@@ -137,6 +137,11 @@ public abstract class Structure {
 			// if it has to be on water
 		if (mustBeBuildOnShore == false) {
 			if (tileWidth == 1 && tileHeight == 1) {
+				if(tiles[0].structures != null && tiles [0].structures.canBeBuildOver){
+					if(tiles [0].structures.name == this.name){
+						return false;
+					}
+				}
 				if (Tile.checkTile (tiles [0]) == false) {
 					return false;
 				}
@@ -151,6 +156,11 @@ public abstract class Structure {
 		} else {
 			//if it has to be on land 
 			if (tileWidth == 1 && tileHeight == 1) {
+				if(tiles [0].structures.canBeBuildOver){
+					if(tiles [0].structures.name == this.name){
+						return false;
+					}
+				}
 				if (Tile.checkTile (tiles[0],mustBeBuildOnShore) == false) {
 					return false;
 				}

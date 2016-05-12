@@ -48,6 +48,14 @@ public class MarketBuilding : UserStructure {
 				tn.North ();
 			}
 		}
+		foreach(Tile rangeTile in myRangeTiles){
+			if(rangeTile.structures == null){
+				continue;
+			}
+			if(rangeTile.structures is ProductionBuilding){
+				((ProductionBuilding)rangeTile.structures).RegisterOutputChanged (OnOutputChangedStructure);
+			}
+		}
 		BuildController.Instance.RegisterStructureCreated (OnStructureBuild);
 	}
 	public void OnOutputChangedStructure(Structure str){

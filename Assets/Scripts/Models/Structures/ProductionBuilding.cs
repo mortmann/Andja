@@ -19,6 +19,13 @@ public class ProductionBuilding : UserStructure {
 	public int growableReadyCount;
 	Queue<Structure> workingGrowables;
 
+	public float Efficiency{
+		get {
+			return (float)OnRegisterCallbacks / (float)myRangeTiles.Count;
+		}
+	}
+	public int OnRegisterCallbacks;
+
 	public ProductionBuilding(string name,Item[] intake, int[] needIntake,int[] maxIntake, float time, Item[] output, int maxOutputStorage , int tileWidth, int tileHeight,int buildcost,Item[] buildItems,int maintenancecost,bool hasHitbox=true, bool canBeBuildOnShore=false) {
 		this.name = name;
 		this.intake = intake;
@@ -163,7 +170,7 @@ public class ProductionBuilding : UserStructure {
 		cbOutputChange += callbackfunc;
 	}
 
-	public void UnregisterTileChanged(Action<Structure> callbackfunc) {
+	public void UnregisterOutputChanged(Action<Structure> callbackfunc) {
 		cbOutputChange -= callbackfunc;
 	}
 	public override void OnBuild(){
@@ -186,6 +193,7 @@ public class ProductionBuilding : UserStructure {
 		foreach (Tile rangeTile in myRangeTiles) {
 			if(rangeTile.structures != null){
 				if(rangeTile.structures.name.Contains (growable)){
+					OnRegisterCallbacks++;
 					rangeTile.structures.RegisterOnChangedCallback (OnGrowableChanged);	
 				}
 			}
@@ -204,18 +212,18 @@ public class ProductionBuilding : UserStructure {
 			return;
 		}
 		workingGrowables.Enqueue (str);
-		Debug.Log ("OnGrowableChanged");
 		growableReadyCount ++;
 		// send worker todo this job
 		// not important right now
 	}
 	public void OnTileStructureChange(Tile t){
+		OnRegisterCallbacks--;
 		if(t.structures == null){
 			return;
 		}
 		if(t.structures.name == growable){
+			OnRegisterCallbacks++;
 			t.structures.RegisterOnChangedCallback (OnGrowableChanged);	
-
 		}
 
 	}

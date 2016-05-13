@@ -74,6 +74,7 @@ public class BuildController : MonoBehaviour {
 		}
 		if(structurePrototypes [name].BuildTyp == BuildTypes.Drag){
 			MouseController.Instance.mouseState = MouseState.Drag;
+			MouseController.Instance.structure = toBuildStructure;
 		}
     }
 	public void BuildOnTile(List<Tile> tiles, bool forEachTileOnce){
@@ -96,6 +97,7 @@ public class BuildController : MonoBehaviour {
 			}
 			if (tiles [0].myCity != null) {
 				tiles [0].myCity.addStructure (s);
+				s.city = tiles [0].myCity;
 			}
 		} else {
 			foreach (Tile tile in tiles) {
@@ -110,6 +112,7 @@ public class BuildController : MonoBehaviour {
 				}
 				if (tiles [0].myCity != null) {
 					tiles [0].myCity.addStructure (s);
+					s.city = tiles [0].myCity;
 				}
 			}
 		}

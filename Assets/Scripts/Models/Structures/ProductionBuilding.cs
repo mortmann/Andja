@@ -21,7 +21,7 @@ public class ProductionBuilding : UserStructure {
 
 	public float Efficiency{
 		get {
-			return (float)OnRegisterCallbacks / (float)myRangeTiles.Count;
+			return Mathf.Round(((float)OnRegisterCallbacks / (float)myRangeTiles.Count)*1000)/10f;
 		}
 	}
 	public int OnRegisterCallbacks;
@@ -176,10 +176,6 @@ public class ProductionBuilding : UserStructure {
 	public override void OnBuild(){
 		this.growable = "tree";
 		workingGrowables = new Queue<Structure> ();
-		foreach(Tile rangeTile in myRangeTiles){
-			rangeTile.RegisterTileStructureChangedCallback (OnTileStructureChange);
-		}
-
 		if(intake != null){
 			return;		
 		}
@@ -193,10 +189,13 @@ public class ProductionBuilding : UserStructure {
 		foreach (Tile rangeTile in myRangeTiles) {
 			if(rangeTile.structures != null){
 				if(rangeTile.structures.name.Contains (growable)){
-					OnRegisterCallbacks++;
 					rangeTile.structures.RegisterOnChangedCallback (OnGrowableChanged);	
+					OnRegisterCallbacks++;
 				}
 			}
+		}
+		foreach(Tile rangeTile in myRangeTiles){
+			rangeTile.RegisterTileStructureChangedCallback (OnTileStructureChange);
 		}
 		//if(Tile.checkTile (rangeTile,false)) 
 	}
@@ -216,8 +215,10 @@ public class ProductionBuilding : UserStructure {
 		// send worker todo this job
 		// not important right now
 	}
-	public void OnTileStructureChange(Tile t){
-		OnRegisterCallbacks--;
+	public void OnTileStructureChange(Tile t, Structure old){
+		if(old != null && old.name == growable){
+			OnRegisterCallbacks--;
+		}
 		if(t.structures == null){
 			return;
 		}
@@ -225,6 +226,5 @@ public class ProductionBuilding : UserStructure {
 			OnRegisterCallbacks++;
 			t.structures.RegisterOnChangedCallback (OnGrowableChanged);	
 		}
-
 	}
 }

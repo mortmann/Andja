@@ -10,11 +10,13 @@ public class ProduktionUI : MonoBehaviour {
 	Dictionary<Item, GameObject> itemToGO;
 	ProductionBuilding str;
 	Slider progress;
+	Text efficiency;
 	public void Show(ProductionBuilding str){
 		if (this.str == str) {
 			return;
 		}
 		this.str = str;
+		efficiency = progressContent.GetComponentInChildren<Text> ();
 		progress = progressContent.GetComponentInChildren<Slider> ();
 		progress.maxValue = str.produceTime;
 		progress.value = 0;
@@ -56,6 +58,7 @@ public class ProduktionUI : MonoBehaviour {
 				t.text = item.count + "t";
 			}
 			progress.value = str.produceTime - str.produceCountdown;
+			efficiency.text = str.Efficiency + "%";
 		}
 	}
 }

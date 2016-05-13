@@ -266,7 +266,7 @@ public class MouseController : MonoBehaviour {
 			return;
 		}
 		if(tiles != null) {
-			Build( tiles );
+			Build( tiles,true );
 		}
 	}
 

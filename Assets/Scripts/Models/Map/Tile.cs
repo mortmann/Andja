@@ -22,9 +22,10 @@ public class Tile {
 			if(_structures != null){
 				_structures.Destroy ();
 			}
+			Structure oldStructure = _structures;
 			_structures = value;
-			if (cbTileChanged != null) {
-				cbTileChanged (this);
+			if (cbTileStructureChanged != null) {
+				cbTileStructureChanged (this,oldStructure);
 			} 
 		}
 	}
@@ -54,13 +55,7 @@ public class Tile {
     public TileType Type {
         get { return _type; }
         set {
-            TileType oldType = _type;
             _type = value;
-            // Call the callback and let things know we've changed.
-
-            if (cbTileChanged != null && oldType != _type) {
-                cbTileChanged(this);
-            }
         }
     }
 
@@ -106,19 +101,19 @@ public class Tile {
     }
 
     // The function we callback any time our tile's data changes
-    Action<Tile> cbTileChanged;
+	Action<Tile,Structure> cbTileStructureChanged;
     /// <summary>
     /// Register a function to be called back when our tile type changes.
     /// </summary>
-    public void RegisterTileStructureChangedCallback(Action<Tile> callback) {
-        cbTileChanged += callback;
+	public void RegisterTileStructureChangedCallback(Action<Tile,Structure> callback) {
+        cbTileStructureChanged += callback;
     }
 
     /// <summary>
     /// Unregister a callback.
     /// </summary>
-    public void UnregisterTileStructureChangedCallback(Action<Tile> callback) {
-        cbTileChanged -= callback;
+	public void UnregisterTileStructureChangedCallback(Action<Tile,Structure> callback) {
+        cbTileStructureChanged -= callback;
     }
 
 

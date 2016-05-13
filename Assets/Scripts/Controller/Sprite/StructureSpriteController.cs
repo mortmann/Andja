@@ -66,6 +66,14 @@ public class StructureSpriteController : MonoBehaviour {
 		}
 	}
 	void OnStrucutureChanged(Structure structure){
+		if(structure == null){
+			Debug.LogError ("Structure change and its empty?");
+			return;
+		}
+		if( structureGameObjectMap.ContainsKey (structure) == false){
+			Debug.LogError ("StructureSprite not in the Map to a gameobject! " + structure.myBuildingTiles[0].toString ());
+			return;
+		}
 		if(structure is Growable){
 			SpriteRenderer sr = structureGameObjectMap[structure].GetComponent<SpriteRenderer>();
 			sr.sprite = structureSprites[structure.name + "_" + ((Growable)structure).currentStage];

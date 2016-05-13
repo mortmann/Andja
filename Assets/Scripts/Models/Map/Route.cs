@@ -43,7 +43,7 @@ public class Route  {
 			((Road)item.structures).Route = this;
 		}
 		tileGraph.addNodes (route.tileGraph);
-		myTiles[0].myCity.RemoveRoad (route);
+		myTiles[0].myCity.RemoveRoute (route);
 
 	}
 

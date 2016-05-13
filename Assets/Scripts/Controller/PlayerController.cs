@@ -25,11 +25,15 @@ public class PlayerController : MonoBehaviour {
 
 		tickTimer -= Time.deltaTime;
 		if(tickTimer<=0){
+			int citychange=0;
+			foreach (City c in myCities) {
+				citychange += c.cityBalance;
+			}
 			tickTimer = balanceTicks;
-			balance += change;
+			balance += change+citychange;
 
 		}
-		if(balance < 1000000){
+		if(balance < -1000000){
 			// game over !
 		}
 	}
@@ -59,13 +63,9 @@ public class PlayerController : MonoBehaviour {
 		change += amount;
 	}
 	public void OnCityCreated(City city){
-
 		myCities.Add (city);
-
 	}
 	public void OnStructureCreated(Structure structure){
-		reduceChange(structure.maintenancecost);
 		reduceMoney (structure.buildcost);
-
 	}
 }

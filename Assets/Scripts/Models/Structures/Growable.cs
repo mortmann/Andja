@@ -11,6 +11,7 @@ public class Growable : Structure {
 
 	public Growable(string name,Item produceItem){
 		this.myBuildingTyp = BuildingTyp.Blocking;
+		this.BuildTyp = BuildTypes.Drag;
 		buildcost = 50;
 		tileWidth = 1;
 		tileHeight = 1;

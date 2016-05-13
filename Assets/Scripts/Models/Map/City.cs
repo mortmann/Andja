@@ -10,14 +10,15 @@ public class City {
     public Inventory myInv;
     public List<Structure> myStructures;
 	public List<Tile> myTiles;
-	public List<Route> myRoads;
+	public List<Route> myRoutes;
+	public int cityBalance;
 
     public City(Island island) {
         this.island = island;
         myInv = new Inventory();
         myStructures = new List<Structure>();
 		myTiles = new List<Tile> ();
-		myRoads = new List<Route> ();
+		myRoutes = new List<Route> ();
     }
 
     internal void update(float deltaTime) {
@@ -27,6 +28,7 @@ public class City {
     }
 
 	public void addStructure(Structure str){
+		cityBalance += str.maintenancecost;
 		myStructures.Add (str);
 
 	}
@@ -46,17 +48,19 @@ public class City {
 	}
 
 	public void AddRoute(Route route){
-		this.myRoads.Add (route);
+		this.myRoutes.Add (route);
 	}
 
-	public void RemoveRoad(Route route){
-		if(myRoads.Contains (route)){
-			myRoads.Remove (route);
+	public void RemoveRoute(Route route){
+		if(myRoutes.Contains (route)){
+			myRoutes.Remove (route);
 		} 
 	}
 	public void removeStructure(Structure structure){
-		if(myStructures.Contains (structure))
+		if (myStructures.Contains (structure)) {
 			myStructures.Remove (structure);
+			cityBalance -= structure.maintenancecost;
+		}
 	}
 
 }

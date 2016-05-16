@@ -1,6 +1,9 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 using System;
+using System.Xml;
+using System.Xml.Schema;
+using System.Xml.Serialization;
 
 public class ProductionBuilding : UserStructure {
 
@@ -13,6 +16,7 @@ public class ProductionBuilding : UserStructure {
 	public float produceCountdown;
 	public Item[] output;
 	public string growable;
+	public int[] inputStorage;
 	public int[] outputStorage;
 	public int maxOutputStorage;
 	Action<Structure> cbOutputChange;
@@ -191,6 +195,10 @@ public class ProductionBuilding : UserStructure {
 				if(rangeTile.structures.name.Contains (growable)){
 					rangeTile.structures.RegisterOnChangedCallback (OnGrowableChanged);	
 					OnRegisterCallbacks++;
+					if(((Growable)rangeTile.structures).hasProduced == true){
+						growableReadyCount ++;
+						workingGrowables.Enqueue (rangeTile.structures);
+					}
 				}
 			}
 		}
@@ -225,6 +233,52 @@ public class ProductionBuilding : UserStructure {
 		if(t.structures.name == growable){
 			OnRegisterCallbacks++;
 			t.structures.RegisterOnChangedCallback (OnGrowableChanged);	
+		}
+	}
+
+	public override void WriteXml (XmlWriter writer){
+		writer.WriteAttributeString("Name", name ); //change this to id
+		writer.WriteAttributeString("BuildingTile_X", myBuildingTiles[0].X.ToString () );
+		writer.WriteAttributeString("BuildingTile_Y", myBuildingTiles[0].Y.ToString () );
+		writer.WriteAttributeString("Rotated", rotated.ToString());
+		writer.WriteAttributeString("OutputClaimed", outputClaimed.ToString () );
+		writer.WriteAttributeString("ProduceCountdown", produceCountdown.ToString () );
+		if (inputStorage != null) {
+			writer.WriteStartElement ("Inputs");
+			foreach (int i in inputStorage) {
+				writer.WriteStartElement ("InputStorage");
+				writer.WriteAttributeString ("amount", i.ToString ());
+				writer.WriteEndElement ();
+			}
+			writer.WriteEndElement ();
+		}
+		if (outputStorage != null) {
+			writer.WriteStartElement ("Outputs");
+			foreach (int i in outputStorage) {
+				writer.WriteStartElement ("OutputStorage");
+				writer.WriteAttributeString ("amount", i.ToString ());
+				writer.WriteEndElement ();
+			}
+			writer.WriteEndElement ();
+		}
+	}
+	public override void ReadXml(XmlReader reader) {
+		rotated = int.Parse( reader.GetAttribute("Rotated") );
+		outputClaimed = bool.Parse (reader.GetAttribute("OutputClaimed"));
+		produceCountdown = float.Parse( reader.GetAttribute("ProduceCountdown") );
+		int input= 0;
+		if(reader.ReadToDescendant("Inputs") ) {
+			do {
+				inputStorage[input] = int.Parse( reader.GetAttribute("amount") );
+				input++;
+			} while( reader.ReadToNextSibling("InputStorage") );
+		}
+		int output= 0;
+		if(reader.ReadToDescendant("Outputs") ) {
+			do {
+				outputStorage[output] = int.Parse( reader.GetAttribute("amount") );
+				output++;
+			} while( reader.ReadToNextSibling("OutputStorage") );
 		}
 	}
 }

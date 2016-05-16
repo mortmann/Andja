@@ -92,7 +92,10 @@ public class Pathfinding  {
 	Tile _currTile;
 	public Tile currTile {
 		get { return _currTile; }
-		protected set { _currTile = value; }
+		 set { 
+			X = value.X;
+			Y = value.Y;
+			_currTile = value; }
 	}
 
 	private Vector3 rotationDirection;

@@ -2,8 +2,11 @@
 using System.Collections;
 using System;
 using System.Collections.Generic;
+using System.Xml;
+using System.Xml.Schema;
+using System.Xml.Serialization;
 
-public class City {
+public class City : IXmlSerializable{
     //TODO: set this to the player that creates this
     public int playerNumber = 0;
     public Island island { get; protected set; }
@@ -62,5 +65,85 @@ public class City {
 			cityBalance -= structure.maintenancecost;
 		}
 	}
+	//////////////////////////////////////////////////////////////////////////////////////
+	/// 
+	/// 						SAVING & LOADING
+	/// 
+	//////////////////////////////////////////////////////////////////////////////////////
+	public XmlSchema GetSchema() {
+		return null;
+	}
 
+	public void WriteXml(XmlWriter writer) {
+		writer.WriteAttributeString("Player", playerNumber.ToString() );
+		writer.WriteStartElement("Inventory");
+			myInv.WriteXml(writer);
+		writer.WriteEndElement();
+
+		Structure tempWarehouse = null;
+		List<Structure> tempMarketbuildings = new List<Structure>();
+		List<Structure> tempStructures = new List<Structure>();
+		foreach (Structure s in myStructures) {
+			if (s is MarketBuilding) {
+				tempMarketbuildings.Add (s);
+			} else 
+			if(s is Warehouse){
+				tempWarehouse = s;
+			} else {
+				tempStructures.Add (s);
+			}
+		}
+		List<Structure> writeStructure = new List<Structure>();
+		if (tempWarehouse != null) {
+			writeStructure.Add (tempWarehouse);
+		}
+		writeStructure.AddRange (tempMarketbuildings);
+		writeStructure.AddRange (tempStructures);
+
+		writer.WriteStartElement("Structures");
+		foreach (Structure s in writeStructure) {
+			writer.WriteStartElement("Structure");
+			s.WriteXml(writer);
+			writer.WriteEndElement();
+		}
+		writer.WriteEndElement();
+		writer.WriteStartElement("Routes");
+		foreach (Route r in myRoutes) {
+			writer.WriteStartElement("Route");
+			r.WriteXml(writer);
+			writer.WriteEndElement();
+		}
+		writer.WriteEndElement();
+
+
+	}
+	public void ReadXml(XmlReader reader) {
+		int player = int.Parse( reader.GetAttribute("Player") );
+		myInv = new Inventory ();
+		myInv.ReadXml (reader);
+		BuildController bc = new BuildController ();
+
+		if(reader.ReadToDescendant("City") ) {
+			do {
+				int x = int.Parse( reader.GetAttribute("BuildingTile_X") );
+				int y = int.Parse( reader.GetAttribute("BuildingTile_Y") );
+				Tile t = WorldController.Instance.world.GetTileAt (x,y);
+				Structure s=bc.structurePrototypes[reader.GetAttribute("Name")].Clone(); 
+				if(s is MarketBuilding){
+					((MarketBuilding)s).ReadXml (reader);
+				} else 
+				if(s is Warehouse){
+					((Warehouse)s).ReadXml (reader);
+				} else 
+				if(s is ProductionBuilding){
+					((ProductionBuilding)s).ReadXml (reader);
+				} else 
+				if(s is Growable){
+					((Growable)s).ReadXml (reader);
+				}
+				bc.BuildOnTile (s,t);
+				myStructures.Add (s);
+			} while( reader.ReadToNextSibling("Island") );
+		}
+	}
 }

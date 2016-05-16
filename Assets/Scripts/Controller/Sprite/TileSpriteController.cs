@@ -13,6 +13,8 @@ public class TileSpriteController : MonoBehaviour {
 
     // Use this for initialization
     void Start () {
+		tileGameObjectMap = new Dictionary<Tile, GameObject>();
+
         for (int x = 0; x < world.Width; x++) {
             for (int y = 0; y < world.Height; y++) {
                 GameObject tile_go = new GameObject();
@@ -24,7 +26,6 @@ public class TileSpriteController : MonoBehaviour {
                 sr.sortingLayerName = "Tiles";
                 tile_go.transform.SetParent(this.transform, true);
 
-                tileGameObjectMap = new Dictionary<Tile, GameObject>();
                 tileGameObjectMap.Add(tile_data, tile_go);
 
                 OnTileChanged(tile_data);

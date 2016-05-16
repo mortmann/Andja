@@ -1,14 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Xml;
+using System.Xml.Schema;
+using System.Xml.Serialization;
 
-public class Inventory {
+public class Inventory : IXmlSerializable{
 	public int maxStackSize { get; protected set;}
     public Dictionary<int, Item> items {
 		get;
 		protected set;
 	}
-	public int numberOfSpaces{
+	public int numberOfSpaces {
 		get;
 		protected set;
 	}
@@ -189,5 +192,40 @@ public class Inventory {
 
 	public void UnregisterOnChangedCallback(Action<Inventory> cb) {
 		cbInventoryChanged -= cb;
+	}
+	//////////////////////////////////////////////////////////////////////////////////////
+	/// 
+	/// 						SAVING & LOADING
+	/// 
+	//////////////////////////////////////////////////////////////////////////////////////
+	public XmlSchema GetSchema() {
+		return null;
+	}
+
+	public void WriteXml(XmlWriter writer) {
+		writer.WriteAttributeString( "MaxStackSize",maxStackSize.ToString ());
+		writer.WriteAttributeString( "NumberOfSpaces",numberOfSpaces.ToString ());
+		writer.WriteStartElement("Items");
+		foreach (int c in items.Keys) {
+			writer.WriteStartElement("Item");
+			writer.WriteAttributeString( "Number", c.ToString () );
+			items [c].WriteXml (writer);
+			writer.WriteEndElement();
+		}
+		writer.WriteEndElement();
+	}
+	public void ReadXml(XmlReader reader) {
+		maxStackSize = int.Parse( reader.GetAttribute("MaxStackSize") );
+		numberOfSpaces = int.Parse( reader.GetAttribute("NumberOfSpaces") );
+		BuildController bs = BuildController.Instance;
+		if(reader.ReadToDescendant("Items") ) {
+			do {
+				int number = int.Parse( reader.GetAttribute("Number") );
+				int id = int.Parse( reader.GetAttribute("ID") );
+				Item i = bs.allItems[id].Clone();
+				i.ReadXml (reader);
+				items[number] = i;
+			} while( reader.ReadToNextSibling("Unit") );
+		}
 	}
 }

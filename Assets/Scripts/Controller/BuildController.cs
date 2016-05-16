@@ -83,6 +83,21 @@ public class BuildController : MonoBehaviour {
 		}
 		BuildOnTile (tiles, forEachTileOnce, toBuildStructure);
 	}
+	public void BuildOnTile(Structure s , Tile t){
+		if (toBuildStructure == null) {
+			return;
+		}
+		if (s.PlaceStructure (s.GetBuildingTiles (t.X, t.Y)) == false) {
+			return;
+		}
+		if (cbStructureCreated != null) {
+			cbStructureCreated (s);
+		}
+		if (t.myCity != null) {
+			t.myCity.addStructure (s);
+			s.city = t.myCity;
+		}
+	}
 	public void BuildOnTile(List<Tile> tiles, bool forEachTileOnce, Structure structure){
 		if(tiles == null || tiles.Count == 0){
 			return;
@@ -117,6 +132,8 @@ public class BuildController : MonoBehaviour {
 			}
 		}
 	}
+
+
 	public void BuildOnTile(string name, List<Tile> tiles){
 		if(structurePrototypes.ContainsKey (name) == false){
 			return;

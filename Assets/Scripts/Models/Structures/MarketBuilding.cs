@@ -1,5 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
+using System.Xml;
+using System.Xml.Schema;
+using System.Xml.Serialization;
 
 public class MarketBuilding : UserStructure {
 	public List<Route> myRoutes;
@@ -99,6 +102,33 @@ public class MarketBuilding : UserStructure {
 					myRoutes.Add (r);
 				}
 			}
+		}
+	}
+
+	public override void WriteXml (XmlWriter writer){
+		writer.WriteAttributeString("Name", name ); //change this to id
+		writer.WriteAttributeString("BuildingTile_X", myBuildingTiles[0].X.ToString () );
+		writer.WriteAttributeString("BuildingTile_Y", myBuildingTiles[0].Y.ToString () );
+		writer.WriteAttributeString("Rotated", rotated.ToString());
+		if (myWorker != null) {
+			writer.WriteStartElement ("Workers");
+			foreach (Worker w in myWorker) {
+				writer.WriteStartElement ("Worker");
+				w.WriteXml (writer);
+				writer.WriteEndElement ();
+			}
+			writer.WriteEndElement ();
+		}
+		
+	}
+	public override void ReadXml(XmlReader reader) {
+		rotated = int.Parse( reader.GetAttribute("Rotated") );
+		if(reader.ReadToDescendant("Workers") ) {
+			do {
+				Worker w = new Worker(this);
+				w.ReadXml (reader);
+				myWorker.Add (w);
+			} while( reader.ReadToNextSibling("Island") );
 		}
 	}
 }

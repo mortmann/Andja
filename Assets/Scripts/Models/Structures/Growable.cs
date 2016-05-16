@@ -1,5 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Xml;
+using System.Xml.Schema;
+using System.Xml.Serialization;
 
 public class Growable : Structure {
 	float growTime = 5f;
@@ -7,6 +10,7 @@ public class Growable : Structure {
 	int ageStages = 2;
 	public int currentStage= 0;
 	public bool hasProduced =false;
+	public bool outputClaimed =false;
 	Item produceItem ;
 
 	public Growable(string name,Item produceItem){
@@ -51,6 +55,7 @@ public class Growable : Structure {
 			return;
 		}
 		if(currentStage==ageStages){
+			hasProduced = true;
 			return;
 		}
 		 
@@ -63,9 +68,6 @@ public class Growable : Structure {
 				return;
 			}
 			currentStage++;
-			if(currentStage == ageStages){
-				hasProduced = true;
-			}
 			callbackIfnotNull ();
 		}
 	}
@@ -75,5 +77,21 @@ public class Growable : Structure {
 		currentStage= 0;
 		callbackIfnotNull ();
 		hasProduced = false;
+	}
+
+	public override void WriteXml (XmlWriter writer){
+		writer.WriteAttributeString("Name", name ); //change this to id
+		writer.WriteAttributeString("BuildingTile_X", myBuildingTiles[0].X.ToString () );
+		writer.WriteAttributeString("BuildingTile_Y", myBuildingTiles[0].Y.ToString () );
+		writer.WriteAttributeString("OutputClaimed", outputClaimed.ToString () );
+		writer.WriteAttributeString("CurrentStage",currentStage.ToString());
+		writer.WriteAttributeString("Age",age.ToString());
+		writer.WriteAttributeString("Rotated", rotated.ToString());
+	}
+	public override void ReadXml (XmlReader reader)	{
+		
+		//int x = int.Parse( reader.GetAttribute("X") );
+		//int y = int.Parse( reader.GetAttribute("Y") );
+
 	}
 }

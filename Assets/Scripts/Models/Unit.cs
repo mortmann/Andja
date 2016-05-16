@@ -1,8 +1,11 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System;
+using System.Xml;
+using System.Xml.Schema;
+using System.Xml.Serialization;
 
-public class Unit : MonoBehaviour {
+public class Unit : MonoBehaviour, IXmlSerializable {
    
 
     void Start() {
@@ -214,4 +217,32 @@ public class Unit : MonoBehaviour {
 		pathfinding.AddMovementCommand( x, y);
     }
 
+	//////////////////////////////////////////////////////////////////////////////////////
+	/// 
+	/// 						SAVING & LOADING
+	/// 
+	//////////////////////////////////////////////////////////////////////////////////////
+	public XmlSchema GetSchema() {
+		return null;
+	}
+	public void WriteXml(XmlWriter writer){
+		writer.WriteAttributeString("IsShip", isShip.ToString () );
+		if (inventory != null) {
+			writer.WriteStartElement ("Inventory");
+			inventory.WriteXml (writer);
+			writer.WriteEndElement ();
+		}
+		writer.WriteAttributeString("currTile_X", pathfinding.currTile.X.ToString () );
+		writer.WriteAttributeString("currTile_Y", pathfinding.currTile.Y.ToString () );
+		writer.WriteAttributeString("dest_X", pathfinding.dest_X.ToString () );
+		writer.WriteAttributeString("dest_Y", pathfinding.dest_Y.ToString () );
+
+	}
+	public void ReadXml (XmlReader reader){
+		isShip = bool.Parse(reader.GetAttribute ("IsShip"));
+		int x = int.Parse( reader.GetAttribute("destTile_X") );
+		int y = int.Parse( reader.GetAttribute("destTile_Y") );
+		AddMovementCommand (x, y);
+
+	}
 }

@@ -1,8 +1,11 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System;
+using System.Xml;
+using System.Xml.Schema;
+using System.Xml.Serialization;
 
-public class Worker {
+public class Worker : IXmlSerializable{
 
 	Structure myHome;
 	Pathfinding path;
@@ -11,8 +14,11 @@ public class Worker {
 	float doTimer;
 	Inventory inventory;
 	ProductionBuilding workStructure;
+	Tile destTile;
+	Tile currTile;
 	Action<Worker> cbWorkerChanged;
 	Action<Worker> cbWorkerDestroy;
+
 	bool goingToWork;
 
 	public float X {
@@ -41,17 +47,26 @@ public class Worker {
 		doTimer = workTime;
 		AddJobStructure(structure);
 	}
+	public Worker(Structure myHome){
+		this.myHome = myHome;
+		isAtHome = false;
+		goingToWork = true;
+		inventory = new Inventory (4,false);
+		doTimer = workTime;
+	}
 	public void Update(float deltaTime){
 		if(path == null){
+			if (destTile != null) {
+				if(destTile.structures is ProductionBuilding)
+					AddJobStructure ((ProductionBuilding)destTile.structures);
+			}
+			//theres no goal so delete it after some time?
 			return;
 		}
 		float moving = path.Update_DoMovement (deltaTime).magnitude;
 		if(cbWorkerChanged != null)
 			cbWorkerChanged(this);
 		if ( moving > 0) {
-//				transform.Translate (move, Space.World);
-//			_x += move.x;
-//			_y += move.y;
 			return;
 		}
 		// coming home from doing the work
@@ -98,6 +113,11 @@ public class Worker {
 		goingToWork = true;
 		//job_dest_tile = tile;
 		path = new Pathfinding (myHome.roadsAroundStructure (),structure.roadsAroundStructure (),1.5f);
+		if (currTile != null) {
+			path.currTile = currTile;
+			currTile = null;
+			destTile = null;
+		}
 	}
 
 	public void RegisterOnChangedCallback(Action<Worker> cb) {
@@ -114,5 +134,36 @@ public class Worker {
 	public void UnregisterOnDestroyCallback(Action<Worker> cb) {
 		cbWorkerDestroy -= cb;
 	}
+	//////////////////////////////////////////////////////////////////////////////////////
+	/// 
+	/// 						SAVING & LOADING
+	/// 
+	//////////////////////////////////////////////////////////////////////////////////////
+	public XmlSchema GetSchema() {
+		return null;
+	}
+	public void WriteXml(XmlWriter writer){
 
+		writer.WriteStartElement("Inventory");
+		inventory.WriteXml(writer);
+		writer.WriteEndElement();
+		writer.WriteAttributeString("currTile_X", path.currTile.X.ToString () );
+		writer.WriteAttributeString("currTile_Y", path.currTile.Y.ToString () );
+		writer.WriteAttributeString("destTile_X", workStructure.JobTile.X.ToString () );
+		writer.WriteAttributeString("destTile_Y", workStructure.JobTile.Y.ToString () );
+		writer.WriteAttributeString("goingToWork", goingToWork.ToString () );
+
+	}
+	public void ReadXml (XmlReader reader){
+
+		isAtHome = false;
+
+		int dx = int.Parse( reader.GetAttribute("destTile_X") );
+		int dy = int.Parse( reader.GetAttribute("destTile_Y") );
+		destTile = WorldController.Instance.world.GetTileAt (dx,dy);
+		int cx = int.Parse( reader.GetAttribute("currTile_X") );
+		int cy = int.Parse( reader.GetAttribute("currTile_Y") );
+		currTile = WorldController.Instance.world.GetTileAt (cx,cy);
+		goingToWork = bool.Parse (reader.GetAttribute ("goingToWork"));
+	}
 }

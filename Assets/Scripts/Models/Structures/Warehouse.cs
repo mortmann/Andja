@@ -1,5 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Xml;
+using System.Xml.Schema;
+using System.Xml.Serialization;
 
 public class Warehouse : MarketBuilding {
 
@@ -48,5 +51,13 @@ public class Warehouse : MarketBuilding {
 
 	public override Structure Clone (){
 		return new Warehouse (this);
+	}
+
+	public override void WriteXml (XmlWriter writer){
+//		writer.WriteAttributeString("Name", name ); //change this to id
+//		writer.WriteAttributeString("BuildingTile_X", myBuildingTiles[0].X );
+//		writer.WriteAttributeString("BuildingTile_Y", myBuildingTiles[0].Y );
+//		writer.WriteAttributeString("Rotated", rotated.ToString());
+		base.WriteXml (writer);
 	}
 }

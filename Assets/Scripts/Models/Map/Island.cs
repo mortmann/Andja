@@ -1,8 +1,11 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 using System;
+using System.Xml;
+using System.Xml.Schema;
+using System.Xml.Serialization;
 
-public class Island {
+public class Island : IXmlSerializable{
     public Path_TileGraph tileGraph { get; protected set; }
     public List<Tile> myTiles;
     public List<City> myCities;
@@ -61,6 +64,36 @@ public class Island {
 			cbCityCreated(c);
         return c;
     }
+	//////////////////////////////////////////////////////////////////////////////////////
+	/// 
+	/// 						SAVING & LOADING
+	/// 
+	//////////////////////////////////////////////////////////////////////////////////////
+	public XmlSchema GetSchema() {
+		return null;
+	}
 
+	public void WriteXml(XmlWriter writer) {
+		writer.WriteAttributeString("StartTile_X",myTiles[0].X.ToString ());
+		writer.WriteAttributeString("StartTile_Y",myTiles[0].Y.ToString ());
+		writer.WriteStartElement("Cities");
+		foreach (City c in myCities) {
+			writer.WriteStartElement("City");
+			c.WriteXml(writer);
+			writer.WriteEndElement();
+		}
+		writer.WriteEndElement();
+
+
+
+	}
+
+	public void ReadXml(XmlReader reader) {
+		do {
+			City c = new City(this);
+			c.ReadXml(reader);
+			myCities.Add (c);
+		} while( reader.ReadToNextSibling("Island") );
+	}
 
 }

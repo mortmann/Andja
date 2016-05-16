@@ -22,6 +22,9 @@ public abstract class UserStructure : Structure {
 		}
 	}
 	public void update_Worker(float deltaTime){
+		if(myWorker == null){
+			return;
+		}
 		for (int i = myWorker.Count-1; i >= 0; i--) {
 			Worker w = myWorker[i];
 			w.Update (deltaTime);

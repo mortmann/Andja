@@ -1,6 +1,10 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 using System;
+using System.Xml;
+using System.Xml.Schema;
+using System.Xml.Serialization;
+
 public class Road : Structure {
 	private Route _route;
 	public Route Route {
@@ -112,4 +116,14 @@ public class Road : Structure {
 		cbRoadChanged -= cb;
 	}
 
+
+	public override void WriteXml (XmlWriter writer){
+		writer.WriteAttributeString("Name", name ); //change this to id
+		writer.WriteAttributeString("BuildingTile_X", myBuildingTiles[0].X.ToString() );
+		writer.WriteAttributeString("BuildingTile_Y", myBuildingTiles[0].Y.ToString() );
+		writer.WriteAttributeString("Rotated", rotated.ToString());
+	}
+	public override void ReadXml(XmlReader reader) {
+		rotated = int.Parse( reader.GetAttribute("Rotated") );
+	}
 }

@@ -1,12 +1,15 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System;
+using System.Xml;
+using System.Xml.Schema;
+using System.Xml.Serialization;
 
 
 public enum TileType { Water, Shore, Dirt, Grass, Stone, Mountain };
 
 
-public class Tile {
+public class Tile : IXmlSerializable{
     //Want to have more than one structure in one tile!
     //more than one tree or tree and bench! But for now only one
 	protected Structure _structures= null;
@@ -218,10 +221,27 @@ public class Tile {
 		}
 		return true;
 	}
-
-
-
     public String toString() {
         return "tile_" + X + "_" + Y;
     }
+
+	//////////////////////////////////////////////////////////////////////////////////////
+	/// 
+	/// 						SAVING & LOADING
+	/// 
+	//////////////////////////////////////////////////////////////////////////////////////
+	public XmlSchema GetSchema() {
+		return null;
+	}
+
+	public void WriteXml(XmlWriter writer) {
+		writer.WriteAttributeString( "X", X.ToString() );
+		writer.WriteAttributeString( "Y", Y.ToString() );
+		writer.WriteAttributeString( "Type", ((int)Type).ToString() );
+	}
+
+	public void ReadXml(XmlReader reader) {
+		Type = (TileType)int.Parse( reader.GetAttribute("Type") );
+	}
+
 }

@@ -1,8 +1,11 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System;
+using System.Xml;
+using System.Xml.Schema;
+using System.Xml.Serialization;
 
-public class Item {
+public class Item : IXmlSerializable{
     public int ID;
     public string name;
     public int count;
@@ -16,7 +19,8 @@ public class Item {
 		this.ID = other.ID;
 		this.name = other.name;
 	}
-
+	public Item(){
+	}
 
 	virtual public Item Clone (){
 		return new Item(this);
@@ -26,5 +30,20 @@ public class Item {
 		i.count = this.count;
 		return i;
 	}
+	//////////////////////////////////////////////////////////////////////////////////////
+	/// 
+	/// 						SAVING & LOADING
+	/// 
+	//////////////////////////////////////////////////////////////////////////////////////
+	public XmlSchema GetSchema() {
+		return null;
+	}
 
+	public void WriteXml(XmlWriter writer) {
+		writer.WriteAttributeString( "ID", ID.ToString () );
+		writer.WriteAttributeString( "Count", count.ToString () );
+	}
+	public void ReadXml(XmlReader reader) {
+		count = int.Parse( reader.GetAttribute("Count") );
+	}
 }

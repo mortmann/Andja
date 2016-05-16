@@ -3,11 +3,15 @@ using System.Collections;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Xml;
+using System.Xml.Schema;
+using System.Xml.Serialization;
 
 public enum BuildTypes {Drag, Path, Single};
 public enum BuildingTyp {Production, Pathfinding, Blocking};
 
-public abstract class Structure {
+public abstract class Structure : IXmlSerializable {
+	
 	public string name;
 	public City city;
     public bool isWalkable { get; protected set; }
@@ -414,5 +418,16 @@ public abstract class Structure {
 		if(cbStructureDestroy!=null)
 			cbStructureDestroy(this);
 	}
+
+	//////////////////////////////////////////////////////////////////////////////////////
+	/// 
+	/// 						SAVING & LOADING
+	/// 
+	//////////////////////////////////////////////////////////////////////////////////////
+	public XmlSchema GetSchema() {
+		return null;
+	}
+	public abstract void WriteXml(XmlWriter writer);
+	public abstract void ReadXml (XmlReader reader);
 }
 

@@ -1,7 +1,10 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
+using System.Xml;
+using System.Xml.Schema;
+using System.Xml.Serialization;
 
-public class Route  {
+public class Route : IXmlSerializable {
 	public Path_TileGraph tileGraph { get; protected set; }
 	public List<Tile> myTiles;
 	public Route(Tile startTile){
@@ -9,30 +12,30 @@ public class Route  {
 		myTiles.Add (startTile);
 		tileGraph = new Path_TileGraph(this);
 	}
-//	protected void IslandFloodFill(Tile tile) {
-//		if (tile == null) {
-//			// We are trying to flood fill off the map, so just return
-//			// without doing anything.
-//			return;
-//		}
-//		if (tile.structures == null || tile.structures.BuildTyp != BuildTypes.Path) {
-//			// There is no road or structure at all
-//			return;
-//		}
-//		Queue<Tile> tilesToCheck = new Queue<Tile>();
-//		tilesToCheck.Enqueue(tile);
-//		while (tilesToCheck.Count > 0) {
-//			Tile t = tilesToCheck.Dequeue();
-//			if (t.Type != TileType.Water) {
-//				myTiles.Add(t);
-//				Tile[] ns = t.GetNeighbours();
-//				foreach (Tile t2 in ns) {
-//					tilesToCheck.Enqueue(t2);
-//				}
-//			}
-//		}
-//	}
-//
+	protected void RouteFloodFill(Tile tile) {
+		if (tile == null) {
+			// We are trying to flood fill off the map, so just return
+			// without doing anything.
+			return;
+		}
+		if (tile.structures == null) {
+			// There is no road or structure at all
+			return;
+		}
+		Queue<Tile> tilesToCheck = new Queue<Tile>();
+		tilesToCheck.Enqueue(tile);
+		while (tilesToCheck.Count > 0) {
+			Tile t = tilesToCheck.Dequeue();
+			if (t.Type != TileType.Water && t.structures != null && t.structures.myBuildingTyp == BuildingTyp.Pathfinding) {
+				myTiles.Add(t);
+				Tile[] ns = t.GetNeighbours();
+				foreach (Tile t2 in ns) {
+					tilesToCheck.Enqueue(t2);
+				}
+			}
+		}
+	}
+
 	public void addRoadTile(Tile tile){
 		myTiles.Add (tile);
 		tileGraph.AddNodeToRouteTileGraph (tile);
@@ -50,5 +53,22 @@ public class Route  {
 	///for debug purpose only if no longer needed delete
 	public string toString(){
 		return myTiles[0].toString () + "_Route";
+	}
+
+	//////////////////////////////////////////////////////////////////////////////////////
+	/// 
+	/// 						SAVING & LOADING
+	/// 
+	//////////////////////////////////////////////////////////////////////////////////////
+	public XmlSchema GetSchema() {
+		return null;
+	}
+
+	public void WriteXml(XmlWriter writer) {
+		writer.WriteAttributeString("StartTile_X", myTiles[0].X.ToString () );
+		writer.WriteAttributeString("StartTile_Y", myTiles[0].Y.ToString () );
+	}
+	public void ReadXml(XmlReader reader) {
+
 	}
 }

@@ -53,7 +53,7 @@ public class TileSpriteController : MonoBehaviour {
             return;
         }
 		SpriteRenderer sr = tile_go.GetComponent<SpriteRenderer> ();
-		if(tile_data.isHighlighted){
+		if(tile_data.IsHighlighted){
 			sr.material = highlightMaterial;
 		} else {
 			sr.material = clearMaterial;

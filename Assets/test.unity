@@ -1762,6 +1762,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   waterSprite: {fileID: 21300014, guid: 080bbf42caa2cac418f89352966c4543, type: 3}
   dirtSprite: {fileID: 21300008, guid: 080bbf42caa2cac418f89352966c4543, type: 3}
+  darkMaterial: {fileID: 2100000, guid: 4d5d2f80a0493544faaf9953f1479bc9, type: 2}
+  highlightMaterial: {fileID: 2100000, guid: aef7459fdfc4791468859c716de5eadd, type: 2}
 --- !u!4 &656967743
 Transform:
   m_ObjectHideFlags: 0

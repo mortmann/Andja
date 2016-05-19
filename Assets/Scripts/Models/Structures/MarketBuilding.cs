@@ -6,6 +6,7 @@ using System.Xml.Serialization;
 
 public class MarketBuilding : UserStructure {
 	public List<Route> myRoutes;
+	public List<Structure> RegisteredSturctures;
 	public MarketBuilding(){
 		tileWidth = 4;
 		tileHeight = 4;
@@ -37,6 +38,7 @@ public class MarketBuilding : UserStructure {
 	}
 	public override void OnBuild(){
 		myWorker = new List<Worker> ();
+		RegisteredSturctures = new List<Structure> ();
 		myRoutes = GetMyRoutes ();
 		jobsToDo = new List<ProductionBuilding> ();
 		// add all the tiles to the city it was build in
@@ -56,7 +58,10 @@ public class MarketBuilding : UserStructure {
 				continue;
 			}
 			if(rangeTile.structures is ProductionBuilding){
-				((ProductionBuilding)rangeTile.structures).RegisterOutputChanged (OnOutputChangedStructure);
+				if (RegisteredSturctures.Contains (rangeTile.structures) == false) {
+					((ProductionBuilding)rangeTile.structures).RegisterOutputChanged (OnOutputChangedStructure);
+					RegisteredSturctures.Add (rangeTile.structures);
+				}
 			}
 		}
 		BuildController.Instance.RegisterStructureCreated (OnStructureBuild);

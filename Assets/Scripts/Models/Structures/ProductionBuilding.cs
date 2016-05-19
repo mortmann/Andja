@@ -178,7 +178,7 @@ public class ProductionBuilding : UserStructure {
 		cbOutputChange -= callbackfunc;
 	}
 	public override void OnBuild(){
-		this.growable = "tree";
+		growable = "tree";
 		workingGrowables = new Queue<Structure> ();
 		if(intake != null){
 			return;		
@@ -187,7 +187,6 @@ public class ProductionBuilding : UserStructure {
 			return;
 		}
 		GameObject.FindObjectOfType<BuildController> ().BuildOnTile ("tree", myRangeTiles);
-
 		// if we are here this produces only 
 		// and it has a growable to "plant"
 		foreach (Tile rangeTile in myRangeTiles) {

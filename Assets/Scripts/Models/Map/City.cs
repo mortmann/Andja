@@ -118,9 +118,11 @@ public class City : IXmlSerializable{
 
 	}
 	public void ReadXml(XmlReader reader) {
-		int player = int.Parse( reader.GetAttribute("Player") );
+		playerNumber = int.Parse( reader.GetAttribute("Player") );
+
 		myInv = new Inventory ();
 		myInv.ReadXml (reader);
+
 		BuildController bc = new BuildController ();
 
 		if(reader.ReadToDescendant("City") ) {
@@ -128,7 +130,7 @@ public class City : IXmlSerializable{
 				int x = int.Parse( reader.GetAttribute("BuildingTile_X") );
 				int y = int.Parse( reader.GetAttribute("BuildingTile_Y") );
 				Tile t = WorldController.Instance.world.GetTileAt (x,y);
-				Structure s=bc.structurePrototypes[reader.GetAttribute("Name")].Clone(); 
+				Structure s = bc.structurePrototypes[reader.GetAttribute("Name")].Clone(); 
 				if(s is MarketBuilding){
 					((MarketBuilding)s).ReadXml (reader);
 				} else 

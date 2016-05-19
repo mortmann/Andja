@@ -56,9 +56,9 @@ public class Growable : Structure {
 		}
 		if(currentStage==ageStages){
 			hasProduced = true;
+			callbackIfnotNull ();
 			return;
 		}
-		 
 		age += deltaTime;
 		if((age/growTime) > 0.33*currentStage){
 			if(Random.Range (0,100) <99){
@@ -73,8 +73,8 @@ public class Growable : Structure {
 	}
 
 	public void Reset (){
-		growTime = 100f;
 		currentStage= 0;
+		age = 0f;
 		callbackIfnotNull ();
 		hasProduced = false;
 	}

@@ -5,7 +5,6 @@ public abstract class UserStructure : Structure {
 	public float health;
 
 	protected int maxNumberOfWorker = 1;
-	protected int numOfWorkingWorker = 0;
 	public List<Worker> myWorker;
 	public List<ProductionBuilding> jobsToDo;
 	protected Tile _jobTile;
@@ -37,10 +36,9 @@ public abstract class UserStructure : Structure {
 		}
 		ProductionBuilding giveJob = null;
 		foreach (ProductionBuilding item in jobsToDo) {
-			if (numOfWorkingWorker == maxNumberOfWorker) {
+			if (myWorker.Count == maxNumberOfWorker) {
 				break;
 			}			
-			
 			Worker ws = new Worker (this, item);
 			giveJob = item;
 			WorldController.Instance.world.CreateWorkerGameObject (ws);
@@ -56,7 +54,6 @@ public abstract class UserStructure : Structure {
 			Debug.LogError ("WorkerComeBack - Worker comesback, but doesnt live here!");
 			return;
 		}
-		numOfWorkingWorker--;
 		w.Destroy ();
 		myWorker.Remove (w);
 	}

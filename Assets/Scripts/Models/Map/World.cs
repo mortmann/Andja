@@ -138,7 +138,7 @@ public class World : IXmlSerializable{
 		cbWorkerCreated -= callbackfunc;
 	}
     // Gets called whenever ANY tile changes
-    void OnTileChanged(Tile t) {
+    public void OnTileChanged(Tile t) {
         if (cbTileChanged == null)
             return;
 

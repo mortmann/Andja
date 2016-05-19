@@ -6,6 +6,9 @@ public class TileSpriteController : MonoBehaviour {
     Dictionary<Tile, GameObject> tileGameObjectMap;
     public Sprite waterSprite;
     public Sprite dirtSprite;
+	public Material darkMaterial;
+	public Material clearMaterial;
+	public Material highlightMaterial;
     // The pathfinding graph used to navigate our world map.
     World world {
         get { return WorldController.Instance.world; }
@@ -23,8 +26,10 @@ public class TileSpriteController : MonoBehaviour {
                 tile_go.transform.position = new Vector3(tile_data.X , tile_data.Y , 0);
                 SpriteRenderer sr = tile_go.AddComponent<SpriteRenderer>();
                 sr.sprite = waterSprite;
+				clearMaterial = sr.material;
                 sr.sortingLayerName = "Tiles";
                 tile_go.transform.SetParent(this.transform, true);
+
 
                 tileGameObjectMap.Add(tile_data, tile_go);
 
@@ -36,6 +41,7 @@ public class TileSpriteController : MonoBehaviour {
         world.RegisterTileChanged(OnTileChanged);
     }
 
+
     void OnTileChanged(Tile tile_data) {
 
         if (tileGameObjectMap.ContainsKey(tile_data) == false) {
@@ -46,10 +52,15 @@ public class TileSpriteController : MonoBehaviour {
         GameObject tile_go = tileGameObjectMap[tile_data];
 
         if (tile_go == null) {
-            Debug.LogError("tileGameObjectMap's returned GameObject is null -- did you forget to add the tile to the dictionary? Or maybe forget to unregister a callback?");
+            Debug.LogError("tileGame ObjectMap's returned GameObject is null -- did you forget to add the tile to the dictionary? Or maybe forget to unregister a callback?");
             return;
         }
-
+		SpriteRenderer sr = tile_go.GetComponent<SpriteRenderer> ();
+		if(tile_data.isHighlighted){
+			sr.material = highlightMaterial;
+		} else {
+			sr.material = clearMaterial;
+		}
         if (tile_data.Type == TileType.Water) {
             tile_go.GetComponent<SpriteRenderer>().sprite = waterSprite;
         } else if (tile_data.Type == TileType.Dirt) {

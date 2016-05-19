@@ -53,8 +53,18 @@ public class Tile : IXmlSerializable{
 	}
 
     public World world;
-	public bool isHighlighted;
-
+	protected bool _isHighlighted;
+	public bool IsHighlighted {
+		get { return _isHighlighted;}
+		set { 
+			if(value == _isHighlighted){
+				return;
+			} else {
+				this._isHighlighted = value;
+				world.OnTileChanged (this);
+			}
+		}
+	}
     private TileType _type = TileType.Water;
     public TileType Type {
         get { return _type; }

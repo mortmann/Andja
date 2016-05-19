@@ -7,7 +7,7 @@ public class TileSpriteController : MonoBehaviour {
     public Sprite waterSprite;
     public Sprite dirtSprite;
 	public Material darkMaterial;
-	public Material clearMaterial;
+	Material clearMaterial;
 	public Material highlightMaterial;
     // The pathfinding graph used to navigate our world map.
     World world {
@@ -29,10 +29,7 @@ public class TileSpriteController : MonoBehaviour {
 				clearMaterial = sr.material;
                 sr.sortingLayerName = "Tiles";
                 tile_go.transform.SetParent(this.transform, true);
-
-
                 tileGameObjectMap.Add(tile_data, tile_go);
-
                 OnTileChanged(tile_data);
             }
         }

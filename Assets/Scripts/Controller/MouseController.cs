@@ -193,9 +193,8 @@ public class MouseController : MonoBehaviour {
 		if(highlightTiles == null){
 			highlightTiles = structure.GetInRangeTiles (WorldController.Instance.world.GetTileAt (currFramePosition.x, currFramePosition.y));
 			foreach(Tile t in highlightTiles){
-				t.isHighlighted = true;
-				w.OnTileChanged (t);
-			}
+				t.IsHighlighted = true;
+				}
 			return;
 		}
 		//all other times to show it
@@ -203,15 +202,13 @@ public class MouseController : MonoBehaviour {
 		foreach(Tile t in highlightTiles){
 			if(temp.Contains (t) == false){
 //				Debug.Log ("changed false");
-				t.isHighlighted = false;
-				w.OnTileChanged (t);
+				t.IsHighlighted = false;
 			}
 		}
 		foreach(Tile t in temp){
 			if(highlightTiles.Contains (t) == false){
 				//				Debug.Log ("changed false");
-				t.isHighlighted = true;
-				w.OnTileChanged (t);
+				t.IsHighlighted = true;
 			}
 		}
 		highlightTiles = temp;

@@ -53,6 +53,7 @@ public class Tile : IXmlSerializable{
 	}
 
     public World world;
+	public bool isHighlighted;
 
     private TileType _type = TileType.Water;
     public TileType Type {

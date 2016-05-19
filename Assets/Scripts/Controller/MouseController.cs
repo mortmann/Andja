@@ -72,7 +72,6 @@ public class MouseController : MonoBehaviour {
         currFramePosition.z = 0;
 		RemovePrefabs ();
         //UpdateCursor();
-
         if (mouseState == MouseState.Drag) { 
             UpdateDragging();
         } else
@@ -92,7 +91,7 @@ public class MouseController : MonoBehaviour {
 			}
 			//mouse press decide what it hit 
 			RaycastHit2D hit = Physics2D.Raycast(new Vector2(currFramePosition.x, currFramePosition.y), Vector2.zero, 200);
-			DecideWhatToShow (hit);
+			DecideWhatUIToShow (hit);
         }
 
         UpdateCameraMovement();
@@ -101,7 +100,7 @@ public class MouseController : MonoBehaviour {
 		lastFramePosition = Camera.main.ScreenToWorldPoint( Input.mousePosition );
 		lastFramePosition.z = 0;
 	}
-	private void DecideWhatToShow(RaycastHit2D hit){
+	private void DecideWhatUIToShow(RaycastHit2D hit){
 		if (hit) {
 			selectedUnit = hit.transform.GetComponent<Unit> ();
 			if (selectedUnit != null) {
@@ -131,9 +130,7 @@ public class MouseController : MonoBehaviour {
 			return;
 		}
 		List<Tile> structureTiles = structure.GetBuildingTiles (currFramePosition.x, currFramePosition.y);
-//		if (highlightTiles == null || WorldController.Instance.world.GetTileAt (currFramePosition.x, currFramePosition.y) != WorldController.Instance.world.GetTileAt (lastFramePosition.x, lastFramePosition.y)) {
-			highlightTiles = structure.GetInRangeTiles (WorldController.Instance.world.GetTileAt (currFramePosition.x, currFramePosition.y));
-//		}
+		ShowHighliteOnTiles ();
 		if (structure.mustBeBuildOnShore) {
 			foreach (Tile t in structureTiles) {
 				if (t != null) {
@@ -155,11 +152,11 @@ public class MouseController : MonoBehaviour {
 				}
 			}
 		}
-		if (highlightTiles != null) {
-			foreach (Tile t in highlightTiles) {
-				ShowHighliteOnTile (t);
-			}
-		}
+//		if (highlightTiles != null) {
+//			foreach (Tile t in highlightTiles) {
+//				ShowHighliteOnTile (t);
+//			}
+//		}
 		if (Input.GetMouseButtonDown (0)) {
 			Build (structureTiles);
 		}
@@ -190,13 +187,34 @@ public class MouseController : MonoBehaviour {
 		go.transform.SetParent(this.transform, true);
 		previewGameObjects.Add(go);
 	}
-	void ShowHighliteOnTile(Tile t){
-		if(t == null) {
+	void ShowHighliteOnTiles(){
+		World w = WorldController.Instance.world;
+		//first time to show highlights
+		if(highlightTiles == null){
+			highlightTiles = structure.GetInRangeTiles (WorldController.Instance.world.GetTileAt (currFramePosition.x, currFramePosition.y));
+			foreach(Tile t in highlightTiles){
+				t.isHighlighted = true;
+				w.OnTileChanged (t);
+			}
 			return;
 		}
-		GameObject go = SimplePool.Spawn( highlightTileCursorPrefab, new Vector3(t.X, t.Y, 0), Quaternion.identity );
-		go.transform.SetParent(this.transform, true);
-		previewGameObjects.Add(go);
+		//all other times to show it
+		List<Tile> temp = structure.GetInRangeTiles (WorldController.Instance.world.GetTileAt (currFramePosition.x, currFramePosition.y));
+		foreach(Tile t in highlightTiles){
+			if(temp.Contains (t) == false){
+//				Debug.Log ("changed false");
+				t.isHighlighted = false;
+				w.OnTileChanged (t);
+			}
+		}
+		foreach(Tile t in temp){
+			if(highlightTiles.Contains (t) == false){
+				//				Debug.Log ("changed false");
+				t.isHighlighted = true;
+				w.OnTileChanged (t);
+			}
+		}
+		highlightTiles = temp;
 	}
     private void UpdateUnit() {
 		// If we're over a UI element, then bail out from this.

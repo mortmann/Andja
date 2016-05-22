@@ -20,8 +20,8 @@ public class TileSpriteController : MonoBehaviour {
 
         for (int x = 0; x < world.Width; x++) {
             for (int y = 0; y < world.Height; y++) {
-                GameObject tile_go = new GameObject();
                 Tile tile_data = world.GetTileAt(x, y);
+				GameObject tile_go = new GameObject();
                 tile_go.name = "Tile_" + x + "_" + y;
                 tile_go.transform.position = new Vector3(tile_data.X , tile_data.Y , 0);
                 SpriteRenderer sr = tile_go.AddComponent<SpriteRenderer>();

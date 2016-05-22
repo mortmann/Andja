@@ -38,9 +38,9 @@ public class BuildController : MonoBehaviour {
 
 
 		structurePrototypes.Add (0, new Road (0,"dirtroad"));
-		structurePrototypes.Add (1, new MarketBuilding ());
-		structurePrototypes.Add (2, new Warehouse ());
-		structurePrototypes.Add (3, new Growable ("tree",allItems[1]));
+		structurePrototypes.Add (1, new MarketBuilding (1));
+		structurePrototypes.Add (2, new Warehouse (2));
+		structurePrototypes.Add (3, new Growable (3,"tree",allItems[1]));
 		Item[] items = { allItems[1] };
 		structurePrototypes.Add (4, new ProductionBuilding(
 			4,"lumberjack",

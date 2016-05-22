@@ -38,7 +38,6 @@ public class Item : IXmlSerializable{
 	public XmlSchema GetSchema() {
 		return null;
 	}
-
 	public void WriteXml(XmlWriter writer) {
 		writer.WriteAttributeString( "ID", ID.ToString () );
 		writer.WriteAttributeString( "Count", count.ToString () );

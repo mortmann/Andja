@@ -21,8 +21,11 @@ public class StructureSpriteController : MonoBehaviour {
 		LoadSprites ();
 	}
 	void OnStrucutureCreated(Structure structure) {
+		
 		GameObject go = new GameObject ();
 		structure.RegisterOnChangedCallback (OnStrucutureChanged);
+		structure.RegisterOnDestroyCallback (OnStrucutureDestroyed);
+
 		float x = 0;
 		float y = 0;
 		if (structure.tileWidth> 1) {
@@ -36,8 +39,6 @@ public class StructureSpriteController : MonoBehaviour {
 //		if (structure.rotated == 0) {
 //			z = 0;
 //		}
-		structure.RegisterOnDestroyCallback (OnStrucutureDestroyed);
-
 
 		go.transform.position = new Vector3 (t.X + x,t.Y + y);
 		go.transform.Rotate (Vector3.forward*structure.rotated); // = new Quaternion (0, 0, structure.rotated, 100);
@@ -60,16 +61,12 @@ public class StructureSpriteController : MonoBehaviour {
 				sr.sprite = structureSprites ["nosprite"];
 			}
 		} else if (structure is Growable) {
-			if (structureSprites.ContainsKey (structure.name + structure.connectOrientation)) {
+			if (structureSprites.ContainsKey (structure.name + "_" + ((Growable)structure).currentStage)) {
 				sr.sprite = structureSprites [structure.name + "_" + ((Growable)structure).currentStage];
 			} else {
 				sr.sprite = structureSprites ["nosprite"];
 			}
 		} else {
-			if (structure.hasHitbox) {
-				BoxCollider2D col = go.AddComponent<BoxCollider2D> ();
-				col.size = new Vector2 (structureSprites [structure.name].textureRect.size.x / structureSprites [structure.name].pixelsPerUnit, structureSprites [structure.name].textureRect.size.y / structureSprites [structure.name].pixelsPerUnit);
-			}
 			if (structureSprites.ContainsKey (structure.name)) {
 				sr.sprite = structureSprites[structure.name];
 			} else {
@@ -77,6 +74,10 @@ public class StructureSpriteController : MonoBehaviour {
 				go.transform.localScale = new Vector3(structure.tileWidth,structure.tileHeight);
 				sr.sprite = sprite;
 			}
+		}
+		if (structure.hasHitbox) {
+			BoxCollider2D col = go.AddComponent<BoxCollider2D> ();
+			col.size = new Vector2 (sr.sprite.textureRect.size.x /sr.sprite.pixelsPerUnit, sr.sprite.textureRect.size.y / sr.sprite.pixelsPerUnit);
 		}
 	}
 	void OnStrucutureChanged(Structure structure){

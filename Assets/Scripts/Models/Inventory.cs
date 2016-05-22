@@ -99,6 +99,9 @@ public class Inventory : IXmlSerializable{
 		if(items.ContainsKey (id))
 			items.Remove (id);
 	}
+	public int GetAmountForItem(Item item){
+		return items [item.ID].count;
+	}
     /// <summary>
     /// returns 1 if the toAdd will be empty
 	/// returns 0 when it could add some of it

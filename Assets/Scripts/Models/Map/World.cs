@@ -21,7 +21,7 @@ public class World : IXmlSerializable{
 
     //get { return height; } protected set { height = value;}
 
-    public World(int width = 100, int height = 100){
+    public World(int width = 1000, int height = 1000){
         this.Width = width;
         this.Height = height;
         tiles = new Tile[width, height];

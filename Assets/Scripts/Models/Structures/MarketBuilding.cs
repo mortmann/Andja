@@ -7,7 +7,8 @@ using System.Xml.Serialization;
 public class MarketBuilding : UserStructure {
 	public List<Route> myRoutes;
 	public List<Structure> RegisteredSturctures;
-	public MarketBuilding(){
+	public MarketBuilding(int id){
+		this.ID = id;
 		tileWidth = 4;
 		tileHeight = 4;
 		name = "market";
@@ -17,7 +18,10 @@ public class MarketBuilding : UserStructure {
 		myBuildingTyp = BuildingTyp.Blocking;
 		buildingRange = 18;
 	}
+	public MarketBuilding(){
+	}
 	protected MarketBuilding(MarketBuilding str){
+		this.ID = str.ID;
 		this.name = str.name;
 		this.tileWidth = str.tileWidth;
 		this.tileHeight = str.tileHeight;

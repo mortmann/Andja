@@ -21,7 +21,6 @@ public class Pathfinding  {
 	public Queue<Tile> backPath;
 
 	private float _speed;
-
 	private float speed {
 		get{ 
 			return _speed;

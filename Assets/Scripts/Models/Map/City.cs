@@ -15,8 +15,12 @@ public class City : IXmlSerializable{
 	public List<Tile> myTiles;
 	public List<Route> myRoutes;
 	public int cityBalance;
-
+	public int[] citizienCount;
     public City(Island island) {
+		citizienCount = new int[4];
+		foreach (int item in citizienCount) {
+			item = 0;
+		}
         this.island = island;
         myInv = new Inventory();
         myStructures = new List<Structure>();
@@ -49,7 +53,9 @@ public class City : IXmlSerializable{
 			myInv.removeItemAmount (item);
 		}
 	}
-
+	public float TryToGetItem(Item item,float amount){
+		return 
+	}
 	public void AddRoute(Route route){
 		this.myRoutes.Add (route);
 	}

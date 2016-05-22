@@ -5,14 +5,16 @@ using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Serialization;
 
+public enum Climate {Cold,Middle,Warm};
 public class Island : IXmlSerializable{
     public Path_TileGraph tileGraph { get; protected set; }
     public List<Tile> myTiles;
     public List<City> myCities;
 	public Action<City> cbCityCreated;
+	public Climate myClimate;
 
     //TODO: get a tile to start with!
-    public Island(Tile startTile) {
+	public Island(Tile startTile, Climate climate = Climate.Middle) {
         myTiles = new List<Tile>();
         myTiles.Add(startTile);
         myCities = new List<City>();

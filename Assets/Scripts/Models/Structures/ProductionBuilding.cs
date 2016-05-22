@@ -30,34 +30,40 @@ public class ProductionBuilding : UserStructure {
 	}
 	public int OnRegisterCallbacks;
 
-	public ProductionBuilding(string name,Item[] intake, int[] needIntake,int[] maxIntake, float time, Item[] output, int maxOutputStorage , int tileWidth, int tileHeight,int buildcost,Item[] buildItems,int maintenancecost,bool hasHitbox=true, bool canBeBuildOnShore=false) {
+	public ProductionBuilding(int id,string name,Item[] intake, int[] needIntake, float produceTime, Item[] output, int tileWidth, int tileHeight,int buildcost,Item[] buildItems,int maintenancecost,bool hasHitbox=true, bool mustBeBuildOnShore=false) {
 		this.name = name;
 		this.intake = intake;
 		this.needIntake = needIntake;
-		this.produceTime = time;
+		this.produceTime = produceTime;
 		this.output = output;
-		this.maxOutputStorage = maxOutputStorage;
+		this.maxOutputStorage = 5; // hardcoded 5 ? need this to change?
 		this.tileWidth = tileWidth;
 		this.tileHeight = tileHeight;
-		this.maxIntake = maxIntake;
-		this.mustBeBuildOnShore = canBeBuildOnShore;
+		if (intake != null && needIntake!=null) {
+			int i=0;
+			foreach(int needed in needIntake){
+				this.maxIntake[i] = 5*needed; // make it 5 times the needed
+				i++;
+			}
+		}
+		this.mustBeBuildOnShore = mustBeBuildOnShore;
 		this.maintenancecost = maintenancecost;
 		this.hasHitbox = hasHitbox;
 		this.myBuildingTyp = BuildingTyp.Production;
 		BuildTyp = BuildTypes.Single;
 	}
-	public ProductionBuilding(string name,string growable, float time, Item[] output, int maxOutputStorage , int tileWidth, int tileHeight,int buildcost,Item[] buildItems,int maintenancecost,bool hasHitbox=true, bool canBeBuildOnShore=false) {
+	public ProductionBuilding(string name,string growable, float time, Item[] output , int tileWidth, int tileHeight,int buildcost,Item[] buildItems,int maintenancecost,bool hasHitbox=true, bool mustBeBuildOnShore=false) {
 		this.name = name;
 		this.produceTime = time;
 		this.output = output;
-		this.maxOutputStorage = maxOutputStorage;
+		this.maxOutputStorage = 5;
 		this.tileWidth = tileWidth;
 		this.tileHeight = tileHeight;
-		this.mustBeBuildOnShore = canBeBuildOnShore;
+		this.mustBeBuildOnShore = mustBeBuildOnShore;
 		this.maintenancecost = maintenancecost;
 		this.hasHitbox = hasHitbox;
 		this.myBuildingTyp = BuildingTyp.Production;
-		BuildTyp = BuildTypes.Single;
+		this.BuildTyp = BuildTypes.Single;
 		this.growable = growable;
 	}
 	protected ProductionBuilding(ProductionBuilding str){
@@ -77,6 +83,7 @@ public class ProductionBuilding : UserStructure {
 		this.BuildTyp = str.BuildTyp;
 		this.rotated = str.rotated;
 		this.hasHitbox = str.hasHitbox;
+		this.growable = str.growable;
 		this.myBuildingTyp = BuildingTyp.Production;
 	}
 
@@ -186,7 +193,7 @@ public class ProductionBuilding : UserStructure {
 		if(growable == null | growable == ""){
 			return;
 		}
-		GameObject.FindObjectOfType<BuildController> ().BuildOnTile ("tree", myRangeTiles);
+		GameObject.FindObjectOfType<BuildController> ().BuildOnTile (3, myRangeTiles);
 		// if we are here this produces only 
 		// and it has a growable to "plant"
 		foreach (Tile rangeTile in myRangeTiles) {
@@ -204,7 +211,6 @@ public class ProductionBuilding : UserStructure {
 		foreach(Tile rangeTile in myRangeTiles){
 			rangeTile.RegisterTileStructureChangedCallback (OnTileStructureChange);
 		}
-		//if(Tile.checkTile (rangeTile,false)) 
 	}
 
 	public void OnGrowableChanged(Structure str){
@@ -239,9 +245,9 @@ public class ProductionBuilding : UserStructure {
 		writer.WriteAttributeString("Name", name ); //change this to id
 		writer.WriteAttributeString("BuildingTile_X", myBuildingTiles[0].X.ToString () );
 		writer.WriteAttributeString("BuildingTile_Y", myBuildingTiles[0].Y.ToString () );
-		writer.WriteAttributeString("Rotated", rotated.ToString());
-		writer.WriteAttributeString("OutputClaimed", outputClaimed.ToString () );
-		writer.WriteAttributeString("ProduceCountdown", produceCountdown.ToString () );
+		writer.WriteElementString("Rotated", rotated.ToString());
+		writer.WriteElementString("OutputClaimed", outputClaimed.ToString () );
+		writer.WriteElementString("ProduceCountdown", produceCountdown.ToString () );
 		if (inputStorage != null) {
 			writer.WriteStartElement ("Inputs");
 			foreach (int i in inputStorage) {
@@ -262,9 +268,9 @@ public class ProductionBuilding : UserStructure {
 		}
 	}
 	public override void ReadXml(XmlReader reader) {
-		rotated = int.Parse( reader.GetAttribute("Rotated") );
-		outputClaimed = bool.Parse (reader.GetAttribute("OutputClaimed"));
-		produceCountdown = float.Parse( reader.GetAttribute("ProduceCountdown") );
+		rotated = int.Parse( reader.ReadElementString("Rotated") );
+		outputClaimed = bool.Parse (reader.ReadElementString("OutputClaimed"));
+		produceCountdown = float.Parse( reader.ReadElementString("ProduceCountdown") );
 		int input= 0;
 		if(reader.ReadToDescendant("Inputs") ) {
 			do {

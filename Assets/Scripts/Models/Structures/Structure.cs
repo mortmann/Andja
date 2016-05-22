@@ -11,7 +11,7 @@ public enum BuildTypes {Drag, Path, Single};
 public enum BuildingTyp {Production, Pathfinding, Blocking};
 
 public abstract class Structure : IXmlSerializable {
-	
+	public int ID;
 	public string name;
 	public City city;
     public bool isWalkable { get; protected set; }
@@ -208,7 +208,7 @@ public abstract class Structure : IXmlSerializable {
 		}
 		return tiles;
 	}
-	private void GetPrototypTiles(){
+	private void CalculatePrototypTiles(){
 		List<Tile> temp = new List<Tile> ();
 		float x;
 		float y;
@@ -262,7 +262,7 @@ public abstract class Structure : IXmlSerializable {
 	}
 	public List<Tile> GetInRangeTiles (Tile firstTile) {
 		if(myPrototypeTiles == null){
-			GetPrototypTiles ();
+			CalculatePrototypTiles ();
 		}
 		if(firstTile==null){
 			return null;
@@ -272,12 +272,10 @@ public abstract class Structure : IXmlSerializable {
 		}
 
 		World w = WorldController.Instance.world;
-		List<Tile> calcProtype = new List<Tile>(myPrototypeTiles);
 		myRangeTiles = new List<Tile> ();
 		float width = firstTile.X-buildingRange - tileWidth / 2;
 		float height = firstTile.Y-buildingRange - tileHeight / 2;
-
-		foreach(Tile t in calcProtype){
+		foreach(Tile t in myPrototypeTiles){
 			myRangeTiles.Add (w.GetTileAt (t.X +width,t.Y+height));			
 		}
 		//remove the tile where the building is standing

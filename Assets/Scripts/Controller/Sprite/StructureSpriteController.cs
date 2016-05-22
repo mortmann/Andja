@@ -54,15 +54,29 @@ public class StructureSpriteController : MonoBehaviour {
 			Font ArialFont = (Font)Resources.GetBuiltinResource (typeof(Font), "Arial.ttf");
 			text.font = ArialFont;
 			text.material = ArialFont.material;
-			sr.sprite = structureSprites [structure.name + structure.connectOrientation];
+			if (structureSprites.ContainsKey (structure.name + structure.connectOrientation)) {
+				sr.sprite = structureSprites [structure.name + structure.connectOrientation];
+			} else {
+				sr.sprite = structureSprites ["nosprite"];
+			}
 		} else if (structure is Growable) {
-			sr.sprite = structureSprites [structure.name + "_0"];
+			if (structureSprites.ContainsKey (structure.name + structure.connectOrientation)) {
+				sr.sprite = structureSprites [structure.name + "_" + ((Growable)structure).currentStage];
+			} else {
+				sr.sprite = structureSprites ["nosprite"];
+			}
 		} else {
 			if (structure.hasHitbox) {
 				BoxCollider2D col = go.AddComponent<BoxCollider2D> ();
 				col.size = new Vector2 (structureSprites [structure.name].textureRect.size.x / structureSprites [structure.name].pixelsPerUnit, structureSprites [structure.name].textureRect.size.y / structureSprites [structure.name].pixelsPerUnit);
 			}
-			sr.sprite = structureSprites[structure.name];
+			if (structureSprites.ContainsKey (structure.name)) {
+				sr.sprite = structureSprites[structure.name];
+			} else {
+				Sprite sprite = structureSprites ["nosprite"];
+				go.transform.localScale = new Vector3(structure.tileWidth,structure.tileHeight);
+				sr.sprite = sprite;
+			}
 		}
 	}
 	void OnStrucutureChanged(Structure structure){
@@ -89,8 +103,12 @@ public class StructureSpriteController : MonoBehaviour {
 		Structure s = road;
 		structureGameObjectMap[s].GetComponent<Text>().text = road.Route.toString ();
 
-		SpriteRenderer sr = structureGameObjectMap[s].GetComponent<Text>().GetComponent<SpriteRenderer>();
-		sr.sprite = structureSprites[road.name + road.connectOrientation];
+		SpriteRenderer sr = structureGameObjectMap[s].GetComponent<SpriteRenderer>();
+		if (structureSprites.ContainsKey (road.name + road.connectOrientation)) {
+			sr.sprite = structureSprites [road.name + road.connectOrientation];
+		} else {
+			sr.sprite = structureSprites ["nosprite"];
+		}
 	}
 
 	void LoadSprites() {

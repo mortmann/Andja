@@ -114,7 +114,7 @@ public class MarketBuilding : UserStructure {
 		writer.WriteAttributeString("Name", name ); //change this to id
 		writer.WriteAttributeString("BuildingTile_X", myBuildingTiles[0].X.ToString () );
 		writer.WriteAttributeString("BuildingTile_Y", myBuildingTiles[0].Y.ToString () );
-		writer.WriteAttributeString("Rotated", rotated.ToString());
+		writer.WriteElementString("Rotated", rotated.ToString());
 		if (myWorker != null) {
 			writer.WriteStartElement ("Workers");
 			foreach (Worker w in myWorker) {
@@ -127,7 +127,7 @@ public class MarketBuilding : UserStructure {
 		
 	}
 	public override void ReadXml(XmlReader reader) {
-		rotated = int.Parse( reader.GetAttribute("Rotated") );
+		rotated = int.Parse( reader.ReadElementString("Rotated") );
 		if(reader.ReadToDescendant("Workers") ) {
 			do {
 				Worker w = new Worker(this);

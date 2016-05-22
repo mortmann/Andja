@@ -107,13 +107,6 @@ public class City : IXmlSerializable{
 			writer.WriteEndElement();
 		}
 		writer.WriteEndElement();
-		writer.WriteStartElement("Routes");
-		foreach (Route r in myRoutes) {
-			writer.WriteStartElement("Route");
-			r.WriteXml(writer);
-			writer.WriteEndElement();
-		}
-		writer.WriteEndElement();
 
 
 	}
@@ -130,7 +123,7 @@ public class City : IXmlSerializable{
 				int x = int.Parse( reader.GetAttribute("BuildingTile_X") );
 				int y = int.Parse( reader.GetAttribute("BuildingTile_Y") );
 				Tile t = WorldController.Instance.world.GetTileAt (x,y);
-				Structure s = bc.structurePrototypes[reader.GetAttribute("Name")].Clone(); 
+				Structure s = bc.structurePrototypes[int.Parse (reader.GetAttribute("ID"))].Clone(); 
 				if(s is MarketBuilding){
 					((MarketBuilding)s).ReadXml (reader);
 				} else 

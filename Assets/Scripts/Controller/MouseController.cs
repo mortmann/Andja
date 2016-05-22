@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine.EventSystems;
 using System;
+using System.Linq;
 
 public enum MouseState { Idle,Drag, Path, Single, Unit };
 
@@ -15,7 +16,19 @@ public class MouseController : MonoBehaviour {
 	// The world-position of the mouse last frame.
 	Vector3 lastFramePosition;
 	Vector3 currFramePosition;
-	List<Tile> highlightTiles;
+	HashSet<Tile> _highlightTiles;
+	HashSet<Tile> HighlightTiles {
+		get { return _highlightTiles; }
+		set {
+			if (value == null) {
+				foreach (Tile t in _highlightTiles) {
+					t.IsHighlighted = false;
+				}
+				return;
+			}
+			_highlightTiles = value;
+		}
+	}
 	// The world-position start of our left-mouse drag operation
 	Vector3 dragStartPosition;
 	List<GameObject> previewGameObjects;
@@ -30,7 +43,7 @@ public class MouseController : MonoBehaviour {
 			return _structure;
 		}
 		set {
-			highlightTiles = null;
+			HighlightTiles = null;
 			_structure = value;
 		}
 	}
@@ -48,6 +61,7 @@ public class MouseController : MonoBehaviour {
 		bmc = GameObject.FindObjectOfType<BuildController>();
 		bmc.RegisterStructureCreated (ResetBuilding);
 		uic = GameObject.FindObjectOfType<UIController> ();
+		_highlightTiles = new HashSet<Tile> ();
 	}
 
 	/// <summary>
@@ -80,7 +94,7 @@ public class MouseController : MonoBehaviour {
 		} else
 		if (mouseState == MouseState.Single) {
 			UpdateSingle();
-		} else
+		} else 
 		if (mouseState == MouseState.Unit && selectedUnit != null) {
             UpdateUnit();
 		} 
@@ -188,30 +202,36 @@ public class MouseController : MonoBehaviour {
 		previewGameObjects.Add(go);
 	}
 	void ShowHighliteOnTiles(){
-		World w = WorldController.Instance.world;
-		//first time to show highlights
-		if(highlightTiles == null){
-			highlightTiles = structure.GetInRangeTiles (WorldController.Instance.world.GetTileAt (currFramePosition.x, currFramePosition.y));
-			foreach(Tile t in highlightTiles){
-				t.IsHighlighted = true;
-				}
+		if (HighlightTiles == null) {
+			HighlightTiles = new HashSet<Tile> ();
+		}
+
+
+		HashSet<Tile> temp = new HashSet<Tile>();
+		temp.UnionWith (HighlightTiles);
+		HighlightTiles.Clear ();
+		HighlightTiles = new HashSet<Tile> (structure.GetInRangeTiles (WorldController.Instance.world.GetTileAt (currFramePosition.x, currFramePosition.y)));
+//		Debug.Log (temp.Count + " " + highlightTiles.Count);
+		foreach (Tile t in temp) {
+			if (t == null || HighlightTiles.Contains (t) == true) {
+				continue;
+			}
+			t.IsHighlighted = false;
+		}
+		foreach(Tile t in HighlightTiles){
+			if (t == null) {
+				continue;
+			}
+			t.IsHighlighted = true;
+		}
+	}
+	void RemoveHighliteOnTiles(){
+		if(HighlightTiles == null){
 			return;
 		}
-		//all other times to show it
-		List<Tile> temp = structure.GetInRangeTiles (WorldController.Instance.world.GetTileAt (currFramePosition.x, currFramePosition.y));
-		foreach(Tile t in highlightTiles){
-			if(temp.Contains (t) == false){
-//				Debug.Log ("changed false");
-				t.IsHighlighted = false;
-			}
+		foreach(Tile t in HighlightTiles){
+			t.IsHighlighted = false;
 		}
-		foreach(Tile t in temp){
-			if(highlightTiles.Contains (t) == false){
-				//				Debug.Log ("changed false");
-				t.IsHighlighted = true;
-			}
-		}
-		highlightTiles = temp;
 	}
     private void UpdateUnit() {
 		// If we're over a UI element, then bail out from this.
@@ -335,7 +355,7 @@ public class MouseController : MonoBehaviour {
 
 	public void ResetBuilding(Structure structure){
 		structure = null;
-		highlightTiles = null;
+		HighlightTiles = null;
 	}
 
     void UpdateCameraMovement() {

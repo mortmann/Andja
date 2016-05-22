@@ -3,12 +3,16 @@ using System.Collections;
 using System.Collections.Generic;
 using System;
 using UnityEngine.Events;
+using System.Xml;
+using System.Xml.Schema;
+using System.Xml.Serialization;
+using System.IO;
 
 public class BuildController : MonoBehaviour {
     public static BuildController Instance { get; protected set; }
 
 	public Structure toBuildStructure;
-	public Dictionary<string,Structure>  structurePrototypes;
+	public Dictionary<int,Structure>  structurePrototypes;
 	public Dictionary<int, Item> allItems;
 
 	Action<Structure> cbStructureCreated;
@@ -26,21 +30,21 @@ public class BuildController : MonoBehaviour {
 
 		// prototypes of items
 		allItems = new Dictionary<int, Item> ();
-		allItems.Add (0,new Item(0,"wood"));
-		allItems.Add (1,new Item(1,"stone"));
-		allItems.Add (2,new Item(2,"tools"));
+		ReadItemsFromXML();
 		// setup all prototypes of structures here 
 		// load them from the 
-		structurePrototypes = new Dictionary<string, Structure> ();
-		structurePrototypes.Add ("dirtroad", new Road ("dirtroad"));
-		structurePrototypes.Add ("market", new MarketBuilding ());
-		structurePrototypes.Add ("warehouse", new Warehouse ());
-		structurePrototypes.Add ("tree", new Growable ("tree",allItems[0]));
-		Item[] items = { allItems[0] };
-		structurePrototypes.Add ("lumberjack", new ProductionBuilding(
-			"lumberjack",
-			null,null,null,
-			3,items,5,
+		structurePrototypes = new Dictionary<int, Structure> ();
+		ReadStructuresFromXML();
+
+
+		structurePrototypes.Add (0, new Road (0,"dirtroad"));
+		structurePrototypes.Add (1, new MarketBuilding ());
+		structurePrototypes.Add (2, new Warehouse ());
+		structurePrototypes.Add (3, new Growable ("tree",allItems[1]));
+		Item[] items = { allItems[1] };
+		structurePrototypes.Add (4, new ProductionBuilding(
+			4,"lumberjack",
+			null,null,3,items,
 			2,2,500,null,50
 		));
 
@@ -59,20 +63,20 @@ public class BuildController : MonoBehaviour {
 	}
 
 	public void OnClickSettle(){
-		OnClick ("warehouse");
+//		OnClick ("warehouse");
 	}
 
-	public void OnClick(string name) {
-		toBuildStructure = structurePrototypes [name].Clone ();
-		if(structurePrototypes [name].BuildTyp == BuildTypes.Path){
+	public void OnClick(int id) {
+		toBuildStructure = structurePrototypes [id].Clone ();
+		if(structurePrototypes [id].BuildTyp == BuildTypes.Path){
 			MouseController.Instance.mouseState = MouseState.Path;
 
 		}
-		if(structurePrototypes [name].BuildTyp == BuildTypes.Single){
+		if(structurePrototypes [id].BuildTyp == BuildTypes.Single){
 			MouseController.Instance.mouseState = MouseState.Single;
 			MouseController.Instance.structure = toBuildStructure;
 		}
-		if(structurePrototypes [name].BuildTyp == BuildTypes.Drag){
+		if(structurePrototypes [id].BuildTyp == BuildTypes.Drag){
 			MouseController.Instance.mouseState = MouseState.Drag;
 			MouseController.Instance.structure = toBuildStructure;
 		}
@@ -83,6 +87,12 @@ public class BuildController : MonoBehaviour {
 		}
 		BuildOnTile (tiles, forEachTileOnce, toBuildStructure);
 	}
+	/// <summary>
+	/// USED ONLY FOR LOADING
+	/// DONT USE THIS FOR ANYTHING ELSE!!
+	/// </summary>
+	/// <param name="s">S.</param>
+	/// <param name="t">T.</param>
 	public void BuildOnTile(Structure s , Tile t){
 		if (toBuildStructure == null) {
 			return;
@@ -99,7 +109,7 @@ public class BuildController : MonoBehaviour {
 		}
 	}
 	public void BuildOnTile(List<Tile> tiles, bool forEachTileOnce, Structure structure){
-		if(tiles == null || tiles.Count == 0){
+		if(tiles == null || tiles.Count == 0 || WorldController.Instance.isPaused){
 			return;
 		}
 		if (forEachTileOnce == false) {
@@ -134,11 +144,11 @@ public class BuildController : MonoBehaviour {
 	}
 
 
-	public void BuildOnTile(string name, List<Tile> tiles){
-		if(structurePrototypes.ContainsKey (name) == false){
+	public void BuildOnTile(int id, List<Tile> tiles){
+		if(structurePrototypes.ContainsKey (id) == false){
 			return;
 		}
-		BuildOnTile (tiles, true, structurePrototypes[name]);
+		BuildOnTile (tiles, true, structurePrototypes[id]);
 	}
 	public City CreateCity(Tile t){
 		if(t.myCity != null){
@@ -164,4 +174,67 @@ public class BuildController : MonoBehaviour {
 		cbCityCreated -= callbackfunc;
 	}
 
+	private void ReadItemsFromXML(){
+		XmlDocument xmlDoc = new XmlDocument(); // xmlDoc is the new xml document.
+		TextAsset ta = ((TextAsset)Resources.Load("XMLs/items", typeof(TextAsset)));
+		xmlDoc.LoadXml(ta.text); // load the file.
+		foreach(XmlElement node in xmlDoc.SelectNodes("Items/Item")){
+			Item item = new Item ();
+			item.ID = int.Parse(node.SelectSingleNode("ID").InnerText);
+			item.name = node.SelectSingleNode("EN"+ "_Name").InnerText;
+			allItems [item.ID] = item;
+		}
+	}
+	private void ReadStructuresFromXML(){
+		XmlDocument xmlDoc = new XmlDocument();
+
+		TextAsset ta = ((TextAsset)Resources.Load("XMLs/roads", typeof(TextAsset)));
+		xmlDoc.LoadXml(ta.text); // load the file.
+		ReadRoads (xmlDoc);
+
+//		ta = ((TextAsset)Resources.Load("XMLs/growables", typeof(TextAsset)));
+//		xmlDoc.LoadXml(ta.text); // load the file.
+//		ReadGrowables (xmlDoc);
+//
+//		ta = ((TextAsset)Resources.Load("XMLs/marketbuildings", typeof(TextAsset)));
+//		xmlDoc.LoadXml(ta.text); // load the file.
+//		ReadMarketBuildings (xmlDoc);
+//
+//		ta = ((TextAsset)Resources.Load("XMLs/produktionbuildings", typeof(TextAsset)));
+//		xmlDoc.LoadXml(ta.text); // load the file.
+//		ReadProduktionBuildings (xmlDoc);
+
+	}
+	private void ReadRoads(XmlDocument xmlDoc){
+		foreach(XmlElement node in xmlDoc.SelectNodes("Buildings/Road")){
+			int ID = int.Parse(node.GetAttribute("ID"));
+			string name = node.SelectSingleNode("EN"+ "_Name").InnerText;
+			Road road = new Road (ID,name);
+			structurePrototypes [ID] = road;
+		}
+	}
+	private void ReadGrowables(XmlDocument xmlDoc){
+		foreach(XmlElement node in xmlDoc.SelectNodes("Buildings/Growable")){
+			int ID = int.Parse(node.GetAttribute("ID"));
+			string name = node.SelectSingleNode("EN"+ "_Name").InnerText;
+			Road road = new Road (ID,name);
+			structurePrototypes [ID] = road;
+		}
+	}
+	private void ReadMarketBuildings(XmlDocument xmlDoc){
+		foreach(XmlElement node in xmlDoc.SelectNodes("Buildings/Logistic")){
+			int ID = int.Parse(node.GetAttribute("ID"));
+			string name = node.SelectSingleNode("EN"+ "_Name").InnerText;
+			Road road = new Road (ID,name);
+			structurePrototypes [ID] = road;
+		}
+	}
+	private void ReadProduktionBuildings(XmlDocument xmlDoc){
+		foreach(XmlElement node in xmlDoc.SelectNodes("Buildings/Produktion")){
+			int ID = int.Parse(node.GetAttribute("ID"));
+			string name = node.SelectSingleNode("EN"+ "_Name").InnerText;
+			Road road = new Road (ID,name);
+			structurePrototypes [ID] = road;
+		}
+	}
 }

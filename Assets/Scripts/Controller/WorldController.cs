@@ -12,6 +12,8 @@ public class WorldController : MonoBehaviour {
     // The world and tile data
     public World world { get; protected set; }
 	static bool loadWorld = false;
+	public float timeMultiplier = 1;
+	public bool isPaused = false;
 
     // Use this for initialization
     void OnEnable() {
@@ -30,10 +32,10 @@ public class WorldController : MonoBehaviour {
 
     // Update is called once per frame
     void Update() {
-		if (world == null) {
+		if (world == null || isPaused) {
 			return;
 		}
-        world.update(Time.deltaTime);
+        world.update(Time.deltaTime * timeMultiplier);
     }
 
     internal Tile GetTileAtWorldCoord(Vector3 currFramePosition) {
@@ -71,4 +73,29 @@ public class WorldController : MonoBehaviour {
 		Camera.main.transform.position = new Vector3( world.Width/2, world.Height/2, Camera.main.transform.position.z );
 		Debug.Log ("LOAD ENDED");
 	}
+	public void OnClickChangeTimeMultiplier(int multi){
+		switch(multi){
+		case 0:
+			isPaused = !isPaused;
+			break;
+		case 1:
+			timeMultiplier = 0.5f;
+			isPaused = false;
+			break;
+		case 2:
+			timeMultiplier = 0.75f;
+			isPaused = false;
+			break;
+		case 3:
+			timeMultiplier = 1.5f;
+			isPaused = false;
+			break;
+		case 4:
+			timeMultiplier = 2;
+			isPaused = false;
+			break;
+		
+		}
+	}
+
 }

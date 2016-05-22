@@ -13,7 +13,8 @@ public class Road : Structure {
 		}
 	}
 	Action<Road> cbRoadChanged;
-	public Road(string name, int buildcost = 50){
+	public Road(int ID,string name, int buildcost = 50){
+		this.ID = ID;
 		this.name = name;
 		this.tileWidth = 1;
 		this.tileHeight = 1;
@@ -24,6 +25,7 @@ public class Road : Structure {
 		buildingRange = 0;
 	}
 	protected Road(Road str){
+		this.ID = str.ID;
 		this.name = str.name;
 		this.tileWidth = str.tileWidth;
 		this.tileHeight = str.tileHeight;
@@ -118,12 +120,12 @@ public class Road : Structure {
 
 
 	public override void WriteXml (XmlWriter writer){
-		writer.WriteAttributeString("Name", name ); //change this to id
+		writer.WriteAttributeString("ID", ID.ToString() ); 
 		writer.WriteAttributeString("BuildingTile_X", myBuildingTiles[0].X.ToString() );
 		writer.WriteAttributeString("BuildingTile_Y", myBuildingTiles[0].Y.ToString() );
-		writer.WriteAttributeString("Rotated", rotated.ToString());
+		writer.WriteElementString("Rotated", rotated.ToString());
 	}
 	public override void ReadXml(XmlReader reader) {
-		rotated = int.Parse( reader.GetAttribute("Rotated") );
+		rotated = int.Parse( reader.ReadElementString("Rotated") );
 	}
 }

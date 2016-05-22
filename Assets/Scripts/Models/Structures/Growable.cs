@@ -13,7 +13,8 @@ public class Growable : Structure {
 	public bool outputClaimed =false;
 	Item produceItem ;
 
-	public Growable(string name,Item produceItem){
+	public Growable(int id,string name,Item produceItem){
+		this.ID = id;
 		this.myBuildingTyp = BuildingTyp.Blocking;
 		this.BuildTyp = BuildTypes.Drag;
 		buildcost = 50;
@@ -26,6 +27,7 @@ public class Growable : Structure {
 		canBeBuildOver = true;
 	}
 	protected Growable(Growable g){
+		this.ID = g.ID;
 		this.name = g.name;
 		this.produceItem = g.produceItem;
 		this.tileWidth = g.tileWidth;

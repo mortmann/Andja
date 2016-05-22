@@ -31,6 +31,7 @@ public class ProductionBuilding : UserStructure {
 	public int OnRegisterCallbacks;
 
 	public ProductionBuilding(int id,string name,Item[] intake, int[] needIntake, float produceTime, Item[] output, int tileWidth, int tileHeight,int buildcost,Item[] buildItems,int maintenancecost,bool hasHitbox=true, bool mustBeBuildOnShore=false) {
+		this.ID = id;
 		this.name = name;
 		this.intake = intake;
 		this.needIntake = needIntake;
@@ -67,6 +68,7 @@ public class ProductionBuilding : UserStructure {
 		this.growable = growable;
 	}
 	protected ProductionBuilding(ProductionBuilding str){
+		this.ID = str.ID;
 		this.name = str.name;
 		this.intake = str.intake;
 		this.needIntake = str.needIntake;

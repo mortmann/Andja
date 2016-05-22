@@ -8,7 +8,8 @@ public class Warehouse : MarketBuilding {
 
 	public float buildRange = 18;
 
-	public Warehouse(){
+	public Warehouse(int id){
+		this.ID = id;
 		tileWidth = 3;
 		tileHeight = 3;
 		name = "warehouse";
@@ -17,8 +18,10 @@ public class Warehouse : MarketBuilding {
 		mustBeBuildOnShore = true;
 		BuildTyp = BuildTypes.Single;
 	}
-
+	public Warehouse(){
+	}
 	protected Warehouse(Structure str){
+		this.ID = str.ID;
 		this.name = str.name;
 		this.tileWidth = str.tileWidth;
 		this.tileHeight = str.tileHeight;

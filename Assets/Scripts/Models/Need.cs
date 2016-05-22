@@ -20,14 +20,14 @@ public class Need {
 	public float TryToConsumThis(City city,int level,int people){
 		if(this.level > level){
 			//whoever called this doesnt have the permissions to consum
-			return;
+			return 0;
 		}
 		if(item == null){
 			//this does not require any item -> it needs a structure
-			return;
+			return 0;
 		}
 		float neededCounsumAmount = uses [level] * ((float)people);
-		float gottenAmount = city.TryToGetAmount (item);
+		float gottenAmount = city.TryToRemoveAmount (item,neededCounsumAmount);
 
 		return gottenAmount / neededCounsumAmount;
 	}

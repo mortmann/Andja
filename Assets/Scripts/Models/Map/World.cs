@@ -13,7 +13,7 @@ public class World : IXmlSerializable{
     public Path_TileGraph tileGraph { get; set; }
     public List<Island> islandList { get; protected set; }
     public List<Unit> units { get; protected set; }
-
+	public List<Need> allNeeds;
 
     Action<Unit> cbUnitCreated;
 	Action<Worker> cbWorkerCreated;
@@ -36,6 +36,8 @@ public class World : IXmlSerializable{
             }
         }
         
+		LoadPrototypsNeedsFromXML ();
+
         tileGraph = new Path_TileGraph(this);
         islandList = new List<Island>();
         units = new List<Unit>();
@@ -49,6 +51,7 @@ public class World : IXmlSerializable{
 	public World(){
 	}
 	public void SetupWorld(int Width, int Height){
+		LoadPrototypsNeedsFromXML ();
 		tiles = new Tile[Width, Height];
 		for (int x = 0; x < Width; x++) {
 			for (int y = 0; y < Height; y++) {
@@ -110,6 +113,24 @@ public class World : IXmlSerializable{
             cbUnitCreated(c);
         return c;
     }
+
+	public void LoadPrototypsNeedsFromXML(){
+		allNeeds = new List<Need> ();
+		XmlDocument xmlDoc = new XmlDocument(); // xmlDoc is the new xml document.
+		TextAsset ta = ((TextAsset)Resources.Load("XMLs/needs", typeof(TextAsset)));
+		xmlDoc.LoadXml(ta.text); // load the file.
+		foreach(XmlElement node in xmlDoc.SelectNodes("Needs/Need")){
+			Need need = new Need ();
+			need.id = int.Parse(node.SelectSingleNode("ID").InnerText);
+			need.startLevel = int.Parse(node.SelectSingleNode("Level").InnerText);
+			need.name = node.SelectSingleNode("EN"+ "_Name").InnerText;
+			need.structure = BuildController.Instance.structurePrototypes [int.Parse(node.SelectSingleNode("Structure").InnerText)];
+			need.item = BuildController.Instance.allItems [int.Parse(node.SelectSingleNode("Item").InnerText)];
+			allNeeds.Add (need);
+		}
+	}
+
+
 	public void CreateWorkerGameObject(Worker worker) {
 		if (cbWorkerCreated != null)
 			cbWorkerCreated(worker);

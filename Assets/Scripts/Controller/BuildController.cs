@@ -14,6 +14,8 @@ public class BuildController : MonoBehaviour {
 	public Structure toBuildStructure;
 	public Dictionary<int,Structure>  structurePrototypes;
 	public Dictionary<int, Item> allItems;
+	public int buildID = 0;
+	public Queue<Structure> loadedToPlaceStructure;
 
 	Action<Structure> cbStructureCreated;
 	Action<City> cbCityCreated;
@@ -27,7 +29,7 @@ public class BuildController : MonoBehaviour {
 	}
 
 	public void Awake(){
-
+		buildID = 0;
 		// prototypes of items
 		allItems = new Dictionary<int, Item> ();
 		ReadItemsFromXML();
@@ -104,11 +106,13 @@ public class BuildController : MonoBehaviour {
 		if (s.PlaceStructure (s.GetBuildingTiles (t.X, t.Y)) == false) {
 			return;
 		}
+		s.buildID = buildID;
+		buildID++;
 		if (cbStructureCreated != null) {
 			cbStructureCreated (s);
 		}
 		if (t.myCity != null) {
-			t.myIsland.addStructure (s);
+			t.myIsland.AddStructure (s);
 			s.city = t.myCity;
 		}
 	}
@@ -165,6 +169,10 @@ public class BuildController : MonoBehaviour {
 		return c; 
 	}
 
+	public void AddLoadedPlacedStructure(Structure structure){
+		
+	}
+
 	public void RegisterStructureCreated(Action<Structure> callbackfunc) {
 		cbStructureCreated += callbackfunc;
 	}
@@ -194,7 +202,6 @@ public class BuildController : MonoBehaviour {
 	}
 	private void ReadStructuresFromXML(){
 		XmlDocument xmlDoc = new XmlDocument();
-
 		TextAsset ta = ((TextAsset)Resources.Load("XMLs/roads", typeof(TextAsset)));
 		xmlDoc.LoadXml(ta.text); // load the file.
 		ReadRoads (xmlDoc);

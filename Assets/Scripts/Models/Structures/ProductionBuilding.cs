@@ -244,10 +244,7 @@ public class ProductionBuilding : UserStructure {
 	}
 
 	public override void WriteXml (XmlWriter writer){
-		writer.WriteAttributeString("Name", name ); //change this to id
-		writer.WriteAttributeString("BuildingTile_X", myBuildingTiles[0].X.ToString () );
-		writer.WriteAttributeString("BuildingTile_Y", myBuildingTiles[0].Y.ToString () );
-		writer.WriteElementString("Rotated", rotated.ToString());
+		BaseWriteXml (writer);
 		writer.WriteElementString("OutputClaimed", outputClaimed.ToString () );
 		writer.WriteElementString("ProduceCountdown", produceCountdown.ToString () );
 		if (inputStorage != null) {
@@ -270,7 +267,7 @@ public class ProductionBuilding : UserStructure {
 		}
 	}
 	public override void ReadXml(XmlReader reader) {
-		rotated = int.Parse( reader.ReadElementString("Rotated") );
+		BaseReadXml (reader);
 		outputClaimed = bool.Parse (reader.ReadElementString("OutputClaimed"));
 		produceCountdown = float.Parse( reader.ReadElementString("ProduceCountdown") );
 		int input= 0;

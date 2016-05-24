@@ -120,12 +120,9 @@ public class Road : Structure {
 
 
 	public override void WriteXml (XmlWriter writer){
-		writer.WriteAttributeString("ID", ID.ToString() ); 
-		writer.WriteAttributeString("BuildingTile_X", myBuildingTiles[0].X.ToString() );
-		writer.WriteAttributeString("BuildingTile_Y", myBuildingTiles[0].Y.ToString() );
-		writer.WriteElementString("Rotated", rotated.ToString());
+		BaseWriteXml (writer);
 	}
 	public override void ReadXml(XmlReader reader) {
-		rotated = int.Parse( reader.ReadElementString("Rotated") );
+		BaseReadXml (reader);
 	}
 }

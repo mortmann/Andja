@@ -180,7 +180,7 @@ public class World : IXmlSerializable{
 		// Save info here
 		writer.WriteAttributeString( "Width", Width.ToString() );
 		writer.WriteAttributeString( "Height", Height.ToString() );
-
+		writer.WriteAttributeString( "BuildID", BuildController.Instance.buildID.ToString() );
 		writer.WriteStartElement("Tiles");
 		for (int x = 0; x < Width; x++) {
 			for (int y = 0; y < Height; y++) {
@@ -224,10 +224,9 @@ public class World : IXmlSerializable{
 
 		Width = int.Parse( reader.GetAttribute("Width") );
 		Height = int.Parse( reader.GetAttribute("Height") );
-		Debug.Log (Width + " : " + Height);
+		BuildController.Instance.buildID = int.Parse( reader.GetAttribute("BuildID") );
 		SetupWorld(Width, Height);
 		while(reader.Read()) {
-			
 			switch(reader.Name) {
 			case "Tiles":
 				ReadXml_Tiles(reader);

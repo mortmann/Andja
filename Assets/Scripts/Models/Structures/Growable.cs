@@ -82,16 +82,13 @@ public class Growable : Structure {
 	}
 
 	public override void WriteXml (XmlWriter writer){
-		writer.WriteAttributeString("Name", name ); //change this to id
-		writer.WriteAttributeString("BuildingTile_X", myBuildingTiles[0].X.ToString () );
-		writer.WriteAttributeString("BuildingTile_Y", myBuildingTiles[0].Y.ToString () );
+		BaseWriteXml (writer);
 		writer.WriteElementString("OutputClaimed", outputClaimed.ToString () );
 		writer.WriteElementString("CurrentStage",currentStage.ToString());
 		writer.WriteElementString("Age",age.ToString());
-		writer.WriteElementString("Rotated", rotated.ToString());
 	}
 	public override void ReadXml (XmlReader reader)	{
-		rotated = int.Parse( reader.ReadElementString("Rotated") );
+		BaseReadXml (reader);
 		currentStage = int.Parse( reader.ReadElementString("CurrentStage") );
 		age = float.Parse( reader.ReadElementString("Age") );
 		outputClaimed = bool.Parse (reader.ReadElementString("OutputClaimed"));

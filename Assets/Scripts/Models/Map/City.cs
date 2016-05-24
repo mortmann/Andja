@@ -157,7 +157,7 @@ public class City : IXmlSerializable{
 		myInv = new Inventory ();
 		myInv.ReadXml (reader);
 
-		BuildController bc = new BuildController ();
+		BuildController bc = BuildController.Instance;
 
 		if(reader.ReadToDescendant("City") ) {
 			do {

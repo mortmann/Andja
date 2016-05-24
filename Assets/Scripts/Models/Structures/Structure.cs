@@ -12,6 +12,7 @@ public enum BuildingTyp {Production, Pathfinding, Blocking};
 
 public abstract class Structure : IXmlSerializable {
 	public int ID;
+	public int playerID;
 	public string name;
 	public City city;
     public bool isWalkable { get; protected set; }

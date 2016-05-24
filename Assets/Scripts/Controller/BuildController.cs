@@ -108,7 +108,7 @@ public class BuildController : MonoBehaviour {
 			cbStructureCreated (s);
 		}
 		if (t.myCity != null) {
-			t.myCity.addStructure (s);
+			t.myIsland.addStructure (s);
 			s.city = t.myCity;
 		}
 	}
@@ -177,7 +177,10 @@ public class BuildController : MonoBehaviour {
 	public void UnregisterCityCreated(Action<City> callbackfunc) {
 		cbCityCreated -= callbackfunc;
 	}
-
+	///////////////////////////////////////
+	/// XML LOADING FROM FILE
+	/// 
+	///////////////////////////////////////
 	private void ReadItemsFromXML(){
 		XmlDocument xmlDoc = new XmlDocument(); // xmlDoc is the new xml document.
 		TextAsset ta = ((TextAsset)Resources.Load("XMLs/items", typeof(TextAsset)));

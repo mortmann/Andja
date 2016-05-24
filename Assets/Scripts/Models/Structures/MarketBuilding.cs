@@ -118,6 +118,7 @@ public class MarketBuilding : UserStructure {
 		writer.WriteAttributeString("Name", name ); //change this to id
 		writer.WriteAttributeString("BuildingTile_X", myBuildingTiles[0].X.ToString () );
 		writer.WriteAttributeString("BuildingTile_Y", myBuildingTiles[0].Y.ToString () );
+
 		writer.WriteElementString("Rotated", rotated.ToString());
 		if (myWorker != null) {
 			writer.WriteStartElement ("Workers");

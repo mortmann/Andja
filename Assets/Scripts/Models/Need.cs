@@ -18,7 +18,9 @@ public class Need {
 		this.uses = uses;
 		this.structure = structure;
 	}
-
+	public Need(){
+		
+	}
 	public float TryToConsumThisIn(City city,int level,int[] peoples){
 		if(item == null){
 			//this does not require any item -> it needs a structure
@@ -37,7 +39,7 @@ public class Need {
 		if(availableAmount == 0){
 			return 0;
 		}
-		int usedAmount = Mathf.Clamp (availableAmount, 1, neededCounsumAmount);
+		int usedAmount = (int) Mathf.Clamp (availableAmount, 1, neededCounsumAmount);
 		city.removeRessource (item,usedAmount);
 		//minimum is 1 because if 0 -> ERROR due dividing through 0
 		return usedAmount / neededCounsumAmount;

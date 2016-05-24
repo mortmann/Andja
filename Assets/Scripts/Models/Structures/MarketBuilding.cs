@@ -137,7 +137,7 @@ public class MarketBuilding : UserStructure {
 				Worker w = new Worker(this);
 				w.ReadXml (reader);
 				myWorker.Add (w);
-			} while( reader.ReadToNextSibling("Island") );
+			} while( reader.ReadToNextSibling("Worker") );
 		}
 	}
 }

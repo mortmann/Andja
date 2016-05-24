@@ -9,7 +9,7 @@ using System.Xml.Serialization;
 public enum TileType { Water, Shore, Dirt, Grass, Stone, Mountain };
 
 
-public class Tile : IXmlSerializable{
+public class Tile : IXmlSerializable {
     //Want to have more than one structure in one tile!
     //more than one tree or tree and bench! But for now only one
 	protected Structure _structures= null;

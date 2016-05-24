@@ -10,7 +10,6 @@ public class Island : IXmlSerializable{
     public Path_TileGraph tileGraph { get; protected set; }
     public List<Tile> myTiles;
     public List<City> myCities;
-	public Action<City> cbCityCreated;
 	public Climate myClimate;
 
     //TODO: get a tile to start with!
@@ -60,10 +59,8 @@ public class Island : IXmlSerializable{
     }
 
     public City CreateCity() {
-        City c = new City(this);
+		City c = new City(this,myTiles[0].world.allNeeds);
 		myCities.Add (c);
-		if (cbCityCreated != null)
-			cbCityCreated(c);
         return c;
     }
 	//////////////////////////////////////////////////////////////////////////////////////
@@ -85,17 +82,15 @@ public class Island : IXmlSerializable{
 			writer.WriteEndElement();
 		}
 		writer.WriteEndElement();
-
-
-
 	}
 
 	public void ReadXml(XmlReader reader) {
 		do {
-			City c = new City(this);
+			City c = new City(this,myTiles[0].world.allNeeds);
 			c.ReadXml(reader);
 			myCities.Add (c);
-		} while( reader.ReadToNextSibling("Island") );
+		} while( reader.ReadToNextSibling("City") );
+
 	}
 
 }

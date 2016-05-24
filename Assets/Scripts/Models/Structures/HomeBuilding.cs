@@ -14,7 +14,6 @@ public class HomeBuilding : Structure{
 	public int buildingLevel;
 
 	public HomeBuilding(){
-		
 		canUpgrade = false;
 		tileWidth = 2;
 		tileHeight = 2;
@@ -56,11 +55,13 @@ public class HomeBuilding : Structure{
 		writer.WriteAttributeString("BuildingTile_X", myBuildingTiles[0].X.ToString () );
 		writer.WriteAttributeString("BuildingTile_Y", myBuildingTiles[0].Y.ToString () );
 		writer.WriteElementString("Rotated", rotated.ToString());
-
-
+		writer.WriteElementString("People", people.ToString());
+		writer.WriteElementString("BuildingLevel", buildingLevel.ToString());
 
 	}
 	public override void ReadXml (XmlReader reader) {
-		
+		rotated = int.Parse( reader.GetAttribute("Rotated") );
+		people = int.Parse( reader.GetAttribute("People") );
+		buildingLevel = int.Parse( reader.GetAttribute("BuildingLevel") );
 	}
 }

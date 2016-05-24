@@ -11,35 +11,53 @@ public class City : IXmlSerializable{
     public int playerNumber = 0;
     public Island island { get; protected set; }
     public Inventory myInv;
+
     public List<Structure> myStructures;
+	public List<HomeBuilding> myHomes;
+
 	public List<Tile> myTiles;
 	public List<Route> myRoutes;
+
+	public List<Need> allNeeds;
+
 	public int cityBalance;
 	public int[] citizienCount;
+	public float useTick;
+	public float useTickTimer;
 
-    public City(Island island) {
+	public City(Island island,List<Need> allNeeds) {
 		citizienCount = new int[4];
 		for (int i = 0; i < citizienCount.Length; i++) {
 			citizienCount [i] = 0;
 		}
-
+		this.allNeeds = allNeeds;
         this.island = island;
         myInv = new Inventory();
         myStructures = new List<Structure>();
 		myTiles = new List<Tile> ();
 		myRoutes = new List<Route> ();
+		useTickTimer = useTick;
     }
 
     internal void update(float deltaTime) {
         foreach(Structure s in myStructures) {
             s.update(deltaTime);
         }
+		useTickTimer -= deltaTime;
+		if(useTickTimer>=0){
+			foreach(Need n in allNeeds){
+				n.TryToConsumThisIn (this,n.startLevel,citizienCount);
+			}
+		}
     }
 
 	public void addStructure(Structure str){
-		cityBalance += str.maintenancecost;
-		myStructures.Add (str);
-
+		if(str is HomeBuilding) {
+			myHomes.Add ((HomeBuilding)str);
+		} else {
+			cityBalance += str.maintenancecost;
+			myStructures.Add (str);
+		}
 	}
 
 	public void addTile(Tile t){
@@ -54,6 +72,12 @@ public class City : IXmlSerializable{
 		foreach (Item item in remove) {
 			myInv.removeItemAmount (item);
 		}
+	}
+
+	public void removeRessource(Item item, int amount){
+		Item i = item.Clone ();
+		i.count = amount;
+		myInv.removeItemAmount (i);
 	}
 
 	/// <summary>
@@ -155,7 +179,7 @@ public class City : IXmlSerializable{
 				}
 				bc.BuildOnTile (s,t);
 				myStructures.Add (s);
-			} while( reader.ReadToNextSibling("Island") );
+			} while( reader.ReadToNextSibling("Structure") );
 		}
 	}
 }

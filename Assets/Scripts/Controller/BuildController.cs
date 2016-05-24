@@ -63,10 +63,14 @@ public class BuildController : MonoBehaviour {
 	}
 
 	public void OnClickSettle(){
-//		OnClick ("warehouse");
+		OnClick (6);
 	}
 
 	public void OnClick(int id) {
+		if(structurePrototypes.ContainsKey (id) == false){
+			Debug.LogError ("BUTTON has ID that not is structure prototypes ->o_O<- ");
+			return;
+		}
 		toBuildStructure = structurePrototypes [id].Clone ();
 		if(structurePrototypes [id].BuildTyp == BuildTypes.Path){
 			MouseController.Instance.mouseState = MouseState.Path;
@@ -154,7 +158,7 @@ public class BuildController : MonoBehaviour {
 		if(t.myCity != null){
 			return null;
 		}
-		City c = new City (t.myIsland);
+		City c = t.myIsland.CreateCity ();
 		if(cbCityCreated != null) {
 			cbCityCreated (c);
 		}

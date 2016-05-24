@@ -51,16 +51,13 @@ public class HomeBuilding : Structure{
 	}
 
 	public override void WriteXml (XmlWriter writer)	{
-		writer.WriteAttributeString("Name", name ); //change this to id
-		writer.WriteAttributeString("BuildingTile_X", myBuildingTiles[0].X.ToString () );
-		writer.WriteAttributeString("BuildingTile_Y", myBuildingTiles[0].Y.ToString () );
-		writer.WriteElementString("Rotated", rotated.ToString());
+		BaseWriteXml (writer);
 		writer.WriteElementString("People", people.ToString());
 		writer.WriteElementString("BuildingLevel", buildingLevel.ToString());
 
 	}
 	public override void ReadXml (XmlReader reader) {
-		rotated = int.Parse( reader.GetAttribute("Rotated") );
+		BaseReadXml (reader);
 		people = int.Parse( reader.GetAttribute("People") );
 		buildingLevel = int.Parse( reader.GetAttribute("BuildingLevel") );
 	}

@@ -11,8 +11,13 @@ public enum BuildTypes {Drag, Path, Single};
 public enum BuildingTyp {Production, Pathfinding, Blocking};
 
 public abstract class Structure : IXmlSerializable {
+	//prototype id
 	public int ID;
+	//player id
 	public int playerID;
+	//build id -- when it was build
+	public int buildID;
+
 	public string name;
 	public City city;
     public bool isWalkable { get; protected set; }
@@ -72,33 +77,6 @@ public abstract class Structure : IXmlSerializable {
 	public BuildTypes BuildTyp;
 	public BuildingTyp myBuildingTyp = BuildingTyp.Blocking;
 	public string connectOrientation;
-
-
-	public Structure(string name, int buildcost = 50){
-		this.name = name;
-		this.tileWidth = 1;
-		this.tileHeight = 1;
-		maintenancecost = 0;
-		buildcost = 25;
-		BuildTyp = BuildTypes.Path;
-		myBuildingTyp = BuildingTyp.Pathfinding;
-		buildingRange = 0;
-	}
-
-    public Structure() {
-    }
-    protected Structure(Structure str){
-		this.name = str.name;
-		this.tileWidth = str.tileWidth;
-		this.tileHeight = str.tileHeight;
-		this.mustBeBuildOnShore = str.mustBeBuildOnShore;
-		this.maintenancecost = str.maintenancecost;
-		this.buildcost = str.buildcost;
-		this.BuildTyp = str.BuildTyp;
-		this.rotated = str.rotated;
-		this.hasHitbox = str.hasHitbox;
-		this.buildingRange = str.buildingRange;
-	}
 
 	public abstract Structure Clone ();
 
@@ -354,46 +332,46 @@ public abstract class Structure : IXmlSerializable {
 	}
 
 
-	//			Queue<Tile> temp = new Queue<Tile> ();
-	//			int times = ((this.buildingRange*2)) + _tileWidth;
-	//			times = times * times;
-	//			times -= myBuildingTiles.Count;
-	//			times /= 4;
-	//			for (int i = 0; i < temp.Count; i++) {
-	//
-	//				Debug.Log (times);
-	//				foreach (Tile n in temp.Dequeue().GetNeighbours (diag)) {
-	//					if(temp.Contains (n)==false){
-	//						temp.Enqueue (n);
-	//						times--;
-	//						if (times <= (4 * myBuildingTiles.Count + 4)/4) {
-	//							Debug.Log ("times " + times);
-	//							diag = false;
-	//						}
-	//						if (times == 0) {
-	//							break;
-	//						}
-	//					}	
-	//				}
-	//
-	//			}
-	//			foreach (Tile t in myBuildingTiles) {
-	//				temp.Enqueue(t);
-	//			}
-	////			bool diag = true;
-	//FIXME need to change this its to a more optimized solution
-	//			for (int i = 0; i < buildingRange; i++) {
-	//				for (int a = 0; a < myBuildingTiles.Count; a++) {
-	//					Tile t = temp.Dequeue ();		
-	//					foreach (Tile n in t.GetNeighbours (diag)) {
-	//						if (temp.Contains (n) == false) {
-	//							myRangeTiles.Add (n);
-	//							temp.Enqueue (n);
-	//						}
-	//					}
-	//				}
-	//			}
-	//			myRangeTiles = new List<Tile>(temp);
+//			Queue<Tile> temp = new Queue<Tile> ();
+//			int times = ((this.buildingRange*2)) + _tileWidth;
+//			times = times * times;
+//			times -= myBuildingTiles.Count;
+//			times /= 4;
+//			for (int i = 0; i < temp.Count; i++) {
+//
+//				Debug.Log (times);
+//				foreach (Tile n in temp.Dequeue().GetNeighbours (diag)) {
+//					if(temp.Contains (n)==false){
+//						temp.Enqueue (n);
+//						times--;
+//						if (times <= (4 * myBuildingTiles.Count + 4)/4) {
+//							Debug.Log ("times " + times);
+//							diag = false;
+//						}
+//						if (times == 0) {
+//							break;
+//						}
+//					}	
+//				}
+//
+//			}
+//			foreach (Tile t in myBuildingTiles) {
+//				temp.Enqueue(t);
+//			}
+////			bool diag = true;
+//FIXME need to change this its to a more optimized solution
+//			for (int i = 0; i < buildingRange; i++) {
+//				for (int a = 0; a < myBuildingTiles.Count; a++) {
+//					Tile t = temp.Dequeue ();		
+//					foreach (Tile n in t.GetNeighbours (diag)) {
+//						if (temp.Contains (n) == false) {
+//							myRangeTiles.Add (n);
+//							temp.Enqueue (n);
+//						}
+//					}
+//				}
+//			}
+//			myRangeTiles = new List<Tile>(temp);
 
 
 	public List<Tile> roadsAroundStructure(){
@@ -426,7 +404,19 @@ public abstract class Structure : IXmlSerializable {
 	public XmlSchema GetSchema() {
 		return null;
 	}
-	public abstract void WriteXml(XmlWriter writer);
+	public abstract void WriteXml (XmlWriter writer);
 	public abstract void ReadXml (XmlReader reader);
+
+	public void BaseWriteXml(XmlWriter writer){
+		writer.WriteAttributeString ("BuildID", buildID.ToString ()); 
+		writer.WriteAttributeString ("ID", ID.ToString ()); //change this to id
+		writer.WriteAttributeString ("BuildingTile_X", myBuildingTiles [0].X.ToString ());
+		writer.WriteAttributeString ("BuildingTile_Y", myBuildingTiles [0].Y.ToString ());
+		writer.WriteElementString("Rotated", rotated.ToString());
+	}
+	public void BaseReadXml(XmlReader reader){
+		rotated = int.Parse( reader.ReadElementString("Rotated") );
+		buildID = int.Parse( reader.ReadElementString("BuildID") );
+	}
 }
 

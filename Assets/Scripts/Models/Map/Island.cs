@@ -61,11 +61,7 @@ public class Island : IXmlSerializable{
         }
     }
 	public void AddStructure(Structure str){
-		if(str is MarketBuilding || str is Warehouse){
-			cityRangeBuildings.Add (str);	
-		} else {
-			str.myBuildingTiles [0].myCity.addStructure (str);
-		}
+		str.myBuildingTiles [0].myCity.addStructure (str);
 	}
     public City CreateCity() {
 		City c = new City(this,myTiles[0].world.allNeeds);
@@ -106,9 +102,9 @@ public class Island : IXmlSerializable{
 		BuildController bc = BuildController.Instance;
 		if (reader.ReadToDescendant ("CityRangeBuildings")) {
 			do {
-				Structure s = bc.structurePrototypes [reader.ReadAttributeValue ("ID")].Clone ();
-				int x = int.Parse (reader.ReadAttributeValue ("BuildingTile_X"));
-				int y = int.Parse (reader.ReadAttributeValue ("BuildingTile_Y"));
+				Structure s = bc.structurePrototypes [int.Parse (reader.GetAttribute ("ID"))].Clone ();
+				int x = int.Parse (reader.GetAttribute ("BuildingTile_X"));
+				int y = int.Parse (reader.GetAttribute ("BuildingTile_Y"));
 
 				s.ReadXml (reader);
 			

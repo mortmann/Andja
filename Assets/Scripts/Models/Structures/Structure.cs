@@ -331,49 +331,6 @@ public abstract class Structure : IXmlSerializable {
 		}
 	}
 
-
-//			Queue<Tile> temp = new Queue<Tile> ();
-//			int times = ((this.buildingRange*2)) + _tileWidth;
-//			times = times * times;
-//			times -= myBuildingTiles.Count;
-//			times /= 4;
-//			for (int i = 0; i < temp.Count; i++) {
-//
-//				Debug.Log (times);
-//				foreach (Tile n in temp.Dequeue().GetNeighbours (diag)) {
-//					if(temp.Contains (n)==false){
-//						temp.Enqueue (n);
-//						times--;
-//						if (times <= (4 * myBuildingTiles.Count + 4)/4) {
-//							Debug.Log ("times " + times);
-//							diag = false;
-//						}
-//						if (times == 0) {
-//							break;
-//						}
-//					}	
-//				}
-//
-//			}
-//			foreach (Tile t in myBuildingTiles) {
-//				temp.Enqueue(t);
-//			}
-////			bool diag = true;
-//FIXME need to change this its to a more optimized solution
-//			for (int i = 0; i < buildingRange; i++) {
-//				for (int a = 0; a < myBuildingTiles.Count; a++) {
-//					Tile t = temp.Dequeue ();		
-//					foreach (Tile n in t.GetNeighbours (diag)) {
-//						if (temp.Contains (n) == false) {
-//							myRangeTiles.Add (n);
-//							temp.Enqueue (n);
-//						}
-//					}
-//				}
-//			}
-//			myRangeTiles = new List<Tile>(temp);
-
-
 	public List<Tile> roadsAroundStructure(){
 		List<Tile> roads = new List<Tile>();
 		foreach (Tile item in myBuildingTiles) {

@@ -10,7 +10,6 @@ public class Island : IXmlSerializable{
     public Path_TileGraph tileGraph { get; protected set; }
     public List<Tile> myTiles;
     public List<City> myCities;
-	public List<Structure> cityRangeBuildings;
 	public Climate myClimate;
 	public List<Fertility> myFertilities;
 
@@ -81,13 +80,7 @@ public class Island : IXmlSerializable{
 		writer.WriteAttributeString("StartTile_X",myTiles[0].X.ToString ());
 		writer.WriteAttributeString("StartTile_Y",myTiles[0].Y.ToString ());
 		writer.WriteElementString ("Climate",myClimate.ToString ());
-		writer.WriteStartElement("CityRangeBuildings");
-		foreach (Structure s in cityRangeBuildings) {
-			writer.WriteStartElement("CityRange");
-			s.WriteXml(writer);
-			writer.WriteEndElement();
-		}
-		writer.WriteEndElement();
+
 		writer.WriteStartElement("Cities");
 		foreach (City c in myCities) {
 			writer.WriteStartElement("City");
@@ -99,19 +92,6 @@ public class Island : IXmlSerializable{
 
 	public void ReadXml(XmlReader reader) {
 		myClimate = (Climate)int.Parse (reader.ReadElementString ("Climate"));
-		BuildController bc = BuildController.Instance;
-		if (reader.ReadToDescendant ("CityRangeBuildings")) {
-			do {
-				Structure s = bc.structurePrototypes [int.Parse (reader.GetAttribute ("ID"))].Clone ();
-				int x = int.Parse (reader.GetAttribute ("BuildingTile_X"));
-				int y = int.Parse (reader.GetAttribute ("BuildingTile_Y"));
-
-				s.ReadXml (reader);
-			
-				bc.BuildOnTile (s, myTiles [0].world.GetTileAt (x, y));
-				cityRangeBuildings.Add (s);
-			} while(reader.ReadToNextSibling ("CityRange"));
-		}
 		if (reader.ReadToDescendant ("Cities")) {
 			do {
 				City c = new City (this, myTiles [0].world.allNeeds);

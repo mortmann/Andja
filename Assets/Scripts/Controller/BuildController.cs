@@ -15,7 +15,8 @@ public class BuildController : MonoBehaviour {
 	public Dictionary<int,Structure>  structurePrototypes;
 	public Dictionary<int, Item> allItems;
 	public int buildID = 0;
-	public Queue<Structure> loadedToPlaceStructure;
+	public Dictionary<int,Structure> loadedToPlaceStructure;
+	public Dictionary<int,Tile> loadedToPlaceTile;
 
 	Action<Structure> cbStructureCreated;
 	Action<City> cbCityCreated;
@@ -169,8 +170,16 @@ public class BuildController : MonoBehaviour {
 		return c; 
 	}
 
-	public void AddLoadedPlacedStructure(Structure structure){
-		
+	public void AddLoadedPlacedStructure(int bid,Structure structure,Tile t){
+		loadedToPlaceStructure.Add (bid,structure);
+		loadedToPlaceTile.Add (bid,t);
+	}
+	public void PlaceAllLoadedStructure(){
+		for (int i = 0; i < loadedToPlaceStructure.Count; i++) {
+			BuildOnTile (loadedToPlaceStructure[i],loadedToPlaceTile[i]);
+		}
+		loadedToPlaceStructure.Clear ();
+		loadedToPlaceTile.Clear ();
 	}
 
 	public void RegisterStructureCreated(Action<Structure> callbackfunc) {

@@ -159,10 +159,11 @@ public class City : IXmlSerializable{
 
 		BuildController bc = BuildController.Instance;
 
-		if(reader.ReadToDescendant("City") ) {
+		if(reader.ReadToDescendant("Structures") ) {
 			do {
 				int x = int.Parse( reader.GetAttribute("BuildingTile_X") );
 				int y = int.Parse( reader.GetAttribute("BuildingTile_Y") );
+				int buildID = int.Parse( reader.GetAttribute("BuildID") );
 				Tile t = WorldController.Instance.world.GetTileAt (x,y);
 				Structure s = bc.structurePrototypes[int.Parse (reader.GetAttribute("ID"))].Clone(); 
 				if(s is MarketBuilding){
@@ -177,7 +178,7 @@ public class City : IXmlSerializable{
 				if(s is Growable){
 					((Growable)s).ReadXml (reader);
 				}
-				bc.BuildOnTile (s,t);
+				bc.AddLoadedPlacedStructure (buildID,s,t);
 				myStructures.Add (s);
 			} while( reader.ReadToNextSibling("Structure") );
 		}

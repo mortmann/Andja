@@ -49,7 +49,7 @@ public class WorldController : MonoBehaviour {
 		serializer.Serialize(writer, world);
 		writer.Close();
 //		Debug.Log( writer.ToString() );
-		System.IO.File.WriteAllText("C:\\Users\\MortmannMKII v2\\Desktop\\Unity\\save.xml", writer.ToString());
+		System.IO.File.WriteAllText("C:\\Users\\KlappDidi MK3\\Desktop\\Unity\\save.xml", writer.ToString());
 		PlayerPrefs.SetString("SaveGame00", writer.ToString());
 	}
 	public void LoadWorld() {
@@ -71,6 +71,7 @@ public class WorldController : MonoBehaviour {
 		reader.Close();
 		// Center the Camera
 		Camera.main.transform.position = new Vector3( world.Width/2, world.Height/2, Camera.main.transform.position.z );
+		BuildController.Instance.PlaceAllLoadedStructure ();
 		Debug.Log ("LOAD ENDED");
 	}
 	public void OnClickChangeTimeMultiplier(int multi){

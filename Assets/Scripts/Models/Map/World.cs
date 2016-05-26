@@ -36,7 +36,7 @@ public class World : IXmlSerializable{
             }
         }
         
-		LoadPrototypsNeedsFromXML ();
+//		LoadPrototypsNeedsFromXML ();
 
         tileGraph = new Path_TileGraph(this);
         islandList = new List<Island>();
@@ -51,7 +51,7 @@ public class World : IXmlSerializable{
 	public World(){
 	}
 	public void SetupWorld(int Width, int Height){
-		LoadPrototypsNeedsFromXML ();
+//		LoadPrototypsNeedsFromXML ();
 		tiles = new Tile[Width, Height];
 		for (int x = 0; x < Width; x++) {
 			for (int y = 0; y < Height; y++) {
@@ -231,9 +231,9 @@ public class World : IXmlSerializable{
 			case "Tiles":
 				ReadXml_Tiles(reader);
 				break;
-//			case "Islands":
-//				ReadXml_Islands(reader);
-//				break;
+			case "Islands":
+				ReadXml_Islands(reader);
+				break;
 //			case "Units":
 //				ReadXml_Units(reader);
 //				break; 

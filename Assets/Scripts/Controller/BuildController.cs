@@ -34,6 +34,10 @@ public class BuildController : MonoBehaviour {
 		// prototypes of items
 		allItems = new Dictionary<int, Item> ();
 		ReadItemsFromXML();
+
+		loadedToPlaceTile = new Dictionary<int, Tile> ();
+		loadedToPlaceStructure = new Dictionary<int, Structure> ();
+
 		// setup all prototypes of structures here 
 		// load them from the 
 		structurePrototypes = new Dictionary<int, Structure> ();
@@ -107,8 +111,6 @@ public class BuildController : MonoBehaviour {
 		if (s.PlaceStructure (s.GetBuildingTiles (t.X, t.Y)) == false) {
 			return;
 		}
-		s.buildID = buildID;
-		buildID++;
 		if (cbStructureCreated != null) {
 			cbStructureCreated (s);
 		}
@@ -129,6 +131,8 @@ public class BuildController : MonoBehaviour {
 			if (cbStructureCreated != null) {
 				cbStructureCreated (s);
 			}
+			s.buildID = buildID;
+			buildID++;
 			if (tiles [0].myCity != null) {
 				tiles [0].myCity.addStructure (s);
 				s.city = tiles [0].myCity;
@@ -144,6 +148,8 @@ public class BuildController : MonoBehaviour {
 				if (cbStructureCreated != null) {
 					cbStructureCreated (s);
 				}
+				s.buildID = buildID;
+				buildID++;
 				if (tiles [0].myCity != null) {
 					tiles [0].myCity.addStructure (s);
 					s.city = tiles [0].myCity;
@@ -171,6 +177,7 @@ public class BuildController : MonoBehaviour {
 	}
 
 	public void AddLoadedPlacedStructure(int bid,Structure structure,Tile t){
+		Debug.Log (bid + " " + structure.name + " " + t.toString ());
 		loadedToPlaceStructure.Add (bid,structure);
 		loadedToPlaceTile.Add (bid,t);
 	}

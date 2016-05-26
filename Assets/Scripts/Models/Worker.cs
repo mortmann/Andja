@@ -143,16 +143,14 @@ public class Worker : IXmlSerializable{
 		return null;
 	}
 	public void WriteXml(XmlWriter writer){
-
-		writer.WriteStartElement("Inventory");
-		inventory.WriteXml(writer);
-		writer.WriteEndElement();
 		writer.WriteAttributeString("currTile_X", path.currTile.X.ToString () );
 		writer.WriteAttributeString("currTile_Y", path.currTile.Y.ToString () );
 		writer.WriteAttributeString("destTile_X", workStructure.JobTile.X.ToString () );
 		writer.WriteAttributeString("destTile_Y", workStructure.JobTile.Y.ToString () );
 		writer.WriteAttributeString("goingToWork", goingToWork.ToString () );
-
+		writer.WriteStartElement("Inventory");
+		inventory.WriteXml(writer);
+		writer.WriteEndElement();
 	}
 	public void ReadXml (XmlReader reader){
 

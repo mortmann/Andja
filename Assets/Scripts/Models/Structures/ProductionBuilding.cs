@@ -245,8 +245,8 @@ public class ProductionBuilding : UserStructure {
 
 	public override void WriteXml (XmlWriter writer){
 		BaseWriteXml (writer);
-		writer.WriteElementString("OutputClaimed", outputClaimed.ToString () );
-		writer.WriteElementString("ProduceCountdown", produceCountdown.ToString () );
+		writer.WriteAttributeString("OutputClaimed", outputClaimed.ToString () );
+		writer.WriteAttributeString("ProduceCountdown", produceCountdown.ToString () );
 		if (inputStorage != null) {
 			writer.WriteStartElement ("Inputs");
 			foreach (int i in inputStorage) {
@@ -268,8 +268,8 @@ public class ProductionBuilding : UserStructure {
 	}
 	public override void ReadXml(XmlReader reader) {
 		BaseReadXml (reader);
-		outputClaimed = bool.Parse (reader.ReadElementString("OutputClaimed"));
-		produceCountdown = float.Parse( reader.ReadElementString("ProduceCountdown") );
+		outputClaimed = bool.Parse (reader.GetAttribute("OutputClaimed"));
+		produceCountdown = float.Parse( reader.GetAttribute("ProduceCountdown") );
 		int input= 0;
 		if(reader.ReadToDescendant("Inputs") ) {
 			do {

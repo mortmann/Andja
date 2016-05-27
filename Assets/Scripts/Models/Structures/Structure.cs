@@ -369,11 +369,11 @@ public abstract class Structure : IXmlSerializable {
 		writer.WriteAttributeString ("ID", ID.ToString ()); //change this to id
 		writer.WriteAttributeString ("BuildingTile_X", myBuildingTiles [0].X.ToString ());
 		writer.WriteAttributeString ("BuildingTile_Y", myBuildingTiles [0].Y.ToString ());
-		writer.WriteElementString("Rotated", rotated.ToString());
+		writer.WriteAttributeString("Rotated", rotated.ToString());
 	}
 	public void BaseReadXml(XmlReader reader){
-		rotated = int.Parse( reader.ReadElementString("Rotated") );
-		buildID = int.Parse( reader.ReadElementString("BuildID") );
+		rotated = int.Parse( reader.GetAttribute("Rotated") );
+		buildID = int.Parse( reader.GetAttribute("BuildID") );
 	}
 }
 

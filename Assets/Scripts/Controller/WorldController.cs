@@ -49,7 +49,7 @@ public class WorldController : MonoBehaviour {
 		serializer.Serialize(writer, world);
 		writer.Close();
 //		Debug.Log( writer.ToString() );
-		System.IO.File.WriteAllText("C:\\Users\\KlappDidi MK3\\Desktop\\Unity\\save.xml", writer.ToString());
+		System.IO.File.WriteAllText("C:\\Users\\Mortmann\\Desktop\\Unity\\save.xml", writer.ToString());
 		PlayerPrefs.SetString("SaveGame00", writer.ToString());
 	}
 	public void LoadWorld() {

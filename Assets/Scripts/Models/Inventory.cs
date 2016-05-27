@@ -221,14 +221,14 @@ public class Inventory : IXmlSerializable{
 		maxStackSize = int.Parse( reader.GetAttribute("MaxStackSize") );
 		numberOfSpaces = int.Parse( reader.GetAttribute("NumberOfSpaces") );
 		BuildController bs = BuildController.Instance;
-		if(reader.ReadToDescendant("Items") ) {
+		if(reader.ReadToDescendant("Item") ) {
 			do {
 				int number = int.Parse( reader.GetAttribute("Number") );
 				int id = int.Parse( reader.GetAttribute("ID") );
 				Item i = bs.allItems[id].Clone();
 				i.ReadXml (reader);
 				items[number] = i;
-			} while( reader.ReadToNextSibling("Unit") );
+			} while( reader.ReadToNextSibling("Item") );
 		}
 	}
 }

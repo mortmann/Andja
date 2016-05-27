@@ -153,9 +153,7 @@ public class Worker : IXmlSerializable{
 		writer.WriteEndElement();
 	}
 	public void ReadXml (XmlReader reader){
-
 		isAtHome = false;
-
 		int dx = int.Parse( reader.GetAttribute("destTile_X") );
 		int dy = int.Parse( reader.GetAttribute("destTile_Y") );
 		destTile = WorldController.Instance.world.GetTileAt (dx,dy);
@@ -163,5 +161,10 @@ public class Worker : IXmlSerializable{
 		int cy = int.Parse( reader.GetAttribute("currTile_Y") );
 		currTile = WorldController.Instance.world.GetTileAt (cx,cy);
 		goingToWork = bool.Parse (reader.GetAttribute ("goingToWork"));
+
+		reader.ReadToDescendant ("Inventory");
+		inventory = new Inventory ();
+		inventory.ReadXml (reader);
+
 	}
 }

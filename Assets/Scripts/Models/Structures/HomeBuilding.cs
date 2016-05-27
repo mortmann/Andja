@@ -52,8 +52,8 @@ public class HomeBuilding : Structure{
 
 	public override void WriteXml (XmlWriter writer)	{
 		BaseWriteXml (writer);
-		writer.WriteElementString("People", people.ToString());
-		writer.WriteElementString("BuildingLevel", buildingLevel.ToString());
+		writer.WriteAttributeString("People", people.ToString());
+		writer.WriteAttributeString("BuildingLevel", buildingLevel.ToString());
 
 	}
 	public override void ReadXml (XmlReader reader) {

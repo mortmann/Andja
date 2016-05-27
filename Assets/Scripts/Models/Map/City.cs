@@ -153,7 +153,7 @@ public class City : IXmlSerializable{
 	}
 	public void ReadXml(XmlReader reader) {
 		playerNumber = int.Parse( reader.GetAttribute("Player") );
-
+		reader.ReadToDescendant ("Inventory");
 		myInv = new Inventory ();
 		myInv.ReadXml (reader);
 

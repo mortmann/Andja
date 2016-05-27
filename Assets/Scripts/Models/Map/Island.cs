@@ -79,7 +79,7 @@ public class Island : IXmlSerializable{
 	public void WriteXml(XmlWriter writer) {
 		writer.WriteAttributeString("StartTile_X",myTiles[0].X.ToString ());
 		writer.WriteAttributeString("StartTile_Y",myTiles[0].Y.ToString ());
-		writer.WriteElementString ("Climate",((int)myClimate).ToString ());
+		writer.WriteAttributeString ("Climate",((int)myClimate).ToString ());
 
 		writer.WriteStartElement("Cities");
 		foreach (City c in myCities) {
@@ -91,9 +91,7 @@ public class Island : IXmlSerializable{
 	}
 
 	public void ReadXml(XmlReader reader) {
-		reader.ReadStartElement ("Climate");
-		Debug.Log (reader.ReadElementContentAsString ());
-		myClimate = (Climate)int.Parse (reader.ReadElementString ("Climate"));
+		myClimate = (Climate)int.Parse(reader.GetAttribute ("Climate"));
 		if (reader.ReadToDescendant ("City")) {
 			do {
 				City c = new City (this, myTiles [0].world.allNeeds);

@@ -1,25 +1,25 @@
 fileFormatVersion: 2
 guid: 469243ede1433474aa2ce103c4fe3090
-timeCreated: 1462758521
+timeCreated: 1464374894
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
-    21300000: dirtroad_
-    21300002: dirtroad_S
-    21300004: dirtroad_NES
-    21300006: dirtroad_W
-    21300008: dirtroad_E
-    21300010: dirtroad_NSW
-    21300012: dirtroad_ES
-    21300014: dirtroad_SW
-    21300016: dirtroad_N
-    21300018: dirtroad_NS
-    21300020: dirtroad_NE
-    21300022: dirtroad_EW
-    21300024: dirtroad_NW
-    21300026: dirtroad_NEW
-    21300028: dirtroad_NESW
-    21300030: dirtroad_ESW
+    21300000: Dirtroad_
+    21300002: Dirtroad_S
+    21300004: Dirtroad_NES
+    21300006: Dirtroad_W
+    21300008: Dirtroad_E
+    21300010: Dirtroad_NSW
+    21300012: Dirtroad_ES
+    21300014: Dirtroad_SW
+    21300016: Dirtroad_N
+    21300018: Dirtroad_NS
+    21300020: Dirtroad_NE
+    21300022: Dirtroad_EW
+    21300024: Dirtroad_NW
+    21300026: Dirtroad_NEW
+    21300028: Dirtroad_NESW
+    21300030: Dirtroad_ESW
   serializedVersion: 2
   mipmaps:
     mipMapMode: 0
@@ -71,7 +71,7 @@ TextureImporter:
     allowsAlphaSplitting: 0
   spriteSheet:
     sprites:
-    - name: dirtroad_
+    - name: Dirtroad_
       rect:
         serializedVersion: 2
         x: 0
@@ -86,7 +86,7 @@ TextureImporter:
         - {x: -16, y: -16}
         - {x: 16, y: -16}
         - {x: 16, y: 16}
-    - name: dirtroad_S
+    - name: Dirtroad_S
       rect:
         serializedVersion: 2
         x: 352
@@ -101,7 +101,7 @@ TextureImporter:
         - {x: -16, y: -16}
         - {x: 16, y: -16}
         - {x: 16, y: 16}
-    - name: dirtroad_NES
+    - name: Dirtroad_NES
       rect:
         serializedVersion: 2
         x: 128
@@ -116,7 +116,7 @@ TextureImporter:
         - {x: -16, y: -16}
         - {x: 16, y: -16}
         - {x: 16, y: 16}
-    - name: dirtroad_W
+    - name: Dirtroad_W
       rect:
         serializedVersion: 2
         x: 384
@@ -131,7 +131,7 @@ TextureImporter:
         - {x: -16, y: -16}
         - {x: 16, y: -16}
         - {x: 16, y: 16}
-    - name: dirtroad_E
+    - name: Dirtroad_E
       rect:
         serializedVersion: 2
         x: 320
@@ -146,7 +146,7 @@ TextureImporter:
         - {x: -16, y: -16}
         - {x: 16, y: -16}
         - {x: 16, y: 16}
-    - name: dirtroad_NSW
+    - name: Dirtroad_NSW
       rect:
         serializedVersion: 2
         x: 256
@@ -161,7 +161,7 @@ TextureImporter:
         - {x: -16, y: -16}
         - {x: 16, y: -16}
         - {x: 16, y: 16}
-    - name: dirtroad_ES
+    - name: Dirtroad_ES
       rect:
         serializedVersion: 2
         x: 0
@@ -176,7 +176,7 @@ TextureImporter:
         - {x: -16, y: -16}
         - {x: 16, y: -16}
         - {x: 16, y: 16}
-    - name: dirtroad_SW
+    - name: Dirtroad_SW
       rect:
         serializedVersion: 2
         x: 64
@@ -191,7 +191,7 @@ TextureImporter:
         - {x: -16, y: -16}
         - {x: 16, y: -16}
         - {x: 16, y: 16}
-    - name: dirtroad_N
+    - name: Dirtroad_N
       rect:
         serializedVersion: 2
         x: 352
@@ -206,7 +206,7 @@ TextureImporter:
         - {x: -16, y: -16}
         - {x: 16, y: -16}
         - {x: 16, y: 16}
-    - name: dirtroad_NS
+    - name: Dirtroad_NS
       rect:
         serializedVersion: 2
         x: 0
@@ -221,7 +221,7 @@ TextureImporter:
         - {x: -16, y: -16}
         - {x: 16, y: -16}
         - {x: 16, y: 16}
-    - name: dirtroad_NE
+    - name: Dirtroad_NE
       rect:
         serializedVersion: 2
         x: 0
@@ -236,7 +236,7 @@ TextureImporter:
         - {x: -16, y: -16}
         - {x: 16, y: -16}
         - {x: 16, y: 16}
-    - name: dirtroad_EW
+    - name: Dirtroad_EW
       rect:
         serializedVersion: 2
         x: 32
@@ -251,7 +251,7 @@ TextureImporter:
         - {x: -16, y: -16}
         - {x: 16, y: -16}
         - {x: 16, y: 16}
-    - name: dirtroad_NW
+    - name: Dirtroad_NW
       rect:
         serializedVersion: 2
         x: 64
@@ -266,7 +266,7 @@ TextureImporter:
         - {x: -16, y: -16}
         - {x: 16, y: -16}
         - {x: 16, y: 16}
-    - name: dirtroad_NEW
+    - name: Dirtroad_NEW
       rect:
         serializedVersion: 2
         x: 192
@@ -281,7 +281,7 @@ TextureImporter:
         - {x: -16, y: -16}
         - {x: 16, y: -16}
         - {x: 16, y: 16}
-    - name: dirtroad_NESW
+    - name: Dirtroad_NESW
       rect:
         serializedVersion: 2
         x: 352
@@ -296,7 +296,7 @@ TextureImporter:
         - {x: -16, y: -16}
         - {x: 16, y: -16}
         - {x: 16, y: 16}
-    - name: dirtroad_ESW
+    - name: Dirtroad_ESW
       rect:
         serializedVersion: 2
         x: 192

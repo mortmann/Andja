@@ -24,6 +24,8 @@ public abstract class Structure : IXmlSerializable {
 	public bool hasHitbox { get; protected set; }
 
 	public int buildingRange = 3;
+	public int PopulationLevel = 0;
+	public int PopulationCount = 0;
 
 	public int rotated = 0; 
 	public bool canRotate = true;
@@ -45,6 +47,8 @@ public abstract class Structure : IXmlSerializable {
 		}
 		protected set { _tileWidth = value;}
 	}
+
+	public Tile BuildTile {get { return myBuildingTiles [0]; }}
 
 	private int _tileHeight; 
 	public int tileHeight {
@@ -71,7 +75,9 @@ public abstract class Structure : IXmlSerializable {
 	Action<Structure> cbStructureDestroy;
 
     public bool canStartBurning;
-	public bool mustBeBuildOnShore;
+	public bool mustBeBuildOnShore= false;
+	public bool mustBeBuildOnMountain= false;
+
 	public int maintenancecost;
 	public int buildcost;
 	public BuildTypes BuildTyp;
@@ -117,45 +123,26 @@ public abstract class Structure : IXmlSerializable {
 
 		//test if the place is buildable
 		// TODO add check for Mines eg buildings on mountains!
-			// if it has to be on water
-		if (mustBeBuildOnShore == false) {
-			if (tileWidth == 1 && tileHeight == 1) {
-				if(tiles[0].structures != null && tiles [0].structures.canBeBuildOver){
-					if(tiles [0].structures.name == this.name){
-						return false;
-					}
-				}
-				if (Tile.checkTile (tiles [0]) == false) {
-					return false;
-				}
-				myBuildingTiles.Add (tiles [0]);
-			} else {
-				if(correctSpot(tiles)){
-					myBuildingTiles.AddRange (tiles);
-				} else {
-					return false;
-				}
+		// if it has to be on land
+		if (mustBeBuildOnShore == false && mustBeBuildOnMountain == false) {
+			if (PlaceOnLand (tiles) == false) {
+				return false;
 			}
-		} else {
-			//if it has to be on land 
-			if (tileWidth == 1 && tileHeight == 1) {
-				if(tiles [0].structures.canBeBuildOver){
-					if(tiles [0].structures.name == this.name){
-						return false;
-					}
-				}
-				if (Tile.checkTile (tiles[0],mustBeBuildOnShore) == false) {
-					return false;
-				}
-				myBuildingTiles.Add (tiles[0]);
-			} 
-			else {
-				if(correctSpotForOnShore(tiles)){
-					myBuildingTiles.AddRange (tiles);
-				} else {
-					return false;
-				}
+		}
+		if (mustBeBuildOnMountain == true && mustBeBuildOnShore == false) {
+			if (PlaceOnMountain (tiles) == false) {
+				return false;
 			}
+		} 
+		//if it has to be on shore 
+		if (mustBeBuildOnShore == true && mustBeBuildOnMountain == false) {
+			if (PlaceOnShore (tiles) == false) {
+				return false;
+			}
+		}
+
+		if (SpecialCheckForBuild (tiles) == false) {
+			return false;
 		}
 
 		//if we are here we can build this and
@@ -177,12 +164,85 @@ public abstract class Structure : IXmlSerializable {
 		OnBuild ();
 		return true;
 	}
+
+	protected bool PlaceOnLand(List<Tile> tiles){
+		foreach (var item in tiles) {
+			Debug.Log (item.myCity + "_" + item.myIsland );
+		}
+
+		if (tileWidth == 1 && tileHeight == 1) {
+			if(tiles[0].structures != null && tiles [0].structures.canBeBuildOver){
+				if(tiles [0].structures.name == this.name){
+					return false;
+				}
+			}
+			if (Tile.checkTile (tiles [0]) == false) {
+				return false;
+			}
+			myBuildingTiles.Add (tiles [0]);
+		} else {
+			if(correctSpot(tiles)){
+				myBuildingTiles.AddRange (tiles);
+			} else {
+				return false;
+			}
+		}
+		return true;
+	}
+	protected bool PlaceOnMountain(List<Tile> tiles){
+		Debug.Log ("PlaceOnMountain");
+		if (tileWidth == 1 && tileHeight == 1) {
+			if (tiles [0].structures != null && tiles [0].structures.canBeBuildOver) {
+				if (tiles [0].structures.name == this.name) {
+					return false;
+				}
+			}
+			if (Tile.checkTile (tiles [0]) == false) {
+				return false;
+			}
+			myBuildingTiles.Add (tiles [0]);
+		} else {
+			if (correctSpotOnMountain (tiles)) {
+				myBuildingTiles.AddRange (tiles);
+			} else {
+				return false;
+			}
+		}
+		return true;
+	}
+	protected bool PlaceOnShore(List<Tile> tiles){
+		if (tileWidth == 1 && tileHeight == 1) {
+			if(tiles [0].structures.canBeBuildOver){
+				if(tiles [0].structures.name == this.name){
+					return false;
+				}
+			}
+			if (Tile.checkTile (tiles[0],mustBeBuildOnShore) == false) {
+				return false;
+			}
+			myBuildingTiles.Add (tiles[0]);
+		} 
+		else {
+			if(correctSpotOnShore(tiles)){
+				myBuildingTiles.AddRange (tiles);
+			} else {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	public virtual bool SpecialCheckForBuild(List<Tile> tiles){
+		return true;
+	}
+
+
 	public List<Tile> GetBuildingTiles(float x , float y){
 		List<Tile> tiles = new List<Tile> ();
 		for (int w = 0; w < tileWidth; w++) {
-			tiles.Add ( WorldController.Instance.world.GetTileAt(x + w, y));
+			tiles.Add ( World.current.GetTileAt(x + w, y));
 			for (int h = 1; h < tileHeight; h++) {
-				tiles.Add (WorldController.Instance.world.GetTileAt (x + w, y + h));
+				tiles.Add (World.current.GetTileAt (x + w, y + h));
 			}
 		}
 		return tiles;
@@ -270,39 +330,27 @@ public abstract class Structure : IXmlSerializable {
 			}
 		}
 		return true;
-		// old code maybe be useful later
-//			Tile t = tiles[0];
-//			myTiles.Add (tiles[0]);
-//			for (int w = 0; w < tileWidth; w++) {
-//				if (Tile.checkTile (t) == false) {
-//					return false;
-//				}
-//				Tile tn = t;
-//				for (int h = 0; h < tileHeight - 1; h++) {
-//					tn = tn.North ();
-//					if (Tile.checkTile (tn) == false) {
-//						return false;
-//					}
-//					myTiles.Add (tn);
-//				}
-//				myTiles.Add (t);
-//				t = t.East ();
-//			}
 	}
-	public bool correctSpotForOnShore(List<Tile> tiles){
-		int water = 0;
+	public bool correctSpotOnMountain(List<Tile> tiles){
+		return correctSpotForOn (tiles,TileType.Mountain);
+	}
+	public bool correctSpotOnShore(List<Tile> tiles){
+		return correctSpotForOn (tiles,TileType.Water);
+	}
+	public bool correctSpotForOn(List<Tile> tiles, TileType tt){
+		int other = 0;
 		int land  = 0;
-		Tile[] waterTiles = new Tile[Mathf.Max (tileWidth,tileHeight)];
+		Tile[] otherTiles = new Tile[Mathf.Max (tileWidth,tileHeight)];
 		foreach (Tile t in tiles) {
 			if(t == null){
 				return false;
 			}
-			if (t.Type == TileType.Water) {
-				water++;
-				if ((tileWidth) < water && (tileHeight) < water ) {
+			if (t.Type == tt) {
+				other++;
+				if ((tileWidth) < other && (tileHeight) < other ) {
 					return false;
 				}
-				waterTiles [water-1] = t;
+				otherTiles [other-1] = t;
 			}
 			if (Tile.IsBuildType (t.Type)) {
 				land++;
@@ -310,13 +358,22 @@ public abstract class Structure : IXmlSerializable {
 					return false;
 				}
 			}
+			if (Tile.IsUnbuildableType (t.Type,tt)) {
+				return false;
+			}
 		}
-		Tile temp = waterTiles [0];
-		for (int i = 1; i < waterTiles.Length; i++) {
-			if (temp.IsNeighbour (waterTiles [i]) == false) {
+		if (otherTiles [0] == null) {
+			return false;
+		}
+		Tile temp = otherTiles [0];
+		for (int i = 1; i < otherTiles.Length; i++) {
+			if(otherTiles [i] == null){
+				return false;
+			}
+			if (temp.IsNeighbour (otherTiles [i]) == false) {
 				return false;
 			} 
-			temp = waterTiles [i];
+			temp = otherTiles [i];
 		}
 		return true;
 	}

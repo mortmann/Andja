@@ -48,7 +48,6 @@ public class WorldController : MonoBehaviour {
 		TextWriter writer = new StringWriter();
 		serializer.Serialize(writer, world);
 		writer.Close();
-//		Debug.Log( writer.ToString() );
 		System.IO.File.WriteAllText("C:\\Users\\Mortmann\\Desktop\\Unity\\save.xml", writer.ToString());
 		PlayerPrefs.SetString("SaveGame00", writer.ToString());
 	}

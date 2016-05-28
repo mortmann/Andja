@@ -12,6 +12,7 @@ public class Island : IXmlSerializable{
     public List<City> myCities;
 	public Climate myClimate;
 	public List<Fertility> myFertilities;
+	public Dictionary<string,int> myRessources;
 
     //TODO: get a tile to start with!
 	public Island(Tile startTile, Climate climate = Climate.Middle) {
@@ -24,6 +25,7 @@ public class Island : IXmlSerializable{
             IslandFloodFill(t);
         }
         tileGraph = new Path_TileGraph(this);
+
     }
     protected void IslandFloodFill(Tile tile) {
         if (tile == null) {
@@ -55,15 +57,15 @@ public class Island : IXmlSerializable{
     }
 
     public void update(float deltaTime) {
-        foreach(City c in myCities) {
-            c.update(deltaTime);
+		for (int i = 0; i < myCities.Count; i++) {
+			myCities[i].update(deltaTime);
         }
     }
 	public void AddStructure(Structure str){
 		str.myBuildingTiles [0].myCity.addStructure (str);
 	}
     public City CreateCity() {
-		City c = new City(this,myTiles[0].world.allNeeds);
+		City c = new City(this,World.current.allNeeds);
 		myCities.Add (c);
         return c;
     }
@@ -94,7 +96,7 @@ public class Island : IXmlSerializable{
 		myClimate = (Climate)int.Parse(reader.GetAttribute ("Climate"));
 		if (reader.ReadToDescendant ("City")) {
 			do {
-				City c = new City (this, myTiles [0].world.allNeeds);
+				City c = new City (this, World.current.allNeeds);
 				c.ReadXml (reader);
 				myCities.Add (c);
 			} while(reader.ReadToNextSibling ("City"));

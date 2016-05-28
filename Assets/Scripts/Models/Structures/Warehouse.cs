@@ -37,6 +37,9 @@ public class Warehouse : MarketBuilding {
 
 	public override void OnBuild(){
 		Tile t = myBuildingTiles [0];
+		if (t.myCity != null) {
+			return;
+		}
 		this.city = BuildController.Instance.CreateCity(t);
 		if(city == null) {
 			return;

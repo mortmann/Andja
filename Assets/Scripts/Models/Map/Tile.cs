@@ -51,8 +51,6 @@ public class Tile : IXmlSerializable {
 			_myCity = value;
 		} 
 	}
-
-    public World world;
 	protected bool _isHighlighted;
 	public bool IsHighlighted {
 		get { return _isHighlighted;}
@@ -61,7 +59,7 @@ public class Tile : IXmlSerializable {
 				return;
 			} else {
 				this._isHighlighted = value;
-				world.OnTileChanged (this);
+				World.current.OnTileChanged (this);
 			}
 		}
 	}
@@ -107,8 +105,7 @@ public class Tile : IXmlSerializable {
         }
     }
 
-    public Tile(World world, int x, int y){
-        this.world = world;
+    public Tile(int x, int y){
         this.x = x;
         this.y = y;
         _type = TileType.Water;
@@ -156,27 +153,27 @@ public class Tile : IXmlSerializable {
 
         Tile n;
 
-        n = world.GetTileAt(X, Y + 1);
+		n = World.current.GetTileAt(X, Y + 1);
     	//NORTH
 		ns[0] = n;  // Could be null, but that's okay.
 		//WEST
-        n = world.GetTileAt(X + 1, Y);
+		n = World.current.GetTileAt(X + 1, Y);
         ns[1] = n;  // Could be null, but that's okay.
         //SOUTH
-		n = world.GetTileAt(X, Y - 1);
+		n = World.current.GetTileAt(X, Y - 1);
         ns[2] = n;  // Could be null, but that's okay.
         //EAST
-		n = world.GetTileAt(X - 1, Y);
+		n = World.current.GetTileAt(X - 1, Y);
         ns[3] = n;  // Could be null, but that's okay.
 
         if (diagOkay == true) {
-            n = world.GetTileAt(X + 1, Y + 1);
+			n = World.current.GetTileAt(X + 1, Y + 1);
             ns[4] = n;  // Could be null, but that's okay.
-            n = world.GetTileAt(X + 1, Y - 1);
+			n = World.current.GetTileAt(X + 1, Y - 1);
             ns[5] = n;  // Could be null, but that's okay.
-            n = world.GetTileAt(X - 1, Y - 1);
+			n = World.current.GetTileAt(X - 1, Y - 1);
             ns[6] = n;  // Could be null, but that's okay.
-            n = world.GetTileAt(X - 1, Y + 1);
+			n = World.current.GetTileAt(X - 1, Y + 1);
             ns[7] = n;  // Could be null, but that's okay.
         }
 
@@ -184,16 +181,16 @@ public class Tile : IXmlSerializable {
     }
 
     public Tile North() {
-        return world.GetTileAt(X, Y + 1);
+		return World.current.GetTileAt(X, Y + 1);
     }
     public Tile South() {
-        return world.GetTileAt(X, Y - 1);
+		return World.current.GetTileAt(X, Y - 1);
     }
     public Tile East() {
-        return world.GetTileAt(X + 1, Y);
+		return World.current.GetTileAt(X + 1, Y);
     }
     public Tile West() {
-        return world.GetTileAt(X - 1, Y);
+		return World.current.GetTileAt(X - 1, Y);
     }
 	/// <summary>
 	/// Checks if Structure can be placed on the tile.
@@ -232,6 +229,22 @@ public class Tile : IXmlSerializable {
 		}
 		return true;
 	}
+	/// <summary>
+	/// Water doesnt count as unbuildable!
+	/// Determines if is unbuildable type the specified t.
+	/// </summary>
+	/// <returns><c>true</c> if is unbuildable type the specified t; otherwise, <c>false</c>.</returns>
+	/// <param name="t">T.</param>
+	public static bool IsUnbuildableType(TileType t,TileType toBuildOn){
+		if( t == TileType.Mountain && toBuildOn != TileType.Mountain){
+			return true;
+		}
+		if( t == TileType.Water && toBuildOn != TileType.Water){
+			return true;
+		}
+		return false;
+	}
+
     public String toString() {
         return "tile_" + X + "_" + Y;
     }

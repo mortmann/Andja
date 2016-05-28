@@ -42,9 +42,7 @@ public class BuildController : MonoBehaviour {
 		// load them from the 
 		structurePrototypes = new Dictionary<int, Structure> ();
 		ReadStructuresFromXML();
-
-
-		structurePrototypes.Add (0, new Road (0,"dirtroad"));
+		structurePrototypes.Add (5, new MineStructure (5));
 		structurePrototypes.Add (1, new MarketBuilding (1));
 		structurePrototypes.Add (2, new Warehouse (2));
 		structurePrototypes.Add (3, new Growable (3,"tree",allItems[1]));
@@ -124,40 +122,30 @@ public class BuildController : MonoBehaviour {
 			return;
 		}
 		if (forEachTileOnce == false) {
-			Structure s = structure.Clone ();
-			if (s.PlaceStructure (tiles) == false) {
-				return;
-			}
-			if (cbStructureCreated != null) {
-				cbStructureCreated (s);
-			}
-			s.buildID = buildID;
-			buildID++;
-			if (tiles [0].myCity != null) {
-				tiles [0].myCity.addStructure (s);
-				s.city = tiles [0].myCity;
-			}
+			RealBuild (tiles,structure);
 		} else {
 			foreach (Tile tile in tiles) {
-				Structure s = structure.Clone ();
-				List<Tile> temp = new List<Tile> ();
-				temp.Add (tile);
-				if (s.PlaceStructure (temp) == false) {
-					continue;
-				}
-				if (cbStructureCreated != null) {
-					cbStructureCreated (s);
-				}
-				s.buildID = buildID;
-				buildID++;
-				if (tiles [0].myCity != null) {
-					tiles [0].myCity.addStructure (s);
-					s.city = tiles [0].myCity;
-				}
+				List<Tile> t = new List<Tile> ();
+				t.Add (tile);
+				RealBuild (t,structure);
 			}
 		}
 	}
-
+	protected void RealBuild(List<Tile> tiles,Structure structure){
+		Structure s = structure.Clone ();
+		if (s.PlaceStructure (tiles) == false) {
+			return;
+		}
+		if (cbStructureCreated != null) {
+			cbStructureCreated (s);
+		}
+		s.buildID = buildID;
+		buildID++;
+		if (tiles [0].myCity != null) {
+			tiles [0].myCity.addStructure (s);
+			s.city = tiles [0].myCity;
+		}
+	}
 
 	public void BuildOnTile(int id, List<Tile> tiles){
 		if(structurePrototypes.ContainsKey (id) == false){
@@ -166,6 +154,9 @@ public class BuildController : MonoBehaviour {
 		BuildOnTile (tiles, true, structurePrototypes[id]);
 	}
 	public City CreateCity(Tile t){
+		if(t.myIsland == null){
+			return null;
+		}
 		if(t.myCity != null){
 			return null;
 		}
@@ -240,6 +231,7 @@ public class BuildController : MonoBehaviour {
 			int ID = int.Parse(node.GetAttribute("ID"));
 			string name = node.SelectSingleNode("EN"+ "_Name").InnerText;
 			Road road = new Road (ID,name);
+			road.PopulationLevel= int.Parse(node.SelectSingleNode("Pop_Level").InnerText); 
 			structurePrototypes [ID] = road;
 		}
 	}

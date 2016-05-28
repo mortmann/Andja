@@ -182,7 +182,7 @@ public class Pathfinding  {
 	public Path_AStar GetPathStar(){
 		// Generate a path to our destination
 		if (pathmode == path_mode.world) {
-			return new Path_AStar (currTile.world, currTile, destTile); // This will calculate a path from curr to dest.
+			return new Path_AStar (World.current, currTile, destTile); // This will calculate a path from curr to dest.
 		} else if (pathmode == path_mode.island) {
 			return new Path_AStar (currTile.myIsland, currTile, destTile);
 		} else if (pathmode == path_mode.route) {
@@ -230,7 +230,7 @@ public class Pathfinding  {
 
 	public void AddMovementCommand(float x, float y) {
 		IsAtDest = false;
-		destTile = currTile.world.GetTileAt (x, y);
+		destTile = World.current.GetTileAt (x, y);
 		dest_X = x;
 		dest_Y = y;
 	}

@@ -6,11 +6,15 @@ public class PlayerController : MonoBehaviour {
 	List<City> myCities;
 	public int change { get; protected set;}
 	public int balance { get; protected set;}
+	public int maxPopulationCount { get; set;}
+	public int maxPopulationLevel { get; set;}
 	float balanceTicks;
 	float tickTimer;
 
 	// Use this for initialization
-	void Start () {
+	void Awake () {
+		maxPopulationCount = 0;
+		maxPopulationLevel = 0;
 		myCities = new List<City> ();
 		change = -10;
 		balance = 50000;
@@ -26,8 +30,8 @@ public class PlayerController : MonoBehaviour {
 		tickTimer -= Time.deltaTime;
 		if(tickTimer<=0){
 			int citychange=0;
-			foreach (City c in myCities) {
-				citychange += c.cityBalance;
+			for (int i = 0; i < myCities.Count; i++) {
+				citychange += myCities[i].cityBalance;
 			}
 			tickTimer = balanceTicks;
 			balance += change+citychange;

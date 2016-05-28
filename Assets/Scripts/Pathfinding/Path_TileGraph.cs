@@ -215,12 +215,12 @@ public class Path_TileGraph {
 		if( Mathf.Abs(dX) + Mathf.Abs(dY) == 2 ) {
 			// We are diagonal
 
-			if( curr.world.GetTileAt( curr.X - dX, curr.Y ).movementCost == 0 ) {
+			if( World.current.GetTileAt( curr.X - dX, curr.Y ).movementCost == 0 ) {
 				// East or West is unwalkable, therefore this would be a clipped movement.
 				return true;
 			}
 
-			if( curr.world.GetTileAt( curr.X, curr.Y - dY ).movementCost == 0 ) {
+			if( World.current.GetTileAt( curr.X, curr.Y - dY ).movementCost == 0 ) {
 				// North or South is unwalkable, therefore this would be a clipped movement.
 				return true;
 			}
@@ -241,12 +241,12 @@ public class Path_TileGraph {
         if (Mathf.Abs(dX) + Mathf.Abs(dY) == 2) {
             // We are diagonal
 
-            if (curr.world.GetTileAt(curr.X - dX, curr.Y).Type != TileType.Water) {
+			if (World.current.GetTileAt(curr.X - dX, curr.Y).Type != TileType.Water) {
                 // East or West is unfloatable, therefore this would be a driving on ground movement.
                 return true;
             }
 
-            if (curr.world.GetTileAt(curr.X, curr.Y - dY).Type != TileType.Water) {
+			if (World.current.GetTileAt(curr.X, curr.Y - dY).Type != TileType.Water) {
                 // North or South is unfloatable, therefore this would be a driving on ground movement.
                 return true;
             }

@@ -40,13 +40,13 @@ public class City : IXmlSerializable{
     }
 
     internal void update(float deltaTime) {
-        foreach(Structure s in myStructures) {
-            s.update(deltaTime);
+		for (int i = 0; i < myStructures.Count; i++) {
+			myStructures[i].update(deltaTime);
         }
 		useTickTimer -= deltaTime;
 		if(useTickTimer>=0){
-			foreach(Need n in allNeeds){
-				n.TryToConsumThisIn (this,n.startLevel,citizienCount);
+			for (int i = 0; i < allNeeds.Count; i++) {
+				allNeeds[i].TryToConsumThisIn (this,allNeeds[i].startLevel,citizienCount);
 			}
 		}
     }

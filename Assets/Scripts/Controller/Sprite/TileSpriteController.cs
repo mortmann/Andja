@@ -6,6 +6,8 @@ public class TileSpriteController : MonoBehaviour {
     Dictionary<Tile, GameObject> tileGameObjectMap;
     public Sprite waterSprite;
     public Sprite dirtSprite;
+	public Sprite mountainSprite;
+
 	public Material darkMaterial;
 	Material clearMaterial;
 	public Material highlightMaterial;
@@ -62,7 +64,9 @@ public class TileSpriteController : MonoBehaviour {
             tile_go.GetComponent<SpriteRenderer>().sprite = waterSprite;
         } else if (tile_data.Type == TileType.Dirt) {
             tile_go.GetComponent<SpriteRenderer>().sprite = dirtSprite;
-        } else {
+		} else if (tile_data.Type == TileType.Mountain) {
+			tile_go.GetComponent<SpriteRenderer>().sprite = mountainSprite;
+		} else {
             Debug.LogError("OnTileTypeChanged - Unrecognized tile type.");
         }
 

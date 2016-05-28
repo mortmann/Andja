@@ -14,6 +14,8 @@ public class World : IXmlSerializable{
     public List<Island> islandList { get; protected set; }
     public List<Unit> units { get; protected set; }
 	public List<Need> allNeeds;
+	public static World current { get; protected set; }
+
 
     Action<Unit> cbUnitCreated;
 	Action<Worker> cbWorkerCreated;
@@ -22,48 +24,42 @@ public class World : IXmlSerializable{
     //get { return height; } protected set { height = value;}
 
     public World(int width = 1000, int height = 1000){
-        this.Width = width;
-        this.Height = height;
-        tiles = new Tile[width, height];
-        for (int x = 0; x < width; x++) {
-            for (int y= 0; y < height ; y++) {
-                tiles[x, y] = new Tile(this, x, y);
-                if (x > 40 && x < 60) {
-                    if (y > 40 && y < 60) {
-                        tiles[x, y].Type = TileType.Dirt;
-                    }
-                }
-            }
-        }
-        
-//		LoadPrototypsNeedsFromXML ();
-
-        tileGraph = new Path_TileGraph(this);
-        islandList = new List<Island>();
-        units = new List<Unit>();
-//        CreateUnit(tiles[30, 30]);    
-        islandList.Add(new Island(tiles[41, 41]));
-		islandList [0].CreateCity ();
-		foreach(Tile t in islandList [0].myTiles){
-			islandList [0].myCities [0].addTile (t);
-		}
+		SetupWorld (width,height);
     }
 	public World(){
 	}
 	public void SetupWorld(int Width, int Height){
+		current = this;
+		this.Width = Width;
+		this.Height = Width;
 //		LoadPrototypsNeedsFromXML ();
 		tiles = new Tile[Width, Height];
 		for (int x = 0; x < Width; x++) {
 			for (int y = 0; y < Height; y++) {
-				tiles [x, y] = new Tile (this, x, y);
+				tiles [x, y] = new Tile (x, y);
+
+				if (x > 40 && x < 60) {
+					if (y > 40 && y < 60) {
+						tiles[x, y].Type = TileType.Dirt;
+					}
+					if (x > 47 && x < 53 && y > 47 && y < 53) {
+						tiles[x, y].Type = TileType.Mountain;
+					}
+				}
+
 			}
 		}
+		//		LoadPrototypsNeedsFromXML ();
 
-		this.Width = Width;
-		this.Height = Width;
 		tileGraph = new Path_TileGraph(this);
 		islandList = new List<Island>();
 		units = new List<Unit>();
+		//        CreateUnit(tiles[30, 30]);    
+		islandList.Add(new Island(tiles[41, 41]));
+		islandList [0].CreateCity ();
+		for (int i = 0; i < islandList [0].myTiles.Count; i++) {
+			islandList [0].myCities [0].addTile (islandList [0].myTiles [i]);
+		}
 	}
     internal void update(float deltaTime) {
         foreach(Island i in islandList) {

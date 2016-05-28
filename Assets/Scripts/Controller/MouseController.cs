@@ -138,9 +138,11 @@ public class MouseController : MonoBehaviour {
 	private void UpdateSingle() {
 		// If we're over a UI element, then bail out from this.
 		if (EventSystem.current.IsPointerOverGameObject ()) {
+			HighlightTiles = null; 
 			return;
 		}
 		if (structure == null) {
+			HighlightTiles = null; 
 			return;
 		}
 		List<Tile> structureTiles = structure.GetBuildingTiles (currFramePosition.x, currFramePosition.y);
@@ -148,7 +150,18 @@ public class MouseController : MonoBehaviour {
 		if (structure.mustBeBuildOnShore) {
 			foreach (Tile t in structureTiles) {
 				if (t != null) {
-					if (structure.correctSpotForOnShore (structureTiles) == false) {
+					if (structure.correctSpotOnShore (structureTiles) == false) {
+						ShowRedPrefabOnTile (t);
+					} else {
+						ShowPrefabOnTile (t);
+					}
+				}
+			}
+		} else 
+		if (structure.mustBeBuildOnMountain) {
+			foreach (Tile t in structureTiles) {
+				if (t != null) {
+					if (structure.correctSpotOnMountain (structureTiles) == false) {
 						ShowRedPrefabOnTile (t);
 					} else {
 						ShowPrefabOnTile (t);
@@ -166,11 +179,6 @@ public class MouseController : MonoBehaviour {
 				}
 			}
 		}
-//		if (highlightTiles != null) {
-//			foreach (Tile t in highlightTiles) {
-//				ShowHighliteOnTile (t);
-//			}
-//		}
 		if (Input.GetMouseButtonDown (0)) {
 			Build (structureTiles);
 		}

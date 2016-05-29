@@ -61,7 +61,7 @@ public class BuildController : MonoBehaviour {
 	public void Update(){
 		if (Input.GetButtonDown ("Rotate")) {
 			if(toBuildStructure != null){
-				toBuildStructure.RotatedStructure ();
+				toBuildStructure.RotateStructure ();
 			}
 		}
 	}
@@ -167,7 +167,6 @@ public class BuildController : MonoBehaviour {
 	}
 
 	public void AddLoadedPlacedStructure(int bid,Structure structure,Tile t){
-		Debug.Log (bid + " " + structure.name + " " + t.toString ());
 		loadedToPlaceStructure.Add (bid,structure);
 		loadedToPlaceTile.Add (bid,t);
 	}

@@ -9,6 +9,7 @@ using System.Xml.Serialization;
 
 public enum BuildTypes {Drag, Path, Single};
 public enum BuildingTyp {Production, Pathfinding, Blocking};
+public enum Direction {N, E, S, W};
 
 public abstract class Structure : IXmlSerializable {
 	//prototype id
@@ -32,6 +33,8 @@ public abstract class Structure : IXmlSerializable {
 
 	public bool canBeBuildOver = false;
 
+	public Direction front = Direction.E; 
+
 	private int _tileWidth;
 	public int tileWidth {
 		get { 
@@ -48,7 +51,7 @@ public abstract class Structure : IXmlSerializable {
 		protected set { _tileWidth = value;}
 	}
 
-	public Tile BuildTile {get { return myBuildingTiles [0]; }}
+	public Tile BuildTile { get { return myBuildingTiles [0]; }}
 
 	private int _tileHeight; 
 	public int tileHeight {
@@ -103,32 +106,28 @@ public abstract class Structure : IXmlSerializable {
 		if(cbStructureChanged != null)
 			cbStructureChanged (this);
 	}
-
     public void RegisterOnChangedCallback(Action<Structure> cb) {
         cbStructureChanged += cb;
     }
-
     public void UnregisterOnChangedCallback(Action<Structure> cb) {
         cbStructureChanged -= cb;
     }
 	public void RegisterOnDestroyCallback(Action<Structure> cb) {
 		cbStructureDestroy += cb;
 	}
-
 	public void UnregisterOnDestroyCallback(Action<Structure> cb) {
 		cbStructureDestroy -= cb;
 	}
 	public bool PlaceStructure(List<Tile> tiles){
 		myBuildingTiles = new List<Tile> ();
-
 		//test if the place is buildable
-		// TODO add check for Mines eg buildings on mountains!
 		// if it has to be on land
 		if (mustBeBuildOnShore == false && mustBeBuildOnMountain == false) {
 			if (PlaceOnLand (tiles) == false) {
 				return false;
 			}
 		}
+		// if it has to be on mountain
 		if (mustBeBuildOnMountain == true && mustBeBuildOnShore == false) {
 			if (PlaceOnMountain (tiles) == false) {
 				return false;
@@ -140,7 +139,7 @@ public abstract class Structure : IXmlSerializable {
 				return false;
 			}
 		}
-
+		//special check for some structures 
 		if (SpecialCheckForBuild (tiles) == false) {
 			return false;
 		}
@@ -166,22 +165,18 @@ public abstract class Structure : IXmlSerializable {
 	}
 
 	protected bool PlaceOnLand(List<Tile> tiles){
-		foreach (var item in tiles) {
-			Debug.Log (item.myCity + "_" + item.myIsland );
-		}
-
 		if (tileWidth == 1 && tileHeight == 1) {
 			if(tiles[0].structures != null && tiles [0].structures.canBeBuildOver){
 				if(tiles [0].structures.name == this.name){
 					return false;
 				}
 			}
-			if (Tile.checkTile (tiles [0]) == false) {
+			if (correctSpotOnLand (tiles) == false) {
 				return false;
 			}
 			myBuildingTiles.Add (tiles [0]);
 		} else {
-			if(correctSpot(tiles)){
+			if(correctSpotOnLand(tiles)){
 				myBuildingTiles.AddRange (tiles);
 			} else {
 				return false;
@@ -197,7 +192,7 @@ public abstract class Structure : IXmlSerializable {
 					return false;
 				}
 			}
-			if (Tile.checkTile (tiles [0]) == false) {
+			if (correctSpotOnMountain  (tiles) == false) {
 				return false;
 			}
 			myBuildingTiles.Add (tiles [0]);
@@ -217,7 +212,7 @@ public abstract class Structure : IXmlSerializable {
 					return false;
 				}
 			}
-			if (Tile.checkTile (tiles[0],mustBeBuildOnShore) == false) {
+			if (correctSpotOnShore (tiles) == false) {
 				return false;
 			}
 			myBuildingTiles.Add (tiles[0]);
@@ -248,6 +243,9 @@ public abstract class Structure : IXmlSerializable {
 		return tiles;
 	}
 	private void CalculatePrototypTiles(){
+		if(buildingRange == 0){
+			return;
+		}
 		List<Tile> temp = new List<Tile> ();
 		float x;
 		float y;
@@ -255,10 +253,10 @@ public abstract class Structure : IXmlSerializable {
 		Tile firstTile = WorldController.Instance.world.GetTileAt (0 + buildingRange+tileWidth/2,0 + buildingRange+tileHeight/2);
 		Vector2 center = new Vector2 (firstTile.X, firstTile.Y);
 		if (tileWidth > 1) {
-			center.x += 0.5f + ((float)tileWidth) / 2 - 1;
+			center.x += 0.5f + ((float)tileWidth) / 2f - 1;
 		}
 		if (tileHeight > 1) {
-			center.y += 0.5f + ((float)tileHeight) / 2 - 1;
+			center.y += 0.5f + ((float)tileHeight) / 2f - 1;
 		}
 		World w = WorldController.Instance.world;
 		float radius = this.buildingRange + 1.5f;
@@ -277,11 +275,8 @@ public abstract class Structure : IXmlSerializable {
 				}
 			}
 		}
-		if(buildingRange == 0){
-			return;
-		}
 		myPrototypeTiles = new List<Tile> ();
-
+		//like flood fill the inner circle
 		Queue<Tile> tilesToCheck = new Queue<Tile> ();
 		tilesToCheck.Enqueue (firstTile.South ());
 		while (tilesToCheck.Count > 0) {
@@ -323,7 +318,7 @@ public abstract class Structure : IXmlSerializable {
 	
 
 	public abstract void OnBuild();
-	public bool correctSpot(List<Tile> tiles){
+	public bool correctSpotOnLand(List<Tile> tiles){
 		foreach(Tile t in tiles){
 			if (Tile.checkTile (t) == false) {
 				return false;

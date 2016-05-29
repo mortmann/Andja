@@ -7,7 +7,6 @@ using System.Xml.Serialization;
 
 public class ProductionBuilding : UserStructure {
 
-
 	public Item[] intake;
 	public int[] needIntake;
 	public int[] maxIntake;
@@ -23,7 +22,7 @@ public class ProductionBuilding : UserStructure {
 	public int growableReadyCount;
 	Queue<Structure> workingGrowables;
 
-	public float Efficiency{
+	public virtual float Efficiency{
 		get {
 			return Mathf.Round(((float)OnRegisterCallbacks / (float)myRangeTiles.Count)*1000)/10f;
 		}
@@ -52,6 +51,8 @@ public class ProductionBuilding : UserStructure {
 		this.hasHitbox = hasHitbox;
 		this.myBuildingTyp = BuildingTyp.Production;
 		BuildTyp = BuildTypes.Single;
+	}
+	protected ProductionBuilding(){
 	}
 	public ProductionBuilding(string name,string growable, float time, Item[] output , int tileWidth, int tileHeight,int buildcost,Item[] buildItems,int maintenancecost,bool hasHitbox=true, bool mustBeBuildOnShore=false) {
 		this.name = name;

@@ -36,7 +36,6 @@ public class MouseController : MonoBehaviour {
 	BuildController bmc;
 	UIController uic;
 
-
 	protected Structure _structure;
 	public Structure structure {
 		get{ 
@@ -47,6 +46,7 @@ public class MouseController : MonoBehaviour {
 			_structure = value;
 		}
 	}
+
 	public MouseState mouseState = MouseState.Idle;
     private Vector3 pathStartPosition;
     private Path_AStar path;
@@ -126,7 +126,6 @@ public class MouseController : MonoBehaviour {
 				if (t.structures != null) {
 					uic.OpenStructureUI (t.structures);
 				}
-
 			}
 		} else {
 			if (EventSystem.current.IsPointerOverGameObject ()) {
@@ -210,6 +209,9 @@ public class MouseController : MonoBehaviour {
 		previewGameObjects.Add(go);
 	}
 	void ShowHighliteOnTiles(){
+		if (structure.buildingRange == 0) {
+			return;
+		}
 		if (HighlightTiles == null) {
 			HighlightTiles = new HashSet<Tile> ();
 		}

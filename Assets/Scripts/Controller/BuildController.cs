@@ -30,6 +30,10 @@ public class BuildController : MonoBehaviour {
 	}
 
 	public void Awake(){
+		if (Instance != null) {
+			Debug.LogError("There should never be two world controllers.");
+		}
+		Instance = this;
 		buildID = 0;
 		// prototypes of items
 		allItems = new Dictionary<int, Item> ();
@@ -52,11 +56,6 @@ public class BuildController : MonoBehaviour {
 			null,null,3,items,
 			2,2,500,null,50
 		));
-
-        if (Instance != null) {
-            Debug.LogError("There should never be two world controllers.");
-        }
-        Instance = this;
 	}
 
 	public void Update(){

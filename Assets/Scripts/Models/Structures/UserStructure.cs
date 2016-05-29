@@ -6,7 +6,6 @@ using System.Xml.Serialization;
 
 public abstract class UserStructure : Structure {
 	public float health;
-
 	protected int maxNumberOfWorker = 1;
 	public List<Worker> myWorker;
 	public List<ProductionBuilding> jobsToDo;

@@ -18,7 +18,7 @@ public class UIController : MonoBehaviour {
 	}
 
 	public void OpenStructureUI(Structure str){
-		if (str is ProductionBuilding) {
+		if (str is ProductionBuilding || str is MineStructure) {
 			OpenProduktionUI ((ProductionBuilding)str);
 		}
 		if (str is MarketBuilding || str is Warehouse) {

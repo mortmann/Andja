@@ -17,6 +17,8 @@ public class Island : IXmlSerializable{
     //TODO: get a tile to start with!
 	public Island(Tile startTile, Climate climate = Climate.Middle) {
 		myFertilities = new List<Fertility> ();
+		myRessources = new Dictionary<string, int> ();
+		myRessources ["stone"] = int.MaxValue;
         myTiles = new List<Tile>();
         myTiles.Add(startTile);
         myCities = new List<City>();

@@ -12,7 +12,6 @@ public class MouseController : MonoBehaviour {
 
     public GameObject greenTileCursorPrefab;
 	public GameObject redTileCursorPrefab;
-	public GameObject highlightTileCursorPrefab;
 	// The world-position of the mouse last frame.
 	Vector3 lastFramePosition;
 	Vector3 currFramePosition;
@@ -84,6 +83,9 @@ public class MouseController : MonoBehaviour {
 		
         currFramePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         currFramePosition.z = 0;
+		if(currFramePosition.y < 0 || currFramePosition.x < 0){
+			return;
+		}
 		RemovePrefabs ();
         //UpdateCursor();
         if (mouseState == MouseState.Drag) { 
@@ -150,6 +152,8 @@ public class MouseController : MonoBehaviour {
 			foreach (Tile t in structureTiles) {
 				if (t != null) {
 					if (structure.correctSpotOnShore (structureTiles) == false) {
+						int r = structure.ChangePosition ((int)currFramePosition.x, (int)currFramePosition.y);
+						structure.rotated = r;
 						ShowRedPrefabOnTile (t);
 					} else {
 						ShowPrefabOnTile (t);
@@ -161,6 +165,8 @@ public class MouseController : MonoBehaviour {
 			foreach (Tile t in structureTiles) {
 				if (t != null) {
 					if (structure.correctSpotOnMountain (structureTiles) == false) {
+						int r = structure.ChangePosition ((int)currFramePosition.x, (int)currFramePosition.y);
+						structure.rotated = r;
 						ShowRedPrefabOnTile (t);
 					} else {
 						ShowPrefabOnTile (t);
@@ -216,7 +222,6 @@ public class MouseController : MonoBehaviour {
 			HighlightTiles = new HashSet<Tile> ();
 		}
 
-
 		HashSet<Tile> temp = new HashSet<Tile>();
 		temp.UnionWith (HighlightTiles);
 		HighlightTiles.Clear ();
@@ -256,8 +261,6 @@ public class MouseController : MonoBehaviour {
 
     void UpdateDragging() {
 		// If we're over a UI element, then bail out from this.
-
-
 		if( EventSystem.current.IsPointerOverGameObject() ) {
 			return;
 		}
@@ -409,8 +412,6 @@ public class MouseController : MonoBehaviour {
 	public void Escape(){
 		ResetBuilding (null);
 		this.mouseState = MouseState.Idle;
-
-
 	}
 
 

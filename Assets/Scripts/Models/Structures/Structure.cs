@@ -9,7 +9,7 @@ using System.Xml.Serialization;
 
 public enum BuildTypes {Drag, Path, Single};
 public enum BuildingTyp {Production, Pathfinding, Blocking};
-public enum Direction {N, E, S, W};
+public enum Direction {None, N, E, S, W};
 
 public abstract class Structure : IXmlSerializable {
 	//prototype id
@@ -33,7 +33,7 @@ public abstract class Structure : IXmlSerializable {
 
 	public bool canBeBuildOver = false;
 
-	public Direction front = Direction.E; 
+	public Direction mustFrontBuildDir = Direction.None; 
 
 	private int _tileWidth;
 	public int tileWidth {
@@ -165,6 +165,12 @@ public abstract class Structure : IXmlSerializable {
 	}
 
 	protected bool PlaceOnLand(List<Tile> tiles){
+		for (int i = 0; i < tiles.Count; i++) {
+			if(tiles[i].structures!=null && tiles[i].structures.canBeBuildOver == false){
+				return false;
+			}
+		}
+
 		if (tileWidth == 1 && tileHeight == 1) {
 			if(tiles[0].structures != null && tiles [0].structures.canBeBuildOver){
 				if(tiles [0].structures.name == this.name){
@@ -185,7 +191,6 @@ public abstract class Structure : IXmlSerializable {
 		return true;
 	}
 	protected bool PlaceOnMountain(List<Tile> tiles){
-		Debug.Log ("PlaceOnMountain");
 		if (tileWidth == 1 && tileHeight == 1) {
 			if (tiles [0].structures != null && tiles [0].structures.canBeBuildOver) {
 				if (tiles [0].structures.name == this.name) {
@@ -372,8 +377,26 @@ public abstract class Structure : IXmlSerializable {
 		}
 		return true;
 	}
-
-	public void RotatedStructure(){
+	public int ChangePosition(int x , int y, int rotate = 0){
+		if(rotate == 360){
+			return 0;
+		}
+		this.rotated = rotate;
+		if(mustBeBuildOnMountain){
+			List<Tile> t = this.GetBuildingTiles (x,y);
+			if(this.correctSpotOnMountain (t)==false){
+				return ChangePosition (x,y,rotate+90);
+			}	
+		}
+		if(mustBeBuildOnShore){
+			List<Tile> t = this.GetBuildingTiles (x,y);
+			if(this.correctSpotOnShore (t)==false){
+				return ChangePosition (x,y,rotate+90);
+			}	
+		}
+		return rotate;
+	}
+	public void RotateStructure(){
 		if(canRotate == false) {
 			return;
 		}

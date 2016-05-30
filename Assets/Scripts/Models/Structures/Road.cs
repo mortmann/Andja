@@ -14,6 +14,7 @@ public class Road : Structure {
 	}
 	Action<Road> cbRoadChanged;
 	public Road(int ID,string name, int buildcost = 50){
+		canBeUpgraded = true;
 		this.ID = ID;
 		this.name = name;
 		this.tileWidth = 1;
@@ -25,6 +26,7 @@ public class Road : Structure {
 		buildingRange = 0;
 	}
 	protected Road(Road str){
+		this.canBeUpgraded = str.canBeUpgraded;
 		this.ID = str.ID;
 		this.name = str.name;
 		this.tileWidth = str.tileWidth;
@@ -117,8 +119,6 @@ public class Road : Structure {
 	public void UnregisterOnRoadCallback(Action<Road> cb) {
 		cbRoadChanged -= cb;
 	}
-
-
 	public override void WriteXml (XmlWriter writer){
 		BaseWriteXml (writer);
 	}

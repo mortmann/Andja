@@ -15,6 +15,7 @@ public class MouseController : MonoBehaviour {
 	// The world-position of the mouse last frame.
 	Vector3 lastFramePosition;
 	Vector3 currFramePosition;
+
 	HashSet<Tile> _highlightTiles;
 	HashSet<Tile> HighlightTiles {
 		get { return _highlightTiles; }
@@ -152,7 +153,7 @@ public class MouseController : MonoBehaviour {
 			foreach (Tile t in structureTiles) {
 				if (t != null) {
 					if (structure.correctSpotOnShore (structureTiles) == false) {
-						int r = structure.ChangePosition ((int)currFramePosition.x, (int)currFramePosition.y);
+						int r = structure.ChangeRotation ((int)currFramePosition.x, (int)currFramePosition.y);
 						structure.rotated = r;
 						ShowRedPrefabOnTile (t);
 					} else {
@@ -165,7 +166,7 @@ public class MouseController : MonoBehaviour {
 			foreach (Tile t in structureTiles) {
 				if (t != null) {
 					if (structure.correctSpotOnMountain (structureTiles) == false) {
-						int r = structure.ChangePosition ((int)currFramePosition.x, (int)currFramePosition.y);
+						int r = structure.ChangeRotation ((int)currFramePosition.x, (int)currFramePosition.y);
 						structure.rotated = r;
 						ShowRedPrefabOnTile (t);
 					} else {
@@ -176,7 +177,7 @@ public class MouseController : MonoBehaviour {
 		} else {
 			foreach (Tile t in structureTiles) {
 				if (t != null) {
-					if (Tile.IsBuildType (t.Type) == false) {
+					if (Tile.IsBuildType (t.Type) == false || t.structures !=null && t.structures.canBeBuildOver == false) {
 						ShowRedPrefabOnTile (t);
 					} else {
 						ShowPrefabOnTile (t);

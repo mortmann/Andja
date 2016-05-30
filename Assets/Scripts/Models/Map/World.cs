@@ -273,8 +273,8 @@ public class World : IXmlSerializable{
 			do {
 				int x = int.Parse( reader.GetAttribute("currTile_X") );
 				int y = int.Parse( reader.GetAttribute("currTile_Y") );
-				Unit c = CreateUnit( tiles[x,y] );
-				c.ReadXml(reader);
+				Unit u = CreateUnit( tiles[x,y] );
+				u.ReadXml(reader);
 			} while( reader.ReadToNextSibling("Unit") );
 		}
 	}

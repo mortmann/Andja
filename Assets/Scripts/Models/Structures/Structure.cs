@@ -32,6 +32,7 @@ public abstract class Structure : IXmlSerializable {
 	public bool canRotate = true;
 
 	public bool canBeBuildOver = false;
+	public bool canBeUpgraded = false;
 
 	public Direction mustFrontBuildDir = Direction.None; 
 
@@ -170,7 +171,6 @@ public abstract class Structure : IXmlSerializable {
 				return false;
 			}
 		}
-
 		if (tileWidth == 1 && tileHeight == 1) {
 			if(tiles[0].structures != null && tiles [0].structures.canBeBuildOver){
 				if(tiles [0].structures.name == this.name){
@@ -377,7 +377,7 @@ public abstract class Structure : IXmlSerializable {
 		}
 		return true;
 	}
-	public int ChangePosition(int x , int y, int rotate = 0){
+	public int ChangeRotation(int x , int y, int rotate = 0){
 		if(rotate == 360){
 			return 0;
 		}
@@ -385,13 +385,13 @@ public abstract class Structure : IXmlSerializable {
 		if(mustBeBuildOnMountain){
 			List<Tile> t = this.GetBuildingTiles (x,y);
 			if(this.correctSpotOnMountain (t)==false){
-				return ChangePosition (x,y,rotate+90);
+				return ChangeRotation (x,y,rotate+90);
 			}	
 		}
 		if(mustBeBuildOnShore){
 			List<Tile> t = this.GetBuildingTiles (x,y);
 			if(this.correctSpotOnShore (t)==false){
-				return ChangePosition (x,y,rotate+90);
+				return ChangeRotation (x,y,rotate+90);
 			}	
 		}
 		return rotate;

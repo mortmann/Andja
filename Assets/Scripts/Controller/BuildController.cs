@@ -56,6 +56,7 @@ public class BuildController : MonoBehaviour {
 			null,null,3,items,
 			2,2,500,null,50
 		));
+		structurePrototypes.Add (6,new HomeBuilding (6));
 	}
 
 	public void Update(){

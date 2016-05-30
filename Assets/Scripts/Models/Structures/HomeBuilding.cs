@@ -13,7 +13,8 @@ public class HomeBuilding : Structure{
 	public bool canUpgrade;
 	public int buildingLevel;
 
-	public HomeBuilding(){
+	public HomeBuilding(int pid){
+		this.ID = pid;
 		canUpgrade = false;
 		tileWidth = 2;
 		tileHeight = 2;
@@ -23,8 +24,10 @@ public class HomeBuilding : Structure{
 		maxLivingSpaces = 8;
 		buildingLevel = 0;
 		name = "Home";
+
 	}
 	protected HomeBuilding(HomeBuilding b){
+		this.ID = b.ID;
 		this.people = b.people;
 		this.tileWidth = b.tileWidth;
 		this.tileHeight = b.tileHeight;

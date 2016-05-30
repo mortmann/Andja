@@ -36,6 +36,7 @@ public class City : IXmlSerializable{
         myStructures = new List<Structure>();
 		myTiles = new List<Tile> ();
 		myRoutes = new List<Route> ();
+		myHomes = new List<HomeBuilding> ();
 		useTickTimer = useTick;
     }
 

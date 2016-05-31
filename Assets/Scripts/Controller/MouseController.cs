@@ -147,13 +147,13 @@ public class MouseController : MonoBehaviour {
 			HighlightTiles = null; 
 			return;
 		}
-		List<Tile> structureTiles = structure.GetBuildingTiles (currFramePosition.x, currFramePosition.y);
+		List<Tile> structureTiles = structure.GetBuildingTiles (GetTileUnderneathMouse().X, GetTileUnderneathMouse().Y);
 		ShowHighliteOnTiles ();
 		if (structure.mustBeBuildOnShore) {
 			foreach (Tile t in structureTiles) {
 				if (t != null) {
 					if (structure.correctSpotOnShore (structureTiles) == false) {
-						int r = structure.ChangeRotation ((int)currFramePosition.x, (int)currFramePosition.y);
+						int r = structure.ChangeRotation (GetTileUnderneathMouse().X, GetTileUnderneathMouse().Y);
 						structure.rotated = r;
 						ShowRedPrefabOnTile (t);
 					} else {
@@ -166,7 +166,7 @@ public class MouseController : MonoBehaviour {
 			foreach (Tile t in structureTiles) {
 				if (t != null) {
 					if (structure.correctSpotOnMountain (structureTiles) == false) {
-						int r = structure.ChangeRotation ((int)currFramePosition.x, (int)currFramePosition.y);
+						int r = structure.ChangeRotation (GetTileUnderneathMouse().X, GetTileUnderneathMouse().Y);
 						structure.rotated = r;
 						ShowRedPrefabOnTile (t);
 					} else {
@@ -188,6 +188,9 @@ public class MouseController : MonoBehaviour {
 		if (Input.GetMouseButtonDown (0)) {
 			Build (structureTiles);
 		}
+	}
+	public Tile GetTileUnderneathMouse(){
+		return World.current.GetTileAt (currFramePosition.x+0.5f,currFramePosition.y+0.5f);
 	}
 
 	public void RemovePrefabs(){
@@ -226,7 +229,7 @@ public class MouseController : MonoBehaviour {
 		HashSet<Tile> temp = new HashSet<Tile>();
 		temp.UnionWith (HighlightTiles);
 		HighlightTiles.Clear ();
-		HighlightTiles = new HashSet<Tile> (structure.GetInRangeTiles (WorldController.Instance.world.GetTileAt (currFramePosition.x, currFramePosition.y)));
+		HighlightTiles = new HashSet<Tile> (structure.GetInRangeTiles (GetTileUnderneathMouse()));
 //		Debug.Log (temp.Count + " " + highlightTiles.Count);
 		foreach (Tile t in temp) {
 			if (t == null || HighlightTiles.Contains (t) == true) {

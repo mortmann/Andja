@@ -2040,6 +2040,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5b19a32f8b9b4da47a5c7ab8089fbb54, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  circleSprite: {fileID: 21300000, guid: b4c5456699349e44e8d837cb9d7a1aa0, type: 3}
 --- !u!4 &729713878
 Transform:
   m_ObjectHideFlags: 0
@@ -5333,8 +5334,6 @@ MonoBehaviour:
   greenTileCursorPrefab: {fileID: 148012, guid: 3e7dad4f6217dd643b1db6f62d7120da,
     type: 2}
   redTileCursorPrefab: {fileID: 185664, guid: 6f9c3aff1a8f22840bb44f849ea52e43, type: 2}
-  highlightTileCursorPrefab: {fileID: 159820, guid: 736314db0c3946145a6f12324ec88b6d,
-    type: 2}
   mouseState: 0
 --- !u!4 &1425382437
 Transform:

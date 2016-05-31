@@ -112,10 +112,6 @@ public class BuildController : MonoBehaviour {
 		if (cbStructureCreated != null) {
 			cbStructureCreated (s);
 		}
-		if (t.myCity != null) {
-			t.myIsland.AddStructure (s);
-			s.city = t.myCity;
-		}
 	}
 	public void BuildOnTile(List<Tile> tiles, bool forEachTileOnce, Structure structure){
 		if(tiles == null || tiles.Count == 0 || WorldController.Instance.isPaused){

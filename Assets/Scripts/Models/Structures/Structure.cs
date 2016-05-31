@@ -33,6 +33,7 @@ public abstract class Structure : IXmlSerializable {
 
 	public bool canBeBuildOver = false;
 	public bool canBeUpgraded = false;
+	public bool showExtraUI = false;
 
 	public Direction mustFrontBuildDir = Direction.None; 
 
@@ -102,7 +103,6 @@ public abstract class Structure : IXmlSerializable {
 	public virtual void update (float deltaTime){
     }
 
-
 	public void callbackIfnotNull(){
 		if(cbStructureChanged != null)
 			cbStructureChanged (this);
@@ -147,9 +147,16 @@ public abstract class Structure : IXmlSerializable {
 
 		//if we are here we can build this and
 		//set the tiles to the this structure -> claim the tiles!
+		bool hasCity = false;
 		neighbourTiles = new List<Tile>();
 		foreach (Tile mt in myBuildingTiles) {
 			mt.structures = this;
+			if(mt.myCity!=null && hasCity == false){
+				this.city = mt.myCity;
+				hasCity = true;
+				mt.myIsland.AddStructure (this);
+				Debug.Log ("_" + mt.myIsland + " " + city.name);
+			}
 			foreach(Tile nbt in mt.GetNeighbours()){
 				if (myBuildingTiles.Contains (nbt) == false) {
 					neighbourTiles.Add (nbt);
@@ -238,6 +245,8 @@ public abstract class Structure : IXmlSerializable {
 
 
 	public List<Tile> GetBuildingTiles(float x , float y){
+		x = Mathf.FloorToInt (x);
+		y = Mathf.FloorToInt (y);
 		List<Tile> tiles = new List<Tile> ();
 		for (int w = 0; w < tileWidth; w++) {
 			tiles.Add ( World.current.GetTileAt(x + w, y));
@@ -323,6 +332,10 @@ public abstract class Structure : IXmlSerializable {
 	
 
 	public abstract void OnBuild();
+	public virtual void OnClick (){
+	}
+	public virtual void OnClickClose (){
+	}
 	public bool correctSpotOnLand(List<Tile> tiles){
 		foreach(Tile t in tiles){
 			if (Tile.checkTile (t) == false) {
@@ -337,6 +350,8 @@ public abstract class Structure : IXmlSerializable {
 	public bool correctSpotOnShore(List<Tile> tiles){
 		return correctSpotForOn (tiles,TileType.Water);
 	}
+
+	//TODO add "front" consideration in so tht only if it is placed correctly it can be placed here!
 	public bool correctSpotForOn(List<Tile> tiles, TileType tt){
 		int other = 0;
 		int land  = 0;

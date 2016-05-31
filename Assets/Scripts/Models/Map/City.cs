@@ -25,6 +25,8 @@ public class City : IXmlSerializable{
 	public float useTick;
 	public float useTickTimer;
 
+	public string name {get{return "City "+island.myCities.IndexOf (this);}}
+
 	public City(Island island,List<Need> allNeeds) {
 		citizienCount = new int[4];
 		for (int i = 0; i < citizienCount.Length; i++) {

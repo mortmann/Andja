@@ -11,6 +11,9 @@ public class CityInventoryUI : MonoBehaviour {
 
 
 	public void ShowInventory(City city){
+		if(city == null){
+			return;
+		}
 		inventory = city.myInv;
 		inventory.RegisterOnChangedCallback (OnInventoryChange);
 		itemToGO = new Dictionary<Item, GameObject> ();

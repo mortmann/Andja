@@ -10,6 +10,8 @@ public class UIController : MonoBehaviour {
 	public GameObject rightCanvas;
 	public GameObject CityInventoryCanvas;
 
+	public Structure oldStr;
+
 	void Start(){
 		uiInfoCanvas.SetActive (false);
 		chooseBuildCanvas.SetActive (false);
@@ -18,6 +20,13 @@ public class UIController : MonoBehaviour {
 	}
 
 	public void OpenStructureUI(Structure str){
+		if(oldStr == str || str != null){
+			return;
+		} else {
+			oldStr.OnClickClose ();
+		}
+		oldStr = str;
+		str.OnClick ();
 		if (str is ProductionBuilding || str is MineStructure) {
 			OpenProduktionUI ((ProductionBuilding)str);
 		}
@@ -26,6 +35,10 @@ public class UIController : MonoBehaviour {
 		}
 	}
 	public void OpenCityInventory(City city){
+		if(city == null){
+			Debug.Log ("nocity");
+			return;
+		}
 		toggleRightUI ();
 		CityInventoryCanvas.SetActive (true);
 		CityInventoryCanvas.GetComponent<CityInventoryUI>().ShowInventory (city);
@@ -73,6 +86,10 @@ public class UIController : MonoBehaviour {
 	}
 
 	public void CloseInfoUI (){
+		if(oldStr != null){
+			oldStr.OnClickClose ();
+			oldStr = null;
+		}
 		unitCanvas.SetActive (false);
 		buildingCanvas.SetActive (false);
 		uiInfoCanvas.SetActive (false);

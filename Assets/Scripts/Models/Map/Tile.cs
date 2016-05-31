@@ -78,6 +78,9 @@ public class Tile : IXmlSerializable {
 			if (Type == TileType.Water) {
 				return 1;  
 			}
+			if (Type == TileType.Mountain) {
+				return Mathf.Infinity;  
+			}
 			if (structures == null){
 				return baseTileMovementCost;
 			}

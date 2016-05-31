@@ -64,7 +64,7 @@ public class Island : IXmlSerializable{
         }
     }
 	public void AddStructure(Structure str){
-		str.myBuildingTiles [0].myCity.addStructure (str);
+		str.city.addStructure (str);
 	}
     public City CreateCity() {
 		City c = new City(this,World.current.allNeeds);

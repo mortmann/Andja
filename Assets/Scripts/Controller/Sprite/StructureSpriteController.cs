@@ -6,7 +6,7 @@ using UnityEngine.UI;
 public class StructureSpriteController : MonoBehaviour {
 	Dictionary<Structure, GameObject> structureGameObjectMap;
 	Dictionary<string, Sprite> structureSprites = new Dictionary<string, Sprite>();
-
+	public Sprite circleSprite;
 	BuildController bm;
 
 	World world {
@@ -34,15 +34,10 @@ public class StructureSpriteController : MonoBehaviour {
 		if (structure.tileHeight> 1) {
 			y = 0.5f + ((float)structure.tileHeight) / 2 - 1;
 		}
-		Tile t = structure.myBuildingTiles[0];
-//		float z;
-//		if (structure.rotated == 0) {
-//			z = 0;
-//		}
+		Tile t = structure.BuildTile;
 
 		go.transform.position = new Vector3 (t.X + x,t.Y + y);
 		go.transform.Rotate (Vector3.forward*structure.rotated); // = new Quaternion (0, 0, structure.rotated, 100);
-//		go.transform.Rotate (new Vector3(0,0,structure.rotated));
 		go.transform.SetParent (this.transform,true);
 		go.name = structure.name +"_"+structure.myBuildingTiles [0].toString ();
 		SpriteRenderer sr = go.AddComponent<SpriteRenderer>();
@@ -92,6 +87,13 @@ public class StructureSpriteController : MonoBehaviour {
 		if(structure is Growable){
 			SpriteRenderer sr = structureGameObjectMap[structure].GetComponent<SpriteRenderer>();
 			sr.sprite = structureSprites[structure.name + "_" + ((Growable)structure).currentStage];
+		}
+		if(structure is Warehouse){
+			GameObject go = new GameObject ();
+			go.transform.position = structureGameObjectMap [structure].transform.position;
+			go.transform.localScale = new Vector3(((Warehouse)structure).shipRange,((Warehouse)structure).shipRange,0);
+			go.AddComponent<SpriteRenderer> ().sprite = circleSprite;
+			go.transform.SetParent (structureGameObjectMap [structure].transform);
 		}
 	}
 	void OnStrucutureDestroyed(Structure structure) {

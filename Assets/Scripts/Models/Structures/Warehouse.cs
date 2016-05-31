@@ -7,7 +7,7 @@ using System.Xml.Serialization;
 public class Warehouse : MarketBuilding {
 
 	public float buildRange = 18;
-
+	public int shipRange = 10;
 	public Warehouse(int id){
 		this.ID = id;
 		tileWidth = 3;
@@ -17,6 +17,8 @@ public class Warehouse : MarketBuilding {
 		maintenancecost = 10;
 		mustBeBuildOnShore = true;
 		BuildTyp = BuildTypes.Single;
+		showExtraUI = true;
+		hasHitbox = true;
 	}
 	public Warehouse(){
 	}
@@ -32,6 +34,8 @@ public class Warehouse : MarketBuilding {
 		this.rotated = str.rotated;
 		this.hasHitbox = str.hasHitbox;
 		this.buildingRange = str.buildingRange;
+		this.showExtraUI = str.showExtraUI;
+		this.hasHitbox = str.hasHitbox;
 	}
 
 
@@ -55,15 +59,18 @@ public class Warehouse : MarketBuilding {
 		}
 	}
 
+	public override void OnClick (){
+		
+		callbackIfnotNull ();
+	}
+	public override void OnClickClose (){
+	
+	}
 	public override Structure Clone (){
 		return new Warehouse (this);
 	}
 
 	public override void WriteXml (XmlWriter writer){
-//		writer.WriteAttributeString("Name", name ); //change this to id
-//		writer.WriteAttributeString("BuildingTile_X", myBuildingTiles[0].X );
-//		writer.WriteAttributeString("BuildingTile_Y", myBuildingTiles[0].Y );
-//		writer.WriteAttributeString("Rotated", rotated.ToString());
 		base.WriteXml (writer);
 	}
 }

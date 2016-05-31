@@ -8,6 +8,7 @@ public class MarketBuilding : UserStructure {
 	public List<Route> myRoutes;
 	public List<Structure> RegisteredSturctures;
 	public MarketBuilding(int id){
+		hasHitbox = true;
 		this.ID = id;
 		tileWidth = 4;
 		tileHeight = 4;
@@ -33,6 +34,7 @@ public class MarketBuilding : UserStructure {
 		this.rotated = str.rotated;
 		this.hasHitbox = str.hasHitbox;
 		this.buildingRange = str.buildingRange;
+		this.hasHitbox = hasHitbox;
 	}
 	public override Structure Clone (){
 		return new MarketBuilding(this);

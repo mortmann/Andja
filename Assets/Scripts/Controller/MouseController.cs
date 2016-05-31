@@ -290,35 +290,41 @@ public class MouseController : MonoBehaviour {
 			end_y = start_y;
 			start_y = tmp;
 		}
+		List<Tile> tiles = new List<Tile> ();
 		if( Input.GetMouseButton(0) ) {
 			// Display a preview of the drag area
-			for (int x = start_x; x <= end_x; x++) {
-				for (int y = start_y; y <= end_y; y++) {
-					Tile t = WorldController.Instance.world.GetTileAt(x, y);
-					if(t != null) {
-                        if(t.Type != TileType.Water) { 
-							ShowPrefabOnTile (t);
-                        }
-					}
+			for (int x = start_x; x <= end_x; x+=structure.tileWidth) {
+				for (int y = start_y; y <= end_y; y+=structure.tileHeight) {
+					tiles.Add (World.current.GetTileAt (x,y));
 				}
 			}
 		}
 
-		List<Tile> tiles = new List<Tile> ();
-		// End Drag
-		if( Input.GetMouseButtonUp(0) ) {
-			// Loop through all the tiles
-			for (int x = start_x; x <= end_x; x++) {
-				for (int y = start_y; y <= end_y; y++) {
-					tiles.Add (WorldController.Instance.world.GetTileAt(x, y));
-				}
+		foreach (Tile item in tiles) {
+			List<Tile> temp = structure.GetBuildingTiles (item.X, item.Y);
+			foreach (Tile tile in temp) {
+				if(Tile.IsBuildType (tile.Type)){
+					ShowPrefabOnTile (tile);
+				} else {
+					ShowRedPrefabOnTile (tile);
+				}				
 			}
 		}
-		if(structure == null){
-			return;
-		}
-		if(tiles != null) {
-			Build( tiles,true );
+		// End Drag
+		if( Input.GetMouseButtonUp(0) ) {
+			List<Tile> ts = new List<Tile> ();
+			// Loop through all the tiles
+			for (int x = start_x; x <= end_x; x+=structure.tileWidth) {
+				for (int y = start_y; y <= end_y; y+=structure.tileHeight) {
+					ts.Add (WorldController.Instance.world.GetTileAt(x, y));
+				}
+			}
+			if(structure == null){
+				return;
+			}
+			if(ts != null) {
+				Build( ts,true );
+			}
 		}
 	}
 
@@ -352,9 +358,11 @@ public class MouseController : MonoBehaviour {
             } 
             foreach (Tile t in path.path) {
                 if (t != null) {
-                    if (t.Type != TileType.Water) {
+					if (Tile.IsBuildType (t.Type)) {
 						ShowPrefabOnTile (t);
-                    }
+					} else {
+						ShowRedPrefabOnTile (t);
+					}
                 }
             }
         }

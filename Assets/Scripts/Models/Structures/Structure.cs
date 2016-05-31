@@ -155,7 +155,6 @@ public abstract class Structure : IXmlSerializable {
 				this.city = mt.myCity;
 				hasCity = true;
 				mt.myIsland.AddStructure (this);
-				Debug.Log ("_" + mt.myIsland + " " + city.name);
 			}
 			foreach(Tile nbt in mt.GetNeighbours()){
 				if (myBuildingTiles.Contains (nbt) == false) {

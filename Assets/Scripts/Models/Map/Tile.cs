@@ -22,8 +22,11 @@ public class Tile : IXmlSerializable {
 				Debug.Log ("Tile.structures! Why does the structure add itself again to the tile?");
 				return;
 			}
-			if(_structures != null){
+			if(_structures != null && _structures.canBeBuildOver){
 				_structures.Destroy ();
+			} else if(_structures != null){
+				Debug.LogError ("Structure what cant be build, tried to get buildover...");
+				return;
 			}
 			Structure oldStructure = _structures;
 			_structures = value;

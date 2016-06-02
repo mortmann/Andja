@@ -73,7 +73,7 @@ public class BuildController : MonoBehaviour {
 
 	public void OnClick(int id) {
 		if(structurePrototypes.ContainsKey (id) == false){
-			Debug.LogError ("BUTTON has ID that not is structure prototypes ->o_O<- ");
+			Debug.LogError ("BUTTON has ID that is not structure prototypes ->o_O<- ");
 			return;
 		}
 		toBuildStructure = structurePrototypes [id].Clone ();
@@ -129,18 +129,29 @@ public class BuildController : MonoBehaviour {
 	}
 	protected void RealBuild(List<Tile> tiles,Structure structure){
 		Structure s = structure.Clone ();
+		//check to see if the structure can be placed there
 		if (s.PlaceStructure (tiles) == false) {
 			return;
 		}
+		//call all callbacks on structure created
 		if (cbStructureCreated != null) {
 			cbStructureCreated (s);
 		}
+		// this is for loading so everything will be placed in order
 		s.buildID = buildID;
 		buildID++;
-		if (tiles [0].myCity != null) {
-			tiles [0].myCity.addStructure (s);
-			s.city = tiles [0].myCity;
+		//find a tile thats on island -- only important for onshore/onwater buildings
+		Tile islandTile = tiles[0];
+		foreach (Tile item in tiles) {
+			if(item.myIsland != null){
+				islandTile = item;
+				break;
+			}
 		}
+		if(islandTile == null){
+			return;
+		}
+		islandTile.myIsland.AddStructure (s);
 	}
 
 	public void BuildOnTile(int id, List<Tile> tiles){
@@ -211,11 +222,11 @@ public class BuildController : MonoBehaviour {
 //		ta = ((TextAsset)Resources.Load("XMLs/growables", typeof(TextAsset)));
 //		xmlDoc.LoadXml(ta.text); // load the file.
 //		ReadGrowables (xmlDoc);
-//
+
 //		ta = ((TextAsset)Resources.Load("XMLs/marketbuildings", typeof(TextAsset)));
 //		xmlDoc.LoadXml(ta.text); // load the file.
 //		ReadMarketBuildings (xmlDoc);
-//
+
 //		ta = ((TextAsset)Resources.Load("XMLs/produktionbuildings", typeof(TextAsset)));
 //		xmlDoc.LoadXml(ta.text); // load the file.
 //		ReadProduktionBuildings (xmlDoc);

@@ -19,6 +19,7 @@ public class Warehouse : MarketBuilding {
 		BuildTyp = BuildTypes.Single;
 		showExtraUI = true;
 		hasHitbox = true;
+		mustFrontBuildDir = Direction.W;
 	}
 	public Warehouse(){
 	}
@@ -36,6 +37,7 @@ public class Warehouse : MarketBuilding {
 		this.buildingRange = str.buildingRange;
 		this.showExtraUI = str.showExtraUI;
 		this.hasHitbox = str.hasHitbox;
+		this.mustFrontBuildDir = str.mustFrontBuildDir;
 	}
 
 
@@ -60,7 +62,6 @@ public class Warehouse : MarketBuilding {
 	}
 
 	public override void OnClick (){
-		
 		callbackIfnotNull ();
 	}
 	public override void OnClickClose (){

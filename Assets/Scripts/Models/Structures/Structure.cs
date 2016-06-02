@@ -243,14 +243,23 @@ public abstract class Structure : IXmlSerializable {
 	}
 
 
-	public List<Tile> GetBuildingTiles(float x , float y){
+	public List<Tile> GetBuildingTiles(float x , float y, bool ignoreRotation = false){
 		x = Mathf.FloorToInt (x);
 		y = Mathf.FloorToInt (y);
 		List<Tile> tiles = new List<Tile> ();
-		for (int w = 0; w < tileWidth; w++) {
-			tiles.Add ( World.current.GetTileAt(x + w, y));
-			for (int h = 1; h < tileHeight; h++) {
-				tiles.Add (World.current.GetTileAt (x + w, y + h));
+		if (ignoreRotation == false) {
+			for (int w = 0; w < tileWidth; w++) {
+				tiles.Add (World.current.GetTileAt (x + w, y));
+				for (int h = 1; h < tileHeight; h++) {
+					tiles.Add (World.current.GetTileAt (x + w, y + h));
+				}
+			}
+		} else {
+			for (int w = 0; w < _tileWidth; w++) {
+				tiles.Add (World.current.GetTileAt (x + w, y));
+				for (int h = 1; h < _tileHeight; h++) {
+					tiles.Add (World.current.GetTileAt (x + w, y + h));
+				}
 			}
 		}
 		return tiles;
@@ -308,13 +317,13 @@ public abstract class Structure : IXmlSerializable {
 		}
 	}
 	public List<Tile> GetInRangeTiles (Tile firstTile) {
-		if(myPrototypeTiles == null){
+		if (myPrototypeTiles == null) {
 			CalculatePrototypTiles ();
 		}
-		if(firstTile==null){
+		if (firstTile==null) {
 			return null;
 		}
-		if(buildingRange == 0){
+		if (buildingRange == 0) {
 			return null;
 		}
 
@@ -352,23 +361,101 @@ public abstract class Structure : IXmlSerializable {
 
 	//TODO add "front" consideration in so tht only if it is placed correctly it can be placed here!
 	public bool correctSpotForOn(List<Tile> tiles, TileType tt){
+		switch (rotated){
+		case 0:
+			return CheckFor0Rotation (tiles,tt);
+		case 90:
+			return CheckFor90Rotation (tiles,tt);
+		case 180:
+			return CheckFor180Rotation (tiles,tt);
+		case 270:
+			return CheckFor270Rotation (tiles,tt);
+		}
+		Debug.LogError ("correctSpotForOn -- wrong rotation !"); 
+		return false;
+	}
+	public bool CheckFor0Rotation(List<Tile> tiles, TileType tt){
+		switch (mustFrontBuildDir){
+		case Direction.None:
+			return CheckNoneDirection (tiles, tt);
+		case Direction.N:
+			return CheckForTopRow (tiles, tt);
+		case Direction.E:
+			return CheckForRightRow (tiles, tt);
+		case Direction.S:
+			return CheckForBottomRow (tiles, tt);
+		case Direction.W:
+			return CheckForLeftRow (tiles, tt);
+		}
+		Debug.LogError ("CheckForNoneRotation -- Should not be here !"); 
+		return false;
+	}
+	public bool CheckFor90Rotation (List<Tile> tiles, TileType tt){
+		switch (mustFrontBuildDir){
+		case Direction.None:
+			return CheckNoneDirection (tiles, tt);
+		case Direction.N:
+			return CheckForRightRow (tiles, tt);
+		case Direction.E:
+			return CheckForBottomRow (tiles, tt);
+		case Direction.S:
+			return CheckForLeftRow (tiles, tt);
+		case Direction.W:
+			return CheckForTopRow (tiles, tt);
+		}
+		Debug.LogError ("CheckForNoneRotation -- Should not be here !"); 
+		return false;
+	}
+	public bool CheckFor180Rotation(List<Tile> tiles, TileType tt){
+		switch (mustFrontBuildDir){
+		case Direction.None:
+			return CheckNoneDirection (tiles, tt);
+		case Direction.N:
+			return CheckForBottomRow (tiles, tt);
+		case Direction.E:
+			return CheckForLeftRow (tiles, tt);
+		case Direction.S:
+			return CheckForTopRow (tiles, tt);
+		case Direction.W:
+			return CheckForRightRow (tiles, tt);
+		}
+		Debug.LogError ("CheckForNoneRotation -- Should not be here !"); 
+		return false;
+	}
+	public bool CheckFor270Rotation(List<Tile> tiles, TileType tt){
+		switch (mustFrontBuildDir){
+		case Direction.None:
+			return CheckNoneDirection (tiles, tt);
+		case Direction.N:
+			return CheckForLeftRow (tiles, tt);
+		case Direction.E:
+			return CheckForTopRow (tiles, tt);
+		case Direction.S:
+			return CheckForRightRow (tiles, tt);
+		case Direction.W:
+			return CheckForBottomRow (tiles, tt);
+		}
+		Debug.LogError ("CheckForNoneRotation -- Should not be here !"); 
+		return false;
+	}
+	public bool CheckNoneDirection(List<Tile> tiles, TileType tt){
+		Tile[] otherTiles = new Tile[Mathf.Max (tileWidth,tileHeight)];
 		int other = 0;
 		int land  = 0;
-		Tile[] otherTiles = new Tile[Mathf.Max (tileWidth,tileHeight)];
 		foreach (Tile t in tiles) {
-			if(t == null){
+			if (t == null) {
 				return false;
 			}
 			if (t.Type == tt) {
 				other++;
-				if ((tileWidth) < other && (tileHeight) < other ) {
+				if ((tileWidth) < other && (tileHeight) < other) {
 					return false;
 				}
-				otherTiles [other-1] = t;
+				otherTiles [other - 1] = t;
 			}
 			if (Tile.IsBuildType (t.Type)) {
 				land++;
-				if ((tileWidth)*2 < land && (tileHeight)*2 < land ) {
+				if ((tileWidth) * 2 < land && (tileHeight) * 2 < land) {
 					return false;
 				}
 			}
@@ -388,6 +475,86 @@ public abstract class Structure : IXmlSerializable {
 				return false;
 			} 
 			temp = otherTiles [i];
+		}
+		return true;
+	}
+	private bool CheckForTopRow(List<Tile> tiles, TileType tt){
+		int maxY = -1;
+		for (int i = 0; i < tiles.Count; i++) {
+			if(tiles[i].Y > maxY){
+				maxY = tiles[i].Y;
+			}	
+		}
+		for (int i = 0; i < tiles.Count; i++) {
+			if(tiles[i].Y == maxY){
+				if(tiles[i].Type != tt){
+					return false;
+				}
+			} else {
+				if(Tile.IsBuildType (tiles[i].Type)==false){
+					return false;
+				}
+			}
+		}
+		return true;
+	}
+	private bool CheckForRightRow(List<Tile> tiles, TileType tt){
+		int maxX = -1;
+		for (int i = 0; i < tiles.Count; i++) {
+			if(tiles[i].X > maxX){
+				maxX = tiles[i].X;
+			}	
+		}
+		for (int i = 0; i < tiles.Count; i++) {
+			if(tiles[i].X == maxX){
+				if(tiles[i].Type != tt){
+					return false;
+				}
+			} else {
+				if(Tile.IsBuildType (tiles[i].Type)==false){
+					return false;
+				}
+			}
+		}
+		return true;
+	}
+	private bool CheckForBottomRow(List<Tile> tiles, TileType tt){
+		int minY = int.MaxValue;
+		for (int i = 0; i < tiles.Count; i++) {
+			if(tiles[i].Y < minY){
+				minY = tiles[i].Y;
+			}	
+		}
+		for (int i = 0; i < tiles.Count; i++) {
+			if(tiles[i].Y == minY){
+				if(tiles[i].Type != tt){
+					return false;
+				}
+			} else {
+				if(Tile.IsBuildType (tiles[i].Type)==false){
+					return false;
+				}
+			}
+		}
+		return true;
+	}
+	private bool CheckForLeftRow(List<Tile> tiles, TileType tt){
+		int minX = int.MaxValue;
+		for (int i = 0; i < tiles.Count; i++) {
+			if(tiles[i].X < minX){
+				minX = tiles[i].X;
+			}	
+		}
+		for (int i = 0; i < tiles.Count; i++) {
+			if(tiles[i].X == minX){
+				if(tiles[i].Type != tt){
+					return false;
+				}
+			} else {
+				if(Tile.IsBuildType (tiles[i].Type)==false){
+					return false;
+				}
+			}
 		}
 		return true;
 	}

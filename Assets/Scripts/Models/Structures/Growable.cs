@@ -11,7 +11,7 @@ public class Growable : Structure {
 	public int currentStage= 0;
 	public bool hasProduced =false;
 	public bool outputClaimed =false;
-	Item produceItem ;
+	Item produceItem;
 
 	public Growable(int id,string name,Item produceItem){
 		this.ID = id;

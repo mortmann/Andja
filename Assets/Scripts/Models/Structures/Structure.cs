@@ -608,7 +608,9 @@ public abstract class Structure : IXmlSerializable {
 		if(cbStructureDestroy!=null)
 			cbStructureDestroy(this);
 	}
-
+	public override string ToString (){
+		return name + "@" + BuildTile.toString ();
+	}
 	//////////////////////////////////////////////////////////////////////////////////////
 	/// 
 	/// 						SAVING & LOADING

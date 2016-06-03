@@ -13,7 +13,7 @@ public class Worker : IXmlSerializable{
 	float workTime = 1f;
 	float doTimer;
 	Inventory inventory;
-	ProductionBuilding workStructure;
+	UserStructure workStructure;
 	Tile destTile;
 	Tile currTile;
 	Action<Worker> cbWorkerChanged;
@@ -36,7 +36,7 @@ public class Worker : IXmlSerializable{
 			return path.Y;
 		}
 	}
-	public Worker(Structure myHome, ProductionBuilding structure){
+	public Worker(Structure myHome, UserStructure structure){
 		this.myHome = myHome;
 		workStructure = structure;
 
@@ -57,8 +57,8 @@ public class Worker : IXmlSerializable{
 	public void Update(float deltaTime){
 		if(path == null){
 			if (destTile != null) {
-				if(destTile.structures is ProductionBuilding)
-					AddJobStructure ((ProductionBuilding)destTile.structures);
+				if(destTile.structures is UserStructure)
+					AddJobStructure ((UserStructure)destTile.structures);
 			}
 			//theres no goal so delete it after some time?
 			return;
@@ -106,7 +106,7 @@ public class Worker : IXmlSerializable{
 		if(cbWorkerDestroy != null)
 			cbWorkerDestroy(this);
 	}
-	public void AddJobStructure(ProductionBuilding structure){
+	public void AddJobStructure(UserStructure structure){
 		if(structure == null){
 			return;
 		}

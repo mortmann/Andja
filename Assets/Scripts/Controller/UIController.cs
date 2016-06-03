@@ -20,15 +20,19 @@ public class UIController : MonoBehaviour {
 	}
 
 	public void OpenStructureUI(Structure str){
-		if(oldStr == str || str != null){
+		if(oldStr == str || str == null){
 			return;
-		} else {
+		} 
+		if(oldStr!=null) {
 			oldStr.OnClickClose ();
 		}
 		oldStr = str;
 		str.OnClick ();
-		if (str is ProductionBuilding || str is MineStructure) {
-			OpenProduktionUI ((ProductionBuilding)str);
+		if (str is ProductionBuilding) {
+			OpenProduktionUI ((UserStructure)str);
+		}
+		if(str is MineStructure || str is Farm ){
+			OpenProduceUI ((UserStructure)str);
 		}
 		if (str is MarketBuilding || str is Warehouse) {
 			OpenCityInventory (str.city);
@@ -57,7 +61,7 @@ public class UIController : MonoBehaviour {
 			uiInfoCanvas.SetActive (false);
 		}
 	}
-	public void OpenProduktionUI(ProductionBuilding str){
+	public void OpenProduktionUI(UserStructure str){
 		if(str == null){
 			return;
 		}
@@ -70,6 +74,20 @@ public class UIController : MonoBehaviour {
 		buildingCanvas.SetActive (false);
 		uiInfoCanvas.SetActive (false);
 	}
+	public void OpenProduceUI(UserStructure str){
+		if(str == null){
+			return;
+		}
+		unitCanvas.SetActive (false);
+		buildingCanvas.SetActive (true);
+		toggleInfoUI ();
+		buildingCanvas.GetComponent<ProduktionUI>().ShowProduce (str);
+	}
+	public void CloseProduceUI(){
+		buildingCanvas.SetActive (false);
+		uiInfoCanvas.SetActive (false);
+	}
+
 	public void OpenUnitUI(Unit u){
 		if(u==null){
 			return;
@@ -86,6 +104,7 @@ public class UIController : MonoBehaviour {
 	}
 
 	public void CloseInfoUI (){
+		Debug.Log ("close"); 
 		if(oldStr != null){
 			oldStr.OnClickClose ();
 			oldStr = null;

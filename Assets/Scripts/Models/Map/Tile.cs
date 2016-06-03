@@ -25,7 +25,7 @@ public class Tile : IXmlSerializable {
 			if(_structures != null && _structures.canBeBuildOver){
 				_structures.Destroy ();
 			} else if(_structures != null){
-				Debug.LogError ("Structure what cant be build, tried to get buildover...");
+				Debug.LogError ("Structure cant be build, tried to get buildover...");
 				return;
 			}
 			Structure oldStructure = _structures;

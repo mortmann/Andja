@@ -23,8 +23,8 @@ public class StructureSpriteController : MonoBehaviour {
 	void OnStrucutureCreated(Structure structure) {
 		
 		GameObject go = new GameObject ();
-		structure.RegisterOnChangedCallback (OnStrucutureChanged);
-		structure.RegisterOnDestroyCallback (OnStrucutureDestroyed);
+		structure.RegisterOnChangedCallback (OnStructureChanged);
+		structure.RegisterOnDestroyCallback (OnStructureDestroyed);
 
 		float x = 0;
 		float y = 0;
@@ -75,13 +75,13 @@ public class StructureSpriteController : MonoBehaviour {
 			col.size = new Vector2 (sr.sprite.textureRect.size.x /sr.sprite.pixelsPerUnit, sr.sprite.textureRect.size.y / sr.sprite.pixelsPerUnit);
 		}
 	}
-	void OnStrucutureChanged(Structure structure){
+	void OnStructureChanged(Structure structure){
 		if(structure == null){
 			Debug.LogError ("Structure change and its empty?");
 			return;
 		}
 		if( structureGameObjectMap.ContainsKey (structure) == false){
-			Debug.LogError ("StructureSprite not in the Map to a gameobject! " + structure.myBuildingTiles[0].toString ());
+			Debug.LogError ("StructureSprite not in the Map to a gameobject! "+ structure.name+"@"+ structure.myBuildingTiles[0].toString ());
 			return;
 		}
 		if(structure is Growable){
@@ -96,9 +96,10 @@ public class StructureSpriteController : MonoBehaviour {
 			go.transform.SetParent (structureGameObjectMap [structure].transform);
 		}
 	}
-	void OnStrucutureDestroyed(Structure structure) {
+	void OnStructureDestroyed(Structure structure) {
 		GameObject go = structureGameObjectMap [structure];
 		GameObject.Destroy (go);
+		structure.UnregisterOnChangedCallback (OnStructureChanged);
 		structureGameObjectMap.Remove (structure);
 	}
 		

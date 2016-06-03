@@ -10,24 +10,20 @@ public class ProductionBuilding : UserStructure {
 	public Item[] intake;
 	public int[] needIntake;
 	public int[] maxIntake;
-	public bool outputClaimed;
-	public float produceTime;
-	public float produceCountdown;
-	public Item[] output;
-	public string growable;
 	public int[] inputStorage;
-	public int[] outputStorage;
-	public int maxOutputStorage;
-	Action<Structure> cbOutputChange;
-	public int growableReadyCount;
-	Queue<Structure> workingGrowables;
 
-	public virtual float Efficiency{
+	public override float Efficiency{
 		get {
-			return Mathf.Round(((float)OnRegisterCallbacks / (float)myRangeTiles.Count)*1000)/10f;
+			float inputs=0;
+			for (int i = 0; i < inputStorage.Length; i++) {
+				inputs += inputStorage[0]/needIntake[0];
+			}
+			if(inputs==0){
+				return 0;
+			}
+			return Mathf.Round(inputs*1000)/10f;
 		}
 	}
-	public int OnRegisterCallbacks;
 
 	public ProductionBuilding(int id,string name,Item[] intake, int[] needIntake, float produceTime, Item[] output, int tileWidth, int tileHeight,int buildcost,Item[] buildItems,int maintenancecost,bool hasHitbox=true, bool mustBeBuildOnShore=false) {
 		this.ID = id;
@@ -66,7 +62,6 @@ public class ProductionBuilding : UserStructure {
 		this.hasHitbox = hasHitbox;
 		this.myBuildingTyp = BuildingTyp.Production;
 		this.BuildTyp = BuildTypes.Single;
-		this.growable = growable;
 	}
 	protected ProductionBuilding(ProductionBuilding str){
 		this.ID = str.ID;
@@ -86,7 +81,6 @@ public class ProductionBuilding : UserStructure {
 		this.BuildTyp = str.BuildTyp;
 		this.rotated = str.rotated;
 		this.hasHitbox = str.hasHitbox;
-		this.growable = str.growable;
 		this.myBuildingTyp = BuildingTyp.Production;
 	}
 
@@ -100,7 +94,7 @@ public class ProductionBuilding : UserStructure {
 		if(needIntake == null && output == null){
 			return;
 		}
-		if(needIntake == null && growableReadyCount==0){
+		if(needIntake == null){
 			return;
 		}
 		if (needIntake != null) {
@@ -129,11 +123,6 @@ public class ProductionBuilding : UserStructure {
 			if (output != null) {
 				for (int i = 0; i < output.Length; i++) {
 					output[i].count++;
-					if(growable != null){
-						Growable g = (Growable)workingGrowables.Dequeue ();
-						growableReadyCount--;
-						((Growable)g).Reset ();
-					}
 
 					if (cbOutputChange != null) {
 						cbOutputChange (this);
@@ -158,96 +147,13 @@ public class ProductionBuilding : UserStructure {
 		}
 		return true;
 	}
-	public Item[] getOutput(){
-		Item[] temp = new Item[output.Length];
-		for (int i = 0; i < output.Length; i++) {
-			temp [i] = output [i].CloneWithCount ();
-			output[i].count= 0;
-		}
-		return temp;
-	}
-	public Item getOneOutput() {
-		if(output == null){
-			return null;
-		}
-		for (int i = 0; i < output.Length; i++) {
-			if (output[i].count > 0) {
-				callbackIfnotNull ();
-				Item temp = output [i].CloneWithCount();
-				output [i].count = 0;
-				return temp;
-			}
-		}
-		return null;
-	}
-	public void RegisterOutputChanged(Action<Structure> callbackfunc) {
-		cbOutputChange += callbackfunc;
-	}
 
-	public void UnregisterOutputChanged(Action<Structure> callbackfunc) {
-		cbOutputChange -= callbackfunc;
-	}
 	public override void OnBuild(){
-		growable = "tree";
-		workingGrowables = new Queue<Structure> ();
-		if(intake != null){
-			return;		
-		}
-		if(growable == null | growable == ""){
-			return;
-		}
-		GameObject.FindObjectOfType<BuildController> ().BuildOnTile (3, myRangeTiles);
-		// if we are here this produces only 
-		// and it has a growable to "plant"
-		foreach (Tile rangeTile in myRangeTiles) {
-			if(rangeTile.structures != null){
-				if(rangeTile.structures.name.Contains (growable)){
-					rangeTile.structures.RegisterOnChangedCallback (OnGrowableChanged);	
-					OnRegisterCallbacks++;
-					if(((Growable)rangeTile.structures).hasProduced == true){
-						growableReadyCount ++;
-						workingGrowables.Enqueue (rangeTile.structures);
-					}
-				}
-			}
-		}
-		foreach(Tile rangeTile in myRangeTiles){
-			rangeTile.RegisterTileStructureChangedCallback (OnTileStructureChange);
-		}
-	}
-
-	public void OnGrowableChanged(Structure str){
-		if(str is Growable == false){
-			return;
-		}
-		if(str.name != growable){
-			return;
-		}
-		if(((Growable)str).hasProduced == false){
-			return;
-		}
-		workingGrowables.Enqueue (str);
-		growableReadyCount ++;
-		// send worker todo this job
-		// not important right now
-	}
-	public void OnTileStructureChange(Tile t, Structure old){
-		if(old != null && old.name == growable){
-			OnRegisterCallbacks--;
-		}
-		if(t.structures == null){
-			return;
-		}
-		if(t.structures.name == growable){
-			OnRegisterCallbacks++;
-			t.structures.RegisterOnChangedCallback (OnGrowableChanged);	
-		}
 	}
 
 	public override void WriteXml (XmlWriter writer){
 		BaseWriteXml (writer);
-		writer.WriteAttributeString("OutputClaimed", outputClaimed.ToString () );
-		writer.WriteAttributeString("ProduceCountdown", produceCountdown.ToString () );
+		WriteUserXml (writer);
 		if (inputStorage != null) {
 			writer.WriteStartElement ("Inputs");
 			foreach (int i in inputStorage) {
@@ -257,20 +163,11 @@ public class ProductionBuilding : UserStructure {
 			}
 			writer.WriteEndElement ();
 		}
-		if (outputStorage != null) {
-			writer.WriteStartElement ("Outputs");
-			foreach (int i in outputStorage) {
-				writer.WriteStartElement ("OutputStorage");
-				writer.WriteAttributeString ("amount", i.ToString ());
-				writer.WriteEndElement ();
-			}
-			writer.WriteEndElement ();
-		}
+
 	}
 	public override void ReadXml(XmlReader reader) {
 		BaseReadXml (reader);
-		outputClaimed = bool.Parse (reader.GetAttribute("OutputClaimed"));
-		produceCountdown = float.Parse( reader.GetAttribute("ProduceCountdown") );
+		ReadUserXml (reader);
 		int input= 0;
 		if(reader.ReadToDescendant("Inputs") ) {
 			do {
@@ -278,12 +175,6 @@ public class ProductionBuilding : UserStructure {
 				input++;
 			} while( reader.ReadToNextSibling("InputStorage") );
 		}
-		int output= 0;
-		if(reader.ReadToDescendant("Outputs") ) {
-			do {
-				outputStorage[output] = int.Parse( reader.GetAttribute("amount") );
-				output++;
-			} while( reader.ReadToNextSibling("OutputStorage") );
-		}
+
 	}
 }

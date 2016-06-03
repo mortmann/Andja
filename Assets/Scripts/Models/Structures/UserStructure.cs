@@ -8,7 +8,7 @@ public abstract class UserStructure : Structure {
 	public float health;
 	protected int maxNumberOfWorker = 1;
 	public List<Worker> myWorker;
-	public List<ProductionBuilding> jobsToDo;
+	public List<UserStructure> jobsToDo;
 	protected Tile _jobTile;
 	public Tile JobTile {
 		get {
@@ -36,8 +36,8 @@ public abstract class UserStructure : Structure {
 		if (jobsToDo.Count == 0) {
 			return;
 		}
-		ProductionBuilding giveJob = null;
-		foreach (ProductionBuilding item in jobsToDo) {
+		UserStructure giveJob = null;
+		foreach (UserStructure item in jobsToDo) {
 			if (myWorker.Count == maxNumberOfWorker) {
 				break;
 			}			

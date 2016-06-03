@@ -50,11 +50,11 @@ public class BuildController : MonoBehaviour {
 		structurePrototypes.Add (1, new MarketBuilding (1));
 		structurePrototypes.Add (2, new Warehouse (2));
 		structurePrototypes.Add (3, new Growable (3,"tree",allItems[1]));
-		Item[] items = { allItems[1] };
-		structurePrototypes.Add (4, new ProductionBuilding(
+		Item item =  allItems[1] ;
+		structurePrototypes.Add (4, new Farm(
 			4,"lumberjack",
-			null,null,3,items,
-			2,2,500,null,50
+			3,item,
+			2,2,500,50
 		));
 		structurePrototypes.Add (6,new HomeBuilding (6));
 	}
@@ -151,7 +151,6 @@ public class BuildController : MonoBehaviour {
 		if(islandTile == null){
 			return;
 		}
-		islandTile.myIsland.AddStructure (s);
 	}
 
 	public void BuildOnTile(int id, List<Tile> tiles){

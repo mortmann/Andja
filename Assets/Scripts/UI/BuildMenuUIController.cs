@@ -89,6 +89,7 @@ public class BuildMenuUIController : MonoBehaviour {
 		oldSelectedCivLevel = i;
 	}
 	public void OnDisable() {
+		if(oldButton != null)
 		oldButton.GetComponent<Image> ().color = Color.white;
 	}
 }

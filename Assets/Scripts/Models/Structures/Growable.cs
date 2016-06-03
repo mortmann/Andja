@@ -22,11 +22,13 @@ public class Growable : Structure {
 		tileHeight = 1;
 		growTime = 100f;
 		hasHitbox = false;
+		canBeBuildOver = true;
 		this.name = name;
 		this.produceItem = produceItem;
 		canBeBuildOver = true;
 	}
 	protected Growable(Growable g){
+		this.canBeBuildOver = g.canBeBuildOver;
 		this.ID = g.ID;
 		this.name = g.name;
 		this.produceItem = g.produceItem;

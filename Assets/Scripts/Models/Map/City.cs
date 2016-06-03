@@ -45,7 +45,9 @@ public class City : IXmlSerializable{
     internal void update(float deltaTime) {
 		for (int i = 0; i < myStructures.Count; i++) {
 			myStructures[i].update(deltaTime);
-        }
+		}
+		Debug.Log ("count " + myStructures.Count); 
+
 		useTickTimer -= deltaTime;
 		if(useTickTimer>=0){
 			for (int i = 0; i < allNeeds.Count; i++) {
@@ -104,10 +106,14 @@ public class City : IXmlSerializable{
 		} 
 	}
 	public void removeStructure(Structure structure){
+		Debug.Log("Remove this");
 		if (myStructures.Contains (structure)) {
 			myStructures.Remove (structure);
 			cityBalance -= structure.maintenancecost;
+		} else {
+			Debug.LogError ("This structure "+structure.ToString () +" does not belong to this city "); 
 		}
+
 	}
 	//////////////////////////////////////////////////////////////////////////////////////
 	/// 
@@ -175,8 +181,8 @@ public class City : IXmlSerializable{
 				if(s is Warehouse){
 					((Warehouse)s).ReadXml (reader);
 				} else 
-				if(s is ProductionBuilding){
-					((ProductionBuilding)s).ReadXml (reader);
+				if(s is UserStructure){
+					((UserStructure)s).ReadXml (reader);
 				} else 
 				if(s is Growable){
 					((Growable)s).ReadXml (reader);

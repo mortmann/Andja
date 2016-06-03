@@ -125,7 +125,7 @@ public class MouseController : MonoBehaviour {
 				uic.OpenUnitUI (selectedUnit);
 			}
 			if (selectedUnit == null) {
-				Tile t = WorldController.Instance.world.GetTileAt (currFramePosition.x, currFramePosition.y);
+				Tile t = GetMouseOverTile ();
 				if (t.structures != null) {
 					uic.OpenStructureUI (t.structures);
 				}

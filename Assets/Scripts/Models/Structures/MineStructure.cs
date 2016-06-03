@@ -1,10 +1,14 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
-public class MineStructure : ProductionBuilding {
+public class MineStructure : UserStructure {
 
 	public string myRessource;
-	public override float Efficiency { get { return 100; } }
+	public override float Efficiency { get { 
+			if(BuildTile.myIsland.myRessources [myRessource] ==0){
+				return 0;
+			}
+			return 100; } }
 	public MineStructure(int pid){
 		myRessource = "stone";
 		this.ID = pid;
@@ -16,7 +20,7 @@ public class MineStructure : ProductionBuilding {
 		BuildTyp = BuildTypes.Single;
 		output = new Item[1];
 		output[0] = BuildController.Instance.allItems [3];
-		outputStorage = new int[1];
+
 		hasHitbox = true;
 		maxOutputStorage = 5;
 		produceTime = 15f;
@@ -65,6 +69,10 @@ public class MineStructure : ProductionBuilding {
 		if (produceCountdown <= 0) {
 			produceCountdown = produceTime;
 			output [0].count++;
+
+			if (cbOutputChange != null) {
+				cbOutputChange (this);
+			}
 		}
 	}
 
@@ -76,10 +84,10 @@ public class MineStructure : ProductionBuilding {
 	}
 	public override void ReadXml (System.Xml.XmlReader reader){
 		BaseReadXml (reader);
-		base.ReadXml (reader);
+		ReadUserXml (reader);
 	}
 	public override void WriteXml (System.Xml.XmlWriter writer)	{
 		BaseWriteXml (writer);
-		base.WriteXml (writer);
+		WriteUserXml (writer);
 	}
 }

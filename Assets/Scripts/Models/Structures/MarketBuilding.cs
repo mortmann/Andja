@@ -46,7 +46,7 @@ public class MarketBuilding : UserStructure {
 		myWorker = new List<Worker> ();
 		RegisteredSturctures = new List<Structure> ();
 		myRoutes = GetMyRoutes ();
-		jobsToDo = new List<ProductionBuilding> ();
+		jobsToDo = new List<UserStructure> ();
 		// add all the tiles to the city it was build in
 		Tile t = myBuildingTiles [0];
 		this.city = t.myCity;
@@ -63,9 +63,9 @@ public class MarketBuilding : UserStructure {
 			if(rangeTile.structures == null){
 				continue;
 			}
-			if(rangeTile.structures is ProductionBuilding){
+			if(rangeTile.structures is UserStructure){
 				if (RegisteredSturctures.Contains (rangeTile.structures) == false) {
-					((ProductionBuilding)rangeTile.structures).RegisterOutputChanged (OnOutputChangedStructure);
+					((UserStructure)rangeTile.structures).RegisterOutputChanged (OnOutputChangedStructure);
 					RegisteredSturctures.Add (rangeTile.structures);
 				}
 			}
@@ -73,10 +73,10 @@ public class MarketBuilding : UserStructure {
 		BuildController.Instance.RegisterStructureCreated (OnStructureBuild);
 	}
 	public void OnOutputChangedStructure(Structure str){
-		if(str is ProductionBuilding == false){
+		if(str is UserStructure == false){
 			return;
 		}
-		foreach (Route item in ((ProductionBuilding)str).GetMyRoutes()) {
+		foreach (Route item in ((UserStructure)str).GetMyRoutes()) {
 			if (myRoutes.Contains (item)) {
 				foreach (Tile tile in str.neighbourTiles) {
 					if(tile.structures is Road == false){
@@ -85,8 +85,8 @@ public class MarketBuilding : UserStructure {
 					if(myRoutes.Contains(((Road)tile.structures).Route) == false){
 						continue;
 					}
-					if (((ProductionBuilding)str).outputClaimed == false) {
-						jobsToDo.Add ((ProductionBuilding)str);
+					if (((UserStructure)str).outputClaimed == false) {
+						jobsToDo.Add ((UserStructure)str);
 					}
 					return;
 				}
@@ -104,7 +104,7 @@ public class MarketBuilding : UserStructure {
 					break;
 				}
 			}
-			((ProductionBuilding)structure).RegisterOutputChanged (OnOutputChangedStructure);
+			((UserStructure)structure).RegisterOutputChanged (OnOutputChangedStructure);
 		}
 		if (structure.myBuildingTyp == BuildingTyp.Pathfinding) {
 			if(neighbourTiles.Contains (structure.myBuildingTiles[0])){

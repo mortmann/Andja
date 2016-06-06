@@ -35,6 +35,8 @@ public abstract class Structure : IXmlSerializable {
 	public bool canBeUpgraded = false;
 	public bool showExtraUI = false;
 
+	public Vector2 middleVector {get {return new Vector2 (BuildTile.X + (float)tileWidth/2f,BuildTile.Y + (float)tileHeight/2f);}}
+
 	public Direction mustFrontBuildDir = Direction.None; 
 
 	private int _tileWidth;
@@ -72,8 +74,8 @@ public abstract class Structure : IXmlSerializable {
 	}
 
 	public List<Tile> myBuildingTiles;
-	public List<Tile> neighbourTiles;
-	public List<Tile> myRangeTiles;
+	public HashSet<Tile> neighbourTiles;
+	public HashSet<Tile> myRangeTiles;
 	public List<Tile> myPrototypeTiles;
 
     Action<Structure> cbStructureChanged;
@@ -148,9 +150,9 @@ public abstract class Structure : IXmlSerializable {
 		//if we are here we can build this and
 		//set the tiles to the this structure -> claim the tiles!
 		bool hasCity = false;
-		neighbourTiles = new List<Tile>();
+		neighbourTiles = new HashSet<Tile>();
 		foreach (Tile mt in myBuildingTiles) {
-			mt.structures = this;
+			mt.Structure = this;
 			if(mt.myCity!=null && hasCity == false){
 				this.city = mt.myCity;
 				hasCity = true;
@@ -173,13 +175,13 @@ public abstract class Structure : IXmlSerializable {
 
 	protected bool PlaceOnLand(List<Tile> tiles){
 		for (int i = 0; i < tiles.Count; i++) {
-			if(tiles[i].structures!=null && tiles[i].structures.canBeBuildOver == false){
+			if(tiles[i].Structure!=null && tiles[i].Structure.canBeBuildOver == false){
 				return false;
 			}
 		}
 		if (tileWidth == 1 && tileHeight == 1) {
-			if(tiles[0].structures != null && tiles [0].structures.canBeBuildOver){
-				if(tiles [0].structures.name == this.name){
+			if(tiles[0].Structure != null && tiles [0].Structure.canBeBuildOver){
+				if(tiles [0].Structure.name == this.name){
 					return false;
 				}
 			}
@@ -198,8 +200,8 @@ public abstract class Structure : IXmlSerializable {
 	}
 	protected bool PlaceOnMountain(List<Tile> tiles){
 		if (tileWidth == 1 && tileHeight == 1) {
-			if (tiles [0].structures != null && tiles [0].structures.canBeBuildOver) {
-				if (tiles [0].structures.name == this.name) {
+			if (tiles [0].Structure != null && tiles [0].Structure.canBeBuildOver) {
+				if (tiles [0].Structure.name == this.name) {
 					return false;
 				}
 			}
@@ -218,8 +220,8 @@ public abstract class Structure : IXmlSerializable {
 	}
 	protected bool PlaceOnShore(List<Tile> tiles){
 		if (tileWidth == 1 && tileHeight == 1) {
-			if(tiles [0].structures.canBeBuildOver){
-				if(tiles [0].structures.name == this.name){
+			if(tiles [0].Structure.canBeBuildOver){
+				if(tiles [0].Structure.name == this.name){
 					return false;
 				}
 			}
@@ -316,7 +318,7 @@ public abstract class Structure : IXmlSerializable {
 			myPrototypeTiles.Remove (item);
 		}
 	}
-	public List<Tile> GetInRangeTiles (Tile firstTile) {
+	public HashSet<Tile> GetInRangeTiles (Tile firstTile) {
 		if (myPrototypeTiles == null) {
 			CalculatePrototypTiles ();
 		}
@@ -328,7 +330,7 @@ public abstract class Structure : IXmlSerializable {
 		}
 
 		World w = WorldController.Instance.world;
-		myRangeTiles = new List<Tile> ();
+		myRangeTiles = new HashSet<Tile> ();
 		float width = firstTile.X-buildingRange - tileWidth / 2;
 		float height = firstTile.Y-buildingRange - tileHeight / 2;
 		foreach(Tile t in myPrototypeTiles){
@@ -591,8 +593,8 @@ public abstract class Structure : IXmlSerializable {
 		List<Tile> roads = new List<Tile>();
 		foreach (Tile item in myBuildingTiles) {
 			foreach (Tile n in item.GetNeighbours ()) {
-				if(n.structures != null ){
-					if (n.structures is Road) {
+				if(n.Structure != null ){
+					if (n.Structure is Road) {
 						roads.Add (n);
 					}
 				}

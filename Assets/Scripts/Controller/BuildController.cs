@@ -17,7 +17,7 @@ public class BuildController : MonoBehaviour {
 	public int buildID = 0;
 	public Dictionary<int,Structure> loadedToPlaceStructure;
 	public Dictionary<int,Tile> loadedToPlaceTile;
-
+	public List<Need> allNeeds;
 	Action<Structure> cbStructureCreated;
 	Action<City> cbCityCreated;
 
@@ -57,6 +57,9 @@ public class BuildController : MonoBehaviour {
 			2,2,500,50
 		));
 		structurePrototypes.Add (6,new HomeBuilding (6));
+		//needs
+		allNeeds = new List<Need>();
+		ReadNeedsFromXML ();
 	}
 
 	public void Update(){
@@ -207,9 +210,42 @@ public class BuildController : MonoBehaviour {
 		xmlDoc.LoadXml(ta.text); // load the file.
 		foreach(XmlElement node in xmlDoc.SelectNodes("Items/Item")){
 			Item item = new Item ();
-			item.ID = int.Parse(node.SelectSingleNode("ID").InnerText);
+			item.ID = int.Parse(node.GetAttribute("ID"));
 			item.name = node.SelectSingleNode("EN"+ "_Name").InnerText;
 			allItems [item.ID] = item;
+		}
+	}
+	private void ReadNeedsFromXML(){
+		XmlDocument xmlDoc = new XmlDocument(); // xmlDoc is the new xml document.
+		TextAsset ta = ((TextAsset)Resources.Load("XMLs/needs", typeof(TextAsset)));
+		xmlDoc.LoadXml(ta.text); // load the file.
+		foreach(XmlElement node in xmlDoc.SelectNodes("Needs/Need")){
+			Need need = new Need ();
+			need.ID = int.Parse(node.GetAttribute("ID"));
+			need.name = node.SelectSingleNode("EN"+ "_Name").InnerText;
+			need.popCount =  0;// TODO: int.Parse(node.SelectSingleNode("Count").InnerText);
+			need.startLevel = int.Parse(node.SelectSingleNode("Level").InnerText);
+			int structure = int.Parse (node.SelectSingleNode ("Structure").InnerText);
+			if (structure == -1) {
+				int item = int.Parse(node.SelectSingleNode("Item").InnerText);
+				if (allItems.ContainsKey (item)) {
+					need.item = allItems [item];
+				} else {
+					continue;
+				}
+			} else {
+				if (structurePrototypes.ContainsKey (structure)) {
+					need.structure = structurePrototypes [structure];
+				} else {
+					continue;
+				}
+			}
+			float[] fs = new float[4];
+			fs[0] = float.Parse(node.SelectSingleNode("Peasent").InnerText);
+			fs[1] = float.Parse(node.SelectSingleNode("Citizen").InnerText);
+			fs[2] = float.Parse(node.SelectSingleNode("Patrician").InnerText);
+			fs[3] = float.Parse(node.SelectSingleNode("Nobleman").InnerText);
+			allNeeds.Add (need);
 		}
 	}
 	private void ReadStructuresFromXML(){

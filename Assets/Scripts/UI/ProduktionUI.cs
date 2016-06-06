@@ -51,6 +51,7 @@ public class ProduktionUI : MonoBehaviour {
 		if(ustrs == null || ustrs == userStr ){
 			return;
 		}
+		Debug.Log ("SHOW"); 
 		this.userStr = ustrs;
 		efficiency = progressContent.GetComponentInChildren<Text> ();
 		progress = progressContent.GetComponentInChildren<Slider> ();

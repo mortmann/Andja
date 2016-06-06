@@ -18,8 +18,10 @@ public class Worker : IXmlSerializable{
 	Tile currTile;
 	Action<Worker> cbWorkerChanged;
 	Action<Worker> cbWorkerDestroy;
-
+	bool hasToFollowRoads;
 	bool goingToWork;
+	Item[] toGetItems;
+
 
 	public float X {
 		get {
@@ -36,18 +38,19 @@ public class Worker : IXmlSerializable{
 			return path.Y;
 		}
 	}
-	public Worker(Structure myHome, UserStructure structure){
+	public Worker(Structure myHome, UserStructure structure,Item[] toGetItems = null, bool hasToFollowRoads = true){
 		this.myHome = myHome;
 		workStructure = structure;
-
+		this.hasToFollowRoads = hasToFollowRoads;
 		structure.outputClaimed = true;
 		isAtHome = false;
 		goingToWork = true;
 		inventory = new Inventory (4,false);
 		doTimer = workTime;
 		AddJobStructure(structure);
+		this.toGetItems = toGetItems;
 	}
-	public Worker(Structure myHome){
+	public Worker(Structure myHome, bool hasToFollowRoads = true){
 		this.myHome = myHome;
 		isAtHome = false;
 		goingToWork = true;
@@ -57,8 +60,8 @@ public class Worker : IXmlSerializable{
 	public void Update(float deltaTime){
 		if(path == null){
 			if (destTile != null) {
-				if(destTile.structures is UserStructure)
-					AddJobStructure ((UserStructure)destTile.structures);
+				if(destTile.Structure is UserStructure)
+					AddJobStructure ((UserStructure)destTile.Structure);
 			}
 			//theres no goal so delete it after some time?
 			return;
@@ -75,6 +78,9 @@ public class Worker : IXmlSerializable{
 			if (myHome is MarketBuilding) {
 				((MarketBuilding)myHome).city.myInv.addIventory (inventory);
 			}
+			if (myHome is ProductionBuilding) {
+				((ProductionBuilding)myHome).addToIntake (inventory); 
+			}
 			doTimer -= deltaTime;
 			if (doTimer > 0) {
 				return;
@@ -90,8 +96,12 @@ public class Worker : IXmlSerializable{
 			return;
 		}
 		if (workStructure != null) {
-			foreach (Item item in workStructure.getOutput ()) {
-				inventory.addItem (item);
+			if (toGetItems == null) {
+				foreach (Item item in workStructure.getOutput ()) {
+					inventory.addItem (item);
+				}
+			} else {
+
 			}
 			workStructure.outputClaimed = false;
 			doTimer = workTime/2;
@@ -112,7 +122,11 @@ public class Worker : IXmlSerializable{
 		}
 		goingToWork = true;
 		//job_dest_tile = tile;
-		path = new Pathfinding (myHome.roadsAroundStructure (),structure.roadsAroundStructure (),1.5f);
+		path_mode pm = path_mode.route;
+		if (hasToFollowRoads == false) {
+			pm = path_mode.island;
+		}
+		path = new Pathfinding (myHome.roadsAroundStructure (),structure.roadsAroundStructure (),1.5f,pm);
 		if (currTile != null) {
 			path.currTile = currTile;
 			currTile = null;

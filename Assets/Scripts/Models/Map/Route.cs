@@ -18,7 +18,7 @@ public class Route : IXmlSerializable {
 			// without doing anything.
 			return;
 		}
-		if (tile.structures == null) {
+		if (tile.Structure == null) {
 			// There is no road or structure at all
 			return;
 		}
@@ -26,7 +26,7 @@ public class Route : IXmlSerializable {
 		tilesToCheck.Enqueue(tile);
 		while (tilesToCheck.Count > 0) {
 			Tile t = tilesToCheck.Dequeue();
-			if (t.Type != TileType.Water && t.structures != null && t.structures.myBuildingTyp == BuildingTyp.Pathfinding) {
+			if (t.Type != TileType.Water && t.Structure != null && t.Structure.myBuildingTyp == BuildingTyp.Pathfinding) {
 				myTiles.Add(t);
 				Tile[] ns = t.GetNeighbours();
 				foreach (Tile t2 in ns) {
@@ -43,7 +43,7 @@ public class Route : IXmlSerializable {
 
 	public void addRoute(Route route){
 		foreach (Tile item in route.myTiles) {
-			((Road)item.structures).Route = this;
+			((Road)item.Structure).Route = this;
 		}
 		tileGraph.addNodes (route.tileGraph);
 		myTiles[0].myCity.RemoveRoute (route);

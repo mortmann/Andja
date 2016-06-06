@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-using System.Collections;
+using System.Collections.Generic;
 using System;
 using System.Xml;
 using System.Xml.Schema;
@@ -13,13 +13,13 @@ public class Tile : IXmlSerializable {
     //Want to have more than one structure in one tile!
     //more than one tree or tree and bench! But for now only one
 	protected Structure _structures= null;
-	public Structure structures {
+	public Structure Structure {
 		get{
 			return _structures;
 		} 
 		set {
 			if(_structures == value){
-				Debug.Log ("Tile.structures! Why does the structure add itself again to the tile?");
+				Debug.Log ("Tile.structure! Why does the structure add itself again to the tile?");
 				return;
 			}
 			if(_structures != null && _structures.canBeBuildOver){
@@ -35,7 +35,6 @@ public class Tile : IXmlSerializable {
 			} 
 		}
 	}
-
     public Island myIsland { get; set; }
 	protected City _myCity;
 	public City myCity { 
@@ -73,10 +72,11 @@ public class Tile : IXmlSerializable {
             _type = value;
         }
     }
+	public List<NeedsBuilding> listOfInRangeNeedBuildings { get; protected set; }
 
     const float baseTileMovementCost = 1;
 
-    public float movementCost {
+    public float MovementCost {
         get {
 			if (Type == TileType.Water) {
 				return 1;  
@@ -84,13 +84,13 @@ public class Tile : IXmlSerializable {
 			if (Type == TileType.Mountain) {
 				return Mathf.Infinity;  
 			}
-			if (structures == null){
+			if (Structure == null){
 				return baseTileMovementCost;
 			}
-			if (structures.BuildTyp == BuildTypes.Single){
+			if (Structure.BuildTyp == BuildTypes.Single){
 				return float.PositiveInfinity;
 			}
-			if (structures.BuildTyp == BuildTypes.Path){
+			if (Structure.BuildTyp == BuildTypes.Path){
 				return 0.25f;
 			}
             return 1;
@@ -143,6 +143,28 @@ public class Tile : IXmlSerializable {
             (diagOkay && (Mathf.Abs(this.X - tile.X) == 1 && Mathf.Abs(this.Y - tile.Y) == 1)); // Check diag adjacency
             
     }
+
+	public void addNeedStructure(NeedsBuilding ns){
+		if(IsBuildType (Type)== false){
+			return;
+		}
+		if (listOfInRangeNeedBuildings == null) {
+			listOfInRangeNeedBuildings = new List<NeedsBuilding> ();
+		}
+		listOfInRangeNeedBuildings.Add (ns);
+	}
+	public void removeNeedStructure(NeedsBuilding ns){
+		if(IsBuildType (Type)== false){
+			return;
+		}
+		if (listOfInRangeNeedBuildings == null) {
+			return;
+		}
+		if (listOfInRangeNeedBuildings.Contains (ns) == false) {
+			return;
+		}
+		listOfInRangeNeedBuildings.Remove (ns);
+	}
     /// <summary>
     /// Gets the neighbours.
     /// </summary>
@@ -201,13 +223,13 @@ public class Tile : IXmlSerializable {
 	/// <summary>
 	/// Checks if Structure can be placed on the tile.
 	/// </summary>
-	/// <returns><c>true</c>, if tile was checked, <c>false</c> otherwise.</returns>
+	/// <returns><c>true</c>, if tile is buildable, <c>false</c> otherwise.</returns>
 	/// <param name="t">Tile to check, canBeBuildOnShore if shore tiles are ok</param>
-	public static bool checkTile(Tile t, bool canBeBuildOnShore =false){
+	public static bool checkTile(Tile t, bool canBeBuildOnShore =false, bool canBeBuildOnMountain =false){
 		if(t.Type == TileType.Water){
 			return false;
 		}
-		if(t.Type == TileType.Mountain){
+		if(t.Type == TileType.Mountain && canBeBuildOnMountain ==false){
 			return false;
 		}
 		if(t.Type == TileType.Stone){
@@ -218,8 +240,8 @@ public class Tile : IXmlSerializable {
 				return false;
 			}
 		}
-		if(t.structures != null ) {
-			if(t.structures.canBeBuildOver == false){
+		if(t.Structure != null ) {
+			if(t.Structure.canBeBuildOver == false){
 				return false;
 			}
 		}

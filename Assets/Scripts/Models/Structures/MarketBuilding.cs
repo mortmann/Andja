@@ -8,6 +8,7 @@ public class MarketBuilding : UserStructure {
 	public List<Route> myRoutes;
 	public List<Structure> RegisteredSturctures;
 	public MarketBuilding(int id){
+		
 		hasHitbox = true;
 		this.ID = id;
 		tileWidth = 4;
@@ -46,7 +47,7 @@ public class MarketBuilding : UserStructure {
 		myWorker = new List<Worker> ();
 		RegisteredSturctures = new List<Structure> ();
 		myRoutes = GetMyRoutes ();
-		jobsToDo = new List<UserStructure> ();
+		jobsToDo = new Dictionary<UserStructure, Item[]> ();
 		// add all the tiles to the city it was build in
 		Tile t = myBuildingTiles [0];
 		this.city = t.myCity;
@@ -60,13 +61,13 @@ public class MarketBuilding : UserStructure {
 			}
 		}
 		foreach(Tile rangeTile in myRangeTiles){
-			if(rangeTile.structures == null){
+			if(rangeTile.Structure == null){
 				continue;
 			}
-			if(rangeTile.structures is UserStructure){
-				if (RegisteredSturctures.Contains (rangeTile.structures) == false) {
-					((UserStructure)rangeTile.structures).RegisterOutputChanged (OnOutputChangedStructure);
-					RegisteredSturctures.Add (rangeTile.structures);
+			if(rangeTile.Structure is UserStructure){
+				if (RegisteredSturctures.Contains (rangeTile.Structure) == false) {
+					((UserStructure)rangeTile.Structure).RegisterOutputChanged (OnOutputChangedStructure);
+					RegisteredSturctures.Add (rangeTile.Structure);
 				}
 			}
 		}
@@ -79,14 +80,14 @@ public class MarketBuilding : UserStructure {
 		foreach (Route item in ((UserStructure)str).GetMyRoutes()) {
 			if (myRoutes.Contains (item)) {
 				foreach (Tile tile in str.neighbourTiles) {
-					if(tile.structures is Road == false){
+					if(tile.Structure is Road == false){
 						continue;
 					}
-					if(myRoutes.Contains(((Road)tile.structures).Route) == false){
+					if(myRoutes.Contains(((Road)tile.Structure).Route) == false){
 						continue;
 					}
 					if (((UserStructure)str).outputClaimed == false) {
-						jobsToDo.Add ((UserStructure)str);
+						jobsToDo.Add ((UserStructure)str,null);
 					}
 					return;
 				}
@@ -101,10 +102,10 @@ public class MarketBuilding : UserStructure {
 		if(structure.myBuildingTyp == BuildingTyp.Production){
 			foreach (Tile item in structure.myBuildingTiles) {
 				if(myRangeTiles.Contains (item)){
+					((UserStructure)structure).RegisterOutputChanged (OnOutputChangedStructure);
 					break;
 				}
 			}
-			((UserStructure)structure).RegisterOutputChanged (OnOutputChangedStructure);
 		}
 		if (structure.myBuildingTyp == BuildingTyp.Pathfinding) {
 			if(neighbourTiles.Contains (structure.myBuildingTiles[0])){
@@ -118,25 +119,11 @@ public class MarketBuilding : UserStructure {
 
 	public override void WriteXml (XmlWriter writer){
 		BaseWriteXml (writer);
-		if (myWorker != null) {
-			writer.WriteStartElement ("Workers");
-			foreach (Worker w in myWorker) {
-				writer.WriteStartElement ("Worker");
-				w.WriteXml (writer);
-				writer.WriteEndElement ();
-			}
-			writer.WriteEndElement ();
-		}
+		WriteUserXml (writer);
 		
 	}
 	public override void ReadXml(XmlReader reader) {
 		BaseReadXml (reader);
-		if(reader.ReadToDescendant("Workers") ) {
-			do {
-				Worker w = new Worker(this);
-				w.ReadXml (reader);
-				myWorker.Add (w);
-			} while( reader.ReadToNextSibling("Worker") );
-		}
+		ReadUserXml(reader);
 	}
 }

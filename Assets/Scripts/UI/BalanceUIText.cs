@@ -21,12 +21,12 @@ public class BalanceUIText : MonoBehaviour {
 		}
 		if(playerController.change < 0){
 			changeText.color = Color.red;
-			changeText.text =""+ playerController.change+ " ";
+			changeText.text =""+ playerController.change + " ";
 		}
 		if(playerController.change >= 0){
 			changeText.color = Color.green;
-			changeText.text ="+ "+ playerController.change+ " ";
+			changeText.text ="+ "+ playerController.change + " ";
 		}
-		balanceText.text = playerController.balance + " " ;
+		balanceText.text = playerController.balance + " ";
 	}
 }

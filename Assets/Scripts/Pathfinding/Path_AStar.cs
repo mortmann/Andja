@@ -99,7 +99,7 @@ public class Path_AStar {
 				if (ClosedSet.Contains(neighbor) == true)
 					continue; // ignore this already completed neighbor
 
-				float movement_cost_to_neighbor = neighbor.data.movementCost * dist_between(current, neighbor);
+				float movement_cost_to_neighbor = neighbor.data.MovementCost * dist_between(current, neighbor);
 
 				float tentative_g_score = g_score[current] + movement_cost_to_neighbor;
 

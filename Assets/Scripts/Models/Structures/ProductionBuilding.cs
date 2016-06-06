@@ -10,14 +10,13 @@ public class ProductionBuilding : UserStructure {
 	public Item[] intake;
 	public int[] needIntake;
 	public int[] maxIntake;
-	public int[] inputStorage;
 	MarketBuilding nearestMarketBuilding;
 
 	public override float Efficiency{
 		get {
 			float inputs=0;
-			for (int i = 0; i < inputStorage.Length; i++) {
-				inputs += inputStorage[0]/needIntake[0];
+			for (int i = 0; i < intake.Length; i++) {
+				inputs += intake[0].count/needIntake[0];
 			}
 			if(inputs==0){
 				return 0;
@@ -36,6 +35,7 @@ public class ProductionBuilding : UserStructure {
 		this.maxOutputStorage = 5; // hardcoded 5 ? need this to change?
 		this.tileWidth = tileWidth;
 		this.tileHeight = tileHeight;
+		maxIntake= new int[needIntake.Length];
 		if (intake != null && needIntake!=null) {
 			int i=0;
 			foreach(int needed in needIntake){
@@ -92,19 +92,24 @@ public class ProductionBuilding : UserStructure {
 				return;
 			}
 		}
+		List<Item> getItems = new List<Item> ();
+		UserStructure jobStructure = null;
+		for (int i = 0; i < intake.Length; i++) {
+			if (maxIntake[i] <= intake[i].count) {
+				jobStructure = GetJobForWorker (intake[i]);
+				if (jobStructure != null) {
+					return;
+				}
+
+			}
+		}
+		myWorker.Add (new Worker(this));
 
 		for (int i = 0; i < intake.Length; i++) {
-			if (needIntake[i] > intake[i].count) {
-				UserStructure jobStructure = GetJobForWorker (intake[i],needIntake[i]-intake[i].count);
-				if (jobStructure == null) {
-					continue;
-				}
-				myWorker.Add (new Worker(this));
+			if (needIntake [i] > intake [i].count) {
 				return;
 			}
 		}
-
-
 
 		produceCountdown -= deltaTime;
 		if(produceCountdown <= 0) {
@@ -122,11 +127,14 @@ public class ProductionBuilding : UserStructure {
 		}
 	}
 
-	public UserStructure GetJobForWorker (Item neededIntake,int amount){
+	public UserStructure GetJobForWorker (Item neededIntake){
 		if(jobsToDo.Count == 0 && nearestMarketBuilding == null){
 			return null;
 		}
 		if (jobsToDo.Count == 0) {
+			if (city.hasItem (neededIntake)) {
+				return null;	
+			}
 			return nearestMarketBuilding;
 		}
 		foreach (UserStructure item in jobsToDo.Keys) {
@@ -138,6 +146,9 @@ public class ProductionBuilding : UserStructure {
 	public void OnOutputChangedStructure(Structure str){
 		if(str is UserStructure == false){
 			return;
+		}
+		if(jobsToDo.ContainsKey (str)){
+			jobsToDo.Remove (str);
 		}
 		UserStructure ustr = ((UserStructure)str);
 		List<Item> getItems = new List<Item> ();
@@ -172,7 +183,11 @@ public class ProductionBuilding : UserStructure {
 	}
 
 	public override void OnBuild(){
+		myWorker = new List<Worker> ();
 		jobsToDo = new Dictionary<UserStructure, Item[]> ();
+//		for (int i = 0; i < intake.Length; i++) {
+//			intake [i].count = maxIntake [i];
+//		}
 		foreach(Tile rangeTile in myRangeTiles){
 			if(rangeTile.Structure == null){
 				continue;
@@ -210,10 +225,15 @@ public class ProductionBuilding : UserStructure {
 		if (str is UserStructure == false) {
 			return;
 		}
+		bool inRange = false;
 		for (int i = 0; i < str.myBuildingTiles.Count; i++) {
-			if (myRangeTiles.Contains (str.myBuildingTiles [i]) == false) {
-				return;
+			if (myRangeTiles.Contains (str.myBuildingTiles [i]) == true) {
+				inRange = true;
+				break;
 			}
+		}
+		if(inRange == false){
+			return;
 		}
 		if (str is MarketBuilding) {
 			findNearestMarketBuilding(str.BuildTile);
@@ -225,14 +245,17 @@ public class ProductionBuilding : UserStructure {
 		}
 	}
 	public void findNearestMarketBuilding(Tile tile){
+		Debug.Log ("Find nearestMarketBuilding");
 		if (tile.Structure is MarketBuilding) {
 			if (nearestMarketBuilding == null) {
 				nearestMarketBuilding =(MarketBuilding) tile.Structure;
+				Debug.Log ("found -only one");
 			} else {
 				float firstDistance = nearestMarketBuilding.middleVector.magnitude - middleVector.magnitude;
 				float secondDistance = tile.Structure.middleVector.magnitude - middleVector.magnitude;
-				if (secondDistance < firstDistance) {
+				if (Mathf.Abs (secondDistance) < Mathf.Abs (firstDistance)) {
 					nearestMarketBuilding =(MarketBuilding) tile.Structure;
+					Debug.Log ("found one " + firstDistance + " zu " + secondDistance);
 				}
 			}
 		}
@@ -241,11 +264,11 @@ public class ProductionBuilding : UserStructure {
 	public override void WriteXml (XmlWriter writer){
 		BaseWriteXml (writer);
 		WriteUserXml (writer);
-		if (inputStorage != null) {
+		if (intake != null) {
 			writer.WriteStartElement ("Inputs");
-			foreach (int i in inputStorage) {
+			foreach (Item i in intake) {
 				writer.WriteStartElement ("InputStorage");
-				writer.WriteAttributeString ("amount", i.ToString ());
+				writer.WriteAttributeString ("amount", i.count.ToString ());
 				writer.WriteEndElement ();
 			}
 			writer.WriteEndElement ();
@@ -258,7 +281,7 @@ public class ProductionBuilding : UserStructure {
 		int input= 0;
 		if(reader.ReadToDescendant("Inputs") ) {
 			do {
-				inputStorage[input] = int.Parse( reader.GetAttribute("amount") );
+				intake[input].count = int.Parse( reader.GetAttribute("amount") );
 				input++;
 			} while( reader.ReadToNextSibling("InputStorage") );
 		}

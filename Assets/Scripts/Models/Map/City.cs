@@ -33,6 +33,10 @@ public class City : IXmlSerializable{
 		}
         this.island = island;
         myInv = new Inventory();
+		Item temp = BuildController.Instance.allItems[47].Clone ();
+		temp.count = 50;
+		myInv.addItem (temp);
+
         myStructures = new List<Structure>();
 		myTiles = new List<Tile> ();
 		myRoutes = new List<Route> ();

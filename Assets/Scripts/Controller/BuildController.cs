@@ -57,6 +57,12 @@ public class BuildController : MonoBehaviour {
 			2,2,500,50
 		));
 		structurePrototypes.Add (6,new HomeBuilding (6));
+		Item[] temp1 = new Item[1];
+		temp1 [0] = allItems [47].Clone ();
+		Item[] temp2 = new Item[1];
+		temp2 [0] = allItems [48].Clone();
+		int[] ints = { 1 };
+		structurePrototypes.Add(7,new ProductionBuilding(7,"Hanfweber",temp1,ints,1,temp2,3,2,1000,null,100));
 		//needs
 		allNeeds = new List<Need>();
 		ReadNeedsFromXML ();

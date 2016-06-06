@@ -3,20 +3,22 @@ using System.Collections;
 
 public class Need {
 	
-	public int id;
+	public int ID;
 	public string name;
 	public Item item;
 	public Structure structure;
 	public float[] uses;
 	public int startLevel;
+	public int popCount;
 
-	public Need(int id, string name,int level, Item item,Structure structure, float[] uses){
-		this.id = id;
+	public Need(int id, string name,int level,int count, Item item,Structure structure, float[] uses){
+		this.ID = id;
 		this.name = name;
 		this.startLevel = level;
 		this.item = item;
 		this.uses = uses;
 		this.structure = structure;
+		this.popCount = count;
 	}
 	public Need(){
 		

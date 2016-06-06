@@ -189,8 +189,8 @@ public class Pathfinding  {
 				Path_AStar p = null;
 				foreach (Tile start in roadTilesAroundStartStructure) {
 					foreach (Tile end in roadTilesAroundEndStructure) {
-						if (((Road)end.structures).Route == ((Road)start.structures).Route) {
-							Path_AStar temp = new Path_AStar (((Road)start.structures).Route, start, end);
+						if (((Road)end.Structure).Route == ((Road)start.Structure).Route) {
+							Path_AStar temp = new Path_AStar (((Road)start.Structure).Route, start, end);
 							if (p == null || temp.path.Count < p.path.Count ) {
 								p = temp;
 								destTile = end;

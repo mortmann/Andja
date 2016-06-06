@@ -6,11 +6,12 @@ using System.Xml.Schema;
 using System.Xml.Serialization;
 
 public class ProductionBuilding : UserStructure {
-
+	public Dictionary<Structure,Item[]> RegisteredStructures;
 	public Item[] intake;
 	public int[] needIntake;
 	public int[] maxIntake;
 	public int[] inputStorage;
+	MarketBuilding nearestMarketBuilding;
 
 	public override float Efficiency{
 		get {
@@ -50,19 +51,7 @@ public class ProductionBuilding : UserStructure {
 	}
 	protected ProductionBuilding(){
 	}
-	public ProductionBuilding(string name,string growable, float time, Item[] output , int tileWidth, int tileHeight,int buildcost,Item[] buildItems,int maintenancecost,bool hasHitbox=true, bool mustBeBuildOnShore=false) {
-		this.name = name;
-		this.produceTime = time;
-		this.output = output;
-		this.maxOutputStorage = 5;
-		this.tileWidth = tileWidth;
-		this.tileHeight = tileHeight;
-		this.mustBeBuildOnShore = mustBeBuildOnShore;
-		this.maintenancecost = maintenancecost;
-		this.hasHitbox = hasHitbox;
-		this.myBuildingTyp = BuildingTyp.Production;
-		this.BuildTyp = BuildTypes.Single;
-	}
+
 	protected ProductionBuilding(ProductionBuilding str){
 		this.ID = str.ID;
 		this.name = str.name;
@@ -97,58 +86,156 @@ public class ProductionBuilding : UserStructure {
 		if(needIntake == null){
 			return;
 		}
-		if (needIntake != null) {
-			for (int i = 0; i < intake.Length; i++) {
-				if (needIntake[i] > intake[i].count) {
-					return;
-				}
+
+		for (int i = 0; i < output.Length; i++) {
+			if (output[i].count == maxOutputStorage) {
+				return;
 			}
 		}
 
-		if (output != null) {
-			for (int i = 0; i < output.Length; i++) {
-				if (output[i].count == maxOutputStorage) {
-					return;
+		for (int i = 0; i < intake.Length; i++) {
+			if (needIntake[i] > intake[i].count) {
+				UserStructure jobStructure = GetJobForWorker (intake[i],needIntake[i]-intake[i].count);
+				if (jobStructure == null) {
+					continue;
 				}
+				myWorker.Add (new Worker(this));
+				return;
 			}
 		}
+
+
+
 		produceCountdown -= deltaTime;
 		if(produceCountdown <= 0) {
 			produceCountdown = produceTime;
-			if (needIntake != null) {
-				for (int i = 0; i < intake.Length; i++) {
-					intake[i].count--;
-				}
+			for (int i = 0; i < intake.Length; i++) {
+				intake[i].count--;
 			}
-			if (output != null) {
-				for (int i = 0; i < output.Length; i++) {
-					output[i].count++;
+			for (int i = 0; i < output.Length; i++) {
+				output[i].count++;
 
-					if (cbOutputChange != null) {
-						cbOutputChange (this);
-					}
+				if (cbOutputChange != null) {
+					cbOutputChange (this);
 				}
 			}
 		}
 	}
 
-	public bool addToIntake (Item toAdd){
+	public UserStructure GetJobForWorker (Item neededIntake,int amount){
+		if(jobsToDo.Count == 0 && nearestMarketBuilding == null){
+			return null;
+		}
+		if (jobsToDo.Count == 0) {
+			return nearestMarketBuilding;
+		}
+		foreach (UserStructure item in jobsToDo.Keys) {
+			return item;
+		}
+		Debug.LogError ("GetJobForWorker - This should never occur!");
+		return null;
+	}
+	public void OnOutputChangedStructure(Structure str){
+		if(str is UserStructure == false){
+			return;
+		}
+		UserStructure ustr = ((UserStructure)str);
+		List<Item> getItems = new List<Item> ();
+		List<Item> items = new List<Item> (ustr.output);
+		foreach (Item item in RegisteredStructures[str]) {
+			Item i = items.Find (x => x.ID == item.ID);
+			if(i.count > 0){
+				getItems.Add (i);
+			}
+		}
+		if (((UserStructure)str).outputClaimed == false) {
+			jobsToDo.Add (ustr,getItems.ToArray());
+		}
+
+	}
+	public bool addToIntake (Inventory toAdd){
 		if(intake == null){
 			return false;
 		}
-		for(int i = 0; i < intake.Length; i++) {
-			if(intake[i].ID == toAdd.ID) {
-				if((intake[i].count+ toAdd.count) >= maxIntake[i]) {
-					return false;
+		foreach (Item item in toAdd.items.Values) {
+			for(int i = 0; i < intake.Length; i++) {
+				if(intake[i].ID == item.ID) {
+					if((intake[i].count+ item.count) >= maxIntake[i]) {
+						return false;
+					}
+					intake[i].count += item.count;
+					callbackIfnotNull ();
 				}
-				callbackIfnotNull ();
-				intake[i].count += toAdd.count;
 			}
 		}
 		return true;
 	}
 
 	public override void OnBuild(){
+		jobsToDo = new Dictionary<UserStructure, Item[]> ();
+		foreach(Tile rangeTile in myRangeTiles){
+			if(rangeTile.Structure == null){
+				continue;
+			}
+			if(rangeTile.Structure is UserStructure){
+				if (rangeTile.Structure is MarketBuilding) {
+					findNearestMarketBuilding (rangeTile);
+					continue;
+				}
+				if (RegisteredStructures.ContainsKey (rangeTile.Structure) == false) {
+					Item[] items = hasNeedItem (((UserStructure)rangeTile.Structure).output);
+					if(items.Length == 0){
+						continue;
+					}
+					((UserStructure)rangeTile.Structure).RegisterOutputChanged (OnOutputChangedStructure);
+					RegisteredStructures.Add (rangeTile.Structure,items);
+				}
+			}
+
+		}
+		BuildController.Instance.RegisterStructureCreated (OnStructureBuild);
+	}
+	public Item[] hasNeedItem(Item[] output){
+		List<Item> items = new List<Item> ();
+		for (int i = 0; i < output.Length; i++) {
+			for (int s = 0; s < intake.Length; s++) {
+				if (output [i].ID == intake [s].ID) {
+					items.Add (output [i]);
+				}
+			}
+		}
+		return items.ToArray();
+	}
+	public void OnStructureBuild(Structure str){
+		if (str is UserStructure == false) {
+			return;
+		}
+		for (int i = 0; i < str.myBuildingTiles.Count; i++) {
+			if (myRangeTiles.Contains (str.myBuildingTiles [i]) == false) {
+				return;
+			}
+		}
+		if (str is MarketBuilding) {
+			findNearestMarketBuilding(str.BuildTile);
+			return;
+		}
+		Item[] items = hasNeedItem(((UserStructure)str).output);
+		if(items.Length > 0 ){
+			((UserStructure)str).RegisterOutputChanged (OnOutputChangedStructure);
+		}
+	}
+	public void findNearestMarketBuilding(Tile tile){
+		if (tile.Structure is MarketBuilding) {
+			if (nearestMarketBuilding == null) {
+				nearestMarketBuilding =(MarketBuilding) tile.Structure;
+			} else {
+				float firstDistance = nearestMarketBuilding.middleVector.magnitude - middleVector.magnitude;
+				float secondDistance = tile.Structure.middleVector.magnitude - middleVector.magnitude;
+				if (secondDistance < firstDistance) {
+					nearestMarketBuilding =(MarketBuilding) tile.Structure;
+				}
+			}
+		}
 	}
 
 	public override void WriteXml (XmlWriter writer){

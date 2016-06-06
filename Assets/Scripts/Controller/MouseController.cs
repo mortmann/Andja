@@ -125,9 +125,9 @@ public class MouseController : MonoBehaviour {
 				uic.OpenUnitUI (selectedUnit);
 			}
 			if (selectedUnit == null) {
-				Tile t = GetMouseOverTile ();
-				if (t.structures != null) {
-					uic.OpenStructureUI (t.structures);
+				Tile t = GetTileUnderneathMouse (false);
+				if (t.Structure != null) {
+					uic.OpenStructureUI (t.Structure);
 				}
 			}
 		} else {
@@ -177,7 +177,7 @@ public class MouseController : MonoBehaviour {
 		} else {
 			foreach (Tile t in structureTiles) {
 				if (t != null) {
-					if (Tile.IsBuildType (t.Type) == false || t.structures !=null && t.structures.canBeBuildOver == false) {
+					if (Tile.IsBuildType (t.Type) == false || t.Structure !=null && t.Structure.canBeBuildOver == false) {
 						ShowRedPrefabOnTile (t);
 					} else {
 						ShowPrefabOnTile (t);
@@ -189,8 +189,14 @@ public class MouseController : MonoBehaviour {
 			Build (structureTiles);
 		}
 	}
-	public Tile GetTileUnderneathMouse(){
-		return World.current.GetTileAt (currFramePosition.x+0.5f,currFramePosition.y+0.5f);
+	public Tile GetTileUnderneathMouse(bool plusOffset = true){
+		float xOffset = 0;
+		float yOffset = 0;
+		if (plusOffset) {
+			xOffset = 0.5f;
+			yOffset = 0.5f;
+		}
+		return World.current.GetTileAt (currFramePosition.x+xOffset,currFramePosition.y+yOffset);
 	}
 
 	public void RemovePrefabs(){

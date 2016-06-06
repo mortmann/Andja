@@ -45,7 +45,7 @@ public class Path_TileGraph {
                     // This neighbour exists, is walkable, and doesn't requiring clipping a corner --> so create an edge.
 
                     Path_Edge<Tile> e = new Path_Edge<Tile>();
-                    e.cost = neighbours[i].movementCost;
+                    e.cost = neighbours[i].MovementCost;
                     e.node = nodes[neighbours[i]];
 
                     // Add the edge to our temporary (and growable!) list
@@ -71,7 +71,7 @@ public class Path_TileGraph {
 			if(nodes.ContainsKey (t)){
 				//add the edges to the new node
 				Path_Edge<Tile> newEdge = new Path_Edge<Tile>();
-				newEdge.cost = toAdd.movementCost;
+				newEdge.cost = toAdd.MovementCost;
 				newEdge.node = nodes[toAdd];
 				toAdd_edges.Add (newEdge);
 
@@ -80,7 +80,7 @@ public class Path_TileGraph {
 				Path_Node<Tile> n = nodes [t];
 				List<Path_Edge<Tile>> neighbours_edges = new List<Path_Edge<Tile>>(n.edges);
 				Path_Edge<Tile> oldEdge = new Path_Edge<Tile>();
-				oldEdge.cost = toAdd.movementCost;
+				oldEdge.cost = toAdd.MovementCost;
 				oldEdge.node = nodes[toAdd];
 				neighbours_edges.Add (oldEdge);
 				n.edges = neighbours_edges.ToArray ();
@@ -130,7 +130,7 @@ public class Path_TileGraph {
 					// This neighbour exists, is walkable, and doesn't requiring clipping a corner --> so create an edge.
 
 					Path_Edge<Tile> e = new Path_Edge<Tile>();
-					e.cost = neighbours[i].movementCost;
+					e.cost = neighbours[i].MovementCost;
 					e.node = nodes[neighbours[i]];
 
 					// Add the edge to our temporary (and growable!) list
@@ -190,7 +190,7 @@ public class Path_TileGraph {
 					// This neighbour exists, is walkable, and doesn't requiring clipping a corner --> so create an edge.
 
 					Path_Edge<Tile> e = new Path_Edge<Tile>();
-					e.cost = neighbours[i].movementCost;
+					e.cost = neighbours[i].MovementCost;
 					e.node = nodes[ neighbours[i] ];
 
 					// Add the edge to our temporary (and growable!) list
@@ -215,12 +215,12 @@ public class Path_TileGraph {
 		if( Mathf.Abs(dX) + Mathf.Abs(dY) == 2 ) {
 			// We are diagonal
 
-			if( World.current.GetTileAt( curr.X - dX, curr.Y ).movementCost == 0 ) {
+			if( World.current.GetTileAt( curr.X - dX, curr.Y ).MovementCost == 0 ) {
 				// East or West is unwalkable, therefore this would be a clipped movement.
 				return true;
 			}
 
-			if( World.current.GetTileAt( curr.X, curr.Y - dY ).movementCost == 0 ) {
+			if( World.current.GetTileAt( curr.X, curr.Y - dY ).MovementCost == 0 ) {
 				// North or South is unwalkable, therefore this would be a clipped movement.
 				return true;
 			}

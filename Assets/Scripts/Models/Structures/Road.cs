@@ -48,19 +48,19 @@ public class Road : Structure {
 		List<Route> routes = new List<Route> ();
 		int routeCount=0;
 		foreach(Tile t in myBuildingTiles[0].GetNeighbours ()){
-			if (t.structures == null) {
+			if (t.Structure == null) {
 				continue;
 			}
-			if (t.structures.BuildTyp != BuildTypes.Path) {
+			if (t.Structure.BuildTyp != BuildTypes.Path) {
 				continue;
 			}
-			if (t.structures is Road) {
-				if (((Road)t.structures).Route != null) {
-					if (routes.Contains (((Road)t.structures).Route) == false) {
-						routes.Add( ((Road)t.structures).Route );
+			if (t.Structure is Road) {
+				if (((Road)t.Structure).Route != null) {
+					if (routes.Contains (((Road)t.Structure).Route) == false) {
+						routes.Add( ((Road)t.Structure).Route );
 						routeCount++;
 					}
-					((Road)t.structures).updateOrientation ();
+					((Road)t.Structure).updateOrientation ();
 				} 
 			}
 		}
@@ -89,23 +89,23 @@ public class Road : Structure {
 	public void updateOrientation (){
 		Tile[] neig = myBuildingTiles [0].GetNeighbours ();
 		connectOrientation = "_";
-		if(neig[0].structures != null){
-			if (neig [0].structures is Road) {
+		if(neig[0].Structure != null){
+			if (neig [0].Structure is Road) {
 				connectOrientation += "N";
 			}
 		}
-		if(neig[1].structures!= null){
-			if(neig[1].structures is Road){
+		if(neig[1].Structure!= null){
+			if(neig[1].Structure is Road){
 				connectOrientation += "E";
 			}
 		}
-		if(neig[2].structures!= null){
-			if(neig[2].structures is Road){
+		if(neig[2].Structure!= null){
+			if(neig[2].Structure is Road){
 				connectOrientation += "S";			
 			}
 		}
-		if(neig[3].structures!= null){
-			if(neig[3].structures is Road){
+		if(neig[3].Structure!= null){
+			if(neig[3].Structure is Road){
 				connectOrientation += "W";
 			}
 		}

@@ -9,7 +9,7 @@ public abstract class UserStructure : Structure {
 	public float health;
 	protected int maxNumberOfWorker = 1;
 	public List<Worker> myWorker;
-	public List<UserStructure> jobsToDo;
+	public Dictionary<UserStructure,Item[]> jobsToDo;
 	public bool outputClaimed;
 	public float produceTime;
 	public float produceCountdown;
@@ -53,12 +53,17 @@ public abstract class UserStructure : Structure {
 			return;
 		}
 		UserStructure giveJob = null;
-		foreach (UserStructure item in jobsToDo) {
+		foreach (UserStructure item in jobsToDo.Keys) {
 			if (myWorker.Count == maxNumberOfWorker) {
 				break;
-			}			
-			Worker ws = new Worker (this, item);
-			giveJob = item;
+			}
+			Worker ws;
+			if (jobsToDo [item] != null) {
+				ws= new Worker (this, item,jobsToDo [item]);
+			} else {
+				ws= new Worker (this, item);
+			}
+				giveJob = item;
 			WorldController.Instance.world.CreateWorkerGameObject (ws);
 			myWorker.Add (ws);
 		}
@@ -83,15 +88,18 @@ public abstract class UserStructure : Structure {
 		}
 		return temp;
 	}
-	public Item getOneOutput() {
+	public Item getOneOutput(Item item) {
 		if(output == null){
 			return null;
 		}
 		for (int i = 0; i < output.Length; i++) {
+			if(item.ID != output[i].ID){
+				continue;
+			}
 			if (output[i].count > 0) {
-				callbackIfnotNull ();
 				Item temp = output [i].CloneWithCount();
 				output [i].count = 0;
+				callbackIfnotNull ();
 				return temp;
 			}
 		}
@@ -107,11 +115,11 @@ public abstract class UserStructure : Structure {
 	public List<Route> GetMyRoutes(){
 		List<Route> myRoutes = new List<Route>();
 		foreach (Tile t in neighbourTiles) {
-			if (t.structures == null) {
+			if (t.Structure == null) {
 				continue;
 			}
-			if(t.structures is Road){
-				myRoutes.Add (((Road)t.structures).Route);
+			if(t.Structure is Road){
+				myRoutes.Add (((Road)t.Structure).Route);
 			}
 		}
 		return myRoutes;
@@ -129,6 +137,15 @@ public abstract class UserStructure : Structure {
 			}
 			writer.WriteEndElement ();
 		}
+		if (myWorker != null) {
+			writer.WriteStartElement ("Workers");
+			foreach (Worker w in myWorker) {
+				writer.WriteStartElement ("Worker");
+				w.WriteXml (writer);
+				writer.WriteEndElement ();
+			}
+			writer.WriteEndElement ();
+		}
 	}
 
 	public void ReadUserXml(XmlReader reader){
@@ -140,6 +157,13 @@ public abstract class UserStructure : Structure {
 				outputStorage[output] = int.Parse( reader.GetAttribute("amount") );
 				output++;
 			} while( reader.ReadToNextSibling("OutputStorage") );
+		}
+		if(reader.ReadToDescendant("Workers") ) {
+			do {
+				Worker w = new Worker(this);
+				w.ReadXml (reader);
+				myWorker.Add (w);
+			} while( reader.ReadToNextSibling("Worker") );
 		}
 	}
 }

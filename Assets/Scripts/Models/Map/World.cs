@@ -49,6 +49,7 @@ public class World : IXmlSerializable{
 
 			}
 		}
+		allNeeds = new List<Need> ();
 		//		LoadPrototypsNeedsFromXML ();
 
 		tileGraph = new Path_TileGraph(this);
@@ -117,7 +118,7 @@ public class World : IXmlSerializable{
 		xmlDoc.LoadXml(ta.text); // load the file.
 		foreach(XmlElement node in xmlDoc.SelectNodes("Needs/Need")){
 			Need need = new Need ();
-			need.id = int.Parse(node.SelectSingleNode("ID").InnerText);
+			need.ID = int.Parse(node.SelectSingleNode("ID").InnerText);
 			need.startLevel = int.Parse(node.SelectSingleNode("Level").InnerText);
 			need.name = node.SelectSingleNode("EN"+ "_Name").InnerText;
 			need.structure = BuildController.Instance.structurePrototypes [int.Parse(node.SelectSingleNode("Structure").InnerText)];

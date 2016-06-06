@@ -18,8 +18,7 @@ public class City : IXmlSerializable{
 	public List<Tile> myTiles;
 	public List<Route> myRoutes;
 
-	public List<Need> allNeeds;
-
+	public Dictionary<Need,float> allNeeds;
 	public int cityBalance;
 	public int[] citizienCount;
 	public float useTick;
@@ -27,18 +26,21 @@ public class City : IXmlSerializable{
 
 	public string name {get{return "City "+island.myCities.IndexOf (this);}}
 
-	public City(Island island,List<Need> allNeeds) {
+	public City(Island island,List<Need> allNeedsList) {
 		citizienCount = new int[4];
 		for (int i = 0; i < citizienCount.Length; i++) {
 			citizienCount [i] = 0;
 		}
-		this.allNeeds = allNeeds;
         this.island = island;
         myInv = new Inventory();
         myStructures = new List<Structure>();
 		myTiles = new List<Tile> ();
 		myRoutes = new List<Route> ();
 		myHomes = new List<HomeBuilding> ();
+		allNeeds = new Dictionary<Need,float> ();
+		for (int i = 0; i < allNeedsList.Count; i++) {
+			allNeeds.Add (allNeedsList[i],0);
+		}
 		useTickTimer = useTick;
     }
 
@@ -46,12 +48,11 @@ public class City : IXmlSerializable{
 		for (int i = 0; i < myStructures.Count; i++) {
 			myStructures[i].update(deltaTime);
 		}
-		Debug.Log ("count " + myStructures.Count); 
 
 		useTickTimer -= deltaTime;
 		if(useTickTimer>=0){
-			for (int i = 0; i < allNeeds.Count; i++) {
-				allNeeds[i].TryToConsumThisIn (this,allNeeds[i].startLevel,citizienCount);
+			foreach (Need n in allNeeds.Keys) {
+				allNeeds[n] = n.TryToConsumThisIn (this,n.startLevel,citizienCount);
 			}
 		}
     }

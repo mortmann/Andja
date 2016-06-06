@@ -1,581 +1,516 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <Items>
-	<Item>
-		<ID>1</ID>
+	<Item ID="1">
 		<SatisfiesNeed>-1</SatisfiesNeed>
 		<Decays>-1</Decays>
 		<EN_Name>Wood</EN_Name>
 		<DE_Name>Holz</DE_Name>
 	</Item>
-	<Item>
-		<ID>2</ID>
+	<Item ID="2">
 		<SatisfiesNeed>-1</SatisfiesNeed>
 		<Decays>-1</Decays>
 		<EN_Name>Tools</EN_Name>
 		<DE_Name>Werkzeug</DE_Name>
 	</Item>
-	<Item>
-		<ID>3</ID>
+	<Item ID="3">
 		<SatisfiesNeed>-1</SatisfiesNeed>
 		<Decays>-1</Decays>
 		<EN_Name>Stone</EN_Name>
 		<DE_Name>Stein</DE_Name>
 	</Item>
-	<Item>
-		<ID>4</ID>
+	<Item ID="4">
 		<SatisfiesNeed>-1</SatisfiesNeed>
 		<Decays>-1</Decays>
 		<EN_Name>Brick</EN_Name>
 		<DE_Name>Ziegel</DE_Name>
 	</Item>
-	<Item>
-		<ID>5</ID>
+	<Item ID="5">
 		<SatisfiesNeed>-1</SatisfiesNeed>
 		<Decays>-1</Decays>
 		<EN_Name>Glas</EN_Name>
 		<DE_Name>Glas</DE_Name>
 	</Item>
-	<Item>
-		<ID>6</ID>
+	<Item ID="6">
 		<SatisfiesNeed>-1</SatisfiesNeed>
 		<Decays>-1</Decays>
 		<EN_Name>Marble</EN_Name>
 		<DE_Name>Marmor</DE_Name>
 	</Item>
-	<Item>
-		<ID>7</ID>
+	<Item ID="7">
 		<SatisfiesNeed>-1</SatisfiesNeed>
 		<Decays>-1</Decays>
 		<EN_Name>Luxury Wood</EN_Name>
 		<DE_Name>Luxusholz</DE_Name>
 	</Item>
-	<Item>
-		<ID>20</ID>
+	<Item ID="20">
 		<SatisfiesNeed>-1</SatisfiesNeed>
 		<Decays>-1</Decays>
 		<EN_Name>Iron Ore</EN_Name>
 		<DE_Name>Eisenerz</DE_Name>
 	</Item>
-	<Item>
-		<ID>21</ID>
+	<Item ID="21">
 		<SatisfiesNeed>-1</SatisfiesNeed>
 		<Decays>-1</Decays>
 		<EN_Name>Iron Ingot</EN_Name>
 		<DE_Name>Eisenrohling</DE_Name>
 	</Item>
-	<Item>
-		<ID>22</ID>
+	<Item ID="22">
 		<SatisfiesNeed>-1</SatisfiesNeed>
 		<Decays>-1</Decays>
 		<EN_Name>Coal</EN_Name>
 		<DE_Name>Kohle</DE_Name>
 	</Item>
-	<Item>
-		<ID>23</ID>
+	<Item ID="23">
 		<SatisfiesNeed>-1</SatisfiesNeed>
 		<Decays>-1</Decays>
 		<EN_Name>Venison</EN_Name>
 		<DE_Name>Wildfleisch</DE_Name>
 	</Item>
-	<Item>
-		<ID>24</ID>
+	<Item ID="24">
 		<SatisfiesNeed>-1</SatisfiesNeed>
 		<Decays>-1</Decays>
 		<EN_Name>Clay</EN_Name>
 		<DE_Name>Lehm</DE_Name>
 	</Item>
-	<Item>
-		<ID>25</ID>
+	<Item ID="25">
 		<SatisfiesNeed>-1</SatisfiesNeed>
 		<Decays>-1</Decays>
 		<EN_Name>Sand</EN_Name>
 		<DE_Name>Sand</DE_Name>
 	</Item>
-	<Item>
-		<ID>26</ID>
+	<Item ID="26">
 		<SatisfiesNeed>-1</SatisfiesNeed>
 		<Decays>-1</Decays>
 		<EN_Name>Quartz</EN_Name>
 		<DE_Name>Quarz</DE_Name>
 	</Item>
-	<Item>
-		<ID>27</ID>
+	<Item ID="27">
 		<SatisfiesNeed>-1</SatisfiesNeed>
 		<Decays>-1</Decays>
 		<EN_Name>Fish</EN_Name>
 		<DE_Name>Fisch</DE_Name>
 	</Item>
-	<Item>
-		<ID>28</ID>
+	<Item ID="28">
 		<SatisfiesNeed>-1</SatisfiesNeed>
 		<Decays>-1</Decays>
 		<EN_Name>Wheat</EN_Name>
 		<DE_Name>Getreide</DE_Name>
 	</Item>
-	<Item>
-		<ID>29</ID>
+	<Item ID="29">
 		<SatisfiesNeed>-1</SatisfiesNeed>
 		<Decays>-1</Decays>
 		<EN_Name>Flour</EN_Name>
 		<DE_Name>Mehl</DE_Name>
 	</Item>
-	<Item>
-		<ID>30</ID>
+	<Item ID="30">
 		<SatisfiesNeed>-1</SatisfiesNeed>
 		<Decays>-1</Decays>
 		<EN_Name>Bread</EN_Name>
 		<DE_Name>Brot</DE_Name>
 	</Item>
-	<Item>
-		<ID>31</ID>
+	<Item ID="31">
+		<SatisfiesNeed>-1</SatisfiesNeed>
+		<Decays>-1</Decays>
+		<EN_Name>Pig</EN_Name>
+		<DE_Name>Schwein</DE_Name>
+	</Item>
+	<Item ID="32">
+		<SatisfiesNeed>-1</SatisfiesNeed>
+		<Decays>-1</Decays>
+		<EN_Name>Pig-Meat</EN_Name>
+		<DE_Name>Schweinefleisch</DE_Name>
+	</Item>
+	<Item ID="33">
 		<SatisfiesNeed>-1</SatisfiesNeed>
 		<Decays>-1</Decays>
 		<EN_Name>Hops</EN_Name>
 		<DE_Name>Hopfen</DE_Name>
 	</Item>
-	<Item>
-		<ID>32</ID>
+	<Item ID="34">
 		<SatisfiesNeed>-1</SatisfiesNeed>
 		<Decays>-1</Decays>
 		<EN_Name>Beer</EN_Name>
 		<DE_Name>Bier</DE_Name>
 	</Item>
-	<Item>
-		<ID>33</ID>
+	<Item ID="35">
 		<SatisfiesNeed>-1</SatisfiesNeed>
 		<Decays>-1</Decays>
 		<EN_Name>Sugar</EN_Name>
 		<DE_Name>Zucker</DE_Name>
 	</Item>
-	<Item>
-		<ID>34</ID>
+	<Item ID="36">
 		<SatisfiesNeed>-1</SatisfiesNeed>
 		<Decays>-1</Decays>
 		<EN_Name>Rum</EN_Name>
 		<DE_Name>Rum</DE_Name>
 	</Item>
-	<Item>
-		<ID>35</ID>
+	<Item ID="37">
 		<SatisfiesNeed>-1</SatisfiesNeed>
 		<Decays>-1</Decays>
 		<EN_Name>Potatoes</EN_Name>
 		<DE_Name>Kartoffeln</DE_Name>
 	</Item>
-	<Item>
-		<ID>36</ID>
+	<Item ID="38">
 		<SatisfiesNeed>-1</SatisfiesNeed>
 		<Decays>-1</Decays>
 		<EN_Name>Fruits</EN_Name>
 		<DE_Name>Früchte</DE_Name>
 	</Item>
-	<Item>
-		<ID>37</ID>
+	<Item ID="39">
 		<SatisfiesNeed>-1</SatisfiesNeed>
 		<Decays>-1</Decays>
 		<EN_Name>Liquor</EN_Name>
 		<DE_Name>Schnaps</DE_Name>
 	</Item>
-	<Item>
-		<ID>38</ID>
+	<Item ID="40">
 		<SatisfiesNeed>-1</SatisfiesNeed>
 		<Decays>-1</Decays>
 		<EN_Name>Wine Grapes</EN_Name>
 		<DE_Name>Weintrauben</DE_Name>
 	</Item>
-	<Item>
-		<ID>39</ID>
+	<Item ID="41">
 		<SatisfiesNeed>-1</SatisfiesNeed>
 		<Decays>-1</Decays>
 		<EN_Name>Casks</EN_Name>
 		<DE_Name>Fässer</DE_Name>
 	</Item>
-	<Item>
-		<ID>40</ID>
+	<Item ID="42">
 		<SatisfiesNeed>-1</SatisfiesNeed>
 		<Decays>-1</Decays>
 		<EN_Name>Wine</EN_Name>
 		<DE_Name>Wein</DE_Name>
 	</Item>
-	<Item>
-		<ID>41</ID>
+	<Item ID="43">
 		<SatisfiesNeed>-1</SatisfiesNeed>
 		<Decays>-1</Decays>
 		<EN_Name>Coffee Beans</EN_Name>
 		<DE_Name>Kaffeebohnen</DE_Name>
 	</Item>
-	<Item>
-		<ID>42</ID>
+	<Item ID="44">
 		<SatisfiesNeed>-1</SatisfiesNeed>
 		<Decays>-1</Decays>
 		<EN_Name>Coffee</EN_Name>
 		<DE_Name>Kaffee</DE_Name>
 	</Item>
-	<Item>
-		<ID>43</ID>
+	<Item ID="45">
 		<SatisfiesNeed>-1</SatisfiesNeed>
 		<Decays>-1</Decays>
 		<EN_Name>Cocoa</EN_Name>
 		<DE_Name>Kakao</DE_Name>
 	</Item>
-	<Item>
-		<ID>44</ID>
+	<Item ID="46">
 		<SatisfiesNeed>-1</SatisfiesNeed>
 		<Decays>-1</Decays>
 		<EN_Name>Sweets</EN_Name>
 		<DE_Name>Süßigkeiten</DE_Name>
 	</Item>
-	<Item>
-		<ID>45</ID>
+	<Item ID="47">
 		<SatisfiesNeed>-1</SatisfiesNeed>
 		<Decays>-1</Decays>
 		<EN_Name>Hemp</EN_Name>
 		<DE_Name>Hanf</DE_Name>
 	</Item>
-	<Item>
-		<ID>46</ID>
+	<Item ID="48">
 		<SatisfiesNeed>-1</SatisfiesNeed>
 		<Decays>-1</Decays>
 		<EN_Name>Hemp Fabric</EN_Name>
 		<DE_Name>Hanfballen</DE_Name>
 	</Item>
-	<Item>
-		<ID>47</ID>
+	<Item ID="49">
 		<SatisfiesNeed>-1</SatisfiesNeed>
 		<Decays>-1</Decays>
 		<EN_Name>Hemp Clothes</EN_Name>
 		<DE_Name>Hanfkleidung</DE_Name>
 	</Item>
-	<Item>
-		<ID>48</ID>
+	<Item ID="50">
 		<SatisfiesNeed>-1</SatisfiesNeed>
 		<Decays>-1</Decays>
 		<EN_Name>Ropes</EN_Name>
 		<DE_Name>Seile</DE_Name>
 	</Item>
-	<Item>
-		<ID>49</ID>
+	<Item ID="51">
 		<SatisfiesNeed>-1</SatisfiesNeed>
 		<Decays>-1</Decays>
 		<EN_Name>Cooper Ore</EN_Name>
 		<DE_Name>Kupfererz</DE_Name>
 	</Item>
-	<Item>
-		<ID>50</ID>
+	<Item ID="52">
 		<SatisfiesNeed>-1</SatisfiesNeed>
 		<Decays>-1</Decays>
 		<EN_Name>Copper Ingots</EN_Name>
 		<DE_Name>Kupferbarren</DE_Name>
 	</Item>
-	<Item>
-		<ID>51</ID>
+	<Item ID="53">
 		<SatisfiesNeed>-1</SatisfiesNeed>
 		<Decays>-1</Decays>
 		<EN_Name>Cutlery</EN_Name>
 		<DE_Name>Besteck</DE_Name>
 	</Item>
-	<Item>
-		<ID>52</ID>
+	<Item ID="54">
 		<SatisfiesNeed>-1</SatisfiesNeed>
 		<Decays>-1</Decays>
 		<EN_Name>Spice</EN_Name>
 		<DE_Name>Gewürz</DE_Name>
 	</Item>
-	<Item>
-		<ID>53</ID>
+	<Item ID="55">
 		<SatisfiesNeed>-1</SatisfiesNeed>
 		<Decays>-1</Decays>
 		<EN_Name>Cows</EN_Name>
 		<DE_Name>Kühe</DE_Name>
 	</Item>
-	<Item>
-		<ID>54</ID>
+	<Item ID="56">
 		<SatisfiesNeed>-1</SatisfiesNeed>
 		<Decays>-1</Decays>
-		<EN_Name>Meat</EN_Name>
-		<DE_Name>Fleisch</DE_Name>
+		<EN_Name>Cow-Meat</EN_Name>
+		<DE_Name>Kuhfleisch</DE_Name>
 	</Item>
-	<Item>
-		<ID>55</ID>
+	<Item ID="57">
 		<SatisfiesNeed>-1</SatisfiesNeed>
 		<Decays>-1</Decays>
 		<EN_Name>Leather</EN_Name>
 		<DE_Name>Leder</DE_Name>
 	</Item>
-	<Item>
-		<ID>56</ID>
+	<Item ID="58">
 		<SatisfiesNeed>-1</SatisfiesNeed>
 		<Decays>-1</Decays>
 		<EN_Name>Paper</EN_Name>
 		<DE_Name>Papier</DE_Name>
 	</Item>
-	<Item>
-		<ID>57</ID>
+	<Item ID="59">
 		<SatisfiesNeed>-1</SatisfiesNeed>
 		<Decays>-1</Decays>
 		<EN_Name>Flowers</EN_Name>
 		<DE_Name>Blumen</DE_Name>
 	</Item>
-	<Item>
-		<ID>58</ID>
+	<Item ID="60">
 		<SatisfiesNeed>-1</SatisfiesNeed>
 		<Decays>-1</Decays>
 		<EN_Name>Color</EN_Name>
 		<DE_Name>Farbe</DE_Name>
 	</Item>
-	<Item>
-		<ID>59</ID>
+	<Item ID="61">
 		<SatisfiesNeed>-1</SatisfiesNeed>
 		<Decays>-1</Decays>
 		<EN_Name>Books</EN_Name>
 		<DE_Name>Buch</DE_Name>
 	</Item>
-	<Item>
-		<ID>60</ID>
+	<Item ID="62">
 		<SatisfiesNeed>-1</SatisfiesNeed>
 		<Decays>-1</Decays>
 		<EN_Name>Goggles</EN_Name>
 		<DE_Name>Brillen</DE_Name>
 	</Item>
-	<Item>
-		<ID>61</ID>
+	<Item ID="63">
 		<SatisfiesNeed>-1</SatisfiesNeed>
 		<Decays>-1</Decays>
 		<EN_Name>Tobacco</EN_Name>
 		<DE_Name>Tabak</DE_Name>
 	</Item>
-	<Item>
-		<ID>62</ID>
+	<Item ID="64">
 		<SatisfiesNeed>-1</SatisfiesNeed>
 		<Decays>-1</Decays>
 		<EN_Name>Tobacco Products</EN_Name>
 		<DE_Name>Tabakwaren</DE_Name>
 	</Item>
-	<Item>
-		<ID>63</ID>
+	<Item ID="65">
 		<SatisfiesNeed>-1</SatisfiesNeed>
 		<Decays>-1</Decays>
 		<EN_Name>Grain Salt</EN_Name>
 		<DE_Name>Grobes Salz</DE_Name>
 	</Item>
-	<Item>
-		<ID>64</ID>
+	<Item ID="66">
 		<SatisfiesNeed>-1</SatisfiesNeed>
 		<Decays>-1</Decays>
 		<EN_Name>Salt</EN_Name>
 		<DE_Name>Salz</DE_Name>
 	</Item>
-	<Item>
-		<ID>65</ID>
+	<Item ID="67">
 		<SatisfiesNeed>-1</SatisfiesNeed>
 		<Decays>-1</Decays>
 		<EN_Name>Honey</EN_Name>
 		<DE_Name>Honig</DE_Name>
 	</Item>
-	<Item>
-		<ID>66</ID>
+	<Item ID="68">
 		<SatisfiesNeed>-1</SatisfiesNeed>
 		<Decays>-1</Decays>
 		<EN_Name>Beeswax</EN_Name>
 		<DE_Name>Bienenwachs</DE_Name>
 	</Item>
-	<Item>
-		<ID>67</ID>
+	<Item ID="69">
 		<SatisfiesNeed>-1</SatisfiesNeed>
 		<Decays>-1</Decays>
 		<EN_Name>Candles</EN_Name>
 		<DE_Name>Kerzen</DE_Name>
 	</Item>
-	<Item>
-		<ID>68</ID>
+	<Item ID="70">
 		<SatisfiesNeed>-1</SatisfiesNeed>
 		<Decays>-1</Decays>
 		<EN_Name>Candleholder</EN_Name>
 		<DE_Name>Kerzenhalter</DE_Name>
 	</Item>
-	<Item>
-		<ID>69</ID>
+	<Item ID="71">
 		<SatisfiesNeed>-1</SatisfiesNeed>
 		<Decays>-1</Decays>
 		<EN_Name>Sheep´s Wool</EN_Name>
 		<DE_Name>Schafswolle</DE_Name>
 	</Item>
-	<Item>
-		<ID>70</ID>
+	<Item ID="72">
 		<SatisfiesNeed>-1</SatisfiesNeed>
 		<Decays>-1</Decays>
 		<EN_Name>Sheep-Wool Cloth</EN_Name>
 		<DE_Name>Schafswolleleinen *1</DE_Name>
 	</Item>
-	<Item>
-		<ID>71</ID>
+	<Item ID="73">
 		<SatisfiesNeed>-1</SatisfiesNeed>
 		<Decays>-1</Decays>
 		<EN_Name>Better Clothes</EN_Name>
 		<DE_Name>Bessere Kleidung *1</DE_Name>
 	</Item>
-	<Item>
-		<ID>72</ID>
+	<Item ID="74">
 		<SatisfiesNeed>-1</SatisfiesNeed>
 		<Decays>-1</Decays>
-		<EN_Name>Palm Oil</EN_Name>
-		<DE_Name>Palmöl</DE_Name>
+		<EN_Name>Olives</EN_Name>
+		<DE_Name>Oliven</DE_Name>
 	</Item>
-	<Item>
-		<ID>73</ID>
+	<Item ID="75">
 		<SatisfiesNeed>-1</SatisfiesNeed>
 		<Decays>-1</Decays>
 		<EN_Name>Soap</EN_Name>
 		<DE_Name>Seife</DE_Name>
 	</Item>
-	<Item>
-		<ID>74</ID>
+	<Item ID="76">
 		<SatisfiesNeed>-1</SatisfiesNeed>
 		<Decays>-1</Decays>
 		<EN_Name>Medicinal Herbs</EN_Name>
 		<DE_Name>Heilkräuter</DE_Name>
 	</Item>
-	<Item>
-		<ID>75</ID>
+	<Item ID="77">
 		<SatisfiesNeed>-1</SatisfiesNeed>
 		<Decays>-1</Decays>
 		<EN_Name>Whale Oil</EN_Name>
 		<DE_Name>Waltran</DE_Name>
 	</Item>
-	<Item>
-		<ID>76</ID>
+	<Item ID="78">
 		<SatisfiesNeed>-1</SatisfiesNeed>
 		<Decays>-1</Decays>
 		<EN_Name>Lamp Oil</EN_Name>
 		<DE_Name> Lampenöl</DE_Name>
 	</Item>
-	<Item>
-		<ID>77</ID>
+	<Item ID="79">
 		<SatisfiesNeed>-1</SatisfiesNeed>
 		<Decays>-1</Decays>
 		<EN_Name>Perfume Bottle</EN_Name>
 		<DE_Name>Parfumflaschen</DE_Name>
 	</Item>
-	<Item>
-		<ID>78</ID>
+	<Item ID="80">
 		<SatisfiesNeed>-1</SatisfiesNeed>
 		<Decays>-1</Decays>
 		<EN_Name>Perfume</EN_Name>
 		<DE_Name>Parfum</DE_Name>
 	</Item>
-	<Item>
-		<ID>79</ID>
+	<Item ID="81">
 		<SatisfiesNeed>-1</SatisfiesNeed>
 		<Decays>-1</Decays>
 		<EN_Name>Raw Silk</EN_Name>
 		<DE_Name>Rohe Seide</DE_Name>
 	</Item>
-	<Item>
-		<ID>80</ID>
+	<Item ID="82">
 		<SatisfiesNeed>-1</SatisfiesNeed>
 		<Decays>-1</Decays>
 		<EN_Name>Bales of Silk</EN_Name>
 		<DE_Name>Seidenballen</DE_Name>
 	</Item>
-	<Item>
-		<ID>81</ID>
+	<Item ID="83">
 		<SatisfiesNeed>-1</SatisfiesNeed>
 		<Decays>-1</Decays>
 		<EN_Name>Fur</EN_Name>
 		<DE_Name>Pelze</DE_Name>
 	</Item>
-	<Item>
-		<ID>82</ID>
+	<Item ID="84">
 		<SatisfiesNeed>-1</SatisfiesNeed>
 		<Decays>-1</Decays>
 		<EN_Name>Luxury Clothes</EN_Name>
 		<DE_Name>Luxuskleider </DE_Name>
 	</Item>
-	<Item>
-		<ID>83</ID>
+	<Item ID="85">
 		<SatisfiesNeed>-1</SatisfiesNeed>
 		<Decays>-1</Decays>
 		<EN_Name>Gold Ore</EN_Name>
 		<DE_Name>Goldnuggets</DE_Name>
 	</Item>
-	<Item>
-		<ID>84</ID>
+	<Item ID="86">
 		<SatisfiesNeed>-1</SatisfiesNeed>
 		<Decays>-1</Decays>
 		<EN_Name>Gold</EN_Name>
 		<DE_Name>Gold</DE_Name>
 	</Item>
-	<Item>
-		<ID>85</ID>
+	<Item ID="87">
 		<SatisfiesNeed>-1</SatisfiesNeed>
 		<Decays>-1</Decays>
 		<EN_Name>Rough Diamonds</EN_Name>
 		<DE_Name>Rohdiamanten</DE_Name>
 	</Item>
-	<Item>
-		<ID>86</ID>
+	<Item ID="88">
 		<SatisfiesNeed>-1</SatisfiesNeed>
 		<Decays>-1</Decays>
 		<EN_Name>Diamonds</EN_Name>
 		<DE_Name>Diamanten</DE_Name>
 	</Item>
-	<Item>
-		<ID>87</ID>
+	<Item ID="89">
 		<SatisfiesNeed>-1</SatisfiesNeed>
 		<Decays>-1</Decays>
 		<EN_Name>Jewelry</EN_Name>
 		<DE_Name>Schmuck</DE_Name>
 	</Item>
-	<Item>
-		<ID>88</ID>
+	<Item ID="90">
 		<SatisfiesNeed>-1</SatisfiesNeed>
 		<Decays>-1</Decays>
 		<EN_Name>Luxury Cutlery</EN_Name>
 		<DE_Name>Luxusbesteck</DE_Name>
 	</Item>
-	<Item>
-		<ID>200</ID>
+	<Item ID="91">
+		<SatisfiesNeed>-1</SatisfiesNeed>
+		<Decays>-1</Decays>
+		<EN_Name>Carpets</EN_Name>
+		<DE_Name>Teppiche</DE_Name>
+	</Item>
+	<Item ID="200">
 		<SatisfiesNeed>-1</SatisfiesNeed>
 		<Decays>-1</Decays>
 		<EN_Name>Armors</EN_Name>
 		<DE_Name>Rüstungen</DE_Name>
 	</Item>
-	<Item>
-		<ID>201</ID>
+	<Item ID="201">
 		<SatisfiesNeed>-1</SatisfiesNeed>
 		<Decays>-1</Decays>
 		<EN_Name>Swords</EN_Name>
 		<DE_Name>Schwerter</DE_Name>
 	</Item>
-	<Item>
-		<ID>202</ID>
+	<Item ID="202">
 		<SatisfiesNeed>-1</SatisfiesNeed>
 		<Decays>-1</Decays>
 		<EN_Name>Pike</EN_Name>
 		<DE_Name>Pikes</DE_Name>
 	</Item>
-	<Item>
-		<ID>203</ID>
+	<Item ID="203">
 		<SatisfiesNeed>-1</SatisfiesNeed>
 		<Decays>-1</Decays>
 		<EN_Name>Bows</EN_Name>
 		<DE_Name>Bögen</DE_Name>
 	</Item>
-	<Item>
-		<ID>204</ID>
+	<Item ID="204">
 		<SatisfiesNeed>-1</SatisfiesNeed>
 		<Decays>-1</Decays>
 		<EN_Name>Cannons</EN_Name>
 		<DE_Name>Kanonen</DE_Name>
 	</Item>
-	<Item>
-		<ID>205</ID>
+	<Item ID="205">
 		<SatisfiesNeed>-1</SatisfiesNeed>
 		<Decays>-1</Decays>
 		<EN_Name>Rifles</EN_Name>
 		<DE_Name>Büchsen</DE_Name>
 	</Item>
-	<Item>
-		<ID>206</ID>
+	<Item ID="206">
 		<SatisfiesNeed>-1</SatisfiesNeed>
 		<Decays>-1</Decays>
 		<EN_Name>Horses</EN_Name>

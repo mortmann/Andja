@@ -61,7 +61,7 @@ public class MineStructure : UserStructure {
 		if (BuildTile.myIsland.myRessources [myRessource] <= 0) {
 			return;
 		} 
-		if (outputStorage[0] >= maxOutputStorage){
+		if (output[0].count >= maxOutputStorage){
 			return;
 		}
 

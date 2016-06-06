@@ -6,7 +6,7 @@ using System.Xml.Schema;
 using System.Xml.Serialization;
 
 public class ProductionBuilding : UserStructure {
-	public Dictionary<Structure,Item[]> RegisteredStructures;
+	public Dictionary<UserStructure,Item[]> RegisteredStructures;
 	public Item[] intake;
 	public int[] needIntake;
 	public int[] maxIntake;
@@ -43,6 +43,7 @@ public class ProductionBuilding : UserStructure {
 				i++;
 			}
 		}
+		maxNumberOfWorker = 1;
 		this.mustBeBuildOnShore = mustBeBuildOnShore;
 		this.maintenancecost = maintenancecost;
 		this.hasHitbox = hasHitbox;
@@ -61,6 +62,7 @@ public class ProductionBuilding : UserStructure {
 		this.produceCountdown =  str.produceTime;
 		this.output = str.output;
 		this.maxOutputStorage = str.maxOutputStorage;
+		this.maxNumberOfWorker = str.maxNumberOfWorker;
 		this.tileWidth = str.tileWidth;
 		this.tileHeight = str.tileHeight;
 		this.maxIntake = str.maxIntake;
@@ -86,25 +88,17 @@ public class ProductionBuilding : UserStructure {
 		if(needIntake == null){
 			return;
 		}
-
+		if(myWorker != null){
+			foreach (Worker item in myWorker) {
+				item.Update (deltaTime);
+			}
+		}
 		for (int i = 0; i < output.Length; i++) {
 			if (output[i].count == maxOutputStorage) {
 				return;
 			}
 		}
-		List<Item> getItems = new List<Item> ();
-		UserStructure jobStructure = null;
-		for (int i = 0; i < intake.Length; i++) {
-			if (maxIntake[i] <= intake[i].count) {
-				jobStructure = GetJobForWorker (intake[i]);
-				if (jobStructure != null) {
-					return;
-				}
-
-			}
-		}
-		myWorker.Add (new Worker(this));
-
+		SendOutWorkerIfCan ();
 		for (int i = 0; i < intake.Length; i++) {
 			if (needIntake [i] > intake [i].count) {
 				return;
@@ -127,33 +121,49 @@ public class ProductionBuilding : UserStructure {
 		}
 	}
 
-	public UserStructure GetJobForWorker (Item neededIntake){
-		if(jobsToDo.Count == 0 && nearestMarketBuilding == null){
-			return null;
+	public void SendOutWorkerIfCan (){
+		if(myWorker.Count >= maxNumberOfWorker){
+			return;
 		}
-		if (jobsToDo.Count == 0) {
-			if (city.hasItem (neededIntake)) {
-				return null;	
+		List<Item> needItems = new List<Item> ();
+		for (int i = 0; i < intake.Length; i++) {
+			if (maxIntake[i] <= intake[i].count) {
+				needItems.Add ( intake [i].Clone () );
 			}
-			return nearestMarketBuilding;
 		}
-		foreach (UserStructure item in jobsToDo.Keys) {
-			return item;
+		if(needItems.Count == 0){
+			return;
 		}
-		Debug.LogError ("GetJobForWorker - This should never occur!");
-		return null;
+		List<Item> getItems = new List<Item> ();
+		UserStructure goal;
+		if (jobsToDo.Count == 0 && nearestMarketBuilding != null) {
+			goal = nearestMarketBuilding;
+			getItems = needItems;
+		} else {
+			foreach (UserStructure ustr in jobsToDo.Keys) {
+				goal = ustr;
+				for (int i = 0; i < jobsToDo[ustr].Length; i++) {
+					getItems.Add (jobsToDo[ustr][i]);
+				}
+				break;
+			}
+		}
+		if(goal == null || getItems == null){
+			return;
+		}
+		myWorker.Add (new Worker(this,goal,getItems.ToArray ()));
 	}
 	public void OnOutputChangedStructure(Structure str){
 		if(str is UserStructure == false){
 			return;
 		}
-		if(jobsToDo.ContainsKey (str)){
-			jobsToDo.Remove (str);
+		if(jobsToDo.ContainsKey((UserStructure)str)){
+			jobsToDo.Remove ((UserStructure)str);
 		}
 		UserStructure ustr = ((UserStructure)str);
 		List<Item> getItems = new List<Item> ();
 		List<Item> items = new List<Item> (ustr.output);
-		foreach (Item item in RegisteredStructures[str]) {
+		foreach (Item item in RegisteredStructures[(UserStructure)str]) {
 			Item i = items.Find (x => x.ID == item.ID);
 			if(i.count > 0){
 				getItems.Add (i);
@@ -197,13 +207,13 @@ public class ProductionBuilding : UserStructure {
 					findNearestMarketBuilding (rangeTile);
 					continue;
 				}
-				if (RegisteredStructures.ContainsKey (rangeTile.Structure) == false) {
+				if (RegisteredStructures.ContainsKey ((UserStructure)rangeTile.Structure) == false) {
 					Item[] items = hasNeedItem (((UserStructure)rangeTile.Structure).output);
 					if(items.Length == 0){
 						continue;
 					}
 					((UserStructure)rangeTile.Structure).RegisterOutputChanged (OnOutputChangedStructure);
-					RegisteredStructures.Add (rangeTile.Structure,items);
+					RegisteredStructures.Add ((UserStructure)rangeTile.Structure,items);
 				}
 			}
 

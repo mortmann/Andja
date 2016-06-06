@@ -90,6 +90,11 @@ public class City : IXmlSerializable{
 		myInv.removeItemAmount (i);
 	}
 
+	public bool hasItem(Item item){
+		return myInv.hasAnythingOf (item.ID);
+	}
+
+
 	/// <summary>
 	/// Tries to Remove item.
 	/// </summary>

@@ -99,6 +99,17 @@ public class Inventory : IXmlSerializable{
 		if(items.ContainsKey (id))
 			items.Remove (id);
 	}
+	public bool hasAnythingOf(int id){
+		if(items.ContainsKey(id) == false){
+			return false;
+		}
+		if(items[id].count > 0){
+			return true;
+		}
+		return false;
+	}
+
+
 	public int GetAmountForItem(Item item){
 		return items [item.ID].count;
 	}

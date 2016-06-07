@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-using System.Collections;
+using System.Collections.Generic;
 using System;
 using System.Xml;
 using System.Xml.Schema;
@@ -42,7 +42,9 @@ public class Worker : IXmlSerializable{
 		this.myHome = myHome;
 		workStructure = structure;
 		this.hasToFollowRoads = hasToFollowRoads;
-		structure.outputClaimed = true;
+		if (structure is MarketBuilding == false) {
+			structure.outputClaimed = true;
+		}
 		isAtHome = false;
 		goingToWork = true;
 		inventory = new Inventory (4,false);
@@ -64,6 +66,7 @@ public class Worker : IXmlSerializable{
 					AddJobStructure ((UserStructure)destTile.Structure);
 			}
 			//theres no goal so delete it after some time?
+			Debug.Log ("worker has no goal");
 			return;
 		}
 		float moving = path.Update_DoMovement (deltaTime).magnitude;
@@ -100,9 +103,14 @@ public class Worker : IXmlSerializable{
 				foreach (Item item in workStructure.getOutput ()) {
 					inventory.addItem (item);
 				}
-			} else {
-
+			} 
+			if(workStructure is MarketBuilding){
+				int[] temp = { 5 };
+				foreach (Item item in workStructure.getOutput (toGetItems,temp)) {
+					inventory.addItem (item);
+				}
 			}
+
 			workStructure.outputClaimed = false;
 			doTimer = workTime/2;
 			goingToWork = false;
@@ -122,11 +130,13 @@ public class Worker : IXmlSerializable{
 		}
 		goingToWork = true;
 		//job_dest_tile = tile;
-		path_mode pm = path_mode.route;
 		if (hasToFollowRoads == false) {
-			pm = path_mode.island;
+			path_mode pm = path_mode.island;
+			path = new Pathfinding (new List<Tile>(myHome.neighbourTiles),new List<Tile>(structure.neighbourTiles),1.5f,pm);
+		} else {
+			path_mode pm = path_mode.route;
+			path = new Pathfinding (myHome.roadsAroundStructure (),structure.roadsAroundStructure (),1.5f,pm);
 		}
-		path = new Pathfinding (myHome.roadsAroundStructure (),structure.roadsAroundStructure (),1.5f,pm);
 		if (currTile != null) {
 			path.currTile = currTile;
 			currTile = null;

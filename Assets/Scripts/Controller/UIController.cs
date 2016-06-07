@@ -104,7 +104,9 @@ public class UIController : MonoBehaviour {
 	}
 
 	public void CloseInfoUI (){
-		Debug.Log ("close"); 
+		if(uiInfoCanvas.activeSelf == false){
+			return;
+		}
 		if(oldStr != null){
 			oldStr.OnClickClose ();
 			oldStr = null;

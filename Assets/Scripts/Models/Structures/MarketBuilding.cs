@@ -117,6 +117,17 @@ public class MarketBuilding : UserStructure {
 		}
 	}
 
+	public override Item[] getOutput(Item[] getItems,int[] maxAmounts){
+		Item[] temp = new Item[getItems.Length];
+		for (int i = 0; i < getItems.Length; i++) {
+			if(city.myInv.GetAmountForItem (getItems[i]) == 0){
+				continue;
+			}	
+			temp [i] = city.myInv.getItemWithMaxAmount (getItems [i], maxAmounts [i]);
+		}
+		return temp;
+	}
+
 	public override void WriteXml (XmlWriter writer){
 		BaseWriteXml (writer);
 		WriteUserXml (writer);

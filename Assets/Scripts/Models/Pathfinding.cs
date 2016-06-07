@@ -53,7 +53,11 @@ public class Pathfinding  {
 		this.speed = speed;
 		pathmode = pm;
 		pathAStar = GetPathStar ();
-		backPath = new Queue<Tile> (pathAStar.path.Reverse ());
+		if(pathAStar.Length () == 0){
+			Debug.LogError ("pathfinding path has 0 tiles");
+		} else {
+			backPath = new Queue<Tile> (pathAStar.path.Reverse ());
+		}
 		currTile = pathAStar.Dequeue ();
 		X = currTile.X;
 		Y = currTile.Y;
@@ -184,7 +188,24 @@ public class Pathfinding  {
 		if (pathmode == path_mode.world) {
 			return new Path_AStar (World.current, currTile, destTile); // This will calculate a path from curr to dest.
 		} else if (pathmode == path_mode.island) {
-			return new Path_AStar (currTile.myIsland, currTile, destTile);
+			Path_AStar p = null;
+			foreach (Tile start in roadTilesAroundStartStructure) {
+				if(start.Structure != null && start.Structure.myBuildingTyp != BuildingTyp.Pathfinding){
+					continue;
+				}
+				foreach (Tile end in roadTilesAroundEndStructure) {
+					if(end.Structure != null && end.Structure.myBuildingTyp != BuildingTyp.Pathfinding){
+						continue;
+					}
+					Path_AStar temp = new Path_AStar (start.myIsland, start, end);
+					if (p == null || temp.path.Count < p.path.Count ) {
+						p = temp;
+						destTile = end;
+						startTile = start;
+					} 
+				}
+			}
+			return p;
 		} else if (pathmode == path_mode.route) {
 				Path_AStar p = null;
 				foreach (Tile start in roadTilesAroundStartStructure) {
@@ -201,6 +222,7 @@ public class Pathfinding  {
 				return p;
 			} 
 		}
+		Debug.LogError ("pathmode not valid");
 		return null;
 	}
 	public void Reverse (){

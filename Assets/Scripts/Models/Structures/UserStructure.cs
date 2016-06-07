@@ -49,6 +49,9 @@ public abstract class UserStructure : Structure {
 				WorkerComeBack (w);
 			}
 		}
+		SendOutWorkerIfCan ();
+	}
+	public virtual void SendOutWorkerIfCan (){
 		if (jobsToDo.Count == 0) {
 			return;
 		}
@@ -63,7 +66,7 @@ public abstract class UserStructure : Structure {
 			} else {
 				ws= new Worker (this, item);
 			}
-				giveJob = item;
+			giveJob = item;
 			WorldController.Instance.world.CreateWorkerGameObject (ws);
 			myWorker.Add (ws);
 		}
@@ -71,7 +74,6 @@ public abstract class UserStructure : Structure {
 			jobsToDo.Remove (giveJob);
 		}
 	}
-
 	public void WorkerComeBack(Worker w){
 		if (myWorker.Contains (w) == false) {
 			Debug.LogError ("WorkerComeBack - Worker comesback, but doesnt live here!");
@@ -85,6 +87,18 @@ public abstract class UserStructure : Structure {
 		for (int i = 0; i < output.Length; i++) {
 			temp [i] = output [i].CloneWithCount ();
 			output[i].count= 0;
+		}
+		return temp;
+	}
+	public virtual Item[] getOutput(Item[] getItems,int[] maxAmounts){
+		Item[] temp = new Item[output.Length];
+		for (int i = 0; i < output.Length; i++) {
+			if(output[i].count ==  0){
+				continue;
+			}	
+			temp [i] = output [i].CloneWithCount ();
+			temp [i].count = Mathf.Clamp (temp [i].count, 0, maxAmounts [i]);
+			output[i].count -= temp[i].count;
 		}
 		return temp;
 	}

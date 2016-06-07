@@ -88,17 +88,15 @@ public class ProductionBuilding : UserStructure {
 		if(needIntake == null){
 			return;
 		}
-		if(myWorker != null){
-			foreach (Worker item in myWorker) {
-				item.Update (deltaTime);
-			}
-		}
+
 		for (int i = 0; i < output.Length; i++) {
 			if (output[i].count == maxOutputStorage) {
 				return;
 			}
 		}
-		SendOutWorkerIfCan ();
+
+		base.update_Worker (deltaTime);
+
 		for (int i = 0; i < intake.Length; i++) {
 			if (needIntake [i] > intake [i].count) {
 				return;
@@ -121,13 +119,13 @@ public class ProductionBuilding : UserStructure {
 		}
 	}
 
-	public void SendOutWorkerIfCan (){
-		if(myWorker.Count >= maxNumberOfWorker){
+	public override void SendOutWorkerIfCan (){
+		if(myWorker.Count >= maxNumberOfWorker || jobsToDo.Count == 0 && nearestMarketBuilding == null){
 			return;
 		}
 		List<Item> needItems = new List<Item> ();
 		for (int i = 0; i < intake.Length; i++) {
-			if (maxIntake[i] <= intake[i].count) {
+			if (maxIntake[i] >= intake[i].count) {
 				needItems.Add ( intake [i].Clone () );
 			}
 		}
@@ -135,7 +133,7 @@ public class ProductionBuilding : UserStructure {
 			return;
 		}
 		List<Item> getItems = new List<Item> ();
-		UserStructure goal;
+		UserStructure goal = null;
 		if (jobsToDo.Count == 0 && nearestMarketBuilding != null) {
 			goal = nearestMarketBuilding;
 			getItems = needItems;
@@ -149,9 +147,12 @@ public class ProductionBuilding : UserStructure {
 			}
 		}
 		if(goal == null || getItems == null){
+			Debug.Log ("no goal or items");
 			return;
 		}
-		myWorker.Add (new Worker(this,goal,getItems.ToArray ()));
+		myWorker.Add (new Worker(this,goal,getItems.ToArray (),false));
+		WorldController.Instance.world.CreateWorkerGameObject (myWorker[0]);
+
 	}
 	public void OnOutputChangedStructure(Structure str){
 		if(str is UserStructure == false){
@@ -181,7 +182,7 @@ public class ProductionBuilding : UserStructure {
 		foreach (Item item in toAdd.items.Values) {
 			for(int i = 0; i < intake.Length; i++) {
 				if(intake[i].ID == item.ID) {
-					if((intake[i].count+ item.count) >= maxIntake[i]) {
+					if((intake[i].count+ item.count) > maxIntake[i]) {
 						return false;
 					}
 					intake[i].count += item.count;
@@ -255,17 +256,14 @@ public class ProductionBuilding : UserStructure {
 		}
 	}
 	public void findNearestMarketBuilding(Tile tile){
-		Debug.Log ("Find nearestMarketBuilding");
 		if (tile.Structure is MarketBuilding) {
 			if (nearestMarketBuilding == null) {
 				nearestMarketBuilding =(MarketBuilding) tile.Structure;
-				Debug.Log ("found -only one");
 			} else {
 				float firstDistance = nearestMarketBuilding.middleVector.magnitude - middleVector.magnitude;
 				float secondDistance = tile.Structure.middleVector.magnitude - middleVector.magnitude;
 				if (Mathf.Abs (secondDistance) < Mathf.Abs (firstDistance)) {
 					nearestMarketBuilding =(MarketBuilding) tile.Structure;
-					Debug.Log ("found one " + firstDistance + " zu " + secondDistance);
 				}
 			}
 		}

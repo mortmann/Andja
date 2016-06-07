@@ -79,6 +79,16 @@ public class Inventory : IXmlSerializable{
             return 1;
         }
     }
+	public Item getItemWithMaxAmount(Item item, int maxAmount){
+		Item output = items [item.ID];
+		Item temp = output.CloneWithCount();
+		temp.count = Mathf.Clamp (temp.count, 0, maxAmount );
+		output.count -= temp.count;
+		if(cbInventoryChanged != null)
+			cbInventoryChanged (this);
+		return 	temp;
+	}
+
 	public int InventorySpaces(){
 		int count = 0;
 		foreach (int item in items.Keys) {

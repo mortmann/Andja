@@ -123,25 +123,35 @@ public class ProductionBuilding : UserStructure {
 		if(myWorker.Count >= maxNumberOfWorker || jobsToDo.Count == 0 && nearestMarketBuilding == null){
 			return;
 		}
-		List<Item> needItems = new List<Item> ();
+		Dictionary<Item,int> needItems = new Dictionary<Item, int> ();
 		for (int i = 0; i < intake.Length; i++) {
-			if (maxIntake[i] >= intake[i].count) {
-				needItems.Add ( intake [i].Clone () );
+			if (maxIntake[i] > intake[i].count) {
+				needItems.Add ( intake [i].Clone (),maxIntake[i]-intake[i].count );
 			}
 		}
 		if(needItems.Count == 0){
 			return;
 		}
 		List<Item> getItems = new List<Item> ();
+		List<int> ints = new List<int> ();
 		UserStructure goal = null;
 		if (jobsToDo.Count == 0 && nearestMarketBuilding != null) {
+			getItems = new List<Item>(needItems.Keys);
+			for (int i = 0; i < getItems.Count; i++) {
+				if(city.hasItem (getItems[i]) == false){
+					needItems.Remove (getItems[i]);
+
+				}
+			}
 			goal = nearestMarketBuilding;
-			getItems = needItems;
+
+			ints = new List<int>(needItems.Values);
 		} else {
 			foreach (UserStructure ustr in jobsToDo.Keys) {
 				goal = ustr;
 				for (int i = 0; i < jobsToDo[ustr].Length; i++) {
 					getItems.Add (jobsToDo[ustr][i]);
+					ints.Add (needItems[jobsToDo[ustr][i]]);
 				}
 				break;
 			}
@@ -150,7 +160,7 @@ public class ProductionBuilding : UserStructure {
 			Debug.Log ("no goal or items");
 			return;
 		}
-		myWorker.Add (new Worker(this,goal,getItems.ToArray (),false));
+		myWorker.Add (new Worker(this,goal,getItems.ToArray (),ints.ToArray (),false));
 		WorldController.Instance.world.CreateWorkerGameObject (myWorker[0]);
 
 	}
@@ -179,17 +189,16 @@ public class ProductionBuilding : UserStructure {
 		if(intake == null){
 			return false;
 		}
-		foreach (Item item in toAdd.items.Values) {
-			for(int i = 0; i < intake.Length; i++) {
-				if(intake[i].ID == item.ID) {
-					if((intake[i].count+ item.count) > maxIntake[i]) {
-						return false;
-					}
-					intake[i].count += item.count;
-					callbackIfnotNull ();
-				}
+		for(int i = 0; i < intake.Length; i++) {
+			if((intake[i].count+ toAdd.items[intake[i].ID].count) > maxIntake[i]) {
+				return false;
 			}
+			Debug.Log (toAdd.items[intake[i].ID].count);
+			intake[i].count += toAdd.items[intake[i].ID].count;
+			toAdd.items [intake [i].ID].count = 0;
+			callbackIfnotNull ();
 		}
+
 		return true;
 	}
 

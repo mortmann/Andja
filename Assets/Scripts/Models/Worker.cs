@@ -7,7 +7,7 @@ using System.Xml.Serialization;
 
 public class Worker : IXmlSerializable{
 
-	Structure myHome;
+	public Structure myHome;
 	Pathfinding path;
 	public bool isAtHome;
 	float workTime = 1f;
@@ -21,7 +21,7 @@ public class Worker : IXmlSerializable{
 	bool hasToFollowRoads;
 	bool goingToWork;
 	Item[] toGetItems;
-
+	int[] toGetAmount;
 
 	public float X {
 		get {
@@ -41,6 +41,21 @@ public class Worker : IXmlSerializable{
 	public Worker(Structure myHome, UserStructure structure,Item[] toGetItems = null, bool hasToFollowRoads = true){
 		this.myHome = myHome;
 		workStructure = structure;
+		this.hasToFollowRoads = hasToFollowRoads;
+		if (structure is MarketBuilding == false) {
+			structure.outputClaimed = true;
+		}
+		isAtHome = false;
+		goingToWork = true;
+		inventory = new Inventory (4,false);
+		doTimer = workTime;
+		AddJobStructure(structure);
+		this.toGetItems = toGetItems;
+	}
+	public Worker(Structure myHome, UserStructure structure,Item[] toGetItems,int[] toGetAmount, bool hasToFollowRoads = false){
+		this.myHome = myHome;
+		workStructure = structure;
+		this.toGetAmount = toGetAmount;
 		this.hasToFollowRoads = hasToFollowRoads;
 		if (structure is MarketBuilding == false) {
 			structure.outputClaimed = true;
@@ -77,16 +92,16 @@ public class Worker : IXmlSerializable{
 		}
 		// coming home from doing the work
 		// drop off the items its carrying
-		if (goingToWork == false) {
+		if (goingToWork == false ) {
+			doTimer -= deltaTime;
+			if (doTimer > 0) {
+				return;
+			}
 			if (myHome is MarketBuilding) {
 				((MarketBuilding)myHome).city.myInv.addIventory (inventory);
 			}
 			if (myHome is ProductionBuilding) {
 				((ProductionBuilding)myHome).addToIntake (inventory); 
-			}
-			doTimer -= deltaTime;
-			if (doTimer > 0) {
-				return;
 			}
 			isAtHome = true;
 			path = null;
@@ -105,8 +120,7 @@ public class Worker : IXmlSerializable{
 				}
 			} 
 			if(workStructure is MarketBuilding){
-				int[] temp = { 5 };
-				foreach (Item item in workStructure.getOutput (toGetItems,temp)) {
+				foreach (Item item in workStructure.getOutput (toGetItems,toGetAmount)) {
 					inventory.addItem (item);
 				}
 			}

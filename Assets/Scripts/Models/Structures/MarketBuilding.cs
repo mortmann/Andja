@@ -124,6 +124,7 @@ public class MarketBuilding : UserStructure {
 				continue;
 			}	
 			temp [i] = city.myInv.getItemWithMaxAmount (getItems [i], maxAmounts [i]);
+			Debug.Log (temp[i].count);
 		}
 		return temp;
 	}

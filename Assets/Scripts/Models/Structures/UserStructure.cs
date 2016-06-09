@@ -6,6 +6,7 @@ using System.Xml.Serialization;
 using System;
 
 public abstract class UserStructure : Structure {
+	
 	public float health;
 	protected int maxNumberOfWorker = 1;
 	public List<Worker> myWorker;
@@ -18,14 +19,12 @@ public abstract class UserStructure : Structure {
 	public int maxOutputStorage;
 	protected Action<Structure> cbOutputChange;
 
-	protected Tile _jobTile;
-
 	public virtual float Efficiency{
 		get {
 			return 100;
 		}
 	}
-
+	protected Tile _jobTile;
 	public Tile JobTile {
 		get {
 			if (_jobTile == null) {
@@ -92,13 +91,15 @@ public abstract class UserStructure : Structure {
 	}
 	public virtual Item[] getOutput(Item[] getItems,int[] maxAmounts){
 		Item[] temp = new Item[output.Length];
-		for (int i = 0; i < output.Length; i++) {
-			if(output[i].count ==  0){
-				continue;
-			}	
-			temp [i] = output [i].CloneWithCount ();
-			temp [i].count = Mathf.Clamp (temp [i].count, 0, maxAmounts [i]);
-			output[i].count -= temp[i].count;
+		for (int g = 0; g < getItems.Length; g++) {
+			for (int i = 0; i < output.Length; i++) {
+				if(output[i].count ==  0 || output[i].ID == getItems[g].ID){
+					continue;
+				}	
+				temp [i] = output [i].CloneWithCount ();
+				temp [i].count = Mathf.Clamp (temp [i].count, 0, maxAmounts [i]);
+				output[i].count -= temp[i].count;
+			}
 		}
 		return temp;
 	}

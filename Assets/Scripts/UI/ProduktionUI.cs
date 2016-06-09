@@ -57,6 +57,11 @@ public class ProduktionUI : MonoBehaviour {
 		progress = progressContent.GetComponentInChildren<Slider> ();
 		progress.maxValue = userStr.produceTime;
 		progress.value = 0;
+		if(itemToGO != null){
+			foreach (GameObject item in itemToGO.Values) {
+				GameObject.Destroy (item);
+			}
+		}
 		itemToGO = new Dictionary<Item, GameObject> ();
 		if (userStr.output != null) {
 			for (int i = 0; i < userStr.output.Length; i++) {

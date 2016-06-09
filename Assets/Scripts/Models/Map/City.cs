@@ -117,7 +117,6 @@ public class City : IXmlSerializable{
 		} 
 	}
 	public void removeStructure(Structure structure){
-		Debug.Log("Remove this");
 		if (myStructures.Contains (structure)) {
 			myStructures.Remove (structure);
 			cityBalance -= structure.maintenancecost;

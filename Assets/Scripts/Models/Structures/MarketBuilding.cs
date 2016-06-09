@@ -77,6 +77,19 @@ public class MarketBuilding : UserStructure {
 		if(str is UserStructure == false){
 			return;
 		}
+		bool hasOutput = false;
+		for (int i = 0; i < ((UserStructure)str).output.Length; i++) {
+			if(((UserStructure)str).output[i].count > 0){
+				hasOutput = true;
+				break;
+			}
+		}
+		if(hasOutput == false){
+			return;
+		}
+		if(jobsToDo.ContainsKey ((UserStructure)str)){
+			jobsToDo.Remove ((UserStructure)str);
+		}
 		foreach (Route item in ((UserStructure)str).GetMyRoutes()) {
 			if (myRoutes.Contains (item)) {
 				foreach (Tile tile in str.neighbourTiles) {
@@ -124,7 +137,6 @@ public class MarketBuilding : UserStructure {
 				continue;
 			}	
 			temp [i] = city.myInv.getItemWithMaxAmount (getItems [i], maxAmounts [i]);
-			Debug.Log (temp[i].count);
 		}
 		return temp;
 	}

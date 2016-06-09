@@ -148,8 +148,7 @@ public class Worker : IXmlSerializable{
 			path_mode pm = path_mode.island;
 			path = new Pathfinding (new List<Tile>(myHome.neighbourTiles),new List<Tile>(structure.neighbourTiles),1.5f,pm);
 		} else {
-			path_mode pm = path_mode.route;
-			path = new Pathfinding (myHome.roadsAroundStructure (),structure.roadsAroundStructure (),1.5f,pm);
+			path = new Pathfinding (myHome.roadsAroundStructure (),structure.roadsAroundStructure (),1.5f);
 		}
 		if (currTile != null) {
 			path.currTile = currTile;

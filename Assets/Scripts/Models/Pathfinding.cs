@@ -110,7 +110,7 @@ public class Pathfinding  {
 			X = transform.position.x;
 			Y = transform.position.y;
 		} 
-		if (nextTile == destTile && pathmode != path_mode.route ) {
+		if (nextTile == destTile && pathmode == path_mode.world  ) {
 			
 			pathAStar = null;
 			// we are one tile from destination tile away...

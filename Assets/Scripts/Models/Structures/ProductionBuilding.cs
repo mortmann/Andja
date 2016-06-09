@@ -21,7 +21,7 @@ public class ProductionBuilding : UserStructure {
 			if(inputs==0){
 				return 0;
 			}
-			return Mathf.Round(inputs*1000)/10f;
+			return Mathf.Clamp(Mathf.Round(inputs*1000)/10f,0,100);
 		}
 	}
 

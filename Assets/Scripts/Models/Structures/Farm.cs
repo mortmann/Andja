@@ -22,11 +22,13 @@ public class Farm : UserStructure {
 		this.output = new Item[1];
 		this.output [0] = produce;
 		this.produceTime = produceTime;
-		myBuildingTyp = BuildingTyp.Blocking;
+		maxOutputStorage = 5;
+		myBuildingTyp = BuildingTyp.Production ;
 		BuildTyp = BuildTypes.Single;
 		hasHitbox = true;
 	}
 	protected Farm(Farm f){
+		this.myBuildingTyp = f.myBuildingTyp;
 		this.ID = f.ID;
 		this.name = f.name;
 		this.tileWidth = f.tileWidth;
@@ -36,6 +38,7 @@ public class Farm : UserStructure {
 		this.output = f.output;
 		this.produceTime = f.produceTime;
 		this.produceCountdown = f.produceTime;
+		this.maxOutputStorage = f.maxOutputStorage;
 		myBuildingTyp = f.myBuildingTyp;
 		BuildTyp = f.BuildTyp;
 		hasHitbox = f.hasHitbox;
@@ -110,6 +113,9 @@ public class Farm : UserStructure {
 			OnRegisterCallbacks--;
 		}
 		if(t.Structure == null){
+			if(old.name == growable){
+				OnRegisterCallbacks--;
+			}
 			return;
 		}
 		if(t.Structure.name == growable){

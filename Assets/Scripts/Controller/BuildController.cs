@@ -8,9 +8,11 @@ using System.Xml.Schema;
 using System.Xml.Serialization;
 using System.IO;
 
+public enum BuildStateModes {Off,On};
+
 public class BuildController : MonoBehaviour {
     public static BuildController Instance { get; protected set; }
-
+	public BuildStateModes buildState;
 	public Structure toBuildStructure;
 	public Dictionary<int,Structure>  structurePrototypes;
 	public Dictionary<int, Item> allItems;
@@ -20,7 +22,7 @@ public class BuildController : MonoBehaviour {
 	public List<Need> allNeeds;
 	Action<Structure> cbStructureCreated;
 	Action<City> cbCityCreated;
-
+	Action<BuildStateModes> cbBuildStateChange;
 	public Dictionary<int, Item> getCopieOfAllItems(){
 		Dictionary<int, Item> items = new Dictionary<int, Item>();
 		foreach (int item in allItems.Keys) {
@@ -34,6 +36,7 @@ public class BuildController : MonoBehaviour {
 			Debug.LogError("There should never be two world controllers.");
 		}
 		Instance = this;
+		buildState = BuildStateModes.Off;
 		buildID = 0;
 		// prototypes of items
 		allItems = new Dictionary<int, Item> ();
@@ -98,6 +101,7 @@ public class BuildController : MonoBehaviour {
 			MouseController.Instance.mouseState = MouseState.Drag;
 			MouseController.Instance.structure = toBuildStructure;
 		}
+		buildState = BuildStateModes.On;
     }
 	public void BuildOnTile(List<Tile> tiles, bool forEachTileOnce){
 		if (toBuildStructure == null) {
@@ -193,6 +197,10 @@ public class BuildController : MonoBehaviour {
 		loadedToPlaceStructure.Clear ();
 		loadedToPlaceTile.Clear ();
 	}
+	public void ResetBuild(){
+		buildState = BuildStateModes.Off;
+		this.toBuildStructure = null;
+	}
 
 	public void RegisterStructureCreated(Action<Structure> callbackfunc) {
 		cbStructureCreated += callbackfunc;
@@ -205,6 +213,12 @@ public class BuildController : MonoBehaviour {
 	}
 	public void UnregisterCityCreated(Action<City> callbackfunc) {
 		cbCityCreated -= callbackfunc;
+	}
+	public void RegisterBuildStateChange(Action<BuildStateModes> callbackfunc) {
+		cbBuildStateChange += callbackfunc;
+	}
+	public void UnregisterBuildStateChange(Action<BuildStateModes> callbackfunc) {
+		cbBuildStateChange -= callbackfunc;
 	}
 	///////////////////////////////////////
 	/// XML LOADING FROM FILE

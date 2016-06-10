@@ -38,8 +38,16 @@ public class TileSpriteController : MonoBehaviour {
         // Register our callback so that our GameObject gets updated whenever
         // the tile's type changes.
         world.RegisterTileChanged(OnTileChanged);
-    }
+		BuildController.Instance.RegisterBuildStateChange (OnBuildStateChance);
 
+    }
+	void OnBuildStateChance(BuildStateModes bsm){
+		if(bsm == BuildStateModes.On){
+			
+		} else {
+			
+		}
+	}
 
     void OnTileChanged(Tile tile_data) {
 
@@ -57,8 +65,12 @@ public class TileSpriteController : MonoBehaviour {
 		SpriteRenderer sr = tile_go.GetComponent<SpriteRenderer> ();
 		if(tile_data.IsHighlighted){
 			sr.material = highlightMaterial;
-		} else {
+		} else 
+		if(BuildController.Instance.buildState == BuildStateModes.Off){
 			sr.material = clearMaterial;
+		} else
+		if(BuildController.Instance.buildState == BuildStateModes.On){
+			sr.material = darkMaterial;
 		}
         if (tile_data.Type == TileType.Water) {
             tile_go.GetComponent<SpriteRenderer>().sprite = waterSprite;

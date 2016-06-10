@@ -25,7 +25,7 @@ public class MouseController : MonoBehaviour {
 					t.IsHighlighted = false;
 				}
 				return;
-			}
+			} 
 			_highlightTiles = value;
 		}
 	}
@@ -429,6 +429,7 @@ public class MouseController : MonoBehaviour {
 	/// </summary>
 	public void Escape(){
 		ResetBuilding (null);
+		bmc.ResetBuild ();
 		this.mouseState = MouseState.Idle;
 	}
 

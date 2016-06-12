@@ -6,9 +6,9 @@ using System.Xml.Serialization;
 
 public class Warehouse : MarketBuilding {
 
-	public float buildRange = 18;
 	public int shipRange = 10;
 	public Warehouse(int id){
+		buildingRange = 18;
 		this.ID = id;
 		tileWidth = 3;
 		tileHeight = 3;
@@ -51,14 +51,7 @@ public class Warehouse : MarketBuilding {
 			return;
 		}
 		//dostuff thats happen when build
-		for (int w = 0; w < buildRange; w++) {
-			city.addTile (t);
-			Tile tn = t.North ();
-			for (int h = 1; h < buildRange; h++) {
-				city.addTile (tn);
-				tn.North ();
-			}
-		}
+		city.addTiles (myRangeTiles);
 	}
 
 	public override void OnClick (){

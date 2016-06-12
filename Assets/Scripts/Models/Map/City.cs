@@ -70,12 +70,10 @@ public class City : IXmlSerializable{
 		}
 	}
 
-	public void addTile(Tile t){
-		if (t.Type == TileType.Water) {
-			return;
-		}
-		t.myCity = this;
-		myTiles.Add (t);
+	public void addTiles(HashSet<Tile> t){
+		t.RemoveWhere (x => x.Type == TileType.Water);
+		myTiles.AddRange( new List<Tile> (t));
+		myTiles.ForEach (x => x.myCity = this);
 	}
 
 	public void removeRessources(Item[] remove){

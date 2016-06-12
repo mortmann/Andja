@@ -13,7 +13,9 @@ public class Island : IXmlSerializable{
 	public Climate myClimate;
 	public List<Fertility> myFertilities;
 	public Dictionary<string,int> myRessources;
-
+	public Vector2 min;
+	public Vector2 max;
+	public bool allReadyHighlighted;
     //TODO: get a tile to start with!
 	public Island(Tile startTile, Climate climate = Climate.Middle) {
 		myFertilities = new List<Fertility> ();
@@ -27,7 +29,7 @@ public class Island : IXmlSerializable{
             IslandFloodFill(t);
         }
         tileGraph = new Path_TileGraph(this);
-
+		allReadyHighlighted = false;
     }
     protected void IslandFloodFill(Tile tile) {
         if (tile == null) {
@@ -43,10 +45,26 @@ public class Island : IXmlSerializable{
             // already in there
             return;
         }
+		min = new Vector2 (tile.X, tile.Y);
+		max = new Vector2 (tile.X, tile.Y);
         Queue<Tile> tilesToCheck = new Queue<Tile>();
         tilesToCheck.Enqueue(tile);
         while (tilesToCheck.Count > 0) {
             Tile t = tilesToCheck.Dequeue();
+			if (min.x > t.X) {
+				min.x = t.X;
+			}
+			if (min.y > t.Y) {
+				min.y= t.Y;
+			}
+			if (max.x < t.X) {
+				max.x = t.X;
+			}
+			if (max.y < t.Y) {
+				max.y = t.Y;
+			}
+
+
             if (t.Type != TileType.Water && t.myIsland != this) {
                 myTiles.Add(t);
                 t.myIsland = this;
@@ -64,9 +82,11 @@ public class Island : IXmlSerializable{
         }
     }
 	public void AddStructure(Structure str){
+		allReadyHighlighted = false;
 		str.city.addStructure (str);
 	}
     public City CreateCity() {
+		allReadyHighlighted = false;
 		City c = new City(this,World.current.allNeeds);
 		myCities.Add (c);
         return c;

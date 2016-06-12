@@ -7,7 +7,7 @@ using System.Xml.Serialization;
 
 
 public enum TileType { Water, Shore, Dirt, Grass, Stone, Mountain };
-
+public enum TileMark { None, Highlight, Dark, Reset }
 
 public class Tile : IXmlSerializable {
     //Want to have more than one structure in one tile!
@@ -53,14 +53,28 @@ public class Tile : IXmlSerializable {
 			_myCity = value;
 		} 
 	}
-	protected bool _isHighlighted;
-	public bool IsHighlighted {
-		get { return _isHighlighted;}
+	protected TileMark _oldTileState;
+	protected TileMark _tileState;
+	public TileMark TileState {
+		get { return _tileState;}
 		set { 
-			if(value == _isHighlighted){
+			if (value == TileMark.Reset) {
+				if (Type == TileType.Water) {
+					this._tileState = TileMark.None;
+					World.current.OnTileChanged (this);
+					return;
+				}
+				this._tileState = _oldTileState;
+				World.current.OnTileChanged (this);
+				return;
+			}
+			if(value == _tileState){
 				return;
 			} else {
-				this._isHighlighted = value;
+				if (_tileState != TileMark.Highlight) {
+					_oldTileState = _tileState;
+				}
+				this._tileState = value;
 				World.current.OnTileChanged (this);
 			}
 		}

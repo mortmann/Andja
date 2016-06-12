@@ -100,7 +100,9 @@ public class StructureSpriteController : MonoBehaviour {
 			GameObject go = new GameObject ();
 			go.transform.position = structureGameObjectMap [structure].transform.position;
 			go.transform.localScale = new Vector3(((Warehouse)structure).shipRange,((Warehouse)structure).shipRange,0);
-			go.AddComponent<SpriteRenderer> ().sprite = circleSprite;
+			SpriteRenderer sr = go.AddComponent<SpriteRenderer> ();
+			sr.sprite = circleSprite;
+			sr.sortingLayerName = "StructuresUI";
 			go.transform.SetParent (structureGameObjectMap [structure].transform);
 		}
 	}

@@ -6,6 +6,7 @@ public class BalanceUIText : MonoBehaviour {
 	public PlayerController playerController;
 	public Text balanceText;
 	public Text changeText;
+	public Text fpsText;
 	// Use this for initialization
 	void Start () {
 		playerController = GameObject.FindObjectOfType<PlayerController>();
@@ -28,5 +29,7 @@ public class BalanceUIText : MonoBehaviour {
 			changeText.text ="+ "+ playerController.change + " ";
 		}
 		balanceText.text = playerController.balance + " ";
+
+		fpsText.text = Mathf.Round (1.0f / Time.deltaTime) + " fps ";
 	}
 }

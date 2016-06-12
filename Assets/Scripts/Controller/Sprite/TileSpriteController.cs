@@ -7,13 +7,16 @@ public class TileSpriteController : MonoBehaviour {
     public Sprite waterSprite;
     public Sprite dirtSprite;
 	public Sprite mountainSprite;
+	public Sprite darkLayerSprite;
+	GameObject darkLayer;
+
 
 	public Material darkMaterial;
 	Material clearMaterial;
 	public Material highlightMaterial;
     // The pathfinding graph used to navigate our world map.
     World world {
-        get { return WorldController.Instance.world; }
+		get { return World.current; }
     }
 
     // Use this for initialization
@@ -29,7 +32,7 @@ public class TileSpriteController : MonoBehaviour {
                 SpriteRenderer sr = tile_go.AddComponent<SpriteRenderer>();
                 sr.sprite = waterSprite;
 				clearMaterial = sr.material;
-                sr.sortingLayerName = "Tiles";
+                sr.sortingLayerName = "WaterTile";
                 tile_go.transform.SetParent(this.transform, true);
                 tileGameObjectMap.Add(tile_data, tile_go);
                 OnTileChanged(tile_data);
@@ -43,9 +46,17 @@ public class TileSpriteController : MonoBehaviour {
     }
 	void OnBuildStateChance(BuildStateModes bsm){
 		if(bsm == BuildStateModes.On){
-			
+			if (darkLayer != null) {
+				return;
+			}
+			darkLayer = new GameObject ();
+			darkLayer.transform.position = new Vector3((world.Width/2)-0.5f,(world.Height/2)-0.5f , 0);
+			SpriteRenderer sr = darkLayer.AddComponent<SpriteRenderer> ();
+			sr.sprite = darkLayerSprite;
+			sr.sortingLayerName = "DarkLayer";
+			darkLayer.transform.localScale = new Vector3 (world.Width,world.Height);
 		} else {
-			
+			GameObject.Destroy (darkLayer);
 		}
 	}
 
@@ -63,14 +74,18 @@ public class TileSpriteController : MonoBehaviour {
             return;
         }
 		SpriteRenderer sr = tile_go.GetComponent<SpriteRenderer> ();
-		if(tile_data.IsHighlighted){
+		if(tile_data.TileState == TileMark.Highlight){
 			sr.material = highlightMaterial;
 		} else 
-		if(BuildController.Instance.buildState == BuildStateModes.Off){
+			if(tile_data.TileState == TileMark.None ){
 			sr.material = clearMaterial;
 		} else
-		if(BuildController.Instance.buildState == BuildStateModes.On){
+		if(tile_data.TileState == TileMark.Dark){
 			sr.material = darkMaterial;
+		}
+
+		if (tile_data.Type != TileType.Water) {
+			tile_go.GetComponent<SpriteRenderer> ().sortingLayerName = "Tile";
 		}
         if (tile_data.Type == TileType.Water) {
             tile_go.GetComponent<SpriteRenderer>().sprite = waterSprite;

@@ -49,17 +49,8 @@ public class MarketBuilding : UserStructure {
 		myRoutes = GetMyRoutes ();
 		jobsToDo = new Dictionary<UserStructure, Item[]> ();
 		// add all the tiles to the city it was build in
-		Tile t = myBuildingTiles [0];
-		this.city = t.myCity;
 		//dostuff thats happen when build
-		for (int w = 0; w < buildingRange; w++) {
-			city.addTile (t);
-			Tile tn = t.North ();
-			for (int h = 1; h < buildingRange; h++) {
-				city.addTile (tn);
-				tn.North ();
-			}
-		}
+		city.addTiles (myRangeTiles);
 		foreach(Tile rangeTile in myRangeTiles){
 			if(rangeTile.Structure == null){
 				continue;

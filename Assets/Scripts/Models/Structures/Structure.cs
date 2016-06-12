@@ -198,6 +198,17 @@ public abstract class Structure : IXmlSerializable {
 		}
 		return true;
 	}
+	public bool correctSpotOnLand(Tile t){
+		if (Tile.IsBuildType (t.Type) == false)
+			return false;
+		if (t.Structure !=null && t.Structure.canBeBuildOver == false)
+			return false;
+		if(t.myCity == null || t.myCity.playerNumber != PlayerController.Instance.number)
+			return false;
+
+		return true;
+	}
+
 	protected bool PlaceOnMountain(List<Tile> tiles){
 		if (tileWidth == 1 && tileHeight == 1) {
 			if (tiles [0].Structure != null && tiles [0].Structure.canBeBuildOver) {
@@ -336,10 +347,8 @@ public abstract class Structure : IXmlSerializable {
 		foreach(Tile t in myPrototypeTiles){
 			myRangeTiles.Add (w.GetTileAt (t.X +width,t.Y+height));			
 		}
-		//remove the tile where the building is standing
 		return myRangeTiles;
 	}
-	
 
 	public abstract void OnBuild();
 	public virtual void OnClick (){
@@ -347,22 +356,37 @@ public abstract class Structure : IXmlSerializable {
 	public virtual void OnClickClose (){
 	}
 	public bool correctSpotOnLand(List<Tile> tiles){
+		if (islandHasEnoughItemsToBuild() == false || playerHasEnoughMoney() == false) {
+			return false;
+		}
 		foreach(Tile t in tiles){
-			if (Tile.checkTile (t) == false) {
+			if(correctSpotOnLand (t) == false){
 				return false;
 			}
 		}
 		return true;
 	}
 	public bool correctSpotOnMountain(List<Tile> tiles){
+		
 		return correctSpotForOn (tiles,TileType.Mountain);
 	}
 	public bool correctSpotOnShore(List<Tile> tiles){
+		
 		return correctSpotForOn (tiles,TileType.Water);
 	}
-
-	//TODO add "front" consideration in so tht only if it is placed correctly it can be placed here!
+	protected virtual bool islandHasEnoughItemsToBuild(){
+		return true;
+	}
+	protected bool playerHasEnoughMoney(){
+		if(PlayerController.Instance.balance >= buildcost){
+			return true;
+		}
+		return false;
+	}
 	public bool correctSpotForOn(List<Tile> tiles, TileType tt){
+		if (islandHasEnoughItemsToBuild() == false || playerHasEnoughMoney() == false) {
+			return false;
+		}
 		switch (rotated){
 		case 0:
 			return CheckFor0Rotation (tiles,tt);

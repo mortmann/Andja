@@ -22,7 +22,10 @@ public class MouseController : MonoBehaviour {
 		set {
 			if (value == null) {
 				foreach (Tile t in _highlightTiles) {
-					t.IsHighlighted = false;
+					if (t == null) {
+						continue;
+					}
+					t.TileState = TileMark.Reset;
 				}
 				return;
 			} 
@@ -70,6 +73,13 @@ public class MouseController : MonoBehaviour {
 	public Vector3 GetMousePosition() {
 		return currFramePosition;
 	}
+	/// <summary>
+	/// Gets the mouse position in world space.
+	/// </summary>
+	public Vector3 GetLastMousePosition() {
+		return lastFramePosition;
+	}
+
 
 	public Tile GetMouseOverTile() {
 /*		return WorldController.Instance.world.GetTileAt(
@@ -111,7 +121,6 @@ public class MouseController : MonoBehaviour {
 			DecideWhatUIToShow (hit);
         }
 
-        UpdateCameraMovement();
 		// Save the mouse position from this frame
 		// We don't use currFramePosition because we may have moved the camera.
 		lastFramePosition = Camera.main.ScreenToWorldPoint( Input.mousePosition );
@@ -177,7 +186,7 @@ public class MouseController : MonoBehaviour {
 		} else {
 			foreach (Tile t in structureTiles) {
 				if (t != null) {
-					if (Tile.IsBuildType (t.Type) == false || t.Structure !=null && t.Structure.canBeBuildOver == false) {
+					if (structure.correctSpotOnLand (t) == false) {
 						ShowRedPrefabOnTile (t);
 					} else {
 						ShowPrefabOnTile (t);
@@ -201,6 +210,8 @@ public class MouseController : MonoBehaviour {
 
 	public void RemovePrefabs(){
 		while(previewGameObjects.Count > 0) {
+			Tile t = World.current.GetTileAt (previewGameObjects[0].transform.position.x,previewGameObjects[0].transform.position.y);
+			t.TileState = TileMark.Reset;
 			GameObject go = previewGameObjects[0];
 			previewGameObjects.RemoveAt(0);
 			SimplePool.Despawn (go);
@@ -210,6 +221,7 @@ public class MouseController : MonoBehaviour {
 		if(t == null) {
 			return;
 		}
+		t.TileState = TileMark.None;
 		// Display the building hint on top of this tile position
 		GameObject go = SimplePool.Spawn( redTileCursorPrefab, new Vector3(t.X, t.Y, 0), Quaternion.identity );
 		go.transform.SetParent(this.transform, true);
@@ -219,6 +231,7 @@ public class MouseController : MonoBehaviour {
 		if(t == null) {
 			return;
 		}
+		t.TileState = TileMark.None;
 		// Display the building hint on top of this tile position
 		GameObject go = SimplePool.Spawn( greenTileCursorPrefab, new Vector3(t.X, t.Y, 0), Quaternion.identity );
 		go.transform.SetParent(this.transform, true);
@@ -232,8 +245,7 @@ public class MouseController : MonoBehaviour {
 			HighlightTiles = new HashSet<Tile> ();
 		}
 
-		HashSet<Tile> temp = new HashSet<Tile>();
-		temp.UnionWith (HighlightTiles);
+		HashSet<Tile> temp = new HashSet<Tile>(HighlightTiles);
 		HighlightTiles.Clear ();
 		HighlightTiles = new HashSet<Tile> (structure.GetInRangeTiles (GetTileUnderneathMouse()));
 //		Debug.Log (temp.Count + " " + highlightTiles.Count);
@@ -241,13 +253,13 @@ public class MouseController : MonoBehaviour {
 			if (t == null || HighlightTiles.Contains (t) == true) {
 				continue;
 			}
-			t.IsHighlighted = false;
+			t.TileState = TileMark.Reset;
 		}
 		foreach(Tile t in HighlightTiles){
 			if (t == null) {
 				continue;
 			}
-			t.IsHighlighted = true;
+			t.TileState = TileMark.Highlight;
 		}
 	}
 	void RemoveHighliteOnTiles(){
@@ -255,7 +267,7 @@ public class MouseController : MonoBehaviour {
 			return;
 		}
 		foreach(Tile t in HighlightTiles){
-			t.IsHighlighted = false;
+			t.TileState = TileMark.Reset;
 		}
 	}
     private void UpdateUnit() {
@@ -389,39 +401,7 @@ public class MouseController : MonoBehaviour {
 		HighlightTiles = null;
 	}
 
-    void UpdateCameraMovement() {
-		// Handle screen panning
-		if( Input.GetMouseButton(1) || Input.GetMouseButton(2) ) {	// Right or Middle Mouse Button
-			Vector3 diff = lastFramePosition - currFramePosition;
-			if(Camera.main.transform.position.x>WorldController.Instance.world.Width + Camera.main.orthographicSize/4){
-				if(diff.x > 0){
-					diff.x = 0;
-				}
-			}
-			if(Camera.main.transform.position.x<- Camera.main.orthographicSize/4){
-				if(diff.x < 0){
-					diff.x = 0;
-				}
-			}
-			if(Camera.main.transform.position.y>WorldController.Instance.world.Height + Camera.main.orthographicSize/4){
-				if(diff.y > 0){
-					diff.y = 0;
-				}
-			}
-			if(Camera.main.transform.position.y < - Camera.main.orthographicSize/4){
-				if(diff.y < 0){
-					diff.y = 0;
-				}
-			}
-			Camera.main.transform.Translate (diff);
-		}
-		if(EventSystem.current.IsPointerOverGameObject()){
-			return;
-		}	
-		Camera.main.orthographicSize -= Camera.main.orthographicSize * Input.GetAxis("Mouse ScrollWheel");
 
-		Camera.main.orthographicSize = Mathf.Clamp(Camera.main.orthographicSize, 3f, 25f);
-	}
 	/// <summary>
 	/// what to on escape press 
 	///  - set tobuildstructure to null

@@ -12,7 +12,18 @@ public enum BuildStateModes {Off,On};
 
 public class BuildController : MonoBehaviour {
     public static BuildController Instance { get; protected set; }
-	public BuildStateModes buildState;
+	protected BuildStateModes _buildState;
+	public BuildStateModes BuildState { 
+			get { return _buildState; } 
+			set { 
+				if (_buildState == value) {
+					return;
+				}
+				_buildState = value;
+				if (cbBuildStateChange != null)
+					cbBuildStateChange (_buildState); 
+				}
+			}
 	public Structure toBuildStructure;
 	public Dictionary<int,Structure>  structurePrototypes;
 	public Dictionary<int, Item> allItems;
@@ -36,7 +47,7 @@ public class BuildController : MonoBehaviour {
 			Debug.LogError("There should never be two world controllers.");
 		}
 		Instance = this;
-		buildState = BuildStateModes.Off;
+		BuildState = BuildStateModes.Off;
 		buildID = 0;
 		// prototypes of items
 		allItems = new Dictionary<int, Item> ();
@@ -101,7 +112,8 @@ public class BuildController : MonoBehaviour {
 			MouseController.Instance.mouseState = MouseState.Drag;
 			MouseController.Instance.structure = toBuildStructure;
 		}
-		buildState = BuildStateModes.On;
+
+		BuildState = BuildStateModes.On;
     }
 	public void BuildOnTile(List<Tile> tiles, bool forEachTileOnce){
 		if (toBuildStructure == null) {
@@ -198,7 +210,7 @@ public class BuildController : MonoBehaviour {
 		loadedToPlaceTile.Clear ();
 	}
 	public void ResetBuild(){
-		buildState = BuildStateModes.Off;
+		BuildState = BuildStateModes.Off;
 		this.toBuildStructure = null;
 	}
 

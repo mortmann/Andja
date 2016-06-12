@@ -203,9 +203,13 @@ public abstract class Structure : IXmlSerializable {
 			return false;
 		if (t.Structure !=null && t.Structure.canBeBuildOver == false)
 			return false;
-		if(t.myCity == null || t.myCity.playerNumber != PlayerController.Instance.number)
+		if(t.myCity == null){//shouldnt never ever happend 
+			Debug.LogError ("this tile doesnt have any city, not even wilderness");
 			return false;
-
+		}
+		if (t.myCity.playerNumber != PlayerController.Instance.number && t.myCity.IsWilderness () == false)
+			return false;
+		
 		return true;
 	}
 

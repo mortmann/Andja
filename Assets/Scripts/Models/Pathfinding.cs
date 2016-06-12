@@ -111,7 +111,6 @@ public class Pathfinding  {
 			Y = transform.position.y;
 		} 
 		if (nextTile == destTile && pathmode == path_mode.world  ) {
-			
 			pathAStar = null;
 			// we are one tile from destination tile away...
 			// now we have to go to the correct x/y coordinations

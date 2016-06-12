@@ -74,6 +74,13 @@ public class Island : IXmlSerializable{
                 }
             }
         }
+
+		//city that contains all the structures like trees that doesnt belong to any player
+		//so it has the playernumber -1 -> needs to be checked for when buildings are placed
+		//have a function like is notplayer city
+		//it does not need NEEDs
+		myCities.Add (new City(-1,this,null,myTiles)); 
+
     }
 
     public void update(float deltaTime) {
@@ -87,7 +94,7 @@ public class Island : IXmlSerializable{
 	}
     public City CreateCity() {
 		allReadyHighlighted = false;
-		City c = new City(this,World.current.allNeeds);
+		City c = new City(PlayerController.Instance.number,this,World.current.allNeeds);
 		myCities.Add (c);
         return c;
     }
@@ -118,7 +125,8 @@ public class Island : IXmlSerializable{
 		myClimate = (Climate)int.Parse(reader.GetAttribute ("Climate"));
 		if (reader.ReadToDescendant ("City")) {
 			do {
-				City c = new City (this, World.current.allNeeds);
+				int playerNumber = int.Parse( reader.GetAttribute("Player") );
+				City c = new City (playerNumber,this, World.current.allNeeds);
 				c.ReadXml (reader);
 				myCities.Add (c);
 			} while(reader.ReadToNextSibling ("City"));

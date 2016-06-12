@@ -62,7 +62,7 @@ public class MarketBuilding : UserStructure {
 				}
 			}
 		}
-		BuildController.Instance.RegisterStructureCreated (OnStructureBuild);
+		city.RegisterStructureAdded (OnStructureAdded);
 	}
 	public void OnOutputChangedStructure(Structure str){
 		if(str is UserStructure == false){
@@ -99,7 +99,7 @@ public class MarketBuilding : UserStructure {
 		}
 	}
 
-	public void OnStructureBuild(Structure structure){
+	public void OnStructureAdded(Structure structure){
 		if(this == structure){
 			return;
 		}

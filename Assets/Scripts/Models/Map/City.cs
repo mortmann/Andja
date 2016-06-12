@@ -15,7 +15,7 @@ public class City : IXmlSerializable{
     public List<Structure> myStructures;
 	public List<HomeBuilding> myHomes;
 
-	public List<Tile> myTiles;
+	public HashSet<Tile> myTiles;
 	public List<Route> myRoutes;
 
 	public Dictionary<Need,float> allNeeds;
@@ -24,21 +24,33 @@ public class City : IXmlSerializable{
 	public float useTick;
 	public float useTickTimer;
 
+	public Action<Structure> cbStructureAdded;
+
 	public string name {get{return "City "+island.myCities.IndexOf (this);}}
 
-	public City(Island island,List<Need> allNeedsList) {
+	public City(int playerNr,Island island,List<Need> allNeedsList, List<Tile> islandTiles = null) {
+		
+		this.playerNumber = playerNr;
 		citizienCount = new int[4];
 		for (int i = 0; i < citizienCount.Length; i++) {
 			citizienCount [i] = 0;
 		}
         this.island = island;
+
+		myStructures = new List<Structure>();
+		myTiles = new HashSet<Tile> ();
+		// if this city doesnt belong to anyone it does not need
+		//anything underneath here
+		if(playerNr == -1){
+			this.myTiles.UnionWith (islandTiles); 
+			return;
+		}
         myInv = new Inventory();
+		//temporary
 		Item temp = BuildController.Instance.allItems[47].Clone ();
 		temp.count = 50;
 		myInv.addItem (temp);
 
-        myStructures = new List<Structure>();
-		myTiles = new List<Tile> ();
 		myRoutes = new List<Route> ();
 		myHomes = new List<HomeBuilding> ();
 		allNeeds = new Dictionary<Need,float> ();
@@ -52,7 +64,9 @@ public class City : IXmlSerializable{
 		for (int i = 0; i < myStructures.Count; i++) {
 			myStructures[i].update(deltaTime);
 		}
-
+		if(playerNumber==-1){
+			return;
+		}
 		useTickTimer -= deltaTime;
 		if(useTickTimer>=0){
 			foreach (Need n in allNeeds.Keys) {
@@ -68,12 +82,21 @@ public class City : IXmlSerializable{
 			cityBalance += str.maintenancecost;
 			myStructures.Add (str);
 		}
+		if(cbStructureAdded!=null){
+			cbStructureAdded (str);
+		}
 	}
 
 	public void addTiles(HashSet<Tile> t){
 		t.RemoveWhere (x => x.Type == TileType.Water);
-		myTiles.AddRange( new List<Tile> (t));
-		myTiles.ForEach (x => x.myCity = this);
+		List<Tile> tiles = new List<Tile> (t);
+		tiles.ForEach (x => {if(x.myCity.IsWilderness ())x.myCity = this;});
+		for (int i = 0; i < tiles.Count; i++) {
+			if(tiles[i].Structure != null){
+				myStructures.Add (tiles[i].Structure);
+			}
+			myTiles.Add (tiles[i]);
+		}
 	}
 
 	public void removeRessources(Item[] remove){
@@ -92,6 +115,9 @@ public class City : IXmlSerializable{
 		return myInv.hasAnythingOf (item.ID);
 	}
 
+	public bool IsWilderness(){
+		return playerNumber == -1;
+	}
 
 
 	/// <summary>
@@ -123,6 +149,14 @@ public class City : IXmlSerializable{
 		}
 
 	}
+
+	public void RegisterStructureAdded(Action<Structure> callbackfunc) {
+		cbStructureAdded += callbackfunc;
+	}
+	public void UnregisterStructureAdded(Action<Structure> callbackfunc) {
+		cbStructureAdded -= callbackfunc;
+	}
+
 	//////////////////////////////////////////////////////////////////////////////////////
 	/// 
 	/// 						SAVING & LOADING
@@ -169,7 +203,6 @@ public class City : IXmlSerializable{
 
 	}
 	public void ReadXml(XmlReader reader) {
-		playerNumber = int.Parse( reader.GetAttribute("Player") );
 		reader.ReadToDescendant ("Inventory");
 		myInv = new Inventory ();
 		myInv.ReadXml (reader);

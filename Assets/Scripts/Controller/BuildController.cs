@@ -188,7 +188,7 @@ public class BuildController : MonoBehaviour {
 		if(t.myIsland == null){
 			return null;
 		}
-		if(t.myCity != null){
+		if(t.myCity != null && t.myCity.IsWilderness () ==false){
 			return null;
 		}
 		City c = t.myIsland.CreateCity ();

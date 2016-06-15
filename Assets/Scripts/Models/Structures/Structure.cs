@@ -207,9 +207,15 @@ public abstract class Structure : IXmlSerializable {
 			Debug.LogError ("this tile doesnt have any city, not even wilderness");
 			return false;
 		}
-		if (t.myCity.playerNumber != PlayerController.Instance.number && t.myCity.IsWilderness () == false)
+		if (t.myCity.playerNumber != PlayerController.Instance.number) {
+			if (t.myCity.IsWilderness () == false ) {
+				if(this is Warehouse){
+					return true;
+				}
+
+			} 
 			return false;
-		
+		}
 		return true;
 	}
 

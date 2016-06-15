@@ -43,11 +43,16 @@ public class Warehouse : MarketBuilding {
 
 	public override void OnBuild(){
 		Tile t = myBuildingTiles [0];
-		if (t.myCity != null) {
-			return;
+		int i = 0;
+		while(t.myIsland == null){
+			t = myBuildingTiles [i];
+			i++;
+			if(myBuildingTiles.Count > i){
+				break;
+			}
 		}
 		this.city = BuildController.Instance.CreateCity(t);
-		if(city == null) {
+		if (city == null) {
 			return;
 		}
 		//dostuff thats happen when build

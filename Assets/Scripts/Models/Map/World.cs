@@ -132,30 +132,34 @@ public class World : IXmlSerializable{
 			if (islandList [i].allReadyHighlighted) {
 				continue;
 			}
-			if (islandList [i].min.x > lowerX ) {
-				if (islandList [i].min.y > lowerY ) {
-					//island is in camera viewport
-					islandList [i].allReadyHighlighted = true;
-					for (int t = 0; t < islandList [i].myTiles.Count; t++) {
-						if(islandList [i].myTiles [t].myCity ==null || islandList [i].myTiles [t].myCity.playerNumber != pc.number){
-							islandList [i].myTiles [t].TileState = TileMark.Dark;
-						}
+
+//			if (islandList [i].min.x < lowerX && islandList [i].min.x < upperX) {
+//				if (islandList [i].min.y > lowerY && islandList [i].min.y < upperY) {
+//					//island is in camera viewport
+			//TODO IS THIS optimal? if not optimise this 
+			if (islandList [i].myTiles.Find (x => x.X > lowerX && x.X < upperX && x.Y > lowerY && x.Y < upperY) != null) {
+				islandList [i].allReadyHighlighted = true;
+				for (int t = 0; t < islandList [i].myTiles.Count; t++) {
+					if (islandList [i].myTiles [t].myCity == null || islandList [i].myTiles [t].myCity.playerNumber != pc.number) {
+						islandList [i].myTiles [t].TileState = TileMark.Dark;
 					}
-					continue;
 				}
 			}
-			if (islandList [i].max.x < upperX ) {
-				if (islandList [i].max.y < upperY) {
-					//island is in camera viewport
-					islandList [i].allReadyHighlighted = true;
-					for (int t = 0; t < islandList [i].myTiles.Count; t++) {
-						if(islandList [i].myTiles [t].myCity == null || islandList [i].myTiles [t].myCity.playerNumber != pc.number){
-							islandList [i].myTiles [t].TileState = TileMark.Dark;
-						}
-					}
-					continue;
-				}
-			}
+//					continue;
+//				}
+//			}
+//			if (islandList [i].max.x < upperX ) {
+//				if (islandList [i].max.y < upperY) {
+//					//island is in camera viewport
+//					islandList [i].allReadyHighlighted = true;
+//					for (int t = 0; t < islandList [i].myTiles.Count; t++) {
+//						if(islandList [i].myTiles [t].myCity == null || islandList [i].myTiles [t].myCity.playerNumber != pc.number){
+//							islandList [i].myTiles [t].TileState = TileMark.Dark;
+//						}
+//					}
+//					continue;
+//				}
+//			}
 		}
 	}
 	public void resetIslandMark(){

@@ -210,8 +210,8 @@ public class MouseController : MonoBehaviour {
 
 	public void RemovePrefabs(){
 		while(previewGameObjects.Count > 0) {
-			Tile t = World.current.GetTileAt (previewGameObjects[0].transform.position.x,previewGameObjects[0].transform.position.y);
-			t.TileState = TileMark.Reset;
+//			Tile t = World.current.GetTileAt (previewGameObjects[0].transform.position.x,previewGameObjects[0].transform.position.y);
+//			t.TileState = TileMark.Reset;
 			GameObject go = previewGameObjects[0];
 			previewGameObjects.RemoveAt(0);
 			SimplePool.Despawn (go);
@@ -221,7 +221,7 @@ public class MouseController : MonoBehaviour {
 		if(t == null) {
 			return;
 		}
-		t.TileState = TileMark.None;
+//		t.TileState = TileMark.None;
 		// Display the building hint on top of this tile position
 		GameObject go = SimplePool.Spawn( redTileCursorPrefab, new Vector3(t.X, t.Y, 0), Quaternion.identity );
 		go.transform.SetParent(this.transform, true);
@@ -231,7 +231,7 @@ public class MouseController : MonoBehaviour {
 		if(t == null) {
 			return;
 		}
-		t.TileState = TileMark.None;
+//		t.TileState = TileMark.None;
 		// Display the building hint on top of this tile position
 		GameObject go = SimplePool.Spawn( greenTileCursorPrefab, new Vector3(t.X, t.Y, 0), Quaternion.identity );
 		go.transform.SetParent(this.transform, true);

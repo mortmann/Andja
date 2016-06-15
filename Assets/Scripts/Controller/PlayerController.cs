@@ -23,7 +23,7 @@ public class PlayerController : MonoBehaviour {
 		maxPopulationLevel = 0;
 		myCities = new List<City> ();
 		change = -10;
-		balance = 0;
+		balance = 50000;
 		balanceTicks = 5f;
 		tickTimer = balanceTicks;
 		GameObject.FindObjectOfType<BuildController>().RegisterCityCreated (OnCityCreated);

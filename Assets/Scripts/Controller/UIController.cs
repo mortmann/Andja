@@ -40,7 +40,6 @@ public class UIController : MonoBehaviour {
 	}
 	public void OpenCityInventory(City city){
 		if(city == null){
-			Debug.Log ("nocity");
 			return;
 		}
 		toggleRightUI ();

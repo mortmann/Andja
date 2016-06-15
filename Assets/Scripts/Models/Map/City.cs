@@ -42,6 +42,7 @@ public class City : IXmlSerializable{
 		// if this city doesnt belong to anyone it does not need
 		//anything underneath here
 		if(playerNr == -1){
+			islandTiles.ForEach (x => x.myCity = this);
 			this.myTiles.UnionWith (islandTiles); 
 			return;
 		}
@@ -90,7 +91,7 @@ public class City : IXmlSerializable{
 	public void addTiles(HashSet<Tile> t){
 		t.RemoveWhere (x => x.Type == TileType.Water);
 		List<Tile> tiles = new List<Tile> (t);
-		tiles.ForEach (x => {if(x.myCity.IsWilderness ())x.myCity = this;});
+		tiles.ForEach (x => {if(x.myCity.IsWilderness ()) x.myCity = this;});
 		for (int i = 0; i < tiles.Count; i++) {
 			if(tiles[i].Structure != null){
 				myStructures.Add (tiles[i].Structure);

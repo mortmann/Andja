@@ -29,7 +29,6 @@ public class City : IXmlSerializable{
 	public string name {get{return "City "+island.myCities.IndexOf (this);}}
 
 	public City(int playerNr,Island island,List<Need> allNeedsList, List<Tile> islandTiles = null) {
-		
 		this.playerNumber = playerNr;
 		citizienCount = new int[4];
 		for (int i = 0; i < citizienCount.Length; i++) {
@@ -203,6 +202,7 @@ public class City : IXmlSerializable{
 
 
 	}
+
 	public void ReadXml(XmlReader reader) {
 		reader.ReadToDescendant ("Inventory");
 		myInv = new Inventory ();

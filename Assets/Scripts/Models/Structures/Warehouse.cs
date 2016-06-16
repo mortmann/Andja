@@ -5,9 +5,8 @@ using System.Xml.Schema;
 using System.Xml.Serialization;
 
 public class Warehouse : MarketBuilding {
-
-	public int shipRange = 10;
 	public Warehouse(int id){
+		contactRange = 6.3f;
 		buildingRange = 18;
 		this.ID = id;
 		tileWidth = 3;
@@ -23,7 +22,7 @@ public class Warehouse : MarketBuilding {
 	}
 	public Warehouse(){
 	}
-	protected Warehouse(Structure str){
+	protected Warehouse(Warehouse str){
 		this.ID = str.ID;
 		this.name = str.name;
 		this.tileWidth = str.tileWidth;
@@ -38,10 +37,16 @@ public class Warehouse : MarketBuilding {
 		this.showExtraUI = str.showExtraUI;
 		this.hasHitbox = str.hasHitbox;
 		this.mustFrontBuildDir = str.mustFrontBuildDir;
+		this.contactRange = str.contactRange;
+	}
+	public override void update (float deltaTime) {
+
+
+
 	}
 
-
 	public override void OnBuild(){
+		//changethis code?
 		Tile t = myBuildingTiles [0];
 		int i = 0;
 		while(t.myIsland == null){
@@ -51,6 +56,7 @@ public class Warehouse : MarketBuilding {
 				break;
 			}
 		}
+
 		this.city = BuildController.Instance.CreateCity(t);
 		if (city == null) {
 			return;

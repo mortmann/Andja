@@ -1,10 +1,9 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine.UI;
 
 public class StructureSpriteController : MonoBehaviour {
-	Dictionary<Structure, GameObject> structureGameObjectMap;
+	public Dictionary<Structure, GameObject> structureGameObjectMap;
 	Dictionary<string, Sprite> structureSprites = new Dictionary<string, Sprite>();
 	public Sprite circleSprite;
 	BuildController bm;
@@ -78,6 +77,17 @@ public class StructureSpriteController : MonoBehaviour {
 				sr.sprite = sprite;
 			}
 		}
+		if(structure is UserStructure && ((UserStructure)structure).contactRange>0){
+			GameObject goContact = new GameObject ();
+			CircleCollider2D cc2d = goContact.AddComponent<CircleCollider2D>();
+			cc2d.radius = ((UserStructure)structure).contactRange;
+			cc2d.isTrigger = true;
+			goContact.transform.SetParent (go.transform);
+			goContact.AddComponent<ContactColliderScript>();
+			goContact.name = "ContactCollider";
+		}
+
+
 		if (structure.hasHitbox) {
 			BoxCollider2D col = go.AddComponent<BoxCollider2D> ();
 			col.size = new Vector2 (sr.sprite.textureRect.size.x /sr.sprite.pixelsPerUnit, sr.sprite.textureRect.size.y / sr.sprite.pixelsPerUnit);
@@ -98,8 +108,9 @@ public class StructureSpriteController : MonoBehaviour {
 		}
 		if(structure is Warehouse){
 			GameObject go = new GameObject ();
+			go.name = "RangeUI";
 			go.transform.position = structureGameObjectMap [structure].transform.position;
-			go.transform.localScale = new Vector3(((Warehouse)structure).shipRange,((Warehouse)structure).shipRange,0);
+			go.transform.localScale = new Vector3(((Warehouse)structure).contactRange,((Warehouse)structure).contactRange,0);
 			SpriteRenderer sr = go.AddComponent<SpriteRenderer> ();
 			sr.sprite = circleSprite;
 			sr.sortingLayerName = "StructuresUI";

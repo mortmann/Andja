@@ -6,7 +6,8 @@ using System.Xml.Serialization;
 using System;
 
 public abstract class UserStructure : Structure {
-	
+	public float contactRange=0;
+
 	public float health;
 	protected int maxNumberOfWorker = 1;
 	public List<Worker> myWorker;

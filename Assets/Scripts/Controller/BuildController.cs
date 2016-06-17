@@ -186,9 +186,11 @@ public class BuildController : MonoBehaviour {
 	}
 	public City CreateCity(Tile t){
 		if(t.myIsland == null){
+			Debug.LogError ("CreateCity called not on a island!");
 			return null;
 		}
 		if(t.myCity != null && t.myCity.IsWilderness () ==false){
+			Debug.LogError ("CreateCity called not on a t.myCity && t.myCity.IsWilderness () ==false!");
 			return null;
 		}
 		City c = t.myIsland.CreateCity ();

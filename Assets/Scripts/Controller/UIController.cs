@@ -13,7 +13,7 @@ public class UIController : MonoBehaviour {
 	public Structure oldStr;
 
 	void Start(){
-		uiInfoCanvas.SetActive (false);
+		CloseInfoUI ();
 		chooseBuildCanvas.SetActive (false);
 		buildingCanvas.SetActive (false);
 		unitCanvas.SetActive (false);
@@ -38,13 +38,13 @@ public class UIController : MonoBehaviour {
 			OpenCityInventory (str.city);
 		}
 	}
-	public void OpenCityInventory(City city){
+	public void OpenCityInventory(City city, bool trade = false){
 		if(city == null){
 			return;
 		}
 		toggleRightUI ();
 		CityInventoryCanvas.SetActive (true);
-		CityInventoryCanvas.GetComponent<CityInventoryUI>().ShowInventory (city);
+		CityInventoryCanvas.GetComponent<CityInventoryUI>().ShowInventory (city,trade);
 	}
 	public void toggleRightUI(){
 		rightCanvas.SetActive (!rightCanvas.activeSelf);
@@ -71,7 +71,7 @@ public class UIController : MonoBehaviour {
 	}
 	public void CloseProduktionUI(){
 		buildingCanvas.SetActive (false);
-		uiInfoCanvas.SetActive (false);
+		CloseInfoUI ();
 	}
 	public void OpenProduceUI(UserStructure str){
 		if(str == null){
@@ -84,12 +84,18 @@ public class UIController : MonoBehaviour {
 	}
 	public void CloseProduceUI(){
 		buildingCanvas.SetActive (false);
-		uiInfoCanvas.SetActive (false);
+		CloseInfoUI ();
 	}
 
 	public void OpenUnitUI(Unit u){
 		if(u==null){
 			return;
+		}
+		if (u.rangeUStructure != null) {
+			if (u.rangeUStructure is Warehouse) {
+				CloseRightUI ();
+				OpenCityInventory (u.rangeUStructure.city,true);
+			}
 		}
 		buildingCanvas.SetActive (false);
 		unitCanvas.SetActive (true);
@@ -99,13 +105,13 @@ public class UIController : MonoBehaviour {
 
 	public void CloseUnitUI(){
 		unitCanvas.SetActive (false);
-		uiInfoCanvas.SetActive (false);
+		CloseInfoUI ();
 	}
 
 	public void CloseInfoUI (){
 		if(uiInfoCanvas.activeSelf == false){
 			return;
-		}
+		}		
 		if(oldStr != null){
 			oldStr.OnClickClose ();
 			oldStr = null;
@@ -118,13 +124,17 @@ public class UIController : MonoBehaviour {
 		chooseBuildCanvas.SetActive (false);
 	}
 	public void CloseRightUI(){
+		if(oldStr != null){
+			oldStr.OnClickClose ();
+			oldStr = null;
+		}
 		CityInventoryCanvas.SetActive (false);
 		rightCanvas.SetActive (false);
 	}
 	public void Escape() {
+		CloseInfoUI ();
 		CloseProduktionUI ();
 		CloseUnitUI ();
-		CloseInfoUI ();
 		CloseChooseBuild ();
 		CloseRightUI ();
 	}

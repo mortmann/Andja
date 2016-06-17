@@ -88,9 +88,10 @@ public class City : IXmlSerializable{
 	}
 
 	public void addTiles(HashSet<Tile> t){
-		t.RemoveWhere (x => x.Type == TileType.Water);
+		t.RemoveWhere (x => x.Type == TileType.Water || x.myCity.IsWilderness ()==false);
 		List<Tile> tiles = new List<Tile> (t);
-		tiles.ForEach (x => {if(x.myCity.IsWilderness ()) x.myCity = this;});
+
+		tiles.ForEach (x => { x.myCity = this; });
 		for (int i = 0; i < tiles.Count; i++) {
 			if(tiles[i].Structure != null){
 				myStructures.Add (tiles[i].Structure);
@@ -116,7 +117,7 @@ public class City : IXmlSerializable{
 	}
 
 	public bool IsWilderness(){
-		return playerNumber == -1;
+		return this == island.wilderniss;
 	}
 
 

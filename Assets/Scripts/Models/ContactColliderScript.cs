@@ -3,14 +3,19 @@ using System.Collections;
 using System;
 
 public class ContactColliderScript : MonoBehaviour {
-	CircleCollider2D cc2d;
-	// Use this for initialization
-	void Start () {
-		cc2d = gameObject.GetComponent<CircleCollider2D>();
-	}
-	
+	public UserStructure contact;
 
-	public void OnCollisionEnter(Collision coll){
-		
+	void OnCollisionEnter2D(Collision2D coll) {
+		Unit u = coll.gameObject.GetComponent<Unit> ();
+		if (u != null)
+			u.isInRangeOfWarehouse (contact);
+
+	}
+
+	void OnCollisionExit2D(Collision2D coll) {
+		Unit u = coll.gameObject.GetComponent<Unit> ();
+		if (coll.gameObject.GetComponent<Unit> ()!=null)
+			u.isInRangeOfWarehouse (contact);
+
 	}
 }

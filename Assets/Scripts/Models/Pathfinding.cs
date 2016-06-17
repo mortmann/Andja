@@ -197,6 +197,9 @@ public class Pathfinding  {
 						continue;
 					}
 					Path_AStar temp = new Path_AStar (start.myIsland, start, end);
+					if (temp == null) {
+						continue;
+					}
 					if (p == null || temp.path.Count < p.path.Count ) {
 						p = temp;
 						destTile = end;

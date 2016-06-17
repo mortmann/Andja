@@ -41,15 +41,16 @@ public class Tile : IXmlSerializable {
 		get{
 			return _myCity;
 		} 
-		set { 
+		set {
 			if (value == null) {
 				if (_myCity !=null){
-					 
+					_myCity = myIsland.wilderniss;
 				}
 			} 
-			if (_myCity !=null){
+			if (_myCity !=myIsland.wilderniss){
 				return;
 			}
+
 			_myCity = value;
 		} 
 	}

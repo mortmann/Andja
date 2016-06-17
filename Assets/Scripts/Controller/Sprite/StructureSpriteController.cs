@@ -83,6 +83,7 @@ public class StructureSpriteController : MonoBehaviour {
 			cc2d.radius = ((UserStructure)structure).contactRange;
 			cc2d.isTrigger = true;
 			goContact.transform.SetParent (go.transform);
+			goContact.transform.localPosition = Vector3.zero;
 			goContact.AddComponent<ContactColliderScript>();
 			goContact.name = "ContactCollider";
 		}
@@ -105,16 +106,21 @@ public class StructureSpriteController : MonoBehaviour {
 		if(structure is Growable){
 			SpriteRenderer sr = structureGameObjectMap[structure].GetComponent<SpriteRenderer>();
 			sr.sprite = structureSprites[structure.name + "_" + ((Growable)structure).currentStage];
-		}
+		} else
 		if(structure is Warehouse){
-			GameObject go = new GameObject ();
-			go.name = "RangeUI";
-			go.transform.position = structureGameObjectMap [structure].transform.position;
-			go.transform.localScale = new Vector3(((Warehouse)structure).contactRange,((Warehouse)structure).contactRange,0);
-			SpriteRenderer sr = go.AddComponent<SpriteRenderer> ();
-			sr.sprite = circleSprite;
-			sr.sortingLayerName = "StructuresUI";
-			go.transform.SetParent (structureGameObjectMap [structure].transform);
+			if (structure.extraUIOn == true) {
+				GameObject go = new GameObject ();
+				go.name = "RangeUI";
+				go.transform.position = structureGameObjectMap [structure].transform.position;
+				go.transform.localScale = new Vector3 (((Warehouse)structure).contactRange, ((Warehouse)structure).contactRange, 0);
+				SpriteRenderer sr = go.AddComponent<SpriteRenderer> ();
+				sr.sprite = circleSprite;
+				sr.sortingLayerName = "StructuresUI";
+				go.transform.SetParent (structureGameObjectMap [structure].transform);
+			} else {
+				if(structureGameObjectMap [structure].transform.FindChild("RangeUI") !=null)
+					GameObject.Destroy (structureGameObjectMap [structure].transform.FindChild("RangeUI").gameObject );
+			}
 		}
 	}
 	void OnStructureDestroyed(Structure structure) {

@@ -34,6 +34,7 @@ public abstract class Structure : IXmlSerializable {
 	public bool canBeBuildOver = false;
 	public bool canBeUpgraded = false;
 	public bool showExtraUI = false;
+	public bool extraUIOn = false;
 
 	public Vector2 middleVector {get {return new Vector2 (BuildTile.X + (float)tileWidth/2f,BuildTile.Y + (float)tileHeight/2f);}}
 

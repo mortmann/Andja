@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-using System.Collections;
+using System.Collections.Generic;
 using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Serialization;
@@ -52,7 +52,7 @@ public class Warehouse : MarketBuilding {
 		while(t.myIsland == null){
 			t = myBuildingTiles [i];
 			i++;
-			if(myBuildingTiles.Count > i){
+			if(myBuildingTiles.Count < i){
 				break;
 			}
 		}
@@ -63,13 +63,16 @@ public class Warehouse : MarketBuilding {
 		}
 		//dostuff thats happen when build
 		city.addTiles (myRangeTiles);
+		city.addTiles (new HashSet<Tile>(myBuildingTiles));
 	}
 
 	public override void OnClick (){
+		extraUIOn = true;
 		callbackIfnotNull ();
 	}
 	public override void OnClickClose (){
-	
+		extraUIOn = false;
+		callbackIfnotNull ();
 	}
 	public override Structure Clone (){
 		return new Warehouse (this);

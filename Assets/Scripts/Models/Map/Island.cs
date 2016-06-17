@@ -15,6 +15,7 @@ public class Island : IXmlSerializable{
 	public Dictionary<string,int> myRessources;
 	public Vector2 min;
 	public Vector2 max;
+	public City wilderniss;
 	public bool allReadyHighlighted;
     //TODO: get a tile to start with!
 	public Island(Tile startTile, Climate climate = Climate.Middle) {
@@ -80,7 +81,7 @@ public class Island : IXmlSerializable{
 		//have a function like is notplayer city
 		//it does not need NEEDs
 		myCities.Add (new City(-1,this,null,myTiles)); 
-
+		wilderniss = myCities [0];
     }
 
     public void update(float deltaTime) {

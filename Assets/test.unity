@@ -3443,6 +3443,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   contentCanvas: {fileID: 767439450}
   itemPrefab: {fileID: 178454, guid: 454ea8bfc9cd0f84698610e721a842b2, type: 2}
+  trade: 0
 --- !u!1 &888453685
 GameObject:
   m_ObjectHideFlags: 0

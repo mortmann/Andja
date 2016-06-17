@@ -1,19 +1,20 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 using UnityEngine.UI;
-
+using UnityEngine.EventSystems;
 public class CityInventoryUI : MonoBehaviour {
 
 	public GameObject contentCanvas;
 	public GameObject itemPrefab;
 	Inventory inventory;
 	Dictionary<Item, GameObject> itemToGO;
+	public bool trade;
 
-
-	public void ShowInventory(City city){
+	public void ShowInventory(City city, bool trade){
 		if(city == null){
 			return;
 		}
+		this.trade = trade;
 		inventory = city.myInv;
 		inventory.RegisterOnChangedCallback (OnInventoryChange);
 		itemToGO = new Dictionary<Item, GameObject> ();
@@ -23,12 +24,22 @@ public class CityInventoryUI : MonoBehaviour {
 			Slider s = go_i.GetComponentInChildren<Slider> ();
 			s.maxValue = inventory.maxStackSize;
 			s.value = item.count;
+			EventTrigger trigger = go_i.GetComponent<EventTrigger> ();
+			EventTrigger.Entry entry = new EventTrigger.Entry( );
+			entry.eventID = EventTriggerType.PointerClick;
+			Item i = item.Clone ();
+			entry.callback.AddListener( ( data ) => { OnItemClick( i ); } );
+			trigger.triggers.Add( entry );
 			AdjustSliderColor (s);
 			// set image here
 			Text tons = go_i.GetComponentInChildren<Text> ();
 			tons.text = item.count +"t";
 			go_i.transform.SetParent (contentCanvas.transform);
 		}
+	}
+
+	void OnItemClick(Item item){
+		Debug.Log (item.name);
 	}
 
 	void AdjustSliderColor(Slider s){

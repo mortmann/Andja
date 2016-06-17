@@ -57,10 +57,6 @@ public class World : IXmlSerializable{
 		units = new List<Unit>();
 		//        CreateUnit(tiles[30, 30]);    
 		islandList.Add(new Island(tiles[41, 41]));
-//		islandList [0].CreateCity ();
-//		for (int i = 0; i < islandList [0].myTiles.Count; i++) {
-//			islandList [0].myCities [0].addTile (islandList [0].myTiles [i]);
-//		}
 	}
     internal void update(float deltaTime) {
         foreach(Island i in islandList) {
@@ -132,34 +128,18 @@ public class World : IXmlSerializable{
 			if (islandList [i].allReadyHighlighted) {
 				continue;
 			}
-
-//			if (islandList [i].min.x < lowerX && islandList [i].min.x < upperX) {
-//				if (islandList [i].min.y > lowerY && islandList [i].min.y < upperY) {
-//					//island is in camera viewport
 			//TODO IS THIS optimal? if not optimise this 
 			if (islandList [i].myTiles.Find (x => x.X > lowerX && x.X < upperX && x.Y > lowerY && x.Y < upperY) != null) {
 				islandList [i].allReadyHighlighted = true;
 				for (int t = 0; t < islandList [i].myTiles.Count; t++) {
-					if (islandList [i].myTiles [t].myCity == null || islandList [i].myTiles [t].myCity.playerNumber != pc.number) {
+					if (islandList [i].myTiles [t].myCity.playerNumber != pc.number) {
 						islandList [i].myTiles [t].TileState = TileMark.Dark;
+					} else {
+						islandList [i].myTiles [t].TileState = TileMark.None;
 					}
 				}
 			}
-//					continue;
-//				}
-//			}
-//			if (islandList [i].max.x < upperX ) {
-//				if (islandList [i].max.y < upperY) {
-//					//island is in camera viewport
-//					islandList [i].allReadyHighlighted = true;
-//					for (int t = 0; t < islandList [i].myTiles.Count; t++) {
-//						if(islandList [i].myTiles [t].myCity == null || islandList [i].myTiles [t].myCity.playerNumber != pc.number){
-//							islandList [i].myTiles [t].TileState = TileMark.Dark;
-//						}
-//					}
-//					continue;
-//				}
-//			}
+
 		}
 	}
 	public void resetIslandMark(){

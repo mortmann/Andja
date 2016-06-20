@@ -7,6 +7,7 @@ using System.Xml.Schema;
 using System.Xml.Serialization;
 
 public class World : IXmlSerializable{
+	
     public Tile[,] tiles { get; protected set; }
     public int Width { get; protected set; }
     public int Height { get; protected set; }
@@ -15,13 +16,11 @@ public class World : IXmlSerializable{
     public List<Unit> units { get; protected set; }
 	public List<Need> allNeeds;
 	public static World current { get; protected set; }
-
+	public Dictionary<Climate,List<Fertility>> allFertilities;
 
     Action<Unit> cbUnitCreated;
 	Action<Worker> cbWorkerCreated;
     Action<Tile> cbTileChanged;
-
-    //get { return height; } protected set { height = value;}
 
     public World(int width = 1000, int height = 1000){
 		SetupWorld (width,height);
@@ -51,18 +50,43 @@ public class World : IXmlSerializable{
 		}
 		allNeeds = new List<Need> ();
 		//		LoadPrototypsNeedsFromXML ();
-
+		allFertilities = GameObject.FindObjectOfType<BuildController>().allFertilities;
 		tileGraph = new Path_TileGraph(this);
 		islandList = new List<Island>();
 		units = new List<Unit>();
 		//        CreateUnit(tiles[30, 30]);    
-		islandList.Add(new Island(tiles[41, 41]));
+		CreateIsland (41, 41);
 	}
     internal void update(float deltaTime) {
         foreach(Island i in islandList) {
             i.update(deltaTime);
         }
     }
+
+	public void CreateIsland(int x, int y){
+		Tile t = GetTileAt (x, y);
+		if(t.Type == TileType.Water){
+			Debug.LogError ("Tried to create island on a water tile at " + t.toString ());
+			return;
+		}
+
+		float third = (float)Height/3f;
+		Climate myClimate =(Climate)Mathf.RoundToInt ( t.Y / third);
+		Fertility[] fers = new Fertility[3];
+		List<Fertility> climFer = BuildController.Instance.allFertilities [myClimate];
+
+		for (int i = 0; i < fers.Length; i++) {
+			Fertility f = climFer[UnityEngine.Random.Range (0,climFer.Count)];
+			fers [i] = f;
+		}
+
+		Island island = new Island (t,(Climate)myClimate);
+		island.myFertilities = new List<Fertility> (fers);
+		islandList.Add (island);
+
+	}
+
+
     public Tile GetTileAt(int x,int y){
         if (x >= Width ||y >= Height ) {
             return null;

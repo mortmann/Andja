@@ -69,9 +69,15 @@ public class Unit : MonoBehaviour, IXmlSerializable {
     }
 
 	public void isInRangeOfWarehouse(UserStructure ware){
+		if(ware!=null){
+		}
 		rangeUStructure = ware; 
 	}
-
+	public void clickedItem(Item clicked){
+		if(rangeUStructure != null && rangeUStructure is Warehouse){
+			rangeUStructure.city.tradeFromShip (clicked);
+		}
+	}
     public void RegisterOnChangedCallback(Action<Unit> cb) {
         cbUnitChanged += cb;
     }
@@ -100,6 +106,12 @@ public class Unit : MonoBehaviour, IXmlSerializable {
         Debug.Log("AddMovementCommand " + tile.toString());
 		pathfinding.AddMovementCommand( x, y);
     }
+	public int tryToAddItemMaxAmount(Item item , int amount){
+		Item t = item.Clone ();
+		t.count = amount;
+		return inventory.addItem (t);
+	}
+
 
 	//////////////////////////////////////////////////////////////////////////////////////
 	/// 

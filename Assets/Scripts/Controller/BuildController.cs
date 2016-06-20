@@ -31,9 +31,11 @@ public class BuildController : MonoBehaviour {
 	public Dictionary<int,Structure> loadedToPlaceStructure;
 	public Dictionary<int,Tile> loadedToPlaceTile;
 	public List<Need> allNeeds;
+	public Dictionary<Climate,List<Fertility>> allFertilities;
 	Action<Structure> cbStructureCreated;
 	Action<City> cbCityCreated;
 	Action<BuildStateModes> cbBuildStateChange;
+
 	public Dictionary<int, Item> getCopieOfAllItems(){
 		Dictionary<int, Item> items = new Dictionary<int, Item>();
 		foreach (int item in allItems.Keys) {
@@ -80,6 +82,8 @@ public class BuildController : MonoBehaviour {
 		//needs
 		allNeeds = new List<Need>();
 		ReadNeedsFromXML ();
+		allFertilities = new Dictionary<Climate,List<Fertility>> ();
+		ReadFertilitiesFromXML ();
 	}
 
 	public void Update(){
@@ -247,6 +251,24 @@ public class BuildController : MonoBehaviour {
 			item.ID = int.Parse(node.GetAttribute("ID"));
 			item.name = node.SelectSingleNode("EN"+ "_Name").InnerText;
 			allItems [item.ID] = item;
+		}
+	}
+	private void ReadFertilitiesFromXML(){
+		XmlDocument xmlDoc = new XmlDocument(); // xmlDoc is the new xml document.
+		TextAsset ta = ((TextAsset)Resources.Load("XMLs/fertilities", typeof(TextAsset)));
+		xmlDoc.LoadXml(ta.text); // load the file.
+		foreach(XmlElement node in xmlDoc.SelectNodes("Fertilities/Fertility")){
+			Fertility fer = new Fertility ();
+			fer.ID = int.Parse(node.GetAttribute("ID"));
+			fer.name = node.SelectSingleNode("EN"+ "_Name").InnerText;
+			string[] climates = node.SelectSingleNode("Climate").InnerText.Split (';');
+			fer.climates = new Climate[climates.Length];
+			for (int i = 0; i < climates.Length; i++) {
+				fer.climates [i] = (Climate)int.Parse (climates [i]);
+			}
+			foreach (Climate item in fer.climates) {
+				allFertilities [item].Add (fer);
+			}
 		}
 	}
 	private void ReadNeedsFromXML(){

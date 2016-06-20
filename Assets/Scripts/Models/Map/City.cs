@@ -11,7 +11,7 @@ public class City : IXmlSerializable{
     public int playerNumber = 0;
     public Island island { get; protected set; }
     public Inventory myInv;
-
+	public Unit tradeUnit;
     public List<Structure> myStructures;
 	public List<HomeBuilding> myHomes;
 
@@ -23,9 +23,9 @@ public class City : IXmlSerializable{
 	public int[] citizienCount;
 	public float useTick;
 	public float useTickTimer;
-
+	public Warehouse myWarehouse;
 	public Action<Structure> cbStructureAdded;
-
+	public Action<Structure> cbRegisterTradeOffer;
 	public string name {get{return "City "+island.myCities.IndexOf (this);}}
 
 	public City(int playerNr,Island island,List<Need> allNeedsList, List<Tile> islandTiles = null) {
@@ -79,6 +79,13 @@ public class City : IXmlSerializable{
 		if(str is HomeBuilding) {
 			myHomes.Add ((HomeBuilding)str);
 		} else {
+			if(str is Warehouse){
+				if(myWarehouse!=null){
+					Debug.LogError ("There should be only one Warehouse per City!");
+					return;
+				}
+				myWarehouse = (Warehouse)str;
+			}
 			cityBalance += str.maintenancecost;
 			myStructures.Add (str);
 		}
@@ -113,14 +120,26 @@ public class City : IXmlSerializable{
 	}
 
 	public bool hasItem(Item item){
-		return myInv.hasAnythingOf (item.ID);
+		return myInv.hasAnythingOf (item);
 	}
 
 	public bool IsWilderness(){
 		return this == island.wilderniss;
 	}
 
-
+	public void tradeWithShip(Item toTrade){
+		if(tradeUnit==null || toTrade ==null){
+			return;
+		}
+		toTrade.count = 50;
+		myInv.moveItem (tradeUnit.inventory,toTrade);
+	}
+	public void tradeFromShip(Item getTrade){
+		if(getTrade ==null){
+			return;
+		}
+		tradeUnit.inventory.moveItem (myInv,getTrade);
+	}
 	/// <summary>
 	/// Tries to Remove item.
 	/// </summary>

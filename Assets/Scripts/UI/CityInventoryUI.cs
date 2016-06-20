@@ -9,16 +9,20 @@ public class CityInventoryUI : MonoBehaviour {
 	Inventory inventory;
 	Dictionary<Item, GameObject> itemToGO;
 	public bool trade;
+	public City city;
+
 
 	public void ShowInventory(City city, bool trade){
 		if(city == null){
 			return;
 		}
+		this.city = city;
 		this.trade = trade;
 		inventory = city.myInv;
 		inventory.RegisterOnChangedCallback (OnInventoryChange);
 		itemToGO = new Dictionary<Item, GameObject> ();
-		foreach (Item item in inventory.items.Values) {
+		foreach (Item items in inventory.items.Values) {
+			Item item = items; // cities can only have 1 stack
 			GameObject go_i = GameObject.Instantiate (itemPrefab);
 			itemToGO.Add (item,go_i);
 			Slider s = go_i.GetComponentInChildren<Slider> ();
@@ -40,6 +44,7 @@ public class CityInventoryUI : MonoBehaviour {
 
 	void OnItemClick(Item item){
 		Debug.Log (item.name);
+		city.tradeWithShip (item);
 	}
 
 	void AdjustSliderColor(Slider s){

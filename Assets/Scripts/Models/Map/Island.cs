@@ -6,20 +6,28 @@ using System.Xml.Schema;
 using System.Xml.Serialization;
 
 public enum Climate {Cold,Middle,Warm};
+
 public class Island : IXmlSerializable{
-    public Path_TileGraph tileGraph { get; protected set; }
+    
+	public Path_TileGraph tileGraph { get; protected set; }
+
     public List<Tile> myTiles;
     public List<City> myCities;
+
 	public Climate myClimate;
 	public List<Fertility> myFertilities;
 	public Dictionary<string,int> myRessources;
+
 	public Vector2 min;
 	public Vector2 max;
 	public City wilderniss;
 	public bool allReadyHighlighted;
+
     //TODO: get a tile to start with!
 	public Island(Tile startTile, Climate climate = Climate.Middle) {
 		myFertilities = new List<Fertility> ();
+
+
 		myRessources = new Dictionary<string, int> ();
 		myRessources ["stone"] = int.MaxValue;
         myTiles = new List<Tile>();
@@ -51,6 +59,7 @@ public class Island : IXmlSerializable{
         Queue<Tile> tilesToCheck = new Queue<Tile>();
         tilesToCheck.Enqueue(tile);
         while (tilesToCheck.Count > 0) {
+			
             Tile t = tilesToCheck.Dequeue();
 			if (min.x > t.X) {
 				min.x = t.X;

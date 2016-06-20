@@ -135,7 +135,6 @@ public class MarketBuilding : UserStructure {
 	public override void WriteXml (XmlWriter writer){
 		BaseWriteXml (writer);
 		WriteUserXml (writer);
-		
 	}
 	public override void ReadXml(XmlReader reader) {
 		BaseReadXml (reader);

@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 public class UnitUI : MonoBehaviour {
 	public Canvas content;
 	public GameObject itemPrefab;
@@ -18,8 +19,8 @@ public class UnitUI : MonoBehaviour {
 		if(inv == null){
 			return;
 		}
-		foreach (Item item in inv.items.Values) {
-			addItemGameObject(item);
+		foreach (Item i in inv.items.Values) {
+			addItemGameObject(i);
 		}
 	}
 
@@ -34,28 +35,35 @@ public class UnitUI : MonoBehaviour {
 			s.maxValue = inv.maxStackSize;
 			s.value = item.count;
 			t.text = item.count + "t";
+			EventTrigger trigger = go.GetComponent<EventTrigger> ();
+			EventTrigger.Entry entry = new EventTrigger.Entry( );
+			entry.eventID = EventTriggerType.PointerClick;
+			Item i = item.Clone ();
+			entry.callback.AddListener( ( data ) => { OnItemClick( i ); } );
+			trigger.triggers.Add( entry );
 			itemToGO.Add (item,go);
 		} else {
 			s.maxValue = inv.maxStackSize;
 			s.value = 0;
 			t.text = 0 + "t";
 		}
+
 		go.transform.SetParent (content.transform);
 
 	}
-
+	void OnItemClick(Item clicked){
+		unit.clickedItem (clicked);
+	}
 	public void OnInvChange(Inventory changedInv){
 		foreach(Item i in changedInv.items.Values){
-			if(inv.items.ContainsValue (i)){
-				if(inv.items[i.ID].count != i.count){
-					itemToGO[i].GetComponentInChildren<Text> ().text = i.count + "t";
-					itemToGO [i].GetComponentInChildren<Slider> ().value = i.count;
-				}
+			if (inv.items.ContainsValue (i)) {
+				itemToGO [i].GetComponentInChildren<Text> ().text = i.count + "t";
+				itemToGO [i].GetComponentInChildren<Slider> ().value = i.count;
 			} else {
-				foreach(Item ig in itemToGO.Keys){
-					if(ig.ID == -1){
+				foreach (Item ig in itemToGO.Keys) {
+					if (ig.ID == -1) {
 						itemToGO.Remove (ig);
-						addItemGameObject(i);
+						addItemGameObject (i);
 						break;
 					}
 				}

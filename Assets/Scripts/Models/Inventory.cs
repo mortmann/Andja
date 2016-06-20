@@ -27,11 +27,13 @@ public class Inventory : IXmlSerializable{
         items = new Dictionary<int, Item>();
 		this.needsPlaceholders = needsPlaceholders;
 		if (numberOfSpaces == -1) {
+			//for cities
 			items = GameObject.FindObjectOfType<BuildController> ().getCopieOfAllItems ();
 		} else {
-			if (needsPlaceholders) {
+			//for units
+			if (this.needsPlaceholders) {
 				for (int i = 0; i < +numberOfSpaces; i++) {
-					items.Add (i-1000, new Item (-1, "empty"));
+					items.Add (i, new Item (-1, "empty"));
 				}
 			}
 		}
@@ -48,47 +50,102 @@ public class Inventory : IXmlSerializable{
 		if (item.ID == -1) {
 			return -1;
 		}
-        if (items.ContainsKey(item.ID)) {
-            return tryToAddCount(items[item.ID],item);
-        } else {
-            //-1 stands for unlimited spaces for Islands 
-			if(numberOfSpaces != -1) {
-				if (needsPlaceholders) {
-					if (InventorySpaces () == 0) {
-						return -1;
-					}
-					if (InventorySpaces () < 0) {
-						Debug.LogError ("There are more Items in inventory than there are places.");
-						return -1;
-					}
-				} else {
-					if (items.Count == numberOfSpaces) {
-						return -1;
-					}
-					if (items.Count > numberOfSpaces) {
-						Debug.LogError ("There are more Items in inventory than there are places.");
-						return -1;
-					}
-				}
-            } 
-			RemovePlaceholder ();
-			items.Add(item.ID, item);
 
+		if(numberOfSpaces == -1){
+			return cityAddItem (item);
+		} else {
+			return unitAddItem (item);
+		}
+
+    }
+
+	private int cityAddItem(Item toAdd){
+		//in a city there is always a stack to be added to
+		Item inInv = items [toAdd.ID];
+		if(inInv.count == maxStackSize) {
+			return 0;
+		}
+		int amount = 0;
+		//if there´s not enough space
+		if(toAdd.count + inInv.count > maxStackSize) {
+			//add as much as possible if 
+			amount = maxStackSize - inInv.count;
+			lowerItemAmount (toAdd, amount);
+			inInv.count = maxStackSize;
 			if(cbInventoryChanged != null)
 				cbInventoryChanged (this);
-            return 1;
-        }
-    }
-	public Item getItemWithMaxAmount(Item item, int maxAmount){
-		Item output = items [item.ID];
-		Item temp = output.CloneWithCount();
-		temp.count = Mathf.Clamp (temp.count, 0, maxAmount );
-		output.count -= temp.count;
+			return amount;
+		}
+
+		//now there´s enough space
+		amount = toAdd.count;
+		lowerItemAmount (toAdd, amount);
+		inInv.count += amount;
 		if(cbInventoryChanged != null)
 			cbInventoryChanged (this);
-		return 	temp;
+		return amount;
+	}
+	private int unitAddItem(Item toAdd){
+		int amount = 0;
+		foreach (Item inInv in items.Values) {
+			if(inInv.ID == toAdd.ID){
+				if(inInv.count == maxStackSize){
+					continue;
+				}
+				int temp = Mathf.Clamp (toAdd.count, 0, maxStackSize - inInv.count);
+				amount += temp;
+				inInv.count += temp;
+				lowerItemAmount (toAdd, temp);
+				if(toAdd.count==0){
+					break;
+				}
+			}
+		}
+		if(toAdd.count>0){
+			if(InventorySpaces ()>0){
+				int id = RemovePlaceholder ();
+				Item temp = toAdd.Clone ();
+				temp.count = Mathf.Clamp (toAdd.count,0,maxStackSize);
+				lowerItemAmount (toAdd, temp.count);
+				amount += temp.count;
+				items [id] = temp;
+			}
+		}
+		return amount;
 	}
 
+	public int getPlaceInItem(Item item){
+		if(numberOfSpaces == -1){
+			return item.ID;
+		} else {
+			foreach (int inInv in items.Keys) {
+				if(items[inInv].ID == item.ID){
+					return inInv;
+				}
+			}
+			return -1;
+		}
+	}
+	public Item getItemWithMaxAmount(Item item, int maxAmount){
+		Item output = getItemInInventory (item);
+		Item temp = output.CloneWithCount();
+		temp.count = Mathf.Clamp (temp.count, 0, maxAmount );
+		lowerItemAmount (output, temp.count);
+		maxAmount -= temp.count;
+		if(maxAmount>0 && numberOfSpaces !=-1){
+			temp.count += getItemWithMaxAmount (item, maxAmount).count;
+		}
+		if(cbInventoryChanged != null)
+			cbInventoryChanged (this);
+		return temp;
+	}
+	private Item getItemInInventory(Item item){
+		return items [getPlaceInItem (item)];
+	}
+
+	public void setItemCountNull (Item item){
+		getItemInInventory (item).count = 0;
+	}
 	public int InventorySpaces(){
 		int count = 0;
 		foreach (int item in items.Keys) {
@@ -98,7 +155,7 @@ public class Inventory : IXmlSerializable{
 		}
 		return count;
 	}
-	public void RemovePlaceholder(){
+	public int RemovePlaceholder(){
 		int id = int.MinValue;
 		foreach (int item in items.Keys) {
 			if (items [item].ID == -1) {
@@ -108,12 +165,10 @@ public class Inventory : IXmlSerializable{
 		}
 		if(items.ContainsKey (id))
 			items.Remove (id);
+		return id;
 	}
-	public bool hasAnythingOf(int id){
-		if(items.ContainsKey(id) == false){
-			return false;
-		}
-		if(items[id].count > 0){
+	public bool hasAnythingOf(Item item){
+		if(getItemInInventory (item).count > 0){
 			return true;
 		}
 		return false;
@@ -121,51 +176,50 @@ public class Inventory : IXmlSerializable{
 
 
 	public int GetAmountForItem(Item item){
-		return items [item.ID].count;
+		return getItemInInventory (item).count;
 	}
     /// <summary>
-    /// returns 1 if the toAdd will be empty
-	/// returns 0 when it could add some of it
-	/// returns -1 when theres no place
+    /// returns amount added
     /// </summary>
     /// <param name="inInv"></param>
     /// <param name="toAdd"></param>
     /// <returns></returns>
-    private int tryToAddCount(Item inInv,Item toAdd) {
-        //if there´s no space for it
-        if(inInv.count == maxStackSize) {
-            return -1;
-        }
-        //if there´s not enough space
-        if(toAdd.count + inInv.count > maxStackSize) {
-            //add as much as possible if 
-            toAdd.count -= maxStackSize - inInv.count;
-            inInv.count = maxStackSize;
-			if(cbInventoryChanged != null)
-				cbInventoryChanged (this);
-            return 0;
-        }
-
-        //now there´s enough space
-        inInv.count += toAdd.count;
-		if(cbInventoryChanged != null)
-			cbInventoryChanged (this);
-        return 1;
-    }
+//    private int tryToAddCount(Item inInv,Item toAdd) {
+//        //if there´s no space for it
+//        if(inInv.count == maxStackSize) {
+//            return 0;
+//        }
+//        //if there´s not enough space
+//        if(toAdd.count + inInv.count > maxStackSize) {
+//            //add as much as possible if 
+//            toAdd.count -= maxStackSize - inInv.count;
+//            inInv.count = maxStackSize;
+//			if(cbInventoryChanged != null)
+//				cbInventoryChanged (this);
+//            return 0;
+//        }
+//
+//        //now there´s enough space
+//        inInv.count += toAdd.count;
+//		if(cbInventoryChanged != null)
+//			cbInventoryChanged (this);
+//        return 1;
+//    }
 	/// <summary>
 	/// moves item amount to the given inventory
 	/// </summary>
 	/// <returns><c>true</c>, if item was moved, <c>false</c> otherwise.</returns>
 	/// <param name="inv">Inv.</param>
 	/// <param name="it">It.</param>
-	public bool moveItem(Inventory inv, Item it){
+	public bool moveItem(Inventory moveToInv, Item it){
 		if (items.ContainsKey (it.ID)) {
 			Item i = items [it.ID];
-			if (inv.addItem (i) == 0) {
+			moveToInv.addItem (i);
+			if (it.count > 0) {
 				cbInventoryChanged (this);
 				return true;	
 			}
-			if (inv.addItem (i) == 1) {
+			if (it.count==0) {
 				if(this.numberOfSpaces != -1){
 					items.Remove (it.ID);
 				}
@@ -184,17 +238,29 @@ public class Inventory : IXmlSerializable{
 	/// <param name="it">It.</param>
 	public bool removeItemAmount(Item it){
 		if (items.ContainsKey (it.ID)) {
-			Item i = items [it.ID];
+			Item i = getItemInInventory (it);
 			if (i.count < it.count) {
 				return false;
 			}
 			if(cbInventoryChanged != null)
 				cbInventoryChanged (this);
-			i.count -= it.count;
+			lowerItemAmount (i, it.count);
 			return true;
 		}
 		return false;
 	}	
+
+	private void lowerItemAmount(Item i,int amount){
+		i.count -= amount;
+		if(numberOfSpaces!=-1){
+			if (i.count == 0) {
+				int id = getPlaceInItem (i);
+				items.Remove (id);
+				if(needsPlaceholders)
+					items.Add (id, new Item (-1, "empty"));
+			}
+		}
+	}
 
 	public void addIventory(Inventory inv){
 		foreach (Item item in inv.items.Values) {

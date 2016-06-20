@@ -94,6 +94,7 @@ public class UIController : MonoBehaviour {
 		if (u.rangeUStructure != null) {
 			if (u.rangeUStructure is Warehouse) {
 				CloseRightUI ();
+				u.rangeUStructure.city.tradeUnit = u;
 				OpenCityInventory (u.rangeUStructure.city,true);
 			}
 		}

@@ -190,12 +190,12 @@ public class ProductionBuilding : UserStructure {
 			return false;
 		}
 		for(int i = 0; i < intake.Length; i++) {
-			if((intake[i].count+ toAdd.items[intake[i].ID].count) > maxIntake[i]) {
+			if((intake[i].count+ toAdd.GetAmountForItem(intake[i])) > maxIntake[i]) {
 				return false;
 			}
-			Debug.Log (toAdd.items[intake[i].ID].count);
-			intake[i].count += toAdd.items[intake[i].ID].count;
-			toAdd.items [intake [i].ID].count = 0;
+			Debug.Log (toAdd.GetAmountForItem(intake[i]));
+			intake[i].count += toAdd.GetAmountForItem(intake[i]);
+			toAdd.setItemCountNull (intake[i]);
 			callbackIfnotNull ();
 		}
 
@@ -228,7 +228,7 @@ public class ProductionBuilding : UserStructure {
 			}
 
 		}
-		BuildController.Instance.RegisterStructureCreated (OnStructureBuild);
+		city.RegisterStructureAdded (OnStructureBuild);
 	}
 	public Item[] hasNeedItem(Item[] output){
 		List<Item> items = new List<Item> ();

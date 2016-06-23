@@ -201,7 +201,7 @@ public class Path_AStar {
 	}
 
 	public Tile Dequeue() {
-			return path.Dequeue ();
+		return path.Dequeue ();
 	}
 
 

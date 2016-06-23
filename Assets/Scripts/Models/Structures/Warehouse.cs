@@ -5,7 +5,7 @@ using System.Xml.Schema;
 using System.Xml.Serialization;
 
 public class Warehouse : MarketBuilding {
-	List<Unit> inRangeUnits;
+	public List<Unit> inRangeUnits;
 	public Warehouse(int id){
 		inRangeUnits = new List<Unit> ();
 		contactRange = 6.3f;
@@ -40,6 +40,7 @@ public class Warehouse : MarketBuilding {
 		this.hasHitbox = str.hasHitbox;
 		this.mustFrontBuildDir = str.mustFrontBuildDir;
 		this.contactRange = str.contactRange;
+		this.inRangeUnits = new List<Unit> ();
 	}
 	public override void update (float deltaTime) {
 
@@ -48,7 +49,7 @@ public class Warehouse : MarketBuilding {
 	}
 	public override bool SpecialCheckForBuild (List<Tile> tiles){
 		foreach (Tile item in tiles) {
-			if(item.myCity==null && item.myCity.IsWilderness ()){
+			if(item.myCity==null || item.myCity.IsWilderness ()){
 				continue;
 			} 
 			if(item.myCity.myWarehouse!=null){

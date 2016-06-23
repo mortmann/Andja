@@ -45,6 +45,7 @@ public class Pathfinding  {
 		this.speed = speed;
 		this.transform = transform;
 		pathmode = pm;
+		World.current.RegisterTileGraphChanged (WorldTGraphUpdate);
 	}
 
 	public Pathfinding( List<Tile> startTiles,List<Tile> endTiles , float speed , path_mode pm = path_mode.route){
@@ -99,6 +100,14 @@ public class Pathfinding  {
 			X = value.X;
 			Y = value.Y;
 			_currTile = value; }
+	}
+
+	public void WorldTGraphUpdate(World world){
+		if (pathmode == path_mode.route || pathmode == path_mode.island) {
+			roadTilesAroundStartStructure = new List<Tile> ();
+			roadTilesAroundStartStructure.Add (currTile);
+		}
+		GetPathStar ();
 	}
 
 	private Vector3 rotationDirection;

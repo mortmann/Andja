@@ -100,6 +100,9 @@ public class Island : IXmlSerializable{
     }
 	public void AddStructure(Structure str){
 		allReadyHighlighted = false;
+		if(str.city == wilderniss){
+			Debug.LogWarning ("adding to wilderniss wanted?");
+		}
 		str.city.addStructure (str);
 	}
     public City CreateCity() {

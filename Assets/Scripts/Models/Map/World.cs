@@ -21,7 +21,7 @@ public class World : IXmlSerializable{
     Action<Unit> cbUnitCreated;
 	Action<Worker> cbWorkerCreated;
     Action<Tile> cbTileChanged;
-
+	Action<World> cbTileGraphChanged;
     public World(int width = 1000, int height = 1000){
 		SetupWorld (width,height);
     }
@@ -54,7 +54,7 @@ public class World : IXmlSerializable{
 		tileGraph = new Path_TileGraph(this);
 		islandList = new List<Island>();
 		units = new List<Unit>();
-		//        CreateUnit(tiles[30, 30]);    
+		CreateUnit(tiles[30, 30]);    
 		CreateIsland (41, 41);
 	}
     internal void update(float deltaTime) {
@@ -176,11 +176,24 @@ public class World : IXmlSerializable{
 			}
 		}
 	}
+	public void invalidateGraph(){
+		tileGraph = null;
+		tileGraph = new Path_TileGraph (this);
+		if (cbTileGraphChanged != null)
+			cbTileGraphChanged (this);
+
+	}
 	public void CreateWorkerGameObject(Worker worker) {
 		if (cbWorkerCreated != null)
 			cbWorkerCreated(worker);
 	}
-  
+	public void RegisterTileGraphChanged(Action<World> callbackfunc) {
+		cbTileGraphChanged += callbackfunc;
+	}
+
+	public void UnregisterTileGraphChanged(Action<World> callbackfunc) {
+		cbTileGraphChanged -= callbackfunc;
+	}
     public void RegisterTileChanged(Action<Tile> callbackfunc) {
         cbTileChanged += callbackfunc;
     }

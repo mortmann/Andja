@@ -35,7 +35,7 @@ public abstract class Structure : IXmlSerializable {
 	public bool canBeUpgraded = false;
 	public bool showExtraUI = false;
 	public bool extraUIOn = false;
-
+	public bool buildInWilderniss = false;
 	public Vector2 middleVector {get {return new Vector2 (BuildTile.X + (float)tileWidth/2f,BuildTile.Y + (float)tileHeight/2f);}}
 
 	public Direction mustFrontBuildDir = Direction.None; 
@@ -154,9 +154,10 @@ public abstract class Structure : IXmlSerializable {
 		neighbourTiles = new HashSet<Tile>();
 		foreach (Tile mt in myBuildingTiles) {
 			mt.Structure = this;
-			if(mt.myCity!=null && hasCity == false){
+			if(mt.myCity!=null && hasCity == false && buildInWilderniss == mt.myCity.IsWilderness ()){
 				this.city = mt.myCity;
 				hasCity = true;
+
 				mt.myIsland.AddStructure (this);
 			}
 			foreach(Tile nbt in mt.GetNeighbours()){

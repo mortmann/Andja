@@ -277,7 +277,7 @@ public class MouseController : MonoBehaviour {
 		}
         if (Input.GetMouseButtonDown(0)) {
             selectedUnit.AddMovementCommand(currFramePosition.x, currFramePosition.y);
-            mouseState = MouseState.Drag;
+            mouseState = MouseState.Idle;
         }
     }
 

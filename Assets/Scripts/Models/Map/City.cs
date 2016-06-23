@@ -11,13 +11,12 @@ public class City : IXmlSerializable{
     public int playerNumber = 0;
     public Island island { get; protected set; }
     public Inventory myInv;
-	public Unit tradeUnit;
     public List<Structure> myStructures;
 	public List<HomeBuilding> myHomes;
 
 	public HashSet<Tile> myTiles;
 	public List<Route> myRoutes;
-
+	public Unit tradeUnit;
 	public Dictionary<Need,float> allNeeds;
 	public int cityBalance;
 	public int[] citizienCount;
@@ -76,6 +75,9 @@ public class City : IXmlSerializable{
     }
 
 	public void addStructure(Structure str){
+		if(myStructures.Contains (str)){
+			Debug.LogError ("Adding a structure that already belongs to this city.");
+		}
 		if(str is HomeBuilding) {
 			myHomes.Add ((HomeBuilding)str);
 		} else {
@@ -84,6 +86,7 @@ public class City : IXmlSerializable{
 					Debug.LogError ("There should be only one Warehouse per City!");
 					return;
 				}
+				Debug.Log (name + " is warehouse" + (Warehouse)str );
 				myWarehouse = (Warehouse)str;
 			}
 			cityBalance += str.maintenancecost;
@@ -101,7 +104,10 @@ public class City : IXmlSerializable{
 		tiles.ForEach (x => { x.myCity = this; });
 		for (int i = 0; i < tiles.Count; i++) {
 			if(tiles[i].Structure != null){
-				myStructures.Add (tiles[i].Structure);
+				if (myStructures.Contains (tiles [i].Structure) ==false) { 
+					addStructure (tiles [i].Structure);
+				}
+				tiles [i].Structure.city = this;
 			}
 			myTiles.Add (tiles[i]);
 		}
@@ -128,18 +134,24 @@ public class City : IXmlSerializable{
 	}
 
 	public void tradeWithShip(Item toTrade){
-		if(tradeUnit==null || toTrade ==null){
+		if(myWarehouse==null || myWarehouse.inRangeUnits.Count==0  || toTrade ==null){
 			return;
 		}
 		toTrade.count = 50;
-		myInv.moveItem (tradeUnit.inventory,toTrade);
+		if (tradeUnit == null) {
+			myInv.moveItem (myWarehouse.inRangeUnits [0].inventory, toTrade);
+		} else {
+			myInv.moveItem (tradeUnit.inventory, toTrade);
+		}
 	}
-	public void tradeFromShip(Item getTrade){
+	public void tradeFromShip(Unit u,Item getTrade){
 		if(getTrade ==null){
 			return;
 		}
-		tradeUnit.inventory.moveItem (myInv,getTrade);
+		u.inventory.moveItem (myInv,getTrade);
 	}
+
+
 	/// <summary>
 	/// Tries to Remove item.
 	/// </summary>

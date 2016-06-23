@@ -9,6 +9,7 @@ public class UnitUI : MonoBehaviour {
 	Dictionary<Item, GameObject> itemToGO;
 	Unit unit;
 	public void Show(Unit unit){
+		Debug.Log ("show"); 
 		if (unit == this.unit) {
 			return;
 		}
@@ -41,32 +42,42 @@ public class UnitUI : MonoBehaviour {
 			Item i = item.Clone ();
 			entry.callback.AddListener( ( data ) => { OnItemClick( i ); } );
 			trigger.triggers.Add( entry );
-			itemToGO.Add (item,go);
+
 		} else {
 			s.maxValue = inv.maxStackSize;
 			s.value = 0;
 			t.text = 0 + "t";
 		}
-
+		itemToGO.Add (item,go);
 		go.transform.SetParent (content.transform);
 
 	}
 	void OnItemClick(Item clicked){
 		unit.clickedItem (clicked);
 	}
+	//TODO: make this so it adds it infront
 	public void OnInvChange(Inventory changedInv){
-		foreach(Item i in changedInv.items.Values){
-			if (inv.items.ContainsValue (i)) {
-				itemToGO [i].GetComponentInChildren<Text> ().text = i.count + "t";
-				itemToGO [i].GetComponentInChildren<Slider> ().value = i.count;
+		foreach(Item item in changedInv.items.Values){
+			if (item.ID != -1 && itemToGO.ContainsKey (item)) {
+				itemToGO [item].GetComponentInChildren<Text> ().text = item.count + "t";
+				itemToGO [item].GetComponentInChildren<Slider> ().value = item.count;
 			} else {
-				foreach (Item ig in itemToGO.Keys) {
-					if (ig.ID == -1) {
-						itemToGO.Remove (ig);
-						addItemGameObject (i);
-						break;
+				if(item.ID == -1){
+					continue;
+				}
+				Item toRemove = null;
+				foreach (Item it in itemToGO.Keys) {
+					Debug.Log (it.ID);
+					if(it.ID==-1){
+						toRemove = it;
 					}
 				}
+				if(toRemove == null){
+					continue;
+				}
+				GameObject.Destroy (itemToGO[toRemove]);
+				itemToGO.Remove (toRemove);
+				addItemGameObject (item);
 			}
 		}
 	}

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 public class CityInventoryUI : MonoBehaviour {
-
+	public GameObject cityname;
 	public GameObject contentCanvas;
 	public GameObject itemPrefab;
 	Inventory inventory;
@@ -16,6 +16,7 @@ public class CityInventoryUI : MonoBehaviour {
 		if(city == null){
 			return;
 		}
+		cityname.GetComponent<Text> ().text = city.name;
 		this.city = city;
 		this.trade = trade;
 		inventory = city.myInv;
@@ -43,7 +44,6 @@ public class CityInventoryUI : MonoBehaviour {
 	}
 
 	void OnItemClick(Item item){
-		Debug.Log (item.name);
 		city.tradeWithShip (item);
 	}
 
@@ -76,21 +76,10 @@ public class CityInventoryUI : MonoBehaviour {
 
 	}
 	public void OnInventoryChange(Inventory changedInv){
+		Debug.Log ("OnInventoryChange city"); 
 		foreach(Item i in changedInv.items.Values){
-			if(inventory.items.ContainsValue (i)){
-				if(inventory.items[i.ID].count != i.count){
-					itemToGO[i].GetComponentInChildren<Text> ().text = i.count + "t";
-					itemToGO [i].GetComponentInChildren<Slider> ().value = i.count;
-				}
-			} else {
-				foreach(Item ig in itemToGO.Keys){
-					if(ig.ID == -1){
-						itemToGO.Remove (ig);
-						addItemGameObject(i);
-						break;
-					}
-				}
-			}
+			itemToGO [i].GetComponentInChildren<Text> ().text = i.count + "t";
+			itemToGO [i].GetComponentInChildren<Slider> ().value = i.count;
 		}
 	}
 	// Update is called once per frame

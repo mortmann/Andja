@@ -162,6 +162,9 @@ public class BuildController : MonoBehaviour {
 		if (s.PlaceStructure (tiles) == false) {
 			return;
 		}
+		if(s.myBuildingTiles.Find (x=>x.Type==TileType.Water)!=null){
+			World.current.invalidateGraph ();
+		}
 		//call all callbacks on structure created
 		if (cbStructureCreated != null) {
 			cbStructureCreated (s);
@@ -267,7 +270,13 @@ public class BuildController : MonoBehaviour {
 				fer.climates [i] = (Climate)int.Parse (climates [i]);
 			}
 			foreach (Climate item in fer.climates) {
-				allFertilities [item].Add (fer);
+				if (allFertilities.ContainsKey (item)==false) {
+					List<Fertility> f = new List<Fertility> ();
+					f.Add (fer);
+					allFertilities.Add (item, f);
+				} else {
+					allFertilities [item].Add (fer);
+				}
 			}
 		}
 	}

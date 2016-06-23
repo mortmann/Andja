@@ -94,6 +94,9 @@ public class Tile : IXmlSerializable {
     public float MovementCost {
         get {
 			if (Type == TileType.Water) {
+				if(Structure!=null){
+					return float.PositiveInfinity;
+				}
 				return 1;  
 			}
 			if (Type == TileType.Mountain) {

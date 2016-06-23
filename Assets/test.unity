@@ -3441,6 +3441,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6de47b7d22ff0ec479e746156783ec37, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  cityname: {fileID: 1310221913}
   contentCanvas: {fileID: 767439450}
   itemPrefab: {fileID: 178454, guid: 454ea8bfc9cd0f84698610e721a842b2, type: 2}
   trade: 0
@@ -7460,11 +7461,11 @@ MonoBehaviour:
   m_Padding:
     m_Left: 0
     m_Right: 0
-    m_Top: 15
+    m_Top: 0
     m_Bottom: 0
   m_ChildAlignment: 0
   m_StartCorner: 0
-  m_StartAxis: 0
+  m_StartAxis: 1
   m_CellSize: {x: 35, y: 50}
   m_Spacing: {x: 5, y: 10}
   m_Constraint: 1
@@ -7905,7 +7906,7 @@ CanvasGroup:
   m_Enabled: 1
   m_Alpha: 1
   m_Interactable: 1
-  m_BlocksRaycasts: 0
+  m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0
 --- !u!114 &1737801753
 MonoBehaviour:

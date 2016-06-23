@@ -84,7 +84,8 @@ public class StructureSpriteController : MonoBehaviour {
 			cc2d.isTrigger = true;
 			goContact.transform.SetParent (go.transform);
 			goContact.transform.localPosition = Vector3.zero;
-			goContact.AddComponent<ContactColliderScript>();
+			ContactColliderScript c = goContact.AddComponent<ContactColliderScript>();
+			c.contact = ((UserStructure)structure);
 			goContact.name = "ContactCollider";
 		}
 

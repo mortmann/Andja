@@ -48,7 +48,7 @@ public class Inventory : IXmlSerializable{
     /// <returns></returns>
     public int addItem(Item item) {
 		if (item.ID == -1) {
-			return -1;
+			return 0;
 		}
 
 		if(numberOfSpaces == -1){
@@ -70,7 +70,7 @@ public class Inventory : IXmlSerializable{
 		if(toAdd.count + inInv.count > maxStackSize) {
 			//add as much as possible if 
 			amount = maxStackSize - inInv.count;
-			lowerItemAmount (toAdd, amount);
+			toAdd.count -= amount;
 			inInv.count = maxStackSize;
 			if(cbInventoryChanged != null)
 				cbInventoryChanged (this);
@@ -79,17 +79,20 @@ public class Inventory : IXmlSerializable{
 
 		//now there´s enough space
 		amount = toAdd.count;
-		lowerItemAmount (toAdd, amount);
+		toAdd.count -= amount;
 		inInv.count += amount;
 		if(cbInventoryChanged != null)
 			cbInventoryChanged (this);
 		return amount;
 	}
 	private int unitAddItem(Item toAdd){
+		Debug.Log ("unitAddItem"); 
 		int amount = 0;
 		foreach (Item inInv in items.Values) {
 			if(inInv.ID == toAdd.ID){
+				Debug.Log ("inInv.ID == toAdd.ID");
 				if(inInv.count == maxStackSize){
+					Debug.Log ("inInv.count == maxStackSize");
 					continue;
 				}
 				int temp = Mathf.Clamp (toAdd.count, 0, maxStackSize - inInv.count);
@@ -102,7 +105,9 @@ public class Inventory : IXmlSerializable{
 			}
 		}
 		if(toAdd.count>0){
+			Debug.Log ("toAdd.count>0");
 			if(InventorySpaces ()>0){
+				Debug.Log ("InventorySpaces ()>0");
 				int id = RemovePlaceholder ();
 				Item temp = toAdd.Clone ();
 				temp.count = Mathf.Clamp (toAdd.count,0,maxStackSize);
@@ -111,6 +116,9 @@ public class Inventory : IXmlSerializable{
 				items [id] = temp;
 			}
 		}
+		if(cbInventoryChanged != null)
+			cbInventoryChanged (this);
+		Debug.Log ("amount " + amount);
 		return amount;
 	}
 
@@ -149,7 +157,7 @@ public class Inventory : IXmlSerializable{
 	public int InventorySpaces(){
 		int count = 0;
 		foreach (int item in items.Keys) {
-			if (item == -1) {
+			if (items[item].ID == -1) {
 				count++;
 			}
 		}
@@ -178,33 +186,7 @@ public class Inventory : IXmlSerializable{
 	public int GetAmountForItem(Item item){
 		return getItemInInventory (item).count;
 	}
-    /// <summary>
-    /// returns amount added
-    /// </summary>
-    /// <param name="inInv"></param>
-    /// <param name="toAdd"></param>
-    /// <returns></returns>
-//    private int tryToAddCount(Item inInv,Item toAdd) {
-//        //if there´s no space for it
-//        if(inInv.count == maxStackSize) {
-//            return 0;
-//        }
-//        //if there´s not enough space
-//        if(toAdd.count + inInv.count > maxStackSize) {
-//            //add as much as possible if 
-//            toAdd.count -= maxStackSize - inInv.count;
-//            inInv.count = maxStackSize;
-//			if(cbInventoryChanged != null)
-//				cbInventoryChanged (this);
-//            return 0;
-//        }
-//
-//        //now there´s enough space
-//        inInv.count += toAdd.count;
-//		if(cbInventoryChanged != null)
-//			cbInventoryChanged (this);
-//        return 1;
-//    }
+
 	/// <summary>
 	/// moves item amount to the given inventory
 	/// </summary>
@@ -214,19 +196,12 @@ public class Inventory : IXmlSerializable{
 	public bool moveItem(Inventory moveToInv, Item it){
 		if (items.ContainsKey (it.ID)) {
 			Item i = items [it.ID];
-			moveToInv.addItem (i);
-			if (it.count > 0) {
+			it.count = Mathf.Clamp (i.count, 0, it.count);
+			int amount = moveToInv.addItem (it);
+			lowerItemAmount (i, amount);
+			if(cbInventoryChanged != null)
 				cbInventoryChanged (this);
-				return true;	
-			}
-			if (it.count==0) {
-				if(this.numberOfSpaces != -1){
-					items.Remove (it.ID);
-				}
-				if(cbInventoryChanged != null)
-					cbInventoryChanged (this);
-				return true;	
-			}
+			return true;	
 		}
 		return false;
 	}
@@ -251,7 +226,12 @@ public class Inventory : IXmlSerializable{
 	}	
 
 	private void lowerItemAmount(Item i,int amount){
-		i.count -= amount;
+		Debug.Log ("lower"); 
+		if (items.ContainsKey (getPlaceInItem (i))) {
+			items [getPlaceInItem (i)].count -= amount;
+		} else {
+			i.count -= amount;
+		}
 		if(numberOfSpaces!=-1){
 			if (i.count == 0) {
 				int id = getPlaceInItem (i);

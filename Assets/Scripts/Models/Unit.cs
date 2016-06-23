@@ -75,7 +75,7 @@ public class Unit : MonoBehaviour, IXmlSerializable {
 	}
 	public void clickedItem(Item clicked){
 		if(rangeUStructure != null && rangeUStructure is Warehouse){
-			rangeUStructure.city.tradeFromShip (clicked);
+			rangeUStructure.city.tradeFromShip (this,clicked);
 		}
 	}
     public void RegisterOnChangedCallback(Action<Unit> cb) {

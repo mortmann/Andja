@@ -53,6 +53,7 @@ public class UnitUI : MonoBehaviour {
 
 	}
 	void OnItemClick(Item clicked){
+		Debug.Log (clicked.name); 
 		unit.clickedItem (clicked);
 	}
 	//TODO: make this so it adds it infront
@@ -67,7 +68,6 @@ public class UnitUI : MonoBehaviour {
 				}
 				Item toRemove = null;
 				foreach (Item it in itemToGO.Keys) {
-					Debug.Log (it.ID);
 					if(it.ID==-1){
 						toRemove = it;
 					}

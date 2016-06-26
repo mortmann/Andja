@@ -63,26 +63,30 @@ public class Inventory : IXmlSerializable{
 		//in a city there is always a stack to be added to
 		Item inInv = items [toAdd.ID];
 		if(inInv.count == maxStackSize) {
+			Debug.Log ("inventory-item is full"); 
 			return 0;
 		}
 		int amount = 0;
-		//if there´s not enough space
-		if(toAdd.count + inInv.count > maxStackSize) {
-			//add as much as possible if 
-			amount = maxStackSize - inInv.count;
-			toAdd.count -= amount;
-			inInv.count = maxStackSize;
-			if(cbInventoryChanged != null)
-				cbInventoryChanged (this);
-			return amount;
-		}
+//		//if there´s not enough space
+//		if(toAdd.count + inInv.count > maxStackSize) {
+//			//add as much as possible if 
+		amount = moveAmountFromItemToInv (toAdd, inInv);
 
-		//now there´s enough space
-		amount = toAdd.count;
-		toAdd.count -= amount;
-		inInv.count += amount;
-		if(cbInventoryChanged != null)
-			cbInventoryChanged (this);
+////			amount = maxStackSize - inInv.count;
+////			amount = Mathf.Clamp (amount, 0, toAdd.count);
+////			toAdd.count -= amount;
+////			inInv.count += amount;
+//			if(cbInventoryChanged != null)
+//				cbInventoryChanged (this);
+//			return amount;
+//		}
+//
+//		//now there´s enough space
+//		amount = toAdd.count;
+//		toAdd.count -= amount;
+//		inInv.count += amount;
+//		if(cbInventoryChanged != null)
+//			cbInventoryChanged (this);
 		return amount;
 	}
 	private int unitAddItem(Item toAdd){
@@ -95,10 +99,13 @@ public class Inventory : IXmlSerializable{
 					Debug.Log ("inInv.count == maxStackSize");
 					continue;
 				}
-				int temp = Mathf.Clamp (toAdd.count, 0, maxStackSize - inInv.count);
-				amount += temp;
-				inInv.count += temp;
-				lowerItemAmount (toAdd, temp);
+//				int temp = Mathf.Clamp (toAdd.count, 0, maxStackSize - inInv.count);
+//				amount += temp;
+//				inInv.count += temp;
+//				lowerItemAmount (toAdd, temp);
+
+				amount = moveAmountFromItemToInv (toAdd,inInv); 
+				toAdd.count -= amount;
 				if(toAdd.count==0){
 					break;
 				}
@@ -107,18 +114,17 @@ public class Inventory : IXmlSerializable{
 		if(toAdd.count>0){
 			Debug.Log ("toAdd.count>0");
 			if(InventorySpaces ()>0){
-				Debug.Log ("InventorySpaces ()>0");
 				int id = RemovePlaceholder ();
 				Item temp = toAdd.Clone ();
-				temp.count = Mathf.Clamp (toAdd.count,0,maxStackSize);
-				lowerItemAmount (toAdd, temp.count);
-				amount += temp.count;
+				moveAmountFromItemToInv (toAdd,temp);
+//				temp.count = Mathf.Clamp (toAdd.count,0,maxStackSize);
+//				lowerItemAmount (toAdd, temp.count);
+//				amount += temp.count;
 				items [id] = temp;
 			}
 		}
 		if(cbInventoryChanged != null)
 			cbInventoryChanged (this);
-		Debug.Log ("amount " + amount);
 		return amount;
 	}
 
@@ -194,9 +200,9 @@ public class Inventory : IXmlSerializable{
 	/// <param name="inv">Inv.</param>
 	/// <param name="it">It.</param>
 	public bool moveItem(Inventory moveToInv, Item it){
-		if (items.ContainsKey (it.ID)) {
-			Item i = items [it.ID];
-			it.count = Mathf.Clamp (i.count, 0, it.count);
+		if (items.ContainsKey (getPlaceInItem (it))) {
+			Item i = items [getPlaceInItem (it)];
+//			it.count = Mathf.Clamp (i.count, 0, it.count);
 			int amount = moveToInv.addItem (it);
 			lowerItemAmount (i, amount);
 			if(cbInventoryChanged != null)
@@ -240,7 +246,30 @@ public class Inventory : IXmlSerializable{
 					items.Add (id, new Item (-1, "empty"));
 			}
 		}
+		if(cbInventoryChanged!=null){
+			cbInventoryChanged (this);
+		}
 	}
+
+	private int moveAmountFromItemToInv(Item toBeMoved,Item toReceive){
+
+		//whats the amount to be moved
+		int amount = toBeMoved.count;
+		//clamp it to the maximum it can be
+		amount = Mathf.Clamp (amount, 0, maxStackSize - toReceive.count);
+		lowerItemAmount (toBeMoved,amount);
+		increaseItemAmount (toReceive, amount);
+
+		return amount;
+	}
+	private void increaseItemAmount(Item item,int amount){
+		Debug.Log ("increase " + amount); 
+		item.count += amount;
+		if(cbInventoryChanged!=null){
+			cbInventoryChanged (this);
+		}
+	}
+
 
 	public void addIventory(Inventory inv){
 		foreach (Item item in inv.items.Values) {

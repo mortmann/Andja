@@ -60,6 +60,7 @@ public class Inventory : IXmlSerializable{
     }
 
 	private int cityAddItem(Item toAdd){
+		Debug.Log ("cityadd " + toAdd.count);
 		//in a city there is always a stack to be added to
 		Item inInv = items [toAdd.ID];
 		if(inInv.count == maxStackSize) {
@@ -116,7 +117,7 @@ public class Inventory : IXmlSerializable{
 			if(InventorySpaces ()>0){
 				int id = RemovePlaceholder ();
 				Item temp = toAdd.Clone ();
-				moveAmountFromItemToInv (toAdd,temp);
+				amount+=moveAmountFromItemToInv (toAdd,temp);
 //				temp.count = Mathf.Clamp (toAdd.count,0,maxStackSize);
 //				lowerItemAmount (toAdd, temp.count);
 //				amount += temp.count;
@@ -232,10 +233,13 @@ public class Inventory : IXmlSerializable{
 	}	
 
 	private void lowerItemAmount(Item i,int amount){
-		Debug.Log ("lower"); 
+		Debug.Log ("lower " + i.name + " -=" +amount); 
 		if (items.ContainsKey (getPlaceInItem (i))) {
+			Debug.Log ("contains "+ items [getPlaceInItem (i)].count); 
 			items [getPlaceInItem (i)].count -= amount;
+			Debug.Log ("contains only " + items [getPlaceInItem (i)].count); 
 		} else {
+			Debug.Log ("not in");
 			i.count -= amount;
 		}
 		if(numberOfSpaces!=-1){
@@ -252,12 +256,12 @@ public class Inventory : IXmlSerializable{
 	}
 
 	private int moveAmountFromItemToInv(Item toBeMoved,Item toReceive){
-
+		Debug.Log ("move " + toBeMoved.count + " receive " + toReceive.count);
 		//whats the amount to be moved
 		int amount = toBeMoved.count;
 		//clamp it to the maximum it can be
 		amount = Mathf.Clamp (amount, 0, maxStackSize - toReceive.count);
-		lowerItemAmount (toBeMoved,amount);
+//		toBeMoved.count-=amount;
 		increaseItemAmount (toReceive, amount);
 
 		return amount;

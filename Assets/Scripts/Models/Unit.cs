@@ -11,10 +11,10 @@ public class Unit : MonoBehaviour, IXmlSerializable {
 
     void Start() {
 		speed = 2f;
-		pathfinding = new Pathfinding (transform, speed, WorldController.Instance.world.GetTileAt(35, 35));
+		pathfinding = new Pathfinding (transform, speed, WorldController.Instance.world.GetTileAt(42, 38));
 
 
-        transform.Translate(new Vector3(35,35, 0));
+        transform.Translate(new Vector3(42,38, 0));
 		inventory = new Inventory (6);
         isShip = true;
 		r2d = GetComponent<Rigidbody2D>();

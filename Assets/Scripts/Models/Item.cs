@@ -30,6 +30,11 @@ public class Item : IXmlSerializable{
 		i.count = this.count;
 		return i;
 	}
+
+	public override string ToString (){
+		return string.Format ("[Item] " + ID +":"+name+":"+count);
+	}
+
 	//////////////////////////////////////////////////////////////////////////////////////
 	/// 
 	/// 						SAVING & LOADING

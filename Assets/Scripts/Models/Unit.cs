@@ -11,11 +11,11 @@ public class Unit : MonoBehaviour, IXmlSerializable {
 
     void Start() {
 		speed = 2f;
-		pathfinding = new Pathfinding (transform, speed, WorldController.Instance.world.GetTileAt(35, 35));
+		pathfinding = new Pathfinding (transform, speed, WorldController.Instance.world.GetTileAt(42, 38));
 
 
-        transform.Translate(new Vector3(35,35, 0));
-		inventory = new Inventory (6);
+        transform.Translate(new Vector3(42,38, 0));
+		inventory = new Inventory (6,this.name);
         isShip = true;
 		r2d = GetComponent<Rigidbody2D>();
 
@@ -74,6 +74,7 @@ public class Unit : MonoBehaviour, IXmlSerializable {
 		rangeUStructure = ware; 
 	}
 	public void clickedItem(Item clicked){
+		Debug.Log (clicked.ToString ()); 
 		if(rangeUStructure != null && rangeUStructure is Warehouse){
 			rangeUStructure.city.tradeFromShip (this,clicked);
 		}
@@ -103,7 +104,7 @@ public class Unit : MonoBehaviour, IXmlSerializable {
                 return;
             }
         }
-        Debug.Log("AddMovementCommand " + tile.toString());
+//        Debug.Log("AddMovementCommand " + tile.toString());
 		pathfinding.AddMovementCommand( x, y);
     }
 	public int tryToAddItemMaxAmount(Item item , int amount){

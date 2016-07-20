@@ -128,6 +128,7 @@ public class MouseController : MonoBehaviour {
 	}
 	private void DecideWhatUIToShow(RaycastHit2D hit){
 		if (hit) {
+//			Debug.Log (hit.transform.name); 
 			selectedUnit = hit.transform.GetComponent<Unit> ();
 			if (selectedUnit != null) {
 				mouseState = MouseState.Unit;

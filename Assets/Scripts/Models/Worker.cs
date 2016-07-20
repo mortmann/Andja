@@ -47,7 +47,7 @@ public class Worker : IXmlSerializable{
 		}
 		isAtHome = false;
 		goingToWork = true;
-		inventory = new Inventory (4,false);
+		inventory = new Inventory (4);
 		doTimer = workTime;
 		AddJobStructure(structure);
 		this.toGetItems = toGetItems;
@@ -62,7 +62,7 @@ public class Worker : IXmlSerializable{
 		}
 		isAtHome = false;
 		goingToWork = true;
-		inventory = new Inventory (4,false);
+		inventory = new Inventory (4);
 		doTimer = workTime;
 		AddJobStructure(structure);
 		this.toGetItems = toGetItems;
@@ -71,7 +71,7 @@ public class Worker : IXmlSerializable{
 		this.myHome = myHome;
 		isAtHome = false;
 		goingToWork = true;
-		inventory = new Inventory (4,false);
+		inventory = new Inventory (4);
 		doTimer = workTime;
 	}
 	public void Update(float deltaTime){

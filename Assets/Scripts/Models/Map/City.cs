@@ -44,7 +44,7 @@ public class City : IXmlSerializable{
 			this.myTiles.UnionWith (islandTiles); 
 			return;
 		}
-        myInv = new Inventory();
+        myInv = new Inventory(-1,name);
 		//temporary
 		Item temp = BuildController.Instance.allItems[47].Clone ();
 		temp.count = 50;
@@ -86,7 +86,6 @@ public class City : IXmlSerializable{
 					Debug.LogError ("There should be only one Warehouse per City!");
 					return;
 				}
-				Debug.Log (name + " is warehouse" + (Warehouse)str );
 				myWarehouse = (Warehouse)str;
 			}
 			cityBalance += str.maintenancecost;
@@ -137,18 +136,17 @@ public class City : IXmlSerializable{
 		if(myWarehouse==null || myWarehouse.inRangeUnits.Count==0  || toTrade ==null){
 			return;
 		}
-		toTrade.count = 50;
 		if (tradeUnit == null) {
-			myInv.moveItem (myWarehouse.inRangeUnits [0].inventory, toTrade);
+			myInv.moveItem (myWarehouse.inRangeUnits [0].inventory, toTrade,5);
 		} else {
-			myInv.moveItem (tradeUnit.inventory, toTrade);
+			myInv.moveItem (tradeUnit.inventory, toTrade,50);
 		}
 	}
 	public void tradeFromShip(Unit u,Item getTrade){
 		if(getTrade ==null){
 			return;
 		}
-		u.inventory.moveItem (myInv,getTrade);
+		u.inventory.moveItem (myInv,getTrade,50);
 	}
 
 

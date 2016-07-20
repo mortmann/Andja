@@ -15,39 +15,31 @@ public class Inventory : IXmlSerializable{
 		get;
 		protected set;
 	}
+	public string name;
 
 	Action<Inventory> cbInventoryChanged;
-	bool needsPlaceholders;
     /// <summary>
     /// leave blanc for unlimited spaces! To limited it give a int > 0 
     /// </summary>
     /// <param name="numberOfSpaces"></param>
-	public Inventory(int numberOfSpaces = -1, bool needsPlaceholders = true) {
+	public Inventory(int numberOfSpaces = -1,string name = "noname") {
         maxStackSize = 50;
+		this.name = name + "-INV";
         items = new Dictionary<int, Item>();
-		this.needsPlaceholders = needsPlaceholders;
 		if (numberOfSpaces == -1) {
 			//for cities
 			items = GameObject.FindObjectOfType<BuildController> ().getCopieOfAllItems ();
-		} else {
-			//for units
-			if (this.needsPlaceholders) {
-				for (int i = 0; i < +numberOfSpaces; i++) {
-					items.Add (i, new Item (-1, "empty"));
-				}
-			}
-		}
+		} 
         this.numberOfSpaces = numberOfSpaces;
     }
     /// <summary>
-	/// returns 1 if the toAdd will be empty
-	/// returns 0 when it could add some of it
-	/// returns -1 when theres no place   
+	/// returns amount  
 	/// </summary>
     /// <param name="item"></param>
     /// <returns></returns>
     public int addItem(Item item) {
-		if (item.ID == -1) {
+		if (item.ID <= -1) {
+			Debug.LogError ("ITEM ID is smaller or equal to -1");
 			return 0;
 		}
 
@@ -60,51 +52,23 @@ public class Inventory : IXmlSerializable{
     }
 
 	private int cityAddItem(Item toAdd){
-		Debug.Log ("cityadd " + toAdd.count);
 		//in a city there is always a stack to be added to
 		Item inInv = items [toAdd.ID];
+		//if its already full no need to put it in there
 		if(inInv.count == maxStackSize) {
 			Debug.Log ("inventory-item is full"); 
 			return 0;
 		}
-		int amount = 0;
-//		//if there´s not enough space
-//		if(toAdd.count + inInv.count > maxStackSize) {
-//			//add as much as possible if 
-		amount = moveAmountFromItemToInv (toAdd, inInv);
-
-////			amount = maxStackSize - inInv.count;
-////			amount = Mathf.Clamp (amount, 0, toAdd.count);
-////			toAdd.count -= amount;
-////			inInv.count += amount;
-//			if(cbInventoryChanged != null)
-//				cbInventoryChanged (this);
-//			return amount;
-//		}
-//
-//		//now there´s enough space
-//		amount = toAdd.count;
-//		toAdd.count -= amount;
-//		inInv.count += amount;
-//		if(cbInventoryChanged != null)
-//			cbInventoryChanged (this);
-		return amount;
+		return moveAmountFromItemToInv (toAdd, inInv);
 	}
 	private int unitAddItem(Item toAdd){
-		Debug.Log ("unitAddItem"); 
 		int amount = 0;
 		foreach (Item inInv in items.Values) {
 			if(inInv.ID == toAdd.ID){
-				Debug.Log ("inInv.ID == toAdd.ID");
 				if(inInv.count == maxStackSize){
-					Debug.Log ("inInv.count == maxStackSize");
 					continue;
 				}
-//				int temp = Mathf.Clamp (toAdd.count, 0, maxStackSize - inInv.count);
-//				amount += temp;
-//				inInv.count += temp;
-//				lowerItemAmount (toAdd, temp);
-
+				// move
 				amount = moveAmountFromItemToInv (toAdd,inInv); 
 				toAdd.count -= amount;
 				if(toAdd.count==0){
@@ -113,19 +77,17 @@ public class Inventory : IXmlSerializable{
 			}
 		}
 		if(toAdd.count>0){
-			Debug.Log ("toAdd.count>0");
-			if(InventorySpaces ()>0){
-				int id = RemovePlaceholder ();
-				Item temp = toAdd.Clone ();
-				amount+=moveAmountFromItemToInv (toAdd,temp);
-//				temp.count = Mathf.Clamp (toAdd.count,0,maxStackSize);
-//				lowerItemAmount (toAdd, temp.count);
-//				amount += temp.count;
-				items [id] = temp;
+			Item temp = toAdd.Clone ();
+			amount+=moveAmountFromItemToInv (toAdd,temp);
+			for (int i = 0; i < numberOfSpaces; i++) {
+				if(items.ContainsKey (i)==false){
+					items.Add (i,temp); 
+					break;
+				}
 			}
+			if(cbInventoryChanged != null)
+				cbInventoryChanged (this);
 		}
-		if(cbInventoryChanged != null)
-			cbInventoryChanged (this);
 		return amount;
 	}
 
@@ -133,9 +95,9 @@ public class Inventory : IXmlSerializable{
 		if(numberOfSpaces == -1){
 			return item.ID;
 		} else {
-			foreach (int inInv in items.Keys) {
-				if(items[inInv].ID == item.ID){
-					return inInv;
+			for (int i = 0; i < numberOfSpaces;i++) {
+				if(items.ContainsKey (i)&&items[i] == item){
+					return i;
 				}
 			}
 			return -1;
@@ -150,8 +112,6 @@ public class Inventory : IXmlSerializable{
 		if(maxAmount>0 && numberOfSpaces !=-1){
 			temp.count += getItemWithMaxAmount (item, maxAmount).count;
 		}
-		if(cbInventoryChanged != null)
-			cbInventoryChanged (this);
 		return temp;
 	}
 	private Item getItemInInventory(Item item){
@@ -161,27 +121,7 @@ public class Inventory : IXmlSerializable{
 	public void setItemCountNull (Item item){
 		getItemInInventory (item).count = 0;
 	}
-	public int InventorySpaces(){
-		int count = 0;
-		foreach (int item in items.Keys) {
-			if (items[item].ID == -1) {
-				count++;
-			}
-		}
-		return count;
-	}
-	public int RemovePlaceholder(){
-		int id = int.MinValue;
-		foreach (int item in items.Keys) {
-			if (items [item].ID == -1) {
-				id = item;
-				break;
-			}
-		}
-		if(items.ContainsKey (id))
-			items.Remove (id);
-		return id;
-	}
+
 	public bool hasAnythingOf(Item item){
 		if(getItemInInventory (item).count > 0){
 			return true;
@@ -200,14 +140,18 @@ public class Inventory : IXmlSerializable{
 	/// <returns><c>true</c>, if item was moved, <c>false</c> otherwise.</returns>
 	/// <param name="inv">Inv.</param>
 	/// <param name="it">It.</param>
-	public bool moveItem(Inventory moveToInv, Item it){
+	public bool moveItem(Inventory moveToInv, Item it,int amountMove){
 		if (items.ContainsKey (getPlaceInItem (it))) {
 			Item i = items [getPlaceInItem (it)];
-//			it.count = Mathf.Clamp (i.count, 0, it.count);
+			Debug.Log (i.ToString ()); 
+			if(i.count<=0){
+				return false;
+			}
+			it = it.CloneWithCount ();
+			it.count = Mathf.Clamp (it.count, 0, amountMove);
 			int amount = moveToInv.addItem (it);
+			Debug.Log ("Itemamount " + amount); 
 			lowerItemAmount (i, amount);
-			if(cbInventoryChanged != null)
-				cbInventoryChanged (this);
 			return true;	
 		}
 		return false;
@@ -224,8 +168,6 @@ public class Inventory : IXmlSerializable{
 			if (i.count < it.count) {
 				return false;
 			}
-			if(cbInventoryChanged != null)
-				cbInventoryChanged (this);
 			lowerItemAmount (i, it.count);
 			return true;
 		}
@@ -233,9 +175,9 @@ public class Inventory : IXmlSerializable{
 	}	
 
 	private void lowerItemAmount(Item i,int amount){
-		Debug.Log ("lower " + i.name + " -=" +amount); 
+		Debug.Log (name + " lower " + i.name + " -=" +amount); 
 		if (items.ContainsKey (getPlaceInItem (i))) {
-			Debug.Log ("contains "+ items [getPlaceInItem (i)].count); 
+//			Debug.Log ("contains "+ items [getPlaceInItem (i)].count); 
 			items [getPlaceInItem (i)].count -= amount;
 			Debug.Log ("contains only " + items [getPlaceInItem (i)].count); 
 		} else {
@@ -244,10 +186,11 @@ public class Inventory : IXmlSerializable{
 		}
 		if(numberOfSpaces!=-1){
 			if (i.count == 0) {
-				int id = getPlaceInItem (i);
-				items.Remove (id);
-				if(needsPlaceholders)
-					items.Add (id, new Item (-1, "empty"));
+				for (int d = 0; d < items.Count; d++) {
+					if(items[d].count==0){
+						items.Remove (d);
+					}
+				}
 			}
 		}
 		if(cbInventoryChanged!=null){
@@ -256,7 +199,7 @@ public class Inventory : IXmlSerializable{
 	}
 
 	private int moveAmountFromItemToInv(Item toBeMoved,Item toReceive){
-		Debug.Log ("move " + toBeMoved.count + " receive " + toReceive.count);
+//		Debug.Log ("move " + toBeMoved.count + " already in " + toReceive.count);
 		//whats the amount to be moved
 		int amount = toBeMoved.count;
 		//clamp it to the maximum it can be
@@ -267,7 +210,10 @@ public class Inventory : IXmlSerializable{
 		return amount;
 	}
 	private void increaseItemAmount(Item item,int amount){
-		Debug.Log ("increase " + amount); 
+		if(amount<=0){
+			Debug.LogError ("Increase Amount is " + amount + "! "); 
+		}
+		Debug.Log (name + " increase " + amount); 
 		item.count += amount;
 		if(cbInventoryChanged!=null){
 			cbInventoryChanged (this);
@@ -283,11 +229,22 @@ public class Inventory : IXmlSerializable{
 	}
 
     public void addToStackSize(int value) {
+		if(value<=0){
+			Debug.LogError ("Increase Stacksize is " + value + "! "); 
+		}
         this.maxStackSize += value;
     }
     public void subFromStackSize(int value) {
+		if(value<=0){
+			Debug.LogError ("Decrease Stacksize is " + value + "! "); 
+		}
         this.maxStackSize -= value;
     }
+
+	public Item getItem(Item item){
+		return items [getPlaceInItem (item)];
+	}
+
 
 	public void RegisterOnChangedCallback(Action<Inventory> cb) {
 		cbInventoryChanged += cb;

@@ -89,6 +89,7 @@ public class UIController : MonoBehaviour {
 
 	public void OpenUnitUI(Unit u){
 		if(u==null){
+			Debug.LogError ("Unit Script is null"); 
 			return;
 		}
 		if (u.rangeUStructure != null) {
@@ -100,7 +101,8 @@ public class UIController : MonoBehaviour {
 		}
 		buildingCanvas.SetActive (false);
 		unitCanvas.SetActive (true);
-		toggleInfoUI ();
+		CloseInfoUI ();
+		OpenInfoUI ();
 		unitCanvas.GetComponent<UnitUI> ().Show (u);
 	}
 
@@ -108,7 +110,9 @@ public class UIController : MonoBehaviour {
 		unitCanvas.SetActive (false);
 		CloseInfoUI ();
 	}
-
+	public void OpenInfoUI (){
+		uiInfoCanvas.SetActive (true);
+	}
 	public void CloseInfoUI (){
 		if(uiInfoCanvas.activeSelf == false){
 			return;

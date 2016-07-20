@@ -14,7 +14,6 @@ public class ContactColliderScript : MonoBehaviour {
 		}
 	}
 	void OnTriggerEnter2D(Collider2D coll) {
-		Debug.Log ("Collision"); 
 		Unit u = coll.gameObject.GetComponent<Unit> ();
 		if (u != null) {
 			u.isInRangeOfWarehouse (contact);

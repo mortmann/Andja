@@ -54,7 +54,7 @@ public class World : IXmlSerializable{
 		tileGraph = new Path_TileGraph(this);
 		islandList = new List<Island>();
 		units = new List<Unit>();
-		CreateUnit(tiles[30, 30]);    
+		CreateUnit(tiles[42, 38]);    
 		CreateIsland (41, 41);
 	}
     internal void update(float deltaTime) {

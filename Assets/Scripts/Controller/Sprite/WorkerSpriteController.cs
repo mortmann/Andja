@@ -18,8 +18,6 @@ public class WorkerSpriteController : MonoBehaviour {
 	}
 	private void OnWorkerCreated(Worker w) {
 		// Create a visual GameObject linked to this data.
-		// FIXME: Does not consider multi-tile objects nor rotated objects
-		// This creates a new GameObject and adds it to our scene.
 		GameObject char_go = new GameObject();
 
 		// Add our tile/GO pair to the dictionary.

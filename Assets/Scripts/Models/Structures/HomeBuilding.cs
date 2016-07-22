@@ -6,6 +6,7 @@ using System.Xml.Serialization;
 
 public class HomeBuilding : Structure{
 	public PlayerController pc;
+
 	public int people;
 	public int maxLivingSpaces;
 	public float increaseSpeed;
@@ -59,16 +60,30 @@ public class HomeBuilding : Structure{
 	}
 
 	public override void update (float deltaTime) {
+		if(city==null||city.playerNumber==-1){
+			//here the people are very unhappy and will leave veryfast
+			return;
+		}
 		float allPercentage = 0;
 		int count = 0;
+		bool percCritical=false;
 		foreach (Need n in city.allNeeds.Keys) {
 			if (n.startLevel <= buildingLevel && n.popCount <= pc.maxPopulationCount) {
-				allPercentage += city.allNeeds [n];
+				if (n.structure == null) {
+					allPercentage += city.allNeeds [n];
+					if(city.allNeeds [n] < 0.4f){
+						percCritical=true;
+					}
+				} else {
+					if(isInRangeOf (n.structure)){
+						allPercentage += 1;
+					}
+				}
 				count++;
 			}
 		}
 		allPercentage /= count; 
-		if (allPercentage < 0.2f) {
+		if (allPercentage < 0.4f && percCritical) {
 			decTimer -= deltaTime;
 			incTimer += deltaTime;
 			incTimer = Mathf.Clamp (incTimer, 0, increaseSpeed);
@@ -76,13 +91,13 @@ public class HomeBuilding : Structure{
 			if (decTimer <= 0) {
 				people--;
 			}
-		}
-		if (allPercentage > 0.2f && allPercentage < 0.85f) {
+		} else
+		if (allPercentage > 0.4f && allPercentage < 0.85f) {
 			incTimer += deltaTime;
 			incTimer = Mathf.Clamp (incTimer, 0, increaseSpeed);
 			decTimer += deltaTime;
 			decTimer = Mathf.Clamp (decTimer, 0, decreaseSpeed);
-		}
+		} else 
 		if (allPercentage > 0.85f) {
 			incTimer -= deltaTime;
 			decTimer += deltaTime;
@@ -91,6 +106,7 @@ public class HomeBuilding : Structure{
 				people++;
 			}
 		}
+		people = Mathf.Clamp (people, 0, maxLivingSpaces);
 	}
 	public void OnTStructureChange(Tile t, Structure old){
 		if(old is Road == false || t.Structure is Road == false){
@@ -108,4 +124,13 @@ public class HomeBuilding : Structure{
 		people = int.Parse( reader.GetAttribute("People") );
 		buildingLevel = int.Parse( reader.GetAttribute("BuildingLevel") );
 	}
+	public bool isInRangeOf(NeedsBuilding str){
+		List<NeedsBuilding> strs = new List<NeedsBuilding> ();
+		foreach (Tile item in myBuildingTiles) {
+			strs.AddRange (item.listOfInRangeNeedBuildings);
+		}
+		return strs.Contains (str);
+	}
+
+
 }

@@ -76,8 +76,12 @@ public class Warehouse : MarketBuilding {
 				break;
 			}
 		}
+		if(t.myIsland.myCities.Exists (x=>x.playerNumber==PlayerController.Instance.number)){
+			this.city = t.myIsland.myCities.Find (x => x.playerNumber == PlayerController.Instance.number);
+		} else {
+			this.city = BuildController.Instance.CreateCity(t);
+		}
 
-		this.city = BuildController.Instance.CreateCity(t);
 		if (city == null) {
 			return;
 		}

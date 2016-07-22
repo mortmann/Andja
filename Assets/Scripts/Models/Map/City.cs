@@ -18,6 +18,10 @@ public class City : IXmlSerializable{
 	public List<Route> myRoutes;
 	public Unit tradeUnit;
 	public Dictionary<Need,float> allNeeds;
+	public List<Need> needsList;
+
+	public Dictionary<int,Need> idToNeed;
+
 	public int cityBalance;
 	public int[] citizienCount;
 	public float useTick;
@@ -40,23 +44,29 @@ public class City : IXmlSerializable{
 		// if this city doesnt belong to anyone it does not need
 		//anything underneath here
 		if(playerNr == -1){
+			 
 			islandTiles.ForEach (x => x.myCity = this);
 			this.myTiles.UnionWith (islandTiles); 
+			myInv = new Inventory (0);
 			return;
 		}
         myInv = new Inventory(-1,name);
 		//temporary
-		Item temp = BuildController.Instance.allItems[47].Clone ();
+		Item temp = BuildController.Instance.allItems[49].Clone ();
 		temp.count = 50;
 		myInv.addItem (temp);
 
 		myRoutes = new List<Route> ();
 		myHomes = new List<HomeBuilding> ();
 		allNeeds = new Dictionary<Need,float> ();
+		needsList = allNeedsList;
+		idToNeed = new Dictionary<int, Need> ();
 		for (int i = 0; i < allNeedsList.Count; i++) {
 			allNeeds.Add (allNeedsList[i],0);
+			idToNeed.Add (allNeedsList[i].ID,allNeedsList[i]);
 		}
-		useTickTimer = useTick;
+		useTick = 30f;
+//		useTickTimer = useTick;
     }
 
     internal void update(float deltaTime) {
@@ -67,16 +77,20 @@ public class City : IXmlSerializable{
 			return;
 		}
 		useTickTimer -= deltaTime;
-		if(useTickTimer>=0){
-			foreach (Need n in allNeeds.Keys) {
-				allNeeds[n] = n.TryToConsumThisIn (this,n.startLevel,citizienCount);
+		if(useTickTimer<=0){
+			useTickTimer = useTick;
+			for(int i = 0;i<needsList.Count;i++){
+				allNeeds[needsList[i]]=needsList[i].TryToConsumThisIn (this,citizienCount);
 			}
 		}
     }
 
 	public void addStructure(Structure str){
 		if(myStructures.Contains (str)){
-			Debug.LogError ("Adding a structure that already belongs to this city.");
+			//happens on loading for loaded stuff
+			//so not an actual error anymore
+//			Debug.LogError ("Adding a structure that already belongs to this city.");
+			return;
 		}
 		if(str is HomeBuilding) {
 			myHomes.Add ((HomeBuilding)str);
@@ -99,7 +113,6 @@ public class City : IXmlSerializable{
 	public void addTiles(HashSet<Tile> t){
 		t.RemoveWhere (x => x.Type == TileType.Water || x.myCity.IsWilderness ()==false);
 		List<Tile> tiles = new List<Tile> (t);
-
 		tiles.ForEach (x => { x.myCity = this; });
 		for (int i = 0; i < tiles.Count; i++) {
 			if(tiles[i].Structure != null){
@@ -148,17 +161,17 @@ public class City : IXmlSerializable{
 		}
 		u.inventory.moveItem (myInv,getTrade,50);
 	}
+	public float getPercentage(Need need){
+		if(idToNeed.ContainsKey (need.ID)==false){
+			Debug.LogError ("NEED NOT FOUND");
+			return 0;
+		}
+		return allNeeds[idToNeed[need.ID]];
+	}
 
 
-	/// <summary>
-	/// Tries to Remove item.
-	/// </summary>
-	/// <returns>The to Remove item.</returns>
-	/// <param name="item">Item.</param>
-	/// <param name="amount">Amount.</param>
-	public float TryToRemoveAmount( Item item, float amount ){
-		int f = myInv.GetAmountForItem (item);
-		return amount / f;
+	public float GetAmountForThis( Item item, float amount ){
+		return myInv.GetAmountForItem (item);
 	}
 	
 	public void AddRoute(Route route){
@@ -221,7 +234,12 @@ public class City : IXmlSerializable{
 		}
 		writeStructure.AddRange (tempMarketbuildings);
 		writeStructure.AddRange (tempStructures);
-
+		//TODO MAKE THIS MORE PERFOMANT
+		if (myHomes != null) {
+			foreach (var item in myHomes) {
+				writeStructure.Add (item);
+			}
+		}
 		writer.WriteStartElement("Structures");
 		foreach (Structure s in writeStructure) {
 			writer.WriteStartElement("Structure");
@@ -234,34 +252,44 @@ public class City : IXmlSerializable{
 	}
 
 	public void ReadXml(XmlReader reader) {
+		playerNumber = int.Parse (reader.GetAttribute("Player"));
 		reader.ReadToDescendant ("Inventory");
 		myInv = new Inventory ();
 		myInv.ReadXml (reader);
-
 		BuildController bc = BuildController.Instance;
+		reader.ReadToFollowing ("Structures");
 
-		if(reader.ReadToDescendant("Structures") ) {
-			do {
-				int x = int.Parse( reader.GetAttribute("BuildingTile_X") );
-				int y = int.Parse( reader.GetAttribute("BuildingTile_Y") );
-				int buildID = int.Parse( reader.GetAttribute("BuildID") );
-				Tile t = WorldController.Instance.world.GetTileAt (x,y);
-				Structure s = bc.structurePrototypes[int.Parse (reader.GetAttribute("ID"))].Clone(); 
-				if(s is MarketBuilding){
+		//TODO change this to smth better
+		//weird bug workaround
+		//not working with nextsibling
+		//not like in someplaces
+		//but for now its working
+		while(reader.Read ()) {
+			if(reader.Name=="Structures"){
+				break;
+			}
+
+			if (reader.Name == "Structure" ) {
+				int x = int.Parse (reader.GetAttribute ("BuildingTile_X"));
+				int y = int.Parse (reader.GetAttribute ("BuildingTile_Y"));
+				int buildID = int.Parse (reader.GetAttribute ("BuildID"));
+				Tile t = World.current.GetTileAt (x, y);
+				Structure s = bc.structurePrototypes [int.Parse (reader.GetAttribute ("ID"))].Clone (); 
+				if (s is MarketBuilding) {
 					((MarketBuilding)s).ReadXml (reader);
-				} else 
-				if(s is Warehouse){
+				} else if (s is Warehouse) {
 					((Warehouse)s).ReadXml (reader);
-				} else 
-				if(s is UserStructure){
+				} else if (s is UserStructure) {
 					((UserStructure)s).ReadXml (reader);
-				} else 
-				if(s is Growable){
+				} else if (s is Growable) {
 					((Growable)s).ReadXml (reader);
+				} else if (s is HomeBuilding) {
+					((HomeBuilding)s).ReadXml (reader);
 				}
-				bc.AddLoadedPlacedStructure (buildID,s,t);
+				bc.AddLoadedPlacedStructure (buildID, s, t);
 				myStructures.Add (s);
-			} while( reader.ReadToNextSibling("Structure") );
+			}
 		}
+
 	}
 }

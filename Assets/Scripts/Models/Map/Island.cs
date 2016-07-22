@@ -136,14 +136,50 @@ public class Island : IXmlSerializable{
 
 	public void ReadXml(XmlReader reader) {
 		myClimate = (Climate)int.Parse(reader.GetAttribute ("Climate"));
-		if (reader.ReadToDescendant ("City")) {
-			do {
-				int playerNumber = int.Parse( reader.GetAttribute("Player") );
-				City c = new City (playerNumber,this, World.current.allNeeds);
-				c.ReadXml (reader);
+//		if (reader.ReadToDescendant ("City")) {
+		reader.ReadToFollowing ("Cities");
+			while(reader.Read ()) {
+//			Debug.Log (reader.IsStartElement ("City") + " -- " + reader.Name); 
+
+			if (reader.IsStartElement ("City")) {
+				int playerNumber = int.Parse (reader.GetAttribute ("Player"));
+				Debug.Log (playerNumber);
+				City c = null;
+				if (playerNumber == -1) {
+					c = new City (playerNumber, this, World.current.allNeeds, this.myTiles);
+					wilderniss = c;
+				} else {
+					c = new City (playerNumber, this, World.current.allNeeds);	
+					c.ReadXml (reader);
+
+				}
+
 				myCities.Add (c);
-			} while(reader.ReadToNextSibling ("City"));
+			}
+			if(reader.Name=="Cities"){
+//			Debug.Log (reader.Name + " break"); 
+				break;
+			}
 		}
+
+
+//			do {
+//				Debug.Log ("City"); 
+//				Debug.Log (reader.GetAttribute ("Player")); 
+//				int playerNumber = int.Parse (reader.GetAttribute ("Player"));
+//				City c = null;
+//				if (playerNumber == -1) {
+//					c = new City (playerNumber, this, World.current.allNeeds, this.myTiles);
+//				} else {
+//					c = new City (playerNumber, this, World.current.allNeeds);	
+//				}
+//
+//				c.ReadXml (reader);
+//				myCities.Add (c);
+//
+//				 
+//			} while(reader.ReadToNextSibling ("City"));
+//		}
 	}
 
 }

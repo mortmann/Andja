@@ -43,14 +43,11 @@ public class Tile : IXmlSerializable {
 		} 
 		set {
 			if (value == null) {
-				if (_myCity !=null){
-					_myCity = myIsland.wilderniss;
-				}
+				_myCity = myIsland.wilderniss;
 			} 
-			if (_myCity !=myIsland.wilderniss){
+			if (_myCity!=null && _myCity.IsWilderness ()==false){
 				return;
 			}
-
 			_myCity = value;
 		} 
 	}
@@ -133,6 +130,7 @@ public class Tile : IXmlSerializable {
         this.x = x;
         this.y = y;
         _type = TileType.Water;
+		listOfInRangeNeedBuildings = new List<NeedsBuilding> ();
     }
 
     // The function we callback any time our tile's data changes

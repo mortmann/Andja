@@ -136,10 +136,10 @@ public class Unit : MonoBehaviour, IXmlSerializable {
 
 	}
 	public void ReadXml (XmlReader reader){
-		isShip = bool.Parse(reader.GetAttribute ("IsShip"));
-		int x = int.Parse( reader.GetAttribute("destTile_X") );
-		int y = int.Parse( reader.GetAttribute("destTile_Y") );
-		AddMovementCommand (x, y);
+//		isShip = bool.Parse(reader.GetAttribute ("IsShip"));
+//		int x = int.Parse( reader.GetAttribute("destTile_X") );
+//		int y = int.Parse( reader.GetAttribute("destTile_Y") );
+//		AddMovementCommand (x, y);
 
 	}
 }

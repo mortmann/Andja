@@ -56,7 +56,11 @@ public abstract class Structure : IXmlSerializable {
 		protected set { _tileWidth = value;}
 	}
 
-	public Tile BuildTile { get { return myBuildingTiles [0]; }}
+	public Tile BuildTile { get { 
+			if (myBuildingTiles == null)
+				return null;
+			return myBuildingTiles [0]; 
+	}}
 
 	private int _tileHeight; 
 	public int tileHeight {
@@ -145,6 +149,7 @@ public abstract class Structure : IXmlSerializable {
 		}
 		//special check for some structures 
 		if (SpecialCheckForBuild (tiles) == false) {
+			Debug.Log ("specialcheck failed"); 
 			return false;
 		}
 
@@ -210,6 +215,8 @@ public abstract class Structure : IXmlSerializable {
 			return false;
 		}
 		if (t.myCity.playerNumber != PlayerController.Instance.number) {
+			Debug.Log (t.myCity.IsWilderness () +"-"+t.myCity.playerNumber +" wrongcity " + PlayerController.Instance.number); 
+
 			if (t.myCity.IsWilderness () == false ) {
 				if(this is Warehouse){
 					return true;
@@ -368,11 +375,9 @@ public abstract class Structure : IXmlSerializable {
 	public virtual void OnClickClose (){
 	}
 	public bool correctSpotOnLand(List<Tile> tiles){
-		if (islandHasEnoughItemsToBuild() == false || playerHasEnoughMoney() == false) {
-			return false;
-		}
 		foreach(Tile t in tiles){
 			if(correctSpotOnLand (t) == false){
+				
 				return false;
 			}
 		}
@@ -386,19 +391,12 @@ public abstract class Structure : IXmlSerializable {
 		
 		return correctSpotForOn (tiles,TileType.Water);
 	}
-	protected virtual bool islandHasEnoughItemsToBuild(){
+	public virtual bool islandHasEnoughItemsToBuild(){
 		return true;
 	}
-	protected bool playerHasEnoughMoney(){
-		if(PlayerController.Instance.balance >= buildcost){
-			return true;
-		}
-		return false;
-	}
+
 	public bool correctSpotForOn(List<Tile> tiles, TileType tt){
-		if (islandHasEnoughItemsToBuild() == false || playerHasEnoughMoney() == false) {
-			return false;
-		}
+		
 		switch (rotated){
 		case 0:
 			return CheckFor0Rotation (tiles,tt);
@@ -647,6 +645,9 @@ public abstract class Structure : IXmlSerializable {
 			cbStructureDestroy(this);
 	}
 	public override string ToString (){
+		if(BuildTile==null){
+			return name +"@error";
+		}
 		return name + "@" + BuildTile.toString ();
 	}
 	//////////////////////////////////////////////////////////////////////////////////////

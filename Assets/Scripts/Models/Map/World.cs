@@ -31,7 +31,6 @@ public class World : IXmlSerializable{
 		current = this;
 		this.Width = Width;
 		this.Height = Width;
-//		LoadPrototypsNeedsFromXML ();
 		tiles = new Tile[Width, Height];
 		for (int x = 0; x < Width; x++) {
 			for (int y = 0; y < Height; y++) {
@@ -48,13 +47,12 @@ public class World : IXmlSerializable{
 
 			}
 		}
-		allNeeds = new List<Need> ();
-		//		LoadPrototypsNeedsFromXML ();
+		allNeeds = GameObject.FindObjectOfType<BuildController>().allNeeds;
 		allFertilities = GameObject.FindObjectOfType<BuildController>().allFertilities;
 		tileGraph = new Path_TileGraph(this);
 		islandList = new List<Island>();
 		units = new List<Unit>();
-		CreateUnit(tiles[42, 38]);    
+//		CreateUnit(tiles[42, 38]);    
 		CreateIsland (41, 41);
 	}
     internal void update(float deltaTime) {
@@ -131,21 +129,7 @@ public class World : IXmlSerializable{
         return c;
     }
 
-	public void LoadPrototypsNeedsFromXML(){
-		allNeeds = new List<Need> ();
-		XmlDocument xmlDoc = new XmlDocument(); // xmlDoc is the new xml document.
-		TextAsset ta = ((TextAsset)Resources.Load("XMLs/needs", typeof(TextAsset)));
-		xmlDoc.LoadXml(ta.text); // load the file.
-		foreach(XmlElement node in xmlDoc.SelectNodes("Needs/Need")){
-			Need need = new Need ();
-			need.ID = int.Parse(node.SelectSingleNode("ID").InnerText);
-			need.startLevel = int.Parse(node.SelectSingleNode("Level").InnerText);
-			need.name = node.SelectSingleNode("EN"+ "_Name").InnerText;
-			need.structure = BuildController.Instance.structurePrototypes [int.Parse(node.SelectSingleNode("Structure").InnerText)];
-			need.item = BuildController.Instance.allItems [int.Parse(node.SelectSingleNode("Item").InnerText)];
-			allNeeds.Add (need);
-		}
-	}
+
 	public void checkIfInCamera(float lowerX,float lowerY, float upperX,float upperY){
 		PlayerController pc = GameObject.FindObjectOfType<PlayerController>();
 		for (int i = 0; i < islandList.Count; i++) {
@@ -297,7 +281,6 @@ public class World : IXmlSerializable{
 //				break; 
 			}
 		}
-
 
 	}
 

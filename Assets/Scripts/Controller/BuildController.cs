@@ -63,6 +63,7 @@ public class BuildController : MonoBehaviour {
 		structurePrototypes = new Dictionary<int, Structure> ();
 		ReadStructuresFromXML();
 		structurePrototypes.Add (5, new MineStructure (5));
+		structurePrototypes.Add (30, new NeedsBuilding (30));
 		structurePrototypes.Add (1, new MarketBuilding (1));
 		structurePrototypes.Add (2, new Warehouse (2));
 		structurePrototypes.Add (3, new Growable (3,"tree",allItems[1]));
@@ -131,16 +132,23 @@ public class BuildController : MonoBehaviour {
 	/// </summary>
 	/// <param name="s">S.</param>
 	/// <param name="t">T.</param>
-	public void BuildOnTile(Structure s , Tile t){
-		if (toBuildStructure == null) {
+	private void BuildOnTile(Structure s , Tile t){
+		if(s==null||t==null){
+			Debug.LogError ("Something went wrong by loading Structure!");
 			return;
 		}
-		if (s.PlaceStructure (s.GetBuildingTiles (t.X, t.Y)) == false) {
-			return;
-		}
-		if (cbStructureCreated != null) {
-			cbStructureCreated (s);
-		}
+		//TODO RETHINK THIS
+		GameObject.FindObjectOfType<StructureSpriteController> ().Initiate ();
+
+		RealBuild (s.GetBuildingTiles (t.X, t.Y), s,true);
+//		if (s.PlaceStructure (s.GetBuildingTiles (t.X, t.Y)) == false) {
+//			Debug.LogError ("Something went wrong by placeing loaded Structure!");
+//			return;
+//		}
+//		if (cbStructureCreated != null) {
+//			Debug.Log ("Placed correct " + cbStructureCreated.GetInvocationList ()[0].Method); 
+//			cbStructureCreated (s);
+//		}
 	}
 	public void BuildOnTile(List<Tile> tiles, bool forEachTileOnce, Structure structure){
 		if(tiles == null || tiles.Count == 0 || WorldController.Instance.isPaused){
@@ -156,11 +164,25 @@ public class BuildController : MonoBehaviour {
 			}
 		}
 	}
-	protected void RealBuild(List<Tile> tiles,Structure structure){
-		Structure s = structure.Clone ();
+	protected void RealBuild(List<Tile> tiles,Structure s,bool loading=false){
+		if (loading == false) {
+			s = s.Clone ();
+		} 
 		//check to see if the structure can be placed there
 		if (s.PlaceStructure (tiles) == false) {
+			if(loading){
+				Debug.LogError ("PLACING FAILED WHILE LOADING! " + s.name);
+			}
 			return;
+		}
+		if(loading==false){
+			if (s.islandHasEnoughItemsToBuild() == false || playerHasEnoughMoney(s) == false) {
+				return;
+			}
+			//remove the items from the island inventory
+		} else {
+			//nocosts for loadingbuildings
+			s.buildcost = 0;
 		}
 		if(s.myBuildingTiles.Find (x=>x.Type==TileType.Water)!=null){
 			World.current.invalidateGraph ();
@@ -168,10 +190,12 @@ public class BuildController : MonoBehaviour {
 		//call all callbacks on structure created
 		if (cbStructureCreated != null) {
 			cbStructureCreated (s);
+		} 
+		if (loading == false) {
+			// this is for loading so everything will be placed in order
+			s.buildID = buildID;
+			buildID++;
 		}
-		// this is for loading so everything will be placed in order
-		s.buildID = buildID;
-		buildID++;
 		//find a tile thats on island -- only important for onshore/onwater buildings
 		Tile islandTile = tiles[0];
 		foreach (Tile item in tiles) {
@@ -184,7 +208,12 @@ public class BuildController : MonoBehaviour {
 			return;
 		}
 	}
-
+	public bool playerHasEnoughMoney(Structure s){
+		if(PlayerController.Instance.balance >= s.buildcost){
+			return true;
+		}
+		return false;
+	}
 	public void BuildOnTile(int id, List<Tile> tiles){
 		if(structurePrototypes.ContainsKey (id) == false){
 			return;
@@ -296,12 +325,17 @@ public class BuildController : MonoBehaviour {
 				if (allItems.ContainsKey (item)) {
 					need.item = allItems [item];
 				} else {
+					Debug.Log (item + " is not in itemspool "+need.name);
 					continue;
 				}
 			} else {
 				if (structurePrototypes.ContainsKey (structure)) {
-					need.structure = structurePrototypes [structure];
+					//TODO maybe add a validation here and give error to user?
+					need.structure = (NeedsBuilding)structurePrototypes [structure];
+
 				} else {
+					Debug.Log (structure + " is not in structurespool "+need.name);
+
 					continue;
 				}
 			}
@@ -310,6 +344,7 @@ public class BuildController : MonoBehaviour {
 			fs[1] = float.Parse(node.SelectSingleNode("Citizen").InnerText);
 			fs[2] = float.Parse(node.SelectSingleNode("Patrician").InnerText);
 			fs[3] = float.Parse(node.SelectSingleNode("Nobleman").InnerText);
+			need.uses = fs;
 			allNeeds.Add (need);
 		}
 	}

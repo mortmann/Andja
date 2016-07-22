@@ -11,16 +11,20 @@ public class StructureSpriteController : MonoBehaviour {
 	World world {
 		get { return WorldController.Instance.world; }
 	}
-
-	void Start () {
+	void Start (){
+		Initiate ();
+	}
+	public void Initiate () {
+		if(structureGameObjectMap!=null){
+			return;
+		}
 		structureGameObjectMap = new Dictionary<Structure, GameObject> ();
 		// here load sprites
 		bm = GameObject.FindObjectOfType<BuildController>();
 		bm.RegisterStructureCreated (OnStrucutureCreated);
 		LoadSprites ();
 	}
-	void OnStrucutureCreated(Structure structure) {
-		
+	public void OnStrucutureCreated(Structure structure) {
 		GameObject go = new GameObject ();
 		structure.RegisterOnChangedCallback (OnStructureChanged);
 		structure.RegisterOnDestroyCallback (OnStructureDestroyed);

@@ -48,7 +48,7 @@ public class WorldController : MonoBehaviour {
 		TextWriter writer = new StringWriter();
 		serializer.Serialize(writer, world);
 		writer.Close();
-		System.IO.File.WriteAllText("C:\\Users\\Mortmann\\Desktop\\Unity\\save.xml", writer.ToString());
+		System.IO.File.WriteAllText(System.Environment.GetFolderPath(System.Environment.SpecialFolder.Desktop)+"\\Unity\\save.xml", writer.ToString());
 		PlayerPrefs.SetString("SaveGame00", writer.ToString());
 	}
 	public void LoadWorld() {
@@ -64,9 +64,8 @@ public class WorldController : MonoBehaviour {
 
 		XmlSerializer serializer = new XmlSerializer( typeof(World) );
 		TextReader reader = new StringReader( PlayerPrefs.GetString("SaveGame00") );
-		Debug.Log( reader.ToString() );
+
 		world = (World)serializer.Deserialize(reader);
-		Debug.Log ("World " + world);
 		reader.Close();
 		// Center the Camera
 		Camera.main.transform.position = new Vector3( world.Width/2, world.Height/2, Camera.main.transform.position.z );

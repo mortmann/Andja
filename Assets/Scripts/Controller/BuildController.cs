@@ -32,6 +32,7 @@ public class BuildController : MonoBehaviour {
 	public Dictionary<int,Tile> loadedToPlaceTile;
 	public List<Need> allNeeds;
 	public Dictionary<Climate,List<Fertility>> allFertilities;
+	public Dictionary<int,Fertility> idToFertilities;
 	Action<Structure> cbStructureCreated;
 	Action<City> cbCityCreated;
 	Action<BuildStateModes> cbBuildStateChange;
@@ -70,7 +71,7 @@ public class BuildController : MonoBehaviour {
 		Item item =  allItems[1] ;
 		structurePrototypes.Add (4, new Farm(
 			4,"lumberjack",
-			3,item,
+			3,item,3,
 			2,2,500,50
 		));
 		structurePrototypes.Add (6,new HomeBuilding (6));
@@ -83,6 +84,7 @@ public class BuildController : MonoBehaviour {
 		//needs
 		allNeeds = new List<Need>();
 		ReadNeedsFromXML ();
+		idToFertilities = new Dictionary<int, Fertility> ();
 		allFertilities = new Dictionary<Climate,List<Fertility>> ();
 		ReadFertilitiesFromXML ();
 	}
@@ -101,13 +103,13 @@ public class BuildController : MonoBehaviour {
 
 	public void OnClick(int id) {
 		if(structurePrototypes.ContainsKey (id) == false){
-			Debug.LogError ("BUTTON has ID that is not structure prototypes ->o_O<- ");
+			Debug.LogError ("BUTTON has ID that is not a structure prototypes ->o_O<- ");
 			return;
 		}
 		toBuildStructure = structurePrototypes [id].Clone ();
 		if(structurePrototypes [id].BuildTyp == BuildTypes.Path){
 			MouseController.Instance.mouseState = MouseState.Path;
-
+			MouseController.Instance.structure = toBuildStructure;
 		}
 		if(structurePrototypes [id].BuildTyp == BuildTypes.Single){
 			MouseController.Instance.mouseState = MouseState.Single;
@@ -139,16 +141,7 @@ public class BuildController : MonoBehaviour {
 		}
 		//TODO RETHINK THIS
 		GameObject.FindObjectOfType<StructureSpriteController> ().Initiate ();
-
 		RealBuild (s.GetBuildingTiles (t.X, t.Y), s,true);
-//		if (s.PlaceStructure (s.GetBuildingTiles (t.X, t.Y)) == false) {
-//			Debug.LogError ("Something went wrong by placeing loaded Structure!");
-//			return;
-//		}
-//		if (cbStructureCreated != null) {
-//			Debug.Log ("Placed correct " + cbStructureCreated.GetInvocationList ()[0].Method); 
-//			cbStructureCreated (s);
-//		}
 	}
 	public void BuildOnTile(List<Tile> tiles, bool forEachTileOnce, Structure structure){
 		if(tiles == null || tiles.Count == 0 || WorldController.Instance.isPaused){
@@ -159,7 +152,7 @@ public class BuildController : MonoBehaviour {
 		} else {
 			foreach (Tile tile in tiles) {
 				List<Tile> t = new List<Tile> ();
-				t.Add (tile);
+				t.AddRange (structure.GetBuildingTiles (tile.X,tile.Y));
 				RealBuild (t,structure);
 			}
 		}
@@ -293,6 +286,7 @@ public class BuildController : MonoBehaviour {
 			Fertility fer = new Fertility ();
 			fer.ID = int.Parse(node.GetAttribute("ID"));
 			fer.name = node.SelectSingleNode("EN"+ "_Name").InnerText;
+			idToFertilities.Add (fer.ID,fer); 
 			string[] climates = node.SelectSingleNode("Climate").InnerText.Split (';');
 			fer.climates = new Climate[climates.Length];
 			for (int i = 0; i < climates.Length; i++) {
@@ -332,10 +326,7 @@ public class BuildController : MonoBehaviour {
 				if (structurePrototypes.ContainsKey (structure)) {
 					//TODO maybe add a validation here and give error to user?
 					need.structure = (NeedsBuilding)structurePrototypes [structure];
-
 				} else {
-					Debug.Log (structure + " is not in structurespool "+need.name);
-
 					continue;
 				}
 			}

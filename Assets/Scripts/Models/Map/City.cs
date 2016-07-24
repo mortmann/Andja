@@ -258,7 +258,7 @@ public class City : IXmlSerializable{
 		myInv.ReadXml (reader);
 		BuildController bc = BuildController.Instance;
 		reader.ReadToFollowing ("Structures");
-
+		Debug.Log (reader.Name);
 		//TODO change this to smth better
 		//weird bug workaround
 		//not working with nextsibling

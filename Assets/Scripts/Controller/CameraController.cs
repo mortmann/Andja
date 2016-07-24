@@ -1,12 +1,12 @@
 ﻿using UnityEngine;
-using System.Collections;
+using System.Collections.Generic;
 using UnityEngine.EventSystems;
 
 public class CameraController : MonoBehaviour {
 	Vector3 lastFramePosition;
 	Vector3 currFramePosition;
-
-
+	Tile middleTile;
+	public Island nearestIsland;
 
 	void Start() {
 		
@@ -33,6 +33,9 @@ public class CameraController : MonoBehaviour {
 		} else {
 			World.current.resetIslandMark ();
 		}
+		Vector3 middle = Camera.main.ScreenToWorldPoint (new Vector3 (Camera.main.pixelWidth/2, Camera.main.pixelHeight/2));
+		middleTile = World.current.GetTileAt (middle.x,middle.y);
+		findNearestIsland ();
 		World w = World.current;
 		if(upperX>w.Width ){
 			if(diff.x > 0){
@@ -99,5 +102,31 @@ public class CameraController : MonoBehaviour {
 		float zoomMultiplier = Mathf.Clamp(Camera.main.orthographicSize - 2,1,4f)*10;
 		return new Vector3(zoomMultiplier*Horizontal*Time.deltaTime,zoomMultiplier*Vertical*Time.deltaTime,0);
 	}
+	public void findNearestIsland(){
+		HashSet<Tile> tiles= new HashSet<Tile>();
+		Queue<Tile> tilesToCheck = new Queue<Tile>();
+		tilesToCheck.Enqueue(middleTile);
+		while (tilesToCheck.Count > 0) {
 
+			Tile t = tilesToCheck.Dequeue();
+			if (t==null){
+				return;
+			}
+			if(t.myIsland!=null){
+				nearestIsland = t.myIsland;
+				break;
+			}
+			if(tiles.Count>100){
+				nearestIsland = null; 
+				break;
+			}
+			if (tiles.Contains (t)==false) {
+				tiles.Add(t);
+				Tile[] ns = t.GetNeighbours();
+				foreach (Tile t2 in ns) {
+					tilesToCheck.Enqueue(t2);
+				}
+			}
+		}
+	}
 }

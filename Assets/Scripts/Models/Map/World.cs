@@ -17,6 +17,8 @@ public class World : IXmlSerializable{
 	public List<Need> allNeeds;
 	public static World current { get; protected set; }
 	public Dictionary<Climate,List<Fertility>> allFertilities;
+	public Dictionary<int,Fertility> idToFertilities;
+
 
     Action<Unit> cbUnitCreated;
 	Action<Worker> cbWorkerCreated;
@@ -49,6 +51,7 @@ public class World : IXmlSerializable{
 		}
 		allNeeds = GameObject.FindObjectOfType<BuildController>().allNeeds;
 		allFertilities = GameObject.FindObjectOfType<BuildController>().allFertilities;
+		idToFertilities= GameObject.FindObjectOfType<BuildController>().idToFertilities;
 		tileGraph = new Path_TileGraph(this);
 		islandList = new List<Island>();
 		units = new List<Unit>();
@@ -75,6 +78,7 @@ public class World : IXmlSerializable{
 
 		for (int i = 0; i < fers.Length; i++) {
 			Fertility f = climFer[UnityEngine.Random.Range (0,climFer.Count)];
+			climFer.Remove (f);
 			fers [i] = f;
 		}
 
@@ -160,6 +164,11 @@ public class World : IXmlSerializable{
 			}
 		}
 	}
+	public Fertility getFertility(int ID){
+		return idToFertilities [ID];
+	}
+
+
 	public void invalidateGraph(){
 		tileGraph = null;
 		tileGraph = new Path_TileGraph (this);

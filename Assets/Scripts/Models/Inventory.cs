@@ -175,11 +175,11 @@ public class Inventory : IXmlSerializable{
 	}	
 
 	private void lowerItemAmount(Item i,int amount){
-		Debug.Log (name + " lower " + i.name + " -=" +amount); 
+//		Debug.Log (name + " lower " + i.name + " -=" +amount); 
 		if (items.ContainsKey (getPlaceInItem (i))) {
 //			Debug.Log ("contains "+ items [getPlaceInItem (i)].count); 
 			items [getPlaceInItem (i)].count -= amount;
-			Debug.Log ("contains only " + items [getPlaceInItem (i)].count); 
+//			Debug.Log ("contains only " + items [getPlaceInItem (i)].count); 
 		} else {
 			Debug.Log ("not in");
 			i.count -= amount;
@@ -213,7 +213,7 @@ public class Inventory : IXmlSerializable{
 		if(amount<=0){
 			Debug.LogError ("Increase Amount is " + amount + "! "); 
 		}
-		Debug.Log (name + " increase " + amount); 
+//		Debug.Log (name + " increase " + amount); 
 		item.count += amount;
 		if(cbInventoryChanged!=null){
 			cbInventoryChanged (this);

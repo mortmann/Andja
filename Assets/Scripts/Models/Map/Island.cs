@@ -124,7 +124,13 @@ public class Island : IXmlSerializable{
 		writer.WriteAttributeString("StartTile_X",myTiles[0].X.ToString ());
 		writer.WriteAttributeString("StartTile_Y",myTiles[0].Y.ToString ());
 		writer.WriteAttributeString ("Climate",((int)myClimate).ToString ());
-
+		writer.WriteStartElement("fertilities");
+		foreach(Fertility fer in myFertilities){
+			writer.WriteStartElement("fertility");
+			writer.WriteAttributeString ("ID",fer.ID.ToString ());
+			writer.WriteEndElement();
+		}
+		writer.WriteEndElement();
 		writer.WriteStartElement("Cities");
 		foreach (City c in myCities) {
 			writer.WriteStartElement("City");
@@ -137,16 +143,31 @@ public class Island : IXmlSerializable{
 	public void ReadXml(XmlReader reader) {
 		myClimate = (Climate)int.Parse(reader.GetAttribute ("Climate"));
 //		if (reader.ReadToDescendant ("City")) {
+		reader.ReadToFollowing ("fertilities");
+		List<int> ferIDs = new List<int>();
+		while (reader.Read ()) {
+			if (reader.IsStartElement ("fertility")) {
+				ferIDs.Add (int.Parse (reader.GetAttribute ("ID")));
+			}
+			if(reader.Name == "fertilities"){
+				break;
+			}
+		}
+		foreach (int item in ferIDs) {
+			myFertilities.Add (World.current.getFertility(item)); 
+		}
+		myCities = new List<City> ();
+		wilderniss = null;
 		reader.ReadToFollowing ("Cities");
 			while(reader.Read ()) {
 //			Debug.Log (reader.IsStartElement ("City") + " -- " + reader.Name); 
 
 			if (reader.IsStartElement ("City")) {
 				int playerNumber = int.Parse (reader.GetAttribute ("Player"));
-				Debug.Log (playerNumber);
 				City c = null;
 				if (playerNumber == -1) {
 					c = new City (playerNumber, this, World.current.allNeeds, this.myTiles);
+					c.ReadXml (reader);
 					wilderniss = c;
 				} else {
 					c = new City (playerNumber, this, World.current.allNeeds);	

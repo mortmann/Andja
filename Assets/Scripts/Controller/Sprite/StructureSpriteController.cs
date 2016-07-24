@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 public class StructureSpriteController : MonoBehaviour {
 	public Dictionary<Structure, GameObject> structureGameObjectMap;
-	Dictionary<string, Sprite> structureSprites = new Dictionary<string, Sprite>();
+	public Dictionary<string, Sprite> structureSprites = new Dictionary<string, Sprite>();
 	public Sprite circleSprite;
 	BuildController bm;
 
@@ -40,7 +40,7 @@ public class StructureSpriteController : MonoBehaviour {
 		Tile t = structure.BuildTile;
 
 		go.transform.position = new Vector3 (t.X + x,t.Y + y);
-		go.transform.Rotate (Vector3.forward*structure.rotated); // = new Quaternion (0, 0, structure.rotated, 100);
+		go.transform.Rotate (Vector3.forward*structure.rotated); 
 		go.transform.SetParent (this.transform,true);
 		go.name = structure.name +"_"+structure.myBuildingTiles [0].toString ();
 		SpriteRenderer sr = go.AddComponent<SpriteRenderer>();
@@ -156,5 +156,13 @@ public class StructureSpriteController : MonoBehaviour {
 			structureSprites[s.name] = s;
 		}
 	}
-
+	public Sprite getStructureSprite(Structure str){
+		if(structureSprites.ContainsKey (str.name)==false){
+			//FIXME this should be active in future 
+			//fornow there arent many sprites anyway
+//			Debug.LogError ("No Structure Sprite for that Name!");
+			return null; 
+		}
+		return structureSprites [str.name];
+	}
 }

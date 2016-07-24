@@ -29,9 +29,11 @@ public class HomeBuilding : Structure{
 		name = "Home";
 		increaseSpeed = 3;
 		decreaseSpeed = 2;
+		this.buildingRange = 0;
 		hasHitbox = true;
 	}
 	protected HomeBuilding(HomeBuilding b){
+		this.buildingRange = b.buildingRange;
 		this.ID = b.ID;
 		this.people = b.people;
 		this.tileWidth = b.tileWidth;

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 
 public class Farm : UserStructure {
-	public string growable;
+	public int growableID=-1;
 	public int growableReadyCount;
 	public int OnRegisterCallbacks;
 	Queue<Structure> workingGrowables;
@@ -12,9 +12,10 @@ public class Farm : UserStructure {
 			return Mathf.Round(((float)OnRegisterCallbacks / (float)myRangeTiles.Count)*1000)/10f;
 		}
 	}
-	public Farm(int id, string name,float produceTime, Item produce, int tileWidth, int tileHeight, int buildcost, int maintance ){
+	public Farm(int id, string name,float produceTime, Item produce, int growableID,int tileWidth, int tileHeight, int buildcost, int maintance ){
 		this.ID = id;
 		this.name = name;
+		this.growableID = growableID;
 		this.tileWidth = tileWidth;
 		this.tileHeight = tileHeight;
 		this.buildcost = buildcost;
@@ -22,6 +23,7 @@ public class Farm : UserStructure {
 		this.output = new Item[1];
 		this.output [0] = produce;
 		this.produceTime = produceTime;
+		this.buildingRange = 3;
 		maxOutputStorage = 5;
 		myBuildingTyp = BuildingTyp.Production ;
 		BuildTyp = BuildTypes.Single;
@@ -39,6 +41,8 @@ public class Farm : UserStructure {
 		this.produceTime = f.produceTime;
 		this.produceCountdown = f.produceTime;
 		this.maxOutputStorage = f.maxOutputStorage;
+		this.buildingRange = f.buildingRange;
+		this.growableID = f.growableID;
 		myBuildingTyp = f.myBuildingTyp;
 		BuildTyp = f.BuildTyp;
 		hasHitbox = f.hasHitbox;
@@ -48,16 +52,15 @@ public class Farm : UserStructure {
 	}
 
 	public override void OnBuild ()	{
-		growable = "tree";
 		workingGrowables = new Queue<Structure> ();
-		if(growable == null | growable == ""){
+		if(growableID == -1){
 			return;
 		}
 		GameObject.FindObjectOfType<BuildController> ().BuildOnTile (3, new List<Tile>(myRangeTiles));
 		//farm has it needs plant if it can 
 		foreach (Tile rangeTile in myRangeTiles) {
 			if(rangeTile.Structure != null){
-				if(rangeTile.Structure.name.Contains (growable)){
+				if(rangeTile.Structure.ID==growableID){
 					rangeTile.Structure.RegisterOnChangedCallback (OnGrowableChanged);	
 					OnRegisterCallbacks++;
 					if(((Growable)rangeTile.Structure).hasProduced == true){
@@ -82,7 +85,7 @@ public class Farm : UserStructure {
 		produceCountdown -= deltaTime;
 		if (produceCountdown <= 0) {
 			produceCountdown = deltaTime;
-			if (growable != null) {
+			if (growableID != -1) {
 				Growable g = (Growable)workingGrowables.Dequeue ();
 				output[0].count++;
 				growableReadyCount--;
@@ -97,7 +100,7 @@ public class Farm : UserStructure {
 		if(str is Growable == false){
 			return;
 		}
-		if(str.name != growable){
+		if(str.ID != growableID){
 			return;
 		}
 		if(((Growable)str).hasProduced == false){
@@ -109,20 +112,49 @@ public class Farm : UserStructure {
 		// not important right now
 	}
 	public void OnTileStructureChange(Tile t, Structure old){
-		if(old != null && old.name == growable){
+		if(old != null && old.ID == growableID){
 			OnRegisterCallbacks--;
 		}
 		if(t.Structure == null){
-			if(old.name == growable){
+			if(old.ID == growableID){
 				OnRegisterCallbacks--;
 			}
 			return;
 		}
-		if(t.Structure.name == growable){
+		if(t.Structure.ID == growableID){
 			OnRegisterCallbacks++;
 			t.Structure.RegisterOnChangedCallback (OnGrowableChanged);	
 		}
 	}
+	public override void ExtraBuildUI (GameObject parent,Tile t){
+		//FIXME
+		//TODO
+
+
+		GameObject extra = new GameObject();
+		extra.transform.SetParent (parent.transform);
+
+		//SpriteRenderer sr = extra.AddComponent<SpriteRenderer> ();
+		TextMesh tm = extra.AddComponent <TextMesh> ();
+		tm.fontSize = 15;
+		tm.color = Color.magenta;
+		HashSet<Tile> hs = this.GetInRangeTiles (t);
+		if(hs==null){
+			return;
+		}
+		int count=0;
+		foreach (Tile item in hs) {
+//			Debug.Log (item.toString ()); 
+			if(item.Structure!=null && item.Structure.ID==growableID){
+				
+				count++;
+			}
+		}
+		Debug.Log (Mathf.RoundToInt(((float)count/(float)hs.Count)*100));
+		//NEEDS MODIFYING LIKE WEATHER?, temperature or smth like that
+		tm.text = Mathf.RoundToInt(((float)count/(float)hs.Count)*100)+"%";
+	}
+		
 	public override void ReadXml (System.Xml.XmlReader reader)	{
 		base.BaseReadXml (reader);
 		ReadUserXml (reader);

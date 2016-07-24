@@ -24,7 +24,7 @@ public abstract class Structure : IXmlSerializable {
     public bool isWalkable { get; protected set; }
 	public bool hasHitbox { get; protected set; }
 
-	public int buildingRange = 3;
+	public int buildingRange = 0;
 	public int PopulationLevel = 0;
 	public int PopulationCount = 0;
 
@@ -98,14 +98,16 @@ public abstract class Structure : IXmlSerializable {
 
 	public abstract Structure Clone ();
 
-    public GameObject getGameObject() {
-        GameObject go = new GameObject();
-		if (hasHitbox) {
-			BoxCollider2D b = go.AddComponent<BoxCollider2D> ();
-			b.size = new Vector2 (tileWidth, tileHeight);
-		}
-        return go;
-    }
+	/// <summary>
+	/// Extra Build UI for showing stuff when building
+	/// structures. Or so.
+	/// </summary>
+	/// <param name="parent">Its the parent for the extra UI.</param>		
+	public virtual void ExtraBuildUI(GameObject parent,Tile t){
+		//does nothing normally
+		//stuff here to show for when building this
+		//using this for e.g. farm efficiency bar!
+	}
 
 	public virtual void update (float deltaTime){
     }
@@ -128,6 +130,7 @@ public abstract class Structure : IXmlSerializable {
 	}
 	public bool PlaceStructure(List<Tile> tiles){
 		myBuildingTiles = new List<Tile> ();
+
 		//test if the place is buildable
 		// if it has to be on land
 		if (mustBeBuildOnShore == false && mustBeBuildOnMountain == false) {
@@ -215,13 +218,10 @@ public abstract class Structure : IXmlSerializable {
 			return false;
 		}
 		if (t.myCity.playerNumber != PlayerController.Instance.number) {
-			Debug.Log (t.myCity.IsWilderness () +"-"+t.myCity.playerNumber +" wrongcity " + PlayerController.Instance.number); 
-
 			if (t.myCity.IsWilderness () == false ) {
 				if(this is Warehouse){
 					return true;
 				}
-
 			} 
 			return false;
 		}
@@ -348,6 +348,11 @@ public abstract class Structure : IXmlSerializable {
 			myPrototypeTiles.Remove (item);
 		}
 	}
+	/// <summary>
+	/// Gets the in range tiles.
+	/// </summary>
+	/// <returns>The in range tiles.</returns>
+	/// <param name="firstTile">The most left one, first row.</param>
 	public HashSet<Tile> GetInRangeTiles (Tile firstTile) {
 		if (myPrototypeTiles == null) {
 			CalculatePrototypTiles ();
@@ -396,7 +401,6 @@ public abstract class Structure : IXmlSerializable {
 	}
 
 	public bool correctSpotForOn(List<Tile> tiles, TileType tt){
-		
 		switch (rotated){
 		case 0:
 			return CheckFor0Rotation (tiles,tt);

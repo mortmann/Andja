@@ -1,10 +1,9 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
-using System.Xml;
-using System.Xml.Schema;
-using System.Xml.Serialization;
 
-public class Route : IXmlSerializable {
+//DOESNT NEED TO BE SAVED
+//GETS CREATED WHEN NEEDED
+public class Route {
 	public Path_TileGraph tileGraph { get; protected set; }
 	public List<Tile> myTiles;
 	public Route(Tile startTile){
@@ -54,21 +53,5 @@ public class Route : IXmlSerializable {
 	public string toString(){
 		return myTiles[0].toString () + "_Route";
 	}
-
-	//////////////////////////////////////////////////////////////////////////////////////
-	/// 
-	/// 						SAVING & LOADING
-	/// 
-	//////////////////////////////////////////////////////////////////////////////////////
-	public XmlSchema GetSchema() {
-		return null;
-	}
-
-	public void WriteXml(XmlWriter writer) {
-		writer.WriteAttributeString("StartTile_X", myTiles[0].X.ToString () );
-		writer.WriteAttributeString("StartTile_Y", myTiles[0].Y.ToString () );
-	}
-	public void ReadXml(XmlReader reader) {
-
-	}
+		
 }

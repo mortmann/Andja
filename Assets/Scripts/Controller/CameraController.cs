@@ -5,9 +5,11 @@ using UnityEngine.EventSystems;
 public class CameraController : MonoBehaviour {
 	Vector3 lastFramePosition;
 	Vector3 currFramePosition;
+	public Vector3 upper=new Vector3();
+	public Vector3 lower=new Vector3();
 	Tile middleTile;
 	public Island nearestIsland;
-
+	public float zoomLevel;
 	void Start() {
 		
 	}
@@ -19,13 +21,14 @@ public class CameraController : MonoBehaviour {
 		currFramePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 		currFramePosition.z = 0;
 		UpdateZoom();
+		zoomLevel= Mathf.Clamp(Camera.main.orthographicSize - 2,1,4f)*10;
 		diff += UpdateKeyboardCameraMovement ();
 		diff += UpdateMouseCameraMovement ();
 
-		Vector3 lower = Camera.main.ScreenToWorldPoint (Vector3.zero);
+		lower = Camera.main.ScreenToWorldPoint (Vector3.zero);
 		float lowerX = lower.x;
 		float lowerY = lower.y;
-		Vector3 upper = Camera.main.ScreenToWorldPoint (new Vector3 (Camera.main.pixelWidth, Camera.main.pixelHeight));
+		upper = Camera.main.ScreenToWorldPoint (new Vector3 (Camera.main.pixelWidth, Camera.main.pixelHeight));
 		float upperX = upper.x;
 		float upperY = upper.y;
 		if (BuildController.Instance.BuildState == BuildStateModes.On) {
@@ -76,6 +79,7 @@ public class CameraController : MonoBehaviour {
 		if(Input.GetKey (KeyCode.Minus)|| Input.GetKey (KeyCode.KeypadMinus)){
 			Camera.main.orthographicSize += Camera.main.orthographicSize * 0.1f;
 		}
+
 		if( EventSystem.current.IsPointerOverGameObject() ) {
 			return;
 		}

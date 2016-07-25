@@ -9,6 +9,7 @@ using System.Xml.Serialization;
 public enum TileType { Water, Shore, Dirt, Grass, Stone, Mountain };
 public enum TileMark { None, Highlight, Dark, Reset }
 
+
 public class Tile : IXmlSerializable {
     //Want to have more than one structure in one tile!
     //more than one tree or tree and bench! But for now only one
@@ -77,16 +78,19 @@ public class Tile : IXmlSerializable {
 			}
 		}
 	}
-    private TileType _type = TileType.Water;
+    
+	[XmlAttribute("Type")]
+	private TileType _type = TileType.Water;
     public TileType Type {
         get { return _type; }
         set {
+			listOfInRangeNeedBuildings = new List<NeedsBuilding> ();
             _type = value;
         }
     }
+
 	public List<NeedsBuilding> listOfInRangeNeedBuildings { get; protected set; }
 
-    const float baseTileMovementCost = 1;
 
     public float MovementCost {
         get {
@@ -100,7 +104,7 @@ public class Tile : IXmlSerializable {
 				return Mathf.Infinity;  
 			}
 			if (Structure == null){
-				return baseTileMovementCost;
+				return 1;
 			}
 			if (Structure.BuildTyp == BuildTypes.Single){
 				return float.PositiveInfinity;
@@ -111,8 +115,9 @@ public class Tile : IXmlSerializable {
             return 1;
         }
     }
-
+	[XmlAttribute("X")]
 	int x;
+	[XmlAttribute("Y")]
 	int y;
     public int X {
         get {
@@ -125,12 +130,11 @@ public class Tile : IXmlSerializable {
             return y;
         }
     }
-
+	public Tile(){}
     public Tile(int x, int y){
         this.x = x;
         this.y = y;
         _type = TileType.Water;
-		listOfInRangeNeedBuildings = new List<NeedsBuilding> ();
     }
 
     // The function we callback any time our tile's data changes

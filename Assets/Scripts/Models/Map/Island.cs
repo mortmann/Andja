@@ -89,8 +89,9 @@ public class Island : IXmlSerializable{
 		//so it has the playernumber -1 -> needs to be checked for when buildings are placed
 		//have a function like is notplayer city
 		//it does not need NEEDs
-		myCities.Add (new City(-1,this,null,myTiles)); 
+		myCities.Add (new City(myTiles,this)); 
 		wilderniss = myCities [0];
+//		BuildController.Instance.BuildOnTile (myTiles,true,BuildController.Instance.structurePrototypes[3],true);
     }
 
     public void update(float deltaTime) {
@@ -100,10 +101,10 @@ public class Island : IXmlSerializable{
     }
 	public void AddStructure(Structure str){
 		allReadyHighlighted = false;
-		if(str.city == wilderniss){
-			Debug.LogWarning ("adding to wilderniss wanted?");
+		if(str.City == wilderniss){
+//			Debug.LogWarning ("adding to wilderniss wanted?");
 		}
-		str.city.addStructure (str);
+		str.City.addStructure (str);
 	}
     public City CreateCity() {
 		allReadyHighlighted = false;
@@ -142,7 +143,6 @@ public class Island : IXmlSerializable{
 
 	public void ReadXml(XmlReader reader) {
 		myClimate = (Climate)int.Parse(reader.GetAttribute ("Climate"));
-//		if (reader.ReadToDescendant ("City")) {
 		reader.ReadToFollowing ("fertilities");
 		List<int> ferIDs = new List<int>();
 		while (reader.Read ()) {
@@ -155,52 +155,38 @@ public class Island : IXmlSerializable{
 		}
 		foreach (int item in ferIDs) {
 			myFertilities.Add (World.current.getFertility(item)); 
+			Debug.Log (World.current.getFertility(item).name); 
 		}
 		myCities = new List<City> ();
 		wilderniss = null;
 		reader.ReadToFollowing ("Cities");
-			while(reader.Read ()) {
-//			Debug.Log (reader.IsStartElement ("City") + " -- " + reader.Name); 
+		if (reader.ReadToDescendant ("City")) {
+			//Workaround for readnextsibling
+			//why ever it is not working here
+			//read as long as it reads cities
+			//if it reads city start the do more
+			do {
+				if(reader.IsStartElement ("City")==false){
+					Debug.Log (reader.Name ); 
+					if(reader.Name == "Cities"){
+						return;
+					}
+					continue;
+				}				 
 
-			if (reader.IsStartElement ("City")) {
 				int playerNumber = int.Parse (reader.GetAttribute ("Player"));
+
 				City c = null;
 				if (playerNumber == -1) {
-					c = new City (playerNumber, this, World.current.allNeeds, this.myTiles);
-					c.ReadXml (reader);
-					wilderniss = c;
+					c = new City (this.myTiles,this);
 				} else {
 					c = new City (playerNumber, this, World.current.allNeeds);	
-					c.ReadXml (reader);
-
 				}
-
+				c.ReadXml (reader);
 				myCities.Add (c);
-			}
-			if(reader.Name=="Cities"){
-//			Debug.Log (reader.Name + " break"); 
-				break;
-			}
+
+				 
+			} while(reader.Read ());
 		}
-
-
-//			do {
-//				Debug.Log ("City"); 
-//				Debug.Log (reader.GetAttribute ("Player")); 
-//				int playerNumber = int.Parse (reader.GetAttribute ("Player"));
-//				City c = null;
-//				if (playerNumber == -1) {
-//					c = new City (playerNumber, this, World.current.allNeeds, this.myTiles);
-//				} else {
-//					c = new City (playerNumber, this, World.current.allNeeds);	
-//				}
-//
-//				c.ReadXml (reader);
-//				myCities.Add (c);
-//
-//				 
-//			} while(reader.ReadToNextSibling ("City"));
-//		}
 	}
-
 }

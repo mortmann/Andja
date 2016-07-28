@@ -141,26 +141,35 @@ public class BuildController : MonoBehaviour {
 		}
 		//TODO RETHINK THIS
 		GameObject.FindObjectOfType<StructureSpriteController> ().Initiate ();
-		RealBuild (s.GetBuildingTiles (t.X, t.Y), s,true);
+		RealBuild (s.GetBuildingTiles (t.X, t.Y), s,true,true);
 	}
-	public void BuildOnTile(List<Tile> tiles, bool forEachTileOnce, Structure structure){
+	public void BuildOnTile(List<Tile> tiles, bool forEachTileOnce, Structure structure,bool wild=false){
 		if(tiles == null || tiles.Count == 0 || WorldController.Instance.isPaused){
 			return;
 		}
 		if (forEachTileOnce == false) {
-			RealBuild (tiles,structure);
+			RealBuild (tiles,structure,false,wild);
 		} else {
 			foreach (Tile tile in tiles) {
 				List<Tile> t = new List<Tile> ();
 				t.AddRange (structure.GetBuildingTiles (tile.X,tile.Y));
-				RealBuild (t,structure);
+				RealBuild (t,structure,false,wild);
 			}
 		}
 	}
-	protected void RealBuild(List<Tile> tiles,Structure s,bool loading=false){
+	protected void RealBuild(List<Tile> tiles,Structure s,bool loading=false,bool wild=false){
 		if (loading == false) {
 			s = s.Clone ();
-		} 
+		}
+		//set the player id for check for city
+		//has to be changed if someone takes it over
+		if(wild==false)
+			s.playerID = PlayerController.Instance.number;
+		//if it should be build in wilderniss city
+		if(wild){
+			s.playerID = -1;
+			s.buildInWilderniss = true;
+		}
 		//check to see if the structure can be placed there
 		if (s.PlaceStructure (tiles) == false) {
 			if(loading){
@@ -168,7 +177,7 @@ public class BuildController : MonoBehaviour {
 			}
 			return;
 		}
-		if(loading==false){
+		if(loading==false&&wild==false){
 			if (s.islandHasEnoughItemsToBuild() == false || playerHasEnoughMoney(s) == false) {
 				return;
 			}
@@ -181,6 +190,9 @@ public class BuildController : MonoBehaviour {
 			World.current.invalidateGraph ();
 		}
 		//call all callbacks on structure created
+
+//		if (cbStructureCreated == null)
+			GameObject.FindObjectOfType<StructureSpriteController>().Initiate ();
 		if (cbStructureCreated != null) {
 			cbStructureCreated (s);
 		} 
@@ -234,7 +246,7 @@ public class BuildController : MonoBehaviour {
 		loadedToPlaceTile.Add (bid,t);
 	}
 	public void PlaceAllLoadedStructure(){
-		for (int i = 0; i < loadedToPlaceStructure.Count; i++) {
+		foreach (int i in loadedToPlaceStructure.Keys) {
 			BuildOnTile (loadedToPlaceStructure[i],loadedToPlaceTile[i]);
 		}
 		loadedToPlaceStructure.Clear ();

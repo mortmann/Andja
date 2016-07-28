@@ -32,21 +32,7 @@ public class TileSpriteController : MonoBehaviour {
 		water.transform.position = new Vector3((world.Width/2)-0.5f,(world.Height/2)-0.5f , 0);
 		water.transform.localScale = new Vector3 (6+world.Width/10,0.1f,6+world.Height/10);
 		water.GetComponent<Renderer> ().material.mainTextureScale = new Vector2 (world.Width, world.Height*3);
-//		for (int x = (int)cc.lower.x-2; x < cc.upper.x+2; x++) {
-//			for (int y=(int)cc.lower.y-2; y < cc.upper.y+2; y++) {
-//                Tile tile_data = world.GetTileAt(x, y);
-//				GameObject tile_go = new GameObject();
-//                tile_go.name = "Tile_" + x + "_" + y;
-//                tile_go.transform.position = new Vector3(tile_data.X , tile_data.Y , 0);
-//                SpriteRenderer sr = tile_go.AddComponent<SpriteRenderer>();
-//                sr.sprite = waterSprite;
-//				clearMaterial = sr.material;
-//                sr.sortingLayerName = "WaterTile";
-//                tile_go.transform.SetParent(this.transform, true);
-//                tileGameObjectMap.Add(tile_data, tile_go);
-//                OnTileChanged(tile_data);
-//            }
-//        }
+
         // Register our callback so that our GameObject gets updated whenever
         // the tile's type changes.
         world.RegisterTileChanged(OnTileChanged);

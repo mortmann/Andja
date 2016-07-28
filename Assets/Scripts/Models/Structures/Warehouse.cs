@@ -77,17 +77,17 @@ public class Warehouse : MarketBuilding {
 			}
 		}
 		if(t.myIsland.myCities.Exists (x=>x.playerNumber==PlayerController.Instance.number)){
-			this.city = t.myIsland.myCities.Find (x => x.playerNumber == PlayerController.Instance.number);
+			this.City = t.myIsland.myCities.Find (x => x.playerNumber == PlayerController.Instance.number);
 		} else {
-			this.city = BuildController.Instance.CreateCity(t);
+			this.City = BuildController.Instance.CreateCity(t);
 		}
 
-		if (city == null) {
+		if (City == null) {
 			return;
 		}
 		//dostuff thats happen when build
-		city.addTiles (myRangeTiles);
-		city.addTiles (new HashSet<Tile>(myBuildingTiles));
+		City.addTiles (myRangeTiles);
+		City.addTiles (new HashSet<Tile>(myBuildingTiles));
 	}
 
 	public override void OnClick (){

@@ -45,7 +45,13 @@ public class Tile : IXmlSerializable {
 		set {
 			if (value == null) {
 				_myCity = myIsland.wilderniss;
+				return;
 			} 
+			if(_myCity!=null &&_myCity.playerNumber==-1 && value.playerNumber==-1){
+				Debug.Log ("override");
+				_myCity = value;
+				return;
+			}
 			if (_myCity!=null && _myCity.IsWilderness ()==false){
 				return;
 			}
@@ -79,7 +85,6 @@ public class Tile : IXmlSerializable {
 		}
 	}
     
-	[XmlAttribute("Type")]
 	private TileType _type = TileType.Water;
     public TileType Type {
         get { return _type; }
@@ -296,7 +301,12 @@ public class Tile : IXmlSerializable {
     public String toString() {
         return "tile_" + X + "_" + Y;
     }
-
+//	public override bool Equals (object obj){
+//		if(obj==null){
+//			return false;
+//		}
+//		return X == ((Tile)obj).X && Y == ((Tile)obj).Y;
+//	}
 	//////////////////////////////////////////////////////////////////////////////////////
 	/// 
 	/// 						SAVING & LOADING

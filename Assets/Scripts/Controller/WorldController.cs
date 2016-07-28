@@ -37,7 +37,12 @@ public class WorldController : MonoBehaviour {
 		}
         world.update(Time.deltaTime * timeMultiplier);
     }
-
+	void FixedUpdate (){
+		if (world == null || isPaused) {
+			return;
+		}
+		world.fixedupdate(Time.deltaTime * timeMultiplier);
+	}
     internal Tile GetTileAtWorldCoord(Vector3 currFramePosition) {
         return world.GetTileAt(Mathf.FloorToInt(currFramePosition.x), Mathf.FloorToInt(currFramePosition.y));
     }

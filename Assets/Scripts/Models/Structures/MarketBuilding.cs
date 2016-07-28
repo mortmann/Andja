@@ -50,7 +50,7 @@ public class MarketBuilding : UserStructure {
 		jobsToDo = new Dictionary<UserStructure, Item[]> ();
 		// add all the tiles to the city it was build in
 		//dostuff thats happen when build
-		city.addTiles (myRangeTiles);
+		City.addTiles (myRangeTiles);
 		foreach(Tile rangeTile in myRangeTiles){
 			if(rangeTile.Structure == null){
 				continue;
@@ -62,7 +62,7 @@ public class MarketBuilding : UserStructure {
 				}
 			}
 		}
-		city.RegisterStructureAdded (OnStructureAdded);
+		City.RegisterStructureAdded (OnStructureAdded);
 	}
 	public void OnOutputChangedStructure(Structure str){
 		if(str is UserStructure == false){
@@ -124,10 +124,10 @@ public class MarketBuilding : UserStructure {
 	public override Item[] getOutput(Item[] getItems,int[] maxAmounts){
 		Item[] temp = new Item[getItems.Length];
 		for (int i = 0; i < getItems.Length; i++) {
-			if(city.myInv.GetAmountForItem (getItems[i]) == 0){
+			if(City.myInv.GetAmountForItem (getItems[i]) == 0){
 				continue;
 			}	
-			temp [i] = city.myInv.getItemWithMaxAmount (getItems [i], maxAmounts [i]);
+			temp [i] = City.myInv.getItemWithMaxAmount (getItems [i], maxAmounts [i]);
 		}
 		return temp;
 	}

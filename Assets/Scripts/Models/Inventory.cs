@@ -227,7 +227,48 @@ public class Inventory : IXmlSerializable{
 			addItem (item);
 		}
 	}
-
+	public Item[] getBuildMaterial(){
+		//there are 10 ids reserved for buildingmaterial
+		//currently there are 7 builditems
+		List<Item> itemlist = new List<Item> ();
+		for (int i = 0; i < 10; i++) {
+			if(ContainsItemWithID(i)){
+				itemlist.Add(GetItemWithID (i));
+			}
+		}
+		return itemlist.ToArray ();
+	}
+	public Item GetItemWithID(int id){
+		if(numberOfSpaces==-1){
+			if(items.ContainsKey (id))
+				return items[id];
+			return null;
+		} else {
+			Item i = null;
+			foreach (Item item in items.Values) {
+				if(item.ID==id){
+					if(i==null){
+						i = item;
+					} else {
+						i.count += item.count;
+					}
+				}
+			}
+			return i;
+		}
+	}
+	public bool ContainsItemWithID(int id){
+		if(numberOfSpaces==-1){
+			return true;
+		} else {
+			foreach (Item item in items.Values) {
+				if(item.ID==id){
+					return true;
+				}
+			}
+		}
+		return false;
+	}
     public void addToStackSize(int value) {
 		if(value<=0){
 			Debug.LogError ("Increase Stacksize is " + value + "! "); 

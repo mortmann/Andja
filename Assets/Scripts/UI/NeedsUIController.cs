@@ -50,8 +50,8 @@ public class NeedsUIController : MonoBehaviour {
 			Text t = s.transform.parent.GetComponentInChildren<Text> ();
 
 			if (ns [i].item != null) {
-				t.text = home.city.getPercentage (ns [i]) * 100 + "%";
-				s.value = home.city.getPercentage (ns [i])* 100;
+				t.text = home.City.getPercentage (ns [i]) * 100 + "%";
+				s.value = home.City.getPercentage (ns [i])* 100;
 			} else {
 				if(home.isInRangeOf (ns[i].structure)) {
 					t.text = "In Range";
@@ -97,8 +97,8 @@ public class NeedsUIController : MonoBehaviour {
 			Slider s= needToGO [item].GetComponentInChildren<Slider> ();
 			Text t  = s.transform.parent.GetComponentInChildren<Text> ();
 			if (item.item != null) {
-				t.text = home.city.getPercentage (item) * 100 + "%";
-				s.value = home.city.getPercentage (item)*100;
+				t.text = home.City.getPercentage (item) * 100 + "%";
+				s.value = home.City.getPercentage (item)*100;
 			} else {
 				if(home.isInRangeOf (item.structure)){
 					t.text = "In Range";

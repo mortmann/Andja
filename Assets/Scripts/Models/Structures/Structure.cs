@@ -20,7 +20,16 @@ public abstract class Structure : IXmlSerializable {
 	public int buildID;
 
 	public string name;
-	public City city;
+	private City _city;
+	public City City {
+		get { return _city;}
+		set {
+			if(_city!=null){
+				_city.removeStructure (this);
+			}
+			_city = value;
+		}
+	}
     public bool isWalkable { get; protected set; }
 	public bool hasHitbox { get; protected set; }
 
@@ -150,6 +159,13 @@ public abstract class Structure : IXmlSerializable {
 				return false;
 			}
 		}
+		//check if it's in a city
+		if(IsTilesCityViable(tiles)==false && buildInWilderniss==false){
+			Debug.Log ("check failed"); 
+			return false;
+		}
+
+
 		//special check for some structures 
 		if (SpecialCheckForBuild (tiles) == false) {
 			Debug.Log ("specialcheck failed"); 
@@ -163,7 +179,7 @@ public abstract class Structure : IXmlSerializable {
 		foreach (Tile mt in myBuildingTiles) {
 			mt.Structure = this;
 			if(mt.myCity!=null && hasCity == false && buildInWilderniss == mt.myCity.IsWilderness ()){
-				this.city = mt.myCity;
+				this.City = mt.myCity;
 				hasCity = true;
 
 				mt.myIsland.AddStructure (this);
@@ -182,7 +198,47 @@ public abstract class Structure : IXmlSerializable {
 		OnBuild ();
 		return true;
 	}
-
+	/// <summary>
+	/// Determines whether it can be build in this city tiles
+	/// Chances if you can build a little bit outside the area!
+	/// For now tho it can be done
+	/// Only if all tiles are within the city owned by the player it can
+	/// be build (Exception Warehouse)
+	/// </summary>
+	/// <returns><c>true</c> if this instance is city viable the specified tiles; otherwise, <c>false</c>.</returns>
+	/// <param name="tiles">Tiles.</param>
+	public bool IsTilesCityViable(List<Tile> tiles){
+		foreach (Tile t in tiles) {
+			if (t.myCity!=null && t.myCity.playerNumber != playerID) {
+				//here it cant build cause someoneelse owns it
+				if (t.myCity.IsWilderness () == false ) {
+					return false;
+				} else {
+					//HERE it can be build if 
+					//EXCEPTION warehouses can be build on new islands
+					if(this is Warehouse == false){
+						return false;
+					}
+				}
+			} 
+		}
+		return true;
+	}
+	public bool IsTileCityViable(Tile t){
+		if (t.myCity!=null && t.myCity.playerNumber != playerID) {
+			//here it cant build cause someoneelse owns it
+			if (t.myCity.IsWilderness () == false ) {
+				return false;
+			} else {
+				//HERE it can be build if 
+				//EXCEPTION warehouses can be build on new islands
+				if(this is Warehouse == false){
+					return false;
+				}
+			}
+		} 
+		return true;
+	}
 	protected bool PlaceOnLand(List<Tile> tiles){
 		for (int i = 0; i < tiles.Count; i++) {
 			if(tiles[i].Structure!=null && tiles[i].Structure.canBeBuildOver == false){
@@ -215,14 +271,6 @@ public abstract class Structure : IXmlSerializable {
 			return false;
 		if(t.myCity == null){//shouldnt never ever happend 
 			Debug.LogError ("this tile doesnt have any city, not even wilderness");
-			return false;
-		}
-		if (t.myCity.playerNumber != PlayerController.Instance.number) {
-			if (t.myCity.IsWilderness () == false ) {
-				if(this is Warehouse){
-					return true;
-				}
-			} 
 			return false;
 		}
 		return true;
@@ -435,13 +483,13 @@ public abstract class Structure : IXmlSerializable {
 		case Direction.None:
 			return CheckNoneDirection (tiles, tt);
 		case Direction.N:
-			return CheckForRightRow (tiles, tt);
-		case Direction.E:
-			return CheckForBottomRow (tiles, tt);
-		case Direction.S:
 			return CheckForLeftRow (tiles, tt);
-		case Direction.W:
+		case Direction.E:
 			return CheckForTopRow (tiles, tt);
+		case Direction.S:
+			return CheckForRightRow (tiles, tt);
+		case Direction.W:
+			return CheckForBottomRow (tiles, tt);
 		}
 		Debug.LogError ("CheckForNoneRotation -- Should not be here !"); 
 		return false;
@@ -467,13 +515,13 @@ public abstract class Structure : IXmlSerializable {
 		case Direction.None:
 			return CheckNoneDirection (tiles, tt);
 		case Direction.N:
-			return CheckForLeftRow (tiles, tt);
-		case Direction.E:
-			return CheckForTopRow (tiles, tt);
-		case Direction.S:
 			return CheckForRightRow (tiles, tt);
-		case Direction.W:
+		case Direction.E:
 			return CheckForBottomRow (tiles, tt);
+		case Direction.S:
+			return CheckForLeftRow (tiles, tt);
+		case Direction.W:
+			return CheckForTopRow (tiles, tt);
 		}
 		Debug.LogError ("CheckForNoneRotation -- Should not be here !"); 
 		return false;
@@ -642,8 +690,8 @@ public abstract class Structure : IXmlSerializable {
 	}
 
 	public void Destroy(){
-		if (city != null) {
-			city.removeStructure (this);
+		if (City != null) {
+			City.removeStructure (this);
 		}
 		if(cbStructureDestroy!=null)
 			cbStructureDestroy(this);

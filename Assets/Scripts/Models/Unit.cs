@@ -5,62 +5,75 @@ using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Serialization;
 
-public class Unit : MonoBehaviour, IXmlSerializable {
+public enum UnitType{ship,land};
+public class Unit : IXmlSerializable {
    
+	public int playerNumber;
 	public UserStructure rangeUStructure;
+	protected GameObject myGameobject;
+	public Transform transform;
+	public Tile startTile;
 
-    void Start() {
-		speed = 2f;
-		pathfinding = new Pathfinding (transform, speed, WorldController.Instance.world.GetTileAt(42, 38));
 
 
-        transform.Translate(new Vector3(42,38, 0));
-		inventory = new Inventory (6,this.name);
-        isShip = true;
-		r2d = GetComponent<Rigidbody2D>();
+	float speed;   // Tiles per second
 
-    }
 
+
+	Action<Unit> cbUnitChanged;
+
+	public Inventory inventory;
+
+	internal float width;
+	internal float height;
 	private Pathfinding pathfinding;
 
 	public Rigidbody2D r2d;
 
-    public float X {
-        get {
+	public float X {
+		get {
 			return pathfinding.X;
-        }
-    }
-    public float Y {
-        get {
+		}
+	}
+	public float Y {
+		get {
 			return pathfinding.Y;
-        }
-    }
+		}
+	}
 
 
-    public bool isShip;
+	public bool isShip;
 	public bool hasChanged = false;
-    // If we aren't moving, then destTile = currTile
+
+
+	public Unit(Tile t,UnitType ut=UnitType.ship) {
+		speed = 2f;
+		inventory = new Inventory (6,"SHIP");
+        isShip = true;
+		startTile = t;
+		pathfinding = new Pathfinding (speed, startTile);
+
+    }
+	public void SetGameObject(GameObject go){
+		myGameobject = go;
+		myGameobject.transform.position = new Vector3(startTile.X,startTile.Y,0);
+		transform = myGameobject.transform;
+		pathfinding.transform = transform;
+		r2d = myGameobject.GetComponent<Rigidbody2D>();
+		r2d.MoveRotation (pathfinding.rotation);
+	}
 
 
     public GameObject GetGameObject() {
-        return gameObject;
+		return myGameobject;
     }
 
 
-    float speed;   // Tiles per second
-
-
-
-    Action<Unit> cbUnitChanged;
-
-    public Inventory inventory;
-
-    internal float width;
-    internal float height;
-    
-
-    public void FixedUpdate() {
-		r2d.MovePosition (transform.position + pathfinding.Update_DoMovement(Time.deltaTime));
+	public void Update(float deltaTime) {
+		if(myGameobject==null){
+			return;
+		}
+		r2d.MovePosition (transform.position + pathfinding.Update_DoMovement(deltaTime));
 		r2d.MoveRotation (transform.rotation.z + pathfinding.UpdateRotation ());
 		if(hasChanged){
 	        if (cbUnitChanged != null)
@@ -76,7 +89,7 @@ public class Unit : MonoBehaviour, IXmlSerializable {
 	public void clickedItem(Item clicked){
 		Debug.Log (clicked.ToString ()); 
 		if(rangeUStructure != null && rangeUStructure is Warehouse){
-			rangeUStructure.city.tradeFromShip (this,clicked);
+			rangeUStructure.City.tradeFromShip (this,clicked);
 		}
 	}
     public void RegisterOnChangedCallback(Action<Unit> cb) {
@@ -88,7 +101,7 @@ public class Unit : MonoBehaviour, IXmlSerializable {
     }
 
     public void AddMovementCommand(float x, float y) {
-        Tile tile = WorldController.Instance.world.GetTileAt(x, y);
+		Tile tile = World.current.GetTileAt(x, y);
         if(tile == null){
             return;
         }
@@ -124,22 +137,31 @@ public class Unit : MonoBehaviour, IXmlSerializable {
 	}
 	public void WriteXml(XmlWriter writer){
 		writer.WriteAttributeString("IsShip", isShip.ToString () );
+		writer.WriteAttributeString("currTile_X", pathfinding.currTile.X.ToString () );
+		writer.WriteAttributeString("currTile_Y", pathfinding.currTile.Y.ToString () );
+		writer.WriteAttributeString("dest_X", pathfinding.dest_X.ToString () );
+		writer.WriteAttributeString("dest_Y", pathfinding.dest_Y.ToString () );
+		writer.WriteAttributeString("rotation", pathfinding.rotation.ToString () );
 		if (inventory != null) {
 			writer.WriteStartElement ("Inventory");
 			inventory.WriteXml (writer);
 			writer.WriteEndElement ();
 		}
-		writer.WriteAttributeString("currTile_X", pathfinding.currTile.X.ToString () );
-		writer.WriteAttributeString("currTile_Y", pathfinding.currTile.Y.ToString () );
-		writer.WriteAttributeString("dest_X", pathfinding.dest_X.ToString () );
-		writer.WriteAttributeString("dest_Y", pathfinding.dest_Y.ToString () );
 
 	}
 	public void ReadXml (XmlReader reader){
-//		isShip = bool.Parse(reader.GetAttribute ("IsShip"));
-//		int x = int.Parse( reader.GetAttribute("destTile_X") );
-//		int y = int.Parse( reader.GetAttribute("destTile_Y") );
-//		AddMovementCommand (x, y);
+		
+		isShip = bool.Parse(reader.GetAttribute ("IsShip"));
+		float x = float.Parse( reader.GetAttribute("dest_X") );
+		float y = float.Parse( reader.GetAttribute("dest_Y") );
+		float rot = float.Parse( reader.GetAttribute("rotation") );
+		pathfinding.rotation = rot;
+		reader.ReadToDescendant ("Inventory");
+		inventory = new Inventory ();
+		inventory.ReadXml (reader);
+
+
+		AddMovementCommand (x, y);
 
 	}
 }

@@ -28,7 +28,6 @@ public class StructureSpriteController : MonoBehaviour {
 		GameObject go = new GameObject ();
 		structure.RegisterOnChangedCallback (OnStructureChanged);
 		structure.RegisterOnDestroyCallback (OnStructureDestroyed);
-
 		float x = 0;
 		float y = 0;
 		if (structure.tileWidth> 1) {

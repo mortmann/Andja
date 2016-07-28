@@ -29,9 +29,13 @@ public class City : IXmlSerializable{
 	public Warehouse myWarehouse;
 	public Action<Structure> cbStructureAdded;
 	public Action<Structure> cbRegisterTradeOffer;
-	public string name {get{return "City "+island.myCities.IndexOf (this);}}
+	public string name {get{
+			if(this.IsWilderness ()){
+				return "Wilderniss";
+			}
+			return "City "+island.myCities.IndexOf (this);}}
 
-	public City(int playerNr,Island island,List<Need> allNeedsList, List<Tile> islandTiles = null) {
+	public City(int playerNr,Island island,List<Need> allNeedsList) {
 		this.playerNumber = playerNr;
 		citizienCount = new int[4];
 		for (int i = 0; i < citizienCount.Length; i++) {
@@ -43,29 +47,23 @@ public class City : IXmlSerializable{
 		myTiles = new HashSet<Tile> ();
 		// if this city doesnt belong to anyone it does not need
 		//anything underneath here
-		if(playerNr == -1){
-			 
-			islandTiles.ForEach (x => x.myCity = this);
-			this.myTiles.UnionWith (islandTiles); 
-			myInv = new Inventory (0);
-			return;
-		}
-        myInv = new Inventory(-1,name);
-		//temporary
-		Item temp = BuildController.Instance.allItems[49].Clone ();
-		temp.count = 50;
-		myInv.addItem (temp);
 
-		myRoutes = new List<Route> ();
-		myHomes = new List<HomeBuilding> ();
-		allNeeds = new Dictionary<Need,float> ();
-		needsList = allNeedsList;
-		idToNeed = new Dictionary<int, Need> ();
-		for (int i = 0; i < allNeedsList.Count; i++) {
-			allNeeds.Add (allNeedsList[i],0);
-			idToNeed.Add (allNeedsList[i].ID,allNeedsList[i]);
-		}
-		useTick = 30f;
+			myInv = new Inventory (-1, name);
+			//temporary
+			Item temp = BuildController.Instance.allItems [49].Clone ();
+			temp.count = 50;
+			myInv.addItem (temp);
+
+			myRoutes = new List<Route> ();
+			myHomes = new List<HomeBuilding> ();
+			allNeeds = new Dictionary<Need,float> ();
+			needsList = allNeedsList;
+			idToNeed = new Dictionary<int, Need> ();
+			for (int i = 0; i < allNeedsList.Count; i++) {
+				allNeeds.Add (allNeedsList [i], 0);
+				idToNeed.Add (allNeedsList [i].ID, allNeedsList [i]);
+			}
+			useTick = 30f;
 //		useTickTimer = useTick;
     }
 
@@ -76,6 +74,14 @@ public class City : IXmlSerializable{
 		if(playerNumber==-1){
 			return;
 		}
+		for (int i = 0; i < citizienCount.Length; i++) {
+			citizienCount [i] = 0;
+		}
+		//TODO mabye make itso that callbacks add/sub from it?
+		//TODO or make it so that homes are responsive for it 
+		for (int i = 0; i < myHomes.Count; i++) {
+			citizienCount [myHomes [i].buildingLevel] += myHomes [i].people;
+		}
 		useTickTimer -= deltaTime;
 		if(useTickTimer<=0){
 			useTickTimer = useTick;
@@ -84,7 +90,20 @@ public class City : IXmlSerializable{
 			}
 		}
     }
-
+	public City(List<Tile> tiles,Island island){
+//		tiles.ForEach (x => x.myCity = this);
+		List<Tile> temp = new List<Tile>(tiles);
+		island.wilderniss = this;
+		for (int i = 0; i < tiles.Count; i++) {
+			temp[i].myCity= null;
+		}
+		myTiles = new HashSet<Tile> (tiles);
+		myInv = new Inventory (0);
+		this.playerNumber = -1;
+		this.island = island;
+		island.wilderniss = this;
+		myStructures = new List<Structure> ();
+	}
 	public void addStructure(Structure str){
 		if(myStructures.Contains (str)){
 			//happens on loading for loaded stuff
@@ -117,9 +136,9 @@ public class City : IXmlSerializable{
 		for (int i = 0; i < tiles.Count; i++) {
 			if(tiles[i].Structure != null){
 				if (myStructures.Contains (tiles [i].Structure) ==false) { 
+					tiles [i].Structure.City = this;
 					addStructure (tiles [i].Structure);
 				}
-				tiles [i].Structure.city = this;
 			}
 			myTiles.Add (tiles[i]);
 		}
@@ -142,6 +161,9 @@ public class City : IXmlSerializable{
 	}
 
 	public bool IsWilderness(){
+		if(playerNumber==-1 && this != island.wilderniss){
+			Debug.LogError ("NOT WILDERNISS! But -1 playernumber!? " + this.name);
+		}
 		return this == island.wilderniss;
 	}
 
@@ -188,7 +210,12 @@ public class City : IXmlSerializable{
 			myStructures.Remove (structure);
 			cityBalance -= structure.maintenancecost;
 		} else {
-			Debug.LogError ("This structure "+structure.ToString () +" does not belong to this city "); 
+			//this is no error if this is wilderniss
+			if(structure is Warehouse){
+				return;
+			}
+
+			Debug.LogError (this.name + " This structure "+structure.ToString () +" does not belong to this city "); 
 		}
 
 	}
@@ -257,19 +284,17 @@ public class City : IXmlSerializable{
 		myInv = new Inventory ();
 		myInv.ReadXml (reader);
 		BuildController bc = BuildController.Instance;
-		reader.ReadToFollowing ("Structures");
-		Debug.Log (reader.Name);
 		//TODO change this to smth better
 		//weird bug workaround
 		//not working with nextsibling
 		//not like in someplaces
 		//but for now its working
-		while(reader.Read ()) {
-			if(reader.Name=="Structures"){
-				break;
-			}
-
-			if (reader.Name == "Structure" ) {
+		reader.ReadToFollowing ("Structures");
+//		while(reader.ReadToFollowing ("Structure")==false){
+//			reader.Read ();
+//		}
+		if (reader.ReadToDescendant ("Structure")) {
+			do {
 				int x = int.Parse (reader.GetAttribute ("BuildingTile_X"));
 				int y = int.Parse (reader.GetAttribute ("BuildingTile_Y"));
 				int buildID = int.Parse (reader.GetAttribute ("BuildID"));
@@ -285,11 +310,15 @@ public class City : IXmlSerializable{
 					((Growable)s).ReadXml (reader);
 				} else if (s is HomeBuilding) {
 					((HomeBuilding)s).ReadXml (reader);
+					myHomes.Add ((HomeBuilding )s);
 				}
 				bc.AddLoadedPlacedStructure (buildID, s, t);
 				myStructures.Add (s);
-			}
+			} while(reader.ReadToNextSibling ("Structure"));
 		}
+//		}
+
+//		}
 
 	}
 }

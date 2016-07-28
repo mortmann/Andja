@@ -98,7 +98,7 @@ public class Worker : IXmlSerializable{
 				return;
 			}
 			if (myHome is MarketBuilding) {
-				((MarketBuilding)myHome).city.myInv.addIventory (inventory);
+				((MarketBuilding)myHome).City.myInv.addIventory (inventory);
 			}
 			if (myHome is ProductionBuilding) {
 				((ProductionBuilding)myHome).addToIntake (inventory); 

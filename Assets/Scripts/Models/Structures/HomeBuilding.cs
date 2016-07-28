@@ -62,18 +62,18 @@ public class HomeBuilding : Structure{
 	}
 
 	public override void update (float deltaTime) {
-		if(city==null||city.playerNumber==-1){
+		if(City==null||City.playerNumber==-1){
 			//here the people are very unhappy and will leave veryfast
 			return;
 		}
 		float allPercentage = 0;
 		int count = 0;
 		bool percCritical=false;
-		foreach (Need n in city.allNeeds.Keys) {
+		foreach (Need n in City.allNeeds.Keys) {
 			if (n.startLevel <= buildingLevel && n.popCount <= pc.maxPopulationCount) {
 				if (n.structure == null) {
-					allPercentage += city.allNeeds [n];
-					if(city.allNeeds [n] < 0.4f){
+					allPercentage += City.allNeeds [n];
+					if(City.allNeeds [n] < 0.4f){
 						percCritical=true;
 					}
 				} else {

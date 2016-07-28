@@ -17,7 +17,7 @@ public class Pathfinding  {
 	protected List<Tile> roadTilesAroundEndStructure;
 	private Vector3 pos;
 	public float rotation;
-	private Transform transform;
+	public Transform transform;
 	public Queue<Tile> backPath;
 
 	private float _speed;
@@ -35,7 +35,7 @@ public class Pathfinding  {
 	}
 	private path_mode pathmode;
 
-	public Pathfinding( Transform transform, float speed, Tile startTile , path_mode pm = path_mode.world){
+	public Pathfinding( float speed, Tile startTile , path_mode pm = path_mode.world){
 		currTile = startTile;
 		destTile = startTile;
 		X = currTile.X;
@@ -43,7 +43,6 @@ public class Pathfinding  {
 		dest_X = currTile.X;
 		dest_Y = currTile.Y;
 		this.speed = speed;
-		this.transform = transform;
 		pathmode = pm;
 		World.current.RegisterTileGraphChanged (WorldTGraphUpdate);
 	}
@@ -97,9 +96,10 @@ public class Pathfinding  {
 	public Tile currTile {
 		get { return _currTile; }
 		 set { 
-			X = value.X;
-			Y = value.Y;
-			_currTile = value; }
+				X = value.X;
+				Y = value.Y;
+			_currTile = value; 
+		}
 	}
 
 	public void WorldTGraphUpdate(World world){
@@ -126,6 +126,8 @@ public class Pathfinding  {
 			if(X>=dest_X-0.1f && X <= dest_X + 0.1f && Y >= dest_Y - 0.1f && Y <= dest_Y + 0.1f) {
 				//we are near enough
 				currTile = WorldController.Instance.world.GetTileAt(X, Y);
+				nextTile = null;
+				destTile = currTile;
 				return Vector3.zero;
 			}
 			Vector3 dir = new Vector3(dest_X - X, dest_Y - Y);

@@ -138,7 +138,7 @@ public class ProductionBuilding : UserStructure {
 		if (jobsToDo.Count == 0 && nearestMarketBuilding != null) {
 			getItems = new List<Item>(needItems.Keys);
 			for (int i = 0; i < getItems.Count; i++) {
-				if(city.hasItem (getItems[i]) == false){
+				if(City.hasItem (getItems[i]) == false){
 					needItems.Remove (getItems[i]);
 
 				}
@@ -228,7 +228,7 @@ public class ProductionBuilding : UserStructure {
 			}
 
 		}
-		city.RegisterStructureAdded (OnStructureBuild);
+		City.RegisterStructureAdded (OnStructureBuild);
 	}
 	public Item[] hasNeedItem(Item[] output){
 		List<Item> items = new List<Item> ();

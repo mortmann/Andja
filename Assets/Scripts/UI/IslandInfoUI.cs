@@ -25,6 +25,7 @@ public class IslandInfoUI : MonoBehaviour {
 		string text="| ";
 		foreach (Fertility item in cc.nearestIsland.myFertilities) {
 			text+=item.name+" | ";
+
 		}
 		City c = cc.nearestIsland.myCities.Find (x => x.playerNumber == pc.number);
 		if(c !=null){
@@ -35,6 +36,14 @@ public class IslandInfoUI : MonoBehaviour {
 
 			text += count+"P";
 			text += " | " + c.cityBalance+"$";
+			text += "\n";
+			Item[] items = c.myInv.getBuildMaterial ();
+			for (int i = 0; i < items.Length; i++) {
+				if(items[i]==null){
+					continue;				
+				}
+				text += " | " + items[i].name+"="+items[i].count;	
+			}
 		}
 		fertilityText.text = text;
 	}

@@ -26,14 +26,6 @@ public class World : IXmlSerializable{
 	Action<World> cbTileGraphChanged;
     public World(int width = 1000, int height = 1000){
 		SetupWorld (width,height);
-    }
-	public World(){
-	}
-	public void SetupWorld(int Width, int Height){
-		current = this;
-		this.Width = Width;
-		this.Height = Width;
-		tiles = new Tile[Width, Height];
 		for (int x = 0; x < Width; x++) {
 			for (int y = 0; y < Height; y++) {
 				tiles [x, y] = new Tile (x, y);
@@ -49,21 +41,34 @@ public class World : IXmlSerializable{
 
 			}
 		}
+		CreateUnit(tiles[42, 38]);    
+		CreateIsland (41, 41);
+    }
+	public World(){
+	}
+	public void SetupWorld(int Width, int Height){
+		current = this;
+		this.Width = Width;
+		this.Height = Width;
+		tiles = new Tile[Width, Height];
 		allNeeds = GameObject.FindObjectOfType<BuildController>().allNeeds;
 		allFertilities = GameObject.FindObjectOfType<BuildController>().allFertilities;
 		idToFertilities= GameObject.FindObjectOfType<BuildController>().idToFertilities;
 		tileGraph = new Path_TileGraph(this);
 		islandList = new List<Island>();
 		units = new List<Unit>();
-//		CreateUnit(tiles[42, 38]);    
-		CreateIsland (41, 41);
+
 	}
     internal void update(float deltaTime) {
         foreach(Island i in islandList) {
             i.update(deltaTime);
         }
     }
-
+	internal void fixedupdate(float deltaTime){
+		foreach (Unit item in units) {
+			item.Update (deltaTime);
+		}
+	}
 	public void CreateIsland(int x, int y){
 		Tile t = GetTileAt (x, y);
 		if(t.Type == TileType.Water){
@@ -124,9 +129,7 @@ public class World : IXmlSerializable{
         return tiles[x, y];
     }
     public Unit CreateUnit(Tile t) {
-		GameObject go = GameObject.Instantiate((GameObject)Resources.Load ("Prefabs/ship",typeof(GameObject)));
-//        Unit c = go.AddComponent<Unit>();
-		Unit c = go.GetComponent<Unit> ();
+		Unit c = new Unit (t);
         units.Add(c);
         if (cbUnitCreated != null)
             cbUnitCreated(c);
@@ -251,21 +254,15 @@ public class World : IXmlSerializable{
 			writer.WriteEndElement();
 		}
 		writer.WriteEndElement();
-//
-//		writer.WriteStartElement("Units");
-//		foreach(Unit c in units) {
-//			writer.WriteStartElement("Character");
-//			c.WriteXml(writer);
-//			writer.WriteEndElement();
-//
-//		}
-//		writer.WriteEndElement();
-//
-		/*		writer.WriteStartElement("Width");
-		writer.WriteValue(Width);
-		writer.WriteEndElement();
-*/
 
+		writer.WriteStartElement("Units");
+		foreach(Unit c in units) {
+			writer.WriteStartElement("Unit");
+			c.WriteXml(writer);
+			writer.WriteEndElement();
+
+		}
+		writer.WriteEndElement();
 
 	}
 
@@ -280,14 +277,17 @@ public class World : IXmlSerializable{
 		while(reader.Read()) {
 			switch(reader.Name) {
 			case "Tiles":
-				ReadXml_Tiles(reader);
+				if(reader.IsStartElement ())
+					ReadXml_Tiles(reader);
 				break;
 			case "Islands":
-				ReadXml_Islands(reader);
+				if(reader.IsStartElement ())
+					ReadXml_Islands(reader);
 				break;
-//			case "Units":
-//				ReadXml_Units(reader);
-//				break; 
+			case "Units":
+				if(reader.IsStartElement ())
+					ReadXml_Units(reader);
+				break; 
 			}
 		}
 

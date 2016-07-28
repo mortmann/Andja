@@ -38,7 +38,7 @@ public class UIController : MonoBehaviour {
 			OpenProduceUI ((UserStructure)str);
 		}
 		if (str is MarketBuilding || str is Warehouse) {
-			OpenCityInventory (str.city);
+			OpenCityInventory (str.City);
 		}
 	}
 	public void OpenCityInventory(City city, bool trade = false){
@@ -99,14 +99,14 @@ public class UIController : MonoBehaviour {
 		if (u.rangeUStructure != null) {
 			if (u.rangeUStructure is Warehouse) {
 				CloseRightUI ();
-				u.rangeUStructure.city.tradeUnit = u;
-				OpenCityInventory (u.rangeUStructure.city,true);
+				u.rangeUStructure.City.tradeUnit = u;
+				OpenCityInventory (u.rangeUStructure.City,true);
 			}
 		}
 		buildingCanvas.SetActive (false);
-		unitCanvas.SetActive (true);
 		CloseInfoUI ();
 		OpenInfoUI ();
+		unitCanvas.SetActive (true);
 		unitCanvas.GetComponent<UnitUI> ().Show (u);
 	}
 

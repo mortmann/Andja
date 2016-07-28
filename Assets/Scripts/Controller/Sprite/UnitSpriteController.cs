@@ -20,35 +20,35 @@ public class UnitSpriteController : MonoBehaviour {
         }
     }
 
-    private void OnUnitCreated(Unit c) {
+	private void OnUnitCreated(Unit u) {
         // Create a visual GameObject linked to this data.
         // Create a 2d box collider around the unit
 
-        // FIXME: Does not consider multi-tile objects nor rotated objects
 
         // This creates a new GameObject and adds it to our scene.
-        GameObject char_go = c.GetGameObject();
+		GameObject char_go = new GameObject();
 
         // Add our tile/GO pair to the dictionary.
-        unitGameObjectMap.Add(c, char_go);
+        unitGameObjectMap.Add(u, char_go);
 
         char_go.name = "Ship";
-        char_go.transform.position = new Vector3(c.X,c.Y,0);
         char_go.transform.SetParent(this.transform, true);
-        
-//        BoxCollider2D col = char_go.AddComponent<BoxCollider2D>();
-//        col.size = new Vector2(unitSprites["ship"].textureRect.size.x / unitSprites["ship"].pixelsPerUnit, unitSprites["ship"].textureRect.size.y / unitSprites["ship"].pixelsPerUnit);
-        //unitSprites["ship"].rect.size / unitSprites["ship"].pixelsPerUnit;    
-//        Unit u = char_go.GetComponent<Unit>();
-//        u.width = unitSprites["ship"].textureRect.size.x / unitSprites["ship"].pixelsPerUnit;
-//        u.height = unitSprites["ship"].textureRect.size.y / unitSprites["ship"].pixelsPerUnit;
-//        SpriteRenderer sr = char_go.AddComponent<SpriteRenderer>();
-//        sr.sprite = unitSprites["ship"];
-//        sr.sortingLayerName = "Units";
+		char_go.AddComponent<UnitHoldingScript> ().unit=u;
+		Rigidbody2D r2d = char_go.AddComponent<Rigidbody2D> (); 
+		r2d.gravityScale = 0;       
+		BoxCollider2D col = char_go.AddComponent<BoxCollider2D>();
+        col.size = new Vector2(unitSprites["ship"].textureRect.size.x / unitSprites["ship"].pixelsPerUnit, unitSprites["ship"].textureRect.size.y / unitSprites["ship"].pixelsPerUnit);
+//        unitSprites["ship"].rect.size / unitSprites["ship"].pixelsPerUnit;    
+        u.width = unitSprites["ship"].textureRect.size.x / unitSprites["ship"].pixelsPerUnit;
+        u.height = unitSprites["ship"].textureRect.size.y / unitSprites["ship"].pixelsPerUnit;
+        SpriteRenderer sr = char_go.AddComponent<SpriteRenderer>();
+        sr.sprite = unitSprites["ship"];
+        sr.sortingLayerName = "Units";
 
+		u.SetGameObject (char_go);
         // Register our callback so that our GameObject gets updated whenever
         // the object's into changes.
-        c.RegisterOnChangedCallback(OnUnitChanged);
+        u.RegisterOnChangedCallback(OnUnitChanged);
     }
     void OnUnitChanged(Unit c) {
         //Debug.Log("OnFurnitureChanged");

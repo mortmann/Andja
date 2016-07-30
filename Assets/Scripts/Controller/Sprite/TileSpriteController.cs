@@ -51,6 +51,7 @@ public class TileSpriteController : MonoBehaviour {
 			sr.sprite = darkLayerSprite;
 			sr.sortingLayerName = "DarkLayer";
 			darkLayer.transform.localScale = new Vector3 (world.Width,world.Height);
+			gameObject.name="DarkLayer";
 		} else {
 			GameObject.Destroy (darkLayer);
 		}

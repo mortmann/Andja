@@ -6,6 +6,9 @@ using System.Xml.Serialization;
 
 public class Warehouse : MarketBuilding {
 	public List<Unit> inRangeUnits;
+
+	public Tile tradeTile;
+
 	public Warehouse(int id){
 		inRangeUnits = new List<Unit> ();
 		contactRange = 6.3f;
@@ -68,18 +71,30 @@ public class Warehouse : MarketBuilding {
 	public override void OnBuild(){
 		//changethis code?
 		Tile t = myBuildingTiles [0];
+		Tile temp=null;
 		int i = 0;
-		while(t.myIsland == null){
-			t = myBuildingTiles [i];
-			i++;
-			if(myBuildingTiles.Count < i){
-				break;
+		foreach (Tile item in myBuildingTiles) {
+			if(item.myIsland!=null){
+				t = item;
+			}
+			if (item.Type == TileType.Water){
+				if(temp==null||temp.X>item.X||temp.Y>item.Y){
+					temp = item;	
+				}
 			}
 		}
+		//now we have the tile thats has the smallest x/y 
+		//to get the tile we now have to rotate a vector thats
+		//1 up and 1 left from the temptile
+		Vector3 rot = new Vector3 (-1, 1, 0);
+		rot = Quaternion.AngleAxis (rotated, new Vector3(0,0,1)) * rot;
+		tradeTile = World.current.GetTileAt (temp.X+rot.x,temp.Y+rot.y);
+
+
 		if(t.myIsland.myCities.Exists (x=>x.playerNumber==PlayerController.Instance.number)){
 			this.City = t.myIsland.myCities.Find (x => x.playerNumber == PlayerController.Instance.number);
 		} else {
-			this.City = BuildController.Instance.CreateCity(t);
+			this.City = BuildController.Instance.CreateCity(t,this);
 		}
 
 		if (City == null) {
@@ -88,6 +103,9 @@ public class Warehouse : MarketBuilding {
 		//dostuff thats happen when build
 		City.addTiles (myRangeTiles);
 		City.addTiles (new HashSet<Tile>(myBuildingTiles));
+	}
+	public Tile getTradeTile(){
+		return tradeTile; //maybe this changes or not s
 	}
 
 	public override void OnClick (){
@@ -105,4 +123,5 @@ public class Warehouse : MarketBuilding {
 	public override void WriteXml (XmlWriter writer){
 		base.WriteXml (writer);
 	}
+
 }

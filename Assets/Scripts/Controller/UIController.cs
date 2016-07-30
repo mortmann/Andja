@@ -10,6 +10,7 @@ public class UIController : MonoBehaviour {
 	public GameObject rightCanvas;
 	public GameObject CityInventoryCanvas;
 	public GameObject citizenCanvas;
+	public GameObject tradeMapCanvas;
 	public Structure oldStr;
 
 	void Start(){
@@ -150,9 +151,16 @@ public class UIController : MonoBehaviour {
 
 	}
 	public void CloseHomeUI(){
-		
+		CloseRightUI ();
 	}
+	public void OpenTradeMenu(){
+		CloseChooseBuild ();
+		tradeMapCanvas.SetActive (true);
 
+	}
+	public void CloseTradeMenu(){
+		tradeMapCanvas.SetActive (false);
+	}
 	public void Escape() {
 		CloseHomeUI ();
 		CloseInfoUI ();
@@ -160,6 +168,7 @@ public class UIController : MonoBehaviour {
 		CloseUnitUI ();
 		CloseChooseBuild ();
 		CloseRightUI ();
+		CloseTradeMenu ();
 	}
 
 

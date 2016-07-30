@@ -26,23 +26,19 @@ public class World : IXmlSerializable{
 	Action<World> cbTileGraphChanged;
     public World(int width = 1000, int height = 1000){
 		SetupWorld (width,height);
-		for (int x = 0; x < Width; x++) {
-			for (int y = 0; y < Height; y++) {
-				tiles [x, y] = new Tile (x, y);
-
-				if (x > 40 && x < 60) {
-					if (y > 40 && y < 60) {
-						tiles[x, y].Type = TileType.Dirt;
-					}
-					if (x > 47 && x < 53 && y > 47 && y < 53) {
-						tiles[x, y].Type = TileType.Mountain;
-					}
-				}
-
+		for (int x = 30; x < 40; x++) {
+			for (int y = 40; y < 60; y++) {
+				tiles[x, y].Type = TileType.Dirt;
+			}
+		}
+		for (int x = 60; x < 70; x++) {
+			for (int y = 40; y < 60; y++) {
+				tiles[x, y].Type = TileType.Dirt;
 			}
 		}
 		CreateUnit(tiles[42, 38]);    
-		CreateIsland (41, 41);
+		CreateIsland (31, 41);
+		CreateIsland (61, 41);
     }
 	public World(){
 	}
@@ -51,6 +47,11 @@ public class World : IXmlSerializable{
 		this.Width = Width;
 		this.Height = Width;
 		tiles = new Tile[Width, Height];
+		for (int x = 0; x < Width; x++) {
+			for (int y = 0; y < Height; y++) {
+				tiles [x, y] = new Tile (x, y);
+			}
+		}
 		allNeeds = GameObject.FindObjectOfType<BuildController>().allNeeds;
 		allFertilities = GameObject.FindObjectOfType<BuildController>().allFertilities;
 		idToFertilities= GameObject.FindObjectOfType<BuildController>().idToFertilities;
@@ -79,7 +80,7 @@ public class World : IXmlSerializable{
 		float third = (float)Height/3f;
 		Climate myClimate =(Climate)Mathf.RoundToInt ( t.Y / third);
 		Fertility[] fers = new Fertility[3];
-		List<Fertility> climFer = BuildController.Instance.allFertilities [myClimate];
+		List<Fertility> climFer = new List<Fertility>(BuildController.Instance.allFertilities [myClimate]);
 
 		for (int i = 0; i < fers.Length; i++) {
 			Fertility f = climFer[UnityEngine.Random.Range (0,climFer.Count)];
@@ -183,6 +184,7 @@ public class World : IXmlSerializable{
 		if (cbWorkerCreated != null)
 			cbWorkerCreated(worker);
 	}
+	#region callbacks
 	public void RegisterTileGraphChanged(Action<World> callbackfunc) {
 		cbTileGraphChanged += callbackfunc;
 	}
@@ -219,13 +221,13 @@ public class World : IXmlSerializable{
 
         cbTileChanged(t);
     }
-
+	#endregion
 	//////////////////////////////////////////////////////////////////////////////////////
 	/// 
 	/// 						SAVING & LOADING
 	/// 
 	//////////////////////////////////////////////////////////////////////////////////////
-
+	#region xmlsave
 	public XmlSchema GetSchema() {
 		return null;
 	}
@@ -332,5 +334,5 @@ public class World : IXmlSerializable{
 			} while( reader.ReadToNextSibling("Unit") );
 		}
 	}
-
+	#endregion
 }

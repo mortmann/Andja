@@ -5,8 +5,9 @@ using UnityEngine.EventSystems;
 public class CameraController : MonoBehaviour {
 	Vector3 lastFramePosition;
 	Vector3 currFramePosition;
-	public Vector3 upper=new Vector3();
+	public Vector3 upper=new Vector3(1,1);
 	public Vector3 lower=new Vector3();
+	public Vector3 middle=new Vector3();
 	Tile middleTile;
 	public Island nearestIsland;
 	public float zoomLevel;
@@ -36,7 +37,7 @@ public class CameraController : MonoBehaviour {
 		} else {
 			World.current.resetIslandMark ();
 		}
-		Vector3 middle = Camera.main.ScreenToWorldPoint (new Vector3 (Camera.main.pixelWidth/2, Camera.main.pixelHeight/2));
+		middle = Camera.main.ScreenToWorldPoint (new Vector3 (Camera.main.pixelWidth/2, Camera.main.pixelHeight/2));
 		middleTile = World.current.GetTileAt (middle.x,middle.y);
 		findNearestIsland ();
 		World w = World.current;

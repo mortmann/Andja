@@ -15,12 +15,12 @@ public class UnitSpriteController : MonoBehaviour {
         unitGameObjectMap = new Dictionary<Unit, GameObject>();
         LoadSprites();
         world.RegisterUnitCreated(OnUnitCreated);
-        foreach (Unit c in world.units) {
-            OnUnitCreated(c);
-        }
+		foreach (var item in world.units) {
+			OnUnitCreated (item);
+		}        
     }
 
-	private void OnUnitCreated(Unit u) {
+	public void OnUnitCreated(Unit u) {
         // Create a visual GameObject linked to this data.
         // Create a 2d box collider around the unit
 

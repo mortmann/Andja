@@ -19,7 +19,9 @@ public class KeyboardController : MonoBehaviour {
 			mc.Escape ();
 			uic.Escape ();
 		}
-	
+		if(Input.GetKeyDown (KeyCode.M)){
+			uic.OpenTradeMenu ();
+		}
 	}
 
 

@@ -14,7 +14,7 @@ public class Unit : IXmlSerializable {
 	public Transform transform;
 	public Tile startTile;
 
-
+	public TradeRoute tradeRoute;
 
 	float speed;   // Tiles per second
 
@@ -73,6 +73,18 @@ public class Unit : IXmlSerializable {
 		if(myGameobject==null){
 			return;
 		}
+		if(tradeRoute!=null){
+			if(pathfinding.currTile==tradeRoute.getCurrentDestination ()){
+				//do trading here
+				//take some time todo that
+
+				//then get a next destination
+				AddMovementCommand (tradeRoute.getNextDestination ());
+			} else {
+				//start the route
+				AddMovementCommand (tradeRoute.getNextDestination ());
+			}
+		}
 		r2d.MovePosition (transform.position + pathfinding.Update_DoMovement(deltaTime));
 		r2d.MoveRotation (transform.rotation.z + pathfinding.UpdateRotation ());
 		if(hasChanged){
@@ -100,6 +112,15 @@ public class Unit : IXmlSerializable {
         cbUnitChanged -= cb;
     }
 
+	public void AddMovementCommand(Tile t) {
+		if(t==null){
+			//not really an error it can happen
+			Debug.LogWarning ("AddMovementCommand |This Tile is null -- REMOVE THIS AFTER DEBUGGING!");
+			return;
+		} else {
+			AddMovementCommand (t.X,t.Y);
+		}
+	}
     public void AddMovementCommand(float x, float y) {
 		Tile tile = World.current.GetTileAt(x, y);
         if(tile == null){

@@ -90,6 +90,11 @@ public class City : IXmlSerializable{
 			}
 		}
     }
+	/// <summary>
+	/// USE only for the creation of non player city aka Wilderniss
+	/// </summary>
+	/// <param name="tiles">Tiles.</param>
+	/// <param name="island">Island.</param>
 	public City(List<Tile> tiles,Island island){
 //		tiles.ForEach (x => x.myCity = this);
 		List<Tile> temp = new List<Tile>(tiles);
@@ -304,6 +309,7 @@ public class City : IXmlSerializable{
 					((MarketBuilding)s).ReadXml (reader);
 				} else if (s is Warehouse) {
 					((Warehouse)s).ReadXml (reader);
+					myWarehouse = ((Warehouse)s);
 				} else if (s is UserStructure) {
 					((UserStructure)s).ReadXml (reader);
 				} else if (s is Growable) {

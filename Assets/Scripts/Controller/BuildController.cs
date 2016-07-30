@@ -225,7 +225,7 @@ public class BuildController : MonoBehaviour {
 		}
 		BuildOnTile (tiles, true, structurePrototypes[id]);
 	}
-	public City CreateCity(Tile t){
+	public City CreateCity(Tile t,Warehouse w){
 		if(t.myIsland == null){
 			Debug.LogError ("CreateCity called not on a island!");
 			return null;
@@ -235,6 +235,8 @@ public class BuildController : MonoBehaviour {
 			return null;
 		}
 		City c = t.myIsland.CreateCity ();
+		// needed for mapimage
+		c.addStructure (w);// dont know if this is good ...
 		if(cbCityCreated != null) {
 			cbCityCreated (c);
 		}

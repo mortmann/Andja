@@ -128,6 +128,7 @@ public class Pathfinding  {
 				currTile = WorldController.Instance.world.GetTileAt(X, Y);
 				nextTile = null;
 				destTile = currTile;
+				IsAtDest = true;
 				return Vector3.zero;
 			}
 			Vector3 dir = new Vector3(dest_X - X, dest_Y - Y);
@@ -147,6 +148,7 @@ public class Pathfinding  {
 			//no move command so return!
 			if (destTile == currTile) {
 //				IsAtDest = true;
+				IsAtDest = true;
 				return Vector3.zero;
 			}
 			if (nextTile == null || nextTile == currTile) {

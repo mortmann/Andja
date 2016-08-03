@@ -29,11 +29,16 @@ public class City : IXmlSerializable{
 	public Warehouse myWarehouse;
 	public Action<Structure> cbStructureAdded;
 	public Action<Structure> cbRegisterTradeOffer;
+	private string _name="";
 	public string name {get{
 			if(this.IsWilderness ()){
 				return "Wilderniss";
 			}
-			return "City "+island.myCities.IndexOf (this);}}
+			if(_name.Length==0){
+				return "City "+island.myCities.IndexOf (this);	
+			}
+			return _name;
+			}}
 
 	public City(int playerNr,Island island,List<Need> allNeedsList) {
 		this.playerNumber = playerNr;
@@ -64,9 +69,11 @@ public class City : IXmlSerializable{
 				idToNeed.Add (allNeedsList [i].ID, allNeedsList [i]);
 			}
 			useTick = 30f;
-//		useTickTimer = useTick;
-    }
 
+		_name = "<City>" + UnityEngine.Random.Range (0, 1000);
+		//		useTickTimer = useTick;
+    }
+	 
     internal void update(float deltaTime) {
 		for (int i = 0; i < myStructures.Count; i++) {
 			myStructures[i].update(deltaTime);
@@ -82,6 +89,7 @@ public class City : IXmlSerializable{
 		for (int i = 0; i < myHomes.Count; i++) {
 			citizienCount [myHomes [i].buildingLevel] += myHomes [i].people;
 		}
+
 		useTickTimer -= deltaTime;
 		if(useTickTimer<=0){
 			useTickTimer = useTick;
@@ -118,17 +126,18 @@ public class City : IXmlSerializable{
 		}
 		if(str is HomeBuilding) {
 			myHomes.Add ((HomeBuilding)str);
-		} else {
-			if(str is Warehouse){
-				if(myWarehouse!=null){
-					Debug.LogError ("There should be only one Warehouse per City!");
-					return;
-				}
-				myWarehouse = (Warehouse)str;
+		} 
+
+		if(str is Warehouse){
+			if(myWarehouse!=null){
+				Debug.LogError ("There should be only one Warehouse per City!");
+				return;
 			}
-			cityBalance += str.maintenancecost;
-			myStructures.Add (str);
+			myWarehouse = (Warehouse)str;
 		}
+		cityBalance += str.maintenancecost;
+		myStructures.Add (str);
+
 		if(cbStructureAdded!=null){
 			cbStructureAdded (str);
 		}
@@ -172,21 +181,23 @@ public class City : IXmlSerializable{
 		return this == island.wilderniss;
 	}
 
-	public void tradeWithShip(Item toTrade){
+	public void tradeWithShip(Item toTrade,int amount=50, Unit ship = null){
 		if(myWarehouse==null || myWarehouse.inRangeUnits.Count==0  || toTrade ==null){
 			return;
 		}
-		if (tradeUnit == null) {
-			myInv.moveItem (myWarehouse.inRangeUnits [0].inventory, toTrade,5);
+		if (tradeUnit == null && ship==null) {
+			myInv.moveItem (myWarehouse.inRangeUnits [0].inventory, toTrade,amount);
+		} else if(ship==null){
+			myInv.moveItem (tradeUnit.inventory, toTrade,amount);
 		} else {
-			myInv.moveItem (tradeUnit.inventory, toTrade,50);
+			myInv.moveItem (ship.inventory, toTrade,amount);
 		}
 	}
-	public void tradeFromShip(Unit u,Item getTrade){
+	public void tradeFromShip(Unit u,Item getTrade,int amount = 50){
 		if(getTrade ==null){
 			return;
 		}
-		u.inventory.moveItem (myInv,getTrade,50);
+		u.inventory.moveItem (myInv,getTrade,amount);
 	}
 	public float getPercentage(Need need){
 		if(idToNeed.ContainsKey (need.ID)==false){

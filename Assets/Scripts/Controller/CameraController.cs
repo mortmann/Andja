@@ -62,7 +62,6 @@ public class CameraController : MonoBehaviour {
 			}
 		}
 		Camera.main.transform.Translate (diff);
-		Camera.main.orthographicSize = Mathf.Clamp(Camera.main.orthographicSize, 3f, 25f);
 		lastFramePosition = Camera.main.ScreenToWorldPoint( Input.mousePosition );
 		lastFramePosition.z = 0;
 	}
@@ -85,6 +84,8 @@ public class CameraController : MonoBehaviour {
 			return;
 		}
 		Camera.main.orthographicSize -= Camera.main.orthographicSize * Input.GetAxis("Mouse ScrollWheel");
+		Camera.main.orthographicSize = Mathf.Clamp(Camera.main.orthographicSize, 3f, 25f);
+
 	}
 	public Vector3 UpdateKeyboardCameraMovement(){
 		if (Mathf.Abs (Input.GetAxis ("Horizontal")) == 0 && Mathf.Abs (Input.GetAxis ("Vertical")) == 0) {

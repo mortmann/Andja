@@ -129,10 +129,31 @@ public class Inventory : IXmlSerializable{
 		return false;
 	}
 
-
+	/// <summary>
+	/// Warning find the first Item and returns the amount!
+	/// WARNING!!!!!
+	/// </summary>
+	/// <returns>The amount for item.</returns>
+	/// <param name="item">Item.</param>
 	public int GetAmountForItem(Item item){
 		return getItemInInventory (item).count;
 	}
+
+	public int GetTotalAmountFor(Item item){
+		if(numberOfSpaces==-1){
+			//theres only one stack
+			return GetAmountForItem (item);
+		} 
+		//now check for everyspace if its the item
+		int count=0;
+		foreach (Item inInv in items.Values) {
+			if(inInv.ID == item.ID){
+				count += inInv.count;
+			}
+		}
+		return count;
+	}
+
 
 	/// <summary>
 	/// moves item amount to the given inventory

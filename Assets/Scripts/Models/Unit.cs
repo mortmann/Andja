@@ -45,6 +45,7 @@ public class Unit : IXmlSerializable {
 	public bool isShip;
 	public bool hasChanged = false;
 
+	public float tradeTime=1.5f;
 
 	public Unit(Tile t,UnitType ut=UnitType.ship) {
 		speed = 2f;
@@ -73,14 +74,21 @@ public class Unit : IXmlSerializable {
 		if(myGameobject==null){
 			return;
 		}
-		if(tradeRoute!=null){
-			if(pathfinding.currTile==tradeRoute.getCurrentDestination ()){
+		if(tradeRoute!=null&&tradeRoute.Valid){
+			 
+			if(pathfinding.IsAtDest&&tradeRoute.isStarted){
 				//do trading here
 				//take some time todo that
-
-				//then get a next destination
-				AddMovementCommand (tradeRoute.getNextDestination ());
-			} else {
+				if(tradeTime<0){
+					tradeRoute.doCurrentTrade (this);
+					tradeTime = 1.5f;
+					//then get a next destination
+					AddMovementCommand (tradeRoute.getNextDestination ());	
+				} else {
+					tradeTime -= deltaTime;
+				}
+			} 
+			if(tradeRoute.isStarted==false){
 				//start the route
 				AddMovementCommand (tradeRoute.getNextDestination ());
 			}
@@ -115,13 +123,16 @@ public class Unit : IXmlSerializable {
 	public void AddMovementCommand(Tile t) {
 		if(t==null){
 			//not really an error it can happen
-			Debug.LogWarning ("AddMovementCommand |This Tile is null -- REMOVE THIS AFTER DEBUGGING!");
 			return;
 		} else {
+			if(t==pathfinding.currTile){
+				return;
+			}
 			AddMovementCommand (t.X,t.Y);
 		}
 	}
     public void AddMovementCommand(float x, float y) {
+		
 		Tile tile = World.current.GetTileAt(x, y);
         if(tile == null){
             return;

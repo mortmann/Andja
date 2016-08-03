@@ -11,14 +11,11 @@ public class MapImage : MonoBehaviour {
 	GameObject cameraRect;
 	CameraController cc;
 	Texture2D tex;
-	float refresh=0;
 	//for tradingroute
-	TradeRoute tradeRoute;
+	public Dictionary<Warehouse,GameObject> warehouseToGO;
+	public Dictionary<Unit,GameObject> unitToGO;
 	public GameObject tradingMenu;
-	List<Unit> units;
-	Dictionary<Warehouse,GameObject> warehouseToGO;
-	Dictionary<Unit,GameObject> unitToGO;
-
+	TradePanel tp;
 	// Use this for initialization
 	void Start () {
 		cc = GameObject.FindObjectOfType<CameraController> ();
@@ -53,14 +50,22 @@ public class MapImage : MonoBehaviour {
 		Color co = Color.black;
 		co.a = 0.5f;
 		cameraRect.GetComponent<Image> ().color = co;
-
+		tp = tradingMenu.GetComponent<TradePanel> ();
+		tp.Initialize ();
 		BuildController.Instance.RegisterCityCreated (OnCityCreated);
+		foreach (Island item in w.islandList) {
+			foreach (City c in item.myCities) {
+				if(c.IsWilderness ()){
+					continue;
+				}
+				OnCityCreated (c);
+			}
+		}
 		w.RegisterUnitCreated (OnUnitCreated);
-		units = new List<Unit> ();
 		foreach (Unit item in w.units) {
 			OnUnitCreated (item);
 		}
-		ShowTradeRoute ();
+		tp.Show (w.units[0]);
 	}
 	public void Show(){
 		//do smth when it gets shown
@@ -69,7 +74,6 @@ public class MapImage : MonoBehaviour {
 //		PlayerController pc = PlayerController.Instance;
 		RectTransform rt = mapParts.GetComponent<RectTransform> ();
 		World w = World.current;
-
 		if(c!=null){
 			GameObject g = GameObject.Instantiate (mapCitySelectPrefab);
 			g.transform.SetParent (mapParts.transform);
@@ -77,26 +81,23 @@ public class MapImage : MonoBehaviour {
 			pos.Scale (new Vector3(rt.rect.width/w.Width,rt.rect.height/w.Height));
 			g.transform.localPosition = pos;
 			g.GetComponentInChildren<Text> ().text = c.name;
-			g.GetComponent<Toggle > ().onValueChanged.AddListener (( data ) => { OnToggleClicked (c.myWarehouse); });
+			EventTrigger trigger = g.GetComponent<EventTrigger> ();
+			EventTrigger.Entry entry = new EventTrigger.Entry( );
+			entry.eventID = EventTriggerType.PointerClick;
+			entry.callback.AddListener( ( data ) => { OnWarehouseClick( c ); } );
+			trigger.triggers.Add( entry );
+			g.GetComponentInChildren <Toggle > ().onValueChanged.AddListener (( data ) => { OnToggleClicked (c.myWarehouse); });
 			c.myWarehouse.RegisterOnDestroyCallback (OnWarehouseDestroy);
 			warehouseToGO.Add (c.myWarehouse, g);
 		}
 	}
+	public void OnWarehouseClick(City c){
+		tp.OnWarehouseClick(c);
+	}
+
 	public void OnToggleClicked(Warehouse warehouse){
-		if(tradeRoute == null){
-			tradeRoute = new TradeRoute();
-		}
-
-		Toggle t = warehouseToGO [warehouse].GetComponent<Toggle> ();
-		if(t.isOn){
-			//not that good
-			tradeRoute.AddWarehouse (warehouse);
-			t.GetComponentsInChildren<Text> ()[1].text=""+tradeRoute.GetLastNumber();
-
-		} else {
-			t.GetComponentsInChildren<Text> ()[1].text="";
-			tradeRoute.RemoveWarehouse (warehouse);
-		}
+		Toggle t = warehouseToGO [warehouse].GetComponentInChildren<Toggle> ();
+		tp.OnToggleClicked (warehouse,t);
 	}
 	public void OnWarehouseDestroy(Structure str){
 		if(str is Warehouse == false){
@@ -124,22 +125,11 @@ public class MapImage : MonoBehaviour {
 			Dropdown.OptionData op = new Dropdown.OptionData(u.ToString ());// TODO change this to the name of the unit!
 			d.options.Add (op); //doesnt take strings directly...
 			d.RefreshShownValue (); // it doesnt update on its own! so we have todo it! 
-			units.Add (u);
+			tp.addUnit(u);
 		}
+
 	}
-	public void ShowTradeRoute(){
-		tradeRoute = units [tradingMenu.GetComponentInChildren<Dropdown> ().value].tradeRoute;
-		foreach(Warehouse w in warehouseToGO.Keys){
-			Toggle t = warehouseToGO [w].GetComponent<Toggle> ();
-			if (tradeRoute.Contains (w) == false) {
-				t.GetComponentsInChildren<Text> () [1].text = "";//+tradeRoute.GetLastNumber();
-				t.isOn = false;
-			} else {
-				t.GetComponentsInChildren<Text> () [1].text = ""+tradeRoute.GetNumberFor(w);
-				t.isOn = true;
-	 		}
-		}
-	}
+
 	// Update is called once per frame
 	void Update () {
 		World w = World.current;
@@ -149,7 +139,6 @@ public class MapImage : MonoBehaviour {
 		Vector3 vec = cc.upper - cc.lower;
 		vec /= Mathf.Clamp(cc.zoomLevel,40,cc.zoomLevel);// I dont get why this is working, but it does
 		cameraRect.transform.localScale = 2*((vec));
-		refresh -= Time.deltaTime;
 		foreach (Unit item in w.units) {
 			if(unitToGO.ContainsKey (item)==false){
 				Debug.LogError ("unit got not added");
@@ -163,4 +152,5 @@ public class MapImage : MonoBehaviour {
 		}
 
 	}
+		
 }

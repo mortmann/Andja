@@ -72,7 +72,6 @@ public class Warehouse : MarketBuilding {
 		//changethis code?
 		Tile t = myBuildingTiles [0];
 		Tile temp=null;
-		int i = 0;
 		foreach (Tile item in myBuildingTiles) {
 			if(item.myIsland!=null){
 				t = item;
@@ -87,7 +86,9 @@ public class Warehouse : MarketBuilding {
 		//to get the tile we now have to rotate a vector thats
 		//1 up and 1 left from the temptile
 		Vector3 rot = new Vector3 (-1, 1, 0);
-		rot = Quaternion.AngleAxis (rotated, new Vector3(0,0,1)) * rot;
+		rot = Quaternion.AngleAxis (rotated, new Vector3(0,1,0)) * rot;
+		if (rotated == 180)//cheap fix --update this
+			rot = new Vector3 (1, 1, 0);
 		tradeTile = World.current.GetTileAt (temp.X+rot.x,temp.Y+rot.y);
 
 

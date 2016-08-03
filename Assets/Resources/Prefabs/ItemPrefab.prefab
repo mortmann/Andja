@@ -77,6 +77,7 @@ GameObject:
   - 114: {fileID: 11416498}
   - 114: {fileID: 11451398}
   - 114: {fileID: 11425430}
+  - 114: {fileID: 11476080}
   m_Layer: 5
   m_Name: ItemPrefab
   m_TagString: Untagged
@@ -265,6 +266,20 @@ MonoBehaviour:
     m_VerticalOverflow: 0
     m_LineSpacing: 1
   m_Text: 999t
+--- !u!114 &11476080
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 178454}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 49b546d433b72f841874ac9a80dcebde, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  image: {fileID: 11487936}
+  text: {fileID: 11453570}
+  slider: {fileID: 11408398}
 --- !u!114 &11487936
 MonoBehaviour:
   m_ObjectHideFlags: 1

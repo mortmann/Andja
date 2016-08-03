@@ -182,7 +182,9 @@ public class MouseController : MonoBehaviour {
 			if(structure.mustBeBuildOnMountain == false && structure.mustBeBuildOnShore == false){
 				if (structure.correctSpotOnLand (t) == false) {
 					ShowRedPrefabOnTile (t);
-				} 
+				} else {
+					ShowPrefabOnTile (t);
+				}
 				continue;
 			}
 			if (structure.mustBeBuildOnShore && structure.correctSpotOnShore (structureTiles)){

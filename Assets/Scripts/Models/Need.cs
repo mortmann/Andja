@@ -32,7 +32,11 @@ public class Need {
 		for (int i = startLevel; i < peoples.Length; i++) {
 			neededConsumAmount += uses [i] * ((float)peoples[i]);
 		}
+		if(neededConsumAmount==0){
+			return 0;
+		}
 		neededConsumAmount = Mathf.Clamp (Mathf.RoundToInt (neededConsumAmount),1,Mathf.Infinity);
+
 		float availableAmount = city.GetAmountForThis (item,neededConsumAmount);
 
 		if(availableAmount == 0){

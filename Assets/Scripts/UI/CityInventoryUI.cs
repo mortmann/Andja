@@ -50,7 +50,13 @@ public class CityInventoryUI : MonoBehaviour {
 	}
 
 	void OnItemClick(Item item){
-		city.tradeWithShip (city.myInv.getItem (item));
+		if (trade) {
+			//trade to ship
+			city.tradeWithShip (city.myInv.getItem (item));
+		} else {
+			//select item for trademenu
+			GameObject.FindObjectOfType<TradePanel>().GetClickedItemCity(item);
+		}
 	}
 
 	void AdjustSliderColor(Slider s){

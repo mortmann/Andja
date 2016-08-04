@@ -61,11 +61,11 @@ public class TradePanel : MonoBehaviour {
 			return;
 		}
 		ItemUI g = intToGameObject [pressedItem];
+		g.SetItem (i, unit.inventory.maxStackSize);
 //		pressedItem = -1;
 		intToItem.Add (pressedItem,i.Clone ()); 
 		//set stuff here orso what ever
 		GameObject.FindObjectOfType<UIController> ().CloseRightUI ();
-
 	}
 
 	public void OnItemClick(int i){

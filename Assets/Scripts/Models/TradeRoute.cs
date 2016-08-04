@@ -161,7 +161,7 @@ public class TradeRoute {
 			}
 			c.tradeWithShip (item,needed,u);
 		}
-		//give as much as possible but max the chosen one
+		//give as much as possible but max the choosen one
 		foreach (Item item in t.giving) {
 			c.tradeFromShip (u,item,item.count);
 		}

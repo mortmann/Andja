@@ -270,5 +270,10 @@ public class Pathfinding  {
 		destTile = World.current.GetTileAt (x, y);
 		dest_X = x;
 		dest_Y = y;
+//		Debug.Log ("curr: " + currTile.toString ());
+//		Debug.Log ("dest: " + destTile.toString ()); 
+//		foreach (Tile item in GetPathStar ().path) {
+//			Debug.Log (item.Type); 
+//		}
 	}
 }

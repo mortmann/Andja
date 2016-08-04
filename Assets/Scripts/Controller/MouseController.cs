@@ -114,7 +114,7 @@ public class MouseController : MonoBehaviour {
             UpdateUnit();
 		} 
         if (Input.GetMouseButtonDown(0)) {
-			
+			Debug.Log (GetTileUnderneathMouse ().toString ()); 
 			if( EventSystem.current.IsPointerOverGameObject() ) {
 				return;
 			}
@@ -122,7 +122,7 @@ public class MouseController : MonoBehaviour {
 			RaycastHit2D hit = Physics2D.Raycast(new Vector2(currFramePosition.x, currFramePosition.y), Vector2.zero, 200);
 			DecideWhatUIToShow (hit);
         }
-
+		 
 		// Save the mouse position from this frame
 		// We don't use currFramePosition because we may have moved the camera.
 		lastFramePosition = Camera.main.ScreenToWorldPoint( Input.mousePosition );

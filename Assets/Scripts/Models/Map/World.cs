@@ -39,6 +39,8 @@ public class World : IXmlSerializable{
 		CreateUnit(tiles[42, 38]);    
 		CreateIsland (31, 41);
 		CreateIsland (61, 41);
+		tileGraph = new Path_TileGraph(this);
+
     }
 	public World(){
 	}

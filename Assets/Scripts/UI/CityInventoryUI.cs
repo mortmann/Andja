@@ -6,7 +6,7 @@ public class CityInventoryUI : MonoBehaviour {
 	public GameObject cityname;
 	public GameObject contentCanvas;
 	public GameObject itemPrefab;
-	Dictionary<int, GameObject> itemToGO;
+	Dictionary<int, ItemUI> itemToGO;
 	public bool trade;
 	public City city;
 
@@ -27,24 +27,21 @@ public class CityInventoryUI : MonoBehaviour {
 		}
 		children.ForEach(child => Destroy(child));
 
-		itemToGO = new Dictionary<int, GameObject> ();
+		itemToGO = new Dictionary<int, ItemUI> ();
 		foreach (Item item in city.myInv.items.Values) {
 			GameObject go_i = GameObject.Instantiate (itemPrefab);
 			go_i.name = item.name + " Item";
-			itemToGO.Add (item.ID,go_i);
-			Slider s = go_i.GetComponentInChildren<Slider> ();
-			s.maxValue = city.myInv.maxStackSize;
-			s.value = item.count;
-			EventTrigger trigger = go_i.GetComponent<EventTrigger> ();
-			EventTrigger.Entry entry = new EventTrigger.Entry( );
-			entry.eventID = EventTriggerType.PointerClick;
+			ItemUI iui = go_i.GetComponent<ItemUI> ();
+			itemToGO.Add (item.ID,iui);
+			iui.SetItem (item,city.myInv.maxStackSize,true);
+			// does this need to be here?
+			// or can it be move to itemui?
+			// changes in th future maybe
 			Item i = item.Clone ();
-			entry.callback.AddListener( ( data ) => { OnItemClick( i ); } );
-			trigger.triggers.Add( entry );
-			AdjustSliderColor (s);
-			// set image here
-			Text tons = go_i.GetComponentInChildren<Text> ();
-			tons.text = item.count +"t";
+			iui.AddListener (( data) => {
+				OnItemClick (i);
+			});
+
 			go_i.transform.SetParent (contentCanvas.transform);
 		}
 	}
@@ -59,13 +56,7 @@ public class CityInventoryUI : MonoBehaviour {
 		}
 	}
 
-	void AdjustSliderColor(Slider s){
-		if (s.value / s.maxValue < 0.2f) {
-			s.GetComponentInChildren<Image> ().color = Color.red;
-		} else {
-			s.GetComponentInChildren<Image> ().color = Color.green;
-		}
-	}
+
 //	private void addItemGameObject(Item item){
 //		if(item == null){
 //			return;
@@ -89,22 +80,8 @@ public class CityInventoryUI : MonoBehaviour {
 //	}
 	public void OnInventoryChange(Inventory changedInv){
 		foreach(int i in changedInv.items.Keys){
-			itemToGO [i].GetComponentInChildren<Text> ().text = city.myInv.items[i].count + "t wat";
-			itemToGO [i].GetComponentInChildren<Slider> ().value = city.myInv.items[i].count;
-			AdjustSliderColor (itemToGO[i].GetComponentInChildren<Slider> ());
+			itemToGO [i].ChangeItemCount (city.myInv.items [i].count);
+			itemToGO [i].ChangeMaxValue (city.myInv.maxStackSize);
 		}
 	}
-	// Update is called once per frame
-//	void Update () {
-//		if(city.myInv != null){
-//			foreach (int id in itemToGO.Keys) {
-//				GameObject go = itemToGO [id];
-//				Slider s = go.GetComponentInChildren<Slider> ();
-//				s.value = city.myInv.items[id].count;
-//				AdjustSliderColor (s);
-//				Text t = go.GetComponentInChildren<Text> ();
-//				t.text = city.myInv.items[id].count + "t";
-//			}
-//		}
-//	}
 }

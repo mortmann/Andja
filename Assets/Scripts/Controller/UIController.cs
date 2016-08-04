@@ -161,6 +161,13 @@ public class UIController : MonoBehaviour {
 		tradeMapCanvas.SetActive (true);
 		tradeMapCanvas.GetComponent<MapImage> ().Show();
 	}
+	public void ToggleTradeMenu(){
+		if(tradeMapCanvas.activeSelf){
+			CloseTradeMenu ();
+		}else {
+			OpenTradeMenu ();
+		}
+	}
 	public void CloseTradeMenu(){
 		tradeMapCanvas.SetActive (false);
 	}

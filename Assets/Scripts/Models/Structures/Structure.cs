@@ -106,21 +106,27 @@ public abstract class Structure : IXmlSerializable {
 	public string connectOrientation;
 
 	public abstract Structure Clone ();
+	public virtual void update (float deltaTime){
+	}
+
 
 	/// <summary>
 	/// Extra Build UI for showing stuff when building
 	/// structures. Or so.
 	/// </summary>
 	/// <param name="parent">Its the parent for the extra UI.</param>		
-	public virtual void ExtraBuildUI(GameObject parent,Tile t){
+	public virtual void ExtraBuildUI(GameObject parent){
+		//does nothing normally
+		//stuff here to show for when building this
+		//using this for e.g. farm efficiency bar!
+	}
+	public virtual void UpdateExtraBuildUI(GameObject parent,Tile t){
 		//does nothing normally
 		//stuff here to show for when building this
 		//using this for e.g. farm efficiency bar!
 	}
 
-	public virtual void update (float deltaTime){
-    }
-
+	#region callbacks
 	public void callbackIfnotNull(){
 		if(cbStructureChanged != null)
 			cbStructureChanged (this);
@@ -137,6 +143,8 @@ public abstract class Structure : IXmlSerializable {
 	public void UnregisterOnDestroyCallback(Action<Structure> cb) {
 		cbStructureDestroy -= cb;
 	}
+	#endregion
+	#region placestructure
 	public bool PlaceStructure(List<Tile> tiles){
 		myBuildingTiles = new List<Tile> ();
 
@@ -264,64 +272,12 @@ public abstract class Structure : IXmlSerializable {
 		}
 		return true;
 	}
-	public bool correctSpotOnLand(Tile t){
-		if (Tile.IsBuildType (t.Type) == false)
-			return false;
-		if (t.Structure !=null && t.Structure.canBeBuildOver == false)
-			return false;
-		if(t.myCity == null){//shouldnt never ever happend 
-			Debug.LogError ("this tile doesnt have any city, not even wilderness");
-			return false;
-		}
-		return true;
-	}
 
-	protected bool PlaceOnMountain(List<Tile> tiles){
-		if (tileWidth == 1 && tileHeight == 1) {
-			if (tiles [0].Structure != null && tiles [0].Structure.canBeBuildOver) {
-				if (tiles [0].Structure.name == this.name) {
-					return false;
-				}
-			}
-			if (correctSpotOnMountain  (tiles) == false) {
-				return false;
-			}
-			myBuildingTiles.Add (tiles [0]);
-		} else {
-			if (correctSpotOnMountain (tiles)) {
-				myBuildingTiles.AddRange (tiles);
-			} else {
-				return false;
-			}
-		}
-		return true;
-	}
-	protected bool PlaceOnShore(List<Tile> tiles){
-		if (tileWidth == 1 && tileHeight == 1) {
-			if(tiles [0].Structure.canBeBuildOver){
-				if(tiles [0].Structure.name == this.name){
-					return false;
-				}
-			}
-			if (correctSpotOnShore (tiles) == false) {
-				return false;
-			}
-			myBuildingTiles.Add (tiles[0]);
-		} 
-		else {
-			if(correctSpotOnShore(tiles)){
-				myBuildingTiles.AddRange (tiles);
-			} else {
-				return false;
-			}
-		}
-		return true;
-	}
 
 	public virtual bool SpecialCheckForBuild(List<Tile> tiles){
 		return true;
 	}
-
+	#endregion
 
 	public List<Tile> GetBuildingTiles(float x , float y, bool ignoreRotation = false){
 		x = Mathf.FloorToInt (x);
@@ -427,27 +383,79 @@ public abstract class Structure : IXmlSerializable {
 	}
 	public virtual void OnClickClose (){
 	}
+
+	#region correctspot
 	public bool correctSpotOnLand(List<Tile> tiles){
 		foreach(Tile t in tiles){
 			if(correctSpotOnLand (t) == false){
-				
+
+				return false;
+			}
+		}
+		return true;
+	}
+	public bool correctSpotOnLand(Tile t){
+		if (Tile.IsBuildType (t.Type) == false)
+			return false;
+		if (t.Structure !=null && t.Structure.canBeBuildOver == false)
+			return false;
+		if(t.myCity == null){//shouldnt never ever happend 
+			Debug.LogError ("this tile doesnt have any city, not even wilderness");
+			return false;
+		}
+		return true;
+	}
+
+	protected bool PlaceOnMountain(List<Tile> tiles){
+		if (tileWidth == 1 && tileHeight == 1) {
+			if (tiles [0].Structure != null && tiles [0].Structure.canBeBuildOver) {
+				if (tiles [0].Structure.name == this.name) {
+					return false;
+				}
+			}
+			if (correctSpotOnMountain  (tiles) == false) {
+				return false;
+			}
+			myBuildingTiles.Add (tiles [0]);
+		} else {
+			if (correctSpotOnMountain (tiles)) {
+				myBuildingTiles.AddRange (tiles);
+			} else {
+				return false;
+			}
+		}
+		return true;
+	}
+	protected bool PlaceOnShore(List<Tile> tiles){
+		if (tileWidth == 1 && tileHeight == 1) {
+			if(tiles [0].Structure.canBeBuildOver){
+				if(tiles [0].Structure.name == this.name){
+					return false;
+				}
+			}
+			if (correctSpotOnShore (tiles) == false) {
+				return false;
+			}
+			myBuildingTiles.Add (tiles[0]);
+		} 
+		else {
+			if(correctSpotOnShore(tiles)){
+				myBuildingTiles.AddRange (tiles);
+			} else {
 				return false;
 			}
 		}
 		return true;
 	}
 	public bool correctSpotOnMountain(List<Tile> tiles){
-		
 		return correctSpotForOn (tiles,TileType.Mountain);
 	}
 	public bool correctSpotOnShore(List<Tile> tiles){
-		
 		return correctSpotForOn (tiles,TileType.Water);
 	}
 	public virtual bool islandHasEnoughItemsToBuild(){
 		return true;
 	}
-
 	public bool correctSpotForOn(List<Tile> tiles, TileType tt){
 		switch (rotated){
 		case 0:
@@ -646,6 +654,8 @@ public abstract class Structure : IXmlSerializable {
 		}
 		return true;
 	}
+	#endregion
+	#region rotation
 	public int ChangeRotation(int x , int y, int rotate = 0){
 		if(rotate == 360){
 			return 0;
@@ -674,7 +684,7 @@ public abstract class Structure : IXmlSerializable {
 			rotated = 0;
 		}
 	}
-
+	#endregion
 	public List<Tile> roadsAroundStructure(){
 		List<Tile> roads = new List<Tile>();
 		foreach (Tile item in myBuildingTiles) {
@@ -688,8 +698,9 @@ public abstract class Structure : IXmlSerializable {
 		}
 		return roads;
 	}
-
+	protected virtual void OnDestroy(){}
 	public void Destroy(){
+		OnDestroy ();
 		if (City != null) {
 			City.removeStructure (this);
 		}
@@ -702,6 +713,7 @@ public abstract class Structure : IXmlSerializable {
 		}
 		return name + "@" + BuildTile.toString ();
 	}
+	#region xmlsave
 	//////////////////////////////////////////////////////////////////////////////////////
 	/// 
 	/// 						SAVING & LOADING
@@ -724,5 +736,6 @@ public abstract class Structure : IXmlSerializable {
 		rotated = int.Parse( reader.GetAttribute("Rotated") );
 		buildID = int.Parse( reader.GetAttribute("BuildID") );
 	}
+	#endregion
 }
 

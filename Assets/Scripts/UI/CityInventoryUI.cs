@@ -46,13 +46,17 @@ public class CityInventoryUI : MonoBehaviour {
 		}
 	}
 
-	void OnItemClick(Item item){
+	void OnItemClick(Item item){		
+		Debug.Log ("clicked " + item.ToString()); 
+		
 		if (trade) {
 			//trade to ship
 			city.tradeWithShip (city.myInv.getItem (item));
 		} else {
 			//select item for trademenu
-			GameObject.FindObjectOfType<TradePanel>().GetClickedItemCity(item);
+			TradePanel tp = GameObject.FindObjectOfType<TradePanel> ();
+			if(tp!=null)
+				tp.GetClickedItemCity(item);
 		}
 	}
 

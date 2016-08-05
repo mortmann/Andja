@@ -29,7 +29,7 @@ public class TileSpriteController : MonoBehaviour {
 		cc = GameObject.FindObjectOfType<CameraController> ();
 		tileGameObjectMap = new Dictionary<Tile, GameObject>();
 		water = Instantiate (waterLayer);
-		water.transform.position = new Vector3((world.Width/2)-0.5f,(world.Height/2)-0.5f , 0);
+		water.transform.position = new Vector3((world.Width/2)-0.5f,(world.Height/2)-0.5f , 0.1f);
 		water.transform.localScale = new Vector3 (6+world.Width/10,0.1f,6+world.Height/10);
 		water.GetComponent<Renderer> ().material.mainTextureScale = new Vector2 (world.Width, world.Height*3);
 
@@ -40,7 +40,7 @@ public class TileSpriteController : MonoBehaviour {
 
     }
 	void OnBuildStateChance(BuildStateModes bsm){
-		if(bsm == BuildStateModes.On){
+		if(bsm == BuildStateModes.Build){
 			if (darkLayer != null) {
 				return;
 			}
@@ -51,7 +51,8 @@ public class TileSpriteController : MonoBehaviour {
 			sr.sprite = darkLayerSprite;
 			sr.sortingLayerName = "DarkLayer";
 			darkLayer.transform.localScale = new Vector3 (world.Width,world.Height);
-			gameObject.name="DarkLayer";
+			darkLayer.name="DarkLayer";
+			darkLayer.transform.SetParent (this.transform);
 		} else {
 			GameObject.Destroy (darkLayer);
 		}

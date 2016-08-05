@@ -126,35 +126,29 @@ public class Farm : UserStructure {
 			t.Structure.RegisterOnChangedCallback (OnGrowableChanged);	
 		}
 	}
-	public override void ExtraBuildUI (GameObject parent,Tile t){
+	public override void ExtraBuildUI (GameObject parent){
 		//FIXME
 		//TODO
-
-
-		GameObject extra = new GameObject();
+		GameObject extra = GameObject.Instantiate (Resources.Load<GameObject> ("Prefabs/SpriteSlider"));
 		extra.transform.SetParent (parent.transform);
-
-		//SpriteRenderer sr = extra.AddComponent<SpriteRenderer> ();
-		TextMesh tm = extra.AddComponent <TextMesh> ();
-		tm.fontSize = 15;
-		tm.color = Color.magenta;
+	}
+	public override void UpdateExtraBuildUI (GameObject parent,Tile t){
+		//FIXME
+		//TODO
 		HashSet<Tile> hs = this.GetInRangeTiles (t);
 		if(hs==null){
 			return;
 		}
 		int count=0;
 		foreach (Tile item in hs) {
-//			Debug.Log (item.toString ()); 
 			if(item.Structure!=null && item.Structure.ID==growableID){
-				
 				count++;
 			}
 		}
-		Debug.Log (Mathf.RoundToInt(((float)count/(float)hs.Count)*100));
-		//NEEDS MODIFYING LIKE WEATHER?, temperature or smth like that
-		tm.text = Mathf.RoundToInt(((float)count/(float)hs.Count)*100)+"%";
-	}
+		parent.GetComponentInChildren<SpriteSlider> ().ChangePercent (Mathf.RoundToInt(((float)count/(float)hs.Count)*100));
 		
+	}
+
 	public override void ReadXml (System.Xml.XmlReader reader)	{
 		base.BaseReadXml (reader);
 		ReadUserXml (reader);

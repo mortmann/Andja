@@ -32,7 +32,7 @@ public class CameraController : MonoBehaviour {
 		upper = Camera.main.ScreenToWorldPoint (new Vector3 (Camera.main.pixelWidth, Camera.main.pixelHeight));
 		float upperX = upper.x;
 		float upperY = upper.y;
-		if (BuildController.Instance.BuildState == BuildStateModes.On) {
+		if (BuildController.Instance.BuildState == BuildStateModes.Build) {
 			World.current.checkIfInCamera (lowerX, lowerY, upperX, upperY);
 		} else {
 			World.current.resetIslandMark ();

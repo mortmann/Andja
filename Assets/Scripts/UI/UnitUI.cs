@@ -38,12 +38,12 @@ public class UnitUI : MonoBehaviour {
 		go.name = "item " + i;
 		if (item.ID != -1) {
 			iui.SetItem (item, inv.maxStackSize);
-
-			EventTrigger trigger = go.GetComponent<EventTrigger> ();
-			EventTrigger.Entry entry = new EventTrigger.Entry( );
-			entry.eventID = EventTriggerType.PointerClick;
-			entry.callback.AddListener( ( data ) => { OnItemClick( i ); } );
-			trigger.triggers.Add( entry );
+			iui.AddListener (( data ) => { OnItemClick( i ); });
+//			EventTrigger trigger = go.GetComponent<EventTrigger> ();
+//			EventTrigger.Entry entry = new EventTrigger.Entry( );
+//			entry.eventID = EventTriggerType.PointerClick;
+//			entry.callback.AddListener(  );
+//			trigger.triggers.Add( entry );
 		} 
 		itemToGO.Add (i,iui);
 

@@ -8,7 +8,7 @@ using System.Xml.Schema;
 using System.Xml.Serialization;
 using System.IO;
 
-public enum BuildStateModes {Off,On};
+public enum BuildStateModes {None,Build,Destroy};
 
 public class BuildController : MonoBehaviour {
     public static BuildController Instance { get; protected set; }
@@ -50,7 +50,7 @@ public class BuildController : MonoBehaviour {
 			Debug.LogError("There should never be two world controllers.");
 		}
 		Instance = this;
-		BuildState = BuildStateModes.Off;
+		BuildState = BuildStateModes.None;
 		buildID = 0;
 		// prototypes of items
 		allItems = new Dictionary<int, Item> ();
@@ -100,7 +100,18 @@ public class BuildController : MonoBehaviour {
 	public void OnClickSettle(){
 		OnClick (6);
 	}
+	public void DestroyStructureOnTiles( IEnumerable<Tile> tiles){
+		foreach(Tile t in tiles){
+			DestroyStructureOnTile (t);
+		}
+	}
+	public void DestroyStructureOnTile(Tile t){
+		if(t.Structure==null){
+			return;
+		}
+		t.Structure.Destroy ();
 
+	}
 	public void OnClick(int id) {
 		if(structurePrototypes.ContainsKey (id) == false){
 			Debug.LogError ("BUTTON has ID that is not a structure prototypes ->o_O<- ");
@@ -120,7 +131,7 @@ public class BuildController : MonoBehaviour {
 			MouseController.Instance.structure = toBuildStructure;
 		}
 
-		BuildState = BuildStateModes.On;
+		BuildState = BuildStateModes.Build;
     }
 	public void BuildOnTile(List<Tile> tiles, bool forEachTileOnce){
 		if (toBuildStructure == null) {
@@ -255,10 +266,14 @@ public class BuildController : MonoBehaviour {
 		loadedToPlaceTile.Clear ();
 	}
 	public void ResetBuild(){
-		BuildState = BuildStateModes.Off;
+		BuildState = BuildStateModes.None;
 		this.toBuildStructure = null;
 	}
-
+	public void DestroyToolSelect(){
+		ResetBuild ();
+		BuildState = BuildStateModes.Destroy;
+		MouseController.Instance.mouseState = MouseState.Destroy;
+	}
 	public void RegisterStructureCreated(Action<Structure> callbackfunc) {
 		cbStructureCreated += callbackfunc;
 	}

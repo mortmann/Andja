@@ -9,7 +9,14 @@ public class TradePanel : MonoBehaviour {
 	public GameObject fromShip;
 	public GameObject toShip;
 	public GameObject itemPrefab;
-	int pressedItem=-1;
+	int _pressedItem;
+
+	int pressedItem{
+		get{return _pressedItem;}
+		set{
+			_pressedItem = value;
+		}
+	}
 	Dictionary<int,ItemUI> intToGameObject;
 	Dictionary<int,Item> intToItem;
 	public TradeRoute tradeRoute;
@@ -64,6 +71,9 @@ public class TradePanel : MonoBehaviour {
 		g.SetItem (i, unit.inventory.maxStackSize);
 //		pressedItem = -1;
 		intToItem.Add (pressedItem,i.Clone ()); 
+		if(intToItem.ContainsKey (pressedItem))
+			intToItem [pressedItem].count=Mathf.RoundToInt(amountSlider.value);
+		g.ChangeItemCount (amountSlider.value);
 		//set stuff here orso what ever
 		GameObject.FindObjectOfType<UIController> ().CloseRightUI ();
 	}
@@ -202,5 +212,10 @@ public class TradePanel : MonoBehaviour {
 			intToGameObject [place].ChangeItemCount (i);
 			place = +2;
 		}
+	}
+
+	public void DeleteSelectedItem(){
+		intToGameObject [pressedItem].SetItem (null, unit.inventory.maxStackSize);
+		intToItem.Remove (pressedItem);
 	}
 }

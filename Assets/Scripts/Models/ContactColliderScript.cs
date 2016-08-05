@@ -13,6 +13,7 @@ public class ContactColliderScript : MonoBehaviour {
 			((Warehouse)contact).addUnitToTrade (u);
 		}
 	}
+
 	void OnTriggerEnter2D(Collider2D coll) {
 		Unit u = coll.gameObject.GetComponent<UnitHoldingScript> ().unit;
 		if (u != null) {

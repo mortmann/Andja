@@ -11,10 +11,11 @@ public class ItemUI : MonoBehaviour {
 	public void SetItem(Item i, int maxValue,bool changeColor = false){
 		this.changeColor = changeColor;
 		ChangeMaxValue (maxValue);
-		if(i ==null){
+		if (i == null) { 
 			ChangeItemCount (0);			
+		} else {
+			ChangeItemCount (i);
 		}
-		ChangeItemCount (i);
 		//set item pic andso
 	}
 	public void ChangeItemCount(Item i){
@@ -45,12 +46,16 @@ public class ItemUI : MonoBehaviour {
 		}
 	}
 
-	public void AddListener(UnityAction<UnityEventBase> ueb){
+	public void AddListener(UnityAction<BaseEventData> ueb){
 		EventTrigger trigger = GetComponent<EventTrigger> ();
 		EventTrigger.Entry entry = new EventTrigger.Entry( );
 		entry.eventID = EventTriggerType.PointerClick;
 
 		entry.callback.AddListener( ueb );
 		trigger.triggers.Add( entry );
+	}
+
+	public void OnMouseOver(){
+		
 	}
 }

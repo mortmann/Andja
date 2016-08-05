@@ -4,7 +4,7 @@ using UnityEngine.EventSystems;
 using System;
 using System.Linq;
 
-public enum MouseState { Idle,Drag, Path, Single, Unit };
+public enum MouseState { Idle,Drag, Path, Single, Unit,Destroy };
 
 public class MouseController : MonoBehaviour {
 
@@ -12,6 +12,7 @@ public class MouseController : MonoBehaviour {
 
     public GameObject greenTileCursorPrefab;
 	public GameObject redTileCursorPrefab;
+	GameObject previewGO;
 	// The world-position of the mouse last frame.
 	Vector3 lastFramePosition;
 	Vector3 currFramePosition;
@@ -46,6 +47,8 @@ public class MouseController : MonoBehaviour {
 			return _structure;
 		}
 		set {
+			GameObject.Destroy (previewGO);
+			previewGO = null;
 			HighlightTiles = null;
 			_structure = value;
 		}
@@ -114,10 +117,11 @@ public class MouseController : MonoBehaviour {
             UpdateUnit();
 		} 
         if (Input.GetMouseButtonDown(0)) {
-			Debug.Log (GetTileUnderneathMouse ().toString ()); 
+			
 			if( EventSystem.current.IsPointerOverGameObject() ) {
 				return;
 			}
+			Debug.Log (GetTileUnderneathMouse ().toString ()); 
 			//mouse press decide what it hit 
 			RaycastHit2D hit = Physics2D.Raycast(new Vector2(currFramePosition.x, currFramePosition.y), Vector2.zero, 200);
 			DecideWhatUIToShow (hit);
@@ -213,22 +217,34 @@ public class MouseController : MonoBehaviour {
 		}
 		return World.current.GetTileAt (currFramePosition.x+xOffset,currFramePosition.y+yOffset);
 	}
-	//FIXME this is not optimal 
-	// change this to a diffrent way of showing/storing go
-	public void ShowPreviewStructureOnTiles(Tile t){
-		GameObject previewGO = new GameObject ();
+
+	public void CreatePreviewStructure(){
+		previewGO = new GameObject ();
 		previewGO.transform.SetParent(this.transform, true);
 		previewGO.name="PreviewGO";
 		SpriteRenderer sr = previewGO.AddComponent<SpriteRenderer> ();
 		sr.sprite = ssc.getStructureSprite (structure);
-		sr.sortingLayerName = "Structures";
+		sr.sortingLayerName = "StructuresUI";
 		sr.color = new Color (sr.color.a, sr.color.b, sr.color.g, 0.5f);
-		structure.ExtraBuildUI (previewGO,t);
+		structure.ExtraBuildUI (previewGO);
+
+	}
+
+	//FIXME this is not optimal 
+	// change this to a diffrent way of showing/storing go
+	public void ShowPreviewStructureOnTiles(Tile t){
+		if(previewGO==null){
+			CreatePreviewStructure ();
+		}
+		previewGO.SetActive (true);
+
+		//this is for extra ui when building like 
+		//how effective it is to build there
+		//this may move from this place
+		structure.UpdateExtraBuildUI (previewGO,t);
 		previewGO.transform.position = new Vector3( GetTileUnderneathMouse ().X + (( structure.tileWidth-1 )/2f),
 			GetTileUnderneathMouse ().Y + (( structure.tileHeight-1 )/2f), 0);
-		previewGO.transform.Rotate (Vector3.forward*structure.rotated);
-		previewGameObjects.Add (previewGO); 
-
+		previewGO.transform.localRotation = new Quaternion(structure.rotated,0,0,0);
 	}
 	public void RemovePrefabs(){
 		while(previewGameObjects.Count > 0) {
@@ -238,6 +254,9 @@ public class MouseController : MonoBehaviour {
 			previewGameObjects.RemoveAt(0);
 			SimplePool.Despawn (go);
 		}
+		//so it has to be "moved" to be visible
+		if(previewGO!=null)
+			previewGO.SetActive (false);
 	}
 	void ShowRedPrefabOnTile(Tile t){
 		if(t == null) {
@@ -358,8 +377,14 @@ public class MouseController : MonoBehaviour {
 			if(structure == null){
 				return;
 			}
+
 			if(ts != null) {
-				Build( ts,true );
+				if (mouseState == MouseState.Destroy) {
+					Debug.Log ("Destroy"); 
+					bmc.DestroyStructureOnTiles (ts);	
+				} else {
+					Build (ts, true);
+				}
 			}
 		}
 	}
@@ -409,6 +434,8 @@ public class MouseController : MonoBehaviour {
 	}
 
 	public void ResetBuilding(Structure structure){
+		GameObject.Destroy (previewGO);
+		previewGO = null;
 		structure = null;
 		HighlightTiles = null;
 	}

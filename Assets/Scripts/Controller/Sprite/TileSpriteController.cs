@@ -40,7 +40,7 @@ public class TileSpriteController : MonoBehaviour {
 
     }
 	void OnBuildStateChance(BuildStateModes bsm){
-		if(bsm == BuildStateModes.Build){
+		if(bsm != BuildStateModes.None){
 			if (darkLayer != null) {
 				return;
 			}
@@ -55,6 +55,8 @@ public class TileSpriteController : MonoBehaviour {
 			darkLayer.transform.SetParent (this.transform);
 		} else {
 			GameObject.Destroy (darkLayer);
+			darkLayer = null;
+
 		}
 	}
 

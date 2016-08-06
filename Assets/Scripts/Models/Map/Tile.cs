@@ -19,16 +19,13 @@ public class Tile : IXmlSerializable {
 			return _structures;
 		} 
 		set {
-			if(_structures == value){
-				Debug.Log ("Tile.structure! Why does the structure add itself again to the tile?");
+			if(_structures!=null&&_structures == value){
+//				Debug.Log ("Tile.structure! Why does the structure add itself again to the tile?");
 				return;
 			}
-			if(_structures != null && _structures.canBeBuildOver){
+			if(_structures != null && _structures.canBeBuildOver && value!=null){
 				_structures.Destroy ();
-			} else if(_structures != null){
-				Debug.LogError ("Structure cant be build, tried to get buildover...");
-				return;
-			}
+			} 
 			Structure oldStructure = _structures;
 			_structures = value;
 			if (cbTileStructureChanged != null) {
@@ -36,14 +33,37 @@ public class Tile : IXmlSerializable {
 			} 
 		}
 	}
-    public Island myIsland { get; set; }
+	protected Island _myIsland;
+
+	public Island myIsland { get{return _myIsland;} 
+		set{ 
+			if(value==null){
+				Debug.LogError ("setting myisland to NULL is not viable " + value);
+				return;
+			}
+			_myIsland = value;
+		}}
+	//the 
+	private Queue<City> cities;
 	protected City _myCity;
 	public City myCity { 
 		get{
 			return _myCity;
 		} 
 		set {
+			if(myIsland==null){
+				return;
+			}
 			if (value == null) {
+				if(cities!=null&&cities.Count>0){
+					//if this has more than one city claiming it 
+					//its gonna go add them to a queue and giving it 
+					//in that order the right to own it
+					City c = cities.Dequeue ();
+					_myCity = value;
+					c.addTile (this);
+					return;
+				}
 				_myCity = myIsland.wilderniss;
 				return;
 			} 
@@ -53,6 +73,10 @@ public class Tile : IXmlSerializable {
 				return;
 			}
 			if (_myCity!=null && _myCity.IsWilderness ()==false){
+				if(cities==null){
+					cities = new Queue<City> ();
+				}
+				cities.Enqueue (value);
 				return;
 			}
 			_myCity = value;

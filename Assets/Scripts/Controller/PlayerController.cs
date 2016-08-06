@@ -77,5 +77,6 @@ public class PlayerController : MonoBehaviour {
 	}
 	public void OnStructureCreated(Structure structure){
 		reduceMoney (structure.buildcost);
+
 	}
 }

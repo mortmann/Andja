@@ -98,6 +98,12 @@ public class MarketBuilding : UserStructure {
 			}
 		}
 	}
+	protected override void OnDestroy (){
+		List<Tile> h = new List<Tile> (myBuildingTiles);
+		h.AddRange (myRangeTiles); 
+		City.removeTiles (h);
+	} 
+
 
 	public void OnStructureAdded(Structure structure){
 		if(this == structure){

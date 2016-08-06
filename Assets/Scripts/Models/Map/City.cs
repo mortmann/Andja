@@ -127,7 +127,6 @@ public class City : IXmlSerializable{
 		if(str is HomeBuilding) {
 			myHomes.Add ((HomeBuilding)str);
 		} 
-
 		if(str is Warehouse){
 			if(myWarehouse!=null){
 				Debug.LogError ("There should be only one Warehouse per City!");
@@ -144,7 +143,7 @@ public class City : IXmlSerializable{
 	}
 
 	public void addTiles(HashSet<Tile> t){
-		t.RemoveWhere (x => x.Type == TileType.Water || x.myCity.IsWilderness ()==false);
+		t.RemoveWhere (x => x.Type == TileType.Water);
 		List<Tile> tiles = new List<Tile> (t);
 		tiles.ForEach (x => { x.myCity = this; });
 		for (int i = 0; i < tiles.Count; i++) {
@@ -157,7 +156,12 @@ public class City : IXmlSerializable{
 			myTiles.Add (tiles[i]);
 		}
 	}
-
+	public void addTile(Tile t){
+		if(t.Type==TileType.Water||myTiles.Contains (t)){
+			return;
+		}
+		myTiles.Add (t);
+	}
 	public void removeRessources(Item[] remove){
 		foreach (Item item in remove) {
 			myInv.removeItemAmount (item);
@@ -221,8 +225,23 @@ public class City : IXmlSerializable{
 			myRoutes.Remove (route);
 		} 
 	}
-	public void removeStructure(Structure structure){
+	public void removeStructure(Structure structure, bool returnRessources=false){
 		if (myStructures.Contains (structure)) {
+			if(structure is HomeBuilding){
+				myHomes.Remove ((HomeBuilding)structure);
+			} else 
+			if(structure is Warehouse){
+				myWarehouse = null;
+			}  
+			//if were geting some of the ressources back
+			//when we destroy it -> should be a setting 
+			if(returnRessources){
+				Item[] res = structure.buildingItems;
+				for (int i = 0; i < res.Length; i++) {
+					res [i].count /= 3; // FIXME do not have this hardcoded! Change it to be chooseable!
+				}
+				myInv.AddItems (res);
+			}
 			myStructures.Remove (structure);
 			cityBalance -= structure.maintenancecost;
 		} else {
@@ -230,12 +249,21 @@ public class City : IXmlSerializable{
 			if(structure is Warehouse){
 				return;
 			}
-
 			Debug.LogError (this.name + " This structure "+structure.ToString () +" does not belong to this city "); 
 		}
 
 	}
-
+	public void removeTiles(List<Tile> tiles){
+		foreach (Tile item in tiles) {
+			item.myCity = null;
+			if(item.myCity!=this){
+				myTiles.Remove (item);
+			}
+		}
+		if(myTiles.Count==0){
+			island.RemoveCity (this);
+		}
+	}
 	public void RegisterStructureAdded(Action<Structure> callbackfunc) {
 		cbStructureAdded += callbackfunc;
 	}

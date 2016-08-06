@@ -5,8 +5,8 @@ using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Serialization;
 
-public class ProductionBuilding : UserStructure {
-	public Dictionary<UserStructure,Item[]> RegisteredStructures;
+public class ProductionBuilding : OutputStructure {
+	public Dictionary<OutputStructure,Item[]> RegisteredStructures;
 	public Item[] intake;
 	public int[] needIntake;
 	public int[] maxIntake;
@@ -49,11 +49,14 @@ public class ProductionBuilding : UserStructure {
 		this.hasHitbox = hasHitbox;
 		this.myBuildingTyp = BuildingTyp.Production;
 		BuildTyp = BuildTypes.Single;
+		this.canTakeDamage = true;
+
 	}
 	protected ProductionBuilding(){
 	}
 
 	protected ProductionBuilding(ProductionBuilding str){
+		this.canTakeDamage = str.canTakeDamage;
 		this.ID = str.ID;
 		this.name = str.name;
 		this.intake = str.intake;
@@ -134,7 +137,7 @@ public class ProductionBuilding : UserStructure {
 		}
 		List<Item> getItems = new List<Item> ();
 		List<int> ints = new List<int> ();
-		UserStructure goal = null;
+		OutputStructure goal = null;
 		if (jobsToDo.Count == 0 && nearestMarketBuilding != null) {
 			getItems = new List<Item>(needItems.Keys);
 			for (int i = 0; i < getItems.Count; i++) {
@@ -147,7 +150,7 @@ public class ProductionBuilding : UserStructure {
 
 			ints = new List<int>(needItems.Values);
 		} else {
-			foreach (UserStructure ustr in jobsToDo.Keys) {
+			foreach (OutputStructure ustr in jobsToDo.Keys) {
 				goal = ustr;
 				for (int i = 0; i < jobsToDo[ustr].Length; i++) {
 					getItems.Add (jobsToDo[ustr][i]);
@@ -165,22 +168,22 @@ public class ProductionBuilding : UserStructure {
 
 	}
 	public void OnOutputChangedStructure(Structure str){
-		if(str is UserStructure == false){
+		if(str is OutputStructure == false){
 			return;
 		}
-		if(jobsToDo.ContainsKey((UserStructure)str)){
-			jobsToDo.Remove ((UserStructure)str);
+		if(jobsToDo.ContainsKey((OutputStructure)str)){
+			jobsToDo.Remove ((OutputStructure)str);
 		}
-		UserStructure ustr = ((UserStructure)str);
+		OutputStructure ustr = ((OutputStructure)str);
 		List<Item> getItems = new List<Item> ();
 		List<Item> items = new List<Item> (ustr.output);
-		foreach (Item item in RegisteredStructures[(UserStructure)str]) {
+		foreach (Item item in RegisteredStructures[(OutputStructure)str]) {
 			Item i = items.Find (x => x.ID == item.ID);
 			if(i.count > 0){
 				getItems.Add (i);
 			}
 		}
-		if (((UserStructure)str).outputClaimed == false) {
+		if (((OutputStructure)str).outputClaimed == false) {
 			jobsToDo.Add (ustr,getItems.ToArray());
 		}
 
@@ -204,7 +207,7 @@ public class ProductionBuilding : UserStructure {
 
 	public override void OnBuild(){
 		myWorker = new List<Worker> ();
-		jobsToDo = new Dictionary<UserStructure, Item[]> ();
+		jobsToDo = new Dictionary<OutputStructure, Item[]> ();
 //		for (int i = 0; i < intake.Length; i++) {
 //			intake [i].count = maxIntake [i];
 //		}
@@ -212,18 +215,18 @@ public class ProductionBuilding : UserStructure {
 			if(rangeTile.Structure == null){
 				continue;
 			}
-			if(rangeTile.Structure is UserStructure){
+			if(rangeTile.Structure is OutputStructure){
 				if (rangeTile.Structure is MarketBuilding) {
 					findNearestMarketBuilding (rangeTile);
 					continue;
 				}
-				if (RegisteredStructures.ContainsKey ((UserStructure)rangeTile.Structure) == false) {
-					Item[] items = hasNeedItem (((UserStructure)rangeTile.Structure).output);
+				if (RegisteredStructures.ContainsKey ((OutputStructure)rangeTile.Structure) == false) {
+					Item[] items = hasNeedItem (((OutputStructure)rangeTile.Structure).output);
 					if(items.Length == 0){
 						continue;
 					}
-					((UserStructure)rangeTile.Structure).RegisterOutputChanged (OnOutputChangedStructure);
-					RegisteredStructures.Add ((UserStructure)rangeTile.Structure,items);
+					((OutputStructure)rangeTile.Structure).RegisterOutputChanged (OnOutputChangedStructure);
+					RegisteredStructures.Add ((OutputStructure)rangeTile.Structure,items);
 				}
 			}
 
@@ -242,7 +245,7 @@ public class ProductionBuilding : UserStructure {
 		return items.ToArray();
 	}
 	public void OnStructureBuild(Structure str){
-		if (str is UserStructure == false) {
+		if (str is OutputStructure == false) {
 			return;
 		}
 		bool inRange = false;
@@ -259,9 +262,9 @@ public class ProductionBuilding : UserStructure {
 			findNearestMarketBuilding(str.BuildTile);
 			return;
 		}
-		Item[] items = hasNeedItem(((UserStructure)str).output);
+		Item[] items = hasNeedItem(((OutputStructure)str).output);
 		if(items.Length > 0 ){
-			((UserStructure)str).RegisterOutputChanged (OnOutputChangedStructure);
+			((OutputStructure)str).RegisterOutputChanged (OnOutputChangedStructure);
 		}
 	}
 	public void findNearestMarketBuilding(Tile tile){

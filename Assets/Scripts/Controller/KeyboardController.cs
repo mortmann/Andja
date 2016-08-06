@@ -6,9 +6,11 @@ public class KeyboardController : MonoBehaviour {
 	// Use this for initialization
 	UIController uic;
 	MouseController mc;
+	BuildController bc;
 	void Start () {
 		uic = GameObject.FindObjectOfType<UIController>();
 		mc = GameObject.FindObjectOfType<MouseController>();
+		bc = GameObject.FindObjectOfType<BuildController> ();
 	}
 	// Update is called once per frame
 	void Update () {
@@ -18,6 +20,7 @@ public class KeyboardController : MonoBehaviour {
 		if(Input.GetKeyDown (KeyCode.Escape)){
 			mc.Escape ();
 			uic.Escape ();
+			bc.Escape ();
 		}
 		if(Input.GetKeyDown (KeyCode.M)){
 			uic.ToggleTradeMenu ();

@@ -13,7 +13,7 @@ public class Worker : IXmlSerializable{
 	float workTime = 1f;
 	float doTimer;
 	Inventory inventory;
-	UserStructure workStructure;
+	OutputStructure workStructure;
 	Tile destTile;
 	Tile currTile;
 	Action<Worker> cbWorkerChanged;
@@ -38,7 +38,7 @@ public class Worker : IXmlSerializable{
 			return path.Y;
 		}
 	}
-	public Worker(Structure myHome, UserStructure structure,Item[] toGetItems = null, bool hasToFollowRoads = true){
+	public Worker(Structure myHome, OutputStructure structure,Item[] toGetItems = null, bool hasToFollowRoads = true){
 		this.myHome = myHome;
 		workStructure = structure;
 		this.hasToFollowRoads = hasToFollowRoads;
@@ -52,7 +52,7 @@ public class Worker : IXmlSerializable{
 		AddJobStructure(structure);
 		this.toGetItems = toGetItems;
 	}
-	public Worker(Structure myHome, UserStructure structure,Item[] toGetItems,int[] toGetAmount, bool hasToFollowRoads = false){
+	public Worker(Structure myHome, OutputStructure structure,Item[] toGetItems,int[] toGetAmount, bool hasToFollowRoads = false){
 		this.myHome = myHome;
 		workStructure = structure;
 		this.toGetAmount = toGetAmount;
@@ -77,8 +77,8 @@ public class Worker : IXmlSerializable{
 	public void Update(float deltaTime){
 		if(path == null){
 			if (destTile != null) {
-				if(destTile.Structure is UserStructure)
-					AddJobStructure ((UserStructure)destTile.Structure);
+				if(destTile.Structure is OutputStructure)
+					AddJobStructure ((OutputStructure)destTile.Structure);
 			}
 			//theres no goal so delete it after some time?
 			Debug.Log ("worker has no goal");
@@ -138,7 +138,7 @@ public class Worker : IXmlSerializable{
 		if(cbWorkerDestroy != null)
 			cbWorkerDestroy(this);
 	}
-	public void AddJobStructure(UserStructure structure){
+	public void AddJobStructure(OutputStructure structure){
 		if(structure == null){
 			return;
 		}

@@ -19,6 +19,7 @@ public class BuildController : MonoBehaviour {
 				if (_buildState == value) {
 					return;
 				}
+				World.current.resetIslandMark ();
 				_buildState = value;
 				if (cbBuildStateChange != null)
 					cbBuildStateChange (_buildState); 
@@ -308,6 +309,12 @@ public class BuildController : MonoBehaviour {
 		BuildState = BuildStateModes.Destroy;
 		MouseController.Instance.mouseState = MouseState.Destroy;
 	}
+	public void Escape(){
+		World.current.resetIslandMark ();
+		ResetBuild ();
+	}
+
+
 	public void RegisterStructureCreated(Action<Structure> callbackfunc) {
 		cbStructureCreated += callbackfunc;
 	}
@@ -374,7 +381,7 @@ public class BuildController : MonoBehaviour {
 			Need need = new Need ();
 			need.ID = int.Parse(node.GetAttribute("ID"));
 			need.name = node.SelectSingleNode("EN"+ "_Name").InnerText;
-			need.popCount =  0;// TODO: int.Parse(node.SelectSingleNode("Count").InnerText);
+			need.popCount = 0;//int.Parse(node.SelectSingleNode("Count").InnerText);
 			need.startLevel = int.Parse(node.SelectSingleNode("Level").InnerText);
 			int structure = int.Parse (node.SelectSingleNode ("Structure").InnerText);
 			if (structure == -1) {

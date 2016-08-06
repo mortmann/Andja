@@ -30,13 +30,13 @@ public class UIController : MonoBehaviour {
 		oldStr = str;
 		str.OnClick ();
 		if (str is ProductionBuilding) {
-			OpenProduktionUI ((UserStructure)str);
+			OpenProduktionUI ((OutputStructure)str);
 		}
 		if (str is HomeBuilding) {
 			OpenHomeUI ((HomeBuilding)str);
 		}
 		if(str is MineStructure || str is Farm ){
-			OpenProduceUI ((UserStructure)str);
+			OpenProduceUI ((OutputStructure)str);
 		}
 		if (str is MarketBuilding || str is Warehouse) {
 			OpenCityInventory (str.City);
@@ -65,7 +65,7 @@ public class UIController : MonoBehaviour {
 			uiInfoCanvas.SetActive (false);
 		}
 	}
-	public void OpenProduktionUI(UserStructure str){
+	public void OpenProduktionUI(OutputStructure str){
 		if(str == null){
 			return;
 		}
@@ -78,7 +78,7 @@ public class UIController : MonoBehaviour {
 		buildingCanvas.SetActive (false);
 		CloseInfoUI ();
 	}
-	public void OpenProduceUI(UserStructure str){
+	public void OpenProduceUI(OutputStructure str){
 		if(str == null){
 			return;
 		}

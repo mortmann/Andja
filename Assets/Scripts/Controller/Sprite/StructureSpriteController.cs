@@ -80,15 +80,15 @@ public class StructureSpriteController : MonoBehaviour {
 				sr.sprite = sprite;
 			}
 		}
-		if(structure is UserStructure && ((UserStructure)structure).contactRange>0){
+		if(structure is OutputStructure && ((OutputStructure)structure).contactRange>0){
 			GameObject goContact = new GameObject ();
 			CircleCollider2D cc2d = goContact.AddComponent<CircleCollider2D>();
-			cc2d.radius = ((UserStructure)structure).contactRange;
+			cc2d.radius = ((OutputStructure)structure).contactRange;
 			cc2d.isTrigger = true;
 			goContact.transform.SetParent (go.transform);
 			goContact.transform.localPosition = Vector3.zero;
 			ContactColliderScript c = goContact.AddComponent<ContactColliderScript>();
-			c.contact = ((UserStructure)structure);
+			c.contact = ((OutputStructure)structure);
 			goContact.name = "ContactCollider";
 		}
 

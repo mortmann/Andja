@@ -5,24 +5,12 @@ using System.Xml.Schema;
 using System.Xml.Serialization;
 using System;
 
-public abstract class UserStructure : Structure {
+public abstract class OutputStructure : Structure {
 	public float contactRange=0;
 
-	protected float _health;
-	public float Health {
-		get {
-			return _health;
-		}
-		set {
-			if(_health<=0){
-				Destroy ();
-			}
-			_health = value;
-		}
-	}
 	protected int maxNumberOfWorker = 1;
 	public List<Worker> myWorker;
-	public Dictionary<UserStructure,Item[]> jobsToDo;
+	public Dictionary<OutputStructure,Item[]> jobsToDo;
 	public bool outputClaimed;
 	public float produceTime;
 	public float produceCountdown;
@@ -69,8 +57,8 @@ public abstract class UserStructure : Structure {
 		if (jobsToDo.Count == 0) {
 			return;
 		}
-		UserStructure giveJob = null;
-		foreach (UserStructure item in jobsToDo.Keys) {
+		OutputStructure giveJob = null;
+		foreach (OutputStructure item in jobsToDo.Keys) {
 			if (myWorker.Count == maxNumberOfWorker) {
 				break;
 			}

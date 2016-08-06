@@ -107,10 +107,10 @@ public class City : IXmlSerializable{
 //		tiles.ForEach (x => x.myCity = this);
 		List<Tile> temp = new List<Tile>(tiles);
 		island.wilderniss = this;
+		myTiles = new HashSet<Tile> (tiles);
 		for (int i = 0; i < tiles.Count; i++) {
 			temp[i].myCity= null;
 		}
-		myTiles = new HashSet<Tile> (tiles);
 		myInv = new Inventory (0);
 		this.playerNumber = -1;
 		this.island = island;
@@ -141,25 +141,48 @@ public class City : IXmlSerializable{
 			cbStructureAdded (str);
 		}
 	}
-
+	//current wrapper to make sure its valid
+	public void RemoveTile(Tile t){
+		//if it doesnt contain it there is an error
+		if(myTiles.Contains (t)==false){
+			Debug.LogError ("This city does not know that it had this tile!" + t.toString ()); 
+			return;
+		}
+		myTiles.Remove (t);
+		island.allReadyHighlighted = false;
+	}
 	public void addTiles(HashSet<Tile> t){
+		// does not really needs it because tiles witout island reject cities
+		//but it is a secondary security that this does not happen
 		t.RemoveWhere (x => x.Type == TileType.Water);
 		List<Tile> tiles = new List<Tile> (t);
-		tiles.ForEach (x => { x.myCity = this; });
 		for (int i = 0; i < tiles.Count; i++) {
+			tiles [i].myCity = this;
 			if(tiles[i].Structure != null){
 				if (myStructures.Contains (tiles [i].Structure) ==false) { 
 					tiles [i].Structure.City = this;
+					tiles [i].Structure.playerID = playerNumber;
 					addStructure (tiles [i].Structure);
 				}
 			}
 			myTiles.Add (tiles[i]);
 		}
+		island.allReadyHighlighted = false;
+
 	}
 	public void addTile(Tile t){
-		if(t.Type==TileType.Water||myTiles.Contains (t)){
+		if(t.Type==TileType.Water||myTiles==null||myTiles.Contains (t)){
 			return;
 		}
+		if(t.Structure != null){
+			if (myStructures.Contains (t.Structure) ==false) { 
+				t.Structure.City = this;
+				t.Structure.playerID = playerNumber;
+ 
+				addStructure (t.Structure);
+			}
+		}
+		island.allReadyHighlighted = false;
 		myTiles.Add (t);
 	}
 	public void removeRessources(Item[] remove){
@@ -251,6 +274,7 @@ public class City : IXmlSerializable{
 			}
 			Debug.LogError (this.name + " This structure "+structure.ToString () +" does not belong to this city "); 
 		}
+		island.allReadyHighlighted = false;
 
 	}
 	public void removeTiles(List<Tile> tiles){
@@ -264,6 +288,7 @@ public class City : IXmlSerializable{
 			island.RemoveCity (this);
 		}
 	}
+
 	public void RegisterStructureAdded(Action<Structure> callbackfunc) {
 		cbStructureAdded += callbackfunc;
 	}
@@ -349,8 +374,8 @@ public class City : IXmlSerializable{
 				} else if (s is Warehouse) {
 					((Warehouse)s).ReadXml (reader);
 					myWarehouse = ((Warehouse)s);
-				} else if (s is UserStructure) {
-					((UserStructure)s).ReadXml (reader);
+				} else if (s is OutputStructure) {
+					((OutputStructure)s).ReadXml (reader);
 				} else if (s is Growable) {
 					((Growable)s).ReadXml (reader);
 				} else if (s is HomeBuilding) {

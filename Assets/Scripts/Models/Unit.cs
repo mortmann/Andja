@@ -9,7 +9,7 @@ public enum UnitType{ship,land};
 public class Unit : IXmlSerializable {
    
 	public int playerNumber;
-	public UserStructure rangeUStructure;
+	public OutputStructure rangeUStructure;
 	protected GameObject myGameobject;
 	public Transform transform;
 	public Tile startTile;
@@ -101,7 +101,7 @@ public class Unit : IXmlSerializable {
 		}
     }
 
-	public void isInRangeOfWarehouse(UserStructure ware){
+	public void isInRangeOfWarehouse(OutputStructure ware){
 		if(ware!=null){
 		}
 		rangeUStructure = ware; 

@@ -9,10 +9,10 @@ public class ProduktionUI : MonoBehaviour {
 	public GameObject itemPrefab;
 	Dictionary<Item, GameObject> itemToGO;
 	ProductionBuilding pbstr;
-	UserStructure userStr;
+	OutputStructure userStr;
 	Slider progress;
 	Text efficiency;
-	public void Show(UserStructure ustr){
+	public void Show(OutputStructure ustr){
 		if (this.pbstr == ustr || ustr is ProductionBuilding == false) {
 			return;
 		}
@@ -47,7 +47,7 @@ public class ProduktionUI : MonoBehaviour {
 			}
 		}
 	}
-	public void ShowProduce(UserStructure ustrs){
+	public void ShowProduce(OutputStructure ustrs){
 		if(ustrs == null || ustrs == userStr ){
 			return;
 		}

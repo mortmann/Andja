@@ -24,6 +24,8 @@ public class Warehouse : MarketBuilding {
 		showExtraUI = true;
 		hasHitbox = true;
 		mustFrontBuildDir = Direction.W;
+		this.canTakeDamage = true;
+
 	}
 	public Warehouse(){
 	}
@@ -44,6 +46,8 @@ public class Warehouse : MarketBuilding {
 		this.mustFrontBuildDir = str.mustFrontBuildDir;
 		this.contactRange = str.contactRange;
 		this.inRangeUnits = new List<Unit> ();
+		this.canTakeDamage = str.canTakeDamage;
+
 	}
 	public override void update (float deltaTime) {
 

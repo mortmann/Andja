@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
-public class MineStructure : UserStructure {
+public class MineStructure : OutputStructure {
 
 	public string myRessource;
 	public override float Efficiency { get { 

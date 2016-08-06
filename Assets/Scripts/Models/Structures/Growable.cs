@@ -39,7 +39,9 @@ public class Growable : Structure {
 		this.rotated = g.rotated;
 		this.hasHitbox = g.hasHitbox;
 		this.growTime = g.growTime;
-		this.canBeBuildOver = true;
+		this.canBeBuildOver = g.canBeBuildOver;
+		this.canTakeDamage = g.canTakeDamage;
+
 	}
 	public override Structure Clone (){
 		return new Growable(this);

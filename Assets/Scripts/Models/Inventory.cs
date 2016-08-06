@@ -278,6 +278,11 @@ public class Inventory : IXmlSerializable{
 			return i;
 		}
 	}
+	public void AddItems(IEnumerable<Item> items){
+		foreach (Item item in items) {
+			addItem (item);
+		}
+	}
 	public bool ContainsItemWithID(int id){
 		if(numberOfSpaces==-1){
 			return true;
@@ -289,6 +294,17 @@ public class Inventory : IXmlSerializable{
 			}
 		}
 		return false;
+	}
+	public bool ContainsItemsWithRequiredAmount(Item[] items){
+		if(items==null){
+			return true;
+		}
+		foreach(Item i in items){
+			if(i.count<GetTotalAmountFor (i)){
+				return false;
+			}
+		}
+		return true;
 	}
     public void addToStackSize(int value) {
 		if(value<=0){

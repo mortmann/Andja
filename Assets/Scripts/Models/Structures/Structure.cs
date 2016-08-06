@@ -12,6 +12,7 @@ public enum BuildingTyp {Production, Pathfinding, Blocking};
 public enum Direction {None, N, E, S, W};
 
 public abstract class Structure : IXmlSerializable {
+	#region variables
 	//prototype id
 	public int ID;
 	//player id
@@ -104,12 +105,19 @@ public abstract class Structure : IXmlSerializable {
 	public BuildTypes BuildTyp;
 	public BuildingTyp myBuildingTyp = BuildingTyp.Blocking;
 	public string connectOrientation;
+	public Item[] buildingItems;
+	#endregion
 
+	#region Virtual/Abstract
 	public abstract Structure Clone ();
 	public virtual void update (float deltaTime){
 	}
-
-
+	public abstract void OnBuild();
+	public virtual void OnClick (){
+	}
+	public virtual void OnClickClose (){
+	}
+	protected virtual void OnDestroy(){}
 	/// <summary>
 	/// Extra Build UI for showing stuff when building
 	/// structures. Or so.
@@ -125,6 +133,7 @@ public abstract class Structure : IXmlSerializable {
 		//stuff here to show for when building this
 		//using this for e.g. farm efficiency bar!
 	}
+	#endregion 
 
 	#region callbacks
 	public void callbackIfnotNull(){
@@ -278,7 +287,7 @@ public abstract class Structure : IXmlSerializable {
 		return true;
 	}
 	#endregion
-
+	#region List<Tile>
 	public List<Tile> GetBuildingTiles(float x , float y, bool ignoreRotation = false){
 		x = Mathf.FloorToInt (x);
 		y = Mathf.FloorToInt (y);
@@ -300,6 +309,58 @@ public abstract class Structure : IXmlSerializable {
 		}
 		return tiles;
 	}
+	/// <summary>
+	/// Gets the in range tiles.
+	/// </summary>
+	/// <returns>The in range tiles.</returns>
+	/// <param name="firstTile">The most left one, first row.</param>
+	public HashSet<Tile> GetInRangeTiles (Tile firstTile) {
+		if (myPrototypeTiles == null) {
+			CalculatePrototypTiles ();
+		}
+		if (firstTile==null) {
+			return null;
+		}
+		if (buildingRange == 0) {
+			return null;
+		}
+
+		World w = WorldController.Instance.world;
+		myRangeTiles = new HashSet<Tile> ();
+		float width = firstTile.X-buildingRange - tileWidth / 2;
+		float height = firstTile.Y-buildingRange - tileHeight / 2;
+		foreach(Tile t in myPrototypeTiles){
+			myRangeTiles.Add (w.GetTileAt (t.X +width,t.Y+height));			
+		}
+		return myRangeTiles;
+	}
+	public List<Tile> roadsAroundStructure(){
+		List<Tile> roads = new List<Tile>();
+		foreach (Tile item in myBuildingTiles) {
+			foreach (Tile n in item.GetNeighbours ()) {
+				if(n.Structure != null ){
+					if (n.Structure is Road) {
+						roads.Add (n);
+					}
+				}
+			}
+		}
+		return roads;
+	}
+	#endregion
+	#region other
+	public void Destroy(){
+		OnDestroy ();
+		foreach(Tile t in myBuildingTiles){
+			t.Structure = null;
+		}
+		//buildcontroller will take care of this
+		//because so it can take care of getting res
+		//back as well, so this doesnt need to know that
+//		City.removeStructure (this);
+		if(cbStructureDestroy!=null)
+			cbStructureDestroy(this);
+	}
 	private void CalculatePrototypTiles(){
 		if(buildingRange == 0){
 			return;
@@ -308,7 +369,7 @@ public abstract class Structure : IXmlSerializable {
 		float x;
 		float y;
 		//get the tile at bottom left to create a "prototype circle"
-		Tile firstTile = WorldController.Instance.world.GetTileAt (0 + buildingRange+tileWidth/2,0 + buildingRange+tileHeight/2);
+		Tile firstTile = World.current.GetTileAt (0 + buildingRange+tileWidth/2,0 + buildingRange+tileHeight/2);
 		Vector2 center = new Vector2 (firstTile.X, firstTile.Y);
 		if (tileWidth > 1) {
 			center.x += 0.5f + ((float)tileWidth) / 2f - 1;
@@ -352,38 +413,7 @@ public abstract class Structure : IXmlSerializable {
 			myPrototypeTiles.Remove (item);
 		}
 	}
-	/// <summary>
-	/// Gets the in range tiles.
-	/// </summary>
-	/// <returns>The in range tiles.</returns>
-	/// <param name="firstTile">The most left one, first row.</param>
-	public HashSet<Tile> GetInRangeTiles (Tile firstTile) {
-		if (myPrototypeTiles == null) {
-			CalculatePrototypTiles ();
-		}
-		if (firstTile==null) {
-			return null;
-		}
-		if (buildingRange == 0) {
-			return null;
-		}
-
-		World w = WorldController.Instance.world;
-		myRangeTiles = new HashSet<Tile> ();
-		float width = firstTile.X-buildingRange - tileWidth / 2;
-		float height = firstTile.Y-buildingRange - tileHeight / 2;
-		foreach(Tile t in myPrototypeTiles){
-			myRangeTiles.Add (w.GetTileAt (t.X +width,t.Y+height));			
-		}
-		return myRangeTiles;
-	}
-
-	public abstract void OnBuild();
-	public virtual void OnClick (){
-	}
-	public virtual void OnClickClose (){
-	}
-
+	#endregion
 	#region correctspot
 	public bool correctSpotOnLand(List<Tile> tiles){
 		foreach(Tile t in tiles){
@@ -453,8 +483,8 @@ public abstract class Structure : IXmlSerializable {
 	public bool correctSpotOnShore(List<Tile> tiles){
 		return correctSpotForOn (tiles,TileType.Water);
 	}
-	public virtual bool islandHasEnoughItemsToBuild(){
-		return true;
+	public virtual Item[] BuildingItems(){
+		return buildingItems;
 	}
 	public bool correctSpotForOn(List<Tile> tiles, TileType tt){
 		switch (rotated){
@@ -685,34 +715,14 @@ public abstract class Structure : IXmlSerializable {
 		}
 	}
 	#endregion
-	public List<Tile> roadsAroundStructure(){
-		List<Tile> roads = new List<Tile>();
-		foreach (Tile item in myBuildingTiles) {
-			foreach (Tile n in item.GetNeighbours ()) {
-				if(n.Structure != null ){
-					if (n.Structure is Road) {
-						roads.Add (n);
-					}
-				}
-			}
-		}
-		return roads;
-	}
-	protected virtual void OnDestroy(){}
-	public void Destroy(){
-		OnDestroy ();
-		if (City != null) {
-			City.removeStructure (this);
-		}
-		if(cbStructureDestroy!=null)
-			cbStructureDestroy(this);
-	}
+	#region override
 	public override string ToString (){
 		if(BuildTile==null){
 			return name +"@error";
 		}
 		return name + "@" + BuildTile.toString ();
 	}
+	#endregion
 	#region xmlsave
 	//////////////////////////////////////////////////////////////////////////////////////
 	/// 

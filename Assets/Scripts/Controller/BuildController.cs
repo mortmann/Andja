@@ -109,8 +109,9 @@ public class BuildController : MonoBehaviour {
 		if(t.Structure==null){
 			return;
 		}
-		t.Structure.Destroy ();
-
+		if(t.Structure.playerID==PlayerController.Instance.number){
+			t.Structure.Destroy ();
+		}
 	}
 	public void OnClick(int id) {
 		if(structurePrototypes.ContainsKey (id) == false){
@@ -172,15 +173,63 @@ public class BuildController : MonoBehaviour {
 		if (loading == false) {
 			s = s.Clone ();
 		}
-		//set the player id for check for city
-		//has to be changed if someone takes it over
-		if(wild==false)
-			s.playerID = PlayerController.Instance.number;
+
 		//if it should be build in wilderniss city
 		if(wild){
 			s.playerID = -1;
 			s.buildInWilderniss = true;
+		} else {
+			//set the player id for check for city
+			//has to be changed if someone takes it over
+			s.playerID = PlayerController.Instance.number;
 		}
+		//before we need to check if we can build THERE
+		//we need to know if there is if we COULD build 
+		//it anyway? that means enough ressources and enough Money
+		if(loading==false&&wild==false){
+			//find a city that matches the player 
+			//and check for money
+			if(playerHasEnoughMoney(s)==false){
+				Debug.Log ("not playerHasEnoughMoney"); 
+				return;
+			}
+			//if it doesnt need ressources return
+			if (s.buildingItems != null) {
+				foreach (Tile item in tiles) {
+					//we can build in wilderniss terrain but we need our own city
+					//FIXME how do we do it with warehouses?
+					if (item.myCity != null && item.myCity.IsWilderness () == false) {
+						//WARNING: checking for this twice!
+						//this is one is not necasserily needed
+						//but it we *need* the city to check for its ressources
+						//this saves a lot of cpu but it can be problematic if we want to be able 
+						//to build something in enemy-terrain
+						if (item.myCity.playerNumber != PlayerController.Instance.number) {
+							Debug.Log ("PlayerController.Instance.number"); 
+							return;
+						}
+						//check for ressources  
+						if (item.myCity.myInv.ContainsItemsWithRequiredAmount (s.BuildingItems ()) == false) {
+							Debug.Log ("ContainsItemsWithRequiredAmount==null"); 
+							return;
+						}
+						//now we know that there is enough from everthing and it can be build
+						//we dont need longer to check a city tile
+						//playercontroller will handle the reduction of money/and everything else 
+						//related to money - But we need to remove the Ressources
+						item.myCity.removeRessources (s.BuildingItems ());
+						break;
+					}
+				}
+			}
+			//remove the items from the island inventory
+		} else {
+			//nocosts for loadingbuildings
+			s.buildcost = 0;
+		}
+	
+		//now we know that we COULD build that structure
+		//but CAN WE?
 		//check to see if the structure can be placed there
 		if (s.PlaceStructure (tiles) == false) {
 			if(loading){
@@ -188,21 +237,13 @@ public class BuildController : MonoBehaviour {
 			}
 			return;
 		}
-		if(loading==false&&wild==false){
-			if (s.islandHasEnoughItemsToBuild() == false || playerHasEnoughMoney(s) == false) {
-				return;
-			}
-			//remove the items from the island inventory
-		} else {
-			//nocosts for loadingbuildings
-			s.buildcost = 0;
-		}
+
 		if(s.myBuildingTiles.Find (x=>x.Type==TileType.Water)!=null){
 			World.current.invalidateGraph ();
 		}
 		//call all callbacks on structure created
-
-//		if (cbStructureCreated == null)
+		//FIXME remove this or smth
+		if (cbStructureCreated == null)
 			GameObject.FindObjectOfType<StructureSpriteController>().Initiate ();
 		if (cbStructureCreated != null) {
 			cbStructureCreated (s);
@@ -212,17 +253,10 @@ public class BuildController : MonoBehaviour {
 			s.buildID = buildID;
 			buildID++;
 		}
-		//find a tile thats on island -- only important for onshore/onwater buildings
-		Tile islandTile = tiles[0];
-		foreach (Tile item in tiles) {
-			if(item.myIsland != null){
-				islandTile = item;
-				break;
-			}
-		}
-		if(islandTile == null){
-			return;
-		}
+		s.RegisterOnDestroyCallback (OnDestroyStructure);
+	}
+	public void OnDestroyStructure(Structure str){
+		str.City.removeStructure (str);
 	}
 	public bool playerHasEnoughMoney(Structure s){
 		if(PlayerController.Instance.balance >= s.buildcost){

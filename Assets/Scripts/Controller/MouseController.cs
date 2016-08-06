@@ -104,7 +104,7 @@ public class MouseController : MonoBehaviour {
 		}
 		RemovePrefabs ();
         //UpdateCursor();
-        if (mouseState == MouseState.Drag) { 
+		if (mouseState == MouseState.Drag||mouseState == MouseState.Destroy) { 
             UpdateDragging();
         } else
         if (mouseState == MouseState.Path) {
@@ -363,7 +363,11 @@ public class MouseController : MonoBehaviour {
 			tiles.Add (GetTileUnderneathMouse ());
 		}
 		foreach (Tile item in tiles) {
-			ShowSinglePreview (item);				
+			if(mouseState == MouseState.Destroy){
+				ShowRedPrefabOnTile (item);
+			} else {
+				ShowSinglePreview (item);				
+			}
 		}
 		// End Drag
 		if( Input.GetMouseButtonUp(0) ) {
@@ -380,7 +384,6 @@ public class MouseController : MonoBehaviour {
 
 			if(ts != null) {
 				if (mouseState == MouseState.Destroy) {
-					Debug.Log ("Destroy"); 
 					bmc.DestroyStructureOnTiles (ts);	
 				} else {
 					Build (ts, true);

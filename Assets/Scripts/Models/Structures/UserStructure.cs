@@ -8,7 +8,18 @@ using System;
 public abstract class UserStructure : Structure {
 	public float contactRange=0;
 
-	public float health;
+	protected float _health;
+	public float Health {
+		get {
+			return _health;
+		}
+		set {
+			if(_health<=0){
+				Destroy ();
+			}
+			_health = value;
+		}
+	}
 	protected int maxNumberOfWorker = 1;
 	public List<Worker> myWorker;
 	public Dictionary<UserStructure,Item[]> jobsToDo;
@@ -19,6 +30,9 @@ public abstract class UserStructure : Structure {
 	public int[] outputStorage;
 	public int maxOutputStorage;
 	protected Action<Structure> cbOutputChange;
+
+
+
 
 	public virtual float Efficiency{
 		get {
@@ -120,6 +134,9 @@ public abstract class UserStructure : Structure {
 			}
 		}
 		return null;
+	}
+	public override Item[] BuildingItems (){
+		return buildingItems;
 	}
 	public void RegisterOutputChanged(Action<Structure> callbackfunc) {
 		cbOutputChange += callbackfunc;

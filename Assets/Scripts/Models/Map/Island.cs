@@ -112,6 +112,9 @@ public class Island : IXmlSerializable{
 		myCities.Add (c);
         return c;
     }
+	public void RemoveCity(City c) {
+		myCities.Remove (c);
+	}
 	//////////////////////////////////////////////////////////////////////////////////////
 	/// 
 	/// 						SAVING & LOADING

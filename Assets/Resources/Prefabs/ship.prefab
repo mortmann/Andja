@@ -11,7 +11,7 @@ GameObject:
   - 212: {fileID: 21205244}
   - 61: {fileID: 6185388}
   - 50: {fileID: 5060460}
-  - 114: {fileID: 11404300}
+  - 114: {fileID: 11487274}
   m_Layer: 0
   m_Name: ship
   m_TagString: Untagged
@@ -62,7 +62,7 @@ BoxCollider2D:
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
   m_Size: {x: 0.94, y: 0.44}
---- !u!114 &11404300
+--- !u!114 &11487274
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -70,12 +70,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 163366}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b7b4d900cf4fee84787751da11eb70b8, type: 3}
+  m_Script: {fileID: 11500000, guid: 2ebdabb7c3f1b4a4e8f5a6b58dd56e86, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  r2d: {fileID: 0}
-  isShip: 1
-  hasChanged: 0
 --- !u!212 &21205244
 SpriteRenderer:
   m_ObjectHideFlags: 1

@@ -108,7 +108,11 @@ public class Warehouse : MarketBuilding {
 	public Tile getTradeTile(){
 		return tradeTile; //maybe this changes or not s
 	}
-
+	protected override void OnDestroy (){
+		List<Tile> h = new List<Tile> (myBuildingTiles);
+		h.AddRange (myRangeTiles); 
+		City.removeTiles (h);
+	}
 	public override void OnClick (){
 		extraUIOn = true;
 		callbackIfnotNull ();

@@ -54,6 +54,8 @@ public class Tile : IXmlSerializable {
 			if(myIsland==null){
 				return;
 			}
+			//if the tile gets unclaimed by the current owner of this
+			//either wilderniss or other player
 			if (value == null) {
 				if(cities!=null&&cities.Count>0){
 					//if this has more than one city claiming it 
@@ -64,20 +66,32 @@ public class Tile : IXmlSerializable {
 					c.addTile (this);
 					return;
 				}
+				myIsland.wilderniss.addTile (this);
 				_myCity = myIsland.wilderniss;
 				return;
 			} 
+			//warns about double wilderniss
+			//can be removed for performance if 
+			//necessary but it helps for development
 			if(_myCity!=null &&_myCity.playerNumber==-1 && value.playerNumber==-1){
 				Debug.Log ("override");
 				_myCity = value;
 				return;
 			}
+			//remembers the order of the cities that have a claim 
+			//on that tile -- Maybe do a check if the city
+			//that currently owns has a another claim onit?
 			if (_myCity!=null && _myCity.IsWilderness ()==false){
 				if(cities==null){
 					cities = new Queue<City> ();
 				}
 				cities.Enqueue (value);
 				return;
+			}
+			//if the current city is not null remove this from it
+			//FIXME is there a performance problem here? ifso fix it
+			if(_myCity!=null){
+				_myCity.RemoveTile(this);
 			}
 			_myCity = value;
 		} 

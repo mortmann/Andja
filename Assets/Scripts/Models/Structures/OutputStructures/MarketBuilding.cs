@@ -4,7 +4,7 @@ using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Serialization;
 
-public class MarketBuilding : UserStructure {
+public class MarketBuilding : OutputStructure {
 	public List<Route> myRoutes;
 	public List<Structure> RegisteredSturctures;
 	public MarketBuilding(int id){
@@ -19,6 +19,8 @@ public class MarketBuilding : UserStructure {
 		BuildTyp = BuildTypes.Single;
 		myBuildingTyp = BuildingTyp.Blocking;
 		buildingRange = 18;
+		this.canTakeDamage = true;
+
 	}
 	public MarketBuilding(){
 	}
@@ -35,7 +37,9 @@ public class MarketBuilding : UserStructure {
 		this.rotated = str.rotated;
 		this.hasHitbox = str.hasHitbox;
 		this.buildingRange = str.buildingRange;
-		this.hasHitbox = hasHitbox;
+		this.hasHitbox = str.hasHitbox;
+		this.canTakeDamage = str.canTakeDamage;
+
 	}
 	public override Structure Clone (){
 		return new MarketBuilding(this);
@@ -47,7 +51,7 @@ public class MarketBuilding : UserStructure {
 		myWorker = new List<Worker> ();
 		RegisteredSturctures = new List<Structure> ();
 		myRoutes = GetMyRoutes ();
-		jobsToDo = new Dictionary<UserStructure, Item[]> ();
+		jobsToDo = new Dictionary<OutputStructure, Item[]> ();
 		// add all the tiles to the city it was build in
 		//dostuff thats happen when build
 		City.addTiles (myRangeTiles);
@@ -55,9 +59,9 @@ public class MarketBuilding : UserStructure {
 			if(rangeTile.Structure == null){
 				continue;
 			}
-			if(rangeTile.Structure is UserStructure){
+			if(rangeTile.Structure is OutputStructure){
 				if (RegisteredSturctures.Contains (rangeTile.Structure) == false) {
-					((UserStructure)rangeTile.Structure).RegisterOutputChanged (OnOutputChangedStructure);
+					((OutputStructure)rangeTile.Structure).RegisterOutputChanged (OnOutputChangedStructure);
 					RegisteredSturctures.Add (rangeTile.Structure);
 				}
 			}
@@ -65,12 +69,12 @@ public class MarketBuilding : UserStructure {
 		City.RegisterStructureAdded (OnStructureAdded);
 	}
 	public void OnOutputChangedStructure(Structure str){
-		if(str is UserStructure == false){
+		if(str is OutputStructure == false){
 			return;
 		}
 		bool hasOutput = false;
-		for (int i = 0; i < ((UserStructure)str).output.Length; i++) {
-			if(((UserStructure)str).output[i].count > 0){
+		for (int i = 0; i < ((OutputStructure)str).output.Length; i++) {
+			if(((OutputStructure)str).output[i].count > 0){
 				hasOutput = true;
 				break;
 			}
@@ -78,10 +82,10 @@ public class MarketBuilding : UserStructure {
 		if(hasOutput == false){
 			return;
 		}
-		if(jobsToDo.ContainsKey ((UserStructure)str)){
-			jobsToDo.Remove ((UserStructure)str);
+		if(jobsToDo.ContainsKey ((OutputStructure)str)){
+			jobsToDo.Remove ((OutputStructure)str);
 		}
-		foreach (Route item in ((UserStructure)str).GetMyRoutes()) {
+		foreach (Route item in ((OutputStructure)str).GetMyRoutes()) {
 			if (myRoutes.Contains (item)) {
 				foreach (Tile tile in str.neighbourTiles) {
 					if(tile.Structure is Road == false){
@@ -90,8 +94,8 @@ public class MarketBuilding : UserStructure {
 					if(myRoutes.Contains(((Road)tile.Structure).Route) == false){
 						continue;
 					}
-					if (((UserStructure)str).outputClaimed == false) {
-						jobsToDo.Add ((UserStructure)str,null);
+					if (((OutputStructure)str).outputClaimed == false) {
+						jobsToDo.Add ((OutputStructure)str,null);
 					}
 					return;
 				}
@@ -112,7 +116,7 @@ public class MarketBuilding : UserStructure {
 		if(structure.myBuildingTyp == BuildingTyp.Production){
 			foreach (Tile item in structure.myBuildingTiles) {
 				if(myRangeTiles.Contains (item)){
-					((UserStructure)structure).RegisterOutputChanged (OnOutputChangedStructure);
+					((OutputStructure)structure).RegisterOutputChanged (OnOutputChangedStructure);
 					break;
 				}
 			}

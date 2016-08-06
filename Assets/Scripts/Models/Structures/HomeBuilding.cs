@@ -31,6 +31,8 @@ public class HomeBuilding : Structure{
 		decreaseSpeed = 2;
 		this.buildingRange = 0;
 		hasHitbox = true;
+		this.canTakeDamage = true;
+
 	}
 	protected HomeBuilding(HomeBuilding b){
 		this.buildingRange = b.buildingRange;
@@ -49,6 +51,8 @@ public class HomeBuilding : Structure{
 		this.maxLivingSpaces = b.maxLivingSpaces;
 		this.increaseSpeed = b.increaseSpeed;
 		this.decreaseSpeed = b.decreaseSpeed;
+		this.canTakeDamage = b.canTakeDamage;
+
 	}
 	public override Structure Clone (){
 		return new HomeBuilding (this);

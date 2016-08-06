@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 
-public class Farm : UserStructure {
+public class Farm : OutputStructure {
 	public int growableID=-1;
 	public int growableReadyCount;
 	public int OnRegisterCallbacks;
@@ -28,6 +28,7 @@ public class Farm : UserStructure {
 		myBuildingTyp = BuildingTyp.Production ;
 		BuildTyp = BuildTypes.Single;
 		hasHitbox = true;
+		this.canTakeDamage = true;
 	}
 	protected Farm(Farm f){
 		this.myBuildingTyp = f.myBuildingTyp;
@@ -46,6 +47,7 @@ public class Farm : UserStructure {
 		myBuildingTyp = f.myBuildingTyp;
 		BuildTyp = f.BuildTyp;
 		hasHitbox = f.hasHitbox;
+		this.canTakeDamage = f.canTakeDamage;
 	}
 	public override Structure Clone ()	{
 		return new Farm (this);

@@ -12,7 +12,6 @@ public class CameraController : MonoBehaviour {
 	public Island nearestIsland;
 	public float zoomLevel;
 	void Start() {
-		
 	}
 
 

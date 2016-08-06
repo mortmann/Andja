@@ -121,7 +121,7 @@ public class MouseController : MonoBehaviour {
 			if( EventSystem.current.IsPointerOverGameObject() ) {
 				return;
 			}
-			Debug.Log (GetTileUnderneathMouse ().toString ()); 
+//			Debug.Log (GetTileUnderneathMouse ().toString ()); 
 			//mouse press decide what it hit 
 			RaycastHit2D hit = Physics2D.Raycast(new Vector2(currFramePosition.x, currFramePosition.y), Vector2.zero, 200);
 			DecideWhatUIToShow (hit);

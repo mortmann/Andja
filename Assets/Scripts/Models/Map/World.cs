@@ -165,6 +165,7 @@ public class World : IXmlSerializable{
 			if (islandList [i].allReadyHighlighted == false) {
 				continue;
 			}
+			islandList [i].allReadyHighlighted = false;
 			for (int t = 0; t < islandList [i].myTiles.Count; t++) {
 				islandList [i].myTiles [t].TileState = TileMark.None;
 			}

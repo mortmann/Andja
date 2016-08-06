@@ -31,6 +31,24 @@ public abstract class Structure : IXmlSerializable {
 			_city = value;
 		}
 	}
+	public bool canTakeDamage;
+	protected float _health;
+	public float Health {
+		get {
+			return _health;
+		}
+		set {
+			if(canTakeDamage==false){
+				return;
+			}
+			if(_health<=0){
+				Destroy ();
+			}
+			_health = value;
+		}
+	}
+
+
     public bool isWalkable { get; protected set; }
 	public bool hasHitbox { get; protected set; }
 
@@ -178,7 +196,6 @@ public abstract class Structure : IXmlSerializable {
 		}
 		//check if it's in a city
 		if(IsTilesCityViable(tiles)==false && buildInWilderniss==false){
-			Debug.Log ("check failed"); 
 			return false;
 		}
 
@@ -349,6 +366,23 @@ public abstract class Structure : IXmlSerializable {
 	}
 	#endregion
 	#region other
+	public void TakeDamage(float damage){
+		if(canTakeDamage==false){
+			return;
+		}
+		if(damage<0){
+			damage = -damage;
+			Debug.LogWarning ("Damage should be never smaller than 0 - Fixed it!");
+		}
+		Health -= damage;
+	}
+	public void HealHealth(float heal){
+		if(heal<0){
+			heal = -heal;
+			Debug.LogWarning ("Healing should be never smaller than 0 - Fixed it!");
+		}
+		Health += heal;
+	}
 	public void Destroy(){
 		OnDestroy ();
 		foreach(Tile t in myBuildingTiles){

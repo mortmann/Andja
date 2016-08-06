@@ -3,7 +3,7 @@ using System.Collections;
 using System;
 
 public class ContactColliderScript : MonoBehaviour {
-	public UserStructure contact;
+	public OutputStructure contact;
 	//dont know why this aint working
 	void OnCollisionEnter2D(Collision2D coll) {
 		Debug.Log ("Collision"); 

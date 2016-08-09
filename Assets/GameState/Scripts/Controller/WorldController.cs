@@ -26,10 +26,10 @@ public class WorldController : MonoBehaviour {
 			CreateWorldFromSaveFile ();
 		} else {
 			GameDataHolder gdh = GameObject.FindObjectOfType<GameDataHolder>();
-			if (gdh == null)
+			if (gdh != null)
 				this.world = new World (gdh.width, gdh.height);
 			else
-				this.world = new World (100, 100);
+				this.world = new World (1000, 1000);
 		}
         Camera.main.transform.position = new Vector3(world.Width / 2, world.Height / 2, Camera.main.transform.position.z);
     }

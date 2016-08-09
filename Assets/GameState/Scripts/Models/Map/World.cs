@@ -29,19 +29,19 @@ public class World : IXmlSerializable{
 		SetupWorld (width,height);
 		for (int x = 30; x < 40; x++) {
 			for (int y = 40; y < 60; y++) {
-				tiles [x, y] = new Tile (x,y);
+				tiles [x, y] = new LandTile (x,y);
 				tiles[x, y].Type = TileType.Dirt;
 			}
 		}
 		for (int x = 60; x < 70; x++) {
 			for (int y = 40; y < 60; y++) {
-				tiles [x, y] = new Tile (x,y);
+				tiles [x, y] = new LandTile (x,y);
 				tiles[x, y].Type = TileType.Dirt;
 			}
 		}
-//		CreateUnit(tiles[34, 41],PlayerController.Instance.number,false);
-//		CreateUnit(tiles[34, 47],2,false); 
-//		CreateUnit(tiles[42, 38],PlayerController.Instance.number,true);    
+		CreateUnit(tiles[34, 41],PlayerController.Instance.number,false);
+		CreateUnit(tiles[34, 47],2,false); 
+		CreateUnit(tiles[42, 38],PlayerController.Instance.number,true);    
 
 		CreateIsland (31, 41);
 		CreateIsland (61, 41);
@@ -60,9 +60,9 @@ public class World : IXmlSerializable{
 				tiles [x, y] = new Tile (x, y);
 			}
 		}
-//		allNeeds = GameObject.FindObjectOfType<BuildController>().allNeeds;
-//		allFertilities = GameObject.FindObjectOfType<BuildController>().allFertilities;
-//		idToFertilities= GameObject.FindObjectOfType<BuildController>().idToFertilities;
+		allNeeds = GameObject.FindObjectOfType<BuildController>().allNeeds;
+		allFertilities = GameObject.FindObjectOfType<BuildController>().allFertilities;
+		idToFertilities= GameObject.FindObjectOfType<BuildController>().idToFertilities;
 		tileGraph = new Path_TileGraph(this);
 		islandList = new List<Island>();
 		units = new List<Unit>();
@@ -344,7 +344,7 @@ public class World : IXmlSerializable{
 				int playernumber=int.Parse( reader.GetAttribute("playernumber") );
 				int x = int.Parse( reader.GetAttribute("currTile_X") );
 				int y = int.Parse( reader.GetAttribute("currTile_Y") );
-				Unit u = CreateUnit( tiles[x,y],playernumber,true );
+				Unit u = CreateUnit( GetTileAt (x,y),playernumber,true );
 				u.ReadXml(reader);
 			} while( reader.ReadToNextSibling("Unit") );
 		}

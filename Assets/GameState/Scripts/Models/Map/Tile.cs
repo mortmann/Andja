@@ -7,196 +7,9 @@ using System.Xml.Serialization;
 
 public enum TileType { Water, Shore, Dirt, Grass, Stone, Mountain };
 public enum TileMark { None, Highlight, Dark, Reset }
-public class Tile :IXmlSerializable {
-	//Want to have more than one structure in one tile!
-	//more than one tree or tree and bench! But for now only one
-	protected Structure _structures= null;
-	public  Structure Structure {
-		get{
-			return _structures;
-		} 
-		set {
-			if(_structures!=null&&_structures == value){
-				//				Debug.Log ("Tile.structure! Why does the structure add itself again to the tile?");
-				return;
-			}
-			if(_structures != null && _structures.canBeBuildOver && value!=null){
-				_structures.Destroy ();
-			} 
-			Structure oldStructure = _structures;
-			_structures = value;
-			if (cbTileStructureChanged != null) {
-				cbTileStructureChanged (this,oldStructure);
-			} 
-		}
-	}
-	protected Island _myIsland;
 
-	public  Island myIsland { get{return _myIsland;} 
-		set{ 
-			if(value==null){
-				Debug.LogError ("setting myisland to NULL is not viable " + value);
-				return;
-			}
-			_myIsland = value;
-		}}
+public class Tile : IXmlSerializable {
 
-	private Queue<City> cities;
-	protected City _myCity;
-	public  City myCity { 
-		get{
-			return _myCity;
-		} 
-		set {
-			if(myIsland==null){
-				return;
-			}
-			//if the tile gets unclaimed by the current owner of this
-			//either wilderniss or other player
-			if (value == null) {
-				if(cities!=null&&cities.Count>0){
-					//if this has more than one city claiming it 
-					//its gonna go add them to a queue and giving it 
-					//in that order the right to own it
-					City c = cities.Dequeue ();
-					_myCity = value;
-					c.addTile (this);
-					return;
-				}
-				myIsland.wilderniss.addTile (this);
-				_myCity = myIsland.wilderniss;
-				return;
-			} 
-			//warns about double wilderniss
-			//can be removed for performance if 
-			//necessary but it helps for development
-			if(_myCity!=null &&_myCity.playerNumber==-1 && value.playerNumber==-1){
-				_myCity = value;
-				return;
-			}
-			//remembers the order of the cities that have a claim 
-			//on that tile -- Maybe do a check if the city
-			//that currently owns has a another claim onit?
-			if (_myCity!=null && _myCity.IsWilderness ()==false){
-				if(cities==null){
-					cities = new Queue<City> ();
-				}
-				cities.Enqueue (value);
-				return;
-			}
-			//if the current city is not null remove this from it
-			//FIXME is there a performance problem here? ifso fix it
-			if(_myCity!=null){
-				_myCity.RemoveTile(this);
-			}
-			_myCity = value;
-		} 
-	}
-	protected TileMark _oldTileState;
-	protected TileMark _tileState;
-	public TileMark TileState {
-		get { return _tileState;}
-		set { 
-			if (value == TileMark.Reset) {
-				if (Type == TileType.Water) {
-					this._tileState = TileMark.None;
-					World.current.OnTileChanged (this);
-					return;
-				}
-				this._tileState = _oldTileState;
-				World.current.OnTileChanged (this);
-				return;
-			}
-			if(value == _tileState){
-				return;
-			} else {
-				if (_tileState != TileMark.Highlight) {
-					_oldTileState = _tileState;
-				}
-				this._tileState = value;
-				World.current.OnTileChanged (this);
-			}
-		}
-	}
-
-	public List<NeedsBuilding> listOfInRangeNeedBuildings { get; protected set; }
-
-	public Tile(){}
-	public Tile(int x, int y){
-		this.x = x;
-		this.y = y;
-		_type = TileType.Water;
-	}
-
-	// The function we callback any time our tile's data changes
-	Action<Tile,Structure> cbTileStructureChanged;
-	/// <summary>
-	/// Register a function to be called back when our tile type changes.
-	/// </summary>
-	public void RegisterTileStructureChangedCallback(Action<Tile,Structure> callback) {
-		cbTileStructureChanged += callback;
-	}
-
-	/// <summary>
-	/// Unregister a callback.
-	/// </summary>
-	public void UnregisterTileStructureChangedCallback(Action<Tile,Structure> callback) {
-		cbTileStructureChanged -= callback;
-	}
-
-	public void addNeedStructure(NeedsBuilding ns){
-		if(IsBuildType (Type)== false){
-			return;
-		}
-		if (listOfInRangeNeedBuildings == null) {
-			listOfInRangeNeedBuildings = new List<NeedsBuilding> ();
-		}
-		listOfInRangeNeedBuildings.Add (ns);
-	}
-	public void removeNeedStructure(NeedsBuilding ns){
-		if(IsBuildType (Type)== false){
-			return;
-		}
-		if (listOfInRangeNeedBuildings == null) {
-			return;
-		}
-		if (listOfInRangeNeedBuildings.Contains (ns) == false) {
-			return;
-		}
-		listOfInRangeNeedBuildings.Remove (ns);
-	}
-	protected TileType _type = TileType.Water;
-	public TileType Type {
-		get { return _type; }
-		set {
-			_type = value;
-		}
-	}
-
-
-	public float MovementCost {
-		get {
-			if (Type == TileType.Water) {
-				//				if(Structure!=null){
-				//					return float.PositiveInfinity;
-				//				}
-				return 1;  
-			}
-			if (Type == TileType.Mountain) {
-				return Mathf.Infinity;  
-			}
-			//			if (Structure == null){
-			//				return 1;
-			//			}
-			//			if (Structure.myBuildingTyp != BuildingTyp.Pathfinding){
-			//				return float.PositiveInfinity;
-			//			}
-			//			if (Structure.myBuildingTyp == BuildingTyp.Pathfinding){
-			//				return 0.25f;
-			//			}
-			return 1;
-		}
-	}
 	[XmlAttribute("X")]
 	protected int x;
 	[XmlAttribute("Y")]
@@ -212,7 +25,47 @@ public class Tile :IXmlSerializable {
 			return y;
 		}
 	}
-		
+
+	public Tile(){}
+	public Tile(int x, int y){
+		this.x = x;
+		this.y = y;
+		_type = TileType.Water;
+	}
+	protected TileType _type = TileType.Water;
+	public TileType Type {
+		get { return _type; }
+		set {
+			_type = value;
+		}
+	}
+
+
+	public float MovementCost {
+		get {
+			if (Type == TileType.Water) {
+				if(Structure!=null){
+					return float.PositiveInfinity;
+				}
+				return 1;  
+			}
+			if (Type == TileType.Mountain) {
+				return Mathf.Infinity;  
+			}
+			if (Structure == null){
+				return 1;
+			}
+			if (Structure.myBuildingTyp != BuildingTyp.Pathfinding){
+				return float.PositiveInfinity;
+			}
+			if (Structure.myBuildingTyp == BuildingTyp.Pathfinding){
+				return 0.25f;
+			}
+			return 1;
+		}
+	}
+
+
 
 	// Tells us if two tiles are adjacent.
 	public bool IsNeighbour(Tile tile, bool diagOkay = false) {
@@ -223,7 +76,7 @@ public class Tile :IXmlSerializable {
 			(diagOkay && (Mathf.Abs(this.X - tile.X) == 1 && Mathf.Abs(this.Y - tile.Y) == 1)); // Check diag adjacency
 
 	}
-		
+
 	/// <summary>
 	/// Gets the neighbours.
 	/// </summary>
@@ -284,7 +137,7 @@ public class Tile :IXmlSerializable {
 	/// </summary>
 	/// <returns><c>true</c>, if tile is buildable, <c>false</c> otherwise.</returns>
 	/// <param name="t">Tile to check, canBeBuildOnShore if shore tiles are ok</param>
-	public static bool checkTile(Tile t, bool canBeBuildOnShore =false, bool canBeBuildOnMountain =false){
+	public virtual bool checkTile(Tile t, bool canBeBuildOnShore =false, bool canBeBuildOnMountain =false){
 		if(t.Type == TileType.Water){
 			return false;
 		}
@@ -299,11 +152,11 @@ public class Tile :IXmlSerializable {
 				return false;
 			}
 		}
-		//		if(t.Structure != null ) {
-		//			if(t.Structure.canBeBuildOver == false){ 
-		//				return false;
-		//			}
-		//		}
+		if(t.Structure != null ) {
+			if(t.Structure.canBeBuildOver == false){ 
+				return false;
+			}
+		}
 		return true;
 	}
 
@@ -332,15 +185,51 @@ public class Tile :IXmlSerializable {
 		return false;
 	}
 
+
+
+	//Want to have more than one structure in one tile!
+	//more than one tree or tree and bench! But for now only one
+	public virtual Structure Structure {
+		get{
+			return null;
+		} 
+		set {
+		}
+	}
+	public virtual Island myIsland { get { return null; } set { } }
+	public virtual City myCity { 
+		get{
+			return null;
+		} 
+		set {
+		} 
+	}
+	public virtual TileMark TileState {
+		get { return TileMark.None;}
+		set { 
+		}
+	}
+	/// <summary>
+	/// Register a function to be called back when our tile type changes.
+	/// </summary>
+	public virtual void RegisterTileStructureChangedCallback(Action<Tile,Structure> callback) {
+	}
+
+	/// <summary>
+	/// Unregister a callback.
+	/// </summary>
+	public virtual void UnregisterTileStructureChangedCallback(Action<Tile,Structure> callback) {
+	}
+	public virtual void addNeedStructure(NeedsBuilding ns){
+	}
+	public virtual void removeNeedStructure(NeedsBuilding ns){
+	}
+	public virtual List<NeedsBuilding> getListOfInRangeNeedBuildings(){
+		return null;
+	}
 	public String toString() {
 		return "tile_" + X + "_" + Y;
 	}
-	//	public override bool Equals (object obj){
-	//		if(obj==null){
-	//			return false;
-	//		}
-	//		return X == ((Tile)obj).X && Y == ((Tile)obj).Y;
-	//	}
 	//////////////////////////////////////////////////////////////////////////////////////
 	/// 
 	/// 						SAVING & LOADING

@@ -29,7 +29,7 @@ public class WorldController : MonoBehaviour {
 			if (gdh == null)
 				this.world = new World (gdh.width, gdh.height);
 			else
-				this.world = new World (1000, 1000);
+				this.world = new World (100, 100);
 		}
         Camera.main.transform.position = new Vector3(world.Width / 2, world.Height / 2, Camera.main.transform.position.z);
     }

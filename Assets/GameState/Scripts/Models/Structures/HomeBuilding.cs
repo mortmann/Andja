@@ -141,7 +141,7 @@ public class HomeBuilding : Structure{
 	public bool isInRangeOf(NeedsBuilding str){
 		List<NeedsBuilding> strs = new List<NeedsBuilding> ();
 		foreach (Tile item in myBuildingTiles) {
-			strs.AddRange (item.listOfInRangeNeedBuildings);
+			strs.AddRange (item.getListOfInRangeNeedBuildings());
 		}
 		return strs.Contains (str);
 	}

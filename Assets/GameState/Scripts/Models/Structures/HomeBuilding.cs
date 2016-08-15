@@ -11,7 +11,7 @@ public class HomeBuilding : Structure{
 	public int maxLivingSpaces;
 	public float increaseSpeed;
 	public float decreaseSpeed;
-	public bool canUpgrade;
+	public bool canUpgrade=false;
 	public int buildingLevel;
 	public float decTimer;
 	public float incTimer;
@@ -139,12 +139,33 @@ public class HomeBuilding : Structure{
 		buildingLevel = int.Parse( reader.GetAttribute("BuildingLevel") );
 	}
 	public bool isInRangeOf(NeedsBuilding str){
+		if(str==null){
+			return false;
+		}
 		List<NeedsBuilding> strs = new List<NeedsBuilding> ();
 		foreach (Tile item in myBuildingTiles) {
+			if(item.getListOfInRangeNeedBuildings()==null){
+				continue;
+			}
 			strs.AddRange (item.getListOfInRangeNeedBuildings());
+		}
+		if(strs.Count==0){
+			return false;
 		}
 		return strs.Contains (str);
 	}
 
+	public void UpgradeHouse(){
+		if(canUpgrade==false){
+			return;
+		}
+		buildingLevel += 1;
+		maxLivingSpaces *= 2; // TODO load this in from somewhere
+		canUpgrade = false;
+	}
+	public void DowngradeHouse(){
+		buildingLevel -= 1;
+		maxLivingSpaces /= 2; // TODO load this in from somewhere
 
+	}
 }

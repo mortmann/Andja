@@ -11,12 +11,18 @@ public class CameraController : MonoBehaviour {
 	Tile middleTile;
 	public Island nearestIsland;
 	public float zoomLevel;
+
 	void Start() {
+		
 	}
 
 
 
+
 	void Update () {
+		if(UIController.Instance.IsPauseMenuOpen()){
+			return;
+		}
 		Vector3 diff = new Vector3(0,0);
 		currFramePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 		currFramePosition.z = 0;

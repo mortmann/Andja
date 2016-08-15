@@ -1,23 +1,38 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
 public class UIController : MonoBehaviour {
 
+	public GameObject mainCanvas;
+	public GameObject shortCutCanvas;
+
 	public GameObject uiInfoCanvas;
+
 	public GameObject chooseBuildCanvas;
+
 	public GameObject buildingCanvas;
 	public GameObject unitCanvas;
 	public GameObject rightCanvas;
 	public GameObject CityInventoryCanvas;
 	public GameObject citizenCanvas;
 	public GameObject tradeMapCanvas;
-	public Structure oldStr;
+	public GameObject pauseMenuCanvas;
+
+	Structure oldStr;
+
+
+
+	public static UIController Instance;
 
 	void Start(){
-		CloseInfoUI ();
-		chooseBuildCanvas.SetActive (false);
-		buildingCanvas.SetActive (false);
-		unitCanvas.SetActive (false);
+		Escape (true);
+		if(Instance!=null){
+			Debug.LogError ("There are two uicontroller"); 
+		}
+		Instance = this;
+
 	}
 
 	public void OpenStructureUI(Structure str){
@@ -78,6 +93,12 @@ public class UIController : MonoBehaviour {
 		buildingCanvas.SetActive (false);
 		CloseInfoUI ();
 	}
+
+	public void TogglePauseMenu(){
+		pauseMenuCanvas.SetActive (!pauseMenuCanvas.activeSelf);
+		WorldController.Instance.IsModal = pauseMenuCanvas.activeSelf;
+	}
+
 	public void OpenProduceUI(OutputStructure str){
 		if(str == null){
 			return;
@@ -171,7 +192,10 @@ public class UIController : MonoBehaviour {
 	public void CloseTradeMenu(){
 		tradeMapCanvas.SetActive (false);
 	}
-	public void Escape() {
+	public void Escape(bool firstreset=false) {
+		if(AnyMenuOpen ()==false&&firstreset==false){
+			TogglePauseMenu ();
+		}
 		CloseHomeUI ();
 		CloseInfoUI ();
 		CloseProduktionUI ();
@@ -179,7 +203,22 @@ public class UIController : MonoBehaviour {
 		CloseChooseBuild ();
 		CloseRightUI ();
 		CloseTradeMenu ();
+
+	}
+	public bool IsPauseMenuOpen(){
+		return pauseMenuCanvas.activeSelf;
+	}
+	public bool AnyMenuOpen(){
+		return rightCanvas.activeSelf || uiInfoCanvas.activeSelf || chooseBuildCanvas.activeSelf || tradeMapCanvas.activeSelf;
 	}
 
+	public void SetDragAndDropBuild(GameObject go){
+		shortCutCanvas.GetComponent<ShortcutUI> ().SetDragAndDropBuild (go);
+	}
+
+	public void StopDragAndDropBuild(){
+		Debug.Log ("EJMfkojsdoinfvoksjnvjösdn"); 
+		shortCutCanvas.GetComponent<ShortcutUI> ().StopDragAndDropBuild ();
+	}
 
 }

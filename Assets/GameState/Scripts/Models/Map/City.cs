@@ -154,7 +154,7 @@ public class City : IXmlSerializable{
 	public void addTiles(HashSet<Tile> t){
 		// does not really needs it because tiles witout island reject cities
 		//but it is a secondary security that this does not happen
-		t.RemoveWhere (x => x.Type == TileType.Water);
+		t.RemoveWhere (x => x.Type == TileType.Ocean);
 		List<Tile> tiles = new List<Tile> (t);
 		for (int i = 0; i < tiles.Count; i++) {
 			tiles [i].myCity = this;
@@ -171,7 +171,7 @@ public class City : IXmlSerializable{
 
 	}
 	public void addTile(Tile t){
-		if(t.Type==TileType.Water||myTiles==null||myTiles.Contains (t)){
+		if(t.Type==TileType.Ocean||myTiles==null||myTiles.Contains (t)){
 			return;
 		}
 		if(t.Structure != null){

@@ -10,25 +10,45 @@ public class Path_AStar {
 	public Path_AStar(Queue<Tile> backPath){
 		path = backPath;
 	}
-	public Path_AStar(World world, Tile tileStart, Tile tileEnd) {
-		// Check to see if we have a valid tile graph
-		if(world.tileGraph == null) {
-			world.tileGraph = new Path_TileGraph(world);
-		}
-
-		// A dictionary of all valid, walkable nodes.
-		Dictionary<Tile, Path_Node<Tile>> nodes = world.tileGraph.nodes;
-		Calculate (nodes,tileStart,tileEnd);
-	}
 
     public Path_AStar(Island island, Tile tileStart, Tile tileEnd) {
         if(island == null || tileStart == null || tileEnd == null) {
             return;
         }
         // A dictionary of all valid, walkable nodes.
-        Dictionary<Tile, Path_Node<Tile>> nodes = island.tileGraph.nodes;
+        Dictionary<Tile, Path_Node<Tile>> nodes = island.tileGraphIslandTiles.nodes;
 		Calculate (nodes,tileStart,tileEnd);
     }
+	public Path_AStar(Tile t, Tile tileStart, Vector3 end) {
+		if(t == null || tileStart == null) {
+			Debug.Log (t + " " + tileStart); 
+			return;
+		}
+		// A dictionary of all valid, walkable nodes.
+		Dictionary<Tile, Path_Node<Tile>> nodes = t.pathfinding.nodes;
+		Tile goal = World.current.GetTileAt (end.x,end.y);
+		if(nodes.ContainsKey (goal)){
+			Calculate (nodes,tileStart,goal);
+			return;
+		}
+		float max = (tileStart.vector - end).sqrMagnitude;
+		float min = float.MaxValue;
+		float curr;
+
+		foreach (var item in nodes.Keys) {
+			curr = (item.vector - end).sqrMagnitude;
+			if(curr>max){
+				continue;
+			}
+			if(min>=curr){
+				min = curr;
+				goal = item;
+			}
+
+		}
+
+		Calculate (nodes,tileStart,goal);
+	}
 	public Path_AStar(Route route, Tile tileStart, Tile tileEnd) {
 		if(route == null || tileStart == null || tileEnd == null) {
 			return;
@@ -36,6 +56,7 @@ public class Path_AStar {
 		// A dictionary of all valid, walkable nodes.
 		Dictionary<Tile, Path_Node<Tile>> nodes = route.tileGraph.nodes;
 		Calculate (nodes,tileStart,tileEnd);
+
 	}
 
 	private void Calculate(Dictionary<Tile, Path_Node<Tile>> nodes,Tile tileStart, Tile tileEnd){
@@ -127,6 +148,8 @@ public class Path_AStar {
 		// path list will be null.
 
 	}
+
+
     float heuristic_cost_estimate( Path_Node<Tile> a, Path_Node<Tile> b ) {
 
 		return Mathf.Sqrt(

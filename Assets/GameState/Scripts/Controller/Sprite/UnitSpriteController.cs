@@ -30,8 +30,17 @@ public class UnitSpriteController : MonoBehaviour {
 
         // Add our tile/GO pair to the dictionary.
         unitGameObjectMap.Add(u, char_go);
+		SpriteRenderer sr = char_go.AddComponent<SpriteRenderer>();
+		sr.sortingLayerName = "Units";
 
-        char_go.name = "Ship";
+		if(u.isShip){
+			char_go.name = "Ship";
+			sr.sprite = unitSprites["ship"];
+
+		} else {
+			sr.sprite = unitSprites["unit"];
+
+		}
         char_go.transform.SetParent(this.transform, true);
 		char_go.AddComponent<UnitHoldingScript> ().unit=u;
 		Rigidbody2D r2d = char_go.AddComponent<Rigidbody2D> (); 
@@ -41,9 +50,6 @@ public class UnitSpriteController : MonoBehaviour {
 //        unitSprites["ship"].rect.size / unitSprites["ship"].pixelsPerUnit;    
         u.width = unitSprites["ship"].textureRect.size.x / unitSprites["ship"].pixelsPerUnit;
         u.height = unitSprites["ship"].textureRect.size.y / unitSprites["ship"].pixelsPerUnit;
-        SpriteRenderer sr = char_go.AddComponent<SpriteRenderer>();
-        sr.sprite = unitSprites["ship"];
-        sr.sortingLayerName = "Units";
 
 		u.SetGameObject (char_go);
         // Register our callback so that our GameObject gets updated whenever

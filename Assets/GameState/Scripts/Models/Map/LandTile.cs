@@ -96,7 +96,7 @@ public class LandTile : Tile,IXmlSerializable {
 		get { return _tileState;}
 		set { 
 			if (value == TileMark.Reset) {
-				if (Type == TileType.Water) {
+				if (Type == TileType.Ocean) {
 					this._tileState = TileMark.None;
 					World.current.OnTileChanged (this);
 					return;
@@ -123,7 +123,7 @@ public class LandTile : Tile,IXmlSerializable {
 	public LandTile(int x, int y){
 		this.x = x;
 		this.y = y;
-		_type = TileType.Water; 
+		_type = TileType.Ocean; 
 	} 
 
 	// The function we callback any time our tile's data changes

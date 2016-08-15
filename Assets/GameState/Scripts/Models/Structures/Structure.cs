@@ -515,7 +515,7 @@ public abstract class Structure : IXmlSerializable {
 		return correctSpotForOn (tiles,TileType.Mountain);
 	}
 	public bool correctSpotOnShore(List<Tile> tiles){
-		return correctSpotForOn (tiles,TileType.Water);
+		return correctSpotForOn (tiles,TileType.Ocean);
 	}
 	public virtual Item[] BuildingItems(){
 		return buildingItems;

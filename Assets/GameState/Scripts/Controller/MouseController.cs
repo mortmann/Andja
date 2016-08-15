@@ -152,6 +152,7 @@ public class MouseController : MonoBehaviour {
 			}
 			if (SelectedUnit == null) {
 				Tile t = GetTileUnderneathMouse (false);
+				Debug.Log ("tile " + t.toString ()); 
 				if (t.Structure != null) {
 					uic.OpenStructureUI (t.Structure);
 				}

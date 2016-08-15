@@ -13,7 +13,7 @@ public class Worker : IXmlSerializable{
 	float workTime = 1f;
 	float doTimer;
 	Inventory inventory;
-	OutputStructure workStructure;
+	public OutputStructure workStructure;
 	Tile destTile;
 	Tile currTile;
 	Action<Worker> cbWorkerChanged;
@@ -135,6 +135,8 @@ public class Worker : IXmlSerializable{
 		
 	}
 	public void Destroy() {
+		if (goingToWork)
+			workStructure.resetOutputClaimed ();
 		if(cbWorkerDestroy != null)
 			cbWorkerDestroy(this);
 	}

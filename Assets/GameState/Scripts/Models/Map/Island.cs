@@ -9,7 +9,8 @@ public enum Climate {Cold,Middle,Warm};
 
 public class Island : IXmlSerializable{
     
-	public Path_TileGraph tileGraph { get; protected set; }
+	public Path_TileGraph tileGraphIslandTiles { get; protected set; }
+	public Path_TileGraph tileGraphAroundIslandTiles { get; protected set; }
 
     public List<Tile> myTiles;
     public List<City> myCities;
@@ -37,7 +38,9 @@ public class Island : IXmlSerializable{
         foreach (Tile t in startTile.GetNeighbours()) {
             IslandFloodFill(t);
         }
-        tileGraph = new Path_TileGraph(this);
+        tileGraphIslandTiles = new Path_TileGraph(this);
+		tileGraphAroundIslandTiles = new Path_TileGraph (min, max);
+
 		allReadyHighlighted = false;
     }
     protected void IslandFloodFill(Tile tile) {
@@ -46,7 +49,7 @@ public class Island : IXmlSerializable{
             // without doing anything.
             return;
         }
-        if (tile.Type == TileType.Water) {
+        if (tile.Type == TileType.Ocean) {
             // Water is the border of every island :>
             return;
         }
@@ -75,7 +78,7 @@ public class Island : IXmlSerializable{
 			}
 
 
-            if (t.Type != TileType.Water && t.myIsland != this) {
+            if (t.Type != TileType.Ocean && t.myIsland != this) {
                 myTiles.Add(t);
                 t.myIsland = this;
                 Tile[] ns = t.GetNeighbours();
@@ -149,12 +152,15 @@ public class Island : IXmlSerializable{
 		reader.ReadToFollowing ("fertilities");
 		List<int> ferIDs = new List<int>();
 		while (reader.Read ()) {
-			if (reader.IsStartElement ("fertility")) {
-				ferIDs.Add (int.Parse (reader.GetAttribute ("ID")));
-			}
-			if(reader.Name == "fertilities"){
-				break;
-			}
+			if(reader.IsStartElement ("fertility")==false){
+				Debug.Log (reader.Name ); 
+				if(reader.Name == "fertilities"){
+					break;
+				}
+				continue;
+			}	
+			ferIDs.Add (int.Parse (reader.GetAttribute ("ID")));
+
 		}
 		foreach (int item in ferIDs) {
 			myFertilities.Add (World.current.getFertility(item)); 
@@ -185,7 +191,7 @@ public class Island : IXmlSerializable{
 				} else {
 					c = new City (playerNumber, this, World.current.allNeeds);	
 				}
-				c.ReadXml (reader);
+//				c.ReadXml (reader);
 				myCities.Add (c);
 
 				 

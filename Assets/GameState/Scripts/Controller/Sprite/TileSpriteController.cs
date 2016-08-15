@@ -88,10 +88,10 @@ public class TileSpriteController : MonoBehaviour {
 			sr.material = darkMaterial;
 		}
 
-		if (tile_data.Type != TileType.Water) {
+		if (tile_data.Type != TileType.Ocean) {
 			tile_go.GetComponent<SpriteRenderer> ().sortingLayerName = "Tile";
 		}
-        if (tile_data.Type == TileType.Water) {
+        if (tile_data.Type == TileType.Ocean) {
             tile_go.GetComponent<SpriteRenderer>().sprite = waterSprite;
         } else if (tile_data.Type == TileType.Dirt) {
             tile_go.GetComponent<SpriteRenderer>().sprite = dirtSprite;
@@ -123,7 +123,7 @@ public class TileSpriteController : MonoBehaviour {
 		for (int x = lowerX; x < upperX; x++) {
 			for (int y=lowerY; y < upperY; y++) {
 				Tile tile_data = world.GetTileAt(x, y);
-				if(World.current.GetTileAt (x,y)==null||World.current.GetTileAt (x,y).Type == TileType.Water || tileGameObjectMap.ContainsKey (tile_data)){
+				if(World.current.GetTileAt (x,y)==null||World.current.GetTileAt (x,y).Type == TileType.Ocean || tileGameObjectMap.ContainsKey (tile_data)){
 					continue;
 				}
 				GameObject tile_go = new GameObject();

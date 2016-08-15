@@ -6,4 +6,7 @@ public class ChangeScene : MonoBehaviour {
 	public void ChangeSceneClick(){
 		SceneManager.LoadScene ("GameState"); 
 	}
+	public void OpenMenuState(){
+		SceneManager.LoadScene ("MainMenu"); 
+	}
 }

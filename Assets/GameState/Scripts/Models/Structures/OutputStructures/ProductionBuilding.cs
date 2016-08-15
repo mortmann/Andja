@@ -107,6 +107,7 @@ public class ProductionBuilding : OutputStructure {
 		}
 
 		produceCountdown -= deltaTime;
+		Debug.Log ("prod" + produceCountdown); 
 		if(produceCountdown <= 0) {
 			produceCountdown = produceTime;
 			for (int i = 0; i < intake.Length; i++) {

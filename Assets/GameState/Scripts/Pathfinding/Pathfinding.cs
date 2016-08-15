@@ -21,6 +21,7 @@ public class Pathfinding  {
 	public Transform transform;
 	public Queue<Tile> backPath;
 	private path_dest pathDest;
+
 	private float _speed;
 	private float speed {
 		get{ 
@@ -135,11 +136,49 @@ public class Pathfinding  {
 			Debug.LogError ("currtile/desttile");
 			return Vector3.zero;
 		}
- 
-		//if it has to be exact and if the goal is the nexttile
-		if (pathDest==path_dest.exact&&nextTile == destTile) {
+		//so for everything we can use astar
+		//but the world(ships in water)
+		//the tilegraph gets too big
+		if(pathmode!=path_mode.world){
+			//if it has to be exact and if the goal is the nexttile
+			if (pathDest==path_dest.exact&&nextTile == destTile) {
+				return accurateMove (deltaTime);
+			} 
+			return DoAStar (deltaTime);
+		}
+		return DoWorldMove (deltaTime);
+
+	}
+	private Vector3 DoWorldMove(float deltaTime){
+		Vector3 move = currTile.vector-destTile.vector;
+
+		if(currTile.pathfinding==null || pathAStar!=null&&pathAStar.path.Count == 0) {
+           
+//			Debug.Log ("accurate");
+			if (currTile.pathfinding == null) {
+//				Debug.Log ("cur: "+currTile.toString () +  " p " + (currTile.pathfinding==null)); 
+
+//				pathAStar = null;  
+			}
+			currTile = World.current.GetTileAt(X, Y);
 			return accurateMove (deltaTime);
 		} else {
+			if(pathAStar==null){
+				Debug.Log ("pathastar is null " + currTile.toString ()  ); 
+				pathAStar=new Path_AStar (currTile,currTile, new Vector3 (dest_X,dest_Y));
+//				foreach (Tile item in pathAStar.path) {
+//					Debug.Log ("Path " + item.toString ()); 
+//				}
+				Debug.Log ("count "+ pathAStar.path.Count);
+			}
+			move = DoAStar (deltaTime);
+//			Debug.Log ("move " + move + " _ " + move.magnitude); 
+			return move;
+		}
+//		Debug.LogError ("worldpathfinding - should never happen"); 
+//		return Vector3.zero;
+	}
+	private Vector3 DoAStar(float deltaTime){
 			//no move command so return!
 			if (destTile == currTile) {
 				IsAtDest = true;
@@ -165,31 +204,32 @@ public class Pathfinding  {
 				Mathf.Pow(currTile.X - nextTile.X, 2) +
 				Mathf.Pow(currTile.Y - nextTile.Y, 2)
 			);
-
+			
 			float percThisFrame = distThisFrame / distToTravel;
 			// Add that to overall percentage travelled.
 			movementPercentage += percThisFrame;
-			if (movementPercentage > 1) {
-				// We have reached our destination
-				// TODO: Get the next tile from the pathfinding system.
-				//       If there are no more tiles, then we have TRULY
-				//       reached our destination.
-				currTile = nextTile;
-				movementPercentage = 0;
-				// FIXME?  Do we actually want to retain any overshot movement?
-			}
-			Vector3 temp = deltaTime * dir * speed;
-			if (transform == null) {
-				X += temp.x;
-				Y += temp.y;
-			}
-			return temp;
+//		if(World.current.IsInTileAt (nextTile,X,Y)){
+//			currTile = nextTile;
+//		}
+		if (movementPercentage > 1) {
+//			Debug.Log (movementPercentage+" "+currTile.toString() + " nexttile "+nextTile.toString ()); 
+			// We have reached our destination
+			// TODO: Get the next tile from the pathfinding system.
+			//       If there are no more tiles, then we have TRULY
+			//       reached our destination.
+			currTile = nextTile;
+			movementPercentage = 0;
+			// FIXME?  Do we actually want to retain any overshot movement?
 		}
-
+		Vector3 temp = deltaTime * dir * speed;
+		if (transform == null) {
+			X += temp.x;
+			Y += temp.y;
+		}
+		return temp;
 
 	}
 	private Vector3 accurateMove(float deltaTime){
-		pathAStar = null;
 		// we are one tile from destination tile away...
 		// now we have to go to the correct x/y coordinations
 		if(X>=dest_X-0.1f && X <= dest_X + 0.1f && Y >= dest_Y - 0.1f && Y <= dest_Y + 0.1f) {
@@ -219,8 +259,9 @@ public class Pathfinding  {
 		// Generate a path to our destination
 		switch (pathmode) {
 		case path_mode.world:
-				return new Path_AStar (World.current, currTile, destTile); // This will calculate a path from curr to dest.
-			
+//				return new Path_AStar (World.current, currTile, destTile); // This will calculate a path from curr to dest.
+			Debug.Log ("dis is not possible for WORLD") ;
+			return null;
 		case path_mode.route:
 			Path_AStar p = null;
 			foreach (Tile start in roadTilesAroundStartStructure) {

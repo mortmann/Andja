@@ -5,8 +5,8 @@ using System.Xml.Schema;
 using System.Xml.Serialization;
 
 public class MarketBuilding : OutputStructure {
-	public List<Route> myRoutes;
 	public List<Structure> RegisteredSturctures;
+	public List<Structure> OutputMarkedSturctures;
 	public MarketBuilding(int id){
 		
 		hasHitbox = true;
@@ -45,12 +45,14 @@ public class MarketBuilding : OutputStructure {
 		return new MarketBuilding(this);
 	}
 	public override void update (float deltaTime){
+
+
 		base.update_Worker (deltaTime);
 	}
 	public override void OnBuild(){
 		myWorker = new List<Worker> ();
 		RegisteredSturctures = new List<Structure> ();
-		myRoutes = GetMyRoutes ();
+		OutputMarkedSturctures = new List<Structure> ();
 		jobsToDo = new Dictionary<OutputStructure, Item[]> ();
 		// add all the tiles to the city it was build in
 		//dostuff thats happen when build
@@ -80,27 +82,43 @@ public class MarketBuilding : OutputStructure {
 			}
 		}
 		if(hasOutput == false){
+			if(OutputMarkedSturctures.Contains (str)){
+				OutputMarkedSturctures.Remove (str);
+			}
 			return;
 		}
 		if(jobsToDo.ContainsKey ((OutputStructure)str)){
 			jobsToDo.Remove ((OutputStructure)str);
 		}
+		List<Route> myRoutes = GetMyRoutes ();
+		//get the roads around the structure
 		foreach (Route item in ((OutputStructure)str).GetMyRoutes()) {
+			//if one of them is in my roads
 			if (myRoutes.Contains (item)) {
-				foreach (Tile tile in str.neighbourTiles) {
-					if(tile.Structure is Road == false){
-						continue;
-					}
-					if(myRoutes.Contains(((Road)tile.Structure).Route) == false){
-						continue;
-					}
+				//if we are here we can get there through atleast 1 road
+//				foreach (Tile tile in str.neighbourTiles) {
+//					if(tile.Structure is Road == false){
+//						continue;
+//					}
+//					if(myRoutes.Contains(((Road)tile.Structure).Route) == false){
+//						continue;
+//					}
 					if (((OutputStructure)str).outputClaimed == false) {
 						jobsToDo.Add ((OutputStructure)str,null);
 					}
-					return;
+				if(OutputMarkedSturctures.Contains (str)){
+					OutputMarkedSturctures.Remove (str);
 				}
+					return;
+//				}
 			}
 		}
+		//if were here there is noconnection between here and a the structure
+		//so remember it for the case it gets connected to it.
+		if(OutputMarkedSturctures.Contains (str)){
+			return;
+		}
+		OutputMarkedSturctures.Add (str);
 	}
 	protected override void OnDestroy (){
 		List<Tile> h = new List<Tile> (myBuildingTiles);
@@ -116,7 +134,7 @@ public class MarketBuilding : OutputStructure {
 		if(this == structure){
 			return;
 		}
-		if(structure.myBuildingTyp == BuildingTyp.Production){
+		if(structure is OutputStructure){
 			foreach (Tile item in structure.myBuildingTiles) {
 				if(myRangeTiles.Contains (item)){
 					((OutputStructure)structure).RegisterOutputChanged (OnOutputChangedStructure);
@@ -124,13 +142,25 @@ public class MarketBuilding : OutputStructure {
 				}
 			}
 		}
+		//IF THIS is a pathfinding structure check for new road
+		//if true added that to the myroads
+
 		if (structure.myBuildingTyp == BuildingTyp.Pathfinding) {
+			List<Route> myRoutes = GetMyRoutes ();
 			if(neighbourTiles.Contains (structure.myBuildingTiles[0])){
-				Route r = ((Road)structure).Route;
-				if (myRoutes.Contains (r) == false) {
-					myRoutes.Add (r);
+				if (myRoutes.Contains (((Road)structure).Route) == false) {
+					myRoutes.Add (((Road)structure).Route);
 				}
 			}
+			for (int i = 0; i < OutputMarkedSturctures.Count; i++) {
+				foreach (Route item in ((OutputStructure)OutputMarkedSturctures[i]).GetMyRoutes ()) {
+					if(myRoutes.Contains (item)){
+						OnOutputChangedStructure(OutputMarkedSturctures[i]);				
+						break;//breaks only the innerloop eg the routes loop
+					}
+				}
+			}
+
 		}
 	}
 

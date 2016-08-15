@@ -7,7 +7,7 @@ public class Farm : OutputStructure {
 	public int OnRegisterCallbacks;
 	Queue<Structure> workingGrowables;
 
-	public override float Efficiency{
+    public override float Efficiency{
 		get {
 			return Mathf.Round(((float)OnRegisterCallbacks / (float)myRangeTiles.Count)*1000)/10f;
 		}
@@ -90,7 +90,7 @@ public class Farm : OutputStructure {
 
 		produceCountdown -= deltaTime;
 		if (produceCountdown <= 0) {
-			produceCountdown = deltaTime;
+			produceCountdown = produceTime;
 			if (growable != null) {
 				Growable g = (Growable)workingGrowables.Dequeue ();
 				output[0].count++;

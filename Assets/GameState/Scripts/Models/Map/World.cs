@@ -45,8 +45,7 @@ public class World : IXmlSerializable{
 
 		CreateIsland (31, 41);
 		CreateIsland (61, 41);
-		tileGraph = new Path_TileGraph(this);
-
+		 
     }
 	public World(){
 	}
@@ -63,7 +62,6 @@ public class World : IXmlSerializable{
 		allNeeds = GameObject.FindObjectOfType<BuildController>().allNeeds;
 		allFertilities = GameObject.FindObjectOfType<BuildController>().allFertilities;
 		idToFertilities= GameObject.FindObjectOfType<BuildController>().idToFertilities;
-		tileGraph = new Path_TileGraph(this);
 		islandList = new List<Island>();
 		units = new List<Unit>();
 
@@ -80,7 +78,7 @@ public class World : IXmlSerializable{
 	}
 	public void CreateIsland(int x, int y){
 		Tile t = GetTileAt (x, y);
-		if(t.Type == TileType.Water){
+		if(t.Type == TileType.Ocean){
 			Debug.LogError ("Tried to create island on a water tile at " + t.toString ());
 			return;
 		}
@@ -187,13 +185,6 @@ public class World : IXmlSerializable{
 	}
 
 
-	public void invalidateGraph(){
-		tileGraph = null;
-		tileGraph = new Path_TileGraph (this);
-		if (cbTileGraphChanged != null)
-			cbTileGraphChanged (this);
-
-	}
 	public void CreateWorkerGameObject(Worker worker) {
 		if (cbWorkerCreated != null)
 			cbWorkerCreated(worker);
@@ -254,7 +245,7 @@ public class World : IXmlSerializable{
 		writer.WriteStartElement("Tiles");
 		for (int x = 0; x < Width; x++) {
 			for (int y = 0; y < Height; y++) {
-				if (tiles [x, y].Type != TileType.Water) {
+				if (tiles [x, y].Type != TileType.Ocean) {
 					writer.WriteStartElement ("Tile");
 					tiles [x, y].WriteXml (writer);
 					writer.WriteEndElement ();
@@ -319,7 +310,7 @@ public class World : IXmlSerializable{
 			do {
 				int x = int.Parse( reader.GetAttribute("X") );
 				int y = int.Parse( reader.GetAttribute("Y") );
-//				Debug.Log(x + " " + y);
+				tiles[x,y] = new LandTile(x,y); //save only landtiles
 				tiles[x,y].ReadXml(reader);
 			} while ( reader.ReadToNextSibling("Tile") );
 		}
@@ -329,24 +320,36 @@ public class World : IXmlSerializable{
 		Debug.Log("ReadXml_Islands");
 		if(reader.ReadToDescendant("Island") ) {
 			do {
+				if(reader.IsStartElement ("Island")==false){
+					if(reader.Name == "Islands"){
+						return;
+					}
+					continue;
+				}	
 				int x = int.Parse( reader.GetAttribute("StartTile_X") );
 				int y = int.Parse( reader.GetAttribute("StartTile_Y") );
 				Island i = new Island(GetTileAt (x,y));
 				i.ReadXml (reader);
 				islandList.Add (i);
-			} while( reader.ReadToNextSibling("Island") );
+			} while( reader.Read () );
 		}
 	}
 	void ReadXml_Units(XmlReader reader) {
 		Debug.Log("ReadXml_Units");
 		if(reader.ReadToDescendant("Unit") ) {
 			do {
+				if(reader.IsStartElement ("Unit")==false){
+					if(reader.Name == "Units"){
+						return;
+					}
+					continue;
+				}
 				int playernumber=int.Parse( reader.GetAttribute("playernumber") );
 				int x = int.Parse( reader.GetAttribute("currTile_X") );
 				int y = int.Parse( reader.GetAttribute("currTile_Y") );
 				Unit u = CreateUnit( GetTileAt (x,y),playernumber,true );
 				u.ReadXml(reader);
-			} while( reader.ReadToNextSibling("Unit") );
+			} while( reader.Read () );
 		}
 	}
 	#endregion

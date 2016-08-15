@@ -25,7 +25,7 @@ public class Route {
 		tilesToCheck.Enqueue(tile);
 		while (tilesToCheck.Count > 0) {
 			Tile t = tilesToCheck.Dequeue();
-			if (t.Type != TileType.Water && t.Structure != null && t.Structure.myBuildingTyp == BuildingTyp.Pathfinding) {
+			if (t.Type != TileType.Ocean && t.Structure != null && t.Structure.myBuildingTyp == BuildingTyp.Pathfinding) {
 				myTiles.Add(t);
 				Tile[] ns = t.GetNeighbours();
 				foreach (Tile t2 in ns) {

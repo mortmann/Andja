@@ -150,7 +150,7 @@ public class BuildController : MonoBehaviour {
 		RealBuild (s.GetBuildingTiles (t.X, t.Y), s,true,true);
 	}
 	public void BuildOnTile(List<Tile> tiles, bool forEachTileOnce, Structure structure,bool wild=false){
-		if(tiles == null || tiles.Count == 0 || WorldController.Instance.isPaused){
+		if(tiles == null || tiles.Count == 0 || WorldController.Instance.IsPaused){
 			return;
 		}
 		if (forEachTileOnce == false) {
@@ -232,9 +232,6 @@ public class BuildController : MonoBehaviour {
 			return;
 		}
 
-		if(s.myBuildingTiles.Find (x=>x.Type==TileType.Water)!=null){
-			World.current.invalidateGraph ();
-		}
 		//call all callbacks on structure created
 		//FIXME remove this or smth
 		if (cbStructureCreated == null)

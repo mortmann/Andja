@@ -18,6 +18,8 @@ public class GS_Resolution : MonoBehaviour {
 	}
 	public void OnChange(){
 		Screen.SetResolution (resolutions[dp.value].width,resolutions[dp.value].height,Screen.fullScreen,resolutions[dp.value].refreshRate);
+
+	
 	}
 
 }

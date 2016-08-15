@@ -145,8 +145,8 @@ public class Path_TileGraph {
 
 	}
 
-    public Path_TileGraph(World world) {
-
+	public Path_TileGraph(Vector2 lowerBounds, Vector2 upperBounds) {
+		World w = World.current;
 
 		// Loop through all tiles of the world
 		// For each tile, create a node
@@ -154,13 +154,14 @@ public class Path_TileGraph {
 
 		nodes = new Dictionary<Tile, Path_Node<Tile>>();
 
-		for (int x = 0; x < world.Width; x++) {
-			for (int y = 0; y < world.Height; y++) {
+		for (int x = (int)lowerBounds.x-2; x < upperBounds.x+2; x++) {
+			for (int y = (int)lowerBounds.y-2; y < upperBounds.y+2; y++) {
 
-				Tile t = world.GetTileAt(x,y);
+				Tile t = w.GetTileAt(x,y);
 
-				if(t.Type == TileType.Water) {	
+				if(t.Type == TileType.Ocean) {	
 					Path_Node<Tile> n = new Path_Node<Tile>();
+                    t.pathfinding = this;
 					n.data = t;
 					nodes.Add(t, n);
 				}
@@ -185,7 +186,7 @@ public class Path_TileGraph {
 
 			// If neighbour is walkable, create an edge to the relevant node.
 			for (int i = 0; i < neighbours.Length; i++) {
-				if(neighbours[i] != null && neighbours[i].Type == TileType.Water && IsClippingCornerWater( t, neighbours[i] ) == false) {
+				if(nodes.ContainsKey (neighbours[i]) && neighbours[i] != null && neighbours[i].Type == TileType.Ocean && IsClippingCornerWater( t, neighbours[i] ) == false) {
 					// This neighbour exists, is walkable, and doesn't requiring clipping a corner --> so create an edge.
 
 					Path_Edge<Tile> e = new Path_Edge<Tile>();
@@ -240,12 +241,12 @@ public class Path_TileGraph {
         if (Mathf.Abs(dX) + Mathf.Abs(dY) == 2) {
             // We are diagonal
 
-			if (World.current.GetTileAt(curr.X - dX, curr.Y).Type != TileType.Water) {
+			if (World.current.GetTileAt(curr.X - dX, curr.Y).Type != TileType.Ocean) {
                 // East or West is unfloatable, therefore this would be a driving on ground movement.
                 return true;
             }
 
-			if (World.current.GetTileAt(curr.X, curr.Y - dY).Type != TileType.Water) {
+			if (World.current.GetTileAt(curr.X, curr.Y - dY).Type != TileType.Ocean) {
                 // North or South is unfloatable, therefore this would be a driving on ground movement.
                 return true;
             }

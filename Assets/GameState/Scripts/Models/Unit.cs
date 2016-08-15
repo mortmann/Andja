@@ -26,7 +26,7 @@ public class Unit : IXmlSerializable {
 
 	protected internal float width;
 	protected internal float height;
-	protected Pathfinding pathfinding;
+	public Pathfinding pathfinding;
 
 
 	public float X {
@@ -87,11 +87,11 @@ public class Unit : IXmlSerializable {
 		}
     }
 	protected void UpdateAggroRange(){
-		Collider2D[] c2d = Physics2D.OverlapCircleAll (new Vector2(X,Y),2);
-		foreach (var item in c2d) {
-			if(item!=null&&item.gameObject!=myGameobject)
-				Debug.Log ("my " +myGameobject + " hit " + item.gameObject); 	
-		}
+		//Collider2D[] c2d = Physics2D.OverlapCircleAll (new Vector2(X,Y),2);
+		//foreach (var item in c2d) {
+//			if(item!=null&&item.gameObject!=myGameobject)
+//				Debug.Log ("my " +myGameobject + " hit " + item.gameObject); 	
+		//}
 
 	}
 	protected void UpdateParol(){
@@ -132,7 +132,7 @@ public class Unit : IXmlSerializable {
 		if(tile == null){
 			return;
 		}
-		if (tile.Type == TileType.Water) {
+		if (tile.Type == TileType.Ocean) {
 			return;
 		}
 		if (tile.Type == TileType.Mountain) {
@@ -167,7 +167,7 @@ public class Unit : IXmlSerializable {
         if(tile == null){
             return;
         }
-        if (tile.Type == TileType.Water) {
+        if (tile.Type == TileType.Ocean) {
             return;
         }
         if (tile.Type == TileType.Mountain) {
@@ -216,10 +216,10 @@ public class Unit : IXmlSerializable {
 		float y = float.Parse( reader.GetAttribute("dest_Y") );
 		float rot = float.Parse( reader.GetAttribute("rotation") );
 		pathfinding.rotation = rot;
-		reader.ReadToDescendant ("Inventory");
-		inventory = new Inventory ();
-		inventory.ReadXml (reader);
-
+		if (reader.ReadToDescendant ("Inventory")) {
+			inventory = new Inventory ();
+			inventory.ReadXml (reader);
+		}
 
 		AddMovementCommand (x, y);
 

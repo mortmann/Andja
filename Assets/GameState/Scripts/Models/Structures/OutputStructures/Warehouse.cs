@@ -1,8 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
-using System.Xml;
-using System.Xml.Schema;
-using System.Xml.Serialization;
+
 
 public class Warehouse : MarketBuilding {
 	public List<Unit> inRangeUnits;
@@ -49,11 +47,7 @@ public class Warehouse : MarketBuilding {
 		this.canTakeDamage = str.canTakeDamage;
 
 	}
-	public override void update (float deltaTime) {
-
-
-
-	}
+	
 	public override bool SpecialCheckForBuild (List<Tile> tiles){
 		foreach (Tile item in tiles) {
 			if(item.myCity==null || item.myCity.IsWilderness ()){
@@ -80,7 +74,7 @@ public class Warehouse : MarketBuilding {
 			if(item.myIsland!=null){
 				t = item;
 			}
-			if (item.Type == TileType.Water){
+			if (item.Type == TileType.Ocean){
 				if(temp==null||temp.X>item.X||temp.Y>item.Y){
 					temp = item;	
 				}
@@ -133,8 +127,5 @@ public class Warehouse : MarketBuilding {
 		return new Warehouse (this);
 	}
 
-	public override void WriteXml (XmlWriter writer){
-		base.WriteXml (writer);
-	}
 
 }

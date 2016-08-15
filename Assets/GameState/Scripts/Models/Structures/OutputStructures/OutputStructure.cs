@@ -89,6 +89,7 @@ public abstract class OutputStructure : Structure {
 		for (int i = 0; i < output.Length; i++) {
 			temp [i] = output [i].CloneWithCount ();
 			output[i].count= 0;
+			CallOutputChangedCB ();
 		}
 		return temp;
 	}
@@ -102,6 +103,7 @@ public abstract class OutputStructure : Structure {
 				temp [i] = output [i].CloneWithCount ();
 				temp [i].count = Mathf.Clamp (temp [i].count, 0, maxAmounts [i]);
 				output[i].count -= temp[i].count;
+				CallOutputChangedCB ();
 			}
 		}
 		return temp;
@@ -125,6 +127,10 @@ public abstract class OutputStructure : Structure {
 	}
 	public override Item[] BuildingItems (){
 		return buildingItems;
+	}
+	public void CallOutputChangedCB(){
+		if (cbOutputChange!=null)
+			cbOutputChange (this);
 	}
 	public void RegisterOutputChanged(Action<Structure> callbackfunc) {
 		cbOutputChange += callbackfunc;
@@ -153,7 +159,16 @@ public abstract class OutputStructure : Structure {
 		}
 		return myRoutes;
 	}
-
+	public void resetOutputClaimed(){
+		this.outputClaimed = false;
+		foreach (int item in outputStorage) {
+			if(item>0){
+				if (cbOutputChange != null)
+					cbOutputChange (this);
+				return;
+			}
+		}
+	}
 	public void WriteUserXml(XmlWriter writer){
 		writer.WriteAttributeString("OutputClaimed", outputClaimed.ToString () );
 		writer.WriteAttributeString("ProduceCountdown", produceCountdown.ToString () );

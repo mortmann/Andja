@@ -4,8 +4,20 @@ using System;
 using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Serialization;
-
-public enum TileType { Water, Shore, Dirt, Grass, Stone, Mountain };
+/// <summary>
+/// /*Tile type.*/
+/// Ocean = Water outside of Islands -> have no own GameObjects
+/// Shore = Water/Land(Sand or smth) at the borders island
+/// Water = Eg Sea or River inside islands
+/// Dirt = Not as good as Grass but can be build on by everything
+/// Grass = Normal Tile for forest and stuff
+/// Stone = its rocky (really rocky) so building growables is a bad idea (but it works)
+/// Desert = nothing grows here
+/// Steppe = Exotic goods like it here
+/// Jungle = Exotic goods Love it here
+/// Mountain = you cant build anything here except mines(andso)
+/// </summary>
+public enum TileType { Ocean, Shore, Water, Dirt, Grass, Stone, Desert, Steppe, Jungle, Mountain };
 public enum TileMark { None, Highlight, Dark, Reset }
 
 public class Tile : IXmlSerializable {
@@ -26,13 +38,16 @@ public class Tile : IXmlSerializable {
 		}
 	}
 
+    public Path_TileGraph pathfinding;
+
+	public Vector3 vector { get {return new Vector3 (x, y, 0);} }
 	public Tile(){}
 	public Tile(int x, int y){
 		this.x = x;
 		this.y = y;
-		_type = TileType.Water;
+		_type = TileType.Ocean;
 	}
-	protected TileType _type = TileType.Water;
+	protected TileType _type = TileType.Ocean;
 	public TileType Type {
 		get { return _type; }
 		set {
@@ -43,7 +58,7 @@ public class Tile : IXmlSerializable {
 
 	public float MovementCost {
 		get {
-			if (Type == TileType.Water) {
+			if (Type == TileType.Ocean) {
 				if(Structure!=null){
 					return float.PositiveInfinity;
 				}
@@ -138,7 +153,7 @@ public class Tile : IXmlSerializable {
 	/// <returns><c>true</c>, if tile is buildable, <c>false</c> otherwise.</returns>
 	/// <param name="t">Tile to check, canBeBuildOnShore if shore tiles are ok</param>
 	public virtual bool checkTile(Tile t, bool canBeBuildOnShore =false, bool canBeBuildOnMountain =false){
-		if(t.Type == TileType.Water){
+		if(t.Type == TileType.Ocean){
 			return false;
 		}
 		if(t.Type == TileType.Mountain && canBeBuildOnMountain ==false){
@@ -161,7 +176,7 @@ public class Tile : IXmlSerializable {
 	}
 
 	public static bool IsBuildType(TileType t){
-		if( t == TileType.Water){
+		if( t == TileType.Ocean){
 			return false;
 		}
 		if( t == TileType.Mountain){
@@ -179,7 +194,7 @@ public class Tile : IXmlSerializable {
 		if( t == TileType.Mountain && toBuildOn != TileType.Mountain){
 			return true;
 		}
-		if( t == TileType.Water && toBuildOn != TileType.Water){
+		if( t == TileType.Ocean && toBuildOn != TileType.Ocean){
 			return true;
 		}
 		return false;
@@ -228,7 +243,7 @@ public class Tile : IXmlSerializable {
 		return null;
 	}
 	public String toString() {
-		return "tile_" + X + "_" + Y;
+		return "tile_" + X + "_" + Y+"-("+Type+")";
 	}
 	//////////////////////////////////////////////////////////////////////////////////////
 	/// 

@@ -68,7 +68,7 @@ public class Ship : Unit {
 		if(tile == null){
 			return;
 		}
-		if (tile.Type != TileType.Water) {
+		if (tile.Type != TileType.Ocean) {
 			return;
 		}
 		onPatrol = false;

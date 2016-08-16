@@ -5,7 +5,7 @@ using System.Xml.Schema;
 using System.Xml.Serialization;
 
 public class HomeBuilding : Structure{
-	public PlayerController pc;
+	public Player pc;
 
 	public int people;
 	public int maxLivingSpaces;
@@ -59,7 +59,7 @@ public class HomeBuilding : Structure{
 	}
 
 	public override void OnBuild(){
-		pc = GameObject.FindObjectOfType<PlayerController> ();
+		pc = GameObject.FindObjectOfType<PlayerController> ().GetPlayer (playerID);
 		HashSet<Tile> neighbourTiles = new HashSet<Tile> ();
 		foreach (Tile item in myBuildingTiles) {
 			foreach(Tile nbt in item.GetNeighbours()){

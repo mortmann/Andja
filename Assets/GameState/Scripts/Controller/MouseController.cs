@@ -94,15 +94,7 @@ public class MouseController : MonoBehaviour {
 	public Vector3 GetLastMousePosition() {
 		return lastFramePosition;
 	}
-
-
-	public Tile GetMouseOverTile() {
-/*		return WorldController.Instance.world.GetTileAt(
-			Mathf.FloorToInt(currFramePosition.x), 
-			Mathf.FloorToInt(currFramePosition.y)
-		);*/
-		return WorldController.Instance.GetTileAtWorldCoord( currFramePosition );
-	}
+		
 
     // Update is called once per frame
     void Update() {
@@ -151,7 +143,7 @@ public class MouseController : MonoBehaviour {
 				uic.OpenUnitUI (SelectedUnit);
 			}
 			if (SelectedUnit == null) {
-				Tile t = GetTileUnderneathMouse (false);
+				Tile t = GetTileUnderneathMouse ();
 				Debug.Log ("tile " + t.toString ()); 
 				if (t.Structure != null) {
 					uic.OpenStructureUI (t.Structure);
@@ -221,14 +213,8 @@ public class MouseController : MonoBehaviour {
 	}
 
 
-	public Tile GetTileUnderneathMouse(bool plusOffset = true){
-		float xOffset = 0;
-		float yOffset = 0;
-		if (plusOffset) {
-			xOffset = 0.5f;
-			yOffset = 0.5f;
-		}
-		return World.current.GetTileAt (currFramePosition.x+xOffset,currFramePosition.y+yOffset);
+	public Tile GetTileUnderneathMouse(){
+		return World.current.GetTileAt (currFramePosition.x+0.5f,currFramePosition.y+0.5f);
 	}
 
 	public void CreatePreviewStructure(){
@@ -330,10 +316,16 @@ public class MouseController : MonoBehaviour {
 			return;
 		}
         if (Input.GetMouseButtonDown(0)) {
-			if(SelectedUnit.playerNumber!=PlayerController.Instance.number){
+			if(SelectedUnit.playerNumber!=PlayerController.Instance.currentPlayerNumber){
 				mouseState = MouseState.Idle;
 				return;
 			}
+
+			RaycastHit2D hit = Physics2D.Raycast(new Vector2(currFramePosition.x, currFramePosition.y), Vector2.zero, 200);
+			if(hit.transform.gameObject.GetComponent<UnitHoldingScript >()!=null){
+				SelectedUnit.GiveAttackCommand (hit.transform.gameObject.GetComponent<UnitHoldingScript >().unit);
+			}
+
 			if(patrolCommandToAdd){
 				SelectedUnit.AddPatrolCommand (currFramePosition.x, currFramePosition.y);
 				patrolCommandToAdd = false;
@@ -455,7 +447,7 @@ public class MouseController : MonoBehaviour {
       
     }
 	void Build(List<Tile> t,bool single = false){
-		bmc.BuildOnTile (t,single);
+		bmc.BuildOnTile (t,single,PlayerController.Instance.currentPlayerNumber);
 	}
 
 	public void ResetBuilding(Structure structure){

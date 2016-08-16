@@ -60,7 +60,7 @@ public class WorldController : MonoBehaviour {
 		world.fixedupdate(Time.deltaTime * timeMultiplier);
 	}
     internal Tile GetTileAtWorldCoord(Vector3 currFramePosition) {
-        return world.GetTileAt(Mathf.FloorToInt(currFramePosition.x), Mathf.FloorToInt(currFramePosition.y));
+        return world.GetTileAt(Mathf.FloorToInt(currFramePosition.x)+0.5f, Mathf.FloorToInt(currFramePosition.y)+0.5f);
     }
 
 	public void SaveWorld(string savename) {

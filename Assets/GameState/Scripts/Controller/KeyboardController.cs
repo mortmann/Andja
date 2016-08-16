@@ -1,6 +1,9 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+//TODO REMOVE
+using UnityEngine.EventSystems;
+
 public class KeyboardController : MonoBehaviour {
 
 	// Use this for initialization
@@ -37,6 +40,20 @@ public class KeyboardController : MonoBehaviour {
 				bc.toBuildStructure.RotateStructure ();
 			}
 		}
+
+		if(Application.isEditor){
+			if(Input.GetKey (KeyCode.LeftShift)){
+				if(EventSystem.current.IsPointerOverGameObject ()==false){
+					FindObjectOfType<HoverOverScript> ().DebugInfo (mc.GetTileUnderneathMouse ().toString ());
+					GameObject.Find ("Debug").transform.localPosition = mc.GetMousePosition ();
+				} 
+			}
+			if(Input.GetKeyUp (KeyCode.LeftShift)){
+				GameObject.Find ("Debug").transform.localPosition = new Vector3 (-200, -200);
+
+			}
+		}
+
 	}
 
 

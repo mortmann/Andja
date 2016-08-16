@@ -12,15 +12,38 @@ public class Unit : IXmlSerializable {
 	protected GameObject myGameobject;
 	public Tile startTile;
 
-	public float currHealth=50;
+
+	//COMBAT STUFF
+	float aggroTimer=1f;
+	float aggroCooldown=1f;
+	Unit enganging ;
+	float attackRange=1f;
+	private float _currHealth = 50;
+	public float currHealth {
+		get { return _currHealth;}
+		protected set {
+			if(value<=0){
+				Destroy ();
+			}
+			_currHealth = value;
+		}
+	}
 	public int maxHP=50;
 	public float attackDistance;
-	public float damage;
-	public float damageReduction;
-	public float damageMultiplier;
+	public float damage=10;
+	public DamageType myDamageType=DamageType.Blade;
+	public ArmorType myArmorType=ArmorType.Leather;
+	public float attackCooldown=1;
+	public float attackRate=1;
+
+	public Vector3 VectorPosition {
+		get {return new Vector3 (X, Y);}
+	}
 
 	protected float speed;   // Tiles per second
 	protected Action<Unit> cbUnitChanged;
+	protected Action<Unit> cbUnitDestroyed;
+
 
 	public Inventory inventory;
 
@@ -77,7 +100,10 @@ public class Unit : IXmlSerializable {
 		}
 		//PATROL
 		UpdateParol ();
-		UpdateAggroRange ();
+		UpdateAggroRange (deltaTime);
+		if(Fighting(deltaTime)){
+			return;
+		}
 		pathfinding.Update_DoMovement (deltaTime);
 		pathfinding.UpdateRotation ();
 		myGameobject.transform.position = new Vector3 (X, Y, -0.1f);
@@ -86,13 +112,62 @@ public class Unit : IXmlSerializable {
 	            cbUnitChanged(this);
 		}
     }
-	protected void UpdateAggroRange(){
-		//Collider2D[] c2d = Physics2D.OverlapCircleAll (new Vector2(X,Y),2);
-		//foreach (var item in c2d) {
-//			if(item!=null&&item.gameObject!=myGameobject)
-//				Debug.Log ("my " +myGameobject + " hit " + item.gameObject); 	
-		//}
+	protected void UpdateAggroRange(float deltaTime){
+		if(enganging!=null){
+			return;
+		}
+		aggroTimer -= deltaTime;
+		if(aggroTimer>0){
+			return;
+		}
+		aggroTimer = aggroCooldown;
 
+		Collider2D[] c2d = Physics2D.OverlapCircleAll (new Vector2(X,Y),2);
+		foreach (var item in c2d) {
+			//check for not null = only to be sure its not null
+			//if its not my own gameobject
+			if (item == null || item.gameObject == myGameobject) {
+				continue;
+			}
+			if (item.gameObject.GetComponent<UnitHoldingScript> () == null) {
+				continue;
+			}
+			Unit u = item.gameObject.GetComponent<UnitHoldingScript> ().unit;
+			if(u.playerNumber==playerNumber){
+				continue;
+			}
+			//see if players are at war
+			if(PlayerController.Instance.ArePlayersAtWar (playerNumber,u.playerNumber)){
+				GiveAttackCommand (u);
+			}
+		}
+
+	}
+	public void GiveAttackCommand(Unit u){
+		enganging = u;
+		AddMovementCommand (u.X,u.Y);
+	}
+	public bool Fighting(float deltaTime){
+		if(enganging!=null){
+			float dist = (enganging.VectorPosition - VectorPosition).magnitude;
+			if(dist<attackRange){
+				DoAttack (deltaTime);
+				return true;
+			}
+		}
+		return false;
+	}
+	public void DoAttack(float deltaTime){
+		if(enganging.currHealth<=0){
+			enganging = null;
+		}
+		attackCooldown -= deltaTime;
+		if(attackCooldown>0){
+			return;
+		}
+		attackCooldown = attackRate;
+
+		enganging.TakeDamage (myDamageType,damage);
 	}
 	protected void UpdateParol(){
 		//PATROL
@@ -127,6 +202,13 @@ public class Unit : IXmlSerializable {
     public void UnregisterOnChangedCallback(Action<Unit> cb) {
         cbUnitChanged -= cb;
     }
+	public void RegisterOnDestroyCallback(Action<Unit> cb) {
+		cbUnitDestroyed += cb;
+	}
+
+	public void UnregisterOnDestroyCallback(Action<Unit> cb) {
+		cbUnitDestroyed -= cb;
+	}
 	public void AddPatrolCommand(float targetX,float targetY){
 		Tile tile = World.current.GetTileAt(targetX, targetY);
 		if(tile == null){
@@ -185,7 +267,19 @@ public class Unit : IXmlSerializable {
 		return inventory.addItem (t);
 	}
 
-
+	public void TakeDamage(DamageType dt, float amount){
+		if(amount<0){
+			Debug.LogError ("damage must be positive");
+			return;
+		}
+		currHealth -= Combat.ArmorDamageReduction (myArmorType, dt) * amount;
+	}
+	public virtual void Destroy(){
+		//Do stuff here when on destroyed
+		if(cbUnitDestroyed!=null){
+			cbUnitDestroyed (this);
+		}
+	}
 	//////////////////////////////////////////////////////////////////////////////////////
 	/// 
 	/// 						SAVING & LOADING

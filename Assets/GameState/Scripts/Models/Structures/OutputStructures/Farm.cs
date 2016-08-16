@@ -62,7 +62,7 @@ public class Farm : OutputStructure {
 		if(growable == null){
 			return;
 		}
-		GameObject.FindObjectOfType<BuildController> ().BuildOnTile (3, new List<Tile>(myRangeTiles));
+		GameObject.FindObjectOfType<BuildController> ().BuildOnTile (3, new List<Tile>(myRangeTiles),playerID);
 		//farm has it needs plant if it can 
 		foreach (Tile rangeTile in myRangeTiles) {
 			if(rangeTile.Structure != null){

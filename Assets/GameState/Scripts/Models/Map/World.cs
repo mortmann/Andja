@@ -14,6 +14,7 @@ public class World : IXmlSerializable{
     public Path_TileGraph tileGraph { get; set; }
     public List<Island> islandList { get; protected set; }
     public List<Unit> units { get; protected set; }
+	List<Unit> toRemoveUnits;
 	public List<Need> allNeeds;
 	public static World current { get; protected set; }
 	public Dictionary<Climate,List<Fertility>> allFertilities;
@@ -39,9 +40,9 @@ public class World : IXmlSerializable{
 				tiles[x, y].Type = TileType.Dirt;
 			}
 		}
-		CreateUnit(tiles[34, 41],PlayerController.Instance.number,false);
+		CreateUnit(tiles[34, 41],PlayerController.Instance.currentPlayerNumber,false);
 		CreateUnit(tiles[34, 47],2,false); 
-		CreateUnit(tiles[42, 38],PlayerController.Instance.number,true);    
+		CreateUnit(tiles[42, 38],PlayerController.Instance.currentPlayerNumber,true);    
 
 		CreateIsland (31, 41);
 		CreateIsland (61, 41);
@@ -64,7 +65,7 @@ public class World : IXmlSerializable{
 		idToFertilities= GameObject.FindObjectOfType<BuildController>().idToFertilities;
 		islandList = new List<Island>();
 		units = new List<Unit>();
-
+		toRemoveUnits = new List<Unit> ();
 	}
     internal void update(float deltaTime) {
         foreach(Island i in islandList) {
@@ -72,9 +73,17 @@ public class World : IXmlSerializable{
         }
     }
 	internal void fixedupdate(float deltaTime){
-		foreach (Unit item in units) {
-			item.Update (deltaTime);
+		for (int i = units.Count-1; i >=0; i--) {
+			units[i].Update (deltaTime);
 		}
+
+		if (toRemoveUnits.Count > 0) {
+			foreach (Unit item in toRemoveUnits) {
+				units.Remove (item);
+			}
+			toRemoveUnits.Clear ();
+		}
+
 	}
 	public void CreateIsland(int x, int y){
 		Tile t = GetTileAt (x, y);
@@ -143,11 +152,14 @@ public class World : IXmlSerializable{
 			c = new Unit (t,playernumber);			
 		}
         units.Add(c);
+		c.RegisterOnDestroyCallback (OnUnitDestroy);
         if (cbUnitCreated != null)
             cbUnitCreated(c);
         return c;
     }
-
+	public void OnUnitDestroy(Unit u){
+		toRemoveUnits.Add (u);
+	}
 
 	public void checkIfInCamera(float lowerX,float lowerY, float upperX,float upperY){
 		PlayerController pc = GameObject.FindObjectOfType<PlayerController>();
@@ -159,7 +171,7 @@ public class World : IXmlSerializable{
 			if (islandList [i].myTiles.Find (x => x.X > lowerX && x.X < upperX && x.Y > lowerY && x.Y < upperY) != null) {
 				islandList [i].allReadyHighlighted = true;
 				for (int t = 0; t < islandList [i].myTiles.Count; t++) {
-					if (islandList [i].myTiles [t].myCity.playerNumber != pc.number) {
+					if (islandList [i].myTiles [t].myCity.playerNumber != pc.currentPlayerNumber) {
 						islandList [i].myTiles [t].TileState = TileMark.Dark;
 					} else {
 						islandList [i].myTiles [t].TileState = TileMark.None;

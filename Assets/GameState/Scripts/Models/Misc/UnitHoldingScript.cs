@@ -8,6 +8,9 @@ public class UnitHoldingScript : MonoBehaviour {
 
 	//FIXME TODO REMOVE DIS
 	public void Update(){
+		if(unit==null){
+			Destroy (this);
+		}
 		x= unit.pathfinding.currTile.X;
 		y=unit.pathfinding.currTile.Y;
 	}

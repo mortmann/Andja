@@ -6,6 +6,7 @@ public class UnitUI : MonoBehaviour {
 	public Canvas content;
 	public GameObject itemPrefab;
 	public GameObject settleButton;
+	public GameObject buttonCanvas;
 	public Text healthText;
 	public Inventory inv;
 	Dictionary<int, ItemUI> itemToGO;
@@ -16,14 +17,27 @@ public class UnitUI : MonoBehaviour {
 		}
 		this.unit = unit;
 		inv = unit.inventory;
+
+		//clear inventory screen
+		foreach (Transform item in content.transform) {
+			GameObject.Destroy (item.gameObject); 
+		}
+
+		//you can only command your own units
+		if(unit.playerNumber!=PlayerController.Instance.currentPlayerNumber){
+			buttonCanvas.SetActive (false);
+			return;
+		} else {
+			buttonCanvas.SetActive (true);
+		}
+
+		//only ships can settle
 		if(unit is Ship){
 			settleButton.SetActive (true);
 		} else {
 			settleButton.SetActive (false);
 		}
-		foreach (Transform item in content.transform) {
-			GameObject.Destroy (item.gameObject); 
-		}
+			
 		if(inv==null){
 			return;
 		}
@@ -78,6 +92,9 @@ public class UnitUI : MonoBehaviour {
 
 	}
 	public void Update(){
+		if(unit.currHealth<=0){
+			UIController.Instance.CloseUnitUI ();
+		}
 		healthText.text = Mathf.CeilToInt (unit.currHealth) + "/" + unit.maxHP+"HP";
 	}
 }

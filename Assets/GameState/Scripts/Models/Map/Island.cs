@@ -109,9 +109,9 @@ public class Island : IXmlSerializable{
 		}
 		str.City.addStructure (str);
 	}
-    public City CreateCity() {
+	public City CreateCity(int playerNumber) {
 		allReadyHighlighted = false;
-		City c = new City(PlayerController.Instance.number,this,World.current.allNeeds);
+		City c = new City(playerNumber,this,World.current.allNeeds);
 		myCities.Add (c);
         return c;
     }

@@ -99,11 +99,15 @@ public class BuildController : MonoBehaviour {
 			DestroyStructureOnTile (t);
 		}
 	}
+	/// <summary>
+	/// Works only for current player not for someone else
+	/// </summary>
+	/// <param name="t">T.</param>
 	public void DestroyStructureOnTile(Tile t){
 		if(t.Structure==null){
 			return;
 		}
-		if(t.Structure.playerID==PlayerController.Instance.number){
+		if(t.Structure.playerID==PlayerController.Instance.currentPlayerNumber){
 			t.Structure.Destroy ();
 		}
 	}
@@ -128,11 +132,11 @@ public class BuildController : MonoBehaviour {
 
 		BuildState = BuildStateModes.Build;
     }
-	public void BuildOnTile(List<Tile> tiles, bool forEachTileOnce){
+	public void BuildOnTile(List<Tile> tiles, bool forEachTileOnce,int playerNumber){
 		if (toBuildStructure == null) {
 			return;
 		}
-		BuildOnTile (tiles, forEachTileOnce, toBuildStructure);
+		BuildOnTile (tiles, forEachTileOnce, toBuildStructure,playerNumber);
 	}
 	/// <summary>
 	/// USED ONLY FOR LOADING
@@ -147,23 +151,23 @@ public class BuildController : MonoBehaviour {
 		}
 		//TODO RETHINK THIS
 		GameObject.FindObjectOfType<StructureSpriteController> ().Initiate ();
-		RealBuild (s.GetBuildingTiles (t.X, t.Y), s,true,true);
+		RealBuild (s.GetBuildingTiles (t.X, t.Y), s,-1,true,true);
 	}
-	public void BuildOnTile(List<Tile> tiles, bool forEachTileOnce, Structure structure,bool wild=false){
+	public void BuildOnTile(List<Tile> tiles, bool forEachTileOnce, Structure structure,int playerNumber,bool wild=false){
 		if(tiles == null || tiles.Count == 0 || WorldController.Instance.IsPaused){
 			return;
 		}
 		if (forEachTileOnce == false) {
-			RealBuild (tiles,structure,false,wild);
+			RealBuild (tiles,structure,playerNumber,false,wild);
 		} else {
 			foreach (Tile tile in tiles) {
 				List<Tile> t = new List<Tile> ();
 				t.AddRange (structure.GetBuildingTiles (tile.X,tile.Y));
-				RealBuild (t,structure,false,wild);
+				RealBuild (t,structure,playerNumber,false,wild);
 			}
 		}
 	}
-	protected void RealBuild(List<Tile> tiles,Structure s,bool loading=false,bool wild=false){
+	protected void RealBuild(List<Tile> tiles,Structure s,int playerNumber,bool loading=false,bool wild=false){
 		if (loading == false) {
 			s = s.Clone ();
 		}
@@ -175,7 +179,7 @@ public class BuildController : MonoBehaviour {
 		} else {
 			//set the player id for check for city
 			//has to be changed if someone takes it over
-			s.playerID = PlayerController.Instance.number;
+			s.playerID = playerNumber;
 		}
 		//before we need to check if we can build THERE
 		//we need to know if there is if we COULD build 
@@ -183,7 +187,7 @@ public class BuildController : MonoBehaviour {
 		if(loading==false&&wild==false){
 			//find a city that matches the player 
 			//and check for money
-			if(playerHasEnoughMoney(s)==false){
+			if(playerHasEnoughMoney(s,playerNumber)==false){
 				Debug.Log ("not playerHasEnoughMoney"); 
 				return;
 			}
@@ -198,7 +202,7 @@ public class BuildController : MonoBehaviour {
 						//but it we *need* the city to check for its ressources
 						//this saves a lot of cpu but it can be problematic if we want to be able 
 						//to build something in enemy-terrain
-						if (item.myCity.playerNumber != PlayerController.Instance.number) {
+						if (item.myCity.playerNumber != PlayerController.Instance.currentPlayerNumber) {
 							Debug.Log ("PlayerController.Instance.number"); 
 							return;
 						}
@@ -249,17 +253,17 @@ public class BuildController : MonoBehaviour {
 	public void OnDestroyStructure(Structure str){
 		str.City.removeStructure (str);
 	}
-	public bool playerHasEnoughMoney(Structure s){
-		if(PlayerController.Instance.balance >= s.buildcost){
+	public bool playerHasEnoughMoney(Structure s,int playerNumber){
+		if(PlayerController.Instance.GetPlayer (playerNumber).balance >= s.buildcost){
 			return true;
 		}
 		return false;
 	}
-	public void BuildOnTile(int id, List<Tile> tiles){
+	public void BuildOnTile(int id, List<Tile> tiles,int playerNumber){
 		if(structurePrototypes.ContainsKey (id) == false){
 			return;
 		}
-		BuildOnTile (tiles, true, structurePrototypes[id]);
+		BuildOnTile (tiles, true, structurePrototypes[id],playerNumber);
 	}
 	public City CreateCity(Tile t,Warehouse w){
 		if(t.myIsland == null){
@@ -270,7 +274,7 @@ public class BuildController : MonoBehaviour {
 			Debug.LogError ("CreateCity called not on a t.myCity && t.myCity.IsWilderness () ==false!");
 			return null;
 		}
-		City c = t.myIsland.CreateCity ();
+		City c = t.myIsland.CreateCity (w.playerID);
 		// needed for mapimage
 		c.addStructure (w);// dont know if this is good ...
 		if(cbCityCreated != null) {

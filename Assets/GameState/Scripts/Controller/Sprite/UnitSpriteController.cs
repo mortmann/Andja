@@ -55,11 +55,9 @@ public class UnitSpriteController : MonoBehaviour {
         // Register our callback so that our GameObject gets updated whenever
         // the object's into changes.
         u.RegisterOnChangedCallback(OnUnitChanged);
+		u.RegisterOnDestroyCallback (OnUnitDestroy);
     }
     void OnUnitChanged(Unit c) {
-        //Debug.Log("OnFurnitureChanged");
-        // Make sure the furniture's graphics are correct.
-
         if (unitGameObjectMap.ContainsKey(c) == false) {
             Debug.LogError("OnCharacterChanged -- trying to change visuals for character not in our map.");
             return;
@@ -73,7 +71,16 @@ public class UnitSpriteController : MonoBehaviour {
 
         char_go.transform.position = new Vector3(c.X, c.Y, 0);
     }
+	void OnUnitDestroy(Unit c) {
+		if (unitGameObjectMap.ContainsKey(c) == false) {
+			Debug.LogError("OnCharacterChanged -- trying to change visuals for character not in our map.");
+			return;
+		}
 
+		GameObject char_go = unitGameObjectMap[c];
+		Destroy (char_go);
+		unitGameObjectMap.Remove (c);
+	}
     void LoadSprites() {
         unitSprites = new Dictionary<string, Sprite>();
         Sprite[] sprites = Resources.LoadAll<Sprite>("Units/");

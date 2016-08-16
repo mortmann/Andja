@@ -90,8 +90,8 @@ public class Warehouse : MarketBuilding {
 		tradeTile = World.current.GetTileAt (temp.X+rot.x,temp.Y+rot.y);
 
 
-		if(t.myIsland.myCities.Exists (x=>x.playerNumber==PlayerController.Instance.number)){
-			this.City = t.myIsland.myCities.Find (x => x.playerNumber == PlayerController.Instance.number);
+		if(t.myIsland.myCities.Exists (x=>x.playerNumber==PlayerController.Instance.currentPlayerNumber)){
+			this.City = t.myIsland.myCities.Find (x => x.playerNumber == PlayerController.Instance.currentPlayerNumber);
 		} else {
 			this.City = BuildController.Instance.CreateCity(t,this);
 		}

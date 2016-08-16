@@ -14,7 +14,7 @@ public class BuildMenuUIController : MonoBehaviour {
 	BuildController bc;
 	GameObject oldButton;
 	int oldSelectedCivLevel = 0;
-	PlayerController pc;
+	Player player;
     // Use this for initialization
     void Start () {
 		nameToGOMap = new Dictionary<string, GameObject> ();
@@ -22,7 +22,7 @@ public class BuildMenuUIController : MonoBehaviour {
 		bc = GameObject.FindObjectOfType<BuildController> ();
 		buttons= new List<string>[4];
 
-		pc = GameObject.FindObjectOfType<PlayerController> ();
+		player = GameObject.FindObjectOfType<PlayerController> ().currPlayer;
 
 		for (int i = 0; i < 4; i++) {
 			buttons [i] = new List<string> ();
@@ -46,7 +46,7 @@ public class BuildMenuUIController : MonoBehaviour {
 		}
 		for (int i = 0; i < buttonPopulationsLevelContent.transform.childCount; i++) {
 			GameObject g = buttonPopulationsLevelContent.transform.GetChild (i).gameObject;
-			if (i > pc.maxPopulationLevel) {
+			if (i > player.maxPopulationLevel) {
 				g.GetComponent<Button>().interactable = false; 
 			} else {
 				g.GetComponent<Button>().interactable = true;
@@ -56,14 +56,14 @@ public class BuildMenuUIController : MonoBehaviour {
 	public void Update(){
 		for (int i = 0; i < buttonPopulationsLevelContent.transform.childCount; i++) {
 			GameObject g = buttonPopulationsLevelContent.transform.GetChild (i).gameObject;
-			if (i > pc.maxPopulationLevel) {
+			if (i > player.maxPopulationLevel) {
 				g.GetComponent<Button>().interactable = false; 
 			} else {
 				g.GetComponent<Button>().interactable = true; 
 			}
 		}
 		foreach (string name in buttons[oldSelectedCivLevel]) {
-			if (pc.maxPopulationCount >= bc.structurePrototypes [nameToIDMap [name]].PopulationCount) {
+			if (player.maxPopulationCount >= bc.structurePrototypes [nameToIDMap [name]].PopulationCount) {
 				nameToGOMap [name].SetActive (true);
 			}
 		}
@@ -86,7 +86,7 @@ public class BuildMenuUIController : MonoBehaviour {
 			nameToGOMap[item].SetActive (false);
 		}
 		foreach (string name in buttons[i]) {
-			if (pc.maxPopulationCount >= bc.structurePrototypes [nameToIDMap [name]].PopulationCount) {
+			if (player.maxPopulationCount >= bc.structurePrototypes [nameToIDMap [name]].PopulationCount) {
 				nameToGOMap [name].SetActive (true);
 			}
 		}

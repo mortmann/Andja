@@ -63,6 +63,9 @@ public class PlayerController : MonoBehaviour {
 		reduceMoney (structure.buildcost,structure.playerID);
 	}
 	public bool ArePlayersAtWar(int pnum1,int pnum2){
+		if(pnum1==-1||pnum2==-1){
+			return true;//could add here be at peacce with pirates through money 
+		}
 		return players [pnum1].playersAtWarWith.Contains (pnum2);
 	}
 

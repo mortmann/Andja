@@ -8,4 +8,10 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/MainMenu.unity
   - enabled: 1
+    path: Assets/GameStateLoadingScreen.unity
+  - enabled: 1
     path: Assets/GameState.unity
+  - enabled: 1
+    path: Assets/EditorLoadingScreen.unity
+  - enabled: 1
+    path: Assets/IslandEditor.unity

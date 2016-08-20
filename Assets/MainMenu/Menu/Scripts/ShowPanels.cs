@@ -63,6 +63,9 @@ public class ShowPanels : MonoBehaviour {
 
     public void ShowPanel(int id) {
         panels[id].SetActive(true);
+		if(panels[id].GetComponent<GS_Panel>()==null){
+			Debug.LogWarning ("first select is null");
+		} else
         panels[id].GetComponent<GS_Panel>().SelectFirstElement();
         panelOpen = true;
         HideMenu();

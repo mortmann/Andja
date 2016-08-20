@@ -20,7 +20,11 @@ public class CameraController : MonoBehaviour {
 
 
 	void Update () {
-		if(UIController.Instance.IsPauseMenuOpen()){
+		
+		if(UIController.Instance!=null && UIController.Instance.IsPauseMenuOpen()){
+			return;
+		}
+		if(EditorUIController.Instance!=null && EditorUIController.Instance.IsPauseMenuOpen()){
 			return;
 		}
 		Vector3 diff = new Vector3(0,0);
@@ -31,22 +35,32 @@ public class CameraController : MonoBehaviour {
 		diff += UpdateKeyboardCameraMovement ();
 		diff += UpdateMouseCameraMovement ();
 
+		Vector2 showBounds = new Vector2 ();
 		lower = Camera.main.ScreenToWorldPoint (Vector3.zero);
+
 		float lowerX = lower.x;
 		float lowerY = lower.y;
 		upper = Camera.main.ScreenToWorldPoint (new Vector3 (Camera.main.pixelWidth, Camera.main.pixelHeight));
 		float upperX = upper.x;
 		float upperY = upper.y;
-		if (BuildController.Instance.BuildState != BuildStateModes.None) {
-			World.current.checkIfInCamera (lowerX, lowerY, upperX, upperY);
+		if(WorldController.Instance==null){
+			showBounds.x = EditorController.Instance.editorIsland.width;
+			showBounds.y = EditorController.Instance.editorIsland.height;
 		} else {
-			World.current.resetIslandMark ();
+			if (BuildController.Instance.BuildState != BuildStateModes.None) {
+				World.current.checkIfInCamera (lowerX, lowerY, upperX, upperY);
+			} else {
+				World.current.resetIslandMark ();
+			}
+			middle = Camera.main.ScreenToWorldPoint (new Vector3 (Camera.main.pixelWidth/2, Camera.main.pixelHeight/2));
+			middleTile = World.current.GetTileAt (middle.x,middle.y);
+			findNearestIsland ();
+			World w = World.current;
+			showBounds.x = w.Width;
+			showBounds.y = w.Height;
 		}
-		middle = Camera.main.ScreenToWorldPoint (new Vector3 (Camera.main.pixelWidth/2, Camera.main.pixelHeight/2));
-		middleTile = World.current.GetTileAt (middle.x,middle.y);
-		findNearestIsland ();
-		World w = World.current;
-		if(upperX>w.Width ){
+
+		if(upperX>showBounds.x ){
 			if(diff.x > 0){
 				diff.x = 0;
 			}
@@ -56,7 +70,7 @@ public class CameraController : MonoBehaviour {
 				diff.x = 0;
 			}
 		}
-		if(upperY>w.Height){//Camera.main.orthographicSize/divide
+		if(upperY>showBounds.y ){//Camera.main.orthographicSize/divide
 			if(diff.y > 0){
 				diff.y = 0;
 			}

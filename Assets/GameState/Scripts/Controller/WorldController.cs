@@ -11,7 +11,6 @@ public class WorldController : MonoBehaviour {
 
     // The world and tile data
     public World world { get; protected set; }
-	static string savegamename;
 
 	public float timeMultiplier = 1;
 	private bool _isPaused = false;
@@ -30,18 +29,19 @@ public class WorldController : MonoBehaviour {
         if (Instance != null) {
             Debug.LogError("There should never be two world controllers.");
         }
+		GameDataHolder gdh = GameDataHolder.Instance;
+
         Instance = this;
-		if (savegamename!=null) {
-			CreateWorldFromSaveFile ();
-			savegamename = null;
+		if (gdh!=null && gdh.loadsavegame!=null) {
+			CreateWorldFromSaveFile (gdh.loadsavegame);
+			gdh.loadsavegame = null;
 
 		} else {
-			GameDataHolder gdh = GameObject.FindObjectOfType<GameDataHolder>();
 			if (gdh != null) {
 				this.world = new World (gdh.width, gdh.height);
-				GameObject.Destroy (gdh.gameObject);
+//				GameObject.Destroy (gdh.gameObject);
 			} else
-				this.world = new World (1000, 1000);
+				this.world = new World (100, 100);
 		}
         Camera.main.transform.position = new Vector3(world.Width / 2, world.Height / 2, Camera.main.transform.position.z);
     }
@@ -83,14 +83,16 @@ public class WorldController : MonoBehaviour {
 		File.WriteAllText( filePath, writer.ToString() );
 
 	}
-	public void LoadWorld(string savegame) {
+	public void LoadWorld(bool quickload = false) {
 		Debug.Log("LoadWorld button was clicked.");
+		if(quickload){
+			GameDataHolder gdh = GameDataHolder.Instance;
+			gdh.loadsavegame = "QuickSave";//TODO CHANGE THIS TO smth not hardcoded
+		}
 		// Reload the scene to reset all data (and purge old references)
-		savegamename = savegame;
-		SceneManager.LoadScene( SceneManager.GetActiveScene().name );
-
+		SceneManager.LoadScene( "GameStateLoadingScreen" );
 	}
-	void CreateWorldFromSaveFile() {
+	void CreateWorldFromSaveFile(string savegamename) {
 		Debug.Log("CreateWorldFromSaveFile");
 		// Create a world from our save file data.
 
@@ -131,7 +133,6 @@ public class WorldController : MonoBehaviour {
 		}
 	}
 	public string GetSaveGamesPath(){
-		//TODO FIXME change this to documentspath
-		return System.IO.Path.Combine(Application.dataPath.Replace ("/Assets","") , "saves");
+		return GameDataHolder.Instance.GetSaveGamesPath ();
 	}
 }

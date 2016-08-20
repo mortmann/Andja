@@ -7,7 +7,7 @@ using System.Xml.Serialization;
 public class Growable : Structure {
 	float growTime = 5f;
 	float age = 0;
-	int ageStages = 2;
+	public int ageStages = 2;
 	public int currentStage= 0;
 	public bool hasProduced =false;
 	public bool outputClaimed =false;

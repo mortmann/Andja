@@ -16,12 +16,23 @@ public class SaveLoadUIScript : MonoBehaviour {
 		foreach (Transform item in canvasGO.transform) {
 			GameObject.Destroy (item.gameObject);
 		}
-		string directoryPath = WorldController.Instance.GetSaveGamesPath ();
-
+		string directoryPath="";
+		if (GameDataHolder.Instance != null) {
+			directoryPath = GameDataHolder.Instance.GetSaveGamesPath ();
+		} else {
+			directoryPath = EditorController.Instance.GetSaveGamesPath ();
+		}
+		
 		DirectoryInfo saveDir = new DirectoryInfo( directoryPath );
-
-
-		FileInfo[] saveGames = saveDir.GetFiles(".sav").OrderBy( f => f.CreationTime ).ToArray();
+		if(saveDir.Exists==false){
+			saveDir.Create ();
+		}
+		FileInfo[] saveGames;
+		if(EditorController.Instance!=null){
+			saveGames = saveDir.GetFiles("*.isl").OrderBy( f => f.CreationTime ).ToArray();
+		} else {
+			 saveGames = saveDir.GetFiles("*.sav").OrderBy( f => f.CreationTime ).ToArray();
+		}
 
 		// Build file list by instantiating fileListItemPrefab
 
@@ -37,7 +48,7 @@ public class SaveLoadUIScript : MonoBehaviour {
 			EventTrigger trigger = go.GetComponent<EventTrigger> ();
 			EventTrigger.Entry entry = new EventTrigger.Entry( );
 			entry.eventID = EventTriggerType.PointerClick;
-			string name = saveGames [i].FullName;
+			string name = Path.GetFileNameWithoutExtension( saveGames[i].FullName);
 			entry.callback.AddListener ((data)=>{OnSaveGameSelect (name,go);});
 			trigger.triggers.Add( entry );
 
@@ -64,7 +75,11 @@ public class SaveLoadUIScript : MonoBehaviour {
 		}
 		//TODO ASK IF he wants to load it
 		//and warn losing ansaved data
-		WorldController.Instance.LoadWorld (selected);
+		GameDataHolder.Instance.loadsavegame = selected;
+		if (WorldController.Instance != null)
+			WorldController.Instance.LoadWorld ();
+		else
+			GameObject.FindObjectOfType<ChangeScene> ().ChangeToGameStateLoadScreen ();
 	}
 	public void OnSavePressed(){
 		if(selected!=null&&(saveGameInput.text==null||saveGameInput.text=="")){
@@ -72,6 +87,26 @@ public class SaveLoadUIScript : MonoBehaviour {
 			//TODO ask if you want to overwrite
 		} else {
 			WorldController.Instance.SaveWorld (saveGameInput.text);
+		}
+	}
+	public void OnIslandLoadPressed(){
+		if(selected==null){
+			return;
+		}
+		//TODO ASK IF he wants to load it
+		//and warn losing ansaved data
+
+		if (EditorController.Instance != null)
+			EditorController.Instance.LoadWorld (selected);
+		else
+			GameObject.FindObjectOfType<ChangeScene> ().ChangeToGameStateLoadScreen ();
+	}
+	public void OnIslandSaveClick(){
+		if(selected!=null&&(saveGameInput.text==null||saveGameInput.text=="")){
+			EditorController.Instance.SaveWorld (selected); // overwrite
+			//TODO ask if you want to overwrite
+		} else {
+			EditorController.Instance.SaveWorld (saveGameInput.text);
 		}
 	}
 }

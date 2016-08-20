@@ -116,7 +116,7 @@ public class MapImage : MonoBehaviour {
 		RectTransform rt = mapParts.GetComponent<RectTransform> ();
 		World w = World.current;
 
-		if(u!=null && u.isShip){
+		if(u!=null && u.isShip && u.playerNumber==PlayerController.Instance.currentPlayerNumber){
 			GameObject g = GameObject.Instantiate (mapShipIconPrefab);
 			g.transform.SetParent (mapParts.transform);
 			Vector3 pos = new Vector3 (u.X, u.Y, 0);

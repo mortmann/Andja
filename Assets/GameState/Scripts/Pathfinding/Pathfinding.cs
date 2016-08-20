@@ -169,7 +169,7 @@ public class Pathfinding  {
 //				foreach (Tile item in pathAStar.path) {
 //					Debug.Log ("Path " + item.toString ()); 
 //				}
-				Debug.Log ("count "+ pathAStar.path.Count);
+//				Debug.Log ("count "+ pathAStar.path.Count);
 			}
 			move = DoAStar (deltaTime);
 //			Debug.Log ("move " + move + " _ " + move.magnitude); 
@@ -218,7 +218,7 @@ public class Pathfinding  {
 			//       If there are no more tiles, then we have TRULY
 			//       reached our destination.
 			currTile = nextTile;
-			movementPercentage = 0;
+			movementPercentage -= 1;
 			// FIXME?  Do we actually want to retain any overshot movement?
 		}
 		Vector3 temp = deltaTime * dir * speed;

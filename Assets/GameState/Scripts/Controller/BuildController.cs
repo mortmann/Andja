@@ -435,8 +435,8 @@ public class BuildController : MonoBehaviour {
 		foreach(XmlElement node in xmlDoc.SelectNodes("Buildings/Growable")){
 			int ID = int.Parse(node.GetAttribute("ID"));
 			string name = node.SelectSingleNode("EN"+ "_Name").InnerText;
-			Road road = new Road (ID,name);
-			structurePrototypes [ID] = road;
+			Growable grow = new Growable (ID,name,null,null);
+			structurePrototypes [ID] = grow;
 		}
 	}
 	private void ReadMarketBuildings(XmlDocument xmlDoc){

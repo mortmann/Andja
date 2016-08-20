@@ -399,7 +399,6 @@ public abstract class Structure : IXmlSerializable {
 		if(buildingRange == 0){
 			return;
 		}
-		List<Tile> temp = new List<Tile> ();
 		float x;
 		float y;
 		//get the tile at bottom left to create a "prototype circle"
@@ -412,6 +411,7 @@ public abstract class Structure : IXmlSerializable {
 			center.y += 0.5f + ((float)tileHeight) / 2f - 1;
 		}
 		World w = WorldController.Instance.world;
+		List<Tile> temp = new List<Tile> ();
 		float radius = this.buildingRange + 1.5f;
 		for (float a = 0; a < 360; a += 0.5f) {
 			x = center.x + radius * Mathf.Cos (a);

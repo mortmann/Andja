@@ -1,6 +1,6 @@
 fileFormatVersion: 2
 guid: 080bbf42caa2cac418f89352966c4543
-timeCreated: 1460419765
+timeCreated: 1471547044
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
@@ -10,9 +10,9 @@ TextureImporter:
     21300006: Dirt_Full_1
     21300008: Dirt_Full_2
     21300010: Dirt_Full_3
-    21300012: Water_Full_1
-    21300014: Water_Full_2
-    21300016: Water_Full_3
+    21300012: Ocean_1
+    21300014: Ocean_2
+    21300016: Ocean_3
     21300018: base_landscape_9
     21300020: base_landscape_10
     21300022: base_landscape_11
@@ -257,7 +257,7 @@ TextureImporter:
         - {x: -16, y: -16}
         - {x: 16, y: -16}
         - {x: 16, y: 16}
-    - name: Water_Full_1
+    - name: Ocean_1
       rect:
         serializedVersion: 2
         x: 192
@@ -272,7 +272,7 @@ TextureImporter:
         - {x: -16, y: -16}
         - {x: 16, y: -16}
         - {x: 16, y: 16}
-    - name: Water_Full_2
+    - name: Ocean_2
       rect:
         serializedVersion: 2
         x: 224
@@ -287,7 +287,7 @@ TextureImporter:
         - {x: -16, y: -16}
         - {x: 16, y: -16}
         - {x: 16, y: 16}
-    - name: Water_Full_3
+    - name: Ocean_3
       rect:
         serializedVersion: 2
         x: 256

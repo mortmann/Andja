@@ -7,11 +7,11 @@ using System.Xml.Serialization;
 /// <summary>
 /// /*Tile type.*/
 /// Ocean = Water outside of Islands -> have no own GameObjects
-/// Shore = Water/Land(Sand or smth) at the borders island
+/// Shore = Water/Land(Sand or smth) at the borders island -> normally it can be build(only onshore can build here)
 /// Water = Eg Sea or River inside islands
 /// Dirt = Not as good as Grass but can be build on by everything
 /// Grass = Normal Tile for forest and stuff
-/// Stone = its rocky (really rocky) so building growables is a bad idea (but it works)
+/// Stone = its rocky like a big rock -> cant build here
 /// Desert = nothing grows here
 /// Steppe = Exotic goods like it here
 /// Jungle = Exotic goods Love it here
@@ -180,6 +180,12 @@ public class Tile : IXmlSerializable {
 			return false;
 		}
 		if( t == TileType.Mountain){
+			return false;
+		}
+		if( t == TileType.Stone){
+			return false;
+		}
+		if( t == TileType.Shore){
 			return false;
 		}
 		return true;

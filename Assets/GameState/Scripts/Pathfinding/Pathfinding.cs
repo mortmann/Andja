@@ -164,7 +164,7 @@ public class Pathfinding  {
 			return accurateMove (deltaTime);
 		} else {
 			if(pathAStar==null){
-				Debug.Log ("pathastar is null " + currTile.toString ()  ); 
+//				Debug.Log ("pathastar is null " + currTile.toString ()  ); 
 				pathAStar=new Path_AStar (currTile,currTile, new Vector3 (dest_X,dest_Y));
 //				foreach (Tile item in pathAStar.path) {
 //					Debug.Log ("Path " + item.toString ()); 

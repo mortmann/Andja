@@ -1,0 +1,249 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1265\cocoasubrtf210
+{\fonttbl\f0\fnil\fcharset0 HelveticaNeue;\f1\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;\red26\green26\blue26;\red31\green177\blue138;\red26\green117\blue216;
+\red177\green10\blue155;\red135\green136\blue117;\red52\green52\blue52;\red17\green133\blue131;\red40\green78\blue147;
+}
+\margl1440\margr1440\vieww11400\viewh9000\viewkind0
+\deftab720
+\pard\pardeftab720\sl460\sa231
+
+\f0\b\fs36 \cf2 InputX User Manual 
+\fs28 \
+\pard\pardeftab720\sl460\sa231
+
+\i\b0 \cf2 The most recent version of this documentation can be found online,
+\i0  {\field{\*\fldinst{HYPERLINK "https://maxnorthcodes.wordpress.com/2015/04/06/inputx-unity-script-user-manual/"}}{\fldrslt 
+\f1 \cf3 here.}}\
+InputX is a script that addresses\'a0a number of\'a0input-related needs\'a0that most programmers will eventually have\'a0to implement themselves, otherwise.\'a0It's primary ambition is to make input programming less of a headache\'a0by giving\'a0you the additional functionality you'll need immediately, and to do it in\'a0a concise syntax that\'a0produces\'a0easy to read code.\
+To set up InputX, simply add the script to some object in your scene. You should only ever have one instance of InputX in the scene. Adding more than one may cause problems, and trying to use InputX's static methods will not work if there is no instance of InputX active in the scene.\
+\pard\pardeftab720\sl600
+{\field{\*\fldinst{HYPERLINK "https://maxnorthcodes.wordpress.com/2015/04/06/inputx-unity-script-user-manual/#benefits"}}{\fldrslt 
+\f1\b \cf3 What does InputX do better than the standard Input class?
+\b0 \
+}}\pard\pardeftab720\sl600
+
+\f1 \cf3 	{\field{\*\fldinst{HYPERLINK "https://maxnorthcodes.wordpress.com/2015/04/06/inputx-unity-script-user-manual/#syntax"}}{\fldrslt Syntax\
+}}	{\field{\*\fldinst{HYPERLINK "https://maxnorthcodes.wordpress.com/2015/04/06/inputx-unity-script-user-manual/#inputflexibility"}}{\fldrslt Call any input function with any input type\
+}}	{\field{\*\fldinst{HYPERLINK "https://maxnorthcodes.wordpress.com/2015/04/06/inputx-unity-script-user-manual/#runtime"}}{\fldrslt Change input during runtime and make user profiles\
+}}	{\field{\*\fldinst{HYPERLINK "https://maxnorthcodes.wordpress.com/2015/04/06/inputx-unity-script-user-manual/#fixedupdate"}}{\fldrslt FixedUpdate system\
+}}	{\field{\*\fldinst{HYPERLINK "https://maxnorthcodes.wordpress.com/2015/04/06/inputx-unity-script-user-manual/#efficiency"}}{\fldrslt Efficiency\
+}}	{\field{\*\fldinst{HYPERLINK "https://maxnorthcodes.wordpress.com/2015/04/06/inputx-unity-script-user-manual/#timesensitive"}}{\fldrslt Time sensitive input events\
+}}\pard\pardeftab720\sl600
+{\field{\*\fldinst{HYPERLINK "https://maxnorthcodes.wordpress.com/2015/04/06/inputx-unity-script-user-manual/#inputtypes"}}{\fldrslt 
+\b \cf3 Customize AxisCode and InputCode
+\b0 \
+}}\pard\pardeftab720\sl600
+\cf3 	{\field{\*\fldinst{HYPERLINK "https://maxnorthcodes.wordpress.com/2015/04/06/inputx-unity-script-user-manual/#concept"}}{\fldrslt What are they for?\
+}}	{\field{\*\fldinst{HYPERLINK "https://maxnorthcodes.wordpress.com/2015/04/06/inputx-unity-script-user-manual/#synchronize"}}{\fldrslt Synchronize AxisCode with InputManager\
+}}	{\field{\*\fldinst{HYPERLINK "https://maxnorthcodes.wordpress.com/2015/04/06/inputx-unity-script-user-manual/#inputmanager"}}{\fldrslt Why use InputManager.asset?\
+}}	{\field{\*\fldinst{HYPERLINK "https://maxnorthcodes.wordpress.com/2015/04/06/inputx-unity-script-user-manual/#hidemembers"}}{\fldrslt Hiding InputCode members\
+}}	{\field{\*\fldinst{HYPERLINK "https://maxnorthcodes.wordpress.com/2015/04/06/inputx-unity-script-user-manual/#aliases"}}{\fldrslt Making alias InputCode members\
+}}\pard\pardeftab720\sl600
+{\field{\*\fldinst{HYPERLINK "https://maxnorthcodes.wordpress.com/2015/04/06/inputx-unity-script-user-manual/#timedinput"}}{\fldrslt 
+\b \cf3 How to use the TimedInput class
+\b0 \
+}}\pard\pardeftab720\sl600
+\cf3 	{\field{\*\fldinst{HYPERLINK "https://maxnorthcodes.wordpress.com/2015/04/06/inputx-unity-script-user-manual/#globaltime"}}{\fldrslt Update Time Globally\
+}}	{\field{\*\fldinst{HYPERLINK "https://maxnorthcodes.wordpress.com/2015/04/06/inputx-unity-script-user-manual/#constructors"}}{\fldrslt Initialization \'96 The Inspector and Constructors\
+}}\pard\pardeftab720\sl600
+{\field{\*\fldinst{HYPERLINK "https://maxnorthcodes.wordpress.com/2015/04/06/inputx-unity-script-user-manual/#usersettings"}}{\fldrslt 
+\b \cf3 \'93User Settings\'94 in the Inspector
+\b0 \
+}}\pard\pardeftab720\sl600
+\cf3 	{\field{\*\fldinst{HYPERLINK "https://maxnorthcodes.wordpress.com/2015/04/06/inputx-unity-script-user-manual/#logwarnings"}}{\fldrslt Log debug warnings\
+}}	{\field{\*\fldinst{HYPERLINK "https://maxnorthcodes.wordpress.com/2015/04/06/inputx-unity-script-user-manual/#trackstates"}}{\fldrslt Track Axis States\
+}}	{\field{\*\fldinst{HYPERLINK "https://maxnorthcodes.wordpress.com/2015/04/06/inputx-unity-script-user-manual/#allowglobaltime"}}{\fldrslt Allow Global Timed Input\
+}}	{\field{\*\fldinst{HYPERLINK "https://maxnorthcodes.wordpress.com/2015/04/06/inputx-unity-script-user-manual/#timedinputdefault"}}{\fldrslt Timed Input Default\
+}}	{\field{\*\fldinst{HYPERLINK "https://maxnorthcodes.wordpress.com/2015/04/06/inputx-unity-script-user-manual/#taggedtriggers"}}{\fldrslt Triggers\
+}}	{\field{\*\fldinst{HYPERLINK "https://maxnorthcodes.wordpress.com/2015/04/06/inputx-unity-script-user-manual/#updatetriggers"}}{\fldrslt Update Trigger Axes}}\
+\pard\pardeftab720\sl600
+
+\f0 \cf2 \
+\pard\pardeftab720\sl460\sa231
+
+\b \cf2 What does InputX do better than the standard Input class?
+\b0 \
+
+\b Syntax
+\b0 \
+Using InputX is very similar to using the Input class. Each method is static and has a similar name, but the syntax is simplified. Rather than Input.GetButtonDown(), GetButtonUp() GetKeyUp() or GetKeyDownDown(), you just\'a0write InputX.Down() or Up(). Rather than Input.GetAxis(), you write InputX.Axis(). Rather than Input.GetButton() or GetKey(), you use InputX.Pressed().\
+Additionally, the standard Input class requires the user to be aware of the input type they are using and to know which method type is appropriate for it. InputX does not need to distinguish between GetButton, GetKey, or GetAxis because\'85\
+
+\b InputX allows programmers to use any input function on any input type.
+\b0 \
+One of the limitations of the standard Input class is that you can\'92t check input \'93Up\'94 and \'93Down\'94 events on an axis, only on joystick buttons and keys. This means\'a0some additional programming is required if you want to fire a single bullet when the player uses a gamepad trigger, for example.\
+InputX takes care of this by defining an enum called InputCode. InputCode contains members for every KeyCode as well as the user defined axes. Players simply pass these InputCode members as arguments to InputX\'92s Up, Down, Pressed, and Axis methods and get appropriate results regardless of input type. Additionally, these functions can be passed an array of InputCodes (of any length) and check multiple input sources in one line of code, even axes and buttons together. You can also call any of these methods using KeyCodes, KeyCode arrays, or strings.\
+For more information on InputCode, see {\field{\*\fldinst{HYPERLINK "https://wordpress.com/post/88145563/5#inputtypes"}}{\fldrslt \cf4 \'93\cf2 How to customize the input types AxisCode and InputCode\cf4 \'94}}\
+
+\b InputX makes it easy to create commands and modify\'a0input preferences\'a0in-game, even to track user input profiles.
+\b0 \
+To create a new player command, all you have to do is declare an InputCode field in your MonoBehaviour class. This variable will be passed to the the various InputX methods each time you check input. You can then set the type of input that this command uses\'a0from the inspector, or initialize\'a0it in your declaration if you wish. Even better, you can easily re-assign this field from another script to allow players to customize input preferences during game runtime. You can also declare your field as an InputCode[ ] array, which allows each command to check input from multiple sources, including buttons and axes. The input sources inside the array can also be conveniently modified from the inspector.\
+To create a user input profile, simply define a public class (use the [Serializable] attribute to expose it to the Inspector), and fill this class with fields of type InputCode or InputCode[ ] (depending on the number of input sources for each command) for each player command that you want to track. InputCode is a value type that translates to an int, so it is easy to serialize each command's input types and save them, so they can be remembered the next time your player starts the game. You will have to look online to learn how to save and load player data in Unity.\
+
+\b InputX works better with the FixedUpdate system.
+\b0 \
+If you have tried to use Input.GetButtonDown/Up inside of a FixedUpdate loop, then you probably ran the game and saw your player command get applied several times within a single frame. Or maybe you didn\'92t know what was going on, only that your player seemed to jump at unpredictable heights. This is because FixedUpdate operates differently than Update, and can sometimes run several times within a single frame, meaning your code controlled by checking \'93Down\'94 or \'93Up\'94 runs multiple times.\
+For this reason, InputX\'92s input methods come with an optional parameter that lets you decide if your code should run for each round of FixedUpdate, or only once for the first FixedUpdate( ) of each frame. By 
+\i default,
+\i0  the Up and Down methods will run inside only the first FixedUpdate of each frame. You can make it run for each round by setting the second optional parameter to false. The Pressed() and Axis() methods on the other hand will run for every cycle of FixedUpdate() 
+\i by default
+\i0 , unless you set the optional parameter to 
+\i true
+\i0 .\
+Examples:\
+InputX.Down(myInputCode) // checks once per frame, in first FixedUpdate()\
+InputX.Down(myInputCode, false)  // checks for each FixedUpdate()\
+InputX.Axis(myInputCode)// checks for each FixedUpdate()\
+InputX.Axis(myInputCode, true)// checks once per frame, in first FixedUpdate()\
+Tips:\
+1) InputX keeps track of the first FixedUpdate using a public static variable called checkInput. Feel free to use this anywhere inside of FixedUpdate where you only want the code to run once per frame.\
+2) You can write to the public static checkInput field. By writing to this variable, you can disable input checking for the remainder of the frame (similarly to the Input class\'92s ResetInputAxes() method).\
+
+\b Efficiency
+\b0 \
+When set up\'a0properly, InputX is even more efficient than the standard Input class because it requires fewer string comparisons. Values and states for each\'a0axis are checked and stored at the beginning of each frame, meaning only one string check per axis per frame. Each\'a0time you call the InputX Down(), Up(), Pressed() and Axis() methods, you are merely\'a0fetching a pre-calculated value. If you do not want InputX to keep track of states and values for every axis, you\'a0can specify which\'a0ones it should track\'a0in the InputXTypes script, inside of the AxisCodes enum. Why track data you won't be using?\
+
+\b Time-sensitive input events are made easy
+\b0 \
+The InputX script defines\'a0a separate class called TimedInput that contains two read-only properties\'a0for detecting time-based input events (more to come soon). The first is Tapped, which is somewhat similar to InputX's Down( ) method (or Unity's GetButtonDown( ) ), but which only returns true if the player releases the button before a specified time limit.\'a0The second property\'a0is Held, which acts similarly to InputX's Pressed method (or Unity's\'a0GetButton), except that it only returns true after the player has held\'a0the button beyond a\'a0specified time threshold.\
+There are a number of ways to take advantage of these methods, but one good example is to use\'a0the Tapped and Held properties\'a0together to\'a0get additional functionality out of a single button or axis.\'a0Consider this scenario: you want the player to be ready to climb obstacles by holding down the same button assigned to the "jump" command, but you want the game to give your player a chance to distinguish his intention to jump from his intention to climb. With these methods, you can tell the program, "if the\'a0user has\'a0released the button within .3 seconds, they meant to jump; if they are still holding it, then they clearly intend to climb, so start climbing and don't jump when they eventually release the button." This sort of pattern\'a0gives you more functionality\'a0out of fewer input sources, and makes reading player commands more\'a0deterministic.\
+As a side note, the TimedInput properties\'a0make use of InputX's own Up() and Pressed()\'a0methods. That means you can program this behavior for an axis as well\'a0as buttons (for example, to distinguish flicking a gamepad stick\'a0from a firm press)!\
+\'a0For more information on how to use and construct instances of TimedInput, see {\field{\*\fldinst{HYPERLINK "https://wordpress.com/post/88145563/5#constructors"}}{\fldrslt \cf4 "How to use and construct the TimedInput class".}}\
+
+\b How to customize the input types AxisCode and InputCode
+\b0 \
+AxisCode and InputCode are defined in InputXTypes.cs. Understanding what they do and how to manipulate them is crucial to getting the most power out of InputX.\'a0Once you set them up initially, you may have no need to alter them at all later, unless you do something in the InputManager that confuses it.\'a0In fact, if you use the pre-configured\'a0InputManager.asset file that comes with InputX, you shouldn't need\'a0to touch them, period.\
+
+\b Concept
+\b0 \
+The main idea behind the InputCode enum is that it would be convenient if there were an enum that contained members representing every button, key, and axis,\'a0in the same way that the KeyCode enum allows you to reference keyboard keys, mouse clicks, and joystick buttons. This would mean you could take advantage of Intellisense and code completion when entering an input argument, and would also mean fewer\'a0string comparisons\'a0performed by\'a0the method call.\
+In order to accomplish\'a0this, I created the AxisCode enum. Each member of AxisCode references one of the axes defined in your input settings manager. Each member of InputCode references the members of KeyCode\'a0and AxisCode that you want to use (you can intentionally leave some members out for convenience's sake. {\field{\*\fldinst{HYPERLINK "https://wordpress.com/post/88145563/5#hidemembers"}}{\fldrslt \cf4 More on that here.}})\
+
+\b How to synchronize AxisCodes with the axes defined in input settings
+\b0 \
+By following these 3 rules, InputX will be able to locate the input members defined in Unity's input settings using your AxisCode members.\uc0\u8232 
+\b 1)
+\b0  \ul \ulc2 The first member\ulnone  defined is \ul the only one\ulnone  that you should ever\'a0explicitly assign a value to, and \ul you absolutely must assign it a value\ulnone . Do not assign to the others. Leaving the others unassigned guarantees that they are automatically assigned values that sequentially follow the first (which is crucial).\
+\pard\pardeftab720\sl460\sa231
+
+\b \cf2 2)
+\b0  The value that is assigned to the \ul first AxisCode must\'a0be greater than 429\ulnone , or else it will clash with KeyCode. Use 500 just to be safe.\
+
+\b 3)
+\b0  The name of each member of AxisCode must correspond to an axis set up in Unity's input settings. It must be \ul spelled the same\ulnone , use the \ul same capitalization\ulnone , and use\'a0\ul no spaces\ulnone . Go to Edit -> Project Settings -> Input to open your input manager. Make sure to remove spaces from each\'a0axis you want to reference (but keep in mind, you don't 
+\i have
+\i0  to keep an AxisCode for every axis. It's up to you).\
+
+\b What are the benefits of using the pre-configured InputManager.asset file that comes with InputX?
+\b0 \
+The pre-configured InputManager is set up to work out of the box with the AxisCode enum.\'a0In it's original state, the\'a0AxisCode\'a0enum defines a member for each unique kind of axis, such as MouseX, MouseY,\'a0MouseScroll, and Joystick0 through Joystick10 (plus two axes corresponding to WASD motion).\
+By creating a single AxisCode for the commonly used unique axes, the player reduces clutter inside of the AxisCode definition and makes it behave in accordance with\'a0the role of AxisCode (which is to behave similarly to KeyCode, and have each member reference a unique input source). If you want to have two different names for the same axis, such as having the unique members MacXboxRightStickY and PCXboxRightStickX which both reference Joystick Axis 4 (a common need), then that is exactly what InputCode is for. InputCode is what you will generally pass to the InputX methods, and you can define multiple members of InputCode that correspond to the same input source, but with different names. {\field{\*\fldinst{HYPERLINK "https://wordpress.com/post/88145563/5#aliases"}}{\fldrslt \cf4 More on creating aliases in InputCode here.}}\
+The only time you should make an alias of the same axis inside of AxisCode is to create an inverted axis, or another version of the same axis with different sensitivity and smoothing settings.\
+
+\b Tip:
+\b0  For even more incentive not to create aliases of the same input source in AxisCode, be aware that more members of AxisCode will increase the runtime size of InputX, as well as the processor time spent tracking Up and Down states for them.\'a0This is also a good reason not to include axes you will never use. If you don't support Joystick inputs, there's no need to include them inside AxisCode. If you may want them later, consider hiding them with // note tags.\
+
+\b Hiding members in InputCode
+\b0 \
+There are many keys represented in the KeyCode enum, and most of them you will never want to use as input. To make it easier to select input from the inspector you may choose to exclude some KeyCode members from the InputCode enum definition. The best way to do this is to hide these members behind note tags rather than remove them entirely, in case you decide you want them later. To make this easier, the KeyCode members of InputCode come organized in lines roughly by category. That way you can hide an entire group of keys with a single set of // tags at the front of the line. Some groups of keys are pre-hidden by default. Simply remove the // or /* */ tags to expose them.\
+
+\b Making duplicate aliases in InputCode
+\b0 \
+Each member of InputCode needs to be assigned a KeyCode or AxisCode value (these values represent underlying integers, but it is unsafe to work with the integers directly). Conveniently enough, it is possible to have multiple different members that are assigned the same value. This allows you to provide different names for the same input source if desired.\
+For example, you can define each of these as members of InputCode:\
+JoystickButton5 = KeyCode.JoystickButton5,\uc0\u8232 MacXboxDPadUp = KeyCode.JoystickButton5,\u8232 WinXboxRightBumper = KeyCode.JoystickButton5,\
+Each of these different names will show up as options when you assign fields of InputCode from\'a0the editor inspector.\
+
+\b Tip:
+\b0  Another useful trick is to use pre-processor directives to hide certain aliases automatically depending on the editor platform. By default the InputCode enum defines members for both Windows and Mac layouts of Xbox 360 controller inputs, and hides one or the other depending on which platform you are editing from.\
+Example:\
+\pard\pardeftab720\sl460\sa231
+\cf5 #if\'a0UNITY_EDITOR_WIN\'a0||\'a0!UNITY_EDITOR\cf2 \uc0\u8232 
+\i \cf6 //Define\'a0WinXbox\'a0inputs\'a0here\cf2 \uc0\u8232 \cf5 #endif\'a0
+\i0 \cf2 \
+\cf5 #if\'a0UNITY_EDITOR_MAC\'a0||\'a0!UNITY_EDITOR\cf2 \uc0\u8232 
+\i \cf6 //Define\'a0MacXbox\'a0inputs\'a0here\cf2 \uc0\u8232 \cf5 #endif\'a0
+\i0 \cf2 \
+\pard\pardeftab720\sl460\sa231
+
+\b \cf2 How to use and construct the TimedInput class
+\b0 \
+
+\b Update Time Globally
+\b0 \
+This can be activated and deactivated for each instance of TimedInput. By setting this bool to true, you are allowing your TimedInput instances to keep track of when you press the input used by each instance even when the game loop is not running over code that evaluates\'a0the TimedInput properties.\
+The usefulness is better illustrated by example. If you are programming a jump ability for your character, then you most likely want to make sure that your character is on the ground before any jump commands can be applied. You might maintain this behavior by keeping track of a bool called "touchingGround", for example. We'll call your TimedInput instance "timedJump". You would probably code your jump behavior as follows:\
+\pard\pardeftab720\sl460\sa231
+\cf7 \'a0\'a0\'a0\'a0\cf8 if\cf7 \'a0(touchingGround)\'a0\{\cf2 \uc0\u8232 \cf7 \'a0\'a0\'a0\'a0\'a0\'a0\'a0\'a0
+\i \cf6 //ground\'a0behaviour\'a0code
+\i0 \cf2 \uc0\u8232 \cf7 \'a0\'a0\'a0\'a0\'a0\'a0\'a0\'a0\cf8 if\cf7 \'a0(timedJump.Tapped)\'a0MakePlayerJump\'a0()\'a0;\cf2 \uc0\u8232 \cf7 \'a0\'a0\'a0\'a0\}\cf2 \uc0\u8232 \cf7 \'a0\'a0\'a0\'a0\cf8 else\cf2 \uc0\u8232 \cf7 \'a0\'a0\'a0\'a0\'a0\'a0\'a0\'a0
+\i \cf6 //mid-air\'a0behaviour\'a0code
+\i0 \cf2 \
+If the player holds the input source associated with timedJump while they are not touching the ground, then the Tapped property\'a0is not being evaluated,\'a0which prevents timedJump from updating the clock that counts how long the player has been\'a0pressing the jump input.\
+Allowing for global timing\'a0keeps track of time for each TimedInput instance regardless of whether or not\'a0Held and Tapped are being evaluated.\'a0It guarantees that the Tap was truly a Tap, no matter what.\
+\pard\pardeftab720\sl460\sa231
+
+\b \cf2 Note:\'a0
+\b0 In the inspector for the GameObject with InputX attached to it, you will find a "User Settings" drop down that includes a checkbox for "Global Timed Input". This bool acts as a master override for global time updating. Turn it off to force all TimedInputs to update time locally.\
+
+\b Initialization - The Inspector and Constructors
+\b0 \
+TimedInput values declared public can have values set directly from the Inspector. However, if you want to create a new TimedInput during runtime, or to associate the TimedInput directly with a pre-existing InputCode[ ] array, then you can assign them with one of the overloaded constructors.\
+There are 4 different constructors for TimedInput.\
+\pard\pardeftab720\sl460\sa231
+\cf8 \ul \ulc8 public\cf7 \ulc7 \'a0TimedInput()\cf2 \ulnone \
+The default constructor. When it is run automatically on public fields by the serializer, it sets \'93tapLimit\'94 and \'93holdThreshold\'94 to .25f. When used in Awake(), Start(), or any runtime code, it will set these two fields to the default TimedInput value set in the InputX script inspector. The InputCode[ ] array \'93inputs\'94 will be initialized with InputCode.None.\
+\
+\cf8 \ul \ulc8 public\cf7 \ulc7 \'a0TimedInput\'a0(\cf8 \ulc8 params\cf7 \ulc7 \'a0InputCode[]\'a0argInputSelection)\cf2 \ulnone \
+The params InputCode[ ] argument allows for great flexibility when initializing a TimedInput. It allows you to enter a series of InputCode arguments of any length to construct a new InputCode array, if you wish. But you can also pass an entire array that you have initialized elsewhere. So, consider the code below as an example:\
+\pard\pardeftab720\sl460\sa231
+
+\i \cf6 //initializes\'a0jump\'a0with\'a0two\'a0input\'a0sources
+\i0 \cf2 \uc0\u8232 \cf8 public\cf7 \'a0InputCode[]\'a0jump\'a0=\'a0\{InputCode.\cf9 Space\cf7 ,\'a0InputCode.XboxButtonA\};\cf2 \uc0\u8232 \cf8 private\cf7 \'a0TimedInput\'a0timedJump;\cf2 \uc0\u8232 \cf7 \'a0\'a0\'a0\'a0\cf2 \uc0\u8232 \cf9 void\cf7 \'a0Awake\'a0(\'a0)\'a0\{\'a0timedJump\'a0=\'a0\cf8 new\cf7 \'a0TimedInput\'a0(jump);\cf2 \
+By supplying the constructor with a pre-existing InputCode array directly associates "timedJump" with "jump". Altering the input members of one directly affects the input sources of the other (more accurately, they both use references to the same InputCode array).\
+\
+\pard\pardeftab720\sl460\sa231
+\cf8 \ul \ulc8 public\cf7 \ulc7 \'a0TimedInput\'a0(\cf9 \ulc9 float\cf7 \ulc7 \'a0tapLimitHoldThreshold,\'a0\cf8 \ulc8 params\cf7 \ulc7 \'a0InputCode[]\'a0argInputSelection)\cf2 \ulnone \
+The single float parameter allows for a non-default value to assign "tapLimit" and "HoldThreshold" with in common.\
+\
+\cf8 \ul \ulc8 public\cf7 \ulc7 \'a0TimedInput\'a0(\cf9 \ulc9 float\cf7 \ulc7 \'a0argTapLimit,\'a0\cf9 \ulc9 float\cf7 \ulc7 \'a0argHoldThreshhold,\'a0\cf8 \ulc8 params\cf7 \ulc7 \'a0InputCode[]\'a0argInputSelection)\cf2 \ulnone \
+Two separate floats allow for assigning "tapLimit" and "holdThreshold" with different values.\
+\
+\pard\pardeftab720\sl460\sa231
+
+\b \cf2 What is inside the "User Settings" drop down in the Inspector?
+\b0 \
+
+\b Log debug warnings
+\b0 \
+InputX's debug log only notifies the user when a frame passed without a single FixedUpdate, and tells them the frequency of skipped FixedUpdates since the game started. This can be useful for debugging input, because if you have input detection code inside of FixedUpdate and a frame passes that skips FixedUpdate, then your Up or Down check\'a0went undetected. For instance, you may have a jump command inside FixedUpdate that runs on Down(), but for some reason your player is only sometimes not jumping when you press the jump button. Skipped FixedUpdates are typically responsible for this.\
+A future release of InputX will feature additional methods for the TimedInput class, including some that track skipped FixedUpdates and extend\'a0Down and Up events to the following frame.\
+
+\b Track Axis States
+\b0 \
+This is the functionality of keeping track of states for each axis defined in the {\field{\*\fldinst{HYPERLINK "https://wordpress.com/post/88145563/inputtypes"}}{\fldrslt \cf4 AxisCode enum}},\'a0which\'a0allows you to check Up and Down events for axes. When deactivated, these methods will always return false.\
+Tracking Axis States is also responsible for translating the triggers included in the Triggers\'a0array. When turned off, all axes will be interpreted normally. More on Triggers in InputX just below.\
+
+\b Global Timed Input
+\b0 \
+Tracking time globally can be toggled on and off for every single instance of TimedInput. The GlobalTimed input bool shown here is a master override. When\'a0set to false, all TimedInput members default to\'a0local time updating. {\field{\*\fldinst{HYPERLINK "https://wordpress.com/post/88145563/5#globaltime"}}{\fldrslt \cf4 More info on Globally Updating TimedInput here.}}\
+
+\b Timed Input Default
+\b0 \
+This float specifies the default common\'a0tap limit and hold threshold for all instances of TimedInput assigned using one of the constructor overloads that does not include\'a0a float parameter. {\field{\*\fldinst{HYPERLINK "https://wordpress.com/post/88145563/5#constructors"}}{\fldrslt \cf4 More on constructing new instances of TimedInput here.}}\
+
+\b Triggers
+\b0 \
+By adding members of AxisCode to the \'93triggers\'94 array, you are telling InputX to give it special treatment as a trigger, and to translate it's values to a new scale of 0 to 1 (compared to typical scale of -1 to 1).\
+Be aware that just because you have a gamepad with triggers does not mean that this feature is appropriate for them. For example, some gamepads divide a single axis between both triggers, so that the left axis returns values between -1 and 0, while the right returns values between 0 and 1. Flagging this divided axis as a trigger would be unhelpful here, because the triggers are already in the proper range (though there are problems of their own with this set up). \ul The ideal use for flagging an axis as a trigger is when Unity assigns an entire axis scale of -1 to 1 to your trigger.\ulnone  Look online to find\'a0out how your controller's axes are mapped.\
+
+\b Note:
+\b0  The most important reason for flagging an axis as a trigger is not merely to do a trivial translation of scale. \ul It also handles a bug involving the way that Unity reads these axes.\ulnone \'a0The engine\'a0has difficulty distinguishing between zero pressure on the trigger, and exactly half pressure on the trigger. When not pressed, the axis reads 0. When pressed slightly, it shoots down to -1, and increases with pressure up to 1 (through 0 again). When released, it will stay at -1 for a time, but may return back to 0 erratically if not pressed for a while. InputX's treatment of triggers manages this problem and guarantees predictable axis readings for triggers.\
+
+\b Update Trigger Axes
+\b0 \
+Checking this bool informs InputX that the triggers in the \'93triggers\'94 array have been changed, so that it can perform the necessary modifications. As soon as the update is performed, the bool is set back to false.\
+
+\b Note:
+\b0  The bool primarily acts as a way to update the known triggers in a convenient way from the inspector, mostly\'a0for debugging. InputX also contains a public static method called UpdateTriggerAxes( ) that can be called from your scripts if needed.\
+}

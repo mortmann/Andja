@@ -62,14 +62,17 @@ public class UnitSpriteController : MonoBehaviour {
             Debug.LogError("OnCharacterChanged -- trying to change visuals for character not in our map.");
             return;
         }
-
         GameObject char_go = unitGameObjectMap[c];
-        //Debug.Log(furn_go);
-        //Debug.Log(furn_go.GetComponent<SpriteRenderer>());
+		if(c is Ship){
+			if(((Ship)c).isOffWorld){
+				char_go.SetActive (false);
+			} else {
+				char_go.SetActive (true);
+			}
+		} else {
+			char_go.transform.position = new Vector3(c.X, c.Y, 0);
 
-        //char_go.GetComponent<SpriteRenderer>().sprite = GetSpriteForFurniture(furn);
-
-        char_go.transform.position = new Vector3(c.X, c.Y, 0);
+		}
     }
 	void OnUnitDestroy(Unit c) {
 		if (unitGameObjectMap.ContainsKey(c) == false) {

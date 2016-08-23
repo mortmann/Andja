@@ -12,6 +12,8 @@ public class WorldController : MonoBehaviour {
     // The world and tile data
     public World world { get; protected set; }
 
+	public OffworldMarket offworldMarket;
+
 	public float timeMultiplier = 1;
 	private bool _isPaused = false;
 	public bool IsPaused {
@@ -30,6 +32,8 @@ public class WorldController : MonoBehaviour {
             Debug.LogError("There should never be two world controllers.");
         }
 		GameDataHolder gdh = GameDataHolder.Instance;
+
+		offworldMarket = new OffworldMarket ();
 
         Instance = this;
 		if (gdh!=null && gdh.loadsavegame!=null) {
@@ -59,10 +63,50 @@ public class WorldController : MonoBehaviour {
 		}
 		world.fixedupdate(Time.deltaTime * timeMultiplier);
 	}
-    internal Tile GetTileAtWorldCoord(Vector3 currFramePosition) {
-        return world.GetTileAt(Mathf.FloorToInt(currFramePosition.x)+0.5f, Mathf.FloorToInt(currFramePosition.y)+0.5f);
-    }
 
+	public void TogglePause(){
+		if(IsPaused){
+			OnClickChangeTimeMultiplier (0);
+		} else {
+			OnClickChangeTimeMultiplier (-1);
+		}
+	}
+	public void OnClickChangeTimeMultiplier(int multi){
+		switch(multi){
+		case -1:
+			IsPaused = !IsPaused; 
+			break;
+		case 0:
+			IsPaused = !IsPaused; 
+			break;
+		case 1:
+			timeMultiplier = 0.5f;
+			IsPaused = false;
+			break;
+		case 2:
+			timeMultiplier = 0.75f;
+			IsPaused = false;
+			break;
+		case 3:
+			timeMultiplier = 1.5f;
+			IsPaused = false;
+			break;
+		case 4:
+			timeMultiplier = 2;
+			IsPaused = false;
+			break;
+		}
+	}
+
+	///
+	///
+	/// ONLY SAVE/LOAD SUFF UNDERNEATH HERE
+	///
+
+	/// <summary>
+	/// Saves the world.
+	/// </summary>
+	/// <param name="savename">Savename.</param>
 	public void SaveWorld(string savename) {
 		Debug.Log("SaveWorld button was clicked.");
 		XmlSerializer serializer = new XmlSerializer( typeof(World) );
@@ -108,30 +152,7 @@ public class WorldController : MonoBehaviour {
 		BuildController.Instance.PlaceAllLoadedStructure ();
 		Debug.Log ("LOAD ENDED");
 	}
-	public void OnClickChangeTimeMultiplier(int multi){
-		switch(multi){
-		case 0:
-			IsPaused = !IsPaused; 
-			break;
-		case 1:
-			timeMultiplier = 0.5f;
-			IsPaused = false;
-			break;
-		case 2:
-			timeMultiplier = 0.75f;
-			IsPaused = false;
-			break;
-		case 3:
-			timeMultiplier = 1.5f;
-			IsPaused = false;
-			break;
-		case 4:
-			timeMultiplier = 2;
-			IsPaused = false;
-			break;
-		
-		}
-	}
+
 	public string GetSaveGamesPath(){
 		return GameDataHolder.Instance.GetSaveGamesPath ();
 	}

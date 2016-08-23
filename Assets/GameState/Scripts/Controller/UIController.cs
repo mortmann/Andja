@@ -19,6 +19,7 @@ public class UIController : MonoBehaviour {
 	public GameObject citizenCanvas;
 	public GameObject tradeMapCanvas;
 	public GameObject pauseMenuCanvas;
+	public GameObject offWorldMapCanvas;
 
 	Structure oldStr;
 
@@ -179,8 +180,23 @@ public class UIController : MonoBehaviour {
 		if(tradeMapCanvas.activeSelf){
 			return;
 		}
+		offWorldMapCanvas.SetActive (false);
 		tradeMapCanvas.SetActive (true);
 		tradeMapCanvas.GetComponent<MapImage> ().Show();
+	}
+	public void ToggleOffWorldMenu(){
+		if(offWorldMapCanvas.activeSelf){
+			CloseOffWorldMenu ();
+		}else {
+			OpenOffWorldMenu ();
+		}
+	}
+	public void CloseOffWorldMenu(){
+		offWorldMapCanvas.SetActive (false);
+	}
+	public void OpenOffWorldMenu(){
+		tradeMapCanvas.SetActive (false);
+		offWorldMapCanvas.SetActive (true);
 	}
 	public void ToggleTradeMenu(){
 		if(tradeMapCanvas.activeSelf){
@@ -203,7 +219,7 @@ public class UIController : MonoBehaviour {
 		CloseChooseBuild ();
 		CloseRightUI ();
 		CloseTradeMenu ();
-
+		CloseOffWorldMenu ();
 	}
 	public bool IsPauseMenuOpen(){
 		return pauseMenuCanvas.activeSelf;

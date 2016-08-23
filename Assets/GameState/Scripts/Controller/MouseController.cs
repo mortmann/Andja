@@ -322,7 +322,7 @@ public class MouseController : MonoBehaviour {
 			}
 
 			RaycastHit2D hit = Physics2D.Raycast(new Vector2(currFramePosition.x, currFramePosition.y), Vector2.zero, 200);
-			if(hit.transform.gameObject.GetComponent<UnitHoldingScript >()!=null){
+			if(hit.transform!=null && hit.transform.gameObject.GetComponent<UnitHoldingScript >()!=null){
 				SelectedUnit.GiveAttackCommand (hit.transform.gameObject.GetComponent<UnitHoldingScript >().unit);
 			}
 

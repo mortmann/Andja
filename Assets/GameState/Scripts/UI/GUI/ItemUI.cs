@@ -11,8 +11,12 @@ public class ItemUI : MonoBehaviour {
 
 	public string itemName;
 	public void SetItem(Item i, int maxValue,bool changeColor = false){
-		this.changeColor = changeColor;
+		this.changeColor = changeColor; 
+		RefreshItem (i);
 		ChangeMaxValue (maxValue);
+
+	}
+	public void RefreshItem(Item i){
 		if (i == null) { 
 			ChangeItemCount (0);			
 			itemName="Empty";//FIXME not hardcoded
@@ -34,7 +38,6 @@ public class ItemUI : MonoBehaviour {
 			OnMouseExit ();
 		} );
 		trigger.triggers.Add( exit );
-
 	}
 	public void ChangeItemCount(Item i){
 		ChangeItemCount (i.count);

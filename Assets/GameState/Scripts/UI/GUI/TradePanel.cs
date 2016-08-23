@@ -21,6 +21,7 @@ public class TradePanel : MonoBehaviour {
 	Dictionary<int,Item> intToItem;
 	public TradeRoute tradeRoute;
 	public List<Ship> ships;
+	public Dictionary<Unit,string> unitNames;
 	Dropdown shipDP;
 	MapImage mi;
 	public Slider amountSlider;
@@ -35,13 +36,39 @@ public class TradePanel : MonoBehaviour {
 		mi = GameObject.FindObjectOfType<MapImage> ();
 		tradeRoute = new TradeRoute ();
 		amountSlider.onValueChanged.AddListener (OnAmountSliderMoved);
+		unitNames = new Dictionary<Unit,string> ();
+		foreach (Unit item in World.current.units) {
+			if(item.isShip==false||item.playerNumber!=PlayerController.Instance.currentPlayerNumber){
+				continue;
+			}
+			ships.Add ((Ship) item); 
+			unitNames.Add ((Ship) item,item.Name); 
+			item.RegisterOnDestroyCallback (OnShipDestroy);
+			item.RegisterOnChangedCallback (OnShipChanged);
+		}
+		RefreshDropDownValues ();
+		shipDP.onValueChanged.AddListener (OnDropDownChange);
 	}
+	public void OnDropDownChange(int i){
+		Show (ships[i]);
+	}
+
+	public void OnShipDestroy(Unit u){
+		unitNames.Remove (u);
+		shipDP.RefreshShownValue ();
+	}
+	public void OnShipChanged(Unit u){
+		unitNames [u] = u.Name;
+		shipDP.RefreshShownValue ();
+	}
+
 	public void OnAmountSliderMoved(float f){
 		if(intToGameObject.ContainsKey (pressedItem)==false){
 			return;
 		}
 		intToGameObject [this.pressedItem].ChangeItemCount (f);
 	}
+
 	public void Show(Ship unit){
 		amountSlider.maxValue = unit.inventory.maxStackSize;
 		this.unit = unit;
@@ -77,7 +104,11 @@ public class TradePanel : MonoBehaviour {
 		//set stuff here orso what ever
 		GameObject.FindObjectOfType<UIController> ().CloseRightUI ();
 	}
-
+	public void RefreshDropDownValues(){
+		shipDP.ClearOptions ();
+		shipDP.AddOptions (new List<string>(unitNames.Values));
+		shipDP.RefreshShownValue ();
+	} 
 	public void OnItemClick(int i){
 		if(city == null){
 			return;
@@ -220,5 +251,12 @@ public class TradePanel : MonoBehaviour {
 	public void DeleteSelectedItem(){
 		intToGameObject [pressedItem].SetItem (null, unit.inventory.maxStackSize);
 		intToItem.Remove (pressedItem);
+	}
+
+	void OnDisable(){
+		foreach (Ship item in ships) {
+			item.UnregisterOnChangedCallback (OnShipChanged);
+			item.UnregisterOnChangedCallback (OnShipDestroy);
+		}
 	}
 }

@@ -11,7 +11,9 @@ public class Unit : IXmlSerializable {
 	public OutputStructure rangeUStructure;
 	protected GameObject myGameobject;
 	public Tile startTile;
-
+	public string Name {
+		get { return myGameobject.name; }
+	}
 
 	//COMBAT STUFF
 	float aggroTimer=1f;
@@ -266,7 +268,11 @@ public class Unit : IXmlSerializable {
 		t.count = amount;
 		return inventory.addItem (t);
 	}
-
+	public void CallChangedCallback(){
+		if(cbUnitChanged!=null){
+			cbUnitChanged (this);
+		}
+	}
 	public void TakeDamage(DamageType dt, float amount){
 		if(amount<0){
 			Debug.LogError ("damage must be positive");

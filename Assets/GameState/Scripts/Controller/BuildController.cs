@@ -25,6 +25,7 @@ public class BuildController : MonoBehaviour {
 					cbBuildStateChange (_buildState); 
 				}
 			}
+
 	public Structure toBuildStructure;
 	public Dictionary<int,Structure>  structurePrototypes;
 	public Dictionary<int, Item> allItems;
@@ -34,6 +35,8 @@ public class BuildController : MonoBehaviour {
 	public List<Need> allNeeds;
 	public Dictionary<Climate,List<Fertility>> allFertilities;
 	public Dictionary<int,Fertility> idToFertilities;
+
+
 	Action<Structure> cbStructureCreated;
 	Action<City> cbCityCreated;
 	Action<BuildStateModes> cbBuildStateChange;

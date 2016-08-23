@@ -35,6 +35,15 @@ public class KeyboardController : MonoBehaviour {
 		if(Input.GetKeyDown (KeyCode.M)){
 			uic.ToggleTradeMenu ();
 		}
+		if(Input.GetKeyDown (KeyCode.O)){
+			uic.ToggleOffWorldMenu ();
+		}
+		if(Input.GetKeyDown (KeyCode.Space)){
+			WorldController.Instance.TogglePause ();
+		}
+//		if(Input.GetKeyDown (KeyCode.Alpha1)){
+//			WorldController.Instance.OnClickChangeTimeMultiplier (1);
+//		}
 		if (Input.GetButtonDown ("Rotate")) {
 			if(bc.toBuildStructure != null){
 				bc.toBuildStructure.RotateStructure ();

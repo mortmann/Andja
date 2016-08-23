@@ -51,7 +51,7 @@ public class CityInventoryUI : MonoBehaviour {
 		
 		if (trade) {
 			//trade to ship
-			city.tradeWithShip (city.myInv.getItem (item));
+			city.tradeWithShip (city.myInv.getItemInInventory (item));
 		} else {
 			//select item for trademenu
 			TradePanel tp = GameObject.FindObjectOfType<TradePanel> ();

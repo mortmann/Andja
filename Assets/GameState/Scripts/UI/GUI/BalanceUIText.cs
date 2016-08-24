@@ -29,7 +29,10 @@ public class BalanceUIText : MonoBehaviour {
 			changeText.text ="+ "+ player.change + " ";
 		}
 		balanceText.text = player.balance + " ";
-
-		fpsText.text = Mathf.Round (1.0f / Time.deltaTime) + " fps ";
+//		if(Application.isEditor==false){
+//			fpsText.text = "";
+//		} else {
+			fpsText.text = Mathf.Round (1.0f / Time.deltaTime) + " fps ";
+//		}
 	}
 }

@@ -38,6 +38,13 @@ public class LandTile : Tile,IXmlSerializable {
 			}
 			_myIsland = value;
 		}}
+	protected string _spriteName;
+	public override string SpriteName {
+		get { return _spriteName; }
+		set {
+			_spriteName = value;
+		}
+	}
 
 	private Queue<City> cities;
 	protected City _myCity;

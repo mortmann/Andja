@@ -8768,8 +8768,8 @@ RectTransform:
   m_RootOrder: 0
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 1, y: -0.000024795532}
-  m_SizeDelta: {x: 277, y: 49.4}
+  m_AnchoredPosition: {x: 0, y: -0.000024795532}
+  m_SizeDelta: {x: 300.5, y: 49.4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &636082140
 MonoBehaviour:
@@ -9033,13 +9033,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 89627e930dcaa864a9e6671121d07a0d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  waterSprite: {fileID: 21300014, guid: 080bbf42caa2cac418f89352966c4543, type: 3}
   dirtSprite: {fileID: 21300008, guid: 080bbf42caa2cac418f89352966c4543, type: 3}
   mountainSprite: {fileID: 21300000, guid: 0c4ad53366d1b6041b0950722c7258ae, type: 3}
   darkLayerSprite: {fileID: 21300000, guid: b49278ae7e0176143b41bfa33a26693f, type: 3}
   waterLayer: {fileID: 167726, guid: 4fceb91cd8f861c4b95ceb552bfa1bbb, type: 2}
   water: {fileID: 0}
-  waterTexture: {fileID: 0}
   waterMaterial: {fileID: 2100000, guid: 2669decae9483f047ab070ca18c88766, type: 2}
   darkMaterial: {fileID: 2100000, guid: 4d5d2f80a0493544faaf9953f1479bc9, type: 2}
   highlightMaterial: {fileID: 2100000, guid: aef7459fdfc4791468859c716de5eadd, type: 2}
@@ -13656,8 +13654,8 @@ RectTransform:
   m_RootOrder: 2
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 99.625, y: -35.125}
-  m_SizeDelta: {x: 200, y: 71.8}
+  m_AnchoredPosition: {x: 99.625, y: -24.612}
+  m_SizeDelta: {x: 200, y: 50.775}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &854451083
 MonoBehaviour:
@@ -14143,7 +14141,7 @@ RectTransform:
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 331.5, y: 109}
+  m_SizeDelta: {x: 400.2, y: 109}
   m_Pivot: {x: 1, y: 0}
 --- !u!114 &888453687
 MonoBehaviour:
@@ -14513,8 +14511,8 @@ RectTransform:
   m_RootOrder: 2
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -66.6, y: -34.1}
-  m_SizeDelta: {x: 65.2, y: 18.6}
+  m_AnchoredPosition: {x: -72.9, y: -14}
+  m_SizeDelta: {x: 54.1, y: 18.6}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &908674150
 MonoBehaviour:
@@ -14542,7 +14540,7 @@ MonoBehaviour:
     m_BestFit: 0
     m_MinSize: 10
     m_MaxSize: 40
-    m_Alignment: 0
+    m_Alignment: 1
     m_AlignByGeometry: 0
     m_RichText: 1
     m_HorizontalOverflow: 0
@@ -32295,15 +32293,15 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 22436292, guid: 5864dc44dbea66546a4fcc81f58cec4d, type: 2}
       propertyPath: m_RootOrder
-      value: 10
+      value: 9
       objectReference: {fileID: 0}
     - target: {fileID: 22436292, guid: 5864dc44dbea66546a4fcc81f58cec4d, type: 2}
       propertyPath: m_AnchoredPosition.x
-      value: -25
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 22436292, guid: 5864dc44dbea66546a4fcc81f58cec4d, type: 2}
       propertyPath: m_AnchoredPosition.y
-      value: -50
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 22436292, guid: 5864dc44dbea66546a4fcc81f58cec4d, type: 2}
       propertyPath: m_SizeDelta.x

@@ -37,6 +37,11 @@ public class Tile : IXmlSerializable {
 			return y;
 		}
 	}
+	public virtual string SpriteName {
+		get { return null; }
+		set {
+		}
+	}
 
     public Path_TileGraph pathfinding;
 

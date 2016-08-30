@@ -154,7 +154,7 @@ public class Pathfinding  {
 
 		if(currTile.pathfinding==null || pathAStar!=null&&pathAStar.path.Count == 0) {
            
-//			Debug.Log ("accurate");
+//			Debug.Log ("accurate " + (pathAStar!=null&&pathAStar.path.Count == 0));
 			if (currTile.pathfinding == null) {
 //				Debug.Log ("cur: "+currTile.toString () +  " p " + (currTile.pathfinding==null)); 
 
@@ -169,10 +169,8 @@ public class Pathfinding  {
 //				foreach (Tile item in pathAStar.path) {
 //					Debug.Log ("Path " + item.toString ()); 
 //				}
-//				Debug.Log ("count "+ pathAStar.path.Count);
 			}
 			move = DoAStar (deltaTime);
-//			Debug.Log ("move " + move + " _ " + move.magnitude); 
 			return move;
 		}
 //		Debug.LogError ("worldpathfinding - should never happen"); 
@@ -194,7 +192,7 @@ public class Pathfinding  {
 				}
 				nextTile = pathAStar.Dequeue();
 			}
-
+//		Debug.Log ("ASTAR"); 
 			rotationDirection = new Vector3 (nextTile.X, nextTile.Y);
 			Vector3 dir = new Vector3(nextTile.X - X, nextTile.Y - Y);
 			dir = dir.normalized;
@@ -211,6 +209,7 @@ public class Pathfinding  {
 //		if(World.current.IsInTileAt (nextTile,X,Y)){
 //			currTile = nextTile;
 //		}
+
 		if (movementPercentage > 1) {
 //			Debug.Log (movementPercentage+" "+currTile.toString() + " nexttile "+nextTile.toString ()); 
 			// We have reached our destination
@@ -218,7 +217,7 @@ public class Pathfinding  {
 			//       If there are no more tiles, then we have TRULY
 			//       reached our destination.
 			currTile = nextTile;
-			movementPercentage -= 1;
+			movementPercentage = 0;
 			// FIXME?  Do we actually want to retain any overshot movement?
 		}
 		Vector3 temp = deltaTime * dir * speed;

@@ -15,7 +15,7 @@ public class MapImage : MonoBehaviour {
 	public Dictionary<Warehouse,GameObject> warehouseToGO;
 	public Dictionary<Unit,GameObject> unitToGO;
 	public GameObject tradingMenu;
-	TradePanel tp;
+	TradeRoutePanel tp;
 	// Use this for initialization
 	void Start () {
 		cc = GameObject.FindObjectOfType<CameraController> ();
@@ -50,7 +50,7 @@ public class MapImage : MonoBehaviour {
 		Color co = Color.black;
 		co.a = 0.5f;
 		cameraRect.GetComponent<Image> ().color = co;
-		tp = tradingMenu.GetComponent<TradePanel> ();
+		tp = tradingMenu.GetComponent<TradeRoutePanel> ();
 		tp.Initialize ();
 		BuildController.Instance.RegisterCityCreated (OnCityCreated);
 		foreach (Island item in w.islandList) {

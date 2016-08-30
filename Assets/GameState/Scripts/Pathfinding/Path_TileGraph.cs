@@ -168,7 +168,7 @@ public class Path_TileGraph {
 
 			}
 		}
-
+//		Debug.Log (nodes.Count);
 
 
 		// Now loop through all nodes again

@@ -6,14 +6,15 @@ public class CityInventoryUI : MonoBehaviour {
 	public GameObject cityname;
 	public GameObject contentCanvas;
 	public GameObject itemPrefab;
+	public GameObject tradePanel;
+
 	Dictionary<int, ItemUI> itemToGO;
 	public bool trade;
 	public City city;
 
 
 	public void ShowInventory(City city, bool trade){
-		if(city == null && this.city.name == city.name){
-			
+		if(city == null && this.city == city){
 			return;
 		}
 		cityname.GetComponent<Text> ().text = city.name;
@@ -21,11 +22,9 @@ public class CityInventoryUI : MonoBehaviour {
 		this.trade = trade;
 		city.myInv.RegisterOnChangedCallback (OnInventoryChange);
 
-		var children = new List<GameObject>();
 		foreach (Transform child in contentCanvas.transform) {
-			children.Add (child.gameObject);
+			Destroy (child.gameObject);
 		}
-		children.ForEach(child => Destroy(child));
 
 		itemToGO = new Dictionary<int, ItemUI> ();
 		foreach (Item item in city.myInv.items.Values) {
@@ -48,44 +47,37 @@ public class CityInventoryUI : MonoBehaviour {
 
 	void OnItemClick(Item item){		
 		Debug.Log ("clicked " + item.ToString()); 
-		
 		if (trade) {
 			//trade to ship
-			city.tradeWithShip (city.myInv.getItemInInventory (item));
-		} else {
+			city.tradeWithShip (city.myInv.getItemInInventoryClone (item));
+			return;
+		} 
+		if(GameObject.FindObjectOfType<TradeRoutePanel> ()!=null){
 			//select item for trademenu
-			TradePanel tp = GameObject.FindObjectOfType<TradePanel> ();
-			if(tp!=null)
-				tp.GetClickedItemCity(item);
+			TradeRoutePanel tp = GameObject.FindObjectOfType<TradeRoutePanel> ();
+			tp.GetClickedItemCity(item);
+			return;
+		}
+		if(tradePanel.activeSelf){
+			tradePanel.GetComponent<TradePanel> ().OnItemSelected (city.myInv.getItemInInventoryClone (item));
 		}
 	}
 
 
-//	private void addItemGameObject(Item item){
-//		if(item == null){
-//			return;
-//		}
-//		GameObject go = GameObject.Instantiate (itemPrefab);
-//		Slider s = go.GetComponentInChildren<Slider> ();
-//		Text t = go.GetComponentInChildren<Text> ();
-//		if (item.ID != -1) {
-//			s.maxValue = city.myInv.maxStackSize;
-//			s.value = item.count;
-//			t.text = item.count + "t";
-//			itemToGO.Add (item,go);
-//		} else {
-//			s.maxValue = city.myInv.maxStackSize;
-//			s.value = 0;
-//			t.text = 0 + "t";
-//		}
-//		AdjustSliderColor (s);
-//		go.transform.SetParent (contentCanvas.transform);
-//
-//	}
+	public void OnTradeMenuClick(){
+		if(!tradePanel.activeSelf)
+			tradePanel.GetComponent<TradePanel> ().Show (city);
+		tradePanel.SetActive (!tradePanel.activeSelf);
+	}
 	public void OnInventoryChange(Inventory changedInv){
 		foreach(int i in changedInv.items.Keys){
 			itemToGO [i].ChangeItemCount (city.myInv.items [i].count);
 			itemToGO [i].ChangeMaxValue (city.myInv.maxStackSize);
 		}
 	}
+
+	void OnDisable(){
+		tradePanel.SetActive (false);
+	}
+
 }

@@ -141,12 +141,15 @@ public class MouseController : MonoBehaviour {
 				mouseState = MouseState.Unit;
 				SelectedUnit=hit.transform.GetComponent<UnitHoldingScript> ().unit;
 				uic.OpenUnitUI (SelectedUnit);
+			} else {
+				SelectedUnit = null;
 			}
 			if (SelectedUnit == null) {
 				Tile t = GetTileUnderneathMouse ();
-				Debug.Log ("tile " + t.toString ()); 
 				if (t.Structure != null) {
 					uic.OpenStructureUI (t.Structure);
+				} else {
+					Debug.Log ("tile " + t.toString ()); 
 				}
 			}
 		} else {
@@ -323,9 +326,15 @@ public class MouseController : MonoBehaviour {
 
 			RaycastHit2D hit = Physics2D.Raycast(new Vector2(currFramePosition.x, currFramePosition.y), Vector2.zero, 200);
 			if(hit.transform!=null && hit.transform.gameObject.GetComponent<UnitHoldingScript >()!=null){
-				SelectedUnit.GiveAttackCommand (hit.transform.gameObject.GetComponent<UnitHoldingScript >().unit);
-			}
+				SelectedUnit.GiveAttackCommand (hit.transform.gameObject.GetComponent<UnitHoldingScript >().unit,true);
 
+			}
+			if (hit.transform != null && hit.transform.gameObject.GetComponent<UnitHoldingScript > () == null) {
+				Tile t = GetTileUnderneathMouse ();
+				if(t.Structure!=null&&t.Structure is MarketBuilding){
+					SelectedUnit.GiveAttackCommand (t.Structure);
+				}
+			}
 			if(patrolCommandToAdd){
 				SelectedUnit.AddPatrolCommand (currFramePosition.x, currFramePosition.y);
 				patrolCommandToAdd = false;

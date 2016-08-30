@@ -47,6 +47,7 @@ public abstract class Structure : IXmlSerializable {
 			_health = value;
 		}
 	}
+	public float MaxHealth;
 
 
     public bool isWalkable { get; protected set; }
@@ -375,6 +376,7 @@ public abstract class Structure : IXmlSerializable {
 			Debug.LogWarning ("Damage should be never smaller than 0 - Fixed it!");
 		}
 		Health -= damage;
+		Health = Mathf.Clamp (Health, 0, MaxHealth);
 	}
 	public void HealHealth(float heal){
 		if(heal<0){
@@ -382,6 +384,7 @@ public abstract class Structure : IXmlSerializable {
 			Debug.LogWarning ("Healing should be never smaller than 0 - Fixed it!");
 		}
 		Health += heal;
+		Health = Mathf.Clamp (Health, 0, MaxHealth);
 	}
 	public void Destroy(){
 		OnDestroy ();

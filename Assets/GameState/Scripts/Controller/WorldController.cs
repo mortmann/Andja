@@ -39,11 +39,9 @@ public class WorldController : MonoBehaviour {
 		if (gdh!=null && gdh.loadsavegame!=null) {
 			CreateWorldFromSaveFile (gdh.loadsavegame);
 			gdh.loadsavegame = null;
-
 		} else {
 			if (gdh != null) {
 				this.world = new World (gdh.width, gdh.height);
-//				GameObject.Destroy (gdh.gameObject);
 			} else
 				this.world = new World (100, 100);
 		}
@@ -133,7 +131,7 @@ public class WorldController : MonoBehaviour {
 			GameDataHolder gdh = GameDataHolder.Instance;
 			gdh.loadsavegame = "QuickSave";//TODO CHANGE THIS TO smth not hardcoded
 		}
-		// Reload the scene to reset all data (and purge old references)
+		// set to loadscreen to reset all data (and purge old references)
 		SceneManager.LoadScene( "GameStateLoadingScreen" );
 	}
 	void CreateWorldFromSaveFile(string savegamename) {

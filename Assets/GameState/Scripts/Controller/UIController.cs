@@ -20,6 +20,7 @@ public class UIController : MonoBehaviour {
 	public GameObject tradeMapCanvas;
 	public GameObject pauseMenuCanvas;
 	public GameObject offWorldMapCanvas;
+	public GameObject otherCityUI;
 
 	Structure oldStr;
 
@@ -33,7 +34,6 @@ public class UIController : MonoBehaviour {
 			Debug.LogError ("There are two uicontroller"); 
 		}
 		Instance = this;
-
 	}
 
 	public void OpenStructureUI(Structure str){
@@ -42,6 +42,12 @@ public class UIController : MonoBehaviour {
 		} 
 		if(oldStr!=null) {
 			oldStr.OnClickClose ();
+		}			
+		if(str.playerID != PlayerController.Instance.currentPlayerNumber){
+			if (str is Warehouse) {
+				OpenOtherCity(str.City);
+				return;
+			}
 		}
 		oldStr = str;
 		str.OnClick ();
@@ -57,6 +63,15 @@ public class UIController : MonoBehaviour {
 		if (str is MarketBuilding || str is Warehouse) {
 			OpenCityInventory (str.City);
 		}
+	}
+	public void OpenOtherCity(City city){
+		if(city == null){
+			return;
+		}
+		CloseRightUI ();
+		rightCanvas.SetActive (true);
+		otherCityUI.SetActive (true);
+		otherCityUI.GetComponent<OtherCityUI> ().Show(city);
 	}
 	public void OpenCityInventory(City city, bool trade = false){
 		if(city == null){
@@ -121,9 +136,11 @@ public class UIController : MonoBehaviour {
 		}
 		if (u.rangeUStructure != null) {
 			if (u.rangeUStructure is Warehouse) {
-				CloseRightUI ();
-				u.rangeUStructure.City.tradeUnit = u;
-				OpenCityInventory (u.rangeUStructure.City,true);
+				if (u.rangeUStructure.playerID == PlayerController.Instance.currentPlayerNumber) {
+					CloseRightUI ();
+					u.rangeUStructure.City.tradeUnit = u;
+					OpenCityInventory (u.rangeUStructure.City, true);
+				}
 			}
 		}
 		buildingCanvas.SetActive (false);
@@ -160,6 +177,7 @@ public class UIController : MonoBehaviour {
 			oldStr.OnClickClose ();
 			oldStr = null;
 		}
+		otherCityUI.SetActive (false);
 		CityInventoryCanvas.SetActive (false);
 		citizenCanvas.SetActive (false);
 		rightCanvas.SetActive (false);

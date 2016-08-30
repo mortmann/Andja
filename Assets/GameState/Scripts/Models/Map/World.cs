@@ -43,6 +43,7 @@ public class World : IXmlSerializable{
 		CreateUnit(tiles[34, 41],PlayerController.Instance.currentPlayerNumber,false);
 		CreateUnit(tiles[34, 47],2,false); 
 		CreateUnit(tiles[42, 38],PlayerController.Instance.currentPlayerNumber,true);    
+		CreateUnit(tiles[44, 38],2,true);    
 
 		CreateIsland (31, 41);
 		CreateIsland (61, 41);

@@ -12,9 +12,7 @@ public class UnitUI : MonoBehaviour {
 	Dictionary<int, ItemUI> itemToGO;
 	Unit unit;
 	public void Show(Unit unit){
-		if (unit == this.unit) {
-			return;
-		}
+		
 		this.unit = unit;
 		inv = unit.inventory;
 
@@ -78,7 +76,7 @@ public class UnitUI : MonoBehaviour {
 	}
 	void OnItemClick(int clicked){
 		Debug.Log ("clicked " + clicked); 
-		unit.clickedItem (inv.items[clicked]);
+		unit.ToTradeItemToNearbyWarehouse (inv.items[clicked]);
 	}
 	public void OnInvChange(Inventory changedInv){
 		foreach(int i in itemToGO.Keys){

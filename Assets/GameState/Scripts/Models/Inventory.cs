@@ -124,8 +124,11 @@ public class Inventory : IXmlSerializable{
 		}
 		return temp;
 	}
-	public Item getItemInInventory(Item item){
+	private Item getItemInInventory(Item item){
 		return items [getPlaceInItems (item)];
+	}
+	public Item getItemInInventoryClone(Item item){
+		return items [getPlaceInItems (item)].CloneWithCount ();
 	}
 
 	public void setItemCountNull (Item item){
@@ -178,21 +181,21 @@ public class Inventory : IXmlSerializable{
 	/// <returns><c>true</c>, if item was moved, <c>false</c> otherwise.</returns>
 	/// <param name="inv">Inv.</param>
 	/// <param name="it">It.</param>
-	public bool moveItem(Inventory moveToInv, Item it,int amountMove){
+	public int moveItem(Inventory moveToInv, Item it,int amountMove){
 		if (items.ContainsKey (getPlaceInItems (it))) {
 			Item i = items [getPlaceInItems (it)];
 			Debug.Log (i.ToString ()); 
 			if(i.count<=0){
-				return false;
+				return 0;
 			}
 			it = it.CloneWithCount ();
 			it.count = Mathf.Clamp (it.count, 0, amountMove);
 			int amount = moveToInv.addItem (it);
 			Debug.Log ("Itemamount " + amount); 
 			lowerItemAmount (i, amount);
-			return true;	
+			return amount;	
 		}
-		return false;
+		return 0;
 	}
 	/// <summary>
 	/// removes an item amount from this inventory but not moving it to any other inventory
@@ -288,8 +291,9 @@ public class Inventory : IXmlSerializable{
 	}
 	private Item GetItemWithID(int id){
 		if(numberOfSpaces==-1){
-			if(items.ContainsKey (id))
-				return items[id];
+			if (items.ContainsKey (id)) {
+				return items [id];
+			}
 			return null;
 		} else {
 			Item i = null;
@@ -305,6 +309,31 @@ public class Inventory : IXmlSerializable{
 			return i;
 		}
 	}
+	public Item GetItemWithIDClone(int id){
+		if(numberOfSpaces==-1){
+			if (items.ContainsKey (id)) {
+				Debug.Log ("GetItemWithID "+ items[id].ToString ()); 
+				return items [id].CloneWithCount ();
+			}
+			return null;
+		} else {
+			Item i = null;
+			foreach (Item item in items.Values) {
+				if(item.ID==id){
+					if(i==null){
+						i = item;
+					} else {
+						i.count += item.count;
+					}
+				}
+			}
+			if(i == null){
+				return null;
+			}
+			return i.CloneWithCount ();
+		}
+	}
+
 	public void AddItems(IEnumerable<Item> items){
 		foreach (Item item in items) {
 			addItem (item);

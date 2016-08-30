@@ -6,7 +6,7 @@ using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Serialization;
 
-public class City : IXmlSerializable{
+public class City : IXmlSerializable {
     //TODO: set this to the player that creates this
     public int playerNumber = 0;
     public Island island { get; protected set; }
@@ -29,7 +29,14 @@ public class City : IXmlSerializable{
 	public Warehouse myWarehouse;
 	public Action<Structure> cbStructureAdded;
 	public Action<Structure> cbRegisterTradeOffer;
-	private string _name="";
+	/// <summary>
+	/// ITEM which is to trade
+	/// bool = true -> SELL
+	/// 	 = false -> BUY
+	/// </summary>
+	public Dictionary<int,TradeItem> itemIDtoTradeItem;
+
+	private string _name=""; 
 	public string name {get{
 			if(this.IsWilderness ()){
 				return "Wilderniss";
@@ -47,28 +54,26 @@ public class City : IXmlSerializable{
 			citizienCount [i] = 0;
 		}
         this.island = island;
-
+		itemIDtoTradeItem = new Dictionary<int, TradeItem> ();
 		myStructures = new List<Structure>();
 		myTiles = new HashSet<Tile> ();
-		// if this city doesnt belong to anyone it does not need
-		//anything underneath here
 
-			myInv = new Inventory (-1, name);
-			//temporary
-			Item temp = BuildController.Instance.allItems [49].Clone ();
-			temp.count = 50;
-			myInv.addItem (temp);
+		myInv = new Inventory (-1, name);
+		//temporary
+		Item temp = BuildController.Instance.allItems [49].Clone ();
+		temp.count = 50;
+		myInv.addItem (temp);
 
-			myRoutes = new List<Route> ();
-			myHomes = new List<HomeBuilding> ();
-			allNeeds = new Dictionary<Need,float> ();
-			needsList = allNeedsList;
-			idToNeed = new Dictionary<int, Need> ();
-			for (int i = 0; i < allNeedsList.Count; i++) {
-				allNeeds.Add (allNeedsList [i], 0);
-				idToNeed.Add (allNeedsList [i].ID, allNeedsList [i]);
-			}
-			useTick = 30f;
+		myRoutes = new List<Route> ();
+		myHomes = new List<HomeBuilding> ();
+		allNeeds = new Dictionary<Need,float> ();
+		needsList = allNeedsList;
+		idToNeed = new Dictionary<int, Need> ();
+		for (int i = 0; i < allNeedsList.Count; i++) {
+			allNeeds.Add (allNeedsList [i], 0);
+			idToNeed.Add (allNeedsList [i].ID, allNeedsList [i]);
+		}
+		useTick = 30f;
 
 		_name = "<City>" + UnityEngine.Random.Range (0, 1000);
 		//		useTickTimer = useTick;
@@ -207,24 +212,74 @@ public class City : IXmlSerializable{
 		}
 		return this == island.wilderniss;
 	}
-
-	public void tradeWithShip(Item toTrade,int amount=50, Unit ship = null){
-		if(myWarehouse==null || myWarehouse.inRangeUnits.Count==0  || toTrade ==null){
+	/// <summary>
+	/// Ship buys from city means 
+	/// SELLING IT from perspectiv City
+	/// </summary>
+	/// <param name="itemID">Item I.</param>
+	/// <param name="player">Player.</param>
+	/// <param name="ship">Ship.</param>
+	/// <param name="amount">Amount.</param>
+	public void BuyFromCity(int itemID,Player player, Ship ship, int amount=50){
+		if(itemIDtoTradeItem.ContainsKey (itemID)==false){
 			return;
+		}
+		//true = BUY
+		TradeItem ti = itemIDtoTradeItem [itemID];
+		if(ti.selling==false){
+			Debug.Log ("this item is not to buy"); 
+			return;
+		}
+		Item i = ti.SellItemAmount (myInv.GetItemWithIDClone (itemID));
+		Player myPlayer = PlayerController.Instance.GetPlayer (playerNumber);
+		int am = tradeWithShip (i,Mathf.Clamp (amount,0,i.count),ship);
+		myPlayer.addMoney (am * ti.price);
+		player.reduceMoney (am * ti.price);
+
+	}
+	/// <summary>
+	/// Ship sells to city.
+	/// City BUYs it.
+	/// </summary>
+	/// <param name="itemID">Item I.</param>
+	/// <param name="player">Player.</param>
+	/// <param name="ship">Ship.</param>
+	/// <param name="amount">Amount.</param>
+	public void SellToCity(int itemID,Player player, Ship ship, int amount=50){
+		if(itemIDtoTradeItem.ContainsKey (itemID)==false){
+			return;
+		}
+		TradeItem ti = itemIDtoTradeItem [itemID];
+		//TRUE = sell
+		if(ti.selling==true){
+			Debug.Log ("this item is not to sell here"); 
+			return;
+		}
+		Item i = ti.BuyItemAmount (myInv.GetItemWithIDClone (itemID));
+		Player myPlayer = PlayerController.Instance.GetPlayer (playerNumber);
+		int am = tradeFromShip (ship,i,Mathf.Clamp (amount,0,i.count));
+		myPlayer.reduceMoney (am * ti.price);
+		player.addMoney (am * ti.price);
+
+	}
+	public int tradeWithShip(Item toTrade,int amount=50, Unit ship = null){
+		if(myWarehouse==null || myWarehouse.inRangeUnits.Count==0  || toTrade ==null){
+			Debug.Log ("myWarehouse==null || myWarehouse.inRangeUnits.Count==0  || toTrade ==null"); 
+			return 0;
 		}
 		if (tradeUnit == null && ship==null) {
-			myInv.moveItem (myWarehouse.inRangeUnits [0].inventory, toTrade,amount);
+			return myInv.moveItem (myWarehouse.inRangeUnits [0].inventory, toTrade,amount);
 		} else if(ship==null){
-			myInv.moveItem (tradeUnit.inventory, toTrade,amount);
+			return myInv.moveItem (tradeUnit.inventory, toTrade,amount);
 		} else {
-			myInv.moveItem (ship.inventory, toTrade,amount);
+			return myInv.moveItem (ship.inventory, toTrade,amount);
 		}
 	}
-	public void tradeFromShip(Unit u,Item getTrade,int amount = 50){
+	public int tradeFromShip(Unit u,Item getTrade,int amount = 50){
 		if(getTrade ==null){
-			return;
+			return 0;
 		}
-		u.inventory.moveItem (myInv,getTrade,amount);
+		return u.inventory.moveItem (myInv,getTrade,amount);
 	}
 	public float getPercentage(Need need){
 		if(idToNeed.ContainsKey (need.ID)==false){
@@ -233,8 +288,15 @@ public class City : IXmlSerializable{
 		}
 		return allNeeds[idToNeed[need.ID]];
 	}
-
-
+	public void RemoveTradeItem(Item item){
+		itemIDtoTradeItem.Remove (item.ID);
+	}
+	public void ChangeTradeItemAmount(Item item){
+		itemIDtoTradeItem [item.ID].count = item.count;
+	}
+	public void ChangeTradeItemPrice(int id, int price){
+		itemIDtoTradeItem [id].price = price;
+	}
 	public float GetAmountForThis( Item item, float amount ){
 		return myInv.GetAmountForItem (item);
 	}
@@ -386,9 +448,6 @@ public class City : IXmlSerializable{
 				myStructures.Add (s);
 			} while(reader.ReadToNextSibling ("Structure"));
 		}
-//		}
-
-//		}
 
 	}
 }

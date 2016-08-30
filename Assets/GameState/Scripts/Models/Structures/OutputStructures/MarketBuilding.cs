@@ -7,6 +7,9 @@ using System.Xml.Serialization;
 public class MarketBuilding : OutputStructure {
 	public List<Structure> RegisteredSturctures;
 	public List<Structure> OutputMarkedSturctures;
+	public int level=1;
+	public float takenOverState = 0;
+	public float takeOverStartGoal = 100;
 	public MarketBuilding(int id){
 		
 		hasHitbox = true;
@@ -96,21 +99,13 @@ public class MarketBuilding : OutputStructure {
 			//if one of them is in my roads
 			if (myRoutes.Contains (item)) {
 				//if we are here we can get there through atleast 1 road
-//				foreach (Tile tile in str.neighbourTiles) {
-//					if(tile.Structure is Road == false){
-//						continue;
-//					}
-//					if(myRoutes.Contains(((Road)tile.Structure).Route) == false){
-//						continue;
-//					}
-					if (((OutputStructure)str).outputClaimed == false) {
-						jobsToDo.Add ((OutputStructure)str,null);
-					}
+				if (((OutputStructure)str).outputClaimed == false) {
+					jobsToDo.Add ((OutputStructure)str,null);
+				}
 				if(OutputMarkedSturctures.Contains (str)){
 					OutputMarkedSturctures.Remove (str);
 				}
 					return;
-//				}
 			}
 		}
 		//if were here there is noconnection between here and a the structure
@@ -174,7 +169,21 @@ public class MarketBuilding : OutputStructure {
 		}
 		return temp;
 	}
-
+	public void TakeOverMarketBuilding(float deltaTime,int playerNumber, float speed = 1){
+		takenOverState += deltaTime * speed;
+		if(takeOverStartGoal<=takenOverState){
+			if(myBuildingTiles[0].myIsland!=null){
+				City c = myBuildingTiles [0].myIsland.myCities.Find (x => x.playerNumber == playerNumber);
+				if(c!=null){
+					OnDestroy ();
+					City = c;
+					OnBuild ();
+				} else {
+					Health = 0; //???? is this good?
+				}
+			}
+		}
+	}
 	public override void WriteXml (XmlWriter writer){
 		BaseWriteXml (writer);
 		WriteUserXml (writer);

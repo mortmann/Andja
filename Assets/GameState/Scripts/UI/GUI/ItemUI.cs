@@ -3,18 +3,18 @@ using System.Collections;
 using UnityEngine.UI;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
+
 public class ItemUI : MonoBehaviour {
 	public Image image;//TODO load it fromanywhere?
 	public Text text;
 	public Slider slider;
 	public bool changeColor=false;
-
 	public string itemName;
+
 	public void SetItem(Item i, int maxValue,bool changeColor = false){
 		this.changeColor = changeColor; 
 		RefreshItem (i);
 		ChangeMaxValue (maxValue);
-
 	}
 	public void RefreshItem(Item i){
 		if (i == null) { 

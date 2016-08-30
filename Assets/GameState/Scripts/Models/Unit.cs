@@ -8,6 +8,7 @@ using System.Xml.Serialization;
 public class Unit : IXmlSerializable {
    
 	public int playerNumber;
+
 	public OutputStructure rangeUStructure;
 	protected GameObject myGameobject;
 	public Tile startTile;
@@ -18,8 +19,10 @@ public class Unit : IXmlSerializable {
 	//COMBAT STUFF
 	float aggroTimer=1f;
 	float aggroCooldown=1f;
-	Unit enganging ;
-	float attackRange=1f;
+	Unit engangingUnit;
+	Structure attackingStructure;
+	bool isCapturing;
+	public int maxHP=50;
 	private float _currHealth = 50;
 	public float currHealth {
 		get { return _currHealth;}
@@ -30,30 +33,20 @@ public class Unit : IXmlSerializable {
 			_currHealth = value;
 		}
 	}
-	public int maxHP=50;
-	public float attackDistance;
+	public float attackRange=1f;
 	public float damage=10;
 	public DamageType myDamageType=DamageType.Blade;
 	public ArmorType myArmorType=ArmorType.Leather;
 	public float attackCooldown=1;
 	public float attackRate=1;
-
+	//PATHFINDING STUFF
 	public Vector3 VectorPosition {
 		get {return new Vector3 (X, Y);}
 	}
-
 	protected float speed;   // Tiles per second
-	protected Action<Unit> cbUnitChanged;
-	protected Action<Unit> cbUnitDestroyed;
-
-
-	public Inventory inventory;
-
 	protected internal float width;
 	protected internal float height;
 	public Pathfinding pathfinding;
-
-
 	public float X {
 		get {
 			return pathfinding.X;
@@ -64,17 +57,18 @@ public class Unit : IXmlSerializable {
 			return pathfinding.Y;
 		}
 	}
+
 	public Vector2 patrolTarget;
 	public Vector2 patrolStart;
 	public bool onWayToPatrolTarget; // false for targetPatrol, true for patrolstart
 	public bool onPatrol = false;
-
 	public bool isShip;
-
 	public bool hasChanged = false;
-
 	public float tradeTime=1.5f;
 
+	protected Action<Unit> cbUnitChanged;
+	protected Action<Unit> cbUnitDestroyed;
+	public Inventory inventory;
 
 	public Unit(Tile t,int playernumber) {
 		this.playerNumber = playernumber;
@@ -115,7 +109,7 @@ public class Unit : IXmlSerializable {
 		}
     }
 	protected void UpdateAggroRange(float deltaTime){
-		if(enganging!=null){
+		if(engangingUnit!=null){
 			return;
 		}
 		aggroTimer -= deltaTime;
@@ -145,13 +139,78 @@ public class Unit : IXmlSerializable {
 		}
 
 	}
-	public void GiveAttackCommand(Unit u){
-		enganging = u;
+	public void GiveAttackCommand(Unit u, bool overridingAttack=false){
+		if(overridingAttack==false&&attackingStructure!=null){
+			return;
+		}
+		attackingStructure = null;
+		engangingUnit = u;
 		AddMovementCommand (u.X,u.Y);
 	}
+	public void GiveAttackCommand(Structure structure){
+		if(this.isShip || this.myDamageType == DamageType.Artillery){
+			attackingStructure = structure;
+			Tile nearstTile = null;
+			float nearDist= float.MaxValue;
+			foreach (Tile item in structure.neighbourTiles) {
+				if(isShip){
+					if(item.Type != TileType.Ocean){
+						continue;
+					}
+				} else {
+					if(item.Type == TileType.Ocean || item.MovementCost<=0){
+						continue;
+					}
+				}
+				float currDist = (item.vector-pathfinding.currTile.vector).magnitude;
+				if(currDist<nearDist){
+					currDist = nearDist;
+					nearstTile = item;
+				}
+			}
+			if(nearstTile == null){
+				return;
+			}
+			AddMovementCommand (nearstTile);
+		} else {
+			//only MarketBuildings are captureable and not warehouses
+			if(structure is MarketBuilding && (structure is Warehouse)==false){
+				Tile nearstTile = null;
+				float nearDist= float.MaxValue;
+				foreach (Tile item in structure.neighbourTiles) {
+					if(isShip){
+						if(item.Type != TileType.Ocean){
+							continue;
+						}
+					} else {
+						if(item.Type == TileType.Ocean || item.MovementCost<=0){
+							continue;
+						}
+					}
+					float currDist = (item.vector-pathfinding.currTile.vector).magnitude;
+					if(currDist<nearDist){
+						currDist = nearDist;
+						nearstTile = item;
+					}
+				}
+				if(nearstTile == null){
+					return;
+				}
+				isCapturing = true;
+				AddMovementCommand (nearstTile);
+			}
+		}
+	}
+
 	public bool Fighting(float deltaTime){
-		if(enganging!=null){
-			float dist = (enganging.VectorPosition - VectorPosition).magnitude;
+		if(engangingUnit!=null){
+			float dist = (engangingUnit.VectorPosition - VectorPosition).magnitude;
+			if(dist<attackRange){
+				DoAttack (deltaTime);
+				return true;
+			}
+		} else {
+			float dist = (attackingStructure.middleVector - VectorPosition).magnitude;
 			if(dist<attackRange){
 				DoAttack (deltaTime);
 				return true;
@@ -160,17 +219,36 @@ public class Unit : IXmlSerializable {
 		return false;
 	}
 	public void DoAttack(float deltaTime){
-		if(enganging.currHealth<=0){
-			enganging = null;
-		}
-		attackCooldown -= deltaTime;
-		if(attackCooldown>0){
-			return;
-		}
-		attackCooldown = attackRate;
+		if(engangingUnit!=null){
+			if(engangingUnit.currHealth<=0){
+				engangingUnit = null;
+			}
+			attackCooldown -= deltaTime;
+			if(attackCooldown>0){
+				return;
+			}
+			attackCooldown = attackRate;
 
-		enganging.TakeDamage (myDamageType,damage);
+			engangingUnit.TakeDamage (myDamageType,damage);
+		}
+		if(isCapturing){
+			if(attackingStructure.neighbourTiles.Contains (pathfinding.currTile)){
+				((MarketBuilding)attackingStructure).TakeOverMarketBuilding (deltaTime, playerNumber, 1);
+			}
+		} else {
+			if(attackingStructure.Health<=0){
+				attackingStructure = null;
+			}
+			attackCooldown -= deltaTime;
+			if(attackCooldown>0){
+				return;
+			}
+			attackCooldown = attackRate;
+
+			attackingStructure.TakeDamage (damage);
+		}
 	}
+
 	protected void UpdateParol(){
 		//PATROL
 		if(onPatrol){
@@ -191,26 +269,18 @@ public class Unit : IXmlSerializable {
 		}
 		rangeUStructure = ware; 
 	}
-	public void clickedItem(Item clicked){
+	public void ToTradeItemToNearbyWarehouse(Item clicked){
 		Debug.Log (clicked.ToString ()); 
 		if(rangeUStructure != null && rangeUStructure is Warehouse){
-			rangeUStructure.City.tradeFromShip (this,clicked);
+			if(rangeUStructure.playerID == playerNumber){
+				rangeUStructure.City.tradeFromShip (this,clicked);
+			} else {
+				Player p = PlayerController.Instance.GetPlayer (playerNumber);
+				rangeUStructure.City.SellToCity (clicked.ID,p,(Ship)this,clicked.count);
+			}
 		}
 	}
-    public void RegisterOnChangedCallback(Action<Unit> cb) {
-        cbUnitChanged += cb;
-    }
 
-    public void UnregisterOnChangedCallback(Action<Unit> cb) {
-        cbUnitChanged -= cb;
-    }
-	public void RegisterOnDestroyCallback(Action<Unit> cb) {
-		cbUnitDestroyed += cb;
-	}
-
-	public void UnregisterOnDestroyCallback(Action<Unit> cb) {
-		cbUnitDestroyed -= cb;
-	}
 	public void AddPatrolCommand(float targetX,float targetY){
 		Tile tile = World.current.GetTileAt(targetX, targetY);
 		if(tile == null){
@@ -285,6 +355,20 @@ public class Unit : IXmlSerializable {
 		if(cbUnitDestroyed!=null){
 			cbUnitDestroyed (this);
 		}
+	}
+	public void RegisterOnChangedCallback(Action<Unit> cb) {
+		cbUnitChanged += cb;
+	}
+
+	public void UnregisterOnChangedCallback(Action<Unit> cb) {
+		cbUnitChanged -= cb;
+	}
+	public void RegisterOnDestroyCallback(Action<Unit> cb) {
+		cbUnitDestroyed += cb;
+	}
+
+	public void UnregisterOnDestroyCallback(Action<Unit> cb) {
+		cbUnitDestroyed -= cb;
 	}
 	//////////////////////////////////////////////////////////////////////////////////////
 	/// 

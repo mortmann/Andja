@@ -6,7 +6,7 @@ using System.Collections.Generic;
 /// but it updates the money for all
 /// </summary>
 public class PlayerController : MonoBehaviour {
-	public int currentPlayerNumber { get; protected set;}
+	public int currentPlayerNumber;
 	public Player currPlayer{get {return players [currentPlayerNumber];}}
 	float balanceTicks;
 	float tickTimer;
@@ -41,7 +41,38 @@ public class PlayerController : MonoBehaviour {
 			}
 			tickTimer = balanceTicks;
 		}
-
+		if(Application.isEditor){
+			//ALLOW SWITCH OF playernumber in editor
+			if(Input.GetKey (KeyCode.LeftShift)){
+				if(Input.GetKeyDown (KeyCode.Alpha0)){
+					currentPlayerNumber = 0;
+				}  
+				if(Input.GetKeyDown (KeyCode.Alpha1)){
+					currentPlayerNumber = 1;
+				} 
+				if(Input.GetKeyDown (KeyCode.Alpha2)){
+					currentPlayerNumber = 2;
+				} 
+				if(Input.GetKeyDown (KeyCode.Alpha3)){
+					currentPlayerNumber = 3;
+				} 
+				if(Input.GetKeyDown (KeyCode.Alpha4)){
+					currentPlayerNumber = 4;
+				} 
+				if(Input.GetKeyDown (KeyCode.Alpha5)){
+					currentPlayerNumber = 5;
+				} 
+				if(Input.GetKeyDown (KeyCode.Alpha6)){
+					currentPlayerNumber = 6;
+				} 
+				if(Input.GetKeyDown (KeyCode.Alpha7)){
+					currentPlayerNumber = 8;
+				} 
+				if(Input.GetKeyDown (KeyCode.Alpha9)){
+					currentPlayerNumber = 9;
+				} 
+			}
+		}
 	}
 
 	public void reduceMoney(int money, int playerNr) {

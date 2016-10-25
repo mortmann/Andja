@@ -12,7 +12,11 @@ public class KeyboardController : MonoBehaviour {
 	BuildController bc;
 
 
+
+
+
 	void Start () {
+		new InputHandler ();
 		uic = GameObject.FindObjectOfType<UIController>();
 		mc = GameObject.FindObjectOfType<MouseController>();
 		bc = GameObject.FindObjectOfType<BuildController> ();
@@ -29,16 +33,16 @@ public class KeyboardController : MonoBehaviour {
 		if(uic.IsPauseMenuOpen()){
 			return;
 		}
-		if (Input.GetButtonDown ("BuildMenu")) {
+		if (InputHandler.GetButtonDown ("BuildMenu")) {
 			uic.showBuildMenu();
 		}
-		if(Input.GetKeyDown (KeyCode.M)){
+		if(InputHandler.GetButtonDown ("TradeMenu")){
 			uic.ToggleTradeMenu ();
 		}
-		if(Input.GetKeyDown (KeyCode.O)){
+		if(InputHandler.GetButtonDown ("Offworld")){
 			uic.ToggleOffWorldMenu ();
 		}
-		if(Input.GetKeyDown (KeyCode.Space)){
+		if(InputHandler.GetButtonDown ("TogglePause")){
 			WorldController.Instance.TogglePause ();
 		}
 //		if(Input.GetKeyDown (KeyCode.Alpha1)){

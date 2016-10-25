@@ -47,7 +47,7 @@ public class ProductionBuilding : OutputStructure {
 		this.mustBeBuildOnShore = mustBeBuildOnShore;
 		this.maintenancecost = maintenancecost;
 		this.hasHitbox = hasHitbox;
-		this.myBuildingTyp = BuildingTyp.Production;
+		this.myBuildingTyp = BuildingTyp.Blocking;
 		BuildTyp = BuildTypes.Single;
 		this.canTakeDamage = true;
 
@@ -75,7 +75,7 @@ public class ProductionBuilding : OutputStructure {
 		this.BuildTyp = str.BuildTyp;
 		this.rotated = str.rotated;
 		this.hasHitbox = str.hasHitbox;
-		this.myBuildingTyp = BuildingTyp.Production;
+		this.myBuildingTyp = BuildingTyp.Blocking;
 	}
 
 

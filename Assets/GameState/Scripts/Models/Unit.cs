@@ -147,7 +147,10 @@ public class Unit : IXmlSerializable {
 		engangingUnit = u;
 		AddMovementCommand (u.X,u.Y);
 	}
-	public void GiveAttackCommand(Structure structure){
+	public void GiveAttackCommand(Structure structure, bool overridingAttack=false){
+		if(overridingAttack==false&&engangingUnit!=null){
+			return;
+		}
 		if(this.isShip || this.myDamageType == DamageType.Artillery){
 			attackingStructure = structure;
 			Tile nearstTile = null;
@@ -204,13 +207,21 @@ public class Unit : IXmlSerializable {
 
 	public bool Fighting(float deltaTime){
 		if(engangingUnit!=null){
+			if(PlayerController.Instance.ArePlayersAtWar (engangingUnit.playerNumber,playerNumber)){
+				engangingUnit = null;
+				return false;
+			}
 			float dist = (engangingUnit.VectorPosition - VectorPosition).magnitude;
 			if(dist<attackRange){
 				DoAttack (deltaTime);
 				return true;
 			}
-		} else {
-			float dist = (attackingStructure.middleVector - VectorPosition).magnitude;
+		} else if(attackingStructure!=null){
+			if(PlayerController.Instance.ArePlayersAtWar (attackingStructure.playerID,playerNumber)){
+				attackingStructure = null;
+				return false;
+			}
+			float dist = (attackingStructure.middleVector.magnitude - VectorPosition.magnitude);
 			if(dist<attackRange){
 				DoAttack (deltaTime);
 				return true;
@@ -232,12 +243,17 @@ public class Unit : IXmlSerializable {
 			engangingUnit.TakeDamage (myDamageType,damage);
 		}
 		if(isCapturing){
+			if(attackingStructure.Health<=0||attackingStructure.playerID!=playerNumber){
+				attackingStructure = null;
+				return;
+			}
 			if(attackingStructure.neighbourTiles.Contains (pathfinding.currTile)){
 				((MarketBuilding)attackingStructure).TakeOverMarketBuilding (deltaTime, playerNumber, 1);
 			}
 		} else {
 			if(attackingStructure.Health<=0){
 				attackingStructure = null;
+				return;
 			}
 			attackCooldown -= deltaTime;
 			if(attackCooldown>0){

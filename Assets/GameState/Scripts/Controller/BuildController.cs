@@ -1,15 +1,25 @@
-﻿using UnityEngine;
-using System.Collections;
-using System.Collections.Generic;
+﻿#region License
+// ====================================================
+// Andja Copyright(C) 2016 Team Mortmann
+// ====================================================
+#endregion
 using System;
-using UnityEngine.Events;
+using System.Collections.Generic;
+using System.IO;
 using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Serialization;
-using System.IO;
+using UnityEngine;
+using UnityEngine.Events;
 
-public enum BuildStateModes {None,Build,Destroy};
+/// <summary>
+/// Build state modes.
+/// </summary>
+public enum BuildStateModes { None, Build, Destroy }
 
+/// <summary>
+/// Build controller.
+/// </summary>
 public class BuildController : MonoBehaviour {
     public static BuildController Instance { get; protected set; }
 	protected BuildStateModes _buildState;

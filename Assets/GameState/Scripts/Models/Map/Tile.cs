@@ -75,7 +75,7 @@ public class Tile : IXmlSerializable {
 			if (Structure == null){
 				return 1;
 			}
-			if (Structure.myBuildingTyp != BuildingTyp.Pathfinding){
+			if (Structure.myBuildingTyp != BuildingTyp.Pathfinding && Structure.canBeBuildOver==false){
 				return float.PositiveInfinity;
 			}
 			if (Structure.myBuildingTyp == BuildingTyp.Pathfinding){

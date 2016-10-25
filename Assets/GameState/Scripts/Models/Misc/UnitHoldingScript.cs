@@ -11,7 +11,10 @@ public class UnitHoldingScript : MonoBehaviour {
 		if(unit==null){
 			Destroy (this);
 		}
-		x= unit.pathfinding.currTile.X;
+		if(unit.pathfinding==null){
+			return;
+		}
+		x=unit.pathfinding.currTile.X;
 		y=unit.pathfinding.currTile.Y;
 	}
 }

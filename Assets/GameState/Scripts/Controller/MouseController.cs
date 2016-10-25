@@ -332,7 +332,7 @@ public class MouseController : MonoBehaviour {
 			if (hit.transform != null && hit.transform.gameObject.GetComponent<UnitHoldingScript > () == null) {
 				Tile t = GetTileUnderneathMouse ();
 				if(t.Structure!=null&&t.Structure is MarketBuilding){
-					SelectedUnit.GiveAttackCommand (t.Structure);
+					SelectedUnit.GiveAttackCommand (t.Structure,true);
 				}
 			}
 			if(patrolCommandToAdd){

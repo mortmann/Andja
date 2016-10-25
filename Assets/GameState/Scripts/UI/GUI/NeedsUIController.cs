@@ -97,6 +97,9 @@ public class NeedsUIController : MonoBehaviour {
 	}
 	// Update is called once per frame
 	void Update () {
+		if(home==null){
+			return;
+		}
 		if(home.canUpgrade){
 			upgradeButton.SetActive (true);
 		} else {

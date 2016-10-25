@@ -8,7 +8,7 @@ using System.Xml.Schema;
 using System.Xml.Serialization;
 
 public enum BuildTypes {Drag, Path, Single};
-public enum BuildingTyp {Production, Pathfinding, Blocking};
+public enum BuildingTyp {Pathfinding, Blocking,Free};
 public enum Direction {None, N, E, S, W};
 
 public abstract class Structure : IXmlSerializable {

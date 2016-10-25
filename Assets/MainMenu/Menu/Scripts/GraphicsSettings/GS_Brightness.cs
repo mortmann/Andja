@@ -8,8 +8,8 @@ public class GS_Brightness : GS_SliderBase {
     }
 
     protected override void OnSliderValueChange() {
-        cam.GetComponent<Brightness>().brightness = slider.value / 100f;
-    }
+
+	}
 
     protected override void OnSliderValueChangeSetDisplayText() {
         displayValue.text = Value.ToString() + "%";

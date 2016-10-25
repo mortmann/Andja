@@ -63,7 +63,6 @@ public class Path_AStar {
 		// Make sure our start/end tiles are in the list of nodes!
 		if (nodes.ContainsKey(tileStart) == false) {
 			Debug.LogError("Path_AStar: The starting tile isn't in the list of nodes!");
-
 			return;
 		}
 		if (nodes.ContainsKey(tileEnd) == false) {

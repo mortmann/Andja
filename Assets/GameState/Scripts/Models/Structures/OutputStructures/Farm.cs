@@ -29,7 +29,7 @@ public class Farm : OutputStructure {
 		this.produceTime = produceTime;
 		this.buildingRange = 3;
 		maxOutputStorage = 5;
-		myBuildingTyp = BuildingTyp.Production ;
+		myBuildingTyp = BuildingTyp.Blocking;
 		BuildTyp = BuildTypes.Single;
 		hasHitbox = true;
 		this.canTakeDamage = true;

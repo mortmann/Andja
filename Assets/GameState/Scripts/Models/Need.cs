@@ -10,7 +10,7 @@ public class Need {
 	public float[] uses;
 	public int startLevel;
 	public int popCount;
-
+	private float lastNeededNotConsumed;
 	public Need(int id, string name,int level,int count, Item item,NeedsBuilding structure, float[] uses){
 		this.ID = id;
 		this.name = name;
@@ -42,8 +42,19 @@ public class Need {
 		if(availableAmount == 0){
 			return 0;
 		}
-		int usedAmount = (int) Mathf.Clamp (availableAmount, 1, neededConsumAmount);
-
+		if(neededConsumAmount<1){
+			if (lastNeededNotConsumed == 0) {
+				lastNeededNotConsumed = neededConsumAmount;
+			} else {
+				neededConsumAmount += lastNeededNotConsumed;
+				if (neededConsumAmount < 1) {
+					lastNeededNotConsumed = neededConsumAmount;
+				} else {
+					lastNeededNotConsumed = 0;
+				}
+			}
+		}
+		int usedAmount = (int) Mathf.Clamp (availableAmount, 0, neededConsumAmount);
 		city.removeRessource (item,usedAmount);
 		//minimum is 1 because if 0 -> ERROR due dividing through 0
 		return Mathf.RoundToInt (100*(usedAmount / neededConsumAmount))/100;

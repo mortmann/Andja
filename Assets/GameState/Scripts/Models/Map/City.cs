@@ -66,11 +66,11 @@ public class City : IXmlSerializable {
 		myRoutes = new List<Route> ();
 		myHomes = new List<HomeBuilding> ();
 		allNeeds = new Dictionary<Need,float> ();
-		needsList = allNeedsList;
+		needsList = new List<Need>(allNeedsList);
 		idToNeed = new Dictionary<int, Need> ();
 		for (int i = 0; i < allNeedsList.Count; i++) {
-			allNeeds.Add (allNeedsList [i], 0);
-			idToNeed.Add (allNeedsList [i].ID, allNeedsList [i]);
+			allNeeds.Add (needsList [i], 0);
+			idToNeed.Add (needsList [i].ID, needsList [i]);
 		}
 		useTick = 30f;
 

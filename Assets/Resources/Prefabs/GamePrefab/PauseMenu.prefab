@@ -3738,6 +3738,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   graphics: {fileID: 132566}
   sound: {fileID: 196188}
+  controls: {fileID: 0}
 --- !u!114 &11409332
 MonoBehaviour:
   m_ObjectHideFlags: 1

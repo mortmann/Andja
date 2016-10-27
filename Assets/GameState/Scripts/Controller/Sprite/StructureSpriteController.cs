@@ -149,7 +149,7 @@ public class StructureSpriteController : MonoBehaviour {
 
 	void LoadSprites() {
 		structureSprites = new Dictionary<string, Sprite>();
-		Sprite[] sprites = Resources.LoadAll<Sprite>("Structures/");
+		Sprite[] sprites = Resources.LoadAll<Sprite>("Textures/Structures/");
 		foreach (Sprite s in sprites) {
 //			Debug.Log (s.name);
 			structureSprites[s.name] = s;

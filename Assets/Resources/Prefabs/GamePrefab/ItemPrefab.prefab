@@ -281,7 +281,6 @@ MonoBehaviour:
   text: {fileID: 11453570}
   slider: {fileID: 11408398}
   changeColor: 0
-  mouseOverPrefab: {fileID: 136252, guid: 0220ae90ebdc9c44ab58dfd2d2cfcc7d, type: 2}
   itemName: 
 --- !u!114 &11487936
 MonoBehaviour:

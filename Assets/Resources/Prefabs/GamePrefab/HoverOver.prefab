@@ -136,6 +136,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9746cb08076518a44b34a5f3fd17e4d8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  hovertime: 3
 --- !u!114 &11490858
 MonoBehaviour:
   m_ObjectHideFlags: 1

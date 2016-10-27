@@ -13,7 +13,6 @@ public class TileSpriteController : MonoBehaviour {
 	public GameObject water;
 	public Dictionary<string, Sprite> typeTotileSpriteNames;
 	public Material waterMaterial;
-
 	public Material darkMaterial;
 	Material clearMaterial;
 	public Material highlightMaterial;

@@ -1,18 +1,24 @@
 ﻿using UnityEngine;
 using UnityEngine.Audio;
-
+using System.Collections.Generic;
+using System.IO;
 public class MenuAudioManager : MonoBehaviour {
-
+	static string fileName="keybinds.ini";
     public AudioMixer mixer;	
-
     public static MenuAudioManager instance;
 
     public AudioClip hoverSound;
     public AudioClip sliderSound;
     public AudioClip clickSound;
+	private int masterVolume;
+	private int musicVolume;
+	private int ambientVolume;
+	private int soundVolume;
+	private int uiVolume;
 
     void Awake() {
         instance = this;
+		ReadSoundVolumes ();
     }
 
     public void PlayClickSound() {
@@ -30,18 +36,28 @@ public class MenuAudioManager : MonoBehaviour {
 
     public void SetMusicVolume(float value) {
         mixer.SetFloat("MusicVolume", ConvertToDecibel(value));
+		masterVolume = Mathf.RoundToInt (value);
+		SaveVolumetSchema ();
     }
     public void SetSoundEffectsVolume(float value) {
         mixer.SetFloat("SoundEffectsVolume", ConvertToDecibel(value));
+		soundVolume = Mathf.RoundToInt (value);
+		SaveVolumetSchema ();
     }
     public void SetMasterVolume(float value) {
         mixer.SetFloat("MasterVolume", ConvertToDecibel(value));
+		masterVolume = Mathf.RoundToInt (value);
+		SaveVolumetSchema ();
     }
     public void SetAmbientVolume(float value) {
         mixer.SetFloat("AmbientVolume", ConvertToDecibel(value));
+		ambientVolume = Mathf.RoundToInt (value);
+		SaveVolumetSchema ();
     }
     public void SetUIVolume(float value) {
-        mixer.SetFloat("UIVolume", ConvertToDecibel(value));
+		mixer.SetFloat ("UIVolume", ConvertToDecibel (value));
+		uiVolume = Mathf.RoundToInt (value);
+		SaveVolumetSchema ();
     }
 
     /**
@@ -65,4 +81,67 @@ public class MenuAudioManager : MonoBehaviour {
 
         return decibel;
     }
+	public void SaveVolumetSchema(){
+		string path = Application.dataPath.Replace ("/Assets", "");
+		if( Directory.Exists(path ) == false ) {
+			// NOTE: This can throw an exception if we can't create the folder,
+			// but why would this ever happen? We should, by definition, have the ability
+			// to write to our persistent data folder unless something is REALLY broken
+			// with the computer/device we're running on.
+			Directory.CreateDirectory( path  );
+		}
+		if(FindObjectOfType<SoundController>()!=null){
+			
+		}
+		string filePath = System.IO.Path.Combine(path,fileName) ;
+		StringWriter writer = new StringWriter ();
+		writer.WriteLine ("masterVolume  = "+masterVolume);
+		writer.WriteLine ("soundVolume   = "+soundVolume);
+		writer.WriteLine ("ambientVolume = "+ambientVolume);
+		writer.WriteLine ("uiVolume      = "+uiVolume);
+		writer.WriteLine ("musicVolume   = "+musicVolume);
+		File.WriteAllText( filePath, writer.ToString() );
+	}
+	public void ReadSoundVolumes(){
+		string filePath = System.IO.Path.Combine(Application.dataPath.Replace ("/Assets",""),fileName) ;
+		if(File.Exists (filePath)==false){
+			SetMasterVolume (100);
+			SetMusicVolume (100);
+			SetUIVolume (100);
+			SetSoundEffectsVolume (100);
+			SetAmbientVolume (100);
+			return;
+		}
+		string[] lines = File.ReadAllLines (filePath);
+		foreach(string line in lines){
+			string[] split = line.Split ('=');
+			if(split.Length!=2){
+				continue;
+			}
+			split[0]=split[0].Trim();
+			split[1]=split[1].Trim();
+			int value = 0;
+			if(int.TryParse (split[1],out value)==false){
+				Debug.LogError ("Error in reading in integer from "+fileName);
+				value = 50;
+			}
+			switch(split[0]){
+			case "masterVolume":
+				masterVolume = value;
+				break;
+			case "musicVolume":
+				musicVolume = value;
+				break;
+			case "ambientVolume":
+				ambientVolume = value;
+				break;
+			case "soundVolume":
+				soundVolume = value;
+				break;
+			case "uiVolume":
+				uiVolume = value;
+				break;
+			}
+		}
+	}
 }

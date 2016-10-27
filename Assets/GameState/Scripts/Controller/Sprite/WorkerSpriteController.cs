@@ -57,7 +57,7 @@ public class WorkerSpriteController : MonoBehaviour {
 	}
 	void LoadSprites() {
 		unitSprites = new Dictionary<string, Sprite>();
-		Sprite[] sprites = Resources.LoadAll<Sprite>("Worker/");
+		Sprite[] sprites = Resources.LoadAll<Sprite>("Textures/Worker/");
 		foreach (Sprite s in sprites) {
 			unitSprites[s.name] = s;
 		}

@@ -3,20 +3,32 @@ using System.Collections.Generic;
 
 public class WorkerSpriteController : MonoBehaviour {
 	private Dictionary<string, Sprite> unitSprites;
-	private Dictionary<Worker, GameObject> workerToGO;
+	public Dictionary<Worker, GameObject> workerToGO;
+	CameraController cc;
 
 	// Use this for initialization
 	void Start () {
 		workerToGO = new Dictionary<Worker, GameObject> ();
 		LoadSprites ();
+		cc = FindObjectOfType<CameraController> ();
 		WorldController.Instance.world.RegisterWorkerCreated (OnWorkerCreated);
 	}
 	
 	// Update is called once per frame
 	void Update () {
-	
+		//if worker change they gonna be created if they dont exist
+		//maybe they should be created if NOT updated AND they are on screen
+		//TODO rethink this
 	}
 	private void OnWorkerCreated(Worker w) {
+		// Register our callback so that our GameObject gets updated whenever
+		// the object's into changes.
+		w.RegisterOnChangedCallback(OnWorkerChanged);
+		w.RegisterOnDestroyCallback(OnWorkerDestroy);
+		if (cc.CameraViewRange.Contains (new Vector2 (w.X, w.Y))==false){
+			return;
+		}
+
 		// Create a visual GameObject linked to this data.
 		GameObject char_go = new GameObject();
 
@@ -32,16 +44,13 @@ public class WorkerSpriteController : MonoBehaviour {
         SpriteRenderer sr = char_go.AddComponent<SpriteRenderer>();
         sr.sprite = unitSprites["worker"];
         sr.sortingLayerName = "Persons";
-
-		// Register our callback so that our GameObject gets updated whenever
-		// the object's into changes.
-		w.RegisterOnChangedCallback(OnWorkerChanged);
-		w.RegisterOnDestroyCallback(OnWorkerDestroy);
-
 	}
 	void OnWorkerChanged(Worker w) {
 		if (workerToGO.ContainsKey(w) == false) {
-			Debug.LogError("OnCharacterChanged -- trying to change visuals for character not in our map.");
+			if (cc.CameraViewRange.Contains (new Vector2 (w.X, w.Y))){
+				OnWorkerCreated (w);
+			}
+//			Debug.LogError("OnCharacterChanged -- trying to change visuals for character not in our map.");
 			return;
 		}
 		GameObject char_go = workerToGO[w];

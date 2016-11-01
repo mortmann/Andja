@@ -10,10 +10,10 @@ public class Unit : IXmlSerializable {
 	public int playerNumber;
 
 	public OutputStructure rangeUStructure;
-	protected GameObject myGameobject;
 	public Tile startTile;
 	public string Name {
-		get { return myGameobject.name; }
+		protected set;
+		get;
 	}
 
 	//COMBAT STUFF
@@ -46,6 +46,7 @@ public class Unit : IXmlSerializable {
 	protected float speed;   // Tiles per second
 	protected internal float width;
 	protected internal float height;
+
 	public Pathfinding pathfinding;
 	public float X {
 		get {
@@ -57,7 +58,11 @@ public class Unit : IXmlSerializable {
 			return pathfinding.Y;
 		}
 	}
-
+	public float Rotation {
+		get {
+			return pathfinding.rotation;
+		}
+	}
 	public Vector2 patrolTarget;
 	public Vector2 patrolStart;
 	public bool onWayToPatrolTarget; // false for targetPatrol, true for patrolstart
@@ -68,6 +73,8 @@ public class Unit : IXmlSerializable {
 
 	protected Action<Unit> cbUnitChanged;
 	protected Action<Unit> cbUnitDestroyed;
+	protected Action<Unit,string> cbUnitSound;
+
 	public Inventory inventory;
 
 	public Unit(Tile t,int playernumber) {
@@ -75,25 +82,11 @@ public class Unit : IXmlSerializable {
 		speed = 2f;
 		startTile = t;
 		pathfinding = new Pathfinding (speed, startTile,path_mode.islandSingleStartpoint);
+		Name = "Unit " + UnityEngine.Random.Range (0, 1000000000);
     }
 	public Unit(){
 	}
-	public virtual void SetGameObject(GameObject go){
-		myGameobject = go;
-		myGameobject.name = "Unit " + UnityEngine.Random.Range (0, 1000000000);
-		myGameobject.transform.position = new Vector3(startTile.X,startTile.Y,0);
-	}
-
-
-    public GameObject GetGameObject() {
-		return myGameobject;
-    }
-
-
 	public virtual void Update(float deltaTime) {
-		if(myGameobject==null){
-			return;
-		}
 		//PATROL
 		UpdateParol ();
 		UpdateAggroRange (deltaTime);
@@ -102,11 +95,9 @@ public class Unit : IXmlSerializable {
 		}
 		pathfinding.Update_DoMovement (deltaTime);
 		pathfinding.UpdateRotation ();
-		myGameobject.transform.position = new Vector3 (X, Y, -0.1f);
-		if(hasChanged){
-	        if (cbUnitChanged != null)
-	            cbUnitChanged(this);
-		}
+//		myGameobject.transform.position = new Vector3 (X, Y, -0.1f);
+        if (cbUnitChanged != null)
+            cbUnitChanged(this);
     }
 	protected void UpdateAggroRange(float deltaTime){
 		if(engangingUnit!=null){
@@ -122,7 +113,7 @@ public class Unit : IXmlSerializable {
 		foreach (var item in c2d) {
 			//check for not null = only to be sure its not null
 			//if its not my own gameobject
-			if (item == null || item.gameObject == myGameobject) {
+			if (item == null){
 				continue;
 			}
 			if (item.gameObject.GetComponent<UnitHoldingScript> () == null) {
@@ -385,6 +376,12 @@ public class Unit : IXmlSerializable {
 
 	public void UnregisterOnDestroyCallback(Action<Unit> cb) {
 		cbUnitDestroyed -= cb;
+	}
+	public void RegisterOnSoundCallback(Action<Unit,string> cb) {
+		cbUnitSound += cb;
+	}
+	public void UnregisterOnSoundCallback(Action<Unit,string> cb) {
+		cbUnitSound -= cb;
 	}
 	//////////////////////////////////////////////////////////////////////////////////////
 	/// 

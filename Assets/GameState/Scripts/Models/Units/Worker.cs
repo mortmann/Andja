@@ -5,7 +5,7 @@ using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Serialization;
 
-public class Worker : IXmlSerializable{
+public class Worker : IXmlSerializable {
 
 	public Structure myHome;
 	Pathfinding path;
@@ -18,6 +18,8 @@ public class Worker : IXmlSerializable{
 	Tile currTile;
 	Action<Worker> cbWorkerChanged;
 	Action<Worker> cbWorkerDestroy;
+	Action<Worker, string> cbSoundCallback;
+	string soundWorkName="";//idk how to load/read this in? has this the workstructure not worker???
 	bool hasToFollowRoads;
 	bool goingToWork;
 	Item[] toGetItems;
@@ -111,6 +113,9 @@ public class Worker : IXmlSerializable{
 		//do its job -- get the items in tile
 		doTimer -= deltaTime;
 		if (doTimer > 0) {
+			if(cbSoundCallback!=null){
+				cbSoundCallback (this, soundWorkName);
+			}
 			return;
 		}
 		if (workStructure != null) {
@@ -173,6 +178,15 @@ public class Worker : IXmlSerializable{
 	public void UnregisterOnDestroyCallback(Action<Worker> cb) {
 		cbWorkerDestroy -= cb;
 	}
+
+	public void RegisterOnSoundCallback (Action<Worker, string> cb) {
+		cbSoundCallback += cb;
+	}
+
+	public void UnregisterOnSoundCallback (Action<Worker, string> cb) {
+		cbSoundCallback -= cb;
+	}
+
 	//////////////////////////////////////////////////////////////////////////////////////
 	/// 
 	/// 						SAVING & LOADING

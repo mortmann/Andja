@@ -11,9 +11,12 @@ public class CameraController : MonoBehaviour {
 	Tile middleTile;
 	public Island nearestIsland;
 	public float zoomLevel;
-
+	public HashSet<Tile> tilesCurrentInCameraView;
+	public HashSet<Structure> structureCurrentInCameraView;
+	public Rect CameraViewRange;
 	void Start() {
-		
+		tilesCurrentInCameraView = new HashSet<Tile> ();
+		structureCurrentInCameraView = new HashSet<Structure> ();
 	}
 
 
@@ -83,6 +86,32 @@ public class CameraController : MonoBehaviour {
 		Camera.main.transform.Translate (diff);
 		lastFramePosition = Camera.main.ScreenToWorldPoint( Input.mousePosition );
 		lastFramePosition.z = 0;
+
+
+		tilesCurrentInCameraView.Clear ();
+		structureCurrentInCameraView.Clear ();
+		int mod = (int)zoomLevel / 10;
+		int lX = (int)lower.x - 1*mod;
+		int uX = (int)upper.x + 3*mod;
+		int lY = (int)lower.y - 1*mod;
+		int uY = (int)upper.y + 3*mod;
+		CameraViewRange = new Rect (lX,lY,uX-lX,uY-lY);
+		for (int x = lX; x < uX; x++) {
+			for (int y=lY; y < uY; y++) {
+				Tile tile_data = World.current.GetTileAt(x, y);
+				if(tile_data==null
+					||tile_data.Type == TileType.Ocean ){
+					continue;
+				}
+				tilesCurrentInCameraView.Add (tile_data); 
+				if(tile_data.Structure!=null){
+					//we dont need trees, roads, growables in general or anything like that
+					if(tile_data.Structure.myBuildingTyp==BuildingTyp.Blocking){
+						structureCurrentInCameraView.Add (tile_data.Structure);
+					}
+				}
+			}
+		}
 	}
 	Vector3 UpdateMouseCameraMovement() {
 		// Handle screen panning

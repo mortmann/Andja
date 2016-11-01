@@ -114,6 +114,7 @@ public abstract class Structure : IXmlSerializable {
 
     Action<Structure> cbStructureChanged;
 	Action<Structure> cbStructureDestroy;
+	Action<Structure,string> cbStructureSound;
 
     public bool canStartBurning;
 	public bool mustBeBuildOnShore= false;
@@ -170,6 +171,12 @@ public abstract class Structure : IXmlSerializable {
 	}
 	public void UnregisterOnDestroyCallback(Action<Structure> cb) {
 		cbStructureDestroy -= cb;
+	}
+	public void RegisterOnSoundCallback(Action<Structure,string> cb){
+		cbStructureSound += cb;
+	}
+	public void UnregisterOnSoundCallback(Action<Structure,string> cb) {
+		cbStructureSound -= cb;
 	}
 	#endregion
 	#region placestructure

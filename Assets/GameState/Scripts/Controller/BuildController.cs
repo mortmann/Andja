@@ -162,8 +162,6 @@ public class BuildController : MonoBehaviour {
 			Debug.LogError ("Something went wrong by loading Structure!");
 			return;
 		}
-		//TODO RETHINK THIS
-		GameObject.FindObjectOfType<StructureSpriteController> ().Initiate ();
 		RealBuild (s.GetBuildingTiles (t.X, t.Y), s,-1,true,true);
 	}
 	public void BuildOnTile(List<Tile> tiles, bool forEachTileOnce, Structure structure,int playerNumber,bool wild=false){
@@ -251,8 +249,6 @@ public class BuildController : MonoBehaviour {
 
 		//call all callbacks on structure created
 		//FIXME remove this or smth
-		if (cbStructureCreated == null)
-			GameObject.FindObjectOfType<StructureSpriteController>().Initiate ();
 		if (cbStructureCreated != null) {
 			cbStructureCreated (s);
 		} 

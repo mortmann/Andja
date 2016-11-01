@@ -7,22 +7,31 @@ public class StructureSpriteController : MonoBehaviour {
 	public Dictionary<string, Sprite> structureSprites = new Dictionary<string, Sprite>();
 	public Sprite circleSprite;
 	BuildController bm;
-
+	CameraController cc;
 	World world {
 		get { return WorldController.Instance.world; }
 	}
 	void Start (){
-		Initiate ();
-	}
-	public void Initiate () {
-		if(structureGameObjectMap!=null){
-			return;
-		}
 		structureGameObjectMap = new Dictionary<Structure, GameObject> ();
 		// here load sprites
-		bm = GameObject.FindObjectOfType<BuildController>();
-		bm.RegisterStructureCreated (OnStrucutureCreated);
+//		bm = GameObject.FindObjectOfType<BuildController>();
+//		bm.RegisterStructureCreated (OnStrucutureCreated);
 		LoadSprites ();
+		cc = GameObject.FindObjectOfType<CameraController> ();
+	}
+	void Update(){
+		List<Structure> ts = new List<Structure> (structureGameObjectMap.Keys);
+		foreach(Structure str in ts){
+			if(cc.structureCurrentInCameraView.Contains (str)==false){
+				GameObject.Destroy (structureGameObjectMap[str]);
+				structureGameObjectMap.Remove (str);
+			}
+		}
+		foreach (Structure str in cc.structureCurrentInCameraView) {
+			if(structureGameObjectMap.ContainsKey (str)==false){
+				OnStrucutureCreated (str);
+			}
+		}
 	}
 	public void OnStrucutureCreated(Structure structure) {
 		GameObject go = new GameObject ();
@@ -163,5 +172,11 @@ public class StructureSpriteController : MonoBehaviour {
 			return null; 
 		}
 		return structureSprites [str.name];
+	}
+	public GameObject GetGameObject(Structure str){
+		if(structureGameObjectMap.ContainsKey (str)==false){
+			return null;
+		}
+		return structureGameObjectMap [str];
 	}
 }

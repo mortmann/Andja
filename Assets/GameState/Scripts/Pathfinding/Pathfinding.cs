@@ -18,7 +18,6 @@ public class Pathfinding {
     protected List<Tile> roadTilesAroundEndStructure;
     private Vector3 pos;
     public float rotation;
-    public Transform transform;
     public Queue<Tile> backPath;
     private path_dest pathDest;
 
@@ -84,30 +83,18 @@ public class Pathfinding {
     private float _x;
     public float X {
         get {
-            if (transform != null) {
-                return transform.position.x;
-            }
             return _x;
         }
         protected set {
-            if (transform != null) {
-                return;
-            }
             _x = value;
         }
     }
     private float _y;
     public float Y {
         get {
-            if (transform != null) {
-                return transform.position.y;
-            }
             return _y;
         }
         protected set {
-            if (transform != null) {
-                return;
-            }
             _y = value;
         }
     }
@@ -154,30 +141,71 @@ public class Pathfinding {
     private Vector3 DoWorldMove(float deltaTime) {
         Vector3 move = currTile.vector - destTile.vector;
 
+		// SO first we have to go through all tiles and check if it has a
+		// tilegraph which would have to be used instead of going straight to goal
+		// if we encounter one we're going to caluclate the path through it
+		// then we have to check if there is a tile in this graph which is close to the 
+		// starttile so we can go directly to this instead of taking a longer router.
+		// this will consum more cpu upfront but the it will create a prebuild path
+		// which can be used.
+
+		//at the end before we know that shortcut can be used, we need to know if 
+		//there is land that cant be used between there and the entry point
+		//if there is go back till there is not -- This can be very inefficient
+		//i dont know if there is a better solution for now! <---TODO think about it
+		HashSet<Tile> allTilesOnLine;//start ---- goal (on a straight line)
+		Vector2 startVector = new Vector2 (startTile.X, startTile.Y);//start
+		Vector2 goalVector = new Vector2 (destTile.X, destTile.Y);//goal
+		Vector2 lineVector = goalVector - startTile;//distant between start goal
+		lineVector.Normalize (); // normalize that we can vector that gives 1 
+								 // (we could possible take the double and use that)
+								 // because that would mean we are never in the same tile twice
+								 // but that could be bad if x/y is 1 ?
+
+		Tile lastChecked = startTile;
+		if(lastChecked!=destTile){
+			Tile currChecked = World.current.GetTileAt (lastChecked.X + lineVector.x, lastChecked.Y + lineVector.y);
+			//if this happen we did not go far enough
+			//so no need to check again (could be avoided to read above)
+			if(currChecked==lastChecked){
+				lastChecked = currChecked;
+				continue; 
+			}
+			//we checked this tile and there is no need
+			//for further pathfinding thorugh a tilegraph!
+			if(currChecked.pathfinding==null){
+				lastChecked = currChecked;
+				continue;
+			}
+			//if we are here we HAVE to go through a tilegraph
+			//So get it.
+			Path_AStar toTake = new Path_AStar (currChecked, currChecked, Vector3 (dest_X, dest_Y));
+		}
+
+
         if (currTile.pathfinding == null || pathAStar != null && pathAStar.path.Count == 0) {
-
-            //			Debug.Log ("accurate " + (pathAStar!=null&&pathAStar.path.Count == 0));
+//			Debug.Log ("accurate " + (pathAStar!=null&&pathAStar.path.Count == 0));
             if (currTile.pathfinding == null) {
-                //				Debug.Log ("cur: "+currTile.toString () +  " p " + (currTile.pathfinding==null)); 
+//				Debug.Log ("cur: "+currTile.toString () +  " p " + (currTile.pathfinding==null)); 
 
-                //				pathAStar = null;  
+//				pathAStar = null;  
             }
             currTile = World.current.GetTileAt(X, Y);
             return accurateMove(deltaTime);
         }
         else {
             if (pathAStar == null) {
-                //				Debug.Log ("pathastar is null " + currTile.toString ()  ); 
+//				Debug.Log ("pathastar is null " + currTile.toString ()  ); 
                 pathAStar = new Path_AStar(currTile, currTile, new Vector3(dest_X, dest_Y));
-                //				foreach (Tile item in pathAStar.path) {
-                //					Debug.Log ("Path " + item.toString ()); 
-                //				}
+//				foreach (Tile item in pathAStar.path) {
+//					Debug.Log ("Path " + item.toString ()); 
+//				}
             }
             move = DoAStar(deltaTime);
             return move;
         }
-        //		Debug.LogError ("worldpathfinding - should never happen"); 
-        //		return Vector3.zero;
+//		Debug.LogError ("worldpathfinding - should never happen"); 
+//		return Vector3.zero;
     }
     private Vector3 DoAStar(float deltaTime) {
         //no move command so return!
@@ -195,7 +223,7 @@ public class Pathfinding {
             }
             nextTile = pathAStar.Dequeue();
         }
-        //		Debug.Log ("ASTAR"); 
+//		Debug.Log ("ASTAR"); 
         rotationDirection = new Vector3(nextTile.X, nextTile.Y);
         Vector3 dir = new Vector3(nextTile.X - X, nextTile.Y - Y);
         dir = dir.normalized;
@@ -209,9 +237,9 @@ public class Pathfinding {
         float percThisFrame = distThisFrame / distToTravel;
         // Add that to overall percentage travelled.
         movementPercentage += percThisFrame;
-        //		if(World.current.IsInTileAt (nextTile,X,Y)){
-        //			currTile = nextTile;
-        //		}
+//		if(World.current.IsInTileAt (nextTile,X,Y)){
+//			currTile = nextTile;
+//		}
 
         if (movementPercentage > 1) {
             //			Debug.Log (movementPercentage+" "+currTile.toString() + " nexttile "+nextTile.toString ()); 
@@ -224,10 +252,8 @@ public class Pathfinding {
             // FIXME?  Do we actually want to retain any overshot movement?
         }
         Vector3 temp = deltaTime * dir * speed;
-        if (transform == null) {
-            X += temp.x;
-            Y += temp.y;
-        }
+        X += temp.x;
+        Y += temp.y;
         return temp;
 
     }
@@ -249,10 +275,8 @@ public class Pathfinding {
         // DUNNO why this works and not vector * deltaTime
         temp.x *= deltaTime;
         temp.y *= deltaTime;
-        if (transform == null) {
-            X += temp.x;
-            Y += temp.y;
-        }
+        X += temp.x;
+        Y += temp.y;
         return temp;
     }
 
@@ -264,8 +288,10 @@ public class Pathfinding {
                 //				return new Path_AStar (World.current, currTile, destTile); // This will calculate a path from curr to dest.
                 Debug.Log("dis is not possible for WORLD");
                 return null;
+
             case path_mode.route:
-                Path_AStar p = null;
+                
+				Path_AStar p = null;
                 foreach (Tile start in roadTilesAroundStartStructure) {
                     foreach (Tile end in roadTilesAroundEndStructure) {
                         if (((Road)end.Structure).Route == ((Road)start.Structure).Route) {
@@ -282,6 +308,7 @@ public class Pathfinding {
                 break;
 
             case path_mode.islandMultipleStartpoints:
+			
                 Path_AStar pa = null;
                 foreach (Tile start in roadTilesAroundStartStructure) {
                     if (start.Structure != null && start.Structure.myBuildingTyp != BuildingTyp.Pathfinding) {
@@ -325,16 +352,8 @@ public class Pathfinding {
         Vector2 PointB = new Vector2(X, Y);
         Vector2 moveDirection = PointA - PointB;
         float angle = Mathf.Atan2(moveDirection.y, moveDirection.x);
-        if (transform != null) {
-            rotation = transform.rotation.z;
-            if ((rotation > angle + 0.1f && rotation > angle - 0.1f) == false) {
-                return angle * Mathf.Rad2Deg;
-            }
-        }
-        else {
-            if ((rotation > angle + 0.1f && rotation > angle - 0.1f) == false) {
-                rotation += angle * Mathf.Rad2Deg;
-            }
+        if ((rotation > angle + 0.1f && rotation > angle - 0.1f) == false) {
+            rotation += angle * Mathf.Rad2Deg;
         }
         //no need to rotate
         return 0;

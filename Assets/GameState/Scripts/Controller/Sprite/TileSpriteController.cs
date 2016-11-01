@@ -103,41 +103,28 @@ public class TileSpriteController : MonoBehaviour {
 		}
     }
 	public void Update(){
-		int mod = (int)cc.zoomLevel / 10;
-		int lowerX = (int)cc.lower.x - 1*mod;
-		int upperX = (int)cc.upper.x + 3*mod;
-		int lowerY = (int)cc.lower.y - 1*mod;
-		int upperY = (int)cc.upper.y + 3*mod;
 		List<Tile> ts = new List<Tile> (tileGameObjectMap.Keys);
-		for (int i = 0; i < ts.Count; i++) {
-			Tile tile_data = ts [i];
-			if(tileGameObjectMap.ContainsKey (tile_data)){
-				if(tile_data.X>lowerX&&tile_data.X<upperX&&tile_data.Y>lowerY&&tile_data.Y<upperY){
-					continue;
-				} 
-				GameObject.Destroy (tileGameObjectMap[tile_data]);
-				tileGameObjectMap.Remove (tile_data);
+		foreach(Tile t in ts){
+			if(cc.tilesCurrentInCameraView.Contains (t)==false){
+				GameObject.Destroy (tileGameObjectMap[t]);
+				tileGameObjectMap.Remove (t);
 			}
 		}
-		for (int x = lowerX; x < upperX; x++) {
-			for (int y=lowerY; y < upperY; y++) {
-				Tile tile_data = world.GetTileAt(x, y);
-				if(World.current.GetTileAt (x,y)==null
-					||World.current.GetTileAt (x,y).Type == TileType.Ocean 
-					|| tileGameObjectMap.ContainsKey (tile_data)){
-					continue;
-				}
-				GameObject tile_go = new GameObject();
-
-				tile_go.name = "Tile_" + x + "_" + y;
-				tile_go.transform.position = new Vector3(tile_data.X , tile_data.Y , 0);
-
-				SpriteRenderer sr = tile_go.AddComponent<SpriteRenderer>();
-				sr.sortingLayerName = "Tile";
-				tile_go.transform.SetParent(this.transform, true);
-				tileGameObjectMap.Add(tile_data, tile_go);
-				OnTileChanged(tile_data);
+		foreach (Tile tile_data in cc.tilesCurrentInCameraView) {
+			if(tileGameObjectMap.ContainsKey (tile_data)){
+				continue;
 			}
+			GameObject tile_go = new GameObject();
+
+			tile_go.name = "Tile_" + tile_data.X + "_" + tile_data.Y;
+			tile_go.transform.position = new Vector3(tile_data.X , tile_data.Y , 0);
+
+			SpriteRenderer sr = tile_go.AddComponent<SpriteRenderer>();
+			sr.sortingLayerName = "Tile";
+			tile_go.transform.SetParent(this.transform, true);
+			tileGameObjectMap.Add(tile_data, tile_go);
+			OnTileChanged(tile_data);
+
 		}
 
 	}

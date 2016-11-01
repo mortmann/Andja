@@ -49,8 +49,11 @@ public class GS_SliderBase : MonoBehaviour {
         if (displayLabels.Length > 0) {
             displayValue.text = displayLabels[Value];
         }
+		OnStart ();
     }
-
+	public virtual void OnStart (){
+		
+	}
     /**
      * The settings to apply when a preset is selected. Overriden in each
      * respective settings class. Here you can turn off an effect on a lower

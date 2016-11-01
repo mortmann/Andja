@@ -3,7 +3,7 @@ using UnityEngine.Audio;
 using System.Collections.Generic;
 using System.IO;
 public class MenuAudioManager : MonoBehaviour {
-	static string fileName="keybinds.ini";
+	static string fileName="volume.ini";
     public AudioMixer mixer;	
     public static MenuAudioManager instance;
 
@@ -36,29 +36,43 @@ public class MenuAudioManager : MonoBehaviour {
 
     public void SetMusicVolume(float value) {
         mixer.SetFloat("MusicVolume", ConvertToDecibel(value));
-		masterVolume = Mathf.RoundToInt (value);
+		musicVolume = Mathf.RoundToInt (value);
 		SaveVolumetSchema ();
     }
     public void SetSoundEffectsVolume(float value) {
         mixer.SetFloat("SoundEffectsVolume", ConvertToDecibel(value));
 		soundVolume = Mathf.RoundToInt (value);
-		SaveVolumetSchema ();
     }
     public void SetMasterVolume(float value) {
         mixer.SetFloat("MasterVolume", ConvertToDecibel(value));
 		masterVolume = Mathf.RoundToInt (value);
-		SaveVolumetSchema ();
     }
     public void SetAmbientVolume(float value) {
         mixer.SetFloat("AmbientVolume", ConvertToDecibel(value));
 		ambientVolume = Mathf.RoundToInt (value);
-		SaveVolumetSchema ();
     }
     public void SetUIVolume(float value) {
 		mixer.SetFloat ("UIVolume", ConvertToDecibel (value));
 		uiVolume = Mathf.RoundToInt (value);
-		SaveVolumetSchema ();
     }
+
+	public float getVolumeFor(VolumeType volType){
+		switch (volType) {
+		case VolumeType.Master:
+			return masterVolume;
+		case VolumeType.SoundEffect:
+			return soundVolume;
+		case VolumeType.Ambient:
+			return ambientVolume;
+		case VolumeType.Music:
+			return musicVolume;
+		case VolumeType.UI:
+			return uiVolume;
+		default:
+			Debug.LogError ("Unknown VolumeType");
+			return 0;
+		}
+	}
 
     /**
      * Convert the value coming from our sliders to a decibel value we can
@@ -90,9 +104,6 @@ public class MenuAudioManager : MonoBehaviour {
 			// with the computer/device we're running on.
 			Directory.CreateDirectory( path  );
 		}
-		if(FindObjectOfType<SoundController>()!=null){
-			
-		}
 		string filePath = System.IO.Path.Combine(path,fileName) ;
 		StringWriter writer = new StringWriter ();
 		writer.WriteLine ("masterVolume  = "+masterVolume);
@@ -110,8 +121,10 @@ public class MenuAudioManager : MonoBehaviour {
 			SetUIVolume (100);
 			SetSoundEffectsVolume (100);
 			SetAmbientVolume (100);
+			Debug.Log ("load"); 
 			return;
 		}
+
 		string[] lines = File.ReadAllLines (filePath);
 		foreach(string line in lines){
 			string[] split = line.Split ('=');
@@ -141,7 +154,16 @@ public class MenuAudioManager : MonoBehaviour {
 			case "uiVolume":
 				uiVolume = value;
 				break;
+			default: 
+				Debug.LogError ("This name is not a volume type");
+				break;
 			}
 		}
 	}
+
+	void OnDisable(){
+		SaveVolumetSchema ();
+	}
+
+
 }

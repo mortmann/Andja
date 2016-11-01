@@ -19,6 +19,12 @@ public class Path_AStar {
         Dictionary<Tile, Path_Node<Tile>> nodes = island.tileGraphIslandTiles.nodes;
 		Calculate (nodes,tileStart,tileEnd);
     }
+	/// <summary>
+	/// Initializes a new instance of the <see cref="Path_AStar"/> class.
+	/// </summary>
+	/// <param name="t"Tile T has to have tilegraph to it</param>
+	/// <param name="tileStart">Tile start could be same BUT it has to be were the unit is atm.</param>
+	/// <param name="end">End = Vector where the unit ultimate has to be, not where it will be at the end of the tilegraph.</param>
 	public Path_AStar(Tile t, Tile tileStart, Vector3 end) {
 		if(t == null || tileStart == null) {
 			Debug.Log (t + " " + tileStart); 

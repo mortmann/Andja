@@ -2,9 +2,7 @@
 using System.Collections.Generic;
 
 public class Ship : Unit {
-	public Transform transform;
 	public TradeRoute tradeRoute;
-	public Rigidbody2D r2d;
 
 	bool goingToOffworldMarket;
 	public bool isOffWorld;
@@ -23,10 +21,6 @@ public class Ship : Unit {
 
 
 	public override void Update (float deltaTime){
-		if(myGameobject==null){
-			return;
-		}
-
 		//TRADEROUTE
 		UpdateTradeRoute (deltaTime);
 		//PAROL
@@ -35,12 +29,12 @@ public class Ship : Unit {
 		UpdateWorldMarket (deltaTime);
 
 		//MOVE THE SHIP
-		r2d.MovePosition (transform.position + pathfinding.Update_DoMovement(deltaTime));
-		r2d.MoveRotation (transform.rotation.z + pathfinding.UpdateRotation ());
-		if(hasChanged){
-			if (cbUnitChanged != null)
-				cbUnitChanged(this);
-		}
+		pathfinding.Update_DoMovement (deltaTime);
+		pathfinding.UpdateRotation ();
+//		r2d.MovePosition (transform.position + pathfinding.Update_DoMovement(deltaTime));
+//		r2d.MoveRotation (transform.rotation.z + pathfinding.UpdateRotation ());
+		if (cbUnitChanged != null)
+			cbUnitChanged(this);
 	}
 	private void UpdateTradeRoute(float deltaTime){
 		if(tradeRoute!=null&&tradeRoute.Valid){
@@ -114,15 +108,6 @@ public class Ship : Unit {
 		if (tradeRoute != null)
 			tradeRoute.isStarted = false;
 	}
-	public override void SetGameObject (GameObject go)	{
-		myGameobject = go; //what?
-		myGameobject.transform.position = new Vector3(startTile.X,startTile.Y,0);
-		transform = myGameobject.transform;
-		pathfinding.transform = transform;
-		r2d = myGameobject.GetComponent<Rigidbody2D>();
-		r2d.MoveRotation (pathfinding.rotation);
-	}
-
 	public override void AddMovementCommand (float x, float y){
 		Tile tile = World.current.GetTileAt(x, y);
 		if(tile == null){

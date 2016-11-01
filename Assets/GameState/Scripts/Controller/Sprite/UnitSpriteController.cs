@@ -5,7 +5,7 @@ using System;
 
 public class UnitSpriteController : MonoBehaviour {
     private Dictionary<string, Sprite> unitSprites;
-    private Dictionary<Unit, GameObject> unitGameObjectMap;
+    public Dictionary<Unit, GameObject> unitGameObjectMap;
 
     World world {
         get { return WorldController.Instance.world; }
@@ -17,9 +17,11 @@ public class UnitSpriteController : MonoBehaviour {
         world.RegisterUnitCreated(OnUnitCreated);
 		foreach (var item in world.units) {
 			OnUnitCreated (item);
-		}        
-    }
+		}        		
 
+    }
+	void Update(){
+	}
 	public void OnUnitCreated(Unit u) {
         // Create a visual GameObject linked to this data.
         // Create a 2d box collider around the unit
@@ -39,19 +41,16 @@ public class UnitSpriteController : MonoBehaviour {
 
 		} else {
 			sr.sprite = unitSprites["unit"];
-
+			char_go.name = u.Name;
 		}
         char_go.transform.SetParent(this.transform, true);
 		char_go.AddComponent<UnitHoldingScript> ().unit=u;
 		Rigidbody2D r2d = char_go.AddComponent<Rigidbody2D> (); 
 		r2d.gravityScale = 0;       
 		BoxCollider2D col = char_go.AddComponent<BoxCollider2D>();
-        col.size = new Vector2(unitSprites["ship"].textureRect.size.x / unitSprites["ship"].pixelsPerUnit, unitSprites["ship"].textureRect.size.y / unitSprites["ship"].pixelsPerUnit);
-//        unitSprites["ship"].rect.size / unitSprites["ship"].pixelsPerUnit;    
-        u.width = unitSprites["ship"].textureRect.size.x / unitSprites["ship"].pixelsPerUnit;
-        u.height = unitSprites["ship"].textureRect.size.y / unitSprites["ship"].pixelsPerUnit;
-
-		u.SetGameObject (char_go);
+		col.size = new Vector2(sr.sprite.textureRect.size.x / sr.sprite.pixelsPerUnit, sr.sprite.textureRect.size.y / sr.sprite.pixelsPerUnit);
+		u.width = sr.sprite.textureRect.size.x / sr.sprite.pixelsPerUnit;
+		u.height = sr.sprite.textureRect.size.y / sr.sprite.pixelsPerUnit;
         // Register our callback so that our GameObject gets updated whenever
         // the object's into changes.
         u.RegisterOnChangedCallback(OnUnitChanged);
@@ -69,10 +68,8 @@ public class UnitSpriteController : MonoBehaviour {
 			} else {
 				char_go.SetActive (true);
 			}
-		} else {
-			char_go.transform.position = new Vector3(c.X, c.Y, 0);
-
-		}
+		} 
+		char_go.transform.position = new Vector3(c.X, c.Y, 0);
     }
 	void OnUnitDestroy(Unit c) {
 		if (unitGameObjectMap.ContainsKey(c) == false) {

@@ -19,6 +19,7 @@ public class StructureSpriteController : MonoBehaviour {
 		LoadSprites ();
 		cc = GameObject.FindObjectOfType<CameraController> ();
 	}
+
 	void Update(){
 		List<Structure> ts = new List<Structure> (structureGameObjectMap.Keys);
 		foreach(Structure str in ts){

@@ -11,7 +11,6 @@ public class World : IXmlSerializable{
     public Tile[,] tiles { get; protected set; }
     public int Width { get; protected set; }
     public int Height { get; protected set; }
-    public Path_TileGraph tileGraph { get; set; }
     public List<Island> islandList { get; protected set; }
     public List<Unit> units { get; protected set; }
 	List<Unit> toRemoveUnits;
@@ -19,7 +18,21 @@ public class World : IXmlSerializable{
 	public static World current { get; protected set; }
 	public Dictionary<Climate,List<Fertility>> allFertilities;
 	public Dictionary<int,Fertility> idToFertilities;
-
+	public bool[,] _tilesmap;
+	public bool[,] Tilesmap { get {
+			if(_tilesmap == null){
+				_tilesmap = new bool[World.current.Width,World.current.Height];
+				for (int x = 0; x < World.current.Width; x++) {
+					for (int y = 0; y < World.current.Height; y++) {
+						_tilesmap [x, y] = (World.current.GetTileAt (x, y).Type == TileType.Ocean);
+					}	
+				}
+			}
+			return _tilesmap;
+		}
+		protected set {
+			_tilesmap = value;
+		}}
 
     Action<Unit> cbUnitCreated;
 	Action<Worker> cbWorkerCreated;
@@ -47,7 +60,10 @@ public class World : IXmlSerializable{
 
 		CreateIsland (31, 41);
 		CreateIsland (61, 41);
-		 
+
+
+
+
     }
 	public World(){
 	}
@@ -193,10 +209,15 @@ public class World : IXmlSerializable{
 			}
 		}
 	}
+	// we dont need this right now because str cant be build on Ocean tiles only
+	// on shore tiles 
+	public void ChangeWorldGraph(Tile t, bool b){
+		Tilesmap [t.X, t.Y] = b;
+	}
+
 	public Fertility getFertility(int ID){
 		return idToFertilities [ID];
 	}
-
 
 	public void CreateWorkerGameObject(Worker worker) {
 		if (cbWorkerCreated != null)

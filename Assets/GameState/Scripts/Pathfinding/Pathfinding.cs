@@ -10,7 +10,7 @@ public class Pathfinding {
     private float movementPercentage; // Goes from 0 to 1 as we move from currTile to destTile
     public float dest_X;
     public float dest_Y;
-    public bool IsAtDest;
+    public bool IsAtDest=true;
     // If we aren't moving, then destTile = currTile
     protected Tile _destTile;
     //for building 
@@ -18,6 +18,7 @@ public class Pathfinding {
     protected List<Tile> roadTilesAroundEndStructure;
     private Vector3 pos;
     public float rotation;
+	public Queue<Tile> worldPath;
     public Queue<Tile> backPath;
     private path_dest pathDest;
 
@@ -47,7 +48,6 @@ public class Pathfinding {
         this.speed = speed;
         pathmode = pm;
         pathDest = path_dest.exact;
-
         if (pm == path_mode.world)
             World.current.RegisterTileGraphChanged(WorldTGraphUpdate);
     }
@@ -139,74 +139,42 @@ public class Pathfinding {
 
     }
     private Vector3 DoWorldMove(float deltaTime) {
-        Vector3 move = currTile.vector - destTile.vector;
-
-		// SO first we have to go through all tiles and check if it has a
-		// tilegraph which would have to be used instead of going straight to goal
-		// if we encounter one we're going to caluclate the path through it
-		// then we have to check if there is a tile in this graph which is close to the 
-		// starttile so we can go directly to this instead of taking a longer router.
-		// this will consum more cpu upfront but the it will create a prebuild path
-		// which can be used.
-
-		//at the end before we know that shortcut can be used, we need to know if 
-		//there is land that cant be used between there and the entry point
-		//if there is go back till there is not -- This can be very inefficient
-		//i dont know if there is a better solution for now! <---TODO think about it
-		HashSet<Tile> allTilesOnLine;//start ---- goal (on a straight line)
-		Vector2 startVector = new Vector2 (startTile.X, startTile.Y);//start
-		Vector2 goalVector = new Vector2 (destTile.X, destTile.Y);//goal
-		Vector2 lineVector = goalVector - startTile;//distant between start goal
-		lineVector.Normalize (); // normalize that we can vector that gives 1 
-								 // (we could possible take the double and use that)
-								 // because that would mean we are never in the same tile twice
-								 // but that could be bad if x/y is 1 ?
-
-		Tile lastChecked = startTile;
-		if(lastChecked!=destTile){
-			Tile currChecked = World.current.GetTileAt (lastChecked.X + lineVector.x, lastChecked.Y + lineVector.y);
-			//if this happen we did not go far enough
-			//so no need to check again (could be avoided to read above)
-			if(currChecked==lastChecked){
-				lastChecked = currChecked;
-				continue; 
+		if(IsAtDest==false){
+			if(destTile==currTile){
+				return Vector3.zero;
 			}
-			//we checked this tile and there is no need
-			//for further pathfinding thorugh a tilegraph!
-			if(currChecked.pathfinding==null){
-				lastChecked = currChecked;
-				continue;
+			if(nextTile==destTile){
+				return accurateMove (deltaTime);
 			}
-			//if we are here we HAVE to go through a tilegraph
-			//So get it.
-			Path_AStar toTake = new Path_AStar (currChecked, currChecked, Vector3 (dest_X, dest_Y));
+			if (nextTile == null || nextTile == currTile) {
+				nextTile = worldPath.Dequeue ();
+			}
+			rotationDirection = new Vector3(nextTile.X, nextTile.Y);
+			Vector3 dir = new Vector3(nextTile.X - X, nextTile.Y - Y);
+			Vector3 temp = deltaTime * dir.normalized * speed;
+			X += temp.x;
+			Y += temp.y;
+			if(nextTile == World.current.GetTileAt(X+0.5f,Y+0.5f)){
+				currTile = nextTile;
+			}
+			return temp;
 		}
-
-
-        if (currTile.pathfinding == null || pathAStar != null && pathAStar.path.Count == 0) {
-//			Debug.Log ("accurate " + (pathAStar!=null&&pathAStar.path.Count == 0));
-            if (currTile.pathfinding == null) {
-//				Debug.Log ("cur: "+currTile.toString () +  " p " + (currTile.pathfinding==null)); 
-
-//				pathAStar = null;  
-            }
-            currTile = World.current.GetTileAt(X, Y);
-            return accurateMove(deltaTime);
-        }
-        else {
-            if (pathAStar == null) {
-//				Debug.Log ("pathastar is null " + currTile.toString ()  ); 
-                pathAStar = new Path_AStar(currTile, currTile, new Vector3(dest_X, dest_Y));
-//				foreach (Tile item in pathAStar.path) {
-//					Debug.Log ("Path " + item.toString ()); 
-//				}
-            }
-            move = DoAStar(deltaTime);
-            return move;
-        }
-//		Debug.LogError ("worldpathfinding - should never happen"); 
-//		return Vector3.zero;
+		return Vector3.zero;
     }
+	private void CalculateWorldPath(){
+		// create a grid
+		PathFind.Grid grid = new PathFind.Grid(World.current.Width-1,World.current.Height-1, World.current.Tilesmap);
+		// create source and target points
+		PathFind.Point _from = new PathFind.Point(currTile.X, currTile.Y);
+		PathFind.Point _to = new PathFind.Point(destTile.X, destTile.Y);
+		// get path
+		// path will either be a list of Points (x, y), or an empty list if no path is found.
+		List<PathFind.Point> points = PathFind.Pathfinding.FindPath (grid, _from, _to);
+		worldPath = new Queue<Tile> ();
+		for (int i = 0; i < points.Count; i++) {
+			worldPath.Enqueue (World.current.GetTileAt (points [i].x, points [i].y));
+		}
+	}
     private Vector3 DoAStar(float deltaTime) {
         //no move command so return!
         if (destTile == currTile) {
@@ -365,6 +333,9 @@ public class Pathfinding {
         dest_X = x;
         dest_Y = y;
         pathDest = path_dest.exact;
+		if(pathmode == path_mode.world){
+			CalculateWorldPath ();
+		}
         //		Debug.Log ("curr: " + currTile.toString ());
         //		Debug.Log ("dest: " + destTile.toString ()); 
         //		foreach (Tile item in GetPathStar ().path) {

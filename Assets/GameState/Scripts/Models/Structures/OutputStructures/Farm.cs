@@ -87,7 +87,7 @@ public class Farm : OutputStructure {
 		if(output[0].count >= maxOutputStorage){
 			return;
 		}
-
+		//send out worker to collect goods
 		produceCountdown -= deltaTime;
 		if (produceCountdown <= 0) {
 			produceCountdown = produceTime;
@@ -104,6 +104,7 @@ public class Farm : OutputStructure {
 	}
 	public void OnGrowableChanged(Structure str){
 		if(str is Growable == false){
+			str.UnregisterOnChangedCallback (OnGrowableChanged);
 			return;
 		}
 		if(str.ID != growable.ID){
@@ -140,7 +141,7 @@ public class Farm : OutputStructure {
 	public override void ExtraBuildUI (GameObject parent){
 		//FIXME
 		//TODO
-		GameObject extra = GameObject.Instantiate (Resources.Load<GameObject> ("Prefabs/SpriteSlider"));
+		GameObject extra = GameObject.Instantiate (Resources.Load<GameObject> ("Prefabs/GamePrefab/SpriteSlider"));
 		extra.transform.SetParent (parent.transform);
 	}
 	public override void UpdateExtraBuildUI (GameObject parent,Tile t){

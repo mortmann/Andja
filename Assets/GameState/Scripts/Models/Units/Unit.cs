@@ -94,7 +94,7 @@ public class Unit : IXmlSerializable {
 			return;
 		}
 		pathfinding.Update_DoMovement (deltaTime);
-		pathfinding.UpdateRotation ();
+
 //		myGameobject.transform.position = new Vector3 (X, Y, -0.1f);
         if (cbUnitChanged != null)
             cbUnitChanged(this);
@@ -338,6 +338,7 @@ public class Unit : IXmlSerializable {
 			return;
 		}
 		onPatrol = false;
+
 		pathfinding.AddMovementCommand( x, y);
     }
 	public int tryToAddItemMaxAmount(Item item , int amount){

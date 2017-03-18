@@ -4,7 +4,7 @@ using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Serialization;
 
-public class Growable : Structure {
+public class Growable : OutputStructure {
 	float growTime = 5f;
 	float age = 0;
 	public int ageStages = 2;
@@ -12,9 +12,14 @@ public class Growable : Structure {
 	public bool hasProduced =false;
 	public bool outputClaimed =false;
 	public Fertility fer;
-	Item produceItem;
+
+
 
 	public Growable(int id,string name,Item produceItem,Fertility fer = null){
+		forMarketplace = false;
+		maxNumberOfWorker = 0;
+		output = new Item[]{produceItem};
+		maxOutputStorage = 1;
 		this.ID = id;
 		this.fer = fer;
 		this.myBuildingTyp = BuildingTyp.Free;
@@ -26,14 +31,13 @@ public class Growable : Structure {
 		hasHitbox = false;
 		canBeBuildOver = true;
 		this.name = name;
-		this.produceItem = produceItem;
 		canBeBuildOver = true;
 	}
 	protected Growable(Growable g){
 		this.canBeBuildOver = g.canBeBuildOver;
 		this.ID = g.ID;
 		this.name = g.name;
-		this.produceItem = g.produceItem;
+		this.output = g.output;
 		this.tileWidth = g.tileWidth;
 		this.tileHeight = g.tileHeight;
 		this.buildcost = g.buildcost;
@@ -44,31 +48,38 @@ public class Growable : Structure {
 		this.canBeBuildOver = g.canBeBuildOver;
 		this.canTakeDamage = g.canTakeDamage;
 		this.fer = g.fer;
+		this.forMarketplace = g.forMarketplace;
 	}
 	public override Structure Clone (){
 		return new Growable(this);
 	}
-
-	public Item getProducedItem(){
-		Item p = produceItem.Clone ();
-		p.count = 1;
-		return p;
-	}
+	//got replaced with get output
+//	public Item getProducedItem(){
+//		Item p = produceItem.Clone ();
+//		p.count = 1;
+//		return p;
+//	}
 
 	public override void OnBuild(){
-
+		if(fer!=null && City.HasFertility (fer)==false){
+			efficiencyModifier = 0;
+		} else {
+			//maybe have ground type be factor? stone etc
+			efficiencyModifier = 1;
+		}
 	}
 	public override void update (float deltaTime) {
-		if(hasProduced){
+		if(hasProduced||efficiencyModifier==0){
 			return;
 		}
 		if(currentStage==ageStages){
 			hasProduced = true;
+			output[0].count=1;
 			callbackIfnotNull ();
 			return;
 		}
-		age += deltaTime;
-		if((age/growTime) > 0.33*currentStage){
+		age += efficiencyModifier*(deltaTime/growTime);
+		if((age) > 0.33*currentStage){
 			if(Random.Range (0,100) <99){
 				return;
 			}
@@ -81,6 +92,7 @@ public class Growable : Structure {
 	}
 
 	public void Reset (){
+		output[0].count = 0;
 		currentStage= 0;
 		age = 0f;
 		callbackIfnotNull ();

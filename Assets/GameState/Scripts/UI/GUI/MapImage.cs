@@ -74,6 +74,9 @@ public class MapImage : MonoBehaviour {
 		//do smth when it gets shown
 	}
 	public void OnCityCreated(City c){
+		if(c==null||c.playerNumber!=PlayerController.Instance.currentPlayerNumber){
+			return;
+		}
 //		PlayerController pc = PlayerController.Instance;
 		RectTransform rt = mapParts.GetComponent<RectTransform> ();
 		World w = World.current;
@@ -113,23 +116,24 @@ public class MapImage : MonoBehaviour {
 		//TODO UPDATE ALL TRADE_ROUTES
 	}
 	public void OnUnitCreated(Unit u){
+		if(u==null||u.playerNumber!=PlayerController.Instance.currentPlayerNumber){
+			return;
+		}
 		RectTransform rt = mapParts.GetComponent<RectTransform> ();
 		World w = World.current;
 
-		if(u!=null && u.isShip && u.playerNumber==PlayerController.Instance.currentPlayerNumber){
-			GameObject g = GameObject.Instantiate (mapShipIconPrefab);
-			g.transform.SetParent (mapParts.transform);
-			Vector3 pos = new Vector3 (u.X, u.Y, 0);
-			pos.Scale (new Vector3(rt.rect.width/w.Width,rt.rect.height/w.Height));
-			g.transform.localPosition = pos;
-			unitToGO.Add (u, g);
+		GameObject g = GameObject.Instantiate (mapShipIconPrefab);
+		g.transform.SetParent (mapParts.transform);
+		Vector3 pos = new Vector3 (u.X, u.Y, 0);
+		pos.Scale (new Vector3(rt.rect.width/w.Width,rt.rect.height/w.Height));
+		g.transform.localPosition = pos;
+		unitToGO.Add (u, g);
 
-			Dropdown d = tradingMenu.GetComponentInChildren<Dropdown> ();
-			Dropdown.OptionData op = new Dropdown.OptionData(u.ToString ());// TODO change this to the name of the unit!
-			d.options.Add (op); //doesnt take strings directly...
-			d.RefreshShownValue (); // it doesnt update on its own! so we have todo it! 
-			tp.addUnit(u);
-		}
+		Dropdown d = tradingMenu.GetComponentInChildren<Dropdown> ();
+		Dropdown.OptionData op = new Dropdown.OptionData(u.ToString ());// TODO change this to the name of the unit!
+		d.options.Add (op); //doesnt take strings directly...
+		d.RefreshShownValue (); // it doesnt update on its own! so we have todo it! 
+		tp.addUnit(u);
 
 	}
 
@@ -140,11 +144,13 @@ public class MapImage : MonoBehaviour {
 		RectTransform rt = mapParts.GetComponent<RectTransform> ();
 		cameraRect.transform.localPosition = cc.middle * rt.rect.width/w.Width;
 		Vector3 vec = cc.upper - cc.lower;
-		vec /= Mathf.Clamp(cc.zoomLevel,40,cc.zoomLevel);// I dont get why this is working, but it does
+		vec /= Mathf.Clamp(cc.zoomLevel,CameraController.maxZoomLevel,cc.zoomLevel);// I dont get why this is working, but it does
 		cameraRect.transform.localScale = 2*((vec));
 		foreach (Unit item in w.units) {
-			if(item.isShip==true && unitToGO.ContainsKey (item)==false){
-				Debug.LogError ("unit got not added");
+			if(item.isShip==false){
+				continue;
+			}
+			if(unitToGO.ContainsKey (item)==false){
 				OnUnitCreated (item);
 				continue;
 			}

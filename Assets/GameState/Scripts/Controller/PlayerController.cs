@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
+using System;
 /// <summary>
 /// Player controller.
 /// this is mostly for the currentplayer
@@ -12,6 +13,9 @@ public class PlayerController : MonoBehaviour {
 	float tickTimer;
 	public static PlayerController Instance { get; protected set; }
 	List<Player> players;
+	EventUIManager euim;
+
+
 	// Use this for initialization
 	void Awake () {
 		if (Instance != null) {
@@ -29,6 +33,8 @@ public class PlayerController : MonoBehaviour {
 		tickTimer = balanceTicks;
 		GameObject.FindObjectOfType<BuildController>().RegisterCityCreated (OnCityCreated);
 		GameObject.FindObjectOfType<BuildController>().RegisterStructureCreated (OnStructureCreated);
+		euim = GameObject.FindObjectOfType<EventUIManager> ();
+		GameObject.FindObjectOfType<EventController> ().RegisterOnEvent (OnEventCreated, OnEventEnded);
 	}
 	
 	// Update is called once per frame
@@ -37,6 +43,9 @@ public class PlayerController : MonoBehaviour {
 		tickTimer -= Time.deltaTime;
 		if(tickTimer<=0){
 			foreach(Player p in players){
+				if(p == null){
+					continue;
+				}
 				p.Update ();
 			}
 			tickTimer = balanceTicks;
@@ -74,7 +83,33 @@ public class PlayerController : MonoBehaviour {
 			}
 		}
 	}
-
+	public void OnEventCreated(GameEvent ge){
+		if(ge.target is Island){
+			foreach (City item in ((Island)ge.target).myCities) {
+				if(item.playerNumber == currentPlayerNumber){
+					euim.AddEVENT (ge.id,ge.name,ge.position);
+				}
+			}
+			return;
+		}
+		if(ge.target.GetPlayerNumber () == currentPlayerNumber){
+			euim.AddEVENT (ge.id,ge.name,ge.position);
+		} else {
+			//inform the ai about the event!
+		}
+	}
+	public void OnEventEnded(GameEvent ge){
+		if(ge.target is Player){
+			return;
+		}
+		if((ge.target as Player).playerNumber == currentPlayerNumber){
+			euim.AddEVENT (ge.id,ge.name,ge.position);
+		} else {
+			//inform the ai about the event!
+		}
+		//MAYBE REMOVE the message from the ui?
+		//else inform the ai again
+	}
 	public void reduceMoney(int money, int playerNr) {
 		players[playerNr].reduceMoney (money);
 	}

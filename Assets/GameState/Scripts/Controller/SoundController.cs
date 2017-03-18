@@ -11,9 +11,14 @@ public class SoundController : MonoBehaviour {
 	public static SoundController Instance;
 	public AudioSource musicSource;
 	public AudioSource ambientSource;
-	float ambientSourceMaxVolume;
+	public AudioSource windAmbientSource;
+
 	public AudioSource uiSource;
 	public AudioSource soundEffectSource;
+	public GameObject soundEffect2DGO;
+	List<AudioSource> playedAudios;
+
+
 
 	public AudioClip placeBuildingSound;
 	public AudioClip cityCreateSound;
@@ -25,6 +30,8 @@ public class SoundController : MonoBehaviour {
 
 	public static string MusicLocation = "Audio/Music/";
 	public static string SoundEffectLocation = "Audio/Game/SoundEffects/";
+	public static string AmbientLocation = "Audio/Game/Ambient/";
+
 	AmbientSound currentAmbient;
 
 	// Use this for initialization
@@ -37,7 +44,11 @@ public class SoundController : MonoBehaviour {
 		cameraController = GameObject.FindObjectOfType<CameraController> ();
 		BuildController.Instance.RegisterStructureCreated (OnBuild);
 		BuildController.Instance.RegisterCityCreated (OnCityCreate);
-		ambientSourceMaxVolume = ambientSource.volume;
+		EventController.Instance.RegisterOnEvent (OnEventStart,OnEventEnd);
+		playedAudios = new List<AudioSource> ();
+		windAmbientSource.loop = true;
+		windAmbientSource.clip = Resources.Load (AmbientLocation + "wind-1") as AudioClip;
+		windAmbientSource.Play ();
 		ssc = FindObjectOfType<StructureSpriteController> ();
 		wsc = FindObjectOfType<WorkerSpriteController> ();
 		usc = FindObjectOfType<UnitSpriteController> ();
@@ -51,9 +62,17 @@ public class SoundController : MonoBehaviour {
 		if(WorldController.Instance.IsPaused){
 			return;
 		}
-
+		ambientSource.volume = Mathf.Clamp  ((CameraController.maxZoomLevel-cameraController.zoomLevel) / CameraController.maxZoomLevel,0,1f);
+		windAmbientSource.volume = Mathf.Clamp (1 - ambientSource.volume-0.7f,0.03f,0.15f);
 		UpdateAmbient ();
 		UpdateSoundEffects ();
+		for (int i = playedAudios.Count-1; i >= 0; i--) {
+			if(playedAudios[i].isPlaying == false){
+				Destroy (playedAudios[i].gameObject);
+				playedAudios.RemoveAt (i);
+			}
+		} 
+
 	}
 
 	void UpdateSoundEffects (){
@@ -97,13 +116,6 @@ public class SoundController : MonoBehaviour {
 		{
 			field.SetValue(audio, field.GetValue(copied));
 		}
-//			audio.volume = soundEffectSource.volume;
-//			audio.outputAudioMixerGroup = soundEffectSource.outputAudioMixerGroup;
-//			audio.spread = soundEffectSource.spread;
-//			audio.maxDistance = soundEffectSource.maxDistance;
-//			audio.minDistance = soundEffectSource.minDistance;
-//			audio.dopplerLevel = soundEffectSource.dopplerLevel;
-//			audio.rolloffMode= soundEffectSource.rolloffMode;
 	}
 
 	public void PlaySoundEffectStructure(Structure str, string filePath ){
@@ -165,43 +177,84 @@ public class SoundController : MonoBehaviour {
 	}
 
 	public void OnBuild(Structure str){
+		if(str.playerID!=PlayerController.Instance.currentPlayerNumber){
+			return;
+		}
 		//Maybe make diffrent sound when diffrent buildingtyps are placed
-		uiSource.clip = placeBuildingSound;
-		uiSource.Play ();
+		GameObject g = Instantiate (soundEffect2DGO);
+		g.transform.SetParent (soundEffect2DGO.transform);
+		AudioSource ac = g.GetComponent<AudioSource> ();
+		ac.clip = placeBuildingSound;
+		ac.volume = 0.75f;
+		ac.Play ();
+		playedAudios.Add (ac);
 	}
 	public void OnCityCreate(City c){
+		if(c.playerNumber!=PlayerController.Instance.currentPlayerNumber){
+			return;
+		}
 		//diffrent sounds for diffrent locations of City? North,middle,South?
-		uiSource.clip = cityCreateSound;
-		uiSource.Play ();
+		GameObject g = Instantiate (soundEffect2DGO);
+		g.transform.SetParent (soundEffect2DGO.transform);
+		AudioSource ac = g.GetComponent<AudioSource> ();
+		ac.clip = cityCreateSound;
+		ac.volume = 0.75f;
+		ac.Play ();
+		playedAudios.Add (ac);
 	}
 	public void UpdateAmbient(){
+		AmbientSound ambient = AmbientSound.Water;
 		if(cameraController.nearestIsland!=null){
 			switch (cameraController.nearestIsland.myClimate){
 			case Climate.Cold:
-				currentAmbient = AmbientSound.North;
+				ambient = AmbientSound.North;
 				break;
 			case Climate.Middle:
-				currentAmbient = AmbientSound.Middle;
+				ambient = AmbientSound.Middle;
 				break;
 			case Climate.Warm:
-				currentAmbient = AmbientSound.South;
+				ambient = AmbientSound.South;
 				break;
 			}
 		} else {
-			currentAmbient = AmbientSound.Water;
+			ambient = AmbientSound.Water;
 		}
+		//If its the same no need to change the music
+		if(ambient==currentAmbient){
+			return;
+		}
+		currentAmbient = ambient;
+		string soundFileName="";
 		switch (currentAmbient) {
 		case AmbientSound.Water:
+			soundFileName="water-medium-";
 			break;
 		case AmbientSound.North:
+			soundFileName="north-";
 			break;
 		case AmbientSound.Middle:
+			soundFileName="middle-";
 			break;
 		case AmbientSound.South:
+			soundFileName="south-";
 			break;
 		}
+		//find out which one exact- number for now only 1
+		soundFileName+="1";
+		AudioClip ac = Resources.Load(AmbientLocation+soundFileName) as AudioClip;
+		ac.LoadAudioData ();
+		ambientSource.clip = ac;
+		ambientSource.Play ();
 		//TODO make this like it should be :D, better make it sound nice 
-		//TODO make if you get further away from the ground wind is gonna get louder
-		ambientSource.volume = ambientSourceMaxVolume - cameraController.zoomLevel / ambientSourceMaxVolume;
+
 	}
+		
+	//TODO implement a way of playing these sounds
+	public void OnEventStart(GameEvent ge){
+		Debug.LogWarning ("Not implemented yet!");
+	}
+	public void OnEventEnd(GameEvent ge){
+		//Maybe never used?
+	}
+
 }

@@ -11,7 +11,7 @@ public enum BuildTypes {Drag, Path, Single};
 public enum BuildingTyp {Pathfinding, Blocking,Free};
 public enum Direction {None, N, E, S, W};
 
-public abstract class Structure : IXmlSerializable {
+public abstract class Structure : IXmlSerializable,IGEventable {
 	#region variables
 	//prototype id
 	public int ID;
@@ -21,6 +21,7 @@ public abstract class Structure : IXmlSerializable {
 	public int buildID;
 
 	public string name;
+	public string SmallName { get { return name.ToLower ();} }
 	private City _city;
 	public City City {
 		get { return _city;}
@@ -52,6 +53,7 @@ public abstract class Structure : IXmlSerializable {
 
     public bool isWalkable { get; protected set; }
 	public bool hasHitbox { get; protected set; }
+	public bool isActive {  get; protected set; }
 
 	public int buildingRange = 0;
 	public int PopulationLevel = 0;
@@ -153,9 +155,42 @@ public abstract class Structure : IXmlSerializable {
 		//stuff here to show for when building this
 		//using this for e.g. farm efficiency bar!
 	}
+	public virtual void OnEventCreateVirtual(GameEvent ge){
+		
+	}
+	public virtual void OnEventEndedVirtual(GameEvent ge){
+
+	}
 	#endregion 
 
 	#region callbacks
+	public void OnEventCreate(GameEvent ge){
+		//every subtype has do decide what todo
+		//maybe some above reactions here 
+		if(ge.target is Structure){
+			if(ge.target==this){
+				OnEventCreateVirtual (ge);
+			}
+			return;
+		}
+		if(ge.IsTarget (this)){
+			OnEventCreateVirtual (ge);
+		}
+	}
+	public void OnEventEnded(GameEvent ge){
+		//every subtype has do decide what todo
+		//maybe some above reactions here 
+		if(ge.target is Structure){
+			if(ge.target==this){
+				OnEventEndedVirtual (ge);
+			}
+			return;
+		}
+		if(ge.IsTarget (this)){
+			OnEventEndedVirtual (ge);
+
+		}
+	}
 	public void callbackIfnotNull(){
 		if(cbStructureChanged != null)
 			cbStructureChanged (this);
@@ -236,6 +271,8 @@ public abstract class Structure : IXmlSerializable {
 		//it searches all the tiles it has in its reach!
 		GetInRangeTiles (myBuildingTiles[0]);
 		myPrototypeTiles = null;
+
+		City.RegisterOnEvent (OnEventCreate, OnEventEnded);
 		// do on place structure stuff here!
 		OnBuild ();
 		return true;
@@ -374,6 +411,12 @@ public abstract class Structure : IXmlSerializable {
 	}
 	#endregion
 	#region other
+	public int GetPlayerNumber(){
+		return playerID;
+	}
+	public void RegisterOnEvent(Action<GameEvent> create,Action<GameEvent> ending){
+		Debug.LogError ("Not implemented! Because nothing yet needs it and would take to much RAM!" );
+	}
 	public void TakeDamage(float damage){
 		if(canTakeDamage==false){
 			return;
@@ -398,10 +441,6 @@ public abstract class Structure : IXmlSerializable {
 		foreach(Tile t in myBuildingTiles){
 			t.Structure = null;
 		}
-		//buildcontroller will take care of this
-		//because so it can take care of getting res
-		//back as well, so this doesnt need to know that
-//		City.removeStructure (this);
 		if(cbStructureDestroy!=null)
 			cbStructureDestroy(this);
 	}

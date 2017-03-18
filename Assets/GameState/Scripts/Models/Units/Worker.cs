@@ -6,12 +6,10 @@ using System.Xml.Schema;
 using System.Xml.Serialization;
 
 public class Worker : IXmlSerializable {
-
-	public Structure myHome;
+	#region runtimeVariables
+	public OutputStructure myHome;
 	Pathfinding path;
 	public bool isAtHome;
-	float workTime = 1f;
-	float doTimer;
 	Inventory inventory;
 	public OutputStructure workStructure;
 	Tile destTile;
@@ -19,12 +17,17 @@ public class Worker : IXmlSerializable {
 	Action<Worker> cbWorkerChanged;
 	Action<Worker> cbWorkerDestroy;
 	Action<Worker, string> cbSoundCallback;
+	//TODO sound
 	string soundWorkName="";//idk how to load/read this in? has this the workstructure not worker???
+	float doTimer;
+	#endregion
+	#region readInVariables
 	bool hasToFollowRoads;
 	bool goingToWork;
 	Item[] toGetItems;
 	int[] toGetAmount;
-
+	float workTime = 1f;
+	#endregion
 	public float X {
 		get {
 			return path.X;
@@ -41,7 +44,11 @@ public class Worker : IXmlSerializable {
 		}
 	}
 	public Worker(Structure myHome, OutputStructure structure,Item[] toGetItems = null, bool hasToFollowRoads = true){
-		this.myHome = myHome;
+		if(myHome is OutputStructure ==false){
+			Debug.LogError ("Home is not OutputStructure--if this should be possible redesign");
+			return;
+		}
+		this.myHome = (OutputStructure)myHome;
 		workStructure = structure;
 		this.hasToFollowRoads = hasToFollowRoads;
 		if (structure is MarketBuilding == false) {
@@ -51,11 +58,15 @@ public class Worker : IXmlSerializable {
 		goingToWork = true;
 		inventory = new Inventory (4);
 		doTimer = workTime;
-		AddJobStructure(structure);
+		SetGoalStructure(structure);
 		this.toGetItems = toGetItems;
 	}
 	public Worker(Structure myHome, OutputStructure structure,Item[] toGetItems,int[] toGetAmount, bool hasToFollowRoads = false){
-		this.myHome = myHome;
+		if(myHome is OutputStructure ==false){
+			Debug.LogError ("Home is not OutputStructure--if this should be possible redesign");
+			return;
+		}
+		this.myHome = (OutputStructure)myHome;
 		workStructure = structure;
 		this.toGetAmount = toGetAmount;
 		this.hasToFollowRoads = hasToFollowRoads;
@@ -66,49 +77,84 @@ public class Worker : IXmlSerializable {
 		goingToWork = true;
 		inventory = new Inventory (4);
 		doTimer = workTime;
-		AddJobStructure(structure);
+		SetGoalStructure(structure);
 		this.toGetItems = toGetItems;
 	}
 	public Worker(Structure myHome, bool hasToFollowRoads = true){
-		this.myHome = myHome;
+		if(myHome is OutputStructure ==false){
+			Debug.LogError ("Home is not OutputStructure--if this should be possible redesign");
+			return;
+		}
+		this.myHome = (OutputStructure)myHome;		
 		isAtHome = false;
 		goingToWork = true;
 		inventory = new Inventory (4);
 		doTimer = workTime;
 	}
 	public void Update(float deltaTime){
+		if(myHome.isActive==false){
+			GoHome ();
+		} 
+		if(myHome.Efficiency <= 0){
+			GoHome ();
+		}
+		//worker can only work if
+		// -homeStructure is active
+		// -goalStructure can be reached -> search new goal
+		// -goalStructure has smth to be worked eg grown/has output
+		// -Efficiency of home > 0
+		// -home is not full (?) maybe second worker?
+		//If any of these are false the worker should return to home
+		//except there is no way to home then remove
+
 		if(path == null){
 			if (destTile != null) {
 				if(destTile.Structure is OutputStructure)
-					AddJobStructure ((OutputStructure)destTile.Structure);
+					SetGoalStructure ((OutputStructure)destTile.Structure);
 			}
 			//theres no goal so delete it after some time?
 			Debug.Log ("worker has no goal");
 			return;
 		}
-		float moving = path.Update_DoMovement (deltaTime).magnitude;
+		//do the movement 
+		path.Update_DoMovement (deltaTime);
 		if(cbWorkerChanged != null)
 			cbWorkerChanged(this);
-		if ( moving > 0) {
+		if (path.IsAtDest==false) {
+			Debug.LogWarning ("if this is not working this is the error ^ was magnitude of move");
 			return;
 		}
-		// coming home from doing the work
-		// drop off the items its carrying
-		if (goingToWork == false ) {
-			doTimer -= deltaTime;
-			if (doTimer > 0) {
-				return;
-			}
-			if (myHome is MarketBuilding) {
-				((MarketBuilding)myHome).City.myInv.addIventory (inventory);
-			}
-			if (myHome is ProductionBuilding) {
-				((ProductionBuilding)myHome).addToIntake (inventory); 
-			}
-			isAtHome = true;
-			path = null;
+		if (goingToWork == false) {
+			// coming home from doing the work
+			// drop off the items its carrying
+			DropOffItems (deltaTime);
+		} else {
+			//if we are here this means we're
+			//AT the destination and can start working
+			DoWork (deltaTime);
+		}
+	}
+	public void DropOffItems(float deltaTime){
+		doTimer -= deltaTime;
+		if (doTimer > 0) {
 			return;
 		}
+		if (myHome is MarketBuilding) {
+			((MarketBuilding)myHome).City.myInv.addIventory (inventory);
+		} else
+		if (myHome is ProductionBuilding) {
+			((ProductionBuilding)myHome).addToIntake (inventory); 
+		} else {
+			//this home is a OutputBuilding or smth that takes it to output
+			myHome.addToOutput (inventory);
+		}
+		isAtHome = true;
+		path = null;
+	}
+	public void GoHome() {
+		SetGoalStructure (myHome);
+	}
+	public void DoWork(float deltaTime){
 		//we are here at the job tile
 		//do its job -- get the items in tile
 		doTimer -= deltaTime;
@@ -136,20 +182,24 @@ public class Worker : IXmlSerializable {
 			path.Reverse ();
 			path.IsAtDest = false;
 		}
-
-		
 	}
+
+
 	public void Destroy() {
 		if (goingToWork)
 			workStructure.resetOutputClaimed ();
 		if(cbWorkerDestroy != null)
 			cbWorkerDestroy(this);
 	}
-	public void AddJobStructure(OutputStructure structure){
+	public void SetGoalStructure(OutputStructure structure){
 		if(structure == null){
 			return;
 		}
-		goingToWork = true;
+		if(structure!=null){
+			goingToWork = true;
+		} else {
+			goingToWork = false;
+		}
 		//job_dest_tile = tile;
 		if (hasToFollowRoads == false) {
 			path_mode pm = path_mode.islandMultipleStartpoints;

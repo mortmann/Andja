@@ -1,10 +1,11 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
+using Priority_Queue;
 
 public enum path_mode { world, islandMultipleStartpoints, islandSingleStartpoint, route };
 public enum path_dest { tile, exact };
-
+public enum turn_type { OnPoint, TurnRadius };
 public class Pathfinding {
     private Path_AStar pathAStar;
     private float movementPercentage; // Goes from 0 to 1 as we move from currTile to destTile
@@ -21,7 +22,8 @@ public class Pathfinding {
 	public Queue<Tile> worldPath;
     public Queue<Tile> backPath;
     private path_dest pathDest;
-
+	public Vector3 LastMove { get; protected set;}
+	private float rotationSpeed=90;
     private float _speed;
     private float speed {
         get {
@@ -37,10 +39,10 @@ public class Pathfinding {
         }
     }
     private path_mode pathmode;
-
+	private turn_type myTurnType=turn_type.OnPoint;
+	public float turnSpeed;
     public Pathfinding(float speed, Tile startTile, path_mode pm = path_mode.world) {
         currTile = startTile;
-        destTile = startTile;
         X = currTile.X;
         Y = currTile.Y;
         dest_X = currTile.X;
@@ -71,7 +73,10 @@ public class Pathfinding {
     }
     public Tile startTile;
     public Tile destTile {
-        get { return _destTile; }
+        get { 
+			if (_destTile == null)
+				return currTile;
+			return _destTile; }
         set {
             if (_destTile != value) {
                 _destTile = value;
@@ -120,23 +125,34 @@ public class Pathfinding {
     }
 
     private Vector3 rotationDirection;
-    public Vector3 Update_DoMovement(float deltaTime) {
+    public void Update_DoMovement(float deltaTime) {
         if (currTile == null || destTile == null) {
             Debug.LogError("currtile/desttile");
-            return Vector3.zero;
+            LastMove = Vector3.zero;
+			return;
         }
+		//if were standing or if we can turn OnPoint(OnSpot) turn to face the rightway
+		if(myTurnType==turn_type.OnPoint||LastMove.sqrMagnitude<=0.1){
+			//so we can turn on point but not move
+			//so rotate around with the turnspeed
+			//we can only rotate if we know the next tile we are going to visit
+			if(IsAtDest==false&&currTile!=destTile && UpdateRotationOnPoint(deltaTime)==false){
+				return;
+			}
+		}
+
         //so for everything we can use astar
         //but the world(ships in water)
-        //the tilegraph gets too big
+        //the tilegraph gets too big -> going to use bool-array instead
         if (pathmode != path_mode.world) {
             //if it has to be exact and if the goal is the nexttile
             if (pathDest == path_dest.exact && nextTile == destTile) {
-                return accurateMove(deltaTime);
+				LastMove = accurateMove(deltaTime);
             }
-            return DoAStar(deltaTime);
+			LastMove = DoAStar(deltaTime);
+			return;
         }
-        return DoWorldMove(deltaTime);
-
+		LastMove = DoWorldMove(deltaTime);
     }
     private Vector3 DoWorldMove(float deltaTime) {
 		if(IsAtDest==false){
@@ -253,7 +269,6 @@ public class Pathfinding {
         // Generate a path to our destination
         switch (pathmode) {
             case path_mode.world:
-                //				return new Path_AStar (World.current, currTile, destTile); // This will calculate a path from curr to dest.
                 Debug.Log("dis is not possible for WORLD");
                 return null;
 
@@ -314,17 +329,31 @@ public class Pathfinding {
         destTile = startTile;
         pathAStar = new Path_AStar(backPath);
     }
-
-    public float UpdateRotation() {
+	float t = 0;
+	public bool UpdateRotationOnPoint(float delta) {
+		if(rotationDirection.magnitude==0||currTile==nextTile){
+			return true;
+		}
         Vector2 PointA = new Vector2(rotationDirection.x, rotationDirection.y);
         Vector2 PointB = new Vector2(X, Y);
         Vector2 moveDirection = PointA - PointB;
-        float angle = Mathf.Atan2(moveDirection.y, moveDirection.x);
-        if ((rotation > angle + 0.1f && rotation > angle - 0.1f) == false) {
-            rotation += angle * Mathf.Rad2Deg;
-        }
-        //no need to rotate
-        return 0;
+		float angle =Mathf.Atan2(moveDirection.y, moveDirection.x) * Mathf.Rad2Deg;
+//		if(angle<0){
+//			angle =360+ angle;
+//		}
+		rotation = angle;
+		return true;
+		if (rotation < angle + 0.1f 
+			&& rotation > angle - 0.1f) {
+			//no need to rotate so set the rotation to the correct one
+			rotation = angle;
+			t = 0;
+			return true;
+		}
+		t += delta;
+
+		rotation = Mathf.LerpAngle (rotation , angle,t);//Mathf.LerpAngle ( rotation , angle , t);
+		return false;
     }
 
     public void AddMovementCommand(float x, float y) {
@@ -342,4 +371,51 @@ public class Pathfinding {
         //			Debug.Log (item.Type); 
         //		}
     }
+
+	//------------------------------
+	//TEST
+//	private void GetPathRoute(Tile goal){
+//		foreach (Tile start in roadTilesAroundStartStructure) {
+//			foreach (Tile end in roadTilesAroundEndStructure) {
+//				if (((Road)end.Structure).Route == ((Road)start.Structure).Route) {
+//					CalculatePathInRoute (start,end);
+//				}
+//			}
+//		}
+//	}
+//
+//	private void CalculatePathInRoute(Tile start, Tile goal){
+//		SimplePriorityQueue<Tile> pq = new SimplePriorityQueue<Tile>();
+//		List<Tile> currentWay = new List<Tile>();
+//		HashSet<Tile> closed = new HashSet<Tile> ();
+//		Tile curr = start;
+//		while(curr!=goal){
+//			foreach (Tile t in curr.GetNeighbours ()) {
+//				bool next = false;
+//				if(t.Structure is Road){
+//					if(currentWay.Contains (t)||pq.Contains (t)){
+//						continue;
+//					}
+//					float dist = (goal.vector - t.vector).sqrMagnitude;
+//					pq.Enqueue (t,dist);
+//					next = true;
+//				}
+//
+//				if (next) {
+//					currentWay.Add (curr);
+//				} else {
+//					Tile nearest = pq.Dequeue ();
+//					HashSet<Tile> hs = new HashSet<Tile> (nearest.GetNeighbours ());
+//					for (int i = currentWay.Count-1; i <=0; i--) {
+//						if(hs.Contains (currentWay[i])){
+//							currentWay.Add (nearest);
+//							break;
+//						}
+//						currentWay.RemoveAt (i);
+//					}
+//				}
+//				curr = pq.Dequeue ();
+//			}
+//		}
+//	}
 }

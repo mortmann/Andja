@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine.EventSystems;
 
 public class CameraController : MonoBehaviour {
+	public static int maxZoomLevel = 25;
+	public static int minZoomLevel = 3;
 	Vector3 lastFramePosition;
 	Vector3 currFramePosition;
 	public Vector3 upper=new Vector3(1,1);
@@ -14,13 +16,17 @@ public class CameraController : MonoBehaviour {
 	public HashSet<Tile> tilesCurrentInCameraView;
 	public HashSet<Structure> structureCurrentInCameraView;
 	public Rect CameraViewRange;
+
+	public static CameraController Instance;
+
 	void Start() {
+		if (Instance != null) {
+			Debug.LogError("There should never be two mouse controllers.");
+		}
+		Instance = this;
 		tilesCurrentInCameraView = new HashSet<Tile> ();
 		structureCurrentInCameraView = new HashSet<Structure> ();
 	}
-
-
-
 
 	void Update () {
 		
@@ -34,7 +40,7 @@ public class CameraController : MonoBehaviour {
 		currFramePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 		currFramePosition.z = 0;
 		UpdateZoom();
-		zoomLevel= Mathf.Clamp(Camera.main.orthographicSize - 2,1,4f)*10;
+		zoomLevel= Mathf.Clamp(Camera.main.orthographicSize - 2,minZoomLevel,maxZoomLevel);
 		diff += UpdateKeyboardCameraMovement ();
 		diff += UpdateMouseCameraMovement ();
 
@@ -90,7 +96,7 @@ public class CameraController : MonoBehaviour {
 
 		tilesCurrentInCameraView.Clear ();
 		structureCurrentInCameraView.Clear ();
-		int mod = (int)zoomLevel / 10;
+		int mod = (int)zoomLevel/2;//TODO: optimize this
 		int lX = (int)lower.x - 1*mod;
 		int uX = (int)upper.x + 3*mod;
 		int lY = (int)lower.y - 1*mod;
@@ -106,9 +112,10 @@ public class CameraController : MonoBehaviour {
 				tilesCurrentInCameraView.Add (tile_data); 
 				if(tile_data.Structure!=null){
 					//we dont need trees, roads, growables in general or anything like that
-					if(tile_data.Structure.myBuildingTyp==BuildingTyp.Blocking){
+					//why tho they use the same structurespritecontroller like every other structure???
+//					if(tile_data.Structure.myBuildingTyp==BuildingTyp.Blocking){
 						structureCurrentInCameraView.Add (tile_data.Structure);
-					}
+//					}
 				}
 			}
 		}
@@ -182,5 +189,12 @@ public class CameraController : MonoBehaviour {
 				}
 			}
 		}
+	}
+
+	public void MoveCameraToPosition(Vector2 pos){
+		Camera.main.transform.position = new Vector3 (pos.x, pos.y, Camera.main.transform.position.z);
+		currFramePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+		lastFramePosition = currFramePosition;
+
 	}
 }

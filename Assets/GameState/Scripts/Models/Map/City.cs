@@ -5,7 +5,7 @@ using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Serialization;
 
-public class City : IXmlSerializable {
+public class City : IXmlSerializable,IGEventable {
     //TODO: set this to the player that creates this
     public int playerNumber = 0;
     public Island island { get; protected set; }
@@ -26,8 +26,13 @@ public class City : IXmlSerializable {
 	public float useTick;
 	public float useTickTimer;
 	public Warehouse myWarehouse;
-	public Action<Structure> cbStructureAdded;
-	public Action<Structure> cbRegisterTradeOffer;
+	Action<Structure> cbStructureAdded;
+	Action<Structure> cbStructureRemoved;
+
+	Action<Structure> cbRegisterTradeOffer;
+	Action<GameEvent> cbEventCreated;
+	Action<GameEvent> cbEventEnded;
+
 	/// <summary>
 	/// ITEM which is to trade
 	/// bool = true -> SELL
@@ -89,7 +94,7 @@ public class City : IXmlSerializable {
 			citizienCount [i] = 0;
 		}
 		//TODO mabye make itso that callbacks add/sub from it?
-		//TODO or make it so that homes are responsive for it 
+		//TODO or make it so that homes are responsible for it 
 		for (int i = 0; i < myHomes.Count; i++) {
 			citizienCount [myHomes [i].buildingLevel] += myHomes [i].people;
 		}
@@ -328,6 +333,7 @@ public class City : IXmlSerializable {
 			}
 			myStructures.Remove (structure);
 			cityBalance -= structure.maintenancecost;
+			cbStructureRemoved (structure);
 		} else {
 			//this is no error if this is wilderniss
 			if(structure is Warehouse){
@@ -338,6 +344,7 @@ public class City : IXmlSerializable {
 		island.allReadyHighlighted = false;
 
 	}
+
 	public void removeTiles(List<Tile> tiles){
 		foreach (Tile item in tiles) {
 			item.myCity = null;
@@ -356,7 +363,61 @@ public class City : IXmlSerializable {
 	public void UnregisterStructureAdded(Action<Structure> callbackfunc) {
 		cbStructureAdded -= callbackfunc;
 	}
+	public void RegisterOnEvent(Action<GameEvent> create,Action<GameEvent> ending){
+		cbEventCreated += create;
+		cbEventEnded += ending;
+	}
+	public void OnEventCreate(GameEvent ge){
+		if(ge.target is City){
+			if(ge.target==this){
+				if(cbEventCreated!=null){
+					cbEventCreated (ge);
+				}
+			}
+			return;
+		}
+		if(ge.target is Player){
+			if(playerNumber == ge.target.GetPlayerNumber ()){
+				if(cbEventCreated!=null){
+					cbEventCreated (ge);
+				}
+			}
+			return;
+		}
+		if(ge.target is Island){
+			if(cbEventCreated!=null){
+				cbEventCreated (ge);
+			}
+			return;
+		}
+		if(ge.target is Structure){
+			if(cbEventCreated!=null){
+				cbEventCreated (ge);
+			}
+			return;
+		}
 
+	}
+	public void OnEventEnded(GameEvent ge){
+		//this only gets called in two cases
+		//either event is on this island or in one of its cities
+		if(ge.IsTarget (island)||ge.GetTarget (GetType ())==this){
+			if(cbEventEnded!=null){
+				cbEventEnded (ge);
+			}
+		}
+	}
+
+	public bool HasFertility(Fertility fer){
+		//this is here so we could make it 
+		//That cities can have additional fertirilies as the island
+		//for now its an easier way to get the information
+		return island.myFertilities.Contains (fer);
+	}
+
+	public int GetPlayerNumber(){
+		return playerNumber;
+	}
 	//////////////////////////////////////////////////////////////////////////////////////
 	/// 
 	/// 						SAVING & LOADING

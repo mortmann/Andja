@@ -6,8 +6,9 @@ using System.Xml.Serialization;
 using System;
 
 public abstract class OutputStructure : Structure {
+	
 	public float contactRange=0;
-
+	public bool forMarketplace=true;
 	protected int maxNumberOfWorker = 1;
 	public List<Worker> myWorker;
 	public Dictionary<OutputStructure,Item[]> jobsToDo;
@@ -15,16 +16,14 @@ public abstract class OutputStructure : Structure {
 	public float produceTime;
 	public float produceCountdown;
 	public Item[] output;
-	public int[] outputStorage;
 	public int maxOutputStorage;
 	protected Action<Structure> cbOutputChange;
-
-
-
+	bool canWork { get { return Efficiency == 0; }}
+	public float efficiencyModifier;
 
 	public virtual float Efficiency{
 		get {
-			return 100;
+			return 100 * efficiencyModifier;
 		}
 	}
 	protected Tile _jobTile;
@@ -84,6 +83,19 @@ public abstract class OutputStructure : Structure {
 		w.Destroy ();
 		myWorker.Remove (w);
 	}
+
+	public void addToOutput(Inventory inv){
+		for(int i=0; i<output.Length; i++){
+			//maybe switch to manually foreach because it may be faster
+			//because worker that use this function usually only carry 
+			//what the home eg this needs
+			if(inv.ContainsItemWithID (output[i].ID)){
+				Item item = inv.getAllOfItem (output[i]);
+				output[i].count = Mathf.Clamp ( output[i].count + item.count,0,maxOutputStorage);
+			}
+		}
+	}
+
 	public Item[] getOutput(){
 		Item[] temp = new Item[output.Length];
 		for (int i = 0; i < output.Length; i++) {
@@ -161,22 +173,28 @@ public abstract class OutputStructure : Structure {
 	}
 	public void resetOutputClaimed(){
 		this.outputClaimed = false;
-		foreach (int item in outputStorage) {
-			if(item>0){
+		foreach (Item item in output) {
+			if(item.count>0){
 				if (cbOutputChange != null)
 					cbOutputChange (this);
 				return;
 			}
 		}
 	}
+	protected override void OnDestroy () {
+		foreach (Worker item in myWorker) {
+			item.Destroy ();
+		}
+	}
+
 	public void WriteUserXml(XmlWriter writer){
 		writer.WriteAttributeString("OutputClaimed", outputClaimed.ToString () );
 		writer.WriteAttributeString("ProduceCountdown", produceCountdown.ToString () );
-		if (outputStorage != null) {
+		if (output != null) {
 			writer.WriteStartElement ("Outputs");
-			foreach (int i in outputStorage) {
+			foreach (Item i in output) {
 				writer.WriteStartElement ("OutputStorage");
-				writer.WriteAttributeString ("amount", i.ToString ());
+				writer.WriteAttributeString ("amount", i.count.ToString ());
 				writer.WriteEndElement ();
 			}
 			writer.WriteEndElement ();
@@ -195,11 +213,11 @@ public abstract class OutputStructure : Structure {
 	public void ReadUserXml(XmlReader reader){
 		outputClaimed = bool.Parse (reader.GetAttribute("OutputClaimed"));
 		produceCountdown = float.Parse( reader.GetAttribute("ProduceCountdown") );
-		int output= 0;
+		int o= 0;
 		if(reader.ReadToDescendant("Outputs") ) {
 			do {
-				outputStorage[output] = int.Parse( reader.GetAttribute("amount") );
-				output++;
+				output[o].count = int.Parse( reader.GetAttribute("amount") );
+				o++;
 			} while( reader.ReadToNextSibling("OutputStorage") );
 		}
 		if(reader.ReadToDescendant("Workers") ) {

@@ -6,7 +6,9 @@ using System;
 public class UnitSpriteController : MonoBehaviour {
     private Dictionary<string, Sprite> unitSprites;
     public Dictionary<Unit, GameObject> unitGameObjectMap;
-
+	public GameObject unitGoalPrefab;
+	private GameObject unitGoalGO;
+	MouseController mouseController;
     World world {
         get { return WorldController.Instance.world; }
     }
@@ -18,9 +20,26 @@ public class UnitSpriteController : MonoBehaviour {
 		foreach (var item in world.units) {
 			OnUnitCreated (item);
 		}        		
-
+		mouseController = MouseController.Instance;
+		unitGoalGO = Instantiate (unitGoalPrefab);
     }
 	void Update(){
+		if(mouseController.mouseState == MouseState.Unit){
+			if(mouseController.SelectedUnit==null){
+				Debug.LogError ("There is something wrong with MouseController State Unit. No unitselected!");
+				return;
+			}
+			//if we are here there is a unit we can show movement
+			//if the unit is not at his destination we have to show it.
+			if(mouseController.SelectedUnit.pathfinding.IsAtDest){
+				//it doesnt move so return 
+				unitGoalGO.SetActive (false);
+				return;
+			}
+			unitGoalGO.SetActive (true);
+			Pathfinding p = mouseController.SelectedUnit.pathfinding;
+			unitGoalGO.transform.position = new Vector3 (p.dest_X, p.dest_Y);
+		}
 	}
 	public void OnUnitCreated(Unit u) {
         // Create a visual GameObject linked to this data.
@@ -58,7 +77,7 @@ public class UnitSpriteController : MonoBehaviour {
     }
     void OnUnitChanged(Unit c) {
         if (unitGameObjectMap.ContainsKey(c) == false) {
-            Debug.LogError("OnCharacterChanged -- trying to change visuals for character not in our map.");
+            Debug.LogError("OnUnitChanged -- trying to change visuals for character not in our map.");
             return;
         }
         GameObject char_go = unitGameObjectMap[c];
@@ -68,8 +87,15 @@ public class UnitSpriteController : MonoBehaviour {
 			} else {
 				char_go.SetActive (true);
 			}
-		} 
-		char_go.transform.position = new Vector3(c.X, c.Y, 0);
+			//change this so it does use the rigidbody to move
+			char_go.transform.position = new Vector3(c.X, c.Y, 0);
+			char_go.transform.rotation = new Quaternion (0, 0, c.Rotation, 0);
+		} else {
+			char_go.transform.position = new Vector3(c.X, c.Y, 0);
+			Quaternion q = char_go.transform.rotation;
+			q.eulerAngles = new Vector3 (0, 0, c.Rotation);
+			char_go.transform.rotation = q;
+		}
     }
 	void OnUnitDestroy(Unit c) {
 		if (unitGameObjectMap.ContainsKey(c) == false) {

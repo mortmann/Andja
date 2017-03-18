@@ -24,6 +24,8 @@ public class WorldController : MonoBehaviour {
 			_isPaused = value;
 		}
 	}
+	public float DeltaTime { get { return Time.deltaTime * timeMultiplier;}}
+	public float FixedDeltaTime { get { return Time.fixedDeltaTime * timeMultiplier;}}
 
 	public bool IsModal; // If true, a modal dialog box is open so normal inputs should be ignored.
     // Use this for initialization
@@ -59,7 +61,7 @@ public class WorldController : MonoBehaviour {
 		if (world == null || IsPaused) {
 			return;
 		}
-		world.fixedupdate(Time.deltaTime * timeMultiplier);
+		world.fixedupdate(Time.fixedDeltaTime * timeMultiplier);
 	}
 
 	public void TogglePause(){

@@ -1,0 +1,29 @@
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:element name="Buildings">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="Road" maxOccurs="unbounded" minOccurs="0">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element type="xs:string" name="DE_Name"/>
+			  <xs:element type="xs:string" name="EN_Name"/>
+              <xs:element type="xs:int" name="Pop_Level"/>
+			  <xs:element type="xs:int" name="Count"/>
+              <xs:element type="xs:decimal" name="Walkspeed"/>
+			  <xs:element type="xs:int" name="Wood"/>
+              <xs:element type="xs:int" name="Tool"/>
+              <xs:element type="xs:int" name="Stone"/>
+              <xs:element type="xs:int" name="Brick"/>
+              <xs:element type="xs:int" name="Marble"/>
+              <xs:element type="xs:int" name="Glas"/>
+              <xs:element type="xs:int" name="ExoticWood"/>
+              <xs:element type="xs:int" name="Buildprice"/>
+              <xs:element type="xs:int" name="Upkeep"/>
+            </xs:sequence>
+			<xs:attribute type="xs:int" name="ID"/>
+          </xs:complexType>
+        </xs:element>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

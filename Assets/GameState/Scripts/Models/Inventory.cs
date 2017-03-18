@@ -112,7 +112,9 @@ public class Inventory : IXmlSerializable{
 		return items [i];
 	}
 
-
+	public Item getAllOfItem(Item item){
+		return getItemWithMaxAmount (item,int.MaxValue);
+	}
 	public Item getItemWithMaxAmount(Item item, int maxAmount){
 		Item output = getItemInInventory (item);
 		Item temp = output.CloneWithCount();
@@ -127,6 +129,11 @@ public class Inventory : IXmlSerializable{
 	private Item getItemInInventory(Item item){
 		return items [getPlaceInItems (item)];
 	}
+	/// <summary>
+	/// Gets CLONED item WITH count but DOESNT REMOVE it FROM inventory.
+	/// </summary>
+	/// <returns>The item in inventory clone.</returns>
+	/// <param name="item">Item.</param>
 	public Item getItemInInventoryClone(Item item){
 		return items [getPlaceInItems (item)].CloneWithCount ();
 	}

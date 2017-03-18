@@ -11,13 +11,13 @@ public class Path_AStar {
 		path = backPath;
 	}
 
-    public Path_AStar(Island island, Tile tileStart, Tile tileEnd) {
+	public Path_AStar(Island island, Tile tileStart, Tile tileEnd,bool diag=true) {
         if(island == null || tileStart == null || tileEnd == null) {
             return;
         }
         // A dictionary of all valid, walkable nodes.
         Dictionary<Tile, Path_Node<Tile>> nodes = island.tileGraphIslandTiles.nodes;
-		Calculate (nodes,tileStart,tileEnd);
+		Calculate (nodes,tileStart,tileEnd,diag);
     }
 	/// <summary>
 	/// Initializes a new instance of the <see cref="Path_AStar"/> class.
@@ -65,7 +65,7 @@ public class Path_AStar {
 
 	}
 
-	private void Calculate(Dictionary<Tile, Path_Node<Tile>> nodes,Tile tileStart, Tile tileEnd){
+	private void Calculate(Dictionary<Tile, Path_Node<Tile>> nodes,Tile tileStart, Tile tileEnd,bool diag = true){
 		// Make sure our start/end tiles are in the list of nodes!
 		if (nodes.ContainsKey(tileStart) == false) {
 			Debug.LogError("Path_AStar: The starting tile isn't in the list of nodes!");
@@ -119,6 +119,11 @@ public class Path_AStar {
 			ClosedSet.Add(current);
 
 			foreach (Path_Edge<Tile> edge_neighbor in current.edges) {
+				if(diag==false){
+					if((edge_neighbor.node.data.vector-current.data.vector).sqrMagnitude>1){
+						continue;
+					}
+				}
 				Path_Node<Tile> neighbor = edge_neighbor.node;
 
 				if (ClosedSet.Contains(neighbor) == true)
@@ -224,7 +229,11 @@ public class Path_AStar {
 		// backwards from the END tile to the START tile, so let's reverse it.
 
 		path = new Queue<Tile>( total_path.Reverse() );
-
+//		GameObject prefab = Resources.Load<GameObject> ("Debug/DebugPathfinding");
+//		foreach (Tile item in path) {
+//			GameObject g = GameObject.Instantiate (prefab);
+//			g.transform.position = new Vector3 (0.5f,0.5f,-2) + item.vector;
+//		}
 	}
 
 	public Tile Dequeue() {

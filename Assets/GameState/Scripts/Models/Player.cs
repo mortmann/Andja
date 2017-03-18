@@ -1,8 +1,9 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
-
-public class Player {
-
+using System;
+public class Player : IGEventable {
+	Action<GameEvent> cbEventCreated;
+	Action<GameEvent> cbEventEnded;
 	List<City> myCities;
 	public int change { get; protected set;}
 	public int balance { get; protected set;}
@@ -71,5 +72,11 @@ public class Player {
 	}
 	public void OnStructureDestroy(Structure structure){
 		//dosmth
+	}
+	public void RegisterOnEvent(Action<GameEvent> create,Action<GameEvent> ending){
+		
+	}
+	public int GetPlayerNumber(){
+		return playerNumber;
 	}
 }

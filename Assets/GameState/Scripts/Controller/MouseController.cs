@@ -61,9 +61,9 @@ public class MouseController : MonoBehaviour {
     private Vector3 pathStartPosition;
     private Path_AStar path;
 	private Unit _selectedUnit;
-	private Unit SelectedUnit  {
+	public Unit SelectedUnit  {
 		get { return _selectedUnit;}
-		set { 
+		protected set { 
 			patrolCommandToAdd = false; 
 			_selectedUnit = value;
 		}
@@ -318,12 +318,11 @@ public class MouseController : MonoBehaviour {
 		if( EventSystem.current.IsPointerOverGameObject() ) {
 			return;
 		}
-        if (Input.GetMouseButtonDown(0)) {
+        if (Input.GetMouseButtonDown(1)) {
 			if(SelectedUnit.playerNumber!=PlayerController.Instance.currentPlayerNumber){
 				mouseState = MouseState.Idle;
 				return;
 			}
-
 			RaycastHit2D hit = Physics2D.Raycast(new Vector2(currFramePosition.x, currFramePosition.y), Vector2.zero, 200);
 			if(hit.transform!=null && hit.transform.gameObject.GetComponent<UnitHoldingScript >()!=null){
 				SelectedUnit.GiveAttackCommand (hit.transform.gameObject.GetComponent<UnitHoldingScript >().unit,true);
@@ -341,7 +340,7 @@ public class MouseController : MonoBehaviour {
 			} else {
 				SelectedUnit.AddMovementCommand(currFramePosition.x, currFramePosition.y);
 			}
-            mouseState = MouseState.Idle;
+//            mouseState = MouseState.Idle;
         }
     }
 
@@ -438,7 +437,7 @@ public class MouseController : MonoBehaviour {
                 return;
             }
             if (pathStartTile.myIsland != null && pathEndTile.myIsland != null) {
-                path = new Path_AStar(pathStartTile.myIsland, pathStartTile, pathEndTile);
+                path = new Path_AStar(pathStartTile.myIsland, pathStartTile, pathEndTile,false);
             }
             if(path.path == null) {
                 return;

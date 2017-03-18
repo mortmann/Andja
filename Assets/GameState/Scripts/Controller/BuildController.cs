@@ -196,6 +196,10 @@ public class BuildController : MonoBehaviour {
 		//we need to know if there is if we COULD build 
 		//it anyway? that means enough ressources and enough Money
 		if(loading==false&&wild==false){
+			//TODO: Check for Event restricting building from players
+			//return;
+
+
 			//find a city that matches the player 
 			//and check for money
 			if(playerHasEnoughMoney(s,playerNumber)==false){

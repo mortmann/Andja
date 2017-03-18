@@ -27,10 +27,9 @@ public class Ship : Unit {
 		UpdateParol ();
 		//WORLDMARKET
 		UpdateWorldMarket (deltaTime);
-
 		//MOVE THE SHIP
 		pathfinding.Update_DoMovement (deltaTime);
-		pathfinding.UpdateRotation ();
+//		pathfinding.UpdateRotationOnPoint ();
 //		r2d.MovePosition (transform.position + pathfinding.Update_DoMovement(deltaTime));
 //		r2d.MoveRotation (transform.rotation.z + pathfinding.UpdateRotation ());
 		if (cbUnitChanged != null)
@@ -118,6 +117,5 @@ public class Ship : Unit {
 		}
 		onPatrol = false;
 		pathfinding.AddMovementCommand( x, y);
-
 	}
 }

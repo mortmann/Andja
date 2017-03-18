@@ -121,7 +121,10 @@ public class Path_TileGraph {
 			List<Path_Edge<Tile>> edges = new List<Path_Edge<Tile>>();
 
 			// Get a list of neighbours for the tile
-			Tile[] neighbours = t.GetNeighbours(false);  // NOTE: Some of the array spots could be null.
+			//this will allow diagonal movement which is fine
+			//for freewalking units on islands
+			//TODO: Create better Pathfinding for those units, which is not gridbased?
+			Tile[] neighbours = t.GetNeighbours(true);  // NOTE: Some of the array spots could be null.
 
 			// If neighbour is walkable, create an edge to the relevant node.
 			for (int i = 0; i < neighbours.Length; i++) {

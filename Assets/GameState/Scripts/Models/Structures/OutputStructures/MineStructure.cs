@@ -39,7 +39,6 @@ public class MineStructure : OutputStructure {
 		produceTime = ms.produceTime;
 		produceCountdown = produceTime;
 		output = ms.output;
-		outputStorage = ms.outputStorage;
 		hasHitbox = ms.hasHitbox;
 		maxOutputStorage = ms.maxOutputStorage;
 		buildingRange = ms.buildingRange;

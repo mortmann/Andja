@@ -4,8 +4,8 @@ using System.Collections;
 public class UnitHoldingScript : MonoBehaviour {
     public Unit unit;
 	public int x;
-	public int y ;
-
+	public int y;
+	public float rot;
 	//FIXME TODO REMOVE DIS
 	public void Update(){
 		if(unit==null){
@@ -16,5 +16,6 @@ public class UnitHoldingScript : MonoBehaviour {
 		}
 		x=unit.pathfinding.currTile.X;
 		y=unit.pathfinding.currTile.Y;
+		rot =unit.pathfinding.rotation; 
 	}
 }

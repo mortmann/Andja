@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<data-set xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <record id="0">
+       <Name></Name>
+       <Wood></Wood>
+       <Tool></Tool>
+	   <Stone></Stone>
+	   <Brick></Brick>
+	   <Marble></Marble>
+	   <Glas></Glas>
+	   <ExoticWood></ExoticWood>
+	   <Buildprice></Buildprice>
+	   <Upkeep></Upkeep>
+    </record>
+	<record id="1">
+       <ID></ID>
+       <Name></Name>
+       <Wood></Wood>
+       <Tool></Tool>
+	   <Stone></Stone>
+	   <Brick></Brick>
+	   <Marble></Marble>
+	   <Glas></Glas>
+	   <ExoticWood></ExoticWood>
+	   <Buildprice></Buildprice>
+	   <Upkeep></Upkeep>
+    </record>
+</data-set>

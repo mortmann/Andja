@@ -251,7 +251,6 @@ public class UIController : MonoBehaviour {
 	}
 
 	public void StopDragAndDropBuild(){
-		Debug.Log ("EJMfkojsdoinfvoksjnvjösdn"); 
 		shortCutCanvas.GetComponent<ShortcutUI> ().StopDragAndDropBuild ();
 	}
 

@@ -6,7 +6,7 @@ using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Serialization;
 
-public class World : IXmlSerializable{
+public class World : IXmlSerializable,IGEventable{
 	
     public Tile[,] tiles { get; protected set; }
     public int Width { get; protected set; }
@@ -38,6 +38,9 @@ public class World : IXmlSerializable{
 	Action<Worker> cbWorkerCreated;
     Action<Tile> cbTileChanged;
 	Action<World> cbTileGraphChanged;
+	Action<GameEvent> cbEventCreated;
+	Action<GameEvent> cbEventEnded;
+
 
     public World(int width = 1000, int height = 1000){
 		SetupWorld (width,height);
@@ -80,6 +83,7 @@ public class World : IXmlSerializable{
 		allNeeds = GameObject.FindObjectOfType<BuildController>().allNeeds;
 		allFertilities = GameObject.FindObjectOfType<BuildController>().allFertilities;
 		idToFertilities= GameObject.FindObjectOfType<BuildController>().idToFertilities;
+		EventController.Instance.RegisterOnEvent (OnEventCreate,OnEventEnded);
 		islandList = new List<Island>();
 		units = new List<Unit>();
 		toRemoveUnits = new List<Unit> ();
@@ -88,6 +92,7 @@ public class World : IXmlSerializable{
         foreach(Island i in islandList) {
             i.update(deltaTime);
         }
+
     }
 	internal void fixedupdate(float deltaTime){
 		for (int i = units.Count-1; i >=0; i--) {
@@ -260,6 +265,29 @@ public class World : IXmlSerializable{
 
         cbTileChanged(t);
     }
+	public void RegisterOnEvent(Action<GameEvent> create,Action<GameEvent> ending){
+		cbEventCreated += create;
+		cbEventEnded += ending;
+	}
+	public void OnEventCreate(GameEvent ge){
+		if(ge.HasWorldEffect ()==false){
+			return;
+		}
+		if(cbEventCreated!=null){
+			cbEventCreated (ge);
+		}
+	}
+	public void OnEventEnded(GameEvent ge){
+		if(ge.HasWorldEffect ()==false){
+			return;
+		}
+		if(cbEventEnded!=null){
+			cbEventEnded (ge);
+		}
+	}
+	public int GetPlayerNumber(){
+		return -2;
+	}
 	#endregion
 	//////////////////////////////////////////////////////////////////////////////////////
 	/// 

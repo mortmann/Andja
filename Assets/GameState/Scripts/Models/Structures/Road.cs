@@ -84,7 +84,7 @@ public class Road : Structure {
 			routes [0].addRoute (routes [i]);
 			Route = routes [0];
 		}
-		 
+
 	}
 	public void updateOrientation (){
 		Tile[] neig = myBuildingTiles [0].GetNeighbours ();
@@ -112,6 +112,13 @@ public class Road : Structure {
 		if (cbRoadChanged != null)
 			cbRoadChanged (this);
 	}
+	protected override void OnDestroy () {
+		if(Route!=null){
+			Route.removeRoadTile (BuildTile);
+		}
+	}
+
+
 	public void RegisterOnRoadCallback(Action<Road> cb) {
 		cbRoadChanged += cb;
 	}

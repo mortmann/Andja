@@ -7,7 +7,7 @@ using System.Xml.Serialization;
 
 public enum Climate {Cold,Middle,Warm};
 
-public class Island : IXmlSerializable{
+public class Island : IXmlSerializable,IGEventable{
     
 	public Path_TileGraph tileGraphIslandTiles { get; protected set; }
 	public Path_TileGraph tileGraphAroundIslandTiles { get; protected set; }
@@ -23,6 +23,10 @@ public class Island : IXmlSerializable{
 	public Vector2 max;
 	public City wilderniss;
 	public bool allReadyHighlighted;
+
+	Action<GameEvent> cbEventCreated;
+	Action<GameEvent> cbEventEnded;
+
 
     //TODO: get a tile to start with!
 	public Island(Tile startTile, Climate climate = Climate.Middle) {
@@ -42,6 +46,8 @@ public class Island : IXmlSerializable{
 		tileGraphAroundIslandTiles = new Path_TileGraph (min, max);
 
 		allReadyHighlighted = false;
+
+		World.current.RegisterOnEvent (OnEventCreated,OnEventEnded);
     }
     protected void IslandFloodFill(Tile tile) {
         if (tile == null) {
@@ -117,6 +123,53 @@ public class Island : IXmlSerializable{
     }
 	public void RemoveCity(City c) {
 		myCities.Remove (c);
+	}
+
+	public void RegisterOnEvent(Action<GameEvent> create,Action<GameEvent> ending){
+		cbEventCreated += create;
+		cbEventEnded += ending;
+	}
+	public void OnEventCreated(GameEvent ge){
+		OnEvent (ge,cbEventCreated);
+	}
+	void OnEvent(GameEvent ge, Action<GameEvent> ac){
+		if(ge.target is Island){
+			if(ge.target == this){
+				if(ac!=null){
+					ac (ge);
+				}
+			}
+			return;
+		} else {
+			if(ac!=null){
+				ac (ge);
+			}
+			return;	
+		}
+//		if(ge.target is City){
+//			ac (ge);
+//			return;
+//		} 
+//		if(ge.target is Structure) {
+//			if(ac!=null){
+//				ac (ge);
+//			}
+//		}
+//		if(ge.target is Player){
+//			for (int i = 0; i < myCities.Count; i++) {
+//				if(ge.target.GetPlayerNumber ()!=myCities[i].playerNumber){
+//					continue;
+//				}
+//				ac (ge);
+//			}
+//			return;
+//		}
+	}
+	public void OnEventEnded(GameEvent ge){
+		OnEvent (ge,cbEventEnded);
+	}
+	public int GetPlayerNumber(){
+		return -1;
 	}
 	//////////////////////////////////////////////////////////////////////////////////////
 	/// 

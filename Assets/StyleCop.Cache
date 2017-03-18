@@ -12526,10 +12526,6 @@
       </violation>
     </violations>
   </sourcecode>
-  <project key="1336727075">
-    <configuration>
-    </configuration>
-  </project>
   <sourcecode name="BuildController.cs" parser="StyleCop.CSharp.CsParser">
     <timestamps>
       <styleCop>2016.10.14 14:51:03.420</styleCop>
@@ -18619,6 +18615,39 @@
         <startColumn>24</startColumn>
         <endLine>467</endLine>
         <endColumn>24</endColumn>
+        <warning>False</warning>
+      </violation>
+    </violations>
+  </sourcecode>
+  <project key="1336727075">
+    <configuration>
+    </configuration>
+  </project>
+  <sourcecode name="Route.cs" parser="StyleCop.CSharp.CsParser">
+    <timestamps>
+      <styleCop>2016.10.14 14:51:03.420</styleCop>
+      <settingsFile>2016.10.14 15:39:52.554</settingsFile>
+      <sourceFile>2016.12.02 16:05:24.030</sourceFile>
+      <parser>2016.10.14 14:51:03.420</parser>
+      <StyleCop.CSharp.DocumentationRules>2016.10.14 14:51:03.420</StyleCop.CSharp.DocumentationRules>
+      <StyleCop.CSharp.DocumentationRules.FilesHashCode>1797643533</StyleCop.CSharp.DocumentationRules.FilesHashCode>
+      <StyleCop.CSharp.LayoutRules>2016.10.14 14:51:03.420</StyleCop.CSharp.LayoutRules>
+      <StyleCop.CSharp.LayoutRules.FilesHashCode>0</StyleCop.CSharp.LayoutRules.FilesHashCode>
+      <StyleCop.CSharp.MaintainabilityRules>2016.10.14 14:51:03.420</StyleCop.CSharp.MaintainabilityRules>
+      <StyleCop.CSharp.MaintainabilityRules.FilesHashCode>0</StyleCop.CSharp.MaintainabilityRules.FilesHashCode>
+      <StyleCop.CSharp.NamingRules>2016.10.14 14:51:03.420</StyleCop.CSharp.NamingRules>
+      <StyleCop.CSharp.NamingRules.FilesHashCode>0</StyleCop.CSharp.NamingRules.FilesHashCode>
+      <StyleCop.CSharp.OrderingRules>2016.10.14 14:51:03.420</StyleCop.CSharp.OrderingRules>
+      <StyleCop.CSharp.OrderingRules.FilesHashCode>0</StyleCop.CSharp.OrderingRules.FilesHashCode>
+      <StyleCop.CSharp.ReadabilityRules>2016.10.14 14:51:03.420</StyleCop.CSharp.ReadabilityRules>
+      <StyleCop.CSharp.ReadabilityRules.FilesHashCode>0</StyleCop.CSharp.ReadabilityRules.FilesHashCode>
+      <StyleCop.CSharp.SpacingRules>2016.10.14 14:51:03.420</StyleCop.CSharp.SpacingRules>
+      <StyleCop.CSharp.SpacingRules.FilesHashCode>0</StyleCop.CSharp.SpacingRules.FilesHashCode>
+    </timestamps>
+    <violations>
+      <violation namespace="StyleCop.CSharp.CsParser" rule="SyntaxException" ruleCheckId="SA0102">
+        <context>A syntax error has been discovered in file C:\Users\Klappdidi MK3\Desktop\Unity\Andja\Assets\GameState\Scripts\Models\Map\Route.cs on line 74.</context>
+        <line>74</line>
         <warning>False</warning>
       </violation>
     </violations>

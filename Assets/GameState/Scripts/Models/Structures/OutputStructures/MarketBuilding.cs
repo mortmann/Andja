@@ -61,15 +61,10 @@ public class MarketBuilding : OutputStructure {
 		//dostuff thats happen when build
 		City.addTiles (myRangeTiles);
 		foreach(Tile rangeTile in myRangeTiles){
-			if(rangeTile.Structure == null){
+			if(rangeTile.myCity!=City){
 				continue;
 			}
-			if(rangeTile.Structure is OutputStructure){
-				if (RegisteredSturctures.Contains (rangeTile.Structure) == false) {
-					((OutputStructure)rangeTile.Structure).RegisterOutputChanged (OnOutputChangedStructure);
-					RegisteredSturctures.Add (rangeTile.Structure);
-				}
-			}
+			OnStructureAdded (rangeTile.Structure);
 		}
 		City.RegisterStructureAdded (OnStructureAdded);
 	}
@@ -116,20 +111,27 @@ public class MarketBuilding : OutputStructure {
 		OutputMarkedSturctures.Add (str);
 	}
 	protected override void OnDestroy (){
+		base.OnDestroy ();
 		List<Tile> h = new List<Tile> (myBuildingTiles);
 		h.AddRange (myRangeTiles); 
 		City.removeTiles (h);
-		foreach (Worker item in myWorker) {
-			item.Destroy ();
-		}
 	} 
 
 
 	public void OnStructureAdded(Structure structure){
+		if(structure == null){
+			return;
+		}
 		if(this == structure){
 			return;
 		}
+		if(structure.City!=City){
+			return;
+		}
 		if(structure is OutputStructure){
+			if(((OutputStructure)structure).forMarketplace==false){
+				return;
+			}
 			foreach (Tile item in structure.myBuildingTiles) {
 				if(myRangeTiles.Contains (item)){
 					((OutputStructure)structure).RegisterOutputChanged (OnOutputChangedStructure);

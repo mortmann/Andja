@@ -10,7 +10,6 @@ public class Growable : OutputStructure {
 	public int ageStages = 2;
 	public int currentStage= 0;
 	public bool hasProduced =false;
-	public bool outputClaimed =false;
 	public Fertility fer;
 
 

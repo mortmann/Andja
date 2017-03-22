@@ -6,6 +6,8 @@ using System.Xml.Schema;
 using System.Xml.Serialization;
 
 public class City : IXmlSerializable,IGEventable {
+	private static int TargetType = 12;
+
     //TODO: set this to the player that creates this
     public int playerNumber = 0;
     public Island island { get; protected set; }
@@ -363,6 +365,12 @@ public class City : IXmlSerializable,IGEventable {
 	public void UnregisterStructureAdded(Action<Structure> callbackfunc) {
 		cbStructureAdded -= callbackfunc;
 	}
+	public void RegisterStructureRemove(Action<Structure> callbackfunc) {
+		cbStructureRemoved += callbackfunc;
+	}
+	public void UnregisterStructureRemove(Action<Structure> callbackfunc) {
+		cbStructureRemoved -= callbackfunc;
+	}
 	public void RegisterOnEvent(Action<GameEvent> create,Action<GameEvent> ending){
 		cbEventCreated += create;
 		cbEventEnded += ending;
@@ -401,7 +409,7 @@ public class City : IXmlSerializable,IGEventable {
 	public void OnEventEnded(GameEvent ge){
 		//this only gets called in two cases
 		//either event is on this island or in one of its cities
-		if(ge.IsTarget (island)||ge.GetTarget (GetType ())==this){
+		if(ge.IsTarget (island)||ge.IsTarget(this)){
 			if(cbEventEnded!=null){
 				cbEventEnded (ge);
 			}
@@ -417,6 +425,9 @@ public class City : IXmlSerializable,IGEventable {
 
 	public int GetPlayerNumber(){
 		return playerNumber;
+	}
+	public int GetTargetType(){
+		return TargetType;
 	}
 	//////////////////////////////////////////////////////////////////////////////////////
 	/// 

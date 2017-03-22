@@ -8,7 +8,8 @@ using System.Xml.Serialization;
 public enum Climate {Cold,Middle,Warm};
 
 public class Island : IXmlSerializable,IGEventable{
-    
+	private static int TargetType = 11;
+
 	public Path_TileGraph tileGraphIslandTiles { get; protected set; }
 	public Path_TileGraph tileGraphAroundIslandTiles { get; protected set; }
 
@@ -170,6 +171,9 @@ public class Island : IXmlSerializable,IGEventable{
 	}
 	public int GetPlayerNumber(){
 		return -1;
+	}
+	public int GetTargetType(){
+		return TargetType;
 	}
 	//////////////////////////////////////////////////////////////////////////////////////
 	/// 

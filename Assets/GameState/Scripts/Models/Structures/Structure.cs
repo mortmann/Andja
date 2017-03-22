@@ -13,6 +13,8 @@ public enum Direction {None, N, E, S, W};
 
 public abstract class Structure : IXmlSerializable,IGEventable {
 	#region variables
+	private static int TargetType = 100;
+
 	//prototype id
 	public int ID;
 	//player id
@@ -413,6 +415,9 @@ public abstract class Structure : IXmlSerializable,IGEventable {
 	#region other
 	public int GetPlayerNumber(){
 		return playerID;
+	}
+	public int GetTargetType(){
+		return TargetType + ID;
 	}
 	public void RegisterOnEvent(Action<GameEvent> create,Action<GameEvent> ending){
 		Debug.LogError ("Not implemented! Because nothing yet needs it and would take to much RAM!" );

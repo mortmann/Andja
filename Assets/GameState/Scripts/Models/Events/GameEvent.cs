@@ -5,7 +5,7 @@ public class GameEvent {
 	public EventType EventType { protected set; get; }
 
 	public Influence[] influences { protected set; get; }
-	public Dictionary<Type,Influence> targetToInfluence;
+	public Dictionary<int,Influence> targetToInfluence;
 
 
 	public bool IsDone { get { return currentDuration <= 0;}}
@@ -70,30 +70,39 @@ public class GameEvent {
 		return false;
 	}
 	public bool IsTarget(IGEventable t){
+		//when the event is limited to a specific area or player
 		if(target!=null){
-			if(target is Player){
-				if(target.GetPlayerNumber () == t.GetPlayerNumber ())
-					return IsTarget (t.GetType ());
+			if(target is Player && t is Player){
+				if(target.GetPlayerNumber () != t.GetPlayerNumber ()){
+					if(t is Player){
+						return false;
+					} 
+				}
+			} else
+			if(target is Island){
+				if(target != t){
+					return false;
+				}
+			} else
+			if(target is City){
+				if(target != t){
+					return false;
+				}
 			}
 		}
-		return IsTarget (t.GetType ());
-	}
-	bool IsTarget(Type t){
-		if(targetToInfluence.ContainsKey (t)==false){
-			Debug.LogError ("target was not in influences! why?");
+		//if we are here the IGEventable t is in "range" (specified target eg island andso)
+		if(targetToInfluence.ContainsKey (t.GetTargetType())==false){
 			return false;
 		}
-		return targetToInfluence.ContainsKey (t);
+		return true;
 	}
-	public IGEventable GetTarget(Type t){
-		return targetToInfluence [t].target;
-	}
+		
 	public Influence GetInfluenceForTarget(IGEventable t){
-		if(targetToInfluence.ContainsKey (t.GetType ())==false){
+		if(targetToInfluence.ContainsKey (t.GetTargetType ())==false){
 			Debug.LogError ("target was not in influences! why?");
 			return null;
 		}
-		return targetToInfluence [t.GetType ()];
+		return targetToInfluence [t.GetTargetType ()];
 	}
 
 	public class Influence {

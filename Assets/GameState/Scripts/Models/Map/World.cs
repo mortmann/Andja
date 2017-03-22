@@ -7,7 +7,8 @@ using System.Xml.Schema;
 using System.Xml.Serialization;
 
 public class World : IXmlSerializable,IGEventable{
-	
+	private static int TargetType = 10;
+
     public Tile[,] tiles { get; protected set; }
     public int Width { get; protected set; }
     public int Height { get; protected set; }
@@ -287,6 +288,9 @@ public class World : IXmlSerializable,IGEventable{
 	}
 	public int GetPlayerNumber(){
 		return -2;
+	}
+	public int GetTargetType(){
+		return TargetType;
 	}
 	#endregion
 	//////////////////////////////////////////////////////////////////////////////////////

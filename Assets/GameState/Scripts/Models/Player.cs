@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System;
 public class Player : IGEventable {
+	private static int TargetType = 1;
+
 	Action<GameEvent> cbEventCreated;
 	Action<GameEvent> cbEventEnded;
 	List<City> myCities;
@@ -78,5 +80,8 @@ public class Player : IGEventable {
 	}
 	public int GetPlayerNumber(){
 		return playerNumber;
+	}
+	public int GetTargetType(){
+		return TargetType;
 	}
 }

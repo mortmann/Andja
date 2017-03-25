@@ -12138,7 +12138,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   content: {fileID: 1217739083}
-  itemPricePrefab: {fileID: 110244, guid: 88fa36b05db19ba4d81766b829499e06, type: 2}
+  itemPricePrefab: {fileID: 139816, guid: b012131277f1c884e996fbc9f5b26a06, type: 2}
   panel: {fileID: 1393007054}
 --- !u!1 &698921314
 GameObject:
@@ -20552,7 +20552,7 @@ RectTransform:
   m_RootOrder: 0
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 100, y: -0.000030517578}
+  m_AnchoredPosition: {x: 100, y: -0.000015258789}
   m_SizeDelta: {x: 0, y: -150}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &1047432604

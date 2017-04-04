@@ -158,14 +158,20 @@ public abstract class Structure : IXmlSerializable,IGEventable {
 		//using this for e.g. farm efficiency bar!
 	}
 	public virtual void OnEventCreateVirtual(GameEvent ge){
-		
+		ge.InfluenceTarget (this, true);
 	}
 	public virtual void OnEventEndedVirtual(GameEvent ge){
-
+		ge.InfluenceTarget (this, false);
 	}
 	#endregion 
 
 	#region callbacks
+	/// <summary>
+	/// Do not override this function!
+	/// USE virtual to override the reaction to an event that
+	/// influences this Structure.
+	/// </summary>
+	/// <param name="ge">Ge.</param>
 	public void OnEventCreate(GameEvent ge){
 		//every subtype has do decide what todo
 		//maybe some above reactions here 
@@ -179,6 +185,12 @@ public abstract class Structure : IXmlSerializable,IGEventable {
 			OnEventCreateVirtual (ge);
 		}
 	}
+	/// <summary>
+	/// Do not override this function!
+	/// USE virtual to override the reaction to an event that
+	/// influences this Structure.
+	/// </summary>
+	/// <param name="ge">Ge.</param>
 	public void OnEventEnded(GameEvent ge){
 		//every subtype has do decide what todo
 		//maybe some above reactions here 
@@ -190,7 +202,6 @@ public abstract class Structure : IXmlSerializable,IGEventable {
 		}
 		if(ge.IsTarget (this)){
 			OnEventEndedVirtual (ge);
-
 		}
 	}
 	public void callbackIfnotNull(){

@@ -376,40 +376,20 @@ public class City : IXmlSerializable,IGEventable {
 		cbEventEnded += ending;
 	}
 	public void OnEventCreate(GameEvent ge){
-		if(ge.target is City){
-			if(ge.target==this){
-				if(cbEventCreated!=null){
-					cbEventCreated (ge);
-				}
-			}
-			return;
-		}
-		if(ge.target is Player){
-			if(playerNumber == ge.target.GetPlayerNumber ()){
-				if(cbEventCreated!=null){
-					cbEventCreated (ge);
-				}
-			}
-			return;
-		}
-		if(ge.target is Island){
+		//this only gets called in two cases
+		//either event is on this island or in one of its cities
+		if(ge.IsTarget (island)||ge.IsTarget(this)){
+			ge.InfluenceTarget (this, true);
 			if(cbEventCreated!=null){
 				cbEventCreated (ge);
 			}
-			return;
 		}
-		if(ge.target is Structure){
-			if(cbEventCreated!=null){
-				cbEventCreated (ge);
-			}
-			return;
-		}
-
 	}
 	public void OnEventEnded(GameEvent ge){
 		//this only gets called in two cases
 		//either event is on this island or in one of its cities
 		if(ge.IsTarget (island)||ge.IsTarget(this)){
+			ge.InfluenceTarget (this, false);
 			if(cbEventEnded!=null){
 				cbEventEnded (ge);
 			}

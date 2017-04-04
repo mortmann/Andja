@@ -131,11 +131,12 @@ public class Island : IXmlSerializable,IGEventable{
 		cbEventEnded += ending;
 	}
 	public void OnEventCreated(GameEvent ge){
-		OnEvent (ge,cbEventCreated);
+		OnEvent (ge,cbEventCreated,true);
 	}
-	void OnEvent(GameEvent ge, Action<GameEvent> ac){
+	void OnEvent(GameEvent ge, Action<GameEvent> ac,bool start){
 		if(ge.target is Island){
 			if(ge.target == this){
+				ge.InfluenceTarget (this, start);
 				if(ac!=null){
 					ac (ge);
 				}
@@ -147,27 +148,9 @@ public class Island : IXmlSerializable,IGEventable{
 			}
 			return;	
 		}
-//		if(ge.target is City){
-//			ac (ge);
-//			return;
-//		} 
-//		if(ge.target is Structure) {
-//			if(ac!=null){
-//				ac (ge);
-//			}
-//		}
-//		if(ge.target is Player){
-//			for (int i = 0; i < myCities.Count; i++) {
-//				if(ge.target.GetPlayerNumber ()!=myCities[i].playerNumber){
-//					continue;
-//				}
-//				ac (ge);
-//			}
-//			return;
-//		}
 	}
 	public void OnEventEnded(GameEvent ge){
-		OnEvent (ge,cbEventEnded);
+		OnEvent (ge,cbEventEnded,false);
 	}
 	public int GetPlayerNumber(){
 		return -1;

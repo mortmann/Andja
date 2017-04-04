@@ -45,7 +45,7 @@ public class EventController : MonoBehaviour {
 
 	Dictionary<EventType,GameEvent[]> typeToEvents;
 	Dictionary<int,GameEvent> idToActiveEvent;
-	//Every EventType has a 
+	//Every EventType has a chance to happen
 	Dictionary<EventType,float> chanceToEvent;
 
 	Action<GameEvent> cbEventCreated;
@@ -59,7 +59,6 @@ public class EventController : MonoBehaviour {
 			Debug.LogError("There should never be two event controllers.");
 		}
 		Instance = this;
-		GameEventFunctions g = new GameEventFunctions ();
 		var a = CreateReusableAction<GameEvent,bool,Structure> ("OutputStructure_Efficiency");
 		a (new GameEvent (),true,new MineStructure ());
 		idToActiveEvent = new Dictionary<int, GameEvent> ();

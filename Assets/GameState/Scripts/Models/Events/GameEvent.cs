@@ -69,16 +69,21 @@ public class GameEvent {
 		}
 		return false;
 	}
+	/// <summary>
+	/// Determines whether this instance is target the specified Event targets.
+	/// This includes the Player, City and Island. 
+	/// </summary>
+	/// <returns><c>true</c> if this instance is target the specified event otherwise, <c>false</c>.</returns>
+	/// <param name="t">T.</param>
 	public bool IsTarget(IGEventable t){
 		//when the event is limited to a specific area or player
 		if(target!=null){
 			if(target is Player && t is Player){
 				if(target.GetPlayerNumber () != t.GetPlayerNumber ()){
-					if(t is Player){
-						return false;
-					} 
+					return false;
 				}
 			} else
+			//needs to be tested if works if not every city/island needs identification
 			if(target is Island){
 				if(target != t){
 					return false;
@@ -91,12 +96,23 @@ public class GameEvent {
 			}
 		}
 		//if we are here the IGEventable t is in "range" (specified target eg island andso)
+		//or there is no range atall
+		//is there an influence targeting t?
 		if(targetToInfluence.ContainsKey (t.GetTargetType())==false){
 			return false;
 		}
 		return true;
 	}
-		
+
+	public void InfluenceTarget(IGEventable t,bool start){
+		Influence i = GetInfluenceForTarget (t);
+		if(i == null){
+			Debug.LogError ("Influence is null!");
+			return;
+		}
+		i.Function (this, start, t);
+	}
+
 	public Influence GetInfluenceForTarget(IGEventable t){
 		if(targetToInfluence.ContainsKey (t.GetTargetType ())==false){
 			Debug.LogError ("target was not in influences! why?");

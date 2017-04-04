@@ -84,32 +84,51 @@ public class PlayerController : MonoBehaviour {
 		}
 	}
 	public void OnEventCreated(GameEvent ge){
+		if(ge.target == null){
+			euim.AddEVENT (ge.id,ge.name,ge.position);
+			InformAIaboutEvent (ge, true);
+			return;
+		}
+		//if its a island check if the player needs to know about it
+		//eg. if he has a city on it
 		if(ge.target is Island){
 			foreach (City item in ((Island)ge.target).myCities) {
 				if(item.playerNumber == currentPlayerNumber){
 					euim.AddEVENT (ge.id,ge.name,ge.position);
+				} else {
+					InformAIaboutEvent (ge, true);
 				}
 			}
 			return;
 		}
-		if(ge.target.GetPlayerNumber () == currentPlayerNumber){
+		//is the target not owned by anyone and it is a structure 
+		//then inform all... it could be global effect on type of structure
+		//should be pretty rare
+		if(ge.target.GetPlayerNumber()<0&&ge.target is Structure){
+			euim.AddEVENT (ge.id,ge.name,ge.position);
+			InformAIaboutEvent (ge, true);
+		}
+		//just check if the target is owned by the player
+		if(ge.target.GetPlayerNumber() == currentPlayerNumber){
 			euim.AddEVENT (ge.id,ge.name,ge.position);
 		} else {
-			//inform the ai about the event!
+			InformAIaboutEvent (ge, true);
 		}
 	}
 	public void OnEventEnded(GameEvent ge){
-		if(ge.target is Player){
-			return;
-		}
-		if((ge.target as Player).playerNumber == currentPlayerNumber){
-			euim.AddEVENT (ge.id,ge.name,ge.position);
-		} else {
-			//inform the ai about the event!
-		}
 		//MAYBE REMOVE the message from the ui?
 		//else inform the ai again
 	}
+	/// <summary>
+	/// NOT IMPLEMENTED YET
+	/// </summary>
+	/// <param name="ge">Ge.</param>
+	/// <param name="start">If set to <c>true</c> start.</param>
+	public void InformAIaboutEvent(GameEvent ge,bool start){
+		//do something with it to inform the ai about 
+	}
+
+
 	public void reduceMoney(int money, int playerNr) {
 		players[playerNr].reduceMoney (money);
 	}

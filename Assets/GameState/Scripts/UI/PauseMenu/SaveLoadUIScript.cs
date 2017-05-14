@@ -83,10 +83,10 @@ public class SaveLoadUIScript : MonoBehaviour {
 	}
 	public void OnSavePressed(){
 		if(selected!=null&&(saveGameInput.text==null||saveGameInput.text=="")){
-			WorldController.Instance.SaveWorld (selected); // overwrite
+			SaveController.Instance.SaveGameState (selected); // overwrite
 			//TODO ask if you want to overwrite
 		} else {
-			WorldController.Instance.SaveWorld (saveGameInput.text);
+			SaveController.Instance.SaveGameState (saveGameInput.text);
 		}
 	}
 	public void OnIslandLoadPressed(){

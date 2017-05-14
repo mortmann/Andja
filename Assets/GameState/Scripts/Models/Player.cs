@@ -1,7 +1,11 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 using System;
-public class Player : IGEventable {
+using System.Xml;
+using System.Xml.Schema;
+using System.Xml.Serialization;
+
+public class Player : IXmlSerializable,IGEventable {
 	private static int TargetType = 1;
 
 	Action<GameEvent> cbEventCreated;
@@ -84,4 +88,20 @@ public class Player : IGEventable {
 	public int GetTargetType(){
 		return TargetType;
 	}
+
+	#region save
+	public XmlSchema GetSchema() {
+		return null;
+	}
+
+	public void WriteXml(XmlWriter writer) {
+
+	}
+
+	public void ReadXml(XmlReader reader) {
+
+	}
+	#endregion
+
+
 }

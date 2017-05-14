@@ -33,11 +33,12 @@ public class WorldController : MonoBehaviour {
         if (Instance != null) {
             Debug.LogError("There should never be two world controllers.");
         }
+		Instance = this;
+
 		GameDataHolder gdh = GameDataHolder.Instance;
 
 		offworldMarket = new OffworldMarket ();
 
-        Instance = this;
 		if (gdh!=null && gdh.loadsavegame!=null) {
 			CreateWorldFromSaveFile (gdh.loadsavegame);
 			gdh.loadsavegame = null;
@@ -107,25 +108,14 @@ public class WorldController : MonoBehaviour {
 	/// Saves the world.
 	/// </summary>
 	/// <param name="savename">Savename.</param>
-	public void SaveWorld(string savename) {
+	public String SaveWorld() {
 		Debug.Log("SaveWorld button was clicked.");
 		XmlSerializer serializer = new XmlSerializer( typeof(World) );
 		TextWriter writer = new StringWriter();
 		serializer.Serialize(writer, world);
 		writer.Close();
 		// Create/overwrite the save file with the xml text.
-
-		// Make sure the save folder exists.
-		if( Directory.Exists(GetSaveGamesPath () ) == false ) {
-			// NOTE: This can throw an exception if we can't create the folder,
-			// but why would this ever happen? We should, by definition, have the ability
-			// to write to our persistent data folder unless something is REALLY broken
-			// with the computer/device we're running on.
-			Directory.CreateDirectory( GetSaveGamesPath ()  );
-		}
-		string filePath = System.IO.Path.Combine(GetSaveGamesPath (),savename+".sav") ;
-		File.WriteAllText( filePath, writer.ToString() );
-
+		return writer.ToString();
 	}
 	public void LoadWorld(bool quickload = false) {
 		Debug.Log("LoadWorld button was clicked.");

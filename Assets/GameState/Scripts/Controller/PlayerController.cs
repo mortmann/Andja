@@ -1,12 +1,17 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 using System;
+using System.Xml;
+using System.Xml.Schema;
+using System.Xml.Serialization;
+using System.IO;
+
 /// <summary>
 /// Player controller.
 /// this is mostly for the currentplayer
 /// but it updates the money for all
 /// </summary>
-public class PlayerController : MonoBehaviour {
+public class PlayerController : IXmlSerializable,MonoBehaviour {
 	public int currentPlayerNumber;
 	public Player currPlayer{get {return players [currentPlayerNumber];}}
 	float balanceTicks;
@@ -160,4 +165,34 @@ public class PlayerController : MonoBehaviour {
 		}
 		return players [i];
 	}
+
+
+	#region save
+	public string SavePlayers(){
+		XmlSerializer serializer = new XmlSerializer( typeof(PlayerController) );
+		TextWriter writer = new StringWriter();
+		serializer.Serialize(writer, this);
+		writer.Close();
+		// Create/overwrite the save file with the xml text.
+		return writer.ToString();
+	}
+
+	public XmlSchema GetSchema() {
+		return null;
+	}
+
+	public void WriteXml(XmlWriter writer) {
+
+		foreach(Player p in players){
+			writer.WriteStartElement ("Player");
+			p.WriteXml (writer);
+			writer.WriteEndElement ();
+		}
+
+	}
+
+	public void ReadXml(XmlReader reader) {
+
+	}
+	#endregion
 }

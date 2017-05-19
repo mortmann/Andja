@@ -34,4 +34,8 @@ public class GameDataHolder : MonoBehaviour {
 		//TODO FIXME change this to documentspath
 		return System.IO.Path.Combine(Application.dataPath.Replace ("/Assets","") , "saves");
 	}
+
+	public string GetSaveData(){
+		
+	}
 }

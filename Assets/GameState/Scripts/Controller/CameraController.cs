@@ -197,4 +197,9 @@ public class CameraController : MonoBehaviour {
 		lastFramePosition = currFramePosition;
 
 	}
+
+	public string GetSaveCamera(){
+		return "CAMERA";
+	}
+
 }

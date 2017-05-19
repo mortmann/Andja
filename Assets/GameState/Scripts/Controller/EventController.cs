@@ -170,4 +170,10 @@ public class EventController : MonoBehaviour {
 		cbEventEnded += ending;
 	}
 
+
+	public String GetSaveEvent(){
+		return "NOTHING";
+	}
+
+
 }

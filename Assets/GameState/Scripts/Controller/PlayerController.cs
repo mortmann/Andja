@@ -11,7 +11,7 @@ using System.IO;
 /// this is mostly for the currentplayer
 /// but it updates the money for all
 /// </summary>
-public class PlayerController : IXmlSerializable,MonoBehaviour {
+public class PlayerController : MonoBehaviour,IXmlSerializable {
 	public int currentPlayerNumber;
 	public Player currPlayer{get {return players [currentPlayerNumber];}}
 	float balanceTicks;
@@ -168,7 +168,7 @@ public class PlayerController : IXmlSerializable,MonoBehaviour {
 
 
 	#region save
-	public string SavePlayers(){
+	public string GetPlayerSaveData(){
 		XmlSerializer serializer = new XmlSerializer( typeof(PlayerController) );
 		TextWriter writer = new StringWriter();
 		serializer.Serialize(writer, this);

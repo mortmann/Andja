@@ -108,7 +108,7 @@ public class WorldController : MonoBehaviour {
 	/// Saves the world.
 	/// </summary>
 	/// <param name="savename">Savename.</param>
-	public String SaveWorld() {
+	public String GetSaveWorld() {
 		Debug.Log("SaveWorld button was clicked.");
 		XmlSerializer serializer = new XmlSerializer( typeof(World) );
 		TextWriter writer = new StringWriter();

@@ -13,7 +13,9 @@ using System.IO;
 /// </summary>
 public class PlayerController : MonoBehaviour {
 	public int currentPlayerNumber;
+	int piratePlayerNumber = int.MaxValue; // so it isnt the same like the number of wilderness
 	public Player currPlayer{get {return players [currentPlayerNumber];}}
+	HashSet<KeyValuePair<int,int>> playerWars;
 	float balanceTicks;
 	float tickTimer;
 	public static PlayerController Instance { get; protected set; }
@@ -33,6 +35,11 @@ public class PlayerController : MonoBehaviour {
 		players.Add (p); 
 		players.Add (new Player(1)); 
 		players.Add (new Player(2)); 
+		Debug.Log (ArePlayersAtWar (0,1));
+		Debug.Log (ArePlayersAtWar (1,2)); 
+		playerWars = new HashSet<KeyValuePair<int, int>> ();
+		playerWars.Add (new KeyValuePair<int, int>(0,1));
+		playerWars.Add (new KeyValuePair<int, int>(0,2));
 
 		balanceTicks = 5f;
 		tickTimer = balanceTicks;
@@ -153,10 +160,10 @@ public class PlayerController : MonoBehaviour {
 		reduceMoney (structure.buildcost,structure.playerID);
 	}
 	public bool ArePlayersAtWar(int pnum1,int pnum2){
-		if(pnum1==-1||pnum2==-1){
-			return true;//could add here be at peacce with pirates through money 
+		if(pnum1==piratePlayerNumber||pnum2==piratePlayerNumber){
+			return true;//could add here be at peace with pirates through money 
 		}
-		return players [pnum1].playersAtWarWith.Contains (pnum2);
+		return playerWars.Contains (new KeyValuePair<int, int>(pnum1,pnum2));
 	}
 
 	public Player GetPlayer(int i){
@@ -170,7 +177,7 @@ public class PlayerController : MonoBehaviour {
 	public string GetSavePlayerData(){
 		XmlSerializer serializer = new XmlSerializer( typeof(PlayerControllerSave) );
 		TextWriter writer = new StringWriter();
-		serializer.Serialize(writer,new PlayerControllerSave(currentPlayerNumber, balanceTicks, tickTimer, players));
+		serializer.Serialize(writer,new PlayerControllerSave(currentPlayerNumber, balanceTicks, tickTimer, players,playerWars));
 		writer.Close();
 		// Create/overwrite the save file with the xml text.
 		return writer.ToString();
@@ -193,11 +200,14 @@ public class PlayerController : MonoBehaviour {
 		public float balanceTicks;
 		public float tickTimer;
 		public List<Player> players;
-		public PlayerControllerSave(int cpn,float balanceTicks,float tickTimer,List<Player> players ){
+		public HashSet<KeyValuePair<int,int>> playerWars;
+
+		public PlayerControllerSave(int cpn,float balanceTicks,float tickTimer,List<Player> players, HashSet<KeyValuePair<int,int>> playerWars ){
 			currentPlayerNumber = cpn;
 			this.balanceTicks = balanceTicks;
 			this.players = players;
 			this.tickTimer = tickTimer;
+			this.playerWars = playerWars;
 		}
 		public PlayerControllerSave(){
 			
@@ -208,22 +218,30 @@ public class PlayerController : MonoBehaviour {
 		}
 
 		public void WriteXml(XmlWriter writer) {
-
+			writer.WriteStartElement ("Players");
 			foreach(Player p in players){
 				writer.WriteStartElement ("Player");
 				writer.WriteAttributeString ("ID", p.GetPlayerNumber() + "");
 				p.WriteXml (writer);
 				writer.WriteEndElement ();
 			}
-
+			writer.WriteEndElement ();
+			writer.WriteStartElement ("Wars");
+			foreach(KeyValuePair<int,int> pnum in playerWars){
+				writer.WriteStartElement ("War");
+				writer.WriteElementString ("Player Nr1", pnum.Key+"");
+				writer.WriteElementString ("Player Nr2", pnum.Value+"");
+				writer.WriteEndElement ();
+			}
+			writer.WriteEndElement ();
 		}
 
 		public void ReadXml(XmlReader reader) {
 			if(reader.ReadToDescendant("Player") ) {
 				do {
 					if(reader.IsStartElement ("Player")==false){
-						if(reader.Name == "PlayerControllerSave"){
-							return;
+						if(reader.Name == "Players"){
+							break;
 						}
 						continue;
 					}	
@@ -231,6 +249,17 @@ public class PlayerController : MonoBehaviour {
 					Player p = new Player(id);
 					p.ReadXml (reader);
 					players.Add(p);
+				} while( reader.Read () );
+				do {
+					if(reader.IsStartElement ("War")==false){
+						if(reader.Name == "Wars"){
+							break;
+						}
+						continue;
+					}	
+					int pnum1 = int.Parse( reader.GetAttribute("Player Nr1") );
+					int pnum2 = int.Parse( reader.GetAttribute("Player Nr2") );
+					playerWars.Add (new KeyValuePair<int, int>(pnum1,pnum2));
 				} while( reader.Read () );
 			}
 

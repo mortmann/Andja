@@ -11,12 +11,25 @@ public class Player : IXmlSerializable,IGEventable {
 	Action<GameEvent> cbEventCreated;
 	Action<GameEvent> cbEventEnded;
 	List<City> myCities;
-	public int change { get; protected set;}
-	public int balance { get; protected set;}
-	public int maxPopulationCount { get; set;}
-	public int maxPopulationLevel { get; set;}
-	public List<int> playersAtWarWith;
+	public int change { get; protected set;} //should be calculated after reload anyway
+	public int balance { get; protected set;} //also be calculated after reload
+	// because only the new level popcount is interesting
+	// needs to be saved because you can lose pop due
+	// war or death and only the highest ever matters here 
+	private int _maxPopulationLevel;
+	public int maxPopulationLevel { 
+		get {return _maxPopulationLevel;} 
+		set { 
+			if(maxPopulationLevel<value){
+				return;
+			}
+			_maxPopulationLevel = value;
+			maxPopulationCount = 0; 
+		}
+	} 									  
+	public int maxPopulationCount { get; protected set;}
 	public int playerNumber;
+
 	public Player(int number){
 		playerNumber = number;
 		maxPopulationCount = 0;
@@ -24,11 +37,6 @@ public class Player : IXmlSerializable,IGEventable {
 		myCities = new List<City> ();
 		change = -10;
 		balance = 50000;
-		playersAtWarWith = new List<int> ();
-		//TODO remove this
-		playersAtWarWith.Add (2); 
-		playersAtWarWith.Add (0); 
-
 	}
 	public void Update () {
 
@@ -95,10 +103,13 @@ public class Player : IXmlSerializable,IGEventable {
 	}
 
 	public void WriteXml(XmlWriter writer) {
-
+		writer.WriteElementString ("maxPopulationLevel",this.maxPopulationLevel+"");
+		writer.WriteElementString ("maxPopulationCount",this.maxPopulationCount+"");
 	}
 
 	public void ReadXml(XmlReader reader) {
+		maxPopulationCount = int.Parse( reader.GetAttribute("maxPopulationCount") );
+		maxPopulationLevel = int.Parse( reader.GetAttribute("maxPopulationLevel") );
 
 	}
 	#endregion

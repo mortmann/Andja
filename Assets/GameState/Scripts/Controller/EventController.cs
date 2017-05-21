@@ -2,6 +2,10 @@
 using System.Collections.Generic;
 using System;
 using System.Reflection;
+using System.Xml;
+using System.Xml.Schema;
+using System.Xml.Serialization;
+using System.IO;
 
 //TODO:
 //-We need a UI displaying most(if not all) Events -> left side on the screen?
@@ -171,9 +175,63 @@ public class EventController : MonoBehaviour {
 	}
 
 
-	public String GetSaveEvent(){
-		return "NOTHING";
+	public string GetSaveGameEventData(){
+		XmlSerializer serializer = new XmlSerializer( typeof(GameEventSave) );
+		TextWriter writer = new StringWriter();
+		serializer.Serialize(writer,new GameEventSave(idToActiveEvent));
+		writer.Close();
+		// Create/overwrite the save file with the xml text.
+		return writer.ToString();
+	}
+	public void LoadGameEventData(string data){
+		XmlSerializer serializer = new XmlSerializer( typeof(GameEventSave) );
+		TextReader reader = new StringReader( data );
+		GameEventSave gcs = (GameEventSave)serializer.Deserialize(reader);
+		reader.Close();
+		idToActiveEvent = gcs.idToActiveEvent;
 	}
 
+	public class GameEventSave : IXmlSerializable {
+		public Dictionary<int,GameEvent> idToActiveEvent;
+		public GameEventSave(Dictionary<int,GameEvent> idToActiveEvent ){
+			this.idToActiveEvent = idToActiveEvent;
+		}
+		public GameEventSave(){
 
+		}
+		#region save
+		public XmlSchema GetSchema() {
+			return null;
+		}
+
+		public void WriteXml(XmlWriter writer) {
+
+			foreach(int p in idToActiveEvent.Keys){
+				writer.WriteStartElement ("GameEvent");
+				writer.WriteAttributeString ("ID", p + "");
+				idToActiveEvent[p].WriteXml (writer);
+				writer.WriteEndElement ();
+			}
+
+		}
+
+		public void ReadXml(XmlReader reader) {
+			if(reader.ReadToDescendant("GameEvent") ) {
+				do {
+					if(reader.IsStartElement ("GameEvent")==false){
+						if(reader.Name == "GameEventSave"){
+							return;
+						}
+						continue;
+					}	
+					int id = int.Parse( reader.GetAttribute("ID") );
+					GameEvent ge = new GameEvent();
+					//load the functions to it etc
+					idToActiveEvent.Add(id,ge);
+				} while( reader.Read () );
+			}
+
+		}
+		#endregion
+	}
 }

@@ -39,8 +39,8 @@ public class WorldController : MonoBehaviour {
 
 		offworldMarket = new OffworldMarket ();
 
-		if (gdh!=null && gdh.loadsavegame!=null) {
-			CreateWorldFromSaveFile (gdh.loadsavegame);
+		if (gdh!=null && gdh.loadsavegame!=null && gdh.loadsavegame.Length > 0) {
+			LoadWorldData (gdh.loadsavegame);
 			gdh.loadsavegame = null;
 		} else {
 			if (gdh != null) {
@@ -108,7 +108,7 @@ public class WorldController : MonoBehaviour {
 	/// Saves the world.
 	/// </summary>
 	/// <param name="savename">Savename.</param>
-	public String GetSaveWorld() {
+	public String GetSaveWorldData() {
 		Debug.Log("SaveWorld button was clicked.");
 		XmlSerializer serializer = new XmlSerializer( typeof(World) );
 		TextWriter writer = new StringWriter();
@@ -126,15 +126,12 @@ public class WorldController : MonoBehaviour {
 		// set to loadscreen to reset all data (and purge old references)
 		SceneManager.LoadScene( "GameStateLoadingScreen" );
 	}
-	void CreateWorldFromSaveFile(string savegamename) {
-		Debug.Log("CreateWorldFromSaveFile");
+	public void LoadWorldData(string saveGameText) {
+		Debug.Log("CreateWorldFromSaveFile " + saveGameText);
 		// Create a world from our save file data.
 
 		XmlSerializer serializer = new XmlSerializer( typeof(World) );
-		string saveGameText = File.ReadAllText( System.IO.Path.Combine( GetSaveGamesPath (), savegamename ) );
-
 		TextReader reader = new StringReader( saveGameText );
-		Debug.Log (reader.ToString () + " "+saveGameText); 
 		world = (World)serializer.Deserialize(reader);
 		reader.Close();
 		// Center the Camera
@@ -142,8 +139,5 @@ public class WorldController : MonoBehaviour {
 		BuildController.Instance.PlaceAllLoadedStructure ();
 		Debug.Log ("LOAD ENDED");
 	}
-
-	public string GetSaveGamesPath(){
-		return GameDataHolder.Instance.GetSaveGamesPath ();
-	}
+		
 }

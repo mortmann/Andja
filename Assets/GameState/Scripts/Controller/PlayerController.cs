@@ -11,7 +11,7 @@ using System.IO;
 /// this is mostly for the currentplayer
 /// but it updates the money for all
 /// </summary>
-public class PlayerController : MonoBehaviour,IXmlSerializable {
+public class PlayerController : MonoBehaviour {
 	public int currentPlayerNumber;
 	public Player currPlayer{get {return players [currentPlayerNumber];}}
 	float balanceTicks;
@@ -167,32 +167,76 @@ public class PlayerController : MonoBehaviour,IXmlSerializable {
 	}
 
 
-	#region save
-	public string GetPlayerSaveData(){
-		XmlSerializer serializer = new XmlSerializer( typeof(PlayerController) );
+	public string GetSavePlayerData(){
+		XmlSerializer serializer = new XmlSerializer( typeof(PlayerControllerSave) );
 		TextWriter writer = new StringWriter();
-		serializer.Serialize(writer, this);
+		serializer.Serialize(writer,new PlayerControllerSave(currentPlayerNumber, balanceTicks, tickTimer, players));
 		writer.Close();
 		// Create/overwrite the save file with the xml text.
 		return writer.ToString();
 	}
+	public void LoadPlayerData(string data){
+		XmlSerializer serializer = new XmlSerializer( typeof(PlayerControllerSave) );
+		TextReader reader = new StringReader( data );
+		PlayerControllerSave pcs = (PlayerControllerSave)serializer.Deserialize(reader);
+		reader.Close();
 
-	public XmlSchema GetSchema() {
-		return null;
+		currentPlayerNumber = pcs.currentPlayerNumber;
+		players = pcs.players;
+		tickTimer = pcs.tickTimer;
+		balanceTicks = pcs.balanceTicks;
 	}
 
-	public void WriteXml(XmlWriter writer) {
-
-		foreach(Player p in players){
-			writer.WriteStartElement ("Player");
-			p.WriteXml (writer);
-			writer.WriteEndElement ();
+	public class PlayerControllerSave : IXmlSerializable {
+		
+		public int currentPlayerNumber;
+		public float balanceTicks;
+		public float tickTimer;
+		public List<Player> players;
+		public PlayerControllerSave(int cpn,float balanceTicks,float tickTimer,List<Player> players ){
+			currentPlayerNumber = cpn;
+			this.balanceTicks = balanceTicks;
+			this.players = players;
+			this.tickTimer = tickTimer;
+		}
+		public PlayerControllerSave(){
+			
+		}
+		#region save
+		public XmlSchema GetSchema() {
+			return null;
 		}
 
+		public void WriteXml(XmlWriter writer) {
+
+			foreach(Player p in players){
+				writer.WriteStartElement ("Player");
+				writer.WriteAttributeString ("ID", p.GetPlayerNumber() + "");
+				p.WriteXml (writer);
+				writer.WriteEndElement ();
+			}
+
+		}
+
+		public void ReadXml(XmlReader reader) {
+			if(reader.ReadToDescendant("Player") ) {
+				do {
+					if(reader.IsStartElement ("Player")==false){
+						if(reader.Name == "PlayerControllerSave"){
+							return;
+						}
+						continue;
+					}	
+					int id = int.Parse( reader.GetAttribute("ID") );
+					Player p = new Player(id);
+					p.ReadXml (reader);
+					players.Add(p);
+				} while( reader.Read () );
+			}
+
+		}
+		#endregion
 	}
 
-	public void ReadXml(XmlReader reader) {
 
-	}
-	#endregion
 }

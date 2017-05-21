@@ -18,12 +18,13 @@ public class CameraController : MonoBehaviour {
 	public Rect CameraViewRange;
 
 	public static CameraController Instance;
-
-	void Start() {
+	void Awake () {
 		if (Instance != null) {
-			Debug.LogError("There should never be two mouse controllers.");
+			Debug.LogError ("There should never be two SaveController.");
 		}
 		Instance = this;
+	}
+	void Start() {
 		tilesCurrentInCameraView = new HashSet<Tile> ();
 		structureCurrentInCameraView = new HashSet<Structure> ();
 	}
@@ -199,7 +200,27 @@ public class CameraController : MonoBehaviour {
 	}
 
 	public string GetSaveCamera(){
-		return "CAMERA";
+		return Camera.main.transform.position.ToString () + ";" + Camera.main.orthographicSize;
 	}
-
+	public void LoadSaveCameraData(string data){
+		string[] datas = data.Split (';');
+		Camera.main.transform.position = StringToVector3 (datas[0]);
+		float temp = 0;
+		float.TryParse (datas[1],out temp);
+		Camera.main.orthographicSize = temp;
+	}
+	public Vector3 StringToVector3(string vector3){
+		//Remove the ( )
+		if (vector3.StartsWith ("(") && vector3.EndsWith (")")) {
+			vector3 = vector3.Substring(1, vector3.Length-2);
+		}
+		// split the items
+		string[] vecs = vector3.Split(',');
+		// store as a Vector3
+		Vector3 result = new Vector3(
+			float.Parse(vecs[0]),
+			float.Parse(vecs[1]),
+			float.Parse(vecs[2]));
+		return result;
+	}
 }

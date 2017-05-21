@@ -12,7 +12,7 @@ public class EventMessage : MonoBehaviour {
 	// Use this for initialization
 	public void Setup (string name, Vector2 position) {
 		this.position = position;
-		this.name = name;
+		this.eventName = name;
 		if(name.Length>30){
 			name = name.Substring (0,30) + "...";
 		}
@@ -45,7 +45,7 @@ public class EventMessage : MonoBehaviour {
 		CameraController.Instance.MoveCameraToPosition (position);
 	}
 	public void OnMouseEnter(){
-		GameObject.FindObjectOfType<HoverOverScript> ().Show (name);
+		GameObject.FindObjectOfType<HoverOverScript> ().Show (eventName);
 	}
 	public void OnMouseExit(){
 		GameObject.FindObjectOfType<HoverOverScript> ().Unshow ();

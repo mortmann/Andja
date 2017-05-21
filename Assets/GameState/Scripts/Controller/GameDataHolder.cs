@@ -16,7 +16,7 @@ public class GameDataHolder : MonoBehaviour {
 	public bool[] catastrophics;
 	
 
-	public void Start(){
+	public void Awake(){
 		if(Instance!=null){
 			Destroy (this.gameObject);
 			return;
@@ -30,12 +30,11 @@ public class GameDataHolder : MonoBehaviour {
 	public void SetWidht(Text go){
 		width = int.Parse (go.text);
 	}
-	public string GetSaveGamesPath(){
-		//TODO FIXME change this to documentspath
-		return System.IO.Path.Combine(Application.dataPath.Replace ("/Assets","") , "saves");
-	}
 
-	public string GetSaveData(){
-		
+	public string GetSaveGameData(){
+		return "GDH";
+	}
+	public void LoadGameData(string data){
+		Debug.Log (data);
 	}
 }

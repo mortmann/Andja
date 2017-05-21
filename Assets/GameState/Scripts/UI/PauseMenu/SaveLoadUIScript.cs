@@ -18,7 +18,7 @@ public class SaveLoadUIScript : MonoBehaviour {
 		}
 		string directoryPath="";
 		if (GameDataHolder.Instance != null) {
-			directoryPath = GameDataHolder.Instance.GetSaveGamesPath ();
+			directoryPath = SaveController.Instance.GetSaveGamesPath ();
 		} else {
 			directoryPath = EditorController.Instance.GetSaveGamesPath ();
 		}

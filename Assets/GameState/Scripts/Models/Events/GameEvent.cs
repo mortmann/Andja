@@ -1,6 +1,9 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 using System;
+using System.Xml;
+using System.Xml.Schema;
+using System.Xml.Serialization;
 public class GameEvent {
 	public EventType EventType { protected set; get; }
 
@@ -140,5 +143,17 @@ public class GameEvent {
 
 	//TODO save the events 
 	//TODO LOAD THESE ALSO 
-	//DONT KNOW WHERE AND HOW EXACTLY THOUGH
+	#region save
+	public XmlSchema GetSchema() {
+		return null;
+	}
+
+	public void WriteXml(XmlWriter writer) {
+
+	}
+
+	public void ReadXml(XmlReader reader) {
+
+	}
+	#endregion
 }

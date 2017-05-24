@@ -6,7 +6,7 @@ using System.Xml.Schema;
 using System.Xml.Serialization;
 
 public class City : IXmlSerializable,IGEventable {
-	private static int TargetType = 12;
+	public const int TargetType = 12;
 
     //TODO: set this to the player that creates this
     public int playerNumber = 0;
@@ -500,5 +500,11 @@ public class City : IXmlSerializable,IGEventable {
 			} while(reader.ReadToNextSibling ("Structure"));
 		}
 
+	}
+
+	public void SaveIGE(XmlWriter writer){
+		writer.WriteAttributeString("TargetType", TargetType +"" );
+		writer.WriteAttributeString("Island", island.myTiles.ToString() +"" );
+		writer.WriteAttributeString("PlayerNumber", playerNumber +"" );
 	}
 }

@@ -13,7 +13,7 @@ public enum Direction {None, N, E, S, W};
 
 public abstract class Structure : IXmlSerializable,IGEventable {
 	#region variables
-	private static int TargetType = 100;
+	public const int TargetType = 100;
 
 	//prototype id
 	public int ID;
@@ -844,6 +844,11 @@ public abstract class Structure : IXmlSerializable,IGEventable {
 	public void BaseReadXml(XmlReader reader){
 		rotated = int.Parse( reader.GetAttribute("Rotated") );
 		buildID = int.Parse( reader.GetAttribute("BuildID") );
+	}
+	public void SaveIGE(XmlWriter writer){
+		writer.WriteAttributeString("TargetType", TargetType +"" );
+		writer.WriteAttributeString("BuildID", buildID +"" );
+		writer.WriteAttributeString("BuildTile", BuildTile.toString() +"" );
 	}
 	#endregion
 }

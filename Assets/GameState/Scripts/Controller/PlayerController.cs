@@ -35,11 +35,9 @@ public class PlayerController : MonoBehaviour {
 		players.Add (p); 
 		players.Add (new Player(1)); 
 		players.Add (new Player(2)); 
-		Debug.Log (ArePlayersAtWar (0,1));
-		Debug.Log (ArePlayersAtWar (1,2)); 
 		playerWars = new HashSet<KeyValuePair<int, int>> ();
-		playerWars.Add (new KeyValuePair<int, int>(0,1));
-		playerWars.Add (new KeyValuePair<int, int>(0,2));
+		AddPlayersWar (0,1);
+		AddPlayersWar (1,0);
 
 		balanceTicks = 5f;
 		tickTimer = balanceTicks;
@@ -160,12 +158,34 @@ public class PlayerController : MonoBehaviour {
 		reduceMoney (structure.buildcost,structure.playerID);
 	}
 	public bool ArePlayersAtWar(int pnum1,int pnum2){
+		if(pnum1 == pnum2){
+			return false; // LUL same player cant attack himself
+		}
 		if(pnum1==piratePlayerNumber||pnum2==piratePlayerNumber){
 			return true;//could add here be at peace with pirates through money 
 		}
-		return playerWars.Contains (new KeyValuePair<int, int>(pnum1,pnum2));
+		return playerWars.Contains (new KeyValuePair<int, int>(pnum1,pnum2))||//or
+			   playerWars.Contains (new KeyValuePair<int, int>(pnum2,pnum1));
 	}
-
+	public void AddPlayersWar(int pnum1,int pnum2){
+		if(pnum1 == pnum2){
+			return; // LUL same player cant attack himself
+		}
+		if(ArePlayersAtWar (pnum1,pnum2)){
+			return; // already at war no need for same to be added
+		}
+		playerWars.Add (new KeyValuePair<int, int>(pnum1,pnum2)); 
+	}
+	public void RemovePlayerWar(int pnum1, int pnum2){
+		if(pnum1 == pnum2){
+			return; // LUL same player cant attack himself
+		}
+		if(ArePlayersAtWar (pnum1,pnum2)==false){
+			return; // they werent at war to begin with
+		}
+		playerWars.RemoveWhere (x => x.Key == pnum1 && x.Value == pnum2 || //or
+									 x.Key == pnum2 && x.Value == pnum1);
+	}
 	public Player GetPlayer(int i){
 		if(i<0){
 			return null;

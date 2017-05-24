@@ -152,7 +152,12 @@ public class GameEvent {
 		writer.WriteElementString ("currentDuration", currentDuration +"");
 		writer.WriteElementString ("Range", Range +"");
 		writer.WriteStartElement ("IGEventable");
-		target.SaveIGE (writer);
+		if(target != null){
+			target.SaveIGE (writer);	
+		} else {
+			writer.WriteElementString ("TargetType","-1");
+		}
+
 //		writer.WriteElementString ("ID", target.);
 		writer.WriteEndElement ();
 	}

@@ -79,7 +79,8 @@ public class EventController : MonoBehaviour {
 			return;
 		}
 		//update and remove inactive events
-		for (ulong i = (ulong)idToActiveEvent.Count-1; i > 0; i--) {
+		List<ulong> ids = new List<ulong>(idToActiveEvent.Keys);
+		foreach (ulong i in ids) {
 			idToActiveEvent [i].Update (WorldController.Instance.DeltaTime);
 			if(idToActiveEvent [i].IsDone){
 				cbEventEnded (idToActiveEvent [i]);
@@ -232,7 +233,7 @@ public class EventController : MonoBehaviour {
 					GameEvent ge = new GameEvent();
 					//load the functions to it etc
 					int tt = int.Parse( reader.GetAttribute("TargetType") );
-					IGEventable target; 
+					IGEventable target = null; 
 					switch(tt){
 					case World.TargetType:
 						target = World.current;
@@ -253,6 +254,10 @@ public class EventController : MonoBehaviour {
 						Vector2 tileVec = Tile.ToStringToTileVector(tileTemp);
 						target = World.current.GetTileAt(tileVec.x,tileVec.y).myIsland;
 						break;
+					case -1:
+						//This case is the null case!
+						//if the target should be null the TargetType will be -1
+						break;
 					default: // Structure
 						if(tt<Structure.TargetType){
 							Debug.LogError("TargetType " + tt + " does not meet any programmed in!");
@@ -268,6 +273,7 @@ public class EventController : MonoBehaviour {
 						target = World.current.GetTileAt(vec2Tile.x,vec2Tile.y).Structure;
 						break;
 					}
+					ge.target = target;
 					idToActiveEvent.Add(id,ge);
 				} while( reader.Read () );
 			}

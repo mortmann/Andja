@@ -8,7 +8,7 @@ using System.Xml.Serialization;
 public enum Climate {Cold,Middle,Warm};
 
 public class Island : IXmlSerializable,IGEventable{
-	private static int TargetType = 11;
+	public const int TargetType = 11;
 
 	public Path_TileGraph tileGraphIslandTiles { get; protected set; }
 	public Path_TileGraph tileGraphAroundIslandTiles { get; protected set; }
@@ -115,6 +115,9 @@ public class Island : IXmlSerializable,IGEventable{
 //			Debug.LogWarning ("adding to wilderniss wanted?");
 		}
 		str.City.addStructure (str);
+	}
+	public City FindCityByPlayer(int playerNumber) {
+		return myCities.Find(x=> x.playerNumber == playerNumber);
 	}
 	public City CreateCity(int playerNumber) {
 		allReadyHighlighted = false;
@@ -237,5 +240,9 @@ public class Island : IXmlSerializable,IGEventable{
 				 
 			} while(reader.Read ());
 		}
+	}
+	public void SaveIGE(XmlWriter writer){
+		writer.WriteAttributeString("TargetType", TargetType +"" );
+		writer.WriteAttributeString("Island", myTiles.ToString() +"" );
 	}
 }

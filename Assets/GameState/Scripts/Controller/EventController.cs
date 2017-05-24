@@ -46,9 +46,9 @@ public enum InfluenceTyp {Building, Unit}
 */
 public class EventController : MonoBehaviour {
 	public static EventController Instance { get; protected set; }
-
+	private ulong lastID = 0;
 	Dictionary<EventType,GameEvent[]> typeToEvents;
-	Dictionary<int,GameEvent> idToActiveEvent;
+	Dictionary<ulong,GameEvent> idToActiveEvent;
 	//Every EventType has a chance to happen
 	Dictionary<EventType,float> chanceToEvent;
 
@@ -65,7 +65,7 @@ public class EventController : MonoBehaviour {
 		Instance = this;
 		var a = CreateReusableAction<GameEvent,bool,Structure> ("OutputStructure_Efficiency");
 		a (new GameEvent (),true,new MineStructure ());
-		idToActiveEvent = new Dictionary<int, GameEvent> ();
+		idToActiveEvent = new Dictionary<ulong, GameEvent> ();
 		chanceToEvent = new Dictionary<EventType, float> ();
 		typeToEvents = new Dictionary<EventType, GameEvent[]> ();
 	}
@@ -79,7 +79,7 @@ public class EventController : MonoBehaviour {
 			return;
 		}
 		//update and remove inactive events
-		for (int i = idToActiveEvent.Count-1; i > 0; i--) {
+		for (ulong i = (ulong)idToActiveEvent.Count-1; i > 0; i--) {
 			idToActiveEvent [i].Update (WorldController.Instance.DeltaTime);
 			if(idToActiveEvent [i].IsDone){
 				cbEventEnded (idToActiveEvent [i]);
@@ -95,25 +95,29 @@ public class EventController : MonoBehaviour {
 		EventType type = RandomType ();
 
 		GameEvent ge = RandomEvent (type);
-//		idToActiveEvent.Add (,ge);
+		//now find random the target of the GameEvent
+		switch(type){
+		case EventType.City:
+			break;
+		case EventType.Disaster:
+			break;
+		case EventType.Weather:
+			break;
+		case EventType.Production:
+			break;
+		case EventType.Quest:
+			Debug.LogWarning ("Not yet implemented");
+			break;
+		case EventType.Other:
+			Debug.LogWarning ("Not yet implemented");
+			break;
+		}
 		cbEventCreated(ge);
+
+		idToActiveEvent.Add (lastID,ge);
+		lastID++;
 		timeSinceLastEvent = 0;
-//		switch(type){
-//		case EventType.City:
-//			break;
-//		case EventType.Disaster:
-//			break;
-//		case EventType.Weather:
-//			break;
-//		case EventType.Production:
-//			break;
-//		case EventType.Quest:
-//			Debug.LogWarning ("Not yet implemented");
-//			break;
-//		case EventType.Other:
-//			Debug.LogWarning ("Not yet implemented");
-//			break;
-//		}
+
 	} 
 	bool RandomIf(){
 		timeSinceLastEvent += WorldController.Instance.DeltaTime;
@@ -192,8 +196,8 @@ public class EventController : MonoBehaviour {
 	}
 
 	public class GameEventSave : IXmlSerializable {
-		public Dictionary<int,GameEvent> idToActiveEvent;
-		public GameEventSave(Dictionary<int,GameEvent> idToActiveEvent ){
+		public Dictionary<ulong,GameEvent> idToActiveEvent;
+		public GameEventSave(Dictionary<ulong,GameEvent> idToActiveEvent ){
 			this.idToActiveEvent = idToActiveEvent;
 		}
 		public GameEventSave(){
@@ -206,7 +210,7 @@ public class EventController : MonoBehaviour {
 
 		public void WriteXml(XmlWriter writer) {
 
-			foreach(int p in idToActiveEvent.Keys){
+			foreach(ulong p in idToActiveEvent.Keys){
 				writer.WriteStartElement ("GameEvent");
 				writer.WriteAttributeString ("ID", p + "");
 				idToActiveEvent[p].WriteXml (writer);
@@ -224,9 +228,46 @@ public class EventController : MonoBehaviour {
 						}
 						continue;
 					}	
-					int id = int.Parse( reader.GetAttribute("ID") );
+					ulong id = ulong.Parse( reader.GetAttribute("ID") );
 					GameEvent ge = new GameEvent();
 					//load the functions to it etc
+					int tt = int.Parse( reader.GetAttribute("TargetType") );
+					IGEventable target; 
+					switch(tt){
+					case World.TargetType:
+						target = World.current;
+						break;
+					case City.TargetType:
+						string tile = reader.GetAttribute("Island");
+						Vector2 vec2 = Tile.ToStringToTileVector(tile);
+						Island i = World.current.GetTileAt(vec2.x,vec2.y).myIsland;
+						int player = int.Parse( reader.GetAttribute("PlayerNumber") );
+						target = i.FindCityByPlayer(player);
+						break;
+					case Player.TargetType:
+						int pnum = int.Parse( reader.GetAttribute("PlayerNumber") );
+						PlayerController.Instance.GetPlayer(pnum);
+						break;
+					case Island.TargetType:
+						string tileTemp = reader.GetAttribute("Island");
+						Vector2 tileVec = Tile.ToStringToTileVector(tileTemp);
+						target = World.current.GetTileAt(tileVec.x,tileVec.y).myIsland;
+						break;
+					default: // Structure
+						if(tt<Structure.TargetType){
+							Debug.LogError("TargetType " + tt + " does not meet any programmed in!");
+							return;
+						}
+						int strBuildID = int.Parse( reader.GetAttribute("BuildID") );
+						string tileString = reader.GetAttribute("Island");
+						Vector2 vec2Tile = Tile.ToStringToTileVector(tileString);
+						if(World.current.GetTileAt(vec2.x,vec2.y).Structure.buildID != strBuildID){
+							Debug.Log ("BuildID doesnt match up.");
+							continue;
+						}
+						target = World.current.GetTileAt(vec2Tile.x,vec2Tile.y).Structure;
+						break;
+					}
 					idToActiveEvent.Add(id,ge);
 				} while( reader.Read () );
 			}

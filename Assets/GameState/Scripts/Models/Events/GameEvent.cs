@@ -149,7 +149,12 @@ public class GameEvent {
 	}
 
 	public void WriteXml(XmlWriter writer) {
-
+		writer.WriteElementString ("currentDuration", currentDuration +"");
+		writer.WriteElementString ("Range", Range +"");
+		writer.WriteStartElement ("IGEventable");
+		target.SaveIGE (writer);
+//		writer.WriteElementString ("ID", target.);
+		writer.WriteEndElement ();
 	}
 
 	public void ReadXml(XmlReader reader) {

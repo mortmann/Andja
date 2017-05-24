@@ -6,7 +6,7 @@ using System.Xml.Schema;
 using System.Xml.Serialization;
 
 public class Player : IXmlSerializable,IGEventable {
-	private static int TargetType = 1;
+	public const int TargetType = 1;
 
 	Action<GameEvent> cbEventCreated;
 	Action<GameEvent> cbEventEnded;
@@ -111,6 +111,10 @@ public class Player : IXmlSerializable,IGEventable {
 		maxPopulationCount = int.Parse( reader.GetAttribute("maxPopulationCount") );
 		maxPopulationLevel = int.Parse( reader.GetAttribute("maxPopulationLevel") );
 
+	}
+	public void SaveIGE(XmlWriter writer){
+		writer.WriteAttributeString("TargetType", TargetType +"" );
+		writer.WriteAttributeString("PlayerNumber", playerNumber +"" );
 	}
 	#endregion
 

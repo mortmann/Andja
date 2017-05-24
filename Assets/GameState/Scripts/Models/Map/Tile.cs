@@ -254,7 +254,20 @@ public class Tile : IXmlSerializable {
 		return null;
 	}
 	public String toString() {
-		return "tile_" + X + "_" + Y+"-("+Type+")";
+		return "tile_" + X + "_" + Y+"_"+Type+"";
+	}
+	public static Vector2 ToStringToTileVector(String tileToString){
+		string[] datas = tileToString.Split ('_');
+		if(datas.Length != 3){
+			Debug.LogError ("Tried to call this with a wrong string.");
+			return Vector2.zero;
+		}
+		if(datas[0]!="tile"){
+			Debug.LogError ("Tried to call this without a correct tile string.");
+			return Vector2.zero;
+		}
+		return new Vector2 (int.Parse (datas [1]), int.Parse (datas [2]));
+
 	}
 	//////////////////////////////////////////////////////////////////////////////////////
 	/// 

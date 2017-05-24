@@ -7,7 +7,7 @@ using System.Xml.Schema;
 using System.Xml.Serialization;
 
 public class World : IXmlSerializable,IGEventable{
-	private static int TargetType = 10;
+	public const int TargetType = 10;
 
     public Tile[,] tiles { get; protected set; }
     public int Width { get; protected set; }
@@ -417,6 +417,9 @@ public class World : IXmlSerializable,IGEventable{
 				u.ReadXml(reader);
 			} while( reader.Read () );
 		}
+	}
+	public void SaveIGE(XmlWriter writer){
+		writer.WriteAttributeString("TargetType", TargetType +"" );
 	}
 	#endregion
 }

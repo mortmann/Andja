@@ -24,8 +24,8 @@ using System.IO;
 /// Event type. Specify which kind of Event happens.
 /// TODO: TO DECIDE IF QUEST ARE HANDLED HERE
 /// </summary>
-public enum EventType {Weather, City, Production, Quest,  Disaster, Other }
-public enum InfluenceRange {World, Island, City, Range, Player }
+public enum EventType {Weather, City, Structure, Quest,  Disaster, Other }
+public enum InfluenceRange {World, Island, City, Structure, Range, Player }
 public enum InfluenceTyp {Building, Unit}
 
 /*
@@ -56,15 +56,17 @@ public class EventController : MonoBehaviour {
 	Action<GameEvent> cbEventEnded;
 
 	float timeSinceLastEvent=0;
-
+	World world;
 	// Use this for initialization
 	void Awake () {
 		if (Instance != null) {
-			Debug.LogError("There should never be two event controllers.");
+			Debug.LogError ("There should never be two event controllers.");
 		}
 		Instance = this;
-		var a = CreateReusableAction<GameEvent,bool,Structure> ("OutputStructure_Efficiency");
-		a (new GameEvent (),true,new MineStructure ());
+	}
+	void Start() {
+//		var a = CreateReusableAction<GameEvent,bool,Structure> ("OutputStructure_Efficiency");
+		world = World.current;
 		idToActiveEvent = new Dictionary<ulong, GameEvent> ();
 		chanceToEvent = new Dictionary<EventType, float> ();
 		typeToEvents = new Dictionary<EventType, GameEvent[]> ();
@@ -92,19 +94,48 @@ public class EventController : MonoBehaviour {
 			return;
 		}
 
-		//TODO Randomize which event it is better
-		EventType type = RandomType ();
 
-		GameEvent ge = RandomEvent (type);
+//		cbEventCreated(ge);
+//
+//		idToActiveEvent.Add (lastID,ge);
+//		ge.StartEvent (Vector2.zero);
+//		lastID++;
+//		timeSinceLastEvent = 0;
+
+	} 
+
+	public void CreateRandomEvent(){
+		//TODO Randomize which event it is better
+		CreateRandomTypeEvent (RandomType ());
+	}
+	public void CreateRandomTypeEvent(EventType type){
 		//now find random the target of the GameEvent
+		CreateGameEvent( RandomEvent (type) );
+
+	}
+	public void CreateGameEvent(GameEvent ge){
+		//fill the type
+
+	}
+	IGEventable GetEventTargetForEventType(EventType type){
+		IGEventable ige = null;
+		//some times should be target all cities...
+		//idk how todo do it tho...
+//		int r = Random.
+
 		switch(type){
 		case EventType.City:
+			List<City> cities = new List<City> ();
+			foreach (Island item in world.islandList) {
+				cities.AddRange (item.myCities);
+			}
 			break;
 		case EventType.Disaster:
 			break;
 		case EventType.Weather:
 			break;
-		case EventType.Production:
+		case EventType.Structure:
+
 			break;
 		case EventType.Quest:
 			Debug.LogWarning ("Not yet implemented");
@@ -113,17 +144,13 @@ public class EventController : MonoBehaviour {
 			Debug.LogWarning ("Not yet implemented");
 			break;
 		}
-		cbEventCreated(ge);
-
-		idToActiveEvent.Add (lastID,ge);
-		lastID++;
-		timeSinceLastEvent = 0;
-
-	} 
+		return ige;
+	}
 	bool RandomIf(){
 		timeSinceLastEvent += WorldController.Instance.DeltaTime;
 		return UnityEngine.Random.Range (0.2f, 1.5f) *(Mathf.Exp ((1/180)*timeSinceLastEvent)-1) > 1;
 	}
+
 	GameEvent RandomEvent(EventType type){
 		GameEvent[] ges = typeToEvents [type];
 		//TODO move this to the load -> dic<type,sum>
@@ -189,6 +216,8 @@ public class EventController : MonoBehaviour {
 		return writer.ToString();
 	}
 	public void LoadGameEventData(string data){
+		XmlSerializer s = new XmlSerializer( typeof() );
+		UnityEngine.Random.
 		XmlSerializer serializer = new XmlSerializer( typeof(GameEventSave) );
 		TextReader reader = new StringReader( data );
 		GameEventSave gcs = (GameEventSave)serializer.Deserialize(reader);

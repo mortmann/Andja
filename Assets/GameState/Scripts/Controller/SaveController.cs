@@ -45,7 +45,6 @@ public class SaveController : MonoBehaviour {
 		}
 		FileStream saveStream = File.Create (System.IO.Path.Combine( GetSaveGamesPath() , name + ".sav" ));
 		StreamWriter writer = new StreamWriter (saveStream);
-		Debug.Log (writer + " " + gdh);
 		writer.WriteLine (Regex.Replace(gdh.GetSaveGameData(), @"\s+", " "));
 		writer.WriteLine (Regex.Replace(pc.GetSavePlayerData(), @"\s+", " "));
 		writer.WriteLine (Regex.Replace(wc.GetSaveWorldData(), @"\s+", " "));

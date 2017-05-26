@@ -12,7 +12,7 @@ public class Player : IXmlSerializable,IGEventable {
 	Action<GameEvent> cbEventEnded;
 	List<City> myCities;
 	public int change { get; protected set;} //should be calculated after reload anyway
-	public int balance { get; protected set;} //also be calculated after reload
+	public int balance { get; protected set;} 
 	// because only the new level popcount is interesting
 	// needs to be saved because you can lose pop due
 	// war or death and only the highest ever matters here 
@@ -105,11 +105,14 @@ public class Player : IXmlSerializable,IGEventable {
 	public void WriteXml(XmlWriter writer) {
 		writer.WriteElementString ("maxPopulationLevel",this.maxPopulationLevel+"");
 		writer.WriteElementString ("maxPopulationCount",this.maxPopulationCount+"");
+		writer.WriteElementString ("balance",this.balance+"");
+
 	}
 
 	public void ReadXml(XmlReader reader) {
 		maxPopulationCount = int.Parse( reader.GetAttribute("maxPopulationCount") );
 		maxPopulationLevel = int.Parse( reader.GetAttribute("maxPopulationLevel") );
+		balance = int.Parse( reader.GetAttribute("balance") );
 
 	}
 	public void SaveIGE(XmlWriter writer){

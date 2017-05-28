@@ -18054,7 +18054,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9581abfa09f94c9449eaf47238dd26c9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  listPrefab: {fileID: 0}
+  listPrefab: {fileID: 119214, guid: 8061fbc91f3a42d4a8ca82b14181dbd2, type: 2}
   canvasGO: {fileID: 1524291127}
   saveGameInput: {fileID: 0}
 --- !u!114 &926121493

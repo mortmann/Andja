@@ -29,10 +29,10 @@ public class WorldController : MonoBehaviour {
 
 	public bool IsModal; // If true, a modal dialog box is open so normal inputs should be ignored.
     // Use this for initialization
-    void OnEnable() {
-        if (Instance != null) {
-            Debug.LogError("There should never be two world controllers.");
-        }
+    void Awake() {
+		if (Instance != null) {
+			Debug.LogError ("There should never be two world controllers.");
+		}
 		Instance = this;
 
 		GameDataHolder gdh = GameDataHolder.Instance;
@@ -40,8 +40,8 @@ public class WorldController : MonoBehaviour {
 		offworldMarket = new OffworldMarket ();
 
 		if (gdh!=null && gdh.loadsavegame!=null && gdh.loadsavegame.Length > 0) {
-			LoadWorldData (gdh.loadsavegame);
-			gdh.loadsavegame = null;
+//			SaveController.Instance.LoadGameState (gdh.loadsavegame);
+//			gdh.loadsavegame = null;
 		} else {
 			if (gdh != null) {
 				this.world = new World (gdh.width, gdh.height);

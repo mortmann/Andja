@@ -67,8 +67,8 @@ public class EventController : MonoBehaviour {
 		float y = 0;
 		float s = 10;
 		for (int i = 0; i < s; i++) {
-			x +=(UnityEngine.Random.Range(0,2) * 500 + CalcParabolaVertex (500, 750, UnityEngine.Random.Range (0, 500)));
-			y +=(UnityEngine.Random.Range(0,2) * 500 + CalcParabolaVertex (500, 750, UnityEngine.Random.Range (0, 500)));
+			x +=(UnityEngine.Random.Range(0,2) * 500 + GetWeightedYFromRandomX (500, 750, UnityEngine.Random.Range (0, 500)));
+			y +=(UnityEngine.Random.Range(0,2) * 500 + GetWeightedYFromRandomX (500, 750, UnityEngine.Random.Range (0, 500)));
 		}
 		x /= s;
 		y /= s;
@@ -219,7 +219,7 @@ public class EventController : MonoBehaviour {
 		return iges [UnityEngine.Random.Range (0, iges.Count - 1)];
 	}
 
-	public float CalcParabolaVertex(float size,float dist, float randomX) {
+	public float GetWeightedYFromRandomX(float size,float dist, float randomX) {
 		float x1 = 0f; 
 		float y1 = 0f; 
 		float x2 = dist;
@@ -235,8 +235,8 @@ public class EventController : MonoBehaviour {
 	}
 	public Vector2 GetRandomVector2(){
 		Vector2 vec = new Vector2 ();
-		vec.x =(UnityEngine.Random.Range(0,2) * 500 + CalcParabolaVertex (500, 750, UnityEngine.Random.Range (0, 500)));
-		vec.y =(UnityEngine.Random.Range(0,2) * 500 + CalcParabolaVertex (500, 750, UnityEngine.Random.Range (0, 500)));
+		vec.x =(UnityEngine.Random.Range(0,2) * 500 + GetWeightedYFromRandomX (500, 750, UnityEngine.Random.Range (0, 500)));
+		vec.y =(UnityEngine.Random.Range(0,2) * 500 + GetWeightedYFromRandomX (500, 750, UnityEngine.Random.Range (0, 500)));
 		return vec;
 	}
 	public static Action<TParam1> CreateReusableAction<TParam1>(string methodName) {

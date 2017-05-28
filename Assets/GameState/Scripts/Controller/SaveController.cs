@@ -29,6 +29,10 @@ public class SaveController : MonoBehaviour {
 		cc = CameraController.Instance;
 		gdh = GameDataHolder.Instance;
 		pc = PlayerController.Instance;
+		if (gdh!=null && gdh.loadsavegame!=null && gdh.loadsavegame.Length > 0) {
+			SaveController.Instance.LoadGameState (gdh.loadsavegame);
+			gdh.loadsavegame = null;
+		}
 //		LoadGameState ("sae");
 	}
 	public void Update(){
@@ -43,15 +47,24 @@ public class SaveController : MonoBehaviour {
 		if(wasPaused==false){
 			wc.IsPaused = true;
 		}
-		FileStream saveStream = File.Create (System.IO.Path.Combine( GetSaveGamesPath() , name + ".sav" ));
-		StreamWriter writer = new StreamWriter (saveStream);
-		writer.WriteLine (Regex.Replace(gdh.GetSaveGameData(), @"\s+", " "));
-		writer.WriteLine (Regex.Replace(pc.GetSavePlayerData(), @"\s+", " "));
-		writer.WriteLine (Regex.Replace(wc.GetSaveWorldData(), @"\s+", " "));
-		writer.WriteLine (Regex.Replace(ec.GetSaveGameEventData(), @"\s+", " "));
-		writer.WriteLine (Regex.Replace(cc.GetSaveCamera(), @"\s+", " "));
-		writer.Flush ();
-		writer.Close ();
+		string path = System.IO.Path.Combine (GetSaveGamesPath (), name + ".sav");
+		string[] strings = new string[5];
+		strings[0] = (gdh.GetSaveGameData());
+		strings[1] =  (pc.GetSavePlayerData ());
+		strings[2] =  (wc.GetSaveWorldData ());
+		strings[3] =  (ec.GetSaveGameEventData ());
+		strings[4] = (cc.GetSaveCamera ());
+
+		System.IO.File.WriteAllText(path, JsonUtil.arrayToJson<string> (strings));
+//		FileStream saveStream = File.Create (System.IO.Path.Combine( GetSaveGamesPath() , name + ".sav" ));
+//		StreamWriter writer = new StreamWriter (saveStream);
+//		writer.WriteLine (Regex.Replace(gdh.GetSaveGameData(), @"\s+", " "));
+//		writer.WriteLine (Regex.Replace(pc.GetSavePlayerData(), @"\s+", " "));
+//		writer.WriteLine (Regex.Replace(wc.GetSaveWorldData(), @"\s+", " "));
+//		writer.WriteLine (Regex.Replace(ec.GetSaveGameEventData(), @"\s+", " "));
+//		writer.WriteLine (Regex.Replace(cc.GetSaveCamera(), @"\s+", " "));
+//		writer.Flush ();
+//		writer.Close ();
 //		string temp = FileUtil.GetUniqueTempPathInProject ();
 //		System.IO.File.WriteAllText(temp +"world.temp", wc.SaveWorld());
 //		System.IO.File.WriteAllText(temp +"event.temp", ec.SaveEvent());
@@ -72,14 +85,20 @@ public class SaveController : MonoBehaviour {
 		if(wasPaused==false){
 			wc.IsPaused = true;
 		}
-		FileStream readStream = File.OpenRead (System.IO.Path.Combine( GetSaveGamesPath() , name + ".sav" ));
-		StreamReader reader = new StreamReader (readStream);
-		gdh.LoadGameData(reader.ReadLine ()); // gamedata
-		pc.LoadPlayerData(reader.ReadLine ()); // player
-		wc.LoadWorldData (reader.ReadLine ()); // world
-		ec.LoadGameEventData(reader.ReadLine ()); // event
-		cc.LoadSaveCameraData(reader.ReadLine ()); // camera
-		reader.Close ();
+		string alllines = System.IO.File.ReadAllText (System.IO.Path.Combine (GetSaveGamesPath (), name + ".sav"));
+		Debug.Log (alllines); 
+		string[] lines = JsonUtil.getJsonArray<string> (alllines);
+		foreach (var item in lines) {
+			Debug.Log (item); 
+		}
+//		FileStream readStream = File.OpenRead (System.IO.Path.Combine( GetSaveGamesPath() , name + ".sav" ));
+//		StreamReader reader = new StreamReader (readStream);
+		gdh.LoadGameData(lines[0]); // gamedata
+		pc.LoadPlayerData(lines[1]); // player
+		wc.LoadWorldData (lines[2]); // world
+		ec.LoadGameEventData(lines[3]); // event
+		cc.LoadSaveCameraData(lines[4]); // camera
+//		reader.Close ();
 
 		if(wasPaused == false){
 			wc.IsPaused = false;

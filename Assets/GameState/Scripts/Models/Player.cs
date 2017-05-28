@@ -110,8 +110,8 @@ public class Player : IXmlSerializable,IGEventable {
 	}
 
 	public void ReadXml(XmlReader reader) {
-		maxPopulationCount = int.Parse( reader.GetAttribute("maxPopulationCount") );
 		maxPopulationLevel = int.Parse( reader.GetAttribute("maxPopulationLevel") );
+		maxPopulationCount = int.Parse( reader.GetAttribute("maxPopulationCount") );
 		balance = int.Parse( reader.GetAttribute("balance") );
 
 	}

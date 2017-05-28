@@ -20,7 +20,7 @@ public abstract class Structure : IXmlSerializable,IGEventable {
 	//player id
 	public int playerID;
 	//build id -- when it was build
-	public int buildID;
+	public uint buildID;
 
 	public string name;
 	public string SmallName { get { return name.ToLower ();} }
@@ -843,7 +843,7 @@ public abstract class Structure : IXmlSerializable,IGEventable {
 	}
 	public void BaseReadXml(XmlReader reader){
 		rotated = int.Parse( reader.GetAttribute("Rotated") );
-		buildID = int.Parse( reader.GetAttribute("BuildID") );
+		buildID = uint.Parse( reader.GetAttribute("BuildID") );
 	}
 	public void SaveIGE(XmlWriter writer){
 		writer.WriteAttributeString("TargetType", TargetType +"" );

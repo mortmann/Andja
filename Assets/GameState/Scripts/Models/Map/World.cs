@@ -345,7 +345,7 @@ public class World : IXmlSerializable,IGEventable{
 
 		Width = int.Parse( reader.GetAttribute("Width") );
 		Height = int.Parse( reader.GetAttribute("Height") );
-		BuildController.Instance.buildID = int.Parse( reader.GetAttribute("BuildID") );
+		BuildController.Instance.buildID = uint.Parse( reader.GetAttribute("BuildID") );
 		SetupWorld(Width, Height);
 		while(reader.Read()) {
 			switch(reader.Name) {

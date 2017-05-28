@@ -2,77 +2,69 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-
+using System;
 public class InputHandler {
 
-	static Dictionary<string,KeyCode> primaryNameToKey;
-	static Dictionary<string,KeyCode> secondaryNameToKey;
+	static Dictionary<string,KeyBind> nameToKeyBinds;
 	static string fileName="keybinds.ini";
 
 
 	// Use this for initialization
 	public InputHandler () {
-		primaryNameToKey = new Dictionary<string, KeyCode> ();
-		secondaryNameToKey = new Dictionary<string, KeyCode> ();
-//		SaveInputSchema (Application.dataPath.Replace ("/Assets",""));
+		nameToKeyBinds = new Dictionary<string, KeyBind> ();
 		LoadInputSchema (Application.dataPath.Replace ("/Assets",""));
 		SetupKeyBinds ();
 
 	}
-	public static Dictionary<string,KeyCode> GetPrimaryBinds(){
-		return primaryNameToKey;
+	public static Dictionary<string,KeyBind> GetBinds(){
+		return nameToKeyBinds;
 	}
-	public static Dictionary<string,KeyCode> GetSecondaryBinds(){
-		return secondaryNameToKey;
-	}
+
 	private void SetupKeyBinds(){
-		if(primaryNameToKey.Count>0){
+		if(nameToKeyBinds.Count>0){
 			return;
 		}
-		primaryNameToKey.Add ("BuildMenu",KeyCode.B);
-		primaryNameToKey.Add ("TradeMenu",KeyCode.M);
-		primaryNameToKey.Add ("Offworld",KeyCode.O);
-		primaryNameToKey.Add ("TogglePause",KeyCode.Space);
-		primaryNameToKey.Add ("Rotate",KeyCode.R); 
+		nameToKeyBinds.Add ("BuildMenu",new KeyBind("BuildMenu", KeyCode.B, KeyBind.notSetCode) );
+		nameToKeyBinds.Add ("TradeMenu",new KeyBind("TradeMenu", KeyCode.M, KeyBind.notSetCode));
+		nameToKeyBinds.Add ("Offworld",new KeyBind("Offworld", KeyCode.O, KeyBind.notSetCode));
+		nameToKeyBinds.Add ("TogglePause",new KeyBind("TogglePause", KeyCode.Space, KeyBind.notSetCode));
+		nameToKeyBinds.Add ("Rotate",new KeyBind("Rotate", KeyCode.R, KeyBind.notSetCode)); 
 	}	
 	public static void ChangePrimaryNameToKey(string name, KeyCode key){
-		if(primaryNameToKey.ContainsKey (name)){
-			primaryNameToKey [name] = key;
+		if(nameToKeyBinds.ContainsKey (name)){
+			nameToKeyBinds [name].SetPrimary (key);
 			return;
 		}
-		primaryNameToKey.Add (name,key);
+		nameToKeyBinds.Add (name,new KeyBind (name, key, KeyBind.notSetCode));
+
 	}
 	public static void ChangeSecondaryNameToKey(string name, KeyCode key){
-		if(secondaryNameToKey.ContainsKey (name)){
-			secondaryNameToKey [name] = key;
+		if(nameToKeyBinds.ContainsKey (name)){
+			nameToKeyBinds [name].SetSecondary (key);
 			return;
 		}
-		secondaryNameToKey.Add (name,key);
+		nameToKeyBinds.Add (name,new KeyBind (name, KeyBind.notSetCode , key));
+
 	}
 	public static bool GetButtonDown(string name){
-		if(primaryNameToKey.ContainsKey (name)==false){
-			if(secondaryNameToKey.ContainsKey (name)==false){
-				Debug.LogWarning ("No Key found with name " + name);
-				return false;
-			}
-			return Input.GetKeyDown (secondaryNameToKey[name]);
+		if (nameToKeyBinds.ContainsKey (name) == false) {	
+			Debug.LogWarning ("No KeyBind for Name " + name);
+			return false;
 		}
-		return Input.GetKeyDown (primaryNameToKey[name]);
+		return nameToKeyBinds[name].GetButtonDown();
 	}
 
 	public static bool GetButton (string name){
-		if(primaryNameToKey.ContainsKey (name)==false){
-			if(secondaryNameToKey.ContainsKey (name)==false){
-				Debug.LogWarning ("No Key found with name " + name);
-				return false;
-			}
-			return Input.GetKey (secondaryNameToKey[name]);
+		if (nameToKeyBinds.ContainsKey (name) == false) {	
+			Debug.LogWarning ("No KeyBind for Name " + name);
+			return false;
 		}
-		return Input.GetKey (primaryNameToKey[name]);
+		return nameToKeyBinds[name].GetButton();
 	}
 
 
-	public static void SaveInputSchema(string path){
+	public static void SaveInputSchema(){
+		string path = Application.dataPath.Replace ("/Assets", "");
 		if( Directory.Exists(path ) == false ) {
 			// NOTE: This can throw an exception if we can't create the folder,
 			// but why would this ever happen? We should, by definition, have the ability
@@ -81,44 +73,121 @@ public class InputHandler {
 			Directory.CreateDirectory( path  );
 		}
 		string filePath = System.IO.Path.Combine(path,fileName) ;
-		StringWriter writer = new StringWriter ();
-		List<string> keys = new List<string> (primaryNameToKey.Keys);
-		keys.AddRange (secondaryNameToKey.Keys);
-		foreach (string key in keys.Distinct()) {
-			if(primaryNameToKey.ContainsKey (key)){
-				writer.Write (key);
-				writer.WriteLine (":"+primaryNameToKey[key]);
-			}
-			if(secondaryNameToKey.ContainsKey (key)){
-				writer.Write (key);
-				writer.WriteLine (":"+secondaryNameToKey[key]);
-			}
-		}	
-		File.WriteAllText( filePath, writer.ToString() );
+//		StringWriter writer = new StringWriter ();
+//		List<string> keys = new List<string> (primaryNameToKey.Keys);
+//		keys.AddRange (secondaryNameToKey.Keys);
+//		foreach (string key in keys.Distinct()) {
+//			if(primaryNameToKey.ContainsKey (key)){
+//				writer.Write (key);
+//				writer.WriteLine (":"+primaryNameToKey[key]);
+//			}
+//			if(secondaryNameToKey.ContainsKey (key)){
+//				writer.Write (key);
+//				writer.WriteLine (":"+secondaryNameToKey[key]);
+//			}
+//		}	
+		KeyBind[] binds = new KeyBind[nameToKeyBinds.Count];
+		nameToKeyBinds.Values.CopyTo (binds, 0);
+		File.WriteAllText( filePath, JsonUtil.arrayToJson<KeyBind>(binds));
 	}
 	public static void LoadInputSchema(string path){
 		string filePath = System.IO.Path.Combine(path,fileName) ;
 		if(File.Exists (filePath)==false){
 			return;
 		}
-		string[] lines = File.ReadAllLines (filePath);
-		foreach(string line in lines){
-			string[] split = line.Split (':');
-			if(split.Length!=2){
-				continue;
+		nameToKeyBinds = new Dictionary<string, KeyBind> ();
+		string lines = File.ReadAllText (filePath);
+		KeyBind[] binds = JsonUtil.getJsonArray<KeyBind> (lines);
+		foreach (KeyBind item in binds) {
+			nameToKeyBinds.Add (item.name, item);
+		}
+//		foreach(string line in lines){
+//			string[] split = line.Split (':');
+//			if(split.Length!=2){
+//				continue;
+//			}
+//			split[0]=split[0].Trim();
+//			split[1]=split[1].Trim();
+//			if(primaryNameToKey.ContainsKey (split[0])){
+//				if(secondaryNameToKey.ContainsKey (split[0])){
+//					continue;
+//				}
+//				secondaryNameToKey.Add (split[0],(KeyCode)System.Enum.Parse (typeof(KeyCode), split[1],true));
+//				continue;
+//			}
+//			primaryNameToKey.Add (split[0],(KeyCode)System.Enum.Parse (typeof(KeyCode), split[1],true)); 
+//		}
+
+	}
+	[Serializable]  
+	public class KeyBind {
+		public const KeyCode notSetCode = KeyCode.Exclaim;
+
+		public string name;
+		/// <summary>
+		/// DO NOT SET DIRECTLY
+		/// </summary>
+		[SerializeField]
+		KeyCode primary = KeyCode.Exclaim;
+		/// <summary>
+		/// DO NOT SET DIRECTLY
+		/// </summary>
+		[SerializeField]
+		KeyCode secondary = KeyCode.Exclaim;
+
+		public KeyBind(){
+			
+		}
+		public KeyBind(string name, KeyCode primary, KeyCode secondary){
+			this.name = name;
+			this.primary = primary;
+			this.secondary = secondary;
+		}
+		public String GetPrimaryString(){
+			if(primary == KeyCode.Exclaim){
+				return "-";
 			}
-			split[0]=split[0].Trim();
-			split[1]=split[1].Trim();
-			if(primaryNameToKey.ContainsKey (split[0])){
-				if(secondaryNameToKey.ContainsKey (split[0])){
-					continue;
-				}
-				secondaryNameToKey.Add (split[0],(KeyCode)System.Enum.Parse (typeof(KeyCode), split[1],true));
-				continue;
+			return primary.ToString ();
+		}
+		public String GetSecondaryString(){
+			if(secondary == KeyCode.Exclaim){
+				return "-";
 			}
-			primaryNameToKey.Add (split[0],(KeyCode)System.Enum.Parse (typeof(KeyCode), split[1],true)); 
+			return secondary.ToString ();
+		}
+		public bool SetPrimary(KeyCode k){
+			if(k == KeyCode.Exclaim){
+				return false;
+			}
+			primary = k;
+			return true;
+		}
+		public bool SetSecondary(KeyCode k){
+			if(k == KeyCode.Exclaim){
+				return false;
+			}
+			secondary = k;
+			return true;
+		}
+		public bool GetButtonDown(){
+			if(primary != notSetCode){
+				return Input.GetKeyDown (primary);
+			}
+			if(secondary != notSetCode){
+				return Input.GetKeyDown (secondary);
+			}
+			return false;
 		}
 
+		public bool GetButton(){
+			if(primary != notSetCode){
+				return Input.GetKey (primary);
+			}
+			if(secondary != notSetCode){
+				return Input.GetKey (secondary);
+			}
+			return false;
+		}
 	}
 
 }

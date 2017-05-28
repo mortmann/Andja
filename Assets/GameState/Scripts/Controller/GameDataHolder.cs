@@ -8,8 +8,8 @@ public class GameDataHolder : MonoBehaviour {
 	public int height=100;
 	public int width=100;
 	public string loadsavegame;
-	public string mapname;//for future when tiles are in a diffrent file
-	public int[] bots; // this is for so 
+	public string mapname; //for future when tiles are in a diffrent file
+	public int[] bots; // this is for from being in anykind relevant so 
 	public int playerCount=1;
 	public bool pirates=true;
 	public bool fire=true;

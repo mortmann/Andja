@@ -139,5 +139,13 @@ public class WorldController : MonoBehaviour {
 		BuildController.Instance.PlaceAllLoadedStructure ();
 		Debug.Log ("LOAD ENDED");
 	}
-		
+
+	public void LoadWorldTilesFromWorldFile(string mapname){
+		string path = System.IO.Path.Combine (Application.dataPath.Replace ("/Assets", ""), "maps");
+		if(Directory.Exists(path) == false){
+			Directory.CreateDirectory (path);
+		}
+		string lines = File.ReadAllText (System.IO.Path.Combine( path , name + ".map" ));
+		//read tiles here
+	}
 }

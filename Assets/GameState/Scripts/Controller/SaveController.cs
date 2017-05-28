@@ -72,8 +72,8 @@ public class SaveController : MonoBehaviour {
 		if(wasPaused==false){
 			wc.IsPaused = true;
 		}
-		FileStream saveStream = File.OpenRead (System.IO.Path.Combine( GetSaveGamesPath() , name + ".sav" ));
-		StreamReader reader = new StreamReader (saveStream);
+		FileStream readStream = File.OpenRead (System.IO.Path.Combine( GetSaveGamesPath() , name + ".sav" ));
+		StreamReader reader = new StreamReader (readStream);
 		gdh.LoadGameData(reader.ReadLine ()); // gamedata
 		pc.LoadPlayerData(reader.ReadLine ()); // player
 		wc.LoadWorldData (reader.ReadLine ()); // world

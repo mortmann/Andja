@@ -25,7 +25,7 @@ using System.IO;
 /// TODO: TO DECIDE IF QUEST ARE HANDLED HERE
 /// </summary>
 public enum EventType {Weather, City, Structure, Quest,  Disaster, Other }
-public enum InfluenceRange {World, Island, City, Structure, Range, Player }
+public enum InfluenceRange {World, Island, City, Structure, Range, Player } 
 public enum InfluenceTyp {Building, Unit}
 
 /*
@@ -46,9 +46,9 @@ public enum InfluenceTyp {Building, Unit}
 */
 public class EventController : MonoBehaviour {
 	public static EventController Instance { get; protected set; }
-	private ulong lastID = 0;
+	private uint lastID = 0;
 	Dictionary<EventType,GameEvent[]> typeToEvents;
-	Dictionary<ulong,GameEvent> idToActiveEvent;
+	Dictionary<uint,GameEvent> idToActiveEvent;
 	//Every EventType has a chance to happen
 	Dictionary<EventType,float> chanceToEvent;
 
@@ -63,11 +63,23 @@ public class EventController : MonoBehaviour {
 			Debug.LogError ("There should never be two event controllers.");
 		}
 		Instance = this;
+		float x = 0;
+		float y = 0;
+		float s = 10;
+		for (int i = 0; i < s; i++) {
+			x +=(UnityEngine.Random.Range(0,2) * 500 + CalcParabolaVertex (500, 750, UnityEngine.Random.Range (0, 500)));
+			y +=(UnityEngine.Random.Range(0,2) * 500 + CalcParabolaVertex (500, 750, UnityEngine.Random.Range (0, 500)));
+		}
+		x /= s;
+		y /= s;
+		Debug.Log (x + " x  y " +y);
+
+
 	}
 	void Start() {
 //		var a = CreateReusableAction<GameEvent,bool,Structure> ("OutputStructure_Efficiency");
 		world = World.current;
-		idToActiveEvent = new Dictionary<ulong, GameEvent> ();
+		idToActiveEvent = new Dictionary<uint, GameEvent> ();
 		chanceToEvent = new Dictionary<EventType, float> ();
 		typeToEvents = new Dictionary<EventType, GameEvent[]> ();
 	}
@@ -81,8 +93,8 @@ public class EventController : MonoBehaviour {
 			return;
 		}
 		//update and remove inactive events
-		List<ulong> ids = new List<ulong>(idToActiveEvent.Keys);
-		foreach (ulong i in ids) {
+		List<uint> ids = new List<uint>(idToActiveEvent.Keys);
+		foreach (uint i in ids) {
 			idToActiveEvent [i].Update (WorldController.Instance.DeltaTime);
 			if(idToActiveEvent [i].IsDone){
 				cbEventEnded (idToActiveEvent [i]);
@@ -93,14 +105,8 @@ public class EventController : MonoBehaviour {
 		if(RandomIf()==false){
 			return;
 		}
-
-
-//		cbEventCreated(ge);
-//
-//		idToActiveEvent.Add (lastID,ge);
-//		ge.StartEvent (Vector2.zero);
-//		lastID++;
-//		timeSinceLastEvent = 0;
+		CreateRandomEvent ();
+		timeSinceLastEvent = 0;
 
 	} 
 
@@ -111,17 +117,21 @@ public class EventController : MonoBehaviour {
 	public void CreateRandomTypeEvent(EventType type){
 		//now find random the target of the GameEvent
 		CreateGameEvent( RandomEvent (type) );
-
 	}
 	public void CreateGameEvent(GameEvent ge){
 		//fill the type
+		cbEventCreated(ge);
+
+		idToActiveEvent.Add (lastID,ge);
+		ge.StartEvent (Vector2.zero);
+		lastID++;
 
 	}
 	IGEventable GetEventTargetForEventType(EventType type){
 		IGEventable ige = null;
 		//some times should be target all cities...
 		//idk how todo do it tho...
-//		int r = Random.
+
 
 		switch(type){
 		case EventType.City:
@@ -129,13 +139,36 @@ public class EventController : MonoBehaviour {
 			foreach (Island item in world.islandList) {
 				cities.AddRange (item.myCities);
 			}
+			ige = RandomItemFromList<City>(cities);
 			break;
 		case EventType.Disaster:
+			ige = RandomItemFromList<Island>(world.islandList);
 			break;
 		case EventType.Weather:
+			//????
+			//range? 
+			//position?
+			//island?
 			break;
 		case EventType.Structure:
+			//probably go like:
+			//  random island
+			//  random city
+			//  random structure
+			//  random effect for structure type?
 
+			float r = UnityEngine.Random.Range (0f, 1f);
+			if(r<0.4f){ //idk
+				return null; // there is no specific target
+			}
+
+			Island i = RandomItemFromList<Island> (world.islandList);
+			City c = RandomItemFromList<City> (i.myCities);
+			if(c.playerNumber == -1){ // random decided there will be no event? 
+				// are there events for wilderniss structures?
+			} else {
+				ige = RandomItemFromList<Structure> (c.myStructures);
+			}
 			break;
 		case EventType.Quest:
 			Debug.LogWarning ("Not yet implemented");
@@ -182,6 +215,30 @@ public class EventController : MonoBehaviour {
 		return EventType.City;
 	}
 
+	T RandomItemFromList<T>(List<T> iges){
+		return iges [UnityEngine.Random.Range (0, iges.Count - 1)];
+	}
+
+	public float CalcParabolaVertex(float size,float dist, float randomX) {
+		float x1 = 0f; 
+		float y1 = 0f; 
+		float x2 = dist;
+		float y2 = size; 
+		float x3 = dist * 2; 
+		float y3 = 0f;
+		float denom = (x1 - x2) * (x1 - x3) * (x2 - x3);
+		float A     = (x3 * (y2 - y1) + x2 * (y1 - y3) + x1 * (y3 - y2)) / denom;
+		float B     = (x3*x3 * (y1 - y2) + x2*x2 * (y3 - y1) + x1*x1 * (y2 - y3)) / denom;
+		float C     = (x2 * x3 * (x2 - x3) * y1 + x3 * x1 * (x3 - x1) * y2 + x1 * x2 * (x1 - x2) * y3) / denom;
+//		Debug.Log (A+"x^2 + "+ B +"x +"+C);
+		return A * Mathf.Pow (randomX, 2) + B * randomX + C;
+	}
+	public Vector2 GetRandomVector2(){
+		Vector2 vec = new Vector2 ();
+		vec.x =(UnityEngine.Random.Range(0,2) * 500 + CalcParabolaVertex (500, 750, UnityEngine.Random.Range (0, 500)));
+		vec.y =(UnityEngine.Random.Range(0,2) * 500 + CalcParabolaVertex (500, 750, UnityEngine.Random.Range (0, 500)));
+		return vec;
+	}
 	public static Action<TParam1> CreateReusableAction<TParam1>(string methodName) {
 		var method = typeof(GameEventFunctions).GetMethod(methodName);
 		var del = Delegate.CreateDelegate(typeof(Action<TParam1>), method);
@@ -216,8 +273,7 @@ public class EventController : MonoBehaviour {
 		return writer.ToString();
 	}
 	public void LoadGameEventData(string data){
-		XmlSerializer s = new XmlSerializer( typeof() );
-		UnityEngine.Random.
+
 		XmlSerializer serializer = new XmlSerializer( typeof(GameEventSave) );
 		TextReader reader = new StringReader( data );
 		GameEventSave gcs = (GameEventSave)serializer.Deserialize(reader);
@@ -226,8 +282,8 @@ public class EventController : MonoBehaviour {
 	}
 
 	public class GameEventSave : IXmlSerializable {
-		public Dictionary<ulong,GameEvent> idToActiveEvent;
-		public GameEventSave(Dictionary<ulong,GameEvent> idToActiveEvent ){
+		public Dictionary<uint,GameEvent> idToActiveEvent;
+		public GameEventSave(Dictionary<uint,GameEvent> idToActiveEvent ){
 			this.idToActiveEvent = idToActiveEvent;
 		}
 		public GameEventSave(){
@@ -239,8 +295,8 @@ public class EventController : MonoBehaviour {
 		}
 
 		public void WriteXml(XmlWriter writer) {
-
-			foreach(ulong p in idToActiveEvent.Keys){
+			writer.WriteElementString ("Random" , JsonUtility.ToJson(UnityEngine.Random.state));
+			foreach(uint p in idToActiveEvent.Keys){
 				writer.WriteStartElement ("GameEvent");
 				writer.WriteAttributeString ("ID", p + "");
 				idToActiveEvent[p].WriteXml (writer);
@@ -250,6 +306,7 @@ public class EventController : MonoBehaviour {
 		}
 
 		public void ReadXml(XmlReader reader) {
+			UnityEngine.Random.state = JsonUtility.FromJson<UnityEngine.Random.State>(reader.ReadElementString ("Random"));
 			if(reader.ReadToDescendant("GameEvent") ) {
 				do {
 					if(reader.IsStartElement ("GameEvent")==false){
@@ -258,7 +315,7 @@ public class EventController : MonoBehaviour {
 						}
 						continue;
 					}	
-					ulong id = ulong.Parse( reader.GetAttribute("ID") );
+					uint id = uint.Parse( reader.GetAttribute("ID") );
 					GameEvent ge = new GameEvent();
 					//load the functions to it etc
 					int tt = int.Parse( reader.GetAttribute("TargetType") );
@@ -292,10 +349,10 @@ public class EventController : MonoBehaviour {
 							Debug.LogError("TargetType " + tt + " does not meet any programmed in!");
 							return;
 						}
-						int strBuildID = int.Parse( reader.GetAttribute("BuildID") );
+						uint strBuildID = uint.Parse( reader.GetAttribute("BuildID") );
 						string tileString = reader.GetAttribute("Island");
 						Vector2 vec2Tile = Tile.ToStringToTileVector(tileString);
-						if(World.current.GetTileAt(vec2.x,vec2.y).Structure.buildID != strBuildID){
+						if(World.current.GetTileAt(vec2Tile.x,vec2Tile.y).Structure.buildID != strBuildID){
 							Debug.Log ("BuildID doesnt match up.");
 							continue;
 						}

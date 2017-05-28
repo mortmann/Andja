@@ -39,7 +39,7 @@ public class BuildController : MonoBehaviour {
 	public Structure toBuildStructure;
 	public Dictionary<int,Structure>  structurePrototypes;
 	public Dictionary<int, Item> allItems;
-	public int buildID = 0;
+	public uint buildID = 0;
 	public Dictionary<int,Structure> loadedToPlaceStructure;
 	public Dictionary<int,Tile> loadedToPlaceTile;
 	public List<Need> allNeeds;

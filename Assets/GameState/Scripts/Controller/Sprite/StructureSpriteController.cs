@@ -133,8 +133,8 @@ public class StructureSpriteController : MonoBehaviour {
 				sr.sortingLayerName = "StructuresUI";
 				go.transform.SetParent (structureGameObjectMap [structure].transform);
 			} else {
-				if(structureGameObjectMap [structure].transform.FindChild("RangeUI") !=null)
-					GameObject.Destroy (structureGameObjectMap [structure].transform.FindChild("RangeUI").gameObject );
+				if(structureGameObjectMap [structure].transform.Find("RangeUI") !=null)
+					GameObject.Destroy (structureGameObjectMap [structure].transform.Find("RangeUI").gameObject );
 			}
 		}
 	}

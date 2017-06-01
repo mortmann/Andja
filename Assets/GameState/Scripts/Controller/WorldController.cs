@@ -45,10 +45,9 @@ public class WorldController : MonoBehaviour {
 		} else {
 			if (gdh != null) {
 				this.world = new World (gdh.width, gdh.height);
-			} else
-				this.world = new World (100, 100);
+			} 
+			Camera.main.transform.position = new Vector3(world.Width / 2, world.Height / 2, Camera.main.transform.position.z);
 		}
-        Camera.main.transform.position = new Vector3(world.Width / 2, world.Height / 2, Camera.main.transform.position.z);
     }
 
     // Update is called once per frame
@@ -145,7 +144,7 @@ public class WorldController : MonoBehaviour {
 		if(Directory.Exists(path) == false){
 			Directory.CreateDirectory (path);
 		}
-		string lines = File.ReadAllText (System.IO.Path.Combine( path , name + ".map" ));
+//		string lines = File.ReadAllText (System.IO.Path.Combine( path , name + ".map" ));
 		//read tiles here
 	}
 }

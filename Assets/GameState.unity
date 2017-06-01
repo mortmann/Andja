@@ -2030,7 +2030,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 22439226, guid: af492ce011007dd459e69e670c484096, type: 2}
       propertyPath: m_SizeDelta.y
-      value: 0
+      value: 40
       objectReference: {fileID: 0}
     - target: {fileID: 22439226, guid: af492ce011007dd459e69e670c484096, type: 2}
       propertyPath: m_AnchorMin.x
@@ -4457,7 +4457,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &227928128
 RectTransform:
   m_ObjectHideFlags: 0
@@ -17069,6 +17069,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0b9f9d4c9e1436a4681c6df01d343356, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  player:
+    _balance: 0
+    _maxPopulationLevel: 0
+    _maxPopulationCount: 0
+    playerNumber: 0
   balanceText: {fileID: 160480401}
   changeText: {fileID: 43775317}
   fpsText: {fileID: 908674150}

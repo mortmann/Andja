@@ -285,9 +285,10 @@ public abstract class Structure : IXmlSerializable,IGEventable {
 		GetInRangeTiles (myBuildingTiles[0]);
 		myPrototypeTiles = null;
 
-		City.RegisterOnEvent (OnEventCreate, OnEventEnded);
 		// do on place structure stuff here!
 		OnBuild ();
+		City.RegisterOnEvent (OnEventCreate, OnEventEnded);
+
 		return true;
 	}
 	/// <summary>

@@ -10,7 +10,7 @@ public class SaveController : MonoBehaviour {
 
 	public static SaveController Instance;
 	//TODO autosave here
-
+	const string SaveFileVersion = "0.1.1";
 	WorldController wc;
 	EventController ec;
 	CameraController cc;
@@ -30,7 +30,7 @@ public class SaveController : MonoBehaviour {
 		gdh = GameDataHolder.Instance;
 		pc = PlayerController.Instance;
 		if (gdh!=null && gdh.loadsavegame!=null && gdh.loadsavegame.Length > 0) {
-			SaveController.Instance.LoadGameState (gdh.loadsavegame);
+			LoadGameState (gdh.loadsavegame);
 			gdh.loadsavegame = null;
 		}
 //		LoadGameState ("sae");
@@ -48,12 +48,13 @@ public class SaveController : MonoBehaviour {
 			wc.IsPaused = true;
 		}
 		string path = System.IO.Path.Combine (GetSaveGamesPath (), name + ".sav");
-		string[] strings = new string[5];
-		strings[0] = (gdh.GetSaveGameData());
-		strings[1] =  (pc.GetSavePlayerData ());
-		strings[2] =  (wc.GetSaveWorldData ());
-		strings[3] =  (ec.GetSaveGameEventData ());
-		strings[4] = (cc.GetSaveCamera ());
+		string[] strings = new string[6];
+		strings[0] = (SaveFileVersion);
+		strings[1] = (gdh.GetSaveGameData());
+		strings[2] =  (pc.GetSavePlayerData ());
+		strings[3] =  (wc.GetSaveWorldData ());
+		strings[4] =  (ec.GetSaveGameEventData ());
+		strings[5] = (cc.GetSaveCamera ());
 
 		System.IO.File.WriteAllText(path, JsonUtil.arrayToJson<string> (strings));
 //		FileStream saveStream = File.Create (System.IO.Path.Combine( GetSaveGamesPath() , name + ".sav" ));
@@ -91,14 +92,16 @@ public class SaveController : MonoBehaviour {
 		foreach (var item in lines) {
 			Debug.Log (item); 
 		}
-//		FileStream readStream = File.OpenRead (System.IO.Path.Combine( GetSaveGamesPath() , name + ".sav" ));
-//		StreamReader reader = new StreamReader (readStream);
-		gdh.LoadGameData(lines[0]); // gamedata
-		pc.LoadPlayerData(lines[1]); // player
-		wc.LoadWorldData (lines[2]); // world
-		ec.LoadGameEventData(lines[3]); // event
-		cc.LoadSaveCameraData(lines[4]); // camera
-//		reader.Close ();
+		if(SaveFileVersion!=lines[0]){
+			Debug.LogError ("Mismatch of SaveFile Versions " + lines[0] + " " + SaveFileVersion);
+			return;
+		}
+		gdh.LoadGameData(lines[1]); // gamedata
+		pc.LoadPlayerData(lines[2]); // player
+		wc.LoadWorldData (lines[3]); // world
+		ec.LoadGameEventData(lines[4]); // event
+		cc.LoadSaveCameraData(lines[5]); // camera
+
 
 		if(wasPaused == false){
 			wc.IsPaused = false;

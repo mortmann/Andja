@@ -24,7 +24,7 @@ public class GameEventFunctions {
 		if(str is OutputStructure == false){
 			return;
 		}
-		OutputStructure o = (OutputStructure)str;
+//		OutputStructure o = (OutputStructure)str;
 //		o.efficiencyModifier = 
 
 	}

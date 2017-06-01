@@ -1,9 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 using System;
-using System.Xml;
-using System.Xml.Schema;
-using System.Xml.Serialization;
 using System.IO;
 
 /// <summary>
@@ -15,7 +12,7 @@ public class PlayerController : MonoBehaviour {
 	public int currentPlayerNumber;
 	int piratePlayerNumber = int.MaxValue; // so it isnt the same like the number of wilderness
 	public Player currPlayer{get {return players [currentPlayerNumber];}}
-	HashSet<KeyValuePair<int,int>> playerWars;
+	HashSet<War> playerWars;
 	float balanceTicks;
 	float tickTimer;
 	public static PlayerController Instance { get; protected set; }
@@ -35,16 +32,16 @@ public class PlayerController : MonoBehaviour {
 		players.Add (p); 
 		players.Add (new Player(1)); 
 		players.Add (new Player(2)); 
-		playerWars = new HashSet<KeyValuePair<int, int>> ();
+		playerWars = new HashSet<War> ();
 		AddPlayersWar (0,1);
 		AddPlayersWar (1,0);
-
 		balanceTicks = 5f;
 		tickTimer = balanceTicks;
 		GameObject.FindObjectOfType<BuildController>().RegisterCityCreated (OnCityCreated);
 		GameObject.FindObjectOfType<BuildController>().RegisterStructureCreated (OnStructureCreated);
 		euim = GameObject.FindObjectOfType<EventUIManager> ();
 		GameObject.FindObjectOfType<EventController> ().RegisterOnEvent (OnEventCreated, OnEventEnded);
+
 	}
 	
 	// Update is called once per frame
@@ -164,8 +161,7 @@ public class PlayerController : MonoBehaviour {
 		if(pnum1==piratePlayerNumber||pnum2==piratePlayerNumber){
 			return true;//could add here be at peace with pirates through money 
 		}
-		return playerWars.Contains (new KeyValuePair<int, int>(pnum1,pnum2))||//or
-			   playerWars.Contains (new KeyValuePair<int, int>(pnum2,pnum1));
+		return playerWars.Contains (new War(pnum1,pnum2));
 	}
 	public void AddPlayersWar(int pnum1,int pnum2){
 		if(pnum1 == pnum2){
@@ -174,7 +170,7 @@ public class PlayerController : MonoBehaviour {
 		if(ArePlayersAtWar (pnum1,pnum2)){
 			return; // already at war no need for same to be added
 		}
-		playerWars.Add (new KeyValuePair<int, int>(pnum1,pnum2)); 
+		playerWars.Add (new War(pnum1,pnum2)); 
 	}
 	public void RemovePlayerWar(int pnum1, int pnum2){
 		if(pnum1 == pnum2){
@@ -183,8 +179,7 @@ public class PlayerController : MonoBehaviour {
 		if(ArePlayersAtWar (pnum1,pnum2)==false){
 			return; // they werent at war to begin with
 		}
-		playerWars.RemoveWhere (x => x.Key == pnum1 && x.Value == pnum2 || //or
-									 x.Key == pnum2 && x.Value == pnum1);
+		playerWars.Remove (new War(pnum1,pnum2));
 	}
 	public Player GetPlayer(int i){
 		if(i<0){
@@ -195,34 +190,27 @@ public class PlayerController : MonoBehaviour {
 
 
 	public string GetSavePlayerData(){
-		XmlSerializer serializer = new XmlSerializer( typeof(PlayerControllerSave) );
-		TextWriter writer = new StringWriter();
-		serializer.Serialize(writer,new PlayerControllerSave(currentPlayerNumber, balanceTicks, tickTimer, players,playerWars));
-		writer.Close();
 		// Create/overwrite the save file with the xml text.
-		return writer.ToString();
+		return JsonUtility.ToJson(new PlayerControllerSave(currentPlayerNumber, balanceTicks, tickTimer, players,playerWars));
 	}
 	public void LoadPlayerData(string data){
-		XmlSerializer serializer = new XmlSerializer( typeof(PlayerControllerSave) );
-		TextReader reader = new StringReader( data );
-		PlayerControllerSave pcs = (PlayerControllerSave)serializer.Deserialize(reader);
-		reader.Close();
-
+		PlayerControllerSave pcs = JsonUtility.FromJson<PlayerControllerSave> (data);
 		currentPlayerNumber = pcs.currentPlayerNumber;
 		players = pcs.players;
+		playerWars = pcs.playerWars;
 		tickTimer = pcs.tickTimer;
 		balanceTicks = pcs.balanceTicks;
 	}
-
-	public class PlayerControllerSave : IXmlSerializable {
+	[Serializable]
+	public class PlayerControllerSave {
 		
 		public int currentPlayerNumber;
 		public float balanceTicks;
 		public float tickTimer;
 		public List<Player> players;
-		public HashSet<KeyValuePair<int,int>> playerWars;
+		public HashSet<War> playerWars;
 
-		public PlayerControllerSave(int cpn,float balanceTicks,float tickTimer,List<Player> players, HashSet<KeyValuePair<int,int>> playerWars ){
+		public PlayerControllerSave(int cpn,float balanceTicks,float tickTimer,List<Player> players, HashSet<War> playerWars ){
 			currentPlayerNumber = cpn;
 			this.balanceTicks = balanceTicks;
 			this.players = players;
@@ -232,59 +220,71 @@ public class PlayerController : MonoBehaviour {
 		public PlayerControllerSave(){
 			
 		}
-		#region save
-		public XmlSchema GetSchema() {
-			return null;
+	}
+	[Serializable]
+	public class War {
+		public int playerOne;
+		public int playerTwo;
+
+		public War(){
 		}
 
-		public void WriteXml(XmlWriter writer) {
-			writer.WriteStartElement ("Players");
-			foreach(Player p in players){
-				writer.WriteStartElement ("Player");
-				writer.WriteAttributeString ("ID", p.GetPlayerNumber() + "");
-				p.WriteXml (writer);
-				writer.WriteEndElement ();
+		public War(int one, int two){
+			if(one>two){
+				playerOne = two;
+				playerTwo = one;
+			} else {
+				playerOne = one;
+				playerTwo = two;
 			}
-			writer.WriteEndElement ();
-			writer.WriteStartElement ("Wars");
-			foreach(KeyValuePair<int,int> pnum in playerWars){
-				writer.WriteStartElement ("War");
-				writer.WriteElementString ("Player Nr1", pnum.Key+"");
-				writer.WriteElementString ("Player Nr2", pnum.Value+"");
-				writer.WriteEndElement ();
-			}
-			writer.WriteEndElement ();
 		}
-
-		public void ReadXml(XmlReader reader) {
-			if(reader.ReadToDescendant("Player") ) {
-				do {
-					if(reader.IsStartElement ("Player")==false){
-						if(reader.Name == "Players"){
-							break;
-						}
-						continue;
-					}	
-					int id = int.Parse( reader.GetAttribute("ID") );
-					Player p = new Player(id);
-					p.ReadXml (reader);
-					players.Add(p);
-				} while( reader.Read () );
-				do {
-					if(reader.IsStartElement ("War")==false){
-						if(reader.Name == "Wars"){
-							break;
-						}
-						continue;
-					}	
-					int pnum1 = int.Parse( reader.GetAttribute("Player Nr1") );
-					int pnum2 = int.Parse( reader.GetAttribute("Player Nr2") );
-					playerWars.Add (new KeyValuePair<int, int>(pnum1,pnum2));
-				} while( reader.Read () );
+		public bool Equals(War p){
+			if(p == null){
+				return false;
+			}
+			return p.playerOne == playerOne && p.playerTwo == playerTwo;
+		}
+		public override bool Equals (object obj) {
+			// If parameter cannot be cast to ThreeDPoint return false:
+			War p = obj as War;
+			if ((object)p == null){
+				return false;
+			}
+			// Return true if the fields match:
+			return p.playerOne == playerOne && p.playerTwo == playerTwo;
+		}
+		public override int GetHashCode(){
+			return playerOne ^ playerTwo;
+		}
+		public static bool operator ==(War a, War b){
+			// If both are null, or both are same instance, return true.
+			if (System.Object.ReferenceEquals(a, b)){
+				return true;
 			}
 
+			// If one is null, but not both, return false.
+			if (((object)a == null) || ((object)b == null)){
+				return false;
+			}
+
+			// Return true if the fields match:
+			return a.playerOne == b.playerOne && a.playerTwo == b.playerTwo 
+				|| a.playerTwo == b.playerOne && a.playerOne == b.playerTwo;
 		}
-		#endregion
+		public static bool operator !=(War a, War b){
+			// If both are null, or both are same instance, return false.
+			if (System.Object.ReferenceEquals(a, b)){
+				return false;
+			}
+
+			// If one is null, but not both, return true.
+			if (((object)a == null) || ((object)b == null)){
+				return true;
+			}
+
+			// Return true if the fields not match:
+			return a.playerOne != b.playerOne || a.playerTwo != b.playerTwo;
+		}
 	}
 
 

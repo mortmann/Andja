@@ -2,20 +2,31 @@
 using System.Collections.Generic;
 using System;
 using System.Xml;
-using System.Xml.Schema;
-using System.Xml.Serialization;
 
-public class Player : IXmlSerializable,IGEventable {
+
+[Serializable]
+public class Player : IGEventable {
+	[NonSerialized]
 	public const int TargetType = 1;
 
 	Action<GameEvent> cbEventCreated;
 	Action<GameEvent> cbEventEnded;
 	List<City> myCities;
-	public int change { get; protected set;} //should be calculated after reload anyway
-	public int balance { get; protected set;} 
+
+	[NonSerialized]
+	private int _change;
+	public int change { get { return _change;} 
+		protected set { _change = value;}
+	} //should be calculated after reload anyway
+	[SerializeField]
+	private int _balance;
+	public int balance { get { return _balance;} 
+		protected set { _balance = value;}
+	} 
 	// because only the new level popcount is interesting
 	// needs to be saved because you can lose pop due
 	// war or death and only the highest ever matters here 
+	[SerializeField]
 	private int _maxPopulationLevel;
 	public int maxPopulationLevel { 
 		get {return _maxPopulationLevel;} 
@@ -27,8 +38,19 @@ public class Player : IXmlSerializable,IGEventable {
 			maxPopulationCount = 0; 
 		}
 	} 									  
-	public int maxPopulationCount { get; protected set;}
+	[SerializeField]
+	private int _maxPopulationCount;
+	public int maxPopulationCount { 
+		get {return _maxPopulationCount;} 
+		set { 
+			_maxPopulationCount = value;
+		}
+	} 
+	[SerializeField]
 	public int playerNumber;
+
+	public Player(){
+	}
 
 	public Player(int number){
 		playerNumber = number;
@@ -98,27 +120,10 @@ public class Player : IXmlSerializable,IGEventable {
 	}
 
 	#region save
-	public XmlSchema GetSchema() {
-		return null;
-	}
-
-	public void WriteXml(XmlWriter writer) {
-		writer.WriteElementString ("maxPopulationLevel",this.maxPopulationLevel+"");
-		writer.WriteElementString ("maxPopulationCount",this.maxPopulationCount+"");
-		writer.WriteElementString ("balance",this.balance+"");
-
-	}
-
-	public void ReadXml(XmlReader reader) {
-		maxPopulationLevel = int.Parse( reader.GetAttribute("maxPopulationLevel") );
-		maxPopulationCount = int.Parse( reader.GetAttribute("maxPopulationCount") );
-		balance = int.Parse( reader.GetAttribute("balance") );
-
-	}
-	public void SaveIGE(XmlWriter writer){
-		writer.WriteAttributeString("TargetType", TargetType +"" );
-		writer.WriteAttributeString("PlayerNumber", playerNumber +"" );
-	}
+		public void SaveIGE(XmlWriter writer){
+			writer.WriteAttributeString("TargetType", TargetType +"" );
+			writer.WriteAttributeString("PlayerNumber", playerNumber +"" );
+		}
 	#endregion
 
 

@@ -235,8 +235,11 @@ public class EventController : MonoBehaviour {
 	}
 	public Vector2 GetRandomVector2(){
 		Vector2 vec = new Vector2 ();
-		vec.x =(UnityEngine.Random.Range(0,2) * 500 + GetWeightedYFromRandomX (500, 750, UnityEngine.Random.Range (0, 500)));
-		vec.y =(UnityEngine.Random.Range(0,2) * 500 + GetWeightedYFromRandomX (500, 750, UnityEngine.Random.Range (0, 500)));
+		float w = (float) World.current.Width / 2f;
+		float h = (float) World.current.Height / 2f;
+
+		vec.x =(UnityEngine.Random.Range(0,2) * w + GetWeightedYFromRandomX (w, w * 1.25f, UnityEngine.Random.Range (0, w)));
+		vec.y =(UnityEngine.Random.Range(0,2) * h + GetWeightedYFromRandomX (h, h * 1.25f, UnityEngine.Random.Range (0, h)));
 		return vec;
 	}
 	public static Action<TParam1> CreateReusableAction<TParam1>(string methodName) {

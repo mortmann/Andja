@@ -342,7 +342,7 @@ public class Pathfinding {
 //			angle =360+ angle;
 //		}
 		rotation = angle;
-		return true;
+
 		if (rotation < angle + 0.1f 
 			&& rotation > angle - 0.1f) {
 			//no need to rotate so set the rotation to the correct one
@@ -352,7 +352,7 @@ public class Pathfinding {
 		}
 		t += delta;
 
-		rotation = Mathf.LerpAngle (rotation , angle,t);//Mathf.LerpAngle ( rotation , angle , t);
+		rotation = Mathf.LerpAngle (rotation , angle,t*rotationSpeed);//Mathf.LerpAngle ( rotation , angle , t);
 		return false;
     }
 

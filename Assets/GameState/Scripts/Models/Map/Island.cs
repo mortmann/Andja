@@ -234,7 +234,7 @@ public class Island : IXmlSerializable,IGEventable{
 				} else {
 					c = new City (playerNumber, this, World.current.allNeeds);	
 				}
-//				c.ReadXml (reader);
+				c.ReadXml (reader);
 				myCities.Add (c);
 
 				 

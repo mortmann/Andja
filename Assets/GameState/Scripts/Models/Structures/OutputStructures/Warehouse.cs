@@ -45,7 +45,8 @@ public class Warehouse : MarketBuilding {
 		this.contactRange = str.contactRange;
 		this.inRangeUnits = new List<Unit> ();
 		this.canTakeDamage = str.canTakeDamage;
-
+		this.myWorker = new List<Worker> ();
+		this.jobsToDo = new Dictionary<OutputStructure, Item[]> ();
 	}
 	
 	public override bool SpecialCheckForBuild (List<Tile> tiles){

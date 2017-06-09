@@ -17,6 +17,7 @@ public class CityInventoryUI : MonoBehaviour {
 		if(city == null && this.city == city){
 			return;
 		}
+		city.RegisterCityDestroy (OnCityDestroy);
 		cityname.GetComponent<Text> ().text = city.name;
 		this.city = city;
 		this.trade = trade;
@@ -44,9 +45,14 @@ public class CityInventoryUI : MonoBehaviour {
 			go_i.transform.SetParent (contentCanvas.transform);
 		}
 	}
+	public void OnCityDestroy(City c){
+		if(city != c){
+			return;
+		}
+		UIController.Instance.HideCityUI (c);
+	}
 
 	void OnItemClick(Item item){		
-		Debug.Log ("clicked " + item.ToString()); 
 		if (trade) {
 			//trade to ship
 			city.tradeWithShip (city.myInv.getItemInInventoryClone (item));
@@ -78,6 +84,9 @@ public class CityInventoryUI : MonoBehaviour {
 
 	void OnDisable(){
 		tradePanel.SetActive (false);
+		if(city!=null){
+			city.UnregisterCityDestroy (OnCityDestroy);
+		}
 	}
 
 }

@@ -5,19 +5,23 @@ using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Serialization;
 
+public enum ItemType {Build,Intermediate,Luxury}
+
 public class Item : IXmlSerializable{
     public int ID;
     public string name;
     public int count;
-
-    public Item(int id, string name, int count = 0) {
+	public ItemType Type;
+    public Item(int id, string name,ItemType type, int count = 0) {
         this.ID = id;
         this.name = name;
         this.count = count;
+		this.Type = type;
     }
 	public Item(Item other){
 		this.ID = other.ID;
 		this.name = other.name;
+		this.Type = other.Type;
 	}
 	public Item(){
 	}

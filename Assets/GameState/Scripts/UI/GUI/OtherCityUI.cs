@@ -2,13 +2,15 @@
 using System.Collections;
 
 public class OtherCityUI : MonoBehaviour {
-	City city;
+	public City city { protected set; get;}
 	public GameObject ItemsCanvas;
 	public GameObject TradeItemPrefab;
 	public GameObject ItemCanvas;
 	// Use this for initialization
 	public void Show (City c) {
 		city = c;
+		city.RegisterCityDestroy (OnCityDestroy);
+
 		city.myInv.RegisterOnChangedCallback (OnInventoryChange);
 		OnInventoryChange(city.myInv);
 	}
@@ -45,5 +47,15 @@ public class OtherCityUI : MonoBehaviour {
 
 		city.BuyFromCity (itemID, PlayerController.Instance.currPlayer, ((Ship)u), amount);
 	}
-
+	public void OnCityDestroy(City c){
+		if(city != c){
+			return;
+		}
+		UIController.Instance.HideCityUI (c);
+	}
+	void OnDisable(){
+		if(city!=null){
+			city.UnregisterCityDestroy (OnCityDestroy);
+		}
+	}
 }

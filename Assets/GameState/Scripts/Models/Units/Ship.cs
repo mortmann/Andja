@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 
+[JsonObject(MemberSerialization.OptIn)]
 public class Ship : Unit {
 	public TradeRoute tradeRoute;
 
@@ -13,8 +15,7 @@ public class Ship : Unit {
 		this.playerNumber = playernumber;
 		inventory = new Inventory (6, "SHIP");
 		isShip = true;
-		startTile = t;
-		pathfinding = new Pathfinding (speed, startTile);
+		pathfinding = new Pathfinding (speed, t);
 		speed = 2f;
 		offWorldTime = 5f;
 	}

@@ -87,11 +87,7 @@ public class SaveController : MonoBehaviour {
 			wc.IsPaused = true;
 		}
 		string alllines = System.IO.File.ReadAllText (System.IO.Path.Combine (GetSaveGamesPath (), name + ".sav"));
-		Debug.Log (alllines); 
 		string[] lines = JsonUtil.getJsonArray<string> (alllines);
-		foreach (var item in lines) {
-			Debug.Log (item); 
-		}
 		if(SaveFileVersion!=lines[0]){
 			Debug.LogError ("Mismatch of SaveFile Versions " + lines[0] + " " + SaveFileVersion);
 			return;

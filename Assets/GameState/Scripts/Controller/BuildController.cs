@@ -39,6 +39,8 @@ public class BuildController : MonoBehaviour {
 	public Structure toBuildStructure;
 	public Dictionary<int,Structure>  structurePrototypes;
 	public Dictionary<int, Item> allItems;
+	public static List<Item> buildItems;
+
 	public uint buildID = 0;
 	public Dictionary<int,Structure> loadedToPlaceStructure;
 	public Dictionary<int,Tile> loadedToPlaceTile;
@@ -68,6 +70,7 @@ public class BuildController : MonoBehaviour {
 		buildID = 0;
 		// prototypes of items
 		allItems = new Dictionary<int, Item> ();
+		buildItems = new List<Item> ();
 		ReadItemsFromXML();
 
 		loadedToPlaceTile = new Dictionary<int, Tile> ();
@@ -107,20 +110,20 @@ public class BuildController : MonoBehaviour {
 	public void OnClickSettle(){
 		OnClick (6);
 	}
-	public void DestroyStructureOnTiles( IEnumerable<Tile> tiles){
+	public void DestroyStructureOnTiles( IEnumerable<Tile> tiles, Player destroyPlayer){
 		foreach(Tile t in tiles){
-			DestroyStructureOnTile (t);
+			DestroyStructureOnTile (t,destroyPlayer);
 		}
 	}
 	/// <summary>
 	/// Works only for current player not for someone else
 	/// </summary>
 	/// <param name="t">T.</param>
-	public void DestroyStructureOnTile(Tile t){
+	public void DestroyStructureOnTile(Tile t, Player destroyPlayer){
 		if(t.Structure==null){
 			return;
 		}
-		if(t.Structure.playerID==PlayerController.Instance.currentPlayerNumber){
+		if(t.Structure.playerID==destroyPlayer.playerNumber){
 			t.Structure.Destroy ();
 		}
 	}
@@ -264,7 +267,7 @@ public class BuildController : MonoBehaviour {
 		s.RegisterOnDestroyCallback (OnDestroyStructure);
 	}
 	public void OnDestroyStructure(Structure str){
-		str.City.removeStructure (str);
+//		str.City.removeStructure (str);
 	}
 	public bool playerHasEnoughMoney(Structure s,int playerNumber){
 		if(PlayerController.Instance.GetPlayer (playerNumber).balance >= s.buildcost){
@@ -352,7 +355,11 @@ public class BuildController : MonoBehaviour {
 			Item item = new Item ();
 			item.ID = int.Parse(node.GetAttribute("ID"));
 			item.name = node.SelectSingleNode("EN"+ "_Name").InnerText;
+			item.Type = (ItemType) int.Parse (node.SelectSingleNode("Type").InnerText);
 			allItems [item.ID] = item;
+			if(item.Type == ItemType.Build){
+				buildItems.Add (item); 
+			}
 		}
 	}
 	private void ReadFertilitiesFromXML(){

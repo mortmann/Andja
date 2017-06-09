@@ -196,7 +196,6 @@ public class Island : IXmlSerializable,IGEventable{
 		List<int> ferIDs = new List<int>();
 		while (reader.Read ()) {
 			if(reader.IsStartElement ("fertility")==false){
-				Debug.Log (reader.Name ); 
 				if(reader.Name == "fertilities"){
 					break;
 				}
@@ -207,7 +206,6 @@ public class Island : IXmlSerializable,IGEventable{
 		}
 		foreach (int item in ferIDs) {
 			myFertilities.Add (World.current.getFertility(item)); 
-			Debug.Log (World.current.getFertility(item).name); 
 		}
 		myCities = new List<City> ();
 		wilderniss = null;
@@ -219,7 +217,6 @@ public class Island : IXmlSerializable,IGEventable{
 			//if it reads city start the do more
 			do {
 				if(reader.IsStartElement ("City")==false){
-					Debug.Log (reader.Name ); 
 					if(reader.Name == "Cities"){
 						return;
 					}

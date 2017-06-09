@@ -23,6 +23,7 @@ public class ItemUI : MonoBehaviour {
 		} else {
 			itemName=i.name;
 			ChangeItemCount (i);
+			image.sprite = UIController.GetItemImageForID (i.ID);
 		}
 		//set item pic andso
 		EventTrigger trigger = GetComponent<EventTrigger> ();

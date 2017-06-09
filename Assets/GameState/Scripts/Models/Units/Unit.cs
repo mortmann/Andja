@@ -4,25 +4,24 @@ using System;
 using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Serialization;
+using Newtonsoft.Json;
 
+[JsonObject(MemberSerialization.OptIn)]
 public class Unit : IXmlSerializable {
-   
+   	//save these Variables
 	public int playerNumber;
-
-	public OutputStructure rangeUStructure;
-	public Tile startTile;
-	public string Name {
-		protected set;
-		get;
+	public bool IsDead { 
+		get { return _currHealth <= 0;}
 	}
-
-	//COMBAT STUFF
-	float aggroTimer=1f;
-	float aggroCooldown=1f;
-	Unit engangingUnit;
-	Structure attackingStructure;
-	bool isCapturing;
-	public int maxHP=50;
+	private string _Name;
+	public string Name {
+		get {
+			return _Name;
+		}
+		protected set {
+			_Name = value;
+		}
+	}
 	private float _currHealth = 50;
 	public float currHealth {
 		get { return _currHealth;}
@@ -33,20 +32,24 @@ public class Unit : IXmlSerializable {
 			_currHealth = value;
 		}
 	}
-	public float attackRange=1f;
-	public float damage=10;
-	public DamageType myDamageType=DamageType.Blade;
-	public ArmorType myArmorType=ArmorType.Leather;
-	public float attackCooldown=1;
-	public float attackRate=1;
-	//PATHFINDING STUFF
-	public Vector3 VectorPosition {
-		get {return new Vector3 (X, Y);}
-	}
-	protected float speed;   // Tiles per second
-	protected internal float width;
-	protected internal float height;
+	//COMBAT STUFF
+	float aggroCooldown=1f;
+	public Vector2 patrolTarget;
+	public Vector2 patrolStart;
+	public bool onWayToPatrolTarget; // false for targetPatrol, true for patrolstart
+	public bool onPatrol = false;
+	public bool isShip;
+	public bool hasChanged = false;
+	public float tradeTime=1.5f;
 
+	//being calculated at runtime
+	public OutputStructure rangeUStructure;
+	Unit engangingUnit;
+	Structure attackingStructure;
+	bool isCapturing;
+	protected Action<Unit> cbUnitChanged;
+	protected Action<Unit> cbUnitDestroyed;
+	protected Action<Unit,string> cbUnitSound;
 	public Pathfinding pathfinding;
 	public float X {
 		get {
@@ -63,25 +66,33 @@ public class Unit : IXmlSerializable {
 			return pathfinding.rotation;
 		}
 	}
-	public Vector2 patrolTarget;
-	public Vector2 patrolStart;
-	public bool onWayToPatrolTarget; // false for targetPatrol, true for patrolstart
-	public bool onPatrol = false;
-	public bool isShip;
-	public bool hasChanged = false;
-	public float tradeTime=1.5f;
+	public Vector3 VectorPosition {
+		get {return new Vector3 (X, Y);}
+	}
 
-	protected Action<Unit> cbUnitChanged;
-	protected Action<Unit> cbUnitDestroyed;
-	protected Action<Unit,string> cbUnitSound;
+	//gets from prototyp / being loaded in from masterfile
+	public int maxHP=50;
+	float aggroTimer=1f;
+	public float attackRange=1f;
+	public float damage=10;
+	public DamageType myDamageType=DamageType.Blade;
+	public ArmorType myArmorType=ArmorType.Leather;
+	public float attackCooldown=1;
+	public float attackRate=1;
+	protected float speed;   // Tiles per second
+	protected internal float width;
+	protected internal float height;
+
+
+
+
 
 	public Inventory inventory;
 
 	public Unit(Tile t,int playernumber) {
 		this.playerNumber = playernumber;
 		speed = 2f;
-		startTile = t;
-		pathfinding = new Pathfinding (speed, startTile,path_mode.islandSingleStartpoint);
+		pathfinding = new Pathfinding (speed, t,path_mode.islandSingleStartpoint);
 		Name = "Unit " + UnityEngine.Random.Range (0, 1000000000);
     }
 	public Unit(){
@@ -422,4 +433,5 @@ public class Unit : IXmlSerializable {
 		AddMovementCommand (x, y);
 
 	}
+
 }

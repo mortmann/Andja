@@ -289,9 +289,9 @@ public class Inventory : IXmlSerializable{
 		//there are 10 ids reserved for buildingmaterial
 		//currently there are 7 builditems
 		List<Item> itemlist = new List<Item> ();
-		for (int i = 0; i < 10; i++) {
-			if(ContainsItemWithID(i)){
-				itemlist.Add(GetItemWithID (i));
+		foreach (Item i in BuildController.buildItems) {
+			if(ContainsItemWithID(i.ID)){
+				itemlist.Add(GetItemWithID (i.ID));
 			}
 		}
 		return itemlist.ToArray ();

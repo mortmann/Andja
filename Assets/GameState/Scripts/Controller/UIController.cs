@@ -24,7 +24,7 @@ public class UIController : MonoBehaviour {
 
 	Structure oldStr;
 
-
+	public static Sprite[] ItemImages;
 
 	public static UIController Instance;
 
@@ -34,6 +34,7 @@ public class UIController : MonoBehaviour {
 			Debug.LogError ("There are two uicontroller"); 
 		}
 		Instance = this;
+		ItemImages = Resources.LoadAll<Sprite> ("Textures/Items/items");
 	}
 
 	public void OpenStructureUI(Structure str){
@@ -81,6 +82,10 @@ public class UIController : MonoBehaviour {
 		rightCanvas.SetActive (true);
 		CityInventoryCanvas.SetActive (true);
 		CityInventoryCanvas.GetComponent<CityInventoryUI>().ShowInventory (city,trade);
+	}
+	public void HideCityUI (City city){
+		otherCityUI.SetActive (false);
+		CityInventoryCanvas.SetActive (false);
 	}
 	public void toggleRightUI(){
 		rightCanvas.SetActive (!rightCanvas.activeSelf);
@@ -254,4 +259,12 @@ public class UIController : MonoBehaviour {
 		shortCutCanvas.GetComponent<ShortcutUI> ().StopDragAndDropBuild ();
 	}
 
+
+	public static Sprite GetItemImageForID(int id){
+		int pic = id - 1;
+		if(ItemImages.Length-1 < pic || pic < 0){
+			return null;
+		}
+		return ItemImages [pic];
+	}
 }

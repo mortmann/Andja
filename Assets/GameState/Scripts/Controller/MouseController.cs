@@ -406,7 +406,7 @@ public class MouseController : MonoBehaviour {
 
 			if(ts != null) {
 				if (mouseState == MouseState.Destroy) {
-					bmc.DestroyStructureOnTiles (ts);	
+					bmc.DestroyStructureOnTiles (ts,PlayerController.Instance.currPlayer);	
 				} else {
 					Build (ts, true);
 				}

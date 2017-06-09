@@ -180,8 +180,13 @@ public class SoundController : MonoBehaviour {
 		if(str.playerID!=PlayerController.Instance.currentPlayerNumber){
 			return;
 		}
+		string name =  "BuildSound_" + Time.frameCount;
+		if(GameObject.Find (name) != null){
+			return;
+		}
 		//Maybe make diffrent sound when diffrent buildingtyps are placed
 		GameObject g = Instantiate (soundEffect2DGO);
+		g.name = name;
 		g.transform.SetParent (soundEffect2DGO.transform);
 		AudioSource ac = g.GetComponent<AudioSource> ();
 		ac.clip = placeBuildingSound;

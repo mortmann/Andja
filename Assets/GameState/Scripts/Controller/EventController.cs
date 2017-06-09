@@ -72,9 +72,6 @@ public class EventController : MonoBehaviour {
 		}
 		x /= s;
 		y /= s;
-		Debug.Log (x + " x  y " +y);
-
-
 	}
 	void Start() {
 //		var a = CreateReusableAction<GameEvent,bool,Structure> ("OutputStructure_Efficiency");
@@ -309,6 +306,7 @@ public class EventController : MonoBehaviour {
 		}
 
 		public void ReadXml(XmlReader reader) {
+			reader.ReadToFollowing ("Random");
 			UnityEngine.Random.state = JsonUtility.FromJson<UnityEngine.Random.State>(reader.ReadElementString ("Random"));
 			if(reader.ReadToDescendant("GameEvent") ) {
 				do {

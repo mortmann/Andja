@@ -30,6 +30,7 @@ public class City : IXmlSerializable,IGEventable {
 	public Warehouse myWarehouse;
 	Action<Structure> cbStructureAdded;
 	Action<Structure> cbStructureRemoved;
+	Action<City> cbCityDestroy;
 
 	Action<Structure> cbRegisterTradeOffer;
 	Action<GameEvent> cbEventCreated;
@@ -317,6 +318,10 @@ public class City : IXmlSerializable,IGEventable {
 		} 
 	}
 	public void removeStructure(Structure structure, bool returnRessources=false){
+		if(structure==null){
+			Debug.Log ("null"); 
+			return;
+		}
 		if (myStructures.Contains (structure)) {
 			if(structure is HomeBuilding){
 				myHomes.Remove ((HomeBuilding)structure);
@@ -335,7 +340,8 @@ public class City : IXmlSerializable,IGEventable {
 			}
 			myStructures.Remove (structure);
 			cityBalance -= structure.maintenancecost;
-			cbStructureRemoved (structure);
+			if(cbStructureRemoved!=null)
+				cbStructureRemoved (structure);
 		} else {
 			//this is no error if this is wilderniss
 			if(structure is Warehouse){
@@ -347,7 +353,7 @@ public class City : IXmlSerializable,IGEventable {
 
 	}
 
-	public void removeTiles(List<Tile> tiles){
+	public void removeTiles(IEnumerable<Tile> tiles){
 		foreach (Tile item in tiles) {
 			item.myCity = null;
 			if(item.myCity!=this){
@@ -355,10 +361,23 @@ public class City : IXmlSerializable,IGEventable {
 			}
 		}
 		if(myTiles.Count==0){
-			island.RemoveCity (this);
+			Destroy ();
 		}
 	}
-
+	public void Destroy(){
+		if(myTiles.Count > 0){
+			removeTiles (myTiles);
+		}
+		island.RemoveCity (this);
+		if(cbCityDestroy!=null)
+			cbCityDestroy (this);
+	}
+	public void RegisterCityDestroy(Action<City> callbackfunc) {
+		cbCityDestroy += callbackfunc;
+	}
+	public void UnregisterCityDestroy(Action<City> callbackfunc) {
+		cbCityDestroy -= callbackfunc;
+	}
 	public void RegisterStructureAdded(Action<Structure> callbackfunc) {
 		cbStructureAdded += callbackfunc;
 	}

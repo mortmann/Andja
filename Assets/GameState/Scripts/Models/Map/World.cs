@@ -14,7 +14,6 @@ public class World : IXmlSerializable,IGEventable{
     public int Height { get; protected set; }
     public List<Island> islandList { get; protected set; }
     public List<Unit> units { get; protected set; }
-	List<Unit> toRemoveUnits;
 	public List<Need> allNeeds;
 	public static World current { get; protected set; }
 	public Dictionary<Climate,List<Fertility>> allFertilities;
@@ -87,7 +86,6 @@ public class World : IXmlSerializable,IGEventable{
 		EventController.Instance.RegisterOnEvent (OnEventCreate,OnEventEnded);
 		islandList = new List<Island>();
 		units = new List<Unit>();
-		toRemoveUnits = new List<Unit> ();
 	}
     internal void update(float deltaTime) {
         foreach(Island i in islandList) {
@@ -98,14 +96,12 @@ public class World : IXmlSerializable,IGEventable{
 	internal void fixedupdate(float deltaTime){
 		for (int i = units.Count-1; i >=0; i--) {
 			units[i].Update (deltaTime);
+			if(units[i].IsDead ==true){
+				units.RemoveAt (i);
+			}
 		}
 
-		if (toRemoveUnits.Count > 0) {
-			foreach (Unit item in toRemoveUnits) {
-				units.Remove (item);
-			}
-			toRemoveUnits.Clear ();
-		}
+
 
 	}
 	public void CreateIsland(int x, int y){
@@ -181,7 +177,6 @@ public class World : IXmlSerializable,IGEventable{
         return c;
     }
 	public void OnUnitDestroy(Unit u){
-		toRemoveUnits.Add (u);
 	}
 
 	public void checkIfInCamera(float lowerX,float lowerY, float upperX,float upperY){
@@ -422,4 +417,27 @@ public class World : IXmlSerializable,IGEventable{
 		writer.WriteAttributeString("TargetType", TargetType +"" );
 	}
 	#endregion
+
+	public string GetJsonSave(){
+		WorldSave ws = new WorldSave (units, islandList);
+		return JsonUtility.ToJson (ws);
+	}
+	[Serializable]
+	public class WorldSave{
+
+		public List<Unit> units;
+		public List<Island> islands;
+
+
+
+		public WorldSave(){
+		}
+		public WorldSave(List<Unit> units, List<Island> islands){
+			this.units = units;
+			this.islands = islands;
+		}
+
+	}
+
+
 }

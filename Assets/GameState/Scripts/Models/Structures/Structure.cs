@@ -24,11 +24,7 @@ public abstract class Structure : IGEventable {
 	[JsonPropertyAttribute] public string name;
 	[JsonPropertyAttribute] private City _city;
 
-	[JsonPropertyAttribute] public bool canTakeDamage;
 	[JsonPropertyAttribute] protected float _health;
-
-	[JsonPropertyAttribute] private int _tileWidth;
-	[JsonPropertyAttribute] private int _tileHeight; 
 
 	[JsonPropertyAttribute] public Tile BuildTile { get { 
 			if (myBuildingTiles == null)
@@ -42,6 +38,7 @@ public abstract class Structure : IGEventable {
 		}
 	}
 	[JsonPropertyAttribute] public int rotated = 0; 
+	[JsonPropertyAttribute] public bool buildInWilderniss = false;
 
 	#endregion
 	#region RuntimeOrOther
@@ -79,13 +76,16 @@ public abstract class Structure : IGEventable {
 	public int PopulationLevel = 0;
 	public int PopulationCount = 0;
 
+	private int _tileWidth;
+	private int _tileHeight;
+
 	public bool canRotate = true;
 	public bool canBeBuildOver = false;
 	public bool canBeUpgraded = false;
 	public bool showExtraUI = false;
-	public bool extraUIOn = false;
+	public bool canTakeDamage = false;
 
-	public bool buildInWilderniss = false;
+	public bool extraUIOn = false;
 	public Vector2 middleVector {get {return new Vector2 (BuildTile.X + (float)tileWidth/2f,BuildTile.Y + (float)tileHeight/2f);}}
 
 	public Direction mustFrontBuildDir = Direction.None; 
@@ -140,6 +140,27 @@ public abstract class Structure : IGEventable {
 	public string connectOrientation;
 	public Item[] buildingItems;
 
+	protected void BaseCopyData(Structure str){
+		ID = str.ID;
+		isWalkable = str.isWalkable;
+		hasHitbox = str.hasHitbox;
+		isActive = str.isActive;
+		MaxHealth = str.MaxHealth;
+
+		buildingRange = str.buildingRange;
+		PopulationLevel = str.PopulationLevel;
+		PopulationCount = str.PopulationCount;
+		_tileWidth = str.tileWidth;
+		_tileHeight = str.tileHeight;
+
+		canTakeDamage = str.canTakeDamage;
+		canRotate = str.canRotate;
+		canBeBuildOver = str.canBeBuildOver;
+		canBeUpgraded = str.canBeUpgraded;
+		showExtraUI = str.showExtraUI;
+		mustFrontBuildDir = str.mustFrontBuildDir;
+
+	}
 	#endregion
 	#endregion
 

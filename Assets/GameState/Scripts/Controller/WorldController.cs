@@ -146,7 +146,6 @@ public class WorldController : MonoBehaviour {
 		BuildController.Instance.PlaceAllLoadedStructure (loadedStructures);
 		// Center the Camera
 		Camera.main.transform.position = new Vector3( world.Width/2, world.Height/2, Camera.main.transform.position.z );
-		BuildController.Instance.PlaceAllLoadedStructure ();
 		Debug.Log ("LOAD ENDED");
 	}
 

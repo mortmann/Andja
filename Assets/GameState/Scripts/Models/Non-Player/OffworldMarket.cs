@@ -1,15 +1,19 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
+using Newtonsoft.Json;
+
 /// <summary>
 /// Offworld market.
 /// Only ships can trade with it
 /// </summary>
+
+[JsonObject(MemberSerialization.OptIn)]
 public class OffworldMarket {
-	public Dictionary<int,int> itemIDtoSellPrice;
-	public Dictionary<int,int> itemIDtoBuyPrice;
+	[JsonPropertyAttribute] public Dictionary<int,int> itemIDtoSellPrice;
+	[JsonPropertyAttribute] public Dictionary<int,int> itemIDtoBuyPrice;
 
 	// Use this for initialization
-	public OffworldMarket () {
+	public OffworldMarket (bool n=true) {
 		//Read the prices for selling/buying from a seperate file in savegame
 		//are these prices randomly generated? if so were do we get the lower 
 		//and upper bounds for it do we sell/buy limitless or is there a cooldown 
@@ -29,7 +33,8 @@ public class OffworldMarket {
 			itemIDtoBuyPrice.Add (id,10); //eg Random.Range (10,20)
 		}
 	}
-
+	public OffworldMarket(){
+	}
 
 	public void SellItemToOffWorldMarket(Item item, Player player){
 		if(itemIDtoSellPrice.ContainsKey (item.ID )== false){

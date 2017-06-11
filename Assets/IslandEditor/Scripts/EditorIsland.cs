@@ -91,7 +91,7 @@ public class EditorIsland  : IXmlSerializable {
 			for (int y = 0; y < height; y++) {
 				if (tiles [x, y].Type != TileType.Ocean) {
 					writer.WriteStartElement ("Tile");
-					tiles [x, y].WriteXml (writer);
+//					tiles [x, y].WriteXml (writer);
 					writer.WriteEndElement ();
 				}
 			}
@@ -144,7 +144,7 @@ public class EditorIsland  : IXmlSerializable {
 				int x = int.Parse( reader.GetAttribute("X") );
 				int y = int.Parse( reader.GetAttribute("Y") );
 				tiles[x,y] = new EditorTile(x,y); //save only landtiles
-				tiles[x,y].ReadXml(reader);
+//				tiles[x,y].ReadXml(reader);
 			} while ( reader.ReadToNextSibling("Tile") );
 		}
 

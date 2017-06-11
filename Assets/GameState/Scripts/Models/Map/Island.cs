@@ -1,55 +1,77 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 using System;
-using System.Xml;
-using System.Xml.Schema;
-using System.Xml.Serialization;
+using Newtonsoft.Json;
+using System.Linq;
 
 public enum Climate {Cold,Middle,Warm};
 
-public class Island : IXmlSerializable,IGEventable{
+[JsonObject(MemberSerialization.OptIn)]
+public class Island : IGEventable{
 	public const int TargetType = 11;
+	#region Serialize
+
+	[JsonPropertyAttribute] public List<City> myCities;
+	[JsonPropertyAttribute] public List<Fertility> myFertilities;
+	[JsonPropertyAttribute] public Climate myClimate;
+	[JsonPropertyAttribute] public Dictionary<string,int> myRessources;
+	[JsonPropertyAttribute] public Tile StartTile;
+
+	#endregion
+	#region RuntimeOrOther
 
 	public Path_TileGraph tileGraphIslandTiles { get; protected set; }
-	public Path_TileGraph tileGraphAroundIslandTiles { get; protected set; }
-
-    public List<Tile> myTiles;
-    public List<City> myCities;
-
-	public Climate myClimate;
-	public List<Fertility> myFertilities;
-	public Dictionary<string,int> myRessources;
-
+	public List<Tile> myTiles;
 	public Vector2 min;
 	public Vector2 max;
 	public City wilderniss;
 	public bool allReadyHighlighted;
-
 	Action<GameEvent> cbEventCreated;
 	Action<GameEvent> cbEventEnded;
 
-
-    //TODO: get a tile to start with!
+	#endregion
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Island"/> class.
+	/// DO not change anything in here unless(!!) it should not happen on load also
+	/// IF both times should happen then put it into Setup!
+    /// </summary>
+    /// <param name="startTile">Start tile.</param>
+    /// <param name="climate">Climate.</param>
 	public Island(Tile startTile, Climate climate = Climate.Middle) {
+		StartTile = startTile; // if it gets loaded the StartTile will already be set
 		myFertilities = new List<Fertility> ();
-
-
 		myRessources = new Dictionary<string, int> ();
+		myCities = new List<City>();
+		Setup ();
+		//TODO REMOVE THIS
+		//LOAD this from map file?
 		myRessources ["stone"] = int.MaxValue;
-        myTiles = new List<Tile>();
-        myTiles.Add(startTile);
-        myCities = new List<City>();
-        startTile.myIsland = this;
-        foreach (Tile t in startTile.GetNeighbours()) {
-            IslandFloodFill(t);
-        }
-        tileGraphIslandTiles = new Path_TileGraph(this);
-		tileGraphAroundIslandTiles = new Path_TileGraph (min, max);
 
-		allReadyHighlighted = false;
-
-		World.current.RegisterOnEvent (OnEventCreated,OnEventEnded);
     }
+	public Island(){
+	}
+	private void Setup(){
+		myTiles = new List<Tile>();
+		foreach (Tile t in StartTile.GetNeighbours()) {
+			IslandFloodFill(t);
+		}
+		StartTile.myIsland = this;
+		allReadyHighlighted = false;
+		World.current.RegisterOnEvent (OnEventCreated,OnEventEnded);
+		tileGraphIslandTiles = new Path_TileGraph(this);
+	}
+	public IEnumerable<Structure> Load(){
+		Setup ();
+		List<Structure> structs = new List<Structure>();
+		foreach(City c in myCities){
+			if(c.playerNumber == -1){
+				wilderniss = c;
+			}
+			structs.AddRange(c.Load ());
+		}
+		return structs;
+	}
+
     protected void IslandFloodFill(Tile tile) {
         if (tile == null) {
             // We are trying to flood fill off the map, so just return
@@ -94,11 +116,13 @@ public class Island : IXmlSerializable,IGEventable{
                 }
             }
         }
-
 		//city that contains all the structures like trees that doesnt belong to any player
 		//so it has the playernumber -1 -> needs to be checked for when buildings are placed
 		//have a function like is notplayer city
 		//it does not need NEEDs
+		if(myCities.Count>0){
+			return; // this means it got loaded in so there is already a wilderniss
+		}
 		myCities.Add (new City(myTiles,this)); 
 		wilderniss = myCities [0];
 //		BuildController.Instance.BuildOnTile (myTiles,true,BuildController.Instance.structurePrototypes[3],true);
@@ -121,7 +145,7 @@ public class Island : IXmlSerializable,IGEventable{
 	}
 	public City CreateCity(int playerNumber) {
 		allReadyHighlighted = false;
-		City c = new City(playerNumber,this,World.current.allNeeds);
+		City c = new City(playerNumber,this);
 		myCities.Add (c);
         return c;
     }
@@ -161,85 +185,5 @@ public class Island : IXmlSerializable,IGEventable{
 	public int GetTargetType(){
 		return TargetType;
 	}
-	//////////////////////////////////////////////////////////////////////////////////////
-	/// 
-	/// 						SAVING & LOADING
-	/// 
-	//////////////////////////////////////////////////////////////////////////////////////
-	public XmlSchema GetSchema() {
-		return null;
-	}
 
-	public void WriteXml(XmlWriter writer) {
-		writer.WriteAttributeString("StartTile_X",myTiles[0].X.ToString ());
-		writer.WriteAttributeString("StartTile_Y",myTiles[0].Y.ToString ());
-		writer.WriteAttributeString ("Climate",((int)myClimate).ToString ());
-		writer.WriteStartElement("fertilities");
-		foreach(Fertility fer in myFertilities){
-			writer.WriteStartElement("fertility");
-			writer.WriteAttributeString ("ID",fer.ID.ToString ());
-			writer.WriteEndElement();
-		}
-		writer.WriteEndElement();
-		writer.WriteStartElement("Cities");
-		foreach (City c in myCities) {
-			writer.WriteStartElement("City");
-			c.WriteXml(writer);
-			writer.WriteEndElement();
-		}
-		writer.WriteEndElement();
-	}
-
-	public void ReadXml(XmlReader reader) {
-		myClimate = (Climate)int.Parse(reader.GetAttribute ("Climate"));
-		reader.ReadToFollowing ("fertilities");
-		List<int> ferIDs = new List<int>();
-		while (reader.Read ()) {
-			if(reader.IsStartElement ("fertility")==false){
-				if(reader.Name == "fertilities"){
-					break;
-				}
-				continue;
-			}	
-			ferIDs.Add (int.Parse (reader.GetAttribute ("ID")));
-
-		}
-		foreach (int item in ferIDs) {
-			myFertilities.Add (World.current.getFertility(item)); 
-		}
-		myCities = new List<City> ();
-		wilderniss = null;
-		reader.ReadToFollowing ("Cities");
-		if (reader.ReadToDescendant ("City")) {
-			//Workaround for readnextsibling
-			//why ever it is not working here
-			//read as long as it reads cities
-			//if it reads city start the do more
-			do {
-				if(reader.IsStartElement ("City")==false){
-					if(reader.Name == "Cities"){
-						return;
-					}
-					continue;
-				}				 
-
-				int playerNumber = int.Parse (reader.GetAttribute ("Player"));
-
-				City c = null;
-				if (playerNumber == -1) {
-					c = new City (this.myTiles,this);
-				} else {
-					c = new City (playerNumber, this, World.current.allNeeds);	
-				}
-				c.ReadXml (reader);
-				myCities.Add (c);
-
-				 
-			} while(reader.Read ());
-		}
-	}
-	public void SaveIGE(XmlWriter writer){
-		writer.WriteAttributeString("TargetType", TargetType +"" );
-		writer.WriteAttributeString("Island", myTiles.ToString() +"" );
-	}
 }

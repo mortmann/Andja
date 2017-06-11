@@ -177,7 +177,7 @@ public class SoundController : MonoBehaviour {
 	}
 
 	public void OnBuild(Structure str){
-		if(str.playerID!=PlayerController.Instance.currentPlayerNumber){
+		if(str.playerNumber!=PlayerController.Instance.currentPlayerNumber){
 			return;
 		}
 		string name =  "BuildSound_" + Time.frameCount;

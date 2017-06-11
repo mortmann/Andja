@@ -6,12 +6,10 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Xml;
-using System.Xml.Schema;
-using System.Xml.Serialization;
 using UnityEngine;
 using UnityEngine.Events;
-
+using System.Xml;
+using System.Xml.Serialization;
 /// <summary>
 /// Build state modes.
 /// </summary>
@@ -42,12 +40,9 @@ public class BuildController : MonoBehaviour {
 	public static List<Item> buildItems;
 
 	public uint buildID = 0;
-	public Dictionary<int,Structure> loadedToPlaceStructure;
-	public Dictionary<int,Tile> loadedToPlaceTile;
 	public List<Need> allNeeds;
 	public Dictionary<Climate,List<Fertility>> allFertilities;
 	public Dictionary<int,Fertility> idToFertilities;
-
 
 	Action<Structure> cbStructureCreated;
 	Action<City> cbCityCreated;
@@ -72,9 +67,6 @@ public class BuildController : MonoBehaviour {
 		allItems = new Dictionary<int, Item> ();
 		buildItems = new List<Item> ();
 		ReadItemsFromXML();
-
-		loadedToPlaceTile = new Dictionary<int, Tile> ();
-		loadedToPlaceStructure = new Dictionary<int, Structure> ();
 
 		// setup all prototypes of structures here 
 		// load them from the 
@@ -123,7 +115,7 @@ public class BuildController : MonoBehaviour {
 		if(t.Structure==null){
 			return;
 		}
-		if(t.Structure.playerID==destroyPlayer.playerNumber){
+		if(t.Structure.playerNumber==destroyPlayer.playerNumber){
 			t.Structure.Destroy ();
 		}
 	}
@@ -188,12 +180,12 @@ public class BuildController : MonoBehaviour {
 
 		//if it should be build in wilderniss city
 		if(wild){
-			s.playerID = -1;
+			s.playerNumber = -1;
 			s.buildInWilderniss = true;
 		} else {
 			//set the player id for check for city
 			//has to be changed if someone takes it over
-			s.playerID = playerNumber;
+			s.playerNumber = playerNumber;
 		}
 		//before we need to check if we can build THERE
 		//we need to know if there is if we COULD build 
@@ -290,7 +282,7 @@ public class BuildController : MonoBehaviour {
 			Debug.LogError ("CreateCity called not on a t.myCity && t.myCity.IsWilderness () ==false!");
 			return null;
 		}
-		City c = t.myIsland.CreateCity (w.playerID);
+		City c = t.myIsland.CreateCity (w.playerNumber);
 		// needed for mapimage
 		c.addStructure (w);// dont know if this is good ...
 		if(cbCityCreated != null) {
@@ -299,16 +291,12 @@ public class BuildController : MonoBehaviour {
 		return c; 
 	}
 
-	public void AddLoadedPlacedStructure(int bid,Structure structure,Tile t){
-		loadedToPlaceStructure.Add (bid,structure);
-		loadedToPlaceTile.Add (bid,t);
-	}
-	public void PlaceAllLoadedStructure(){
-		foreach (int i in loadedToPlaceStructure.Keys) {
-			BuildOnTile (loadedToPlaceStructure[i],loadedToPlaceTile[i]);
+
+	public void PlaceAllLoadedStructure(List<Structure> structures){
+		for (int i = 0; i < structures.Count; i++) {
+			structures[i].LoadPrototypData (structurePrototypes[structures[i].buildID]);
+			BuildOnTile (structures[i],structures[i].BuildTile);
 		}
-		loadedToPlaceStructure.Clear ();
-		loadedToPlaceTile.Clear ();
 	}
 	public void ResetBuild(){
 		BuildState = BuildStateModes.None;

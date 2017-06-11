@@ -1,13 +1,9 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System;
-using System.Xml;
-using System.Xml.Schema;
-using System.Xml.Serialization;
-public class EditorTile : IXmlSerializable{
-	[XmlAttribute("X")]
+
+public class EditorTile {
 	protected int _x;
-	[XmlAttribute("Y")]
 	protected int _y;
 	public int X {
 		get {
@@ -100,26 +96,5 @@ public class EditorTile : IXmlSerializable{
 
 		return ns;
 	}
-
-	//////////////////////////////////////////////////////////////////////////////////////
-	/// 
-	/// 						SAVING & LOADING
-	/// 
-	//////////////////////////////////////////////////////////////////////////////////////
-	public XmlSchema GetSchema() {
-		return null;
-	}
-
-	public void WriteXml(XmlWriter writer) {
-		writer.WriteAttributeString( "X", X.ToString() );
-		writer.WriteAttributeString( "Y", Y.ToString() );
-		writer.WriteAttributeString( "Type", ((int)Type).ToString() );
-		writer.WriteAttributeString( "SpriteName", SpriteName );
-	}
-
-	public void ReadXml(XmlReader reader) {
-		Type = (TileType)int.Parse( reader.GetAttribute("Type") );
-		SpriteName = reader.GetAttribute( "SpriteName", SpriteName );
-
-	}
+		
 }

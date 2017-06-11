@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 using UnityEngine.EventSystems;
+using System;
 
 public class CameraController : MonoBehaviour {
 	public static int maxZoomLevel = 25;
@@ -199,28 +200,19 @@ public class CameraController : MonoBehaviour {
 
 	}
 
-	public string GetSaveCamera(){
-		return Camera.main.transform.position.ToString () + ";" + Camera.main.orthographicSize;
+	public CameraSave GetSaveCamera(){
+		CameraSave cs = new CameraSave ();
+		cs.orthographicSize = Camera.main.orthographicSize;
+		cs.pos = Camera.main.transform.position;
+		return cs;
 	}
-	public void LoadSaveCameraData(string data){
-		string[] datas = data.Split (';');
-		Camera.main.transform.position = StringToVector3 (datas[0]);
-		float temp = 0;
-		float.TryParse (datas[1],out temp);
-		Camera.main.orthographicSize = temp;
+	public void LoadSaveCameraData(CameraSave cs){
+		Camera.main.transform.position = cs.pos;
+		Camera.main.orthographicSize = cs.orthographicSize;
 	}
-	public Vector3 StringToVector3(string vector3){
-		//Remove the ( )
-		if (vector3.StartsWith ("(") && vector3.EndsWith (")")) {
-			vector3 = vector3.Substring(1, vector3.Length-2);
-		}
-		// split the items
-		string[] vecs = vector3.Split(',');
-		// store as a Vector3
-		Vector3 result = new Vector3(
-			float.Parse(vecs[0]),
-			float.Parse(vecs[1]),
-			float.Parse(vecs[2]));
-		return result;
-	}
+}
+[Serializable]
+public class CameraSave {
+	public Vector3 pos;
+	public float orthographicSize;
 }

@@ -1,8 +1,13 @@
 ﻿using UnityEngine;
 using System.Collections;
+using Newtonsoft.Json;
 
+[JsonObject(MemberSerialization.OptIn)]
 public class NeedsBuilding : Structure {
-
+	#region Serialize
+	#endregion
+	#region RuntimeOrOther
+	#endregion
 	public NeedsBuilding (int pid){
 		this.ID = pid;
 		tileWidth = 2;
@@ -24,6 +29,10 @@ public class NeedsBuilding : Structure {
 		this.buildcost = b.buildcost;
 		this.maintenancecost = b.maintenancecost;
 	}
+	/// <summary>
+	/// DO NOT USE
+	/// </summary>
+	public NeedsBuilding(){}
 	public override Structure Clone (){
 		return new NeedsBuilding (this);
 	}
@@ -39,10 +48,5 @@ public class NeedsBuilding : Structure {
 	}
 	public override void update (float deltaTime){
 	}
-	public override void ReadXml (System.Xml.XmlReader reader){
-		BaseReadXml (reader);
-	}
-	public override void WriteXml (System.Xml.XmlWriter writer){
-		BaseWriteXml (writer);
-	}
+
 }

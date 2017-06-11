@@ -221,7 +221,7 @@ public class TradeRoutePanel : MonoBehaviour {
 
 	public void NextCity(bool right){
 		tradeRoute.SetCityTrade (city, GetToShip (), GetFromShip ());		
-		Trade t = tradeRoute.GetNextTrade (city,right);
+		TradeRoute.Trade t = tradeRoute.GetNextTrade (city,right);
 		SetCity (t.city);
 	}
 
@@ -233,7 +233,7 @@ public class TradeRoutePanel : MonoBehaviour {
 		intToItem = new Dictionary<int, Item> ();
 		ResetItemIcons ();
 		city = c;
-		Trade t = tradeRoute.GetTradeFor (city);
+		TradeRoute.Trade t = tradeRoute.GetTradeFor (city);
 		if(t==null){
 			return;
 		}

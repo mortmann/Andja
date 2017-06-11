@@ -1,12 +1,20 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 
-
+[JsonObject(MemberSerialization.OptIn)]
 public class Warehouse : MarketBuilding {
-	public List<Unit> inRangeUnits;
+
+	#region Serialize
+
+
+	#endregion
+	#region RuntimeOrOther
 
 	public Tile tradeTile;
+	public List<Unit> inRangeUnits;
 
+	#endregion
 	public Warehouse(int id){
 		inRangeUnits = new List<Unit> ();
 		contactRange = 6.3f;
@@ -25,6 +33,9 @@ public class Warehouse : MarketBuilding {
 		this.canTakeDamage = true;
 
 	}
+	/// <summary>
+	/// DO NOT USE
+	/// </summary>
 	public Warehouse(){
 	}
 	protected Warehouse(Warehouse str){

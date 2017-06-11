@@ -1,9 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 using System;
-using System.Xml;
-using System.Xml.Schema;
-using System.Xml.Serialization;
+
+
 public class GameEvent {
 	public EventType EventType { protected set; get; }
 
@@ -140,30 +139,5 @@ public class GameEvent {
 			this.target = t;
 		}
 	}
-
-	//TODO save the events 
-	//TODO LOAD THESE ALSO 
-	#region save
-	public XmlSchema GetSchema() {
-		return null;
-	}
-
-	public void WriteXml(XmlWriter writer) {
-		writer.WriteElementString ("currentDuration", currentDuration +"");
-		writer.WriteElementString ("Range", Range +"");
-		writer.WriteStartElement ("IGEventable");
-		if(target != null){
-			target.SaveIGE (writer);	
-		} else {
-			writer.WriteElementString ("TargetType","-1");
-		}
-
-//		writer.WriteElementString ("ID", target.);
-		writer.WriteEndElement ();
-	}
-
-	public void ReadXml(XmlReader reader) {
-
-	}
-	#endregion
+		
 }

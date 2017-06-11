@@ -1,31 +1,32 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 using System;
-using System.Xml;
-using System.Xml.Schema;
-using System.Xml.Serialization;
+using Newtonsoft.Json;
 
-public class Worker : IXmlSerializable {
+[JsonObject(MemberSerialization.OptIn)]
+public class Worker {
+	#region Serialize
+	[JsonPropertyAttribute] public OutputStructure myHome;
+	[JsonPropertyAttribute] Pathfinding path;
+	[JsonPropertyAttribute] float doTimer;
+	[JsonPropertyAttribute] Item[] toGetItems;
+	[JsonPropertyAttribute] int[] toGetAmount;
+	[JsonPropertyAttribute] Inventory inventory;
+	[JsonPropertyAttribute] bool goingToWork;
+	[JsonPropertyAttribute] Tile destTile;
+	[JsonPropertyAttribute] public bool isAtHome;
+	#endregion
 	#region runtimeVariables
-	public OutputStructure myHome;
-	Pathfinding path;
-	public bool isAtHome;
-	Inventory inventory;
 	public OutputStructure workStructure;
-	Tile destTile;
 	Tile currTile;
 	Action<Worker> cbWorkerChanged;
 	Action<Worker> cbWorkerDestroy;
 	Action<Worker, string> cbSoundCallback;
 	//TODO sound
 	string soundWorkName="";//idk how to load/read this in? has this the workstructure not worker???
-	float doTimer;
 	#endregion
 	#region readInVariables
 	bool hasToFollowRoads;
-	bool goingToWork;
-	Item[] toGetItems;
-	int[] toGetAmount;
 	float workTime = 1f;
 	#endregion
 	public float X {
@@ -236,38 +237,5 @@ public class Worker : IXmlSerializable {
 	public void UnregisterOnSoundCallback (Action<Worker, string> cb) {
 		cbSoundCallback -= cb;
 	}
-
-	//////////////////////////////////////////////////////////////////////////////////////
-	/// 
-	/// 						SAVING & LOADING
-	/// 
-	//////////////////////////////////////////////////////////////////////////////////////
-	public XmlSchema GetSchema() {
-		return null;
-	}
-	public void WriteXml(XmlWriter writer){
-		writer.WriteAttributeString("currTile_X", path.currTile.X.ToString () );
-		writer.WriteAttributeString("currTile_Y", path.currTile.Y.ToString () );
-		writer.WriteAttributeString("destTile_X", workStructure.JobTile.X.ToString () );
-		writer.WriteAttributeString("destTile_Y", workStructure.JobTile.Y.ToString () );
-		writer.WriteAttributeString("goingToWork", goingToWork.ToString () );
-		writer.WriteStartElement("Inventory");
-		inventory.WriteXml(writer);
-		writer.WriteEndElement();
-	}
-	public void ReadXml (XmlReader reader){
-		isAtHome = false;
-		int dx = int.Parse( reader.GetAttribute("destTile_X") );
-		int dy = int.Parse( reader.GetAttribute("destTile_Y") );
-		destTile = WorldController.Instance.world.GetTileAt (dx,dy);
-		int cx = int.Parse( reader.GetAttribute("currTile_X") );
-		int cy = int.Parse( reader.GetAttribute("currTile_Y") );
-		currTile = WorldController.Instance.world.GetTileAt (cx,cy);
-		goingToWork = bool.Parse (reader.GetAttribute ("goingToWork"));
-
-		reader.ReadToDescendant ("Inventory");
-		inventory = new Inventory ();
-		inventory.ReadXml (reader);
-
-	}
+		
 }

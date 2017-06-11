@@ -1,11 +1,21 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 
+[JsonObject(MemberSerialization.OptIn)]
 public class Farm : OutputStructure {
+	
+
+	#region Serialize
+	#endregion
+	#region RuntimeOrOther
+
 	public Growable growable;
 	public int growableReadyCount;
 	public int OnRegisterCallbacks;
 	Queue<Structure> workingGrowables;
+
+	#endregion
 
     public override float Efficiency{
 		get {
@@ -53,6 +63,11 @@ public class Farm : OutputStructure {
 		hasHitbox = f.hasHitbox;
 		this.canTakeDamage = f.canTakeDamage;
 	}
+	/// <summary>
+	/// DO NOT USE
+	/// </summary>
+	public Farm(){}
+
 	public override Structure Clone ()	{
 		return new Farm (this);
 	}
@@ -62,7 +77,7 @@ public class Farm : OutputStructure {
 		if(growable == null){
 			return;
 		}
-		GameObject.FindObjectOfType<BuildController> ().BuildOnTile (3, new List<Tile>(myRangeTiles),playerID);
+		GameObject.FindObjectOfType<BuildController> ().BuildOnTile (3, new List<Tile>(myRangeTiles),playerNumber);
 		//farm has it needs plant if it can 
 		foreach (Tile rangeTile in myRangeTiles) {
 			if(rangeTile.Structure != null){
@@ -172,12 +187,4 @@ public class Farm : OutputStructure {
 		
 	}
 
-	public override void ReadXml (System.Xml.XmlReader reader)	{
-		base.BaseReadXml (reader);
-		ReadUserXml (reader);
-	}
-	public override void WriteXml (System.Xml.XmlWriter writer)	{
-		BaseWriteXml (writer);
-		WriteUserXml (writer);
-	}
 }

@@ -1,49 +1,28 @@
 ﻿using UnityEngine;
 using System;
 using System.Collections.Generic;
-using System.Xml;
-using System.Xml.Schema;
-using System.Xml.Serialization;
+using Newtonsoft.Json;
 
-public class City : IXmlSerializable,IGEventable {
+[JsonObject(MemberSerialization.OptIn)]
+public class City : IGEventable {
 	public const int TargetType = 12;
-
-    //TODO: set this to the player that creates this
-    public int playerNumber = 0;
-    public Island island { get; protected set; }
-    public Inventory myInv;
-    public List<Structure> myStructures;
-	public List<HomeBuilding> myHomes;
-
-	public HashSet<Tile> myTiles;
-	public List<Route> myRoutes;
-	public Unit tradeUnit;
-	public Dictionary<Need,float> allNeeds;
-	public List<Need> needsList;
-
-	public Dictionary<int,Need> idToNeed;
-
-	public int cityBalance;
-	public int[] citizienCount;
-	public float useTick;
-	public float useTickTimer;
-	public Warehouse myWarehouse;
-	Action<Structure> cbStructureAdded;
-	Action<Structure> cbStructureRemoved;
-	Action<City> cbCityDestroy;
-
-	Action<Structure> cbRegisterTradeOffer;
-	Action<GameEvent> cbEventCreated;
-	Action<GameEvent> cbEventEnded;
-
+	#region Serialize
+	[JsonPropertyAttribute] public int playerNumber = 0;
+	[JsonPropertyAttribute] public Inventory myInv;
+	[JsonPropertyAttribute] public List<Structure> myStructures;
+	[JsonPropertyAttribute] public Dictionary<Need,float> allNeeds; // i think this is what is missing
+	[JsonPropertyAttribute] public float useTickTimer;
 	/// <summary>
 	/// ITEM which is to trade
 	/// bool = true -> SELL
 	/// 	 = false -> BUY
 	/// </summary>
-	public Dictionary<int,TradeItem> itemIDtoTradeItem;
+	[JsonPropertyAttribute] public Dictionary<int,TradeItem> itemIDtoTradeItem;
+	[JsonPropertyAttribute] private string _name=""; 
+	[JsonPropertyAttribute] public int[] citizienCount;
 
-	private string _name=""; 
+	#endregion
+	#region RuntimeOrOther
 	public string name {get{
 			if(this.IsWilderness ()){
 				return "Wilderniss";
@@ -52,40 +31,78 @@ public class City : IXmlSerializable,IGEventable {
 				return "City "+island.myCities.IndexOf (this);	
 			}
 			return _name;
-			}}
+	}}
+	public Island island { get; protected set; }
+	//TODO: set this to the player that creates this
+	public List<HomeBuilding> myHomes;
+	public HashSet<Tile> myTiles;
+	public List<Route> myRoutes;
+	public Unit tradeUnit;
+	public Dictionary<int,Need> idToNeed;
+	public int cityBalance;
+	public float useTick;
+	public Warehouse myWarehouse;
+	Action<Structure> cbStructureAdded;
+	Action<Structure> cbStructureRemoved;
+	Action<City> cbCityDestroy;
 
-	public City(int playerNr,Island island,List<Need> allNeedsList) {
+	Action<Structure> cbRegisterTradeOffer;
+	Action<GameEvent> cbEventCreated;
+	Action<GameEvent> cbEventEnded;
+	#endregion
+
+	public City(int playerNr,Island island) {
 		this.playerNumber = playerNr;
+		this.island = island;
 		citizienCount = new int[4];
+		itemIDtoTradeItem = new Dictionary<int, TradeItem> ();
+		myStructures = new List<Structure>();
+		myInv = new Inventory (-1, name);
+		allNeeds = new Dictionary<Need,float> ();
+		Setup ();
+
 		for (int i = 0; i < citizienCount.Length; i++) {
 			citizienCount [i] = 0;
 		}
-        this.island = island;
-		itemIDtoTradeItem = new Dictionary<int, TradeItem> ();
-		myStructures = new List<Structure>();
-		myTiles = new HashSet<Tile> ();
-
-		myInv = new Inventory (-1, name);
 		//temporary
 		Item temp = BuildController.Instance.allItems [49].Clone ();
 		temp.count = 50;
 		myInv.addItem (temp);
-
-		myRoutes = new List<Route> ();
-		myHomes = new List<HomeBuilding> ();
-		allNeeds = new Dictionary<Need,float> ();
-		needsList = new List<Need>(allNeedsList);
-		idToNeed = new Dictionary<int, Need> ();
-		for (int i = 0; i < allNeedsList.Count; i++) {
-			allNeeds.Add (needsList [i], 0);
-			idToNeed.Add (needsList [i].ID, needsList [i]);
-		}
-		useTick = 30f;
-
 		_name = "<City>" + UnityEngine.Random.Range (0, 1000);
 		//		useTickTimer = useTick;
     }
-	 
+	/// <summary>
+	/// DO NOT USE! ONLY serialization!
+	/// </summary>
+	public City(){
+	}
+
+	private void Setup(){
+		
+		myTiles = new HashSet<Tile> ();
+		myHomes = new List<HomeBuilding> ();
+		myRoutes = new List<Route> ();
+		useTick = 30f;
+		idToNeed = new Dictionary<int, Need> ();
+		for (int i = 0; i < World.current.allNeeds.Count; i++) {
+			allNeeds.Add (World.current.allNeeds [i], 0);
+			idToNeed.Add (World.current.allNeeds [i].ID, World.current.allNeeds [i]);
+		}
+	}
+	public IEnumerable<Structure> Load(){
+		Setup ();
+		foreach (Structure item in myStructures) {
+			if(item is Warehouse){
+				myWarehouse =(Warehouse) item;
+			} else 
+			if(item is HomeBuilding){
+				myHomes.Add ((HomeBuilding)item);
+			}
+//			item.Load ();
+		}
+		return myStructures;
+	}
+
     internal void update(float deltaTime) {
 		for (int i = 0; i < myStructures.Count; i++) {
 			myStructures[i].update(deltaTime);
@@ -105,8 +122,8 @@ public class City : IXmlSerializable,IGEventable {
 		useTickTimer -= deltaTime;
 		if(useTickTimer<=0){
 			useTickTimer = useTick;
-			for(int i = 0;i<needsList.Count;i++){
-				allNeeds[needsList[i]]=needsList[i].TryToConsumThisIn (this,citizienCount);
+			foreach(Need need in allNeeds.Keys){
+				allNeeds[need]=need.TryToConsumThisIn (this,citizienCount);
 			}
 		}
     }
@@ -173,7 +190,7 @@ public class City : IXmlSerializable,IGEventable {
 			if(tiles[i].Structure != null){
 				if (myStructures.Contains (tiles [i].Structure) ==false) { 
 					tiles [i].Structure.City = this;
-					tiles [i].Structure.playerID = playerNumber;
+					tiles [i].Structure.playerNumber = playerNumber;
 					addStructure (tiles [i].Structure);
 				}
 			}
@@ -189,7 +206,7 @@ public class City : IXmlSerializable,IGEventable {
 		if(t.Structure != null){
 			if (myStructures.Contains (t.Structure) ==false) { 
 				t.Structure.City = this;
-				t.Structure.playerID = playerNumber;
+				t.Structure.playerNumber = playerNumber;
  
 				addStructure (t.Structure);
 			}
@@ -365,6 +382,9 @@ public class City : IXmlSerializable,IGEventable {
 		}
 	}
 	public void Destroy(){
+		if(playerNumber==-1){
+			return; // this is the wilderniss it cant be removed! or destroyed
+		}
 		if(myTiles.Count > 0){
 			removeTiles (myTiles);
 		}
@@ -428,102 +448,5 @@ public class City : IXmlSerializable,IGEventable {
 	public int GetTargetType(){
 		return TargetType;
 	}
-	//////////////////////////////////////////////////////////////////////////////////////
-	/// 
-	/// 						SAVING & LOADING
-	/// 
-	//////////////////////////////////////////////////////////////////////////////////////
-	public XmlSchema GetSchema() {
-		return null;
-	}
 
-	public void WriteXml(XmlWriter writer) {
-		writer.WriteAttributeString("Player", playerNumber.ToString() );
-		writer.WriteStartElement("Inventory");
-			myInv.WriteXml(writer);
-		writer.WriteEndElement();
-
-		Structure tempWarehouse = null;
-		List<Structure> tempMarketbuildings = new List<Structure>();
-		List<Structure> tempStructures = new List<Structure>();
-		foreach (Structure s in myStructures) {
-			if (s is MarketBuilding) {
-				tempMarketbuildings.Add (s);
-			} else 
-			if(s is Warehouse){
-				tempWarehouse = s;
-			} else {
-				tempStructures.Add (s);
-			}
-		}
-		List<Structure> writeStructure = new List<Structure>();
-		if (tempWarehouse != null) {
-			writeStructure.Add (tempWarehouse);
-		}
-		writeStructure.AddRange (tempMarketbuildings);
-		writeStructure.AddRange (tempStructures);
-		//TODO MAKE THIS MORE PERFOMANT
-		if (myHomes != null) {
-			foreach (var item in myHomes) {
-				writeStructure.Add (item);
-			}
-		}
-		writer.WriteStartElement("Structures");
-		foreach (Structure s in writeStructure) {
-			writer.WriteStartElement("Structure");
-			s.WriteXml(writer);
-			writer.WriteEndElement();
-		}
-		writer.WriteEndElement();
-
-
-	}
-
-	public void ReadXml(XmlReader reader) {
-		playerNumber = int.Parse (reader.GetAttribute("Player"));
-		reader.ReadToDescendant ("Inventory");
-		myInv = new Inventory ();
-		myInv.ReadXml (reader);
-		BuildController bc = BuildController.Instance;
-		//TODO change this to smth better
-		//weird bug workaround
-		//not working with nextsibling
-		//not like in someplaces
-		//but for now its working
-		reader.ReadToFollowing ("Structures");
-//		while(reader.ReadToFollowing ("Structure")==false){
-//			reader.Read ();
-//		}
-		if (reader.ReadToDescendant ("Structure")) {
-			do {
-				int x = int.Parse (reader.GetAttribute ("BuildingTile_X"));
-				int y = int.Parse (reader.GetAttribute ("BuildingTile_Y"));
-				int buildID = int.Parse (reader.GetAttribute ("BuildID"));
-				Tile t = World.current.GetTileAt (x, y);
-				Structure s = bc.structurePrototypes [int.Parse (reader.GetAttribute ("ID"))].Clone (); 
-				if (s is MarketBuilding) {
-					((MarketBuilding)s).ReadXml (reader);
-				} else if (s is Warehouse) {
-					((Warehouse)s).ReadXml (reader);
-					myWarehouse = ((Warehouse)s);
-				} else if (s is OutputStructure) {
-					((OutputStructure)s).ReadXml (reader);
-				} else if (s is Growable) {
-					((Growable)s).ReadXml (reader);
-				} else if (s is HomeBuilding) {
-					((HomeBuilding)s).ReadXml (reader);
-					myHomes.Add ((HomeBuilding )s);
-				}
-				bc.AddLoadedPlacedStructure (buildID, s, t);
-				myStructures.Add (s);
-			} while(reader.ReadToNextSibling ("Structure"));
-		}
-
-	}
-
-	public void SaveIGE(XmlWriter writer){
-		writer.WriteAttributeString("TargetType", TargetType +"" );
-		writer.WriteAttributeString("Island", island.myTiles.ToString() +"" );
-		writer.WriteAttributeString("PlayerNumber", playerNumber +"" );
-	}
 }

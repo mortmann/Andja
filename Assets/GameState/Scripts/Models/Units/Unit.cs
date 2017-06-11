@@ -1,19 +1,32 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System;
-using System.Xml;
-using System.Xml.Schema;
-using System.Xml.Serialization;
 using Newtonsoft.Json;
 
 [JsonObject(MemberSerialization.OptIn)]
-public class Unit : IXmlSerializable {
+public class Unit  {
    	//save these Variables
-	public int playerNumber;
-	public bool IsDead { 
-		get { return _currHealth <= 0;}
-	}
-	private string _Name;
+	#region Serialize
+	[JsonPropertyAttribute] public int playerNumber;
+	[JsonPropertyAttribute] private string _Name;
+	[JsonPropertyAttribute] private float _currHealth = 50;
+	[JsonPropertyAttribute] float aggroCooldown=1f;
+	//COMBAT STUFF
+	[JsonPropertyAttribute] public Vector2 patrolTarget;
+	[JsonPropertyAttribute] public Vector2 patrolStart;
+	[JsonPropertyAttribute] public bool onWayToPatrolTarget; // false for targetPatrol, true for patrolstart
+	[JsonPropertyAttribute] public bool onPatrol = false;
+	[JsonPropertyAttribute] public bool isShip;
+	[JsonPropertyAttribute] public bool hasChanged = false;
+	[JsonPropertyAttribute] public float tradeTime=1.5f;
+	[JsonPropertyAttribute] public Pathfinding pathfinding;
+	#endregion
+	//being calculated at runtime
+	#region calculated 
+	//FIXME: these should be safed 
+	//not quite sure how to do it
+	Unit engangingUnit;
+	Structure attackingStructure;
 	public string Name {
 		get {
 			return _Name;
@@ -22,7 +35,6 @@ public class Unit : IXmlSerializable {
 			_Name = value;
 		}
 	}
-	private float _currHealth = 50;
 	public float currHealth {
 		get { return _currHealth;}
 		protected set {
@@ -32,25 +44,11 @@ public class Unit : IXmlSerializable {
 			_currHealth = value;
 		}
 	}
-	//COMBAT STUFF
-	float aggroCooldown=1f;
-	public Vector2 patrolTarget;
-	public Vector2 patrolStart;
-	public bool onWayToPatrolTarget; // false for targetPatrol, true for patrolstart
-	public bool onPatrol = false;
-	public bool isShip;
-	public bool hasChanged = false;
-	public float tradeTime=1.5f;
-
-	//being calculated at runtime
 	public OutputStructure rangeUStructure;
-	Unit engangingUnit;
-	Structure attackingStructure;
 	bool isCapturing;
 	protected Action<Unit> cbUnitChanged;
 	protected Action<Unit> cbUnitDestroyed;
 	protected Action<Unit,string> cbUnitSound;
-	public Pathfinding pathfinding;
 	public float X {
 		get {
 			return pathfinding.X;
@@ -69,8 +67,12 @@ public class Unit : IXmlSerializable {
 	public Vector3 VectorPosition {
 		get {return new Vector3 (X, Y);}
 	}
-
+	public bool IsDead { 
+		get { return _currHealth <= 0;}
+	}
+	#endregion
 	//gets from prototyp / being loaded in from masterfile
+	#region prototype
 	public int maxHP=50;
 	float aggroTimer=1f;
 	public float attackRange=1f;
@@ -82,7 +84,7 @@ public class Unit : IXmlSerializable {
 	protected float speed;   // Tiles per second
 	protected internal float width;
 	protected internal float height;
-
+	#endregion
 
 
 
@@ -219,7 +221,7 @@ public class Unit : IXmlSerializable {
 				return true;
 			}
 		} else if(attackingStructure!=null){
-			if(PlayerController.Instance.ArePlayersAtWar (attackingStructure.playerID,playerNumber)){
+			if(PlayerController.Instance.ArePlayersAtWar (attackingStructure.playerNumber,playerNumber)){
 				attackingStructure = null;
 				return false;
 			}
@@ -245,7 +247,7 @@ public class Unit : IXmlSerializable {
 			engangingUnit.TakeDamage (myDamageType,damage);
 		}
 		if(isCapturing){
-			if(attackingStructure.Health<=0||attackingStructure.playerID!=playerNumber){
+			if(attackingStructure.Health<=0||attackingStructure.playerNumber!=playerNumber){
 				attackingStructure = null;
 				return;
 			}
@@ -290,7 +292,7 @@ public class Unit : IXmlSerializable {
 	public void ToTradeItemToNearbyWarehouse(Item clicked){
 		Debug.Log (clicked.ToString ()); 
 		if(rangeUStructure != null && rangeUStructure is Warehouse){
-			if(rangeUStructure.playerID == playerNumber){
+			if(rangeUStructure.playerNumber == playerNumber){
 				rangeUStructure.City.tradeFromShip (this,clicked);
 			} else {
 				Player p = PlayerController.Instance.GetPlayer (playerNumber);
@@ -394,44 +396,6 @@ public class Unit : IXmlSerializable {
 	}
 	public void UnregisterOnSoundCallback(Action<Unit,string> cb) {
 		cbUnitSound -= cb;
-	}
-	//////////////////////////////////////////////////////////////////////////////////////
-	/// 
-	/// 						SAVING & LOADING
-	/// 
-	//////////////////////////////////////////////////////////////////////////////////////
-	public XmlSchema GetSchema() {
-		return null;
-	}
-	public void WriteXml(XmlWriter writer){
-		writer.WriteAttributeString("IsShip", isShip.ToString () );
-		writer.WriteAttributeString("playernumber", playerNumber.ToString () );
-		writer.WriteAttributeString("currTile_X", pathfinding.currTile.X.ToString () );
-		writer.WriteAttributeString("currTile_Y", pathfinding.currTile.Y.ToString () );
-		writer.WriteAttributeString("dest_X", pathfinding.dest_X.ToString () );
-		writer.WriteAttributeString("dest_Y", pathfinding.dest_Y.ToString () );
-		writer.WriteAttributeString("rotation", pathfinding.rotation.ToString () );
-		if (inventory != null) {
-			writer.WriteStartElement ("Inventory");
-			inventory.WriteXml (writer);
-			writer.WriteEndElement ();
-		}
-
-	}
-	public void ReadXml (XmlReader reader){
-		
-		isShip = bool.Parse(reader.GetAttribute ("IsShip"));
-		float x = float.Parse( reader.GetAttribute("dest_X") );
-		float y = float.Parse( reader.GetAttribute("dest_Y") );
-		float rot = float.Parse( reader.GetAttribute("rotation") );
-		pathfinding.rotation = rot;
-		if (reader.ReadToDescendant ("Inventory")) {
-			inventory = new Inventory ();
-			inventory.ReadXml (reader);
-		}
-
-		AddMovementCommand (x, y);
-
 	}
 
 }

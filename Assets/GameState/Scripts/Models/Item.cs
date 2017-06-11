@@ -1,17 +1,17 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System;
-using System.Xml;
-using System.Xml.Schema;
-using System.Xml.Serialization;
+using Newtonsoft.Json;
+
 
 public enum ItemType {Build,Intermediate,Luxury}
 
-public class Item : IXmlSerializable{
-    public int ID;
-    public string name;
-    public int count;
-	public ItemType Type;
+[JsonObject(MemberSerialization.OptIn)]
+public class Item {
+	[JsonPropertyAttribute] public int ID;
+	[JsonPropertyAttribute] public string name;
+	[JsonPropertyAttribute] public int count;
+	[JsonPropertyAttribute] public ItemType Type;
     public Item(int id, string name,ItemType type, int count = 0) {
         this.ID = id;
         this.name = name;
@@ -39,19 +39,5 @@ public class Item : IXmlSerializable{
 		return string.Format ("[Item] " + ID +":"+name+":"+count);
 	}
 
-	//////////////////////////////////////////////////////////////////////////////////////
-	/// 
-	/// 						SAVING & LOADING
-	/// 
-	//////////////////////////////////////////////////////////////////////////////////////
-	public XmlSchema GetSchema() {
-		return null;
-	}
-	public void WriteXml(XmlWriter writer) {
-		writer.WriteAttributeString( "ID", ID.ToString () );
-		writer.WriteAttributeString( "Count", count.ToString () );
-	}
-	public void ReadXml(XmlReader reader) {
-		count = int.Parse( reader.GetAttribute("Count") );
-	}
+
 }

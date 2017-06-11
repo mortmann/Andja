@@ -2,45 +2,56 @@
 using System.Collections.Generic;
 using System.Linq;
 using Priority_Queue;
+using Newtonsoft.Json;
 
 public enum path_mode { world, islandMultipleStartpoints, islandSingleStartpoint, route };
 public enum path_dest { tile, exact };
 public enum turn_type { OnPoint, TurnRadius };
+
+[JsonObject(MemberSerialization.OptIn)]
 public class Pathfinding {
-    private Path_AStar pathAStar;
-    private float movementPercentage; // Goes from 0 to 1 as we move from currTile to destTile
-    public float dest_X;
-    public float dest_Y;
-    public bool IsAtDest=true;
-    // If we aren't moving, then destTile = currTile
-    protected Tile _destTile;
-    //for building 
-    protected List<Tile> roadTilesAroundStartStructure;
-    protected List<Tile> roadTilesAroundEndStructure;
-    private Vector3 pos;
-    public float rotation;
-	public Queue<Tile> worldPath;
-    public Queue<Tile> backPath;
-    private path_dest pathDest;
+	#region Serialize
+	[JsonPropertyAttribute] private float movementPercentage; // Goes from 0 to 1 as we move from currTile to destTile
+	[JsonPropertyAttribute] public float dest_X;
+	[JsonPropertyAttribute] public float dest_Y;
+	[JsonPropertyAttribute] public bool IsAtDest=true;
+	// If we aren't moving, then destTile = currTile
+	[JsonPropertyAttribute] protected Tile _destTile;
+	[JsonPropertyAttribute] private Vector3 pos;
+	[JsonPropertyAttribute] public float rotation;
+	[JsonPropertyAttribute] public Queue<Tile> worldPath;
+	[JsonPropertyAttribute] public Queue<Tile> backPath;
+
+
+	#endregion
+	#region RuntimeOrPrototyp
+	private Path_AStar pathAStar;
+	//for building 
+	protected List<Tile> roadTilesAroundStartStructure;
+	protected List<Tile> roadTilesAroundEndStructure;
+	private path_dest pathDest;
 	public Vector3 LastMove { get; protected set;}
 	private float rotationSpeed=90;
-    private float _speed;
-    private float speed {
-        get {
-            return _speed;
-        }
-        set {
-            if (value == 0) {
-                _speed = 1;
-            }
-            else {
-                _speed = value;
-            }
-        }
-    }
-    private path_mode pathmode;
+	private float _speed;
+	private float speed {
+		get {
+			return _speed;
+		}
+		set {
+			if (value == 0) {
+				_speed = 1;
+			}
+			else {
+				_speed = value;
+			}
+		}
+	}
+	private path_mode pathmode;
 	private turn_type myTurnType=turn_type.OnPoint;
 	public float turnSpeed;
+	#endregion
+
+
     public Pathfinding(float speed, Tile startTile, path_mode pm = path_mode.world) {
         currTile = startTile;
         X = currTile.X;

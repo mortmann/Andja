@@ -3,28 +3,49 @@ using System.Collections;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Xml;
-using System.Xml.Schema;
-using System.Xml.Serialization;
+using Newtonsoft.Json;
 
 public enum BuildTypes {Drag, Path, Single};
 public enum BuildingTyp {Pathfinding, Blocking,Free};
 public enum Direction {None, N, E, S, W};
 
-public abstract class Structure : IXmlSerializable,IGEventable {
+[JsonObject(MemberSerialization.OptIn)]
+public abstract class Structure : IGEventable {
 	#region variables
 	public const int TargetType = 100;
-
+	#region Serialize
 	//prototype id
-	public int ID;
+	[JsonPropertyAttribute] public int ID;
 	//player id
-	public int playerID;
+	[JsonPropertyAttribute] public int playerNumber;
 	//build id -- when it was build
-	public uint buildID;
+	[JsonPropertyAttribute] public uint buildID;
 
-	public string name;
+	[JsonPropertyAttribute] public string name;
+	[JsonPropertyAttribute] private City _city;
+
+	[JsonPropertyAttribute] public bool canTakeDamage;
+	[JsonPropertyAttribute] protected float _health;
+
+	[JsonPropertyAttribute] private int _tileWidth;
+	[JsonPropertyAttribute] private int _tileHeight; 
+
+	[JsonPropertyAttribute] public Tile BuildTile { get { 
+			if (myBuildingTiles == null)
+				return null;
+			return myBuildingTiles [0]; 
+		} 
+		set {
+			if (myBuildingTiles == null)
+				myBuildingTiles = new List<Tile> ();
+			myBuildingTiles.Add (value);
+		}
+	}
+	[JsonPropertyAttribute] public int rotated = 0; 
+
+	#endregion
+	#region RuntimeOrOther
 	public string SmallName { get { return name.ToLower ();} }
-	private City _city;
 	public City City {
 		get { return _city;}
 		set {
@@ -34,8 +55,6 @@ public abstract class Structure : IXmlSerializable,IGEventable {
 			_city = value;
 		}
 	}
-	public bool canTakeDamage;
-	protected float _health;
 	public float Health {
 		get {
 			return _health;
@@ -50,30 +69,27 @@ public abstract class Structure : IXmlSerializable,IGEventable {
 			_health = value;
 		}
 	}
-	public float MaxHealth;
 
-
-    public bool isWalkable { get; protected set; }
+	public bool isWalkable { get; protected set; }
 	public bool hasHitbox { get; protected set; }
 	public bool isActive {  get; protected set; }
+	public float MaxHealth;
 
 	public int buildingRange = 0;
 	public int PopulationLevel = 0;
 	public int PopulationCount = 0;
 
-	public int rotated = 0; 
 	public bool canRotate = true;
-
 	public bool canBeBuildOver = false;
 	public bool canBeUpgraded = false;
 	public bool showExtraUI = false;
 	public bool extraUIOn = false;
+
 	public bool buildInWilderniss = false;
 	public Vector2 middleVector {get {return new Vector2 (BuildTile.X + (float)tileWidth/2f,BuildTile.Y + (float)tileHeight/2f);}}
 
 	public Direction mustFrontBuildDir = Direction.None; 
 
-	private int _tileWidth;
 	public int tileWidth {
 		get { 
 			if (rotated == 0 || rotated == 180) {
@@ -88,14 +104,6 @@ public abstract class Structure : IXmlSerializable,IGEventable {
 		}
 		protected set { _tileWidth = value;}
 	}
-
-	public Tile BuildTile { get { 
-			if (myBuildingTiles == null)
-				return null;
-			return myBuildingTiles [0]; 
-	}}
-
-	private int _tileHeight; 
 	public int tileHeight {
 		get { 
 			if (rotated == 0 || rotated == 180) {
@@ -116,23 +124,27 @@ public abstract class Structure : IXmlSerializable,IGEventable {
 	public HashSet<Tile> myRangeTiles;
 	public List<Tile> myPrototypeTiles;
 
-    Action<Structure> cbStructureChanged;
+	Action<Structure> cbStructureChanged;
 	Action<Structure> cbStructureDestroy;
 	Action<Structure,string> cbStructureSound;
 
-    public bool canStartBurning;
+	public bool canStartBurning;
 	public bool mustBeBuildOnShore= false;
 	public bool mustBeBuildOnMountain= false;
 
 	public int maintenancecost;
 	public int buildcost;
+
 	public BuildTypes BuildTyp;
 	public BuildingTyp myBuildingTyp = BuildingTyp.Blocking;
 	public string connectOrientation;
 	public Item[] buildingItems;
+
+	#endregion
 	#endregion
 
 	#region Virtual/Abstract
+	public abstract void LoadPrototypData (Structure prototyp);
 	public abstract Structure Clone ();
 	public virtual void update (float deltaTime){
 	}
@@ -302,7 +314,7 @@ public abstract class Structure : IXmlSerializable,IGEventable {
 	/// <param name="tiles">Tiles.</param>
 	public bool IsTilesCityViable(List<Tile> tiles){
 		foreach (Tile t in tiles) {
-			if (t.myCity!=null && t.myCity.playerNumber != playerID) {
+			if (t.myCity!=null && t.myCity.playerNumber != playerNumber) {
 				//here it cant build cause someoneelse owns it
 				if (t.myCity.IsWilderness () == false ) {
 					return false;
@@ -318,7 +330,7 @@ public abstract class Structure : IXmlSerializable,IGEventable {
 		return true;
 	}
 	public bool IsTileCityViable(Tile t){
-		if (t.myCity!=null && t.myCity.playerNumber != playerID) {
+		if (t.myCity!=null && t.myCity.playerNumber != playerNumber) {
 			//here it cant build cause someoneelse owns it
 			if (t.myCity.IsWilderness () == false ) {
 				return false;
@@ -426,7 +438,7 @@ public abstract class Structure : IXmlSerializable,IGEventable {
 	#endregion
 	#region other
 	public int GetPlayerNumber(){
-		return playerID;
+		return playerNumber;
 	}
 	public int GetTargetType(){
 		return TargetType + ID;
@@ -823,34 +835,6 @@ public abstract class Structure : IXmlSerializable,IGEventable {
 		return name + "@" + BuildTile.toString ();
 	}
 	#endregion
-	#region xmlsave
-	//////////////////////////////////////////////////////////////////////////////////////
-	/// 
-	/// 						SAVING & LOADING
-	/// 
-	//////////////////////////////////////////////////////////////////////////////////////
-	public XmlSchema GetSchema() {
-		return null;
-	}
-	public abstract void WriteXml (XmlWriter writer);
-	public abstract void ReadXml (XmlReader reader);
 
-	public void BaseWriteXml(XmlWriter writer){
-		writer.WriteAttributeString ("BuildID", buildID.ToString ()); 
-		writer.WriteAttributeString ("ID", ID.ToString ()); //change this to id
-		writer.WriteAttributeString ("BuildingTile_X", myBuildingTiles [0].X.ToString ());
-		writer.WriteAttributeString ("BuildingTile_Y", myBuildingTiles [0].Y.ToString ());
-		writer.WriteAttributeString("Rotated", rotated.ToString());
-	}
-	public void BaseReadXml(XmlReader reader){
-		rotated = int.Parse( reader.GetAttribute("Rotated") );
-		buildID = uint.Parse( reader.GetAttribute("BuildID") );
-	}
-	public void SaveIGE(XmlWriter writer){
-		writer.WriteAttributeString("TargetType", TargetType +"" );
-		writer.WriteAttributeString("BuildID", buildID +"" );
-		writer.WriteAttributeString("BuildTile", BuildTile.toString() +"" );
-	}
-	#endregion
 }
 

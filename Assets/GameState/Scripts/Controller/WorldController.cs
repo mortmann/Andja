@@ -3,8 +3,8 @@ using System.Linq;
 using UnityEngine;
 using System.Collections.Generic;
 using UnityEngine.SceneManagement;
-using System.Xml.Serialization;
 using System.IO;
+using Newtonsoft.Json;
 
 public class WorldController : MonoBehaviour {
     public static WorldController Instance { get; protected set; }
@@ -47,6 +47,17 @@ public class WorldController : MonoBehaviour {
 				this.world = new World (gdh.width, gdh.height);
 			} 
 			Camera.main.transform.position = new Vector3(world.Width / 2, world.Height / 2, Camera.main.transform.position.z);
+		}
+		List<int> test = new List<int> ();
+		test.Add (9);
+		test.Add (1);
+		test.Add (11);
+		test.Add (192);
+		test.Add (0);
+		test.Add (12112);
+		test.Sort ((x, y) => x.CompareTo(y));
+		foreach (var item in test) {
+				Debug.Log (item);
 		}
     }
 
@@ -107,14 +118,11 @@ public class WorldController : MonoBehaviour {
 	/// Saves the world.
 	/// </summary>
 	/// <param name="savename">Savename.</param>
-	public String GetSaveWorldData() {
-		Debug.Log("SaveWorld button was clicked.");
-		XmlSerializer serializer = new XmlSerializer( typeof(World) );
-		TextWriter writer = new StringWriter();
-		serializer.Serialize(writer, world);
-		writer.Close();
-		// Create/overwrite the save file with the xml text.
-		return writer.ToString();
+	public WorldSaveState GetSaveWorldData() {
+		WorldSaveState wss = new WorldSaveState ();
+		wss.world = world;
+		wss.offworld = offworldMarket;
+		return wss;
 	}
 	public void LoadWorld(bool quickload = false) {
 		Debug.Log("LoadWorld button was clicked.");
@@ -125,14 +133,17 @@ public class WorldController : MonoBehaviour {
 		// set to loadscreen to reset all data (and purge old references)
 		SceneManager.LoadScene( "GameStateLoadingScreen" );
 	}
-	public void LoadWorldData(string saveGameText) {
-		Debug.Log("CreateWorldFromSaveFile " + saveGameText);
+	public void LoadWorldData(WorldSaveState wss) {
+		offworldMarket = wss.offworld;
 		// Create a world from our save file data.
-
-		XmlSerializer serializer = new XmlSerializer( typeof(World) );
-		TextReader reader = new StringReader( saveGameText );
-		world = (World)serializer.Deserialize(reader);
-		reader.Close();
+		World loadWorld = wss.world;
+		//Now turn the loaded World into a playable World
+		List<Structure> loadedStructures = new List<Structure>();
+		foreach (Island island in loadWorld.islandList) {
+			loadedStructures.AddRange(island.Load ());
+		}
+		loadedStructures.Sort ((x, y) => x.buildID.CompareTo(y.buildID) );
+		BuildController.Instance.PlaceAllLoadedStructure (loadedStructures);
 		// Center the Camera
 		Camera.main.transform.position = new Vector3( world.Width/2, world.Height/2, Camera.main.transform.position.z );
 		BuildController.Instance.PlaceAllLoadedStructure ();
@@ -147,4 +158,9 @@ public class WorldController : MonoBehaviour {
 //		string lines = File.ReadAllText (System.IO.Path.Combine( path , name + ".map" ));
 		//read tiles here
 	}
+}
+
+public class WorldSaveState {
+	public OffworldMarket offworld;
+	public World world;
 }

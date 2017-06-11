@@ -1,16 +1,27 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 using System;
-using System.Xml;
-using System.Xml.Schema;
-using System.Xml.Serialization;
 
+using Newtonsoft.Json;
+
+[JsonObject(MemberSerialization.OptIn)]
 public class ProductionBuilding : OutputStructure {
+
+	#region Serialize
+
+
+	#endregion
+	#region RuntimeOrOther
+
 	public Dictionary<OutputStructure,Item[]> RegisteredStructures;
 	public Item[] intake;
 	public int[] needIntake;
 	public int[] maxIntake;
 	MarketBuilding nearestMarketBuilding;
+
+	#endregion
+
+
 
 	public override float Efficiency{
 		get {
@@ -52,6 +63,9 @@ public class ProductionBuilding : OutputStructure {
 		this.canTakeDamage = true;
 
 	}
+	/// <summary>
+	/// DO NOT USE
+	/// </summary>
 	protected ProductionBuilding(){
 	}
 
@@ -282,30 +296,5 @@ public class ProductionBuilding : OutputStructure {
 		}
 	}
 
-	public override void WriteXml (XmlWriter writer){
-		BaseWriteXml (writer);
-		WriteUserXml (writer);
-		if (intake != null) {
-			writer.WriteStartElement ("Inputs");
-			foreach (Item i in intake) {
-				writer.WriteStartElement ("InputStorage");
-				writer.WriteAttributeString ("amount", i.count.ToString ());
-				writer.WriteEndElement ();
-			}
-			writer.WriteEndElement ();
-		}
 
-	}
-	public override void ReadXml(XmlReader reader) {
-		BaseReadXml (reader);
-		ReadUserXml (reader);
-		int input= 0;
-		if(reader.ReadToDescendant("Inputs") ) {
-			do {
-				intake[input].count = int.Parse( reader.GetAttribute("amount") );
-				input++;
-			} while( reader.ReadToNextSibling("InputStorage") );
-		}
-
-	}
 }

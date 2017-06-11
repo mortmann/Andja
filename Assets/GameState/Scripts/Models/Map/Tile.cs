@@ -1,9 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 using System;
-using System.Xml;
-using System.Xml.Schema;
-using System.Xml.Serialization;
+using Newtonsoft.Json;
+
 /// <summary>
 /// /*Tile type.*/
 /// Ocean = Water outside of Islands -> have no own GameObjects
@@ -20,12 +19,11 @@ using System.Xml.Serialization;
 public enum TileType { Ocean, Shore, Water, Dirt, Grass, Stone, Desert, Steppe, Jungle, Mountain };
 public enum TileMark { None, Highlight, Dark, Reset }
 
-public class Tile : IXmlSerializable {
+[JsonObject(MemberSerialization.OptIn)]
+public class Tile {
 
-	[XmlAttribute("X")]
-	protected int x;
-	[XmlAttribute("Y")]
-	protected int y;
+	[JsonPropertyAttribute] protected int x;
+	[JsonPropertyAttribute] protected int y;
 	public int X {
 		get {
 			return x;
@@ -269,22 +267,5 @@ public class Tile : IXmlSerializable {
 		return new Vector2 (int.Parse (datas [1]), int.Parse (datas [2]));
 
 	}
-	//////////////////////////////////////////////////////////////////////////////////////
-	/// 
-	/// 						SAVING & LOADING
-	/// 
-	//////////////////////////////////////////////////////////////////////////////////////
-	public XmlSchema GetSchema() {
-		return null;
-	}
 
-	public void WriteXml(XmlWriter writer) {
-		writer.WriteAttributeString( "X", X.ToString() );
-		writer.WriteAttributeString( "Y", Y.ToString() );
-		writer.WriteAttributeString( "Type", ((int)Type).ToString() );
-	}
-
-	public void ReadXml(XmlReader reader) {
-		Type = (TileType)int.Parse( reader.GetAttribute("Type") );
-	}
 }

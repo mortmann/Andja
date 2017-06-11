@@ -17,17 +17,24 @@ public abstract class OutputStructure : Structure {
 	public float contactRange=0;
 	public bool forMarketplace=true;
 	protected int maxNumberOfWorker = 1;
-	public Dictionary<OutputStructure,Item[]> jobsToDo;
-	public bool outputClaimed;
 	public float produceTime;
 	public int maxOutputStorage;
+
+	public Dictionary<OutputStructure,Item[]> jobsToDo;
+	public bool outputClaimed;
 	protected Action<Structure> cbOutputChange;
 	bool canWork { get { return Efficiency == 0; }}
 	public float efficiencyModifier;
 
 	#endregion
 
-
+	protected void OutputCopyData(OutputStructure o){
+		contactRange = o.contactRange;
+		forMarketplace = o.forMarketplace;
+		maxNumberOfWorker = o.maxNumberOfWorker;
+		produceTime = o.produceTime;
+		maxOutputStorage = o.maxOutputStorage;
+	}
 
 	public virtual float Efficiency{
 		get {

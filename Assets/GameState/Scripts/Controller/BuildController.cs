@@ -292,10 +292,10 @@ public class BuildController : MonoBehaviour {
 	}
 
 
-	public void PlaceAllLoadedStructure(List<Structure> structures){
-		for (int i = 0; i < structures.Count; i++) {
-			structures[i].LoadPrototypData (structurePrototypes[structures[i].buildID]);
-			BuildOnTile (structures[i],structures[i].BuildTile);
+	public void PlaceAllLoadedStructure(List<Structure> loadedStructures){
+		for (int i = 0; i < loadedStructures.Count; i++) {
+			loadedStructures[i].LoadPrototypData (structurePrototypes[loadedStructures[i].ID]);
+			BuildOnTile (loadedStructures[i],loadedStructures[i].BuildTile);
 		}
 	}
 	public void ResetBuild(){

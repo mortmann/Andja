@@ -9,7 +9,6 @@ public class Growable : OutputStructure {
 	#region Serialize
 
 	[JsonPropertyAttribute] float age = 0;
-	[JsonPropertyAttribute] public int ageStages = 2;
 	[JsonPropertyAttribute] public int currentStage= 0;
 	[JsonPropertyAttribute] public bool hasProduced =false;
 
@@ -18,6 +17,7 @@ public class Growable : OutputStructure {
 
 	float growTime = 5f;
 	public Fertility fer;
+	public int ageStages = 2;
 
 	#endregion
 
@@ -40,21 +40,7 @@ public class Growable : OutputStructure {
 		canBeBuildOver = true;
 	}
 	protected Growable(Growable g){
-		this.canBeBuildOver = g.canBeBuildOver;
-		this.ID = g.ID;
-		this.name = g.name;
-		this.output = g.output;
-		this.tileWidth = g.tileWidth;
-		this.tileHeight = g.tileHeight;
-		this.buildcost = g.buildcost;
-		this.BuildTyp = g.BuildTyp;
-		this.rotated = g.rotated;
-		this.hasHitbox = g.hasHitbox;
-		this.growTime = g.growTime;
-		this.canBeBuildOver = g.canBeBuildOver;
-		this.canTakeDamage = g.canTakeDamage;
-		this.fer = g.fer;
-		this.forMarketplace = g.forMarketplace;
+		CopyData (g);
 	}
 	/// <summary>
 	/// DO NOT USE
@@ -64,12 +50,39 @@ public class Growable : OutputStructure {
 	public override Structure Clone (){
 		return new Growable(this);
 	}
-	//got replaced with get output
-//	public Item getProducedItem(){
-//		Item p = produceItem.Clone ();
-//		p.count = 1;
-//		return p;
-//	}
+
+	public override void LoadPrototypData(Structure s){
+		Growable g = s as Growable;
+		if(g == null){
+			Debug.LogError ("ERROR - Prototyp was wrong");
+			return;
+		}
+		CopyData (s);
+	}
+	private void CopyData(Growable g){
+		BaseCopyData (g);
+		OutputCopyData (g);
+		growTime = g.growTime;
+		fer = g.fer;
+		ageStages = g.ageStages;
+
+//		this.canBeBuildOver = g.canBeBuildOver;
+//		this.ageStages = g.ageStages;
+//		this.ID = g.ID;
+//		this.name = g.name;
+//		this.output = g.output;
+//		this.tileWidth = g.tileWidth;
+//		this.tileHeight = g.tileHeight;
+//		this.buildcost = g.buildcost;
+//		this.BuildTyp = g.BuildTyp;
+//		this.rotated = g.rotated;
+//		this.hasHitbox = g.hasHitbox;
+//		this.growTime = g.growTime;
+//		this.canBeBuildOver = g.canBeBuildOver;
+//		this.canTakeDamage = g.canTakeDamage;
+//		this.fer = g.fer;
+//		this.forMarketplace = g.forMarketplace;
+	}
 
 	public override void OnBuild(){
 		if(fer!=null && City.HasFertility (fer)==false){

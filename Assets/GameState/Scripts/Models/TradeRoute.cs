@@ -1,152 +1,120 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 
-public class Trade {
-	public City city;
-	public Item[] getting;
-	public Item[] giving;
-	public Trade(City c,Item[] getting,Item[] giving){
-		city = c;
-		this.getting = getting;
-		this.giving = giving;
-//		getting = new List<Item> ();
-//		giving = new List<Item> ();
-	}
-	public Trade(Trade t){
-		city = t.city;
-		getting = t.getting;
-		giving = t.giving;
-	}
-}
+
+
+[JsonObject(MemberSerialization.OptIn)]
 public class TradeRoute {
-	int numberOfStops=0;
-	int currentDestination=0;
-	List<City> cities;
-	Dictionary<City,Trade> cityToTrade;
+	int numberOfStops { get {return trades.Count;}}
+	[JsonPropertyAttribute] int currentDestination=0;
+	[JsonPropertyAttribute] List<Trade> trades;
+
 	public bool isStarted=false;
 	public bool Valid{
 		get {
-			return cities.Count > 1;
+			return trades.Count > 1;
 		}
 	}
 	public TradeRoute(){
-		cities = new List<City> ();
-		cityToTrade = new Dictionary<City, Trade> ();
+		trades = new List<Trade> ();
 	}
 	public TradeRoute(TradeRoute tr){
-		this.cities = tr.cities;
-		cityToTrade = new Dictionary<City, Trade> ();
-		foreach(City c in tr.cityToTrade.Keys){
-			cityToTrade.Add (c,new Trade(tr.cityToTrade[c]));
-		}
-		numberOfStops = tr.numberOfStops;
+		this.trades = tr.trades;
 		currentDestination = tr.currentDestination;
 		isStarted = tr.isStarted;
-
 	}
 	public void AddWarehouse(Warehouse w){
-		numberOfStops++;
 		Trade t = new Trade (w.City,null,null);
-		cities.Add (w.City);
-		cityToTrade.Add (w.City,t);
+		trades.Add (t);
 	}
 	public void SetCityTrade(City city,Item[] getting,Item[] giving){
-		if(cityToTrade.ContainsKey (city)){
-			cityToTrade [city].getting = getting;
-			cityToTrade [city].giving = giving;
+		Trade t = trades.Find (x => x.city == city);
+		if(t!=null){
+			t.getting = getting;
+			t.giving = giving;
 		} else {
 			Debug.LogError ("Wat de f SetCityTrade"); 
 		}
 	}
 	public Trade GetCurrentCityTrade(){
-		return cityToTrade [cities[currentDestination]];
+		return trades [currentDestination];
 	}
 	public void RemoveWarehouse(Warehouse w){
-		
-		numberOfStops--;
-		City c=null;
-		int pos = 0;
-		if (numberOfStops > 1) {
-			c = cities [currentDestination];
-			pos = cities.IndexOf (c);
+		Trade t = GetTradeFor(w.City);
+		if(t==null){
+			Debug.LogError ("Tried to remove a city that wasnt in here!");
+			return; // not in error from somewhere
 		}
-		cities.Remove (w.City);
-		cityToTrade.Remove (w.City);
-		//if the currentdestination gets removed let the pointer
-		//but clamp it if needed
-		if(c!=null&&c.myWarehouse==w){
-			currentDestination = Mathf.Clamp (currentDestination, 0, numberOfStops - 1);
-		} else {
+		if(trades.IndexOf(t)<currentDestination){
+			currentDestination--; // smaller then we must remove to be on the same still
+		} else 
+		if(trades.IndexOf(t)==currentDestination){
 			//if its behind the otherone so decrease the destination pointer
-			if(currentDestination>pos){
-				currentDestination--;
-			} 
+			currentDestination--;
+			currentDestination = Mathf.Clamp (currentDestination,0,numberOfStops-1);
 		}
+		trades.Remove (t);
+
 	}
 
 	public int GetLastNumber(){
 		return numberOfStops;
 	}
 	public int GetNumberFor(Warehouse w){
-		for (int i = 0; i < cities.Count; i++) {
-			if(cities[i].myWarehouse==w||w.City==cities[i]){
+		for (int i = 0; i < trades.Count; i++) {
+			if(trades[i].city==w.City){
 				return i + 1;
 			} 
 		}
 		return -1;
 	}
 	public Tile getCurrentDestination(){
-		if(cities.Count==0){
+		if(trades.Count==0){
 			return null;
 		}
-		if(cities [currentDestination].myWarehouse==null){
+		if(trades [currentDestination].city.myWarehouse==null){
 			return null;
 		}
-		return cities [currentDestination].myWarehouse.getTradeTile ();
+		return trades [currentDestination].city.myWarehouse.getTradeTile ();
 	}
 	public Tile getNextDestination(){
 		//if theres only one destination
 		//that means there is no realtraderoute in place
 		//so just return
-		if(cities.Count<=1){
+		if(trades.Count<=1){
 			return null;
 		}
 
 		for (int i = 0; i < numberOfStops; i++) {
 			increaseDestination ();
-			if(cities [currentDestination].myWarehouse!=null){
+			if(trades [currentDestination].city.myWarehouse!=null){
 				isStarted = true;
-				return cities [currentDestination].myWarehouse.getTradeTile ();
+				return trades [currentDestination].city.myWarehouse.getTradeTile ();
 			}
 		}
 		return null;
 	}
 	public void increaseDestination(){
 		if(isStarted)
-			currentDestination = (currentDestination + 1) % cities.Count;
+			currentDestination = (currentDestination + 1) % trades.Count;
 	}
 	public bool Contains(City c){
-		return cityToTrade.ContainsKey (c);
+		return GetTradeFor (c) != null;
 	}
 
 	public Trade GetNextTrade(City curr , bool r){
-		if(cities.Contains (curr)==false){
+		if(Contains (curr)==false){
 			Debug.LogError ("GetTradeCurr-currentcity isnt in cities"); 
 			return null;
 		}
-		int i = cities.IndexOf (curr);
-		if(r){
-			i = (i + 1) % cities.Count;
-		} else {
-			i = (i - 1) % cities.Count;
-		}
-		return cityToTrade [cities [i]];
+		return trades [currentDestination];
 	}
 	public Trade GetTradeFor(City c){
-		if(cities.Contains (c)==false){
+		if(Contains (c)==false){
 			return null;
 		}
-		return cityToTrade [c];
+		return  trades.Find (x => x.city == c);
 	}
 
 	public void doCurrentTrade(Unit u){
@@ -167,6 +135,41 @@ public class TradeRoute {
 		}
 
 	}
+
+	[JsonObject(MemberSerialization.OptIn)]
+//	[JsonConverter(typeof(TradeSerializer))]
+	[System.Serializable]
+	public class Trade {
+		[JsonPropertyAttribute] public City city;
+		[JsonPropertyAttribute] public Item[] getting;
+		[JsonPropertyAttribute] public Item[] giving;
+		public Trade(City c,Item[] getting,Item[] giving){
+			city = c;
+			this.getting = getting;
+			this.giving = giving;
+			//		getting = new List<Item> ();
+			//		giving = new List<Item> ();
+		}
+		public Trade(Trade t){
+			city = t.city;
+			getting = t.getting;
+			giving = t.giving;
+		}
+		public Trade(){
+		}
+	}
+
+//	public class TradeSerializer : JsonSerializer{
+//		override 
+////		internal override void SerializeInternal (JsonWriter jsonWriter, object value, System.Type objectType){
+////			var trade = value as Trade;
+////			jsonWriter.WriteStartObject ();
+////			Serialize (jsonWriter,trade.city.myTiles.GetEnumerator().Current);
+////			Serialize (jsonWriter,trade.getting);
+////			Serialize (jsonWriter,trade.giving);
+////			jsonWriter.WriteEndObject ();
+////		}
+//	}
 
 
 }

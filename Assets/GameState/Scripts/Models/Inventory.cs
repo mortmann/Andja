@@ -1,26 +1,27 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
-using System.Xml;
-using System.Xml.Schema;
-using System.Xml.Serialization;
+using Newtonsoft.Json;
 
-public class Inventory : IXmlSerializable{
-	public int maxStackSize { get; protected set;}
-    public Dictionary<int, Item> items {
+[JsonObject(MemberSerialization.OptIn)]
+public class Inventory {
+	[JsonPropertyAttribute] public int maxStackSize { get; protected set;}
+
+	[JsonPropertyAttribute] public Dictionary<int, Item> items {
 		get;
 		protected set;
 	}
-	public int numberOfSpaces {
+	[JsonPropertyAttribute] public int numberOfSpaces {
 		get;
 		protected set;
 	}
+	[JsonPropertyAttribute] public string name;
+
+	Action<Inventory> cbInventoryChanged;
 	public bool HasUnlimitedSpace {
 		get { return numberOfSpaces != -1;}
 	}
-	public string name;
 
-	Action<Inventory> cbInventoryChanged;
     /// <summary>
     /// leave blanc for unlimited spaces! To limited it give a int > 0 
     /// </summary>
@@ -35,6 +36,10 @@ public class Inventory : IXmlSerializable{
 		} 
         this.numberOfSpaces = numberOfSpaces;
     }
+	/// <summary>
+	/// DO NOT USE
+	/// </summary>
+	public Inventory(){}
     /// <summary>
 	/// returns amount  
 	/// </summary>
@@ -389,39 +394,5 @@ public class Inventory : IXmlSerializable{
 	public void UnregisterOnChangedCallback(Action<Inventory> cb) {
 		cbInventoryChanged -= cb;
 	}
-	//////////////////////////////////////////////////////////////////////////////////////
-	/// 
-	/// 						SAVING & LOADING
-	/// 
-	//////////////////////////////////////////////////////////////////////////////////////
-	public XmlSchema GetSchema() {
-		return null;
-	}
 
-	public void WriteXml(XmlWriter writer) {
-		writer.WriteAttributeString( "MaxStackSize",maxStackSize.ToString ());
-		writer.WriteAttributeString( "NumberOfSpaces",numberOfSpaces.ToString ());
-		writer.WriteStartElement("Items");
-		foreach (int c in items.Keys) {
-			writer.WriteStartElement("Item");
-			writer.WriteAttributeString( "Number", c.ToString () );
-			items [c].WriteXml (writer);
-			writer.WriteEndElement();
-		}
-		writer.WriteEndElement();
-	}
-	public void ReadXml(XmlReader reader) {
-		maxStackSize = int.Parse( reader.GetAttribute("MaxStackSize") );
-		numberOfSpaces = int.Parse( reader.GetAttribute("NumberOfSpaces") );
-		BuildController bs = BuildController.Instance;
-		if(reader.ReadToDescendant("Item") ) {
-			do {
-				int number = int.Parse( reader.GetAttribute("Number") );
-				int id = int.Parse( reader.GetAttribute("ID") );
-				Item i = bs.allItems[id].Clone();
-				i.ReadXml (reader);
-				items[number] = i;
-			} while( reader.ReadToNextSibling("Item") );
-		}
-	}
 }

@@ -1,14 +1,24 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using Newtonsoft.Json;
+
+[JsonObject(MemberSerialization.OptIn)]
 public class MineStructure : OutputStructure {
+	#region Serialize
+	#endregion
+	#region RuntimeOrOther
 
 	public string myRessource;
 	public override float Efficiency { get { 
 			if(BuildTile.myIsland.myRessources [myRessource] ==0){
 				return 0;
 			}
-			return 100; } }
+			return 100; 
+	} }
+
+	#endregion
+
 	public MineStructure(int pid){
 		myRessource = "stone";
 		this.ID = pid;
@@ -26,6 +36,9 @@ public class MineStructure : OutputStructure {
 		produceTime = 15f;
 		buildingRange = 0;
 	}
+	/// <summary>
+	/// DO NOT USE
+	/// </summary>
 	public MineStructure(){
 	}
 	protected MineStructure(MineStructure ms){
@@ -81,12 +94,5 @@ public class MineStructure : OutputStructure {
 	public override void OnBuild ()	{
 		
 	}
-	public override void ReadXml (System.Xml.XmlReader reader){
-		BaseReadXml (reader);
-		ReadUserXml (reader);
-	}
-	public override void WriteXml (System.Xml.XmlWriter writer)	{
-		BaseWriteXml (writer);
-		WriteUserXml (writer);
-	}
+
 }

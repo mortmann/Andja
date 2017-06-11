@@ -2,9 +2,6 @@
 using System.Collections.Generic;
 using System;
 using System.Reflection;
-using System.Xml;
-using System.Xml.Schema;
-using System.Xml.Serialization;
 using System.IO;
 
 //TODO:
@@ -264,108 +261,23 @@ public class EventController : MonoBehaviour {
 	}
 
 
-	public string GetSaveGameEventData(){
-		XmlSerializer serializer = new XmlSerializer( typeof(GameEventSave) );
-		TextWriter writer = new StringWriter();
-		serializer.Serialize(writer,new GameEventSave(idToActiveEvent));
-		writer.Close();
-		// Create/overwrite the save file with the xml text.
-		return writer.ToString();
+	public GameEventSave GetSaveGameEventData(){
+		GameEventSave ges = new GameEventSave (idToActiveEvent);
+		return ges;
 	}
-	public void LoadGameEventData(string data){
+	public void LoadGameEventData(GameEventSave data){
+		idToActiveEvent = data.idToActiveEvent;
+	}
+}
 
-		XmlSerializer serializer = new XmlSerializer( typeof(GameEventSave) );
-		TextReader reader = new StringReader( data );
-		GameEventSave gcs = (GameEventSave)serializer.Deserialize(reader);
-		reader.Close();
-		idToActiveEvent = gcs.idToActiveEvent;
+public class GameEventSave {
+	public Dictionary<uint,GameEvent> idToActiveEvent;
+	public UnityEngine.Random.State Random;
+	public GameEventSave(Dictionary<uint,GameEvent> idToActiveEvent ){
+		this.idToActiveEvent = idToActiveEvent;
+	}
+	public GameEventSave(){
+
 	}
 
-	public class GameEventSave : IXmlSerializable {
-		public Dictionary<uint,GameEvent> idToActiveEvent;
-		public GameEventSave(Dictionary<uint,GameEvent> idToActiveEvent ){
-			this.idToActiveEvent = idToActiveEvent;
-		}
-		public GameEventSave(){
-
-		}
-		#region save
-		public XmlSchema GetSchema() {
-			return null;
-		}
-
-		public void WriteXml(XmlWriter writer) {
-			writer.WriteElementString ("Random" , JsonUtility.ToJson(UnityEngine.Random.state));
-			foreach(uint p in idToActiveEvent.Keys){
-				writer.WriteStartElement ("GameEvent");
-				writer.WriteAttributeString ("ID", p + "");
-				idToActiveEvent[p].WriteXml (writer);
-				writer.WriteEndElement ();
-			}
-
-		}
-
-		public void ReadXml(XmlReader reader) {
-			reader.ReadToFollowing ("Random");
-			UnityEngine.Random.state = JsonUtility.FromJson<UnityEngine.Random.State>(reader.ReadElementString ("Random"));
-			if(reader.ReadToDescendant("GameEvent") ) {
-				do {
-					if(reader.IsStartElement ("GameEvent")==false){
-						if(reader.Name == "GameEventSave"){
-							return;
-						}
-						continue;
-					}	
-					uint id = uint.Parse( reader.GetAttribute("ID") );
-					GameEvent ge = new GameEvent();
-					//load the functions to it etc
-					int tt = int.Parse( reader.GetAttribute("TargetType") );
-					IGEventable target = null; 
-					switch(tt){
-					case World.TargetType:
-						target = World.current;
-						break;
-					case City.TargetType:
-						string tile = reader.GetAttribute("Island");
-						Vector2 vec2 = Tile.ToStringToTileVector(tile);
-						Island i = World.current.GetTileAt(vec2.x,vec2.y).myIsland;
-						int player = int.Parse( reader.GetAttribute("PlayerNumber") );
-						target = i.FindCityByPlayer(player);
-						break;
-					case Player.TargetType:
-						int pnum = int.Parse( reader.GetAttribute("PlayerNumber") );
-						PlayerController.Instance.GetPlayer(pnum);
-						break;
-					case Island.TargetType:
-						string tileTemp = reader.GetAttribute("Island");
-						Vector2 tileVec = Tile.ToStringToTileVector(tileTemp);
-						target = World.current.GetTileAt(tileVec.x,tileVec.y).myIsland;
-						break;
-					case -1:
-						//This case is the null case!
-						//if the target should be null the TargetType will be -1
-						break;
-					default: // Structure
-						if(tt<Structure.TargetType){
-							Debug.LogError("TargetType " + tt + " does not meet any programmed in!");
-							return;
-						}
-						uint strBuildID = uint.Parse( reader.GetAttribute("BuildID") );
-						string tileString = reader.GetAttribute("Island");
-						Vector2 vec2Tile = Tile.ToStringToTileVector(tileString);
-						if(World.current.GetTileAt(vec2Tile.x,vec2Tile.y).Structure.buildID != strBuildID){
-							Debug.Log ("BuildID doesnt match up.");
-							continue;
-						}
-						target = World.current.GetTileAt(vec2Tile.x,vec2Tile.y).Structure;
-						break;
-					}
-					ge.target = target;
-					idToActiveEvent.Add(id,ge);
-				} while( reader.Read () );
-			}
-
-		}
-		#endregion
-	}
 }

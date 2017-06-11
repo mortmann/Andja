@@ -5,7 +5,8 @@ using System.IO;
 using System.IO.Compression;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
-
+using Newtonsoft.Json;
+using System;
 public class SaveController : MonoBehaviour {
 
 	public static SaveController Instance;
@@ -33,6 +34,26 @@ public class SaveController : MonoBehaviour {
 			LoadGameState (gdh.loadsavegame);
 			gdh.loadsavegame = null;
 		}
+//		Item[] items = new Item[4];
+//		items [0] = new Item (1, "test", ItemType.Build, 12);
+//		items [1] = new Item (1, "test", ItemType.Build, 53);
+//		items [2] = new Item (2, "test2", ItemType.Intermediate, 12);
+//		items [3] = new Item (3, "test3", ItemType.Luxury, 12);
+//		TradeRoute.Trade t = new TradeRoute.Trade (World.current.islandList [0].myCities [0], items, items);
+//
+//		string json =  (JsonConvert.SerializeObject(t,
+//			new JsonSerializerSettings
+//			{
+//				NullValueHandling = NullValueHandling.Ignore,
+//				PreserveReferencesHandling = PreserveReferencesHandling.Objects 
+//			}) );
+//		TradeRoute.Trade t2 = JsonConvert.DeserializeObject<TradeRoute.Trade> (json);
+//		Debug.Log (t2.getting[0]);
+//		Debug.Log (t2.getting[1]);
+//		Debug.Log (t2.giving[0]);
+//		Debug.Log (t2.giving[1]);
+//
+
 //		LoadGameState ("sae");
 	}
 	public void Update(){
@@ -48,27 +69,25 @@ public class SaveController : MonoBehaviour {
 			wc.IsPaused = true;
 		}
 		string path = System.IO.Path.Combine (GetSaveGamesPath (), name + ".sav");
-		string[] strings = new string[6];
-		strings[0] = (SaveFileVersion);
-		strings[1] = (gdh.GetSaveGameData());
-		strings[2] =  (pc.GetSavePlayerData ());
-		strings[3] =  (wc.GetSaveWorldData ());
-		strings[4] =  (ec.GetSaveGameEventData ());
-		strings[5] = (cc.GetSaveCamera ());
 
-		System.IO.File.WriteAllText(path, JsonUtil.arrayToJson<string> (strings));
-//		FileStream saveStream = File.Create (System.IO.Path.Combine( GetSaveGamesPath() , name + ".sav" ));
-//		StreamWriter writer = new StreamWriter (saveStream);
-//		writer.WriteLine (Regex.Replace(gdh.GetSaveGameData(), @"\s+", " "));
-//		writer.WriteLine (Regex.Replace(pc.GetSavePlayerData(), @"\s+", " "));
-//		writer.WriteLine (Regex.Replace(wc.GetSaveWorldData(), @"\s+", " "));
-//		writer.WriteLine (Regex.Replace(ec.GetSaveGameEventData(), @"\s+", " "));
-//		writer.WriteLine (Regex.Replace(cc.GetSaveCamera(), @"\s+", " "));
-//		writer.Flush ();
-//		writer.Close ();
-//		string temp = FileUtil.GetUniqueTempPathInProject ();
-//		System.IO.File.WriteAllText(temp +"world.temp", wc.SaveWorld());
-//		System.IO.File.WriteAllText(temp +"event.temp", ec.SaveEvent());
+		SaveState savestate = new SaveState ();
+		savestate.safefileversion = (SaveFileVersion);
+		savestate.gamedata = (gdh.GetSaveGameData());
+		savestate.pcs =  (pc.GetSavePlayerData ());
+		savestate.world =  (wc.GetSaveWorldData ());
+		savestate.ges =  (ec.GetSaveGameEventData ());
+		savestate.camera = (cc.GetSaveCamera ());
+
+
+		System.IO.File.WriteAllText(path, JsonConvert.SerializeObject(savestate,Formatting.Indented,
+				new JsonSerializerSettings
+				{
+					NullValueHandling = NullValueHandling.Ignore,
+					PreserveReferencesHandling = PreserveReferencesHandling.Objects, 
+					ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+				}
+			) 
+		);
 
 		if(wasPaused == false){
 			wc.IsPaused = false;
@@ -87,22 +106,30 @@ public class SaveController : MonoBehaviour {
 			wc.IsPaused = true;
 		}
 		string alllines = System.IO.File.ReadAllText (System.IO.Path.Combine (GetSaveGamesPath (), name + ".sav"));
-		string[] lines = JsonUtil.getJsonArray<string> (alllines);
-		if(SaveFileVersion!=lines[0]){
-			Debug.LogError ("Mismatch of SaveFile Versions " + lines[0] + " " + SaveFileVersion);
+		SaveState state = JsonConvert.DeserializeObject<SaveState> (alllines);
+		if(SaveFileVersion!=state.safefileversion){
+			Debug.LogError ("Mismatch of SaveFile Versions " + state.safefileversion + " & " + SaveFileVersion);
 			return;
 		}
-		gdh.LoadGameData(lines[1]); // gamedata
-		pc.LoadPlayerData(lines[2]); // player
-		wc.LoadWorldData (lines[3]); // world
-		ec.LoadGameEventData(lines[4]); // event
-		cc.LoadSaveCameraData(lines[5]); // camera
+		gdh.LoadGameData(state.gamedata); // gamedata
+		pc.LoadPlayerData(state.pcs); // player
+		wc.LoadWorldData (state.world); // world
+		ec.LoadGameEventData(state.ges); // event
+		cc.LoadSaveCameraData(state.camera); // camera
 
 
 		if(wasPaused == false){
 			wc.IsPaused = false;
 		}
 	}
-
-
+	[Serializable]
+	public class SaveState {
+		public string safefileversion;
+		public GameData gamedata;
+		public WorldSaveState world;
+		public PlayerControllerSave pcs;
+		public GameEventSave ges;
+		public CameraSave camera;
+	}
 }
+

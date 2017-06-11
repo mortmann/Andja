@@ -1,15 +1,24 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
-using System.Xml;
-using System.Xml.Schema;
-using System.Xml.Serialization;
+using Newtonsoft.Json;
 
+[JsonObject(MemberSerialization.OptIn)]
 public class MarketBuilding : OutputStructure {
-	public List<Structure> RegisteredSturctures;
-	public List<Structure> OutputMarkedSturctures;
+
+	#region Serialize
+
 	public int level=1;
 	public float takenOverState = 0;
+
+	#endregion
+	#region RuntimeOrOther
+
+	public List<Structure> RegisteredSturctures;
+	public List<Structure> OutputMarkedSturctures;
 	public float takeOverStartGoal = 100;
+
+	#endregion
+
 	public MarketBuilding(int id){
 		
 		hasHitbox = true;
@@ -25,6 +34,9 @@ public class MarketBuilding : OutputStructure {
 		this.canTakeDamage = true;
 
 	}
+	/// <summary>
+	/// DO NOT USE
+	/// </summary>
 	public MarketBuilding(){
 	}
 	protected MarketBuilding(MarketBuilding str){
@@ -186,12 +198,5 @@ public class MarketBuilding : OutputStructure {
 			}
 		}
 	}
-	public override void WriteXml (XmlWriter writer){
-		BaseWriteXml (writer);
-		WriteUserXml (writer);
-	}
-	public override void ReadXml(XmlReader reader) {
-		BaseReadXml (reader);
-		ReadUserXml(reader);
-	}
+
 }

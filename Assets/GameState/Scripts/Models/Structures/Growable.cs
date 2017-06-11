@@ -1,18 +1,25 @@
 ﻿using UnityEngine;
 using System.Collections;
-using System.Xml;
-using System.Xml.Schema;
-using System.Xml.Serialization;
+using Newtonsoft.Json;
 
+[JsonObject(MemberSerialization.OptIn)]
 public class Growable : OutputStructure {
+	
+
+	#region Serialize
+
+	[JsonPropertyAttribute] float age = 0;
+	[JsonPropertyAttribute] public int ageStages = 2;
+	[JsonPropertyAttribute] public int currentStage= 0;
+	[JsonPropertyAttribute] public bool hasProduced =false;
+
+	#endregion
+	#region RuntimeOrOther
+
 	float growTime = 5f;
-	float age = 0;
-	public int ageStages = 2;
-	public int currentStage= 0;
-	public bool hasProduced =false;
 	public Fertility fer;
 
-
+	#endregion
 
 	public Growable(int id,string name,Item produceItem,Fertility fer = null){
 		forMarketplace = false;
@@ -49,6 +56,11 @@ public class Growable : OutputStructure {
 		this.fer = g.fer;
 		this.forMarketplace = g.forMarketplace;
 	}
+	/// <summary>
+	/// DO NOT USE
+	/// </summary>
+	public Growable(){}
+
 	public override Structure Clone (){
 		return new Growable(this);
 	}
@@ -97,18 +109,5 @@ public class Growable : OutputStructure {
 		callbackIfnotNull ();
 		hasProduced = false;
 	}
-
-	public override void WriteXml (XmlWriter writer){
-		BaseWriteXml (writer);
-		writer.WriteAttributeString("OutputClaimed", outputClaimed.ToString () );
-		writer.WriteAttributeString("CurrentStage",currentStage.ToString());
-		writer.WriteAttributeString("Age",age.ToString());
-	}
-	public override void ReadXml (XmlReader reader)	{
-		BaseReadXml (reader);
-		currentStage = int.Parse( reader.GetAttribute("CurrentStage") );
-		age = float.Parse( reader.GetAttribute("Age") );
-		outputClaimed = bool.Parse (reader.GetAttribute("OutputClaimed"));
-
-	}
+		
 }

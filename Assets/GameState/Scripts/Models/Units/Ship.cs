@@ -4,12 +4,11 @@ using Newtonsoft.Json;
 
 [JsonObject(MemberSerialization.OptIn)]
 public class Ship : Unit {
-	public TradeRoute tradeRoute;
-
-	bool goingToOffworldMarket;
-	public bool isOffWorld;
-	Item[] toBuy;
-	float offWorldTime;
+	[JsonPropertyAttribute] public TradeRoute tradeRoute;
+	[JsonPropertyAttribute] bool goingToOffworldMarket;
+	[JsonPropertyAttribute] public bool isOffWorld;
+	[JsonPropertyAttribute] Item[] toBuy;
+	[JsonPropertyAttribute] float offWorldTime;
 
 	public Ship(Tile t,int playernumber){
 		this.playerNumber = playernumber;

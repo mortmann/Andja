@@ -2,20 +2,25 @@
 using System.Collections;
 using System;
 using System.Collections.Generic;
-using System.Xml;
-using System.Xml.Schema;
-using System.Xml.Serialization;
+using Newtonsoft.Json;
 
-public class World : IXmlSerializable,IGEventable{
+[JsonObject(MemberSerialization.OptIn)]
+public class World : IGEventable{
 	public const int TargetType = 10;
-
-    public Tile[,] tiles { get; protected set; }
-    public int Width { get; protected set; }
-    public int Height { get; protected set; }
-    public List<Island> islandList { get; protected set; }
-    public List<Unit> units { get; protected set; }
-	public List<Need> allNeeds;
 	public static World current { get; protected set; }
+
+	#region Serialize
+
+	[JsonPropertyAttribute] public List<Island> islandList { get; protected set; }
+	[JsonPropertyAttribute] public List<Unit> units { get; protected set; }
+
+	#endregion
+	#region RuntimeOrOther
+
+	public Tile[,] tiles { get; protected set; }
+	public int Width { get; protected set; }
+	public int Height { get; protected set; }
+	public List<Need> allNeeds;
 	public Dictionary<Climate,List<Fertility>> allFertilities;
 	public Dictionary<int,Fertility> idToFertilities;
 	public bool[,] _tilesmap;
@@ -34,12 +39,14 @@ public class World : IXmlSerializable,IGEventable{
 			_tilesmap = value;
 		}}
 
-    Action<Unit> cbUnitCreated;
+	Action<Unit> cbUnitCreated;
 	Action<Worker> cbWorkerCreated;
-    Action<Tile> cbTileChanged;
+	Action<Tile> cbTileChanged;
 	Action<World> cbTileGraphChanged;
 	Action<GameEvent> cbEventCreated;
 	Action<GameEvent> cbEventEnded;
+
+	#endregion
 
 
     public World(int width = 1000, int height = 1000){
@@ -286,135 +293,6 @@ public class World : IXmlSerializable,IGEventable{
 	}
 	public int GetTargetType(){
 		return TargetType;
-	}
-	#endregion
-	//////////////////////////////////////////////////////////////////////////////////////
-	/// 
-	/// 						SAVING & LOADING
-	/// 
-	//////////////////////////////////////////////////////////////////////////////////////
-	#region xmlsave
-	public XmlSchema GetSchema() {
-		return null;
-	}
-
-	public void WriteXml(XmlWriter writer) {
-		// Save info here
-		writer.WriteAttributeString( "Width", Width.ToString() );
-		writer.WriteAttributeString( "Height", Height.ToString() );
-		writer.WriteAttributeString( "BuildID", BuildController.Instance.buildID.ToString() );
-		writer.WriteStartElement("Tiles");
-		for (int x = 0; x < Width; x++) {
-			for (int y = 0; y < Height; y++) {
-				if (tiles [x, y].Type != TileType.Ocean) {
-					writer.WriteStartElement ("Tile");
-					tiles [x, y].WriteXml (writer);
-					writer.WriteEndElement ();
-				}
-			}
-		}
-		writer.WriteEndElement();
-//
-		writer.WriteStartElement("Islands");
-		foreach(Island island in islandList) {
-			writer.WriteStartElement("Island");
-			island.WriteXml(writer);
-			writer.WriteEndElement();
-		}
-		writer.WriteEndElement();
-
-		writer.WriteStartElement("Units");
-		foreach(Unit c in units) {
-			writer.WriteStartElement("Unit");
-			c.WriteXml(writer);
-			writer.WriteEndElement();
-
-		}
-		writer.WriteEndElement();
-
-	}
-
-	public void ReadXml(XmlReader reader) {
-		Debug.Log("World::ReadXml");
-		// Load info here
-
-		Width = int.Parse( reader.GetAttribute("Width") );
-		Height = int.Parse( reader.GetAttribute("Height") );
-		BuildController.Instance.buildID = uint.Parse( reader.GetAttribute("BuildID") );
-		SetupWorld(Width, Height);
-		while(reader.Read()) {
-			switch(reader.Name) {
-			case "Tiles":
-				if(reader.IsStartElement ())
-					ReadXml_Tiles(reader);
-				break;
-			case "Islands":
-				if(reader.IsStartElement ())
-					ReadXml_Islands(reader);
-				break;
-			case "Units":
-				if(reader.IsStartElement ())
-					ReadXml_Units(reader);
-				break; 
-			}
-		}
-
-	}
-
-	void ReadXml_Tiles(XmlReader reader) {
-		Debug.Log("ReadXml_Tiles");
-		// We are in the "Tiles" element, so read elements until
-		// we run out of "Tile" nodes.
-
-		if( reader.ReadToDescendant("Tile") ) {
-			// We have at least one tile, so do something with it.
-			do {
-				int x = int.Parse( reader.GetAttribute("X") );
-				int y = int.Parse( reader.GetAttribute("Y") );
-				tiles[x,y] = new LandTile(x,y); //save only landtiles
-				tiles[x,y].ReadXml(reader);
-			} while ( reader.ReadToNextSibling("Tile") );
-		}
-
-	}
-	void ReadXml_Islands(XmlReader reader) {
-		Debug.Log("ReadXml_Islands");
-		if(reader.ReadToDescendant("Island") ) {
-			do {
-				if(reader.IsStartElement ("Island")==false){
-					if(reader.Name == "Islands"){
-						return;
-					}
-					continue;
-				}	
-				int x = int.Parse( reader.GetAttribute("StartTile_X") );
-				int y = int.Parse( reader.GetAttribute("StartTile_Y") );
-				Island i = new Island(GetTileAt (x,y));
-				i.ReadXml (reader);
-				islandList.Add (i);
-			} while( reader.Read () );
-		}
-	}
-	void ReadXml_Units(XmlReader reader) {
-		Debug.Log("ReadXml_Units");
-		if(reader.ReadToDescendant("Unit") ) {
-			do {
-				if(reader.IsStartElement ("Unit")==false){
-					if(reader.Name == "Units"){
-						return;
-					}
-					continue;
-				}
-				int playernumber=int.Parse( reader.GetAttribute("playernumber") );
-				int x = int.Parse( reader.GetAttribute("currTile_X") );
-				int y = int.Parse( reader.GetAttribute("currTile_Y") );
-				Unit u = CreateUnit( GetTileAt (x,y),playernumber,true );
-				u.ReadXml(reader);
-			} while( reader.Read () );
-		}
-	}
-	public void SaveIGE(XmlWriter writer){
-		writer.WriteAttributeString("TargetType", TargetType +"" );
 	}
 	#endregion
 

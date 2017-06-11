@@ -16,5 +16,4 @@ public interface IGEventable {
 	/// </summary>
 	/// <returns>The target type.</returns>
 	int GetTargetType();
-	void SaveIGE (System.Xml.XmlWriter writer);
 }

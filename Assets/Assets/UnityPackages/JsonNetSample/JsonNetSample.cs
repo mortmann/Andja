@@ -24,10 +24,9 @@ public class JsonNetSample : MonoBehaviour
     {
 		Debug.Log (msg); 
     }
-	[JsonObject(MemberSerialization.OptIn)]
     public class Product
     {
-		[JsonProperty]
+		public Vector3 vector;
         public string Name;
 //		[Json]
         public DateTime ExpiryDate = new DateTime(2000, 1, 1, 0, 0, 0, DateTimeKind.Utc);
@@ -55,7 +54,7 @@ public class JsonNetSample : MonoBehaviour
     [System.Serializable]
     public class CharacterListItem
     {
-		
+		public Vector2 vec;
         public int Id { get; set; }
         public string Name { get; set; }
         public int Level { get; set; }
@@ -80,8 +79,14 @@ public class JsonNetSample : MonoBehaviour
         product.ExpiryDate = new DateTime(2008, 12, 28);
         product.Sizes = new string[] { "Small" };
 
-//        string json = JsonConvert.SerializeObject(product);
-//        WriteLine("APPLE *!!!! " +json);
+		string json = JsonConvert.SerializeObject(product,new JsonSerializerSettings
+				{
+					NullValueHandling = NullValueHandling.Ignore,
+					PreserveReferencesHandling = PreserveReferencesHandling.Objects,
+			        ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+				}) ;
+
+        WriteLine("APPLE *!!!! " +json);
     }
 
     public class Movie

@@ -1,18 +1,26 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 using System;
-using System.Xml;
-using System.Xml.Schema;
-using System.Xml.Serialization;
+using Newtonsoft.Json;
 
+[JsonObject(MemberSerialization.OptIn)]
 public class Road : Structure {
+	#region Serialize
+	#endregion
+	#region RuntimeOrOther
+
 	private Route _route;
 	public Route Route {
 		get {return _route;}
 		set { _route = value;
 		}
 	}
+
+	#endregion
+
+
 	Action<Road> cbRoadChanged;
+
 	public Road(int ID,string name, int buildcost = 50){
 		canBeUpgraded = true;
 		this.ID = ID;
@@ -40,6 +48,10 @@ public class Road : Structure {
 		this.buildingRange = str.buildingRange;
 		this.myBuildingTyp = str.myBuildingTyp;
 	}
+	/// <summary>
+	/// DO NOT USE
+	/// </summary>
+	public Road(){}
 	public override Structure Clone(){
 		return new Road (this);
 	}
@@ -126,10 +138,5 @@ public class Road : Structure {
 	public void UnregisterOnRoadCallback(Action<Road> cb) {
 		cbRoadChanged -= cb;
 	}
-	public override void WriteXml (XmlWriter writer){
-		BaseWriteXml (writer);
-	}
-	public override void ReadXml(XmlReader reader) {
-		BaseReadXml (reader);
-	}
+
 }

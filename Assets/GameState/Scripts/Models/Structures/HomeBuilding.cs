@@ -1,20 +1,26 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
-using System.Xml;
-using System.Xml.Schema;
-using System.Xml.Serialization;
+using Newtonsoft.Json;
 
+[JsonObject(MemberSerialization.OptIn)]
 public class HomeBuilding : Structure{
-	public Player pc;
+	#region Serialize
 
-	public int people;
+	[JsonPropertyAttribute] public int people;
+	[JsonPropertyAttribute] public int buildingLevel;
+	[JsonPropertyAttribute] public float decTimer;
+	[JsonPropertyAttribute] public float incTimer;
+
+	#endregion
+	#region RuntimeOrOther
+
 	public int maxLivingSpaces;
 	public float increaseSpeed;
 	public float decreaseSpeed;
 	public bool canUpgrade=false;
-	public int buildingLevel;
-	public float decTimer;
-	public float incTimer;
+
+	#endregion
+
 
 	public HomeBuilding(int pid){
 		this.ID = pid;
@@ -54,12 +60,15 @@ public class HomeBuilding : Structure{
 		this.canTakeDamage = b.canTakeDamage;
 
 	}
+	/// <summary>
+	/// DO NOT USE
+	/// </summary>
+	public HomeBuilding(){}
 	public override Structure Clone (){
 		return new HomeBuilding (this);
 	}
 
 	public override void OnBuild(){
-		pc = GameObject.FindObjectOfType<PlayerController> ().GetPlayer (playerID);
 		HashSet<Tile> neighbourTiles = new HashSet<Tile> ();
 		foreach (Tile item in myBuildingTiles) {
 			foreach(Tile nbt in item.GetNeighbours()){
@@ -82,6 +91,7 @@ public class HomeBuilding : Structure{
 		int count = 0;
 		bool percCritical=false;
 		foreach (Need n in City.allNeeds.Keys) {
+			Player pc = PlayerController.Instance.GetPlayer (playerNumber);
 			if (n.startLevel <= buildingLevel && n.popCount <= pc.maxPopulationCount) {
 				if (n.structure == null) {
 					allPercentage += City.allNeeds [n];
@@ -126,17 +136,6 @@ public class HomeBuilding : Structure{
 		if(old is Road == false || t.Structure is Road == false){
 			return;
 		}
-	}
-	public override void WriteXml (XmlWriter writer)	{
-		BaseWriteXml (writer);
-		writer.WriteAttributeString("People", people.ToString());
-		writer.WriteAttributeString("BuildingLevel", buildingLevel.ToString());
-
-	}
-	public override void ReadXml (XmlReader reader) {
-		BaseReadXml (reader);
-		people = int.Parse( reader.GetAttribute("People") );
-		buildingLevel = int.Parse( reader.GetAttribute("BuildingLevel") );
 	}
 	public bool isInRangeOf(NeedsBuilding str){
 		if(str==null){

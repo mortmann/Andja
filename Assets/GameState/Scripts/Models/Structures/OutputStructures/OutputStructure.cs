@@ -1,25 +1,33 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
-using System.Xml;
-using System.Xml.Schema;
-using System.Xml.Serialization;
 using System;
+using Newtonsoft.Json;
 
+[JsonObject(MemberSerialization.OptIn)]
 public abstract class OutputStructure : Structure {
-	
+	#region Serialize
+
+	[JsonPropertyAttribute] public List<Worker> myWorker;
+	[JsonPropertyAttribute] public float produceCountdown;
+	[JsonPropertyAttribute] public Item[] output;
+
+	#endregion
+	#region RuntimeOrOther
+
 	public float contactRange=0;
 	public bool forMarketplace=true;
 	protected int maxNumberOfWorker = 1;
-	public List<Worker> myWorker;
 	public Dictionary<OutputStructure,Item[]> jobsToDo;
 	public bool outputClaimed;
 	public float produceTime;
-	public float produceCountdown;
-	public Item[] output;
 	public int maxOutputStorage;
 	protected Action<Structure> cbOutputChange;
 	bool canWork { get { return Efficiency == 0; }}
 	public float efficiencyModifier;
+
+	#endregion
+
+
 
 	public virtual float Efficiency{
 		get {
@@ -187,45 +195,5 @@ public abstract class OutputStructure : Structure {
 		}
 	}
 
-	public void WriteUserXml(XmlWriter writer){
-		writer.WriteAttributeString("OutputClaimed", outputClaimed.ToString () );
-		writer.WriteAttributeString("ProduceCountdown", produceCountdown.ToString () );
-		if (output != null) {
-			writer.WriteStartElement ("Outputs");
-			foreach (Item i in output) {
-				writer.WriteStartElement ("OutputStorage");
-				writer.WriteAttributeString ("amount", i.count.ToString ());
-				writer.WriteEndElement ();
-			}
-			writer.WriteEndElement ();
-		}
-		if (myWorker != null) {
-			writer.WriteStartElement ("Workers");
-			foreach (Worker w in myWorker) {
-				writer.WriteStartElement ("Worker");
-				w.WriteXml (writer);
-				writer.WriteEndElement ();
-			}
-			writer.WriteEndElement ();
-		}
-	}
 
-	public void ReadUserXml(XmlReader reader){
-		outputClaimed = bool.Parse (reader.GetAttribute("OutputClaimed"));
-		produceCountdown = float.Parse( reader.GetAttribute("ProduceCountdown") );
-		int o= 0;
-		if(reader.ReadToDescendant("Outputs") ) {
-			do {
-				output[o].count = int.Parse( reader.GetAttribute("amount") );
-				o++;
-			} while( reader.ReadToNextSibling("OutputStorage") );
-		}
-		if(reader.ReadToDescendant("Workers") ) {
-			do {
-				Worker w = new Worker(this);
-				w.ReadXml (reader);
-				myWorker.Add (w);
-			} while( reader.ReadToNextSibling("Worker") );
-		}
-	}
 }

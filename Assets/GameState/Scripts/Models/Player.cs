@@ -1,24 +1,22 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 using System;
-using System.Xml;
 
-
-[Serializable]
+[JsonObject(MemberSerialization.OptIn)]
 public class Player : IGEventable {
-	[NonSerialized]
+	#region Not Serialized
 	public const int TargetType = 1;
-
 	Action<GameEvent> cbEventCreated;
 	Action<GameEvent> cbEventEnded;
 	List<City> myCities;
-
-	[NonSerialized]
 	private int _change;
 	public int change { get { return _change;} 
 		protected set { _change = value;}
 	} //should be calculated after reload anyway
-	[SerializeField]
+	#endregion 
+	#region Serialized
+	[JsonPropertyAttribute]
 	private int _balance;
 	public int balance { get { return _balance;} 
 		protected set { _balance = value;}
@@ -26,7 +24,7 @@ public class Player : IGEventable {
 	// because only the new level popcount is interesting
 	// needs to be saved because you can lose pop due
 	// war or death and only the highest ever matters here 
-	[SerializeField]
+	[JsonPropertyAttribute]
 	private int _maxPopulationLevel;
 	public int maxPopulationLevel { 
 		get {return _maxPopulationLevel;} 
@@ -38,7 +36,7 @@ public class Player : IGEventable {
 			maxPopulationCount = 0; 
 		}
 	} 									  
-	[SerializeField]
+	[JsonPropertyAttribute]
 	private int _maxPopulationCount;
 	public int maxPopulationCount { 
 		get {return _maxPopulationCount;} 
@@ -46,8 +44,9 @@ public class Player : IGEventable {
 			_maxPopulationCount = value;
 		}
 	} 
-	[SerializeField]
+	[JsonPropertyAttribute]
 	public int playerNumber;
+	#endregion 
 
 	public Player(){
 	}
@@ -118,13 +117,5 @@ public class Player : IGEventable {
 	public int GetTargetType(){
 		return TargetType;
 	}
-
-	#region save
-		public void SaveIGE(XmlWriter writer){
-			writer.WriteAttributeString("TargetType", TargetType +"" );
-			writer.WriteAttributeString("PlayerNumber", playerNumber +"" );
-		}
-	#endregion
-
 
 }

@@ -152,7 +152,7 @@ public class PlayerController : MonoBehaviour {
 		players [city.playerNumber].OnCityCreated (city);
 	}
 	public void OnStructureCreated(Structure structure){
-		reduceMoney (structure.buildcost,structure.playerID);
+		reduceMoney (structure.buildcost,structure.playerNumber);
 	}
 	public bool ArePlayersAtWar(int pnum1,int pnum2){
 		if(pnum1 == pnum2){
@@ -188,104 +188,102 @@ public class PlayerController : MonoBehaviour {
 		return players [i];
 	}
 
-
-	public string GetSavePlayerData(){
+	public PlayerControllerSave GetSavePlayerData(){
 		// Create/overwrite the save file with the xml text.
-		return JsonUtility.ToJson(new PlayerControllerSave(currentPlayerNumber, balanceTicks, tickTimer, players,playerWars));
+		return new PlayerControllerSave(currentPlayerNumber, balanceTicks, tickTimer, players,playerWars);
 	}
-	public void LoadPlayerData(string data){
-		PlayerControllerSave pcs = JsonUtility.FromJson<PlayerControllerSave> (data);
+	public void LoadPlayerData(PlayerControllerSave pcs){
 		currentPlayerNumber = pcs.currentPlayerNumber;
 		players = pcs.players;
 		playerWars = pcs.playerWars;
 		tickTimer = pcs.tickTimer;
 		balanceTicks = pcs.balanceTicks;
 	}
-	[Serializable]
-	public class PlayerControllerSave {
-		
-		public int currentPlayerNumber;
-		public float balanceTicks;
-		public float tickTimer;
-		public List<Player> players;
-		public HashSet<War> playerWars;
 
-		public PlayerControllerSave(int cpn,float balanceTicks,float tickTimer,List<Player> players, HashSet<War> playerWars ){
-			currentPlayerNumber = cpn;
-			this.balanceTicks = balanceTicks;
-			this.players = players;
-			this.tickTimer = tickTimer;
-			this.playerWars = playerWars;
-		}
-		public PlayerControllerSave(){
-			
-		}
+}
+[Serializable]
+public class PlayerControllerSave {
+
+	public int currentPlayerNumber;
+	public float balanceTicks;
+	public float tickTimer;
+	public List<Player> players;
+	public HashSet<War> playerWars;
+
+	public PlayerControllerSave(int cpn,float balanceTicks,float tickTimer,List<Player> players, HashSet<War> playerWars ){
+		currentPlayerNumber = cpn;
+		this.balanceTicks = balanceTicks;
+		this.players = players;
+		this.tickTimer = tickTimer;
+		this.playerWars = playerWars;
 	}
-	[Serializable]
-	public class War {
-		public int playerOne;
-		public int playerTwo;
+	public PlayerControllerSave(){
 
-		public War(){
-		}
+	}
+}
 
-		public War(int one, int two){
-			if(one>two){
-				playerOne = two;
-				playerTwo = one;
-			} else {
-				playerOne = one;
-				playerTwo = two;
-			}
-		}
-		public bool Equals(War p){
-			if(p == null){
-				return false;
-			}
-			return p.playerOne == playerOne && p.playerTwo == playerTwo;
-		}
-		public override bool Equals (object obj) {
-			// If parameter cannot be cast to ThreeDPoint return false:
-			War p = obj as War;
-			if ((object)p == null){
-				return false;
-			}
-			// Return true if the fields match:
-			return p.playerOne == playerOne && p.playerTwo == playerTwo;
-		}
-		public override int GetHashCode(){
-			return playerOne ^ playerTwo;
-		}
-		public static bool operator ==(War a, War b){
-			// If both are null, or both are same instance, return true.
-			if (System.Object.ReferenceEquals(a, b)){
-				return true;
-			}
+[Serializable]
+public class War {
+	public int playerOne;
+	public int playerTwo;
 
-			// If one is null, but not both, return false.
-			if (((object)a == null) || ((object)b == null)){
-				return false;
-			}
-
-			// Return true if the fields match:
-			return a.playerOne == b.playerOne && a.playerTwo == b.playerTwo 
-				|| a.playerTwo == b.playerOne && a.playerOne == b.playerTwo;
-		}
-		public static bool operator !=(War a, War b){
-			// If both are null, or both are same instance, return false.
-			if (System.Object.ReferenceEquals(a, b)){
-				return false;
-			}
-
-			// If one is null, but not both, return true.
-			if (((object)a == null) || ((object)b == null)){
-				return true;
-			}
-
-			// Return true if the fields not match:
-			return a.playerOne != b.playerOne || a.playerTwo != b.playerTwo;
-		}
+	public War(){
 	}
 
+	public War(int one, int two){
+		if(one>two){
+			playerOne = two;
+			playerTwo = one;
+		} else {
+			playerOne = one;
+			playerTwo = two;
+		}
+	}
+	public bool Equals(War p){
+		if(p == null){
+			return false;
+		}
+		return p.playerOne == playerOne && p.playerTwo == playerTwo;
+	}
+	public override bool Equals (object obj) {
+		// If parameter cannot be cast to ThreeDPoint return false:
+		War p = obj as War;
+		if ((object)p == null){
+			return false;
+		}
+		// Return true if the fields match:
+		return p.playerOne == playerOne && p.playerTwo == playerTwo;
+	}
+	public override int GetHashCode(){
+		return playerOne ^ playerTwo;
+	}
+	public static bool operator ==(War a, War b){
+		// If both are null, or both are same instance, return true.
+		if (System.Object.ReferenceEquals(a, b)){
+			return true;
+		}
 
+		// If one is null, but not both, return false.
+		if (((object)a == null) || ((object)b == null)){
+			return false;
+		}
+
+		// Return true if the fields match:
+		return a.playerOne == b.playerOne && a.playerTwo == b.playerTwo 
+			|| a.playerTwo == b.playerOne && a.playerOne == b.playerTwo;
+	}
+	public static bool operator !=(War a, War b){
+		// If both are null, or both are same instance, return false.
+		if (System.Object.ReferenceEquals(a, b)){
+			return false;
+		}
+
+		// If one is null, but not both, return true.
+		if (((object)a == null) || ((object)b == null)){
+			return true;
+		}
+
+		// Return true if the fields not match:
+		return a.playerOne != b.playerOne || a.playerTwo != b.playerTwo;
+	}
 }

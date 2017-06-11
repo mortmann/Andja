@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
+using System;
+
 public class GameDataHolder : MonoBehaviour {
 
 	public static GameDataHolder Instance;
@@ -31,10 +33,13 @@ public class GameDataHolder : MonoBehaviour {
 		width = int.Parse (go.text);
 	}
 
-	public string GetSaveGameData(){
-		return "GDH";
+	public GameData GetSaveGameData(){
+		return new GameData();
 	}
-	public void LoadGameData(string data){
-		Debug.Log (data);
+	public void LoadGameData(GameData data){
 	}
+}
+
+[Serializable]
+public class GameData {
 }

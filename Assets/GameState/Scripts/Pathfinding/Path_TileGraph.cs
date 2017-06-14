@@ -164,7 +164,6 @@ public class Path_TileGraph {
 
 				if(t.Type == TileType.Ocean) {	
 					Path_Node<Tile> n = new Path_Node<Tile>();
-                    t.pathfinding = this;
 					n.data = t;
 					nodes.Add(t, n);
 				}

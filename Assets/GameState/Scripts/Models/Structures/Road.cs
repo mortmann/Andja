@@ -55,6 +55,17 @@ public class Road : Structure {
 	public override Structure Clone(){
 		return new Road (this);
 	}
+	public override void LoadPrototypData(Structure s){
+		Road r = s as Road;
+		if(r == null){
+			Debug.LogError ("ERROR - Prototyp was wrong");
+			return;
+		}
+		CopyData (r);
+	}
+	private void CopyData(Road r){
+		BaseCopyData (r);
+	}
 
 	public override void OnBuild (){
 		List<Route> routes = new List<Route> ();

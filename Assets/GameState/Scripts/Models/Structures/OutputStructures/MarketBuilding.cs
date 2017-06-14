@@ -7,8 +7,8 @@ public class MarketBuilding : OutputStructure {
 
 	#region Serialize
 
-	public int level=1;
-	public float takenOverState = 0;
+	[JsonPropertyAttribute] public int level=1;
+	[JsonPropertyAttribute] public float takenOverState = 0;
 
 	#endregion
 	#region RuntimeOrOther
@@ -40,28 +40,27 @@ public class MarketBuilding : OutputStructure {
 	public MarketBuilding(){
 	}
 	protected MarketBuilding(MarketBuilding str){
-		this.ID = str.ID;
-		this.name = str.name;
-		this.tileWidth = str.tileWidth;
-		this.tileHeight = str.tileHeight;
-		this.mustBeBuildOnShore = str.mustBeBuildOnShore;
-		this.maintenancecost = str.maintenancecost;
-		this.maxNumberOfWorker = str.maxNumberOfWorker;
-		this.buildcost = str.buildcost;
-		this.BuildTyp = str.BuildTyp;
-		this.rotated = str.rotated;
-		this.hasHitbox = str.hasHitbox;
-		this.buildingRange = str.buildingRange;
-		this.hasHitbox = str.hasHitbox;
-		this.canTakeDamage = str.canTakeDamage;
-
+		CopyData (str);
 	}
 	public override Structure Clone (){
 		return new MarketBuilding(this);
 	}
+
+	public override void LoadPrototypData(Structure s){
+		MarketBuilding mb = s as MarketBuilding;
+		if(mb == null){
+			Debug.LogError ("ERROR - Prototyp was wrong");
+			return;
+		}
+		CopyData (mb);
+	}
+	private void CopyData(MarketBuilding mb){
+		BaseCopyData (mb);
+		takeOverStartGoal = mb.takeOverStartGoal;
+
+	}
+
 	public override void update (float deltaTime){
-
-
 		base.update_Worker (deltaTime);
 	}
 	public override void OnBuild(){

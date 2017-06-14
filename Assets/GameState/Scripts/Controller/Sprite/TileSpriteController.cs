@@ -136,4 +136,8 @@ public class TileSpriteController : MonoBehaviour {
 			typeTotileSpriteNames.Add (s.name, s);
 		}
 	}
+	void OnDestroy() {
+		world.UnregisterTileChanged (OnTileChanged);
+		BuildController.Instance.UnregisterBuildStateChange (OnBuildStateChance);
+	}
 }

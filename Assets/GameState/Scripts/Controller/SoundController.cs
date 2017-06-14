@@ -18,8 +18,6 @@ public class SoundController : MonoBehaviour {
 	public GameObject soundEffect2DGO;
 	List<AudioSource> playedAudios;
 
-
-
 	public AudioClip placeBuildingSound;
 	public AudioClip cityCreateSound;
 

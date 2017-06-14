@@ -13,14 +13,37 @@ public class World : IGEventable{
 
 	[JsonPropertyAttribute] public List<Island> islandList { get; protected set; }
 	[JsonPropertyAttribute] public List<Unit> units { get; protected set; }
+	/// <summary>
+	/// ONLY for saving
+	/// </summary>
+	/// <value>The tile list.</value>
+	[JsonPropertyAttribute] private List<Tile> tileList {
+		get {
+			if(tiles == null){
+				return new List<Tile> ();
+			}
+			List<Tile> l = new List<Tile> (tiles);
+			l.RemoveAll (x => x.Type == TileType.Ocean);
+			return l;
+		} 
+		set {
+			foreach (Tile item in value) {
+				SetTileAt (item.X, item.Y, item);
+			}
+			LoadWaterTiles ();
+		}
+	}
 
 	#endregion
 	#region RuntimeOrOther
-
-	public Tile[,] tiles { get; protected set; }
+	public Tile[] tiles { get; protected set; }
 	public int Width { get; protected set; }
 	public int Height { get; protected set; }
-	public List<Need> allNeeds;
+	public static List<Need> allNeeds {
+		get {
+			return BuildController.Instance.allNeeds;
+		}
+	}
 	public Dictionary<Climate,List<Fertility>> allFertilities;
 	public Dictionary<int,Fertility> idToFertilities;
 	public bool[,] _tilesmap;
@@ -53,26 +76,23 @@ public class World : IGEventable{
 		SetupWorld (width,height);
 		for (int x = 30; x < 40; x++) {
 			for (int y = 40; y < 60; y++) {
-				tiles [x, y] = new LandTile (x,y);
-				tiles[x, y].Type = TileType.Dirt;
+				SetTileAt (x,y,new LandTile (x,y));
+				GetTileAt(x,y).Type = TileType.Dirt;
 			}
 		}
 		for (int x = 60; x < 70; x++) {
 			for (int y = 40; y < 60; y++) {
-				tiles [x, y] = new LandTile (x,y);
-				tiles[x, y].Type = TileType.Dirt;
+				SetTileAt (x,y,new LandTile (x,y));
+				GetTileAt(x,y).Type = TileType.Dirt;
 			}
 		}
-		CreateUnit(tiles[34, 41],PlayerController.Instance.currentPlayerNumber,false);
-		CreateUnit(tiles[34, 47],2,false); 
-		CreateUnit(tiles[42, 38],PlayerController.Instance.currentPlayerNumber,true);    
-		CreateUnit(tiles[44, 38],2,true);    
+		CreateUnit(GetTileAt(34, 41),PlayerController.Instance.currentPlayerNumber,false);
+		CreateUnit(GetTileAt(34, 47),2,false); 
+		CreateUnit(GetTileAt(42, 38),PlayerController.Instance.currentPlayerNumber,true);    
+		CreateUnit(GetTileAt(34, 38),2,true);    
 
 		CreateIsland (31, 41);
 		CreateIsland (61, 41);
-
-
-
 
     }
 	public World(){
@@ -81,13 +101,13 @@ public class World : IGEventable{
 		current = this;
 		this.Width = Width;
 		this.Height = Height;
-		tiles = new Tile[Width, Height];
+		tiles = new Tile[Width*Height];
 		for (int x = 0; x < Width; x++) {
 			for (int y = 0; y < Height; y++) {
-				tiles [x, y] = new Tile (x, y);
+				SetTileAt (x, y, new Tile (x,y));
 			}
 		}
-		allNeeds = GameObject.FindObjectOfType<BuildController>().allNeeds;
+//		allNeeds = GameObject.FindObjectOfType<BuildController>().allNeeds;
 		allFertilities = GameObject.FindObjectOfType<BuildController>().allFertilities;
 		idToFertilities= GameObject.FindObjectOfType<BuildController>().idToFertilities;
 		EventController.Instance.RegisterOnEvent (OnEventCreate,OnEventEnded);
@@ -134,8 +154,15 @@ public class World : IGEventable{
 		islandList.Add (island);
 
 	}
-
-
+	public void SetTileAt(int x,int y,Tile t){
+		if (x >= Width ||y >= Height ) {
+			return;
+		}
+		if (x < 0 || y < 0) {
+			return;
+		}
+		tiles[x * Height + y] = t;
+	}
     public Tile GetTileAt(int x,int y){
         if (x >= Width ||y >= Height ) {
             return null;
@@ -143,7 +170,7 @@ public class World : IGEventable{
         if (x < 0 || y < 0) {
             return null;
         }
-        return tiles[x, y];
+		return tiles[x * Height + y];
     }
 	public bool IsInTileAt(Tile t,float x,float y){
 		if (x >= Width ||y >= Height ) {
@@ -162,13 +189,7 @@ public class World : IGEventable{
     public Tile GetTileAt(float fx, float fy) {
         int x = Mathf.FloorToInt(fx);
         int y = Mathf.FloorToInt(fy);
-        if (x >= Width || y >= Height) {
-            return null;
-        }
-        if (x < 0 || y < 0) {
-            return null;
-        }
-        return tiles[x, y];
+		return GetTileAt(x,y);
     }
 	public Unit CreateUnit(Tile t,int playernumber,bool isShip) {
 		Unit c = null;
@@ -300,6 +321,16 @@ public class World : IGEventable{
 		WorldSave ws = new WorldSave (units, islandList);
 		return JsonUtility.ToJson (ws);
 	}
+	public void LoadWaterTiles (){
+		for (int x = 0; x < Width; x++) {
+			for (int y = 0; y < Height; y++) {
+				if(GetTileAt(x,y) == null){
+					SetTileAt (x, y, new Tile (x,y));
+				}
+			}
+		}
+	}
+
 	[Serializable]
 	public class WorldSave{
 

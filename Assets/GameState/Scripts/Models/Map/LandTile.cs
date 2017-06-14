@@ -96,6 +96,7 @@ public class LandTile : Tile {
 			_myCity = value;
 		} 
 	}
+
 	protected TileMark _oldTileState;
 	protected TileMark _tileState;
 	public override TileMark TileState {

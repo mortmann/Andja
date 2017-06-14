@@ -41,16 +41,16 @@ public class Tile {
 		}
 	}
 
-    public Path_TileGraph pathfinding;
-
 	public Vector3 vector { get {return new Vector3 (x, y, 0);} }
+
 	public Tile(){}
 	public Tile(int x, int y){
 		this.x = x;
 		this.y = y;
 		_type = TileType.Ocean;
 	}
-	protected TileType _type = TileType.Ocean;
+
+	[JsonPropertyAttribute] protected TileType _type = TileType.Ocean;
 	public TileType Type {
 		get { return _type; }
 		set {
@@ -266,6 +266,48 @@ public class Tile {
 		}
 		return new Vector2 (int.Parse (datas [1]), int.Parse (datas [2]));
 
+	}
+
+
+	public override bool Equals (object obj) {
+		// If parameter cannot be cast to ThreeDPoint return false:
+		Tile t = obj as Tile;
+		if ((object)t == null){
+			return false;
+		}
+		// Return true if the fields match:
+		return t.X == X && t.Y == Y;
+	}
+	public override int GetHashCode(){
+		return X ^ Y;
+	}
+	public static bool operator ==(Tile a, Tile b){
+		// If both are null, or both are same instance, return true.
+		if (System.Object.ReferenceEquals(a, b)){
+			return true;
+		}
+
+		// If one is null, but not both, return false.
+		if (((object)a == null) || ((object)b == null)){
+			return false;
+		}
+
+		// Return true if the fields match:
+		return a.X == b.X && a.Y == b.Y;
+	}
+	public static bool operator !=(Tile a, Tile b){
+		// If both are null, or both are same instance, return false.
+		if (System.Object.ReferenceEquals(a, b)){
+			return false;
+		}
+
+		// If one is null, but not both, return true.
+		if (((object)a == null) || ((object)b == null)){
+			return true;
+		}
+
+		// Return true if the fields not match:
+		return a.X != b.X || a.Y != b.Y;
 	}
 
 }

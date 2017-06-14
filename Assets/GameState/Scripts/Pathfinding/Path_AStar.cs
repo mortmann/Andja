@@ -30,30 +30,32 @@ public class Path_AStar {
 			Debug.Log (t + " " + tileStart); 
 			return;
 		}
+		Debug.LogError ("Removed this pathfinding!");
+		return;
 		// A dictionary of all valid, walkable nodes.
-		Dictionary<Tile, Path_Node<Tile>> nodes = t.pathfinding.nodes;
-		Tile goal = World.current.GetTileAt (end.x,end.y);
-		if(nodes.ContainsKey (goal)){
-			Calculate (nodes,tileStart,goal);
-			return;
-		}
-		float max = (tileStart.vector - end).sqrMagnitude;
-		float min = float.MaxValue;
-		float curr;
-
-		foreach (var item in nodes.Keys) {
-			curr = (item.vector - end).sqrMagnitude;
-			if(curr>max){
-				continue;
-			}
-			if(min>=curr){
-				min = curr;
-				goal = item;
-			}
-
-		}
-
-		Calculate (nodes,tileStart,goal);
+//		Dictionary<Tile, Path_Node<Tile>> nodes = t.pathfinding.nodes;
+//		Tile goal = World.current.GetTileAt (end.x,end.y);
+//		if(nodes.ContainsKey (goal)){
+//			Calculate (nodes,tileStart,goal);
+//			return;
+//		}
+//		float max = (tileStart.vector - end).sqrMagnitude;
+//		float min = float.MaxValue;
+//		float curr;
+//
+//		foreach (var item in nodes.Keys) {
+//			curr = (item.vector - end).sqrMagnitude;
+//			if(curr>max){
+//				continue;
+//			}
+//			if(min>=curr){
+//				min = curr;
+//				goal = item;
+//			}
+//
+//		}
+//
+//		Calculate (nodes,tileStart,goal);
 	}
 	public Path_AStar(Route route, Tile tileStart, Tile tileEnd) {
 		if(route == null || tileStart == null || tileEnd == null) {

@@ -111,6 +111,8 @@ public class SaveController : MonoBehaviour {
 			Debug.LogError ("Mismatch of SaveFile Versions " + state.safefileversion + " & " + SaveFileVersion);
 			return;
 		}
+		BuildController.Instance.LoadFromXML ();
+
 		gdh.LoadGameData(state.gamedata); // gamedata
 		pc.LoadPlayerData(state.pcs); // player
 		wc.LoadWorldData (state.world); // world

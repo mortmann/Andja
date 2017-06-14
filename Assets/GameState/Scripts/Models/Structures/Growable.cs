@@ -9,8 +9,8 @@ public class Growable : OutputStructure {
 	#region Serialize
 
 	[JsonPropertyAttribute] float age = 0;
-	[JsonPropertyAttribute] public int currentStage= 0;
-	[JsonPropertyAttribute] public bool hasProduced =false;
+	[JsonPropertyAttribute] public int currentStage = 0;
+	[JsonPropertyAttribute] public bool hasProduced = false;
 
 	#endregion
 	#region RuntimeOrOther
@@ -41,6 +41,9 @@ public class Growable : OutputStructure {
 	}
 	protected Growable(Growable g){
 		CopyData (g);
+		age = g.age;
+		currentStage = g.currentStage;
+		hasProduced = g.hasProduced;
 	}
 	/// <summary>
 	/// DO NOT USE
@@ -57,17 +60,16 @@ public class Growable : OutputStructure {
 			Debug.LogError ("ERROR - Prototyp was wrong");
 			return;
 		}
-		CopyData (s);
+		CopyData (g);
 	}
 	private void CopyData(Growable g){
-		BaseCopyData (g);
 		OutputCopyData (g);
-		growTime = g.growTime;
-		fer = g.fer;
-		ageStages = g.ageStages;
+		this.fer = g.fer;
+		this.growTime = g.growTime;
+		this.ageStages = g.ageStages;
+
 
 //		this.canBeBuildOver = g.canBeBuildOver;
-//		this.ageStages = g.ageStages;
 //		this.ID = g.ID;
 //		this.name = g.name;
 //		this.output = g.output;
@@ -77,10 +79,8 @@ public class Growable : OutputStructure {
 //		this.BuildTyp = g.BuildTyp;
 //		this.rotated = g.rotated;
 //		this.hasHitbox = g.hasHitbox;
-//		this.growTime = g.growTime;
 //		this.canBeBuildOver = g.canBeBuildOver;
 //		this.canTakeDamage = g.canTakeDamage;
-//		this.fer = g.fer;
 //		this.forMarketplace = g.forMarketplace;
 	}
 

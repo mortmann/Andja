@@ -49,6 +49,7 @@ public class Player : IGEventable {
 	#endregion 
 
 	public Player(){
+		myCities = new List<City> ();
 	}
 
 	public Player(int number){

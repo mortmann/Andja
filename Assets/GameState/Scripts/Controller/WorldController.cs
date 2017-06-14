@@ -44,20 +44,9 @@ public class WorldController : MonoBehaviour {
 //			gdh.loadsavegame = null;
 		} else {
 			if (gdh != null) {
-				this.world = new World (gdh.width, gdh.height);
+				this.world = new World (gdh.width +900, gdh.height+900);
 			} 
 			Camera.main.transform.position = new Vector3(world.Width / 2, world.Height / 2, Camera.main.transform.position.z);
-		}
-		List<int> test = new List<int> ();
-		test.Add (9);
-		test.Add (1);
-		test.Add (11);
-		test.Add (192);
-		test.Add (0);
-		test.Add (12112);
-		test.Sort ((x, y) => x.CompareTo(y));
-		foreach (var item in test) {
-				Debug.Log (item);
 		}
     }
 
@@ -145,7 +134,8 @@ public class WorldController : MonoBehaviour {
 		loadedStructures.Sort ((x, y) => x.buildID.CompareTo(y.buildID) );
 		BuildController.Instance.PlaceAllLoadedStructure (loadedStructures);
 		// Center the Camera
-		Camera.main.transform.position = new Vector3( world.Width/2, world.Height/2, Camera.main.transform.position.z );
+		Camera.main.transform.position = new Vector3( loadWorld.Width/2, loadWorld.Height/2, Camera.main.transform.position.z );
+		world = loadWorld;
 		Debug.Log ("LOAD ENDED");
 	}
 

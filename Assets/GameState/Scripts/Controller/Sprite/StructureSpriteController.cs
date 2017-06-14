@@ -182,4 +182,7 @@ public class StructureSpriteController : MonoBehaviour {
 		}
 		return structureGameObjectMap [str];
 	}
+	void OnDestroy() {
+		
+	}
 }

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Newtonsoft.Json;
 
 [JsonObject(MemberSerialization.OptIn)]
-public class HomeBuilding : Structure{
+public class HomeBuilding : Structure {
 	#region Serialize
 
 	[JsonPropertyAttribute] public int people;
@@ -38,32 +38,45 @@ public class HomeBuilding : Structure{
 		this.buildingRange = 0;
 		hasHitbox = true;
 		this.canTakeDamage = true;
+		this.maintenancecost = 0;
 
 	}
 	protected HomeBuilding(HomeBuilding b){
-		this.buildingRange = b.buildingRange;
-		this.ID = b.ID;
-		this.people = b.people;
-		this.tileWidth = b.tileWidth;
-		this.tileHeight = b.tileHeight;
-		this.rotated = b.rotated;
-		this.maintenancecost = b.maintenancecost;
-		this.hasHitbox = b.hasHitbox;
-		this.name = b.name;
-		this.BuildTyp = b.BuildTyp;
-		this.buildcost = b.buildcost;
-		this.buildingLevel = 1;
-		this.maintenancecost = 0;
+//		this.buildingRange = b.buildingRange;
+//		this.ID = b.ID;
+//		this.people = b.people;
+//		this.tileWidth = b.tileWidth;
+//		this.tileHeight = b.tileHeight;
+//		this.rotated = b.rotated;
+//		this.maintenancecost = b.maintenancecost;
+//		this.hasHitbox = b.hasHitbox;
+//		this.name = b.name;
+//		this.BuildTyp = b.BuildTyp;
+//		this.buildcost = b.buildcost;
+		BaseCopyData (b);
 		this.maxLivingSpaces = b.maxLivingSpaces;
 		this.increaseSpeed = b.increaseSpeed;
 		this.decreaseSpeed = b.decreaseSpeed;
 		this.canTakeDamage = b.canTakeDamage;
-
+		this.buildingLevel = b.buildingLevel;
 	}
 	/// <summary>
 	/// DO NOT USE
 	/// </summary>
 	public HomeBuilding(){}
+
+	public override void LoadPrototypData (Structure prototyp) {
+		HomeBuilding home = prototyp as HomeBuilding;
+		if(prototyp == null){
+			Debug.LogError ("ERROR - Prototyp was wrong");
+			return;
+		}
+		BaseCopyData (home);
+		maxLivingSpaces = home.maxLivingSpaces;
+		increaseSpeed = home.increaseSpeed;
+		decreaseSpeed = home.decreaseSpeed;
+	}
+
 	public override Structure Clone (){
 		return new HomeBuilding (this);
 	}

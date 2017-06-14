@@ -33,6 +33,20 @@ public class NeedsBuilding : Structure {
 	/// DO NOT USE
 	/// </summary>
 	public NeedsBuilding(){}
+
+	public override void LoadPrototypData(Structure s){
+		NeedsBuilding nb = s as NeedsBuilding;
+		if(nb == null){
+			Debug.LogError ("ERROR - Prototyp was wrong");
+			return;
+		}
+		CopyData (nb);
+	}
+	private void CopyData(NeedsBuilding nb){
+		BaseCopyData (nb);
+
+	}
+		
 	public override Structure Clone (){
 		return new NeedsBuilding (this);
 	}

@@ -114,4 +114,7 @@ public class UnitSpriteController : MonoBehaviour {
             unitSprites[s.name] = s;
         }
     }
+	void OnDestroy() {
+		world.UnregisterUnitCreated (OnUnitCreated);
+	}
 }

@@ -29,6 +29,7 @@ public abstract class OutputStructure : Structure {
 	#endregion
 
 	protected void OutputCopyData(OutputStructure o){
+		BaseCopyData (o);
 		contactRange = o.contactRange;
 		forMarketplace = o.forMarketplace;
 		maxNumberOfWorker = o.maxNumberOfWorker;

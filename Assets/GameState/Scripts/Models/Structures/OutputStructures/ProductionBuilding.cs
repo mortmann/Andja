@@ -9,14 +9,15 @@ public class ProductionBuilding : OutputStructure {
 
 	#region Serialize
 
+	[JsonPropertyAttribute] public Item[] intake;
 
 	#endregion
 	#region RuntimeOrOther
 
-	public Dictionary<OutputStructure,Item[]> RegisteredStructures;
-	public Item[] intake;
 	public int[] needIntake;
 	public int[] maxIntake;
+
+	public Dictionary<OutputStructure,Item[]> RegisteredStructures;
 	MarketBuilding nearestMarketBuilding;
 
 	#endregion
@@ -70,26 +71,8 @@ public class ProductionBuilding : OutputStructure {
 	}
 
 	protected ProductionBuilding(ProductionBuilding str){
-		this.canTakeDamage = str.canTakeDamage;
-		this.ID = str.ID;
-		this.name = str.name;
-		this.intake = str.intake;
-		this.needIntake = str.needIntake;
-		this.produceTime = str.produceTime;
-		this.produceCountdown =  str.produceTime;
-		this.output = str.output;
-		this.maxOutputStorage = str.maxOutputStorage;
-		this.maxNumberOfWorker = str.maxNumberOfWorker;
-		this.tileWidth = str.tileWidth;
-		this.tileHeight = str.tileHeight;
-		this.maxIntake = str.maxIntake;
-		this.mustBeBuildOnShore = str.mustBeBuildOnShore;
-		this.maintenancecost = str.maintenancecost;
-		this.buildcost = str.buildcost;
-		this.BuildTyp = str.BuildTyp;
-		this.rotated = str.rotated;
-		this.hasHitbox = str.hasHitbox;
-		this.myBuildingTyp = BuildingTyp.Blocking;
+		LoadPrototypData (str);
+		intake = str.intake;
 	}
 
 
@@ -97,6 +80,19 @@ public class ProductionBuilding : OutputStructure {
 		return new ProductionBuilding(this);
 	}
 
+	public override void LoadPrototypData(Structure s){
+		ProductionBuilding pb = s as ProductionBuilding;
+		if(pb == null){
+			Debug.LogError ("ERROR - Prototyp was wrong");
+			return;
+		}
+		CopyData (pb);
+	}
+	private void CopyData(ProductionBuilding pb){
+		OutputCopyData (pb);
+		needIntake = pb.needIntake;
+		maxIntake = pb.maxIntake;
+	}
 
 	public override void update (float deltaTime){
 		if(needIntake == null && output == null){

@@ -59,6 +59,9 @@ public class City : IGEventable {
 		myStructures = new List<Structure>();
 		myInv = new Inventory (-1, name);
 		allNeeds = new Dictionary<Need,float> ();
+		for (int i = 0; i < World.allNeeds.Count; i++) {
+			allNeeds.Add (World.allNeeds [i], 0);
+		}
 		Setup ();
 
 		for (int i = 0; i < citizienCount.Length; i++) {
@@ -84,9 +87,8 @@ public class City : IGEventable {
 		myRoutes = new List<Route> ();
 		useTick = 30f;
 		idToNeed = new Dictionary<int, Need> ();
-		for (int i = 0; i < World.current.allNeeds.Count; i++) {
-			allNeeds.Add (World.current.allNeeds [i], 0);
-			idToNeed.Add (World.current.allNeeds [i].ID, World.current.allNeeds [i]);
+		for (int i = 0; i < World.allNeeds.Count; i++) {
+			idToNeed.Add (World.allNeeds [i].ID, World.allNeeds [i]);
 		}
 	}
 	public IEnumerable<Structure> Load(){

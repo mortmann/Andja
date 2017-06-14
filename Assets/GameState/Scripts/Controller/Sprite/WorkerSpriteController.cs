@@ -71,4 +71,7 @@ public class WorkerSpriteController : MonoBehaviour {
 			unitSprites[s.name] = s;
 		}
 	}
+	void OnDestroy() {
+		WorldController.Instance.world.UnregisterWorkerCreated (OnWorkerCreated);
+	}
 }

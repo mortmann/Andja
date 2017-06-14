@@ -65,6 +65,9 @@ public class Pathfinding {
             World.current.RegisterTileGraphChanged(WorldTGraphUpdate);
     }
 
+	public Pathfinding(){
+		
+	}
     public Pathfinding(List<Tile> startTiles, List<Tile> endTiles, float speed, path_mode pm = path_mode.route) {
         roadTilesAroundStartStructure = startTiles;
         roadTilesAroundEndStructure = endTiles;
@@ -117,7 +120,11 @@ public class Pathfinding {
     Tile nextTile;  // The next tile in the pathfinding sequence
     Tile _currTile;
     public Tile currTile {
-        get { return _currTile; }
+        get { 
+			if(_currTile == null){
+				return World.current.GetTileAt (X, Y);
+			}
+			return _currTile; }
         set {
             if (_currTile == null) {
                 X = value.X;
@@ -138,7 +145,6 @@ public class Pathfinding {
     private Vector3 rotationDirection;
     public void Update_DoMovement(float deltaTime) {
         if (currTile == null || destTile == null) {
-            Debug.LogError("currtile/desttile");
             LastMove = Vector3.zero;
 			return;
         }

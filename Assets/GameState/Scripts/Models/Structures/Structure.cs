@@ -159,7 +159,13 @@ public abstract class Structure : IGEventable {
 		canBeUpgraded = str.canBeUpgraded;
 		showExtraUI = str.showExtraUI;
 		mustFrontBuildDir = str.mustFrontBuildDir;
-
+		canStartBurning = str.canStartBurning;
+		mustBeBuildOnShore = str.mustBeBuildOnShore;
+		mustBeBuildOnMountain = str.mustBeBuildOnMountain;
+		maintenancecost = str.maintenancecost;
+		BuildTyp = str.BuildTyp;
+		myBuildingTyp = str.myBuildingTyp;
+		buildingItems = str.buildingItems;
 	}
 	#endregion
 	#endregion

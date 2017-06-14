@@ -63,6 +63,13 @@ public class BuildController : MonoBehaviour {
 		Instance = this;
 		BuildState = BuildStateModes.None;
 		buildID = 0;
+
+		LoadFromXML();
+	}
+	public void LoadFromXML(){
+		if(allItems != null){
+			return;
+		}
 		// prototypes of items
 		allItems = new Dictionary<int, Item> ();
 		buildItems = new List<Item> ();
@@ -97,7 +104,6 @@ public class BuildController : MonoBehaviour {
 		allFertilities = new Dictionary<Climate,List<Fertility>> ();
 		ReadFertilitiesFromXML ();
 	}
-
 
 	public void OnClickSettle(){
 		OnClick (6);

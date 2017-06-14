@@ -10,6 +10,7 @@ public class MineStructure : OutputStructure {
 	#region RuntimeOrOther
 
 	public string myRessource;
+
 	public override float Efficiency { get { 
 			if(BuildTile.myIsland.myRessources [myRessource] ==0){
 				return 0;
@@ -42,21 +43,21 @@ public class MineStructure : OutputStructure {
 	public MineStructure(){
 	}
 	protected MineStructure(MineStructure ms){
-		myBuildingTyp = ms.myBuildingTyp;
-		myRessource = ms.myRessource;
-		BuildTyp = ms.BuildTyp;
-		mustBeBuildOnMountain = true;
-		tileWidth = ms.tileWidth;
-		tileHeight = ms.tileHeight;
-		name = ms.name;
-		produceTime = ms.produceTime;
-		produceCountdown = produceTime;
-		output = ms.output;
-		hasHitbox = ms.hasHitbox;
-		maxOutputStorage = ms.maxOutputStorage;
-		buildingRange = ms.buildingRange;
+		LoadPrototypData (ms);
 	}
+	public override void LoadPrototypData(Structure s){
+		MineStructure ms = s as MineStructure;
+		if(ms == null){
+			Debug.LogError ("ERROR - Prototyp was wrong");
+			return;
+		}
+		CopyData (ms);
+	}
+	private void CopyData(MineStructure ms){
+		OutputCopyData (ms);
+		myRessource = ms.myRessource;
 
+	}
 
 	public override bool SpecialCheckForBuild (List<Tile> tiles) {
 		for (int i = 0; i < tiles.Count; i++) {

@@ -45,23 +45,8 @@ public class Farm : OutputStructure {
 		this.canTakeDamage = true;
 	}
 	protected Farm(Farm f){
-		this.myBuildingTyp = f.myBuildingTyp;
-		this.ID = f.ID;
-		this.name = f.name;
-		this.tileWidth = f.tileWidth;
-		this.tileHeight = f.tileHeight;
-		this.buildcost = f.buildcost;
-		this.maintenancecost = f.maintenancecost;
-		this.output = f.output;
-		this.produceTime = f.produceTime;
-		this.produceCountdown = f.produceTime;
-		this.maxOutputStorage = f.maxOutputStorage;
-		this.buildingRange = f.buildingRange;
+		OutputCopyData (f);
 		this.growable = f.growable;
-		myBuildingTyp = f.myBuildingTyp;
-		BuildTyp = f.BuildTyp;
-		hasHitbox = f.hasHitbox;
-		this.canTakeDamage = f.canTakeDamage;
 	}
 	/// <summary>
 	/// DO NOT USE
@@ -70,6 +55,20 @@ public class Farm : OutputStructure {
 
 	public override Structure Clone ()	{
 		return new Farm (this);
+	}
+
+	public override void LoadPrototypData(Structure s){
+		Farm f = s as Farm;
+		if(f == null){
+			Debug.LogError ("ERROR - Prototyp was wrong");
+			return;
+		}
+		CopyData (f);
+	}
+	private void CopyData(Farm nb){
+		BaseCopyData (nb);
+		growable = nb.growable;
+
 	}
 
 	public override void OnBuild ()	{

@@ -12,7 +12,7 @@ public class BuildingBuildUI : MonoBehaviour {
 	// Use this for initialization
 	public void Show (Structure str,bool hoverOver=true) {
 		this.structure = str;
-		GetComponentInChildren<Text> ().text = str.name;
+		GetComponentInChildren<Text> ().text = str.spriteName;
 		EventTrigger trigger = GetComponent<EventTrigger> ();
 		if (hoverOver) {
 			EventTrigger.Entry enter = new EventTrigger.Entry ();
@@ -49,7 +49,7 @@ public class BuildingBuildUI : MonoBehaviour {
 	}
 	public void OnMouseEnter(){
 //		hoverover = true;
-		GameObject.FindObjectOfType<HoverOverScript> ().Show (structure.name);
+		GameObject.FindObjectOfType<HoverOverScript> ().Show (structure.spriteName);
 	}
 	public void OnMouseExit(){
 		//TODO: reset hovertime better

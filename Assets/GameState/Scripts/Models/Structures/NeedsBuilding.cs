@@ -8,44 +8,18 @@ public class NeedsBuilding : Structure {
 	#endregion
 	#region RuntimeOrOther
 	#endregion
-	public NeedsBuilding (int pid){
+	public NeedsBuilding (int pid, StructurePrototypeData spd){
 		this.ID = pid;
-		tileWidth = 2;
-		tileHeight = 2;
-		BuildTyp = BuildTypes.Single;
-		myBuildingTyp =	BuildingTyp.Blocking;
-		name = "NeedsBuilding";
-		this.maintenancecost = 100;
+		this._prototypData = spd;
 	}
 	public NeedsBuilding (NeedsBuilding b){
-		this.ID = b.ID;
-		this.tileWidth = b.tileWidth;
-		this.tileHeight = b.tileHeight;
-		this.rotated = b.rotated;
-		this.maintenancecost = b.maintenancecost;
-		this.hasHitbox = b.hasHitbox;
-		this.name = b.name;
-		this.BuildTyp = b.BuildTyp;
-		this.buildcost = b.buildcost;
-		this.maintenancecost = b.maintenancecost;
+		BaseCopyData (b);
 	}
 	/// <summary>
 	/// DO NOT USE
 	/// </summary>
 	public NeedsBuilding(){}
 
-	public override void LoadPrototypData(Structure s){
-		NeedsBuilding nb = s as NeedsBuilding;
-		if(nb == null){
-			Debug.LogError ("ERROR - Prototyp was wrong");
-			return;
-		}
-		CopyData (nb);
-	}
-	private void CopyData(NeedsBuilding nb){
-		BaseCopyData (nb);
-
-	}
 		
 	public override Structure Clone (){
 		return new NeedsBuilding (this);

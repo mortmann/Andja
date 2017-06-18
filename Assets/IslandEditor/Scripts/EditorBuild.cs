@@ -14,7 +14,7 @@ public class EditorBuild : MonoBehaviour {
 		foreach (int item in EditorStructureSpriteController.Instance.structurePrototypes.Keys) {
 			GameObject g = GameObject.Instantiate (prefabListItem);
 			g.transform.SetParent (content.transform);
-			g.GetComponentInChildren<Text >().text = EditorStructureSpriteController.Instance.structurePrototypes[item].name;
+			g.GetComponentInChildren<Text >().text = EditorStructureSpriteController.Instance.structurePrototypes[item].spriteName;
 			int temp = item;
 			EventTrigger eventTrigger = g.GetComponent<EventTrigger>();
 			EventTrigger.Entry entry = new EventTrigger.Entry();

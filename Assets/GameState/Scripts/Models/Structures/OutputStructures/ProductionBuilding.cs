@@ -4,31 +4,53 @@ using System;
 
 using Newtonsoft.Json;
 
+public class ProductionPrototypeData : OutputPrototypData {
+	public int[] needIntake;
+	public int[] maxIntake;
+	public Item[] intake;
+}
+
+
 [JsonObject(MemberSerialization.OptIn)]
 public class ProductionBuilding : OutputStructure {
 
 	#region Serialize
-
-	[JsonPropertyAttribute] public Item[] intake;
+	private Item[] _intake;
+	[JsonPropertyAttribute] public Item[] Intake {
+		get {
+			if(_intake == null){
+				_intake = ProductionData.intake;
+			}
+			return _intake;
+		}
+		set {
+			_intake = value;
+		}
+	}
 
 	#endregion
 	#region RuntimeOrOther
 
-	public int[] needIntake;
-	public int[] maxIntake;
-
 	public Dictionary<OutputStructure,Item[]> RegisteredStructures;
 	MarketBuilding nearestMarketBuilding;
-
+	public int[] needIntake { get  { return ProductionData.needIntake; }}
+	public int[] maxIntake { get  { return ProductionData.maxIntake; }}
 	#endregion
 
-
+	protected ProductionPrototypeData _productionData;
+	public ProductionPrototypeData  ProductionData {
+		get { if(_productionData==null){
+				_productionData = (ProductionPrototypeData)PrototypController.Instance.GetPrototypDataForID (ID);
+			}
+			return _productionData;
+		}
+	}
 
 	public override float Efficiency{
 		get {
 			float inputs=0;
-			for (int i = 0; i < intake.Length; i++) {
-				inputs += intake[0].count/needIntake[0];
+			for (int i = 0; i < Intake.Length; i++) {
+				inputs += Intake[0].count/needIntake[0];
 			}
 			if(inputs==0){
 				return 0;
@@ -37,32 +59,9 @@ public class ProductionBuilding : OutputStructure {
 		}
 	}
 
-	public ProductionBuilding(int id,string name,Item[] intake, int[] needIntake, float produceTime, Item[] output, int tileWidth, int tileHeight,int buildcost,Item[] buildItems,int maintenancecost,bool hasHitbox=true, bool mustBeBuildOnShore=false) {
+	public ProductionBuilding(int id,ProductionPrototypeData  ProductionData) {
 		this.ID = id;
-		this.name = name;
-		this.intake = intake;
-		this.needIntake = needIntake;
-		this.produceTime = produceTime;
-		this.output = output;
-		this.maxOutputStorage = 5; // hardcoded 5 ? need this to change?
-		this.tileWidth = tileWidth;
-		this.tileHeight = tileHeight;
-		maxIntake= new int[needIntake.Length];
-		if (intake != null && needIntake!=null) {
-			int i=0;
-			foreach(int needed in needIntake){
-				this.maxIntake[i] = 5*needed; // make it 5 times the needed
-				i++;
-			}
-		}
-		maxNumberOfWorker = 1;
-		this.mustBeBuildOnShore = mustBeBuildOnShore;
-		this.maintenancecost = maintenancecost;
-		this.hasHitbox = hasHitbox;
-		this.myBuildingTyp = BuildingTyp.Blocking;
-		BuildTyp = BuildTypes.Single;
-		this.canTakeDamage = true;
-
+		this._productionData = ProductionData;
 	}
 	/// <summary>
 	/// DO NOT USE
@@ -71,29 +70,14 @@ public class ProductionBuilding : OutputStructure {
 	}
 
 	protected ProductionBuilding(ProductionBuilding str){
-		LoadPrototypData (str);
-		intake = str.intake;
+		OutputCopyData (str);
 	}
 
 
 	public override Structure Clone (){
 		return new ProductionBuilding(this);
 	}
-
-	public override void LoadPrototypData(Structure s){
-		ProductionBuilding pb = s as ProductionBuilding;
-		if(pb == null){
-			Debug.LogError ("ERROR - Prototyp was wrong");
-			return;
-		}
-		CopyData (pb);
-	}
-	private void CopyData(ProductionBuilding pb){
-		OutputCopyData (pb);
-		needIntake = pb.needIntake;
-		maxIntake = pb.maxIntake;
-	}
-
+		
 	public override void update (float deltaTime){
 		if(needIntake == null && output == null){
 			return;
@@ -110,8 +94,8 @@ public class ProductionBuilding : OutputStructure {
 
 		base.update_Worker (deltaTime);
 
-		for (int i = 0; i < intake.Length; i++) {
-			if (needIntake [i] > intake [i].count) {
+		for (int i = 0; i < Intake.Length; i++) {
+			if (needIntake [i] > Intake [i].count) {
 				return;
 			}
 		}
@@ -120,8 +104,8 @@ public class ProductionBuilding : OutputStructure {
 		Debug.Log ("prod" + produceCountdown); 
 		if(produceCountdown <= 0) {
 			produceCountdown = produceTime;
-			for (int i = 0; i < intake.Length; i++) {
-				intake[i].count--;
+			for (int i = 0; i < Intake.Length; i++) {
+				Intake[i].count--;
 			}
 			for (int i = 0; i < output.Length; i++) {
 				output[i].count++;
@@ -138,9 +122,9 @@ public class ProductionBuilding : OutputStructure {
 			return;
 		}
 		Dictionary<Item,int> needItems = new Dictionary<Item, int> ();
-		for (int i = 0; i < intake.Length; i++) {
-			if (maxIntake[i] > intake[i].count) {
-				needItems.Add ( intake [i].Clone (),maxIntake[i]-intake[i].count );
+		for (int i = 0; i < Intake.Length; i++) {
+			if (maxIntake[i] > Intake[i].count) {
+				needItems.Add ( Intake [i].Clone (),maxIntake[i]-Intake[i].count );
 			}
 		}
 		if(needItems.Count == 0){
@@ -200,16 +184,16 @@ public class ProductionBuilding : OutputStructure {
 
 	}
 	public bool addToIntake (Inventory toAdd){
-		if(intake == null){
+		if(Intake == null){
 			return false;
 		}
-		for(int i = 0; i < intake.Length; i++) {
-			if((intake[i].count+ toAdd.GetAmountForItem(intake[i])) > maxIntake[i]) {
+		for(int i = 0; i < Intake.Length; i++) {
+			if((Intake[i].count+ toAdd.GetAmountForItem(Intake[i])) > maxIntake[i]) {
 				return false;
 			}
-			Debug.Log (toAdd.GetAmountForItem(intake[i]));
-			intake[i].count += toAdd.GetAmountForItem(intake[i]);
-			toAdd.setItemCountNull (intake[i]);
+			Debug.Log (toAdd.GetAmountForItem(Intake[i]));
+			Intake[i].count += toAdd.GetAmountForItem(Intake[i]);
+			toAdd.setItemCountNull (Intake[i]);
 			callbackIfnotNull ();
 		}
 
@@ -247,8 +231,8 @@ public class ProductionBuilding : OutputStructure {
 	public Item[] hasNeedItem(Item[] output){
 		List<Item> items = new List<Item> ();
 		for (int i = 0; i < output.Length; i++) {
-			for (int s = 0; s < intake.Length; s++) {
-				if (output [i].ID == intake [s].ID) {
+			for (int s = 0; s < Intake.Length; s++) {
+				if (output [i].ID == Intake [s].ID) {
 					items.Add (output [i]);
 				}
 			}

@@ -151,7 +151,10 @@ public class PlayerController : MonoBehaviour {
 	public void OnCityCreated(City city){
 		players [city.playerNumber].OnCityCreated (city);
 	}
-	public void OnStructureCreated(Structure structure){
+	public void OnStructureCreated(Structure structure,bool loading = false){
+		if(loading){
+			return; // getsloaded in so no need to subtract any money
+		}
 		reduceMoney (structure.buildcost,structure.playerNumber);
 	}
 	public bool ArePlayersAtWar(int pnum1,int pnum2){

@@ -2,6 +2,13 @@
 using System.Collections.Generic;
 using Newtonsoft.Json;
 
+public class HomePrototypeData : StructurePrototypeData {
+	public int maxLivingSpaces;
+	public float increaseSpeed;
+	public float decreaseSpeed;
+}
+
+
 [JsonObject(MemberSerialization.OptIn)]
 public class HomeBuilding : Structure {
 	#region Serialize
@@ -13,69 +20,34 @@ public class HomeBuilding : Structure {
 
 	#endregion
 	#region RuntimeOrOther
+	protected HomePrototypeData _homeData;
+	public HomePrototypeData HomeData {
+		get { if(_homeData==null){
+				_homeData = (HomePrototypeData)PrototypController.Instance.GetPrototypDataForID (ID);
+			}
+			return _homeData;
+		}
+	}
 
-	public int maxLivingSpaces;
-	public float increaseSpeed;
-	public float decreaseSpeed;
-	public bool canUpgrade=false;
-
+	public int maxLivingSpaces {get{ return HomeData.maxLivingSpaces;}}
+	public float increaseSpeed {get{ return HomeData.increaseSpeed;}}
+	public float decreaseSpeed {get{ return HomeData.decreaseSpeed;}}
+	public bool canUpgrade;
 	#endregion
 
 
-	public HomeBuilding(int pid){
+	public HomeBuilding(int pid, HomePrototypeData proto){
 		this.ID = pid;
-		canUpgrade = false;
-		tileWidth = 2;
-		tileHeight = 2;
-		BuildTyp = BuildTypes.Drag;
-		myBuildingTyp =	BuildingTyp.Blocking;
-		people = 1;
-		maxLivingSpaces = 8;
-		buildingLevel = 0;
-		name = "Home";
-		increaseSpeed = 3;
-		decreaseSpeed = 2;
-		this.buildingRange = 0;
-		hasHitbox = true;
-		this.canTakeDamage = true;
-		this.maintenancecost = 0;
-
+		this._homeData = proto;
 	}
 	protected HomeBuilding(HomeBuilding b){
-//		this.buildingRange = b.buildingRange;
-//		this.ID = b.ID;
-//		this.people = b.people;
-//		this.tileWidth = b.tileWidth;
-//		this.tileHeight = b.tileHeight;
-//		this.rotated = b.rotated;
-//		this.maintenancecost = b.maintenancecost;
-//		this.hasHitbox = b.hasHitbox;
-//		this.name = b.name;
-//		this.BuildTyp = b.BuildTyp;
-//		this.buildcost = b.buildcost;
 		BaseCopyData (b);
-		this.maxLivingSpaces = b.maxLivingSpaces;
-		this.increaseSpeed = b.increaseSpeed;
-		this.decreaseSpeed = b.decreaseSpeed;
-		this.canTakeDamage = b.canTakeDamage;
-		this.buildingLevel = b.buildingLevel;
 	}
 	/// <summary>
 	/// DO NOT USE
 	/// </summary>
 	public HomeBuilding(){}
 
-	public override void LoadPrototypData (Structure prototyp) {
-		HomeBuilding home = prototyp as HomeBuilding;
-		if(prototyp == null){
-			Debug.LogError ("ERROR - Prototyp was wrong");
-			return;
-		}
-		BaseCopyData (home);
-		maxLivingSpaces = home.maxLivingSpaces;
-		increaseSpeed = home.increaseSpeed;
-		decreaseSpeed = home.decreaseSpeed;
-	}
 
 	public override Structure Clone (){
 		return new HomeBuilding (this);
@@ -172,12 +144,12 @@ public class HomeBuilding : Structure {
 			return;
 		}
 		buildingLevel += 1;
-		maxLivingSpaces *= 2; // TODO load this in from somewhere
+//		Homedata.maxLivingSpaces *= 2; // TODO load this in from somewhere
 		canUpgrade = false;
 	}
 	public void DowngradeHouse(){
 		buildingLevel -= 1;
-		maxLivingSpaces /= 2; // TODO load this in from somewhere
+//		Homedata.maxLivingSpaces /= 2; // TODO load this in from somewhere
 
 	}
 }

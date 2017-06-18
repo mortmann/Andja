@@ -68,7 +68,7 @@ public class City : IGEventable {
 			citizienCount [i] = 0;
 		}
 		//temporary
-		Item temp = BuildController.Instance.allItems [49].Clone ();
+		Item temp = PrototypController.Instance.allItems [49].Clone ();
 		temp.count = 50;
 		myInv.addItem (temp);
 		_name = "<City>" + UnityEngine.Random.Range (0, 1000);

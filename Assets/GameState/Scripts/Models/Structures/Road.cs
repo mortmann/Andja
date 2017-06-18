@@ -21,32 +21,35 @@ public class Road : Structure {
 
 	Action<Road> cbRoadChanged;
 
-	public Road(int ID,string name, int buildcost = 50){
-		canBeUpgraded = true;
+	public Road(int ID, StructurePrototypeData spd){
 		this.ID = ID;
-		this.name = name;
-		this.tileWidth = 1;
-		this.tileHeight = 1;
-		maintenancecost = 0;
-		buildcost = 25;
-		BuildTyp = BuildTypes.Path;
-		myBuildingTyp = BuildingTyp.Pathfinding;
-		buildingRange = 0;
+		this._prototypData = spd;
+//		this.name = name;
+//		this.tileWidth = 1;
+//		this.tileHeight = 1;
+//		maintenancecost = 0;
+//		buildcost = 25;
+//		BuildTyp = BuildTypes.Path;
+//		myBuildingTyp = BuildingTyp.Pathfinding;
+//		buildingRange = 0;
+//		canBeUpgraded = true;
+
 	}
 	protected Road(Road str){
-		this.canBeUpgraded = str.canBeUpgraded;
-		this.ID = str.ID;
-		this.name = str.name;
-		this.tileWidth = str.tileWidth;
-		this.tileHeight = str.tileHeight;
-		this.mustBeBuildOnShore = str.mustBeBuildOnShore;
-		this.maintenancecost = str.maintenancecost;
-		this.buildcost = str.buildcost;
-		this.BuildTyp = str.BuildTyp;
-		this.rotated = str.rotated;
-		this.hasHitbox = str.hasHitbox;
-		this.buildingRange = str.buildingRange;
-		this.myBuildingTyp = str.myBuildingTyp;
+		BaseCopyData (str);
+//		this.canBeUpgraded = str.canBeUpgraded;
+//		this.ID = str.ID;
+//		this.name = str.name;
+//		this.tileWidth = str.tileWidth;
+//		this.tileHeight = str.tileHeight;
+//		this.mustBeBuildOnShore = str.mustBeBuildOnShore;
+//		this.maintenancecost = str.maintenancecost;
+//		this.buildcost = str.buildcost;
+//		this.BuildTyp = str.BuildTyp;
+//		this.rotated = str.rotated;
+//		this.hasHitbox = str.hasHitbox;
+//		this.buildingRange = str.buildingRange;
+//		this.myBuildingTyp = str.myBuildingTyp;
 	}
 	/// <summary>
 	/// DO NOT USE
@@ -54,17 +57,6 @@ public class Road : Structure {
 	public Road(){}
 	public override Structure Clone(){
 		return new Road (this);
-	}
-	public override void LoadPrototypData(Structure s){
-		Road r = s as Road;
-		if(r == null){
-			Debug.LogError ("ERROR - Prototyp was wrong");
-			return;
-		}
-		CopyData (r);
-	}
-	private void CopyData(Road r){
-		BaseCopyData (r);
 	}
 
 	public override void OnBuild (){

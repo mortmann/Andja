@@ -9,6 +9,45 @@ public enum BuildTypes {Drag, Path, Single};
 public enum BuildingTyp {Pathfinding, Blocking,Free};
 public enum Direction {None, N, E, S, W};
 
+public class StructurePrototypeData : LanguageVariables {
+	public bool isWalkable;
+	public bool hasHitbox;// { get; protected set; }
+	public bool isActive;// {  get; protected set; }
+	public float MaxHealth;
+
+	public int buildingRange = 0;
+	public int PopulationLevel = 0;
+	public int PopulationCount = 0;
+
+	public int StructureLevel = 0;
+
+	public int tileWidth;
+	public int tileHeight;
+
+	public bool canRotate = true;
+	public bool canBeBuildOver = false;
+	public bool canBeUpgraded = false;
+	public bool canTakeDamage = false;
+	public bool showExtraUI = false;
+
+	public Direction mustFrontBuildDir= Direction.None; 
+
+	public List<Tile> myPrototypeTiles;
+
+	public bool canStartBurning;
+	public bool mustBeBuildOnShore = false;
+	public bool mustBeBuildOnMountain = false;
+
+	public int maintenancecost;
+	public int buildcost;
+
+	public BuildTypes BuildTyp;
+	public BuildingTyp myBuildingTyp = BuildingTyp.Blocking;
+	public Item[] buildingItems;
+
+	public string spriteBaseName;
+}
+
 [JsonObject(MemberSerialization.OptIn)]
 public abstract class Structure : IGEventable {
 	#region variables
@@ -21,7 +60,6 @@ public abstract class Structure : IGEventable {
 	//build id -- when it was build
 	[JsonPropertyAttribute] public uint buildID;
 
-	[JsonPropertyAttribute] public string name;
 	[JsonPropertyAttribute] private City _city;
 
 	[JsonPropertyAttribute] protected float _health;
@@ -42,7 +80,72 @@ public abstract class Structure : IGEventable {
 
 	#endregion
 	#region RuntimeOrOther
-	public string SmallName { get { return name.ToLower ();} }
+	public List<Tile> myBuildingTiles;
+	public HashSet<Tile> neighbourTiles;
+	public HashSet<Tile> myRangeTiles;
+	public string connectOrientation;
+
+	protected StructurePrototypeData _prototypData;
+	public StructurePrototypeData data {
+		get { if(_prototypData==null){
+				_prototypData = PrototypController.Instance.GetPrototypDataForID (ID);
+			}
+			return _prototypData;
+		}
+	}
+
+	public bool isWalkable { get {return data.isWalkable;} }
+	public bool hasHitbox { get {return data.hasHitbox;} }
+	public bool isActive { get {return data.isActive;} }
+	public float MaxHealth { get {return data.MaxHealth;} }
+
+	public int buildingRange { get {return data.buildingRange;} }// = 0;
+	public int PopulationLevel { get {return data.PopulationLevel;} }// = 0;
+	public int PopulationCount { get {return data.PopulationCount;} }// = 0;
+
+	private int _tileWidth { get {return data.tileWidth;} }
+	private int _tileHeight { get {return data.tileHeight;} }
+
+	public bool canRotate { get {return data.canRotate;} }// = true;
+	public bool canBeBuildOver { get {return data.canBeBuildOver;} }// = false;
+	public bool canBeUpgraded { get {return data.canBeUpgraded;} }// = false;
+	public bool showExtraUI { get {return data.showExtraUI;} }
+	public bool canTakeDamage { get {return data.canTakeDamage;} }// = false;
+
+
+	public Direction mustFrontBuildDir { get {return data.mustFrontBuildDir;} }// = Direction.None; 
+
+	public List<Tile> myPrototypeTiles { get {return data.myPrototypeTiles;} }
+
+	public bool canStartBurning { get {return data.canStartBurning;} }
+	public bool mustBeBuildOnShore { get {return data.mustBeBuildOnShore;} }//= false;
+	public bool mustBeBuildOnMountain { get {return data.mustBeBuildOnMountain;} }//= false;
+
+	public int maintenancecost{ get {return data.maintenancecost;} }
+	public int buildcost{ get {return data.buildcost;} }
+
+	public BuildTypes BuildTyp{ get {return data.BuildTyp;} }
+	public BuildingTyp myBuildingTyp{ get {return data.myBuildingTyp;} }// = BuildingTyp.Blocking;
+	public Item[] buildingItems{ get {return data.buildingItems;} }
+
+	public string spriteName{ get { return data.spriteBaseName/*TODO: make multiple saved sprites possible*/; } }
+
+	Action<Structure> cbStructureChanged;
+	Action<Structure> cbStructureDestroy;
+	Action<Structure,string> cbStructureSound;
+	public bool extraUIOn = false;
+
+
+	protected void BaseCopyData(Structure str){
+		ID = str.ID;
+		_prototypData = str.data;
+	}
+
+	#endregion
+	#endregion
+	#region Properties 
+	public Vector2 middleVector {get {return new Vector2 (BuildTile.X + (float)tileWidth/2f,BuildTile.Y + (float)tileHeight/2f);}}
+	public string SmallName { get { return spriteName.ToLower ();} }
 	public City City {
 		get { return _city;}
 		set {
@@ -66,30 +169,6 @@ public abstract class Structure : IGEventable {
 			_health = value;
 		}
 	}
-
-	public bool isWalkable { get; protected set; }
-	public bool hasHitbox { get; protected set; }
-	public bool isActive {  get; protected set; }
-	public float MaxHealth;
-
-	public int buildingRange = 0;
-	public int PopulationLevel = 0;
-	public int PopulationCount = 0;
-
-	private int _tileWidth;
-	private int _tileHeight;
-
-	public bool canRotate = true;
-	public bool canBeBuildOver = false;
-	public bool canBeUpgraded = false;
-	public bool showExtraUI = false;
-	public bool canTakeDamage = false;
-
-	public bool extraUIOn = false;
-	public Vector2 middleVector {get {return new Vector2 (BuildTile.X + (float)tileWidth/2f,BuildTile.Y + (float)tileHeight/2f);}}
-
-	public Direction mustFrontBuildDir = Direction.None; 
-
 	public int tileWidth {
 		get { 
 			if (rotated == 0 || rotated == 180) {
@@ -102,7 +181,6 @@ public abstract class Structure : IGEventable {
 			Debug.LogError ("Structure was rotated out of angle bounds: " + rotated);
 			return 0;
 		}
-		protected set { _tileWidth = value;}
 	}
 	public int tileHeight {
 		get { 
@@ -116,62 +194,9 @@ public abstract class Structure : IGEventable {
 			Debug.LogError ("Structure was rotated out of angle bounds: " + rotated);
 			return 0;
 		}
-		protected set { _tileHeight = value;}
-	}
-
-	public List<Tile> myBuildingTiles;
-	public HashSet<Tile> neighbourTiles;
-	public HashSet<Tile> myRangeTiles;
-	public List<Tile> myPrototypeTiles;
-
-	Action<Structure> cbStructureChanged;
-	Action<Structure> cbStructureDestroy;
-	Action<Structure,string> cbStructureSound;
-
-	public bool canStartBurning;
-	public bool mustBeBuildOnShore= false;
-	public bool mustBeBuildOnMountain= false;
-
-	public int maintenancecost;
-	public int buildcost;
-
-	public BuildTypes BuildTyp;
-	public BuildingTyp myBuildingTyp = BuildingTyp.Blocking;
-	public string connectOrientation;
-	public Item[] buildingItems;
-
-	protected void BaseCopyData(Structure str){
-		ID = str.ID;
-		isWalkable = str.isWalkable;
-		hasHitbox = str.hasHitbox;
-		isActive = str.isActive;
-		MaxHealth = str.MaxHealth;
-
-		buildingRange = str.buildingRange;
-		PopulationLevel = str.PopulationLevel;
-		PopulationCount = str.PopulationCount;
-		_tileWidth = str.tileWidth;
-		_tileHeight = str.tileHeight;
-
-		canTakeDamage = str.canTakeDamage;
-		canRotate = str.canRotate;
-		canBeBuildOver = str.canBeBuildOver;
-		canBeUpgraded = str.canBeUpgraded;
-		showExtraUI = str.showExtraUI;
-		mustFrontBuildDir = str.mustFrontBuildDir;
-		canStartBurning = str.canStartBurning;
-		mustBeBuildOnShore = str.mustBeBuildOnShore;
-		mustBeBuildOnMountain = str.mustBeBuildOnMountain;
-		maintenancecost = str.maintenancecost;
-		BuildTyp = str.BuildTyp;
-		myBuildingTyp = str.myBuildingTyp;
-		buildingItems = str.buildingItems;
 	}
 	#endregion
-	#endregion
-
 	#region Virtual/Abstract
-	public abstract void LoadPrototypData (Structure prototyp);
 	public abstract Structure Clone ();
 	public virtual void update (float deltaTime){
 	}
@@ -322,7 +347,6 @@ public abstract class Structure : IGEventable {
 
 		//it searches all the tiles it has in its reach!
 		GetInRangeTiles (myBuildingTiles[0]);
-		myPrototypeTiles = null;
 
 		// do on place structure stuff here!
 		OnBuild ();
@@ -379,7 +403,7 @@ public abstract class Structure : IGEventable {
 		}
 		if (tileWidth == 1 && tileHeight == 1) {
 			if(tiles[0].Structure != null && tiles [0].Structure.canBeBuildOver){
-				if(tiles [0].Structure.name == this.name){
+				if(tiles [0].Structure.spriteName == this.spriteName){
 					return false;
 				}
 			}
@@ -533,7 +557,6 @@ public abstract class Structure : IGEventable {
 				}
 			}
 		}
-		myPrototypeTiles = new List<Tile> ();
 		//like flood fill the inner circle
 		Queue<Tile> tilesToCheck = new Queue<Tile> ();
 		tilesToCheck.Enqueue (firstTile.South ());
@@ -578,7 +601,7 @@ public abstract class Structure : IGEventable {
 	protected bool PlaceOnMountain(List<Tile> tiles){
 		if (tileWidth == 1 && tileHeight == 1) {
 			if (tiles [0].Structure != null && tiles [0].Structure.canBeBuildOver) {
-				if (tiles [0].Structure.name == this.name) {
+				if (tiles [0].Structure.spriteName == this.spriteName) {
 					return false;
 				}
 			}
@@ -598,7 +621,7 @@ public abstract class Structure : IGEventable {
 	protected bool PlaceOnShore(List<Tile> tiles){
 		if (tileWidth == 1 && tileHeight == 1) {
 			if(tiles [0].Structure.canBeBuildOver){
-				if(tiles [0].Structure.name == this.name){
+				if(tiles [0].Structure.spriteName == this.spriteName){
 					return false;
 				}
 			}
@@ -857,9 +880,9 @@ public abstract class Structure : IGEventable {
 	#region override
 	public override string ToString (){
 		if(BuildTile==null){
-			return name +"@error";
+			return spriteName +"@error";
 		}
-		return name + "@" + BuildTile.toString ();
+		return spriteName + "@" + BuildTile.toString ();
 	}
 	#endregion
 

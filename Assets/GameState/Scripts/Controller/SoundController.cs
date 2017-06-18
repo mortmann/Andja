@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine.Audio;
 using System.IO;
+using System;
 
 enum AmbientSound { Water, North, Middle, South }
 // TODO: 
@@ -29,6 +30,7 @@ public class SoundController : MonoBehaviour {
 	public static string MusicLocation = "Audio/Music/";
 	public static string SoundEffectLocation = "Audio/Game/SoundEffects/";
 	public static string AmbientLocation = "Audio/Game/Ambient/";
+	public AudioMixer mixer;
 
 	AmbientSound currentAmbient;
 
@@ -50,6 +52,15 @@ public class SoundController : MonoBehaviour {
 		ssc = FindObjectOfType<StructureSpriteController> ();
 		wsc = FindObjectOfType<WorkerSpriteController> ();
 		usc = FindObjectOfType<UnitSpriteController> ();
+
+		Dictionary<string,int> volumes = MenuAudioManager.StaticReadSoundVolumes ();
+		if(volumes != null){
+			foreach(VolumeType v in Enum.GetValues(typeof(VolumeType))){
+				if(volumes.ContainsKey(v.ToString())){
+					mixer.SetFloat (v.ToString(),MenuAudioManager.ConvertToDecibel(volumes[v.ToString()]));
+				}
+			}
+		}
 	}
 	
 	// Update is called once per frame
@@ -174,7 +185,10 @@ public class SoundController : MonoBehaviour {
 		return ac;
 	}
 
-	public void OnBuild(Structure str){
+	public void OnBuild(Structure str,bool loading){
+		if(loading){
+			return;
+		}
 		if(str.playerNumber!=PlayerController.Instance.currentPlayerNumber){
 			return;
 		}

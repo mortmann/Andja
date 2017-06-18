@@ -15,22 +15,11 @@ public class Warehouse : MarketBuilding {
 	public List<Unit> inRangeUnits;
 
 	#endregion
-	public Warehouse(int id){
-		inRangeUnits = new List<Unit> ();
-		contactRange = 6.3f;
-		buildingRange = 18;
+	public Warehouse(int id,MarketPrototypData mpd){
 		this.ID = id;
-		tileWidth = 3;
-		tileHeight = 3;
-		name = "warehouse";
-		buildcost = 500;
-		maintenancecost = 10;
-		mustBeBuildOnShore = true;
-		BuildTyp = BuildTypes.Single;
-		showExtraUI = true;
-		hasHitbox = true;
-		mustFrontBuildDir = Direction.W;
-		this.canTakeDamage = true;
+		inRangeUnits = new List<Unit> ();
+		this._marketData = mpd;
+
 
 	}
 	/// <summary>
@@ -40,24 +29,24 @@ public class Warehouse : MarketBuilding {
 	}
 	protected Warehouse(Warehouse str){
 		this.ID = str.ID;
-		this.name = str.name;
-		this.tileWidth = str.tileWidth;
-		this.tileHeight = str.tileHeight;
-		this.mustBeBuildOnShore = str.mustBeBuildOnShore;
-		this.maintenancecost = str.maintenancecost;
-		this.buildcost = str.buildcost;
-		this.BuildTyp = str.BuildTyp;
-		this.rotated = str.rotated;
-		this.hasHitbox = str.hasHitbox;
-		this.buildingRange = str.buildingRange;
-		this.showExtraUI = str.showExtraUI;
-		this.hasHitbox = str.hasHitbox;
-		this.mustFrontBuildDir = str.mustFrontBuildDir;
-		this.contactRange = str.contactRange;
-		this.inRangeUnits = new List<Unit> ();
-		this.canTakeDamage = str.canTakeDamage;
-		this.myWorker = new List<Worker> ();
-		this.jobsToDo = new Dictionary<OutputStructure, Item[]> ();
+//		this.name = str.name;
+//		this.tileWidth = str.tileWidth;
+//		this.tileHeight = str.tileHeight;
+//		this.mustBeBuildOnShore = str.mustBeBuildOnShore;
+//		this.maintenancecost = str.maintenancecost;
+//		this.buildcost = str.buildcost;
+//		this.BuildTyp = str.BuildTyp;
+//		this.rotated = str.rotated;
+//		this.hasHitbox = str.hasHitbox;
+//		this.buildingRange = str.buildingRange;
+//		this.showExtraUI = str.showExtraUI;
+//		this.hasHitbox = str.hasHitbox;
+//		this.mustFrontBuildDir = str.mustFrontBuildDir;
+//		this.contactRange = str.contactRange;
+//		this.inRangeUnits = new List<Unit> ();
+//		this.canTakeDamage = str.canTakeDamage;
+//		this.myWorker = new List<Worker> ();
+//		this.jobsToDo = new Dictionary<OutputStructure, Item[]> ();
 	}
 	
 	public override bool SpecialCheckForBuild (List<Tile> tiles){

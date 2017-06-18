@@ -13233,7 +13233,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   displayLabels: []
-  myType: 0
+  myType: 2
 --- !u!114 &726423407
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -14438,7 +14438,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   displayLabels: []
-  myType: 0
+  myType: 4
 --- !u!114 &754553665
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -24784,6 +24784,47 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
+--- !u!1 &1263909159
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 1263909160}
+  - component: {fileID: 1263909161}
+  m_Layer: 0
+  m_Name: PrototypeController
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1263909160
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1263909159}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1380915039}
+  m_RootOrder: 10
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1263909161
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1263909159}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 64c03656d17d6d2439e28d989d7ddd26, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  selectedLanguage: EN
 --- !u!224 &1264246791 stripped
 RectTransform:
   m_PrefabParentObject: {fileID: 22447972, guid: 454ea8bfc9cd0f84698610e721a842b2,
@@ -26240,7 +26281,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   displayLabels: []
-  myType: 0
+  myType: 3
 --- !u!114 &1343832532
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -26820,6 +26861,7 @@ Transform:
   - {fileID: 1828248826}
   - {fileID: 320371953}
   - {fileID: 161333032}
+  - {fileID: 1263909160}
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -31273,7 +31315,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   displayLabels: []
-  myType: 0
+  myType: 1
 --- !u!114 &1560734960
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -37229,6 +37271,7 @@ MonoBehaviour:
   soundEffect2DGO: {fileID: 1111706883}
   placeBuildingSound: {fileID: 8300000, guid: 4f01852c9cbd1f34c8eed733df589855, type: 3}
   cityCreateSound: {fileID: 8300000, guid: 16868382a415abf46a11f6727fe5a5db, type: 3}
+  mixer: {fileID: 24100000, guid: 67c981402fe73a84f807ad231f412b64, type: 2}
 --- !u!1001 &1830978820
 Prefab:
   m_ObjectHideFlags: 0

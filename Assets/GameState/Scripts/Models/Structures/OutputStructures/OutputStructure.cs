@@ -3,38 +3,62 @@ using System.Collections.Generic;
 using System;
 using Newtonsoft.Json;
 
+public class OutputPrototypData : StructurePrototypeData {
+	public float contactRange=0;
+	public bool forMarketplace=true;
+	public int maxNumberOfWorker = 1;
+	public float produceTime;
+	public int maxOutputStorage;
+	public Item[] output;
+}
+
+
 [JsonObject(MemberSerialization.OptIn)]
 public abstract class OutputStructure : Structure {
 	#region Serialize
 
 	[JsonPropertyAttribute] public List<Worker> myWorker;
 	[JsonPropertyAttribute] public float produceCountdown;
-	[JsonPropertyAttribute] public Item[] output;
+	private Item[] _output;
+	[JsonPropertyAttribute] public Item[] output {
+		get {
+			if(_output == null){
+				_output = OutputData.output;
+			}
+			return _output;
+		}
+		set {
+			_output = value;
+		}
+	}
 
 	#endregion
 	#region RuntimeOrOther
 
-	public float contactRange=0;
-	public bool forMarketplace=true;
-	protected int maxNumberOfWorker = 1;
-	public float produceTime;
-	public int maxOutputStorage;
-
 	public Dictionary<OutputStructure,Item[]> jobsToDo;
 	public bool outputClaimed;
 	protected Action<Structure> cbOutputChange;
-	bool canWork { get { return Efficiency == 0; }}
+	bool canWork { get { return Efficiency > 0; }}
 	public float efficiencyModifier;
 
+	public float contactRange {get{ return OutputData.contactRange;}}
+	public bool forMarketplace {get{ return OutputData.forMarketplace;}}
+	protected int maxNumberOfWorker {get{ return OutputData.maxOutputStorage;}}
+	public float produceTime {get{ return OutputData.produceTime;}}
+	public int maxOutputStorage {get{ return OutputData.maxOutputStorage;}}
+
+	protected OutputPrototypData _outputData;
+	public OutputPrototypData OutputData {
+		get { if(_outputData==null){
+				_outputData = (OutputPrototypData)PrototypController.Instance.GetPrototypDataForID (ID);
+			}
+			return _outputData;
+		}
+	}
 	#endregion
 
 	protected void OutputCopyData(OutputStructure o){
 		BaseCopyData (o);
-		contactRange = o.contactRange;
-		forMarketplace = o.forMarketplace;
-		maxNumberOfWorker = o.maxNumberOfWorker;
-		produceTime = o.produceTime;
-		maxOutputStorage = o.maxOutputStorage;
 	}
 
 	public virtual float Efficiency{

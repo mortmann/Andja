@@ -2,6 +2,13 @@
 using System.Collections;
 using Newtonsoft.Json;
 
+public class GrowablePrototypData : OutputPrototypData {
+	public float growTime = 5f;
+	public Fertility fer;
+	public int ageStages = 2;
+
+}
+
 [JsonObject(MemberSerialization.OptIn)]
 public class Growable : OutputStructure {
 	
@@ -15,35 +22,26 @@ public class Growable : OutputStructure {
 	#endregion
 	#region RuntimeOrOther
 
-	float growTime = 5f;
-	public Fertility fer;
-	public int ageStages = 2;
+	float growTime {get{ return GrowableData.growTime; }}
+	public Fertility fer {get{ return GrowableData.fer; }}
+	public int ageStages {get{ return GrowableData.ageStages; }}
 
+	protected GrowablePrototypData _growableData;
+	public GrowablePrototypData GrowableData {
+		get { if(_growableData==null){
+				_growableData = (GrowablePrototypData)PrototypController.Instance.GetPrototypDataForID (ID);
+			}
+			return _growableData;
+		}
+	}
 	#endregion
 
-	public Growable(int id,string name,Item produceItem,Fertility fer = null){
-		forMarketplace = false;
-		maxNumberOfWorker = 0;
-		output = new Item[]{produceItem};
-		maxOutputStorage = 1;
+	public Growable(int id, GrowablePrototypData _growableData){
 		this.ID = id;
-		this.fer = fer;
-		this.myBuildingTyp = BuildingTyp.Free;
-		this.BuildTyp = BuildTypes.Drag;
-		buildcost = 50;
-		tileWidth = 1;
-		tileHeight = 1;
-		growTime = 100f;
-		hasHitbox = false;
-		canBeBuildOver = true;
-		this.name = name;
-		canBeBuildOver = true;
+		this._growableData = _growableData;
 	}
 	protected Growable(Growable g){
-		CopyData (g);
-		age = g.age;
-		currentStage = g.currentStage;
-		hasProduced = g.hasProduced;
+		BaseCopyData (g);
 	}
 	/// <summary>
 	/// DO NOT USE
@@ -52,36 +50,6 @@ public class Growable : OutputStructure {
 
 	public override Structure Clone (){
 		return new Growable(this);
-	}
-
-	public override void LoadPrototypData(Structure s){
-		Growable g = s as Growable;
-		if(g == null){
-			Debug.LogError ("ERROR - Prototyp was wrong");
-			return;
-		}
-		CopyData (g);
-	}
-	private void CopyData(Growable g){
-		OutputCopyData (g);
-		this.fer = g.fer;
-		this.growTime = g.growTime;
-		this.ageStages = g.ageStages;
-
-
-//		this.canBeBuildOver = g.canBeBuildOver;
-//		this.ID = g.ID;
-//		this.name = g.name;
-//		this.output = g.output;
-//		this.tileWidth = g.tileWidth;
-//		this.tileHeight = g.tileHeight;
-//		this.buildcost = g.buildcost;
-//		this.BuildTyp = g.BuildTyp;
-//		this.rotated = g.rotated;
-//		this.hasHitbox = g.hasHitbox;
-//		this.canBeBuildOver = g.canBeBuildOver;
-//		this.canTakeDamage = g.canTakeDamage;
-//		this.forMarketplace = g.forMarketplace;
 	}
 
 	public override void OnBuild(){

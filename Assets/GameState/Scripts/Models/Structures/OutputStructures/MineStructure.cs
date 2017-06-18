@@ -3,13 +3,19 @@ using System.Collections;
 using System.Collections.Generic;
 using Newtonsoft.Json;
 
+public class MinePrototypData : OutputPrototypData {
+	
+	public string myRessource;
+
+}
+
 [JsonObject(MemberSerialization.OptIn)]
 public class MineStructure : OutputStructure {
 	#region Serialize
 	#endregion
 	#region RuntimeOrOther
 
-	public string myRessource;
+	public string myRessource {get{ return MineData.myRessource;}}
 
 	public override float Efficiency { get { 
 			if(BuildTile.myIsland.myRessources [myRessource] ==0){
@@ -17,25 +23,20 @@ public class MineStructure : OutputStructure {
 			}
 			return 100; 
 	} }
-
+	
+	protected MinePrototypData _mineData;
+	public MinePrototypData MineData {
+		get { if(_mineData==null){
+				_mineData = (MinePrototypData)PrototypController.Instance.GetPrototypDataForID (ID);
+			}
+			return _mineData;
+		}
+	}
 	#endregion
 
-	public MineStructure(int pid){
-		myRessource = "stone";
+	public MineStructure(int pid,MinePrototypData MineData){
 		this.ID = pid;
-		mustBeBuildOnMountain = true;
-		tileWidth = 2;
-		tileHeight = 3;
-		name = "Mine";
-		myBuildingTyp = BuildingTyp.Blocking;
-		BuildTyp = BuildTypes.Single;
-		output = new Item[1];
-		output[0] = BuildController.Instance.allItems [3];
-
-		hasHitbox = true;
-		maxOutputStorage = 5;
-		produceTime = 15f;
-		buildingRange = 0;
+		_mineData = MineData;
 	}
 	/// <summary>
 	/// DO NOT USE
@@ -43,20 +44,7 @@ public class MineStructure : OutputStructure {
 	public MineStructure(){
 	}
 	protected MineStructure(MineStructure ms){
-		LoadPrototypData (ms);
-	}
-	public override void LoadPrototypData(Structure s){
-		MineStructure ms = s as MineStructure;
-		if(ms == null){
-			Debug.LogError ("ERROR - Prototyp was wrong");
-			return;
-		}
-		CopyData (ms);
-	}
-	private void CopyData(MineStructure ms){
 		OutputCopyData (ms);
-		myRessource = ms.myRessource;
-
 	}
 
 	public override bool SpecialCheckForBuild (List<Tile> tiles) {

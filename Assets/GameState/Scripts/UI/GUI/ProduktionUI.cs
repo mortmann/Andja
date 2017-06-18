@@ -22,16 +22,16 @@ public class ProduktionUI : MonoBehaviour {
 		progress.maxValue = pbstr.produceTime;
 		progress.value = 0;
 		itemToGO = new Dictionary<Item, GameObject> ();
-		if (pbstr.intake != null) {
-			for (int i = 0; i < pbstr.intake.Length; i++) {
+		if (pbstr.Intake != null) {
+			for (int i = 0; i < pbstr.Intake.Length; i++) {
 				GameObject go = GameObject.Instantiate (itemPrefab);
 				Slider s = go.GetComponentInChildren<Slider> ();
 				s.maxValue = pbstr.maxIntake [i];
-				s.value = pbstr.intake [i].count;
+				s.value = pbstr.Intake [i].count;
 				Text t = go.GetComponentInChildren<Text> ();
-				t.text = pbstr.intake [i].count + "t";
+				t.text = pbstr.Intake [i].count + "t";
 				go.transform.SetParent (inputContent.transform);
-				itemToGO.Add (pbstr.intake [i], go);
+				itemToGO.Add (pbstr.Intake [i], go);
 			}
 		}
 		if (pbstr.output != null) {

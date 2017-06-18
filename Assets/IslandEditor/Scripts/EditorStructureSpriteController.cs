@@ -23,7 +23,7 @@ public class EditorStructureSpriteController : MonoBehaviour {
 //		ReadGrowables (xmlDoc);
 		structureGameObjectMap = new Dictionary<EditorTile, GameObject> ();
 		structurePrototypes = new Dictionary<int, Structure> ();
-		structurePrototypes.Add (3, new Growable (3,"tree",null));
+//		structurePrototypes.Add (3, new Growable (3,"tree",null));
 		foreach (EditorTile item in EditorController.Instance.editorIsland.structures.Keys) {
 			growableLevel = EditorController.Instance.editorIsland.structures [item] [1];
 			OnStructureCreated (EditorController.Instance.editorIsland.structures [item] [0],item);
@@ -40,7 +40,7 @@ public class EditorStructureSpriteController : MonoBehaviour {
 		go.name = "Structure_" + t.X + "_" + t.Y;
 		SpriteRenderer sr = go.AddComponent<SpriteRenderer>();
 		sr.sortingLayerName = "Structures";
-		sr.sprite = structureSprites[structurePrototypes[structure].name+"_"+growableLevel];
+		sr.sprite = structureSprites[structurePrototypes[structure].spriteName+"_"+growableLevel];
 		structureGameObjectMap.Add (t,go); 
 	}
 	void OnStructureDestroy(EditorTile t){
@@ -58,8 +58,8 @@ public class EditorStructureSpriteController : MonoBehaviour {
 		foreach(XmlElement node in xmlDoc.SelectNodes("Buildings/Growable")){
 			int ID = int.Parse(node.GetAttribute("ID"));
 			string name = node.SelectSingleNode("EN"+ "_Name").InnerText;
-			Growable growable = new Growable (ID,name,null,null);
-			structurePrototypes [ID] = growable;
+//			Growable growable = new Growable (ID,name,null,null);
+//			structurePrototypes [ID] = growable;
 		}
 	}
 	void LoadSprites() {

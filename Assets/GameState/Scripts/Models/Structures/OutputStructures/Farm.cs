@@ -2,6 +2,11 @@
 using System.Collections.Generic;
 using Newtonsoft.Json;
 
+public class FarmPrototypData : OutputPrototypData {
+	public Growable growable;
+}
+
+
 [JsonObject(MemberSerialization.OptIn)]
 public class Farm : OutputStructure {
 	
@@ -10,11 +15,20 @@ public class Farm : OutputStructure {
 	#endregion
 	#region RuntimeOrOther
 
-	public Growable growable;
+	public Growable growable { get { return FarmData.growable; }}
+
 	public int growableReadyCount;
 	public int OnRegisterCallbacks;
 	Queue<Structure> workingGrowables;
 
+	protected FarmPrototypData _farmData;
+	public FarmPrototypData  FarmData {
+		get { if(_farmData==null){
+				_farmData = (FarmPrototypData)PrototypController.Instance.GetPrototypDataForID (ID);
+			}
+			return _farmData;
+		}
+	}
 	#endregion
 
     public override float Efficiency{
@@ -22,31 +36,30 @@ public class Farm : OutputStructure {
 			return Mathf.Round(((float)OnRegisterCallbacks / (float)myRangeTiles.Count)*1000)/10f;
 		}
 	}
-	public Farm(int id, string name,float produceTime, Item produce, Structure growable,int tileWidth, int tileHeight, int buildcost, int maintance ){
-		this.ID = id;
-		this.name = name;
-		if(growable is Growable ==false){
-			Debug.LogError ("this farm didnt receive a Growable Structure");			
-		} else {
-			this.growable = (Growable)growable;
-		}
-		this.tileWidth = tileWidth;
-		this.tileHeight = tileHeight;
-		this.buildcost = buildcost;
-		this.maintenancecost = maintance;
-		this.output = new Item[1];
-		this.output [0] = produce;
-		this.produceTime = produceTime;
-		this.buildingRange = 3;
-		maxOutputStorage = 5;
-		myBuildingTyp = BuildingTyp.Blocking;
-		BuildTyp = BuildTypes.Single;
-		hasHitbox = true;
-		this.canTakeDamage = true;
+	public Farm(int id){
+//		this.ID = id;
+//		this.name = name;
+//		if(growable is Growable ==false){
+//			Debug.LogError ("this farm didnt receive a Growable Structure");			
+//		} else {
+//			this.growable = (Growable)growable;
+//		}
+//		this.tileWidth = tileWidth;
+//		this.tileHeight = tileHeight;
+//		this.buildcost = buildcost;
+//		this.maintenancecost = maintance;
+//		this.output = new Item[1];
+//		this.output [0] = produce;
+//		this.produceTime = produceTime;
+//		this.buildingRange = 3;
+//		maxOutputStorage = 5;
+//		myBuildingTyp = BuildingTyp.Blocking;
+//		BuildTyp = BuildTypes.Single;
+//		hasHitbox = true;
+//		this.canTakeDamage = true;
 	}
 	protected Farm(Farm f){
 		OutputCopyData (f);
-		this.growable = f.growable;
 	}
 	/// <summary>
 	/// DO NOT USE
@@ -56,20 +69,7 @@ public class Farm : OutputStructure {
 	public override Structure Clone ()	{
 		return new Farm (this);
 	}
-
-	public override void LoadPrototypData(Structure s){
-		Farm f = s as Farm;
-		if(f == null){
-			Debug.LogError ("ERROR - Prototyp was wrong");
-			return;
-		}
-		CopyData (f);
-	}
-	private void CopyData(Farm nb){
-		BaseCopyData (nb);
-		growable = nb.growable;
-
-	}
+		
 
 	public override void OnBuild ()	{
 		workingGrowables = new Queue<Structure> ();

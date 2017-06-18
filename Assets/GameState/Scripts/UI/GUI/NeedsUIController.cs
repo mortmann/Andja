@@ -25,9 +25,8 @@ public class NeedsUIController : MonoBehaviour {
 		}
 		children.ForEach(child => Destroy(child));
 
-		BuildController bs = GameObject.FindObjectOfType<BuildController> ();
 		needToGO = new Dictionary<Need, GameObject> ();
-		List<Need> ns = bs.allNeeds;
+		List<Need> ns = PrototypController.Instance.allNeeds;
 		citizenCanvas.GetComponentInChildren<Text> ().text=home.people+"/"+home.maxLivingSpaces;
 		needs = new List<Need>[5];
 		for (int i = 0; i < needs.Length; i++) {
@@ -43,7 +42,7 @@ public class NeedsUIController : MonoBehaviour {
 			if (ns [i].item != null) {
 				name += ns [i].item.name;
 			} else {
-				name += ns [i].structure.name;
+				name += ns [i].structure.spriteName;
 			}
 			b.GetComponentInChildren<Text> ().text = name;
 			//Slider settings

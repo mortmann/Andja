@@ -168,13 +168,13 @@ public class StructureSpriteController : MonoBehaviour {
 		}
 	}
 	public Sprite getStructureSprite(Structure str){
-		if(structureSprites.ContainsKey (str.name)==false){
+		if(structureSprites.ContainsKey (str.spriteName)==false){
 			//FIXME this should be active in future 
 			//fornow there arent many sprites anyway
 //			Debug.LogError ("No Structure Sprite for that Name!");
 			return null; 
 		}
-		return structureSprites [str.name];
+		return structureSprites [str.spriteName];
 	}
 	public GameObject GetGameObject(Structure str){
 		if(structureGameObjectMap.ContainsKey (str)==false){

@@ -2,22 +2,25 @@
 using UnityEngine.Audio;
 using System.Collections.Generic;
 using System.IO;
+using Newtonsoft.Json;
+using System;
+
+public enum VolumeType { MasterVolume, SoundEffectsVolume, AmbientVolume, MusicVolume, UIVolume}
+
 public class MenuAudioManager : MonoBehaviour {
-	static string fileName="volume.ini";
+	public static string fileName="volume.ini";
     public AudioMixer mixer;	
     public static MenuAudioManager instance;
 
     public AudioClip hoverSound;
     public AudioClip sliderSound;
     public AudioClip clickSound;
-	private int masterVolume;
-	private int musicVolume;
-	private int ambientVolume;
-	private int soundVolume;
-	private int uiVolume;
+
+	Dictionary<string,int> volumes;
 
     void Awake() {
         instance = this;
+		volumes = new Dictionary<string, int> ();
 		ReadSoundVolumes ();
     }
 
@@ -36,49 +39,38 @@ public class MenuAudioManager : MonoBehaviour {
 
     public void SetMusicVolume(float value) {
         mixer.SetFloat("MusicVolume", ConvertToDecibel(value));
-		musicVolume = Mathf.RoundToInt (value);
-		SaveVolumetSchema ();
+		volumes["MusicVolume"] = Mathf.RoundToInt (value);
     }
     public void SetSoundEffectsVolume(float value) {
         mixer.SetFloat("SoundEffectsVolume", ConvertToDecibel(value));
-		soundVolume = Mathf.RoundToInt (value);
+		volumes["SoundEffectsVolume"] = Mathf.RoundToInt (value);
     }
     public void SetMasterVolume(float value) {
         mixer.SetFloat("MasterVolume", ConvertToDecibel(value));
-		masterVolume = Mathf.RoundToInt (value);
+		volumes["MasterVolume"] = Mathf.RoundToInt (value);
     }
     public void SetAmbientVolume(float value) {
         mixer.SetFloat("AmbientVolume", ConvertToDecibel(value));
-		ambientVolume = Mathf.RoundToInt (value);
+		volumes["AmbientVolume"] = Mathf.RoundToInt (value);
     }
     public void SetUIVolume(float value) {
 		mixer.SetFloat ("UIVolume", ConvertToDecibel (value));
-		uiVolume = Mathf.RoundToInt (value);
+		volumes["UIVolume"] = Mathf.RoundToInt (value);
     }
 
 	public float getVolumeFor(VolumeType volType){
-		switch (volType) {
-		case VolumeType.Master:
-			return masterVolume;
-		case VolumeType.SoundEffect:
-			return soundVolume;
-		case VolumeType.Ambient:
-			return ambientVolume;
-		case VolumeType.Music:
-			return musicVolume;
-		case VolumeType.UI:
-			return uiVolume;
-		default:
-			Debug.LogError ("Unknown VolumeType");
-			return 0;
+		if(volumes.ContainsKey(volType.ToString())==false){
+			Debug.LogError ("VolumeType not in Dictionary");
+			return -1;
 		}
+		return volumes[volType.ToString()];
 	}
 
     /**
      * Convert the value coming from our sliders to a decibel value we can
      * feed into the audio mixer.
      */
-    public float ConvertToDecibel(float value) {
+    public static float ConvertToDecibel(float value) {
         // Log(0) is undefined so we just set it by default to -80 decibels
         // which is 0 volume in the audio mixer.
         float decibel = -80f;
@@ -105,14 +97,10 @@ public class MenuAudioManager : MonoBehaviour {
 			Directory.CreateDirectory( path  );
 		}
 		string filePath = System.IO.Path.Combine(path,fileName) ;
-		StringWriter writer = new StringWriter ();
-		writer.WriteLine ("masterVolume  = "+masterVolume);
-		writer.WriteLine ("soundVolume   = "+soundVolume);
-		writer.WriteLine ("ambientVolume = "+ambientVolume);
-		writer.WriteLine ("uiVolume      = "+uiVolume);
-		writer.WriteLine ("musicVolume   = "+musicVolume);
-		File.WriteAllText( filePath, writer.ToString() );
+		File.WriteAllText( filePath, JsonConvert.SerializeObject(volumes) );
 	}
+
+
 	public void ReadSoundVolumes(){
 		string filePath = System.IO.Path.Combine(Application.dataPath.Replace ("/Assets",""),fileName) ;
 		if(File.Exists (filePath)==false){
@@ -124,43 +112,15 @@ public class MenuAudioManager : MonoBehaviour {
 			Debug.Log ("load"); 
 			return;
 		}
-
-		string[] lines = File.ReadAllLines (filePath);
-		foreach(string line in lines){
-			string[] split = line.Split ('=');
-			if(split.Length!=2){
-				continue;
-			}
-			split[0]=split[0].Trim();
-			split[1]=split[1].Trim();
-			int value = 0;
-			if(int.TryParse (split[1],out value)==false){
-				Debug.LogError ("Error in reading in integer from "+fileName);
-				value = 50;
-			}
-			switch(split[0]){
-			case "masterVolume":
-				masterVolume = value;
-				break;
-			case "musicVolume":
-				musicVolume = value;
-				break;
-			case "ambientVolume":
-				ambientVolume = value;
-				break;
-			case "soundVolume":
-				soundVolume = value;
-				break;
-			case "uiVolume":
-				uiVolume = value;
-				break;
-			default: 
-				Debug.LogError ("This name is not a volume type");
-				break;
-			}
-		}
+		volumes = JsonConvert.DeserializeObject<Dictionary<string,int>> (File.ReadAllText (filePath));
 	}
-
+	public static Dictionary<string,int> StaticReadSoundVolumes(){
+		string filePath = System.IO.Path.Combine(Application.dataPath.Replace ("/Assets",""),fileName) ;
+		if(File.Exists (filePath)==false){
+			return null;
+		}
+		return JsonConvert.DeserializeObject<Dictionary<string,int>> (File.ReadAllText (filePath));
+	}
 	void OnDisable(){
 		SaveVolumetSchema ();
 	}

@@ -458,7 +458,10 @@ public class MouseController : MonoBehaviour {
 		bmc.BuildOnTile (t,single,PlayerController.Instance.currentPlayerNumber);
 	}
 
-	public void ResetBuilding(Structure structure){
+	public void ResetBuilding(Structure structure,bool loading = false){
+		if(loading){
+			return;// there is no need to call any following
+		}
 		GameObject.Destroy (previewGO);
 		previewGO = null;
 		structure = null;

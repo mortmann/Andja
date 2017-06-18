@@ -41,7 +41,7 @@ public class World : IGEventable{
 	public int Height { get; protected set; }
 	public static List<Need> allNeeds {
 		get {
-			return BuildController.Instance.allNeeds;
+			return PrototypController.Instance.allNeeds;
 		}
 	}
 	public Dictionary<Climate,List<Fertility>> allFertilities;
@@ -108,8 +108,8 @@ public class World : IGEventable{
 			}
 		}
 //		allNeeds = GameObject.FindObjectOfType<BuildController>().allNeeds;
-		allFertilities = GameObject.FindObjectOfType<BuildController>().allFertilities;
-		idToFertilities= GameObject.FindObjectOfType<BuildController>().idToFertilities;
+		allFertilities = PrototypController.Instance.allFertilities;
+		idToFertilities= PrototypController.Instance.idToFertilities;
 		EventController.Instance.RegisterOnEvent (OnEventCreate,OnEventEnded);
 		islandList = new List<Island>();
 		units = new List<Unit>();
@@ -141,7 +141,7 @@ public class World : IGEventable{
 		float third = (float)Height/3f;
 		Climate myClimate =(Climate)Mathf.RoundToInt ( t.Y / third);
 		Fertility[] fers = new Fertility[3];
-		List<Fertility> climFer = new List<Fertility>(BuildController.Instance.allFertilities [myClimate]);
+		List<Fertility> climFer = new List<Fertility>(PrototypController.Instance.allFertilities [myClimate]);
 
 		for (int i = 0; i < fers.Length; i++) {
 			Fertility f = climFer[UnityEngine.Random.Range (0,climFer.Count)];

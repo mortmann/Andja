@@ -2,6 +2,12 @@
 using System.Collections.Generic;
 using Newtonsoft.Json;
 
+public class MarketPrototypData : OutputPrototypData {
+	public float takeOverStartGoal = 100;
+}
+
+
+
 [JsonObject(MemberSerialization.OptIn)]
 public class MarketBuilding : OutputStructure {
 
@@ -15,24 +21,22 @@ public class MarketBuilding : OutputStructure {
 
 	public List<Structure> RegisteredSturctures;
 	public List<Structure> OutputMarkedSturctures;
-	public float takeOverStartGoal = 100;
 
+	public float takeOverStartGoal {get{ return MarketData.maxOutputStorage;}}
+
+	protected MarketPrototypData _marketData;
+	public MarketPrototypData  MarketData {
+		get { if(_marketData==null){
+				_marketData = (MarketPrototypData)PrototypController.Instance.GetPrototypDataForID (ID);
+			}
+			return _marketData;
+		}
+	}
 	#endregion
 
-	public MarketBuilding(int id){
-		
-		hasHitbox = true;
+	public MarketBuilding(int id,MarketPrototypData  MarketData){
 		this.ID = id;
-		tileWidth = 4;
-		tileHeight = 4;
-		name = "market";
-		buildcost = 500;
-		maintenancecost = 10;
-		BuildTyp = BuildTypes.Single;
-		myBuildingTyp = BuildingTyp.Blocking;
-		buildingRange = 18;
-		this.canTakeDamage = true;
-
+		_marketData = MarketData;
 	}
 	/// <summary>
 	/// DO NOT USE
@@ -40,25 +44,13 @@ public class MarketBuilding : OutputStructure {
 	public MarketBuilding(){
 	}
 	protected MarketBuilding(MarketBuilding str){
-		CopyData (str);
+		BaseCopyData (str);
 	}
 	public override Structure Clone (){
 		return new MarketBuilding(this);
 	}
 
-	public override void LoadPrototypData(Structure s){
-		MarketBuilding mb = s as MarketBuilding;
-		if(mb == null){
-			Debug.LogError ("ERROR - Prototyp was wrong");
-			return;
-		}
-		CopyData (mb);
-	}
-	private void CopyData(MarketBuilding mb){
-		BaseCopyData (mb);
-		takeOverStartGoal = mb.takeOverStartGoal;
 
-	}
 
 	public override void update (float deltaTime){
 		base.update_Worker (deltaTime);

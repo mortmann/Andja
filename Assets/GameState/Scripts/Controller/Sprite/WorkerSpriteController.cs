@@ -35,7 +35,7 @@ public class WorkerSpriteController : MonoBehaviour {
 		// Add our tile/GO pair to the dictionary.
 		workerToGO.Add(w, char_go);
 
-		char_go.name = w.myHome.name + " - Worker";
+		char_go.name = w.myHome.spriteName + " - Worker";
 		char_go.transform.position = new Vector3(w.X,w.Y,0);
 		Vector3 v = char_go.transform.rotation.eulerAngles;
 		char_go.transform.rotation.eulerAngles.Set(v.x,v.y,w.Z);

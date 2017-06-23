@@ -5,7 +5,6 @@ using System;
 using Newtonsoft.Json;
 
 public class ProductionPrototypeData : OutputPrototypData {
-	public int[] needIntake;
 	public int[] maxIntake;
 	public Item[] intake;
 }
@@ -16,7 +15,7 @@ public class ProductionBuilding : OutputStructure {
 
 	#region Serialize
 	private Item[] _intake;
-	[JsonPropertyAttribute] public Item[] Intake {
+	[JsonPropertyAttribute] public Item[] MyIntake {
 		get {
 			if(_intake == null){
 				_intake = ProductionData.intake;
@@ -33,7 +32,7 @@ public class ProductionBuilding : OutputStructure {
 
 	public Dictionary<OutputStructure,Item[]> RegisteredStructures;
 	MarketBuilding nearestMarketBuilding;
-	public int[] needIntake { get  { return ProductionData.needIntake; }}
+//	public int[] needIntake { get  { return ProductionData.needIntake; }}
 	public int[] maxIntake { get  { return ProductionData.maxIntake; }}
 	#endregion
 
@@ -49,8 +48,8 @@ public class ProductionBuilding : OutputStructure {
 	public override float Efficiency{
 		get {
 			float inputs=0;
-			for (int i = 0; i < Intake.Length; i++) {
-				inputs += Intake[0].count/needIntake[0];
+			for (int i = 0; i < MyIntake.Length; i++) {
+				inputs += MyIntake[0].count/ProductionData.intake[i].count;
 			}
 			if(inputs==0){
 				return 0;
@@ -79,10 +78,10 @@ public class ProductionBuilding : OutputStructure {
 	}
 		
 	public override void update (float deltaTime){
-		if(needIntake == null && output == null){
+		if(ProductionData.intake == null && output == null){
 			return;
 		}
-		if(needIntake == null){
+		if(ProductionData.intake == null){
 			return;
 		}
 
@@ -94,8 +93,8 @@ public class ProductionBuilding : OutputStructure {
 
 		base.update_Worker (deltaTime);
 
-		for (int i = 0; i < Intake.Length; i++) {
-			if (needIntake [i] > Intake [i].count) {
+		for (int i = 0; i < MyIntake.Length; i++) {
+			if (ProductionData.intake[i].count > MyIntake [i].count) {
 				return;
 			}
 		}
@@ -104,8 +103,8 @@ public class ProductionBuilding : OutputStructure {
 		Debug.Log ("prod" + produceCountdown); 
 		if(produceCountdown <= 0) {
 			produceCountdown = produceTime;
-			for (int i = 0; i < Intake.Length; i++) {
-				Intake[i].count--;
+			for (int i = 0; i < MyIntake.Length; i++) {
+				MyIntake[i].count--;
 			}
 			for (int i = 0; i < output.Length; i++) {
 				output[i].count++;
@@ -122,9 +121,9 @@ public class ProductionBuilding : OutputStructure {
 			return;
 		}
 		Dictionary<Item,int> needItems = new Dictionary<Item, int> ();
-		for (int i = 0; i < Intake.Length; i++) {
-			if (maxIntake[i] > Intake[i].count) {
-				needItems.Add ( Intake [i].Clone (),maxIntake[i]-Intake[i].count );
+		for (int i = 0; i < MyIntake.Length; i++) {
+			if (maxIntake[i] > MyIntake[i].count) {
+				needItems.Add ( MyIntake [i].Clone (),maxIntake[i]-MyIntake[i].count );
 			}
 		}
 		if(needItems.Count == 0){
@@ -184,16 +183,16 @@ public class ProductionBuilding : OutputStructure {
 
 	}
 	public bool addToIntake (Inventory toAdd){
-		if(Intake == null){
+		if(MyIntake == null){
 			return false;
 		}
-		for(int i = 0; i < Intake.Length; i++) {
-			if((Intake[i].count+ toAdd.GetAmountForItem(Intake[i])) > maxIntake[i]) {
+		for(int i = 0; i < MyIntake.Length; i++) {
+			if((MyIntake[i].count+ toAdd.GetAmountForItem(MyIntake[i])) > maxIntake[i]) {
 				return false;
 			}
-			Debug.Log (toAdd.GetAmountForItem(Intake[i]));
-			Intake[i].count += toAdd.GetAmountForItem(Intake[i]);
-			toAdd.setItemCountNull (Intake[i]);
+			Debug.Log (toAdd.GetAmountForItem(MyIntake[i]));
+			MyIntake[i].count += toAdd.GetAmountForItem(MyIntake[i]);
+			toAdd.setItemCountNull (MyIntake[i]);
 			callbackIfnotNull ();
 		}
 
@@ -231,8 +230,8 @@ public class ProductionBuilding : OutputStructure {
 	public Item[] hasNeedItem(Item[] output){
 		List<Item> items = new List<Item> ();
 		for (int i = 0; i < output.Length; i++) {
-			for (int s = 0; s < Intake.Length; s++) {
-				if (output [i].ID == Intake [s].ID) {
+			for (int s = 0; s < MyIntake.Length; s++) {
+				if (output [i].ID == MyIntake [s].ID) {
 					items.Add (output [i]);
 				}
 			}

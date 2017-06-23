@@ -297,11 +297,11 @@ public class PrototypController : MonoBehaviour {
 			SetLanguageData (node,ppd);
 
 			//DO After loading from file
-			ppd.maxIntake= new int[ppd.needIntake.Length];
-			if (ppd.intake != null && ppd.needIntake!=null) {
+			ppd.maxIntake= new int[ppd.intake.Length];
+			if (ppd.intake != null && ppd.intake!=null) {
 				int i=0;
-				foreach(int needed in ppd.needIntake){
-					ppd.maxIntake[i] = 5*needed; // make it 5 times the needed
+				foreach(Item needed in ppd.intake){
+					ppd.maxIntake[i] = 5*needed.count; // make it 5 times the needed
 					i++;
 				}
 			}

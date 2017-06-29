@@ -34,7 +34,9 @@ public class BuildController : MonoBehaviour {
 			}
 	public uint buildID = 0;
 
-	public Dictionary<int,Structure>  structurePrototypes;
+	public Dictionary<int,Structure>  structurePrototypes {
+		get { return PrototypController.Instance.structurePrototypes; }
+	}
 	public Structure toBuildStructure;
 
 	Action<Structure,bool> cbStructureCreated;

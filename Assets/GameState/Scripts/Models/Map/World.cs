@@ -86,9 +86,9 @@ public class World : IGEventable{
 				GetTileAt(x,y).Type = TileType.Dirt;
 			}
 		}
-		CreateUnit(GetTileAt(34, 41),PlayerController.Instance.currentPlayerNumber,false);
+//		CreateUnit(GetTileAt(34, 41),PlayerController.Instance.currentPlayerNumber,false);
 		CreateUnit(GetTileAt(34, 47),2,false); 
-		CreateUnit(GetTileAt(42, 38),PlayerController.Instance.currentPlayerNumber,true);    
+//		CreateUnit(GetTileAt(42, 38),PlayerController.Instance.currentPlayerNumber,true);    
 		CreateUnit(GetTileAt(34, 38),2,true);    
 
 		CreateIsland (31, 41);
@@ -107,10 +107,9 @@ public class World : IGEventable{
 				SetTileAt (x, y, new Tile (x,y));
 			}
 		}
-//		allNeeds = GameObject.FindObjectOfType<BuildController>().allNeeds;
 		allFertilities = PrototypController.Instance.allFertilities;
 		idToFertilities= PrototypController.Instance.idToFertilities;
-		EventController.Instance.RegisterOnEvent (OnEventCreate,OnEventEnded);
+//		EventController.Instance.RegisterOnEvent (OnEventCreate,OnEventEnded);
 		islandList = new List<Island>();
 		units = new List<Unit>();
 	}

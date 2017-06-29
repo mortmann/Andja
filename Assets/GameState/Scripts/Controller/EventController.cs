@@ -89,6 +89,7 @@ public class EventController : MonoBehaviour {
 		//update and remove inactive events
 		List<uint> ids = new List<uint>(idToActiveEvent.Keys);
 		foreach (uint i in ids) {
+			Debug.Log ("update " +i); 
 			idToActiveEvent [i].Update (WorldController.Instance.DeltaTime);
 			if(idToActiveEvent [i].IsDone){
 				cbEventEnded (idToActiveEvent [i]);

@@ -23,7 +23,7 @@ public class HomeBuilding : Structure {
 	protected HomePrototypeData _homeData;
 	public HomePrototypeData HomeData {
 		get { if(_homeData==null){
-				_homeData = (HomePrototypeData)PrototypController.Instance.GetPrototypDataForID (ID);
+				_homeData = (HomePrototypeData)PrototypController.Instance.GetStructurePrototypDataForID (ID);
 			}
 			return _homeData;
 		}
@@ -75,12 +75,12 @@ public class HomeBuilding : Structure {
 		float allPercentage = 0;
 		int count = 0;
 		bool percCritical=false;
-		foreach (Need n in City.allNeeds.Keys) {
+		foreach (Need n in City.idToNeed.Values) {
 			Player pc = PlayerController.Instance.GetPlayer (playerNumber);
 			if (n.startLevel <= buildingLevel && n.popCount <= pc.maxPopulationCount) {
 				if (n.structure == null) {
-					allPercentage += City.allNeeds [n];
-					if(City.allNeeds [n] < 0.4f){
+					allPercentage += n.percantageAvailability;
+					if(n.percantageAvailability < 0.3f){
 						percCritical=true;
 					}
 				} else {

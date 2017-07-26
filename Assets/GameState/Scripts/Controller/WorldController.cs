@@ -44,7 +44,7 @@ public class WorldController : MonoBehaviour {
 //			gdh.loadsavegame = null;
 		} else {
 			if (gdh != null) {
-				this.world = new World (gdh.width +900, gdh.height+900);
+				this.world = new World (gdh.width , gdh.height);
 			} 
 			Camera.main.transform.position = new Vector3(world.Width / 2, world.Height / 2, Camera.main.transform.position.z);
 		}
@@ -125,17 +125,15 @@ public class WorldController : MonoBehaviour {
 	public void LoadWorldData(WorldSaveState wss) {
 		offworldMarket = wss.offworld;
 		// Create a world from our save file data.
-		World loadWorld = wss.world;
+		world = wss.world;
 		//Now turn the loaded World into a playable World
 		List<Structure> loadedStructures = new List<Structure>();
-		foreach (Island island in loadWorld.islandList) {
+		foreach (Island island in world.islandList) {
 			loadedStructures.AddRange(island.Load ());
 		}
 		loadedStructures.Sort ((x, y) => x.buildID.CompareTo(y.buildID) );
 		BuildController.Instance.PlaceAllLoadedStructure (loadedStructures);
 		// Center the Camera
-		Camera.main.transform.position = new Vector3( loadWorld.Width/2, loadWorld.Height/2, Camera.main.transform.position.z );
-		world = loadWorld;
 		Debug.Log ("LOAD ENDED");
 	}
 

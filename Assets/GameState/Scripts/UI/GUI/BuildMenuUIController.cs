@@ -33,7 +33,6 @@ public class BuildMenuUIController : MonoBehaviour {
 			b.GetComponentInChildren<Text>().text = s.spriteName;
 			b.transform.SetParent(buttonBuildingContent.transform);
 
-
 			b.GetComponent<Button> ().onClick.AddListener(() => {OnClick(b.name);});
 			b.GetComponent<Image> ().color = Color.white;
 			b.GetComponent<BuildingBuildUI> ().Show(s);

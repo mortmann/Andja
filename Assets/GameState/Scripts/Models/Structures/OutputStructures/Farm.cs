@@ -24,7 +24,7 @@ public class Farm : OutputStructure {
 	protected FarmPrototypData _farmData;
 	public FarmPrototypData  FarmData {
 		get { if(_farmData==null){
-				_farmData = (FarmPrototypData)PrototypController.Instance.GetPrototypDataForID (ID);
+				_farmData = (FarmPrototypData)PrototypController.Instance.GetStructurePrototypDataForID (ID);
 			}
 			return _farmData;
 		}

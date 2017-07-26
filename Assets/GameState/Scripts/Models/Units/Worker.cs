@@ -204,9 +204,9 @@ public class Worker {
 		//job_dest_tile = tile;
 		if (hasToFollowRoads == false) {
 			path_mode pm = path_mode.islandMultipleStartpoints;
-			path = new Pathfinding (new List<Tile>(myHome.neighbourTiles),new List<Tile>(structure.neighbourTiles),1.5f,pm);
+//			path = new Pathfinding (new List<Tile>(myHome.neighbourTiles),new List<Tile>(structure.neighbourTiles),1.5f,pm);
 		} else {
-			path = new Pathfinding (myHome.roadsAroundStructure (),structure.roadsAroundStructure (),1.5f);
+//			path = new Pathfinding (myHome.roadsAroundStructure (),structure.roadsAroundStructure (),1.5f);
 		}
 		if (currTile != null) {
 			path.currTile = currTile;

@@ -27,7 +27,7 @@ public class MarketBuilding : OutputStructure {
 	protected MarketPrototypData _marketData;
 	public MarketPrototypData  MarketData {
 		get { if(_marketData==null){
-				_marketData = (MarketPrototypData)PrototypController.Instance.GetPrototypDataForID (ID);
+				_marketData = (MarketPrototypData)PrototypController.Instance.GetStructurePrototypDataForID (ID);
 			}
 			return _marketData;
 		}

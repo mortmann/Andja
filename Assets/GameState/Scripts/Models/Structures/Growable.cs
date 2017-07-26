@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 
 public class GrowablePrototypData : OutputPrototypData {
 	public float growTime = 5f;
-	public Fertility fer;
+	public Fertility fertility;
 	public int ageStages = 2;
 
 }
@@ -23,13 +23,13 @@ public class Growable : OutputStructure {
 	#region RuntimeOrOther
 
 	float growTime {get{ return GrowableData.growTime; }}
-	public Fertility fer {get{ return GrowableData.fer; }}
+	public Fertility fer {get{ return GrowableData.fertility; }}
 	public int ageStages {get{ return GrowableData.ageStages; }}
 
 	protected GrowablePrototypData _growableData;
 	public GrowablePrototypData GrowableData {
 		get { if(_growableData==null){
-				_growableData = (GrowablePrototypData)PrototypController.Instance.GetPrototypDataForID (ID);
+				_growableData = (GrowablePrototypData)PrototypController.Instance.GetStructurePrototypDataForID (ID);
 			}
 			return _growableData;
 		}

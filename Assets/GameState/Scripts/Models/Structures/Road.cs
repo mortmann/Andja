@@ -101,8 +101,9 @@ public class Road : Structure {
 		}
 
 	}
-	public void updateOrientation (){
+	public void updateOrientation (IEnumerable<Tile> futureRoads = null){
 		Tile[] neig = myBuildingTiles [0].GetNeighbours ();
+
 		connectOrientation = "_";
 		if(neig[0].Structure != null){
 			if (neig [0].Structure is Road) {

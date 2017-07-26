@@ -84,7 +84,8 @@ public class SaveController : MonoBehaviour {
 				{
 					NullValueHandling = NullValueHandling.Ignore,
 					PreserveReferencesHandling = PreserveReferencesHandling.Objects, 
-					ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+					ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+					TypeNameHandling = TypeNameHandling.Auto
 				}
 			) 
 		);
@@ -106,7 +107,13 @@ public class SaveController : MonoBehaviour {
 			wc.IsPaused = true;
 		}
 		string alllines = System.IO.File.ReadAllText (System.IO.Path.Combine (GetSaveGamesPath (), name + ".sav"));
-		SaveState state = JsonConvert.DeserializeObject<SaveState> (alllines);
+		SaveState state = JsonConvert.DeserializeObject<SaveState> (alllines,new JsonSerializerSettings
+			{
+				NullValueHandling = NullValueHandling.Ignore,
+				PreserveReferencesHandling = PreserveReferencesHandling.Objects, 
+				ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+				TypeNameHandling = TypeNameHandling.Auto
+			});
 		if(SaveFileVersion!=state.safefileversion){
 			Debug.LogError ("Mismatch of SaveFile Versions " + state.safefileversion + " & " + SaveFileVersion);
 			return;

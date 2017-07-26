@@ -48,6 +48,7 @@ public class Island : IGEventable{
 		myRessources ["stone"] = int.MaxValue;
 
     }
+
 	public Island(){
 	}
 	private void Setup(){
@@ -67,6 +68,7 @@ public class Island : IGEventable{
 			if(c.playerNumber == -1){
 				wilderniss = c;
 			}
+			c.island = this;
 			structs.AddRange(c.Load ());
 		}
 		return structs;

@@ -1,0 +1,519 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Items>
+	<Item ID="1">
+		<Type>0</Type>
+		<Decays>-1</Decays>
+		<EN_Name>Wood</EN_Name>
+		<DE_Name>Holz</DE_Name>
+	</Item>
+	<Item ID="2">
+		<Type>0</Type>
+		<Decays>-1</Decays>
+		<EN_Name>Tools</EN_Name>
+		<DE_Name>Werkzeug</DE_Name>
+	</Item>
+	<Item ID="3">
+		<Type>0</Type>
+		<Decays>-1</Decays>
+		<EN_Name>Stone</EN_Name>
+		<DE_Name>Stein</DE_Name>
+	</Item>
+	<Item ID="4">
+		<Type>0</Type>
+		<Decays>-1</Decays>
+		<EN_Name>Brick</EN_Name>
+		<DE_Name>Ziegel</DE_Name>
+	</Item>
+	<Item ID="5">
+		<Type>0</Type>
+		<Decays>-1</Decays>
+		<EN_Name>Glas</EN_Name>
+		<DE_Name>Glas</DE_Name>
+	</Item>
+	<Item ID="6">
+		<Type>0</Type>
+		<Decays>-1</Decays>
+		<EN_Name>Marble</EN_Name>
+		<DE_Name>Marmor</DE_Name>
+	</Item>
+	<Item ID="7">
+		<Type>0</Type>
+		<Decays>-1</Decays>
+		<EN_Name>Luxury Wood</EN_Name>
+		<DE_Name>Luxusholz</DE_Name>
+	</Item>
+	<Item ID="20">
+		<Type>1</Type>
+		<Decays>-1</Decays>
+		<EN_Name>Iron Ore</EN_Name>
+		<DE_Name>Eisenerz</DE_Name>
+	</Item>
+	<Item ID="21">
+		<Type>1</Type>
+		<Decays>-1</Decays>
+		<EN_Name>Iron Ingot</EN_Name>
+		<DE_Name>Eisenrohling</DE_Name>
+	</Item>
+	<Item ID="22">
+		<Type>1</Type>
+		<Decays>-1</Decays>
+		<EN_Name>Coal</EN_Name>
+		<DE_Name>Kohle</DE_Name>
+	</Item>
+	<Item ID="23">
+		<Type>2</Type>
+		<Decays>-1</Decays>
+		<EN_Name>Venison</EN_Name>
+		<DE_Name>Wildfleisch</DE_Name>
+	</Item>
+	<Item ID="24">
+		<Type>1</Type>
+		<Decays>-1</Decays>
+		<EN_Name>Clay</EN_Name>
+		<DE_Name>Lehm</DE_Name>
+	</Item>
+	<Item ID="25">
+		<Type>1</Type>
+		<Decays>-1</Decays>
+		<EN_Name>Sand</EN_Name>
+		<DE_Name>Sand</DE_Name>
+	</Item>
+	<Item ID="26">
+		<Type>1</Type>
+		<Decays>-1</Decays>
+		<EN_Name>Quartz</EN_Name>
+		<DE_Name>Quarz</DE_Name>
+	</Item>
+	<Item ID="27">
+		<Type>2</Type>
+		<Decays>-1</Decays>
+		<EN_Name>Fish</EN_Name>
+		<DE_Name>Fisch</DE_Name>
+	</Item>
+	<Item ID="28">
+		<Type>1</Type>
+		<Decays>-1</Decays>
+		<EN_Name>Wheat</EN_Name>
+		<DE_Name>Getreide</DE_Name>
+	</Item>
+	<Item ID="29">
+		<Type>1</Type>
+		<Decays>-1</Decays>
+		<EN_Name>Flour</EN_Name>
+		<DE_Name>Mehl</DE_Name>
+	</Item>
+	<Item ID="30">
+		<Type>2</Type>
+		<Decays>-1</Decays>
+		<EN_Name>Bread</EN_Name>
+		<DE_Name>Brot</DE_Name>
+	</Item>
+	<Item ID="31">
+		<Type>1</Type>
+		<Decays>-1</Decays>
+		<EN_Name>Pig</EN_Name>
+		<DE_Name>Schwein</DE_Name>
+	</Item>
+	<Item ID="32">
+		<Type>1</Type>
+		<Decays>-1</Decays>
+		<EN_Name>Pig-Meat</EN_Name>
+		<DE_Name>Schweinefleisch</DE_Name>
+	</Item>
+	<Item ID="33">
+		<Type>1</Type>
+		<Decays>-1</Decays>
+		<EN_Name>Hops</EN_Name>
+		<DE_Name>Hopfen</DE_Name>
+	</Item>
+	<Item ID="34">
+		<Type>2</Type>
+		<Decays>-1</Decays>
+		<EN_Name>Beer</EN_Name>
+		<DE_Name>Bier</DE_Name>
+	</Item>
+	<Item ID="35">
+		<Type>1</Type>
+		<Decays>-1</Decays>
+		<EN_Name>Sugar</EN_Name>
+		<DE_Name>Zucker</DE_Name>
+	</Item>
+	<Item ID="36">
+		<Type>2</Type>
+		<Decays>-1</Decays>
+		<EN_Name>Rum</EN_Name>
+		<DE_Name>Rum</DE_Name>
+	</Item>
+	<Item ID="37">
+		<Type>2</Type>
+		<Decays>-1</Decays>
+		<EN_Name>Potatoes</EN_Name>
+		<DE_Name>Kartoffeln</DE_Name>
+	</Item>
+	<Item ID="38">
+		<Type>1</Type>
+		<Decays>-1</Decays>
+		<EN_Name>Fruits</EN_Name>
+		<DE_Name>Früchte</DE_Name>
+	</Item>
+	<Item ID="39">
+		<Type>2</Type>
+		<Decays>-1</Decays>
+		<EN_Name>Liquor</EN_Name>
+		<DE_Name>Schnaps</DE_Name>
+	</Item>
+	<Item ID="40">
+		<Type>1</Type>
+		<Decays>-1</Decays>
+		<EN_Name>Wine Grapes</EN_Name>
+		<DE_Name>Weintrauben</DE_Name>
+	</Item>
+	<Item ID="41">
+		<Type>1</Type>
+		<Decays>-1</Decays>
+		<EN_Name>Casks</EN_Name>
+		<DE_Name>Fässer</DE_Name>
+	</Item>
+	<Item ID="42">
+		<Type>2</Type>
+		<Decays>-1</Decays>
+		<EN_Name>Wine</EN_Name>
+		<DE_Name>Wein</DE_Name>
+	</Item>
+	<Item ID="43">
+		<Type>1</Type>
+		<Decays>-1</Decays>
+		<EN_Name>Coffee Beans</EN_Name>
+		<DE_Name>Kaffeebohnen</DE_Name>
+	</Item>
+	<Item ID="44">
+		<Type>2</Type>
+		<Decays>-1</Decays>
+		<EN_Name>Coffee</EN_Name>
+		<DE_Name>Kaffee</DE_Name>
+	</Item>
+	<Item ID="45">
+		<Type>1</Type>
+		<Decays>-1</Decays>
+		<EN_Name>Cocoa</EN_Name>
+		<DE_Name>Kakao</DE_Name>
+	</Item>
+	<Item ID="46">
+		<Type>2</Type>
+		<Decays>-1</Decays>
+		<EN_Name>Sweets</EN_Name>
+		<DE_Name>Süßigkeiten</DE_Name>
+	</Item>
+	<Item ID="47">
+		<Type>1</Type>
+		<Decays>-1</Decays>
+		<EN_Name>Hemp</EN_Name>
+		<DE_Name>Hanf</DE_Name>
+	</Item>
+	<Item ID="48">
+		<Type>1</Type>
+		<Decays>-1</Decays>
+		<EN_Name>Hemp Fabric</EN_Name>
+		<DE_Name>Hanfballen</DE_Name>
+	</Item>
+	<Item ID="49">
+		<Type>2</Type>
+		<Decays>-1</Decays>
+		<EN_Name>Hemp Clothes</EN_Name>
+		<DE_Name>Hanfkleidung</DE_Name>
+	</Item>
+	<Item ID="50">
+		<Type>2</Type>
+		<Decays>-1</Decays>
+		<EN_Name>Ropes</EN_Name>
+		<DE_Name>Seile</DE_Name>
+	</Item>
+	<Item ID="51">
+		<Type>1</Type>
+		<Decays>-1</Decays>
+		<EN_Name>Cooper Ore</EN_Name>
+		<DE_Name>Kupfererz</DE_Name>
+	</Item>
+	<Item ID="52">
+		<Type>1</Type>
+		<Decays>-1</Decays>
+		<EN_Name>Copper Ingots</EN_Name>
+		<DE_Name>Kupferbarren</DE_Name>
+	</Item>
+	<Item ID="53">
+		<Type>2</Type>
+		<Decays>-1</Decays>
+		<EN_Name>Cutlery</EN_Name>
+		<DE_Name>Besteck</DE_Name>
+	</Item>
+	<Item ID="54">
+		<Type>2</Type>
+		<Decays>-1</Decays>
+		<EN_Name>Spice</EN_Name>
+		<DE_Name>Gewürz</DE_Name>
+	</Item>
+	<Item ID="55">
+		<Type>1</Type>
+		<Decays>-1</Decays>
+		<EN_Name>Cows</EN_Name>
+		<DE_Name>Kühe</DE_Name>
+	</Item>
+	<Item ID="56">
+		<Type>2</Type>
+		<Decays>-1</Decays>
+		<EN_Name>Cow-Meat</EN_Name>
+		<DE_Name>Kuhfleisch</DE_Name>
+	</Item>
+	<Item ID="57">
+		<Type>1</Type>
+		<Decays>-1</Decays>
+		<EN_Name>Leather</EN_Name>
+		<DE_Name>Leder</DE_Name>
+	</Item>
+	<Item ID="58">
+		<Type>1</Type>
+		<Decays>-1</Decays>
+		<EN_Name>Paper</EN_Name>
+		<DE_Name>Papier</DE_Name>
+	</Item>
+	<Item ID="59">
+		<Type>1</Type>
+		<Decays>-1</Decays>
+		<EN_Name>Flowers</EN_Name>
+		<DE_Name>Blumen</DE_Name>
+	</Item>
+	<Item ID="60">
+		<Type>1</Type>
+		<Decays>-1</Decays>
+		<EN_Name>Color</EN_Name>
+		<DE_Name>Farbe</DE_Name>
+	</Item>
+	<Item ID="61">
+		<Type>2</Type>
+		<Decays>-1</Decays>
+		<EN_Name>Books</EN_Name>
+		<DE_Name>Buch</DE_Name>
+	</Item>
+	<Item ID="62">
+		<Type>2</Type>
+		<Decays>-1</Decays>
+		<EN_Name>Goggles</EN_Name>
+		<DE_Name>Brillen</DE_Name>
+	</Item>
+	<Item ID="63">
+		<Type>1</Type>
+		<Decays>-1</Decays>
+		<EN_Name>Tobacco</EN_Name>
+		<DE_Name>Tabak</DE_Name>
+	</Item>
+	<Item ID="64">
+		<Type>2</Type>
+		<Decays>-1</Decays>
+		<EN_Name>Tobacco Products</EN_Name>
+		<DE_Name>Tabakwaren</DE_Name>
+	</Item>
+	<Item ID="65">
+		<Type>1</Type>
+		<Decays>-1</Decays>
+		<EN_Name>Grain Salt</EN_Name>
+		<DE_Name>Grobes Salz</DE_Name>
+	</Item>
+	<Item ID="66">
+		<Type>2</Type>
+		<Decays>-1</Decays>
+		<EN_Name>Salt</EN_Name>
+		<DE_Name>Salz</DE_Name>
+	</Item>
+	<Item ID="67">
+		<Type>2</Type>
+		<Decays>-1</Decays>
+		<EN_Name>Honey</EN_Name>
+		<DE_Name>Honig</DE_Name>
+	</Item>
+	<Item ID="68">
+		<Type>1</Type>
+		<Decays>-1</Decays>
+		<EN_Name>Beeswax</EN_Name>
+		<DE_Name>Bienenwachs</DE_Name>
+	</Item>
+	<Item ID="69">
+		<Type>1</Type>
+		<Decays>-1</Decays>
+		<EN_Name>Candles</EN_Name>
+		<DE_Name>Kerzen</DE_Name>
+	</Item>
+	<Item ID="70">
+		<Type>2</Type>
+		<Decays>-1</Decays>
+		<EN_Name>Candleholder</EN_Name>
+		<DE_Name>Kerzenhalter</DE_Name>
+	</Item>
+	<Item ID="71">
+		<Type>1</Type>
+		<Decays>-1</Decays>
+		<EN_Name>Sheep´s Wool</EN_Name>
+		<DE_Name>Schafswolle</DE_Name>
+	</Item>
+	<Item ID="72">
+		<Type>1</Type>
+		<Decays>-1</Decays>
+		<EN_Name>Sheep-Wool Cloth</EN_Name>
+		<DE_Name>Schafswolleleinen *1</DE_Name>
+	</Item>
+	<Item ID="73">
+		<Type>2</Type>
+		<Decays>-1</Decays>
+		<EN_Name>Better Clothes</EN_Name>
+		<DE_Name>Bessere Kleidung *1</DE_Name>
+	</Item>
+	<Item ID="74">
+		<Type>1</Type>
+		<Decays>-1</Decays>
+		<EN_Name>Olives</EN_Name>
+		<DE_Name>Oliven</DE_Name>
+	</Item>
+	<Item ID="75">
+		<Type>2</Type>
+		<Decays>-1</Decays>
+		<EN_Name>Soap</EN_Name>
+		<DE_Name>Seife</DE_Name>
+	</Item>
+	<Item ID="76">
+		<Type>1</Type>
+		<Decays>-1</Decays>
+		<EN_Name>Medicinal Herbs</EN_Name>
+		<DE_Name>Heilkräuter</DE_Name>
+	</Item>
+	<Item ID="77">
+		<Type>1</Type>
+		<Decays>-1</Decays>
+		<EN_Name>Whale Oil</EN_Name>
+		<DE_Name>Waltran</DE_Name>
+	</Item>
+	<Item ID="78">
+		<Type>2</Type>
+		<Decays>-1</Decays>
+		<EN_Name>Lamp Oil</EN_Name>
+		<DE_Name> Lampenöl</DE_Name>
+	</Item>
+	<Item ID="79">
+		<Type>1</Type>
+		<Decays>-1</Decays>
+		<EN_Name>Perfume Bottle</EN_Name>
+		<DE_Name>Parfumflaschen</DE_Name>
+	</Item>
+	<Item ID="80">
+		<Type>2</Type>
+		<Decays>-1</Decays>
+		<EN_Name>Perfume</EN_Name>
+		<DE_Name>Parfum</DE_Name>
+	</Item>
+	<Item ID="81">
+		<Type>1</Type>
+		<Decays>-1</Decays>
+		<EN_Name>Raw Silk</EN_Name>
+		<DE_Name>Rohe Seide</DE_Name>
+	</Item>
+	<Item ID="82">
+		<Type>1</Type>
+		<Decays>-1</Decays>
+		<EN_Name>Bales of Silk</EN_Name>
+		<DE_Name>Seidenballen</DE_Name>
+	</Item>
+	<Item ID="83">
+		<Type>1</Type>
+		<Decays>-1</Decays>
+		<EN_Name>Fur</EN_Name>
+		<DE_Name>Pelze</DE_Name>
+	</Item>
+	<Item ID="84">
+		<Type>2</Type>
+		<Decays>-1</Decays>
+		<EN_Name>Luxury Clothes</EN_Name>
+		<DE_Name>Luxuskleider </DE_Name>
+	</Item>
+	<Item ID="85">
+		<Type>1</Type>
+		<Decays>-1</Decays>
+		<EN_Name>Gold Ore</EN_Name>
+		<DE_Name>Goldnuggets</DE_Name>
+	</Item>
+	<Item ID="86">
+		<Type>1</Type>
+		<Decays>-1</Decays>
+		<EN_Name>Gold</EN_Name>
+		<DE_Name>Gold</DE_Name>
+	</Item>
+	<Item ID="87">
+		<Type>1</Type>
+		<Decays>-1</Decays>
+		<EN_Name>Rough Diamonds</EN_Name>
+		<DE_Name>Rohdiamanten</DE_Name>
+	</Item>
+	<Item ID="88">
+		<Type>1</Type>
+		<Decays>-1</Decays>
+		<EN_Name>Diamonds</EN_Name>
+		<DE_Name>Diamanten</DE_Name>
+	</Item>
+	<Item ID="89">
+		<Type>2</Type>
+		<Decays>-1</Decays>
+		<EN_Name>Jewelry</EN_Name>
+		<DE_Name>Schmuck</DE_Name>
+	</Item>
+	<Item ID="90">
+		<Type>2</Type>
+		<Decays>-1</Decays>
+		<EN_Name>Luxury Cutlery</EN_Name>
+		<DE_Name>Luxusbesteck</DE_Name>
+	</Item>
+	<Item ID="91">
+		<Type>2</Type>
+		<Decays>-1</Decays>
+		<EN_Name>Carpets</EN_Name>
+		<DE_Name>Teppiche</DE_Name>
+	</Item>
+	<Item ID="200">
+		<Type>1</Type>
+		<Decays>-1</Decays>
+		<EN_Name>Armors</EN_Name>
+		<DE_Name>Rüstungen</DE_Name>
+	</Item>
+	<Item ID="201">
+		<Type>1</Type>
+		<Decays>-1</Decays>
+		<EN_Name>Swords</EN_Name>
+		<DE_Name>Schwerter</DE_Name>
+	</Item>
+	<Item ID="202">
+		<Type>1</Type>
+		<Decays>-1</Decays>
+		<EN_Name>Pike</EN_Name>
+		<DE_Name>Pikes</DE_Name>
+	</Item>
+	<Item ID="203">
+		<Type>1</Type>
+		<Decays>-1</Decays>
+		<EN_Name>Bows</EN_Name>
+		<DE_Name>Bögen</DE_Name>
+	</Item>
+	<Item ID="204">
+		<Type>1</Type>
+		<Decays>-1</Decays>
+		<EN_Name>Cannons</EN_Name>
+		<DE_Name>Kanonen</DE_Name>
+	</Item>
+	<Item ID="205">
+		<Type>1</Type>
+		<Decays>-1</Decays>
+		<EN_Name>Rifles</EN_Name>
+		<DE_Name>Büchsen</DE_Name>
+	</Item>
+	<Item ID="206">
+		<Type>1</Type>
+		<Decays>-1</Decays>
+		<EN_Name>Horses</EN_Name>
+		<DE_Name>Pferden</DE_Name>
+	</Item>
+</Items>

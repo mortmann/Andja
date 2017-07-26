@@ -26,7 +26,6 @@ public class CityInventoryUI : MonoBehaviour {
 		foreach (Transform child in contentCanvas.transform) {
 			Destroy (child.gameObject);
 		}
-
 		itemToGO = new Dictionary<int, ItemUI> ();
 		foreach (Item item in city.myInv.items.Values) {
 			GameObject go_i = GameObject.Instantiate (itemPrefab);

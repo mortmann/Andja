@@ -13,11 +13,14 @@ public class MouseController : MonoBehaviour {
     public GameObject greenTileCursorPrefab;
 	public GameObject redTileCursorPrefab;
 	GameObject previewGO;
+
 	// The world-position of the mouse last frame.
 	Vector3 lastFramePosition;
 	Vector3 currFramePosition;
+
 	StructureSpriteController ssc;
 
+	bool autorotate = true;
 	HashSet<Tile> _highlightTiles;
 	HashSet<Tile> HighlightTiles {
 		get { return _highlightTiles; }
@@ -59,7 +62,9 @@ public class MouseController : MonoBehaviour {
 
 	public MouseState mouseState = MouseState.Idle;
     private Vector3 pathStartPosition;
-    private Path_AStar path;
+    
+	private Path_AStar path;
+
 	private Unit _selectedUnit;
 	public Unit SelectedUnit  {
 		get { return _selectedUnit;}
@@ -162,7 +167,7 @@ public class MouseController : MonoBehaviour {
 	private void UpdateSingle() {
 		// If we're over a UI element, then bail out from this.
 		if (EventSystem.current.IsPointerOverGameObject ()) {
-			HighlightTiles = null; 
+			HighlightTiles = null;
 			return;
 		}
 		if (structure == null) {
@@ -176,11 +181,23 @@ public class MouseController : MonoBehaviour {
 		}
 	}
 	private void ShowSinglePreview(Tile tile){
+		if(tile == null){
+			return;
+		}
 		List<Tile> structureTiles = structure.GetBuildingTiles (tile.X, tile.Y);
 		ShowHighlightOnTiles ();
 		ShowPreviewStructureOnTiles (tile);
-
-		foreach (Tile t in structureTiles) {
+		Dictionary<Tile,bool> tileToCanBuild = null;
+		if(autorotate){
+			for(int r = 0; r<4;r++){
+				tileToCanBuild = structure.correctSpot (structureTiles);
+				if(tileToCanBuild.Values.ToList ().Contains (false)==false){
+					break;
+				}
+				structure.RotateStructure ();
+			}
+		}
+		foreach (Tile t in tileToCanBuild.Keys) {
 			if(t==null){
 				continue;
 			}	
@@ -189,26 +206,13 @@ public class MouseController : MonoBehaviour {
 				ShowRedPrefabOnTile (t);
 				continue;
 			}
-			if(structure.mustBeBuildOnMountain == false && structure.mustBeBuildOnShore == false){
-				if (structure.correctSpotOnLand (t) == false) {
-					ShowRedPrefabOnTile (t);
-				} else {
-					ShowPrefabOnTile (t);
-				}
-				continue;
-			}
-			if (structure.mustBeBuildOnShore && structure.correctSpotOnShore (structureTiles)){
+			if (tileToCanBuild[t]) {
 				ShowPrefabOnTile (t);
-				continue;
+			} else {
+				ShowRedPrefabOnTile (t);
 			}
-			if(structure.mustBeBuildOnMountain && structure.correctSpotOnMountain (structureTiles)){
-				ShowPrefabOnTile (t);
-				continue;
-			}
-			int r = structure.ChangeRotation (tile.X, tile.Y);
-			structure.rotated = r;
-			ShowRedPrefabOnTile (t);
 		}
+
 	}
 
 	public void SetToPatrolMode(){
@@ -319,7 +323,7 @@ public class MouseController : MonoBehaviour {
 			return;
 		}
         if (Input.GetMouseButtonDown(1)) {
-			if(SelectedUnit.playerNumber!=PlayerController.Instance.currentPlayerNumber){
+			if(SelectedUnit.playerNumber!=PlayerController.currentPlayerNumber){
 				mouseState = MouseState.Idle;
 				return;
 			}
@@ -455,7 +459,7 @@ public class MouseController : MonoBehaviour {
       
     }
 	void Build(List<Tile> t,bool single = false){
-		bmc.BuildOnTile (t,single,PlayerController.Instance.currentPlayerNumber);
+		bmc.BuildOnTile (t,single,PlayerController.currentPlayerNumber);
 	}
 
 	public void ResetBuilding(Structure structure,bool loading = false){

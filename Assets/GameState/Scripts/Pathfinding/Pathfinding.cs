@@ -11,13 +11,13 @@ public enum turn_type { OnPoint, TurnRadius };
 [JsonObject(MemberSerialization.OptIn)]
 public class Pathfinding {
 	#region Serialize
-	[JsonPropertyAttribute] private float movementPercentage; // Goes from 0 to 1 as we move from currTile to destTile
+	[JsonPropertyAttribute] protected float movementPercentage; // Goes from 0 to 1 as we move from currTile to destTile
 	[JsonPropertyAttribute] public float dest_X;
 	[JsonPropertyAttribute] public float dest_Y;
 	[JsonPropertyAttribute] public bool IsAtDest=true;
 	// If we aren't moving, then destTile = currTile
 	[JsonPropertyAttribute] protected Tile _destTile;
-	[JsonPropertyAttribute] private Vector3 pos;
+	[JsonPropertyAttribute] protected Vector3 pos;
 	[JsonPropertyAttribute] public float rotation;
 	[JsonPropertyAttribute] public Queue<Tile> worldPath;
 	[JsonPropertyAttribute] public Queue<Tile> backPath;
@@ -26,13 +26,10 @@ public class Pathfinding {
 	#endregion
 	#region RuntimeOrPrototyp
 	private Path_AStar pathAStar;
-	//for building 
-	protected List<Tile> roadTilesAroundStartStructure;
-	protected List<Tile> roadTilesAroundEndStructure;
 	private path_dest pathDest;
 	public Vector3 LastMove { get; protected set;}
-	private float rotationSpeed=90;
-	private float _speed;
+	protected float rotationSpeed=90;
+	protected float _speed;
 	private float speed {
 		get {
 			return _speed;
@@ -46,8 +43,8 @@ public class Pathfinding {
 			}
 		}
 	}
-	private path_mode pathmode;
-	private turn_type myTurnType=turn_type.OnPoint;
+	protected path_mode pathmode;
+	protected turn_type myTurnType=turn_type.OnPoint;
 	public float turnSpeed;
 	#endregion
 
@@ -68,23 +65,6 @@ public class Pathfinding {
 	public Pathfinding(){
 		
 	}
-    public Pathfinding(List<Tile> startTiles, List<Tile> endTiles, float speed, path_mode pm = path_mode.route) {
-        roadTilesAroundStartStructure = startTiles;
-        roadTilesAroundEndStructure = endTiles;
-        this.speed = speed;
-        pathmode = pm;
-        pathAStar = GetPathStar();
-        if (pathAStar.Length() == 0) {
-            Debug.LogError("pathfinding path has 0 tiles");
-        }
-        else {
-            backPath = new Queue<Tile>(pathAStar.path.Reverse());
-        }
-        currTile = pathAStar.Dequeue();
-        X = currTile.X;
-        Y = currTile.Y;
-        pathDest = path_dest.tile;
-    }
     public Tile startTile;
     public Tile destTile {
         get { 
@@ -126,6 +106,9 @@ public class Pathfinding {
 			}
 			return _currTile; }
         set {
+			if(value==null){
+				return;
+			}
             if (_currTile == null) {
                 X = value.X;
                 Y = value.Y;
@@ -135,15 +118,11 @@ public class Pathfinding {
     }
 
     public void WorldTGraphUpdate(World world) {
-        if (pathmode == path_mode.route || pathmode == path_mode.islandMultipleStartpoints) {
-            roadTilesAroundStartStructure = new List<Tile>();
-            roadTilesAroundStartStructure.Add(currTile);
-        }
         GetPathStar();
     }
 
     private Vector3 rotationDirection;
-    public void Update_DoMovement(float deltaTime) {
+    public virtual void Update_DoMovement(float deltaTime) {
         if (currTile == null || destTile == null) {
             LastMove = Vector3.zero;
 			return;
@@ -196,17 +175,17 @@ public class Pathfinding {
     }
 	private void CalculateWorldPath(){
 		// create a grid
-		PathFind.Grid grid = new PathFind.Grid(World.current.Width-1,World.current.Height-1, World.current.Tilesmap);
+//		PathFind.Grid grid = new PathFind.Grid(World.current.Width-1,World.current.Height-1, World.current.Tilesmap);
 		// create source and target points
-		PathFind.Point _from = new PathFind.Point(currTile.X, currTile.Y);
-		PathFind.Point _to = new PathFind.Point(destTile.X, destTile.Y);
-		// get path
-		// path will either be a list of Points (x, y), or an empty list if no path is found.
-		List<PathFind.Point> points = PathFind.Pathfinding.FindPath (grid, _from, _to);
-		worldPath = new Queue<Tile> ();
-		for (int i = 0; i < points.Count; i++) {
-			worldPath.Enqueue (World.current.GetTileAt (points [i].x, points [i].y));
-		}
+//		PathFind.Point _from = new PathFind.Point(currTile.X, currTile.Y);
+//		PathFind.Point _to = new PathFind.Point(destTile.X, destTile.Y);
+//		// get path
+//		// path will either be a list of Points (x, y), or an empty list if no path is found.
+//		List<PathFind.Point> points = PathFind.Pathfinding.FindPath (World.current.Tilesmap, _from, _to);
+//		worldPath = new Queue<Tile> ();
+//		for (int i = 0; i < points.Count; i++) {
+//			worldPath.Enqueue (World.current.GetTileAt (points [i].x, points [i].y));
+//		}
 	}
     private Vector3 DoAStar(float deltaTime) {
         //no move command so return!
@@ -289,49 +268,49 @@ public class Pathfinding {
                 Debug.Log("dis is not possible for WORLD");
                 return null;
 
-            case path_mode.route:
-                
-				Path_AStar p = null;
-                foreach (Tile start in roadTilesAroundStartStructure) {
-                    foreach (Tile end in roadTilesAroundEndStructure) {
-                        if (((Road)end.Structure).Route == ((Road)start.Structure).Route) {
-                            Path_AStar temp = new Path_AStar(((Road)start.Structure).Route, start, end);
-                            if (p == null || temp.path.Count < p.path.Count) {
-                                p = temp;
-                                destTile = end;
-                                startTile = start;
-                            }
-                        }
-                    }
-                    return p;
-                }
-                break;
+//            case path_mode.route:
+//                
+//				Path_AStar p = null;
+//                foreach (Tile start in roadTilesAroundStartStructure) {
+//                    foreach (Tile end in roadTilesAroundEndStructure) {
+//                        if (((Road)end.Structure).Route == ((Road)start.Structure).Route) {
+//                            Path_AStar temp = new Path_AStar(((Road)start.Structure).Route, start, end);
+//                            if (p == null || temp.path.Count < p.path.Count) {
+//                                p = temp;
+//                                destTile = end;
+//                                startTile = start;
+//                            }
+//                        }
+//                    }
+//                    return p;
+//                }
+//                break;
 
-            case path_mode.islandMultipleStartpoints:
-			
-                Path_AStar pa = null;
-                foreach (Tile start in roadTilesAroundStartStructure) {
-                    if (start.Structure != null && start.Structure.myBuildingTyp != BuildingTyp.Pathfinding) {
-                        continue;
-                    }
-                    foreach (Tile end in roadTilesAroundEndStructure) {
-                        if (end.Structure != null && end.Structure.myBuildingTyp != BuildingTyp.Pathfinding) {
-                            continue;
-                        }
-                        Path_AStar temp = new Path_AStar(start.myIsland, start, end);
-                        if (temp == null) {
-                            continue;
-                        }
-                        if (pa == null || temp.path.Count < pa.path.Count) {
-                            pa = temp;
-                            destTile = end;
-                            startTile = start;
-                        }
-                    }
-
-                    return pa;
-                }
-                break;
+//            case path_mode.islandMultipleStartpoints:
+//			
+//                Path_AStar pa = null;
+//                foreach (Tile start in roadTilesAroundStartStructure) {
+//                    if (start.Structure != null && start.Structure.myBuildingTyp != BuildingTyp.Pathfinding) {
+//                        continue;
+//                    }
+//                    foreach (Tile end in roadTilesAroundEndStructure) {
+//                        if (end.Structure != null && end.Structure.myBuildingTyp != BuildingTyp.Pathfinding) {
+//                            continue;
+//                        }
+//                        Path_AStar temp = new Path_AStar(start.myIsland, start, end);
+//                        if (temp == null) {
+//                            continue;
+//                        }
+//                        if (pa == null || temp.path.Count < pa.path.Count) {
+//                            pa = temp;
+//                            destTile = end;
+//                            startTile = start;
+//                        }
+//                    }
+//
+//                    return pa;
+//                }
+//                break;
 
             case path_mode.islandSingleStartpoint:
                 return new Path_AStar(currTile.myIsland, currTile, destTile); // This will calculate a path from curr to dest.

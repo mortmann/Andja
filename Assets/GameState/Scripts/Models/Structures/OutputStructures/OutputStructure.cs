@@ -50,7 +50,7 @@ public abstract class OutputStructure : Structure {
 	protected OutputPrototypData _outputData;
 	public OutputPrototypData OutputData {
 		get { if(_outputData==null){
-				_outputData = (OutputPrototypData)PrototypController.Instance.GetPrototypDataForID (ID);
+				_outputData = (OutputPrototypData)PrototypController.Instance.GetStructurePrototypDataForID (ID);
 			}
 			return _outputData;
 		}

@@ -131,9 +131,11 @@ public class BuildController : MonoBehaviour {
 		}
 	}
 	protected void RealBuild(List<Tile> tiles,Structure s,int playerNumber,bool loading=false,bool wild=false){
+		int rotate = s.rotated;
 		if (loading == false) {
 			s = s.Clone ();
 		}
+		s.rotated = rotate;
 
 		//if it should be build in wilderniss city
 		if(wild){
@@ -158,18 +160,18 @@ public class BuildController : MonoBehaviour {
 				Debug.Log ("not playerHasEnoughMoney"); 
 				return;
 			}
-			//if it doesnt need ressources return
+			//if it need ressources
 			if (s.buildingItems != null) {
 				foreach (Tile item in tiles) {
 					//we can build in wilderniss terrain but we need our own city
 					//FIXME how do we do it with warehouses?
-					if (item.myCity != null && item.myCity.IsWilderness () == false) {
+					if (s.GetType ()!=typeof(Warehouse) && item.myCity != null && item.myCity.IsWilderness () == false) {
 						//WARNING: checking for this twice!
 						//this is one is not necasserily needed
 						//but it we *need* the city to check for its ressources
 						//this saves a lot of cpu but it can be problematic if we want to be able 
 						//to build something in enemy-terrain
-						if (item.myCity.playerNumber != PlayerController.Instance.currentPlayerNumber) {
+						if (item.myCity.playerNumber != PlayerController.currentPlayerNumber) {
 							Debug.Log ("PlayerController.Instance.number"); 
 							return;
 						}
@@ -182,12 +184,10 @@ public class BuildController : MonoBehaviour {
 						//we dont need longer to check a city tile
 						//playercontroller will handle the reduction of money/and everything else 
 						//related to money - But we need to remove the Ressources
-						item.myCity.removeRessources (s.BuildingItems ());
 						break;
 					}
 				}
 			}
-			//remove the items from the island inventory
 		} 
 	
 		//now we know that we COULD build that structure
@@ -195,7 +195,7 @@ public class BuildController : MonoBehaviour {
 		//check to see if the structure can be placed there
 		if (s.PlaceStructure (tiles) == false) {
 			if(loading){
-				Debug.LogError ("PLACING FAILED WHILE LOADING! " + s.spriteName);
+				Debug.LogError ("PLACING FAILED WHILE LOADING! " + s.buildID);
 			}
 			return;
 		}

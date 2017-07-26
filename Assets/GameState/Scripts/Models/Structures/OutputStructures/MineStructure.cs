@@ -27,7 +27,7 @@ public class MineStructure : OutputStructure {
 	protected MinePrototypData _mineData;
 	public MinePrototypData MineData {
 		get { if(_mineData==null){
-				_mineData = (MinePrototypData)PrototypController.Instance.GetPrototypDataForID (ID);
+				_mineData = (MinePrototypData)PrototypController.Instance.GetStructurePrototypDataForID (ID);
 			}
 			return _mineData;
 		}

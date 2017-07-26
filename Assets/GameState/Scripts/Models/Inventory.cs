@@ -100,6 +100,10 @@ public class Inventory {
 
 	public int getPlaceInItems(Item item){
 		if(numberOfSpaces == -1){
+			if(items.ContainsKey (item.ID)==false){
+				Debug.LogError("CITY DOESNT HAVE THE ITEM ?!? " + item.ToString ()); 
+				return 1;
+			}
 			return item.ID;
 		} else {
 			for (int i = 0; i < numberOfSpaces;i++) {
@@ -304,6 +308,7 @@ public class Inventory {
 	private Item GetItemWithID(int id){
 		if(numberOfSpaces==-1){
 			if (items.ContainsKey (id)) {
+				Debug.Log (items[id].ID + " " + id); 
 				return items [id];
 			}
 			return null;

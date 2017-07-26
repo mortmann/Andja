@@ -20,8 +20,8 @@ public enum TileType { Ocean, Shore, Water, Dirt, Grass, Stone, Desert, Steppe, 
 public enum TileMark { None, Highlight, Dark, Reset }
 
 [JsonObject(MemberSerialization.OptIn)]
-public class Tile {
-
+public class Tile : IComparable<Tile>, IEqualityComparer<Tile> {
+	
 	[JsonPropertyAttribute] protected int x;
 	[JsonPropertyAttribute] protected int y;
 	public int X {
@@ -154,24 +154,29 @@ public class Tile {
 	/// Checks if Structure can be placed on the tile.
 	/// </summary>
 	/// <returns><c>true</c>, if tile is buildable, <c>false</c> otherwise.</returns>
-	/// <param name="t">Tile to check, canBeBuildOnShore if shore tiles are ok</param>
-	public virtual bool checkTile(Tile t, bool canBeBuildOnShore =false, bool canBeBuildOnMountain =false){
-		if(t.Type == TileType.Ocean){
+	/// <param name="t"> if its ok to be build on special tiletypes, forced means if it has to be true for either mountain/shore</param>
+	public virtual bool checkTile(bool mustBeShore =false, bool mustBeMountain =false){
+		if(mustBeShore){
+			return Type == TileType.Shore;
+		}
+		if(mustBeMountain){
+			return Type == TileType.Mountain;
+		}
+
+		if(Type == TileType.Ocean){
 			return false;
 		}
-		if(t.Type == TileType.Mountain && canBeBuildOnMountain ==false){
+		if(Type == TileType.Mountain){
 			return false;
 		}
-		if(t.Type == TileType.Stone){
+		if(Type == TileType.Stone){
 			return false;
 		}
-		if(canBeBuildOnShore == false){
-			if(t.Type == TileType.Shore){
-				return false;
-			}
+		if(Type == TileType.Shore){
+			return false;
 		}
-		if(t.Structure != null ) {
-			if(t.Structure.canBeBuildOver == false){ 
+		if(Structure != null) {
+			if(Structure.canBeBuildOver == false){ 
 				return false;
 			}
 		}
@@ -310,4 +315,21 @@ public class Tile {
 		return a.X != b.X || a.Y != b.Y;
 	}
 
+	#region IComparable implementation
+	public int CompareTo (Tile other) {
+		return X.CompareTo (other.X)+Y.CompareTo (other.Y);
+	}
+	#endregion
+
+	#region IEqualityComparer implementation
+
+	public bool Equals (Tile x, Tile y) {
+		return x.X == y.X && x.Y == y.Y;
+	}
+
+	public int GetHashCode (Tile obj) {
+		return x ^ y;
+	}
+
+	#endregion
 }

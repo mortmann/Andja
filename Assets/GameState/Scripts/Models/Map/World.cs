@@ -46,21 +46,20 @@ public class World : IGEventable{
 	}
 	public Dictionary<Climate,List<Fertility>> allFertilities;
 	public Dictionary<int,Fertility> idToFertilities;
-	public bool[,] _tilesmap;
+
+	protected bool[,] _tilesmap;
 	public bool[,] Tilesmap { get {
 			if(_tilesmap == null){
-				_tilesmap = new bool[World.current.Width,World.current.Height];
-				for (int x = 0; x < World.current.Width; x++) {
-					for (int y = 0; y < World.current.Height; y++) {
+				for (int x = 0; x < Width; x++) {
+					for (int y = 0; y < Height; y++) {
 						_tilesmap [x, y] = (World.current.GetTileAt (x, y).Type == TileType.Ocean);
 					}	
 				}
 			}
 			return _tilesmap;
 		}
-		protected set {
-			_tilesmap = value;
-		}}
+	}
+	
 
 	Action<Unit> cbUnitCreated;
 	Action<Worker> cbWorkerCreated;
@@ -74,6 +73,12 @@ public class World : IGEventable{
 
     public World(int width = 1000, int height = 1000){
 		SetupWorld (width,height);
+		for (int x = 29; x < 41; x++) {
+			for (int y = 39; y < 61; y++) {
+				SetTileAt (x,y,new LandTile (x,y));
+				GetTileAt(x,y).Type = TileType.Shore;
+			}
+		}
 		for (int x = 30; x < 40; x++) {
 			for (int y = 40; y < 60; y++) {
 				SetTileAt (x,y,new LandTile (x,y));
@@ -93,8 +98,8 @@ public class World : IGEventable{
 
 		CreateIsland (31, 41);
 		CreateIsland (61, 41);
+	}
 
-    }
 	public World(){
 	}
 	public void SetupWorld(int Width, int Height){
@@ -140,7 +145,10 @@ public class World : IGEventable{
 		float third = (float)Height/3f;
 		Climate myClimate =(Climate)Mathf.RoundToInt ( t.Y / third);
 		Fertility[] fers = new Fertility[3];
-		List<Fertility> climFer = new List<Fertility>(PrototypController.Instance.allFertilities [myClimate]);
+		if(PrototypController.Instance.GetFertilitiesForClimate(myClimate)==null){
+			return;
+		}
+		List<Fertility> climFer = new List<Fertility>(PrototypController.Instance.GetFertilitiesForClimate(myClimate));
 
 		for (int i = 0; i < fers.Length; i++) {
 			Fertility f = climFer[UnityEngine.Random.Range (0,climFer.Count)];
@@ -216,7 +224,7 @@ public class World : IGEventable{
 			if (islandList [i].myTiles.Find (x => x.X > lowerX && x.X < upperX && x.Y > lowerY && x.Y < upperY) != null) {
 				islandList [i].allReadyHighlighted = true;
 				for (int t = 0; t < islandList [i].myTiles.Count; t++) {
-					if (islandList [i].myTiles [t].myCity.playerNumber != pc.currentPlayerNumber) {
+					if (islandList [i].myTiles [t].myCity.playerNumber != PlayerController.currentPlayerNumber) {
 						islandList [i].myTiles [t].TileState = TileMark.Dark;
 					} else {
 						islandList [i].myTiles [t].TileState = TileMark.None;

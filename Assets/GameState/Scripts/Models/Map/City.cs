@@ -10,7 +10,7 @@ public class City : IGEventable {
 	[JsonPropertyAttribute] public int playerNumber = 0;
 	[JsonPropertyAttribute] public Inventory myInv;
 	[JsonPropertyAttribute] public List<Structure> myStructures;
-	[JsonPropertyAttribute] public Dictionary<Need,float> allNeeds; // i think this is what is missing
+	[JsonPropertyAttribute] public Dictionary<int,Need> idToNeed; // i think this is what is missing
 	[JsonPropertyAttribute] public float useTickTimer;
 	/// <summary>
 	/// ITEM which is to trade
@@ -20,6 +20,7 @@ public class City : IGEventable {
 	[JsonPropertyAttribute] public Dictionary<int,TradeItem> itemIDtoTradeItem;
 	[JsonPropertyAttribute] private string _name=""; 
 	[JsonPropertyAttribute] public int[] citizienCount;
+	[JsonPropertyAttribute] public Island island { get; set; }
 
 	#endregion
 	#region RuntimeOrOther
@@ -32,13 +33,11 @@ public class City : IGEventable {
 			}
 			return _name;
 	}}
-	public Island island { get; protected set; }
 	//TODO: set this to the player that creates this
 	public List<HomeBuilding> myHomes;
 	public HashSet<Tile> myTiles;
 	public List<Route> myRoutes;
 	public Unit tradeUnit;
-	public Dictionary<int,Need> idToNeed;
 	public int cityBalance;
 	public float useTick;
 	public Warehouse myWarehouse;
@@ -58,19 +57,17 @@ public class City : IGEventable {
 		itemIDtoTradeItem = new Dictionary<int, TradeItem> ();
 		myStructures = new List<Structure>();
 		myInv = new Inventory (-1, name);
-		allNeeds = new Dictionary<Need,float> ();
-		for (int i = 0; i < World.allNeeds.Count; i++) {
-			allNeeds.Add (World.allNeeds [i], 0);
-		}
+		idToNeed = new Dictionary<int, Need> ();
+
 		Setup ();
 
 		for (int i = 0; i < citizienCount.Length; i++) {
 			citizienCount [i] = 0;
 		}
 		//temporary
-		Item temp = PrototypController.Instance.allItems [49].Clone ();
-		temp.count = 50;
-		myInv.addItem (temp);
+//		Item temp = PrototypController.Instance.allItems [49].Clone ();
+//		temp.count = 50;
+//		myInv.addItem (temp);
 		_name = "<City>" + UnityEngine.Random.Range (0, 1000);
 		//		useTickTimer = useTick;
     }
@@ -81,15 +78,19 @@ public class City : IGEventable {
 	}
 
 	private void Setup(){
-		
 		myTiles = new HashSet<Tile> ();
 		myHomes = new List<HomeBuilding> ();
 		myRoutes = new List<Route> ();
-		useTick = 30f;
-		idToNeed = new Dictionary<int, Need> ();
-		for (int i = 0; i < World.allNeeds.Count; i++) {
-			idToNeed.Add (World.allNeeds [i].ID, World.allNeeds [i]);
+		if(idToNeed==null){
+			return;
 		}
+		for (int i = 0; i < World.allNeeds.Count; i++) {
+			if(idToNeed.ContainsKey (World.allNeeds [i].ID)){
+				continue;
+			}
+			idToNeed.Add (World.allNeeds [i].ID, World.allNeeds [i].Clone ());
+		}
+		useTick = 30f;
 	}
 	public IEnumerable<Structure> Load(){
 		Setup ();
@@ -124,8 +125,8 @@ public class City : IGEventable {
 		useTickTimer -= deltaTime;
 		if(useTickTimer<=0){
 			useTickTimer = useTick;
-			foreach(Need need in allNeeds.Keys){
-				allNeeds[need]=need.TryToConsumThisIn (this,citizienCount);
+			foreach(Need need in idToNeed.Values){
+				need.TryToConsumThisIn (this,citizienCount);
 			}
 		}
     }
@@ -159,13 +160,15 @@ public class City : IGEventable {
 			myHomes.Add ((HomeBuilding)str);
 		} 
 		if(str is Warehouse){
-			if(myWarehouse!=null){
-				Debug.LogError ("There should be only one Warehouse per City!");
+			if(myWarehouse!=null && myWarehouse.buildID!=str.buildID){
+				Debug.LogError ("There should be only one Warehouse per City! ");
 				return;
 			}
 			myWarehouse = (Warehouse)str;
 		}
 		cityBalance += str.maintenancecost;
+		removeRessources (str.BuildingItems ());
+
 		myStructures.Add (str);
 
 		if(cbStructureAdded!=null){
@@ -185,7 +188,10 @@ public class City : IGEventable {
 	public void addTiles(HashSet<Tile> t){
 		// does not really needs it because tiles witout island reject cities
 		//but it is a secondary security that this does not happen
-		t.RemoveWhere (x => x.Type == TileType.Ocean);
+		if(t==null){
+			return;
+		}
+		t.RemoveWhere (x =>x==null || x.Type == TileType.Ocean);
 		List<Tile> tiles = new List<Tile> (t);
 		for (int i = 0; i < tiles.Count; i++) {
 			tiles [i].myCity = this;
@@ -217,6 +223,9 @@ public class City : IGEventable {
 		myTiles.Add (t);
 	}
 	public void removeRessources(Item[] remove){
+		if(remove==null){
+			return;
+		}
 		foreach (Item item in remove) {
 			myInv.removeItemAmount (item);
 		}
@@ -309,10 +318,9 @@ public class City : IGEventable {
 	}
 	public float getPercentage(Need need){
 		if(idToNeed.ContainsKey (need.ID)==false){
-			Debug.LogError ("NEED NOT FOUND");
 			return 0;
 		}
-		return allNeeds[idToNeed[need.ID]];
+		return idToNeed[need.ID].percantageAvailability;
 	}
 	public void RemoveTradeItem(Item item){
 		itemIDtoTradeItem.Remove (item.ID);
@@ -328,6 +336,9 @@ public class City : IGEventable {
 	}
 	
 	public void AddRoute(Route route){
+		if(myRoutes==null){
+			myRoutes = new List<Route> (); // i dont get why its null while loading
+		}
 		this.myRoutes.Add (route);
 	}
 
@@ -446,6 +457,9 @@ public class City : IGEventable {
 
 	public int GetPlayerNumber(){
 		return playerNumber;
+	}
+	public bool IsCurrPlayerCity(){
+		return playerNumber == PlayerController.currentPlayerNumber;
 	}
 	public int GetTargetType(){
 		return TargetType;

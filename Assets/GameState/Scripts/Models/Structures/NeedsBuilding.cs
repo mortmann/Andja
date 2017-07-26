@@ -12,6 +12,9 @@ public class NeedsBuilding : Structure {
 		this.ID = pid;
 		this._prototypData = spd;
 	}
+	public NeedsBuilding (int pid){
+		this.ID = pid;
+	}
 	public NeedsBuilding (NeedsBuilding b){
 		BaseCopyData (b);
 	}

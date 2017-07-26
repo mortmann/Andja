@@ -189,7 +189,7 @@ public class SoundController : MonoBehaviour {
 		if(loading){
 			return;
 		}
-		if(str.playerNumber!=PlayerController.Instance.currentPlayerNumber){
+		if(str.playerNumber!=PlayerController.currentPlayerNumber){
 			return;
 		}
 		string name =  "BuildSound_" + Time.frameCount;
@@ -207,7 +207,7 @@ public class SoundController : MonoBehaviour {
 		playedAudios.Add (ac);
 	}
 	public void OnCityCreate(City c){
-		if(c.playerNumber!=PlayerController.Instance.currentPlayerNumber){
+		if(c.playerNumber!=PlayerController.currentPlayerNumber){
 			return;
 		}
 		//diffrent sounds for diffrent locations of City? North,middle,South?

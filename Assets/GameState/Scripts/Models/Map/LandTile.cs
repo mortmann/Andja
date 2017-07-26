@@ -98,26 +98,32 @@ public class LandTile : Tile {
 	}
 
 	protected TileMark _oldTileState;
+	private TileMark OldTileState {
+		get { return _oldTileState; }
+		set {
+			if(value==TileMark.Highlight){
+				
+			} else {
+				_oldTileState = value;
+			}
+
+		}
+	}
 	protected TileMark _tileState;
 	public override TileMark TileState {
-		get { return _tileState;}
+		get { 
+			return _tileState;
+		}
 		set { 
 			if (value == TileMark.Reset) {
-				if (Type == TileType.Ocean) {
-					this._tileState = TileMark.None;
-					World.current.OnTileChanged (this);
-					return;
-				}
-				this._tileState = _oldTileState;
+				_tileState = _oldTileState;
 				World.current.OnTileChanged (this);
 				return;
 			}
 			if(value == _tileState){
 				return;
 			} else {
-				if (_tileState != TileMark.Highlight) {
-					_oldTileState = _tileState;
-				}
+				_oldTileState = _tileState;
 				this._tileState = value;
 				World.current.OnTileChanged (this);
 			}

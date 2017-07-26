@@ -74,7 +74,7 @@ public class MapImage : MonoBehaviour {
 		//do smth when it gets shown
 	}
 	public void OnCityCreated(City c){
-		if(c==null||c.playerNumber!=PlayerController.Instance.currentPlayerNumber){
+		if(c==null||c.playerNumber!=PlayerController.currentPlayerNumber){
 			return;
 		}
 //		PlayerController pc = PlayerController.Instance;
@@ -116,7 +116,7 @@ public class MapImage : MonoBehaviour {
 		//TODO UPDATE ALL TRADE_ROUTES
 	}
 	public void OnUnitCreated(Unit u){
-		if(u==null||u.playerNumber!=PlayerController.Instance.currentPlayerNumber){
+		if(u==null||u.playerNumber!=PlayerController.currentPlayerNumber){
 			return;
 		}
 		RectTransform rt = mapParts.GetComponent<RectTransform> ();

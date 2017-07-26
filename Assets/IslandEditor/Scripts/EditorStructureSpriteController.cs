@@ -54,14 +54,7 @@ public class EditorStructureSpriteController : MonoBehaviour {
 	void Update () {
 	
 	}
-	private void ReadGrowables(XmlDocument xmlDoc){
-		foreach(XmlElement node in xmlDoc.SelectNodes("Buildings/Growable")){
-			int ID = int.Parse(node.GetAttribute("ID"));
-			string name = node.SelectSingleNode("EN"+ "_Name").InnerText;
-//			Growable growable = new Growable (ID,name,null,null);
-//			structurePrototypes [ID] = growable;
-		}
-	}
+
 	void LoadSprites() {
 		structureSprites = new Dictionary<string, Sprite>();
 		Sprite[] sprites = Resources.LoadAll<Sprite>("Structures/");

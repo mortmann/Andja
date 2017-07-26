@@ -9,7 +9,7 @@ using System.IO;
 /// but it updates the money for all
 /// </summary>
 public class PlayerController : MonoBehaviour {
-	public int currentPlayerNumber;
+	public static int currentPlayerNumber;
 	int piratePlayerNumber = int.MaxValue; // so it isnt the same like the number of wilderness
 	public Player currPlayer{get {return players [currentPlayerNumber];}}
 	HashSet<War> playerWars;

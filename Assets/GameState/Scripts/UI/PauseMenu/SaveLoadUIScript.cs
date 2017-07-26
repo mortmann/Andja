@@ -51,8 +51,8 @@ public class SaveLoadUIScript : MonoBehaviour {
 			string name = Path.GetFileNameWithoutExtension( saveGames[i].FullName);
 			entry.callback.AddListener ((data)=>{OnSaveGameSelect (name,go);});
 			trigger.triggers.Add( entry );
-
-			go.GetComponentInChildren<Text>().text = Path.GetFileNameWithoutExtension( saveGames[i].FullName) +" ["+ saveGames[i].CreationTime+"]";
+			string date = saveGames [i].CreationTime.ToString ("dd-MM-yyyy");
+			go.GetComponentInChildren<Text>().text = Path.GetFileNameWithoutExtension( saveGames[i].FullName) +" ["+ date +"]";
 
 		}
 		if(saveGameInput!=null){

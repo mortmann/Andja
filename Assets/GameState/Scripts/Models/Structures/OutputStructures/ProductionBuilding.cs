@@ -39,7 +39,7 @@ public class ProductionBuilding : OutputStructure {
 	protected ProductionPrototypeData _productionData;
 	public ProductionPrototypeData  ProductionData {
 		get { if(_productionData==null){
-				_productionData = (ProductionPrototypeData)PrototypController.Instance.GetPrototypDataForID (ID);
+				_productionData = (ProductionPrototypeData)PrototypController.Instance.GetStructurePrototypDataForID (ID);
 			}
 			return _productionData;
 		}

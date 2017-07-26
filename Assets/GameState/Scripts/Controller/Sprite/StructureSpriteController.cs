@@ -66,7 +66,7 @@ public class StructureSpriteController : MonoBehaviour {
 			gos.transform.localPosition = Vector3.zero;
 			gos.GetComponent<MeshRenderer>().sortingLayerName = "StructuresUI";
 			if (((Road)structure).Route != null) {
-				text.text = ((Road)structure).Route.toString ();
+//				text.text = ((Road)structure).Route.toString ();
 			}
 			Font ArialFont = (Font)Resources.GetBuiltinResource (typeof(Font), "Arial.ttf");
 			text.font = ArialFont;
@@ -120,7 +120,8 @@ public class StructureSpriteController : MonoBehaviour {
 		}
 		if(structure is Growable){
 			SpriteRenderer sr = structureGameObjectMap[structure].GetComponent<SpriteRenderer>();
-			sr.sprite = structureSprites[structure.SmallName + "_" + ((Growable)structure).currentStage];
+			if(structureSprites.ContainsKey (structure.SmallName + "_" + ((Growable)structure).currentStage))
+				sr.sprite = structureSprites[structure.SmallName + "_" + ((Growable)structure).currentStage];
 		} else
 		if(structure is Warehouse){
 			if (structure.extraUIOn == true) {
@@ -169,6 +170,9 @@ public class StructureSpriteController : MonoBehaviour {
 	}
 	public Sprite getStructureSprite(Structure str){
 		if(structureSprites.ContainsKey (str.spriteName)==false){
+			if(structureSprites.ContainsKey (str.spriteName+"_" + str.connectOrientation)){
+				return structureSprites [str.spriteName + "_" + str.connectOrientation];
+			}
 			//FIXME this should be active in future 
 			//fornow there arent many sprites anyway
 //			Debug.LogError ("No Structure Sprite for that Name!");

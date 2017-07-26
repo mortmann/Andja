@@ -10,9 +10,7 @@ public enum BuildingTyp {Pathfinding, Blocking,Free};
 public enum Direction {None, N, E, S, W};
 
 public class StructurePrototypeData : LanguageVariables {
-	public bool isWalkable;
 	public bool hasHitbox;// { get; protected set; }
-	public bool isActive;// {  get; protected set; }
 	public float MaxHealth;
 
 	public int buildingRange = 0;
@@ -32,7 +30,17 @@ public class StructurePrototypeData : LanguageVariables {
 
 	public Direction mustFrontBuildDir= Direction.None; 
 
-	public List<Tile> myPrototypeTiles;
+	//doenst get loaded in anyway
+	private List<Tile> _myPrototypeTiles;
+		
+	public List<Tile> myPrototypeTiles {
+		get {
+			if (_myPrototypeTiles == null) {
+				CalculatePrototypTiles ();
+			}
+			return _myPrototypeTiles;
+		}
+	}
 
 	public bool canStartBurning;
 	public bool mustBeBuildOnShore = false;
@@ -46,6 +54,63 @@ public class StructurePrototypeData : LanguageVariables {
 	public Item[] buildingItems;
 
 	public string spriteBaseName;
+
+
+	private void CalculatePrototypTiles(){
+		_myPrototypeTiles = new List<Tile> ();
+		if(buildingRange == 0){
+			return;
+		}
+		float x;
+		float y;
+		//get the tile at bottom left to create a "prototype circle"
+		Tile firstTile = World.current.GetTileAt (0 + buildingRange+tileWidth/2,0 + buildingRange+tileHeight/2);
+		Vector2 center = new Vector2 (firstTile.X, firstTile.Y);
+		if (tileWidth > 1) {
+			center.x += 0.5f + ((float)tileWidth) / 2f - 1;
+		}
+		if (tileHeight > 1) {
+			center.y += 0.5f + ((float)tileHeight) / 2f - 1;
+		}
+		World w = WorldController.Instance.world;
+		List<Tile> temp = new List<Tile> ();
+		float radius = this.buildingRange + 1.5f;
+		for (float a = 0; a < 360; a += 0.5f) {
+			x = center.x + radius * Mathf.Cos (a);
+			y = center.y + radius * Mathf.Sin (a);
+			//			GameObject go = new GameObject ();
+			//			go.transform.position = new Vector3 (x, y);
+			//			go.AddComponent<SpriteRenderer> ().sprite = Resources.Load<Sprite> ("Debug");
+			x = Mathf.RoundToInt (x);
+			y = Mathf.RoundToInt (y);
+			for (int i = 0; i < buildingRange; i++) {
+				Tile circleTile = w.GetTileAt (x, y);
+				if (temp.Contains (circleTile) == false) {
+					temp.Add (circleTile);
+				}
+			}
+		}
+		//like flood fill the inner circle
+		Queue<Tile> tilesToCheck = new Queue<Tile> ();
+		tilesToCheck.Enqueue (firstTile.South ());
+		while (tilesToCheck.Count > 0) {
+			Tile t = tilesToCheck.Dequeue ();
+			if (temp.Contains (t) == false && _myPrototypeTiles.Contains (t) == false) {
+				_myPrototypeTiles.Add (t);
+				Tile[] ns = t.GetNeighbours (false);
+				foreach (Tile t2 in ns) {
+					tilesToCheck.Enqueue (t2);
+				}
+			}
+		}
+		for (int width = 0; width < tileWidth; width++) {
+			myPrototypeTiles.Remove (World.current.GetTileAt (firstTile.X + width, firstTile.Y));
+			for (int height = 1; height < tileHeight; height++) {
+				myPrototypeTiles.Remove (World.current.GetTileAt (firstTile.X + width, firstTile.Y+height));
+			}
+		}
+	}
+
 }
 
 [JsonObject(MemberSerialization.OptIn)]
@@ -75,9 +140,9 @@ public abstract class Structure : IGEventable {
 			myBuildingTiles.Add (value);
 		}
 	}
-	[JsonPropertyAttribute] public int rotated = 0; 
+	[JsonPropertyAttribute] public int  rotated = 0; 
 	[JsonPropertyAttribute] public bool buildInWilderniss = false;
-
+	[JsonPropertyAttribute] public bool isActive;
 	#endregion
 	#region RuntimeOrOther
 	public List<Tile> myBuildingTiles;
@@ -88,15 +153,14 @@ public abstract class Structure : IGEventable {
 	protected StructurePrototypeData _prototypData;
 	public StructurePrototypeData data {
 		get { if(_prototypData==null){
-				_prototypData = PrototypController.Instance.GetPrototypDataForID (ID);
+				_prototypData = PrototypController.Instance.GetStructurePrototypDataForID (ID);
 			}
 			return _prototypData;
 		}
 	}
 
-	public bool isWalkable { get {return data.isWalkable;} }
+	public bool isWalkable { get {return this.myBuildingTyp != BuildingTyp.Blocking;} }
 	public bool hasHitbox { get {return data.hasHitbox;} }
-	public bool isActive { get {return data.isActive;} }
 	public float MaxHealth { get {return data.MaxHealth;} }
 
 	public int buildingRange { get {return data.buildingRange;} }// = 0;
@@ -149,7 +213,7 @@ public abstract class Structure : IGEventable {
 	public City City {
 		get { return _city;}
 		set {
-			if(_city!=null){
+			if(_city!=value){
 				_city.removeStructure (this);
 			}
 			_city = value;
@@ -297,28 +361,15 @@ public abstract class Structure : IGEventable {
 
 		//test if the place is buildable
 		// if it has to be on land
-		if (mustBeBuildOnShore == false && mustBeBuildOnMountain == false) {
-			if (PlaceOnLand (tiles) == false) {
-				return false;
-			}
-		}
-		// if it has to be on mountain
-		if (mustBeBuildOnMountain == true && mustBeBuildOnShore == false) {
-			if (PlaceOnMountain (tiles) == false) {
-				return false;
-			}
-		} 
-		//if it has to be on shore 
-		if (mustBeBuildOnShore == true && mustBeBuildOnMountain == false) {
-			if (PlaceOnShore (tiles) == false) {
-				return false;
-			}
+		if(canBuildOnSpot (tiles)==false){
+//			Debug.Log ("canBuildOnSpot failed"); 
+			return false;
 		}
 		//check if it's in a city
 		if(IsTilesCityViable(tiles)==false && buildInWilderniss==false){
+//			Debug.Log ("IsTilesCityViable failed"); 
 			return false;
 		}
-
 
 		//special check for some structures 
 		if (SpecialCheckForBuild (tiles) == false) {
@@ -326,6 +377,7 @@ public abstract class Structure : IGEventable {
 			return false;
 		}
 
+		myBuildingTiles.AddRange (tiles);
 		//if we are here we can build this and
 		//set the tiles to the this structure -> claim the tiles!
 		bool hasCity = false;
@@ -395,32 +447,6 @@ public abstract class Structure : IGEventable {
 		} 
 		return true;
 	}
-	protected bool PlaceOnLand(List<Tile> tiles){
-		for (int i = 0; i < tiles.Count; i++) {
-			if(tiles[i].Structure!=null && tiles[i].Structure.canBeBuildOver == false){
-				return false;
-			}
-		}
-		if (tileWidth == 1 && tileHeight == 1) {
-			if(tiles[0].Structure != null && tiles [0].Structure.canBeBuildOver){
-				if(tiles [0].Structure.spriteName == this.spriteName){
-					return false;
-				}
-			}
-			if (correctSpotOnLand (tiles) == false) {
-				return false;
-			}
-			myBuildingTiles.Add (tiles [0]);
-		} else {
-			if(correctSpotOnLand(tiles)){
-				myBuildingTiles.AddRange (tiles);
-			} else {
-				return false;
-			}
-		}
-		return true;
-	}
-
 
 	public virtual bool SpecialCheckForBuild(List<Tile> tiles){
 		return true;
@@ -446,6 +472,7 @@ public abstract class Structure : IGEventable {
 				}
 			}
 		}
+
 		return tiles;
 	}
 	/// <summary>
@@ -454,9 +481,6 @@ public abstract class Structure : IGEventable {
 	/// <returns>The in range tiles.</returns>
 	/// <param name="firstTile">The most left one, first row.</param>
 	public HashSet<Tile> GetInRangeTiles (Tile firstTile) {
-		if (myPrototypeTiles == null) {
-			CalculatePrototypTiles ();
-		}
 		if (firstTile==null) {
 			return null;
 		}
@@ -524,328 +548,95 @@ public abstract class Structure : IGEventable {
 		if(cbStructureDestroy!=null)
 			cbStructureDestroy(this);
 	}
-	private void CalculatePrototypTiles(){
-		if(buildingRange == 0){
-			return;
-		}
-		float x;
-		float y;
-		//get the tile at bottom left to create a "prototype circle"
-		Tile firstTile = World.current.GetTileAt (0 + buildingRange+tileWidth/2,0 + buildingRange+tileHeight/2);
-		Vector2 center = new Vector2 (firstTile.X, firstTile.Y);
-		if (tileWidth > 1) {
-			center.x += 0.5f + ((float)tileWidth) / 2f - 1;
-		}
-		if (tileHeight > 1) {
-			center.y += 0.5f + ((float)tileHeight) / 2f - 1;
-		}
-		World w = WorldController.Instance.world;
-		List<Tile> temp = new List<Tile> ();
-		float radius = this.buildingRange + 1.5f;
-		for (float a = 0; a < 360; a += 0.5f) {
-			x = center.x + radius * Mathf.Cos (a);
-			y = center.y + radius * Mathf.Sin (a);
-			//			GameObject go = new GameObject ();
-			//			go.transform.position = new Vector3 (x, y);
-			//			go.AddComponent<SpriteRenderer> ().sprite = Resources.Load<Sprite> ("Debug");
-			x = Mathf.RoundToInt (x);
-			y = Mathf.RoundToInt (y);
-			for (int i = 0; i < buildingRange; i++) {
-				Tile circleTile = w.GetTileAt (x, y);
-				if (temp.Contains (circleTile) == false) {
-					temp.Add (circleTile);
-				}
-			}
-		}
-		//like flood fill the inner circle
-		Queue<Tile> tilesToCheck = new Queue<Tile> ();
-		tilesToCheck.Enqueue (firstTile.South ());
-		while (tilesToCheck.Count > 0) {
-			Tile t = tilesToCheck.Dequeue ();
-			if (temp.Contains (t) == false && myPrototypeTiles.Contains (t) == false) {
-				myPrototypeTiles.Add (t);
-				Tile[] ns = t.GetNeighbours (false);
-				foreach (Tile t2 in ns) {
-					tilesToCheck.Enqueue (t2);
-				}
-			}
-		}
-		//remove the tile where the building is standing
-		foreach (Tile item in GetBuildingTiles (firstTile.X,firstTile.Y)) {
-			myPrototypeTiles.Remove (item);
-		}
-	}
 	#endregion
 	#region correctspot
-	public bool correctSpotOnLand(List<Tile> tiles){
-		foreach(Tile t in tiles){
-			if(correctSpotOnLand (t) == false){
-
-				return false;
-			}
-		}
-		return true;
-	}
-	public bool correctSpotOnLand(Tile t){
-		if (Tile.IsBuildType (t.Type) == false)
-			return false;
-		if (t.Structure !=null && t.Structure.canBeBuildOver == false)
-			return false;
-		if(t.myCity == null){//shouldnt never ever happend 
-			Debug.LogError ("this tile doesnt have any city, not even wilderness");
-			return false;
-		}
-		return true;
-	}
-
-	protected bool PlaceOnMountain(List<Tile> tiles){
-		if (tileWidth == 1 && tileHeight == 1) {
-			if (tiles [0].Structure != null && tiles [0].Structure.canBeBuildOver) {
-				if (tiles [0].Structure.spriteName == this.spriteName) {
-					return false;
-				}
-			}
-			if (correctSpotOnMountain  (tiles) == false) {
-				return false;
-			}
-			myBuildingTiles.Add (tiles [0]);
-		} else {
-			if (correctSpotOnMountain (tiles)) {
-				myBuildingTiles.AddRange (tiles);
-			} else {
-				return false;
-			}
-		}
-		return true;
-	}
-	protected bool PlaceOnShore(List<Tile> tiles){
-		if (tileWidth == 1 && tileHeight == 1) {
-			if(tiles [0].Structure.canBeBuildOver){
-				if(tiles [0].Structure.spriteName == this.spriteName){
-					return false;
-				}
-			}
-			if (correctSpotOnShore (tiles) == false) {
-				return false;
-			}
-			myBuildingTiles.Add (tiles[0]);
-		} 
-		else {
-			if(correctSpotOnShore(tiles)){
-				myBuildingTiles.AddRange (tiles);
-			} else {
-				return false;
-			}
-		}
-		return true;
-	}
-	public bool correctSpotOnMountain(List<Tile> tiles){
-		return correctSpotForOn (tiles,TileType.Mountain);
-	}
-	public bool correctSpotOnShore(List<Tile> tiles){
-		return correctSpotForOn (tiles,TileType.Ocean);
-	}
 	public virtual Item[] BuildingItems(){
 		return buildingItems;
 	}
-	public bool correctSpotForOn(List<Tile> tiles, TileType tt){
-		switch (rotated){
-		case 0:
-			return CheckFor0Rotation (tiles,tt);
-		case 90:
-			return CheckFor90Rotation (tiles,tt);
-		case 180:
-			return CheckFor180Rotation (tiles,tt);
-		case 270:
-			return CheckFor270Rotation (tiles,tt);
-		}
-		Debug.LogError ("correctSpotForOn -- wrong rotation !"); 
-		return false;
+	public bool canBuildOnSpot(List<Tile> tiles){
+		List<bool> bools = new List<bool> (correctSpot (tiles).Values);
+		return bools.Contains (false)==false;
 	}
-	public bool CheckFor0Rotation(List<Tile> tiles, TileType tt){
-		switch (mustFrontBuildDir){
-		case Direction.None:
-			return CheckNoneDirection (tiles, tt);
+
+	public Dictionary<Tile,bool> correctSpot(List<Tile> tiles){
+		Dictionary<Tile,bool> tileToCanBuild = new Dictionary<Tile, bool> ();
+		//to make it faster
+		if(mustFrontBuildDir==Direction.None&&mustBeBuildOnShore==false&&mustBeBuildOnMountain==false){
+			foreach (Tile item in tiles) {
+				tileToCanBuild.Add (item,item.checkTile ());
+			}
+			return tileToCanBuild;
+		}
+
+		//TO simplify this we are gonna sort the array so it is in order
+		//from the coordinationsystem that means 0,0-width,height
+		Tile[,] sortedTiles = new Tile[tileWidth,tileHeight];
+		List<Tile> ts = new List<Tile>(tiles);
+		ts.RemoveAll (x=>x==null);
+		ts.Sort ((x, y) => x.X.CompareTo (y.X)+x.Y.CompareTo (y.Y));
+		foreach(Tile t in ts){
+			int x = t.X - ts [0].X;
+			int y = t.Y - ts [0].Y;
+			sortedTiles [x, y] = t; // so we have the tile at the correct spot
+		}
+		Direction row = RowToTest ();
+		switch (row) {
 		case Direction.N:
-			return CheckForTopRow (tiles, tt);
+			return CheckTilesWithRowFix (tileToCanBuild,sortedTiles, tileWidth,tileHeight,false);
 		case Direction.E:
-			return CheckForRightRow (tiles, tt);
+			return CheckTilesWithRowFix (tileToCanBuild,sortedTiles, tileWidth,tileHeight,true);
 		case Direction.S:
-			return CheckForBottomRow (tiles, tt);
+			return CheckTilesWithRowFix (tileToCanBuild,sortedTiles, tileWidth,0,false);
 		case Direction.W:
-			return CheckForLeftRow (tiles, tt);
+			return CheckTilesWithRowFix (tileToCanBuild,sortedTiles, 0,tileHeight,true);
+		default:
+			return null;
 		}
-		Debug.LogError ("CheckForNoneRotation -- Should not be here !"); 
-		return false;
 	}
-	public bool CheckFor90Rotation (List<Tile> tiles, TileType tt){
-		switch (mustFrontBuildDir){
-		case Direction.None:
-			return CheckNoneDirection (tiles, tt);
-		case Direction.N:
-			return CheckForLeftRow (tiles, tt);
-		case Direction.E:
-			return CheckForTopRow (tiles, tt);
-		case Direction.S:
-			return CheckForRightRow (tiles, tt);
-		case Direction.W:
-			return CheckForBottomRow (tiles, tt);
-		}
-		Debug.LogError ("CheckForNoneRotation -- Should not be here !"); 
-		return false;
-	}
-	public bool CheckFor180Rotation(List<Tile> tiles, TileType tt){
-		switch (mustFrontBuildDir){
-		case Direction.None:
-			return CheckNoneDirection (tiles, tt);
-		case Direction.N:
-			return CheckForBottomRow (tiles, tt);
-		case Direction.E:
-			return CheckForLeftRow (tiles, tt);
-		case Direction.S:
-			return CheckForTopRow (tiles, tt);
-		case Direction.W:
-			return CheckForRightRow (tiles, tt);
-		}
-		Debug.LogError ("CheckForNoneRotation -- Should not be here !"); 
-		return false;
-	}
-	public bool CheckFor270Rotation(List<Tile> tiles, TileType tt){
-		switch (mustFrontBuildDir){
-		case Direction.None:
-			return CheckNoneDirection (tiles, tt);
-		case Direction.N:
-			return CheckForRightRow (tiles, tt);
-		case Direction.E:
-			return CheckForBottomRow (tiles, tt);
-		case Direction.S:
-			return CheckForLeftRow (tiles, tt);
-		case Direction.W:
-			return CheckForTopRow (tiles, tt);
-		}
-		Debug.LogError ("CheckForNoneRotation -- Should not be here !"); 
-		return false;
-	}
-	public bool CheckNoneDirection(List<Tile> tiles, TileType tt){
-		Tile[] otherTiles = new Tile[Mathf.Max (tileWidth,tileHeight)];
-		int other = 0;
-		int land  = 0;
-		foreach (Tile t in tiles) {
-			if (t == null) {
-				return false;
-			}
-			if (t.Type == tt) {
-				other++;
-				if ((tileWidth) < other && (tileHeight) < other) {
-					return false;
+	private Dictionary<Tile,bool> CheckTilesWithRowFix(Dictionary<Tile,bool> tileToCanBuild,Tile[,] tiles, int x,int y, bool fixX){
+		if (fixX) {
+			x = Mathf.Max (x-1, 0);
+			for(int i=0;i<y;i++){
+				if(tiles[x,i]==null){
+					continue;
 				}
-				otherTiles [other - 1] = t;
+				tileToCanBuild.Add (tiles [x, i], tiles [x, i].checkTile (mustBeBuildOnShore, mustBeBuildOnMountain));
+				tiles [x, i] = null;
 			}
-			if (Tile.IsBuildType (t.Type)) {
-				land++;
-				if ((tileWidth) * 2 < land && (tileHeight) * 2 < land) {
-					return false;
+		} else {
+			y = Mathf.Max (y-1, 0);
+			for(int i=0;i<x;i++){
+				if(tiles[i,y]==null){
+					continue;
 				}
-			}
-			if (Tile.IsUnbuildableType (t.Type,tt)) {
-				return false;
+				tileToCanBuild.Add (tiles [i, y], tiles [i, y].checkTile (mustBeBuildOnShore, mustBeBuildOnMountain));
+				tiles [i, y] = null;
 			}
 		}
-		if (otherTiles [0] == null) {
-			return false;
-		}
-		Tile temp = otherTiles [0];
-		for (int i = 1; i < otherTiles.Length; i++) {
-			if(otherTiles [i] == null){
-				return false;
+		foreach(Tile t in tiles){
+			if(t==null){
+				continue;
 			}
-			if (temp.IsNeighbour (otherTiles [i]) == false) {
-				return false;
-			} 
-			temp = otherTiles [i];
+			tileToCanBuild.Add (t,t.checkTile ());
 		}
-		return true;
+		return tileToCanBuild;
 	}
-	private bool CheckForTopRow(List<Tile> tiles, TileType tt){
-		int maxY = -1;
-		for (int i = 0; i < tiles.Count; i++) {
-			if(tiles[i].Y > maxY){
-				maxY = tiles[i].Y;
-			}	
+	private Direction RowToTest(){
+		if(mustFrontBuildDir==Direction.None){
+			return Direction.None;
 		}
-		for (int i = 0; i < tiles.Count; i++) {
-			if(tiles[i].Y == maxY){
-				if(tiles[i].Type != tt){
-					return false;
-				}
-			} else {
-				if(Tile.IsBuildType (tiles[i].Type)==false){
-					return false;
-				}
-			}
+		int must = (int)mustFrontBuildDir;
+		//so we have either 1,2,3 or 4
+		//so just loop through those and add per 90: 1
+		int rotNum = rotated / 90; // so we have now 1,2,3
+		//we add this to the must be correct one
+		must += rotNum;
+		if(must>4){
+			must -= 4;
 		}
-		return true;
+		return (Direction)must;
 	}
-	private bool CheckForRightRow(List<Tile> tiles, TileType tt){
-		int maxX = -1;
-		for (int i = 0; i < tiles.Count; i++) {
-			if(tiles[i].X > maxX){
-				maxX = tiles[i].X;
-			}	
-		}
-		for (int i = 0; i < tiles.Count; i++) {
-			if(tiles[i].X == maxX){
-				if(tiles[i].Type != tt){
-					return false;
-				}
-			} else {
-				if(Tile.IsBuildType (tiles[i].Type)==false){
-					return false;
-				}
-			}
-		}
-		return true;
-	}
-	private bool CheckForBottomRow(List<Tile> tiles, TileType tt){
-		int minY = int.MaxValue;
-		for (int i = 0; i < tiles.Count; i++) {
-			if(tiles[i].Y < minY){
-				minY = tiles[i].Y;
-			}	
-		}
-		for (int i = 0; i < tiles.Count; i++) {
-			if(tiles[i].Y == minY){
-				if(tiles[i].Type != tt){
-					return false;
-				}
-			} else {
-				if(Tile.IsBuildType (tiles[i].Type)==false){
-					return false;
-				}
-			}
-		}
-		return true;
-	}
-	private bool CheckForLeftRow(List<Tile> tiles, TileType tt){
-		int minX = int.MaxValue;
-		for (int i = 0; i < tiles.Count; i++) {
-			if(tiles[i].X < minX){
-				minX = tiles[i].X;
-			}	
-		}
-		for (int i = 0; i < tiles.Count; i++) {
-			if(tiles[i].X == minX){
-				if(tiles[i].Type != tt){
-					return false;
-				}
-			} else {
-				if(Tile.IsBuildType (tiles[i].Type)==false){
-					return false;
-				}
-			}
-		}
-		return true;
-	}
+
 	#endregion
 	#region rotation
 	public int ChangeRotation(int x , int y, int rotate = 0){
@@ -853,18 +644,18 @@ public abstract class Structure : IGEventable {
 			return 0;
 		}
 		this.rotated = rotate;
-		if(mustBeBuildOnMountain){
-			List<Tile> t = this.GetBuildingTiles (x,y);
-			if(this.correctSpotOnMountain (t)==false){
-				return ChangeRotation (x,y,rotate+90);
-			}	
-		}
-		if(mustBeBuildOnShore){
-			List<Tile> t = this.GetBuildingTiles (x,y);
-			if(this.correctSpotOnShore (t)==false){
-				return ChangeRotation (x,y,rotate+90);
-			}	
-		}
+//		if(mustBeBuildOnMountain){
+//			List<Tile> t = this.GetBuildingTiles (x,y);
+//			if(this.correctSpotOnMountain (t)==false){
+//				return ChangeRotation (x,y,rotate+90);
+//			}	
+//		}
+//		if(mustBeBuildOnShore){
+//			List<Tile> t = this.GetBuildingTiles (x,y);
+//			if(this.correctSpotOnShore (t)==false){
+//				return ChangeRotation (x,y,rotate+90);
+//			}	
+//		}
 		return rotate;
 	}
 	public void RotateStructure(){

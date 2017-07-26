@@ -1,0 +1,4657 @@
+{
+  "$id": "1",
+  "safefileversion": "0.1.1",
+  "gamedata": {
+    "$id": "2"
+  },
+  "world": {
+    "$id": "3",
+    "offworld": {
+      "$id": "4"
+    },
+    "world": {
+      "$id": "5",
+      "islandList": [
+        {
+          "$id": "6",
+          "myCities": [
+            {
+              "$id": "7",
+              "playerNumber": -1,
+              "myInv": {
+                "$id": "8",
+                "name": "noname-INV",
+                "maxStackSize": 50,
+                "items": {
+                  "$id": "9"
+                },
+                "numberOfSpaces": 0
+              },
+              "myStructures": [],
+              "useTickTimer": 0.0,
+              "_name": ""
+            },
+            {
+              "$id": "10",
+              "playerNumber": 0,
+              "myInv": {
+                "$id": "11",
+                "name": "City -1-INV",
+                "maxStackSize": 50,
+                "items": {
+                  "$id": "12",
+                  "1": {
+                    "$id": "13",
+                    "ID": 0,
+                    "count": 0
+                  },
+                  "2": {
+                    "$id": "14",
+                    "ID": 0,
+                    "count": 0
+                  },
+                  "3": {
+                    "$id": "15",
+                    "ID": 0,
+                    "count": 0
+                  },
+                  "4": {
+                    "$id": "16",
+                    "ID": 0,
+                    "count": 0
+                  },
+                  "5": {
+                    "$id": "17",
+                    "ID": 0,
+                    "count": 0
+                  },
+                  "6": {
+                    "$id": "18",
+                    "ID": 0,
+                    "count": 0
+                  },
+                  "7": {
+                    "$id": "19",
+                    "ID": 0,
+                    "count": 0
+                  },
+                  "20": {
+                    "$id": "20",
+                    "ID": 0,
+                    "count": 0
+                  },
+                  "21": {
+                    "$id": "21",
+                    "ID": 0,
+                    "count": 0
+                  },
+                  "22": {
+                    "$id": "22",
+                    "ID": 0,
+                    "count": 0
+                  },
+                  "23": {
+                    "$id": "23",
+                    "ID": 0,
+                    "count": 0
+                  },
+                  "24": {
+                    "$id": "24",
+                    "ID": 0,
+                    "count": 0
+                  },
+                  "25": {
+                    "$id": "25",
+                    "ID": 0,
+                    "count": 0
+                  },
+                  "26": {
+                    "$id": "26",
+                    "ID": 0,
+                    "count": 0
+                  },
+                  "27": {
+                    "$id": "27",
+                    "ID": 0,
+                    "count": 0
+                  },
+                  "28": {
+                    "$id": "28",
+                    "ID": 0,
+                    "count": 0
+                  },
+                  "29": {
+                    "$id": "29",
+                    "ID": 0,
+                    "count": 0
+                  },
+                  "30": {
+                    "$id": "30",
+                    "ID": 0,
+                    "count": 0
+                  },
+                  "31": {
+                    "$id": "31",
+                    "ID": 0,
+                    "count": 0
+                  },
+                  "32": {
+                    "$id": "32",
+                    "ID": 0,
+                    "count": 0
+                  },
+                  "33": {
+                    "$id": "33",
+                    "ID": 0,
+                    "count": 0
+                  },
+                  "34": {
+                    "$id": "34",
+                    "ID": 0,
+                    "count": 0
+                  },
+                  "35": {
+                    "$id": "35",
+                    "ID": 0,
+                    "count": 0
+                  },
+                  "36": {
+                    "$id": "36",
+                    "ID": 0,
+                    "count": 0
+                  },
+                  "37": {
+                    "$id": "37",
+                    "ID": 0,
+                    "count": 0
+                  },
+                  "38": {
+                    "$id": "38",
+                    "ID": 0,
+                    "count": 0
+                  },
+                  "39": {
+                    "$id": "39",
+                    "ID": 0,
+                    "count": 0
+                  },
+                  "40": {
+                    "$id": "40",
+                    "ID": 0,
+                    "count": 0
+                  },
+                  "41": {
+                    "$id": "41",
+                    "ID": 0,
+                    "count": 0
+                  },
+                  "42": {
+                    "$id": "42",
+                    "ID": 0,
+                    "count": 0
+                  },
+                  "43": {
+                    "$id": "43",
+                    "ID": 0,
+                    "count": 0
+                  },
+                  "44": {
+                    "$id": "44",
+                    "ID": 0,
+                    "count": 0
+                  },
+                  "45": {
+                    "$id": "45",
+                    "ID": 0,
+                    "count": 0
+                  },
+                  "46": {
+                    "$id": "46",
+                    "ID": 0,
+                    "count": 0
+                  },
+                  "47": {
+                    "$id": "47",
+                    "ID": 0,
+                    "count": 0
+                  },
+                  "48": {
+                    "$id": "48",
+                    "ID": 0,
+                    "count": 0
+                  },
+                  "49": {
+                    "$id": "49",
+                    "ID": 0,
+                    "count": 0
+                  },
+                  "50": {
+                    "$id": "50",
+                    "ID": 0,
+                    "count": 0
+                  },
+                  "51": {
+                    "$id": "51",
+                    "ID": 0,
+                    "count": 0
+                  },
+                  "52": {
+                    "$id": "52",
+                    "ID": 0,
+                    "count": 0
+                  },
+                  "53": {
+                    "$id": "53",
+                    "ID": 0,
+                    "count": 0
+                  },
+                  "54": {
+                    "$id": "54",
+                    "ID": 0,
+                    "count": 0
+                  },
+                  "55": {
+                    "$id": "55",
+                    "ID": 0,
+                    "count": 0
+                  },
+                  "56": {
+                    "$id": "56",
+                    "ID": 0,
+                    "count": 0
+                  },
+                  "57": {
+                    "$id": "57",
+                    "ID": 0,
+                    "count": 0
+                  },
+                  "58": {
+                    "$id": "58",
+                    "ID": 0,
+                    "count": 0
+                  },
+                  "59": {
+                    "$id": "59",
+                    "ID": 0,
+                    "count": 0
+                  },
+                  "60": {
+                    "$id": "60",
+                    "ID": 0,
+                    "count": 0
+                  },
+                  "61": {
+                    "$id": "61",
+                    "ID": 0,
+                    "count": 0
+                  },
+                  "62": {
+                    "$id": "62",
+                    "ID": 0,
+                    "count": 0
+                  },
+                  "63": {
+                    "$id": "63",
+                    "ID": 0,
+                    "count": 0
+                  },
+                  "64": {
+                    "$id": "64",
+                    "ID": 0,
+                    "count": 0
+                  },
+                  "65": {
+                    "$id": "65",
+                    "ID": 0,
+                    "count": 0
+                  },
+                  "66": {
+                    "$id": "66",
+                    "ID": 0,
+                    "count": 0
+                  },
+                  "67": {
+                    "$id": "67",
+                    "ID": 0,
+                    "count": 0
+                  },
+                  "68": {
+                    "$id": "68",
+                    "ID": 0,
+                    "count": 0
+                  },
+                  "69": {
+                    "$id": "69",
+                    "ID": 0,
+                    "count": 0
+                  },
+                  "70": {
+                    "$id": "70",
+                    "ID": 0,
+                    "count": 0
+                  },
+                  "71": {
+                    "$id": "71",
+                    "ID": 0,
+                    "count": 0
+                  },
+                  "72": {
+                    "$id": "72",
+                    "ID": 0,
+                    "count": 0
+                  },
+                  "73": {
+                    "$id": "73",
+                    "ID": 0,
+                    "count": 0
+                  },
+                  "74": {
+                    "$id": "74",
+                    "ID": 0,
+                    "count": 0
+                  },
+                  "75": {
+                    "$id": "75",
+                    "ID": 0,
+                    "count": 0
+                  },
+                  "76": {
+                    "$id": "76",
+                    "ID": 0,
+                    "count": 0
+                  },
+                  "77": {
+                    "$id": "77",
+                    "ID": 0,
+                    "count": 0
+                  },
+                  "78": {
+                    "$id": "78",
+                    "ID": 0,
+                    "count": 0
+                  },
+                  "79": {
+                    "$id": "79",
+                    "ID": 0,
+                    "count": 0
+                  },
+                  "80": {
+                    "$id": "80",
+                    "ID": 0,
+                    "count": 0
+                  },
+                  "81": {
+                    "$id": "81",
+                    "ID": 0,
+                    "count": 0
+                  },
+                  "82": {
+                    "$id": "82",
+                    "ID": 0,
+                    "count": 0
+                  },
+                  "83": {
+                    "$id": "83",
+                    "ID": 0,
+                    "count": 0
+                  },
+                  "84": {
+                    "$id": "84",
+                    "ID": 0,
+                    "count": 0
+                  },
+                  "85": {
+                    "$id": "85",
+                    "ID": 0,
+                    "count": 0
+                  },
+                  "86": {
+                    "$id": "86",
+                    "ID": 0,
+                    "count": 0
+                  },
+                  "87": {
+                    "$id": "87",
+                    "ID": 0,
+                    "count": 0
+                  },
+                  "88": {
+                    "$id": "88",
+                    "ID": 0,
+                    "count": 0
+                  },
+                  "89": {
+                    "$id": "89",
+                    "ID": 0,
+                    "count": 0
+                  },
+                  "90": {
+                    "$id": "90",
+                    "ID": 0,
+                    "count": 0
+                  },
+                  "91": {
+                    "$id": "91",
+                    "ID": 0,
+                    "count": 0
+                  },
+                  "200": {
+                    "$id": "92",
+                    "ID": 0,
+                    "count": 0
+                  },
+                  "201": {
+                    "$id": "93",
+                    "ID": 0,
+                    "count": 0
+                  },
+                  "202": {
+                    "$id": "94",
+                    "ID": 0,
+                    "count": 0
+                  },
+                  "203": {
+                    "$id": "95",
+                    "ID": 0,
+                    "count": 0
+                  },
+                  "204": {
+                    "$id": "96",
+                    "ID": 0,
+                    "count": 0
+                  },
+                  "205": {
+                    "$id": "97",
+                    "ID": 0,
+                    "count": 0
+                  },
+                  "206": {
+                    "$id": "98",
+                    "ID": 0,
+                    "count": 0
+                  }
+                },
+                "numberOfSpaces": -1
+              },
+              "myStructures": [
+                {
+                  "$id": "99",
+                  "$type": "Warehouse, Assembly-CSharp",
+                  "level": 1,
+                  "takenOverState": 0.0,
+                  "produceCountdown": 0.0,
+                  "ID": 6,
+                  "playerNumber": 0,
+                  "buildID": 0,
+                  "_health": 0.0,
+                  "rotated": 180,
+                  "buildInWilderniss": false,
+                  "isActive": false,
+                  "_city": {
+                    "$ref": "10"
+                  },
+                  "BuildTile": {
+                    "$id": "100",
+                    "$type": "LandTile, Assembly-CSharp",
+                    "x": 37,
+                    "y": 47,
+                    "_type": 3
+                  }
+                },
+                {
+                  "$id": "101",
+                  "$type": "Road, Assembly-CSharp",
+                  "ID": 10,
+                  "playerNumber": 0,
+                  "buildID": 1,
+                  "_health": 0.0,
+                  "rotated": 0,
+                  "buildInWilderniss": false,
+                  "isActive": false,
+                  "_city": {
+                    "$ref": "10"
+                  },
+                  "BuildTile": {
+                    "$id": "102",
+                    "$type": "LandTile, Assembly-CSharp",
+                    "x": 36,
+                    "y": 49,
+                    "_type": 3
+                  }
+                },
+                {
+                  "$id": "103",
+                  "$type": "Road, Assembly-CSharp",
+                  "ID": 10,
+                  "playerNumber": 0,
+                  "buildID": 2,
+                  "_health": 0.0,
+                  "rotated": 0,
+                  "buildInWilderniss": false,
+                  "isActive": false,
+                  "_city": {
+                    "$ref": "10"
+                  },
+                  "BuildTile": {
+                    "$id": "104",
+                    "$type": "LandTile, Assembly-CSharp",
+                    "x": 36,
+                    "y": 50,
+                    "_type": 3
+                  }
+                },
+                {
+                  "$id": "105",
+                  "$type": "Road, Assembly-CSharp",
+                  "ID": 10,
+                  "playerNumber": 0,
+                  "buildID": 3,
+                  "_health": 0.0,
+                  "rotated": 0,
+                  "buildInWilderniss": false,
+                  "isActive": false,
+                  "_city": {
+                    "$ref": "10"
+                  },
+                  "BuildTile": {
+                    "$id": "106",
+                    "$type": "LandTile, Assembly-CSharp",
+                    "x": 36,
+                    "y": 51,
+                    "_type": 3
+                  }
+                },
+                {
+                  "$id": "107",
+                  "$type": "Road, Assembly-CSharp",
+                  "ID": 10,
+                  "playerNumber": 0,
+                  "buildID": 4,
+                  "_health": 0.0,
+                  "rotated": 0,
+                  "buildInWilderniss": false,
+                  "isActive": false,
+                  "_city": {
+                    "$ref": "10"
+                  },
+                  "BuildTile": {
+                    "$id": "108",
+                    "$type": "LandTile, Assembly-CSharp",
+                    "x": 35,
+                    "y": 51,
+                    "_type": 3
+                  }
+                },
+                {
+                  "$id": "109",
+                  "$type": "Road, Assembly-CSharp",
+                  "ID": 10,
+                  "playerNumber": 0,
+                  "buildID": 5,
+                  "_health": 0.0,
+                  "rotated": 0,
+                  "buildInWilderniss": false,
+                  "isActive": false,
+                  "_city": {
+                    "$ref": "10"
+                  },
+                  "BuildTile": {
+                    "$id": "110",
+                    "$type": "LandTile, Assembly-CSharp",
+                    "x": 35,
+                    "y": 44,
+                    "_type": 3
+                  }
+                },
+                {
+                  "$id": "111",
+                  "$type": "Growable, Assembly-CSharp",
+                  "age": 0.588946164,
+                  "currentStage": 2,
+                  "hasProduced": false,
+                  "produceCountdown": 0.0,
+                  "ID": 101,
+                  "playerNumber": 0,
+                  "buildID": 6,
+                  "_health": 0.0,
+                  "rotated": 0,
+                  "buildInWilderniss": false,
+                  "isActive": false,
+                  "_city": {
+                    "$ref": "10"
+                  },
+                  "output": [
+                    {
+                      "$id": "112",
+                      "ID": 0,
+                      "count": 0
+                    }
+                  ],
+                  "BuildTile": {
+                    "$id": "113",
+                    "$type": "LandTile, Assembly-CSharp",
+                    "x": 32,
+                    "y": 50,
+                    "_type": 3
+                  }
+                },
+                {
+                  "$id": "114",
+                  "$type": "Growable, Assembly-CSharp",
+                  "age": 0.588946164,
+                  "currentStage": 2,
+                  "hasProduced": false,
+                  "produceCountdown": 0.0,
+                  "ID": 101,
+                  "playerNumber": 0,
+                  "buildID": 7,
+                  "_health": 0.0,
+                  "rotated": 0,
+                  "buildInWilderniss": false,
+                  "isActive": false,
+                  "_city": {
+                    "$ref": "10"
+                  },
+                  "output": [
+                    {
+                      "$ref": "112"
+                    }
+                  ],
+                  "BuildTile": {
+                    "$id": "115",
+                    "$type": "LandTile, Assembly-CSharp",
+                    "x": 32,
+                    "y": 51,
+                    "_type": 3
+                  }
+                },
+                {
+                  "$id": "116",
+                  "$type": "Growable, Assembly-CSharp",
+                  "age": 0.588946164,
+                  "currentStage": 1,
+                  "hasProduced": false,
+                  "produceCountdown": 0.0,
+                  "ID": 101,
+                  "playerNumber": 0,
+                  "buildID": 8,
+                  "_health": 0.0,
+                  "rotated": 0,
+                  "buildInWilderniss": false,
+                  "isActive": false,
+                  "_city": {
+                    "$ref": "10"
+                  },
+                  "output": [
+                    {
+                      "$ref": "112"
+                    }
+                  ],
+                  "BuildTile": {
+                    "$id": "117",
+                    "$type": "LandTile, Assembly-CSharp",
+                    "x": 32,
+                    "y": 52,
+                    "_type": 3
+                  }
+                },
+                {
+                  "$id": "118",
+                  "$type": "Growable, Assembly-CSharp",
+                  "age": 0.588946164,
+                  "currentStage": 2,
+                  "hasProduced": false,
+                  "produceCountdown": 0.0,
+                  "ID": 101,
+                  "playerNumber": 0,
+                  "buildID": 9,
+                  "_health": 0.0,
+                  "rotated": 0,
+                  "buildInWilderniss": false,
+                  "isActive": false,
+                  "_city": {
+                    "$ref": "10"
+                  },
+                  "output": [
+                    {
+                      "$ref": "112"
+                    }
+                  ],
+                  "BuildTile": {
+                    "$id": "119",
+                    "$type": "LandTile, Assembly-CSharp",
+                    "x": 32,
+                    "y": 53,
+                    "_type": 3
+                  }
+                },
+                {
+                  "$id": "120",
+                  "$type": "Growable, Assembly-CSharp",
+                  "age": 0.588946164,
+                  "currentStage": 2,
+                  "hasProduced": false,
+                  "produceCountdown": 0.0,
+                  "ID": 101,
+                  "playerNumber": 0,
+                  "buildID": 10,
+                  "_health": 0.0,
+                  "rotated": 0,
+                  "buildInWilderniss": false,
+                  "isActive": false,
+                  "_city": {
+                    "$ref": "10"
+                  },
+                  "output": [
+                    {
+                      "$ref": "112"
+                    }
+                  ],
+                  "BuildTile": {
+                    "$id": "121",
+                    "$type": "LandTile, Assembly-CSharp",
+                    "x": 33,
+                    "y": 50,
+                    "_type": 3
+                  }
+                },
+                {
+                  "$id": "122",
+                  "$type": "Growable, Assembly-CSharp",
+                  "age": 0.588946164,
+                  "currentStage": 0,
+                  "hasProduced": false,
+                  "produceCountdown": 0.0,
+                  "ID": 101,
+                  "playerNumber": 0,
+                  "buildID": 11,
+                  "_health": 0.0,
+                  "rotated": 0,
+                  "buildInWilderniss": false,
+                  "isActive": false,
+                  "_city": {
+                    "$ref": "10"
+                  },
+                  "output": [
+                    {
+                      "$ref": "112"
+                    }
+                  ],
+                  "BuildTile": {
+                    "$id": "123",
+                    "$type": "LandTile, Assembly-CSharp",
+                    "x": 33,
+                    "y": 51,
+                    "_type": 3
+                  }
+                },
+                {
+                  "$id": "124",
+                  "$type": "Growable, Assembly-CSharp",
+                  "age": 0.588946164,
+                  "currentStage": 2,
+                  "hasProduced": false,
+                  "produceCountdown": 0.0,
+                  "ID": 101,
+                  "playerNumber": 0,
+                  "buildID": 12,
+                  "_health": 0.0,
+                  "rotated": 0,
+                  "buildInWilderniss": false,
+                  "isActive": false,
+                  "_city": {
+                    "$ref": "10"
+                  },
+                  "output": [
+                    {
+                      "$ref": "112"
+                    }
+                  ],
+                  "BuildTile": {
+                    "$id": "125",
+                    "$type": "LandTile, Assembly-CSharp",
+                    "x": 33,
+                    "y": 52,
+                    "_type": 3
+                  }
+                },
+                {
+                  "$id": "126",
+                  "$type": "Growable, Assembly-CSharp",
+                  "age": 0.588946164,
+                  "currentStage": 1,
+                  "hasProduced": false,
+                  "produceCountdown": 0.0,
+                  "ID": 101,
+                  "playerNumber": 0,
+                  "buildID": 13,
+                  "_health": 0.0,
+                  "rotated": 0,
+                  "buildInWilderniss": false,
+                  "isActive": false,
+                  "_city": {
+                    "$ref": "10"
+                  },
+                  "output": [
+                    {
+                      "$ref": "112"
+                    }
+                  ],
+                  "BuildTile": {
+                    "$id": "127",
+                    "$type": "LandTile, Assembly-CSharp",
+                    "x": 33,
+                    "y": 53,
+                    "_type": 3
+                  }
+                },
+                {
+                  "$id": "128",
+                  "$type": "Growable, Assembly-CSharp",
+                  "age": 0.588946164,
+                  "currentStage": 1,
+                  "hasProduced": false,
+                  "produceCountdown": 0.0,
+                  "ID": 101,
+                  "playerNumber": 0,
+                  "buildID": 14,
+                  "_health": 0.0,
+                  "rotated": 0,
+                  "buildInWilderniss": false,
+                  "isActive": false,
+                  "_city": {
+                    "$ref": "10"
+                  },
+                  "output": [
+                    {
+                      "$ref": "112"
+                    }
+                  ],
+                  "BuildTile": {
+                    "$id": "129",
+                    "$type": "LandTile, Assembly-CSharp",
+                    "x": 34,
+                    "y": 50,
+                    "_type": 3
+                  }
+                },
+                {
+                  "$id": "130",
+                  "$type": "Growable, Assembly-CSharp",
+                  "age": 0.588946164,
+                  "currentStage": 1,
+                  "hasProduced": false,
+                  "produceCountdown": 0.0,
+                  "ID": 101,
+                  "playerNumber": 0,
+                  "buildID": 15,
+                  "_health": 0.0,
+                  "rotated": 0,
+                  "buildInWilderniss": false,
+                  "isActive": false,
+                  "_city": {
+                    "$ref": "10"
+                  },
+                  "output": [
+                    {
+                      "$ref": "112"
+                    }
+                  ],
+                  "BuildTile": {
+                    "$id": "131",
+                    "$type": "LandTile, Assembly-CSharp",
+                    "x": 34,
+                    "y": 51,
+                    "_type": 3
+                  }
+                },
+                {
+                  "$id": "132",
+                  "$type": "Growable, Assembly-CSharp",
+                  "age": 0.588946164,
+                  "currentStage": 0,
+                  "hasProduced": false,
+                  "produceCountdown": 0.0,
+                  "ID": 101,
+                  "playerNumber": 0,
+                  "buildID": 16,
+                  "_health": 0.0,
+                  "rotated": 0,
+                  "buildInWilderniss": false,
+                  "isActive": false,
+                  "_city": {
+                    "$ref": "10"
+                  },
+                  "output": [
+                    {
+                      "$ref": "112"
+                    }
+                  ],
+                  "BuildTile": {
+                    "$id": "133",
+                    "$type": "LandTile, Assembly-CSharp",
+                    "x": 34,
+                    "y": 52,
+                    "_type": 3
+                  }
+                },
+                {
+                  "$id": "134",
+                  "$type": "Growable, Assembly-CSharp",
+                  "age": 0.588946164,
+                  "currentStage": 1,
+                  "hasProduced": false,
+                  "produceCountdown": 0.0,
+                  "ID": 101,
+                  "playerNumber": 0,
+                  "buildID": 17,
+                  "_health": 0.0,
+                  "rotated": 0,
+                  "buildInWilderniss": false,
+                  "isActive": false,
+                  "_city": {
+                    "$ref": "10"
+                  },
+                  "output": [
+                    {
+                      "$ref": "112"
+                    }
+                  ],
+                  "BuildTile": {
+                    "$id": "135",
+                    "$type": "LandTile, Assembly-CSharp",
+                    "x": 34,
+                    "y": 53,
+                    "_type": 3
+                  }
+                }
+              ],
+              "idToNeed": {
+                "$id": "136",
+                "1": {
+                  "$id": "137",
+                  "ID": 1,
+                  "lastNeededNotConsumed": 0.0,
+                  "percantageAvailability": 0.0
+                },
+                "2": {
+                  "$id": "138",
+                  "ID": 2,
+                  "lastNeededNotConsumed": 0.0,
+                  "percantageAvailability": 0.0
+                },
+                "3": {
+                  "$id": "139",
+                  "ID": 3,
+                  "lastNeededNotConsumed": 0.0,
+                  "percantageAvailability": 0.0
+                },
+                "4": {
+                  "$id": "140",
+                  "ID": 4,
+                  "lastNeededNotConsumed": 0.0,
+                  "percantageAvailability": 0.0
+                },
+                "5": {
+                  "$id": "141",
+                  "ID": 5,
+                  "lastNeededNotConsumed": 0.0,
+                  "percantageAvailability": 0.0
+                },
+                "6": {
+                  "$id": "142",
+                  "ID": 6,
+                  "lastNeededNotConsumed": 0.0,
+                  "percantageAvailability": 0.0
+                },
+                "7": {
+                  "$id": "143",
+                  "ID": 7,
+                  "lastNeededNotConsumed": 0.0,
+                  "percantageAvailability": 0.0
+                },
+                "8": {
+                  "$id": "144",
+                  "ID": 8,
+                  "lastNeededNotConsumed": 0.0,
+                  "percantageAvailability": 0.0
+                },
+                "9": {
+                  "$id": "145",
+                  "ID": 9,
+                  "lastNeededNotConsumed": 0.0,
+                  "percantageAvailability": 0.0
+                },
+                "10": {
+                  "$id": "146",
+                  "ID": 10,
+                  "lastNeededNotConsumed": 0.0,
+                  "percantageAvailability": 0.0
+                },
+                "11": {
+                  "$id": "147",
+                  "ID": 11,
+                  "lastNeededNotConsumed": 0.0,
+                  "percantageAvailability": 0.0
+                },
+                "12": {
+                  "$id": "148",
+                  "ID": 12,
+                  "lastNeededNotConsumed": 0.0,
+                  "percantageAvailability": 0.0
+                },
+                "13": {
+                  "$id": "149",
+                  "ID": 13,
+                  "lastNeededNotConsumed": 0.0,
+                  "percantageAvailability": 0.0
+                },
+                "14": {
+                  "$id": "150",
+                  "ID": 14,
+                  "lastNeededNotConsumed": 0.0,
+                  "percantageAvailability": 0.0
+                },
+                "15": {
+                  "$id": "151",
+                  "ID": 15,
+                  "lastNeededNotConsumed": 0.0,
+                  "percantageAvailability": 0.0
+                },
+                "16": {
+                  "$id": "152",
+                  "ID": 16,
+                  "lastNeededNotConsumed": 0.0,
+                  "percantageAvailability": 0.0
+                },
+                "17": {
+                  "$id": "153",
+                  "ID": 17,
+                  "lastNeededNotConsumed": 0.0,
+                  "percantageAvailability": 0.0
+                },
+                "18": {
+                  "$id": "154",
+                  "ID": 18,
+                  "lastNeededNotConsumed": 0.0,
+                  "percantageAvailability": 0.0
+                },
+                "19": {
+                  "$id": "155",
+                  "ID": 19,
+                  "lastNeededNotConsumed": 0.0,
+                  "percantageAvailability": 0.0
+                },
+                "20": {
+                  "$id": "156",
+                  "ID": 20,
+                  "lastNeededNotConsumed": 0.0,
+                  "percantageAvailability": 0.0
+                },
+                "21": {
+                  "$id": "157",
+                  "ID": 21,
+                  "lastNeededNotConsumed": 0.0,
+                  "percantageAvailability": 0.0
+                },
+                "22": {
+                  "$id": "158",
+                  "ID": 22,
+                  "lastNeededNotConsumed": 0.0,
+                  "percantageAvailability": 0.0
+                },
+                "23": {
+                  "$id": "159",
+                  "ID": 23,
+                  "lastNeededNotConsumed": 0.0,
+                  "percantageAvailability": 0.0
+                },
+                "24": {
+                  "$id": "160",
+                  "ID": 24,
+                  "lastNeededNotConsumed": 0.0,
+                  "percantageAvailability": 0.0
+                },
+                "25": {
+                  "$id": "161",
+                  "ID": 25,
+                  "lastNeededNotConsumed": 0.0,
+                  "percantageAvailability": 0.0
+                },
+                "26": {
+                  "$id": "162",
+                  "ID": 26,
+                  "lastNeededNotConsumed": 0.0,
+                  "percantageAvailability": 0.0
+                },
+                "27": {
+                  "$id": "163",
+                  "ID": 27,
+                  "lastNeededNotConsumed": 0.0,
+                  "percantageAvailability": 0.0
+                },
+                "28": {
+                  "$id": "164",
+                  "ID": 28,
+                  "lastNeededNotConsumed": 0.0,
+                  "percantageAvailability": 0.0
+                },
+                "29": {
+                  "$id": "165",
+                  "ID": 29,
+                  "lastNeededNotConsumed": 0.0,
+                  "percantageAvailability": 0.0
+                },
+                "30": {
+                  "$id": "166",
+                  "ID": 30,
+                  "lastNeededNotConsumed": 0.0,
+                  "percantageAvailability": 0.0
+                },
+                "31": {
+                  "$id": "167",
+                  "ID": 31,
+                  "lastNeededNotConsumed": 0.0,
+                  "percantageAvailability": 0.0
+                },
+                "32": {
+                  "$id": "168",
+                  "ID": 32,
+                  "lastNeededNotConsumed": 0.0,
+                  "percantageAvailability": 0.0
+                },
+                "33": {
+                  "$id": "169",
+                  "ID": 33,
+                  "lastNeededNotConsumed": 0.0,
+                  "percantageAvailability": 0.0
+                },
+                "34": {
+                  "$id": "170",
+                  "ID": 34,
+                  "lastNeededNotConsumed": 0.0,
+                  "percantageAvailability": 0.0
+                },
+                "35": {
+                  "$id": "171",
+                  "ID": 35,
+                  "lastNeededNotConsumed": 0.0,
+                  "percantageAvailability": 0.0
+                },
+                "36": {
+                  "$id": "172",
+                  "ID": 36,
+                  "lastNeededNotConsumed": 0.0,
+                  "percantageAvailability": 0.0
+                },
+                "37": {
+                  "$id": "173",
+                  "ID": 37,
+                  "lastNeededNotConsumed": 0.0,
+                  "percantageAvailability": 0.0
+                },
+                "38": {
+                  "$id": "174",
+                  "ID": 38,
+                  "lastNeededNotConsumed": 0.0,
+                  "percantageAvailability": 0.0
+                },
+                "39": {
+                  "$id": "175",
+                  "ID": 39,
+                  "lastNeededNotConsumed": 0.0,
+                  "percantageAvailability": 0.0
+                },
+                "40": {
+                  "$id": "176",
+                  "ID": 40,
+                  "lastNeededNotConsumed": 0.0,
+                  "percantageAvailability": 0.0
+                }
+              },
+              "useTickTimer": 20.7918816,
+              "itemIDtoTradeItem": {
+                "$id": "177"
+              },
+              "_name": "<City>137",
+              "citizienCount": [
+                0,
+                0,
+                0,
+                0
+              ]
+            }
+          ],
+          "myFertilities": [
+            {
+              "$id": "178",
+              "ID": 2,
+              "data": {
+                "climates": [
+                  0,
+                  1
+                ]
+              },
+              "climates": [
+                0,
+                1
+              ]
+            },
+            {
+              "$id": "179",
+              "ID": 0,
+              "data": {
+                "climates": [
+                  1
+                ]
+              },
+              "climates": [
+                1
+              ]
+            },
+            {
+              "$id": "180",
+              "ID": 1,
+              "data": {
+                "climates": [
+                  0,
+                  1
+                ]
+              },
+              "climates": [
+                0,
+                1
+              ]
+            }
+          ],
+          "myClimate": 0,
+          "myRessources": {
+            "$id": "181",
+            "stone": 2147483647
+          },
+          "StartTile": {
+            "$id": "182",
+            "$type": "LandTile, Assembly-CSharp",
+            "x": 31,
+            "y": 41,
+            "_type": 3
+          }
+        },
+        {
+          "$id": "183",
+          "myCities": [
+            {
+              "$id": "184",
+              "playerNumber": -1,
+              "myInv": {
+                "$id": "185",
+                "name": "noname-INV",
+                "maxStackSize": 50,
+                "items": {
+                  "$id": "186"
+                },
+                "numberOfSpaces": 0
+              },
+              "myStructures": [],
+              "useTickTimer": 0.0,
+              "_name": ""
+            }
+          ],
+          "myFertilities": [
+            {
+              "$ref": "180"
+            },
+            {
+              "$ref": "179"
+            },
+            {
+              "$ref": "178"
+            }
+          ],
+          "myClimate": 0,
+          "myRessources": {
+            "$id": "187",
+            "stone": 2147483647
+          },
+          "StartTile": {
+            "$id": "188",
+            "$type": "LandTile, Assembly-CSharp",
+            "x": 61,
+            "y": 41,
+            "_type": 3
+          }
+        }
+      ],
+      "units": [
+        {
+          "$id": "189",
+          "playerNumber": 2,
+          "_Name": "Unit 906181003",
+          "_currHealth": 50.0,
+          "aggroCooldown": 1.0,
+          "patrolTarget": {
+            "$id": "190",
+            "x": 0.0,
+            "y": 0.0,
+            "magnitude": 0.0,
+            "sqrMagnitude": 0.0
+          },
+          "patrolStart": {
+            "$id": "191",
+            "x": 0.0,
+            "y": 0.0,
+            "magnitude": 0.0,
+            "sqrMagnitude": 0.0
+          },
+          "onWayToPatrolTarget": false,
+          "onPatrol": false,
+          "isShip": false,
+          "hasChanged": false,
+          "tradeTime": 1.5,
+          "pathfinding": {
+            "$id": "192",
+            "movementPercentage": 0.0,
+            "dest_X": 34.0,
+            "dest_Y": 47.0,
+            "IsAtDest": true,
+            "pos": {
+              "$id": "193",
+              "x": 0.0,
+              "y": 0.0,
+              "z": 0.0,
+              "magnitude": 0.0,
+              "sqrMagnitude": 0.0
+            },
+            "rotation": 0.0
+          }
+        },
+        {
+          "$id": "194",
+          "$type": "Ship, Assembly-CSharp",
+          "goingToOffworldMarket": false,
+          "isOffWorld": false,
+          "offWorldTime": 5.0,
+          "playerNumber": 2,
+          "patrolTarget": {
+            "$id": "195",
+            "x": 0.0,
+            "y": 0.0,
+            "magnitude": 0.0,
+            "sqrMagnitude": 0.0
+          },
+          "patrolStart": {
+            "$id": "196",
+            "x": 0.0,
+            "y": 0.0,
+            "magnitude": 0.0,
+            "sqrMagnitude": 0.0
+          },
+          "onWayToPatrolTarget": false,
+          "onPatrol": false,
+          "isShip": true,
+          "hasChanged": false,
+          "tradeTime": 1.5,
+          "pathfinding": {
+            "$id": "197",
+            "movementPercentage": 0.0,
+            "dest_X": 34.0,
+            "dest_Y": 38.0,
+            "IsAtDest": true,
+            "pos": {
+              "$id": "198",
+              "x": 0.0,
+              "y": 0.0,
+              "z": 0.0,
+              "magnitude": 0.0,
+              "sqrMagnitude": 0.0
+            },
+            "rotation": 0.0
+          },
+          "_currHealth": 50.0,
+          "aggroCooldown": 1.0
+        }
+      ],
+      "tileList": [
+        {
+          "$id": "199",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 29,
+          "y": 39,
+          "_type": 1
+        },
+        {
+          "$id": "200",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 29,
+          "y": 40,
+          "_type": 1
+        },
+        {
+          "$id": "201",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 29,
+          "y": 41,
+          "_type": 1
+        },
+        {
+          "$id": "202",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 29,
+          "y": 42,
+          "_type": 1
+        },
+        {
+          "$id": "203",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 29,
+          "y": 43,
+          "_type": 1
+        },
+        {
+          "$id": "204",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 29,
+          "y": 44,
+          "_type": 1
+        },
+        {
+          "$id": "205",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 29,
+          "y": 45,
+          "_type": 1
+        },
+        {
+          "$id": "206",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 29,
+          "y": 46,
+          "_type": 1
+        },
+        {
+          "$id": "207",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 29,
+          "y": 47,
+          "_type": 1
+        },
+        {
+          "$id": "208",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 29,
+          "y": 48,
+          "_type": 1
+        },
+        {
+          "$id": "209",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 29,
+          "y": 49,
+          "_type": 1
+        },
+        {
+          "$id": "210",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 29,
+          "y": 50,
+          "_type": 1
+        },
+        {
+          "$id": "211",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 29,
+          "y": 51,
+          "_type": 1
+        },
+        {
+          "$id": "212",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 29,
+          "y": 52,
+          "_type": 1
+        },
+        {
+          "$id": "213",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 29,
+          "y": 53,
+          "_type": 1
+        },
+        {
+          "$id": "214",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 29,
+          "y": 54,
+          "_type": 1
+        },
+        {
+          "$id": "215",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 29,
+          "y": 55,
+          "_type": 1
+        },
+        {
+          "$id": "216",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 29,
+          "y": 56,
+          "_type": 1
+        },
+        {
+          "$id": "217",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 29,
+          "y": 57,
+          "_type": 1
+        },
+        {
+          "$id": "218",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 29,
+          "y": 58,
+          "_type": 1
+        },
+        {
+          "$id": "219",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 29,
+          "y": 59,
+          "_type": 1
+        },
+        {
+          "$id": "220",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 29,
+          "y": 60,
+          "_type": 1
+        },
+        {
+          "$id": "221",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 30,
+          "y": 39,
+          "_type": 1
+        },
+        {
+          "$id": "222",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 30,
+          "y": 40,
+          "_type": 3
+        },
+        {
+          "$id": "223",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 30,
+          "y": 41,
+          "_type": 3
+        },
+        {
+          "$id": "224",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 30,
+          "y": 42,
+          "_type": 3
+        },
+        {
+          "$id": "225",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 30,
+          "y": 43,
+          "_type": 3
+        },
+        {
+          "$id": "226",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 30,
+          "y": 44,
+          "_type": 3
+        },
+        {
+          "$id": "227",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 30,
+          "y": 45,
+          "_type": 3
+        },
+        {
+          "$id": "228",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 30,
+          "y": 46,
+          "_type": 3
+        },
+        {
+          "$id": "229",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 30,
+          "y": 47,
+          "_type": 3
+        },
+        {
+          "$id": "230",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 30,
+          "y": 48,
+          "_type": 3
+        },
+        {
+          "$id": "231",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 30,
+          "y": 49,
+          "_type": 3
+        },
+        {
+          "$id": "232",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 30,
+          "y": 50,
+          "_type": 3
+        },
+        {
+          "$id": "233",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 30,
+          "y": 51,
+          "_type": 3
+        },
+        {
+          "$id": "234",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 30,
+          "y": 52,
+          "_type": 3
+        },
+        {
+          "$id": "235",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 30,
+          "y": 53,
+          "_type": 3
+        },
+        {
+          "$id": "236",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 30,
+          "y": 54,
+          "_type": 3
+        },
+        {
+          "$id": "237",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 30,
+          "y": 55,
+          "_type": 3
+        },
+        {
+          "$id": "238",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 30,
+          "y": 56,
+          "_type": 3
+        },
+        {
+          "$id": "239",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 30,
+          "y": 57,
+          "_type": 3
+        },
+        {
+          "$id": "240",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 30,
+          "y": 58,
+          "_type": 3
+        },
+        {
+          "$id": "241",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 30,
+          "y": 59,
+          "_type": 3
+        },
+        {
+          "$id": "242",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 30,
+          "y": 60,
+          "_type": 1
+        },
+        {
+          "$id": "243",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 31,
+          "y": 39,
+          "_type": 1
+        },
+        {
+          "$id": "244",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 31,
+          "y": 40,
+          "_type": 3
+        },
+        {
+          "$ref": "182"
+        },
+        {
+          "$id": "245",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 31,
+          "y": 42,
+          "_type": 3
+        },
+        {
+          "$id": "246",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 31,
+          "y": 43,
+          "_type": 3
+        },
+        {
+          "$id": "247",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 31,
+          "y": 44,
+          "_type": 3
+        },
+        {
+          "$id": "248",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 31,
+          "y": 45,
+          "_type": 3
+        },
+        {
+          "$id": "249",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 31,
+          "y": 46,
+          "_type": 3
+        },
+        {
+          "$id": "250",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 31,
+          "y": 47,
+          "_type": 3
+        },
+        {
+          "$id": "251",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 31,
+          "y": 48,
+          "_type": 3
+        },
+        {
+          "$id": "252",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 31,
+          "y": 49,
+          "_type": 3
+        },
+        {
+          "$id": "253",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 31,
+          "y": 50,
+          "_type": 3
+        },
+        {
+          "$id": "254",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 31,
+          "y": 51,
+          "_type": 3
+        },
+        {
+          "$id": "255",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 31,
+          "y": 52,
+          "_type": 3
+        },
+        {
+          "$id": "256",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 31,
+          "y": 53,
+          "_type": 3
+        },
+        {
+          "$id": "257",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 31,
+          "y": 54,
+          "_type": 3
+        },
+        {
+          "$id": "258",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 31,
+          "y": 55,
+          "_type": 3
+        },
+        {
+          "$id": "259",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 31,
+          "y": 56,
+          "_type": 3
+        },
+        {
+          "$id": "260",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 31,
+          "y": 57,
+          "_type": 3
+        },
+        {
+          "$id": "261",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 31,
+          "y": 58,
+          "_type": 3
+        },
+        {
+          "$id": "262",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 31,
+          "y": 59,
+          "_type": 3
+        },
+        {
+          "$id": "263",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 31,
+          "y": 60,
+          "_type": 1
+        },
+        {
+          "$id": "264",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 32,
+          "y": 39,
+          "_type": 1
+        },
+        {
+          "$id": "265",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 32,
+          "y": 40,
+          "_type": 3
+        },
+        {
+          "$id": "266",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 32,
+          "y": 41,
+          "_type": 3
+        },
+        {
+          "$id": "267",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 32,
+          "y": 42,
+          "_type": 3
+        },
+        {
+          "$id": "268",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 32,
+          "y": 43,
+          "_type": 3
+        },
+        {
+          "$id": "269",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 32,
+          "y": 44,
+          "_type": 3
+        },
+        {
+          "$id": "270",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 32,
+          "y": 45,
+          "_type": 3
+        },
+        {
+          "$id": "271",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 32,
+          "y": 46,
+          "_type": 3
+        },
+        {
+          "$id": "272",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 32,
+          "y": 47,
+          "_type": 3
+        },
+        {
+          "$id": "273",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 32,
+          "y": 48,
+          "_type": 3
+        },
+        {
+          "$id": "274",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 32,
+          "y": 49,
+          "_type": 3
+        },
+        {
+          "$ref": "113"
+        },
+        {
+          "$ref": "115"
+        },
+        {
+          "$ref": "117"
+        },
+        {
+          "$ref": "119"
+        },
+        {
+          "$id": "275",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 32,
+          "y": 54,
+          "_type": 3
+        },
+        {
+          "$id": "276",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 32,
+          "y": 55,
+          "_type": 3
+        },
+        {
+          "$id": "277",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 32,
+          "y": 56,
+          "_type": 3
+        },
+        {
+          "$id": "278",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 32,
+          "y": 57,
+          "_type": 3
+        },
+        {
+          "$id": "279",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 32,
+          "y": 58,
+          "_type": 3
+        },
+        {
+          "$id": "280",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 32,
+          "y": 59,
+          "_type": 3
+        },
+        {
+          "$id": "281",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 32,
+          "y": 60,
+          "_type": 1
+        },
+        {
+          "$id": "282",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 33,
+          "y": 39,
+          "_type": 1
+        },
+        {
+          "$id": "283",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 33,
+          "y": 40,
+          "_type": 3
+        },
+        {
+          "$id": "284",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 33,
+          "y": 41,
+          "_type": 3
+        },
+        {
+          "$id": "285",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 33,
+          "y": 42,
+          "_type": 3
+        },
+        {
+          "$id": "286",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 33,
+          "y": 43,
+          "_type": 3
+        },
+        {
+          "$id": "287",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 33,
+          "y": 44,
+          "_type": 3
+        },
+        {
+          "$id": "288",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 33,
+          "y": 45,
+          "_type": 3
+        },
+        {
+          "$id": "289",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 33,
+          "y": 46,
+          "_type": 3
+        },
+        {
+          "$id": "290",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 33,
+          "y": 47,
+          "_type": 3
+        },
+        {
+          "$id": "291",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 33,
+          "y": 48,
+          "_type": 3
+        },
+        {
+          "$id": "292",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 33,
+          "y": 49,
+          "_type": 3
+        },
+        {
+          "$ref": "121"
+        },
+        {
+          "$ref": "123"
+        },
+        {
+          "$ref": "125"
+        },
+        {
+          "$ref": "127"
+        },
+        {
+          "$id": "293",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 33,
+          "y": 54,
+          "_type": 3
+        },
+        {
+          "$id": "294",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 33,
+          "y": 55,
+          "_type": 3
+        },
+        {
+          "$id": "295",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 33,
+          "y": 56,
+          "_type": 3
+        },
+        {
+          "$id": "296",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 33,
+          "y": 57,
+          "_type": 3
+        },
+        {
+          "$id": "297",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 33,
+          "y": 58,
+          "_type": 3
+        },
+        {
+          "$id": "298",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 33,
+          "y": 59,
+          "_type": 3
+        },
+        {
+          "$id": "299",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 33,
+          "y": 60,
+          "_type": 1
+        },
+        {
+          "$id": "300",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 34,
+          "y": 39,
+          "_type": 1
+        },
+        {
+          "$id": "301",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 34,
+          "y": 40,
+          "_type": 3
+        },
+        {
+          "$id": "302",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 34,
+          "y": 41,
+          "_type": 3
+        },
+        {
+          "$id": "303",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 34,
+          "y": 42,
+          "_type": 3
+        },
+        {
+          "$id": "304",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 34,
+          "y": 43,
+          "_type": 3
+        },
+        {
+          "$id": "305",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 34,
+          "y": 44,
+          "_type": 3
+        },
+        {
+          "$id": "306",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 34,
+          "y": 45,
+          "_type": 3
+        },
+        {
+          "$id": "307",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 34,
+          "y": 46,
+          "_type": 3
+        },
+        {
+          "$id": "308",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 34,
+          "y": 47,
+          "_type": 3
+        },
+        {
+          "$id": "309",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 34,
+          "y": 48,
+          "_type": 3
+        },
+        {
+          "$id": "310",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 34,
+          "y": 49,
+          "_type": 3
+        },
+        {
+          "$ref": "129"
+        },
+        {
+          "$ref": "131"
+        },
+        {
+          "$ref": "133"
+        },
+        {
+          "$ref": "135"
+        },
+        {
+          "$id": "311",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 34,
+          "y": 54,
+          "_type": 3
+        },
+        {
+          "$id": "312",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 34,
+          "y": 55,
+          "_type": 3
+        },
+        {
+          "$id": "313",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 34,
+          "y": 56,
+          "_type": 3
+        },
+        {
+          "$id": "314",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 34,
+          "y": 57,
+          "_type": 3
+        },
+        {
+          "$id": "315",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 34,
+          "y": 58,
+          "_type": 3
+        },
+        {
+          "$id": "316",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 34,
+          "y": 59,
+          "_type": 3
+        },
+        {
+          "$id": "317",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 34,
+          "y": 60,
+          "_type": 1
+        },
+        {
+          "$id": "318",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 35,
+          "y": 39,
+          "_type": 1
+        },
+        {
+          "$id": "319",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 35,
+          "y": 40,
+          "_type": 3
+        },
+        {
+          "$id": "320",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 35,
+          "y": 41,
+          "_type": 3
+        },
+        {
+          "$id": "321",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 35,
+          "y": 42,
+          "_type": 3
+        },
+        {
+          "$id": "322",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 35,
+          "y": 43,
+          "_type": 3
+        },
+        {
+          "$ref": "110"
+        },
+        {
+          "$id": "323",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 35,
+          "y": 45,
+          "_type": 3
+        },
+        {
+          "$id": "324",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 35,
+          "y": 46,
+          "_type": 3
+        },
+        {
+          "$id": "325",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 35,
+          "y": 47,
+          "_type": 3
+        },
+        {
+          "$id": "326",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 35,
+          "y": 48,
+          "_type": 3
+        },
+        {
+          "$id": "327",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 35,
+          "y": 49,
+          "_type": 3
+        },
+        {
+          "$id": "328",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 35,
+          "y": 50,
+          "_type": 3
+        },
+        {
+          "$ref": "108"
+        },
+        {
+          "$id": "329",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 35,
+          "y": 52,
+          "_type": 3
+        },
+        {
+          "$id": "330",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 35,
+          "y": 53,
+          "_type": 3
+        },
+        {
+          "$id": "331",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 35,
+          "y": 54,
+          "_type": 3
+        },
+        {
+          "$id": "332",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 35,
+          "y": 55,
+          "_type": 3
+        },
+        {
+          "$id": "333",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 35,
+          "y": 56,
+          "_type": 3
+        },
+        {
+          "$id": "334",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 35,
+          "y": 57,
+          "_type": 3
+        },
+        {
+          "$id": "335",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 35,
+          "y": 58,
+          "_type": 3
+        },
+        {
+          "$id": "336",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 35,
+          "y": 59,
+          "_type": 3
+        },
+        {
+          "$id": "337",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 35,
+          "y": 60,
+          "_type": 1
+        },
+        {
+          "$id": "338",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 36,
+          "y": 39,
+          "_type": 1
+        },
+        {
+          "$id": "339",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 36,
+          "y": 40,
+          "_type": 3
+        },
+        {
+          "$id": "340",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 36,
+          "y": 41,
+          "_type": 3
+        },
+        {
+          "$id": "341",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 36,
+          "y": 42,
+          "_type": 3
+        },
+        {
+          "$id": "342",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 36,
+          "y": 43,
+          "_type": 3
+        },
+        {
+          "$id": "343",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 36,
+          "y": 44,
+          "_type": 3
+        },
+        {
+          "$id": "344",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 36,
+          "y": 45,
+          "_type": 3
+        },
+        {
+          "$id": "345",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 36,
+          "y": 46,
+          "_type": 3
+        },
+        {
+          "$id": "346",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 36,
+          "y": 47,
+          "_type": 3
+        },
+        {
+          "$id": "347",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 36,
+          "y": 48,
+          "_type": 3
+        },
+        {
+          "$ref": "102"
+        },
+        {
+          "$ref": "104"
+        },
+        {
+          "$ref": "106"
+        },
+        {
+          "$id": "348",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 36,
+          "y": 52,
+          "_type": 3
+        },
+        {
+          "$id": "349",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 36,
+          "y": 53,
+          "_type": 3
+        },
+        {
+          "$id": "350",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 36,
+          "y": 54,
+          "_type": 3
+        },
+        {
+          "$id": "351",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 36,
+          "y": 55,
+          "_type": 3
+        },
+        {
+          "$id": "352",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 36,
+          "y": 56,
+          "_type": 3
+        },
+        {
+          "$id": "353",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 36,
+          "y": 57,
+          "_type": 3
+        },
+        {
+          "$id": "354",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 36,
+          "y": 58,
+          "_type": 3
+        },
+        {
+          "$id": "355",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 36,
+          "y": 59,
+          "_type": 3
+        },
+        {
+          "$id": "356",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 36,
+          "y": 60,
+          "_type": 1
+        },
+        {
+          "$id": "357",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 37,
+          "y": 39,
+          "_type": 1
+        },
+        {
+          "$id": "358",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 37,
+          "y": 40,
+          "_type": 3
+        },
+        {
+          "$id": "359",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 37,
+          "y": 41,
+          "_type": 3
+        },
+        {
+          "$id": "360",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 37,
+          "y": 42,
+          "_type": 3
+        },
+        {
+          "$id": "361",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 37,
+          "y": 43,
+          "_type": 3
+        },
+        {
+          "$id": "362",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 37,
+          "y": 44,
+          "_type": 3
+        },
+        {
+          "$id": "363",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 37,
+          "y": 45,
+          "_type": 3
+        },
+        {
+          "$id": "364",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 37,
+          "y": 46,
+          "_type": 3
+        },
+        {
+          "$ref": "100"
+        },
+        {
+          "$id": "365",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 37,
+          "y": 48,
+          "_type": 3
+        },
+        {
+          "$id": "366",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 37,
+          "y": 49,
+          "_type": 3
+        },
+        {
+          "$id": "367",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 37,
+          "y": 50,
+          "_type": 3
+        },
+        {
+          "$id": "368",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 37,
+          "y": 51,
+          "_type": 3
+        },
+        {
+          "$id": "369",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 37,
+          "y": 52,
+          "_type": 3
+        },
+        {
+          "$id": "370",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 37,
+          "y": 53,
+          "_type": 3
+        },
+        {
+          "$id": "371",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 37,
+          "y": 54,
+          "_type": 3
+        },
+        {
+          "$id": "372",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 37,
+          "y": 55,
+          "_type": 3
+        },
+        {
+          "$id": "373",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 37,
+          "y": 56,
+          "_type": 3
+        },
+        {
+          "$id": "374",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 37,
+          "y": 57,
+          "_type": 3
+        },
+        {
+          "$id": "375",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 37,
+          "y": 58,
+          "_type": 3
+        },
+        {
+          "$id": "376",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 37,
+          "y": 59,
+          "_type": 3
+        },
+        {
+          "$id": "377",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 37,
+          "y": 60,
+          "_type": 1
+        },
+        {
+          "$id": "378",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 38,
+          "y": 39,
+          "_type": 1
+        },
+        {
+          "$id": "379",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 38,
+          "y": 40,
+          "_type": 3
+        },
+        {
+          "$id": "380",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 38,
+          "y": 41,
+          "_type": 3
+        },
+        {
+          "$id": "381",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 38,
+          "y": 42,
+          "_type": 3
+        },
+        {
+          "$id": "382",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 38,
+          "y": 43,
+          "_type": 3
+        },
+        {
+          "$id": "383",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 38,
+          "y": 44,
+          "_type": 3
+        },
+        {
+          "$id": "384",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 38,
+          "y": 45,
+          "_type": 3
+        },
+        {
+          "$id": "385",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 38,
+          "y": 46,
+          "_type": 3
+        },
+        {
+          "$id": "386",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 38,
+          "y": 47,
+          "_type": 3
+        },
+        {
+          "$id": "387",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 38,
+          "y": 48,
+          "_type": 3
+        },
+        {
+          "$id": "388",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 38,
+          "y": 49,
+          "_type": 3
+        },
+        {
+          "$id": "389",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 38,
+          "y": 50,
+          "_type": 3
+        },
+        {
+          "$id": "390",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 38,
+          "y": 51,
+          "_type": 3
+        },
+        {
+          "$id": "391",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 38,
+          "y": 52,
+          "_type": 3
+        },
+        {
+          "$id": "392",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 38,
+          "y": 53,
+          "_type": 3
+        },
+        {
+          "$id": "393",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 38,
+          "y": 54,
+          "_type": 3
+        },
+        {
+          "$id": "394",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 38,
+          "y": 55,
+          "_type": 3
+        },
+        {
+          "$id": "395",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 38,
+          "y": 56,
+          "_type": 3
+        },
+        {
+          "$id": "396",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 38,
+          "y": 57,
+          "_type": 3
+        },
+        {
+          "$id": "397",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 38,
+          "y": 58,
+          "_type": 3
+        },
+        {
+          "$id": "398",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 38,
+          "y": 59,
+          "_type": 3
+        },
+        {
+          "$id": "399",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 38,
+          "y": 60,
+          "_type": 1
+        },
+        {
+          "$id": "400",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 39,
+          "y": 39,
+          "_type": 1
+        },
+        {
+          "$id": "401",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 39,
+          "y": 40,
+          "_type": 3
+        },
+        {
+          "$id": "402",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 39,
+          "y": 41,
+          "_type": 3
+        },
+        {
+          "$id": "403",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 39,
+          "y": 42,
+          "_type": 3
+        },
+        {
+          "$id": "404",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 39,
+          "y": 43,
+          "_type": 3
+        },
+        {
+          "$id": "405",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 39,
+          "y": 44,
+          "_type": 3
+        },
+        {
+          "$id": "406",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 39,
+          "y": 45,
+          "_type": 3
+        },
+        {
+          "$id": "407",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 39,
+          "y": 46,
+          "_type": 3
+        },
+        {
+          "$id": "408",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 39,
+          "y": 47,
+          "_type": 3
+        },
+        {
+          "$id": "409",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 39,
+          "y": 48,
+          "_type": 3
+        },
+        {
+          "$id": "410",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 39,
+          "y": 49,
+          "_type": 3
+        },
+        {
+          "$id": "411",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 39,
+          "y": 50,
+          "_type": 3
+        },
+        {
+          "$id": "412",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 39,
+          "y": 51,
+          "_type": 3
+        },
+        {
+          "$id": "413",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 39,
+          "y": 52,
+          "_type": 3
+        },
+        {
+          "$id": "414",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 39,
+          "y": 53,
+          "_type": 3
+        },
+        {
+          "$id": "415",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 39,
+          "y": 54,
+          "_type": 3
+        },
+        {
+          "$id": "416",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 39,
+          "y": 55,
+          "_type": 3
+        },
+        {
+          "$id": "417",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 39,
+          "y": 56,
+          "_type": 3
+        },
+        {
+          "$id": "418",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 39,
+          "y": 57,
+          "_type": 3
+        },
+        {
+          "$id": "419",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 39,
+          "y": 58,
+          "_type": 3
+        },
+        {
+          "$id": "420",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 39,
+          "y": 59,
+          "_type": 3
+        },
+        {
+          "$id": "421",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 39,
+          "y": 60,
+          "_type": 1
+        },
+        {
+          "$id": "422",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 40,
+          "y": 39,
+          "_type": 1
+        },
+        {
+          "$id": "423",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 40,
+          "y": 40,
+          "_type": 1
+        },
+        {
+          "$id": "424",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 40,
+          "y": 41,
+          "_type": 1
+        },
+        {
+          "$id": "425",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 40,
+          "y": 42,
+          "_type": 1
+        },
+        {
+          "$id": "426",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 40,
+          "y": 43,
+          "_type": 1
+        },
+        {
+          "$id": "427",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 40,
+          "y": 44,
+          "_type": 1
+        },
+        {
+          "$id": "428",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 40,
+          "y": 45,
+          "_type": 1
+        },
+        {
+          "$id": "429",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 40,
+          "y": 46,
+          "_type": 1
+        },
+        {
+          "$id": "430",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 40,
+          "y": 47,
+          "_type": 1
+        },
+        {
+          "$id": "431",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 40,
+          "y": 48,
+          "_type": 1
+        },
+        {
+          "$id": "432",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 40,
+          "y": 49,
+          "_type": 1
+        },
+        {
+          "$id": "433",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 40,
+          "y": 50,
+          "_type": 1
+        },
+        {
+          "$id": "434",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 40,
+          "y": 51,
+          "_type": 1
+        },
+        {
+          "$id": "435",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 40,
+          "y": 52,
+          "_type": 1
+        },
+        {
+          "$id": "436",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 40,
+          "y": 53,
+          "_type": 1
+        },
+        {
+          "$id": "437",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 40,
+          "y": 54,
+          "_type": 1
+        },
+        {
+          "$id": "438",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 40,
+          "y": 55,
+          "_type": 1
+        },
+        {
+          "$id": "439",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 40,
+          "y": 56,
+          "_type": 1
+        },
+        {
+          "$id": "440",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 40,
+          "y": 57,
+          "_type": 1
+        },
+        {
+          "$id": "441",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 40,
+          "y": 58,
+          "_type": 1
+        },
+        {
+          "$id": "442",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 40,
+          "y": 59,
+          "_type": 1
+        },
+        {
+          "$id": "443",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 40,
+          "y": 60,
+          "_type": 1
+        },
+        {
+          "$id": "444",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 60,
+          "y": 40,
+          "_type": 3
+        },
+        {
+          "$id": "445",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 60,
+          "y": 41,
+          "_type": 3
+        },
+        {
+          "$id": "446",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 60,
+          "y": 42,
+          "_type": 3
+        },
+        {
+          "$id": "447",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 60,
+          "y": 43,
+          "_type": 3
+        },
+        {
+          "$id": "448",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 60,
+          "y": 44,
+          "_type": 3
+        },
+        {
+          "$id": "449",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 60,
+          "y": 45,
+          "_type": 3
+        },
+        {
+          "$id": "450",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 60,
+          "y": 46,
+          "_type": 3
+        },
+        {
+          "$id": "451",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 60,
+          "y": 47,
+          "_type": 3
+        },
+        {
+          "$id": "452",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 60,
+          "y": 48,
+          "_type": 3
+        },
+        {
+          "$id": "453",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 60,
+          "y": 49,
+          "_type": 3
+        },
+        {
+          "$id": "454",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 60,
+          "y": 50,
+          "_type": 3
+        },
+        {
+          "$id": "455",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 60,
+          "y": 51,
+          "_type": 3
+        },
+        {
+          "$id": "456",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 60,
+          "y": 52,
+          "_type": 3
+        },
+        {
+          "$id": "457",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 60,
+          "y": 53,
+          "_type": 3
+        },
+        {
+          "$id": "458",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 60,
+          "y": 54,
+          "_type": 3
+        },
+        {
+          "$id": "459",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 60,
+          "y": 55,
+          "_type": 3
+        },
+        {
+          "$id": "460",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 60,
+          "y": 56,
+          "_type": 3
+        },
+        {
+          "$id": "461",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 60,
+          "y": 57,
+          "_type": 3
+        },
+        {
+          "$id": "462",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 60,
+          "y": 58,
+          "_type": 3
+        },
+        {
+          "$id": "463",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 60,
+          "y": 59,
+          "_type": 3
+        },
+        {
+          "$id": "464",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 61,
+          "y": 40,
+          "_type": 3
+        },
+        {
+          "$ref": "188"
+        },
+        {
+          "$id": "465",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 61,
+          "y": 42,
+          "_type": 3
+        },
+        {
+          "$id": "466",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 61,
+          "y": 43,
+          "_type": 3
+        },
+        {
+          "$id": "467",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 61,
+          "y": 44,
+          "_type": 3
+        },
+        {
+          "$id": "468",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 61,
+          "y": 45,
+          "_type": 3
+        },
+        {
+          "$id": "469",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 61,
+          "y": 46,
+          "_type": 3
+        },
+        {
+          "$id": "470",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 61,
+          "y": 47,
+          "_type": 3
+        },
+        {
+          "$id": "471",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 61,
+          "y": 48,
+          "_type": 3
+        },
+        {
+          "$id": "472",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 61,
+          "y": 49,
+          "_type": 3
+        },
+        {
+          "$id": "473",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 61,
+          "y": 50,
+          "_type": 3
+        },
+        {
+          "$id": "474",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 61,
+          "y": 51,
+          "_type": 3
+        },
+        {
+          "$id": "475",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 61,
+          "y": 52,
+          "_type": 3
+        },
+        {
+          "$id": "476",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 61,
+          "y": 53,
+          "_type": 3
+        },
+        {
+          "$id": "477",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 61,
+          "y": 54,
+          "_type": 3
+        },
+        {
+          "$id": "478",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 61,
+          "y": 55,
+          "_type": 3
+        },
+        {
+          "$id": "479",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 61,
+          "y": 56,
+          "_type": 3
+        },
+        {
+          "$id": "480",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 61,
+          "y": 57,
+          "_type": 3
+        },
+        {
+          "$id": "481",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 61,
+          "y": 58,
+          "_type": 3
+        },
+        {
+          "$id": "482",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 61,
+          "y": 59,
+          "_type": 3
+        },
+        {
+          "$id": "483",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 62,
+          "y": 40,
+          "_type": 3
+        },
+        {
+          "$id": "484",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 62,
+          "y": 41,
+          "_type": 3
+        },
+        {
+          "$id": "485",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 62,
+          "y": 42,
+          "_type": 3
+        },
+        {
+          "$id": "486",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 62,
+          "y": 43,
+          "_type": 3
+        },
+        {
+          "$id": "487",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 62,
+          "y": 44,
+          "_type": 3
+        },
+        {
+          "$id": "488",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 62,
+          "y": 45,
+          "_type": 3
+        },
+        {
+          "$id": "489",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 62,
+          "y": 46,
+          "_type": 3
+        },
+        {
+          "$id": "490",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 62,
+          "y": 47,
+          "_type": 3
+        },
+        {
+          "$id": "491",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 62,
+          "y": 48,
+          "_type": 3
+        },
+        {
+          "$id": "492",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 62,
+          "y": 49,
+          "_type": 3
+        },
+        {
+          "$id": "493",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 62,
+          "y": 50,
+          "_type": 3
+        },
+        {
+          "$id": "494",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 62,
+          "y": 51,
+          "_type": 3
+        },
+        {
+          "$id": "495",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 62,
+          "y": 52,
+          "_type": 3
+        },
+        {
+          "$id": "496",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 62,
+          "y": 53,
+          "_type": 3
+        },
+        {
+          "$id": "497",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 62,
+          "y": 54,
+          "_type": 3
+        },
+        {
+          "$id": "498",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 62,
+          "y": 55,
+          "_type": 3
+        },
+        {
+          "$id": "499",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 62,
+          "y": 56,
+          "_type": 3
+        },
+        {
+          "$id": "500",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 62,
+          "y": 57,
+          "_type": 3
+        },
+        {
+          "$id": "501",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 62,
+          "y": 58,
+          "_type": 3
+        },
+        {
+          "$id": "502",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 62,
+          "y": 59,
+          "_type": 3
+        },
+        {
+          "$id": "503",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 63,
+          "y": 40,
+          "_type": 3
+        },
+        {
+          "$id": "504",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 63,
+          "y": 41,
+          "_type": 3
+        },
+        {
+          "$id": "505",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 63,
+          "y": 42,
+          "_type": 3
+        },
+        {
+          "$id": "506",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 63,
+          "y": 43,
+          "_type": 3
+        },
+        {
+          "$id": "507",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 63,
+          "y": 44,
+          "_type": 3
+        },
+        {
+          "$id": "508",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 63,
+          "y": 45,
+          "_type": 3
+        },
+        {
+          "$id": "509",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 63,
+          "y": 46,
+          "_type": 3
+        },
+        {
+          "$id": "510",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 63,
+          "y": 47,
+          "_type": 3
+        },
+        {
+          "$id": "511",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 63,
+          "y": 48,
+          "_type": 3
+        },
+        {
+          "$id": "512",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 63,
+          "y": 49,
+          "_type": 3
+        },
+        {
+          "$id": "513",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 63,
+          "y": 50,
+          "_type": 3
+        },
+        {
+          "$id": "514",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 63,
+          "y": 51,
+          "_type": 3
+        },
+        {
+          "$id": "515",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 63,
+          "y": 52,
+          "_type": 3
+        },
+        {
+          "$id": "516",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 63,
+          "y": 53,
+          "_type": 3
+        },
+        {
+          "$id": "517",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 63,
+          "y": 54,
+          "_type": 3
+        },
+        {
+          "$id": "518",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 63,
+          "y": 55,
+          "_type": 3
+        },
+        {
+          "$id": "519",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 63,
+          "y": 56,
+          "_type": 3
+        },
+        {
+          "$id": "520",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 63,
+          "y": 57,
+          "_type": 3
+        },
+        {
+          "$id": "521",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 63,
+          "y": 58,
+          "_type": 3
+        },
+        {
+          "$id": "522",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 63,
+          "y": 59,
+          "_type": 3
+        },
+        {
+          "$id": "523",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 64,
+          "y": 40,
+          "_type": 3
+        },
+        {
+          "$id": "524",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 64,
+          "y": 41,
+          "_type": 3
+        },
+        {
+          "$id": "525",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 64,
+          "y": 42,
+          "_type": 3
+        },
+        {
+          "$id": "526",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 64,
+          "y": 43,
+          "_type": 3
+        },
+        {
+          "$id": "527",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 64,
+          "y": 44,
+          "_type": 3
+        },
+        {
+          "$id": "528",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 64,
+          "y": 45,
+          "_type": 3
+        },
+        {
+          "$id": "529",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 64,
+          "y": 46,
+          "_type": 3
+        },
+        {
+          "$id": "530",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 64,
+          "y": 47,
+          "_type": 3
+        },
+        {
+          "$id": "531",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 64,
+          "y": 48,
+          "_type": 3
+        },
+        {
+          "$id": "532",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 64,
+          "y": 49,
+          "_type": 3
+        },
+        {
+          "$id": "533",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 64,
+          "y": 50,
+          "_type": 3
+        },
+        {
+          "$id": "534",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 64,
+          "y": 51,
+          "_type": 3
+        },
+        {
+          "$id": "535",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 64,
+          "y": 52,
+          "_type": 3
+        },
+        {
+          "$id": "536",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 64,
+          "y": 53,
+          "_type": 3
+        },
+        {
+          "$id": "537",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 64,
+          "y": 54,
+          "_type": 3
+        },
+        {
+          "$id": "538",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 64,
+          "y": 55,
+          "_type": 3
+        },
+        {
+          "$id": "539",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 64,
+          "y": 56,
+          "_type": 3
+        },
+        {
+          "$id": "540",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 64,
+          "y": 57,
+          "_type": 3
+        },
+        {
+          "$id": "541",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 64,
+          "y": 58,
+          "_type": 3
+        },
+        {
+          "$id": "542",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 64,
+          "y": 59,
+          "_type": 3
+        },
+        {
+          "$id": "543",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 65,
+          "y": 40,
+          "_type": 3
+        },
+        {
+          "$id": "544",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 65,
+          "y": 41,
+          "_type": 3
+        },
+        {
+          "$id": "545",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 65,
+          "y": 42,
+          "_type": 3
+        },
+        {
+          "$id": "546",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 65,
+          "y": 43,
+          "_type": 3
+        },
+        {
+          "$id": "547",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 65,
+          "y": 44,
+          "_type": 3
+        },
+        {
+          "$id": "548",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 65,
+          "y": 45,
+          "_type": 3
+        },
+        {
+          "$id": "549",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 65,
+          "y": 46,
+          "_type": 3
+        },
+        {
+          "$id": "550",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 65,
+          "y": 47,
+          "_type": 3
+        },
+        {
+          "$id": "551",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 65,
+          "y": 48,
+          "_type": 3
+        },
+        {
+          "$id": "552",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 65,
+          "y": 49,
+          "_type": 3
+        },
+        {
+          "$id": "553",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 65,
+          "y": 50,
+          "_type": 3
+        },
+        {
+          "$id": "554",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 65,
+          "y": 51,
+          "_type": 3
+        },
+        {
+          "$id": "555",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 65,
+          "y": 52,
+          "_type": 3
+        },
+        {
+          "$id": "556",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 65,
+          "y": 53,
+          "_type": 3
+        },
+        {
+          "$id": "557",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 65,
+          "y": 54,
+          "_type": 3
+        },
+        {
+          "$id": "558",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 65,
+          "y": 55,
+          "_type": 3
+        },
+        {
+          "$id": "559",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 65,
+          "y": 56,
+          "_type": 3
+        },
+        {
+          "$id": "560",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 65,
+          "y": 57,
+          "_type": 3
+        },
+        {
+          "$id": "561",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 65,
+          "y": 58,
+          "_type": 3
+        },
+        {
+          "$id": "562",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 65,
+          "y": 59,
+          "_type": 3
+        },
+        {
+          "$id": "563",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 66,
+          "y": 40,
+          "_type": 3
+        },
+        {
+          "$id": "564",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 66,
+          "y": 41,
+          "_type": 3
+        },
+        {
+          "$id": "565",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 66,
+          "y": 42,
+          "_type": 3
+        },
+        {
+          "$id": "566",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 66,
+          "y": 43,
+          "_type": 3
+        },
+        {
+          "$id": "567",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 66,
+          "y": 44,
+          "_type": 3
+        },
+        {
+          "$id": "568",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 66,
+          "y": 45,
+          "_type": 3
+        },
+        {
+          "$id": "569",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 66,
+          "y": 46,
+          "_type": 3
+        },
+        {
+          "$id": "570",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 66,
+          "y": 47,
+          "_type": 3
+        },
+        {
+          "$id": "571",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 66,
+          "y": 48,
+          "_type": 3
+        },
+        {
+          "$id": "572",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 66,
+          "y": 49,
+          "_type": 3
+        },
+        {
+          "$id": "573",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 66,
+          "y": 50,
+          "_type": 3
+        },
+        {
+          "$id": "574",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 66,
+          "y": 51,
+          "_type": 3
+        },
+        {
+          "$id": "575",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 66,
+          "y": 52,
+          "_type": 3
+        },
+        {
+          "$id": "576",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 66,
+          "y": 53,
+          "_type": 3
+        },
+        {
+          "$id": "577",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 66,
+          "y": 54,
+          "_type": 3
+        },
+        {
+          "$id": "578",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 66,
+          "y": 55,
+          "_type": 3
+        },
+        {
+          "$id": "579",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 66,
+          "y": 56,
+          "_type": 3
+        },
+        {
+          "$id": "580",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 66,
+          "y": 57,
+          "_type": 3
+        },
+        {
+          "$id": "581",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 66,
+          "y": 58,
+          "_type": 3
+        },
+        {
+          "$id": "582",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 66,
+          "y": 59,
+          "_type": 3
+        },
+        {
+          "$id": "583",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 67,
+          "y": 40,
+          "_type": 3
+        },
+        {
+          "$id": "584",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 67,
+          "y": 41,
+          "_type": 3
+        },
+        {
+          "$id": "585",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 67,
+          "y": 42,
+          "_type": 3
+        },
+        {
+          "$id": "586",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 67,
+          "y": 43,
+          "_type": 3
+        },
+        {
+          "$id": "587",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 67,
+          "y": 44,
+          "_type": 3
+        },
+        {
+          "$id": "588",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 67,
+          "y": 45,
+          "_type": 3
+        },
+        {
+          "$id": "589",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 67,
+          "y": 46,
+          "_type": 3
+        },
+        {
+          "$id": "590",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 67,
+          "y": 47,
+          "_type": 3
+        },
+        {
+          "$id": "591",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 67,
+          "y": 48,
+          "_type": 3
+        },
+        {
+          "$id": "592",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 67,
+          "y": 49,
+          "_type": 3
+        },
+        {
+          "$id": "593",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 67,
+          "y": 50,
+          "_type": 3
+        },
+        {
+          "$id": "594",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 67,
+          "y": 51,
+          "_type": 3
+        },
+        {
+          "$id": "595",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 67,
+          "y": 52,
+          "_type": 3
+        },
+        {
+          "$id": "596",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 67,
+          "y": 53,
+          "_type": 3
+        },
+        {
+          "$id": "597",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 67,
+          "y": 54,
+          "_type": 3
+        },
+        {
+          "$id": "598",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 67,
+          "y": 55,
+          "_type": 3
+        },
+        {
+          "$id": "599",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 67,
+          "y": 56,
+          "_type": 3
+        },
+        {
+          "$id": "600",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 67,
+          "y": 57,
+          "_type": 3
+        },
+        {
+          "$id": "601",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 67,
+          "y": 58,
+          "_type": 3
+        },
+        {
+          "$id": "602",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 67,
+          "y": 59,
+          "_type": 3
+        },
+        {
+          "$id": "603",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 68,
+          "y": 40,
+          "_type": 3
+        },
+        {
+          "$id": "604",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 68,
+          "y": 41,
+          "_type": 3
+        },
+        {
+          "$id": "605",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 68,
+          "y": 42,
+          "_type": 3
+        },
+        {
+          "$id": "606",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 68,
+          "y": 43,
+          "_type": 3
+        },
+        {
+          "$id": "607",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 68,
+          "y": 44,
+          "_type": 3
+        },
+        {
+          "$id": "608",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 68,
+          "y": 45,
+          "_type": 3
+        },
+        {
+          "$id": "609",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 68,
+          "y": 46,
+          "_type": 3
+        },
+        {
+          "$id": "610",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 68,
+          "y": 47,
+          "_type": 3
+        },
+        {
+          "$id": "611",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 68,
+          "y": 48,
+          "_type": 3
+        },
+        {
+          "$id": "612",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 68,
+          "y": 49,
+          "_type": 3
+        },
+        {
+          "$id": "613",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 68,
+          "y": 50,
+          "_type": 3
+        },
+        {
+          "$id": "614",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 68,
+          "y": 51,
+          "_type": 3
+        },
+        {
+          "$id": "615",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 68,
+          "y": 52,
+          "_type": 3
+        },
+        {
+          "$id": "616",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 68,
+          "y": 53,
+          "_type": 3
+        },
+        {
+          "$id": "617",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 68,
+          "y": 54,
+          "_type": 3
+        },
+        {
+          "$id": "618",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 68,
+          "y": 55,
+          "_type": 3
+        },
+        {
+          "$id": "619",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 68,
+          "y": 56,
+          "_type": 3
+        },
+        {
+          "$id": "620",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 68,
+          "y": 57,
+          "_type": 3
+        },
+        {
+          "$id": "621",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 68,
+          "y": 58,
+          "_type": 3
+        },
+        {
+          "$id": "622",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 68,
+          "y": 59,
+          "_type": 3
+        },
+        {
+          "$id": "623",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 69,
+          "y": 40,
+          "_type": 3
+        },
+        {
+          "$id": "624",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 69,
+          "y": 41,
+          "_type": 3
+        },
+        {
+          "$id": "625",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 69,
+          "y": 42,
+          "_type": 3
+        },
+        {
+          "$id": "626",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 69,
+          "y": 43,
+          "_type": 3
+        },
+        {
+          "$id": "627",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 69,
+          "y": 44,
+          "_type": 3
+        },
+        {
+          "$id": "628",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 69,
+          "y": 45,
+          "_type": 3
+        },
+        {
+          "$id": "629",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 69,
+          "y": 46,
+          "_type": 3
+        },
+        {
+          "$id": "630",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 69,
+          "y": 47,
+          "_type": 3
+        },
+        {
+          "$id": "631",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 69,
+          "y": 48,
+          "_type": 3
+        },
+        {
+          "$id": "632",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 69,
+          "y": 49,
+          "_type": 3
+        },
+        {
+          "$id": "633",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 69,
+          "y": 50,
+          "_type": 3
+        },
+        {
+          "$id": "634",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 69,
+          "y": 51,
+          "_type": 3
+        },
+        {
+          "$id": "635",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 69,
+          "y": 52,
+          "_type": 3
+        },
+        {
+          "$id": "636",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 69,
+          "y": 53,
+          "_type": 3
+        },
+        {
+          "$id": "637",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 69,
+          "y": 54,
+          "_type": 3
+        },
+        {
+          "$id": "638",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 69,
+          "y": 55,
+          "_type": 3
+        },
+        {
+          "$id": "639",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 69,
+          "y": 56,
+          "_type": 3
+        },
+        {
+          "$id": "640",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 69,
+          "y": 57,
+          "_type": 3
+        },
+        {
+          "$id": "641",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 69,
+          "y": 58,
+          "_type": 3
+        },
+        {
+          "$id": "642",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 69,
+          "y": 59,
+          "_type": 3
+        }
+      ]
+    }
+  },
+  "pcs": {
+    "$id": "643",
+    "currentPlayerNumber": 0,
+    "balanceTicks": 5.0,
+    "tickTimer": 3.198254,
+    "players": [
+      {
+        "$id": "644",
+        "_balance": 49615,
+        "_maxPopulationLevel": 0,
+        "_maxPopulationCount": 0,
+        "playerNumber": 0
+      },
+      {
+        "$id": "645",
+        "_balance": 49770,
+        "_maxPopulationLevel": 0,
+        "_maxPopulationCount": 0,
+        "playerNumber": 1
+      },
+      {
+        "$id": "646",
+        "_balance": 49770,
+        "_maxPopulationLevel": 0,
+        "_maxPopulationCount": 0,
+        "playerNumber": 2
+      }
+    ],
+    "playerWars": [
+      {
+        "$id": "647",
+        "playerOne": 0,
+        "playerTwo": 1
+      }
+    ]
+  },
+  "ges": {
+    "$id": "648",
+    "idToActiveEvent": {
+      "$id": "649"
+    },
+    "Random": {
+      "$id": "650"
+    }
+  },
+  "camera": {
+    "$id": "651",
+    "pos": {
+      "$id": "652",
+      "x": 39.706192,
+      "y": 50.0,
+      "z": -10.0,
+      "normalized": {
+        "x": 0.6143951,
+        "y": 0.7736767,
+        "z": -0.154735342,
+        "normalized": {
+          "x": 0.614395142,
+          "y": 0.773676753,
+          "z": -0.154735357,
+          "magnitude": 1.0,
+          "sqrMagnitude": 1.00000012
+        },
+        "magnitude": 0.99999994,
+        "sqrMagnitude": 0.99999994
+      },
+      "magnitude": 64.62648,
+      "sqrMagnitude": 4176.58154
+    },
+    "orthographicSize": 8.120153
+  }
+}

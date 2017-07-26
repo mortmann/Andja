@@ -1,62 +1,113 @@
 ﻿using UnityEngine;
 using System.Collections;
+using Newtonsoft.Json;
 
-public class Need {
-	
-	public int ID;
-	public string name;
+public class NeedPrototypeData : LanguageVariables {
 	public Item item;
 	public NeedsBuilding structure;
 	public float[] uses;
 	public int startLevel;
 	public int popCount;
+}
+
+[JsonObject(MemberSerialization.OptIn)]
+public class Need {
+	protected NeedPrototypeData _prototypData;
+	public NeedPrototypeData data {
+		get { if(_prototypData==null){
+				_prototypData = PrototypController.Instance.GetNeedPrototypDataForID (ID);
+			}
+			return _prototypData;
+		}
+	}
+	public string name {
+		get { return data.Name;}	
+	}
+	public Item item{
+		get { return data.item;}	
+	}
+	public NeedsBuilding structure{
+		get { return data.structure;}	
+	}
+	public float[] uses{
+		get { return data.uses;}	
+	}
+	public int startLevel{
+		get { return data.startLevel;}	
+	}
+
+	public int popCount{
+		get { return data.popCount;}	
+	}
+
+	[JsonPropertyAttribute]
+	public int ID ;
+	[JsonPropertyAttribute]
 	private float lastNeededNotConsumed;
-	public Need(int id, string name,int level,int count, Item item,NeedsBuilding structure, float[] uses){
+	[JsonPropertyAttribute]
+	public float percantageAvailability;
+	public Need(int id, NeedPrototypeData npd){
 		this.ID = id;
-		this.name = name;
-		this.startLevel = level;
-		this.item = item;
-		this.uses = uses;
-		this.structure = structure;
-		this.popCount = count;
+		this._prototypData = npd;
 	}
 	public Need(){
 		
 	}
-	public float TryToConsumThisIn(City city,int[] peoples){
+	public Need Clone() {
+		return new Need (this);
+	}
+	protected Need(Need other){
+		this.ID = other.ID;
+	}
+
+	public void TryToConsumThisIn(City city,int[] peoples){
 		if(item == null){
 			//this does not require any item -> it needs a structure
-			return 0;
+			percantageAvailability = 0;
+			return;
 		}
 		float neededConsumAmount = 0;
+		// how much do we need to consum?
 		for (int i = startLevel; i < peoples.Length; i++) {
 			neededConsumAmount += uses [i] * ((float)peoples[i]);
 		}
+
 		if(neededConsumAmount==0){
-			return 0;
+			//we dont need anything to consum so no need to go anyfurther
+			percantageAvailability = 0;
+			return;
 		}
+		//either we consum 1 ton or as much as we need
 		neededConsumAmount = Mathf.Clamp (Mathf.RoundToInt (neededConsumAmount),1,Mathf.Infinity);
-
+		//now how much do we have in the city
 		float availableAmount = city.GetAmountForThis (item,neededConsumAmount);
-
+		//if we have none?
 		if(availableAmount == 0){
-			return 0;
+			//we can just set the lastneeded to current needed
+			lastNeededNotConsumed = neededConsumAmount;
+			percantageAvailability = 0;
+			return;
 		}
-		if(neededConsumAmount<1){
-			if (lastNeededNotConsumed == 0) {
-				lastNeededNotConsumed = neededConsumAmount;
-			} else {
-				neededConsumAmount += lastNeededNotConsumed;
-				if (neededConsumAmount < 1) {
-					lastNeededNotConsumed = neededConsumAmount;
-				} else {
-					lastNeededNotConsumed = 0;
-				}
-			}
-		}
+		//so we are here now start consum it
+		//i dont think we need this
+//		if(neededConsumAmount<1){
+//			if (lastNeededNotConsumed == 0) {
+//				lastNeededNotConsumed = neededConsumAmount;
+//			} else {
+//				neededConsumAmount += lastNeededNotConsumed;
+//				if (neededConsumAmount < 1) {
+//					lastNeededNotConsumed = neededConsumAmount;
+//				} else {
+//					lastNeededNotConsumed = 0;
+//				}
+//			}
+//		}
+		// how much to we consum of the avaible?
 		int usedAmount = (int) Mathf.Clamp (availableAmount, 0, neededConsumAmount);
+		//now remove that amount of items
 		city.removeRessource (item,usedAmount);
 		//minimum is 1 because if 0 -> ERROR due dividing through 0
-		return Mathf.RoundToInt (100*(usedAmount / neededConsumAmount))/100;
+		//calculate the percantage of availability
+		percantageAvailability = Mathf.RoundToInt (100*(usedAmount / neededConsumAmount))/100;
 	}
 }

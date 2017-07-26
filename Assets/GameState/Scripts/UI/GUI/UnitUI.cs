@@ -22,7 +22,7 @@ public class UnitUI : MonoBehaviour {
 		}
 
 		//you can only command your own units
-		if(unit.playerNumber!=PlayerController.Instance.currentPlayerNumber){
+		if(unit.playerNumber!=PlayerController.currentPlayerNumber){
 			buttonCanvas.SetActive (false);
 			return;
 		} else {

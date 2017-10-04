@@ -41,9 +41,9 @@ public class Need {
 	}
 
 	[JsonPropertyAttribute]
-	public int ID ;
+	public int ID;
 	[JsonPropertyAttribute]
-	private float lastNeededNotConsumed;
+	public float lastNeededNotConsumed;
 	[JsonPropertyAttribute]
 	public float percantageAvailability;
 	public Need(int id, NeedPrototypeData npd){

@@ -17,6 +17,7 @@ public class CameraController : MonoBehaviour {
 	public HashSet<Tile> tilesCurrentInCameraView;
 	public HashSet<Structure> structureCurrentInCameraView;
 	public Rect CameraViewRange;
+	Vector2 showBounds = new Vector2 ();
 
 	public static CameraController Instance;
 	void Awake () {
@@ -28,6 +29,16 @@ public class CameraController : MonoBehaviour {
 	void Start() {
 		tilesCurrentInCameraView = new HashSet<Tile> ();
 		structureCurrentInCameraView = new HashSet<Structure> ();
+		if(WorldController.Instance==null){
+			showBounds.x = EditorController.Instance.editorIsland.width;
+			showBounds.y = EditorController.Instance.editorIsland.height;
+		} else {
+			middle = Camera.main.ScreenToWorldPoint (new Vector3 (Camera.main.pixelWidth/2, Camera.main.pixelHeight/2));
+			middleTile = World.current.GetTileAt (middle.x,middle.y);
+			World w = World.current;
+			showBounds.x = w.Width;
+			showBounds.y = w.Height;
+		}
 	}
 
 	void Update () {
@@ -46,47 +57,29 @@ public class CameraController : MonoBehaviour {
 		diff += UpdateKeyboardCameraMovement ();
 		diff += UpdateMouseCameraMovement ();
 
-		Vector2 showBounds = new Vector2 ();
 		lower = Camera.main.ScreenToWorldPoint (Vector3.zero);
-
-		float lowerX = lower.x;
-		float lowerY = lower.y;
 		upper = Camera.main.ScreenToWorldPoint (new Vector3 (Camera.main.pixelWidth, Camera.main.pixelHeight));
-		float upperX = upper.x;
-		float upperY = upper.y;
-		if(WorldController.Instance==null){
-			showBounds.x = EditorController.Instance.editorIsland.width;
-			showBounds.y = EditorController.Instance.editorIsland.height;
-		} else {
-			if (BuildController.Instance.BuildState != BuildStateModes.None) {
-				World.current.checkIfInCamera (lowerX, lowerY, upperX, upperY);
-			} else {
-				World.current.resetIslandMark ();
-			}
-			middle = Camera.main.ScreenToWorldPoint (new Vector3 (Camera.main.pixelWidth/2, Camera.main.pixelHeight/2));
-			middleTile = World.current.GetTileAt (middle.x,middle.y);
-			findNearestIsland ();
-			World w = World.current;
-			showBounds.x = w.Width;
-			showBounds.y = w.Height;
-		}
+		middle = Camera.main.ScreenToWorldPoint (new Vector3 (Camera.main.pixelWidth/2, Camera.main.pixelHeight/2));
 
-		if(upperX>showBounds.x ){
+		middleTile = World.current.GetTileAt (middle.x,middle.y);
+		findNearestIsland ();
+
+		if(upper.x>showBounds.x ){
 			if(diff.x > 0){
 				diff.x = 0;
 			}
 		}
-		if(lowerX<0){//Camera.main.orthographicSize/divide
+		if(lower.x<0){//Camera.main.orthographicSize/divide
 			if(diff.x < 0){
 				diff.x = 0;
 			}
 		}
-		if(upperY>showBounds.y ){//Camera.main.orthographicSize/divide
+		if(upper.y>showBounds.y ){//Camera.main.orthographicSize/divide
 			if(diff.y > 0){
 				diff.y = 0;
 			}
 		}
-		if(lowerY<0){
+		if(lower.y<0){
 			if(diff.y < 0){
 				diff.y = 0;
 			}
@@ -113,8 +106,6 @@ public class CameraController : MonoBehaviour {
 				}
 				tilesCurrentInCameraView.Add (tile_data); 
 				if(tile_data.Structure!=null){
-					//we dont need trees, roads, growables in general or anything like that
-					//why tho they use the same structurespritecontroller like every other structure???
 //					if(tile_data.Structure.myBuildingTyp==BuildingTyp.Blocking){
 						structureCurrentInCameraView.Add (tile_data.Structure);
 //					}
@@ -145,6 +136,9 @@ public class CameraController : MonoBehaviour {
 
 	}
 	public Vector3 UpdateKeyboardCameraMovement(){
+		if(UIController.Instance.IsTextFieldFocused()){
+			return Vector3.zero;
+		}
 		if (Mathf.Abs (Input.GetAxis ("Horizontal")) == 0 && Mathf.Abs (Input.GetAxis ("Vertical")) == 0) {
 			return Vector3.zero;
 		}

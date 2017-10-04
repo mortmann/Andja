@@ -143,7 +143,7 @@
          </output>
          <growTime>5.0</growTime>
          <fertility>-1</fertility>
-         <ageStages>4</ageStages>
+         <ageStages>3</ageStages>
       </growable>
    </Growables>
    <Markets>

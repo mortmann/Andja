@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine.EventSystems;
 using System;
 using System.Linq;
+using System.Collections;
 
 public enum MouseState { Idle,Drag, Path, Single, Unit,Destroy };
 
@@ -25,15 +26,6 @@ public class MouseController : MonoBehaviour {
 	HashSet<Tile> HighlightTiles {
 		get { return _highlightTiles; }
 		set {
-			if (value == null) {
-				foreach (Tile t in _highlightTiles) {
-					if (t == null) {
-						continue;
-					}
-					t.TileState = TileMark.Reset;
-				}
-				return;
-			} 
 			_highlightTiles = value;
 		}
 	}
@@ -46,6 +38,7 @@ public class MouseController : MonoBehaviour {
 
 	//substate for unit
 	bool patrolCommandToAdd;
+	bool buildFromUnit;
 
 	protected Structure _structure;
 	public Structure structure {
@@ -133,7 +126,10 @@ public class MouseController : MonoBehaviour {
 			RaycastHit2D hit = Physics2D.Raycast(new Vector2(currFramePosition.x, currFramePosition.y), Vector2.zero, 200);
 			DecideWhatUIToShow (hit);
         }
-		 
+		if (Input.GetMouseButtonDown (1)) {
+			ResetBuilding (null);
+			mouseState = MouseState.Idle;
+		}
 		// Save the mouse position from this frame
 		// We don't use currFramePosition because we may have moved the camera.
 		lastFramePosition = Camera.main.ScreenToWorldPoint( Input.mousePosition );
@@ -147,7 +143,8 @@ public class MouseController : MonoBehaviour {
 				SelectedUnit=hit.transform.GetComponent<UnitHoldingScript> ().unit;
 				uic.OpenUnitUI (SelectedUnit);
 			} else {
-				SelectedUnit = null;
+				if (buildFromUnit == false)
+					ResetBuilding (null);
 			}
 			if (SelectedUnit == null) {
 				Tile t = GetTileUnderneathMouse ();
@@ -161,6 +158,8 @@ public class MouseController : MonoBehaviour {
 			if (EventSystem.current.IsPointerOverGameObject ()) {
 				return;
 			}
+			if (buildFromUnit == false)
+				return;
 			uic.CloseInfoUI ();
 		}
 	}
@@ -202,7 +201,7 @@ public class MouseController : MonoBehaviour {
 				continue;
 			}	
 			//not viable city overrides everything
-			if(structure.IsTileCityViable (t)==false){
+			if(structure.IsTileCityViable (t,PlayerController.currentPlayerNumber)==false){
 				ShowRedPrefabOnTile (t);
 				continue;
 			}
@@ -214,11 +213,6 @@ public class MouseController : MonoBehaviour {
 		}
 
 	}
-
-	public void SetToPatrolMode(){
-		patrolCommandToAdd = true;
-	}
-
 
 	public Tile GetTileUnderneathMouse(){
 		return World.current.GetTileAt (currFramePosition.x+0.5f,currFramePosition.y+0.5f);
@@ -233,7 +227,7 @@ public class MouseController : MonoBehaviour {
 		sr.sortingLayerName = "StructuresUI";
 		sr.color = new Color (sr.color.a, sr.color.b, sr.color.g, 0.5f);
 		structure.ExtraBuildUI (previewGO);
-
+		TileSpriteController.Instance.tileDeciderFunc += TileCityDecider;
 	}
 
 	//FIXME this is not optimal 
@@ -285,38 +279,15 @@ public class MouseController : MonoBehaviour {
 		previewGameObjects.Add(go);
 	}
 	void ShowHighlightOnTiles(){
+		if( EventSystem.current.IsPointerOverGameObject() ) {
+			return;
+		}
 		if (structure.buildingRange == 0) {
 			return;
 		}
-		if (HighlightTiles == null) {
-			HighlightTiles = new HashSet<Tile> ();
-		}
-
-		HashSet<Tile> temp = new HashSet<Tile>(HighlightTiles);
-		HighlightTiles.Clear ();
 		HighlightTiles = new HashSet<Tile> (structure.GetInRangeTiles (GetTileUnderneathMouse()));
-//		Debug.Log (temp.Count + " " + highlightTiles.Count);
-		foreach (Tile t in temp) {
-			if (t == null || HighlightTiles.Contains (t) == true) {
-				continue;
-			}
-			t.TileState = TileMark.Reset;
-		}
-		foreach(Tile t in HighlightTiles){
-			if (t == null) {
-				continue;
-			}
-			t.TileState = TileMark.Highlight;
-		}
 	}
-	void RemoveHighliteOnTiles(){
-		if(HighlightTiles == null){
-			return;
-		}
-		foreach(Tile t in HighlightTiles){
-			t.TileState = TileMark.Reset;
-		}
-	}
+
     private void UpdateUnit() {
 		// If we're over a UI element, then bail out from this.
 		if( EventSystem.current.IsPointerOverGameObject() ) {
@@ -378,15 +349,11 @@ public class MouseController : MonoBehaviour {
 		HashSet<Tile> tiles = new HashSet<Tile> ();
 		if( Input.GetMouseButton(0) ) {
 			// Display a preview of the drag area
-			for (int x = start_x; x <= end_x; x+=structure.tileWidth) {
-				for (int y = start_y; y <= end_y; y+=structure.tileHeight) {
-					if(tiles.Contains (World.current.GetTileAt (x,y))==false)
-						tiles.Add (World.current.GetTileAt (x,y));
-				}
-			}
+			tiles = new HashSet<Tile>(GetTilesStructures (start_x,end_x,start_y,end_y));
 		}
 		if(tiles.Count==0){
 			tiles.Add (GetTileUnderneathMouse ());
+
 		}
 		foreach (Tile item in tiles) {
 			if(mouseState == MouseState.Destroy){
@@ -397,26 +364,37 @@ public class MouseController : MonoBehaviour {
 		}
 		// End Drag
 		if( Input.GetMouseButtonUp(0) ) {
-			List<Tile> ts = new List<Tile> ();
-			// Loop through all the tiles
-			for (int x = start_x; x <= end_x; x+=structure.tileWidth) {
-				for (int y = start_y; y <= end_y; y+=structure.tileHeight) {
-					ts.Add (WorldController.Instance.world.GetTileAt(x, y));
-				}
-			}
-			if(structure == null){
-				return;
-			}
-
+			List<Tile> ts = new List<Tile>(GetTilesStructures (start_x,end_x,start_y,end_y));
 			if(ts != null) {
 				if (mouseState == MouseState.Destroy) {
 					bmc.DestroyStructureOnTiles (ts,PlayerController.Instance.currPlayer);	
 				} else {
+					if(structure == null){
+						return;
+					}
 					Build (ts, true);
 				}
 			}
 		}
 	}
+
+	private IEnumerable<Tile> GetTilesStructures(int start_x,int end_x,int start_y,int end_y){
+		int width = 1;
+		int height = 1;
+		List<Tile> tiles = new List<Tile>();
+		if(structure!=null){
+			width = structure.tileWidth;
+			height = structure.tileHeight;
+		}
+		for (int x = start_x; x <= end_x; x+=width) {
+			for (int y = start_y; y <= end_y; y+=height) {
+				if(tiles.Contains (World.current.GetTileAt (x,y))==false)
+					tiles.Add (World.current.GetTileAt (x,y));
+			}
+		}
+		return tiles;
+	}
+
 
     void UpdatePathBetweenTiles() {
         if (EventSystem.current.IsPointerOverGameObject()) {
@@ -453,15 +431,28 @@ public class MouseController : MonoBehaviour {
         // End path
         if (Input.GetMouseButtonUp(0)) {
             // Loop through all the tiles
+			if(path==null || path.path==null){
+				return;
+			}
 			Build( new List<Tile>(path.path),true );
         }
 
       
     }
 	void Build(List<Tile> t,bool single = false){
-		bmc.BuildOnTile (t,single,PlayerController.currentPlayerNumber);
+		Unit temp = null;
+		if(buildFromUnit){
+			temp = SelectedUnit;
+		}
+		bmc.BuildOnTile (t,single,PlayerController.currentPlayerNumber,false,temp);
 	}
-
+	public void BuildFromUnit(){
+		buildFromUnit = true;
+		bmc.SettleFromUnit (SelectedUnit);
+	}
+	public void SetToPatrolMode(){
+		patrolCommandToAdd = true;
+	}
 	public void ResetBuilding(Structure structure,bool loading = false){
 		if(loading){
 			return;// there is no need to call any following
@@ -470,6 +461,11 @@ public class MouseController : MonoBehaviour {
 		previewGO = null;
 		structure = null;
 		HighlightTiles = null;
+		if(buildFromUnit){
+			SelectedUnit = null;
+			buildFromUnit = false;
+		}
+		TileSpriteController.Instance.removeDecider (TileCityDecider);
 	}
 
 
@@ -479,10 +475,23 @@ public class MouseController : MonoBehaviour {
 	///  - set mousestate to drag
 	/// </summary>
 	public void Escape(){
+		SelectedUnit = null;
 		ResetBuilding (null);
 		bmc.ResetBuild ();
 		this.mouseState = MouseState.Idle;
 	}
 
-
+	TileMark TileCityDecider(Tile t){
+		if(t==null){
+			return TileMark.None;
+		}
+		if(HighlightTiles!=null&&HighlightTiles.Contains(t)){
+			return TileMark.Highlight;
+		} else
+			if(t.myCity!=null&&t.myCity.IsCurrPlayerCity ()){
+			return TileMark.None;
+		} else {
+			return TileMark.Dark;
+		}
+	}
 }

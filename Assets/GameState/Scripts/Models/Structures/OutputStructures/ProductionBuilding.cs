@@ -18,7 +18,13 @@ public class ProductionBuilding : OutputStructure {
 	[JsonPropertyAttribute] public Item[] MyIntake {
 		get {
 			if(_intake == null){
-				_intake = ProductionData.intake;
+				if(ProductionData.intake==null){
+					return null;
+				}
+				_intake = new Item[ProductionData.intake.Length];
+				for(int i = 0; i<ProductionData.intake.Length;i++){
+					_intake [i] = ProductionData.intake [i].Clone();
+				}
 			}
 			return _intake;
 		}
@@ -45,18 +51,22 @@ public class ProductionBuilding : OutputStructure {
 		}
 	}
 
-	public override float Efficiency{
-		get {
-			float inputs=0;
-			for (int i = 0; i < MyIntake.Length; i++) {
-				inputs += MyIntake[0].count/ProductionData.intake[i].count;
-			}
-			if(inputs==0){
-				return 0;
-			}
-			return Mathf.Clamp(Mathf.Round(inputs*1000)/10f,0,100);
-		}
-	}
+//	public override float Efficiency{
+//		get {
+//			float inputs=0;
+//			for (int i = 0; i < MyIntake.Length; i++) {
+//				if(ProductionData.intake[i].count==0){
+//					Debug.LogWarning(ProductionData.intake[i].ToString() + " INTAKE REQUEST IS 0!!");
+//					continue;
+//				}
+//				inputs += MyIntake[i].count/ProductionData.intake[i].count;
+//			}
+//			if(inputs==0){
+//				return 0;
+//			}
+//			return Mathf.Clamp(Mathf.Round(inputs*1000)/10f,0,100);
+//		}
+//	}
 
 	public ProductionBuilding(int id,ProductionPrototypeData  ProductionData) {
 		this.ID = id;
@@ -66,6 +76,7 @@ public class ProductionBuilding : OutputStructure {
 	/// DO NOT USE
 	/// </summary>
 	protected ProductionBuilding(){
+		RegisteredStructures = new Dictionary<OutputStructure, Item[]> ();
 	}
 
 	protected ProductionBuilding(ProductionBuilding str){
@@ -99,10 +110,9 @@ public class ProductionBuilding : OutputStructure {
 			}
 		}
 
-		produceCountdown -= deltaTime;
-		Debug.Log ("prod" + produceCountdown); 
-		if(produceCountdown <= 0) {
-			produceCountdown = produceTime;
+		produceCountdown += deltaTime;
+		if(produceCountdown >= produceTime) {
+			produceCountdown = 0;
 			for (int i = 0; i < MyIntake.Length; i++) {
 				MyIntake[i].count--;
 			}
@@ -129,37 +139,23 @@ public class ProductionBuilding : OutputStructure {
 		if(needItems.Count == 0){
 			return;
 		}
-		List<Item> getItems = new List<Item> ();
-		List<int> ints = new List<int> ();
-		OutputStructure goal = null;
 		if (jobsToDo.Count == 0 && nearestMarketBuilding != null) {
-			getItems = new List<Item>(needItems.Keys);
-			for (int i = 0; i < getItems.Count; i++) {
-				if(City.hasItem (getItems[i]) == false){
-					needItems.Remove (getItems[i]);
-
+			List<Item> getItems = new List<Item> ();
+			for (int i = MyIntake.Length - 1; i >= 0; i--) {
+				if(City.hasItem (MyIntake[i])){
+					Item item = MyIntake [i].Clone ();
+					item.count = maxIntake [i] - MyIntake [i].count;
+					getItems.Add (item);
 				}
 			}
-			goal = nearestMarketBuilding;
-
-			ints = new List<int>(needItems.Values);
+			if(getItems.Count<=0){
+				return;
+			}
+			myWorker.Add (new Worker(this,nearestMarketBuilding, getItems.ToArray() ,false));
+			WorldController.Instance.world.CreateWorkerGameObject (myWorker[0]);
 		} else {
-			foreach (OutputStructure ustr in jobsToDo.Keys) {
-				goal = ustr;
-				for (int i = 0; i < jobsToDo[ustr].Length; i++) {
-					getItems.Add (jobsToDo[ustr][i]);
-					ints.Add (needItems[jobsToDo[ustr][i]]);
-				}
-				break;
-			}
+			base.SendOutWorkerIfCan ();
 		}
-		if(goal == null || getItems == null){
-			Debug.Log ("no goal or items");
-			return;
-		}
-		myWorker.Add (new Worker(this,goal,getItems.ToArray (),ints.ToArray (),false));
-		WorldController.Instance.world.CreateWorkerGameObject (myWorker[0]);
-
 	}
 	public void OnOutputChangedStructure(Structure str){
 		if(str is OutputStructure == false){
@@ -190,7 +186,6 @@ public class ProductionBuilding : OutputStructure {
 			if((MyIntake[i].count+ toAdd.GetAmountForItem(MyIntake[i])) > maxIntake[i]) {
 				return false;
 			}
-			Debug.Log (toAdd.GetAmountForItem(MyIntake[i]));
 			MyIntake[i].count += toAdd.GetAmountForItem(MyIntake[i]);
 			toAdd.setItemCountNull (MyIntake[i]);
 			callbackIfnotNull ();
@@ -198,10 +193,25 @@ public class ProductionBuilding : OutputStructure {
 
 		return true;
 	}
-
+	public override Item[] GetRequieredItems(OutputStructure str,Item[] items){
+		
+		List<Item> all = new List<Item> ();
+		for (int i = MyIntake.Length - 1; i >= 0; i--) {
+			int id = MyIntake [i].ID;
+			for (int s = 0; s < items.Length; s++) {
+				if(items[i].ID==id){
+					Item item = items [i].Clone ();
+					item.count = maxIntake[i] - MyIntake [i].count;
+					if(item.count>0)
+						all.Add (item);
+				}
+			}
+		}
+		return all.ToArray();
+	}
 	public override void OnBuild(){
-		myWorker = new List<Worker> ();
 		jobsToDo = new Dictionary<OutputStructure, Item[]> ();
+		RegisteredStructures = new Dictionary<OutputStructure, Item[]> ();
 //		for (int i = 0; i < intake.Length; i++) {
 //			intake [i].count = maxIntake [i];
 //		}
@@ -223,8 +233,16 @@ public class ProductionBuilding : OutputStructure {
 					RegisteredStructures.Add ((OutputStructure)rangeTile.Structure,items);
 				}
 			}
-
 		}
+		//FIXME this is a temporary fix to a stupid bug, which cause
+		//i cant find because it works otherwise
+		// bug is that myHome doesnt get set by json for this kind of structures
+		// but it works for warehouse for example
+		// to save save space we could always set it here but that would mean for every kind extra or in place structure???
+		foreach(Worker w in myWorker){
+			w.myHome = this;		
+		}
+
 		City.RegisterStructureAdded (OnStructureBuild);
 	}
 	public Item[] hasNeedItem(Item[] output){
@@ -259,6 +277,7 @@ public class ProductionBuilding : OutputStructure {
 		Item[] items = hasNeedItem(((OutputStructure)str).output);
 		if(items.Length > 0 ){
 			((OutputStructure)str).RegisterOutputChanged (OnOutputChangedStructure);
+			RegisteredStructures.Add ((OutputStructure)str, items);
 		}
 	}
 	public void findNearestMarketBuilding(Tile tile){

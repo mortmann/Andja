@@ -42,6 +42,8 @@ public class MarketBuilding : OutputStructure {
 	/// DO NOT USE
 	/// </summary>
 	public MarketBuilding(){
+		RegisteredSturctures = new List<Structure> ();
+		OutputMarkedSturctures = new List<Structure> ();
 	}
 	protected MarketBuilding(MarketBuilding str){
 		BaseCopyData (str);
@@ -56,7 +58,7 @@ public class MarketBuilding : OutputStructure {
 		base.update_Worker (deltaTime);
 	}
 	public override void OnBuild(){
-		myWorker = new List<Worker> ();
+		workersHasToFollowRoads = true; // DUNNO HOW where to set it without the need to copy it extra
 		RegisteredSturctures = new List<Structure> ();
 		OutputMarkedSturctures = new List<Structure> ();
 		jobsToDo = new Dictionary<OutputStructure, Item[]> ();
@@ -71,7 +73,7 @@ public class MarketBuilding : OutputStructure {
 		}
 		City.RegisterStructureAdded (OnStructureAdded);
 	}
-	public void OnOutputChangedStructure(Structure str){
+	public void OnOutputChangedStructure(Structure str){		
 		if(str is OutputStructure == false){
 			return;
 		}
@@ -86,11 +88,17 @@ public class MarketBuilding : OutputStructure {
 			if(OutputMarkedSturctures.Contains (str)){
 				OutputMarkedSturctures.Remove (str);
 			}
+			if(jobsToDo.ContainsKey((OutputStructure)str)){
+				jobsToDo.Remove ((OutputStructure)str);
+			}
 			return;
 		}
+
+
 		if(jobsToDo.ContainsKey ((OutputStructure)str)){
 			jobsToDo.Remove ((OutputStructure)str);
 		}
+
 		List<Route> myRoutes = GetMyRoutes ();
 		//get the roads around the structure
 		foreach (Route item in ((OutputStructure)str).GetMyRoutes()) {
@@ -103,7 +111,7 @@ public class MarketBuilding : OutputStructure {
 				if(OutputMarkedSturctures.Contains (str)){
 					OutputMarkedSturctures.Remove (str);
 				}
-					return;
+				return;
 			}
 		}
 		//if were here there is noconnection between here and a the structure
@@ -131,6 +139,7 @@ public class MarketBuilding : OutputStructure {
 		if(structure.City!=City){
 			return;
 		}
+
 		if(structure is OutputStructure){
 			if(((OutputStructure)structure).forMarketplace==false){
 				return;
@@ -164,13 +173,43 @@ public class MarketBuilding : OutputStructure {
 		}
 	}
 
+	public override Item[] GetRequieredItems(OutputStructure str,Item[] items){
+		if(items==null){
+			items = str.output;
+		}
+		List<Item> all = new List<Item> ();
+		for (int i = items.Length - 1; i >= 0; i--) {
+			int space = City.inventory.GetSpaceFor (items[i]);
+			if(space==0){
+				
+			} else {
+				Item item = items [i].Clone ();
+				item.count = space;//Mathf.Clamp (items [i].count, 0, space);
+				all.Add (item);
+			}
+		}
+		return all.ToArray();
+	}
+
+	public override Item[] getOutputWithItemCountAsMax(Item[] getItems){
+		Item[] temp = new Item[getItems.Length];
+		for (int i = 0; i < getItems.Length; i++) {
+			if(City.inventory.GetAmountForItem (getItems[i]) == 0){
+				continue;
+			}	
+			temp [i] = City.inventory.getItemWithMaxAmount (getItems [i], getItems [i].count);
+		}
+		return temp;
+	}
+
+
 	public override Item[] getOutput(Item[] getItems,int[] maxAmounts){
 		Item[] temp = new Item[getItems.Length];
 		for (int i = 0; i < getItems.Length; i++) {
-			if(City.myInv.GetAmountForItem (getItems[i]) == 0){
+			if(City.inventory.GetAmountForItem (getItems[i]) == 0){
 				continue;
 			}	
-			temp [i] = City.myInv.getItemWithMaxAmount (getItems [i], maxAmounts [i]);
+			temp [i] = City.inventory.getItemWithMaxAmount (getItems [i], maxAmounts [i]);
 		}
 		return temp;
 	}

@@ -17,19 +17,19 @@ public class Warehouse : MarketBuilding {
 	#endregion
 	public Warehouse(int id,MarketPrototypData mpd){
 		this.ID = id;
-		inRangeUnits = new List<Unit> ();
+		inRangeUnits = new List<Unit> ();	
 		this._marketData = mpd;
-
 
 	}
 	/// <summary>
 	/// DO NOT USE
 	/// </summary>
 	public Warehouse(){
+		inRangeUnits = new List<Unit> ();	
 	}
 	protected Warehouse(Warehouse str){
 		this.ID = str.ID;
-
+		inRangeUnits = new List<Unit> ();
 	}
 	
 	public override bool SpecialCheckForBuild (List<Tile> tiles){
@@ -51,6 +51,8 @@ public class Warehouse : MarketBuilding {
 			inRangeUnits.Remove (u);
 	}
 	public override void OnBuild(){
+		workersHasToFollowRoads = true; // DUNNO HOW where to set it without the need to copy it extra
+
 		Tile[,] sortedTiles = new Tile[tileWidth,tileHeight];
 		List<Tile> ts = new List<Tile>(myBuildingTiles);
 		ts.Sort ((x, y) => x.X.CompareTo (y.X)+x.Y.CompareTo (y.Y));
@@ -70,12 +72,8 @@ public class Warehouse : MarketBuilding {
 			rot = new Vector3 (tileWidth/2 + 1, 0, 0);
 		tradeTile = World.current.GetTileAt (t.X+rot.x,t.Y+rot.y);
 
-		if(t.myIsland.myCities.Exists (x=>x.playerNumber==playerNumber)){
-			this.City = t.myIsland.myCities.Find (x => x.playerNumber == playerNumber);
-		} else {
-			this.City = BuildController.Instance.CreateCity(t,this);
-		}
 		this.City.myWarehouse = this;
+
 		if (City == null) {
 			return;
 		}
@@ -86,6 +84,19 @@ public class Warehouse : MarketBuilding {
 		//dostuff thats happen when build
 		City.addTiles (myRangeTiles);
 		City.addTiles (new HashSet<Tile>(myBuildingTiles));
+		RegisteredSturctures = new List<Structure> ();
+		OutputMarkedSturctures = new List<Structure> ();
+		jobsToDo = new Dictionary<OutputStructure, Item[]> ();
+
+		// add all the tiles to the city it was build in
+		//dostuff thats happen when build
+		foreach(Tile rangeTile in myRangeTiles){
+			if(rangeTile.myCity!=City){
+				continue;
+			}
+			OnStructureAdded (rangeTile.Structure);
+		}
+		City.RegisterStructureAdded (OnStructureAdded);
 	}
 	public Tile getTradeTile(){
 		return tradeTile; //maybe this changes or not s

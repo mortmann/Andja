@@ -48,6 +48,7 @@ public class WorldController : MonoBehaviour {
 			} 
 			Camera.main.transform.position = new Vector3(world.Width / 2, world.Height / 2, Camera.main.transform.position.z);
 		}
+//		new OceanPathfinding().SetDestination(world.GetTileAt(22,20),world.GetTileAt(34,56));
     }
 
     // Update is called once per frame
@@ -133,7 +134,9 @@ public class WorldController : MonoBehaviour {
 		}
 		loadedStructures.Sort ((x, y) => x.buildID.CompareTo(y.buildID) );
 		BuildController.Instance.PlaceAllLoadedStructure (loadedStructures);
-		// Center the Camera
+		if(loadWorker!=null){
+			GameObject.FindObjectOfType<WorkerSpriteController> ().loadedWorker = loadWorker;
+		}
 		Debug.Log ("LOAD ENDED");
 	}
 
@@ -145,6 +148,14 @@ public class WorldController : MonoBehaviour {
 //		string lines = File.ReadAllText (System.IO.Path.Combine( path , name + ".map" ));
 		//read tiles here
 	}
+	List<Worker> loadWorker;
+	public void AddWorkerForLoad(Worker w){
+		if(loadWorker==null){
+			loadWorker = new List<Worker> ();
+		}
+		loadWorker.Add (w);
+	}
+
 }
 
 public class WorldSaveState {

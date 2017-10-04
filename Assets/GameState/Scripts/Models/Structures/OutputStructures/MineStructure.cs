@@ -66,9 +66,9 @@ public class MineStructure : OutputStructure {
 			return;
 		}
 
-		produceCountdown -= deltaTime;
-		if (produceCountdown <= 0) {
-			produceCountdown = produceTime;
+		produceCountdown += deltaTime;
+		if(produceCountdown >= produceTime) {
+			produceCountdown = 0;
 			output [0].count++;
 
 			if (cbOutputChange != null) {

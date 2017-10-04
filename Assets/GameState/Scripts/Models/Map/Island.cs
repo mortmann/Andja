@@ -24,7 +24,7 @@ public class Island : IGEventable{
 	public List<Tile> myTiles;
 	public Vector2 min;
 	public Vector2 max;
-	public City wilderniss;
+	public City wilderness;
 	public bool allReadyHighlighted;
 	Action<GameEvent> cbEventCreated;
 	Action<GameEvent> cbEventEnded;
@@ -66,7 +66,7 @@ public class Island : IGEventable{
 		List<Structure> structs = new List<Structure>();
 		foreach(City c in myCities){
 			if(c.playerNumber == -1){
-				wilderniss = c;
+				wilderness = c;
 			}
 			c.island = this;
 			structs.AddRange(c.Load ());
@@ -123,10 +123,10 @@ public class Island : IGEventable{
 		//have a function like is notplayer city
 		//it does not need NEEDs
 		if(myCities.Count>0){
-			return; // this means it got loaded in so there is already a wilderniss
+			return; // this means it got loaded in so there is already a wilderness
 		}
 		myCities.Add (new City(myTiles,this)); 
-		wilderniss = myCities [0];
+		wilderness = myCities [0];
 //		BuildController.Instance.BuildOnTile (myTiles,true,BuildController.Instance.structurePrototypes[3],true);
     }
 
@@ -137,8 +137,8 @@ public class Island : IGEventable{
     }
 	public void AddStructure(Structure str){
 		allReadyHighlighted = false;
-		if(str.City == wilderniss){
-//			Debug.LogWarning ("adding to wilderniss wanted?");
+		if(str.City == wilderness){
+//			Debug.LogWarning ("adding to wilderness wanted?");
 		}
 		str.City.addStructure (str);
 	}

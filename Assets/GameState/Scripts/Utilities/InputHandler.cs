@@ -21,14 +21,19 @@ public class InputHandler {
 	}
 
 	private void SetupKeyBinds(){
-		if(nameToKeyBinds.Count>0){
-			return;
-		}
-		nameToKeyBinds.Add ("BuildMenu",new KeyBind("BuildMenu", KeyCode.B, KeyBind.notSetCode) );
-		nameToKeyBinds.Add ("TradeMenu",new KeyBind("TradeMenu", KeyCode.M, KeyBind.notSetCode));
-		nameToKeyBinds.Add ("Offworld",new KeyBind("Offworld", KeyCode.O, KeyBind.notSetCode));
-		nameToKeyBinds.Add ("TogglePause",new KeyBind("TogglePause", KeyCode.Space, KeyBind.notSetCode));
-		nameToKeyBinds.Add ("Rotate",new KeyBind("Rotate", KeyCode.R, KeyBind.notSetCode)); 
+		if (nameToKeyBinds.ContainsKey ("BuildMenu")==false)
+			nameToKeyBinds.Add ("BuildMenu",new KeyBind("BuildMenu", KeyCode.B, KeyBind.notSetCode) );
+		if (nameToKeyBinds.ContainsKey ("TradeMenu")==false)
+			nameToKeyBinds.Add ("TradeMenu",new KeyBind("TradeMenu", KeyCode.M, KeyBind.notSetCode));
+		if (nameToKeyBinds.ContainsKey ("Offworld")==false)
+			nameToKeyBinds.Add ("Offworld",new KeyBind("Offworld", KeyCode.O, KeyBind.notSetCode));
+		if (nameToKeyBinds.ContainsKey ("TogglePause")==false)
+			nameToKeyBinds.Add ("TogglePause",new KeyBind("TogglePause", KeyCode.Space, KeyBind.notSetCode));
+		if (nameToKeyBinds.ContainsKey ("Rotate")==false)
+			nameToKeyBinds.Add ("Rotate",new KeyBind("Rotate", KeyCode.R, KeyBind.notSetCode)); 
+		if (nameToKeyBinds.ContainsKey ("Console")==false)
+			nameToKeyBinds.Add ("Console",new KeyBind("Rotate", KeyCode.F1, KeyBind.notSetCode)); 
+
 	}	
 	public static void ChangePrimaryNameToKey(string name, KeyCode key){
 		if(nameToKeyBinds.ContainsKey (name)){
@@ -101,22 +106,6 @@ public class InputHandler {
 		foreach (KeyBind item in binds) {
 			nameToKeyBinds.Add (item.name, item);
 		}
-//		foreach(string line in lines){
-//			string[] split = line.Split (':');
-//			if(split.Length!=2){
-//				continue;
-//			}
-//			split[0]=split[0].Trim();
-//			split[1]=split[1].Trim();
-//			if(primaryNameToKey.ContainsKey (split[0])){
-//				if(secondaryNameToKey.ContainsKey (split[0])){
-//					continue;
-//				}
-//				secondaryNameToKey.Add (split[0],(KeyCode)System.Enum.Parse (typeof(KeyCode), split[1],true));
-//				continue;
-//			}
-//			primaryNameToKey.Add (split[0],(KeyCode)System.Enum.Parse (typeof(KeyCode), split[1],true)); 
-//		}
 
 	}
 	[Serializable]  

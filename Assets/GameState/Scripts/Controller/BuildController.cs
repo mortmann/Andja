@@ -26,13 +26,14 @@ public class BuildController : MonoBehaviour {
 				if (_buildState == value) {
 					return;
 				}
-				World.current.resetIslandMark ();
 				_buildState = value;
 				if (cbBuildStateChange != null)
 					cbBuildStateChange (_buildState); 
 				}
 			}
 	public uint buildID = 0;
+	public bool noBuildCost = false;
+	public bool noUnitRestriction = false;
 
 	public Dictionary<int,Structure>  structurePrototypes {
 		get { return PrototypController.Instance.structurePrototypes; }
@@ -52,12 +53,16 @@ public class BuildController : MonoBehaviour {
 			Debug.LogError("There should never be two world controllers.");
 		}
 		Instance = this;
+		if (noBuildCost && noUnitRestriction) {
+			Debug.LogWarning("Cheats are activated.");
+		}
 		BuildState = BuildStateModes.None;
 		buildID = 0;
 	}
 
-	public void OnClickSettle(){
-		OnClick (6);
+	public void SettleFromUnit(Unit buildUnit = null){
+		//FIXME: get a way to get this id for warehouse
+		OnClick (6,buildUnit);
 	}
 	public void DestroyStructureOnTiles( IEnumerable<Tile> tiles, Player destroyPlayer){
 		foreach(Tile t in tiles){
@@ -76,7 +81,7 @@ public class BuildController : MonoBehaviour {
 			t.Structure.Destroy ();
 		}
 	}
-	public void OnClick(int id) {
+	public void OnClick(int id, Unit buildInRangeUnit = null) {
 		if(structurePrototypes.ContainsKey (id) == false){
 			Debug.LogError ("BUTTON has ID that is not a structure prototypes ->o_O<- ");
 			return;
@@ -94,14 +99,13 @@ public class BuildController : MonoBehaviour {
 			MouseController.Instance.mouseState = MouseState.Drag;
 			MouseController.Instance.structure = toBuildStructure;
 		}
-
 		BuildState = BuildStateModes.Build;
     }
-	public void BuildOnTile(List<Tile> tiles, bool forEachTileOnce,int playerNumber){
+	public void BuildOnTile(List<Tile> tiles, bool forEachTileOnce,int playerNumber,bool wild = false, Unit buildInRange = null){
 		if (toBuildStructure == null) {
 			return;
 		}
-		BuildOnTile (tiles, forEachTileOnce, toBuildStructure,playerNumber);
+		BuildOnTile (tiles, forEachTileOnce, toBuildStructure,playerNumber,wild,buildInRange);
 	}
 	/// <summary>
 	/// USED ONLY FOR LOADING
@@ -116,80 +120,96 @@ public class BuildController : MonoBehaviour {
 		}
 		RealBuild (s.GetBuildingTiles (t.X, t.Y), s,-1,true,true);
 	}
-	public void BuildOnTile(List<Tile> tiles, bool forEachTileOnce, Structure structure,int playerNumber,bool wild=false){
+	public void BuildOnTile(List<Tile> tiles, bool forEachTileOnce, Structure structure,int playerNumber,bool wild=false, Unit buildInRange = null){
 		if(tiles == null || tiles.Count == 0 || WorldController.Instance.IsPaused){
 			return;
 		}
 		if (forEachTileOnce == false) {
-			RealBuild (tiles,structure,playerNumber,false,wild);
+			RealBuild (tiles,structure,playerNumber,false,wild,buildInRange);
 		} else {
 			foreach (Tile tile in tiles) {
 				List<Tile> t = new List<Tile> ();
 				t.AddRange (structure.GetBuildingTiles (tile.X,tile.Y));
-				RealBuild (t,structure,playerNumber,false,wild);
+				RealBuild (t,structure,playerNumber,false,wild,buildInRange);
 			}
 		}
 	}
-	protected void RealBuild(List<Tile> tiles,Structure s,int playerNumber,bool loading=false,bool wild=false){
+	protected void RealBuild(List<Tile> tiles,Structure s,int playerNumber, bool loading=false,bool wild=false , Unit buildInRangeUnit = null){
+		if(tiles==null){
+			Debug.LogError ("tiles is null");
+			return;
+		}
+		tiles.RemoveAll (x => x==null || x.Type == TileType.Ocean);
+		if(tiles.Count==0){
+			return;
+		}
 		int rotate = s.rotated;
 		if (loading == false) {
 			s = s.Clone ();
 		}
-		s.rotated = rotate;
 
-		//if it should be build in wilderniss city
-		if(wild){
-			s.playerNumber = -1;
-			s.buildInWilderniss = true;
-		} else {
-			//set the player id for check for city
-			//has to be changed if someone takes it over
-			s.playerNumber = playerNumber;
+		if(buildInRangeUnit!=null&&noUnitRestriction==false){
+			Vector3 unitPos = buildInRangeUnit.pathfinding.Position;
+			Tile t = tiles.Find(x=>{ return x.IsInRange(unitPos,buildInRangeUnit.BuildRange); });
+			if(t == null){
+				Debug.LogWarning ("failed Range check -- Give UI feedback");
+				return;
+			}
 		}
+		//FIXME find a better solution for this?
+		s.rotated = rotate;
+		//if is build in wilderniss city
+		s.buildInWilderniss = wild;
+
+
 		//before we need to check if we can build THERE
 		//we need to know if there is if we COULD build 
 		//it anyway? that means enough ressources and enough Money
 		if(loading==false&&wild==false){
 			//TODO: Check for Event restricting building from players
 			//return;
-
-
 			//find a city that matches the player 
 			//and check for money
 			if(playerHasEnoughMoney(s,playerNumber)==false){
-				Debug.Log ("not playerHasEnoughMoney"); 
+				Debug.Log ("not playerHasEnoughMoney -- Give UI feedback"); 
 				return;
 			}
-			//if it need ressources
-			if (s.buildingItems != null) {
-				foreach (Tile item in tiles) {
-					//we can build in wilderniss terrain but we need our own city
-					//FIXME how do we do it with warehouses?
-					if (s.GetType ()!=typeof(Warehouse) && item.myCity != null && item.myCity.IsWilderness () == false) {
-						//WARNING: checking for this twice!
-						//this is one is not necasserily needed
-						//but it we *need* the city to check for its ressources
-						//this saves a lot of cpu but it can be problematic if we want to be able 
-						//to build something in enemy-terrain
-						if (item.myCity.playerNumber != PlayerController.currentPlayerNumber) {
-							Debug.Log ("PlayerController.Instance.number"); 
-							return;
-						}
-						//check for ressources  
-						if (item.myCity.myInv.ContainsItemsWithRequiredAmount (s.BuildingItems ()) == false) {
-							Debug.Log ("ContainsItemsWithRequiredAmount==null"); 
-							return;
-						}
-						//now we know that there is enough from everthing and it can be build
-						//we dont need longer to check a city tile
-						//playercontroller will handle the reduction of money/and everything else 
-						//related to money - But we need to remove the Ressources
-						break;
+			//Is the player allowed to place it here? -> city
+
+			Tile block = tiles.Find(x=>x.myCity.IsWilderness()==false&&x.myCity.playerNumber!=playerNumber);
+			if(block!=null){
+				return; // there is a tile that is owned by another player
+			}
+			Tile hasCity = tiles.Find(x=>x.myCity.playerNumber == playerNumber);
+			if(hasCity==null){
+				if(s.GetType () == typeof(Warehouse)){
+					s.City = CreateCity (tiles [0].myIsland, playerNumber);
+				} else {
+					return; // SO no city found and no warehouse to create on
+				}
+			} else {
+				s.City = hasCity.myCity;
+			}
+			if(noBuildCost==false){
+				if (s.BuildingItems ()!=null) {
+					Inventory inv = null;
+					if(buildInRangeUnit!=null){
+						inv = buildInRangeUnit.inventory;
+					} else {
+						inv = hasCity.myCity.inventory;
+					}
+					if(inv==null){
+						Debug.LogError ("Build something with smth that has no inventory"); 
+						return;
+					}
+					if(inv.ContainsItemsWithRequiredAmount (s.BuildingItems ()) == false){
+						Debug.Log ("ContainsItemsWithRequiredAmount==null"); 
+						return;
 					}
 				}
 			}
-		} 
-	
+		}
+
 		//now we know that we COULD build that structure
 		//but CAN WE?
 		//check to see if the structure can be placed there
@@ -198,6 +218,10 @@ public class BuildController : MonoBehaviour {
 				Debug.LogError ("PLACING FAILED WHILE LOADING! " + s.buildID);
 			}
 			return;
+		}
+
+		if(buildInRangeUnit!=null&&noBuildCost==false){
+			buildInRangeUnit.inventory.removeItemsAmount (s.BuildingItems ());
 		}
 
 		//call all callbacks on structure created
@@ -227,18 +251,13 @@ public class BuildController : MonoBehaviour {
 		}
 		BuildOnTile (tiles, true, structurePrototypes[id],playerNumber);
 	}
-	public City CreateCity(Tile t,Warehouse w){
-		if(t.myIsland == null){
+	public City CreateCity(Island i , int playernumber){
+		if(i == null){
 			Debug.LogError ("CreateCity called not on a island!");
 			return null;
 		}
-		if(t.myCity != null && t.myCity.IsWilderness () ==false){
-			Debug.LogError ("CreateCity called not on a t.myCity && t.myCity.IsWilderness () ==false!");
-			return null;
-		}
-		City c = t.myIsland.CreateCity (w.playerNumber);
+		City c = i.CreateCity (playernumber);
 		// needed for mapimage
-		c.addStructure (w);// dont know if this is good ...
 		if(cbCityCreated != null) {
 			cbCityCreated (c);
 		}
@@ -248,8 +267,8 @@ public class BuildController : MonoBehaviour {
 
 	public void PlaceAllLoadedStructure(List<Structure> loadedStructures){
 		for (int i = 0; i < loadedStructures.Count; i++) {
-//			loadedStructures[i].LoadPrototypData (structurePrototypes[loadedStructures[i].ID]);
 			BuildOnTile (loadedStructures[i],loadedStructures[i].BuildTile);
+			loadedStructures [i].City.triggerAddCallBack (loadedStructures[i]);
 		}
 	}
 	public void ResetBuild(){
@@ -262,7 +281,6 @@ public class BuildController : MonoBehaviour {
 		MouseController.Instance.mouseState = MouseState.Destroy;
 	}
 	public void Escape(){
-		World.current.resetIslandMark ();
 		ResetBuild ();
 	}
 

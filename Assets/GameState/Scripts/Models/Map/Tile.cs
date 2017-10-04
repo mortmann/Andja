@@ -233,21 +233,23 @@ public class Tile : IComparable<Tile>, IEqualityComparer<Tile> {
 		set {
 		} 
 	}
-	public virtual TileMark TileState {
-		get { return TileMark.None;}
-		set { 
-		}
+
+	public float DistanceFromVector(Vector3 vec){
+		return Vector3.Distance (this.vector, vec);
+	}
+	public bool IsInRange(Vector3 vec,float Range){
+		return Vector3.Distance (this.vector, vec) <= Range;
 	}
 	/// <summary>
 	/// Register a function to be called back when our tile type changes.
 	/// </summary>
-	public virtual void RegisterTileStructureChangedCallback(Action<Tile,Structure> callback) {
+	public virtual void RegisterTileStructureChangedCallback(Action<Structure,Structure> callback) {
 	}
 
 	/// <summary>
 	/// Unregister a callback.
 	/// </summary>
-	public virtual void UnregisterTileStructureChangedCallback(Action<Tile,Structure> callback) {
+	public virtual void UnregisterTileStructureChangedCallback(Action<Structure,Structure> callback) {
 	}
 	public virtual void addNeedStructure(NeedsBuilding ns){
 	}
@@ -259,6 +261,7 @@ public class Tile : IComparable<Tile>, IEqualityComparer<Tile> {
 	public String toString() {
 		return "tile_" + X + "_" + Y+"_"+Type+"";
 	}
+
 	public static Vector2 ToStringToTileVector(String tileToString){
 		string[] datas = tileToString.Split ('_');
 		if(datas.Length != 3){

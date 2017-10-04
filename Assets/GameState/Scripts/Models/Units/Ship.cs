@@ -14,9 +14,11 @@ public class Ship : Unit {
 		this.playerNumber = playernumber;
 		inventory = new Inventory (6, "SHIP");
 		isShip = true;
-		pathfinding = new Pathfinding (speed, t);
 		speed = 2f;
 		offWorldTime = 5f;
+		attackRange = 10f;
+
+		pathfinding = new OceanPathfinding (t,this);
 	}
 
 
@@ -116,6 +118,6 @@ public class Ship : Unit {
 			return;
 		}
 		onPatrol = false;
-		pathfinding.AddMovementCommand( x, y);
+		((OceanPathfinding)pathfinding).SetDestination( x,y);
 	}
 }

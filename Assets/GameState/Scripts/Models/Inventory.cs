@@ -17,8 +17,8 @@ public class Inventory {
 	}
 	[JsonPropertyAttribute] public string name;
 
-	Action<Inventory> cbInventoryChanged;
-	public bool HasUnlimitedSpace {
+	protected Action<Inventory> cbInventoryChanged;
+	public bool HasLimitedSpace {
 		get { return numberOfSpaces != -1;}
 	}
 
@@ -26,7 +26,7 @@ public class Inventory {
     /// leave blanc for unlimited spaces! To limited it give a int > 0 
     /// </summary>
     /// <param name="numberOfSpaces"></param>
-	public Inventory(int numberOfSpaces = -1,string name = "noname") {
+	public Inventory(int numberOfSpaces = -1, string name = "noname") {
         maxStackSize = 50;
 		this.name = name + "-INV";
         items = new Dictionary<int, Item>();
@@ -45,30 +45,11 @@ public class Inventory {
 	/// </summary>
     /// <param name="item"></param>
     /// <returns></returns>
-    public int addItem(Item item) {
-		if (item.ID <= -1) {
+	public virtual int addItem(Item toAdd) {
+		if (toAdd.ID <= -1) {
 			Debug.LogError ("ITEM ID is smaller or equal to -1");
 			return 0;
 		}
-		if(numberOfSpaces == -1){
-			return cityAddItem (item);
-		} else {
-			return unitAddItem (item);
-		}
-
-    }
-
-	private int cityAddItem(Item toAdd){
-		//in a city there is always a stack to be added to
-		Item inInv = items [toAdd.ID];
-		//if its already full no need to put it in there
-		if(inInv.count == maxStackSize) {
-			Debug.Log ("inventory-item is full"); 
-			return 0;
-		}
-		return moveAmountFromItemToInv (toAdd, inInv);
-	}
-	private int unitAddItem(Item toAdd){
 		int amount = 0;
 		foreach (Item inInv in items.Values) {
 			if(inInv.ID == toAdd.ID){
@@ -96,23 +77,16 @@ public class Inventory {
 				cbInventoryChanged (this);
 		}
 		return amount;
-	}
+    }
 
-	public int getPlaceInItems(Item item){
-		if(numberOfSpaces == -1){
-			if(items.ContainsKey (item.ID)==false){
-				Debug.LogError("CITY DOESNT HAVE THE ITEM ?!? " + item.ToString ()); 
-				return 1;
+
+	public virtual int getPlaceInItems(Item item){
+		for (int i = 0; i < numberOfSpaces;i++) {
+			if(items.ContainsKey (i)&&items[i].ID == item.ID){
+				return i;
 			}
-			return item.ID;
-		} else {
-			for (int i = 0; i < numberOfSpaces;i++) {
-				if(items.ContainsKey (i)&&items[i] == item){
-					return i;
-				}
-			}
-			return -1;
 		}
+		return -1;
 	}
 	public Item GetItemWithNRinItems(int i) {
 		if(items.ContainsKey(i)==false){
@@ -126,6 +100,9 @@ public class Inventory {
 	}
 	public Item getItemWithMaxAmount(Item item, int maxAmount){
 		Item output = getItemInInventory (item);
+		if(output==null){
+			return null;
+		}
 		Item temp = output.CloneWithCount();
 		temp.count = Mathf.Clamp (temp.count, 0, maxAmount );
 		lowerItemAmount (output, temp.count);
@@ -135,8 +112,12 @@ public class Inventory {
 		}
 		return temp;
 	}
-	private Item getItemInInventory(Item item){
-		return items [getPlaceInItems (item)];
+	protected Item getItemInInventory(Item item){
+		int pos = getPlaceInItems (item);
+		if(pos<0){
+			return null;
+		}
+		return items [pos];
 	}
 	/// <summary>
 	/// Gets CLONED item WITH count but DOESNT REMOVE it FROM inventory.
@@ -147,12 +128,12 @@ public class Inventory {
 		return items [getPlaceInItems (item)].CloneWithCount ();
 	}
 
-	public void setItemCountNull (Item item){
-		if(HasUnlimitedSpace == false){
-			items.Remove ( getPlaceInItems (item) );
-		} else {
-			getItemInInventory (item).count = 0;
+	public virtual void setItemCountNull (Item item){
+		Item i = getItemInInventory (item);
+		if(i==null){
+			return;
 		}
+		i.count = 0;
 		if(cbInventoryChanged!=null){
 			cbInventoryChanged (this); 
 		}
@@ -172,14 +153,14 @@ public class Inventory {
 	/// <returns>The amount for item.</returns>
 	/// <param name="item">Item.</param>
 	public int GetAmountForItem(Item item){
+		Item it = getItemInInventory (item);
+		if(it==null){
+			return 0;
+		}
 		return getItemInInventory (item).count;
 	}
 
-	public int GetTotalAmountFor(Item item){
-		if(numberOfSpaces==-1){
-			//theres only one stack
-			return GetAmountForItem (item);
-		} 
+	public virtual int GetTotalAmountFor(Item item){
 		//now check for everyspace if its the item
 		int count=0;
 		foreach (Item inInv in items.Values) {
@@ -220,48 +201,60 @@ public class Inventory {
 	/// <returns><c>true</c>, if item amount was removed, <c>false</c> otherwise.</returns>
 	/// <param name="it">It.</param>
 	public bool removeItemAmount(Item it){
-		if (items.ContainsKey (it.ID)) {
-			Item i = getItemInInventory (it);
-			if (i.count < it.count) {
-				return false;
-			}
-			lowerItemAmount (i, it.count);
+		if(it==null){
 			return true;
 		}
-		return false;
+		Item i = getItemInInventory (it);
+		if(i == null){
+			return false;
+		}
+		if (i.count < it.count) {
+			return false;
+		}
+		lowerItemAmount (i, it.count);
+		return true;
 	}	
+	/// <summary>
+	/// CHECK FIRST IF AVAIBLE THEN REMOVE!
+	/// Removes the items amounts. It will return false
+	/// if there couldnt be removed a single item in the list
+	/// but still removes the rest. So be careful!
+	/// </summary>
+	/// <returns><c>true</c>, if items amount was removed, <c>false</c> otherwise.</returns>
+	/// <param name="coll">Coll.</param>
+	public bool removeItemsAmount(ICollection<Item> coll){
+		bool successful = false;
+		foreach(Item i in coll){
+			successful = removeItemAmount (i);
+		}
+		return successful;
+	}
 	/// <summary>
 	/// WARNING THIS WILL EMPTY THE COMPLETE
 	/// INVENTORY NOTHING WILL BE LEFT
 	/// </summary>
-	public Item[] GetAllItemsAndRemoveThem(){
+	public virtual Item[] GetAllItemsAndRemoveThem(){
 		//get all items in a list
 		List<Item> temp = new List<Item> (items.Values);
 		//reset the inventory here
-		if (HasUnlimitedSpace == false) {
-			items = new Dictionary<int, Item>();
-		} else {
-			items = BuildController.Instance.getCopieOfAllItems ();
-		}
+		items = new Dictionary<int, Item>();
 		if(cbInventoryChanged!=null){
 			cbInventoryChanged (this);
 		}
 		return temp.ToArray ();
 	}
 
-	private void lowerItemAmount(Item i,int amount){
+	protected virtual void lowerItemAmount(Item i,int amount){
 		if (items.ContainsKey (getPlaceInItems (i))) {
 			items [getPlaceInItems (i)].count -= amount;
 		} else {
 			Debug.Log ("not in");
 			i.count -= amount;
 		}
-		if(HasUnlimitedSpace == false){
-			if (i.count == 0) {
-				for (int d = 0; d < items.Count; d++) {
-					if(items[d].count==0){
-						items.Remove (d);
-					}
+		if (i.count == 0) {
+			for (int d = 0; d < items.Count; d++) {
+				if(items[d].count==0){
+					items.Remove (d);
 				}
 			}
 		}
@@ -270,7 +263,7 @@ public class Inventory {
 		}
 	}
 
-	private int moveAmountFromItemToInv(Item toBeMoved,Item toReceive){
+	protected int moveAmountFromItemToInv(Item toBeMoved,Item toReceive){
 		//whats the amount to be moved
 		int amount = toBeMoved.count;
 		//clamp it to the maximum it can be
@@ -278,7 +271,7 @@ public class Inventory {
 		increaseItemAmount (toReceive, amount);
 		return amount;
 	}
-	private void increaseItemAmount(Item item,int amount){
+	protected void increaseItemAmount(Item item,int amount){
 		if(amount<=0){
 			Debug.LogError ("Increase Amount is " + amount + "! "); 
 		}
@@ -294,7 +287,7 @@ public class Inventory {
 			addItem (item);
 		}
 	}
-	public Item[] getBuildMaterial(){
+	public virtual Item[] getBuildMaterial(){
 		//there are 10 ids reserved for buildingmaterial
 		//currently there are 7 builditems
 		List<Item> itemlist = new List<Item> ();
@@ -305,65 +298,48 @@ public class Inventory {
 		}
 		return itemlist.ToArray ();
 	}
-	private Item GetItemWithID(int id){
-		if(numberOfSpaces==-1){
-			if (items.ContainsKey (id)) {
-				Debug.Log (items[id].ID + " " + id); 
-				return items [id];
-			}
-			return null;
-		} else {
-			Item i = null;
-			foreach (Item item in items.Values) {
-				if(item.ID==id){
-					if(i==null){
-						i = item;
-					} else {
-						i.count += item.count;
-					}
+	protected virtual Item GetItemWithID(int id){
+		Item i = null;
+		foreach (Item item in items.Values) {
+			if(item.ID==id){
+				if(i==null){
+					i = item;
+				} else {
+					i.count += item.count;
 				}
 			}
-			return i;
 		}
+		return i;
 	}
-	public Item GetItemWithIDClone(int id){
-		if(numberOfSpaces==-1){
-			if (items.ContainsKey (id)) {
-				Debug.Log ("GetItemWithID "+ items[id].ToString ()); 
-				return items [id].CloneWithCount ();
-			}
-			return null;
-		} else {
-			Item i = null;
-			foreach (Item item in items.Values) {
-				if(item.ID==id){
-					if(i==null){
-						i = item;
-					} else {
-						i.count += item.count;
-					}
+	public virtual Item GetItemWithIDClone(int id){
+		Item i = null;
+		foreach (Item item in items.Values) {
+			if(item.ID==id){
+				if(i==null){
+					i = item;
+				} else {
+					i.count += item.count;
 				}
 			}
-			if(i == null){
-				return null;
-			}
-			return i.CloneWithCount ();
 		}
+		if(i == null){
+			return null;
+		}
+		return i.CloneWithCount ();
 	}
-
+	public int GetSpaceFor(Item i){
+		int amount= GetAmountForItem (i);
+		return maxStackSize - amount;
+	}
 	public void AddItems(IEnumerable<Item> items){
 		foreach (Item item in items) {
 			addItem (item);
 		}
 	}
-	public bool ContainsItemWithID(int id){
-		if(numberOfSpaces==-1){
-			return true;
-		} else {
-			foreach (Item item in items.Values) {
-				if(item.ID==id){
-					return true;
-				}
+	public virtual bool ContainsItemWithID(int id){
+		foreach (Item item in items.Values) {
+			if(item.ID==id){
+				return true;
 			}
 		}
 		return false;
@@ -373,7 +349,7 @@ public class Inventory {
 			return true;
 		}
 		foreach(Item i in items){
-			if(i.count<GetTotalAmountFor (i)){
+			if(i.count>GetTotalAmountFor (i)){
 				return false;
 			}
 		}

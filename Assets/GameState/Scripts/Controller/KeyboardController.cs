@@ -11,10 +11,6 @@ public class KeyboardController : MonoBehaviour {
 	MouseController mc;
 	BuildController bc;
 
-
-
-
-
 	void Start () {
 		new InputHandler ();
 		uic = GameObject.FindObjectOfType<UIController>();
@@ -23,13 +19,16 @@ public class KeyboardController : MonoBehaviour {
 	}
 	// Update is called once per frame
 	void Update () {
-		
-		if(Input.GetKeyDown (KeyCode.Escape)){
-			
+
+
+		if (Input.GetKeyDown (KeyCode.Escape)) {
 			mc.Escape ();
-			uic.Escape ();
+			uic.Escape (BuildController.Instance.BuildState!=BuildStateModes.None);
 			bc.Escape ();
 		} 
+		if(uic.IsTextFieldFocused()){
+			return;
+		}
 		if(uic.IsPauseMenuOpen()){
 			return;
 		}
@@ -44,6 +43,9 @@ public class KeyboardController : MonoBehaviour {
 		}
 		if(InputHandler.GetButtonDown ("TogglePause")){
 			WorldController.Instance.TogglePause ();
+		}
+		if(InputHandler.GetButtonDown ("Console")){
+			uic.ToggleConsole ();
 		}
 //		if(Input.GetKeyDown (KeyCode.Alpha1)){
 //			WorldController.Instance.OnClickChangeTimeMultiplier (1);

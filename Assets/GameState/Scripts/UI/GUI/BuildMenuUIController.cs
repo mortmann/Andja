@@ -66,6 +66,10 @@ public class BuildMenuUIController : MonoBehaviour {
 				nameToGOMap [name].SetActive (true);
 			}
 		}
+		if (Input.GetMouseButtonDown (1)&&oldButton!=null) {
+			oldButton.GetComponent<Image> ().color = Color.white;
+			oldButton = null;
+		}
 	}
 	public void OnClick(string name){
 		if(nameToGOMap.ContainsKey (name) == false){

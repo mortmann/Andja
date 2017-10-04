@@ -154,6 +154,8 @@ public class SoundController : MonoBehaviour {
 			return;
 		}
 		AudioClip ac = Resources.Load(SoundEffectLocation+filePath) as AudioClip;
+		if (ac == null)
+			return;
 		ac.LoadAudioData ();
 		goal.PlayOneShot (ac);
 	}

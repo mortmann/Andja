@@ -12,6 +12,7 @@ public class UIController : MonoBehaviour {
 
 	public GameObject chooseBuildCanvas;
 
+	public GameObject consoleCanvas;
 	public GameObject buildingCanvas;
 	public GameObject unitCanvas;
 	public GameObject rightCanvas;
@@ -22,7 +23,7 @@ public class UIController : MonoBehaviour {
 	public GameObject offWorldMapCanvas;
 	public GameObject otherCityUI;
 
-	Structure oldStr;
+	Structure openStructure;
 
 	public static Sprite[] ItemImages;
 
@@ -38,11 +39,11 @@ public class UIController : MonoBehaviour {
 	}
 
 	public void OpenStructureUI(Structure str){
-		if(oldStr == str || str == null){
+		if(openStructure == str || str == null){
 			return;
 		} 
-		if(oldStr!=null) {
-			oldStr.OnClickClose ();
+		if(openStructure!=null) {
+			openStructure.OnClickClose ();
 		}			
 		if(str.playerNumber != PlayerController.currentPlayerNumber){
 			if (str is Warehouse) {
@@ -50,7 +51,7 @@ public class UIController : MonoBehaviour {
 				return;
 			}
 		}
-		oldStr = str;
+		openStructure = str;
 		str.OnClick ();
 		if (str is ProductionBuilding) {
 			OpenProduktionUI ((OutputStructure)str);
@@ -127,9 +128,18 @@ public class UIController : MonoBehaviour {
 		unitCanvas.SetActive (false);
 		buildingCanvas.SetActive (true);
 		toggleInfoUI ();
-		buildingCanvas.GetComponent<ProduktionUI>().ShowProduce (str);
+		buildingCanvas.GetComponent<ProduktionUI>().Show (str);
+		TileSpriteController.Instance.tileDeciderFunc += StrcutureTileDecider;
+	}
+	TileMark StrcutureTileDecider(Tile t){
+		if(openStructure!=null&&openStructure.myRangeTiles.Contains(t)){
+			return TileMark.None;
+		} else {
+			return TileMark.Dark; 
+		}
 	}
 	public void CloseProduceUI(){
+		TileSpriteController.Instance.removeDecider (StrcutureTileDecider);
 		buildingCanvas.SetActive (false);
 		CloseInfoUI ();
 	}
@@ -166,9 +176,10 @@ public class UIController : MonoBehaviour {
 		if(uiInfoCanvas.activeSelf == false){
 			return;
 		}		
-		if(oldStr != null){
-			oldStr.OnClickClose ();
-			oldStr = null;
+		if(openStructure != null){
+			TileSpriteController.Instance.removeDecider (StrcutureTileDecider);
+			openStructure.OnClickClose ();
+			openStructure = null;
 		}
 		unitCanvas.SetActive (false);
 		buildingCanvas.SetActive (false);
@@ -178,9 +189,9 @@ public class UIController : MonoBehaviour {
 		chooseBuildCanvas.SetActive (false);
 	}
 	public void CloseRightUI(){
-		if(oldStr != null){
-			oldStr.OnClickClose ();
-			oldStr = null;
+		if(openStructure != null){
+			openStructure.OnClickClose ();
+			openStructure = null;
 		}
 		otherCityUI.SetActive (false);
 		CityInventoryCanvas.SetActive (false);
@@ -231,10 +242,11 @@ public class UIController : MonoBehaviour {
 	public void CloseTradeMenu(){
 		tradeMapCanvas.SetActive (false);
 	}
-	public void Escape(bool firstreset=false) {
-		if(AnyMenuOpen ()==false&&firstreset==false){
+	public void Escape(bool dontOpenPause=false) {
+		if(AnyMenuOpen ()==false&&dontOpenPause==false){
 			TogglePauseMenu ();
 		}
+		CloseConsole ();
 		CloseHomeUI ();
 		CloseInfoUI ();
 		CloseProduktionUI ();
@@ -243,12 +255,16 @@ public class UIController : MonoBehaviour {
 		CloseRightUI ();
 		CloseTradeMenu ();
 		CloseOffWorldMenu ();
+		if (TileSpriteController.Instance != null)
+			TileSpriteController.Instance.removeDecider (StrcutureTileDecider);
 	}
 	public bool IsPauseMenuOpen(){
 		return pauseMenuCanvas.activeSelf;
 	}
 	public bool AnyMenuOpen(){
-		return rightCanvas.activeSelf || uiInfoCanvas.activeSelf || chooseBuildCanvas.activeSelf || tradeMapCanvas.activeSelf;
+		return rightCanvas.activeSelf || uiInfoCanvas.activeSelf || 
+			chooseBuildCanvas.activeSelf || tradeMapCanvas.activeSelf || 
+			consoleCanvas.activeSelf;
 	}
 
 	public void SetDragAndDropBuild(GameObject go){
@@ -258,8 +274,12 @@ public class UIController : MonoBehaviour {
 	public void StopDragAndDropBuild(){
 		shortCutCanvas.GetComponent<ShortcutUI> ().StopDragAndDropBuild ();
 	}
-
-
+	public void ToggleConsole(){
+		consoleCanvas.SetActive (!consoleCanvas.activeSelf);
+	}
+	public void CloseConsole(){
+		consoleCanvas.SetActive (false);
+	}
 	public static Sprite GetItemImageForID(int id){
 		int pic = id - 1;
 		if(ItemImages.Length-1 < pic || pic < 0){
@@ -267,4 +287,12 @@ public class UIController : MonoBehaviour {
 		}
 		return ItemImages [pic];
 	}
+
+	public bool IsTextFieldFocused(){
+		if(EventSystem.current.currentSelectedGameObject==null || EventSystem.current.currentSelectedGameObject.GetComponent<InputField>() ==null){
+			return false;
+		}
+		return (EventSystem.current.currentSelectedGameObject.GetComponent<InputField>()).isFocused;
+	}
+
 }

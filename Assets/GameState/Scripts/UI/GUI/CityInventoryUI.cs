@@ -21,18 +21,18 @@ public class CityInventoryUI : MonoBehaviour {
 		cityname.GetComponent<Text> ().text = city.name;
 		this.city = city;
 		this.trade = trade;
-		city.myInv.RegisterOnChangedCallback (OnInventoryChange);
+		city.inventory.RegisterOnChangedCallback (OnInventoryChange);
 
 		foreach (Transform child in contentCanvas.transform) {
 			Destroy (child.gameObject);
 		}
 		itemToGO = new Dictionary<int, ItemUI> ();
-		foreach (Item item in city.myInv.items.Values) {
+		foreach (Item item in city.inventory.items.Values) {
 			GameObject go_i = GameObject.Instantiate (itemPrefab);
 			go_i.name = item.name + " Item";
 			ItemUI iui = go_i.GetComponent<ItemUI> ();
 			itemToGO.Add (item.ID,iui);
-			iui.SetItem (item,city.myInv.maxStackSize,true);
+			iui.SetItem (item,city.inventory.maxStackSize,true);
 			// does this need to be here?
 			// or can it be move to itemui?
 			// changes in th future maybe
@@ -54,7 +54,7 @@ public class CityInventoryUI : MonoBehaviour {
 	void OnItemClick(Item item){		
 		if (trade) {
 			//trade to ship
-			city.tradeWithShip (city.myInv.getItemInInventoryClone (item));
+			city.tradeWithShip (city.inventory.getItemInInventoryClone (item));
 			return;
 		} 
 		if(GameObject.FindObjectOfType<TradeRoutePanel> ()!=null){
@@ -64,7 +64,7 @@ public class CityInventoryUI : MonoBehaviour {
 			return;
 		}
 		if(tradePanel.activeSelf){
-			tradePanel.GetComponent<TradePanel> ().OnItemSelected (city.myInv.getItemInInventoryClone (item));
+			tradePanel.GetComponent<TradePanel> ().OnItemSelected (city.inventory.getItemInInventoryClone (item));
 		}
 	}
 
@@ -76,8 +76,8 @@ public class CityInventoryUI : MonoBehaviour {
 	}
 	public void OnInventoryChange(Inventory changedInv){
 		foreach(int i in changedInv.items.Keys){
-			itemToGO [i].ChangeItemCount (city.myInv.items [i].count);
-			itemToGO [i].ChangeMaxValue (city.myInv.maxStackSize);
+			itemToGO [i].ChangeItemCount (city.inventory.items [i].count);
+			itemToGO [i].ChangeMaxValue (city.inventory.maxStackSize);
 		}
 	}
 

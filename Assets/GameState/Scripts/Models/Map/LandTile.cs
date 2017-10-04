@@ -14,16 +14,19 @@ public class LandTile : Tile {
 		} 
 		set {
 			if(_structures!=null&&_structures == value){
-				//				Debug.Log ("Tile.structure! Why does the structure add itself again to the tile?");
 				return;
 			}
+			if(_structures!=null && null!=value&&_structures.ID == value.ID){
+				Debug.LogWarning ("Structure got build over even tho it is the same ID! Is this wanted?? " + value.ID);
+				return;
+			}
+			Structure oldStructure = _structures;
 			if(_structures != null && _structures.canBeBuildOver && value!=null){
 				_structures.Destroy ();
 			} 
-			Structure oldStructure = _structures;
 			_structures = value;
 			if (cbTileStructureChanged != null) {
-				cbTileStructureChanged (this,oldStructure);
+				cbTileStructureChanged (value,oldStructure);
 			} 
 		}
 	}
@@ -67,8 +70,8 @@ public class LandTile : Tile {
 					c.addTile (this);
 					return;
 				}
-				myIsland.wilderniss.addTile (this);
-				_myCity = myIsland.wilderniss;
+				myIsland.wilderness.addTile (this);
+				_myCity = myIsland.wilderness;
 				return;
 			} 
 			//warns about double wilderniss
@@ -97,39 +100,6 @@ public class LandTile : Tile {
 		} 
 	}
 
-	protected TileMark _oldTileState;
-	private TileMark OldTileState {
-		get { return _oldTileState; }
-		set {
-			if(value==TileMark.Highlight){
-				
-			} else {
-				_oldTileState = value;
-			}
-
-		}
-	}
-	protected TileMark _tileState;
-	public override TileMark TileState {
-		get { 
-			return _tileState;
-		}
-		set { 
-			if (value == TileMark.Reset) {
-				_tileState = _oldTileState;
-				World.current.OnTileChanged (this);
-				return;
-			}
-			if(value == _tileState){
-				return;
-			} else {
-				_oldTileState = _tileState;
-				this._tileState = value;
-				World.current.OnTileChanged (this);
-			}
-		}
-	}
-
 	public List<NeedsBuilding> listOfInRangeNeedBuildings { get; protected set; }
 
 	public LandTile(){}
@@ -139,19 +109,21 @@ public class LandTile : Tile {
 		_type = TileType.Ocean; 
 	} 
 
-	// The function we callback any time our tile's data changes
-	Action<Tile,Structure> cbTileStructureChanged;
+	// The function we callback any time our tile's structure changes
+	//some how the first == now is sometimes null even tho it IS NOT NULL
+	//second one is the old ! that one is working
+	Action<Structure,Structure> cbTileStructureChanged;
 	/// <summary>
 	/// Register a function to be called back when our tile type changes.
 	/// </summary>
-	public override void RegisterTileStructureChangedCallback(Action<Tile,Structure> callback) {
+	public override void RegisterTileStructureChangedCallback(Action<Structure,Structure> callback) {
 		cbTileStructureChanged += callback;
 	}
 
 	/// <summary>
 	/// Unregister a callback.
 	/// </summary>
-	public override void UnregisterTileStructureChangedCallback(Action<Tile,Structure> callback) {
+	public override void UnregisterTileStructureChangedCallback(Action<Structure,Structure> callback) {
 		cbTileStructureChanged -= callback;
 	}
 
@@ -179,5 +151,8 @@ public class LandTile : Tile {
 
 	public override List<NeedsBuilding > getListOfInRangeNeedBuildings (){
 		return listOfInRangeNeedBuildings;
+	}
+	public override string ToString (){
+		return string.Format ("[LAND: X={0}, Y={1}, Structure={0}, myCity={1}]", X, Y, Structure, myCity.name);
 	}
 }

@@ -13,8 +13,8 @@ TagManager:
   - UI
   - 
   - 
+  - UnitUI
   - HoverOver
-  - 
   - 
   - 
   - 
@@ -43,6 +43,9 @@ TagManager:
     locked: 0
   - name: WaterTile
     uniqueID: 1576076863
+    locked: 0
+  - name: DarkTile
+    uniqueID: 1595110019
     locked: 0
   - name: DarkLayer
     uniqueID: 1213898929

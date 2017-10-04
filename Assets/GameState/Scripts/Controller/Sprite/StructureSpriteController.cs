@@ -6,6 +6,8 @@ public class StructureSpriteController : MonoBehaviour {
 	public Dictionary<Structure, GameObject> structureGameObjectMap;
 	public Dictionary<string, Sprite> structureSprites = new Dictionary<string, Sprite>();
 	public Sprite circleSprite;
+	public Sprite unitCircleSprite;
+
 	BuildController bm;
 	CameraController cc;
 	World world {
@@ -81,6 +83,7 @@ public class StructureSpriteController : MonoBehaviour {
 				sr.sprite = structureSprites [structure.SmallName + "_" + ((Growable)structure).currentStage];
 			} else {
 				sr.sprite = structureSprites ["nosprite"];
+				Debug.Log (structure.SmallName + "_" + ((Growable)structure).currentStage);
 			}
 		} else {
 			if (structureSprites.ContainsKey (structure.SmallName)) {
@@ -115,7 +118,7 @@ public class StructureSpriteController : MonoBehaviour {
 			return;
 		}
 		if( structureGameObjectMap.ContainsKey (structure) == false){
-			Debug.LogError ("StructureSprite not in the Map to a gameobject! "+ structure.SmallName+"@"+ structure.myBuildingTiles[0].toString ());
+//			Debug.LogError ("StructureSprite not in the Map to a gameobject! "+ structure.SmallName+"@"+ structure.myBuildingTiles[0].toString ());
 			return;
 		}
 		if(structure is Growable){
@@ -140,6 +143,9 @@ public class StructureSpriteController : MonoBehaviour {
 		}
 	}
 	void OnStructureDestroyed(Structure structure) {
+		if(structureGameObjectMap.ContainsKey(structure)==false){
+			return;
+		}
 		GameObject go = structureGameObjectMap [structure];
 		GameObject.Destroy (go);
 		structure.UnregisterOnChangedCallback (OnStructureChanged);

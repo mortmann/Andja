@@ -23,6 +23,13 @@ public class Unit  {
 	#endregion
 	//being calculated at runtime
 	#region calculated 
+
+	//TODO decide on this:
+	public float BuildRange {
+		get {
+			return attackRange;
+		}
+	}
 	//FIXME: these should be safed 
 	//not quite sure how to do it
 	Unit engangingUnit;
@@ -81,7 +88,9 @@ public class Unit  {
 	public ArmorType myArmorType=ArmorType.Leather;
 	public float attackCooldown=1;
 	public float attackRate=1;
-	protected float speed;   // Tiles per second
+	public float speed; 
+	public float rotationSpeed = 2f; 
+
 	protected internal float width;
 	protected internal float height;
 	#endregion
@@ -94,8 +103,8 @@ public class Unit  {
 	public Unit(Tile t,int playernumber) {
 		this.playerNumber = playernumber;
 		speed = 2f;
-		pathfinding = new Pathfinding (speed, t,path_mode.islandSingleStartpoint);
 		Name = "Unit " + UnityEngine.Random.Range (0, 1000000000);
+		pathfinding = new IslandPathfinding (this,t);
     }
 	public Unit(){
 	}
@@ -106,9 +115,9 @@ public class Unit  {
 		if(Fighting(deltaTime)){
 			return;
 		}
-		pathfinding.Update_DoMovement (deltaTime);
+		if(pathfinding!=null)
+			pathfinding.Update_DoMovement (deltaTime);
 
-//		myGameobject.transform.position = new Vector3 (X, Y, -0.1f);
         if (cbUnitChanged != null)
             cbUnitChanged(this);
     }
@@ -274,9 +283,9 @@ public class Unit  {
 		if(onPatrol){
 			if(pathfinding.IsAtDest){
 				if (onWayToPatrolTarget) {
-					pathfinding.AddMovementCommand (patrolStart.x , patrolStart.y);
+//					pathfinding.AddMovementCommand (patrolStart.x , patrolStart.y);
 				} else {
-					pathfinding.AddMovementCommand (patrolTarget.x , patrolTarget.y);
+//					pathfinding.AddMovementCommand (patrolTarget.x , patrolTarget.y);
 				}
 				onWayToPatrolTarget = !onWayToPatrolTarget; 
 			}
@@ -317,7 +326,7 @@ public class Unit  {
 		onPatrol = true;
 		patrolStart = new Vector2 (X, Y);
 		patrolTarget = new Vector2 (targetX, targetY);
-		pathfinding.AddMovementCommand(targetX, targetY);
+//		pathfinding.AddMovementCommand(targetX, targetY);
 
 	}
 	protected virtual void OverrideCurrentMission(){
@@ -352,7 +361,9 @@ public class Unit  {
 		}
 		onPatrol = false;
 
-		pathfinding.AddMovementCommand( x, y);
+		if(pathfinding is IslandPathfinding){
+			((IslandPathfinding)pathfinding).SetDestination (x,y);
+		}
     }
 	public int tryToAddItemMaxAmount(Item item , int amount){
 		Item t = item.Clone ();

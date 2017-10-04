@@ -26,14 +26,22 @@ public class Route {
 			Debug.LogError ("Path got not updated previously!"); 
 			return;
 		}
+		HashSet<Tile> alreadyChecked = new HashSet<Tile> ();
 		Queue<Tile> tilesToCheck = new Queue<Tile>();
 		tilesToCheck.Enqueue(tile);
 		while (tilesToCheck.Count > 0) {
 			Tile t = tilesToCheck.Dequeue();
-			if (t.Type != TileType.Ocean && t.Structure != null && t.Structure.myBuildingTyp == BuildingTyp.Pathfinding) {
+			alreadyChecked.Add (t);
+			if(t.Type == TileType.Ocean || t.Structure == null){
+				continue;
+			}
+			if (t.Structure.myBuildingTyp == BuildingTyp.Pathfinding) {
 				myTiles.Add(t);
 				Tile[] ns = t.GetNeighbours();
 				foreach (Tile t2 in ns) {
+					if(alreadyChecked.Contains(t2)){
+						continue;
+					}
 					tilesToCheck.Enqueue(t2);
 				}
 			}

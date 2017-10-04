@@ -19,11 +19,20 @@ public abstract class OutputStructure : Structure {
 
 	[JsonPropertyAttribute] public List<Worker> myWorker;
 	[JsonPropertyAttribute] public float produceCountdown;
-	private Item[] _output;
-	[JsonPropertyAttribute] public Item[] output {
+	[JsonPropertyAttribute] protected Item[] _output; // FIXME DOESNT GET LOADED IN!??!? why?
+
+	#endregion
+	#region RuntimeOrOther
+	public Item[] output {
 		get {
 			if(_output == null){
-				_output = OutputData.output;
+				if(OutputData.output==null){
+					return null;
+				}
+				_output = new Item[OutputData.output.Length];
+				for(int i = 0; i<OutputData.output.Length;i++){
+					_output [i] = OutputData.output [i].Clone();
+				}
 			}
 			return _output;
 		}
@@ -31,19 +40,15 @@ public abstract class OutputStructure : Structure {
 			_output = value;
 		}
 	}
-
-	#endregion
-	#region RuntimeOrOther
-
 	public Dictionary<OutputStructure,Item[]> jobsToDo;
 	public bool outputClaimed;
 	protected Action<Structure> cbOutputChange;
 	bool canWork { get { return Efficiency > 0; }}
-	public float efficiencyModifier;
-
+	public float efficiencyModifier = 1;
+	public bool workersHasToFollowRoads = false;
 	public float contactRange {get{ return OutputData.contactRange;}}
 	public bool forMarketplace {get{ return OutputData.forMarketplace;}}
-	protected int maxNumberOfWorker {get{ return OutputData.maxOutputStorage;}}
+	protected int maxNumberOfWorker {get{ return OutputData.maxNumberOfWorker;}}
 	public float produceTime {get{ return OutputData.produceTime;}}
 	public int maxOutputStorage {get{ return OutputData.maxOutputStorage;}}
 
@@ -56,6 +61,11 @@ public abstract class OutputStructure : Structure {
 		}
 	}
 	#endregion
+
+	public OutputStructure(){
+		jobsToDo = new Dictionary<OutputStructure, Item[]> ();
+
+	}
 
 	protected void OutputCopyData(OutputStructure o){
 		BaseCopyData (o);
@@ -80,8 +90,11 @@ public abstract class OutputStructure : Structure {
 		}
 	}
 	public void update_Worker(float deltaTime){
-		if(myWorker == null){
+		if(maxNumberOfWorker <= 0){
 			return;
+		}
+		if(myWorker==null){
+			myWorker = new List<Worker> ();
 		}
 		for (int i = myWorker.Count-1; i >= 0; i--) {
 			Worker w = myWorker[i];
@@ -89,32 +102,57 @@ public abstract class OutputStructure : Structure {
 			if (w.isAtHome) {
 				WorkerComeBack (w);
 			}
-		}
+		}		
+
 		SendOutWorkerIfCan ();
 	}
 	public virtual void SendOutWorkerIfCan (){
 		if (jobsToDo.Count == 0) {
 			return;
 		}
-		OutputStructure giveJob = null;
-		foreach (OutputStructure item in jobsToDo.Keys) {
+		List<OutputStructure> givenJobs = new List<OutputStructure> ();
+		foreach (OutputStructure jobStr in jobsToDo.Keys) {
 			if (myWorker.Count == maxNumberOfWorker) {
 				break;
 			}
-			Worker ws;
-			if (jobsToDo [item] != null) {
-				ws= new Worker (this, item,jobsToDo [item]);
-			} else {
-				ws= new Worker (this, item);
+			Item[] items = GetRequieredItems(jobStr,jobsToDo [jobStr]);
+			if(items==null||items.Length<=0){
+				continue;
 			}
-			giveJob = item;
+			Worker ws = new Worker (this, jobStr,items,workersHasToFollowRoads);
+
+			givenJobs.Add(jobStr);
 			WorldController.Instance.world.CreateWorkerGameObject (ws);
 			myWorker.Add (ws);
 		}
-		if (giveJob != null) {
-			jobsToDo.Remove (giveJob);
+		foreach (OutputStructure giveJob in givenJobs) {
+			if (giveJob != null) {
+				if(giveJob is ProductionBuilding){
+					return;
+				}
+				jobsToDo.Remove (giveJob);
+			}
 		}
 	}
+	public virtual Item[] GetRequieredItems(OutputStructure str,Item[] items){
+		if(items==null){
+			items = str.output;
+		}
+		List<Item> all = new List<Item> ();
+		for (int i = output.Length - 1; i >= 0; i--) {
+			int id = output [i].ID;
+			for (int s = 0; s < items.Length; s++) {
+				if(items[i].ID==id){
+					Item item = items [i].Clone ();
+					item.count = maxOutputStorage - output [i].count;
+					if(item.count>0)
+						all.Add (item);
+				}
+			}
+		}
+		return all.ToArray();
+	}
+
 	public void WorkerComeBack(Worker w){
 		if (myWorker.Contains (w) == false) {
 			Debug.LogError ("WorkerComeBack - Worker comesback, but doesnt live here!");
@@ -149,11 +187,29 @@ public abstract class OutputStructure : Structure {
 		Item[] temp = new Item[output.Length];
 		for (int g = 0; g < getItems.Length; g++) {
 			for (int i = 0; i < output.Length; i++) {
-				if(output[i].count ==  0 || output[i].ID == getItems[g].ID){
+				if(output[i].count ==  0 || output[i].ID != getItems[g].ID){
 					continue;
 				}	
 				temp [i] = output [i].CloneWithCount ();
 				temp [i].count = Mathf.Clamp (temp [i].count, 0, maxAmounts [i]);
+				output[i].count -= temp[i].count;
+				CallOutputChangedCB ();
+			}
+		}
+		return temp;
+	}
+	public virtual Item[] getOutputWithItemCountAsMax(Item[] getItems){
+		Item[] temp = new Item[output.Length];
+		for (int g = 0; g < getItems.Length; g++) {
+			for (int i = 0; i < output.Length; i++) {
+				if(output[i].ID != getItems[g].ID){
+					continue;
+				}	
+				if(output[i].count ==  0){
+					Debug.LogWarning ("output[i].count ==  0");
+				}
+				temp [i] = output [i].CloneWithCount ();
+				temp [i].count = Mathf.Clamp (temp [i].count, 0, getItems [i].count);
 				output[i].count -= temp[i].count;
 				CallOutputChangedCB ();
 			}
@@ -222,9 +278,12 @@ public abstract class OutputStructure : Structure {
 		}
 	}
 	protected override void OnDestroy () {
-		foreach (Worker item in myWorker) {
-			item.Destroy ();
+		if(myWorker!=null){
+			foreach (Worker item in myWorker) {
+				item.Destroy ();
+			}
 		}
+
 	}
 
 

@@ -8,7 +8,7 @@ public class City : IGEventable {
 	public const int TargetType = 12;
 	#region Serialize
 	[JsonPropertyAttribute] public int playerNumber = 0;
-	[JsonPropertyAttribute] public Inventory myInv;
+	[JsonPropertyAttribute] public Inventory inventory;
 	[JsonPropertyAttribute] public List<Structure> myStructures;
 	[JsonPropertyAttribute] public Dictionary<int,Need> idToNeed; // i think this is what is missing
 	[JsonPropertyAttribute] public float useTickTimer;
@@ -20,13 +20,13 @@ public class City : IGEventable {
 	[JsonPropertyAttribute] public Dictionary<int,TradeItem> itemIDtoTradeItem;
 	[JsonPropertyAttribute] private string _name=""; 
 	[JsonPropertyAttribute] public int[] citizienCount;
-	[JsonPropertyAttribute] public Island island { get; set; }
+	[JsonPropertyAttribute] public Island island;
 
 	#endregion
 	#region RuntimeOrOther
 	public string name {get{
 			if(this.IsWilderness ()){
-				return "Wilderniss";
+				return "Wilderness";
 			}
 			if(_name.Length==0){
 				return "City "+island.myCities.IndexOf (this);	
@@ -56,7 +56,7 @@ public class City : IGEventable {
 		citizienCount = new int[4];
 		itemIDtoTradeItem = new Dictionary<int, TradeItem> ();
 		myStructures = new List<Structure>();
-		myInv = new Inventory (-1, name);
+		inventory = new CityInventory (name);
 		idToNeed = new Dictionary<int, Need> ();
 
 		Setup ();
@@ -131,22 +131,22 @@ public class City : IGEventable {
 		}
     }
 	/// <summary>
-	/// USE only for the creation of non player city aka Wilderniss
+	/// USE only for the creation of non player city aka Wilderness
 	/// </summary>
 	/// <param name="tiles">Tiles.</param>
 	/// <param name="island">Island.</param>
 	public City(List<Tile> tiles,Island island){
 //		tiles.ForEach (x => x.myCity = this);
 		List<Tile> temp = new List<Tile>(tiles);
-		island.wilderniss = this;
+		island.wilderness = this;
 		myTiles = new HashSet<Tile> (tiles);
 		for (int i = 0; i < tiles.Count; i++) {
 			temp[i].myCity= null;
 		}
-		myInv = new Inventory (0);
+		inventory = new Inventory (0);
 		this.playerNumber = -1;
 		this.island = island;
-		island.wilderniss = this;
+		island.wilderness = this;
 		myStructures = new List<Structure> ();
 	}
 	public void addStructure(Structure str){
@@ -175,6 +175,11 @@ public class City : IGEventable {
 			cbStructureAdded (str);
 		}
 	}
+	public void triggerAddCallBack(Structure str){
+		if(cbStructureAdded!=null){
+			cbStructureAdded (str);
+		}
+	}
 	//current wrapper to make sure its valid
 	public void RemoveTile(Tile t){
 		//if it doesnt contain it there is an error
@@ -198,7 +203,6 @@ public class City : IGEventable {
 			if(tiles[i].Structure != null){
 				if (myStructures.Contains (tiles [i].Structure) ==false) { 
 					tiles [i].Structure.City = this;
-					tiles [i].Structure.playerNumber = playerNumber;
 					addStructure (tiles [i].Structure);
 				}
 			}
@@ -214,8 +218,6 @@ public class City : IGEventable {
 		if(t.Structure != null){
 			if (myStructures.Contains (t.Structure) ==false) { 
 				t.Structure.City = this;
-				t.Structure.playerNumber = playerNumber;
- 
 				addStructure (t.Structure);
 			}
 		}
@@ -227,25 +229,25 @@ public class City : IGEventable {
 			return;
 		}
 		foreach (Item item in remove) {
-			myInv.removeItemAmount (item);
+			inventory.removeItemAmount (item);
 		}
 	}
 
 	public void removeRessource(Item item, int amount){
 		Item i = item.Clone ();
 		i.count = amount;
-		myInv.removeItemAmount (i);
+		inventory.removeItemAmount (i);
 	}
 
 	public bool hasItem(Item item){
-		return myInv.hasAnythingOf (item);
+		return inventory.hasAnythingOf (item);
 	}
 
 	public bool IsWilderness(){
-		if(playerNumber==-1 && this != island.wilderniss){
-			Debug.LogError ("NOT WILDERNISS! But -1 playernumber!? " + this.name);
+		if(playerNumber==-1 && this != island.wilderness){
+			Debug.LogError ("NOT WILDERNESS! But -1 playernumber!? ");
 		}
-		return this == island.wilderniss;
+		return this == island.wilderness;
 	}
 	/// <summary>
 	/// Ship buys from city means 
@@ -265,7 +267,7 @@ public class City : IGEventable {
 			Debug.Log ("this item is not to buy"); 
 			return;
 		}
-		Item i = ti.SellItemAmount (myInv.GetItemWithIDClone (itemID));
+		Item i = ti.SellItemAmount (inventory.GetItemWithIDClone (itemID));
 		Player myPlayer = PlayerController.Instance.GetPlayer (playerNumber);
 		int am = tradeWithShip (i,Mathf.Clamp (amount,0,i.count),ship);
 		myPlayer.addMoney (am * ti.price);
@@ -290,7 +292,7 @@ public class City : IGEventable {
 			Debug.Log ("this item is not to sell here"); 
 			return;
 		}
-		Item i = ti.BuyItemAmount (myInv.GetItemWithIDClone (itemID));
+		Item i = ti.BuyItemAmount (inventory.GetItemWithIDClone (itemID));
 		Player myPlayer = PlayerController.Instance.GetPlayer (playerNumber);
 		int am = tradeFromShip (ship,i,Mathf.Clamp (amount,0,i.count));
 		myPlayer.reduceMoney (am * ti.price);
@@ -303,18 +305,18 @@ public class City : IGEventable {
 			return 0;
 		}
 		if (tradeUnit == null && ship==null) {
-			return myInv.moveItem (myWarehouse.inRangeUnits [0].inventory, toTrade,amount);
+			return inventory.moveItem (myWarehouse.inRangeUnits [0].inventory, toTrade,amount);
 		} else if(ship==null){
-			return myInv.moveItem (tradeUnit.inventory, toTrade,amount);
+			return inventory.moveItem (tradeUnit.inventory, toTrade,amount);
 		} else {
-			return myInv.moveItem (ship.inventory, toTrade,amount);
+			return inventory.moveItem (ship.inventory, toTrade,amount);
 		}
 	}
 	public int tradeFromShip(Unit u,Item getTrade,int amount = 50){
 		if(getTrade ==null){
 			return 0;
 		}
-		return u.inventory.moveItem (myInv,getTrade,amount);
+		return u.inventory.moveItem (inventory,getTrade,amount);
 	}
 	public float getPercentage(Need need){
 		if(idToNeed.ContainsKey (need.ID)==false){
@@ -332,7 +334,7 @@ public class City : IGEventable {
 		itemIDtoTradeItem [id].price = price;
 	}
 	public float GetAmountForThis( Item item, float amount ){
-		return myInv.GetAmountForItem (item);
+		return inventory.GetAmountForItem (item);
 	}
 	
 	public void AddRoute(Route route){
@@ -366,14 +368,14 @@ public class City : IGEventable {
 				for (int i = 0; i < res.Length; i++) {
 					res [i].count /= 3; // FIXME do not have this hardcoded! Change it to be chooseable!
 				}
-				myInv.AddItems (res);
+				inventory.AddItems (res);
 			}
 			myStructures.Remove (structure);
 			cityBalance -= structure.maintenancecost;
 			if(cbStructureRemoved!=null)
 				cbStructureRemoved (structure);
 		} else {
-			//this is no error if this is wilderniss
+			//this is no error if this is wilderness
 			if(structure is Warehouse){
 				return;
 			}
@@ -396,7 +398,7 @@ public class City : IGEventable {
 	}
 	public void Destroy(){
 		if(playerNumber==-1){
-			return; // this is the wilderniss it cant be removed! or destroyed
+			return; // this is the wilderness it cant be removed! or destroyed
 		}
 		if(myTiles.Count > 0){
 			removeTiles (myTiles);

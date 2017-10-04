@@ -120,8 +120,7 @@ public abstract class Structure : IGEventable {
 	#region Serialize
 	//prototype id
 	[JsonPropertyAttribute] public int ID;
-	//player id
-	[JsonPropertyAttribute] public int playerNumber;
+
 	//build id -- when it was build
 	[JsonPropertyAttribute] public uint buildID;
 
@@ -142,14 +141,21 @@ public abstract class Structure : IGEventable {
 	}
 	[JsonPropertyAttribute] public int  rotated = 0; 
 	[JsonPropertyAttribute] public bool buildInWilderniss = false;
-	[JsonPropertyAttribute] public bool isActive;
+	[JsonPropertyAttribute] public bool isActive = true;
 	#endregion
 	#region RuntimeOrOther
 	public List<Tile> myBuildingTiles;
 	public HashSet<Tile> neighbourTiles;
 	public HashSet<Tile> myRangeTiles;
 	public string connectOrientation;
-
+	//player id
+	public int playerNumber {
+		get {
+			if(City==null){
+				return -1;
+			}
+			return City.GetPlayerNumber ();}	
+	}
 	protected StructurePrototypeData _prototypData;
 	public StructurePrototypeData data {
 		get { if(_prototypData==null){
@@ -213,7 +219,7 @@ public abstract class Structure : IGEventable {
 	public City City {
 		get { return _city;}
 		set {
-			if(_city!=value){
+			if(_city!=null&&_city!=value){
 				_city.removeStructure (this);
 			}
 			_city = value;
@@ -362,18 +368,13 @@ public abstract class Structure : IGEventable {
 		//test if the place is buildable
 		// if it has to be on land
 		if(canBuildOnSpot (tiles)==false){
-//			Debug.Log ("canBuildOnSpot failed"); 
-			return false;
-		}
-		//check if it's in a city
-		if(IsTilesCityViable(tiles)==false && buildInWilderniss==false){
-//			Debug.Log ("IsTilesCityViable failed"); 
+			Debug.Log ("canBuildOnSpot FAILED -- Give UI feedback"); 
 			return false;
 		}
 
 		//special check for some structures 
 		if (SpecialCheckForBuild (tiles) == false) {
-			Debug.Log ("specialcheck failed"); 
+			Debug.Log ("specialcheck failed -- Give UI feedback"); 
 			return false;
 		}
 
@@ -387,7 +388,6 @@ public abstract class Structure : IGEventable {
 			if(mt.myCity!=null && hasCity == false && buildInWilderniss == mt.myCity.IsWilderness ()){
 				this.City = mt.myCity;
 				hasCity = true;
-
 				mt.myIsland.AddStructure (this);
 			}
 			foreach(Tile nbt in mt.GetNeighbours()){
@@ -406,34 +406,9 @@ public abstract class Structure : IGEventable {
 
 		return true;
 	}
-	/// <summary>
-	/// Determines whether it can be build in this city tiles
-	/// Chances if you can build a little bit outside the area!
-	/// For now tho it can be done
-	/// Only if all tiles are within the city owned by the player it can
-	/// be build (Exception Warehouse)
-	/// </summary>
-	/// <returns><c>true</c> if this instance is city viable the specified tiles; otherwise, <c>false</c>.</returns>
-	/// <param name="tiles">Tiles.</param>
-	public bool IsTilesCityViable(List<Tile> tiles){
-		foreach (Tile t in tiles) {
-			if (t.myCity!=null && t.myCity.playerNumber != playerNumber) {
-				//here it cant build cause someoneelse owns it
-				if (t.myCity.IsWilderness () == false ) {
-					return false;
-				} else {
-					//HERE it can be build if 
-					//EXCEPTION warehouses can be build on new islands
-					if(this is Warehouse == false){
-						return false;
-					}
-				}
-			} 
-		}
-		return true;
-	}
-	public bool IsTileCityViable(Tile t){
-		if (t.myCity!=null && t.myCity.playerNumber != playerNumber) {
+
+	public bool IsTileCityViable(Tile t, int player){
+		if (t.myCity!=null && t.myCity.playerNumber != player) {
 			//here it cant build cause someoneelse owns it
 			if (t.myCity.IsWilderness () == false ) {
 				return false;
@@ -481,13 +456,13 @@ public abstract class Structure : IGEventable {
 	/// <returns>The in range tiles.</returns>
 	/// <param name="firstTile">The most left one, first row.</param>
 	public HashSet<Tile> GetInRangeTiles (Tile firstTile) {
-		if (firstTile==null) {
-			return null;
-		}
 		if (buildingRange == 0) {
 			return null;
 		}
-
+		if (firstTile==null) {
+			Debug.LogError ("Range Tiles Tile is null -> cant calculated of that");
+			return null;
+		}
 		World w = WorldController.Instance.world;
 		myRangeTiles = new HashSet<Tile> ();
 		float width = firstTile.X-buildingRange - tileWidth / 2;
@@ -644,18 +619,6 @@ public abstract class Structure : IGEventable {
 			return 0;
 		}
 		this.rotated = rotate;
-//		if(mustBeBuildOnMountain){
-//			List<Tile> t = this.GetBuildingTiles (x,y);
-//			if(this.correctSpotOnMountain (t)==false){
-//				return ChangeRotation (x,y,rotate+90);
-//			}	
-//		}
-//		if(mustBeBuildOnShore){
-//			List<Tile> t = this.GetBuildingTiles (x,y);
-//			if(this.correctSpotOnShore (t)==false){
-//				return ChangeRotation (x,y,rotate+90);
-//			}	
-//		}
 		return rotate;
 	}
 	public void RotateStructure(){

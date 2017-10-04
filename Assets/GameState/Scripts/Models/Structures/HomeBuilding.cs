@@ -117,8 +117,8 @@ public class HomeBuilding : Structure {
 		}
 		people = Mathf.Clamp (people, 0, maxLivingSpaces);
 	}
-	public void OnTStructureChange(Tile t, Structure old){
-		if(old is Road == false || t.Structure is Road == false){
+	public void OnTStructureChange(Structure now, Structure old){
+		if(old is Road == false || now is Road == false){
 			return;
 		}
 	}

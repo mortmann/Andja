@@ -10,7 +10,7 @@ using System.Xml.Serialization;
 public enum Language {English,German}
 
 public class PrototypController : MonoBehaviour {
-
+	public const int StartID = 1;
 	public Language selectedLanguage = Language.English;
 
 	public static PrototypController Instance;
@@ -166,7 +166,6 @@ public class PrototypController : MonoBehaviour {
 			for(int i=0; i<xnl.Count;i++){
 				fpd.climates [i] = (Climate)int.Parse ( xnl [i].InnerXml );
 			}
-
 			Fertility fer = new Fertility (ID,fpd);
 			idToFertilities.Add (fer.ID,fer); 
 			fertilityPrototypeDatas [ID] = fpd;
@@ -206,6 +205,7 @@ public class PrototypController : MonoBehaviour {
 		xmlDoc.LoadXml(ta.text); // load the file.
 		ReadRoads (xmlDoc.SelectSingleNode ("structures/roads"));
 		ReadGrowables (xmlDoc.SelectSingleNode ("structures/growables"));
+		ReadFarms (xmlDoc.SelectSingleNode ("structures/farms"));
 		ReadMarketBuildings (xmlDoc.SelectSingleNode ("structures/markets"));
 		ReadProductionBuildings (xmlDoc.SelectSingleNode ("structures/productions"));
 		ReadNeedsBuildings (xmlDoc.SelectSingleNode ("structures/needsbuildings"));
@@ -267,6 +267,18 @@ public class PrototypController : MonoBehaviour {
 			structurePrototypes [ID] = new Growable (ID,gpd);
 		}
 	}
+	private void ReadFarms(XmlNode xmlDoc){
+		foreach(XmlElement node in xmlDoc.SelectNodes("farm")){
+			int ID = int.Parse(node.GetAttribute("ID"));
+
+			FarmPrototypData fpd = new FarmPrototypData ();
+			//THESE are fix and are not changed for any growable
+			//!not anymore
+			SetData<FarmPrototypData> (node,ref  fpd);
+			structurePrototypeDatas.Add (ID,fpd);
+			structurePrototypes [ID] = new Farm (ID,fpd);
+		}
+	}
 	private void ReadMarketBuildings(XmlNode xmlDoc){
 		foreach(XmlElement node in xmlDoc.SelectNodes("market")){
 			int ID = int.Parse(node.GetAttribute("ID"));
@@ -291,7 +303,7 @@ public class PrototypController : MonoBehaviour {
 		}
 	}
 	private void ReadProductionBuildings(XmlNode xmlDoc){
-		foreach(XmlElement node in xmlDoc.SelectNodes("produktion")){
+		foreach(XmlElement node in xmlDoc.SelectNodes("production")){
 			
 			int ID = int.Parse(node.GetAttribute("ID"));
 
@@ -303,6 +315,7 @@ public class PrototypController : MonoBehaviour {
 			ppd.myBuildingTyp = BuildingTyp.Blocking;
 			ppd.BuildTyp = BuildTypes.Single;
 			ppd.canTakeDamage = true;
+			ppd.forMarketplace = true;
 			//!not anymore
 
 			ppd.Name = "TEST Production";
@@ -445,13 +458,16 @@ public class PrototypController : MonoBehaviour {
 		}
 		foreach(FieldInfo fi in fields){
 			XmlNode n = node.SelectSingleNode(fi.Name);
+
 			if(langs.Contains (fi.Name)){
+				
 				if(n==null){
 					//TODO activate this warning when all data is correctly created
 					//				Debug.LogWarning (fi.Name + " selected language not avaible!");
 					continue;
 				}
-				XmlNode textNode = n.SelectSingleNode("entry[@string='"+selectedLanguage.ToString ()+"']");
+				XmlNode textNode = n.SelectSingleNode("entry[@lang='"+selectedLanguage.ToString ()+"']");
+
 				if(textNode!=null){
 					fi.SetValue(data, Convert.ChangeType (textNode.InnerXml,fi.FieldType));
 				}

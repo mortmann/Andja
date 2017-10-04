@@ -18,7 +18,8 @@ public class Item {
 
 	protected ItemPrototypeData _prototypData;
 	public ItemPrototypeData data {
-		get { if(_prototypData==null){
+		get { 
+			if(_prototypData==null){
 				_prototypData = PrototypController.Instance.GetItemPrototypDataForID (ID);
 			}
 			return _prototypData;
@@ -45,7 +46,6 @@ public class Item {
 	}
 	public Item(Item other){
 		this.ID = other.ID;
-		this._prototypData = other.data;
 	}
 	public Item(){
 	}

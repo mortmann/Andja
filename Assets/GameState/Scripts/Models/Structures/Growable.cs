@@ -82,7 +82,18 @@ public class Growable : OutputStructure {
 			callbackIfnotNull ();
 		}
 	}
-
+	public override bool SpecialCheckForBuild (System.Collections.Generic.List<Tile> tiles){
+		//this should be only ever 1 but for whateverreason it is not it still checks and doesnt really matter anyway
+		foreach(Tile t in tiles){
+			if(t.Structure==null){
+				continue;
+			}
+			if(t.Structure.ID == ID){
+				return false;
+			}
+		}
+		return true;
+	}
 	public void Reset (){
 		output[0].count = 0;
 		currentStage= 0;

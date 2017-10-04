@@ -8,12 +8,18 @@ public class UnitSpriteController : MonoBehaviour {
     public Dictionary<Unit, GameObject> unitGameObjectMap;
 	public GameObject unitGoalPrefab;
 	private GameObject unitGoalGO;
+	public GameObject unitPathPrefab;
+	public GameObject unitCirclePrefab;
+
+	private Unit circleUnit;
+	private const string circleGOname = "buildrange_circle_gameobject";
 	MouseController mouseController;
     World world {
         get { return WorldController.Instance.world; }
     }
     // Use this for initialization
     void Start () {
+		
         unitGameObjectMap = new Dictionary<Unit, GameObject>();
         LoadSprites();
         world.RegisterUnitCreated(OnUnitCreated);
@@ -22,7 +28,12 @@ public class UnitSpriteController : MonoBehaviour {
 		}        		
 		mouseController = MouseController.Instance;
 		unitGoalGO = Instantiate (unitGoalPrefab);
+		unitGoalGO.SetActive (false);
+
+		BuildController.Instance.RegisterBuildStateChange (OnBuildStateChange);
     }
+
+
 	void Update(){
 		if(mouseController.mouseState == MouseState.Unit){
 			if(mouseController.SelectedUnit==null){
@@ -48,7 +59,8 @@ public class UnitSpriteController : MonoBehaviour {
 
         // This creates a new GameObject and adds it to our scene.
 		GameObject char_go = new GameObject();
-
+		GameObject line_go = Instantiate (unitPathPrefab);
+		line_go.transform.SetParent (char_go.transform);
         // Add our tile/GO pair to the dictionary.
         unitGameObjectMap.Add(u, char_go);
 		SpriteRenderer sr = char_go.AddComponent<SpriteRenderer>();
@@ -117,4 +129,36 @@ public class UnitSpriteController : MonoBehaviour {
 	void OnDestroy() {
 		world.UnregisterUnitCreated (OnUnitCreated);
 	}
+
+	void OnBuildStateChange(BuildStateModes bsm){
+		if(bsm != BuildStateModes.Build ){
+			RemoveBuildCircle ();
+			return;
+		}
+		CreateBuildCircle ();
+	}
+	void RemoveBuildCircle (){
+		if(circleUnit==null){
+			return; // can be because cheats
+		}
+		if(unitGameObjectMap.ContainsKey(circleUnit)==false){
+			return;//maybe it has been destroyed or other bug calls this function twice or cheats cause to call this without create
+		}
+		GameObject go = unitGameObjectMap [circleUnit].transform.Find (circleGOname).gameObject;
+		Destroy (go);
+	}
+	void CreateBuildCircle (){
+		Unit u = mouseController.SelectedUnit;
+		if(u==null){
+			return;
+		}
+		Transform parent = unitGameObjectMap [u].transform;
+		GameObject go = Instantiate (unitCirclePrefab);
+		go.name = circleGOname;
+		go.transform.localScale = new Vector3 (u.BuildRange, u.BuildRange);
+		go.transform.SetParent (parent);
+		go.transform.localPosition =new Vector3(0,0,-0.5f);
+		circleUnit = u;
+	}
+
 }

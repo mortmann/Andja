@@ -35,7 +35,7 @@ public class IslandInfoUI : MonoBehaviour {
 			text += count+"P";
 			text += " | " + c.cityBalance+"$";
 			text += "\n";
-			Item[] items = c.myInv.getBuildMaterial ();
+			Item[] items = c.inventory.getBuildMaterial ();
 			for (int i = 0; i < items.Length; i++) {
 				if(items[i]==null){
 					continue;				

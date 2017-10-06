@@ -91,6 +91,7 @@ public class StructureSpriteController : MonoBehaviour {
 			} else {
 				Sprite sprite = structureSprites ["nosprite"];
 				go.transform.localScale = new Vector3(structure.tileWidth,structure.tileHeight);
+				go.transform.localRotation = Quaternion.identity;
 				sr.sprite = sprite;
 			}
 		}

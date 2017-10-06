@@ -434,8 +434,8 @@ public abstract class Structure : IGEventable {
 		List<Tile> tiles = new List<Tile> ();
 		if (ignoreRotation == false) {
 			for (int w = 0; w < tileWidth; w++) {
-				tiles.Add (World.current.GetTileAt (x + w, y));
-				for (int h = 1; h < tileHeight; h++) {
+//				tiles.Add (World.current.GetTileAt (x + w, y));
+				for (int h = 0; h < tileHeight; h++) {
 					tiles.Add (World.current.GetTileAt (x + w, y + h));
 				}
 			}
@@ -544,18 +544,26 @@ public abstract class Structure : IGEventable {
 		}
 
 		//TO simplify this we are gonna sort the array so it is in order
-		//from the coordinationsystem that means 0,0-width,height
+		//from the coordinationsystem that means 0,0->width,height
 		Tile[,] sortedTiles = new Tile[tileWidth,tileHeight];
+
 		List<Tile> ts = new List<Tile>(tiles);
 		ts.RemoveAll (x=>x==null);
 		ts.Sort ((x, y) => x.X.CompareTo (y.X)+x.Y.CompareTo (y.Y));
 		foreach(Tile t in ts){
 			int x = t.X - ts [0].X;
 			int y = t.Y - ts [0].Y;
+			if(tileWidth<=x||tileHeight<=y){
+				Debug.Log (ts[0] + " -> " + t + " | " + tileWidth + " - " + tileHeight); 
+
+			}
 			sortedTiles [x, y] = t; // so we have the tile at the correct spot
 		}
 		Direction row = RowToTest ();
 		switch (row) {
+		case Direction.None:
+			Debug.LogWarning ("Not implementet! How are we gonna do this?");
+			return tileToCanBuild;
 		case Direction.N:
 			return CheckTilesWithRowFix (tileToCanBuild,sortedTiles, tileWidth,tileHeight,false);
 		case Direction.E:

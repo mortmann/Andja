@@ -153,6 +153,6 @@ public class LandTile : Tile {
 		return listOfInRangeNeedBuildings;
 	}
 	public override string ToString (){
-		return string.Format ("[LAND: X={0}, Y={1}, Structure={0}, myCity={1}]", X, Y, Structure, myCity.name);
+		return string.Format ("[LAND: X={0}, Y={1}, Structure={0}, myCity={1}]", X, Y, Structure, myCity);
 	}
 }

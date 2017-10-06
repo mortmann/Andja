@@ -89,12 +89,10 @@ public class ProductionBuilding : OutputStructure {
 	}
 		
 	public override void update (float deltaTime){
-		if(ProductionData.intake == null && output == null){
+		if(output == null){
 			return;
 		}
-		if(ProductionData.intake == null){
-			return;
-		}
+
 
 		for (int i = 0; i < output.Length; i++) {
 			if (output[i].count == maxOutputStorage) {
@@ -104,17 +102,20 @@ public class ProductionBuilding : OutputStructure {
 
 		base.update_Worker (deltaTime);
 
-		for (int i = 0; i < MyIntake.Length; i++) {
-			if (ProductionData.intake[i].count > MyIntake [i].count) {
-				return;
+		if (ProductionData.intake != null) {
+			for (int i = 0; i < MyIntake.Length; i++) {
+				if (ProductionData.intake [i].count > MyIntake [i].count) {
+					return;
+				}
 			}
 		}
-
 		produceCountdown += deltaTime;
 		if(produceCountdown >= produceTime) {
 			produceCountdown = 0;
-			for (int i = 0; i < MyIntake.Length; i++) {
-				MyIntake[i].count--;
+			if(MyIntake!=null){
+				for (int i = 0; i < MyIntake.Length; i++) {
+					MyIntake[i].count--;
+				}
 			}
 			for (int i = 0; i < output.Length; i++) {
 				output[i].count++;
@@ -215,35 +216,39 @@ public class ProductionBuilding : OutputStructure {
 //		for (int i = 0; i < intake.Length; i++) {
 //			intake [i].count = maxIntake [i];
 //		}
-		foreach(Tile rangeTile in myRangeTiles){
-			if(rangeTile.Structure == null){
-				continue;
-			}
-			if(rangeTile.Structure is OutputStructure){
-				if (rangeTile.Structure is MarketBuilding) {
-					findNearestMarketBuilding (rangeTile);
+		if(myRangeTiles!=null){
+			foreach(Tile rangeTile in myRangeTiles){
+				if(rangeTile.Structure == null){
 					continue;
 				}
-				if (RegisteredStructures.ContainsKey ((OutputStructure)rangeTile.Structure) == false) {
-					Item[] items = hasNeedItem (((OutputStructure)rangeTile.Structure).output);
-					if(items.Length == 0){
+				if(rangeTile.Structure is OutputStructure){
+					if (rangeTile.Structure is MarketBuilding) {
+						findNearestMarketBuilding (rangeTile);
 						continue;
 					}
-					((OutputStructure)rangeTile.Structure).RegisterOutputChanged (OnOutputChangedStructure);
-					RegisteredStructures.Add ((OutputStructure)rangeTile.Structure,items);
+					if (RegisteredStructures.ContainsKey ((OutputStructure)rangeTile.Structure) == false) {
+						Item[] items = hasNeedItem (((OutputStructure)rangeTile.Structure).output);
+						if(items.Length == 0){
+							continue;
+						}
+						((OutputStructure)rangeTile.Structure).RegisterOutputChanged (OnOutputChangedStructure);
+						RegisteredStructures.Add ((OutputStructure)rangeTile.Structure,items);
+					}
 				}
 			}
+			City.RegisterStructureAdded (OnStructureBuild);
 		}
 		//FIXME this is a temporary fix to a stupid bug, which cause
 		//i cant find because it works otherwise
 		// bug is that myHome doesnt get set by json for this kind of structures
 		// but it works for warehouse for example
 		// to save save space we could always set it here but that would mean for every kind extra or in place structure???
-		foreach(Worker w in myWorker){
-			w.myHome = this;		
+		if(myWorker!=null){
+			foreach(Worker w in myWorker){
+				w.myHome = this;		
+			}	
 		}
 
-		City.RegisterStructureAdded (OnStructureBuild);
 	}
 	public Item[] hasNeedItem(Item[] output){
 		List<Item> items = new List<Item> ();

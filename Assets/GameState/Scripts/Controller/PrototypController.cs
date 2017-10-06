@@ -332,7 +332,8 @@ public class PrototypController : MonoBehaviour {
 			SetData<ProductionPrototypeData> (node, ref ppd);
 
 			//DO After loading from file
-			ppd.maxIntake= new int[ppd.intake.Length];
+			if(ppd.intake!=null)
+				ppd.maxIntake= new int[ppd.intake.Length];
 			if (ppd.intake != null && ppd.intake!=null) {
 				int i=0;
 				foreach(Item needed in ppd.intake){

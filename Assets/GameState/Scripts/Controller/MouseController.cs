@@ -183,12 +183,12 @@ public class MouseController : MonoBehaviour {
 		if(tile == null){
 			return;
 		}
-		List<Tile> structureTiles = structure.GetBuildingTiles (tile.X, tile.Y);
 		ShowHighlightOnTiles ();
 		ShowPreviewStructureOnTiles (tile);
 		Dictionary<Tile,bool> tileToCanBuild = null;
 		if(autorotate){
 			for(int r = 0; r<4;r++){
+				List<Tile> structureTiles = structure.GetBuildingTiles (tile.X, tile.Y);
 				tileToCanBuild = structure.correctSpot (structureTiles);
 				if(tileToCanBuild.Values.ToList ().Contains (false)==false){
 					break;

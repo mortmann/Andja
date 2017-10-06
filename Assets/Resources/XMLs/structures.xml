@@ -345,7 +345,7 @@
          <canBeUpgraded>false</canBeUpgraded>
          <canTakeDamage>true</canTakeDamage>
          <showExtraUI>false</showExtraUI>
-         <mustFrontBuildDir>0</mustFrontBuildDir>
+         <mustFrontBuildDir>1</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
          <mustBeBuildOnShore>true</mustBeBuildOnShore>
          <mustBeBuildOnMountain>false</mustBeBuildOnMountain>

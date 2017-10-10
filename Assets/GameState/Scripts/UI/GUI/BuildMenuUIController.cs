@@ -28,6 +28,9 @@ public class BuildMenuUIController : MonoBehaviour {
 			buttons [i] = new List<string> ();
 		}
 		foreach (Structure s in bc.structurePrototypes.Values) {
+			if(s.canBeBuild==false){
+				continue; 
+			}
 			GameObject b = Instantiate(buttonPrefab);
 			b.name = s.spriteName;
 			b.GetComponentInChildren<Text>().text = s.spriteName;

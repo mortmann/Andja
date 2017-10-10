@@ -92,10 +92,6 @@ public class PrototypController : MonoBehaviour {
 		itemPrototypeDatas = new Dictionary<int, ItemPrototypeData> ();
 		ReadItemsFromXML();
 
-		allNeeds = new List<Need>();
-		needPrototypeDatas = new Dictionary<int, NeedPrototypeData> ();
-		ReadNeedsFromXML ();
-
 		// setup all prototypes of structures here 
 		// load them from the 
 		structurePrototypes = new Dictionary<int, Structure> ();
@@ -122,10 +118,13 @@ public class PrototypController : MonoBehaviour {
 //		structurePrototypes.Add(7,new ProductionBuilding(7,"Hanfweber",temp1,ints,1,temp2,3,2,1000,null,100));
 		//needs
 
-
+		allNeeds = new List<Need>();
+		needPrototypeDatas = new Dictionary<int, NeedPrototypeData> ();
+		ReadNeedsFromXML ();
 
 		Debug.Log ("Read in structures: " +structurePrototypes.Count);
 		Debug.Log ("Read in items: " + allItems.Count); 
+		Debug.Log ("Read in needs: " + allNeeds.Count); 
 	}
 
 	///////////////////////////////////////
@@ -184,7 +183,7 @@ public class PrototypController : MonoBehaviour {
 		XmlDocument xmlDoc = new XmlDocument(); // xmlDoc is the new xml document.
 		TextAsset ta = ((TextAsset)Resources.Load("XMLs/needs", typeof(TextAsset)));
 		xmlDoc.LoadXml(ta.text); // load the file.
-		foreach(XmlElement node in xmlDoc.SelectNodes("Needs/Need")){
+		foreach(XmlElement node in xmlDoc.SelectNodes("needs/Need")){
 			NeedPrototypeData npd = new NeedPrototypeData ();
 			int ID = int.Parse(node.GetAttribute("ID"));
 			SetData<NeedPrototypeData> (node,ref npd);

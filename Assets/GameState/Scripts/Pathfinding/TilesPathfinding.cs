@@ -18,6 +18,12 @@ public class TilesPathfinding : Pathfinding {
 	}
 
 	protected override void CalculatePath(){
+		if(startTiles==null){
+			startTiles = new List<Tile> ();
+			startTiles.Add (startTile);
+			endTiles = new List<Tile> ();
+			endTiles.Add (destTile);
+		}
 		Path_AStar pa = new Path_AStar (startTiles[0].myIsland,startTiles,endTiles);
 		worldPath = pa.path;
 		currTile = worldPath.Peek ();

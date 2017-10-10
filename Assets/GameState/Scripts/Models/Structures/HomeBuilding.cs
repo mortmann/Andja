@@ -39,9 +39,11 @@ public class HomeBuilding : Structure {
 	public HomeBuilding(int pid, HomePrototypeData proto){
 		this.ID = pid;
 		this._homeData = proto;
+		people = 1;
 	}
 	protected HomeBuilding(HomeBuilding b){
 		BaseCopyData (b);
+		people = 1;
 	}
 	/// <summary>
 	/// DO NOT USE
@@ -93,25 +95,28 @@ public class HomeBuilding : Structure {
 		}
 		allPercentage /= count; 
 		if (allPercentage < 0.4f && percCritical) {
-			decTimer -= deltaTime;
-			incTimer += deltaTime;
+			decTimer += deltaTime;
+			incTimer -= deltaTime;
 			incTimer = Mathf.Clamp (incTimer, 0, increaseSpeed);
-
-			if (decTimer <= 0) {
+			if (decTimer >= decreaseSpeed) {
+				Debug.Log ("DECREASE");
 				people--;
+				decTimer = 0;
 			}
 		} else
 		if (allPercentage > 0.4f && allPercentage < 0.85f) {
-			incTimer += deltaTime;
+			incTimer -= deltaTime;
 			incTimer = Mathf.Clamp (incTimer, 0, increaseSpeed);
-			decTimer += deltaTime;
+			decTimer -= deltaTime;
 			decTimer = Mathf.Clamp (decTimer, 0, decreaseSpeed);
 		} else 
 		if (allPercentage > 0.85f) {
-			incTimer -= deltaTime;
-			decTimer += deltaTime;
+			incTimer += deltaTime;
+			decTimer -= deltaTime;
 			decTimer = Mathf.Clamp (decTimer, 0, decreaseSpeed);
-			if (incTimer <= 0) {
+			if (incTimer >= increaseSpeed) {
+				Debug.Log ("INCREASE");
+				incTimer = 0;
 				people++;
 			}
 		}

@@ -209,7 +209,7 @@
          </output>
          <growTime>5.0</growTime>
          <fertility>-1</fertility>
-         <ageStages>2</ageStages>
+         <ageStages>3</ageStages>
       </growable>
       <growable ID="104">
          <Name>
@@ -259,7 +259,7 @@
          </output>
          <growTime>3.0</growTime>
          <fertility>0</fertility>
-         <ageStages>3</ageStages>
+         <ageStages>2</ageStages>
       </growable>
    </growables>
    <markets>
@@ -318,6 +318,61 @@
    <mines/>
    <needsbuildings/>
    <productions>
+      <production ID="200">
+         <Name>
+            <entry lang="English">Fisherman&apos;s hut</entry>
+            <entry lang="German">Fischerhütte</entry>
+         </Name>
+         <Description>
+            <entry lang="English">Catches Fish to eat.</entry>
+            <entry lang="German">Fischt Fisch zum essen.</entry>
+         </Description>
+         <HoverOver>
+            <entry lang="English">Fisherman</entry>
+            <entry lang="German">Fischer</entry>
+         </HoverOver>
+         <isWalkable>false</isWalkable>
+         <hasHitbox>true</hasHitbox>
+         <MaxHealth>100.0</MaxHealth>
+         <buildingRange>0</buildingRange>
+         <PopulationLevel>0</PopulationLevel>
+         <PopulationCount>0</PopulationCount>
+         <StructureLevel>0</StructureLevel>
+         <tileWidth>3</tileWidth>
+         <tileHeight>4</tileHeight>
+         <canRotate>true</canRotate>
+         <canBeBuildOver>false</canBeBuildOver>
+         <canBeUpgraded>false</canBeUpgraded>
+         <canTakeDamage>true</canTakeDamage>
+         <showExtraUI>false</showExtraUI>
+         <mustFrontBuildDir>1</mustFrontBuildDir>
+         <canStartBurning>false</canStartBurning>
+         <mustBeBuildOnShore>true</mustBeBuildOnShore>
+         <mustBeBuildOnMountain>false</mustBeBuildOnMountain>
+         <maintenancecost>0</maintenancecost>
+         <buildcost>100</buildcost>
+         <BuildTyp>2</BuildTyp>
+         <myBuildingTyp>1</myBuildingTyp>
+         <buildingItems length="2">
+            <Item ID="1">
+               <count>3</count>
+            </Item>
+            <Item ID="2">
+               <count>2</count>
+            </Item>
+         </buildingItems>
+         <spriteBaseName>fishermanshut</spriteBaseName>
+         <contactRange>0.0</contactRange>
+         <forMarketplace>true</forMarketplace>
+         <maxNumberOfWorker>1</maxNumberOfWorker>
+         <produceTime>30.0</produceTime>
+         <maxOutputStorage>5</maxOutputStorage>
+         <output length="1">
+            <Item ID="27">
+               <count>1</count>
+            </Item>
+         </output>
+      </production>
       <production ID="202">
          <Name>
             <entry lang="English">Hemp Weaver&apos;s Hut</entry>

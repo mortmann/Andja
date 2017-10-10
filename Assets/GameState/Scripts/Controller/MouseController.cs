@@ -183,18 +183,27 @@ public class MouseController : MonoBehaviour {
 		if(tile == null){
 			return;
 		}
-		ShowHighlightOnTiles ();
-		ShowPreviewStructureOnTiles (tile);
+		int tempTest = structure.rotated;
 		Dictionary<Tile,bool> tileToCanBuild = null;
 		if(autorotate){
 			for(int r = 0; r<4;r++){
+				structure.AddTimes90ToRotate (r);
 				List<Tile> structureTiles = structure.GetBuildingTiles (tile.X, tile.Y);
 				tileToCanBuild = structure.correctSpot (structureTiles);
 				if(tileToCanBuild.Values.ToList ().Contains (false)==false){
 					break;
 				}
-				structure.RotateStructure ();
+					
 			}
+		}
+
+
+		ShowHighlightOnTiles ();
+		ShowPreviewStructureOnTiles (tile);
+		if(tileToCanBuild.Values.ToList ().Contains (false)){
+			//TODO fix this temporary fix
+			// it is so that previews dont spinn like crazy BUT find better way todo this
+			structure.rotated = tempTest;
 		}
 		foreach (Tile t in tileToCanBuild.Keys) {
 			if(t==null){
@@ -222,7 +231,9 @@ public class MouseController : MonoBehaviour {
 		previewGO = new GameObject ();
 		previewGO.transform.SetParent(this.transform, true);
 		previewGO.name="PreviewGO";
+
 		SpriteRenderer sr = previewGO.AddComponent<SpriteRenderer> ();
+
 		sr.sprite = ssc.getStructureSprite (structure);
 		sr.sortingLayerName = "StructuresUI";
 		sr.color = new Color (sr.color.a, sr.color.b, sr.color.g, 0.5f);
@@ -242,9 +253,17 @@ public class MouseController : MonoBehaviour {
 		//how effective it is to build there
 		//this may move from this place
 		structure.UpdateExtraBuildUI (previewGO,t);
-		previewGO.transform.position = new Vector3( GetTileUnderneathMouse ().X + (( structure.tileWidth-1 )/2f),
-			GetTileUnderneathMouse ().Y + (( structure.tileHeight-1 )/2f), 0);
-		previewGO.transform.localRotation = new Quaternion(structure.rotated,0,0,0);
+		float x = 0;
+		float y = 0;
+		if (structure.tileWidth> 1) {
+			x = 0.5f + ((float)structure.tileWidth) / 2 - 1;
+		}
+		if (structure.tileHeight> 1) {
+			y = 0.5f + ((float)structure.tileHeight) / 2 - 1;
+		}
+		previewGO.transform.position = new Vector3( GetTileUnderneathMouse ().X + x,
+			GetTileUnderneathMouse ().Y + y, 0);
+		previewGO.transform.eulerAngles = new Vector3 (0, 0, 360-structure.rotated);
 	}
 	public void RemovePrefabs(){
 		while(previewGameObjects.Count > 0) {

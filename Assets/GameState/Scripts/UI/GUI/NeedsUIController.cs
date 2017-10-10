@@ -38,10 +38,15 @@ public class NeedsUIController : MonoBehaviour {
 			//--The first text IS the name
 			//--there must be a better way?
 			b.name = ns [i].name;
-			string name = b.name + " | ";
+			string name = ns [i].name + " | ";
 			if (ns [i].item != null) {
 				name += ns [i].item.name;
 			} else {
+				if(ns [i].structure==null){
+					Destroy (b);
+//					Debug.LogWarning(ns[i].ID + " " + ns [i].name +" is missing its structure! Either non declared or structure not existing!");
+					continue;
+				}
 				name += ns [i].structure.spriteName;
 			}
 			b.GetComponentInChildren<Text> ().text = name;
@@ -65,8 +70,8 @@ public class NeedsUIController : MonoBehaviour {
 			b.transform.SetParent(contentCanvas.transform);
 			needToGO.Add (ns[i],b);
 		}
-		ChangeNeedLevel (1);
-		actualLevel = 1;
+		ChangeNeedLevel (0);
+		actualLevel = 0;
 		for (int i = 0; i < buttonPopulationsLevelContent.transform.childCount; i++) {
 			GameObject g = buttonPopulationsLevelContent.transform.GetChild (i).gameObject;
 			if (i >= 1) {

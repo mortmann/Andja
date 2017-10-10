@@ -27,6 +27,7 @@ public class StructurePrototypeData : LanguageVariables {
 	public bool canBeUpgraded = false;
 	public bool canTakeDamage = false;
 	public bool showExtraUI = false;
+	public bool canBeBuild = true;
 
 	public Direction mustFrontBuildDir= Direction.None; 
 
@@ -168,6 +169,8 @@ public abstract class Structure : IGEventable {
 	public bool isWalkable { get {return this.myBuildingTyp != BuildingTyp.Blocking;} }
 	public bool hasHitbox { get {return data.hasHitbox;} }
 	public float MaxHealth { get {return data.MaxHealth;} }
+
+	public bool canBeBuild { get {return data.canBeBuild;} }
 
 	public int buildingRange { get {return data.buildingRange;} }// = 0;
 	public int PopulationLevel { get {return data.PopulationLevel;} }// = 0;
@@ -637,6 +640,13 @@ public abstract class Structure : IGEventable {
 		if (rotated == 360) {
 			rotated = 0;
 		}
+	}
+	public void AddTimes90ToRotate(int times){
+		if(canRotate == false) {
+			return;
+		}
+		rotated += 90 * times;
+		rotated %= 360;
 	}
 	#endregion
 	#region override

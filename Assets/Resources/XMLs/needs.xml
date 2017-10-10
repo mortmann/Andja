@@ -1,443 +1,525 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<Needs>
-	<Need ID="1">
-		<EN_Name>Companionship </EN_Name>
-		<DE_Name>Gemeinschaft</DE_Name>
-		<Structure>30</Structure>
-		<Item>-1</Item>
-		<Level>1</Level>
-		<Peasent>1</Peasent>
-		<Citizen>1</Citizen>
-		<Patrician>1</Patrician>
-		<Nobleman>1</Nobleman>
-	</Need>
-	<Need ID="2">
-		<EN_Name>Belief</EN_Name>
-		<DE_Name>Glauben</DE_Name>
-		<Structure>31</Structure>
-		<Item>-1</Item>
-		<Level>1</Level>
-		<Peasent>1</Peasent>
-		<Citizen>1</Citizen>
-		<Patrician>0</Patrician>
-		<Nobleman>0</Nobleman>
-	</Need>
-	<Need ID="3">
-		<EN_Name>Fun</EN_Name>
-		<DE_Name>Spaß</DE_Name>
-		<Structure>32</Structure>
-		<Item>-1</Item>
-		<Level>1</Level>
-		<Peasent>1</Peasent>
-		<Citizen>1</Citizen>
-		<Patrician>1</Patrician>
-		<Nobleman>1</Nobleman>
-	</Need>
-	<Need ID="4">
-		<EN_Name>Food</EN_Name>
-		<DE_Name>Nahrung</DE_Name>
-		<Structure>-1</Structure>
-		<Item>27</Item>
-		<Level>1</Level>
-		<Peasent>3</Peasent>
-		<Citizen>2</Citizen>
-		<Patrician>1</Patrician>
-		<Nobleman>1</Nobleman>
-	</Need>
-	<Need ID="5">
-		<EN_Name>Food</EN_Name>
-		<DE_Name>Nahrung</DE_Name>
-		<Structure>-1</Structure>
-		<Item>37</Item>
-		<Level>1</Level>
-		<Peasent>3</Peasent>
-		<Citizen>2</Citizen>
-		<Patrician>1.5</Patrician>
-		<Nobleman>1</Nobleman>
-	</Need>
-	<Need ID="6">
-		<EN_Name>Alcohol</EN_Name>
-		<DE_Name>Alkohol</DE_Name>
-		<Structure>-1</Structure>
-		<Item>39</Item>
-		<Level>1</Level>
-		<Peasent>2</Peasent>
-		<Citizen>2</Citizen>
-		<Patrician>2</Patrician>
-		<Nobleman>2</Nobleman>
-	</Need>
-	<Need ID="7">
-		<EN_Name>Food</EN_Name>
-		<DE_Name>Nahrung</DE_Name>
-		<Structure>-1</Structure>
-		<Item>23</Item>
-		<Level>1</Level>
-		<Peasent>1</Peasent>
-		<Citizen>1</Citizen>
-		<Patrician>1</Patrician>
-		<Nobleman>1</Nobleman>
-	</Need>
-	<Need ID="8">
-		<EN_Name>Clothes</EN_Name>
-		<DE_Name>Bekleidung</DE_Name>
-		<Structure>-1</Structure>
-		<Item>49</Item>
-		<Level>1</Level>
-		<Peasent>1</Peasent>
-		<Citizen>1.5</Citizen>
-		<Patrician>0.5</Patrician>
-		<Nobleman>1</Nobleman>
-	</Need>
-	<Need ID="9">
-		<EN_Name>Security</EN_Name>
-		<DE_Name>Sicherkeit</DE_Name>
-		<Structure>33</Structure>
-		<Item>-1</Item>
-		<Level>2</Level>
-		<Peasent>0</Peasent>
-		<Citizen>1</Citizen>
-		<Patrician>1</Patrician>
-		<Nobleman>1</Nobleman>
-	</Need>
-	<Need ID="10">
-		<EN_Name>Clean</EN_Name>
-		<DE_Name>Sauberkeit</DE_Name>
-		<Structure>34</Structure>
-		<Item>-1</Item>
-		<Level>2</Level>
-		<Peasent>0</Peasent>
-		<Citizen>1</Citizen>
-		<Patrician>1</Patrician>
-		<Nobleman>1</Nobleman>
-	</Need>
-	<Need ID="11">
-		<EN_Name>Education</EN_Name>
-		<DE_Name>Bildung</DE_Name>
-		<Structure>35</Structure>
-		<Item>-1</Item>
-		<Level>2</Level>
-		<Peasent>0</Peasent>
-		<Citizen>1</Citizen>
-		<Patrician>1</Patrician>
-		<Nobleman>1</Nobleman>
-	</Need>
-	<Need ID="12">
-		<EN_Name>Food</EN_Name>
-		<DE_Name>Nahrung</DE_Name>
-		<Structure>-1</Structure>
-		<Item>30</Item>
-		<Level>2</Level>
-		<Peasent>0</Peasent>
-		<Citizen>2.14035714285714</Citizen>
-		<Patrician>2.46178571428572</Patrician>
-		<Nobleman>2.21428571428572</Nobleman>
-	</Need>
-	<Need ID="13">
-		<EN_Name>Salt?</EN_Name>
-		<DE_Name>Salz?</DE_Name>
-		<Structure>-1</Structure>
-		<Item>66</Item>
-		<Level>2</Level>
-		<Peasent>0</Peasent>
-		<Citizen>2.20357142857143</Citizen>
-		<Patrician>2.58452380952381</Patrician>
-		<Nobleman>2.30952380952381</Nobleman>
-	</Need>
-	<Need ID="14">
-		<EN_Name>Luxury</EN_Name>
-		<DE_Name>Luxus</DE_Name>
-		<Structure>-1</Structure>
-		<Item>67</Item>
-		<Level>2</Level>
-		<Peasent>0</Peasent>
-		<Citizen>2.26678571428571</Citizen>
-		<Patrician>2.70726190476191</Patrician>
-		<Nobleman>2.40476190476191</Nobleman>
-	</Need>
-	<Need ID="15">
-		<EN_Name>Food</EN_Name>
-		<DE_Name>Nahrung</DE_Name>
-		<Structure>-1</Structure>
-		<Item>32</Item>
-		<Level>2</Level>
-		<Peasent>0</Peasent>
-		<Citizen>2.33</Citizen>
-		<Patrician>2.83</Patrician>
-		<Nobleman>2.5</Nobleman>
-	</Need>
-	<Need ID="16">
-		<EN_Name>Alcohol</EN_Name>
-		<DE_Name>Alkohol</DE_Name>
-		<Structure>-1</Structure>
-		<Item>34</Item>
-		<Level>2</Level>
-		<Peasent>0</Peasent>
-		<Citizen>2.39321428571429</Citizen>
-		<Patrician>2.9527380952381</Patrician>
-		<Nobleman>2.5952380952381</Nobleman>
-	</Need>
-	<Need ID="17">
-		<EN_Name>Spice?</EN_Name>
-		<DE_Name>Gewürz?</DE_Name>
-		<Structure>-1</Structure>
-		<Item>54</Item>
-		<Level>2</Level>
-		<Peasent>0</Peasent>
-		<Citizen>2.45642857142857</Citizen>
-		<Patrician>3.07547619047619</Patrician>
-		<Nobleman>2.69047619047619</Nobleman>
-	</Need>
-	<Need ID="18">
-		<EN_Name>Luxury</EN_Name>
-		<DE_Name>Luxus</DE_Name>
-		<Structure>-1</Structure>
-		<Item>53</Item>
-		<Level>2</Level>
-		<Peasent>0</Peasent>
-		<Citizen>2.51964285714286</Citizen>
-		<Patrician>3.19821428571429</Patrician>
-		<Nobleman>2.78571428571429</Nobleman>
-	</Need>
-	<Need ID="19">
-		<EN_Name>Clean</EN_Name>
-		<DE_Name>Sauberkeit</DE_Name>
-		<Structure>36</Structure>
-		<Item>-1</Item>
-		<Level>3</Level>
-		<Peasent>0</Peasent>
-		<Citizen>0</Citizen>
-		<Patrician>1</Patrician>
-		<Nobleman>1</Nobleman>
-	</Need>
-	<Need ID="20">
-		<EN_Name>Belief</EN_Name>
-		<DE_Name>Glauben</DE_Name>
-		<Structure>37</Structure>
-		<Item>-1</Item>
-		<Level>3</Level>
-		<Peasent>0</Peasent>
-		<Citizen>0</Citizen>
-		<Patrician>1</Patrician>
-		<Nobleman>1</Nobleman>
-	</Need>
-	<Need ID="21">
-		<EN_Name>Security</EN_Name>
-		<DE_Name>Sicherkeit</DE_Name>
-		<Structure>38</Structure>
-		<Item>-1</Item>
-		<Level>3</Level>
-		<Peasent>0</Peasent>
-		<Citizen>0</Citizen>
-		<Patrician>1</Patrician>
-		<Nobleman>1</Nobleman>
-	</Need>
-	<Need ID="22">
-		<EN_Name>Fun</EN_Name>
-		<DE_Name>Spaß</DE_Name>
-		<Structure>39</Structure>
-		<Item>-1</Item>
-		<Level>3</Level>
-		<Peasent>0</Peasent>
-		<Citizen>0</Citizen>
-		<Patrician>1</Patrician>
-		<Nobleman>1</Nobleman>
-	</Need>
-	<Need ID="23">
-		<EN_Name>Luxury</EN_Name>
-		<DE_Name>Luxus</DE_Name>
-		<Structure>-1</Structure>
-		<Item>44</Item>
-		<Level>3</Level>
-		<Peasent>0</Peasent>
-		<Citizen>0</Citizen>
-		<Patrician>3.81190476190471</Patrician>
-		<Nobleman>3.26190476190471</Nobleman>
-	</Need>
-	<Need ID="24">
-		<EN_Name>Food</EN_Name>
-		<DE_Name>Nahrung</DE_Name>
-		<Structure>-1</Structure>
-		<Item>56</Item>
-		<Level>3</Level>
-		<Peasent>0</Peasent>
-		<Citizen>0</Citizen>
-		<Patrician>3.9346428571428</Patrician>
-		<Nobleman>3.3571428571428</Nobleman>
-	</Need>
-	<Need ID="25">
-		<EN_Name>Luxury</EN_Name>
-		<DE_Name>Luxus</DE_Name>
-		<Structure>-1</Structure>
-		<Item>75</Item>
-		<Level>3</Level>
-		<Peasent>0</Peasent>
-		<Citizen>0</Citizen>
-		<Patrician>4.05738095238089</Patrician>
-		<Nobleman>3.45238095238089</Nobleman>
-	</Need>
-	<Need ID="26">
-		<EN_Name>Luxury</EN_Name>
-		<DE_Name>Luxus</DE_Name>
-		<Structure>-1</Structure>
-		<Item>62</Item>
-		<Level>3</Level>
-		<Peasent>0</Peasent>
-		<Citizen>0</Citizen>
-		<Patrician>4.18011904761898</Patrician>
-		<Nobleman>3.54761904761898</Nobleman>
-	</Need>
-	<Need ID="27">
-		<EN_Name>Clothes</EN_Name>
-		<DE_Name>Bekleidung</DE_Name>
-		<Structure>-1</Structure>
-		<Item>73</Item>
-		<Level>3</Level>
-		<Peasent>0</Peasent>
-		<Citizen>0</Citizen>
-		<Patrician>4.30285714285707</Patrician>
-		<Nobleman>3.64285714285707</Nobleman>
-	</Need>
-	<Need ID="28">
-		<EN_Name>Luxury</EN_Name>
-		<DE_Name>Luxus</DE_Name>
-		<Structure>-1</Structure>
-		<Item>70</Item>
-		<Level>3</Level>
-		<Peasent>0</Peasent>
-		<Citizen>0</Citizen>
-		<Patrician>4.42559523809517</Patrician>
-		<Nobleman>3.73809523809516</Nobleman>
-	</Need>
-	<Need ID="29">
-		<EN_Name>Fun</EN_Name>
-		<DE_Name>Spaß</DE_Name>
-		<Structure>-1</Structure>
-		<Item>61</Item>
-		<Level>3</Level>
-		<Peasent>0</Peasent>
-		<Citizen>0</Citizen>
-		<Patrician>4.54833333333326</Patrician>
-		<Nobleman>3.83333333333325</Nobleman>
-	</Need>
-	<Need ID="30">
-		<EN_Name>Education</EN_Name>
-		<DE_Name>Bildung</DE_Name>
-		<Structure>39</Structure>
-		<Item>-1</Item>
-		<Level>4</Level>
-		<Peasent>0</Peasent>
-		<Citizen>0</Citizen>
-		<Patrician>0</Patrician>
-		<Nobleman>1</Nobleman>
-	</Need>
-	<Need ID="31">
-		<EN_Name>Belief</EN_Name>
-		<DE_Name>Glauben</DE_Name>
-		<Structure>40</Structure>
-		<Item>-1</Item>
-		<Level>4</Level>
-		<Peasent>0</Peasent>
-		<Citizen>0</Citizen>
-		<Patrician>0</Patrician>
-		<Nobleman>1</Nobleman>
-	</Need>
-	<Need ID="32">
-		<EN_Name>Fun</EN_Name>
-		<DE_Name>Spaß</DE_Name>
-		<Structure>41</Structure>
-		<Item>-1</Item>
-		<Level>4</Level>
-		<Peasent>0</Peasent>
-		<Citizen>0</Citizen>
-		<Patrician>0</Patrician>
-		<Nobleman>1</Nobleman>
-	</Need>
-	<Need ID="33">
-		<EN_Name>MONUMENT</EN_Name>
-		<DE_Name>MONUMENT</DE_Name>
-		<Structure>42</Structure>
-		<Item>-1</Item>
-		<Level>4</Level>
-		<Peasent>0</Peasent>
-		<Citizen>0</Citizen>
-		<Patrician>0</Patrician>
-		<Nobleman>1</Nobleman>
-	</Need>
-	<Need ID="34">
-		<EN_Name>MONUMENT</EN_Name>
-		<DE_Name>MONUMENT</DE_Name>
-		<Structure>43</Structure>
-		<Item>-1</Item>
-		<Level>4</Level>
-		<Peasent>0</Peasent>
-		<Citizen>0</Citizen>
-		<Patrician>0</Patrician>
-		<Nobleman>1</Nobleman>
-	</Need>
-	<Need ID="35">
-		<EN_Name>Luxury</EN_Name>
-		<DE_Name>Luxus</DE_Name>
-		<Structure>-1</Structure>
-		<Item>80</Item>
-		<Level>4</Level>
-		<Peasent>0</Peasent>
-		<Citizen>0</Citizen>
-		<Patrician>0</Patrician>
-		<Nobleman>4.40476190476179</Nobleman>
-	</Need>
-	<Need ID="36">
-		<EN_Name>Clothes</EN_Name>
-		<DE_Name>Bekleidung</DE_Name>
-		<Structure>-1</Structure>
-		<Item>84</Item>
-		<Level>4</Level>
-		<Peasent>0</Peasent>
-		<Citizen>0</Citizen>
-		<Patrician>0</Patrician>
-		<Nobleman>4.49999999999988</Nobleman>
-	</Need>
-	<Need ID="37">
-		<EN_Name>Alcohol</EN_Name>
-		<DE_Name>Alkohol</DE_Name>
-		<Structure>-1</Structure>
-		<Item>42</Item>
-		<Level>4</Level>
-		<Peasent>0</Peasent>
-		<Citizen>0</Citizen>
-		<Patrician>0</Patrician>
-		<Nobleman>4.59523809523797</Nobleman>
-	</Need>
-	<Need ID="38">
-		<EN_Name>Luxury</EN_Name>
-		<DE_Name>Luxus</DE_Name>
-		<Structure>-1</Structure>
-		<Item>89</Item>
-		<Level>4</Level>
-		<Peasent>0</Peasent>
-		<Citizen>0</Citizen>
-		<Patrician>0</Patrician>
-		<Nobleman>4.69047619047606</Nobleman>
-	</Need>
-	<Need ID="39">
-		<EN_Name>Luxury</EN_Name>
-		<DE_Name>Luxus</DE_Name>
-		<Structure>-1</Structure>
-		<Item>91</Item>
-		<Level>4</Level>
-		<Peasent>0</Peasent>
-		<Citizen>0</Citizen>
-		<Patrician>0</Patrician>
-		<Nobleman>4.78571428571415</Nobleman>
-	</Need>
-	<Need ID="40">
-		<EN_Name>Luxury</EN_Name>
-		<DE_Name>Luxus</DE_Name>
-		<Structure>-1</Structure>
-		<Item>90</Item>
-		<Level>4</Level>
-		<Peasent>0</Peasent>
-		<Citizen>0</Citizen>
-		<Patrician>0</Patrician>
-		<Nobleman>4.88095238095224</Nobleman>
-	</Need>
-</Needs>
+<needs>
+   <Need ID="1">
+      <Peasent>1.0</Peasent>
+      <Citizen>1.0</Citizen>
+      <Patrician>1.0</Patrician>
+      <Nobleman>1.0</Nobleman>
+      <Name>
+         <entry lang="English">Companionship </entry>
+         <entry lang="German">Gemeinschaft</entry>
+      </Name>
+      <structure>0</structure>
+      <startLevel>1</startLevel>
+      <popCount>0</popCount>
+   </Need>
+   <Need ID="2">
+      <Peasent>1.0</Peasent>
+      <Citizen>1.0</Citizen>
+      <Patrician>0.0</Patrician>
+      <Nobleman>0.0</Nobleman>
+      <Name>
+         <entry lang="English">Belief</entry>
+         <entry lang="German">Glauben</entry>
+      </Name>
+      <structure>0</structure>
+      <startLevel>1</startLevel>
+      <popCount>0</popCount>
+   </Need>
+   <Need ID="3">
+      <Peasent>1.0</Peasent>
+      <Citizen>1.0</Citizen>
+      <Patrician>1.0</Patrician>
+      <Nobleman>1.0</Nobleman>
+      <Name>
+         <entry lang="English">Fun</entry>
+         <entry lang="German">Spaß</entry>
+      </Name>
+      <structure>0</structure>
+      <startLevel>1</startLevel>
+      <popCount>0</popCount>
+   </Need>
+   <Need ID="4">
+      <Peasent>3.0</Peasent>
+      <Citizen>2.0</Citizen>
+      <Patrician>1.0</Patrician>
+      <Nobleman>1.0</Nobleman>
+      <Name>
+         <entry lang="English">Food</entry>
+         <entry lang="German">Nahrung</entry>
+      </Name>
+      <item ID="27">
+         <count>0</count>
+      </item>
+      <structure>0</structure>
+      <startLevel>0</startLevel>
+      <popCount>0</popCount>
+   </Need>
+   <Need ID="5">
+      <Peasent>3.0</Peasent>
+      <Citizen>2.0</Citizen>
+      <Patrician>1.5</Patrician>
+      <Nobleman>1.0</Nobleman>
+      <Name>
+         <entry lang="English">Food</entry>
+         <entry lang="German">Nahrung</entry>
+      </Name>
+      <structure>0</structure>
+      <startLevel>1</startLevel>
+      <popCount>0</popCount>
+   </Need>
+   <Need ID="6">
+      <Peasent>2.0</Peasent>
+      <Citizen>2.0</Citizen>
+      <Patrician>2.0</Patrician>
+      <Nobleman>2.0</Nobleman>
+      <Name>
+         <entry lang="English">Alcohol</entry>
+         <entry lang="German">Alkohol</entry>
+      </Name>
+      <structure>0</structure>
+      <startLevel>1</startLevel>
+      <popCount>0</popCount>
+   </Need>
+   <Need ID="7">
+      <Peasent>1.0</Peasent>
+      <Citizen>1.0</Citizen>
+      <Patrician>1.0</Patrician>
+      <Nobleman>1.0</Nobleman>
+      <Name>
+         <entry lang="English">Food</entry>
+         <entry lang="German">Nahrung</entry>
+      </Name>
+      <structure>0</structure>
+      <startLevel>1</startLevel>
+      <popCount>0</popCount>
+   </Need>
+   <Need ID="8">
+      <Peasent>1.0</Peasent>
+      <Citizen>1.5</Citizen>
+      <Patrician>0.5</Patrician>
+      <Nobleman>1.0</Nobleman>
+      <Name>
+         <entry lang="English">Clothes</entry>
+         <entry lang="German">Bekleidung</entry>
+      </Name>
+      <structure>0</structure>
+      <startLevel>1</startLevel>
+      <popCount>0</popCount>
+   </Need>
+   <Need ID="9">
+      <Peasent>0.0</Peasent>
+      <Citizen>1.0</Citizen>
+      <Patrician>1.0</Patrician>
+      <Nobleman>1.0</Nobleman>
+      <Name>
+         <entry lang="English">Security</entry>
+         <entry lang="German">Sicherkeit</entry>
+      </Name>
+      <structure>0</structure>
+      <startLevel>1</startLevel>
+      <popCount>0</popCount>
+   </Need>
+   <Need ID="10">
+      <Peasent>0.0</Peasent>
+      <Citizen>1.0</Citizen>
+      <Patrician>1.0</Patrician>
+      <Nobleman>1.0</Nobleman>
+      <Name>
+         <entry lang="English">Clean</entry>
+         <entry lang="German">Sauberkeit</entry>
+      </Name>
+      <structure>0</structure>
+      <startLevel>1</startLevel>
+      <popCount>0</popCount>
+   </Need>
+   <Need ID="11">
+      <Peasent>0.0</Peasent>
+      <Citizen>1.0</Citizen>
+      <Patrician>1.0</Patrician>
+      <Nobleman>1.0</Nobleman>
+      <Name>
+         <entry lang="English">Education</entry>
+         <entry lang="German">Bildung</entry>
+      </Name>
+      <structure>0</structure>
+      <startLevel>1</startLevel>
+      <popCount>0</popCount>
+   </Need>
+   <Need ID="12">
+      <Peasent>0.0</Peasent>
+      <Citizen>2.1403573</Citizen>
+      <Patrician>2.4617858</Patrician>
+      <Nobleman>2.2142856</Nobleman>
+      <Name>
+         <entry lang="English">Food</entry>
+         <entry lang="German">Nahrung</entry>
+      </Name>
+      <structure>0</structure>
+      <startLevel>1</startLevel>
+      <popCount>0</popCount>
+   </Need>
+   <Need ID="13">
+      <Peasent>0.0</Peasent>
+      <Citizen>2.2035713</Citizen>
+      <Patrician>2.584524</Patrician>
+      <Nobleman>2.3095238</Nobleman>
+      <Name>
+         <entry lang="English">Salt?</entry>
+         <entry lang="German">Salz?</entry>
+      </Name>
+      <structure>0</structure>
+      <startLevel>1</startLevel>
+      <popCount>0</popCount>
+   </Need>
+   <Need ID="14">
+      <Peasent>0.0</Peasent>
+      <Citizen>2.2667856</Citizen>
+      <Patrician>2.7072618</Patrician>
+      <Nobleman>2.4047618</Nobleman>
+      <Name>
+         <entry lang="English">Luxury</entry>
+         <entry lang="German">Luxus</entry>
+      </Name>
+      <structure>0</structure>
+      <startLevel>1</startLevel>
+      <popCount>0</popCount>
+   </Need>
+   <Need ID="15">
+      <Peasent>0.0</Peasent>
+      <Citizen>2.33</Citizen>
+      <Patrician>2.83</Patrician>
+      <Nobleman>2.5</Nobleman>
+      <Name>
+         <entry lang="English">Food</entry>
+         <entry lang="German">Nahrung</entry>
+      </Name>
+      <structure>0</structure>
+      <startLevel>1</startLevel>
+      <popCount>0</popCount>
+   </Need>
+   <Need ID="16">
+      <Peasent>0.0</Peasent>
+      <Citizen>2.3932142</Citizen>
+      <Patrician>2.952738</Patrician>
+      <Nobleman>2.5952382</Nobleman>
+      <Name>
+         <entry lang="English">Alcohol</entry>
+         <entry lang="German">Alkohol</entry>
+      </Name>
+      <structure>0</structure>
+      <startLevel>1</startLevel>
+      <popCount>0</popCount>
+   </Need>
+   <Need ID="17">
+      <Peasent>0.0</Peasent>
+      <Citizen>2.4564285</Citizen>
+      <Patrician>3.0754762</Patrician>
+      <Nobleman>2.6904762</Nobleman>
+      <Name>
+         <entry lang="English">Spice?</entry>
+         <entry lang="German">Gewürz?</entry>
+      </Name>
+      <structure>0</structure>
+      <startLevel>1</startLevel>
+      <popCount>0</popCount>
+   </Need>
+   <Need ID="18">
+      <Peasent>0.0</Peasent>
+      <Citizen>2.5196428</Citizen>
+      <Patrician>3.1982143</Patrician>
+      <Nobleman>2.7857144</Nobleman>
+      <Name>
+         <entry lang="English">Luxury</entry>
+         <entry lang="German">Luxus</entry>
+      </Name>
+      <structure>0</structure>
+      <startLevel>1</startLevel>
+      <popCount>0</popCount>
+   </Need>
+   <Need ID="19">
+      <Peasent>0.0</Peasent>
+      <Citizen>0.0</Citizen>
+      <Patrician>1.0</Patrician>
+      <Nobleman>1.0</Nobleman>
+      <Name>
+         <entry lang="English">Clean</entry>
+         <entry lang="German">Sauberkeit</entry>
+      </Name>
+      <structure>0</structure>
+      <startLevel>1</startLevel>
+      <popCount>0</popCount>
+   </Need>
+   <Need ID="20">
+      <Peasent>0.0</Peasent>
+      <Citizen>0.0</Citizen>
+      <Patrician>1.0</Patrician>
+      <Nobleman>1.0</Nobleman>
+      <Name>
+         <entry lang="English">Belief</entry>
+         <entry lang="German">Glauben</entry>
+      </Name>
+      <structure>0</structure>
+      <startLevel>1</startLevel>
+      <popCount>0</popCount>
+   </Need>
+   <Need ID="21">
+      <Peasent>0.0</Peasent>
+      <Citizen>0.0</Citizen>
+      <Patrician>1.0</Patrician>
+      <Nobleman>1.0</Nobleman>
+      <Name>
+         <entry lang="English">Security</entry>
+         <entry lang="German">Sicherkeit</entry>
+      </Name>
+      <structure>0</structure>
+      <startLevel>1</startLevel>
+      <popCount>0</popCount>
+   </Need>
+   <Need ID="22">
+      <Peasent>0.0</Peasent>
+      <Citizen>0.0</Citizen>
+      <Patrician>1.0</Patrician>
+      <Nobleman>1.0</Nobleman>
+      <Name>
+         <entry lang="English">Fun</entry>
+         <entry lang="German">Spaß</entry>
+      </Name>
+      <structure>0</structure>
+      <startLevel>1</startLevel>
+      <popCount>0</popCount>
+   </Need>
+   <Need ID="23">
+      <Peasent>0.0</Peasent>
+      <Citizen>0.0</Citizen>
+      <Patrician>3.8119047</Patrician>
+      <Nobleman>3.2619047</Nobleman>
+      <Name>
+         <entry lang="English">Luxury</entry>
+         <entry lang="German">Luxus</entry>
+      </Name>
+      <structure>0</structure>
+      <startLevel>1</startLevel>
+      <popCount>0</popCount>
+   </Need>
+   <Need ID="24">
+      <Peasent>0.0</Peasent>
+      <Citizen>0.0</Citizen>
+      <Patrician>3.9346428</Patrician>
+      <Nobleman>3.357143</Nobleman>
+      <Name>
+         <entry lang="English">Food</entry>
+         <entry lang="German">Nahrung</entry>
+      </Name>
+      <structure>0</structure>
+      <startLevel>1</startLevel>
+      <popCount>0</popCount>
+   </Need>
+   <Need ID="25">
+      <Peasent>0.0</Peasent>
+      <Citizen>0.0</Citizen>
+      <Patrician>4.057381</Patrician>
+      <Nobleman>3.452381</Nobleman>
+      <Name>
+         <entry lang="English">Luxury</entry>
+         <entry lang="German">Luxus</entry>
+      </Name>
+      <structure>0</structure>
+      <startLevel>1</startLevel>
+      <popCount>0</popCount>
+   </Need>
+   <Need ID="26">
+      <Peasent>0.0</Peasent>
+      <Citizen>0.0</Citizen>
+      <Patrician>4.180119</Patrician>
+      <Nobleman>3.547619</Nobleman>
+      <Name>
+         <entry lang="English">Luxury</entry>
+         <entry lang="German">Luxus</entry>
+      </Name>
+      <structure>0</structure>
+      <startLevel>1</startLevel>
+      <popCount>0</popCount>
+   </Need>
+   <Need ID="27">
+      <Peasent>0.0</Peasent>
+      <Citizen>0.0</Citizen>
+      <Patrician>4.302857</Patrician>
+      <Nobleman>3.642857</Nobleman>
+      <Name>
+         <entry lang="English">Clothes</entry>
+         <entry lang="German">Bekleidung</entry>
+      </Name>
+      <structure>0</structure>
+      <startLevel>1</startLevel>
+      <popCount>0</popCount>
+   </Need>
+   <Need ID="28">
+      <Peasent>0.0</Peasent>
+      <Citizen>0.0</Citizen>
+      <Patrician>4.4255953</Patrician>
+      <Nobleman>3.7380953</Nobleman>
+      <Name>
+         <entry lang="English">Luxury</entry>
+         <entry lang="German">Luxus</entry>
+      </Name>
+      <structure>0</structure>
+      <startLevel>1</startLevel>
+      <popCount>0</popCount>
+   </Need>
+   <Need ID="29">
+      <Peasent>0.0</Peasent>
+      <Citizen>0.0</Citizen>
+      <Patrician>4.548333</Patrician>
+      <Nobleman>3.8333333</Nobleman>
+      <Name>
+         <entry lang="English">Fun</entry>
+         <entry lang="German">Spaß</entry>
+      </Name>
+      <structure>0</structure>
+      <startLevel>1</startLevel>
+      <popCount>0</popCount>
+   </Need>
+   <Need ID="30">
+      <Peasent>0.0</Peasent>
+      <Citizen>0.0</Citizen>
+      <Patrician>0.0</Patrician>
+      <Nobleman>1.0</Nobleman>
+      <Name>
+         <entry lang="English">Education</entry>
+         <entry lang="German">Bildung</entry>
+      </Name>
+      <structure>0</structure>
+      <startLevel>1</startLevel>
+      <popCount>0</popCount>
+   </Need>
+   <Need ID="31">
+      <Peasent>0.0</Peasent>
+      <Citizen>0.0</Citizen>
+      <Patrician>0.0</Patrician>
+      <Nobleman>1.0</Nobleman>
+      <Name>
+         <entry lang="English">Belief</entry>
+         <entry lang="German">Glauben</entry>
+      </Name>
+      <structure>0</structure>
+      <startLevel>1</startLevel>
+      <popCount>0</popCount>
+   </Need>
+   <Need ID="32">
+      <Peasent>0.0</Peasent>
+      <Citizen>0.0</Citizen>
+      <Patrician>0.0</Patrician>
+      <Nobleman>1.0</Nobleman>
+      <Name>
+         <entry lang="English">Fun</entry>
+         <entry lang="German">Spaß</entry>
+      </Name>
+      <structure>0</structure>
+      <startLevel>1</startLevel>
+      <popCount>0</popCount>
+   </Need>
+   <Need ID="33">
+      <Peasent>0.0</Peasent>
+      <Citizen>0.0</Citizen>
+      <Patrician>0.0</Patrician>
+      <Nobleman>1.0</Nobleman>
+      <Name>
+         <entry lang="English">MONUMENT</entry>
+         <entry lang="German">MONUMENT</entry>
+      </Name>
+      <structure>0</structure>
+      <startLevel>1</startLevel>
+      <popCount>0</popCount>
+   </Need>
+   <Need ID="34">
+      <Peasent>0.0</Peasent>
+      <Citizen>0.0</Citizen>
+      <Patrician>0.0</Patrician>
+      <Nobleman>1.0</Nobleman>
+      <Name>
+         <entry lang="English">MONUMENT</entry>
+         <entry lang="German">MONUMENT</entry>
+      </Name>
+      <structure>0</structure>
+      <startLevel>1</startLevel>
+      <popCount>0</popCount>
+   </Need>
+   <Need ID="35">
+      <Peasent>0.0</Peasent>
+      <Citizen>0.0</Citizen>
+      <Patrician>0.0</Patrician>
+      <Nobleman>4.404762</Nobleman>
+      <Name>
+         <entry lang="English">Luxury</entry>
+         <entry lang="German">Luxus</entry>
+      </Name>
+      <structure>0</structure>
+      <startLevel>1</startLevel>
+      <popCount>0</popCount>
+   </Need>
+   <Need ID="36">
+      <Peasent>0.0</Peasent>
+      <Citizen>0.0</Citizen>
+      <Patrician>0.0</Patrician>
+      <Nobleman>4.5</Nobleman>
+      <Name>
+         <entry lang="English">Clothes</entry>
+         <entry lang="German">Bekleidung</entry>
+      </Name>
+      <structure>0</structure>
+      <startLevel>1</startLevel>
+      <popCount>0</popCount>
+   </Need>
+   <Need ID="37">
+      <Peasent>0.0</Peasent>
+      <Citizen>0.0</Citizen>
+      <Patrician>0.0</Patrician>
+      <Nobleman>4.595238</Nobleman>
+      <Name>
+         <entry lang="English">Alcohol</entry>
+         <entry lang="German">Alkohol</entry>
+      </Name>
+      <structure>0</structure>
+      <startLevel>1</startLevel>
+      <popCount>0</popCount>
+   </Need>
+   <Need ID="38">
+      <Peasent>0.0</Peasent>
+      <Citizen>0.0</Citizen>
+      <Patrician>0.0</Patrician>
+      <Nobleman>4.6904764</Nobleman>
+      <Name>
+         <entry lang="English">Luxury</entry>
+         <entry lang="German">Luxus</entry>
+      </Name>
+      <structure>0</structure>
+      <startLevel>1</startLevel>
+      <popCount>0</popCount>
+   </Need>
+   <Need ID="39">
+      <Peasent>0.0</Peasent>
+      <Citizen>0.0</Citizen>
+      <Patrician>0.0</Patrician>
+      <Nobleman>4.785714</Nobleman>
+      <Name>
+         <entry lang="English">Luxury</entry>
+         <entry lang="German">Luxus</entry>
+      </Name>
+      <structure>0</structure>
+      <startLevel>1</startLevel>
+      <popCount>0</popCount>
+   </Need>
+   <Need ID="40">
+      <Peasent>0.0</Peasent>
+      <Citizen>0.0</Citizen>
+      <Patrician>0.0</Patrician>
+      <Nobleman>4.8809524</Nobleman>
+      <Name>
+         <entry lang="English">Luxury</entry>
+         <entry lang="German">Luxus</entry>
+      </Name>
+      <structure>0</structure>
+      <startLevel>1</startLevel>
+      <popCount>0</popCount>
+   </Need>
+</needs>

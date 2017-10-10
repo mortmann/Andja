@@ -51,7 +51,7 @@ public class StructureSpriteController : MonoBehaviour {
 		Tile t = structure.BuildTile;
 
 		go.transform.position = new Vector3 (t.X + x,t.Y + y);
-		go.transform.Rotate (Vector3.forward*structure.rotated); 
+		go.transform.transform.eulerAngles = new Vector3 (0, 0, 360-structure.rotated);
 		go.transform.SetParent (this.transform,true);
 		go.name = structure.SmallName +"_"+structure.myBuildingTiles [0].toString ();
 		SpriteRenderer sr = go.AddComponent<SpriteRenderer>();

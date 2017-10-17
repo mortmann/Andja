@@ -46,6 +46,9 @@ public class Need {
 	public float lastNeededNotConsumed;
 	[JsonPropertyAttribute]
 	public float percantageAvailability;
+	[JsonPropertyAttribute]
+	public float notUsedOfTon;
+
 	public Need(int id, NeedPrototypeData npd){
 		this.ID = id;
 		this._prototypData = npd;
@@ -77,10 +80,13 @@ public class Need {
 			percantageAvailability = 0;
 			return;
 		}
-		//either we consum 1 ton or as much as we need
-		neededConsumAmount = Mathf.Clamp (Mathf.RoundToInt (neededConsumAmount),1,Mathf.Infinity);
-		//now how much do we have in the city
 		float availableAmount = city.GetAmountForThis (item,neededConsumAmount);
+
+		notUsedOfTon = Mathf.Max(0,availableAmount - neededConsumAmount);
+
+		//either we need to get 1 ton or as much as we need
+		neededConsumAmount = Mathf.CeilToInt (neededConsumAmount);
+		//now how much do we have in the city
 		//if we have none?
 		if(availableAmount == 0){
 			//we can just set the lastneeded to current needed
@@ -88,20 +94,7 @@ public class Need {
 			percantageAvailability = 0;
 			return;
 		}
-		//so we are here now start consum it
-		//i dont think we need this
-//		if(neededConsumAmount<1){
-//			if (lastNeededNotConsumed == 0) {
-//				lastNeededNotConsumed = neededConsumAmount;
-//			} else {
-//				neededConsumAmount += lastNeededNotConsumed;
-//				if (neededConsumAmount < 1) {
-//					lastNeededNotConsumed = neededConsumAmount;
-//				} else {
-//					lastNeededNotConsumed = 0;
-//				}
-//			}
-//		}
+
 		// how much to we consum of the avaible?
 		int usedAmount = (int) Mathf.Clamp (availableAmount, 0, neededConsumAmount);
 		//now remove that amount of items
@@ -109,5 +102,12 @@ public class Need {
 		//minimum is 1 because if 0 -> ERROR due dividing through 0
 		//calculate the percantage of availability
 		percantageAvailability = Mathf.RoundToInt (100*(usedAmount / neededConsumAmount))/100;
+	}
+
+	public bool IsItemNeed(){
+		return item != null;
+	}
+	public bool IsStructureNeed(){
+		return structure != null;
 	}
 }

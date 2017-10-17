@@ -6,6 +6,9 @@ using Newtonsoft.Json;
 [JsonObject(MemberSerialization.OptIn)]
 public class City : IGEventable {
 	public const int TargetType = 12;
+
+	//TODO FIX this position of this
+	public const int citizienLevels = 4;
 	#region Serialize
 	[JsonPropertyAttribute] public int playerNumber = 0;
 	[JsonPropertyAttribute] public Inventory inventory;
@@ -19,8 +22,13 @@ public class City : IGEventable {
 	/// </summary>
 	[JsonPropertyAttribute] public Dictionary<int,TradeItem> itemIDtoTradeItem;
 	[JsonPropertyAttribute] private string _name=""; 
+
 	[JsonPropertyAttribute] public int[] citizienCount;
+	[JsonPropertyAttribute] public float[] citizienHappiness;
+	[JsonPropertyAttribute] public bool[] criticalAvaibilityNeed;
+
 	[JsonPropertyAttribute] public Island island;
+
 
 	#endregion
 	#region RuntimeOrOther
@@ -41,6 +49,10 @@ public class City : IGEventable {
 	public int cityBalance;
 	public float useTick;
 	public Warehouse myWarehouse;
+
+	public List<Need> itemNeeds;
+	public List<Need> structureNeeds;
+
 	Action<Structure> cbStructureAdded;
 	Action<Structure> cbStructureRemoved;
 	Action<City> cbCityDestroy;
@@ -53,16 +65,21 @@ public class City : IGEventable {
 	public City(int playerNr,Island island) {
 		this.playerNumber = playerNr;
 		this.island = island;
-		citizienCount = new int[4];
+
+		citizienCount = new int[citizienLevels];
+		citizienHappiness = new float[citizienLevels];
+		criticalAvaibilityNeed = new bool[citizienLevels];
+
 		itemIDtoTradeItem = new Dictionary<int, TradeItem> ();
 		myStructures = new List<Structure>();
 		inventory = new CityInventory (name);
-		idToNeed = new Dictionary<int, Need> ();
+
 
 		Setup ();
 
 		for (int i = 0; i < citizienCount.Length; i++) {
 			citizienCount [i] = 0;
+			citizienHappiness [i] = 0.5f;
 		}
 		//temporary
 //		Item temp = PrototypController.Instance.allItems [49].Clone ();
@@ -84,11 +101,14 @@ public class City : IGEventable {
 		if(idToNeed==null){
 			return;
 		}
-		for (int i = 0; i < World.allNeeds.Count; i++) {
-			if(idToNeed.ContainsKey (World.allNeeds [i].ID)){
-				continue;
+		List<Need> allNeeds = World.getCopieOfAllNeeds();
+		for (int i = 0; i < allNeeds.Count; i++) {
+			if(allNeeds[i].IsItemNeed()){
+				itemNeeds.Add (allNeeds [i]);
+			} else 
+			if(allNeeds[i].IsStructureNeed()){
+				structureNeeds.Add (allNeeds [i]);
 			}
-			idToNeed.Add (World.allNeeds [i].ID, World.allNeeds [i].Clone ());
 		}
 		useTick = 30f;
 	}
@@ -110,25 +130,10 @@ public class City : IGEventable {
 		for (int i = 0; i < myStructures.Count; i++) {
 			myStructures[i].update(deltaTime);
 		}
-		if(playerNumber==-1){
+		if(playerNumber==-1 || myHomes.Count==0){
 			return;
 		}
-		for (int i = 0; i < citizienCount.Length; i++) {
-			citizienCount [i] = 0;
-		}
-		//TODO mabye make itso that callbacks add/sub from it?
-		//TODO or make it so that homes are responsible for it 
-		for (int i = 0; i < myHomes.Count; i++) {
-			citizienCount [myHomes [i].buildingLevel] += myHomes [i].people;
-		}
-
-		useTickTimer -= deltaTime;
-		if(useTickTimer<=0){
-			useTickTimer = useTick;
-			foreach(Need need in idToNeed.Values){
-				need.TryToConsumThisIn (this,citizienCount);
-			}
-		}
+		UpdateNeeds (deltaTime);
     }
 	/// <summary>
 	/// USE only for the creation of non player city aka Wilderness
@@ -175,6 +180,38 @@ public class City : IGEventable {
 			cbStructureAdded (str);
 		}
 	}
+
+	private void UpdateNeeds(float deltaTime){
+		for (int i = 0; i < citizienLevels; i++) {
+			criticalAvaibilityNeed [i] = false;
+		}
+		useTickTimer -= deltaTime;
+		if(useTickTimer<=0){
+			useTickTimer = useTick;
+			int[] levelCount = new int[citizienLevels];
+			float[] sumOfPerc = new float[citizienLevels];
+			foreach(Need need in itemNeeds){
+				need.TryToConsumThisIn (this,citizienCount);
+				levelCount [need.startLevel]++;
+				sumOfPerc [need.startLevel] += need.percantageAvailability;
+				if(need.percantageAvailability<0.4f){
+					criticalAvaibilityNeed [need.startLevel] = true;
+				}
+			}
+			float[] percentagesPerLevel = new float[citizienLevels];
+			float percantageSummed=0;
+			for (int i = 0; i < citizienLevels; i++) {
+				percentagesPerLevel [i] = sumOfPerc [i] / levelCount [i];
+				for (int s = 0; s <= i; s++) {
+					percantageSummed = percentagesPerLevel [s]; 
+				}
+				citizienHappiness [i] = percantageSummed / (i+1);
+			}
+
+		}
+	}
+
+
 	public void triggerAddCallBack(Structure str){
 		if(cbStructureAdded!=null){
 			cbStructureAdded (str);
@@ -216,7 +253,7 @@ public class City : IGEventable {
 			return;
 		}
 		if(t.Structure != null){
-			if (myStructures.Contains (t.Structure) ==false) { 
+			if (myStructures.Contains (t.Structure) == false) { 
 				t.Structure.City = this;
 				addStructure (t.Structure);
 			}
@@ -224,6 +261,22 @@ public class City : IGEventable {
 		island.allReadyHighlighted = false;
 		myTiles.Add (t);
 	}
+	public bool getNeedCriticalForLevel(int buildingLevel){
+		return criticalAvaibilityNeed [buildingLevel];
+	}
+	public void addPeople(int level, int count){
+		if(count<0){
+			return;
+		}
+		citizienCount [level] += count;
+	}
+	public void removePeople(int level, int count){
+		if(count<0){
+			return;
+		}
+		citizienCount [level] -= count;
+	}
+
 	public void removeRessources(Item[] remove){
 		if(remove==null){
 			return;
@@ -333,7 +386,7 @@ public class City : IGEventable {
 	public void ChangeTradeItemPrice(int id, int price){
 		itemIDtoTradeItem [id].price = price;
 	}
-	public float GetAmountForThis( Item item, float amount ){
+	public int GetAmountForThis( Item item, float amount ){
 		return inventory.GetAmountForItem (item);
 	}
 	
@@ -384,7 +437,9 @@ public class City : IGEventable {
 		island.allReadyHighlighted = false;
 
 	}
-
+	public float getHappinessForCitizenLevel(int level){
+		return citizienHappiness [level];
+	}
 	public void removeTiles(IEnumerable<Tile> tiles){
 		foreach (Tile item in tiles) {
 			item.myCity = null;

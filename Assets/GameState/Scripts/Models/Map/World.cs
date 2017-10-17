@@ -34,10 +34,8 @@ public class World : IGEventable{
 	#endregion
 	#region RuntimeOrOther
 	public Tile[] tiles { get; protected set; }
-	public static List<Need> allNeeds {
-		get {
-			return PrototypController.Instance.allNeeds;
-		}
+	public static List<Need> getCopieOfAllNeeds() {
+		return PrototypController.Instance.getCopieOfAllNeeds();
 	}
 	public Dictionary<Climate,List<Fertility>> allFertilities;
 	public Dictionary<int,Fertility> idToFertilities;

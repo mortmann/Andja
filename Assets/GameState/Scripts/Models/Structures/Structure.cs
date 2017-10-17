@@ -223,6 +223,7 @@ public abstract class Structure : IGEventable {
 		get { return _city;}
 		set {
 			if(_city!=null&&_city!=value){
+				OnCityChange (_city,value);
 				_city.removeStructure (this);
 			}
 			_city = value;
@@ -279,6 +280,7 @@ public abstract class Structure : IGEventable {
 	public virtual void OnClickClose (){
 	}
 	protected virtual void OnDestroy(){}
+	protected virtual void OnCityChange (City old,City newOne){}
 	/// <summary>
 	/// Extra Build UI for showing stuff when building
 	/// structures. Or so.

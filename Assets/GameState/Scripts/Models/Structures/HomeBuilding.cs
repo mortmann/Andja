@@ -75,32 +75,31 @@ public class HomeBuilding : Structure {
 			return;
 		}
 		float allPercentage = 0;
+		float structurePercentage = 0;
 		int count = 0;
-		bool percCritical=false;
-		foreach (Need n in City.idToNeed.Values) {
+		bool percCritical = City.getNeedCriticalForLevel(buildingLevel);
+
+		foreach (Need n in City.structureNeeds) {
 			Player pc = PlayerController.Instance.GetPlayer (playerNumber);
 			if (n.startLevel <= buildingLevel && n.popCount <= pc.maxPopulationCount) {
-				if (n.structure == null) {
-					allPercentage += n.percantageAvailability;
-					if(n.percantageAvailability < 0.3f){
-						percCritical=true;
-					}
-				} else {
-					if(isInRangeOf (n.structure)){
-						allPercentage += 1;
-					}
+				if(isInRangeOf (n.structure)){
+					structurePercentage += 1;
 				}
 				count++;
 			}
 		}
-		allPercentage /= count; 
+		structurePercentage /= count; 
+
+		allPercentage = City.getHappinessForCitizenLevel (buildingLevel) + structurePercentage;
+		allPercentage /= 2;
+
 		if (allPercentage < 0.4f && percCritical) {
 			decTimer += deltaTime;
 			incTimer -= deltaTime;
 			incTimer = Mathf.Clamp (incTimer, 0, increaseSpeed);
 			if (decTimer >= decreaseSpeed) {
 				Debug.Log ("DECREASE");
-				people--;
+				TryToDecreasePeople();
 				decTimer = 0;
 			}
 		} else
@@ -117,10 +116,23 @@ public class HomeBuilding : Structure {
 			if (incTimer >= increaseSpeed) {
 				Debug.Log ("INCREASE");
 				incTimer = 0;
-				people++;
+				TryToIncreasePeople ();
 			}
 		}
-		people = Mathf.Clamp (people, 0, maxLivingSpaces);
+	}
+	private void TryToIncreasePeople(){
+		if(people>=maxLivingSpaces){
+			return;
+		}
+		people++;
+		City.addPeople (buildingLevel,1);
+	}
+	private void TryToDecreasePeople(){
+		if(people<=0){
+			return;
+		}
+		people--;
+		City.removePeople (buildingLevel,1);
 	}
 	public void OnTStructureChange(Structure now, Structure old){
 		if(old is Road == false || now is Road == false){
@@ -143,7 +155,13 @@ public class HomeBuilding : Structure {
 		}
 		return strs.Contains (str);
 	}
-
+	protected override void OnCityChange (City old, City newOne) {
+		old.removePeople (buildingLevel, people);
+		newOne.addPeople (buildingLevel, people);
+	}
+	protected override void OnDestroy () {
+		City.removePeople (buildingLevel,people);
+	}
 	public void UpgradeHouse(){
 		if(canUpgrade==false){
 			return;

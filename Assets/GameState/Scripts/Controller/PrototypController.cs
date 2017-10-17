@@ -23,7 +23,8 @@ public class PrototypController : MonoBehaviour {
 	public Dictionary<int, Item> allItems;
 	public static List<Item> buildItems;
 
-	public List<Need> allNeeds;
+	private List<Need> allNeeds;
+
 	public Dictionary<Climate,List<Fertility>> allFertilities;
 	public Dictionary<int,Fertility> idToFertilities;
 
@@ -34,6 +35,13 @@ public class PrototypController : MonoBehaviour {
 			items.Add (id,allItems [id].Clone ());
 		}
 		return items;
+	}
+	public List<Need> getCopieOfAllNeeds(){
+		List<Need> needs = new List<Need> ();
+		foreach (Need item in allNeeds) {
+			needs.Add (item.Clone ());
+		}
+		return needs;
 	}
 	// Use this for initialization
 	void Awake () {
@@ -67,7 +75,6 @@ public class PrototypController : MonoBehaviour {
 	public NeedPrototypeData GetNeedPrototypDataForID(int ID){
 		return needPrototypeDatas [ID];
 	}
-
 	public ICollection<Fertility> GetFertilitiesForClimate(Climate c){
 		if(allFertilities.ContainsKey (c)==false){
 			Debug.Log (c); 

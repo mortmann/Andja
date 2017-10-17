@@ -26,7 +26,7 @@ public class NeedsUIController : MonoBehaviour {
 		children.ForEach(child => Destroy(child));
 
 		needToGO = new Dictionary<Need, GameObject> ();
-		List<Need> ns = PrototypController.Instance.allNeeds;
+		List<Need> ns = PrototypController.Instance.getCopieOfAllNeeds ();
 		citizenCanvas.GetComponentInChildren<Text> ().text=home.people+"/"+home.maxLivingSpaces;
 		needs = new List<Need>[5];
 		for (int i = 0; i < needs.Length; i++) {

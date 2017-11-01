@@ -2,13 +2,16 @@
 using UnityEngine.Audio;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
+using UnityEngine.SceneManagement;
 
-public class ShowPanels : MonoBehaviour {
+public class MenuController : MonoBehaviour {
 
-    public static ShowPanels instance;
-
+    public static MenuController instance;
+	public bool saved;
     public GameObject menu;
     public GameObject[] panels;
+
+
 
     // Used by the buttons which open panels so we can return to the same button
     // after closing the panel.
@@ -29,7 +32,14 @@ public class ShowPanels : MonoBehaviour {
 
     bool menuOpen = true;
     bool panelOpen = false;
-
+	void OnEnable(){
+		foreach(Transform t in transform){
+			if(t != menu.transform){
+				t.gameObject.SetActive (false);
+			} 
+		}
+		menu.SetActive (true);
+	}
     void Awake() {
         instance = this;
     }
@@ -79,8 +89,21 @@ public class ShowPanels : MonoBehaviour {
         menu.SetActive(false);
         menuOpen = false;
     }
-
+	public void Saved() {
+		saved = true;
+	}
+	public void OnDisabled(){
+		saved = false;
+	}
+	public bool hasSaved() {
+		return saved;
+	}
     public void Quit() {
+		if(saved==false){
+			ShowWarning ();
+			scene = "Close";
+			return;
+		}
         //If we are running in a standalone build of the game
 #if UNITY_STANDALONE
 		//Quit the application
@@ -93,4 +116,42 @@ public class ShowPanels : MonoBehaviour {
         UnityEditor.EditorApplication.isPlaying = false;
 #endif
     }
+
+	public GameObject dialog;
+	string scene;
+
+	public void ChangeToGameStateLoadScreen(){
+		if(saved==false){
+			ShowWarning ();
+			scene = "GameStateLoadingScreen";
+			return;
+		}
+		SceneManager.LoadScene ("GameStateLoadingScreen"); 
+	}
+	public void ChangeToEditorLoadScreen(){
+		SceneManager.LoadScene ("EditorLoadingScreen"); 
+	}
+	public void ChangeToGameStateScreen(){
+		SceneManager.LoadScene ("GameState"); 
+	}
+	public void ChangeToMainMenuScreen(){
+		if(saved==false){
+			ShowWarning ();
+			scene = "MainMenu";
+			return;
+		}
+		SceneManager.LoadScene ("MainMenu"); 
+	}
+	public void ShowWarning (){
+		dialog.SetActive (true);
+	}
+
+	public void DialogYesOption () {
+		if(scene=="Close"){
+			Quit ();
+			return; // should not be needed
+		}
+		SceneManager.LoadScene (scene); 
+	}
+
 }

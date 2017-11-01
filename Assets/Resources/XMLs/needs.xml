@@ -39,10 +39,10 @@
       <popCount>0</popCount>
    </Need>
    <Need ID="4">
-      <Peasent>3.0</Peasent>
-      <Citizen>2.0</Citizen>
-      <Patrician>1.0</Patrician>
-      <Nobleman>1.0</Nobleman>
+      <Peasent>0.01</Peasent>
+      <Citizen>0.02</Citizen>
+      <Patrician>0.03</Patrician>
+      <Nobleman>0.05</Nobleman>
       <Name>
          <entry lang="English">Food</entry>
          <entry lang="German">Nahrung</entry>

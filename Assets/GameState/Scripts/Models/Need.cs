@@ -69,21 +69,30 @@ public class Need {
 			percantageAvailability = 0;
 			return;
 		}
+
 		float neededConsumAmount = 0;
 		// how much do we need to consum?
 		for (int i = startLevel; i < peoples.Length; i++) {
 			neededConsumAmount += uses [i] * ((float)peoples[i]);
 		}
-
 		if(neededConsumAmount==0){
 			//we dont need anything to consum so no need to go anyfurther
 			percantageAvailability = 0;
 			return;
 		}
+
+		//IF it has still enough no need to calculate more
+		if(notUsedOfTon>=neededConsumAmount){
+			notUsedOfTon -= neededConsumAmount;
+			percantageAvailability = 1;
+			return;
+		}
+		//so just remove from needed what we have
+		neededConsumAmount -= notUsedOfTon;
+		//now we have a amount that still needs to be fullfilled by the cities inventory
+
 		float availableAmount = city.GetAmountForThis (item,neededConsumAmount);
-
-		notUsedOfTon = Mathf.Max(0,availableAmount - neededConsumAmount);
-
+		notUsedOfTon = Mathf.CeilToInt (neededConsumAmount) - neededConsumAmount;
 		//either we need to get 1 ton or as much as we need
 		neededConsumAmount = Mathf.CeilToInt (neededConsumAmount);
 		//now how much do we have in the city
@@ -99,6 +108,7 @@ public class Need {
 		int usedAmount = (int) Mathf.Clamp (availableAmount, 0, neededConsumAmount);
 		//now remove that amount of items
 		city.removeRessource (item,usedAmount);
+
 		//minimum is 1 because if 0 -> ERROR due dividing through 0
 		//calculate the percantage of availability
 		percantageAvailability = Mathf.RoundToInt (100*(usedAmount / neededConsumAmount))/100;

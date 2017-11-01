@@ -32,7 +32,7 @@ public class InputHandler {
 		if (nameToKeyBinds.ContainsKey ("Rotate")==false)
 			nameToKeyBinds.Add ("Rotate",new KeyBind("Rotate", KeyCode.R, KeyBind.notSetCode)); 
 		if (nameToKeyBinds.ContainsKey ("Console")==false)
-			nameToKeyBinds.Add ("Console",new KeyBind("Rotate", KeyCode.F1, KeyBind.notSetCode)); 
+			nameToKeyBinds.Add ("Console",new KeyBind("Console", KeyCode.F1, KeyBind.notSetCode)); 
 
 	}	
 	public static void ChangePrimaryNameToKey(string name, KeyCode key){

@@ -101,6 +101,9 @@ public class SaveController : MonoBehaviour {
 	}
 
 	public void LoadGameState(string name = "autosave"){
+		if(wc==null){
+			return;
+		}
 		//first pause the world so nothing changes and we can save an 
 		bool wasPaused = wc.IsPaused;
 		if(wasPaused==false){

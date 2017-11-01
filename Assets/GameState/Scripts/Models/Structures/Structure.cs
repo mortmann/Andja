@@ -203,9 +203,9 @@ public abstract class Structure : IGEventable {
 
 	public string spriteName{ get { return data.spriteBaseName/*TODO: make multiple saved sprites possible*/; } }
 
-	Action<Structure> cbStructureChanged;
-	Action<Structure> cbStructureDestroy;
-	Action<Structure,string> cbStructureSound;
+	protected Action<Structure> cbStructureChanged;
+	protected Action<Structure> cbStructureDestroy;
+	protected Action<Structure,string> cbStructureSound;
 	public bool extraUIOn = false;
 
 

@@ -79,7 +79,7 @@ public class SaveLoadUIScript : MonoBehaviour {
 		if (WorldController.Instance != null)
 			WorldController.Instance.LoadWorld ();
 		else
-			GameObject.FindObjectOfType<ChangeScene> ().ChangeToGameStateLoadScreen ();
+			GameObject.FindObjectOfType<MenuController> ().ChangeToGameStateLoadScreen ();
 	}
 	public void OnSavePressed(){
 		if(selected!=null&&(saveGameInput.text==null||saveGameInput.text=="")){
@@ -99,7 +99,7 @@ public class SaveLoadUIScript : MonoBehaviour {
 		if (EditorController.Instance != null)
 			EditorController.Instance.LoadWorld (selected);
 		else
-			GameObject.FindObjectOfType<ChangeScene> ().ChangeToGameStateLoadScreen ();
+			GameObject.FindObjectOfType<MenuController> ().ChangeToGameStateLoadScreen ();
 	}
 	public void OnIslandSaveClick(){
 		if(selected!=null&&(saveGameInput.text==null||saveGameInput.text=="")){

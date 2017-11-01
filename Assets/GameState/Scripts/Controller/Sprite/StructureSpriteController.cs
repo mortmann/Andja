@@ -126,8 +126,8 @@ public class StructureSpriteController : MonoBehaviour {
 			SpriteRenderer sr = structureGameObjectMap[structure].GetComponent<SpriteRenderer>();
 			if(structureSprites.ContainsKey (structure.SmallName + "_" + ((Growable)structure).currentStage))
 				sr.sprite = structureSprites[structure.SmallName + "_" + ((Growable)structure).currentStage];
-		} else
-		if(structure is Warehouse){
+		} 
+		else if(structure is Warehouse){
 			if (structure.extraUIOn == true) {
 				GameObject go = new GameObject ();
 				go.name = "RangeUI";
@@ -141,6 +141,9 @@ public class StructureSpriteController : MonoBehaviour {
 				if(structureGameObjectMap [structure].transform.Find("RangeUI") !=null)
 					GameObject.Destroy (structureGameObjectMap [structure].transform.Find("RangeUI").gameObject );
 			}
+		}
+		else if(structure is HomeBuilding){
+			structureGameObjectMap[structure].GetComponent<SpriteRenderer> ().sprite = structureSprites[structure.SmallName];
 		}
 	}
 	void OnStructureDestroyed(Structure structure) {

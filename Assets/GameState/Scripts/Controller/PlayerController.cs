@@ -21,7 +21,7 @@ public class PlayerController : MonoBehaviour {
 
 
 	// Use this for initialization
-	void Awake () {
+	void OnEnable () {			
 		if (Instance != null) {
 			Debug.LogError("There should never be two mouse controllers.");
 		}

@@ -26,7 +26,10 @@ public class NeedsUIController : MonoBehaviour {
 		children.ForEach(child => Destroy(child));
 
 		needToGO = new Dictionary<Need, GameObject> ();
-		List<Need> ns = PrototypController.Instance.getCopieOfAllNeeds ();
+		List<Need> ns = new List<Need> ();
+		ns.AddRange (home.City.structureNeeds);
+		ns.AddRange (home.City.itemNeeds);
+
 		citizenCanvas.GetComponentInChildren<Text> ().text=home.people+"/"+home.maxLivingSpaces;
 		needs = new List<Need>[5];
 		for (int i = 0; i < needs.Length; i++) {
@@ -71,17 +74,32 @@ public class NeedsUIController : MonoBehaviour {
 			needToGO.Add (ns[i],b);
 		}
 		ChangeNeedLevel (0);
-		actualLevel = 0;
+
 		for (int i = 0; i < buttonPopulationsLevelContent.transform.childCount; i++) {
 			GameObject g = buttonPopulationsLevelContent.transform.GetChild (i).gameObject;
-			if (i >= 1) {
+			if (i > home.buildingLevel) {
 				g.GetComponent<Button>().interactable = false; 
 			} else {
 				g.GetComponent<Button>().interactable = true;
 			}
 		}
-
+		PlayerController.Instance.currPlayer.RegisterMaxPopulationCountChange (OnPopulationCountChange);
 	}
+
+	public void OnPopulationCountChange(int level,int count){
+		if(home.buildingLevel<level){
+			return;
+		}
+		if(actualLevel<level){
+			return;
+		}
+		foreach(Need n in needs[level]){
+			if(n.popCount<=count){
+				needToGO [n].SetActive (true);
+			}
+		}
+	}
+
 	public void ChangeNeedLevel(int level){
 		for (int i = 0; i < 5; i++) {
 			if (i == level) {
@@ -104,7 +122,7 @@ public class NeedsUIController : MonoBehaviour {
 		if(home==null){
 			return;
 		}
-		if(home.canUpgrade){
+		if(home.BuildingCanBeUpgraded()){
 			upgradeButton.SetActive (true);
 		} else {
 			upgradeButton.SetActive (false);
@@ -114,11 +132,11 @@ public class NeedsUIController : MonoBehaviour {
 		foreach (Need item in needs [actualLevel]) {
 			Slider s= needToGO [item].GetComponentInChildren<Slider> ();
 			Text t  = s.transform.parent.GetComponentInChildren<Text> ();
-			if (item.item != null) {
-				t.text = home.City.getPercentage (item) * 100 + "%";
-				s.value = home.City.getPercentage (item)*100;
+			if (item.IsItemNeed()) {
+				t.text = item.percantageAvailability * 100 + "%";
+				s.value = item.percantageAvailability * 100;
 			} else {
-				if(home.isInRangeOf (item.structure)){
+				if(home.isStructureNeedFullfilled(item)){
 					t.text = "In Range";
 					s.value = 100;
 				}else {

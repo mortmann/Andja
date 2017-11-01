@@ -3,23 +3,38 @@ using System.Collections.Generic;
 using UnityEngine.UI;
 public class GS_Resolution : MonoBehaviour {
 	Dropdown dp;
-	Resolution[] resolutions;
+	Dictionary<string,Resolution> resolutions;
+	protected GraphicsSettings graphicsSettings;
+	protected Settings setting;
+
 	// Use this for initialization
 	void Start () {
+		setting = Settings.Resolution;
+		graphicsSettings = FindObjectOfType<GraphicsSettings>();
 		dp = GetComponent<Dropdown> ();
 		List<string> resses = new List<string> ();
-		resolutions = Screen.resolutions;
-		foreach (Resolution res in resolutions) {
-			resses.Add(res.width + "x" + res.height + "@" +res.refreshRate);
+		resolutions = new Dictionary<string, Resolution> ();
+		foreach (Resolution res in Screen.resolutions) {
+			if(resolutions.ContainsKey(res.ToString())){
+				continue;
+			}
+			resolutions [res.ToString ()] = res;
+			resses.Add(res.ToString());
 		}
 		dp.AddOptions (resses);
-		dp.value = resolutions.Length-1;
-
+		if (graphicsSettings.hasSavedGraphicsOption (setting)) {
+			dp.value = resses.FindIndex (x => {
+				return x == graphicsSettings.getSavedGraphicsOption (setting);
+			});
+		}
 	}
-	public void OnChange(){
-		Screen.SetResolution (resolutions[dp.value].width,resolutions[dp.value].height,Screen.fullScreen,resolutions[dp.value].refreshRate);
 
-	
+	public void OnChange(){
+		string res = dp.options [dp.value].text;
+		if(resolutions.ContainsKey(res))
+			graphicsSettings.setSavedGraphicsOption (setting,
+				JsonUtility.ToJson(new GraphicsSettings.CustomResolution(resolutions[res]))
+			);
 	}
 
 }

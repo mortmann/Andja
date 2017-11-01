@@ -5,10 +5,14 @@ public class OptionsToggle : MonoBehaviour {
 	public GameObject graphics;
 	public GameObject sound;
 	public GameObject controls;
+	public void Start(){
+		ToggleGraphics ();
+	}
 	public void ToggleGraphics(){
 		graphics.SetActive (true);
 		sound.SetActive (false);
 		controls.SetActive (false);
+		FindObjectOfType<GraphicsSettings> ().OnOpen ();
 	}
 	public void ToggleSound(){
 		graphics.SetActive (false);

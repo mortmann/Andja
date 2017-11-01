@@ -3,7 +3,11 @@ using UnityStandardAssets.ImageEffects;
 using Smaa;
 
 public class GS_AntiAliasing : GS_SliderBase {
-
+	public override void OnStart (){
+		setting = Settings.AntiAliasing;
+		if(graphicsSettings.hasSavedGraphicsOption(setting))
+			SetAntiAliasing (int.Parse (graphicsSettings.getSavedGraphicsOption (setting)));
+	}
     protected override void GraphicsPresetLow() {
         SetAntiAliasing(0);
     }
@@ -25,19 +29,7 @@ public class GS_AntiAliasing : GS_SliderBase {
     }
 
     void SetAntiAliasing(int value) {
-        if (value == 2) {
-            cam.GetComponent<Antialiasing>().enabled = false;
-            cam.GetComponent<SMAA>().enabled = true;
-        }
-        else if (value == 1) {
-            cam.GetComponent<Antialiasing>().enabled = true;
-            cam.GetComponent<SMAA>().enabled = false;
-        }
-        else {
-            cam.GetComponent<Antialiasing>().enabled = false;
-            cam.GetComponent<SMAA>().enabled = false;
-        }
-
+		graphicsSettings.setSavedGraphicsOption (setting,value);
         // Set the actual slider value. For the OnSliderValueChange() callback
         // this is uneccesary, but it shouldn't cause any harm. We do however
         // need to do it when the value is set from an outside source like the

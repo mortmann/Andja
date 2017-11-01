@@ -5,6 +5,7 @@ using UnityEngine.UI;
 
 public class GS_SliderBase : MonoBehaviour {
 
+	protected Settings setting;
     // The camera in use.
     protected Camera cam;
     // The text we display to the user for the slider value.
@@ -16,26 +17,25 @@ public class GS_SliderBase : MonoBehaviour {
         get { return (int)slider.value; }
     }
 
-    GraphicsSettings graphicsSettings;
+	protected GraphicsSettings graphicsSettings;
 
     public string[] displayLabels;
 
-    void Awake() {
+    void OnEnable() {
         // Get the camera.
         cam = Camera.main;
-
         // Get the slider.
         slider = GetComponent<Slider>();
 
         // Register the graphics preset listeners.
-        graphicsSettings = GameObject.Find("Menu").GetComponent<GraphicsSettings>();
+		graphicsSettings = FindObjectOfType<GraphicsSettings>();
         graphicsSettings.lowPresetEvent.AddListener(GraphicsPresetLow);
         graphicsSettings.mediumPresetEvent.AddListener(GraphicsPresetMedium);
         graphicsSettings.highPresetEvent.AddListener(GraphicsPresetHigh);
         graphicsSettings.ultraPresetEvent.AddListener(GraphicsPresetUltra);
     }
 
-    protected virtual void Start() {
+    protected void Start() {
         // Attach the listener for the method we call when the slider value changes.
         slider.onValueChanged.AddListener(delegate { OnSliderValueChange(); });
         slider.onValueChanged.AddListener(delegate { OnSliderValueChangeSetDisplayText(); });
@@ -60,7 +60,7 @@ public class GS_SliderBase : MonoBehaviour {
      * quality setting or adjust some of it's values, lower shadow distance
      * perhaps or whatever you want.
      */
-    protected virtual void GraphicsPresetLow() {
+	protected virtual void GraphicsPresetLow() { 
     }
     protected virtual void GraphicsPresetMedium() {
     }

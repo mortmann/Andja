@@ -18,7 +18,7 @@ public class MenuAudioManager : MonoBehaviour {
 
 	Dictionary<string,int> volumes;
 
-    void Awake() {
+	void Start() { 
         instance = this;
 		volumes = new Dictionary<string, int> ();
 		ReadSoundVolumes ();
@@ -38,24 +38,24 @@ public class MenuAudioManager : MonoBehaviour {
     }
 
     public void SetMusicVolume(float value) {
-        mixer.SetFloat("MusicVolume", ConvertToDecibel(value));
-		volumes["MusicVolume"] = Mathf.RoundToInt (value);
+		mixer.SetFloat(VolumeType.MusicVolume.ToString(), ConvertToDecibel(value));
+		volumes[VolumeType.MusicVolume.ToString()] = Mathf.RoundToInt (value);
     }
     public void SetSoundEffectsVolume(float value) {
-        mixer.SetFloat("SoundEffectsVolume", ConvertToDecibel(value));
-		volumes["SoundEffectsVolume"] = Mathf.RoundToInt (value);
+		mixer.SetFloat(VolumeType.SoundEffectsVolume.ToString(), ConvertToDecibel(value));
+		volumes[VolumeType.SoundEffectsVolume.ToString()] = Mathf.RoundToInt (value);
     }
-    public void SetMasterVolume(float value) {
-        mixer.SetFloat("MasterVolume", ConvertToDecibel(value));
-		volumes["MasterVolume"] = Mathf.RoundToInt (value);
+	public void SetMasterVolume(float value) {
+		mixer.SetFloat(VolumeType.MasterVolume.ToString(), ConvertToDecibel(value));
+		volumes[VolumeType.MasterVolume.ToString()] = Mathf.RoundToInt (value);
     }
     public void SetAmbientVolume(float value) {
-        mixer.SetFloat("AmbientVolume", ConvertToDecibel(value));
-		volumes["AmbientVolume"] = Mathf.RoundToInt (value);
+		mixer.SetFloat(VolumeType.AmbientVolume.ToString(), ConvertToDecibel(value));
+		volumes[VolumeType.AmbientVolume.ToString()] = Mathf.RoundToInt (value);
     }
-    public void SetUIVolume(float value) {
-		mixer.SetFloat ("UIVolume", ConvertToDecibel (value));
-		volumes["UIVolume"] = Mathf.RoundToInt (value);
+	public void SetUIVolume(float value) { 
+		mixer.SetFloat (VolumeType.UIVolume.ToString(), ConvertToDecibel (value));
+		volumes[VolumeType.UIVolume.ToString()] = Mathf.RoundToInt (value);
     }
 
 	public float getVolumeFor(VolumeType volType){
@@ -96,6 +96,9 @@ public class MenuAudioManager : MonoBehaviour {
 			// with the computer/device we're running on.
 			Directory.CreateDirectory( path  );
 		}
+		if(volumes==null){
+			return;
+		}
 		string filePath = System.IO.Path.Combine(path,fileName) ;
 		File.WriteAllText( filePath, JsonConvert.SerializeObject(volumes) );
 	}
@@ -109,10 +112,14 @@ public class MenuAudioManager : MonoBehaviour {
 			SetUIVolume (100);
 			SetSoundEffectsVolume (100);
 			SetAmbientVolume (100);
-			Debug.Log ("load"); 
 			return;
 		}
 		volumes = JsonConvert.DeserializeObject<Dictionary<string,int>> (File.ReadAllText (filePath));
+		SetAmbientVolume (getVolumeFor (VolumeType.AmbientVolume));
+		SetMasterVolume (getVolumeFor (VolumeType.MasterVolume));
+		SetMusicVolume (getVolumeFor (VolumeType.MusicVolume));
+		SetUIVolume (getVolumeFor (VolumeType.UIVolume));
+		SetSoundEffectsVolume (getVolumeFor (VolumeType.SoundEffectsVolume));
 	}
 	public static Dictionary<string,int> StaticReadSoundVolumes(){
 		string filePath = System.IO.Path.Combine(Application.dataPath.Replace ("/Assets",""),fileName) ;

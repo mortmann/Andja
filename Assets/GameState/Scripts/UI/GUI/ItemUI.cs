@@ -25,7 +25,6 @@ public class ItemUI : MonoBehaviour {
 			ChangeItemCount (i);
 			image.sprite = UIController.GetItemImageForID (i.ID);
 		}
-		//set item pic andso
 		EventTrigger trigger = GetComponent<EventTrigger> ();
 		EventTrigger.Entry enter = new EventTrigger.Entry( );
 		enter.eventID = EventTriggerType.PointerEnter;

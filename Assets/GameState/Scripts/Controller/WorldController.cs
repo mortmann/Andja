@@ -46,7 +46,6 @@ public class WorldController : MonoBehaviour {
 			if (gdh != null) {
 				this.world = new World (gdh.width , gdh.height);
 			} 
-			Camera.main.transform.position = new Vector3(world.Width / 2, world.Height / 2, Camera.main.transform.position.z);
 		}
 //		new OceanPathfinding().SetDestination(world.GetTileAt(22,20),world.GetTileAt(34,56));
     }

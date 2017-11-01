@@ -66,20 +66,17 @@ public class City : IGEventable {
 		this.playerNumber = playerNr;
 		this.island = island;
 
-		citizienCount = new int[citizienLevels];
-		citizienHappiness = new float[citizienLevels];
-		criticalAvaibilityNeed = new bool[citizienLevels];
 
 		itemIDtoTradeItem = new Dictionary<int, TradeItem> ();
 		myStructures = new List<Structure>();
 		inventory = new CityInventory (name);
-
 
 		Setup ();
 
 		for (int i = 0; i < citizienCount.Length; i++) {
 			citizienCount [i] = 0;
 			citizienHappiness [i] = 0.5f;
+			criticalAvaibilityNeed [i] = false;
 		}
 		//temporary
 //		Item temp = PrototypController.Instance.allItems [49].Clone ();
@@ -101,7 +98,20 @@ public class City : IGEventable {
 		if(idToNeed==null){
 			return;
 		}
+		itemNeeds = new List<Need> ();
+		structureNeeds = new List<Need> ();
 		List<Need> allNeeds = World.getCopieOfAllNeeds();
+		if(citizienHappiness == null){
+			citizienCount = new int[citizienLevels];
+			citizienHappiness = new float[citizienLevels];
+			criticalAvaibilityNeed = new bool[citizienLevels];
+
+			for (int i = 0; i < citizienCount.Length; i++) {
+				citizienCount [i] = 0;
+				citizienHappiness [i] = 0.5f;
+				criticalAvaibilityNeed [i] = false;
+			}
+		}
 		for (int i = 0; i < allNeeds.Count; i++) {
 			if(allNeeds[i].IsItemNeed()){
 				itemNeeds.Add (allNeeds [i]);
@@ -110,7 +120,10 @@ public class City : IGEventable {
 				structureNeeds.Add (allNeeds [i]);
 			}
 		}
+
+		// THINGS NEED TO BE LOADED IN 
 		useTick = 30f;
+
 	}
 	public IEnumerable<Structure> Load(){
 		Setup ();
@@ -188,29 +201,31 @@ public class City : IGEventable {
 		useTickTimer -= deltaTime;
 		if(useTickTimer<=0){
 			useTickTimer = useTick;
-			int[] levelCount = new int[citizienLevels];
-			float[] sumOfPerc = new float[citizienLevels];
-			foreach(Need need in itemNeeds){
-				need.TryToConsumThisIn (this,citizienCount);
-				levelCount [need.startLevel]++;
-				sumOfPerc [need.startLevel] += need.percantageAvailability;
-				if(need.percantageAvailability<0.4f){
-					criticalAvaibilityNeed [need.startLevel] = true;
-				}
-			}
-			float[] percentagesPerLevel = new float[citizienLevels];
-			float percantageSummed=0;
-			for (int i = 0; i < citizienLevels; i++) {
-				percentagesPerLevel [i] = sumOfPerc [i] / levelCount [i];
-				for (int s = 0; s <= i; s++) {
-					percantageSummed = percentagesPerLevel [s]; 
-				}
-				citizienHappiness [i] = percantageSummed / (i+1);
-			}
+			CalculateNeeds ();
 
 		}
 	}
-
+	public void CalculateNeeds(){
+		int[] levelCount = new int[citizienLevels];
+		float[] sumOfPerc = new float[citizienLevels];
+		foreach(Need need in itemNeeds){
+			need.TryToConsumThisIn (this,citizienCount);
+			levelCount [need.startLevel]++;
+			sumOfPerc [need.startLevel] += need.percantageAvailability;
+			if(need.percantageAvailability<0.4f){
+				criticalAvaibilityNeed [need.startLevel] = true;
+			}
+		}
+		float[] percentagesPerLevel = new float[citizienLevels];
+		float percantageSummed=0;
+		for (int i = 0; i < citizienLevels; i++) {
+			percentagesPerLevel [i] = sumOfPerc [i] / levelCount [i];
+			for (int s = 0; s <= i; s++) {
+				percantageSummed = percentagesPerLevel [s]; 
+			}
+			citizienHappiness [i] = percantageSummed / (i+1);
+		}
+	}
 
 	public void triggerAddCallBack(Structure str){
 		if(cbStructureAdded!=null){
@@ -287,6 +302,9 @@ public class City : IGEventable {
 	}
 
 	public void removeRessource(Item item, int amount){
+		if(amount<0){
+			return;
+		}
 		Item i = item.Clone ();
 		i.count = amount;
 		inventory.removeItemAmount (i);
@@ -295,7 +313,6 @@ public class City : IGEventable {
 	public bool hasItem(Item item){
 		return inventory.hasAnythingOf (item);
 	}
-
 	public bool IsWilderness(){
 		if(playerNumber==-1 && this != island.wilderness){
 			Debug.LogError ("NOT WILDERNESS! But -1 playernumber!? ");

@@ -32,7 +32,8 @@ public class HomeBuilding : Structure {
 	public int maxLivingSpaces {get{ return HomeData.maxLivingSpaces;}}
 	public float increaseSpeed {get{ return HomeData.increaseSpeed;}}
 	public float decreaseSpeed {get{ return HomeData.decreaseSpeed;}}
-	public bool canUpgrade;
+	bool canUpgrade;
+
 	#endregion
 
 
@@ -67,6 +68,8 @@ public class HomeBuilding : Structure {
 		foreach (Tile t in neighbourTiles) {
 			t.RegisterTileStructureChangedCallback (OnTStructureChange);
 		}
+		City.addPeople (buildingLevel,people);
+
 	}
 
 	public override void update (float deltaTime) {
@@ -78,8 +81,8 @@ public class HomeBuilding : Structure {
 		float structurePercentage = 0;
 		int count = 0;
 		bool percCritical = City.getNeedCriticalForLevel(buildingLevel);
-
-		foreach (Need n in City.structureNeeds) {
+		Player myPlayer = PlayerController.Instance.GetPlayer (playerNumber);
+		foreach (Need n in myPlayer.getUnlockedStructureNeeds(buildingLevel)) {
 			Player pc = PlayerController.Instance.GetPlayer (playerNumber);
 			if (n.startLevel <= buildingLevel && n.popCount <= pc.maxPopulationCount) {
 				if(isInRangeOf (n.structure)){
@@ -88,38 +91,43 @@ public class HomeBuilding : Structure {
 				count++;
 			}
 		}
-		structurePercentage /= count; 
+		if (count == 0) {
+			allPercentage = City.getHappinessForCitizenLevel (buildingLevel);
+		} else {
+			allPercentage = City.getHappinessForCitizenLevel (buildingLevel) + structurePercentage;
+			structurePercentage /= count; 
+			allPercentage /= 2;
+		}
 
-		allPercentage = City.getHappinessForCitizenLevel (buildingLevel) + structurePercentage;
-		allPercentage /= 2;
-
-		if (allPercentage < 0.4f && percCritical) {
+		if (allPercentage < 0.4f || percCritical) {
 			decTimer += deltaTime;
 			incTimer -= deltaTime;
 			incTimer = Mathf.Clamp (incTimer, 0, increaseSpeed);
 			if (decTimer >= decreaseSpeed) {
-				Debug.Log ("DECREASE");
 				TryToDecreasePeople();
 				decTimer = 0;
 			}
-		} else
-		if (allPercentage > 0.4f && allPercentage < 0.85f) {
+		} 
+		else if (allPercentage > 0.4f && allPercentage < 0.85f) {
 			incTimer -= deltaTime;
 			incTimer = Mathf.Clamp (incTimer, 0, increaseSpeed);
 			decTimer -= deltaTime;
 			decTimer = Mathf.Clamp (decTimer, 0, decreaseSpeed);
-		} else 
-		if (allPercentage > 0.85f) {
+		}  
+		else if (allPercentage > 0.85f) {
 			incTimer += deltaTime;
 			decTimer -= deltaTime;
 			decTimer = Mathf.Clamp (decTimer, 0, decreaseSpeed);
 			if (incTimer >= increaseSpeed) {
-				Debug.Log ("INCREASE");
 				incTimer = 0;
+				if(people==maxLivingSpaces && myPlayer.hasUnlockedAllNeeds(buildingLevel)){
+					canUpgrade = true;
+				}
 				TryToIncreasePeople ();
 			}
 		}
 	}
+
 	private void TryToIncreasePeople(){
 		if(people>=maxLivingSpaces){
 			return;
@@ -138,6 +146,13 @@ public class HomeBuilding : Structure {
 		if(old is Road == false || now is Road == false){
 			return;
 		}
+	}
+	public bool isStructureNeedFullfilled(Need need){
+		if(need.IsItemNeed()){
+			Debug.LogError ("wrong need got called here! " + need.ID);
+			return false;
+		}
+		return isInRangeOf (need.structure);
 	}
 	public bool isInRangeOf(NeedsBuilding str){
 		if(str==null){
@@ -163,10 +178,14 @@ public class HomeBuilding : Structure {
 		City.removePeople (buildingLevel,people);
 	}
 	public void UpgradeHouse(){
-		if(canUpgrade==false){
+		if(canUpgrade==false&&IsMaxLevel()){
 			return;
 		}
+		ID += 1; // we need to change to the other House type
 		buildingLevel += 1;
+
+		cbStructureChanged (this);
+
 //		Homedata.maxLivingSpaces *= 2; // TODO load this in from somewhere
 		canUpgrade = false;
 	}
@@ -174,5 +193,11 @@ public class HomeBuilding : Structure {
 		buildingLevel -= 1;
 //		Homedata.maxLivingSpaces /= 2; // TODO load this in from somewhere
 
+	}
+	public bool BuildingCanBeUpgraded(){
+		return IsMaxLevel () == false && canUpgrade;
+	}
+	public bool IsMaxLevel(){
+		return ID == 23; //TODO Change this to smth flexibel not static check
 	}
 }

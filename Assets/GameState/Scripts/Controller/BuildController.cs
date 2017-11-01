@@ -50,7 +50,7 @@ public class BuildController : MonoBehaviour {
 
 	public void Awake(){
 		if (Instance != null) {
-			Debug.LogError("There should never be two world controllers.");
+			Debug.LogError("There should never be two BuildController.");
 		}
 		Instance = this;
 		if (noBuildCost && noUnitRestriction) {

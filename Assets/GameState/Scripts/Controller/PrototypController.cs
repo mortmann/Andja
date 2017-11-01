@@ -1,17 +1,15 @@
 ﻿using System;
-using System.Reflection;
-using System.Linq.Expressions;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
+using System.Collections.ObjectModel;
+using System.Linq.Expressions;
+using System.Reflection;
 using System.Xml;
 using System.Xml.Serialization;
-
-public enum Language {English,German}
+using UnityEngine;
 
 public class PrototypController : MonoBehaviour {
 	public const int StartID = 1;
-	public Language selectedLanguage = Language.English;
 
 	public static PrototypController Instance;
 	public Dictionary<int,Structure>  structurePrototypes;
@@ -43,8 +41,12 @@ public class PrototypController : MonoBehaviour {
 		}
 		return needs;
 	}
+
+	public ReadOnlyCollection<Need> getAllNeeds(){
+		return new ReadOnlyCollection<Need> (allNeeds);
+	}
 	// Use this for initialization
-	void Awake () {
+	void Awake () {		
 		if (Instance != null) {
 			Debug.LogError("There should never be two world controllers.");
 		}
@@ -473,7 +475,7 @@ public class PrototypController : MonoBehaviour {
 					//				Debug.LogWarning (fi.Name + " selected language not avaible!");
 					continue;
 				}
-				XmlNode textNode = n.SelectSingleNode("entry[@lang='"+selectedLanguage.ToString ()+"']");
+				XmlNode textNode = n.SelectSingleNode("entry[@lang='"+UILanguageController.selectedLanguage.ToString ()+"']");
 
 				if(textNode!=null){
 					fi.SetValue(data, Convert.ChangeType (textNode.InnerXml,fi.FieldType));

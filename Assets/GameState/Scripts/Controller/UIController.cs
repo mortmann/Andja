@@ -243,7 +243,7 @@ public class UIController : MonoBehaviour {
 		tradeMapCanvas.SetActive (false);
 	}
 	public void Escape(bool dontOpenPause=false) {
-		if(AnyMenuOpen ()==false&&dontOpenPause==false){
+		if(AnyMenuOpen ()==false&&dontOpenPause==false&&MouseController.Instance.mouseState!=MouseState.Idle){
 			TogglePauseMenu ();
 		}
 		CloseConsole ();

@@ -118,6 +118,6 @@ public class GS_Selectable : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
      * Play the 'tick' sound when we move a slider.
      */
     public void OnSliderValueChange() {
-        MenuAudioManager.instance.PlaySliderSound();
+//        MenuAudioManager.instance.PlaySliderSound();
     }
 }

@@ -133,7 +133,9 @@ public class Road : Structure {
 			Route.removeRoadTile (BuildTile);
 		}
 	}
-
+	public override string GetSpriteName (){
+		return base.GetSpriteName () +connectOrientation;
+	}
 
 	public void RegisterOnRoadCallback(Action<Road> cb) {
 		cbRoadChanged += cb;

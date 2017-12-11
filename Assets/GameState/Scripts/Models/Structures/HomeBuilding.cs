@@ -183,7 +183,7 @@ public class HomeBuilding : Structure {
 		}
 		ID += 1; // we need to change to the other House type
 		buildingLevel += 1;
-
+		_homeData = (HomePrototypeData)PrototypController.Instance.GetStructurePrototypDataForID (ID);
 		cbStructureChanged (this);
 
 //		Homedata.maxLivingSpaces *= 2; // TODO load this in from somewhere

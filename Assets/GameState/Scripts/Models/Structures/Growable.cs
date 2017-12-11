@@ -94,6 +94,9 @@ public class Growable : OutputStructure {
 		}
 		return true;
 	}
+	public override string GetSpriteName (){
+		return base.GetSpriteName () + "_" + currentStage;
+	}
 	public void Reset (){
 		output[0].count = 0;
 		currentStage= 0;

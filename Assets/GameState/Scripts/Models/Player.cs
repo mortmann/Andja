@@ -11,9 +11,9 @@ public class Player : IGEventable {
 	Action<GameEvent> cbEventEnded;
 	List<City> myCities;
 
-	HashSet<Need>[] lockedNeeds;
-	HashSet<Need> unlockedItemNeeds;
-	HashSet<Need>[] unlockedStructureNeeds;
+	public HashSet<Need>[] lockedNeeds { get; protected set;}
+	public HashSet<Need> unlockedItemNeeds { get; protected set;}
+	public HashSet<Need>[] unlockedStructureNeeds { get; protected set;}
 
 	private int _change;
 	public int change { get { return _change;} 
@@ -81,15 +81,23 @@ public class Player : IGEventable {
 	private void Setup(){
 		myCities = new List<City> ();
 		lockedNeeds = new HashSet<Need>[City.citizienLevels];
+		unlockedStructureNeeds = new HashSet<Need>[City.citizienLevels];
+		unlockedItemNeeds = new HashSet<Need> ();
+
+		for (int i = 0; i < City.citizienLevels; i++) {
+			lockedNeeds [i] = new HashSet<Need> ();
+			unlockedStructureNeeds [i] = new HashSet<Need> ();
+		}
 		foreach(Need n in PrototypController.Instance.getCopieOfAllNeeds ()){
-			if(lockedNeeds[n.startLevel]==null){
-				lockedNeeds [n.startLevel] = new HashSet<Need> ();
-			}
 			lockedNeeds [n.startLevel].Add (n);
 		}
-		unlockedItemNeeds = new HashSet<Need> ();
-		unlockedStructureNeeds = new HashSet<Need>[City.citizienLevels];
-
+		for(int i = 0; i <= maxPopulationLevel; i++){
+			int count = maxPopulationCount;
+			if(i<maxPopulationLevel){
+				count = int.MaxValue;
+			}
+			needUnlockCheck (i, count);
+		}
 		RegisterMaxPopulationCountChange (needUnlockCheck);
 
 	}
@@ -108,24 +116,26 @@ public class Player : IGEventable {
 	}
 	private void needUnlockCheck(int level, int count){
 		//TODO Replace this with a less intense check
+		HashSet<Need> toRemove = new HashSet<Need> ();
 		foreach(Need need in lockedNeeds[level]){
 			if(need.startLevel!=level){
 				return;
 			}
-			if(need.popCount<count){
+			if(need.popCount>count){
 				return;
 			}
-			lockedNeeds[level].Remove (need);
+			toRemove.Add (need);
 			if(need.IsItemNeed()){
 				unlockedItemNeeds.Add (need);
 			} else {
-				if(unlockedStructureNeeds[need.startLevel]==null){
-					unlockedStructureNeeds [need.startLevel] = new HashSet<Need> ();
-				}
 				unlockedStructureNeeds[need.startLevel].Add (need);
 			}
-			cbNeedUnlocked (need);
+			if(cbNeedUnlocked!=null)
+				cbNeedUnlocked (need);
 		}	
+		foreach(Need need in toRemove){
+			lockedNeeds [level].Remove (need);
+		}
 	}
 	public HashSet<Need> getUnlockedStructureNeeds(int level){
 		return unlockedStructureNeeds [level];
@@ -133,6 +143,18 @@ public class Player : IGEventable {
 	public bool hasUnlockedAllNeeds(int level){
 		return lockedNeeds [level].Count == 0;
 	}
+	public bool hasUnlockedNeed(Need n){
+		if (n == null) {
+			Debug.Log ("??? Need is null!");
+			return false;
+		}
+		if (lockedNeeds [n.startLevel] == null) {
+			Debug.Log ("??? lockedNeeds is null!");
+			return false;
+		}
+		return lockedNeeds [n.startLevel].Contains (n)==false;
+	}
+
 	public void reduceMoney(int money) {
 		if (money < 0) {
 			return;	

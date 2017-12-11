@@ -302,6 +302,9 @@ public abstract class Structure : IGEventable {
 	public virtual void OnEventEndedVirtual(GameEvent ge){
 		ge.InfluenceTarget (this, false);
 	}
+	public virtual string GetSpriteName(){
+		return spriteName;
+	}
 	#endregion 
 
 	#region callbacks

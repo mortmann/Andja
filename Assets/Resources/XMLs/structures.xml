@@ -624,7 +624,7 @@
          <buildingRange>0</buildingRange>
          <PopulationLevel>1</PopulationLevel>
          <PopulationCount>0</PopulationCount>
-         <StructureLevel>0</StructureLevel>
+         <StructureLevel>1</StructureLevel>
          <tileWidth>3</tileWidth>
          <tileHeight>3</tileHeight>
          <canRotate>true</canRotate>
@@ -673,7 +673,7 @@
          <buildingRange>0</buildingRange>
          <PopulationLevel>2</PopulationLevel>
          <PopulationCount>0</PopulationCount>
-         <StructureLevel>0</StructureLevel>
+         <StructureLevel>2</StructureLevel>
          <tileWidth>3</tileWidth>
          <tileHeight>3</tileHeight>
          <canRotate>true</canRotate>
@@ -725,7 +725,7 @@
          <buildingRange>0</buildingRange>
          <PopulationLevel>3</PopulationLevel>
          <PopulationCount>0</PopulationCount>
-         <StructureLevel>0</StructureLevel>
+         <StructureLevel>3</StructureLevel>
          <tileWidth>3</tileWidth>
          <tileHeight>3</tileHeight>
          <canRotate>true</canRotate>

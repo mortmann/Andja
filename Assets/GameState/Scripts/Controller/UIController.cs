@@ -35,7 +35,7 @@ public class UIController : MonoBehaviour {
 			Debug.LogError ("There are two uicontroller"); 
 		}
 		Instance = this;
-		ItemImages = Resources.LoadAll<Sprite> ("Textures/Items/items");
+		ItemImages = Resources.LoadAll<Sprite> ("Textures/Items/");
 	}
 
 	public void OpenStructureUI(Structure str){

@@ -8,7 +8,6 @@
 108 Hanfballen
 109 Hanfkleidung K 
 
-
 201 Getreide
 202 Mehl
 203 Brot F
@@ -23,12 +22,12 @@
 212 Schweinefleisch F
 213 Leder 
 214 Lederschuhe K
-215 Hopfen
-216 Bier T
-217 Gewürze L
-218 Kupfer
-219 Kupferbarren
-220 Kupferbesteck L
+215 Gewürze L
+216 Kupfer
+217 Kupferbarren
+218 Kupferbesteck L
+219 Hopfen
+220 Bier T
 
 301 Lehm
 302 Sand
@@ -66,12 +65,14 @@
 410 Gold
 411 Goldbarren
 412 Roh-Diamanten
-413 Schmuck L
-414 Lampenöl L
-415 Lampen
+413 Diamanten
+414 Schmuck L
+415 Lampenöl L
 416 Kakao 
 417 Süßigkeiten F
 418 Teppich  L
+419 Luxusbesteck  L
+ Lampen?
 
 -Rum/Met?
 

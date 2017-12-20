@@ -33,6 +33,9 @@ public class CameraController : MonoBehaviour {
 			showBounds.x = EditorController.Instance.editorIsland.width;
 			showBounds.y = EditorController.Instance.editorIsland.height;
 		} else {
+			if(WorldController.Instance.isLoaded == false){
+				Camera.main.transform.position = new Vector3 (World.current.Width / 2, World.current.Height / 2, Camera.main.transform.position.z);
+			}
 			middle = Camera.main.ScreenToWorldPoint (new Vector3 (Camera.main.pixelWidth/2, Camera.main.pixelHeight/2));
 			middleTile = World.current.GetTileAt (middle.x,middle.y);
 			World w = World.current;

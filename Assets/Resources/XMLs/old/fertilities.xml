@@ -1,58 +1,103 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<Fertilities>
-	<Fertility ID="0">
-		<EN_Name>Hemp</EN_Name>
-		<DE_Name>Hanf</DE_Name>
-		<Climate>1</Climate>
-	</Fertility>
-	<Fertility ID="1">
-		<EN_Name>Wheat</EN_Name>
-		<DE_Name>Getreide</DE_Name>
-		<Climate>0;1</Climate>
-	</Fertility>
-	<Fertility ID="2">
-		<EN_Name>Hop</EN_Name>
-		<DE_Name>Hopfen</DE_Name>
-		<Climate>0;1</Climate>
-	</Fertility>
-	<Fertility ID="3">
-		<EN_Name>Spices</EN_Name>
-		<DE_Name>Gewürze</DE_Name>
-		<Climate>2</Climate>
-	</Fertility>
-	<Fertility ID="4">
-		<EN_Name>Coffee</EN_Name>
-		<DE_Name>Kaffee</DE_Name>
-		<Climate>2</Climate>
-	</Fertility>
-	<Fertility ID="5">
-		<EN_Name>Oilves</EN_Name>
-		<DE_Name>Oliven</DE_Name>
-		<Climate>2</Climate>
-	</Fertility>
-	<Fertility ID="6">
-		<EN_Name>Silk</EN_Name>
-		<DE_Name>Seide</DE_Name>
-		<Climate>2</Climate>
-	</Fertility>
-	<Fertility ID="7">
-		<EN_Name>Coca</EN_Name>
-		<DE_Name>Kakao</DE_Name>
-		<Climate>2</Climate>
-	</Fertility>
-	<Fertility ID="8">
-		<EN_Name>Sugarcone</EN_Name>
-		<DE_Name>Zuckerrohr</DE_Name>
-		<Climate>2</Climate>
-	</Fertility>
-	<Fertility ID="9">
-		<EN_Name>Wine</EN_Name>
-		<DE_Name>Wein</DE_Name>
-		<Climate>2</Climate>
-	</Fertility>
-	<Fertility ID="10">
-		<EN_Name>Herbs</EN_Name>
-		<DE_Name>Heilkräuter</DE_Name>
-		<Climate>0</Climate>
-	</Fertility>
-</Fertilities>
+<fertilities>
+   <Fertility ID="0">
+      <Name>
+         <entry lang="English">Hemp</entry>
+         <entry lang="German">Hanf</entry>
+      </Name>
+      <climates>
+         <Climate>1</Climate>
+      </climates>
+   </Fertility>
+   <Fertility ID="1">
+      <Name>
+         <entry lang="English">Wheat</entry>
+         <entry lang="German">Getreide</entry>
+      </Name>
+      <climates>
+         <Climate>0</Climate>
+         <Climate>1</Climate>
+      </climates>
+   </Fertility>
+   <Fertility ID="2">
+      <Name>
+         <entry lang="English">Hop</entry>
+         <entry lang="German">Hopfen</entry>
+      </Name>
+      <climates>
+         <Climate>0</Climate>
+         <Climate>1</Climate>
+      </climates>
+   </Fertility>
+   <Fertility ID="3">
+      <Name>
+         <entry lang="English">Spices</entry>
+         <entry lang="German">Gewürze</entry>
+      </Name>
+      <climates>
+         <Climate>2</Climate>
+      </climates>
+   </Fertility>
+   <Fertility ID="4">
+      <Name>
+         <entry lang="English">Coffee</entry>
+         <entry lang="German">Kaffee</entry>
+      </Name>
+      <climates>
+         <Climate>2</Climate>
+      </climates>
+   </Fertility>
+   <Fertility ID="5">
+      <Name>
+         <entry lang="English">Oilves</entry>
+         <entry lang="German">Oliven</entry>
+      </Name>
+      <climates>
+         <Climate>2</Climate>
+      </climates>
+   </Fertility>
+   <Fertility ID="6">
+      <Name>
+         <entry lang="English">Silk</entry>
+         <entry lang="German">Seide</entry>
+      </Name>
+      <climates>
+         <Climate>2</Climate>
+      </climates>
+   </Fertility>
+   <Fertility ID="7">
+      <Name>
+         <entry lang="English">Coca</entry>
+         <entry lang="German">Kakao</entry>
+      </Name>
+      <climates>
+         <Climate>2</Climate>
+      </climates>
+   </Fertility>
+   <Fertility ID="8">
+      <Name>
+         <entry lang="English">Sugarcone</entry>
+         <entry lang="German">Zuckerrohr</entry>
+      </Name>
+      <climates>
+         <Climate>2</Climate>
+      </climates>
+   </Fertility>
+   <Fertility ID="9">
+      <Name>
+         <entry lang="English">Wine</entry>
+         <entry lang="German">Wein</entry>
+      </Name>
+      <climates>
+         <Climate>2</Climate>
+      </climates>
+   </Fertility>
+   <Fertility ID="10">
+      <Name>
+         <entry lang="English">Herbs</entry>
+         <entry lang="German">Heilkräuter</entry>
+      </Name>
+      <climates>
+         <Climate>0</Climate>
+      </climates>
+   </Fertility>
+</fertilities>

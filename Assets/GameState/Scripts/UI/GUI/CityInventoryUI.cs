@@ -37,7 +37,7 @@ public class CityInventoryUI : MonoBehaviour {
 			// or can it be move to itemui?
 			// changes in th future maybe
 			Item i = item.Clone ();
-			iui.AddListener (( data) => {
+			iui.AddClickListener (( data) => {
 				OnItemClick (i);
 			});
 

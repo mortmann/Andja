@@ -16,14 +16,12 @@ public class OutputPrototypData : StructurePrototypeData {
 [JsonObject(MemberSerialization.OptIn)]
 public abstract class OutputStructure : Structure {
 	#region Serialize
-
 	[JsonPropertyAttribute] public List<Worker> myWorker;
 	[JsonPropertyAttribute] public float produceCountdown;
-	[JsonPropertyAttribute] protected Item[] _output; // FIXME DOESNT GET LOADED IN!??!? why?
-
+	protected Item[] _output; // FIXME DOESNT GET LOADED IN!??!? why? fixed?
 	#endregion
 	#region RuntimeOrOther
-	public Item[] output {
+	[JsonPropertyAttribute] public virtual Item[] output {
 		get {
 			if(_output == null){
 				if(OutputData.output==null){

@@ -4,12 +4,13 @@ using System;
 
 using Newtonsoft.Json;
 
+public enum InputTyp { AND, OR }
+
 public class ProductionPrototypeData : OutputPrototypData {
-	public int[] maxIntake;
 	public Item[] intake;
+	public InputTyp myInputTyp;
 }
-
-
+	
 [JsonObject(MemberSerialization.OptIn)]
 public class ProductionBuilding : OutputStructure {
 
@@ -21,10 +22,16 @@ public class ProductionBuilding : OutputStructure {
 				if(ProductionData.intake==null){
 					return null;
 				}
-				_intake = new Item[ProductionData.intake.Length];
-				for(int i = 0; i<ProductionData.intake.Length;i++){
-					_intake [i] = ProductionData.intake [i].Clone();
-				}
+				if(ProductionData.myInputTyp == InputTyp.AND){
+					_intake = new Item[ProductionData.intake.Length];
+					for(int i = 0; i<ProductionData.intake.Length;i++){
+						_intake [i] = ProductionData.intake [i].Clone();
+					}
+				} 
+				if(ProductionData.myInputTyp == InputTyp.OR){
+					_intake = new Item[1];
+					_intake [0] = ProductionData.intake [0].Clone();
+				} 
 			}
 			return _intake;
 		}
@@ -35,11 +42,30 @@ public class ProductionBuilding : OutputStructure {
 
 	#endregion
 	#region RuntimeOrOther
+	private int _orItemIndex=int.MinValue; //TODO think about to switch to short if it needs to save space 
+	public int orItemIndex {
+		get {
+			if(_orItemIndex==int.MinValue){
+				for (int i = 0; i < ProductionData.intake.Length; i++) {
+					Item item = ProductionData.intake [i];
+					if (item.ID == MyIntake [0].ID) {
+						_orItemIndex = i;
+					}
+				}
+			}
+			return _orItemIndex;
+		}
+		set {
+			_orItemIndex = value;
+		}
+	}
+
 
 	public Dictionary<OutputStructure,Item[]> RegisteredStructures;
 	MarketBuilding nearestMarketBuilding;
 //	public int[] needIntake { get  { return ProductionData.needIntake; }}
-	public int[] maxIntake { get  { return ProductionData.maxIntake; }}
+	public InputTyp myInputTyp { get  { return ProductionData.myInputTyp; }}
+
 	#endregion
 
 	protected ProductionPrototypeData _productionData;
@@ -92,8 +118,6 @@ public class ProductionBuilding : OutputStructure {
 		if(output == null){
 			return;
 		}
-
-
 		for (int i = 0; i < output.Length; i++) {
 			if (output[i].count == maxOutputStorage) {
 				return;
@@ -102,12 +126,8 @@ public class ProductionBuilding : OutputStructure {
 
 		base.update_Worker (deltaTime);
 
-		if (ProductionData.intake != null) {
-			for (int i = 0; i < MyIntake.Length; i++) {
-				if (ProductionData.intake [i].count > MyIntake [i].count) {
-					return;
-				}
-			}
+		if(hasRequiredInput() == false){
+			return;
 		}
 		produceCountdown += deltaTime;
 		if(produceCountdown >= produceTime) {
@@ -118,13 +138,30 @@ public class ProductionBuilding : OutputStructure {
 				}
 			}
 			for (int i = 0; i < output.Length; i++) {
-				output[i].count++;
-
+				output[i].count += OutputData.output[i].count;
 				if (cbOutputChange != null) {
 					cbOutputChange (this);
 				}
 			}
 		}
+	}
+	public bool hasRequiredInput(){
+		if (ProductionData.intake == null) {
+			return true;
+		}
+		if(myInputTyp == InputTyp.AND){
+			for (int i = 0; i < MyIntake.Length; i++) {
+				if (ProductionData.intake [i].count > MyIntake [i].count) {
+					return false;
+				}
+			}
+		}
+		else if(myInputTyp == InputTyp.OR){
+			if (ProductionData.intake [orItemIndex].count > MyIntake [0].count) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	public override void SendOutWorkerIfCan (){
@@ -133,8 +170,8 @@ public class ProductionBuilding : OutputStructure {
 		}
 		Dictionary<Item,int> needItems = new Dictionary<Item, int> ();
 		for (int i = 0; i < MyIntake.Length; i++) {
-			if (maxIntake[i] > MyIntake[i].count) {
-				needItems.Add ( MyIntake [i].Clone (),maxIntake[i]-MyIntake[i].count );
+			if (GetMaxIntakeForIntakeIndex(i) > MyIntake[i].count) {
+				needItems.Add ( MyIntake [i].Clone (),GetMaxIntakeForIntakeIndex(i)-MyIntake[i].count );
 			}
 		}
 		if(needItems.Count == 0){
@@ -145,7 +182,7 @@ public class ProductionBuilding : OutputStructure {
 			for (int i = MyIntake.Length - 1; i >= 0; i--) {
 				if(City.hasItem (MyIntake[i])){
 					Item item = MyIntake [i].Clone ();
-					item.count = maxIntake [i] - MyIntake [i].count;
+					item.count = GetMaxIntakeForIntakeIndex(i) - MyIntake [i].count;
 					getItems.Add (item);
 				}
 			}
@@ -179,12 +216,13 @@ public class ProductionBuilding : OutputStructure {
 		}
 
 	}
+
 	public bool addToIntake (Inventory toAdd){
 		if(MyIntake == null){
 			return false;
 		}
 		for(int i = 0; i < MyIntake.Length; i++) {
-			if((MyIntake[i].count+ toAdd.GetAmountForItem(MyIntake[i])) > maxIntake[i]) {
+			if((MyIntake[i].count+ toAdd.GetAmountForItem(MyIntake[i])) > GetMaxIntakeForIntakeIndex(i)) {
 				return false;
 			}
 			MyIntake[i].count += toAdd.GetAmountForItem(MyIntake[i]);
@@ -194,15 +232,15 @@ public class ProductionBuilding : OutputStructure {
 
 		return true;
 	}
+
 	public override Item[] GetRequieredItems(OutputStructure str,Item[] items){
-		
 		List<Item> all = new List<Item> ();
 		for (int i = MyIntake.Length - 1; i >= 0; i--) {
 			int id = MyIntake [i].ID;
 			for (int s = 0; s < items.Length; s++) {
 				if(items[i].ID==id){
 					Item item = items [i].Clone ();
-					item.count = maxIntake[i] - MyIntake [i].count;
+					item.count = GetMaxIntakeForIntakeIndex(i) - MyIntake [i].count;
 					if(item.count>0)
 						all.Add (item);
 				}
@@ -250,6 +288,36 @@ public class ProductionBuilding : OutputStructure {
 		}
 
 	}
+
+	public void ChangeInput(Item change){
+		if(change == null){
+			return;
+		}
+		if(myInputTyp == InputTyp.AND){
+			return;
+		}
+		for (int i = 0; i < ProductionData.intake.Length; i++) {
+			Item item = ProductionData.intake [i];
+			if (item.ID == change.ID) {
+				MyIntake [0] = item.Clone ();
+				break;
+			}
+		}
+	}
+	/// <summary>
+	/// Give an index for the needed Item, so only use in for loops
+	/// OR
+	/// for OR Inake use with orItemIndex
+	/// </summary>
+	/// <param name="i">The index.</param>
+	public int GetMaxIntakeForIntakeIndex(int itemIndex){
+		if(itemIndex<0||itemIndex>ProductionData.intake.Length){
+			Debug.LogError ("GetMaxIntakeMultiplier received an invalid number " + itemIndex);
+			return -1;
+		}
+		return ProductionData.intake[itemIndex].count * 5; //TODO THINK ABOUT THIS
+	}
+
 	public Item[] hasNeedItem(Item[] output){
 		List<Item> items = new List<Item> ();
 		for (int i = 0; i < output.Length; i++) {

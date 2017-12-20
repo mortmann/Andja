@@ -142,6 +142,7 @@ public class TileSpriteController : MonoBehaviour {
 				}
 			} else {
 				sr.material = clearMaterial;
+				darkLayer.SetActive (false);
 //				sr.sortingLayerName = "Tile";
 			}
 		}

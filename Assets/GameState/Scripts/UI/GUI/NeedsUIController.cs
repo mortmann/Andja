@@ -11,7 +11,7 @@ public class NeedsUIController : MonoBehaviour {
 	public GameObject upgradeButton;
 	public Dictionary<Need,NeedUI> needToUI;
 	public List<Need>[] needs;
-	int actualLevel;
+	int currentLevel;
 	HomeBuilding home;
 
 	public void Show (HomeBuilding home) {
@@ -74,7 +74,7 @@ public class NeedsUIController : MonoBehaviour {
 		for (int i = 0; i < needs[level].Count; i++) {
 			needToUI [needs [level][i]].gameObject.SetActive (true);
 		}
-		actualLevel = level;
+		currentLevel = level;
 	}
 
 	public void UpgradeHome(){

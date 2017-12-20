@@ -8,7 +8,7 @@
          <entry lang="English">Companionship </entry>
          <entry lang="German">Gemeinschaft</entry>
       </Name>
-      <structure>401</structure>
+      <structure>0</structure>
       <startLevel>0</startLevel>
       <popCount>0</popCount>
    </Need>
@@ -21,9 +21,9 @@
          <entry lang="English">Belief</entry>
          <entry lang="German">Glauben</entry>
       </Name>
-      <structure>402</structure>
-      <startLevel>0</startLevel>
-      <popCount>500</popCount>
+      <structure>0</structure>
+      <startLevel>1</startLevel>
+      <popCount>0</popCount>
    </Need>
    <Need ID="3">
       <Peasent>1.0</Peasent>
@@ -34,7 +34,7 @@
          <entry lang="English">Fun</entry>
          <entry lang="German">Spaß</entry>
       </Name>
-      <structure>403</structure>
+      <structure>0</structure>
       <startLevel>0</startLevel>
       <popCount>0</popCount>
    </Need>
@@ -47,44 +47,51 @@
          <entry lang="English">Food</entry>
          <entry lang="German">Nahrung</entry>
       </Name>
-      <item ID="102">
+      <item ID="27">
          <count>0</count>
       </item>
       <structure>0</structure>
       <startLevel>0</startLevel>
       <popCount>0</popCount>
    </Need>
-   <Need ID="6">
-      <Peasent>0.02</Peasent>
-      <Citizen>0.03</Citizen>
-      <Patrician>0.02</Patrician>
-      <Nobleman>0.04</Nobleman>
-      <Name>
-         <entry lang="English">Alcohol</entry>
-         <entry lang="German">Alkohol</entry>
-      </Name>
-      <item ID="106">
-         <count>0</count>
-      </item>
-      <structure>0</structure>
-      <startLevel>0</startLevel>
-      <popCount>500</popCount>
-   </Need>
-   <Need ID="7">
-      <Peasent>0.01</Peasent>
-      <Citizen>0.04</Citizen>
-      <Patrician>0.1</Patrician>
-      <Nobleman>0.08</Nobleman>
+   <Need ID="5">
+      <Peasent>3.0</Peasent>
+      <Citizen>2.0</Citizen>
+      <Patrician>1.5</Patrician>
+      <Nobleman>1.0</Nobleman>
       <Name>
          <entry lang="English">Food</entry>
          <entry lang="German">Nahrung</entry>
       </Name>
-      <item ID="103">
-         <count>0</count>
-      </item>
       <structure>0</structure>
       <startLevel>0</startLevel>
-      <popCount>1250</popCount>
+      <popCount>0</popCount>
+   </Need>
+   <Need ID="6">
+      <Peasent>2.0</Peasent>
+      <Citizen>2.0</Citizen>
+      <Patrician>2.0</Patrician>
+      <Nobleman>2.0</Nobleman>
+      <Name>
+         <entry lang="English">Alcohol</entry>
+         <entry lang="German">Alkohol</entry>
+      </Name>
+      <structure>0</structure>
+      <startLevel>0</startLevel>
+      <popCount>0</popCount>
+   </Need>
+   <Need ID="7">
+      <Peasent>1.0</Peasent>
+      <Citizen>1.0</Citizen>
+      <Patrician>1.0</Patrician>
+      <Nobleman>1.0</Nobleman>
+      <Name>
+         <entry lang="English">Food</entry>
+         <entry lang="German">Nahrung</entry>
+      </Name>
+      <structure>0</structure>
+      <startLevel>0</startLevel>
+      <popCount>0</popCount>
    </Need>
    <Need ID="8">
       <Peasent>1.0</Peasent>
@@ -513,22 +520,6 @@
       </Name>
       <structure>0</structure>
       <startLevel>1</startLevel>
-      <popCount>0</popCount>
-   </Need>
-   <Need ID="41">
-      <Peasent>3.0</Peasent>
-      <Citizen>2.0</Citizen>
-      <Patrician>1.5</Patrician>
-      <Nobleman>1.0</Nobleman>
-      <Name>
-         <entry lang="English">Food</entry>
-         <entry lang="German">Nahrung</entry>
-      </Name>
-      <item ID="101">
-         <count>0</count>
-      </item>
-      <structure>0</structure>
-      <startLevel>0</startLevel>
       <popCount>0</popCount>
    </Need>
 </needs>

@@ -89,6 +89,7 @@
       </Name>
       <climates>
          <Climate>2</Climate>
+         <Climate>1</Climate>
       </climates>
    </Fertility>
    <Fertility ID="10">
@@ -98,6 +99,15 @@
       </Name>
       <climates>
          <Climate>0</Climate>
+      </climates>
+   </Fertility>
+   <Fertility ID="11">
+      <Name>
+         <entry lang="English">Sugar</entry>
+         <entry lang="German">Zucker</entry>
+      </Name>
+      <climates>
+         <Climate>2</Climate>
       </climates>
    </Fertility>
 </fertilities>

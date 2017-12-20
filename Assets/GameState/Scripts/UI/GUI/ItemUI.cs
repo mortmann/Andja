@@ -66,8 +66,16 @@ public class ItemUI : MonoBehaviour {
 			slider.GetComponentInChildren<Image> ().color = Color.green;
 		}
 	}
-
-	public void AddListener(UnityAction<BaseEventData> ueb){
+	public void setInactive (bool inactive){
+		Color c = image.color;
+		if(inactive){
+			c.a = 0.5f;
+		} else {
+			c.a = 1;
+		}
+		image.color = c;
+	}
+	public void AddClickListener(UnityAction<BaseEventData> ueb){
 		EventTrigger trigger = GetComponent<EventTrigger> ();
 		EventTrigger.Entry entry = new EventTrigger.Entry( );
 		entry.eventID = EventTriggerType.PointerClick;

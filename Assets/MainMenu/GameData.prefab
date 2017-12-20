@@ -42,7 +42,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   height: 100
   width: 100
-  loadsavegame: save_test_2
+  loadsavegame: 
   mapname: 
   bots: 
   playerCount: 1

@@ -2,6 +2,7 @@
 using System.Collections;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
+using System.Collections.Generic;
 
 public class UIController : MonoBehaviour {
 
@@ -25,8 +26,8 @@ public class UIController : MonoBehaviour {
 
 	Structure openStructure;
 
-	public static Sprite[] ItemImages;
-
+	public static Dictionary<string,Sprite> ItemImages;
+	public static string itemSpriteName = "item_";
 	public static UIController Instance;
 
 	void Start(){
@@ -35,7 +36,12 @@ public class UIController : MonoBehaviour {
 			Debug.LogError ("There are two uicontroller"); 
 		}
 		Instance = this;
-		ItemImages = Resources.LoadAll<Sprite> ("Textures/Items/");
+		Sprite[] sprites = Resources.LoadAll<Sprite> ("Textures/Items/");
+		Debug.Log (sprites.Length + " Item Sprite");
+		ItemImages = new Dictionary<string, Sprite> ();
+		foreach (Sprite item in sprites) {
+			ItemImages [item.name] = item;
+		}
 	}
 
 	public void OpenStructureUI(Structure str){
@@ -281,11 +287,11 @@ public class UIController : MonoBehaviour {
 		consoleCanvas.SetActive (false);
 	}
 	public static Sprite GetItemImageForID(int id){
-		int pic = id - 1;
-		if(ItemImages.Length-1 < pic || pic < 0){
+		if(ItemImages.ContainsKey(itemSpriteName + id) == false){
+			Debug.LogWarning ("Item " + id + " is missing image!");
 			return null;
 		}
-		return ItemImages [pic];
+		return ItemImages [itemSpriteName + id];
 	}
 
 	public bool IsTextFieldFocused(){

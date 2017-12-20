@@ -173,6 +173,10 @@ public class World : IGEventable{
 		List<Fertility> climFer = new List<Fertility>(PrototypController.Instance.GetFertilitiesForClimate(myClimate));
 
 		for (int i = 0; i < fers.Length; i++) {
+			if(climFer.Count==0){
+				Debug.LogWarning("NOT ENOUGH FERTILITIES FOR CLIMATE " + myClimate);
+				break;
+			}
 			Fertility f = climFer[UnityEngine.Random.Range (0,climFer.Count)];
 			climFer.Remove (f);
 			fers [i] = f;

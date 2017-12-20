@@ -64,7 +64,7 @@ public class UnitUI : MonoBehaviour {
 		go.name = "item " + i;
 		if (item.ID != -1) {
 			iui.SetItem (item, inv.maxStackSize);
-			iui.AddListener (( data ) => { OnItemClick( i ); });
+			iui.AddClickListener (( data ) => { OnItemClick( i ); });
 //			EventTrigger trigger = go.GetComponent<EventTrigger> ();
 //			EventTrigger.Entry entry = new EventTrigger.Entry( );
 //			entry.eventID = EventTriggerType.PointerClick;

@@ -15,6 +15,7 @@ public class BuildMenuUIController : MonoBehaviour {
 	GameObject oldButton;
 	int selectedCivLevel = 0;
 	Player player;
+	public bool enableAllBuildings = false;
     // Use this for initialization
     void Start () {
 		nameToGOMap = new Dictionary<string, GameObject> ();
@@ -46,18 +47,14 @@ public class BuildMenuUIController : MonoBehaviour {
 				b.SetActive(false);
 			}
 		}
-		for (int i = 0; i < buttonPopulationsLevelContent.transform.childCount; i++) {
-			GameObject g = buttonPopulationsLevelContent.transform.GetChild (i).gameObject;
-			if (i > player.maxPopulationLevel) {
-				g.GetComponent<Button>().interactable = false; 
-			} else {
-				g.GetComponent<Button>().interactable = true;
-			}
-		}
+		OnMaxPopLevelChange (player.maxPopulationLevel);
 
 		player.RegisterMaxPopulationCountChange (OnMaxPopLevelChange);
 		buildController.RegisterBuildStateChange (OnBuildModeChange);
     }
+	void OnEnable(){
+		
+	}
 	public void OnBuildModeChange (BuildStateModes mode){
 		if(mode!=BuildStateModes.Build){
 			if(oldButton!=null)
@@ -67,7 +64,7 @@ public class BuildMenuUIController : MonoBehaviour {
 	public void OnMaxPopLevelChange(int level){
 		for (int i = 0; i < buttonPopulationsLevelContent.transform.childCount; i++) {
 			GameObject g = buttonPopulationsLevelContent.transform.GetChild (i).gameObject;
-			if (i > level) {
+			if (i > level && enableAllBuildings == false) {
 				g.GetComponent<Button>().interactable = false; 
 			} else {
 				g.GetComponent<Button>().interactable = true; 

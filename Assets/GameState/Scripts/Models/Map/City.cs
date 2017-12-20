@@ -72,7 +72,9 @@ public class City : IGEventable {
 		inventory = new CityInventory (name);
 
 		Setup ();
-
+		citizienCount = new int[citizienLevels];
+		citizienHappiness = new float[citizienLevels];
+		criticalAvaibilityNeed = new bool[citizienLevels];
 		for (int i = 0; i < citizienCount.Length; i++) {
 			citizienCount [i] = 0;
 			citizienHappiness [i] = 0.5f;

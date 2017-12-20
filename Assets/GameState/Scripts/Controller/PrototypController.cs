@@ -280,7 +280,7 @@ public class PrototypController : MonoBehaviour {
 			int ID = int.Parse(node.GetAttribute("ID"));
 
 			FarmPrototypData fpd = new FarmPrototypData ();
-			//THESE are fix and are not changed for any growable
+			//THESE are fix and are not changed for any 
 			//!not anymore
 			SetData<FarmPrototypData> (node,ref  fpd);
 			structurePrototypeDatas.Add (ID,fpd);
@@ -340,15 +340,6 @@ public class PrototypController : MonoBehaviour {
 			SetData<ProductionPrototypeData> (node, ref ppd);
 
 			//DO After loading from file
-			if(ppd.intake!=null)
-				ppd.maxIntake= new int[ppd.intake.Length];
-			if (ppd.intake != null && ppd.intake!=null) {
-				int i=0;
-				foreach(Item needed in ppd.intake){
-					ppd.maxIntake[i] = 5*needed.count; // make it 5 times the needed
-					i++;
-				}
-			}
 
 			structurePrototypeDatas.Add (ID,ppd);
 			structurePrototypes [ID] = new ProductionBuilding (ID,ppd);
@@ -360,7 +351,6 @@ public class PrototypController : MonoBehaviour {
 			int ID = int.Parse (node.GetAttribute ("ID"));
 			StructurePrototypeData spd = new StructurePrototypeData ();
 			//THESE are fix and are not changed for any NeedsBuilding
-			 
 			//!not anymore
 			spd.tileWidth = 2;
 			spd.tileHeight = 2;
@@ -541,7 +531,7 @@ public class PrototypController : MonoBehaviour {
 			return null;
 		}
 		if(allItems.ContainsKey (id)==false){
-			Debug.LogError ("ID was not created! " + id);
+			Debug.LogError ("ITEM ID was not created! " + id);
 			return null;
 		}
 		Item clone = allItems [id].Clone ();
@@ -565,7 +555,7 @@ public class PrototypController : MonoBehaviour {
 			return null;//not needed
 		}
 		if(structurePrototypes.ContainsKey (id)==false){
-			Debug.LogError ("ID was not created before the depending Structure!");
+			Debug.LogError ("ID was not created before the depending Structure! " + id);
 			return null;
 		}
 		return structurePrototypes [id];

@@ -28,6 +28,8 @@ public class WorldController : MonoBehaviour {
 	public float FixedDeltaTime { get { return Time.fixedDeltaTime * timeMultiplier;}}
 
 	public bool IsModal; // If true, a modal dialog box is open so normal inputs should be ignored.
+
+	public bool isLoaded = true;
     // Use this for initialization
     void Awake() {
 		if (Instance != null) {
@@ -36,15 +38,14 @@ public class WorldController : MonoBehaviour {
 		Instance = this;
 
 		GameDataHolder gdh = GameDataHolder.Instance;
-
 		offworldMarket = new OffworldMarket ();
-
 		if (gdh!=null && gdh.loadsavegame!=null && gdh.loadsavegame.Length > 0) {
 //			SaveController.Instance.LoadGameState (gdh.loadsavegame);
 //			gdh.loadsavegame = null;
 		} else {
 			if (gdh != null) {
 				this.world = new World (gdh.width , gdh.height);
+				isLoaded = false;
 			} 
 		}
 //		new OceanPathfinding().SetDestination(world.GetTileAt(22,20),world.GetTileAt(34,56));

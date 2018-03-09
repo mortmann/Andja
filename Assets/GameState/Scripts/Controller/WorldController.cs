@@ -44,7 +44,8 @@ public class WorldController : MonoBehaviour {
 //			gdh.loadsavegame = null;
 		} else {
 			if (gdh != null) {
-				this.world = new World (gdh.width , gdh.height);
+				MapGenerator mg = FindObjectOfType<MapGenerator> ();
+				this.world = new World (mg.GetTiles(), gdh.width , gdh.height);
 				isLoaded = false;
 			} 
 		}

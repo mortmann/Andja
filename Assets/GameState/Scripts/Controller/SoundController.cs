@@ -121,8 +121,7 @@ public class SoundController : MonoBehaviour {
 		AudioSource audio = goal.AddComponent<AudioSource>();
 		// Copied fields can be restricted with BindingFlags
 		System.Reflection.FieldInfo[] fields = audio.GetType ().GetFields(); 
-		foreach (System.Reflection.FieldInfo field in fields)
-		{
+		foreach (System.Reflection.FieldInfo field in fields) {
 			field.SetValue(audio, field.GetValue(copied));
 		}
 	}

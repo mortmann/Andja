@@ -14,14 +14,16 @@ public class EditorController : MonoBehaviour {
 
 
 	public static EditorController Instance { get; protected set; }
-	public EditorIsland editorIsland;
-	public static int width= 100;
-	public static int height= 100;
+	public World world;
+	public static int width  = 100;
+	public static int height = 100;
 	public static Climate climate = Climate.Middle;
 
 	public bool changeTileType;
 	public TileType selectedTileType = TileType.Dirt;
-	public int structureID;
+
+	public Structure structure;
+
 	public int structureStage;
 	public bool DestroyBuilding=false;
 	public BrushTypes brushType = BrushTypes.Square;
@@ -29,8 +31,12 @@ public class EditorController : MonoBehaviour {
 	public string spriteName;
 	static string loadsavegame;
 	int brushSize=1;
-	Action<int,EditorTile> cbStructureCreated;
-	Action<EditorTile> cbStructureDestroyed;
+
+	Action<Structure,Tile> cbStructureCreated;
+	Action<Tile> cbStructureDestroyed;
+
+	Dictionary<Tile,Structure> tileToStructure;
+
 	public bool IsModal; // If true, a modal dialog box is open so normal inputs should be ignored.
 	// Use this for initialization
 	void OnEnable() {
@@ -40,10 +46,10 @@ public class EditorController : MonoBehaviour {
 		Instance = this;
 
 		if (loadsavegame!=null) {
-			CreateWorldFromSaveFile (loadsavegame);
+//			CreateWorldFromSaveFile (loadsavegame);
 			loadsavegame = null;
 		} else {
-			editorIsland = new EditorIsland (width,height,climate);
+			world = new World (width, height);
 		}
 		Camera.main.transform.position = new Vector3(width / 2, height / 2, Camera.main.transform.position.z);
 	}
@@ -67,7 +73,7 @@ public class EditorController : MonoBehaviour {
 		}
 	}
 	public void ChangeTileType(){
-		EditorTile t = GetTileAtWorldCoord (Camera.main.ScreenToWorldPoint(Input.mousePosition));
+		Tile t = GetTileAtWorldCoord (Camera.main.ScreenToWorldPoint(Input.mousePosition));
 		ChangeTileTypeForTile (t);
 		switch (brushType) {
 		case BrushTypes.Square:
@@ -80,15 +86,15 @@ public class EditorController : MonoBehaviour {
 			throw new ArgumentOutOfRangeException ();
 		} 
 	}
-	private void SquareBrush(Action<EditorTile> action, EditorTile t){
+	private void SquareBrush(Action<Tile> action,Tile t){
 		for (int x = -Mathf.FloorToInt ((float)brushSize / 2f); x < Mathf.CeilToInt ((float)brushSize / 2f); x++) {
 			for (int y = -Mathf.FloorToInt ((float)brushSize / 2f); y < Mathf.CeilToInt ((float)brushSize / 2f); y++) {
 				RandomModifier (action,GetTileAtWorldCoord (t.X+x,t.Y+y));
 			}
 		}
 	}
-	private void RoundBrush(Action<EditorTile> action, EditorTile t){
-		List<EditorTile> temp = new List<EditorTile> ();
+	private void RoundBrush(Action<Tile> action, Tile t){
+		List<Tile> temp = new List<Tile> ();
 		float x=0;
 		float y=0;
 		float radius = brushSize + 1f;
@@ -101,31 +107,31 @@ public class EditorController : MonoBehaviour {
 			x = Mathf.RoundToInt (x);
 			y = Mathf.RoundToInt (y);
 			for (int i = 0; i < brushSize; i++) {
-				EditorTile circleTile = GetTileAtWorldCoord (Mathf.RoundToInt (x),Mathf.RoundToInt ( y));
+				Tile circleTile = GetTileAtWorldCoord (Mathf.RoundToInt (x),Mathf.RoundToInt ( y));
 				if (temp.Contains (circleTile) == false) {
 					temp.Add (circleTile);
 				}
 			}
 		}
-		List<EditorTile> tempInner= new List<EditorTile>();
+		List<Tile> tempInner= new List<Tile>();
 		//like flood fill the inner circle
-		Queue<EditorTile> tilesToCheck = new Queue<EditorTile> ();
+		Queue<Tile> tilesToCheck = new Queue<Tile> ();
 		tilesToCheck.Enqueue (t);
 		while (tilesToCheck.Count > 0) {
-			EditorTile et = tilesToCheck.Dequeue ();
+			Tile et = tilesToCheck.Dequeue ();
 			if (temp.Contains (et) == false && tempInner.Contains (et) == false) {
 				tempInner.Add (et);
-				EditorTile[] ns = et.GetNeighbours (false);
-				foreach (EditorTile t2 in ns) {
+				Tile[] ns = et.GetNeighbours (false);
+				foreach (Tile t2 in ns) {
 					tilesToCheck.Enqueue (t2);
 				}
 			}
 		}
-		foreach(EditorTile item in tempInner){
+		foreach(Tile item in tempInner){
 			RandomModifier (action,item);
 		}
 	}
-	private void RandomModifier(Action<EditorTile> action,EditorTile et){
+	private void RandomModifier(Action<Tile> action,Tile et){
 		if(randomChange==100){
 			action (et);
 		}
@@ -137,25 +143,23 @@ public class EditorController : MonoBehaviour {
 		}
 	}
 
-
-
-	private void ChangeTileTypeForTile(EditorTile t){
+	private void ChangeTileTypeForTile(Tile t){
 		TileType oldType=t.Type;
 		t.Type = selectedTileType;
 		t.SpriteName = spriteName;
 		if(selectedTileType==TileType.Ocean){
-			foreach(EditorTile n in t.GetNeighbours (true)){
+			foreach(Tile n in t.GetNeighbours (true)){
 				n.Type = TileType.Shore;
 			}
 		} 
 		if(selectedTileType != TileType.Shore){
 			
 			if(oldType ==TileType.Ocean || oldType ==TileType.Shore){
-				foreach(EditorTile n in t.GetNeighbours (true)){
+				foreach(Tile n in t.GetNeighbours (true)){
 					if(n==null){
 						continue;
 					}
-					List<EditorTile> et = new List<EditorTile> (n.GetNeighbours (true));
+					List<Tile> et = new List<Tile> (n.GetNeighbours (true));
 					if(et.Find (x=>x!=null && x.Type == TileType.Ocean)!=null){;
 						n.Type = TileType.Shore;
 						n.SpriteName = "Shore";
@@ -172,7 +176,7 @@ public class EditorController : MonoBehaviour {
 	}
 	public void CreateStructure(){
 		if(Input.GetMouseButton(0)){
-			EditorTile et = GetTileAtWorldCoord (Camera.main.ScreenToWorldPoint (Input.mousePosition));
+			Tile et = GetTileAtWorldCoord (Camera.main.ScreenToWorldPoint (Input.mousePosition));
 			if(DestroyBuilding){
 				switch (brushType) {
 				case BrushTypes.Square:
@@ -199,24 +203,24 @@ public class EditorController : MonoBehaviour {
 			}
 		}
 	}
-	public void DestroyStructureOnTile(EditorTile et){
-		editorIsland.RemoveStructure (et);
+	public void DestroyStructureOnTile(Tile et){
+		tileToStructure.Remove (et);
 		if (cbStructureDestroyed != null)
 			cbStructureDestroyed (et);
 	}
 	public void ChangeBrushType(int type){
 		brushType = (BrushTypes)type;
 	}
-	private void CreateStructureOnTile(EditorTile et){
-		if(editorIsland.structures.ContainsKey (et)){
+	private void CreateStructureOnTile(Tile et){
+		if(tileToStructure.ContainsKey (et)){
 			return;
 		}
 		if(Tile.IsBuildType (et.Type)==false){
 			return;
 		}
-		editorIsland.AddStructure(structureID,structureStage,et);
+		tileToStructure.Add(et,structure);
 		if(cbStructureCreated!=null)
-			cbStructureCreated(structureID,et);
+			cbStructureCreated(structure,et);
 	}
 	public void setBrushSize(int size){
 		brushSize = size;
@@ -224,37 +228,32 @@ public class EditorController : MonoBehaviour {
 	public void ChangeBuild(bool type){
 		changeTileType = type;
 	}
-	public void RegisterOnStructureCreated(Action<int,EditorTile> strs){
+
+	public void setAge(int age){
+		if (structure is Growable)
+			((Growable)structure).currentStage = age;
+	}
+	public void setStructure(int id){
+		structure = PrototypController.Instance.structurePrototypes [id];
+	}
+	public void RegisterOnStructureCreated(Action<Structure,Tile> strs){
 		cbStructureCreated += strs;
 	}
-	public void UnregisterOnStructureCreated(Action<int,EditorTile> strs){
+	public void UnregisterOnStructureCreated(Action<Structure,Tile> strs){
 		cbStructureCreated -= strs;
 	}
-	public void RegisterOnStructureDestroyed(Action<EditorTile> strs){
+	public void RegisterOnStructureDestroyed(Action<Tile> strs){
 		cbStructureDestroyed += strs;
 	}
-	public void UnregisterOnStructureDestroyed(Action<EditorTile> strs){
+	public void UnregisterOnStructureDestroyed(Action<Tile> strs){
 		cbStructureDestroyed -= strs;
 	}
 
-	internal EditorTile GetTileAtWorldCoord(Vector3 currFramePosition) {
-		if (currFramePosition.x >= editorIsland.width ||currFramePosition.y >= editorIsland.height ) {
-			return null;
-		}
-		if (currFramePosition.x < 0 || currFramePosition.y < 0) {
-			return null;
-		}
-
-		return editorIsland.tiles[Mathf.FloorToInt(currFramePosition.x+0.5f), Mathf.FloorToInt(currFramePosition.y+0.5f)];
+	internal Tile GetTileAtWorldCoord(Vector3 currFramePosition) {
+		return World.current.GetTileAt (currFramePosition.x, currFramePosition.y);
 	}
-	internal EditorTile GetTileAtWorldCoord(int x , int y) {
-		if (x >= editorIsland.width ||y >= editorIsland.height ) {
-			return null;
-		}
-		if (x < 0 || y < 0) {
-			return null;
-		}
-		return editorIsland.tiles[x, y];
+	internal Tile GetTileAtWorldCoord(int x , int y) {
+		return World.current.GetTileAt (x, y);
 	}
 	public void OnBrushRandomChange(float f){
 		this.randomChange = f;
@@ -266,55 +265,6 @@ public class EditorController : MonoBehaviour {
 	/// 
 
 
-	public void SaveWorld(string savename) {
-		Debug.Log("SaveWorld button was clicked.");
-		XmlSerializer serializer = new XmlSerializer( typeof(EditorIsland) );
-
-		TextWriter writer = new StringWriter();
-		serializer.Serialize(writer, editorIsland);
-
-		writer.Close();
-		// Create/overwrite the save file with the xml text.
-
-		// Make sure the save folder exists.
-		if( Directory.Exists(GetSaveGamesPath () ) == false ) {
-			// NOTE: This can throw an exception if we can't create the folder,
-			// but why would this ever happen? We should, by definition, have the ability
-			// to write to our persistent data folder unless something is REALLY broken
-			// with the computer/device we're running on.
-			Directory.CreateDirectory( GetSaveGamesPath ()  );
-		}
-		string filePath = System.IO.Path.Combine(GetSaveGamesPath (),savename+".isl") ;
-		File.WriteAllText( filePath, writer.ToString() );
-
-	}
-	public void LoadWorld(string name) {
-		Debug.Log("LoadWorld button was clicked.");
-		loadsavegame=name;
-
-//		if(quickload){
-//			GameDataHolder gdh = GameDataHolder.Instance;
-//			gdh.loadsavegame = "QuickSave";//TODO CHANGE THIS TO smth not hardcoded
-//		}
-		// Reload the scene to reset all data (and purge old references)
-		SceneManager.LoadScene( "IslandEditor" );
-	}
-	void CreateWorldFromSaveFile(string savegamename) {
-		Debug.Log("CreateWorldFromSaveFile");
-		// Create a world from our save file data.
-
-		XmlSerializer serializer = new XmlSerializer( typeof(EditorIsland) );
-		string saveGameText = File.ReadAllText( System.IO.Path.Combine( GetSaveGamesPath (), savegamename+".isl" ) );
-
-		TextReader reader = new StringReader( saveGameText );
-//		Debug.Log (reader.ToString () + " "+saveGameText); 
-		editorIsland = (EditorIsland)serializer.Deserialize(reader);
-		reader.Close();
-
-		// Center the Camera
-		Camera.main.transform.position = new Vector3( editorIsland.width/2, editorIsland.height/2, Camera.main.transform.position.z );
-		Debug.Log ("LOAD ENDED");
-	}
 	public string GetSaveGamesPath(){
 		return System.IO.Path.Combine(Application.dataPath.Replace ("/Assets","") , "islands");
 	}

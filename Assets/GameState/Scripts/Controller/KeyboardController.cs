@@ -19,14 +19,12 @@ public class KeyboardController : MonoBehaviour {
 	}
 	// Update is called once per frame
 	void Update () {
-
-
 		if (Input.GetKeyDown (KeyCode.Escape)) {
 			mc.Escape ();
-			uic.Escape (BuildController.Instance.BuildState!=BuildStateModes.None);
 			bc.Escape ();
+			uic.Escape (BuildController.Instance.BuildState!=BuildStateModes.None);
 		} 
-		if(uic.IsTextFieldFocused()){
+		if(UIController.IsTextFieldFocused()){
 			return;
 		}
 		if(uic.IsPauseMenuOpen()){

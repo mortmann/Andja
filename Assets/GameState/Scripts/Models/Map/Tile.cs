@@ -16,7 +16,7 @@ using Newtonsoft.Json;
 /// Jungle = Exotic goods Love it here
 /// Mountain = you cant build anything here except mines(andso)
 /// </summary>
-public enum TileType { Ocean, Shore, Water, Dirt, Grass, Stone, Desert, Steppe, Jungle, Mountain };
+public enum TileType { Ocean, Shore, Cliff, Water, Dirt, Grass, Stone, Desert, Steppe, Jungle, Mountain };
 public enum TileMark { None, Highlight, Dark, Reset }
 
 [JsonObject(MemberSerialization.OptIn)]
@@ -29,18 +29,19 @@ public class Tile : IComparable<Tile>, IEqualityComparer<Tile> {
 			return x;
 		}
 	}
-
 	public int Y {
 		get {
 			return y;
 		}
 	}
+	public float Elevation;
+	public float Moisture;
+
 	public virtual string SpriteName {
 		get { return null; }
 		set {
 		}
 	}
-
 	public Vector3 vector { get {return new Vector3 (x, y, 0);} }
 
 	public Tile(){}

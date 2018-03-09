@@ -79,38 +79,61 @@ public class World : IGEventable{
 
 	#endregion
 
-
-    public World(int width = 1000, int height = 1000){
+	/// <summary>
+	/// Initializes a new instance of the <see cref="World"/> class.
+	/// Used in the GameState!
+	/// </summary>
+	/// <param name="tiles">Tiles.</param>
+	/// <param name="width">Width.</param>
+	/// <param name="height">Height.</param>
+    public World(Tile[] tiles, int width = 1000, int height = 1000){
 		this.Width = width;
 		this.Height = height;
+		this.tiles = tiles;
 		SetupWorld ();
 
-		for (int x = 29; x < 41; x++) {
-			for (int y = 39; y < 61; y++) {
-				SetTileAt (x,y,new LandTile (x,y));
-				GetTileAt(x,y).Type = TileType.Shore;
-			}
-		}
-		for (int x = 30; x < 40; x++) {
-			for (int y = 40; y < 60; y++) {
-				SetTileAt (x,y,new LandTile (x,y));
-				GetTileAt(x,y).Type = TileType.Dirt;
-			}
-		}
-		for (int x = 60; x < 70; x++) {
-			for (int y = 40; y < 60; y++) {
-				SetTileAt (x,y,new LandTile (x,y));
-				GetTileAt(x,y).Type = TileType.Dirt;
-			}
-		}
+//		for (int x = 29; x < 41; x++) {
+//			for (int y = 39; y < 61; y++) {
+//				SetTileAt (x,y,new LandTile (x,y));
+//				GetTileAt(x,y).Type = TileType.Shore;
+//			}
+//		}
+//		for (int x = 30; x < 40; x++) {
+//			for (int y = 40; y < 60; y++) {
+//				SetTileAt (x,y,new LandTile (x,y));
+//				GetTileAt(x,y).Type = TileType.Dirt;
+//			}
+//		}
+//		for (int x = 60; x < 70; x++) {
+//			for (int y = 40; y < 60; y++) {
+//				SetTileAt (x,y,new LandTile (x,y));
+//				GetTileAt(x,y).Type = TileType.Dirt;
+//			}
+//		}
 
 //		CreateUnit(GetTileAt(34, 41),PlayerController.currentPlayerNumber,false);
 //		CreateUnit(GetTileAt(34, 47),2,false); 
 //		CreateUnit(GetTileAt(42, 38),PlayerController.currentPlayerNumber,true);    
 //		CreateUnit(GetTileAt(34, 38),2,true);    
 
-		CreateIsland (31, 41);
-		CreateIsland (61, 41);
+//		CreateIsland (31, 41);
+//		CreateIsland (61, 41);
+	}
+	/// <summary>
+	/// Initializes a new instance of the <see cref="World"/> class. Used in the Editor!
+	/// </summary>
+	/// <param name="width">Width.</param>
+	/// <param name="height">Height.</param>
+	public World(int width, int height){
+		this.Width = width;
+		this.Height = height;
+		tiles = new Tile[Width*Height];
+		for (int x = 0; x < Width; x++) {
+			for (int y = 0; y < Height; y++) {
+				SetTileAt (x, y, new Tile (x,y));
+			}
+		}
+
 	}
 	[JsonConstructor]
 	public World(List<Tile> tileList, int Width, int Height){
@@ -127,12 +150,6 @@ public class World : IGEventable{
 	}
 	public void SetupWorld(){
 		current = this;
-		tiles = new Tile[Width*Height];
-		for (int x = 0; x < Width; x++) {
-			for (int y = 0; y < Height; y++) {
-				SetTileAt (x, y, new Tile (x,y));
-			}
-		}
 		allFertilities = PrototypController.Instance.allFertilities;
 		idToFertilities= PrototypController.Instance.idToFertilities;
 //		EventController.Instance.RegisterOnEvent (OnEventCreate,OnEventEnded);

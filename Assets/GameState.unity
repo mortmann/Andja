@@ -2579,6 +2579,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0958238ee6371c5429d80a17aa29c909, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  devCameraZoom: 0
   upper: {x: 0, y: 0, z: 0}
   lower: {x: 0, y: 0, z: 0}
   middle: {x: 0, y: 0, z: 0}
@@ -9459,6 +9460,7 @@ MonoBehaviour:
   dirtSprite: {fileID: 21300008, guid: 080bbf42caa2cac418f89352966c4543, type: 3}
   mountainSprite: {fileID: 21300000, guid: 0c4ad53366d1b6041b0950722c7258ae, type: 3}
   shoreSprite: {fileID: 21300000, guid: c983630864974b244a656ba78cd7b665, type: 3}
+  tilePrefab: {fileID: 1314587207701820, guid: 9a2d501f2d7407a4eb80bc8d91ff7e43, type: 2}
   darkLayerSprite: {fileID: 21300000, guid: b49278ae7e0176143b41bfa33a26693f, type: 3}
   waterLayer: {fileID: 167726, guid: 4fceb91cd8f861c4b95ceb552bfa1bbb, type: 2}
   water: {fileID: 0}
@@ -16699,7 +16701,7 @@ MonoBehaviour:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1182257879}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5f4436d815d35d54aa03e4ce2723cbff, type: 3}
   m_Name: 
@@ -16712,7 +16714,7 @@ MonoBehaviour:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1182257879}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 646b5bc27a658f447b1d929fd5ffbd70, type: 3}
   m_Name: 
@@ -23999,6 +24001,18 @@ Prefab:
     - target: {fileID: 185728, guid: dfbb72e7b75263b4da3c1b05eaa385c6, type: 2}
       propertyPath: m_Name
       value: Constant
+      objectReference: {fileID: 0}
+    - target: {fileID: 11473390, guid: dfbb72e7b75263b4da3c1b05eaa385c6, type: 2}
+      propertyPath: height
+      value: 1000
+      objectReference: {fileID: 0}
+    - target: {fileID: 11473390, guid: dfbb72e7b75263b4da3c1b05eaa385c6, type: 2}
+      propertyPath: width
+      value: 1000
+      objectReference: {fileID: 0}
+    - target: {fileID: 11473390, guid: dfbb72e7b75263b4da3c1b05eaa385c6, type: 2}
+      propertyPath: fire
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: dfbb72e7b75263b4da3c1b05eaa385c6, type: 2}

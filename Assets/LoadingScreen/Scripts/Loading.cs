@@ -7,15 +7,23 @@ public class Loading : MonoBehaviour {
 	AsyncOperation aso;
 	public Text percentText;
 	public bool loadEditor;
+	float sceneLoadingProgress {
+		get { 
+			if (aso == null)
+				return 0;
+			return Mathf.Clamp (1f+(1.1f*aso.progress) * 100,0,100); }
+	}
 	// Use this for initialization
 	void Start () {
-		if(loadEditor==false)
-			aso = SceneManager.LoadSceneAsync ("GameState");
-		else 
+		if(loadEditor)
 			aso = SceneManager.LoadSceneAsync("IslandEditor");
 	}
 	
 	void Update(){
-		percentText.text = Mathf.Clamp (1f+(1.1f*aso.progress) * 100,0,100) + "%";
+		int percantage =(int)( sceneLoadingProgress * 0.7f + MapGenerator.Instance.percantageProgress * 0.3f );
+		percentText.text =  percantage + "%";
+		if(MapGenerator.Instance.isDone&&aso == null)
+			aso = SceneManager.LoadSceneAsync ("GameState");
+		
 	}
 }

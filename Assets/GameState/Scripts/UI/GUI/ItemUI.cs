@@ -75,15 +75,20 @@ public class ItemUI : MonoBehaviour {
 		}
 		image.color = c;
 	}
-	public void AddClickListener(UnityAction<BaseEventData> ueb){
+	public void AddClickListener(UnityAction<BaseEventData> ueb, bool clearAll = false){
 		EventTrigger trigger = GetComponent<EventTrigger> ();
 		EventTrigger.Entry entry = new EventTrigger.Entry( );
 		entry.eventID = EventTriggerType.PointerClick;
-
+		if(clearAll){
+			ClearAllTriggers ();
+		}
 		entry.callback.AddListener( ueb );
 		trigger.triggers.Add( entry );
 	}
-
+	public void ClearAllTriggers(){
+		EventTrigger trigger = GetComponent<EventTrigger> ();
+		trigger.triggers.Clear ();
+	}
 	public void OnMouseEnter(){
 		GameObject.FindObjectOfType<HoverOverScript> ().Show (itemName);
 	}

@@ -15,12 +15,13 @@ public class KeyInputSettings : MonoBehaviour {
 		foreach (Transform item in contentTransform) {
 			Destroy (item.gameObject);
 		}
-		foreach (InputHandler.KeyBind item in InputHandler.GetBinds().Values) {
+		foreach (string name in InputHandler.GetBinds().Keys) {
+			InputHandler.KeyBind item = InputHandler.GetBinds () [name];
 //			InputHandler.KeyBind item = InputHandler.GetBinds () [s];
 			GameObject g = Instantiate (keyPrefab);
-			g.GetComponent<KeyInputSingle>().SetUp (item.name,item.GetPrimaryString(),item.GetSecondaryString(),OnClickButton);
+			g.GetComponent<KeyInputSingle>().SetUp (name,item.GetPrimaryString(),item.GetSecondaryString(),OnClickButton);
 			g.transform.SetParent (contentTransform);
-			buttonNameToGO.Add (item.name,g.GetComponent<KeyInputSingle>());
+			buttonNameToGO.Add (name,g.GetComponent<KeyInputSingle>());
 		}
 	
 	}

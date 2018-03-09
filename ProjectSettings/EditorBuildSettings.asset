@@ -5,13 +5,18 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 1
+  - enabled: 0
     path: Assets/MainMenu.unity
+    guid: 4cf95fe2cc5a7ad41bc40647b5ea51f5
   - enabled: 1
     path: Assets/GameStateLoadingScreen.unity
+    guid: c75cb71b89ebef34f82690345fcefae4
   - enabled: 1
     path: Assets/GameState.unity
-  - enabled: 1
+    guid: aabab82f1c169b142a913fd8852e3ea3
+  - enabled: 0
     path: Assets/EditorLoadingScreen.unity
-  - enabled: 1
+    guid: 7b48b586c35376745bf246dfe0c07c27
+  - enabled: 0
     path: Assets/IslandEditor.unity
+    guid: 46274702288b60f43b3e4ba7750e8a88

@@ -47,8 +47,7 @@ public class MouseController : MonoBehaviour {
 		}
 		set {
 			GameObject.Destroy (previewGO);
-			previewGO = null;
-			HighlightTiles = null;
+			ResetBuilding (null);
 			_structure = value;
 		}
 	}
@@ -238,7 +237,9 @@ public class MouseController : MonoBehaviour {
 		sr.sortingLayerName = "StructuresUI";
 		sr.color = new Color (sr.color.a, sr.color.b, sr.color.g, 0.5f);
 		structure.ExtraBuildUI (previewGO);
-		TileSpriteController.Instance.tileDeciderFunc += TileCityDecider;
+
+		TileSpriteController.Instance.AddDecider (TileCityDecider);
+
 	}
 
 	//FIXME this is not optimal 
@@ -476,7 +477,9 @@ public class MouseController : MonoBehaviour {
 		if(loading){
 			return;// there is no need to call any following
 		}
+		TileSpriteController.Instance.removeDecider (TileCityDecider);
 		GameObject.Destroy (previewGO);
+
 		previewGO = null;
 		structure = null;
 		HighlightTiles = null;
@@ -484,7 +487,6 @@ public class MouseController : MonoBehaviour {
 			SelectedUnit = null;
 			buildFromUnit = false;
 		}
-		TileSpriteController.Instance.removeDecider (TileCityDecider);
 	}
 
 

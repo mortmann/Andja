@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System;
+using Newtonsoft.Json;
+
 public class InputHandler {
 
 	static Dictionary<string,KeyBind> nameToKeyBinds;
@@ -13,26 +15,26 @@ public class InputHandler {
 	public InputHandler () {
 		nameToKeyBinds = new Dictionary<string, KeyBind> ();
 		LoadInputSchema (Application.dataPath.Replace ("/Assets",""));
-		SetupKeyBinds ();
+//		SetupKeyBinds ();
 
 	}
 	public static Dictionary<string,KeyBind> GetBinds(){
 		return nameToKeyBinds;
 	}
 
-	private void SetupKeyBinds(){
+	private static void SetupKeyBinds(){
 		if (nameToKeyBinds.ContainsKey ("BuildMenu")==false)
-			nameToKeyBinds.Add ("BuildMenu",new KeyBind("BuildMenu", KeyCode.B, KeyBind.notSetCode) );
+			ChangePrimaryNameToKey ("BuildMenu",KeyCode.B );
 		if (nameToKeyBinds.ContainsKey ("TradeMenu")==false)
-			nameToKeyBinds.Add ("TradeMenu",new KeyBind("TradeMenu", KeyCode.M, KeyBind.notSetCode));
+			ChangePrimaryNameToKey ("TradeMenu",KeyCode.M);
 		if (nameToKeyBinds.ContainsKey ("Offworld")==false)
-			nameToKeyBinds.Add ("Offworld",new KeyBind("Offworld", KeyCode.O, KeyBind.notSetCode));
+			ChangePrimaryNameToKey ("Offworld",KeyCode.O);
 		if (nameToKeyBinds.ContainsKey ("TogglePause")==false)
-			nameToKeyBinds.Add ("TogglePause",new KeyBind("TogglePause", KeyCode.Space, KeyBind.notSetCode));
+			ChangePrimaryNameToKey ("TogglePause",KeyCode.Space);
 		if (nameToKeyBinds.ContainsKey ("Rotate")==false)
-			nameToKeyBinds.Add ("Rotate",new KeyBind("Rotate", KeyCode.R, KeyBind.notSetCode)); 
+			ChangePrimaryNameToKey ("Rotate",KeyCode.R); 
 		if (nameToKeyBinds.ContainsKey ("Console")==false)
-			nameToKeyBinds.Add ("Console",new KeyBind("Console", KeyCode.F1, KeyBind.notSetCode)); 
+			ChangePrimaryNameToKey ("Console",KeyCode.F1); 
 
 	}	
 	public static void ChangePrimaryNameToKey(string name, KeyCode key){
@@ -40,7 +42,7 @@ public class InputHandler {
 			nameToKeyBinds [name].SetPrimary (key);
 			return;
 		}
-		nameToKeyBinds.Add (name,new KeyBind (name, key, KeyBind.notSetCode));
+		nameToKeyBinds.Add (name,new KeyBind (key, KeyBind.notSetCode));
 
 	}
 	public static void ChangeSecondaryNameToKey(string name, KeyCode key){
@@ -48,7 +50,7 @@ public class InputHandler {
 			nameToKeyBinds [name].SetSecondary (key);
 			return;
 		}
-		nameToKeyBinds.Add (name,new KeyBind (name, KeyBind.notSetCode , key));
+		nameToKeyBinds.Add (name,new KeyBind (KeyBind.notSetCode , key));
 
 	}
 	public static bool GetButtonDown(string name){
@@ -78,57 +80,41 @@ public class InputHandler {
 			Directory.CreateDirectory( path  );
 		}
 		string filePath = System.IO.Path.Combine(path,fileName) ;
-//		StringWriter writer = new StringWriter ();
-//		List<string> keys = new List<string> (primaryNameToKey.Keys);
-//		keys.AddRange (secondaryNameToKey.Keys);
-//		foreach (string key in keys.Distinct()) {
-//			if(primaryNameToKey.ContainsKey (key)){
-//				writer.Write (key);
-//				writer.WriteLine (":"+primaryNameToKey[key]);
-//			}
-//			if(secondaryNameToKey.ContainsKey (key)){
-//				writer.Write (key);
-//				writer.WriteLine (":"+secondaryNameToKey[key]);
-//			}
-//		}	
-		KeyBind[] binds = new KeyBind[nameToKeyBinds.Count];
-		nameToKeyBinds.Values.CopyTo (binds, 0);
-		File.WriteAllText( filePath, JsonUtil.arrayToJson<KeyBind>(binds));
+		File.WriteAllText( filePath, JsonConvert.SerializeObject(nameToKeyBinds,
+			new JsonSerializerSettings() {
+				Formatting = Newtonsoft.Json.Formatting.Indented
+			}));
 	}
 	public static void LoadInputSchema(string path){
-		string filePath = System.IO.Path.Combine(path,fileName) ;
-		if(File.Exists (filePath)==false){
-			return;
+		try {
+			string filePath = System.IO.Path.Combine(path,fileName) ;
+			nameToKeyBinds = new Dictionary<string, KeyBind> ();
+			string lines = File.ReadAllText (filePath);
+			nameToKeyBinds = JsonConvert.DeserializeObject<Dictionary<string, KeyBind>> (lines);
+		} catch {
+			SetupKeyBinds ();
+			SaveInputSchema (); // create the file so it can be manipulated 
 		}
-		nameToKeyBinds = new Dictionary<string, KeyBind> ();
-		string lines = File.ReadAllText (filePath);
-		KeyBind[] binds = JsonUtil.getJsonArray<KeyBind> (lines);
-		foreach (KeyBind item in binds) {
-			nameToKeyBinds.Add (item.name, item);
-		}
-
 	}
-	[Serializable]  
-	public class KeyBind {
-		public const KeyCode notSetCode = KeyCode.Exclaim;
 
-		public string name;
+	public class KeyBind {
+		public const KeyCode notSetCode = KeyCode.RightWindows;
+
 		/// <summary>
 		/// DO NOT SET DIRECTLY
 		/// </summary>
-		[SerializeField]
-		KeyCode primary = KeyCode.Exclaim;
+		[JsonProperty]
+		KeyCode primary = notSetCode;
 		/// <summary>
 		/// DO NOT SET DIRECTLY
 		/// </summary>
-		[SerializeField]
-		KeyCode secondary = KeyCode.Exclaim;
+		[JsonProperty]
+		KeyCode secondary = notSetCode;
 
 		public KeyBind(){
 			
 		}
-		public KeyBind(string name, KeyCode primary, KeyCode secondary){
-			this.name = name;
+		public KeyBind(KeyCode primary, KeyCode secondary){
 			this.primary = primary;
 			this.secondary = secondary;
 		}
@@ -159,23 +145,14 @@ public class InputHandler {
 			return true;
 		}
 		public bool GetButtonDown(){
-			if(primary != notSetCode){
-				return Input.GetKeyDown (primary);
-			}
-			if(secondary != notSetCode){
-				return Input.GetKeyDown (secondary);
-			}
-			return false;
+			return Input.GetKeyDown (primary) && primary != notSetCode
+				|| Input.GetKeyDown (secondary) && secondary != notSetCode ;
 		}
 
 		public bool GetButton(){
-			if(primary != notSetCode){
-				return Input.GetKey (primary);
-			}
-			if(secondary != notSetCode){
-				return Input.GetKey (secondary);
-			}
-			return false;
+			return Input.GetKey (primary) && primary != notSetCode
+				|| Input.GetKey (secondary) && secondary != notSetCode ;
+			
 		}
 	}
 

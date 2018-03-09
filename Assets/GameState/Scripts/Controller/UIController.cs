@@ -135,7 +135,7 @@ public class UIController : MonoBehaviour {
 		buildingCanvas.SetActive (true);
 		toggleInfoUI ();
 		buildingCanvas.GetComponent<ProduktionUI>().Show (str);
-		TileSpriteController.Instance.tileDeciderFunc += StrcutureTileDecider;
+		TileSpriteController.Instance.AddDecider (StrcutureTileDecider);
 	}
 	TileMark StrcutureTileDecider(Tile t){
 		if(openStructure!=null&&openStructure.myRangeTiles.Contains(t)){
@@ -249,7 +249,7 @@ public class UIController : MonoBehaviour {
 		tradeMapCanvas.SetActive (false);
 	}
 	public void Escape(bool dontOpenPause=false) {
-		if(AnyMenuOpen ()==false&&dontOpenPause==false&&MouseController.Instance.mouseState!=MouseState.Idle){
+		if(AnyMenuOpen ()==false&&dontOpenPause==false&&MouseController.Instance.mouseState==MouseState.Idle){
 			TogglePauseMenu ();
 		}
 		CloseConsole ();
@@ -294,7 +294,7 @@ public class UIController : MonoBehaviour {
 		return ItemImages [itemSpriteName + id];
 	}
 
-	public bool IsTextFieldFocused(){
+	public static bool IsTextFieldFocused(){
 		if(EventSystem.current.currentSelectedGameObject==null || EventSystem.current.currentSelectedGameObject.GetComponent<InputField>() ==null){
 			return false;
 		}

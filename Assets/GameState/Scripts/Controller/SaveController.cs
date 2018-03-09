@@ -1,5 +1,4 @@
-﻿using UnityEditor;
-using UnityEngine;
+﻿using UnityEngine;
 using System.Collections;
 using System.IO;
 using System.IO.Compression;
@@ -11,7 +10,7 @@ public class SaveController : MonoBehaviour {
 
 	public static SaveController Instance;
 	//TODO autosave here
-	const string SaveFileVersion = "0.1.1";
+	const string SaveFileVersion = "0.1.2";
 	WorldController wc;
 	EventController ec;
 	CameraController cc;
@@ -24,7 +23,7 @@ public class SaveController : MonoBehaviour {
 		Instance = this;
 	}
 	// Use this for initialization
-	void Start () {
+	void Start () { 
 		wc = WorldController.Instance;
 		ec = EventController.Instance;
 		cc = CameraController.Instance;

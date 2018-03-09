@@ -793,7 +793,6 @@
          <maxNumberOfWorker>0</maxNumberOfWorker>
          <produceTime>0.0</produceTime>
          <maxOutputStorage>1</maxOutputStorage>
-         <growTime>0.0</growTime>
          <fertility>-1</fertility>
          <ageStages>0</ageStages>
       </growable>
@@ -838,14 +837,13 @@
          <contactRange>0.0</contactRange>
          <forMarketplace>false</forMarketplace>
          <maxNumberOfWorker>0</maxNumberOfWorker>
-         <produceTime>0.0</produceTime>
+         <produceTime>20.0</produceTime>
          <maxOutputStorage>1</maxOutputStorage>
          <output length="1">
             <Item ID="1">
                <count>0</count>
             </Item>
          </output>
-         <growTime>5.0</growTime>
          <fertility>-1</fertility>
          <ageStages>3</ageStages>
       </growable>
@@ -889,14 +887,13 @@
          <contactRange>0.0</contactRange>
          <forMarketplace>false</forMarketplace>
          <maxNumberOfWorker>0</maxNumberOfWorker>
-         <produceTime>0.0</produceTime>
+         <produceTime>5.0</produceTime>
          <maxOutputStorage>1</maxOutputStorage>
          <output length="1">
             <Item ID="107">
                <count>0</count>
             </Item>
          </output>
-         <growTime>5.0</growTime>
          <fertility>0</fertility>
          <ageStages>2</ageStages>
       </growable>
@@ -940,14 +937,13 @@
          <contactRange>0.0</contactRange>
          <forMarketplace>false</forMarketplace>
          <maxNumberOfWorker>0</maxNumberOfWorker>
-         <produceTime>0.0</produceTime>
+         <produceTime>5.0</produceTime>
          <maxOutputStorage>1</maxOutputStorage>
          <output length="1">
             <Item ID="102">
                <count>1</count>
             </Item>
          </output>
-         <growTime>5.0</growTime>
          <fertility>-1</fertility>
          <ageStages>2</ageStages>
       </growable>
@@ -991,14 +987,13 @@
          <contactRange>0.0</contactRange>
          <forMarketplace>false</forMarketplace>
          <maxNumberOfWorker>0</maxNumberOfWorker>
-         <produceTime>0.0</produceTime>
+         <produceTime>5.0</produceTime>
          <maxOutputStorage>1</maxOutputStorage>
          <output length="1">
             <Item ID="104">
                <count>0</count>
             </Item>
          </output>
-         <growTime>5.0</growTime>
          <fertility>11</fertility>
          <ageStages>2</ageStages>
       </growable>
@@ -1042,14 +1037,13 @@
          <contactRange>0.0</contactRange>
          <forMarketplace>false</forMarketplace>
          <maxNumberOfWorker>0</maxNumberOfWorker>
-         <produceTime>0.0</produceTime>
+         <produceTime>5.0</produceTime>
          <maxOutputStorage>1</maxOutputStorage>
          <output length="1">
             <Item ID="105">
                <count>1</count>
             </Item>
          </output>
-         <growTime>5.0</growTime>
          <fertility>-1</fertility>
          <ageStages>2</ageStages>
       </growable>
@@ -1094,14 +1088,13 @@
          <contactRange>0.0</contactRange>
          <forMarketplace>false</forMarketplace>
          <maxNumberOfWorker>0</maxNumberOfWorker>
-         <produceTime>0.0</produceTime>
+         <produceTime>35.0</produceTime>
          <maxOutputStorage>1</maxOutputStorage>
          <output length="1">
             <Item ID="201">
                <count>1</count>
             </Item>
          </output>
-         <growTime>35.0</growTime>
          <fertility>1</fertility>
          <ageStages>5</ageStages>
       </growable>
@@ -1145,14 +1138,13 @@
          <contactRange>0.0</contactRange>
          <forMarketplace>false</forMarketplace>
          <maxNumberOfWorker>0</maxNumberOfWorker>
-         <produceTime>0.0</produceTime>
+         <produceTime>15.0</produceTime>
          <maxOutputStorage>1</maxOutputStorage>
          <output length="1">
             <Item ID="219">
                <count>0</count>
             </Item>
          </output>
-         <growTime>15.0</growTime>
          <fertility>2</fertility>
          <ageStages>2</ageStages>
       </growable>

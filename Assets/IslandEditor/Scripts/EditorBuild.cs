@@ -11,26 +11,30 @@ public class EditorBuild : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		bool first=true;
-		foreach (int item in EditorStructureSpriteController.Instance.structurePrototypes.Keys) {
+		foreach (int item in PrototypController.Instance.structurePrototypes.Keys) {
 			GameObject g = GameObject.Instantiate (prefabListItem);
 			g.transform.SetParent (content.transform);
-			g.GetComponentInChildren<Text >().text = EditorStructureSpriteController.Instance.structurePrototypes[item].spriteName;
+			g.GetComponentInChildren<Text >().text = PrototypController.Instance.structurePrototypes[item].spriteName;
 			int temp = item;
 			EventTrigger eventTrigger = g.GetComponent<EventTrigger>();
 			EventTrigger.Entry entry = new EventTrigger.Entry();
 			entry.eventID = EventTriggerType.Select;
 			entry.callback = new EventTrigger.TriggerEvent();
-			entry.callback.AddListener((data)=>{OnSelect (temp);});
+			entry.callback.AddListener((data)=>{OnBuildingSelect (temp);});
 			eventTrigger.triggers.Add (entry);
 			if(first)
-				OnSelect (temp);
+				OnBuildingSelect (temp);
 		}
 
 	}
 		
-	public void OnSelect(int id){
-		EditorController.Instance.structureID = id;
-		int ages = EditorStructureSpriteController.Instance.GetGrowableStages (id);
+	public void OnBuildingSelect(int id){
+		EditorController.Instance.setStructure (id);
+		if(PrototypController.Instance.structurePrototypes[id] is Growable == false){
+			return;
+		}
+		Growable gr = PrototypController.Instance.structurePrototypes [id] as Growable;
+		int ages = gr.ageStages;
 		foreach (Transform item in AgeStage.transform) {
 			GameObject.Destroy (item.gameObject);
 		}
@@ -48,7 +52,7 @@ public class EditorBuild : MonoBehaviour {
 		}
 	}
 	public void OnAgeSelect(int age){
-		EditorController.Instance.structureStage = age;
-		EditorStructureSpriteController.Instance.growableLevel = age;
+		EditorController.Instance.setAge (age);
+//		EditorStructureSpriteController.Instance.growableLevel = age;
 	}
 }

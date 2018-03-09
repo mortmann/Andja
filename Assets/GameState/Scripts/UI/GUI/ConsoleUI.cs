@@ -57,6 +57,12 @@ public class ConsoleUI : MonoBehaviour {
 			break;
 		case "event":
 			break;
+		case "camera":
+			int num = 0;
+			happend = int.TryParse (parameters [1], out num);
+			bool turn = num == 1;
+			CameraController.Instance.devCameraZoom = turn;
+			break;
 		default:
 			break;
 		}

@@ -67,7 +67,8 @@ public class ProduktionUI : MonoBehaviour {
 						itemToGO.Add (pstr.MyIntake [0], go);
 					} else {
 						go.SetItem (pstr.ProductionData.intake [i],pstr.GetMaxIntakeForIntakeIndex(i));
-						go.AddClickListener (( data ) => { OnItemClick( pstr.ProductionData.intake [i] ); } );
+						int temp = i;
+						go.AddClickListener (( data ) => { OnItemClick( pstr.ProductionData.intake [temp] ); } );
 						go.setInactive (true);
 						itemToGO.Add (pstr.ProductionData.intake [i], go);
 					}
@@ -78,15 +79,33 @@ public class ProduktionUI : MonoBehaviour {
 		
 	}
 
-	public void OnItemClick(Item i){
+	public void OnItemClick(Item item){
+		//first get remove the current orItem and add the version from intake
 		itemToGO [currORItem].setInactive (true);
-		itemToGO [i].setInactive (false);
-		if (currentStructure is ProductionBuilding) {
-			((ProductionBuilding)currentStructure).ChangeInput (i);
+		ItemUI go = itemToGO [currORItem];
+		ProductionBuilding pstr = (ProductionBuilding)currentStructure;
+		for (int i = 0; i < pstr.ProductionData.intake.Length; i++) {
+			if(pstr.ProductionData.intake[i].ID == currORItem.ID){
+				switchItemKey (currORItem, pstr.ProductionData.intake [i]);
+				go.AddClickListener (( data ) => { OnItemClick( pstr.ProductionData.intake [i] ); } );
+				break;
+			}
 		}
-		ItemUI go = itemToGO [i];
-		itemToGO.Remove (i);
-		itemToGO [((ProductionBuilding)currentStructure).MyIntake [0]] = go;
+		itemToGO [item].setInactive (false);
+		//now change the input to the selected
+		//also do change the associated item
+		if (currentStructure is ProductionBuilding) {
+			((ProductionBuilding)currentStructure).ChangeInput (item);
+		}
+		go = itemToGO [item];
+		go.ClearAllTriggers ();
+		switchItemKey (item, ((ProductionBuilding)currentStructure).MyIntake [0]);
+		currORItem = ((ProductionBuilding)currentStructure).MyIntake [0];
+	}
+	private void switchItemKey(Item oldKey, Item newKey){
+		ItemUI go = itemToGO [oldKey];
+		itemToGO.Remove (oldKey);
+		itemToGO [newKey] = go;
 	}
 	// Update is called once per frame
 	void Update () {

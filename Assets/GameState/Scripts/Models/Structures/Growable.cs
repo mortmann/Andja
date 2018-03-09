@@ -3,7 +3,6 @@ using System.Collections;
 using Newtonsoft.Json;
 
 public class GrowablePrototypData : OutputPrototypData {
-	public float growTime = 5f;
 	public Fertility fertility;
 	public int ageStages = 2;
 
@@ -16,13 +15,12 @@ public class Growable : OutputStructure {
 	#region Serialize
 
 	[JsonPropertyAttribute] float age = 0;
-	[JsonPropertyAttribute] public int currentStage = 0;
+	[JsonPropertyAttribute] public int currentStage = 1;
 	[JsonPropertyAttribute] public bool hasProduced = false;
 
 	#endregion
 	#region RuntimeOrOther
 
-	float growTime {get{ return GrowableData.growTime; }}
 	public Fertility fer {get{ return GrowableData.fertility; }}
 	public int ageStages {get{ return GrowableData.ageStages; }}
 
@@ -70,15 +68,18 @@ public class Growable : OutputStructure {
 			callbackIfnotNull ();
 			return;
 		}
-		age += efficiencyModifier*(deltaTime/growTime);
-		if((age) > 0.33*currentStage){
-			if(Random.Range (0,100) <99){
+
+		age += efficiencyModifier*(deltaTime);
+
+		if((age) > currentStage*(produceTime/(float)ageStages+1)){
+			if(Random.Range (0,100) < 98){
 				return;
 			}
 			if(currentStage>=ageStages){
 				return;
 			}
 			currentStage++;
+			Debug.Log ("Stage " + currentStage + " @ Time " + age);
 			callbackIfnotNull ();
 		}
 	}

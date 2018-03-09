@@ -108,6 +108,11 @@ public class LandTile : Tile {
 		this.y = y;
 		_type = TileType.Ocean; 
 	} 
+	public LandTile(int x, int y,Tile t){
+		this.x = x;
+		this.y = y;
+		_type = t.Type;
+	}
 
 	// The function we callback any time our tile's structure changes
 	//some how the first == now is sometimes null even tho it IS NOT NULL

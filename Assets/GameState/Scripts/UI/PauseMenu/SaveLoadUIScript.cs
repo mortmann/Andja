@@ -61,13 +61,21 @@ public class SaveLoadUIScript : MonoBehaviour {
 
 	}
 	public void OnInputChange(){
-		OnSaveGameSelect (null,null);		
+		if (selectedGO != null)
+			selectedGO.GetComponent<SelectableScript> ().OnDeselectCall ();	
+		selectedGO = null;
 	}
 	public void OnSaveGameSelect(string fi,GameObject go){
+		if (go == selectedGO)
+			return;
 		selected = fi;
+		if(saveGameInput!=null && saveGameInput.IsActive()){
+			saveGameInput.text = fi;
+		}
 		if (selectedGO != null)
 			selectedGO.GetComponent<SelectableScript> ().OnDeselectCall ();
 		selectedGO = go;
+
 	}
 	public void OnLoadPressed(){
 		if(selected==null){
@@ -96,17 +104,21 @@ public class SaveLoadUIScript : MonoBehaviour {
 		//TODO ASK IF he wants to load it
 		//and warn losing ansaved data
 
-		if (EditorController.Instance != null)
-			EditorController.Instance.LoadWorld (selected);
+		if (EditorController.Instance != null){		
+			Debug.LogWarning("NOT IMPLEMETED!");
+			
+			//EditorController.Instance.LoadWorld (selected);
+		}
 		else
 			GameObject.FindObjectOfType<MenuController> ().ChangeToGameStateLoadScreen ();
 	}
 	public void OnIslandSaveClick(){
+		Debug.LogWarning("NOT IMPLEMETED!");
 		if(selected!=null&&(saveGameInput.text==null||saveGameInput.text=="")){
-			EditorController.Instance.SaveWorld (selected); // overwrite
+			//EditorController.Instance.SaveWorld (selected); // overwrite
 			//TODO ask if you want to overwrite
 		} else {
-			EditorController.Instance.SaveWorld (saveGameInput.text);
+			//EditorController.Instance.SaveWorld (saveGameInput.text);
 		}
 	}
 }

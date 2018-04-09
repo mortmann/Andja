@@ -27,9 +27,8 @@ public class BuildController : MonoBehaviour {
 					return;
 				}
 				_buildState = value;
-				if (cbBuildStateChange != null)
-					cbBuildStateChange (_buildState); 
-				}
+            cbBuildStateChange?.Invoke(_buildState);
+        }
 			}
 	public uint buildID = 0;
 	public bool noBuildCost = false;
@@ -176,19 +175,19 @@ public class BuildController : MonoBehaviour {
 			}
 			//Is the player allowed to place it here? -> city
 
-			Tile block = tiles.Find(x=>x.myCity.IsWilderness()==false&&x.myCity.playerNumber!=playerNumber);
+			Tile block = tiles.Find(x=>x.MyCity.IsWilderness()==false&&x.MyCity.playerNumber!=playerNumber);
 			if(block!=null){
 				return; // there is a tile that is owned by another player
 			}
-			Tile hasCity = tiles.Find(x=>x.myCity.playerNumber == playerNumber);
+			Tile hasCity = tiles.Find(x=>x.MyCity.playerNumber == playerNumber);
 			if(hasCity==null){
 				if(s.GetType () == typeof(Warehouse)){
-					s.City = CreateCity (tiles [0].myIsland, playerNumber);
+					s.City = CreateCity (tiles [0].MyIsland, playerNumber);
 				} else {
 					return; // SO no city found and no warehouse to create on
 				}
 			} else {
-				s.City = hasCity.myCity;
+				s.City = hasCity.MyCity;
 			}
 			if(noBuildCost==false){
 				if (s.BuildingItems ()!=null) {
@@ -196,7 +195,7 @@ public class BuildController : MonoBehaviour {
 					if(buildInRangeUnit!=null){
 						inv = buildInRangeUnit.inventory;
 					} else {
-						inv = hasCity.myCity.inventory;
+						inv = hasCity.MyCity.inventory;
 					}
 					if(inv==null){
 						Debug.LogError ("Build something with smth that has no inventory"); 
@@ -224,12 +223,10 @@ public class BuildController : MonoBehaviour {
 			buildInRangeUnit.inventory.removeItemsAmount (s.BuildingItems ());
 		}
 
-		//call all callbacks on structure created
-		//FIXME remove this or smth
-		if (cbStructureCreated != null) {
-			cbStructureCreated (s,loading);
-		} 
-		if (loading == false) {
+        //call all callbacks on structure created
+        //FIXME remove this or smth
+        cbStructureCreated?.Invoke(s, loading);
+        if (loading == false) {
 			// this is for loading so everything will be placed in order
 			s.buildID = buildID;
 			buildID++;
@@ -240,7 +237,7 @@ public class BuildController : MonoBehaviour {
 //		str.City.removeStructure (str);
 	}
 	public bool playerHasEnoughMoney(Structure s,int playerNumber){
-		if(PlayerController.Instance.GetPlayer (playerNumber).balance >= s.buildcost){
+		if(PlayerController.Instance.GetPlayer (playerNumber).Balance >= s.buildcost){
 			return true;
 		}
 		return false;
@@ -257,18 +254,16 @@ public class BuildController : MonoBehaviour {
 			return null;
 		}
 		City c = i.CreateCity (playernumber);
-		// needed for mapimage
-		if(cbCityCreated != null) {
-			cbCityCreated (c);
-		}
-		return c; 
+        // needed for mapimage
+        cbCityCreated?.Invoke(c);
+        return c; 
 	}
 
 
 	public void PlaceAllLoadedStructure(List<Structure> loadedStructures){
 		for (int i = 0; i < loadedStructures.Count; i++) {
 			BuildOnTile (loadedStructures[i],loadedStructures[i].BuildTile);
-			loadedStructures [i].City.triggerAddCallBack (loadedStructures[i]);
+			loadedStructures [i].City.TriggerAddCallBack (loadedStructures[i]);
 		}
 	}
 	public void ResetBuild(){

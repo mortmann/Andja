@@ -18,7 +18,7 @@ public class BrushSlider : MonoBehaviour {
 	}
 	public void OnSizeSliderChange(float f){
 		t.text = f.ToString ();
-		EditorController.Instance.setBrushSize ((int)f);
+		EditorController.Instance.SetBrushSize ((int)f);
 	}
 	public void OnRandomSliderChange(float f){
 		if(f==100){

@@ -57,7 +57,7 @@ public class Route {
 		myTiles.Remove (tile);
 		if(myTiles.Count==0){
 			//this route does not have any more roadtiles so kill it
-			myTiles[0].myCity.RemoveRoute (this);
+			myTiles[0].MyCity.RemoveRoute (this);
 		}
 		//cheack if it can split up in to routes
 		int neighboursOfRoute= 0;
@@ -90,7 +90,7 @@ public class Route {
 				//this can be prolematic if the new route is not part of this city
 				//eg conection to other city got cut at the border
 				//thats why the new items city gets the route added
-				item.myCity.AddRoute (new Route (item, true));
+				item.MyCity.AddRoute (new Route (item, true));
 			}
 		}
 	}
@@ -100,13 +100,13 @@ public class Route {
 			((Road)item.Structure).Route = this;
 		}
 		tileGraph.addNodes (route.tileGraph);
-		myTiles[0].myCity.RemoveRoute (route);
+		myTiles[0].MyCity.RemoveRoute (route);
 
 	}
 
 	///for debug purpose only if no longer needed delete
 	public string toString(){
-		return myTiles[0].toString () + "_Route";
+		return myTiles[0].ToString () + "_Route";
 	}
 		
 }

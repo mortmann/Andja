@@ -13,31 +13,31 @@ public class NeedPrototypeData : LanguageVariables {
 [JsonObject(MemberSerialization.OptIn)]
 public class Need {
 	protected NeedPrototypeData _prototypData;
-	public NeedPrototypeData data {
+	public NeedPrototypeData Data {
 		get { if(_prototypData==null){
 				_prototypData = PrototypController.Instance.GetNeedPrototypDataForID (ID);
 			}
 			return _prototypData;
 		}
 	}
-	public string name {
-		get { return data.Name;}	
+	public string Name {
+		get { return Data.Name;}	
 	}
-	public Item item{
-		get { return data.item;}	
+	public Item Item{
+		get { return Data.item;}	
 	}
-	public NeedsBuilding structure{
-		get { return data.structure;}	
+	public NeedsBuilding Structure{
+		get { return Data.structure;}	
 	}
-	public float[] uses{
-		get { return data.uses;}	
+	public float[] Uses{
+		get { return Data.uses;}	
 	}
-	public int startLevel{
-		get { return data.startLevel;}	
+	public int StartLevel{
+		get { return Data.startLevel;}	
 	}
 
-	public int popCount{
-		get { return data.popCount;}	
+	public int PopCount{
+		get { return Data.popCount;}	
 	}
 
 	[JsonPropertyAttribute]
@@ -64,7 +64,7 @@ public class Need {
 	}
 
 	public void TryToConsumThisIn(City city,int[] peoples){
-		if(item == null){
+		if(Item == null){
 			//this does not require any item -> it needs a structure
 			percantageAvailability = 0;
 			return;
@@ -72,8 +72,8 @@ public class Need {
 
 		float neededConsumAmount = 0;
 		// how much do we need to consum?
-		for (int i = startLevel; i < peoples.Length; i++) {
-			neededConsumAmount += uses [i] * ((float)peoples[i]);
+		for (int i = StartLevel; i < peoples.Length; i++) {
+			neededConsumAmount += Uses [i] * ((float)peoples[i]);
 		}
 		if(neededConsumAmount==0){
 			//we dont need anything to consum so no need to go anyfurther
@@ -91,7 +91,7 @@ public class Need {
 		neededConsumAmount -= notUsedOfTon;
 		//now we have a amount that still needs to be fullfilled by the cities inventory
 
-		float availableAmount = city.GetAmountForThis (item,neededConsumAmount);
+		float availableAmount = city.GetAmountForThis (Item,neededConsumAmount);
 		notUsedOfTon = Mathf.CeilToInt (neededConsumAmount) - neededConsumAmount;
 		//either we need to get 1 ton or as much as we need
 		neededConsumAmount = Mathf.CeilToInt (neededConsumAmount);
@@ -107,7 +107,7 @@ public class Need {
 		// how much to we consum of the avaible?
 		int usedAmount = (int) Mathf.Clamp (availableAmount, 0, neededConsumAmount);
 		//now remove that amount of items
-		city.removeRessource (item,usedAmount);
+		city.RemoveRessource (Item,usedAmount);
 
 		//minimum is 1 because if 0 -> ERROR due dividing through 0
 		//calculate the percantage of availability
@@ -115,9 +115,9 @@ public class Need {
 	}
 
 	public bool IsItemNeed(){
-		return item != null;
+		return Item != null;
 	}
 	public bool IsStructureNeed(){
-		return structure != null;
+		return Structure != null;
 	}
 }

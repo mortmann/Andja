@@ -150,7 +150,7 @@ public class MouseController : MonoBehaviour {
 				if (t.Structure != null) {
 					uic.OpenStructureUI (t.Structure);
 				} else {
-					Debug.Log ("tile " + t.toString ()); 
+					Debug.Log ("tile " + t.ToString ()); 
 				}
 			}
 		} else {
@@ -223,7 +223,7 @@ public class MouseController : MonoBehaviour {
 	}
 
 	public Tile GetTileUnderneathMouse(){
-		return World.current.GetTileAt (currFramePosition.x+0.5f,currFramePosition.y+0.5f);
+		return World.Current.GetTileAt (currFramePosition.x+0.5f,currFramePosition.y+0.5f);
 	}
 
 	public void CreatePreviewStructure(){
@@ -408,8 +408,8 @@ public class MouseController : MonoBehaviour {
 		}
 		for (int x = start_x; x <= end_x; x+=width) {
 			for (int y = start_y; y <= end_y; y+=height) {
-				if(tiles.Contains (World.current.GetTileAt (x,y))==false)
-					tiles.Add (World.current.GetTileAt (x,y));
+				if(tiles.Contains (World.Current.GetTileAt (x,y))==false)
+					tiles.Add (World.Current.GetTileAt (x,y));
 			}
 		}
 		return tiles;
@@ -429,7 +429,7 @@ public class MouseController : MonoBehaviour {
             int start_y = Mathf.FloorToInt(pathStartPosition.y + 0.5f);
             Tile pathStartTile = WorldController.Instance.world.GetTileAt(start_x, start_y);  
             
-            if (pathStartTile == null || pathStartTile.myIsland == null) {
+            if (pathStartTile == null || pathStartTile.MyIsland == null) {
                 return;
             }
             int end_x = Mathf.FloorToInt(currFramePosition.x + 0.5f);
@@ -438,8 +438,8 @@ public class MouseController : MonoBehaviour {
             if (pathEndTile == null ) {
                 return;
             }
-            if (pathStartTile.myIsland != null && pathEndTile.myIsland != null) {
-                path = new Path_AStar(pathStartTile.myIsland, pathStartTile, pathEndTile,false);
+            if (pathStartTile.MyIsland != null && pathEndTile.MyIsland != null) {
+                path = new Path_AStar(pathStartTile.MyIsland, pathStartTile, pathEndTile,false);
             }
             if(path.path == null) {
                 return;
@@ -477,7 +477,7 @@ public class MouseController : MonoBehaviour {
 		if(loading){
 			return;// there is no need to call any following
 		}
-		TileSpriteController.Instance.removeDecider (TileCityDecider);
+		TileSpriteController.Instance.RemoveDecider (TileCityDecider);
 		GameObject.Destroy (previewGO);
 
 		previewGO = null;
@@ -509,7 +509,7 @@ public class MouseController : MonoBehaviour {
 		if(HighlightTiles!=null&&HighlightTiles.Contains(t)){
 			return TileMark.Highlight;
 		} else
-			if(t.myCity!=null&&t.myCity.IsCurrPlayerCity ()){
+			if(t.MyCity!=null&&t.MyCity.IsCurrPlayerCity ()){
 			return TileMark.None;
 		} else {
 			return TileMark.Dark;

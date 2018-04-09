@@ -30,8 +30,9 @@ public class Brightness : MonoBehaviour {
     Material material {
         get {
             if (m_Material == null) {
-                m_Material = new Material(shaderDerp);
-                m_Material.hideFlags = HideFlags.HideAndDontSave;
+                m_Material = new Material(shaderDerp) {
+                    hideFlags = HideFlags.HideAndDontSave
+                };
             }
             return m_Material;
         }

@@ -38,7 +38,7 @@ public class TradeRoutePanel : MonoBehaviour {
 		amountSlider.onValueChanged.AddListener (OnAmountSliderMoved);
 		unitNames = new Dictionary<Unit,string> ();
 		ships = new List<Ship> ();
-		foreach (Unit item in World.current.units) {
+		foreach (Unit item in World.Current.Units) {
 			if(item.isShip==false||item.playerNumber!=PlayerController.currentPlayerNumber){
 				continue;
 			}
@@ -82,9 +82,10 @@ public class TradeRoutePanel : MonoBehaviour {
 		g.GetComponentInChildren<Text> ().text= unit.inventory.maxStackSize+"t";
 		//TODO add listener stuff
 		EventTrigger trigger = g.GetComponent<EventTrigger> ();
-		EventTrigger.Entry entry = new EventTrigger.Entry( );
-		entry.eventID = EventTriggerType.PointerClick;
-		int i = intToGameObject.Count;
+        EventTrigger.Entry entry = new EventTrigger.Entry {
+            eventID = EventTriggerType.PointerClick
+        };
+        int i = intToGameObject.Count;
 		intToGameObject.Add (i,g.GetComponent<ItemUI> ()); 
 
 		entry.callback.AddListener( ( data ) => { OnItemClick( i ); } );
@@ -182,7 +183,7 @@ public class TradeRoutePanel : MonoBehaviour {
 			//not that good
 			tradeRoute.AddWarehouse (warehouse);
 			t.GetComponentInChildren<Text> ().text=""+tradeRoute.GetLastNumber();
-			text.text = warehouse.City.name;
+			text.text = warehouse.City.Name;
 		} else {
 			t.GetComponentInChildren<Text> ().text="";
 			tradeRoute.RemoveWarehouse (warehouse);
@@ -229,7 +230,7 @@ public class TradeRoutePanel : MonoBehaviour {
 		if (city != null) {
 			tradeRoute.SetCityTrade (city, GetToShip (), GetFromShip ());		
 		}
-		text.text = c.name;
+		text.text = c.Name;
 		intToItem = new Dictionary<int, Item> ();
 		ResetItemIcons ();
 		city = c;

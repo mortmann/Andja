@@ -60,14 +60,14 @@ public class TradeItemUI : MonoBehaviour {
 			buyButton.interactable = false;
 		}
 		_sell = sell;
-		if(onButtonClick!=null)
-			onButtonClick (item,sell);
-	}
+        onButtonClick?.Invoke(item, sell);
+    }
 	public void AddListener(UnityAction<BaseEventData> ueb){
-		//FIRST EVENTTRIGGER is the item itself
-		EventTrigger.Entry entry = new EventTrigger.Entry( );
-		entry.eventID = EventTriggerType.PointerClick;
-		entry.callback.AddListener( ueb );
+        //FIRST EVENTTRIGGER is the item itself
+        EventTrigger.Entry entry = new EventTrigger.Entry {
+            eventID = EventTriggerType.PointerClick
+        };
+        entry.callback.AddListener( ueb );
 		trigger.triggers.Add( entry );
 	}
 

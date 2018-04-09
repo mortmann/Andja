@@ -20,6 +20,9 @@ public class StructureSpriteController : MonoBehaviour {
 //		bm.RegisterStructureCreated (OnStrucutureCreated);
 		LoadSprites ();
 		cc = GameObject.FindObjectOfType<CameraController> ();
+		if (EditorController.IsEditor){
+			EditorController.Instance.RegisterOnStructureDestroyed (OnTileStructureDestroyed);
+		}
 	}
 
 	void Update(){
@@ -36,7 +39,7 @@ public class StructureSpriteController : MonoBehaviour {
 			}
 		}
 	}
-	public void OnStrucutureCreated(Structure structure) {
+	public void OnStrucutureCreated(Structure structure) {		
 		GameObject go = new GameObject ();
 		structure.RegisterOnChangedCallback (OnStructureChanged);
 		structure.RegisterOnDestroyCallback (OnStructureDestroyed);
@@ -52,7 +55,7 @@ public class StructureSpriteController : MonoBehaviour {
 		go.transform.position = new Vector3 (t.X + x,t.Y + y);
 		go.transform.transform.eulerAngles = new Vector3 (0, 0, 360-structure.rotated);
 		go.transform.SetParent (this.transform,true);
-		go.name = structure.SmallName +"_"+structure.myBuildingTiles [0].toString ();
+		go.name = structure.SmallName +"_"+structure.myBuildingTiles [0].ToString ();
 		SpriteRenderer sr = go.AddComponent<SpriteRenderer>();
 		sr.sortingLayerName = "Structures";
 		structureGameObjectMap.Add (structure,go);
@@ -92,7 +95,7 @@ public class StructureSpriteController : MonoBehaviour {
 			col.size = new Vector2 (sr.sprite.textureRect.size.x /sr.sprite.pixelsPerUnit, sr.sprite.textureRect.size.y / sr.sprite.pixelsPerUnit);
 		}
 	}
-	void OnStructureChanged(Structure structure){
+	void OnStructureChanged(Structure structure){			
 		if(structure == null){
 			Debug.LogError ("Structure change and its empty?");
 			return;
@@ -108,9 +111,10 @@ public class StructureSpriteController : MonoBehaviour {
 		} 
 		else if(structure is Warehouse){
 			if (structure.extraUIOn == true) {
-				GameObject go = new GameObject ();
-				go.name = "RangeUI";
-				go.transform.position = structureGameObjectMap [structure].transform.position;
+                GameObject go = new GameObject {
+                    name = "RangeUI"
+                };
+                go.transform.position = structureGameObjectMap [structure].transform.position;
 				go.transform.localScale = new Vector3 (((Warehouse)structure).contactRange, ((Warehouse)structure).contactRange, 0);
 				SpriteRenderer sr = go.AddComponent<SpriteRenderer> ();
 				sr.sprite = circleSprite;
@@ -143,6 +147,9 @@ public class StructureSpriteController : MonoBehaviour {
 		} else {
 			return structureSprites ["nosprite"];
 		}
+	}
+	void OnTileStructureDestroyed(Tile t){
+		OnStructureDestroyed (t.Structure);
 	}
 	void OnStructureDestroyed(Structure structure) {
 		if(structureGameObjectMap.ContainsKey(structure)==false){

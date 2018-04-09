@@ -57,7 +57,7 @@ public class KeyboardController : MonoBehaviour {
 		if(Application.isEditor){
 			if(Input.GetKey (KeyCode.LeftShift)){
 				if(EventSystem.current.IsPointerOverGameObject ()==false){
-					FindObjectOfType<HoverOverScript> ().DebugInfo (mc.GetTileUnderneathMouse ().toString ());
+					FindObjectOfType<HoverOverScript> ().DebugInfo (mc.GetTileUnderneathMouse ().ToString ());
 					GameObject.Find ("Debug").transform.localPosition = mc.GetMousePosition ();
 				} 
 			}

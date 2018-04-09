@@ -34,10 +34,10 @@ public class Warehouse : MarketBuilding {
 	
 	public override bool SpecialCheckForBuild (List<Tile> tiles){
 		foreach (Tile item in tiles) {
-			if(item.myCity==null || item.myCity.IsWilderness ()){
+			if(item.MyCity==null || item.MyCity.IsWilderness ()){
 				continue;
 			} 
-			if(item.myCity.myWarehouse!=null){
+			if(item.MyCity.myWarehouse!=null){
 				return false;
 			}
 		}
@@ -70,7 +70,7 @@ public class Warehouse : MarketBuilding {
 		rot = Quaternion.AngleAxis (rotated, Vector3.up) * rot;
 		if (rotated == 180) //cheap fix --update this
 			rot = new Vector3 (tileWidth/2 + 1, 0, 0);
-		tradeTile = World.current.GetTileAt (t.X+rot.x,t.Y+rot.y);
+		tradeTile = World.Current.GetTileAt (t.X+rot.x,t.Y+rot.y);
 
 		this.City.myWarehouse = this;
 
@@ -82,8 +82,8 @@ public class Warehouse : MarketBuilding {
 			Debug.Log (myRangeTiles.Count); 
 		}
 		//dostuff thats happen when build
-		City.addTiles (myRangeTiles);
-		City.addTiles (new HashSet<Tile>(myBuildingTiles));
+		City.AddTiles (myRangeTiles);
+		City.AddTiles (new HashSet<Tile>(myBuildingTiles));
 		RegisteredSturctures = new List<Structure> ();
 		OutputMarkedSturctures = new List<Structure> ();
 		jobsToDo = new Dictionary<OutputStructure, Item[]> ();
@@ -91,7 +91,7 @@ public class Warehouse : MarketBuilding {
 		// add all the tiles to the city it was build in
 		//dostuff thats happen when build
 		foreach(Tile rangeTile in myRangeTiles){
-			if(rangeTile.myCity!=City){
+			if(rangeTile.MyCity!=City){
 				continue;
 			}
 			OnStructureAdded (rangeTile.Structure);
@@ -104,7 +104,7 @@ public class Warehouse : MarketBuilding {
 	protected override void OnDestroy (){
 		List<Tile> h = new List<Tile> (myBuildingTiles);
 		h.AddRange (myRangeTiles); 
-		City.removeTiles (h);
+		City.RemoveTiles (h);
 		//you lose any res that the worker carrying
 		foreach (Worker item in myWorker) {
 			item.Destroy ();

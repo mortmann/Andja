@@ -65,7 +65,7 @@ public class StructurePrototypeData : LanguageVariables {
 		float x;
 		float y;
 		//get the tile at bottom left to create a "prototype circle"
-		Tile firstTile = World.current.GetTileAt (0 + buildingRange+tileWidth/2,0 + buildingRange+tileHeight/2);
+		Tile firstTile = World.Current.GetTileAt (0 + buildingRange+tileWidth/2,0 + buildingRange+tileHeight/2);
 		Vector2 center = new Vector2 (firstTile.X, firstTile.Y);
 		if (tileWidth > 1) {
 			center.x += 0.5f + ((float)tileWidth) / 2f - 1;
@@ -105,9 +105,9 @@ public class StructurePrototypeData : LanguageVariables {
 			}
 		}
 		for (int width = 0; width < tileWidth; width++) {
-			myPrototypeTiles.Remove (World.current.GetTileAt (firstTile.X + width, firstTile.Y));
+			myPrototypeTiles.Remove (World.Current.GetTileAt (firstTile.X + width, firstTile.Y));
 			for (int height = 1; height < tileHeight; height++) {
-				myPrototypeTiles.Remove (World.current.GetTileAt (firstTile.X + width, firstTile.Y+height));
+				myPrototypeTiles.Remove (World.Current.GetTileAt (firstTile.X + width, firstTile.Y+height));
 			}
 		}
 	}
@@ -224,7 +224,7 @@ public abstract class Structure : IGEventable {
 		set {
 			if(_city!=null&&_city!=value){
 				OnCityChange (_city,value);
-				_city.removeStructure (this);
+				_city.RemoveStructure (this);
 			}
 			_city = value;
 		}
@@ -347,9 +347,8 @@ public abstract class Structure : IGEventable {
 		}
 	}
 	public void callbackIfnotNull(){
-		if(cbStructureChanged != null)
-			cbStructureChanged (this);
-	}
+        cbStructureChanged?.Invoke(this);
+    }
     public void RegisterOnChangedCallback(Action<Structure> cb) {
         cbStructureChanged += cb;
     }
@@ -393,10 +392,10 @@ public abstract class Structure : IGEventable {
 		neighbourTiles = new HashSet<Tile>();
 		foreach (Tile mt in myBuildingTiles) {
 			mt.Structure = this;
-			if(mt.myCity!=null && hasCity == false && buildInWilderniss == mt.myCity.IsWilderness ()){
-				this.City = mt.myCity;
+			if(mt.MyCity!=null && hasCity == false && buildInWilderniss == mt.MyCity.IsWilderness ()){
+				this.City = mt.MyCity;
 				hasCity = true;
-				mt.myIsland.AddStructure (this);
+				mt.MyIsland.AddStructure (this);
 			}
 			foreach(Tile nbt in mt.GetNeighbours()){
 				if (myBuildingTiles.Contains (nbt) == false) {
@@ -416,9 +415,9 @@ public abstract class Structure : IGEventable {
 	}
 
 	public bool IsTileCityViable(Tile t, int player){
-		if (t.myCity!=null && t.myCity.playerNumber != player) {
+		if (t.MyCity!=null && t.MyCity.playerNumber != player) {
 			//here it cant build cause someoneelse owns it
-			if (t.myCity.IsWilderness () == false ) {
+			if (t.MyCity.IsWilderness () == false ) {
 				return false;
 			} else {
 				//HERE it can be build if 
@@ -444,14 +443,14 @@ public abstract class Structure : IGEventable {
 			for (int w = 0; w < tileWidth; w++) {
 //				tiles.Add (World.current.GetTileAt (x + w, y));
 				for (int h = 0; h < tileHeight; h++) {
-					tiles.Add (World.current.GetTileAt (x + w, y + h));
+					tiles.Add (World.Current.GetTileAt (x + w, y + h));
 				}
 			}
 		} else {
 			for (int w = 0; w < _tileWidth; w++) {
-				tiles.Add (World.current.GetTileAt (x + w, y));
+				tiles.Add (World.Current.GetTileAt (x + w, y));
 				for (int h = 1; h < _tileHeight; h++) {
-					tiles.Add (World.current.GetTileAt (x + w, y + h));
+					tiles.Add (World.Current.GetTileAt (x + w, y + h));
 				}
 			}
 		}
@@ -528,9 +527,8 @@ public abstract class Structure : IGEventable {
 		foreach(Tile t in myBuildingTiles){
 			t.Structure = null;
 		}
-		if(cbStructureDestroy!=null)
-			cbStructureDestroy(this);
-	}
+        cbStructureDestroy?.Invoke(this);
+    }
 	#endregion
 	#region correctspot
 	public virtual Item[] BuildingItems(){
@@ -546,7 +544,7 @@ public abstract class Structure : IGEventable {
 		//to make it faster
 		if(mustFrontBuildDir==Direction.None&&mustBeBuildOnShore==false&&mustBeBuildOnMountain==false){
 			foreach (Tile item in tiles) {
-				tileToCanBuild.Add (item,item.checkTile ());
+				tileToCanBuild.Add (item,item.CheckTile ());
 			}
 			return tileToCanBuild;
 		}
@@ -591,7 +589,7 @@ public abstract class Structure : IGEventable {
 				if(tiles[x,i]==null){
 					continue;
 				}
-				tileToCanBuild.Add (tiles [x, i], tiles [x, i].checkTile (mustBeBuildOnShore, mustBeBuildOnMountain));
+				tileToCanBuild.Add (tiles [x, i], tiles [x, i].CheckTile (mustBeBuildOnShore, mustBeBuildOnMountain));
 				tiles [x, i] = null;
 			}
 		} else {
@@ -600,7 +598,7 @@ public abstract class Structure : IGEventable {
 				if(tiles[i,y]==null){
 					continue;
 				}
-				tileToCanBuild.Add (tiles [i, y], tiles [i, y].checkTile (mustBeBuildOnShore, mustBeBuildOnMountain));
+				tileToCanBuild.Add (tiles [i, y], tiles [i, y].CheckTile (mustBeBuildOnShore, mustBeBuildOnMountain));
 				tiles [i, y] = null;
 			}
 		}
@@ -608,7 +606,7 @@ public abstract class Structure : IGEventable {
 			if(t==null){
 				continue;
 			}
-			tileToCanBuild.Add (t,t.checkTile ());
+			tileToCanBuild.Add (t,t.CheckTile ());
 		}
 		return tileToCanBuild;
 	}
@@ -659,7 +657,7 @@ public abstract class Structure : IGEventable {
 		if(BuildTile==null){
 			return spriteName +"@error";
 		}
-		return spriteName + "@" + BuildTile.toString ();
+		return spriteName + "@" + BuildTile.ToString ();
 	}
 	#endregion
 

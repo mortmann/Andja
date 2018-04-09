@@ -20,10 +20,11 @@ public class PriceTagUI : MonoBehaviour {
 	}
 	public void AddListener(UnityAction<BaseEventData> ueb){
 		EventTrigger trigger = GetComponentInChildren<EventTrigger> ();
-		EventTrigger.Entry entry = new EventTrigger.Entry( );
-		entry.eventID = EventTriggerType.PointerClick;
+        EventTrigger.Entry entry = new EventTrigger.Entry {
+            eventID = EventTriggerType.PointerClick
+        };
 
-		entry.callback.AddListener( ueb );
+        entry.callback.AddListener( ueb );
 		trigger.triggers.Add( entry );
 	}
 }

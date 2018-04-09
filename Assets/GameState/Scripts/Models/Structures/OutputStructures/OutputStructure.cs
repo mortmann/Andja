@@ -235,9 +235,8 @@ public abstract class OutputStructure : Structure {
 		return buildingItems;
 	}
 	public void CallOutputChangedCB(){
-		if (cbOutputChange!=null)
-			cbOutputChange (this);
-	}
+        cbOutputChange?.Invoke(this);
+    }
 	public void RegisterOutputChanged(Action<Structure> callbackfunc) {
 		cbOutputChange += callbackfunc;
 	}
@@ -269,9 +268,8 @@ public abstract class OutputStructure : Structure {
 		this.outputClaimed = false;
 		foreach (Item item in output) {
 			if(item.count>0){
-				if (cbOutputChange != null)
-					cbOutputChange (this);
-				return;
+                cbOutputChange?.Invoke(this);
+                return;
 			}
 		}
 	}

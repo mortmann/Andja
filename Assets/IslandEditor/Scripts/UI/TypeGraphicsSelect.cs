@@ -12,7 +12,7 @@ public class TypeGraphicsSelect : MonoBehaviour {
 	public Dictionary<string,List<GameObject>> typeToGameObjects;
 	TileType currentSelected;
 	// Use this for initialization
-	void Start () {
+	void OnEnable () {
 		typeToGameObjects = new Dictionary<string, List<GameObject>> ();
 		LoadSprites ();
 		foreach (string type in typeTotileSpriteNames.Keys) {
@@ -26,10 +26,11 @@ public class TypeGraphicsSelect : MonoBehaviour {
 				g.GetComponentInChildren<Text > ().text = sprite;
 				//set the trigger up
 				EventTrigger eventTrigger = g.GetComponent<EventTrigger> ();
-				EventTrigger.Entry entry = new EventTrigger.Entry ();
-				entry.eventID = EventTriggerType.Select;
-				entry.callback = new EventTrigger.TriggerEvent ();
-				int temp = number;
+                EventTrigger.Entry entry = new EventTrigger.Entry {
+                    eventID = EventTriggerType.Select,
+                    callback = new EventTrigger.TriggerEvent()
+                };
+                int temp = number;
 				number++;
 				entry.callback.AddListener ((data) => {
 					OnSelect (temp);
@@ -41,7 +42,7 @@ public class TypeGraphicsSelect : MonoBehaviour {
 //			Debug.Log ("typeToGameObjects |" + type + "|"); 
 			typeToGameObjects.Add (type, gos); 
 		}
-		ChangeType (TileType.Dirt);
+
 	}
 	public void ChangeType(TileType item){
 		foreach(Transform t in content.transform){

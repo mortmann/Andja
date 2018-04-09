@@ -395,13 +395,14 @@ namespace EpPathFinding.cs
                                 currentSnapshot.stage = 1;
                                 stack.Push(currentSnapshot);
 
-                                newSnapshot = new JumpSnapshot();
-                                newSnapshot.iX = currentSnapshot.iX + currentSnapshot.tDx;
-                                newSnapshot.iY = currentSnapshot.iY;
-                                newSnapshot.iPx = currentSnapshot.iX;
-                                newSnapshot.iPy = currentSnapshot.iY;
-                                newSnapshot.stage = 0;
-                                stack.Push(newSnapshot);
+                            newSnapshot = new JumpSnapshot {
+                                iX = currentSnapshot.iX + currentSnapshot.tDx,
+                                iY = currentSnapshot.iY,
+                                iPx = currentSnapshot.iX,
+                                iPy = currentSnapshot.iY,
+                                stage = 0
+                            };
+                            stack.Push(newSnapshot);
                                 continue;
                             }
 
@@ -412,24 +413,26 @@ namespace EpPathFinding.cs
                             // neighbors is open to allow the path
                             if (iParam.SearchGrid.IsWalkableAt(currentSnapshot.iX + currentSnapshot.tDx, currentSnapshot.iY) || iParam.SearchGrid.IsWalkableAt(currentSnapshot.iX, currentSnapshot.iY + currentSnapshot.tDy))
                             {
-                                newSnapshot = new JumpSnapshot();
-                                newSnapshot.iX = currentSnapshot.iX + currentSnapshot.tDx;
-                                newSnapshot.iY = currentSnapshot.iY + currentSnapshot.tDy;
-                                newSnapshot.iPx = currentSnapshot.iX;
-                                newSnapshot.iPy = currentSnapshot.iY;
-                                newSnapshot.stage = 0;
-                                stack.Push(newSnapshot);
+                            newSnapshot = new JumpSnapshot {
+                                iX = currentSnapshot.iX + currentSnapshot.tDx,
+                                iY = currentSnapshot.iY + currentSnapshot.tDy,
+                                iPx = currentSnapshot.iX,
+                                iPy = currentSnapshot.iY,
+                                stage = 0
+                            };
+                            stack.Push(newSnapshot);
                                 continue;
                             }
                             else if (iParam.DiagonalMovement==DiagonalMovement.Always)
                             {
-                                newSnapshot = new JumpSnapshot();
-                                newSnapshot.iX = currentSnapshot.iX + currentSnapshot.tDx;
-                                newSnapshot.iY = currentSnapshot.iY + currentSnapshot.tDy;
-                                newSnapshot.iPx = currentSnapshot.iX;
-                                newSnapshot.iPy = currentSnapshot.iY;
-                                newSnapshot.stage = 0;
-                                stack.Push(newSnapshot);
+                            newSnapshot = new JumpSnapshot {
+                                iX = currentSnapshot.iX + currentSnapshot.tDx,
+                                iY = currentSnapshot.iY + currentSnapshot.tDy,
+                                iPx = currentSnapshot.iX,
+                                iPy = currentSnapshot.iY,
+                                stage = 0
+                            };
+                            stack.Push(newSnapshot);
                                 continue;
                             }
                         }
@@ -477,13 +480,14 @@ namespace EpPathFinding.cs
                                 currentSnapshot.stage = 3;
                                 stack.Push(currentSnapshot);
 
-                                newSnapshot = new JumpSnapshot();
-                                newSnapshot.iX = currentSnapshot.iX + currentSnapshot.tDx;
-                                newSnapshot.iY = currentSnapshot.iY;
-                                newSnapshot.iPx = currentSnapshot.iX;
-                                newSnapshot.iPy = currentSnapshot.iY;
-                                newSnapshot.stage = 0;
-                                stack.Push(newSnapshot);
+                            newSnapshot = new JumpSnapshot {
+                                iX = currentSnapshot.iX + currentSnapshot.tDx,
+                                iY = currentSnapshot.iY,
+                                iPx = currentSnapshot.iX,
+                                iPy = currentSnapshot.iY,
+                                stage = 0
+                            };
+                            stack.Push(newSnapshot);
                                 continue;
                             }
 
@@ -491,13 +495,14 @@ namespace EpPathFinding.cs
                             // neighbors is open to allow the path
                             if (iParam.SearchGrid.IsWalkableAt(currentSnapshot.iX + currentSnapshot.tDx, currentSnapshot.iY) && iParam.SearchGrid.IsWalkableAt(currentSnapshot.iX, currentSnapshot.iY + currentSnapshot.tDy))
                             {
-                                newSnapshot = new JumpSnapshot();
-                                newSnapshot.iX = currentSnapshot.iX + currentSnapshot.tDx;
-                                newSnapshot.iY = currentSnapshot.iY + currentSnapshot.tDy;
-                                newSnapshot.iPx = currentSnapshot.iX;
-                                newSnapshot.iPy = currentSnapshot.iY;
-                                newSnapshot.stage = 0;
-                                stack.Push(newSnapshot);
+                            newSnapshot = new JumpSnapshot {
+                                iX = currentSnapshot.iX + currentSnapshot.tDx,
+                                iY = currentSnapshot.iY + currentSnapshot.tDy,
+                                iPx = currentSnapshot.iX,
+                                iPy = currentSnapshot.iY,
+                                stage = 0
+                            };
+                            stack.Push(newSnapshot);
                                 continue;
                             }
                         }
@@ -527,13 +532,14 @@ namespace EpPathFinding.cs
                                 currentSnapshot.stage = 5;
                                 stack.Push(currentSnapshot);
 
-                                newSnapshot = new JumpSnapshot();
-                                newSnapshot.iX = currentSnapshot.iX;
-                                newSnapshot.iY = currentSnapshot.iY + 1;
-                                newSnapshot.iPx = currentSnapshot.iX;
-                                newSnapshot.iPy = currentSnapshot.iY;
-                                newSnapshot.stage = 0;
-                                stack.Push(newSnapshot);
+                            newSnapshot = new JumpSnapshot {
+                                iX = currentSnapshot.iX,
+                                iY = currentSnapshot.iY + 1,
+                                iPx = currentSnapshot.iX,
+                                iPy = currentSnapshot.iY,
+                                stage = 0
+                            };
+                            stack.Push(newSnapshot);
                                 continue;
                             }
                             else // tDy != 0
@@ -541,13 +547,14 @@ namespace EpPathFinding.cs
                                 currentSnapshot.stage = 6;
                                 stack.Push(currentSnapshot);
 
-                                newSnapshot = new JumpSnapshot();
-                                newSnapshot.iX = currentSnapshot.iX + 1;
-                                newSnapshot.iY = currentSnapshot.iY;
-                                newSnapshot.iPx = currentSnapshot.iX;
-                                newSnapshot.iPy = currentSnapshot.iY;
-                                newSnapshot.stage = 0;
-                                stack.Push(newSnapshot);
+                            newSnapshot = new JumpSnapshot {
+                                iX = currentSnapshot.iX + 1,
+                                iY = currentSnapshot.iY,
+                                iPx = currentSnapshot.iX,
+                                iPy = currentSnapshot.iY,
+                                stage = 0
+                            };
+                            stack.Push(newSnapshot);
                                 continue;
 
                             }
@@ -564,13 +571,14 @@ namespace EpPathFinding.cs
                         currentSnapshot.stage = 2;
                         stack.Push(currentSnapshot);
 
-                        newSnapshot = new JumpSnapshot();
-                        newSnapshot.iX = currentSnapshot.iX;
-                        newSnapshot.iY = currentSnapshot.iY + currentSnapshot.tDy;
-                        newSnapshot.iPx = currentSnapshot.iX;
-                        newSnapshot.iPy = currentSnapshot.iY;
-                        newSnapshot.stage = 0;
-                        stack.Push(newSnapshot);
+                    newSnapshot = new JumpSnapshot {
+                        iX = currentSnapshot.iX,
+                        iY = currentSnapshot.iY + currentSnapshot.tDy,
+                        iPx = currentSnapshot.iX,
+                        iPy = currentSnapshot.iY,
+                        stage = 0
+                    };
+                    stack.Push(newSnapshot);
                         break;
                     case 2:
                         if (retVal != null)
@@ -583,24 +591,26 @@ namespace EpPathFinding.cs
                         // neighbors is open to allow the path
                         if (iParam.SearchGrid.IsWalkableAt(currentSnapshot.iX + currentSnapshot.tDx, currentSnapshot.iY) || iParam.SearchGrid.IsWalkableAt(currentSnapshot.iX, currentSnapshot.iY + currentSnapshot.tDy))
                         {
-                            newSnapshot = new JumpSnapshot();
-                            newSnapshot.iX = currentSnapshot.iX + currentSnapshot.tDx;
-                            newSnapshot.iY = currentSnapshot.iY + currentSnapshot.tDy;
-                            newSnapshot.iPx = currentSnapshot.iX;
-                            newSnapshot.iPy = currentSnapshot.iY;
-                            newSnapshot.stage = 0;
-                            stack.Push(newSnapshot);
+                        newSnapshot = new JumpSnapshot {
+                            iX = currentSnapshot.iX + currentSnapshot.tDx,
+                            iY = currentSnapshot.iY + currentSnapshot.tDy,
+                            iPx = currentSnapshot.iX,
+                            iPy = currentSnapshot.iY,
+                            stage = 0
+                        };
+                        stack.Push(newSnapshot);
                             continue;
                         }
                         else if (iParam.DiagonalMovement==DiagonalMovement.Always)
                         {
-                            newSnapshot = new JumpSnapshot();
-                            newSnapshot.iX = currentSnapshot.iX + currentSnapshot.tDx;
-                            newSnapshot.iY = currentSnapshot.iY + currentSnapshot.tDy;
-                            newSnapshot.iPx = currentSnapshot.iX;
-                            newSnapshot.iPy = currentSnapshot.iY;
-                            newSnapshot.stage = 0;
-                            stack.Push(newSnapshot);
+                        newSnapshot = new JumpSnapshot {
+                            iX = currentSnapshot.iX + currentSnapshot.tDx,
+                            iY = currentSnapshot.iY + currentSnapshot.tDy,
+                            iPx = currentSnapshot.iX,
+                            iPy = currentSnapshot.iY,
+                            stage = 0
+                        };
+                        stack.Push(newSnapshot);
                             continue;
                         }
                         retVal = null;
@@ -615,13 +625,14 @@ namespace EpPathFinding.cs
                         currentSnapshot.stage = 4;
                         stack.Push(currentSnapshot);
 
-                        newSnapshot = new JumpSnapshot();
-                        newSnapshot.iX = currentSnapshot.iX;
-                        newSnapshot.iY = currentSnapshot.iY + currentSnapshot.tDy;
-                        newSnapshot.iPx = currentSnapshot.iX;
-                        newSnapshot.iPy = currentSnapshot.iY;
-                        newSnapshot.stage = 0;
-                        stack.Push(newSnapshot);
+                    newSnapshot = new JumpSnapshot {
+                        iX = currentSnapshot.iX,
+                        iY = currentSnapshot.iY + currentSnapshot.tDy,
+                        iPx = currentSnapshot.iX,
+                        iPy = currentSnapshot.iY,
+                        stage = 0
+                    };
+                    stack.Push(newSnapshot);
                         break;
                     case 4:
                         if (retVal != null)
@@ -634,13 +645,14 @@ namespace EpPathFinding.cs
                         // neighbors is open to allow the path
                         if (iParam.SearchGrid.IsWalkableAt(currentSnapshot.iX + currentSnapshot.tDx, currentSnapshot.iY) && iParam.SearchGrid.IsWalkableAt(currentSnapshot.iX, currentSnapshot.iY + currentSnapshot.tDy))
                         {
-                            newSnapshot = new JumpSnapshot();
-                            newSnapshot.iX = currentSnapshot.iX + currentSnapshot.tDx;
-                            newSnapshot.iY = currentSnapshot.iY + currentSnapshot.tDy;
-                            newSnapshot.iPx = currentSnapshot.iX;
-                            newSnapshot.iPy = currentSnapshot.iY;
-                            newSnapshot.stage = 0;
-                            stack.Push(newSnapshot);
+                        newSnapshot = new JumpSnapshot {
+                            iX = currentSnapshot.iX + currentSnapshot.tDx,
+                            iY = currentSnapshot.iY + currentSnapshot.tDy,
+                            iPx = currentSnapshot.iX,
+                            iPy = currentSnapshot.iY,
+                            stage = 0
+                        };
+                        stack.Push(newSnapshot);
                             continue;
                         }
                         retVal = null;
@@ -654,13 +666,14 @@ namespace EpPathFinding.cs
                         currentSnapshot.stage = 7;
                         stack.Push(currentSnapshot);
 
-                        newSnapshot = new JumpSnapshot();
-                        newSnapshot.iX = currentSnapshot.iX;
-                        newSnapshot.iY = currentSnapshot.iY - 1;
-                        newSnapshot.iPx = currentSnapshot.iX;
-                        newSnapshot.iPy = currentSnapshot.iY;
-                        newSnapshot.stage = 0;
-                        stack.Push(newSnapshot);
+                    newSnapshot = new JumpSnapshot {
+                        iX = currentSnapshot.iX,
+                        iY = currentSnapshot.iY - 1,
+                        iPx = currentSnapshot.iX,
+                        iPy = currentSnapshot.iY,
+                        stage = 0
+                    };
+                    stack.Push(newSnapshot);
                         break;
                     case 6:
                         if (retVal != null)
@@ -671,13 +684,14 @@ namespace EpPathFinding.cs
                         currentSnapshot.stage = 7;
                         stack.Push(currentSnapshot);
 
-                        newSnapshot = new JumpSnapshot();
-                        newSnapshot.iX = currentSnapshot.iX - 1;
-                        newSnapshot.iY = currentSnapshot.iY;
-                        newSnapshot.iPx = currentSnapshot.iX;
-                        newSnapshot.iPy = currentSnapshot.iY;
-                        newSnapshot.stage = 0;
-                        stack.Push(newSnapshot);
+                    newSnapshot = new JumpSnapshot {
+                        iX = currentSnapshot.iX - 1,
+                        iY = currentSnapshot.iY,
+                        iPx = currentSnapshot.iX,
+                        iPy = currentSnapshot.iY,
+                        stage = 0
+                    };
+                    stack.Push(newSnapshot);
                         break;
                     case 7:
                         if (retVal != null)
@@ -688,13 +702,14 @@ namespace EpPathFinding.cs
                         // keep going
                         if (iParam.SearchGrid.IsWalkableAt(currentSnapshot.iX + currentSnapshot.tDx, currentSnapshot.iY) && iParam.SearchGrid.IsWalkableAt(currentSnapshot.iX, currentSnapshot.iY + currentSnapshot.tDy))
                         {
-                            newSnapshot = new JumpSnapshot();
-                            newSnapshot.iX = currentSnapshot.iX + currentSnapshot.tDx;
-                            newSnapshot.iY = currentSnapshot.iY + currentSnapshot.tDy;
-                            newSnapshot.iPx = currentSnapshot.iX;
-                            newSnapshot.iPy = currentSnapshot.iY;
-                            newSnapshot.stage = 0;
-                            stack.Push(newSnapshot);
+                        newSnapshot = new JumpSnapshot {
+                            iX = currentSnapshot.iX + currentSnapshot.tDx,
+                            iY = currentSnapshot.iY + currentSnapshot.tDy,
+                            iPx = currentSnapshot.iX,
+                            iPy = currentSnapshot.iY,
+                            stage = 0
+                        };
+                        stack.Push(newSnapshot);
                             continue;
                         }
                         retVal = null;

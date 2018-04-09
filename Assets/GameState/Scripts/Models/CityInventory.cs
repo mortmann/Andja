@@ -44,26 +44,20 @@ public class CityInventory : Inventory {
 	}
 	public override void setItemCountNull (Item item){
 		getItemInInventory (item).count = 0;
-		if(cbInventoryChanged!=null){
-			cbInventoryChanged (this); 
-		}
-	}
+        cbInventoryChanged?.Invoke(this);
+    }
 	public override Item[] GetAllItemsAndRemoveThem(){
 		//get all items in a list
 		List<Item> temp = new List<Item> (items.Values);
 		items = BuildController.Instance.getCopieOfAllItems ();
-		if(cbInventoryChanged!=null){
-			cbInventoryChanged (this);
-		}
-		return temp.ToArray ();
+        cbInventoryChanged?.Invoke(this);
+        return temp.ToArray ();
 	}
 
 	protected override void lowerItemAmount(Item i,int amount){
 		Item invItem = items [getPlaceInItems (i)];
 		invItem.count -= Mathf.Max(invItem.count-amount,0);
-		if(cbInventoryChanged!=null){
-			cbInventoryChanged (this);
-		}
-	}
+        cbInventoryChanged?.Invoke(this);
+    }
 
 }

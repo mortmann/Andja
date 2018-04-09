@@ -94,7 +94,7 @@ public abstract class Pathfinding {
     public Tile currTile {
         get { 
 			if(_currTile == null){
-				return World.current.GetTileAt (X, Y);
+				return World.Current.GetTileAt (X, Y);
 			}
 			return _currTile; }
         set {
@@ -168,7 +168,7 @@ public abstract class Pathfinding {
 
         X += temp.x;
         Y += temp.y;
-		if(World.current.IsInTileAt(nextTile,X,Y)){
+		if(World.Current.IsInTileAt(nextTile,X,Y)){
 			currTile = nextTile;
 		}
 

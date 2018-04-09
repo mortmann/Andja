@@ -18,7 +18,7 @@ public class MineStructure : OutputStructure {
 	public string myRessource {get{ return MineData.myRessource;}}
 
 	public override float Efficiency { get { 
-			if(BuildTile.myIsland.myRessources [myRessource] ==0){
+			if(BuildTile.MyIsland.myRessources [myRessource] ==0){
 				return 0;
 			}
 			return 100; 
@@ -50,7 +50,7 @@ public class MineStructure : OutputStructure {
 	public override bool SpecialCheckForBuild (List<Tile> tiles) {
 		for (int i = 0; i < tiles.Count; i++) {
 			if(tiles[i].Type == TileType.Mountain){
-				if (BuildTile.myIsland.myRessources [myRessource] <= 0) {
+				if (BuildTile.MyIsland.myRessources [myRessource] <= 0) {
 					return false;
 				}
 			}
@@ -59,7 +59,7 @@ public class MineStructure : OutputStructure {
 	}
 
 	public override void update (float deltaTime){
-		if (BuildTile.myIsland.myRessources [myRessource] <= 0) {
+		if (BuildTile.MyIsland.myRessources [myRessource] <= 0) {
 			return;
 		} 
 		if (output[0].count >= maxOutputStorage){
@@ -71,10 +71,8 @@ public class MineStructure : OutputStructure {
 			produceCountdown = 0;
 			output [0].count++;
 
-			if (cbOutputChange != null) {
-				cbOutputChange (this);
-			}
-		}
+            cbOutputChange?.Invoke(this);
+        }
 	}
 
 	public override Structure Clone (){

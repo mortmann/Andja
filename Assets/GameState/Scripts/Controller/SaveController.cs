@@ -33,25 +33,7 @@ public class SaveController : MonoBehaviour {
 			LoadGameState (gdh.loadsavegame);
 			gdh.loadsavegame = null;
 		}
-//		Item[] items = new Item[4];
-//		items [0] = new Item (1, "test", ItemType.Build, 12);
-//		items [1] = new Item (1, "test", ItemType.Build, 53);
-//		items [2] = new Item (2, "test2", ItemType.Intermediate, 12);
-//		items [3] = new Item (3, "test3", ItemType.Luxury, 12);
-//		TradeRoute.Trade t = new TradeRoute.Trade (World.current.islandList [0].myCities [0], items, items);
-//
-//		string json =  (JsonConvert.SerializeObject(t,
-//			new JsonSerializerSettings
-//			{
-//				NullValueHandling = NullValueHandling.Ignore,
-//				PreserveReferencesHandling = PreserveReferencesHandling.Objects 
-//			}) );
-//		TradeRoute.Trade t2 = JsonConvert.DeserializeObject<TradeRoute.Trade> (json);
-//		Debug.Log (t2.getting[0]);
-//		Debug.Log (t2.getting[1]);
-//		Debug.Log (t2.giving[0]);
-//		Debug.Log (t2.giving[1]);
-//
+
 
 //		LoadGameState ("sae");
 	}
@@ -69,16 +51,17 @@ public class SaveController : MonoBehaviour {
 		}
 		string path = System.IO.Path.Combine (GetSaveGamesPath (), name + ".sav");
 
-		SaveState savestate = new SaveState ();
-		savestate.safefileversion = (SaveFileVersion);
-		savestate.gamedata = (gdh.GetSaveGameData());
-		savestate.pcs =  (pc.GetSavePlayerData ());
-		savestate.world =  (wc.GetSaveWorldData ());
-		savestate.ges =  (ec.GetSaveGameEventData ());
-		savestate.camera = (cc.GetSaveCamera ());
+        SaveState savestate = new SaveState {
+            safefileversion = (SaveFileVersion),
+            gamedata = (gdh.GetSaveGameData()),
+            pcs = (pc.GetSavePlayerData()),
+            world = (wc.GetSaveWorldData()),
+            ges = (ec.GetSaveGameEventData()),
+            camera = (cc.GetSaveCamera())
+        };
 
 
-		System.IO.File.WriteAllText(path, JsonConvert.SerializeObject(savestate,Formatting.Indented,
+        System.IO.File.WriteAllText(path, JsonConvert.SerializeObject(savestate,Formatting.Indented,
 				new JsonSerializerSettings
 				{
 					NullValueHandling = NullValueHandling.Ignore,

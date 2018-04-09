@@ -79,11 +79,12 @@ namespace EpPathFinding.cs
         public DynamicGrid(List<GridPos> iWalkableGridList = null)
             : base()
         {
-            m_gridRect = new GridRect();
-            m_gridRect.minX = 0;
-            m_gridRect.minY = 0;
-            m_gridRect.maxX = 0;
-            m_gridRect.maxY = 0;
+            m_gridRect = new GridRect {
+                minX = 0,
+                minY = 0,
+                maxX = 0,
+                maxY = 0
+            };
             m_notSet = true;
             buildNodes(iWalkableGridList);
         }

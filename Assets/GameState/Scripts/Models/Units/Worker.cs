@@ -126,10 +126,9 @@ public class Worker {
 		//do the movement 
 		path.Update_DoMovement (deltaTime);
 
-		if(cbWorkerChanged != null)
-			cbWorkerChanged(this);
+        cbWorkerChanged?.Invoke(this);
 
-		if (path.IsAtDest==false) {
+        if (path.IsAtDest==false) {
 			return;
 		}
 		if (goingToWork == false) {		
@@ -167,10 +166,8 @@ public class Worker {
 		//do its job -- get the items in tile
 		doTimer -= deltaTime;
 		if (doTimer > 0) {
-			if(cbSoundCallback!=null){
-				cbSoundCallback (this, soundWorkName);
-			}
-			return;
+            cbSoundCallback?.Invoke(this, soundWorkName);
+            return;
 		}
 		if(workStructure==null&&destTile!=null&&destTile.Structure is OutputStructure){
 			workStructure = (OutputStructure)destTile.Structure;
@@ -204,9 +201,8 @@ public class Worker {
 	public void Destroy() {
 		if (goingToWork)
 			workStructure.resetOutputClaimed ();
-		if(cbWorkerDestroy != null)
-			cbWorkerDestroy(this);
-	}
+        cbWorkerDestroy?.Invoke(this);
+    }
 	public void SetGoalStructure(OutputStructure structure){
 		if(structure == null){
 			return;

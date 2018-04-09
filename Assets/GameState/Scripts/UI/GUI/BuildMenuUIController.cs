@@ -47,7 +47,7 @@ public class BuildMenuUIController : MonoBehaviour {
 				b.SetActive(false);
 			}
 		}
-		OnMaxPopLevelChange (player.maxPopulationLevel);
+		OnMaxPopLevelChange (player.MaxPopulationLevel);
 
 		player.RegisterMaxPopulationCountChange (OnMaxPopLevelChange);
 		buildController.RegisterBuildStateChange (OnBuildModeChange);
@@ -106,7 +106,7 @@ public class BuildMenuUIController : MonoBehaviour {
 			nameToGOMap[item].SetActive (false);
 		}
 		foreach (string name in buttons[i]) {
-			if (player.maxPopulationCount >= buildController.structurePrototypes [nameToIDMap [name]].PopulationCount) {
+			if (player.MaxPopulationCount >= buildController.structurePrototypes [nameToIDMap [name]].PopulationCount) {
 				nameToGOMap [name].SetActive (true);
 			}
 		}

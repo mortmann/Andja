@@ -15,22 +15,22 @@ public class NeedUI : MonoBehaviour {
 	public void setNeed(Need need, HomeBuilding home){
 		this.need = need;
 		this.home = home;
-		this.name = need.name;
-		string name = need.name + " | ";
+		this.name = need.Name;
+		string name = need.Name + " | ";
 		if (need.IsItemNeed()) {
-			name += need.item.name;
+			name += need.Item.name;
 		} else {
-			if(need.structure==null){
+			if(need.Structure==null){
 				nameText.text = "Missing Structure";
 				//					Debug.LogWarning(ns[i].ID + " " + curr.name +" is missing its structure! Either non declared or structure not existing!");
 				return;
 			}
-			name += need.structure.SmallName;
+			name += need.Structure.SmallName;
 		}
-		nameText.text = need.name;
+		nameText.text = need.Name;
 	}
 	void Update(){
-		if(PlayerController.Instance.currPlayer.hasUnlockedNeed(need)==false){
+		if(PlayerController.Instance.currPlayer.HasUnlockedNeed(need)==false){
 			percentageText.text = "LOCKED!";
 			return;
 		}

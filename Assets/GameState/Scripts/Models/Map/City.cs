@@ -32,7 +32,7 @@ public class City : IGEventable {
 
 	#endregion
 	#region RuntimeOrOther
-	public string name {get{
+	public string Name {get{
 			if(this.IsWilderness ()){
 				return "Wilderness";
 			}
@@ -69,7 +69,7 @@ public class City : IGEventable {
 
 		itemIDtoTradeItem = new Dictionary<int, TradeItem> ();
 		myStructures = new List<Structure>();
-		inventory = new CityInventory (name);
+		inventory = new CityInventory (Name);
 
 		Setup ();
 		citizienCount = new int[citizienLevels];
@@ -102,7 +102,7 @@ public class City : IGEventable {
 		}
 		itemNeeds = new List<Need> ();
 		structureNeeds = new List<Need> ();
-		List<Need> allNeeds = World.getCopieOfAllNeeds();
+		List<Need> allNeeds = World.GetCopieOfAllNeeds();
 		if(citizienHappiness == null){
 			citizienCount = new int[citizienLevels];
 			citizienHappiness = new float[citizienLevels];
@@ -141,7 +141,7 @@ public class City : IGEventable {
 		return myStructures;
 	}
 
-    internal void update(float deltaTime) {
+    internal void Update(float deltaTime) {
 		for (int i = 0; i < myStructures.Count; i++) {
 			myStructures[i].update(deltaTime);
 		}
@@ -161,7 +161,7 @@ public class City : IGEventable {
 		island.wilderness = this;
 		myTiles = new HashSet<Tile> (tiles);
 		for (int i = 0; i < tiles.Count; i++) {
-			temp[i].myCity= null;
+			temp[i].MyCity= null;
 		}
 		inventory = new Inventory (0);
 		this.playerNumber = -1;
@@ -169,7 +169,7 @@ public class City : IGEventable {
 		island.wilderness = this;
 		myStructures = new List<Structure> ();
 	}
-	public void addStructure(Structure str){
+	public void AddStructure(Structure str){
 		if(myStructures.Contains (str)){
 			//happens on loading for loaded stuff
 			//so not an actual error anymore
@@ -187,14 +187,12 @@ public class City : IGEventable {
 			myWarehouse = (Warehouse)str;
 		}
 		cityBalance += str.maintenancecost;
-		removeRessources (str.BuildingItems ());
+		RemoveRessources (str.BuildingItems ());
 
 		myStructures.Add (str);
 
-		if(cbStructureAdded!=null){
-			cbStructureAdded (str);
-		}
-	}
+        cbStructureAdded?.Invoke(str);
+    }
 
 	private void UpdateNeeds(float deltaTime){
 		for (int i = 0; i < citizienLevels; i++) {
@@ -212,10 +210,10 @@ public class City : IGEventable {
 		float[] sumOfPerc = new float[citizienLevels];
 		foreach(Need need in itemNeeds){
 			need.TryToConsumThisIn (this,citizienCount);
-			levelCount [need.startLevel]++;
-			sumOfPerc [need.startLevel] += need.percantageAvailability;
+			levelCount [need.StartLevel]++;
+			sumOfPerc [need.StartLevel] += need.percantageAvailability;
 			if(need.percantageAvailability<0.4f){
-				criticalAvaibilityNeed [need.startLevel] = true;
+				criticalAvaibilityNeed [need.StartLevel] = true;
 			}
 		}
 		float[] percentagesPerLevel = new float[citizienLevels];
@@ -229,22 +227,20 @@ public class City : IGEventable {
 		}
 	}
 
-	public void triggerAddCallBack(Structure str){
-		if(cbStructureAdded!=null){
-			cbStructureAdded (str);
-		}
-	}
+	public void TriggerAddCallBack(Structure str){
+        cbStructureAdded?.Invoke(str);
+    }
 	//current wrapper to make sure its valid
 	public void RemoveTile(Tile t){
 		//if it doesnt contain it there is an error
 		if(myTiles.Contains (t)==false){
-			Debug.LogError ("This city does not know that it had this tile!" + t.toString ()); 
+			Debug.LogError ("This city does not know that it had this tile!" + t.ToString ()); 
 			return;
 		}
 		myTiles.Remove (t);
 		island.allReadyHighlighted = false;
 	}
-	public void addTiles(HashSet<Tile> t){
+	public void AddTiles(HashSet<Tile> t){
 		// does not really needs it because tiles witout island reject cities
 		//but it is a secondary security that this does not happen
 		if(t==null){
@@ -253,11 +249,11 @@ public class City : IGEventable {
 		t.RemoveWhere (x =>x==null || x.Type == TileType.Ocean);
 		List<Tile> tiles = new List<Tile> (t);
 		for (int i = 0; i < tiles.Count; i++) {
-			tiles [i].myCity = this;
+			tiles [i].MyCity = this;
 			if(tiles[i].Structure != null){
 				if (myStructures.Contains (tiles [i].Structure) ==false) { 
 					tiles [i].Structure.City = this;
-					addStructure (tiles [i].Structure);
+					AddStructure (tiles [i].Structure);
 				}
 			}
 			myTiles.Add (tiles[i]);
@@ -265,36 +261,36 @@ public class City : IGEventable {
 		island.allReadyHighlighted = false;
 
 	}
-	public void addTile(Tile t){
+	public void AddTile(Tile t){
 		if(t.Type==TileType.Ocean||myTiles==null||myTiles.Contains (t)){
 			return;
 		}
 		if(t.Structure != null){
 			if (myStructures.Contains (t.Structure) == false) { 
 				t.Structure.City = this;
-				addStructure (t.Structure);
+				AddStructure (t.Structure);
 			}
 		}
 		island.allReadyHighlighted = false;
 		myTiles.Add (t);
 	}
-	public bool getNeedCriticalForLevel(int buildingLevel){
+	public bool GetNeedCriticalForLevel(int buildingLevel){
 		return criticalAvaibilityNeed [buildingLevel];
 	}
-	public void addPeople(int level, int count){
+	public void AddPeople(int level, int count){
 		if(count<0){
 			return;
 		}
 		citizienCount [level] += count;
 	}
-	public void removePeople(int level, int count){
+	public void RemovePeople(int level, int count){
 		if(count<0){
 			return;
 		}
 		citizienCount [level] -= count;
 	}
 
-	public void removeRessources(Item[] remove){
+	public void RemoveRessources(Item[] remove){
 		if(remove==null){
 			return;
 		}
@@ -303,7 +299,7 @@ public class City : IGEventable {
 		}
 	}
 
-	public void removeRessource(Item item, int amount){
+	public void RemoveRessource(Item item, int amount){
 		if(amount<0){
 			return;
 		}
@@ -312,7 +308,7 @@ public class City : IGEventable {
 		inventory.removeItemAmount (i);
 	}
 
-	public bool hasItem(Item item){
+	public bool HasItem(Item item){
 		return inventory.hasAnythingOf (item);
 	}
 	public bool IsWilderness(){
@@ -341,9 +337,9 @@ public class City : IGEventable {
 		}
 		Item i = ti.SellItemAmount (inventory.GetItemWithIDClone (itemID));
 		Player myPlayer = PlayerController.Instance.GetPlayer (playerNumber);
-		int am = tradeWithShip (i,Mathf.Clamp (amount,0,i.count),ship);
-		myPlayer.addMoney (am * ti.price);
-		player.reduceMoney (am * ti.price);
+		int am = TradeWithShip (i,Mathf.Clamp (amount,0,i.count),ship);
+		myPlayer.AddMoney (am * ti.price);
+		player.ReduceMoney (am * ti.price);
 
 	}
 	/// <summary>
@@ -366,12 +362,12 @@ public class City : IGEventable {
 		}
 		Item i = ti.BuyItemAmount (inventory.GetItemWithIDClone (itemID));
 		Player myPlayer = PlayerController.Instance.GetPlayer (playerNumber);
-		int am = tradeFromShip (ship,i,Mathf.Clamp (amount,0,i.count));
-		myPlayer.reduceMoney (am * ti.price);
-		player.addMoney (am * ti.price);
+		int am = TradeFromShip (ship,i,Mathf.Clamp (amount,0,i.count));
+		myPlayer.ReduceMoney (am * ti.price);
+		player.AddMoney (am * ti.price);
 
 	}
-	public int tradeWithShip(Item toTrade,int amount=50, Unit ship = null){
+	public int TradeWithShip(Item toTrade,int amount=50, Unit ship = null){
 		if(myWarehouse==null || myWarehouse.inRangeUnits.Count==0  || toTrade ==null){
 			Debug.Log ("myWarehouse==null || myWarehouse.inRangeUnits.Count==0  || toTrade ==null"); 
 			return 0;
@@ -384,13 +380,13 @@ public class City : IGEventable {
 			return inventory.moveItem (ship.inventory, toTrade,amount);
 		}
 	}
-	public int tradeFromShip(Unit u,Item getTrade,int amount = 50){
+	public int TradeFromShip(Unit u,Item getTrade,int amount = 50){
 		if(getTrade ==null){
 			return 0;
 		}
 		return u.inventory.moveItem (inventory,getTrade,amount);
 	}
-	public float getPercentage(Need need){
+	public float GetPercentage(Need need){
 		if(idToNeed.ContainsKey (need.ID)==false){
 			return 0;
 		}
@@ -421,7 +417,7 @@ public class City : IGEventable {
 			myRoutes.Remove (route);
 		} 
 	}
-	public void removeStructure(Structure structure, bool returnRessources=false){
+	public void RemoveStructure(Structure structure, bool returnRessources=false){
 		if(structure==null){
 			Debug.Log ("null"); 
 			return;
@@ -444,25 +440,24 @@ public class City : IGEventable {
 			}
 			myStructures.Remove (structure);
 			cityBalance -= structure.maintenancecost;
-			if(cbStructureRemoved!=null)
-				cbStructureRemoved (structure);
-		} else {
+            cbStructureRemoved?.Invoke(structure);
+        } else {
 			//this is no error if this is wilderness
 			if(structure is Warehouse){
 				return;
 			}
-			Debug.LogError (this.name + " This structure "+structure.ToString () +" does not belong to this city "); 
+			Debug.LogError (this.Name + " This structure "+structure.ToString () +" does not belong to this city "); 
 		}
 		island.allReadyHighlighted = false;
 
 	}
-	public float getHappinessForCitizenLevel(int level){
+	public float GetHappinessForCitizenLevel(int level){
 		return citizienHappiness [level];
 	}
-	public void removeTiles(IEnumerable<Tile> tiles){
+	public void RemoveTiles(IEnumerable<Tile> tiles){
 		foreach (Tile item in tiles) {
-			item.myCity = null;
-			if(item.myCity!=this){
+			item.MyCity = null;
+			if(item.MyCity!=this){
 				myTiles.Remove (item);
 			}
 		}
@@ -475,12 +470,11 @@ public class City : IGEventable {
 			return; // this is the wilderness it cant be removed! or destroyed
 		}
 		if(myTiles.Count > 0){
-			removeTiles (myTiles);
+			RemoveTiles (myTiles);
 		}
 		island.RemoveCity (this);
-		if(cbCityDestroy!=null)
-			cbCityDestroy (this);
-	}
+        cbCityDestroy?.Invoke(this);
+    }
 	public void RegisterCityDestroy(Action<City> callbackfunc) {
 		cbCityDestroy += callbackfunc;
 	}
@@ -508,20 +502,16 @@ public class City : IGEventable {
 		//either event is on this island or in one of its cities
 		if(ge.IsTarget (island)||ge.IsTarget(this)){
 			ge.InfluenceTarget (this, true);
-			if(cbEventCreated!=null){
-				cbEventCreated (ge);
-			}
-		}
+            cbEventCreated?.Invoke(ge);
+        }
 	}
 	public void OnEventEnded(GameEvent ge){
 		//this only gets called in two cases
 		//either event is on this island or in one of its cities
 		if(ge.IsTarget (island)||ge.IsTarget(this)){
 			ge.InfluenceTarget (this, false);
-			if(cbEventEnded!=null){
-				cbEventEnded (ge);
-			}
-		}
+            cbEventEnded?.Invoke(ge);
+        }
 	}
 
 	public bool HasFertility(Fertility fer){

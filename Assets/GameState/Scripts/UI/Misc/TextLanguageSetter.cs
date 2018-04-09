@@ -22,15 +22,17 @@ public class TextLanguageSetter : MonoBehaviour {
 			return;
 		}
 		EventTrigger trigger = GetComponent<EventTrigger> ();
-		EventTrigger.Entry enter = new EventTrigger.Entry( );
-		enter.eventID = EventTriggerType.PointerEnter;
-		enter.callback.AddListener( ( data) => {
+        EventTrigger.Entry enter = new EventTrigger.Entry {
+            eventID = EventTriggerType.PointerEnter
+        };
+        enter.callback.AddListener( ( data) => {
 			OnMouseEnter ();
 		} );
 		trigger.triggers.Add( enter );
-		EventTrigger.Entry exit = new EventTrigger.Entry( );
-		exit.eventID = EventTriggerType.PointerExit;
-		exit.callback.AddListener( ( data) => {
+        EventTrigger.Entry exit = new EventTrigger.Entry {
+            eventID = EventTriggerType.PointerExit
+        };
+        exit.callback.AddListener( ( data) => {
 			OnMouseExit ();
 		} );
 		trigger.triggers.Add( exit );

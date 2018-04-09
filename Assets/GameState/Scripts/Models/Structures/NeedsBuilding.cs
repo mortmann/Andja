@@ -29,7 +29,7 @@ public class NeedsBuilding : Structure {
 	}
 	public override void OnBuild ()	{
 		foreach (Tile t in myRangeTiles) {
-			t.addNeedStructure (this);
+			t.AddNeedStructure (this);
 		}
 	}
 	public override void OnClick (){

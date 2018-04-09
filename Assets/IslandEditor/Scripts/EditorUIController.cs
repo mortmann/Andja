@@ -17,6 +17,8 @@ public class EditorUIController : MonoBehaviour {
 	public static EditorUIController Instance;
 	public GameObject newIsland;
 
+
+
 	// Use this for initialization
 	void Start () {
 		if(Instance!=null){
@@ -47,9 +49,6 @@ public class EditorUIController : MonoBehaviour {
 	public void DestroyToggle(bool b){
 		BuildDestroyButton.interactable = !b;
 		BuildBuildButton.interactable = b;
-	}
-	public bool IsPauseMenuOpen(){
-		return pauseMenu.activeSelf;
 	}
 	public void PauseMenuToggle(){
 		pauseMenu.SetActive (!pauseMenu.activeSelf);

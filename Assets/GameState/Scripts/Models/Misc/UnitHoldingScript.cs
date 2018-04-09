@@ -21,7 +21,7 @@ public class UnitHoldingScript : MonoBehaviour {
 			line.useWorldSpace = true;
 			int s = 0;
 			foreach(Tile t in unit.pathfinding.worldPath){
-				line.SetPosition (s, t.vector + Vector3.back);
+				line.SetPosition (s, t.Vector + Vector3.back);
 				s++;
 			}
 			line.SetPosition (s, new Vector3 (unit.pathfinding.dest_X, unit.pathfinding.dest_Y,-1));

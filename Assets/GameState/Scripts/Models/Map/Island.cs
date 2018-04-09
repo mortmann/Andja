@@ -56,9 +56,9 @@ public class Island : IGEventable{
 		foreach (Tile t in StartTile.GetNeighbours()) {
 			IslandFloodFill(t);
 		}
-		StartTile.myIsland = this;
+		StartTile.MyIsland = this;
 		allReadyHighlighted = false;
-		World.current.RegisterOnEvent (OnEventCreated,OnEventEnded);
+		World.Current.RegisterOnEvent (OnEventCreated,OnEventEnded);
 		tileGraphIslandTiles = new Path_TileGraph(this);
 	}
 	public IEnumerable<Structure> Load(){
@@ -84,7 +84,7 @@ public class Island : IGEventable{
             // Water is the border of every island :>
             return;
         }
-        if(tile.myIsland == this) {
+        if(tile.MyIsland == this) {
             // already in there
             return;
         }
@@ -109,9 +109,9 @@ public class Island : IGEventable{
 			}
 
 
-            if (t.Type != TileType.Ocean && t.myIsland != this) {
+            if (t.Type != TileType.Ocean && t.MyIsland != this) {
                 myTiles.Add(t);
-                t.myIsland = this;
+                t.MyIsland = this;
                 Tile[] ns = t.GetNeighbours();
                 foreach (Tile t2 in ns) {
                     tilesToCheck.Enqueue(t2);
@@ -132,7 +132,7 @@ public class Island : IGEventable{
 
     public void update(float deltaTime) {
 		for (int i = 0; i < myCities.Count; i++) {
-			myCities[i].update(deltaTime);
+			myCities[i].Update(deltaTime);
         }
     }
 	public void AddStructure(Structure str){
@@ -140,7 +140,7 @@ public class Island : IGEventable{
 		if(str.City == wilderness){
 //			Debug.LogWarning ("adding to wilderness wanted?");
 		}
-		str.City.addStructure (str);
+		str.City.AddStructure (str);
 	}
 	public City FindCityByPlayer(int playerNumber) {
 		return myCities.Find(x=> x.playerNumber == playerNumber);
@@ -166,16 +166,12 @@ public class Island : IGEventable{
 		if(ge.target is Island){
 			if(ge.target == this){
 				ge.InfluenceTarget (this, start);
-				if(ac!=null){
-					ac (ge);
-				}
-			}
+                ac?.Invoke(ge);
+            }
 			return;
 		} else {
-			if(ac!=null){
-				ac (ge);
-			}
-			return;	
+            ac?.Invoke(ge);
+            return;	
 		}
 	}
 	public void OnEventEnded(GameEvent ge){

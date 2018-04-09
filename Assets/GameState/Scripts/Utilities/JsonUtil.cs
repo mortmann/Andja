@@ -14,9 +14,10 @@ public class JsonUtil {
 	//Usage:
 	//string jsonString = JsonHelper.arrayToJson<YouObject>(objects);
 	public static string arrayToJson<T>(T[] array){
-		Wrapper<T> wrapper = new Wrapper<T> ();
-		wrapper.array = array;
-		return JsonUtility.ToJson (wrapper);
+        Wrapper<T> wrapper = new Wrapper<T> {
+            array = array
+        };
+        return JsonUtility.ToJson (wrapper);
 	}
 
 	[Serializable]

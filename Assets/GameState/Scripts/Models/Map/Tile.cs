@@ -37,12 +37,13 @@ public class Tile : IComparable<Tile>, IEqualityComparer<Tile> {
 	public float Elevation;
 	public float Moisture;
 
-	public virtual string SpriteName {
+    [JsonPropertyAttribute]
+    public virtual string SpriteName {
 		get { return null; }
 		set {
 		}
 	}
-	public Vector3 vector { get {return new Vector3 (x, y, 0);} }
+	public Vector3 Vector { get {return new Vector3 (x, y, 0);} }
 
 	public Tile(){}
 	public Tile(int x, int y){
@@ -112,27 +113,27 @@ public class Tile : IComparable<Tile>, IEqualityComparer<Tile> {
 
 		Tile n;
 
-		n = World.current.GetTileAt(X, Y + 1);
+		n = World.Current.GetTileAt(X, Y + 1);
 		//NORTH
 		ns[0] = n;  // Could be null, but that's okay.
 		//WEST
-		n = World.current.GetTileAt(X + 1, Y);
+		n = World.Current.GetTileAt(X + 1, Y);
 		ns[1] = n;  // Could be null, but that's okay.
 		//SOUTH
-		n = World.current.GetTileAt(X, Y - 1);
+		n = World.Current.GetTileAt(X, Y - 1);
 		ns[2] = n;  // Could be null, but that's okay.
 		//EAST
-		n = World.current.GetTileAt(X - 1, Y);
+		n = World.Current.GetTileAt(X - 1, Y);
 		ns[3] = n;  // Could be null, but that's okay.
 
 		if (diagOkay == true) {
-			n = World.current.GetTileAt(X + 1, Y + 1);
+			n = World.Current.GetTileAt(X + 1, Y + 1);
 			ns[4] = n;  // Could be null, but that's okay.
-			n = World.current.GetTileAt(X + 1, Y - 1);
+			n = World.Current.GetTileAt(X + 1, Y - 1);
 			ns[5] = n;  // Could be null, but that's okay.
-			n = World.current.GetTileAt(X - 1, Y - 1);
+			n = World.Current.GetTileAt(X - 1, Y - 1);
 			ns[6] = n;  // Could be null, but that's okay.
-			n = World.current.GetTileAt(X - 1, Y + 1);
+			n = World.Current.GetTileAt(X - 1, Y + 1);
 			ns[7] = n;  // Could be null, but that's okay.
 		}
 
@@ -140,23 +141,23 @@ public class Tile : IComparable<Tile>, IEqualityComparer<Tile> {
 	}
 
 	public Tile North() {
-		return World.current.GetTileAt(X, Y + 1);
+		return World.Current.GetTileAt(X, Y + 1);
 	}
 	public Tile South() {
-		return World.current.GetTileAt(X, Y - 1);
+		return World.Current.GetTileAt(X, Y - 1);
 	}
 	public Tile East() {
-		return World.current.GetTileAt(X + 1, Y);
+		return World.Current.GetTileAt(X + 1, Y);
 	}
 	public Tile West() {
-		return World.current.GetTileAt(X - 1, Y);
+		return World.Current.GetTileAt(X - 1, Y);
 	}
 	/// <summary>
 	/// Checks if Structure can be placed on the tile.
 	/// </summary>
 	/// <returns><c>true</c>, if tile is buildable, <c>false</c> otherwise.</returns>
 	/// <param name="t"> if its ok to be build on special tiletypes, forced means if it has to be true for either mountain/shore</param>
-	public virtual bool checkTile(bool mustBeShore =false, bool mustBeMountain =false){
+	public virtual bool CheckTile(bool mustBeShore =false, bool mustBeMountain =false){
 		if(mustBeShore){
 			return Type == TileType.Shore;
 		}
@@ -226,8 +227,8 @@ public class Tile : IComparable<Tile>, IEqualityComparer<Tile> {
 		set {
 		}
 	}
-	public virtual Island myIsland { get { return null; } set { } }
-	public virtual City myCity { 
+	public virtual Island MyIsland { get { return null; } set { } }
+	public virtual City MyCity { 
 		get{
 			return null;
 		} 
@@ -236,10 +237,10 @@ public class Tile : IComparable<Tile>, IEqualityComparer<Tile> {
 	}
 
 	public float DistanceFromVector(Vector3 vec){
-		return Vector3.Distance (this.vector, vec);
+		return Vector3.Distance (this.Vector, vec);
 	}
 	public bool IsInRange(Vector3 vec,float Range){
-		return Vector3.Distance (this.vector, vec) <= Range;
+		return Vector3.Distance (this.Vector, vec) <= Range;
 	}
 	/// <summary>
 	/// Register a function to be called back when our tile type changes.
@@ -252,14 +253,14 @@ public class Tile : IComparable<Tile>, IEqualityComparer<Tile> {
 	/// </summary>
 	public virtual void UnregisterTileStructureChangedCallback(Action<Structure,Structure> callback) {
 	}
-	public virtual void addNeedStructure(NeedsBuilding ns){
+	public virtual void AddNeedStructure(NeedsBuilding ns){
 	}
-	public virtual void removeNeedStructure(NeedsBuilding ns){
+	public virtual void RemoveNeedStructure(NeedsBuilding ns){
 	}
-	public virtual List<NeedsBuilding> getListOfInRangeNeedBuildings(){
+	public virtual List<NeedsBuilding> GetListOfInRangeNeedBuildings(){
 		return null;
 	}
-	public String toString() {
+    override public String ToString() {
 		return "tile_" + X + "_" + Y+"_"+Type+"";
 	}
 

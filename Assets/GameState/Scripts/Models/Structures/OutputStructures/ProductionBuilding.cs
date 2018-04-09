@@ -139,10 +139,8 @@ public class ProductionBuilding : OutputStructure {
 			}
 			for (int i = 0; i < output.Length; i++) {
 				output[i].count += OutputData.output[i].count;
-				if (cbOutputChange != null) {
-					cbOutputChange (this);
-				}
-			}
+                cbOutputChange?.Invoke(this);
+            }
 		}
 	}
 	public bool hasRequiredInput(){
@@ -180,7 +178,7 @@ public class ProductionBuilding : OutputStructure {
 		if (jobsToDo.Count == 0 && nearestMarketBuilding != null) {
 			List<Item> getItems = new List<Item> ();
 			for (int i = MyIntake.Length - 1; i >= 0; i--) {
-				if(City.hasItem (MyIntake[i])){
+				if(City.HasItem (MyIntake[i])){
 					Item item = MyIntake [i].Clone ();
 					item.count = GetMaxIntakeForIntakeIndex(i) - MyIntake [i].count;
 					getItems.Add (item);

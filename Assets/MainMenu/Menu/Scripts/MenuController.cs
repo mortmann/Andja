@@ -5,13 +5,10 @@ using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 
 public class MenuController : MonoBehaviour {
-
     public static MenuController instance;
 	public bool saved;
     public GameObject menu;
     public GameObject[] panels;
-
-
 
     // Used by the buttons which open panels so we can return to the same button
     // after closing the panel.
@@ -30,7 +27,7 @@ public class MenuController : MonoBehaviour {
     [HideInInspector]
     public bool vignetteEnabled;
 
-    bool menuOpen = true;
+	static bool mainMenuOpen = false;
     bool panelOpen = false;
 	void OnEnable(){
 		foreach(Transform t in transform){
@@ -45,11 +42,11 @@ public class MenuController : MonoBehaviour {
     }
 
     void Update() {
-        if (Input.GetButtonDown("Cancel")) {
+        if (InputHandler.GetButtonDown("Cancel")) {
             if (panelOpen) {
                 HideAllPanels();
             }
-            else if (menuOpen) {
+            else if (mainMenuOpen) {
                 HideMenu();
             }
             else {
@@ -83,11 +80,11 @@ public class MenuController : MonoBehaviour {
 
     public void ShowMenu() {
         menu.SetActive(true);
-        menuOpen = true;
+        mainMenuOpen = true;
     }
     public void HideMenu() {
         menu.SetActive(false);
-        menuOpen = false;
+        mainMenuOpen = false;
     }
 	public void Saved() {
 		saved = true;
@@ -145,7 +142,6 @@ public class MenuController : MonoBehaviour {
 	public void ShowWarning (){
 		dialog.SetActive (true);
 	}
-
 	public void DialogYesOption () {
 		if(scene=="Close"){
 			Quit ();
@@ -153,5 +149,6 @@ public class MenuController : MonoBehaviour {
 		}
 		SceneManager.LoadScene (scene); 
 	}
+
 
 }

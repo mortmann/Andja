@@ -17,6 +17,6 @@ public class NewIsland : MonoBehaviour {
 		int h = int.Parse ( height.text);
 		int w = int.Parse ( width.text );
 		Climate cli = (Climate)zone.value;
-		EditorController.Instance.NewIsland (w,h,cli);
+		StartCoroutine( EditorController.Instance.NewIsland (w,h,cli) );
 	}
 }

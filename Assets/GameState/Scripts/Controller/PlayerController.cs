@@ -137,16 +137,16 @@ public class PlayerController : MonoBehaviour {
 
 
 	public void reduceMoney(int money, int playerNr) {
-		players[playerNr].reduceMoney (money);
+		players[playerNr].ReduceMoney (money);
 	}
 	public void addMoney(int money, int playerNr) {
-		players [playerNr].addMoney (money);
+		players [playerNr].AddMoney (money);
 	}
 	public void reduceChange(int amount, int playerNr) {
-		players [playerNr].reduceChange (amount);
+		players [playerNr].ReduceChange (amount);
 	}
 	public void addChange(int amount, int playerNr) {
-		players [playerNr].reduceChange (amount);
+		players [playerNr].ReduceChange (amount);
 	}
 	public void OnCityCreated(City city){
 		players [city.playerNumber].OnCityCreated (city);

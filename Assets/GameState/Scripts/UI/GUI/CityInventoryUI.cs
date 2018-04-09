@@ -18,7 +18,7 @@ public class CityInventoryUI : MonoBehaviour {
 			return;
 		}
 		city.RegisterCityDestroy (OnCityDestroy);
-		cityname.GetComponent<Text> ().text = city.name;
+		cityname.GetComponent<Text> ().text = city.Name;
 		this.city = city;
 		this.trade = trade;
 		city.inventory.RegisterOnChangedCallback (OnInventoryChange);
@@ -54,7 +54,7 @@ public class CityInventoryUI : MonoBehaviour {
 	void OnItemClick(Item item){		
 		if (trade) {
 			//trade to ship
-			city.tradeWithShip (city.inventory.getItemInInventoryClone (item));
+			city.TradeWithShip (city.inventory.getItemInInventoryClone (item));
 			return;
 		} 
 		if(GameObject.FindObjectOfType<TradeRoutePanel> ()!=null){

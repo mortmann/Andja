@@ -72,7 +72,7 @@ public class EventController : MonoBehaviour {
 	}
 	void Start() {
 //		var a = CreateReusableAction<GameEvent,bool,Structure> ("OutputStructure_Efficiency");
-		world = World.current;
+		world = World.Current;
 		idToActiveEvent = new Dictionary<uint, GameEvent> ();
 		chanceToEvent = new Dictionary<EventType, float> ();
 		typeToEvents = new Dictionary<EventType, GameEvent[]> ();
@@ -131,13 +131,13 @@ public class EventController : MonoBehaviour {
 		switch(type){
 		case EventType.City:
 			List<City> cities = new List<City> ();
-			foreach (Island item in world.islandList) {
+			foreach (Island item in world.IslandList) {
 				cities.AddRange (item.myCities);
 			}
 			ige = RandomItemFromList<City>(cities);
 			break;
 		case EventType.Disaster:
-			ige = RandomItemFromList<Island>(world.islandList);
+			ige = RandomItemFromList<Island>(world.IslandList);
 			break;
 		case EventType.Weather:
 			//????
@@ -157,7 +157,7 @@ public class EventController : MonoBehaviour {
 				return null; // there is no specific target
 			}
 
-			Island i = RandomItemFromList<Island> (world.islandList);
+			Island i = RandomItemFromList<Island> (world.IslandList);
 			City c = RandomItemFromList<City> (i.myCities);
 			if(c.playerNumber == -1){ // random decided there will be no event? 
 				// are there events for wilderniss structures?
@@ -230,8 +230,8 @@ public class EventController : MonoBehaviour {
 	}
 	public Vector2 GetRandomVector2(){
 		Vector2 vec = new Vector2 ();
-		float w = (float) World.current.Width / 2f;
-		float h = (float) World.current.Height / 2f;
+		float w = (float) World.Current.Width / 2f;
+		float h = (float) World.Current.Height / 2f;
 
 		vec.x =(UnityEngine.Random.Range(0,2) * w + GetWeightedYFromRandomX (w, w * 1.25f, UnityEngine.Random.Range (0, w)));
 		vec.y =(UnityEngine.Random.Range(0,2) * h + GetWeightedYFromRandomX (h, h * 1.25f, UnityEngine.Random.Range (0, h)));

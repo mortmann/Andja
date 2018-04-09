@@ -1,23 +1,30 @@
 ﻿using System;
 using System.Linq;
 using UnityEngine;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.SceneManagement;
-using System.Xml.Serialization;
-using System.IO;
+
 using UnityEngine.EventSystems;
-using UnityEngine.UI;
+using Newtonsoft.Json;
 
 public enum BrushTypes {Square,Round}
+public enum IslandSizeTypes { ExtraSmall, Small, Middle, Big, ExtraBig }
 
 public class EditorController : MonoBehaviour {
-
+	public const string islandSaveFileVersion = "i_0.0.2";
+	public static bool IsEditor = false;
 
 	public static EditorController Instance { get; protected set; }
+	public MapGenerator mapGenerator;
+
 	public World world;
+	Dictionary<Tile,Structure> tileToStructure;
+
 	public static int width  = 100;
 	public static int height = 100;
 	public static Climate climate = Climate.Middle;
+	static System.IO.FileInfo loadsavegame;
 
 	public bool changeTileType;
 	public TileType selectedTileType = TileType.Dirt;
@@ -29,34 +36,45 @@ public class EditorController : MonoBehaviour {
 	public BrushTypes brushType = BrushTypes.Square;
 	public float randomChange=100;
 	public string spriteName;
-	static string loadsavegame;
 	int brushSize=1;
 
-	Action<Structure,Tile> cbStructureCreated;
+    public IslandSizeTypes IslandSize;
+
+	Action<Structure> cbStructureCreated;
 	Action<Tile> cbStructureDestroyed;
 
-	Dictionary<Tile,Structure> tileToStructure;
+    public bool IsModal; // If true, a modal dialog box is open so normal inputs should be ignored.
 
-	public bool IsModal; // If true, a modal dialog box is open so normal inputs should be ignored.
-	// Use this for initialization
-	void OnEnable() {
+    // Use this for initialization
+    void OnEnable() {
 		if (Instance != null) {
 			Debug.LogError("There should never be two world controllers.");
 		}
+		tileToStructure = new Dictionary<Tile, Structure> ();
+		IsEditor = true;
 		Instance = this;
-
-		if (loadsavegame!=null) {
-//			CreateWorldFromSaveFile (loadsavegame);
+		new InputHandler ();
+		MapGenerator mg = FindObjectOfType<MapGenerator> ();
+		if (loadsavegame != null) {
+			CreateFromSave (loadsavegame);
 			loadsavegame = null;
-		} else {
+		} else if (mg != null){
+			world = new World (mg.GetTiles (), mg.Width, mg.Height);
+		}
+		else {
 			world = new World (width, height);
 		}
 		Camera.main.transform.position = new Vector3(width / 2, height / 2, Camera.main.transform.position.z);
 	}
-	public void NewIsland(int w,int h, Climate clim){
-		width = w;
-		height = h;
-		climate = clim;
+	public IEnumerator NewIsland(int w,int h, Climate clim){
+		GameObject go = Instantiate (mapGenerator.gameObject);
+		MapGenerator mg = go.GetComponent<MapGenerator> ();
+		mg.SetToGenerate (w, h,new MapGenerator.IslandGenInfo (w, w, h, h,Climate.Middle));
+		mg.Generate ();
+		while(mg.isDone == false){
+			yield return null;
+		}
+		DontDestroyOnLoad (go);
 		SceneManager.LoadScene( "IslandEditor" );
 	}
 
@@ -144,38 +162,79 @@ public class EditorController : MonoBehaviour {
 	}
 
 	private void ChangeTileTypeForTile(Tile t){
-		TileType oldType=t.Type;
-		t.Type = selectedTileType;
-		t.SpriteName = spriteName;
-		if(selectedTileType==TileType.Ocean){
-			foreach(Tile n in t.GetNeighbours (true)){
-				n.Type = TileType.Shore;
-			}
-		} 
-		if(selectedTileType != TileType.Shore){
-			
-			if(oldType ==TileType.Ocean || oldType ==TileType.Shore){
-				foreach(Tile n in t.GetNeighbours (true)){
-					if(n==null){
-						continue;
-					}
-					List<Tile> et = new List<Tile> (n.GetNeighbours (true));
-					if(et.Find (x=>x!=null && x.Type == TileType.Ocean)!=null){;
-						n.Type = TileType.Shore;
-						n.SpriteName = "Shore";
-					} else {
-						n.Type = selectedTileType;
-						n.SpriteName = spriteName;
-					}
-				}
-			}
+        if (t == null)
+            return;
+		if(t.Type == selectedTileType){
+			return;
 		}
+		if(t.Type == TileType.Ocean){
+			World.Current.SetTileAt (t.X, t.Y, new LandTile (t.X,t.Y));
+		} 
+		if(selectedTileType == TileType.Ocean){
+			if(t.Structure!=null){
+				DestroyStructureOnTile (t);
+			}
+			World.Current.SetTileAt (t.X, t.Y, new Tile (t.X,t.Y));
+		}
+		t.Type = selectedTileType;
+
+        t.SpriteName = spriteName + GetSpriteAddonForTile(t);
+
+        World.Current.OnTileChanged (t);
 	}
+
+    private string GetSpriteAddonForTile(Tile t){
+        //FOR now only Shore is rotating to face the other tiles
+        if(t.Type != TileType.Shore) {
+            return "";
+        }
+        string connectOrientation = "";
+        Tile[] neig = t.GetNeighbours();
+
+        connectOrientation = "_";
+        int neighbours = 0;
+        if (neig[0] != null && neig[0].Type == TileType.Shore) {
+            connectOrientation += "N";
+            neighbours++;
+        }
+        if (neig[1] != null && neig[1].Type == TileType.Shore) {
+            connectOrientation += "E";
+            neighbours++;
+        }
+        if (neig[2] != null && neig[2].Type == TileType.Shore) {
+            connectOrientation += "S";
+            neighbours++;
+        }
+        if (neig[3] != null && neig[3].Type == TileType.Shore) {
+            connectOrientation += "W";
+            neighbours++;
+        }
+
+        if (neighbours == 1) {
+            connectOrientation += "_";
+            if (neig[0] != null && neig[0].Type != TileType.Shore && neig[0].Type != TileType.Ocean) {
+                connectOrientation += "N";
+            } 
+            if (neig[1] != null && neig[1].Type != TileType.Shore && neig[1].Type != TileType.Ocean) {
+                connectOrientation += "E";
+            }
+            if (neig[2] != null && neig[2].Type != TileType.Shore && neig[2].Type != TileType.Ocean) {
+                connectOrientation += "S";
+            }
+            if (neig[3] != null && neig[3].Type != TileType.Shore && neig[3].Type != TileType.Ocean) {
+                connectOrientation += "W";
+            }
+        }
+        return connectOrientation;
+    }
+
+
+
 	public void SetDestroyMode(bool destroy){
 		DestroyBuilding = destroy;
 	}
 	public void CreateStructure(){
-		if(Input.GetMouseButton(0)){
+		if(Input.GetMouseButtonDown(0)){
 			Tile et = GetTileAtWorldCoord (Camera.main.ScreenToWorldPoint (Input.mousePosition));
 			if(DestroyBuilding){
 				switch (brushType) {
@@ -205,9 +264,8 @@ public class EditorController : MonoBehaviour {
 	}
 	public void DestroyStructureOnTile(Tile et){
 		tileToStructure.Remove (et);
-		if (cbStructureDestroyed != null)
-			cbStructureDestroyed (et);
-	}
+        cbStructureDestroyed?.Invoke(et);
+    }
 	public void ChangeBrushType(int type){
 		brushType = (BrushTypes)type;
 	}
@@ -218,28 +276,37 @@ public class EditorController : MonoBehaviour {
 		if(Tile.IsBuildType (et.Type)==false){
 			return;
 		}
-		tileToStructure.Add(et,structure);
-		if(cbStructureCreated!=null)
-			cbStructureCreated(structure,et);
+		Structure toPlace = structure.Clone ();
+		//Set Variables of Structure somehow
+		if (toPlace is Growable)
+			((Growable)toPlace).currentStage = structureStage;
+
+		PlaceStructureOnTile (toPlace, et);
 	}
-	public void setBrushSize(int size){
+	void PlaceStructureOnTile(Structure toPlace, Tile placeOn){
+		placeOn.Structure = toPlace;
+		toPlace.BuildTile = placeOn;
+		tileToStructure.Add(placeOn, toPlace);
+        cbStructureCreated?.Invoke(toPlace);
+    } 
+	public void SetBrushSize(int size){
 		brushSize = size;
 	}
 	public void ChangeBuild(bool type){
 		changeTileType = type;
 	}
 
-	public void setAge(int age){
+	public void SetAge(int age){
 		if (structure is Growable)
 			((Growable)structure).currentStage = age;
 	}
-	public void setStructure(int id){
+	public void SetStructure(int id){
 		structure = PrototypController.Instance.structurePrototypes [id];
 	}
-	public void RegisterOnStructureCreated(Action<Structure,Tile> strs){
+	public void RegisterOnStructureCreated(Action<Structure> strs){
 		cbStructureCreated += strs;
 	}
-	public void UnregisterOnStructureCreated(Action<Structure,Tile> strs){
+	public void UnregisterOnStructureCreated(Action<Structure> strs){
 		cbStructureCreated -= strs;
 	}
 	public void RegisterOnStructureDestroyed(Action<Tile> strs){
@@ -250,10 +317,10 @@ public class EditorController : MonoBehaviour {
 	}
 
 	internal Tile GetTileAtWorldCoord(Vector3 currFramePosition) {
-		return World.current.GetTileAt (currFramePosition.x, currFramePosition.y);
+		return World.Current.GetTileAt (currFramePosition.x+0.5f, currFramePosition.y+0.5f);
 	}
 	internal Tile GetTileAtWorldCoord(int x , int y) {
-		return World.current.GetTileAt (x, y);
+		return World.Current.GetTileAt (x, y);
 	}
 	public void OnBrushRandomChange(float f){
 		this.randomChange = f;
@@ -264,8 +331,73 @@ public class EditorController : MonoBehaviour {
 	/// 
 	/// 
 
+	public void SaveIslandState(string name = "autosave"){
+		string path = System.IO.Path.Combine(GetSaveGamesPath(), climate.ToString());
+        path = System.IO.Path.Combine(path, IslandSize.ToString());
+        path = System.IO.Path.Combine (path, name + ".isl");
 
+		SaveIsland savestate = GetSaveState();
+
+		System.IO.File.WriteAllText(path, JsonConvert.SerializeObject(savestate,//Formatting.Indented,
+			new JsonSerializerSettings
+			{
+				NullValueHandling = NullValueHandling.Ignore,
+				ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+                TypeNameHandling = TypeNameHandling.Auto
+            }
+		) 
+		);
+	}
+
+	public void LoadIsland(System.IO.FileInfo file ){
+		loadsavegame = file;
+		MenuController.instance.ChangeToEditorLoadScreen ();
+	}
+	private void CreateFromSave(System.IO.FileInfo file){
+		string alllines = System.IO.File.ReadAllText (file.FullName);
+		SaveIsland state = JsonConvert.DeserializeObject<SaveIsland> (alllines,new JsonSerializerSettings
+			{
+				NullValueHandling = NullValueHandling.Ignore,
+				ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+				TypeNameHandling = TypeNameHandling.Auto
+			});
+		if(islandSaveFileVersion!=state.version){
+			Debug.LogError ("Mismatch of SaveFile Versions " + state.version + " & " + islandSaveFileVersion);
+			return;
+		}
+		LoadSaveState (state);
+	}
+
+	void LoadSaveState(SaveIsland load){
+		world = new World(load.tiles,load.Width,load.Height);
+		tileToStructure = new Dictionary<Tile, Structure> ();
+		foreach(Structure s in load.structures){
+			PlaceStructureOnTile (s, s.BuildTile);
+		}
+	}
+	public SaveIsland GetSaveState(){
+		HashSet<Tile> toSave = new HashSet<Tile> (world.Tiles);
+		toSave.RemoveWhere(x=>x.Type == TileType.Ocean);
+		return new SaveIsland (tileToStructure, toSave.ToArray() , width,height);
+	}
 	public string GetSaveGamesPath(){
 		return System.IO.Path.Combine(Application.dataPath.Replace ("/Assets","") , "islands");
 	}
+	[JsonObject]
+	public class SaveIsland {
+		[JsonPropertyAttribute] public string version = islandSaveFileVersion;
+		[JsonPropertyAttribute(TypeNameHandling = TypeNameHandling.Auto)] public List<Structure> structures;
+		[JsonPropertyAttribute(TypeNameHandling =TypeNameHandling.None)] public Tile[] tiles;
+		[JsonPropertyAttribute] public int Width;
+		public SaveIsland(){
+			
+		}
+		[JsonPropertyAttribute] public int Height;
+		public SaveIsland(Dictionary<Tile,Structure> tileToStructure,Tile[] tiles,int Width,int Height){
+			this.Width=Width;
+			this.Height=Height;
+			this.structures = new List<Structure>(tileToStructure.Values);
+			this.tiles = tiles;
+		}
+ 	}
 }

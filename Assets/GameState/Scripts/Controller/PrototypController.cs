@@ -224,22 +224,23 @@ public class PrototypController : MonoBehaviour {
 	private void ReadRoads(XmlNode xmlDoc){
 		foreach(XmlElement node in xmlDoc.SelectNodes("road")){
 			int ID = int.Parse(node.GetAttribute("ID"));
-			
-			StructurePrototypeData spd = new StructurePrototypeData ();
-			//THESE are fix and are not changed for any road
-			spd.tileWidth = 1;
-			spd.tileHeight = 1;
-			spd.BuildTyp = BuildTypes.Path;
-			spd.myBuildingTyp = BuildingTyp.Pathfinding;
-			spd.canBeUpgraded = true;
-			//!not anymore
-			spd.maintenancecost = 0;
-			spd.buildcost = 25;
-			spd.Name = "Testroad";
-			spd.buildingRange = 0;
-			spd.StructureLevel = 0;
 
-			SetData<StructurePrototypeData> (node,ref spd);
+            StructurePrototypeData spd = new StructurePrototypeData {
+                //THESE are fix and are not changed for any road
+                tileWidth = 1,
+                tileHeight = 1,
+                BuildTyp = BuildTypes.Path,
+                myBuildingTyp = BuildingTyp.Pathfinding,
+                canBeUpgraded = true,
+                //!not anymore
+                maintenancecost = 0,
+                buildcost = 25,
+                Name = "Testroad",
+                buildingRange = 0,
+                StructureLevel = 0
+            };
+
+            SetData<StructurePrototypeData> (node,ref spd);
 
 			structurePrototypeDatas.Add (ID,spd);
 			structurePrototypes [ID] =  new Road (ID,spd);
@@ -250,27 +251,28 @@ public class PrototypController : MonoBehaviour {
 		foreach(XmlElement node in xmlDoc.SelectNodes("growable")){
 			int ID = int.Parse(node.GetAttribute("ID"));
 
-			GrowablePrototypData gpd = new GrowablePrototypData ();
-			//THESE are fix and are not changed for any growable
-			gpd.forMarketplace = false;
-			gpd.maxNumberOfWorker = 0;
-			gpd.tileWidth = 1;
-			gpd.tileHeight = 1;
-			gpd.myBuildingTyp = BuildingTyp.Free;
-			gpd.BuildTyp = BuildTypes.Drag;
-			gpd.buildcost = 50;
-			gpd.maxOutputStorage = 1;
-			//!not anymore
+            GrowablePrototypData gpd = new GrowablePrototypData {
+                //THESE are fix and are not changed for any growable
+                forMarketplace = false,
+                maxNumberOfWorker = 0,
+                tileWidth = 1,
+                tileHeight = 1,
+                myBuildingTyp = BuildingTyp.Free,
+                BuildTyp = BuildTypes.Drag,
+                buildcost = 50,
+                maxOutputStorage = 1
+            };
+            //!not anymore
 
-//			growTime = 100f;
-//			hasHitbox = false;
-//			canBeBuildOver = true;
-//			this.name = "Testgrowable";
-//			canBeBuildOver = true;
-//			gpd.output = new Item[]{produceItem};
-//			gpd.fer = fer;
+            //			growTime = 100f;
+            //			hasHitbox = false;
+            //			canBeBuildOver = true;
+            //			this.name = "Testgrowable";
+            //			canBeBuildOver = true;
+            //			gpd.output = new Item[]{produceItem};
+            //			gpd.fer = fer;
 
-			SetData<GrowablePrototypData> (node,ref  gpd);
+            SetData<GrowablePrototypData> (node,ref  gpd);
 			structurePrototypeDatas.Add (ID,gpd);
 			structurePrototypes [ID] = new Growable (ID,gpd);
 		}
@@ -290,21 +292,22 @@ public class PrototypController : MonoBehaviour {
 	private void ReadMarketBuildings(XmlNode xmlDoc){
 		foreach(XmlElement node in xmlDoc.SelectNodes("market")){
 			int ID = int.Parse(node.GetAttribute("ID"));
-			MarketPrototypData mpd = new MarketPrototypData ();
-			//THESE are fix and are not changed for any growable
-			mpd.hasHitbox = true;
-			mpd.tileWidth = 4;
-			mpd.tileHeight = 4;
-			mpd.BuildTyp = BuildTypes.Single;
-			mpd.myBuildingTyp = BuildingTyp.Blocking;
-			mpd.buildingRange = 18;
-			mpd.canTakeDamage = true;
+            MarketPrototypData mpd = new MarketPrototypData {
+                //THESE are fix and are not changed for any growable
+                hasHitbox = true,
+                tileWidth = 4,
+                tileHeight = 4,
+                BuildTyp = BuildTypes.Single,
+                myBuildingTyp = BuildingTyp.Blocking,
+                buildingRange = 18,
+                canTakeDamage = true,
 
-			mpd.Name = "market";
-			mpd.buildcost = 500;
-			mpd.maintenancecost = 10;
+                Name = "market",
+                buildcost = 500,
+                maintenancecost = 10
+            };
 
-			SetData<MarketPrototypData> (node,ref  mpd);
+            SetData<MarketPrototypData> (node,ref  mpd);
 
 			structurePrototypeDatas.Add (ID,mpd);
 			structurePrototypes [ID] = new MarketBuilding (ID,mpd);
@@ -315,29 +318,30 @@ public class PrototypController : MonoBehaviour {
 			
 			int ID = int.Parse(node.GetAttribute("ID"));
 
-			ProductionPrototypeData ppd = new ProductionPrototypeData ();
+            ProductionPrototypeData ppd = new ProductionPrototypeData {
 
-			//THESE are fix and are not changed for any ProduktionBuilding
-			ppd.maxOutputStorage = 5; // hardcoded 5 ? need this to change?
-			ppd.hasHitbox = true;
-			ppd.myBuildingTyp = BuildingTyp.Blocking;
-			ppd.BuildTyp = BuildTypes.Single;
-			ppd.canTakeDamage = true;
-			ppd.forMarketplace = true;
-			//!not anymore
+                //THESE are fix and are not changed for any ProduktionBuilding
+                maxOutputStorage = 5, // hardcoded 5 ? need this to change?
+                hasHitbox = true,
+                myBuildingTyp = BuildingTyp.Blocking,
+                BuildTyp = BuildTypes.Single,
+                canTakeDamage = true,
+                forMarketplace = true,
+                //!not anymore
 
-			ppd.Name = "TEST Production";
-			ppd.maxNumberOfWorker = 1;
-//			ppd.mustBeBuildOnShore = mustBeBuildOnShore;
-//			ppd.maintenancecost = maintenancecost;
-//			ppd.intake = intake;
-//			ppd.needIntake = needIntake;
-//			ppd.produceTime = produceTime;
-//			ppd.output = output;
-//			ppd.tileWidth = tileWidth;
-//			ppd.tileHeight = tileHeight;
+                Name = "TEST Production",
+                maxNumberOfWorker = 1
+            };
+            //			ppd.mustBeBuildOnShore = mustBeBuildOnShore;
+            //			ppd.maintenancecost = maintenancecost;
+            //			ppd.intake = intake;
+            //			ppd.needIntake = needIntake;
+            //			ppd.produceTime = produceTime;
+            //			ppd.output = output;
+            //			ppd.tileWidth = tileWidth;
+            //			ppd.tileHeight = tileHeight;
 
-			SetData<ProductionPrototypeData> (node, ref ppd);
+            SetData<ProductionPrototypeData> (node, ref ppd);
 
 			//DO After loading from file
 
@@ -349,17 +353,18 @@ public class PrototypController : MonoBehaviour {
 	private void ReadNeedsBuildings(XmlNode xmlDoc){
 		foreach (XmlElement node in xmlDoc.SelectNodes("needsbuilding")) {
 			int ID = int.Parse (node.GetAttribute ("ID"));
-			StructurePrototypeData spd = new StructurePrototypeData ();
-			//THESE are fix and are not changed for any NeedsBuilding
-			//!not anymore
-			spd.tileWidth = 2;
-			spd.tileHeight = 2;
-			spd.BuildTyp = BuildTypes.Single;
-			spd.myBuildingTyp =	BuildingTyp.Blocking;
-			spd.Name = "NeedsBuilding";
-			spd.maintenancecost = 100;
+            StructurePrototypeData spd = new StructurePrototypeData {
+                //THESE are fix and are not changed for any NeedsBuilding
+                //!not anymore
+                tileWidth = 2,
+                tileHeight = 2,
+                BuildTyp = BuildTypes.Single,
+                myBuildingTyp = BuildingTyp.Blocking,
+                Name = "NeedsBuilding",
+                maintenancecost = 100
+            };
 
-			SetData<StructurePrototypeData> (node,ref spd);
+            SetData<StructurePrototypeData> (node,ref spd);
 
 			structurePrototypeDatas.Add (ID,spd);
 			structurePrototypes [ID] = new NeedsBuilding (ID,spd);
@@ -369,25 +374,26 @@ public class PrototypController : MonoBehaviour {
 	private void ReadHomeBuildings(XmlNode xmlDoc){
 		foreach (XmlElement node in xmlDoc.SelectNodes("home")) {
 			int ID = int.Parse (node.GetAttribute ("ID"));
-			HomePrototypeData hpd = new HomePrototypeData ();
-			//THESE are fix and are not changed for any HomeBuilding
-			hpd.tileWidth = 2;
-			hpd.tileHeight = 2;
-			hpd.BuildTyp = BuildTypes.Drag;
-			hpd.myBuildingTyp =	BuildingTyp.Blocking;
-			hpd.buildingRange = 0;
-			hpd.hasHitbox = true;
-			hpd.canTakeDamage = true;
-			hpd.maintenancecost = 0;
-			//!not anymore
-//			hpd.people = 1;
-//			hpd.maxLivingSpaces = 8;
-//			hpd.buildingLevel = 0;
-//			hpd.Name = "Home";
-//			hpd.increaseSpeed = 3;
-//			hpd.decreaseSpeed = 2;
+            HomePrototypeData hpd = new HomePrototypeData {
+                //THESE are fix and are not changed for any HomeBuilding
+                tileWidth = 2,
+                tileHeight = 2,
+                BuildTyp = BuildTypes.Drag,
+                myBuildingTyp = BuildingTyp.Blocking,
+                buildingRange = 0,
+                hasHitbox = true,
+                canTakeDamage = true,
+                maintenancecost = 0
+            };
+            //!not anymore
+            //			hpd.people = 1;
+            //			hpd.maxLivingSpaces = 8;
+            //			hpd.buildingLevel = 0;
+            //			hpd.Name = "Home";
+            //			hpd.increaseSpeed = 3;
+            //			hpd.decreaseSpeed = 2;
 
-			SetData<HomePrototypeData> (node,ref hpd);
+            SetData<HomePrototypeData> (node,ref hpd);
 
 			structurePrototypeDatas.Add (ID,hpd);
 			structurePrototypes [ID] = new HomeBuilding (ID,hpd);
@@ -397,25 +403,26 @@ public class PrototypController : MonoBehaviour {
 	private void ReadWarehouse(XmlNode xmlDoc){
 		foreach (XmlElement node in xmlDoc.SelectNodes("warehouse")) {
 			int ID = int.Parse (node.GetAttribute ("ID"));
-			MarketPrototypData mpd = new MarketPrototypData ();
-			//THESE are fix and are not changed for any Warehouse
-			mpd.contactRange = 6.3f;
-			mpd.mustBeBuildOnShore = true;
-			mpd.BuildTyp = BuildTypes.Single;
-			mpd.showExtraUI = true;
-			mpd.hasHitbox = true;
-			mpd.canTakeDamage = true;
-			mpd.buildingRange = 18;
+            MarketPrototypData mpd = new MarketPrototypData {
+                //THESE are fix and are not changed for any Warehouse
+                contactRange = 6.3f,
+                mustBeBuildOnShore = true,
+                BuildTyp = BuildTypes.Single,
+                showExtraUI = true,
+                hasHitbox = true,
+                canTakeDamage = true,
+                buildingRange = 18,
 
-			//!not anymore
-			mpd.tileWidth = 3;
-			mpd.tileHeight = 3;
-			mpd.Name = "warehouse";
-			mpd.buildcost = 500;
-			mpd.maintenancecost = 10;
-			mpd.mustFrontBuildDir = Direction.W;
+                //!not anymore
+                tileWidth = 3,
+                tileHeight = 3,
+                Name = "warehouse",
+                buildcost = 500,
+                maintenancecost = 10,
+                mustFrontBuildDir = Direction.W
+            };
 
-			SetData<MarketPrototypData> (node,ref mpd);
+            SetData<MarketPrototypData> (node,ref mpd);
 			structurePrototypeDatas.Add (ID,mpd);
 			structurePrototypes [ID] = new Warehouse (ID,mpd);
 		}
@@ -424,20 +431,21 @@ public class PrototypController : MonoBehaviour {
 		foreach (XmlElement node in xmlDoc.SelectNodes("mine")) {
 			int ID = int.Parse (node.GetAttribute ("ID"));
 
-			MinePrototypData mpd = new MinePrototypData ();
-			//THESE are fix and are not changed for any Warehouse
-			mpd.mustBeBuildOnMountain = true;
-			mpd.tileWidth = 2;
-			mpd.tileHeight = 3;
-			mpd.Name = "Mine";
-			mpd.myBuildingTyp = BuildingTyp.Blocking;
-			mpd.BuildTyp = BuildTypes.Single;
-			mpd.hasHitbox = true;
-			mpd.buildingRange = 0;
+            MinePrototypData mpd = new MinePrototypData {
+                //THESE are fix and are not changed for any Warehouse
+                mustBeBuildOnMountain = true,
+                tileWidth = 2,
+                tileHeight = 3,
+                Name = "Mine",
+                myBuildingTyp = BuildingTyp.Blocking,
+                BuildTyp = BuildTypes.Single,
+                hasHitbox = true,
+                buildingRange = 0,
 
-			//!not anymore
-			mpd.output = new Item[1];
-			mpd.output[0] = PrototypController.Instance.allItems [3];
+                //!not anymore
+                output = new Item[1]
+            };
+            mpd.output[0] = PrototypController.Instance.allItems [3];
 			mpd.myRessource = "stone";
 			mpd.maxOutputStorage = 5;
 			mpd.produceTime = 15f;

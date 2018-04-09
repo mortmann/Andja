@@ -32,8 +32,8 @@ public class NeedsUIController : MonoBehaviour {
 		needs = new List<Need>[City.citizienLevels];
 		for (int i = 0; i < City.citizienLevels; i++) {
 			needs [i] = new List<Need> ();
-			ns.AddRange (p.lockedNeeds [i]);
-			ns.AddRange (p.unlockedStructureNeeds[i]);
+			ns.AddRange (p.LockedNeeds [i]);
+			ns.AddRange (p.UnlockedStructureNeeds[i]);
 		}
 
 		for (int i = 0; i < ns.Count; i++) {
@@ -42,7 +42,7 @@ public class NeedsUIController : MonoBehaviour {
 			NeedUI ui = b.GetComponent<NeedUI>();
 			ui.setNeed (ns [i], home);
 			needToUI [ns [i]] = ui;
-			needs [ns [i].startLevel].Add (ns [i]);
+			needs [ns [i].StartLevel].Add (ns [i]);
 		}
 		ChangeNeedLevel (0);
 

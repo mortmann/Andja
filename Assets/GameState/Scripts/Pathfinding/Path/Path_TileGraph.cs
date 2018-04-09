@@ -20,8 +20,9 @@ public class Path_TileGraph {
 		this.myTiles = route.myTiles;
         nodes = new Dictionary<Tile, Path_Node<Tile>>();
         foreach(Tile t in myTiles) {
-            Path_Node<Tile> n = new Path_Node<Tile>();
-            n.data = t;
+            Path_Node<Tile> n = new Path_Node<Tile> {
+                data = t
+            };
             nodes.Add(t, n);
             
         }
@@ -44,9 +45,10 @@ public class Path_TileGraph {
                 if (nodes.ContainsKey(neighbours[i])) {
                     // This neighbour exists, is walkable, and doesn't requiring clipping a corner --> so create an edge.
 
-                    Path_Edge<Tile> e = new Path_Edge<Tile>();
-                    e.cost = neighbours[i].MovementCost;
-                    e.node = nodes[neighbours[i]];
+                    Path_Edge<Tile> e = new Path_Edge<Tile> {
+                        cost = neighbours[i].MovementCost,
+                        node = nodes[neighbours[i]]
+                    };
 
                     // Add the edge to our temporary (and growable!) list
                     edges.Add(e);
@@ -63,26 +65,29 @@ public class Path_TileGraph {
 		if(nodes.ContainsKey(toAdd) == true){
 			return;
 		}
-		Path_Node<Tile> toAdd_node= new Path_Node<Tile>();
-		toAdd_node.data = toAdd;
-		nodes.Add (toAdd,toAdd_node);
+        Path_Node<Tile> toAdd_node = new Path_Node<Tile> {
+            data = toAdd
+        };
+        nodes.Add (toAdd,toAdd_node);
 		List<Path_Edge<Tile>> toAdd_edges = new List<Path_Edge<Tile>>();
 		foreach (Tile t in toAdd.GetNeighbours ()) {
 			if(nodes.ContainsKey (t)){
-				//add the edges to the new node
-				Path_Edge<Tile> newEdge = new Path_Edge<Tile>();
-				newEdge.cost = toAdd.MovementCost;
-				newEdge.node = nodes[t];
-				toAdd_edges.Add (newEdge);
+                //add the edges to the new node
+                Path_Edge<Tile> newEdge = new Path_Edge<Tile> {
+                    cost = toAdd.MovementCost,
+                    node = nodes[t]
+                };
+                toAdd_edges.Add (newEdge);
 
 
 				//update the present nodes with the new edge to the new node
 				Path_Node<Tile> n = nodes [t];
 				List<Path_Edge<Tile>> neighbours_edges = new List<Path_Edge<Tile>>(n.edges);
-				Path_Edge<Tile> oldEdge = new Path_Edge<Tile>();
-				oldEdge.cost = toAdd.MovementCost;
-				oldEdge.node = nodes[toAdd];
-				neighbours_edges.Add (oldEdge);
+                Path_Edge<Tile> oldEdge = new Path_Edge<Tile> {
+                    cost = toAdd.MovementCost,
+                    node = nodes[toAdd]
+                };
+                neighbours_edges.Add (oldEdge);
 				n.edges = neighbours_edges.ToArray ();
 			}
 			toAdd_node.edges = toAdd_edges.ToArray ();
@@ -105,9 +110,10 @@ public class Path_TileGraph {
 		this.myTiles = island.myTiles;
 		nodes = new Dictionary<Tile, Path_Node<Tile>>();
 		foreach(Tile t in myTiles) {
-			Path_Node<Tile> n = new Path_Node<Tile>();
-			n.data = t;
-			nodes.Add(t, n);
+            Path_Node<Tile> n = new Path_Node<Tile> {
+                data = t
+            };
+            nodes.Add(t, n);
 
 		}
 		// Now loop through all nodes again
@@ -130,14 +136,15 @@ public class Path_TileGraph {
 			for (int i = 0; i < neighbours.Length; i++) {
 				// neighbours[i] != null && neighbours[i].Type != TileType.Water && IsClippingCorner(t, neighbours[i]) == false
 				if (nodes.ContainsKey(neighbours[i])) {
-					// This neighbour exists, is walkable, and doesn't requiring clipping a corner --> so create an edge.
+                    // This neighbour exists, is walkable, and doesn't requiring clipping a corner --> so create an edge.
 
-					Path_Edge<Tile> e = new Path_Edge<Tile>();
-					e.cost = neighbours[i].MovementCost;
-					e.node = nodes[neighbours[i]];
+                    Path_Edge<Tile> e = new Path_Edge<Tile> {
+                        cost = neighbours[i].MovementCost,
+                        node = nodes[neighbours[i]]
+                    };
 
-					// Add the edge to our temporary (and growable!) list
-					edges.Add(e);
+                    // Add the edge to our temporary (and growable!) list
+                    edges.Add(e);
 
 					edgeCount++;
 				}
@@ -149,7 +156,7 @@ public class Path_TileGraph {
 	}
 
 	public Path_TileGraph(Vector2 lowerBounds, Vector2 upperBounds) {
-		World w = World.current;
+		World w = World.Current;
 
 		// Loop through all tiles of the world
 		// For each tile, create a node
@@ -162,10 +169,11 @@ public class Path_TileGraph {
 
 				Tile t = w.GetTileAt(x,y);
 
-				if(t.Type == TileType.Ocean) {	
-					Path_Node<Tile> n = new Path_Node<Tile>();
-					n.data = t;
-					nodes.Add(t, n);
+				if(t.Type == TileType.Ocean) {
+                    Path_Node<Tile> n = new Path_Node<Tile> {
+                        data = t
+                    };
+                    nodes.Add(t, n);
 				}
 
 			}
@@ -189,14 +197,15 @@ public class Path_TileGraph {
 			// If neighbour is walkable, create an edge to the relevant node.
 			for (int i = 0; i < neighbours.Length; i++) {
 				if(nodes.ContainsKey (neighbours[i]) && neighbours[i] != null && neighbours[i].Type == TileType.Ocean && IsClippingCornerWater( t, neighbours[i] ) == false) {
-					// This neighbour exists, is walkable, and doesn't requiring clipping a corner --> so create an edge.
+                    // This neighbour exists, is walkable, and doesn't requiring clipping a corner --> so create an edge.
 
-					Path_Edge<Tile> e = new Path_Edge<Tile>();
-					e.cost = neighbours[i].MovementCost;
-					e.node = nodes[ neighbours[i] ];
+                    Path_Edge<Tile> e = new Path_Edge<Tile> {
+                        cost = neighbours[i].MovementCost,
+                        node = nodes[neighbours[i]]
+                    };
 
-					// Add the edge to our temporary (and growable!) list
-					edges.Add(e);
+                    // Add the edge to our temporary (and growable!) list
+                    edges.Add(e);
 
 					edgeCount++;
 				}
@@ -217,12 +226,12 @@ public class Path_TileGraph {
 		if( Mathf.Abs(dX) + Mathf.Abs(dY) == 2 ) {
 			// We are diagonal
 
-			if( World.current.GetTileAt( curr.X - dX, curr.Y ).MovementCost == 0 ) {
+			if( World.Current.GetTileAt( curr.X - dX, curr.Y ).MovementCost == 0 ) {
 				// East or West is unwalkable, therefore this would be a clipped movement.
 				return true;
 			}
 
-			if( World.current.GetTileAt( curr.X, curr.Y - dY ).MovementCost == 0 ) {
+			if( World.Current.GetTileAt( curr.X, curr.Y - dY ).MovementCost == 0 ) {
 				// North or South is unwalkable, therefore this would be a clipped movement.
 				return true;
 			}
@@ -243,12 +252,12 @@ public class Path_TileGraph {
         if (Mathf.Abs(dX) + Mathf.Abs(dY) == 2) {
             // We are diagonal
 
-			if (World.current.GetTileAt(curr.X - dX, curr.Y).Type != TileType.Ocean) {
+			if (World.Current.GetTileAt(curr.X - dX, curr.Y).Type != TileType.Ocean) {
                 // East or West is unfloatable, therefore this would be a driving on ground movement.
                 return true;
             }
 
-			if (World.current.GetTileAt(curr.X, curr.Y - dY).Type != TileType.Ocean) {
+			if (World.Current.GetTileAt(curr.X, curr.Y - dY).Type != TileType.Ocean) {
                 // North or South is unfloatable, therefore this would be a driving on ground movement.
                 return true;
             }

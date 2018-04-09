@@ -101,7 +101,7 @@ public class Path_AStar {
 			}
 			foreach (Path_Edge<Tile> edge_neighbor in current.edges) {
 				if(diag==false){
-					if((edge_neighbor.node.data.vector-current.data.vector).sqrMagnitude>1.1){
+					if((edge_neighbor.node.data.Vector-current.data.Vector).sqrMagnitude>1.1){
 						continue;
 					}
 				}

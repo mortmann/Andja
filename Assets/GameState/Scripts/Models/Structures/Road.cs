@@ -24,32 +24,9 @@ public class Road : Structure {
 	public Road(int ID, StructurePrototypeData spd){
 		this.ID = ID;
 		this._prototypData = spd;
-//		this.name = name;
-//		this.tileWidth = 1;
-//		this.tileHeight = 1;
-//		maintenancecost = 0;
-//		buildcost = 25;
-//		BuildTyp = BuildTypes.Path;
-//		myBuildingTyp = BuildingTyp.Pathfinding;
-//		buildingRange = 0;
-//		canBeUpgraded = true;
-
 	}
 	protected Road(Road str){
 		BaseCopyData (str);
-//		this.canBeUpgraded = str.canBeUpgraded;
-//		this.ID = str.ID;
-//		this.name = str.name;
-//		this.tileWidth = str.tileWidth;
-//		this.tileHeight = str.tileHeight;
-//		this.mustBeBuildOnShore = str.mustBeBuildOnShore;
-//		this.maintenancecost = str.maintenancecost;
-//		this.buildcost = str.buildcost;
-//		this.BuildTyp = str.BuildTyp;
-//		this.rotated = str.rotated;
-//		this.hasHitbox = str.hasHitbox;
-//		this.buildingRange = str.buildingRange;
-//		this.myBuildingTyp = str.myBuildingTyp;
 	}
 	/// <summary>
 	/// DO NOT USE
@@ -75,16 +52,16 @@ public class Road : Structure {
 						routes.Add( ((Road)t.Structure).Route );
 						routeCount++;
 					}
-					((Road)t.Structure).updateOrientation ();
+					((Road)t.Structure).UpdateOrientation ();
 				} 
 			}
 		}
-		updateOrientation ();
+		UpdateOrientation ();
 		if(routeCount == 0) {
 			//If there is no route next to it 
 			//so create a new route 
 			Route = new Route(myBuildingTiles [0]);
-			myBuildingTiles [0].myCity.AddRoute (Route);	
+			myBuildingTiles [0].MyCity.AddRoute (Route);	
 			return;
 		}
 		if(routeCount == 1){
@@ -101,10 +78,11 @@ public class Road : Structure {
 		}
 
 	}
-	public void updateOrientation (IEnumerable<Tile> futureRoads = null){
+	public void UpdateOrientation (IEnumerable<Tile> futureRoads = null){
 		Tile[] neig = myBuildingTiles [0].GetNeighbours ();
 
 		connectOrientation = "_";
+
 		if(neig[0].Structure != null){
 			if (neig [0].Structure is Road) {
 				connectOrientation += "N";
@@ -125,9 +103,8 @@ public class Road : Structure {
 				connectOrientation += "W";
 			}
 		}
-		if (cbRoadChanged != null)
-			cbRoadChanged (this);
-	}
+        cbRoadChanged?.Invoke(this);
+    }
 	protected override void OnDestroy () {
 		if(Route!=null){
 			Route.removeRoadTile (BuildTile);

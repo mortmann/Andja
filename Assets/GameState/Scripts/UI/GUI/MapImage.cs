@@ -21,7 +21,7 @@ public class MapImage : MonoBehaviour {
 		cc = GameObject.FindObjectOfType<CameraController> ();
 		warehouseToGO = new Dictionary<Warehouse, GameObject> ();
 		unitToGO = new Dictionary<Unit, GameObject> ();
-		World w = World.current;
+		World w = World.Current;
 		tex = new Texture2D (w.Width, w.Height);
 		Color[] p=tex.GetPixels ();
 		int pixel=p.Length-1;
@@ -53,7 +53,7 @@ public class MapImage : MonoBehaviour {
 		tp = tradingMenu.GetComponent<TradeRoutePanel> ();
 		tp.Initialize ();
 		BuildController.Instance.RegisterCityCreated (OnCityCreated);
-		foreach (Island item in w.islandList) {
+		foreach (Island item in w.IslandList) {
 			foreach (City c in item.myCities) {
 				if(c.IsWilderness ()){
 					continue;
@@ -63,7 +63,7 @@ public class MapImage : MonoBehaviour {
 		}
 		w.RegisterUnitCreated (OnUnitCreated);
 		Ship sh = null;
-		foreach (Unit item in w.units) {
+		foreach (Unit item in w.Units) {
 			OnUnitCreated (item);
 			if (item is Ship && sh==null)
 				sh = (Ship)item;
@@ -79,18 +79,19 @@ public class MapImage : MonoBehaviour {
 		}
 //		PlayerController pc = PlayerController.Instance;
 		RectTransform rt = mapParts.GetComponent<RectTransform> ();
-		World w = World.current;
+		World w = World.Current;
 		if(c!=null){
 			GameObject g = GameObject.Instantiate (mapCitySelectPrefab);
 			g.transform.SetParent (mapParts.transform);
 			Vector3 pos = new Vector3 (c.myWarehouse.BuildTile.X, c.myWarehouse.BuildTile.Y, 0);
 			pos.Scale (new Vector3(rt.rect.width/w.Width,rt.rect.height/w.Height));
 			g.transform.localPosition = pos;
-			g.GetComponentInChildren<Text> ().text = c.name;
+			g.GetComponentInChildren<Text> ().text = c.Name;
 			EventTrigger trigger = g.GetComponent<EventTrigger> ();
-			EventTrigger.Entry entry = new EventTrigger.Entry( );
-			entry.eventID = EventTriggerType.PointerClick;
-			entry.callback.AddListener( ( data ) => { OnWarehouseClick( c ); } );
+            EventTrigger.Entry entry = new EventTrigger.Entry {
+                eventID = EventTriggerType.PointerClick
+            };
+            entry.callback.AddListener( ( data ) => { OnWarehouseClick( c ); } );
 			trigger.triggers.Add( entry );
 			g.GetComponentInChildren <Toggle > ().onValueChanged.AddListener (( data ) => { OnToggleClicked (c.myWarehouse); });
 			c.myWarehouse.RegisterOnDestroyCallback (OnWarehouseDestroy);
@@ -120,7 +121,7 @@ public class MapImage : MonoBehaviour {
 			return;
 		}
 		RectTransform rt = mapParts.GetComponent<RectTransform> ();
-		World w = World.current;
+		World w = World.Current;
 
 		GameObject g = GameObject.Instantiate (mapShipIconPrefab);
 		g.transform.SetParent (mapParts.transform);
@@ -139,14 +140,14 @@ public class MapImage : MonoBehaviour {
 
 	// Update is called once per frame
 	void Update () {
-		World w = World.current;
+		World w = World.Current;
 		//if something changes reset it 
 		RectTransform rt = mapParts.GetComponent<RectTransform> ();
 		cameraRect.transform.localPosition = cc.middle * rt.rect.width/w.Width;
 		Vector3 vec = cc.upper - cc.lower;
 		vec /= Mathf.Clamp(cc.zoomLevel,CameraController.maxZoomLevel,cc.zoomLevel);// I dont get why this is working, but it does
 		cameraRect.transform.localScale = 2*((vec));
-		foreach (Unit item in w.units) {
+		foreach (Unit item in w.Units) {
 			if(item.isShip==false){
 				continue;
 			}

@@ -127,11 +127,11 @@ public class TradeRoute {
 			if(needed==0){
 				continue;
 			}
-			c.tradeWithShip (item,needed,u);
+			c.TradeWithShip (item,needed,u);
 		}
 		//give as much as possible but max the choosen one
 		foreach (Item item in t.giving) {
-			c.tradeFromShip (u,item,item.count);
+			c.TradeFromShip (u,item,item.count);
 		}
 
 	}

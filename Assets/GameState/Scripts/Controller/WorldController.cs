@@ -57,13 +57,13 @@ public class WorldController : MonoBehaviour {
 		if (world == null || IsPaused) {
 			return;
 		}
-        world.update(Time.deltaTime * timeMultiplier);
+        world.Update(Time.deltaTime * timeMultiplier);
     }
 	void FixedUpdate (){
 		if (world == null || IsPaused) {
 			return;
 		}
-		world.fixedupdate(Time.fixedDeltaTime * timeMultiplier);
+		world.Fixedupdate(Time.fixedDeltaTime * timeMultiplier);
 	}
 
 	public void TogglePause(){
@@ -110,10 +110,11 @@ public class WorldController : MonoBehaviour {
 	/// </summary>
 	/// <param name="savename">Savename.</param>
 	public WorldSaveState GetSaveWorldData() {
-		WorldSaveState wss = new WorldSaveState ();
-		wss.world = world;
-		wss.offworld = offworldMarket;
-		return wss;
+        WorldSaveState wss = new WorldSaveState {
+            world = world,
+            offworld = offworldMarket
+        };
+        return wss;
 	}
 	public void LoadWorld(bool quickload = false) {
 		Debug.Log("LoadWorld button was clicked.");
@@ -130,7 +131,7 @@ public class WorldController : MonoBehaviour {
 		world = wss.world;
 		//Now turn the loaded World into a playable World
 		List<Structure> loadedStructures = new List<Structure>();
-		foreach (Island island in world.islandList) {
+		foreach (Island island in world.IslandList) {
 			loadedStructures.AddRange(island.Load ());
 		}
 		loadedStructures.Sort ((x, y) => x.buildID.CompareTo(y.buildID) );

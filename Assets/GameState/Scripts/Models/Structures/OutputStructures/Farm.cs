@@ -95,10 +95,8 @@ public class Farm : OutputStructure {
 				growableReadyCount--;
 				((Growable)g).Reset ();
 			}
-			if (cbOutputChange != null) {
-				cbOutputChange (this);
-			}
-		}
+            cbOutputChange?.Invoke(this);
+        }
 	}
 	public void OnGrowableChanged(Structure str){
 		if(str is Growable == false){
@@ -171,10 +169,10 @@ public class Farm : OutputStructure {
 		percentage = Mathf.RoundToInt (((float)count / (float)hs.Count) * 100);
 
 		if(growable.fer !=null){
-			if(t.myIsland==null){
+			if(t.MyIsland==null){
 				return;
 			}
-			if(t.myIsland.myFertilities.Contains (growable.fer)==false){
+			if(t.MyIsland.myFertilities.Contains (growable.fer)==false){
 				percentage = 0;
 			} else {
 				//TODO calculate the perfect grow environment?

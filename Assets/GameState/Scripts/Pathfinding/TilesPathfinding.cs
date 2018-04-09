@@ -24,7 +24,7 @@ public class TilesPathfinding : Pathfinding {
 			endTiles = new List<Tile> ();
 			endTiles.Add (destTile);
 		}
-		Path_AStar pa = new Path_AStar (startTiles[0].myIsland,startTiles,endTiles);
+		Path_AStar pa = new Path_AStar (startTiles[0].MyIsland,startTiles,endTiles);
 		worldPath = pa.path;
 		currTile = worldPath.Peek ();
 		startTile = currTile;

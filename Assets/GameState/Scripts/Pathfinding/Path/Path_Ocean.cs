@@ -8,8 +8,8 @@ public class Path_Ocean {
 	bool[,] tiles;
 
 	public Path_Ocean(Vector3 startPos, Vector3 endPos){
-		Calculate (World.current.GetTileAt (startPos.x, startPos.y), 
-			World.current.GetTileAt (endPos.x, endPos.y));
+		Calculate (World.Current.GetTileAt (startPos.x, startPos.y), 
+			World.Current.GetTileAt (endPos.x, endPos.y));
 	}
 	/// <summary>
 	/// Calculate the specified nodes, tileStart, tileEnd and diag.
@@ -77,7 +77,7 @@ public class Path_Ocean {
 	}
 
 	bool doesJumpHitMove( Vector3 pos ){
-		if (pos.x >= World.current.Width || pos.y >= World.current.Height ) {
+		if (pos.x >= World.Current.Width || pos.y >= World.Current.Height ) {
 			return false; //outside map
 		}
 		if (pos.x < 0 || pos.y < 0) {
@@ -172,12 +172,12 @@ public class Path_Ocean {
 		if (Mathf.Abs(dX) + Mathf.Abs(dY) == 2) {
 			// We are diagonal
 
-			if (World.current.GetTileAt(curr.X - dX, curr.Y).Type != TileType.Ocean) {
+			if (World.Current.GetTileAt(curr.X - dX, curr.Y).Type != TileType.Ocean) {
 				// East or West is unfloatable, therefore this would be a driving on ground movement.
 				return true;
 			}
 
-			if (World.current.GetTileAt(curr.X, curr.Y - dY).Type != TileType.Ocean) {
+			if (World.Current.GetTileAt(curr.X, curr.Y - dY).Type != TileType.Ocean) {
 				// North or South is unfloatable, therefore this would be a driving on ground movement.
 				return true;
 			}

@@ -26,15 +26,17 @@ public class ItemUI : MonoBehaviour {
 			image.sprite = UIController.GetItemImageForID (i.ID);
 		}
 		EventTrigger trigger = GetComponent<EventTrigger> ();
-		EventTrigger.Entry enter = new EventTrigger.Entry( );
-		enter.eventID = EventTriggerType.PointerEnter;
-		enter.callback.AddListener( ( data) => {
+        EventTrigger.Entry enter = new EventTrigger.Entry {
+            eventID = EventTriggerType.PointerEnter
+        };
+        enter.callback.AddListener( ( data) => {
 			OnMouseEnter ();
 		} );
 		trigger.triggers.Add( enter );
-		EventTrigger.Entry exit = new EventTrigger.Entry( );
-		exit.eventID = EventTriggerType.PointerExit;
-		exit.callback.AddListener( ( data) => {
+        EventTrigger.Entry exit = new EventTrigger.Entry {
+            eventID = EventTriggerType.PointerExit
+        };
+        exit.callback.AddListener( ( data) => {
 			OnMouseExit ();
 		} );
 		trigger.triggers.Add( exit );
@@ -77,9 +79,10 @@ public class ItemUI : MonoBehaviour {
 	}
 	public void AddClickListener(UnityAction<BaseEventData> ueb, bool clearAll = false){
 		EventTrigger trigger = GetComponent<EventTrigger> ();
-		EventTrigger.Entry entry = new EventTrigger.Entry( );
-		entry.eventID = EventTriggerType.PointerClick;
-		if(clearAll){
+        EventTrigger.Entry entry = new EventTrigger.Entry {
+            eventID = EventTriggerType.PointerClick
+        };
+        if (clearAll){
 			ClearAllTriggers ();
 		}
 		entry.callback.AddListener( ueb );

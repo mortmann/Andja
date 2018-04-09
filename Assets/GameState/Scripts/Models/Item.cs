@@ -54,9 +54,10 @@ public class Item {
 		return new Item(this);
 	}
 	virtual public Item CloneWithCount (){
-		Item i = new Item(this);
-		i.count = this.count;
-		return i;
+        Item i = new Item(this) {
+            count = this.count
+        };
+        return i;
 	}
 
 	public override string ToString (){

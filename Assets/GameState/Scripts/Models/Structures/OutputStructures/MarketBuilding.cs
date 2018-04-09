@@ -64,9 +64,9 @@ public class MarketBuilding : OutputStructure {
 		jobsToDo = new Dictionary<OutputStructure, Item[]> ();
 		// add all the tiles to the city it was build in
 		//dostuff thats happen when build
-		City.addTiles (myRangeTiles);
+		City.AddTiles (myRangeTiles);
 		foreach(Tile rangeTile in myRangeTiles){
-			if(rangeTile.myCity!=City){
+			if(rangeTile.MyCity!=City){
 				continue;
 			}
 			OnStructureAdded (rangeTile.Structure);
@@ -125,7 +125,7 @@ public class MarketBuilding : OutputStructure {
 		base.OnDestroy ();
 		List<Tile> h = new List<Tile> (myBuildingTiles);
 		h.AddRange (myRangeTiles); 
-		City.removeTiles (h);
+		City.RemoveTiles (h);
 	} 
 
 
@@ -216,8 +216,8 @@ public class MarketBuilding : OutputStructure {
 	public void TakeOverMarketBuilding(float deltaTime,int playerNumber, float speed = 1){
 		takenOverState += deltaTime * speed;
 		if(takeOverStartGoal<=takenOverState){
-			if(myBuildingTiles[0].myIsland!=null){
-				City c = myBuildingTiles [0].myIsland.myCities.Find (x => x.playerNumber == playerNumber);
+			if(myBuildingTiles[0].MyIsland!=null){
+				City c = myBuildingTiles [0].MyIsland.myCities.Find (x => x.playerNumber == playerNumber);
 				if(c!=null){
 					OnDestroy ();
 					City = c;

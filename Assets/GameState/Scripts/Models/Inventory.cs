@@ -73,9 +73,8 @@ public class Inventory {
 					break;
 				}
 			}
-			if(cbInventoryChanged != null)
-				cbInventoryChanged (this);
-		}
+            cbInventoryChanged?.Invoke(this);
+        }
 		return amount;
     }
 
@@ -134,10 +133,8 @@ public class Inventory {
 			return;
 		}
 		i.count = 0;
-		if(cbInventoryChanged!=null){
-			cbInventoryChanged (this); 
-		}
-	}
+        cbInventoryChanged?.Invoke(this);
+    }
 
 	public bool hasAnythingOf(Item item){
 		if(getItemInInventory (item).count > 0){
@@ -238,10 +235,8 @@ public class Inventory {
 		List<Item> temp = new List<Item> (items.Values);
 		//reset the inventory here
 		items = new Dictionary<int, Item>();
-		if(cbInventoryChanged!=null){
-			cbInventoryChanged (this);
-		}
-		return temp.ToArray ();
+        cbInventoryChanged?.Invoke(this);
+        return temp.ToArray ();
 	}
 
 	protected virtual void lowerItemAmount(Item i,int amount){
@@ -258,10 +253,8 @@ public class Inventory {
 				}
 			}
 		}
-		if(cbInventoryChanged!=null){
-			cbInventoryChanged (this);
-		}
-	}
+        cbInventoryChanged?.Invoke(this);
+    }
 
 	protected int moveAmountFromItemToInv(Item toBeMoved,Item toReceive){
 		//whats the amount to be moved
@@ -276,10 +269,8 @@ public class Inventory {
 			Debug.LogError ("Increase Amount is " + amount + "! "); 
 		}
 		item.count += amount;
-		if(cbInventoryChanged!=null){
-			cbInventoryChanged (this);
-		}
-	}
+        cbInventoryChanged?.Invoke(this);
+    }
 
 
 	public void addIventory(Inventory inv){

@@ -9,7 +9,7 @@ public class InputHandler {
 
 	static Dictionary<string,KeyBind> nameToKeyBinds;
 	static string fileName="keybinds.ini";
-
+	//TODO add a between layer for mouse buttons -> so it can be switched
 
 	// Use this for initialization
 	public InputHandler () {
@@ -35,7 +35,8 @@ public class InputHandler {
 			ChangePrimaryNameToKey ("Rotate",KeyCode.R); 
 		if (nameToKeyBinds.ContainsKey ("Console")==false)
 			ChangePrimaryNameToKey ("Console",KeyCode.F1); 
-
+		if (nameToKeyBinds.ContainsKey ("Cancel")==false)
+			ChangePrimaryNameToKey ("Cancel",KeyCode.Escape); 
 	}	
 	public static void ChangePrimaryNameToKey(string name, KeyCode key){
 		if(nameToKeyBinds.ContainsKey (name)){

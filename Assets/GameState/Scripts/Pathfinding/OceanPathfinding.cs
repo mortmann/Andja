@@ -25,7 +25,7 @@ public class OceanPathfinding : Pathfinding {
 		dest_Y = end.Y;
 		this.start = currTile;
 		this.destTile = end;
-		tileGrid = World.current.TilesGrid;
+		tileGrid = World.Current.TilesGrid;
 		Thread calcPath = new Thread (CalculatePath);
 		calcPath.Start ();
 	}
@@ -34,8 +34,8 @@ public class OceanPathfinding : Pathfinding {
 		dest_X = x;
 		dest_Y = y;
 		this.start = currTile;
-		this.destTile = World.current.GetTileAt(x, y);
-		tileGrid = World.current.TilesGrid;
+		this.destTile = World.Current.GetTileAt(x, y);
+		tileGrid = World.Current.TilesGrid;
 		Thread calcPath = new Thread (CalculatePath);
 		calcPath.Start ();
 	}
@@ -44,7 +44,7 @@ public class OceanPathfinding : Pathfinding {
 		List<GridPos> pos = JumpPointFinder.FindPath (jpParam);
 		worldPath = new Queue<Tile> ();
 		for (int i =0; i < pos.Count; i++) {
-			worldPath.Enqueue (World.current.GetTileAt (pos [i].x, pos [i].y));
+			worldPath.Enqueue (World.Current.GetTileAt (pos [i].x, pos [i].y));
 		}
 		CreateReversePath ();
 	}

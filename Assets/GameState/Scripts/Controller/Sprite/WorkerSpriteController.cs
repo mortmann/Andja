@@ -17,7 +17,7 @@ public class WorkerSpriteController : MonoBehaviour {
 				OnWorkerCreated (item);
 			}
 		}
-		World.current.RegisterWorkerCreated (OnWorkerCreated);
+		World.Current.RegisterWorkerCreated (OnWorkerCreated);
 
 	}
 	// Update is called once per frame

@@ -41,9 +41,8 @@ public class UILanguageController : MonoBehaviour {
 	}
 	public void ChangeLanguage(Language language){
 		selectedLanguage = language;
-		if (cbLanguageChange != null)
-			cbLanguageChange ();
-	}
+        cbLanguageChange?.Invoke();
+    }
 
 	public void RegisterLanguageChange(Action callbackfunc) {
 		cbLanguageChange += callbackfunc;

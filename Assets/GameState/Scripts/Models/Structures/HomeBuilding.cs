@@ -68,7 +68,7 @@ public class HomeBuilding : Structure {
 		foreach (Tile t in neighbourTiles) {
 			t.RegisterTileStructureChangedCallback (OnTStructureChange);
 		}
-		City.addPeople (buildingLevel,people);
+		City.AddPeople (buildingLevel,people);
 
 	}
 
@@ -80,21 +80,21 @@ public class HomeBuilding : Structure {
 		float allPercentage = 0;
 		float structurePercentage = 0;
 		int count = 0;
-		bool percCritical = City.getNeedCriticalForLevel(buildingLevel);
+		bool percCritical = City.GetNeedCriticalForLevel(buildingLevel);
 		Player myPlayer = PlayerController.Instance.GetPlayer (playerNumber);
-		foreach (Need n in myPlayer.getUnlockedStructureNeeds(buildingLevel)) {
+		foreach (Need n in myPlayer.GetUnlockedStructureNeeds(buildingLevel)) {
 			Player pc = PlayerController.Instance.GetPlayer (playerNumber);
-			if (n.startLevel <= buildingLevel && n.popCount <= pc.maxPopulationCount) {
-				if(isInRangeOf (n.structure)){
+			if (n.StartLevel <= buildingLevel && n.PopCount <= pc.MaxPopulationCount) {
+				if(isInRangeOf (n.Structure)){
 					structurePercentage += 1;
 				}
 				count++;
 			}
 		}
 		if (count == 0) {
-			allPercentage = City.getHappinessForCitizenLevel (buildingLevel);
+			allPercentage = City.GetHappinessForCitizenLevel (buildingLevel);
 		} else {
-			allPercentage = City.getHappinessForCitizenLevel (buildingLevel) + structurePercentage;
+			allPercentage = City.GetHappinessForCitizenLevel (buildingLevel) + structurePercentage;
 			structurePercentage /= count; 
 			allPercentage /= 2;
 		}
@@ -120,7 +120,7 @@ public class HomeBuilding : Structure {
 			decTimer = Mathf.Clamp (decTimer, 0, decreaseSpeed);
 			if (incTimer >= increaseSpeed) {
 				incTimer = 0;
-				if(people==maxLivingSpaces && myPlayer.hasUnlockedAllNeeds(buildingLevel)){
+				if(people==maxLivingSpaces && myPlayer.HasUnlockedAllNeeds(buildingLevel)){
 					canUpgrade = true;
 				}
 				TryToIncreasePeople ();
@@ -133,14 +133,14 @@ public class HomeBuilding : Structure {
 			return;
 		}
 		people++;
-		City.addPeople (buildingLevel,1);
+		City.AddPeople (buildingLevel,1);
 	}
 	private void TryToDecreasePeople(){
 		if(people<=0){
 			return;
 		}
 		people--;
-		City.removePeople (buildingLevel,1);
+		City.RemovePeople (buildingLevel,1);
 	}
 	public void OnTStructureChange(Structure now, Structure old){
 		if(old is Road == false || now is Road == false){
@@ -152,7 +152,7 @@ public class HomeBuilding : Structure {
 			Debug.LogError ("wrong need got called here! " + need.ID);
 			return false;
 		}
-		return isInRangeOf (need.structure);
+		return isInRangeOf (need.Structure);
 	}
 	public bool isInRangeOf(NeedsBuilding str){
 		if(str==null){
@@ -160,10 +160,10 @@ public class HomeBuilding : Structure {
 		}
 		List<NeedsBuilding> strs = new List<NeedsBuilding> ();
 		foreach (Tile item in myBuildingTiles) {
-			if(item.getListOfInRangeNeedBuildings()==null){
+			if(item.GetListOfInRangeNeedBuildings()==null){
 				continue;
 			}
-			strs.AddRange (item.getListOfInRangeNeedBuildings());
+			strs.AddRange (item.GetListOfInRangeNeedBuildings());
 		}
 		if(strs.Count==0){
 			return false;
@@ -171,11 +171,11 @@ public class HomeBuilding : Structure {
 		return strs.Contains (str);
 	}
 	protected override void OnCityChange (City old, City newOne) {
-		old.removePeople (buildingLevel, people);
-		newOne.addPeople (buildingLevel, people);
+		old.RemovePeople (buildingLevel, people);
+		newOne.AddPeople (buildingLevel, people);
 	}
 	protected override void OnDestroy () {
-		City.removePeople (buildingLevel,people);
+		City.RemovePeople (buildingLevel,people);
 	}
 	public void UpgradeHouse(){
 		if(canUpgrade==false&&IsMaxLevel()){

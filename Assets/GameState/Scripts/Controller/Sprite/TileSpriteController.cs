@@ -10,7 +10,10 @@ public class TileSpriteController : MonoBehaviour {
 	Dictionary<Tile, SpriteRenderer> tileSpriteRendererMap;
     public Sprite dirtSprite;
 	public Sprite mountainSprite;
-	public Sprite shoreSprite;
+
+	public GameObject karoOverlay;
+	GameObject karoOverlayInstance;
+
 	public GameObject tilePrefab;
 
 	public Sprite darkLayerSprite;
@@ -24,11 +27,11 @@ public class TileSpriteController : MonoBehaviour {
 	public Material highlightMaterial;
 
 	public delegate TileMark TileDecider(Tile tile);
-	public event TileDecider tileDeciderFunc;
+	public event TileDecider TileDeciderFunc;
 
     // The pathfinding graph used to navigate our world map.
-    World world {
-		get { return World.current; }
+    World World {
+		get { return World.Current; }
     }
 
     // Use this for initialization
@@ -38,75 +41,102 @@ public class TileSpriteController : MonoBehaviour {
 		}
 		Instance = this;
 		tileSpriteRendererMap = new Dictionary<Tile, SpriteRenderer>();
+
 		water = Instantiate (waterLayer);
-		water.transform.position = new Vector3((world.Width/2)-0.5f,(world.Height/2)-0.5f , 0.1f);
-		water.transform.localScale = new Vector3 (6+world.Width/10,0.1f,6+world.Height/10);
-		water.GetComponent<Renderer> ().material.mainTextureScale = new Vector2 (world.Width, world.Height*3);
+
 		LoadSprites ();
 
 		//DarkLayer probably gonna be changed
-		darkLayer = new GameObject ();
-		darkLayer.transform.position = new Vector3((world.Width/2)-0.5f,(world.Height/2)-0.5f , 0);
-		SpriteRenderer sr = darkLayer.AddComponent<SpriteRenderer> ();
+		if(EditorController.IsEditor==false){
+			water.transform.position = new Vector3((World.Width/2)-0.5f,(World.Height/2)-0.5f , 0.1f);
+			water.transform.localScale = new Vector3 (6+World.Width/10,0.1f,6+World.Height/10);
+	//		water.GetComponent<Renderer> ().material = waterMaterial;
+			water.GetComponent<Renderer> ().material.mainTextureScale = new Vector2 (World.Width, World.Height*3);
 
-		sr.sprite = darkLayerSprite;
-		sr.sortingLayerName = "DarkLayer";
+			darkLayer = new GameObject ();
+			darkLayer.transform.position = new Vector3((World.Width/2)-0.5f,(World.Height/2)-0.5f , 0);
+			SpriteRenderer sr = darkLayer.AddComponent<SpriteRenderer> ();
+			sr.sprite = darkLayerSprite;
+			sr.sortingLayerName = "DarkLayer";
+			darkLayer.transform.localScale =  new Vector3 (1.25f*World.Width,1.25f*World.Height,0);
+			darkLayer.name="DarkLayer";
+			darkLayer.transform.SetParent (this.transform);
+			darkLayer.SetActive (false);
+		} else {
+//			karoOverlayInstance = Instantiate ( karoOverlay );
+//			karoOverlayInstance.GetComponent <MeshRenderer> ().material.mainTextureScale = new Vector2 (world.Width, world.Height);
+//			karoOverlayInstance.transform.position = new Vector3((world.Width/2)-0.5f,(world.Height/2)-0.5f , 0);
+//			karoOverlayInstance.transform.localScale =  new Vector3 (world.Width,1f,world.Height);
+			water.transform.position = new Vector3((World.Width/2)-0.5f,(World.Height/2)-0.5f, 0.1f);
+			water.transform.localScale = new Vector3 (World.Width/10,0.1f,World.Height/10);
+			water.GetComponent<Renderer> ().material = waterMaterial;
+			water.GetComponent<Renderer> ().material.mainTextureScale = new Vector2 (World.Width, World.Height);
 
-		darkLayer.transform.localScale =  new Vector3 (1.25f*world.Width,1.25f*world.Height,0);
-		darkLayer.name="DarkLayer";
-		darkLayer.transform.SetParent (this.transform);
-		darkLayer.SetActive (false);
-
+		}
 
         // Register our callback so that our GameObject gets updated whenever
         // the tile's type changes.
-        world.RegisterTileChanged(OnTileChanged);
+        World.RegisterTileChanged(OnTileChanged);
+
 //		BuildController.Instance.RegisterBuildStateChange (OnBuildStateChance);
 
     }
-//	void OnBuildStateChance(BuildStateModes bsm){
-//		if(bsm != BuildStateModes.None){
-//			if (darkLayer != null) {
-//				return;
-//			}
-//			darkLayer.SetActive (true);
-//		} else {
-//			darkLayer.SetActive (false);
-//			tileDeciderFunc = null;
-//		}
-//	}
-//
+    //	void OnBuildStateChance(BuildStateModes bsm){
+    //		if(bsm != BuildStateModes.None){
+    //			if (darkLayer != null) {
+    //				return;
+    //			}
+    //			darkLayer.SetActive (true);
+    //		} else {
+    //			darkLayer.SetActive (false);
+    //			tileDeciderFunc = null;
+    //		}
+    //	}
+    //
     void OnTileChanged(Tile tile_data) {
-		//this is cheaper to compare than to look it up in a dictionary
-		if(tile_data==null || tile_data.Type == TileType.Ocean){
-			return;
-		}
+        //this is cheaper to compare than to look it up in a dictionary
+        if (tile_data == null || tile_data.Type == TileType.Ocean) {
+            if (EditorController.IsEditor && tileSpriteRendererMap.ContainsKey(tile_data)) {
+                Destroy(tileSpriteRendererMap[tile_data].gameObject);
+                tileSpriteRendererMap.Remove(tile_data);
+            }
+            return;
+        }
         if (tileSpriteRendererMap.ContainsKey(tile_data) == false) {
-//            Debug.LogError("tileGameObjectMap doesn't contain the tile_data -- did you forget to add the tile to the dictionary? Or maybe forget to unregister a callback?");
+            if (EditorController.IsEditor) {
+                SpawnTile(tile_data);
+                return;
+            }
+            //            Debug.LogError("tileGameObjectMap doesn't contain the tile_data -- did you forget to add the tile to the dictionary? Or maybe forget to unregister a callback?");
             return;
         }
 
-		SpriteRenderer sr = tileSpriteRendererMap[tile_data];
+        SpriteRenderer sr = tileSpriteRendererMap[tile_data];
 
-		if (sr == null) {
+        if (sr == null) {
             Debug.LogError("tileGame ObjectMap's returned GameObject is null -- did you forget to add the tile to the dictionary? Or maybe forget to unregister a callback?");
             return;
         }
-		if(clearMaterial==null){
-			clearMaterial = sr.material;
-		}
-		//for now the tile knows what a sprite has for one for know
-		if(tile_data.SpriteName != null && typeTotileSpriteNames.ContainsKey (tile_data.SpriteName)){
-			sr.sprite = typeTotileSpriteNames [tile_data.SpriteName];
-		} 
-		//the sprite gone missing? --- Made a mistake in nameing it?
-		if (tile_data.Type == TileType.Dirt) {
-			sr.sprite = dirtSprite;
-		} else if (tile_data.Type == TileType.Mountain) {
-			sr.sprite = mountainSprite;
-		} else if (tile_data.Type == TileType.Shore) {
-			sr.sprite = shoreSprite;
-		} 
+        if (clearMaterial == null) {
+            clearMaterial = sr.material;
+        }
+        //for now the tile knows what a sprite has for one for know
+        if (tile_data.SpriteName != null && typeTotileSpriteNames.ContainsKey(tile_data.SpriteName)) {
+            sr.sprite = typeTotileSpriteNames[tile_data.SpriteName];
+        }
+        //the sprite gone missing? --- Made a mistake in nameing it?
+        if (tile_data.Type == TileType.Ocean) {
+            sr.sprite = null;
+        } else if (tile_data.Type == TileType.Dirt) {
+            sr.sprite = dirtSprite;
+        } else if (tile_data.Type == TileType.Mountain) {
+            sr.sprite = mountainSprite;
+        } else if (tile_data.Type == TileType.Shore) {
+            if (sr.sprite == null) {
+                Debug.Log("Missing Sprite for Shore " + tile_data.SpriteName);
+                sr.sprite = typeTotileSpriteNames["shore_"];
+            }
+        }
 		else {
 			Debug.LogError("OnTileTypeChanged - Unrecognized tile type.");
 		}
@@ -120,6 +150,9 @@ public class TileSpriteController : MonoBehaviour {
 		tileSpriteRendererMap.Remove (t);
 	}
 	public void SpawnTile(Tile t){
+		if(EditorController.IsEditor&& tileSpriteRendererMap.ContainsKey (t)){
+			return;
+		}
 		GameObject tile_go = SimplePool.Spawn( tilePrefab, new Vector3(t.X, t.Y, 0), Quaternion.identity );
 		tile_go.name = "Tile_" + t.X + "_" + t.Y;
 		tile_go.transform.position = new Vector3(t.X , t.Y , 0);
@@ -132,9 +165,9 @@ public class TileSpriteController : MonoBehaviour {
 
 
 		SpriteRenderer sprite = tileSpriteRendererMap[t];
-		if(tileDeciderFunc!=null){
+		if(TileDeciderFunc!=null){
 			darkLayer.SetActive (true);
-			TileMark tm = tileDeciderFunc (t);
+			TileMark tm = TileDeciderFunc (t);
 			switch (tm) {
 			case TileMark.None:
 				sprite.material = clearMaterial;
@@ -151,13 +184,14 @@ public class TileSpriteController : MonoBehaviour {
 			}
 		} else {
 			sprite.material = clearMaterial;
-			darkLayer.SetActive (false);
+			if(darkLayer!=null)
+				darkLayer.SetActive (false);
 			//				sr.sortingLayerName = "Tile";
 		}
 	}
 
 	TileMark TileCityDecider(Tile t){
-		if(t.myCity.IsCurrPlayerCity ()){
+		if(t.MyCity.IsCurrPlayerCity ()){
 			return TileMark.None;
 		} else {
 			return TileMark.Dark;
@@ -172,20 +206,23 @@ public class TileSpriteController : MonoBehaviour {
 		}
 	}
 	void OnDestroy() {
-		world.UnregisterTileChanged (OnTileChanged);
+		World.UnregisterTileChanged (OnTileChanged);
 	}
 	public void AddDecider(TileDecider addDeciderFunc){
-		this.tileDeciderFunc += addDeciderFunc;
+		this.TileDeciderFunc += addDeciderFunc;
 	}
 	public void ResetDecider(){
 		Debug.Log ("RESET");
-		tileDeciderFunc = null;
+		TileDeciderFunc = null;
 		darkLayer.SetActive (false);
 	}
-	public void removeDecider(TileDecider removeFunc){
-		tileDeciderFunc -= removeFunc;
-		if(tileDeciderFunc==null || tileDeciderFunc.GetInvocationList().Length==0)
+	public void RemoveDecider(TileDecider removeFunc){
+		TileDeciderFunc -= removeFunc;
+		if(TileDeciderFunc==null || TileDeciderFunc.GetInvocationList().Length==0)
 			darkLayer.SetActive (false);
 
 	}
+
+
+
 }

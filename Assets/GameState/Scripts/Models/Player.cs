@@ -11,12 +11,12 @@ public class Player : IGEventable {
 	Action<GameEvent> cbEventEnded;
 	List<City> myCities;
 
-	public HashSet<Need>[] lockedNeeds { get; protected set;}
-	public HashSet<Need> unlockedItemNeeds { get; protected set;}
-	public HashSet<Need>[] unlockedStructureNeeds { get; protected set;}
+	public HashSet<Need>[] LockedNeeds { get; protected set;}
+	public HashSet<Need> UnlockedItemNeeds { get; protected set;}
+	public HashSet<Need>[] UnlockedStructureNeeds { get; protected set;}
 
 	private int _change;
-	public int change { get { return _change;} 
+	public int Change { get { return _change;} 
 		protected set { _change = value;}
 	} //should be calculated after reload anyway
 
@@ -27,7 +27,7 @@ public class Player : IGEventable {
 	#region Serialized
 	[JsonPropertyAttribute]
 	private int _balance;
-	public int balance { get { return _balance;} 
+	public int Balance { get { return _balance;} 
 		protected set { _balance = value;}
 	} 
 	// because only the new level popcount is interesting
@@ -35,22 +35,21 @@ public class Player : IGEventable {
 	// war or death and only the highest ever matters here 
 	[JsonPropertyAttribute]
 	private int _maxPopulationLevel;
-	public int maxPopulationLevel { 
+	public int MaxPopulationLevel { 
 		get {return _maxPopulationLevel;} 
 		set { 
-			if(maxPopulationLevel<value){
+			if(MaxPopulationLevel<value){
 				Debug.Log ("value < maxPopulationLevel");
 				return;
 			}
 			_maxPopulationLevel = value;
-			_maxPopulationCount = 0; 
-			if(cbMaxPopulationMLCountChange!=null)
-				cbMaxPopulationMLCountChange (maxPopulationLevel,_maxPopulationCount);
-		}
+			_maxPopulationCount = 0;
+            cbMaxPopulationMLCountChange?.Invoke(MaxPopulationLevel, _maxPopulationCount);
+        }
 	} 									  
 	[JsonPropertyAttribute]
 	private int _maxPopulationCount;
-	public int maxPopulationCount { 
+	public int MaxPopulationCount { 
 		get {return _maxPopulationCount;} 
 		set { 
 			if(value<_maxPopulationCount){
@@ -58,9 +57,8 @@ public class Player : IGEventable {
 				return;
 			} 
 			_maxPopulationCount = value;
-			if(cbMaxPopulationMLCountChange!=null)
-				cbMaxPopulationMLCountChange (maxPopulationLevel,_maxPopulationCount);
-		}
+            cbMaxPopulationMLCountChange?.Invoke(MaxPopulationLevel, _maxPopulationCount);
+        }
 	} 
 	[JsonPropertyAttribute]
 	public int playerNumber;
@@ -72,33 +70,33 @@ public class Player : IGEventable {
 
 	public Player(int number){
 		playerNumber = number;
-		maxPopulationCount = 0;
-		maxPopulationLevel = 0;
-		change = 0;
-		balance = 50000;
+		MaxPopulationCount = 0;
+		MaxPopulationLevel = 0;
+		Change = 0;
+		Balance = 50000;
 		Setup ();
 	}
 	private void Setup(){
 		myCities = new List<City> ();
-		lockedNeeds = new HashSet<Need>[City.citizienLevels];
-		unlockedStructureNeeds = new HashSet<Need>[City.citizienLevels];
-		unlockedItemNeeds = new HashSet<Need> ();
+		LockedNeeds = new HashSet<Need>[City.citizienLevels];
+		UnlockedStructureNeeds = new HashSet<Need>[City.citizienLevels];
+		UnlockedItemNeeds = new HashSet<Need> ();
 
 		for (int i = 0; i < City.citizienLevels; i++) {
-			lockedNeeds [i] = new HashSet<Need> ();
-			unlockedStructureNeeds [i] = new HashSet<Need> ();
+			LockedNeeds [i] = new HashSet<Need> ();
+			UnlockedStructureNeeds [i] = new HashSet<Need> ();
 		}
 		foreach(Need n in PrototypController.Instance.getCopieOfAllNeeds ()){
-			lockedNeeds [n.startLevel].Add (n);
+			LockedNeeds [n.StartLevel].Add (n);
 		}
-		for(int i = 0; i <= maxPopulationLevel; i++){
-			int count = maxPopulationCount;
-			if(i<maxPopulationLevel){
+		for(int i = 0; i <= MaxPopulationLevel; i++){
+			int count = MaxPopulationCount;
+			if(i<MaxPopulationLevel){
 				count = int.MaxValue;
 			}
-			needUnlockCheck (i, count);
+			NeedUnlockCheck (i, count);
 		}
-		RegisterMaxPopulationCountChange (needUnlockCheck);
+		RegisterMaxPopulationCountChange (NeedUnlockCheck);
 
 	}
 	public void Update () {
@@ -108,83 +106,82 @@ public class Player : IGEventable {
 			citychange += myCities[i].cityBalance;
 		}
 
-		balance += change+citychange;
+		Balance += Change+citychange;
 
-		if(balance < -1000000){
+		if(Balance < -1000000){
 			// game over !
 		}
 	}
-	private void needUnlockCheck(int level, int count){
+	private void NeedUnlockCheck(int level, int count){
 		//TODO Replace this with a less intense check
 		HashSet<Need> toRemove = new HashSet<Need> ();
-		foreach(Need need in lockedNeeds[level]){
-			if(need.startLevel!=level){
+		foreach(Need need in LockedNeeds[level]){
+			if(need.StartLevel!=level){
 				return;
 			}
-			if(need.popCount>count){
+			if(need.PopCount>count){
 				return;
 			}
 			toRemove.Add (need);
 			if(need.IsItemNeed()){
-				unlockedItemNeeds.Add (need);
+				UnlockedItemNeeds.Add (need);
 			} else {
-				unlockedStructureNeeds[need.startLevel].Add (need);
+				UnlockedStructureNeeds[need.StartLevel].Add (need);
 			}
-			if(cbNeedUnlocked!=null)
-				cbNeedUnlocked (need);
-		}	
+            cbNeedUnlocked?.Invoke(need);
+        }	
 		foreach(Need need in toRemove){
-			lockedNeeds [level].Remove (need);
+			LockedNeeds [level].Remove (need);
 		}
 	}
-	public HashSet<Need> getUnlockedStructureNeeds(int level){
-		return unlockedStructureNeeds [level];
+	public HashSet<Need> GetUnlockedStructureNeeds(int level){
+		return UnlockedStructureNeeds [level];
 	}
-	public bool hasUnlockedAllNeeds(int level){
-		return lockedNeeds [level].Count == 0;
+	public bool HasUnlockedAllNeeds(int level){
+		return LockedNeeds [level].Count == 0;
 	}
-	public bool hasUnlockedNeed(Need n){
+	public bool HasUnlockedNeed(Need n){
 		if (n == null) {
 			Debug.Log ("??? Need is null!");
 			return false;
 		}
-		if (lockedNeeds [n.startLevel] == null) {
+		if (LockedNeeds [n.StartLevel] == null) {
 			Debug.Log ("??? lockedNeeds is null!");
 			return false;
 		}
-		return lockedNeeds [n.startLevel].Contains (n)==false;
+		return LockedNeeds [n.StartLevel].Contains (n)==false;
 	}
 
-	public void reduceMoney(int money) {
+	public void ReduceMoney(int money) {
 		if (money < 0) {
 			return;	
 		}
-		balance -= money;
+		Balance -= money;
 	}
-	public void addMoney(int money) {
+	public void AddMoney(int money) {
 		if (money < 0) {
 			return;	
 		}
-		balance += money;
+		Balance += money;
 	}
-	public void reduceChange(int amount) {
+	public void ReduceChange(int amount) {
 		if (amount < 0) {
 			return;	
 		}
-		change -= amount;
+		Change -= amount;
 	}
-	public void addChange(int amount) {
+	public void AddChange(int amount) {
 		if (amount < 0) {
 			return;	
 		}
-		change += amount;
+		Change += amount;
 	}
 	public void OnCityCreated(City city){
 		myCities.Add (city);
 
 	}
 	public void OnStructureCreated(Structure structure){
-		reduceMoney (structure.buildcost);
+		ReduceMoney (structure.buildcost);
 		structure.RegisterOnDestroyCallback (OnStructureDestroy);
 	}
 	public void OnStructureDestroy(Structure structure){

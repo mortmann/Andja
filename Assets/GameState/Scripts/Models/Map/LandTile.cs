@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System;
 using Newtonsoft.Json;
 
-[JsonObject(MemberSerialization.OptIn)]
+[JsonObject(MemberSerialization.OptIn, ItemTypeNameHandling = TypeNameHandling.None)]
 public class LandTile : Tile {
 	//Want to have more than one structure in one tile!
 	//more than one tree or tree and bench! But for now only one
@@ -25,14 +25,12 @@ public class LandTile : Tile {
 				_structures.Destroy ();
 			} 
 			_structures = value;
-			if (cbTileStructureChanged != null) {
-				cbTileStructureChanged (value,oldStructure);
-			} 
-		}
+            cbTileStructureChanged?.Invoke(value, oldStructure);
+        }
 	}
 	protected Island _myIsland;
 
-	public override Island myIsland { get{return _myIsland;} 
+	public override Island MyIsland { get{return _myIsland;} 
 		set{ 
 			if(value==null){
 				Debug.LogError ("setting myisland to NULL is not viable " + value);
@@ -50,12 +48,12 @@ public class LandTile : Tile {
 
 	private Queue<City> cities;
 	protected City _myCity;
-	public override City myCity { 
+	public override City MyCity { 
 		get{
 			return _myCity;
 		} 
 		set {
-			if(myIsland==null){
+			if(MyIsland==null){
 				return;
 			}
 			//if the tile gets unclaimed by the current owner of this
@@ -67,11 +65,11 @@ public class LandTile : Tile {
 					//in that order the right to own it
 					City c = cities.Dequeue ();
 					_myCity = value;
-					c.addTile (this);
+					c.AddTile (this);
 					return;
 				}
-				myIsland.wilderness.addTile (this);
-				_myCity = myIsland.wilderness;
+				MyIsland.wilderness.AddTile (this);
+				_myCity = MyIsland.wilderness;
 				return;
 			} 
 			//warns about double wilderniss
@@ -100,7 +98,7 @@ public class LandTile : Tile {
 		} 
 	}
 
-	public List<NeedsBuilding> listOfInRangeNeedBuildings { get; protected set; }
+	public List<NeedsBuilding> ListOfInRangeNeedBuildings { get; protected set; }
 
 	public LandTile(){}
 	public LandTile(int x, int y){
@@ -132,32 +130,32 @@ public class LandTile : Tile {
 		cbTileStructureChanged -= callback;
 	}
 
-	public override void addNeedStructure(NeedsBuilding ns){
+	public override void AddNeedStructure(NeedsBuilding ns){
 		if(IsBuildType (Type)== false){
 			return;
 		}
-		if (listOfInRangeNeedBuildings == null) {
-			listOfInRangeNeedBuildings = new List<NeedsBuilding> ();
+		if (ListOfInRangeNeedBuildings == null) {
+			ListOfInRangeNeedBuildings = new List<NeedsBuilding> ();
 		}
-		listOfInRangeNeedBuildings.Add (ns);
+		ListOfInRangeNeedBuildings.Add (ns);
 	}
-	public override void removeNeedStructure(NeedsBuilding ns){
+	public override void RemoveNeedStructure(NeedsBuilding ns){
 		if(IsBuildType (Type)== false){
 			return;
 		}
-		if (listOfInRangeNeedBuildings == null) {
+		if (ListOfInRangeNeedBuildings == null) {
 			return;
 		}
-		if (listOfInRangeNeedBuildings.Contains (ns) == false) {
+		if (ListOfInRangeNeedBuildings.Contains (ns) == false) {
 			return;
 		}
-		listOfInRangeNeedBuildings.Remove (ns);
+		ListOfInRangeNeedBuildings.Remove (ns);
 	}
 
-	public override List<NeedsBuilding > getListOfInRangeNeedBuildings (){
-		return listOfInRangeNeedBuildings;
+	public override List<NeedsBuilding > GetListOfInRangeNeedBuildings (){
+		return ListOfInRangeNeedBuildings;
 	}
 	public override string ToString (){
-		return string.Format ("[LAND: X={0}, Y={1}, Structure={0}, myCity={1}]", X, Y, Structure, myCity);
+		return string.Format ("[LAND: X={0}, Y={1}, Structure={0}, myCity={1}]", X, Y, Structure, MyCity);
 	}
 }

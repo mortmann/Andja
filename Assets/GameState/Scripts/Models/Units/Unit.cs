@@ -118,8 +118,7 @@ public class Unit  {
 		if(pathfinding!=null)
 			pathfinding.Update_DoMovement (deltaTime);
 
-        if (cbUnitChanged != null)
-            cbUnitChanged(this);
+        cbUnitChanged?.Invoke(this);
     }
 	protected void UpdateAggroRange(float deltaTime){
 		if(engangingUnit!=null){
@@ -178,7 +177,7 @@ public class Unit  {
 						continue;
 					}
 				}
-				float currDist = (item.vector-pathfinding.currTile.vector).magnitude;
+				float currDist = (item.Vector-pathfinding.currTile.Vector).magnitude;
 				if(currDist<nearDist){
 					currDist = nearDist;
 					nearstTile = item;
@@ -203,7 +202,7 @@ public class Unit  {
 							continue;
 						}
 					}
-					float currDist = (item.vector-pathfinding.currTile.vector).magnitude;
+					float currDist = (item.Vector-pathfinding.currTile.Vector).magnitude;
 					if(currDist<nearDist){
 						currDist = nearDist;
 						nearstTile = item;
@@ -302,7 +301,7 @@ public class Unit  {
 		Debug.Log (clicked.ToString ()); 
 		if(rangeUStructure != null && rangeUStructure is Warehouse){
 			if(rangeUStructure.playerNumber == playerNumber){
-				rangeUStructure.City.tradeFromShip (this,clicked);
+				rangeUStructure.City.TradeFromShip (this,clicked);
 			} else {
 				Player p = PlayerController.Instance.GetPlayer (playerNumber);
 				rangeUStructure.City.SellToCity (clicked.ID,p,(Ship)this,clicked.count);
@@ -311,7 +310,7 @@ public class Unit  {
 	}
 
 	public void AddPatrolCommand(float targetX,float targetY){
-		Tile tile = World.current.GetTileAt(targetX, targetY);
+		Tile tile = World.Current.GetTileAt(targetX, targetY);
 		if(tile == null){
 			return;
 		}
@@ -346,7 +345,7 @@ public class Unit  {
 		}
 	}
     public virtual void AddMovementCommand(float x, float y) {
-		Tile tile = World.current.GetTileAt(x, y);
+		Tile tile = World.Current.GetTileAt(x, y);
         if(tile == null){
             return;
         }
@@ -356,7 +355,7 @@ public class Unit  {
         if (tile.Type == TileType.Mountain) {
             return;
         }
-		if(pathfinding.currTile.myIsland!=tile.myIsland){
+		if(pathfinding.currTile.MyIsland!=tile.MyIsland){
 			return;
 		}
 		onPatrol = false;
@@ -371,10 +370,8 @@ public class Unit  {
 		return inventory.addItem (t);
 	}
 	public void CallChangedCallback(){
-		if(cbUnitChanged!=null){
-			cbUnitChanged (this);
-		}
-	}
+        cbUnitChanged?.Invoke(this);
+    }
 	public void TakeDamage(DamageType dt, float amount){
 		if(amount<0){
 			Debug.LogError ("damage must be positive");
@@ -383,11 +380,9 @@ public class Unit  {
 		currHealth -= Combat.ArmorDamageReduction (myArmorType, dt) * amount;
 	}
 	public virtual void Destroy(){
-		//Do stuff here when on destroyed
-		if(cbUnitDestroyed!=null){
-			cbUnitDestroyed (this);
-		}
-	}
+        //Do stuff here when on destroyed
+        cbUnitDestroyed?.Invoke(this);
+    }
 	public void RegisterOnChangedCallback(Action<Unit> cb) {
 		cbUnitChanged += cb;
 	}

@@ -8,24 +8,24 @@ using EpPathFinding.cs;
 [JsonObject(MemberSerialization.OptIn)]
 public class World : IGEventable{
 	public const int TargetType = 10;
-	public static World current { get; protected set; }
+	public static World Current { get; protected set; }
 
 	#region Serialize
 
-	[JsonPropertyAttribute] public List<Island> islandList { get; protected set; }
-	[JsonPropertyAttribute] public List<Unit> units { get; protected set; }
+	[JsonPropertyAttribute] public List<Island> IslandList { get; protected set; }
+	[JsonPropertyAttribute] public List<Unit> Units { get; protected set; }
 	[JsonPropertyAttribute] public readonly int Width;
 	[JsonPropertyAttribute] public readonly int Height;
 	/// <summary>
 	/// ONLY for saving
 	/// </summary>
 	/// <value>The tile list.</value>
-	[JsonPropertyAttribute] public List<Tile> tileList {
+	[JsonPropertyAttribute] public List<Tile> TileList {
 		get {
-			if (tiles == null) {
+			if (Tiles == null) {
 				return new List<Tile> ();
 			}
-			List<Tile> l = new List<Tile> (tiles);
+			List<Tile> l = new List<Tile> (Tiles);
 			l.RemoveAll (x => x.Type == TileType.Ocean);
 			return l;
 		} 
@@ -33,8 +33,8 @@ public class World : IGEventable{
 
 	#endregion
 	#region RuntimeOrOther
-	public Tile[] tiles { get; protected set; }
-	public static List<Need> getCopieOfAllNeeds() {
+	public Tile[] Tiles { get; protected set; }
+	public static List<Need> GetCopieOfAllNeeds() {
 		return PrototypController.Instance.getCopieOfAllNeeds();
 	}
 	public Dictionary<Climate,List<Fertility>> allFertilities;
@@ -47,7 +47,7 @@ public class World : IGEventable{
 				for (int x = 0; x < Width; x++) {
 					_tilesmap[Width] = new bool[Height];
 					for (int y = 0; y < Height; y++) {
-						_tilesmap [x][y] = (World.current.GetTileAt (x, y).Type == TileType.Ocean);
+						_tilesmap [x][y] = (World.Current.GetTileAt (x, y).Type == TileType.Ocean);
 					}	
 				}
 			}
@@ -61,7 +61,7 @@ public class World : IGEventable{
 				for (int x = 0; x < Width; x++) {
 					boolgrid[x] = new bool[Height];
 					for (int y = 0; y < Height; y++) {
-						boolgrid [x][y] = (World.current.GetTileAt (x, y).Type == TileType.Ocean);
+						boolgrid [x][y] = (World.Current.GetTileAt (x, y).Type == TileType.Ocean);
 					}	
 				}
 				_tilesgrid = new StaticGrid (Width, Height, boolgrid);
@@ -86,10 +86,20 @@ public class World : IGEventable{
 	/// <param name="tiles">Tiles.</param>
 	/// <param name="width">Width.</param>
 	/// <param name="height">Height.</param>
-    public World(Tile[] tiles, int width = 1000, int height = 1000){
+    public World(Tile[] addTiles, int width = 1000, int height = 1000){
 		this.Width = width;
 		this.Height = height;
-		this.tiles = tiles;
+		this.Tiles = new Tile[Width*Height];
+		foreach(Tile t in addTiles){
+			if(t!=null)
+				SetTileAt (t.X, t.Y, t);
+		}
+		for (int x = 0; x < width; x++) {
+			for (int y = 0; y < height; y++) {
+				if (GetTileAt (x, y) == null)
+					SetTileAt (x, y, new Tile ());
+			}
+		}
 		SetupWorld ();
 
 //		for (int x = 29; x < 41; x++) {
@@ -127,47 +137,47 @@ public class World : IGEventable{
 	public World(int width, int height){
 		this.Width = width;
 		this.Height = height;
-		tiles = new Tile[Width*Height];
+		Tiles = new Tile[Width*Height];
 		for (int x = 0; x < Width; x++) {
 			for (int y = 0; y < Height; y++) {
 				SetTileAt (x, y, new Tile (x,y));
 			}
 		}
-
+		Current = this;
 	}
 	[JsonConstructor]
 	public World(List<Tile> tileList, int Width, int Height){
 		this.Width = Width;
 		this.Height = Height;
-		tiles = new Tile[Width*Height];
+		Tiles = new Tile[Width*Height];
 		foreach (Tile item in tileList) {
 			SetTileAt (item.X, item.Y, item);
 		}
 		LoadWaterTiles ();
-		current = this;
+		Current = this;
 		allFertilities = PrototypController.Instance.allFertilities;
 		idToFertilities= PrototypController.Instance.idToFertilities;
 	}
 	public void SetupWorld(){
-		current = this;
+		Current = this;
 		allFertilities = PrototypController.Instance.allFertilities;
 		idToFertilities= PrototypController.Instance.idToFertilities;
 //		EventController.Instance.RegisterOnEvent (OnEventCreate,OnEventEnded);
-		islandList = new List<Island>();
-		units = new List<Unit>();
+		IslandList = new List<Island>();
+		Units = new List<Unit>();
 
 	}
-    internal void update(float deltaTime) {
-        foreach(Island i in islandList) {
+    internal void Update(float deltaTime) {
+        foreach(Island i in IslandList) {
             i.update(deltaTime);
         }
 
     }
-	internal void fixedupdate(float deltaTime){
-		for (int i = units.Count-1; i >=0; i--) {
-			units[i].Update (deltaTime);
-			if(units[i].IsDead ==true){
-				units.RemoveAt (i);
+	internal void Fixedupdate(float deltaTime){
+		for (int i = Units.Count-1; i >=0; i--) {
+			Units[i].Update (deltaTime);
+			if(Units[i].IsDead ==true){
+				Units.RemoveAt (i);
 			}
 		}
 
@@ -177,7 +187,7 @@ public class World : IGEventable{
 	public void CreateIsland(int x, int y){
 		Tile t = GetTileAt (x, y);
 		if(t.Type == TileType.Ocean){
-			Debug.LogError ("Tried to create island on a water tile at " + t.toString ());
+			Debug.LogError ("Tried to create island on a water tile at " + t.ToString ());
 			return;
 		}
 
@@ -199,19 +209,22 @@ public class World : IGEventable{
 			fers [i] = f;
 		}
 
-		Island island = new Island (t,(Climate)myClimate);
-		island.myFertilities = new List<Fertility> (fers);
-		islandList.Add (island);
+        Island island = new Island(t, (Climate)myClimate) {
+            myFertilities = new List<Fertility>(fers)
+        };
+        IslandList.Add (island);
 
 	}
 	public void SetTileAt(int x,int y,Tile t){
+        if (t == null)
+            Debug.LogWarning("Set a Tile to null! Is this wanted?");
 		if (x >= Width ||y >= Height ) {
 			return;
 		}
 		if (x < 0 || y < 0) {
 			return;
 		}
-		tiles[x * Height + y] = t;
+		Tiles[x * Height + y] = t;
 	}
     public Tile GetTileAt(int x,int y){
         if (x >= Width ||y >= Height ) {
@@ -220,7 +233,7 @@ public class World : IGEventable{
         if (x < 0 || y < 0) {
             return null;
         }
-		return tiles[x * Height + y];
+		return Tiles[x * Height + y];
     }
 	public bool IsInTileAt(Tile t,float x,float y){
 		if (x >= Width ||y >= Height ) {
@@ -248,10 +261,9 @@ public class World : IGEventable{
 		} else {
 			c = new Unit (t,playernumber);			
 		}
-        units.Add(c);
+        Units.Add(c);
 		c.RegisterOnDestroyCallback (OnUnitDestroy);
-        if (cbUnitCreated != null)
-            cbUnitCreated(c);
+        cbUnitCreated?.Invoke(c);
         return c;
     }
 	public void OnUnitDestroy(Unit u){
@@ -263,15 +275,13 @@ public class World : IGEventable{
 		Tilesmap [t.X][t.Y] = b;
 	}
 
-	public Fertility getFertility(int ID){
+	public Fertility GetFertility(int ID){
 		return idToFertilities [ID];
 	}
 
 	public void CreateWorkerGameObject(Worker worker) {
-		if (cbWorkerCreated != null) {
-			cbWorkerCreated (worker);
-		}
-	}
+        cbWorkerCreated?.Invoke(worker);
+    }
 	#region callbacks
 	public void RegisterTileGraphChanged(Action<World> callbackfunc) {
 		cbTileGraphChanged += callbackfunc;
@@ -318,18 +328,14 @@ public class World : IGEventable{
 		if(ge.HasWorldEffect ()==false){
 			return;
 		}
-		if(cbEventCreated!=null){
-			cbEventCreated (ge);
-		}
-	}
+        cbEventCreated?.Invoke(ge);
+    }
 	public void OnEventEnded(GameEvent ge){
 		if(ge.HasWorldEffect ()==false){
 			return;
 		}
-		if(cbEventEnded!=null){
-			cbEventEnded (ge);
-		}
-	}
+        cbEventEnded?.Invoke(ge);
+    }
 	public int GetPlayerNumber(){
 		return -2;
 	}
@@ -339,7 +345,7 @@ public class World : IGEventable{
 	#endregion
 
 	public string GetJsonSave(){
-		WorldSave ws = new WorldSave (units, islandList);
+		WorldSave ws = new WorldSave (Units, IslandList);
 		return JsonUtility.ToJson (ws);
 	}
 	public void LoadWaterTiles (){

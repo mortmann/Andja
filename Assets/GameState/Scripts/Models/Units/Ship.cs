@@ -31,12 +31,11 @@ public class Ship : Unit {
 		UpdateWorldMarket (deltaTime);
 		//MOVE THE SHIP
 		pathfinding.Update_DoMovement (deltaTime);
-//		pathfinding.UpdateRotationOnPoint ();
-//		r2d.MovePosition (transform.position + pathfinding.Update_DoMovement(deltaTime));
-//		r2d.MoveRotation (transform.rotation.z + pathfinding.UpdateRotation ());
-		if (cbUnitChanged != null)
-			cbUnitChanged(this);
-	}
+        //		pathfinding.UpdateRotationOnPoint ();
+        //		r2d.MovePosition (transform.position + pathfinding.Update_DoMovement(deltaTime));
+        //		r2d.MoveRotation (transform.rotation.z + pathfinding.UpdateRotation ());
+        cbUnitChanged?.Invoke(this);
+    }
 	private void UpdateTradeRoute(float deltaTime){
 		if(tradeRoute!=null&&tradeRoute.Valid){
 			if(pathfinding.IsAtDest&&tradeRoute.isStarted){
@@ -93,10 +92,10 @@ public class Ship : Unit {
 		//TODO OPTIMISE THIS SO IT CHECKS THE ROUTE FOR ANY
 		//ISLANDS SO IT CAN TAKE A OTHER ROUTE
 		if(X >= Y){
-			goal = World.current.GetTileAt (0, Y);
+			goal = World.Current.GetTileAt (0, Y);
 		}
 		if(X<Y){
-			goal = World.current.GetTileAt (X,0);
+			goal = World.Current.GetTileAt (X,0);
 		}
 		goingToOffworldMarket = true;
 		this.toBuy = toBuy;
@@ -110,7 +109,7 @@ public class Ship : Unit {
 			tradeRoute.isStarted = false;
 	}
 	public override void AddMovementCommand (float x, float y){
-		Tile tile = World.current.GetTileAt(x, y);
+		Tile tile = World.Current.GetTileAt(x, y);
 		if(tile == null){
 			return;
 		}

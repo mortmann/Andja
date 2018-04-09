@@ -145,7 +145,7 @@ public class UIController : MonoBehaviour {
 		}
 	}
 	public void CloseProduceUI(){
-		TileSpriteController.Instance.removeDecider (StrcutureTileDecider);
+		TileSpriteController.Instance.RemoveDecider (StrcutureTileDecider);
 		buildingCanvas.SetActive (false);
 		CloseInfoUI ();
 	}
@@ -183,7 +183,7 @@ public class UIController : MonoBehaviour {
 			return;
 		}		
 		if(openStructure != null){
-			TileSpriteController.Instance.removeDecider (StrcutureTileDecider);
+			TileSpriteController.Instance.RemoveDecider (StrcutureTileDecider);
 			openStructure.OnClickClose ();
 			openStructure = null;
 		}
@@ -262,7 +262,7 @@ public class UIController : MonoBehaviour {
 		CloseTradeMenu ();
 		CloseOffWorldMenu ();
 		if (TileSpriteController.Instance != null)
-			TileSpriteController.Instance.removeDecider (StrcutureTileDecider);
+			TileSpriteController.Instance.RemoveDecider (StrcutureTileDecider);
 	}
 	public bool IsPauseMenuOpen(){
 		return pauseMenuCanvas.activeSelf;

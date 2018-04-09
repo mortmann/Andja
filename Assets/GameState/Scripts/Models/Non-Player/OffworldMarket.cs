@@ -42,14 +42,14 @@ public class OffworldMarket {
 		}
 		int count = item.count;
 		item.count = 0;
-		player.addMoney (Mathf.RoundToInt (count * itemIDtoSellPrice [item.ID]));
+		player.AddMoney (Mathf.RoundToInt (count * itemIDtoSellPrice [item.ID]));
 	}
 	public Item BuyItemToOffWorldMarket(Item item, int amount, Player player){
 		if(itemIDtoSellPrice.ContainsKey (item.ID )== false){
 			return null; 
 		}
 		item.count = amount;
-		player.reduceMoney (Mathf.RoundToInt (amount * itemIDtoSellPrice [item.ID]));
+		player.ReduceMoney (Mathf.RoundToInt (amount * itemIDtoSellPrice [item.ID]));
 		return item;
 	}
 }

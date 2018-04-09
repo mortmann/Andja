@@ -119,9 +119,10 @@ namespace Smaa
 			{
 				if (m_Material == null)
 				{
-					m_Material = new Material(Shader);
-					m_Material.hideFlags = HideFlags.HideAndDontSave;
-				}
+                    m_Material = new Material(Shader) {
+                        hideFlags = HideFlags.HideAndDontSave
+                    };
+                }
 
 				return m_Material;
 			}

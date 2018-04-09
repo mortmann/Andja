@@ -23,7 +23,7 @@ public class UnitSpriteController : MonoBehaviour {
         unitGameObjectMap = new Dictionary<Unit, GameObject>();
         LoadSprites();
         world.RegisterUnitCreated(OnUnitCreated);
-		foreach (var item in world.units) {
+		foreach (var item in world.Units) {
 			OnUnitCreated (item);
 		}        		
 		mouseController = MouseController.Instance;

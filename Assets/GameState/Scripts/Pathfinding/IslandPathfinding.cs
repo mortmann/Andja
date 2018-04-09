@@ -23,7 +23,7 @@ public class IslandPathfinding : Pathfinding {
 	}
 	public void SetDestination(Vector3 end) {
 		this.start = this.currTile;
-		this.destTile = World.current.GetTileAt(end.x,end.y);
+		this.destTile = World.Current.GetTileAt(end.x,end.y);
 		dest_X = end.x;
 		dest_Y = end.y;
 		pathDest = path_dest.exact;
@@ -32,7 +32,7 @@ public class IslandPathfinding : Pathfinding {
 	}
 	public void SetDestination(float x, float y) {
 		this.start = this.currTile;
-		this.destTile = World.current.GetTileAt(x,y);
+		this.destTile = World.Current.GetTileAt(x,y);
 		dest_X = x;
 		dest_Y = y;
 		pathDest = path_dest.exact;
@@ -40,7 +40,7 @@ public class IslandPathfinding : Pathfinding {
 		calcPath.Start ();
 	}
 	protected override void CalculatePath(){
-		Path_AStar pa = new Path_AStar (start.myIsland,start,destTile);
+		Path_AStar pa = new Path_AStar (start.MyIsland,start,destTile);
 		worldPath = pa.path;
 		CreateReversePath ();
 	}

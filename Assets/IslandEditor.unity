@@ -5320,6 +5320,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   dirtSprite: {fileID: 21300006, guid: 080bbf42caa2cac418f89352966c4543, type: 3}
   mountainSprite: {fileID: 21300000, guid: 0c4ad53366d1b6041b0950722c7258ae, type: 3}
+  noSprite: {fileID: 21300000, guid: 87e6e5dee78ceb64eb4280a54f794fcc, type: 3}
   karoOverlay: {fileID: 1163574123938242, guid: f30a6ba0ca9d6fc45824b792d8dd3df2,
     type: 2}
   tilePrefab: {fileID: 1314587207701820, guid: 9a2d501f2d7407a4eb80bc8d91ff7e43, type: 2}
@@ -6188,6 +6189,7 @@ Camera:
   m_TargetEye: 3
   m_HDR: 0
   m_AllowMSAA: 0
+  m_AllowDynamicResolution: 0
   m_ForceIntoRT: 0
   m_OcclusionCulling: 1
   m_StereoConvergence: 10

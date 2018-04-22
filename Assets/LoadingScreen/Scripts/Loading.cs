@@ -22,9 +22,9 @@ public class Loading : MonoBehaviour {
 	void Update(){
 		int percantage = 0;
 		if(loadEditor == false){
-			percantage =(int)( sceneLoadingProgress * 0.7f + MapGenerator.Instance.percantageProgress * 0.3f );
+			percantage =(int)( sceneLoadingProgress * 0.7f + MapGenerator.Instance.PercantageProgress * 0.3f );
 
-			if(MapGenerator.Instance.isDone&&aso == null)
+			if(MapGenerator.Instance.IsDone&&aso == null)
 				aso = SceneManager.LoadSceneAsync ("GameState");
 		} else {
 			percantage = (int)(sceneLoadingProgress);

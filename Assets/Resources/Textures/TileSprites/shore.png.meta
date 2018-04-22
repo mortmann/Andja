@@ -9,33 +9,39 @@ TextureImporter:
     21300004: shore_S_E
     21300006: shore_S_W
     21300008: shore_ES
-    21300010: shore_EW
+    21300010: shore_EW_S
     21300012: shore_SW
     21300014: shore_N_W
     21300016: shore_ES
-    21300018: shore_NS
+    21300018: shore_NS_E
     21300020: shore_NE
     21300022: shore_11
     21300024: shore_NW
-    21300026: shore_13
-    21300028: shore_14
-    21300030: shore_15
+    21300026: shore_NS_W
+    21300028: shore_NE
+    21300030: shore_EW_N
     21300032: shore_NW
     21300034: shore_17
     21300036: shore_4
     21300038: shore_5
     21300040: shore_N_E
-    21300042: shore_EW
+    21300042: shore_EW_S
     21300044: shore_SW
-    21300046: shore_NS
+    21300046: shore_NS_E
     21300048: shore_18
     21300050: shore_19
     21300052: shore_NSW
     21300054: shore_21
-    21300056: shore_0
-    21300058: shore_2
+    21300056: shore_E_S
+    21300058: shore_W_S
     21300060: shore_3
     21300062: shore_6
+    21300064: shore_E_N
+    21300066: shore_W_N
+    21300068: shore_SW_NE
+    21300070: shore_NW_ES
+    21300072: shore_ES_NW
+    21300074: shore_NE_SW
   externalObjects: {}
   serializedVersion: 4
   mipmaps:
@@ -77,8 +83,9 @@ TextureImporter:
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spritePixelsToUnits: 32
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
   alphaIsTransparency: 1
   spriteTessellationDetail: -1
@@ -97,6 +104,7 @@ TextureImporter:
     crunchedCompression: 0
     allowsAlphaSplitting: 0
     overridden: 0
+    androidETC2FallbackOverride: 0
   - buildTarget: Standalone
     maxTextureSize: 2048
     resizeAlgorithm: 0
@@ -106,6 +114,7 @@ TextureImporter:
     crunchedCompression: 0
     allowsAlphaSplitting: 0
     overridden: 0
+    androidETC2FallbackOverride: 0
   spriteSheet:
     serializedVersion: 2
     sprites:
@@ -236,7 +245,7 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: shore_EW
+      name: shore_EW_S
       rect:
         serializedVersion: 2
         x: 32
@@ -278,7 +287,7 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: shore_NS
+      name: shore_NS_E
       rect:
         serializedVersion: 2
         x: 0
@@ -292,7 +301,7 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: shore_13
+      name: shore_NS_W
       rect:
         serializedVersion: 2
         x: 64
@@ -306,7 +315,7 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: shore_14
+      name: shore_NE
       rect:
         serializedVersion: 2
         x: 0
@@ -320,7 +329,7 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: shore_15
+      name: shore_EW_N
       rect:
         serializedVersion: 2
         x: 32
@@ -337,21 +346,7 @@ TextureImporter:
       name: shore_NW
       rect:
         serializedVersion: 2
-        x: 65
-        y: 95
-        width: 32
-        height: 32
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-    - serializedVersion: 2
-      name: shore_17
-      rect:
-        serializedVersion: 2
-        x: 96
+        x: 64
         y: 96
         width: 32
         height: 32
@@ -418,7 +413,7 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: shore_0
+      name: shore_E_S
       rect:
         serializedVersion: 2
         x: 224
@@ -426,13 +421,13 @@ TextureImporter:
         width: 32
         height: 32
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: shore_2
+      name: shore_W_S
       rect:
         serializedVersion: 2
         x: 256
@@ -440,17 +435,45 @@ TextureImporter:
         width: 32
         height: 32
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: shore_3
+      name: shore_E_N
       rect:
         serializedVersion: 2
         x: 224
         y: 96
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: shore_W_N
+      rect:
+        serializedVersion: 2
+        x: 256
+        y: 96
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: shore_SW_NE
+      rect:
+        serializedVersion: 2
+        x: 288
+        y: 192
         width: 32
         height: 32
       alignment: 0
@@ -460,11 +483,39 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: shore_6
+      name: shore_NW_ES
       rect:
         serializedVersion: 2
-        x: 256
-        y: 96
+        x: 288
+        y: 224
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: shore_ES_NW
+      rect:
+        serializedVersion: 2
+        x: 320
+        y: 192
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: shore_NE_SW
+      rect:
+        serializedVersion: 2
+        x: 320
+        y: 224
         width: 32
         height: 32
       alignment: 0

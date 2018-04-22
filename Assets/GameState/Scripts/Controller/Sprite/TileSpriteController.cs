@@ -10,8 +10,9 @@ public class TileSpriteController : MonoBehaviour {
 	Dictionary<Tile, SpriteRenderer> tileSpriteRendererMap;
     public Sprite dirtSprite;
 	public Sprite mountainSprite;
+    public Sprite noSprite;
 
-	public GameObject karoOverlay;
+    public GameObject karoOverlay;
 	GameObject karoOverlayInstance;
 
 	public GameObject tilePrefab;
@@ -107,10 +108,8 @@ public class TileSpriteController : MonoBehaviour {
                 SpawnTile(tile_data);
                 return;
             }
-            //            Debug.LogError("tileGameObjectMap doesn't contain the tile_data -- did you forget to add the tile to the dictionary? Or maybe forget to unregister a callback?");
             return;
         }
-
         SpriteRenderer sr = tileSpriteRendererMap[tile_data];
 
         if (sr == null) {
@@ -125,9 +124,7 @@ public class TileSpriteController : MonoBehaviour {
             sr.sprite = typeTotileSpriteNames[tile_data.SpriteName];
         }
         //the sprite gone missing? --- Made a mistake in nameing it?
-        if (tile_data.Type == TileType.Ocean) {
-            sr.sprite = null;
-        } else if (tile_data.Type == TileType.Dirt) {
+        if (tile_data.Type == TileType.Dirt) {
             sr.sprite = dirtSprite;
         } else if (tile_data.Type == TileType.Mountain) {
             sr.sprite = mountainSprite;
@@ -140,13 +137,42 @@ public class TileSpriteController : MonoBehaviour {
 		else {
 			Debug.LogError("OnTileTypeChanged - Unrecognized tile type.");
 		}
+        if(sr.sprite == null) {
+            sr.sprite = noSprite;
+        }
+        if (TileDeciderFunc != null) {
+            darkLayer.SetActive(true);
+            TileMark tm = TileDeciderFunc(tile_data);
+            switch (tm) {
+                case TileMark.None:
+                sr.material = clearMaterial;
+                //					sr.sortingLayerName = "Tile";
+                break;
+                case TileMark.Highlight:
+                sr.material = highlightMaterial;
+                //					sr.sortingLayerName = "Tile";
+                break;
+                case TileMark.Dark:
+                sr.material = darkMaterial;
+                //					sr.sortingLayerName = "DarkTile";
+                break;
+            }
+        }
+        else {
+            sr.material = clearMaterial;
+            if (darkLayer != null)
+                darkLayer.SetActive(false);
+            //				sr.sortingLayerName = "Tile";
+        }
+
     }
 
 	public void DespawnTile(Tile t){
 		if(tileSpriteRendererMap.ContainsKey(t)==false){
 			return;
 		}
-		SimplePool.Despawn (tileSpriteRendererMap [t].gameObject);
+        tileSpriteRendererMap[t].sprite = null; //removing for now because not everything has a sprite
+        SimplePool.Despawn (tileSpriteRendererMap [t].gameObject);
 		tileSpriteRendererMap.Remove (t);
 	}
 	public void SpawnTile(Tile t){
@@ -161,33 +187,8 @@ public class TileSpriteController : MonoBehaviour {
 		tile_go.transform.SetParent(this.transform, true);
 		tileSpriteRendererMap.Add(t, sr);
 		OnTileChanged(t);
-		//			}
 
-
-		SpriteRenderer sprite = tileSpriteRendererMap[t];
-		if(TileDeciderFunc!=null){
-			darkLayer.SetActive (true);
-			TileMark tm = TileDeciderFunc (t);
-			switch (tm) {
-			case TileMark.None:
-				sprite.material = clearMaterial;
-				//					sr.sortingLayerName = "Tile";
-				break;
-			case TileMark.Highlight:
-				sprite.material = highlightMaterial;
-				//					sr.sortingLayerName = "Tile";
-				break;
-			case TileMark.Dark:
-				sprite.material = darkMaterial;
-				//					sr.sortingLayerName = "DarkTile";
-				break;
-			}
-		} else {
-			sprite.material = clearMaterial;
-			if(darkLayer!=null)
-				darkLayer.SetActive (false);
-			//				sr.sortingLayerName = "Tile";
-		}
+		
 	}
 
 	TileMark TileCityDecider(Tile t){

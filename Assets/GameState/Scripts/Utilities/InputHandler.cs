@@ -36,8 +36,10 @@ public class InputHandler {
 		if (nameToKeyBinds.ContainsKey ("Console")==false)
 			ChangePrimaryNameToKey ("Console",KeyCode.F1); 
 		if (nameToKeyBinds.ContainsKey ("Cancel")==false)
-			ChangePrimaryNameToKey ("Cancel",KeyCode.Escape); 
-	}	
+			ChangePrimaryNameToKey ("Cancel",KeyCode.Escape);
+        if (nameToKeyBinds.ContainsKey("Screenshot") == false)
+            ChangePrimaryNameToKey("Screenshot", KeyCode.F12);
+    }	
 	public static void ChangePrimaryNameToKey(string name, KeyCode key){
 		if(nameToKeyBinds.ContainsKey (name)){
 			nameToKeyBinds [name].SetPrimary (key);
@@ -92,7 +94,7 @@ public class InputHandler {
 			nameToKeyBinds = new Dictionary<string, KeyBind> ();
 			string lines = File.ReadAllText (filePath);
 			nameToKeyBinds = JsonConvert.DeserializeObject<Dictionary<string, KeyBind>> (lines);
-		} catch {
+		} finally {
 			SetupKeyBinds ();
 			SaveInputSchema (); // create the file so it can be manipulated 
 		}

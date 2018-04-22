@@ -86,7 +86,7 @@ public class Player : IGEventable {
 			LockedNeeds [i] = new HashSet<Need> ();
 			UnlockedStructureNeeds [i] = new HashSet<Need> ();
 		}
-		foreach(Need n in PrototypController.Instance.getCopieOfAllNeeds ()){
+		foreach(Need n in PrototypController.Instance.GetCopieOfAllNeeds ()){
 			LockedNeeds [n.StartLevel].Add (n);
 		}
 		for(int i = 0; i <= MaxPopulationLevel; i++){

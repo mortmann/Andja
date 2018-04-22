@@ -14,10 +14,10 @@ public class MapGenerator : MonoBehaviour {
 	List<Task> generatorsTasks;
 	int completedIslands=0;
 	List<IslandGenerator> generators;
-	public float percantageProgress {
+	public float PercantageProgress {
 		get { return 100* ((float)completedIslands / toGeneratorIslands); }
 	}
-	public bool isDone {
+	public bool IsDone {
 		get { return completedIslands == toGeneratorIslands; }
 	}
 	int toGeneratorIslands = 0;
@@ -85,7 +85,7 @@ public class MapGenerator : MonoBehaviour {
 		for (int i = 0; i < generatorsTasks.Count; i++) {
 			Task t = generatorsTasks [i]; 
 
-			if (t.IsCompleted && isDone == false) {
+			if (t.IsCompleted && IsDone == false) {
 				Debug.Log ("TASK Number " + i + " is finished! ");
 				if( t.IsFaulted){
 					Debug.LogError ("TASK Number " + i + " had an exception: " + t.Exception.ToString());
@@ -94,7 +94,7 @@ public class MapGenerator : MonoBehaviour {
 				generatorsTasks.Remove (t);
 			}
 		}
-		if(isDone&&tilesPopulated==false){
+		if(IsDone&&tilesPopulated==false){
 			for (int i = 0; i < generators.Count; i++) {
 				IslandGenerator isg = generators [i];
 				int x = 0;

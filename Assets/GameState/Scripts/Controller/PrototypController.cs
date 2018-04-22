@@ -26,7 +26,7 @@ public class PrototypController : MonoBehaviour {
 	public Dictionary<Climate,List<Fertility>> allFertilities;
 	public Dictionary<int,Fertility> idToFertilities;
 
-	public Dictionary<int, Item> getCopieOfAllItems(){
+	public Dictionary<int, Item> GetCopieOfAllItems(){
 		Dictionary<int, Item> items = new Dictionary<int, Item>();
 		foreach (int item in allItems.Keys) {
 			int id = item;
@@ -34,7 +34,7 @@ public class PrototypController : MonoBehaviour {
 		}
 		return items;
 	}
-	public List<Need> getCopieOfAllNeeds(){
+	public List<Need> GetCopieOfAllNeeds(){
 		List<Need> needs = new List<Need> ();
 		foreach (Need item in allNeeds) {
 			needs.Add (item.Clone ());
@@ -42,7 +42,7 @@ public class PrototypController : MonoBehaviour {
 		return needs;
 	}
 
-	public ReadOnlyCollection<Need> getAllNeeds(){
+	public ReadOnlyCollection<Need> GetAllNeeds(){
 		return new ReadOnlyCollection<Need> (allNeeds);
 	}
 	// Use this for initialization
@@ -179,9 +179,10 @@ public class PrototypController : MonoBehaviour {
 			fertilityPrototypeDatas [ID] = fpd;
 			foreach (Climate item in fer.climates) {
 				if (allFertilities.ContainsKey (item)==false) {
-					List<Fertility> f = new List<Fertility> ();
-					f.Add (fer);
-					allFertilities.Add (item, f);
+                    List<Fertility> f = new List<Fertility> {
+                        fer
+                    };
+                    allFertilities.Add (item, f);
 				} else {
 					allFertilities [item].Add (fer);
 				}

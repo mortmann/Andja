@@ -64,7 +64,7 @@ public class CameraController : MonoBehaviour {
 		middle = Camera.main.ScreenToWorldPoint (new Vector3 (Camera.main.pixelWidth/2, Camera.main.pixelHeight/2));
 
 		middleTile = World.Current.GetTileAt (middle.x,middle.y);
-		findNearestIsland ();
+		FindNearestIsland ();
 
 		Vector3 newLower = cameraMove + lower;
 		Vector3 newUpper = cameraMove + upper;
@@ -186,7 +186,7 @@ public class CameraController : MonoBehaviour {
 		return new Vector3(zoomMultiplier*Horizontal*Time.deltaTime,zoomMultiplier*Vertical*Time.deltaTime,0);
 	}
 
-	public void findNearestIsland(){
+	public void FindNearestIsland(){
 		HashSet<Tile> tiles= new HashSet<Tile>();
 		Queue<Tile> tilesToCheck = new Queue<Tile>();
 		tilesToCheck.Enqueue(middleTile);

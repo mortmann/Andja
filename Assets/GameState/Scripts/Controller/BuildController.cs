@@ -44,7 +44,7 @@ public class BuildController : MonoBehaviour {
 	Action<BuildStateModes> cbBuildStateChange;
 
 	public Dictionary<int, Item> getCopieOfAllItems(){
-		return PrototypController.Instance.getCopieOfAllItems();
+		return PrototypController.Instance.GetCopieOfAllItems();
 	}
 
 	public void Awake(){

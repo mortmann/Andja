@@ -71,7 +71,7 @@ public class EditorController : MonoBehaviour {
 		MapGenerator mg = go.GetComponent<MapGenerator> ();
 		mg.SetToGenerate (w, h,new MapGenerator.IslandGenInfo (w, w, h, h,Climate.Middle));
 		mg.Generate ();
-		while(mg.isDone == false){
+		while(mg.IsDone == false){
 			yield return null;
 		}
 		DontDestroyOnLoad (go);
@@ -170,16 +170,27 @@ public class EditorController : MonoBehaviour {
 		if(t.Type == TileType.Ocean){
 			World.Current.SetTileAt (t.X, t.Y, new LandTile (t.X,t.Y));
 		} 
-		if(selectedTileType == TileType.Ocean){
+        t = World.Current.GetTileAt(t.X, t.Y);
+
+        if (selectedTileType == TileType.Ocean){
 			if(t.Structure!=null){
 				DestroyStructureOnTile (t);
 			}
 			World.Current.SetTileAt (t.X, t.Y, new Tile (t.X,t.Y));
 		}
 		t.Type = selectedTileType;
-
-        t.SpriteName = spriteName + GetSpriteAddonForTile(t);
-
+        if(t.Type == TileType.Shore) {
+            foreach (Tile neigh in t.GetNeighbours()) {
+                if (neigh.Type != TileType.Shore) {
+                    continue;
+                }
+                neigh.SpriteName = "shore" + GetSpriteAddonForTile(neigh);
+                World.Current.OnTileChanged(neigh);
+            }
+            t.SpriteName = "shore" + GetSpriteAddonForTile(t);
+        } else {
+            t.SpriteName = spriteName;
+        }
         World.Current.OnTileChanged (t);
 	}
 
@@ -209,8 +220,7 @@ public class EditorController : MonoBehaviour {
             connectOrientation += "W";
             neighbours++;
         }
-
-        if (neighbours == 1) {
+        if (neighbours > 0) {
             connectOrientation += "_";
             if (neig[0] != null && neig[0].Type != TileType.Shore && neig[0].Type != TileType.Ocean) {
                 connectOrientation += "N";
@@ -227,8 +237,6 @@ public class EditorController : MonoBehaviour {
         }
         return connectOrientation;
     }
-
-
 
 	public void SetDestroyMode(bool destroy){
 		DestroyBuilding = destroy;

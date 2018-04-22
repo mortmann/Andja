@@ -43,18 +43,21 @@ public class KeyboardController : MonoBehaviour {
 			WorldController.Instance.TogglePause ();
 		}
 		if(InputHandler.GetButtonDown ("Console")){
+            
 			uic.ToggleConsole ();
 		}
 //		if(Input.GetKeyDown (KeyCode.Alpha1)){
 //			WorldController.Instance.OnClickChangeTimeMultiplier (1);
 //		}
-		if (Input.GetButtonDown ("Rotate")) {
+		if (InputHandler.GetButtonDown ("Rotate")) {
 			if(bc.toBuildStructure != null){
 				bc.toBuildStructure.RotateStructure ();
 			}
 		}
-
-		if(Application.isEditor){
+        if (InputHandler.GetButtonDown("Screenshot")) {
+            ScreenCapture.CaptureScreenshot("screenshot_"+ System.DateTime.Now.ToString("dd_MM_yyyy-hh_mm_ss_ff")+".jpg");
+        }
+        if (Application.isEditor){
 			if(Input.GetKey (KeyCode.LeftShift)){
 				if(EventSystem.current.IsPointerOverGameObject ()==false){
 					FindObjectOfType<HoverOverScript> ().DebugInfo (mc.GetTileUnderneathMouse ().ToString ());

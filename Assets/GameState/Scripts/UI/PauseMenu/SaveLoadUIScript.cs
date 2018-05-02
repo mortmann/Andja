@@ -24,7 +24,7 @@ public class SaveLoadUIScript : MonoBehaviour {
 		if (EditorController.IsEditor == false) {
 			directoryPath = SaveController.Instance.GetSaveGamesPath ();
 		} else {
-			directoryPath = EditorController.Instance.GetSaveGamesPath ();
+			directoryPath = EditorController.GetSaveGamesPath ();
 		}
 		
 		DirectoryInfo saveDir = new DirectoryInfo( directoryPath );

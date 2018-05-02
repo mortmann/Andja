@@ -9,7 +9,6 @@ using UnityEngine.EventSystems;
 using Newtonsoft.Json;
 
 public enum BrushTypes {Square,Round}
-public enum IslandSizeTypes { ExtraSmall, Small, Middle, Big, ExtraBig }
 
 public class EditorController : MonoBehaviour {
 	public const string islandSaveFileVersion = "i_0.0.2";
@@ -69,7 +68,7 @@ public class EditorController : MonoBehaviour {
 	public IEnumerator NewIsland(int w,int h, Climate clim){
 		GameObject go = Instantiate (mapGenerator.gameObject);
 		MapGenerator mg = go.GetComponent<MapGenerator> ();
-		mg.SetToGenerate (w, h,new MapGenerator.IslandGenInfo (w, w, h, h,Climate.Middle));
+		mg.EditorGenerate(w, h, new MapGenerator.IslandGenInfo (new MapGenerator.Range(w, w) , new MapGenerator.Range(h,h) , Climate.Middle));
 		mg.Generate ();
 		while(mg.IsDone == false){
 			yield return null;
@@ -340,8 +339,7 @@ public class EditorController : MonoBehaviour {
 	/// 
 
 	public void SaveIslandState(string name = "autosave"){
-		string path = System.IO.Path.Combine(GetSaveGamesPath(), climate.ToString());
-        path = System.IO.Path.Combine(path, IslandSize.ToString());
+        string path = GetPathToIsland(IslandSize, climate);
         path = System.IO.Path.Combine (path, name + ".isl");
 
 		SaveIsland savestate = GetSaveState();
@@ -357,25 +355,31 @@ public class EditorController : MonoBehaviour {
 		);
 	}
 
+    public static string GetPathToIsland(IslandSizeTypes islandSize, Climate islandClimate) {
+        string path = System.IO.Path.Combine(GetSaveGamesPath(), islandClimate.ToString());
+        path = System.IO.Path.Combine(path, islandSize.ToString());
+        return path;
+    }
 	public void LoadIsland(System.IO.FileInfo file ){
 		loadsavegame = file;
 		MenuController.instance.ChangeToEditorLoadScreen ();
 	}
 	private void CreateFromSave(System.IO.FileInfo file){
-		string alllines = System.IO.File.ReadAllText (file.FullName);
-		SaveIsland state = JsonConvert.DeserializeObject<SaveIsland> (alllines,new JsonSerializerSettings
-			{
-				NullValueHandling = NullValueHandling.Ignore,
-				ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
-				TypeNameHandling = TypeNameHandling.Auto
-			});
-		if(islandSaveFileVersion!=state.version){
-			Debug.LogError ("Mismatch of SaveFile Versions " + state.version + " & " + islandSaveFileVersion);
-			return;
-		}
-		LoadSaveState (state);
+		LoadSaveState (LoadIsland(file.FullName));
 	}
-
+    public static SaveIsland LoadIsland(string location) {
+        string alllines = System.IO.File.ReadAllText(location);
+        SaveIsland state = JsonConvert.DeserializeObject<SaveIsland>(alllines, new JsonSerializerSettings {
+            NullValueHandling = NullValueHandling.Ignore,
+            ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+            TypeNameHandling = TypeNameHandling.Auto
+        });
+        if (islandSaveFileVersion != state.version) {
+            Debug.LogError("Mismatch of SaveFile Versions " + state.version + " & " + islandSaveFileVersion);
+            return null;
+        }
+        return state;
+    }
 	void LoadSaveState(SaveIsland load){
 		world = new World(load.tiles,load.Width,load.Height);
 		tileToStructure = new Dictionary<Tile, Structure> ();
@@ -386,9 +390,9 @@ public class EditorController : MonoBehaviour {
 	public SaveIsland GetSaveState(){
 		HashSet<Tile> toSave = new HashSet<Tile> (world.Tiles);
 		toSave.RemoveWhere(x=>x.Type == TileType.Ocean);
-		return new SaveIsland (tileToStructure, toSave.ToArray() , width,height);
+		return new SaveIsland (tileToStructure, toSave.ToArray() , width,height, climate);
 	}
-	public string GetSaveGamesPath(){
+	public static string GetSaveGamesPath(){
 		return System.IO.Path.Combine(Application.dataPath.Replace ("/Assets","") , "islands");
 	}
 	[JsonObject]
@@ -397,14 +401,17 @@ public class EditorController : MonoBehaviour {
 		[JsonPropertyAttribute(TypeNameHandling = TypeNameHandling.Auto)] public List<Structure> structures;
 		[JsonPropertyAttribute(TypeNameHandling =TypeNameHandling.None)] public Tile[] tiles;
 		[JsonPropertyAttribute] public int Width;
-		public SaveIsland(){
+        [JsonPropertyAttribute] public int Height;
+        [JsonPropertyAttribute] private Climate climate;
+
+        public SaveIsland(){
 			
 		}
-		[JsonPropertyAttribute] public int Height;
-		public SaveIsland(Dictionary<Tile,Structure> tileToStructure,Tile[] tiles,int Width,int Height){
+		public SaveIsland(Dictionary<Tile,Structure> tileToStructure,Tile[] tiles,int Width,int Height, Climate climate){
 			this.Width=Width;
 			this.Height=Height;
-			this.structures = new List<Structure>(tileToStructure.Values);
+            this.climate = climate;
+            this.structures = new List<Structure>(tileToStructure.Values);
 			this.tiles = tiles;
 		}
  	}

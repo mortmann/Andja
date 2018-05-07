@@ -15,9 +15,10 @@ public class IslandGenerator {
 	public int Width;
 	public int Height;
 	public Tile[] Tiles { get; protected set; }
-
+    public Climate climate;
 	// Use this for initialization
-	public IslandGenerator(int Width, int Height, int seed, int splats) {
+	public IslandGenerator(int Width, int Height, int seed, int splats, Climate climate) {
+        this.climate = climate;
 		this.Width = Width;
 		this.Height = Height;
 		this.seed = seed;
@@ -409,5 +410,7 @@ public class IslandGenerator {
 		return tiles.ToArray ();
 	}
 
-
+    public MapGenerator.IslandStruct GetIslandStruct() {
+        return new MapGenerator.IslandStruct(Width, Height, Tiles, climate);
+    }
 }

@@ -402,7 +402,7 @@ public class EditorController : MonoBehaviour {
 		[JsonPropertyAttribute(TypeNameHandling =TypeNameHandling.None)] public Tile[] tiles;
 		[JsonPropertyAttribute] public int Width;
         [JsonPropertyAttribute] public int Height;
-        [JsonPropertyAttribute] private Climate climate;
+        [JsonPropertyAttribute] public Climate climate;
 
         public SaveIsland(){
 			

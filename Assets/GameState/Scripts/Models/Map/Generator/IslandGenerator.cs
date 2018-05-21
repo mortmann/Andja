@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -135,7 +136,7 @@ public class IslandGenerator {
 //			t.Elevation -= fn.GetValue (t.X, t.Y) * 0.09f;
 //		}
 
-		Debug.Log ("FloodFillLands");
+		//Debug.Log ("FloodFillLands");
 		HashSet<Tile> island = FloodFillLands();
 		List<Tile> all = new List<Tile>(Tiles);
 		all.ForEach(x=>{
@@ -144,40 +145,56 @@ public class IslandGenerator {
 				}
 			}
 		);
-		Debug.Log ("FloodFillOcean");
+		//Debug.Log ("FloodFillOcean");
 		FloodFillOcean (island);
 
 		for (int x = 0; x < Width; x++) {
 			for (int y = 0; y < Height; y++) {
 				Tile t = GetTileAt (x, y);
+                if(t.Elevation > islandThreshold) {
+                    t = new LandTile(x, y, t);
+                    SetTileAt(x, y, t);
+                }
 				if(t.Elevation > mountainElevation){
 					t.Type = TileType.Mountain;
 				}
 				else if(t.Elevation > dirtElevation){
 					t.Type = TileType.Dirt;
 				}
-				else if(t.Elevation > cliffElevation){
-					t.Type = TileType.Dirt;
-					foreach(Tile nt in GetNeighbours(t)){
-						if(nt == null){
-							continue;
-						}
-						if(nt.Elevation<islandThreshold){
-//							t.Type = TileType.Cliff;
-							break;
-						}
-					}
-				} 
-				//else if(t.Elevation > shoreElevation){
-				//	t.Type = TileType.Shore;
-				//} 
+                //				else if(t.Elevation > cliffElevation){
+                //					t.Type = TileType.Dirt;
+                //					foreach(Tile nt in GetNeighbours(t)){
+                //						if(nt == null){
+                //							continue;
+                //						}
+                //						if(nt.Elevation<islandThreshold){
+                ////							t.Type = TileType.Cliff;
+                //							break;
+                //						}
+                //					}
+                //				}
+                //else if(t.Elevation > shoreElevation){
+                //	t.Type = TileType.Shore;
+                //} 
+                //We need to give it a random tilesprite
+                t.SpriteName = GetRandomSprite(t);
 			}
 		}
 		sw.Stop ();
 		Debug.Log ("Generated island with size " + Width +":"+ Height +" in " + sw.ElapsedMilliseconds +"ms (" + sw.Elapsed.TotalSeconds +"s)! ");
 	}
-	//Returns biggest land mass as list
-	protected HashSet<Tile> FloodFillLands() {
+
+    private string GetRandomSprite(Tile t) {
+        List<string> all = TileSpriteController.GetSpriteNamesForType(t.Type, climate);
+        if (all == null) {
+            Debug.Log(t.Type);
+            return "";
+        }
+        int rand = random.Range(0, all.Count - 1);
+        return all[rand];
+    }
+    //Returns biggest land mass as list
+    protected HashSet<Tile> FloodFillLands() {
 		List<Tile> allTiles = new List<Tile> (Tiles);
 		HashSet<Tile> currIslandTiles = new HashSet<Tile> ();
 		allTiles.RemoveAll (t => t.Elevation < islandThreshold);

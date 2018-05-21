@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 using System.Linq;
 
 public enum Climate {Cold,Middle,Warm};
-public enum IslandSizeTypes { ExtraSmall, Small, Middle, Big, ExtraBig }
+public enum IslandSizeTypes { ExtraSmall, Small, Middle, Big, ExtraBig, Other }
 
 [JsonObject(MemberSerialization.OptIn)]
 public class Island : IGEventable{
@@ -21,7 +21,7 @@ public class Island : IGEventable{
 	#endregion
 	#region RuntimeOrOther
 
-	public Path_TileGraph tileGraphIslandTiles { get; protected set; }
+	public Path_TileGraph TileGraphIslandTiles { get; protected set; }
 	public List<Tile> myTiles;
 	public Vector2 min;
 	public Vector2 max;
@@ -60,7 +60,7 @@ public class Island : IGEventable{
 		StartTile.MyIsland = this;
 		allReadyHighlighted = false;
 		World.Current.RegisterOnEvent (OnEventCreated,OnEventEnded);
-		tileGraphIslandTiles = new Path_TileGraph(this);
+		TileGraphIslandTiles = new Path_TileGraph(this);
 	}
 	public IEnumerable<Structure> Load(){
 		Setup ();
@@ -131,7 +131,7 @@ public class Island : IGEventable{
 //		BuildController.Instance.BuildOnTile (myTiles,true,BuildController.Instance.structurePrototypes[3],true);
     }
 
-    public void update(float deltaTime) {
+    public void Update(float deltaTime) {
 		for (int i = 0; i < myCities.Count; i++) {
 			myCities[i].Update(deltaTime);
         }
@@ -198,7 +198,7 @@ public class Island : IGEventable{
             case IslandSizeTypes.ExtraBig:
             return new MapGenerator.Range(140, 160);
             default:
-            Debug.LogError("NOT RECOGNISED ISLAND SIZE! Nothing has no size!");
+            //Debug.LogError("NOT RECOGNISED ISLAND SIZE! Nothing has no size!");
             return new MapGenerator.Range(0, 0);
         }
     }
@@ -211,7 +211,7 @@ public class Island : IGEventable{
             }
         }
         Debug.LogError("The Island does not fit any Range! Widht = " + widht + " : Height " + height );
-        return IslandSizeTypes.ExtraBig;
+        return IslandSizeTypes.Other;
     }
 
 }

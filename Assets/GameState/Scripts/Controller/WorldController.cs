@@ -10,7 +10,7 @@ public class WorldController : MonoBehaviour {
     public static WorldController Instance { get; protected set; }
 
     // The world and tile data
-    public World world { get; protected set; }
+    public World World { get; protected set; }
 
 	public OffworldMarket offworldMarket;
 
@@ -45,7 +45,7 @@ public class WorldController : MonoBehaviour {
 		} else {
 			if (gdh != null) {
 				MapGenerator mg = FindObjectOfType<MapGenerator> ();
-				this.world = new World (mg.GetTiles(), gdh.width , gdh.height);
+				this.World = new World (mg.GetTiles(), gdh.width , gdh.height);
 				isLoaded = false;
 			} 
 		}
@@ -54,16 +54,16 @@ public class WorldController : MonoBehaviour {
 
     // Update is called once per frame
     void Update() {
-		if (world == null || IsPaused) {
+		if (World == null || IsPaused) {
 			return;
 		}
-        world.Update(Time.deltaTime * timeMultiplier);
+        World.Update(Time.deltaTime * timeMultiplier);
     }
 	void FixedUpdate (){
-		if (world == null || IsPaused) {
+		if (World == null || IsPaused) {
 			return;
 		}
-		world.Fixedupdate(Time.fixedDeltaTime * timeMultiplier);
+		World.Fixedupdate(Time.fixedDeltaTime * timeMultiplier);
 	}
 
 	public void TogglePause(){
@@ -111,7 +111,7 @@ public class WorldController : MonoBehaviour {
 	/// <param name="savename">Savename.</param>
 	public WorldSaveState GetSaveWorldData() {
         WorldSaveState wss = new WorldSaveState {
-            world = world,
+            world = World,
             offworld = offworldMarket
         };
         return wss;
@@ -128,10 +128,10 @@ public class WorldController : MonoBehaviour {
 	public void LoadWorldData(WorldSaveState wss) {
 		offworldMarket = wss.offworld;
 		// Create a world from our save file data.
-		world = wss.world;
+		World = wss.world;
 		//Now turn the loaded World into a playable World
 		List<Structure> loadedStructures = new List<Structure>();
-		foreach (Island island in world.IslandList) {
+		foreach (Island island in World.IslandList) {
 			loadedStructures.AddRange(island.Load ());
 		}
 		loadedStructures.Sort ((x, y) => x.buildID.CompareTo(y.buildID) );

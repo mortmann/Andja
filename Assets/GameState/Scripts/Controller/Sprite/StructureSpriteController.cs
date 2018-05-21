@@ -10,8 +10,8 @@ public class StructureSpriteController : MonoBehaviour {
 
 	BuildController bm;
 	CameraController cc;
-	World world {
-		get { return WorldController.Instance.world; }
+	World World {
+		get { return WorldController.Instance.World; }
 	}
 	void Start (){
 		structureGameObjectMap = new Dictionary<Structure, GameObject> ();
@@ -177,7 +177,7 @@ public class StructureSpriteController : MonoBehaviour {
 			structureSprites[s.name] = s;
 		}
 	}
-	public Sprite getStructureSprite(Structure str){
+	public Sprite GetStructureSprite(Structure str){
 		if(structureSprites.ContainsKey (str.GetSpriteName())==false){
 			//FIXME this should be active in future 
 			//fornow there arent many sprites anyway

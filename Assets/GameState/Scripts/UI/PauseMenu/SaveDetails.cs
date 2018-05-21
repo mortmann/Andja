@@ -14,8 +14,8 @@ public class SaveDetails : MonoBehaviour {
     public void ShowDetails(FileInfo saveFile) {
         if (EditorController.IsEditor) {
             creationDate.text = saveFile.CreationTime.ToString("dd.MM.yyyy");
-            climate.text = saveFile.Directory.Parent.Parent.Name;
-            size.text = saveFile.Directory.Parent.Name;
+            climate.text = saveFile.Directory.Parent.Name;
+            size.text = saveFile.Directory.Name;
         }
         
     }

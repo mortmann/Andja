@@ -109,6 +109,7 @@ public class LandTile : Tile {
 	public LandTile(int x, int y,Tile t){
 		this.x = x;
 		this.y = y;
+        Elevation = t.Elevation;
 		_type = t.Type;
 	}
 

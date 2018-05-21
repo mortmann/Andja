@@ -46,7 +46,7 @@ public class CameraController : MonoBehaviour {
 	}
 
 	void Update () {
-		//PauseMenu
+        //DO not move atall when Menu is Open
 		if(PauseMenu.isOpen){
 			return;
 		}
@@ -218,7 +218,6 @@ public class CameraController : MonoBehaviour {
 		Camera.main.transform.position = new Vector3 (pos.x, pos.y, Camera.main.transform.position.z);
 		currFramePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 		lastFramePosition = currFramePosition;
-
 	}
 
 	public CameraSave GetSaveCamera(){

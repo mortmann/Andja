@@ -21,7 +21,7 @@ public class Path_AStar {
             return;
         }
         // A dictionary of all valid, walkable nodes.
-        Dictionary<Tile, Path_Node<Tile>> nodes = island.tileGraphIslandTiles.nodes;
+        Dictionary<Tile, Path_Node<Tile>> nodes = island.TileGraphIslandTiles.nodes;
 		Calculate (nodes,tileStart,tileEnd,diag);
     }
 
@@ -43,7 +43,7 @@ public class Path_AStar {
 		this.startTiles = startTiles;
 		this.endTiles = endTiles;
 		// A dictionary of all valid, walkable nodes.
-		Dictionary<Tile, Path_Node<Tile>> nodes = island.tileGraphIslandTiles.nodes;
+		Dictionary<Tile, Path_Node<Tile>> nodes = island.TileGraphIslandTiles.nodes;
 		Calculate (nodes,startTiles[0],endTiles[0]);
 	}
 	private void Calculate(Dictionary<Tile, Path_Node<Tile>> nodes,Tile tileStart, Tile tileEnd,bool diag = true){

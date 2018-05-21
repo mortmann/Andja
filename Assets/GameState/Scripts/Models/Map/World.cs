@@ -169,7 +169,7 @@ public class World : IGEventable{
 	}
     internal void Update(float deltaTime) {
         foreach(Island i in IslandList) {
-            i.update(deltaTime);
+            i.Update(deltaTime);
         }
 
     }

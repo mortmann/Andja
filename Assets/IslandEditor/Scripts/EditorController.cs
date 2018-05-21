@@ -37,7 +37,9 @@ public class EditorController : MonoBehaviour {
 	public string spriteName;
 	int brushSize=1;
 
-    public IslandSizeTypes IslandSize;
+    public IslandSizeTypes IslandSize {
+        get { return Island.GetSizeTyp(width, height); }
+    }
 
 	Action<Structure> cbStructureCreated;
 	Action<Tile> cbStructureDestroyed;
@@ -63,13 +65,23 @@ public class EditorController : MonoBehaviour {
 		else {
 			world = new World (width, height);
 		}
-		Camera.main.transform.position = new Vector3(width / 2, height / 2, Camera.main.transform.position.z);
+        foreach (Climate climate in Enum.GetValues(typeof(Climate))) {
+            foreach (IslandSizeTypes size in Enum.GetValues(typeof(IslandSizeTypes))) {
+                if(System.IO.Directory.Exists(GetPathToIsland(size,climate)) == false){
+                    System.IO.Directory.CreateDirectory(GetPathToIsland(size, climate));
+                }
+            }
+        }
+        Camera.main.transform.position = new Vector3(width / 2, height / 2, Camera.main.transform.position.z);
 	}
 	public IEnumerator NewIsland(int w,int h, Climate clim){
 		GameObject go = Instantiate (mapGenerator.gameObject);
 		MapGenerator mg = go.GetComponent<MapGenerator> ();
-		mg.EditorGenerate(w, h, new MapGenerator.IslandGenInfo (new MapGenerator.Range(w, w) , new MapGenerator.Range(h,h) , Climate.Middle));
+		mg.EditorGenerate(w, h, new MapGenerator.IslandGenInfo (new MapGenerator.Range(w, w) , new MapGenerator.Range(h,h) , clim));
 		mg.Generate ();
+        width = w;
+        height = h;
+        climate = clim;
 		while(mg.IsDone == false){
 			yield return null;
 		}
@@ -398,11 +410,11 @@ public class EditorController : MonoBehaviour {
 	[JsonObject]
 	public class SaveIsland {
 		[JsonPropertyAttribute] public string version = islandSaveFileVersion;
-		[JsonPropertyAttribute(TypeNameHandling = TypeNameHandling.Auto)] public List<Structure> structures;
-		[JsonPropertyAttribute(TypeNameHandling =TypeNameHandling.None)] public Tile[] tiles;
 		[JsonPropertyAttribute] public int Width;
         [JsonPropertyAttribute] public int Height;
         [JsonPropertyAttribute] public Climate climate;
+        [JsonPropertyAttribute(TypeNameHandling = TypeNameHandling.Auto)] public List<Structure> structures;
+        [JsonPropertyAttribute(TypeNameHandling = TypeNameHandling.None)] public Tile[] tiles;
 
         public SaveIsland(){
 			

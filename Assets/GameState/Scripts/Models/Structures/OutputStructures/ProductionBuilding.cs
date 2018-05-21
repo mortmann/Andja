@@ -188,7 +188,7 @@ public class ProductionBuilding : OutputStructure {
 				return;
 			}
 			myWorker.Add (new Worker(this,nearestMarketBuilding, getItems.ToArray() ,false));
-			WorldController.Instance.world.CreateWorkerGameObject (myWorker[0]);
+			WorldController.Instance.World.CreateWorkerGameObject (myWorker[0]);
 		} else {
 			base.SendOutWorkerIfCan ();
 		}

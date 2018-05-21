@@ -5271,7 +5271,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: North
+  m_Text: Cold
 --- !u!222 &1243131468
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -5318,15 +5318,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 89627e930dcaa864a9e6671121d07a0d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dirtSprite: {fileID: 21300006, guid: 080bbf42caa2cac418f89352966c4543, type: 3}
-  mountainSprite: {fileID: 21300000, guid: 0c4ad53366d1b6041b0950722c7258ae, type: 3}
   noSprite: {fileID: 21300000, guid: 87e6e5dee78ceb64eb4280a54f794fcc, type: 3}
   karoOverlay: {fileID: 1163574123938242, guid: f30a6ba0ca9d6fc45824b792d8dd3df2,
     type: 2}
   tilePrefab: {fileID: 1314587207701820, guid: 9a2d501f2d7407a4eb80bc8d91ff7e43, type: 2}
-  darkLayerSprite: {fileID: 0}
   waterLayer: {fileID: 167726, guid: 4fceb91cd8f861c4b95ceb552bfa1bbb, type: 2}
   water: {fileID: 0}
+  darkLayerSprite: {fileID: 0}
   waterMaterial: {fileID: 2100000, guid: ac077958db547504bb55970a5133bede, type: 2}
   darkMaterial: {fileID: 0}
   highlightMaterial: {fileID: 0}
@@ -5860,7 +5858,6 @@ MonoBehaviour:
   brushType: 0
   randomChange: 0
   spriteName: 
-  IslandSize: 0
   IsModal: 0
 --- !u!1 &1321122953
 GameObject:
@@ -7662,11 +7659,11 @@ MonoBehaviour:
   m_Value: 0
   m_Options:
     m_Options:
-    - m_Text: North
+    - m_Text: Cold
       m_Image: {fileID: 0}
     - m_Text: Middle
       m_Image: {fileID: 0}
-    - m_Text: South
+    - m_Text: Warm
       m_Image: {fileID: 0}
   m_OnValueChanged:
     m_PersistentCalls:

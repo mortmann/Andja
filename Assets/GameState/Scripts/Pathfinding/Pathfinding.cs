@@ -179,7 +179,7 @@ public abstract class Pathfinding {
         // now we have to go to the correct x/y coordinations
         if (X >= dest_X - 0.1f && X <= dest_X + 0.1f && Y >= dest_Y - 0.1f && Y <= dest_Y + 0.1f) {
             //we are near enough
-            currTile = WorldController.Instance.world.GetTileAt(X, Y);
+            currTile = WorldController.Instance.World.GetTileAt(X, Y);
             nextTile = null;
             destTile = currTile;
             IsAtDest = true;

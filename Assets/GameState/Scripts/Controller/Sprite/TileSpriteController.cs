@@ -2,33 +2,41 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-
+using System;
+/// <summary>
+/// Sprite Names should follow this rule
+/// climate_tiletyp_version_connection
+/// if climate == null:
+/// tiletyp_version_connectionSameType
+/// there could be in future:
+/// climate_tiletyp_2ndTileType_version_connectionSameType_connection2ndType
+/// </summary>
 public class TileSpriteController : MonoBehaviour {
 
 	public static TileSpriteController Instance { get; protected set; }
 
 	Dictionary<Tile, SpriteRenderer> tileSpriteRendererMap;
-    public Sprite dirtSprite;
-	public Sprite mountainSprite;
+    public static Dictionary<string, Sprite> nameToSprite;
+    private static Dictionary<TileType, Dictionary<string, List<string>>> typeTotileSpriteNames;
+
     public Sprite noSprite;
-
     public GameObject karoOverlay;
-	GameObject karoOverlayInstance;
-
 	public GameObject tilePrefab;
+    GameObject darkLayer;
+    public GameObject waterLayer;
+    public GameObject water;
 
-	public Sprite darkLayerSprite;
-	GameObject darkLayer;
-	public GameObject waterLayer;
-	public GameObject water;
-	public Dictionary<string, Sprite> typeTotileSpriteNames;
+    public Sprite darkLayerSprite;
+	
 	public Material waterMaterial;
 	public Material darkMaterial;
 	Material clearMaterial;
 	public Material highlightMaterial;
 
-	public delegate TileMark TileDecider(Tile tile);
+    public delegate TileMark TileDecider(Tile tile);
 	public event TileDecider TileDeciderFunc;
+
+    public enum TileSpriteClimate { cold, middle, warm, all }
 
     // The pathfinding graph used to navigate our world map.
     World World {
@@ -36,7 +44,7 @@ public class TileSpriteController : MonoBehaviour {
     }
 
     // Use this for initialization
-    void Start () {
+    void OnEnable () {
 		if (Instance != null) {
 			Debug.LogError("There should never be two mouse controllers.");
 		}
@@ -45,7 +53,7 @@ public class TileSpriteController : MonoBehaviour {
 
 		water = Instantiate (waterLayer);
 
-		LoadSprites ();
+        LoadSprites();
 
 		//DarkLayer probably gonna be changed
 		if(EditorController.IsEditor==false){
@@ -120,23 +128,17 @@ public class TileSpriteController : MonoBehaviour {
             clearMaterial = sr.material;
         }
         //for now the tile knows what a sprite has for one for know
-        if (tile_data.SpriteName != null && typeTotileSpriteNames.ContainsKey(tile_data.SpriteName)) {
-            sr.sprite = typeTotileSpriteNames[tile_data.SpriteName];
+        if (tile_data.SpriteName != null && nameToSprite.ContainsKey(tile_data.SpriteName)) {
+            sr.sprite = nameToSprite[tile_data.SpriteName];
         }
-        //the sprite gone missing? --- Made a mistake in nameing it?
-        if (tile_data.Type == TileType.Dirt) {
-            sr.sprite = dirtSprite;
-        } else if (tile_data.Type == TileType.Mountain) {
-            sr.sprite = mountainSprite;
-        } else if (tile_data.Type == TileType.Shore) {
+        //TODO: Fix it so far that this temporary fix isnt needed anymore
+        if (tile_data.Type == TileType.Shore) {
             if (sr.sprite == null) {
                 Debug.Log("Missing Sprite for Shore " + tile_data.SpriteName);
-                sr.sprite = typeTotileSpriteNames["shore_"];
+                sr.sprite = nameToSprite["shore_"];
             }
         }
-		else {
-			Debug.LogError("OnTileTypeChanged - Unrecognized tile type.");
-		}
+		
         if(sr.sprite == null) {
             sr.sprite = noSprite;
         }
@@ -166,8 +168,7 @@ public class TileSpriteController : MonoBehaviour {
         }
 
     }
-
-	public void DespawnTile(Tile t){
+    public void DespawnTile(Tile t){
 		if(tileSpriteRendererMap.ContainsKey(t)==false){
 			return;
 		}
@@ -199,13 +200,49 @@ public class TileSpriteController : MonoBehaviour {
 		}
 	}
 
-	void LoadSprites() {
-		typeTotileSpriteNames = new Dictionary<string, Sprite>();
+    static void LoadSprites() {
+		nameToSprite = new Dictionary<string, Sprite>();
 		Sprite[] sprites = Resources.LoadAll<Sprite>("Textures/TileSprites/");
 		foreach (Sprite s in sprites) {
-			typeTotileSpriteNames.Add (s.name, s);
+			nameToSprite.Add (s.name, s);
 		}
-	}
+
+        typeTotileSpriteNames = new Dictionary<TileType, Dictionary<string, List<string>>>();
+        
+        Climate current = EditorController.climate;
+        foreach (string s in TileSpriteController.nameToSprite.Keys) {
+            string part = s.Split('_')[0].ToLower();
+            string climateIdentifier = TileSpriteClimate.all.ToString();
+            //if the first identifier is a climate
+            try {
+                Climate climate = (Climate)Enum.Parse(typeof(Climate), part, true);
+                climateIdentifier = climate.ToString();
+                part = s.Split('_')[1].ToLower();
+            }
+            catch {
+
+            }
+
+            TileType type;
+            try {
+                type = (TileType)Enum.Parse(typeof(TileType), part, true);
+            } catch {
+                continue;
+            }
+
+            //			Debug.Log (type + " / " + s.name);
+            if (typeTotileSpriteNames.ContainsKey(type) == false) {
+                Dictionary<string, List<string>> dict = new Dictionary<string, List<string>>();
+                typeTotileSpriteNames.Add(type, dict);
+            }
+            if (typeTotileSpriteNames[type].ContainsKey(climateIdentifier)) {
+                typeTotileSpriteNames[type][climateIdentifier].Add(s);
+            }
+            else {
+                typeTotileSpriteNames[type].Add(climateIdentifier, new List<string> { s });
+            }
+        }
+    }
 	void OnDestroy() {
 		World.UnregisterTileChanged (OnTileChanged);
 	}
@@ -213,7 +250,7 @@ public class TileSpriteController : MonoBehaviour {
 		this.TileDeciderFunc += addDeciderFunc;
 	}
 	public void ResetDecider(){
-		Debug.Log ("RESET");
+		//Debug.Log ("RESET");
 		TileDeciderFunc = null;
 		darkLayer.SetActive (false);
 	}
@@ -223,7 +260,20 @@ public class TileSpriteController : MonoBehaviour {
 			darkLayer.SetActive (false);
 
 	}
-
+    public static List<string> GetSpriteNamesForType(TileType type, Climate climate) {
+        string climateString = climate.ToString();
+        if (typeTotileSpriteNames == null)
+            LoadSprites();
+        if (typeTotileSpriteNames.ContainsKey(type) == false)
+            return null;
+        if(typeTotileSpriteNames[type].ContainsKey(climateString) == false) {
+            if (typeTotileSpriteNames[type].ContainsKey(TileSpriteClimate.all.ToString()) == false) {
+                return null;
+            }
+            return typeTotileSpriteNames[type][TileSpriteClimate.all.ToString()];
+        }
+        return typeTotileSpriteNames[type][climateString];
+    }
 
 
 }

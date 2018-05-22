@@ -11,12 +11,13 @@ public class MapGenerator : MonoBehaviour {
 
 	bool tilesPopulated = false;
 	Tile[] tiles;
-	public int Width;
-	public int Height; 
-	List<Task> generatorsTasks;
     List<IslandStruct> toPlaceIslands;
 
-    int completedIslands =0;
+    public int Width;
+	public int Height; 
+	List<Task> generatorsTasks;
+
+    int completedIslands = 0;
 	List<IslandGenerator> islandGenerators;
     ConcurrentBag<EditorController.SaveIsland> loadedIslandsList;
     public float PercantageProgress {
@@ -203,12 +204,13 @@ public class MapGenerator : MonoBehaviour {
         sw.Start();
 
         List<Rect> rectangleIslands = new List<Rect>();
+        Dictionary<Rect, IslandStruct> placeToIsland = new Dictionary<Rect, IslandStruct>();
         foreach(IslandStruct island in toPlaceIslands) {
             bool failed = false;
             int tries = 0;
             while (tries < 1024) {
-                int x = ;
-                int y = 0;
+                int x = Random.Range(0, Width  - island.Width);
+                int y = Random.Range(0, Height - island.Height);
                 tries++;
                 Rect toTest = new Rect(x, y, island.Width, island.Height);
                 foreach (Rect inWorld in rectangleIslands) {
@@ -220,6 +222,8 @@ public class MapGenerator : MonoBehaviour {
                 if (failed) {
                     continue;
                 }
+                rectangleIslands.Add(toTest);
+                placeToIsland.Add(toTest, island);
                 Debug.Log("Placing island on x " + x + "y " + y + " !");
                 break;
             }
@@ -227,12 +231,46 @@ public class MapGenerator : MonoBehaviour {
                 Debug.Log("Placing island failed 1024 times!");
             } 
         }
-        
+        foreach(Rect place in placeToIsland.Keys) {
+            IslandStruct island = placeToIsland[place];
+            Tile[] islandTiles = new Tile[island.Tiles.Length];
+            for (int i = 0; i < island.Tiles.Length; i++ ) {
+                Tile t = island.Tiles[i];
+                Tile newTile = SetNewLandTileAt((int)place.x + t.X, (int) place.y + t.Y, t);
+                islandTiles[i] = newTile;
+                if (island.tileToStructure.ContainsKey(t)) {
+                    //the tile has a structure associated 
+                    //need to update that reference to the new location of that tile
+                }
+
+            }
+        }
         sw.Stop();
         Debug.Log("Generated map with island number " + toPlaceIslands.Count + " in a Map" + Width + " : " + Height 
             + " in " + sw.ElapsedMilliseconds + "ms (" + sw.Elapsed.TotalSeconds + "s)! ");
     }
 
+    private Tile SetNewLandTileAt(int x, int y, Tile t) {
+        LandTile tl = new LandTile(x, y, t);
+        SetTileAt(x, y, tl);
+        return tl;
+    }
+
+    /// <summary>
+    /// WARNING Destroys this GameObject!
+    /// </summary>
+    /// <returns></returns>    
+    public World GetWorld() {
+        World world = new World(tiles, Width, Height);
+        
+        Destroy(this.gameObject);
+        return world;
+    }
+
+    /// <summary>
+    /// WARNING Destroys this GameObject!
+    /// </summary>
+    /// <returns></returns>    
     public Tile[] GetTiles(){
 		Destroy (this.gameObject);
 		return tiles;

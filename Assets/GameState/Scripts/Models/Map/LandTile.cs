@@ -110,6 +110,7 @@ public class LandTile : Tile {
 		this.x = x;
 		this.y = y;
         Elevation = t.Elevation;
+        SpriteName = t.SpriteName;
 		_type = t.Type;
 	}
 

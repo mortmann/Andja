@@ -47,16 +47,23 @@ public class Island : IGEventable{
 		//TODO REMOVE THIS
 		//LOAD this from map file?
 		myRessources ["stone"] = int.MaxValue;
-
+        myTiles = new List<Tile>();
+        foreach (Tile t in StartTile.GetNeighbours()) {
+            IslandFloodFill(t);
+        }
     }
-
-	public Island(){
+    public Island(Tile[] tiles, Climate climate = Climate.Middle) {
+        myFertilities = new List<Fertility>();
+        myRessources = new Dictionary<string, int>();
+        myCities = new List<City>();
+        Setup();
+        //TODO REMOVE THIS
+        //LOAD this from map file?
+        myRessources["stone"] = int.MaxValue;
+    }
+    public Island(){
 	}
 	private void Setup(){
-		myTiles = new List<Tile>();
-		foreach (Tile t in StartTile.GetNeighbours()) {
-			IslandFloodFill(t);
-		}
 		StartTile.MyIsland = this;
 		allReadyHighlighted = false;
 		World.Current.RegisterOnEvent (OnEventCreated,OnEventEnded);

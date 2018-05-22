@@ -184,24 +184,19 @@ public class World : IGEventable{
 
 
 	}
-	public void CreateIsland(int x, int y){
-		Tile t = GetTileAt (x, y);
-		if(t.Type == TileType.Ocean){
-			Debug.LogError ("Tried to create island on a water tile at " + t.ToString ());
-			return;
-		}
-
+	public void CreateIsland(MapGenerator.IslandStruct islandStruct){
 		float third = (float)Height/3f;
-		Climate myClimate =(Climate)Mathf.RoundToInt ( t.Y / third);
+		
+
 		Fertility[] fers = new Fertility[3];
-		if(PrototypController.Instance.GetFertilitiesForClimate(myClimate)==null){
+		if(PrototypController.Instance.GetFertilitiesForClimate(islandStruct.climate) ==null){
 			return;
 		}
-		List<Fertility> climFer = new List<Fertility>(PrototypController.Instance.GetFertilitiesForClimate(myClimate));
+		List<Fertility> climFer = new List<Fertility>(PrototypController.Instance.GetFertilitiesForClimate(islandStruct.climate));
 
 		for (int i = 0; i < fers.Length; i++) {
 			if(climFer.Count==0){
-				Debug.LogWarning("NOT ENOUGH FERTILITIES FOR CLIMATE " + myClimate);
+				Debug.LogWarning("NOT ENOUGH FERTILITIES FOR CLIMATE " + islandStruct.climate);
 				break;
 			}
 			Fertility f = climFer[UnityEngine.Random.Range (0,climFer.Count)];
@@ -209,7 +204,7 @@ public class World : IGEventable{
 			fers [i] = f;
 		}
 
-        Island island = new Island(t, (Climate)myClimate) {
+        Island island = new Island(islandStruct.Tiles, islandStruct.climate) {
             myFertilities = new List<Fertility>(fers)
         };
         IslandList.Add (island);

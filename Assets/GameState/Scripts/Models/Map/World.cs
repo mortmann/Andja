@@ -190,6 +190,7 @@ public class World : IGEventable{
 
 		Fertility[] fers = new Fertility[3];
 		if(PrototypController.Instance.GetFertilitiesForClimate(islandStruct.climate) ==null){
+            Debug.LogError("NO fertility found for this climate " + islandStruct.climate);
 			return;
 		}
 		List<Fertility> climFer = new List<Fertility>(PrototypController.Instance.GetFertilitiesForClimate(islandStruct.climate));
@@ -203,7 +204,9 @@ public class World : IGEventable{
 			climFer.Remove (f);
 			fers [i] = f;
 		}
-
+        foreach(Fertility f in fers) {
+            Debug.Log(islandStruct.climate + " " + f);
+        }
         Island island = new Island(islandStruct.Tiles, islandStruct.climate) {
             myFertilities = new List<Fertility>(fers)
         };

@@ -45,8 +45,8 @@ public class WorldController : MonoBehaviour {
 		} else {
 			if (gdh != null) {
 				MapGenerator mg = FindObjectOfType<MapGenerator> ();
-				this.World = new World (mg.GetTiles(), gdh.width , gdh.height);
-				isLoaded = false;
+                this.World = mg.GetWorld();
+                isLoaded = false;
 			} 
 		}
 //		new OceanPathfinding().SetDestination(world.GetTileAt(22,20),world.GetTileAt(34,56));

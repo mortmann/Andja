@@ -242,8 +242,8 @@ public class MapGenerator : MonoBehaviour {
                     //the tile has a structure associated 
                     //need to update that reference to the new location of that tile
                 }
-
             }
+            island.Tiles = islandTiles;
         }
         sw.Stop();
         Debug.Log("Generated map with island number " + toPlaceIslands.Count + " in a Map" + Width + " : " + Height 
@@ -262,7 +262,9 @@ public class MapGenerator : MonoBehaviour {
     /// <returns></returns>    
     public World GetWorld() {
         World world = new World(tiles, Width, Height);
-        
+        foreach(IslandStruct island in toPlaceIslands) {
+            world.CreateIsland(island);
+        }
         Destroy(this.gameObject);
         return world;
     }
@@ -284,11 +286,7 @@ public class MapGenerator : MonoBehaviour {
 		if (x < 0 || y < 0) {
 			return;
 		}
-		if(t.Type != TileType.Ocean){
-			tiles[x * Height + y] = new LandTile(x,y,t);
-			return;
-		} else
-			tiles[x * Height + y] = new Tile(x,y);
+	    tiles[x * Height + y] = t;
 	}
 		
 

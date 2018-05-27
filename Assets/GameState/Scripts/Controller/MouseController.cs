@@ -188,7 +188,7 @@ public class MouseController : MonoBehaviour {
 			for(int r = 0; r<4;r++){
 				structure.AddTimes90ToRotate (r);
 				List<Tile> structureTiles = structure.GetBuildingTiles (tile.X, tile.Y);
-				tileToCanBuild = structure.correctSpot (structureTiles);
+				tileToCanBuild = structure.CorrectSpot (structureTiles);
 				if(tileToCanBuild.Values.ToList ().Contains (false)==false){
 					break;
 				}
@@ -256,11 +256,11 @@ public class MouseController : MonoBehaviour {
 		structure.UpdateExtraBuildUI (previewGO,t);
 		float x = 0;
 		float y = 0;
-		if (structure.tileWidth> 1) {
-			x = 0.5f + ((float)structure.tileWidth) / 2 - 1;
+		if (structure.TileWidth> 1) {
+			x = 0.5f + ((float)structure.TileWidth) / 2 - 1;
 		}
-		if (structure.tileHeight> 1) {
-			y = 0.5f + ((float)structure.tileHeight) / 2 - 1;
+		if (structure.TileHeight> 1) {
+			y = 0.5f + ((float)structure.TileHeight) / 2 - 1;
 		}
 		previewGO.transform.position = new Vector3( GetTileUnderneathMouse ().X + x,
 			GetTileUnderneathMouse ().Y + y, 0);
@@ -403,8 +403,8 @@ public class MouseController : MonoBehaviour {
 		int height = 1;
 		List<Tile> tiles = new List<Tile>();
 		if(structure!=null){
-			width = structure.tileWidth;
-			height = structure.tileHeight;
+			width = structure.TileWidth;
+			height = structure.TileHeight;
 		}
 		for (int x = start_x; x <= end_x; x+=width) {
 			for (int y = start_y; y <= end_y; y+=height) {

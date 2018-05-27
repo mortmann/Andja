@@ -322,7 +322,7 @@ public class Tile : IComparable<Tile>, IEqualityComparer<Tile> {
 
 	#region IComparable implementation
 	public int CompareTo (Tile other) {
-		return X.CompareTo (other.X)+Y.CompareTo (other.Y);
+		return X.CompareTo (other.X)*Y.CompareTo (other.Y);
 	}
 	#endregion
 

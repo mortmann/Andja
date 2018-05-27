@@ -53,7 +53,7 @@ public class Warehouse : MarketBuilding {
 	public override void OnBuild(){
 		workersHasToFollowRoads = true; // DUNNO HOW where to set it without the need to copy it extra
 
-		Tile[,] sortedTiles = new Tile[tileWidth,tileHeight];
+		Tile[,] sortedTiles = new Tile[TileWidth,TileHeight];
 		List<Tile> ts = new List<Tile>(myBuildingTiles);
 		ts.Sort ((x, y) => x.X.CompareTo (y.X)+x.Y.CompareTo (y.Y));
 		foreach(Tile ti in ts){
@@ -61,15 +61,15 @@ public class Warehouse : MarketBuilding {
 			int y = ti.Y - ts [0].Y;
 			sortedTiles [x, y] = ti; // so we have the tile at the correct spot
 		}
-		Tile t = sortedTiles [Mathf.RoundToInt (tileWidth / 2), Mathf.RoundToInt (tileHeight / 2)];
+		Tile t = sortedTiles [Mathf.RoundToInt (TileWidth / 2), Mathf.RoundToInt (TileHeight / 2)];
 		//now we have the tile thats has the smallest x/y 
 		//to get the tile we now have to rotate a vector thats
 		//1 up and 1 left from the temptile
 
-		Vector3 rot = new Vector3 (-tileWidth/2 - 1, 0, 0);
+		Vector3 rot = new Vector3 (-TileWidth/2 - 1, 0, 0);
 		rot = Quaternion.AngleAxis (rotated, Vector3.up) * rot;
 		if (rotated == 180) //cheap fix --update this
-			rot = new Vector3 (tileWidth/2 + 1, 0, 0);
+			rot = new Vector3 (TileWidth/2 + 1, 0, 0);
 		tradeTile = World.Current.GetTileAt (t.X+rot.x,t.Y+rot.y);
 
 		this.City.myWarehouse = this;
@@ -79,7 +79,6 @@ public class Warehouse : MarketBuilding {
 		}
 		if(myRangeTiles==null||myRangeTiles.Count==0){
 			myRangeTiles = GetInRangeTiles (BuildTile);
-			Debug.Log (myRangeTiles.Count); 
 		}
 		//dostuff thats happen when build
 		City.AddTiles (myRangeTiles);

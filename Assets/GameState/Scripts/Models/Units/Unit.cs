@@ -233,7 +233,7 @@ public class Unit  {
 				attackingStructure = null;
 				return false;
 			}
-			float dist = (attackingStructure.middleVector.magnitude - VectorPosition.magnitude);
+			float dist = (attackingStructure.MiddleVector.magnitude - VectorPosition.magnitude);
 			if(dist<attackRange){
 				DoAttack (deltaTime);
 				return true;

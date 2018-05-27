@@ -62,7 +62,6 @@ public class Island : IGEventable{
         StartTile = tiles[0];
         min = new Vector2(tiles[0].X, tiles[0].Y);
         max = new Vector2(tiles[0].X, tiles[0].Y);
-        Debug.Log(World.Current.GetTileAt(tiles[0].X, tiles[0].Y) == tiles[0]);
         foreach (Tile t in tiles) {
             t.MyIsland = this;
             if (min.x > t.X) {

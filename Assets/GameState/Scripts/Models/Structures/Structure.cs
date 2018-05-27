@@ -34,7 +34,7 @@ public class StructurePrototypeData : LanguageVariables {
 	//doenst get loaded in anyway
 	private List<Tile> _myPrototypeTiles;
 		
-	public List<Tile> myPrototypeTiles {
+	public List<Tile> MyPrototypeTiles {
 		get {
 			if (_myPrototypeTiles == null) {
 				CalculatePrototypTiles ();
@@ -105,9 +105,9 @@ public class StructurePrototypeData : LanguageVariables {
 			}
 		}
 		for (int width = 0; width < tileWidth; width++) {
-			myPrototypeTiles.Remove (World.Current.GetTileAt (firstTile.X + width, firstTile.Y));
+			MyPrototypeTiles.Remove (World.Current.GetTileAt (firstTile.X + width, firstTile.Y));
 			for (int height = 1; height < tileHeight; height++) {
-				myPrototypeTiles.Remove (World.Current.GetTileAt (firstTile.X + width, firstTile.Y+height));
+				MyPrototypeTiles.Remove (World.Current.GetTileAt (firstTile.X + width, firstTile.Y+height));
 			}
 		}
 	}
@@ -188,7 +188,7 @@ public abstract class Structure : IGEventable {
 
 	public Direction mustFrontBuildDir { get {return data.mustFrontBuildDir;} }// = Direction.None; 
 
-	public List<Tile> myPrototypeTiles { get {return data.myPrototypeTiles;} }
+	public List<Tile> myPrototypeTiles { get {return data.MyPrototypeTiles;} }
 
 	public bool canStartBurning { get {return data.canStartBurning;} }
 	public bool mustBeBuildOnShore { get {return data.mustBeBuildOnShore;} }//= false;
@@ -217,7 +217,7 @@ public abstract class Structure : IGEventable {
 	#endregion
 	#endregion
 	#region Properties 
-	public Vector2 middleVector {get {return new Vector2 (BuildTile.X + (float)tileWidth/2f,BuildTile.Y + (float)tileHeight/2f);}}
+	public Vector2 MiddleVector {get {return new Vector2 (BuildTile.X + (float)TileWidth/2f,BuildTile.Y + (float)TileHeight/2f);}}
 	public string SmallName { get { return spriteName.ToLower ();} }
 	public City City {
 		get { return _city;}
@@ -243,7 +243,7 @@ public abstract class Structure : IGEventable {
 			_health = value;
 		}
 	}
-	public int tileWidth {
+	public int TileWidth {
 		get { 
 			if (rotated == 0 || rotated == 180) {
 				return _tileWidth;
@@ -256,7 +256,7 @@ public abstract class Structure : IGEventable {
 			return 0;
 		}
 	}
-	public int tileHeight {
+	public int TileHeight {
 		get { 
 			if (rotated == 0 || rotated == 180) {
 				return _tileHeight;
@@ -374,7 +374,7 @@ public abstract class Structure : IGEventable {
 
 		//test if the place is buildable
 		// if it has to be on land
-		if(canBuildOnSpot (tiles)==false){
+		if(CanBuildOnSpot (tiles)==false){
 			Debug.Log ("canBuildOnSpot FAILED -- Give UI feedback"); 
 			return false;
 		}
@@ -440,9 +440,9 @@ public abstract class Structure : IGEventable {
 		y = Mathf.FloorToInt (y);
 		List<Tile> tiles = new List<Tile> ();
 		if (ignoreRotation == false) {
-			for (int w = 0; w < tileWidth; w++) {
+			for (int w = 0; w < TileWidth; w++) {
 //				tiles.Add (World.current.GetTileAt (x + w, y));
-				for (int h = 0; h < tileHeight; h++) {
+				for (int h = 0; h < TileHeight; h++) {
 					tiles.Add (World.Current.GetTileAt (x + w, y + h));
 				}
 			}
@@ -472,8 +472,8 @@ public abstract class Structure : IGEventable {
 		}
 		World w = WorldController.Instance.World;
 		myRangeTiles = new HashSet<Tile> ();
-		float width = firstTile.X-buildingRange - tileWidth / 2;
-		float height = firstTile.Y-buildingRange - tileHeight / 2;
+		float width = firstTile.X-buildingRange - TileWidth / 2;
+		float height = firstTile.Y-buildingRange - TileHeight / 2;
 		foreach(Tile t in myPrototypeTiles){
 			myRangeTiles.Add (w.GetTileAt (t.X +width,t.Y+height));			
 		}
@@ -534,55 +534,61 @@ public abstract class Structure : IGEventable {
 	public virtual Item[] BuildingItems(){
 		return buildingItems;
 	}
-	public bool canBuildOnSpot(List<Tile> tiles){
-		List<bool> bools = new List<bool> (correctSpot (tiles).Values);
+	public bool CanBuildOnSpot(List<Tile> tiles){
+		List<bool> bools = new List<bool> (CorrectSpot (tiles).Values);
 		return bools.Contains (false)==false;
 	}
 
-	public Dictionary<Tile,bool> correctSpot(List<Tile> tiles){
+	public Dictionary<Tile,bool> CorrectSpot(List<Tile> tiles){
 		Dictionary<Tile,bool> tileToCanBuild = new Dictionary<Tile, bool> ();
 		//to make it faster
-		if(mustFrontBuildDir==Direction.None&&mustBeBuildOnShore==false&&mustBeBuildOnMountain==false){
+		if(mustFrontBuildDir==Direction.None && mustBeBuildOnShore==false && mustBeBuildOnMountain==false){
 			foreach (Tile item in tiles) {
 				tileToCanBuild.Add (item,item.CheckTile ());
 			}
 			return tileToCanBuild;
 		}
 
-		//TO simplify this we are gonna sort the array so it is in order
-		//from the coordinationsystem that means 0,0->width,height
-		Tile[,] sortedTiles = new Tile[tileWidth,tileHeight];
+        //TO simplify this we are gonna sort the array so it is in order
+        //from the coordinationsystem that means 0,0->width,height
+        int max = Mathf.Max(TileWidth, TileHeight);
+		Tile[,] sortedTiles = new Tile[max, max];
 
 		List<Tile> ts = new List<Tile>(tiles);
-		ts.RemoveAll (x=>x==null);
-		ts.Sort ((x, y) => x.X.CompareTo (y.X)+x.Y.CompareTo (y.Y));
+
+        if (ts.Count == 0)
+            return null;
+
+		//ts.RemoveAll (x=>x==null);
+		ts.Sort ((x, y) => x.X.CompareTo (y.X)*x.Y.CompareTo (y.Y));
+        Debug.Log(ts.Count);
 		foreach(Tile t in ts){
 			int x = t.X - ts [0].X;
 			int y = t.Y - ts [0].Y;
-			if(tileWidth<=x||tileHeight<=y){
-				Debug.Log (ts[0] + " -> " + t + " | " + tileWidth + " - " + tileHeight); 
+			if( TileWidth<=x || TileHeight<=y ){
 
 			}
 			sortedTiles [x, y] = t; // so we have the tile at the correct spot
 		}
+
 		Direction row = RowToTest ();
 		switch (row) {
 		case Direction.None:
 			Debug.LogWarning ("Not implementet! How are we gonna do this?");
 			return tileToCanBuild;
 		case Direction.N:
-			return CheckTilesWithRowFix (tileToCanBuild,sortedTiles, tileWidth,tileHeight,false);
+			return CheckTilesWithRowFix (tileToCanBuild,sortedTiles, TileWidth,TileHeight,false);
 		case Direction.E:
-			return CheckTilesWithRowFix (tileToCanBuild,sortedTiles, tileWidth,tileHeight,true);
+			return CheckTilesWithRowFix (tileToCanBuild,sortedTiles, TileWidth,TileHeight,true);
 		case Direction.S:
-			return CheckTilesWithRowFix (tileToCanBuild,sortedTiles, tileWidth,0,false);
+			return CheckTilesWithRowFix (tileToCanBuild,sortedTiles, TileWidth,0,false);
 		case Direction.W:
-			return CheckTilesWithRowFix (tileToCanBuild,sortedTiles, 0,tileHeight,true);
+			return CheckTilesWithRowFix (tileToCanBuild,sortedTiles, 0,TileHeight,true);
 		default:
 			return null;
 		}
 	}
-	private Dictionary<Tile,bool> CheckTilesWithRowFix(Dictionary<Tile,bool> tileToCanBuild,Tile[,] tiles, int x,int y, bool fixX){
+	private Dictionary<Tile,bool> CheckTilesWithRowFix(Dictionary<Tile,bool> tileToCanBuild, Tile[,] tiles, int x,int y, bool fixX){
 		if (fixX) {
 			x = Mathf.Max (x-1, 0);
 			for(int i=0;i<y;i++){

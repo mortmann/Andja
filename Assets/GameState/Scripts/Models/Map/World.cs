@@ -181,9 +181,8 @@ public class World : IGEventable{
 			}
 		}
 
-
-
 	}
+
 	public void CreateIsland(MapGenerator.IslandStruct islandStruct){
 		float third = (float)Height/3f;
 		

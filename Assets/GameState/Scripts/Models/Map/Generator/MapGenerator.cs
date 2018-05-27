@@ -12,6 +12,7 @@ public class MapGenerator : MonoBehaviour {
 	bool tilesPopulated = false;
 	Tile[] tiles;
     List<IslandStruct> toPlaceIslands;
+    List<IslandStruct> doneIslands;
 
     public int Width;
 	public int Height; 
@@ -231,12 +232,13 @@ public class MapGenerator : MonoBehaviour {
                 Debug.Log("Placing island failed 1024 times!");
             } 
         }
-        foreach(Rect place in placeToIsland.Keys) {
+        doneIslands = new List<IslandStruct>();
+        foreach (Rect place in placeToIsland.Keys) {
             IslandStruct island = placeToIsland[place];
             Tile[] islandTiles = new Tile[island.Tiles.Length];
             for (int i = 0; i < island.Tiles.Length; i++ ) {
                 Tile t = island.Tiles[i];
-                Tile newTile = SetNewLandTileAt((int)place.x + t.X, (int) place.y + t.Y, t);
+                Tile newTile = SetNewLandTileAt((int)(place.x + t.X), (int)(place.y + t.Y), t);
                 islandTiles[i] = newTile;
                 if (island.tileToStructure.ContainsKey(t)) {
                     //the tile has a structure associated 
@@ -244,6 +246,7 @@ public class MapGenerator : MonoBehaviour {
                 }
             }
             island.Tiles = islandTiles;
+            doneIslands.Add(island);
         }
         sw.Stop();
         Debug.Log("Generated map with island number " + toPlaceIslands.Count + " in a Map" + Width + " : " + Height 
@@ -262,7 +265,7 @@ public class MapGenerator : MonoBehaviour {
     /// <returns></returns>    
     public World GetWorld() {
         World world = new World(tiles, Width, Height);
-        foreach(IslandStruct island in toPlaceIslands) {
+        foreach(IslandStruct island in doneIslands) {
             world.CreateIsland(island);
         }
         Destroy(this.gameObject);
@@ -306,8 +309,6 @@ public class MapGenerator : MonoBehaviour {
             this.Height = Height;
             this.climate = climate;
 		}
-
-
 		//Maybe add any SpecialFeature it may contain? eg vulkan, 
 	}
     public struct IslandStruct {

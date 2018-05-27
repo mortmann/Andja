@@ -45,11 +45,11 @@ public class StructureSpriteController : MonoBehaviour {
 		structure.RegisterOnDestroyCallback (OnStructureDestroyed);
 		float x = 0;
 		float y = 0;
-		if (structure.tileWidth> 1) {
-			x = 0.5f + ((float)structure.tileWidth) / 2 - 1;
+		if (structure.TileWidth> 1) {
+			x = 0.5f + ((float)structure.TileWidth) / 2 - 1;
 		}
-		if (structure.tileHeight> 1) {
-			y = 0.5f + ((float)structure.tileHeight) / 2 - 1;
+		if (structure.TileHeight> 1) {
+			y = 0.5f + ((float)structure.TileHeight) / 2 - 1;
 		}
 		Tile t = structure.BuildTile;
 		go.transform.position = new Vector3 (t.X + x,t.Y + y);
@@ -136,7 +136,7 @@ public class StructureSpriteController : MonoBehaviour {
 			sr.sprite = structureSprites[str.GetSpriteName()];
 		} else {
 			sr.sprite =  structureSprites ["nosprite"];
-			go.transform.localScale = new Vector3(str.tileWidth,str.tileHeight);
+			go.transform.localScale = new Vector3(str.TileWidth,str.TileHeight);
 			go.transform.localRotation = Quaternion.identity;
 		}
 	}

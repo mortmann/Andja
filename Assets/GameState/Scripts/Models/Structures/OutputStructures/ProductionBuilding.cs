@@ -356,8 +356,8 @@ public class ProductionBuilding : OutputStructure {
 			if (nearestMarketBuilding == null) {
 				nearestMarketBuilding =(MarketBuilding) tile.Structure;
 			} else {
-				float firstDistance = nearestMarketBuilding.middleVector.magnitude - middleVector.magnitude;
-				float secondDistance = tile.Structure.middleVector.magnitude - middleVector.magnitude;
+				float firstDistance = nearestMarketBuilding.MiddleVector.magnitude - MiddleVector.magnitude;
+				float secondDistance = tile.Structure.MiddleVector.magnitude - MiddleVector.magnitude;
 				if (Mathf.Abs (secondDistance) < Mathf.Abs (firstDistance)) {
 					nearestMarketBuilding =(MarketBuilding) tile.Structure;
 				}

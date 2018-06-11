@@ -14,7 +14,7 @@ public class EditorBuild : MonoBehaviour {
 		foreach (int item in PrototypController.Instance.structurePrototypes.Keys) {
 			GameObject g = GameObject.Instantiate (prefabListItem);
 			g.transform.SetParent (BuildingSelectContent.transform);
-			g.GetComponentInChildren<Text >().text = PrototypController.Instance.structurePrototypes[item].spriteName;
+			g.GetComponentInChildren<Text >().text = PrototypController.Instance.structurePrototypes[item].SpriteName;
 			int temp = item;
 			EventTrigger eventTrigger = g.GetComponent<EventTrigger>();
             EventTrigger.Entry entry = new EventTrigger.Entry {
@@ -35,7 +35,7 @@ public class EditorBuild : MonoBehaviour {
 			return;
 		}
 		Growable gr = PrototypController.Instance.structurePrototypes [id] as Growable;
-		int ages = gr.ageStages;
+		int ages = gr.AgeStages;
 		foreach (Transform item in BuildingSettingsContent.transform) {
 			GameObject.Destroy (item.gameObject);
 		}

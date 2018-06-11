@@ -45,7 +45,7 @@ public class OtherCityUI : MonoBehaviour {
 			return;
 		}			
 
-		city.BuyFromCity (itemID, PlayerController.Instance.currPlayer, ((Ship)u), amount);
+		city.BuyFromCity (itemID, PlayerController.Instance.CurrPlayer, ((Ship)u), amount);
 	}
 	public void OnCityDestroy(City c){
 		if(city != c){

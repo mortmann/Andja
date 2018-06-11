@@ -21,8 +21,8 @@ public class Growable : OutputStructure {
 	#endregion
 	#region RuntimeOrOther
 
-	public Fertility fer {get{ return GrowableData.fertility; }}
-	public int ageStages {get{ return GrowableData.ageStages; }}
+	public Fertility Fertility {get{ return GrowableData.fertility; }}
+	public int AgeStages {get{ return GrowableData.ageStages; }}
 
 	protected GrowablePrototypData _growableData;
 	public GrowablePrototypData GrowableData {
@@ -51,36 +51,36 @@ public class Growable : OutputStructure {
 	}
 
 	public override void OnBuild(){
-		if(fer!=null && City.HasFertility (fer)==false){
+		if(Fertility!=null && City.HasFertility (Fertility)==false){
 			efficiencyModifier = 0;
 		} else {
 			//maybe have ground type be factor? stone etc
 			efficiencyModifier = 1;
 		}
 	}
-	public override void update (float deltaTime) {
+	public override void Update (float deltaTime) {
 		if(hasProduced||efficiencyModifier==0){
 			return;
 		}
-		if(currentStage==ageStages){
+		if(currentStage==AgeStages){
 			hasProduced = true;
 			output[0].count=1;
-			callbackIfnotNull ();
+			CallbackIfnotNull ();
 			return;
 		}
 
 		age += efficiencyModifier*(deltaTime);
 
-		if((age) > currentStage*(produceTime/(float)ageStages+1)){
+		if((age) > currentStage*(produceTime/(float)AgeStages+1)){
 			if(Random.Range (0,100) < 98){
 				return;
 			}
-			if(currentStage>=ageStages){
+			if(currentStage>=AgeStages){
 				return;
 			}
 			currentStage++;
-			Debug.Log ("Stage " + currentStage + " @ Time " + age);
-			callbackIfnotNull ();
+			//Debug.Log ("Stage " + currentStage + " @ Time " + age);
+			CallbackIfnotNull ();
 		}
 	}
 	public override bool SpecialCheckForBuild (System.Collections.Generic.List<Tile> tiles){
@@ -102,7 +102,7 @@ public class Growable : OutputStructure {
 		output[0].count = 0;
 		currentStage= 0;
 		age = 0f;
-		callbackIfnotNull ();
+		CallbackIfnotNull ();
 		hasProduced = false;
 	}
 		

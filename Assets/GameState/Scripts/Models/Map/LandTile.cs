@@ -21,7 +21,7 @@ public class LandTile : Tile {
 				return;
 			}
 			Structure oldStructure = _structures;
-			if(_structures != null && _structures.canBeBuildOver && value!=null){
+			if(_structures != null && _structures.CanBeBuildOver && value!=null){
 				_structures.Destroy ();
 			} 
 			_structures = value;
@@ -68,8 +68,8 @@ public class LandTile : Tile {
 					c.AddTile (this);
 					return;
 				}
-				MyIsland.wilderness.AddTile (this);
-				_myCity = MyIsland.wilderness;
+				MyIsland.Wilderness.AddTile (this);
+				_myCity = MyIsland.Wilderness;
 				return;
 			} 
 			//warns about double wilderniss
@@ -158,6 +158,6 @@ public class LandTile : Tile {
 		return ListOfInRangeNeedBuildings;
 	}
 	public override string ToString (){
-		return string.Format ("[LAND: X={0}, Y={1}, Structure={0}, myCity={1}]", X, Y, Structure, MyCity);
+		return string.Format ("[LAND: X={0}, Y={1}, Structure={2}, myCity={3}]", X, Y, Structure, MyCity.ToString());
 	}
 }

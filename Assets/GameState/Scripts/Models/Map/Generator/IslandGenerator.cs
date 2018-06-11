@@ -4,15 +4,15 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class IslandGenerator {
+    public readonly int seed;
 
-	static readonly float shoreElevation = 0.29f;
+    static readonly float shoreElevation = 0.29f;
 	static readonly float cliffElevation = 0.37f;
 	static readonly float dirtElevation = 0.43f;
 	static readonly float mountainElevation = 1.15f;
 	static readonly float landThreshold = cliffElevation;
 	static readonly float islandThreshold = shoreElevation;
 	ThreadRandom random;
-	int seed;
 	public int Width;
 	public int Height;
 	public Tile[] Tiles { get; protected set; }

@@ -41,10 +41,21 @@ public class City : IGEventable {
 			}
 			return _name;
 	}}
-	//TODO: set this to the player that creates this
-	public List<HomeBuilding> myHomes;
-	public HashSet<Tile> myTiles;
-	public List<Route> myRoutes;
+
+    public HashSet<Tile> MyTiles {
+        get {
+            return _myTiles;
+        }
+
+        set {
+            _myTiles = value;
+        }
+    }
+
+    //TODO: set this to the player that creates this
+    public List<HomeBuilding> myHomes;
+    private HashSet<Tile> _myTiles;
+    public List<Route> myRoutes;
 	public Unit tradeUnit;
 	public int cityBalance;
 	public float useTick;
@@ -66,12 +77,12 @@ public class City : IGEventable {
 		this.playerNumber = playerNr;
 		this.island = island;
 
+        MyTiles = new HashSet<Tile>();
 
-		itemIDtoTradeItem = new Dictionary<int, TradeItem> ();
+        itemIDtoTradeItem = new Dictionary<int, TradeItem> ();
 		myStructures = new List<Structure>();
 		inventory = new CityInventory (Name);
-
-		Setup ();
+        Setup();
 		citizienCount = new int[citizienLevels];
 		citizienHappiness = new float[citizienLevels];
 		criticalAvaibilityNeed = new bool[citizienLevels];
@@ -80,10 +91,7 @@ public class City : IGEventable {
 			citizienHappiness [i] = 0.5f;
 			criticalAvaibilityNeed [i] = false;
 		}
-		//temporary
-//		Item temp = PrototypController.Instance.allItems [49].Clone ();
-//		temp.count = 50;
-//		myInv.addItem (temp);
+
 		_name = "<City>" + UnityEngine.Random.Range (0, 1000);
 		//		useTickTimer = useTick;
     }
@@ -91,11 +99,12 @@ public class City : IGEventable {
 	/// DO NOT USE! ONLY serialization!
 	/// </summary>
 	public City(){
-	}
+        MyTiles = new HashSet<Tile>();
+        Setup();
+    }
 
 	private void Setup(){
-		myTiles = new HashSet<Tile> ();
-		myHomes = new List<HomeBuilding> ();
+        myHomes = new List<HomeBuilding> ();
 		myRoutes = new List<Route> ();
 		if(idToNeed==null){
 			return;
@@ -143,7 +152,7 @@ public class City : IGEventable {
 
     internal void Update(float deltaTime) {
 		for (int i = 0; i < myStructures.Count; i++) {
-			myStructures[i].update(deltaTime);
+			myStructures[i].Update(deltaTime);
 		}
 		if(playerNumber==-1 || myHomes.Count==0){
 			return;
@@ -158,15 +167,15 @@ public class City : IGEventable {
 	public City(List<Tile> tiles,Island island){
 //		tiles.ForEach (x => x.myCity = this);
 		List<Tile> temp = new List<Tile>(tiles);
-		island.wilderness = this;
-		myTiles = new HashSet<Tile> (tiles);
+		island.Wilderness = this;
+		MyTiles = new HashSet<Tile> (tiles);
 		for (int i = 0; i < tiles.Count; i++) {
 			temp[i].MyCity= null;
 		}
 		inventory = new Inventory (0);
 		this.playerNumber = -1;
 		this.island = island;
-		island.wilderness = this;
+		island.Wilderness = this;
 		myStructures = new List<Structure> ();
 	}
 	public void AddStructure(Structure str){
@@ -186,8 +195,8 @@ public class City : IGEventable {
 			}
 			myWarehouse = (Warehouse)str;
 		}
-		cityBalance += str.maintenancecost;
-		RemoveRessources (str.BuildingItems ());
+		cityBalance += str.Maintenancecost;
+		RemoveRessources (str.GetBuildingItems ());
 
 		myStructures.Add (str);
 
@@ -233,21 +242,25 @@ public class City : IGEventable {
 	//current wrapper to make sure its valid
 	public void RemoveTile(Tile t){
 		//if it doesnt contain it there is an error
-		if(myTiles.Contains (t)==false){
-			Debug.LogError ("This city does not know that it had this tile!" + t.ToString ()); 
+		if(MyTiles.Contains (t)==false){
+			Debug.LogError ("This city does not know that it had this tile! " + t.ToString () +" -> " +MyTiles.Count); 
 			return;
 		}
-		myTiles.Remove (t);
+		MyTiles.Remove (t);
 		island.allReadyHighlighted = false;
 	}
-	public void AddTiles(HashSet<Tile> t){
+    public void AddTiles(IEnumerable<Tile> t) {
+        AddTiles(new HashSet<Tile>(t));
+    }
+
+    public void AddTiles(HashSet<Tile> t){
 		// does not really needs it because tiles witout island reject cities
 		//but it is a secondary security that this does not happen
 		if(t==null){
 			return;
 		}
 		t.RemoveWhere (x =>x==null || x.Type == TileType.Ocean);
-		List<Tile> tiles = new List<Tile> (t);
+        List<Tile> tiles = new List<Tile> (t);
 		for (int i = 0; i < tiles.Count; i++) {
 			tiles [i].MyCity = this;
 			if(tiles[i].Structure != null){
@@ -256,13 +269,12 @@ public class City : IGEventable {
 					AddStructure (tiles [i].Structure);
 				}
 			}
-			myTiles.Add (tiles[i]);
+			MyTiles.Add (tiles[i]);
 		}
 		island.allReadyHighlighted = false;
-
 	}
 	public void AddTile(Tile t){
-		if(t.Type==TileType.Ocean||myTiles==null||myTiles.Contains (t)){
+        if (t.Type==TileType.Ocean||MyTiles.Contains (t)){
 			return;
 		}
 		if(t.Structure != null){
@@ -272,7 +284,7 @@ public class City : IGEventable {
 			}
 		}
 		island.allReadyHighlighted = false;
-		myTiles.Add (t);
+		MyTiles.Add (t);
 	}
 	public bool GetNeedCriticalForLevel(int buildingLevel){
 		return criticalAvaibilityNeed [buildingLevel];
@@ -312,10 +324,10 @@ public class City : IGEventable {
 		return inventory.hasAnythingOf (item);
 	}
 	public bool IsWilderness(){
-		if(playerNumber==-1 && this != island.wilderness){
+		if(playerNumber==-1 && this != island.Wilderness){
 			Debug.LogError ("NOT WILDERNESS! But -1 playernumber!? ");
 		}
-		return this == island.wilderness;
+		return this == island.Wilderness;
 	}
 	/// <summary>
 	/// Ship buys from city means 
@@ -432,14 +444,14 @@ public class City : IGEventable {
 			//if were geting some of the ressources back
 			//when we destroy it -> should be a setting 
 			if(returnRessources){
-				Item[] res = structure.buildingItems;
+				Item[] res = structure.BuildingItems;
 				for (int i = 0; i < res.Length; i++) {
 					res [i].count /= 3; // FIXME do not have this hardcoded! Change it to be chooseable!
 				}
 				inventory.AddItems (res);
 			}
 			myStructures.Remove (structure);
-			cityBalance -= structure.maintenancecost;
+			cityBalance -= structure.Maintenancecost;
             cbStructureRemoved?.Invoke(structure);
         } else {
 			//this is no error if this is wilderness
@@ -458,10 +470,10 @@ public class City : IGEventable {
 		foreach (Tile item in tiles) {
 			item.MyCity = null;
 			if(item.MyCity!=this){
-				myTiles.Remove (item);
+				MyTiles.Remove (item);
 			}
 		}
-		if(myTiles.Count==0){
+		if(MyTiles.Count==0){
 			Destroy ();
 		}
 	}
@@ -469,8 +481,8 @@ public class City : IGEventable {
 		if(playerNumber==-1){
 			return; // this is the wilderness it cant be removed! or destroyed
 		}
-		if(myTiles.Count > 0){
-			RemoveTiles (myTiles);
+		if(MyTiles.Count > 0){
+			RemoveTiles (MyTiles);
 		}
 		island.RemoveCity (this);
         cbCityDestroy?.Invoke(this);
@@ -530,5 +542,8 @@ public class City : IGEventable {
 	public int GetTargetType(){
 		return TargetType;
 	}
-
+    
+    public override string ToString() {
+        return Name;
+    }
 }

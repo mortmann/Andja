@@ -43,7 +43,9 @@ public enum InfluenceTyp {Building, Unit}
 */
 public class EventController : MonoBehaviour {
 	public static EventController Instance { get; protected set; }
-	private uint lastID = 0;
+    static GameEventSave save;
+
+    private uint lastID = 0;
 	Dictionary<EventType,GameEvent[]> typeToEvents;
 	Dictionary<uint,GameEvent> idToActiveEvent;
 	//Every EventType has a chance to happen
@@ -69,6 +71,10 @@ public class EventController : MonoBehaviour {
 		}
 		x /= s;
 		y /= s;
+        if(save != null) {
+            LoadGameEventData();
+            save = null;
+        }
 	}
 	void Start() {
 //		var a = CreateReusableAction<GameEvent,bool,Structure> ("OutputStructure_Efficiency");
@@ -113,7 +119,12 @@ public class EventController : MonoBehaviour {
 		//now find random the target of the GameEvent
 		CreateGameEvent( RandomEvent (type) );
 	}
-	public void CreateGameEvent(GameEvent ge){
+
+    internal static void SetGameEventData(GameEventSave ges) {
+        save = ges;
+    }
+
+    public void CreateGameEvent(GameEvent ge){
 		//fill the type
 		cbEventCreated(ge);
 
@@ -266,8 +277,8 @@ public class EventController : MonoBehaviour {
 		GameEventSave ges = new GameEventSave (idToActiveEvent);
 		return ges;
 	}
-	public void LoadGameEventData(GameEventSave data){
-		idToActiveEvent = data.idToActiveEvent;
+	public void LoadGameEventData(){
+		idToActiveEvent = save.idToActiveEvent;
 	}
 }
 

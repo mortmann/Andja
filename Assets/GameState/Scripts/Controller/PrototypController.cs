@@ -177,7 +177,7 @@ public class PrototypController : MonoBehaviour {
 			Fertility fer = new Fertility (ID,fpd);
 			idToFertilities.Add (fer.ID,fer); 
 			fertilityPrototypeDatas [ID] = fpd;
-			foreach (Climate item in fer.climates) {
+			foreach (Climate item in fer.Climates) {
 				if (allFertilities.ContainsKey (item)==false) {
                     List<Fertility> f = new List<Fertility> {
                         fer

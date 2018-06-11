@@ -72,7 +72,7 @@ public class HomeBuilding : Structure {
 
 	}
 
-	public override void update (float deltaTime) {
+	public override void Update (float deltaTime) {
 		if(City==null||City.playerNumber==-1){
 			//here the people are very unhappy and will leave veryfast
 			return;
@@ -81,9 +81,9 @@ public class HomeBuilding : Structure {
 		float structurePercentage = 0;
 		int count = 0;
 		bool percCritical = City.GetNeedCriticalForLevel(buildingLevel);
-		Player myPlayer = PlayerController.Instance.GetPlayer (playerNumber);
+		Player myPlayer = PlayerController.Instance.GetPlayer (PlayerNumber);
 		foreach (Need n in myPlayer.GetUnlockedStructureNeeds(buildingLevel)) {
-			Player pc = PlayerController.Instance.GetPlayer (playerNumber);
+			Player pc = PlayerController.Instance.GetPlayer (PlayerNumber);
 			if (n.StartLevel <= buildingLevel && n.PopCount <= pc.MaxPopulationCount) {
 				if(isInRangeOf (n.Structure)){
 					structurePercentage += 1;

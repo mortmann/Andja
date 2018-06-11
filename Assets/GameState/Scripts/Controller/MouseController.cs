@@ -302,7 +302,7 @@ public class MouseController : MonoBehaviour {
 		if( EventSystem.current.IsPointerOverGameObject() ) {
 			return;
 		}
-		if (structure.buildingRange == 0) {
+		if (structure.BuildingRange == 0) {
 			return;
 		}
 		HighlightTiles = new HashSet<Tile> (structure.GetInRangeTiles (GetTileUnderneathMouse()));
@@ -387,7 +387,7 @@ public class MouseController : MonoBehaviour {
 			List<Tile> ts = new List<Tile>(GetTilesStructures (start_x,end_x,start_y,end_y));
 			if(ts != null) {
 				if (mouseState == MouseState.Destroy) {
-					bmc.DestroyStructureOnTiles (ts,PlayerController.Instance.currPlayer);	
+					bmc.DestroyStructureOnTiles (ts,PlayerController.Instance.CurrPlayer);	
 				} else {
 					if(structure == null){
 						return;

@@ -37,7 +37,7 @@ public class NeedsBuilding : Structure {
 	}
 	public override void OnClickClose (){
 	}
-	public override void update (float deltaTime){
+	public override void Update (float deltaTime){
 	}
 
 }

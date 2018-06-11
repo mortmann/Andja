@@ -35,7 +35,7 @@ public class Route {
 			if(t.Type == TileType.Ocean || t.Structure == null){
 				continue;
 			}
-			if (t.Structure.myBuildingTyp == BuildingTyp.Pathfinding) {
+			if (t.Structure.MyBuildingTyp == BuildingTyp.Pathfinding) {
 				myTiles.Add(t);
 				Tile[] ns = t.GetNeighbours();
 				foreach (Tile t2 in ns) {

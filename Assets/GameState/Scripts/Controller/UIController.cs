@@ -51,7 +51,7 @@ public class UIController : MonoBehaviour {
 		if(openStructure!=null) {
 			openStructure.OnClickClose ();
 		}			
-		if(str.playerNumber != PlayerController.currentPlayerNumber){
+		if(str.PlayerNumber != PlayerController.currentPlayerNumber){
 			if (str is Warehouse) {
 				OpenOtherCity(str.City);
 				return;
@@ -157,7 +157,7 @@ public class UIController : MonoBehaviour {
 		}
 		if (u.rangeUStructure != null) {
 			if (u.rangeUStructure is Warehouse) {
-				if (u.rangeUStructure.playerNumber == PlayerController.currentPlayerNumber) {
+				if (u.rangeUStructure.PlayerNumber == PlayerController.currentPlayerNumber) {
 					CloseRightUI ();
 					u.rangeUStructure.City.tradeUnit = u;
 					OpenCityInventory (u.rangeUStructure.City, true);

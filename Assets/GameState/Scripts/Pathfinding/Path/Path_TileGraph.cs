@@ -131,7 +131,7 @@ public class Path_TileGraph {
 			//for freewalking units on islands
 			//TODO: Create better Pathfinding for those units, which is not gridbased?
 			Tile[] neighbours = t.GetNeighbours(true);  // NOTE: Some of the array spots could be null.
-
+            
 			// If neighbour is walkable, create an edge to the relevant node.
 			for (int i = 0; i < neighbours.Length; i++) {
 				// neighbours[i] != null && neighbours[i].Type != TileType.Water && IsClippingCorner(t, neighbours[i]) == false

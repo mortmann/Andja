@@ -22,11 +22,24 @@ public class Island : IGEventable{
 	#region RuntimeOrOther
 
 	public Path_TileGraph TileGraphIslandTiles { get; protected set; }
-	public List<Tile> myTiles;
+
+    public City Wilderness {
+        get {
+            if (_wilderness == null)
+                _wilderness = myCities.Find(x => x.playerNumber == -1);
+            return _wilderness;
+        }
+
+        set {
+            _wilderness = value;
+        }
+    }
+
+    public List<Tile> myTiles;
 	public Vector2 min;
 	public Vector2 max;
-	public City wilderness;
-	public bool allReadyHighlighted;
+    private City _wilderness;
+    public bool allReadyHighlighted;
 	Action<GameEvent> cbEventCreated;
 	Action<GameEvent> cbEventEnded;
 
@@ -43,7 +56,7 @@ public class Island : IGEventable{
 		myFertilities = new List<Fertility> ();
 		myRessources = new Dictionary<string, int> ();
 		myCities = new List<City>();
-		Setup ();
+		
         this.myClimate = climate;
         //TODO REMOVE THIS
         //LOAD this from map file?
@@ -53,12 +66,50 @@ public class Island : IGEventable{
         foreach (Tile t in StartTile.GetNeighbours()) {
             IslandFloodFill(t);
         }
+        Setup();
     }
     public Island(Tile[] tiles, Climate climate = Climate.Middle) {
         myFertilities = new List<Fertility>();
         myRessources = new Dictionary<string, int>();
         myCities = new List<City>();
         this.myClimate = climate;
+        SetTiles(tiles);
+        Setup();
+        //TODO REMOVE THIS
+        //LOAD this from map file?
+        myRessources["stone"] = int.MaxValue;
+    }
+    public Island(){
+	}
+	private void Setup(){
+        allReadyHighlighted = false;
+        World.Current.RegisterOnEvent(OnEventCreated, OnEventEnded);
+        //city that contains all the structures like trees that doesnt belong to any player
+        //so it has the playernumber -1 -> needs to be checked for when buildings are placed
+        //have a function like is notplayer city
+        //it does not need NEEDs
+        if (myCities.Count > 0) {
+            return; // this means it got loaded in so there is already a wilderness
+        }
+        myCities.Add(new City(myTiles, this));
+        Wilderness = myCities[0];
+	}
+
+	public IEnumerable<Structure> Load(){
+		Setup ();
+		List<Structure> structs = new List<Structure>();
+		foreach(City c in myCities){
+			if(c.playerNumber == -1){
+				Wilderness = c;
+			}
+			c.island = this;
+			structs.AddRange(c.Load ());
+		}
+		return structs;
+	}
+
+    internal void SetTiles(Tile[] tiles) {
+        this.myTiles = new List<Tile>(tiles);
         StartTile = tiles[0];
         min = new Vector2(tiles[0].X, tiles[0].Y);
         max = new Vector2(tiles[0].X, tiles[0].Y);
@@ -77,43 +128,10 @@ public class Island : IGEventable{
                 max.y = t.Y;
             }
         }
-        myTiles = new List<Tile>(tiles);
-        Setup();
-        //TODO REMOVE THIS
-        //LOAD this from map file?
-        myRessources["stone"] = int.MaxValue;
-    }
-    public Island(){
-	}
-	private void Setup(){
-        allReadyHighlighted = false;
-        World.Current.RegisterOnEvent(OnEventCreated, OnEventEnded);
+        if(Wilderness!=null)
+            Wilderness.AddTiles(myTiles);
         TileGraphIslandTiles = new Path_TileGraph(this);
-        //city that contains all the structures like trees that doesnt belong to any player
-        //so it has the playernumber -1 -> needs to be checked for when buildings are placed
-        //have a function like is notplayer city
-        //it does not need NEEDs
-        if (myCities.Count > 0) {
-            return; // this means it got loaded in so there is already a wilderness
-        }
-        myCities.Add(new City(myTiles, this));
-        wilderness = myCities[0];
-        //		BuildController.Instance.BuildOnTile (myTiles,true,BuildController.Instance.structurePrototypes[3],true);
-       
-	}
-
-	public IEnumerable<Structure> Load(){
-		Setup ();
-		List<Structure> structs = new List<Structure>();
-		foreach(City c in myCities){
-			if(c.playerNumber == -1){
-				wilderness = c;
-			}
-			c.island = this;
-			structs.AddRange(c.Load ());
-		}
-		return structs;
-	}
+    }
 
     /// <summary>
     /// DEPRACATED -- Not needed anymore! Tiles are now determined by the Mapgenerator, which gives the world them for each island!
@@ -163,7 +181,7 @@ public class Island : IGEventable{
                 }
             }
         }
-		
+        TileGraphIslandTiles = new Path_TileGraph(this);
     }
 
     public void Update(float deltaTime) {
@@ -173,7 +191,7 @@ public class Island : IGEventable{
     }
 	public void AddStructure(Structure str){
 		allReadyHighlighted = false;
-		if(str.City == wilderness){
+		if(str.City == Wilderness){
 //			Debug.LogWarning ("adding to wilderness wanted?");
 		}
 		str.City.AddStructure (str);

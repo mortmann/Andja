@@ -218,7 +218,7 @@ public class Worker {
 			((TilesPathfinding)path).SetDestination (new List<Tile>(myHome.neighbourTiles),new List<Tile>(structure.neighbourTiles));
 		} else {
 			path = new RoutePathfinding();
-			((RoutePathfinding)path).SetDestination (myHome.roadsAroundStructure (),structure.roadsAroundStructure ());
+			((RoutePathfinding)path).SetDestination (myHome.RoadsAroundStructure (),structure.RoadsAroundStructure ());
 		}
 		destTile = structure.BuildTile;
 	}

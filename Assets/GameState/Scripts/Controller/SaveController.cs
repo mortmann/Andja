@@ -9,14 +9,19 @@ using System;
 public class SaveController : MonoBehaviour {
 
 	public static SaveController Instance;
-	//TODO autosave here
-	const string SaveFileVersion = "0.1.2";
-	WorldController wc;
-	EventController ec;
-	CameraController cc;
-	GameDataHolder gdh;
-	PlayerController pc;
-	void Awake () {
+    public static bool IsLoadingSave = false;
+    public bool IsDone = false;
+    public float loadingPercantage = 0;
+
+    //TODO autosave here
+    const string SaveFileVersion = "0.1.3";
+    GameDataHolder GDH => GameDataHolder.Instance;
+    WorldController WC => WorldController.Instance;
+    EventController EC => EventController.Instance;
+    CameraController CC => CameraController.Instance;
+    PlayerController PC => PlayerController.Instance;
+
+    void Awake () {
 		if (Instance != null) {
 			Debug.LogError ("There should never be two SaveController.");
 		}
@@ -24,15 +29,14 @@ public class SaveController : MonoBehaviour {
 	}
 	// Use this for initialization
 	void Start () { 
-		wc = WorldController.Instance;
-		ec = EventController.Instance;
-		cc = CameraController.Instance;
-		gdh = GameDataHolder.Instance;
-		pc = PlayerController.Instance;
-		if (gdh!=null && gdh.loadsavegame!=null && gdh.loadsavegame.Length > 0) {
-			LoadGameState (gdh.loadsavegame);
-			gdh.loadsavegame = null;
-		}
+		if (GDH!=null && GDH.loadsavegame!=null && GDH.loadsavegame.Length > 0) {
+            Debug.Log("LOADING SAVEGAME " + GDH.loadsavegame);
+            IsLoadingSave = true;
+            StartCoroutine(LoadGameState (GDH.loadsavegame));
+			GDH.loadsavegame = null;
+		} else {
+            IsLoadingSave = false;
+        }
 
 
 //		LoadGameState ("sae");
@@ -45,19 +49,19 @@ public class SaveController : MonoBehaviour {
 
 	public void SaveGameState(string name = "autosave"){
 		//first pause the world so nothing changes and we can save an 
-		bool wasPaused = wc.IsPaused;
+		bool wasPaused = WC.IsPaused;
 		if(wasPaused==false){
-			wc.IsPaused = true;
+			WC.IsPaused = true;
 		}
 		string path = System.IO.Path.Combine (GetSaveGamesPath (), name + ".sav");
 
         SaveState savestate = new SaveState {
             safefileversion = (SaveFileVersion),
-            gamedata = (gdh.GetSaveGameData()),
-            pcs = (pc.GetSavePlayerData()),
-            world = (wc.GetSaveWorldData()),
-            ges = (ec.GetSaveGameEventData()),
-            camera = (cc.GetSaveCamera())
+            gamedata = (GDH.GetSaveGameData()),
+            pcs = (PC.GetSavePlayerData()),
+            world = (WC.GetSaveWorldData()),
+            ges = (EC.GetSaveGameEventData()),
+            camera = (CC.GetSaveCamera())
         };
 
 
@@ -73,7 +77,7 @@ public class SaveController : MonoBehaviour {
 		);
 
 		if(wasPaused == false){
-			wc.IsPaused = false;
+			WC.IsPaused = false;
 		}
 	}
 
@@ -82,15 +86,8 @@ public class SaveController : MonoBehaviour {
 		return System.IO.Path.Combine(Application.dataPath.Replace ("/Assets","") , "saves");
 	}
 
-	public void LoadGameState(string name = "autosave"){
-		if(wc==null){
-			return;
-		}
-		//first pause the world so nothing changes and we can save an 
-		bool wasPaused = wc.IsPaused;
-		if(wasPaused==false){
-			wc.IsPaused = true;
-		}
+	public IEnumerator LoadGameState(string name = "autosave"){
+		//first pause the world so nothing changes and we can save an 		
 		string alllines = System.IO.File.ReadAllText (System.IO.Path.Combine (GetSaveGamesPath (), name + ".sav"));
 		SaveState state = JsonConvert.DeserializeObject<SaveState> (alllines,new JsonSerializerSettings
 			{
@@ -101,20 +98,25 @@ public class SaveController : MonoBehaviour {
 			});
 		if(SaveFileVersion!=state.safefileversion){
 			Debug.LogError ("Mismatch of SaveFile Versions " + state.safefileversion + " & " + SaveFileVersion);
-			return;
+            yield break;
 		}
 		PrototypController.Instance.LoadFromXML ();
 
-		gdh.LoadGameData(state.gamedata); // gamedata
-		pc.LoadPlayerData(state.pcs); // player
-		wc.LoadWorldData (state.world); // world
-		ec.LoadGameEventData(state.ges); // event
-		cc.LoadSaveCameraData(state.camera); // camera
+		GDH.LoadGameData(state.gamedata); // gamedata
+        if (MapGenerator.Instance.IsDone == false)
+            yield return null;
+        loadingPercantage += 0.2f;
+        PlayerController.SetPlayerData(state.pcs); // player
+        loadingPercantage += 0.2f;
+        WorldController.SetWorldData(state.world); // world
+        loadingPercantage += 0.2f;
+        EventController.SetGameEventData(state.ges); // event
+        loadingPercantage += 0.2f;
+        CameraController.SetSaveCameraData(state.camera); // camera
+        loadingPercantage += 0.2f;
 
-
-		if(wasPaused == false){
-			wc.IsPaused = false;
-		}
+        IsDone = true;
+        yield return null;
 	}
 	[Serializable]
 	public class SaveState {

@@ -181,7 +181,7 @@ public class Player : IGEventable {
 
 	}
 	public void OnStructureCreated(Structure structure){
-		ReduceMoney (structure.buildcost);
+		ReduceMoney (structure.Buildcost);
 		structure.RegisterOnDestroyCallback (OnStructureDestroy);
 	}
 	public void OnStructureDestroy(Structure structure){

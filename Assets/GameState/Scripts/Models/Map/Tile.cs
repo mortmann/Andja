@@ -75,10 +75,10 @@ public class Tile : IComparable<Tile>, IEqualityComparer<Tile> {
 			if (Structure == null){
 				return 1;
 			}
-			if (Structure.myBuildingTyp != BuildingTyp.Pathfinding && Structure.canBeBuildOver==false){
+			if (Structure.MyBuildingTyp != BuildingTyp.Pathfinding && Structure.CanBeBuildOver==false){
 				return float.PositiveInfinity;
 			}
-			if (Structure.myBuildingTyp == BuildingTyp.Pathfinding){
+			if (Structure.MyBuildingTyp == BuildingTyp.Pathfinding){
 				return 0.25f;
 			}
 			return 1;
@@ -178,7 +178,7 @@ public class Tile : IComparable<Tile>, IEqualityComparer<Tile> {
 			return false;
 		}
 		if(Structure != null) {
-			if(Structure.canBeBuildOver == false){ 
+			if(Structure.CanBeBuildOver == false){ 
 				return false;
 			}
 		}

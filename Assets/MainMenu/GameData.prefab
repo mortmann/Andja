@@ -40,10 +40,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a6b596edd02cd4f4cb9fe61c03427982, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  height: 100
-  width: 100
+  MapSeed: 10
+  Height: 100
+  Width: 100
   loadsavegame: 
-  mapname: 
   bots: 
   playerCount: 1
   pirates: 1

@@ -22,7 +22,7 @@ public class IslandInfoUI : MonoBehaviour {
 		cg.alpha = 1;
 		string text="| ";
 		foreach (Fertility item in cc.nearestIsland.myFertilities) {
-			text+=item.name+" | ";
+			text+=item.Name+" | ";
 
 		}
 		City c = cc.nearestIsland.myCities.Find (x => x.playerNumber == PlayerController.currentPlayerNumber);

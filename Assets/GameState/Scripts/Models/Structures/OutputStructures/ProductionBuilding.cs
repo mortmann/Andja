@@ -114,7 +114,7 @@ public class ProductionBuilding : OutputStructure {
 		return new ProductionBuilding(this);
 	}
 		
-	public override void update (float deltaTime){
+	public override void Update (float deltaTime){
 		if(output == null){
 			return;
 		}
@@ -225,7 +225,7 @@ public class ProductionBuilding : OutputStructure {
 			}
 			MyIntake[i].count += toAdd.GetAmountForItem(MyIntake[i]);
 			toAdd.setItemCountNull (MyIntake[i]);
-			callbackIfnotNull ();
+			CallbackIfnotNull ();
 		}
 
 		return true;

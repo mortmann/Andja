@@ -27,14 +27,14 @@ public class BuildController : MonoBehaviour {
 					return;
 				}
 				_buildState = value;
-            cbBuildStateChange?.Invoke(_buildState);
-        }
-			}
+                cbBuildStateChange?.Invoke(_buildState);
+            }
+	}
 	public uint buildID = 0;
 	public bool noBuildCost = false;
 	public bool noUnitRestriction = false;
 
-	public Dictionary<int,Structure>  structurePrototypes {
+	public Dictionary<int,Structure>  StructurePrototypes {
 		get { return PrototypController.Instance.structurePrototypes; }
 	}
 	public Structure toBuildStructure;
@@ -43,7 +43,7 @@ public class BuildController : MonoBehaviour {
 	Action<City> cbCityCreated;
 	Action<BuildStateModes> cbBuildStateChange;
 
-	public Dictionary<int, Item> getCopieOfAllItems(){
+	public Dictionary<int, Item> GetCopieOfAllItems(){
 		return PrototypController.Instance.GetCopieOfAllItems();
 	}
 
@@ -59,7 +59,13 @@ public class BuildController : MonoBehaviour {
 		buildID = 0;
 	}
 
-	public void SettleFromUnit(Unit buildUnit = null){
+    internal void PlaceWorldGeneratedStructure(Dictionary<Tile, Structure> tileToStructure) {
+        foreach(Tile t in tileToStructure.Keys) {
+            BuildOnTile(tileToStructure[t], t);
+        }
+    }
+
+    public void SettleFromUnit(Unit buildUnit = null){
 		//FIXME: get a way to get this id for warehouse
 		OnClick (6,buildUnit);
 	}
@@ -76,25 +82,25 @@ public class BuildController : MonoBehaviour {
 		if(t.Structure==null){
 			return;
 		}
-		if(t.Structure.playerNumber==destroyPlayer.playerNumber){
+		if(t.Structure.PlayerNumber==destroyPlayer.playerNumber){
 			t.Structure.Destroy ();
 		}
 	}
 	public void OnClick(int id, Unit buildInRangeUnit = null) {
-		if(structurePrototypes.ContainsKey (id) == false){
+		if(StructurePrototypes.ContainsKey (id) == false){
 			Debug.LogError ("BUTTON has ID that is not a structure prototypes ->o_O<- ");
 			return;
 		}
-		toBuildStructure = structurePrototypes [id].Clone ();
-		if(structurePrototypes [id].BuildTyp == BuildTypes.Path){
+		toBuildStructure = StructurePrototypes [id].Clone ();
+		if(StructurePrototypes [id].BuildTyp == BuildTypes.Path){
 			MouseController.Instance.mouseState = MouseState.Path;
 			MouseController.Instance.structure = toBuildStructure;
 		}
-		if(structurePrototypes [id].BuildTyp == BuildTypes.Single){
+		if(StructurePrototypes [id].BuildTyp == BuildTypes.Single){
 			MouseController.Instance.mouseState = MouseState.Single;
 			MouseController.Instance.structure = toBuildStructure;
 		}
-		if(structurePrototypes [id].BuildTyp == BuildTypes.Drag){
+		if(StructurePrototypes [id].BuildTyp == BuildTypes.Drag){
 			MouseController.Instance.mouseState = MouseState.Drag;
 			MouseController.Instance.structure = toBuildStructure;
 		}
@@ -169,7 +175,7 @@ public class BuildController : MonoBehaviour {
 			//return;
 			//find a city that matches the player 
 			//and check for money
-			if(playerHasEnoughMoney(s,playerNumber)==false){
+			if(PlayerHasEnoughMoney(s,playerNumber)==false){
 				Debug.Log ("not playerHasEnoughMoney -- Give UI feedback"); 
 				return;
 			}
@@ -190,7 +196,7 @@ public class BuildController : MonoBehaviour {
 				s.City = hasCity.MyCity;
 			}
 			if(noBuildCost==false){
-				if (s.BuildingItems ()!=null) {
+				if (s.GetBuildingItems ()!=null) {
 					Inventory inv = null;
 					if(buildInRangeUnit!=null){
 						inv = buildInRangeUnit.inventory;
@@ -201,7 +207,7 @@ public class BuildController : MonoBehaviour {
 						Debug.LogError ("Build something with smth that has no inventory"); 
 						return;
 					}
-					if(inv.ContainsItemsWithRequiredAmount (s.BuildingItems ()) == false){
+					if(inv.ContainsItemsWithRequiredAmount (s.GetBuildingItems ()) == false){
 						Debug.Log ("ContainsItemsWithRequiredAmount==null"); 
 						return;
 					}
@@ -220,7 +226,7 @@ public class BuildController : MonoBehaviour {
 		}
 
 		if(buildInRangeUnit!=null&&noBuildCost==false){
-			buildInRangeUnit.inventory.removeItemsAmount (s.BuildingItems ());
+			buildInRangeUnit.inventory.removeItemsAmount (s.GetBuildingItems ());
 		}
 
         //call all callbacks on structure created
@@ -236,17 +242,17 @@ public class BuildController : MonoBehaviour {
 	public void OnDestroyStructure(Structure str){
 //		str.City.removeStructure (str);
 	}
-	public bool playerHasEnoughMoney(Structure s,int playerNumber){
-		if(PlayerController.Instance.GetPlayer (playerNumber).Balance >= s.buildcost){
+	public bool PlayerHasEnoughMoney(Structure s,int playerNumber){
+		if(PlayerController.Instance.GetPlayer (playerNumber).Balance >= s.Buildcost){
 			return true;
 		}
 		return false;
 	}
 	public void BuildOnTile(int id, List<Tile> tiles,int playerNumber){
-		if(structurePrototypes.ContainsKey (id) == false){
+		if(StructurePrototypes.ContainsKey (id) == false){
 			return;
 		}
-		BuildOnTile (tiles, true, structurePrototypes[id],playerNumber);
+		BuildOnTile (tiles, true, StructurePrototypes[id],playerNumber);
 	}
 	public City CreateCity(Island i , int playernumber){
 		if(i == null){

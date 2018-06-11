@@ -58,7 +58,7 @@ public class MineStructure : OutputStructure {
 		return true;
 	}
 
-	public override void update (float deltaTime){
+	public override void Update (float deltaTime){
 		if (BuildTile.MyIsland.myRessources [myRessource] <= 0) {
 			return;
 		} 

@@ -26,7 +26,7 @@ public class OffworldMarket {
 		itemIDtoBuyPrice = new Dictionary<int, int> ();
 		//_____TEMPORARY?_____________
 		//get all the diffrent
-		Dictionary<int,Item> temp = BuildController.Instance.getCopieOfAllItems ();
+		Dictionary<int,Item> temp = BuildController.Instance.GetCopieOfAllItems ();
 		foreach (int id in temp.Keys) {
 			//temporary everything cost 10
 			itemIDtoSellPrice.Add (id,10); //eg Random.Range (10,20)

@@ -111,11 +111,11 @@ public class Warehouse : MarketBuilding {
 	}
 	public override void OnClick (){
 		extraUIOn = true;
-		callbackIfnotNull ();
+		CallbackIfnotNull ();
 	}
 	public override void OnClickClose (){
 		extraUIOn = false;
-		callbackIfnotNull ();
+		CallbackIfnotNull ();
 	}
 	public override Structure Clone (){
 		return new Warehouse (this);

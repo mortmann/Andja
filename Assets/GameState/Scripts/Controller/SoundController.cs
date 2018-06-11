@@ -190,7 +190,7 @@ public class SoundController : MonoBehaviour {
 		if(loading){
 			return;
 		}
-		if(str.playerNumber!=PlayerController.currentPlayerNumber){
+		if(str.PlayerNumber!=PlayerController.currentPlayerNumber){
 			return;
 		}
 		string name =  "BuildSound_" + Time.frameCount;

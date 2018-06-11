@@ -26,7 +26,7 @@ public class NeedsUIController : MonoBehaviour {
 		needToUI = new Dictionary<Need, NeedUI> ();
 		List<Need> ns = new List<Need> ();
 		ns.AddRange (home.City.itemNeeds);
-		Player p = PlayerController.Instance.currPlayer;
+		Player p = PlayerController.Instance.CurrPlayer;
 
 		citizenCanvas.GetComponentInChildren<Text> ().text=home.people+"/"+home.maxLivingSpaces;
 		needs = new List<Need>[City.citizienLevels];
@@ -54,7 +54,7 @@ public class NeedsUIController : MonoBehaviour {
 				g.GetComponent<Button>().interactable = true;
 			}
 		}
-		PlayerController.Instance.currPlayer.RegisterNeedUnlock (OnNeedUnlock);
+		PlayerController.Instance.CurrPlayer.RegisterNeedUnlock (OnNeedUnlock);
 	}
 
 	public void OnNeedUnlock(Need need){

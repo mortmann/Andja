@@ -225,14 +225,14 @@ public abstract class OutputStructure : Structure {
 			if (output[i].count > 0) {
 				Item temp = output [i].CloneWithCount();
 				output [i].count = 0;
-				callbackIfnotNull ();
+				CallbackIfnotNull ();
 				return temp;
 			}
 		}
 		return null;
 	}
-	public override Item[] BuildingItems (){
-		return buildingItems;
+	public override Item[] GetBuildingItems (){
+		return BuildingItems;
 	}
 	public void CallOutputChangedCB(){
         cbOutputChange?.Invoke(this);

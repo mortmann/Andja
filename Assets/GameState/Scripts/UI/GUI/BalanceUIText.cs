@@ -9,7 +9,7 @@ public class BalanceUIText : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		player = GameObject.FindObjectOfType<PlayerController>().currPlayer;
+		player = GameObject.FindObjectOfType<PlayerController>().CurrPlayer;
 	}
 	
 	// Update is called once per frame

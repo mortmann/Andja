@@ -229,7 +229,7 @@ public class Unit  {
 				return true;
 			}
 		} else if(attackingStructure!=null){
-			if(PlayerController.Instance.ArePlayersAtWar (attackingStructure.playerNumber,playerNumber)){
+			if(PlayerController.Instance.ArePlayersAtWar (attackingStructure.PlayerNumber,playerNumber)){
 				attackingStructure = null;
 				return false;
 			}
@@ -255,7 +255,7 @@ public class Unit  {
 			engangingUnit.TakeDamage (myDamageType,damage);
 		}
 		if(isCapturing){
-			if(attackingStructure.Health<=0||attackingStructure.playerNumber!=playerNumber){
+			if(attackingStructure.Health<=0||attackingStructure.PlayerNumber!=playerNumber){
 				attackingStructure = null;
 				return;
 			}
@@ -300,7 +300,7 @@ public class Unit  {
 	public void ToTradeItemToNearbyWarehouse(Item clicked){
 		Debug.Log (clicked.ToString ()); 
 		if(rangeUStructure != null && rangeUStructure is Warehouse){
-			if(rangeUStructure.playerNumber == playerNumber){
+			if(rangeUStructure.PlayerNumber == playerNumber){
 				rangeUStructure.City.TradeFromShip (this,clicked);
 			} else {
 				Player p = PlayerController.Instance.GetPlayer (playerNumber);

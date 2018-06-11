@@ -20,13 +20,17 @@ public class CameraController : MonoBehaviour {
 	public HashSet<Structure> structureCurrentInCameraView;
 	public Rect CameraViewRange;
 	Vector2 showBounds = new Vector2 ();
-
-	public static CameraController Instance;
+    static CameraSave save;
+    public static CameraController Instance;
 	void Awake () {
 		if (Instance != null) {
 			Debug.LogError ("There should never be two SaveController.");
 		}
 		Instance = this;
+        if(save != null) {
+            LoadSaveCameraData();
+            save = null;
+        }
 	}
 	void Start() {
 		tilesCurrentInCameraView = new HashSet<Tile> ();
@@ -136,7 +140,12 @@ public class CameraController : MonoBehaviour {
 			}
 		}
 	}
-	Vector3 UpdateMouseCameraMovement() {
+
+    internal static void SetSaveCameraData(CameraSave camera) {
+        save = camera;
+    }
+
+    Vector3 UpdateMouseCameraMovement() {
 		// Handle screen panning
 		if( Input.GetMouseButton(1) || Input.GetMouseButton(2) ) {	// Right or Middle Mouse Button
 			return lastFramePosition-currFramePosition;
@@ -227,9 +236,9 @@ public class CameraController : MonoBehaviour {
         };
         return cs;
 	}
-	public void LoadSaveCameraData(CameraSave cs){
-		Camera.main.transform.position = cs.pos;
-		Camera.main.orthographicSize = cs.orthographicSize;
+	public void LoadSaveCameraData(){
+		Camera.main.transform.position = save.pos;
+		Camera.main.orthographicSize = save.orthographicSize;
 	}
 }
 [Serializable]

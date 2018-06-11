@@ -67,8 +67,8 @@ public class EditorController : MonoBehaviour {
 		}
         foreach (Climate climate in Enum.GetValues(typeof(Climate))) {
             foreach (IslandSizeTypes size in Enum.GetValues(typeof(IslandSizeTypes))) {
-                if(System.IO.Directory.Exists(GetPathToIsland(size,climate)) == false){
-                    System.IO.Directory.CreateDirectory(GetPathToIsland(size, climate));
+                if(System.IO.Directory.Exists(GetTotalPathToIslands(size,climate)) == false){
+                    System.IO.Directory.CreateDirectory(GetTotalPathToIslands(size, climate));
                 }
             }
         }
@@ -344,14 +344,17 @@ public class EditorController : MonoBehaviour {
 	public void OnBrushRandomChange(float f){
 		this.randomChange = f;
 	}
-	/// 
-	/// 
-	/// SAVING FEATURES
-	/// 
-	/// 
+    public void OnDestroy() {
+        IsEditor = false;
+    }
+    /// 
+    /// 
+    /// SAVING FEATURES
+    /// 
+    /// 
 
-	public void SaveIslandState(string name = "autosave"){
-        string path = GetPathToIsland(IslandSize, climate);
+    public void SaveIslandState(string name = "autosave"){
+        string path = GetTotalPathToIslands(IslandSize, climate);
         path = System.IO.Path.Combine (path, name + ".isl");
 
 		SaveIsland savestate = GetSaveState();
@@ -366,11 +369,11 @@ public class EditorController : MonoBehaviour {
 		) 
 		);
 	}
-
-    public static string GetPathToIsland(IslandSizeTypes islandSize, Climate islandClimate) {
-        string path = System.IO.Path.Combine(GetSaveGamesPath(), islandClimate.ToString());
-        path = System.IO.Path.Combine(path, islandSize.ToString());
-        return path;
+    public static string GetRelativePathToIslands(IslandSizeTypes islandSize, Climate islandClimate) {
+        return System.IO.Path.Combine(islandClimate.ToString(), islandSize.ToString());
+    }
+    public static string GetTotalPathToIslands(IslandSizeTypes islandSize, Climate islandClimate) {
+        return System.IO.Path.Combine(GetSaveGamesPath(), GetRelativePathToIslands(islandSize, islandClimate));
     }
 	public void LoadIsland(System.IO.FileInfo file ){
 		loadsavegame = file;
@@ -379,8 +382,8 @@ public class EditorController : MonoBehaviour {
 	private void CreateFromSave(System.IO.FileInfo file){
 		LoadSaveState (LoadIsland(file.FullName));
 	}
-    public static SaveIsland LoadIsland(string location) {
-        string alllines = System.IO.File.ReadAllText(location);
+    public static SaveIsland LoadIsland(string path) {
+        string alllines = System.IO.File.ReadAllText(path);
         SaveIsland state = JsonConvert.DeserializeObject<SaveIsland>(alllines, new JsonSerializerSettings {
             NullValueHandling = NullValueHandling.Ignore,
             ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
@@ -407,7 +410,7 @@ public class EditorController : MonoBehaviour {
 	public static string GetSaveGamesPath(){
 		return System.IO.Path.Combine(Application.dataPath.Replace ("/Assets","") , "islands");
 	}
-	[JsonObject]
+    [JsonObject]
 	public class SaveIsland {
 		[JsonPropertyAttribute] public string version = islandSaveFileVersion;
 		[JsonPropertyAttribute] public int Width;

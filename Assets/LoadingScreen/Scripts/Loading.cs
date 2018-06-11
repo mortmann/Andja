@@ -7,7 +7,7 @@ public class Loading : MonoBehaviour {
 	AsyncOperation aso;
 	public Text percentText;
 	public bool loadEditor;
-	float sceneLoadingProgress {
+	float SceneLoadingProgress {
 		get { 
 			if (aso == null)
 				return 0;
@@ -22,12 +22,24 @@ public class Loading : MonoBehaviour {
 	void Update(){
 		int percantage = 0;
 		if(loadEditor == false){
-			percantage =(int)( sceneLoadingProgress * 0.7f + MapGenerator.Instance.PercantageProgress * 0.3f );
-
-			if(MapGenerator.Instance.IsDone&&aso == null)
+            if (SaveController.IsLoadingSave) {
+                percantage = (int)(SceneLoadingProgress * 0.40f + MapGenerator.Instance.PercantageProgress * 0.3f + SaveController.Instance.loadingPercantage * 0.3f);
+            }
+            else {
+                percantage = (int)(SceneLoadingProgress * 0.7f + MapGenerator.Instance.PercantageProgress * 0.3f);
+            }
+            //First wait for MapGeneration
+            if (MapGenerator.Instance.IsDone == false) {
+                return;
+            }
+            //Wait for Loading Save to be done when it is loading one
+            if(SaveController.IsLoadingSave && SaveController.Instance.IsDone == false) {
+                return;
+            }
+            if(aso == null)
 				aso = SceneManager.LoadSceneAsync ("GameState");
 		} else {
-			percantage = (int)(sceneLoadingProgress);
+			percantage = (int)(SceneLoadingProgress);
 		}
 		percentText.text =  percantage + "%";
 		

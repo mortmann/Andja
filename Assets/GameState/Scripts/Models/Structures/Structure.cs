@@ -150,7 +150,7 @@ public abstract class Structure : IGEventable {
 	public HashSet<Tile> myRangeTiles;
 	public string connectOrientation;
 	//player id
-	public int playerNumber {
+	public int PlayerNumber {
 		get {
 			if(City==null){
 				return -1;
@@ -158,7 +158,7 @@ public abstract class Structure : IGEventable {
 			return City.GetPlayerNumber ();}	
 	}
 	protected StructurePrototypeData _prototypData;
-	public StructurePrototypeData data {
+	public StructurePrototypeData Data {
 		get { if(_prototypData==null){
 				_prototypData = PrototypController.Instance.GetStructurePrototypDataForID (ID);
 			}
@@ -166,42 +166,42 @@ public abstract class Structure : IGEventable {
 		}
 	}
 
-	public bool isWalkable { get {return this.myBuildingTyp != BuildingTyp.Blocking;} }
-	public bool hasHitbox { get {return data.hasHitbox;} }
-	public float MaxHealth { get {return data.MaxHealth;} }
+	public bool IsWalkable { get {return this.MyBuildingTyp != BuildingTyp.Blocking;} }
+	public bool HasHitbox { get {return Data.hasHitbox;} }
+	public float MaxHealth { get {return Data.MaxHealth;} }
 
-	public bool canBeBuild { get {return data.canBeBuild;} }
+	public bool CanBeBuild { get {return Data.canBeBuild;} }
 
-	public int buildingRange { get {return data.buildingRange;} }// = 0;
-	public int PopulationLevel { get {return data.PopulationLevel;} }// = 0;
-	public int PopulationCount { get {return data.PopulationCount;} }// = 0;
+	public int BuildingRange { get {return Data.buildingRange;} }// = 0;
+	public int PopulationLevel { get {return Data.PopulationLevel;} }// = 0;
+	public int PopulationCount { get {return Data.PopulationCount;} }// = 0;
 
-	private int _tileWidth { get {return data.tileWidth;} }
-	private int _tileHeight { get {return data.tileHeight;} }
+	private int _tileWidth { get {return Data.tileWidth;} }
+	private int _tileHeight { get {return Data.tileHeight;} }
 
-	public bool canRotate { get {return data.canRotate;} }// = true;
-	public bool canBeBuildOver { get {return data.canBeBuildOver;} }// = false;
-	public bool canBeUpgraded { get {return data.canBeUpgraded;} }// = false;
-	public bool showExtraUI { get {return data.showExtraUI;} }
-	public bool canTakeDamage { get {return data.canTakeDamage;} }// = false;
+	public bool CanRotate { get {return Data.canRotate;} }// = true;
+	public bool CanBeBuildOver { get {return Data.canBeBuildOver;} }// = false;
+	public bool CanBeUpgraded { get {return Data.canBeUpgraded;} }// = false;
+	public bool ShowExtraUI { get {return Data.showExtraUI;} }
+	public bool CanTakeDamage { get {return Data.canTakeDamage;} }// = false;
 
 
-	public Direction mustFrontBuildDir { get {return data.mustFrontBuildDir;} }// = Direction.None; 
+	public Direction MustFrontBuildDir { get {return Data.mustFrontBuildDir;} }// = Direction.None; 
 
-	public List<Tile> myPrototypeTiles { get {return data.MyPrototypeTiles;} }
+	public List<Tile> MyPrototypeTiles { get {return Data.MyPrototypeTiles;} }
 
-	public bool canStartBurning { get {return data.canStartBurning;} }
-	public bool mustBeBuildOnShore { get {return data.mustBeBuildOnShore;} }//= false;
-	public bool mustBeBuildOnMountain { get {return data.mustBeBuildOnMountain;} }//= false;
+	public bool CanStartBurning { get {return Data.canStartBurning;} }
+	public bool MustBeBuildOnShore { get {return Data.mustBeBuildOnShore;} }//= false;
+	public bool MustBeBuildOnMountain { get {return Data.mustBeBuildOnMountain;} }//= false;
 
-	public int maintenancecost{ get {return data.maintenancecost;} }
-	public int buildcost{ get {return data.buildcost;} }
+	public int Maintenancecost{ get {return Data.maintenancecost;} }
+	public int Buildcost{ get {return Data.buildcost;} }
 
-	public BuildTypes BuildTyp{ get {return data.BuildTyp;} }
-	public BuildingTyp myBuildingTyp{ get {return data.myBuildingTyp;} }// = BuildingTyp.Blocking;
-	public Item[] buildingItems{ get {return data.buildingItems;} }
+	public BuildTypes BuildTyp{ get {return Data.BuildTyp;} }
+	public BuildingTyp MyBuildingTyp{ get {return Data.myBuildingTyp;} }// = BuildingTyp.Blocking;
+	public Item[] BuildingItems{ get {return Data.buildingItems;} }
 
-	public string spriteName{ get { return data.spriteBaseName/*TODO: make multiple saved sprites possible*/; } }
+	public string SpriteName{ get { return Data.spriteBaseName/*TODO: make multiple saved sprites possible*/; } }
 
 	protected Action<Structure> cbStructureChanged;
 	protected Action<Structure> cbStructureDestroy;
@@ -211,14 +211,14 @@ public abstract class Structure : IGEventable {
 
 	protected void BaseCopyData(Structure str){
 		ID = str.ID;
-		_prototypData = str.data;
+		_prototypData = str.Data;
 	}
 
 	#endregion
 	#endregion
 	#region Properties 
 	public Vector2 MiddleVector {get {return new Vector2 (BuildTile.X + (float)TileWidth/2f,BuildTile.Y + (float)TileHeight/2f);}}
-	public string SmallName { get { return spriteName.ToLower ();} }
+	public string SmallName { get { return SpriteName.ToLower ();} }
 	public City City {
 		get { return _city;}
 		set {
@@ -234,7 +234,7 @@ public abstract class Structure : IGEventable {
 			return _health;
 		}
 		set {
-			if(canTakeDamage==false){
+			if(CanTakeDamage==false){
 				return;
 			}
 			if(_health<=0){
@@ -272,7 +272,7 @@ public abstract class Structure : IGEventable {
 	#endregion
 	#region Virtual/Abstract
 	public abstract Structure Clone ();
-	public virtual void update (float deltaTime){
+	public virtual void Update (float deltaTime){
 	}
 	public abstract void OnBuild();
 	public virtual void OnClick (){
@@ -303,7 +303,7 @@ public abstract class Structure : IGEventable {
 		ge.InfluenceTarget (this, false);
 	}
 	public virtual string GetSpriteName(){
-		return spriteName;
+		return SpriteName;
 	}
 	#endregion 
 
@@ -346,7 +346,7 @@ public abstract class Structure : IGEventable {
 			OnEventEndedVirtual (ge);
 		}
 	}
-	public void callbackIfnotNull(){
+	public void CallbackIfnotNull(){
         cbStructureChanged?.Invoke(this);
     }
     public void RegisterOnChangedCallback(Action<Structure> cb) {
@@ -463,7 +463,7 @@ public abstract class Structure : IGEventable {
 	/// <returns>The in range tiles.</returns>
 	/// <param name="firstTile">The most left one, first row.</param>
 	public HashSet<Tile> GetInRangeTiles (Tile firstTile) {
-		if (buildingRange == 0) {
+		if (BuildingRange == 0) {
 			return null;
 		}
 		if (firstTile==null) {
@@ -472,14 +472,14 @@ public abstract class Structure : IGEventable {
 		}
 		World w = WorldController.Instance.World;
 		myRangeTiles = new HashSet<Tile> ();
-		float width = firstTile.X-buildingRange - TileWidth / 2;
-		float height = firstTile.Y-buildingRange - TileHeight / 2;
-		foreach(Tile t in myPrototypeTiles){
+		float width = firstTile.X-BuildingRange - TileWidth / 2;
+		float height = firstTile.Y-BuildingRange - TileHeight / 2;
+		foreach(Tile t in MyPrototypeTiles){
 			myRangeTiles.Add (w.GetTileAt (t.X +width,t.Y+height));			
 		}
 		return myRangeTiles;
 	}
-	public List<Tile> roadsAroundStructure(){
+	public List<Tile> RoadsAroundStructure(){
 		List<Tile> roads = new List<Tile>();
 		foreach (Tile item in myBuildingTiles) {
 			foreach (Tile n in item.GetNeighbours ()) {
@@ -495,7 +495,7 @@ public abstract class Structure : IGEventable {
 	#endregion
 	#region other
 	public int GetPlayerNumber(){
-		return playerNumber;
+		return PlayerNumber;
 	}
 	public int GetTargetType(){
 		return TargetType + ID;
@@ -504,7 +504,7 @@ public abstract class Structure : IGEventable {
 		Debug.LogError ("Not implemented! Because nothing yet needs it and would take to much RAM!" );
 	}
 	public void TakeDamage(float damage){
-		if(canTakeDamage==false){
+		if(CanTakeDamage==false){
 			return;
 		}
 		if(damage<0){
@@ -531,8 +531,8 @@ public abstract class Structure : IGEventable {
     }
 	#endregion
 	#region correctspot
-	public virtual Item[] BuildingItems(){
-		return buildingItems;
+	public virtual Item[] GetBuildingItems(){
+		return BuildingItems;
 	}
 	public bool CanBuildOnSpot(List<Tile> tiles){
 		List<bool> bools = new List<bool> (CorrectSpot (tiles).Values);
@@ -542,7 +542,7 @@ public abstract class Structure : IGEventable {
 	public Dictionary<Tile,bool> CorrectSpot(List<Tile> tiles){
 		Dictionary<Tile,bool> tileToCanBuild = new Dictionary<Tile, bool> ();
 		//to make it faster
-		if(mustFrontBuildDir==Direction.None && mustBeBuildOnShore==false && mustBeBuildOnMountain==false){
+		if(MustFrontBuildDir==Direction.None && MustBeBuildOnShore==false && MustBeBuildOnMountain==false){
 			foreach (Tile item in tiles) {
 				tileToCanBuild.Add (item,item.CheckTile ());
 			}
@@ -561,14 +561,13 @@ public abstract class Structure : IGEventable {
 
 		//ts.RemoveAll (x=>x==null);
 		ts.Sort ((x, y) => x.X.CompareTo (y.X)*x.Y.CompareTo (y.Y));
-        Debug.Log(ts.Count);
 		foreach(Tile t in ts){
 			int x = t.X - ts [0].X;
 			int y = t.Y - ts [0].Y;
-			if( TileWidth<=x || TileHeight<=y ){
-
-			}
-			sortedTiles [x, y] = t; // so we have the tile at the correct spot
+			if( TileWidth<=x || TileHeight<=y || x<0 ||y<0 ){
+                Debug.Log(ts.Count);
+            }
+            sortedTiles [x, y] = t; // so we have the tile at the correct spot
 		}
 
 		Direction row = RowToTest ();
@@ -595,7 +594,7 @@ public abstract class Structure : IGEventable {
 				if(tiles[x,i]==null){
 					continue;
 				}
-				tileToCanBuild.Add (tiles [x, i], tiles [x, i].CheckTile (mustBeBuildOnShore, mustBeBuildOnMountain));
+				tileToCanBuild.Add (tiles [x, i], tiles [x, i].CheckTile (MustBeBuildOnShore, MustBeBuildOnMountain));
 				tiles [x, i] = null;
 			}
 		} else {
@@ -604,7 +603,7 @@ public abstract class Structure : IGEventable {
 				if(tiles[i,y]==null){
 					continue;
 				}
-				tileToCanBuild.Add (tiles [i, y], tiles [i, y].CheckTile (mustBeBuildOnShore, mustBeBuildOnMountain));
+				tileToCanBuild.Add (tiles [i, y], tiles [i, y].CheckTile (MustBeBuildOnShore, MustBeBuildOnMountain));
 				tiles [i, y] = null;
 			}
 		}
@@ -617,10 +616,10 @@ public abstract class Structure : IGEventable {
 		return tileToCanBuild;
 	}
 	private Direction RowToTest(){
-		if(mustFrontBuildDir==Direction.None){
+		if(MustFrontBuildDir==Direction.None){
 			return Direction.None;
 		}
-		int must = (int)mustFrontBuildDir;
+		int must = (int)MustFrontBuildDir;
 		//so we have either 1,2,3 or 4
 		//so just loop through those and add per 90: 1
 		int rotNum = rotated / 90; // so we have now 1,2,3
@@ -642,7 +641,7 @@ public abstract class Structure : IGEventable {
 		return rotate;
 	}
 	public void RotateStructure(){
-		if(canRotate == false) {
+		if(CanRotate == false) {
 			return;
 		}
 		rotated += 90;
@@ -651,7 +650,7 @@ public abstract class Structure : IGEventable {
 		}
 	}
 	public void AddTimes90ToRotate(int times){
-		if(canRotate == false) {
+		if(CanRotate == false) {
 			return;
 		}
 		rotated += 90 * times;
@@ -661,9 +660,9 @@ public abstract class Structure : IGEventable {
 	#region override
 	public override string ToString (){
 		if(BuildTile==null){
-			return spriteName +"@error";
+			return SpriteName +"@error";
 		}
-		return spriteName + "@" + BuildTile.ToString ();
+		return SpriteName + "@ X=" + BuildTile.X +" Y=" + BuildTile.Y;
 	}
 	#endregion
 

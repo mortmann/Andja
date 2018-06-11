@@ -54,7 +54,7 @@ public class MarketBuilding : OutputStructure {
 
 
 
-	public override void update (float deltaTime){
+	public override void Update (float deltaTime){
 		base.update_Worker (deltaTime);
 	}
 	public override void OnBuild(){
@@ -154,7 +154,7 @@ public class MarketBuilding : OutputStructure {
 		//IF THIS is a pathfinding structure check for new road
 		//if true added that to the myroads
 
-		if (structure.myBuildingTyp == BuildingTyp.Pathfinding) {
+		if (structure.MyBuildingTyp == BuildingTyp.Pathfinding) {
 			List<Route> myRoutes = GetMyRoutes ();
 			if(neighbourTiles.Contains (structure.myBuildingTiles[0])){
 				if (myRoutes.Contains (((Road)structure).Route) == false) {

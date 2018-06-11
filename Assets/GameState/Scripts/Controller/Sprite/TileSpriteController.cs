@@ -134,7 +134,8 @@ public class TileSpriteController : MonoBehaviour {
         //TODO: Fix it so far that this temporary fix isnt needed anymore
         if (tile_data.Type == TileType.Shore) {
             if (sr.sprite == null) {
-                Debug.Log("Missing Sprite for Shore " + tile_data.SpriteName);
+                if(EditorController.IsEditor)
+                    Debug.Log("Missing Sprite for Shore " + tile_data.SpriteName);
                 sr.sprite = nameToSprite["shore_"];
             }
         }
@@ -209,7 +210,6 @@ public class TileSpriteController : MonoBehaviour {
 
         typeTotileSpriteNames = new Dictionary<TileType, Dictionary<string, List<string>>>();
         
-        Climate current = EditorController.climate;
         foreach (string s in TileSpriteController.nameToSprite.Keys) {
             string part = s.Split('_')[0].ToLower();
             string climateIdentifier = TileSpriteClimate.all.ToString();

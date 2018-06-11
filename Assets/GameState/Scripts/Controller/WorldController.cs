@@ -8,6 +8,7 @@ using Newtonsoft.Json;
 
 public class WorldController : MonoBehaviour {
     public static WorldController Instance { get; protected set; }
+    static WorldSaveState save;
 
     // The world and tile data
     public World World { get; protected set; }
@@ -39,17 +40,23 @@ public class WorldController : MonoBehaviour {
 
 		GameDataHolder gdh = GameDataHolder.Instance;
 		offworldMarket = new OffworldMarket ();
-		if (gdh!=null && gdh.loadsavegame!=null && gdh.loadsavegame.Length > 0) {
+		if (SaveController.IsLoadingSave) {
 //			SaveController.Instance.LoadGameState (gdh.loadsavegame);
 //			gdh.loadsavegame = null;
 		} else {
 			if (gdh != null) {
 				MapGenerator mg = FindObjectOfType<MapGenerator> ();
+                Dictionary<Tile,Structure> tileToStructure = mg.GetStructures();
                 this.World = mg.GetWorld();
+                BuildController.Instance.PlaceWorldGeneratedStructure(tileToStructure);
+
                 isLoaded = false;
 			} 
 		}
-//		new OceanPathfinding().SetDestination(world.GetTileAt(22,20),world.GetTileAt(34,56));
+        if (save != null) {
+            LoadWorldData();
+            save = null;
+        }
     }
 
     // Update is called once per frame
@@ -125,12 +132,30 @@ public class WorldController : MonoBehaviour {
 		// set to loadscreen to reset all data (and purge old references)
 		SceneManager.LoadScene( "GameStateLoadingScreen" );
 	}
-	public void LoadWorldData(WorldSaveState wss) {
-		offworldMarket = wss.offworld;
+	public void LoadWorldData() {
+		offworldMarket = save.offworld;
 		// Create a world from our save file data.
-		World = wss.world;
-		//Now turn the loaded World into a playable World
-		List<Structure> loadedStructures = new List<Structure>();
+		World = save.world;
+        World.SetTiles(MapGenerator.Instance.GetTiles(),GameDataHolder.Instance.Width,GameDataHolder.Instance.Height);
+
+        List<MapGenerator.IslandStruct> structs = MapGenerator.Instance.GetIslandStructs();
+        foreach(MapGenerator.IslandStruct s in structs) {
+            Debug.Log(s.y +" " + (s.y + s.Width) + " " + s.y + " " + (s.y + s.Height));
+        }
+        foreach (Island island in World.IslandList) {
+            MapGenerator.IslandStruct thisStruct = structs.Find(s =>
+                    island.StartTile.X >= s.x && (s.x + s.Width) >= island.StartTile.X &&
+                    island.StartTile.Y >= s.y && (s.y + s.Height) >= island.StartTile.Y
+            );
+            structs.Remove(thisStruct);
+            if (thisStruct.Tiles == null)
+                Debug.LogError("thisStruct.Tiles is null " + island.StartTile.X + " " + island.StartTile.Y);
+            island.SetTiles(thisStruct.Tiles);
+        }
+        MapGenerator.Instance.Destroy();
+
+        //Now turn the loaded World into a playable World
+        List<Structure> loadedStructures = new List<Structure>();
 		foreach (Island island in World.IslandList) {
 			loadedStructures.AddRange(island.Load ());
 		}
@@ -142,14 +167,10 @@ public class WorldController : MonoBehaviour {
 		Debug.Log ("LOAD ENDED");
 	}
 
-	public void LoadWorldTilesFromWorldFile(string mapname){
-		string path = System.IO.Path.Combine (Application.dataPath.Replace ("/Assets", ""), "maps");
-		if(Directory.Exists(path) == false){
-			Directory.CreateDirectory (path);
-		}
-//		string lines = File.ReadAllText (System.IO.Path.Combine( path , name + ".map" ));
-		//read tiles here
-	}
+    internal static void SetWorldData(WorldSaveState world) {
+        save = world;
+    }
+
 	List<Worker> loadWorker;
 	public void AddWorkerForLoad(Worker w){
 		if(loadWorker==null){

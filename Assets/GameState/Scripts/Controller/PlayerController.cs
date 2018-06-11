@@ -11,7 +11,7 @@ using System.IO;
 public class PlayerController : MonoBehaviour {
 	public static int currentPlayerNumber;
 	int piratePlayerNumber = int.MaxValue; // so it isnt the same like the number of wilderness
-	public Player currPlayer{get {return players [currentPlayerNumber];}}
+	public Player CurrPlayer{get {return players [currentPlayerNumber];}}
 	HashSet<War> playerWars;
 	float balanceTicks;
 	float tickTimer;
@@ -19,9 +19,10 @@ public class PlayerController : MonoBehaviour {
 	List<Player> players;
 	EventUIManager euim;
 
+    static PlayerControllerSave save;
 
-	// Use this for initialization
-	void OnEnable () {			
+    // Use this for initialization
+    void OnEnable () {			
 		if (Instance != null) {
 			Debug.LogError("There should never be two mouse controllers.");
 		}
@@ -41,7 +42,10 @@ public class PlayerController : MonoBehaviour {
 		GameObject.FindObjectOfType<BuildController>().RegisterStructureCreated (OnStructureCreated);
 		euim = GameObject.FindObjectOfType<EventUIManager> ();
 		GameObject.FindObjectOfType<EventController> ().RegisterOnEvent (OnEventCreated, OnEventEnded);
-
+        if(save != null) {
+            LoadPlayerData();
+            save = null;
+        }
 	}
 	
 	// Update is called once per frame
@@ -122,7 +126,12 @@ public class PlayerController : MonoBehaviour {
 			InformAIaboutEvent (ge, true);
 		}
 	}
-	public void OnEventEnded(GameEvent ge){
+
+    internal static void SetPlayerData(PlayerControllerSave pcs) {
+        save = pcs;
+    }
+
+    public void OnEventEnded(GameEvent ge){
 		//MAYBE REMOVE the message from the ui?
 		//else inform the ai again
 	}
@@ -136,16 +145,16 @@ public class PlayerController : MonoBehaviour {
 	}
 
 
-	public void reduceMoney(int money, int playerNr) {
+	public void ReduceMoney(int money, int playerNr) {
 		players[playerNr].ReduceMoney (money);
 	}
-	public void addMoney(int money, int playerNr) {
+	public void AddMoney(int money, int playerNr) {
 		players [playerNr].AddMoney (money);
 	}
-	public void reduceChange(int amount, int playerNr) {
+	public void ReduceChange(int amount, int playerNr) {
 		players [playerNr].ReduceChange (amount);
 	}
-	public void addChange(int amount, int playerNr) {
+	public void AddChange(int amount, int playerNr) {
 		players [playerNr].ReduceChange (amount);
 	}
 	public void OnCityCreated(City city){
@@ -155,7 +164,7 @@ public class PlayerController : MonoBehaviour {
 		if(loading){
 			return; // getsloaded in so no need to subtract any money
 		}
-		reduceMoney (structure.buildcost,structure.playerNumber);
+		ReduceMoney (structure.Buildcost,structure.PlayerNumber);
 	}
 	public bool ArePlayersAtWar(int pnum1,int pnum2){
 		if(pnum1 == pnum2){
@@ -195,12 +204,12 @@ public class PlayerController : MonoBehaviour {
 		// Create/overwrite the save file with the xml text.
 		return new PlayerControllerSave(currentPlayerNumber, balanceTicks, tickTimer, players,playerWars);
 	}
-	public void LoadPlayerData(PlayerControllerSave pcs){
-		currentPlayerNumber = pcs.currentPlayerNumber;
-		players = pcs.players;
-		playerWars = pcs.playerWars;
-		tickTimer = pcs.tickTimer;
-		balanceTicks = pcs.balanceTicks;
+	public void LoadPlayerData(){
+		currentPlayerNumber = save.currentPlayerNumber;
+		players = save.players;
+		playerWars = save.playerWars;
+		tickTimer = save.tickTimer;
+		balanceTicks = save.balanceTicks;
 	}
 
 }

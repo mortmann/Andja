@@ -23,18 +23,18 @@ public class BuildMenuUIController : MonoBehaviour {
 		buildController = BuildController.Instance;
 		buttons= new List<string>[4];
 
-		player = PlayerController.Instance.currPlayer;
+		player = PlayerController.Instance.CurrPlayer;
 
 		for (int i = 0; i < 4; i++) {
 			buttons [i] = new List<string> ();
 		}
-		foreach (Structure s in buildController.structurePrototypes.Values) {
-			if(s.canBeBuild==false){
+		foreach (Structure s in buildController.StructurePrototypes.Values) {
+			if(s.CanBeBuild==false){
 				continue; 
 			}
 			GameObject b = Instantiate(buttonPrefab);
-			b.name = s.spriteName;
-			b.GetComponentInChildren<Text>().text = s.spriteName;
+			b.name = s.SpriteName;
+			b.GetComponentInChildren<Text>().text = s.SpriteName;
 			b.transform.SetParent(buttonBuildingContent.transform);
 
 			b.GetComponent<Button> ().onClick.AddListener(() => {OnClick(b.name);});
@@ -77,7 +77,7 @@ public class BuildMenuUIController : MonoBehaviour {
 			return;
 		}
 		foreach (string name in buttons[level]) {
-			if (count >= buildController.structurePrototypes [nameToIDMap [name]].PopulationCount) {
+			if (count >= buildController.StructurePrototypes [nameToIDMap [name]].PopulationCount) {
 				nameToGOMap [name].SetActive (true);
 			}
 		}
@@ -106,7 +106,7 @@ public class BuildMenuUIController : MonoBehaviour {
 			nameToGOMap[item].SetActive (false);
 		}
 		foreach (string name in buttons[i]) {
-			if (player.MaxPopulationCount >= buildController.structurePrototypes [nameToIDMap [name]].PopulationCount) {
+			if (player.MaxPopulationCount >= buildController.StructurePrototypes [nameToIDMap [name]].PopulationCount) {
 				nameToGOMap [name].SetActive (true);
 			}
 		}

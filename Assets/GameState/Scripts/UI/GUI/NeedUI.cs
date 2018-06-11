@@ -30,7 +30,7 @@ public class NeedUI : MonoBehaviour {
 		nameText.text = need.Name;
 	}
 	void Update(){
-		if(PlayerController.Instance.currPlayer.HasUnlockedNeed(need)==false){
+		if(PlayerController.Instance.CurrPlayer.HasUnlockedNeed(need)==false){
 			percentageText.text = "LOCKED!";
 			return;
 		}

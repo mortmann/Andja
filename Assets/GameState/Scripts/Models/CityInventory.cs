@@ -9,7 +9,7 @@ public class CityInventory : Inventory {
 	public CityInventory(string name = "CITY"){
 		numberOfSpaces = -1;
 		this.name = name;
-		items = BuildController.Instance.getCopieOfAllItems ();
+		items = PrototypController.Instance.GetCopieOfAllItems ();
 		maxStackSize = 50;
 	}
 
@@ -49,7 +49,7 @@ public class CityInventory : Inventory {
 	public override Item[] GetAllItemsAndRemoveThem(){
 		//get all items in a list
 		List<Item> temp = new List<Item> (items.Values);
-		items = BuildController.Instance.getCopieOfAllItems ();
+		items = BuildController.Instance.GetCopieOfAllItems ();
         cbInventoryChanged?.Invoke(this);
         return temp.ToArray ();
 	}

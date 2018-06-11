@@ -11,25 +11,26 @@ public class Fertility : IComparable<Fertility>, IEqualityComparer<Fertility> {
 	public int ID;
 
 	protected FertilityPrototypeData _prototypData;
-	public FertilityPrototypeData data {
-		get { if(_prototypData==null){
+	public FertilityPrototypeData Data {
+		get {
+            if (_prototypData==null) {
 				_prototypData = PrototypController.Instance.GetFertilityPrototypDataForID (ID);
 			}
 			return _prototypData;
 		}
 	}
 
-	public string name {
-		get {return data.Name;}
+	public string Name {
+		get {return Data.Name;}
 	}
-	public Climate[] climates{
-		get {return data.climates;}
+	public Climate[] Climates{
+		get {return Data.climates;}
 	}
-
 	public Fertility(){
 		
 	}
-	public Fertility(int ID, FertilityPrototypeData fpd){
+
+	public Fertility(int ID, FertilityPrototypeData fpd) {
 		this.ID = ID;
 		this._prototypData = fpd;
 	}

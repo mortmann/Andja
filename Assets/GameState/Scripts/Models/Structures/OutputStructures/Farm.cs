@@ -78,7 +78,7 @@ public class Farm : OutputStructure {
 			rangeTile.RegisterTileStructureChangedCallback (OnTileStructureChange);
 		}	
 	}
-	public override void update (float deltaTime){
+	public override void Update (float deltaTime){
 		if(growableReadyCount==0){
 			return;
 		}
@@ -168,11 +168,11 @@ public class Farm : OutputStructure {
 		}
 		percentage = Mathf.RoundToInt (((float)count / (float)hs.Count) * 100);
 
-		if(growable.fer !=null){
+		if(growable.Fertility !=null){
 			if(t.MyIsland==null){
 				return;
 			}
-			if(t.MyIsland.myFertilities.Contains (growable.fer)==false){
+			if(t.MyIsland.myFertilities.Contains (growable.Fertility)==false){
 				percentage = 0;
 			} else {
 				//TODO calculate the perfect grow environment?

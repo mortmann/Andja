@@ -90,7 +90,7 @@ public class StructureSpriteController : MonoBehaviour {
 			goContact.name = "ContactCollider";
 		}
 
-		if (structure.hasHitbox) {
+		if (structure.HasHitbox) {
 			BoxCollider2D col = go.AddComponent<BoxCollider2D> ();
 			col.size = new Vector2 (sr.sprite.textureRect.size.x /sr.sprite.pixelsPerUnit, sr.sprite.textureRect.size.y / sr.sprite.pixelsPerUnit);
 		}

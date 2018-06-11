@@ -32,7 +32,7 @@ public class Inventory {
         items = new Dictionary<int, Item>();
 		if (numberOfSpaces == -1) {
 			//for cities
-			items = BuildController.Instance.getCopieOfAllItems ();
+			items = BuildController.Instance.GetCopieOfAllItems ();
 		} 
         this.numberOfSpaces = numberOfSpaces;
     }

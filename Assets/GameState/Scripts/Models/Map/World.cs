@@ -14,26 +14,13 @@ public class World : IGEventable{
 
 	[JsonPropertyAttribute] public List<Island> IslandList { get; protected set; }
 	[JsonPropertyAttribute] public List<Unit> Units { get; protected set; }
-	[JsonPropertyAttribute] public readonly int Width;
-	[JsonPropertyAttribute] public readonly int Height;
-	/// <summary>
-	/// ONLY for saving
-	/// </summary>
-	/// <value>The tile list.</value>
-	[JsonPropertyAttribute] public List<Tile> TileList {
-		get {
-			if (Tiles == null) {
-				return new List<Tile> ();
-			}
-			List<Tile> l = new List<Tile> (Tiles);
-			l.RemoveAll (x => x.Type == TileType.Ocean);
-			return l;
-		} 
-	}
 
-	#endregion
-	#region RuntimeOrOther
-	public Tile[] Tiles { get; protected set; }
+    #endregion
+    #region RuntimeOrOther
+    public int Width;
+    public int Height;
+
+    public Tile[] Tiles { get; protected set; }
 	public static List<Need> GetCopieOfAllNeeds() {
 		return PrototypController.Instance.GetCopieOfAllNeeds();
 	}
@@ -90,17 +77,18 @@ public class World : IGEventable{
 		this.Width = width;
 		this.Height = height;
 		this.Tiles = new Tile[Width*Height];
-		foreach(Tile t in addTiles){
+        foreach (Tile t in addTiles){
 			if(t!=null)
 				SetTileAt (t.X, t.Y, t);
 		}
 		for (int x = 0; x < width; x++) {
 			for (int y = 0; y < height; y++) {
 				if (GetTileAt (x, y) == null)
-					SetTileAt (x, y, new Tile ());
+					SetTileAt (x, y, new Tile (x,y));
 			}
-		}
-		SetupWorld ();
+        }
+
+        SetupWorld();
 
 //		for (int x = 29; x < 41; x++) {
 //			for (int y = 39; y < 61; y++) {
@@ -129,12 +117,21 @@ public class World : IGEventable{
 //		CreateIsland (31, 41);
 //		CreateIsland (61, 41);
 	}
-	/// <summary>
-	/// Initializes a new instance of the <see cref="World"/> class. Used in the Editor!
-	/// </summary>
-	/// <param name="width">Width.</param>
-	/// <param name="height">Height.</param>
-	public World(int width, int height){
+
+
+    internal void SetTiles(Tile[] tiles, int width, int height) {
+        Tiles = tiles;
+        Width = width;
+        Height = height;
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="World"/> class. Used in the Editor!
+    /// </summary>
+    /// <param name="width">Width.</param>
+    /// <param name="height">Height.</param>
+    [JsonConstructor]
+    public World(int width, int height){
 		this.Width = width;
 		this.Height = height;
 		Tiles = new Tile[Width*Height];
@@ -145,7 +142,7 @@ public class World : IGEventable{
 		}
 		Current = this;
 	}
-	[JsonConstructor]
+	
 	public World(List<Tile> tileList, int Width, int Height){
 		this.Width = Width;
 		this.Height = Height;
@@ -158,7 +155,16 @@ public class World : IGEventable{
 		allFertilities = PrototypController.Instance.allFertilities;
 		idToFertilities= PrototypController.Instance.idToFertilities;
 	}
-	public void SetupWorld(){
+    //[JsonConstructor]
+    //public World(int Width, int Height) {
+    //    this.Width = Width;
+    //    this.Height = Height;
+    //    Tiles = new Tile[Width * Height];
+    //    Current = this;
+    //    allFertilities = PrototypController.Instance.allFertilities;
+    //    idToFertilities = PrototypController.Instance.idToFertilities;
+    //}
+    public void SetupWorld(){
 		Current = this;
 		allFertilities = PrototypController.Instance.allFertilities;
 		idToFertilities= PrototypController.Instance.idToFertilities;
@@ -184,9 +190,6 @@ public class World : IGEventable{
 	}
 
 	public void CreateIsland(MapGenerator.IslandStruct islandStruct){
-		float third = (float)Height/3f;
-		
-
 		Fertility[] fers = new Fertility[3];
 		if(PrototypController.Instance.GetFertilitiesForClimate(islandStruct.climate) ==null){
             Debug.LogError("NO fertility found for this climate " + islandStruct.climate);
@@ -204,7 +207,6 @@ public class World : IGEventable{
 			fers [i] = f;
 		}
         foreach(Fertility f in fers) {
-            Debug.Log(islandStruct.climate + " " + f);
         }
         Island island = new Island(islandStruct.Tiles, islandStruct.climate) {
             myFertilities = new List<Fertility>(fers)

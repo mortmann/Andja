@@ -232,17 +232,17 @@ public class CameraController : MonoBehaviour {
 	public CameraSave GetSaveCamera(){
         CameraSave cs = new CameraSave {
             orthographicSize = Camera.main.orthographicSize,
-            pos = Camera.main.transform.position
+            pos = new SeriaziableVector3(Camera.main.transform.position)
         };
         return cs;
 	}
 	public void LoadSaveCameraData(){
-		Camera.main.transform.position = save.pos;
+		Camera.main.transform.position = save.pos.GetVector3();
 		Camera.main.orthographicSize = save.orthographicSize;
 	}
 }
 [Serializable]
 public class CameraSave {
-	public Vector3 pos;
+	public SeriaziableVector3 pos;
 	public float orthographicSize;
 }

@@ -563,7 +563,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 11473390, guid: dfbb72e7b75263b4da3c1b05eaa385c6, type: 2}
       propertyPath: loadsavegame
-      value: 
+      value: test1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: dfbb72e7b75263b4da3c1b05eaa385c6, type: 2}

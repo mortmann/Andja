@@ -7,9 +7,9 @@
     "Height": 500,
     "Width": 500,
     "usedIslands": [
-      "islands\\Middle\\Middle\\middle_m1.isl",
-      "islands\\Cold\\Middle\\north_m2.isl",
-      "islands\\Warm\\Small\\south_s1.isl"
+      "Middle\\Middle\\middle_m1.isl",
+      "Cold\\Middle\\north_m2.isl",
+      "Warm\\Small\\south_s1.isl"
     ]
   },
   "world": {
@@ -1105,25 +1105,9 @@
     "$id": "159",
     "pos": {
       "$id": "160",
-      "x": 270.091034,
-      "y": 281.7188,
-      "z": -10.0,
-      "normalized": {
-        "x": 0.691825867,
-        "y": 0.7216099,
-        "z": -0.0256145447,
-        "normalized": {
-          "x": 0.6918259,
-          "y": 0.72160995,
-          "z": -0.0256145466,
-          "magnitude": 1.0,
-          "sqrMagnitude": 1.00000012
-        },
-        "magnitude": 0.99999994,
-        "sqrMagnitude": 0.99999994
-      },
-      "magnitude": 390.4032,
-      "sqrMagnitude": 152414.656
+      "X": 270.091034,
+      "Y": 281.7188,
+      "Z": -10.0
     },
     "orthographicSize": 13.1220007
   }

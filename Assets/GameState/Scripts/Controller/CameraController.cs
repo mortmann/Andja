@@ -123,7 +123,10 @@ public class CameraController : MonoBehaviour {
 				}
 
 				if(isInNew){
-					tilesCurrentInCameraView.Add (tile_data); 
+                    //all after this are in the view so we have to maybe update em
+                    World.Current.OnTileChanged(tile_data);
+
+                    tilesCurrentInCameraView.Add (tile_data); 
 					if(tile_data.Structure!=null){
 						structureCurrentInCameraView.Add (tile_data.Structure);
 					}

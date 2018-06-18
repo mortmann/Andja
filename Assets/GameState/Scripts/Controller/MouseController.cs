@@ -508,8 +508,8 @@ public class MouseController : MonoBehaviour {
 		}
 		if(HighlightTiles!=null&&HighlightTiles.Contains(t)){
 			return TileMark.Highlight;
-		} else
-			if(t.MyCity!=null&&t.MyCity.IsCurrPlayerCity ()){
+		}
+        else if(t.MyCity!=null&&t.MyCity.IsCurrPlayerCity ()){
 			return TileMark.None;
 		} else {
 			return TileMark.Dark;

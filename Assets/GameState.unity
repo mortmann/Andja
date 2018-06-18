@@ -2344,7 +2344,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5407655ab65b55340b607643ca29f76d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  IsLoadingSave: 0
   IsDone: 0
   loadingPercantage: 0
 --- !u!224 &163883869 stripped

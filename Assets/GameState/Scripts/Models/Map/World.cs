@@ -314,10 +314,7 @@ public class World : IGEventable{
 	}
     // Gets called whenever ANY tile changes
     public void OnTileChanged(Tile t) {
-        if (cbTileChanged == null)
-            return;
-
-        cbTileChanged(t);
+        cbTileChanged?.Invoke(t);
     }
 	public void RegisterOnEvent(Action<GameEvent> create,Action<GameEvent> ending){
 		cbEventCreated += create;

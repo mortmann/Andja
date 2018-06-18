@@ -124,25 +124,7 @@ public class TileSpriteController : MonoBehaviour {
             Debug.LogError("tileGame ObjectMap's returned GameObject is null -- did you forget to add the tile to the dictionary? Or maybe forget to unregister a callback?");
             return;
         }
-        if (clearMaterial == null) {
-            clearMaterial = sr.material;
-        }
-        //for now the tile knows what a sprite has for one for know
-        if (tile_data.SpriteName != null && nameToSprite.ContainsKey(tile_data.SpriteName)) {
-            sr.sprite = nameToSprite[tile_data.SpriteName];
-        }
-        //TODO: Fix it so far that this temporary fix isnt needed anymore
-        if (tile_data.Type == TileType.Shore) {
-            if (sr.sprite == null) {
-                if(EditorController.IsEditor)
-                    Debug.Log("Missing Sprite for Shore " + tile_data.SpriteName);
-                sr.sprite = nameToSprite["shore_"];
-            }
-        }
-		
-        if(sr.sprite == null) {
-            sr.sprite = noSprite;
-        }
+        
         if (TileDeciderFunc != null) {
             darkLayer.SetActive(true);
             TileMark tm = TileDeciderFunc(tile_data);
@@ -177,18 +159,37 @@ public class TileSpriteController : MonoBehaviour {
         SimplePool.Despawn (tileSpriteRendererMap [t].gameObject);
 		tileSpriteRendererMap.Remove (t);
 	}
-	public void SpawnTile(Tile t){
-		if(EditorController.IsEditor&& tileSpriteRendererMap.ContainsKey (t)){
+	public void SpawnTile(Tile tile_data){
+		if(EditorController.IsEditor&& tileSpriteRendererMap.ContainsKey (tile_data)){
 			return;
 		}
-		GameObject tile_go = SimplePool.Spawn( tilePrefab, new Vector3(t.X, t.Y, 0), Quaternion.identity );
-		tile_go.name = "Tile_" + t.X + "_" + t.Y;
-		tile_go.transform.position = new Vector3(t.X , t.Y , 0);
+		GameObject tile_go = SimplePool.Spawn( tilePrefab, new Vector3(tile_data.X, tile_data.Y, 0), Quaternion.identity );
+		tile_go.name = "Tile_" + tile_data.X + "_" + tile_data.Y;
+		tile_go.transform.position = new Vector3(tile_data.X , tile_data.Y , 0);
 		SpriteRenderer sr = tile_go.GetComponent<SpriteRenderer>();
 		sr.sortingLayerName = "Tile";
 		tile_go.transform.SetParent(this.transform, true);
-		tileSpriteRendererMap.Add(t, sr);
-		OnTileChanged(t);
+		tileSpriteRendererMap.Add(tile_data, sr);
+        if (clearMaterial == null) {
+            clearMaterial = sr.material;
+        }
+        //for now the tile knows what a sprite has for one for know
+        if (tile_data.SpriteName != null && nameToSprite.ContainsKey(tile_data.SpriteName)) {
+            sr.sprite = nameToSprite[tile_data.SpriteName];
+        }
+        //TODO: Fix it so far that this temporary fix isnt needed anymore
+        if (tile_data.Type == TileType.Shore) {
+            if (sr.sprite == null) {
+                if (EditorController.IsEditor)
+                    Debug.Log("Missing Sprite for Shore " + tile_data.SpriteName);
+                sr.sprite = nameToSprite["shore_"];
+            }
+        }
+
+        if (sr.sprite == null) {
+            sr.sprite = noSprite;
+        }
+        OnTileChanged(tile_data);
 
 		
 	}

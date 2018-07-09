@@ -3,14 +3,14 @@
 public class GS_Brightness : GS_SliderBase {
 
 	public override void OnStart() {
-		setting = Settings.Brightness;
-		if(graphicsSettings.hasSavedGraphicsOption(setting))
-			slider.value = (float.Parse (graphicsSettings.getSavedGraphicsOption (setting)));
+		setting = GraphicsSetting.Brightness;
+		if(graphicsSettings.HasSavedGraphicsOption(setting))
+			slider.value = (float.Parse (graphicsSettings.GetSavedGraphicsOption (setting)));
         displayValue.text = Value.ToString() + "%";
     }
 
     protected override void OnSliderValueChange() {
-		graphicsSettings.setSavedGraphicsOption (setting,slider.value);
+		graphicsSettings.SetSavedGraphicsOption (setting,slider.value);
 	}
 
     protected override void OnSliderValueChangeSetDisplayText() {

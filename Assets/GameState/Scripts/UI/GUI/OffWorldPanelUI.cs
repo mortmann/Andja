@@ -68,7 +68,7 @@ public class OffWorldPanelUI : MonoBehaviour {
 		shipDP.RefreshShownValue ();
 	}
 	public void OnDeleteClick(){
-		intToGameObject [pressedItem].SetItem (null, ship.inventory.maxStackSize);
+		intToGameObject [pressedItem].SetItem (null, ship.inventory.MaxStackSize);
 		intToItem.Remove (pressedItem);
 	}
 	public void OnSendClick(){
@@ -90,15 +90,15 @@ public class OffWorldPanelUI : MonoBehaviour {
 		intToItem [pressedItem].count = (int)f;
 	}
 	public void Show(Ship unit){
-		amountSlider.maxValue = unit.inventory.maxStackSize;
+		amountSlider.maxValue = unit.inventory.MaxStackSize;
 		this.ship = unit;
 		ResetItemIcons ();
 	}
 	private void AddItemPrefabTo(Transform t){
 		GameObject g = GameObject.Instantiate (itemPrefab);
 		g.transform.SetParent (t);
-		g.GetComponentInChildren<Slider> ().maxValue = ship.inventory.maxStackSize;
-		g.GetComponentInChildren<Text> ().text= ship.inventory.maxStackSize+"t";
+		g.GetComponentInChildren<Slider> ().maxValue = ship.inventory.MaxStackSize;
+		g.GetComponentInChildren<Text> ().text= ship.inventory.MaxStackSize+"t";
 		//TODO add listener stuff
 		int i = intToGameObject.Count;
 		intToGameObject.Add (i,g.GetComponent<ItemUI> ()); 
@@ -124,11 +124,11 @@ public class OffWorldPanelUI : MonoBehaviour {
 		if(ship==null){
 			return;
 		}
-		for (int i = 0; i < ship.inventory.numberOfSpaces; i++) {
+		for (int i = 0; i < ship.inventory.NumberOfSpaces; i++) {
 			AddItemPrefabTo (toBuy.transform); 
 			Item item = ship.inventory.GetItemWithNRinItems(i);
 			GameObject g = GameObject.Instantiate (itemPrefab);
-			g.GetComponent<ItemUI> ().SetItem (item,ship.inventory.maxStackSize);
+			g.GetComponent<ItemUI> ().SetItem (item,ship.inventory.MaxStackSize);
 			g.transform.SetParent (onShip.transform);
 		}
 	}

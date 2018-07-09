@@ -26,8 +26,8 @@ public class UnitHoldingScript : MonoBehaviour {
 			}
 			line.SetPosition (s, new Vector3 (unit.pathfinding.dest_X, unit.pathfinding.dest_Y,-1));
 		}
-		x=unit.pathfinding.currTile.X;
-		y=unit.pathfinding.currTile.Y;
+		x=unit.pathfinding.CurrTile.X;
+		y=unit.pathfinding.CurrTile.Y;
 		rot =unit.pathfinding.rotation; 
 		playerNumber = unit.playerNumber;
 	}

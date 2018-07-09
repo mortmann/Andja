@@ -6,15 +6,22 @@ public class HoverOverScript : MonoBehaviour {
 	float lifetime=1;
 	public float hovertime=3f;
 	bool show;
-
-	public void Show(string text){
+    public Text Header;
+    public Text Description;
+    public void Show(string header, string description = null){
 //		if(GetComponentInParent<Mask>()!=null){
 //			while(GetComponentInParent<Mask>()!=null){
 //				transform.SetParent (transform.parent.parent);
 //			}
 //		}
 		transform.GetChild (0).gameObject.SetActive (true);
-		GetComponentInChildren<Text> ().text = text;
+		GetComponentInChildren<Text> ().text = header;
+        if(description != null) {
+            Description.gameObject.SetActive(true);
+            Description.text = description;
+        } else {
+            Description.gameObject.SetActive(false);
+        }
 		transform.GetChild (0).gameObject.SetActive (false);
 		show = true;
 	}

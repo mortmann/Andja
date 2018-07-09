@@ -2,7 +2,7 @@
 using System.Collections;
 using Newtonsoft.Json;
 
-public class GrowablePrototypData : OutputPrototypData {
+public class GrowablePrototypeData : OutputPrototypData {
 	public Fertility fertility;
 	public int ageStages = 2;
 
@@ -24,17 +24,17 @@ public class Growable : OutputStructure {
 	public Fertility Fertility {get{ return GrowableData.fertility; }}
 	public int AgeStages {get{ return GrowableData.ageStages; }}
 
-	protected GrowablePrototypData _growableData;
-	public GrowablePrototypData GrowableData {
+	protected GrowablePrototypeData _growableData;
+	public GrowablePrototypeData GrowableData {
 		get { if(_growableData==null){
-				_growableData = (GrowablePrototypData)PrototypController.Instance.GetStructurePrototypDataForID (ID);
+				_growableData = (GrowablePrototypeData)PrototypController.Instance.GetStructurePrototypDataForID (ID);
 			}
 			return _growableData;
 		}
 	}
 	#endregion
 
-	public Growable(int id, GrowablePrototypData _growableData){
+	public Growable(int id, GrowablePrototypeData _growableData){
 		this.ID = id;
 		this._growableData = _growableData;
 	}
@@ -64,14 +64,14 @@ public class Growable : OutputStructure {
 		}
 		if(currentStage==AgeStages){
 			hasProduced = true;
-			output[0].count=1;
+			Output[0].count=1;
 			CallbackIfnotNull ();
 			return;
 		}
 
 		age += efficiencyModifier*(deltaTime);
 
-		if((age) > currentStage*(produceTime/(float)AgeStages+1)){
+		if((age) > currentStage*(ProduceTime/(float)AgeStages+1)){
 			if(Random.Range (0,100) < 98){
 				return;
 			}
@@ -99,7 +99,7 @@ public class Growable : OutputStructure {
 		return base.GetSpriteName () + "_" + currentStage;
 	}
 	public void Reset (){
-		output[0].count = 0;
+		Output[0].count = 0;
 		currentStage= 0;
 		age = 0f;
 		CallbackIfnotNull ();

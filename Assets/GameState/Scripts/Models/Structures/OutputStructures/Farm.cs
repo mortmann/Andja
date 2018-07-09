@@ -75,23 +75,23 @@ public class Farm : OutputStructure {
 			}
 		}
 		foreach(Tile rangeTile in myRangeTiles){
-			rangeTile.RegisterTileStructureChangedCallback (OnTileStructureChange);
+			rangeTile.RegisterTileOldNewStructureChangedCallback (OnTileStructureChange);
 		}	
 	}
 	public override void Update (float deltaTime){
 		if(growableReadyCount==0){
 			return;
 		}
-		if(output[0].count >= maxOutputStorage){
+		if(Output[0].count >= MaxOutputStorage){
 			return;
 		}
 		//send out worker to collect goods
 		produceCountdown += deltaTime;
-		if(produceCountdown >= produceTime) {
+		if(produceCountdown >= ProduceTime) {
 			produceCountdown = 0;
 			if (growable != null) {
 				Growable g = (Growable)workingGrowables.Dequeue ();
-				output[0].count++;
+				Output[0].count++;
 				growableReadyCount--;
 				((Growable)g).Reset ();
 			}

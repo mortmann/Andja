@@ -95,10 +95,19 @@ public class City : IGEventable {
 		_name = "<City>" + UnityEngine.Random.Range (0, 1000);
 		//		useTickTimer = useTick;
     }
-	/// <summary>
-	/// DO NOT USE! ONLY serialization!
-	/// </summary>
-	public City(){
+
+    internal bool HasAnythingOfItems(Item[] buildingItems) {
+        foreach (Item i in buildingItems) {
+            if (HasAnythingOfItem(i) == false)
+                return false;
+        }
+        return true;
+    }
+
+    /// <summary>
+    /// DO NOT USE! ONLY serialization!
+    /// </summary>
+    public City(){
         MyTiles = new HashSet<Tile>();
         Setup();
     }
@@ -253,7 +262,7 @@ public class City : IGEventable {
         AddTiles(new HashSet<Tile>(t));
     }
 
-    public void AddTiles(HashSet<Tile> t){
+    public void AddTiles(HashSet<Tile> t) { 
 		// does not really needs it because tiles witout island reject cities
 		//but it is a secondary security that this does not happen
 		if(t==null){
@@ -262,22 +271,16 @@ public class City : IGEventable {
 		t.RemoveWhere (x =>x==null || x.Type == TileType.Ocean);
         List<Tile> tiles = new List<Tile> (t);
 		for (int i = 0; i < tiles.Count; i++) {
-			tiles [i].MyCity = this;
-			if(tiles[i].Structure != null){
-				if (myStructures.Contains (tiles [i].Structure) ==false) { 
-					tiles [i].Structure.City = this;
-					AddStructure (tiles [i].Structure);
-				}
-			}
-			MyTiles.Add (tiles[i]);
-		}
+            AddTile(tiles[i]);
+        }
 		island.allReadyHighlighted = false;
-	}
+    }
 	public void AddTile(Tile t){
         if (t.Type==TileType.Ocean||MyTiles.Contains (t)){
 			return;
 		}
-		if(t.Structure != null){
+        t.MyCity = this;
+        if (t.Structure != null){
 			if (myStructures.Contains (t.Structure) == false) { 
 				t.Structure.City = this;
 				AddStructure (t.Structure);
@@ -285,6 +288,9 @@ public class City : IGEventable {
 		}
 		island.allReadyHighlighted = false;
 		MyTiles.Add (t);
+        if (IsCurrPlayerCity()) {
+            World.Current.OnTileChanged(t);
+        }
 	}
 	public bool GetNeedCriticalForLevel(int buildingLevel){
 		return criticalAvaibilityNeed [buildingLevel];
@@ -307,7 +313,7 @@ public class City : IGEventable {
 			return;
 		}
 		foreach (Item item in remove) {
-			inventory.removeItemAmount (item);
+			inventory.RemoveItemAmount (item);
 		}
 	}
 
@@ -317,11 +323,16 @@ public class City : IGEventable {
 		}
 		Item i = item.Clone ();
 		i.count = amount;
-		inventory.removeItemAmount (i);
+		inventory.RemoveItemAmount (i);
 	}
-
-	public bool HasItem(Item item){
-		return inventory.hasAnythingOf (item);
+    public bool HasEnoughOfItems(IEnumerable<Item> item) {
+        return inventory.HasEnoughOfItems(item);
+    }
+    public bool HasEnoughOfItem(Item item) {
+        return inventory.HasEnoughOfItem(item);
+    }
+    public bool HasAnythingOfItem(Item item){
+		return inventory.HasAnythingOf (item);
 	}
 	public bool IsWilderness(){
 		if(playerNumber==-1 && this != island.Wilderness){
@@ -385,18 +396,18 @@ public class City : IGEventable {
 			return 0;
 		}
 		if (tradeUnit == null && ship==null) {
-			return inventory.moveItem (myWarehouse.inRangeUnits [0].inventory, toTrade,amount);
+			return inventory.MoveItem (myWarehouse.inRangeUnits [0].inventory, toTrade,amount);
 		} else if(ship==null){
-			return inventory.moveItem (tradeUnit.inventory, toTrade,amount);
+			return inventory.MoveItem (tradeUnit.inventory, toTrade,amount);
 		} else {
-			return inventory.moveItem (ship.inventory, toTrade,amount);
+			return inventory.MoveItem (ship.inventory, toTrade,amount);
 		}
 	}
 	public int TradeFromShip(Unit u,Item getTrade,int amount = 50){
 		if(getTrade ==null){
 			return 0;
 		}
-		return u.inventory.moveItem (inventory,getTrade,amount);
+		return u.inventory.MoveItem (inventory,getTrade,amount);
 	}
 	public float GetPercentage(Need need){
 		if(idToNeed.ContainsKey (need.ID)==false){
@@ -471,7 +482,10 @@ public class City : IGEventable {
 			item.MyCity = null;
 			if(item.MyCity!=this){
 				MyTiles.Remove (item);
-			}
+                if (IsCurrPlayerCity()) {
+                    World.Current.OnTileChanged(item);
+                }
+            }
 		}
 		if(MyTiles.Count==0){
 			Destroy ();

@@ -9,8 +9,8 @@ public class ContactColliderScript : MonoBehaviour {
 		UnitHoldingScript uhs = coll.gameObject.GetComponent<UnitHoldingScript> ();
 		if (uhs != null && uhs.unit.inventory!=null) {
 			Unit u = uhs.unit;
-			u.isInRangeOfWarehouse (contact);
-			((Warehouse)contact).addUnitToTrade (u);
+			u.IsInRangeOfWarehouse (contact);
+			((Warehouse)contact).AddUnitToTrade (u);
 		}
 	}
 
@@ -18,16 +18,16 @@ public class ContactColliderScript : MonoBehaviour {
 		UnitHoldingScript uhs = coll.gameObject.GetComponent<UnitHoldingScript> ();
 		if (uhs != null && uhs.unit.inventory!=null) {
 			Unit u = uhs.unit;
-			u.isInRangeOfWarehouse (contact);
-			((Warehouse)contact).addUnitToTrade (u);
+			u.IsInRangeOfWarehouse (contact);
+			((Warehouse)contact).AddUnitToTrade (u);
 		}
 	}
 	void OnCollisionExit2D(Collision2D coll) {
 		UnitHoldingScript uhs = coll.gameObject.GetComponent<UnitHoldingScript> ();
 		if (uhs != null && uhs.unit.inventory!=null) {
 			Unit u = uhs.unit;
-			u.isInRangeOfWarehouse (null);
-			((Warehouse)contact).removeUnitFromTrade (u);
+			u.IsInRangeOfWarehouse (null);
+			((Warehouse)contact).RemoveUnitFromTrade (u);
 		}
 	}
 }

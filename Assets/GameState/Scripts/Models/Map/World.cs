@@ -209,7 +209,8 @@ public class World : IGEventable{
         foreach(Fertility f in fers) {
         }
         Island island = new Island(islandStruct.Tiles, islandStruct.climate) {
-            myFertilities = new List<Fertility>(fers)
+            myFertilities = new List<Fertility>(fers),
+            Placement = new Vector2(islandStruct.x, islandStruct.y)
         };
         IslandList.Add (island);
 
@@ -241,8 +242,8 @@ public class World : IGEventable{
 		if (x < 0 || y < 0) {
 			return false;
 		}
-		if (x  <= t.X + 0.1f && x  >= t.X - 0.1f) {
-			if (y  <= t.Y + 0.1f && y  >= t.Y - 0.1f) {
+		if (x <= (float)t.X + 0.1f && x >= (float)t.X - 0.1f) {
+			if (y  <= (float)t.Y + 0.1f && y >= (float)t.Y - 0.1f) {
 				return true;
 			}
 		}
@@ -253,17 +254,11 @@ public class World : IGEventable{
         int y = Mathf.FloorToInt(fy);
 		return GetTileAt(x,y);
     }
-	public Unit CreateUnit(Tile t,int playernumber,bool isShip) {
-		Unit c = null;
-		if(isShip){
-			c = new Ship (t,playernumber);
-		} else {
-			c = new Unit (t,playernumber);			
-		}
-        Units.Add(c);
-		c.RegisterOnDestroyCallback (OnUnitDestroy);
-        cbUnitCreated?.Invoke(c);
-        return c;
+	public Unit CreateUnit(Unit unit) {
+        Units.Add(unit);
+        unit.RegisterOnDestroyCallback (OnUnitDestroy);
+        cbUnitCreated?.Invoke(unit);
+        return unit;
     }
 	public void OnUnitDestroy(Unit u){
 	}

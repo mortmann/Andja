@@ -16,7 +16,9 @@ public class UIController : MonoBehaviour {
 	public GameObject consoleCanvas;
 	public GameObject buildingCanvas;
 	public GameObject unitCanvas;
-	public GameObject rightCanvas;
+    public GameObject militaryBuildingCanvas;
+
+    public GameObject rightCanvas;
 	public GameObject CityInventoryCanvas;
 	public GameObject citizenCanvas;
 	public GameObject tradeMapCanvas;
@@ -71,7 +73,10 @@ public class UIController : MonoBehaviour {
 		if (str is MarketBuilding || str is Warehouse) {
 			OpenCityInventory (str.City);
 		}
-	}
+        if (str is MilitaryBuilding) {
+            OpenMilitaryBuildingInfo(str);
+        }
+    }
 	public void OpenOtherCity(City city){
 		if(city == null){
 			return;
@@ -94,15 +99,15 @@ public class UIController : MonoBehaviour {
 		otherCityUI.SetActive (false);
 		CityInventoryCanvas.SetActive (false);
 	}
-	public void toggleRightUI(){
+	public void ToggleRightUI(){
 		rightCanvas.SetActive (!rightCanvas.activeSelf);
 	}
 
-	public void showBuildMenu(){
+	public void ShowBuildMenu(){
 		chooseBuildCanvas.SetActive (!chooseBuildCanvas.activeSelf);
 	}
-	public void toggleInfoUI(){
-		if(unitCanvas.activeSelf || buildingCanvas.activeSelf){
+	public void ToggleInfoUI(){
+		if(unitCanvas.activeSelf || buildingCanvas.activeSelf || militaryBuildingCanvas.activeSelf) {
 			uiInfoCanvas.SetActive (true);
 		} else {
 			uiInfoCanvas.SetActive (false);
@@ -112,17 +117,30 @@ public class UIController : MonoBehaviour {
 		if(str == null){
 			return;
 		}
-		unitCanvas.SetActive (false);
-		buildingCanvas.SetActive (true);
-		toggleInfoUI ();
+        CloseInfoUI();
+        OpenInfoUI();
+        buildingCanvas.SetActive (true);
 		buildingCanvas.GetComponent<ProduktionUI>().Show (str);
 	}
-	public void CloseProduktionUI(){
-		buildingCanvas.SetActive (false);
-		CloseInfoUI ();
-	}
+    public void CloseProduktionUI() {
+        buildingCanvas.SetActive(false);
+        CloseInfoUI();
+    }
+    public void OpenMilitaryBuildingInfo(Structure str) {
+        if (str == null) {
+            return;
+        }
+        CloseInfoUI();
+        OpenInfoUI();
+        militaryBuildingCanvas.SetActive(true);
+        militaryBuildingCanvas.GetComponent<MilitaryBuildingUI>().Show(str);
+    }
+    public void CloseMilitaryBuildingInfo() {
+        buildingCanvas.SetActive(false);
+        CloseInfoUI();
+    }
 
-	public void TogglePauseMenu(){
+    public void TogglePauseMenu(){
 		pauseMenuCanvas.SetActive (!pauseMenuCanvas.activeSelf);
 		WorldController.Instance.IsModal = pauseMenuCanvas.activeSelf;
 	}
@@ -133,7 +151,7 @@ public class UIController : MonoBehaviour {
 		}
 		unitCanvas.SetActive (false);
 		buildingCanvas.SetActive (true);
-		toggleInfoUI ();
+		ToggleInfoUI ();
 		buildingCanvas.GetComponent<ProduktionUI>().Show (str);
 		TileSpriteController.Instance.AddDecider (StrcutureTileDecider);
 	}
@@ -189,7 +207,8 @@ public class UIController : MonoBehaviour {
 		}
 		unitCanvas.SetActive (false);
 		buildingCanvas.SetActive (false);
-		uiInfoCanvas.SetActive (false);
+        militaryBuildingCanvas.SetActive(false);
+        uiInfoCanvas.SetActive (false);
 	}
 	public void CloseChooseBuild(){
 		chooseBuildCanvas.SetActive (false);

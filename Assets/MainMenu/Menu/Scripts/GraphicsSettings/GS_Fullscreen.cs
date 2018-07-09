@@ -3,16 +3,17 @@ using System.Collections;
 
 public class GS_Fullscreen : GS_SliderBase {
 	public override void OnStart (){
-		setting = Settings.Fullscreen;
-		if(graphicsSettings.hasSavedGraphicsOption(setting))
-			SetFullscreen (bool.Parse (graphicsSettings.getSavedGraphicsOption (setting)));
+		setting = GraphicsSetting.Fullscreen;
+		if(graphicsSettings.HasSavedGraphicsOption(setting))
+			SetFullscreen (bool.Parse (graphicsSettings.GetSavedGraphicsOption (setting)));
 	}
 	protected override void OnSliderValueChange() {
 		SetFullscreen(System.Convert.ToBoolean(Value));
 	}
 
 	void SetFullscreen(bool value) {
-		graphicsSettings.setSavedGraphicsOption (setting,value);
-		slider.value = System.Convert.ToInt16(value);
+		graphicsSettings.SetSavedGraphicsOption (setting,value);
+        MouseController.Instance.autorotate = value;
+        slider.value = System.Convert.ToInt16(value);
 	}
 }

@@ -15,7 +15,12 @@ public class Player : IGEventable {
 	public HashSet<Need> UnlockedItemNeeds { get; protected set;}
 	public HashSet<Need>[] UnlockedStructureNeeds { get; protected set;}
 
-	private int _change;
+    private int maximumDebt = 0; // if we want a maximum debt where you still can buy things
+
+    private int _change;
+    /// <summary>
+    /// How the Balance CHANGES foreach Tick that happens
+    /// </summary>
 	public int Change { get { return _change;} 
 		protected set { _change = value;}
 	} //should be calculated after reload anyway
@@ -27,6 +32,9 @@ public class Player : IGEventable {
 	#region Serialized
 	[JsonPropertyAttribute]
 	private int _balance;
+    /// <summary>
+    /// How much Money you have to spend
+    /// </summary>
 	public int Balance { get { return _balance;} 
 		protected set { _balance = value;}
 	} 
@@ -59,8 +67,13 @@ public class Player : IGEventable {
 			_maxPopulationCount = value;
             cbMaxPopulationMLCountChange?.Invoke(MaxPopulationLevel, _maxPopulationCount);
         }
-	} 
-	[JsonPropertyAttribute]
+	}
+
+    internal bool HasEnoughMoney(int buildCost) {
+        return Balance + maximumDebt > buildCost;
+    }
+
+    [JsonPropertyAttribute]
 	public int playerNumber;
 	#endregion 
 

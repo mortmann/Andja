@@ -25,7 +25,8 @@ public class LandTile : Tile {
 				_structures.Destroy ();
 			} 
 			_structures = value;
-            cbTileStructureChanged?.Invoke(value, oldStructure);
+            cbTileOldNewStructureChanged?.Invoke(value, oldStructure);
+            cbTileStructureChanged?.Invoke(this, value);
         }
 	}
 	protected Island _myIsland;
@@ -51,8 +52,8 @@ public class LandTile : Tile {
 	public override City MyCity { 
 		get{
 			return _myCity;
-		} 
-		set {
+		}
+        set {
 			if(MyIsland==null){
 				return;
 			}
@@ -64,7 +65,6 @@ public class LandTile : Tile {
 					//its gonna go add them to a queue and giving it 
 					//in that order the right to own it
 					City c = cities.Dequeue ();
-					_myCity = value;
 					c.AddTile (this);
 					return;
 				}
@@ -117,26 +117,31 @@ public class LandTile : Tile {
 	// The function we callback any time our tile's structure changes
 	//some how the first == now is sometimes null even tho it IS NOT NULL
 	//second one is the old ! that one is working
-	Action<Structure,Structure> cbTileStructureChanged;
-	/// <summary>
-	/// Register a function to be called back when our tile type changes.
-	/// </summary>
-	public override void RegisterTileStructureChangedCallback(Action<Structure,Structure> callback) {
-		cbTileStructureChanged += callback;
+	Action<Structure,Structure> cbTileOldNewStructureChanged;
+    Action<Tile, Structure> cbTileStructureChanged;
+    /// <summary>
+    /// Register a function to be called back when our tile type changes.
+    /// </summary>
+    public override void RegisterTileOldNewStructureChangedCallback(Action<Structure,Structure> callback) {
+		cbTileOldNewStructureChanged += callback;
 	}
-
-	/// <summary>
-	/// Unregister a callback.
-	/// </summary>
-	public override void UnregisterTileStructureChangedCallback(Action<Structure,Structure> callback) {
-		cbTileStructureChanged -= callback;
+	public override void UnregisterOldNewTileStructureChangedCallback(Action<Structure,Structure> callback) {
+		cbTileOldNewStructureChanged -= callback;
 	}
-
-	public override void AddNeedStructure(NeedsBuilding ns){
+    public override void RegisterTileStructureChangedCallback(Action<Tile, Structure> callback) {
+        cbTileStructureChanged += callback;
+    }
+    public override void UnregisterTileStructureChangedCallback(Action<Tile, Structure> callback) {
+        cbTileStructureChanged -= callback;
+    }
+    public override void AddNeedStructure(NeedsBuilding ns){
 		if(IsBuildType (Type)== false){
 			return;
 		}
-		if (ListOfInRangeNeedBuildings == null) {
+        if(ns.City != MyCity) {
+            return;
+        }
+        if (ListOfInRangeNeedBuildings == null) {
 			ListOfInRangeNeedBuildings = new List<NeedsBuilding> ();
 		}
 		ListOfInRangeNeedBuildings.Add (ns);
@@ -148,7 +153,7 @@ public class LandTile : Tile {
 		if (ListOfInRangeNeedBuildings == null) {
 			return;
 		}
-		if (ListOfInRangeNeedBuildings.Contains (ns) == false) {
+        if (ListOfInRangeNeedBuildings.Contains (ns) == false) {
 			return;
 		}
 		ListOfInRangeNeedBuildings.Remove (ns);

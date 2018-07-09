@@ -63,7 +63,11 @@ public class ConsoleUI : MonoBehaviour {
 			bool turn = num == 1;
 			CameraController.Instance.devCameraZoom = turn;
 			break;
-		default:
+            case "1":
+                City c = CameraController.Instance.nearestIsland.FindCityByPlayer(PlayerController.currentPlayerNumber);
+                happend = AddAllItems(c.inventory);
+            break;
+            default:
 			break;
 		}
 		if(happend){
@@ -95,11 +99,11 @@ public class ConsoleUI : MonoBehaviour {
 		}
 		switch(parameters[pos]){
 		case "item":
-			return changeItemInInventory (parameters.Skip (2).ToArray (),c.inventory);
+			return ChangeItemInInventory (parameters.Skip (2).ToArray (),c.inventory);
 		case "fillitup":
-			return addAllItems (c.inventory);
+			return AddAllItems (c.inventory);
 		case "build":
-			return addAllItems (c.inventory,true);
+			return AddAllItems (c.inventory,true);
 		case "name":
 			break;
 		case "player":
@@ -134,10 +138,10 @@ public class ConsoleUI : MonoBehaviour {
 		}
 		switch(parameters[pos]){
 		case "item":
-			return changeItemInInventory (parameters.Skip (1).ToArray (),u.inventory);
+			return ChangeItemInInventory (parameters.Skip (1).ToArray (),u.inventory);
 		case "build":
-			u.inventory.addItem (new Item(1,50));
-			u.inventory.addItem (new Item(2,50));
+			u.inventory.AddItem (new Item(1,50));
+			u.inventory.AddItem (new Item(2,50));
 			return true;
 		case "name":
 			break;
@@ -150,7 +154,7 @@ public class ConsoleUI : MonoBehaviour {
 		}
 		return false;
 	}
-	public bool changeItemInInventory(string[] parameters, Inventory inv){
+	public bool ChangeItemInInventory(string[] parameters, Inventory inv){
 		int id = -1;
 		int amount = 0; // amount can be plus for add or negative for remove
 		if(parameters.Length!=2){
@@ -170,21 +174,21 @@ public class ConsoleUI : MonoBehaviour {
 		}
 		Item i = new Item (id, Mathf.Abs(amount));
 		if(amount>0){
-			inv.addItem (i);
+			inv.AddItem (i);
 		} else {
-			inv.removeItemAmount (i);
+			inv.RemoveItemAmount (i);
 		}
 		return true;
 	}
 
-	private bool addAllItems(Inventory inv, bool onlyBuildItems=false){
-		foreach(Item i in inv.items.Values){
+	private bool AddAllItems(Inventory inv, bool onlyBuildItems=false){
+		foreach(Item i in inv.Items.Values){
 			if(onlyBuildItems){
 				if(i.Type!=ItemType.Build){
 					continue;
 				}
 			}
-			inv.addItem (new Item (i.ID, int.MaxValue));
+			inv.AddItem (new Item (i.ID, int.MaxValue));
 		}
 		return true;
 	}

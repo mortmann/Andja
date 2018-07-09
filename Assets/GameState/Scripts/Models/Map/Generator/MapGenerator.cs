@@ -96,7 +96,7 @@ public class MapGenerator : MonoBehaviour {
         if (hasToUseIslands != null) {
             for (int i = 0; i < hasToUseIslands.Count; i++) {
                 //We have to do this to get the same random values each time!
-                Debug.Log (Random.Range(0, 1000)); 
+               Random.Range(0, 1000); 
             }
         }
         //Load the premade island if there are any 

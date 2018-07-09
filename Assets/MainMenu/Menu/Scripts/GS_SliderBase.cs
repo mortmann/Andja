@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public class GS_SliderBase : MonoBehaviour {
 
-	protected Settings setting;
+	protected GraphicsSetting setting;
     // The camera in use.
     protected Camera cam;
     // The text we display to the user for the slider value.

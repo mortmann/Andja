@@ -78,10 +78,10 @@ public class StructureSpriteController : MonoBehaviour {
 
 		SetSpriteRendererStructureSprite (go, structure);
 
-		if(structure is OutputStructure && ((OutputStructure)structure).contactRange>0){
+		if(structure is OutputStructure && ((OutputStructure)structure).ContactRange>0){
 			GameObject goContact = new GameObject ();
 			CircleCollider2D cc2d = goContact.AddComponent<CircleCollider2D>();
-			cc2d.radius = ((OutputStructure)structure).contactRange;
+			cc2d.radius = ((OutputStructure)structure).ContactRange;
 			cc2d.isTrigger = true;
 			goContact.transform.SetParent (go.transform);
 			goContact.transform.localPosition = Vector3.zero;
@@ -115,7 +115,7 @@ public class StructureSpriteController : MonoBehaviour {
                     name = "RangeUI"
                 };
                 go.transform.position = structureGameObjectMap [structure].transform.position;
-				go.transform.localScale = new Vector3 (((Warehouse)structure).contactRange, ((Warehouse)structure).contactRange, 0);
+				go.transform.localScale = new Vector3 (((Warehouse)structure).ContactRange, ((Warehouse)structure).ContactRange, 0);
 				SpriteRenderer sr = go.AddComponent<SpriteRenderer> ();
 				sr.sprite = circleSprite;
 				sr.sortingLayerName = "StructuresUI";
@@ -176,7 +176,7 @@ public class StructureSpriteController : MonoBehaviour {
 //			Debug.Log (s.name);
 			structureSprites[s.name] = s;
 		}
-	}
+    }
 	public Sprite GetStructureSprite(Structure str){
 		if(structureSprites.ContainsKey (str.GetSpriteName())==false){
 			//FIXME this should be active in future 

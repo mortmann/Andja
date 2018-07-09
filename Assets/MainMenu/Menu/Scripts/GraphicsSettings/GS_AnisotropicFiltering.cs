@@ -2,9 +2,9 @@
 
 public class GS_AnisotropicFiltering : GS_SliderBase {
 	public override void OnStart (){
-		setting = Settings.AnisotropicFiltering;
-		if(graphicsSettings.hasSavedGraphicsOption(setting))
-			SetAnisotropicFiltering (bool.Parse (graphicsSettings.getSavedGraphicsOption (setting)));
+		setting = GraphicsSetting.AnisotropicFiltering;
+		if(graphicsSettings.HasSavedGraphicsOption(setting))
+			SetAnisotropicFiltering (bool.Parse (graphicsSettings.GetSavedGraphicsOption (setting)));
 	}
     protected override void GraphicsPresetLow() {
         SetAnisotropicFiltering(false);
@@ -27,7 +27,7 @@ public class GS_AnisotropicFiltering : GS_SliderBase {
     }
 
     void SetAnisotropicFiltering(bool value) {
-		graphicsSettings.setSavedGraphicsOption (setting,value);
+		graphicsSettings.SetSavedGraphicsOption (setting,value);
 		// Set the actual slider value. For the OnSliderValueChange() callback
         // this is uneccesary, but it shouldn't cause any harm. We do however
         // need to do it when the value is set from an outside source like the

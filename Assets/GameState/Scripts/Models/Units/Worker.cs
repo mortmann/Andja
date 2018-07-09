@@ -10,17 +10,26 @@ public class Worker {
 	[JsonPropertyAttribute] Pathfinding path;
 	[JsonPropertyAttribute] float doTimer;
 	[JsonPropertyAttribute] Item[] toGetItems;
-	[JsonPropertyAttribute] int[] toGetAmount;
+	//[JsonPropertyAttribute] int[] toGetAmount;
 	[JsonPropertyAttribute] Inventory inventory;
 	[JsonPropertyAttribute] bool goingToWork;
-	[JsonPropertyAttribute] Tile destTile;
 	[JsonPropertyAttribute] public bool isAtHome;
-	#endregion
-	#region runtimeVariables
-	public OutputStructure workStructure;
+    [JsonPropertyAttribute] private OutputStructure _workStructure;
+
+    #endregion
+    #region runtimeVariables
+    public OutputStructure WorkStructure {
+        set {
+            _workStructure = value;
+        }
+        get {
+            return _workStructure;
+        }
+    }
 	Action<Worker> cbWorkerChanged;
 	Action<Worker> cbWorkerDestroy;
 	Action<Worker, string> cbSoundCallback;
+    bool hasRegistered;
 	//TODO sound
 	string soundWorkName="";//idk how to load/read this in? has this the workstructure not worker???
 	#endregion
@@ -49,7 +58,7 @@ public class Worker {
 			return;
 		}
 		this.myHome = myHome;
-		workStructure = structure;
+		WorkStructure = structure;
 		this.hasToFollowRoads = hasToFollowRoads;
 		if (structure is MarketBuilding == false) {
 			structure.outputClaimed = true;
@@ -61,39 +70,47 @@ public class Worker {
 		SetGoalStructure(structure);
 		this.toGetItems = toGetItems;
 	}
-	public Worker(OutputStructure myHome, OutputStructure structure,Item[] toGetItems,int[] toGetAmount, bool hasToFollowRoads = false){
-		if(myHome is OutputStructure ==false){
-			Debug.LogError ("Home is not OutputStructure--if this should be possible redesign");
-			return;
-		}
-		this.myHome = myHome;
-		workStructure = structure;
-		this.toGetAmount = toGetAmount;
-		this.hasToFollowRoads = hasToFollowRoads;
-		if (structure is MarketBuilding == false) {
-			structure.outputClaimed = true;
-		}
-		isAtHome = false;
-		goingToWork = true;
-		inventory = new Inventory (4);
-		doTimer = workTime;
-		SetGoalStructure(structure);
-		this.toGetItems = toGetItems;
-	}
-	public Worker(OutputStructure myHome, bool hasToFollowRoads = true){
-		if(myHome is OutputStructure ==false){
-			Debug.LogError ("Home is not OutputStructure--if this should be possible redesign");
-			return;
-		}
-		this.myHome = myHome;		
-		isAtHome = false;
-		goingToWork = true;
-		inventory = new Inventory (4);
-		doTimer = workTime;
-	}
+	//public Worker(OutputStructure myHome, OutputStructure structure,Item[] toGetItems,int[] toGetAmount, bool hasToFollowRoads = false){
+	//	if(myHome is OutputStructure ==false){
+	//		Debug.LogError ("Home is not OutputStructure--if this should be possible redesign");
+	//		return;
+	//	}
+	//	this.myHome = myHome;
+ //       WorkStructure = structure;
+	//	this.toGetAmount = toGetAmount;
+	//	this.hasToFollowRoads = hasToFollowRoads;
+	//	if (structure is MarketBuilding == false) {
+	//		structure.outputClaimed = true;
+	//	}
+	//	isAtHome = false;
+	//	goingToWork = true;
+	//	inventory = new Inventory (4);
+	//	doTimer = workTime;
+	//	SetGoalStructure(structure);
+	//	this.toGetItems = toGetItems;
+	//}
+	//public Worker(OutputStructure myHome, bool hasToFollowRoads = true){
+	//	if(myHome is OutputStructure ==false){
+	//		Debug.LogError ("Home is not OutputStructure--if this should be possible redesign");
+	//		return;
+	//	}
+	//	this.myHome = myHome;		
+	//	isAtHome = false;
+	//	goingToWork = true;
+	//	inventory = new Inventory (4);
+	//	doTimer = workTime;
+	//}
 	public Worker(){
-		WorldController.Instance.AddWorkerForLoad (this);
-	}
+		SaveController.AddWorkerForLoad (this);
+    }
+    public void OnWorkStructureDestroy(Structure str) {
+        if(str != WorkStructure) {
+            Debug.LogError("OnWorkStructureDestroy called on not workstructure destroy!");
+            return;
+        }
+        WorkStructure = null;
+        GoHome();
+    }
 	public void Update(float deltaTime){
 		if(myHome==null){
 			Debug.LogError ("worker has no myHome -> for now set it manually");
@@ -105,21 +122,26 @@ public class Worker {
 		if(myHome.Efficiency <= 0){
 			GoHome ();
 		}
-		//worker can only work if
-		// -homeStructure is active
-		// -goalStructure can be reached -> search new goal
-		// -goalStructure has smth to be worked eg grown/has output
-		// -Efficiency of home > 0
-		// -home is not full (?) maybe second worker?
-		//If any of these are false the worker should return to home
-		//except there is no way to home then remove
-		if(path == null){
-			if (destTile != null) {
-				if(destTile.Structure is OutputStructure)
-					SetGoalStructure ((OutputStructure)destTile.Structure);
-			}
+        if (hasRegistered == false) {
+            _workStructure.RegisterOnDestroyCallback(OnWorkStructureDestroy);
+            hasRegistered = true;
+        }
+        //worker can only work if
+        // -homeStructure is active
+        // -goalStructure can be reached -> search new goal
+        // -goalStructure has smth to be worked eg grown/has output
+        // -Efficiency of home > 0
+        // -home is not full (?) maybe second worker?
+        //If any of these are false the worker should return to home
+        //except there is no way to home then remove
+        if (path == null){
+			//if (destTile != null) {
+			//	if(destTile.Structure is OutputStructure)
+			//		SetGoalStructure ((OutputStructure)destTile.Structure);
+			//}
 			//theres no goal so delete it after some time?
 			Debug.Log ("worker has no goal");
+            GoHome();
 			return;
 		}		
 
@@ -131,15 +153,15 @@ public class Worker {
         if (path.IsAtDest==false) {
 			return;
 		}
-		if (goingToWork == false) {		
-			// coming home from doing the work
-			// drop off the items its carrying
-			DropOffItems (deltaTime);
+		if (goingToWork) {
+            //if we are here this means we're
+            //AT the destination and can start working
+            DoWork(deltaTime);
 		} else {
-			//if we are here this means we're
-			//AT the destination and can start working
-			DoWork (deltaTime);
-		}
+            // coming home from doing the work
+            // drop off the items its carrying
+            DropOffItems(deltaTime);
+        }
 	}
 	public void DropOffItems(float deltaTime){
 		doTimer -= deltaTime;
@@ -147,13 +169,13 @@ public class Worker {
 			return;
 		}
 		if (myHome is MarketBuilding) {
-			((MarketBuilding)myHome).City.inventory.addIventory (inventory);
+			((MarketBuilding)myHome).City.inventory.AddIventory (inventory);
 		} else
 		if (myHome is ProductionBuilding) {
-			((ProductionBuilding)myHome).addToIntake (inventory); 
+			((ProductionBuilding)myHome).AddToIntake (inventory); 
 		} else {
 			//this home is a OutputBuilding or smth that takes it to output
-			myHome.addToOutput (inventory);
+			myHome.AddToOutput (inventory);
 		}
 		isAtHome = true;
 		path = null;
@@ -169,27 +191,30 @@ public class Worker {
             cbSoundCallback?.Invoke(this, soundWorkName);
             return;
 		}
-		if(workStructure==null&&destTile!=null&&destTile.Structure is OutputStructure){
-			workStructure = (OutputStructure)destTile.Structure;
+		if(WorkStructure == null&& path.DestTile != null&& path.DestTile.Structure is OutputStructure){
+            WorkStructure = (OutputStructure)path.DestTile.Structure;
 		}
-		if (workStructure != null) {
+		if (WorkStructure != null) {
 			if (toGetItems == null) {
-				foreach (Item item in workStructure.getOutput ()) {
-					inventory.addItem (item);
+				foreach (Item item in WorkStructure.GetOutput ()) {
+					inventory.AddItem (item);
 				}
 			} 
 			if (toGetItems != null) {
-				foreach (Item item in workStructure.getOutputWithItemCountAsMax (toGetItems)) {
-					inventory.addItem (item);
+				foreach (Item item in WorkStructure.GetOutputWithItemCountAsMax (toGetItems)) {
+					inventory.AddItem (item);
 				}
 			}
-			if(workStructure is MarketBuilding){
-				foreach (Item item in workStructure.getOutput (toGetItems,toGetAmount)) {
-					inventory.addItem (item);
+			if(WorkStructure is MarketBuilding){
+				foreach (Item item in WorkStructure.GetOutputWithItemCountAsMax (toGetItems)) {
+                    if (item == null) {
+                        Debug.LogError("item is null for to get item! Worker is from " +WorkStructure);
+                    }
+					inventory.AddItem (item);
 				}
 			}
-
-			workStructure.outputClaimed = false;
+            WorkStructure.UnregisterOnDestroyCallback(OnWorkStructureDestroy);
+            WorkStructure.outputClaimed = false;
 			doTimer = workTime/2;
 			goingToWork = false;
 			path.Reverse ();
@@ -200,28 +225,22 @@ public class Worker {
 
 	public void Destroy() {
 		if (goingToWork)
-			workStructure.resetOutputClaimed ();
+            WorkStructure.ResetOutputClaimed ();
         cbWorkerDestroy?.Invoke(this);
     }
 	public void SetGoalStructure(OutputStructure structure){
 		if(structure == null){
 			return;
 		}
-		if(structure!=myHome){
-			goingToWork = true;
-		} else {
-			goingToWork = false;
-		}
-		//job_dest_tile = tile;
-		if (hasToFollowRoads == false) {
+        if (hasToFollowRoads == false) {
 			path = new TilesPathfinding ();
 			((TilesPathfinding)path).SetDestination (new List<Tile>(myHome.neighbourTiles),new List<Tile>(structure.neighbourTiles));
 		} else {
 			path = new RoutePathfinding();
 			((RoutePathfinding)path).SetDestination (myHome.RoadsAroundStructure (),structure.RoadsAroundStructure ());
 		}
-		destTile = structure.BuildTile;
-	}
+        _workStructure = structure;
+    }
 
 	public void RegisterOnChangedCallback(Action<Worker> cb) {
 		cbWorkerChanged += cb;

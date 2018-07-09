@@ -9,7 +9,7 @@ using System;
 using UnityStandardAssets.ImageEffects;
 using Smaa;
 
-public enum Settings {Preset,AnisotropicFiltering,AntiAliasing,Vsync,Fullscreen,Resolution,TextureQuality,Brightness  }
+public enum GraphicsSetting {Preset,AnisotropicFiltering,AntiAliasing,Vsync,Fullscreen,Resolution,TextureQuality,Brightness  }
 
 public class GraphicsSettings : MonoBehaviour {
 
@@ -30,8 +30,8 @@ public class GraphicsSettings : MonoBehaviour {
     // All the settings register their listeners in Awake().
     void Awake() {
 		//IF we succesful loaded saved data no need to set it to a preset
-		graphicsOptions = new Dictionary<Settings, string> ();
-		graphicsOptionsToSave = new Dictionary<Settings, string> ();
+		graphicsOptions = new Dictionary<GraphicsSetting, string> ();
+		graphicsOptionsToSave = new Dictionary<GraphicsSetting, string> ();
 		hasLoaded = (ReadGraphicsOption());
         lowPresetEvent = new UnityEvent();
         mediumPresetEvent = new UnityEvent();
@@ -74,8 +74,8 @@ public class GraphicsSettings : MonoBehaviour {
 		presetSlider.value =value;
     }
 
-	Dictionary<Settings, string> graphicsOptions;
-	Dictionary<Settings, string> graphicsOptionsToSave;
+	Dictionary<GraphicsSetting, string> graphicsOptions;
+	Dictionary<GraphicsSetting, string> graphicsOptionsToSave;
 
 	public void SetToCustom(){
 		presetSlider.value = 4;
@@ -84,11 +84,11 @@ public class GraphicsSettings : MonoBehaviour {
 	public void SaveGraphicsOption(){
 
 		SetOptions (graphicsOptionsToSave);
-		foreach(Settings s in graphicsOptionsToSave.Keys){
+		foreach(GraphicsSetting s in graphicsOptionsToSave.Keys){
 			graphicsOptions [s] = graphicsOptionsToSave [s];
 		}
 		graphicsOptionsToSave.Clear ();
-		graphicsOptions [Settings.Preset] = presetSlider.value.ToString ();
+		graphicsOptions [GraphicsSetting.Preset] = presetSlider.value.ToString ();
 
 		string path = Application.dataPath.Replace ("/Assets", "");
 		if( Directory.Exists(path ) == false ) {
@@ -109,37 +109,37 @@ public class GraphicsSettings : MonoBehaviour {
 		if(File.Exists (filePath)==false){
 			return false;
 		}
-		graphicsOptions = JsonConvert.DeserializeObject<Dictionary<Settings,string>> (File.ReadAllText (filePath));
+		graphicsOptions = JsonConvert.DeserializeObject<Dictionary<GraphicsSetting, string>> (File.ReadAllText (filePath));
 		SetOptions (graphicsOptions);
 		return true;
 	}
 
-	private void SetOptions(Dictionary<Settings, string> options){
-		foreach(Settings optionName in options.Keys){
+	private void SetOptions(Dictionary<GraphicsSetting, string> options){
+		foreach(GraphicsSetting optionName in options.Keys){
 			string val = options [optionName];
 			switch (optionName) {
-			case Settings.Preset:
+			case GraphicsSetting.Preset:
 				SetGraphicsPreset(int.Parse (val));
 				break;
-			case Settings.AnisotropicFiltering:
+			case GraphicsSetting.AnisotropicFiltering:
 				SetAnisotropicFiltering (bool.Parse (val));
 				break;
-			case Settings.AntiAliasing:
+			case GraphicsSetting.AntiAliasing:
 				SetAntiAliasing (int.Parse (val));
 				break;
-			case Settings.Brightness:
+			case GraphicsSetting.Brightness:
 				SetBrightness (float.Parse (val));
 				break;
-			case Settings.Fullscreen:
+			case GraphicsSetting.Fullscreen:
 				SetFullscreen (bool.Parse (val));
 				break;
-			case Settings.Resolution:
+			case GraphicsSetting.Resolution:
 				SetResolution( JsonUtility.FromJson<CustomResolution> ( val ) );
 				break;
-			case Settings.TextureQuality:
+			case GraphicsSetting.TextureQuality:
 				SetTextureQuality (int.Parse (val));
 				break;
-			case Settings.Vsync:
+			case GraphicsSetting.Vsync:
 				SetVsync (int.Parse (val));
 				break;
 			default:
@@ -149,14 +149,14 @@ public class GraphicsSettings : MonoBehaviour {
 		}
 	}
 
-	public void setSavedGraphicsOption(Settings name, object val){
+	public void SetSavedGraphicsOption(GraphicsSetting name, object val){
 		graphicsOptions [name] = val.ToString();
 	}
-	public bool hasSavedGraphicsOption(Settings name){
+	public bool HasSavedGraphicsOption(GraphicsSetting name){
 		return graphicsOptions.ContainsKey (name);
 	}
-	public string getSavedGraphicsOption(Settings name){
-		if (hasSavedGraphicsOption (name) == false)
+	public string GetSavedGraphicsOption(GraphicsSetting name){
+		if (HasSavedGraphicsOption (name) == false)
 			return null;
 		return graphicsOptions[name];
 	}

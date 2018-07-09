@@ -29,7 +29,12 @@ public class Path_AStar {
 		if(route == null || tileStart == null || tileEnd == null) {
 			return;
 		}
-		this.startTiles = startTiles;
+        startTiles.RemoveAll(x => x.Structure != null && x.Structure.IsWalkable == false);
+        endTiles.RemoveAll(x => x.Structure != null && x.Structure.IsWalkable == false);
+        if (startTiles.Count == 0 || endTiles.Count == 0) {
+            return;
+        }
+        this.startTiles = startTiles;
 		this.endTiles = endTiles;
 		// A dictionary of all valid, walkable nodes.
 		Dictionary<Tile, Path_Node<Tile>> nodes = route.tileGraph.nodes;
@@ -40,7 +45,12 @@ public class Path_AStar {
 		if(island == null || startTiles == null || endTiles == null|| startTiles.Count == 0 || endTiles.Count == 0) {
 			return;
 		}
-		this.startTiles = startTiles;
+        startTiles.RemoveAll(x => x.Structure != null && x.Structure.IsWalkable == false);
+        endTiles.RemoveAll(x => x.Structure != null && x.Structure.IsWalkable == false);
+        if (startTiles.Count == 0 || endTiles.Count == 0) {
+            return;
+        }
+        this.startTiles = startTiles;
 		this.endTiles = endTiles;
 		// A dictionary of all valid, walkable nodes.
 		Dictionary<Tile, Path_Node<Tile>> nodes = island.TileGraphIslandTiles.nodes;
@@ -84,7 +94,7 @@ public class Path_AStar {
 		foreach (Path_Node<Tile> n in nodes.Values) {
 			f_score[n] = Mathf.Infinity;
 		}
-		f_score[start] = dist_between_without_diag(start, goal);
+		f_score[start] = Dist_between_without_diag(start, goal);
 
 		while (OpenSet.Count > 0) {
 			Path_Node<Tile> current = OpenSet.Dequeue();
@@ -92,7 +102,7 @@ public class Path_AStar {
 				// We have reached our goal! or one that is equally as good but closer
 				// Let's convert this into an actual sequene of
 				// tiles to walk on, then end this constructor function!
-				reconstruct_path(Came_From, current);
+				Reconstruct_path(Came_From, current);
 				return;
 			}
 			ClosedSet.Add(current);
@@ -109,7 +119,7 @@ public class Path_AStar {
 
 				if (ClosedSet.Contains(neighbor) == true)
 					continue; // ignore this already completed neighbor
-				float movement_cost_to_neighbor = neighbor.data.MovementCost * dist_between(current, neighbor);
+				float movement_cost_to_neighbor = neighbor.data.MovementCost * Dist_between(current, neighbor);
 				float tentative_g_score = g_score[current] + movement_cost_to_neighbor;
 
 				if (OpenSet.Contains(neighbor) && tentative_g_score >= g_score[neighbor])
@@ -117,7 +127,7 @@ public class Path_AStar {
 				
 				Came_From[neighbor] = current;
 				g_score[neighbor] = tentative_g_score;
-				f_score[neighbor] = g_score[neighbor] + heuristic_cost_estimate(neighbor, goal);
+				f_score[neighbor] = g_score[neighbor] + Heuristic_cost_estimate(neighbor, goal);
 
 				if (OpenSet.Contains(neighbor) == false) {
 					OpenSet.Enqueue(neighbor, f_score[neighbor]);
@@ -139,7 +149,7 @@ public class Path_AStar {
 	}
 
 
-    float heuristic_cost_estimate( Path_Node<Tile> a, Path_Node<Tile> b ) {
+    float Heuristic_cost_estimate( Path_Node<Tile> a, Path_Node<Tile> b ) {
 
 		return Mathf.Sqrt(
 			Mathf.Pow(a.data.X - b.data.X, 2) +
@@ -148,7 +158,7 @@ public class Path_AStar {
 
 	}
 
-	float dist_between( Path_Node<Tile> a, Path_Node<Tile> b ) {
+	float Dist_between( Path_Node<Tile> a, Path_Node<Tile> b ) {
 		// We can make assumptions because we know we're working
 		// on a grid at this point.
 
@@ -169,7 +179,7 @@ public class Path_AStar {
 		);
 
 	}
-    float dist_between_without_diag(Path_Node<Tile> a, Path_Node<Tile> b) {
+    float Dist_between_without_diag(Path_Node<Tile> a, Path_Node<Tile> b) {
         // We can make assumptions because we know we're working
         // on a grid at this point.
 
@@ -184,7 +194,7 @@ public class Path_AStar {
         );
 
     }
-    void reconstruct_path(
+    void Reconstruct_path(
 		Dictionary<Path_Node<Tile>, Path_Node<Tile>> Came_From,
 		Path_Node<Tile> current
 	) {

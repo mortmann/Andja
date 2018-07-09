@@ -11,8 +11,8 @@ public class WorkerSpriteController : MonoBehaviour {
 		workerToGO = new Dictionary<Worker, GameObject> ();
 		LoadSprites ();
 		cc = FindObjectOfType<CameraController> ();
-
-		if(loadedWorker!=null){
+        loadedWorker = SaveController.GetLoadWorker();
+        if (loadedWorker!=null){
 			foreach (Worker item in loadedWorker) {
 				OnWorkerCreated (item);
 			}
@@ -64,7 +64,7 @@ public class WorkerSpriteController : MonoBehaviour {
 	}
 	void OnWorkerDestroy(Worker w) {
 		if (workerToGO.ContainsKey(w) == false) {
-			Debug.LogError("OnWorkerDestroy.");
+			//Debug.LogError("OnWorkerDestroy.");
 			return;
 		}
 		GameObject.Destroy (workerToGO [w]);

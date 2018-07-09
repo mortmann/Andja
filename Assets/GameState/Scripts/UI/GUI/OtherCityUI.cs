@@ -27,11 +27,11 @@ public class OtherCityUI : MonoBehaviour {
 				//SELL show how much it has
 				Item temp = city.inventory.GetItemWithIDClone (itemID);
 				Item i = ti.SellItemAmount (temp);
-				tiui.Show (i, city.inventory.maxStackSize,ti.selling);
+				tiui.Show (i, city.inventory.MaxStackSize,ti.selling);
 			} else {
 				//BUY show how much it wants
 				Item i = ti.BuyItemAmount (city.inventory.GetItemWithIDClone (itemID));
-				tiui.Show (i, city.inventory.maxStackSize,ti.selling);
+				tiui.Show (i, city.inventory.MaxStackSize,ti.selling);
 			}
 			tiui.UpdatePriceText (ti.price); 
 			int id = itemID;

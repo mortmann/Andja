@@ -5,11 +5,11 @@ public class GS_Resolution : MonoBehaviour {
 	Dropdown dp;
 	Dictionary<string,Resolution> resolutions;
 	protected GraphicsSettings graphicsSettings;
-	protected Settings setting;
+	protected GraphicsSetting setting;
 
 	// Use this for initialization
 	void Start () {
-		setting = Settings.Resolution;
+		setting = GraphicsSetting.Resolution;
 		graphicsSettings = FindObjectOfType<GraphicsSettings>();
 		dp = GetComponent<Dropdown> ();
 		List<string> resses = new List<string> ();
@@ -22,9 +22,9 @@ public class GS_Resolution : MonoBehaviour {
 			resses.Add(res.ToString());
 		}
 		dp.AddOptions (resses);
-		if (graphicsSettings.hasSavedGraphicsOption (setting)) {
+		if (graphicsSettings.HasSavedGraphicsOption (setting)) {
 			dp.value = resses.FindIndex (x => {
-				return x == graphicsSettings.getSavedGraphicsOption (setting);
+				return x == graphicsSettings.GetSavedGraphicsOption (setting);
 			});
 		}
 	}
@@ -32,7 +32,7 @@ public class GS_Resolution : MonoBehaviour {
 	public void OnChange(){
 		string res = dp.options [dp.value].text;
 		if(resolutions.ContainsKey(res))
-			graphicsSettings.setSavedGraphicsOption (setting,
+			graphicsSettings.SetSavedGraphicsOption (setting,
 				JsonUtility.ToJson(new GraphicsSettings.CustomResolution(resolutions[res]))
 			);
 	}

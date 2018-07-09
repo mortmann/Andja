@@ -24,20 +24,20 @@ public class ProduktionUI : MonoBehaviour {
 		this.currentStructure = ustr;
 		efficiency = progressContent.GetComponentInChildren<Text> ();
 		progress = progressContent.GetComponentInChildren<Slider> ();
-		progress.maxValue = currentStructure.produceTime;
+		progress.maxValue = currentStructure.ProduceTime;
 		progress.value = 0;
 		if(itemToGO!=null){
 			foreach(ItemUI go in itemToGO.Values){
-				Destroy (go);
+				Destroy (go.gameObject);
 			}
 		}
 		itemToGO = new Dictionary<Item, ItemUI> ();
-		if (ustr.output != null) {
-			for (int i = 0; i < ustr.output.Length; i++) {
+		if (ustr.Output != null) {
+			for (int i = 0; i < ustr.Output.Length; i++) {
 				ItemUI go = GameObject.Instantiate(itemPrefab).GetComponent<ItemUI>();
-				go.SetItem (ustr.output [i], ustr.maxOutputStorage );
+				go.SetItem (ustr.Output [i], ustr.MaxOutputStorage );
 				go.transform.SetParent (outputContent);
-				itemToGO.Add (ustr.output [i], go);
+				itemToGO.Add (ustr.Output [i], go);
 			}
 		}
 
@@ -46,7 +46,7 @@ public class ProduktionUI : MonoBehaviour {
 			if (pstr.MyIntake == null) {
 				return;
 			}
-			if(pstr.myInputTyp == InputTyp.AND){
+			if(pstr.MyInputTyp == InputTyp.AND){
 				for (int i = 0; i < pstr.MyIntake.Length; i++) {
 					ItemUI go = GameObject.Instantiate (itemPrefab).GetComponent<ItemUI>();
 					go.SetItem (pstr.MyIntake [i], pstr.GetMaxIntakeForIntakeIndex(i) );
@@ -54,22 +54,22 @@ public class ProduktionUI : MonoBehaviour {
 					itemToGO.Add (pstr.MyIntake [i], go);
 				}
 			} 
-			else if(pstr.myInputTyp == InputTyp.OR){
+			else if(pstr.MyInputTyp == InputTyp.OR){
 				for (int i = 0; i < pstr.ProductionData.intake.Length; i++) {
 					ItemUI go = GameObject.Instantiate (itemPrefab).GetComponent<ItemUI>();
 					if(i > 0){
 						GameObject or = GameObject.Instantiate (itemORSeperatorPrefab);
 						or.transform.SetParent (inputContent);
 					}
-					if(i == pstr.orItemIndex){
-						go.SetItem (pstr.MyIntake [0],pstr.GetMaxIntakeForIntakeIndex(pstr.orItemIndex));
+					if(i == pstr.OrItemIndex){
+						go.SetItem (pstr.MyIntake [0],pstr.GetMaxIntakeForIntakeIndex(pstr.OrItemIndex));
 						currORItem = pstr.MyIntake [0];
 						itemToGO.Add (pstr.MyIntake [0], go);
 					} else {
 						go.SetItem (pstr.ProductionData.intake [i],pstr.GetMaxIntakeForIntakeIndex(i));
 						int temp = i;
 						go.AddClickListener (( data ) => { OnItemClick( pstr.ProductionData.intake [temp] ); } );
-						go.setInactive (true);
+						go.SetInactive (true);
 						itemToGO.Add (pstr.ProductionData.intake [i], go);
 					}
 					go.transform.SetParent (inputContent);
@@ -81,17 +81,17 @@ public class ProduktionUI : MonoBehaviour {
 
 	public void OnItemClick(Item item){
 		//first get remove the current orItem and add the version from intake
-		itemToGO [currORItem].setInactive (true);
+		itemToGO [currORItem].SetInactive (true);
 		ItemUI go = itemToGO [currORItem];
 		ProductionBuilding pstr = (ProductionBuilding)currentStructure;
 		for (int i = 0; i < pstr.ProductionData.intake.Length; i++) {
 			if(pstr.ProductionData.intake[i].ID == currORItem.ID){
-				switchItemKey (currORItem, pstr.ProductionData.intake [i]);
+				SwitchItemKey (currORItem, pstr.ProductionData.intake [i]);
 				go.AddClickListener (( data ) => { OnItemClick( pstr.ProductionData.intake [i] ); } );
 				break;
 			}
 		}
-		itemToGO [item].setInactive (false);
+		itemToGO [item].SetInactive (false);
 		//now change the input to the selected
 		//also do change the associated item
 		if (currentStructure is ProductionBuilding) {
@@ -99,10 +99,10 @@ public class ProduktionUI : MonoBehaviour {
 		}
 		go = itemToGO [item];
 		go.ClearAllTriggers ();
-		switchItemKey (item, ((ProductionBuilding)currentStructure).MyIntake [0]);
+		SwitchItemKey (item, ((ProductionBuilding)currentStructure).MyIntake [0]);
 		currORItem = ((ProductionBuilding)currentStructure).MyIntake [0];
 	}
-	private void switchItemKey(Item oldKey, Item newKey){
+	private void SwitchItemKey(Item oldKey, Item newKey){
 		ItemUI go = itemToGO [oldKey];
 		itemToGO.Remove (oldKey);
 		itemToGO [newKey] = go;

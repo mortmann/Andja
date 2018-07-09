@@ -6,7 +6,6 @@ using UnityEngine.EventSystems;
 public class BuildingBuildUI : MonoBehaviour {
 
 	public GameObject mouseOverPrefab;
-	GameObject mouseOver;
 	public Structure structure;
 
 	// Use this for initialization

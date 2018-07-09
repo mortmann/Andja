@@ -7,8 +7,8 @@ public class GS_Selectable : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
 
     // The colors for the states for this button.
     public Color normalColor;
-    public Color highlightColorInitial;
-    public Color highlightColorFadeTo;
+    Color highlightColorInitial = new Color32(120,120,120,120);
+    Color highlightColorFadeTo = new Color32(80,80,80,80);
     public float fadeSpeed = 0.75f;
     float t;
     bool fadeDown = true;

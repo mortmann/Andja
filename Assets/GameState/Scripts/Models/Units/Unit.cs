@@ -3,13 +3,38 @@ using System.Collections;
 using System;
 using Newtonsoft.Json;
 
+public class UnitPrototypeData : LanguageVariables {
+    public int PopulationLevel = 0;
+    public int PopulationCount = 0;
+    public int inventoryPlaces;
+    public int inventorySize;
+    public int maintenancecost;
+    public int buildcost;
+    
+    public Item[] buildingItems;
+    public string spriteBaseName;
+    //public DamageType myDamageType = DamageType.Blade;
+    //public ArmorType myArmorType = ArmorType.Leather;
+    public float buildTime = 1f;
+    public float MaxHealth;
+    public float attackRange = 1f;
+    public float damage = 10;
+    public float attackCooldown = 1;
+    public float attackRate = 1;
+    public float speed;
+    public float rotationSpeed = 2f;
+
+    public float width;
+    public float height;
+}
+
 [JsonObject(MemberSerialization.OptIn)]
 public class Unit  {
    	//save these Variables
 	#region Serialize
 	[JsonPropertyAttribute] public int playerNumber;
-	[JsonPropertyAttribute] private string _Name;
-	[JsonPropertyAttribute] private float _currHealth = 50;
+	[JsonPropertyAttribute] private string _UserSetName;
+	[JsonPropertyAttribute] private float _currHealth;
 	[JsonPropertyAttribute] float aggroCooldown=1f;
 	//COMBAT STUFF
 	[JsonPropertyAttribute] public Vector2 patrolTarget;
@@ -27,22 +52,22 @@ public class Unit  {
 	//TODO decide on this:
 	public float BuildRange {
 		get {
-			return attackRange;
+			return AttackRange;
 		}
 	}
 	//FIXME: these should be safed 
 	//not quite sure how to do it
 	Unit engangingUnit;
 	Structure attackingStructure;
-	public string Name {
+	public string UserSetName {
 		get {
-			return _Name;
+			return _UserSetName;
 		}
 		protected set {
-			_Name = value;
+			_UserSetName = value;
 		}
 	}
-	public float currHealth {
+	public float CurrHealth {
 		get { return _currHealth;}
 		protected set {
 			if(value<=0){
@@ -77,38 +102,73 @@ public class Unit  {
 	public bool IsDead { 
 		get { return _currHealth <= 0;}
 	}
-	#endregion
-	//gets from prototyp / being loaded in from masterfile
-	#region prototype
-	public int maxHP=50;
-	float aggroTimer=1f;
-	public float attackRange=1f;
-	public float damage=10;
-	public DamageType myDamageType=DamageType.Blade;
-	public ArmorType myArmorType=ArmorType.Leather;
-	public float attackCooldown=1;
-	public float attackRate=1;
-	public float speed; 
-	public float rotationSpeed = 2f; 
+    #endregion
+    //gets from prototyp / being loaded in from masterfile
+    #region prototype
+    public int ID;
+	float aggroTimer = 1f;
+    public float attackTimer = 1;
 
-	protected internal float width;
-	protected internal float height;
-	#endregion
+    public float AttackRange => Data.attackRange;
+	public float Damage => Data.damage;
+    //TODO: make this there own classes
+    public DamageType MyDamageType = DamageType.Blade;
+    public ArmorType MyArmorType = ArmorType.Leather;
+    public float MaxHealth => Data.MaxHealth;
+    public float AttackRate => Data.attackRange;
+	public float Speed => Data.speed; 
+	public float RotationSpeed => Data.rotationSpeed;
+    public float BuildTime => Data.buildTime;
+    public int BuildCost => Data.buildcost;
+    public int InventoryPlaces => Data.inventoryPlaces;
+    public int InventorySize => Data.inventorySize;
+
+    public virtual Unit Clone(int playerNumber, Tile t) {
+        return new Unit(this, playerNumber,t);
+    }
+
+    protected internal float Width => Data.width;
+	protected internal float Height => Data.height;
+    public Item[] BuildingItems => Data.buildingItems;
+    public string Name => Data.Name;
+
+    #endregion
+
+    protected UnitPrototypeData _prototypData;
+    public UnitPrototypeData Data {
+        get {
+            if (_prototypData == null) {
+                _prototypData = PrototypController.Instance.GetUnitPrototypDataForID(ID);
+            }
+            return _prototypData;
+        }
+    }
 
 
+    public Inventory inventory;
 
-
-	public Inventory inventory;
-
-	public Unit(Tile t,int playernumber) {
+    public Unit(Tile t,int playernumber) {
 		this.playerNumber = playernumber;
-		speed = 2f;
-		Name = "Unit " + UnityEngine.Random.Range (0, 1000000000);
+		UserSetName = "Unit " + UnityEngine.Random.Range (0, 1000000000);
 		pathfinding = new IslandPathfinding (this,t);
     }
 	public Unit(){
 	}
-	public virtual void Update(float deltaTime) {
+
+    public Unit(int id,UnitPrototypeData upd) {
+        this.ID = id;
+        this._prototypData = upd;
+    }
+
+    public Unit(Unit unit, int playerNumber, Tile t) {
+        this.ID = unit.ID;
+        this._prototypData = unit.Data;
+        this.CurrHealth = MaxHealth;
+        this.playerNumber = playerNumber;
+        UserSetName = "Unit " + UnityEngine.Random.Range(0, 1000000000);
+        pathfinding = new IslandPathfinding(this, t);
+    }
+    public virtual void Update(float deltaTime) {
 		//PATROL
 		UpdateParol ();
 		UpdateAggroRange (deltaTime);
@@ -163,7 +223,7 @@ public class Unit  {
 		if(overridingAttack==false&&engangingUnit!=null){
 			return;
 		}
-		if(this.isShip || this.myDamageType == DamageType.Artillery){
+		if(this.isShip || this.MyDamageType == DamageType.Artillery){
 			attackingStructure = structure;
 			Tile nearstTile = null;
 			float nearDist= float.MaxValue;
@@ -177,7 +237,7 @@ public class Unit  {
 						continue;
 					}
 				}
-				float currDist = (item.Vector-pathfinding.currTile.Vector).magnitude;
+				float currDist = (item.Vector-pathfinding.CurrTile.Vector).magnitude;
 				if(currDist<nearDist){
 					currDist = nearDist;
 					nearstTile = item;
@@ -202,7 +262,7 @@ public class Unit  {
 							continue;
 						}
 					}
-					float currDist = (item.Vector-pathfinding.currTile.Vector).magnitude;
+					float currDist = (item.Vector-pathfinding.CurrTile.Vector).magnitude;
 					if(currDist<nearDist){
 						currDist = nearDist;
 						nearstTile = item;
@@ -224,7 +284,7 @@ public class Unit  {
 				return false;
 			}
 			float dist = (engangingUnit.VectorPosition - VectorPosition).magnitude;
-			if(dist<attackRange){
+			if(dist<AttackRange){
 				DoAttack (deltaTime);
 				return true;
 			}
@@ -234,7 +294,7 @@ public class Unit  {
 				return false;
 			}
 			float dist = (attackingStructure.MiddleVector.magnitude - VectorPosition.magnitude);
-			if(dist<attackRange){
+			if(dist<AttackRange){
 				DoAttack (deltaTime);
 				return true;
 			}
@@ -243,23 +303,23 @@ public class Unit  {
 	}
 	public void DoAttack(float deltaTime){
 		if(engangingUnit!=null){
-			if(engangingUnit.currHealth<=0){
+			if(engangingUnit.CurrHealth<=0){
 				engangingUnit = null;
 			}
-			attackCooldown -= deltaTime;
-			if(attackCooldown>0){
+			attackTimer -= deltaTime;
+			if(attackTimer>0){
 				return;
 			}
-			attackCooldown = attackRate;
+			attackTimer = AttackRate;
 
-			engangingUnit.TakeDamage (myDamageType,damage);
+			engangingUnit.TakeDamage (MyDamageType,Damage);
 		}
 		if(isCapturing){
 			if(attackingStructure.Health<=0||attackingStructure.PlayerNumber!=playerNumber){
 				attackingStructure = null;
 				return;
 			}
-			if(attackingStructure.neighbourTiles.Contains (pathfinding.currTile)){
+			if(attackingStructure.neighbourTiles.Contains (pathfinding.CurrTile)){
 				((MarketBuilding)attackingStructure).TakeOverMarketBuilding (deltaTime, playerNumber, 1);
 			}
 		} else {
@@ -267,13 +327,13 @@ public class Unit  {
 				attackingStructure = null;
 				return;
 			}
-			attackCooldown -= deltaTime;
-			if(attackCooldown>0){
+			attackTimer -= deltaTime;
+			if(attackTimer>0){
 				return;
 			}
-			attackCooldown = attackRate;
+			attackTimer = AttackRate;
 
-			attackingStructure.TakeDamage (damage);
+			attackingStructure.TakeDamage (Damage);
 		}
 	}
 
@@ -290,7 +350,7 @@ public class Unit  {
 			}
 		}
 	}
-	public void isInRangeOfWarehouse(OutputStructure ware){
+	public void IsInRangeOfWarehouse(OutputStructure ware){
 		if(ware==null){
 			Debug.LogError ("WARNING Range warehouse null"); 
 			return;
@@ -338,7 +398,7 @@ public class Unit  {
 			//not really an error it can happen
 			return;
 		} else {
-			if(t==pathfinding.currTile){
+			if(t==pathfinding.CurrTile){
 				return;
 			}
 			AddMovementCommand (t.X,t.Y);
@@ -355,7 +415,7 @@ public class Unit  {
         if (tile.Type == TileType.Mountain) {
             return;
         }
-		if(pathfinding.currTile.MyIsland!=tile.MyIsland){
+		if(pathfinding.CurrTile.MyIsland!=tile.MyIsland){
 			return;
 		}
 		onPatrol = false;
@@ -364,10 +424,10 @@ public class Unit  {
 			((IslandPathfinding)pathfinding).SetDestination (x,y);
 		}
     }
-	public int tryToAddItemMaxAmount(Item item , int amount){
+	public int TryToAddItemMaxAmount(Item item , int amount){
 		Item t = item.Clone ();
 		t.count = amount;
-		return inventory.addItem (t);
+		return inventory.AddItem (t);
 	}
 	public void CallChangedCallback(){
         cbUnitChanged?.Invoke(this);
@@ -377,7 +437,7 @@ public class Unit  {
 			Debug.LogError ("damage must be positive");
 			return;
 		}
-		currHealth -= Combat.ArmorDamageReduction (myArmorType, dt) * amount;
+		CurrHealth -= Combat.ArmorDamageReduction (MyArmorType, dt) * amount;
 	}
 	public virtual void Destroy(){
         //Do stuff here when on destroyed

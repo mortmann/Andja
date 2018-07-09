@@ -43,10 +43,10 @@ public class Warehouse : MarketBuilding {
 		}
 		return true;
 	}
-	public void addUnitToTrade(Unit u){
+	public void AddUnitToTrade(Unit u){
 		inRangeUnits.Add (u);
 	}
-	public void removeUnitFromTrade(Unit u){
+	public void RemoveUnitFromTrade(Unit u){
 		if(inRangeUnits.Contains (u))
 			inRangeUnits.Remove (u);
 	}
@@ -97,14 +97,14 @@ public class Warehouse : MarketBuilding {
 		}
 		City.RegisterStructureAdded (OnStructureAdded);
 	}
-	public Tile getTradeTile(){
+	public Tile GetTradeTile(){
 		return tradeTile; //maybe this changes or not s
 	}
 	protected override void OnDestroy (){
 		List<Tile> h = new List<Tile> (myBuildingTiles);
 		h.AddRange (myRangeTiles); 
 		City.RemoveTiles (h);
-		//you lose any res that the worker carrying
+		//you lose any res that the worker is carrying
 		foreach (Worker item in myWorker) {
 			item.Destroy ();
 		}

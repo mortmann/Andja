@@ -76,7 +76,7 @@ public class TradeRoute {
 		if(trades [currentDestination].city.myWarehouse==null){
 			return null;
 		}
-		return trades [currentDestination].city.myWarehouse.getTradeTile ();
+		return trades [currentDestination].city.myWarehouse.GetTradeTile ();
 	}
 	public Tile getNextDestination(){
 		//if theres only one destination
@@ -90,7 +90,7 @@ public class TradeRoute {
 			increaseDestination ();
 			if(trades [currentDestination].city.myWarehouse!=null){
 				isStarted = true;
-				return trades [currentDestination].city.myWarehouse.getTradeTile ();
+				return trades [currentDestination].city.myWarehouse.GetTradeTile ();
 			}
 		}
 		return null;

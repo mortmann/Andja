@@ -139,9 +139,6 @@ public class WorldController : MonoBehaviour {
         World.SetTiles(MapGenerator.Instance.GetTiles(),GameDataHolder.Instance.Width,GameDataHolder.Instance.Height);
 
         List<MapGenerator.IslandStruct> structs = MapGenerator.Instance.GetIslandStructs();
-        foreach(MapGenerator.IslandStruct s in structs) {
-            Debug.Log(s.y +" " + (s.y + s.Width) + " " + s.y + " " + (s.y + s.Height));
-        }
         foreach (Island island in World.IslandList) {
             MapGenerator.IslandStruct thisStruct = structs.Find(s =>
                     island.StartTile.X >= s.x && (s.x + s.Width) >= island.StartTile.X &&
@@ -161,9 +158,6 @@ public class WorldController : MonoBehaviour {
 		}
 		loadedStructures.Sort ((x, y) => x.buildID.CompareTo(y.buildID) );
 		BuildController.Instance.PlaceAllLoadedStructure (loadedStructures);
-		if(loadWorker!=null){
-			GameObject.FindObjectOfType<WorkerSpriteController> ().loadedWorker = loadWorker;
-		}
 		Debug.Log ("LOAD ENDED");
 	}
 
@@ -171,13 +165,7 @@ public class WorldController : MonoBehaviour {
         save = world;
     }
 
-	List<Worker> loadWorker;
-	public void AddWorkerForLoad(Worker w){
-		if(loadWorker==null){
-			loadWorker = new List<Worker> ();
-		}
-		loadWorker.Add (w);
-	}
+	
 
 }
 

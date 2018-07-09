@@ -8,21 +8,30 @@ public enum Climate {Cold,Middle,Warm};
 public enum IslandSizeTypes { ExtraSmall, Small, Middle, Big, ExtraBig, Other }
 
 [JsonObject(MemberSerialization.OptIn)]
-public class Island : IGEventable{
-	public const int TargetType = 11;
-	#region Serialize
+public class Island : IGEventable {
+    public const int TargetType = 11;
+    #region Serialize
 
-	[JsonPropertyAttribute] public List<City> myCities;
-	[JsonPropertyAttribute] public List<Fertility> myFertilities;
-	[JsonPropertyAttribute] public Climate myClimate;
-	[JsonPropertyAttribute] public Dictionary<string,int> myRessources;
-	[JsonPropertyAttribute] public Tile StartTile;
+    [JsonPropertyAttribute] public List<City> myCities;
+    [JsonPropertyAttribute] public List<Fertility> myFertilities;
+    [JsonPropertyAttribute] public Climate myClimate;
+    [JsonPropertyAttribute] public Dictionary<string, int> myRessources;
+    [JsonPropertyAttribute] public Tile StartTile;
 
-	#endregion
-	#region RuntimeOrOther
+    #endregion
+    #region RuntimeOrOther
 
-	public Path_TileGraph TileGraphIslandTiles { get; protected set; }
-
+    public Path_TileGraph TileGraphIslandTiles { get; protected set; }
+    public int Width {
+        get {
+            return Mathf.CeilToInt (max.x - min.x);
+        }
+    }
+    public int Height {
+        get {
+            return Mathf.CeilToInt (max.y - min.y);
+        }
+    }
     public City Wilderness {
         get {
             if (_wilderness == null)
@@ -36,7 +45,8 @@ public class Island : IGEventable{
     }
 
     public List<Tile> myTiles;
-	public Vector2 min;
+    public Vector2 Placement;
+    public Vector2 min;
 	public Vector2 max;
     private City _wilderness;
     public bool allReadyHighlighted;
@@ -189,13 +199,6 @@ public class Island : IGEventable{
 			myCities[i].Update(deltaTime);
         }
     }
-	public void AddStructure(Structure str){
-		allReadyHighlighted = false;
-		if(str.City == Wilderness){
-//			Debug.LogWarning ("adding to wilderness wanted?");
-		}
-		str.City.AddStructure (str);
-	}
 	public City FindCityByPlayer(int playerNumber) {
 		return myCities.Find(x=> x.playerNumber == playerNumber);
 	}

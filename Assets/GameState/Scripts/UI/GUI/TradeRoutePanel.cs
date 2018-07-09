@@ -71,15 +71,15 @@ public class TradeRoutePanel : MonoBehaviour {
 	}
 
 	public void Show(Ship unit){
-		amountSlider.maxValue = unit.inventory.maxStackSize;
+		amountSlider.maxValue = unit.inventory.MaxStackSize;
 		this.unit = unit;
 		ResetItemIcons ();
 	}
 	private void AddItemPrefabTo(Transform t){
 		GameObject g = GameObject.Instantiate (itemPrefab);
 		g.transform.SetParent (t);
-		g.GetComponentInChildren<Slider> ().maxValue = unit.inventory.maxStackSize;
-		g.GetComponentInChildren<Text> ().text= unit.inventory.maxStackSize+"t";
+		g.GetComponentInChildren<Slider> ().maxValue = unit.inventory.MaxStackSize;
+		g.GetComponentInChildren<Text> ().text= unit.inventory.MaxStackSize+"t";
 		//TODO add listener stuff
 		EventTrigger trigger = g.GetComponent<EventTrigger> ();
         EventTrigger.Entry entry = new EventTrigger.Entry {
@@ -97,7 +97,7 @@ public class TradeRoutePanel : MonoBehaviour {
 			return;
 		}
 		ItemUI g = intToGameObject [pressedItem];
-		g.SetItem (i, unit.inventory.maxStackSize);
+		g.SetItem (i, unit.inventory.MaxStackSize);
 //		pressedItem = -1;
 		intToItem.Add (pressedItem,i.Clone ()); 
 		if(intToItem.ContainsKey (pressedItem))
@@ -201,7 +201,7 @@ public class TradeRoutePanel : MonoBehaviour {
 		foreach(Transform t in toShip.transform){
 			GameObject.Destroy (t.gameObject);
 		}
-		for (int i = 0; i < unit.inventory.numberOfSpaces; i++) {
+		for (int i = 0; i < unit.inventory.NumberOfSpaces; i++) {
 			//this order is important
 			//DO NOT CHANGE THIS 
 			//WITHOUT CHANGING THE RETURNING VALUES FOR
@@ -251,7 +251,7 @@ public class TradeRoutePanel : MonoBehaviour {
 	}
 
 	public void DeleteSelectedItem(){
-		intToGameObject [pressedItem].SetItem (null, unit.inventory.maxStackSize);
+		intToGameObject [pressedItem].SetItem (null, unit.inventory.MaxStackSize);
 		intToItem.Remove (pressedItem);
 	}
 

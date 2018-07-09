@@ -60,7 +60,11 @@ public class Item {
         return i;
 	}
 
-	public override string ToString (){
+    internal string ToSmallString() {
+        return string.Format(name + ":" + count +"t");
+    }
+
+    public override string ToString (){
 		return string.Format ("[Item] " + ID +":"+name+":"+count);
 	}
 

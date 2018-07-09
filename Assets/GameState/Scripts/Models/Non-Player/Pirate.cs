@@ -37,10 +37,10 @@ public class Pirate : MonoBehaviour {
 	}
 
 	public void AddShip(){
-		Tile t = World.Current.GetTileAt (Random.Range (0, World.Current.Height), 0);
-		Ship s = (Ship)World.Current.CreateUnit (t, -1, true);
-		s.RegisterOnDestroyCallback (OnShipDestroy);
-		myShips.Add (s);
+		//Tile t = World.Current.GetTileAt (Random.Range (0, World.Current.Height), 0);
+		//Ship s = (Ship)World.Current.CreateUnit (t, -1, true);
+		//s.RegisterOnDestroyCallback (OnShipDestroy);
+		//myShips.Add (s);
 	}
 	public void OnShipDestroy(Unit u){
 		myShips.Remove ((Ship)u);

@@ -6,6 +6,9 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using Newtonsoft.Json;
 using System;
+using System.Reflection;
+using UnityEditor;
+
 public class SaveController : MonoBehaviour {
 
 	public static SaveController Instance;
@@ -30,6 +33,7 @@ public class SaveController : MonoBehaviour {
 	// Use this for initialization
 	void Start () { 
 		if (GDH!=null && GDH.loadsavegame!=null && GDH.loadsavegame.Length > 0) {
+            ClearConsole();
             Debug.Log("LOADING SAVEGAME " + GDH.loadsavegame);
             IsLoadingSave = true;
             StartCoroutine(LoadGameState (GDH.loadsavegame));
@@ -41,7 +45,15 @@ public class SaveController : MonoBehaviour {
 
 //		LoadGameState ("sae");
 	}
-	public void Update(){
+    static void ClearConsole() {
+        var logEntries = System.Type.GetType("UnityEditor.LogEntries, UnityEditor.dll");
+
+        var clearMethod = logEntries.GetMethod("Clear", System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.Public);
+
+        clearMethod.Invoke(null, null);
+    }
+
+    public void Update(){
 		//autosave every soandso 
 		//maybe option to choose frequenzy
 
@@ -81,7 +93,21 @@ public class SaveController : MonoBehaviour {
 		}
 	}
 
-	public string GetSaveGamesPath(){
+    private static List<Worker> loadWorker;
+    public static void AddWorkerForLoad(Worker w) {
+        if (loadWorker == null) {
+            loadWorker = new List<Worker>();
+        }
+        loadWorker.Add(w);
+    }
+    public static List<Worker> GetLoadWorker() {
+        if (loadWorker == null)
+            return null;
+        List<Worker> tempLoadWorker = new List<Worker>(loadWorker);
+        loadWorker = null;
+        return tempLoadWorker;
+    }
+    public string GetSaveGamesPath(){
 		//TODO FIXME change this to documentspath
 		return System.IO.Path.Combine(Application.dataPath.Replace ("/Assets","") , "saves");
 	}

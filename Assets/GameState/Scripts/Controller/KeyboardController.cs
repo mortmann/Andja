@@ -31,7 +31,7 @@ public class KeyboardController : MonoBehaviour {
 			return;
 		}
 		if (InputHandler.GetButtonDown ("BuildMenu")) {
-			uic.showBuildMenu();
+			uic.ShowBuildMenu();
 		}
 		if(InputHandler.GetButtonDown ("TradeMenu")){
 			uic.ToggleTradeMenu ();

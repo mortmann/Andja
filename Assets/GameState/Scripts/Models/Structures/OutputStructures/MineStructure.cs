@@ -62,14 +62,14 @@ public class MineStructure : OutputStructure {
 		if (BuildTile.MyIsland.myRessources [myRessource] <= 0) {
 			return;
 		} 
-		if (output[0].count >= maxOutputStorage){
+		if (Output[0].count >= MaxOutputStorage){
 			return;
 		}
 
 		produceCountdown += deltaTime;
-		if(produceCountdown >= produceTime) {
+		if(produceCountdown >= ProduceTime) {
 			produceCountdown = 0;
-			output [0].count++;
+			Output [0].count++;
 
             cbOutputChange?.Invoke(this);
         }

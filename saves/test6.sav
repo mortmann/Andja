@@ -1,0 +1,2471 @@
+{
+  "$id": "1",
+  "safefileversion": "0.1.3",
+  "gamedata": {
+    "$id": "2",
+    "MapSeed": 10,
+    "Height": 500,
+    "Width": 500,
+    "usedIslands": [
+      "Middle\\Middle\\middle_m1.isl",
+      "Cold\\Middle\\north_m2.isl",
+      "Warm\\Small\\south_s1.isl"
+    ]
+  },
+  "world": {
+    "$id": "3",
+    "offworld": {
+      "$id": "4"
+    },
+    "world": {
+      "$id": "5",
+      "IslandList": [
+        {
+          "$id": "6",
+          "myCities": [
+            {
+              "$id": "7",
+              "playerNumber": -1,
+              "inventory": {
+                "$id": "8",
+                "name": "noname-INV",
+                "MaxStackSize": 50,
+                "items": {
+                  "$id": "9"
+                },
+                "NumberOfSpaces": 0
+              },
+              "myStructures": [],
+              "useTickTimer": 0.0,
+              "_name": "",
+              "island": {
+                "$ref": "6"
+              }
+            }
+          ],
+          "myFertilities": [
+            {
+              "$id": "10",
+              "ID": 9,
+              "Data": {
+                "climates": [
+                  2,
+                  1
+                ],
+                "Name": "Wine"
+              },
+              "Name": "Wine",
+              "Climates": [
+                2,
+                1
+              ]
+            },
+            {
+              "$id": "11",
+              "ID": 8,
+              "Data": {
+                "climates": [
+                  2
+                ],
+                "Name": "Sugarcone"
+              },
+              "Name": "Sugarcone",
+              "Climates": [
+                2
+              ]
+            },
+            {
+              "$id": "12",
+              "ID": 6,
+              "Data": {
+                "climates": [
+                  2
+                ],
+                "Name": "Silk"
+              },
+              "Name": "Silk",
+              "Climates": [
+                2
+              ]
+            }
+          ],
+          "myClimate": 2,
+          "myRessources": {
+            "$id": "13",
+            "stone": 2147483647
+          },
+          "StartTile": {
+            "$id": "14",
+            "$type": "LandTile, Assembly-CSharp",
+            "x": 140,
+            "y": 71,
+            "_type": 4,
+            "SpriteName": "warm_dirt_1"
+          }
+        },
+        {
+          "$id": "15",
+          "myCities": [
+            {
+              "$id": "16",
+              "playerNumber": -1,
+              "inventory": {
+                "$id": "17",
+                "name": "noname-INV",
+                "MaxStackSize": 50,
+                "items": {
+                  "$id": "18"
+                },
+                "NumberOfSpaces": 0
+              },
+              "myStructures": [],
+              "useTickTimer": 0.0,
+              "_name": "",
+              "island": {
+                "$ref": "15"
+              }
+            },
+            {
+              "$id": "19",
+              "playerNumber": 0,
+              "inventory": {
+                "$id": "20",
+                "$type": "CityInventory, Assembly-CSharp",
+                "name": "City -1",
+                "MaxStackSize": 50,
+                "items": {
+                  "$id": "21",
+                  "1": {
+                    "$id": "22",
+                    "ID": 1,
+                    "count": 12
+                  },
+                  "2": {
+                    "$id": "23",
+                    "ID": 2,
+                    "count": 41
+                  },
+                  "3": {
+                    "$id": "24",
+                    "ID": 3,
+                    "count": 45
+                  },
+                  "4": {
+                    "$id": "25",
+                    "ID": 4,
+                    "count": 50
+                  },
+                  "5": {
+                    "$id": "26",
+                    "ID": 5,
+                    "count": 50
+                  },
+                  "6": {
+                    "$id": "27",
+                    "ID": 6,
+                    "count": 50
+                  },
+                  "7": {
+                    "$id": "28",
+                    "ID": 7,
+                    "count": 50
+                  },
+                  "101": {
+                    "$id": "29",
+                    "ID": 101,
+                    "count": 50
+                  },
+                  "102": {
+                    "$id": "30",
+                    "ID": 102,
+                    "count": 50
+                  },
+                  "103": {
+                    "$id": "31",
+                    "ID": 103,
+                    "count": 50
+                  },
+                  "104": {
+                    "$id": "32",
+                    "ID": 104,
+                    "count": 50
+                  },
+                  "105": {
+                    "$id": "33",
+                    "ID": 105,
+                    "count": 50
+                  },
+                  "106": {
+                    "$id": "34",
+                    "ID": 106,
+                    "count": 50
+                  },
+                  "107": {
+                    "$id": "35",
+                    "ID": 107,
+                    "count": 50
+                  },
+                  "108": {
+                    "$id": "36",
+                    "ID": 108,
+                    "count": 44
+                  },
+                  "109": {
+                    "$id": "37",
+                    "ID": 109,
+                    "count": 50
+                  },
+                  "201": {
+                    "$id": "38",
+                    "ID": 201,
+                    "count": 50
+                  },
+                  "202": {
+                    "$id": "39",
+                    "ID": 202,
+                    "count": 50
+                  },
+                  "203": {
+                    "$id": "40",
+                    "ID": 203,
+                    "count": 50
+                  },
+                  "204": {
+                    "$id": "41",
+                    "ID": 204,
+                    "count": 50
+                  },
+                  "205": {
+                    "$id": "42",
+                    "ID": 205,
+                    "count": 50
+                  },
+                  "206": {
+                    "$id": "43",
+                    "ID": 206,
+                    "count": 50
+                  },
+                  "207": {
+                    "$id": "44",
+                    "ID": 207,
+                    "count": 50
+                  },
+                  "208": {
+                    "$id": "45",
+                    "ID": 208,
+                    "count": 50
+                  },
+                  "209": {
+                    "$id": "46",
+                    "ID": 209,
+                    "count": 50
+                  },
+                  "210": {
+                    "$id": "47",
+                    "ID": 210,
+                    "count": 50
+                  },
+                  "211": {
+                    "$id": "48",
+                    "ID": 211,
+                    "count": 50
+                  },
+                  "212": {
+                    "$id": "49",
+                    "ID": 212,
+                    "count": 50
+                  },
+                  "213": {
+                    "$id": "50",
+                    "ID": 213,
+                    "count": 50
+                  },
+                  "214": {
+                    "$id": "51",
+                    "ID": 214,
+                    "count": 50
+                  },
+                  "215": {
+                    "$id": "52",
+                    "ID": 215,
+                    "count": 50
+                  },
+                  "216": {
+                    "$id": "53",
+                    "ID": 216,
+                    "count": 50
+                  },
+                  "217": {
+                    "$id": "54",
+                    "ID": 217,
+                    "count": 50
+                  },
+                  "218": {
+                    "$id": "55",
+                    "ID": 218,
+                    "count": 50
+                  },
+                  "219": {
+                    "$id": "56",
+                    "ID": 219,
+                    "count": 50
+                  },
+                  "220": {
+                    "$id": "57",
+                    "ID": 220,
+                    "count": 50
+                  },
+                  "301": {
+                    "$id": "58",
+                    "ID": 301,
+                    "count": 50
+                  },
+                  "302": {
+                    "$id": "59",
+                    "ID": 302,
+                    "count": 50
+                  },
+                  "303": {
+                    "$id": "60",
+                    "ID": 303,
+                    "count": 50
+                  },
+                  "305": {
+                    "$id": "61",
+                    "ID": 305,
+                    "count": 50
+                  },
+                  "306": {
+                    "$id": "62",
+                    "ID": 306,
+                    "count": 50
+                  },
+                  "307": {
+                    "$id": "63",
+                    "ID": 307,
+                    "count": 50
+                  },
+                  "308": {
+                    "$id": "64",
+                    "ID": 308,
+                    "count": 50
+                  },
+                  "309": {
+                    "$id": "65",
+                    "ID": 309,
+                    "count": 50
+                  },
+                  "310": {
+                    "$id": "66",
+                    "ID": 310,
+                    "count": 50
+                  },
+                  "311": {
+                    "$id": "67",
+                    "ID": 311,
+                    "count": 50
+                  },
+                  "312": {
+                    "$id": "68",
+                    "ID": 312,
+                    "count": 50
+                  },
+                  "313": {
+                    "$id": "69",
+                    "ID": 313,
+                    "count": 50
+                  },
+                  "314": {
+                    "$id": "70",
+                    "ID": 314,
+                    "count": 50
+                  },
+                  "315": {
+                    "$id": "71",
+                    "ID": 315,
+                    "count": 50
+                  },
+                  "316": {
+                    "$id": "72",
+                    "ID": 316,
+                    "count": 50
+                  },
+                  "317": {
+                    "$id": "73",
+                    "ID": 317,
+                    "count": 50
+                  },
+                  "318": {
+                    "$id": "74",
+                    "ID": 318,
+                    "count": 50
+                  },
+                  "319": {
+                    "$id": "75",
+                    "ID": 319,
+                    "count": 50
+                  },
+                  "320": {
+                    "$id": "76",
+                    "ID": 320,
+                    "count": 50
+                  },
+                  "321": {
+                    "$id": "77",
+                    "ID": 321,
+                    "count": 50
+                  },
+                  "322": {
+                    "$id": "78",
+                    "ID": 322,
+                    "count": 50
+                  },
+                  "323": {
+                    "$id": "79",
+                    "ID": 323,
+                    "count": 50
+                  },
+                  "401": {
+                    "$id": "80",
+                    "ID": 401,
+                    "count": 50
+                  },
+                  "402": {
+                    "$id": "81",
+                    "ID": 402,
+                    "count": 50
+                  },
+                  "403": {
+                    "$id": "82",
+                    "ID": 403,
+                    "count": 50
+                  },
+                  "404": {
+                    "$id": "83",
+                    "ID": 404,
+                    "count": 50
+                  },
+                  "405": {
+                    "$id": "84",
+                    "ID": 405,
+                    "count": 50
+                  },
+                  "406": {
+                    "$id": "85",
+                    "ID": 406,
+                    "count": 50
+                  },
+                  "407": {
+                    "$id": "86",
+                    "ID": 407,
+                    "count": 50
+                  },
+                  "408": {
+                    "$id": "87",
+                    "ID": 408,
+                    "count": 50
+                  },
+                  "409": {
+                    "$id": "88",
+                    "ID": 409,
+                    "count": 50
+                  },
+                  "410": {
+                    "$id": "89",
+                    "ID": 410,
+                    "count": 50
+                  },
+                  "411": {
+                    "$id": "90",
+                    "ID": 411,
+                    "count": 50
+                  },
+                  "412": {
+                    "$id": "91",
+                    "ID": 412,
+                    "count": 50
+                  },
+                  "413": {
+                    "$id": "92",
+                    "ID": 413,
+                    "count": 50
+                  },
+                  "414": {
+                    "$id": "93",
+                    "ID": 414,
+                    "count": 50
+                  },
+                  "415": {
+                    "$id": "94",
+                    "ID": 415,
+                    "count": 50
+                  },
+                  "416": {
+                    "$id": "95",
+                    "ID": 416,
+                    "count": 50
+                  },
+                  "417": {
+                    "$id": "96",
+                    "ID": 417,
+                    "count": 50
+                  },
+                  "418": {
+                    "$id": "97",
+                    "ID": 418,
+                    "count": 50
+                  },
+                  "1001": {
+                    "$id": "98",
+                    "ID": 1001,
+                    "count": 46
+                  },
+                  "1002": {
+                    "$id": "99",
+                    "ID": 1002,
+                    "count": 50
+                  },
+                  "1003": {
+                    "$id": "100",
+                    "ID": 1003,
+                    "count": 45
+                  },
+                  "1004": {
+                    "$id": "101",
+                    "ID": 1004,
+                    "count": 50
+                  },
+                  "1005": {
+                    "$id": "102",
+                    "ID": 1005,
+                    "count": 50
+                  },
+                  "1006": {
+                    "$id": "103",
+                    "ID": 1006,
+                    "count": 50
+                  },
+                  "1007": {
+                    "$id": "104",
+                    "ID": 1007,
+                    "count": 50
+                  },
+                  "1008": {
+                    "$id": "105",
+                    "ID": 1008,
+                    "count": 50
+                  }
+                },
+                "NumberOfSpaces": -1
+              },
+              "myStructures": [
+                {
+                  "$id": "106",
+                  "$type": "Warehouse, Assembly-CSharp",
+                  "level": 1,
+                  "takenOverState": 0.0,
+                  "myWorker": [],
+                  "produceCountdown": 0.0,
+                  "ID": 1,
+                  "buildID": 0,
+                  "_health": 0.0,
+                  "rotated": 0,
+                  "buildInWilderniss": false,
+                  "isActive": true,
+                  "_city": {
+                    "$ref": "19"
+                  },
+                  "BuildTile": {
+                    "$id": "107",
+                    "$type": "LandTile, Assembly-CSharp",
+                    "x": 258,
+                    "y": 273,
+                    "_type": 1,
+                    "SpriteName": "shore_NS_E"
+                  }
+                },
+                {
+                  "$id": "108",
+                  "$type": "MilitaryBuilding, Assembly-CSharp",
+                  "buildTimer": 0.0,
+                  "toBuildUnits": [],
+                  "ID": 1003,
+                  "buildID": 1,
+                  "_health": 0.0,
+                  "rotated": 0,
+                  "buildInWilderniss": false,
+                  "isActive": true,
+                  "_city": {
+                    "$ref": "19"
+                  },
+                  "BuildTile": {
+                    "$id": "109",
+                    "$type": "LandTile, Assembly-CSharp",
+                    "x": 267,
+                    "y": 281,
+                    "_type": 4,
+                    "SpriteName": "cold_dirt_1"
+                  }
+                },
+                {
+                  "$id": "110",
+                  "$type": "MarketBuilding, Assembly-CSharp",
+                  "level": 1,
+                  "takenOverState": 0.0,
+                  "myWorker": [
+                    {
+                      "$id": "111",
+                      "myHome": {
+                        "$ref": "110"
+                      },
+                      "path": {
+                        "$id": "112",
+                        "$type": "RoutePathfinding, Assembly-CSharp",
+                        "dest_X": 0.0,
+                        "dest_Y": 0.0,
+                        "IsAtDest": false,
+                        "_destTile": {
+                          "$id": "113",
+                          "$type": "LandTile, Assembly-CSharp",
+                          "x": 278,
+                          "y": 269,
+                          "_type": 4,
+                          "SpriteName": "cold_dirt_0"
+                        },
+                        "rotation": 180.0,
+                        "_y": 269.0,
+                        "_x": 278.471619,
+                        "startTile": {
+                          "$ref": "113"
+                        }
+                      },
+                      "doTimer": 0.5,
+                      "toGetItems": [
+                        {
+                          "$id": "114",
+                          "ID": 1,
+                          "count": 38
+                        }
+                      ],
+                      "inventory": {
+                        "$id": "115",
+                        "name": "noname-INV",
+                        "MaxStackSize": 50,
+                        "items": {
+                          "$id": "116",
+                          "0": {
+                            "$id": "117",
+                            "ID": 1,
+                            "count": 5
+                          }
+                        },
+                        "NumberOfSpaces": 4
+                      },
+                      "goingToWork": false,
+                      "destTile": {
+                        "$id": "118",
+                        "$type": "LandTile, Assembly-CSharp",
+                        "x": 280,
+                        "y": 268,
+                        "_type": 4,
+                        "SpriteName": "cold_dirt_0"
+                      },
+                      "isAtHome": false
+                    }
+                  ],
+                  "produceCountdown": 0.0,
+                  "ID": 51,
+                  "buildID": 0,
+                  "_health": 0.0,
+                  "rotated": 0,
+                  "buildInWilderniss": false,
+                  "isActive": true,
+                  "_city": {
+                    "$ref": "19"
+                  },
+                  "BuildTile": {
+                    "$id": "119",
+                    "$type": "LandTile, Assembly-CSharp",
+                    "x": 274,
+                    "y": 269,
+                    "_type": 4,
+                    "SpriteName": "cold_dirt_1"
+                  }
+                },
+                {
+                  "$id": "120",
+                  "$type": "MilitaryBuilding, Assembly-CSharp",
+                  "buildTimer": 0.0,
+                  "toBuildUnits": [],
+                  "ID": 1002,
+                  "buildID": 1,
+                  "_health": 0.0,
+                  "rotated": 0,
+                  "buildInWilderniss": false,
+                  "isActive": true,
+                  "_city": {
+                    "$ref": "19"
+                  },
+                  "BuildTile": {
+                    "$id": "121",
+                    "$type": "LandTile, Assembly-CSharp",
+                    "x": 284,
+                    "y": 267,
+                    "_type": 4,
+                    "SpriteName": "cold_dirt_0"
+                  }
+                },
+                {
+                  "$id": "122",
+                  "$type": "Farm, Assembly-CSharp",
+                  "produceCountdown": 0.0,
+                  "ID": 601,
+                  "buildID": 0,
+                  "_health": 0.0,
+                  "rotated": 0,
+                  "buildInWilderniss": false,
+                  "isActive": true,
+                  "_city": {
+                    "$ref": "19"
+                  },
+                  "output": [
+                    {
+                      "$id": "123",
+                      "ID": 1,
+                      "count": 5
+                    }
+                  ],
+                  "BuildTile": {
+                    "$ref": "118"
+                  }
+                },
+                {
+                  "$id": "124",
+                  "$type": "Road, Assembly-CSharp",
+                  "ID": 101,
+                  "buildID": 1,
+                  "_health": 0.0,
+                  "rotated": 0,
+                  "buildInWilderniss": false,
+                  "isActive": true,
+                  "_city": {
+                    "$ref": "19"
+                  },
+                  "BuildTile": {
+                    "$id": "125",
+                    "$type": "LandTile, Assembly-CSharp",
+                    "x": 279,
+                    "y": 269,
+                    "_type": 4,
+                    "SpriteName": "cold_dirt_1"
+                  }
+                },
+                {
+                  "$id": "126",
+                  "$type": "Road, Assembly-CSharp",
+                  "ID": 101,
+                  "buildID": 2,
+                  "_health": 0.0,
+                  "rotated": 0,
+                  "buildInWilderniss": false,
+                  "isActive": true,
+                  "_city": {
+                    "$ref": "19"
+                  },
+                  "BuildTile": {
+                    "$ref": "113"
+                  }
+                },
+                {
+                  "$id": "127",
+                  "$type": "Growable, Assembly-CSharp",
+                  "age": 5.761427,
+                  "currentStage": 3,
+                  "hasProduced": true,
+                  "produceCountdown": 0.0,
+                  "ID": 502,
+                  "buildID": 3,
+                  "_health": 0.0,
+                  "rotated": 0,
+                  "buildInWilderniss": false,
+                  "isActive": true,
+                  "_city": {
+                    "$ref": "19"
+                  },
+                  "output": [
+                    {
+                      "$id": "128",
+                      "ID": 1,
+                      "count": 1
+                    }
+                  ],
+                  "BuildTile": {
+                    "$id": "129",
+                    "$type": "LandTile, Assembly-CSharp",
+                    "x": 278,
+                    "y": 265,
+                    "_type": 4,
+                    "SpriteName": "cold_dirt_1"
+                  }
+                },
+                {
+                  "$id": "130",
+                  "$type": "Growable, Assembly-CSharp",
+                  "age": 6.68229437,
+                  "currentStage": 3,
+                  "hasProduced": true,
+                  "produceCountdown": 0.0,
+                  "ID": 502,
+                  "buildID": 4,
+                  "_health": 0.0,
+                  "rotated": 0,
+                  "buildInWilderniss": false,
+                  "isActive": true,
+                  "_city": {
+                    "$ref": "19"
+                  },
+                  "output": [
+                    {
+                      "$id": "131",
+                      "ID": 1,
+                      "count": 1
+                    }
+                  ],
+                  "BuildTile": {
+                    "$id": "132",
+                    "$type": "LandTile, Assembly-CSharp",
+                    "x": 278,
+                    "y": 266,
+                    "_type": 4,
+                    "SpriteName": "cold_dirt_0"
+                  }
+                },
+                {
+                  "$id": "133",
+                  "$type": "Growable, Assembly-CSharp",
+                  "age": 5.88405132,
+                  "currentStage": 3,
+                  "hasProduced": true,
+                  "produceCountdown": 0.0,
+                  "ID": 502,
+                  "buildID": 5,
+                  "_health": 0.0,
+                  "rotated": 0,
+                  "buildInWilderniss": false,
+                  "isActive": true,
+                  "_city": {
+                    "$ref": "19"
+                  },
+                  "output": [
+                    {
+                      "$id": "134",
+                      "ID": 1,
+                      "count": 1
+                    }
+                  ],
+                  "BuildTile": {
+                    "$id": "135",
+                    "$type": "LandTile, Assembly-CSharp",
+                    "x": 278,
+                    "y": 267,
+                    "_type": 4,
+                    "SpriteName": "cold_dirt_0"
+                  }
+                },
+                {
+                  "$id": "136",
+                  "$type": "Growable, Assembly-CSharp",
+                  "age": 5.814891,
+                  "currentStage": 3,
+                  "hasProduced": true,
+                  "produceCountdown": 0.0,
+                  "ID": 502,
+                  "buildID": 6,
+                  "_health": 0.0,
+                  "rotated": 0,
+                  "buildInWilderniss": false,
+                  "isActive": true,
+                  "_city": {
+                    "$ref": "19"
+                  },
+                  "output": [
+                    {
+                      "$id": "137",
+                      "ID": 1,
+                      "count": 1
+                    }
+                  ],
+                  "BuildTile": {
+                    "$id": "138",
+                    "$type": "LandTile, Assembly-CSharp",
+                    "x": 278,
+                    "y": 268,
+                    "_type": 4,
+                    "SpriteName": "cold_dirt_1"
+                  }
+                },
+                {
+                  "$id": "139",
+                  "$type": "Growable, Assembly-CSharp",
+                  "age": 3.728677,
+                  "currentStage": 2,
+                  "hasProduced": false,
+                  "produceCountdown": 0.0,
+                  "ID": 502,
+                  "buildID": 7,
+                  "_health": 0.0,
+                  "rotated": 0,
+                  "buildInWilderniss": false,
+                  "isActive": true,
+                  "_city": {
+                    "$ref": "19"
+                  },
+                  "output": [
+                    {
+                      "$id": "140",
+                      "ID": 1,
+                      "count": 0
+                    }
+                  ],
+                  "BuildTile": {
+                    "$id": "141",
+                    "$type": "LandTile, Assembly-CSharp",
+                    "x": 278,
+                    "y": 270,
+                    "_type": 4,
+                    "SpriteName": "cold_dirt_0"
+                  }
+                },
+                {
+                  "$id": "142",
+                  "$type": "Growable, Assembly-CSharp",
+                  "age": 5.807449,
+                  "currentStage": 3,
+                  "hasProduced": true,
+                  "produceCountdown": 0.0,
+                  "ID": 502,
+                  "buildID": 8,
+                  "_health": 0.0,
+                  "rotated": 0,
+                  "buildInWilderniss": false,
+                  "isActive": true,
+                  "_city": {
+                    "$ref": "19"
+                  },
+                  "output": [
+                    {
+                      "$id": "143",
+                      "ID": 1,
+                      "count": 1
+                    }
+                  ],
+                  "BuildTile": {
+                    "$id": "144",
+                    "$type": "LandTile, Assembly-CSharp",
+                    "x": 278,
+                    "y": 271,
+                    "_type": 4,
+                    "SpriteName": "cold_dirt_0"
+                  }
+                },
+                {
+                  "$id": "145",
+                  "$type": "Growable, Assembly-CSharp",
+                  "age": 5.381717,
+                  "currentStage": 3,
+                  "hasProduced": true,
+                  "produceCountdown": 0.0,
+                  "ID": 502,
+                  "buildID": 9,
+                  "_health": 0.0,
+                  "rotated": 0,
+                  "buildInWilderniss": false,
+                  "isActive": true,
+                  "_city": {
+                    "$ref": "19"
+                  },
+                  "output": [
+                    {
+                      "$id": "146",
+                      "ID": 1,
+                      "count": 1
+                    }
+                  ],
+                  "BuildTile": {
+                    "$id": "147",
+                    "$type": "LandTile, Assembly-CSharp",
+                    "x": 278,
+                    "y": 272,
+                    "_type": 4,
+                    "SpriteName": "cold_dirt_0"
+                  }
+                },
+                {
+                  "$id": "148",
+                  "$type": "Growable, Assembly-CSharp",
+                  "age": 5.844187,
+                  "currentStage": 3,
+                  "hasProduced": true,
+                  "produceCountdown": 0.0,
+                  "ID": 502,
+                  "buildID": 10,
+                  "_health": 0.0,
+                  "rotated": 0,
+                  "buildInWilderniss": false,
+                  "isActive": true,
+                  "_city": {
+                    "$ref": "19"
+                  },
+                  "output": [
+                    {
+                      "$id": "149",
+                      "ID": 1,
+                      "count": 1
+                    }
+                  ],
+                  "BuildTile": {
+                    "$id": "150",
+                    "$type": "LandTile, Assembly-CSharp",
+                    "x": 279,
+                    "y": 265,
+                    "_type": 4,
+                    "SpriteName": "cold_dirt_1"
+                  }
+                },
+                {
+                  "$id": "151",
+                  "$type": "Growable, Assembly-CSharp",
+                  "age": 6.27985525,
+                  "currentStage": 3,
+                  "hasProduced": true,
+                  "produceCountdown": 0.0,
+                  "ID": 502,
+                  "buildID": 11,
+                  "_health": 0.0,
+                  "rotated": 0,
+                  "buildInWilderniss": false,
+                  "isActive": true,
+                  "_city": {
+                    "$ref": "19"
+                  },
+                  "output": [
+                    {
+                      "$id": "152",
+                      "ID": 1,
+                      "count": 1
+                    }
+                  ],
+                  "BuildTile": {
+                    "$id": "153",
+                    "$type": "LandTile, Assembly-CSharp",
+                    "x": 279,
+                    "y": 266,
+                    "_type": 4,
+                    "SpriteName": "cold_dirt_0"
+                  }
+                },
+                {
+                  "$id": "154",
+                  "$type": "Growable, Assembly-CSharp",
+                  "age": 5.659427,
+                  "currentStage": 2,
+                  "hasProduced": false,
+                  "produceCountdown": 0.0,
+                  "ID": 502,
+                  "buildID": 12,
+                  "_health": 0.0,
+                  "rotated": 0,
+                  "buildInWilderniss": false,
+                  "isActive": true,
+                  "_city": {
+                    "$ref": "19"
+                  },
+                  "output": [
+                    {
+                      "$id": "155",
+                      "ID": 1,
+                      "count": 0
+                    }
+                  ],
+                  "BuildTile": {
+                    "$id": "156",
+                    "$type": "LandTile, Assembly-CSharp",
+                    "x": 279,
+                    "y": 267,
+                    "_type": 4,
+                    "SpriteName": "cold_dirt_1"
+                  }
+                },
+                {
+                  "$id": "157",
+                  "$type": "Growable, Assembly-CSharp",
+                  "age": 0.465126961,
+                  "currentStage": 0,
+                  "hasProduced": false,
+                  "produceCountdown": 0.0,
+                  "ID": 502,
+                  "buildID": 13,
+                  "_health": 0.0,
+                  "rotated": 0,
+                  "buildInWilderniss": false,
+                  "isActive": true,
+                  "_city": {
+                    "$ref": "19"
+                  },
+                  "output": [
+                    {
+                      "$id": "158",
+                      "ID": 1,
+                      "count": 0
+                    }
+                  ],
+                  "BuildTile": {
+                    "$id": "159",
+                    "$type": "LandTile, Assembly-CSharp",
+                    "x": 279,
+                    "y": 268,
+                    "_type": 4,
+                    "SpriteName": "cold_dirt_0"
+                  }
+                },
+                {
+                  "$id": "160",
+                  "$type": "Growable, Assembly-CSharp",
+                  "age": 3.7044723,
+                  "currentStage": 2,
+                  "hasProduced": false,
+                  "produceCountdown": 0.0,
+                  "ID": 502,
+                  "buildID": 14,
+                  "_health": 0.0,
+                  "rotated": 0,
+                  "buildInWilderniss": false,
+                  "isActive": true,
+                  "_city": {
+                    "$ref": "19"
+                  },
+                  "output": [
+                    {
+                      "$id": "161",
+                      "ID": 1,
+                      "count": 0
+                    }
+                  ],
+                  "BuildTile": {
+                    "$id": "162",
+                    "$type": "LandTile, Assembly-CSharp",
+                    "x": 279,
+                    "y": 270,
+                    "_type": 4,
+                    "SpriteName": "cold_dirt_0"
+                  }
+                },
+                {
+                  "$id": "163",
+                  "$type": "Growable, Assembly-CSharp",
+                  "age": 5.481371,
+                  "currentStage": 3,
+                  "hasProduced": true,
+                  "produceCountdown": 0.0,
+                  "ID": 502,
+                  "buildID": 15,
+                  "_health": 0.0,
+                  "rotated": 0,
+                  "buildInWilderniss": false,
+                  "isActive": true,
+                  "_city": {
+                    "$ref": "19"
+                  },
+                  "output": [
+                    {
+                      "$id": "164",
+                      "ID": 1,
+                      "count": 1
+                    }
+                  ],
+                  "BuildTile": {
+                    "$id": "165",
+                    "$type": "LandTile, Assembly-CSharp",
+                    "x": 280,
+                    "y": 265,
+                    "_type": 4,
+                    "SpriteName": "cold_dirt_0"
+                  }
+                },
+                {
+                  "$id": "166",
+                  "$type": "Growable, Assembly-CSharp",
+                  "age": 6.119865,
+                  "currentStage": 3,
+                  "hasProduced": true,
+                  "produceCountdown": 0.0,
+                  "ID": 502,
+                  "buildID": 16,
+                  "_health": 0.0,
+                  "rotated": 0,
+                  "buildInWilderniss": false,
+                  "isActive": true,
+                  "_city": {
+                    "$ref": "19"
+                  },
+                  "output": [
+                    {
+                      "$id": "167",
+                      "ID": 1,
+                      "count": 1
+                    }
+                  ],
+                  "BuildTile": {
+                    "$id": "168",
+                    "$type": "LandTile, Assembly-CSharp",
+                    "x": 280,
+                    "y": 266,
+                    "_type": 4,
+                    "SpriteName": "cold_dirt_0"
+                  }
+                },
+                {
+                  "$id": "169",
+                  "$type": "Growable, Assembly-CSharp",
+                  "age": 0.435129,
+                  "currentStage": 0,
+                  "hasProduced": false,
+                  "produceCountdown": 0.0,
+                  "ID": 502,
+                  "buildID": 17,
+                  "_health": 0.0,
+                  "rotated": 0,
+                  "buildInWilderniss": false,
+                  "isActive": true,
+                  "_city": {
+                    "$ref": "19"
+                  },
+                  "output": [
+                    {
+                      "$id": "170",
+                      "ID": 1,
+                      "count": 0
+                    }
+                  ],
+                  "BuildTile": {
+                    "$id": "171",
+                    "$type": "LandTile, Assembly-CSharp",
+                    "x": 280,
+                    "y": 267,
+                    "_type": 4,
+                    "SpriteName": "cold_dirt_1"
+                  }
+                },
+                {
+                  "$id": "172",
+                  "$type": "Growable, Assembly-CSharp",
+                  "age": 3.69597936,
+                  "currentStage": 2,
+                  "hasProduced": false,
+                  "produceCountdown": 0.0,
+                  "ID": 502,
+                  "buildID": 18,
+                  "_health": 0.0,
+                  "rotated": 0,
+                  "buildInWilderniss": false,
+                  "isActive": true,
+                  "_city": {
+                    "$ref": "19"
+                  },
+                  "output": [
+                    {
+                      "$id": "173",
+                      "ID": 1,
+                      "count": 0
+                    }
+                  ],
+                  "BuildTile": {
+                    "$id": "174",
+                    "$type": "LandTile, Assembly-CSharp",
+                    "x": 280,
+                    "y": 270,
+                    "_type": 4,
+                    "SpriteName": "cold_dirt_0"
+                  }
+                },
+                {
+                  "$id": "175",
+                  "$type": "Growable, Assembly-CSharp",
+                  "age": 3.68518662,
+                  "currentStage": 2,
+                  "hasProduced": false,
+                  "produceCountdown": 0.0,
+                  "ID": 502,
+                  "buildID": 19,
+                  "_health": 0.0,
+                  "rotated": 0,
+                  "buildInWilderniss": false,
+                  "isActive": true,
+                  "_city": {
+                    "$ref": "19"
+                  },
+                  "output": [
+                    {
+                      "$id": "176",
+                      "ID": 1,
+                      "count": 0
+                    }
+                  ],
+                  "BuildTile": {
+                    "$id": "177",
+                    "$type": "LandTile, Assembly-CSharp",
+                    "x": 280,
+                    "y": 271,
+                    "_type": 4,
+                    "SpriteName": "cold_dirt_1"
+                  }
+                },
+                {
+                  "$id": "178",
+                  "$type": "Growable, Assembly-CSharp",
+                  "age": 6.136348,
+                  "currentStage": 3,
+                  "hasProduced": true,
+                  "produceCountdown": 0.0,
+                  "ID": 502,
+                  "buildID": 20,
+                  "_health": 0.0,
+                  "rotated": 0,
+                  "buildInWilderniss": false,
+                  "isActive": true,
+                  "_city": {
+                    "$ref": "19"
+                  },
+                  "output": [
+                    {
+                      "$id": "179",
+                      "ID": 1,
+                      "count": 1
+                    }
+                  ],
+                  "BuildTile": {
+                    "$id": "180",
+                    "$type": "LandTile, Assembly-CSharp",
+                    "x": 280,
+                    "y": 272,
+                    "_type": 4,
+                    "SpriteName": "cold_dirt_1"
+                  }
+                },
+                {
+                  "$id": "181",
+                  "$type": "Growable, Assembly-CSharp",
+                  "age": 5.68005,
+                  "currentStage": 3,
+                  "hasProduced": true,
+                  "produceCountdown": 0.0,
+                  "ID": 502,
+                  "buildID": 21,
+                  "_health": 0.0,
+                  "rotated": 0,
+                  "buildInWilderniss": false,
+                  "isActive": true,
+                  "_city": {
+                    "$ref": "19"
+                  },
+                  "output": [
+                    {
+                      "$id": "182",
+                      "ID": 1,
+                      "count": 1
+                    }
+                  ],
+                  "BuildTile": {
+                    "$id": "183",
+                    "$type": "LandTile, Assembly-CSharp",
+                    "x": 281,
+                    "y": 265,
+                    "_type": 4,
+                    "SpriteName": "cold_dirt_0"
+                  }
+                },
+                {
+                  "$id": "184",
+                  "$type": "Growable, Assembly-CSharp",
+                  "age": 0.453710526,
+                  "currentStage": 0,
+                  "hasProduced": false,
+                  "produceCountdown": 0.0,
+                  "ID": 502,
+                  "buildID": 22,
+                  "_health": 0.0,
+                  "rotated": 0,
+                  "buildInWilderniss": false,
+                  "isActive": true,
+                  "_city": {
+                    "$ref": "19"
+                  },
+                  "output": [
+                    {
+                      "$id": "185",
+                      "ID": 1,
+                      "count": 0
+                    }
+                  ],
+                  "BuildTile": {
+                    "$id": "186",
+                    "$type": "LandTile, Assembly-CSharp",
+                    "x": 281,
+                    "y": 266,
+                    "_type": 4,
+                    "SpriteName": "cold_dirt_1"
+                  }
+                },
+                {
+                  "$id": "187",
+                  "$type": "Growable, Assembly-CSharp",
+                  "age": 6.10084057,
+                  "currentStage": 3,
+                  "hasProduced": true,
+                  "produceCountdown": 0.0,
+                  "ID": 502,
+                  "buildID": 23,
+                  "_health": 0.0,
+                  "rotated": 0,
+                  "buildInWilderniss": false,
+                  "isActive": true,
+                  "_city": {
+                    "$ref": "19"
+                  },
+                  "output": [
+                    {
+                      "$id": "188",
+                      "ID": 1,
+                      "count": 1
+                    }
+                  ],
+                  "BuildTile": {
+                    "$id": "189",
+                    "$type": "LandTile, Assembly-CSharp",
+                    "x": 281,
+                    "y": 267,
+                    "_type": 4,
+                    "SpriteName": "cold_dirt_1"
+                  }
+                },
+                {
+                  "$id": "190",
+                  "$type": "Growable, Assembly-CSharp",
+                  "age": 3.71861386,
+                  "currentStage": 2,
+                  "hasProduced": false,
+                  "produceCountdown": 0.0,
+                  "ID": 502,
+                  "buildID": 24,
+                  "_health": 0.0,
+                  "rotated": 0,
+                  "buildInWilderniss": false,
+                  "isActive": true,
+                  "_city": {
+                    "$ref": "19"
+                  },
+                  "output": [
+                    {
+                      "$id": "191",
+                      "ID": 1,
+                      "count": 0
+                    }
+                  ],
+                  "BuildTile": {
+                    "$id": "192",
+                    "$type": "LandTile, Assembly-CSharp",
+                    "x": 281,
+                    "y": 270,
+                    "_type": 4,
+                    "SpriteName": "cold_dirt_1"
+                  }
+                },
+                {
+                  "$id": "193",
+                  "$type": "Growable, Assembly-CSharp",
+                  "age": 5.99901438,
+                  "currentStage": 3,
+                  "hasProduced": true,
+                  "produceCountdown": 0.0,
+                  "ID": 502,
+                  "buildID": 25,
+                  "_health": 0.0,
+                  "rotated": 0,
+                  "buildInWilderniss": false,
+                  "isActive": true,
+                  "_city": {
+                    "$ref": "19"
+                  },
+                  "output": [
+                    {
+                      "$id": "194",
+                      "ID": 1,
+                      "count": 1
+                    }
+                  ],
+                  "BuildTile": {
+                    "$id": "195",
+                    "$type": "LandTile, Assembly-CSharp",
+                    "x": 281,
+                    "y": 271,
+                    "_type": 4,
+                    "SpriteName": "cold_dirt_0"
+                  }
+                },
+                {
+                  "$id": "196",
+                  "$type": "Growable, Assembly-CSharp",
+                  "age": 5.355091,
+                  "currentStage": 3,
+                  "hasProduced": true,
+                  "produceCountdown": 0.0,
+                  "ID": 502,
+                  "buildID": 26,
+                  "_health": 0.0,
+                  "rotated": 0,
+                  "buildInWilderniss": false,
+                  "isActive": true,
+                  "_city": {
+                    "$ref": "19"
+                  },
+                  "output": [
+                    {
+                      "$id": "197",
+                      "ID": 1,
+                      "count": 1
+                    }
+                  ],
+                  "BuildTile": {
+                    "$id": "198",
+                    "$type": "LandTile, Assembly-CSharp",
+                    "x": 281,
+                    "y": 272,
+                    "_type": 4,
+                    "SpriteName": "cold_dirt_1"
+                  }
+                },
+                {
+                  "$id": "199",
+                  "$type": "Growable, Assembly-CSharp",
+                  "age": 6.20661974,
+                  "currentStage": 3,
+                  "hasProduced": true,
+                  "produceCountdown": 0.0,
+                  "ID": 502,
+                  "buildID": 27,
+                  "_health": 0.0,
+                  "rotated": 0,
+                  "buildInWilderniss": false,
+                  "isActive": true,
+                  "_city": {
+                    "$ref": "19"
+                  },
+                  "output": [
+                    {
+                      "$id": "200",
+                      "ID": 1,
+                      "count": 1
+                    }
+                  ],
+                  "BuildTile": {
+                    "$id": "201",
+                    "$type": "LandTile, Assembly-CSharp",
+                    "x": 282,
+                    "y": 265,
+                    "_type": 4,
+                    "SpriteName": "cold_dirt_0"
+                  }
+                },
+                {
+                  "$id": "202",
+                  "$type": "Growable, Assembly-CSharp",
+                  "age": 5.40356874,
+                  "currentStage": 3,
+                  "hasProduced": true,
+                  "produceCountdown": 0.0,
+                  "ID": 502,
+                  "buildID": 28,
+                  "_health": 0.0,
+                  "rotated": 0,
+                  "buildInWilderniss": false,
+                  "isActive": true,
+                  "_city": {
+                    "$ref": "19"
+                  },
+                  "output": [
+                    {
+                      "$id": "203",
+                      "ID": 1,
+                      "count": 1
+                    }
+                  ],
+                  "BuildTile": {
+                    "$id": "204",
+                    "$type": "LandTile, Assembly-CSharp",
+                    "x": 282,
+                    "y": 266,
+                    "_type": 4,
+                    "SpriteName": "cold_dirt_0"
+                  }
+                },
+                {
+                  "$id": "205",
+                  "$type": "Growable, Assembly-CSharp",
+                  "age": 5.935596,
+                  "currentStage": 3,
+                  "hasProduced": true,
+                  "produceCountdown": 0.0,
+                  "ID": 502,
+                  "buildID": 29,
+                  "_health": 0.0,
+                  "rotated": 0,
+                  "buildInWilderniss": false,
+                  "isActive": true,
+                  "_city": {
+                    "$ref": "19"
+                  },
+                  "output": [
+                    {
+                      "$id": "206",
+                      "ID": 1,
+                      "count": 1
+                    }
+                  ],
+                  "BuildTile": {
+                    "$id": "207",
+                    "$type": "LandTile, Assembly-CSharp",
+                    "x": 282,
+                    "y": 267,
+                    "_type": 4,
+                    "SpriteName": "cold_dirt_0"
+                  }
+                },
+                {
+                  "$id": "208",
+                  "$type": "Growable, Assembly-CSharp",
+                  "age": 6.82365227,
+                  "currentStage": 3,
+                  "hasProduced": true,
+                  "produceCountdown": 0.0,
+                  "ID": 502,
+                  "buildID": 30,
+                  "_health": 0.0,
+                  "rotated": 0,
+                  "buildInWilderniss": false,
+                  "isActive": true,
+                  "_city": {
+                    "$ref": "19"
+                  },
+                  "output": [
+                    {
+                      "$id": "209",
+                      "ID": 1,
+                      "count": 1
+                    }
+                  ],
+                  "BuildTile": {
+                    "$id": "210",
+                    "$type": "LandTile, Assembly-CSharp",
+                    "x": 282,
+                    "y": 268,
+                    "_type": 4,
+                    "SpriteName": "cold_dirt_0"
+                  }
+                },
+                {
+                  "$id": "211",
+                  "$type": "Growable, Assembly-CSharp",
+                  "age": 6.64652538,
+                  "currentStage": 3,
+                  "hasProduced": true,
+                  "produceCountdown": 0.0,
+                  "ID": 502,
+                  "buildID": 31,
+                  "_health": 0.0,
+                  "rotated": 0,
+                  "buildInWilderniss": false,
+                  "isActive": true,
+                  "_city": {
+                    "$ref": "19"
+                  },
+                  "output": [
+                    {
+                      "$id": "212",
+                      "ID": 1,
+                      "count": 1
+                    }
+                  ],
+                  "BuildTile": {
+                    "$id": "213",
+                    "$type": "LandTile, Assembly-CSharp",
+                    "x": 282,
+                    "y": 269,
+                    "_type": 4,
+                    "SpriteName": "cold_dirt_1"
+                  }
+                },
+                {
+                  "$id": "214",
+                  "$type": "Growable, Assembly-CSharp",
+                  "age": 5.7845397,
+                  "currentStage": 3,
+                  "hasProduced": true,
+                  "produceCountdown": 0.0,
+                  "ID": 502,
+                  "buildID": 32,
+                  "_health": 0.0,
+                  "rotated": 0,
+                  "buildInWilderniss": false,
+                  "isActive": true,
+                  "_city": {
+                    "$ref": "19"
+                  },
+                  "output": [
+                    {
+                      "$id": "215",
+                      "ID": 1,
+                      "count": 1
+                    }
+                  ],
+                  "BuildTile": {
+                    "$id": "216",
+                    "$type": "LandTile, Assembly-CSharp",
+                    "x": 282,
+                    "y": 270,
+                    "_type": 4,
+                    "SpriteName": "cold_dirt_1"
+                  }
+                },
+                {
+                  "$id": "217",
+                  "$type": "Growable, Assembly-CSharp",
+                  "age": 6.24671364,
+                  "currentStage": 3,
+                  "hasProduced": true,
+                  "produceCountdown": 0.0,
+                  "ID": 502,
+                  "buildID": 33,
+                  "_health": 0.0,
+                  "rotated": 0,
+                  "buildInWilderniss": false,
+                  "isActive": true,
+                  "_city": {
+                    "$ref": "19"
+                  },
+                  "output": [
+                    {
+                      "$id": "218",
+                      "ID": 1,
+                      "count": 1
+                    }
+                  ],
+                  "BuildTile": {
+                    "$id": "219",
+                    "$type": "LandTile, Assembly-CSharp",
+                    "x": 282,
+                    "y": 271,
+                    "_type": 4,
+                    "SpriteName": "cold_dirt_0"
+                  }
+                },
+                {
+                  "$id": "220",
+                  "$type": "Growable, Assembly-CSharp",
+                  "age": 5.64133453,
+                  "currentStage": 3,
+                  "hasProduced": true,
+                  "produceCountdown": 0.0,
+                  "ID": 502,
+                  "buildID": 34,
+                  "_health": 0.0,
+                  "rotated": 0,
+                  "buildInWilderniss": false,
+                  "isActive": true,
+                  "_city": {
+                    "$ref": "19"
+                  },
+                  "output": [
+                    {
+                      "$id": "221",
+                      "ID": 1,
+                      "count": 1
+                    }
+                  ],
+                  "BuildTile": {
+                    "$id": "222",
+                    "$type": "LandTile, Assembly-CSharp",
+                    "x": 282,
+                    "y": 272,
+                    "_type": 4,
+                    "SpriteName": "cold_dirt_0"
+                  }
+                },
+                {
+                  "$id": "223",
+                  "$type": "Growable, Assembly-CSharp",
+                  "age": 5.416002,
+                  "currentStage": 3,
+                  "hasProduced": true,
+                  "produceCountdown": 0.0,
+                  "ID": 502,
+                  "buildID": 35,
+                  "_health": 0.0,
+                  "rotated": 0,
+                  "buildInWilderniss": false,
+                  "isActive": true,
+                  "_city": {
+                    "$ref": "19"
+                  },
+                  "output": [
+                    {
+                      "$id": "224",
+                      "ID": 1,
+                      "count": 1
+                    }
+                  ],
+                  "BuildTile": {
+                    "$id": "225",
+                    "$type": "LandTile, Assembly-CSharp",
+                    "x": 283,
+                    "y": 265,
+                    "_type": 4,
+                    "SpriteName": "cold_dirt_0"
+                  }
+                },
+                {
+                  "$id": "226",
+                  "$type": "Growable, Assembly-CSharp",
+                  "age": 5.865682,
+                  "currentStage": 3,
+                  "hasProduced": true,
+                  "produceCountdown": 0.0,
+                  "ID": 502,
+                  "buildID": 36,
+                  "_health": 0.0,
+                  "rotated": 0,
+                  "buildInWilderniss": false,
+                  "isActive": true,
+                  "_city": {
+                    "$ref": "19"
+                  },
+                  "output": [
+                    {
+                      "$id": "227",
+                      "ID": 1,
+                      "count": 1
+                    }
+                  ],
+                  "BuildTile": {
+                    "$id": "228",
+                    "$type": "LandTile, Assembly-CSharp",
+                    "x": 283,
+                    "y": 266,
+                    "_type": 4,
+                    "SpriteName": "cold_dirt_0"
+                  }
+                },
+                {
+                  "$id": "229",
+                  "$type": "Growable, Assembly-CSharp",
+                  "age": 0.4453576,
+                  "currentStage": 0,
+                  "hasProduced": false,
+                  "produceCountdown": 0.0,
+                  "ID": 502,
+                  "buildID": 37,
+                  "_health": 0.0,
+                  "rotated": 0,
+                  "buildInWilderniss": false,
+                  "isActive": true,
+                  "_city": {
+                    "$ref": "19"
+                  },
+                  "output": [
+                    {
+                      "$id": "230",
+                      "ID": 1,
+                      "count": 0
+                    }
+                  ],
+                  "BuildTile": {
+                    "$id": "231",
+                    "$type": "LandTile, Assembly-CSharp",
+                    "x": 283,
+                    "y": 267,
+                    "_type": 4,
+                    "SpriteName": "cold_dirt_1"
+                  }
+                },
+                {
+                  "$id": "232",
+                  "$type": "Growable, Assembly-CSharp",
+                  "age": 0.4259589,
+                  "currentStage": 1,
+                  "hasProduced": false,
+                  "produceCountdown": 0.0,
+                  "ID": 502,
+                  "buildID": 38,
+                  "_health": 0.0,
+                  "rotated": 0,
+                  "buildInWilderniss": false,
+                  "isActive": true,
+                  "_city": {
+                    "$ref": "19"
+                  },
+                  "output": [
+                    {
+                      "$id": "233",
+                      "ID": 1,
+                      "count": 0
+                    }
+                  ],
+                  "BuildTile": {
+                    "$id": "234",
+                    "$type": "LandTile, Assembly-CSharp",
+                    "x": 283,
+                    "y": 268,
+                    "_type": 4,
+                    "SpriteName": "cold_dirt_0"
+                  }
+                },
+                {
+                  "$id": "235",
+                  "$type": "Growable, Assembly-CSharp",
+                  "age": 5.68005,
+                  "currentStage": 3,
+                  "hasProduced": true,
+                  "produceCountdown": 0.0,
+                  "ID": 502,
+                  "buildID": 39,
+                  "_health": 0.0,
+                  "rotated": 0,
+                  "buildInWilderniss": false,
+                  "isActive": true,
+                  "_city": {
+                    "$ref": "19"
+                  },
+                  "output": [
+                    {
+                      "$id": "236",
+                      "ID": 1,
+                      "count": 1
+                    }
+                  ],
+                  "BuildTile": {
+                    "$id": "237",
+                    "$type": "LandTile, Assembly-CSharp",
+                    "x": 283,
+                    "y": 269,
+                    "_type": 4,
+                    "SpriteName": "cold_dirt_1"
+                  }
+                },
+                {
+                  "$id": "238",
+                  "$type": "Growable, Assembly-CSharp",
+                  "age": 5.989733,
+                  "currentStage": 3,
+                  "hasProduced": true,
+                  "produceCountdown": 0.0,
+                  "ID": 502,
+                  "buildID": 40,
+                  "_health": 0.0,
+                  "rotated": 0,
+                  "buildInWilderniss": false,
+                  "isActive": true,
+                  "_city": {
+                    "$ref": "19"
+                  },
+                  "output": [
+                    {
+                      "$id": "239",
+                      "ID": 1,
+                      "count": 1
+                    }
+                  ],
+                  "BuildTile": {
+                    "$id": "240",
+                    "$type": "LandTile, Assembly-CSharp",
+                    "x": 283,
+                    "y": 270,
+                    "_type": 4,
+                    "SpriteName": "cold_dirt_1"
+                  }
+                },
+                {
+                  "$id": "241",
+                  "$type": "Growable, Assembly-CSharp",
+                  "age": 5.589718,
+                  "currentStage": 3,
+                  "hasProduced": true,
+                  "produceCountdown": 0.0,
+                  "ID": 502,
+                  "buildID": 41,
+                  "_health": 0.0,
+                  "rotated": 0,
+                  "buildInWilderniss": false,
+                  "isActive": true,
+                  "_city": {
+                    "$ref": "19"
+                  },
+                  "output": [
+                    {
+                      "$id": "242",
+                      "ID": 1,
+                      "count": 1
+                    }
+                  ],
+                  "BuildTile": {
+                    "$id": "243",
+                    "$type": "LandTile, Assembly-CSharp",
+                    "x": 283,
+                    "y": 271,
+                    "_type": 4,
+                    "SpriteName": "cold_dirt_1"
+                  }
+                },
+                {
+                  "$id": "244",
+                  "$type": "Growable, Assembly-CSharp",
+                  "age": 6.0159,
+                  "currentStage": 3,
+                  "hasProduced": true,
+                  "produceCountdown": 0.0,
+                  "ID": 502,
+                  "buildID": 42,
+                  "_health": 0.0,
+                  "rotated": 0,
+                  "buildInWilderniss": false,
+                  "isActive": true,
+                  "_city": {
+                    "$ref": "19"
+                  },
+                  "output": [
+                    {
+                      "$id": "245",
+                      "ID": 1,
+                      "count": 1
+                    }
+                  ],
+                  "BuildTile": {
+                    "$id": "246",
+                    "$type": "LandTile, Assembly-CSharp",
+                    "x": 283,
+                    "y": 272,
+                    "_type": 4,
+                    "SpriteName": "cold_dirt_1"
+                  }
+                },
+                {
+                  "$id": "247",
+                  "$type": "Growable, Assembly-CSharp",
+                  "age": 6.45551157,
+                  "currentStage": 3,
+                  "hasProduced": true,
+                  "produceCountdown": 0.0,
+                  "ID": 502,
+                  "buildID": 43,
+                  "_health": 0.0,
+                  "rotated": 0,
+                  "buildInWilderniss": false,
+                  "isActive": true,
+                  "_city": {
+                    "$ref": "19"
+                  },
+                  "output": [
+                    {
+                      "$id": "248",
+                      "ID": 1,
+                      "count": 1
+                    }
+                  ],
+                  "BuildTile": {
+                    "$id": "249",
+                    "$type": "LandTile, Assembly-CSharp",
+                    "x": 277,
+                    "y": 266,
+                    "_type": 4,
+                    "SpriteName": "cold_dirt_1"
+                  }
+                },
+                {
+                  "$id": "250",
+                  "$type": "Growable, Assembly-CSharp",
+                  "age": 5.5819397,
+                  "currentStage": 3,
+                  "hasProduced": true,
+                  "produceCountdown": 0.0,
+                  "ID": 502,
+                  "buildID": 44,
+                  "_health": 0.0,
+                  "rotated": 0,
+                  "buildInWilderniss": false,
+                  "isActive": true,
+                  "_city": {
+                    "$ref": "19"
+                  },
+                  "output": [
+                    {
+                      "$id": "251",
+                      "ID": 1,
+                      "count": 1
+                    }
+                  ],
+                  "BuildTile": {
+                    "$id": "252",
+                    "$type": "LandTile, Assembly-CSharp",
+                    "x": 277,
+                    "y": 267,
+                    "_type": 4,
+                    "SpriteName": "cold_dirt_1"
+                  }
+                },
+                {
+                  "$id": "253",
+                  "$type": "Growable, Assembly-CSharp",
+                  "age": 6.285098,
+                  "currentStage": 3,
+                  "hasProduced": true,
+                  "produceCountdown": 0.0,
+                  "ID": 502,
+                  "buildID": 45,
+                  "_health": 0.0,
+                  "rotated": 0,
+                  "buildInWilderniss": false,
+                  "isActive": true,
+                  "_city": {
+                    "$ref": "19"
+                  },
+                  "output": [
+                    {
+                      "$id": "254",
+                      "ID": 1,
+                      "count": 1
+                    }
+                  ],
+                  "BuildTile": {
+                    "$id": "255",
+                    "$type": "LandTile, Assembly-CSharp",
+                    "x": 277,
+                    "y": 268,
+                    "_type": 4,
+                    "SpriteName": "cold_dirt_0"
+                  }
+                }
+              ],
+              "useTickTimer": 0.0,
+              "itemIDtoTradeItem": {
+                "$id": "256"
+              },
+              "_name": "<City>785",
+              "citizienCount": [
+                0,
+                0,
+                0,
+                0
+              ],
+              "citizienHappiness": [
+                0.5,
+                0.5,
+                0.5,
+                0.5
+              ],
+              "criticalAvaibilityNeed": [
+                false,
+                false,
+                false,
+                false
+              ],
+              "island": {
+                "$ref": "15"
+              }
+            }
+          ],
+          "myFertilities": [
+            {
+              "$id": "257",
+              "ID": 2,
+              "Data": {
+                "climates": [
+                  0,
+                  1
+                ],
+                "Name": "Hop"
+              },
+              "Name": "Hop",
+              "Climates": [
+                0,
+                1
+              ]
+            },
+            {
+              "$id": "258",
+              "ID": 10,
+              "Data": {
+                "climates": [
+                  0
+                ],
+                "Name": "Herbs"
+              },
+              "Name": "Herbs",
+              "Climates": [
+                0
+              ]
+            },
+            {
+              "$id": "259",
+              "ID": 1,
+              "Data": {
+                "climates": [
+                  0,
+                  1
+                ],
+                "Name": "Wheat"
+              },
+              "Name": "Wheat",
+              "Climates": [
+                0,
+                1
+              ]
+            }
+          ],
+          "myClimate": 0,
+          "myRessources": {
+            "$id": "260",
+            "stone": 2147483647
+          },
+          "StartTile": {
+            "$id": "261",
+            "$type": "LandTile, Assembly-CSharp",
+            "x": 258,
+            "y": 271,
+            "_type": 1,
+            "SpriteName": "shore_NE_"
+          }
+        },
+        {
+          "$id": "262",
+          "myCities": [
+            {
+              "$id": "263",
+              "playerNumber": -1,
+              "inventory": {
+                "$id": "264",
+                "name": "noname-INV",
+                "MaxStackSize": 50,
+                "items": {
+                  "$id": "265"
+                },
+                "NumberOfSpaces": 0
+              },
+              "myStructures": [],
+              "useTickTimer": 0.0,
+              "_name": "",
+              "island": {
+                "$ref": "262"
+              }
+            }
+          ],
+          "myFertilities": [
+            {
+              "$ref": "259"
+            },
+            {
+              "$id": "266",
+              "ID": 0,
+              "Data": {
+                "climates": [
+                  1
+                ],
+                "Name": "Hemp"
+              },
+              "Name": "Hemp",
+              "Climates": [
+                1
+              ]
+            },
+            {
+              "$ref": "10"
+            }
+          ],
+          "myClimate": 1,
+          "myRessources": {
+            "$id": "267",
+            "stone": 2147483647
+          },
+          "StartTile": {
+            "$id": "268",
+            "$type": "LandTile, Assembly-CSharp",
+            "x": 352,
+            "y": 57,
+            "_type": 4,
+            "SpriteName": "middle_dirt_1"
+          }
+        }
+      ],
+      "Units": [
+        {
+          "$id": "269",
+          "playerNumber": 0,
+          "_UserSetName": "Unit 169410345",
+          "_currHealth": 100.0,
+          "aggroCooldown": 1.0,
+          "patrolTarget": {
+            "$id": "270",
+            "x": 0.0,
+            "y": 0.0,
+            "magnitude": 0.0,
+            "sqrMagnitude": 0.0
+          },
+          "patrolStart": {
+            "$id": "271",
+            "x": 0.0,
+            "y": 0.0,
+            "magnitude": 0.0,
+            "sqrMagnitude": 0.0
+          },
+          "onWayToPatrolTarget": false,
+          "onPatrol": false,
+          "isShip": false,
+          "hasChanged": false,
+          "tradeTime": 1.5,
+          "pathfinding": {
+            "$id": "272",
+            "$type": "IslandPathfinding, Assembly-CSharp",
+            "dest_X": 294.878265,
+            "dest_Y": 291.669952,
+            "IsAtDest": true,
+            "_destTile": {
+              "$id": "273",
+              "$type": "LandTile, Assembly-CSharp",
+              "x": 294,
+              "y": 291,
+              "_type": 4,
+              "SpriteName": "cold_dirt_1"
+            },
+            "rotation": 42.46629,
+            "_y": 291.0,
+            "_x": 294.0
+          }
+        },
+        {
+          "$id": "274",
+          "$type": "Ship, Assembly-CSharp",
+          "goingToOffworldMarket": false,
+          "isOffWorld": false,
+          "offWorldTime": 0.0,
+          "playerNumber": 0,
+          "patrolTarget": {
+            "$id": "275",
+            "x": 0.0,
+            "y": 0.0,
+            "magnitude": 0.0,
+            "sqrMagnitude": 0.0
+          },
+          "patrolStart": {
+            "$id": "276",
+            "x": 0.0,
+            "y": 0.0,
+            "magnitude": 0.0,
+            "sqrMagnitude": 0.0
+          },
+          "onWayToPatrolTarget": false,
+          "onPatrol": false,
+          "isShip": true,
+          "hasChanged": false,
+          "tradeTime": 1.5,
+          "pathfinding": {
+            "$id": "277",
+            "$type": "OceanPathfinding, Assembly-CSharp",
+            "dest_X": 294.660034,
+            "dest_Y": 248.987625,
+            "IsAtDest": false,
+            "_destTile": {
+              "$id": "278",
+              "x": 294,
+              "y": 248,
+              "_type": 0
+            },
+            "rotation": -63.39703,
+            "_y": 248.221832,
+            "_x": 284.8889
+          },
+          "_UserSetName": "Ship 499496011",
+          "_currHealth": 1250.0,
+          "aggroCooldown": 1.0
+        }
+      ]
+    }
+  },
+  "pcs": {
+    "$id": "279",
+    "currentPlayerNumber": 0,
+    "balanceTicks": 5.0,
+    "tickTimer": 4.770673,
+    "players": [
+      {
+        "$id": "280",
+        "_balance": 39490,
+        "_maxPopulationLevel": 0,
+        "_maxPopulationCount": 0,
+        "playerNumber": 0
+      },
+      {
+        "$id": "281",
+        "_balance": 50000,
+        "_maxPopulationLevel": 0,
+        "_maxPopulationCount": 0,
+        "playerNumber": 1
+      },
+      {
+        "$id": "282",
+        "_balance": 50000,
+        "_maxPopulationLevel": 0,
+        "_maxPopulationCount": 0,
+        "playerNumber": 2
+      }
+    ],
+    "playerWars": [
+      {
+        "$id": "283",
+        "playerOne": 0,
+        "playerTwo": 1
+      }
+    ]
+  },
+  "ges": {
+    "$id": "284",
+    "idToActiveEvent": {
+      "$id": "285"
+    },
+    "Random": {
+      "$id": "286"
+    }
+  },
+  "camera": {
+    "$id": "287",
+    "pos": {
+      "$id": "288",
+      "x": 284.815033,
+      "y": 267.887817,
+      "z": -10.0,
+      "normalized": {
+        "x": 0.72818315,
+        "y": 0.6849055,
+        "z": -0.02556688,
+        "normalized": {
+          "x": 0.7281832,
+          "y": 0.6849056,
+          "z": -0.0255668815,
+          "magnitude": 1.0,
+          "sqrMagnitude": 1.00000012
+        },
+        "magnitude": 0.99999994,
+        "sqrMagnitude": 0.99999994
+      },
+      "magnitude": 391.131042,
+      "sqrMagnitude": 152983.484
+    },
+    "orthographicSize": 15.915329
+  }
+}

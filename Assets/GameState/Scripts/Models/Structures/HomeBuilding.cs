@@ -57,16 +57,17 @@ public class HomeBuilding : Structure {
 	}
 
 	public override void OnBuild(){
-		HashSet<Tile> neighbourTiles = new HashSet<Tile> ();
-		foreach (Tile item in myBuildingTiles) {
-			foreach(Tile nbt in item.GetNeighbours()){
-				if (myBuildingTiles.Contains (nbt) == false) {
-					neighbourTiles.Add (nbt);
-				}
-			}
-		}
+        //doing it in "structure on build" already so if no problems remove it
+		//HashSet<Tile> neighbourTiles = new HashSet<Tile> ();
+		//foreach (Tile item in myBuildingTiles) {
+		//	foreach(Tile nbt in item.GetNeighbours()){
+		//		if (myBuildingTiles.Contains (nbt) == false) {
+		//			neighbourTiles.Add (nbt);
+		//		}
+		//	}
+		//}
 		foreach (Tile t in neighbourTiles) {
-			t.RegisterTileStructureChangedCallback (OnTStructureChange);
+			t.RegisterTileOldNewStructureChangedCallback (OnTStructureChange);
 		}
 		City.AddPeople (buildingLevel,people);
 
@@ -85,7 +86,7 @@ public class HomeBuilding : Structure {
 		foreach (Need n in myPlayer.GetUnlockedStructureNeeds(buildingLevel)) {
 			Player pc = PlayerController.Instance.GetPlayer (PlayerNumber);
 			if (n.StartLevel <= buildingLevel && n.PopCount <= pc.MaxPopulationCount) {
-				if(isInRangeOf (n.Structure)){
+				if(IsInRangeOf (n.Structure)){
 					structurePercentage += 1;
 				}
 				count++;
@@ -147,14 +148,14 @@ public class HomeBuilding : Structure {
 			return;
 		}
 	}
-	public bool isStructureNeedFullfilled(Need need){
+	public bool IsStructureNeedFullfilled(Need need){
 		if(need.IsItemNeed()){
 			Debug.LogError ("wrong need got called here! " + need.ID);
 			return false;
 		}
-		return isInRangeOf (need.Structure);
+		return IsInRangeOf (need.Structure);
 	}
-	public bool isInRangeOf(NeedsBuilding str){
+	public bool IsInRangeOf(NeedsBuilding str){
 		if(str==null){
 			return false;
 		}

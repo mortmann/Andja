@@ -47,9 +47,17 @@ public class PlayerController : MonoBehaviour {
             save = null;
         }
 	}
-	
-	// Update is called once per frame
-	void Update () {
+
+    internal bool HasEnoughMoney(int playerNumber, int buildCost) {
+        if(playerNumber<0 || playerNumber >= players.Count) {
+            Debug.LogError("The given number was too large or negative! No such player! " + playerNumber);
+            return false;
+        }
+        return players[playerNumber].HasEnoughMoney(buildCost);
+    }
+
+    // Update is called once per frame
+    void Update () {
 
 		tickTimer -= Time.deltaTime;
 		if(tickTimer<=0){
@@ -146,7 +154,7 @@ public class PlayerController : MonoBehaviour {
 
 
 	public void ReduceMoney(int money, int playerNr) {
-		players[playerNr].ReduceMoney (money);
+        players[playerNr].ReduceMoney (money);
 	}
 	public void AddMoney(int money, int playerNr) {
 		players [playerNr].AddMoney (money);

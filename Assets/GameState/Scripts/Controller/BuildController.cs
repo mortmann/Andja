@@ -61,7 +61,7 @@ public class BuildController : MonoBehaviour {
 
     internal void PlaceWorldGeneratedStructure(Dictionary<Tile, Structure> tileToStructure) {
         foreach(Tile t in tileToStructure.Keys) {
-            BuildOnTile(tileToStructure[t], t);
+            RealBuild(new List<Tile>(){ t }, tileToStructure[t],-1,true,true);
         }
     }
 
@@ -94,15 +94,15 @@ public class BuildController : MonoBehaviour {
 		toBuildStructure = StructurePrototypes [id].Clone ();
 		if(StructurePrototypes [id].BuildTyp == BuildTypes.Path){
 			MouseController.Instance.mouseState = MouseState.Path;
-			MouseController.Instance.structure = toBuildStructure;
+			MouseController.Instance.Structure = toBuildStructure;
 		}
 		if(StructurePrototypes [id].BuildTyp == BuildTypes.Single){
 			MouseController.Instance.mouseState = MouseState.Single;
-			MouseController.Instance.structure = toBuildStructure;
+			MouseController.Instance.Structure = toBuildStructure;
 		}
 		if(StructurePrototypes [id].BuildTyp == BuildTypes.Drag){
 			MouseController.Instance.mouseState = MouseState.Drag;
-			MouseController.Instance.structure = toBuildStructure;
+			MouseController.Instance.Structure = toBuildStructure;
 		}
 		BuildState = BuildStateModes.Build;
     }
@@ -120,10 +120,10 @@ public class BuildController : MonoBehaviour {
 	/// <param name="t">T.</param>
 	private void BuildOnTile(Structure s , Tile t){
 		if(s==null||t==null){
-			Debug.LogError ("Something went wrong by loading Structure!");
+			Debug.LogError ("Something went wrong by loading Structure! " + t + " " + s);
 			return;
 		}
-		RealBuild (s.GetBuildingTiles (t.X, t.Y), s,-1,true,true);
+		RealBuild (s.GetBuildingTiles (t.X, t.Y), s,-1,true,false);
 	}
 	public void BuildOnTile(List<Tile> tiles, bool forEachTileOnce, Structure structure,int playerNumber,bool wild=false, Unit buildInRange = null){
 		if(tiles == null || tiles.Count == 0 || WorldController.Instance.IsPaused){
@@ -194,7 +194,7 @@ public class BuildController : MonoBehaviour {
 				}
 			} else {
 				s.City = hasCity.MyCity;
-			}
+            }
 			if(noBuildCost==false){
 				if (s.GetBuildingItems ()!=null) {
 					Inventory inv = null;
@@ -214,7 +214,9 @@ public class BuildController : MonoBehaviour {
 				}
 			}
 		}
-
+        if(wild) {
+            s.City = tiles[0].MyIsland.Wilderness;
+        }
 		//now we know that we COULD build that structure
 		//but CAN WE?
 		//check to see if the structure can be placed there
@@ -225,9 +227,10 @@ public class BuildController : MonoBehaviour {
 			return;
 		}
 
-		if(buildInRangeUnit!=null&&noBuildCost==false){
-			buildInRangeUnit.inventory.removeItemsAmount (s.GetBuildingItems ());
+        if (buildInRangeUnit!=null&&noBuildCost==false){
+			buildInRangeUnit.inventory.RemoveItemsAmount (s.GetBuildingItems ());
 		}
+        s.City.AddStructure(s);
 
         //call all callbacks on structure created
         //FIXME remove this or smth

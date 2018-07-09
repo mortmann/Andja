@@ -13,12 +13,14 @@ public class PrototypController : MonoBehaviour {
 
 	public static PrototypController Instance;
 	public Dictionary<int,Structure>  structurePrototypes;
-	public Dictionary<int,StructurePrototypeData>  structurePrototypeDatas;
+    private Dictionary<int, Unit> unitPrototypes;
+    public Dictionary<int,StructurePrototypeData>  structurePrototypeDatas;
 	public Dictionary<int,ItemPrototypeData>  itemPrototypeDatas;
 	public Dictionary<int,NeedPrototypeData>  needPrototypeDatas;
 	public Dictionary<int,FertilityPrototypeData>  fertilityPrototypeDatas;
+    public Dictionary<int, UnitPrototypeData> unitPrototypeDatas;
 
-	public Dictionary<int, Item> allItems;
+    public Dictionary<int, Item> allItems;
 	public static List<Item> buildItems;
 
 	private List<Need> allNeeds;
@@ -101,9 +103,16 @@ public class PrototypController : MonoBehaviour {
 		itemPrototypeDatas = new Dictionary<int, ItemPrototypeData> ();
 		ReadItemsFromXML();
 
-		// setup all prototypes of structures here 
-		// load them from the 
-		structurePrototypes = new Dictionary<int, Structure> ();
+        //armorPrototypes = new Dictionary<int, Armor>();
+        //armorPrototypes = new Dictionary<int, UnitPrototypeData>();
+        //ReadUnitsFromXML();
+
+        unitPrototypes = new Dictionary<int, Unit>();
+        unitPrototypeDatas = new Dictionary<int, UnitPrototypeData>();
+        ReadUnitsFromXML();
+        // setup all prototypes of structures here 
+        // load them from the 
+        structurePrototypes = new Dictionary<int, Structure> ();
 		structurePrototypeDatas = new Dictionary<int, StructurePrototypeData> ();
 		ReadStructuresFromXML();
 //		structurePrototypes.Add (5, new MineStructure (5));
@@ -132,15 +141,20 @@ public class PrototypController : MonoBehaviour {
 		ReadNeedsFromXML ();
 
 		Debug.Log ("Read in structures: " +structurePrototypes.Count);
-		Debug.Log ("Read in items: " + allItems.Count); 
+        Debug.Log("Read in items: " + unitPrototypes.Count);
+        Debug.Log ("Read in items: " + allItems.Count); 
 		Debug.Log ("Read in needs: " + allNeeds.Count); 
 	}
 
-	///////////////////////////////////////
-	/// XML LOADING FROM FILE
-	/// 
-	///////////////////////////////////////
-	private void ReadItemsFromXML(){
+    internal UnitPrototypeData GetUnitPrototypDataForID(int id) {
+        return unitPrototypeDatas[id];
+    }
+
+    ///////////////////////////////////////
+    /// XML LOADING FROM FILE
+    /// 
+    ///////////////////////////////////////
+    private void ReadItemsFromXML(){
 		XmlDocument xmlDoc = new XmlDocument(); // xmlDoc is the new xml document.
 		TextAsset ta = ((TextAsset)Resources.Load("XMLs/items", typeof(TextAsset)));
 		xmlDoc.LoadXml(ta.text); // load the file.
@@ -158,7 +172,26 @@ public class PrototypController : MonoBehaviour {
 			allItems [id] = item;
 		}
 	}
-	private void ReadFertilitiesFromXML(){
+    private void ReadUnitsFromXML() {
+        XmlDocument xmlDoc = new XmlDocument(); // xmlDoc is the new xml document.
+        TextAsset ta = ((TextAsset)Resources.Load("XMLs/units", typeof(TextAsset)));
+        xmlDoc.LoadXml(ta.text); // load the file.
+        foreach (XmlElement node in xmlDoc.SelectNodes("units/unit")) {
+            UnitPrototypeData upd = new UnitPrototypeData();
+            int id = int.Parse(node.GetAttribute("ID"));
+            SetData<UnitPrototypeData>(node, ref upd);
+            unitPrototypeDatas[id] = upd;
+            unitPrototypes.Add(id, new Unit(id,upd));
+        }
+        foreach (XmlElement node in xmlDoc.SelectNodes("units/ship")) {
+            ShipPrototypeData spd = new ShipPrototypeData();
+            int id = int.Parse(node.GetAttribute("ID"));
+            SetData<ShipPrototypeData>(node, ref spd);
+            unitPrototypeDatas[id] = spd;
+            unitPrototypes.Add(id, new Ship(id, spd));
+        }
+    }
+    private void ReadFertilitiesFromXML(){
 		XmlDocument xmlDoc = new XmlDocument(); // xmlDoc is the new xml document.
 		TextAsset ta = ((TextAsset)Resources.Load("XMLs/fertilities", typeof(TextAsset)));
 		xmlDoc.LoadXml(ta.text); // load the file.
@@ -221,8 +254,24 @@ public class PrototypController : MonoBehaviour {
 		ReadMineStructure (xmlDoc.SelectSingleNode ("structures/mines"));
 		ReadHomeBuildings (xmlDoc.SelectSingleNode ("structures/homes"));
 		ReadWarehouse (xmlDoc.SelectSingleNode ("structures/warehouses"));
-	}
-	private void ReadRoads(XmlNode xmlDoc){
+        ReadMilitaryBuildings(xmlDoc.SelectSingleNode("structures/militarybuildings"));
+
+    }
+
+    private void ReadMilitaryBuildings(XmlNode xmlDoc) {
+        foreach (XmlElement node in xmlDoc.SelectNodes("militarybuilding")) {
+            int ID = int.Parse(node.GetAttribute("ID"));
+
+            MilitaryBuildingPrototypeData mpd = new MilitaryBuildingPrototypeData();
+            //THESE are fix and are not changed for any 
+            //!not anymore
+            SetData<MilitaryBuildingPrototypeData>(node, ref mpd);
+            structurePrototypeDatas.Add(ID, mpd);
+            structurePrototypes[ID] = new MilitaryBuilding(ID, mpd);
+        }
+    }
+
+    private void ReadRoads(XmlNode xmlDoc){
 		foreach(XmlElement node in xmlDoc.SelectNodes("road")){
 			int ID = int.Parse(node.GetAttribute("ID"));
 
@@ -252,7 +301,7 @@ public class PrototypController : MonoBehaviour {
 		foreach(XmlElement node in xmlDoc.SelectNodes("growable")){
 			int ID = int.Parse(node.GetAttribute("ID"));
 
-            GrowablePrototypData gpd = new GrowablePrototypData {
+            GrowablePrototypeData gpd = new GrowablePrototypeData {
                 //THESE are fix and are not changed for any growable
                 forMarketplace = false,
                 maxNumberOfWorker = 0,
@@ -273,7 +322,7 @@ public class PrototypController : MonoBehaviour {
             //			gpd.output = new Item[]{produceItem};
             //			gpd.fer = fer;
 
-            SetData<GrowablePrototypData> (node,ref  gpd);
+            SetData<GrowablePrototypeData> (node,ref  gpd);
 			structurePrototypeDatas.Add (ID,gpd);
 			structurePrototypes [ID] = new Growable (ID,gpd);
 		}
@@ -466,9 +515,7 @@ public class PrototypController : MonoBehaviour {
 		}
 		foreach(FieldInfo fi in fields){
 			XmlNode n = node.SelectSingleNode(fi.Name);
-
 			if(langs.Contains (fi.Name)){
-				
 				if(n==null){
 					//TODO activate this warning when all data is correctly created
 					//				Debug.LogWarning (fi.Name + " selected language not avaible!");
@@ -502,7 +549,19 @@ public class PrototypController : MonoBehaviour {
 					fi.SetValue (data, NodeToFertility (n));
 					continue;
 				}
-				if(fi.FieldType.IsEnum){
+                if (fi.FieldType.IsSubclassOf(typeof(Unit))) {
+                    fi.SetValue(data, NodeToUnit(n));
+                    continue;
+                }
+                if (fi.FieldType.IsSubclassOf(typeof(Unit[])) || fi.FieldType == (typeof(Unit[]))) {
+                    List<Unit> items = new List<Unit>();
+                    foreach (XmlNode item in n.ChildNodes) {
+                        items.Add(NodeToUnit(item));
+                    }
+                    fi.SetValue(data, items.ToArray());
+                    continue;
+                }
+                if (fi.FieldType.IsEnum){
 					int ordinal = -1;
 					if(int.TryParse (n.InnerXml,out ordinal)==false){
 						Debug.LogError ("Enum was not a int");
@@ -527,8 +586,12 @@ public class PrototypController : MonoBehaviour {
 					fi.SetValue(data, Convert.ChangeType (enumArray,fi.FieldType));
 					continue;
 				}
-
-				fi.SetValue(data, Convert.ChangeType (n.InnerXml,fi.FieldType));
+                try {
+                    fi.SetValue(data, Convert.ChangeType(n.InnerXml, fi.FieldType,System.Globalization.CultureInfo.InvariantCulture));
+                }
+                catch {
+                    Debug.Log(fi.Name + " is faulty!");
+                }
 			}
 		}
 	}
@@ -554,7 +617,22 @@ public class PrototypController : MonoBehaviour {
 		}
 		return clone;
 	}
-	private Structure NodeToStructure(XmlNode n){
+    private Unit NodeToUnit(XmlNode n) {
+        int id = -1;
+        if (int.TryParse(n.InnerXml, out id) == false) {
+            Debug.LogError("ID is not an int for Unit ");
+            return null;
+        }
+        if (id == -1) {
+            return null;//not needed
+        }
+        if (unitPrototypes.ContainsKey(id) == false) {
+            Debug.LogError("ID was not created before the depending Unit! " + id);
+            return null;
+        }
+        return unitPrototypes[id];
+    }
+    private Structure NodeToStructure(XmlNode n){
 		int id = -1;
 		if(int.TryParse (n.InnerXml,out id)==false){
 			Debug.LogError ("ID is not an int for Structure ");

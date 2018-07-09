@@ -837,7 +837,7 @@
          <contactRange>0.0</contactRange>
          <forMarketplace>false</forMarketplace>
          <maxNumberOfWorker>0</maxNumberOfWorker>
-         <produceTime>20.0</produceTime>
+         <produceTime>5.0</produceTime>
          <maxOutputStorage>1</maxOutputStorage>
          <output length="1">
             <Item ID="1">
@@ -2547,4 +2547,109 @@
          <decreaseSpeed>8.0</decreaseSpeed>
       </home>
    </homes>
+   <militarybuildings>
+      <militarybuilding ID="1002">
+         <Name>
+            <entry lang="English">Shipyard</entry>
+            <entry lang="German">Werft</entry>
+         </Name>
+         <Description>
+            <entry lang="English">Builds ships.</entry>
+            <entry lang="German">Baut Schiffe.</entry>
+         </Description>
+         <HoverOver>
+            <entry lang="English">Shipyard</entry>
+            <entry lang="German">Werft</entry>
+         </HoverOver>
+         <canBeBuild>true</canBeBuild>
+         <isWalkable>false</isWalkable>
+         <hasHitbox>true</hasHitbox>
+         <MaxHealth>5000.0</MaxHealth>
+         <buildingRange>0</buildingRange>
+         <PopulationLevel>1</PopulationLevel>
+         <PopulationCount>0</PopulationCount>
+         <StructureLevel>0</StructureLevel>
+         <tileWidth>3</tileWidth>
+         <tileHeight>4</tileHeight>
+         <canRotate>true</canRotate>
+         <canBeBuildOver>false</canBeBuildOver>
+         <canBeUpgraded>false</canBeUpgraded>
+         <canTakeDamage>true</canTakeDamage>
+         <showExtraUI>false</showExtraUI>
+         <mustFrontBuildDir>2</mustFrontBuildDir>
+         <canStartBurning>false</canStartBurning>
+         <mustBeBuildOnShore>true</mustBeBuildOnShore>
+         <mustBeBuildOnMountain>false</mustBeBuildOnMountain>
+         <maintenancecost>50</maintenancecost>
+         <buildcost>1500</buildcost>
+         <BuildTyp>2</BuildTyp>
+         <myBuildingTyp>1</myBuildingTyp>
+         <buildingItems length="3">
+            <Item ID="1">
+               <count>10</count>
+            </Item>
+            <Item ID="2">
+               <count>5</count>
+            </Item>
+            <Item ID="3">
+               <count>5</count>
+            </Item>
+         </buildingItems>
+         <spriteBaseName>shipyard</spriteBaseName>
+         <canBeBuildUnits length="1">
+            <Unit>1</Unit>
+         </canBeBuildUnits>
+         <buildTimeModifier>1.0</buildTimeModifier>
+      </militarybuilding>
+      <militarybuilding ID="1003">
+         <Name>
+            <entry lang="English">Fort</entry>
+            <entry lang="German">Kastell</entry>
+         </Name>
+         <Description>
+            <entry lang="English">Can train Units.</entry>
+            <entry lang="German">Kann Einheiten ausbilden.</entry>
+         </Description>
+         <HoverOver>
+            <entry lang="English">Fort</entry>
+            <entry lang="German">Kastell</entry>
+         </HoverOver>
+         <canBeBuild>true</canBeBuild>
+         <isWalkable>false</isWalkable>
+         <hasHitbox>true</hasHitbox>
+         <MaxHealth>2500.0</MaxHealth>
+         <buildingRange>0</buildingRange>
+         <PopulationLevel>1</PopulationLevel>
+         <PopulationCount>0</PopulationCount>
+         <StructureLevel>0</StructureLevel>
+         <tileWidth>3</tileWidth>
+         <tileHeight>3</tileHeight>
+         <canRotate>true</canRotate>
+         <canBeBuildOver>false</canBeBuildOver>
+         <canBeUpgraded>false</canBeUpgraded>
+         <canTakeDamage>true</canTakeDamage>
+         <showExtraUI>false</showExtraUI>
+         <mustFrontBuildDir>0</mustFrontBuildDir>
+         <canStartBurning>false</canStartBurning>
+         <mustBeBuildOnShore>false</mustBeBuildOnShore>
+         <mustBeBuildOnMountain>false</mustBeBuildOnMountain>
+         <maintenancecost>250</maintenancecost>
+         <buildcost>5000</buildcost>
+         <BuildTyp>2</BuildTyp>
+         <myBuildingTyp>1</myBuildingTyp>
+         <buildingItems length="2">
+            <Item ID="2">
+               <count>10</count>
+            </Item>
+            <Item ID="3">
+               <count>20</count>
+            </Item>
+         </buildingItems>
+         <spriteBaseName>fort</spriteBaseName>
+         <canBeBuildUnits length="1">
+            <Unit>0</Unit>
+         </canBeBuildUnits>
+         <buildTimeModifier>1.0</buildTimeModifier>
+      </militarybuilding>
+   </militarybuildings>
 </structures>

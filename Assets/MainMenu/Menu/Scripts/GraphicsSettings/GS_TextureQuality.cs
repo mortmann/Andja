@@ -3,9 +3,9 @@
 public class GS_TextureQuality : GS_SliderBase {
 
 	public override void OnStart (){
-		setting = Settings.TextureQuality;
-		if(graphicsSettings.hasSavedGraphicsOption(setting))
-			SetTextureQuality (int.Parse (graphicsSettings.getSavedGraphicsOption (setting)));
+		setting = GraphicsSetting.TextureQuality;
+		if(graphicsSettings.HasSavedGraphicsOption(setting))
+			SetTextureQuality (int.Parse (graphicsSettings.GetSavedGraphicsOption (setting)));
 	}
 	protected override void GraphicsPresetLow() { 
         SetTextureQuality(0);
@@ -28,7 +28,7 @@ public class GS_TextureQuality : GS_SliderBase {
     }
 
     void SetTextureQuality(int value) {
-		graphicsSettings.setSavedGraphicsOption (setting,value);
+		graphicsSettings.SetSavedGraphicsOption (setting,value);
         // Set the actual slider value. For the OnSliderValueChange() callback
         // this is uneccesary, but it shouldn't cause any harm. We do however
         // need to do it when the value is set from an outside source like the

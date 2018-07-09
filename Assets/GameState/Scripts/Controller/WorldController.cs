@@ -158,9 +158,6 @@ public class WorldController : MonoBehaviour {
 		}
 		loadedStructures.Sort ((x, y) => x.buildID.CompareTo(y.buildID) );
 		BuildController.Instance.PlaceAllLoadedStructure (loadedStructures);
-		if(loadWorker!=null){
-			GameObject.FindObjectOfType<WorkerSpriteController> ().loadedWorker = loadWorker;
-		}
 		Debug.Log ("LOAD ENDED");
 	}
 
@@ -168,13 +165,7 @@ public class WorldController : MonoBehaviour {
         save = world;
     }
 
-	List<Worker> loadWorker;
-	public void AddWorkerForLoad(Worker w){
-		if(loadWorker==null){
-			loadWorker = new List<Worker> ();
-		}
-		loadWorker.Add (w);
-	}
+	
 
 }
 

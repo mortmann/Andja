@@ -22,7 +22,7 @@ public class MarketBuilding : OutputStructure {
 	public List<Structure> RegisteredSturctures;
 	public List<Structure> OutputMarkedSturctures;
 
-	public float takeOverStartGoal {get{ return MarketData.maxOutputStorage;}}
+	public float TakeOverStartGoal {get{ return MarketData.takeOverStartGoal; }}
 
 	protected MarketPrototypData _marketData;
 	public MarketPrototypData  MarketData {
@@ -52,10 +52,8 @@ public class MarketBuilding : OutputStructure {
 		return new MarketBuilding(this);
 	}
 
-
-
 	public override void Update (float deltaTime){
-		base.update_Worker (deltaTime);
+		base.Update_Worker (deltaTime);
 	}
 	public override void OnBuild(){
 		workersHasToFollowRoads = true; // DUNNO HOW where to set it without the need to copy it extra
@@ -78,8 +76,8 @@ public class MarketBuilding : OutputStructure {
 			return;
 		}
 		bool hasOutput = false;
-		for (int i = 0; i < ((OutputStructure)str).output.Length; i++) {
-			if(((OutputStructure)str).output[i].count > 0){
+		for (int i = 0; i < ((OutputStructure)str).Output.Length; i++) {
+			if(((OutputStructure)str).Output[i].count > 0){
 				hasOutput = true;
 				break;
 			}
@@ -141,7 +139,7 @@ public class MarketBuilding : OutputStructure {
 		}
 
 		if(structure is OutputStructure){
-			if(((OutputStructure)structure).forMarketplace==false){
+			if(((OutputStructure)structure).ForMarketplace==false){
 				return;
 			}
 			foreach (Tile item in structure.myBuildingTiles) {
@@ -156,6 +154,8 @@ public class MarketBuilding : OutputStructure {
 
 		if (structure.MyBuildingTyp == BuildingTyp.Pathfinding) {
 			List<Route> myRoutes = GetMyRoutes ();
+            if (myRoutes == null || myRoutes.Count == 0)
+                return;
 			if(neighbourTiles.Contains (structure.myBuildingTiles[0])){
 				if (myRoutes.Contains (((Road)structure).Route) == false) {
 					myRoutes.Add (((Road)structure).Route);
@@ -175,7 +175,7 @@ public class MarketBuilding : OutputStructure {
 
 	public override Item[] GetRequieredItems(OutputStructure str,Item[] items){
 		if(items==null){
-			items = str.output;
+			items = str.Output;
 		}
 		List<Item> all = new List<Item> ();
 		for (int i = items.Length - 1; i >= 0; i--) {
@@ -191,31 +191,34 @@ public class MarketBuilding : OutputStructure {
 		return all.ToArray();
 	}
 
-	public override Item[] getOutputWithItemCountAsMax(Item[] getItems){
+	public override Item[] GetOutputWithItemCountAsMax(Item[] getItems){
 		Item[] temp = new Item[getItems.Length];
 		for (int i = 0; i < getItems.Length; i++) {
-			if(City.inventory.GetAmountForItem (getItems[i]) == 0){
-				continue;
-			}	
-			temp [i] = City.inventory.getItemWithMaxAmount (getItems [i], getItems [i].count);
+			//if(City.inventory.GetAmountForItem (getItems[i]) == 0){
+			//	continue;
+			//}	
+			temp [i] = City.inventory.GetItemWithMaxAmount (getItems [i], getItems [i].count);
 		}
 		return temp;
 	}
 
 
-	public override Item[] getOutput(Item[] getItems,int[] maxAmounts){
+	public override Item[] GetOutput(Item[] getItems,int[] maxAmounts){
 		Item[] temp = new Item[getItems.Length];
 		for (int i = 0; i < getItems.Length; i++) {
-			if(City.inventory.GetAmountForItem (getItems[i]) == 0){
-				continue;
-			}	
-			temp [i] = City.inventory.getItemWithMaxAmount (getItems [i], maxAmounts [i]);
+			//if(City.inventory.GetAmountForItem (getItems[i]) == 0){
+			//	continue;
+			//}	
+            if(getItems[i]==null|| maxAmounts == null){
+                Debug.Log("s");
+            }
+			temp [i] = City.inventory.GetItemWithMaxAmount (getItems [i], maxAmounts [i]);
 		}
 		return temp;
 	}
 	public void TakeOverMarketBuilding(float deltaTime,int playerNumber, float speed = 1){
 		takenOverState += deltaTime * speed;
-		if(takeOverStartGoal<=takenOverState){
+		if(TakeOverStartGoal<=takenOverState){
 			if(myBuildingTiles[0].MyIsland!=null){
 				City c = myBuildingTiles [0].MyIsland.myCities.Find (x => x.playerNumber == playerNumber);
 				if(c!=null){

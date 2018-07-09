@@ -68,7 +68,7 @@ public class ItemUI : MonoBehaviour {
 			slider.GetComponentInChildren<Image> ().color = Color.green;
 		}
 	}
-	public void setInactive (bool inactive){
+	public void SetInactive (bool inactive){
 		Color c = image.color;
 		if(inactive){
 			c.a = 0.5f;

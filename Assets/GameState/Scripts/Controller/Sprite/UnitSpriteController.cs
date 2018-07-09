@@ -14,7 +14,7 @@ public class UnitSpriteController : MonoBehaviour {
 	private Unit circleUnit;
 	private const string circleGOname = "buildrange_circle_gameobject";
 	MouseController mouseController;
-    World world {
+    World World {
         get { return WorldController.Instance.World; }
     }
     // Use this for initialization
@@ -22,8 +22,8 @@ public class UnitSpriteController : MonoBehaviour {
 		
         unitGameObjectMap = new Dictionary<Unit, GameObject>();
         LoadSprites();
-        world.RegisterUnitCreated(OnUnitCreated);
-		foreach (var item in world.Units) {
+        World.RegisterUnitCreated(OnUnitCreated);
+		foreach (var item in World.Units) {
 			OnUnitCreated (item);
 		}        		
 		mouseController = MouseController.Instance;
@@ -80,8 +80,8 @@ public class UnitSpriteController : MonoBehaviour {
 		r2d.gravityScale = 0;       
 		BoxCollider2D col = char_go.AddComponent<BoxCollider2D>();
 		col.size = new Vector2(sr.sprite.textureRect.size.x / sr.sprite.pixelsPerUnit, sr.sprite.textureRect.size.y / sr.sprite.pixelsPerUnit);
-		u.width = sr.sprite.textureRect.size.x / sr.sprite.pixelsPerUnit;
-		u.height = sr.sprite.textureRect.size.y / sr.sprite.pixelsPerUnit;
+		//u.width = sr.sprite.textureRect.size.x / sr.sprite.pixelsPerUnit;
+		//u.height = sr.sprite.textureRect.size.y / sr.sprite.pixelsPerUnit;
         // Register our callback so that our GameObject gets updated whenever
         // the object's into changes.
         u.RegisterOnChangedCallback(OnUnitChanged);
@@ -127,7 +127,7 @@ public class UnitSpriteController : MonoBehaviour {
         }
     }
 	void OnDestroy() {
-		world.UnregisterUnitCreated (OnUnitCreated);
+		World.UnregisterUnitCreated (OnUnitCreated);
 	}
 
 	void OnBuildStateChange(BuildStateModes bsm){

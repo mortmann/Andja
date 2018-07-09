@@ -132,12 +132,12 @@ public class CameraController : MonoBehaviour {
 					}
 				}
 
-				if(isInOld == false && isInNew){
-					tsc.SpawnTile (tile_data);
-				} else
-				if(isInNew == false){
-					tsc.DespawnTile (tile_data);
-				}
+				//if(isInOld == false && isInNew){
+				//	tsc.SpawnTile (tile_data);
+				//} else
+				//if(isInNew == false){
+				//	tsc.DespawnTile (tile_data);
+				//}
 
 
 			}

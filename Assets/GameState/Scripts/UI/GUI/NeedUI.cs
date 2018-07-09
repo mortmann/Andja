@@ -38,7 +38,7 @@ public class NeedUI : MonoBehaviour {
 			percentageText.text = need.percantageAvailability * 100 + "%";
 			slider.value = need.percantageAvailability * 100;
 		} else {
-			if(home.isStructureNeedFullfilled(need)){
+			if(home.IsStructureNeedFullfilled(need)){
 				percentageText.text = "In Range";
 				slider.value = 100;
 			}else {

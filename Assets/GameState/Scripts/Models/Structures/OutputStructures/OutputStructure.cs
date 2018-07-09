@@ -21,7 +21,7 @@ public abstract class OutputStructure : Structure {
 	protected Item[] _output; // FIXME DOESNT GET LOADED IN!??!? why? fixed?
 	#endregion
 	#region RuntimeOrOther
-	[JsonPropertyAttribute] public virtual Item[] output {
+	[JsonPropertyAttribute] public virtual Item[] Output {
 		get {
 			if(_output == null){
 				if(OutputData.output==null){
@@ -41,14 +41,14 @@ public abstract class OutputStructure : Structure {
 	public Dictionary<OutputStructure,Item[]> jobsToDo;
 	public bool outputClaimed;
 	protected Action<Structure> cbOutputChange;
-	bool canWork { get { return Efficiency > 0; }}
+	bool CanWork { get { return Efficiency > 0; }}
 	public float efficiencyModifier = 1;
 	public bool workersHasToFollowRoads = false;
-	public float contactRange {get{ return OutputData.contactRange;}}
-	public bool forMarketplace {get{ return OutputData.forMarketplace;}}
-	protected int maxNumberOfWorker {get{ return OutputData.maxNumberOfWorker;}}
-	public float produceTime {get{ return OutputData.produceTime;}}
-	public int maxOutputStorage {get{ return OutputData.maxOutputStorage;}}
+	public float ContactRange {get{ return OutputData.contactRange;}}
+	public bool ForMarketplace {get{ return OutputData.forMarketplace;}}
+	protected int MaxNumberOfWorker {get{ return OutputData.maxNumberOfWorker;}}
+	public float ProduceTime {get{ return OutputData.produceTime;}}
+	public int MaxOutputStorage {get{ return OutputData.maxOutputStorage;}}
 
 	protected OutputPrototypData _outputData;
 	public OutputPrototypData OutputData {
@@ -87,8 +87,8 @@ public abstract class OutputStructure : Structure {
 			_jobTile = value;
 		}
 	}
-	public void update_Worker(float deltaTime){
-		if(maxNumberOfWorker <= 0){
+	public void Update_Worker(float deltaTime){
+		if(MaxNumberOfWorker <= 0){
 			return;
 		}
 		if(myWorker==null){
@@ -110,10 +110,13 @@ public abstract class OutputStructure : Structure {
 		}
 		List<OutputStructure> givenJobs = new List<OutputStructure> ();
 		foreach (OutputStructure jobStr in jobsToDo.Keys) {
-			if (myWorker.Count == maxNumberOfWorker) {
+			if (myWorker.Count >= MaxNumberOfWorker) {
 				break;
 			}
-			Item[] items = GetRequieredItems(jobStr,jobsToDo [jobStr]);
+            if (jobStr.outputClaimed) {
+                continue;
+            }
+            Item[] items = GetRequieredItems(jobStr,jobsToDo [jobStr]);
 			if(items==null||items.Length<=0){
 				continue;
 			}
@@ -134,15 +137,15 @@ public abstract class OutputStructure : Structure {
 	}
 	public virtual Item[] GetRequieredItems(OutputStructure str,Item[] items){
 		if(items==null){
-			items = str.output;
+			items = str.Output;
 		}
 		List<Item> all = new List<Item> ();
-		for (int i = output.Length - 1; i >= 0; i--) {
-			int id = output [i].ID;
+		for (int i = Output.Length - 1; i >= 0; i--) {
+			int id = Output [i].ID;
 			for (int s = 0; s < items.Length; s++) {
 				if(items[i].ID==id){
 					Item item = items [i].Clone ();
-					item.count = maxOutputStorage - output [i].count;
+					item.count = MaxOutputStorage - Output [i].count;
 					if(item.count>0)
 						all.Add (item);
 				}
@@ -160,71 +163,71 @@ public abstract class OutputStructure : Structure {
 		myWorker.Remove (w);
 	}
 
-	public void addToOutput(Inventory inv){
-		for(int i=0; i<output.Length; i++){
+	public void AddToOutput(Inventory inv){
+		for(int i=0; i<Output.Length; i++){
 			//maybe switch to manually foreach because it may be faster
 			//because worker that use this function usually only carry 
 			//what the home eg this needs
-			if(inv.ContainsItemWithID (output[i].ID)){
-				Item item = inv.getAllOfItem (output[i]);
-				output[i].count = Mathf.Clamp ( output[i].count + item.count,0,maxOutputStorage);
+			if(inv.ContainsItemWithID (Output[i].ID)){
+				Item item = inv.GetAllOfItem (Output[i]);
+				Output[i].count = Mathf.Clamp ( Output[i].count + item.count,0,MaxOutputStorage);
 			}
 		}
 	}
 
-	public Item[] getOutput(){
-		Item[] temp = new Item[output.Length];
-		for (int i = 0; i < output.Length; i++) {
-			temp [i] = output [i].CloneWithCount ();
-			output[i].count= 0;
+	public Item[] GetOutput(){
+		Item[] temp = new Item[Output.Length];
+		for (int i = 0; i < Output.Length; i++) {
+			temp [i] = Output [i].CloneWithCount ();
+			Output[i].count= 0;
 			CallOutputChangedCB ();
 		}
 		return temp;
 	}
-	public virtual Item[] getOutput(Item[] getItems,int[] maxAmounts){
-		Item[] temp = new Item[output.Length];
+	public virtual Item[] GetOutput(Item[] getItems,int[] maxAmounts){
+		Item[] temp = new Item[Output.Length];
 		for (int g = 0; g < getItems.Length; g++) {
-			for (int i = 0; i < output.Length; i++) {
-				if(output[i].count ==  0 || output[i].ID != getItems[g].ID){
+			for (int i = 0; i < Output.Length; i++) {
+				if(Output[i].ID != getItems[g].ID){
 					continue;
 				}	
-				temp [i] = output [i].CloneWithCount ();
+				temp [i] = Output [i].CloneWithCount ();
 				temp [i].count = Mathf.Clamp (temp [i].count, 0, maxAmounts [i]);
-				output[i].count -= temp[i].count;
+				Output[i].count -= temp[i].count;
 				CallOutputChangedCB ();
 			}
 		}
 		return temp;
 	}
-	public virtual Item[] getOutputWithItemCountAsMax(Item[] getItems){
-		Item[] temp = new Item[output.Length];
+	public virtual Item[] GetOutputWithItemCountAsMax(Item[] getItems){
+		Item[] temp = new Item[Output.Length];
 		for (int g = 0; g < getItems.Length; g++) {
-			for (int i = 0; i < output.Length; i++) {
-				if(output[i].ID != getItems[g].ID){
+			for (int i = 0; i < Output.Length; i++) {
+				if(Output[i].ID != getItems[g].ID){
 					continue;
 				}	
-				if(output[i].count ==  0){
+				if(Output[i].count ==  0){
 					Debug.LogWarning ("output[i].count ==  0");
 				}
-				temp [i] = output [i].CloneWithCount ();
+				temp [i] = Output [i].CloneWithCount ();
 				temp [i].count = Mathf.Clamp (temp [i].count, 0, getItems [i].count);
-				output[i].count -= temp[i].count;
+				Output[i].count -= temp[i].count;
 				CallOutputChangedCB ();
 			}
 		}
 		return temp;
 	}
-	public Item getOneOutput(Item item) {
-		if(output == null){
+	public Item GetOneOutput(Item item) {
+		if(Output == null){
 			return null;
 		}
-		for (int i = 0; i < output.Length; i++) {
-			if(item.ID != output[i].ID){
+		for (int i = 0; i < Output.Length; i++) {
+			if(item.ID != Output[i].ID){
 				continue;
 			}
-			if (output[i].count > 0) {
-				Item temp = output [i].CloneWithCount();
-				output [i].count = 0;
+			if (Output[i].count > 0) {
+				Item temp = Output [i].CloneWithCount();
+				Output [i].count = 0;
 				CallbackIfnotNull ();
 				return temp;
 			}
@@ -264,9 +267,9 @@ public abstract class OutputStructure : Structure {
 		}
 		return myRoutes;
 	}
-	public void resetOutputClaimed(){
+	public void ResetOutputClaimed(){
 		this.outputClaimed = false;
-		foreach (Item item in output) {
+		foreach (Item item in Output) {
 			if(item.count>0){
                 cbOutputChange?.Invoke(this);
                 return;

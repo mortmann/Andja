@@ -15,7 +15,7 @@ public class TradePanel : MonoBehaviour {
 	// Use this for initialization
 	public void Show (City c) {
 		city = c;
-		amountSlider.maxValue = city.inventory.maxStackSize;
+		amountSlider.maxValue = city.inventory.MaxStackSize;
 		amountSlider.onValueChanged.AddListener (OnAmountSliderChange);
 		priceSlider.onValueChanged.AddListener (OnPriceSliderChange);
 		intToItem = new Dictionary<int, Item> (); 
@@ -28,11 +28,11 @@ public class TradePanel : MonoBehaviour {
 		 	GameObject g = GameObject.Instantiate (ItemPrefab);
 			g.transform.SetParent (TradeCanvas.transform);
 			if(c.itemIDtoTradeItem.Count<=i){
-				g.GetComponent<TradeItemUI> ().Show (null, c.inventory.maxStackSize, OnSellBuyClick);
+				g.GetComponent<TradeItemUI> ().Show (null, c.inventory.MaxStackSize, OnSellBuyClick);
 			} else {
 				Item item = c.inventory.GetItemWithIDClone (items [i]);
 				intToItem.Add (i,item); 
-				g.GetComponent<TradeItemUI> ().Show (item, c.inventory.maxStackSize, OnSellBuyClick);
+				g.GetComponent<TradeItemUI> ().Show (item, c.inventory.MaxStackSize, OnSellBuyClick);
 				g.GetComponent<TradeItemUI> ().ChangeItemCount (c.itemIDtoTradeItem [items [i]].count);
 			}
 			int temp = i;
@@ -51,12 +51,12 @@ public class TradePanel : MonoBehaviour {
 		if(intToTradeItemUI[pressedItem].item!=null){
 			RemoveCurrentTradeItem (); 
 		}
-		intToTradeItemUI [pressedItem].SetItem (item,city.inventory.maxStackSize);
+		intToTradeItemUI [pressedItem].SetItem (item,city.inventory.MaxStackSize);
 		intToItem.Add (pressedItem,item); 
 		TradeItem ti = new TradeItem (item.ID, ((int)amountSlider.value), 
 						((int)priceSlider.value), intToTradeItemUI [pressedItem].Sell);
 		city.itemIDtoTradeItem.Add (item.ID,ti); 
-		amountSlider.value = city.inventory.maxStackSize / 2;
+		amountSlider.value = city.inventory.MaxStackSize / 2;
 		OnPriceSliderChange (50);
 	}
 	public void OnSellBuyClick(Item item,bool sell){

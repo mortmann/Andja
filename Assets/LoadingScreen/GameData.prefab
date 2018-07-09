@@ -41,14 +41,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   MapSeed: 10
-  Height: 100
-  Width: 100
-  loadsavegame: 
+  Height: 500
+  Width: 500
+  loadsavegame: test13
   bots: 
   playerCount: 1
   pirates: 1
   fire: 1
   catastrophics: 
+  usedIslands: []
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1

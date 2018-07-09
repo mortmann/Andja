@@ -93,6 +93,7 @@ public class MapGenerator : MonoBehaviour {
                 }
             }
         }
+
         //Load the premade island if there are any 
         LoadIslands(hasToUseIslands);
         //THIS IS TEMPORARY -- replace with an better solution that doesnt require a secondary thing besides seed for a map

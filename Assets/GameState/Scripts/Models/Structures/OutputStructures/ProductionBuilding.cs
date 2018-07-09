@@ -43,7 +43,7 @@ public class ProductionBuilding : OutputStructure {
 	#endregion
 	#region RuntimeOrOther
 	private int _orItemIndex=int.MinValue; //TODO think about to switch to short if it needs to save space 
-	public int orItemIndex {
+	public int OrItemIndex {
 		get {
 			if(_orItemIndex==int.MinValue){
 				for (int i = 0; i < ProductionData.intake.Length; i++) {
@@ -60,11 +60,9 @@ public class ProductionBuilding : OutputStructure {
 		}
 	}
 
-
 	public Dictionary<OutputStructure,Item[]> RegisteredStructures;
 	MarketBuilding nearestMarketBuilding;
-//	public int[] needIntake { get  { return ProductionData.needIntake; }}
-	public InputTyp myInputTyp { get  { return ProductionData.myInputTyp; }}
+	public InputTyp MyInputTyp { get  { return ProductionData.myInputTyp; }}
 
 	#endregion
 
@@ -115,47 +113,47 @@ public class ProductionBuilding : OutputStructure {
 	}
 		
 	public override void Update (float deltaTime){
-		if(output == null){
+		if(Output == null){
 			return;
 		}
-		for (int i = 0; i < output.Length; i++) {
-			if (output[i].count == maxOutputStorage) {
+		for (int i = 0; i < Output.Length; i++) {
+			if (Output[i].count == MaxOutputStorage) {
 				return;
 			}
 		}
 
-		base.update_Worker (deltaTime);
+		base.Update_Worker (deltaTime);
 
-		if(hasRequiredInput() == false){
+		if(HasRequiredInput() == false){
 			return;
 		}
 		produceCountdown += deltaTime;
-		if(produceCountdown >= produceTime) {
+		if(produceCountdown >= ProduceTime) {
 			produceCountdown = 0;
 			if(MyIntake!=null){
 				for (int i = 0; i < MyIntake.Length; i++) {
 					MyIntake[i].count--;
 				}
 			}
-			for (int i = 0; i < output.Length; i++) {
-				output[i].count += OutputData.output[i].count;
+			for (int i = 0; i < Output.Length; i++) {
+				Output[i].count += OutputData.output[i].count;
                 cbOutputChange?.Invoke(this);
             }
 		}
 	}
-	public bool hasRequiredInput(){
+	public bool HasRequiredInput(){
 		if (ProductionData.intake == null) {
 			return true;
 		}
-		if(myInputTyp == InputTyp.AND){
+		if(MyInputTyp == InputTyp.AND){
 			for (int i = 0; i < MyIntake.Length; i++) {
 				if (ProductionData.intake [i].count > MyIntake [i].count) {
 					return false;
 				}
 			}
 		}
-		else if(myInputTyp == InputTyp.OR){
-			if (ProductionData.intake [orItemIndex].count > MyIntake [0].count) {
+		else if(MyInputTyp == InputTyp.OR){
+			if (ProductionData.intake [OrItemIndex].count > MyIntake [0].count) {
 				return false;
 			}
 		}
@@ -163,10 +161,10 @@ public class ProductionBuilding : OutputStructure {
 	}
 
 	public override void SendOutWorkerIfCan (){
-		if(myWorker.Count >= maxNumberOfWorker || jobsToDo.Count == 0 && nearestMarketBuilding == null){
+		if(myWorker.Count >= MaxNumberOfWorker || jobsToDo.Count == 0 && nearestMarketBuilding == null){
 			return;
 		}
-		Dictionary<Item,int> needItems = new Dictionary<Item, int> ();
+        Dictionary<Item,int> needItems = new Dictionary<Item, int> ();
 		for (int i = 0; i < MyIntake.Length; i++) {
 			if (GetMaxIntakeForIntakeIndex(i) > MyIntake[i].count) {
 				needItems.Add ( MyIntake [i].Clone (),GetMaxIntakeForIntakeIndex(i)-MyIntake[i].count );
@@ -178,7 +176,7 @@ public class ProductionBuilding : OutputStructure {
 		if (jobsToDo.Count == 0 && nearestMarketBuilding != null) {
 			List<Item> getItems = new List<Item> ();
 			for (int i = MyIntake.Length - 1; i >= 0; i--) {
-				if(City.HasItem (MyIntake[i])){
+				if(City.HasAnythingOfItem (MyIntake[i])){
 					Item item = MyIntake [i].Clone ();
 					item.count = GetMaxIntakeForIntakeIndex(i) - MyIntake [i].count;
 					getItems.Add (item);
@@ -188,7 +186,7 @@ public class ProductionBuilding : OutputStructure {
 				return;
 			}
 			myWorker.Add (new Worker(this,nearestMarketBuilding, getItems.ToArray() ,false));
-			WorldController.Instance.World.CreateWorkerGameObject (myWorker[0]);
+			World.Current.CreateWorkerGameObject (myWorker[0]);
 		} else {
 			base.SendOutWorkerIfCan ();
 		}
@@ -202,7 +200,7 @@ public class ProductionBuilding : OutputStructure {
 		}
 		OutputStructure ustr = ((OutputStructure)str);
 		List<Item> getItems = new List<Item> ();
-		List<Item> items = new List<Item> (ustr.output);
+		List<Item> items = new List<Item> (ustr.Output);
 		foreach (Item item in RegisteredStructures[(OutputStructure)str]) {
 			Item i = items.Find (x => x.ID == item.ID);
 			if(i.count > 0){
@@ -215,7 +213,7 @@ public class ProductionBuilding : OutputStructure {
 
 	}
 
-	public bool addToIntake (Inventory toAdd){
+	public bool AddToIntake (Inventory toAdd){
 		if(MyIntake == null){
 			return false;
 		}
@@ -224,7 +222,7 @@ public class ProductionBuilding : OutputStructure {
 				return false;
 			}
 			MyIntake[i].count += toAdd.GetAmountForItem(MyIntake[i]);
-			toAdd.setItemCountNull (MyIntake[i]);
+			toAdd.SetItemCountNull (MyIntake[i]);
 			CallbackIfnotNull ();
 		}
 
@@ -259,11 +257,11 @@ public class ProductionBuilding : OutputStructure {
 				}
 				if(rangeTile.Structure is OutputStructure){
 					if (rangeTile.Structure is MarketBuilding) {
-						findNearestMarketBuilding (rangeTile);
+						FindNearestMarketBuilding (rangeTile);
 						continue;
 					}
 					if (RegisteredStructures.ContainsKey ((OutputStructure)rangeTile.Structure) == false) {
-						Item[] items = hasNeedItem (((OutputStructure)rangeTile.Structure).output);
+						Item[] items = HasNeedItem (((OutputStructure)rangeTile.Structure).Output);
 						if(items.Length == 0){
 							continue;
 						}
@@ -291,7 +289,7 @@ public class ProductionBuilding : OutputStructure {
 		if(change == null){
 			return;
 		}
-		if(myInputTyp == InputTyp.AND){
+		if(MyInputTyp == InputTyp.AND){
 			return;
 		}
 		for (int i = 0; i < ProductionData.intake.Length; i++) {
@@ -316,7 +314,7 @@ public class ProductionBuilding : OutputStructure {
 		return ProductionData.intake[itemIndex].count * 5; //TODO THINK ABOUT THIS
 	}
 
-	public Item[] hasNeedItem(Item[] output){
+	public Item[] HasNeedItem(Item[] output){
 		List<Item> items = new List<Item> ();
 		for (int i = 0; i < output.Length; i++) {
 			for (int s = 0; s < MyIntake.Length; s++) {
@@ -342,16 +340,16 @@ public class ProductionBuilding : OutputStructure {
 			return;
 		}
 		if (str is MarketBuilding) {
-			findNearestMarketBuilding(str.BuildTile);
+			FindNearestMarketBuilding(str.BuildTile);
 			return;
 		}
-		Item[] items = hasNeedItem(((OutputStructure)str).output);
+		Item[] items = HasNeedItem(((OutputStructure)str).Output);
 		if(items.Length > 0 ){
 			((OutputStructure)str).RegisterOutputChanged (OnOutputChangedStructure);
 			RegisteredStructures.Add ((OutputStructure)str, items);
 		}
 	}
-	public void findNearestMarketBuilding(Tile tile){
+	public void FindNearestMarketBuilding(Tile tile){
 		if (tile.Structure is MarketBuilding) {
 			if (nearestMarketBuilding == null) {
 				nearestMarketBuilding =(MarketBuilding) tile.Structure;

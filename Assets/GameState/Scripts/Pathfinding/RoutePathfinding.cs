@@ -10,30 +10,50 @@ public class RoutePathfinding : Pathfinding {
 
 	List<Tile> startTiles;
 	List<Tile> endTiles;
-
-	/// <summary>
-	/// Preferrably those list ONLY contains tiles WITH roads build on it for
-	/// Performance reasons. But it checks if there is a route
-	/// </summary>
-	/// <param name="startTiles">Start tiles.</param>
-	/// <param name="endTiles">End tiles.</param>
-	public void SetDestination(List<Tile> startTiles, List<Tile> endTiles) {
+    public RoutePathfinding() : base() { }
+    /// <summary>
+    /// Preferrably those list ONLY contains tiles WITH roads build on it for
+    /// Performance reasons. But it checks if there is a route
+    /// </summary>
+    /// <param name="startTiles">Start tiles.</param>
+    /// <param name="endTiles">End tiles.</param>
+    public void SetDestination(List<Tile> startTiles, List<Tile> endTiles) {
 		this.startTiles = startTiles;
 		this.endTiles = endTiles;
 
-		myTurnType = turn_type.OnPoint;
-//		Thread calcPath = new Thread (CalculatePath);
-//		calcPath.Start ();
-		CalculatePath();
-	}
+		myTurnType = Turn_type.OnPoint;
+        Thread calcPath = new Thread(CalculatePath);
+        calcPath.Start();
 
-	protected override void CalculatePath(){
-		if(startTiles==null){
-			startTiles = new List<Tile> ();
-			startTiles.Add (startTile);
-			endTiles = new List<Tile> ();
-			endTiles.Add (destTile);
-		}
+    }
+
+    public override void SetDestination(Tile end) {
+        DestTile = end;
+        Thread calcPath = new Thread(CalculatePath);
+        calcPath.Start();
+
+    }
+
+    public override void SetDestination(float x, float y) {
+        //get the tiles from the world to get a current reference and not an empty from the load
+        DestTile  = World.Current.GetTileAt(x, y);
+        startTile = World.Current.GetTileAt(startTile.X, startTile.Y);
+        Thread calcPath = new Thread(CalculatePath);
+        calcPath.Start();
+
+    }
+
+    protected override void CalculatePath(){
+        pathDest = Path_dest.tile;
+
+        if (startTiles==null){
+            startTiles = new List<Tile> {
+                startTile
+            };
+            endTiles = new List<Tile> {
+                DestTile
+            };
+        }
 		Queue<Tile> currentQueue=null;
 		List<Route> checkedRoutes = new List<Route> ();
 		IsAtDest = false;
@@ -64,22 +84,25 @@ public class RoutePathfinding : Pathfinding {
 		if(worldPath==null||worldPath.Count==0){
 			return;
 		}
-		if(startTile!=null&&startTile!=currTile){
+		if(startTile!=null&&startTile!=CurrTile){
 			CreateReversePath ();
-			while(worldPath.Peek () != currTile) {
+			while(worldPath.Peek () != CurrTile) {
 				// remove as long as it is not the current tile 
 				worldPath.Dequeue ();
-			} 
+			}
+            worldPath.Dequeue();
 
-
-
-		} else {
-			currTile = worldPath.Peek ();
-			startTile = currTile;
+        }
+        else {
+			CurrTile = worldPath.Peek ();
+			startTile = CurrTile;
 			CreateReversePath ();
-			destTile = backPath.Peek ();
+			DestTile = backPath.Peek ();
 		}
+        worldPath.Dequeue();
 
-	}
+        dest_X = DestTile.X;
+        dest_Y = DestTile.Y;
+    }
 
 }

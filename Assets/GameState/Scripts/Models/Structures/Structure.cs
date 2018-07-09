@@ -65,27 +65,35 @@ public class StructurePrototypeData : LanguageVariables {
 		float x;
 		float y;
 		//get the tile at bottom left to create a "prototype circle"
-		Tile firstTile = World.Current.GetTileAt (0 + buildingRange+tileWidth/2,0 + buildingRange+tileHeight/2);
-		Vector2 center = new Vector2 (firstTile.X, firstTile.Y);
-		if (tileWidth > 1) {
-			center.x += 0.5f + ((float)tileWidth) / 2f - 1;
-		}
-		if (tileHeight > 1) {
-			center.y += 0.5f + ((float)tileHeight) / 2f - 1;
-		}
-		World w = WorldController.Instance.World;
-		List<Tile> temp = new List<Tile> ();
-		float radius = this.buildingRange + 1.5f;
+		Tile firstTile = World.Current.GetTileAt (0 + buildingRange,0 + buildingRange);
+        float w = (float)tileWidth / 2f -0.5f;
+        float h = (float)tileHeight / 2f -0.5f;
+
+        Vector2 center = new Vector2 (buildingRange + w, buildingRange + h);
+        //GameObject gos = new GameObject();
+        //gos.transform.position = center;
+        //gos.transform.localScale = new Vector3(5, 5, 1);
+        //gos.AddComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("Textures/MISC/Debug");
+
+        //if (tileWidth > 1) {
+        //    center.x += 0.5f + ((float)tileWidth) / 2f - 1;
+        //}
+        //if (tileHeight > 1) {
+        //    center.y += 0.5f + ((float)tileHeight) / 2f - 1;
+        //}
+        World world = WorldController.Instance.World;
+		HashSet<Tile> temp = new HashSet<Tile> ();
+		float radius = this.buildingRange + 1f;
 		for (float a = 0; a < 360; a += 0.5f) {
 			x = center.x + radius * Mathf.Cos (a);
 			y = center.y + radius * Mathf.Sin (a);
-			//			GameObject go = new GameObject ();
-			//			go.transform.position = new Vector3 (x, y);
-			//			go.AddComponent<SpriteRenderer> ().sprite = Resources.Load<Sprite> ("Debug");
-			x = Mathf.RoundToInt (x);
+            //GameObject go = new GameObject();
+            //go.transform.position = new Vector3(x, y);
+            //go.AddComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("Textures/MISC/Debug");
+            x = Mathf.RoundToInt (x);
 			y = Mathf.RoundToInt (y);
 			for (int i = 0; i < buildingRange; i++) {
-				Tile circleTile = w.GetTileAt (x, y);
+				Tile circleTile = world.GetTileAt (x, y);
 				if (temp.Contains (circleTile) == false) {
 					temp.Add (circleTile);
 				}
@@ -104,13 +112,13 @@ public class StructurePrototypeData : LanguageVariables {
 				}
 			}
 		}
-		for (int width = 0; width < tileWidth; width++) {
-			MyPrototypeTiles.Remove (World.Current.GetTileAt (firstTile.X + width, firstTile.Y));
-			for (int height = 1; height < tileHeight; height++) {
-				MyPrototypeTiles.Remove (World.Current.GetTileAt (firstTile.X + width, firstTile.Y+height));
-			}
-		}
-	}
+        for (int width = 0; width < tileWidth; width++) {
+            MyPrototypeTiles.Remove(World.Current.GetTileAt(firstTile.X + width, firstTile.Y));
+            for (int height = 1; height < tileHeight; height++) {
+                MyPrototypeTiles.Remove(World.Current.GetTileAt(firstTile.X + width, firstTile.Y + height));
+            }
+        }
+    }
 
 }
 
@@ -176,8 +184,8 @@ public abstract class Structure : IGEventable {
 	public int PopulationLevel { get {return Data.PopulationLevel;} }// = 0;
 	public int PopulationCount { get {return Data.PopulationCount;} }// = 0;
 
-	private int _tileWidth { get {return Data.tileWidth;} }
-	private int _tileHeight { get {return Data.tileHeight;} }
+    public int _tileWidth { get {return Data.tileWidth;} }
+	public int _tileHeight { get {return Data.tileHeight;} }
 
 	public bool CanRotate { get {return Data.canRotate;} }// = true;
 	public bool CanBeBuildOver { get {return Data.canBeBuildOver;} }// = false;
@@ -388,15 +396,9 @@ public abstract class Structure : IGEventable {
 		myBuildingTiles.AddRange (tiles);
 		//if we are here we can build this and
 		//set the tiles to the this structure -> claim the tiles!
-		bool hasCity = false;
 		neighbourTiles = new HashSet<Tile>();
-		foreach (Tile mt in myBuildingTiles) {
+        foreach (Tile mt in myBuildingTiles) {
 			mt.Structure = this;
-			if(mt.MyCity!=null && hasCity == false && buildInWilderniss == mt.MyCity.IsWilderness ()){
-				this.City = mt.MyCity;
-				hasCity = true;
-				mt.MyIsland.AddStructure (this);
-			}
 			foreach(Tile nbt in mt.GetNeighbours()){
 				if (myBuildingTiles.Contains (nbt) == false) {
 					neighbourTiles.Add (nbt);
@@ -404,8 +406,8 @@ public abstract class Structure : IGEventable {
 			}
 		}
 
-		//it searches all the tiles it has in its reach!
-		GetInRangeTiles (myBuildingTiles[0]);
+        //it searches all the tiles it has in its reach!
+        myRangeTiles = GetInRangeTiles(myBuildingTiles[0]);
 
 		// do on place structure stuff here!
 		OnBuild ();
@@ -472,8 +474,8 @@ public abstract class Structure : IGEventable {
 		}
 		World w = WorldController.Instance.World;
 		myRangeTiles = new HashSet<Tile> ();
-		float width = firstTile.X-BuildingRange - TileWidth / 2;
-		float height = firstTile.Y-BuildingRange - TileHeight / 2;
+        float width = firstTile.X - BuildingRange;
+		float height = firstTile.Y-BuildingRange;
 		foreach(Tile t in MyPrototypeTiles){
 			myRangeTiles.Add (w.GetTileAt (t.X +width,t.Y+height));			
 		}
@@ -527,6 +529,8 @@ public abstract class Structure : IGEventable {
 		foreach(Tile t in myBuildingTiles){
 			t.Structure = null;
 		}
+        //TODO: add here for getting res back 
+        City.RemoveStructure(this); 
         cbStructureDestroy?.Invoke(this);
     }
 	#endregion

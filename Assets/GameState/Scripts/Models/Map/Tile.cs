@@ -243,15 +243,23 @@ public class Tile : IComparable<Tile>, IEqualityComparer<Tile> {
 		return Vector3.Distance (this.Vector, vec) <= Range;
 	}
 	/// <summary>
-	/// Register a function to be called back when our tile type changes.
+	/// Register a function to be called back when our tile structure changes.
+    /// --NEW--OLD--
 	/// </summary>
-	public virtual void RegisterTileStructureChangedCallback(Action<Structure,Structure> callback) {
+	public virtual void RegisterTileOldNewStructureChangedCallback(Action<Structure,Structure> callback) {
 	}
-
-	/// <summary>
-	/// Unregister a callback.
+    /// <summary>
+	/// Register a function to be called back when our tile structure changes.
+    /// --This tile--NEW--
 	/// </summary>
-	public virtual void UnregisterTileStructureChangedCallback(Action<Structure,Structure> callback) {
+    public virtual void RegisterTileStructureChangedCallback(Action<Tile, Structure> callback) {
+    }
+    public virtual void UnregisterTileStructureChangedCallback(Action<Tile, Structure> callback) {
+    }
+    /// <summary>
+    /// Unregister a callback.
+    /// </summary>
+    public virtual void UnregisterOldNewTileStructureChangedCallback(Action<Structure,Structure> callback) {
 	}
 	public virtual void AddNeedStructure(NeedsBuilding ns){
 	}

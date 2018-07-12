@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public abstract class ToggleBase : MonoBehaviour {
+public class ToggleBase : MonoBehaviour {
     protected Toggle toggle;
     public GameplaySetting setting;
     public string[] displayLabels;
@@ -20,14 +20,13 @@ public abstract class ToggleBase : MonoBehaviour {
         displayValue.text = displayLabels[DiplayValue];
     }
     void Start() {
-        toggle.onValueChanged.AddListener(delegate { OnToggleClick(); });
-
+        toggle.onValueChanged.AddListener(OnToggleClick);
         OnStart();
     }
 
     protected virtual void OnStart() {
     }
-    protected void OnToggleClick() {
+    protected void OnToggleClick(bool change) {
         displayValue.text = displayLabels[DiplayValue];
         OnClick();
     }

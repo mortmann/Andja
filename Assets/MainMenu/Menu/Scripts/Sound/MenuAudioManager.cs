@@ -18,7 +18,8 @@ public class MenuAudioManager : MonoBehaviour {
 
 	Dictionary<string,int> volumes;
 
-	void Start() { 
+	void Start() {
+        Debug.Log("SOUND");
         instance = this;
 		volumes = new Dictionary<string, int> ();
 		ReadSoundVolumes ();
@@ -58,7 +59,7 @@ public class MenuAudioManager : MonoBehaviour {
 		volumes[VolumeType.UIVolume.ToString()] = Mathf.RoundToInt (value);
     }
 
-	public float getVolumeFor(VolumeType volType){
+	public float GetVolumeFor(VolumeType volType){
 		if(volumes.ContainsKey(volType.ToString())==false){
 			Debug.LogError ("VolumeType not in Dictionary");
 			return -1;
@@ -115,11 +116,11 @@ public class MenuAudioManager : MonoBehaviour {
 			return;
 		}
 		volumes = JsonConvert.DeserializeObject<Dictionary<string,int>> (File.ReadAllText (filePath));
-		SetAmbientVolume (getVolumeFor (VolumeType.AmbientVolume));
-		SetMasterVolume (getVolumeFor (VolumeType.MasterVolume));
-		SetMusicVolume (getVolumeFor (VolumeType.MusicVolume));
-		SetUIVolume (getVolumeFor (VolumeType.UIVolume));
-		SetSoundEffectsVolume (getVolumeFor (VolumeType.SoundEffectsVolume));
+		SetAmbientVolume (GetVolumeFor (VolumeType.AmbientVolume));
+		SetMasterVolume (GetVolumeFor (VolumeType.MasterVolume));
+		SetMusicVolume (GetVolumeFor (VolumeType.MusicVolume));
+		SetUIVolume (GetVolumeFor (VolumeType.UIVolume));
+		SetSoundEffectsVolume (GetVolumeFor (VolumeType.SoundEffectsVolume));
 	}
 	public static Dictionary<string,int> StaticReadSoundVolumes(){
 		string filePath = System.IO.Path.Combine(Application.dataPath.Replace ("/Assets",""),fileName) ;

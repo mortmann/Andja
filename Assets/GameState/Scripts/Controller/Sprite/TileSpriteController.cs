@@ -269,6 +269,10 @@ public class TileSpriteController : MonoBehaviour {
         }
 
     }
+    /// <summary>
+    /// Only for editor
+    /// </summary>
+    /// <param name="t"></param>
     public void DespawnTile(Tile t){
 		if(tileSpriteRendererMap.ContainsKey(t)==false){
 			return;
@@ -277,6 +281,10 @@ public class TileSpriteController : MonoBehaviour {
         SimplePool.Despawn (tileSpriteRendererMap [t].gameObject);
 		tileSpriteRendererMap.Remove (t);
 	}
+    /// <summary>
+    /// Only for editor
+    /// </summary>
+    /// <param name="tile_data"></param>
 	public void SpawnTile(Tile tile_data){
 		if(EditorController.IsEditor&& tileSpriteRendererMap.ContainsKey (tile_data)){
 			return;

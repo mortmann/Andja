@@ -553,21 +553,6 @@ Prefab:
       propertyPath: m_Name
       value: Constant
       objectReference: {fileID: 0}
-<<<<<<< HEAD
-    - target: {fileID: 11473390, guid: dfbb72e7b75263b4da3c1b05eaa385c6, type: 2}
-      propertyPath: Height
-      value: 500
-      objectReference: {fileID: 0}
-    - target: {fileID: 11473390, guid: dfbb72e7b75263b4da3c1b05eaa385c6, type: 2}
-      propertyPath: Width
-      value: 500
-      objectReference: {fileID: 0}
-    - target: {fileID: 11473390, guid: dfbb72e7b75263b4da3c1b05eaa385c6, type: 2}
-      propertyPath: loadsavegame
-      value: test1
-      objectReference: {fileID: 0}
-=======
->>>>>>> c18760a97505e361adca820e97af4b71fbb4ba85
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: dfbb72e7b75263b4da3c1b05eaa385c6, type: 2}
   m_IsPrefabParent: 0

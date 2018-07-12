@@ -6,7 +6,8 @@ using System.Linq;
 
 public class ConsoleUI : MonoBehaviour {
 
-	public GameObject TextPrefab;
+    Dictionary<GameObject, Vector3> GOtoPosition;
+    public GameObject TextPrefab;
 	public Transform outputTransform;
 	public InputField inputField;
 	public bool cheats_enabled;
@@ -32,7 +33,6 @@ public class ConsoleUI : MonoBehaviour {
 			Destroy(outputTransform.GetChild(30).gameObject);
 		}
 	}
-
 	public void ReadFromConsole(){
 		string command = inputField.text;
 		if(command.Trim().Length<=0){
@@ -63,7 +63,32 @@ public class ConsoleUI : MonoBehaviour {
 			bool turn = num == 1;
 			CameraController.Instance.devCameraZoom = turn;
 			break;
-            case "1":
+        case "itsrainingbuildings":
+            //easteregg!
+            GOtoPosition = new Dictionary<GameObject, Vector3>();
+            BoxCollider2D[] all = FindObjectsOfType<BoxCollider2D>();
+            foreach(BoxCollider2D b2d in all) {
+                if(b2d.gameObject.GetComponent<Rigidbody2D>() != null) {
+                    continue;
+                }
+                GOtoPosition.Add(b2d.gameObject, b2d.gameObject.transform.position);
+                b2d.gameObject.AddComponent<Rigidbody2D>();
+            }
+            happend = true;
+            break;
+        case "itsdrainingbuildings":
+            if (GOtoPosition == null)
+                break;
+            foreach (GameObject go in GOtoPosition.Keys) {
+                if (go == null) {
+                    continue;
+                }
+                go.transform.position = GOtoPosition[go];
+                Destroy(go.GetComponent<Rigidbody2D>());
+            }
+            happend = true;
+            break;
+        case "1":
                 City c = CameraController.Instance.nearestIsland.FindCityByPlayer(PlayerController.currentPlayerNumber);
                 happend = AddAllItems(c.inventory);
             break;

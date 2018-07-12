@@ -1431,7 +1431,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!1 &1443947404635154
 GameObject:
   m_ObjectHideFlags: 1
@@ -1842,7 +1842,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!1 &1590170687112274
 GameObject:
   m_ObjectHideFlags: 1
@@ -3457,6 +3457,7 @@ GameObject:
   - component: {fileID: 114064106993733792}
   - component: {fileID: 114543926659450704}
   - component: {fileID: 114298697838135946}
+  - component: {fileID: 114932351963611754}
   m_Layer: 5
   m_Name: Menu
   m_TagString: Untagged
@@ -3810,8 +3811,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   normalColor: {r: 0, g: 0, b: 0, a: 0}
-  highlightColorInitial: {r: 0, g: 0, b: 0, a: 0}
-  highlightColorFadeTo: {r: 0, g: 0, b: 0, a: 0}
   fadeSpeed: 0.75
 --- !u!114 &114033622780149628
 MonoBehaviour:
@@ -4154,8 +4153,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   normalColor: {r: 0, g: 0, b: 0, a: 0}
-  highlightColorInitial: {r: 0, g: 0, b: 0, a: 0}
-  highlightColorFadeTo: {r: 0, g: 0, b: 0, a: 0}
   fadeSpeed: 0.75
 --- !u!114 &114063477365923032
 MonoBehaviour:
@@ -4459,8 +4456,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   normalColor: {r: 0, g: 0, b: 0, a: 0}
-  highlightColorInitial: {r: 0, g: 0, b: 0, a: 0}
-  highlightColorFadeTo: {r: 0, g: 0, b: 0, a: 0}
   fadeSpeed: 0.75
 --- !u!114 &114086935290381966
 MonoBehaviour:
@@ -4474,8 +4469,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   normalColor: {r: 0, g: 0, b: 0, a: 0}
-  highlightColorInitial: {r: 0, g: 0, b: 0, a: 0}
-  highlightColorFadeTo: {r: 0, g: 0, b: 0, a: 0}
   fadeSpeed: 0.75
 --- !u!114 &114090371614607240
 MonoBehaviour:
@@ -4489,8 +4482,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   normalColor: {r: 0, g: 0, b: 0, a: 0}
-  highlightColorInitial: {r: 0, g: 0, b: 0, a: 0}
-  highlightColorFadeTo: {r: 0, g: 0, b: 0, a: 0}
   fadeSpeed: 0.75
 --- !u!114 &114094169043369880
 MonoBehaviour:
@@ -5029,8 +5020,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   normalColor: {r: 0, g: 0, b: 0, a: 0}
-  highlightColorInitial: {r: 0, g: 0, b: 0, a: 0}
-  highlightColorFadeTo: {r: 0, g: 0, b: 0, a: 0}
   fadeSpeed: 0.75
 --- !u!114 &114148844425433062
 MonoBehaviour:
@@ -5101,8 +5090,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   normalColor: {r: 0, g: 0, b: 0, a: 0}
-  highlightColorInitial: {r: 0.5808823, g: 0.5808823, b: 0.5808823, a: 0}
-  highlightColorFadeTo: {r: 0.5, g: 0.5, b: 0.5, a: 0}
   fadeSpeed: 0.75
 --- !u!114 &114154593675370488
 MonoBehaviour:
@@ -5409,8 +5396,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   normalColor: {r: 0, g: 0, b: 0, a: 0}
-  highlightColorInitial: {r: 0, g: 0, b: 0, a: 0}
-  highlightColorFadeTo: {r: 0, g: 0, b: 0, a: 0}
   fadeSpeed: 0.75
 --- !u!114 &114187286266155654
 MonoBehaviour:
@@ -5740,8 +5725,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   normalColor: {r: 0, g: 0, b: 0, a: 0}
-  highlightColorInitial: {r: 0, g: 0, b: 0, a: 0}
-  highlightColorFadeTo: {r: 0, g: 0, b: 0, a: 0}
   fadeSpeed: 0.75
 --- !u!114 &114221317641536940
 MonoBehaviour:
@@ -5865,8 +5848,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   normalColor: {r: 0, g: 0, b: 0, a: 0}
-  highlightColorInitial: {r: 0, g: 0, b: 0, a: 0}
-  highlightColorFadeTo: {r: 0, g: 0, b: 0, a: 0}
   fadeSpeed: 0.75
 --- !u!114 &114238793241275312
 MonoBehaviour:
@@ -5892,8 +5873,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   normalColor: {r: 0, g: 0, b: 0, a: 0}
-  highlightColorInitial: {r: 0, g: 0, b: 0, a: 0}
-  highlightColorFadeTo: {r: 0, g: 0, b: 0, a: 0}
   fadeSpeed: 0.75
 --- !u!114 &114247322116824048
 MonoBehaviour:
@@ -6053,8 +6032,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   normalColor: {r: 0, g: 0, b: 0, a: 0}
-  highlightColorInitial: {r: 0, g: 0, b: 0, a: 0}
-  highlightColorFadeTo: {r: 0, g: 0, b: 0, a: 0}
   fadeSpeed: 0.75
 --- !u!114 &114254190320762126
 MonoBehaviour:
@@ -6133,8 +6110,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   normalColor: {r: 0, g: 0, b: 0, a: 0}
-  highlightColorInitial: {r: 0, g: 0, b: 0, a: 0}
-  highlightColorFadeTo: {r: 0, g: 0, b: 0, a: 0}
   fadeSpeed: 0.75
 --- !u!114 &114269468937908730
 MonoBehaviour:
@@ -6259,8 +6234,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   normalColor: {r: 0, g: 0, b: 0, a: 0}
-  highlightColorInitial: {r: 0, g: 0, b: 0, a: 0}
-  highlightColorFadeTo: {r: 0, g: 0, b: 0, a: 0}
   fadeSpeed: 0.75
 --- !u!114 &114278523117517474
 MonoBehaviour:
@@ -6624,8 +6597,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   normalColor: {r: 0, g: 0, b: 0, a: 0}
-  highlightColorInitial: {r: 0, g: 0, b: 0, a: 0}
-  highlightColorFadeTo: {r: 0, g: 0, b: 0, a: 0}
   fadeSpeed: 0.75
 --- !u!114 &114335394375035376
 MonoBehaviour:
@@ -7018,8 +6989,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   normalColor: {r: 0, g: 0, b: 0, a: 0}
-  highlightColorInitial: {r: 0, g: 0, b: 0, a: 0}
-  highlightColorFadeTo: {r: 0, g: 0, b: 0, a: 0}
   fadeSpeed: 0.75
 --- !u!114 &114376752209562622
 MonoBehaviour:
@@ -7353,8 +7322,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   childrens:
   - {fileID: 1894570746604192}
-  - {fileID: 1260980620406584}
-  - {fileID: 1462974301939122}
+  - {fileID: 1695186622872522}
+  - {fileID: 1082360301013220}
   - {fileID: 1443278139971146}
 --- !u!114 &114409953022543264
 MonoBehaviour:
@@ -7368,8 +7337,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   normalColor: {r: 0, g: 0, b: 0, a: 0}
-  highlightColorInitial: {r: 0, g: 0, b: 0, a: 0}
-  highlightColorFadeTo: {r: 0, g: 0, b: 0, a: 0}
   fadeSpeed: 0.75
 --- !u!114 &114410946642791832
 MonoBehaviour:
@@ -7626,8 +7593,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   normalColor: {r: 0, g: 0, b: 0, a: 0}
-  highlightColorInitial: {r: 0, g: 0, b: 0, a: 0}
-  highlightColorFadeTo: {r: 0, g: 0, b: 0, a: 0}
   fadeSpeed: 0.75
 --- !u!114 &114430844346491826
 MonoBehaviour:
@@ -8410,6 +8375,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e520221e9576c254082cec1e863d5e58, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  setting: 0
   displayLabels:
   - On
   - Off
@@ -8425,8 +8391,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   normalColor: {r: 0, g: 0, b: 0, a: 0}
-  highlightColorInitial: {r: 0, g: 0, b: 0, a: 0}
-  highlightColorFadeTo: {r: 0, g: 0, b: 0, a: 0}
   fadeSpeed: 0.75
 --- !u!114 &114503934575560782
 MonoBehaviour:
@@ -8502,8 +8466,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   normalColor: {r: 0, g: 0, b: 0, a: 0}
-  highlightColorInitial: {r: 0, g: 0, b: 0, a: 0}
-  highlightColorFadeTo: {r: 0, g: 0, b: 0, a: 0}
   fadeSpeed: 0.75
 --- !u!114 &114511341304064412
 MonoBehaviour:
@@ -8517,8 +8479,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   normalColor: {r: 0, g: 0, b: 0, a: 0}
-  highlightColorInitial: {r: 0, g: 0, b: 0, a: 0}
-  highlightColorFadeTo: {r: 0, g: 0, b: 0, a: 0}
   fadeSpeed: 0.75
 --- !u!114 &114514127586277390
 MonoBehaviour:
@@ -10158,8 +10118,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   normalColor: {r: 0, g: 0, b: 0, a: 0}
-  highlightColorInitial: {r: 0, g: 0, b: 0, a: 0}
-  highlightColorFadeTo: {r: 0, g: 0, b: 0, a: 0}
   fadeSpeed: 0.75
 --- !u!114 &114661572549715674
 MonoBehaviour:
@@ -10301,8 +10259,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   normalColor: {r: 0, g: 0, b: 0, a: 0}
-  highlightColorInitial: {r: 0, g: 0, b: 0, a: 0}
-  highlightColorFadeTo: {r: 0, g: 0, b: 0, a: 0}
   fadeSpeed: 0.75
 --- !u!114 &114680702745541708
 MonoBehaviour:
@@ -10439,8 +10395,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   normalColor: {r: 0, g: 0, b: 0, a: 0}
-  highlightColorInitial: {r: 0, g: 0, b: 0, a: 0}
-  highlightColorFadeTo: {r: 0, g: 0, b: 0, a: 0}
   fadeSpeed: 0.75
 --- !u!114 &114691813354686996
 MonoBehaviour:
@@ -11232,8 +11186,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   normalColor: {r: 0, g: 0, b: 0, a: 0}
-  highlightColorInitial: {r: 0, g: 0, b: 0, a: 0}
-  highlightColorFadeTo: {r: 0, g: 0, b: 0, a: 0}
   fadeSpeed: 0.75
 --- !u!114 &114774674853610180
 MonoBehaviour:
@@ -11539,8 +11491,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   normalColor: {r: 0, g: 0, b: 0, a: 0}
-  highlightColorInitial: {r: 0, g: 0, b: 0, a: 0}
-  highlightColorFadeTo: {r: 0, g: 0, b: 0, a: 0}
   fadeSpeed: 0.75
 --- !u!114 &114808706107699100
 MonoBehaviour:
@@ -11891,8 +11841,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   normalColor: {r: 0, g: 0, b: 0, a: 0}
-  highlightColorInitial: {r: 0, g: 0, b: 0, a: 0}
-  highlightColorFadeTo: {r: 0, g: 0, b: 0, a: 0}
   fadeSpeed: 0.75
 --- !u!114 &114832186534246818
 MonoBehaviour:
@@ -12136,8 +12084,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   normalColor: {r: 0, g: 0, b: 0, a: 0}
-  highlightColorInitial: {r: 0, g: 0, b: 0, a: 0}
-  highlightColorFadeTo: {r: 0, g: 0, b: 0, a: 0}
   fadeSpeed: 0.75
 --- !u!114 &114874673816073824
 MonoBehaviour:
@@ -12222,8 +12168,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   normalColor: {r: 0, g: 0, b: 0, a: 0}
-  highlightColorInitial: {r: 0, g: 0, b: 0, a: 0}
-  highlightColorFadeTo: {r: 0, g: 0, b: 0, a: 0}
   fadeSpeed: 0.75
 --- !u!114 &114888836100530924
 MonoBehaviour:
@@ -12752,8 +12696,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   normalColor: {r: 0, g: 0, b: 0, a: 0}
-  highlightColorInitial: {r: 0, g: 0, b: 0, a: 0}
-  highlightColorFadeTo: {r: 0, g: 0, b: 0, a: 0}
   fadeSpeed: 0.75
 --- !u!114 &114930602377724820
 MonoBehaviour:
@@ -12768,6 +12710,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_HorizontalFit: 0
   m_VerticalFit: 1
+--- !u!114 &114932351963611754
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1984459194044700}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 55b7d11fb4f0ac24d85dedca84efe607, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &114935490034012170
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -13030,8 +12983,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   normalColor: {r: 0, g: 0, b: 0, a: 0}
-  highlightColorInitial: {r: 0, g: 0, b: 0, a: 0}
-  highlightColorFadeTo: {r: 0, g: 0, b: 0, a: 0}
   fadeSpeed: 0.75
 --- !u!114 &114966757723211846
 MonoBehaviour:
@@ -14954,10 +14905,10 @@ RectTransform:
   m_Father: {fileID: 224248701420093598}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 100, y: -100}
+  m_SizeDelta: {x: 200, y: 40}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224187528089089348
 RectTransform:
@@ -15473,10 +15424,10 @@ RectTransform:
   m_Father: {fileID: 224248701420093598}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 100, y: -60}
+  m_SizeDelta: {x: 200, y: 40}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224320482199176136
 RectTransform:
@@ -15793,10 +15744,10 @@ RectTransform:
   m_Father: {fileID: 224299906994109930}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 100, y: -80}
+  m_SizeDelta: {x: 200, y: 40}
   m_Pivot: {x: 0.5, y: 0}
 --- !u!224 &224426115487559036
 RectTransform:
@@ -16359,7 +16310,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: -2.5, y: 0}
-  m_SizeDelta: {x: -45, y: 0}
+  m_SizeDelta: {x: -45, y: 30}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!224 &224560203316178432
 RectTransform:
@@ -16847,7 +16798,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 100, y: -20}
+  m_AnchoredPosition: {x: 100, y: -140}
   m_SizeDelta: {x: 200, y: 40}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224659191964992090
@@ -17053,11 +17004,11 @@ RectTransform:
   m_Father: {fileID: 224128167557866444}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -207.25}
-  m_SizeDelta: {x: 200, y: 324.5}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_AnchorMin: {x: 0.5, y: 1}
+  m_AnchorMax: {x: 0.5, y: 1}
+  m_AnchoredPosition: {x: 0, y: -200}
+  m_SizeDelta: {x: 200, y: 260}
+  m_Pivot: {x: 0.5, y: 1}
 --- !u!224 &224740992462553748
 RectTransform:
   m_ObjectHideFlags: 1
@@ -17180,10 +17131,10 @@ RectTransform:
   m_Father: {fileID: 224299906994109930}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 100, y: -20}
+  m_SizeDelta: {x: 200, y: 40}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224793303443071906
 RectTransform:
@@ -17290,7 +17241,7 @@ RectTransform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1587618395387500}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -17300,8 +17251,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchoredPosition: {x: -143.8, y: 0}
+  m_SizeDelta: {x: -287.6, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224810605304873648
 RectTransform:
@@ -17453,10 +17404,10 @@ RectTransform:
   m_Father: {fileID: 224248701420093598}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 100, y: -20}
+  m_SizeDelta: {x: 200, y: 40}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224853898233532372
 RectTransform:
@@ -17682,10 +17633,10 @@ RectTransform:
   m_Father: {fileID: 224248701420093598}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 100, y: -140}
+  m_SizeDelta: {x: 200, y: 40}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224923564984520440
 RectTransform:
@@ -17703,10 +17654,10 @@ RectTransform:
   m_Father: {fileID: 224554839645628544}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_SizeDelta: {x: 255, y: 30}
   m_Pivot: {x: 0, y: 1}
 --- !u!224 &224928559813931626
 RectTransform:

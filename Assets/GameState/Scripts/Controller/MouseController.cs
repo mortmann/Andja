@@ -22,7 +22,7 @@ public class MouseController : MonoBehaviour {
 
 	StructureSpriteController ssc;
 
-	public bool autorotate = true;
+	public static bool autorotate = true;
     private HashSet<Tile> _highlightTiles;
 	HashSet<Tile> HighlightTiles {
 		get { return _highlightTiles; }

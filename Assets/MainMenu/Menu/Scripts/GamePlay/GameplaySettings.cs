@@ -12,6 +12,7 @@ public class GameplaySettings : MonoBehaviour {
         Instance = this;
         gameplayOptions = new Dictionary<GameplaySetting, string>();
         gameplayOptionsToSave = new Dictionary<GameplaySetting, string>();
+        ReadGameplayOption();
     }
 
     Dictionary<GameplaySetting, string> gameplayOptions;
@@ -22,7 +23,7 @@ public class GameplaySettings : MonoBehaviour {
 
         SetOptions(gameplayOptionsToSave);
         foreach (GameplaySetting s in gameplayOptionsToSave.Keys) {
-            gameplayOptions[s] = gameplayOptions[s];
+            gameplayOptions[s] = gameplayOptionsToSave[s];
         }
         gameplayOptionsToSave.Clear();
 
@@ -40,7 +41,7 @@ public class GameplaySettings : MonoBehaviour {
         string filePath = System.IO.Path.Combine(path, fileName);
         File.WriteAllText(filePath, JsonConvert.SerializeObject(gameplayOptions));
     }
-    public bool ReadGraphicsOption() {
+    public bool ReadGameplayOption() {
         string filePath = System.IO.Path.Combine(Application.dataPath.Replace("/Assets", ""), fileName);
         if (File.Exists(filePath) == false) {
             return false;
@@ -55,7 +56,7 @@ public class GameplaySettings : MonoBehaviour {
             string val = options[optionName];
             switch (optionName) {
                 case GameplaySetting.autorotate:
-                MouseController.Instance.autorotate = bool.Parse(val);
+                MouseController.autorotate = bool.Parse(val);
                 break;
                 default:
                 Debug.LogWarning("No case for " + optionName);
@@ -75,5 +76,7 @@ public class GameplaySettings : MonoBehaviour {
             return null;
         return gameplayOptions[name];
     }
-
+    private void OnDisable() {
+        SaveGameplayOption();
+    }
 }

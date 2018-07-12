@@ -13,7 +13,7 @@ public class GS_Fullscreen : GS_SliderBase {
 
 	void SetFullscreen(bool value) {
 		graphicsSettings.SetSavedGraphicsOption (setting,value);
-        MouseController.Instance.autorotate = value;
+        MouseController.autorotate = value;
         slider.value = System.Convert.ToInt16(value);
 	}
 }

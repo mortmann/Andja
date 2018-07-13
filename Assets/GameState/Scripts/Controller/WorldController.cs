@@ -3,14 +3,15 @@ using System.Linq;
 using UnityEngine;
 using System.Collections.Generic;
 using UnityEngine.SceneManagement;
-using System.Xml.Serialization;
 using System.IO;
+using Newtonsoft.Json;
 
 public class WorldController : MonoBehaviour {
     public static WorldController Instance { get; protected set; }
+    static WorldSaveState save;
 
     // The world and tile data
-    public World world { get; protected set; }
+    public World World { get; protected set; }
 
 	public OffworldMarket offworldMarket;
 
@@ -28,40 +29,48 @@ public class WorldController : MonoBehaviour {
 	public float FixedDeltaTime { get { return Time.fixedDeltaTime * timeMultiplier;}}
 
 	public bool IsModal; // If true, a modal dialog box is open so normal inputs should be ignored.
+
+	public bool isLoaded = true;
     // Use this for initialization
-    void OnEnable() {
-        if (Instance != null) {
-            Debug.LogError("There should never be two world controllers.");
-        }
+    void Awake() {
+		if (Instance != null) {
+			Debug.LogError ("There should never be two world controllers.");
+		}
+		Instance = this;
+
 		GameDataHolder gdh = GameDataHolder.Instance;
-
 		offworldMarket = new OffworldMarket ();
-
-        Instance = this;
-		if (gdh!=null && gdh.loadsavegame!=null) {
-			CreateWorldFromSaveFile (gdh.loadsavegame);
-			gdh.loadsavegame = null;
+		if (SaveController.IsLoadingSave) {
+//			SaveController.Instance.LoadGameState (gdh.loadsavegame);
+//			gdh.loadsavegame = null;
 		} else {
 			if (gdh != null) {
-				this.world = new World (gdh.width, gdh.height);
-			} else
-				this.world = new World (100, 100);
+				MapGenerator mg = FindObjectOfType<MapGenerator> ();
+                Dictionary<Tile,Structure> tileToStructure = mg.GetStructures();
+                this.World = mg.GetWorld();
+                BuildController.Instance.PlaceWorldGeneratedStructure(tileToStructure);
+
+                isLoaded = false;
+			} 
 		}
-        Camera.main.transform.position = new Vector3(world.Width / 2, world.Height / 2, Camera.main.transform.position.z);
+        if (save != null) {
+            LoadWorldData();
+            save = null;
+        }
     }
 
     // Update is called once per frame
     void Update() {
-		if (world == null || IsPaused) {
+		if (World == null || IsPaused) {
 			return;
 		}
-        world.update(Time.deltaTime * timeMultiplier);
+        World.Update(Time.deltaTime * timeMultiplier);
     }
 	void FixedUpdate (){
-		if (world == null || IsPaused) {
+		if (World == null || IsPaused) {
 			return;
 		}
-		world.fixedupdate(Time.fixedDeltaTime * timeMultiplier);
+		World.Fixedupdate(Time.fixedDeltaTime * timeMultiplier);
 	}
 
 	public void TogglePause(){
@@ -107,25 +116,12 @@ public class WorldController : MonoBehaviour {
 	/// Saves the world.
 	/// </summary>
 	/// <param name="savename">Savename.</param>
-	public void SaveWorld(string savename) {
-		Debug.Log("SaveWorld button was clicked.");
-		XmlSerializer serializer = new XmlSerializer( typeof(World) );
-		TextWriter writer = new StringWriter();
-		serializer.Serialize(writer, world);
-		writer.Close();
-		// Create/overwrite the save file with the xml text.
-
-		// Make sure the save folder exists.
-		if( Directory.Exists(GetSaveGamesPath () ) == false ) {
-			// NOTE: This can throw an exception if we can't create the folder,
-			// but why would this ever happen? We should, by definition, have the ability
-			// to write to our persistent data folder unless something is REALLY broken
-			// with the computer/device we're running on.
-			Directory.CreateDirectory( GetSaveGamesPath ()  );
-		}
-		string filePath = System.IO.Path.Combine(GetSaveGamesPath (),savename+".sav") ;
-		File.WriteAllText( filePath, writer.ToString() );
-
+	public WorldSaveState GetSaveWorldData() {
+        WorldSaveState wss = new WorldSaveState {
+            world = World,
+            offworld = offworldMarket
+        };
+        return wss;
 	}
 	public void LoadWorld(bool quickload = false) {
 		Debug.Log("LoadWorld button was clicked.");
@@ -136,24 +132,44 @@ public class WorldController : MonoBehaviour {
 		// set to loadscreen to reset all data (and purge old references)
 		SceneManager.LoadScene( "GameStateLoadingScreen" );
 	}
-	void CreateWorldFromSaveFile(string savegamename) {
-		Debug.Log("CreateWorldFromSaveFile");
+	public void LoadWorldData() {
+		offworldMarket = save.offworld;
 		// Create a world from our save file data.
+		World = save.world;
+        World.SetTiles(MapGenerator.Instance.GetTiles(),GameDataHolder.Instance.Width,GameDataHolder.Instance.Height);
 
-		XmlSerializer serializer = new XmlSerializer( typeof(World) );
-		string saveGameText = File.ReadAllText( System.IO.Path.Combine( GetSaveGamesPath (), savegamename ) );
+        List<MapGenerator.IslandStruct> structs = MapGenerator.Instance.GetIslandStructs();
+        foreach (Island island in World.IslandList) {
+            MapGenerator.IslandStruct thisStruct = structs.Find(s =>
+                    island.StartTile.X >= s.x && (s.x + s.Width) >= island.StartTile.X &&
+                    island.StartTile.Y >= s.y && (s.y + s.Height) >= island.StartTile.Y
+            );
+            structs.Remove(thisStruct);
+            if (thisStruct.Tiles == null)
+                Debug.LogError("thisStruct.Tiles is null " + island.StartTile.X + " " + island.StartTile.Y);
+            island.SetTiles(thisStruct.Tiles);
+        }
+        MapGenerator.Instance.Destroy();
 
-		TextReader reader = new StringReader( saveGameText );
-		Debug.Log (reader.ToString () + " "+saveGameText); 
-		world = (World)serializer.Deserialize(reader);
-		reader.Close();
-		// Center the Camera
-		Camera.main.transform.position = new Vector3( world.Width/2, world.Height/2, Camera.main.transform.position.z );
-		BuildController.Instance.PlaceAllLoadedStructure ();
+        //Now turn the loaded World into a playable World
+        List<Structure> loadedStructures = new List<Structure>();
+		foreach (Island island in World.IslandList) {
+			loadedStructures.AddRange(island.Load ());
+		}
+		loadedStructures.Sort ((x, y) => x.buildID.CompareTo(y.buildID) );
+		BuildController.Instance.PlaceAllLoadedStructure (loadedStructures);
 		Debug.Log ("LOAD ENDED");
 	}
 
-	public string GetSaveGamesPath(){
-		return GameDataHolder.Instance.GetSaveGamesPath ();
-	}
+    internal static void SetWorldData(WorldSaveState world) {
+        save = world;
+    }
+
+	
+
+}
+
+public class WorldSaveState {
+	public OffworldMarket offworld;
+	public World world;
 }

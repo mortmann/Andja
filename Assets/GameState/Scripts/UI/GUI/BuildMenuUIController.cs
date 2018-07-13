@@ -11,28 +11,31 @@ public class BuildMenuUIController : MonoBehaviour {
 	public Dictionary<string,GameObject> nameToGOMap; 
 	public Dictionary<string,int> nameToIDMap;
 	public List<string>[] buttons;
-	BuildController bc;
+	BuildController buildController;
 	GameObject oldButton;
-	int oldSelectedCivLevel = 0;
+	int selectedCivLevel = 0;
 	Player player;
+	public bool enableAllBuildings = false;
     // Use this for initialization
     void Start () {
 		nameToGOMap = new Dictionary<string, GameObject> ();
 		nameToIDMap = new Dictionary<string, int> ();
-		bc = GameObject.FindObjectOfType<BuildController> ();
+		buildController = BuildController.Instance;
 		buttons= new List<string>[4];
 
-		player = GameObject.FindObjectOfType<PlayerController> ().currPlayer;
+		player = PlayerController.Instance.CurrPlayer;
 
 		for (int i = 0; i < 4; i++) {
 			buttons [i] = new List<string> ();
 		}
-		foreach (Structure s in bc.structurePrototypes.Values) {
+		foreach (Structure s in buildController.StructurePrototypes.Values) {
+			if(s.CanBeBuild==false){
+				continue; 
+			}
 			GameObject b = Instantiate(buttonPrefab);
-			b.name = s.name;
-			b.GetComponentInChildren<Text>().text = s.name;
+			b.name = s.SpriteName;
+			b.GetComponentInChildren<Text>().text = s.SpriteName;
 			b.transform.SetParent(buttonBuildingContent.transform);
-
 
 			b.GetComponent<Button> ().onClick.AddListener(() => {OnClick(b.name);});
 			b.GetComponent<Image> ().color = Color.white;
@@ -44,28 +47,45 @@ public class BuildMenuUIController : MonoBehaviour {
 				b.SetActive(false);
 			}
 		}
-		for (int i = 0; i < buttonPopulationsLevelContent.transform.childCount; i++) {
-			GameObject g = buttonPopulationsLevelContent.transform.GetChild (i).gameObject;
-			if (i > player.maxPopulationLevel) {
-				g.GetComponent<Button>().interactable = false; 
-			} else {
-				g.GetComponent<Button>().interactable = true;
-			}
-		}
+		OnMaxPopLevelChange (player.MaxPopulationLevel);
+
+		player.RegisterMaxPopulationCountChange (OnMaxPopLevelChange);
+		buildController.RegisterBuildStateChange (OnBuildModeChange);
     }
-	public void Update(){
+	void OnEnable(){
+		
+	}
+	public void OnBuildModeChange (BuildStateModes mode){
+		if(mode!=BuildStateModes.Build){
+			if(oldButton!=null)
+				oldButton.GetComponent<Image> ().color = Color.white;
+		}
+	}
+	public void OnMaxPopLevelChange(int level){
 		for (int i = 0; i < buttonPopulationsLevelContent.transform.childCount; i++) {
 			GameObject g = buttonPopulationsLevelContent.transform.GetChild (i).gameObject;
-			if (i > player.maxPopulationLevel) {
+			if (i > level && enableAllBuildings == false) {
 				g.GetComponent<Button>().interactable = false; 
 			} else {
 				g.GetComponent<Button>().interactable = true; 
 			}
 		}
-		foreach (string name in buttons[oldSelectedCivLevel]) {
-			if (player.maxPopulationCount >= bc.structurePrototypes [nameToIDMap [name]].PopulationCount) {
+	}
+	public void OnMaxPopLevelChange(int level,int count){
+		OnMaxPopLevelChange (level);
+		if(level!=selectedCivLevel){
+			return;
+		}
+		foreach (string name in buttons[level]) {
+			if (count >= buildController.StructurePrototypes [nameToIDMap [name]].PopulationCount) {
 				nameToGOMap [name].SetActive (true);
 			}
+		}
+	}
+	public void Update(){
+		if (Input.GetMouseButtonDown (1)&&oldButton!=null) {
+			oldButton.GetComponent<Image> ().color = Color.white;
+			oldButton = null;
 		}
 	}
 	public void OnClick(string name){
@@ -78,19 +98,19 @@ public class BuildMenuUIController : MonoBehaviour {
 		}
 		oldButton = nameToGOMap [name];
 		nameToGOMap [name].GetComponent<Image> ().color = Color.red;
-		bc.OnClick (nameToIDMap[name]);
+		buildController.OnClick (nameToIDMap[name]);
 	}
 
 	public void OnCivilisationLevelClick(int i){
-		foreach (string item in buttons[oldSelectedCivLevel]) {
+		foreach (string item in buttons[selectedCivLevel]) {
 			nameToGOMap[item].SetActive (false);
 		}
 		foreach (string name in buttons[i]) {
-			if (player.maxPopulationCount >= bc.structurePrototypes [nameToIDMap [name]].PopulationCount) {
+			if (player.MaxPopulationCount >= buildController.StructurePrototypes [nameToIDMap [name]].PopulationCount) {
 				nameToGOMap [name].SetActive (true);
 			}
 		}
-		oldSelectedCivLevel = i;
+		selectedCivLevel = i;
 	}
 	public void OnDisable() {
 		if(oldButton != null)

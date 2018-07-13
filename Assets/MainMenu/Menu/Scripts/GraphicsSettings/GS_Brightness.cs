@@ -2,13 +2,15 @@
 
 public class GS_Brightness : GS_SliderBase {
 
-    protected override void Start() {
-        base.Start();
+	public override void OnStart() {
+		setting = GraphicsSetting.Brightness;
+		if(graphicsSettings.HasSavedGraphicsOption(setting))
+			slider.value = (float.Parse (graphicsSettings.GetSavedGraphicsOption (setting)));
         displayValue.text = Value.ToString() + "%";
     }
 
     protected override void OnSliderValueChange() {
-
+		graphicsSettings.SetSavedGraphicsOption (setting,slider.value);
 	}
 
     protected override void OnSliderValueChangeSetDisplayText() {

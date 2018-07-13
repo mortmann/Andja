@@ -3,98 +3,121 @@ using System.Collections.Generic;
 using UnityEngine.UI;
 public class ProduktionUI : MonoBehaviour {
 
-	public Canvas inputContent;
-	public Canvas outputContent;
+	public Transform inputContent;
+	public Transform outputContent;
 	public GameObject progressContent;
 	public GameObject itemPrefab;
-	Dictionary<Item, GameObject> itemToGO;
-	ProductionBuilding pbstr;
-	OutputStructure userStr;
+	public GameObject itemORSeperatorPrefab;
+
+	Dictionary<Item, ItemUI> itemToGO;
+
+	OutputStructure currentStructure;
+
 	Slider progress;
 	Text efficiency;
+	Item currORItem;
+
 	public void Show(OutputStructure ustr){
-		if (this.pbstr == ustr || ustr is ProductionBuilding == false) {
+		if (this.currentStructure == ustr) {
 			return;
 		}
-		this.pbstr = (ProductionBuilding)ustr;
+		this.currentStructure = ustr;
 		efficiency = progressContent.GetComponentInChildren<Text> ();
 		progress = progressContent.GetComponentInChildren<Slider> ();
-		progress.maxValue = pbstr.produceTime;
+		progress.maxValue = currentStructure.ProduceTime;
 		progress.value = 0;
-		itemToGO = new Dictionary<Item, GameObject> ();
-		if (pbstr.intake != null) {
-			for (int i = 0; i < pbstr.intake.Length; i++) {
-				GameObject go = GameObject.Instantiate (itemPrefab);
-				Slider s = go.GetComponentInChildren<Slider> ();
-				s.maxValue = pbstr.maxIntake [i];
-				s.value = pbstr.intake [i].count;
-				Text t = go.GetComponentInChildren<Text> ();
-				t.text = pbstr.intake [i].count + "t";
-				go.transform.SetParent (inputContent.transform);
-				itemToGO.Add (pbstr.intake [i], go);
+		if(itemToGO!=null){
+			foreach(ItemUI go in itemToGO.Values){
+				Destroy (go.gameObject);
 			}
 		}
-		if (pbstr.output != null) {
-			for (int i = 0; i < pbstr.output.Length; i++) {
-				GameObject go = GameObject.Instantiate (itemPrefab);
-				Slider s = go.GetComponentInChildren<Slider> ();
-				s.maxValue = pbstr.maxOutputStorage;
-				s.value = pbstr.output [i].count;
-				Text t = go.GetComponentInChildren<Text> ();
-				t.text = pbstr.output [i].count + "t";
-				go.transform.SetParent (outputContent.transform);
-				itemToGO.Add (pbstr.output [i], go);
+		itemToGO = new Dictionary<Item, ItemUI> ();
+		if (ustr.Output != null) {
+			for (int i = 0; i < ustr.Output.Length; i++) {
+				ItemUI go = GameObject.Instantiate(itemPrefab).GetComponent<ItemUI>();
+				go.SetItem (ustr.Output [i], ustr.MaxOutputStorage );
+				go.transform.SetParent (outputContent);
+				itemToGO.Add (ustr.Output [i], go);
 			}
 		}
-	}
-	public void ShowProduce(OutputStructure ustrs){
-		if(ustrs == null || ustrs == userStr ){
-			return;
-		}
-		Debug.Log ("SHOW"); 
-		this.userStr = ustrs;
-		efficiency = progressContent.GetComponentInChildren<Text> ();
-		progress = progressContent.GetComponentInChildren<Slider> ();
-		progress.maxValue = userStr.produceTime;
-		progress.value = 0;
-		if(itemToGO != null){
-			foreach (GameObject item in itemToGO.Values) {
-				GameObject.Destroy (item);
+
+		if (ustr is ProductionBuilding) {
+			ProductionBuilding pstr = (ProductionBuilding)ustr;
+			if (pstr.MyIntake == null) {
+				return;
 			}
+			if(pstr.MyInputTyp == InputTyp.AND){
+				for (int i = 0; i < pstr.MyIntake.Length; i++) {
+					ItemUI go = GameObject.Instantiate (itemPrefab).GetComponent<ItemUI>();
+					go.SetItem (pstr.MyIntake [i], pstr.GetMaxIntakeForIntakeIndex(i) );
+					go.transform.SetParent (inputContent);
+					itemToGO.Add (pstr.MyIntake [i], go);
+				}
+			} 
+			else if(pstr.MyInputTyp == InputTyp.OR){
+				for (int i = 0; i < pstr.ProductionData.intake.Length; i++) {
+					ItemUI go = GameObject.Instantiate (itemPrefab).GetComponent<ItemUI>();
+					if(i > 0){
+						GameObject or = GameObject.Instantiate (itemORSeperatorPrefab);
+						or.transform.SetParent (inputContent);
+					}
+					if(i == pstr.OrItemIndex){
+						go.SetItem (pstr.MyIntake [0],pstr.GetMaxIntakeForIntakeIndex(pstr.OrItemIndex));
+						currORItem = pstr.MyIntake [0];
+						itemToGO.Add (pstr.MyIntake [0], go);
+					} else {
+						go.SetItem (pstr.ProductionData.intake [i],pstr.GetMaxIntakeForIntakeIndex(i));
+						int temp = i;
+						go.AddClickListener (( data ) => { OnItemClick( pstr.ProductionData.intake [temp] ); } );
+						go.SetInactive (true);
+						itemToGO.Add (pstr.ProductionData.intake [i], go);
+					}
+					go.transform.SetParent (inputContent);
+				}
+			} 
 		}
-		itemToGO = new Dictionary<Item, GameObject> ();
-		if (userStr.output != null) {
-			for (int i = 0; i < userStr.output.Length; i++) {
-				GameObject go = GameObject.Instantiate (itemPrefab);
-				Slider s = go.GetComponentInChildren<Slider> ();
-				s.maxValue = userStr.maxOutputStorage;
-				s.value = userStr.output [i].count;
-				Text t = go.GetComponentInChildren<Text> ();
-				t.text = userStr.output [i].count + "t";
-				go.transform.SetParent (outputContent.transform);
-				itemToGO.Add (userStr.output [i], go);
-			}
-		}
+		
 	}
 
-	// Update is called once per frame
-	void Update () {
-		if(pbstr != null || userStr != null){
-			foreach (Item item in itemToGO.Keys) {
-				GameObject go = itemToGO [item];
-				Slider s = go.GetComponentInChildren<Slider> ();
-				s.value = item.count;
-				Text t = go.GetComponentInChildren<Text> ();
-				t.text = item.count + "t";
-			}
-			if(pbstr != null){
-				progress.value = pbstr.produceTime - pbstr.produceCountdown;
-				efficiency.text = pbstr.Efficiency + "%";
-			} 
-			if(userStr != null){
-				progress.value = userStr.produceTime - userStr.produceCountdown;
-				efficiency.text = userStr.Efficiency + "%";
+	public void OnItemClick(Item item){
+		//first get remove the current orItem and add the version from intake
+		itemToGO [currORItem].SetInactive (true);
+		ItemUI go = itemToGO [currORItem];
+		ProductionBuilding pstr = (ProductionBuilding)currentStructure;
+		for (int i = 0; i < pstr.ProductionData.intake.Length; i++) {
+			if(pstr.ProductionData.intake[i].ID == currORItem.ID){
+				SwitchItemKey (currORItem, pstr.ProductionData.intake [i]);
+				go.AddClickListener (( data ) => { OnItemClick( pstr.ProductionData.intake [i] ); } );
+				break;
 			}
 		}
+		itemToGO [item].SetInactive (false);
+		//now change the input to the selected
+		//also do change the associated item
+		if (currentStructure is ProductionBuilding) {
+			((ProductionBuilding)currentStructure).ChangeInput (item);
+		}
+		go = itemToGO [item];
+		go.ClearAllTriggers ();
+		SwitchItemKey (item, ((ProductionBuilding)currentStructure).MyIntake [0]);
+		currORItem = ((ProductionBuilding)currentStructure).MyIntake [0];
+	}
+	private void SwitchItemKey(Item oldKey, Item newKey){
+		ItemUI go = itemToGO [oldKey];
+		itemToGO.Remove (oldKey);
+		itemToGO [newKey] = go;
+	}
+	// Update is called once per frame
+	void Update () {
+		if(currentStructure == null){
+			Debug.LogError ("Why is it open, when it has no structure?");
+			return;
+		}
+		foreach (Item item in itemToGO.Keys) {
+			itemToGO [item].ChangeItemCount(item);
+		}
+		progress.value = currentStructure.produceCountdown;
+		efficiency.text = currentStructure.Efficiency + "%";
+	
 	}
 }

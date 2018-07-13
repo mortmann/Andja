@@ -12,12 +12,16 @@ public class TypeGraphicsSelect : MonoBehaviour {
 	public Dictionary<string,List<GameObject>> typeToGameObjects;
 	TileType currentSelected;
 	// Use this for initialization
-	void Start () {
+	void OnEnable() {
 		typeToGameObjects = new Dictionary<string, List<GameObject>> ();
 		LoadSprites ();
 		foreach (string type in typeTotileSpriteNames.Keys) {
 			List<GameObject> gos = new List<GameObject> ();
 			int number = 0;
+            if(typeTotileSpriteNames[type] == null) {
+                Debug.Log(type);
+                continue;
+            }
 			foreach (string sprite in typeTotileSpriteNames[type]) {
 				//need to find all sprites for that type
 				GameObject g = GameObject.Instantiate (prefabListItem);
@@ -26,10 +30,11 @@ public class TypeGraphicsSelect : MonoBehaviour {
 				g.GetComponentInChildren<Text > ().text = sprite;
 				//set the trigger up
 				EventTrigger eventTrigger = g.GetComponent<EventTrigger> ();
-				EventTrigger.Entry entry = new EventTrigger.Entry ();
-				entry.eventID = EventTriggerType.Select;
-				entry.callback = new EventTrigger.TriggerEvent ();
-				int temp = number;
+                EventTrigger.Entry entry = new EventTrigger.Entry {
+                    eventID = EventTriggerType.Select,
+                    callback = new EventTrigger.TriggerEvent()
+                };
+                int temp = number;
 				number++;
 				entry.callback.AddListener ((data) => {
 					OnSelect (temp);
@@ -41,7 +46,7 @@ public class TypeGraphicsSelect : MonoBehaviour {
 //			Debug.Log ("typeToGameObjects |" + type + "|"); 
 			typeToGameObjects.Add (type, gos); 
 		}
-		ChangeType (TileType.Dirt);
+
 	}
 	public void ChangeType(TileType item){
 		foreach(Transform t in content.transform){
@@ -50,33 +55,27 @@ public class TypeGraphicsSelect : MonoBehaviour {
 		if(item == TileType.Ocean){
 			return;
 		}
-		if(typeToGameObjects.ContainsKey (item.ToString ().ToLower ())==false){
+		if(typeToGameObjects.ContainsKey (item.ToString ())==false){
 			return;
 		}
-		foreach (GameObject go in typeToGameObjects[item.ToString ().ToLower ()]) {
+		foreach (GameObject go in typeToGameObjects[item.ToString ()]) {
 			go.SetActive (true);
 		}
 		currentSelected = item;
 		OnSelect (0);
 	}
 	public void OnSelect(int number){
-		EditorController.Instance.spriteName = typeTotileSpriteNames [currentSelected.ToString ().ToLower ()] [number];
+		EditorController.Instance.spriteName = typeTotileSpriteNames [currentSelected.ToString ()] [number];
 	}
 
 	void LoadSprites() {
-
-		typeTotileSpriteNames = new Dictionary<string, List<string>>();
-		Sprite[] sprites = Resources.LoadAll<Sprite>("Textures/TileSprites/");
-		foreach (Sprite s in sprites) {
-			string type = s.name.Split ('_') [0].ToLower ();
-//			Debug.Log (type + " / " + s.name); 
-			if(typeTotileSpriteNames.ContainsKey (type)){
-				typeTotileSpriteNames [type].Add (s.name);
-			} else {
-				List<string> sts = new List<string> ();
-				sts.Add (s.name); 
-				typeTotileSpriteNames.Add (type,sts);
-			}
-		}
+        if (typeTotileSpriteNames.Count > 0) {
+            return;
+        }
+		foreach(TileType tt in Enum.GetValues(typeof(TileType))) {
+            typeTotileSpriteNames.Add(tt.ToString(), TileSpriteController.GetSpriteNamesForType(tt, EditorController.climate ));
+            if(typeTotileSpriteNames[tt.ToString()] != null)
+              Debug.Log(tt +"  "+typeTotileSpriteNames[tt.ToString()].Count);
+        }
 	}
 }

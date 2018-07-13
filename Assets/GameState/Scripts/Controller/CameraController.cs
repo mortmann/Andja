@@ -1,9 +1,11 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 using UnityEngine.EventSystems;
+using System;
 
 public class CameraController : MonoBehaviour {
 	public static int maxZoomLevel = 25;
+	public bool devCameraZoom = false;
 	public static int minZoomLevel = 3;
 	Vector3 lastFramePosition;
 	Vector3 currFramePosition;
@@ -14,113 +16,139 @@ public class CameraController : MonoBehaviour {
 	public Island nearestIsland;
 	public float zoomLevel;
 	public HashSet<Tile> tilesCurrentInCameraView;
+
 	public HashSet<Structure> structureCurrentInCameraView;
 	public Rect CameraViewRange;
-
-	public static CameraController Instance;
-
-	void Start() {
+	Vector2 showBounds = new Vector2 ();
+    static CameraSave save;
+    public static CameraController Instance;
+	void Awake () {
 		if (Instance != null) {
-			Debug.LogError("There should never be two mouse controllers.");
+			Debug.LogError ("There should never be two SaveController.");
 		}
 		Instance = this;
+        if(save != null) {
+            LoadSaveCameraData();
+            save = null;
+        }
+	}
+	void Start() {
 		tilesCurrentInCameraView = new HashSet<Tile> ();
 		structureCurrentInCameraView = new HashSet<Structure> ();
+
+		if(WorldController.Instance == null ||WorldController.Instance.isLoaded == false){
+			Camera.main.transform.position = new Vector3 (World.Current.Width / 2, World.Current.Height / 2, Camera.main.transform.position.z);
+		}
+		middle = Camera.main.ScreenToWorldPoint (new Vector3 (Camera.main.pixelWidth/2, Camera.main.pixelHeight/2));
+		lower = Camera.main.ScreenToWorldPoint (Vector3.zero);
+		upper = Camera.main.ScreenToWorldPoint (new Vector3 (Camera.main.pixelWidth, Camera.main.pixelHeight));
+		middle = Camera.main.ScreenToWorldPoint (new Vector3 (Camera.main.pixelWidth/2, Camera.main.pixelHeight/2));
+
+		showBounds.x = World.Current.Width;
+		showBounds.y = World.Current.Height;
+
 	}
 
 	void Update () {
-		
-		if(UIController.Instance!=null && UIController.Instance.IsPauseMenuOpen()){
+        //DO not move atall when Menu is Open
+		if(PauseMenu.isOpen){
 			return;
 		}
-		if(EditorUIController.Instance!=null && EditorUIController.Instance.IsPauseMenuOpen()){
-			return;
-		}
-		Vector3 diff = new Vector3(0,0);
+
+		Vector3 cameraMove = new Vector3(0,0);
 		currFramePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 		currFramePosition.z = 0;
 		UpdateZoom();
 		zoomLevel= Mathf.Clamp(Camera.main.orthographicSize - 2,minZoomLevel,maxZoomLevel);
-		diff += UpdateKeyboardCameraMovement ();
-		diff += UpdateMouseCameraMovement ();
+		cameraMove += UpdateKeyboardCameraMovement ();
+		cameraMove += UpdateMouseCameraMovement ();
 
-		Vector2 showBounds = new Vector2 ();
 		lower = Camera.main.ScreenToWorldPoint (Vector3.zero);
-
-		float lowerX = lower.x;
-		float lowerY = lower.y;
 		upper = Camera.main.ScreenToWorldPoint (new Vector3 (Camera.main.pixelWidth, Camera.main.pixelHeight));
-		float upperX = upper.x;
-		float upperY = upper.y;
-		if(WorldController.Instance==null){
-			showBounds.x = EditorController.Instance.editorIsland.width;
-			showBounds.y = EditorController.Instance.editorIsland.height;
-		} else {
-			if (BuildController.Instance.BuildState != BuildStateModes.None) {
-				World.current.checkIfInCamera (lowerX, lowerY, upperX, upperY);
-			} else {
-				World.current.resetIslandMark ();
-			}
-			middle = Camera.main.ScreenToWorldPoint (new Vector3 (Camera.main.pixelWidth/2, Camera.main.pixelHeight/2));
-			middleTile = World.current.GetTileAt (middle.x,middle.y);
-			findNearestIsland ();
-			World w = World.current;
-			showBounds.x = w.Width;
-			showBounds.y = w.Height;
-		}
+		middle = Camera.main.ScreenToWorldPoint (new Vector3 (Camera.main.pixelWidth/2, Camera.main.pixelHeight/2));
 
-		if(upperX>showBounds.x ){
-			if(diff.x > 0){
-				diff.x = 0;
+		middleTile = World.Current.GetTileAt (middle.x,middle.y);
+		FindNearestIsland ();
+
+		Vector3 newLower = cameraMove + lower;
+		Vector3 newUpper = cameraMove + upper;
+		if(newUpper.x>showBounds.x ){
+			if(cameraMove.x > 0){
+				cameraMove.x = Mathf.Clamp(cameraMove.x, 0, showBounds.x-upper.x);
 			}
 		}
-		if(lowerX<0){//Camera.main.orthographicSize/divide
-			if(diff.x < 0){
-				diff.x = 0;
+		if(newLower.x<0){//Camera.main.orthographicSize/divide
+			if(cameraMove.x < 0){
+				cameraMove.x = Mathf.Clamp(cameraMove.x, 0, -lower.x);
 			}
 		}
-		if(upperY>showBounds.y ){//Camera.main.orthographicSize/divide
-			if(diff.y > 0){
-				diff.y = 0;
+		if(newUpper.y>showBounds.y ){//Camera.main.orthographicSize/divide
+			if(cameraMove.y > 0){
+				cameraMove.y = Mathf.Clamp(cameraMove.y, 0, showBounds.y-upper.y);
 			}
 		}
-		if(lowerY<0){
-			if(diff.y < 0){
-				diff.y = 0;
+		if(newLower.y<0){
+			if(cameraMove.y < 0){
+				cameraMove.y = Mathf.Clamp(cameraMove.y, 0, -lower.y);
 			}
 		}
-		Camera.main.transform.Translate (diff);
+		Camera.main.transform.Translate (cameraMove);
 		lastFramePosition = Camera.main.ScreenToWorldPoint( Input.mousePosition );
 		lastFramePosition.z = 0;
 
+		Rect oldViewRange = new Rect (CameraViewRange);
+
+		int mod = 2+ (int)zoomLevel/2 ;//TODO: optimize this
+		int lX = (int)lower.x - mod;
+		int uX = (int)upper.x + mod;
+		int lY = (int)lower.y - mod;
+		int uY = (int)upper.y + mod;
+		CameraViewRange = new Rect (lX,lY,uX-lX,uY-lY);
 
 		tilesCurrentInCameraView.Clear ();
 		structureCurrentInCameraView.Clear ();
-		int mod = (int)zoomLevel/2;//TODO: optimize this
-		int lX = (int)lower.x - 1*mod;
-		int uX = (int)upper.x + 3*mod;
-		int lY = (int)lower.y - 1*mod;
-		int uY = (int)upper.y + 3*mod;
-		CameraViewRange = new Rect (lX,lY,uX-lX,uY-lY);
-		for (int x = lX; x < uX; x++) {
-			for (int y=lY; y < uY; y++) {
-				Tile tile_data = World.current.GetTileAt(x, y);
+		TileSpriteController tsc = TileSpriteController.Instance;
+		for (int x = Mathf.FloorToInt(Mathf.Min(oldViewRange.xMin,CameraViewRange.xMin)); x < Mathf.CeilToInt(Mathf.Max(oldViewRange.xMax,CameraViewRange.xMax)); x++) {
+			for (int y=Mathf.FloorToInt(Mathf.Min(oldViewRange.yMin,CameraViewRange.yMin)); y < Mathf.CeilToInt(Mathf.Max(oldViewRange.yMax,CameraViewRange.yMax)); y++) {
+				Tile tile_data = World.Current.GetTileAt(x, y);
 				if(tile_data==null
-					||tile_data.Type == TileType.Ocean ){
+					|| tile_data.Type == TileType.Ocean ){
 					continue;
 				}
-				tilesCurrentInCameraView.Add (tile_data); 
-				if(tile_data.Structure!=null){
-					//we dont need trees, roads, growables in general or anything like that
-					//why tho they use the same structurespritecontroller like every other structure???
-//					if(tile_data.Structure.myBuildingTyp==BuildingTyp.Blocking){
-						structureCurrentInCameraView.Add (tile_data.Structure);
-//					}
+
+				bool isInNew = CameraViewRange.Contains (tile_data.Vector);
+				bool isInOld = oldViewRange.Contains (tile_data.Vector);
+				if(isInNew==false && isInOld==false){
+					continue;
 				}
+
+				if(isInNew){
+                    //all after this are in the view so we have to maybe update em
+                    World.Current.OnTileChanged(tile_data);
+
+                    tilesCurrentInCameraView.Add (tile_data); 
+					if(tile_data.Structure!=null){
+						structureCurrentInCameraView.Add (tile_data.Structure);
+					}
+				}
+
+				//if(isInOld == false && isInNew){
+				//	tsc.SpawnTile (tile_data);
+				//} else
+				//if(isInNew == false){
+				//	tsc.DespawnTile (tile_data);
+				//}
+
+
 			}
 		}
 	}
-	Vector3 UpdateMouseCameraMovement() {
+
+    internal static void SetSaveCameraData(CameraSave camera) {
+        save = camera;
+    }
+
+    Vector3 UpdateMouseCameraMovement() {
 		// Handle screen panning
 		if( Input.GetMouseButton(1) || Input.GetMouseButton(2) ) {	// Right or Middle Mouse Button
 			return lastFramePosition-currFramePosition;
@@ -139,10 +167,16 @@ public class CameraController : MonoBehaviour {
 			return;
 		}
 		Camera.main.orthographicSize -= Camera.main.orthographicSize * Input.GetAxis("Mouse ScrollWheel");
-		Camera.main.orthographicSize = Mathf.Clamp(Camera.main.orthographicSize, 3f, 25f);
+		if(devCameraZoom){
+			
+		}
+		Camera.main.orthographicSize = Mathf.Clamp(Camera.main.orthographicSize, minZoomLevel, devCameraZoom? 4*maxZoomLevel : maxZoomLevel);
 
 	}
 	public Vector3 UpdateKeyboardCameraMovement(){
+		if(UIController.IsTextFieldFocused()){
+			return Vector3.zero;
+		}
 		if (Mathf.Abs (Input.GetAxis ("Horizontal")) == 0 && Mathf.Abs (Input.GetAxis ("Vertical")) == 0) {
 			return Vector3.zero;
 		}
@@ -163,7 +197,8 @@ public class CameraController : MonoBehaviour {
 		float zoomMultiplier = Mathf.Clamp(Camera.main.orthographicSize - 2,1,4f)*10;
 		return new Vector3(zoomMultiplier*Horizontal*Time.deltaTime,zoomMultiplier*Vertical*Time.deltaTime,0);
 	}
-	public void findNearestIsland(){
+
+	public void FindNearestIsland(){
 		HashSet<Tile> tiles= new HashSet<Tile>();
 		Queue<Tile> tilesToCheck = new Queue<Tile>();
 		tilesToCheck.Enqueue(middleTile);
@@ -173,8 +208,8 @@ public class CameraController : MonoBehaviour {
 			if (t==null){
 				return;
 			}
-			if(t.myIsland!=null){
-				nearestIsland = t.myIsland;
+			if(t.MyIsland!=null){
+				nearestIsland = t.MyIsland;
 				break;
 			}
 			if(tiles.Count>100){
@@ -195,6 +230,22 @@ public class CameraController : MonoBehaviour {
 		Camera.main.transform.position = new Vector3 (pos.x, pos.y, Camera.main.transform.position.z);
 		currFramePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 		lastFramePosition = currFramePosition;
-
 	}
+
+	public CameraSave GetSaveCamera(){
+        CameraSave cs = new CameraSave {
+            orthographicSize = Camera.main.orthographicSize,
+            pos = new SeriaziableVector3(Camera.main.transform.position)
+        };
+        return cs;
+	}
+	public void LoadSaveCameraData(){
+		Camera.main.transform.position = save.pos.GetVector3();
+		Camera.main.orthographicSize = save.orthographicSize;
+	}
+}
+[Serializable]
+public class CameraSave {
+	public SeriaziableVector3 pos;
+	public float orthographicSize;
 }

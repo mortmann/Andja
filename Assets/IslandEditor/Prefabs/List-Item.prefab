@@ -5,11 +5,11 @@ GameObject:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  serializedVersion: 4
+  serializedVersion: 5
   m_Component:
-  - 224: {fileID: 22499548}
-  - 222: {fileID: 22249224}
-  - 114: {fileID: 11460126}
+  - component: {fileID: 22499548}
+  - component: {fileID: 22249224}
+  - component: {fileID: 11460126}
   m_Layer: 5
   m_Name: List-Item
   m_TagString: Untagged
@@ -22,14 +22,14 @@ GameObject:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  serializedVersion: 4
+  serializedVersion: 5
   m_Component:
-  - 224: {fileID: 22445986}
-  - 222: {fileID: 22224052}
-  - 114: {fileID: 11457274}
-  - 114: {fileID: 11411620}
-  - 114: {fileID: 11418710}
-  - 114: {fileID: 11460708}
+  - component: {fileID: 22445986}
+  - component: {fileID: 22224052}
+  - component: {fileID: 11457274}
+  - component: {fileID: 11411620}
+  - component: {fileID: 11418710}
+  - component: {fileID: 11460708}
   m_Layer: 5
   m_Name: List-Item
   m_TagString: Untagged
@@ -49,12 +49,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_IgnoreLayout: 0
-  m_MinWidth: -1
-  m_MinHeight: -1
-  m_PreferredWidth: -1
+  m_MinWidth: 50
+  m_MinHeight: 30
+  m_PreferredWidth: 150
   m_PreferredHeight: 30
-  m_FlexibleWidth: -1
+  m_FlexibleWidth: 1
   m_FlexibleHeight: -1
+  m_LayoutPriority: 1
 --- !u!114 &11418710
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -144,7 +145,7 @@ MonoBehaviour:
     m_BestFit: 0
     m_MinSize: 10
     m_MaxSize: 40
-    m_Alignment: 3
+    m_Alignment: 4
     m_AlignByGeometry: 0
     m_RichText: 1
     m_HorizontalOverflow: 0
@@ -189,10 +190,11 @@ RectTransform:
   - {fileID: 22499548}
   m_Father: {fileID: 0}
   m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_SizeDelta: {x: 150, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &22499548
 RectTransform:
@@ -206,10 +208,11 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 22445986}
   m_RootOrder: 0
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 160, y: 30}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1001 &100100000
 Prefab:

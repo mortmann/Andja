@@ -5,50 +5,56 @@ using UnityEngine.EventSystems;
 
 public class EditorBuild : MonoBehaviour {
 	public GameObject prefabListItem;
-	public GameObject content;
-	public GameObject AgeStage;
+	public GameObject BuildingSelectContent;
+	public GameObject BuildingSettingsContent;
 
 	// Use this for initialization
 	void Start () {
 		bool first=true;
-		foreach (int item in EditorStructureSpriteController.Instance.structurePrototypes.Keys) {
+		foreach (int item in PrototypController.Instance.structurePrototypes.Keys) {
 			GameObject g = GameObject.Instantiate (prefabListItem);
-			g.transform.SetParent (content.transform);
-			g.GetComponentInChildren<Text >().text = EditorStructureSpriteController.Instance.structurePrototypes[item].name;
+			g.transform.SetParent (BuildingSelectContent.transform);
+			g.GetComponentInChildren<Text >().text = PrototypController.Instance.structurePrototypes[item].SpriteName;
 			int temp = item;
 			EventTrigger eventTrigger = g.GetComponent<EventTrigger>();
-			EventTrigger.Entry entry = new EventTrigger.Entry();
-			entry.eventID = EventTriggerType.Select;
-			entry.callback = new EventTrigger.TriggerEvent();
-			entry.callback.AddListener((data)=>{OnSelect (temp);});
+            EventTrigger.Entry entry = new EventTrigger.Entry {
+                eventID = EventTriggerType.Select,
+                callback = new EventTrigger.TriggerEvent()
+            };
+            entry.callback.AddListener((data)=>{OnBuildingSelect (temp);});
 			eventTrigger.triggers.Add (entry);
 			if(first)
-				OnSelect (temp);
+				OnBuildingSelect (temp);
 		}
 
 	}
 		
-	public void OnSelect(int id){
-		EditorController.Instance.structureID = id;
-		int ages = EditorStructureSpriteController.Instance.GetGrowableStages (id);
-		foreach (Transform item in AgeStage.transform) {
+	public void OnBuildingSelect(int id){
+		EditorController.Instance.SetStructure (id);
+		if(PrototypController.Instance.structurePrototypes[id] is Growable == false){
+			return;
+		}
+		Growable gr = PrototypController.Instance.structurePrototypes [id] as Growable;
+		int ages = gr.AgeStages;
+		foreach (Transform item in BuildingSettingsContent.transform) {
 			GameObject.Destroy (item.gameObject);
 		}
 		for (int i = 0; i <= ages; i++) {
 			GameObject g = GameObject.Instantiate (prefabListItem);
-			g.transform.SetParent (AgeStage.transform);
+			g.transform.SetParent (BuildingSettingsContent.transform);
 			g.GetComponentInChildren<Text >().text = i.ToString ();
 			int temp = i;
 			EventTrigger eventTrigger = g.GetComponent<EventTrigger>();
-			EventTrigger.Entry entry = new EventTrigger.Entry();
-			entry.eventID = EventTriggerType.Select;
-			entry.callback = new EventTrigger.TriggerEvent();
-			entry.callback.AddListener((data)=>{OnAgeSelect (temp);});
+            EventTrigger.Entry entry = new EventTrigger.Entry {
+                eventID = EventTriggerType.Select,
+                callback = new EventTrigger.TriggerEvent()
+            };
+            entry.callback.AddListener((data)=>{OnAgeSelect (temp);});
 			eventTrigger.triggers.Add (entry);
 		}
 	}
 	public void OnAgeSelect(int age){
-		EditorController.Instance.structureStage = age;
-		EditorStructureSpriteController.Instance.growableLevel = age;
+		EditorController.Instance.SetAge (age);
+//		EditorStructureSpriteController.Instance.growableLevel = age;
 	}
 }

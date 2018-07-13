@@ -1,114 +1,109 @@
 ﻿using UnityEngine;
 using System.Collections;
-using System.Xml;
-using System.Xml.Schema;
-using System.Xml.Serialization;
+using Newtonsoft.Json;
 
-public class Growable : OutputStructure {
-	float growTime = 5f;
-	float age = 0;
+public class GrowablePrototypeData : OutputPrototypData {
+	public Fertility fertility;
 	public int ageStages = 2;
-	public int currentStage= 0;
-	public bool hasProduced =false;
-	public Fertility fer;
 
+}
 
+[JsonObject(MemberSerialization.OptIn)]
+public class Growable : OutputStructure {
+	
 
-	public Growable(int id,string name,Item produceItem,Fertility fer = null){
-		forMarketplace = false;
-		maxNumberOfWorker = 0;
-		output = new Item[]{produceItem};
-		maxOutputStorage = 1;
+	#region Serialize
+
+	[JsonPropertyAttribute] float age = 0;
+	[JsonPropertyAttribute] public int currentStage = 1;
+	[JsonPropertyAttribute] public bool hasProduced = false;
+
+	#endregion
+	#region RuntimeOrOther
+
+	public Fertility Fertility {get{ return GrowableData.fertility; }}
+	public int AgeStages {get{ return GrowableData.ageStages; }}
+
+	protected GrowablePrototypeData _growableData;
+	public GrowablePrototypeData GrowableData {
+		get { if(_growableData==null){
+				_growableData = (GrowablePrototypeData)PrototypController.Instance.GetStructurePrototypDataForID (ID);
+			}
+			return _growableData;
+		}
+	}
+	#endregion
+
+	public Growable(int id, GrowablePrototypeData _growableData){
 		this.ID = id;
-		this.fer = fer;
-		this.myBuildingTyp = BuildingTyp.Free;
-		this.BuildTyp = BuildTypes.Drag;
-		buildcost = 50;
-		tileWidth = 1;
-		tileHeight = 1;
-		growTime = 100f;
-		hasHitbox = false;
-		canBeBuildOver = true;
-		this.name = name;
-		canBeBuildOver = true;
+		this._growableData = _growableData;
 	}
 	protected Growable(Growable g){
-		this.canBeBuildOver = g.canBeBuildOver;
-		this.ID = g.ID;
-		this.name = g.name;
-		this.output = g.output;
-		this.tileWidth = g.tileWidth;
-		this.tileHeight = g.tileHeight;
-		this.buildcost = g.buildcost;
-		this.BuildTyp = g.BuildTyp;
-		this.rotated = g.rotated;
-		this.hasHitbox = g.hasHitbox;
-		this.growTime = g.growTime;
-		this.canBeBuildOver = g.canBeBuildOver;
-		this.canTakeDamage = g.canTakeDamage;
-		this.fer = g.fer;
-		this.forMarketplace = g.forMarketplace;
+		BaseCopyData (g);
 	}
+	/// <summary>
+	/// DO NOT USE
+	/// </summary>
+	public Growable(){}
+
 	public override Structure Clone (){
 		return new Growable(this);
 	}
-	//got replaced with get output
-//	public Item getProducedItem(){
-//		Item p = produceItem.Clone ();
-//		p.count = 1;
-//		return p;
-//	}
 
 	public override void OnBuild(){
-		if(fer!=null && City.HasFertility (fer)==false){
+		if(Fertility!=null && City.HasFertility (Fertility)==false){
 			efficiencyModifier = 0;
 		} else {
 			//maybe have ground type be factor? stone etc
 			efficiencyModifier = 1;
 		}
 	}
-	public override void update (float deltaTime) {
+	public override void Update (float deltaTime) {
 		if(hasProduced||efficiencyModifier==0){
 			return;
 		}
-		if(currentStage==ageStages){
+		if(currentStage==AgeStages){
 			hasProduced = true;
-			output[0].count=1;
-			callbackIfnotNull ();
+			Output[0].count=1;
+			CallbackIfnotNull ();
 			return;
 		}
-		age += efficiencyModifier*(deltaTime/growTime);
-		if((age) > 0.33*currentStage){
-			if(Random.Range (0,100) <99){
+
+		age += efficiencyModifier*(deltaTime);
+
+		if((age) > currentStage*(ProduceTime/(float)AgeStages+1)){
+			if(Random.Range (0,100) < 98){
 				return;
 			}
-			if(currentStage>=ageStages){
+			if(currentStage>=AgeStages){
 				return;
 			}
 			currentStage++;
-			callbackIfnotNull ();
+			//Debug.Log ("Stage " + currentStage + " @ Time " + age);
+			CallbackIfnotNull ();
 		}
 	}
-
+	public override bool SpecialCheckForBuild (System.Collections.Generic.List<Tile> tiles){
+		//this should be only ever 1 but for whateverreason it is not it still checks and doesnt really matter anyway
+		foreach(Tile t in tiles){
+			if(t.Structure==null){
+				continue;
+			}
+			if(t.Structure.ID == ID){
+				return false;
+			}
+		}
+		return true;
+	}
+	public override string GetSpriteName (){
+		return base.GetSpriteName () + "_" + currentStage;
+	}
 	public void Reset (){
-		output[0].count = 0;
+		Output[0].count = 0;
 		currentStage= 0;
 		age = 0f;
-		callbackIfnotNull ();
+		CallbackIfnotNull ();
 		hasProduced = false;
 	}
-
-	public override void WriteXml (XmlWriter writer){
-		BaseWriteXml (writer);
-		writer.WriteAttributeString("OutputClaimed", outputClaimed.ToString () );
-		writer.WriteAttributeString("CurrentStage",currentStage.ToString());
-		writer.WriteAttributeString("Age",age.ToString());
-	}
-	public override void ReadXml (XmlReader reader)	{
-		BaseReadXml (reader);
-		currentStage = int.Parse( reader.GetAttribute("CurrentStage") );
-		age = float.Parse( reader.GetAttribute("Age") );
-		outputClaimed = bool.Parse (reader.GetAttribute("OutputClaimed"));
-
-	}
+		
 }

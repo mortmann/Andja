@@ -18,7 +18,7 @@ public class OffWorldMarketUI : MonoBehaviour {
 //		}
 		idToGO = new Dictionary<int, GameObject> ();
 		OffworldMarket ofm = WorldController.Instance.offworldMarket;
-		items = BuildController.Instance.getCopieOfAllItems (); 
+		items = BuildController.Instance.GetCopieOfAllItems (); 
 		foreach (int i in ofm.itemIDtoBuyPrice.Keys) {
 			GameObject g = GameObject.Instantiate (itemPricePrefab);
 			g.GetComponent<PriceTagUI> ().Show (items[i],ofm.itemIDtoSellPrice[i],ofm.itemIDtoBuyPrice[i]);

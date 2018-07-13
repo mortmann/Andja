@@ -1,55 +1,152 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 using System;
-using System.Xml;
-using System.Xml.Schema;
-using System.Xml.Serialization;
+using Newtonsoft.Json;
+using System.Linq;
 
 public enum Climate {Cold,Middle,Warm};
+public enum IslandSizeTypes { ExtraSmall, Small, Middle, Big, ExtraBig, Other }
 
-public class Island : IXmlSerializable,IGEventable{
-	private static int TargetType = 11;
+[JsonObject(MemberSerialization.OptIn)]
+public class Island : IGEventable {
+    public const int TargetType = 11;
+    #region Serialize
 
-	public Path_TileGraph tileGraphIslandTiles { get; protected set; }
-	public Path_TileGraph tileGraphAroundIslandTiles { get; protected set; }
+    [JsonPropertyAttribute] public List<City> myCities;
+    [JsonPropertyAttribute] public List<Fertility> myFertilities;
+    [JsonPropertyAttribute] public Climate myClimate;
+    [JsonPropertyAttribute] public Dictionary<string, int> myRessources;
+    [JsonPropertyAttribute] public Tile StartTile;
+
+    #endregion
+    #region RuntimeOrOther
+
+    public Path_TileGraph TileGraphIslandTiles { get; protected set; }
+    public int Width {
+        get {
+            return Mathf.CeilToInt (max.x - min.x);
+        }
+    }
+    public int Height {
+        get {
+            return Mathf.CeilToInt (max.y - min.y);
+        }
+    }
+    public City Wilderness {
+        get {
+            if (_wilderness == null)
+                _wilderness = myCities.Find(x => x.playerNumber == -1);
+            return _wilderness;
+        }
+
+        set {
+            _wilderness = value;
+        }
+    }
 
     public List<Tile> myTiles;
-    public List<City> myCities;
-
-	public Climate myClimate;
-	public List<Fertility> myFertilities;
-	public Dictionary<string,int> myRessources;
-
-	public Vector2 min;
+    public Vector2 Placement;
+    public Vector2 min;
 	public Vector2 max;
-	public City wilderniss;
-	public bool allReadyHighlighted;
-
+    private City _wilderness;
+    public bool allReadyHighlighted;
 	Action<GameEvent> cbEventCreated;
 	Action<GameEvent> cbEventEnded;
 
-
-    //TODO: get a tile to start with!
+	#endregion
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Island"/> class.
+	/// DO not change anything in here unless(!!) it should not happen on load also
+	/// IF both times should happen then put it into Setup!
+    /// </summary>
+    /// <param name="startTile">Start tile.</param>
+    /// <param name="climate">Climate.</param>
 	public Island(Tile startTile, Climate climate = Climate.Middle) {
+		StartTile = startTile; // if it gets loaded the StartTile will already be set
 		myFertilities = new List<Fertility> ();
-
-
 		myRessources = new Dictionary<string, int> ();
-		myRessources ["stone"] = int.MaxValue;
+		myCities = new List<City>();
+		
+        this.myClimate = climate;
+        //TODO REMOVE THIS
+        //LOAD this from map file?
+        myRessources["stone"] = int.MaxValue;
         myTiles = new List<Tile>();
-        myTiles.Add(startTile);
-        myCities = new List<City>();
-        startTile.myIsland = this;
-        foreach (Tile t in startTile.GetNeighbours()) {
+        StartTile.MyIsland = this;
+        foreach (Tile t in StartTile.GetNeighbours()) {
             IslandFloodFill(t);
         }
-        tileGraphIslandTiles = new Path_TileGraph(this);
-		tileGraphAroundIslandTiles = new Path_TileGraph (min, max);
-
-		allReadyHighlighted = false;
-
-		World.current.RegisterOnEvent (OnEventCreated,OnEventEnded);
+        Setup();
     }
+    public Island(Tile[] tiles, Climate climate = Climate.Middle) {
+        myFertilities = new List<Fertility>();
+        myRessources = new Dictionary<string, int>();
+        myCities = new List<City>();
+        this.myClimate = climate;
+        SetTiles(tiles);
+        Setup();
+        //TODO REMOVE THIS
+        //LOAD this from map file?
+        myRessources["stone"] = int.MaxValue;
+    }
+    public Island(){
+	}
+	private void Setup(){
+        allReadyHighlighted = false;
+        World.Current.RegisterOnEvent(OnEventCreated, OnEventEnded);
+        //city that contains all the structures like trees that doesnt belong to any player
+        //so it has the playernumber -1 -> needs to be checked for when buildings are placed
+        //have a function like is notplayer city
+        //it does not need NEEDs
+        if (myCities.Count > 0) {
+            return; // this means it got loaded in so there is already a wilderness
+        }
+        myCities.Add(new City(myTiles, this));
+        Wilderness = myCities[0];
+	}
+
+	public IEnumerable<Structure> Load(){
+		Setup ();
+		List<Structure> structs = new List<Structure>();
+		foreach(City c in myCities){
+			if(c.playerNumber == -1){
+				Wilderness = c;
+			}
+			c.island = this;
+			structs.AddRange(c.Load ());
+		}
+		return structs;
+	}
+
+    internal void SetTiles(Tile[] tiles) {
+        this.myTiles = new List<Tile>(tiles);
+        StartTile = tiles[0];
+        min = new Vector2(tiles[0].X, tiles[0].Y);
+        max = new Vector2(tiles[0].X, tiles[0].Y);
+        foreach (Tile t in tiles) {
+            t.MyIsland = this;
+            if (min.x > t.X) {
+                min.x = t.X;
+            }
+            if (min.y > t.Y) {
+                min.y = t.Y;
+            }
+            if (max.x < t.X) {
+                max.x = t.X;
+            }
+            if (max.y < t.Y) {
+                max.y = t.Y;
+            }
+        }
+        if(Wilderness!=null)
+            Wilderness.AddTiles(myTiles);
+        TileGraphIslandTiles = new Path_TileGraph(this);
+    }
+
+    /// <summary>
+    /// DEPRACATED -- Not needed anymore! Tiles are now determined by the Mapgenerator, which gives the world them for each island!
+    /// </summary>
+    /// <param name="tile"></param>
     protected void IslandFloodFill(Tile tile) {
         if (tile == null) {
             // We are trying to flood fill off the map, so just return
@@ -60,12 +157,12 @@ public class Island : IXmlSerializable,IGEventable{
             // Water is the border of every island :>
             return;
         }
-        if(tile.myIsland == this) {
+        if(tile.MyIsland == this) {
             // already in there
             return;
         }
-		min = new Vector2 (tile.X, tile.Y);
-		max = new Vector2 (tile.X, tile.Y);
+        min = new Vector2(tile.X, tile.Y);
+        max = new Vector2(tile.X, tile.Y);
         Queue<Tile> tilesToCheck = new Queue<Tile>();
         tilesToCheck.Enqueue(tile);
         while (tilesToCheck.Count > 0) {
@@ -85,40 +182,29 @@ public class Island : IXmlSerializable,IGEventable{
 			}
 
 
-            if (t.Type != TileType.Ocean && t.myIsland != this) {
+            if (t.Type != TileType.Ocean && t.MyIsland != this) {
                 myTiles.Add(t);
-                t.myIsland = this;
+                t.MyIsland = this;
                 Tile[] ns = t.GetNeighbours();
                 foreach (Tile t2 in ns) {
                     tilesToCheck.Enqueue(t2);
                 }
             }
         }
-
-		//city that contains all the structures like trees that doesnt belong to any player
-		//so it has the playernumber -1 -> needs to be checked for when buildings are placed
-		//have a function like is notplayer city
-		//it does not need NEEDs
-		myCities.Add (new City(myTiles,this)); 
-		wilderniss = myCities [0];
-//		BuildController.Instance.BuildOnTile (myTiles,true,BuildController.Instance.structurePrototypes[3],true);
+        TileGraphIslandTiles = new Path_TileGraph(this);
     }
 
-    public void update(float deltaTime) {
+    public void Update(float deltaTime) {
 		for (int i = 0; i < myCities.Count; i++) {
-			myCities[i].update(deltaTime);
+			myCities[i].Update(deltaTime);
         }
     }
-	public void AddStructure(Structure str){
-		allReadyHighlighted = false;
-		if(str.City == wilderniss){
-//			Debug.LogWarning ("adding to wilderniss wanted?");
-		}
-		str.City.addStructure (str);
+	public City FindCityByPlayer(int playerNumber) {
+		return myCities.Find(x=> x.playerNumber == playerNumber);
 	}
 	public City CreateCity(int playerNumber) {
 		allReadyHighlighted = false;
-		City c = new City(playerNumber,this,World.current.allNeeds);
+		City c = new City(playerNumber,this);
 		myCities.Add (c);
         return c;
     }
@@ -137,16 +223,12 @@ public class Island : IXmlSerializable,IGEventable{
 		if(ge.target is Island){
 			if(ge.target == this){
 				ge.InfluenceTarget (this, start);
-				if(ac!=null){
-					ac (ge);
-				}
-			}
+                ac?.Invoke(ge);
+            }
 			return;
 		} else {
-			if(ac!=null){
-				ac (ge);
-			}
-			return;	
+            ac?.Invoke(ge);
+            return;	
 		}
 	}
 	public void OnEventEnded(GameEvent ge){
@@ -158,84 +240,34 @@ public class Island : IXmlSerializable,IGEventable{
 	public int GetTargetType(){
 		return TargetType;
 	}
-	//////////////////////////////////////////////////////////////////////////////////////
-	/// 
-	/// 						SAVING & LOADING
-	/// 
-	//////////////////////////////////////////////////////////////////////////////////////
-	public XmlSchema GetSchema() {
-		return null;
-	}
 
-	public void WriteXml(XmlWriter writer) {
-		writer.WriteAttributeString("StartTile_X",myTiles[0].X.ToString ());
-		writer.WriteAttributeString("StartTile_Y",myTiles[0].Y.ToString ());
-		writer.WriteAttributeString ("Climate",((int)myClimate).ToString ());
-		writer.WriteStartElement("fertilities");
-		foreach(Fertility fer in myFertilities){
-			writer.WriteStartElement("fertility");
-			writer.WriteAttributeString ("ID",fer.ID.ToString ());
-			writer.WriteEndElement();
-		}
-		writer.WriteEndElement();
-		writer.WriteStartElement("Cities");
-		foreach (City c in myCities) {
-			writer.WriteStartElement("City");
-			c.WriteXml(writer);
-			writer.WriteEndElement();
-		}
-		writer.WriteEndElement();
-	}
+    public static MapGenerator.Range GetRangeForSize(IslandSizeTypes sizeType) {
+        switch (sizeType) {
+            case IslandSizeTypes.ExtraSmall:
+            return new MapGenerator.Range(40, 60);
+            case IslandSizeTypes.Small:
+            return new MapGenerator.Range(60, 80);
+            case IslandSizeTypes.Middle:
+            return new MapGenerator.Range(80, 120);
+            case IslandSizeTypes.Big:
+            return new MapGenerator.Range(120, 140);
+            case IslandSizeTypes.ExtraBig:
+            return new MapGenerator.Range(140, 160);
+            default:
+            //Debug.LogError("NOT RECOGNISED ISLAND SIZE! Nothing has no size!");
+            return new MapGenerator.Range(0, 0);
+        }
+    }
+    public static IslandSizeTypes GetSizeTyp(int widht, int height) {
+        foreach(IslandSizeTypes size in Enum.GetValues(typeof(IslandSizeTypes))) {
+            int middle = widht + height;
+            middle /= 2;
+            if (GetRangeForSize(size).IsBetween(middle)) {
+                return size;
+            }
+        }
+        Debug.LogError("The Island does not fit any Range! Widht = " + widht + " : Height " + height );
+        return IslandSizeTypes.Other;
+    }
 
-	public void ReadXml(XmlReader reader) {
-		myClimate = (Climate)int.Parse(reader.GetAttribute ("Climate"));
-		reader.ReadToFollowing ("fertilities");
-		List<int> ferIDs = new List<int>();
-		while (reader.Read ()) {
-			if(reader.IsStartElement ("fertility")==false){
-				Debug.Log (reader.Name ); 
-				if(reader.Name == "fertilities"){
-					break;
-				}
-				continue;
-			}	
-			ferIDs.Add (int.Parse (reader.GetAttribute ("ID")));
-
-		}
-		foreach (int item in ferIDs) {
-			myFertilities.Add (World.current.getFertility(item)); 
-			Debug.Log (World.current.getFertility(item).name); 
-		}
-		myCities = new List<City> ();
-		wilderniss = null;
-		reader.ReadToFollowing ("Cities");
-		if (reader.ReadToDescendant ("City")) {
-			//Workaround for readnextsibling
-			//why ever it is not working here
-			//read as long as it reads cities
-			//if it reads city start the do more
-			do {
-				if(reader.IsStartElement ("City")==false){
-					Debug.Log (reader.Name ); 
-					if(reader.Name == "Cities"){
-						return;
-					}
-					continue;
-				}				 
-
-				int playerNumber = int.Parse (reader.GetAttribute ("Player"));
-
-				City c = null;
-				if (playerNumber == -1) {
-					c = new City (this.myTiles,this);
-				} else {
-					c = new City (playerNumber, this, World.current.allNeeds);	
-				}
-//				c.ReadXml (reader);
-				myCities.Add (c);
-
-				 
-			} while(reader.Read ());
-		}
-	}
 }

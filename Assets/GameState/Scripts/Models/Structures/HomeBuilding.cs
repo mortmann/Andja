@@ -1,171 +1,204 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
-using System.Xml;
-using System.Xml.Schema;
-using System.Xml.Serialization;
+using Newtonsoft.Json;
 
-public class HomeBuilding : Structure{
-	public Player pc;
-
-	public int people;
+public class HomePrototypeData : StructurePrototypeData {
 	public int maxLivingSpaces;
 	public float increaseSpeed;
 	public float decreaseSpeed;
-	public bool canUpgrade=false;
-	public int buildingLevel;
-	public float decTimer;
-	public float incTimer;
+}
 
-	public HomeBuilding(int pid){
+
+[JsonObject(MemberSerialization.OptIn)]
+public class HomeBuilding : Structure {
+	#region Serialize
+
+	[JsonPropertyAttribute] public int people;
+	[JsonPropertyAttribute] public int buildingLevel;
+	[JsonPropertyAttribute] public float decTimer;
+	[JsonPropertyAttribute] public float incTimer;
+
+	#endregion
+	#region RuntimeOrOther
+	protected HomePrototypeData _homeData;
+	public HomePrototypeData HomeData {
+		get { if(_homeData==null){
+				_homeData = (HomePrototypeData)PrototypController.Instance.GetStructurePrototypDataForID (ID);
+			}
+			return _homeData;
+		}
+	}
+
+	public int maxLivingSpaces {get{ return HomeData.maxLivingSpaces;}}
+	public float increaseSpeed {get{ return HomeData.increaseSpeed;}}
+	public float decreaseSpeed {get{ return HomeData.decreaseSpeed;}}
+	bool canUpgrade;
+
+	#endregion
+
+
+	public HomeBuilding(int pid, HomePrototypeData proto){
 		this.ID = pid;
-		canUpgrade = false;
-		tileWidth = 2;
-		tileHeight = 2;
-		BuildTyp = BuildTypes.Drag;
-		myBuildingTyp =	BuildingTyp.Blocking;
+		this._homeData = proto;
 		people = 1;
-		maxLivingSpaces = 8;
-		buildingLevel = 0;
-		name = "Home";
-		increaseSpeed = 3;
-		decreaseSpeed = 2;
-		this.buildingRange = 0;
-		hasHitbox = true;
-		this.canTakeDamage = true;
-
 	}
 	protected HomeBuilding(HomeBuilding b){
-		this.buildingRange = b.buildingRange;
-		this.ID = b.ID;
-		this.people = b.people;
-		this.tileWidth = b.tileWidth;
-		this.tileHeight = b.tileHeight;
-		this.rotated = b.rotated;
-		this.maintenancecost = b.maintenancecost;
-		this.hasHitbox = b.hasHitbox;
-		this.name = b.name;
-		this.BuildTyp = b.BuildTyp;
-		this.buildcost = b.buildcost;
-		this.buildingLevel = 1;
-		this.maintenancecost = 0;
-		this.maxLivingSpaces = b.maxLivingSpaces;
-		this.increaseSpeed = b.increaseSpeed;
-		this.decreaseSpeed = b.decreaseSpeed;
-		this.canTakeDamage = b.canTakeDamage;
-
+		BaseCopyData (b);
+		people = 1;
 	}
+	/// <summary>
+	/// DO NOT USE
+	/// </summary>
+	public HomeBuilding(){}
+
+
 	public override Structure Clone (){
 		return new HomeBuilding (this);
 	}
 
 	public override void OnBuild(){
-		pc = GameObject.FindObjectOfType<PlayerController> ().GetPlayer (playerID);
-		HashSet<Tile> neighbourTiles = new HashSet<Tile> ();
-		foreach (Tile item in myBuildingTiles) {
-			foreach(Tile nbt in item.GetNeighbours()){
-				if (myBuildingTiles.Contains (nbt) == false) {
-					neighbourTiles.Add (nbt);
-				}
-			}
-		}
+        //doing it in "structure on build" already so if no problems remove it
+		//HashSet<Tile> neighbourTiles = new HashSet<Tile> ();
+		//foreach (Tile item in myBuildingTiles) {
+		//	foreach(Tile nbt in item.GetNeighbours()){
+		//		if (myBuildingTiles.Contains (nbt) == false) {
+		//			neighbourTiles.Add (nbt);
+		//		}
+		//	}
+		//}
 		foreach (Tile t in neighbourTiles) {
-			t.RegisterTileStructureChangedCallback (OnTStructureChange);
+			t.RegisterTileOldNewStructureChangedCallback (OnTStructureChange);
 		}
+		City.AddPeople (buildingLevel,people);
+
 	}
 
-	public override void update (float deltaTime) {
+	public override void Update (float deltaTime) {
 		if(City==null||City.playerNumber==-1){
 			//here the people are very unhappy and will leave veryfast
 			return;
 		}
 		float allPercentage = 0;
+		float structurePercentage = 0;
 		int count = 0;
-		bool percCritical=false;
-		foreach (Need n in City.allNeeds.Keys) {
-			if (n.startLevel <= buildingLevel && n.popCount <= pc.maxPopulationCount) {
-				if (n.structure == null) {
-					allPercentage += City.allNeeds [n];
-					if(City.allNeeds [n] < 0.4f){
-						percCritical=true;
-					}
-				} else {
-					if(isInRangeOf (n.structure)){
-						allPercentage += 1;
-					}
+		bool percCritical = City.GetNeedCriticalForLevel(buildingLevel);
+		Player myPlayer = PlayerController.Instance.GetPlayer (PlayerNumber);
+		foreach (Need n in myPlayer.GetUnlockedStructureNeeds(buildingLevel)) {
+			Player pc = PlayerController.Instance.GetPlayer (PlayerNumber);
+			if (n.StartLevel <= buildingLevel && n.PopCount <= pc.MaxPopulationCount) {
+				if(IsInRangeOf (n.Structure)){
+					structurePercentage += 1;
 				}
 				count++;
 			}
 		}
-		allPercentage /= count; 
-		if (allPercentage < 0.4f && percCritical) {
-			decTimer -= deltaTime;
-			incTimer += deltaTime;
-			incTimer = Mathf.Clamp (incTimer, 0, increaseSpeed);
+		if (count == 0) {
+			allPercentage = City.GetHappinessForCitizenLevel (buildingLevel);
+		} else {
+			allPercentage = City.GetHappinessForCitizenLevel (buildingLevel) + structurePercentage;
+			structurePercentage /= count; 
+			allPercentage /= 2;
+		}
 
-			if (decTimer <= 0) {
-				people--;
-			}
-		} else
-		if (allPercentage > 0.4f && allPercentage < 0.85f) {
-			incTimer += deltaTime;
-			incTimer = Mathf.Clamp (incTimer, 0, increaseSpeed);
+		if (allPercentage < 0.4f || percCritical) {
 			decTimer += deltaTime;
-			decTimer = Mathf.Clamp (decTimer, 0, decreaseSpeed);
-		} else 
-		if (allPercentage > 0.85f) {
 			incTimer -= deltaTime;
-			decTimer += deltaTime;
+			incTimer = Mathf.Clamp (incTimer, 0, increaseSpeed);
+			if (decTimer >= decreaseSpeed) {
+				TryToDecreasePeople();
+				decTimer = 0;
+			}
+		} 
+		else if (allPercentage > 0.4f && allPercentage < 0.85f) {
+			incTimer -= deltaTime;
+			incTimer = Mathf.Clamp (incTimer, 0, increaseSpeed);
+			decTimer -= deltaTime;
 			decTimer = Mathf.Clamp (decTimer, 0, decreaseSpeed);
-			if (incTimer <= 0) {
-				people++;
+		}  
+		else if (allPercentage > 0.85f) {
+			incTimer += deltaTime;
+			decTimer -= deltaTime;
+			decTimer = Mathf.Clamp (decTimer, 0, decreaseSpeed);
+			if (incTimer >= increaseSpeed) {
+				incTimer = 0;
+				if(people==maxLivingSpaces && myPlayer.HasUnlockedAllNeeds(buildingLevel)){
+					canUpgrade = true;
+				}
+				TryToIncreasePeople ();
 			}
 		}
-		people = Mathf.Clamp (people, 0, maxLivingSpaces);
 	}
-	public void OnTStructureChange(Tile t, Structure old){
-		if(old is Road == false || t.Structure is Road == false){
+
+	private void TryToIncreasePeople(){
+		if(people>=maxLivingSpaces){
+			return;
+		}
+		people++;
+		City.AddPeople (buildingLevel,1);
+	}
+	private void TryToDecreasePeople(){
+		if(people<=0){
+			return;
+		}
+		people--;
+		City.RemovePeople (buildingLevel,1);
+	}
+	public void OnTStructureChange(Structure now, Structure old){
+		if(old is Road == false || now is Road == false){
 			return;
 		}
 	}
-	public override void WriteXml (XmlWriter writer)	{
-		BaseWriteXml (writer);
-		writer.WriteAttributeString("People", people.ToString());
-		writer.WriteAttributeString("BuildingLevel", buildingLevel.ToString());
-
+	public bool IsStructureNeedFullfilled(Need need){
+		if(need.IsItemNeed()){
+			Debug.LogError ("wrong need got called here! " + need.ID);
+			return false;
+		}
+		return IsInRangeOf (need.Structure);
 	}
-	public override void ReadXml (XmlReader reader) {
-		BaseReadXml (reader);
-		people = int.Parse( reader.GetAttribute("People") );
-		buildingLevel = int.Parse( reader.GetAttribute("BuildingLevel") );
-	}
-	public bool isInRangeOf(NeedsBuilding str){
+	public bool IsInRangeOf(NeedsBuilding str){
 		if(str==null){
 			return false;
 		}
 		List<NeedsBuilding> strs = new List<NeedsBuilding> ();
 		foreach (Tile item in myBuildingTiles) {
-			if(item.getListOfInRangeNeedBuildings()==null){
+			if(item.GetListOfInRangeNeedBuildings()==null){
 				continue;
 			}
-			strs.AddRange (item.getListOfInRangeNeedBuildings());
+			strs.AddRange (item.GetListOfInRangeNeedBuildings());
 		}
 		if(strs.Count==0){
 			return false;
 		}
 		return strs.Contains (str);
 	}
-
+	protected override void OnCityChange (City old, City newOne) {
+		old.RemovePeople (buildingLevel, people);
+		newOne.AddPeople (buildingLevel, people);
+	}
+	protected override void OnDestroy () {
+		City.RemovePeople (buildingLevel,people);
+	}
 	public void UpgradeHouse(){
-		if(canUpgrade==false){
+		if(canUpgrade==false&&IsMaxLevel()){
 			return;
 		}
+		ID += 1; // we need to change to the other House type
 		buildingLevel += 1;
-		maxLivingSpaces *= 2; // TODO load this in from somewhere
+		_homeData = (HomePrototypeData)PrototypController.Instance.GetStructurePrototypDataForID (ID);
+		cbStructureChanged (this);
+
+//		Homedata.maxLivingSpaces *= 2; // TODO load this in from somewhere
 		canUpgrade = false;
 	}
 	public void DowngradeHouse(){
 		buildingLevel -= 1;
-		maxLivingSpaces /= 2; // TODO load this in from somewhere
+//		Homedata.maxLivingSpaces /= 2; // TODO load this in from somewhere
 
+	}
+	public bool BuildingCanBeUpgraded(){
+		return IsMaxLevel () == false && canUpgrade;
+	}
+	public bool IsMaxLevel(){
+		return ID == 23; //TODO Change this to smth flexibel not static check
 	}
 }

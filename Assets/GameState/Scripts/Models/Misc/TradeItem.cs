@@ -1,17 +1,24 @@
 ﻿using UnityEngine;
 using System.Collections;
+using Newtonsoft.Json;
 
+[JsonObject(MemberSerialization.OptIn)]
 public class TradeItem {
-	public int ItemId;
-	public int count;
-	public int price;
-	public bool selling;
+	[JsonPropertyAttribute] public int ItemId;
+	[JsonPropertyAttribute] public int count;
+	[JsonPropertyAttribute] public int price;
+	[JsonPropertyAttribute] public bool selling;
+
 	public TradeItem(int ItemId, int count, int price, bool selling){
 		this.ItemId = ItemId;
 		this.count = count;
 		this.price = price;
 		this.selling = selling;
 	}
+	/// <summary>
+	/// DO NOT USE IT
+	/// </summary>
+	public TradeItem(){}
 
 	public Item SellItemAmount(Item inINV){
 		if(selling==false){

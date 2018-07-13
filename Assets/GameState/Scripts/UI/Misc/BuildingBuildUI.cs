@@ -6,50 +6,53 @@ using UnityEngine.EventSystems;
 public class BuildingBuildUI : MonoBehaviour {
 
 	public GameObject mouseOverPrefab;
-	GameObject mouseOver;
 	public Structure structure;
 
 	// Use this for initialization
 	public void Show (Structure str,bool hoverOver=true) {
 		this.structure = str;
-		GetComponentInChildren<Text> ().text = str.name;
+		GetComponentInChildren<Text> ().text = str.SpriteName;
 		EventTrigger trigger = GetComponent<EventTrigger> ();
 		if (hoverOver) {
-			EventTrigger.Entry enter = new EventTrigger.Entry ();
-			enter.eventID = EventTriggerType.PointerEnter;
-			enter.callback.AddListener (( data) => {
+            EventTrigger.Entry enter = new EventTrigger.Entry {
+                eventID = EventTriggerType.PointerEnter
+            };
+            enter.callback.AddListener (( data) => {
 				OnMouseEnter ();
 			});
 			trigger.triggers.Add (enter);
 
 			trigger.triggers.Add (enter);
-			EventTrigger.Entry exit = new EventTrigger.Entry ();
-			exit.eventID = EventTriggerType.PointerExit;
-			exit.callback.AddListener (( data) => {
+            EventTrigger.Entry exit = new EventTrigger.Entry {
+                eventID = EventTriggerType.PointerExit
+            };
+            exit.callback.AddListener (( data) => {
 				OnMouseExit ();
 			});
 			trigger.triggers.Add (exit);
 		}
 
 
-		EventTrigger.Entry dragStart = new EventTrigger.Entry( );
-		dragStart.eventID = EventTriggerType.BeginDrag;
-		dragStart.callback.AddListener( ( data) => {
+        EventTrigger.Entry dragStart = new EventTrigger.Entry {
+            eventID = EventTriggerType.BeginDrag
+        };
+        dragStart.callback.AddListener( ( data) => {
 			OnDragStart ();
 		} );
 		trigger.triggers.Add( dragStart );
 
 
-		EventTrigger.Entry dragStop = new EventTrigger.Entry( );
-		dragStop.eventID = EventTriggerType.EndDrag;
-		dragStop.callback.AddListener( ( data) => {
+        EventTrigger.Entry dragStop = new EventTrigger.Entry {
+            eventID = EventTriggerType.EndDrag
+        };
+        dragStop.callback.AddListener( ( data) => {
 			OnDragEnd ();
 		} );
 		trigger.triggers.Add( dragStop );
 	}
 	public void OnMouseEnter(){
 //		hoverover = true;
-		GameObject.FindObjectOfType<HoverOverScript> ().Show (structure.name);
+		GameObject.FindObjectOfType<HoverOverScript> ().Show (structure.SpriteName);
 	}
 	public void OnMouseExit(){
 		//TODO: reset hovertime better

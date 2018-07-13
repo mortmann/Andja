@@ -1,26 +1,59 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 
+public class ShipPrototypeData : UnitPrototypeData {
+    public int maximumAmountOfCannons = 0;
+    public int damagePerCannon = 1;
+}
+
+[JsonObject(MemberSerialization.OptIn)]
 public class Ship : Unit {
-	public TradeRoute tradeRoute;
+	[JsonPropertyAttribute] public TradeRoute tradeRoute;
+	[JsonPropertyAttribute] bool goingToOffworldMarket;
+	[JsonPropertyAttribute] public bool isOffWorld;
+	[JsonPropertyAttribute] Item[] toBuy;
+	[JsonPropertyAttribute] float offWorldTime;
+    protected ShipPrototypeData _shipPrototypData;
 
-	bool goingToOffworldMarket;
-	public bool isOffWorld;
-	Item[] toBuy;
-	float offWorldTime;
+    public ShipPrototypeData ShipData {
+        get {
+            if (_shipPrototypData == null) {
+                _shipPrototypData = (ShipPrototypeData)PrototypController.Instance.GetUnitPrototypDataForID(ID);
+            }
+            return _shipPrototypData;
+        }
+    }
+    public Ship() {
 
-	public Ship(Tile t,int playernumber){
+    }
+    public Ship(Tile t,int playernumber){
 		this.playerNumber = playernumber;
-		inventory = new Inventory (6, "SHIP");
+		inventory = new Inventory (6,50, "SHIP");
 		isShip = true;
-		startTile = t;
-		pathfinding = new Pathfinding (speed, startTile);
-		speed = 2f;
 		offWorldTime = 5f;
+		pathfinding = new OceanPathfinding (t,this);
 	}
+    public Ship(Unit unit, int playerNumber, Tile t) {
+        this.ID = unit.ID;
+        this._prototypData = unit.Data;
+        this.CurrHealth = MaxHealth;
+        this.playerNumber = playerNumber;
+        inventory = new Inventory(InventoryPlaces, InventorySize, "SHIP");
+        isShip = true;
+        UserSetName = "Ship " + UnityEngine.Random.Range(0, 1000000000);
+        pathfinding = new OceanPathfinding(t, this);
+    }
+    public override Unit Clone(int playerNumber, Tile t) {
+        return new Ship(this, playerNumber, t);
+    }
+    public Ship(int id, ShipPrototypeData spd) {
+        this.ID = id;
+        this._shipPrototypData = spd;
+        isShip = true;
+    }
 
-
-	public override void Update (float deltaTime){
+    public override void Update (float deltaTime){
 		//TRADEROUTE
 		UpdateTradeRoute (deltaTime);
 		//PAROL
@@ -29,12 +62,11 @@ public class Ship : Unit {
 		UpdateWorldMarket (deltaTime);
 		//MOVE THE SHIP
 		pathfinding.Update_DoMovement (deltaTime);
-//		pathfinding.UpdateRotationOnPoint ();
-//		r2d.MovePosition (transform.position + pathfinding.Update_DoMovement(deltaTime));
-//		r2d.MoveRotation (transform.rotation.z + pathfinding.UpdateRotation ());
-		if (cbUnitChanged != null)
-			cbUnitChanged(this);
-	}
+        //		pathfinding.UpdateRotationOnPoint ();
+        //		r2d.MovePosition (transform.position + pathfinding.Update_DoMovement(deltaTime));
+        //		r2d.MoveRotation (transform.rotation.z + pathfinding.UpdateRotation ());
+        cbUnitChanged?.Invoke(this);
+    }
 	private void UpdateTradeRoute(float deltaTime){
 		if(tradeRoute!=null&&tradeRoute.Valid){
 			if(pathfinding.IsAtDest&&tradeRoute.isStarted){
@@ -79,7 +111,7 @@ public class Ship : Unit {
 			om.SellItemToOffWorldMarket (item,myPlayer);
 		}
 		foreach (Item item in toBuy) {
-			inventory.addItem (om.BuyItemToOffWorldMarket (item,item.count,myPlayer));
+			inventory.AddItem (om.BuyItemToOffWorldMarket (item,item.count,myPlayer));
 		}
 		isOffWorld = false;
 		this.goingToOffworldMarket = false;
@@ -91,10 +123,10 @@ public class Ship : Unit {
 		//TODO OPTIMISE THIS SO IT CHECKS THE ROUTE FOR ANY
 		//ISLANDS SO IT CAN TAKE A OTHER ROUTE
 		if(X >= Y){
-			goal = World.current.GetTileAt (0, Y);
+			goal = World.Current.GetTileAt (0, Y);
 		}
 		if(X<Y){
-			goal = World.current.GetTileAt (X,0);
+			goal = World.Current.GetTileAt (X,0);
 		}
 		goingToOffworldMarket = true;
 		this.toBuy = toBuy;
@@ -108,7 +140,7 @@ public class Ship : Unit {
 			tradeRoute.isStarted = false;
 	}
 	public override void AddMovementCommand (float x, float y){
-		Tile tile = World.current.GetTileAt(x, y);
+		Tile tile = World.Current.GetTileAt(x, y);
 		if(tile == null){
 			return;
 		}
@@ -116,6 +148,6 @@ public class Ship : Unit {
 			return;
 		}
 		onPatrol = false;
-		pathfinding.AddMovementCommand( x, y);
+		((OceanPathfinding)pathfinding).SetDestination(x,y);
 	}
 }

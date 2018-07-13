@@ -55,7 +55,6 @@ namespace Priority_Queue
             }
         }
 
-
         /// <summary>
         /// Returns the head of the queue, without removing it (use Dequeue() for that).
         /// Throws an exception when the queue is empty.

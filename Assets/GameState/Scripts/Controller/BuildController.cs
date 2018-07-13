@@ -6,9 +6,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Xml;
-using System.Xml.Schema;
-using System.Xml.Serialization;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -29,127 +26,91 @@ public class BuildController : MonoBehaviour {
 				if (_buildState == value) {
 					return;
 				}
-				World.current.resetIslandMark ();
 				_buildState = value;
-				if (cbBuildStateChange != null)
-					cbBuildStateChange (_buildState); 
-				}
-			}
+                cbBuildStateChange?.Invoke(_buildState);
+            }
+	}
+	public uint buildID = 0;
+	public bool noBuildCost = false;
+	public bool noUnitRestriction = false;
 
+	public Dictionary<int,Structure>  StructurePrototypes {
+		get { return PrototypController.Instance.structurePrototypes; }
+	}
 	public Structure toBuildStructure;
-	public Dictionary<int,Structure>  structurePrototypes;
-	public Dictionary<int, Item> allItems;
-	public int buildID = 0;
-	public Dictionary<int,Structure> loadedToPlaceStructure;
-	public Dictionary<int,Tile> loadedToPlaceTile;
-	public List<Need> allNeeds;
-	public Dictionary<Climate,List<Fertility>> allFertilities;
-	public Dictionary<int,Fertility> idToFertilities;
 
-
-	Action<Structure> cbStructureCreated;
+	Action<Structure,bool> cbStructureCreated;
 	Action<City> cbCityCreated;
 	Action<BuildStateModes> cbBuildStateChange;
 
-	public Dictionary<int, Item> getCopieOfAllItems(){
-		Dictionary<int, Item> items = new Dictionary<int, Item>();
-		foreach (int item in allItems.Keys) {
-			items.Add (item,allItems [item].Clone ());
-		}
-		return items;
+	public Dictionary<int, Item> GetCopieOfAllItems(){
+		return PrototypController.Instance.GetCopieOfAllItems();
 	}
 
 	public void Awake(){
 		if (Instance != null) {
-			Debug.LogError("There should never be two world controllers.");
+			Debug.LogError("There should never be two BuildController.");
 		}
 		Instance = this;
+		if (noBuildCost && noUnitRestriction) {
+			Debug.LogWarning("Cheats are activated.");
+		}
 		BuildState = BuildStateModes.None;
 		buildID = 0;
-		// prototypes of items
-		allItems = new Dictionary<int, Item> ();
-		ReadItemsFromXML();
-
-		loadedToPlaceTile = new Dictionary<int, Tile> ();
-		loadedToPlaceStructure = new Dictionary<int, Structure> ();
-
-		// setup all prototypes of structures here 
-		// load them from the 
-		structurePrototypes = new Dictionary<int, Structure> ();
-		ReadStructuresFromXML();
-		structurePrototypes.Add (5, new MineStructure (5));
-		structurePrototypes.Add (30, new NeedsBuilding (30));
-		structurePrototypes.Add (1, new MarketBuilding (1));
-		structurePrototypes.Add (2, new Warehouse (2));
-		structurePrototypes.Add (3, new Growable (3,"tree",allItems[1]));
-		Item item =  allItems[1] ;
-		structurePrototypes.Add (4, new Farm(
-			4,"lumberjack",
-			3,item,structurePrototypes[3],
-			2,2,500,50
-		));
-		structurePrototypes.Add (6,new HomeBuilding (6));
-		Item[] temp1 = new Item[1];
-		temp1 [0] = allItems [47].Clone ();
-		Item[] temp2 = new Item[1];
-		temp2 [0] = allItems [48].Clone();
-		int[] ints = { 1 };
-		structurePrototypes.Add(7,new ProductionBuilding(7,"Hanfweber",temp1,ints,1,temp2,3,2,1000,null,100));
-		//needs
-		allNeeds = new List<Need>();
-		ReadNeedsFromXML ();
-		idToFertilities = new Dictionary<int, Fertility> ();
-		allFertilities = new Dictionary<Climate,List<Fertility>> ();
-		ReadFertilitiesFromXML ();
 	}
 
+    internal void PlaceWorldGeneratedStructure(Dictionary<Tile, Structure> tileToStructure) {
+        foreach(Tile t in tileToStructure.Keys) {
+            RealBuild(new List<Tile>(){ t }, tileToStructure[t],-1,true,true);
+        }
+    }
 
-	public void OnClickSettle(){
-		OnClick (6);
+    public void SettleFromUnit(Unit buildUnit = null){
+		//FIXME: get a way to get this id for warehouse
+		OnClick (6,buildUnit);
 	}
-	public void DestroyStructureOnTiles( IEnumerable<Tile> tiles){
+	public void DestroyStructureOnTiles( IEnumerable<Tile> tiles, Player destroyPlayer){
 		foreach(Tile t in tiles){
-			DestroyStructureOnTile (t);
+			DestroyStructureOnTile (t,destroyPlayer);
 		}
 	}
 	/// <summary>
 	/// Works only for current player not for someone else
 	/// </summary>
 	/// <param name="t">T.</param>
-	public void DestroyStructureOnTile(Tile t){
+	public void DestroyStructureOnTile(Tile t, Player destroyPlayer){
 		if(t.Structure==null){
 			return;
 		}
-		if(t.Structure.playerID==PlayerController.Instance.currentPlayerNumber){
+		if(t.Structure.PlayerNumber==destroyPlayer.playerNumber){
 			t.Structure.Destroy ();
 		}
 	}
-	public void OnClick(int id) {
-		if(structurePrototypes.ContainsKey (id) == false){
+	public void OnClick(int id, Unit buildInRangeUnit = null) {
+		if(StructurePrototypes.ContainsKey (id) == false){
 			Debug.LogError ("BUTTON has ID that is not a structure prototypes ->o_O<- ");
 			return;
 		}
-		toBuildStructure = structurePrototypes [id].Clone ();
-		if(structurePrototypes [id].BuildTyp == BuildTypes.Path){
+		toBuildStructure = StructurePrototypes [id].Clone ();
+		if(StructurePrototypes [id].BuildTyp == BuildTypes.Path){
 			MouseController.Instance.mouseState = MouseState.Path;
-			MouseController.Instance.structure = toBuildStructure;
+			MouseController.Instance.Structure = toBuildStructure;
 		}
-		if(structurePrototypes [id].BuildTyp == BuildTypes.Single){
+		if(StructurePrototypes [id].BuildTyp == BuildTypes.Single){
 			MouseController.Instance.mouseState = MouseState.Single;
-			MouseController.Instance.structure = toBuildStructure;
+			MouseController.Instance.Structure = toBuildStructure;
 		}
-		if(structurePrototypes [id].BuildTyp == BuildTypes.Drag){
+		if(StructurePrototypes [id].BuildTyp == BuildTypes.Drag){
 			MouseController.Instance.mouseState = MouseState.Drag;
-			MouseController.Instance.structure = toBuildStructure;
+			MouseController.Instance.Structure = toBuildStructure;
 		}
-
 		BuildState = BuildStateModes.Build;
     }
-	public void BuildOnTile(List<Tile> tiles, bool forEachTileOnce,int playerNumber){
+	public void BuildOnTile(List<Tile> tiles, bool forEachTileOnce,int playerNumber,bool wild = false, Unit buildInRange = null){
 		if (toBuildStructure == null) {
 			return;
 		}
-		BuildOnTile (tiles, forEachTileOnce, toBuildStructure,playerNumber);
+		BuildOnTile (tiles, forEachTileOnce, toBuildStructure,playerNumber,wild,buildInRange);
 	}
 	/// <summary>
 	/// USED ONLY FOR LOADING
@@ -159,104 +120,122 @@ public class BuildController : MonoBehaviour {
 	/// <param name="t">T.</param>
 	private void BuildOnTile(Structure s , Tile t){
 		if(s==null||t==null){
-			Debug.LogError ("Something went wrong by loading Structure!");
+			Debug.LogError ("Something went wrong by loading Structure! " + t + " " + s);
 			return;
 		}
-		RealBuild (s.GetBuildingTiles (t.X, t.Y), s,-1,true,true);
+		RealBuild (s.GetBuildingTiles (t.X, t.Y), s,-1,true,false);
 	}
-	public void BuildOnTile(List<Tile> tiles, bool forEachTileOnce, Structure structure,int playerNumber,bool wild=false){
+	public void BuildOnTile(List<Tile> tiles, bool forEachTileOnce, Structure structure,int playerNumber,bool wild=false, Unit buildInRange = null){
 		if(tiles == null || tiles.Count == 0 || WorldController.Instance.IsPaused){
 			return;
 		}
 		if (forEachTileOnce == false) {
-			RealBuild (tiles,structure,playerNumber,false,wild);
+			RealBuild (tiles,structure,playerNumber,false,wild,buildInRange);
 		} else {
 			foreach (Tile tile in tiles) {
 				List<Tile> t = new List<Tile> ();
 				t.AddRange (structure.GetBuildingTiles (tile.X,tile.Y));
-				RealBuild (t,structure,playerNumber,false,wild);
+				RealBuild (t,structure,playerNumber,false,wild,buildInRange);
 			}
 		}
 	}
-	protected void RealBuild(List<Tile> tiles,Structure s,int playerNumber,bool loading=false,bool wild=false){
+	protected void RealBuild(List<Tile> tiles,Structure s,int playerNumber, bool loading=false,bool wild=false , Unit buildInRangeUnit = null){
+		if(tiles==null){
+			Debug.LogError ("tiles is null");
+			return;
+		}
+		tiles.RemoveAll (x => x==null || x.Type == TileType.Ocean);
+		if(tiles.Count==0){
+			return;
+		}
+		int rotate = s.rotated;
 		if (loading == false) {
 			s = s.Clone ();
 		}
 
-		//if it should be build in wilderniss city
-		if(wild){
-			s.playerID = -1;
-			s.buildInWilderniss = true;
-		} else {
-			//set the player id for check for city
-			//has to be changed if someone takes it over
-			s.playerID = playerNumber;
+		if(buildInRangeUnit!=null&&noUnitRestriction==false){
+			Vector3 unitPos = buildInRangeUnit.pathfinding.Position;
+			Tile t = tiles.Find(x=>{ return x.IsInRange(unitPos,buildInRangeUnit.BuildRange); });
+			if(t == null){
+				Debug.LogWarning ("failed Range check -- Give UI feedback");
+				return;
+			}
 		}
+		//FIXME find a better solution for this?
+		s.rotated = rotate;
+		//if is build in wilderniss city
+		s.buildInWilderniss = wild;
+
+
 		//before we need to check if we can build THERE
 		//we need to know if there is if we COULD build 
 		//it anyway? that means enough ressources and enough Money
 		if(loading==false&&wild==false){
 			//TODO: Check for Event restricting building from players
 			//return;
-
-
 			//find a city that matches the player 
 			//and check for money
-			if(playerHasEnoughMoney(s,playerNumber)==false){
-				Debug.Log ("not playerHasEnoughMoney"); 
+			if(PlayerHasEnoughMoney(s,playerNumber)==false){
+				Debug.Log ("not playerHasEnoughMoney -- Give UI feedback"); 
 				return;
 			}
-			//if it doesnt need ressources return
-			if (s.buildingItems != null) {
-				foreach (Tile item in tiles) {
-					//we can build in wilderniss terrain but we need our own city
-					//FIXME how do we do it with warehouses?
-					if (item.myCity != null && item.myCity.IsWilderness () == false) {
-						//WARNING: checking for this twice!
-						//this is one is not necasserily needed
-						//but it we *need* the city to check for its ressources
-						//this saves a lot of cpu but it can be problematic if we want to be able 
-						//to build something in enemy-terrain
-						if (item.myCity.playerNumber != PlayerController.Instance.currentPlayerNumber) {
-							Debug.Log ("PlayerController.Instance.number"); 
-							return;
-						}
-						//check for ressources  
-						if (item.myCity.myInv.ContainsItemsWithRequiredAmount (s.BuildingItems ()) == false) {
-							Debug.Log ("ContainsItemsWithRequiredAmount==null"); 
-							return;
-						}
-						//now we know that there is enough from everthing and it can be build
-						//we dont need longer to check a city tile
-						//playercontroller will handle the reduction of money/and everything else 
-						//related to money - But we need to remove the Ressources
-						item.myCity.removeRessources (s.BuildingItems ());
-						break;
+			//Is the player allowed to place it here? -> city
+
+			Tile block = tiles.Find(x=>x.MyCity.IsWilderness()==false&&x.MyCity.playerNumber!=playerNumber);
+			if(block!=null){
+				return; // there is a tile that is owned by another player
+			}
+			Tile hasCity = tiles.Find(x=>x.MyCity.playerNumber == playerNumber);
+			if(hasCity==null){
+				if(s.GetType () == typeof(Warehouse)){
+					s.City = CreateCity (tiles [0].MyIsland, playerNumber);
+				} else {
+					return; // SO no city found and no warehouse to create on
+				}
+			} else {
+				s.City = hasCity.MyCity;
+            }
+			if(noBuildCost==false){
+				if (s.GetBuildingItems ()!=null) {
+					Inventory inv = null;
+					if(buildInRangeUnit!=null){
+						inv = buildInRangeUnit.inventory;
+					} else {
+						inv = hasCity.MyCity.inventory;
+					}
+					if(inv==null){
+						Debug.LogError ("Build something with smth that has no inventory"); 
+						return;
+					}
+					if(inv.ContainsItemsWithRequiredAmount (s.GetBuildingItems ()) == false){
+						Debug.Log ("ContainsItemsWithRequiredAmount==null"); 
+						return;
 					}
 				}
 			}
-			//remove the items from the island inventory
-		} else {
-			//nocosts for loadingbuildings
-			s.buildcost = 0;
 		}
-	
+        if(wild) {
+            s.City = tiles[0].MyIsland.Wilderness;
+        }
 		//now we know that we COULD build that structure
 		//but CAN WE?
 		//check to see if the structure can be placed there
 		if (s.PlaceStructure (tiles) == false) {
 			if(loading){
-				Debug.LogError ("PLACING FAILED WHILE LOADING! " + s.name);
+				Debug.LogError ("PLACING FAILED WHILE LOADING! " + s.buildID);
 			}
 			return;
 		}
 
-		//call all callbacks on structure created
-		//FIXME remove this or smth
-		if (cbStructureCreated != null) {
-			cbStructureCreated (s);
-		} 
-		if (loading == false) {
+        if (buildInRangeUnit!=null&&noBuildCost==false){
+			buildInRangeUnit.inventory.RemoveItemsAmount (s.GetBuildingItems ());
+		}
+        s.City.AddStructure(s);
+
+        //call all callbacks on structure created
+        //FIXME remove this or smth
+        cbStructureCreated?.Invoke(s, loading);
+        if (loading == false) {
 			// this is for loading so everything will be placed in order
 			s.buildID = buildID;
 			buildID++;
@@ -264,48 +243,37 @@ public class BuildController : MonoBehaviour {
 		s.RegisterOnDestroyCallback (OnDestroyStructure);
 	}
 	public void OnDestroyStructure(Structure str){
-		str.City.removeStructure (str);
+//		str.City.removeStructure (str);
 	}
-	public bool playerHasEnoughMoney(Structure s,int playerNumber){
-		if(PlayerController.Instance.GetPlayer (playerNumber).balance >= s.buildcost){
+	public bool PlayerHasEnoughMoney(Structure s,int playerNumber){
+		if(PlayerController.Instance.GetPlayer (playerNumber).Balance >= s.Buildcost){
 			return true;
 		}
 		return false;
 	}
 	public void BuildOnTile(int id, List<Tile> tiles,int playerNumber){
-		if(structurePrototypes.ContainsKey (id) == false){
+		if(StructurePrototypes.ContainsKey (id) == false){
 			return;
 		}
-		BuildOnTile (tiles, true, structurePrototypes[id],playerNumber);
+		BuildOnTile (tiles, true, StructurePrototypes[id],playerNumber);
 	}
-	public City CreateCity(Tile t,Warehouse w){
-		if(t.myIsland == null){
+	public City CreateCity(Island i , int playernumber){
+		if(i == null){
 			Debug.LogError ("CreateCity called not on a island!");
 			return null;
 		}
-		if(t.myCity != null && t.myCity.IsWilderness () ==false){
-			Debug.LogError ("CreateCity called not on a t.myCity && t.myCity.IsWilderness () ==false!");
-			return null;
-		}
-		City c = t.myIsland.CreateCity (w.playerID);
-		// needed for mapimage
-		c.addStructure (w);// dont know if this is good ...
-		if(cbCityCreated != null) {
-			cbCityCreated (c);
-		}
-		return c; 
+		City c = i.CreateCity (playernumber);
+        // needed for mapimage
+        cbCityCreated?.Invoke(c);
+        return c; 
 	}
 
-	public void AddLoadedPlacedStructure(int bid,Structure structure,Tile t){
-		loadedToPlaceStructure.Add (bid,structure);
-		loadedToPlaceTile.Add (bid,t);
-	}
-	public void PlaceAllLoadedStructure(){
-		foreach (int i in loadedToPlaceStructure.Keys) {
-			BuildOnTile (loadedToPlaceStructure[i],loadedToPlaceTile[i]);
+
+	public void PlaceAllLoadedStructure(List<Structure> loadedStructures){
+		for (int i = 0; i < loadedStructures.Count; i++) {
+			BuildOnTile (loadedStructures[i],loadedStructures[i].BuildTile);
+			loadedStructures [i].City.TriggerAddCallBack (loadedStructures[i]);
 		}
-		loadedToPlaceStructure.Clear ();
-		loadedToPlaceTile.Clear ();
 	}
 	public void ResetBuild(){
 		BuildState = BuildStateModes.None;
@@ -317,15 +285,14 @@ public class BuildController : MonoBehaviour {
 		MouseController.Instance.mouseState = MouseState.Destroy;
 	}
 	public void Escape(){
-		World.current.resetIslandMark ();
 		ResetBuild ();
 	}
 
 
-	public void RegisterStructureCreated(Action<Structure> callbackfunc) {
+	public void RegisterStructureCreated(Action<Structure,bool> callbackfunc) {
 		cbStructureCreated += callbackfunc;
 	}
-	public void UnregisterStructureCreated(Action<Structure> callbackfunc) {
+	public void UnregisterStructureCreated(Action<Structure,bool> callbackfunc) {
 		cbStructureCreated -= callbackfunc;
 	}
 	public void RegisterCityCreated(Action<City> callbackfunc) {
@@ -340,132 +307,5 @@ public class BuildController : MonoBehaviour {
 	public void UnregisterBuildStateChange(Action<BuildStateModes> callbackfunc) {
 		cbBuildStateChange -= callbackfunc;
 	}
-	///////////////////////////////////////
-	/// XML LOADING FROM FILE
-	/// 
-	///////////////////////////////////////
-	private void ReadItemsFromXML(){
-		XmlDocument xmlDoc = new XmlDocument(); // xmlDoc is the new xml document.
-		TextAsset ta = ((TextAsset)Resources.Load("XMLs/items", typeof(TextAsset)));
-		xmlDoc.LoadXml(ta.text); // load the file.
-		foreach(XmlElement node in xmlDoc.SelectNodes("Items/Item")){
-			Item item = new Item ();
-			item.ID = int.Parse(node.GetAttribute("ID"));
-			item.name = node.SelectSingleNode("EN"+ "_Name").InnerText;
-			allItems [item.ID] = item;
-		}
-	}
-	private void ReadFertilitiesFromXML(){
-		XmlDocument xmlDoc = new XmlDocument(); // xmlDoc is the new xml document.
-		TextAsset ta = ((TextAsset)Resources.Load("XMLs/fertilities", typeof(TextAsset)));
-		xmlDoc.LoadXml(ta.text); // load the file.
-		foreach(XmlElement node in xmlDoc.SelectNodes("Fertilities/Fertility")){
-			Fertility fer = new Fertility ();
-			fer.ID = int.Parse(node.GetAttribute("ID"));
-			fer.name = node.SelectSingleNode("EN"+ "_Name").InnerText;
-			idToFertilities.Add (fer.ID,fer); 
-			string[] climates = node.SelectSingleNode("Climate").InnerText.Split (';');
-			fer.climates = new Climate[climates.Length];
-			for (int i = 0; i < climates.Length; i++) {
-				fer.climates [i] = (Climate)int.Parse (climates [i]);
-			}
-			foreach (Climate item in fer.climates) {
-				if (allFertilities.ContainsKey (item)==false) {
-					List<Fertility> f = new List<Fertility> ();
-					f.Add (fer);
-					allFertilities.Add (item, f);
-				} else {
-					allFertilities [item].Add (fer);
-				}
-			}
-		}
-	}
-	private void ReadNeedsFromXML(){
-		XmlDocument xmlDoc = new XmlDocument(); // xmlDoc is the new xml document.
-		TextAsset ta = ((TextAsset)Resources.Load("XMLs/needs", typeof(TextAsset)));
-		xmlDoc.LoadXml(ta.text); // load the file.
-		foreach(XmlElement node in xmlDoc.SelectNodes("Needs/Need")){
-			Need need = new Need ();
-			need.ID = int.Parse(node.GetAttribute("ID"));
-			need.name = node.SelectSingleNode("EN"+ "_Name").InnerText;
-			need.popCount = 0;//int.Parse(node.SelectSingleNode("Count").InnerText);
-			need.startLevel = int.Parse(node.SelectSingleNode("Level").InnerText);
-			int structure = int.Parse (node.SelectSingleNode ("Structure").InnerText);
-			if (structure == -1) {
-				int item = int.Parse(node.SelectSingleNode("Item").InnerText);
-				if (allItems.ContainsKey (item)) {
-					need.item = allItems [item];
-				} else {
-					Debug.Log (item + " is not in itemspool "+need.name);
-					continue;
-				}
-			} else {
-				if (structurePrototypes.ContainsKey (structure)) {
-					//TODO maybe add a validation here and give error to user?
-					need.structure = (NeedsBuilding)structurePrototypes [structure];
-				} else {
-					continue;
-				}
-			}
-			float[] fs = new float[4];
-			fs[0] = float.Parse(node.SelectSingleNode("Peasent").InnerText);
-			fs[1] = float.Parse(node.SelectSingleNode("Citizen").InnerText);
-			fs[2] = float.Parse(node.SelectSingleNode("Patrician").InnerText);
-			fs[3] = float.Parse(node.SelectSingleNode("Nobleman").InnerText);
-			need.uses = fs;
-			allNeeds.Add (need);
-		}
-	}
-	private void ReadStructuresFromXML(){
-		XmlDocument xmlDoc = new XmlDocument();
-		TextAsset ta = ((TextAsset)Resources.Load("XMLs/roads", typeof(TextAsset)));
-		xmlDoc.LoadXml(ta.text); // load the file.
-		ReadRoads (xmlDoc);
 
-//		ta = ((TextAsset)Resources.Load("XMLs/growables", typeof(TextAsset)));
-//		xmlDoc.LoadXml(ta.text); // load the file.
-//		ReadGrowables (xmlDoc);
-
-//		ta = ((TextAsset)Resources.Load("XMLs/marketbuildings", typeof(TextAsset)));
-//		xmlDoc.LoadXml(ta.text); // load the file.
-//		ReadMarketBuildings (xmlDoc);
-
-//		ta = ((TextAsset)Resources.Load("XMLs/produktionbuildings", typeof(TextAsset)));
-//		xmlDoc.LoadXml(ta.text); // load the file.
-//		ReadProduktionBuildings (xmlDoc);
-
-	}
-	private void ReadRoads(XmlDocument xmlDoc){
-		foreach(XmlElement node in xmlDoc.SelectNodes("Buildings/Road")){
-			int ID = int.Parse(node.GetAttribute("ID"));
-			string name = node.SelectSingleNode("EN"+ "_Name").InnerText;
-			Road road = new Road (ID,name);
-			road.PopulationLevel= int.Parse(node.SelectSingleNode("Pop_Level").InnerText); 
-			structurePrototypes [ID] = road;
-		}
-	}
-	private void ReadGrowables(XmlDocument xmlDoc){
-		foreach(XmlElement node in xmlDoc.SelectNodes("Buildings/Growable")){
-			int ID = int.Parse(node.GetAttribute("ID"));
-			string name = node.SelectSingleNode("EN"+ "_Name").InnerText;
-			Growable grow = new Growable (ID,name,null,null);
-			structurePrototypes [ID] = grow;
-		}
-	}
-	private void ReadMarketBuildings(XmlDocument xmlDoc){
-		foreach(XmlElement node in xmlDoc.SelectNodes("Buildings/Logistic")){
-			int ID = int.Parse(node.GetAttribute("ID"));
-			string name = node.SelectSingleNode("EN"+ "_Name").InnerText;
-			Road road = new Road (ID,name);
-			structurePrototypes [ID] = road;
-		}
-	}
-	private void ReadProduktionBuildings(XmlDocument xmlDoc){
-		foreach(XmlElement node in xmlDoc.SelectNodes("Buildings/Produktion")){
-			int ID = int.Parse(node.GetAttribute("ID"));
-			string name = node.SelectSingleNode("EN"+ "_Name").InnerText;
-			Road road = new Road (ID,name);
-			structurePrototypes [ID] = road;
-		}
-	}
 }

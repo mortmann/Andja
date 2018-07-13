@@ -6,10 +6,12 @@ public class StructureSpriteController : MonoBehaviour {
 	public Dictionary<Structure, GameObject> structureGameObjectMap;
 	public Dictionary<string, Sprite> structureSprites = new Dictionary<string, Sprite>();
 	public Sprite circleSprite;
+	public Sprite unitCircleSprite;
+
 	BuildController bm;
 	CameraController cc;
-	World world {
-		get { return WorldController.Instance.world; }
+	World World {
+		get { return WorldController.Instance.World; }
 	}
 	void Start (){
 		structureGameObjectMap = new Dictionary<Structure, GameObject> ();
@@ -18,6 +20,9 @@ public class StructureSpriteController : MonoBehaviour {
 //		bm.RegisterStructureCreated (OnStrucutureCreated);
 		LoadSprites ();
 		cc = GameObject.FindObjectOfType<CameraController> ();
+		if (EditorController.IsEditor){
+			EditorController.Instance.RegisterOnStructureDestroyed (OnTileStructureDestroyed);
+		}
 	}
 
 	void Update(){
@@ -34,24 +39,23 @@ public class StructureSpriteController : MonoBehaviour {
 			}
 		}
 	}
-	public void OnStrucutureCreated(Structure structure) {
+	public void OnStrucutureCreated(Structure structure) {		
 		GameObject go = new GameObject ();
 		structure.RegisterOnChangedCallback (OnStructureChanged);
 		structure.RegisterOnDestroyCallback (OnStructureDestroyed);
 		float x = 0;
 		float y = 0;
-		if (structure.tileWidth> 1) {
-			x = 0.5f + ((float)structure.tileWidth) / 2 - 1;
+		if (structure.TileWidth> 1) {
+			x = 0.5f + ((float)structure.TileWidth) / 2 - 1;
 		}
-		if (structure.tileHeight> 1) {
-			y = 0.5f + ((float)structure.tileHeight) / 2 - 1;
+		if (structure.TileHeight> 1) {
+			y = 0.5f + ((float)structure.TileHeight) / 2 - 1;
 		}
 		Tile t = structure.BuildTile;
-
 		go.transform.position = new Vector3 (t.X + x,t.Y + y);
-		go.transform.Rotate (Vector3.forward*structure.rotated); 
+		go.transform.transform.eulerAngles = new Vector3 (0, 0, 360-structure.rotated);
 		go.transform.SetParent (this.transform,true);
-		go.name = structure.SmallName +"_"+structure.myBuildingTiles [0].toString ();
+		go.name = structure.SmallName +"_"+structure.myBuildingTiles [0].ToString ();
 		SpriteRenderer sr = go.AddComponent<SpriteRenderer>();
 		sr.sortingLayerName = "Structures";
 		structureGameObjectMap.Add (structure,go);
@@ -66,35 +70,18 @@ public class StructureSpriteController : MonoBehaviour {
 			gos.transform.localPosition = Vector3.zero;
 			gos.GetComponent<MeshRenderer>().sortingLayerName = "StructuresUI";
 			if (((Road)structure).Route != null) {
-				text.text = ((Road)structure).Route.toString ();
+//				text.text = ((Road)structure).Route.toString ();
 			}
 			Font ArialFont = (Font)Resources.GetBuiltinResource (typeof(Font), "Arial.ttf");
 			text.font = ArialFont;
-			if (structureSprites.ContainsKey (structure.SmallName + structure.connectOrientation)) {
-				sr.sprite = structureSprites [structure.SmallName + structure.connectOrientation];
-			} else {
-				sr.sprite = structureSprites ["nosprite"];
-				Debug.Log (structure.SmallName + structure.connectOrientation); 
-			}
-		} else if (structure is Growable) {
-			if (structureSprites.ContainsKey (structure.SmallName + "_" + ((Growable)structure).currentStage)) {
-				sr.sprite = structureSprites [structure.SmallName + "_" + ((Growable)structure).currentStage];
-			} else {
-				sr.sprite = structureSprites ["nosprite"];
-			}
-		} else {
-			if (structureSprites.ContainsKey (structure.SmallName)) {
-				sr.sprite = structureSprites[structure.SmallName];
-			} else {
-				Sprite sprite = structureSprites ["nosprite"];
-				go.transform.localScale = new Vector3(structure.tileWidth,structure.tileHeight);
-				sr.sprite = sprite;
-			}
-		}
-		if(structure is OutputStructure && ((OutputStructure)structure).contactRange>0){
+		} 
+
+		SetSpriteRendererStructureSprite (go, structure);
+
+		if(structure is OutputStructure && ((OutputStructure)structure).ContactRange>0){
 			GameObject goContact = new GameObject ();
 			CircleCollider2D cc2d = goContact.AddComponent<CircleCollider2D>();
-			cc2d.radius = ((OutputStructure)structure).contactRange;
+			cc2d.radius = ((OutputStructure)structure).ContactRange;
 			cc2d.isTrigger = true;
 			goContact.transform.SetParent (go.transform);
 			goContact.transform.localPosition = Vector3.zero;
@@ -103,42 +90,71 @@ public class StructureSpriteController : MonoBehaviour {
 			goContact.name = "ContactCollider";
 		}
 
-
-		if (structure.hasHitbox) {
+		if (structure.HasHitbox) {
 			BoxCollider2D col = go.AddComponent<BoxCollider2D> ();
 			col.size = new Vector2 (sr.sprite.textureRect.size.x /sr.sprite.pixelsPerUnit, sr.sprite.textureRect.size.y / sr.sprite.pixelsPerUnit);
 		}
 	}
-	void OnStructureChanged(Structure structure){
+	void OnStructureChanged(Structure structure){			
 		if(structure == null){
 			Debug.LogError ("Structure change and its empty?");
 			return;
 		}
 		if( structureGameObjectMap.ContainsKey (structure) == false){
-			Debug.LogError ("StructureSprite not in the Map to a gameobject! "+ structure.SmallName+"@"+ structure.myBuildingTiles[0].toString ());
+//			Debug.LogError ("StructureSprite not in the Map to a gameobject! "+ structure.SmallName+"@"+ structure.myBuildingTiles[0].toString ());
 			return;
 		}
 		if(structure is Growable){
 			SpriteRenderer sr = structureGameObjectMap[structure].GetComponent<SpriteRenderer>();
-			sr.sprite = structureSprites[structure.SmallName + "_" + ((Growable)structure).currentStage];
-		} else
-		if(structure is Warehouse){
+			if(structureSprites.ContainsKey (structure.SmallName + "_" + ((Growable)structure).currentStage))
+				sr.sprite = structureSprites[structure.SmallName + "_" + ((Growable)structure).currentStage];
+		} 
+		else if(structure is Warehouse){
 			if (structure.extraUIOn == true) {
-				GameObject go = new GameObject ();
-				go.name = "RangeUI";
-				go.transform.position = structureGameObjectMap [structure].transform.position;
-				go.transform.localScale = new Vector3 (((Warehouse)structure).contactRange, ((Warehouse)structure).contactRange, 0);
+                GameObject go = new GameObject {
+                    name = "RangeUI"
+                };
+                go.transform.position = structureGameObjectMap [structure].transform.position;
+				go.transform.localScale = new Vector3 (((Warehouse)structure).ContactRange, ((Warehouse)structure).ContactRange, 0);
 				SpriteRenderer sr = go.AddComponent<SpriteRenderer> ();
 				sr.sprite = circleSprite;
 				sr.sortingLayerName = "StructuresUI";
 				go.transform.SetParent (structureGameObjectMap [structure].transform);
 			} else {
-				if(structureGameObjectMap [structure].transform.FindChild("RangeUI") !=null)
-					GameObject.Destroy (structureGameObjectMap [structure].transform.FindChild("RangeUI").gameObject );
+				if(structureGameObjectMap [structure].transform.Find("RangeUI") !=null)
+					GameObject.Destroy (structureGameObjectMap [structure].transform.Find("RangeUI").gameObject );
 			}
 		}
+		else if(structure is HomeBuilding){
+			SetSpriteRendererStructureSprite (structureGameObjectMap [structure], structure);
+		}
+	}
+
+	void SetSpriteRendererStructureSprite(GameObject go, Structure str){
+		SpriteRenderer sr = go.GetComponent<SpriteRenderer> ();
+		if (structureSprites.ContainsKey (str.GetSpriteName())) {
+			sr.sprite = structureSprites[str.GetSpriteName()];
+		} else {
+			sr.sprite =  structureSprites ["nosprite"];
+			go.transform.localScale = new Vector3(str.TileWidth,str.TileHeight);
+			go.transform.localRotation = Quaternion.identity;
+		}
+	}
+
+	Sprite GetSprite(string name){
+		if (structureSprites.ContainsKey (name)) {
+			return structureSprites[name];
+		} else {
+			return structureSprites ["nosprite"];
+		}
+	}
+	void OnTileStructureDestroyed(Tile t){
+		OnStructureDestroyed (t.Structure);
 	}
 	void OnStructureDestroyed(Structure structure) {
+		if(structureGameObjectMap.ContainsKey(structure)==false){
+			return;
+		}
 		GameObject go = structureGameObjectMap [structure];
 		GameObject.Destroy (go);
 		structure.UnregisterOnChangedCallback (OnStructureChanged);
@@ -147,13 +163,7 @@ public class StructureSpriteController : MonoBehaviour {
 		
 	public void OnRoadChange(Road road) {
 		Structure s = road;
-		SpriteRenderer sr = structureGameObjectMap[s].GetComponent<SpriteRenderer>();
-		if (structureSprites.ContainsKey (road.SmallName + road.connectOrientation)) {
-			sr.sprite = structureSprites [road.SmallName + road.connectOrientation];
-		} else {
-			sr.sprite = structureSprites ["nosprite"];
-			Debug.Log (road.SmallName + road.connectOrientation); 
-		}
+		SetSpriteRendererStructureSprite (structureGameObjectMap [s], s);
 		if( road.Route != null) {
 			structureGameObjectMap[s].GetComponentInChildren <TextMesh>().text = road.Route.toString ();
 		}
@@ -166,20 +176,23 @@ public class StructureSpriteController : MonoBehaviour {
 //			Debug.Log (s.name);
 			structureSprites[s.name] = s;
 		}
-	}
-	public Sprite getStructureSprite(Structure str){
-		if(structureSprites.ContainsKey (str.name)==false){
+    }
+	public Sprite GetStructureSprite(Structure str){
+		if(structureSprites.ContainsKey (str.GetSpriteName())==false){
 			//FIXME this should be active in future 
 			//fornow there arent many sprites anyway
 //			Debug.LogError ("No Structure Sprite for that Name!");
 			return null; 
 		}
-		return structureSprites [str.name];
+		return GetSprite (str.GetSpriteName());
 	}
 	public GameObject GetGameObject(Structure str){
 		if(structureGameObjectMap.ContainsKey (str)==false){
 			return null;
 		}
 		return structureGameObjectMap [str];
+	}
+	void OnDestroy() {
+		
 	}
 }

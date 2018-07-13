@@ -1,77 +1,63 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
-using System.Xml;
-using System.Xml.Schema;
-using System.Xml.Serialization;
+using Newtonsoft.Json;
 
-public class Inventory : IXmlSerializable{
-	public int maxStackSize { get; protected set;}
-    public Dictionary<int, Item> items {
+[JsonObject(MemberSerialization.OptIn)]
+public class Inventory {
+	[JsonPropertyAttribute] public int MaxStackSize { get; protected set;}
+
+	[JsonPropertyAttribute] public Dictionary<int, Item> Items {
 		get;
 		protected set;
 	}
-	public int numberOfSpaces {
+	[JsonPropertyAttribute] public int NumberOfSpaces {
 		get;
 		protected set;
 	}
-	public bool HasUnlimitedSpace {
-		get { return numberOfSpaces != -1;}
-	}
-	public string name;
+	[JsonPropertyAttribute] public string name;
 
-	Action<Inventory> cbInventoryChanged;
+	protected Action<Inventory> cbInventoryChanged;
+	public bool HasLimitedSpace {
+		get { return NumberOfSpaces != -1;}
+	}
+
     /// <summary>
     /// leave blanc for unlimited spaces! To limited it give a int > 0 
     /// </summary>
     /// <param name="numberOfSpaces"></param>
-	public Inventory(int numberOfSpaces = -1,string name = "noname") {
-        maxStackSize = 50;
+	public Inventory(int numberOfSpaces = -1,int maxStackSize = 50, string name = "noname") {
+        this.MaxStackSize = maxStackSize;
 		this.name = name + "-INV";
-        items = new Dictionary<int, Item>();
+        Items = new Dictionary<int, Item>();
 		if (numberOfSpaces == -1) {
 			//for cities
-			items = BuildController.Instance.getCopieOfAllItems ();
+			Items = BuildController.Instance.GetCopieOfAllItems ();
 		} 
-        this.numberOfSpaces = numberOfSpaces;
+        this.NumberOfSpaces = numberOfSpaces;
     }
+	/// <summary>
+	/// DO NOT USE
+	/// </summary>
+	public Inventory(){}
     /// <summary>
 	/// returns amount  
 	/// </summary>
     /// <param name="item"></param>
     /// <returns></returns>
-    public int addItem(Item item) {
-		if (item.ID <= -1) {
+	public virtual int AddItem(Item toAdd) {
+		if (toAdd.ID <= -1) {
 			Debug.LogError ("ITEM ID is smaller or equal to -1");
 			return 0;
 		}
-		if(numberOfSpaces == -1){
-			return cityAddItem (item);
-		} else {
-			return unitAddItem (item);
-		}
-
-    }
-
-	private int cityAddItem(Item toAdd){
-		//in a city there is always a stack to be added to
-		Item inInv = items [toAdd.ID];
-		//if its already full no need to put it in there
-		if(inInv.count == maxStackSize) {
-			Debug.Log ("inventory-item is full"); 
-			return 0;
-		}
-		return moveAmountFromItemToInv (toAdd, inInv);
-	}
-	private int unitAddItem(Item toAdd){
 		int amount = 0;
-		foreach (Item inInv in items.Values) {
+		foreach (Item inInv in Items.Values) {
 			if(inInv.ID == toAdd.ID){
-				if(inInv.count == maxStackSize){
+				if(inInv.count == MaxStackSize){
 					continue;
 				}
 				// move
-				amount = moveAmountFromItemToInv (toAdd,inInv); 
+				amount = MoveAmountFromItemToInv (toAdd,inInv); 
 				toAdd.count -= amount;
 				if(toAdd.count==0){
 					break;
@@ -80,77 +66,78 @@ public class Inventory : IXmlSerializable{
 		}
 		if(toAdd.count>0){
 			Item temp = toAdd.Clone ();
-			amount+=moveAmountFromItemToInv (toAdd,temp);
-			for (int i = 0; i < numberOfSpaces; i++) {
-				if(items.ContainsKey (i)==false){
-					items.Add (i,temp); 
+			amount+=MoveAmountFromItemToInv (toAdd,temp);
+			for (int i = 0; i < NumberOfSpaces; i++) {
+				if(Items.ContainsKey (i)==false){
+					Items.Add (i,temp); 
 					break;
 				}
 			}
-			if(cbInventoryChanged != null)
-				cbInventoryChanged (this);
-		}
+            cbInventoryChanged?.Invoke(this);
+        }
 		return amount;
-	}
+    }
 
-	public int getPlaceInItems(Item item){
-		if(numberOfSpaces == -1){
-			return item.ID;
-		} else {
-			for (int i = 0; i < numberOfSpaces;i++) {
-				if(items.ContainsKey (i)&&items[i] == item){
-					return i;
-				}
+
+	public virtual int GetPlaceInItems(Item item){
+		for (int i = 0; i < NumberOfSpaces;i++) {
+			if(Items.ContainsKey (i)&&Items[i].ID == item.ID){
+				return i;
 			}
-			return -1;
 		}
+		return -1;
 	}
 	public Item GetItemWithNRinItems(int i) {
-		if(items.ContainsKey(i)==false){
+		if(Items.ContainsKey(i)==false){
 			return null;
 		}
-		return items [i];
+		return Items [i];
 	}
 
-	public Item getAllOfItem(Item item){
-		return getItemWithMaxAmount (item,int.MaxValue);
+	public Item GetAllOfItem(Item item){
+		return GetItemWithMaxAmount (item,int.MaxValue);
 	}
-	public Item getItemWithMaxAmount(Item item, int maxAmount){
-		Item output = getItemInInventory (item);
+	public Item GetItemWithMaxAmount(Item item, int maxAmount){
+		Item output = GetItemInInventory (item);
+		if(output==null){
+			return null;
+		}
 		Item temp = output.CloneWithCount();
 		temp.count = Mathf.Clamp (temp.count, 0, maxAmount );
-		lowerItemAmount (output, temp.count);
+		LowerItemAmount (output, temp.count);
 		maxAmount -= temp.count;
-		if(maxAmount>0 && numberOfSpaces !=-1){
-			temp.count += getItemWithMaxAmount (item, maxAmount).count;
+		if(maxAmount>0 && NumberOfSpaces !=-1){
+			temp.count += GetItemWithMaxAmount (item, maxAmount).count;
 		}
 		return temp;
 	}
-	private Item getItemInInventory(Item item){
-		return items [getPlaceInItems (item)];
+	protected Item GetItemInInventory(Item item){
+		int pos = GetPlaceInItems (item);
+		if(pos<0){
+			return null;
+		}
+		return Items [pos];
 	}
 	/// <summary>
 	/// Gets CLONED item WITH count but DOESNT REMOVE it FROM inventory.
 	/// </summary>
 	/// <returns>The item in inventory clone.</returns>
 	/// <param name="item">Item.</param>
-	public Item getItemInInventoryClone(Item item){
-		return items [getPlaceInItems (item)].CloneWithCount ();
+	public Item GetItemInInventoryClone(Item item){
+		return Items [GetPlaceInItems (item)].CloneWithCount ();
 	}
 
-	public void setItemCountNull (Item item){
-		if(HasUnlimitedSpace == false){
-			items.Remove ( getPlaceInItems (item) );
-		} else {
-			getItemInInventory (item).count = 0;
+	public virtual void SetItemCountNull (Item item){
+		Item i = GetItemInInventory (item);
+		if(i==null){
+			return;
 		}
-		if(cbInventoryChanged!=null){
-			cbInventoryChanged (this); 
-		}
-	}
+		i.count = 0;
+        cbInventoryChanged?.Invoke(this);
+    }
 
-	public bool hasAnythingOf(Item item){
-		if(getItemInInventory (item).count > 0){
+	public bool HasAnythingOf(Item item){
+		if(GetItemInInventory (item).count > 0){
 			return true;
 		}
 		return false;
@@ -163,17 +150,17 @@ public class Inventory : IXmlSerializable{
 	/// <returns>The amount for item.</returns>
 	/// <param name="item">Item.</param>
 	public int GetAmountForItem(Item item){
-		return getItemInInventory (item).count;
+		Item it = GetItemInInventory (item);
+		if(it==null){
+			return 0;
+		}
+		return GetItemInInventory (item).count;
 	}
 
-	public int GetTotalAmountFor(Item item){
-		if(numberOfSpaces==-1){
-			//theres only one stack
-			return GetAmountForItem (item);
-		} 
+	public virtual int GetTotalAmountFor(Item item){
 		//now check for everyspace if its the item
 		int count=0;
-		foreach (Item inInv in items.Values) {
+		foreach (Item inInv in Items.Values) {
 			if(inInv.ID == item.ID){
 				count += inInv.count;
 			}
@@ -188,18 +175,18 @@ public class Inventory : IXmlSerializable{
 	/// <returns><c>true</c>, if item was moved, <c>false</c> otherwise.</returns>
 	/// <param name="inv">Inv.</param>
 	/// <param name="it">It.</param>
-	public int moveItem(Inventory moveToInv, Item it,int amountMove){
-		if (items.ContainsKey (getPlaceInItems (it))) {
-			Item i = items [getPlaceInItems (it)];
+	public int MoveItem(Inventory moveToInv, Item it,int amountMove){
+		if (Items.ContainsKey (GetPlaceInItems (it))) {
+			Item i = Items [GetPlaceInItems (it)];
 			Debug.Log (i.ToString ()); 
 			if(i.count<=0){
 				return 0;
 			}
 			it = it.CloneWithCount ();
 			it.count = Mathf.Clamp (it.count, 0, amountMove);
-			int amount = moveToInv.addItem (it);
+			int amount = moveToInv.AddItem (it);
 			Debug.Log ("Itemamount " + amount); 
-			lowerItemAmount (i, amount);
+			LowerItemAmount (i, amount);
 			return amount;	
 		}
 		return 0;
@@ -210,150 +197,140 @@ public class Inventory : IXmlSerializable{
 	/// </summary>
 	/// <returns><c>true</c>, if item amount was removed, <c>false</c> otherwise.</returns>
 	/// <param name="it">It.</param>
-	public bool removeItemAmount(Item it){
-		if (items.ContainsKey (it.ID)) {
-			Item i = getItemInInventory (it);
-			if (i.count < it.count) {
-				return false;
-			}
-			lowerItemAmount (i, it.count);
+	public bool RemoveItemAmount(Item it){
+		if(it==null){
 			return true;
 		}
-		return false;
+		Item i = GetItemInInventory (it);
+		if(i == null){
+			return false;
+		}
+		if (i.count < it.count) {
+			return false;
+		}
+		LowerItemAmount (i, it.count);
+		return true;
 	}	
+	/// <summary>
+	/// CHECK FIRST IF AVAIBLE THEN REMOVE!
+	/// Removes the items amounts. It will return false
+	/// if there couldnt be removed a single item in the list
+	/// but still removes the rest. So be careful!
+	/// </summary>
+	/// <returns><c>true</c>, if items amount was removed, <c>false</c> otherwise.</returns>
+	/// <param name="coll">Coll.</param>
+	public bool RemoveItemsAmount(ICollection<Item> coll){
+		bool successful = false;
+		foreach(Item i in coll){
+			successful = RemoveItemAmount (i);
+		}
+		return successful;
+	}
 	/// <summary>
 	/// WARNING THIS WILL EMPTY THE COMPLETE
 	/// INVENTORY NOTHING WILL BE LEFT
 	/// </summary>
-	public Item[] GetAllItemsAndRemoveThem(){
+	public virtual Item[] GetAllItemsAndRemoveThem(){
 		//get all items in a list
-		List<Item> temp = new List<Item> (items.Values);
+		List<Item> temp = new List<Item> (Items.Values);
 		//reset the inventory here
-		if (HasUnlimitedSpace == false) {
-			items = new Dictionary<int, Item>();
-		} else {
-			items = BuildController.Instance.getCopieOfAllItems ();
-		}
-		if(cbInventoryChanged!=null){
-			cbInventoryChanged (this);
-		}
-		return temp.ToArray ();
+		Items = new Dictionary<int, Item>();
+        cbInventoryChanged?.Invoke(this);
+        return temp.ToArray ();
 	}
 
-	private void lowerItemAmount(Item i,int amount){
-		if (items.ContainsKey (getPlaceInItems (i))) {
-			items [getPlaceInItems (i)].count -= amount;
+	protected virtual void LowerItemAmount(Item i,int amount){
+		if (Items.ContainsKey (GetPlaceInItems (i))) {
+			Items [GetPlaceInItems (i)].count -= amount;
 		} else {
 			Debug.Log ("not in");
 			i.count -= amount;
 		}
-		if(HasUnlimitedSpace == false){
-			if (i.count == 0) {
-				for (int d = 0; d < items.Count; d++) {
-					if(items[d].count==0){
-						items.Remove (d);
-					}
+		if (i.count == 0) {
+			for (int d = 0; d < Items.Count; d++) {
+				if(Items[d].count==0){
+					Items.Remove (d);
 				}
 			}
 		}
-		if(cbInventoryChanged!=null){
-			cbInventoryChanged (this);
-		}
-	}
+        cbInventoryChanged?.Invoke(this);
+    }
 
-	private int moveAmountFromItemToInv(Item toBeMoved,Item toReceive){
+	protected int MoveAmountFromItemToInv(Item toBeMoved,Item toReceive){
 		//whats the amount to be moved
 		int amount = toBeMoved.count;
 		//clamp it to the maximum it can be
-		amount = Mathf.Clamp (amount, 0, maxStackSize - toReceive.count);
-		increaseItemAmount (toReceive, amount);
+		amount = Mathf.Clamp (amount, 0, MaxStackSize - toReceive.count);
+		IncreaseItemAmount (toReceive, amount);
 		return amount;
 	}
-	private void increaseItemAmount(Item item,int amount){
-		if(amount<=0){
+	protected void IncreaseItemAmount(Item item,int amount){
+		if(amount<0){
 			Debug.LogError ("Increase Amount is " + amount + "! "); 
 		}
 		item.count += amount;
-		if(cbInventoryChanged!=null){
-			cbInventoryChanged (this);
-		}
-	}
+        cbInventoryChanged?.Invoke(this);
+    }
 
 
-	public void addIventory(Inventory inv){
-		foreach (Item item in inv.items.Values) {
-			addItem (item);
+	public void AddIventory(Inventory inv){
+		foreach (Item item in inv.Items.Values) {
+			AddItem (item);
 		}
 	}
-	public Item[] getBuildMaterial(){
+	public virtual Item[] GetBuildMaterial(){
 		//there are 10 ids reserved for buildingmaterial
 		//currently there are 7 builditems
 		List<Item> itemlist = new List<Item> ();
-		for (int i = 0; i < 10; i++) {
-			if(ContainsItemWithID(i)){
-				itemlist.Add(GetItemWithID (i));
+		foreach (Item i in PrototypController.buildItems) {
+			if(ContainsItemWithID(i.ID)){
+				itemlist.Add(GetItemWithID (i.ID));
 			}
 		}
 		return itemlist.ToArray ();
 	}
-	private Item GetItemWithID(int id){
-		if(numberOfSpaces==-1){
-			if (items.ContainsKey (id)) {
-				return items [id];
-			}
-			return null;
-		} else {
-			Item i = null;
-			foreach (Item item in items.Values) {
-				if(item.ID==id){
-					if(i==null){
-						i = item;
-					} else {
-						i.count += item.count;
-					}
+	protected virtual Item GetItemWithID(int id){
+		Item i = null;
+		foreach (Item item in Items.Values) {
+			if(item.ID==id){
+				if(i==null){
+					i = item;
+				} else {
+					i.count += item.count;
 				}
 			}
-			return i;
 		}
+		return i;
 	}
-	public Item GetItemWithIDClone(int id){
-		if(numberOfSpaces==-1){
-			if (items.ContainsKey (id)) {
-				Debug.Log ("GetItemWithID "+ items[id].ToString ()); 
-				return items [id].CloneWithCount ();
-			}
-			return null;
-		} else {
-			Item i = null;
-			foreach (Item item in items.Values) {
-				if(item.ID==id){
-					if(i==null){
-						i = item;
-					} else {
-						i.count += item.count;
-					}
+	public virtual Item GetItemWithIDClone(int id){
+		Item i = null;
+		foreach (Item item in Items.Values) {
+			if(item.ID==id){
+				if(i==null){
+					i = item;
+				} else {
+					i.count += item.count;
 				}
 			}
-			if(i == null){
-				return null;
-			}
-			return i.CloneWithCount ();
 		}
+		if(i == null){
+			return null;
+		}
+		return i.CloneWithCount ();
 	}
-
+	public int GetSpaceFor(Item i){
+		int amount= GetAmountForItem (i);
+		return MaxStackSize - amount;
+	}
 	public void AddItems(IEnumerable<Item> items){
 		foreach (Item item in items) {
-			addItem (item);
+			AddItem (item);
 		}
 	}
-	public bool ContainsItemWithID(int id){
-		if(numberOfSpaces==-1){
-			return true;
-		} else {
-			foreach (Item item in items.Values) {
-				if(item.ID==id){
-					return true;
-				}
+	public virtual bool ContainsItemWithID(int id){
+		foreach (Item item in Items.Values) {
+			if(item.ID==id){
+				return true;
 			}
 		}
 		return false;
@@ -363,23 +340,37 @@ public class Inventory : IXmlSerializable{
 			return true;
 		}
 		foreach(Item i in items){
-			if(i.count<GetTotalAmountFor (i)){
+			if(i.count>GetTotalAmountFor (i)){
 				return false;
 			}
 		}
 		return true;
 	}
-    public void addToStackSize(int value) {
+    public void AddToStackSize(int value) {
 		if(value<=0){
 			Debug.LogError ("Increase Stacksize is " + value + "! "); 
 		}
-        this.maxStackSize += value;
+        this.MaxStackSize += value;
     }
-    public void subFromStackSize(int value) {
+    internal bool HasEnoughOfItems(IEnumerable<Item> item) {
+        foreach (Item i in item) {
+            if (HasEnoughOfItem(i) == false)
+                return false;
+        }
+        return true;
+    }
+    internal bool HasEnoughOfItem(Item item) {
+        Item inInventory = GetItemInInventory(item);
+        if (inInventory == null)
+            return false;
+        return inInventory.count >= item.count;
+    }
+
+    public void SubFromStackSize(int value) {
 		if(value<=0){
 			Debug.LogError ("Decrease Stacksize is " + value + "! "); 
 		}
-        this.maxStackSize -= value;
+        this.MaxStackSize -= value;
     }
 
 	public void RegisterOnChangedCallback(Action<Inventory> cb) {
@@ -389,39 +380,5 @@ public class Inventory : IXmlSerializable{
 	public void UnregisterOnChangedCallback(Action<Inventory> cb) {
 		cbInventoryChanged -= cb;
 	}
-	//////////////////////////////////////////////////////////////////////////////////////
-	/// 
-	/// 						SAVING & LOADING
-	/// 
-	//////////////////////////////////////////////////////////////////////////////////////
-	public XmlSchema GetSchema() {
-		return null;
-	}
 
-	public void WriteXml(XmlWriter writer) {
-		writer.WriteAttributeString( "MaxStackSize",maxStackSize.ToString ());
-		writer.WriteAttributeString( "NumberOfSpaces",numberOfSpaces.ToString ());
-		writer.WriteStartElement("Items");
-		foreach (int c in items.Keys) {
-			writer.WriteStartElement("Item");
-			writer.WriteAttributeString( "Number", c.ToString () );
-			items [c].WriteXml (writer);
-			writer.WriteEndElement();
-		}
-		writer.WriteEndElement();
-	}
-	public void ReadXml(XmlReader reader) {
-		maxStackSize = int.Parse( reader.GetAttribute("MaxStackSize") );
-		numberOfSpaces = int.Parse( reader.GetAttribute("NumberOfSpaces") );
-		BuildController bs = BuildController.Instance;
-		if(reader.ReadToDescendant("Item") ) {
-			do {
-				int number = int.Parse( reader.GetAttribute("Number") );
-				int id = int.Parse( reader.GetAttribute("ID") );
-				Item i = bs.allItems[id].Clone();
-				i.ReadXml (reader);
-				items[number] = i;
-			} while( reader.ReadToNextSibling("Item") );
-		}
-	}
 }

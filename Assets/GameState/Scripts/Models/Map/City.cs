@@ -1,134 +1,193 @@
 ﻿using UnityEngine;
 using System;
 using System.Collections.Generic;
-using System.Xml;
-using System.Xml.Schema;
-using System.Xml.Serialization;
+using Newtonsoft.Json;
 
-public class City : IXmlSerializable,IGEventable {
-	private static int TargetType = 12;
+[JsonObject(MemberSerialization.OptIn)]
+public class City : IGEventable {
+	public const int TargetType = 12;
 
-    //TODO: set this to the player that creates this
-    public int playerNumber = 0;
-    public Island island { get; protected set; }
-    public Inventory myInv;
-    public List<Structure> myStructures;
-	public List<HomeBuilding> myHomes;
-
-	public HashSet<Tile> myTiles;
-	public List<Route> myRoutes;
-	public Unit tradeUnit;
-	public Dictionary<Need,float> allNeeds;
-	public List<Need> needsList;
-
-	public Dictionary<int,Need> idToNeed;
-
-	public int cityBalance;
-	public int[] citizienCount;
-	public float useTick;
-	public float useTickTimer;
-	public Warehouse myWarehouse;
-	Action<Structure> cbStructureAdded;
-	Action<Structure> cbStructureRemoved;
-
-	Action<Structure> cbRegisterTradeOffer;
-	Action<GameEvent> cbEventCreated;
-	Action<GameEvent> cbEventEnded;
-
+	//TODO FIX this position of this
+	public const int citizienLevels = 4;
+	#region Serialize
+	[JsonPropertyAttribute] public int playerNumber = 0;
+	[JsonPropertyAttribute] public Inventory inventory;
+	[JsonPropertyAttribute] public List<Structure> myStructures;
+	[JsonPropertyAttribute] public Dictionary<int,Need> idToNeed; // i think this is what is missing
+	[JsonPropertyAttribute] public float useTickTimer;
 	/// <summary>
 	/// ITEM which is to trade
 	/// bool = true -> SELL
 	/// 	 = false -> BUY
 	/// </summary>
-	public Dictionary<int,TradeItem> itemIDtoTradeItem;
+	[JsonPropertyAttribute] public Dictionary<int,TradeItem> itemIDtoTradeItem;
+	[JsonPropertyAttribute] private string _name=""; 
 
-	private string _name=""; 
-	public string name {get{
+	[JsonPropertyAttribute] public int[] citizienCount;
+	[JsonPropertyAttribute] public float[] citizienHappiness;
+	[JsonPropertyAttribute] public bool[] criticalAvaibilityNeed;
+
+	[JsonPropertyAttribute] public Island island;
+
+
+	#endregion
+	#region RuntimeOrOther
+	public string Name {get{
 			if(this.IsWilderness ()){
-				return "Wilderniss";
+				return "Wilderness";
 			}
 			if(_name.Length==0){
 				return "City "+island.myCities.IndexOf (this);	
 			}
 			return _name;
-			}}
+	}}
 
-	public City(int playerNr,Island island,List<Need> allNeedsList) {
+    public HashSet<Tile> MyTiles {
+        get {
+            return _myTiles;
+        }
+
+        set {
+            _myTiles = value;
+        }
+    }
+
+    //TODO: set this to the player that creates this
+    public List<HomeBuilding> myHomes;
+    private HashSet<Tile> _myTiles;
+    public List<Route> myRoutes;
+	public Unit tradeUnit;
+	public int cityBalance;
+	public float useTick;
+	public Warehouse myWarehouse;
+
+	public List<Need> itemNeeds;
+	public List<Need> structureNeeds;
+
+	Action<Structure> cbStructureAdded;
+	Action<Structure> cbStructureRemoved;
+	Action<City> cbCityDestroy;
+
+	Action<Structure> cbRegisterTradeOffer;
+	Action<GameEvent> cbEventCreated;
+	Action<GameEvent> cbEventEnded;
+	#endregion
+
+	public City(int playerNr,Island island) {
 		this.playerNumber = playerNr;
-		citizienCount = new int[4];
+		this.island = island;
+
+        MyTiles = new HashSet<Tile>();
+
+        itemIDtoTradeItem = new Dictionary<int, TradeItem> ();
+		myStructures = new List<Structure>();
+		inventory = new CityInventory (Name);
+        Setup();
+		citizienCount = new int[citizienLevels];
+		citizienHappiness = new float[citizienLevels];
+		criticalAvaibilityNeed = new bool[citizienLevels];
 		for (int i = 0; i < citizienCount.Length; i++) {
 			citizienCount [i] = 0;
+			citizienHappiness [i] = 0.5f;
+			criticalAvaibilityNeed [i] = false;
 		}
-        this.island = island;
-		itemIDtoTradeItem = new Dictionary<int, TradeItem> ();
-		myStructures = new List<Structure>();
-		myTiles = new HashSet<Tile> ();
-
-		myInv = new Inventory (-1, name);
-		//temporary
-		Item temp = BuildController.Instance.allItems [49].Clone ();
-		temp.count = 50;
-		myInv.addItem (temp);
-
-		myRoutes = new List<Route> ();
-		myHomes = new List<HomeBuilding> ();
-		allNeeds = new Dictionary<Need,float> ();
-		needsList = new List<Need>(allNeedsList);
-		idToNeed = new Dictionary<int, Need> ();
-		for (int i = 0; i < allNeedsList.Count; i++) {
-			allNeeds.Add (needsList [i], 0);
-			idToNeed.Add (needsList [i].ID, needsList [i]);
-		}
-		useTick = 30f;
 
 		_name = "<City>" + UnityEngine.Random.Range (0, 1000);
 		//		useTickTimer = useTick;
     }
-	 
-    internal void update(float deltaTime) {
-		for (int i = 0; i < myStructures.Count; i++) {
-			myStructures[i].update(deltaTime);
-		}
-		if(playerNumber==-1){
+
+    internal bool HasAnythingOfItems(Item[] buildingItems) {
+        foreach (Item i in buildingItems) {
+            if (HasAnythingOfItem(i) == false)
+                return false;
+        }
+        return true;
+    }
+
+    /// <summary>
+    /// DO NOT USE! ONLY serialization!
+    /// </summary>
+    public City(){
+        MyTiles = new HashSet<Tile>();
+        Setup();
+    }
+
+	private void Setup(){
+        myHomes = new List<HomeBuilding> ();
+		myRoutes = new List<Route> ();
+		if(idToNeed==null){
 			return;
 		}
-		for (int i = 0; i < citizienCount.Length; i++) {
-			citizienCount [i] = 0;
-		}
-		//TODO mabye make itso that callbacks add/sub from it?
-		//TODO or make it so that homes are responsible for it 
-		for (int i = 0; i < myHomes.Count; i++) {
-			citizienCount [myHomes [i].buildingLevel] += myHomes [i].people;
-		}
+		itemNeeds = new List<Need> ();
+		structureNeeds = new List<Need> ();
+		List<Need> allNeeds = World.GetCopieOfAllNeeds();
+		if(citizienHappiness == null){
+			citizienCount = new int[citizienLevels];
+			citizienHappiness = new float[citizienLevels];
+			criticalAvaibilityNeed = new bool[citizienLevels];
 
-		useTickTimer -= deltaTime;
-		if(useTickTimer<=0){
-			useTickTimer = useTick;
-			for(int i = 0;i<needsList.Count;i++){
-				allNeeds[needsList[i]]=needsList[i].TryToConsumThisIn (this,citizienCount);
+			for (int i = 0; i < citizienCount.Length; i++) {
+				citizienCount [i] = 0;
+				citizienHappiness [i] = 0.5f;
+				criticalAvaibilityNeed [i] = false;
 			}
 		}
+		for (int i = 0; i < allNeeds.Count; i++) {
+			if(allNeeds[i].IsItemNeed()){
+				itemNeeds.Add (allNeeds [i]);
+			} else 
+			if(allNeeds[i].IsStructureNeed()){
+				structureNeeds.Add (allNeeds [i]);
+			}
+		}
+
+		// THINGS NEED TO BE LOADED IN 
+		useTick = 30f;
+
+	}
+	public IEnumerable<Structure> Load(){
+		Setup ();
+		foreach (Structure item in myStructures) {
+			if(item is Warehouse){
+				myWarehouse =(Warehouse) item;
+			} else 
+			if(item is HomeBuilding){
+				myHomes.Add ((HomeBuilding)item);
+			}
+//			item.Load ();
+		}
+		return myStructures;
+	}
+
+    internal void Update(float deltaTime) {
+		for (int i = 0; i < myStructures.Count; i++) {
+			myStructures[i].Update(deltaTime);
+		}
+		if(playerNumber==-1 || myHomes.Count==0){
+			return;
+		}
+		UpdateNeeds (deltaTime);
     }
 	/// <summary>
-	/// USE only for the creation of non player city aka Wilderniss
+	/// USE only for the creation of non player city aka Wilderness
 	/// </summary>
 	/// <param name="tiles">Tiles.</param>
 	/// <param name="island">Island.</param>
 	public City(List<Tile> tiles,Island island){
 //		tiles.ForEach (x => x.myCity = this);
 		List<Tile> temp = new List<Tile>(tiles);
-		island.wilderniss = this;
-		myTiles = new HashSet<Tile> (tiles);
+		island.Wilderness = this;
+		MyTiles = new HashSet<Tile> (tiles);
 		for (int i = 0; i < tiles.Count; i++) {
-			temp[i].myCity= null;
+			temp[i].MyCity= null;
 		}
-		myInv = new Inventory (0);
+		inventory = new Inventory (0);
 		this.playerNumber = -1;
 		this.island = island;
-		island.wilderniss = this;
+		island.Wilderness = this;
 		myStructures = new List<Structure> ();
 	}
-	public void addStructure(Structure str){
+	public void AddStructure(Structure str){
 		if(myStructures.Contains (str)){
 			//happens on loading for loaded stuff
 			//so not an actual error anymore
@@ -139,84 +198,147 @@ public class City : IXmlSerializable,IGEventable {
 			myHomes.Add ((HomeBuilding)str);
 		} 
 		if(str is Warehouse){
-			if(myWarehouse!=null){
-				Debug.LogError ("There should be only one Warehouse per City!");
+			if(myWarehouse!=null && myWarehouse.buildID!=str.buildID){
+				Debug.LogError ("There should be only one Warehouse per City! ");
 				return;
 			}
 			myWarehouse = (Warehouse)str;
 		}
-		cityBalance += str.maintenancecost;
+		cityBalance += str.Maintenancecost;
+		RemoveRessources (str.GetBuildingItems ());
+
 		myStructures.Add (str);
 
-		if(cbStructureAdded!=null){
-			cbStructureAdded (str);
+        cbStructureAdded?.Invoke(str);
+    }
+
+	private void UpdateNeeds(float deltaTime){
+		for (int i = 0; i < citizienLevels; i++) {
+			criticalAvaibilityNeed [i] = false;
+		}
+		useTickTimer -= deltaTime;
+		if(useTickTimer<=0){
+			useTickTimer = useTick;
+			CalculateNeeds ();
+
 		}
 	}
+	public void CalculateNeeds(){
+		int[] levelCount = new int[citizienLevels];
+		float[] sumOfPerc = new float[citizienLevels];
+		foreach(Need need in itemNeeds){
+			need.TryToConsumThisIn (this,citizienCount);
+			levelCount [need.StartLevel]++;
+			sumOfPerc [need.StartLevel] += need.percantageAvailability;
+			if(need.percantageAvailability<0.4f){
+				criticalAvaibilityNeed [need.StartLevel] = true;
+			}
+		}
+		float[] percentagesPerLevel = new float[citizienLevels];
+		float percantageSummed=0;
+		for (int i = 0; i < citizienLevels; i++) {
+			percentagesPerLevel [i] = sumOfPerc [i] / levelCount [i];
+			for (int s = 0; s <= i; s++) {
+				percantageSummed = percentagesPerLevel [s]; 
+			}
+			citizienHappiness [i] = percantageSummed / (i+1);
+		}
+	}
+
+	public void TriggerAddCallBack(Structure str){
+        cbStructureAdded?.Invoke(str);
+    }
 	//current wrapper to make sure its valid
 	public void RemoveTile(Tile t){
 		//if it doesnt contain it there is an error
-		if(myTiles.Contains (t)==false){
-			Debug.LogError ("This city does not know that it had this tile!" + t.toString ()); 
+		if(MyTiles.Contains (t)==false){
+			Debug.LogError ("This city does not know that it had this tile! " + t.ToString () +" -> " +MyTiles.Count); 
 			return;
 		}
-		myTiles.Remove (t);
+		MyTiles.Remove (t);
 		island.allReadyHighlighted = false;
 	}
-	public void addTiles(HashSet<Tile> t){
+    public void AddTiles(IEnumerable<Tile> t) {
+        AddTiles(new HashSet<Tile>(t));
+    }
+
+    public void AddTiles(HashSet<Tile> t) { 
 		// does not really needs it because tiles witout island reject cities
 		//but it is a secondary security that this does not happen
-		t.RemoveWhere (x => x.Type == TileType.Ocean);
-		List<Tile> tiles = new List<Tile> (t);
-		for (int i = 0; i < tiles.Count; i++) {
-			tiles [i].myCity = this;
-			if(tiles[i].Structure != null){
-				if (myStructures.Contains (tiles [i].Structure) ==false) { 
-					tiles [i].Structure.City = this;
-					tiles [i].Structure.playerID = playerNumber;
-					addStructure (tiles [i].Structure);
-				}
-			}
-			myTiles.Add (tiles[i]);
-		}
-		island.allReadyHighlighted = false;
-
-	}
-	public void addTile(Tile t){
-		if(t.Type==TileType.Ocean||myTiles==null||myTiles.Contains (t)){
+		if(t==null){
 			return;
 		}
-		if(t.Structure != null){
-			if (myStructures.Contains (t.Structure) ==false) { 
+		t.RemoveWhere (x =>x==null || x.Type == TileType.Ocean);
+        List<Tile> tiles = new List<Tile> (t);
+		for (int i = 0; i < tiles.Count; i++) {
+            AddTile(tiles[i]);
+        }
+		island.allReadyHighlighted = false;
+    }
+	public void AddTile(Tile t){
+        if (t.Type==TileType.Ocean||MyTiles.Contains (t)){
+			return;
+		}
+        t.MyCity = this;
+        if (t.Structure != null){
+			if (myStructures.Contains (t.Structure) == false) { 
 				t.Structure.City = this;
-				t.Structure.playerID = playerNumber;
- 
-				addStructure (t.Structure);
+				AddStructure (t.Structure);
 			}
 		}
 		island.allReadyHighlighted = false;
-		myTiles.Add (t);
+		MyTiles.Add (t);
+        if (IsCurrPlayerCity()) {
+            World.Current.OnTileChanged(t);
+        }
 	}
-	public void removeRessources(Item[] remove){
+	public bool GetNeedCriticalForLevel(int buildingLevel){
+		return criticalAvaibilityNeed [buildingLevel];
+	}
+	public void AddPeople(int level, int count){
+		if(count<0){
+			return;
+		}
+		citizienCount [level] += count;
+	}
+	public void RemovePeople(int level, int count){
+		if(count<0){
+			return;
+		}
+		citizienCount [level] -= count;
+	}
+
+	public void RemoveRessources(Item[] remove){
+		if(remove==null){
+			return;
+		}
 		foreach (Item item in remove) {
-			myInv.removeItemAmount (item);
+			inventory.RemoveItemAmount (item);
 		}
 	}
 
-	public void removeRessource(Item item, int amount){
+	public void RemoveRessource(Item item, int amount){
+		if(amount<0){
+			return;
+		}
 		Item i = item.Clone ();
 		i.count = amount;
-		myInv.removeItemAmount (i);
+		inventory.RemoveItemAmount (i);
 	}
-
-	public bool hasItem(Item item){
-		return myInv.hasAnythingOf (item);
+    public bool HasEnoughOfItems(IEnumerable<Item> item) {
+        return inventory.HasEnoughOfItems(item);
+    }
+    public bool HasEnoughOfItem(Item item) {
+        return inventory.HasEnoughOfItem(item);
+    }
+    public bool HasAnythingOfItem(Item item){
+		return inventory.HasAnythingOf (item);
 	}
-
 	public bool IsWilderness(){
-		if(playerNumber==-1 && this != island.wilderniss){
-			Debug.LogError ("NOT WILDERNISS! But -1 playernumber!? " + this.name);
+		if(playerNumber==-1 && this != island.Wilderness){
+			Debug.LogError ("NOT WILDERNESS! But -1 playernumber!? ");
 		}
-		return this == island.wilderniss;
+		return this == island.Wilderness;
 	}
 	/// <summary>
 	/// Ship buys from city means 
@@ -236,11 +358,11 @@ public class City : IXmlSerializable,IGEventable {
 			Debug.Log ("this item is not to buy"); 
 			return;
 		}
-		Item i = ti.SellItemAmount (myInv.GetItemWithIDClone (itemID));
+		Item i = ti.SellItemAmount (inventory.GetItemWithIDClone (itemID));
 		Player myPlayer = PlayerController.Instance.GetPlayer (playerNumber);
-		int am = tradeWithShip (i,Mathf.Clamp (amount,0,i.count),ship);
-		myPlayer.addMoney (am * ti.price);
-		player.reduceMoney (am * ti.price);
+		int am = TradeWithShip (i,Mathf.Clamp (amount,0,i.count),ship);
+		myPlayer.AddMoney (am * ti.price);
+		player.ReduceMoney (am * ti.price);
 
 	}
 	/// <summary>
@@ -261,38 +383,37 @@ public class City : IXmlSerializable,IGEventable {
 			Debug.Log ("this item is not to sell here"); 
 			return;
 		}
-		Item i = ti.BuyItemAmount (myInv.GetItemWithIDClone (itemID));
+		Item i = ti.BuyItemAmount (inventory.GetItemWithIDClone (itemID));
 		Player myPlayer = PlayerController.Instance.GetPlayer (playerNumber);
-		int am = tradeFromShip (ship,i,Mathf.Clamp (amount,0,i.count));
-		myPlayer.reduceMoney (am * ti.price);
-		player.addMoney (am * ti.price);
+		int am = TradeFromShip (ship,i,Mathf.Clamp (amount,0,i.count));
+		myPlayer.ReduceMoney (am * ti.price);
+		player.AddMoney (am * ti.price);
 
 	}
-	public int tradeWithShip(Item toTrade,int amount=50, Unit ship = null){
+	public int TradeWithShip(Item toTrade,int amount=50, Unit ship = null){
 		if(myWarehouse==null || myWarehouse.inRangeUnits.Count==0  || toTrade ==null){
 			Debug.Log ("myWarehouse==null || myWarehouse.inRangeUnits.Count==0  || toTrade ==null"); 
 			return 0;
 		}
 		if (tradeUnit == null && ship==null) {
-			return myInv.moveItem (myWarehouse.inRangeUnits [0].inventory, toTrade,amount);
+			return inventory.MoveItem (myWarehouse.inRangeUnits [0].inventory, toTrade,amount);
 		} else if(ship==null){
-			return myInv.moveItem (tradeUnit.inventory, toTrade,amount);
+			return inventory.MoveItem (tradeUnit.inventory, toTrade,amount);
 		} else {
-			return myInv.moveItem (ship.inventory, toTrade,amount);
+			return inventory.MoveItem (ship.inventory, toTrade,amount);
 		}
 	}
-	public int tradeFromShip(Unit u,Item getTrade,int amount = 50){
+	public int TradeFromShip(Unit u,Item getTrade,int amount = 50){
 		if(getTrade ==null){
 			return 0;
 		}
-		return u.inventory.moveItem (myInv,getTrade,amount);
+		return u.inventory.MoveItem (inventory,getTrade,amount);
 	}
-	public float getPercentage(Need need){
+	public float GetPercentage(Need need){
 		if(idToNeed.ContainsKey (need.ID)==false){
-			Debug.LogError ("NEED NOT FOUND");
 			return 0;
 		}
-		return allNeeds[idToNeed[need.ID]];
+		return idToNeed[need.ID].percantageAvailability;
 	}
 	public void RemoveTradeItem(Item item){
 		itemIDtoTradeItem.Remove (item.ID);
@@ -303,11 +424,14 @@ public class City : IXmlSerializable,IGEventable {
 	public void ChangeTradeItemPrice(int id, int price){
 		itemIDtoTradeItem [id].price = price;
 	}
-	public float GetAmountForThis( Item item, float amount ){
-		return myInv.GetAmountForItem (item);
+	public int GetAmountForThis( Item item, float amount ){
+		return inventory.GetAmountForItem (item);
 	}
 	
 	public void AddRoute(Route route){
+		if(myRoutes==null){
+			myRoutes = new List<Route> (); // i dont get why its null while loading
+		}
 		this.myRoutes.Add (route);
 	}
 
@@ -316,7 +440,11 @@ public class City : IXmlSerializable,IGEventable {
 			myRoutes.Remove (route);
 		} 
 	}
-	public void removeStructure(Structure structure, bool returnRessources=false){
+	public void RemoveStructure(Structure structure, bool returnRessources=false){
+		if(structure==null){
+			Debug.Log ("null"); 
+			return;
+		}
 		if (myStructures.Contains (structure)) {
 			if(structure is HomeBuilding){
 				myHomes.Remove ((HomeBuilding)structure);
@@ -327,38 +455,58 @@ public class City : IXmlSerializable,IGEventable {
 			//if were geting some of the ressources back
 			//when we destroy it -> should be a setting 
 			if(returnRessources){
-				Item[] res = structure.buildingItems;
+				Item[] res = structure.BuildingItems;
 				for (int i = 0; i < res.Length; i++) {
 					res [i].count /= 3; // FIXME do not have this hardcoded! Change it to be chooseable!
 				}
-				myInv.AddItems (res);
+				inventory.AddItems (res);
 			}
 			myStructures.Remove (structure);
-			cityBalance -= structure.maintenancecost;
-			cbStructureRemoved (structure);
-		} else {
-			//this is no error if this is wilderniss
+			cityBalance -= structure.Maintenancecost;
+            cbStructureRemoved?.Invoke(structure);
+        } else {
+			//this is no error if this is wilderness
 			if(structure is Warehouse){
 				return;
 			}
-			Debug.LogError (this.name + " This structure "+structure.ToString () +" does not belong to this city "); 
+			Debug.LogError (this.Name + " This structure "+structure.ToString () +" does not belong to this city "); 
 		}
 		island.allReadyHighlighted = false;
 
 	}
-
-	public void removeTiles(List<Tile> tiles){
+	public float GetHappinessForCitizenLevel(int level){
+		return citizienHappiness [level];
+	}
+	public void RemoveTiles(IEnumerable<Tile> tiles){
 		foreach (Tile item in tiles) {
-			item.myCity = null;
-			if(item.myCity!=this){
-				myTiles.Remove (item);
-			}
+			item.MyCity = null;
+			if(item.MyCity!=this){
+				MyTiles.Remove (item);
+                if (IsCurrPlayerCity()) {
+                    World.Current.OnTileChanged(item);
+                }
+            }
 		}
-		if(myTiles.Count==0){
-			island.RemoveCity (this);
+		if(MyTiles.Count==0){
+			Destroy ();
 		}
 	}
-
+	public void Destroy(){
+		if(playerNumber==-1){
+			return; // this is the wilderness it cant be removed! or destroyed
+		}
+		if(MyTiles.Count > 0){
+			RemoveTiles (MyTiles);
+		}
+		island.RemoveCity (this);
+        cbCityDestroy?.Invoke(this);
+    }
+	public void RegisterCityDestroy(Action<City> callbackfunc) {
+		cbCityDestroy += callbackfunc;
+	}
+	public void UnregisterCityDestroy(Action<City> callbackfunc) {
+		cbCityDestroy -= callbackfunc;
+	}
 	public void RegisterStructureAdded(Action<Structure> callbackfunc) {
 		cbStructureAdded += callbackfunc;
 	}
@@ -380,20 +528,16 @@ public class City : IXmlSerializable,IGEventable {
 		//either event is on this island or in one of its cities
 		if(ge.IsTarget (island)||ge.IsTarget(this)){
 			ge.InfluenceTarget (this, true);
-			if(cbEventCreated!=null){
-				cbEventCreated (ge);
-			}
-		}
+            cbEventCreated?.Invoke(ge);
+        }
 	}
 	public void OnEventEnded(GameEvent ge){
 		//this only gets called in two cases
 		//either event is on this island or in one of its cities
 		if(ge.IsTarget (island)||ge.IsTarget(this)){
 			ge.InfluenceTarget (this, false);
-			if(cbEventEnded!=null){
-				cbEventEnded (ge);
-			}
-		}
+            cbEventEnded?.Invoke(ge);
+        }
 	}
 
 	public bool HasFertility(Fertility fer){
@@ -406,99 +550,14 @@ public class City : IXmlSerializable,IGEventable {
 	public int GetPlayerNumber(){
 		return playerNumber;
 	}
+	public bool IsCurrPlayerCity(){
+		return playerNumber == PlayerController.currentPlayerNumber;
+	}
 	public int GetTargetType(){
 		return TargetType;
 	}
-	//////////////////////////////////////////////////////////////////////////////////////
-	/// 
-	/// 						SAVING & LOADING
-	/// 
-	//////////////////////////////////////////////////////////////////////////////////////
-	public XmlSchema GetSchema() {
-		return null;
-	}
-
-	public void WriteXml(XmlWriter writer) {
-		writer.WriteAttributeString("Player", playerNumber.ToString() );
-		writer.WriteStartElement("Inventory");
-			myInv.WriteXml(writer);
-		writer.WriteEndElement();
-
-		Structure tempWarehouse = null;
-		List<Structure> tempMarketbuildings = new List<Structure>();
-		List<Structure> tempStructures = new List<Structure>();
-		foreach (Structure s in myStructures) {
-			if (s is MarketBuilding) {
-				tempMarketbuildings.Add (s);
-			} else 
-			if(s is Warehouse){
-				tempWarehouse = s;
-			} else {
-				tempStructures.Add (s);
-			}
-		}
-		List<Structure> writeStructure = new List<Structure>();
-		if (tempWarehouse != null) {
-			writeStructure.Add (tempWarehouse);
-		}
-		writeStructure.AddRange (tempMarketbuildings);
-		writeStructure.AddRange (tempStructures);
-		//TODO MAKE THIS MORE PERFOMANT
-		if (myHomes != null) {
-			foreach (var item in myHomes) {
-				writeStructure.Add (item);
-			}
-		}
-		writer.WriteStartElement("Structures");
-		foreach (Structure s in writeStructure) {
-			writer.WriteStartElement("Structure");
-			s.WriteXml(writer);
-			writer.WriteEndElement();
-		}
-		writer.WriteEndElement();
-
-
-	}
-
-	public void ReadXml(XmlReader reader) {
-		playerNumber = int.Parse (reader.GetAttribute("Player"));
-		reader.ReadToDescendant ("Inventory");
-		myInv = new Inventory ();
-		myInv.ReadXml (reader);
-		BuildController bc = BuildController.Instance;
-		//TODO change this to smth better
-		//weird bug workaround
-		//not working with nextsibling
-		//not like in someplaces
-		//but for now its working
-		reader.ReadToFollowing ("Structures");
-//		while(reader.ReadToFollowing ("Structure")==false){
-//			reader.Read ();
-//		}
-		if (reader.ReadToDescendant ("Structure")) {
-			do {
-				int x = int.Parse (reader.GetAttribute ("BuildingTile_X"));
-				int y = int.Parse (reader.GetAttribute ("BuildingTile_Y"));
-				int buildID = int.Parse (reader.GetAttribute ("BuildID"));
-				Tile t = World.current.GetTileAt (x, y);
-				Structure s = bc.structurePrototypes [int.Parse (reader.GetAttribute ("ID"))].Clone (); 
-				if (s is MarketBuilding) {
-					((MarketBuilding)s).ReadXml (reader);
-				} else if (s is Warehouse) {
-					((Warehouse)s).ReadXml (reader);
-					myWarehouse = ((Warehouse)s);
-				} else if (s is OutputStructure) {
-					((OutputStructure)s).ReadXml (reader);
-				} else if (s is Growable) {
-					((Growable)s).ReadXml (reader);
-				} else if (s is HomeBuilding) {
-					((HomeBuilding)s).ReadXml (reader);
-					myHomes.Add ((HomeBuilding )s);
-				}
-				bc.AddLoadedPlacedStructure (buildID, s, t);
-				myStructures.Add (s);
-			} while(reader.ReadToNextSibling ("Structure"));
-		}
-
-	}
+    
+    public override string ToString() {
+        return Name;
+    }
 }

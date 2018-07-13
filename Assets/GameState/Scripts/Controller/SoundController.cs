@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine.Audio;
 using System.IO;
+using System;
 
 enum AmbientSound { Water, North, Middle, South }
 // TODO: 
@@ -18,8 +19,6 @@ public class SoundController : MonoBehaviour {
 	public GameObject soundEffect2DGO;
 	List<AudioSource> playedAudios;
 
-
-
 	public AudioClip placeBuildingSound;
 	public AudioClip cityCreateSound;
 
@@ -31,6 +30,7 @@ public class SoundController : MonoBehaviour {
 	public static string MusicLocation = "Audio/Music/";
 	public static string SoundEffectLocation = "Audio/Game/SoundEffects/";
 	public static string AmbientLocation = "Audio/Game/Ambient/";
+	public AudioMixer mixer;
 
 	AmbientSound currentAmbient;
 
@@ -52,6 +52,15 @@ public class SoundController : MonoBehaviour {
 		ssc = FindObjectOfType<StructureSpriteController> ();
 		wsc = FindObjectOfType<WorkerSpriteController> ();
 		usc = FindObjectOfType<UnitSpriteController> ();
+
+		Dictionary<string,int> volumes = MenuAudioManager.StaticReadSoundVolumes ();
+		if(volumes != null){
+			foreach(VolumeType v in Enum.GetValues(typeof(VolumeType))){
+				if(volumes.ContainsKey(v.ToString())){
+					mixer.SetFloat (v.ToString(),MenuAudioManager.ConvertToDecibel(volumes[v.ToString()]));
+				}
+			}
+		}
 	}
 	
 	// Update is called once per frame
@@ -112,8 +121,7 @@ public class SoundController : MonoBehaviour {
 		AudioSource audio = goal.AddComponent<AudioSource>();
 		// Copied fields can be restricted with BindingFlags
 		System.Reflection.FieldInfo[] fields = audio.GetType ().GetFields(); 
-		foreach (System.Reflection.FieldInfo field in fields)
-		{
+		foreach (System.Reflection.FieldInfo field in fields) {
 			field.SetValue(audio, field.GetValue(copied));
 		}
 	}
@@ -145,6 +153,8 @@ public class SoundController : MonoBehaviour {
 			return;
 		}
 		AudioClip ac = Resources.Load(SoundEffectLocation+filePath) as AudioClip;
+		if (ac == null)
+			return;
 		ac.LoadAudioData ();
 		goal.PlayOneShot (ac);
 	}
@@ -176,12 +186,20 @@ public class SoundController : MonoBehaviour {
 		return ac;
 	}
 
-	public void OnBuild(Structure str){
-		if(str.playerID!=PlayerController.Instance.currentPlayerNumber){
+	public void OnBuild(Structure str,bool loading){
+		if(loading){
+			return;
+		}
+		if(str.PlayerNumber!=PlayerController.currentPlayerNumber){
+			return;
+		}
+		string name =  "BuildSound_" + Time.frameCount;
+		if(GameObject.Find (name) != null){
 			return;
 		}
 		//Maybe make diffrent sound when diffrent buildingtyps are placed
 		GameObject g = Instantiate (soundEffect2DGO);
+		g.name = name;
 		g.transform.SetParent (soundEffect2DGO.transform);
 		AudioSource ac = g.GetComponent<AudioSource> ();
 		ac.clip = placeBuildingSound;
@@ -190,7 +208,7 @@ public class SoundController : MonoBehaviour {
 		playedAudios.Add (ac);
 	}
 	public void OnCityCreate(City c){
-		if(c.playerNumber!=PlayerController.Instance.currentPlayerNumber){
+		if(c.playerNumber!=PlayerController.currentPlayerNumber){
 			return;
 		}
 		//diffrent sounds for diffrent locations of City? North,middle,South?

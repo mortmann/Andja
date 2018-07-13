@@ -5,11 +5,9 @@ public class IslandInfoUI : MonoBehaviour {
 	CameraController cc;
 	Text fertilityText;
 	CanvasGroup cg;
-	PlayerController pc;
 	// Use this for initialization
 	void Start () {
 		cc = GameObject.FindObjectOfType<CameraController> ();
-		pc = GameObject.FindObjectOfType<PlayerController> ();
 		cg = GetComponent<CanvasGroup> ();
 		fertilityText = GetComponentInChildren<Text> ();
 	}
@@ -24,10 +22,10 @@ public class IslandInfoUI : MonoBehaviour {
 		cg.alpha = 1;
 		string text="| ";
 		foreach (Fertility item in cc.nearestIsland.myFertilities) {
-			text+=item.name+" | ";
+			text+=item.Name+" | ";
 
 		}
-		City c = cc.nearestIsland.myCities.Find (x => x.playerNumber == pc.currentPlayerNumber);
+		City c = cc.nearestIsland.myCities.Find (x => x.playerNumber == PlayerController.currentPlayerNumber);
 		if(c !=null){
 			int count=0;
 			foreach (int item in c.citizienCount) {
@@ -37,11 +35,12 @@ public class IslandInfoUI : MonoBehaviour {
 			text += count+"P";
 			text += " | " + c.cityBalance+"$";
 			text += "\n";
-			Item[] items = c.myInv.getBuildMaterial ();
+			Item[] items = c.inventory.GetBuildMaterial ();
 			for (int i = 0; i < items.Length; i++) {
 				if(items[i]==null){
 					continue;				
 				}
+
 				text += " | " + items[i].name+"="+items[i].count;	
 			}
 		}

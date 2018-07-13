@@ -1,11 +1,10 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 using System;
-using System.Xml;
-using System.Xml.Schema;
-using System.Xml.Serialization;
+using Newtonsoft.Json;
 
-public class LandTile : Tile,IXmlSerializable {
+[JsonObject(MemberSerialization.OptIn, ItemTypeNameHandling = TypeNameHandling.None)]
+public class LandTile : Tile {
 	//Want to have more than one structure in one tile!
 	//more than one tree or tree and bench! But for now only one
 	protected Structure _structures= null;
@@ -15,22 +14,24 @@ public class LandTile : Tile,IXmlSerializable {
 		} 
 		set {
 			if(_structures!=null&&_structures == value){
-				//				Debug.Log ("Tile.structure! Why does the structure add itself again to the tile?");
 				return;
 			}
-			if(_structures != null && _structures.canBeBuildOver && value!=null){
+			if(_structures!=null && null!=value&&_structures.ID == value.ID){
+				Debug.LogWarning ("Structure got build over even tho it is the same ID! Is this wanted?? " + value.ID);
+				return;
+			}
+			Structure oldStructure = _structures;
+			if(_structures != null && _structures.CanBeBuildOver && value!=null){
 				_structures.Destroy ();
 			} 
-			Structure oldStructure = _structures;
 			_structures = value;
-			if (cbTileStructureChanged != null) {
-				cbTileStructureChanged (this,oldStructure);
-			} 
-		}
+            cbTileOldNewStructureChanged?.Invoke(value, oldStructure);
+            cbTileStructureChanged?.Invoke(this, value);
+        }
 	}
 	protected Island _myIsland;
 
-	public override Island myIsland { get{return _myIsland;} 
+	public override Island MyIsland { get{return _myIsland;} 
 		set{ 
 			if(value==null){
 				Debug.LogError ("setting myisland to NULL is not viable " + value);
@@ -48,12 +49,12 @@ public class LandTile : Tile,IXmlSerializable {
 
 	private Queue<City> cities;
 	protected City _myCity;
-	public override City myCity { 
+	public override City MyCity { 
 		get{
 			return _myCity;
-		} 
-		set {
-			if(myIsland==null){
+		}
+        set {
+			if(MyIsland==null){
 				return;
 			}
 			//if the tile gets unclaimed by the current owner of this
@@ -64,12 +65,11 @@ public class LandTile : Tile,IXmlSerializable {
 					//its gonna go add them to a queue and giving it 
 					//in that order the right to own it
 					City c = cities.Dequeue ();
-					_myCity = value;
-					c.addTile (this);
+					c.AddTile (this);
 					return;
 				}
-				myIsland.wilderniss.addTile (this);
-				_myCity = myIsland.wilderniss;
+				MyIsland.Wilderness.AddTile (this);
+				_myCity = MyIsland.Wilderness;
 				return;
 			} 
 			//warns about double wilderniss
@@ -97,34 +97,8 @@ public class LandTile : Tile,IXmlSerializable {
 			_myCity = value;
 		} 
 	}
-	protected TileMark _oldTileState;
-	protected TileMark _tileState;
-	public override TileMark TileState {
-		get { return _tileState;}
-		set { 
-			if (value == TileMark.Reset) {
-				if (Type == TileType.Ocean) {
-					this._tileState = TileMark.None;
-					World.current.OnTileChanged (this);
-					return;
-				}
-				this._tileState = _oldTileState;
-				World.current.OnTileChanged (this);
-				return;
-			}
-			if(value == _tileState){
-				return;
-			} else {
-				if (_tileState != TileMark.Highlight) {
-					_oldTileState = _tileState;
-				}
-				this._tileState = value;
-				World.current.OnTileChanged (this);
-			}
-		}
-	}
 
-	public List<NeedsBuilding> listOfInRangeNeedBuildings { get; protected set; }
+	public List<NeedsBuilding> ListOfInRangeNeedBuildings { get; protected set; }
 
 	public LandTile(){}
 	public LandTile(int x, int y){
@@ -132,46 +106,63 @@ public class LandTile : Tile,IXmlSerializable {
 		this.y = y;
 		_type = TileType.Ocean; 
 	} 
-
-	// The function we callback any time our tile's data changes
-	Action<Tile,Structure> cbTileStructureChanged;
-	/// <summary>
-	/// Register a function to be called back when our tile type changes.
-	/// </summary>
-	public override void RegisterTileStructureChangedCallback(Action<Tile,Structure> callback) {
-		cbTileStructureChanged += callback;
+	public LandTile(int x, int y,Tile t){
+		this.x = x;
+		this.y = y;
+        Elevation = t.Elevation;
+        SpriteName = t.SpriteName;
+		_type = t.Type;
 	}
 
-	/// <summary>
-	/// Unregister a callback.
-	/// </summary>
-	public override void UnregisterTileStructureChangedCallback(Action<Tile,Structure> callback) {
-		cbTileStructureChanged -= callback;
+	// The function we callback any time our tile's structure changes
+	//some how the first == now is sometimes null even tho it IS NOT NULL
+	//second one is the old ! that one is working
+	Action<Structure,Structure> cbTileOldNewStructureChanged;
+    Action<Tile, Structure> cbTileStructureChanged;
+    /// <summary>
+    /// Register a function to be called back when our tile type changes.
+    /// </summary>
+    public override void RegisterTileOldNewStructureChangedCallback(Action<Structure,Structure> callback) {
+		cbTileOldNewStructureChanged += callback;
 	}
-
-	public override void addNeedStructure(NeedsBuilding ns){
+	public override void UnregisterOldNewTileStructureChangedCallback(Action<Structure,Structure> callback) {
+		cbTileOldNewStructureChanged -= callback;
+	}
+    public override void RegisterTileStructureChangedCallback(Action<Tile, Structure> callback) {
+        cbTileStructureChanged += callback;
+    }
+    public override void UnregisterTileStructureChangedCallback(Action<Tile, Structure> callback) {
+        cbTileStructureChanged -= callback;
+    }
+    public override void AddNeedStructure(NeedsBuilding ns){
 		if(IsBuildType (Type)== false){
 			return;
 		}
-		if (listOfInRangeNeedBuildings == null) {
-			listOfInRangeNeedBuildings = new List<NeedsBuilding> ();
+        if(ns.City != MyCity) {
+            return;
+        }
+        if (ListOfInRangeNeedBuildings == null) {
+			ListOfInRangeNeedBuildings = new List<NeedsBuilding> ();
 		}
-		listOfInRangeNeedBuildings.Add (ns);
+		ListOfInRangeNeedBuildings.Add (ns);
 	}
-	public override void removeNeedStructure(NeedsBuilding ns){
+	public override void RemoveNeedStructure(NeedsBuilding ns){
 		if(IsBuildType (Type)== false){
 			return;
 		}
-		if (listOfInRangeNeedBuildings == null) {
+		if (ListOfInRangeNeedBuildings == null) {
 			return;
 		}
-		if (listOfInRangeNeedBuildings.Contains (ns) == false) {
+        if (ListOfInRangeNeedBuildings.Contains (ns) == false) {
 			return;
 		}
-		listOfInRangeNeedBuildings.Remove (ns);
+		ListOfInRangeNeedBuildings.Remove (ns);
 	}
 
-	public override List<NeedsBuilding > getListOfInRangeNeedBuildings (){
-		return listOfInRangeNeedBuildings;
+	public override List<NeedsBuilding > GetListOfInRangeNeedBuildings (){
+		return ListOfInRangeNeedBuildings;
+	}
+	public override string ToString (){
+		return string.Format ("[LAND: X={0}, Y={1}, Structure={2}, myCity={3}]", X, Y, Structure, MyCity.ToString());
 	}
 }

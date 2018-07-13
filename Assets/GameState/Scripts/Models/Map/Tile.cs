@@ -1,9 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 using System;
-using System.Xml;
-using System.Xml.Schema;
-using System.Xml.Serialization;
+using Newtonsoft.Json;
+
 /// <summary>
 /// /*Tile type.*/
 /// Ocean = Water outside of Islands -> have no own GameObjects
@@ -17,42 +16,43 @@ using System.Xml.Serialization;
 /// Jungle = Exotic goods Love it here
 /// Mountain = you cant build anything here except mines(andso)
 /// </summary>
-public enum TileType { Ocean, Shore, Water, Dirt, Grass, Stone, Desert, Steppe, Jungle, Mountain };
+public enum TileType { Ocean, Shore, Cliff, Water, Dirt, Grass, Stone, Desert, Steppe, Jungle, Mountain };
 public enum TileMark { None, Highlight, Dark, Reset }
 
-public class Tile : IXmlSerializable {
-
-	[XmlAttribute("X")]
-	protected int x;
-	[XmlAttribute("Y")]
-	protected int y;
+[JsonObject(MemberSerialization.OptIn)]
+public class Tile : IComparable<Tile>, IEqualityComparer<Tile> {
+	
+	[JsonPropertyAttribute] protected int x;
+	[JsonPropertyAttribute] protected int y;
 	public int X {
 		get {
 			return x;
 		}
 	}
-
 	public int Y {
 		get {
 			return y;
 		}
 	}
-	public virtual string SpriteName {
+	public float Elevation;
+	public float Moisture;
+
+    [JsonPropertyAttribute]
+    public virtual string SpriteName {
 		get { return null; }
 		set {
 		}
 	}
+	public Vector3 Vector { get {return new Vector3 (x, y, 0);} }
 
-    public Path_TileGraph pathfinding;
-
-	public Vector3 vector { get {return new Vector3 (x, y, 0);} }
 	public Tile(){}
 	public Tile(int x, int y){
 		this.x = x;
 		this.y = y;
 		_type = TileType.Ocean;
 	}
-	protected TileType _type = TileType.Ocean;
+
+	[JsonPropertyAttribute] protected TileType _type = TileType.Ocean;
 	public TileType Type {
 		get { return _type; }
 		set {
@@ -75,10 +75,10 @@ public class Tile : IXmlSerializable {
 			if (Structure == null){
 				return 1;
 			}
-			if (Structure.myBuildingTyp != BuildingTyp.Pathfinding && Structure.canBeBuildOver==false){
+			if (Structure.MyBuildingTyp != BuildingTyp.Pathfinding && Structure.CanBeBuildOver==false){
 				return float.PositiveInfinity;
 			}
-			if (Structure.myBuildingTyp == BuildingTyp.Pathfinding){
+			if (Structure.MyBuildingTyp == BuildingTyp.Pathfinding){
 				return 0.25f;
 			}
 			return 1;
@@ -113,27 +113,27 @@ public class Tile : IXmlSerializable {
 
 		Tile n;
 
-		n = World.current.GetTileAt(X, Y + 1);
+		n = World.Current.GetTileAt(X, Y + 1);
 		//NORTH
 		ns[0] = n;  // Could be null, but that's okay.
 		//WEST
-		n = World.current.GetTileAt(X + 1, Y);
+		n = World.Current.GetTileAt(X + 1, Y);
 		ns[1] = n;  // Could be null, but that's okay.
 		//SOUTH
-		n = World.current.GetTileAt(X, Y - 1);
+		n = World.Current.GetTileAt(X, Y - 1);
 		ns[2] = n;  // Could be null, but that's okay.
 		//EAST
-		n = World.current.GetTileAt(X - 1, Y);
+		n = World.Current.GetTileAt(X - 1, Y);
 		ns[3] = n;  // Could be null, but that's okay.
 
 		if (diagOkay == true) {
-			n = World.current.GetTileAt(X + 1, Y + 1);
+			n = World.Current.GetTileAt(X + 1, Y + 1);
 			ns[4] = n;  // Could be null, but that's okay.
-			n = World.current.GetTileAt(X + 1, Y - 1);
+			n = World.Current.GetTileAt(X + 1, Y - 1);
 			ns[5] = n;  // Could be null, but that's okay.
-			n = World.current.GetTileAt(X - 1, Y - 1);
+			n = World.Current.GetTileAt(X - 1, Y - 1);
 			ns[6] = n;  // Could be null, but that's okay.
-			n = World.current.GetTileAt(X - 1, Y + 1);
+			n = World.Current.GetTileAt(X - 1, Y + 1);
 			ns[7] = n;  // Could be null, but that's okay.
 		}
 
@@ -141,39 +141,44 @@ public class Tile : IXmlSerializable {
 	}
 
 	public Tile North() {
-		return World.current.GetTileAt(X, Y + 1);
+		return World.Current.GetTileAt(X, Y + 1);
 	}
 	public Tile South() {
-		return World.current.GetTileAt(X, Y - 1);
+		return World.Current.GetTileAt(X, Y - 1);
 	}
 	public Tile East() {
-		return World.current.GetTileAt(X + 1, Y);
+		return World.Current.GetTileAt(X + 1, Y);
 	}
 	public Tile West() {
-		return World.current.GetTileAt(X - 1, Y);
+		return World.Current.GetTileAt(X - 1, Y);
 	}
 	/// <summary>
 	/// Checks if Structure can be placed on the tile.
 	/// </summary>
 	/// <returns><c>true</c>, if tile is buildable, <c>false</c> otherwise.</returns>
-	/// <param name="t">Tile to check, canBeBuildOnShore if shore tiles are ok</param>
-	public virtual bool checkTile(Tile t, bool canBeBuildOnShore =false, bool canBeBuildOnMountain =false){
-		if(t.Type == TileType.Ocean){
+	/// <param name="t"> if its ok to be build on special tiletypes, forced means if it has to be true for either mountain/shore</param>
+	public virtual bool CheckTile(bool mustBeShore =false, bool mustBeMountain =false){
+		if(mustBeShore){
+			return Type == TileType.Shore;
+		}
+		if(mustBeMountain){
+			return Type == TileType.Mountain;
+		}
+
+		if(Type == TileType.Ocean){
 			return false;
 		}
-		if(t.Type == TileType.Mountain && canBeBuildOnMountain ==false){
+		if(Type == TileType.Mountain){
 			return false;
 		}
-		if(t.Type == TileType.Stone){
+		if(Type == TileType.Stone){
 			return false;
 		}
-		if(canBeBuildOnShore == false){
-			if(t.Type == TileType.Shore){
-				return false;
-			}
+		if(Type == TileType.Shore){
+			return false;
 		}
-		if(t.Structure != null ) {
-			if(t.Structure.canBeBuildOver == false){ 
+		if(Structure != null) {
+			if(Structure.CanBeBuildOver == false){ 
 				return false;
 			}
 		}
@@ -222,56 +227,122 @@ public class Tile : IXmlSerializable {
 		set {
 		}
 	}
-	public virtual Island myIsland { get { return null; } set { } }
-	public virtual City myCity { 
+	public virtual Island MyIsland { get { return null; } set { } }
+	public virtual City MyCity { 
 		get{
 			return null;
 		} 
 		set {
 		} 
 	}
-	public virtual TileMark TileState {
-		get { return TileMark.None;}
-		set { 
+
+	public float DistanceFromVector(Vector3 vec){
+		return Vector3.Distance (this.Vector, vec);
+	}
+	public bool IsInRange(Vector3 vec,float Range){
+		return Vector3.Distance (this.Vector, vec) <= Range;
+	}
+	/// <summary>
+	/// Register a function to be called back when our tile structure changes.
+    /// --NEW--OLD--
+	/// </summary>
+	public virtual void RegisterTileOldNewStructureChangedCallback(Action<Structure,Structure> callback) {
+	}
+    /// <summary>
+	/// Register a function to be called back when our tile structure changes.
+    /// --This tile--NEW--
+	/// </summary>
+    public virtual void RegisterTileStructureChangedCallback(Action<Tile, Structure> callback) {
+    }
+    public virtual void UnregisterTileStructureChangedCallback(Action<Tile, Structure> callback) {
+    }
+    /// <summary>
+    /// Unregister a callback.
+    /// </summary>
+    public virtual void UnregisterOldNewTileStructureChangedCallback(Action<Structure,Structure> callback) {
+	}
+	public virtual void AddNeedStructure(NeedsBuilding ns){
+	}
+	public virtual void RemoveNeedStructure(NeedsBuilding ns){
+	}
+	public virtual List<NeedsBuilding> GetListOfInRangeNeedBuildings(){
+		return null;
+	}
+    override public String ToString() {
+		return "tile_" + X + "_" + Y+"_"+Type+"";
+	}
+
+	public static Vector2 ToStringToTileVector(String tileToString){
+		string[] datas = tileToString.Split ('_');
+		if(datas.Length != 3){
+			Debug.LogError ("Tried to call this with a wrong string.");
+			return Vector2.zero;
 		}
-	}
-	/// <summary>
-	/// Register a function to be called back when our tile type changes.
-	/// </summary>
-	public virtual void RegisterTileStructureChangedCallback(Action<Tile,Structure> callback) {
+		if(datas[0]!="tile"){
+			Debug.LogError ("Tried to call this without a correct tile string.");
+			return Vector2.zero;
+		}
+		return new Vector2 (int.Parse (datas [1]), int.Parse (datas [2]));
+
 	}
 
-	/// <summary>
-	/// Unregister a callback.
-	/// </summary>
-	public virtual void UnregisterTileStructureChangedCallback(Action<Tile,Structure> callback) {
+
+	public override bool Equals (object obj) {
+		// If parameter cannot be cast to ThreeDPoint return false:
+		Tile t = obj as Tile;
+		if ((object)t == null){
+			return false;
+		}
+		// Return true if the fields match:
+		return t.X == X && t.Y == Y;
 	}
-	public virtual void addNeedStructure(NeedsBuilding ns){
+	public override int GetHashCode(){
+		return X ^ Y;
 	}
-	public virtual void removeNeedStructure(NeedsBuilding ns){
+	public static bool operator ==(Tile a, Tile b){
+		// If both are null, or both are same instance, return true.
+		if (System.Object.ReferenceEquals(a, b)){
+			return true;
+		}
+
+		// If one is null, but not both, return false.
+		if (((object)a == null) || ((object)b == null)){
+			return false;
+		}
+
+		// Return true if the fields match:
+		return a.X == b.X && a.Y == b.Y;
 	}
-	public virtual List<NeedsBuilding> getListOfInRangeNeedBuildings(){
-		return null;
-	}
-	public String toString() {
-		return "tile_" + X + "_" + Y+"-("+Type+")";
-	}
-	//////////////////////////////////////////////////////////////////////////////////////
-	/// 
-	/// 						SAVING & LOADING
-	/// 
-	//////////////////////////////////////////////////////////////////////////////////////
-	public XmlSchema GetSchema() {
-		return null;
+	public static bool operator !=(Tile a, Tile b){
+		// If both are null, or both are same instance, return false.
+		if (System.Object.ReferenceEquals(a, b)){
+			return false;
+		}
+
+		// If one is null, but not both, return true.
+		if (((object)a == null) || ((object)b == null)){
+			return true;
+		}
+
+		// Return true if the fields not match:
+		return a.X != b.X || a.Y != b.Y;
 	}
 
-	public void WriteXml(XmlWriter writer) {
-		writer.WriteAttributeString( "X", X.ToString() );
-		writer.WriteAttributeString( "Y", Y.ToString() );
-		writer.WriteAttributeString( "Type", ((int)Type).ToString() );
+	#region IComparable implementation
+	public int CompareTo (Tile other) {
+		return X.CompareTo (other.X)*Y.CompareTo (other.Y);
+	}
+	#endregion
+
+	#region IEqualityComparer implementation
+
+	public bool Equals (Tile x, Tile y) {
+		return x.X == y.X && x.Y == y.Y;
 	}
 
-	public void ReadXml(XmlReader reader) {
-		Type = (TileType)int.Parse( reader.GetAttribute("Type") );
+	public int GetHashCode (Tile obj) {
+		return x ^ y;
 	}
+
+	#endregion
 }

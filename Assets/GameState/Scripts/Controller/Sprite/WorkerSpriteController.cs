@@ -5,15 +5,21 @@ public class WorkerSpriteController : MonoBehaviour {
 	private Dictionary<string, Sprite> unitSprites;
 	public Dictionary<Worker, GameObject> workerToGO;
 	CameraController cc;
-
+	public List<Worker> loadedWorker;
 	// Use this for initialization
 	void Start () {
 		workerToGO = new Dictionary<Worker, GameObject> ();
 		LoadSprites ();
 		cc = FindObjectOfType<CameraController> ();
-		WorldController.Instance.world.RegisterWorkerCreated (OnWorkerCreated);
+        loadedWorker = SaveController.GetLoadWorker();
+        if (loadedWorker!=null){
+			foreach (Worker item in loadedWorker) {
+				OnWorkerCreated (item);
+			}
+		}
+		World.Current.RegisterWorkerCreated (OnWorkerCreated);
+
 	}
-	
 	// Update is called once per frame
 	void Update () {
 		//if worker change they gonna be created if they dont exist
@@ -25,9 +31,9 @@ public class WorkerSpriteController : MonoBehaviour {
 		// the object's into changes.
 		w.RegisterOnChangedCallback(OnWorkerChanged);
 		w.RegisterOnDestroyCallback(OnWorkerDestroy);
-		if (cc.CameraViewRange.Contains (new Vector2 (w.X, w.Y))==false){
-			return;
-		}
+//		if (cc.CameraViewRange.Contains (new Vector2 (w.X, w.Y))==false){
+//			return;
+//		}
 
 		// Create a visual GameObject linked to this data.
 		GameObject char_go = new GameObject();
@@ -35,7 +41,7 @@ public class WorkerSpriteController : MonoBehaviour {
 		// Add our tile/GO pair to the dictionary.
 		workerToGO.Add(w, char_go);
 
-		char_go.name = w.myHome.name + " - Worker";
+		char_go.name = " - Worker";
 		char_go.transform.position = new Vector3(w.X,w.Y,0);
 		Vector3 v = char_go.transform.rotation.eulerAngles;
 		char_go.transform.rotation.eulerAngles.Set(v.x,v.y,w.Z);
@@ -58,7 +64,7 @@ public class WorkerSpriteController : MonoBehaviour {
 	}
 	void OnWorkerDestroy(Worker w) {
 		if (workerToGO.ContainsKey(w) == false) {
-			Debug.LogError("OnWorkerDestroy.");
+			//Debug.LogError("OnWorkerDestroy.");
 			return;
 		}
 		GameObject.Destroy (workerToGO [w]);
@@ -70,5 +76,8 @@ public class WorkerSpriteController : MonoBehaviour {
 		foreach (Sprite s in sprites) {
 			unitSprites[s.name] = s;
 		}
+	}
+	void OnDestroy() {
+		WorldController.Instance.World.UnregisterWorkerCreated (OnWorkerCreated);
 	}
 }

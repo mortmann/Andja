@@ -27,9 +27,9 @@ public class Pirate : MonoBehaviour {
 		foreach(Ship s in myShips){
 			//check for ships that needs commands?
 			if(s.pathfinding.IsAtDest){
-				int x = Random.Range (0,World.current.Width);
-				int y = Random.Range (0,World.current.Height);
-				Tile t = World.current.GetTileAt (x, y);
+				int x = Random.Range (0,World.Current.Width);
+				int y = Random.Range (0,World.Current.Height);
+				Tile t = World.Current.GetTileAt (x, y);
 				if(t.Type==TileType.Ocean)
 					s.AddMovementCommand (t);
 			}
@@ -37,10 +37,10 @@ public class Pirate : MonoBehaviour {
 	}
 
 	public void AddShip(){
-		Tile t = World.current.GetTileAt (Random.Range (0, World.current.Height), 0);
-		Ship s = (Ship)World.current.CreateUnit (t, -1, true);
-		s.RegisterOnDestroyCallback (OnShipDestroy);
-		myShips.Add (s);
+		//Tile t = World.Current.GetTileAt (Random.Range (0, World.Current.Height), 0);
+		//Ship s = (Ship)World.Current.CreateUnit (t, -1, true);
+		//s.RegisterOnDestroyCallback (OnShipDestroy);
+		//myShips.Add (s);
 	}
 	public void OnShipDestroy(Unit u){
 		myShips.Remove ((Ship)u);

@@ -1,31 +1,40 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 using System;
-using System.Xml;
-using System.Xml.Schema;
-using System.Xml.Serialization;
+using Newtonsoft.Json;
 
-public class Worker : IXmlSerializable {
-	#region runtimeVariables
-	public OutputStructure myHome;
-	Pathfinding path;
-	public bool isAtHome;
-	Inventory inventory;
-	public OutputStructure workStructure;
-	Tile destTile;
-	Tile currTile;
+[JsonObject(MemberSerialization.OptIn)]
+public class Worker {
+	#region Serialize
+	[JsonPropertyAttribute] public OutputStructure myHome;
+	[JsonPropertyAttribute] Pathfinding path;
+	[JsonPropertyAttribute] float doTimer;
+	[JsonPropertyAttribute] Item[] toGetItems;
+	//[JsonPropertyAttribute] int[] toGetAmount;
+	[JsonPropertyAttribute] Inventory inventory;
+	[JsonPropertyAttribute] bool goingToWork;
+	[JsonPropertyAttribute] public bool isAtHome;
+    [JsonPropertyAttribute] private OutputStructure _workStructure;
+
+    #endregion
+    #region runtimeVariables
+    public OutputStructure WorkStructure {
+        set {
+            _workStructure = value;
+        }
+        get {
+            return _workStructure;
+        }
+    }
 	Action<Worker> cbWorkerChanged;
 	Action<Worker> cbWorkerDestroy;
 	Action<Worker, string> cbSoundCallback;
+    bool hasRegistered;
 	//TODO sound
 	string soundWorkName="";//idk how to load/read this in? has this the workstructure not worker???
-	float doTimer;
 	#endregion
 	#region readInVariables
 	bool hasToFollowRoads;
-	bool goingToWork;
-	Item[] toGetItems;
-	int[] toGetAmount;
 	float workTime = 1f;
 	#endregion
 	public float X {
@@ -43,13 +52,13 @@ public class Worker : IXmlSerializable {
 			return path.Y;
 		}
 	}
-	public Worker(Structure myHome, OutputStructure structure,Item[] toGetItems = null, bool hasToFollowRoads = true){
+	public Worker(OutputStructure myHome, OutputStructure structure,Item[] toGetItems = null, bool hasToFollowRoads = true){
 		if(myHome is OutputStructure ==false){
 			Debug.LogError ("Home is not OutputStructure--if this should be possible redesign");
 			return;
 		}
-		this.myHome = (OutputStructure)myHome;
-		workStructure = structure;
+		this.myHome = myHome;
+		WorkStructure = structure;
 		this.hasToFollowRoads = hasToFollowRoads;
 		if (structure is MarketBuilding == false) {
 			structure.outputClaimed = true;
@@ -61,78 +70,98 @@ public class Worker : IXmlSerializable {
 		SetGoalStructure(structure);
 		this.toGetItems = toGetItems;
 	}
-	public Worker(Structure myHome, OutputStructure structure,Item[] toGetItems,int[] toGetAmount, bool hasToFollowRoads = false){
-		if(myHome is OutputStructure ==false){
-			Debug.LogError ("Home is not OutputStructure--if this should be possible redesign");
-			return;
-		}
-		this.myHome = (OutputStructure)myHome;
-		workStructure = structure;
-		this.toGetAmount = toGetAmount;
-		this.hasToFollowRoads = hasToFollowRoads;
-		if (structure is MarketBuilding == false) {
-			structure.outputClaimed = true;
-		}
-		isAtHome = false;
-		goingToWork = true;
-		inventory = new Inventory (4);
-		doTimer = workTime;
-		SetGoalStructure(structure);
-		this.toGetItems = toGetItems;
-	}
-	public Worker(Structure myHome, bool hasToFollowRoads = true){
-		if(myHome is OutputStructure ==false){
-			Debug.LogError ("Home is not OutputStructure--if this should be possible redesign");
-			return;
-		}
-		this.myHome = (OutputStructure)myHome;		
-		isAtHome = false;
-		goingToWork = true;
-		inventory = new Inventory (4);
-		doTimer = workTime;
-	}
+	//public Worker(OutputStructure myHome, OutputStructure structure,Item[] toGetItems,int[] toGetAmount, bool hasToFollowRoads = false){
+	//	if(myHome is OutputStructure ==false){
+	//		Debug.LogError ("Home is not OutputStructure--if this should be possible redesign");
+	//		return;
+	//	}
+	//	this.myHome = myHome;
+ //       WorkStructure = structure;
+	//	this.toGetAmount = toGetAmount;
+	//	this.hasToFollowRoads = hasToFollowRoads;
+	//	if (structure is MarketBuilding == false) {
+	//		structure.outputClaimed = true;
+	//	}
+	//	isAtHome = false;
+	//	goingToWork = true;
+	//	inventory = new Inventory (4);
+	//	doTimer = workTime;
+	//	SetGoalStructure(structure);
+	//	this.toGetItems = toGetItems;
+	//}
+	//public Worker(OutputStructure myHome, bool hasToFollowRoads = true){
+	//	if(myHome is OutputStructure ==false){
+	//		Debug.LogError ("Home is not OutputStructure--if this should be possible redesign");
+	//		return;
+	//	}
+	//	this.myHome = myHome;		
+	//	isAtHome = false;
+	//	goingToWork = true;
+	//	inventory = new Inventory (4);
+	//	doTimer = workTime;
+	//}
+	public Worker(){
+		SaveController.AddWorkerForLoad (this);
+    }
+    public void OnWorkStructureDestroy(Structure str) {
+        if(str != WorkStructure) {
+            Debug.LogError("OnWorkStructureDestroy called on not workstructure destroy!");
+            return;
+        }
+        WorkStructure = null;
+        GoHome();
+    }
 	public void Update(float deltaTime){
+		if(myHome==null){
+			Debug.LogError ("worker has no myHome -> for now set it manually");
+			return;
+		}
 		if(myHome.isActive==false){
 			GoHome ();
 		} 
 		if(myHome.Efficiency <= 0){
 			GoHome ();
 		}
-		//worker can only work if
-		// -homeStructure is active
-		// -goalStructure can be reached -> search new goal
-		// -goalStructure has smth to be worked eg grown/has output
-		// -Efficiency of home > 0
-		// -home is not full (?) maybe second worker?
-		//If any of these are false the worker should return to home
-		//except there is no way to home then remove
-
-		if(path == null){
-			if (destTile != null) {
-				if(destTile.Structure is OutputStructure)
-					SetGoalStructure ((OutputStructure)destTile.Structure);
-			}
+        if (hasRegistered == false) {
+            _workStructure.RegisterOnDestroyCallback(OnWorkStructureDestroy);
+            hasRegistered = true;
+        }
+        //worker can only work if
+        // -homeStructure is active
+        // -goalStructure can be reached -> search new goal
+        // -goalStructure has smth to be worked eg grown/has output
+        // -Efficiency of home > 0
+        // -home is not full (?) maybe second worker?
+        //If any of these are false the worker should return to home
+        //except there is no way to home then remove
+        if (path == null){
+			//if (destTile != null) {
+			//	if(destTile.Structure is OutputStructure)
+			//		SetGoalStructure ((OutputStructure)destTile.Structure);
+			//}
 			//theres no goal so delete it after some time?
 			Debug.Log ("worker has no goal");
+            GoHome();
 			return;
-		}
+		}		
+
 		//do the movement 
 		path.Update_DoMovement (deltaTime);
-		if(cbWorkerChanged != null)
-			cbWorkerChanged(this);
-		if (path.IsAtDest==false) {
-			Debug.LogWarning ("if this is not working this is the error ^ was magnitude of move");
+
+        cbWorkerChanged?.Invoke(this);
+
+        if (path.IsAtDest==false) {
 			return;
 		}
-		if (goingToWork == false) {
-			// coming home from doing the work
-			// drop off the items its carrying
-			DropOffItems (deltaTime);
+		if (goingToWork) {
+            //if we are here this means we're
+            //AT the destination and can start working
+            DoWork(deltaTime);
 		} else {
-			//if we are here this means we're
-			//AT the destination and can start working
-			DoWork (deltaTime);
-		}
+            // coming home from doing the work
+            // drop off the items its carrying
+            DropOffItems(deltaTime);
+        }
 	}
 	public void DropOffItems(float deltaTime){
 		doTimer -= deltaTime;
@@ -140,13 +169,13 @@ public class Worker : IXmlSerializable {
 			return;
 		}
 		if (myHome is MarketBuilding) {
-			((MarketBuilding)myHome).City.myInv.addIventory (inventory);
+			((MarketBuilding)myHome).City.inventory.AddIventory (inventory);
 		} else
 		if (myHome is ProductionBuilding) {
-			((ProductionBuilding)myHome).addToIntake (inventory); 
+			((ProductionBuilding)myHome).AddToIntake (inventory); 
 		} else {
 			//this home is a OutputBuilding or smth that takes it to output
-			myHome.addToOutput (inventory);
+			myHome.AddToOutput (inventory);
 		}
 		isAtHome = true;
 		path = null;
@@ -159,60 +188,59 @@ public class Worker : IXmlSerializable {
 		//do its job -- get the items in tile
 		doTimer -= deltaTime;
 		if (doTimer > 0) {
-			if(cbSoundCallback!=null){
-				cbSoundCallback (this, soundWorkName);
-			}
-			return;
+            cbSoundCallback?.Invoke(this, soundWorkName);
+            return;
 		}
-		if (workStructure != null) {
+		if(WorkStructure == null&& path.DestTile != null&& path.DestTile.Structure is OutputStructure){
+            WorkStructure = (OutputStructure)path.DestTile.Structure;
+		}
+		if (WorkStructure != null) {
 			if (toGetItems == null) {
-				foreach (Item item in workStructure.getOutput ()) {
-					inventory.addItem (item);
+				foreach (Item item in WorkStructure.GetOutput ()) {
+					inventory.AddItem (item);
 				}
 			} 
-			if(workStructure is MarketBuilding){
-				foreach (Item item in workStructure.getOutput (toGetItems,toGetAmount)) {
-					inventory.addItem (item);
+			if (toGetItems != null) {
+				foreach (Item item in WorkStructure.GetOutputWithItemCountAsMax (toGetItems)) {
+					inventory.AddItem (item);
 				}
 			}
-
-			workStructure.outputClaimed = false;
+			if(WorkStructure is MarketBuilding){
+				foreach (Item item in WorkStructure.GetOutputWithItemCountAsMax (toGetItems)) {
+                    if (item == null) {
+                        Debug.LogError("item is null for to get item! Worker is from " +WorkStructure);
+                    }
+					inventory.AddItem (item);
+				}
+			}
+            WorkStructure.UnregisterOnDestroyCallback(OnWorkStructureDestroy);
+            WorkStructure.outputClaimed = false;
 			doTimer = workTime/2;
 			goingToWork = false;
 			path.Reverse ();
-			path.IsAtDest = false;
 		}
+//		Debug.Log ("WORK completed!");
 	}
 
 
 	public void Destroy() {
 		if (goingToWork)
-			workStructure.resetOutputClaimed ();
-		if(cbWorkerDestroy != null)
-			cbWorkerDestroy(this);
-	}
+            WorkStructure.ResetOutputClaimed ();
+        cbWorkerDestroy?.Invoke(this);
+    }
 	public void SetGoalStructure(OutputStructure structure){
 		if(structure == null){
 			return;
 		}
-		if(structure!=null){
-			goingToWork = true;
+        if (hasToFollowRoads == false) {
+			path = new TilesPathfinding ();
+			((TilesPathfinding)path).SetDestination (new List<Tile>(myHome.neighbourTiles),new List<Tile>(structure.neighbourTiles));
 		} else {
-			goingToWork = false;
+			path = new RoutePathfinding();
+			((RoutePathfinding)path).SetDestination (myHome.RoadsAroundStructure (),structure.RoadsAroundStructure ());
 		}
-		//job_dest_tile = tile;
-		if (hasToFollowRoads == false) {
-			path_mode pm = path_mode.islandMultipleStartpoints;
-			path = new Pathfinding (new List<Tile>(myHome.neighbourTiles),new List<Tile>(structure.neighbourTiles),1.5f,pm);
-		} else {
-			path = new Pathfinding (myHome.roadsAroundStructure (),structure.roadsAroundStructure (),1.5f);
-		}
-		if (currTile != null) {
-			path.currTile = currTile;
-			currTile = null;
-			destTile = null;
-		}
-	}
+        _workStructure = structure;
+    }
 
 	public void RegisterOnChangedCallback(Action<Worker> cb) {
 		cbWorkerChanged += cb;
@@ -236,38 +264,5 @@ public class Worker : IXmlSerializable {
 	public void UnregisterOnSoundCallback (Action<Worker, string> cb) {
 		cbSoundCallback -= cb;
 	}
-
-	//////////////////////////////////////////////////////////////////////////////////////
-	/// 
-	/// 						SAVING & LOADING
-	/// 
-	//////////////////////////////////////////////////////////////////////////////////////
-	public XmlSchema GetSchema() {
-		return null;
-	}
-	public void WriteXml(XmlWriter writer){
-		writer.WriteAttributeString("currTile_X", path.currTile.X.ToString () );
-		writer.WriteAttributeString("currTile_Y", path.currTile.Y.ToString () );
-		writer.WriteAttributeString("destTile_X", workStructure.JobTile.X.ToString () );
-		writer.WriteAttributeString("destTile_Y", workStructure.JobTile.Y.ToString () );
-		writer.WriteAttributeString("goingToWork", goingToWork.ToString () );
-		writer.WriteStartElement("Inventory");
-		inventory.WriteXml(writer);
-		writer.WriteEndElement();
-	}
-	public void ReadXml (XmlReader reader){
-		isAtHome = false;
-		int dx = int.Parse( reader.GetAttribute("destTile_X") );
-		int dy = int.Parse( reader.GetAttribute("destTile_Y") );
-		destTile = WorldController.Instance.world.GetTileAt (dx,dy);
-		int cx = int.Parse( reader.GetAttribute("currTile_X") );
-		int cy = int.Parse( reader.GetAttribute("currTile_Y") );
-		currTile = WorldController.Instance.world.GetTileAt (cx,cy);
-		goingToWork = bool.Parse (reader.GetAttribute ("goingToWork"));
-
-		reader.ReadToDescendant ("Inventory");
-		inventory = new Inventory ();
-		inventory.ReadXml (reader);
-
-	}
+		
 }

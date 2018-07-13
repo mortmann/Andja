@@ -1,519 +1,758 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<Items>
-	<Item ID="1">
-		<SatisfiesNeed>-1</SatisfiesNeed>
-		<Decays>-1</Decays>
-		<EN_Name>Wood</EN_Name>
-		<DE_Name>Holz</DE_Name>
-	</Item>
-	<Item ID="2">
-		<SatisfiesNeed>-1</SatisfiesNeed>
-		<Decays>-1</Decays>
-		<EN_Name>Tools</EN_Name>
-		<DE_Name>Werkzeug</DE_Name>
-	</Item>
-	<Item ID="3">
-		<SatisfiesNeed>-1</SatisfiesNeed>
-		<Decays>-1</Decays>
-		<EN_Name>Stone</EN_Name>
-		<DE_Name>Stein</DE_Name>
-	</Item>
-	<Item ID="4">
-		<SatisfiesNeed>-1</SatisfiesNeed>
-		<Decays>-1</Decays>
-		<EN_Name>Brick</EN_Name>
-		<DE_Name>Ziegel</DE_Name>
-	</Item>
-	<Item ID="5">
-		<SatisfiesNeed>-1</SatisfiesNeed>
-		<Decays>-1</Decays>
-		<EN_Name>Glas</EN_Name>
-		<DE_Name>Glas</DE_Name>
-	</Item>
-	<Item ID="6">
-		<SatisfiesNeed>-1</SatisfiesNeed>
-		<Decays>-1</Decays>
-		<EN_Name>Marble</EN_Name>
-		<DE_Name>Marmor</DE_Name>
-	</Item>
-	<Item ID="7">
-		<SatisfiesNeed>-1</SatisfiesNeed>
-		<Decays>-1</Decays>
-		<EN_Name>Luxury Wood</EN_Name>
-		<DE_Name>Luxusholz</DE_Name>
-	</Item>
-	<Item ID="20">
-		<SatisfiesNeed>-1</SatisfiesNeed>
-		<Decays>-1</Decays>
-		<EN_Name>Iron Ore</EN_Name>
-		<DE_Name>Eisenerz</DE_Name>
-	</Item>
-	<Item ID="21">
-		<SatisfiesNeed>-1</SatisfiesNeed>
-		<Decays>-1</Decays>
-		<EN_Name>Iron Ingot</EN_Name>
-		<DE_Name>Eisenrohling</DE_Name>
-	</Item>
-	<Item ID="22">
-		<SatisfiesNeed>-1</SatisfiesNeed>
-		<Decays>-1</Decays>
-		<EN_Name>Coal</EN_Name>
-		<DE_Name>Kohle</DE_Name>
-	</Item>
-	<Item ID="23">
-		<SatisfiesNeed>-1</SatisfiesNeed>
-		<Decays>-1</Decays>
-		<EN_Name>Venison</EN_Name>
-		<DE_Name>Wildfleisch</DE_Name>
-	</Item>
-	<Item ID="24">
-		<SatisfiesNeed>-1</SatisfiesNeed>
-		<Decays>-1</Decays>
-		<EN_Name>Clay</EN_Name>
-		<DE_Name>Lehm</DE_Name>
-	</Item>
-	<Item ID="25">
-		<SatisfiesNeed>-1</SatisfiesNeed>
-		<Decays>-1</Decays>
-		<EN_Name>Sand</EN_Name>
-		<DE_Name>Sand</DE_Name>
-	</Item>
-	<Item ID="26">
-		<SatisfiesNeed>-1</SatisfiesNeed>
-		<Decays>-1</Decays>
-		<EN_Name>Quartz</EN_Name>
-		<DE_Name>Quarz</DE_Name>
-	</Item>
-	<Item ID="27">
-		<SatisfiesNeed>-1</SatisfiesNeed>
-		<Decays>-1</Decays>
-		<EN_Name>Fish</EN_Name>
-		<DE_Name>Fisch</DE_Name>
-	</Item>
-	<Item ID="28">
-		<SatisfiesNeed>-1</SatisfiesNeed>
-		<Decays>-1</Decays>
-		<EN_Name>Wheat</EN_Name>
-		<DE_Name>Getreide</DE_Name>
-	</Item>
-	<Item ID="29">
-		<SatisfiesNeed>-1</SatisfiesNeed>
-		<Decays>-1</Decays>
-		<EN_Name>Flour</EN_Name>
-		<DE_Name>Mehl</DE_Name>
-	</Item>
-	<Item ID="30">
-		<SatisfiesNeed>-1</SatisfiesNeed>
-		<Decays>-1</Decays>
-		<EN_Name>Bread</EN_Name>
-		<DE_Name>Brot</DE_Name>
-	</Item>
-	<Item ID="31">
-		<SatisfiesNeed>-1</SatisfiesNeed>
-		<Decays>-1</Decays>
-		<EN_Name>Pig</EN_Name>
-		<DE_Name>Schwein</DE_Name>
-	</Item>
-	<Item ID="32">
-		<SatisfiesNeed>-1</SatisfiesNeed>
-		<Decays>-1</Decays>
-		<EN_Name>Pig-Meat</EN_Name>
-		<DE_Name>Schweinefleisch</DE_Name>
-	</Item>
-	<Item ID="33">
-		<SatisfiesNeed>-1</SatisfiesNeed>
-		<Decays>-1</Decays>
-		<EN_Name>Hops</EN_Name>
-		<DE_Name>Hopfen</DE_Name>
-	</Item>
-	<Item ID="34">
-		<SatisfiesNeed>-1</SatisfiesNeed>
-		<Decays>-1</Decays>
-		<EN_Name>Beer</EN_Name>
-		<DE_Name>Bier</DE_Name>
-	</Item>
-	<Item ID="35">
-		<SatisfiesNeed>-1</SatisfiesNeed>
-		<Decays>-1</Decays>
-		<EN_Name>Sugar</EN_Name>
-		<DE_Name>Zucker</DE_Name>
-	</Item>
-	<Item ID="36">
-		<SatisfiesNeed>-1</SatisfiesNeed>
-		<Decays>-1</Decays>
-		<EN_Name>Rum</EN_Name>
-		<DE_Name>Rum</DE_Name>
-	</Item>
-	<Item ID="37">
-		<SatisfiesNeed>-1</SatisfiesNeed>
-		<Decays>-1</Decays>
-		<EN_Name>Potatoes</EN_Name>
-		<DE_Name>Kartoffeln</DE_Name>
-	</Item>
-	<Item ID="38">
-		<SatisfiesNeed>-1</SatisfiesNeed>
-		<Decays>-1</Decays>
-		<EN_Name>Fruits</EN_Name>
-		<DE_Name>Früchte</DE_Name>
-	</Item>
-	<Item ID="39">
-		<SatisfiesNeed>-1</SatisfiesNeed>
-		<Decays>-1</Decays>
-		<EN_Name>Liquor</EN_Name>
-		<DE_Name>Schnaps</DE_Name>
-	</Item>
-	<Item ID="40">
-		<SatisfiesNeed>-1</SatisfiesNeed>
-		<Decays>-1</Decays>
-		<EN_Name>Wine Grapes</EN_Name>
-		<DE_Name>Weintrauben</DE_Name>
-	</Item>
-	<Item ID="41">
-		<SatisfiesNeed>-1</SatisfiesNeed>
-		<Decays>-1</Decays>
-		<EN_Name>Casks</EN_Name>
-		<DE_Name>Fässer</DE_Name>
-	</Item>
-	<Item ID="42">
-		<SatisfiesNeed>-1</SatisfiesNeed>
-		<Decays>-1</Decays>
-		<EN_Name>Wine</EN_Name>
-		<DE_Name>Wein</DE_Name>
-	</Item>
-	<Item ID="43">
-		<SatisfiesNeed>-1</SatisfiesNeed>
-		<Decays>-1</Decays>
-		<EN_Name>Coffee Beans</EN_Name>
-		<DE_Name>Kaffeebohnen</DE_Name>
-	</Item>
-	<Item ID="44">
-		<SatisfiesNeed>-1</SatisfiesNeed>
-		<Decays>-1</Decays>
-		<EN_Name>Coffee</EN_Name>
-		<DE_Name>Kaffee</DE_Name>
-	</Item>
-	<Item ID="45">
-		<SatisfiesNeed>-1</SatisfiesNeed>
-		<Decays>-1</Decays>
-		<EN_Name>Cocoa</EN_Name>
-		<DE_Name>Kakao</DE_Name>
-	</Item>
-	<Item ID="46">
-		<SatisfiesNeed>-1</SatisfiesNeed>
-		<Decays>-1</Decays>
-		<EN_Name>Sweets</EN_Name>
-		<DE_Name>Süßigkeiten</DE_Name>
-	</Item>
-	<Item ID="47">
-		<SatisfiesNeed>-1</SatisfiesNeed>
-		<Decays>-1</Decays>
-		<EN_Name>Hemp</EN_Name>
-		<DE_Name>Hanf</DE_Name>
-	</Item>
-	<Item ID="48">
-		<SatisfiesNeed>-1</SatisfiesNeed>
-		<Decays>-1</Decays>
-		<EN_Name>Hemp Fabric</EN_Name>
-		<DE_Name>Hanfballen</DE_Name>
-	</Item>
-	<Item ID="49">
-		<SatisfiesNeed>-1</SatisfiesNeed>
-		<Decays>-1</Decays>
-		<EN_Name>Hemp Clothes</EN_Name>
-		<DE_Name>Hanfkleidung</DE_Name>
-	</Item>
-	<Item ID="50">
-		<SatisfiesNeed>-1</SatisfiesNeed>
-		<Decays>-1</Decays>
-		<EN_Name>Ropes</EN_Name>
-		<DE_Name>Seile</DE_Name>
-	</Item>
-	<Item ID="51">
-		<SatisfiesNeed>-1</SatisfiesNeed>
-		<Decays>-1</Decays>
-		<EN_Name>Cooper Ore</EN_Name>
-		<DE_Name>Kupfererz</DE_Name>
-	</Item>
-	<Item ID="52">
-		<SatisfiesNeed>-1</SatisfiesNeed>
-		<Decays>-1</Decays>
-		<EN_Name>Copper Ingots</EN_Name>
-		<DE_Name>Kupferbarren</DE_Name>
-	</Item>
-	<Item ID="53">
-		<SatisfiesNeed>-1</SatisfiesNeed>
-		<Decays>-1</Decays>
-		<EN_Name>Cutlery</EN_Name>
-		<DE_Name>Besteck</DE_Name>
-	</Item>
-	<Item ID="54">
-		<SatisfiesNeed>-1</SatisfiesNeed>
-		<Decays>-1</Decays>
-		<EN_Name>Spice</EN_Name>
-		<DE_Name>Gewürz</DE_Name>
-	</Item>
-	<Item ID="55">
-		<SatisfiesNeed>-1</SatisfiesNeed>
-		<Decays>-1</Decays>
-		<EN_Name>Cows</EN_Name>
-		<DE_Name>Kühe</DE_Name>
-	</Item>
-	<Item ID="56">
-		<SatisfiesNeed>-1</SatisfiesNeed>
-		<Decays>-1</Decays>
-		<EN_Name>Cow-Meat</EN_Name>
-		<DE_Name>Kuhfleisch</DE_Name>
-	</Item>
-	<Item ID="57">
-		<SatisfiesNeed>-1</SatisfiesNeed>
-		<Decays>-1</Decays>
-		<EN_Name>Leather</EN_Name>
-		<DE_Name>Leder</DE_Name>
-	</Item>
-	<Item ID="58">
-		<SatisfiesNeed>-1</SatisfiesNeed>
-		<Decays>-1</Decays>
-		<EN_Name>Paper</EN_Name>
-		<DE_Name>Papier</DE_Name>
-	</Item>
-	<Item ID="59">
-		<SatisfiesNeed>-1</SatisfiesNeed>
-		<Decays>-1</Decays>
-		<EN_Name>Flowers</EN_Name>
-		<DE_Name>Blumen</DE_Name>
-	</Item>
-	<Item ID="60">
-		<SatisfiesNeed>-1</SatisfiesNeed>
-		<Decays>-1</Decays>
-		<EN_Name>Color</EN_Name>
-		<DE_Name>Farbe</DE_Name>
-	</Item>
-	<Item ID="61">
-		<SatisfiesNeed>-1</SatisfiesNeed>
-		<Decays>-1</Decays>
-		<EN_Name>Books</EN_Name>
-		<DE_Name>Buch</DE_Name>
-	</Item>
-	<Item ID="62">
-		<SatisfiesNeed>-1</SatisfiesNeed>
-		<Decays>-1</Decays>
-		<EN_Name>Goggles</EN_Name>
-		<DE_Name>Brillen</DE_Name>
-	</Item>
-	<Item ID="63">
-		<SatisfiesNeed>-1</SatisfiesNeed>
-		<Decays>-1</Decays>
-		<EN_Name>Tobacco</EN_Name>
-		<DE_Name>Tabak</DE_Name>
-	</Item>
-	<Item ID="64">
-		<SatisfiesNeed>-1</SatisfiesNeed>
-		<Decays>-1</Decays>
-		<EN_Name>Tobacco Products</EN_Name>
-		<DE_Name>Tabakwaren</DE_Name>
-	</Item>
-	<Item ID="65">
-		<SatisfiesNeed>-1</SatisfiesNeed>
-		<Decays>-1</Decays>
-		<EN_Name>Grain Salt</EN_Name>
-		<DE_Name>Grobes Salz</DE_Name>
-	</Item>
-	<Item ID="66">
-		<SatisfiesNeed>-1</SatisfiesNeed>
-		<Decays>-1</Decays>
-		<EN_Name>Salt</EN_Name>
-		<DE_Name>Salz</DE_Name>
-	</Item>
-	<Item ID="67">
-		<SatisfiesNeed>-1</SatisfiesNeed>
-		<Decays>-1</Decays>
-		<EN_Name>Honey</EN_Name>
-		<DE_Name>Honig</DE_Name>
-	</Item>
-	<Item ID="68">
-		<SatisfiesNeed>-1</SatisfiesNeed>
-		<Decays>-1</Decays>
-		<EN_Name>Beeswax</EN_Name>
-		<DE_Name>Bienenwachs</DE_Name>
-	</Item>
-	<Item ID="69">
-		<SatisfiesNeed>-1</SatisfiesNeed>
-		<Decays>-1</Decays>
-		<EN_Name>Candles</EN_Name>
-		<DE_Name>Kerzen</DE_Name>
-	</Item>
-	<Item ID="70">
-		<SatisfiesNeed>-1</SatisfiesNeed>
-		<Decays>-1</Decays>
-		<EN_Name>Candleholder</EN_Name>
-		<DE_Name>Kerzenhalter</DE_Name>
-	</Item>
-	<Item ID="71">
-		<SatisfiesNeed>-1</SatisfiesNeed>
-		<Decays>-1</Decays>
-		<EN_Name>Sheep´s Wool</EN_Name>
-		<DE_Name>Schafswolle</DE_Name>
-	</Item>
-	<Item ID="72">
-		<SatisfiesNeed>-1</SatisfiesNeed>
-		<Decays>-1</Decays>
-		<EN_Name>Sheep-Wool Cloth</EN_Name>
-		<DE_Name>Schafswolleleinen *1</DE_Name>
-	</Item>
-	<Item ID="73">
-		<SatisfiesNeed>-1</SatisfiesNeed>
-		<Decays>-1</Decays>
-		<EN_Name>Better Clothes</EN_Name>
-		<DE_Name>Bessere Kleidung *1</DE_Name>
-	</Item>
-	<Item ID="74">
-		<SatisfiesNeed>-1</SatisfiesNeed>
-		<Decays>-1</Decays>
-		<EN_Name>Olives</EN_Name>
-		<DE_Name>Oliven</DE_Name>
-	</Item>
-	<Item ID="75">
-		<SatisfiesNeed>-1</SatisfiesNeed>
-		<Decays>-1</Decays>
-		<EN_Name>Soap</EN_Name>
-		<DE_Name>Seife</DE_Name>
-	</Item>
-	<Item ID="76">
-		<SatisfiesNeed>-1</SatisfiesNeed>
-		<Decays>-1</Decays>
-		<EN_Name>Medicinal Herbs</EN_Name>
-		<DE_Name>Heilkräuter</DE_Name>
-	</Item>
-	<Item ID="77">
-		<SatisfiesNeed>-1</SatisfiesNeed>
-		<Decays>-1</Decays>
-		<EN_Name>Whale Oil</EN_Name>
-		<DE_Name>Waltran</DE_Name>
-	</Item>
-	<Item ID="78">
-		<SatisfiesNeed>-1</SatisfiesNeed>
-		<Decays>-1</Decays>
-		<EN_Name>Lamp Oil</EN_Name>
-		<DE_Name> Lampenöl</DE_Name>
-	</Item>
-	<Item ID="79">
-		<SatisfiesNeed>-1</SatisfiesNeed>
-		<Decays>-1</Decays>
-		<EN_Name>Perfume Bottle</EN_Name>
-		<DE_Name>Parfumflaschen</DE_Name>
-	</Item>
-	<Item ID="80">
-		<SatisfiesNeed>-1</SatisfiesNeed>
-		<Decays>-1</Decays>
-		<EN_Name>Perfume</EN_Name>
-		<DE_Name>Parfum</DE_Name>
-	</Item>
-	<Item ID="81">
-		<SatisfiesNeed>-1</SatisfiesNeed>
-		<Decays>-1</Decays>
-		<EN_Name>Raw Silk</EN_Name>
-		<DE_Name>Rohe Seide</DE_Name>
-	</Item>
-	<Item ID="82">
-		<SatisfiesNeed>-1</SatisfiesNeed>
-		<Decays>-1</Decays>
-		<EN_Name>Bales of Silk</EN_Name>
-		<DE_Name>Seidenballen</DE_Name>
-	</Item>
-	<Item ID="83">
-		<SatisfiesNeed>-1</SatisfiesNeed>
-		<Decays>-1</Decays>
-		<EN_Name>Fur</EN_Name>
-		<DE_Name>Pelze</DE_Name>
-	</Item>
-	<Item ID="84">
-		<SatisfiesNeed>-1</SatisfiesNeed>
-		<Decays>-1</Decays>
-		<EN_Name>Luxury Clothes</EN_Name>
-		<DE_Name>Luxuskleider </DE_Name>
-	</Item>
-	<Item ID="85">
-		<SatisfiesNeed>-1</SatisfiesNeed>
-		<Decays>-1</Decays>
-		<EN_Name>Gold Ore</EN_Name>
-		<DE_Name>Goldnuggets</DE_Name>
-	</Item>
-	<Item ID="86">
-		<SatisfiesNeed>-1</SatisfiesNeed>
-		<Decays>-1</Decays>
-		<EN_Name>Gold</EN_Name>
-		<DE_Name>Gold</DE_Name>
-	</Item>
-	<Item ID="87">
-		<SatisfiesNeed>-1</SatisfiesNeed>
-		<Decays>-1</Decays>
-		<EN_Name>Rough Diamonds</EN_Name>
-		<DE_Name>Rohdiamanten</DE_Name>
-	</Item>
-	<Item ID="88">
-		<SatisfiesNeed>-1</SatisfiesNeed>
-		<Decays>-1</Decays>
-		<EN_Name>Diamonds</EN_Name>
-		<DE_Name>Diamanten</DE_Name>
-	</Item>
-	<Item ID="89">
-		<SatisfiesNeed>-1</SatisfiesNeed>
-		<Decays>-1</Decays>
-		<EN_Name>Jewelry</EN_Name>
-		<DE_Name>Schmuck</DE_Name>
-	</Item>
-	<Item ID="90">
-		<SatisfiesNeed>-1</SatisfiesNeed>
-		<Decays>-1</Decays>
-		<EN_Name>Luxury Cutlery</EN_Name>
-		<DE_Name>Luxusbesteck</DE_Name>
-	</Item>
-	<Item ID="91">
-		<SatisfiesNeed>-1</SatisfiesNeed>
-		<Decays>-1</Decays>
-		<EN_Name>Carpets</EN_Name>
-		<DE_Name>Teppiche</DE_Name>
-	</Item>
-	<Item ID="200">
-		<SatisfiesNeed>-1</SatisfiesNeed>
-		<Decays>-1</Decays>
-		<EN_Name>Armors</EN_Name>
-		<DE_Name>Rüstungen</DE_Name>
-	</Item>
-	<Item ID="201">
-		<SatisfiesNeed>-1</SatisfiesNeed>
-		<Decays>-1</Decays>
-		<EN_Name>Swords</EN_Name>
-		<DE_Name>Schwerter</DE_Name>
-	</Item>
-	<Item ID="202">
-		<SatisfiesNeed>-1</SatisfiesNeed>
-		<Decays>-1</Decays>
-		<EN_Name>Pike</EN_Name>
-		<DE_Name>Pikes</DE_Name>
-	</Item>
-	<Item ID="203">
-		<SatisfiesNeed>-1</SatisfiesNeed>
-		<Decays>-1</Decays>
-		<EN_Name>Bows</EN_Name>
-		<DE_Name>Bögen</DE_Name>
-	</Item>
-	<Item ID="204">
-		<SatisfiesNeed>-1</SatisfiesNeed>
-		<Decays>-1</Decays>
-		<EN_Name>Cannons</EN_Name>
-		<DE_Name>Kanonen</DE_Name>
-	</Item>
-	<Item ID="205">
-		<SatisfiesNeed>-1</SatisfiesNeed>
-		<Decays>-1</Decays>
-		<EN_Name>Rifles</EN_Name>
-		<DE_Name>Büchsen</DE_Name>
-	</Item>
-	<Item ID="206">
-		<SatisfiesNeed>-1</SatisfiesNeed>
-		<Decays>-1</Decays>
-		<EN_Name>Horses</EN_Name>
-		<DE_Name>Pferden</DE_Name>
-	</Item>
-</Items>
+<items>
+   <Item ID="1">
+      <count>0</count>
+      <Name>
+         <entry lang="English">Wood</entry>
+         <entry lang="German">Holz</entry>
+      </Name>
+      <Type>0</Type>
+      <Decays>-1</Decays>
+   </Item>
+   <Item ID="2">
+      <count>0</count>
+      <Name>
+         <entry lang="English">Tools</entry>
+         <entry lang="German">Werkzeug</entry>
+      </Name>
+      <Type>0</Type>
+      <Decays>-1</Decays>
+   </Item>
+   <Item ID="3">
+      <count>0</count>
+      <Name>
+         <entry lang="English">Stone</entry>
+         <entry lang="German">Stein</entry>
+      </Name>
+      <Type>0</Type>
+      <Decays>-1</Decays>
+   </Item>
+   <Item ID="4">
+      <count>0</count>
+      <Name>
+         <entry lang="English">Brick</entry>
+         <entry lang="German">Ziegel</entry>
+      </Name>
+      <Type>0</Type>
+      <Decays>-1</Decays>
+   </Item>
+   <Item ID="5">
+      <count>0</count>
+      <Name>
+         <entry lang="English">Glas</entry>
+         <entry lang="German">Glas</entry>
+      </Name>
+      <Type>0</Type>
+      <Decays>-1</Decays>
+   </Item>
+   <Item ID="6">
+      <count>0</count>
+      <Name>
+         <entry lang="English">Marble</entry>
+         <entry lang="German">Marmor</entry>
+      </Name>
+      <Type>0</Type>
+      <Decays>-1</Decays>
+   </Item>
+   <Item ID="7">
+      <count>0</count>
+      <Name>
+         <entry lang="English">Luxury Wood</entry>
+         <entry lang="German">Luxusholz</entry>
+      </Name>
+      <Type>0</Type>
+      <Decays>-1</Decays>
+   </Item>
+   <Item ID="101">
+      <count>0</count>
+      <Name>
+         <entry lang="English">Fish</entry>
+         <entry lang="German">Fisch</entry>
+      </Name>
+      <Type>2</Type>
+      <Decays>-1</Decays>
+   </Item>
+   <Item ID="102">
+      <count>0</count>
+      <Name>
+         <entry lang="English">Potatoes</entry>
+         <entry lang="German">Kartoffeln</entry>
+      </Name>
+      <Type>2</Type>
+      <Decays>-1</Decays>
+   </Item>
+   <Item ID="103">
+      <count>0</count>
+      <Name>
+         <entry lang="English">Venison</entry>
+         <entry lang="German">Wildfleisch</entry>
+      </Name>
+      <Type>2</Type>
+      <Decays>-1</Decays>
+   </Item>
+   <Item ID="104">
+      <count>0</count>
+      <Name>
+         <entry lang="English">Sugar</entry>
+         <entry lang="German">Zucker</entry>
+      </Name>
+      <Type>1</Type>
+      <Decays>-1</Decays>
+   </Item>
+   <Item ID="105">
+      <count>0</count>
+      <Name>
+         <entry lang="English">Fruits</entry>
+         <entry lang="German">Früchte</entry>
+      </Name>
+      <Type>1</Type>
+      <Decays>-1</Decays>
+   </Item>
+   <Item ID="106">
+      <count>0</count>
+      <Name>
+         <entry lang="English">Liquor</entry>
+         <entry lang="German">Schnaps</entry>
+      </Name>
+      <Type>2</Type>
+      <Decays>-1</Decays>
+   </Item>
+   <Item ID="107">
+      <count>0</count>
+      <Name>
+         <entry lang="English">Hemp</entry>
+         <entry lang="German">Hanf</entry>
+      </Name>
+      <Type>1</Type>
+      <Decays>-1</Decays>
+   </Item>
+   <Item ID="108">
+      <count>0</count>
+      <Name>
+         <entry lang="English">Hemp Fabric</entry>
+         <entry lang="German">Hanfballen</entry>
+      </Name>
+      <Type>1</Type>
+      <Decays>-1</Decays>
+   </Item>
+   <Item ID="109">
+      <count>0</count>
+      <Name>
+         <entry lang="English">Hemp Clothes</entry>
+         <entry lang="German">Hanfkleidung</entry>
+      </Name>
+      <Type>2</Type>
+      <Decays>-1</Decays>
+   </Item>
+   <Item ID="201">
+      <count>0</count>
+      <Name>
+         <entry lang="English">Wheat</entry>
+         <entry lang="German">Getreide</entry>
+      </Name>
+      <Type>1</Type>
+      <Decays>-1</Decays>
+   </Item>
+   <Item ID="202">
+      <count>0</count>
+      <Name>
+         <entry lang="English">Flour</entry>
+         <entry lang="German">Mehl</entry>
+      </Name>
+      <Type>1</Type>
+      <Decays>-1</Decays>
+   </Item>
+   <Item ID="203">
+      <count>0</count>
+      <Name>
+         <entry lang="English">Bread</entry>
+         <entry lang="German">Brot</entry>
+      </Name>
+      <Type>2</Type>
+      <Decays>-1</Decays>
+   </Item>
+   <Item ID="204">
+      <count>0</count>
+      <Name>
+         <entry lang="English">Grain Salt</entry>
+         <entry lang="German">Grobes Salz</entry>
+      </Name>
+      <Type>1</Type>
+      <Decays>-1</Decays>
+   </Item>
+   <Item ID="205">
+      <count>0</count>
+      <Name>
+         <entry lang="English">Salt</entry>
+         <entry lang="German">Salz</entry>
+      </Name>
+      <Type>2</Type>
+      <Decays>-1</Decays>
+   </Item>
+   <Item ID="206">
+      <count>0</count>
+      <Name>
+         <entry lang="English">Iron Ore</entry>
+         <entry lang="German">Eisenerz</entry>
+      </Name>
+      <Type>1</Type>
+      <Decays>-1</Decays>
+   </Item>
+   <Item ID="207">
+      <count>0</count>
+      <Name>
+         <entry lang="English">Iron Ingot</entry>
+         <entry lang="German">Eisenrohling</entry>
+      </Name>
+      <Type>1</Type>
+      <Decays>-1</Decays>
+   </Item>
+   <Item ID="208">
+      <count>0</count>
+      <Name>
+         <entry lang="English">Coal</entry>
+         <entry lang="German">Kohle</entry>
+      </Name>
+      <Type>1</Type>
+      <Decays>-1</Decays>
+   </Item>
+   <Item ID="209">
+      <count>0</count>
+      <Name>
+         <entry lang="English">Milk</entry>
+         <entry lang="German">Milch</entry>
+      </Name>
+      <Type>2</Type>
+      <Decays>0</Decays>
+   </Item>
+   <Item ID="210">
+      <count>0</count>
+      <Name>
+         <entry lang="English">Cheese</entry>
+         <entry lang="German">Käse</entry>
+      </Name>
+      <Type>2</Type>
+      <Decays>0</Decays>
+   </Item>
+   <Item ID="211">
+      <count>0</count>
+      <Name>
+         <entry lang="English">Pig</entry>
+         <entry lang="German">Schwein</entry>
+      </Name>
+      <Type>1</Type>
+      <Decays>-1</Decays>
+   </Item>
+   <Item ID="212">
+      <count>0</count>
+      <Name>
+         <entry lang="English">Pig-Meat</entry>
+         <entry lang="German">Schweinefleisch</entry>
+      </Name>
+      <Type>1</Type>
+      <Decays>-1</Decays>
+   </Item>
+   <Item ID="213">
+      <count>0</count>
+      <Name>
+         <entry lang="English">Leather</entry>
+         <entry lang="German">Leder</entry>
+      </Name>
+      <Type>1</Type>
+      <Decays>-1</Decays>
+   </Item>
+   <Item ID="214">
+      <count>0</count>
+      <Name>
+         <entry lang="English">Leather Shoe</entry>
+         <entry lang="German">Lederschuhe</entry>
+      </Name>
+      <Type>1</Type>
+      <Decays>-1</Decays>
+   </Item>
+   <Item ID="215">
+      <count>0</count>
+      <Name>
+         <entry lang="English">Spice</entry>
+         <entry lang="German">Gewürz</entry>
+      </Name>
+      <Type>2</Type>
+      <Decays>-1</Decays>
+   </Item>
+   <Item ID="216">
+      <count>0</count>
+      <Name>
+         <entry lang="English">Cooper Ore</entry>
+         <entry lang="German">Kupfererz</entry>
+      </Name>
+      <Type>1</Type>
+      <Decays>-1</Decays>
+   </Item>
+   <Item ID="217">
+      <count>0</count>
+      <Name>
+         <entry lang="English">Copper Ingots</entry>
+         <entry lang="German">Kupferbarren</entry>
+      </Name>
+      <Type>1</Type>
+      <Decays>-1</Decays>
+   </Item>
+   <Item ID="218">
+      <count>0</count>
+      <Name>
+         <entry lang="English">Cutlery</entry>
+         <entry lang="German">Besteck</entry>
+      </Name>
+      <Type>2</Type>
+      <Decays>-1</Decays>
+   </Item>
+   <Item ID="219">
+      <count>0</count>
+      <Name>
+         <entry lang="English">Hopfen</entry>
+         <entry lang="German">Hops</entry>
+      </Name>
+      <Type>1</Type>
+      <Decays>0</Decays>
+   </Item>
+   <Item ID="220">
+      <count>0</count>
+      <Name>
+         <entry lang="English">Beer</entry>
+         <entry lang="German">Bier</entry>
+      </Name>
+      <Type>2</Type>
+      <Decays>0</Decays>
+   </Item>
+   <Item ID="301">
+      <count>0</count>
+      <Name>
+         <entry lang="English">Clay</entry>
+         <entry lang="German">Lehm</entry>
+      </Name>
+      <Type>1</Type>
+      <Decays>-1</Decays>
+   </Item>
+   <Item ID="302">
+      <count>0</count>
+      <Name>
+         <entry lang="English">Sand</entry>
+         <entry lang="German">Sand</entry>
+      </Name>
+      <Type>1</Type>
+      <Decays>-1</Decays>
+   </Item>
+   <Item ID="303">
+      <count>0</count>
+      <Name>
+         <entry lang="English">Coffee Beans</entry>
+         <entry lang="German">Kaffeebohnen</entry>
+      </Name>
+      <Type>1</Type>
+      <Decays>-1</Decays>
+   </Item>
+   <Item ID="305">
+      <count>0</count>
+      <Name>
+         <entry lang="English">Coffee</entry>
+         <entry lang="German">Kaffee</entry>
+      </Name>
+      <Type>2</Type>
+      <Decays>-1</Decays>
+   </Item>
+   <Item ID="306">
+      <count>0</count>
+      <Name>
+         <entry lang="English">Cows</entry>
+         <entry lang="German">Kühe</entry>
+      </Name>
+      <Type>1</Type>
+      <Decays>-1</Decays>
+   </Item>
+   <Item ID="307">
+      <count>0</count>
+      <Name>
+         <entry lang="English">Cow-Meat</entry>
+         <entry lang="German">Kuhfleisch</entry>
+      </Name>
+      <Type>2</Type>
+      <Decays>-1</Decays>
+   </Item>
+   <Item ID="308">
+      <count>0</count>
+      <Name>
+         <entry lang="English">Olives</entry>
+         <entry lang="German">Oliven</entry>
+      </Name>
+      <Type>1</Type>
+      <Decays>-1</Decays>
+   </Item>
+   <Item ID="309">
+      <count>0</count>
+      <Name>
+         <entry lang="English">Soap</entry>
+         <entry lang="German">Seife</entry>
+      </Name>
+      <Type>2</Type>
+      <Decays>-1</Decays>
+   </Item>
+   <Item ID="310">
+      <count>0</count>
+      <Name>
+         <entry lang="English">Medicinal Herbs</entry>
+         <entry lang="German">Heilkräuter</entry>
+      </Name>
+      <Type>1</Type>
+      <Decays>-1</Decays>
+   </Item>
+   <Item ID="311">
+      <count>0</count>
+      <Name>
+         <entry lang="English">Goggles</entry>
+         <entry lang="German">Brillen</entry>
+      </Name>
+      <Type>2</Type>
+      <Decays>-1</Decays>
+   </Item>
+   <Item ID="312">
+      <count>1</count>
+      <Name>
+         <entry lang="English">Sheep´s Wool</entry>
+         <entry lang="German">Schafswolle</entry>
+      </Name>
+      <Type>1</Type>
+      <Decays>-1</Decays>
+   </Item>
+   <Item ID="313">
+      <count>0</count>
+      <Name>
+         <entry lang="English">Sheep-Wool Cloth</entry>
+         <entry lang="German">Schafswolleleinen *1</entry>
+      </Name>
+      <Type>1</Type>
+      <Decays>-1</Decays>
+   </Item>
+   <Item ID="314">
+      <count>0</count>
+      <Name>
+         <entry lang="English">Better Clothes</entry>
+         <entry lang="German">Bessere Kleidung *1</entry>
+      </Name>
+      <Type>2</Type>
+      <Decays>-1</Decays>
+   </Item>
+   <Item ID="315">
+      <count>0</count>
+      <Name>
+         <entry lang="English">Beeswax</entry>
+         <entry lang="German">Bienenwachs</entry>
+      </Name>
+      <Type>1</Type>
+      <Decays>-1</Decays>
+   </Item>
+   <Item ID="316">
+      <count>0</count>
+      <Name>
+         <entry lang="English">Honey</entry>
+         <entry lang="German">Honig</entry>
+      </Name>
+      <Type>2</Type>
+      <Decays>-1</Decays>
+   </Item>
+   <Item ID="317">
+      <count>0</count>
+      <Name>
+         <entry lang="English">Candles</entry>
+         <entry lang="German">Kerzen</entry>
+      </Name>
+      <Type>1</Type>
+      <Decays>-1</Decays>
+   </Item>
+   <Item ID="318">
+      <count>0</count>
+      <Name>
+         <entry lang="English">Candleholder</entry>
+         <entry lang="German">Kerzenhalter</entry>
+      </Name>
+      <Type>2</Type>
+      <Decays>-1</Decays>
+   </Item>
+   <Item ID="319">
+      <count>0</count>
+      <Name>
+         <entry lang="English">Flowers</entry>
+         <entry lang="German">Blumen</entry>
+      </Name>
+      <Type>1</Type>
+      <Decays>-1</Decays>
+   </Item>
+   <Item ID="320">
+      <count>0</count>
+      <Name>
+         <entry lang="English">Color</entry>
+         <entry lang="German">Farbe</entry>
+      </Name>
+      <Type>1</Type>
+      <Decays>-1</Decays>
+   </Item>
+   <Item ID="321">
+      <count>0</count>
+      <Name>
+         <entry lang="English">Books</entry>
+         <entry lang="German">Buch</entry>
+      </Name>
+      <Type>2</Type>
+      <Decays>-1</Decays>
+   </Item>
+   <Item ID="322">
+      <count>0</count>
+      <Name>
+         <entry lang="English">Tobacco</entry>
+         <entry lang="German">Tabak</entry>
+      </Name>
+      <Type>1</Type>
+      <Decays>-1</Decays>
+   </Item>
+   <Item ID="323">
+      <count>0</count>
+      <Name>
+         <entry lang="English">Tobacco Products</entry>
+         <entry lang="German">Tabakwaren</entry>
+      </Name>
+      <Type>2</Type>
+      <Decays>-1</Decays>
+   </Item>
+   <Item ID="401">
+      <count>0</count>
+      <Name>
+         <entry lang="English">Perfume Bottle</entry>
+         <entry lang="German">Parfümflaschen</entry>
+      </Name>
+      <Type>1</Type>
+      <Decays>-1</Decays>
+   </Item>
+   <Item ID="402">
+      <count>0</count>
+      <Name>
+         <entry lang="English">Whale Oil</entry>
+         <entry lang="German">Waltran</entry>
+      </Name>
+      <Type>1</Type>
+      <Decays>-1</Decays>
+   </Item>
+   <Item ID="403">
+      <count>0</count>
+      <Name>
+         <entry lang="English">Perfume</entry>
+         <entry lang="German">Parfum</entry>
+      </Name>
+      <Type>2</Type>
+      <Decays>-1</Decays>
+   </Item>
+   <Item ID="404">
+      <count>0</count>
+      <Name>
+         <entry lang="English">Fur</entry>
+         <entry lang="German">Pelze</entry>
+      </Name>
+      <Type>1</Type>
+      <Decays>-1</Decays>
+   </Item>
+   <Item ID="405">
+      <count>0</count>
+      <Name>
+         <entry lang="English">Silk</entry>
+         <entry lang="German">Seide</entry>
+      </Name>
+      <Type>1</Type>
+      <Decays>-1</Decays>
+   </Item>
+   <Item ID="406">
+      <count>0</count>
+      <Name>
+         <entry lang="English">Luxury Clothes</entry>
+         <entry lang="German">Luxuskleider </entry>
+      </Name>
+      <Type>2</Type>
+      <Decays>-1</Decays>
+   </Item>
+   <Item ID="407">
+      <count>0</count>
+      <Name>
+         <entry lang="English">Wine Grapes</entry>
+         <entry lang="German">Weintrauben</entry>
+      </Name>
+      <Type>1</Type>
+      <Decays>-1</Decays>
+   </Item>
+   <Item ID="408">
+      <count>0</count>
+      <Name>
+         <entry lang="English">Casks</entry>
+         <entry lang="German">Fässer</entry>
+      </Name>
+      <Type>1</Type>
+      <Decays>-1</Decays>
+   </Item>
+   <Item ID="409">
+      <count>0</count>
+      <Name>
+         <entry lang="English">Wine</entry>
+         <entry lang="German">Wein</entry>
+      </Name>
+      <Type>2</Type>
+      <Decays>-1</Decays>
+   </Item>
+   <Item ID="410">
+      <count>0</count>
+      <Name>
+         <entry lang="English">Gold Ore</entry>
+         <entry lang="German">Goldnuggets</entry>
+      </Name>
+      <Type>1</Type>
+      <Decays>-1</Decays>
+   </Item>
+   <Item ID="411">
+      <count>0</count>
+      <Name>
+         <entry lang="English">Gold</entry>
+         <entry lang="German">Gold</entry>
+      </Name>
+      <Type>1</Type>
+      <Decays>-1</Decays>
+   </Item>
+   <Item ID="412">
+      <count>0</count>
+      <Name>
+         <entry lang="English">Rough Diamonds</entry>
+         <entry lang="German">Rohdiamanten</entry>
+      </Name>
+      <Type>1</Type>
+      <Decays>-1</Decays>
+   </Item>
+   <Item ID="413">
+      <count>0</count>
+      <Name>
+         <entry lang="English">Diamonds</entry>
+         <entry lang="German">Diamanten</entry>
+      </Name>
+      <Type>1</Type>
+      <Decays>-1</Decays>
+   </Item>
+   <Item ID="414">
+      <count>0</count>
+      <Name>
+         <entry lang="English">Jewelry</entry>
+         <entry lang="German">Schmuck</entry>
+      </Name>
+      <Type>2</Type>
+      <Decays>-1</Decays>
+   </Item>
+   <Item ID="415">
+      <count>0</count>
+      <Name>
+         <entry lang="English">Cocoa</entry>
+         <entry lang="German">Kakao</entry>
+      </Name>
+      <Type>1</Type>
+      <Decays>-1</Decays>
+   </Item>
+   <Item ID="416">
+      <count>0</count>
+      <Name>
+         <entry lang="English">Sweets</entry>
+         <entry lang="German">Süßigkeiten</entry>
+      </Name>
+      <Type>2</Type>
+      <Decays>-1</Decays>
+   </Item>
+   <Item ID="417">
+      <count>0</count>
+      <Name>
+         <entry lang="English">Carpets</entry>
+         <entry lang="German">Teppiche</entry>
+      </Name>
+      <Type>2</Type>
+      <Decays>-1</Decays>
+   </Item>
+   <Item ID="418">
+      <count>0</count>
+      <Name>
+         <entry lang="English">Luxury Cutlery</entry>
+         <entry lang="German">Luxusbesteck</entry>
+      </Name>
+      <Type>2</Type>
+      <Decays>-1</Decays>
+   </Item>
+   <Item ID="1001">
+      <count>0</count>
+      <Name>
+         <entry lang="English">Ropes</entry>
+         <entry lang="German">Seile</entry>
+      </Name>
+      <Type>2</Type>
+      <Decays>-1</Decays>
+   </Item>
+   <Item ID="1002">
+      <count>0</count>
+      <Name>
+         <entry lang="English">Armors</entry>
+         <entry lang="German">Rüstungen</entry>
+      </Name>
+      <Type>1</Type>
+      <Decays>-1</Decays>
+   </Item>
+   <Item ID="1003">
+      <count>0</count>
+      <Name>
+         <entry lang="English">Swords</entry>
+         <entry lang="German">Schwerter</entry>
+      </Name>
+      <Type>1</Type>
+      <Decays>-1</Decays>
+   </Item>
+   <Item ID="1004">
+      <count>0</count>
+      <Name>
+         <entry lang="English">Pike</entry>
+         <entry lang="German">Pikes</entry>
+      </Name>
+      <Type>1</Type>
+      <Decays>-1</Decays>
+   </Item>
+   <Item ID="1005">
+      <count>0</count>
+      <Name>
+         <entry lang="English">Bows</entry>
+         <entry lang="German">Bögen</entry>
+      </Name>
+      <Type>1</Type>
+      <Decays>-1</Decays>
+   </Item>
+   <Item ID="1006">
+      <count>0</count>
+      <Name>
+         <entry lang="English">Cannons</entry>
+         <entry lang="German">Kanonen</entry>
+      </Name>
+      <Type>1</Type>
+      <Decays>-1</Decays>
+   </Item>
+   <Item ID="1007">
+      <count>0</count>
+      <Name>
+         <entry lang="English">Rifles</entry>
+         <entry lang="German">Büchsen</entry>
+      </Name>
+      <Type>1</Type>
+      <Decays>-1</Decays>
+   </Item>
+   <Item ID="1008">
+      <count>0</count>
+      <Name>
+         <entry lang="English">Horses</entry>
+         <entry lang="German">Pferden</entry>
+      </Name>
+      <Type>1</Type>
+      <Decays>-1</Decays>
+   </Item>
+</items>

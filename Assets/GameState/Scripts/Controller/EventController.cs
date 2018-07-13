@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System;
 using System.Reflection;
+using System.IO;
 
 //TODO:
 //-We need a UI displaying most(if not all) Events -> left side on the screen?
@@ -20,8 +21,8 @@ using System.Reflection;
 /// Event type. Specify which kind of Event happens.
 /// TODO: TO DECIDE IF QUEST ARE HANDLED HERE
 /// </summary>
-public enum EventType {Weather, City, Production, Quest,  Disaster, Other }
-public enum InfluenceRange {World, Island, City, Range, Player }
+public enum EventType {Weather, City, Structure, Quest,  Disaster, Other }
+public enum InfluenceRange {World, Island, City, Structure, Range, Player } 
 public enum InfluenceTyp {Building, Unit}
 
 /*
@@ -42,9 +43,11 @@ public enum InfluenceTyp {Building, Unit}
 */
 public class EventController : MonoBehaviour {
 	public static EventController Instance { get; protected set; }
+    static GameEventSave save;
 
+    private uint lastID = 0;
 	Dictionary<EventType,GameEvent[]> typeToEvents;
-	Dictionary<int,GameEvent> idToActiveEvent;
+	Dictionary<uint,GameEvent> idToActiveEvent;
 	//Every EventType has a chance to happen
 	Dictionary<EventType,float> chanceToEvent;
 
@@ -52,16 +55,31 @@ public class EventController : MonoBehaviour {
 	Action<GameEvent> cbEventEnded;
 
 	float timeSinceLastEvent=0;
-
+	World world;
 	// Use this for initialization
 	void Awake () {
 		if (Instance != null) {
-			Debug.LogError("There should never be two event controllers.");
+			Debug.LogError ("There should never be two event controllers.");
 		}
 		Instance = this;
-		var a = CreateReusableAction<GameEvent,bool,Structure> ("OutputStructure_Efficiency");
-		a (new GameEvent (),true,new MineStructure ());
-		idToActiveEvent = new Dictionary<int, GameEvent> ();
+		float x = 0;
+		float y = 0;
+		float s = 10;
+		for (int i = 0; i < s; i++) {
+			x +=(UnityEngine.Random.Range(0,2) * 500 + GetWeightedYFromRandomX (500, 750, UnityEngine.Random.Range (0, 500)));
+			y +=(UnityEngine.Random.Range(0,2) * 500 + GetWeightedYFromRandomX (500, 750, UnityEngine.Random.Range (0, 500)));
+		}
+		x /= s;
+		y /= s;
+        if(save != null) {
+            LoadGameEventData();
+            save = null;
+        }
+	}
+	void Start() {
+//		var a = CreateReusableAction<GameEvent,bool,Structure> ("OutputStructure_Efficiency");
+		world = World.Current;
+		idToActiveEvent = new Dictionary<uint, GameEvent> ();
 		chanceToEvent = new Dictionary<EventType, float> ();
 		typeToEvents = new Dictionary<EventType, GameEvent[]> ();
 	}
@@ -75,7 +93,9 @@ public class EventController : MonoBehaviour {
 			return;
 		}
 		//update and remove inactive events
-		for (int i = idToActiveEvent.Count-1; i > 0; i--) {
+		List<uint> ids = new List<uint>(idToActiveEvent.Keys);
+		foreach (uint i in ids) {
+			Debug.Log ("update " +i); 
 			idToActiveEvent [i].Update (WorldController.Instance.DeltaTime);
 			if(idToActiveEvent [i].IsDone){
 				cbEventEnded (idToActiveEvent [i]);
@@ -86,35 +106,90 @@ public class EventController : MonoBehaviour {
 		if(RandomIf()==false){
 			return;
 		}
-
-		//TODO Randomize which event it is better
-		EventType type = RandomType ();
-
-		GameEvent ge = RandomEvent (type);
-//		idToActiveEvent.Add (,ge);
-		cbEventCreated(ge);
+		CreateRandomEvent ();
 		timeSinceLastEvent = 0;
-//		switch(type){
-//		case EventType.City:
-//			break;
-//		case EventType.Disaster:
-//			break;
-//		case EventType.Weather:
-//			break;
-//		case EventType.Production:
-//			break;
-//		case EventType.Quest:
-//			Debug.LogWarning ("Not yet implemented");
-//			break;
-//		case EventType.Other:
-//			Debug.LogWarning ("Not yet implemented");
-//			break;
-//		}
+
 	} 
+
+	public void CreateRandomEvent(){
+		//TODO Randomize which event it is better
+		CreateRandomTypeEvent (RandomType ());
+	}
+	public void CreateRandomTypeEvent(EventType type){
+		//now find random the target of the GameEvent
+		CreateGameEvent( RandomEvent (type) );
+	}
+
+    internal static void SetGameEventData(GameEventSave ges) {
+        save = ges;
+    }
+
+    public void CreateGameEvent(GameEvent ge){
+		//fill the type
+		cbEventCreated(ge);
+
+		idToActiveEvent.Add (lastID,ge);
+		ge.StartEvent (Vector2.zero);
+		lastID++;
+
+	}
+	IGEventable GetEventTargetForEventType(EventType type){
+		IGEventable ige = null;
+		//some times should be target all cities...
+		//idk how todo do it tho...
+
+
+		switch(type){
+		case EventType.City:
+			List<City> cities = new List<City> ();
+			foreach (Island item in world.IslandList) {
+				cities.AddRange (item.myCities);
+			}
+			ige = RandomItemFromList<City>(cities);
+			break;
+		case EventType.Disaster:
+			ige = RandomItemFromList<Island>(world.IslandList);
+			break;
+		case EventType.Weather:
+			//????
+			//range? 
+			//position?
+			//island?
+			break;
+		case EventType.Structure:
+			//probably go like:
+			//  random island
+			//  random city
+			//  random structure
+			//  random effect for structure type?
+
+			float r = UnityEngine.Random.Range (0f, 1f);
+			if(r<0.4f){ //idk
+				return null; // there is no specific target
+			}
+
+			Island i = RandomItemFromList<Island> (world.IslandList);
+			City c = RandomItemFromList<City> (i.myCities);
+			if(c.playerNumber == -1){ // random decided there will be no event? 
+				// are there events for wilderniss structures?
+			} else {
+				ige = RandomItemFromList<Structure> (c.myStructures);
+			}
+			break;
+		case EventType.Quest:
+			Debug.LogWarning ("Not yet implemented");
+			break;
+		case EventType.Other:
+			Debug.LogWarning ("Not yet implemented");
+			break;
+		}
+		return ige;
+	}
 	bool RandomIf(){
 		timeSinceLastEvent += WorldController.Instance.DeltaTime;
 		return UnityEngine.Random.Range (0.2f, 1.5f) *(Mathf.Exp ((1/180)*timeSinceLastEvent)-1) > 1;
 	}
+
 	GameEvent RandomEvent(EventType type){
 		GameEvent[] ges = typeToEvents [type];
 		//TODO move this to the load -> dic<type,sum>
@@ -146,6 +221,33 @@ public class EventController : MonoBehaviour {
 		return EventType.City;
 	}
 
+	T RandomItemFromList<T>(List<T> iges){
+		return iges [UnityEngine.Random.Range (0, iges.Count - 1)];
+	}
+
+	public float GetWeightedYFromRandomX(float size,float dist, float randomX) {
+		float x1 = 0f; 
+		float y1 = 0f; 
+		float x2 = dist;
+		float y2 = size; 
+		float x3 = dist * 2; 
+		float y3 = 0f;
+		float denom = (x1 - x2) * (x1 - x3) * (x2 - x3);
+		float A     = (x3 * (y2 - y1) + x2 * (y1 - y3) + x1 * (y3 - y2)) / denom;
+		float B     = (x3*x3 * (y1 - y2) + x2*x2 * (y3 - y1) + x1*x1 * (y2 - y3)) / denom;
+		float C     = (x2 * x3 * (x2 - x3) * y1 + x3 * x1 * (x3 - x1) * y2 + x1 * x2 * (x1 - x2) * y3) / denom;
+//		Debug.Log (A+"x^2 + "+ B +"x +"+C);
+		return A * Mathf.Pow (randomX, 2) + B * randomX + C;
+	}
+	public Vector2 GetRandomVector2(){
+		Vector2 vec = new Vector2 ();
+		float w = (float) World.Current.Width / 2f;
+		float h = (float) World.Current.Height / 2f;
+
+		vec.x =(UnityEngine.Random.Range(0,2) * w + GetWeightedYFromRandomX (w, w * 1.25f, UnityEngine.Random.Range (0, w)));
+		vec.y =(UnityEngine.Random.Range(0,2) * h + GetWeightedYFromRandomX (h, h * 1.25f, UnityEngine.Random.Range (0, h)));
+		return vec;
+	}
 	public static Action<TParam1> CreateReusableAction<TParam1>(string methodName) {
 		var method = typeof(GameEventFunctions).GetMethod(methodName);
 		var del = Delegate.CreateDelegate(typeof(Action<TParam1>), method);
@@ -168,6 +270,26 @@ public class EventController : MonoBehaviour {
 	public void RegisterOnEvent(Action<GameEvent> create,Action<GameEvent> ending){
 		cbEventCreated += create;
 		cbEventEnded += ending;
+	}
+
+
+	public GameEventSave GetSaveGameEventData(){
+		GameEventSave ges = new GameEventSave (idToActiveEvent);
+		return ges;
+	}
+	public void LoadGameEventData(){
+		idToActiveEvent = save.idToActiveEvent;
+	}
+}
+
+public class GameEventSave {
+	public Dictionary<uint,GameEvent> idToActiveEvent;
+	public UnityEngine.Random.State Random;
+	public GameEventSave(Dictionary<uint,GameEvent> idToActiveEvent ){
+		this.idToActiveEvent = idToActiveEvent;
+	}
+	public GameEventSave(){
+
 	}
 
 }

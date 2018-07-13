@@ -15,16 +15,13 @@ public class KeyInputSettings : MonoBehaviour {
 		foreach (Transform item in contentTransform) {
 			Destroy (item.gameObject);
 		}
-		foreach (string item in InputHandler.GetPrimaryBinds ().Keys) {
+		foreach (string name in InputHandler.GetBinds().Keys) {
+			InputHandler.KeyBind item = InputHandler.GetBinds () [name];
+//			InputHandler.KeyBind item = InputHandler.GetBinds () [s];
 			GameObject g = Instantiate (keyPrefab);
-
-			if(InputHandler.GetSecondaryBinds ().ContainsKey (item)==false){
-				g.GetComponent<KeyInputSingle>().SetUp (item,""+InputHandler.GetPrimaryBinds ()[item],"-",OnClickButton);
-			} else {
-				g.GetComponent<KeyInputSingle>().SetUp (item,""+InputHandler.GetPrimaryBinds ()[item],""+InputHandler.GetSecondaryBinds ()[item],OnClickButton);
-			}
+			g.GetComponent<KeyInputSingle>().SetUp (name,item.GetPrimaryString(),item.GetSecondaryString(),OnClickButton);
 			g.transform.SetParent (contentTransform);
-			buttonNameToGO.Add (item,g.GetComponent<KeyInputSingle>());
+			buttonNameToGO.Add (name,g.GetComponent<KeyInputSingle>());
 		}
 	
 	}
@@ -46,6 +43,9 @@ public class KeyInputSettings : MonoBehaviour {
 					return;
 				}
 				KeyCode s = Event.current.keyCode;
+				if(s == InputHandler.KeyBind.notSetCode){
+					return;
+				}
 				buttonNameToGO[selectedButton].ChangeButtonText (primaryChange,""+s);
 				if(primaryChange){
 					InputHandler.ChangePrimaryNameToKey (selectedButton,s);
@@ -54,7 +54,7 @@ public class KeyInputSettings : MonoBehaviour {
 				}
 				Cursor.visible = true;
 				selectedButton = null;
-				InputHandler.SaveInputSchema (Application.dataPath.Replace ("/Assets",""));
+				InputHandler.SaveInputSchema ();
 			}
 	}
 }

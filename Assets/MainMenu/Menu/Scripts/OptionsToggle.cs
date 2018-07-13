@@ -2,22 +2,24 @@
 using System.Collections;
 
 public class OptionsToggle : MonoBehaviour {
-	public GameObject graphics;
-	public GameObject sound;
-	public GameObject controls;
-	public void ToggleGraphics(){
-		graphics.SetActive (true);
-		sound.SetActive (false);
-		controls.SetActive (false);
+
+    public GameObject[] childrens;
+    int lastOpen = 0;
+    void OnEnable(){
+		Show (lastOpen);
 	}
-	public void ToggleSound(){
-		graphics.SetActive (false);
-		sound.SetActive (true);
-		controls.SetActive (false);
-	}
-	public void ToggleControls(){
-		graphics.SetActive (false);
-		sound.SetActive (false);
-		controls.SetActive (true);
-	}
+    public void Show(int numberOfChildToShow) {
+        if (childrens == null)
+            return;
+        for (int i = 0; i < childrens.Length; i++) {
+            childrens[i].SetActive(false);
+        }
+        childrens[numberOfChildToShow].SetActive(true);
+        lastOpen = numberOfChildToShow;
+    }
+    private void OnDisable() {
+        for (int i = 0; i < childrens.Length; i++) {
+            childrens[i].SetActive(false);
+        }
+    }
 }

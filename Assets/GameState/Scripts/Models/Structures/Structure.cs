@@ -3,45 +3,246 @@ using System.Collections;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Xml;
-using System.Xml.Schema;
-using System.Xml.Serialization;
+using Newtonsoft.Json;
 
 public enum BuildTypes {Drag, Path, Single};
 public enum BuildingTyp {Pathfinding, Blocking,Free};
 public enum Direction {None, N, E, S, W};
 
-public abstract class Structure : IXmlSerializable,IGEventable {
+public class StructurePrototypeData : LanguageVariables {
+	public bool hasHitbox;// { get; protected set; }
+	public float MaxHealth;
+
+	public int buildingRange = 0;
+	public int PopulationLevel = 0;
+	public int PopulationCount = 0;
+
+	public int StructureLevel = 0;
+
+	public int tileWidth;
+	public int tileHeight;
+
+	public bool canRotate = true;
+	public bool canBeBuildOver = false;
+	public bool canBeUpgraded = false;
+	public bool canTakeDamage = false;
+	public bool showExtraUI = false;
+	public bool canBeBuild = true;
+
+	public Direction mustFrontBuildDir= Direction.None; 
+
+	//doenst get loaded in anyway
+	private List<Tile> _myPrototypeTiles;
+		
+	public List<Tile> MyPrototypeTiles {
+		get {
+			if (_myPrototypeTiles == null) {
+				CalculatePrototypTiles ();
+			}
+			return _myPrototypeTiles;
+		}
+	}
+
+	public bool canStartBurning;
+	public bool mustBeBuildOnShore = false;
+	public bool mustBeBuildOnMountain = false;
+
+	public int maintenancecost;
+	public int buildcost;
+
+	public BuildTypes BuildTyp;
+	public BuildingTyp myBuildingTyp = BuildingTyp.Blocking;
+	public Item[] buildingItems;
+
+	public string spriteBaseName;
+
+
+	private void CalculatePrototypTiles(){
+		_myPrototypeTiles = new List<Tile> ();
+		if(buildingRange == 0){
+			return;
+		}
+		float x;
+		float y;
+		//get the tile at bottom left to create a "prototype circle"
+		Tile firstTile = World.Current.GetTileAt (0 + buildingRange,0 + buildingRange);
+        float w = (float)tileWidth / 2f -0.5f;
+        float h = (float)tileHeight / 2f -0.5f;
+
+        Vector2 center = new Vector2 (buildingRange + w, buildingRange + h);
+        //GameObject gos = new GameObject();
+        //gos.transform.position = center;
+        //gos.transform.localScale = new Vector3(5, 5, 1);
+        //gos.AddComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("Textures/MISC/Debug");
+
+        //if (tileWidth > 1) {
+        //    center.x += 0.5f + ((float)tileWidth) / 2f - 1;
+        //}
+        //if (tileHeight > 1) {
+        //    center.y += 0.5f + ((float)tileHeight) / 2f - 1;
+        //}
+        World world = WorldController.Instance.World;
+		HashSet<Tile> temp = new HashSet<Tile> ();
+		float radius = this.buildingRange + 1f;
+		for (float a = 0; a < 360; a += 0.5f) {
+			x = center.x + radius * Mathf.Cos (a);
+			y = center.y + radius * Mathf.Sin (a);
+            //GameObject go = new GameObject();
+            //go.transform.position = new Vector3(x, y);
+            //go.AddComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("Textures/MISC/Debug");
+            x = Mathf.RoundToInt (x);
+			y = Mathf.RoundToInt (y);
+			for (int i = 0; i < buildingRange; i++) {
+				Tile circleTile = world.GetTileAt (x, y);
+				if (temp.Contains (circleTile) == false) {
+					temp.Add (circleTile);
+				}
+			}
+		}
+		//like flood fill the inner circle
+		Queue<Tile> tilesToCheck = new Queue<Tile> ();
+		tilesToCheck.Enqueue (firstTile.South ());
+		while (tilesToCheck.Count > 0) {
+			Tile t = tilesToCheck.Dequeue ();
+			if (temp.Contains (t) == false && _myPrototypeTiles.Contains (t) == false) {
+				_myPrototypeTiles.Add (t);
+				Tile[] ns = t.GetNeighbours (false);
+				foreach (Tile t2 in ns) {
+					tilesToCheck.Enqueue (t2);
+				}
+			}
+		}
+        for (int width = 0; width < tileWidth; width++) {
+            MyPrototypeTiles.Remove(World.Current.GetTileAt(firstTile.X + width, firstTile.Y));
+            for (int height = 1; height < tileHeight; height++) {
+                MyPrototypeTiles.Remove(World.Current.GetTileAt(firstTile.X + width, firstTile.Y + height));
+            }
+        }
+    }
+
+}
+
+[JsonObject(MemberSerialization.OptIn)]
+public abstract class Structure : IGEventable {
 	#region variables
-	private static int TargetType = 100;
-
+	public const int TargetType = 100;
+	#region Serialize
 	//prototype id
-	public int ID;
-	//player id
-	public int playerID;
-	//build id -- when it was build
-	public int buildID;
+	[JsonPropertyAttribute] public int ID;
 
-	public string name;
-	public string SmallName { get { return name.ToLower ();} }
-	private City _city;
+	//build id -- when it was build
+	[JsonPropertyAttribute] public uint buildID;
+
+	[JsonPropertyAttribute] private City _city;
+
+	[JsonPropertyAttribute] protected float _health;
+
+	[JsonPropertyAttribute] public Tile BuildTile { get { 
+			if (myBuildingTiles == null)
+				return null;
+			return myBuildingTiles [0]; 
+		} 
+		set {
+			if (myBuildingTiles == null)
+				myBuildingTiles = new List<Tile> ();
+			myBuildingTiles.Add (value);
+		}
+	}
+	[JsonPropertyAttribute] public int  rotated = 0; 
+	[JsonPropertyAttribute] public bool buildInWilderniss = false;
+	[JsonPropertyAttribute] public bool isActive = true;
+	#endregion
+	#region RuntimeOrOther
+	public List<Tile> myBuildingTiles;
+	public HashSet<Tile> neighbourTiles;
+	public HashSet<Tile> myRangeTiles;
+	public string connectOrientation;
+	//player id
+	public int PlayerNumber {
+		get {
+			if(City==null){
+				return -1;
+			}
+			return City.GetPlayerNumber ();}	
+	}
+	protected StructurePrototypeData _prototypData;
+	public StructurePrototypeData Data {
+		get { if(_prototypData==null){
+				_prototypData = PrototypController.Instance.GetStructurePrototypDataForID (ID);
+			}
+			return _prototypData;
+		}
+	}
+
+	public bool IsWalkable { get {return this.MyBuildingTyp != BuildingTyp.Blocking;} }
+	public bool HasHitbox { get {return Data.hasHitbox;} }
+	public float MaxHealth { get {return Data.MaxHealth;} }
+
+	public bool CanBeBuild { get {return Data.canBeBuild;} }
+
+	public int BuildingRange { get {return Data.buildingRange;} }// = 0;
+	public int PopulationLevel { get {return Data.PopulationLevel;} }// = 0;
+	public int PopulationCount { get {return Data.PopulationCount;} }// = 0;
+
+    public int _tileWidth { get {return Data.tileWidth;} }
+	public int _tileHeight { get {return Data.tileHeight;} }
+
+	public bool CanRotate { get {return Data.canRotate;} }// = true;
+	public bool CanBeBuildOver { get {return Data.canBeBuildOver;} }// = false;
+	public bool CanBeUpgraded { get {return Data.canBeUpgraded;} }// = false;
+	public bool ShowExtraUI { get {return Data.showExtraUI;} }
+	public bool CanTakeDamage { get {return Data.canTakeDamage;} }// = false;
+
+
+	public Direction MustFrontBuildDir { get {return Data.mustFrontBuildDir;} }// = Direction.None; 
+
+	public List<Tile> MyPrototypeTiles { get {return Data.MyPrototypeTiles;} }
+
+	public bool CanStartBurning { get {return Data.canStartBurning;} }
+	public bool MustBeBuildOnShore { get {return Data.mustBeBuildOnShore;} }//= false;
+	public bool MustBeBuildOnMountain { get {return Data.mustBeBuildOnMountain;} }//= false;
+
+	public int Maintenancecost{ get {return Data.maintenancecost;} }
+	public int Buildcost{ get {return Data.buildcost;} }
+
+	public BuildTypes BuildTyp{ get {return Data.BuildTyp;} }
+	public BuildingTyp MyBuildingTyp{ get {return Data.myBuildingTyp;} }// = BuildingTyp.Blocking;
+	public Item[] BuildingItems{ get {return Data.buildingItems;} }
+
+	public string SpriteName{ get { return Data.spriteBaseName/*TODO: make multiple saved sprites possible*/; } }
+
+	protected Action<Structure> cbStructureChanged;
+	protected Action<Structure> cbStructureDestroy;
+	protected Action<Structure,string> cbStructureSound;
+	public bool extraUIOn = false;
+
+
+	protected void BaseCopyData(Structure str){
+		ID = str.ID;
+		_prototypData = str.Data;
+	}
+
+	#endregion
+	#endregion
+	#region Properties 
+	public Vector2 MiddleVector {get {return new Vector2 (BuildTile.X + (float)TileWidth/2f,BuildTile.Y + (float)TileHeight/2f);}}
+	public string SmallName { get { return SpriteName.ToLower ();} }
 	public City City {
 		get { return _city;}
 		set {
-			if(_city!=null){
-				_city.removeStructure (this);
+			if(_city!=null&&_city!=value){
+				OnCityChange (_city,value);
+				_city.RemoveStructure (this);
 			}
 			_city = value;
 		}
 	}
-	public bool canTakeDamage;
-	protected float _health;
 	public float Health {
 		get {
 			return _health;
 		}
 		set {
-			if(canTakeDamage==false){
+			if(CanTakeDamage==false){
 				return;
 			}
 			if(_health<=0){
@@ -50,31 +251,7 @@ public abstract class Structure : IXmlSerializable,IGEventable {
 			_health = value;
 		}
 	}
-	public float MaxHealth;
-
-
-    public bool isWalkable { get; protected set; }
-	public bool hasHitbox { get; protected set; }
-	public bool isActive {  get; protected set; }
-
-	public int buildingRange = 0;
-	public int PopulationLevel = 0;
-	public int PopulationCount = 0;
-
-	public int rotated = 0; 
-	public bool canRotate = true;
-
-	public bool canBeBuildOver = false;
-	public bool canBeUpgraded = false;
-	public bool showExtraUI = false;
-	public bool extraUIOn = false;
-	public bool buildInWilderniss = false;
-	public Vector2 middleVector {get {return new Vector2 (BuildTile.X + (float)tileWidth/2f,BuildTile.Y + (float)tileHeight/2f);}}
-
-	public Direction mustFrontBuildDir = Direction.None; 
-
-	private int _tileWidth;
-	public int tileWidth {
+	public int TileWidth {
 		get { 
 			if (rotated == 0 || rotated == 180) {
 				return _tileWidth;
@@ -86,17 +263,8 @@ public abstract class Structure : IXmlSerializable,IGEventable {
 			Debug.LogError ("Structure was rotated out of angle bounds: " + rotated);
 			return 0;
 		}
-		protected set { _tileWidth = value;}
 	}
-
-	public Tile BuildTile { get { 
-			if (myBuildingTiles == null)
-				return null;
-			return myBuildingTiles [0]; 
-	}}
-
-	private int _tileHeight; 
-	public int tileHeight {
+	public int TileHeight {
 		get { 
 			if (rotated == 0 || rotated == 180) {
 				return _tileHeight;
@@ -108,33 +276,11 @@ public abstract class Structure : IXmlSerializable,IGEventable {
 			Debug.LogError ("Structure was rotated out of angle bounds: " + rotated);
 			return 0;
 		}
-		protected set { _tileHeight = value;}
 	}
-
-	public List<Tile> myBuildingTiles;
-	public HashSet<Tile> neighbourTiles;
-	public HashSet<Tile> myRangeTiles;
-	public List<Tile> myPrototypeTiles;
-
-    Action<Structure> cbStructureChanged;
-	Action<Structure> cbStructureDestroy;
-	Action<Structure,string> cbStructureSound;
-
-    public bool canStartBurning;
-	public bool mustBeBuildOnShore= false;
-	public bool mustBeBuildOnMountain= false;
-
-	public int maintenancecost;
-	public int buildcost;
-	public BuildTypes BuildTyp;
-	public BuildingTyp myBuildingTyp = BuildingTyp.Blocking;
-	public string connectOrientation;
-	public Item[] buildingItems;
 	#endregion
-
 	#region Virtual/Abstract
 	public abstract Structure Clone ();
-	public virtual void update (float deltaTime){
+	public virtual void Update (float deltaTime){
 	}
 	public abstract void OnBuild();
 	public virtual void OnClick (){
@@ -142,6 +288,7 @@ public abstract class Structure : IXmlSerializable,IGEventable {
 	public virtual void OnClickClose (){
 	}
 	protected virtual void OnDestroy(){}
+	protected virtual void OnCityChange (City old,City newOne){}
 	/// <summary>
 	/// Extra Build UI for showing stuff when building
 	/// structures. Or so.
@@ -162,6 +309,9 @@ public abstract class Structure : IXmlSerializable,IGEventable {
 	}
 	public virtual void OnEventEndedVirtual(GameEvent ge){
 		ge.InfluenceTarget (this, false);
+	}
+	public virtual string GetSpriteName(){
+		return SpriteName;
 	}
 	#endregion 
 
@@ -204,10 +354,9 @@ public abstract class Structure : IXmlSerializable,IGEventable {
 			OnEventEndedVirtual (ge);
 		}
 	}
-	public void callbackIfnotNull(){
-		if(cbStructureChanged != null)
-			cbStructureChanged (this);
-	}
+	public void CallbackIfnotNull(){
+        cbStructureChanged?.Invoke(this);
+    }
     public void RegisterOnChangedCallback(Action<Structure> cb) {
         cbStructureChanged += cb;
     }
@@ -233,47 +382,23 @@ public abstract class Structure : IXmlSerializable,IGEventable {
 
 		//test if the place is buildable
 		// if it has to be on land
-		if (mustBeBuildOnShore == false && mustBeBuildOnMountain == false) {
-			if (PlaceOnLand (tiles) == false) {
-				return false;
-			}
-		}
-		// if it has to be on mountain
-		if (mustBeBuildOnMountain == true && mustBeBuildOnShore == false) {
-			if (PlaceOnMountain (tiles) == false) {
-				return false;
-			}
-		} 
-		//if it has to be on shore 
-		if (mustBeBuildOnShore == true && mustBeBuildOnMountain == false) {
-			if (PlaceOnShore (tiles) == false) {
-				return false;
-			}
-		}
-		//check if it's in a city
-		if(IsTilesCityViable(tiles)==false && buildInWilderniss==false){
+		if(CanBuildOnSpot (tiles)==false){
+			Debug.Log ("canBuildOnSpot FAILED -- Give UI feedback"); 
 			return false;
 		}
-
 
 		//special check for some structures 
 		if (SpecialCheckForBuild (tiles) == false) {
-			Debug.Log ("specialcheck failed"); 
+			Debug.Log ("specialcheck failed -- Give UI feedback"); 
 			return false;
 		}
 
+		myBuildingTiles.AddRange (tiles);
 		//if we are here we can build this and
 		//set the tiles to the this structure -> claim the tiles!
-		bool hasCity = false;
 		neighbourTiles = new HashSet<Tile>();
-		foreach (Tile mt in myBuildingTiles) {
+        foreach (Tile mt in myBuildingTiles) {
 			mt.Structure = this;
-			if(mt.myCity!=null && hasCity == false && buildInWilderniss == mt.myCity.IsWilderness ()){
-				this.City = mt.myCity;
-				hasCity = true;
-
-				mt.myIsland.AddStructure (this);
-			}
 			foreach(Tile nbt in mt.GetNeighbours()){
 				if (myBuildingTiles.Contains (nbt) == false) {
 					neighbourTiles.Add (nbt);
@@ -281,45 +406,20 @@ public abstract class Structure : IXmlSerializable,IGEventable {
 			}
 		}
 
-		//it searches all the tiles it has in its reach!
-		GetInRangeTiles (myBuildingTiles[0]);
-		myPrototypeTiles = null;
+        //it searches all the tiles it has in its reach!
+        myRangeTiles = GetInRangeTiles(myBuildingTiles[0]);
 
-		City.RegisterOnEvent (OnEventCreate, OnEventEnded);
 		// do on place structure stuff here!
 		OnBuild ();
+		City.RegisterOnEvent (OnEventCreate, OnEventEnded);
+
 		return true;
 	}
-	/// <summary>
-	/// Determines whether it can be build in this city tiles
-	/// Chances if you can build a little bit outside the area!
-	/// For now tho it can be done
-	/// Only if all tiles are within the city owned by the player it can
-	/// be build (Exception Warehouse)
-	/// </summary>
-	/// <returns><c>true</c> if this instance is city viable the specified tiles; otherwise, <c>false</c>.</returns>
-	/// <param name="tiles">Tiles.</param>
-	public bool IsTilesCityViable(List<Tile> tiles){
-		foreach (Tile t in tiles) {
-			if (t.myCity!=null && t.myCity.playerNumber != playerID) {
-				//here it cant build cause someoneelse owns it
-				if (t.myCity.IsWilderness () == false ) {
-					return false;
-				} else {
-					//HERE it can be build if 
-					//EXCEPTION warehouses can be build on new islands
-					if(this is Warehouse == false){
-						return false;
-					}
-				}
-			} 
-		}
-		return true;
-	}
-	public bool IsTileCityViable(Tile t){
-		if (t.myCity!=null && t.myCity.playerNumber != playerID) {
+
+	public bool IsTileCityViable(Tile t, int player){
+		if (t.MyCity!=null && t.MyCity.playerNumber != player) {
 			//here it cant build cause someoneelse owns it
-			if (t.myCity.IsWilderness () == false ) {
+			if (t.MyCity.IsWilderness () == false ) {
 				return false;
 			} else {
 				//HERE it can be build if 
@@ -331,32 +431,6 @@ public abstract class Structure : IXmlSerializable,IGEventable {
 		} 
 		return true;
 	}
-	protected bool PlaceOnLand(List<Tile> tiles){
-		for (int i = 0; i < tiles.Count; i++) {
-			if(tiles[i].Structure!=null && tiles[i].Structure.canBeBuildOver == false){
-				return false;
-			}
-		}
-		if (tileWidth == 1 && tileHeight == 1) {
-			if(tiles[0].Structure != null && tiles [0].Structure.canBeBuildOver){
-				if(tiles [0].Structure.name == this.name){
-					return false;
-				}
-			}
-			if (correctSpotOnLand (tiles) == false) {
-				return false;
-			}
-			myBuildingTiles.Add (tiles [0]);
-		} else {
-			if(correctSpotOnLand(tiles)){
-				myBuildingTiles.AddRange (tiles);
-			} else {
-				return false;
-			}
-		}
-		return true;
-	}
-
 
 	public virtual bool SpecialCheckForBuild(List<Tile> tiles){
 		return true;
@@ -368,20 +442,21 @@ public abstract class Structure : IXmlSerializable,IGEventable {
 		y = Mathf.FloorToInt (y);
 		List<Tile> tiles = new List<Tile> ();
 		if (ignoreRotation == false) {
-			for (int w = 0; w < tileWidth; w++) {
-				tiles.Add (World.current.GetTileAt (x + w, y));
-				for (int h = 1; h < tileHeight; h++) {
-					tiles.Add (World.current.GetTileAt (x + w, y + h));
+			for (int w = 0; w < TileWidth; w++) {
+//				tiles.Add (World.current.GetTileAt (x + w, y));
+				for (int h = 0; h < TileHeight; h++) {
+					tiles.Add (World.Current.GetTileAt (x + w, y + h));
 				}
 			}
 		} else {
 			for (int w = 0; w < _tileWidth; w++) {
-				tiles.Add (World.current.GetTileAt (x + w, y));
+				tiles.Add (World.Current.GetTileAt (x + w, y));
 				for (int h = 1; h < _tileHeight; h++) {
-					tiles.Add (World.current.GetTileAt (x + w, y + h));
+					tiles.Add (World.Current.GetTileAt (x + w, y + h));
 				}
 			}
 		}
+
 		return tiles;
 	}
 	/// <summary>
@@ -390,26 +465,23 @@ public abstract class Structure : IXmlSerializable,IGEventable {
 	/// <returns>The in range tiles.</returns>
 	/// <param name="firstTile">The most left one, first row.</param>
 	public HashSet<Tile> GetInRangeTiles (Tile firstTile) {
-		if (myPrototypeTiles == null) {
-			CalculatePrototypTiles ();
+		if (BuildingRange == 0) {
+			return null;
 		}
 		if (firstTile==null) {
+			Debug.LogError ("Range Tiles Tile is null -> cant calculated of that");
 			return null;
 		}
-		if (buildingRange == 0) {
-			return null;
-		}
-
-		World w = WorldController.Instance.world;
+		World w = WorldController.Instance.World;
 		myRangeTiles = new HashSet<Tile> ();
-		float width = firstTile.X-buildingRange - tileWidth / 2;
-		float height = firstTile.Y-buildingRange - tileHeight / 2;
-		foreach(Tile t in myPrototypeTiles){
+        float width = firstTile.X - BuildingRange;
+		float height = firstTile.Y-BuildingRange;
+		foreach(Tile t in MyPrototypeTiles){
 			myRangeTiles.Add (w.GetTileAt (t.X +width,t.Y+height));			
 		}
 		return myRangeTiles;
 	}
-	public List<Tile> roadsAroundStructure(){
+	public List<Tile> RoadsAroundStructure(){
 		List<Tile> roads = new List<Tile>();
 		foreach (Tile item in myBuildingTiles) {
 			foreach (Tile n in item.GetNeighbours ()) {
@@ -425,7 +497,7 @@ public abstract class Structure : IXmlSerializable,IGEventable {
 	#endregion
 	#region other
 	public int GetPlayerNumber(){
-		return playerID;
+		return PlayerNumber;
 	}
 	public int GetTargetType(){
 		return TargetType + ID;
@@ -434,7 +506,7 @@ public abstract class Structure : IXmlSerializable,IGEventable {
 		Debug.LogError ("Not implemented! Because nothing yet needs it and would take to much RAM!" );
 	}
 	public void TakeDamage(float damage){
-		if(canTakeDamage==false){
+		if(CanTakeDamage==false){
 			return;
 		}
 		if(damage<0){
@@ -457,332 +529,112 @@ public abstract class Structure : IXmlSerializable,IGEventable {
 		foreach(Tile t in myBuildingTiles){
 			t.Structure = null;
 		}
-		if(cbStructureDestroy!=null)
-			cbStructureDestroy(this);
-	}
-	private void CalculatePrototypTiles(){
-		if(buildingRange == 0){
-			return;
-		}
-		float x;
-		float y;
-		//get the tile at bottom left to create a "prototype circle"
-		Tile firstTile = World.current.GetTileAt (0 + buildingRange+tileWidth/2,0 + buildingRange+tileHeight/2);
-		Vector2 center = new Vector2 (firstTile.X, firstTile.Y);
-		if (tileWidth > 1) {
-			center.x += 0.5f + ((float)tileWidth) / 2f - 1;
-		}
-		if (tileHeight > 1) {
-			center.y += 0.5f + ((float)tileHeight) / 2f - 1;
-		}
-		World w = WorldController.Instance.world;
-		List<Tile> temp = new List<Tile> ();
-		float radius = this.buildingRange + 1.5f;
-		for (float a = 0; a < 360; a += 0.5f) {
-			x = center.x + radius * Mathf.Cos (a);
-			y = center.y + radius * Mathf.Sin (a);
-			//			GameObject go = new GameObject ();
-			//			go.transform.position = new Vector3 (x, y);
-			//			go.AddComponent<SpriteRenderer> ().sprite = Resources.Load<Sprite> ("Debug");
-			x = Mathf.RoundToInt (x);
-			y = Mathf.RoundToInt (y);
-			for (int i = 0; i < buildingRange; i++) {
-				Tile circleTile = w.GetTileAt (x, y);
-				if (temp.Contains (circleTile) == false) {
-					temp.Add (circleTile);
-				}
-			}
-		}
-		myPrototypeTiles = new List<Tile> ();
-		//like flood fill the inner circle
-		Queue<Tile> tilesToCheck = new Queue<Tile> ();
-		tilesToCheck.Enqueue (firstTile.South ());
-		while (tilesToCheck.Count > 0) {
-			Tile t = tilesToCheck.Dequeue ();
-			if (temp.Contains (t) == false && myPrototypeTiles.Contains (t) == false) {
-				myPrototypeTiles.Add (t);
-				Tile[] ns = t.GetNeighbours (false);
-				foreach (Tile t2 in ns) {
-					tilesToCheck.Enqueue (t2);
-				}
-			}
-		}
-		//remove the tile where the building is standing
-		foreach (Tile item in GetBuildingTiles (firstTile.X,firstTile.Y)) {
-			myPrototypeTiles.Remove (item);
-		}
-	}
+        //TODO: add here for getting res back 
+        City.RemoveStructure(this); 
+        cbStructureDestroy?.Invoke(this);
+    }
 	#endregion
 	#region correctspot
-	public bool correctSpotOnLand(List<Tile> tiles){
-		foreach(Tile t in tiles){
-			if(correctSpotOnLand (t) == false){
+	public virtual Item[] GetBuildingItems(){
+		return BuildingItems;
+	}
+	public bool CanBuildOnSpot(List<Tile> tiles){
+		List<bool> bools = new List<bool> (CorrectSpot (tiles).Values);
+		return bools.Contains (false)==false;
+	}
 
-				return false;
+	public Dictionary<Tile,bool> CorrectSpot(List<Tile> tiles){
+		Dictionary<Tile,bool> tileToCanBuild = new Dictionary<Tile, bool> ();
+		//to make it faster
+		if(MustFrontBuildDir==Direction.None && MustBeBuildOnShore==false && MustBeBuildOnMountain==false){
+			foreach (Tile item in tiles) {
+				tileToCanBuild.Add (item,item.CheckTile ());
 			}
+			return tileToCanBuild;
 		}
-		return true;
-	}
-	public bool correctSpotOnLand(Tile t){
-		if (Tile.IsBuildType (t.Type) == false)
-			return false;
-		if (t.Structure !=null && t.Structure.canBeBuildOver == false)
-			return false;
-		if(t.myCity == null){//shouldnt never ever happend 
-			Debug.LogError ("this tile doesnt have any city, not even wilderness");
-			return false;
-		}
-		return true;
-	}
 
-	protected bool PlaceOnMountain(List<Tile> tiles){
-		if (tileWidth == 1 && tileHeight == 1) {
-			if (tiles [0].Structure != null && tiles [0].Structure.canBeBuildOver) {
-				if (tiles [0].Structure.name == this.name) {
-					return false;
+        //TO simplify this we are gonna sort the array so it is in order
+        //from the coordinationsystem that means 0,0->width,height
+        int max = Mathf.Max(TileWidth, TileHeight);
+		Tile[,] sortedTiles = new Tile[max, max];
+
+		List<Tile> ts = new List<Tile>(tiles);
+
+        if (ts.Count == 0)
+            return null;
+
+		//ts.RemoveAll (x=>x==null);
+		ts.Sort ((x, y) => x.X.CompareTo (y.X)*x.Y.CompareTo (y.Y));
+		foreach(Tile t in ts){
+			int x = t.X - ts [0].X;
+			int y = t.Y - ts [0].Y;
+			if( TileWidth<=x || TileHeight<=y || x<0 ||y<0 ){
+                Debug.Log(ts.Count);
+            }
+            sortedTiles [x, y] = t; // so we have the tile at the correct spot
+		}
+
+		Direction row = RowToTest ();
+		switch (row) {
+		case Direction.None:
+			Debug.LogWarning ("Not implementet! How are we gonna do this?");
+			return tileToCanBuild;
+		case Direction.N:
+			return CheckTilesWithRowFix (tileToCanBuild,sortedTiles, TileWidth,TileHeight,false);
+		case Direction.E:
+			return CheckTilesWithRowFix (tileToCanBuild,sortedTiles, TileWidth,TileHeight,true);
+		case Direction.S:
+			return CheckTilesWithRowFix (tileToCanBuild,sortedTiles, TileWidth,0,false);
+		case Direction.W:
+			return CheckTilesWithRowFix (tileToCanBuild,sortedTiles, 0,TileHeight,true);
+		default:
+			return null;
+		}
+	}
+	private Dictionary<Tile,bool> CheckTilesWithRowFix(Dictionary<Tile,bool> tileToCanBuild, Tile[,] tiles, int x,int y, bool fixX){
+		if (fixX) {
+			x = Mathf.Max (x-1, 0);
+			for(int i=0;i<y;i++){
+				if(tiles[x,i]==null){
+					continue;
 				}
+				tileToCanBuild.Add (tiles [x, i], tiles [x, i].CheckTile (MustBeBuildOnShore, MustBeBuildOnMountain));
+				tiles [x, i] = null;
 			}
-			if (correctSpotOnMountain  (tiles) == false) {
-				return false;
-			}
-			myBuildingTiles.Add (tiles [0]);
 		} else {
-			if (correctSpotOnMountain (tiles)) {
-				myBuildingTiles.AddRange (tiles);
-			} else {
-				return false;
-			}
-		}
-		return true;
-	}
-	protected bool PlaceOnShore(List<Tile> tiles){
-		if (tileWidth == 1 && tileHeight == 1) {
-			if(tiles [0].Structure.canBeBuildOver){
-				if(tiles [0].Structure.name == this.name){
-					return false;
+			y = Mathf.Max (y-1, 0);
+			for(int i=0;i<x;i++){
+				if(tiles[i,y]==null){
+					continue;
 				}
-			}
-			if (correctSpotOnShore (tiles) == false) {
-				return false;
-			}
-			myBuildingTiles.Add (tiles[0]);
-		} 
-		else {
-			if(correctSpotOnShore(tiles)){
-				myBuildingTiles.AddRange (tiles);
-			} else {
-				return false;
+				tileToCanBuild.Add (tiles [i, y], tiles [i, y].CheckTile (MustBeBuildOnShore, MustBeBuildOnMountain));
+				tiles [i, y] = null;
 			}
 		}
-		return true;
-	}
-	public bool correctSpotOnMountain(List<Tile> tiles){
-		return correctSpotForOn (tiles,TileType.Mountain);
-	}
-	public bool correctSpotOnShore(List<Tile> tiles){
-		return correctSpotForOn (tiles,TileType.Ocean);
-	}
-	public virtual Item[] BuildingItems(){
-		return buildingItems;
-	}
-	public bool correctSpotForOn(List<Tile> tiles, TileType tt){
-		switch (rotated){
-		case 0:
-			return CheckFor0Rotation (tiles,tt);
-		case 90:
-			return CheckFor90Rotation (tiles,tt);
-		case 180:
-			return CheckFor180Rotation (tiles,tt);
-		case 270:
-			return CheckFor270Rotation (tiles,tt);
-		}
-		Debug.LogError ("correctSpotForOn -- wrong rotation !"); 
-		return false;
-	}
-	public bool CheckFor0Rotation(List<Tile> tiles, TileType tt){
-		switch (mustFrontBuildDir){
-		case Direction.None:
-			return CheckNoneDirection (tiles, tt);
-		case Direction.N:
-			return CheckForTopRow (tiles, tt);
-		case Direction.E:
-			return CheckForRightRow (tiles, tt);
-		case Direction.S:
-			return CheckForBottomRow (tiles, tt);
-		case Direction.W:
-			return CheckForLeftRow (tiles, tt);
-		}
-		Debug.LogError ("CheckForNoneRotation -- Should not be here !"); 
-		return false;
-	}
-	public bool CheckFor90Rotation (List<Tile> tiles, TileType tt){
-		switch (mustFrontBuildDir){
-		case Direction.None:
-			return CheckNoneDirection (tiles, tt);
-		case Direction.N:
-			return CheckForLeftRow (tiles, tt);
-		case Direction.E:
-			return CheckForTopRow (tiles, tt);
-		case Direction.S:
-			return CheckForRightRow (tiles, tt);
-		case Direction.W:
-			return CheckForBottomRow (tiles, tt);
-		}
-		Debug.LogError ("CheckForNoneRotation -- Should not be here !"); 
-		return false;
-	}
-	public bool CheckFor180Rotation(List<Tile> tiles, TileType tt){
-		switch (mustFrontBuildDir){
-		case Direction.None:
-			return CheckNoneDirection (tiles, tt);
-		case Direction.N:
-			return CheckForBottomRow (tiles, tt);
-		case Direction.E:
-			return CheckForLeftRow (tiles, tt);
-		case Direction.S:
-			return CheckForTopRow (tiles, tt);
-		case Direction.W:
-			return CheckForRightRow (tiles, tt);
-		}
-		Debug.LogError ("CheckForNoneRotation -- Should not be here !"); 
-		return false;
-	}
-	public bool CheckFor270Rotation(List<Tile> tiles, TileType tt){
-		switch (mustFrontBuildDir){
-		case Direction.None:
-			return CheckNoneDirection (tiles, tt);
-		case Direction.N:
-			return CheckForRightRow (tiles, tt);
-		case Direction.E:
-			return CheckForBottomRow (tiles, tt);
-		case Direction.S:
-			return CheckForLeftRow (tiles, tt);
-		case Direction.W:
-			return CheckForTopRow (tiles, tt);
-		}
-		Debug.LogError ("CheckForNoneRotation -- Should not be here !"); 
-		return false;
-	}
-	public bool CheckNoneDirection(List<Tile> tiles, TileType tt){
-		Tile[] otherTiles = new Tile[Mathf.Max (tileWidth,tileHeight)];
-		int other = 0;
-		int land  = 0;
-		foreach (Tile t in tiles) {
-			if (t == null) {
-				return false;
+		foreach(Tile t in tiles){
+			if(t==null){
+				continue;
 			}
-			if (t.Type == tt) {
-				other++;
-				if ((tileWidth) < other && (tileHeight) < other) {
-					return false;
-				}
-				otherTiles [other - 1] = t;
-			}
-			if (Tile.IsBuildType (t.Type)) {
-				land++;
-				if ((tileWidth) * 2 < land && (tileHeight) * 2 < land) {
-					return false;
-				}
-			}
-			if (Tile.IsUnbuildableType (t.Type,tt)) {
-				return false;
-			}
+			tileToCanBuild.Add (t,t.CheckTile ());
 		}
-		if (otherTiles [0] == null) {
-			return false;
-		}
-		Tile temp = otherTiles [0];
-		for (int i = 1; i < otherTiles.Length; i++) {
-			if(otherTiles [i] == null){
-				return false;
-			}
-			if (temp.IsNeighbour (otherTiles [i]) == false) {
-				return false;
-			} 
-			temp = otherTiles [i];
-		}
-		return true;
+		return tileToCanBuild;
 	}
-	private bool CheckForTopRow(List<Tile> tiles, TileType tt){
-		int maxY = -1;
-		for (int i = 0; i < tiles.Count; i++) {
-			if(tiles[i].Y > maxY){
-				maxY = tiles[i].Y;
-			}	
+	private Direction RowToTest(){
+		if(MustFrontBuildDir==Direction.None){
+			return Direction.None;
 		}
-		for (int i = 0; i < tiles.Count; i++) {
-			if(tiles[i].Y == maxY){
-				if(tiles[i].Type != tt){
-					return false;
-				}
-			} else {
-				if(Tile.IsBuildType (tiles[i].Type)==false){
-					return false;
-				}
-			}
+		int must = (int)MustFrontBuildDir;
+		//so we have either 1,2,3 or 4
+		//so just loop through those and add per 90: 1
+		int rotNum = rotated / 90; // so we have now 1,2,3
+		//we add this to the must be correct one
+		must += rotNum;
+		if(must>4){
+			must -= 4;
 		}
-		return true;
+		return (Direction)must;
 	}
-	private bool CheckForRightRow(List<Tile> tiles, TileType tt){
-		int maxX = -1;
-		for (int i = 0; i < tiles.Count; i++) {
-			if(tiles[i].X > maxX){
-				maxX = tiles[i].X;
-			}	
-		}
-		for (int i = 0; i < tiles.Count; i++) {
-			if(tiles[i].X == maxX){
-				if(tiles[i].Type != tt){
-					return false;
-				}
-			} else {
-				if(Tile.IsBuildType (tiles[i].Type)==false){
-					return false;
-				}
-			}
-		}
-		return true;
-	}
-	private bool CheckForBottomRow(List<Tile> tiles, TileType tt){
-		int minY = int.MaxValue;
-		for (int i = 0; i < tiles.Count; i++) {
-			if(tiles[i].Y < minY){
-				minY = tiles[i].Y;
-			}	
-		}
-		for (int i = 0; i < tiles.Count; i++) {
-			if(tiles[i].Y == minY){
-				if(tiles[i].Type != tt){
-					return false;
-				}
-			} else {
-				if(Tile.IsBuildType (tiles[i].Type)==false){
-					return false;
-				}
-			}
-		}
-		return true;
-	}
-	private bool CheckForLeftRow(List<Tile> tiles, TileType tt){
-		int minX = int.MaxValue;
-		for (int i = 0; i < tiles.Count; i++) {
-			if(tiles[i].X < minX){
-				minX = tiles[i].X;
-			}	
-		}
-		for (int i = 0; i < tiles.Count; i++) {
-			if(tiles[i].X == minX){
-				if(tiles[i].Type != tt){
-					return false;
-				}
-			} else {
-				if(Tile.IsBuildType (tiles[i].Type)==false){
-					return false;
-				}
-			}
-		}
-		return true;
-	}
+
 	#endregion
 	#region rotation
 	public int ChangeRotation(int x , int y, int rotate = 0){
@@ -790,22 +642,10 @@ public abstract class Structure : IXmlSerializable,IGEventable {
 			return 0;
 		}
 		this.rotated = rotate;
-		if(mustBeBuildOnMountain){
-			List<Tile> t = this.GetBuildingTiles (x,y);
-			if(this.correctSpotOnMountain (t)==false){
-				return ChangeRotation (x,y,rotate+90);
-			}	
-		}
-		if(mustBeBuildOnShore){
-			List<Tile> t = this.GetBuildingTiles (x,y);
-			if(this.correctSpotOnShore (t)==false){
-				return ChangeRotation (x,y,rotate+90);
-			}	
-		}
 		return rotate;
 	}
 	public void RotateStructure(){
-		if(canRotate == false) {
+		if(CanRotate == false) {
 			return;
 		}
 		rotated += 90;
@@ -813,38 +653,22 @@ public abstract class Structure : IXmlSerializable,IGEventable {
 			rotated = 0;
 		}
 	}
+	public void AddTimes90ToRotate(int times){
+		if(CanRotate == false) {
+			return;
+		}
+		rotated += 90 * times;
+		rotated %= 360;
+	}
 	#endregion
 	#region override
 	public override string ToString (){
 		if(BuildTile==null){
-			return name +"@error";
+			return SpriteName +"@error";
 		}
-		return name + "@" + BuildTile.toString ();
+		return SpriteName + "@ X=" + BuildTile.X +" Y=" + BuildTile.Y;
 	}
 	#endregion
-	#region xmlsave
-	//////////////////////////////////////////////////////////////////////////////////////
-	/// 
-	/// 						SAVING & LOADING
-	/// 
-	//////////////////////////////////////////////////////////////////////////////////////
-	public XmlSchema GetSchema() {
-		return null;
-	}
-	public abstract void WriteXml (XmlWriter writer);
-	public abstract void ReadXml (XmlReader reader);
 
-	public void BaseWriteXml(XmlWriter writer){
-		writer.WriteAttributeString ("BuildID", buildID.ToString ()); 
-		writer.WriteAttributeString ("ID", ID.ToString ()); //change this to id
-		writer.WriteAttributeString ("BuildingTile_X", myBuildingTiles [0].X.ToString ());
-		writer.WriteAttributeString ("BuildingTile_Y", myBuildingTiles [0].Y.ToString ());
-		writer.WriteAttributeString("Rotated", rotated.ToString());
-	}
-	public void BaseReadXml(XmlReader reader){
-		rotated = int.Parse( reader.GetAttribute("Rotated") );
-		buildID = int.Parse( reader.GetAttribute("BuildID") );
-	}
-	#endregion
 }
 

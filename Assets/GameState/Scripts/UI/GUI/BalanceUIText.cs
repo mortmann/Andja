@@ -6,33 +6,29 @@ public class BalanceUIText : MonoBehaviour {
 	public Player player;
 	public Text balanceText;
 	public Text changeText;
-	public Text fpsText;
+
 	// Use this for initialization
 	void Start () {
-		player = GameObject.FindObjectOfType<PlayerController>().currPlayer;
+		player = GameObject.FindObjectOfType<PlayerController>().CurrPlayer;
 	}
 	
 	// Update is called once per frame
 	void Update () {
-		if(player.balance < 0){
+		if(player.Balance < 0){
 			balanceText.color = Color.red;
 		}
-		if(player.balance >= 0){
+		if(player.Balance >= 0){
 			balanceText.color = Color.black;
 		}
-		if(player.change < 0){
+		if(player.Change < 0){
 			changeText.color = Color.red;
-			changeText.text =""+ player.change + " ";
+			changeText.text =""+ player.Change + " ";
 		}
-		if(player.change >= 0){
+		if(player.Change >= 0){
 			changeText.color = Color.green;
-			changeText.text ="+ "+ player.change + " ";
+			changeText.text ="+ "+ player.Change + " ";
 		}
-		balanceText.text = player.balance + " ";
-//		if(Application.isEditor==false){
-//			fpsText.text = "";
-//		} else {
-			fpsText.text = Mathf.Round (1.0f / Time.deltaTime) + " fps ";
-//		}
+		balanceText.text = player.Balance + " ";
+
 	}
 }

@@ -1,68 +1,66 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 
-public class Farm : OutputStructure {
+public class FarmPrototypData : OutputPrototypData {
 	public Growable growable;
+}
+
+
+[JsonObject(MemberSerialization.OptIn)]
+public class Farm : OutputStructure {
+	
+
+	#region Serialize
+	#endregion
+	#region RuntimeOrOther
+
+	public Growable growable { get { return FarmData.growable; }}
+
 	public int growableReadyCount;
 	public int OnRegisterCallbacks;
 	Queue<Structure> workingGrowables;
+
+	protected FarmPrototypData _farmData;
+	public FarmPrototypData  FarmData {
+		get { if(_farmData==null){
+				_farmData = (FarmPrototypData)PrototypController.Instance.GetStructurePrototypDataForID (ID);
+			}
+			return _farmData;
+		}
+	}
+	#endregion
 
     public override float Efficiency{
 		get {
 			return Mathf.Round(((float)OnRegisterCallbacks / (float)myRangeTiles.Count)*1000)/10f;
 		}
 	}
-	public Farm(int id, string name,float produceTime, Item produce, Structure growable,int tileWidth, int tileHeight, int buildcost, int maintance ){
+	public Farm(int id,FarmPrototypData fpd){
+		_farmData = fpd;
 		this.ID = id;
-		this.name = name;
-		if(growable is Growable ==false){
-			Debug.LogError ("this farm didnt receive a Growable Structure");			
-		} else {
-			this.growable = (Growable)growable;
-		}
-		this.tileWidth = tileWidth;
-		this.tileHeight = tileHeight;
-		this.buildcost = buildcost;
-		this.maintenancecost = maintance;
-		this.output = new Item[1];
-		this.output [0] = produce;
-		this.produceTime = produceTime;
-		this.buildingRange = 3;
-		maxOutputStorage = 5;
-		myBuildingTyp = BuildingTyp.Blocking;
-		BuildTyp = BuildTypes.Single;
-		hasHitbox = true;
-		this.canTakeDamage = true;
 	}
 	protected Farm(Farm f){
-		this.myBuildingTyp = f.myBuildingTyp;
-		this.ID = f.ID;
-		this.name = f.name;
-		this.tileWidth = f.tileWidth;
-		this.tileHeight = f.tileHeight;
-		this.buildcost = f.buildcost;
-		this.maintenancecost = f.maintenancecost;
-		this.output = f.output;
-		this.produceTime = f.produceTime;
-		this.produceCountdown = f.produceTime;
-		this.maxOutputStorage = f.maxOutputStorage;
-		this.buildingRange = f.buildingRange;
-		this.growable = f.growable;
-		myBuildingTyp = f.myBuildingTyp;
-		BuildTyp = f.BuildTyp;
-		hasHitbox = f.hasHitbox;
-		this.canTakeDamage = f.canTakeDamage;
+		OutputCopyData (f);
+
 	}
+	/// <summary>
+	/// DO NOT USE
+	/// </summary>
+	public Farm(){
+		workingGrowables = new Queue<Structure> ();
+	}
+
 	public override Structure Clone ()	{
 		return new Farm (this);
 	}
+		
 
 	public override void OnBuild ()	{
 		workingGrowables = new Queue<Structure> ();
 		if(growable == null){
 			return;
 		}
-		GameObject.FindObjectOfType<BuildController> ().BuildOnTile (3, new List<Tile>(myRangeTiles),playerID);
 		//farm has it needs plant if it can 
 		foreach (Tile rangeTile in myRangeTiles) {
 			if(rangeTile.Structure != null){
@@ -77,30 +75,28 @@ public class Farm : OutputStructure {
 			}
 		}
 		foreach(Tile rangeTile in myRangeTiles){
-			rangeTile.RegisterTileStructureChangedCallback (OnTileStructureChange);
-		}
+			rangeTile.RegisterTileOldNewStructureChangedCallback (OnTileStructureChange);
+		}	
 	}
-	public override void update (float deltaTime){
+	public override void Update (float deltaTime){
 		if(growableReadyCount==0){
 			return;
 		}
-		if(output[0].count >= maxOutputStorage){
+		if(Output[0].count >= MaxOutputStorage){
 			return;
 		}
 		//send out worker to collect goods
-		produceCountdown -= deltaTime;
-		if (produceCountdown <= 0) {
-			produceCountdown = produceTime;
+		produceCountdown += deltaTime;
+		if(produceCountdown >= ProduceTime) {
+			produceCountdown = 0;
 			if (growable != null) {
 				Growable g = (Growable)workingGrowables.Dequeue ();
-				output[0].count++;
+				Output[0].count++;
 				growableReadyCount--;
 				((Growable)g).Reset ();
 			}
-			if (cbOutputChange != null) {
-				cbOutputChange (this);
-			}
-		}
+            cbOutputChange?.Invoke(this);
+        }
 	}
 	public void OnGrowableChanged(Structure str){
 		if(str is Growable == false){
@@ -118,22 +114,28 @@ public class Farm : OutputStructure {
 		// send worker todo this job
 		// not important right now
 	}
-	public void OnTileStructureChange(Tile t, Structure old){
-		if(old != null && old.ID == growable.ID){
+	public void OnTileStructureChange(Structure now, Structure old){
+		if(old != null && old.ID == growable.ID ){
 			OnRegisterCallbacks--;
 		}
-		if(t.Structure == null){
-			if(old.ID == growable.ID){
-				OnRegisterCallbacks--;
-			}
+		if(now == null){
 			return;
 		}
-		if(t.Structure.ID == growable.ID){
+		if(now.ID == growable.ID){
 			OnRegisterCallbacks++;
-			t.Structure.RegisterOnChangedCallback (OnGrowableChanged);	
+			now.RegisterOnChangedCallback (OnGrowableChanged);	
+			Growable g = now as Growable;
+			if(g.hasProduced){
+				//we need to check if its done
+				//if so we need to get it queued for work!
+				OnGrowableChanged (g);
+			}
 		}
 	}
 	protected override void OnDestroy (){
+		if(myWorker==null){
+			return;
+		}
 		foreach (Worker item in myWorker) {
 			item.Destroy ();
 		}
@@ -152,32 +154,34 @@ public class Farm : OutputStructure {
 			return;
 		}
 		float percentage=0;
-		if(growable.fer !=null){
-			if(City.island.myFertilities.Contains (growable.fer)==false){
+		int count=0;
+		foreach (Tile item in hs) {
+			if(item==null){
+				continue;
+			}
+			if(item.Structure!=null && item.Structure.ID==growable.ID){
+				count++;
+			} else
+			if(item.Structure==null && Tile.IsBuildType(item.Type)){
+				count++;	
+			}
+		}
+		percentage = Mathf.RoundToInt (((float)count / (float)hs.Count) * 100);
+
+		if(growable.Fertility !=null){
+			if(t.MyIsland==null){
+				return;
+			}
+			if(t.MyIsland.myFertilities.Contains (growable.Fertility)==false){
 				percentage = 0;
 			} else {
 				//TODO calculate the perfect grow environment?
-			}
-		} else {
-			int count=0;
-			foreach (Tile item in hs) {
-				if(item.Structure!=null && item.Structure.ID==growable.ID){
-					count++;
-				}
-			}
-			percentage = Mathf.RoundToInt (((float)count / (float)hs.Count) * 100);
-		}
 
+			}
+		} 
+			
 		parent.GetComponentInChildren<SpriteSlider> ().ChangePercent (percentage);
 		
 	}
 
-	public override void ReadXml (System.Xml.XmlReader reader)	{
-		base.BaseReadXml (reader);
-		ReadUserXml (reader);
-	}
-	public override void WriteXml (System.Xml.XmlWriter writer)	{
-		BaseWriteXml (writer);
-		WriteUserXml (writer);
-	}
 }

@@ -22,7 +22,7 @@ public class UnitUI : MonoBehaviour {
 		}
 
 		//you can only command your own units
-		if(unit.playerNumber!=PlayerController.Instance.currentPlayerNumber){
+		if(unit.playerNumber!=PlayerController.currentPlayerNumber){
 			buttonCanvas.SetActive (false);
 			return;
 		} else {
@@ -45,26 +45,26 @@ public class UnitUI : MonoBehaviour {
 		if(inv == null){
 			return;
 		}
-		for (int i=0; i<inv.numberOfSpaces; i++) {
-			addItemGameObject(i);
+		for (int i=0; i<inv.NumberOfSpaces; i++) {
+			AddItemGameObject(i);
 		}
 	}
 
-	private void addItemGameObject(int i){
+	private void AddItemGameObject(int i){
 		GameObject go = GameObject.Instantiate (itemPrefab);
 		go.transform.SetParent (content.transform);
 		ItemUI iui = go.GetComponent<ItemUI> ();
-		if(inv.items.ContainsKey(i) == false){
+		if(inv.Items.ContainsKey(i) == false){
 			go.name = "item " + i;
-			iui.SetItem (null, inv.maxStackSize);
+			iui.SetItem (null, inv.MaxStackSize);
 			itemToGO.Add (i,iui);
 			return;
 		}
-		Item item = inv.items [i];
+		Item item = inv.Items [i];
 		go.name = "item " + i;
 		if (item.ID != -1) {
-			iui.SetItem (item, inv.maxStackSize);
-			iui.AddListener (( data ) => { OnItemClick( i ); });
+			iui.SetItem (item, inv.MaxStackSize);
+			iui.AddClickListener (( data ) => { OnItemClick( i ); });
 //			EventTrigger trigger = go.GetComponent<EventTrigger> ();
 //			EventTrigger.Entry entry = new EventTrigger.Entry( );
 //			entry.eventID = EventTriggerType.PointerClick;
@@ -76,23 +76,23 @@ public class UnitUI : MonoBehaviour {
 	}
 	void OnItemClick(int clicked){
 		Debug.Log ("clicked " + clicked); 
-		unit.ToTradeItemToNearbyWarehouse (inv.items[clicked]);
+		unit.ToTradeItemToNearbyWarehouse (inv.Items[clicked]);
 	}
 	public void OnInvChange(Inventory changedInv){
 		foreach(int i in itemToGO.Keys){
 			GameObject.Destroy (itemToGO[i].gameObject);
 		}
 		itemToGO = new Dictionary<int, ItemUI> ();
-		for (int i=0;i<inv.numberOfSpaces;i++) {
-			addItemGameObject(i);
+		for (int i=0;i<inv.NumberOfSpaces;i++) {
+			AddItemGameObject(i);
 		}
 		inv = changedInv;
 
 	}
 	public void Update(){
-		if(unit.currHealth<=0){
+		if(unit.CurrHealth<=0){
 			UIController.Instance.CloseUnitUI ();
 		}
-		healthText.text = Mathf.CeilToInt (unit.currHealth) + "/" + unit.maxHP+"HP";
+		healthText.text = Mathf.CeilToInt (unit.CurrHealth) + "/" + unit.MaxHealth + "HP";
 	}
 }

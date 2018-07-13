@@ -1,30 +1,73 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System;
-using System.Xml;
-using System.Xml.Schema;
-using System.Xml.Serialization;
+using Newtonsoft.Json;
 
-public class Unit : IXmlSerializable {
-   
-	public int playerNumber;
+public class UnitPrototypeData : LanguageVariables {
+    public int PopulationLevel = 0;
+    public int PopulationCount = 0;
+    public int inventoryPlaces;
+    public int inventorySize;
+    public int maintenancecost;
+    public int buildcost;
+    
+    public Item[] buildingItems;
+    public string spriteBaseName;
+    //public DamageType myDamageType = DamageType.Blade;
+    //public ArmorType myArmorType = ArmorType.Leather;
+    public float buildTime = 1f;
+    public float MaxHealth;
+    public float attackRange = 1f;
+    public float damage = 10;
+    public float attackCooldown = 1;
+    public float attackRate = 1;
+    public float speed;
+    public float rotationSpeed = 2f;
 
-	public OutputStructure rangeUStructure;
-	public Tile startTile;
-	public string Name {
-		protected set;
-		get;
-	}
+    public float width;
+    public float height;
+}
 
+[JsonObject(MemberSerialization.OptIn)]
+public class Unit  {
+   	//save these Variables
+	#region Serialize
+	[JsonPropertyAttribute] public int playerNumber;
+	[JsonPropertyAttribute] private string _UserSetName;
+	[JsonPropertyAttribute] private float _currHealth;
+	[JsonPropertyAttribute] float aggroCooldown=1f;
 	//COMBAT STUFF
-	float aggroTimer=1f;
-	float aggroCooldown=1f;
+	[JsonPropertyAttribute] public Vector2 patrolTarget;
+	[JsonPropertyAttribute] public Vector2 patrolStart;
+	[JsonPropertyAttribute] public bool onWayToPatrolTarget; // false for targetPatrol, true for patrolstart
+	[JsonPropertyAttribute] public bool onPatrol = false;
+	[JsonPropertyAttribute] public bool isShip;
+	[JsonPropertyAttribute] public bool hasChanged = false;
+	[JsonPropertyAttribute] public float tradeTime=1.5f;
+	[JsonPropertyAttribute] public Pathfinding pathfinding;
+	#endregion
+	//being calculated at runtime
+	#region calculated 
+
+	//TODO decide on this:
+	public float BuildRange {
+		get {
+			return AttackRange;
+		}
+	}
+	//FIXME: these should be safed 
+	//not quite sure how to do it
 	Unit engangingUnit;
 	Structure attackingStructure;
-	bool isCapturing;
-	public int maxHP=50;
-	private float _currHealth = 50;
-	public float currHealth {
+	public string UserSetName {
+		get {
+			return _UserSetName;
+		}
+		protected set {
+			_UserSetName = value;
+		}
+	}
+	public float CurrHealth {
 		get { return _currHealth;}
 		protected set {
 			if(value<=0){
@@ -33,21 +76,11 @@ public class Unit : IXmlSerializable {
 			_currHealth = value;
 		}
 	}
-	public float attackRange=1f;
-	public float damage=10;
-	public DamageType myDamageType=DamageType.Blade;
-	public ArmorType myArmorType=ArmorType.Leather;
-	public float attackCooldown=1;
-	public float attackRate=1;
-	//PATHFINDING STUFF
-	public Vector3 VectorPosition {
-		get {return new Vector3 (X, Y);}
-	}
-	protected float speed;   // Tiles per second
-	protected internal float width;
-	protected internal float height;
-
-	public Pathfinding pathfinding;
+	public OutputStructure rangeUStructure;
+	bool isCapturing;
+	protected Action<Unit> cbUnitChanged;
+	protected Action<Unit> cbUnitDestroyed;
+	protected Action<Unit,string> cbUnitSound;
 	public float X {
 		get {
 			return pathfinding.X;
@@ -63,41 +96,89 @@ public class Unit : IXmlSerializable {
 			return pathfinding.rotation;
 		}
 	}
-	public Vector2 patrolTarget;
-	public Vector2 patrolStart;
-	public bool onWayToPatrolTarget; // false for targetPatrol, true for patrolstart
-	public bool onPatrol = false;
-	public bool isShip;
-	public bool hasChanged = false;
-	public float tradeTime=1.5f;
+	public Vector3 VectorPosition {
+		get {return new Vector3 (X, Y);}
+	}
+	public bool IsDead { 
+		get { return _currHealth <= 0;}
+	}
+    #endregion
+    //gets from prototyp / being loaded in from masterfile
+    #region prototype
+    public int ID;
+	float aggroTimer = 1f;
+    public float attackTimer = 1;
 
-	protected Action<Unit> cbUnitChanged;
-	protected Action<Unit> cbUnitDestroyed;
-	protected Action<Unit,string> cbUnitSound;
+    public float AttackRange => Data.attackRange;
+	public float Damage => Data.damage;
+    //TODO: make this there own classes
+    public DamageType MyDamageType = DamageType.Blade;
+    public ArmorType MyArmorType = ArmorType.Leather;
+    public float MaxHealth => Data.MaxHealth;
+    public float AttackRate => Data.attackRange;
+	public float Speed => Data.speed; 
+	public float RotationSpeed => Data.rotationSpeed;
+    public float BuildTime => Data.buildTime;
+    public int BuildCost => Data.buildcost;
+    public int InventoryPlaces => Data.inventoryPlaces;
+    public int InventorySize => Data.inventorySize;
 
-	public Inventory inventory;
+    public virtual Unit Clone(int playerNumber, Tile t) {
+        return new Unit(this, playerNumber,t);
+    }
 
-	public Unit(Tile t,int playernumber) {
+    protected internal float Width => Data.width;
+	protected internal float Height => Data.height;
+    public Item[] BuildingItems => Data.buildingItems;
+    public string Name => Data.Name;
+
+    #endregion
+
+    protected UnitPrototypeData _prototypData;
+    public UnitPrototypeData Data {
+        get {
+            if (_prototypData == null) {
+                _prototypData = PrototypController.Instance.GetUnitPrototypDataForID(ID);
+            }
+            return _prototypData;
+        }
+    }
+
+
+    public Inventory inventory;
+
+    public Unit(Tile t,int playernumber) {
 		this.playerNumber = playernumber;
-		speed = 2f;
-		startTile = t;
-		pathfinding = new Pathfinding (speed, startTile,path_mode.islandSingleStartpoint);
-		Name = "Unit " + UnityEngine.Random.Range (0, 1000000000);
+		UserSetName = "Unit " + UnityEngine.Random.Range (0, 1000000000);
+		pathfinding = new IslandPathfinding (this,t);
     }
 	public Unit(){
 	}
-	public virtual void Update(float deltaTime) {
+
+    public Unit(int id,UnitPrototypeData upd) {
+        this.ID = id;
+        this._prototypData = upd;
+    }
+
+    public Unit(Unit unit, int playerNumber, Tile t) {
+        this.ID = unit.ID;
+        this._prototypData = unit.Data;
+        this.CurrHealth = MaxHealth;
+        this.playerNumber = playerNumber;
+        UserSetName = "Unit " + UnityEngine.Random.Range(0, 1000000000);
+        pathfinding = new IslandPathfinding(this, t);
+    }
+    public virtual void Update(float deltaTime) {
 		//PATROL
 		UpdateParol ();
 		UpdateAggroRange (deltaTime);
 		if(Fighting(deltaTime)){
 			return;
 		}
-		pathfinding.Update_DoMovement (deltaTime);
+		if(pathfinding!=null)
+			pathfinding.Update_DoMovement (deltaTime);
 
-//		myGameobject.transform.position = new Vector3 (X, Y, -0.1f);
-        if (cbUnitChanged != null)
-            cbUnitChanged(this);
+        cbUnitChanged?.Invoke(this);
     }
 	protected void UpdateAggroRange(float deltaTime){
 		if(engangingUnit!=null){
@@ -142,7 +223,7 @@ public class Unit : IXmlSerializable {
 		if(overridingAttack==false&&engangingUnit!=null){
 			return;
 		}
-		if(this.isShip || this.myDamageType == DamageType.Artillery){
+		if(this.isShip || this.MyDamageType == DamageType.Artillery){
 			attackingStructure = structure;
 			Tile nearstTile = null;
 			float nearDist= float.MaxValue;
@@ -156,7 +237,7 @@ public class Unit : IXmlSerializable {
 						continue;
 					}
 				}
-				float currDist = (item.vector-pathfinding.currTile.vector).magnitude;
+				float currDist = (item.Vector-pathfinding.CurrTile.Vector).magnitude;
 				if(currDist<nearDist){
 					currDist = nearDist;
 					nearstTile = item;
@@ -181,7 +262,7 @@ public class Unit : IXmlSerializable {
 							continue;
 						}
 					}
-					float currDist = (item.vector-pathfinding.currTile.vector).magnitude;
+					float currDist = (item.Vector-pathfinding.CurrTile.Vector).magnitude;
 					if(currDist<nearDist){
 						currDist = nearDist;
 						nearstTile = item;
@@ -203,17 +284,17 @@ public class Unit : IXmlSerializable {
 				return false;
 			}
 			float dist = (engangingUnit.VectorPosition - VectorPosition).magnitude;
-			if(dist<attackRange){
+			if(dist<AttackRange){
 				DoAttack (deltaTime);
 				return true;
 			}
 		} else if(attackingStructure!=null){
-			if(PlayerController.Instance.ArePlayersAtWar (attackingStructure.playerID,playerNumber)){
+			if(PlayerController.Instance.ArePlayersAtWar (attackingStructure.PlayerNumber,playerNumber)){
 				attackingStructure = null;
 				return false;
 			}
-			float dist = (attackingStructure.middleVector.magnitude - VectorPosition.magnitude);
-			if(dist<attackRange){
+			float dist = (attackingStructure.MiddleVector.magnitude - VectorPosition.magnitude);
+			if(dist<AttackRange){
 				DoAttack (deltaTime);
 				return true;
 			}
@@ -222,23 +303,23 @@ public class Unit : IXmlSerializable {
 	}
 	public void DoAttack(float deltaTime){
 		if(engangingUnit!=null){
-			if(engangingUnit.currHealth<=0){
+			if(engangingUnit.CurrHealth<=0){
 				engangingUnit = null;
 			}
-			attackCooldown -= deltaTime;
-			if(attackCooldown>0){
+			attackTimer -= deltaTime;
+			if(attackTimer>0){
 				return;
 			}
-			attackCooldown = attackRate;
+			attackTimer = AttackRate;
 
-			engangingUnit.TakeDamage (myDamageType,damage);
+			engangingUnit.TakeDamage (MyDamageType,Damage);
 		}
 		if(isCapturing){
-			if(attackingStructure.Health<=0||attackingStructure.playerID!=playerNumber){
+			if(attackingStructure.Health<=0||attackingStructure.PlayerNumber!=playerNumber){
 				attackingStructure = null;
 				return;
 			}
-			if(attackingStructure.neighbourTiles.Contains (pathfinding.currTile)){
+			if(attackingStructure.neighbourTiles.Contains (pathfinding.CurrTile)){
 				((MarketBuilding)attackingStructure).TakeOverMarketBuilding (deltaTime, playerNumber, 1);
 			}
 		} else {
@@ -246,13 +327,13 @@ public class Unit : IXmlSerializable {
 				attackingStructure = null;
 				return;
 			}
-			attackCooldown -= deltaTime;
-			if(attackCooldown>0){
+			attackTimer -= deltaTime;
+			if(attackTimer>0){
 				return;
 			}
-			attackCooldown = attackRate;
+			attackTimer = AttackRate;
 
-			attackingStructure.TakeDamage (damage);
+			attackingStructure.TakeDamage (Damage);
 		}
 	}
 
@@ -261,15 +342,15 @@ public class Unit : IXmlSerializable {
 		if(onPatrol){
 			if(pathfinding.IsAtDest){
 				if (onWayToPatrolTarget) {
-					pathfinding.AddMovementCommand (patrolStart.x , patrolStart.y);
+//					pathfinding.AddMovementCommand (patrolStart.x , patrolStart.y);
 				} else {
-					pathfinding.AddMovementCommand (patrolTarget.x , patrolTarget.y);
+//					pathfinding.AddMovementCommand (patrolTarget.x , patrolTarget.y);
 				}
 				onWayToPatrolTarget = !onWayToPatrolTarget; 
 			}
 		}
 	}
-	public void isInRangeOfWarehouse(OutputStructure ware){
+	public void IsInRangeOfWarehouse(OutputStructure ware){
 		if(ware==null){
 			Debug.LogError ("WARNING Range warehouse null"); 
 			return;
@@ -279,8 +360,8 @@ public class Unit : IXmlSerializable {
 	public void ToTradeItemToNearbyWarehouse(Item clicked){
 		Debug.Log (clicked.ToString ()); 
 		if(rangeUStructure != null && rangeUStructure is Warehouse){
-			if(rangeUStructure.playerID == playerNumber){
-				rangeUStructure.City.tradeFromShip (this,clicked);
+			if(rangeUStructure.PlayerNumber == playerNumber){
+				rangeUStructure.City.TradeFromShip (this,clicked);
 			} else {
 				Player p = PlayerController.Instance.GetPlayer (playerNumber);
 				rangeUStructure.City.SellToCity (clicked.ID,p,(Ship)this,clicked.count);
@@ -289,7 +370,7 @@ public class Unit : IXmlSerializable {
 	}
 
 	public void AddPatrolCommand(float targetX,float targetY){
-		Tile tile = World.current.GetTileAt(targetX, targetY);
+		Tile tile = World.Current.GetTileAt(targetX, targetY);
 		if(tile == null){
 			return;
 		}
@@ -304,7 +385,7 @@ public class Unit : IXmlSerializable {
 		onPatrol = true;
 		patrolStart = new Vector2 (X, Y);
 		patrolTarget = new Vector2 (targetX, targetY);
-		pathfinding.AddMovementCommand(targetX, targetY);
+//		pathfinding.AddMovementCommand(targetX, targetY);
 
 	}
 	protected virtual void OverrideCurrentMission(){
@@ -317,14 +398,14 @@ public class Unit : IXmlSerializable {
 			//not really an error it can happen
 			return;
 		} else {
-			if(t==pathfinding.currTile){
+			if(t==pathfinding.CurrTile){
 				return;
 			}
 			AddMovementCommand (t.X,t.Y);
 		}
 	}
     public virtual void AddMovementCommand(float x, float y) {
-		Tile tile = World.current.GetTileAt(x, y);
+		Tile tile = World.Current.GetTileAt(x, y);
         if(tile == null){
             return;
         }
@@ -334,36 +415,34 @@ public class Unit : IXmlSerializable {
         if (tile.Type == TileType.Mountain) {
             return;
         }
-		if(pathfinding.currTile.myIsland!=tile.myIsland){
+		if(pathfinding.CurrTile.MyIsland!=tile.MyIsland){
 			return;
 		}
 		onPatrol = false;
 
-		pathfinding.AddMovementCommand( x, y);
+		if(pathfinding is IslandPathfinding){
+			((IslandPathfinding)pathfinding).SetDestination (x,y);
+		}
     }
-	public int tryToAddItemMaxAmount(Item item , int amount){
+	public int TryToAddItemMaxAmount(Item item , int amount){
 		Item t = item.Clone ();
 		t.count = amount;
-		return inventory.addItem (t);
+		return inventory.AddItem (t);
 	}
 	public void CallChangedCallback(){
-		if(cbUnitChanged!=null){
-			cbUnitChanged (this);
-		}
-	}
+        cbUnitChanged?.Invoke(this);
+    }
 	public void TakeDamage(DamageType dt, float amount){
 		if(amount<0){
 			Debug.LogError ("damage must be positive");
 			return;
 		}
-		currHealth -= Combat.ArmorDamageReduction (myArmorType, dt) * amount;
+		CurrHealth -= Combat.ArmorDamageReduction (MyArmorType, dt) * amount;
 	}
 	public virtual void Destroy(){
-		//Do stuff here when on destroyed
-		if(cbUnitDestroyed!=null){
-			cbUnitDestroyed (this);
-		}
-	}
+        //Do stuff here when on destroyed
+        cbUnitDestroyed?.Invoke(this);
+    }
 	public void RegisterOnChangedCallback(Action<Unit> cb) {
 		cbUnitChanged += cb;
 	}
@@ -384,42 +463,5 @@ public class Unit : IXmlSerializable {
 	public void UnregisterOnSoundCallback(Action<Unit,string> cb) {
 		cbUnitSound -= cb;
 	}
-	//////////////////////////////////////////////////////////////////////////////////////
-	/// 
-	/// 						SAVING & LOADING
-	/// 
-	//////////////////////////////////////////////////////////////////////////////////////
-	public XmlSchema GetSchema() {
-		return null;
-	}
-	public void WriteXml(XmlWriter writer){
-		writer.WriteAttributeString("IsShip", isShip.ToString () );
-		writer.WriteAttributeString("playernumber", playerNumber.ToString () );
-		writer.WriteAttributeString("currTile_X", pathfinding.currTile.X.ToString () );
-		writer.WriteAttributeString("currTile_Y", pathfinding.currTile.Y.ToString () );
-		writer.WriteAttributeString("dest_X", pathfinding.dest_X.ToString () );
-		writer.WriteAttributeString("dest_Y", pathfinding.dest_Y.ToString () );
-		writer.WriteAttributeString("rotation", pathfinding.rotation.ToString () );
-		if (inventory != null) {
-			writer.WriteStartElement ("Inventory");
-			inventory.WriteXml (writer);
-			writer.WriteEndElement ();
-		}
 
-	}
-	public void ReadXml (XmlReader reader){
-		
-		isShip = bool.Parse(reader.GetAttribute ("IsShip"));
-		float x = float.Parse( reader.GetAttribute("dest_X") );
-		float y = float.Parse( reader.GetAttribute("dest_Y") );
-		float rot = float.Parse( reader.GetAttribute("rotation") );
-		pathfinding.rotation = rot;
-		if (reader.ReadToDescendant ("Inventory")) {
-			inventory = new Inventory ();
-			inventory.ReadXml (reader);
-		}
-
-		AddMovementCommand (x, y);
-
-	}
 }

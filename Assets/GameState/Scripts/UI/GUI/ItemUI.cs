@@ -23,18 +23,20 @@ public class ItemUI : MonoBehaviour {
 		} else {
 			itemName=i.name;
 			ChangeItemCount (i);
+			image.sprite = UIController.GetItemImageForID (i.ID);
 		}
-		//set item pic andso
 		EventTrigger trigger = GetComponent<EventTrigger> ();
-		EventTrigger.Entry enter = new EventTrigger.Entry( );
-		enter.eventID = EventTriggerType.PointerEnter;
-		enter.callback.AddListener( ( data) => {
+        EventTrigger.Entry enter = new EventTrigger.Entry {
+            eventID = EventTriggerType.PointerEnter
+        };
+        enter.callback.AddListener( ( data) => {
 			OnMouseEnter ();
 		} );
 		trigger.triggers.Add( enter );
-		EventTrigger.Entry exit = new EventTrigger.Entry( );
-		exit.eventID = EventTriggerType.PointerExit;
-		exit.callback.AddListener( ( data) => {
+        EventTrigger.Entry exit = new EventTrigger.Entry {
+            eventID = EventTriggerType.PointerExit
+        };
+        exit.callback.AddListener( ( data) => {
 			OnMouseExit ();
 		} );
 		trigger.triggers.Add( exit );
@@ -66,16 +68,30 @@ public class ItemUI : MonoBehaviour {
 			slider.GetComponentInChildren<Image> ().color = Color.green;
 		}
 	}
-
-	public void AddListener(UnityAction<BaseEventData> ueb){
+	public void SetInactive (bool inactive){
+		Color c = image.color;
+		if(inactive){
+			c.a = 0.5f;
+		} else {
+			c.a = 1;
+		}
+		image.color = c;
+	}
+	public void AddClickListener(UnityAction<BaseEventData> ueb, bool clearAll = false){
 		EventTrigger trigger = GetComponent<EventTrigger> ();
-		EventTrigger.Entry entry = new EventTrigger.Entry( );
-		entry.eventID = EventTriggerType.PointerClick;
-
+        EventTrigger.Entry entry = new EventTrigger.Entry {
+            eventID = EventTriggerType.PointerClick
+        };
+        if (clearAll){
+			ClearAllTriggers ();
+		}
 		entry.callback.AddListener( ueb );
 		trigger.triggers.Add( entry );
 	}
-
+	public void ClearAllTriggers(){
+		EventTrigger trigger = GetComponent<EventTrigger> ();
+		trigger.triggers.Clear ();
+	}
 	public void OnMouseEnter(){
 		GameObject.FindObjectOfType<HoverOverScript> ().Show (itemName);
 	}

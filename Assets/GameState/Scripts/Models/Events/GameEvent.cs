@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 using System;
+
+
 public class GameEvent {
 	public EventType EventType { protected set; get; }
 
@@ -137,8 +139,5 @@ public class GameEvent {
 			this.target = t;
 		}
 	}
-
-	//TODO save the events 
-	//TODO LOAD THESE ALSO 
-	//DONT KNOW WHERE AND HOW EXACTLY THOUGH
+		
 }

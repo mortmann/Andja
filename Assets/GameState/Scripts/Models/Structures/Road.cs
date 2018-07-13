@@ -1,45 +1,37 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 using System;
-using System.Xml;
-using System.Xml.Schema;
-using System.Xml.Serialization;
+using Newtonsoft.Json;
 
+[JsonObject(MemberSerialization.OptIn)]
 public class Road : Structure {
+	#region Serialize
+	#endregion
+	#region RuntimeOrOther
+
 	private Route _route;
 	public Route Route {
 		get {return _route;}
 		set { _route = value;
 		}
 	}
+
+	#endregion
+
+
 	Action<Road> cbRoadChanged;
-	public Road(int ID,string name, int buildcost = 50){
-		canBeUpgraded = true;
+
+	public Road(int ID, StructurePrototypeData spd){
 		this.ID = ID;
-		this.name = name;
-		this.tileWidth = 1;
-		this.tileHeight = 1;
-		maintenancecost = 0;
-		buildcost = 25;
-		BuildTyp = BuildTypes.Path;
-		myBuildingTyp = BuildingTyp.Pathfinding;
-		buildingRange = 0;
+		this._prototypData = spd;
 	}
 	protected Road(Road str){
-		this.canBeUpgraded = str.canBeUpgraded;
-		this.ID = str.ID;
-		this.name = str.name;
-		this.tileWidth = str.tileWidth;
-		this.tileHeight = str.tileHeight;
-		this.mustBeBuildOnShore = str.mustBeBuildOnShore;
-		this.maintenancecost = str.maintenancecost;
-		this.buildcost = str.buildcost;
-		this.BuildTyp = str.BuildTyp;
-		this.rotated = str.rotated;
-		this.hasHitbox = str.hasHitbox;
-		this.buildingRange = str.buildingRange;
-		this.myBuildingTyp = str.myBuildingTyp;
+		BaseCopyData (str);
 	}
+	/// <summary>
+	/// DO NOT USE
+	/// </summary>
+	public Road(){}
 	public override Structure Clone(){
 		return new Road (this);
 	}
@@ -60,16 +52,16 @@ public class Road : Structure {
 						routes.Add( ((Road)t.Structure).Route );
 						routeCount++;
 					}
-					((Road)t.Structure).updateOrientation ();
+					((Road)t.Structure).UpdateOrientation ();
 				} 
 			}
 		}
-		updateOrientation ();
+		UpdateOrientation ();
 		if(routeCount == 0) {
 			//If there is no route next to it 
 			//so create a new route 
 			Route = new Route(myBuildingTiles [0]);
-			myBuildingTiles [0].myCity.AddRoute (Route);	
+			myBuildingTiles [0].MyCity.AddRoute (Route);	
 			return;
 		}
 		if(routeCount == 1){
@@ -86,9 +78,11 @@ public class Road : Structure {
 		}
 
 	}
-	public void updateOrientation (){
+	public void UpdateOrientation (IEnumerable<Tile> futureRoads = null){
 		Tile[] neig = myBuildingTiles [0].GetNeighbours ();
+
 		connectOrientation = "_";
+
 		if(neig[0].Structure != null){
 			if (neig [0].Structure is Road) {
 				connectOrientation += "N";
@@ -109,15 +103,16 @@ public class Road : Structure {
 				connectOrientation += "W";
 			}
 		}
-		if (cbRoadChanged != null)
-			cbRoadChanged (this);
-	}
+        cbRoadChanged?.Invoke(this);
+    }
 	protected override void OnDestroy () {
 		if(Route!=null){
 			Route.removeRoadTile (BuildTile);
 		}
 	}
-
+	public override string GetSpriteName (){
+		return base.GetSpriteName () +connectOrientation;
+	}
 
 	public void RegisterOnRoadCallback(Action<Road> cb) {
 		cbRoadChanged += cb;
@@ -126,10 +121,5 @@ public class Road : Structure {
 	public void UnregisterOnRoadCallback(Action<Road> cb) {
 		cbRoadChanged -= cb;
 	}
-	public override void WriteXml (XmlWriter writer){
-		BaseWriteXml (writer);
-	}
-	public override void ReadXml(XmlReader reader) {
-		BaseReadXml (reader);
-	}
+
 }

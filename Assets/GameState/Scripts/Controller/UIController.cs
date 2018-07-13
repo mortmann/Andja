@@ -2,6 +2,7 @@
 using System.Collections;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
+using System.Collections.Generic;
 
 public class UIController : MonoBehaviour {
 
@@ -12,9 +13,12 @@ public class UIController : MonoBehaviour {
 
 	public GameObject chooseBuildCanvas;
 
+	public GameObject consoleCanvas;
 	public GameObject buildingCanvas;
 	public GameObject unitCanvas;
-	public GameObject rightCanvas;
+    public GameObject militaryBuildingCanvas;
+
+    public GameObject rightCanvas;
 	public GameObject CityInventoryCanvas;
 	public GameObject citizenCanvas;
 	public GameObject tradeMapCanvas;
@@ -22,10 +26,10 @@ public class UIController : MonoBehaviour {
 	public GameObject offWorldMapCanvas;
 	public GameObject otherCityUI;
 
-	Structure oldStr;
+	Structure openStructure;
 
-
-
+	public static Dictionary<string,Sprite> ItemImages;
+	public static string itemSpriteName = "item_";
 	public static UIController Instance;
 
 	void Start(){
@@ -34,22 +38,28 @@ public class UIController : MonoBehaviour {
 			Debug.LogError ("There are two uicontroller"); 
 		}
 		Instance = this;
+		Sprite[] sprites = Resources.LoadAll<Sprite> ("Textures/Items/");
+		Debug.Log (sprites.Length + " Item Sprite");
+		ItemImages = new Dictionary<string, Sprite> ();
+		foreach (Sprite item in sprites) {
+			ItemImages [item.name] = item;
+		}
 	}
 
 	public void OpenStructureUI(Structure str){
-		if(oldStr == str || str == null){
+		if(openStructure == str || str == null){
 			return;
 		} 
-		if(oldStr!=null) {
-			oldStr.OnClickClose ();
+		if(openStructure!=null) {
+			openStructure.OnClickClose ();
 		}			
-		if(str.playerID != PlayerController.Instance.currentPlayerNumber){
+		if(str.PlayerNumber != PlayerController.currentPlayerNumber){
 			if (str is Warehouse) {
 				OpenOtherCity(str.City);
 				return;
 			}
 		}
-		oldStr = str;
+		openStructure = str;
 		str.OnClick ();
 		if (str is ProductionBuilding) {
 			OpenProduktionUI ((OutputStructure)str);
@@ -63,7 +73,10 @@ public class UIController : MonoBehaviour {
 		if (str is MarketBuilding || str is Warehouse) {
 			OpenCityInventory (str.City);
 		}
-	}
+        if (str is MilitaryBuilding) {
+            OpenMilitaryBuildingInfo(str);
+        }
+    }
 	public void OpenOtherCity(City city){
 		if(city == null){
 			return;
@@ -82,15 +95,19 @@ public class UIController : MonoBehaviour {
 		CityInventoryCanvas.SetActive (true);
 		CityInventoryCanvas.GetComponent<CityInventoryUI>().ShowInventory (city,trade);
 	}
-	public void toggleRightUI(){
+	public void HideCityUI (City city){
+		otherCityUI.SetActive (false);
+		CityInventoryCanvas.SetActive (false);
+	}
+	public void ToggleRightUI(){
 		rightCanvas.SetActive (!rightCanvas.activeSelf);
 	}
 
-	public void showBuildMenu(){
+	public void ShowBuildMenu(){
 		chooseBuildCanvas.SetActive (!chooseBuildCanvas.activeSelf);
 	}
-	public void toggleInfoUI(){
-		if(unitCanvas.activeSelf || buildingCanvas.activeSelf){
+	public void ToggleInfoUI(){
+		if(unitCanvas.activeSelf || buildingCanvas.activeSelf || militaryBuildingCanvas.activeSelf) {
 			uiInfoCanvas.SetActive (true);
 		} else {
 			uiInfoCanvas.SetActive (false);
@@ -100,17 +117,30 @@ public class UIController : MonoBehaviour {
 		if(str == null){
 			return;
 		}
-		unitCanvas.SetActive (false);
-		buildingCanvas.SetActive (true);
-		toggleInfoUI ();
+        CloseInfoUI();
+        OpenInfoUI();
+        buildingCanvas.SetActive (true);
 		buildingCanvas.GetComponent<ProduktionUI>().Show (str);
 	}
-	public void CloseProduktionUI(){
-		buildingCanvas.SetActive (false);
-		CloseInfoUI ();
-	}
+    public void CloseProduktionUI() {
+        buildingCanvas.SetActive(false);
+        CloseInfoUI();
+    }
+    public void OpenMilitaryBuildingInfo(Structure str) {
+        if (str == null) {
+            return;
+        }
+        CloseInfoUI();
+        OpenInfoUI();
+        militaryBuildingCanvas.SetActive(true);
+        militaryBuildingCanvas.GetComponent<MilitaryBuildingUI>().Show(str);
+    }
+    public void CloseMilitaryBuildingInfo() {
+        buildingCanvas.SetActive(false);
+        CloseInfoUI();
+    }
 
-	public void TogglePauseMenu(){
+    public void TogglePauseMenu(){
 		pauseMenuCanvas.SetActive (!pauseMenuCanvas.activeSelf);
 		WorldController.Instance.IsModal = pauseMenuCanvas.activeSelf;
 	}
@@ -121,10 +151,19 @@ public class UIController : MonoBehaviour {
 		}
 		unitCanvas.SetActive (false);
 		buildingCanvas.SetActive (true);
-		toggleInfoUI ();
-		buildingCanvas.GetComponent<ProduktionUI>().ShowProduce (str);
+		ToggleInfoUI ();
+		buildingCanvas.GetComponent<ProduktionUI>().Show (str);
+		TileSpriteController.Instance.AddDecider (StrcutureTileDecider);
+	}
+	TileMark StrcutureTileDecider(Tile t){
+		if(openStructure!=null&&openStructure.myRangeTiles.Contains(t)){
+			return TileMark.None;
+		} else {
+			return TileMark.Dark; 
+		}
 	}
 	public void CloseProduceUI(){
+		TileSpriteController.Instance.RemoveDecider (StrcutureTileDecider);
 		buildingCanvas.SetActive (false);
 		CloseInfoUI ();
 	}
@@ -136,7 +175,7 @@ public class UIController : MonoBehaviour {
 		}
 		if (u.rangeUStructure != null) {
 			if (u.rangeUStructure is Warehouse) {
-				if (u.rangeUStructure.playerID == PlayerController.Instance.currentPlayerNumber) {
+				if (u.rangeUStructure.PlayerNumber == PlayerController.currentPlayerNumber) {
 					CloseRightUI ();
 					u.rangeUStructure.City.tradeUnit = u;
 					OpenCityInventory (u.rangeUStructure.City, true);
@@ -161,21 +200,23 @@ public class UIController : MonoBehaviour {
 		if(uiInfoCanvas.activeSelf == false){
 			return;
 		}		
-		if(oldStr != null){
-			oldStr.OnClickClose ();
-			oldStr = null;
+		if(openStructure != null){
+			TileSpriteController.Instance.RemoveDecider (StrcutureTileDecider);
+			openStructure.OnClickClose ();
+			openStructure = null;
 		}
 		unitCanvas.SetActive (false);
 		buildingCanvas.SetActive (false);
-		uiInfoCanvas.SetActive (false);
+        militaryBuildingCanvas.SetActive(false);
+        uiInfoCanvas.SetActive (false);
 	}
 	public void CloseChooseBuild(){
 		chooseBuildCanvas.SetActive (false);
 	}
 	public void CloseRightUI(){
-		if(oldStr != null){
-			oldStr.OnClickClose ();
-			oldStr = null;
+		if(openStructure != null){
+			openStructure.OnClickClose ();
+			openStructure = null;
 		}
 		otherCityUI.SetActive (false);
 		CityInventoryCanvas.SetActive (false);
@@ -226,10 +267,11 @@ public class UIController : MonoBehaviour {
 	public void CloseTradeMenu(){
 		tradeMapCanvas.SetActive (false);
 	}
-	public void Escape(bool firstreset=false) {
-		if(AnyMenuOpen ()==false&&firstreset==false){
+	public void Escape(bool dontOpenPause=false) {
+		if(AnyMenuOpen ()==false&&dontOpenPause==false&&MouseController.Instance.mouseState==MouseState.Idle){
 			TogglePauseMenu ();
 		}
+		CloseConsole ();
 		CloseHomeUI ();
 		CloseInfoUI ();
 		CloseProduktionUI ();
@@ -238,12 +280,16 @@ public class UIController : MonoBehaviour {
 		CloseRightUI ();
 		CloseTradeMenu ();
 		CloseOffWorldMenu ();
+		if (TileSpriteController.Instance != null)
+			TileSpriteController.Instance.RemoveDecider (StrcutureTileDecider);
 	}
 	public bool IsPauseMenuOpen(){
 		return pauseMenuCanvas.activeSelf;
 	}
 	public bool AnyMenuOpen(){
-		return rightCanvas.activeSelf || uiInfoCanvas.activeSelf || chooseBuildCanvas.activeSelf || tradeMapCanvas.activeSelf;
+		return rightCanvas.activeSelf || uiInfoCanvas.activeSelf || 
+			chooseBuildCanvas.activeSelf || tradeMapCanvas.activeSelf || 
+			consoleCanvas.activeSelf;
 	}
 
 	public void SetDragAndDropBuild(GameObject go){
@@ -252,6 +298,26 @@ public class UIController : MonoBehaviour {
 
 	public void StopDragAndDropBuild(){
 		shortCutCanvas.GetComponent<ShortcutUI> ().StopDragAndDropBuild ();
+	}
+	public void ToggleConsole(){
+		consoleCanvas.SetActive (!consoleCanvas.activeSelf);
+	}
+	public void CloseConsole(){
+		consoleCanvas.SetActive (false);
+	}
+	public static Sprite GetItemImageForID(int id){
+		if(ItemImages.ContainsKey(itemSpriteName + id) == false){
+			Debug.LogWarning ("Item " + id + " is missing image!");
+			return null;
+		}
+		return ItemImages [itemSpriteName + id];
+	}
+
+	public static bool IsTextFieldFocused(){
+		if(EventSystem.current.currentSelectedGameObject==null || EventSystem.current.currentSelectedGameObject.GetComponent<InputField>() ==null){
+			return false;
+		}
+		return (EventSystem.current.currentSelectedGameObject.GetComponent<InputField>()).isFocused;
 	}
 
 }

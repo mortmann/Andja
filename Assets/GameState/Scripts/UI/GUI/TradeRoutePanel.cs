@@ -38,8 +38,8 @@ public class TradeRoutePanel : MonoBehaviour {
 		amountSlider.onValueChanged.AddListener (OnAmountSliderMoved);
 		unitNames = new Dictionary<Unit,string> ();
 		ships = new List<Ship> ();
-		foreach (Unit item in World.current.units) {
-			if(item.isShip==false||item.playerNumber!=PlayerController.Instance.currentPlayerNumber){
+		foreach (Unit item in World.Current.Units) {
+			if(item.isShip==false||item.playerNumber!=PlayerController.currentPlayerNumber){
 				continue;
 			}
 			ships.Add ((Ship) item); 
@@ -71,20 +71,21 @@ public class TradeRoutePanel : MonoBehaviour {
 	}
 
 	public void Show(Ship unit){
-		amountSlider.maxValue = unit.inventory.maxStackSize;
+		amountSlider.maxValue = unit.inventory.MaxStackSize;
 		this.unit = unit;
 		ResetItemIcons ();
 	}
 	private void AddItemPrefabTo(Transform t){
 		GameObject g = GameObject.Instantiate (itemPrefab);
 		g.transform.SetParent (t);
-		g.GetComponentInChildren<Slider> ().maxValue = unit.inventory.maxStackSize;
-		g.GetComponentInChildren<Text> ().text= unit.inventory.maxStackSize+"t";
+		g.GetComponentInChildren<Slider> ().maxValue = unit.inventory.MaxStackSize;
+		g.GetComponentInChildren<Text> ().text= unit.inventory.MaxStackSize+"t";
 		//TODO add listener stuff
 		EventTrigger trigger = g.GetComponent<EventTrigger> ();
-		EventTrigger.Entry entry = new EventTrigger.Entry( );
-		entry.eventID = EventTriggerType.PointerClick;
-		int i = intToGameObject.Count;
+        EventTrigger.Entry entry = new EventTrigger.Entry {
+            eventID = EventTriggerType.PointerClick
+        };
+        int i = intToGameObject.Count;
 		intToGameObject.Add (i,g.GetComponent<ItemUI> ()); 
 
 		entry.callback.AddListener( ( data ) => { OnItemClick( i ); } );
@@ -96,7 +97,7 @@ public class TradeRoutePanel : MonoBehaviour {
 			return;
 		}
 		ItemUI g = intToGameObject [pressedItem];
-		g.SetItem (i, unit.inventory.maxStackSize);
+		g.SetItem (i, unit.inventory.MaxStackSize);
 //		pressedItem = -1;
 		intToItem.Add (pressedItem,i.Clone ()); 
 		if(intToItem.ContainsKey (pressedItem))
@@ -182,7 +183,7 @@ public class TradeRoutePanel : MonoBehaviour {
 			//not that good
 			tradeRoute.AddWarehouse (warehouse);
 			t.GetComponentInChildren<Text> ().text=""+tradeRoute.GetLastNumber();
-			text.text = warehouse.City.name;
+			text.text = warehouse.City.Name;
 		} else {
 			t.GetComponentInChildren<Text> ().text="";
 			tradeRoute.RemoveWarehouse (warehouse);
@@ -200,7 +201,7 @@ public class TradeRoutePanel : MonoBehaviour {
 		foreach(Transform t in toShip.transform){
 			GameObject.Destroy (t.gameObject);
 		}
-		for (int i = 0; i < unit.inventory.numberOfSpaces; i++) {
+		for (int i = 0; i < unit.inventory.NumberOfSpaces; i++) {
 			//this order is important
 			//DO NOT CHANGE THIS 
 			//WITHOUT CHANGING THE RETURNING VALUES FOR
@@ -221,7 +222,7 @@ public class TradeRoutePanel : MonoBehaviour {
 
 	public void NextCity(bool right){
 		tradeRoute.SetCityTrade (city, GetToShip (), GetFromShip ());		
-		Trade t = tradeRoute.GetNextTrade (city,right);
+		TradeRoute.Trade t = tradeRoute.GetNextTrade (city,right);
 		SetCity (t.city);
 	}
 
@@ -229,11 +230,11 @@ public class TradeRoutePanel : MonoBehaviour {
 		if (city != null) {
 			tradeRoute.SetCityTrade (city, GetToShip (), GetFromShip ());		
 		}
-		text.text = c.name;
+		text.text = c.Name;
 		intToItem = new Dictionary<int, Item> ();
 		ResetItemIcons ();
 		city = c;
-		Trade t = tradeRoute.GetTradeFor (city);
+		TradeRoute.Trade t = tradeRoute.GetTradeFor (city);
 		if(t==null){
 			return;
 		}
@@ -250,7 +251,7 @@ public class TradeRoutePanel : MonoBehaviour {
 	}
 
 	public void DeleteSelectedItem(){
-		intToGameObject [pressedItem].SetItem (null, unit.inventory.maxStackSize);
+		intToGameObject [pressedItem].SetItem (null, unit.inventory.MaxStackSize);
 		intToItem.Remove (pressedItem);
 	}
 

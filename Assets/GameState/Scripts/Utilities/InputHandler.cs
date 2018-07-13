@@ -2,77 +2,79 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System;
+using Newtonsoft.Json;
 
 public class InputHandler {
 
-	static Dictionary<string,KeyCode> primaryNameToKey;
-	static Dictionary<string,KeyCode> secondaryNameToKey;
+	static Dictionary<string,KeyBind> nameToKeyBinds;
 	static string fileName="keybinds.ini";
-
+	//TODO add a between layer for mouse buttons -> so it can be switched
 
 	// Use this for initialization
 	public InputHandler () {
-		primaryNameToKey = new Dictionary<string, KeyCode> ();
-		secondaryNameToKey = new Dictionary<string, KeyCode> ();
-//		SaveInputSchema (Application.dataPath.Replace ("/Assets",""));
+		nameToKeyBinds = new Dictionary<string, KeyBind> ();
 		LoadInputSchema (Application.dataPath.Replace ("/Assets",""));
-		SetupKeyBinds ();
+//		SetupKeyBinds ();
 
 	}
-	public static Dictionary<string,KeyCode> GetPrimaryBinds(){
-		return primaryNameToKey;
+	public static Dictionary<string,KeyBind> GetBinds(){
+		return nameToKeyBinds;
 	}
-	public static Dictionary<string,KeyCode> GetSecondaryBinds(){
-		return secondaryNameToKey;
-	}
-	private void SetupKeyBinds(){
-		if(primaryNameToKey.Count>0){
-			return;
-		}
-		primaryNameToKey.Add ("BuildMenu",KeyCode.B);
-		primaryNameToKey.Add ("TradeMenu",KeyCode.M);
-		primaryNameToKey.Add ("Offworld",KeyCode.O);
-		primaryNameToKey.Add ("TogglePause",KeyCode.Space);
-		primaryNameToKey.Add ("Rotate",KeyCode.R); 
-	}	
+
+	private static void SetupKeyBinds(){
+		if (nameToKeyBinds.ContainsKey ("BuildMenu")==false)
+			ChangePrimaryNameToKey ("BuildMenu",KeyCode.B );
+		if (nameToKeyBinds.ContainsKey ("TradeMenu")==false)
+			ChangePrimaryNameToKey ("TradeMenu",KeyCode.M);
+		if (nameToKeyBinds.ContainsKey ("Offworld")==false)
+			ChangePrimaryNameToKey ("Offworld",KeyCode.O);
+		if (nameToKeyBinds.ContainsKey ("TogglePause")==false)
+			ChangePrimaryNameToKey ("TogglePause",KeyCode.Space);
+		if (nameToKeyBinds.ContainsKey ("Rotate")==false)
+			ChangePrimaryNameToKey ("Rotate",KeyCode.R); 
+		if (nameToKeyBinds.ContainsKey ("Console")==false)
+			ChangePrimaryNameToKey ("Console",KeyCode.F1); 
+		if (nameToKeyBinds.ContainsKey ("Cancel")==false)
+			ChangePrimaryNameToKey ("Cancel",KeyCode.Escape);
+        if (nameToKeyBinds.ContainsKey("Screenshot") == false)
+            ChangePrimaryNameToKey("Screenshot", KeyCode.F12);
+    }	
 	public static void ChangePrimaryNameToKey(string name, KeyCode key){
-		if(primaryNameToKey.ContainsKey (name)){
-			primaryNameToKey [name] = key;
+		if(nameToKeyBinds.ContainsKey (name)){
+			nameToKeyBinds [name].SetPrimary (key);
 			return;
 		}
-		primaryNameToKey.Add (name,key);
+		nameToKeyBinds.Add (name,new KeyBind (key, KeyBind.notSetCode));
+
 	}
 	public static void ChangeSecondaryNameToKey(string name, KeyCode key){
-		if(secondaryNameToKey.ContainsKey (name)){
-			secondaryNameToKey [name] = key;
+		if(nameToKeyBinds.ContainsKey (name)){
+			nameToKeyBinds [name].SetSecondary (key);
 			return;
 		}
-		secondaryNameToKey.Add (name,key);
+		nameToKeyBinds.Add (name,new KeyBind (KeyBind.notSetCode , key));
+
 	}
 	public static bool GetButtonDown(string name){
-		if(primaryNameToKey.ContainsKey (name)==false){
-			if(secondaryNameToKey.ContainsKey (name)==false){
-				Debug.LogWarning ("No Key found with name " + name);
-				return false;
-			}
-			return Input.GetKeyDown (secondaryNameToKey[name]);
+		if (nameToKeyBinds.ContainsKey (name) == false) {	
+			Debug.LogWarning ("No KeyBind for Name " + name);
+			return false;
 		}
-		return Input.GetKeyDown (primaryNameToKey[name]);
+		return nameToKeyBinds[name].GetButtonDown();
 	}
 
 	public static bool GetButton (string name){
-		if(primaryNameToKey.ContainsKey (name)==false){
-			if(secondaryNameToKey.ContainsKey (name)==false){
-				Debug.LogWarning ("No Key found with name " + name);
-				return false;
-			}
-			return Input.GetKey (secondaryNameToKey[name]);
+		if (nameToKeyBinds.ContainsKey (name) == false) {	
+			Debug.LogWarning ("No KeyBind for Name " + name);
+			return false;
 		}
-		return Input.GetKey (primaryNameToKey[name]);
+		return nameToKeyBinds[name].GetButton();
 	}
 
 
-	public static void SaveInputSchema(string path){
+	public static void SaveInputSchema(){
+		string path = Application.dataPath.Replace ("/Assets", "");
 		if( Directory.Exists(path ) == false ) {
 			// NOTE: This can throw an exception if we can't create the folder,
 			// but why would this ever happen? We should, by definition, have the ability
@@ -81,44 +83,80 @@ public class InputHandler {
 			Directory.CreateDirectory( path  );
 		}
 		string filePath = System.IO.Path.Combine(path,fileName) ;
-		StringWriter writer = new StringWriter ();
-		List<string> keys = new List<string> (primaryNameToKey.Keys);
-		keys.AddRange (secondaryNameToKey.Keys);
-		foreach (string key in keys.Distinct()) {
-			if(primaryNameToKey.ContainsKey (key)){
-				writer.Write (key);
-				writer.WriteLine (":"+primaryNameToKey[key]);
-			}
-			if(secondaryNameToKey.ContainsKey (key)){
-				writer.Write (key);
-				writer.WriteLine (":"+secondaryNameToKey[key]);
-			}
-		}	
-		File.WriteAllText( filePath, writer.ToString() );
+		File.WriteAllText( filePath, JsonConvert.SerializeObject(nameToKeyBinds,
+			new JsonSerializerSettings() {
+				Formatting = Newtonsoft.Json.Formatting.Indented
+			}));
 	}
 	public static void LoadInputSchema(string path){
-		string filePath = System.IO.Path.Combine(path,fileName) ;
-		if(File.Exists (filePath)==false){
-			return;
+		try {
+			string filePath = System.IO.Path.Combine(path,fileName) ;
+			nameToKeyBinds = new Dictionary<string, KeyBind> ();
+			string lines = File.ReadAllText (filePath);
+			nameToKeyBinds = JsonConvert.DeserializeObject<Dictionary<string, KeyBind>> (lines);
+		} finally {
+			SetupKeyBinds ();
+			SaveInputSchema (); // create the file so it can be manipulated 
 		}
-		string[] lines = File.ReadAllLines (filePath);
-		foreach(string line in lines){
-			string[] split = line.Split (':');
-			if(split.Length!=2){
-				continue;
+	}
+
+	public class KeyBind {
+		public const KeyCode notSetCode = KeyCode.RightWindows;
+
+		/// <summary>
+		/// DO NOT SET DIRECTLY
+		/// </summary>
+		[JsonProperty]
+		KeyCode primary = notSetCode;
+		/// <summary>
+		/// DO NOT SET DIRECTLY
+		/// </summary>
+		[JsonProperty]
+		KeyCode secondary = notSetCode;
+
+		public KeyBind(){
+			
+		}
+		public KeyBind(KeyCode primary, KeyCode secondary){
+			this.primary = primary;
+			this.secondary = secondary;
+		}
+		public String GetPrimaryString(){
+			if(primary == KeyCode.Exclaim){
+				return "-";
 			}
-			split[0]=split[0].Trim();
-			split[1]=split[1].Trim();
-			if(primaryNameToKey.ContainsKey (split[0])){
-				if(secondaryNameToKey.ContainsKey (split[0])){
-					continue;
-				}
-				secondaryNameToKey.Add (split[0],(KeyCode)System.Enum.Parse (typeof(KeyCode), split[1],true));
-				continue;
+			return primary.ToString ();
+		}
+		public String GetSecondaryString(){
+			if(secondary == KeyCode.Exclaim){
+				return "-";
 			}
-			primaryNameToKey.Add (split[0],(KeyCode)System.Enum.Parse (typeof(KeyCode), split[1],true)); 
+			return secondary.ToString ();
+		}
+		public bool SetPrimary(KeyCode k){
+			if(k == KeyCode.Exclaim){
+				return false;
+			}
+			primary = k;
+			return true;
+		}
+		public bool SetSecondary(KeyCode k){
+			if(k == KeyCode.Exclaim){
+				return false;
+			}
+			secondary = k;
+			return true;
+		}
+		public bool GetButtonDown(){
+			return Input.GetKeyDown (primary) && primary != notSetCode
+				|| Input.GetKeyDown (secondary) && secondary != notSetCode ;
 		}
 
+		public bool GetButton(){
+			return Input.GetKey (primary) && primary != notSetCode
+				|| Input.GetKey (secondary) && secondary != notSetCode ;
+			
+		}
 	}
 
 }

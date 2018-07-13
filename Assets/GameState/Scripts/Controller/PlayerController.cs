@@ -1,23 +1,28 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 using System;
+using System.IO;
+
 /// <summary>
 /// Player controller.
 /// this is mostly for the currentplayer
 /// but it updates the money for all
 /// </summary>
 public class PlayerController : MonoBehaviour {
-	public int currentPlayerNumber;
-	public Player currPlayer{get {return players [currentPlayerNumber];}}
+	public static int currentPlayerNumber;
+	int piratePlayerNumber = int.MaxValue; // so it isnt the same like the number of wilderness
+	public Player CurrPlayer{get {return players [currentPlayerNumber];}}
+	HashSet<War> playerWars;
 	float balanceTicks;
 	float tickTimer;
 	public static PlayerController Instance { get; protected set; }
 	List<Player> players;
 	EventUIManager euim;
 
+    static PlayerControllerSave save;
 
-	// Use this for initialization
-	void Awake () {
+    // Use this for initialization
+    void OnEnable () {			
 		if (Instance != null) {
 			Debug.LogError("There should never be two mouse controllers.");
 		}
@@ -28,17 +33,31 @@ public class PlayerController : MonoBehaviour {
 		players.Add (p); 
 		players.Add (new Player(1)); 
 		players.Add (new Player(2)); 
-
+		playerWars = new HashSet<War> ();
+		AddPlayersWar (0,1);
+		AddPlayersWar (1,0);
 		balanceTicks = 5f;
 		tickTimer = balanceTicks;
 		GameObject.FindObjectOfType<BuildController>().RegisterCityCreated (OnCityCreated);
 		GameObject.FindObjectOfType<BuildController>().RegisterStructureCreated (OnStructureCreated);
 		euim = GameObject.FindObjectOfType<EventUIManager> ();
 		GameObject.FindObjectOfType<EventController> ().RegisterOnEvent (OnEventCreated, OnEventEnded);
+        if(save != null) {
+            LoadPlayerData();
+            save = null;
+        }
 	}
-	
-	// Update is called once per frame
-	void Update () {
+
+    internal bool HasEnoughMoney(int playerNumber, int buildCost) {
+        if(playerNumber<0 || playerNumber >= players.Count) {
+            Debug.LogError("The given number was too large or negative! No such player! " + playerNumber);
+            return false;
+        }
+        return players[playerNumber].HasEnoughMoney(buildCost);
+    }
+
+    // Update is called once per frame
+    void Update () {
 
 		tickTimer -= Time.deltaTime;
 		if(tickTimer<=0){
@@ -115,7 +134,12 @@ public class PlayerController : MonoBehaviour {
 			InformAIaboutEvent (ge, true);
 		}
 	}
-	public void OnEventEnded(GameEvent ge){
+
+    internal static void SetPlayerData(PlayerControllerSave pcs) {
+        save = pcs;
+    }
+
+    public void OnEventEnded(GameEvent ge){
 		//MAYBE REMOVE the message from the ui?
 		//else inform the ai again
 	}
@@ -129,35 +153,157 @@ public class PlayerController : MonoBehaviour {
 	}
 
 
-	public void reduceMoney(int money, int playerNr) {
-		players[playerNr].reduceMoney (money);
+	public void ReduceMoney(int money, int playerNr) {
+        players[playerNr].ReduceMoney (money);
 	}
-	public void addMoney(int money, int playerNr) {
-		players [playerNr].addMoney (money);
+	public void AddMoney(int money, int playerNr) {
+		players [playerNr].AddMoney (money);
 	}
-	public void reduceChange(int amount, int playerNr) {
-		players [playerNr].reduceChange (amount);
+	public void ReduceChange(int amount, int playerNr) {
+		players [playerNr].ReduceChange (amount);
 	}
-	public void addChange(int amount, int playerNr) {
-		players [playerNr].reduceChange (amount);
+	public void AddChange(int amount, int playerNr) {
+		players [playerNr].ReduceChange (amount);
 	}
 	public void OnCityCreated(City city){
 		players [city.playerNumber].OnCityCreated (city);
 	}
-	public void OnStructureCreated(Structure structure){
-		reduceMoney (structure.buildcost,structure.playerID);
+	public void OnStructureCreated(Structure structure,bool loading = false){
+		if(loading){
+			return; // getsloaded in so no need to subtract any money
+		}
+		ReduceMoney (structure.Buildcost,structure.PlayerNumber);
 	}
 	public bool ArePlayersAtWar(int pnum1,int pnum2){
-		if(pnum1==-1||pnum2==-1){
-			return true;//could add here be at peacce with pirates through money 
+		if(pnum1 == pnum2){
+			return false; // LUL same player cant attack himself
 		}
-		return players [pnum1].playersAtWarWith.Contains (pnum2);
+		if(pnum1==piratePlayerNumber||pnum2==piratePlayerNumber){
+			return true;//could add here be at peace with pirates through money 
+		}
+		return playerWars.Contains (new War(pnum1,pnum2));
 	}
-
+	public void AddPlayersWar(int pnum1,int pnum2){
+		if(pnum1 == pnum2){
+			return; // LUL same player cant attack himself
+		}
+		if(ArePlayersAtWar (pnum1,pnum2)){
+			return; // already at war no need for same to be added
+		}
+		playerWars.Add (new War(pnum1,pnum2)); 
+	}
+	public void RemovePlayerWar(int pnum1, int pnum2){
+		if(pnum1 == pnum2){
+			return; // LUL same player cant attack himself
+		}
+		if(ArePlayersAtWar (pnum1,pnum2)==false){
+			return; // they werent at war to begin with
+		}
+		playerWars.Remove (new War(pnum1,pnum2));
+	}
 	public Player GetPlayer(int i){
 		if(i<0){
 			return null;
 		}
 		return players [i];
+	}
+
+	public PlayerControllerSave GetSavePlayerData(){
+		// Create/overwrite the save file with the xml text.
+		return new PlayerControllerSave(currentPlayerNumber, balanceTicks, tickTimer, players,playerWars);
+	}
+	public void LoadPlayerData(){
+		currentPlayerNumber = save.currentPlayerNumber;
+		players = save.players;
+		playerWars = save.playerWars;
+		tickTimer = save.tickTimer;
+		balanceTicks = save.balanceTicks;
+	}
+
+}
+[Serializable]
+public class PlayerControllerSave {
+
+	public int currentPlayerNumber;
+	public float balanceTicks;
+	public float tickTimer;
+	public List<Player> players;
+	public HashSet<War> playerWars;
+
+	public PlayerControllerSave(int cpn,float balanceTicks,float tickTimer,List<Player> players, HashSet<War> playerWars ){
+		currentPlayerNumber = cpn;
+		this.balanceTicks = balanceTicks;
+		this.players = players;
+		this.tickTimer = tickTimer;
+		this.playerWars = playerWars;
+	}
+	public PlayerControllerSave(){
+
+	}
+}
+
+[Serializable]
+public class War {
+	public int playerOne;
+	public int playerTwo;
+
+	public War(){
+	}
+
+	public War(int one, int two){
+		if(one>two){
+			playerOne = two;
+			playerTwo = one;
+		} else {
+			playerOne = one;
+			playerTwo = two;
+		}
+	}
+	public bool Equals(War p){
+		if(p == null){
+			return false;
+		}
+		return p.playerOne == playerOne && p.playerTwo == playerTwo;
+	}
+	public override bool Equals (object obj) {
+		// If parameter cannot be cast to ThreeDPoint return false:
+		War p = obj as War;
+		if ((object)p == null){
+			return false;
+		}
+		// Return true if the fields match:
+		return p.playerOne == playerOne && p.playerTwo == playerTwo;
+	}
+	public override int GetHashCode(){
+		return playerOne ^ playerTwo;
+	}
+	public static bool operator ==(War a, War b){
+		// If both are null, or both are same instance, return true.
+		if (System.Object.ReferenceEquals(a, b)){
+			return true;
+		}
+
+		// If one is null, but not both, return false.
+		if (((object)a == null) || ((object)b == null)){
+			return false;
+		}
+
+		// Return true if the fields match:
+		return a.playerOne == b.playerOne && a.playerTwo == b.playerTwo 
+			|| a.playerTwo == b.playerOne && a.playerOne == b.playerTwo;
+	}
+	public static bool operator !=(War a, War b){
+		// If both are null, or both are same instance, return false.
+		if (System.Object.ReferenceEquals(a, b)){
+			return false;
+		}
+
+		// If one is null, but not both, return true.
+		if (((object)a == null) || ((object)b == null)){
+			return true;
+		}
+
+		// Return true if the fields not match:
+		return a.playerOne != b.playerOne || a.playerTwo != b.playerTwo;
 	}
 }

@@ -72,7 +72,9 @@ public class ConsoleUI : MonoBehaviour {
                     continue;
                 }
                 GOtoPosition.Add(b2d.gameObject, b2d.gameObject.transform.position);
-                b2d.gameObject.AddComponent<Rigidbody2D>();
+                Rigidbody2D rb2 = b2d.gameObject.AddComponent<Rigidbody2D>();
+                rb2.gravityScale = Random.Range(0.6f, 2.7f);
+                rb2.inertia = Random.Range(0.5f, 1.5f);
             }
             happend = true;
             break;

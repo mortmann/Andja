@@ -239,7 +239,7 @@ public class MouseController : MonoBehaviour {
 		sr.color = new Color (sr.color.a, sr.color.b, sr.color.g, 0.5f);
 		Structure.ExtraBuildUI (previewGO);
 
-		TileSpriteController.Instance.AddDecider (TileCityDecider);
+		TileSpriteController.Instance.AddDecider (TileCityDecider,true);
 
 	}
 
@@ -455,14 +455,14 @@ public class MouseController : MonoBehaviour {
         if (Input.GetMouseButton(0)) {
             int start_x = Mathf.FloorToInt(pathStartPosition.x + 0.5f);
             int start_y = Mathf.FloorToInt(pathStartPosition.y + 0.5f);
-            Tile pathStartTile = WorldController.Instance.World.GetTileAt(start_x, start_y);  
+            Tile pathStartTile = World.Current.GetTileAt(start_x, start_y);  
             
             if (pathStartTile == null || pathStartTile.MyIsland == null) {
                 return;
             }
             int end_x = Mathf.FloorToInt(currFramePosition.x + 0.5f);
             int end_y = Mathf.FloorToInt(currFramePosition.y + 0.5f);
-            Tile pathEndTile = WorldController.Instance.World.GetTileAt(end_x, end_y);
+            Tile pathEndTile = World.Current.GetTileAt(end_x, end_y);
             if (pathEndTile == null ) {
                 return;
             }

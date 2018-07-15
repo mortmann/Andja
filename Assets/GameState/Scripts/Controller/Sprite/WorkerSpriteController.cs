@@ -78,6 +78,6 @@ public class WorkerSpriteController : MonoBehaviour {
 		}
 	}
 	void OnDestroy() {
-		WorldController.Instance.World.UnregisterWorkerCreated (OnWorkerCreated);
+        World.Current.UnregisterWorkerCreated (OnWorkerCreated);
 	}
 }

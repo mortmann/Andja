@@ -3,11 +3,9 @@ using System.Collections;
 using System.IO;
 using System.IO.Compression;
 using System.Collections.Generic;
-using System.Text.RegularExpressions;
 using Newtonsoft.Json;
 using System;
-using System.Reflection;
-using UnityEditor;
+
 
 public class SaveController : MonoBehaviour {
 
@@ -41,9 +39,6 @@ public class SaveController : MonoBehaviour {
 		} else {
             IsLoadingSave = false;
         }
-
-
-//		LoadGameState ("sae");
 	}
     static void ClearConsole() {
         var logEntries = System.Type.GetType("UnityEditor.LogEntries, UnityEditor.dll");
@@ -56,7 +51,6 @@ public class SaveController : MonoBehaviour {
     public void Update(){
 		//autosave every soandso 
 		//maybe option to choose frequenzy
-
 	}
 
 	public void SaveGameState(string name = "autosave"){
@@ -75,7 +69,6 @@ public class SaveController : MonoBehaviour {
             ges = (EC.GetSaveGameEventData()),
             camera = (CC.GetSaveCamera())
         };
-
 
         System.IO.File.WriteAllText(path, JsonConvert.SerializeObject(savestate,Formatting.Indented,
 				new JsonSerializerSettings
@@ -129,7 +122,7 @@ public class SaveController : MonoBehaviour {
 		PrototypController.Instance.LoadFromXML ();
 
 		GDH.LoadGameData(state.gamedata); // gamedata
-        if (MapGenerator.Instance.IsDone == false)
+        while (MapGenerator.Instance.IsDone == false)
             yield return null;
         loadingPercantage += 0.2f;
         PlayerController.SetPlayerData(state.pcs); // player

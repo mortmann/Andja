@@ -11,7 +11,7 @@ public class StructureSpriteController : MonoBehaviour {
 	BuildController bm;
 	CameraController cc;
 	World World {
-		get { return WorldController.Instance.World; }
+		get { return World.Current; }
 	}
 	void Start (){
 		structureGameObjectMap = new Dictionary<Structure, GameObject> ();

@@ -38,25 +38,19 @@ public class WorldController : MonoBehaviour {
 		}
 		Instance = this;
 
-		GameDataHolder gdh = GameDataHolder.Instance;
 		offworldMarket = new OffworldMarket ();
 		if (SaveController.IsLoadingSave) {
-//			SaveController.Instance.LoadGameState (gdh.loadsavegame);
-//			gdh.loadsavegame = null;
-		} else {
-			if (gdh != null) {
-				MapGenerator mg = FindObjectOfType<MapGenerator> ();
-                Dictionary<Tile,Structure> tileToStructure = mg.GetStructures();
-                this.World = mg.GetWorld();
-                BuildController.Instance.PlaceWorldGeneratedStructure(tileToStructure);
-
-                isLoaded = false;
-			} 
-		}
-        if (save != null) {
             LoadWorldData();
             save = null;
-        }
+        } else {
+			MapGenerator mg = FindObjectOfType<MapGenerator> ();
+            Dictionary<Tile,Structure> tileToStructure = mg.GetStructures();
+            World = mg.GetWorld();
+            BuildController.Instance.PlaceWorldGeneratedStructure(tileToStructure);
+
+            isLoaded = false;
+		}
+        
     }
 
     // Update is called once per frame
@@ -148,6 +142,7 @@ public class WorldController : MonoBehaviour {
             if (thisStruct.Tiles == null)
                 Debug.LogError("thisStruct.Tiles is null " + island.StartTile.X + " " + island.StartTile.Y);
             island.SetTiles(thisStruct.Tiles);
+            island.Placement = thisStruct.GetPosition();
         }
         MapGenerator.Instance.Destroy();
 

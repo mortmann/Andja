@@ -15,7 +15,7 @@ public class UnitSpriteController : MonoBehaviour {
 	private const string circleGOname = "buildrange_circle_gameobject";
 	MouseController mouseController;
     World World {
-        get { return WorldController.Instance.World; }
+        get { return World.Current; }
     }
     // Use this for initialization
     void Start () {

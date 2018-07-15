@@ -28,12 +28,14 @@ public class MapGenerator : MonoBehaviour {
 
     public float PercantageProgress {
 		get {
+            if (started == false)
+                return 0;
             float percentage = 0;
             if (toGeneratorIslands > 0)
                 percentage += (float)completedIslands / (float)toGeneratorIslands;
             if(toLoadIslands > 0)
                 percentage += (float)loadedIslands / (float)toLoadIslands;
-            return 100 ; }
+            return 1 ; }
 	}
 	public bool IsDone {
 		get { return completedIslands == toGeneratorIslands && loadedIslands == toLoadIslands; }
@@ -44,6 +46,8 @@ public class MapGenerator : MonoBehaviour {
     int loadedIslands = 0;
 	List<IslandGenInfo> islandsToGenerate;
     private Task loadTask;
+    private World world;
+    private bool started;
 
     public void Awake(){
 		if (Instance != null) {
@@ -61,6 +65,7 @@ public class MapGenerator : MonoBehaviour {
     }
 
     public void DefineParameters(int seed, int height, int width, Dictionary<IslandGenInfo, Range> numberRangeOfIslandsSizes, List<string> hasToUseIslands, bool generatedIslands = false ) {
+        started = true;
         Random.InitState(seed);
         //THIS MUST BE THE FIRST RANDOM NUMBER!
         //TO make sure that there is no change of the placement 
@@ -137,9 +142,11 @@ public class MapGenerator : MonoBehaviour {
 		Width = width;
 		Height = height;
 		islandsToGenerate = new List<IslandGenInfo> (toGenerate);
-	}
+        Generate();
 
-	public void Generate(){
+    }
+
+	private void Generate(){
         if(islandsToGenerate == null) {
             return;
         }
@@ -300,10 +307,11 @@ public class MapGenerator : MonoBehaviour {
             IslandStruct placedIslandStruct = new IslandStruct(island, islandTiles,place);
             doneIslands.Add(placedIslandStruct);
         }  
-
         sw.Stop();
         Debug.Log("Generated map with island number " + toPlaceIslands.Count + " in a Map " + Width + " : " + Height 
             + " in " + sw.ElapsedMilliseconds + "ms (" + sw.Elapsed.TotalSeconds + "s)! ");
+        TileSpriteController.CreateIslandSprites(doneIslands);
+
     }
 
     private Tile SetNewLandTileAt(int x, int y, Tile t) {
@@ -317,11 +325,14 @@ public class MapGenerator : MonoBehaviour {
     /// </summary>
     /// <returns></returns>    
     public World GetWorld() {
-        World world = new World(tiles, Width, Height);
-        foreach(IslandStruct island in doneIslands) {
+        if (IsDone == false) {
+            Debug.LogWarning("World wasnt ready when called!");
+            return null;
+        }
+        world = new World(tiles, Width, Height);
+        foreach (IslandStruct island in doneIslands) {
             world.CreateIsland(island);
         }
-        Destroy(this.gameObject);
         return world;
     }
 
@@ -414,6 +425,9 @@ public class MapGenerator : MonoBehaviour {
         public IslandStruct(IslandStruct copy, Tile[] islandTiles, Rect place) : this(copy, islandTiles) {
             this.x = (int)place.x;
             this.y = (int)place.y;
+        }
+        public Vector2 GetPosition() {
+            return new Vector2(x, y);
         }
     }
     public struct Range {

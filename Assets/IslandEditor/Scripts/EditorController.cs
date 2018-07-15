@@ -78,7 +78,6 @@ public class EditorController : MonoBehaviour {
 		GameObject go = Instantiate (mapGenerator.gameObject);
 		MapGenerator mg = go.GetComponent<MapGenerator> ();
 		mg.EditorGenerate(w, h, new MapGenerator.IslandGenInfo (new MapGenerator.Range(w, w) , new MapGenerator.Range(h,h) , clim));
-		mg.Generate ();
         width = w;
         height = h;
         climate = clim;

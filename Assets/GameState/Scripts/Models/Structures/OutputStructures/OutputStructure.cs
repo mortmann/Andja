@@ -123,7 +123,7 @@ public abstract class OutputStructure : Structure {
 			Worker ws = new Worker (this, jobStr,items,workersHasToFollowRoads);
 
 			givenJobs.Add(jobStr);
-			WorldController.Instance.World.CreateWorkerGameObject (ws);
+            World.Current.CreateWorkerGameObject (ws);
 			myWorker.Add (ws);
 		}
 		foreach (OutputStructure giveJob in givenJobs) {

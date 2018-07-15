@@ -81,7 +81,7 @@ public class StructurePrototypeData : LanguageVariables {
         //if (tileHeight > 1) {
         //    center.y += 0.5f + ((float)tileHeight) / 2f - 1;
         //}
-        World world = WorldController.Instance.World;
+        World world = World.Current;
 		HashSet<Tile> temp = new HashSet<Tile> ();
 		float radius = this.buildingRange + 1f;
 		for (float a = 0; a < 360; a += 0.5f) {
@@ -472,7 +472,7 @@ public abstract class Structure : IGEventable {
 			Debug.LogError ("Range Tiles Tile is null -> cant calculated of that");
 			return null;
 		}
-		World w = WorldController.Instance.World;
+		World w = World.Current;
 		myRangeTiles = new HashSet<Tile> ();
         float width = firstTile.X - BuildingRange;
 		float height = firstTile.Y-BuildingRange;

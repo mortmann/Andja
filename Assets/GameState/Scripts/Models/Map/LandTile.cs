@@ -93,12 +93,12 @@ public class LandTile : Tile {
 			//FIXME is there a performance problem here? ifso fix it
 			if(_myCity!=null){
 				_myCity.RemoveTile(this);
-			}
-			_myCity = value;
+            }
+            _myCity = value;
 		} 
 	}
 
-	public List<NeedsBuilding> ListOfInRangeNeedBuildings { get; protected set; }
+	private List<NeedsBuilding> ListOfInRangeNeedBuildings { get; set; }
 
 	public LandTile(){}
 	public LandTile(int x, int y){
@@ -158,9 +158,29 @@ public class LandTile : Tile {
 		}
 		ListOfInRangeNeedBuildings.Remove (ns);
 	}
-
-	public override List<NeedsBuilding > GetListOfInRangeNeedBuildings (){
-		return ListOfInRangeNeedBuildings;
+    /// <summary>
+    /// Returns all in needbuildings that are in range && in the same city than
+    /// this tiles city, so its just a shortcut
+    /// </summary>
+    /// <returns></returns>
+    public override List<NeedsBuilding> GetListOfInRangeCityNeedBuildings() {
+        if (ListOfInRangeNeedBuildings == null)
+            return null;
+        List<NeedsBuilding> playerAll = new List<NeedsBuilding>(ListOfInRangeNeedBuildings);
+        playerAll.RemoveAll(x => x.PlayerNumber != MyCity.playerNumber);
+        return ListOfInRangeNeedBuildings;
+    }
+    /// <summary>
+    ///  Returns all in needbuildings that are in range && the player owns the building
+    /// </summary>
+    /// <param name="playernumber"></param>
+    /// <returns></returns>
+    public override List<NeedsBuilding > GetListOfInRangeNeedBuildings (int playernumber){
+        if (ListOfInRangeNeedBuildings == null)
+            return null;
+        List<NeedsBuilding> playerAll = new List<NeedsBuilding>(ListOfInRangeNeedBuildings);
+        playerAll.RemoveAll(x => x.PlayerNumber != playernumber);
+        return ListOfInRangeNeedBuildings;
 	}
 	public override string ToString (){
 		return string.Format ("[LAND: X={0}, Y={1}, Structure={2}, myCity={3}]", X, Y, Structure, MyCity.ToString());

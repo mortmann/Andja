@@ -40,7 +40,7 @@ public class OtherCityUI : MonoBehaviour {
 	}
 	public void OnClickItemToTrade(int itemID, int amount = 50){
 		Unit u = city.myWarehouse.inRangeUnits.Find (x => x.playerNumber == PlayerController.currentPlayerNumber);
-		if(u==null && u.isShip==false){
+		if(u==null && u.IsShip==false){
 			Debug.Log ("No Ship in Range"); 
 			return;
 		}			

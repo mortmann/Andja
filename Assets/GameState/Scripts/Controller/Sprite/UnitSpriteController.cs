@@ -6,12 +6,11 @@ using System;
 public class UnitSpriteController : MonoBehaviour {
     private Dictionary<string, Sprite> unitSprites;
     public Dictionary<Unit, GameObject> unitGameObjectMap;
-	public GameObject unitGoalPrefab;
-	private GameObject unitGoalGO;
 	public GameObject unitPathPrefab;
 	public GameObject unitCirclePrefab;
+    public Dictionary<Crate, GameObject> itemGameObjectMap;
 
-	private Unit circleUnit;
+    private Unit circleUnit;
 	private const string circleGOname = "buildrange_circle_gameobject";
 	MouseController mouseController;
     World World {
@@ -19,38 +18,26 @@ public class UnitSpriteController : MonoBehaviour {
     }
     // Use this for initialization
     void Start () {
-		
         unitGameObjectMap = new Dictionary<Unit, GameObject>();
+        itemGameObjectMap = new Dictionary<Crate, GameObject>();
         LoadSprites();
         World.RegisterUnitCreated(OnUnitCreated);
-		foreach (var item in World.Units) {
-			OnUnitCreated (item);
-		}        		
-		mouseController = MouseController.Instance;
-		unitGoalGO = Instantiate (unitGoalPrefab);
-		unitGoalGO.SetActive (false);
+        World.RegisterCrateSpawned(OnCrateSpawned);
+        World.RegisterCrateDespawned(OnCrateDespawned);
 
+        foreach (var item in World.Units) {
+			OnUnitCreated (item);
+		}        
+        foreach(Crate c in World.Crates) {
+            OnCrateSpawned(c);
+        }
+		mouseController = MouseController.Instance;
 		BuildController.Instance.RegisterBuildStateChange (OnBuildStateChange);
     }
 
 
 	void Update(){
-		if(mouseController.mouseState == MouseState.Unit){
-			if(mouseController.SelectedUnit==null){
-				Debug.LogError ("There is something wrong with MouseController State Unit. No unitselected!");
-				return;
-			}
-			//if we are here there is a unit we can show movement
-			//if the unit is not at his destination we have to show it.
-			if(mouseController.SelectedUnit.pathfinding.IsAtDest){
-				//it doesnt move so return 
-				unitGoalGO.SetActive (false);
-				return;
-			}
-			unitGoalGO.SetActive (true);
-			Pathfinding p = mouseController.SelectedUnit.pathfinding;
-			unitGoalGO.transform.position = new Vector3 (p.dest_X, p.dest_Y);
-		}
+		
 	}
 	public void OnUnitCreated(Unit u) {
         // Create a visual GameObject linked to this data.
@@ -66,7 +53,7 @@ public class UnitSpriteController : MonoBehaviour {
 		SpriteRenderer sr = char_go.AddComponent<SpriteRenderer>();
 		sr.sortingLayerName = "Units";
 
-		if(u.isShip){
+		if(u.IsShip){
 			char_go.name = "Ship";
 			sr.sprite = unitSprites["ship"];
 
@@ -78,8 +65,8 @@ public class UnitSpriteController : MonoBehaviour {
 		char_go.AddComponent<UnitHoldingScript> ().unit=u;
 		Rigidbody2D r2d = char_go.AddComponent<Rigidbody2D> (); 
 		r2d.gravityScale = 0;       
-		BoxCollider2D col = char_go.AddComponent<BoxCollider2D>();
-		col.size = new Vector2(sr.sprite.textureRect.size.x / sr.sprite.pixelsPerUnit, sr.sprite.textureRect.size.y / sr.sprite.pixelsPerUnit);
+		BoxCollider2D col = char_go.AddComponent<BoxCollider2D>();col.size = new Vector2(sr.sprite.textureRect.size.x / sr.sprite.pixelsPerUnit, sr.sprite.textureRect.size.y / sr.sprite.pixelsPerUnit);
+		
 		//u.width = sr.sprite.textureRect.size.x / sr.sprite.pixelsPerUnit;
 		//u.height = sr.sprite.textureRect.size.y / sr.sprite.pixelsPerUnit;
         // Register our callback so that our GameObject gets updated whenever
@@ -118,7 +105,28 @@ public class UnitSpriteController : MonoBehaviour {
 		GameObject char_go = unitGameObjectMap[c];
 		Destroy (char_go);
 		unitGameObjectMap.Remove (c);
+        c.UnregisterOnChangedCallback(OnUnitChanged);
 	}
+
+    void OnCrateSpawned(Crate c) {
+        //TODO: create a prefab?
+        GameObject go = new GameObject();
+        SpriteRenderer sr = go.AddComponent<SpriteRenderer>();
+        sr.sprite = unitSprites["Crate"];
+        go.AddComponent<CrateHoldingScript>().thisCrate = c;
+        go.transform.SetParent(this.transform);
+        go.name = "Crate";
+        go.layer = 10;
+        BoxCollider2D col = go.AddComponent<BoxCollider2D>();
+        go.AddComponent<Rigidbody2D>().gravityScale = 0; //TODO: think about if this is good so!
+        col.size = new Vector2(sr.sprite.textureRect.size.x / sr.sprite.pixelsPerUnit, sr.sprite.textureRect.size.y / sr.sprite.pixelsPerUnit);
+        go.transform.position = c.position;
+        itemGameObjectMap.Add(c, go);
+    }
+    void OnCrateDespawned(Crate c) {
+        Destroy(itemGameObjectMap[c]);
+        itemGameObjectMap.Remove(c);
+    }
     void LoadSprites() {
         unitSprites = new Dictionary<string, Sprite>();
 		Sprite[] sprites = Resources.LoadAll<Sprite>("Textures/Units/");
@@ -160,5 +168,4 @@ public class UnitSpriteController : MonoBehaviour {
 		go.transform.localPosition =new Vector3(0,0,-0.5f);
 		circleUnit = u;
 	}
-
 }

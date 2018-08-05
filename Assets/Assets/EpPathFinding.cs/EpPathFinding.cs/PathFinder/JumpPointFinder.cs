@@ -223,11 +223,11 @@ namespace EpPathFinding.cs
             {
                 iParam.SearchGrid.SetWalkableAt(tEndNode.x, tEndNode.y, false);
             }
-			#region modified
-			//we want to have path to the closest point to an island
-			//so that the ship travels there with out the need to click a 
-			//water tile!
-			if(tStartNode!=tNode&& tNode!=null){
+            #region modified
+            //we want to have path to the closest point to an island
+            //so that the ship travels there with out the need to click a 
+            //water tile!
+            if (tStartNode!=tNode&& tNode!=null){
 				List<GridPos> list = Node.Backtrace(tNode);
 				GridPos end = null;
 				float dist = float.MaxValue;

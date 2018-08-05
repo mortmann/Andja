@@ -19,7 +19,6 @@ public class TypeGraphicsSelect : MonoBehaviour {
 			List<GameObject> gos = new List<GameObject> ();
 			int number = 0;
             if(typeTotileSpriteNames[type] == null) {
-                Debug.Log(type);
                 continue;
             }
 			foreach (string sprite in typeTotileSpriteNames[type]) {

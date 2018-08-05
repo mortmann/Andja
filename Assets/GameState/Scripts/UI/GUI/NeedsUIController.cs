@@ -28,7 +28,7 @@ public class NeedsUIController : MonoBehaviour {
 		ns.AddRange (home.City.itemNeeds);
 		Player p = PlayerController.Instance.CurrPlayer;
 
-		citizenCanvas.GetComponentInChildren<Text> ().text=home.people+"/"+home.maxLivingSpaces;
+		citizenCanvas.GetComponentInChildren<Text> ().text=home.people+"/"+home.MaxLivingSpaces;
 		needs = new List<Need>[City.citizienLevels];
 		for (int i = 0; i < City.citizienLevels; i++) {
 			needs [i] = new List<Need> ();

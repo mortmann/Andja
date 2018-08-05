@@ -9,7 +9,7 @@ public class BalanceUIText : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		player = GameObject.FindObjectOfType<PlayerController>().CurrPlayer;
+		player = PlayerController.Instance.CurrPlayer;
 	}
 	
 	// Update is called once per frame
@@ -20,15 +20,14 @@ public class BalanceUIText : MonoBehaviour {
 		if(player.Balance >= 0){
 			balanceText.color = Color.black;
 		}
-		if(player.Change < 0){
+		if(player.LastChange < 0){
 			changeText.color = Color.red;
-			changeText.text =""+ player.Change + " ";
 		}
-		if(player.Change >= 0){
+		if(player.LastChange >= 0){
 			changeText.color = Color.green;
-			changeText.text ="+ "+ player.Change + " ";
 		}
 		balanceText.text = player.Balance + " ";
+        changeText.text = "" + player.LastChange + " ";
 
-	}
+    }
 }

@@ -5,7 +5,6 @@ using Newtonsoft.Json;
 using System.Linq;
 
 public enum Climate {Cold,Middle,Warm};
-public enum IslandSizeTypes { ExtraSmall, Small, Middle, Big, ExtraBig, Other }
 
 [JsonObject(MemberSerialization.OptIn)]
 public class Island : IGEventable {
@@ -241,25 +240,25 @@ public class Island : IGEventable {
 		return TargetType;
 	}
 
-    public static MapGenerator.Range GetRangeForSize(IslandSizeTypes sizeType) {
+    public static MapGenerator.Range GetRangeForSize(Size sizeType) {
         switch (sizeType) {
-            case IslandSizeTypes.ExtraSmall:
+            case Size.VerySmall:
             return new MapGenerator.Range(40, 60);
-            case IslandSizeTypes.Small:
+            case Size.Small:
             return new MapGenerator.Range(60, 80);
-            case IslandSizeTypes.Middle:
+            case Size.Medium:
             return new MapGenerator.Range(80, 120);
-            case IslandSizeTypes.Big:
+            case Size.Large:
             return new MapGenerator.Range(120, 140);
-            case IslandSizeTypes.ExtraBig:
+            case Size.VeryLarge:
             return new MapGenerator.Range(140, 160);
             default:
             //Debug.LogError("NOT RECOGNISED ISLAND SIZE! Nothing has no size!");
             return new MapGenerator.Range(0, 0);
         }
     }
-    public static IslandSizeTypes GetSizeTyp(int widht, int height) {
-        foreach(IslandSizeTypes size in Enum.GetValues(typeof(IslandSizeTypes))) {
+    public static Size GetSizeTyp(int widht, int height) {
+        foreach(Size size in Enum.GetValues(typeof(Size))) {
             int middle = widht + height;
             middle /= 2;
             if (GetRangeForSize(size).IsBetween(middle)) {
@@ -267,7 +266,7 @@ public class Island : IGEventable {
             }
         }
         Debug.LogError("The Island does not fit any Range! Widht = " + widht + " : Height " + height );
-        return IslandSizeTypes.Other;
+        return Size.Other;
     }
 
 }

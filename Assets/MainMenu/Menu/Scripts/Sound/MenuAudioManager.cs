@@ -19,7 +19,6 @@ public class MenuAudioManager : MonoBehaviour {
 	Dictionary<string,int> volumes;
 
 	void Start() {
-        Debug.Log("SOUND");
         instance = this;
 		volumes = new Dictionary<string, int> ();
 		ReadSoundVolumes ();

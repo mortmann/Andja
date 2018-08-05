@@ -21,14 +21,8 @@ public class OceanPathfinding : Pathfinding {
 
 
 	public override void SetDestination(Tile end){
-		dest_X = end.X;
-		dest_Y = end.Y;
-		this.start = World.Current.GetTileAt(X, Y);
-		this.DestTile = end;
-		tileGrid = World.Current.TilesGrid;
-		Thread calcPath = new Thread (CalculatePath);
-		calcPath.Start ();
-	}
+        SetDestination(end.X, end.Y);
+    }
 	public override void SetDestination(float x , float y){
         pathDest = Path_dest.exact;
 		dest_X = x;
@@ -36,10 +30,12 @@ public class OceanPathfinding : Pathfinding {
 		this.start = World.Current.GetTileAt(X, Y);
 		this.DestTile = World.Current.GetTileAt(x, y);
 		tileGrid = World.Current.TilesGrid;
-		Thread calcPath = new Thread (CalculatePath);
+        IsAtDest = false;
+        Thread calcPath = new Thread (CalculatePath);
 		calcPath.Start ();
 	}
 	protected override void CalculatePath(){
+        pathDest = Path_dest.exact;
         System.Diagnostics.Stopwatch StopWatch = new System.Diagnostics.Stopwatch();
         StopWatch.Start();
         JumpPointParam jpParam = new JumpPointParam(tileGrid,new GridPos(start.X,start.Y), new GridPos(DestTile.X,DestTile.Y),true,DiagonalMovement.OnlyWhenNoObstacles);
@@ -54,11 +50,10 @@ public class OceanPathfinding : Pathfinding {
             worldPath.Dequeue();
         }
         if (worldPath.Count > 0) {
-            nextTile = worldPath.Dequeue();
+            NextTile = worldPath.Dequeue();
         }
-            
         StopWatch.Stop();
-        Debug.Log("CalculatePath " + StopWatch.ElapsedMilliseconds + "ms (" + StopWatch.Elapsed.TotalSeconds + "s)! ");
+        Debug.Log("CalculatePath Steps:" + worldPath.Count + " - "+ StopWatch.ElapsedMilliseconds + "ms (" + StopWatch.Elapsed.TotalSeconds + "s)! ");
 
     }
 }

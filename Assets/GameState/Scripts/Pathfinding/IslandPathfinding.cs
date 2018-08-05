@@ -12,24 +12,17 @@ public class IslandPathfinding : Pathfinding {
 		this._speed = u.Speed;
 		this.rotationSpeed = u.RotationSpeed;
 		CurrTile = start;
+        NextTile = CurrTile;
+        dest_X = start.X;
+        dest_Y = start.Y;
 	}
 
 	public override void SetDestination(Tile end) {
-		this.start = this.CurrTile;
-		this.DestTile = end;
-		pathDest = Path_dest.exact;
-		Thread calcPath = new Thread (CalculatePath);
-		calcPath.Start ();
-	}
-	public void SetDestination(Vector3 end) {
-		this.start = this.CurrTile;
-		this.DestTile = World.Current.GetTileAt(end.x,end.y);
-		dest_X = end.x;
-		dest_Y = end.y;
-		pathDest = Path_dest.exact;
-		Thread calcPath = new Thread (CalculatePath);
-		calcPath.Start ();
-	}
+        SetDestination(end.Vector);
+    }
+    public void SetDestination(Vector3 end) {
+        SetDestination(end.x, end.y);
+    }
 	public override void SetDestination(float x, float y) {
 		this.start = this.CurrTile;
 		this.DestTile = World.Current.GetTileAt(x,y);
@@ -49,7 +42,7 @@ public class IslandPathfinding : Pathfinding {
             worldPath.Dequeue();
         }
         if (worldPath.Count > 0) {
-            nextTile = worldPath.Dequeue();
+            NextTile = worldPath.Dequeue();
         }
 
     }

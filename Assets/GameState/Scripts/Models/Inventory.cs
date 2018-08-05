@@ -15,7 +15,6 @@ public class Inventory {
 		get;
 		protected set;
 	}
-	[JsonPropertyAttribute] public string name;
 
 	protected Action<Inventory> cbInventoryChanged;
 	public bool HasLimitedSpace {
@@ -26,9 +25,8 @@ public class Inventory {
     /// leave blanc for unlimited spaces! To limited it give a int > 0 
     /// </summary>
     /// <param name="numberOfSpaces"></param>
-	public Inventory(int numberOfSpaces = -1,int maxStackSize = 50, string name = "noname") {
+	public Inventory(int numberOfSpaces = -1,int maxStackSize = 50) {
         this.MaxStackSize = maxStackSize;
-		this.name = name + "-INV";
         Items = new Dictionary<int, Item>();
 		if (numberOfSpaces == -1) {
 			//for cities
@@ -97,21 +95,45 @@ public class Inventory {
 	public Item GetAllOfItem(Item item){
 		return GetItemWithMaxAmount (item,int.MaxValue);
 	}
-	public Item GetItemWithMaxAmount(Item item, int maxAmount){
-		Item output = GetItemInInventory (item);
-		if(output==null){
+    public Item GetItemWithMaxItemCount(Item item) {
+        return GetItemWithMaxAmount(item, item.count);
+    }
+    public Item GetItemWithMaxAmount(Item item, int maxAmount){
+		Item[] inInv = GetItemsInInventory (item);
+		if(inInv == null){
 			return null;
 		}
-		Item temp = output.CloneWithCount();
-		temp.count = Mathf.Clamp (temp.count, 0, maxAmount );
-		LowerItemAmount (output, temp.count);
-		maxAmount -= temp.count;
-		if(maxAmount>0 && NumberOfSpaces !=-1){
-			temp.count += GetItemWithMaxAmount (item, maxAmount).count;
-		}
-		return temp;
+        Item output = item.Clone();
+        foreach(Item i in inInv) {
+            if (maxAmount <= 0)
+                break;
+            int getFromThisItem = 0;
+            //get as much as needed from this item in the inventory
+            getFromThisItem = Mathf.Clamp(i.count, 0, maxAmount);
+            LowerItemAmount(i, getFromThisItem);
+            maxAmount -= getFromThisItem;
+            output.count += getFromThisItem;
+        }
+
+		return output;
 	}
-	protected Item GetItemInInventory(Item item){
+    /// <summary>
+    /// IF NumberOfSpaces == -1 then this will return null because there are no multiple items of this
+    /// </summary>
+    /// <param name="item"></param>
+    /// <returns></returns>
+    protected Item[] GetItemsInInventory(Item item) {
+        if (NumberOfSpaces == -1)
+            return null; 
+        List<Item> inInv = new List<Item>();
+        foreach(Item i in Items.Values) {
+            if (i.ID == item.ID)
+                inInv.Add(i);
+        }
+        return inInv.ToArray();
+    }
+
+    protected Item GetFirstItemInInventory(Item item){
 		int pos = GetPlaceInItems (item);
 		if(pos<0){
 			return null;
@@ -128,7 +150,7 @@ public class Inventory {
 	}
 
 	public virtual void SetItemCountNull (Item item){
-		Item i = GetItemInInventory (item);
+		Item i = GetFirstItemInInventory (item);
 		if(i==null){
 			return;
 		}
@@ -137,7 +159,7 @@ public class Inventory {
     }
 
 	public bool HasAnythingOf(Item item){
-		if(GetItemInInventory (item).count > 0){
+		if(GetFirstItemInInventory (item).count > 0){
 			return true;
 		}
 		return false;
@@ -150,11 +172,11 @@ public class Inventory {
 	/// <returns>The amount for item.</returns>
 	/// <param name="item">Item.</param>
 	public int GetAmountForItem(Item item){
-		Item it = GetItemInInventory (item);
+		Item it = GetFirstItemInInventory (item);
 		if(it==null){
 			return 0;
 		}
-		return GetItemInInventory (item).count;
+		return GetFirstItemInInventory (item).count;
 	}
 
 	public virtual int GetTotalAmountFor(Item item){
@@ -191,17 +213,57 @@ public class Inventory {
 		}
 		return 0;
 	}
-	/// <summary>
-	/// removes an item amount from this inventory but not moving it to any other inventory
-	/// destroys item amount forever! FOREVER!
-	/// </summary>
-	/// <returns><c>true</c>, if item amount was removed, <c>false</c> otherwise.</returns>
-	/// <param name="it">It.</param>
-	public bool RemoveItemAmount(Item it){
+    /// <summary>
+    /// should only be called for Inventories associated with units
+    /// cause city technically are always full / empty that means it
+    /// always has a spot to unload the item
+    /// </summary>
+    /// <returns></returns>
+    internal bool IsFullWithItems() {
+        if (this is CityInventory)
+            return false;
+        return NumberOfSpaces <= Items.Count;
+    }
+    /// <summary>
+    /// should only be called for Inventories associated with units
+    /// cause city technically are always full / empty that means it
+    /// always has a spot to unload the item
+    /// </summary>
+    /// <returns></returns>
+    internal bool HasSpaceForItem(Item item, bool hasToFitAll = false) {
+        //if its full and does not contain item type return false
+        if(IsFullWithItems() && ContainsItemWithID(item.ID) == false) {
+            return false;
+        }
+        if (hasToFitAll && IsFullWithItems()) {
+            if (RemainingSpaceForItem(item) < item.count) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    protected virtual int RemainingSpaceForItem(Item item) {
+        int remaining = 0;
+        foreach (Item i in Items.Values) {
+            if(i.ID == item.ID) {
+                remaining += MaxStackSize - i.count;
+            }
+        }
+        return remaining;
+    }
+
+    /// <summary>
+    /// removes an item amount from this inventory but not moving it to any other inventory
+    /// destroys item amount forever! FOREVER!
+    /// </summary>
+    /// <returns><c>true</c>, if item amount was removed, <c>false</c> otherwise.</returns>
+    /// <param name="it">It.</param>
+    public bool RemoveItemAmount(Item it){
 		if(it==null){
 			return true;
 		}
-		Item i = GetItemInInventory (it);
+		Item i = GetFirstItemInInventory (it);
 		if(i == null){
 			return false;
 		}
@@ -360,7 +422,7 @@ public class Inventory {
         return true;
     }
     internal bool HasEnoughOfItem(Item item) {
-        Item inInventory = GetItemInInventory(item);
+        Item inInventory = GetFirstItemInInventory(item);
         if (inInventory == null)
             return false;
         return inInventory.count >= item.count;

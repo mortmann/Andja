@@ -13,12 +13,12 @@ public class TextLanguageSetter : MonoBehaviour {
 		if(myText==null){
 			Debug.LogError("TextLanguageSetter has no text object! " + name);
 		}
-		myText.text = UILanguageController.Instance.getText (name);
+		myText.text = UILanguageController.Instance.GetText (name);
 		UILanguageController.Instance.RegisterLanguageChange (OnChangeLanguage);
 		if(GetComponent<EventTrigger> ()==null){
 			this.gameObject.AddComponent<EventTrigger> ();
 		}
-		if(UILanguageController.Instance.hasHoverOverText (name)==false){
+		if(UILanguageController.Instance.HasHoverOverText (name)==false){
 			return;
 		}
 		EventTrigger trigger = GetComponent<EventTrigger> ();
@@ -38,7 +38,7 @@ public class TextLanguageSetter : MonoBehaviour {
 		trigger.triggers.Add( exit );
 	}
 	void OnChangeLanguage () {
-		myText.text = UILanguageController.Instance.getText (name);
+		myText.text = UILanguageController.Instance.GetText (name);
 	}
 	void OnDestroy(){
 		UILanguageController.Instance.UnregisterLanguageChange (OnChangeLanguage);
@@ -47,7 +47,7 @@ public class TextLanguageSetter : MonoBehaviour {
 		UILanguageController.Instance.UnregisterLanguageChange (OnChangeLanguage);
 	}
 	public void OnMouseEnter(){
-		GameObject.FindObjectOfType<HoverOverScript> ().Show (UILanguageController.Instance.getHoverOverText (name));
+		GameObject.FindObjectOfType<HoverOverScript> ().Show (UILanguageController.Instance.GetHoverOverText (name));
 	}
 	public void OnMouseExit(){
 		GameObject.FindObjectOfType<HoverOverScript> ().Unshow ();

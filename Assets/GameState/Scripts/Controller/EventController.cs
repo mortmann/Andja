@@ -271,9 +271,11 @@ public class EventController : MonoBehaviour {
 		cbEventCreated += create;
 		cbEventEnded += ending;
 	}
+    void OnDestroy() {
+        Instance = null;
+    }
 
-
-	public GameEventSave GetSaveGameEventData(){
+    public GameEventSave GetSaveGameEventData(){
 		GameEventSave ges = new GameEventSave (idToActiveEvent);
 		return ges;
 	}

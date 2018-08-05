@@ -24,19 +24,19 @@ public class UILanguageController : MonoBehaviour {
 		nameToHover.Add ("Peasents", "Peasents");
 		//Need a way to load it in
 	}
-	public string getText(string name){
+	public string GetText(string name){
 		if(nameToText.ContainsKey(name)==false){
 			return "Missing Translation - " + name;
 		}
 		return nameToText [name];
 	}
-	public string getHoverOverText(string name){
+	public string GetHoverOverText(string name){
 		if(nameToHover.ContainsKey(name)==false){
 			return "Missing Translation - " + name;
 		}
 		return nameToHover [name];
 	}
-	public bool hasHoverOverText(string name){
+	public bool HasHoverOverText(string name){
 		return nameToHover.ContainsKey (name);
 	}
 	public void ChangeLanguage(Language language){
@@ -50,4 +50,7 @@ public class UILanguageController : MonoBehaviour {
 	public void UnregisterLanguageChange(Action callbackfunc) {
 		cbLanguageChange -= callbackfunc;
 	}
+    void OnDestroy() {
+        Instance = null;
+    }
 }

@@ -14,6 +14,7 @@ public class World : IGEventable{
 
 	[JsonPropertyAttribute] public List<Island> IslandList { get; protected set; }
 	[JsonPropertyAttribute] public List<Unit> Units { get; protected set; }
+    [JsonPropertyAttribute] public List<Crate> Crates { get; protected set; }
 
     #endregion
     #region RuntimeOrOther
@@ -27,7 +28,8 @@ public class World : IGEventable{
 	public Dictionary<Climate,List<Fertility>> allFertilities;
 	public Dictionary<int,Fertility> idToFertilities;
 
-	protected bool[][] _tilesmap;
+    
+    protected bool[][] _tilesmap;
 	public bool[][] Tilesmap { get {
 			if(_tilesmap == null){
 				_tilesmap = new bool[Width][];
@@ -49,11 +51,11 @@ public class World : IGEventable{
 					boolgrid[x] = new bool[Height];
 					for (int y = 0; y < Height; y++) {
 						boolgrid [x][y] = (World.Current.GetTileAt (x, y).Type == TileType.Ocean);
-					}	
+                    }
 				}
 				_tilesgrid = new StaticGrid (Width, Height, boolgrid);
 			}
-			return _tilesgrid;
+			return (StaticGrid)_tilesgrid.Clone();
 		}
 	}
 
@@ -63,8 +65,10 @@ public class World : IGEventable{
 	Action<World> cbTileGraphChanged;
 	Action<GameEvent> cbEventCreated;
 	Action<GameEvent> cbEventEnded;
+    Action<Crate> cbCrateSpawn;
+    Action<Crate> cbCrateDespawned;
 
-	#endregion
+    #endregion
 
 	/// <summary>
 	/// Initializes a new instance of the <see cref="World"/> class.
@@ -89,40 +93,16 @@ public class World : IGEventable{
         }
 
         SetupWorld();
-
-//		for (int x = 29; x < 41; x++) {
-//			for (int y = 39; y < 61; y++) {
-//				SetTileAt (x,y,new LandTile (x,y));
-//				GetTileAt(x,y).Type = TileType.Shore;
-//			}
-//		}
-//		for (int x = 30; x < 40; x++) {
-//			for (int y = 40; y < 60; y++) {
-//				SetTileAt (x,y,new LandTile (x,y));
-//				GetTileAt(x,y).Type = TileType.Dirt;
-//			}
-//		}
-//		for (int x = 60; x < 70; x++) {
-//			for (int y = 40; y < 60; y++) {
-//				SetTileAt (x,y,new LandTile (x,y));
-//				GetTileAt(x,y).Type = TileType.Dirt;
-//			}
-//		}
-
-//		CreateUnit(GetTileAt(34, 41),PlayerController.currentPlayerNumber,false);
-//		CreateUnit(GetTileAt(34, 47),2,false); 
-//		CreateUnit(GetTileAt(42, 38),PlayerController.currentPlayerNumber,true);    
-//		CreateUnit(GetTileAt(34, 38),2,true);    
-
-//		CreateIsland (31, 41);
-//		CreateIsland (61, 41);
 	}
 
 
-    internal void SetTiles(Tile[] tiles, int width, int height) {
+    internal void LoadData(Tile[] tiles, int width, int height) {
         Tiles = tiles;
         Width = width;
         Height = height;
+        foreach(Unit u in Units) {
+            u.RegisterOnDestroyCallback(OnUnitDestroy);
+        }
     }
 
     /// <summary>
@@ -141,9 +121,13 @@ public class World : IGEventable{
 			}
 		}
 		Current = this;
-	}
-	
-	public World(List<Tile> tileList, int Width, int Height){
+
+        if (Crates == null)
+            Crates = new List<Crate>();
+
+    }
+
+    public World(List<Tile> tileList, int Width, int Height){
 		this.Width = Width;
 		this.Height = Height;
 		Tiles = new Tile[Width*Height];
@@ -155,15 +139,7 @@ public class World : IGEventable{
 		allFertilities = PrototypController.Instance.allFertilities;
 		idToFertilities= PrototypController.Instance.idToFertilities;
 	}
-    //[JsonConstructor]
-    //public World(int Width, int Height) {
-    //    this.Width = Width;
-    //    this.Height = Height;
-    //    Tiles = new Tile[Width * Height];
-    //    Current = this;
-    //    allFertilities = PrototypController.Instance.allFertilities;
-    //    idToFertilities = PrototypController.Instance.idToFertilities;
-    //}
+    
     public void SetupWorld(){
 		Current = this;
 		allFertilities = PrototypController.Instance.allFertilities;
@@ -171,22 +147,35 @@ public class World : IGEventable{
 //		EventController.Instance.RegisterOnEvent (OnEventCreate,OnEventEnded);
 		IslandList = new List<Island>();
 		Units = new List<Unit>();
+        Crates = new List<Crate>();
 
-	}
+    }
     internal void Update(float deltaTime) {
         foreach(Island i in IslandList) {
             i.Update(deltaTime);
         }
-
+        for (int pos = Crates.Count-1; pos >= 0; pos--) {
+            Crates[pos].Update(deltaTime);
+        }
     }
-	internal void Fixedupdate(float deltaTime){
+
+    internal void TryToAddCrateToUnit(Unit selectedUnit, Crate thisCrate) {
+        if (selectedUnit.inventory == null)
+            return;
+        Vector2 distance = selectedUnit.Vector2Position - thisCrate.position;
+        if (distance.magnitude > Crate.pickUpDistance)
+            return;
+        int pickedup = selectedUnit.TryToAddItem(thisCrate.item);
+        thisCrate.RemoveItemAmount(pickedup);
+    }
+
+    internal void Fixedupdate(float deltaTime){
 		for (int i = Units.Count-1; i >=0; i--) {
 			Units[i].Update (deltaTime);
 			if(Units[i].IsDead ==true){
 				Units.RemoveAt (i);
 			}
 		}
-
 	}
 
 	public void CreateIsland(MapGenerator.IslandStruct islandStruct){
@@ -249,6 +238,10 @@ public class World : IGEventable{
 		}
 		return false;
 	}
+    public Tile GetTileAt(Vector2 vec) {
+        return GetTileAt(vec.x, vec.y);
+    }
+
     public Tile GetTileAt(float fx, float fy) {
         int x = Mathf.FloorToInt(fx);
         int y = Mathf.FloorToInt(fy);
@@ -261,11 +254,43 @@ public class World : IGEventable{
         return unit;
     }
 	public void OnUnitDestroy(Unit u){
+        //Spawn items from Inventory on the map
+        if(u.inventory != null) {
+            foreach (Item i in u.inventory.GetAllItemsAndRemoveThem()) {
+                SpawnItemOnMap(i,u.VectorPosition);
+            }
+        }
 	}
+    public void SpawnItemOnMap(Item i, Vector2 toSpawnPosition) {
+        Vector2 randomFactor = new Vector2(UnityEngine.Random.Range(-0.5f, 0.5f), UnityEngine.Random.Range(-0.5f, 0.5f));
+        if(GetTileAt((toSpawnPosition+randomFactor)).Type != TileType.Ocean) {
+            toSpawnPosition += randomFactor;
+        }
+        Crate c = new Crate(toSpawnPosition, i);
+        c.onDespawn += DespawnItem;
+        Crates.Add( c );
+        cbCrateSpawn?.Invoke(c);
 
-	// we dont need this right now because str cant be build on Ocean tiles only
-	// on shore tiles 
-	public void ChangeWorldGraph(Tile t, bool b){
+    }
+    public void DespawnItem(Crate c) {
+        Crates.Remove(c);
+        cbCrateDespawned?.Invoke(c);
+    }
+    internal void RegisterCrateSpawned(Action<Crate> onSpawned) {
+        cbCrateSpawn += onSpawned;
+    }
+    internal void UnregisterCrateSpawned(Action<Crate> onSpawned) {
+        cbCrateSpawn -= onSpawned;
+    }
+    internal void RegisterCrateDespawned(Action<Crate> onDespawned) {
+        cbCrateDespawned += onDespawned;
+    }
+    internal void UnregisterCrateDespawned(Action<Crate> onDespawned) {
+        cbCrateDespawned -= onDespawned;
+    }
+    // we dont need this right now because str cant be build on Ocean tiles only
+    // on shore tiles 
+    public void ChangeWorldGraph(Tile t, bool b){
 		Tilesmap [t.X][t.Y] = b;
 	}
 

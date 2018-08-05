@@ -148,7 +148,7 @@ public class MapImage : MonoBehaviour {
 		vec /= Mathf.Clamp(cc.zoomLevel,CameraController.maxZoomLevel,cc.zoomLevel);// I dont get why this is working, but it does
 		cameraRect.transform.localScale = 2*((vec));
 		foreach (Unit item in w.Units) {
-			if(item.isShip==false){
+			if(item.IsShip==false){
 				continue;
 			}
 			if(unitToGO.ContainsKey (item)==false){

@@ -12,34 +12,18 @@ public class SaveLoadUIScript : MonoBehaviour {
 	string selected;
 	public InputField saveGameInput;
 	GameObject selectedGO;
-    Dictionary<string, FileInfo> nameToFile;
+    Dictionary<string, SaveController.SaveMetaData> nameToFile;
 
 	// Use this for initialization
 	void OnEnable () {
-        nameToFile = new Dictionary<string, FileInfo>();
+        nameToFile = new Dictionary<string, SaveController.SaveMetaData>();
 		foreach (Transform item in canvasGO.transform) {
 			GameObject.Destroy (item.gameObject);
 		}
-		string directoryPath="";
-		if (EditorController.IsEditor == false) {
-			directoryPath = SaveController.Instance.GetSaveGamesPath ();
-		} else {
-			directoryPath = EditorController.GetSaveGamesPath ();
-		}
-		
-		DirectoryInfo saveDir = new DirectoryInfo( directoryPath );
-		if(saveDir.Exists==false){
-			saveDir.Create ();
-		}
-		FileInfo[] saveGames;
-		if(EditorController.IsEditor == false){
-			saveGames = saveDir.GetFiles("*.sav").OrderBy( f => f.CreationTime ).ToArray();
-		} else {
-			saveGames = saveDir.GetFiles("*.isl",SearchOption.AllDirectories).OrderBy( f => f.CreationTime ).ToArray();
-		}
+        SaveController.SaveMetaData[] saveMetaDatas = SaveController.GetMetaFiles(EditorController.IsEditor);
 
 		// Build file list by instantiating fileListItemPrefab
-		for(int i = saveGames.Length-1; i>=0 ; i-- ) {
+		for(int i = saveMetaDatas.Length-1; i>=0 ; i-- ) {
 			GameObject go = (GameObject)GameObject.Instantiate(listPrefab);
 
 			// Make sure this gameobject is a child of our list box
@@ -49,13 +33,13 @@ public class SaveLoadUIScript : MonoBehaviour {
             EventTrigger.Entry entry = new EventTrigger.Entry {
                 eventID = EventTriggerType.PointerClick
             };
-            string name = Path.GetFileNameWithoutExtension( saveGames[i].FullName);
+            string name = Path.GetFileNameWithoutExtension(saveMetaDatas[i].saveName);
 			entry.callback.AddListener ((data)=>{OnSaveGameSelect (name,go);});
 			trigger.triggers.Add( entry );
-			string date = saveGames [i].CreationTime.ToString ("dd-MM-yyyy");
-			go.GetComponentInChildren<Text>().text = Path.GetFileNameWithoutExtension( saveGames[i].FullName) +" ["+ date +"]";
+			string date = saveMetaDatas[i].saveTime.ToString ("dd-MM-yyyy");
+			go.GetComponentInChildren<Text>().text = name + " ["+ date +"]";
 
-            nameToFile.Add(name, saveGames[i]);
+            nameToFile.Add(name, saveMetaDatas[i]);
 		}
 		if(saveGameInput!=null){
 			saveGameInput.onValueChanged.AddListener ((data)=>OnInputChange());			
@@ -118,7 +102,7 @@ public class SaveLoadUIScript : MonoBehaviour {
 		SaveController.Instance.SaveGameState (name);
 	}
 	private void EditorSave(string name){
-		EditorController.Instance.SaveIslandState (name);
+        SaveController.Instance.SaveIslandState (name);
 	}
 	private void GameLoad(){
 		GameDataHolder.Instance.loadsavegame = selected;
@@ -128,6 +112,6 @@ public class SaveLoadUIScript : MonoBehaviour {
 			GameObject.FindObjectOfType<MenuController> ().ChangeToGameStateLoadScreen ();
 	}
 	private void EditorLoad(){
-		EditorController.Instance.LoadIsland (nameToFile[selected]);
+        SaveController.Instance.LoadIsland (nameToFile[selected].saveName);
 	}
 }

@@ -41,7 +41,7 @@ public class SoundController : MonoBehaviour {
 			return;
 		}
 		Instance = this;
-		cameraController = GameObject.FindObjectOfType<CameraController> ();
+		cameraController = CameraController.Instance;
 		BuildController.Instance.RegisterStructureCreated (OnBuild);
 		BuildController.Instance.RegisterCityCreated (OnCityCreate);
 		EventController.Instance.RegisterOnEvent (OnEventStart,OnEventEnd);
@@ -274,5 +274,7 @@ public class SoundController : MonoBehaviour {
 	public void OnEventEnd(GameEvent ge){
 		//Maybe never used?
 	}
-
+    void OnDestroy() {
+        Instance = null;
+    }
 }

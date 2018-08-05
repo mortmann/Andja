@@ -7,6 +7,7 @@ using System.Reflection;
 using System.Xml;
 using System.Xml.Serialization;
 using UnityEngine;
+using static Combat;
 
 public class PrototypController : MonoBehaviour {
 	public const int StartID = 1;
@@ -18,7 +19,9 @@ public class PrototypController : MonoBehaviour {
 	public Dictionary<int,ItemPrototypeData>  itemPrototypeDatas;
 	public Dictionary<int,NeedPrototypeData>  needPrototypeDatas;
 	public Dictionary<int,FertilityPrototypeData>  fertilityPrototypeDatas;
-    public Dictionary<int, UnitPrototypeData> unitPrototypeDatas;
+    public Dictionary<int,UnitPrototypeData> unitPrototypeDatas;
+    public Dictionary<int, DamageType> damageTypeDatas;
+    public Dictionary<int, ArmorType> armorTypeDatas;
 
     public Dictionary<int, Item> allItems;
 	public static List<Item> buildItems;
@@ -28,7 +31,11 @@ public class PrototypController : MonoBehaviour {
 	public Dictionary<Climate,List<Fertility>> allFertilities;
 	public Dictionary<int,Fertility> idToFertilities;
 
-	public Dictionary<int, Item> GetCopieOfAllItems(){
+    //TODO: need a way to get this to load in! probably with the rest
+    //      of the data thats still needs to be read in like time for money ticks
+    public ArmorType StructureArmor => armorTypeDatas[1];
+
+    public Dictionary<int, Item> GetCopieOfAllItems(){
 		Dictionary<int, Item> items = new Dictionary<int, Item>();
 		foreach (int item in allItems.Keys) {
 			int id = item;
@@ -103,9 +110,9 @@ public class PrototypController : MonoBehaviour {
 		itemPrototypeDatas = new Dictionary<int, ItemPrototypeData> ();
 		ReadItemsFromXML();
 
-        //armorPrototypes = new Dictionary<int, Armor>();
-        //armorPrototypes = new Dictionary<int, UnitPrototypeData>();
-        //ReadUnitsFromXML();
+        armorTypeDatas = new Dictionary<int, ArmorType>();
+        damageTypeDatas = new Dictionary<int, DamageType>();
+        ReadCombatFromXML();
 
         unitPrototypes = new Dictionary<int, Unit>();
         unitPrototypeDatas = new Dictionary<int, UnitPrototypeData>();
@@ -141,15 +148,55 @@ public class PrototypController : MonoBehaviour {
 		ReadNeedsFromXML ();
 
 		Debug.Log ("Read in structures: " +structurePrototypes.Count);
-        Debug.Log("Read in items: " + unitPrototypes.Count);
+        Debug.Log("Read in units: " + unitPrototypes.Count);
         Debug.Log ("Read in items: " + allItems.Count); 
-		Debug.Log ("Read in needs: " + allNeeds.Count); 
-	}
+		Debug.Log ("Read in needs: " + allNeeds.Count);
+        Debug.Log("Read in damagetypes: " + damageTypeDatas.Count);
+        Debug.Log("Read in armortypes: " + armorTypeDatas.Count);
+    }
+
+    private void ReadCombatFromXML() {
+        XmlDocument xmlDoc = new XmlDocument(); // xmlDoc is the new xml document.
+        TextAsset ta = ((TextAsset)Resources.Load("XMLs/combat", typeof(TextAsset)));
+        xmlDoc.LoadXml(ta.text); // load the file.
+        foreach (XmlElement node in xmlDoc.SelectNodes("combatTypes/armorType")) {
+            ArmorType at = new ArmorType();
+            int id = int.Parse(node.GetAttribute("ID"));
+            SetData<ArmorType>(node, ref at);
+            armorTypeDatas.Add(id, at);
+        }
+        foreach (XmlElement node in xmlDoc.SelectNodes("combatTypes/damageType")) {
+            DamageType at = new DamageType();
+            int id = int.Parse(node.GetAttribute("ID"));
+            
+            SetData<DamageType>(node, ref at);
+            XmlNode dict = node.SelectSingleNode("damageMultiplier");
+            at.damageMultiplier = new Dictionary<ArmorType, float>();
+            foreach(XmlElement child in dict.ChildNodes) {
+                int armorID = -1;
+                if (int.TryParse(child.GetAttribute("ArmorTyp"), out armorID) == false) {
+                    Debug.LogError("ID is not an int for ArmorType " + child.GetAttribute("ArmorTyp"));
+                }
+                if (armorID < 0)
+                    continue;
+                float multiplier = 1;
+                if (float.TryParse(child.InnerText, out multiplier) == false) {
+                    Debug.LogError("ID is not an float for ArmorType ");
+                }
+                at.damageMultiplier[armorTypeDatas[armorID]] = multiplier;
+            }
+            damageTypeDatas.Add(id, at);
+        }
+    }
 
     internal UnitPrototypeData GetUnitPrototypDataForID(int id) {
         return unitPrototypeDatas[id];
     }
-
+    internal Unit GetUnitForID(int id) {
+        if (unitPrototypes.ContainsKey(id) == false)
+            return null;
+        return unitPrototypes[id];
+    }
     ///////////////////////////////////////
     /// XML LOADING FROM FILE
     /// 
@@ -545,7 +592,15 @@ public class PrototypController : MonoBehaviour {
 					fi.SetValue (data, NodeToStructure (n));
 					continue;
 				}
-				if(fi.FieldType==typeof(Fertility)){
+                if (fi.FieldType == typeof(ArmorType)) {
+                    fi.SetValue(data, NodeToArmorType(n));
+                    continue;
+                }
+                if (fi.FieldType == typeof(DamageType)) {
+                    fi.SetValue(data, NodeToDamageType(n));
+                    continue;
+                }
+                if (fi.FieldType==typeof(Fertility)){
 					fi.SetValue (data, NodeToFertility (n));
 					continue;
 				}
@@ -586,6 +641,10 @@ public class PrototypController : MonoBehaviour {
 					fi.SetValue(data, Convert.ChangeType (enumArray,fi.FieldType));
 					continue;
 				}
+                if(fi.FieldType == typeof(Dictionary<ArmorType, float>)) {
+                    // this will get set in load xml directly and not here!
+                    continue;
+                }
                 try {
                     fi.SetValue(data, Convert.ChangeType(n.InnerXml, fi.FieldType,System.Globalization.CultureInfo.InvariantCulture));
                 }
@@ -596,7 +655,39 @@ public class PrototypController : MonoBehaviour {
 		}
 	}
 
-	private Item NodeToItem(XmlNode n){
+    private object NodeToDamageType(XmlNode n) {
+        int id = -1;
+        if (int.TryParse(n.InnerXml, out id) == false) {
+            Debug.LogError("ID is not an int for DamageType ");
+            return null;
+        }
+        if (id == -1) {
+            return null;//not needed
+        }
+        if (damageTypeDatas.ContainsKey(id) == false) {
+            Debug.LogError("ID was not created before the depending DamageType! " + id);
+            return null;
+        }
+        return damageTypeDatas[id];
+    }
+
+    private object NodeToArmorType(XmlNode n) {
+        int id = -1;
+        if (int.TryParse(n.InnerXml, out id) == false) {
+            Debug.LogError("ID is not an int for ArmorType ");
+            return null;
+        }
+        if (id == -1) {
+            return null;//not needed
+        }
+        if (armorTypeDatas.ContainsKey(id) == false) {
+            Debug.LogError("ID was not created before the depending ArmorType! " + id);
+            return null;
+        }
+        return armorTypeDatas[id];
+    }
+
+    private Item NodeToItem(XmlNode n){
 		int id = -1;
 		if(int.TryParse (n.Attributes["ID"].Value,out id)==false){
 			Debug.LogError ("ID is not an int for ITEM ");
@@ -663,5 +754,7 @@ public class PrototypController : MonoBehaviour {
 		return idToFertilities [id];
 	}
 
-
+    void OnDestroy() {
+        Instance = null;
+    }
 }

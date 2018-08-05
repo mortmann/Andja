@@ -5,28 +5,30 @@ public class KeyInputSettings : MonoBehaviour {
 
 	public Transform contentTransform;
 	public GameObject keyPrefab;
-	Dictionary<string,KeyInputSingle> buttonNameToGO;
-	string selectedButton;
+	Dictionary<InputName, KeyInputSingle> buttonNameToGO;
+    InputName selectedButton;
+    bool hasSelected = false;
 	bool primaryChange;
 	// Use this for initialization
 	void Start () {
 		new InputHandler ();
-		buttonNameToGO = new Dictionary<string, KeyInputSingle> ();
+		buttonNameToGO = new Dictionary<InputName, KeyInputSingle> ();
 		foreach (Transform item in contentTransform) {
 			Destroy (item.gameObject);
 		}
-		foreach (string name in InputHandler.GetBinds().Keys) {
+		foreach (InputName name in InputHandler.GetBinds().Keys) {
 			InputHandler.KeyBind item = InputHandler.GetBinds () [name];
 //			InputHandler.KeyBind item = InputHandler.GetBinds () [s];
 			GameObject g = Instantiate (keyPrefab);
 			g.GetComponent<KeyInputSingle>().SetUp (name,item.GetPrimaryString(),item.GetSecondaryString(),OnClickButton);
 			g.transform.SetParent (contentTransform);
-			buttonNameToGO.Add (name,g.GetComponent<KeyInputSingle>());
+			buttonNameToGO.Add (name, g.GetComponent<KeyInputSingle>());
 		}
 	
 	}
-	public void OnClickButton(string name, bool primary){
-		selectedButton = name;
+	public void OnClickButton(InputName name, bool primary){
+        hasSelected = true;
+        selectedButton = name;
 		primaryChange = primary;
 		Cursor.visible = false;
 	}
@@ -36,10 +38,11 @@ public class KeyInputSettings : MonoBehaviour {
 	}
 	public void OnGUI(){
 		if (Input.GetKeyDown (KeyCode.Escape)) {
-			Cursor.visible = true;
+            hasSelected = false;
+            Cursor.visible = true;
 		} else
 			if (Event.current != null && (Event.current.isKey)) {
-				if(selectedButton==null || selectedButton==""){
+				if(hasSelected ==false) {
 					return;
 				}
 				KeyCode s = Event.current.keyCode;
@@ -53,8 +56,8 @@ public class KeyInputSettings : MonoBehaviour {
 					InputHandler.ChangeSecondaryNameToKey (selectedButton,s);
 				}
 				Cursor.visible = true;
-				selectedButton = null;
 				InputHandler.SaveInputSchema ();
-			}
+                hasSelected = false;
+        }
 	}
 }

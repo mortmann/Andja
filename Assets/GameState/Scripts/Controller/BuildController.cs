@@ -82,7 +82,7 @@ public class BuildController : MonoBehaviour {
 		if(t.Structure==null){
 			return;
 		}
-		if(t.Structure.PlayerNumber==destroyPlayer.playerNumber){
+		if(t.Structure.PlayerNumber==destroyPlayer.Number){
 			t.Structure.Destroy ();
 		}
 	}
@@ -307,5 +307,7 @@ public class BuildController : MonoBehaviour {
 	public void UnregisterBuildStateChange(Action<BuildStateModes> callbackfunc) {
 		cbBuildStateChange -= callbackfunc;
 	}
-
+    void OnDestroy() {
+        Instance = null;
+    }
 }

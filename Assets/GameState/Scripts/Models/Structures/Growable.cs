@@ -5,7 +5,6 @@ using Newtonsoft.Json;
 public class GrowablePrototypeData : OutputPrototypData {
 	public Fertility fertility;
 	public int ageStages = 2;
-
 }
 
 [JsonObject(MemberSerialization.OptIn)]

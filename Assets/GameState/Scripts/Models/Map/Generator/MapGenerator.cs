@@ -48,7 +48,7 @@ public class MapGenerator : MonoBehaviour {
     private Task loadTask;
     private World world;
     private bool started;
-
+    Dictionary<KeyValuePair<Climate, Size>, List<string>> islands;
     public void Awake(){
 		if (Instance != null) {
 			Debug.LogError ("There should never be two MapController.");
@@ -58,6 +58,8 @@ public class MapGenerator : MonoBehaviour {
 		DontDestroyOnLoad (this.gameObject);
         toPlaceIslands = new List<IslandStruct>();
         tileToStructure = new Dictionary<Tile, Structure>();
+
+        islands = SaveController.GetIslands();
     }
 
     internal Dictionary<Tile,Structure> GetStructures() {
@@ -93,7 +95,7 @@ public class MapGenerator : MonoBehaviour {
                 Range range = numberRangeOfIslandsSizes[genInfo];
                 int numberOfIslands = Random.Range(range.min, range.max);
                 for (int i = 0; i < numberOfIslands; i++) {
-                    hasToUseIslands.Add(GetRandomIslandFilePath(
+                    hasToUseIslands.Add(GetRandomIslandFileName(
                         Island.GetSizeTyp(genInfo.Width.Middle, genInfo.Height.Middle), genInfo.climate));
                 }
             }
@@ -108,11 +110,10 @@ public class MapGenerator : MonoBehaviour {
         //Let the Update Function do its Job
         startedGenerating = true;
     }
-    private string GetRandomIslandFilePath(IslandSizeTypes size, Climate climate) {
-        DirectoryInfo dir = new DirectoryInfo(EditorController.GetTotalPathToIslands(size, climate));
-        FileInfo[] info = dir.GetFiles("*.isl");
-        FileInfo file = info[Random.Range(0, info.Length)];
-        return Path.Combine(EditorController.GetRelativePathToIslands(size, climate), file.Name);
+    private string GetRandomIslandFileName(Size size, Climate climate) {
+        KeyValuePair<Climate, Size> key = new KeyValuePair<Climate, Size>(climate, size);
+        List<string> keyIslands = islands[key];
+        return keyIslands[Random.Range(0, keyIslands.Count)];
     }
 
     public List<IslandStruct> GetIslandStructs() {
@@ -122,16 +123,13 @@ public class MapGenerator : MonoBehaviour {
     private void LoadIslands(List<string> toLoad) {
         toLoadIslands = toLoad.Count;
         loadedIslandsList = new ConcurrentBag<EditorController.SaveIsland>();
-        string path = EditorController.GetSaveGamesPath();
         //create as thread to be safe this isnt going to slow down 
         loadTask = Task.Factory.StartNew(() => {
-            foreach(string location in toLoad) {
-                string file = System.IO.Path.Combine(path, location );
-                loadedIslandsList.Add(EditorController.LoadIsland(file));
+            foreach(string name in toLoad) {
+                loadedIslandsList.Add(SaveController.Instance.GetIslandSave(name));
                 loadedIslands++;
             } 
         });
-        
         loadTask.ConfigureAwait(false);
     }
 
@@ -311,7 +309,6 @@ public class MapGenerator : MonoBehaviour {
         Debug.Log("Generated map with island number " + toPlaceIslands.Count + " in a Map " + Width + " : " + Height 
             + " in " + sw.ElapsedMilliseconds + "ms (" + sw.Elapsed.TotalSeconds + "s)! ");
         TileSpriteController.CreateIslandSprites(doneIslands);
-
     }
 
     private Tile SetNewLandTileAt(int x, int y, Tile t) {
@@ -382,6 +379,7 @@ public class MapGenerator : MonoBehaviour {
 		//Maybe add any SpecialFeature it may contain? eg vulkan, 
 	}
     public struct IslandStruct {
+        public string name;
         public int Width;
         public int Height;
         public int x;
@@ -396,12 +394,14 @@ public class MapGenerator : MonoBehaviour {
             Tiles = tiles;
             this.climate = climate;
             tileToStructure = new Dictionary<Tile, Structure>();
+            this.name = "";
         }
         public IslandStruct(EditorController.SaveIsland save) : this() {
             Width = save.Width;
             Height = save.Height;
             Tiles = save.tiles;
             this.climate = save.climate;
+            name = save.Name;
             tileToStructure = new Dictionary<Tile, Structure>();
             foreach(Structure str in save.structures) {
                 tileToStructure.Add(str.BuildTile, str);
@@ -413,6 +413,7 @@ public class MapGenerator : MonoBehaviour {
             Tiles = copy.Tiles;
             this.climate = copy.climate;
             tileToStructure = copy.tileToStructure;
+            this.name = copy.name;
             //x = copy.x;
             //y = copy.y;
 

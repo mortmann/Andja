@@ -27,7 +27,7 @@ public class UIController : MonoBehaviour {
 	public GameObject otherCityUI;
 
 	Structure openStructure;
-
+    Unit openUnit;
 	public static Dictionary<string,Sprite> ItemImages;
 	public static string itemSpriteName = "item_";
 	public static UIController Instance;
@@ -59,6 +59,7 @@ public class UIController : MonoBehaviour {
 				return;
 			}
 		}
+        str.RegisterOnDestroyCallback(OnStructureDestroy);
 		openStructure = str;
 		str.OnClick ();
 		if (str is ProductionBuilding) {
@@ -77,7 +78,12 @@ public class UIController : MonoBehaviour {
             OpenMilitaryBuildingInfo(str);
         }
     }
-	public void OpenOtherCity(City city){
+    public void OnStructureDestroy(Structure str) {
+        CloseInfoUI();
+    }
+
+
+    public void OpenOtherCity(City city){
 		if(city == null){
 			return;
 		}
@@ -182,14 +188,19 @@ public class UIController : MonoBehaviour {
 				}
 			}
 		}
-		buildingCanvas.SetActive (false);
+        u.RegisterOnDestroyCallback(OnUnitDestroy);
+
+        buildingCanvas.SetActive (false);
 		CloseInfoUI ();
 		OpenInfoUI ();
 		unitCanvas.SetActive (true);
 		unitCanvas.GetComponent<UnitUI> ().Show (u);
 	}
+    public void OnUnitDestroy(Unit u) {
+        CloseInfoUI();
+    }
 
-	public void CloseUnitUI(){
+    public void CloseUnitUI(){
 		unitCanvas.SetActive (false);
 		CloseInfoUI ();
 	}
@@ -203,14 +214,20 @@ public class UIController : MonoBehaviour {
 		if(openStructure != null){
 			TileSpriteController.Instance.RemoveDecider (StrcutureTileDecider);
 			openStructure.OnClickClose ();
-			openStructure = null;
-		}
-		unitCanvas.SetActive (false);
+            openStructure.UnregisterOnDestroyCallback(OnStructureDestroy);
+            openStructure = null;
+        }
+        if (openUnit != null) {
+            openUnit.UnregisterOnDestroyCallback(OnUnitDestroy);
+            openUnit = null;
+        }
+        unitCanvas.SetActive (false);
 		buildingCanvas.SetActive (false);
         militaryBuildingCanvas.SetActive(false);
         uiInfoCanvas.SetActive (false);
 	}
-	public void CloseChooseBuild(){
+
+    public void CloseChooseBuild(){
 		chooseBuildCanvas.SetActive (false);
 	}
 	public void CloseRightUI(){
@@ -319,5 +336,7 @@ public class UIController : MonoBehaviour {
 		}
 		return (EventSystem.current.currentSelectedGameObject.GetComponent<InputField>()).isFocused;
 	}
-
+    void OnDestroy() {
+        Instance = null;
+    }
 }

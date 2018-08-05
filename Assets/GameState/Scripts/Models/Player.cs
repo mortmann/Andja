@@ -25,7 +25,12 @@ public class Player : IGEventable {
 		protected set { _change = value;}
 	} //should be calculated after reload anyway
 
-	Action<int,int> cbMaxPopulationMLCountChange;
+    private int _lastChange; 
+    public int LastChange {
+        get { return _lastChange; }
+        protected set { _lastChange = value; }
+    }
+    Action<int,int> cbMaxPopulationMLCountChange;
 	Action<Need> cbNeedUnlocked;
 
 	#endregion 
@@ -74,7 +79,7 @@ public class Player : IGEventable {
     }
 
     [JsonPropertyAttribute]
-	public int playerNumber;
+	public int Number;
 	#endregion 
 
 	public Player(){
@@ -82,7 +87,7 @@ public class Player : IGEventable {
 	}
 
 	public Player(int number){
-		playerNumber = number;
+		Number = number;
 		MaxPopulationCount = 0;
 		MaxPopulationLevel = 0;
 		Change = 0;
@@ -113,13 +118,11 @@ public class Player : IGEventable {
 
 	}
 	public void Update () {
-
-		int citychange=0;
-		for (int i = 0; i < myCities.Count; i++) {
-			citychange += myCities[i].cityBalance;
+        LastChange = Change;
+        for (int i = 0; i < myCities.Count; i++) {
+            LastChange += myCities[i].Balance;
 		}
-
-		Balance += Change+citychange;
+		Balance += LastChange;
 
 		if(Balance < -1000000){
 			// game over !
@@ -190,8 +193,9 @@ public class Player : IGEventable {
 		Change += amount;
 	}
 	public void OnCityCreated(City city){
+        if (city.playerNumber != Number)
+            return;
 		myCities.Add (city);
-
 	}
 	public void OnStructureCreated(Structure structure){
 		ReduceMoney (structure.Buildcost);
@@ -222,7 +226,7 @@ public class Player : IGEventable {
 		
 	}
 	public int GetPlayerNumber(){
-		return playerNumber;
+		return Number;
 	}
 	public int GetTargetType(){
 		return TargetType;

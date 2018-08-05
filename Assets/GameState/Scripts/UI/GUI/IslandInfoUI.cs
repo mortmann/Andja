@@ -7,7 +7,7 @@ public class IslandInfoUI : MonoBehaviour {
 	CanvasGroup cg;
 	// Use this for initialization
 	void Start () {
-		cc = GameObject.FindObjectOfType<CameraController> ();
+		cc = CameraController.Instance;
 		cg = GetComponent<CanvasGroup> ();
 		fertilityText = GetComponentInChildren<Text> ();
 	}
@@ -33,7 +33,7 @@ public class IslandInfoUI : MonoBehaviour {
 			}
 
 			text += count+"P";
-			text += " | " + c.cityBalance+"$";
+			text += " | " + c.Balance+"$";
 			text += "\n";
 			Item[] items = c.inventory.GetBuildMaterial ();
 			for (int i = 0; i < items.Length; i++) {

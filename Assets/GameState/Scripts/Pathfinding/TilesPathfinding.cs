@@ -18,6 +18,10 @@ public class TilesPathfinding : Pathfinding {
     }
 
     public override void SetDestination(float x, float y) {
+        if(startTile == null) {
+            Debug.LogWarning("This cannot be called when starttile is null! Why did it get called? -- Please fix!");
+            return;
+        }
         //get the tiles from the world to get a current reference and not an empty from the load
         DestTile = World.Current.GetTileAt(x, y);
         startTile = World.Current.GetTileAt(startTile.X, startTile.Y);

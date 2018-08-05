@@ -9,12 +9,12 @@ public class MarketPrototypData : OutputPrototypData {
 
 
 [JsonObject(MemberSerialization.OptIn)]
-public class MarketBuilding : OutputStructure {
+public class MarketBuilding : OutputStructure, ICapturable {
 
 	#region Serialize
 
 	[JsonPropertyAttribute] public int level=1;
-	[JsonPropertyAttribute] public float takenOverState = 0;
+	[JsonPropertyAttribute] public float capturedProgress = 0;
 
 	#endregion
 	#region RuntimeOrOther
@@ -32,9 +32,16 @@ public class MarketBuilding : OutputStructure {
 			return _marketData;
 		}
 	}
-	#endregion
 
-	public MarketBuilding(int id,MarketPrototypData  MarketData){
+    public bool Captured => capturedProgress == 1;
+    public float MaximumHealth => MarketData.MaxHealth;
+    public float CurrentHealth => Health;
+    public bool IsDestroyed => Health<=0;
+    public Vector2 CurrentPosition => MiddlePoint;
+    public Combat.ArmorType MyArmorType => PrototypController.Instance.StructureArmor;
+    #endregion
+
+    public MarketBuilding(int id,MarketPrototypData  MarketData){
 		this.ID = id;
 		_marketData = MarketData;
 	}
@@ -217,8 +224,8 @@ public class MarketBuilding : OutputStructure {
 		return temp;
 	}
 	public void TakeOverMarketBuilding(float deltaTime,int playerNumber, float speed = 1){
-		takenOverState += deltaTime * speed;
-		if(TakeOverStartGoal<=takenOverState){
+		capturedProgress += deltaTime * speed;
+		if(TakeOverStartGoal<=capturedProgress){
 			if(myBuildingTiles[0].MyIsland!=null){
 				City c = myBuildingTiles [0].MyIsland.myCities.Find (x => x.playerNumber == playerNumber);
 				if(c!=null){
@@ -232,4 +239,11 @@ public class MarketBuilding : OutputStructure {
 		}
 	}
 
+    public void Capture(IWarfare warfare, float progress) {
+        throw new System.NotImplementedException();
+    }
+
+    public bool IsAttackableFrom(IWarfare warfare) {
+        throw new System.NotImplementedException();
+    }
 }

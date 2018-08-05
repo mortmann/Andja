@@ -76,7 +76,6 @@ public class TileSpriteController : MonoBehaviour {
 		//DarkLayer probably gonna be changed
 		if(EditorController.IsEditor==false){
             //CreateIslandSprites(World.Current.IslandList);
-
             water.transform.position = new Vector3((World.Width/2)-0.5f,(World.Height/2)-0.5f , 0.1f);
 			water.transform.localScale = new Vector3 (6+World.Width/10,0.1f,6+World.Height/10);
 	//		water.GetComponent<Renderer> ().material = waterMaterial;
@@ -163,7 +162,7 @@ public class TileSpriteController : MonoBehaviour {
             }
         }
     }
-    public static void CreateIslandSprites(List<MapGenerator.IslandStruct> islands) {
+    public static void CreateIslandSprites(List<MapGenerator.IslandStruct> islands, bool forceGenerate = false) {
         if (EditorController.IsEditor)
             return;
         SpriteCreationStarted = true;
@@ -178,29 +177,12 @@ public class TileSpriteController : MonoBehaviour {
         foreach (string name in nameToSprite.Keys) {
             spriteNameToTexture2D.Add(name, ConvertSpriteToTexture(nameToSprite[name]));
         }
-        foreach (MapGenerator.IslandStruct i in islands) {
-            //Stupid workaround
-            //Vector2 min = new Vector2(i.Tiles[0].X, i.Tiles[0].Y);
-            //Vector2 max = new Vector2(i.Tiles[0].X, i.Tiles[0].Y);
-            //foreach (Tile t in i.Tiles) {
-            //    if (min.x > t.X) {
-            //        min.x = t.X;
-            //    }
-            //    if (min.y > t.Y) {
-            //        min.y = t.Y;
-            //    }
-            //    if (max.x < t.X) {
-            //        max.x = t.X;
-            //    }
-            //    if (max.y < t.Y) {
-            //        max.y = t.Y;
-            //    }
-            //}
 
-            //int islandWidth = Mathf.CeilToInt(max.x - min.x) + 1;
-            //int islandHeight = Mathf.CeilToInt(max.y - min.y) + 1; 
-            //int xTileOffset = (int)min.x;
-            //int yTileOffset = (int)min.y;
+        foreach (MapGenerator.IslandStruct i in islands) {
+            //if forced to generate dont even try to load it
+            Texture2D islandTexture = forceGenerate? null : SaveController.LoadIslandImage(i.name);
+            Texture2D masktexture = forceGenerate? null : SaveController.LoadIslandImage(i.name, "-mask");
+
             int islandWidth = (i.Width + 1);
             int islandHeight = (i.Height + 1);
             int xTileOffset = i.x;
@@ -209,37 +191,48 @@ public class TileSpriteController : MonoBehaviour {
             int spriteWidth = islandWidth * sizeOfSprites;
             int spriteHeight = islandHeight * sizeOfSprites;
 
+            bool generateImage = islandTexture == null || forceGenerate;
+            bool generateMask = masktexture == null || forceGenerate;
+
             //island sprite
-            Texture2D islandTexture = new Texture2D(spriteWidth, spriteHeight, TextureFormat.RGBA32, true);
-            islandTexture.SetPixels32(new Color32[spriteWidth * spriteHeight]);
-            islandTexture.alphaIsTransparency = true;
-            //island mask
-            Texture2D masktexture = new Texture2D(islandWidth, islandHeight, TextureFormat.Alpha8, false ,true);
-            masktexture.SetPixels32(new Color32[(islandWidth) * (islandHeight)]);
-            masktexture.filterMode = FilterMode.Point;
-
-            foreach (Tile tile_data in i.Tiles) {
-                int x = (int)(tile_data.X - xTileOffset);
-                int y = (int)(tile_data.Y - yTileOffset);
-                string name = spriteNameToTexture2D.ContainsKey(tile_data.SpriteName) ? tile_data.SpriteName : "nosprite";
-                Graphics.CopyTexture(spriteNameToTexture2D[name], 0, 0,
-                                        0, 0, sizeOfSprites, sizeOfSprites,
-                                        islandTexture, 0, 0, x* sizeOfSprites, y* sizeOfSprites);
-
-                masktexture.SetPixel(x, y, new Color32(128, 128, 128, 128));
+            if (generateImage) {
+                islandTexture = new Texture2D(spriteWidth, spriteHeight, TextureFormat.RGBA32, true);
+                islandTexture.SetPixels32(new Color32[spriteWidth * spriteHeight]);
+                islandTexture.alphaIsTransparency = true;
             }
-            islandTexture.Apply(true, false);
-            islandToSprite.Add(i.GetPosition(), Sprite.Create(islandTexture, new Rect(0, 0, islandTexture.width, islandTexture.height), Vector2.zero, 32));
-            masktexture.Apply();
-            //System.IO.File.WriteAllBytes(Application.dataPath + "/../Pictures/" + i.climate + ".png", islandTexture.EncodeToPNG());
-            //System.IO.File.WriteAllBytes(Application.dataPath + "/../Pictures/" + i.climate + "-mask.png", masktexture.EncodeToPNG());
-            //islandToMaskTexture.Add(i.GetPosition(), masktexture);
+
+            //island mask
+            if (generateMask) {
+                masktexture = new Texture2D(islandWidth, islandHeight, TextureFormat.Alpha8, false, true);
+                masktexture.SetPixels32(new Color32[(islandWidth) * (islandHeight)]);
+                masktexture.filterMode = FilterMode.Point;
+            }
+            if (generateImage || generateMask) {
+                foreach (Tile tile_data in i.Tiles) {
+                    int x = (int)(tile_data.X - xTileOffset);
+                    int y = (int)(tile_data.Y - yTileOffset);
+                    if (generateImage) {
+                        string name = spriteNameToTexture2D.ContainsKey(tile_data.SpriteName) ? tile_data.SpriteName : "nosprite";
+                        Graphics.CopyTexture(spriteNameToTexture2D[name], 0, 0,
+                                            0, 0, sizeOfSprites, sizeOfSprites,
+                                            islandTexture, 0, 0, x * sizeOfSprites, y * sizeOfSprites);
+                    }
+                    if (generateMask)
+                        masktexture.SetPixel(x, y, new Color32(128, 128, 128, 128));
+                }
+                islandTexture.Apply(true, false);
+                masktexture.Apply();
+            }
+            if(generateImage)
+                SaveController.SaveIslandImage(i.name, islandTexture.EncodeToPNG());
+            if (generateMask)
+                SaveController.SaveIslandImage(i.name+ "-mask", masktexture.EncodeToPNG());
+
             islandToMaskTexture.Add(i.GetPosition(), masktexture);
-            //System.IO.File.WriteAllBytes(Application.temporaryCachePath + "/../Pictures/" + i.climate + "-mask.png", islandToMaskSprite[i.GetPosition()].texture.EncodeToPNG());
-            
+            islandToSprite.Add(i.GetPosition(), Sprite.Create(islandTexture, new Rect(0, 0, islandTexture.width, islandTexture.height), Vector2.zero, 32,0, SpriteMeshType.FullRect));
             createdIslandsSprites++;
         }
-        
+
         islandSpriteStopWatch.Stop();
         Debug.Log("Islandimage " + islandSpriteStopWatch.ElapsedMilliseconds + "ms (" + islandSpriteStopWatch.Elapsed.TotalSeconds + "s)! ");
     }
@@ -284,13 +277,15 @@ public class TileSpriteController : MonoBehaviour {
         if (EditorController.IsEditor && tileSpriteRendererMap.ContainsKey(tile_data) == false) {
             SpawnTile(tile_data);
         }
+        if (EditorController.IsEditor)
+            return;
+
         int x = (int)(tile_data.X - tile_data.MyIsland.Placement.x);
         int y = (int)(tile_data.Y - tile_data.MyIsland.Placement.y);
         if (tile_data.MyCity.playerNumber == PlayerController.currentPlayerNumber) {
             islandToCityMask[tile_data.MyIsland].sprite.texture.SetPixel(x, y, new Color32(128, 128, 128, 255));
-            apply = true;
         }
-
+        apply = true;
         if (TileDeciderFunc != null) {
             darkLayer.SetActive(true);
             
@@ -424,7 +419,8 @@ public class TileSpriteController : MonoBehaviour {
     }
 	void OnDestroy() {
 		World.UnregisterTileChanged (OnTileChanged);
-	}
+        Instance = null;
+    }
 	public void AddDecider(TileDecider addDeciderFunc, bool isCityDecider = false){
 		this.TileDeciderFunc += addDeciderFunc;
         if (TileDeciderFunc != null || TileDeciderFunc.GetInvocationList().Length > 0)
@@ -487,6 +483,5 @@ public class TileSpriteController : MonoBehaviour {
         }
         return typeTotileSpriteNames[type][climateString];
     }
-
 
 }

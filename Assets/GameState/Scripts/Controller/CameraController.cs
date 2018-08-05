@@ -123,24 +123,28 @@ public class CameraController : MonoBehaviour {
 				}
 
 				if(isInNew){
-                    //all after this are in the view so we have to maybe update em
-                    //World.Current.OnTileChanged(tile_data);
+                    if(EditorController.IsEditor) {
+                        //all after this are in the view so we have to maybe update em
+                        World.Current.OnTileChanged(tile_data);
 
-                    //tilesCurrentInCameraView.Add (tile_data); 
-					if(tile_data.Structure!=null){
+                        tilesCurrentInCameraView.Add(tile_data);
+                    }
+                        
+                    if (tile_data.Structure!=null){
 						structureCurrentInCameraView.Add (tile_data.Structure);
 					}
 				}
+                if (EditorController.IsEditor) {
+                    if (isInOld == false && isInNew) {
+                        tsc.SpawnTile(tile_data);
+                    }
+                    else
+                    if (isInNew == false) {
+                        tsc.DespawnTile(tile_data);
+                    }
+                }
 
-				//if(isInOld == false && isInNew){
-				//	tsc.SpawnTile (tile_data);
-				//} else
-				//if(isInNew == false){
-				//	tsc.DespawnTile (tile_data);
-				//}
-
-
-			}
+            }
 		}
 	}
 
@@ -225,8 +229,10 @@ public class CameraController : MonoBehaviour {
 			}
 		}
 	}
-
-	public void MoveCameraToPosition(Vector2 pos){
+    void OnDestroy() {
+        Instance = null;
+    }
+    public void MoveCameraToPosition(Vector2 pos){
 		Camera.main.transform.position = new Vector3 (pos.x, pos.y, Camera.main.transform.position.z);
 		currFramePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 		lastFramePosition = currFramePosition;

@@ -11,13 +11,16 @@ public class SaveDetails : MonoBehaviour {
     public Text climate;
     public Text size;
 
-    public void ShowDetails(FileInfo saveFile) {
+    public void ShowDetails(SaveController.SaveMetaData saveFile) {
+        if (saveFile == null)
+            Debug.LogError("Given SaveFile was null");
+        creationDate.text = saveFile.saveTime.ToString("dd.MM.yyyy");
+        size.text = saveFile.size + "";
         if (EditorController.IsEditor) {
-            creationDate.text = saveFile.CreationTime.ToString("dd.MM.yyyy");
-            climate.text = saveFile.Directory.Parent.Name;
-            size.text = saveFile.Directory.Name;
+            climate.text = saveFile.climate +"";
+        } else {
+            climate.text = saveFile.saveFileType + "";
         }
-        
     }
 	
 	// Update is called once per frame

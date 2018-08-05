@@ -57,7 +57,7 @@ public class City : IGEventable {
     private HashSet<Tile> _myTiles;
     public List<Route> myRoutes;
 	public Unit tradeUnit;
-	public int cityBalance;
+	public int Balance;
 	public float useTick;
 	public Warehouse myWarehouse;
 
@@ -81,7 +81,7 @@ public class City : IGEventable {
 
         itemIDtoTradeItem = new Dictionary<int, TradeItem> ();
 		myStructures = new List<Structure>();
-		inventory = new CityInventory (Name);
+		inventory = new CityInventory ();
         Setup();
 		citizienCount = new int[citizienLevels];
 		citizienHappiness = new float[citizienLevels];
@@ -154,9 +154,12 @@ public class City : IGEventable {
 			if(item is HomeBuilding){
 				myHomes.Add ((HomeBuilding)item);
 			}
-//			item.Load ();
+            //TODO:Find a better way/ cleaner way todo this
+            Balance -= item.Maintenancecost;
 		}
-		return myStructures;
+        if(playerNumber > -1)
+            PlayerController.Instance.GetPlayer(playerNumber).OnCityCreated(this);
+        return myStructures;
 	}
 
     internal void Update(float deltaTime) {
@@ -204,7 +207,7 @@ public class City : IGEventable {
 			}
 			myWarehouse = (Warehouse)str;
 		}
-		cityBalance += str.Maintenancecost;
+		Balance += str.Maintenancecost;
 		RemoveRessources (str.GetBuildingItems ());
 
 		myStructures.Add (str);
@@ -462,7 +465,7 @@ public class City : IGEventable {
 				inventory.AddItems (res);
 			}
 			myStructures.Remove (structure);
-			cityBalance -= structure.Maintenancecost;
+			Balance -= structure.Maintenancecost;
             cbStructureRemoved?.Invoke(structure);
         } else {
 			//this is no error if this is wilderness

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using System.Linq;
+using System;
 
 public class ConsoleUI : MonoBehaviour {
 
@@ -55,7 +56,10 @@ public class ConsoleUI : MonoBehaviour {
 			break;
 		case "island":
 			break;
-		case "event":
+        case "spawn":
+            happend = HandleSpawnCommands(parameters.Skip(1).ToArray());
+            break;
+        case "event":
 			break;
 		case "camera":
 			int num = 0;
@@ -73,8 +77,8 @@ public class ConsoleUI : MonoBehaviour {
                 }
                 GOtoPosition.Add(b2d.gameObject, b2d.gameObject.transform.position);
                 Rigidbody2D rb2 = b2d.gameObject.AddComponent<Rigidbody2D>();
-                rb2.gravityScale = Random.Range(0.6f, 2.7f);
-                rb2.inertia = Random.Range(0.5f, 1.5f);
+                rb2.gravityScale = UnityEngine.Random.Range(0.6f, 2.7f);
+                rb2.inertia = UnityEngine.Random.Range(0.5f, 1.5f);
             }
             happend = true;
             break;
@@ -105,7 +109,48 @@ public class ConsoleUI : MonoBehaviour {
 		inputField.text="";
 	}
 
-	bool HandleCityCommands(string[] parameters){
+    private bool HandleSpawnCommands(string[] parameters) {
+        if (parameters.Length < 1) {
+            return false;
+        }
+        //spawn unit UID playerid 
+        //spawn building BID playerid --> not currently implementing
+        int pos = 0;
+        // switch(parameters[pos]) case unit : case building
+        pos++;
+        int id = -1000;
+        // anything can thats not a number can be the current player
+        if (int.TryParse(parameters[pos], out id) == false) {
+            return false;
+        }
+        pos++;
+        int player = PlayerController.currentPlayerNumber;
+        if (parameters.Length > pos) {
+            if (int.TryParse(parameters[pos], out player) == false) {
+                return false;
+            }
+            else {
+                pos++;
+            }
+        }
+        
+        Unit u = PrototypController.Instance.GetUnitForID(id);
+        if (u == null)
+            return false;
+        Tile t = MouseController.Instance.GetTileUnderneathMouse();
+        if(u.IsShip && t.Type != TileType.Ocean) {
+            return false;
+        }
+        if (u.IsShip == false && t.Type == TileType.Ocean) {
+            return false;
+        }
+        if (PlayerController.Instance.GetPlayer(player) == null)
+            return false;
+        World.Current.CreateUnit(u.Clone(player, t));
+        return true;
+    }
+
+    bool HandleCityCommands(string[] parameters){
 		if(parameters.Length<1){
 			return false;
 		}
@@ -170,7 +215,10 @@ public class ConsoleUI : MonoBehaviour {
 			u.inventory.AddItem (new Item(1,50));
 			u.inventory.AddItem (new Item(2,50));
 			return true;
-		case "name":
+        case "kill":
+            u.Destroy();
+            return true;
+        case "name":
 			break;
 		case "player":
 			break;
@@ -195,7 +243,6 @@ public class ConsoleUI : MonoBehaviour {
 			
 			return false;
 		}
-		Debug.Log (id + " add " + amount);
 		if(id<PrototypController.StartID){
 			return false;
 		}

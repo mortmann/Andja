@@ -173,6 +173,23 @@ public abstract class Structure : IGEventable {
 			return _prototypData;
 		}
 	}
+    public Vector2 _middlePoint;
+    public Vector2 MiddlePoint {
+        get {
+            if (_middlePoint != null)
+                return _middlePoint;
+            Tile[,] sortedTiles = new Tile[TileWidth, TileHeight];
+            List<Tile> ts = new List<Tile>(myBuildingTiles);
+            ts.Sort((x, y) => x.X.CompareTo(y.X) + x.Y.CompareTo(y.Y));
+            foreach (Tile ti in ts) {
+                int x = ti.X - ts[0].X;
+                int y = ti.Y - ts[0].Y;
+                sortedTiles[x, y] = ti; // so we have the tile at the correct spot
+            }
+            _middlePoint = sortedTiles[0, 0].Vector2 + new Vector2(TileWidth / 2, TileHeight / 2);
+            return _middlePoint;
+        }
+    }
 
 	public bool IsWalkable { get {return this.MyBuildingTyp != BuildingTyp.Blocking;} }
 	public bool HasHitbox { get {return Data.hasHitbox;} }
@@ -525,6 +542,7 @@ public abstract class Structure : IGEventable {
 		Health = Mathf.Clamp (Health, 0, MaxHealth);
 	}
 	public void Destroy(){
+        _health = 0;
 		OnDestroy ();
 		foreach(Tile t in myBuildingTiles){
 			t.Structure = null;

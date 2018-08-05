@@ -42,7 +42,7 @@ public class MenuController : MonoBehaviour {
     }
 
     void Update() {
-        if (InputHandler.GetButtonDown("Cancel")) {
+        if (InputHandler.GetButtonDown(InputName.Cancel)) {
             if (panelOpen) {
                 HideAllPanels();
             }

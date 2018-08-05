@@ -35,7 +35,7 @@ public class OffWorldPanelUI : MonoBehaviour {
 		unitNames = new Dictionary<Unit,string> ();
 		ships = new List<Ship> ();
 		foreach (Unit item in World.Current.Units) {
-			if(item.isShip==false||item.playerNumber!=PlayerController.currentPlayerNumber){
+			if(item.IsShip==false||item.playerNumber!=PlayerController.currentPlayerNumber){
 				continue;
 			}
 			ships.Add ((Ship) item); 

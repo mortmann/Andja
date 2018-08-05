@@ -4,43 +4,55 @@ using System.IO;
 using System.Linq;
 using System;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+public enum InputName { BuildMenu, TradeMenu, Offworld, TogglePause, Rotate, Console, Cancel, Screenshot}
 
 public class InputHandler {
 
-	static Dictionary<string,KeyBind> nameToKeyBinds;
+	static Dictionary<InputName, KeyBind> nameToKeyBinds;
 	static string fileName="keybinds.ini";
 	//TODO add a between layer for mouse buttons -> so it can be switched
 
 	// Use this for initialization
 	public InputHandler () {
-		nameToKeyBinds = new Dictionary<string, KeyBind> ();
+		nameToKeyBinds = new Dictionary<InputName, KeyBind> ();
 		LoadInputSchema (Application.dataPath.Replace ("/Assets",""));
 //		SetupKeyBinds ();
 
 	}
-	public static Dictionary<string,KeyBind> GetBinds(){
+	public static Dictionary<InputName, KeyBind> GetBinds(){
 		return nameToKeyBinds;
 	}
 
 	private static void SetupKeyBinds(){
-		if (nameToKeyBinds.ContainsKey ("BuildMenu")==false)
-			ChangePrimaryNameToKey ("BuildMenu",KeyCode.B );
-		if (nameToKeyBinds.ContainsKey ("TradeMenu")==false)
-			ChangePrimaryNameToKey ("TradeMenu",KeyCode.M);
-		if (nameToKeyBinds.ContainsKey ("Offworld")==false)
-			ChangePrimaryNameToKey ("Offworld",KeyCode.O);
-		if (nameToKeyBinds.ContainsKey ("TogglePause")==false)
-			ChangePrimaryNameToKey ("TogglePause",KeyCode.Space);
-		if (nameToKeyBinds.ContainsKey ("Rotate")==false)
-			ChangePrimaryNameToKey ("Rotate",KeyCode.R); 
-		if (nameToKeyBinds.ContainsKey ("Console")==false)
-			ChangePrimaryNameToKey ("Console",KeyCode.F1); 
-		if (nameToKeyBinds.ContainsKey ("Cancel")==false)
-			ChangePrimaryNameToKey ("Cancel",KeyCode.Escape);
-        if (nameToKeyBinds.ContainsKey("Screenshot") == false)
-            ChangePrimaryNameToKey("Screenshot", KeyCode.F12);
-    }	
-	public static void ChangePrimaryNameToKey(string name, KeyCode key){
+        foreach(InputName name in Enum.GetValues(typeof(InputName))) {
+            KeyCode keyCode = KeyCode.RightWindows;
+            if (nameToKeyBinds.ContainsKey(name)) //skip already declared
+                continue;
+            //add here the base input layout
+            switch (name) {
+                case InputName.BuildMenu: keyCode = KeyCode.B;
+                break;
+                case InputName.TradeMenu: keyCode = KeyCode.M;
+                break;
+                case InputName.Offworld: keyCode = KeyCode.O;
+                break;
+                case InputName.TogglePause: keyCode = KeyCode.Space;
+                break;
+                case InputName.Rotate: keyCode = KeyCode.R;
+                break;
+                case InputName.Console: keyCode = KeyCode.F1;
+                break;
+                case InputName.Cancel: keyCode = KeyCode.Escape;
+                break;
+                case InputName.Screenshot: keyCode = KeyCode.F12;
+                break;
+            }
+            ChangePrimaryNameToKey(name, keyCode);
+        }
+
+    }
+    public static void ChangePrimaryNameToKey(InputName name, KeyCode key){
 		if(nameToKeyBinds.ContainsKey (name)){
 			nameToKeyBinds [name].SetPrimary (key);
 			return;
@@ -48,7 +60,7 @@ public class InputHandler {
 		nameToKeyBinds.Add (name,new KeyBind (key, KeyBind.notSetCode));
 
 	}
-	public static void ChangeSecondaryNameToKey(string name, KeyCode key){
+	public static void ChangeSecondaryNameToKey(InputName name, KeyCode key){
 		if(nameToKeyBinds.ContainsKey (name)){
 			nameToKeyBinds [name].SetSecondary (key);
 			return;
@@ -56,7 +68,7 @@ public class InputHandler {
 		nameToKeyBinds.Add (name,new KeyBind (KeyBind.notSetCode , key));
 
 	}
-	public static bool GetButtonDown(string name){
+	public static bool GetButtonDown(InputName name){
 		if (nameToKeyBinds.ContainsKey (name) == false) {	
 			Debug.LogWarning ("No KeyBind for Name " + name);
 			return false;
@@ -64,7 +76,7 @@ public class InputHandler {
 		return nameToKeyBinds[name].GetButtonDown();
 	}
 
-	public static bool GetButton (string name){
+	public static bool GetButton (InputName name){
 		if (nameToKeyBinds.ContainsKey (name) == false) {	
 			Debug.LogWarning ("No KeyBind for Name " + name);
 			return false;
@@ -91,70 +103,74 @@ public class InputHandler {
 	public static void LoadInputSchema(string path){
 		try {
 			string filePath = System.IO.Path.Combine(path,fileName) ;
-			nameToKeyBinds = new Dictionary<string, KeyBind> ();
-			string lines = File.ReadAllText (filePath);
-			nameToKeyBinds = JsonConvert.DeserializeObject<Dictionary<string, KeyBind>> (lines);
-		} finally {
+            if (File.Exists(filePath)) {
+                nameToKeyBinds = new Dictionary<InputName, KeyBind>();
+                string lines = File.ReadAllText(filePath);
+                nameToKeyBinds = JsonConvert.DeserializeObject<Dictionary<InputName, KeyBind>>(lines);
+            }
+        } finally {
 			SetupKeyBinds ();
 			SaveInputSchema (); // create the file so it can be manipulated 
 		}
 	}
 
 	public class KeyBind {
-		public const KeyCode notSetCode = KeyCode.RightWindows;
+		public const KeyCode notSetCode = KeyCode.None;
 
 		/// <summary>
 		/// DO NOT SET DIRECTLY
 		/// </summary>
 		[JsonProperty]
-		KeyCode primary = notSetCode;
+        [JsonConverter(typeof(StringEnumConverter))]
+        KeyCode Primary = notSetCode;
 		/// <summary>
 		/// DO NOT SET DIRECTLY
 		/// </summary>
 		[JsonProperty]
-		KeyCode secondary = notSetCode;
+        [JsonConverter(typeof(StringEnumConverter))]
+        KeyCode Secondary = notSetCode;
 
 		public KeyBind(){
 			
 		}
 		public KeyBind(KeyCode primary, KeyCode secondary){
-			this.primary = primary;
-			this.secondary = secondary;
+			this.Primary = primary;
+			this.Secondary = secondary;
 		}
 		public String GetPrimaryString(){
-			if(primary == KeyCode.Exclaim){
+			if(Primary == notSetCode) {
 				return "-";
 			}
-			return primary.ToString ();
+			return Primary.ToString ();
 		}
 		public String GetSecondaryString(){
-			if(secondary == KeyCode.Exclaim){
+			if(Secondary == notSetCode) {
 				return "-";
 			}
-			return secondary.ToString ();
+			return Secondary.ToString ();
 		}
 		public bool SetPrimary(KeyCode k){
-			if(k == KeyCode.Exclaim){
+			if(k == notSetCode) {
 				return false;
 			}
-			primary = k;
+			Primary = k;
 			return true;
 		}
 		public bool SetSecondary(KeyCode k){
-			if(k == KeyCode.Exclaim){
+			if(k == notSetCode) {
 				return false;
 			}
-			secondary = k;
+			Secondary = k;
 			return true;
 		}
 		public bool GetButtonDown(){
-			return Input.GetKeyDown (primary) && primary != notSetCode
-				|| Input.GetKeyDown (secondary) && secondary != notSetCode ;
+			return Input.GetKeyDown (Primary) && Primary != notSetCode
+				|| Input.GetKeyDown (Secondary) && Secondary != notSetCode ;
 		}
 
 		public bool GetButton(){
-			return Input.GetKey (primary) && primary != notSetCode
-				|| Input.GetKey (secondary) && secondary != notSetCode ;
+			return Input.GetKey (Primary) && Primary != notSetCode
+				|| Input.GetKey (Secondary) && Secondary != notSetCode ;
 			
 		}
 	}

@@ -10,7 +10,7 @@ public class WorkerSpriteController : MonoBehaviour {
 	void Start () {
 		workerToGO = new Dictionary<Worker, GameObject> ();
 		LoadSprites ();
-		cc = FindObjectOfType<CameraController> ();
+		cc = CameraController.Instance;
         loadedWorker = SaveController.GetLoadWorker();
         if (loadedWorker!=null){
 			foreach (Worker item in loadedWorker) {

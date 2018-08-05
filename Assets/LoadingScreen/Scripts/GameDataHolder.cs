@@ -3,16 +3,26 @@ using System.Collections.Generic;
 using UnityEngine.UI;
 using System;
 
+public enum GameType { Endless, Campaign, Szenario, Island }
+public enum Difficulty { Easy, Medium, Hard, VeryHard }
+public enum Size { VerySmall, Small, Medium, Large, VeryLarge, Other }
+
 public class GameDataHolder : MonoBehaviour {
-
 	public static GameDataHolder Instance;
-    public int MapSeed;
+    //TODO: make a way to set this either from world width/height or user
+    public Size WorldSize {
+        get { return Size.Medium; }
+    }
+    public Difficulty difficulty;
+    public GameType saveFileType;
+    public float playTime;
 
-	public int Height=100;
+    public int Height=100;
 	public int Width=100;
 	public string loadsavegame;
+    public int MapSeed;
 
-	public int[] bots; // this is for from being in anykind relevant so 
+    public int[] bots; // this is for from being in anykind relevant so 
 	public int playerCount=1;
 	public bool pirates=true;
 	public bool fire=true;
@@ -30,6 +40,13 @@ public class GameDataHolder : MonoBehaviour {
         if (loadsavegame == null|| loadsavegame == "")
             GenerateMap();
 	}
+    private void Update() {
+        if (WorldController.Instance == null)
+            return; 
+        if (WorldController.Instance.IsPaused)
+            return;
+        playTime += WorldController.Instance.DeltaTime;
+    }
     public void GenerateMap() {
         if(SaveController.IsLoadingSave == false) {
             Dictionary<MapGenerator.IslandGenInfo, MapGenerator.Range> dict = new Dictionary<MapGenerator.IslandGenInfo, MapGenerator.Range> { 

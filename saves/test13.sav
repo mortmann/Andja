@@ -7,9 +7,9 @@
     "Height": 500,
     "Width": 500,
     "usedIslands": [
-      "Middle\\Middle\\middle_m1.isl",
-      "Cold\\Middle\\north_m2.isl",
-      "Warm\\Small\\south_s1.isl"
+      "middle_m1",
+      "north_m2",
+      "south_s1"
     ]
   },
   "world": {
@@ -3863,6 +3863,7 @@
       "Units": [
         {
           "$id": "460",
+		  "ID": "0",
           "playerNumber": 0,
           "_UserSetName": "Unit 169410345",
           "_currHealth": 100.0,
@@ -3883,7 +3884,6 @@
           },
           "onWayToPatrolTarget": false,
           "onPatrol": false,
-          "isShip": false,
           "hasChanged": false,
           "tradeTime": 1.5,
           "pathfinding": {
@@ -3907,7 +3907,8 @@
         },
         {
           "$id": "465",
-          "$type": "Ship, Assembly-CSharp",
+		   "$type": "Ship, Assembly-CSharp",
+		  "ID": "1",
           "goingToOffworldMarket": false,
           "isOffWorld": false,
           "offWorldTime": 0.0,
@@ -3928,7 +3929,6 @@
           },
           "onWayToPatrolTarget": false,
           "onPatrol": false,
-          "isShip": true,
           "hasChanged": false,
           "tradeTime": 1.5,
           "pathfinding": {
@@ -3943,6 +3943,15 @@
           },
           "_UserSetName": "Ship 499496011",
           "_currHealth": 1250.0,
+		  "inventory": {
+			"$id": "6888",
+			"name": "Ship Manuel Edit",
+			"MaxStackSize": 50,
+			"Items": {
+			  "$id": "6889"
+			},
+			"NumberOfSpaces": 6
+			},
           "aggroCooldown": 1.0
         }
       ]

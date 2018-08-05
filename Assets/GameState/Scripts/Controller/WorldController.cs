@@ -43,7 +43,10 @@ public class WorldController : MonoBehaviour {
             LoadWorldData();
             save = null;
         } else {
-			MapGenerator mg = FindObjectOfType<MapGenerator> ();
+			MapGenerator mg = MapGenerator.Instance;
+            if (mg == null) {
+                return;
+            }
             Dictionary<Tile,Structure> tileToStructure = mg.GetStructures();
             World = mg.GetWorld();
             BuildController.Instance.PlaceWorldGeneratedStructure(tileToStructure);
@@ -52,7 +55,9 @@ public class WorldController : MonoBehaviour {
 		}
         
     }
-
+    void OnDestroy() {
+        Instance = null;
+    }
     // Update is called once per frame
     void Update() {
 		if (World == null || IsPaused) {
@@ -100,17 +105,16 @@ public class WorldController : MonoBehaviour {
 			break;
 		}
 	}
+    ///
+    ///
+    /// ONLY SAVE/LOAD SUFF UNDERNEATH HERE
+    ///
 
-	///
-	///
-	/// ONLY SAVE/LOAD SUFF UNDERNEATH HERE
-	///
-
-	/// <summary>
-	/// Saves the world.
-	/// </summary>
-	/// <param name="savename">Savename.</param>
-	public WorldSaveState GetSaveWorldData() {
+    /// <summary>
+    /// Saves the world.
+    /// </summary>
+    /// <param name="savename">Savename.</param>
+    public WorldSaveState GetSaveWorldData() {
         WorldSaveState wss = new WorldSaveState {
             world = World,
             offworld = offworldMarket
@@ -130,7 +134,7 @@ public class WorldController : MonoBehaviour {
 		offworldMarket = save.offworld;
 		// Create a world from our save file data.
 		World = save.world;
-        World.SetTiles(MapGenerator.Instance.GetTiles(),GameDataHolder.Instance.Width,GameDataHolder.Instance.Height);
+        World.LoadData(MapGenerator.Instance.GetTiles(),GameDataHolder.Instance.Width,GameDataHolder.Instance.Height);
 
         List<MapGenerator.IslandStruct> structs = MapGenerator.Instance.GetIslandStructs();
         foreach (Island island in World.IslandList) {

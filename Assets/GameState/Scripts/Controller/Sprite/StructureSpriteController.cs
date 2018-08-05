@@ -19,7 +19,7 @@ public class StructureSpriteController : MonoBehaviour {
 //		bm = GameObject.FindObjectOfType<BuildController>();
 //		bm.RegisterStructureCreated (OnStrucutureCreated);
 		LoadSprites ();
-		cc = GameObject.FindObjectOfType<CameraController> ();
+		cc = CameraController.Instance;
 		if (EditorController.IsEditor){
 			EditorController.Instance.RegisterOnStructureDestroyed (OnTileStructureDestroyed);
 		}
@@ -191,8 +191,5 @@ public class StructureSpriteController : MonoBehaviour {
 			return null;
 		}
 		return structureGameObjectMap [str];
-	}
-	void OnDestroy() {
-		
 	}
 }

@@ -17,10 +17,16 @@ public class UnitHoldingScript : MonoBehaviour {
 		}
 		if(unit.pathfinding.worldPath!=null){
 			LineRenderer line = gameObject.GetComponentInChildren<LineRenderer>();
-			line.positionCount = unit.pathfinding.worldPath.Count+1;
+			line.positionCount = unit.pathfinding.worldPath.Count+3;
 			line.useWorldSpace = true;
 			int s = 0;
-			foreach(Tile t in unit.pathfinding.worldPath){
+            line.SetPosition(s, unit.pathfinding.Position);
+            s++;
+            if(unit.pathfinding.NextTile != null) {
+                line.SetPosition(s, unit.pathfinding.NextTile.Vector);
+                s++;
+            }
+            foreach (Tile t in unit.pathfinding.worldPath){
 				line.SetPosition (s, t.Vector + Vector3.back);
 				s++;
 			}

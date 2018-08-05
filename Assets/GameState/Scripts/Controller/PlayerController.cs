@@ -36,12 +36,12 @@ public class PlayerController : MonoBehaviour {
 		playerWars = new HashSet<War> ();
 		AddPlayersWar (0,1);
 		AddPlayersWar (1,0);
-		balanceTicks = 5f;
+        balanceTicks = 5f;
 		tickTimer = balanceTicks;
-		GameObject.FindObjectOfType<BuildController>().RegisterCityCreated (OnCityCreated);
-		GameObject.FindObjectOfType<BuildController>().RegisterStructureCreated (OnStructureCreated);
+        BuildController.Instance.RegisterCityCreated (OnCityCreated);
+        BuildController.Instance.RegisterStructureCreated (OnStructureCreated);
 		euim = GameObject.FindObjectOfType<EventUIManager> ();
-		GameObject.FindObjectOfType<EventController> ().RegisterOnEvent (OnEventCreated, OnEventEnded);
+        GameObject.FindObjectOfType<EventController>().RegisterOnEvent (OnEventCreated, OnEventEnded);
         if(save != null) {
             LoadPlayerData();
             save = null;
@@ -163,7 +163,7 @@ public class PlayerController : MonoBehaviour {
 		players [playerNr].ReduceChange (amount);
 	}
 	public void AddChange(int amount, int playerNr) {
-		players [playerNr].ReduceChange (amount);
+		players [playerNr].AddChange (amount);
 	}
 	public void OnCityCreated(City city){
 		players [city.playerNumber].OnCityCreated (city);
@@ -181,7 +181,7 @@ public class PlayerController : MonoBehaviour {
 		if(pnum1==piratePlayerNumber||pnum2==piratePlayerNumber){
 			return true;//could add here be at peace with pirates through money 
 		}
-		return playerWars.Contains (new War(pnum1,pnum2));
+        return playerWars.Contains (new War(pnum1,pnum2));
 	}
 	public void AddPlayersWar(int pnum1,int pnum2){
 		if(pnum1 == pnum2){
@@ -202,7 +202,7 @@ public class PlayerController : MonoBehaviour {
 		playerWars.Remove (new War(pnum1,pnum2));
 	}
 	public Player GetPlayer(int i){
-		if(i<0){
+		if(i<0||players.Count <= i){
 			return null;
 		}
 		return players [i];
@@ -219,7 +219,9 @@ public class PlayerController : MonoBehaviour {
 		tickTimer = save.tickTimer;
 		balanceTicks = save.balanceTicks;
 	}
-
+    void OnDestroy() {
+        Instance = null;
+    }
 }
 [Serializable]
 public class PlayerControllerSave {
@@ -259,20 +261,14 @@ public class War {
 			playerTwo = two;
 		}
 	}
-	public bool Equals(War p){
-		if(p == null){
-			return false;
-		}
-		return p.playerOne == playerOne && p.playerTwo == playerTwo;
-	}
 	public override bool Equals (object obj) {
-		// If parameter cannot be cast to ThreeDPoint return false:
-		War p = obj as War;
+        // If parameter cannot be cast to War return false:
+        War p = obj as War;
 		if ((object)p == null){
 			return false;
 		}
 		// Return true if the fields match:
-		return p.playerOne == playerOne && p.playerTwo == playerTwo;
+		return p==this;
 	}
 	public override int GetHashCode(){
 		return playerOne ^ playerTwo;

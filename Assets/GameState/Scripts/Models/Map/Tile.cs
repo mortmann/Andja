@@ -44,8 +44,9 @@ public class Tile : IComparable<Tile>, IEqualityComparer<Tile> {
 		}
 	}
 	public Vector3 Vector { get {return new Vector3 (x, y, 0);} }
+    public Vector2 Vector2 { get { return new Vector2(x, y, 0); } }
 
-	public Tile(){}
+    public Tile(){}
 	public Tile(int x, int y){
 		this.x = x;
 		this.y = y;
@@ -265,7 +266,10 @@ public class Tile : IComparable<Tile>, IEqualityComparer<Tile> {
 	}
 	public virtual void RemoveNeedStructure(NeedsBuilding ns){
 	}
-	public virtual List<NeedsBuilding> GetListOfInRangeNeedBuildings(){
+    public virtual List<NeedsBuilding> GetListOfInRangeCityNeedBuildings() {
+        return null;
+    }
+    public virtual List<NeedsBuilding> GetListOfInRangeNeedBuildings(int playernumber){
 		return null;
 	}
     override public String ToString() {

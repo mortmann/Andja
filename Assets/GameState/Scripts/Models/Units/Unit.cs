@@ -2,6 +2,7 @@
 using System.Collections;
 using System;
 using Newtonsoft.Json;
+using static Combat;
 
 public class UnitPrototypeData : LanguageVariables {
     public int PopulationLevel = 0;
@@ -10,7 +11,10 @@ public class UnitPrototypeData : LanguageVariables {
     public int inventorySize;
     public int maintenancecost;
     public int buildcost;
-    
+
+    public DamageType myDamageType;
+    public ArmorType myArmorType;
+
     public Item[] buildingItems;
     public string spriteBaseName;
     //public DamageType myDamageType = DamageType.Blade;
@@ -28,11 +32,14 @@ public class UnitPrototypeData : LanguageVariables {
     public float height;
 }
 
+//TODO: add feature to capture structures back! -> own command tho!
+
 [JsonObject(MemberSerialization.OptIn)]
-public class Unit  {
-   	//save these Variables
-	#region Serialize
-	[JsonPropertyAttribute] public int playerNumber;
+public class Unit : IWarfare {
+    //save these Variables
+    #region Serialize
+    [JsonPropertyAttribute] public int ID;
+    [JsonPropertyAttribute] public int playerNumber;
 	[JsonPropertyAttribute] private string _UserSetName;
 	[JsonPropertyAttribute] private float _currHealth;
 	[JsonPropertyAttribute] float aggroCooldown=1f;
@@ -41,25 +48,32 @@ public class Unit  {
 	[JsonPropertyAttribute] public Vector2 patrolStart;
 	[JsonPropertyAttribute] public bool onWayToPatrolTarget; // false for targetPatrol, true for patrolstart
 	[JsonPropertyAttribute] public bool onPatrol = false;
-	[JsonPropertyAttribute] public bool isShip;
 	[JsonPropertyAttribute] public bool hasChanged = false;
 	[JsonPropertyAttribute] public float tradeTime=1.5f;
 	[JsonPropertyAttribute] public Pathfinding pathfinding;
-	#endregion
-	//being calculated at runtime
-	#region calculated 
+    [JsonPropertyAttribute] public Inventory inventory;
+    [JsonPropertyAttribute] IWarfare _currentTarget;
+    #endregion
+    //being calculated at runtime
+    #region calculated 
 
-	//TODO decide on this:
-	public float BuildRange {
+    //TODO decide on this:
+    public float BuildRange {
 		get {
 			return AttackRange;
 		}
 	}
-	//FIXME: these should be safed 
-	//not quite sure how to do it
-	Unit engangingUnit;
-	Structure attackingStructure;
-	public string UserSetName {
+
+    public IWarfare CurrentTarget {
+        get {
+            return _currentTarget;
+        }
+        set {
+            _currentTarget = value;
+        }
+    }
+
+    public string UserSetName {
 		get {
 			return _UserSetName;
 		}
@@ -99,21 +113,20 @@ public class Unit  {
 	public Vector3 VectorPosition {
 		get {return new Vector3 (X, Y);}
 	}
-	public bool IsDead { 
+    public Vector2 Vector2Position {
+        get { return new Vector2(X, Y); }
+    }
+    public bool IsDead { 
 		get { return _currHealth <= 0;}
 	}
     #endregion
     //gets from prototyp / being loaded in from masterfile
     #region prototype
-    public int ID;
 	float aggroTimer = 1f;
     public float attackTimer = 1;
 
     public float AttackRange => Data.attackRange;
 	public float Damage => Data.damage;
-    //TODO: make this there own classes
-    public DamageType MyDamageType = DamageType.Blade;
-    public ArmorType MyArmorType = ArmorType.Leather;
     public float MaxHealth => Data.MaxHealth;
     public float AttackRate => Data.attackRange;
 	public float Speed => Data.speed; 
@@ -122,6 +135,7 @@ public class Unit  {
     public int BuildCost => Data.buildcost;
     public int InventoryPlaces => Data.inventoryPlaces;
     public int InventorySize => Data.inventorySize;
+    public virtual bool IsShip => false;
 
     public virtual Unit Clone(int playerNumber, Tile t) {
         return new Unit(this, playerNumber,t);
@@ -144,14 +158,16 @@ public class Unit  {
         }
     }
 
+    public Vector2 CurrentPosition => VectorPosition;
+    public int PlayerNumber => playerNumber;
+    public float MaximumHealth => Data.MaxHealth;
+    public float CurrentHealth => _currHealth;
+    public virtual float CurrentDamage => Damage;
+    public virtual float MaximumDamage => Damage;
+    public DamageType MyDamageType => Data.myDamageType;
+    public ArmorType MyArmorType => Data.myArmorType;
+    public bool IsDestroyed => IsDead;
 
-    public Inventory inventory;
-
-    public Unit(Tile t,int playernumber) {
-		this.playerNumber = playernumber;
-		UserSetName = "Unit " + UnityEngine.Random.Range (0, 1000000000);
-		pathfinding = new IslandPathfinding (this,t);
-    }
 	public Unit(){
 	}
 
@@ -172,16 +188,16 @@ public class Unit  {
 		//PATROL
 		UpdateParol ();
 		UpdateAggroRange (deltaTime);
-		if(Fighting(deltaTime)){
-			return;
-		}
-		if(pathfinding!=null)
+        if (Fighting(deltaTime)) {
+            return;
+        }
+        if (pathfinding!=null)
 			pathfinding.Update_DoMovement (deltaTime);
 
         cbUnitChanged?.Invoke(this);
     }
 	protected void UpdateAggroRange(float deltaTime){
-		if(engangingUnit!=null){
+		if(CurrentTarget != null){
 			return;
 		}
 		aggroTimer -= deltaTime;
@@ -209,131 +225,78 @@ public class Unit  {
 				GiveAttackCommand (u);
 			}
 		}
+	}
+    public bool GiveAttackCommand(IWarfare warfare, bool overrideCurrent = false) {
+        if (overrideCurrent == false && CurrentTarget != null)
+            return false;
+        if (warfare.IsAttackableFrom(this) == false) {
+            return false;
+        }
+        if (PlayerController.Instance.ArePlayersAtWar(PlayerNumber, warfare.PlayerNumber) == false) {
+            return false;
+        }
+        float distance = (warfare.CurrentPosition - CurrentPosition).magnitude;
+        //can it reach it?
+        if (distance > AttackRange == false && AddMovementCommand(ClosestTargetPosition(warfare)) == false)
+            return false;
+        CurrentTarget = warfare;
+        return true;
+    }
+    public void StopAttack() {
+        CurrentTarget = null;
+    }
 
-	}
-	public void GiveAttackCommand(Unit u, bool overridingAttack=false){
-		if(overridingAttack==false&&attackingStructure!=null){
-			return;
-		}
-		attackingStructure = null;
-		engangingUnit = u;
-		AddMovementCommand (u.X,u.Y);
-	}
-	public void GiveAttackCommand(Structure structure, bool overridingAttack=false){
-		if(overridingAttack==false&&engangingUnit!=null){
-			return;
-		}
-		if(this.isShip || this.MyDamageType == DamageType.Artillery){
-			attackingStructure = structure;
-			Tile nearstTile = null;
-			float nearDist= float.MaxValue;
-			foreach (Tile item in structure.neighbourTiles) {
-				if(isShip){
-					if(item.Type != TileType.Ocean){
-						continue;
-					}
-				} else {
-					if(item.Type == TileType.Ocean || item.MovementCost<=0){
-						continue;
-					}
-				}
-				float currDist = (item.Vector-pathfinding.CurrTile.Vector).magnitude;
-				if(currDist<nearDist){
-					currDist = nearDist;
-					nearstTile = item;
-				}
-			}
-			if(nearstTile == null){
-				return;
-			}
-			AddMovementCommand (nearstTile);
-		} else {
-			//only MarketBuildings are captureable and not warehouses
-			if(structure is MarketBuilding && (structure is Warehouse)==false){
-				Tile nearstTile = null;
-				float nearDist= float.MaxValue;
-				foreach (Tile item in structure.neighbourTiles) {
-					if(isShip){
-						if(item.Type != TileType.Ocean){
-							continue;
-						}
-					} else {
-						if(item.Type == TileType.Ocean || item.MovementCost<=0){
-							continue;
-						}
-					}
-					float currDist = (item.Vector-pathfinding.CurrTile.Vector).magnitude;
-					if(currDist<nearDist){
-						currDist = nearDist;
-						nearstTile = item;
-					}
-				}
-				if(nearstTile == null){
-					return;
-				}
-				isCapturing = true;
-				AddMovementCommand (nearstTile);
-			}
-		}
-	}
-
+    public Vector2 ClosestTargetPosition(IWarfare target) {
+        Tile nearstTile = World.Current.GetTileAt(target.CurrentPosition);
+        if (nearstTile.Structure == null)
+            return target.CurrentPosition;
+        if(nearstTile.Structure.IsWalkable)
+            return target.CurrentPosition;
+        float nearDist = float.MaxValue;
+        foreach (Tile item in nearstTile.Structure.neighbourTiles) {
+            if (IsShip) {
+                if (item.Type != TileType.Ocean) {
+                    continue;
+                }
+            }
+            else {
+                if (item.Type == TileType.Ocean || item.MovementCost <= 0) {
+                    continue;
+                }
+            }
+            float currDist = (item.Vector - pathfinding.CurrTile.Vector).magnitude;
+            if (currDist < nearDist) {
+                currDist = nearDist;
+                nearstTile = item;
+            }
+        }
+        return nearstTile.Vector;
+    }
 	public bool Fighting(float deltaTime){
-		if(engangingUnit!=null){
-			if(PlayerController.Instance.ArePlayersAtWar (engangingUnit.playerNumber,playerNumber)){
-				engangingUnit = null;
+		if(CurrentTarget!=null){
+			if(PlayerController.Instance.ArePlayersAtWar (CurrentTarget.PlayerNumber,playerNumber) == false){
+                CurrentTarget = null;
 				return false;
 			}
-			float dist = (engangingUnit.VectorPosition - VectorPosition).magnitude;
+			float dist = (CurrentTarget.CurrentPosition  - CurrentPosition).magnitude;
 			if(dist<AttackRange){
 				DoAttack (deltaTime);
 				return true;
 			}
-		} else if(attackingStructure!=null){
-			if(PlayerController.Instance.ArePlayersAtWar (attackingStructure.PlayerNumber,playerNumber)){
-				attackingStructure = null;
-				return false;
-			}
-			float dist = (attackingStructure.MiddleVector.magnitude - VectorPosition.magnitude);
-			if(dist<AttackRange){
-				DoAttack (deltaTime);
-				return true;
-			}
-		}
+		} 
 		return false;
 	}
 	public void DoAttack(float deltaTime){
-		if(engangingUnit!=null){
-			if(engangingUnit.CurrHealth<=0){
-				engangingUnit = null;
+		if(CurrentTarget != null){
+			if(CurrentTarget.IsDestroyed){
+                CurrentTarget = null;
 			}
 			attackTimer -= deltaTime;
 			if(attackTimer>0){
 				return;
 			}
 			attackTimer = AttackRate;
-
-			engangingUnit.TakeDamage (MyDamageType,Damage);
-		}
-		if(isCapturing){
-			if(attackingStructure.Health<=0||attackingStructure.PlayerNumber!=playerNumber){
-				attackingStructure = null;
-				return;
-			}
-			if(attackingStructure.neighbourTiles.Contains (pathfinding.CurrTile)){
-				((MarketBuilding)attackingStructure).TakeOverMarketBuilding (deltaTime, playerNumber, 1);
-			}
-		} else {
-			if(attackingStructure.Health<=0){
-				attackingStructure = null;
-				return;
-			}
-			attackTimer -= deltaTime;
-			if(attackTimer>0){
-				return;
-			}
-			attackTimer = AttackRate;
-
-			attackingStructure.TakeDamage (Damage);
+            CurrentTarget.TakeDamageFrom (this);
 		}
 	}
 
@@ -342,9 +305,9 @@ public class Unit  {
 		if(onPatrol){
 			if(pathfinding.IsAtDest){
 				if (onWayToPatrolTarget) {
-//					pathfinding.AddMovementCommand (patrolStart.x , patrolStart.y);
+					pathfinding.SetDestination (patrolStart.x , patrolStart.y);
 				} else {
-//					pathfinding.AddMovementCommand (patrolTarget.x , patrolTarget.y);
+					pathfinding.SetDestination (patrolTarget.x , patrolTarget.y);
 				}
 				onWayToPatrolTarget = !onWayToPatrolTarget; 
 			}
@@ -392,39 +355,46 @@ public class Unit  {
 		onWayToPatrolTarget = false;
 		onPatrol = false;
 	}
+    public bool AddMovementCommand(Vector2 vec2) {
+        return AddMovementCommand(vec2.x, vec2.y);
+    }
 
-	public void AddMovementCommand(Tile t) {
+    public bool AddMovementCommand(Tile t) {
 		if(t==null){
 			//not really an error it can happen
-			return;
+			return false;
 		} else {
 			if(t==pathfinding.CurrTile){
-				return;
+				return true;
 			}
-			AddMovementCommand (t.X,t.Y);
+			return AddMovementCommand (t.X,t.Y);
 		}
 	}
-    public virtual void AddMovementCommand(float x, float y) {
+    public virtual bool AddMovementCommand(float x, float y) {
 		Tile tile = World.Current.GetTileAt(x, y);
         if(tile == null){
-            return;
+            return false;
         }
         if (tile.Type == TileType.Ocean) {
-            return;
+            return false;
         }
         if (tile.Type == TileType.Mountain) {
-            return;
+            return false;
         }
 		if(pathfinding.CurrTile.MyIsland!=tile.MyIsland){
-			return;
+			return false;
 		}
 		onPatrol = false;
 
 		if(pathfinding is IslandPathfinding){
 			((IslandPathfinding)pathfinding).SetDestination (x,y);
 		}
+        return true;
     }
-	public int TryToAddItemMaxAmount(Item item , int amount){
+    public int TryToAddItem(Item item) {
+        return inventory.AddItem(item);
+    }
+    public int TryToAddItemMaxAmount(Item item , int amount){
 		Item t = item.Clone ();
 		t.count = amount;
 		return inventory.AddItem (t);
@@ -432,16 +402,10 @@ public class Unit  {
 	public void CallChangedCallback(){
         cbUnitChanged?.Invoke(this);
     }
-	public void TakeDamage(DamageType dt, float amount){
-		if(amount<0){
-			Debug.LogError ("damage must be positive");
-			return;
-		}
-		CurrHealth -= Combat.ArmorDamageReduction (MyArmorType, dt) * amount;
-	}
 	public virtual void Destroy(){
         //Do stuff here when on destroyed
         cbUnitDestroyed?.Invoke(this);
+        _currHealth = 0;
     }
 	public void RegisterOnChangedCallback(Action<Unit> cb) {
 		cbUnitChanged += cb;
@@ -453,7 +417,6 @@ public class Unit  {
 	public void RegisterOnDestroyCallback(Action<Unit> cb) {
 		cbUnitDestroyed += cb;
 	}
-
 	public void UnregisterOnDestroyCallback(Action<Unit> cb) {
 		cbUnitDestroyed -= cb;
 	}
@@ -463,5 +426,17 @@ public class Unit  {
 	public void UnregisterOnSoundCallback(Action<Unit,string> cb) {
 		cbUnitSound -= cb;
 	}
+
+    public bool IsAttackableFrom(IWarfare warfare) {
+        return warfare.MyDamageType.GetDamageMultiplier(MyArmorType) > 0;
+    }
+
+    public void TakeDamageFrom(IWarfare warfare) {
+        CurrHealth -= warfare.MyDamageType.GetDamageMultiplier(MyArmorType) * warfare.CurrentDamage;
+    }
+
+    internal bool IsPlayerUnit() {
+        return PlayerController.currentPlayerNumber == playerNumber;
+    }
 
 }

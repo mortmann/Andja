@@ -34,11 +34,11 @@ public class MouseController : MonoBehaviour {
 	Vector3 dragStartPosition;
 	List<GameObject> previewGameObjects;
 
-	BuildController bmc;
-	UIController uic;
+	BuildController BuildController => BuildController.Instance;
+	UIController UIController => UIController.Instance;
 
-	//substate for unit
-	bool patrolCommandToAdd;
+    //substate for unit
+    bool patrolCommandToAdd;
 	bool buildFromUnit;
 
 	protected Structure _structure;
@@ -62,10 +62,18 @@ public class MouseController : MonoBehaviour {
 	public Unit SelectedUnit  {
 		get { return _selectedUnit;}
 		protected set { 
-			patrolCommandToAdd = false; 
-			_selectedUnit = value;
+			patrolCommandToAdd = false;
+            if (_selectedUnit != null)
+                _selectedUnit.UnregisterOnDestroyCallback(OnUnitDestroy);
+            _selectedUnit = value;
 		}
-	} 
+	}
+
+    private void OnUnitDestroy(Unit obj) {
+        mouseState = MouseState.Idle;
+        _selectedUnit = null;
+    }
+
     // Use this for initialization
     void Start () {
         if (Instance != null) {
@@ -73,9 +81,7 @@ public class MouseController : MonoBehaviour {
         }
         Instance = this;
         previewGameObjects = new List<GameObject>();
-		bmc = GameObject.FindObjectOfType<BuildController>();
-		bmc.RegisterStructureCreated (ResetBuilding);
-		uic = GameObject.FindObjectOfType<UIController> ();
+		BuildController.RegisterStructureCreated (ResetBuilding);
 		_highlightTiles = new HashSet<Tile> ();
 		ssc = GameObject.FindObjectOfType<StructureSpriteController> ();
 	}
@@ -137,30 +143,35 @@ public class MouseController : MonoBehaviour {
 	}
 	private void DecideWhatUIToShow(RaycastHit2D hit){
 		if (hit) {
-//			Debug.Log (hit.transform.name); 
-			if (hit.transform.GetComponent<UnitHoldingScript> () != null) {
+            //			Debug.Log (hit.transform.name); 
+            if (hit.transform.GetComponent<UnitHoldingScript> () != null) {
 				mouseState = MouseState.Unit;
 				SelectedUnit=hit.transform.GetComponent<UnitHoldingScript> ().unit;
-				uic.OpenUnitUI (SelectedUnit);
+                SelectedUnit.RegisterOnDestroyCallback(OnUnitDestroy);
+                UIController.OpenUnitUI (SelectedUnit);
 			} else {
 				if (buildFromUnit == false)
 					ResetBuilding (null);
 			}
 			if (SelectedUnit == null) {
-				Tile t = GetTileUnderneathMouse ();
+                Tile t = GetTileUnderneathMouse ();
 				if (t.Structure != null) {
-					uic.OpenStructureUI (t.Structure);
+					UIController.OpenStructureUI (t.Structure);
 				} else {
 					Debug.Log ("tile " + t.ToString ()); 
 				}
 			}
+            if( SelectedUnit != null && hit.transform.GetComponent<CrateHoldingScript>()!=null) {
+                //TODO: Range check
+                World.Current.TryToAddCrateToUnit(SelectedUnit, hit.transform.GetComponent<CrateHoldingScript>().thisCrate);
+            }
 		} else {
 			if (EventSystem.current.IsPointerOverGameObject ()) {
 				return;
 			}
 			if (buildFromUnit == false)
 				return;
-			uic.CloseInfoUI ();
+			UIController.CloseInfoUI ();
 		}
 	}
 	private void UpdateSingle() {
@@ -354,7 +365,8 @@ public class MouseController : MonoBehaviour {
 			if (hit.transform != null && hit.transform.gameObject.GetComponent<UnitHoldingScript > () == null) {
 				Tile t = GetTileUnderneathMouse ();
 				if(t.Structure!=null&&t.Structure is MarketBuilding){
-					SelectedUnit.GiveAttackCommand (t.Structure,true);
+                    throw new NotImplementedException();
+					//SelectedUnit.GiveAttackCommand (t.Structure,true);
 				}
 			}
 			if(patrolCommandToAdd){
@@ -363,7 +375,6 @@ public class MouseController : MonoBehaviour {
 			} else {
 				SelectedUnit.AddMovementCommand(currFramePosition.x, currFramePosition.y);
 			}
-//            mouseState = MouseState.Idle;
         }
     }
 
@@ -415,7 +426,7 @@ public class MouseController : MonoBehaviour {
 			List<Tile> ts = new List<Tile>(GetTilesStructures (start_x,end_x,start_y,end_y));
 			if(ts != null) {
 				if (mouseState == MouseState.Destroy) {
-					bmc.DestroyStructureOnTiles (ts,PlayerController.Instance.CurrPlayer);	
+					BuildController.DestroyStructureOnTiles (ts,PlayerController.Instance.CurrPlayer);	
 				} else {
 					if(Structure == null){
 						return;
@@ -492,11 +503,11 @@ public class MouseController : MonoBehaviour {
 		if(buildFromUnit){
 			temp = SelectedUnit;
 		}
-		bmc.BuildOnTile (t,single,PlayerController.currentPlayerNumber,false,temp);
+		BuildController.BuildOnTile (t,single,PlayerController.currentPlayerNumber,false,temp);
 	}
 	public void BuildFromUnit(){
 		buildFromUnit = true;
-		bmc.SettleFromUnit (SelectedUnit);
+		BuildController.SettleFromUnit (SelectedUnit);
 	}
 	public void SetToPatrolMode(){
 		patrolCommandToAdd = true;
@@ -516,17 +527,19 @@ public class MouseController : MonoBehaviour {
 			buildFromUnit = false;
 		}
 	}
+    void OnDestroy() {
+        Instance = null;
+    }
 
-
-	/// <summary>
-	/// what to on escape press 
-	///  - set tobuildstructure to null
-	///  - set mousestate to drag
-	/// </summary>
-	public void Escape(){
+    /// <summary>
+    /// what to on escape press 
+    ///  - set tobuildstructure to null
+    ///  - set mousestate to drag
+    /// </summary>
+    public void Escape(){
 		SelectedUnit = null;
 		ResetBuilding (null);
-		bmc.ResetBuild ();
+		BuildController.ResetBuild ();
 		this.mouseState = MouseState.Idle;
 	}
 

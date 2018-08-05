@@ -89,7 +89,7 @@ public abstract class Pathfinding {
             _y = value;
         }
     }
-    protected Tile nextTile;  // The next tile in the pathfinding sequence
+    public Tile NextTile { get; protected set; }  // The next tile in the pathfinding sequence
     Tile _currTile;
     public Tile CurrTile {
         get { 
@@ -121,7 +121,7 @@ public abstract class Pathfinding {
     public virtual void Update_DoMovement(float deltaTime) {
         //for loading purpose or any other strange reason
         //we have a destination & are not there atm && we have no path then calculate it!
-        if (DestTile != null && IsAtDest == false && nextTile != DestTile && worldPath == null)
+        if (DestTile != null && DestTile != CurrTile && IsAtDest == false && NextTile != DestTile && worldPath == null )
             SetDestination(dest_X, dest_Y);
 
         if (CurrTile == DestTile) {
@@ -140,8 +140,9 @@ public abstract class Pathfinding {
 				return;
 			}
 		}
-        if (pathDest == Path_dest.exact && nextTile == DestTile) {
-			LastMove = AccurateMove(deltaTime);
+        if (pathDest == Path_dest.exact && NextTile == DestTile) {
+            worldPath.Clear();
+            LastMove = AccurateMove(deltaTime);
 			return;
         }
 		LastMove = DoWorldPath(deltaTime);
@@ -157,24 +158,24 @@ public abstract class Pathfinding {
             return Vector3.zero;
         }
 
-        if (nextTile == null || nextTile == CurrTile) {
+        if (NextTile == null || NextTile == CurrTile) {
             // Get the next tile from the pathfinder.
 			if (worldPath == null || worldPath.Count == 0) {
                 return Vector3.zero;
             }
-            nextTile = worldPath.Dequeue();
+            NextTile = worldPath.Dequeue();
         }
 
-        rotationDirection = new Vector3(nextTile.X, nextTile.Y);
-        Vector3 dir = new Vector3(nextTile.X - X, nextTile.Y - Y);
+        rotationDirection = new Vector3(NextTile.X, NextTile.Y);
+        Vector3 dir = new Vector3(NextTile.X - X, NextTile.Y - Y);
         dir = dir.normalized;
 
         Vector3 temp = deltaTime * dir * Speed;
 
         X += temp.x;
         Y += temp.y;
-		if(World.Current.IsInTileAt(nextTile,X,Y)){
-			CurrTile = nextTile;
+		if(World.Current.IsInTileAt(NextTile,X,Y)){
+			CurrTile = NextTile;
 		}
 
         return temp;
@@ -185,9 +186,9 @@ public abstract class Pathfinding {
         if (X >= dest_X - 0.1f && X <= dest_X + 0.1f && Y >= dest_Y - 0.1f && Y <= dest_Y + 0.1f) {
             //we are near enough
             CurrTile = World.Current.GetTileAt(X, Y);
-            nextTile = null;
+            NextTile = null;
             DestTile = CurrTile;
-            //IsAtDest = true;
+            IsAtDest = true;
             return Vector3.zero;
         }
         Vector3 dir = new Vector3(dest_X - X, dest_Y - Y);
@@ -215,7 +216,7 @@ public abstract class Pathfinding {
 
 	float t = 0;
 	public bool UpdateRotationOnPoint(float delta) {
-		if(rotationDirection.magnitude==0||CurrTile==nextTile){
+		if(rotationDirection.magnitude==0||CurrTile==NextTile){
 			return true;
 		}
         Vector2 PointA = new Vector2(rotationDirection.x, rotationDirection.y);

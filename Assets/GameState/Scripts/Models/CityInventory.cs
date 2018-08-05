@@ -6,9 +6,8 @@ using Newtonsoft.Json;
 [JsonObject(MemberSerialization.OptIn)]
 public class CityInventory : Inventory {
 
-	public CityInventory(string name = "CITY"){
+	public CityInventory(){
 		NumberOfSpaces = -1;
-		this.name = name;
 		Items = PrototypController.Instance.GetCopieOfAllItems ();
 		MaxStackSize = 50;
 	}
@@ -42,8 +41,11 @@ public class CityInventory : Inventory {
 	public override bool ContainsItemWithID(int id){
 		return true;
 	}
-	public override void SetItemCountNull (Item item){
-		GetItemInInventory (item).count = 0;
+    protected override int RemainingSpaceForItem(Item item) {
+        return MaxStackSize - GetAmountForItem(item);
+    }
+    public override void SetItemCountNull (Item item){
+		GetFirstItemInInventory (item).count = 0;
         cbInventoryChanged?.Invoke(this);
     }
 	public override Item[] GetAllItemsAndRemoveThem(){

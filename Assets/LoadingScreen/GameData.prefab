@@ -9,6 +9,7 @@ GameObject:
   m_Component:
   - component: {fileID: 430686}
   - component: {fileID: 11473390}
+  - component: {fileID: 114054679081829624}
   m_Layer: 0
   m_Name: GameData
   m_TagString: Untagged
@@ -40,10 +41,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a6b596edd02cd4f4cb9fe61c03427982, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  MapSeed: 10
+  difficulty: 0
+  saveFileType: 0
+  playTime: 0
   Height: 500
   Width: 500
   loadsavegame: test13
+  MapSeed: 10
   bots: 
   playerCount: 1
   pirates: 1
@@ -61,3 +65,14 @@ Prefab:
   m_ParentPrefab: {fileID: 0}
   m_RootGameObject: {fileID: 185728}
   m_IsPrefabParent: 1
+--- !u!114 &114054679081829624
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 185728}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7e7b9f74524385f438d9c8564e09b51d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

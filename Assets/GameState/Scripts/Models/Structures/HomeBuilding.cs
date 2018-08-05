@@ -29,9 +29,9 @@ public class HomeBuilding : Structure {
 		}
 	}
 
-	public int maxLivingSpaces {get{ return HomeData.maxLivingSpaces;}}
-	public float increaseSpeed {get{ return HomeData.increaseSpeed;}}
-	public float decreaseSpeed {get{ return HomeData.decreaseSpeed;}}
+	public int MaxLivingSpaces {get{ return HomeData.maxLivingSpaces;}}
+	public float IncreaseSpeed {get{ return HomeData.increaseSpeed;}}
+	public float DecreaseSpeed {get{ return HomeData.decreaseSpeed;}}
 	bool canUpgrade;
 
 	#endregion
@@ -103,25 +103,25 @@ public class HomeBuilding : Structure {
 		if (allPercentage < 0.4f || percCritical) {
 			decTimer += deltaTime;
 			incTimer -= deltaTime;
-			incTimer = Mathf.Clamp (incTimer, 0, increaseSpeed);
-			if (decTimer >= decreaseSpeed) {
+			incTimer = Mathf.Clamp (incTimer, 0, IncreaseSpeed);
+			if (decTimer >= DecreaseSpeed) {
 				TryToDecreasePeople();
 				decTimer = 0;
 			}
 		} 
 		else if (allPercentage > 0.4f && allPercentage < 0.85f) {
 			incTimer -= deltaTime;
-			incTimer = Mathf.Clamp (incTimer, 0, increaseSpeed);
+			incTimer = Mathf.Clamp (incTimer, 0, IncreaseSpeed);
 			decTimer -= deltaTime;
-			decTimer = Mathf.Clamp (decTimer, 0, decreaseSpeed);
+			decTimer = Mathf.Clamp (decTimer, 0, DecreaseSpeed);
 		}  
 		else if (allPercentage > 0.85f) {
 			incTimer += deltaTime;
 			decTimer -= deltaTime;
-			decTimer = Mathf.Clamp (decTimer, 0, decreaseSpeed);
-			if (incTimer >= increaseSpeed) {
+			decTimer = Mathf.Clamp (decTimer, 0, DecreaseSpeed);
+			if (incTimer >= IncreaseSpeed) {
 				incTimer = 0;
-				if(people==maxLivingSpaces && myPlayer.HasUnlockedAllNeeds(buildingLevel)){
+				if(people==MaxLivingSpaces && myPlayer.HasUnlockedAllNeeds(buildingLevel)){
 					canUpgrade = true;
 				}
 				TryToIncreasePeople ();
@@ -130,7 +130,7 @@ public class HomeBuilding : Structure {
 	}
 
 	private void TryToIncreasePeople(){
-		if(people>=maxLivingSpaces){
+		if(people>=MaxLivingSpaces){
 			return;
 		}
 		people++;
@@ -161,10 +161,10 @@ public class HomeBuilding : Structure {
 		}
 		List<NeedsBuilding> strs = new List<NeedsBuilding> ();
 		foreach (Tile item in myBuildingTiles) {
-			if(item.GetListOfInRangeNeedBuildings()==null){
+			if(item.GetListOfInRangeCityNeedBuildings()==null){
 				continue;
 			}
-			strs.AddRange (item.GetListOfInRangeNeedBuildings());
+			strs.AddRange (item.GetListOfInRangeCityNeedBuildings());
 		}
 		if(strs.Count==0){
 			return false;

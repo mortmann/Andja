@@ -44,7 +44,7 @@ public class Tile : IComparable<Tile>, IEqualityComparer<Tile> {
 		}
 	}
 	public Vector3 Vector { get {return new Vector3 (x, y, 0);} }
-    public Vector2 Vector2 { get { return new Vector2(x, y, 0); } }
+    public Vector2 Vector2 { get { return new Vector2(x, y); } }
 
     public Tile(){}
 	public Tile(int x, int y){

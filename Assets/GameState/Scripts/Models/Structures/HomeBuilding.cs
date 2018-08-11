@@ -10,7 +10,7 @@ public class HomePrototypeData : StructurePrototypeData {
 
 
 [JsonObject(MemberSerialization.OptIn)]
-public class HomeBuilding : Structure {
+public class HomeBuilding : TargetStructure {
 	#region Serialize
 
 	[JsonPropertyAttribute] public int people;

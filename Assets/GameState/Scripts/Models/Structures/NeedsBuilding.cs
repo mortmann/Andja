@@ -3,7 +3,7 @@ using System.Collections;
 using Newtonsoft.Json;
 
 [JsonObject(MemberSerialization.OptIn)]
-public class NeedsBuilding : Structure {
+public class NeedsBuilding : TargetStructure {
 	#region Serialize
 	#endregion
 	#region RuntimeOrOther

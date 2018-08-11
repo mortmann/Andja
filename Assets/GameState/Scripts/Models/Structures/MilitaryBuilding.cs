@@ -8,10 +8,12 @@ public class MilitaryBuildingPrototypeData : StructurePrototypeData {
     public Unit[] canBeBuildUnits;
     public float buildTimeModifier;
     public int buildQueueLength = 1;
+    public Combat.DamageType MyDamageType;
+    public int damage;
 }
 
 [JsonObject(MemberSerialization.OptIn)]
-public class MilitaryBuilding : Structure {
+public class MilitaryBuilding : TargetStructure, IWarfare {
     [JsonPropertyAttribute] float buildTimer;
     [JsonPropertyAttribute] Queue<Unit> toBuildUnits;
 
@@ -105,4 +107,20 @@ public class MilitaryBuilding : Structure {
             return;
         World.Current.CreateUnit(unit.Clone(PlayerNumber, toPlaceUnitTiles[0]));
     }
+
+    #region IWarfareImplementation
+    public IWarfare target;
+    public bool GiveAttackCommand(IWarfare warfare, bool overrideCurrent = false) {
+        return false;
+    }
+    public void StopAttack() {
+        target = null;
+    }
+    public float GetCurrentDamage(Combat.ArmorType armorType) {
+        return MyDamageType.GetDamageMultiplier(armorType) * CurrentDamage;
+    }
+    public float CurrentDamage => isActive? 0 : MilitaryBuildingData.damage;
+    public float MaximumDamage => MilitaryBuildingData.damage;
+    public Combat.DamageType MyDamageType => MilitaryBuildingData.MyDamageType;
+    #endregion
 }

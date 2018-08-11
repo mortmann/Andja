@@ -56,7 +56,6 @@ public class StructurePrototypeData : LanguageVariables {
 
 	public string spriteBaseName;
 
-
 	private void CalculatePrototypTiles(){
 		_myPrototypeTiles = new List<Tile> ();
 		if(buildingRange == 0){
@@ -176,7 +175,7 @@ public abstract class Structure : IGEventable {
     public Vector2 _middlePoint;
     public Vector2 MiddlePoint {
         get {
-            if (_middlePoint != null)
+            if (_middlePoint != Vector2.zero)
                 return _middlePoint;
             Tile[,] sortedTiles = new Tile[TileWidth, TileHeight];
             List<Tile> ts = new List<Tile>(myBuildingTiles);
@@ -294,9 +293,10 @@ public abstract class Structure : IGEventable {
 			return 0;
 		}
 	}
-	#endregion
-	#region Virtual/Abstract
-	public abstract Structure Clone ();
+
+    #endregion
+    #region Virtual/Abstract
+    public abstract Structure Clone ();
 	public virtual void Update (float deltaTime){
 	}
 	public abstract void OnBuild();
@@ -686,7 +686,7 @@ public abstract class Structure : IGEventable {
 		}
 		return SpriteName + "@ X=" + BuildTile.X +" Y=" + BuildTile.Y;
 	}
-	#endregion
+    #endregion
 
 }
 

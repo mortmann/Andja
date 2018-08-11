@@ -1,12 +1,11 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 using Newtonsoft.Json;
+using System;
 
 public class MarketPrototypData : OutputPrototypData {
 	public float takeOverStartGoal = 100;
 }
-
-
 
 [JsonObject(MemberSerialization.OptIn)]
 public class MarketBuilding : OutputStructure, ICapturable {
@@ -32,13 +31,6 @@ public class MarketBuilding : OutputStructure, ICapturable {
 			return _marketData;
 		}
 	}
-
-    public bool Captured => capturedProgress == 1;
-    public float MaximumHealth => MarketData.MaxHealth;
-    public float CurrentHealth => Health;
-    public bool IsDestroyed => Health<=0;
-    public Vector2 CurrentPosition => MiddlePoint;
-    public Combat.ArmorType MyArmorType => PrototypController.Instance.StructureArmor;
     #endregion
 
     public MarketBuilding(int id,MarketPrototypData  MarketData){
@@ -61,7 +53,12 @@ public class MarketBuilding : OutputStructure, ICapturable {
 
 	public override void Update (float deltaTime){
 		base.Update_Worker (deltaTime);
-	}
+        if (currentCaptureSpeed > 0) {
+            capturedProgress += currentCaptureSpeed * deltaTime;
+        } else {
+            capturedProgress -= decreaseCaptureSpeed * deltaTime; 
+        }
+    }
 	public override void OnBuild(){
 		workersHasToFollowRoads = true; // DUNNO HOW where to set it without the need to copy it extra
 		RegisteredSturctures = new List<Structure> ();
@@ -223,27 +220,33 @@ public class MarketBuilding : OutputStructure, ICapturable {
 		}
 		return temp;
 	}
-	public void TakeOverMarketBuilding(float deltaTime,int playerNumber, float speed = 1){
-		capturedProgress += deltaTime * speed;
-		if(TakeOverStartGoal<=capturedProgress){
-			if(myBuildingTiles[0].MyIsland!=null){
-				City c = myBuildingTiles [0].MyIsland.myCities.Find (x => x.playerNumber == playerNumber);
-				if(c!=null){
-					OnDestroy ();
-					City = c;
-					OnBuild ();
-				} else {
-					Health = 0; //???? is this good?
-				}
-			}
-		}
-	}
 
+    #region ICapturableImplementation
+    float currentCaptureSpeed = 0f;
+    //TODO: load this all in
+    float decreaseCaptureSpeed = 0.01f;
+    float maximumCaptureSpeed = 0.05f;
     public void Capture(IWarfare warfare, float progress) {
-        throw new System.NotImplementedException();
+        if (Captured) {
+            DoneCapturing(warfare);
+            return;
+        }
+        currentCaptureSpeed = Mathf.Clamp(currentCaptureSpeed + progress, 0, maximumCaptureSpeed);
     }
 
-    public bool IsAttackableFrom(IWarfare warfare) {
-        throw new System.NotImplementedException();
+    private void DoneCapturing(IWarfare warfare) {
+        //either capture it or destroy based on if is a city of that player on that island
+        City c = BuildTile.MyIsland.myCities.Find(x => x.playerNumber == warfare.PlayerNumber);
+        if (c != null) {
+            OnDestroy();
+            City = c;
+            OnBuild();
+        }
+        else {
+            Destroy();
+        }
     }
+
+    public bool Captured => capturedProgress == 1;
+    #endregion
 }

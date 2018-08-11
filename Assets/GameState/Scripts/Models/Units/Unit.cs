@@ -52,7 +52,7 @@ public class Unit : IWarfare {
 	[JsonPropertyAttribute] public float tradeTime=1.5f;
 	[JsonPropertyAttribute] public Pathfinding pathfinding;
     [JsonPropertyAttribute] public Inventory inventory;
-    [JsonPropertyAttribute] IWarfare _currentTarget;
+    [JsonPropertyAttribute] ITargetable _currentTarget;
     #endregion
     //being calculated at runtime
     #region calculated 
@@ -64,7 +64,7 @@ public class Unit : IWarfare {
 		}
 	}
 
-    public IWarfare CurrentTarget {
+    public ITargetable CurrentTarget {
         get {
             return _currentTarget;
         }
@@ -209,7 +209,7 @@ public class Unit : IWarfare {
 		Collider2D[] c2d = Physics2D.OverlapCircleAll (new Vector2(X,Y),2);
 		foreach (var item in c2d) {
 			//check for not null = only to be sure its not null
-			//if its not my own gameobject
+			
 			if (item == null){
 				continue;
 			}
@@ -226,6 +226,20 @@ public class Unit : IWarfare {
 			}
 		}
 	}
+    public bool GiveCaptureCommand(ICapturable warfare, bool overrideCurrent = false) {
+        if (overrideCurrent == false && CurrentTarget != null)
+            return false;
+        if (PlayerController.Instance.ArePlayersAtWar(PlayerNumber, warfare.PlayerNumber) == false) {
+            return false;
+        }
+        float distance = (warfare.CurrentPosition - CurrentPosition).magnitude;
+        //can it reach it?
+        if (distance > AttackRange == false && AddMovementCommand(ClosestTargetPosition(warfare)) == false)
+            return false;
+        CurrentTarget = warfare;
+        return true;
+    }
+
     public bool GiveAttackCommand(IWarfare warfare, bool overrideCurrent = false) {
         if (overrideCurrent == false && CurrentTarget != null)
             return false;
@@ -246,7 +260,7 @@ public class Unit : IWarfare {
         CurrentTarget = null;
     }
 
-    public Vector2 ClosestTargetPosition(IWarfare target) {
+    public Vector2 ClosestTargetPosition(ITargetable target) {
         Tile nearstTile = World.Current.GetTileAt(target.CurrentPosition);
         if (nearstTile.Structure == null)
             return target.CurrentPosition;
@@ -272,7 +286,35 @@ public class Unit : IWarfare {
         }
         return nearstTile.Vector;
     }
-	public bool Fighting(float deltaTime){
+    public bool UpdateCombat(float deltaTime) {
+        if (CurrentTarget == null) {
+            return false;
+        }
+        if(CurrentTarget is IWarfare) {
+            return Fighting(deltaTime);
+        }
+        if (CurrentTarget is ICapturable) {
+            return Capturing(deltaTime);
+        }
+        return false;
+    }
+
+    private bool Capturing(float deltaTime) {
+        if (CurrentTarget != null) {
+            if (PlayerController.Instance.ArePlayersAtWar(CurrentTarget.PlayerNumber, playerNumber) == false) {
+                CurrentTarget = null;
+                return false;
+            }
+            float dist = (CurrentTarget.CurrentPosition - CurrentPosition).magnitude;
+            if (dist < AttackRange) {
+                ((ICapturable)CurrentTarget).Capture(this, 0.01f);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public bool Fighting(float deltaTime){
 		if(CurrentTarget!=null){
 			if(PlayerController.Instance.ArePlayersAtWar (CurrentTarget.PlayerNumber,playerNumber) == false){
                 CurrentTarget = null;
@@ -432,11 +474,14 @@ public class Unit : IWarfare {
     }
 
     public void TakeDamageFrom(IWarfare warfare) {
-        CurrHealth -= warfare.MyDamageType.GetDamageMultiplier(MyArmorType) * warfare.CurrentDamage;
+        CurrHealth -= warfare.GetCurrentDamage(MyArmorType);
     }
 
     internal bool IsPlayerUnit() {
         return PlayerController.currentPlayerNumber == playerNumber;
     }
 
+    public float GetCurrentDamage(ArmorType armorType) {
+        return MyDamageType.GetDamageMultiplier(armorType) * CurrentDamage;
+    }
 }

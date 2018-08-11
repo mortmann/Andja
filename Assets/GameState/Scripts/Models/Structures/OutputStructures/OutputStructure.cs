@@ -14,7 +14,7 @@ public class OutputPrototypData : StructurePrototypeData {
 
 
 [JsonObject(MemberSerialization.OptIn)]
-public abstract class OutputStructure : Structure {
+public abstract class OutputStructure : TargetStructure {
 	#region Serialize
 	[JsonPropertyAttribute] public List<Worker> myWorker;
 	[JsonPropertyAttribute] public float produceCountdown;
@@ -284,6 +284,5 @@ public abstract class OutputStructure : Structure {
 		}
 
 	}
-
 
 }

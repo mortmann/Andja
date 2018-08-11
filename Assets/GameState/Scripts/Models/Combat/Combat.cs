@@ -21,6 +21,7 @@ public class Combat {
             }
             return damageMultiplier[armorType];
         }
+
     }
     public class ArmorType : LanguageVariables {
         public int ID;

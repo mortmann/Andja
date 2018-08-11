@@ -10,7 +10,7 @@ public class ShipPrototypeData : UnitPrototypeData {
     //      OR are there sometyp like HEAVY and prototype returns the associated cannon
     public Item cannonType = null;
 }
-
+//TODO: think about how if ships could be capturable if they are low, at war and the capturing ship can do it?
 [JsonObject(MemberSerialization.OptIn)]
 public class Ship : Unit {
     [JsonPropertyAttribute] public TradeRoute tradeRoute;

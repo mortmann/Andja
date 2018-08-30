@@ -26,12 +26,12 @@ public class Pirate : MonoBehaviour {
 
 		foreach(Ship s in myShips){
 			//check for ships that needs commands?
-			if(s.pathfinding.IsAtDest){
+			if(s.pathfinding.IsAtDestination){
 				int x = Random.Range (0,World.Current.Width);
 				int y = Random.Range (0,World.Current.Height);
 				Tile t = World.Current.GetTileAt (x, y);
 				if(t.Type==TileType.Ocean)
-					s.AddMovementCommand (t);
+					s.GiveMovementCommand (t);
 			}
 		}
 	}

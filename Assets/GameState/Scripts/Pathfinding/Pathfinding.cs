@@ -1,9 +1,9 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
-using Priority_Queue;
 using Newtonsoft.Json;
 using System.Threading;
+using System;
 
 public enum Path_mode { world, islandMultipleStartpoints, islandSingleStartpoint, route };
 public enum Path_dest { tile, exact };
@@ -15,17 +15,19 @@ public abstract class Pathfinding {
 
 	[JsonPropertyAttribute] public float dest_X;
 	[JsonPropertyAttribute] public float dest_Y;
-    [JsonPropertyAttribute] public bool IsAtDest;
+    [JsonPropertyAttribute] protected bool _IsAtDest; 
 	// If we aren't moving, then destTile = currTile
 	[JsonPropertyAttribute] protected Tile _destTile;
 	[JsonPropertyAttribute] public float rotation;
-
 	[JsonPropertyAttribute] protected float _y;
 	[JsonPropertyAttribute] protected float _x;
     [JsonPropertyAttribute] public Tile startTile;
-    
-	#endregion
-	#region RuntimeOrPrototyp
+
+    #endregion
+    #region RuntimeOrPrototyp
+    public bool IsAtDestination { get { return _IsAtDest; } set { _IsAtDest = value; cbIsAtDestination?.Invoke(value); } }
+    public Action<bool> cbIsAtDestination;
+
 	public Vector3 Position {
 		get { return new Vector3 (X,Y);}
 	}
@@ -69,7 +71,7 @@ public abstract class Pathfinding {
         set {
             _destTile = value;
             if (_destTile != value) {
-                IsAtDest = false;
+                IsAtDestination = false;
             }
         }
     }
@@ -111,21 +113,16 @@ public abstract class Pathfinding {
     public Pathfinding() {
     }
 
-
-    public void WorldTGraphUpdate(World world) {
-//        GetPathStar();
-    }
-
     private Vector3 rotationDirection;
 
     public virtual void Update_DoMovement(float deltaTime) {
         //for loading purpose or any other strange reason
         //we have a destination & are not there atm && we have no path then calculate it!
-        if (DestTile != null && DestTile != CurrTile && IsAtDest == false && NextTile != DestTile && worldPath == null )
+        if (DestTile != null && DestTile != CurrTile && IsAtDestination == false && NextTile != DestTile && worldPath == null )
             SetDestination(dest_X, dest_Y);
 
         if (CurrTile == DestTile) {
-			IsAtDest = true;				
+			IsAtDestination = true;				
 			LastMove = Vector3.zero;
 			return;
         }
@@ -135,7 +132,7 @@ public abstract class Pathfinding {
 			//so we can turn on point but not move
 			//so rotate around with the turnspeed
 			//we can only rotate if we know the next tile we are going to visit
-			if(IsAtDest==false&&CurrTile!=DestTile && UpdateRotationOnPoint(deltaTime)==false){		
+			if(IsAtDestination==false&&CurrTile!=DestTile && UpdateRotationOnPoint(deltaTime)==false){		
 				Debug.Log ("UpdateRotationOnPoint(deltaTime)");
 				return;
 			}
@@ -154,7 +151,7 @@ public abstract class Pathfinding {
     private Vector3 DoWorldPath(float deltaTime) {
         //no move command so return!
         if (DestTile == CurrTile) {
-			IsAtDest = true;				
+			IsAtDestination = true;				
             return Vector3.zero;
         }
 
@@ -188,7 +185,7 @@ public abstract class Pathfinding {
             CurrTile = World.Current.GetTileAt(X, Y);
             NextTile = null;
             DestTile = CurrTile;
-            IsAtDest = true;
+            IsAtDestination = true;
             return Vector3.zero;
         }
         Vector3 dir = new Vector3(dest_X - X, dest_Y - Y);
@@ -204,7 +201,7 @@ public abstract class Pathfinding {
     }
 
     public void Reverse() {
-        IsAtDest = false;
+        IsAtDestination = false;
         DestTile = startTile;
         startTile = backPath.Peek();
 		worldPath = backPath;

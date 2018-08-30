@@ -5,7 +5,8 @@ using System;
 using System.Linq;
 using System.Collections;
 
-public enum MouseState { Idle,Drag, Path, Single, Unit,Destroy };
+public enum MouseState { Idle,Drag, Path, Single, Unit, Destroy };
+public enum MouseUnitState { None, Normal, Patrol, Build };
 
 public class MouseController : MonoBehaviour {
 
@@ -19,10 +20,12 @@ public class MouseController : MonoBehaviour {
     // The world-position of the mouse last frame.
     Vector3 lastFramePosition;
 	Vector3 currFramePosition;
-
-	StructureSpriteController ssc;
-
+    private Vector3 dragStartPosition;
+    private Vector3 pathStartPosition;
+    StructureSpriteController ssc;
 	public static bool autorotate = true;
+    public static bool AdditiveCommands => InputHandler.ShiftKey;
+
     private HashSet<Tile> _highlightTiles;
 	HashSet<Tile> HighlightTiles {
 		get { return _highlightTiles; }
@@ -31,17 +34,12 @@ public class MouseController : MonoBehaviour {
 		}
 	}
 	// The world-position start of our left-mouse drag operation
-	Vector3 dragStartPosition;
 	List<GameObject> previewGameObjects;
 
 	BuildController BuildController => BuildController.Instance;
 	UIController UIController => UIController.Instance;
 
-    //substate for unit
-    bool patrolCommandToAdd;
-	bool buildFromUnit;
-
-	protected Structure _structure;
+    protected Structure _structure;
 	public Structure Structure {
 		get{ 
 			return _structure;
@@ -54,19 +52,24 @@ public class MouseController : MonoBehaviour {
 	}
 
 	public MouseState mouseState = MouseState.Idle;
-    private Vector3 pathStartPosition;
+    MouseUnitState mouseUnitState = MouseUnitState.None;
+    
     
 	private Path_AStar path;
 
 	private Unit _selectedUnit;
 	public Unit SelectedUnit  {
 		get { return _selectedUnit;}
-		protected set { 
-			patrolCommandToAdd = false;
+		protected set {
             if (_selectedUnit != null)
                 _selectedUnit.UnregisterOnDestroyCallback(OnUnitDestroy);
             _selectedUnit = value;
-		}
+            if (_selectedUnit == null) {
+                mouseUnitState = MouseUnitState.None;
+            } else {
+                mouseUnitState = MouseUnitState.Normal;
+            }
+        }
 	}
 
     private void OnUnitDestroy(Unit obj) {
@@ -110,29 +113,37 @@ public class MouseController : MonoBehaviour {
 		} 
 		RemovePrefabs ();
         //UpdateCursor();
-		if (mouseState == MouseState.Drag||mouseState == MouseState.Destroy) { 
-            UpdateDragging();
-        } else
-        if (mouseState == MouseState.Path) {
-            UpdatePathBetweenTiles();
-		} else
-		if (mouseState == MouseState.Single) {
-			UpdateSingle();
-		} else 
-		if (mouseState == MouseState.Unit && SelectedUnit != null) {
-            UpdateUnit();
-		} 
-        if (Input.GetMouseButtonDown(0)) {
-			
-			if( EventSystem.current.IsPointerOverGameObject() ) {
-				return;
-			}
-//			Debug.Log (GetTileUnderneathMouse ().toString ()); 
-			//mouse press decide what it hit 
-			RaycastHit2D hit = Physics2D.Raycast(new Vector2(currFramePosition.x, currFramePosition.y), Vector2.zero, 200);
-			DecideWhatUIToShow (hit);
+
+        switch (mouseState) {
+            case MouseState.Idle:
+                break;
+            case MouseState.Drag:
+                UpdateDragging();
+                break;
+            case MouseState.Path:
+                UpdatePathBetweenTiles();
+                break;
+            case MouseState.Single:
+                UpdateSingle();
+                break;
+            case MouseState.Unit:
+                if (SelectedUnit == null) {
+                    mouseState = MouseState.Idle;
+                    return;
+                }
+                UpdateUnit();
+                break;
+            case MouseState.Destroy:
+                UpdateDragging();
+                break;
         }
-		if (Input.GetMouseButtonDown (1)) {
+        if (Input.GetMouseButtonDown(0)) {
+			//mouse press decide what it hit 
+			DecideWhatUIToShow (Physics2D.Raycast(new Vector2(currFramePosition.x, currFramePosition.y), Vector2.zero, 200));
+            if (mouseState != MouseState.Unit)
+                UIController.CloseInfoUI();
+        }
+		if (Input.GetMouseButtonDown (1) && mouseState != MouseState.Unit) {
 			ResetBuilding (null);
 			mouseState = MouseState.Idle;
 		}
@@ -140,19 +151,25 @@ public class MouseController : MonoBehaviour {
 		// We don't use currFramePosition because we may have moved the camera.
 		lastFramePosition = Camera.main.ScreenToWorldPoint( Input.mousePosition );
 		lastFramePosition.z = 0;
-	}
-	private void DecideWhatUIToShow(RaycastHit2D hit){
-		if (hit) {
-            //			Debug.Log (hit.transform.name); 
-            if (hit.transform.GetComponent<UnitHoldingScript> () != null) {
+    }
+    private void DecideWhatUIToShow(RaycastHit2D hit){
+        if (EventSystem.current.IsPointerOverGameObject()) {
+            return;
+        }
+        if (hit) {
+            //Debug.Log (hit.transform.name); 
+            ITargetableHoldingScript targetableHoldingScript = hit.transform.GetComponent<ITargetableHoldingScript>();
+            if (targetableHoldingScript != null && targetableHoldingScript.IsUnit) {
 				mouseState = MouseState.Unit;
-				SelectedUnit=hit.transform.GetComponent<UnitHoldingScript> ().unit;
+                SelectedUnit = (Unit)targetableHoldingScript.Holding;
                 SelectedUnit.RegisterOnDestroyCallback(OnUnitDestroy);
                 UIController.OpenUnitUI (SelectedUnit);
-			} else {
-				if (buildFromUnit == false)
-					ResetBuilding (null);
-			}
+			} else
+            //WHAT?
+   //         else {
+			//	if (MouseUnitState.Build != mouseUnitState)
+			//		ResetBuilding (null);
+			//}
 			if (SelectedUnit == null) {
                 Tile t = GetTileUnderneathMouse ();
 				if (t.Structure != null) {
@@ -161,18 +178,7 @@ public class MouseController : MonoBehaviour {
 					Debug.Log ("tile " + t.ToString ()); 
 				}
 			}
-            if( SelectedUnit != null && hit.transform.GetComponent<CrateHoldingScript>()!=null) {
-                //TODO: Range check
-                World.Current.TryToAddCrateToUnit(SelectedUnit, hit.transform.GetComponent<CrateHoldingScript>().thisCrate);
-            }
-		} else {
-			if (EventSystem.current.IsPointerOverGameObject ()) {
-				return;
-			}
-			if (buildFromUnit == false)
-				return;
-			UIController.CloseInfoUI ();
-		}
+		} 
 	}
 	private void UpdateSingle() {
 		// If we're over a UI element, then bail out from this.
@@ -352,29 +358,70 @@ public class MouseController : MonoBehaviour {
 		if( EventSystem.current.IsPointerOverGameObject() ) {
 			return;
 		}
+        if (Input.GetMouseButtonDown(0)) {
+            switch (mouseUnitState) {
+                case MouseUnitState.None:
+                    Debug.LogWarning("MouseController is in the wrong state!");
+                    break;
+                case MouseUnitState.Normal:
+                    SelectedUnit = null;
+                    UIController.CloseInfoUI();
+                    mouseState = MouseState.Idle;
+                    mouseUnitState = MouseUnitState.None;
+                    break;
+                case MouseUnitState.Patrol:
+                    SelectedUnit.AddPatrolCommand(currFramePosition.x, currFramePosition.y);
+                    break;
+                case MouseUnitState.Build:
+                    break;
+            }
+        }
         if (Input.GetMouseButtonDown(1)) {
 			if(SelectedUnit.playerNumber!=PlayerController.currentPlayerNumber){
 				mouseState = MouseState.Idle;
 				return;
 			}
-			RaycastHit2D hit = Physics2D.Raycast(new Vector2(currFramePosition.x, currFramePosition.y), Vector2.zero, 200);
-			if(hit.transform!=null && hit.transform.gameObject.GetComponent<UnitHoldingScript >()!=null){
-				SelectedUnit.GiveAttackCommand (hit.transform.gameObject.GetComponent<UnitHoldingScript >().unit,true);
-
-			}
-			if (hit.transform != null && hit.transform.gameObject.GetComponent<UnitHoldingScript > () == null) {
-				Tile t = GetTileUnderneathMouse ();
-				if(t.Structure!=null&&t.Structure is MarketBuilding){
-                    throw new NotImplementedException();
-					//SelectedUnit.GiveAttackCommand (t.Structure,true);
-				}
-			}
-			if(patrolCommandToAdd){
-				SelectedUnit.AddPatrolCommand (currFramePosition.x, currFramePosition.y);
-				patrolCommandToAdd = false;
-			} else {
-				SelectedUnit.AddMovementCommand(currFramePosition.x, currFramePosition.y);
-			}
+            RaycastHit2D hit = Physics2D.Raycast(new Vector2(currFramePosition.x, currFramePosition.y), Vector2.zero, 200);
+            if(hit.transform == null) {
+                switch (mouseUnitState) {
+                    case MouseUnitState.None:
+                        Debug.LogWarning("MouseController is in the wrong state!");
+                        break;
+                    case MouseUnitState.Normal:
+                        SelectedUnit.GiveMovementCommand(currFramePosition.x, currFramePosition.y, AdditiveCommands);
+                        break;
+                    case MouseUnitState.Patrol:
+                        mouseUnitState = MouseUnitState.Normal;
+                        break;
+                    case MouseUnitState.Build:
+                        ResetBuilding(null);
+                        break;
+                }
+            }
+            else {
+                ITargetableHoldingScript targetableHoldingScript = hit.transform.GetComponent<ITargetableHoldingScript>();
+                if (targetableHoldingScript != null) {
+                    SelectedUnit.GiveAttackCommand(hit.transform.gameObject.GetComponent<ITargetableHoldingScript>().Holding, AdditiveCommands);
+                }
+                else
+                if (hit.transform.GetComponent<CrateHoldingScript>() != null) {
+                    SelectedUnit.TryToAddCrate(hit.transform.GetComponent<CrateHoldingScript>().thisCrate);
+                } 
+                else
+                if (targetableHoldingScript == null) {
+                    Tile t = GetTileUnderneathMouse();
+                    if (t.Structure != null) {
+                        if (t.Structure is ICapturable) {
+                            SelectedUnit.GiveCaptureCommand((ICapturable)t.Structure, AdditiveCommands);
+                        }
+                        else
+                        if (t.Structure is TargetStructure) {
+                            SelectedUnit.GiveAttackCommand((TargetStructure)t.Structure, AdditiveCommands);
+                        }
+                        return;
+                    }
+                }
+            }
         }
     }
 
@@ -499,32 +546,33 @@ public class MouseController : MonoBehaviour {
       
     }
 	void Build(List<Tile> t,bool single = false){
-		Unit temp = null;
-		if(buildFromUnit){
-			temp = SelectedUnit;
-		}
-		BuildController.BuildOnTile (t,single,PlayerController.currentPlayerNumber,false,temp);
-	}
+		if(mouseState == MouseState.Unit && mouseUnitState == MouseUnitState.Build){
+			BuildController.BuildOnTile(t, single, PlayerController.currentPlayerNumber, false, SelectedUnit);
+        }
+        else {
+            BuildController.BuildOnTile(t, single, PlayerController.currentPlayerNumber, false);
+        }
+    }
 	public void BuildFromUnit(){
-		buildFromUnit = true;
+        mouseUnitState = MouseUnitState.Build;
 		BuildController.SettleFromUnit (SelectedUnit);
 	}
 	public void SetToPatrolMode(){
-		patrolCommandToAdd = true;
-	}
-	public void ResetBuilding(Structure structure,bool loading = false){
+        mouseUnitState = MouseUnitState.Patrol;
+
+    }
+    public void ResetBuilding(Structure structure,bool loading = false){
 		if(loading){
 			return;// there is no need to call any following
 		}
 		TileSpriteController.Instance.RemoveDecider (TileCityDecider);
 		GameObject.Destroy (previewGO);
-
 		previewGO = null;
 		structure = null;
 		HighlightTiles = null;
-		if(buildFromUnit){
+		if(mouseUnitState == MouseUnitState.Build) {
 			SelectedUnit = null;
-			buildFromUnit = false;
+            mouseUnitState = MouseUnitState.Normal;
 		}
 	}
     void OnDestroy() {

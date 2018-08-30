@@ -71,7 +71,7 @@ public class SoundController : MonoBehaviour {
 		if(WorldController.Instance.IsPaused){
 			return;
 		}
-		ambientSource.volume = Mathf.Clamp  ((CameraController.maxZoomLevel-cameraController.zoomLevel) / CameraController.maxZoomLevel,0,1f);
+		ambientSource.volume = Mathf.Clamp  ((CameraController.MaxZoomLevel-cameraController.zoomLevel) / CameraController.MaxZoomLevel,0,1f);
 		windAmbientSource.volume = Mathf.Clamp (1 - ambientSource.volume-0.7f,0.03f,0.15f);
 		UpdateAmbient ();
 		UpdateSoundEffects ();

@@ -24,13 +24,15 @@ public class OceanPathfinding : Pathfinding {
         SetDestination(end.X, end.Y);
     }
 	public override void SetDestination(float x , float y){
+        if (x == dest_X || dest_Y == y)
+            return;
         pathDest = Path_dest.exact;
 		dest_X = x;
 		dest_Y = y;
 		this.start = World.Current.GetTileAt(X, Y);
 		this.DestTile = World.Current.GetTileAt(x, y);
 		tileGrid = World.Current.TilesGrid;
-        IsAtDest = false;
+        IsAtDestination = false;
         Thread calcPath = new Thread (CalculatePath);
 		calcPath.Start ();
 	}
@@ -53,7 +55,7 @@ public class OceanPathfinding : Pathfinding {
             NextTile = worldPath.Dequeue();
         }
         StopWatch.Stop();
-        Debug.Log("CalculatePath Steps:" + worldPath.Count + " - "+ StopWatch.ElapsedMilliseconds + "ms (" + StopWatch.Elapsed.TotalSeconds + "s)! ");
+        //Debug.Log("CalculatePath Steps:" + worldPath.Count + " - "+ StopWatch.ElapsedMilliseconds + "ms (" + StopWatch.Elapsed.TotalSeconds + "s)! ");
 
     }
 }

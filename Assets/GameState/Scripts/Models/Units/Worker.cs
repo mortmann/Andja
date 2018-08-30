@@ -150,7 +150,7 @@ public class Worker {
 
         cbWorkerChanged?.Invoke(this);
 
-        if (path.IsAtDest==false) {
+        if (path.IsAtDestination==false) {
 			return;
 		}
 		if (goingToWork) {

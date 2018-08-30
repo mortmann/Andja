@@ -5,13 +5,13 @@ using UnityEngine.EventSystems;
 public class TradeRoutePanel : MonoBehaviour {
 	public Text text;
 	public City city;
-	Ship unit;
+	Ship ship;
 	public GameObject fromShip;
 	public GameObject toShip;
 	public GameObject itemPrefab;
 	int _pressedItem;
 
-	int pressedItem{
+	int PressedItem{
 		get{return _pressedItem;}
 		set{
 			_pressedItem = value;
@@ -64,22 +64,22 @@ public class TradeRoutePanel : MonoBehaviour {
 	}
 
 	public void OnAmountSliderMoved(float f){
-		if(intToGameObject.ContainsKey (pressedItem)==false){
+		if(intToGameObject.ContainsKey (PressedItem)==false){
 			return;
 		}
-		intToGameObject [this.pressedItem].ChangeItemCount (f);
+		intToGameObject [this.PressedItem].ChangeItemCount (f);
 	}
 
 	public void Show(Ship unit){
 		amountSlider.maxValue = unit.inventory.MaxStackSize;
-		this.unit = unit;
+		this.ship = unit;
 		ResetItemIcons ();
 	}
 	private void AddItemPrefabTo(Transform t){
 		GameObject g = GameObject.Instantiate (itemPrefab);
 		g.transform.SetParent (t);
-		g.GetComponentInChildren<Slider> ().maxValue = unit.inventory.MaxStackSize;
-		g.GetComponentInChildren<Text> ().text= unit.inventory.MaxStackSize+"t";
+		g.GetComponentInChildren<Slider> ().maxValue = ship.inventory.MaxStackSize;
+		g.GetComponentInChildren<Text> ().text= ship.inventory.MaxStackSize+"t";
 		//TODO add listener stuff
 		EventTrigger trigger = g.GetComponent<EventTrigger> ();
         EventTrigger.Entry entry = new EventTrigger.Entry {
@@ -93,15 +93,15 @@ public class TradeRoutePanel : MonoBehaviour {
 
 	}
 	public void GetClickedItemCity(Item i){
-		if(pressedItem == -1){
+		if(PressedItem == -1){
 			return;
 		}
-		ItemUI g = intToGameObject [pressedItem];
-		g.SetItem (i, unit.inventory.MaxStackSize);
+		ItemUI g = intToGameObject [PressedItem];
+		g.SetItem (i, ship.inventory.MaxStackSize);
 //		pressedItem = -1;
-		intToItem.Add (pressedItem,i.Clone ()); 
-		if(intToItem.ContainsKey (pressedItem))
-			intToItem [pressedItem].count=Mathf.RoundToInt(amountSlider.value);
+		intToItem.Add (PressedItem,i.Clone ()); 
+		if(intToItem.ContainsKey (PressedItem))
+			intToItem [PressedItem].count=Mathf.RoundToInt(amountSlider.value);
 		g.ChangeItemCount (amountSlider.value);
 		//set stuff here orso what ever
 		GameObject.FindObjectOfType<UIController> ().CloseRightUI ();
@@ -115,7 +115,7 @@ public class TradeRoutePanel : MonoBehaviour {
 		if(city == null){
 			return;
 		}
-		pressedItem = i;
+		PressedItem = i;
 		GameObject.FindObjectOfType<UIController>().OpenCityInventory (city);
 	}
 	public Item[] GetToShip(){
@@ -191,7 +191,8 @@ public class TradeRoutePanel : MonoBehaviour {
 	}
 	public void OnTRSAVEButtonPressed(){
 		tradeRoute.SetCityTrade (city, GetToShip (), GetFromShip ());
-		unit.tradeRoute = new TradeRoute(tradeRoute);
+		ship.tradeRoute = new TradeRoute(tradeRoute);
+        ship.CurrentMainMode = UnitMainModes.TradeRoute;
 	}
 	public void ResetItemIcons(){
 		intToGameObject = new Dictionary<int, ItemUI> ();
@@ -201,7 +202,7 @@ public class TradeRoutePanel : MonoBehaviour {
 		foreach(Transform t in toShip.transform){
 			GameObject.Destroy (t.gameObject);
 		}
-		for (int i = 0; i < unit.inventory.NumberOfSpaces; i++) {
+		for (int i = 0; i < ship.inventory.NumberOfSpaces; i++) {
 			//this order is important
 			//DO NOT CHANGE THIS 
 			//WITHOUT CHANGING THE RETURNING VALUES FOR
@@ -210,7 +211,7 @@ public class TradeRoutePanel : MonoBehaviour {
 			AddItemPrefabTo (fromShip.transform); //uneven 1,3,5 ...
 		}
 	}
-	public void addUnit(Unit u){
+	public void AddUnit(Unit u){
 		if(u is Ship==false){
 			return;
 		}
@@ -248,14 +249,17 @@ public class TradeRoutePanel : MonoBehaviour {
 			intToGameObject [place].ChangeItemCount (i);
 			place = +2;
 		}
-	}
+        UIController.Instance.OpenCityInventory(c);
+    }
 
-	public void DeleteSelectedItem(){
-		intToGameObject [pressedItem].SetItem (null, unit.inventory.MaxStackSize);
-		intToItem.Remove (pressedItem);
+    public void DeleteSelectedItem(){
+		intToGameObject [PressedItem].SetItem (null, ship.inventory.MaxStackSize);
+		intToItem.Remove (PressedItem);
 	}
 
 	void OnDisable(){
+        if (ships == null)
+            return;
 		foreach (Ship item in ships) {
 			item.UnregisterOnChangedCallback (OnShipChanged);
 			item.UnregisterOnChangedCallback (OnShipDestroy);

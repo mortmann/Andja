@@ -8,13 +8,13 @@ public class SeriaziableVector3 {
 	[JsonPropertyAttribute] float Y;
 	[JsonPropertyAttribute] float Z;
 
-	public SeriaziableVector3(Vector3 vec){
+    [JsonIgnore] public Vector3 Vec {
+        get { return new Vector3(X, Y, Z); }
+        set { X = value.x; Y = value.y; Z = value.z; }
+    }
+    public SeriaziableVector3(Vector3 vec){
 		X = vec.x;
 		Y = vec.y;
 		Z = vec.z;
 	}
-	public Vector3 GetVector3(){
-		return new Vector3 (X, Y, Z);
-	}
-
 }

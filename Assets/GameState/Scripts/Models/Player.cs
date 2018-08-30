@@ -115,14 +115,19 @@ public class Player : IGEventable {
 			NeedUnlockCheck (i, count);
 		}
 		RegisterMaxPopulationCountChange (NeedUnlockCheck);
-
+        CalculateBalance();
 	}
-	public void Update () {
+
+    private void CalculateBalance() {
         LastChange = Change;
         for (int i = 0; i < myCities.Count; i++) {
             LastChange += myCities[i].Balance;
-		}
-		Balance += LastChange;
+        }
+    }
+
+    public void UpdateBalance (float partialPayAmount) {
+        CalculateBalance();
+        Balance += Mathf.RoundToInt(LastChange / partialPayAmount);
 
 		if(Balance < -1000000){
 			// game over !

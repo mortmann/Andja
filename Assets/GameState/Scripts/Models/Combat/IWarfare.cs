@@ -8,7 +8,7 @@ public interface IWarfare : ITargetable {
     float CurrentDamage { get; }
     float MaximumDamage { get; }
     DamageType MyDamageType { get; }
-    bool GiveAttackCommand(IWarfare warfare, bool overrideCurrent = false);
-    void StopAttack();
+    bool GiveAttackCommand(ITargetable warfare, bool overrideCurrent = false);
+    void GoIdle();
     float GetCurrentDamage(ArmorType armorType);
 }

@@ -20,7 +20,8 @@ public class ConsoleUI : MonoBehaviour {
 
 	void OnEnable(){
 		inputField.Select ();
-	}
+        inputField.ActivateInputField();
+    }
 	// Update is called once per frame
 	void Update () {
 		
@@ -65,7 +66,7 @@ public class ConsoleUI : MonoBehaviour {
 			int num = 0;
 			happend = int.TryParse (parameters [1], out num);
 			bool turn = num == 1;
-			CameraController.Instance.devCameraZoom = turn;
+			CameraController.devCameraZoom = turn;
 			break;
         case "itsrainingbuildings":
             //easteregg!
@@ -107,7 +108,9 @@ public class ConsoleUI : MonoBehaviour {
 			WriteToConsole (command + "! Command execution failed!");
 		}
 		inputField.text="";
-	}
+        inputField.Select();
+        inputField.ActivateInputField();
+    }
 
     private bool HandleSpawnCommands(string[] parameters) {
         if (parameters.Length < 1) {

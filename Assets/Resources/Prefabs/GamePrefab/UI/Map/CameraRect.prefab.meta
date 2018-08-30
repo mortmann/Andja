@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 41fc2d7bd7d511a4cb5d18e547d21546
-timeCreated: 1529545330
+guid: 0d631d0eeecbf544fbf5389f33be0e8b
+timeCreated: 1535496860
 licenseType: Free
-ComputeShaderImporter:
+NativeFormatImporter:
   externalObjects: {}
-  currentAPIMask: 4
+  mainObjectFileID: 100100000
   userData: 
   assetBundleName: 
   assetBundleVariant: 

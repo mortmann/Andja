@@ -9,7 +9,9 @@ public enum InputName { BuildMenu, TradeMenu, Offworld, TogglePause, Rotate, Con
 
 public class InputHandler {
 
-	static Dictionary<InputName, KeyBind> nameToKeyBinds;
+    public static bool ShiftKey => Input.GetKey(KeyCode.RightShift) || Input.GetKey(KeyCode.LeftShift);
+
+    static Dictionary<InputName, KeyBind> nameToKeyBinds;
 	static string fileName="keybinds.ini";
 	//TODO add a between layer for mouse buttons -> so it can be switched
 
@@ -53,22 +55,36 @@ public class InputHandler {
 
     }
     public static void ChangePrimaryNameToKey(InputName name, KeyCode key){
+        RemoveKeyCodeFromBinds(key);
 		if(nameToKeyBinds.ContainsKey (name)){
 			nameToKeyBinds [name].SetPrimary (key);
 			return;
 		}
 		nameToKeyBinds.Add (name,new KeyBind (key, KeyBind.notSetCode));
-
 	}
+    
 	public static void ChangeSecondaryNameToKey(InputName name, KeyCode key){
-		if(nameToKeyBinds.ContainsKey (name)){
+        RemoveKeyCodeFromBinds(key);
+        if (nameToKeyBinds.ContainsKey (name)){
 			nameToKeyBinds [name].SetSecondary (key);
 			return;
 		}
 		nameToKeyBinds.Add (name,new KeyBind (KeyBind.notSetCode , key));
-
 	}
-	public static bool GetButtonDown(InputName name){
+    public static void RemoveKeyCodeFromBinds(KeyCode key) {
+        KeyBind kb = GetKeyBindUses(key);
+        if (kb == null)
+            return;
+        kb.RemoveKey(key);
+    }
+    public static KeyBind GetKeyBindUses(KeyCode key) {
+        return new List<KeyBind>(nameToKeyBinds.Values).Find(x => x.HasKeyCode(key));
+    }
+    public static bool KeyAlreadyAssigned(KeyCode key) {
+        return GetKeyBindUses(key) != null;
+    }
+
+    public static bool GetButtonDown(InputName name){
 		if (nameToKeyBinds.ContainsKey (name) == false) {	
 			Debug.LogWarning ("No KeyBind for Name " + name);
 			return false;
@@ -173,6 +189,16 @@ public class InputHandler {
 				|| Input.GetKey (Secondary) && Secondary != notSetCode ;
 			
 		}
-	}
+        public bool HasKeyCode(KeyCode key) {
+            return Primary == key || Secondary == key;
+        }
+
+        internal void RemoveKey(KeyCode key) {
+            if (Primary == key)
+                Primary = notSetCode;
+            if (Secondary == key)
+                Secondary = notSetCode;
+        }
+    }
 
 }

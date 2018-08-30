@@ -8,7 +8,8 @@ public class UnitSpriteController : MonoBehaviour {
     public Dictionary<Unit, GameObject> unitGameObjectMap;
 	public GameObject unitPathPrefab;
 	public GameObject unitCirclePrefab;
-    public Dictionary<Crate, GameObject> itemGameObjectMap;
+    public Dictionary<Crate, GameObject> crateGameObjectMap;
+    public Dictionary<Projectile, GameObject> projectileGameObjectMap;
 
     private Unit circleUnit;
 	private const string circleGOname = "buildrange_circle_gameobject";
@@ -19,7 +20,8 @@ public class UnitSpriteController : MonoBehaviour {
     // Use this for initialization
     void Start () {
         unitGameObjectMap = new Dictionary<Unit, GameObject>();
-        itemGameObjectMap = new Dictionary<Crate, GameObject>();
+        crateGameObjectMap = new Dictionary<Crate, GameObject>();
+        projectileGameObjectMap = new Dictionary<Projectile, GameObject>();
         LoadSprites();
         World.RegisterUnitCreated(OnUnitCreated);
         World.RegisterCrateSpawned(OnCrateSpawned);
@@ -37,7 +39,6 @@ public class UnitSpriteController : MonoBehaviour {
 
 
 	void Update(){
-		
 	}
 	public void OnUnitCreated(Unit u) {
         // Create a visual GameObject linked to this data.
@@ -45,27 +46,22 @@ public class UnitSpriteController : MonoBehaviour {
 
 
         // This creates a new GameObject and adds it to our scene.
-		GameObject char_go = new GameObject();
+		GameObject unit_go = new GameObject();
 		GameObject line_go = Instantiate (unitPathPrefab);
-		line_go.transform.SetParent (char_go.transform);
+		line_go.transform.SetParent (unit_go.transform);
         // Add our tile/GO pair to the dictionary.
-        unitGameObjectMap.Add(u, char_go);
-		SpriteRenderer sr = char_go.AddComponent<SpriteRenderer>();
+        unitGameObjectMap.Add(u, unit_go);
+		SpriteRenderer sr = unit_go.AddComponent<SpriteRenderer>();
 		sr.sortingLayerName = "Units";
+        sr.sprite = unitSprites[u.Data.spriteBaseName];
 
-		if(u.IsShip){
-			char_go.name = "Ship";
-			sr.sprite = unitSprites["ship"];
-
-		} else {
-			sr.sprite = unitSprites["unit"];
-			char_go.name = u.Name;
-		}
-        char_go.transform.SetParent(this.transform, true);
-		char_go.AddComponent<UnitHoldingScript> ().unit=u;
-		Rigidbody2D r2d = char_go.AddComponent<Rigidbody2D> (); 
+        unit_go.transform.SetParent(this.transform, true);
+		unit_go.AddComponent<ITargetableHoldingScript> ().Holding=u;
+		Rigidbody2D r2d = unit_go.AddComponent<Rigidbody2D> (); 
 		r2d.gravityScale = 0;       
-		BoxCollider2D col = char_go.AddComponent<BoxCollider2D>();col.size = new Vector2(sr.sprite.textureRect.size.x / sr.sprite.pixelsPerUnit, sr.sprite.textureRect.size.y / sr.sprite.pixelsPerUnit);
+		BoxCollider2D col = unit_go.AddComponent<BoxCollider2D>();
+        col.size = new Vector2(sr.sprite.textureRect.size.x / sr.sprite.pixelsPerUnit, 
+                                sr.sprite.textureRect.size.y / sr.sprite.pixelsPerUnit);
 		
 		//u.width = sr.sprite.textureRect.size.x / sr.sprite.pixelsPerUnit;
 		//u.height = sr.sprite.textureRect.size.y / sr.sprite.pixelsPerUnit;
@@ -73,7 +69,30 @@ public class UnitSpriteController : MonoBehaviour {
         // the object's into changes.
         u.RegisterOnChangedCallback(OnUnitChanged);
 		u.RegisterOnDestroyCallback (OnUnitDestroy);
+        u.RegisterOnbCreateProjectileCallback(OnProjectileCreated);
+        OnUnitChanged(u);
     }
+
+    private void OnProjectileCreated(Projectile projectile) {
+        GameObject pro_go = new GameObject {
+            name = "Projectile"
+        };
+        SpriteRenderer sr = pro_go.AddComponent<SpriteRenderer>();
+        sr.sortingLayerName = "Units";
+        sr.sprite = unitSprites["cannonball_1"];
+        projectile.RegisterOnDestroyCallback(OnProjectileDestroy);
+        BoxCollider2D col = pro_go.AddComponent<BoxCollider2D>();
+        col.isTrigger = true;
+        col.size = new Vector2(sr.sprite.textureRect.size.x / sr.sprite.pixelsPerUnit,
+                                sr.sprite.textureRect.size.y / sr.sprite.pixelsPerUnit);
+        pro_go.AddComponent<ProjectileHoldingScript>().myProjectile = projectile;
+    }
+
+    private void OnProjectileDestroy(Projectile pro) {
+        projectileGameObjectMap.Remove(pro);
+        pro.UnregisterOnDestroyCallback(OnProjectileDestroy);
+    }
+
     void OnUnitChanged(Unit c) {
         if (unitGameObjectMap.ContainsKey(c) == false) {
             Debug.LogError("OnUnitChanged -- trying to change visuals for character not in our map.");
@@ -101,7 +120,6 @@ public class UnitSpriteController : MonoBehaviour {
 			Debug.LogError("OnCharacterChanged -- trying to change visuals for character not in our map.");
 			return;
 		}
-
 		GameObject char_go = unitGameObjectMap[c];
 		Destroy (char_go);
 		unitGameObjectMap.Remove (c);
@@ -121,11 +139,11 @@ public class UnitSpriteController : MonoBehaviour {
         go.AddComponent<Rigidbody2D>().gravityScale = 0; //TODO: think about if this is good so!
         col.size = new Vector2(sr.sprite.textureRect.size.x / sr.sprite.pixelsPerUnit, sr.sprite.textureRect.size.y / sr.sprite.pixelsPerUnit);
         go.transform.position = c.position;
-        itemGameObjectMap.Add(c, go);
+        crateGameObjectMap.Add(c, go);
     }
     void OnCrateDespawned(Crate c) {
-        Destroy(itemGameObjectMap[c]);
-        itemGameObjectMap.Remove(c);
+        Destroy(crateGameObjectMap[c]);
+        crateGameObjectMap.Remove(c);
     }
     void LoadSprites() {
         unitSprites = new Dictionary<string, Sprite>();

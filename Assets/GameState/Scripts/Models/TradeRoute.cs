@@ -6,7 +6,7 @@ using Newtonsoft.Json;
 
 [JsonObject(MemberSerialization.OptIn)]
 public class TradeRoute {
-	int numberOfStops { get {return trades.Count;}}
+	int NumberOfStops { get {return trades.Count;}}
 	[JsonPropertyAttribute] int currentDestination=0;
 	[JsonPropertyAttribute] List<Trade> trades;
 
@@ -33,9 +33,10 @@ public class TradeRoute {
 		if(t!=null){
 			t.getting = getting;
 			t.giving = giving;
-		} else {
-			Debug.LogError ("Wat de f SetCityTrade"); 
 		}
+  //      else {
+		//	Debug.LogError ("Wat de f SetCityTrade"); 
+		//}
 	}
 	public Trade GetCurrentCityTrade(){
 		return trades [currentDestination];
@@ -52,14 +53,14 @@ public class TradeRoute {
 		if(trades.IndexOf(t)==currentDestination){
 			//if its behind the otherone so decrease the destination pointer
 			currentDestination--;
-			currentDestination = Mathf.Clamp (currentDestination,0,numberOfStops-1);
+			currentDestination = Mathf.Clamp (currentDestination,0,NumberOfStops-1);
 		}
 		trades.Remove (t);
 
 	}
 
 	public int GetLastNumber(){
-		return numberOfStops;
+		return NumberOfStops;
 	}
 	public int GetNumberFor(Warehouse w){
 		for (int i = 0; i < trades.Count; i++) {
@@ -86,8 +87,8 @@ public class TradeRoute {
 			return null;
 		}
 
-		for (int i = 0; i < numberOfStops; i++) {
-			increaseDestination ();
+		for (int i = 0; i < NumberOfStops; i++) {
+			IncreaseDestination ();
 			if(trades [currentDestination].city.myWarehouse!=null){
 				isStarted = true;
 				return trades [currentDestination].city.myWarehouse.GetTradeTile ();
@@ -95,7 +96,7 @@ public class TradeRoute {
 		}
 		return null;
 	}
-	public void increaseDestination(){
+	public void IncreaseDestination(){
 		if(isStarted)
 			currentDestination = (currentDestination + 1) % trades.Count;
 	}
@@ -111,13 +112,10 @@ public class TradeRoute {
 		return trades [currentDestination];
 	}
 	public Trade GetTradeFor(City c){
-		if(Contains (c)==false){
-			return null;
-		}
 		return  trades.Find (x => x.city == c);
 	}
 
-	public void doCurrentTrade(Unit u){
+	public void DoCurrentTrade(Unit u){
 		Trade t = GetCurrentCityTrade ();
 		City c = t.city;
 		Inventory inv=u.inventory;
@@ -158,18 +156,4 @@ public class TradeRoute {
 		public Trade(){
 		}
 	}
-
-//	public class TradeSerializer : JsonSerializer{
-//		override 
-////		internal override void SerializeInternal (JsonWriter jsonWriter, object value, System.Type objectType){
-////			var trade = value as Trade;
-////			jsonWriter.WriteStartObject ();
-////			Serialize (jsonWriter,trade.city.myTiles.GetEnumerator().Current);
-////			Serialize (jsonWriter,trade.getting);
-////			Serialize (jsonWriter,trade.giving);
-////			jsonWriter.WriteEndObject ();
-////		}
-//	}
-
-
 }

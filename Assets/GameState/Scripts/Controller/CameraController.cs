@@ -4,8 +4,8 @@ using UnityEngine.EventSystems;
 using System;
 
 public class CameraController : MonoBehaviour {
-	public static int maxZoomLevel = 25;
-	public bool devCameraZoom = false;
+	public static int MaxZoomLevel => devCameraZoom ? 4 * MaxZoomLevel : 25;
+	public static bool devCameraZoom = false;
 	public static int minZoomLevel = 3;
 	Vector3 lastFramePosition;
 	Vector3 currFramePosition;
@@ -59,7 +59,7 @@ public class CameraController : MonoBehaviour {
 		currFramePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 		currFramePosition.z = 0;
 		UpdateZoom();
-		zoomLevel= Mathf.Clamp(Camera.main.orthographicSize - 2,minZoomLevel,maxZoomLevel);
+		zoomLevel= Mathf.Clamp(Camera.main.orthographicSize - 2,minZoomLevel,MaxZoomLevel);
 		cameraMove += UpdateKeyboardCameraMovement ();
 		cameraMove += UpdateMouseCameraMovement ();
 
@@ -171,10 +171,7 @@ public class CameraController : MonoBehaviour {
 			return;
 		}
 		Camera.main.orthographicSize -= Camera.main.orthographicSize * Input.GetAxis("Mouse ScrollWheel");
-		if(devCameraZoom){
-			
-		}
-		Camera.main.orthographicSize = Mathf.Clamp(Camera.main.orthographicSize, minZoomLevel, devCameraZoom? 4*maxZoomLevel : maxZoomLevel);
+		Camera.main.orthographicSize = Mathf.Clamp(Camera.main.orthographicSize, minZoomLevel, MaxZoomLevel);
 
 	}
 	public Vector3 UpdateKeyboardCameraMovement(){
@@ -246,7 +243,7 @@ public class CameraController : MonoBehaviour {
         return cs;
 	}
 	public void LoadSaveCameraData(){
-		Camera.main.transform.position = save.pos.GetVector3();
+		Camera.main.transform.position = save.pos.Vec;
 		Camera.main.orthographicSize = save.orthographicSize;
 	}
 }

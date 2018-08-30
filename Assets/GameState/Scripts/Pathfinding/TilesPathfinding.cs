@@ -45,7 +45,7 @@ public class TilesPathfinding : Pathfinding {
                 DestTile
             };
         }
-        IsAtDest = false;
+        IsAtDestination = false;
         Path_AStar pa = new Path_AStar (startTiles[0].MyIsland,startTiles,endTiles);
 		worldPath = pa.path;
         CreateReversePath();

@@ -8,14 +8,21 @@ public class KeyInputSingle : MonoBehaviour {
 	public Button primaryButton;
 	public Button secondaryButton;
 	Action<InputName, bool> OnClickButton;
-    InputName buttonName;
+    InputHandler.KeyBind item;
+    InputName inputName;
+    Text primaryText;
+    Text secondaryText;
 
-    public void SetUp(InputName buttonName, string primary, string secondary, Action<InputName, bool> OnClickButton){
-        this.buttonName = buttonName;
-        keyName.text = buttonName.ToString();
-		primaryButton.GetComponentInChildren<Text> ().text = primary;
-		secondaryButton.GetComponentInChildren<Text> ().text = secondary;
-		primaryButton.onClick.AddListener (delegate {
+    public void SetUp(InputName inputName, InputHandler.KeyBind item, Action<InputName, bool> OnClickButton){
+        this.inputName = inputName;
+        keyName.text = inputName.ToString();
+        primaryText = primaryButton.GetComponentInChildren<Text>();
+        secondaryText = secondaryButton.GetComponentInChildren<Text>();
+        primaryText.text = item.GetPrimaryString();
+        secondaryText.text = item.GetSecondaryString();
+        this.item = item;
+
+        primaryButton.onClick.AddListener (delegate {
 			OnClick (true);
 		});
 		secondaryButton.onClick.AddListener (delegate {
@@ -23,9 +30,12 @@ public class KeyInputSingle : MonoBehaviour {
 		});
 		this.OnClickButton = OnClickButton;
 	}
-	
-	public void OnClick(bool primary){
-		OnClickButton (buttonName, primary);
+    private void Update() {
+        primaryText.text = item.GetPrimaryString();
+        secondaryText.text = item.GetSecondaryString();
+    }
+    public void OnClick(bool primary){
+		OnClickButton (inputName, primary);
 	}
 
 	public void ChangeButtonText(bool primary, string text){

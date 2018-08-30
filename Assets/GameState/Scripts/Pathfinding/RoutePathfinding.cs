@@ -56,7 +56,7 @@ public class RoutePathfinding : Pathfinding {
         }
 		Queue<Tile> currentQueue=null;
 		List<Route> checkedRoutes = new List<Route> ();
-		IsAtDest = false;
+		IsAtDestination = false;
 		foreach(Tile st in startTiles){
 			if(st.Structure==null || st.Structure.GetType ()!=typeof(Road)){
 				continue;

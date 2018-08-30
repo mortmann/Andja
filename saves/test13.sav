@@ -3683,7 +3683,7 @@
                         "$type": "TilesPathfinding, Assembly-CSharp",
                         "dest_X": 372.0,
                         "dest_Y": 72.0,
-                        "IsAtDest": false,
+                        "_IsAtDest": false,
                         "_destTile": {
                           "$ref": "415"
                         },
@@ -3891,7 +3891,7 @@
             "$type": "IslandPathfinding, Assembly-CSharp",
             "dest_X": 294.878265,
             "dest_Y": 291.669952,
-            "IsAtDest": true,
+            "_IsAtDest": true,
             "_destTile": {
               "$id": "464",
               "$type": "LandTile, Assembly-CSharp",
@@ -3936,7 +3936,7 @@
             "$type": "OceanPathfinding, Assembly-CSharp",
             "dest_X": 0.0,
             "dest_Y": 0.0,
-            "IsAtDest": true,
+            "_IsAtDest": true,
             "rotation": 0.0,
             "_y": 267.0,
             "_x": 287.0

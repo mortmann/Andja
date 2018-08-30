@@ -62,8 +62,7 @@ public class PrototypController : MonoBehaviour {
 		Instance = this;
 
 		LoadFromXML ();
-
-	}
+    }
 	
 	// Update is called once per frame
 	void Update () {
@@ -98,8 +97,13 @@ public class PrototypController : MonoBehaviour {
 			return;
 		}
 
-		//fertilities
-		allFertilities = new Dictionary<Climate,List<Fertility>> ();
+        //SO THAT IT DOESNT USE FUCKIN COMMA AS THE DECIMAL SEPERATOR?!? WHY NOT POINT -Zoidberg
+        //Why cant it be both -Fry
+        //Good News everyone! Setting it to GB fixes that stupid thing! -Professor
+        System.Threading.Thread.CurrentThread.CurrentCulture = System.Globalization.CultureInfo.CreateSpecificCulture("en-GB");
+
+        //fertilities
+        allFertilities = new Dictionary<Climate,List<Fertility>> ();
 		idToFertilities = new Dictionary<int, Fertility> ();
 		fertilityPrototypeDatas = new Dictionary<int, FertilityPrototypeData> ();
 		ReadFertilitiesFromXML ();
@@ -122,27 +126,8 @@ public class PrototypController : MonoBehaviour {
         structurePrototypes = new Dictionary<int, Structure> ();
 		structurePrototypeDatas = new Dictionary<int, StructurePrototypeData> ();
 		ReadStructuresFromXML();
-//		structurePrototypes.Add (5, new MineStructure (5));
-//		structurePrototypes.Add (30, new NeedsBuilding (30));
-//		structurePrototypes.Add (1, new MarketBuilding (1));
-//		structurePrototypes.Add (2, new Warehouse (2));
-//		structurePrototypes.Add (3, new Growable (3));
-//		,"tree",allItems[1]));
-//		Item item =  allItems[1] ;
-//		structurePrototypes.Add (4, new Farm(
-//			4,"lumberjack",
-//			3,item,structurePrototypes[3],
-//			2,2,500,50
-//		));
-//		structurePrototypes.Add (6,new HomeBuilding (6));
-//		Item[] temp1 = new Item[1];
-//		temp1 [0] = allItems [47].Clone ();
-//		Item[] temp2 = new Item[1];
-//		temp2 [0] = allItems [48].Clone();
-//		int[] ints = { 1 };
-//		structurePrototypes.Add(7,new ProductionBuilding(7,"Hanfweber",temp1,ints,1,temp2,3,2,1000,null,100));
-		//needs
 
+		//needs
 		allNeeds = new List<Need>();
 		needPrototypeDatas = new Dictionary<int, NeedPrototypeData> ();
 		ReadNeedsFromXML ();
@@ -153,6 +138,9 @@ public class PrototypController : MonoBehaviour {
 		Debug.Log ("Read in needs: " + allNeeds.Count);
         Debug.Log("Read in damagetypes: " + damageTypeDatas.Count);
         Debug.Log("Read in armortypes: " + armorTypeDatas.Count);
+
+        //Set it to default so it doesnt interfer with user interface informations
+        System.Threading.Thread.CurrentThread.CurrentCulture = System.Globalization.CultureInfo.InstalledUICulture;
     }
 
     private void ReadCombatFromXML() {
@@ -390,7 +378,7 @@ public class PrototypController : MonoBehaviour {
 		foreach(XmlElement node in xmlDoc.SelectNodes("market")){
 			int ID = int.Parse(node.GetAttribute("ID"));
             MarketPrototypData mpd = new MarketPrototypData {
-                //THESE are fix and are not changed for any growable
+                //THESE are fix and are not changed for any MarketBuilding
                 hasHitbox = true,
                 tileWidth = 4,
                 tileHeight = 4,

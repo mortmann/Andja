@@ -24,7 +24,9 @@ public class IslandPathfinding : Pathfinding {
         SetDestination(end.x, end.y);
     }
 	public override void SetDestination(float x, float y) {
-		this.start = this.CurrTile;
+        if (x == dest_X || dest_Y == y)
+            return;
+        this.start = this.CurrTile;
 		this.DestTile = World.Current.GetTileAt(x,y);
 		dest_X = x;
 		dest_Y = y;

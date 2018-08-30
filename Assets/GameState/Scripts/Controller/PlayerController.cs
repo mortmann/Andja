@@ -13,8 +13,9 @@ public class PlayerController : MonoBehaviour {
 	int piratePlayerNumber = int.MaxValue; // so it isnt the same like the number of wilderness
 	public Player CurrPlayer{get {return players [currentPlayerNumber];}}
 	HashSet<War> playerWars;
-	float balanceTicks;
-	float tickTimer;
+    const float BalanceFullTime = 60f;
+    const float BalanceTicksTime = 4f;
+	float balanceTickTimer;
 	public static PlayerController Instance { get; protected set; }
 	List<Player> players;
 	EventUIManager euim;
@@ -36,8 +37,7 @@ public class PlayerController : MonoBehaviour {
 		playerWars = new HashSet<War> ();
 		AddPlayersWar (0,1);
 		AddPlayersWar (1,0);
-        balanceTicks = 5f;
-		tickTimer = balanceTicks;
+		balanceTickTimer = BalanceTicksTime;
         BuildController.Instance.RegisterCityCreated (OnCityCreated);
         BuildController.Instance.RegisterStructureCreated (OnStructureCreated);
 		euim = GameObject.FindObjectOfType<EventUIManager> ();
@@ -58,16 +58,15 @@ public class PlayerController : MonoBehaviour {
 
     // Update is called once per frame
     void Update () {
-
-		tickTimer -= Time.deltaTime;
-		if(tickTimer<=0){
+		balanceTickTimer -= Time.deltaTime;
+		if(balanceTickTimer<=0){
 			foreach(Player p in players){
 				if(p == null){
 					continue;
 				}
-				p.Update ();
+				p.UpdateBalance ( (BalanceFullTime / BalanceTicksTime) );
 			}
-			tickTimer = balanceTicks;
+			balanceTickTimer = BalanceTicksTime;
 		}
 		if(Application.isEditor){
 			//ALLOW SWITCH OF playernumber in editor
@@ -210,14 +209,13 @@ public class PlayerController : MonoBehaviour {
 
 	public PlayerControllerSave GetSavePlayerData(){
 		// Create/overwrite the save file with the xml text.
-		return new PlayerControllerSave(currentPlayerNumber, balanceTicks, tickTimer, players,playerWars);
+		return new PlayerControllerSave(currentPlayerNumber, balanceTickTimer, players,playerWars);
 	}
 	public void LoadPlayerData(){
 		currentPlayerNumber = save.currentPlayerNumber;
 		players = save.players;
 		playerWars = save.playerWars;
-		tickTimer = save.tickTimer;
-		balanceTicks = save.balanceTicks;
+		balanceTickTimer = save.tickTimer;
 	}
     void OnDestroy() {
         Instance = null;
@@ -227,14 +225,12 @@ public class PlayerController : MonoBehaviour {
 public class PlayerControllerSave {
 
 	public int currentPlayerNumber;
-	public float balanceTicks;
 	public float tickTimer;
 	public List<Player> players;
 	public HashSet<War> playerWars;
 
-	public PlayerControllerSave(int cpn,float balanceTicks,float tickTimer,List<Player> players, HashSet<War> playerWars ){
+	public PlayerControllerSave(int cpn,float tickTimer,List<Player> players, HashSet<War> playerWars ){
 		currentPlayerNumber = cpn;
-		this.balanceTicks = balanceTicks;
 		this.players = players;
 		this.tickTimer = tickTimer;
 		this.playerWars = playerWars;

@@ -62,17 +62,21 @@ public class Warehouse : MarketBuilding {
 			sortedTiles [x, y] = ti; // so we have the tile at the correct spot
 		}
 		Tile t = sortedTiles [Mathf.RoundToInt (TileWidth / 2), Mathf.RoundToInt (TileHeight / 2)];
-		//now we have the tile thats has the smallest x/y 
-		//to get the tile we now have to rotate a vector thats
-		//1 up and 1 left from the temptile
+        //now we have the tile thats has the smallest x/y 
+        //to get the tile we now have to rotate a vector thats
+        //1 up and 1 left from the temptile
 
-		Vector3 rot = new Vector3 (-TileWidth/2 - 1, 0, 0);
-		rot = Quaternion.AngleAxis (rotated, Vector3.up) * rot;
-		if (rotated == 180) //cheap fix --update this
-			rot = new Vector3 (TileWidth/2 + 1, 0, 0);
-		tradeTile = World.Current.GetTileAt (t.X+rot.x,t.Y+rot.y);
+        //Vector3 rot = new Vector3 (-_tileWidth/2 - 1, _tileHeight / 2 - 1, 0);
+        //rot = Quaternion.AngleAxis (rotated, Vector3.forward) * rot;
+        Vector2 rot = new Vector2( (float)TileWidth / 2f + 1, 0);
+        rot = Rotate(rot, rotated);
+		tradeTile = World.Current.GetTileAt (MiddlePoint.x - rot.x, MiddlePoint.y + rot.y);
+        Debug.Log(tradeTile);
+        Debug.Log(Rotate(new Vector2((float)TileWidth / 2f + 1f, 0), 90));
+        Debug.Log(Rotate(new Vector2((float)TileWidth / 2f + 1f, 0), 180));
+        Debug.Log(Rotate(new Vector2((float)TileWidth / 2f + 1f, 0), 270));
 
-		this.City.myWarehouse = this;
+        this.City.myWarehouse = this;
 
 		if (City == null) {
 			return;
@@ -97,7 +101,16 @@ public class Warehouse : MarketBuilding {
 		}
 		City.RegisterStructureAdded (OnStructureAdded);
 	}
-	public Tile GetTradeTile(){
+    public Vector2 Rotate(Vector2 v, float degrees) {
+        float sin = Mathf.Sin(degrees * Mathf.Deg2Rad);
+        float cos = Mathf.Cos(degrees * Mathf.Deg2Rad);
+        float tx = v.x;
+        float ty = v.y;
+        v.x = (cos * tx) - (sin * ty);
+        v.y = (sin * tx) + (cos * ty);
+        return v;
+    }
+    public Tile GetTradeTile(){
 		return tradeTile; //maybe this changes or not s
 	}
 	protected override void OnDestroy (){

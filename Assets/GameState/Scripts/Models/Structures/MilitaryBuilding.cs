@@ -110,10 +110,10 @@ public class MilitaryBuilding : TargetStructure, IWarfare {
 
     #region IWarfareImplementation
     public IWarfare target;
-    public bool GiveAttackCommand(IWarfare warfare, bool overrideCurrent = false) {
+    public bool GiveAttackCommand(ITargetable warfare, bool overrideCurrent = false) {
         return false;
     }
-    public void StopAttack() {
+    public void GoIdle() {
         target = null;
     }
     public float GetCurrentDamage(Combat.ArmorType armorType) {

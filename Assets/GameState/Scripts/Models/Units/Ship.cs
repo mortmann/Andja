@@ -10,11 +10,11 @@ public class ShipPrototypeData : UnitPrototypeData {
     //      OR are there sometyp like HEAVY and prototype returns the associated cannon
     public Item cannonType = null;
 }
+
 //TODO: think about how if ships could be capturable if they are low, at war and the capturing ship can do it?
 [JsonObject(MemberSerialization.OptIn)]
 public class Ship : Unit {
     [JsonPropertyAttribute] public TradeRoute tradeRoute;
-	[JsonPropertyAttribute] bool goingToOffworldMarket;
 	[JsonPropertyAttribute] public bool isOffWorld;
 	[JsonPropertyAttribute] Item[] toBuy;
 	[JsonPropertyAttribute] float offWorldTime;
@@ -62,55 +62,53 @@ public class Ship : Unit {
         this._shipPrototypData = spd;
     }
 
-    public override void Update (float deltaTime){
-		//TRADEROUTE
-		UpdateTradeRoute (deltaTime);
-		//PAROL
-		UpdateParol ();
-		//WORLDMARKET
-		UpdateWorldMarket (deltaTime);
-		//MOVE THE SHIP
-		pathfinding.Update_DoMovement (deltaTime);
-        //		pathfinding.UpdateRotationOnPoint ();
-        //		r2d.MovePosition (transform.position + pathfinding.Update_DoMovement(deltaTime));
-        //		r2d.MoveRotation (transform.rotation.z + pathfinding.UpdateRotation ());
-        cbUnitChanged?.Invoke(this);
+    public override void DoAttack(float deltaTime) {
+        if (CurrentTarget != null) {
+            if (attackTimer > 0) {
+                return;
+            }
+            attackTimer = AttackRate;
+            for (int i = 0; i < CannonItem.count; i++) {
+                cbCreateProjectile?.Invoke(new Projectile(this, CurrentTarget));
+            }
+        }
     }
-	private void UpdateTradeRoute(float deltaTime){
-		if(tradeRoute!=null&&tradeRoute.Valid){
-			if(pathfinding.IsAtDest&&tradeRoute.isStarted){
-				//do trading here
-				//take some time todo that
-				if(tradeTime<0){
-					tradeRoute.doCurrentTrade (this);
-					tradeTime = 1.5f;
-					//then get a next destination
-					AddMovementCommand (tradeRoute.getNextDestination ());	
-				} else {
-					tradeTime -= deltaTime;
-				}
-			} 
-			if(tradeRoute.isStarted==false){
-				//start the route
-				AddMovementCommand (tradeRoute.getNextDestination ());
+
+    protected override void UpdateTradeRoute(float deltaTime){
+        if (tradeRoute == null || tradeRoute.Valid == false) {
+            CurrentMainMode = UnitMainModes.Idle;
+            return;
+        }
+		if(pathfinding.IsAtDestination && tradeRoute.isStarted){
+			//do trading here
+			//take some time todo that
+			if(tradeTime<0){
+				tradeRoute.DoCurrentTrade (this);
+				tradeTime = 1.5f;
+				//then get a next destination
+				SetDestinationIfPossible (tradeRoute.getNextDestination ());	
+			} else {
+				tradeTime -= deltaTime;
 			}
+		} 
+		if(tradeRoute.isStarted==false){
+            //start the route
+            SetDestinationIfPossible(tradeRoute.getNextDestination ());
 		}
 	}
+
+    private void SetDestinationIfPossible(Tile tile) {
+        SetDestinationIfPossible(tile.X, tile.Y);
+    }
 
     internal bool HasCannonsToAddInInventory() {
         return inventory.ContainsItemWithID(CannonItem.ID);
     }
 
-    private void UpdateWorldMarket (float deltaTime){
-		if(goingToOffworldMarket==false){
-			return;
-		}
-		if(pathfinding.IsAtDest&& isOffWorld==false){
+    protected override void UpdateWorldMarket (float deltaTime){
+		if(pathfinding.IsAtDestination && isOffWorld==false){
 			isOffWorld = true;
 			CallChangedCallback ();
-		}
-		if(isOffWorld==false){
-			return;
 		}
 		if(offWorldTime>0){
 			offWorldTime -= deltaTime;
@@ -128,9 +126,9 @@ public class Ship : Unit {
 			inventory.AddItem (om.BuyItemToOffWorldMarket (item,item.count,myPlayer));
 		}
 		isOffWorld = false;
-		this.goingToOffworldMarket = false;
-		CallChangedCallback ();
-	}
+        CurrentMainMode = UnitMainModes.Idle;
+        CallChangedCallback ();
+    }
 
     internal void RemoveCannonsToInventory() {
         CannonItem.count -= inventory.AddItem(CannonItem);
@@ -153,25 +151,16 @@ public class Ship : Unit {
     }
 
     public void SendToOffworldMarket(Item[] toBuy){
-		Tile goal=null;
 		//TODO OPTIMISE THIS SO IT CHECKS THE ROUTE FOR ANY
 		//ISLANDS SO IT CAN TAKE A OTHER ROUTE
 		if(X >= Y){
-			goal = World.Current.GetTileAt (0, Y);
-		}
+            SetDestinationIfPossible(0, Y);
+        }
 		if(X<Y){
-			goal = World.Current.GetTileAt (X,0);
-		}
-		goingToOffworldMarket = true;
-		this.toBuy = toBuy;
-		OverrideCurrentMission ();
-		AddMovementCommand (goal);
-	}
-	protected override void OverrideCurrentMission (){
-		onWayToPatrolTarget = false;
-		onPatrol = false;
-		if (tradeRoute != null)
-			tradeRoute.isStarted = false;
+            SetDestinationIfPossible(X, 0);
+        }
+        this.toBuy = toBuy;
+        CurrentMainMode = UnitMainModes.OffWorldMarket;
 	}
     /// <summary>
     /// Returns true only if it can reach the exact tile but
@@ -180,13 +169,13 @@ public class Ship : Unit {
     /// <param name="x"></param>
     /// <param name="y"></param>
     /// <returns></returns>
-	public override bool AddMovementCommand (float x, float y){
+	protected override bool SetDestinationIfPossible (float x, float y){
 		Tile tile = World.Current.GetTileAt(x, y);
 		if(tile == null){
 			return false;
 		}
-		onPatrol = false;
         ((OceanPathfinding)pathfinding).SetDestination(x, y);
+        CurrentDoingMode = UnitDoModes.Move;
         return tile.Type == TileType.Ocean; 
 	}
     /// <summary>
@@ -204,5 +193,7 @@ public class Ship : Unit {
         CannonItem.count += added;
         toAdd.count -= added;
     }
-
+    public override float GetCurrentDamage(Combat.ArmorType armorType) {
+        return MyDamageType.GetDamageMultiplier(armorType) * ShipData.damagePerCannon;
+    }
 }

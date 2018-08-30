@@ -15,6 +15,7 @@ public class World : IGEventable{
 	[JsonPropertyAttribute] public List<Island> IslandList { get; protected set; }
 	[JsonPropertyAttribute] public List<Unit> Units { get; protected set; }
     [JsonPropertyAttribute] public List<Crate> Crates { get; protected set; }
+    [JsonPropertyAttribute] public List<Projectile> Projectiles { get; protected set; }
 
     #endregion
     #region RuntimeOrOther
@@ -124,7 +125,8 @@ public class World : IGEventable{
 
         if (Crates == null)
             Crates = new List<Crate>();
-
+        if (Projectiles == null)
+            Projectiles = new List<Projectile>();
     }
 
     public World(List<Tile> tileList, int Width, int Height){
@@ -158,17 +160,7 @@ public class World : IGEventable{
             Crates[pos].Update(deltaTime);
         }
     }
-
-    internal void TryToAddCrateToUnit(Unit selectedUnit, Crate thisCrate) {
-        if (selectedUnit.inventory == null)
-            return;
-        Vector2 distance = selectedUnit.Vector2Position - thisCrate.position;
-        if (distance.magnitude > Crate.pickUpDistance)
-            return;
-        int pickedup = selectedUnit.TryToAddItem(thisCrate.item);
-        thisCrate.RemoveItemAmount(pickedup);
-    }
-
+    
     internal void Fixedupdate(float deltaTime){
 		for (int i = Units.Count-1; i >=0; i--) {
 			Units[i].Update (deltaTime);
@@ -176,7 +168,10 @@ public class World : IGEventable{
 				Units.RemoveAt (i);
 			}
 		}
-	}
+        for (int i = Projectiles.Count - 1; i >= 0; i--) {
+            Projectiles[i].Update(deltaTime);
+        }
+    }
 
 	public void CreateIsland(MapGenerator.IslandStruct islandStruct){
 		Fertility[] fers = new Fertility[3];
@@ -250,10 +245,19 @@ public class World : IGEventable{
 	public Unit CreateUnit(Unit unit) {
         Units.Add(unit);
         unit.RegisterOnDestroyCallback (OnUnitDestroy);
+        unit.RegisterOnbCreateProjectileCallback(OnCreateProjectile);
         cbUnitCreated?.Invoke(unit);
         return unit;
     }
-	public void OnUnitDestroy(Unit u){
+
+    private void OnCreateProjectile(Projectile pro) {
+        pro.RegisterOnDestroyCallback(ProjectileDestroyed);
+        Projectiles.Add(pro);
+    }
+    private void ProjectileDestroyed(Projectile pro) {
+        Projectiles.Remove(pro);
+    }
+    public void OnUnitDestroy(Unit u){
         //Spawn items from Inventory on the map
         if(u.inventory != null) {
             foreach (Item i in u.inventory.GetAllItemsAndRemoveThem()) {

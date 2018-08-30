@@ -18,11 +18,10 @@ public class KeyInputSettings : MonoBehaviour {
 		}
 		foreach (InputName name in InputHandler.GetBinds().Keys) {
 			InputHandler.KeyBind item = InputHandler.GetBinds () [name];
-//			InputHandler.KeyBind item = InputHandler.GetBinds () [s];
-			GameObject g = Instantiate (keyPrefab);
-			g.GetComponent<KeyInputSingle>().SetUp (name,item.GetPrimaryString(),item.GetSecondaryString(),OnClickButton);
-			g.transform.SetParent (contentTransform);
-			buttonNameToGO.Add (name, g.GetComponent<KeyInputSingle>());
+            KeyInputSingle key = Instantiate (keyPrefab).GetComponent<KeyInputSingle>();
+            key.SetUp (name,item, OnClickButton);
+            key.transform.SetParent (contentTransform);
+			buttonNameToGO.Add (name, key);
 		}
 	
 	}

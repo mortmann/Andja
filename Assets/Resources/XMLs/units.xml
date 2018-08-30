@@ -55,7 +55,7 @@
       </buildingItems>
       <aggroTimer>1.0</aggroTimer>
       <attackRange>10.0</attackRange>
-      <damage>10.0</damage>
+      <damage>0.0</damage>
       <myDamageType>1</myDamageType>
       <myArmorType>1</myArmorType>
       <attackCooldown>1.0</attackCooldown>
@@ -64,7 +64,7 @@
       <turnSpeed>1.0</turnSpeed>
       <spriteBaseName>ship</spriteBaseName>
       <maximumAmountOfCannons>15</maximumAmountOfCannons>
-      <damagePerCannon>1</damagePerCannon>
+      <damagePerCannon>10</damagePerCannon>
       <cannonType ID="1006">
          <count>10</count>
       </cannonType>

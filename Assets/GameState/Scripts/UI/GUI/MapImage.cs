@@ -6,7 +6,9 @@ using UnityEngine.EventSystems;
 public class MapImage : MonoBehaviour {
 	public GameObject mapCitySelectPrefab;
 	public GameObject mapShipIconPrefab;
-	public Image image;
+    public GameObject cameraRectPrefab;
+
+    public Image image;
 	public GameObject mapParts;
 	GameObject cameraRect;
 	CameraController cc;
@@ -15,7 +17,7 @@ public class MapImage : MonoBehaviour {
 	public Dictionary<Warehouse,GameObject> warehouseToGO;
 	public Dictionary<Unit,GameObject> unitToGO;
 	public GameObject tradingMenu;
-	TradeRoutePanel tp;
+	TradeRoutePanel tradeRoutePanel;
 	// Use this for initialization
 	void Start () {
 		cc = GameObject.FindObjectOfType<CameraController> ();
@@ -43,15 +45,11 @@ public class MapImage : MonoBehaviour {
 
 		image.sprite = s;
 
-		cameraRect = new GameObject ();
-		cameraRect.transform.SetParent (mapParts.transform);
-		cameraRect.AddComponent<Image> ().sprite = Resources.Load<Sprite>("Map/camerashadow");
-		cameraRect.name = "CameraShadow";
-		Color co = Color.black;
-		co.a = 0.5f;
-		cameraRect.GetComponent<Image> ().color = co;
-		tp = tradingMenu.GetComponent<TradeRoutePanel> ();
-		tp.Initialize ();
+        cameraRect = Instantiate(cameraRectPrefab);
+        cameraRect.name = "CameraRect";
+        cameraRect.transform.SetParent(mapParts.transform);
+        tradeRoutePanel = tradingMenu.GetComponent<TradeRoutePanel> ();
+		tradeRoutePanel.Initialize ();
 		BuildController.Instance.RegisterCityCreated (OnCityCreated);
 		foreach (Island item in w.IslandList) {
 			foreach (City c in item.myCities) {
@@ -68,7 +66,7 @@ public class MapImage : MonoBehaviour {
 			if (item is Ship && sh==null)
 				sh = (Ship)item;
 		}
-		tp.Show (sh);
+		tradeRoutePanel.Show (sh);
 	}
 	public void Show(){
 		//do smth when it gets shown
@@ -77,34 +75,34 @@ public class MapImage : MonoBehaviour {
 		if(c==null||c.playerNumber!=PlayerController.currentPlayerNumber){
 			return;
 		}
-//		PlayerController pc = PlayerController.Instance;
 		RectTransform rt = mapParts.GetComponent<RectTransform> ();
 		World w = World.Current;
-		if(c!=null){
-			GameObject g = GameObject.Instantiate (mapCitySelectPrefab);
-			g.transform.SetParent (mapParts.transform);
-			Vector3 pos = new Vector3 (c.myWarehouse.BuildTile.X, c.myWarehouse.BuildTile.Y, 0);
-			pos.Scale (new Vector3(rt.rect.width/w.Width,rt.rect.height/w.Height));
-			g.transform.localPosition = pos;
-			g.GetComponentInChildren<Text> ().text = c.Name;
-			EventTrigger trigger = g.GetComponent<EventTrigger> ();
-            EventTrigger.Entry entry = new EventTrigger.Entry {
-                eventID = EventTriggerType.PointerClick
-            };
-            entry.callback.AddListener( ( data ) => { OnWarehouseClick( c ); } );
-			trigger.triggers.Add( entry );
-			g.GetComponentInChildren <Toggle > ().onValueChanged.AddListener (( data ) => { OnToggleClicked (c.myWarehouse); });
-			c.myWarehouse.RegisterOnDestroyCallback (OnWarehouseDestroy);
-			warehouseToGO.Add (c.myWarehouse, g);
-		}
+		GameObject g = GameObject.Instantiate (mapCitySelectPrefab);
+		g.transform.SetParent (mapParts.transform);
+		Vector3 pos = new Vector3 (c.myWarehouse.BuildTile.X, c.myWarehouse.BuildTile.Y, 0);
+		pos.Scale (new Vector3(rt.rect.width/w.Width,rt.rect.height/w.Height));
+		g.transform.localPosition = pos;
+		g.GetComponentInChildren<Text> ().text = c.Name;
+		EventTrigger trigger = g.GetComponentInChildren<EventTrigger> ();
+        EventTrigger.Entry entry = new EventTrigger.Entry {
+            eventID = EventTriggerType.PointerClick
+        };
+        entry.callback.AddListener( ( data ) => { OnWarehouseClick( c ); } );
+		trigger.triggers.Add( entry );
+		g.GetComponentInChildren <Toggle> ().onValueChanged.AddListener (( data ) => { ToggleWarehouse (c.myWarehouse); });
+            
+        c.myWarehouse.RegisterOnDestroyCallback (OnWarehouseDestroy);
+		warehouseToGO.Add (c.myWarehouse, g);
 	}
 	public void OnWarehouseClick(City c){
-		tp.OnWarehouseClick(c);
-	}
+		tradeRoutePanel.OnWarehouseClick(c);
+        UIController.Instance.OpenCityInventory(c);
+    }
 
-	public void OnToggleClicked(Warehouse warehouse){
+    public void ToggleWarehouse(Warehouse warehouse){
 		Toggle t = warehouseToGO [warehouse].GetComponentInChildren<Toggle> ();
-		tp.OnToggleClicked (warehouse,t);
+		tradeRoutePanel.OnToggleClicked (warehouse,t);
+        UIController.Instance.OpenCityInventory(warehouse.City);
 	}
 	public void OnWarehouseDestroy(Structure str){
 		if(str is Warehouse == false){
@@ -117,9 +115,11 @@ public class MapImage : MonoBehaviour {
 		//TODO UPDATE ALL TRADE_ROUTES
 	}
 	public void OnUnitCreated(Unit u){
-		if(u==null||u.playerNumber!=PlayerController.currentPlayerNumber){
+		if(unitToGO.ContainsKey(u)||u ==null||u.playerNumber!=PlayerController.currentPlayerNumber){
 			return;
 		}
+        if (u.IsShip == false)
+            return;
 		RectTransform rt = mapParts.GetComponent<RectTransform> ();
 		World w = World.Current;
 
@@ -129,13 +129,7 @@ public class MapImage : MonoBehaviour {
 		pos.Scale (new Vector3(rt.rect.width/w.Width,rt.rect.height/w.Height));
 		g.transform.localPosition = pos;
 		unitToGO.Add (u, g);
-
-		Dropdown d = tradingMenu.GetComponentInChildren<Dropdown> ();
-		Dropdown.OptionData op = new Dropdown.OptionData(u.ToString ());// TODO change this to the name of the unit!
-		d.options.Add (op); //doesnt take strings directly...
-		d.RefreshShownValue (); // it doesnt update on its own! so we have todo it! 
-		tp.addUnit(u);
-
+		tradeRoutePanel.AddUnit(u);
 	}
 
 	// Update is called once per frame
@@ -145,8 +139,8 @@ public class MapImage : MonoBehaviour {
 		RectTransform rt = mapParts.GetComponent<RectTransform> ();
 		cameraRect.transform.localPosition = cc.middle * rt.rect.width/w.Width;
 		Vector3 vec = cc.upper - cc.lower;
-		vec /= Mathf.Clamp(cc.zoomLevel,CameraController.maxZoomLevel,cc.zoomLevel);// I dont get why this is working, but it does
-		cameraRect.transform.localScale = 2*((vec));
+        vec /= cc.zoomLevel; // Mathf.Clamp(cc.zoomLevel,CameraController.MaxZoomLevel,cc.zoomLevel);
+		cameraRect.transform.localScale = vec * (cc.zoomLevel / CameraController.MaxZoomLevel) * (rt.rect.width / w.Width);
 		foreach (Unit item in w.Units) {
 			if(item.IsShip==false){
 				continue;

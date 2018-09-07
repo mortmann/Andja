@@ -6,30 +6,29 @@ using Newtonsoft.Json;
 
 [JsonObject(MemberSerialization.OptIn)]
 public class TradeRoute {
-	int NumberOfStops { get {return trades.Count;}}
+	int NumberOfStops { get {return Trades.Count;}}
 	[JsonPropertyAttribute] int currentDestination=0;
-	[JsonPropertyAttribute] List<Trade> trades;
+	[JsonPropertyAttribute] public List<Trade> Trades { get; protected set; }
 
 	public bool isStarted=false;
 	public bool Valid{
 		get {
-			return trades.Count > 1;
+			return Trades.Count > 1;
 		}
 	}
 	public TradeRoute(){
-		trades = new List<Trade> ();
+		Trades = new List<Trade> ();
 	}
-	public TradeRoute(TradeRoute tr){
-		this.trades = tr.trades;
-		currentDestination = tr.currentDestination;
-		isStarted = tr.isStarted;
+   
+    public TradeRoute(TradeRoute tr){
+		this.Trades = tr.Trades;
 	}
 	public void AddWarehouse(Warehouse w){
 		Trade t = new Trade (w.City,null,null);
-		trades.Add (t);
+		Trades.Add (t);
 	}
 	public void SetCityTrade(City city,Item[] getting,Item[] giving){
-		Trade t = trades.Find (x => x.city == city);
+		Trade t = Trades.Find (x => x.city == city);
 		if(t!=null){
 			t.getting = getting;
 			t.giving = giving;
@@ -39,7 +38,7 @@ public class TradeRoute {
 		//}
 	}
 	public Trade GetCurrentCityTrade(){
-		return trades [currentDestination];
+		return Trades [currentDestination];
 	}
 	public void RemoveWarehouse(Warehouse w){
 		Trade t = GetTradeFor(w.City);
@@ -47,15 +46,15 @@ public class TradeRoute {
 			Debug.LogError ("Tried to remove a city that wasnt in here!");
 			return; // not in error from somewhere
 		}
-		if(trades.IndexOf(t)<currentDestination){
+		if(Trades.IndexOf(t)<currentDestination){
 			currentDestination--; // smaller then we must remove to be on the same still
 		} else 
-		if(trades.IndexOf(t)==currentDestination){
+		if(Trades.IndexOf(t)==currentDestination){
 			//if its behind the otherone so decrease the destination pointer
 			currentDestination--;
 			currentDestination = Mathf.Clamp (currentDestination,0,NumberOfStops-1);
 		}
-		trades.Remove (t);
+		Trades.Remove (t);
 
 	}
 
@@ -63,42 +62,42 @@ public class TradeRoute {
 		return NumberOfStops;
 	}
 	public int GetNumberFor(Warehouse w){
-		for (int i = 0; i < trades.Count; i++) {
-			if(trades[i].city==w.City){
+		for (int i = 0; i < Trades.Count; i++) {
+			if(Trades[i].city==w.City){
 				return i + 1;
 			} 
 		}
 		return -1;
 	}
-	public Tile getCurrentDestination(){
-		if(trades.Count==0){
+	public Tile GetCurrentDestination(){
+		if(Trades.Count==0){
 			return null;
 		}
-		if(trades [currentDestination].city.myWarehouse==null){
+		if(Trades [currentDestination].city.myWarehouse==null){
 			return null;
 		}
-		return trades [currentDestination].city.myWarehouse.GetTradeTile ();
+		return Trades [currentDestination].city.myWarehouse.GetTradeTile ();
 	}
-	public Tile getNextDestination(){
+	public Tile GetNextDestination(){
 		//if theres only one destination
 		//that means there is no realtraderoute in place
 		//so just return
-		if(trades.Count<=1){
+		if(Trades.Count<=1){
 			return null;
 		}
 
 		for (int i = 0; i < NumberOfStops; i++) {
 			IncreaseDestination ();
-			if(trades [currentDestination].city.myWarehouse!=null){
+			if(Trades [currentDestination].city.myWarehouse!=null){
 				isStarted = true;
-				return trades [currentDestination].city.myWarehouse.GetTradeTile ();
+				return Trades [currentDestination].city.myWarehouse.GetTradeTile ();
 			}
 		}
 		return null;
 	}
 	public void IncreaseDestination(){
 		if(isStarted)
-			currentDestination = (currentDestination + 1) % trades.Count;
+			currentDestination = (currentDestination + 1) % Trades.Count;
 	}
 	public bool Contains(City c){
 		return GetTradeFor (c) != null;
@@ -109,10 +108,10 @@ public class TradeRoute {
 			Debug.LogError ("GetTradeCurr-currentcity isnt in cities"); 
 			return null;
 		}
-		return trades [currentDestination];
+		return Trades [currentDestination];
 	}
 	public Trade GetTradeFor(City c){
-		return  trades.Find (x => x.city == c);
+		return  Trades.Find (x => x.city == c);
 	}
 
 	public void DoCurrentTrade(Unit u){

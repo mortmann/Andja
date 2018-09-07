@@ -206,7 +206,14 @@ public class PrototypController : MonoBehaviour {
 			}
 			allItems [id] = item;
 		}
-	}
+
+        ItemPrototypeData empty = new ItemPrototypeData {
+            Name = "Empty",
+            Description = "Pretty empty here!"
+        };
+        itemPrototypeDatas[-1] = empty;
+        allItems[-1] = new Item(-1,empty);
+    }
     private void ReadUnitsFromXML() {
         XmlDocument xmlDoc = new XmlDocument(); // xmlDoc is the new xml document.
         TextAsset ta = ((TextAsset)Resources.Load("XMLs/units", typeof(TextAsset)));

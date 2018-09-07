@@ -9,37 +9,36 @@ public class TradeRoutePanel : MonoBehaviour {
 	public GameObject fromShip;
 	public GameObject toShip;
 	public GameObject itemPrefab;
-	int _pressedItem;
 
-	int PressedItem{
-		get{return _pressedItem;}
-		set{
-			_pressedItem = value;
-		}
-	}
-	Dictionary<int,ItemUI> intToGameObject;
-	Dictionary<int,Item> intToItem;
+    Item currentlySelectedItem;
+
+    Dictionary<Item,ItemUI> itemToGameObject;
+
+    List<Item> toAddItem;
+    List<Item> toRemoveItem;
+
+
 	public TradeRoute tradeRoute;
 	public List<Ship> ships;
 	public Dictionary<Unit,string> unitNames;
-	Dropdown shipDP;
+	Dropdown shipSelectionDropDown;
 	MapImage mi;
 	public Slider amountSlider;
 	void Start(){
-		if (intToGameObject == null)//if thats null its not started yet
+		if (itemToGameObject == null)//if thats null its not started yet
 			Initialize ();
 	}
 	public void Initialize(){
-		intToGameObject = new Dictionary<int, ItemUI> ();
-		intToItem = new Dictionary<int, Item> ();
-		shipDP=GetComponentInChildren<Dropdown> ();
+		itemToGameObject = new Dictionary<Item, ItemUI> ();
+		//intToItem = new Dictionary<int, Item> ();
+		shipSelectionDropDown=GetComponentInChildren<Dropdown> ();
 		mi = GameObject.FindObjectOfType<MapImage> ();
 		tradeRoute = new TradeRoute ();
 		amountSlider.onValueChanged.AddListener (OnAmountSliderMoved);
 		unitNames = new Dictionary<Unit,string> ();
 		ships = new List<Ship> ();
 		foreach (Unit item in World.Current.Units) {
-			if(item.IsShip==false||item.playerNumber!=PlayerController.currentPlayerNumber){
+			if(item.IsShip==false||item.IsPlayerUnit() == false){
 				continue;
 			}
 			ships.Add ((Ship) item); 
@@ -48,7 +47,7 @@ public class TradeRoutePanel : MonoBehaviour {
 			item.RegisterOnChangedCallback (OnShipChanged);
 		}
 		RefreshDropDownValues ();
-		shipDP.onValueChanged.AddListener (OnDropDownChange);
+		shipSelectionDropDown.onValueChanged.AddListener (OnDropDownChange);
 	}
 	public void OnDropDownChange(int i){
 		Show (ships[i]);
@@ -56,18 +55,18 @@ public class TradeRoutePanel : MonoBehaviour {
 
 	public void OnShipDestroy(Unit u){
 		unitNames.Remove (u);
-		shipDP.RefreshShownValue ();
+		shipSelectionDropDown.RefreshShownValue ();
 	}
 	public void OnShipChanged(Unit u){
 		unitNames [u] = u.Name;
-		shipDP.RefreshShownValue ();
+		shipSelectionDropDown.RefreshShownValue ();
 	}
 
 	public void OnAmountSliderMoved(float f){
-		if(intToGameObject.ContainsKey (PressedItem)==false){
+		if(itemToGameObject.ContainsKey (currentlySelectedItem) ==false){
 			return;
 		}
-		intToGameObject [this.PressedItem].ChangeItemCount (f);
+		itemToGameObject [currentlySelectedItem].ChangeItemCount (f);
 	}
 
 	public void Show(Ship unit){
@@ -85,31 +84,31 @@ public class TradeRoutePanel : MonoBehaviour {
         EventTrigger.Entry entry = new EventTrigger.Entry {
             eventID = EventTriggerType.PointerClick
         };
-        int i = intToGameObject.Count;
-		intToGameObject.Add (i,g.GetComponent<ItemUI> ()); 
+		itemToGameObject.Add (i,g.GetComponent<ItemUI> ()); 
 
 		entry.callback.AddListener( ( data ) => { OnItemClick( i ); } );
 		trigger.triggers.Add( entry );
 
 	}
 	public void GetClickedItemCity(Item i){
-		if(PressedItem == -1){
+		if(currentlySelectedItem == null){
 			return;
 		}
-		ItemUI g = intToGameObject [PressedItem];
+		ItemUI g = itemToGameObject [currentlySelectedItem];
 		g.SetItem (i, ship.inventory.MaxStackSize);
-//		pressedItem = -1;
+
 		intToItem.Add (PressedItem,i.Clone ()); 
 		if(intToItem.ContainsKey (PressedItem))
 			intToItem [PressedItem].count=Mathf.RoundToInt(amountSlider.value);
+
 		g.ChangeItemCount (amountSlider.value);
 		//set stuff here orso what ever
 		GameObject.FindObjectOfType<UIController> ().CloseRightUI ();
 	}
 	public void RefreshDropDownValues(){
-		shipDP.ClearOptions ();
-		shipDP.AddOptions (new List<string>(unitNames.Values));
-		shipDP.RefreshShownValue ();
+		shipSelectionDropDown.ClearOptions ();
+		shipSelectionDropDown.AddOptions (new List<string>(unitNames.Values));
+		shipSelectionDropDown.RefreshShownValue ();
 	} 
 	public void OnItemClick(int i){
 		if(city == null){
@@ -124,7 +123,7 @@ public class TradeRoutePanel : MonoBehaviour {
 			if(intToItem.ContainsKey (i)==false){
 				continue;
 			}
-			intToItem [i].count = Mathf.RoundToInt (intToGameObject[i].slider.value);
+			intToItem [i].count = Mathf.RoundToInt (itemToGameObject[i].slider.value);
 			items.Add (intToItem[i]);
 		}
 		return items.ToArray ();
@@ -135,14 +134,14 @@ public class TradeRoutePanel : MonoBehaviour {
 			if(intToItem.ContainsKey (i)==false){
 				continue;
 			}
-			intToItem [i].count =Mathf.RoundToInt (intToGameObject[i].slider.value);
+			intToItem [i].count =Mathf.RoundToInt (itemToGameObject[i].slider.value);
 			items.Add (intToItem[i]);
 		}
 		return items.ToArray ();
 	}
 
 	public void ShowTradeRoute(){
-		int v = shipDP.value;
+		int v = shipSelectionDropDown.value;
 		if(ships [v].tradeRoute==null){
 			ships [v].tradeRoute = new TradeRoute ();		
 		} 
@@ -195,7 +194,7 @@ public class TradeRoutePanel : MonoBehaviour {
         ship.CurrentMainMode = UnitMainModes.TradeRoute;
 	}
 	public void ResetItemIcons(){
-		intToGameObject = new Dictionary<int, ItemUI> ();
+		itemToGameObject = new Dictionary<int, ItemUI> ();
 		foreach(Transform t in fromShip.transform){
 			GameObject.Destroy (t.gameObject);
 		}
@@ -228,7 +227,7 @@ public class TradeRoutePanel : MonoBehaviour {
 	}
 
 	public void SetCity(City c){
-		if (city != null) {
+		if (city != null && tradeRoute.Contains(c)) {
 			tradeRoute.SetCityTrade (city, GetToShip (), GetFromShip ());		
 		}
 		text.text = c.Name;
@@ -241,19 +240,19 @@ public class TradeRoutePanel : MonoBehaviour {
 		}
 		int place=0;
 		foreach(Item i in t.getting){
-			intToGameObject [place].ChangeItemCount (i);
+			itemToGameObject [place].ChangeItemCount (i);
 			place = +2;
 		}
 		place = 1;
 		foreach(Item i in t.giving){
-			intToGameObject [place].ChangeItemCount (i);
+			itemToGameObject [place].ChangeItemCount (i);
 			place = +2;
 		}
         UIController.Instance.OpenCityInventory(c);
     }
 
     public void DeleteSelectedItem(){
-		intToGameObject [PressedItem].SetItem (null, ship.inventory.MaxStackSize);
+		itemToGameObject [PressedItem].SetItem (null, ship.inventory.MaxStackSize);
 		intToItem.Remove (PressedItem);
 	}
 

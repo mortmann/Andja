@@ -86,14 +86,14 @@ public class Ship : Unit {
 				tradeRoute.DoCurrentTrade (this);
 				tradeTime = 1.5f;
 				//then get a next destination
-				SetDestinationIfPossible (tradeRoute.getNextDestination ());	
+				SetDestinationIfPossible (tradeRoute.GetNextDestination ());	
 			} else {
 				tradeTime -= deltaTime;
 			}
 		} 
 		if(tradeRoute.isStarted==false){
             //start the route
-            SetDestinationIfPossible(tradeRoute.getNextDestination ());
+            SetDestinationIfPossible(tradeRoute.GetNextDestination ());
 		}
 	}
 

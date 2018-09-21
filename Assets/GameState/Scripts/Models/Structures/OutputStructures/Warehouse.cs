@@ -61,20 +61,15 @@ public class Warehouse : MarketBuilding {
 			int y = ti.Y - ts [0].Y;
 			sortedTiles [x, y] = ti; // so we have the tile at the correct spot
 		}
-		Tile t = sortedTiles [Mathf.RoundToInt (TileWidth / 2), Mathf.RoundToInt (TileHeight / 2)];
         //now we have the tile thats has the smallest x/y 
         //to get the tile we now have to rotate a vector thats
         //1 up and 1 left from the temptile
 
         //Vector3 rot = new Vector3 (-_tileWidth/2 - 1, _tileHeight / 2 - 1, 0);
         //rot = Quaternion.AngleAxis (rotated, Vector3.forward) * rot;
-        Vector2 rot = new Vector2( (float)TileWidth / 2f + 1, 0);
+        Vector2 rot = new Vector2( (float)TileWidth / 2f + 0.5f, 0);
         rot = Rotate(rot, rotated);
-		tradeTile = World.Current.GetTileAt (MiddlePoint.x - rot.x, MiddlePoint.y + rot.y);
-        Debug.Log(tradeTile);
-        Debug.Log(Rotate(new Vector2((float)TileWidth / 2f + 1f, 0), 90));
-        Debug.Log(Rotate(new Vector2((float)TileWidth / 2f + 1f, 0), 180));
-        Debug.Log(Rotate(new Vector2((float)TileWidth / 2f + 1f, 0), 270));
+		tradeTile = World.Current.GetTileAt ( Mathf.FloorToInt(MiddlePoint.x - rot.x), Mathf.FloorToInt(MiddlePoint.y + rot.y) );
 
         this.City.myWarehouse = this;
 

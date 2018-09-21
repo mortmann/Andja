@@ -73,7 +73,7 @@ public class Unit : IWarfare {
         }
     }
 
-    public string UserSetName {
+    public string PlayerSetName {
 		get {
 			return _UserSetName;
 		}
@@ -186,7 +186,7 @@ public class Unit : IWarfare {
         this._prototypData = unit.Data;
         this.CurrHealth = MaxHealth;
         this.playerNumber = playerNumber;
-        UserSetName = "Unit " + UnityEngine.Random.Range(0, 1000000000);
+        PlayerSetName = "Unit " + UnityEngine.Random.Range(0, 1000000000);
         pathfinding = new IslandPathfinding(this, t);
         queuedCommands = new Queue<Command>();
     }

@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using System;
 using System.Collections.Generic;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
@@ -9,19 +10,20 @@ public class CityInventoryUI : MonoBehaviour {
 	public GameObject tradePanel;
 
 	Dictionary<int, ItemUI> itemToGO;
-	public bool trade;
 	public City city;
 
+    Action<Item> onItemPressed;
 
-	public void ShowInventory(City city, bool trade){
+	public void ShowInventory(City city, Action<Item> onItemPressed = null) {
 		if(city == null && this.city == city){
 			return;
 		}
 		city.RegisterCityDestroy (OnCityDestroy);
 		cityname.GetComponent<Text> ().text = city.Name;
 		this.city = city;
-		this.trade = trade;
-		city.inventory.RegisterOnChangedCallback (OnInventoryChange);
+        this.onItemPressed = onItemPressed;
+
+        city.inventory.RegisterOnChangedCallback (OnInventoryChange);
 
 		foreach (Transform child in contentCanvas.transform) {
 			Destroy (child.gameObject);
@@ -33,17 +35,14 @@ public class CityInventoryUI : MonoBehaviour {
 			ItemUI iui = go_i.GetComponent<ItemUI> ();
 			itemToGO.Add (item.ID,iui);
 			iui.SetItem (item,city.inventory.MaxStackSize,true);
-			// does this need to be here?
-			// or can it be move to itemui?
-			// changes in th future maybe
 			Item i = item.Clone ();
 			iui.AddClickListener (( data) => {
 				OnItemClick (i);
 			});
-
 			go_i.transform.SetParent (contentCanvas.transform);
 		}
 	}
+
 	public void OnCityDestroy(City c){
 		if(city != c){
 			return;
@@ -51,21 +50,22 @@ public class CityInventoryUI : MonoBehaviour {
 		UIController.Instance.HideCityUI (c);
 	}
 
-	void OnItemClick(Item item){		
-		if (trade) {
-			//trade to ship
-			city.TradeWithShip (city.inventory.GetItemInInventoryClone (item));
-			return;
-		} 
-		if(GameObject.FindObjectOfType<TradeRoutePanel> ()!=null){
-			//select item for trademenu
-			TradeRoutePanel tp = GameObject.FindObjectOfType<TradeRoutePanel> ();
-			tp.GetClickedItemCity(item);
-			return;
-		}
-		if(tradePanel.activeSelf){
-			tradePanel.GetComponent<TradePanel> ().OnItemSelected (city.inventory.GetItemInInventoryClone (item));
-		}
+	void OnItemClick(Item item){
+        onItemPressed?.Invoke(item);
+		//if (trade) {
+		//	//trade to ship
+		//	city.TradeWithShip (city.inventory.GetItemInInventoryClone (item));
+		//	return;
+		//} 
+		//if(GameObject.FindObjectOfType<TradeRoutePanel> ()!=null){
+		//	//select item for trademenu
+		//	TradeRoutePanel tp = GameObject.FindObjectOfType<TradeRoutePanel> ();
+		//	tp.GetClickedItemCity(item);
+		//	return;
+		//}
+		//if(tradePanel.activeSelf){
+		//	
+		//}
 	}
 
 
@@ -73,7 +73,8 @@ public class CityInventoryUI : MonoBehaviour {
 		if(!tradePanel.activeSelf)
 			tradePanel.GetComponent<TradePanel> ().Show (city);
 		tradePanel.SetActive (!tradePanel.activeSelf);
-	}
+        onItemPressed += (item) => tradePanel.GetComponent<TradePanel>().OnItemSelected(city.inventory.GetItemInInventoryClone(item));
+    }
 	public void OnInventoryChange(Inventory changedInv){
 		foreach(int i in changedInv.Items.Keys){
 			itemToGO [i].ChangeItemCount (city.inventory.Items [i].count);

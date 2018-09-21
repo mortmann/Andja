@@ -216,7 +216,7 @@ namespace EpPathFinding.cs
                     return Node.Backtrace(tNode); // rebuilding path
                 }
 
-                identifySuccessors(iParam, tNode);
+                IdentifySuccessors(iParam, tNode);
             }
 
             if (revertEndNodeWalkable)
@@ -247,7 +247,7 @@ namespace EpPathFinding.cs
             return new List<GridPos>();
         }
 
-        private static void identifySuccessors(JumpPointParam iParam, Node iNode)
+        private static void IdentifySuccessors(JumpPointParam iParam, Node iNode)
         {
             HeuristicDelegate tHeuristic = iParam.HeuristicFunc;
             IntervalHeap<Node> tOpenList = iParam.openList;
@@ -257,14 +257,14 @@ namespace EpPathFinding.cs
             GridPos tJumpPoint;
             Node tJumpNode;
 
-            List<GridPos> tNeighbors = findNeighbors(iParam, iNode);
+            List<GridPos> tNeighbors = FindNeighbors(iParam, iNode);
             for (int i = 0; i < tNeighbors.Count; i++)
             {
                 tNeighbor = tNeighbors[i];
                 if (iParam.UseRecursive)
-                    tJumpPoint = jump(iParam, tNeighbor.x, tNeighbor.y, iNode.x, iNode.y);
+                    tJumpPoint = Jump(iParam, tNeighbor.x, tNeighbor.y, iNode.x, iNode.y);
                 else
-                    tJumpPoint = jumpLoop(iParam, tNeighbor.x, tNeighbor.y, iNode.x, iNode.y);
+                    tJumpPoint = JumpLoop(iParam, tNeighbor.x, tNeighbor.y, iNode.x, iNode.y);
                 if (tJumpPoint != null)
                 {
                     tJumpNode = iParam.SearchGrid.GetNodeAt(tJumpPoint.x, tJumpPoint.y);
@@ -320,7 +320,7 @@ namespace EpPathFinding.cs
             }
         }
 
-        private static GridPos jumpLoop(JumpPointParam iParam, int iX, int iY, int iPx, int iPy)
+        private static GridPos JumpLoop(JumpPointParam iParam, int iX, int iY, int iPx, int iPy)
         {
             GridPos retVal = null;
             Stack<JumpSnapshot> stack = new Stack<JumpSnapshot>();
@@ -721,7 +721,7 @@ namespace EpPathFinding.cs
             return retVal;
 
         }
-        private static GridPos jump(JumpPointParam iParam, int iX, int iY, int iPx, int iPy)
+        private static GridPos Jump(JumpPointParam iParam, int iX, int iY, int iPx, int iPy)
         {
             if (!iParam.SearchGrid.IsWalkableAt(iX, iY))
             {
@@ -770,11 +770,11 @@ namespace EpPathFinding.cs
                 // when moving diagonally, must check for vertical/horizontal jump points
                 if (tDx != 0 && tDy != 0)
                 {
-                    if (jump(iParam, iX + tDx, iY, iX, iY) != null)
+                    if (Jump(iParam, iX + tDx, iY, iX, iY) != null)
                     {
                         return new GridPos(iX, iY);
                     }
-                    if (jump(iParam, iX, iY + tDy, iX, iY) != null)
+                    if (Jump(iParam, iX, iY + tDy, iX, iY) != null)
                     {
                         return new GridPos(iX, iY);
                     }
@@ -784,11 +784,11 @@ namespace EpPathFinding.cs
                 // neighbors is open to allow the path
                 if (iParam.SearchGrid.IsWalkableAt(iX + tDx, iY) || iParam.SearchGrid.IsWalkableAt(iX, iY + tDy))
                 {
-                    return jump(iParam, iX + tDx, iY + tDy, iX, iY);
+                    return Jump(iParam, iX + tDx, iY + tDy, iX, iY);
                 }
                 else if (iParam.DiagonalMovement == DiagonalMovement.Always)
                 {
-                    return jump(iParam, iX + tDx, iY + tDy, iX, iY);
+                    return Jump(iParam, iX + tDx, iY + tDy, iX, iY);
                 }
                 else
                 {
@@ -832,15 +832,15 @@ namespace EpPathFinding.cs
                 // when moving diagonally, must check for vertical/horizontal jump points
                 if (tDx != 0 && tDy != 0)
                 {
-                    if (jump(iParam, iX + tDx, iY, iX, iY) != null) return new GridPos(iX, iY);
-                    if (jump(iParam, iX, iY + tDy, iX, iY) != null) return new GridPos(iX, iY);
+                    if (Jump(iParam, iX + tDx, iY, iX, iY) != null) return new GridPos(iX, iY);
+                    if (Jump(iParam, iX, iY + tDy, iX, iY) != null) return new GridPos(iX, iY);
                 }
 
                 // moving diagonally, must make sure both of the vertical/horizontal
                 // neighbors is open to allow the path
                 if (iParam.SearchGrid.IsWalkableAt(iX + tDx, iY) && iParam.SearchGrid.IsWalkableAt(iX, iY + tDy))
                 {
-                    return jump(iParam, iX + tDx, iY + tDy, iX, iY);
+                    return Jump(iParam, iX + tDx, iY + tDy, iX, iY);
                 }
                 else
                 {
@@ -868,19 +868,19 @@ namespace EpPathFinding.cs
                 //  must check for perpendicular jump points
                 if (tDx != 0 )
                 {
-                    if (jump(iParam, iX, iY + 1, iX, iY) != null) return new GridPos(iX, iY);
-                    if (jump(iParam, iX, iY - 1, iX, iY) != null) return new GridPos(iX, iY);
+                    if (Jump(iParam, iX, iY + 1, iX, iY) != null) return new GridPos(iX, iY);
+                    if (Jump(iParam, iX, iY - 1, iX, iY) != null) return new GridPos(iX, iY);
                 }
                 else // tDy != 0
                 {
-                    if (jump(iParam, iX + 1, iY, iX, iY) != null) return new GridPos(iX, iY);
-                    if (jump(iParam, iX - 1, iY, iX, iY) != null) return new GridPos(iX, iY);
+                    if (Jump(iParam, iX + 1, iY, iX, iY) != null) return new GridPos(iX, iY);
+                    if (Jump(iParam, iX - 1, iY, iX, iY) != null) return new GridPos(iX, iY);
                 }
 
                 // keep going
                 if (iParam.SearchGrid.IsWalkableAt(iX + tDx, iY) && iParam.SearchGrid.IsWalkableAt(iX, iY + tDy))
                 {
-                    return jump(iParam, iX + tDx, iY + tDy, iX, iY);
+                    return Jump(iParam, iX + tDx, iY + tDy, iX, iY);
                 }
                 else
                 {
@@ -889,7 +889,7 @@ namespace EpPathFinding.cs
             }
         }
 
-        private static List<GridPos> findNeighbors(JumpPointParam iParam, Node iNode)
+        private static List<GridPos> FindNeighbors(JumpPointParam iParam, Node iNode)
         {
             Node tParent = (Node)iNode.parent;
             //var diagonalMovement = Util.GetDiagonalMovement(iParam.CrossCorner, iParam.CrossAdjacentPoint);

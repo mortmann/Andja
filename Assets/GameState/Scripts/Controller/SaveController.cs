@@ -214,6 +214,8 @@ public class SaveController : MonoBehaviour {
         Texture2D tex = null;
         byte[] fileData;
         string filePath = Path.Combine(GetIslandSavePath(name), name + nameAddOn + islandImageEnding);
+        if (File.Exists(filePath) == false)
+            return null;
         fileData = File.ReadAllBytes(filePath);
         tex = new Texture2D(2, 2);
         tex.LoadImage(fileData); //..this will auto-resize the texture dimensions.
@@ -265,8 +267,8 @@ public class SaveController : MonoBehaviour {
         return islands;
     }
 
-    internal static void SaveIslandImage(string name, byte[] imagePNG) {
-        string path = Path.Combine(GetIslandSavePath(name), name + islandImageEnding);
+    internal static void SaveIslandImage(string name, byte[] imagePNG, string addon = "") {
+        string path = Path.Combine(GetIslandSavePath(name), name+ addon + islandImageEnding);
         File.WriteAllBytes(path, imagePNG);
     }
 

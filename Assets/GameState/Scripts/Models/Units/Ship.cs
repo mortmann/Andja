@@ -51,7 +51,7 @@ public class Ship : Unit {
         this.CurrHealth = MaxHealth;
         this.playerNumber = playerNumber;
         inventory = new Inventory(InventoryPlaces, InventorySize);
-        UserSetName = "Ship " + UnityEngine.Random.Range(0, 1000000000);
+        PlayerSetName = "Ship " + UnityEngine.Random.Range(0, 1000000000);
         pathfinding = new OceanPathfinding(t, this);
     }
     public override Unit Clone(int playerNumber, Tile t) {
@@ -79,23 +79,29 @@ public class Ship : Unit {
             CurrentMainMode = UnitMainModes.Idle;
             return;
         }
-		if(pathfinding.IsAtDestination && tradeRoute.isStarted){
-			//do trading here
-			//take some time todo that
-			if(tradeTime<0){
-				tradeRoute.DoCurrentTrade (this);
-				tradeTime = 1.5f;
-				//then get a next destination
-				SetDestinationIfPossible (tradeRoute.GetNextDestination ());	
-			} else {
-				tradeTime -= deltaTime;
-			}
-		} 
-		if(tradeRoute.isStarted==false){
-            //start the route
-            SetDestinationIfPossible(tradeRoute.GetNextDestination ());
-		}
-	}
+        if (pathfinding.IsAtDestination) {
+            //do trading here
+            //take some time todo that
+            if (tradeTime > 0) {
+                tradeTime -= deltaTime;
+                return;
+            }
+            tradeRoute.DoCurrentTrade(this);
+            tradeTime = 1.5f;
+            SetDestinationIfPossible(tradeRoute.GetNextDestination(this));
+        }
+    }
+    public void SetTradeRoute(TradeRoute tr) {
+        tradeRoute = tr;
+        StartTradeRoute();
+    }
+
+    public void StartTradeRoute() {
+        if (tradeRoute == null)
+            return;
+        CurrentMainMode = UnitMainModes.TradeRoute;
+        SetDestinationIfPossible(tradeRoute.GetNextDestination(this));
+    }
 
     private void SetDestinationIfPossible(Tile tile) {
         SetDestinationIfPossible(tile.X, tile.Y);
@@ -128,6 +134,14 @@ public class Ship : Unit {
 		isOffWorld = false;
         CurrentMainMode = UnitMainModes.Idle;
         CallChangedCallback ();
+    }
+    /// <summary>
+    /// Does not remove itself from TradeRoute 
+    /// Instead call it from the TradeRoute -> RemoveShip()!
+    /// </summary>
+    internal void StopTradeRoute() {
+        tradeRoute = null;
+        CurrentMainMode = UnitMainModes.Idle;
     }
 
     internal void RemoveCannonsToInventory() {

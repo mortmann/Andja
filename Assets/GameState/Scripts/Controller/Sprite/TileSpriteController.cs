@@ -226,7 +226,7 @@ public class TileSpriteController : MonoBehaviour {
             if(generateImage)
                 SaveController.SaveIslandImage(i.name, islandTexture.EncodeToPNG());
             if (generateMask)
-                SaveController.SaveIslandImage(i.name+ "-mask", masktexture.EncodeToPNG());
+                SaveController.SaveIslandImage(i.name, masktexture.EncodeToPNG(), "-mask");
 
             islandToMaskTexture.Add(i.GetPosition(), masktexture);
             islandToSprite.Add(i.GetPosition(), Sprite.Create(islandTexture, new Rect(0, 0, islandTexture.width, islandTexture.height), Vector2.zero, 32,0, SpriteMeshType.FullRect));
@@ -286,24 +286,18 @@ public class TileSpriteController : MonoBehaviour {
             islandToCityMask[tile_data.MyIsland].sprite.texture.SetPixel(x, y, new Color32(128, 128, 128, 255));
         }
         apply = true;
-        if (TileDeciderFunc != null) {
+        if (TileDeciderFunc != null && islandToCustomMask != null) {
             darkLayer.SetActive(true);
             
             TileMark tm = TileDeciderFunc(tile_data);
             switch (tm) {
                 case TileMark.None:
                     islandToCustomMask[tile_data.MyIsland].sprite.texture.SetPixel(x, y, new Color32(128, 128, 128, 255));
-                //sr.material = clearMaterial;
-                //					sr.sortingLayerName = "Tile";
                 break;
                 case TileMark.Highlight:
-                //sr.material = highlightMaterial;
-                //					sr.sortingLayerName = "Tile";
                 break;
                 case TileMark.Dark:
                      islandToCustomMask[tile_data.MyIsland].sprite.texture.SetPixel(x, y, new Color32(128, 128, 128, 0));
-                //sr.material = darkMaterial;
-                //					sr.sortingLayerName = "DarkTile";
                 break;
             }
         }

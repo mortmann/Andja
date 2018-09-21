@@ -92,14 +92,14 @@ public class UIController : MonoBehaviour {
 		otherCityUI.SetActive (true);
 		otherCityUI.GetComponent<OtherCityUI> ().Show(city);
 	}
-	public void OpenCityInventory(City city, bool trade = false){
+	public void OpenCityInventory(City city, System.Action<Item> onItemPressed = null) {
 		if(city == null){
 			return;
 		}
 		CloseRightUI ();
 		rightCanvas.SetActive (true);
 		CityInventoryCanvas.SetActive (true);
-		CityInventoryCanvas.GetComponent<CityInventoryUI>().ShowInventory (city,trade);
+		CityInventoryCanvas.GetComponent<CityInventoryUI>().ShowInventory (city, onItemPressed);
 	}
 	public void HideCityUI (City city){
 		otherCityUI.SetActive (false);
@@ -184,7 +184,8 @@ public class UIController : MonoBehaviour {
 				if (u.rangeUStructure.PlayerNumber == PlayerController.currentPlayerNumber) {
 					CloseRightUI ();
 					u.rangeUStructure.City.tradeUnit = u;
-					OpenCityInventory (u.rangeUStructure.City, true);
+                    City c = u.rangeUStructure.City;
+                    OpenCityInventory (c, item => c.TradeWithShip(c.inventory.GetItemInInventoryClone(item)));
 				}
 			}
 		}

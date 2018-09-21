@@ -2,26 +2,39 @@
 using System.Collections.Generic;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
+using System;
 public class TradeRoutePanel : MonoBehaviour {
+    public const int TradeAmountMaximum = 100;
 	public Text text;
 	public City city;
-	Ship ship;
 	public GameObject fromShip;
 	public GameObject toShip;
 	public GameObject itemPrefab;
+    public GameObject shipTradeRoutePrefab;
+    public GameObject tradeRouteElementPrefab;
 
-    Item currentlySelectedItem;
+    public Transform loadItemParent;
+    public Transform unloadItemParent;
+    public Transform currentShipList;
+    public Transform allTradeRoutesList;
+
+    Item _currentlySelectedItem;
+    Item CurrentlySelectedItem {
+        get { return _currentlySelectedItem; }
+        set {
+            if (_currentlySelectedItem != null && itemToGameObject.ContainsKey(_currentlySelectedItem))
+                itemToGameObject[_currentlySelectedItem].SetSelected(false);
+            if(value != null)
+                itemToGameObject[value].SetSelected(true);
+            _currentlySelectedItem = value;
+        }
+    }
 
     Dictionary<Item,ItemUI> itemToGameObject;
-
-    List<Item> toAddItem;
-    List<Item> toRemoveItem;
-
-
-	public TradeRoute tradeRoute;
-	public List<Ship> ships;
-	public Dictionary<Unit,string> unitNames;
-	Dropdown shipSelectionDropDown;
+    Dictionary<TradeRoute, GameObject> tradeRouteToGameObject;
+    Dictionary<Ship, ShipElement> shipToGOElement;
+    public int tradeRouteCityState = 0;
+    public TradeRoute tradeRoute;
 	MapImage mi;
 	public Slider amountSlider;
 	void Start(){
@@ -29,154 +42,194 @@ public class TradeRoutePanel : MonoBehaviour {
 			Initialize ();
 	}
 	public void Initialize(){
-		itemToGameObject = new Dictionary<Item, ItemUI> ();
+        foreach (Transform child in allTradeRoutesList.transform) {
+            Destroy(child.gameObject);
+        }
+        foreach (Transform child in currentShipList.transform) {
+            Destroy(child.gameObject);
+        }
+        tradeRouteToGameObject = new Dictionary<TradeRoute, GameObject>();
+        shipToGOElement = new Dictionary<Ship, ShipElement>();
+        itemToGameObject = new Dictionary<Item, ItemUI> ();
 		//intToItem = new Dictionary<int, Item> ();
-		shipSelectionDropDown=GetComponentInChildren<Dropdown> ();
 		mi = GameObject.FindObjectOfType<MapImage> ();
-		tradeRoute = new TradeRoute ();
-		amountSlider.onValueChanged.AddListener (OnAmountSliderMoved);
-		unitNames = new Dictionary<Unit,string> ();
-		ships = new List<Ship> ();
-		foreach (Unit item in World.Current.Units) {
+        amountSlider.maxValue = TradeAmountMaximum;
+        amountSlider.value = 50;
+        amountSlider.onValueChanged.AddListener (OnAmountSliderMoved);
+        World.Current.RegisterUnitCreated(OnShipCreate);
+        foreach (Unit item in World.Current.Units) {
 			if(item.IsShip==false||item.IsPlayerUnit() == false){
 				continue;
 			}
-			ships.Add ((Ship) item); 
-			unitNames.Add ((Ship) item,item.Name); 
-			item.RegisterOnDestroyCallback (OnShipDestroy);
-			item.RegisterOnChangedCallback (OnShipChanged);
+            OnShipCreate(item);
 		}
-		RefreshDropDownValues ();
-		shipSelectionDropDown.onValueChanged.AddListener (OnDropDownChange);
+        foreach(TradeRoute tr in PlayerController.Instance.CurrPlayer.MyTradeRoutes) {
+            AddTradeRouteToList(tr);
+        }
+        if(tradeRoute == null)
+            CreateNewTradeRoute();
 	}
-	public void OnDropDownChange(int i){
-		Show (ships[i]);
+    public void RemoveTradeRoute(TradeRoute tradeRoute) {
+        PlayerController.Instance.CurrPlayer.RemoveTradeRoute(tradeRoute);
+        Destroy(tradeRouteToGameObject[tradeRoute]);
+        tradeRouteToGameObject.Remove(tradeRoute);
+    }
+	public void OnShipDestroy(Unit unit){
+        if (unit.IsPlayerUnit() == false || unit is Ship == false)
+            return;
+        Ship ship = (Ship)unit;
+        Destroy(shipToGOElement[ship].gameObject);
+        shipToGOElement.Remove(ship);
+    }
+	public void OnShipCreate(Unit unit) {
+        if (unit is Ship == false)
+            return;
+        Ship ship = (Ship)unit;
+        unit.RegisterOnDestroyCallback(OnShipDestroy);
+        AddShipToList(ship);
 	}
-
-	public void OnShipDestroy(Unit u){
-		unitNames.Remove (u);
-		shipSelectionDropDown.RefreshShownValue ();
-	}
-	public void OnShipChanged(Unit u){
-		unitNames [u] = u.Name;
-		shipSelectionDropDown.RefreshShownValue ();
-	}
-
+    public void RemoveShipFromTradeRoute(Ship ship) {
+        ship.StopTradeRoute();
+        UpdateShipListOrder();
+    }
 	public void OnAmountSliderMoved(float f){
-		if(itemToGameObject.ContainsKey (currentlySelectedItem) ==false){
+		if(CurrentlySelectedItem == null || itemToGameObject.ContainsKey (CurrentlySelectedItem) ==false){
 			return;
 		}
-		itemToGameObject [currentlySelectedItem].ChangeItemCount (f);
-	}
+        CurrentlySelectedItem.count = (int)f; 
+		itemToGameObject [CurrentlySelectedItem].ChangeItemCount (f);
+        //tradeRoute.ChangeItemAmount(city, CurrentlySelectedItem);
+    }
 
-	public void Show(Ship unit){
-		amountSlider.maxValue = unit.inventory.MaxStackSize;
-		this.ship = unit;
-		ResetItemIcons ();
-	}
-	private void AddItemPrefabTo(Transform t){
-		GameObject g = GameObject.Instantiate (itemPrefab);
-		g.transform.SetParent (t);
-		g.GetComponentInChildren<Slider> ().maxValue = ship.inventory.MaxStackSize;
-		g.GetComponentInChildren<Text> ().text= ship.inventory.MaxStackSize+"t";
-		//TODO add listener stuff
-		EventTrigger trigger = g.GetComponent<EventTrigger> ();
-        EventTrigger.Entry entry = new EventTrigger.Entry {
-            eventID = EventTriggerType.PointerClick
-        };
-		itemToGameObject.Add (i,g.GetComponent<ItemUI> ()); 
+    public void OnItemClick(Item i, PointerEventData.InputButton button) {
+        switch (button) {
+                //SELECT ITEM 
+            case PointerEventData.InputButton.Left:
+                CurrentlySelectedItem = i;
+                break;
+                //REMOVE ITEM 
+            case PointerEventData.InputButton.Right:
+                OnItemRemove(i);
+                break;
+                //NOTHING
+            case PointerEventData.InputButton.Middle:
+                break;
+        }
+    }
+    public void CreateNewTradeRoute() {
+        tradeRoute = new TradeRoute();
+        PlayerController.Instance.CurrPlayer.AddTradeRoute(tradeRoute);
+        AddTradeRouteToList(tradeRoute);
+        ShowTradeRoute(tradeRoute);
+    }
 
-		entry.callback.AddListener( ( data ) => { OnItemClick( i ); } );
-		trigger.triggers.Add( entry );
+    private void AddTradeRouteToList(TradeRoute tradeRoute) {
+        GameObject go = Instantiate(tradeRouteElementPrefab);
+        go.GetComponentInChildren<TradeRouteElement>().SetTradeRoute(tradeRoute,ShowTradeRoute, RemoveTradeRoute);
+        go.transform.SetParent(allTradeRoutesList);
+        tradeRouteToGameObject.Add(tradeRoute, go);
+    }
 
-	}
-	public void GetClickedItemCity(Item i){
-		if(currentlySelectedItem == null){
-			return;
-		}
-		ItemUI g = itemToGameObject [currentlySelectedItem];
-		g.SetItem (i, ship.inventory.MaxStackSize);
-
-		intToItem.Add (PressedItem,i.Clone ()); 
-		if(intToItem.ContainsKey (PressedItem))
-			intToItem [PressedItem].count=Mathf.RoundToInt(amountSlider.value);
-
-		g.ChangeItemCount (amountSlider.value);
-		//set stuff here orso what ever
-		GameObject.FindObjectOfType<UIController> ().CloseRightUI ();
-	}
-	public void RefreshDropDownValues(){
-		shipSelectionDropDown.ClearOptions ();
-		shipSelectionDropDown.AddOptions (new List<string>(unitNames.Values));
-		shipSelectionDropDown.RefreshShownValue ();
-	} 
-	public void OnItemClick(int i){
-		if(city == null){
-			return;
-		}
-		PressedItem = i;
-		GameObject.FindObjectOfType<UIController>().OpenCityInventory (city);
-	}
-	public Item[] GetToShip(){
-		List<Item> items = new List<Item> ();
-		for (int i = 0; i <intToItem.Count; i+=2) {
-			if(intToItem.ContainsKey (i)==false){
-				continue;
-			}
-			intToItem [i].count = Mathf.RoundToInt (itemToGameObject[i].slider.value);
-			items.Add (intToItem[i]);
-		}
-		return items.ToArray ();
-	}
-	public Item[] GetFromShip(){
-		List<Item> items = new List<Item> ();
-		for (int i = 1; i <intToItem.Count; i+=2) {
-			if(intToItem.ContainsKey (i)==false){
-				continue;
-			}
-			intToItem [i].count =Mathf.RoundToInt (itemToGameObject[i].slider.value);
-			items.Add (intToItem[i]);
-		}
-		return items.ToArray ();
-	}
-
-	public void ShowTradeRoute(){
-		int v = shipSelectionDropDown.value;
-		if(ships [v].tradeRoute==null){
-			ships [v].tradeRoute = new TradeRoute ();		
-		} 
-		Show (ships[v]);
-		tradeRoute = new TradeRoute(ships [v].tradeRoute);
-
+    public void ShowTradeRoute(TradeRoute tr){
+        tradeRoute = tr;
 		foreach(Warehouse w in mi.warehouseToGO.Keys){
-			Toggle t = mi.warehouseToGO [w].GetComponent<Toggle> ();
+			GameObject go = mi.warehouseToGO [w];
 			if (tradeRoute.Contains (w.City) == false) {
-				t.GetComponentsInChildren<Text> () [1].text = "";//+tradeRoute.GetLastNumber();
-				t.isOn = false;
+                go.GetComponent<MapCitySelect>().Unselect();
 			} else {
-				t.GetComponentsInChildren<Text> () [1].text = ""+tradeRoute.GetNumberFor(w);
-				t.isOn = true;
+                go.GetComponent<MapCitySelect>().SelectAs(tradeRoute.GetNumberFor(w));
 			}
 		}
+        foreach(Ship ship in tradeRoute.shipToNextStop.Keys) {
+            AddShipToList(ship);
+        }
 	}
-	public void OnWarehouseClick(City c){
+    private void AddShipToList(Ship ship) {
+        GameObject shipGO = Instantiate(shipTradeRoutePrefab);
+        ShipElement se = shipGO.GetComponentInChildren<ShipElement>();
+        se.SetShip(ship, AddShipToTradeRoute, RemoveShipFromTradeRoute);
+        shipGO.transform.SetParent(currentShipList);
+        shipToGOElement.Add(ship, se);
+        UpdateShipListOrder();
+    }
+
+    void UpdateShipListOrder() {
+        List<ShipElement> elements = new List<ShipElement>(shipToGOElement.Values);
+        elements.Sort();
+        for (int i = 0; i < elements.Count; i++) {
+            elements[i].transform.SetSiblingIndex(i);
+        }
+    }
+
+    private void AddShipToTradeRoute(Ship ship) {
+        tradeRoute.AddShip(ship);
+        UpdateShipListOrder();
+    }
+
+    public void OnWarehouseClick(City c){
 		if(tradeRoute.Contains (c)==false){
 			return;
 		}
-//		if(city!=null){
-//			tradeRoute.SetCityTrade (city, GetToShip (), GetFromShip ());		
-//			intToItem = new Dictionary<int, Item> ();
-//			ResetItemIcons ();
-//		}
-//		city = c;	
 		SetCity (c);
 	}
-	public void OnToggleClicked(Warehouse warehouse,Toggle t){
+    public void OnShipAdd(Ship ship) {
+        ship.SetTradeRoute(tradeRoute);
+        AddShipToList(ship);
+    }
+    public void OnShipRemove(Ship ship) {
+        ship.StopTradeRoute();
+        Destroy(shipToGOElement[ship]);
+        shipToGOElement.Remove(ship);
+    }
+    public void OnLoadItemAdd() {
+        UIController.Instance.OpenCityInventory(city, AddLoadItem);
+    }
+    public void OnUnloadItemAdd() {
+        UIController.Instance.OpenCityInventory(city, AddUnloadItem);
+    }
+    public void AddLoadItem(Item item) {
+        AddItem(item, TradeTyp.Load);
+    }
+    public void AddUnloadItem(Item item) {
+        AddItem(item, TradeTyp.Unload);
+    }
+    public void AddItem(Item item, TradeTyp typ) {
+        GameObject gameObject = Instantiate(itemPrefab);
+        ItemUI ui = gameObject.GetComponent<ItemUI>();
+        ui.SetItem(item, TradeAmountMaximum);
+        ui.AddClickListener((PointerEventData) => 
+            {
+                OnItemClick(item, ((PointerEventData)PointerEventData).button);
+            }
+        );
+        ui.ChangeItemCount(amountSlider.value);
+        item.count = (int) amountSlider.value;
+        switch (typ) {
+            case TradeTyp.Load:
+                gameObject.transform.SetParent(loadItemParent);
+                gameObject.transform.SetSiblingIndex(loadItemParent.childCount - 2);
+                break;
+            case TradeTyp.Unload:
+                gameObject.transform.SetParent(unloadItemParent);
+                gameObject.transform.SetSiblingIndex(unloadItemParent.childCount - 2);
+                break;
+        }
+        tradeRoute.AddItemToTrade(city, item, typ);
+        itemToGameObject.Add(item, ui);
+        CurrentlySelectedItem = item;
+        GameObject.FindObjectOfType<UIController>().CloseRightUI();
+    }
+
+    public void OnItemRemove(Item item) {
+        Destroy(itemToGameObject[item].gameObject);
+        tradeRoute.RemoveItemFromTrade(city, item);
+        itemToGameObject.Remove(item);
+    }
+    public void OnWarehouseToggleClicked(Warehouse warehouse,Toggle t){
 		if(tradeRoute == null){
 			Debug.LogError ("NO TRADEROUTE"); 
 			return;
 		}
-
 		if(t.isOn){
 			SetCity (warehouse.City);
 			//not that good
@@ -188,80 +241,44 @@ public class TradeRoutePanel : MonoBehaviour {
 			tradeRoute.RemoveWarehouse (warehouse);
 		}
 	}
-	public void OnTRSAVEButtonPressed(){
-		tradeRoute.SetCityTrade (city, GetToShip (), GetFromShip ());
-		ship.tradeRoute = new TradeRoute(tradeRoute);
-        ship.CurrentMainMode = UnitMainModes.TradeRoute;
-	}
+
 	public void ResetItemIcons(){
-		itemToGameObject = new Dictionary<int, ItemUI> ();
-		foreach(Transform t in fromShip.transform){
-			GameObject.Destroy (t.gameObject);
-		}
-		foreach(Transform t in toShip.transform){
-			GameObject.Destroy (t.gameObject);
-		}
-		for (int i = 0; i < ship.inventory.NumberOfSpaces; i++) {
-			//this order is important
-			//DO NOT CHANGE THIS 
-			//WITHOUT CHANGING THE RETURNING VALUES FOR
-			//GET TO AND FROM SHIP!
-			AddItemPrefabTo (toShip.transform); //even 0,2,4 ...
-			AddItemPrefabTo (fromShip.transform); //uneven 1,3,5 ...
-		}
-	}
-	public void AddUnit(Unit u){
-		if(u is Ship==false){
-			return;
-		}
-		if(ships==null){
-			ships = new List<Ship> ();
-		}
-		ships.Add ((Ship)u); 
+        foreach(ItemUI i in itemToGameObject.Values) {
+            GameObject.Destroy(i.transform.gameObject);
+        }
+        itemToGameObject.Clear();
 	}
 
 	public void NextCity(bool right){
-		tradeRoute.SetCityTrade (city, GetToShip (), GetFromShip ());		
-		TradeRoute.Trade t = tradeRoute.GetNextTrade (city,right);
+        if (tradeRoute.TradeStopNumber == 0)
+            return;
+        ResetItemIcons();
+        tradeRouteCityState += right ? 1 : -1;
+        tradeRouteCityState %= tradeRoute.TradeStopNumber;
+        if (tradeRouteCityState < 0)
+            tradeRouteCityState = tradeRoute.TradeStopNumber - 1;
+        TradeRoute.Trade t = tradeRoute.GetTrade (tradeRouteCityState);
+        
 		SetCity (t.city);
-	}
+    }
 
 	public void SetCity(City c){
-		if (city != null && tradeRoute.Contains(c)) {
-			tradeRoute.SetCityTrade (city, GetToShip (), GetFromShip ());		
-		}
 		text.text = c.Name;
-		intToItem = new Dictionary<int, Item> ();
 		ResetItemIcons ();
 		city = c;
 		TradeRoute.Trade t = tradeRoute.GetTradeFor (city);
 		if(t==null){
 			return;
 		}
-		int place=0;
-		foreach(Item i in t.getting){
-			itemToGameObject [place].ChangeItemCount (i);
-			place = +2;
-		}
-		place = 1;
-		foreach(Item i in t.giving){
-			itemToGameObject [place].ChangeItemCount (i);
-			place = +2;
-		}
-        UIController.Instance.OpenCityInventory(c);
+        foreach (Item i in t.load) {
+            AddItem(i, TradeTyp.Load);
+        }
+        foreach (Item i in t.load) {
+            AddItem(i, TradeTyp.Unload);
+        }
     }
 
-    public void DeleteSelectedItem(){
-		itemToGameObject [PressedItem].SetItem (null, ship.inventory.MaxStackSize);
-		intToItem.Remove (PressedItem);
-	}
-
-	void OnDisable(){
-        if (ships == null)
-            return;
-		foreach (Ship item in ships) {
-			item.UnregisterOnChangedCallback (OnShipChanged);
-			item.UnregisterOnChangedCallback (OnShipDestroy);
-		}
+    void OnDisable(){
+		
 	}
 }

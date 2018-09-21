@@ -19,7 +19,7 @@ public class MapImage : MonoBehaviour {
 	public GameObject tradingMenu;
 	TradeRoutePanel tradeRoutePanel;
 	// Use this for initialization
-	void Start () {
+	void OnEnable () {
 		cc = GameObject.FindObjectOfType<CameraController> ();
 		warehouseToGO = new Dictionary<Warehouse, GameObject> ();
 		unitToGO = new Dictionary<Unit, GameObject> ();
@@ -49,7 +49,6 @@ public class MapImage : MonoBehaviour {
         cameraRect.name = "CameraRect";
         cameraRect.transform.SetParent(mapParts.transform);
         tradeRoutePanel = tradingMenu.GetComponent<TradeRoutePanel> ();
-		tradeRoutePanel.Initialize ();
 		BuildController.Instance.RegisterCityCreated (OnCityCreated);
 		foreach (Island item in w.IslandList) {
 			foreach (City c in item.myCities) {
@@ -66,7 +65,6 @@ public class MapImage : MonoBehaviour {
 			if (item is Ship && sh==null)
 				sh = (Ship)item;
 		}
-		tradeRoutePanel.Show (sh);
 	}
 	public void Show(){
 		//do smth when it gets shown
@@ -96,13 +94,11 @@ public class MapImage : MonoBehaviour {
 	}
 	public void OnWarehouseClick(City c){
 		tradeRoutePanel.OnWarehouseClick(c);
-        UIController.Instance.OpenCityInventory(c);
     }
 
     public void ToggleWarehouse(Warehouse warehouse){
 		Toggle t = warehouseToGO [warehouse].GetComponentInChildren<Toggle> ();
-		tradeRoutePanel.OnToggleClicked (warehouse,t);
-        UIController.Instance.OpenCityInventory(warehouse.City);
+		tradeRoutePanel.OnWarehouseToggleClicked (warehouse,t);
 	}
 	public void OnWarehouseDestroy(Structure str){
 		if(str is Warehouse == false){
@@ -129,7 +125,6 @@ public class MapImage : MonoBehaviour {
 		pos.Scale (new Vector3(rt.rect.width/w.Width,rt.rect.height/w.Height));
 		g.transform.localPosition = pos;
 		unitToGO.Add (u, g);
-		tradeRoutePanel.AddUnit(u);
 	}
 
 	// Update is called once per frame

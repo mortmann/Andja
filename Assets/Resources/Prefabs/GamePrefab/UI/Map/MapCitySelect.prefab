@@ -43,6 +43,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 22459264}
+  - component: {fileID: 114402557411610150}
   m_Layer: 5
   m_Name: MapCitySelect
   m_TagString: Untagged
@@ -325,6 +326,20 @@ MonoBehaviour:
   m_EffectColor: {r: 0, g: 0, b: 0, a: 0.703}
   m_EffectDistance: {x: 1, y: -1}
   m_UseGraphicAlpha: 1
+--- !u!114 &114402557411610150
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 191456}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 83034bc1e2425904188990594e1cb969, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  CityName: {fileID: 11404276}
+  Number: {fileID: 11404404}
+  toggle: {fileID: 11438952}
 --- !u!114 &114732859015867788
 MonoBehaviour:
   m_ObjectHideFlags: 1

@@ -10,8 +10,10 @@ public class Player : IGEventable {
 	Action<GameEvent> cbEventCreated;
 	Action<GameEvent> cbEventEnded;
 	List<City> myCities;
-
-	public HashSet<Need>[] LockedNeeds { get; protected set;}
+    internal bool HasEnoughMoney(int buildCost) {
+        return Balance + maximumDebt > buildCost;
+    }
+    public HashSet<Need>[] LockedNeeds { get; protected set;}
 	public HashSet<Need> UnlockedItemNeeds { get; protected set;}
 	public HashSet<Need>[] UnlockedStructureNeeds { get; protected set;}
 
@@ -73,10 +75,8 @@ public class Player : IGEventable {
             cbMaxPopulationMLCountChange?.Invoke(MaxPopulationLevel, _maxPopulationCount);
         }
 	}
-
-    internal bool HasEnoughMoney(int buildCost) {
-        return Balance + maximumDebt > buildCost;
-    }
+    [JsonPropertyAttribute]
+    public List<TradeRoute> MyTradeRoutes { get; protected set; }
 
     [JsonPropertyAttribute]
 	public int Number;
@@ -99,8 +99,9 @@ public class Player : IGEventable {
 		LockedNeeds = new HashSet<Need>[City.citizienLevels];
 		UnlockedStructureNeeds = new HashSet<Need>[City.citizienLevels];
 		UnlockedItemNeeds = new HashSet<Need> ();
+        MyTradeRoutes = new List<TradeRoute>();
 
-		for (int i = 0; i < City.citizienLevels; i++) {
+        for (int i = 0; i < City.citizienLevels; i++) {
 			LockedNeeds [i] = new HashSet<Need> ();
 			UnlockedStructureNeeds [i] = new HashSet<Need> ();
 		}
@@ -173,6 +174,15 @@ public class Player : IGEventable {
 		return LockedNeeds [n.StartLevel].Contains (n)==false;
 	}
 
+    public void AddTradeRoute(TradeRoute route) {
+        if (MyTradeRoutes == null)
+            MyTradeRoutes = new List<TradeRoute>();
+        MyTradeRoutes.Add(route);
+    }
+    public bool RemoveTradeRoute(TradeRoute route) {
+        route.Destroy();
+        return MyTradeRoutes.Remove(route);
+    }
 	public void ReduceMoney(int money) {
 		if (money < 0) {
 			return;	

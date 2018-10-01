@@ -57,15 +57,6 @@ public class HomeBuilding : TargetStructure {
 	}
 
 	public override void OnBuild(){
-        //doing it in "structure on build" already so if no problems remove it
-		//HashSet<Tile> neighbourTiles = new HashSet<Tile> ();
-		//foreach (Tile item in myBuildingTiles) {
-		//	foreach(Tile nbt in item.GetNeighbours()){
-		//		if (myBuildingTiles.Contains (nbt) == false) {
-		//			neighbourTiles.Add (nbt);
-		//		}
-		//	}
-		//}
 		foreach (Tile t in neighbourTiles) {
 			t.RegisterTileOldNewStructureChangedCallback (OnTStructureChange);
 		}
@@ -95,8 +86,8 @@ public class HomeBuilding : TargetStructure {
 		if (count == 0) {
 			allPercentage = City.GetHappinessForCitizenLevel (buildingLevel);
 		} else {
-			allPercentage = City.GetHappinessForCitizenLevel (buildingLevel) + structurePercentage;
-			structurePercentage /= count; 
+            structurePercentage /= count;
+            allPercentage = City.GetHappinessForCitizenLevel (buildingLevel) + structurePercentage;
 			allPercentage /= 2;
 		}
 

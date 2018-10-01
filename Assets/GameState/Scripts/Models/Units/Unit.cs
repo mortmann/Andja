@@ -35,6 +35,8 @@ public enum UnitMainModes { Idle, Moving, Aggroing, Attack, Patrol, Capture, Tra
 
 [JsonObject(MemberSerialization.OptIn)]
 public class Unit : IWarfare {
+    readonly float EscortDistance = 2f;
+
     //save these Variables
     #region Serialize
     [JsonPropertyAttribute] public int ID;
@@ -159,6 +161,9 @@ public class Unit : IWarfare {
     }
 
     public Vector2 CurrentPosition => VectorPosition;
+    public Vector2 NextDestinationPosition => pathfinding.NextDestination;
+    public Vector2 LastMovement => pathfinding.LastMove;
+
     public int PlayerNumber => playerNumber;
     public float MaximumHealth => Data.MaxHealth;
     public float CurrentHealth => _currHealth;
@@ -242,7 +247,7 @@ public class Unit : IWarfare {
                     UpdateWorldMarket(deltaTime);
                 break;
             case UnitMainModes.Escort:
-                Debug.LogError("Not Implemented yet!");
+                Debug.LogError("Not implemented yet!");
                 break;
         }
         switch (CurrentDoingMode) {
@@ -267,6 +272,8 @@ public class Unit : IWarfare {
         CurrentMainMode = UnitMainModes.Idle;
     }
     private void FollowTarget() {
+
+
         GiveMovementCommand(CurrentTarget.CurrentPosition);
     }
     protected void UpdateMovement(float deltaTime) {

@@ -110,6 +110,15 @@ public abstract class Pathfinding {
             _currTile = value;
         }
     }
+
+    public Vector2 NextDestination {
+        get {
+            if (NextTile == null)
+                return new Vector2(dest_X, dest_Y);
+            return NextTile.Vector2;
+        }
+    }
+
     public Pathfinding() {
     }
 

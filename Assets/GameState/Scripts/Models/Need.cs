@@ -9,6 +9,13 @@ public class NeedPrototypeData : LanguageVariables {
 	public int startLevel;
 	public int popCount;
 }
+/// <summary>
+/// each need needs to be in a group with similar needs
+/// those group have a priority level and each member has a "priority in its group"
+/// how important it is for its owngroup fullfillment
+/// </summary>
+
+
 
 [JsonObject(MemberSerialization.OptIn)]
 public class Need {

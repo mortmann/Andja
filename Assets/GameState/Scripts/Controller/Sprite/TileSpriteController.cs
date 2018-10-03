@@ -248,12 +248,18 @@ public class TileSpriteController : MonoBehaviour {
         try {
             if (sprite.rect.width != sprite.texture.width) {
                 Texture2D newText = new Texture2D((int)sprite.rect.width, (int)sprite.rect.height);
-                Color[] newColors = sprite.texture.GetPixels((int)System.Math.Ceiling(sprite.textureRect.x),
-                                                             (int)System.Math.Ceiling(sprite.textureRect.y),
-                                                             (int)System.Math.Ceiling(sprite.textureRect.width),
-                                                             (int)System.Math.Ceiling(sprite.textureRect.height));
-                newText.SetPixels(newColors);
-                newText.Apply();
+                try {
+                    Color[] newColors = sprite.texture.GetPixels((int)System.Math.Ceiling(sprite.textureRect.x),
+                                                                 (int)System.Math.Ceiling(sprite.textureRect.y),
+                                                                 (int)System.Math.Ceiling(sprite.textureRect.width),
+                                                                 (int)System.Math.Ceiling(sprite.textureRect.height));
+                    //Debug.Log(sprite.name);
+                    newText.SetPixels(newColors);
+                    newText.Apply();
+                } catch(Exception e) {
+                    Debug.Log(sprite.name+ "/n - " + e.Message);
+                }
+                
                 return newText;
             }
             else

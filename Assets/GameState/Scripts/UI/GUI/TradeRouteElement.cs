@@ -14,6 +14,7 @@ public class TradeRouteElement : MonoBehaviour {
         DeleteButton.onClick.AddListener(OnDeleteClick);
         NameText.onEndEdit.AddListener(OnNameEdit);
         NameText.readOnly = true;
+        NameText.interactable = false;
 
         EventTrigger trigger = NameText.GetComponent<EventTrigger>();
         EventTrigger.Entry click = new EventTrigger.Entry {
@@ -34,9 +35,10 @@ public class TradeRouteElement : MonoBehaviour {
     }
 
     private void OnInputFieldClick() {
-        if (NameText.readOnly)
+        if (NameText.readOnly == false)
             return;
         NameText.readOnly = false;
+        NameText.interactable = true;
         NameText.Select();
     }
 
@@ -55,6 +57,8 @@ public class TradeRouteElement : MonoBehaviour {
         this.onSelect += onSelect;
     }
     public void Update() {
-
+        //Doing this to prevent the error when setting this on edit end
+        if (NameText.readOnly == true)
+            NameText.interactable = false;
     }
 }

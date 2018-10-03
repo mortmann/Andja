@@ -147,7 +147,7 @@ public class TradeRoutePanel : MonoBehaviour {
     private void AddShipToList(Ship ship) {
         GameObject shipGO = Instantiate(shipTradeRoutePrefab);
         ShipElement se = shipGO.GetComponentInChildren<ShipElement>();
-        se.SetShip(ship, AddShipToTradeRoute, RemoveShipFromTradeRoute);
+        se.SetShip(ship, true, AddShipToTradeRoute, RemoveShipFromTradeRoute);
         shipGO.transform.SetParent(currentShipList);
         shipToGOElement.Add(ship, se);
         UpdateShipListOrder();

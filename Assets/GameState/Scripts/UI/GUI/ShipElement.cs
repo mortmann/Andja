@@ -22,7 +22,7 @@ public class ShipElement : MonoBehaviour, IComparable<ShipElement> {
         else
             onDelete?.Invoke(ship);
     }
-    public void SetShip(Ship ship, Action<Ship> onAdd, Action<Ship> onDelete) {
+    public void SetShip(Ship ship, bool selected, Action<Ship> onAdd, Action<Ship> onDelete) {
         this.ship = ship;
         NameText.text = ship.PlayerSetName;
         this.onDelete += onDelete;

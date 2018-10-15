@@ -228,7 +228,7 @@ public abstract class OutputStructure : TargetStructure {
 			if (Output[i].count > 0) {
 				Item temp = Output [i].CloneWithCount();
 				Output [i].count = 0;
-				CallbackIfnotNull ();
+				CallbackChangeIfnotNull ();
 				return temp;
 			}
 		}

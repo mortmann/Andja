@@ -223,7 +223,7 @@ public class ProductionBuilding : OutputStructure {
 			}
 			MyIntake[i].count += toAdd.GetAmountForItem(MyIntake[i]);
 			toAdd.SetItemCountNull (MyIntake[i]);
-			CallbackIfnotNull ();
+			CallbackChangeIfnotNull ();
 		}
 
 		return true;

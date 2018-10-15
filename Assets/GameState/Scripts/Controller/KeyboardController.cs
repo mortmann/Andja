@@ -56,14 +56,12 @@ public class KeyboardController : MonoBehaviour {
         if (Application.isEditor){
 			if(Input.GetKey (KeyCode.LeftShift)){
 				if(EventSystem.current.IsPointerOverGameObject ()==false){
-					FindObjectOfType<HoverOverScript> ().DebugInfo (MouseC.GetTileUnderneathMouse ().ToString ());
-					GameObject.Find ("Debug").transform.localPosition = MouseC.GetMousePosition ();
+					FindObjectOfType<HoverOverScript> ().DebugTileInfo (MouseC.GetTileUnderneathMouse ());
 				} 
 			}
 			if(Input.GetKeyUp (KeyCode.LeftShift)){
-				GameObject.Find ("Debug").transform.localPosition = new Vector3 (-200, -200);
-
-			}
+                FindObjectOfType<HoverOverScript>().Unshow();
+            }
 		}
 
 	}

@@ -432,7 +432,7 @@ public class TileSpriteController : MonoBehaviour {
             foreach (Island i in World.Current.IslandList) {
                 GameObject cityMaskGameobject = new GameObject("IslandCustomMask " + addDeciderFunc.Method.Name);
                 cityMaskGameobject.transform.parent = islandToGO[i].transform;
-                cityMaskGameobject.transform.localPosition = Vector3.zero;
+                cityMaskGameobject.transform.localPosition = -new Vector3(0.5f, 0.5f);
                 SpriteMask sm = cityMaskGameobject.AddComponent<SpriteMask>();
                 sm.isCustomRangeActive = true;
                 sm.sortingLayerName = "DarkLayer";

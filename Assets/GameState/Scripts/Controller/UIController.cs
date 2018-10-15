@@ -51,7 +51,7 @@ public class UIController : MonoBehaviour {
 			return;
 		} 
 		if(openStructure!=null) {
-			openStructure.OnClickClose ();
+			openStructure.CloseExtraUI ();
 		}			
 		if(str.PlayerNumber != PlayerController.currentPlayerNumber){
 			if (str is Warehouse) {
@@ -60,8 +60,9 @@ public class UIController : MonoBehaviour {
 			}
 		}
         str.RegisterOnDestroyCallback(OnStructureDestroy);
-		openStructure = str;
-		str.OnClick ();
+        openStructure = str;
+
+        str.OpenExtraUI ();
 		if (str is ProductionBuilding) {
 			OpenProduktionUI ((OutputStructure)str);
 		}
@@ -112,13 +113,7 @@ public class UIController : MonoBehaviour {
 	public void ShowBuildMenu(){
 		chooseBuildCanvas.SetActive (!chooseBuildCanvas.activeSelf);
 	}
-	public void ToggleInfoUI(){
-		if(unitCanvas.activeSelf || buildingCanvas.activeSelf || militaryBuildingCanvas.activeSelf) {
-			uiInfoCanvas.SetActive (true);
-		} else {
-			uiInfoCanvas.SetActive (false);
-		}
-	}
+	
 	public void OpenProduktionUI(OutputStructure str){
 		if(str == null){
 			return;
@@ -155,9 +150,10 @@ public class UIController : MonoBehaviour {
 		if(str == null){
 			return;
 		}
-		unitCanvas.SetActive (false);
-		buildingCanvas.SetActive (true);
-		ToggleInfoUI ();
+        CloseInfoUI();
+        OpenInfoUI();
+        openStructure = str;
+        buildingCanvas.SetActive (true);
 		buildingCanvas.GetComponent<ProduktionUI>().Show (str);
 		TileSpriteController.Instance.AddDecider (StrcutureTileDecider);
 	}
@@ -194,6 +190,7 @@ public class UIController : MonoBehaviour {
         buildingCanvas.SetActive (false);
 		CloseInfoUI ();
 		OpenInfoUI ();
+        openUnit = u;
 		unitCanvas.SetActive (true);
 		unitCanvas.GetComponent<UnitUI> ().Show (u);
 	}
@@ -212,12 +209,12 @@ public class UIController : MonoBehaviour {
 		if(uiInfoCanvas.activeSelf == false){
 			return;
 		}		
-		if(openStructure != null){
+		if(openStructure != null) {
 			TileSpriteController.Instance.RemoveDecider (StrcutureTileDecider);
-			openStructure.OnClickClose ();
+			openStructure.CloseExtraUI ();
             openStructure.UnregisterOnDestroyCallback(OnStructureDestroy);
             openStructure = null;
-        }
+        } 
         if (openUnit != null) {
             openUnit.UnregisterOnDestroyCallback(OnUnitDestroy);
             openUnit = null;
@@ -233,7 +230,7 @@ public class UIController : MonoBehaviour {
 	}
 	public void CloseRightUI(){
 		if(openStructure != null){
-			openStructure.OnClickClose ();
+			openStructure.CloseExtraUI ();
 			openStructure = null;
 		}
 		otherCityUI.SetActive (false);

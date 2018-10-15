@@ -32,11 +32,6 @@ public class NeedsBuilding : TargetStructure {
 			t.AddNeedStructure (this);
 		}
 	}
-	public override void OnClick (){
-		
-	}
-	public override void OnClickClose (){
-	}
 	public override void Update (float deltaTime){
 	}
 

@@ -14,13 +14,13 @@ public class Growable : OutputStructure {
 	#region Serialize
 
 	[JsonPropertyAttribute] float age = 0;
-	[JsonPropertyAttribute] public int currentStage = 1;
+    [JsonPropertyAttribute] public int currentStage = 0;
 	[JsonPropertyAttribute] public bool hasProduced = false;
 
-	#endregion
-	#region RuntimeOrOther
+    #endregion
+    #region RuntimeOrOther
 
-	public Fertility Fertility {get{ return GrowableData.fertility; }}
+    public Fertility Fertility {get{ return GrowableData.fertility; }}
 	public int AgeStages {get{ return GrowableData.ageStages; }}
 
 	protected GrowablePrototypeData _growableData;
@@ -31,9 +31,13 @@ public class Growable : OutputStructure {
 			return _growableData;
 		}
 	}
-	#endregion
 
-	public Growable(int id, GrowablePrototypeData _growableData){
+    protected float TimePerStage => (ProduceTime / (float)AgeStages + 1);
+    protected const float GrowTickTime = 1f;
+
+    #endregion
+
+    public Growable(int id, GrowablePrototypeData _growableData){
 		this.ID = id;
 		this._growableData = _growableData;
 	}
@@ -58,28 +62,18 @@ public class Growable : OutputStructure {
 		}
 	}
 	public override void Update (float deltaTime) {
-		if(hasProduced||efficiencyModifier==0){
+		if(hasProduced||efficiencyModifier<=0){
 			return;
 		}
-		if(currentStage==AgeStages){
-			hasProduced = true;
-			Output[0].count=1;
-			CallbackIfnotNull ();
-			return;
-		}
-
-		age += efficiencyModifier*(deltaTime);
-
-		if((age) > currentStage*(ProduceTime/(float)AgeStages+1)){
-			if(Random.Range (0,100) < 98){
-				return;
-			}
-			if(currentStage>=AgeStages){
-				return;
-			}
-			currentStage++;
-			//Debug.Log ("Stage " + currentStage + " @ Time " + age);
-			CallbackIfnotNull ();
+		age += efficiencyModifier * (deltaTime);
+		if((age) > currentStage * TimePerStage) {
+            currentStage++;
+            if (currentStage >= AgeStages) {
+                Produce();
+                return;
+            }
+            //Debug.Log ("Stage " + currentStage + " @ Time " + age);
+            CallbackChangeIfnotNull ();
 		}
 	}
 	public override bool SpecialCheckForBuild (System.Collections.Generic.List<Tile> tiles){
@@ -94,15 +88,31 @@ public class Growable : OutputStructure {
 		}
 		return true;
 	}
-	public override string GetSpriteName (){
-		return base.GetSpriteName () + "_" + currentStage;
-	}
-	public void Reset (){
+	
+    protected void Produce() {
+        hasProduced = true;
+        Output[0].count = 1;
+        CallbackChangeIfnotNull();
+    }
+
+	public void Harvest (){
 		Output[0].count = 0;
 		currentStage= 0;
 		age = 0f;
-		CallbackIfnotNull ();
+		CallbackChangeIfnotNull ();
 		hasProduced = false;
 	}
-		
+    #region override
+    public override string GetSpriteName() {
+        return base.GetSpriteName() + "_" + currentStage;
+    }
+    public override string ToString() {
+        if (BuildTile == null) {
+            return SpriteName + "@error";
+        }
+        return SpriteName + "@ X=" + BuildTile.X + " Y=" + BuildTile.Y + "\n " 
+            +"Age: " + age + " Current Stage " + currentStage + " \n" 
+            +" HasProduced " + hasProduced;
+    }
+    #endregion
 }

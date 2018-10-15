@@ -117,14 +117,7 @@ public class Warehouse : MarketBuilding {
 			item.Destroy ();
 		}
 	}
-	public override void OnClick (){
-		extraUIOn = true;
-		CallbackIfnotNull ();
-	}
-	public override void OnClickClose (){
-		extraUIOn = false;
-		CallbackIfnotNull ();
-	}
+	
 	public override Structure Clone (){
 		return new Warehouse (this);
 	}

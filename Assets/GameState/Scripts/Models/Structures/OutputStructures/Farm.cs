@@ -4,22 +4,25 @@ using Newtonsoft.Json;
 
 public class FarmPrototypData : OutputPrototypData {
 	public Growable growable;
+    public int neededHarvestToProduce;
 }
 
 
 [JsonObject(MemberSerialization.OptIn)]
 public class Farm : OutputStructure {
-	
 
-	#region Serialize
+
+    #region Serialize
+    [SerializeField] int currentlyHarvested = 0;
 	#endregion
 	#region RuntimeOrOther
 
-	public Growable growable { get { return FarmData.growable; }}
+	public Growable Growable { get { return FarmData.growable; }}
+    public int NeededHarvestForProduce { get { return FarmData.neededHarvestToProduce; } }
 
-	public int growableReadyCount;
+    public int growableReadyCount;
 	public int OnRegisterCallbacks;
-	Queue<Structure> workingGrowables;
+	List<Growable> workingGrowables;
 
 	protected FarmPrototypData _farmData;
 	public FarmPrototypData  FarmData {
@@ -48,7 +51,7 @@ public class Farm : OutputStructure {
 	/// DO NOT USE
 	/// </summary>
 	public Farm(){
-		workingGrowables = new Queue<Structure> ();
+		workingGrowables = new List<Growable> ();
 	}
 
 	public override Structure Clone ()	{
@@ -57,19 +60,19 @@ public class Farm : OutputStructure {
 		
 
 	public override void OnBuild ()	{
-		workingGrowables = new Queue<Structure> ();
-		if(growable == null){
+		workingGrowables = new List<Growable> ();
+		if(Growable == null){
 			return;
 		}
 		//farm has it needs plant if it can 
 		foreach (Tile rangeTile in myRangeTiles) {
 			if(rangeTile.Structure != null){
-				if(rangeTile.Structure.ID==growable.ID){
+				if(rangeTile.Structure.ID==Growable.ID){
 					rangeTile.Structure.RegisterOnChangedCallback (OnGrowableChanged);	
 					OnRegisterCallbacks++;
 					if(((Growable)rangeTile.Structure).hasProduced == true){
 						growableReadyCount ++;
-						workingGrowables.Enqueue (rangeTile.Structure);
+						workingGrowables.Add ((Growable)rangeTile.Structure);
 					}
 				}
 			}
@@ -85,43 +88,51 @@ public class Farm : OutputStructure {
 		if(Output[0].count >= MaxOutputStorage){
 			return;
 		}
-		//send out worker to collect goods
+        //TODO: send out worker to collect goods
 		produceCountdown += deltaTime;
 		if(produceCountdown >= ProduceTime) {
 			produceCountdown = 0;
-			if (growable != null) {
-				Growable g = (Growable)workingGrowables.Dequeue ();
-				Output[0].count++;
-				growableReadyCount--;
-				((Growable)g).Reset ();
+			if (Growable != null) {
+				Growable g = (Growable)workingGrowables[0];
+                currentlyHarvested++;
+				((Growable)g).Harvest ();
 			}
-            cbOutputChange?.Invoke(this);
         }
-	}
-	public void OnGrowableChanged(Structure str){
+        if (currentlyHarvested >= NeededHarvestForProduce) {
+            Output[0].count++;
+            cbOutputChange?.Invoke(this);
+            currentlyHarvested -= NeededHarvestForProduce;
+        }
+    }
+	public void OnGrowableChanged(Structure str) {
 		if(str is Growable == false){
-			str.UnregisterOnChangedCallback (OnGrowableChanged);
+            str.UnregisterOnChangedCallback (OnGrowableChanged);
 			return;
 		}
-		if(str.ID != growable.ID){
-			return;
+        Growable grow = (Growable)str;
+        if (grow.ID != Growable.ID) { 
+            grow.UnregisterOnChangedCallback(OnGrowableChanged);
+            return;
 		}
-		if(((Growable)str).hasProduced == false){
-			return;
+		if(((Growable)grow).hasProduced == false){
+            if (workingGrowables.Contains((Growable)grow)) {
+                growableReadyCount --;
+            }
+            return;
 		}
-		workingGrowables.Enqueue (str);
+		workingGrowables.Add (grow);
 		growableReadyCount ++;
 		// send worker todo this job
 		// not important right now
 	}
 	public void OnTileStructureChange(Structure now, Structure old){
-		if(old != null && old.ID == growable.ID ){
+		if(old != null && old.ID == Growable.ID ){
 			OnRegisterCallbacks--;
 		}
 		if(now == null){
 			return;
 		}
-		if(now.ID == growable.ID){
+		if(now.ID == Growable.ID){
 			OnRegisterCallbacks++;
 			now.RegisterOnChangedCallback (OnGrowableChanged);	
 			Growable g = now as Growable;
@@ -140,11 +151,8 @@ public class Farm : OutputStructure {
 			item.Destroy ();
 		}
 	}
-	public override void ExtraBuildUI (GameObject parent){
-		//FIXME
-		//TODO
-		GameObject extra = GameObject.Instantiate (Resources.Load<GameObject> ("Prefabs/GamePrefab/SpriteSlider"));
-		extra.transform.SetParent (parent.transform);
+	public override object GetExtraBuildUIData () {
+        return Efficiency;
 	}
 	public override void UpdateExtraBuildUI (GameObject parent,Tile t){
 		//FIXME
@@ -159,7 +167,7 @@ public class Farm : OutputStructure {
 			if(item==null){
 				continue;
 			}
-			if(item.Structure!=null && item.Structure.ID==growable.ID){
+			if(item.Structure!=null && item.Structure.ID==Growable.ID){
 				count++;
 			} else
 			if(item.Structure==null && Tile.IsBuildType(item.Type)){
@@ -168,11 +176,11 @@ public class Farm : OutputStructure {
 		}
 		percentage = Mathf.RoundToInt (((float)count / (float)hs.Count) * 100);
 
-		if(growable.Fertility !=null){
+		if(Growable.Fertility !=null){
 			if(t.MyIsland==null){
 				return;
 			}
-			if(t.MyIsland.myFertilities.Contains (growable.Fertility)==false){
+			if(t.MyIsland.myFertilities.Contains (Growable.Fertility)==false){
 				percentage = 0;
 			} else {
 				//TODO calculate the perfect grow environment?

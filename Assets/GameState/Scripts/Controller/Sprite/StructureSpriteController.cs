@@ -1,10 +1,13 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System;
 
 public class StructureSpriteController : MonoBehaviour {
 	public Dictionary<Structure, GameObject> structureGameObjectMap;
-	public Dictionary<string, Sprite> structureSprites = new Dictionary<string, Sprite>();
+    public Dictionary<Structure, GameObject> structureExtraUIMap;
+
+    public Dictionary<string, Sprite> structureSprites = new Dictionary<string, Sprite>();
 	public Sprite circleSprite;
 	public Sprite unitCircleSprite;
 
@@ -15,10 +18,11 @@ public class StructureSpriteController : MonoBehaviour {
 	}
 	void Start (){
 		structureGameObjectMap = new Dictionary<Structure, GameObject> ();
-		// here load sprites
-//		bm = GameObject.FindObjectOfType<BuildController>();
-//		bm.RegisterStructureCreated (OnStrucutureCreated);
-		LoadSprites ();
+        structureExtraUIMap = new Dictionary<Structure, GameObject>();
+        // here load sprites
+        //		bm = GameObject.FindObjectOfType<BuildController>();
+        //		bm.RegisterStructureCreated (OnStrucutureCreated);
+        LoadSprites ();
 		cc = CameraController.Instance;
 		if (EditorController.IsEditor){
 			EditorController.Instance.RegisterOnStructureDestroyed (OnTileStructureDestroyed);
@@ -109,28 +113,46 @@ public class StructureSpriteController : MonoBehaviour {
 			if(structureSprites.ContainsKey (structure.SmallName + "_" + ((Growable)structure).currentStage))
 				sr.sprite = structureSprites[structure.SmallName + "_" + ((Growable)structure).currentStage];
 		} 
-		else if(structure is Warehouse){
-			if (structure.extraUIOn == true) {
-                GameObject go = new GameObject {
-                    name = "RangeUI"
-                };
-                go.transform.position = structureGameObjectMap [structure].transform.position;
-				go.transform.localScale = new Vector3 (((Warehouse)structure).ContactRange, ((Warehouse)structure).ContactRange, 0);
-				SpriteRenderer sr = go.AddComponent<SpriteRenderer> ();
-				sr.sprite = circleSprite;
-				sr.sortingLayerName = "StructuresUI";
-				go.transform.SetParent (structureGameObjectMap [structure].transform);
-			} else {
-				if(structureGameObjectMap [structure].transform.Find("RangeUI") !=null)
-					GameObject.Destroy (structureGameObjectMap [structure].transform.Find("RangeUI").gameObject );
-			}
-		}
 		else if(structure is HomeBuilding){
 			SetSpriteRendererStructureSprite (structureGameObjectMap [structure], structure);
 		}
-	}
+    }
+    public void OnStructureExtraUI(Structure structure, bool show) {
+        if(show) {
+            GameObject extraUI = null;
+            switch (structure.ExtraUITyp) {
+                case ExtraUI.None:
+                    break;
+                case ExtraUI.Range:
+                    extraUI = CreateRange(structure);
+                    break;
+                case ExtraUI.Efficiency:
+                    //GameObject extra = GameObject.Instantiate (Resources.Load<GameObject> ("Prefabs/GamePrefab/SpriteSlider"));
+                    break;
+            }
+            if (extraUI == null)
+                Debug.LogError("No Extra UI to Show was created!");
+            structureExtraUIMap.Add(structure, extraUI);
+        } else {
+            //Not showing it anymore so delete it
+            Destroy(structureExtraUIMap[structure]);
+        }
+    }
 
-	void SetSpriteRendererStructureSprite(GameObject go, Structure str){
+    private GameObject CreateRange(Structure structure) {
+        GameObject go = new GameObject {
+            name = "RangeUI"
+        };
+        go.transform.position = structureGameObjectMap[structure].transform.position;
+        go.transform.localScale = new Vector3(((Warehouse)structure).ContactRange, ((Warehouse)structure).ContactRange, 0);
+        SpriteRenderer sr = go.AddComponent<SpriteRenderer>();
+        sr.sprite = circleSprite;
+        sr.sortingLayerName = "StructuresUI";
+        go.transform.SetParent(structureGameObjectMap[structure].transform);
+        return go;
+    }
+
+    void SetSpriteRendererStructureSprite(GameObject go, Structure str){
 		SpriteRenderer sr = go.GetComponent<SpriteRenderer> ();
 		if (structureSprites.ContainsKey (str.GetSpriteName())) {
 			sr.sprite = structureSprites[str.GetSpriteName()];

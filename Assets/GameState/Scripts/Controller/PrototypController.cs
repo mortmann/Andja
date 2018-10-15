@@ -494,7 +494,6 @@ public class PrototypController : MonoBehaviour {
                 contactRange = 6.3f,
                 mustBeBuildOnShore = true,
                 BuildTyp = BuildTypes.Single,
-                showExtraUI = true,
                 hasHitbox = true,
                 canTakeDamage = true,
                 buildingRange = 18,

@@ -8,6 +8,8 @@ using Newtonsoft.Json;
 public enum BuildTypes {Drag, Path, Single};
 public enum BuildingTyp {Pathfinding, Blocking,Free};
 public enum Direction {None, N, E, S, W};
+public enum ExtraUI { None, Range, Efficiency };
+public enum ExtraBuildUI { None, Range, Efficiency };
 
 public class StructurePrototypeData : LanguageVariables {
 	public bool hasHitbox;// { get; protected set; }
@@ -26,7 +28,6 @@ public class StructurePrototypeData : LanguageVariables {
 	public bool canBeBuildOver = false;
 	public bool canBeUpgraded = false;
 	public bool canTakeDamage = false;
-	public bool showExtraUI = false;
 	public bool canBeBuild = true;
 
 	public Direction mustFrontBuildDir= Direction.None; 
@@ -52,7 +53,10 @@ public class StructurePrototypeData : LanguageVariables {
 
 	public BuildTypes BuildTyp;
 	public BuildingTyp myBuildingTyp = BuildingTyp.Blocking;
-	public Item[] buildingItems;
+    public ExtraUI ExtraUITyp;
+    public ExtraBuildUI ExtraBuildUITyp;
+
+    public Item[] buildingItems;
 
 	public string spriteBaseName;
 
@@ -156,8 +160,10 @@ public abstract class Structure : IGEventable {
 	public HashSet<Tile> neighbourTiles;
 	public HashSet<Tile> myRangeTiles;
 	public string connectOrientation;
-	//player id
-	public int PlayerNumber {
+    public bool HasExtraUI { get { return ExtraUITyp != ExtraUI.None; } }
+
+    //player id
+    public int PlayerNumber {
 		get {
 			if(City==null){
 				return -1;
@@ -196,41 +202,42 @@ public abstract class Structure : IGEventable {
 
 	public bool CanBeBuild { get {return Data.canBeBuild;} }
 
-	public int BuildingRange { get {return Data.buildingRange;} }// = 0;
-	public int PopulationLevel { get {return Data.PopulationLevel;} }// = 0;
-	public int PopulationCount { get {return Data.PopulationCount;} }// = 0;
+	public int BuildingRange { get {return Data.buildingRange;} }
+	public int PopulationLevel { get {return Data.PopulationLevel;} }
+	public int PopulationCount { get {return Data.PopulationCount;} }
 
     public int _tileWidth { get {return Data.tileWidth;} }
 	public int _tileHeight { get {return Data.tileHeight;} }
 
-	public bool CanRotate { get {return Data.canRotate;} }// = true;
-	public bool CanBeBuildOver { get {return Data.canBeBuildOver;} }// = false;
-	public bool CanBeUpgraded { get {return Data.canBeUpgraded;} }// = false;
-	public bool ShowExtraUI { get {return Data.showExtraUI;} }
-	public bool CanTakeDamage { get {return Data.canTakeDamage;} }// = false;
+	public bool CanRotate { get {return Data.canRotate;} }
+	public bool CanBeBuildOver { get {return Data.canBeBuildOver;} }
+	public bool CanBeUpgraded { get {return Data.canBeUpgraded;} }
+	public bool CanTakeDamage { get {return Data.canTakeDamage;} }
 
 
-	public Direction MustFrontBuildDir { get {return Data.mustFrontBuildDir;} }// = Direction.None; 
+	public Direction MustFrontBuildDir { get {return Data.mustFrontBuildDir;} } 
 
 	public List<Tile> MyPrototypeTiles { get {return Data.MyPrototypeTiles;} }
 
 	public bool CanStartBurning { get {return Data.canStartBurning;} }
-	public bool MustBeBuildOnShore { get {return Data.mustBeBuildOnShore;} }//= false;
-	public bool MustBeBuildOnMountain { get {return Data.mustBeBuildOnMountain;} }//= false;
+	public bool MustBeBuildOnShore { get {return Data.mustBeBuildOnShore;} }
+	public bool MustBeBuildOnMountain { get {return Data.mustBeBuildOnMountain;} }
 
 	public int Maintenancecost{ get {return Data.maintenancecost;} }
 	public int Buildcost{ get {return Data.buildcost;} }
 
 	public BuildTypes BuildTyp{ get {return Data.BuildTyp;} }
-	public BuildingTyp MyBuildingTyp{ get {return Data.myBuildingTyp;} }// = BuildingTyp.Blocking;
-	public Item[] BuildingItems{ get {return Data.buildingItems;} }
+	public BuildingTyp MyBuildingTyp{ get {return Data.myBuildingTyp;} }
+    public ExtraUI ExtraUITyp { get { return Data.ExtraUITyp; } }
+    public ExtraBuildUI ExtraBuildUITyp { get { return Data.ExtraBuildUITyp; } }
+
+    public Item[] BuildingItems{ get {return Data.buildingItems;} }
 
 	public string SpriteName{ get { return Data.spriteBaseName/*TODO: make multiple saved sprites possible*/; } }
 
 	protected Action<Structure> cbStructureChanged;
 	protected Action<Structure> cbStructureDestroy;
 	protected Action<Structure,string> cbStructureSound;
-	public bool extraUIOn = false;
 
 
 	protected void BaseCopyData(Structure str){
@@ -300,9 +307,9 @@ public abstract class Structure : IGEventable {
 	public virtual void Update (float deltaTime){
 	}
 	public abstract void OnBuild();
-	public virtual void OnClick (){
+	public virtual void OpenExtraUI () {
 	}
-	public virtual void OnClickClose (){
+	public virtual void CloseExtraUI () {
 	}
 	protected virtual void OnDestroy(){}
 	protected virtual void OnCityChange (City old,City newOne){}
@@ -311,10 +318,11 @@ public abstract class Structure : IGEventable {
 	/// structures. Or so.
 	/// </summary>
 	/// <param name="parent">Its the parent for the extra UI.</param>		
-	public virtual void ExtraBuildUI(GameObject parent){
-		//does nothing normally
-		//stuff here to show for when building this
-		//using this for e.g. farm efficiency bar!
+	public virtual object GetExtraBuildUIData(){
+        //does nothing normally
+        //stuff here to show for when building this
+        //using this for e.g. farm efficiency bar!
+        return null;
 	}
 	public virtual void UpdateExtraBuildUI(GameObject parent,Tile t){
 		//does nothing normally
@@ -371,7 +379,7 @@ public abstract class Structure : IGEventable {
 			OnEventEndedVirtual (ge);
 		}
 	}
-	public void CallbackIfnotNull(){
+	public void CallbackChangeIfnotNull(){
         cbStructureChanged?.Invoke(this);
     }
     public void RegisterOnChangedCallback(Action<Structure> cb) {

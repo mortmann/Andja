@@ -140,8 +140,7 @@ public class MouseController : MonoBehaviour {
         if (Input.GetMouseButtonDown(0)) {
 			//mouse press decide what it hit 
 			DecideWhatUIToShow (Physics2D.Raycast(new Vector2(currFramePosition.x, currFramePosition.y), Vector2.zero, 200));
-            if (mouseState != MouseState.Unit)
-                UIController.CloseInfoUI();
+            
         }
 		if (Input.GetMouseButtonDown (1) && mouseState != MouseState.Unit) {
 			ResetBuilding (null);
@@ -178,7 +177,10 @@ public class MouseController : MonoBehaviour {
 					Debug.Log ("tile " + t.ToString ()); 
 				}
 			}
-		} 
+		} else {
+            if (mouseState != MouseState.Unit)
+                UIController.CloseInfoUI();
+        }
 	}
 	private void UpdateSingle() {
 		// If we're over a UI element, then bail out from this.
@@ -254,10 +256,9 @@ public class MouseController : MonoBehaviour {
 		sr.sprite = ssc.GetStructureSprite (Structure);
 		sr.sortingLayerName = "StructuresUI";
 		sr.color = new Color (sr.color.a, sr.color.b, sr.color.g, 0.5f);
-		Structure.ExtraBuildUI (previewGO);
-
+		//Structure.GetExtraBuildUIData ();
+        //TODO: create extra ui here
 		TileSpriteController.Instance.AddDecider (TileCityDecider,true);
-
 	}
 
 	//FIXME this is not optimal 

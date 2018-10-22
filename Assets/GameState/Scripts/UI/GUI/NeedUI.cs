@@ -35,8 +35,9 @@ public class NeedUI : MonoBehaviour {
 			return;
 		}
 		if (need.IsItemNeed()) {
-			percentageText.text = need.percantageAvailability * 100 + "%";
-			slider.value = need.percantageAvailability * 100;
+            float percantage = need.GetFullfiment(home.PopulationLevel) * 100;
+            percentageText.text = percantage + "%";
+			slider.value = percantage;
 		} else {
 			if(home.IsStructureNeedFullfilled(need)){
 				percentageText.text = "In Range";

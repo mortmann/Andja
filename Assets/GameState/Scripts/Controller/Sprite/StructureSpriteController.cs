@@ -9,7 +9,8 @@ public class StructureSpriteController : MonoBehaviour {
 
     public Dictionary<string, Sprite> structureSprites = new Dictionary<string, Sprite>();
 	public Sprite circleSprite;
-	public Sprite unitCircleSprite;
+    public Sprite upgradeSprite;
+    public Sprite unitCircleSprite;
 
 	BuildController bm;
 	CameraController cc;
@@ -19,9 +20,7 @@ public class StructureSpriteController : MonoBehaviour {
 	void Start (){
 		structureGameObjectMap = new Dictionary<Structure, GameObject> ();
         structureExtraUIMap = new Dictionary<Structure, GameObject>();
-        // here load sprites
-        //		bm = GameObject.FindObjectOfType<BuildController>();
-        //		bm.RegisterStructureCreated (OnStrucutureCreated);
+        
         LoadSprites ();
 		cc = CameraController.Instance;
 		if (EditorController.IsEditor){
@@ -47,7 +46,9 @@ public class StructureSpriteController : MonoBehaviour {
 		GameObject go = new GameObject ();
 		structure.RegisterOnChangedCallback (OnStructureChanged);
 		structure.RegisterOnDestroyCallback (OnStructureDestroyed);
-		float x = 0;
+        structure.RegisterOnExtraUICallback(OnStructureExtraUI);
+
+        float x = 0;
 		float y = 0;
 		if (structure.TileWidth> 1) {
 			x = 0.5f + ((float)structure.TileWidth) / 2 - 1;
@@ -119,24 +120,44 @@ public class StructureSpriteController : MonoBehaviour {
     }
     public void OnStructureExtraUI(Structure structure, bool show) {
         if(show) {
+            if (structureExtraUIMap.ContainsKey(structure))
+                return;
             GameObject extraUI = null;
             switch (structure.ExtraUITyp) {
                 case ExtraUI.None:
-                    break;
+                    return;
                 case ExtraUI.Range:
                     extraUI = CreateRange(structure);
                     break;
                 case ExtraUI.Efficiency:
                     //GameObject extra = GameObject.Instantiate (Resources.Load<GameObject> ("Prefabs/GamePrefab/SpriteSlider"));
                     break;
+                case ExtraUI.Upgrade:
+                    extraUI = CreateUpgrade(structure);
+                    break;
             }
             if (extraUI == null)
-                Debug.LogError("No Extra UI to Show was created!");
+                Debug.LogError("No Extra UI to Show was created for type " + structure.ExtraUITyp);
             structureExtraUIMap.Add(structure, extraUI);
-        } else {
-            //Not showing it anymore so delete it
-            Destroy(structureExtraUIMap[structure]);
         }
+        else {
+            //Not showing it anymore so delete it
+            if(structureExtraUIMap.ContainsKey(structure))
+                Destroy(structureExtraUIMap[structure]);
+        }
+    }
+
+    private GameObject CreateUpgrade(Structure structure) {
+        GameObject go = new GameObject {
+            name = "UpgradeUI"
+        };
+        go.transform.position = structureGameObjectMap[structure].transform.position;
+        go.transform.localScale = new Vector3(1, 1, 0);
+        SpriteRenderer sr = go.AddComponent<SpriteRenderer>();
+        sr.sprite = upgradeSprite;
+        sr.sortingLayerName = "StructuresUI";
+        go.transform.SetParent(structureGameObjectMap[structure].transform);
+        return go;
     }
 
     private GameObject CreateRange(Structure structure) {
@@ -144,7 +165,7 @@ public class StructureSpriteController : MonoBehaviour {
             name = "RangeUI"
         };
         go.transform.position = structureGameObjectMap[structure].transform.position;
-        go.transform.localScale = new Vector3(((Warehouse)structure).ContactRange, ((Warehouse)structure).ContactRange, 0);
+        go.transform.localScale = new Vector3(((OutputStructure)structure).ContactRange, ((OutputStructure)structure).ContactRange, 0);
         SpriteRenderer sr = go.AddComponent<SpriteRenderer>();
         sr.sprite = circleSprite;
         sr.sortingLayerName = "StructuresUI";
@@ -180,7 +201,10 @@ public class StructureSpriteController : MonoBehaviour {
 		GameObject go = structureGameObjectMap [structure];
 		GameObject.Destroy (go);
 		structure.UnregisterOnChangedCallback (OnStructureChanged);
-		structureGameObjectMap.Remove (structure);
+        structure.UnregisterOnDestroyCallback(OnStructureDestroyed);
+        structure.UnregisterOnExtraUICallback(OnStructureExtraUI);
+
+        structureGameObjectMap.Remove (structure);
 	}
 		
 	public void OnRoadChange(Road road) {

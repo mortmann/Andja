@@ -96,12 +96,12 @@ public class Player : IGEventable {
 	}
 	private void Setup(){
 		myCities = new List<City> ();
-		LockedNeeds = new HashSet<Need>[City.citizienLevels];
-		UnlockedStructureNeeds = new HashSet<Need>[City.citizienLevels];
+		LockedNeeds = new HashSet<Need>[PrototypController.NumberOfPopulationLevels];
+		UnlockedStructureNeeds = new HashSet<Need>[PrototypController.NumberOfPopulationLevels];
 		UnlockedItemNeeds = new HashSet<Need> ();
         MyTradeRoutes = new List<TradeRoute>();
 
-        for (int i = 0; i < City.citizienLevels; i++) {
+        for (int i = 0; i < PrototypController.NumberOfPopulationLevels; i++) {
 			LockedNeeds [i] = new HashSet<Need> ();
 			UnlockedStructureNeeds [i] = new HashSet<Need> ();
 		}

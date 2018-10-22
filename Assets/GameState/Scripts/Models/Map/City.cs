@@ -7,8 +7,6 @@ using Newtonsoft.Json;
 public class City : IGEventable {
 	public const int TargetType = 12;
 
-	//TODO FIX this position of this
-	public const int citizienLevels = 4;
 	#region Serialize
 	[JsonPropertyAttribute] public int playerNumber = 0;
 	[JsonPropertyAttribute] public Inventory inventory;
@@ -23,16 +21,12 @@ public class City : IGEventable {
 	[JsonPropertyAttribute] public Dictionary<int,TradeItem> itemIDtoTradeItem;
 	[JsonPropertyAttribute] private string _name=""; 
 
-	[JsonPropertyAttribute] public int[] citizienCount;
-	[JsonPropertyAttribute] public float[] citizienHappiness;
-	[JsonPropertyAttribute] public bool[] criticalAvaibilityNeed;
-
 	[JsonPropertyAttribute] public Island island;
+    [JsonPropertyAttribute] List<PopulationLevel> PopulationLevels;
 
-
-	#endregion
-	#region RuntimeOrOther
-	public string Name {get{
+    #endregion
+    #region RuntimeOrOther
+    public string Name {get{
 			if(this.IsWilderness ()){
 				return "Wilderness";
 			}
@@ -49,6 +43,14 @@ public class City : IGEventable {
 
         set {
             _myTiles = value;
+        }
+    }
+
+    public int PopulationCount { get {
+            int sum = 0;
+            foreach (PopulationLevel p in PopulationLevels)
+                sum += p.populationCount;
+            return sum;
         }
     }
 
@@ -83,14 +85,6 @@ public class City : IGEventable {
 		myStructures = new List<Structure>();
 		inventory = new CityInventory ();
         Setup();
-		citizienCount = new int[citizienLevels];
-		citizienHappiness = new float[citizienLevels];
-		criticalAvaibilityNeed = new bool[citizienLevels];
-		for (int i = 0; i < citizienCount.Length; i++) {
-			citizienCount [i] = 0;
-			citizienHappiness [i] = 0.5f;
-			criticalAvaibilityNeed [i] = false;
-		}
 
 		_name = "<City>" + UnityEngine.Random.Range (0, 1000);
 		//		useTickTimer = useTick;
@@ -121,17 +115,7 @@ public class City : IGEventable {
 		itemNeeds = new List<Need> ();
 		structureNeeds = new List<Need> ();
 		List<Need> allNeeds = World.GetCopieOfAllNeeds();
-		if(citizienHappiness == null){
-			citizienCount = new int[citizienLevels];
-			citizienHappiness = new float[citizienLevels];
-			criticalAvaibilityNeed = new bool[citizienLevels];
 
-			for (int i = 0; i < citizienCount.Length; i++) {
-				citizienCount [i] = 0;
-				citizienHappiness [i] = 0.5f;
-				criticalAvaibilityNeed [i] = false;
-			}
-		}
 		for (int i = 0; i < allNeeds.Count; i++) {
 			if(allNeeds[i].IsItemNeed()){
 				itemNeeds.Add (allNeeds [i]);
@@ -216,36 +200,35 @@ public class City : IGEventable {
     }
 
 	private void UpdateNeeds(float deltaTime){
-		for (int i = 0; i < citizienLevels; i++) {
-			criticalAvaibilityNeed [i] = false;
-		}
 		useTickTimer -= deltaTime;
 		if(useTickTimer<=0){
 			useTickTimer = useTick;
-			CalculateNeeds ();
+
+			//CalculateNeeds ();
 
 		}
 	}
 	public void CalculateNeeds(){
-		int[] levelCount = new int[citizienLevels];
-		float[] sumOfPerc = new float[citizienLevels];
-		foreach(Need need in itemNeeds){
-			need.TryToConsumThisIn (this,citizienCount);
-			levelCount [need.StartLevel]++;
-			sumOfPerc [need.StartLevel] += need.percantageAvailability;
-			if(need.percantageAvailability<0.4f){
-				criticalAvaibilityNeed [need.StartLevel] = true;
-			}
-		}
-		float[] percentagesPerLevel = new float[citizienLevels];
-		float percantageSummed=0;
-		for (int i = 0; i < citizienLevels; i++) {
-			percentagesPerLevel [i] = sumOfPerc [i] / levelCount [i];
-			for (int s = 0; s <= i; s++) {
-				percantageSummed = percentagesPerLevel [s]; 
-			}
-			citizienHappiness [i] = percantageSummed / (i+1);
-		}
+        foreach(PopulationLevel pop in PopulationLevels) {
+            pop.CalculateHappiness(this);
+        }
+		//foreach(Need need in itemNeeds){
+		//	need.TryToConsumThisIn (this,citizienCount);
+		//	levelCount [need.StartLevel]++;
+		//	sumOfPerc [need.StartLevel] += need.percantageAvailability;
+		//	if(need.percantageAvailability<0.4f){
+		//		criticalAvaibilityNeed [need.StartLevel] = true;
+		//	}
+		//}
+		//float[] percentagesPerLevel = new float[citizienLevels];
+		//float percantageSummed=0;
+		//for (int i = 0; i < citizienLevels; i++) {
+		//	percentagesPerLevel [i] = sumOfPerc [i] / levelCount [i];
+		//	for (int s = 0; s <= i; s++) { 
+		//		percantageSummed = percentagesPerLevel [s]; 
+		//	}
+		//	citizienHappiness [i] = percantageSummed / (i+1);
+		//}
 	}
 
 	public void TriggerAddCallBack(Structure str){
@@ -296,19 +279,19 @@ public class City : IGEventable {
         }
 	}
 	public bool GetNeedCriticalForLevel(int buildingLevel){
-		return criticalAvaibilityNeed [buildingLevel];
+		return PopulationLevels [buildingLevel].criticalMissingNeed;
 	}
 	public void AddPeople(int level, int count){
 		if(count<0){
 			return;
 		}
-		citizienCount [level] += count;
+        PopulationLevels[level].AddPeople(count);
 	}
 	public void RemovePeople(int level, int count){
 		if(count<0){
 			return;
 		}
-		citizienCount [level] -= count;
+        PopulationLevels[level].RemovePeople(count);
 	}
 
 	public void RemoveRessources(Item[] remove){
@@ -412,12 +395,7 @@ public class City : IGEventable {
 		}
 		return u.inventory.MoveItem (inventory,getTrade,amount);
 	}
-	public float GetPercentage(Need need){
-		if(idToNeed.ContainsKey (need.ID)==false){
-			return 0;
-		}
-		return idToNeed[need.ID].percantageAvailability;
-	}
+	
 	public void RemoveTradeItem(Item item){
 		itemIDtoTradeItem.Remove (item.ID);
 	}
@@ -478,7 +456,7 @@ public class City : IGEventable {
 
 	}
 	public float GetHappinessForCitizenLevel(int level){
-		return citizienHappiness [level];
+		return PopulationLevels [level].Happiness;
 	}
 	public void RemoveTiles(IEnumerable<Tile> tiles){
 		foreach (Tile item in tiles) {

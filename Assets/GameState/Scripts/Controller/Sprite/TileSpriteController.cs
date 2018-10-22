@@ -299,11 +299,11 @@ public class TileSpriteController : MonoBehaviour {
             switch (tm) {
                 case TileMark.None:
                     islandToCustomMask[tile_data.MyIsland].sprite.texture.SetPixel(x, y, new Color32(128, 128, 128, 255));
-                break;
+                    break;
                 case TileMark.Highlight:
                 break;
                 case TileMark.Dark:
-                     islandToCustomMask[tile_data.MyIsland].sprite.texture.SetPixel(x, y, new Color32(128, 128, 128, 0));
+                    islandToCustomMask[tile_data.MyIsland].sprite.texture.SetPixel(x, y, new Color32(128, 128, 128, 0));
                 break;
             }
         }
@@ -338,7 +338,7 @@ public class TileSpriteController : MonoBehaviour {
 		GameObject tile_go = SimplePool.Spawn( tilePrefab, new Vector3(tile_data.X, tile_data.Y, 0), Quaternion.identity );
 		tile_go.name = "Tile_" + tile_data.X + "_" + tile_data.Y;
 		tile_go.transform.position = new Vector3(tile_data.X , tile_data.Y , 0);
-		SpriteRenderer sr = tile_go.GetComponent<SpriteRenderer>();
+        SpriteRenderer sr = tile_go.GetComponent<SpriteRenderer>();
 		sr.sortingLayerName = "Tile";
 		tile_go.transform.SetParent(this.transform, true);
 		tileSpriteRendererMap.Add(tile_data, sr);
@@ -432,7 +432,7 @@ public class TileSpriteController : MonoBehaviour {
             foreach (Island i in World.Current.IslandList) {
                 GameObject cityMaskGameobject = new GameObject("IslandCustomMask " + addDeciderFunc.Method.Name);
                 cityMaskGameobject.transform.parent = islandToGO[i].transform;
-                cityMaskGameobject.transform.localPosition = -new Vector3(0.5f, 0.5f);
+                cityMaskGameobject.transform.localPosition = -new Vector3(0, 0);
                 SpriteMask sm = cityMaskGameobject.AddComponent<SpriteMask>();
                 sm.isCustomRangeActive = true;
                 sm.sortingLayerName = "DarkLayer";
@@ -440,9 +440,11 @@ public class TileSpriteController : MonoBehaviour {
                 Texture2D masktex = Instantiate<Texture2D>(islandToMaskTexture[i.Placement]);
                 sm.sprite = Sprite.Create(masktex, new Rect(0, 0, masktex.width, masktex.height), Vector2.zero, 1);
                 sm.alphaCutoff = 1;
+
                 islandToCustomMask.Add(i, sm);
 		//TODO: call this again or just ontilechanged when the corresponding decider needs updating 
                 i.myTiles.ForEach(x => OnTileChanged(x));
+
             }
         }
     }

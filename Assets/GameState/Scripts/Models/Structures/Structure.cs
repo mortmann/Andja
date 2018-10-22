@@ -8,7 +8,7 @@ using Newtonsoft.Json;
 public enum BuildTypes {Drag, Path, Single};
 public enum BuildingTyp {Pathfinding, Blocking,Free};
 public enum Direction {None, N, E, S, W};
-public enum ExtraUI { None, Range, Efficiency };
+public enum ExtraUI { None, Range, Upgrade, Efficiency };
 public enum ExtraBuildUI { None, Range, Efficiency };
 
 public class StructurePrototypeData : LanguageVariables {
@@ -237,7 +237,8 @@ public abstract class Structure : IGEventable {
 
 	protected Action<Structure> cbStructureChanged;
 	protected Action<Structure> cbStructureDestroy;
-	protected Action<Structure,string> cbStructureSound;
+    protected Action<Structure, bool> cbStructureExtraUI;
+    protected Action<Structure,string> cbStructureSound;
 
 
 	protected void BaseCopyData(Structure str){
@@ -300,17 +301,19 @@ public abstract class Structure : IGEventable {
 			return 0;
 		}
 	}
-
+    public void OpenExtraUI() {
+        cbStructureExtraUI?.Invoke(this, true); 
+    }
+    public void CloseExtraUI() {
+        cbStructureExtraUI?.Invoke(this, false);
+    }
     #endregion
     #region Virtual/Abstract
     public abstract Structure Clone ();
 	public virtual void Update (float deltaTime){
 	}
 	public abstract void OnBuild();
-	public virtual void OpenExtraUI () {
-	}
-	public virtual void CloseExtraUI () {
-	}
+	
 	protected virtual void OnDestroy(){}
 	protected virtual void OnCityChange (City old,City newOne){}
 	/// <summary>
@@ -400,9 +403,15 @@ public abstract class Structure : IGEventable {
 	public void UnregisterOnSoundCallback(Action<Structure,string> cb) {
 		cbStructureSound -= cb;
 	}
-	#endregion
-	#region placestructure
-	public bool PlaceStructure(List<Tile> tiles){
+    public void RegisterOnExtraUICallback(Action<Structure, bool> cb) {
+        cbStructureExtraUI += cb;
+    }
+    public void UnregisterOnExtraUICallback(Action<Structure, bool> cb) {
+        cbStructureExtraUI -= cb;
+    }
+    #endregion
+    #region placestructure
+    public bool PlaceStructure(List<Tile> tiles){
 		myBuildingTiles = new List<Tile> ();
 
 		//test if the place is buildable

@@ -69,7 +69,8 @@ public class HomeBuilding : TargetStructure {
 			//here the people are very unhappy and will leave veryfast
 			return;
 		}
-		float allPercentage = 0;
+        OpenExtraUI();
+        float allPercentage = 0;
 		float structurePercentage = 0;
 		int count = 0;
 		bool percCritical = City.GetNeedCriticalForLevel(buildingLevel);
@@ -114,6 +115,7 @@ public class HomeBuilding : TargetStructure {
 				incTimer = 0;
 				if(people==MaxLivingSpaces && myPlayer.HasUnlockedAllNeeds(buildingLevel)){
 					canUpgrade = true;
+                    OpenExtraUI();
 				}
 				TryToIncreasePeople ();
 			}

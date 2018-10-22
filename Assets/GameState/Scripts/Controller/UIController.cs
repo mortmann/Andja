@@ -50,19 +50,20 @@ public class UIController : MonoBehaviour {
 		if(openStructure == str || str == null){
 			return;
 		} 
-		if(openStructure!=null) {
-			openStructure.CloseExtraUI ();
-		}			
 		if(str.PlayerNumber != PlayerController.currentPlayerNumber){
 			if (str is Warehouse) {
 				OpenOtherCity(str.City);
 				return;
 			}
 		}
+
+        CloseInfoUI();
+        CloseRightUI();
+
         str.RegisterOnDestroyCallback(OnStructureDestroy);
         openStructure = str;
-
         str.OpenExtraUI ();
+
 		if (str is ProductionBuilding) {
 			OpenProduktionUI ((OutputStructure)str);
 		}
@@ -118,7 +119,6 @@ public class UIController : MonoBehaviour {
 		if(str == null){
 			return;
 		}
-        CloseInfoUI();
         OpenInfoUI();
         buildingCanvas.SetActive (true);
 		buildingCanvas.GetComponent<ProduktionUI>().Show (str);
@@ -131,7 +131,6 @@ public class UIController : MonoBehaviour {
         if (str == null) {
             return;
         }
-        CloseInfoUI();
         OpenInfoUI();
         militaryBuildingCanvas.SetActive(true);
         militaryBuildingCanvas.GetComponent<MilitaryBuildingUI>().Show(str);
@@ -150,7 +149,6 @@ public class UIController : MonoBehaviour {
 		if(str == null){
 			return;
 		}
-        CloseInfoUI();
         OpenInfoUI();
         openStructure = str;
         buildingCanvas.SetActive (true);
@@ -206,7 +204,7 @@ public class UIController : MonoBehaviour {
 		uiInfoCanvas.SetActive (true);
 	}
 	public void CloseInfoUI (){
-		if(uiInfoCanvas.activeSelf == false){
+		if(uiInfoCanvas.activeInHierarchy == false){
 			return;
 		}		
 		if(openStructure != null) {
@@ -229,11 +227,10 @@ public class UIController : MonoBehaviour {
 		chooseBuildCanvas.SetActive (false);
 	}
 	public void CloseRightUI(){
-		if(openStructure != null){
-			openStructure.CloseExtraUI ();
-			openStructure = null;
-		}
-		otherCityUI.SetActive (false);
+        if(openStructure is Warehouse)
+            openStructure.CloseExtraUI();
+
+        otherCityUI.SetActive (false);
 		CityInventoryCanvas.SetActive (false);
 		citizenCanvas.SetActive (false);
 		rightCanvas.SetActive (false);
@@ -287,15 +284,20 @@ public class UIController : MonoBehaviour {
 			TogglePauseMenu ();
 		}
 		CloseConsole ();
-		CloseHomeUI ();
+        CloseRightUI();
+        //CloseHomeUI();
 		CloseInfoUI ();
-		CloseProduktionUI ();
-		CloseUnitUI ();
+		//CloseProduktionUI ();
+		//CloseUnitUI ();
 		CloseChooseBuild ();
-		CloseRightUI ();
 		CloseTradeMenu ();
 		CloseOffWorldMenu ();
-		if (TileSpriteController.Instance != null)
+
+        if(openStructure != null)
+            openStructure.CloseExtraUI();
+
+
+        if (TileSpriteController.Instance != null)
 			TileSpriteController.Instance.RemoveDecider (StrcutureTileDecider);
 	}
 	public bool IsPauseMenuOpen(){

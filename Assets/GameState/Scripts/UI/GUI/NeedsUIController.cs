@@ -29,8 +29,8 @@ public class NeedsUIController : MonoBehaviour {
 		Player p = PlayerController.Instance.CurrPlayer;
 
 		citizenCanvas.GetComponentInChildren<Text> ().text=home.people+"/"+home.MaxLivingSpaces;
-		needs = new List<Need>[City.citizienLevels];
-		for (int i = 0; i < City.citizienLevels; i++) {
+		needs = new List<Need>[PrototypController.NumberOfPopulationLevels];
+		for (int i = 0; i < PrototypController.NumberOfPopulationLevels; i++) {
 			needs [i] = new List<Need> ();
 			ns.AddRange (p.LockedNeeds [i]);
 			ns.AddRange (p.UnlockedStructureNeeds[i]);
@@ -62,7 +62,7 @@ public class NeedsUIController : MonoBehaviour {
 	}
 
 	public void ChangeNeedLevel(int level){
-		for (int i = 0; i < City.citizienLevels; i++) {
+		for (int i = 0; i < PrototypController.NumberOfPopulationLevels; i++) {
 			if (i == level) {
 				continue;
 			}

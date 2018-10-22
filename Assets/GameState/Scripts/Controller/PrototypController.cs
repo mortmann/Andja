@@ -12,6 +12,8 @@ using static Combat;
 public class PrototypController : MonoBehaviour {
 	public const int StartID = 1;
 
+    public static int NumberOfPopulationLevels => 4;
+
 	public static PrototypController Instance;
 	public Dictionary<int,Structure>  structurePrototypes;
     private Dictionary<int, Unit> unitPrototypes;

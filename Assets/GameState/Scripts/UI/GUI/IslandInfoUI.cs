@@ -27,10 +27,7 @@ public class IslandInfoUI : MonoBehaviour {
 		}
 		City c = cc.nearestIsland.myCities.Find (x => x.playerNumber == PlayerController.currentPlayerNumber);
 		if(c !=null){
-			int count=0;
-			foreach (int item in c.citizienCount) {
-				count += item;
-			}
+			int count= c.PopulationCount;
 
 			text += count+"P";
 			text += " | " + c.Balance+"$";

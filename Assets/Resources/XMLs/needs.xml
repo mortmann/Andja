@@ -11,6 +11,7 @@
       <structure>401</structure>
       <startLevel>0</startLevel>
       <popCount>0</popCount>
+      <group>2</group>
    </Need>
    <Need ID="2">
       <Peasent>1.0</Peasent>
@@ -24,6 +25,7 @@
       <structure>402</structure>
       <startLevel>0</startLevel>
       <popCount>500</popCount>
+      <group>8</group>
    </Need>
    <Need ID="3">
       <Peasent>1.0</Peasent>
@@ -37,6 +39,7 @@
       <structure>403</structure>
       <startLevel>0</startLevel>
       <popCount>0</popCount>
+      <group>3</group>
    </Need>
    <Need ID="4">
       <Peasent>0.01</Peasent>
@@ -53,6 +56,7 @@
       <structure>0</structure>
       <startLevel>0</startLevel>
       <popCount>0</popCount>
+      <group>0</group>
    </Need>
    <Need ID="6">
       <Peasent>0.02</Peasent>
@@ -69,6 +73,7 @@
       <structure>0</structure>
       <startLevel>0</startLevel>
       <popCount>500</popCount>
+      <group>1</group>
    </Need>
    <Need ID="7">
       <Peasent>0.01</Peasent>
@@ -85,6 +90,7 @@
       <structure>0</structure>
       <startLevel>0</startLevel>
       <popCount>1250</popCount>
+      <group>0</group>
    </Need>
    <Need ID="8">
       <Peasent>1.0</Peasent>
@@ -98,6 +104,7 @@
       <structure>0</structure>
       <startLevel>0</startLevel>
       <popCount>0</popCount>
+      <group>4</group>
    </Need>
    <Need ID="9">
       <Peasent>0.0</Peasent>
@@ -111,6 +118,7 @@
       <structure>0</structure>
       <startLevel>1</startLevel>
       <popCount>0</popCount>
+      <group>5</group>
    </Need>
    <Need ID="10">
       <Peasent>0.0</Peasent>
@@ -124,6 +132,7 @@
       <structure>0</structure>
       <startLevel>1</startLevel>
       <popCount>0</popCount>
+      <group>0</group>
    </Need>
    <Need ID="11">
       <Peasent>0.0</Peasent>
@@ -137,6 +146,7 @@
       <structure>0</structure>
       <startLevel>1</startLevel>
       <popCount>0</popCount>
+      <group>0</group>
    </Need>
    <Need ID="12">
       <Peasent>0.0</Peasent>
@@ -150,6 +160,7 @@
       <structure>0</structure>
       <startLevel>1</startLevel>
       <popCount>0</popCount>
+      <group>0</group>
    </Need>
    <Need ID="13">
       <Peasent>0.0</Peasent>
@@ -163,6 +174,7 @@
       <structure>0</structure>
       <startLevel>1</startLevel>
       <popCount>0</popCount>
+      <group>0</group>
    </Need>
    <Need ID="14">
       <Peasent>0.0</Peasent>
@@ -176,6 +188,7 @@
       <structure>0</structure>
       <startLevel>1</startLevel>
       <popCount>0</popCount>
+      <group>0</group>
    </Need>
    <Need ID="15">
       <Peasent>0.0</Peasent>
@@ -189,6 +202,7 @@
       <structure>0</structure>
       <startLevel>1</startLevel>
       <popCount>0</popCount>
+      <group>0</group>
    </Need>
    <Need ID="16">
       <Peasent>0.0</Peasent>
@@ -202,6 +216,7 @@
       <structure>0</structure>
       <startLevel>1</startLevel>
       <popCount>0</popCount>
+      <group>0</group>
    </Need>
    <Need ID="17">
       <Peasent>0.0</Peasent>
@@ -215,6 +230,7 @@
       <structure>0</structure>
       <startLevel>1</startLevel>
       <popCount>0</popCount>
+      <group>0</group>
    </Need>
    <Need ID="18">
       <Peasent>0.0</Peasent>
@@ -228,6 +244,7 @@
       <structure>0</structure>
       <startLevel>1</startLevel>
       <popCount>0</popCount>
+      <group>0</group>
    </Need>
    <Need ID="19">
       <Peasent>0.0</Peasent>
@@ -241,6 +258,7 @@
       <structure>0</structure>
       <startLevel>1</startLevel>
       <popCount>0</popCount>
+      <group>0</group>
    </Need>
    <Need ID="20">
       <Peasent>0.0</Peasent>
@@ -254,6 +272,7 @@
       <structure>0</structure>
       <startLevel>1</startLevel>
       <popCount>0</popCount>
+      <group>0</group>
    </Need>
    <Need ID="21">
       <Peasent>0.0</Peasent>
@@ -267,6 +286,7 @@
       <structure>0</structure>
       <startLevel>1</startLevel>
       <popCount>0</popCount>
+      <group>0</group>
    </Need>
    <Need ID="22">
       <Peasent>0.0</Peasent>
@@ -280,6 +300,7 @@
       <structure>0</structure>
       <startLevel>1</startLevel>
       <popCount>0</popCount>
+      <group>0</group>
    </Need>
    <Need ID="23">
       <Peasent>0.0</Peasent>
@@ -293,6 +314,7 @@
       <structure>0</structure>
       <startLevel>1</startLevel>
       <popCount>0</popCount>
+      <group>0</group>
    </Need>
    <Need ID="24">
       <Peasent>0.0</Peasent>
@@ -306,6 +328,7 @@
       <structure>0</structure>
       <startLevel>1</startLevel>
       <popCount>0</popCount>
+      <group>0</group>
    </Need>
    <Need ID="25">
       <Peasent>0.0</Peasent>
@@ -319,6 +342,7 @@
       <structure>0</structure>
       <startLevel>1</startLevel>
       <popCount>0</popCount>
+      <group>0</group>
    </Need>
    <Need ID="26">
       <Peasent>0.0</Peasent>
@@ -332,6 +356,7 @@
       <structure>0</structure>
       <startLevel>1</startLevel>
       <popCount>0</popCount>
+      <group>0</group>
    </Need>
    <Need ID="27">
       <Peasent>0.0</Peasent>
@@ -345,6 +370,7 @@
       <structure>0</structure>
       <startLevel>1</startLevel>
       <popCount>0</popCount>
+      <group>0</group>
    </Need>
    <Need ID="28">
       <Peasent>0.0</Peasent>
@@ -358,6 +384,7 @@
       <structure>0</structure>
       <startLevel>1</startLevel>
       <popCount>0</popCount>
+      <group>0</group>
    </Need>
    <Need ID="29">
       <Peasent>0.0</Peasent>
@@ -371,6 +398,7 @@
       <structure>0</structure>
       <startLevel>1</startLevel>
       <popCount>0</popCount>
+      <group>0</group>
    </Need>
    <Need ID="30">
       <Peasent>0.0</Peasent>
@@ -384,6 +412,7 @@
       <structure>0</structure>
       <startLevel>1</startLevel>
       <popCount>0</popCount>
+      <group>0</group>
    </Need>
    <Need ID="31">
       <Peasent>0.0</Peasent>
@@ -397,6 +426,7 @@
       <structure>0</structure>
       <startLevel>1</startLevel>
       <popCount>0</popCount>
+      <group>0</group>
    </Need>
    <Need ID="32">
       <Peasent>0.0</Peasent>
@@ -410,6 +440,7 @@
       <structure>0</structure>
       <startLevel>1</startLevel>
       <popCount>0</popCount>
+      <group>0</group>
    </Need>
    <Need ID="33">
       <Peasent>0.0</Peasent>
@@ -423,6 +454,7 @@
       <structure>0</structure>
       <startLevel>1</startLevel>
       <popCount>0</popCount>
+      <group>0</group>
    </Need>
    <Need ID="34">
       <Peasent>0.0</Peasent>
@@ -436,6 +468,7 @@
       <structure>0</structure>
       <startLevel>1</startLevel>
       <popCount>0</popCount>
+      <group>0</group>
    </Need>
    <Need ID="35">
       <Peasent>0.0</Peasent>
@@ -449,6 +482,7 @@
       <structure>0</structure>
       <startLevel>1</startLevel>
       <popCount>0</popCount>
+      <group>0</group>
    </Need>
    <Need ID="36">
       <Peasent>0.0</Peasent>
@@ -462,6 +496,7 @@
       <structure>0</structure>
       <startLevel>1</startLevel>
       <popCount>0</popCount>
+      <group>0</group>
    </Need>
    <Need ID="37">
       <Peasent>0.0</Peasent>
@@ -475,6 +510,7 @@
       <structure>0</structure>
       <startLevel>1</startLevel>
       <popCount>0</popCount>
+      <group>0</group>
    </Need>
    <Need ID="38">
       <Peasent>0.0</Peasent>
@@ -488,6 +524,7 @@
       <structure>0</structure>
       <startLevel>1</startLevel>
       <popCount>0</popCount>
+      <group>0</group>
    </Need>
    <Need ID="39">
       <Peasent>0.0</Peasent>
@@ -501,6 +538,7 @@
       <structure>0</structure>
       <startLevel>1</startLevel>
       <popCount>0</popCount>
+      <group>0</group>
    </Need>
    <Need ID="40">
       <Peasent>0.0</Peasent>
@@ -514,6 +552,7 @@
       <structure>0</structure>
       <startLevel>1</startLevel>
       <popCount>0</popCount>
+      <group>0</group>
    </Need>
    <Need ID="41">
       <Peasent>3.0</Peasent>
@@ -530,5 +569,69 @@
       <structure>0</structure>
       <startLevel>0</startLevel>
       <popCount>0</popCount>
+      <group>0</group>
    </Need>
+   <NeedGroup ID="0">
+      <Name>
+         <entry lang="English">Food</entry>
+         <entry lang="German">Nahrung</entry>
+      </Name>
+      <ImportanceLevel>1.5</ImportanceLevel>
+   </NeedGroup>
+   <NeedGroup ID="1">
+      <Name>
+         <entry lang="English">Beverages</entry>
+         <entry lang="German">Getränke</entry>
+      </Name>
+      <ImportanceLevel>1.3</ImportanceLevel>
+   </NeedGroup>
+   <NeedGroup ID="2">
+      <Name>
+         <entry lang="English">Community</entry>
+         <entry lang="German">Gemeinschaft</entry>
+      </Name>
+      <ImportanceLevel>1.0</ImportanceLevel>
+   </NeedGroup>
+   <NeedGroup ID="3">
+      <Name>
+         <entry lang="English">Entertainment</entry>
+         <entry lang="German">Unterhaltung</entry>
+      </Name>
+      <ImportanceLevel>1.0</ImportanceLevel>
+   </NeedGroup>
+   <NeedGroup ID="4">
+      <Name>
+         <entry lang="English">Clothing</entry>
+         <entry lang="German">Bekleidung</entry>
+      </Name>
+      <ImportanceLevel>1.2</ImportanceLevel>
+   </NeedGroup>
+   <NeedGroup ID="5">
+      <Name>
+         <entry lang="English">Security</entry>
+         <entry lang="German">Sicherheit</entry>
+      </Name>
+      <ImportanceLevel>1.2</ImportanceLevel>
+   </NeedGroup>
+   <NeedGroup ID="6">
+      <Name>
+         <entry lang="English">Luxury</entry>
+         <entry lang="German">Luxus</entry>
+      </Name>
+      <ImportanceLevel>1.0</ImportanceLevel>
+   </NeedGroup>
+   <NeedGroup ID="7">
+      <Name>
+         <entry lang="English">Education</entry>
+         <entry lang="German">Bildung</entry>
+      </Name>
+      <ImportanceLevel>0.9</ImportanceLevel>
+   </NeedGroup>
+   <NeedGroup ID="8">
+      <Name>
+         <entry lang="English">Belief</entry>
+         <entry lang="German">Relegion</entry>
+      </Name>
+      <ImportanceLevel>1.5</ImportanceLevel>
+   </NeedGroup>
 </needs>

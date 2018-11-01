@@ -8,43 +8,78 @@ using System;
 public class NeedGroupPrototypData : LanguageVariables {
     public int ID;
     public float ImportanceLevel;
-
 }
 
+[JsonObject(MemberSerialization.OptIn)]
 public class NeedGroup {
     #region Prototype
-    public NeedGroup Data;
+    protected NeedGroupPrototypData _prototypData;
+    public NeedGroupPrototypData Data {
+        get {
+            if (_prototypData == null) {
+                _prototypData = PrototypController.Instance.GetNeedGroupPrototypDataForID(ID);
+            }
+            return _prototypData;
+        }
+    }
     public float ImportanceLevel => Data.ImportanceLevel;
-
-    public bool HasMissingNeed { get; internal set; }
+    public string Name => Data.Name;
     #endregion
+    [JsonPropertyAttribute] public List<Need> Needs;
+
     #region Runtime
-
-    List<Need> GroupNeeds;
-
+    public bool HasMissingNeed { get; internal set; }
+    public readonly int ID;
     #endregion
 
-    public NeedGroup() {
-        GroupNeeds = new List<Need>();
+    public NeedGroup(int ID) {
+        Needs = new List<Need>();
+        this.ID = ID;
     }
 
-    public void AddNeed(Need need) {
-        GroupNeeds.Add(need);
+    public NeedGroup(NeedGroup needGroup) {
+        _prototypData = needGroup.Data;
+        Needs = new List<Need>();
+        foreach (Need n in needGroup.Needs) {
+            Needs.Add(n.Clone());
+        }
+    }
+
+    public NeedGroup Clone() {
+        return new NeedGroup(this);
+    }
+    public void AddNeeds(IEnumerable<Need> need) {
+        Needs.AddRange(need);
     }
 
     public float GetFullfilledPercantage() {
         float currentValue = 0;
-        foreach (Need n in GroupNeeds) {
+        foreach (Need n in Needs) {
             currentValue += n.GetCombinedFullfillment();
         }
-        currentValue /= GroupNeeds.Count;
+        currentValue /= Needs.Count;
         currentValue *= ImportanceLevel;
         return currentValue;
     }
 
     internal void CalculateFullfillment(City city, PopulationLevel populationLevel) {
-        foreach(Need need in GroupNeeds) {
+        foreach(Need need in Needs) {
             need.CalculateFullfillment(city, populationLevel);
+        }
+    }
+
+    internal void AddNeed(Need need) {
+        Needs.Add(need);
+    }
+
+    internal void UpdateNeeds(Player player) {
+        foreach(Need need in Needs) {
+            if (player.HasUnlockedNeed(need) == false) {
+                Needs.Remove(need);
+            }
+            if (need.Exists() || need.IsStructureNeed()) {
+                Needs.Remove(need);
+            }
         }
     }
 }

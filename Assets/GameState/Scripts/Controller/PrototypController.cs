@@ -17,21 +17,29 @@ public class PrototypController : MonoBehaviour {
 	public static PrototypController Instance;
 	public Dictionary<int,Structure>  structurePrototypes;
     private Dictionary<int, Unit> unitPrototypes;
+
     public Dictionary<int,StructurePrototypeData>  structurePrototypeDatas;
 	public Dictionary<int,ItemPrototypeData>  itemPrototypeDatas;
 	public Dictionary<int,NeedPrototypeData>  needPrototypeDatas;
 	public Dictionary<int,FertilityPrototypeData>  fertilityPrototypeDatas;
     public Dictionary<int,UnitPrototypeData> unitPrototypeDatas;
+
     public Dictionary<int, DamageType> damageTypeDatas;
     public Dictionary<int, ArmorType> armorTypeDatas;
+    public Dictionary<int, PopulationLevelPrototypData> populationLevelDatas;
+    public Dictionary<int, NeedGroupPrototypData> needGroupDatas;
+    
 
     public Dictionary<int, Item> allItems;
 	public static List<Item> buildItems;
 
 	private List<Need> allNeeds;
+    private Dictionary<int,List<NeedGroup>> populationLevelToNeedGroup;
+    public Dictionary<Climate,List<Fertility>> allFertilities;
 
-	public Dictionary<Climate,List<Fertility>> allFertilities;
-	public Dictionary<int,Fertility> idToFertilities;
+   
+
+    public Dictionary<int,Fertility> idToFertilities;
 
     //TODO: need a way to get this to load in! probably with the rest
     //      of the data thats still needs to be read in like time for money ticks
@@ -53,6 +61,27 @@ public class PrototypController : MonoBehaviour {
 		return needs;
 	}
 
+    internal bool ExistsNeed(Need need) {
+        throw new NotImplementedException();
+    }
+
+    /// <summary>
+    /// Returns a NEW(!) set of PopulationsLevels that are UNIQUE for EACH CITY
+    /// FULLY stocked WITH a NEW set of Needs in there correct GROUPS!
+    /// CALL only once per CITY creation OR loading
+    /// DONT call otherwise because it is pretty memory and cpu heavy!
+    /// </summary>
+    /// <returns></returns>
+    public List<PopulationLevel> GetPopulationLevels(City city) {
+        List<PopulationLevel> populationLevels = new List<PopulationLevel>();
+        PopulationLevel previous = null;
+        foreach (PopulationLevelPrototypData item in populationLevelDatas.Values) {
+            PopulationLevel clone = new PopulationLevel(item.Level, city, previous);
+            previous = clone;
+            populationLevels.Add(clone);
+        }
+        return populationLevels;
+    }
 	public ReadOnlyCollection<Need> GetAllNeeds(){
 		return new ReadOnlyCollection<Need> (allNeeds);
 	}
@@ -63,7 +92,7 @@ public class PrototypController : MonoBehaviour {
 		}
 		Instance = this;
 
-		LoadFromXML ();
+        LoadFromXML();
     }
 	
 	// Update is called once per frame
@@ -81,13 +110,22 @@ public class PrototypController : MonoBehaviour {
 		}
 		return itemPrototypeDatas [ID];
 	}
-	public FertilityPrototypeData GetFertilityPrototypDataForID(int ID){
+    internal PopulationLevelPrototypData GetPopulationLevelPrototypDataForLevel(int level) {
+        return populationLevelDatas[level];
+    }
+    public FertilityPrototypeData GetFertilityPrototypDataForID(int ID){
 		return fertilityPrototypeDatas [ID];
 	}
 	public NeedPrototypeData GetNeedPrototypDataForID(int ID){
 		return needPrototypeDatas [ID];
 	}
-	public ICollection<Fertility> GetFertilitiesForClimate(Climate c){
+    internal NeedGroupPrototypData GetNeedGroupPrototypDataForID(int ID) {
+        return needGroupDatas[ID];
+    }
+    internal List<NeedGroup> GetNeedPrototypDataForLevel(int level) {
+        return populationLevelToNeedGroup[level];
+    }
+    public ICollection<Fertility> GetFertilitiesForClimate(Climate c){
 		if(allFertilities.ContainsKey (c)==false){
 			Debug.Log (c); 
 			return null;
@@ -103,7 +141,6 @@ public class PrototypController : MonoBehaviour {
         //Why cant it be both -Fry
         //Good News everyone! Setting it to GB fixes that stupid thing! -Professor
         System.Threading.Thread.CurrentThread.CurrentCulture = System.Globalization.CultureInfo.CreateSpecificCulture("en-GB");
-
         //fertilities
         allFertilities = new Dictionary<Climate,List<Fertility>> ();
 		idToFertilities = new Dictionary<int, Fertility> ();
@@ -131,18 +168,39 @@ public class PrototypController : MonoBehaviour {
 
 		//needs
 		allNeeds = new List<Need>();
-		needPrototypeDatas = new Dictionary<int, NeedPrototypeData> ();
+        populationLevelToNeedGroup = new Dictionary<int, List<NeedGroup>>();
+        needPrototypeDatas = new Dictionary<int, NeedPrototypeData> ();
+        needGroupDatas = new Dictionary<int, NeedGroupPrototypData>();
 		ReadNeedsFromXML ();
 
-		Debug.Log ("Read in structures: " +structurePrototypes.Count);
+        //other
+        populationLevelDatas = new Dictionary<int, PopulationLevelPrototypData>();
+        ReadOtherFromXML();
+
+        Debug.Log ("Read in structures: " +structurePrototypes.Count);
         Debug.Log("Read in units: " + unitPrototypes.Count);
         Debug.Log ("Read in items: " + allItems.Count); 
 		Debug.Log ("Read in needs: " + allNeeds.Count);
+        Debug.Log("Read in needGroups: " + needGroupDatas.Count);
         Debug.Log("Read in damagetypes: " + damageTypeDatas.Count);
         Debug.Log("Read in armortypes: " + armorTypeDatas.Count);
+        Debug.Log("Read in populationLevel: " + populationLevelDatas.Count);
 
         //Set it to default so it doesnt interfer with user interface informations
         System.Threading.Thread.CurrentThread.CurrentCulture = System.Globalization.CultureInfo.InstalledUICulture;
+    }
+
+    private void ReadOtherFromXML() {
+        XmlDocument xmlDoc = new XmlDocument(); // xmlDoc is the new xml document.
+        TextAsset ta = ((TextAsset)Resources.Load("XMLs/other", typeof(TextAsset)));
+        xmlDoc.LoadXml(ta.text); // load the file.
+        foreach (XmlElement node in xmlDoc.SelectNodes("Other/PopulationLevel")) {
+            PopulationLevelPrototypData plpd = new PopulationLevelPrototypData();
+            int level = int.Parse(node.GetAttribute("Level"));
+            SetData<PopulationLevelPrototypData>(node, ref plpd);
+            plpd.needGroupList = populationLevelToNeedGroup[plpd.Level];
+            populationLevelDatas.Add(level, plpd);
+        }
     }
 
     private void ReadCombatFromXML() {
@@ -264,7 +322,17 @@ public class PrototypController : MonoBehaviour {
 		XmlDocument xmlDoc = new XmlDocument(); // xmlDoc is the new xml document.
 		TextAsset ta = ((TextAsset)Resources.Load("XMLs/needs", typeof(TextAsset)));
 		xmlDoc.LoadXml(ta.text); // load the file.
-		foreach(XmlElement node in xmlDoc.SelectNodes("needs/Need")){
+        foreach (XmlElement node in xmlDoc.SelectNodes("needs/NeedGroup")) {
+            NeedGroupPrototypData ngpd = new NeedGroupPrototypData();
+            int ID = int.Parse(node.GetAttribute("ID"));
+
+            SetData<NeedGroupPrototypData>(node, ref ngpd);
+            needGroupDatas.Add(ID, ngpd);
+        }
+
+        Dictionary<int, List<Need>> levelToNeedList = new Dictionary<int, List<Need>>();
+
+        foreach (XmlElement node in xmlDoc.SelectNodes("needs/Need")){
 			NeedPrototypeData npd = new NeedPrototypeData ();
 			int ID = int.Parse(node.GetAttribute("ID"));
 			SetData<NeedPrototypeData> (node,ref npd);
@@ -276,10 +344,27 @@ public class PrototypController : MonoBehaviour {
 			fs[3] = float.Parse(node.SelectSingleNode("Nobleman").InnerText);
 			npd.uses = fs;
 			needPrototypeDatas.Add (ID,npd);
-			allNeeds.Add (new Need(ID,npd));
-		}
-	}
-	private void ReadStructuresFromXML(){
+            Need n = new Need(ID, npd);
+            allNeeds.Add (n);
+
+            if (levelToNeedList.ContainsKey(npd.startLevel) == false) {
+                levelToNeedList[npd.startLevel] = new List<Need>();
+            }
+            levelToNeedList[npd.startLevel].Add(n.Clone());
+        }
+
+        foreach(int level in levelToNeedList.Keys) {
+            List<NeedGroup> ngs = new List<NeedGroup>();
+            populationLevelToNeedGroup.Add(level, ngs);
+            foreach (Need need in levelToNeedList[level]) {
+                if (ngs.Exists(x=> x.ID == need.Group.ID) == false)
+                    ngs.Add(new NeedGroup(need.Group.ID));
+                ngs[need.Group.ID].AddNeed(need.Clone()); 
+            }
+        }
+
+    }
+        private void ReadStructuresFromXML(){
 		XmlDocument xmlDoc = new XmlDocument();
 		TextAsset ta = ((TextAsset)Resources.Load("XMLs/structures", typeof(TextAsset)));
 		xmlDoc.LoadXml(ta.text); // load the file.
@@ -494,7 +579,6 @@ public class PrototypController : MonoBehaviour {
             MarketPrototypData mpd = new MarketPrototypData {
                 //THESE are fix and are not changed for any Warehouse
                 contactRange = 6.3f,
-                mustBeBuildOnShore = true,
                 BuildTyp = BuildTypes.Single,
                 hasHitbox = true,
                 canTakeDamage = true,
@@ -520,7 +604,6 @@ public class PrototypController : MonoBehaviour {
 
             MinePrototypData mpd = new MinePrototypData {
                 //THESE are fix and are not changed for any Warehouse
-                mustBeBuildOnMountain = true,
                 tileWidth = 2,
                 tileHeight = 3,
                 Name = "Mine",
@@ -582,6 +665,10 @@ public class PrototypController : MonoBehaviour {
 					fi.SetValue (data, NodeToStructure (n));
 					continue;
 				}
+                if (fi.FieldType == typeof(NeedGroupPrototypData)) {
+                    fi.SetValue(data, NodeToNeedGroupPrototypData(n));
+                    continue;
+                }
                 if (fi.FieldType == typeof(ArmorType)) {
                     fi.SetValue(data, NodeToArmorType(n));
                     continue;
@@ -607,27 +694,24 @@ public class PrototypController : MonoBehaviour {
                     continue;
                 }
                 if (fi.FieldType.IsEnum){
-					int ordinal = -1;
-					if(int.TryParse (n.InnerXml,out ordinal)==false){
-						Debug.LogError ("Enum was not a int");
-						continue;
-					}
-					fi.SetValue(data, Convert.ChangeType (ordinal,Enum.GetUnderlyingType (fi.FieldType)));
+                    fi.SetValue(data, Enum.Parse(fi.FieldType, n.InnerXml, true) );
 					continue;
 				}
 				if(fi.FieldType.IsArray && fi.FieldType.GetElementType ().IsEnum){
 					int t = Enum.GetValues (fi.FieldType.GetElementType ()).Length;
 					var enumArray = Array.CreateInstance (fi.FieldType.GetElementType (),t );
+                    int i = 0;
 					foreach (XmlNode item in n.ChildNodes) {
 						if(item.Name!=fi.FieldType.GetElementType ().ToString ()){
 							continue;
 						}
-						int ordinal = -1;
-						if(int.TryParse (item.InnerXml,out ordinal)==false){
-							Debug.LogError ("Enum was not a int");
-							continue;
-						}
-					}
+                        if (i >= t) {
+                            Debug.LogError("Too many enums given for the number in enum!");
+                            break;
+                        }
+                        enumArray.SetValue(Enum.Parse(fi.FieldType, n.InnerXml, true),i);
+                        i++;
+                    }
 					fi.SetValue(data, Convert.ChangeType (enumArray,fi.FieldType));
 					continue;
 				}
@@ -644,7 +728,7 @@ public class PrototypController : MonoBehaviour {
 			}
 		}
 	}
-
+    
     private object NodeToDamageType(XmlNode n) {
         int id = -1;
         if (int.TryParse(n.InnerXml, out id) == false) {
@@ -660,7 +744,21 @@ public class PrototypController : MonoBehaviour {
         }
         return damageTypeDatas[id];
     }
-
+    private object NodeToNeedGroupPrototypData(XmlNode n) {
+        int id = -1;
+        if (int.TryParse(n.InnerXml, out id) == false) {
+            Debug.LogError("ID is not an int for NeedGroup ");
+            return null;
+        }
+        if (id == -1) {
+            return null;//not needed
+        }
+        if (needGroupDatas.ContainsKey(id) == false) {
+            Debug.LogError("ID was not created before the depending NeedGroup! " + id);
+            return null;
+        }
+        return needGroupDatas[id];
+    }
     private object NodeToArmorType(XmlNode n) {
         int id = -1;
         if (int.TryParse(n.InnerXml, out id) == false) {

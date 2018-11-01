@@ -144,8 +144,7 @@ public class BuildController : MonoBehaviour {
 			Debug.LogError ("tiles is null");
 			return;
 		}
-		tiles.RemoveAll (x => x==null || x.Type == TileType.Ocean);
-		if(tiles.Count==0){
+		if(tiles.Exists(x => x == null || x.Type == TileType.Ocean)) {
 			return;
 		}
 		int rotate = s.rotated;
@@ -222,7 +221,7 @@ public class BuildController : MonoBehaviour {
 		//check to see if the structure can be placed there
 		if (s.PlaceStructure (tiles) == false) {
 			if(loading){
-				Debug.LogError ("PLACING FAILED WHILE LOADING! " + s.buildID);
+				Debug.LogError ("PLACING FAILED WHILE LOADING! " + s.buildID + " - " + s.SmallName );
 			}
 			return;
 		}

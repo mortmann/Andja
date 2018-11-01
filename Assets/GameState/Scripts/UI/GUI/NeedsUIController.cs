@@ -9,7 +9,9 @@ public class NeedsUIController : MonoBehaviour {
 	public GameObject contentCanvas;
 	public GameObject citizenCanvas;
 	public GameObject upgradeButton;
-	public Dictionary<Need,NeedUI> needToUI;
+    public GameObject needGroupCanvas;
+
+    public Dictionary<Need,NeedUI> needToUI;
 	public List<Need>[] needs;
 	HomeBuilding home;
 
@@ -24,25 +26,26 @@ public class NeedsUIController : MonoBehaviour {
 		this.home = home;
 
 		needToUI = new Dictionary<Need, NeedUI> ();
-		List<Need> ns = new List<Need> ();
-		ns.AddRange (home.City.itemNeeds);
+        List<NeedGroup> ns = new List<NeedGroup>(home.City.GetPopulationNeedGroups(home.PopulationLevel));
+
+        Debug.LogError("Not working atm!");
 		Player p = PlayerController.Instance.CurrPlayer;
 
 		citizenCanvas.GetComponentInChildren<Text> ().text=home.people+"/"+home.MaxLivingSpaces;
 		needs = new List<Need>[PrototypController.NumberOfPopulationLevels];
-		for (int i = 0; i < PrototypController.NumberOfPopulationLevels; i++) {
-			needs [i] = new List<Need> ();
-			ns.AddRange (p.LockedNeeds [i]);
-			ns.AddRange (p.UnlockedStructureNeeds[i]);
-		}
-
+		
 		for (int i = 0; i < ns.Count; i++) {
-			GameObject b = Instantiate (needPrefab);
-			b.transform.SetParent (contentCanvas.transform);
-			NeedUI ui = b.GetComponent<NeedUI>();
-			ui.setNeed (ns [i], home);
-			needToUI [ns [i]] = ui;
-			needs [ns [i].StartLevel].Add (ns [i]);
+            GameObject go = Instantiate(needGroupCanvas); //TODO: make it look good
+            go.GetComponent<NeedGroupUI>().Show(ns[i]);
+            go.transform.SetParent(contentCanvas.transform);
+            foreach (Need need in ns[i].Needs) {
+                GameObject b = Instantiate(needPrefab);
+                b.transform.SetParent(go.transform);
+                NeedUI ui = b.GetComponent<NeedUI>();
+                ui.setNeed(need, home);
+                needToUI[need] = ui;
+                needs[need.StartLevel].Add(need);
+            }
 		}
 		ChangeNeedLevel (0);
 

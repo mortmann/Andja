@@ -11,7 +11,6 @@ public class City : IGEventable {
 	[JsonPropertyAttribute] public int playerNumber = 0;
 	[JsonPropertyAttribute] public Inventory inventory;
 	[JsonPropertyAttribute] public List<Structure> myStructures;
-	[JsonPropertyAttribute] public Dictionary<int,Need> idToNeed; // i think this is what is missing
 	[JsonPropertyAttribute] public float useTickTimer;
 	/// <summary>
 	/// ITEM which is to trade
@@ -22,6 +21,7 @@ public class City : IGEventable {
 	[JsonPropertyAttribute] private string _name=""; 
 
 	[JsonPropertyAttribute] public Island island;
+
     [JsonPropertyAttribute] List<PopulationLevel> PopulationLevels;
 
     #endregion
@@ -63,9 +63,6 @@ public class City : IGEventable {
 	public float useTick;
 	public Warehouse myWarehouse;
 
-	public List<Need> itemNeeds;
-	public List<Need> structureNeeds;
-
 	Action<Structure> cbStructureAdded;
 	Action<Structure> cbStructureRemoved;
 	Action<City> cbCityDestroy;
@@ -84,9 +81,11 @@ public class City : IGEventable {
         itemIDtoTradeItem = new Dictionary<int, TradeItem> ();
 		myStructures = new List<Structure>();
 		inventory = new CityInventory ();
-        Setup();
+        _name = "<City>" + UnityEngine.Random.Range(0, 1000);
 
-		_name = "<City>" + UnityEngine.Random.Range (0, 1000);
+        Setup();
+        useTick = 30f;
+
 		//		useTickTimer = useTick;
     }
 
@@ -109,27 +108,28 @@ public class City : IGEventable {
 	private void Setup(){
         myHomes = new List<HomeBuilding> ();
 		myRoutes = new List<Route> ();
-		if(idToNeed==null){
-			return;
-		}
-		itemNeeds = new List<Need> ();
-		structureNeeds = new List<Need> ();
-		List<Need> allNeeds = World.GetCopieOfAllNeeds();
+        if (PopulationLevels == null)
+            PopulationLevels = new List<PopulationLevel>();
 
-		for (int i = 0; i < allNeeds.Count; i++) {
-			if(allNeeds[i].IsItemNeed()){
-				itemNeeds.Add (allNeeds [i]);
-			} else 
-			if(allNeeds[i].IsStructureNeed()){
-				structureNeeds.Add (allNeeds [i]);
-			}
-		}
+        foreach (PopulationLevel pl in PrototypController.Instance.GetPopulationLevels(this)) {
+            if (PopulationLevels.Exists(x => x.Level == pl.Level))
+                continue;
+            PopulationLevels.Add(pl);
+        }
 
-		// THINGS NEED TO BE LOADED IN 
-		useTick = 30f;
 
 	}
-	public IEnumerable<Structure> Load(){
+
+    internal PopulationLevel GetPreviousPopulationLevel(int level) {
+        for(int i = level-1; i >= 0; i--) {
+            PopulationLevel p = PopulationLevels.Find(x => x.Level == level);
+            if (p != null)
+                return p;
+        }
+        return null;
+    }
+
+    public IEnumerable<Structure> Load(){
 		Setup ();
 		foreach (Structure item in myStructures) {
 			if(item is Warehouse){
@@ -141,6 +141,14 @@ public class City : IGEventable {
             //TODO:Find a better way/ cleaner way todo this
             Balance -= item.Maintenancecost;
 		}
+        for(int i = PopulationLevels.Count-1; i>=0; i--) {
+            if(PopulationLevels[i].Exists() == false) {
+                PopulationLevels.Remove(PopulationLevels[i]);
+                continue;
+            }
+            PopulationLevels[i].Load();
+        }
+
         if(playerNumber > -1)
             PlayerController.Instance.GetPlayer(playerNumber).OnCityCreated(this);
         return myStructures;
@@ -458,7 +466,10 @@ public class City : IGEventable {
 	public float GetHappinessForCitizenLevel(int level){
 		return PopulationLevels [level].Happiness;
 	}
-	public void RemoveTiles(IEnumerable<Tile> tiles){
+    internal IEnumerable<NeedGroup> GetPopulationNeedGroups(int level) {
+        return PopulationLevels[level].AllNeedGroupList;
+    }
+    public void RemoveTiles(IEnumerable<Tile> tiles){
 		foreach (Tile item in tiles) {
 			item.MyCity = null;
 			if(item.MyCity!=this){
@@ -537,7 +548,9 @@ public class City : IGEventable {
 	public int GetTargetType(){
 		return TargetType;
 	}
-    
+    public Player GetOwner() {
+        return PlayerController.Instance.GetPlayer(playerNumber);
+    }
     public override string ToString() {
         return Name;
     }

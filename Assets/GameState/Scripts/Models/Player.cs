@@ -173,7 +173,11 @@ public class Player : IGEventable {
 		}
 		return LockedNeeds [n.StartLevel].Contains (n)==false;
 	}
-
+    public bool HasNeedUnlocked(Need need) {
+        if (need.IsItemNeed())
+            return UnlockedItemNeeds.Contains(need);
+        return UnlockedStructureNeeds[need.StartLevel].Contains(need);
+    }
     public void AddTradeRoute(TradeRoute route) {
         if (MyTradeRoutes == null)
             MyTradeRoutes = new List<TradeRoute>();

@@ -144,8 +144,7 @@ public class UIController : MonoBehaviour {
 		pauseMenuCanvas.SetActive (!pauseMenuCanvas.activeSelf);
 		WorldController.Instance.IsModal = pauseMenuCanvas.activeSelf;
 	}
-
-	public void OpenProduceUI(OutputStructure str){
+    public void OpenProduceUI(OutputStructure str){
 		if(str == null){
 			return;
 		}

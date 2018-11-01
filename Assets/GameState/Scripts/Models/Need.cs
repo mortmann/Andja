@@ -7,7 +7,7 @@ using System.Collections.Generic;
 public class NeedPrototypeData : LanguageVariables {
 	public Item item;
 	public NeedsBuilding structure;
-    public NeedGroup group;
+    public NeedGroupPrototypData group; // only for the typ of the group needed!
 	public float[] uses;
 	public int startLevel;
 	public int popCount;
@@ -30,7 +30,9 @@ public class Need {
 			return _prototypData;
 		}
 	}
-
+    public NeedGroupPrototypData Group {
+        get { return Data.group; }
+    }
     public string Name {
 		get { return Data.Name;}	
 	}
@@ -146,4 +148,8 @@ public class Need {
 	public bool IsStructureNeed(){
 		return Structure != null;
 	}
+
+    public bool Exists() {
+        return Data != null;
+    }
 }

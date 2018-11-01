@@ -10,6 +10,7 @@ public enum BuildingTyp {Pathfinding, Blocking,Free};
 public enum Direction {None, N, E, S, W};
 public enum ExtraUI { None, Range, Upgrade, Efficiency };
 public enum ExtraBuildUI { None, Range, Efficiency };
+public enum BuildRestriktions { Land, Shore, Mountain };
 
 public class StructurePrototypeData : LanguageVariables {
 	public bool hasHitbox;// { get; protected set; }
@@ -20,7 +21,7 @@ public class StructurePrototypeData : LanguageVariables {
 	public int PopulationCount = 0;
 
 	public int StructureLevel = 0;
-
+    
 	public int tileWidth;
 	public int tileHeight;
 
@@ -45,10 +46,8 @@ public class StructurePrototypeData : LanguageVariables {
 	}
 
 	public bool canStartBurning;
-	public bool mustBeBuildOnShore = false;
-	public bool mustBeBuildOnMountain = false;
-
-	public int maintenancecost;
+    public BuildRestriktions hasToBuildOnRestriktion;
+    public int maintenancecost;
 	public int buildcost;
 
 	public BuildTypes BuildTyp;
@@ -71,7 +70,6 @@ public class StructurePrototypeData : LanguageVariables {
 		Tile firstTile = World.Current.GetTileAt (0 + buildingRange,0 + buildingRange);
         float w = (float)tileWidth / 2f -0.5f;
         float h = (float)tileHeight / 2f -0.5f;
-
         Vector2 center = new Vector2 (buildingRange + w, buildingRange + h);
         //GameObject gos = new GameObject();
         //gos.transform.position = center;
@@ -220,10 +218,11 @@ public abstract class Structure : IGEventable {
 	public List<Tile> MyPrototypeTiles { get {return Data.MyPrototypeTiles;} }
 
 	public bool CanStartBurning { get {return Data.canStartBurning;} }
-	public bool MustBeBuildOnShore { get {return Data.mustBeBuildOnShore;} }
-	public bool MustBeBuildOnMountain { get {return Data.mustBeBuildOnMountain;} }
+	public bool MustBeBuildOnShore { get {return Data.hasToBuildOnRestriktion == BuildRestriktions.Shore; } }
+	public bool MustBeBuildOnMountain { get {return Data.hasToBuildOnRestriktion == BuildRestriktions.Mountain; } }
+    public BuildRestriktions HasToBuildOnRestriktion { get { return Data.hasToBuildOnRestriktion; } }
 
-	public int Maintenancecost{ get {return Data.maintenancecost;} }
+    public int Maintenancecost{ get {return Data.maintenancecost;} }
 	public int Buildcost{ get {return Data.buildcost;} }
 
 	public BuildTypes BuildTyp{ get {return Data.BuildTyp;} }

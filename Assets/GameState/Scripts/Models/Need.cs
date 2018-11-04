@@ -131,6 +131,17 @@ public class Need {
 		//calculate the percantage of availability
 		percantageAvailability[level] = Mathf.RoundToInt (100 * (usedAmount / neededConsumAmount))/100;
 	}
+
+    internal void SetStructureFullfilled(bool fullfilled) {
+        if (IsItemNeed())
+            return;
+        if (fullfilled) {
+            percantageAvailability.ForEach(x => x = 1);
+        } else {
+            percantageAvailability.ForEach(x => x = 0);
+        }
+    }
+
     internal float GetFullfiment(int populationLevel) {
         return percantageAvailability[populationLevel];
     }

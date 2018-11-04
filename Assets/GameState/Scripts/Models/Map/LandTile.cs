@@ -29,6 +29,7 @@ public class LandTile : Tile {
             cbTileStructureChanged?.Invoke(this, value);
         }
 	}
+
 	protected Island _myIsland;
 
 	public override Island MyIsland { get{return _myIsland;} 
@@ -99,7 +100,7 @@ public class LandTile : Tile {
 	}
 
 	private List<NeedsBuilding> ListOfInRangeNeedBuildings { get; set; }
-
+    private Action<Tile, NeedsBuilding, bool> cbNeedStructureChange;
 	public LandTile(){}
 	public LandTile(int x, int y){
 		this.x = x;
@@ -144,7 +145,8 @@ public class LandTile : Tile {
         if (ListOfInRangeNeedBuildings == null) {
 			ListOfInRangeNeedBuildings = new List<NeedsBuilding> ();
 		}
-		ListOfInRangeNeedBuildings.Add (ns);
+        cbNeedStructureChange?.Invoke(this, ns, true);
+        ListOfInRangeNeedBuildings.Add (ns);
 	}
 	public override void RemoveNeedStructure(NeedsBuilding ns){
 		if(IsBuildType (Type)== false){
@@ -156,6 +158,7 @@ public class LandTile : Tile {
         if (ListOfInRangeNeedBuildings.Contains (ns) == false) {
 			return;
 		}
+        cbNeedStructureChange?.Invoke(this, ns, false);
 		ListOfInRangeNeedBuildings.Remove (ns);
 	}
     /// <summary>
@@ -168,7 +171,7 @@ public class LandTile : Tile {
             return null;
         List<NeedsBuilding> playerAll = new List<NeedsBuilding>(ListOfInRangeNeedBuildings);
         playerAll.RemoveAll(x => x.PlayerNumber != MyCity.playerNumber);
-        return ListOfInRangeNeedBuildings;
+        return playerAll;
     }
     /// <summary>
     ///  Returns all in needbuildings that are in range && the player owns the building
@@ -180,9 +183,15 @@ public class LandTile : Tile {
             return null;
         List<NeedsBuilding> playerAll = new List<NeedsBuilding>(ListOfInRangeNeedBuildings);
         playerAll.RemoveAll(x => x.PlayerNumber != playernumber);
-        return ListOfInRangeNeedBuildings;
+        return playerAll;
 	}
-	public override string ToString (){
+    public void RegisterOnNeedStructureChange(Action<Tile, NeedsBuilding, bool> func) {
+        cbNeedStructureChange += func;
+    }
+    public void UnregisterOnNeedStructureChange(Action<Tile, NeedsBuilding, bool> func) {
+        cbNeedStructureChange -= func;
+    }
+    public override string ToString (){
 		return string.Format ("[LAND: X={0}, Y={1}, Structure={2}, myCity={3}]", X, Y, Structure, MyCity.ToString());
 	}
 }

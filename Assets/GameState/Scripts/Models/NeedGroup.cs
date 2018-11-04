@@ -30,6 +30,7 @@ public class NeedGroup {
     #region Runtime
     public bool HasMissingNeed { get; internal set; }
     public readonly int ID;
+    public List<Need> CombinedNeeds;
     #endregion
 
     public NeedGroup(int ID) {
@@ -66,6 +67,10 @@ public class NeedGroup {
         foreach(Need need in Needs) {
             need.CalculateFullfillment(city, populationLevel);
         }
+    }
+
+    public void CombineGroup() {
+
     }
 
     internal void AddNeed(Need need) {

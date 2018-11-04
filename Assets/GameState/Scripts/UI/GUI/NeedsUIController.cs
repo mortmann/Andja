@@ -26,8 +26,7 @@ public class NeedsUIController : MonoBehaviour {
 		this.home = home;
 
 		needToUI = new Dictionary<Need, NeedUI> ();
-        List<NeedGroup> ns = new List<NeedGroup>(home.City.GetPopulationNeedGroups(home.PopulationLevel));
-
+        List<NeedGroup> ns = new List<NeedGroup>(home.GetNeeds());
         Debug.LogError("Not working atm!");
 		Player p = PlayerController.Instance.CurrPlayer;
 

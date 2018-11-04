@@ -34,10 +34,11 @@ public class Player : IGEventable {
     }
     Action<int,int> cbMaxPopulationMLCountChange;
 	Action<Need> cbNeedUnlocked;
+    Action<Need> cbStructureNeedUnlocked;
 
-	#endregion 
-	#region Serialized
-	[JsonPropertyAttribute]
+    #endregion
+    #region Serialized
+    [JsonPropertyAttribute]
 	private int _balance;
     /// <summary>
     /// How much Money you have to spend
@@ -61,8 +62,23 @@ public class Player : IGEventable {
 			_maxPopulationCount = 0;
             cbMaxPopulationMLCountChange?.Invoke(MaxPopulationLevel, _maxPopulationCount);
         }
-	} 									  
-	[JsonPropertyAttribute]
+	}
+
+    internal List<Need> GetCopyStructureNeeds(int level) {
+        List<Need> list = new List<Need>();
+        foreach(Need n in UnlockedStructureNeeds[level]) {
+            list.Add(n.Clone());
+        }
+        return list;
+    }
+
+    internal void RegisterStructureNeedUnlock(Action<Need> onStructureNeedUnlock) {
+        cbStructureNeedUnlocked += onStructureNeedUnlock;
+    }
+    internal void UnregisterStructureNeedUnlock(Action<Need> onStructureNeedUnlock) {
+        cbStructureNeedUnlocked -= onStructureNeedUnlock;
+    }
+    [JsonPropertyAttribute]
 	private int _maxPopulationCount;
 	public int MaxPopulationCount { 
 		get {return _maxPopulationCount;} 
@@ -148,7 +164,8 @@ public class Player : IGEventable {
 			if(need.IsItemNeed()){
 				UnlockedItemNeeds.Add (need);
 			} else {
-				UnlockedStructureNeeds[need.StartLevel].Add (need);
+                cbStructureNeedUnlocked?.Invoke(need);
+                UnlockedStructureNeeds[need.StartLevel].Add (need);
 			}
             cbNeedUnlocked?.Invoke(need);
         }	

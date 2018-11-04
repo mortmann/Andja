@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 using Newtonsoft.Json;
+using System;
 
 public class HomePrototypeData : StructurePrototypeData {
 	public int maxLivingSpaces;
@@ -29,11 +30,13 @@ public class HomeBuilding : TargetStructure {
 		}
 	}
 
-	public int MaxLivingSpaces {get{ return HomeData.maxLivingSpaces;}}
+    //Should Probably not be a list but lazy fast solution for now
+    public List<Need> structureNeeds;
+
+    public int MaxLivingSpaces {get{ return HomeData.maxLivingSpaces;}}
 	public float IncreaseSpeed {get{ return HomeData.increaseSpeed;}}
 	public float DecreaseSpeed {get{ return HomeData.decreaseSpeed;}}
 	bool canUpgrade;
-
 	#endregion
 
 
@@ -60,11 +63,33 @@ public class HomeBuilding : TargetStructure {
 		foreach (Tile t in neighbourTiles) {
 			t.RegisterTileOldNewStructureChangedCallback (OnTStructureChange);
 		}
-		City.AddPeople (buildingLevel,people);
-
+        foreach(Tile t in myBuildingTiles) {
+            ((LandTile)t).RegisterOnNeedStructureChange(OnNeedsBuildingChange);
+            foreach(NeedsBuilding ns in t.GetListOfInRangeCityNeedBuildings()) {
+                OnNeedsBuildingChange(t, ns, true);
+            }
+        }
+        structureNeeds = City.GetOwner().GetCopyStructureNeeds(buildingLevel);
+        City.GetOwner().RegisterStructureNeedUnlock(OnStructureNeedUnlock);
+        City.AddPeople (buildingLevel,people);
 	}
 
-	public override void Update (float deltaTime) {
+    private void OnStructureNeedUnlock(Need obj) {
+        if(obj.StartLevel > buildingLevel) {
+            return;
+        }
+        structureNeeds.Add(obj);
+    }
+
+    private void OnNeedsBuildingChange(Tile tile, NeedsBuilding type, bool add) {
+        foreach (Need ng in structureNeeds) {
+            if (ng.Structure.ID == type.ID) {
+                ng.SetStructureFullfilled(false);
+            }
+        }
+    }
+
+    public override void Update (float deltaTime) {
 		if(City==null||City.playerNumber==-1){
 			//here the people are very unhappy and will leave veryfast
 			return;
@@ -75,6 +100,8 @@ public class HomeBuilding : TargetStructure {
 		int count = 0;
 		bool percCritical = City.GetNeedCriticalForLevel(buildingLevel);
 		Player myPlayer = PlayerController.Instance.GetPlayer (PlayerNumber);
+
+
 		foreach (Need n in myPlayer.GetUnlockedStructureNeeds(buildingLevel)) {
 			Player pc = PlayerController.Instance.GetPlayer (PlayerNumber);
 			if (n.StartLevel <= buildingLevel && n.PopCount <= pc.MaxPopulationCount) {
@@ -179,7 +206,7 @@ public class HomeBuilding : TargetStructure {
 		buildingLevel += 1;
 		_homeData = (HomePrototypeData)PrototypController.Instance.GetStructurePrototypDataForID (ID);
 		cbStructureChanged (this);
-
+        structureNeeds.AddRange(City.GetOwner().GetCopyStructureNeeds(buildingLevel));
 //		Homedata.maxLivingSpaces *= 2; // TODO load this in from somewhere
 		canUpgrade = false;
 	}

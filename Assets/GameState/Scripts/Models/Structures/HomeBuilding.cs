@@ -5,8 +5,8 @@ using System;
 
 public class HomePrototypeData : StructurePrototypeData {
 	public int maxLivingSpaces;
-	public float increaseSpeed;
-	public float decreaseSpeed;
+	public float increaseTime;
+	public float decreaseTime;
 }
 
 
@@ -34,8 +34,8 @@ public class HomeBuilding : TargetStructure {
     public List<Need> structureNeeds;
 
     public int MaxLivingSpaces {get{ return HomeData.maxLivingSpaces;}}
-	public float IncreaseSpeed {get{ return HomeData.increaseSpeed;}}
-	public float DecreaseSpeed {get{ return HomeData.decreaseSpeed;}}
+	public float IncreaseTime {get{ return HomeData.increaseTime; }}
+	public float DecreaseTime {get{ return HomeData.decreaseTime; }}
 	bool canUpgrade;
 	#endregion
 
@@ -69,10 +69,17 @@ public class HomeBuilding : TargetStructure {
                 OnNeedsBuildingChange(t, ns, true);
             }
         }
-        structureNeeds = City.GetOwner().GetCopyStructureNeeds(buildingLevel);
+        structureNeeds = new List<Need>();
+        AddStructureNeeds(City.GetOwner().GetCopyStructureNeeds(buildingLevel));
+
         City.GetOwner().RegisterStructureNeedUnlock(OnStructureNeedUnlock);
         City.AddPeople (buildingLevel,people);
 	}
+
+    private void AddStructureNeeds(List<Need> list) {
+        structureNeeds.AddRange(list);
+
+    }
 
     private void OnStructureNeedUnlock(Need obj) {
         if(obj.StartLevel > buildingLevel) {
@@ -95,52 +102,43 @@ public class HomeBuilding : TargetStructure {
 			return;
 		}
         OpenExtraUI();
-        float allPercentage = 0;
+        float allPercentage = City.GetHappinessForCitizenLevel(buildingLevel);
 		float structurePercentage = 0;
-		int count = 0;
+
 		bool percCritical = City.GetNeedCriticalForLevel(buildingLevel);
-		Player myPlayer = PlayerController.Instance.GetPlayer (PlayerNumber);
 
-
-		foreach (Need n in myPlayer.GetUnlockedStructureNeeds(buildingLevel)) {
-			Player pc = PlayerController.Instance.GetPlayer (PlayerNumber);
-			if (n.StartLevel <= buildingLevel && n.PopCount <= pc.MaxPopulationCount) {
-				if(IsInRangeOf (n.Structure)){
-					structurePercentage += 1;
-				}
-				count++;
-			}
-		}
-		if (count == 0) {
-			allPercentage = City.GetHappinessForCitizenLevel (buildingLevel);
-		} else {
+        int count = structureNeeds.Count;
+        if (count > 0) {
+            foreach (Need n in structureNeeds) {
+                structurePercentage += n.GetFullfiment(buildingLevel);
+            }
             structurePercentage /= count;
-            allPercentage = City.GetHappinessForCitizenLevel (buildingLevel) + structurePercentage;
+            allPercentage += structurePercentage;
 			allPercentage /= 2;
 		}
 
 		if (allPercentage < 0.4f || percCritical) {
 			decTimer += deltaTime;
 			incTimer -= deltaTime;
-			incTimer = Mathf.Clamp (incTimer, 0, IncreaseSpeed);
-			if (decTimer >= DecreaseSpeed) {
+			incTimer = Mathf.Clamp (incTimer, 0, IncreaseTime);
+			if (decTimer >= DecreaseTime) {
 				TryToDecreasePeople();
 				decTimer = 0;
 			}
 		} 
 		else if (allPercentage > 0.4f && allPercentage < 0.85f) {
 			incTimer -= deltaTime;
-			incTimer = Mathf.Clamp (incTimer, 0, IncreaseSpeed);
+			incTimer = Mathf.Clamp (incTimer, 0, IncreaseTime);
 			decTimer -= deltaTime;
-			decTimer = Mathf.Clamp (decTimer, 0, DecreaseSpeed);
+			decTimer = Mathf.Clamp (decTimer, 0, DecreaseTime);
 		}  
 		else if (allPercentage > 0.85f) {
 			incTimer += deltaTime;
 			decTimer -= deltaTime;
-			decTimer = Mathf.Clamp (decTimer, 0, DecreaseSpeed);
-			if (incTimer >= IncreaseSpeed) {
+			decTimer = Mathf.Clamp (decTimer, 0, DecreaseTime);
+			if (incTimer >= IncreaseTime) {
 				incTimer = 0;
-				if(people==MaxLivingSpaces && myPlayer.HasUnlockedAllNeeds(buildingLevel)){
+				if(people==MaxLivingSpaces && City.GetOwner().HasUnlockedAllNeeds(buildingLevel)){
 					canUpgrade = true;
                     OpenExtraUI();
 				}
@@ -206,7 +204,16 @@ public class HomeBuilding : TargetStructure {
 		buildingLevel += 1;
 		_homeData = (HomePrototypeData)PrototypController.Instance.GetStructurePrototypDataForID (ID);
 		cbStructureChanged (this);
-        structureNeeds.AddRange(City.GetOwner().GetCopyStructureNeeds(buildingLevel));
+
+        List<Need> needs = City.GetOwner().GetCopyStructureNeeds(buildingLevel);
+        foreach(Need n in needs) {
+            if (IsInRangeOf(n.Structure)) {
+                n.SetStructureFullfilled(true);
+            } else {
+                n.SetStructureFullfilled(false);
+            }
+        }
+        structureNeeds.AddRange(needs);
 //		Homedata.maxLivingSpaces *= 2; // TODO load this in from somewhere
 		canUpgrade = false;
 	}

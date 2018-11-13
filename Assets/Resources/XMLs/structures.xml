@@ -27,7 +27,7 @@
          <canBeBuildOver>false</canBeBuildOver>
          <canBeUpgraded>true</canBeUpgraded>
          <canTakeDamage>false</canTakeDamage>
-         <mustFrontBuildDir>0</mustFrontBuildDir>
+         <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
          <maintenancecost>0</maintenancecost>
          <buildcost>15</buildcost>
@@ -65,7 +65,7 @@
          <canBeBuildOver>false</canBeBuildOver>
          <canBeUpgraded>true</canBeUpgraded>
          <canTakeDamage>false</canTakeDamage>
-         <mustFrontBuildDir>0</mustFrontBuildDir>
+         <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
          <maintenancecost>0</maintenancecost>
          <buildcost>50</buildcost>
@@ -104,7 +104,7 @@
          <canBeBuildOver>false</canBeBuildOver>
          <canBeUpgraded>true</canBeUpgraded>
          <canTakeDamage>false</canTakeDamage>
-         <mustFrontBuildDir>0</mustFrontBuildDir>
+         <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
          <maintenancecost>0</maintenancecost>
          <buildcost>100</buildcost>
@@ -147,7 +147,7 @@
          <canBeBuildOver>false</canBeBuildOver>
          <canBeUpgraded>true</canBeUpgraded>
          <canTakeDamage>false</canTakeDamage>
-         <mustFrontBuildDir>0</mustFrontBuildDir>
+         <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
          <maintenancecost>0</maintenancecost>
          <buildcost>0</buildcost>
@@ -187,7 +187,7 @@
          <canBeBuildOver>false</canBeBuildOver>
          <canBeUpgraded>false</canBeUpgraded>
          <canTakeDamage>true</canTakeDamage>
-         <mustFrontBuildDir>0</mustFrontBuildDir>
+         <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
          <maintenancecost>25</maintenancecost>
          <buildcost>250</buildcost>
@@ -252,7 +252,7 @@
          <canBeBuildOver>false</canBeBuildOver>
          <canBeUpgraded>false</canBeUpgraded>
          <canTakeDamage>true</canTakeDamage>
-         <mustFrontBuildDir>0</mustFrontBuildDir>
+         <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
          <maintenancecost>20</maintenancecost>
          <buildcost>0</buildcost>
@@ -310,7 +310,7 @@
          <canBeBuildOver>false</canBeBuildOver>
          <canBeUpgraded>false</canBeUpgraded>
          <canTakeDamage>true</canTakeDamage>
-         <mustFrontBuildDir>0</mustFrontBuildDir>
+         <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
          <maintenancecost>60</maintenancecost>
          <buildcost>500</buildcost>
@@ -368,7 +368,7 @@
          <canBeBuildOver>false</canBeBuildOver>
          <canBeUpgraded>false</canBeUpgraded>
          <canTakeDamage>true</canTakeDamage>
-         <mustFrontBuildDir>0</mustFrontBuildDir>
+         <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
          <maintenancecost>75</maintenancecost>
          <buildcost>650</buildcost>
@@ -426,7 +426,7 @@
          <canBeBuildOver>false</canBeBuildOver>
          <canBeUpgraded>false</canBeUpgraded>
          <canTakeDamage>true</canTakeDamage>
-         <mustFrontBuildDir>0</mustFrontBuildDir>
+         <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
          <maintenancecost>100</maintenancecost>
          <buildcost>1000</buildcost>
@@ -484,7 +484,7 @@
          <canBeBuildOver>false</canBeBuildOver>
          <canBeUpgraded>false</canBeUpgraded>
          <canTakeDamage>true</canTakeDamage>
-         <mustFrontBuildDir>0</mustFrontBuildDir>
+         <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
          <maintenancecost>65</maintenancecost>
          <buildcost>1250</buildcost>
@@ -545,7 +545,7 @@
          <canBeBuildOver>false</canBeBuildOver>
          <canBeUpgraded>false</canBeUpgraded>
          <canTakeDamage>true</canTakeDamage>
-         <mustFrontBuildDir>0</mustFrontBuildDir>
+         <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
          <maintenancecost>25</maintenancecost>
          <buildcost>250</buildcost>
@@ -603,7 +603,7 @@
          <canBeBuildOver>false</canBeBuildOver>
          <canBeUpgraded>false</canBeUpgraded>
          <canTakeDamage>true</canTakeDamage>
-         <mustFrontBuildDir>0</mustFrontBuildDir>
+         <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
          <maintenancecost>75</maintenancecost>
          <buildcost>450</buildcost>
@@ -664,7 +664,7 @@
          <canBeBuildOver>false</canBeBuildOver>
          <canBeUpgraded>false</canBeUpgraded>
          <canTakeDamage>true</canTakeDamage>
-         <mustFrontBuildDir>0</mustFrontBuildDir>
+         <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
          <maintenancecost>100</maintenancecost>
          <buildcost>600</buildcost>
@@ -725,7 +725,7 @@
          <canBeBuildOver>false</canBeBuildOver>
          <canBeUpgraded>false</canBeUpgraded>
          <canTakeDamage>true</canTakeDamage>
-         <mustFrontBuildDir>0</mustFrontBuildDir>
+         <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
          <maintenancecost>110</maintenancecost>
          <buildcost>720</buildcost>
@@ -788,7 +788,7 @@
          <canBeBuildOver>true</canBeBuildOver>
          <canBeUpgraded>false</canBeUpgraded>
          <canTakeDamage>false</canTakeDamage>
-         <mustFrontBuildDir>0</mustFrontBuildDir>
+         <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
          <maintenancecost>0</maintenancecost>
          <buildcost>5</buildcost>
@@ -833,7 +833,7 @@
          <canBeBuildOver>true</canBeBuildOver>
          <canBeUpgraded>false</canBeUpgraded>
          <canTakeDamage>false</canTakeDamage>
-         <mustFrontBuildDir>0</mustFrontBuildDir>
+         <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
          <maintenancecost>0</maintenancecost>
          <buildcost>0</buildcost>
@@ -884,7 +884,7 @@
          <canBeBuildOver>true</canBeBuildOver>
          <canBeUpgraded>false</canBeUpgraded>
          <canTakeDamage>false</canTakeDamage>
-         <mustFrontBuildDir>0</mustFrontBuildDir>
+         <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
          <maintenancecost>0</maintenancecost>
          <buildcost>0</buildcost>
@@ -934,7 +934,7 @@
          <canBeBuildOver>true</canBeBuildOver>
          <canBeUpgraded>false</canBeUpgraded>
          <canTakeDamage>false</canTakeDamage>
-         <mustFrontBuildDir>0</mustFrontBuildDir>
+         <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
          <maintenancecost>0</maintenancecost>
          <buildcost>25</buildcost>
@@ -984,7 +984,7 @@
          <canBeBuildOver>true</canBeBuildOver>
          <canBeUpgraded>false</canBeUpgraded>
          <canTakeDamage>false</canTakeDamage>
-         <mustFrontBuildDir>0</mustFrontBuildDir>
+         <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
          <maintenancecost>0</maintenancecost>
          <buildcost>25</buildcost>
@@ -1034,7 +1034,7 @@
          <canBeBuildOver>true</canBeBuildOver>
          <canBeUpgraded>false</canBeUpgraded>
          <canTakeDamage>false</canTakeDamage>
-         <mustFrontBuildDir>0</mustFrontBuildDir>
+         <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
          <maintenancecost>0</maintenancecost>
          <buildcost>25</buildcost>
@@ -1084,7 +1084,7 @@
          <canBeBuildOver>true</canBeBuildOver>
          <canBeUpgraded>false</canBeUpgraded>
          <canTakeDamage>false</canTakeDamage>
-         <mustFrontBuildDir>0</mustFrontBuildDir>
+         <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
          <maintenancecost>0</maintenancecost>
          <buildcost>45</buildcost>
@@ -1135,7 +1135,7 @@
          <canBeBuildOver>true</canBeBuildOver>
          <canBeUpgraded>false</canBeUpgraded>
          <canTakeDamage>false</canTakeDamage>
-         <mustFrontBuildDir>0</mustFrontBuildDir>
+         <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
          <maintenancecost>0</maintenancecost>
          <buildcost>0</buildcost>
@@ -1187,7 +1187,7 @@
          <canBeBuildOver>false</canBeBuildOver>
          <canBeUpgraded>true</canBeUpgraded>
          <canTakeDamage>true</canTakeDamage>
-         <mustFrontBuildDir>0</mustFrontBuildDir>
+         <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
          <maintenancecost>10</maintenancecost>
          <buildcost>200</buildcost>
@@ -1241,7 +1241,7 @@
          <canBeBuildOver>false</canBeBuildOver>
          <canBeUpgraded>false</canBeUpgraded>
          <canTakeDamage>false</canTakeDamage>
-         <mustFrontBuildDir>0</mustFrontBuildDir>
+         <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
          <maintenancecost>90</maintenancecost>
          <buildcost>1000</buildcost>
@@ -1298,7 +1298,7 @@
          <canBeBuildOver>false</canBeBuildOver>
          <canBeUpgraded>false</canBeUpgraded>
          <canTakeDamage>false</canTakeDamage>
-         <mustFrontBuildDir>0</mustFrontBuildDir>
+         <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
          <maintenancecost>55</maintenancecost>
          <buildcost>800</buildcost>
@@ -1355,7 +1355,7 @@
          <canBeBuildOver>false</canBeBuildOver>
          <canBeUpgraded>false</canBeUpgraded>
          <canTakeDamage>false</canTakeDamage>
-         <mustFrontBuildDir>0</mustFrontBuildDir>
+         <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
          <maintenancecost>80</maintenancecost>
          <buildcost>1100</buildcost>
@@ -1417,7 +1417,7 @@
          <canBeBuildOver>false</canBeBuildOver>
          <canBeUpgraded>false</canBeUpgraded>
          <canTakeDamage>false</canTakeDamage>
-         <mustFrontBuildDir>0</mustFrontBuildDir>
+         <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
          <maintenancecost>15</maintenancecost>
          <buildcost>200</buildcost>
@@ -1463,7 +1463,7 @@
          <canBeBuildOver>false</canBeBuildOver>
          <canBeUpgraded>false</canBeUpgraded>
          <canTakeDamage>false</canTakeDamage>
-         <mustFrontBuildDir>0</mustFrontBuildDir>
+         <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
          <maintenancecost>120</maintenancecost>
          <buildcost>1500</buildcost>
@@ -1509,7 +1509,7 @@
          <canBeBuildOver>false</canBeBuildOver>
          <canBeUpgraded>false</canBeUpgraded>
          <canTakeDamage>false</canTakeDamage>
-         <mustFrontBuildDir>0</mustFrontBuildDir>
+         <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
          <maintenancecost>225</maintenancecost>
          <buildcost>2000</buildcost>
@@ -1557,7 +1557,7 @@
          <canBeBuildOver>false</canBeBuildOver>
          <canBeUpgraded>false</canBeUpgraded>
          <canTakeDamage>true</canTakeDamage>
-         <mustFrontBuildDir>1</mustFrontBuildDir>
+         <mustFrontBuildDir>N</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
          <maintenancecost>0</maintenancecost>
          <buildcost>100</buildcost>
@@ -1614,7 +1614,7 @@
          <canBeBuildOver>false</canBeBuildOver>
          <canBeUpgraded>false</canBeUpgraded>
          <canTakeDamage>true</canTakeDamage>
-         <mustFrontBuildDir>0</mustFrontBuildDir>
+         <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
          <maintenancecost>25</maintenancecost>
          <buildcost>300</buildcost>
@@ -1676,7 +1676,7 @@
          <canBeBuildOver>false</canBeBuildOver>
          <canBeUpgraded>false</canBeUpgraded>
          <canTakeDamage>true</canTakeDamage>
-         <mustFrontBuildDir>0</mustFrontBuildDir>
+         <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
          <maintenancecost>40</maintenancecost>
          <buildcost>750</buildcost>
@@ -1738,7 +1738,7 @@
          <canBeBuildOver>false</canBeBuildOver>
          <canBeUpgraded>false</canBeUpgraded>
          <canTakeDamage>true</canTakeDamage>
-         <mustFrontBuildDir>0</mustFrontBuildDir>
+         <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
          <maintenancecost>50</maintenancecost>
          <buildcost>500</buildcost>
@@ -1806,7 +1806,7 @@
          <canBeBuildOver>false</canBeBuildOver>
          <canBeUpgraded>false</canBeUpgraded>
          <canTakeDamage>true</canTakeDamage>
-         <mustFrontBuildDir>0</mustFrontBuildDir>
+         <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
          <maintenancecost>80</maintenancecost>
          <buildcost>1200</buildcost>
@@ -1864,7 +1864,7 @@
          <canBeBuildOver>false</canBeBuildOver>
          <canBeUpgraded>false</canBeUpgraded>
          <canTakeDamage>true</canTakeDamage>
-         <mustFrontBuildDir>0</mustFrontBuildDir>
+         <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
          <maintenancecost>50</maintenancecost>
          <buildcost>1500</buildcost>
@@ -1929,7 +1929,7 @@
          <canBeBuildOver>false</canBeBuildOver>
          <canBeUpgraded>false</canBeUpgraded>
          <canTakeDamage>true</canTakeDamage>
-         <mustFrontBuildDir>0</mustFrontBuildDir>
+         <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
          <maintenancecost>100</maintenancecost>
          <buildcost>500</buildcost>
@@ -1994,7 +1994,7 @@
          <canBeBuildOver>false</canBeBuildOver>
          <canBeUpgraded>false</canBeUpgraded>
          <canTakeDamage>true</canTakeDamage>
-         <mustFrontBuildDir>0</mustFrontBuildDir>
+         <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
          <maintenancecost>100</maintenancecost>
          <buildcost>1250</buildcost>
@@ -2062,7 +2062,7 @@
          <canBeBuildOver>false</canBeBuildOver>
          <canBeUpgraded>false</canBeUpgraded>
          <canTakeDamage>true</canTakeDamage>
-         <mustFrontBuildDir>0</mustFrontBuildDir>
+         <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
          <maintenancecost>75</maintenancecost>
          <buildcost>750</buildcost>
@@ -2127,7 +2127,7 @@
          <canBeBuildOver>false</canBeBuildOver>
          <canBeUpgraded>false</canBeUpgraded>
          <canTakeDamage>true</canTakeDamage>
-         <mustFrontBuildDir>0</mustFrontBuildDir>
+         <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
          <maintenancecost>45</maintenancecost>
          <buildcost>1400</buildcost>
@@ -2192,7 +2192,7 @@
          <canBeBuildOver>false</canBeBuildOver>
          <canBeUpgraded>false</canBeUpgraded>
          <canTakeDamage>true</canTakeDamage>
-         <mustFrontBuildDir>0</mustFrontBuildDir>
+         <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
          <maintenancecost>150</maintenancecost>
          <buildcost>1500</buildcost>
@@ -2257,7 +2257,7 @@
          <canBeBuildOver>false</canBeBuildOver>
          <canBeUpgraded>false</canBeUpgraded>
          <canTakeDamage>true</canTakeDamage>
-         <mustFrontBuildDir>0</mustFrontBuildDir>
+         <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
          <maintenancecost>160</maintenancecost>
          <buildcost>1700</buildcost>
@@ -2327,7 +2327,7 @@
          <canBeBuildOver>false</canBeBuildOver>
          <canBeUpgraded>true</canBeUpgraded>
          <canTakeDamage>true</canTakeDamage>
-         <mustFrontBuildDir>4</mustFrontBuildDir>
+         <mustFrontBuildDir>W</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
          <maintenancecost>10</maintenancecost>
          <buildcost>300</buildcost>
@@ -2381,7 +2381,7 @@
          <canBeBuildOver>false</canBeBuildOver>
          <canBeUpgraded>false</canBeUpgraded>
          <canTakeDamage>true</canTakeDamage>
-         <mustFrontBuildDir>0</mustFrontBuildDir>
+         <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
          <maintenancecost>0</maintenancecost>
          <buildcost>0</buildcost>
@@ -2397,8 +2397,8 @@
          </buildingItems>
          <spriteBaseName>peasanthouse</spriteBaseName>
          <maxLivingSpaces>8</maxLivingSpaces>
-         <increaseSpeed>1.0</increaseSpeed>
-         <decreaseSpeed>2.0</decreaseSpeed>
+         <increaseTime>1.0</increaseTime>
+         <decreaseTime>2.0</decreaseTime>
       </home>
       <home ID="202">
          <Name>
@@ -2427,7 +2427,7 @@
          <canBeBuildOver>false</canBeBuildOver>
          <canBeUpgraded>false</canBeUpgraded>
          <canTakeDamage>true</canTakeDamage>
-         <mustFrontBuildDir>0</mustFrontBuildDir>
+         <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
          <maintenancecost>0</maintenancecost>
          <buildcost>0</buildcost>
@@ -2446,8 +2446,8 @@
          </buildingItems>
          <spriteBaseName>citizenhouse</spriteBaseName>
          <maxLivingSpaces>0</maxLivingSpaces>
-         <increaseSpeed>2.0</increaseSpeed>
-         <decreaseSpeed>4.0</decreaseSpeed>
+         <increaseTime>2.0</increaseTime>
+         <decreaseTime>4.0</decreaseTime>
       </home>
       <home ID="203">
          <Name>
@@ -2476,7 +2476,7 @@
          <canBeBuildOver>false</canBeBuildOver>
          <canBeUpgraded>false</canBeUpgraded>
          <canTakeDamage>true</canTakeDamage>
-         <mustFrontBuildDir>0</mustFrontBuildDir>
+         <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
          <maintenancecost>0</maintenancecost>
          <buildcost>0</buildcost>
@@ -2498,8 +2498,8 @@
          </buildingItems>
          <spriteBaseName>patricianhouse</spriteBaseName>
          <maxLivingSpaces>0</maxLivingSpaces>
-         <increaseSpeed>3.0</increaseSpeed>
-         <decreaseSpeed>6.0</decreaseSpeed>
+         <increaseTime>3.0</increaseTime>
+         <decreaseTime>6.0</decreaseTime>
       </home>
       <home ID="204">
          <Name>
@@ -2528,7 +2528,7 @@
          <canBeBuildOver>false</canBeBuildOver>
          <canBeUpgraded>false</canBeUpgraded>
          <canTakeDamage>true</canTakeDamage>
-         <mustFrontBuildDir>0</mustFrontBuildDir>
+         <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
          <maintenancecost>0</maintenancecost>
          <buildcost>0</buildcost>
@@ -2553,8 +2553,8 @@
          </buildingItems>
          <spriteBaseName>noblemanhouse</spriteBaseName>
          <maxLivingSpaces>0</maxLivingSpaces>
-         <increaseSpeed>4.0</increaseSpeed>
-         <decreaseSpeed>8.0</decreaseSpeed>
+         <increaseTime>4.0</increaseTime>
+         <decreaseTime>8.0</decreaseTime>
       </home>
    </homes>
    <militarybuildings>
@@ -2585,7 +2585,7 @@
          <canBeBuildOver>false</canBeBuildOver>
          <canBeUpgraded>false</canBeUpgraded>
          <canTakeDamage>true</canTakeDamage>
-         <mustFrontBuildDir>2</mustFrontBuildDir>
+         <mustFrontBuildDir>E</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
          <maintenancecost>50</maintenancecost>
          <buildcost>1500</buildcost>
@@ -2638,7 +2638,7 @@
          <canBeBuildOver>false</canBeBuildOver>
          <canBeUpgraded>false</canBeUpgraded>
          <canTakeDamage>true</canTakeDamage>
-         <mustFrontBuildDir>0</mustFrontBuildDir>
+         <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
          <maintenancecost>250</maintenancecost>
          <buildcost>5000</buildcost>

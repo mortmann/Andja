@@ -28785,6 +28785,7 @@ MonoBehaviour:
   contentCanvas: {fileID: 415090100}
   citizenCanvas: {fileID: 2090869339}
   upgradeButton: {fileID: 745387595}
+  needGroupCanvas: {fileID: 0}
 --- !u!1 &2090869339
 GameObject:
   m_ObjectHideFlags: 0

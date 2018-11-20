@@ -12,9 +12,9 @@ public class HomePrototypeData : StructurePrototypeData {
 
 [JsonObject(MemberSerialization.OptIn)]
 public class HomeBuilding : TargetStructure {
-	#region Serialize
-
-	[JsonPropertyAttribute] public int people;
+    enum CitizienMoods { Mad, Neutral, Happy }
+    #region Serialize
+    [JsonPropertyAttribute] public int people;
 	[JsonPropertyAttribute] public int buildingLevel;
 	[JsonPropertyAttribute] public float decTimer;
 	[JsonPropertyAttribute] public float incTimer;
@@ -29,11 +29,13 @@ public class HomeBuilding : TargetStructure {
 			return _homeData;
 		}
 	}
-
+    CitizienMoods currentMood;
     //Should Probably not be a list but lazy fast solution for now
-    public List<Need> structureNeeds;
+    public List<Need> StructureNeeds;
+    //List containing the groups which contains those needs this structure has
+    public List<NeedGroup> NeedGroups;
 
-    public int MaxLivingSpaces {get{ return HomeData.maxLivingSpaces;}}
+    public int MaxLivingSpaces {get{ return HomeData.maxLivingSpaces; }}
 	public float IncreaseTime {get{ return HomeData.increaseTime; }}
 	public float DecreaseTime {get{ return HomeData.decreaseTime; }}
 	bool canUpgrade;
@@ -69,27 +71,51 @@ public class HomeBuilding : TargetStructure {
                 OnNeedsBuildingChange(t, ns, true);
             }
         }
-        structureNeeds = new List<Need>();
+        StructureNeeds = new List<Need>();
         AddStructureNeeds(City.GetOwner().GetCopyStructureNeeds(buildingLevel));
-
-        City.GetOwner().RegisterStructureNeedUnlock(OnStructureNeedUnlock);
+        AddNeedsToGroup(City.GetPopulationALLNeedGroups(buildingLevel));
+        City.GetOwner().RegisterStructureNeedUnlock(OnNeedUnlock);
+        City.GetPopulationLevel(buildingLevel).RegisterNeedUnlock(OnNeedUnlock);
         City.AddPeople (buildingLevel,people);
 	}
 
-    private void AddStructureNeeds(List<Need> list) {
-        structureNeeds.AddRange(list);
-
+    private void AddNeedsToGroup(IEnumerable<NeedGroup> list) {
+        //this is gonna be ugly! But for now lazy implementation
+        //until i think about something better.
+        foreach(NeedGroup ng in list) {
+            NeedGroup inList = NeedGroups.Find(x => x.ID == ng.ID);
+            if(inList == null) {
+                inList = ng.Clone();
+                NeedGroups.Add(inList);
+            }
+            inList.CombineGroup(ng);
+        }
     }
 
-    private void OnStructureNeedUnlock(Need obj) {
-        if(obj.StartLevel > buildingLevel) {
+    private void AddStructureNeeds(List<Need> list) {
+        foreach(Need n in list) {
+            OnNeedUnlock(n);
+        }
+    }
+
+    private void OnNeedUnlock(Need need) {
+        if(need.StartLevel > buildingLevel) {
             return;
         }
-        structureNeeds.Add(obj);
+        if (need.IsStructureNeed()) {
+            need = need.Clone();
+            StructureNeeds.Add(need);
+        }
+        NeedGroup ng = NeedGroups.Find(x => x.ID == need.Group.ID);
+        if (ng == null) {
+            ng = (new NeedGroup(need.Group.ID));
+            NeedGroups.Add(ng);
+        }
+        ng.AddNeed(need);
     }
 
     private void OnNeedsBuildingChange(Tile tile, NeedsBuilding type, bool add) {
-        foreach (Need ng in structureNeeds) {
+        foreach (Need ng in StructureNeeds) {
             if (ng.Structure.ID == type.ID) {
                 ng.SetStructureFullfilled(false);
             }
@@ -102,52 +128,59 @@ public class HomeBuilding : TargetStructure {
 			return;
 		}
         OpenExtraUI();
-        float allPercentage = City.GetHappinessForCitizenLevel(buildingLevel);
-		float structurePercentage = 0;
+        float summedFullfillment = 0f;
+        foreach(NeedGroup ng in NeedGroups) {
+            summedFullfillment += ng.LastFullfillmentPercentage;
+        }
 
-		bool percCritical = City.GetNeedCriticalForLevel(buildingLevel);
+        float percentage = summedFullfillment /= NeedGroups.Count;
+        
+        if(percentage > 0.9f) {
+            currentMood = CitizienMoods.Happy;
+        } else 
+        if(percentage > 0.5) {
+            currentMood = CitizienMoods.Neutral;
+        }
+        else {
+            currentMood = CitizienMoods.Mad;
+        }
 
-        int count = structureNeeds.Count;
-        if (count > 0) {
-            foreach (Need n in structureNeeds) {
-                structurePercentage += n.GetFullfiment(buildingLevel);
-            }
-            structurePercentage /= count;
-            allPercentage += structurePercentage;
-			allPercentage /= 2;
-		}
+        UpdatePeopleChange(deltaTime);
 
-		if (allPercentage < 0.4f || percCritical) {
-			decTimer += deltaTime;
-			incTimer -= deltaTime;
-			incTimer = Mathf.Clamp (incTimer, 0, IncreaseTime);
-			if (decTimer >= DecreaseTime) {
-				TryToDecreasePeople();
-				decTimer = 0;
-			}
-		} 
-		else if (allPercentage > 0.4f && allPercentage < 0.85f) {
-			incTimer -= deltaTime;
-			incTimer = Mathf.Clamp (incTimer, 0, IncreaseTime);
-			decTimer -= deltaTime;
-			decTimer = Mathf.Clamp (decTimer, 0, DecreaseTime);
-		}  
-		else if (allPercentage > 0.85f) {
-			incTimer += deltaTime;
-			decTimer -= deltaTime;
-			decTimer = Mathf.Clamp (decTimer, 0, DecreaseTime);
-			if (incTimer >= IncreaseTime) {
-				incTimer = 0;
-				if(people==MaxLivingSpaces && City.GetOwner().HasUnlockedAllNeeds(buildingLevel)){
-					canUpgrade = true;
-                    OpenExtraUI();
-				}
-				TryToIncreasePeople ();
-			}
-		}
-	}
+  //      int count = structureNeeds.Count;
+  //      if (count > 0) {
 
-	private void TryToIncreasePeople(){
+        //          if (allPercentage < 0.4f || percCritical) {
+        //	decTimer += deltaTime;
+        //	incTimer -= deltaTime;
+        //	incTimer = Mathf.Clamp (incTimer, 0, IncreaseTime);
+        //	if (decTimer >= DecreaseTime) {
+        //		TryToDecreasePeople();
+        //		decTimer = 0;
+        //	}
+        //} 
+        //else if (allPercentage > 0.4f && allPercentage < 0.85f) {
+        //	incTimer -= deltaTime;
+        //	incTimer = Mathf.Clamp (incTimer, 0, IncreaseTime);
+        //	decTimer -= deltaTime;
+        //	decTimer = Mathf.Clamp (decTimer, 0, DecreaseTime);
+        //}  
+        //else if (allPercentage > 0.85f) {
+        //	incTimer += deltaTime;
+        //	decTimer -= deltaTime;
+        //	decTimer = Mathf.Clamp (decTimer, 0, DecreaseTime);
+        //	if (incTimer >= IncreaseTime) {
+        //		incTimer = 0;
+        //		if(people==MaxLivingSpaces && City.GetOwner().HasUnlockedAllNeeds(buildingLevel)){
+        //			canUpgrade = true;
+        //                  OpenExtraUI();
+        //		}
+        //		TryToIncreasePeople ();
+        //	}
+        //}
+    }
+
+    private void TryToIncreasePeople(){
 		if(people>=MaxLivingSpaces){
 			return;
 		}
@@ -192,8 +225,41 @@ public class HomeBuilding : TargetStructure {
 	protected override void OnCityChange (City old, City newOne) {
 		old.RemovePeople (buildingLevel, people);
 		newOne.AddPeople (buildingLevel, people);
-	}
-	protected override void OnDestroy () {
+        NeedGroups.Clear();
+        StructureNeeds.Clear();
+        foreach(Need n in newOne.GetOwner().GetALLUnlockedStructureNeedsTill(buildingLevel)) {
+            OnNeedUnlock(n);
+        }
+        AddNeedsToGroup(newOne.GetPopulationALLNeedGroups(buildingLevel));
+
+    }
+
+    protected void UpdatePeopleChange(float deltaTime) {
+        switch (currentMood) {
+            case CitizienMoods.Mad:
+                incTimer = Mathf.Clamp(incTimer - deltaTime, 0, IncreaseTime);
+                decTimer = Mathf.Clamp(decTimer + deltaTime, 0, DecreaseTime);
+                break;
+            case CitizienMoods.Neutral:
+                incTimer = Mathf.Clamp(incTimer - deltaTime, 0, IncreaseTime);
+                decTimer = Mathf.Clamp(decTimer - deltaTime, 0, DecreaseTime);
+                break;
+            case CitizienMoods.Happy:
+                incTimer = Mathf.Clamp(incTimer + deltaTime, 0, IncreaseTime);
+                decTimer = Mathf.Clamp(decTimer - deltaTime, 0, DecreaseTime);
+                break;
+        }
+        if (incTimer >= IncreaseTime) {
+            TryToIncreasePeople();
+            incTimer = 0f;
+        }
+        if (decTimer >= DecreaseTime) {
+            TryToDecreasePeople();
+            decTimer = 0f;
+        }
+    }
+
+    protected override void OnDestroy () {
 		City.RemovePeople (buildingLevel,people);
 	}
 	public void UpgradeHouse(){
@@ -213,7 +279,7 @@ public class HomeBuilding : TargetStructure {
                 n.SetStructureFullfilled(false);
             }
         }
-        structureNeeds.AddRange(needs);
+        StructureNeeds.AddRange(needs);
 //		Homedata.maxLivingSpaces *= 2; // TODO load this in from somewhere
 		canUpgrade = false;
 	}

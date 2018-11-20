@@ -176,7 +176,14 @@ public class Player : IGEventable {
 	public HashSet<Need> GetUnlockedStructureNeeds(int level){
 		return UnlockedStructureNeeds [level];
 	}
-	public bool HasUnlockedAllNeeds(int level){
+    public HashSet<Need> GetALLUnlockedStructureNeedsTill(int level) {
+        HashSet<Need> needs = new HashSet<Need>();
+        for(int i = 0; i<=level; i++) {
+            needs.UnionWith(UnlockedStructureNeeds[i]);
+        }
+        return needs;
+    }
+    public bool HasUnlockedAllNeeds(int level){
 		return LockedNeeds [level].Count == 0;
 	}
 	public bool HasUnlockedNeed(Need n){

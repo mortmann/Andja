@@ -29,7 +29,7 @@ public class PopulationLevel  {
             return _Data;
         }
     }
-
+    Action<Need> cbNeedUnlockAdded;
     List<NeedGroup> _AllNeedGroupList;
     public List<NeedGroup> AllNeedGroupList {
         get {
@@ -52,17 +52,17 @@ public class PopulationLevel  {
         NeedGroupList = Data.needGroupList;
         this.previousLevel = previous;
         this.city = city;
-        city.GetOwner().RegisterNeedUnlock(UnlockedNeed);
+        city.GetOwner().RegisterNeedUnlock(OnUnlockedNeed);
     }
     public PopulationLevel(PopulationLevel pl) {
         this.Level = pl.Level;
     }
-    internal void CalculateHappiness(City city) {
+    internal void FullfillNeedsCalcHappiness(City city) {
         float fullfilled = 0;
         bool missingNeed = false;
         foreach(NeedGroup group in AllNeedGroupList) {
             group.CalculateFullfillment(city, this);
-            fullfilled += group.GetFullfilledPercantage();
+            fullfilled += group.LastFullfillmentPercentage;
             if (group.HasMissingNeed)
                 missingNeed = true;
         }
@@ -71,6 +71,12 @@ public class PopulationLevel  {
         //TODO: make it trend towards the happiness? so it doesnt swing like crazy
     }
 
+    internal void RegisterNeedUnlock(Action<Need> onNeedUnlock) {
+        cbNeedUnlockAdded += onNeedUnlock;
+    }
+    internal void UnregisterNeedUnlock(Action<Need> onNeedUnlock) {
+        cbNeedUnlockAdded -= onNeedUnlock;
+    }
     internal void AddPeople(int count) {
         populationCount += count;
     }
@@ -103,7 +109,7 @@ public class PopulationLevel  {
             }
         }
         Player player = PlayerController.Instance.GetPlayer(city.playerNumber);
-        player.RegisterNeedUnlock(UnlockedNeed);
+        player.RegisterNeedUnlock(OnUnlockedNeed);
         foreach (NeedGroup ng in Data.needGroupList) {
             NeedGroup inList = NeedGroupList.Find (x => x.ID == ng.ID);
             if (inList != null) {
@@ -118,7 +124,7 @@ public class PopulationLevel  {
         return Data != null;
     }
 
-    private void UnlockedNeed(Need need) {
+    private void OnUnlockedNeed(Need need) {
         if (need.StartLevel != Level)
             return;
         NeedGroup ng = NeedGroupList.Find(x => x.ID == need.Group.ID);
@@ -126,6 +132,8 @@ public class PopulationLevel  {
             Debug.LogError("UnlockedNeed " + need + " doesnt have the right group inside this level" + Level );
             return;
         }
-        ng.AddNeed(need.Clone());
+        Need clone = need.Clone();
+        cbNeedUnlockAdded?.Invoke(clone);
+        ng.AddNeed(clone);
     }
 }

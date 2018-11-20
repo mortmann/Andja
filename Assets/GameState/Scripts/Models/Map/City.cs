@@ -97,6 +97,10 @@ public class City : IGEventable {
         return true;
     }
 
+    internal PopulationLevel GetPopulationLevel(int buildingLevel) {
+        return PopulationLevels[buildingLevel];
+    }
+
     /// <summary>
     /// DO NOT USE! ONLY serialization!
     /// </summary>
@@ -218,7 +222,7 @@ public class City : IGEventable {
 	}
 	public void CalculateNeeds(){
         foreach(PopulationLevel pop in PopulationLevels) {
-            pop.CalculateHappiness(this);
+            pop.FullfillNeedsCalcHappiness(this);
         }
 		//foreach(Need need in itemNeeds){
 		//	need.TryToConsumThisIn (this,citizienCount);
@@ -382,7 +386,6 @@ public class City : IGEventable {
 		int am = TradeFromShip (ship,i,Mathf.Clamp (amount,0,i.count));
 		myPlayer.ReduceMoney (am * ti.price);
 		player.AddMoney (am * ti.price);
-
 	}
 	public int TradeWithShip(Item toTrade,int amount=50, Unit ship = null){
 		if(myWarehouse==null || myWarehouse.inRangeUnits.Count==0  || toTrade ==null){
@@ -466,7 +469,7 @@ public class City : IGEventable {
 	public float GetHappinessForCitizenLevel(int level){
 		return PopulationLevels [level].Happiness;
 	}
-    internal IEnumerable<NeedGroup> GetPopulationNeedGroups(int level) {
+    internal IEnumerable<NeedGroup> GetPopulationALLNeedGroups(int level) {
         return PopulationLevels[level].AllNeedGroupList;
     }
     public void RemoveTiles(IEnumerable<Tile> tiles){

@@ -26,7 +26,7 @@ public class NeedGroup {
     public string Name => Data.Name;
     #endregion
     [JsonPropertyAttribute] public List<Need> Needs;
-
+    [JsonPropertyAttribute] public float LastFullfillmentPercentage;
     #region Runtime
     public bool HasMissingNeed { get; internal set; }
     public readonly int ID;
@@ -53,28 +53,34 @@ public class NeedGroup {
         Needs.AddRange(need);
     }
 
-    public float GetFullfilledPercantage() {
+    //public float GetFullfilledPercantage() {
+    //    float currentValue = 0;
+    //    foreach (Need n in Needs) {
+    //        currentValue += n.GetCombinedFullfillment();
+    //    }
+    //    currentValue /= Needs.Count;
+    //    currentValue *= ImportanceLevel;
+    //    return currentValue;
+    //}
+
+    internal void CalculateFullfillment(City city, PopulationLevel populationLevel) {
         float currentValue = 0;
-        foreach (Need n in Needs) {
-            currentValue += n.GetCombinedFullfillment();
+        foreach (Need need in Needs) {
+            need.CalculateFullfillment(city, populationLevel);
+            currentValue += need.GetCombinedFullfillment();
         }
         currentValue /= Needs.Count;
         currentValue *= ImportanceLevel;
-        return currentValue;
+        LastFullfillmentPercentage = currentValue;
     }
 
-    internal void CalculateFullfillment(City city, PopulationLevel populationLevel) {
-        foreach(Need need in Needs) {
-            need.CalculateFullfillment(city, populationLevel);
-        }
-    }
-
-    public void CombineGroup() {
-
+    public void CombineGroup(NeedGroup ng) {
+        CombinedNeeds.AddRange(ng.Needs);
     }
 
     internal void AddNeed(Need need) {
         Needs.Add(need);
+        CombinedNeeds.Add(need);
     }
 
     internal void UpdateNeeds(Player player) {

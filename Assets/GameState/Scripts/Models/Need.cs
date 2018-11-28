@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 public class NeedPrototypeData : LanguageVariables {
 	public Item item;
-	public NeedsBuilding structure;
+	public NeedsBuilding[] structures;
     public NeedGroupPrototypData group; // only for the typ of the group needed!
 	public float[] uses;
 	public int startLevel;
@@ -39,8 +39,8 @@ public class Need {
 	public Item Item{
 		get { return Data.item;}	
 	}
-	public NeedsBuilding Structure{
-		get { return Data.structure;}	
+	public NeedsBuilding[] Structures {
+		get { return Data.structures;}	
 	}
 
     public float[] Uses{
@@ -132,6 +132,14 @@ public class Need {
 		percantageAvailability[level] = Mathf.RoundToInt (100 * (usedAmount / neededConsumAmount))/100;
 	}
 
+    internal bool IsSatisifiedThroughStructure(NeedsBuilding type) {
+        foreach(Structure s in Structures) {
+            if (type.ID == s.ID)
+                return true;
+        }
+        return false;
+    }
+
     internal void SetStructureFullfilled(bool fullfilled) {
         if (IsItemNeed())
             return;
@@ -157,7 +165,7 @@ public class Need {
 		return Item != null;
 	}
 	public bool IsStructureNeed(){
-		return Structure != null;
+		return Structures != null;
 	}
 
     public bool Exists() {

@@ -116,7 +116,7 @@ public class HomeBuilding : TargetStructure {
 
     private void OnNeedsBuildingChange(Tile tile, NeedsBuilding type, bool add) {
         foreach (Need ng in StructureNeeds) {
-            if (ng.Structure.ID == type.ID) {
+            if (ng.IsSatisifiedThroughStructure(type)) {
                 ng.SetStructureFullfilled(false);
             }
         }
@@ -204,7 +204,13 @@ public class HomeBuilding : TargetStructure {
 			Debug.LogError ("wrong need got called here! " + need.ID);
 			return false;
 		}
-		return IsInRangeOf (need.Structure);
+
+        foreach(NeedsBuilding s in need.Structures) {
+            if (IsInRangeOf(s)) {
+                return true;
+            }
+        }
+        return false;
 	}
 	public bool IsInRangeOf(NeedsBuilding str){
 		if(str==null){
@@ -273,7 +279,7 @@ public class HomeBuilding : TargetStructure {
 
         List<Need> needs = City.GetOwner().GetCopyStructureNeeds(buildingLevel);
         foreach(Need n in needs) {
-            if (IsInRangeOf(n.Structure)) {
+            if (IsStructureNeedFullfilled(n)) {
                 n.SetStructureFullfilled(true);
             } else {
                 n.SetStructureFullfilled(false);

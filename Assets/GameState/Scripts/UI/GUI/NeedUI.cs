@@ -12,7 +12,7 @@ public class NeedUI : MonoBehaviour {
 	protected Need need;
 	protected HomeBuilding home;
 
-	public void setNeed(Need need, HomeBuilding home){
+	public void SetNeed(Need need, HomeBuilding home){
 		this.need = need;
 		this.home = home;
 		this.name = need.Name;
@@ -20,12 +20,13 @@ public class NeedUI : MonoBehaviour {
 		if (need.IsItemNeed()) {
 			name += need.Item.name;
 		} else {
-			if(need.Structure==null){
+			if(need.Structures==null){
 				nameText.text = "Missing Structure";
 				//					Debug.LogWarning(ns[i].ID + " " + curr.name +" is missing its structure! Either non declared or structure not existing!");
 				return;
 			}
-			name += need.Structure.SmallName;
+            //TODO: rework needed
+			name += need.Structures[0].SmallName;
 		}
 		nameText.text = need.Name;
 	}

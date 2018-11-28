@@ -665,6 +665,14 @@ public class PrototypController : MonoBehaviour {
 					fi.SetValue (data, NodeToStructure (n));
 					continue;
 				}
+                if (fi.FieldType.IsSubclassOf(typeof(Structure[])) || fi.FieldType == (typeof(Structure[]))) {
+                    List<Structure> items = new List<Structure>();
+                    foreach (XmlNode item in n.ChildNodes) {
+                        items.Add(NodeToStructure(item));
+                    }
+                    fi.SetValue(data, items.ToArray());
+                    continue;
+                }
                 if (fi.FieldType == typeof(NeedGroupPrototypData)) {
                     fi.SetValue(data, NodeToNeedGroupPrototypData(n));
                     continue;

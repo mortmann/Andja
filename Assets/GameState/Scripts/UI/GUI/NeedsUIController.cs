@@ -41,7 +41,7 @@ public class NeedsUIController : MonoBehaviour {
                 GameObject b = Instantiate(needPrefab);
                 b.transform.SetParent(go.transform);
                 NeedUI ui = b.GetComponent<NeedUI>();
-                ui.setNeed(need, home);
+                ui.SetNeed(need, home);
                 needToUI[need] = ui;
                 needs[need.StartLevel].Add(need);
             }

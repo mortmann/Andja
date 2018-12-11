@@ -2,6 +2,7 @@
 using UnityEngine.UI;
 using System.Collections.Generic;
 using UnityEngine.EventSystems;
+using System;
 //using UnityEditor;
 public class MapImage : MonoBehaviour {
 	public GameObject mapCitySelectPrefab;
@@ -73,26 +74,36 @@ public class MapImage : MonoBehaviour {
 		if(c==null||c.playerNumber!=PlayerController.currentPlayerNumber){
 			return;
 		}
-		RectTransform rt = mapParts.GetComponent<RectTransform> ();
-		World w = World.Current;
-		GameObject g = GameObject.Instantiate (mapCitySelectPrefab);
-		g.transform.SetParent (mapParts.transform);
-		Vector3 pos = new Vector3 (c.myWarehouse.BuildTile.X, c.myWarehouse.BuildTile.Y, 0);
-		pos.Scale (new Vector3(rt.rect.width/w.Width,rt.rect.height/w.Height));
-		g.transform.localPosition = pos;
-		g.GetComponentInChildren<Text> ().text = c.Name;
-		EventTrigger trigger = g.GetComponentInChildren<EventTrigger> ();
+        c.RegisterStructureAdded(OnWarehouseBuild);
+	}
+
+    private void OnWarehouseBuild(Structure structure) {
+        if(structure is Warehouse == false) {
+            return;
+        }
+        Warehouse warehouse = (Warehouse)structure;
+        RectTransform rt = mapParts.GetComponent<RectTransform>();
+        World w = World.Current;
+        GameObject g = GameObject.Instantiate(mapCitySelectPrefab);
+        g.transform.SetParent(mapParts.transform);
+        Vector3 pos = new Vector3(warehouse.BuildTile.X, warehouse.BuildTile.Y, 0);
+        pos.Scale(new Vector3(rt.rect.width / w.Width, rt.rect.height / w.Height));
+        g.transform.localPosition = pos;
+        g.GetComponentInChildren<Text>().text = warehouse.City.Name;
+        EventTrigger trigger = g.GetComponentInChildren<EventTrigger>();
         EventTrigger.Entry entry = new EventTrigger.Entry {
             eventID = EventTriggerType.PointerClick
         };
-        entry.callback.AddListener( ( data ) => { OnWarehouseClick( c ); } );
-		trigger.triggers.Add( entry );
-		g.GetComponentInChildren <Toggle> ().onValueChanged.AddListener (( data ) => { ToggleWarehouse (c.myWarehouse); });
-            
-        c.myWarehouse.RegisterOnDestroyCallback (OnWarehouseDestroy);
-		warehouseToGO.Add (c.myWarehouse, g);
-	}
-	public void OnWarehouseClick(City c){
+        entry.callback.AddListener((data) => { OnWarehouseClick(warehouse.City); });
+        trigger.triggers.Add(entry);
+        g.GetComponentInChildren<Toggle>().onValueChanged.AddListener((data) => { ToggleWarehouse(warehouse); });
+
+        warehouse.RegisterOnDestroyCallback(OnWarehouseDestroy);
+        warehouseToGO.Add(warehouse, g);
+        warehouse.City.UnregisterStructureAdded(OnWarehouseBuild);
+    }
+
+    public void OnWarehouseClick(City c){
 		tradeRoutePanel.OnWarehouseClick(c);
     }
 
@@ -106,7 +117,8 @@ public class MapImage : MonoBehaviour {
 			return;
 		}
 		Warehouse w = (Warehouse)str;
-		GameObject.Destroy (warehouseToGO [w]);
+        w.City.RegisterStructureAdded(OnWarehouseBuild);
+        GameObject.Destroy (warehouseToGO [w]);
 		warehouseToGO.Remove(w);
 		//TODO UPDATE ALL TRADE_ROUTES
 	}

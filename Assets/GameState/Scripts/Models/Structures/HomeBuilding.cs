@@ -65,21 +65,22 @@ public class HomeBuilding : TargetStructure {
 		foreach (Tile t in neighbourTiles) {
 			t.RegisterTileOldNewStructureChangedCallback (OnTStructureChange);
 		}
-        foreach(Tile t in myBuildingTiles) {
-            ((LandTile)t).RegisterOnNeedStructureChange(OnNeedsBuildingChange);
-            foreach(NeedsBuilding ns in t.GetListOfInRangeCityNeedBuildings()) {
-                OnNeedsBuildingChange(t, ns, true);
-            }
-        }
         StructureNeeds = new List<Need>();
         AddStructureNeeds(City.GetOwner().GetCopyStructureNeeds(buildingLevel));
         AddNeedsToGroup(City.GetPopulationALLNeedGroups(buildingLevel));
         City.GetOwner().RegisterStructureNeedUnlock(OnNeedUnlock);
         City.GetPopulationLevel(buildingLevel).RegisterNeedUnlock(OnNeedUnlock);
         City.AddPeople (buildingLevel,people);
-	}
+        foreach (Tile t in myBuildingTiles) {
+            ((LandTile)t).RegisterOnNeedStructureChange(OnNeedsBuildingChange);
+            foreach (NeedsBuilding ns in t.GetListOfInRangeCityNeedBuildings()) {
+                OnNeedsBuildingChange(t, ns, true);
+            }
+        }
+    }
 
     private void AddNeedsToGroup(IEnumerable<NeedGroup> list) {
+        NeedGroups = new List<NeedGroup>();
         //this is gonna be ugly! But for now lazy implementation
         //until i think about something better.
         foreach(NeedGroup ng in list) {
@@ -127,7 +128,7 @@ public class HomeBuilding : TargetStructure {
 			//here the people are very unhappy and will leave veryfast
 			return;
 		}
-        OpenExtraUI();
+        
         float summedFullfillment = 0f;
         foreach(NeedGroup ng in NeedGroups) {
             summedFullfillment += ng.LastFullfillmentPercentage;
@@ -147,6 +148,9 @@ public class HomeBuilding : TargetStructure {
 
         UpdatePeopleChange(deltaTime);
 
+        if(currentMood == CitizienMoods.Happy && people == MaxLivingSpaces) {
+            OpenExtraUI();
+        }
   //      int count = structureNeeds.Count;
   //      if (count > 0) {
 

@@ -177,7 +177,8 @@ public class PrototypController : MonoBehaviour {
         populationLevelDatas = new Dictionary<int, PopulationLevelPrototypData>();
         ReadOtherFromXML();
 
-        Debug.Log ("Read in structures: " +structurePrototypes.Count);
+        Debug.Log("Read in fertilities types: " + allFertilities.Count + " with all " + fertilityPrototypeDatas.Count);
+        Debug.Log ("Read in structures: " + structurePrototypes.Count);
         Debug.Log("Read in units: " + unitPrototypes.Count);
         Debug.Log ("Read in items: " + allItems.Count); 
 		Debug.Log ("Read in needs: " + allNeeds.Count);
@@ -297,16 +298,14 @@ public class PrototypController : MonoBehaviour {
 			FertilityPrototypeData fpd = new FertilityPrototypeData ();
 
 			SetData<FertilityPrototypeData> (node,ref fpd);
-
-			XmlNodeList xnl= node.SelectNodes ("climates/Climate");
-			fpd.climates = new Climate[xnl.Count];
-			for(int i=0; i<xnl.Count;i++){
-				fpd.climates [i] = (Climate)int.Parse ( xnl [i].InnerXml );
-			}
+			
 			Fertility fer = new Fertility (ID,fpd);
 			idToFertilities.Add (fer.ID,fer); 
 			fertilityPrototypeDatas [ID] = fpd;
 			foreach (Climate item in fer.Climates) {
+                if(item == Climate.Middle) {
+                    Debug.Log(fer);
+                }
 				if (allFertilities.ContainsKey (item)==false) {
                     List<Fertility> f = new List<Fertility> {
                         fer
@@ -706,21 +705,22 @@ public class PrototypController : MonoBehaviour {
 					continue;
 				}
 				if(fi.FieldType.IsArray && fi.FieldType.GetElementType ().IsEnum){
-					int t = Enum.GetValues (fi.FieldType.GetElementType ()).Length;
-					var enumArray = Array.CreateInstance (fi.FieldType.GetElementType (),t );
+                    var listType = typeof(List<>);
+                    var constructedListType = listType.MakeGenericType(fi.FieldType.GetElementType());
+
+                    var list = (IList)Activator.CreateInstance(constructedListType);
+
                     int i = 0;
 					foreach (XmlNode item in n.ChildNodes) {
 						if(item.Name!=fi.FieldType.GetElementType ().ToString ()){
 							continue;
 						}
-                        if (i >= t) {
-                            Debug.LogError("Too many enums given for the number in enum!");
-                            break;
-                        }
-                        enumArray.SetValue(Enum.Parse(fi.FieldType, n.InnerXml, true),i);
+                        list.Add(Enum.Parse(fi.FieldType.GetElementType(), item.InnerXml, true));
                         i++;
                     }
-					fi.SetValue(data, Convert.ChangeType (enumArray,fi.FieldType));
+                    Array enumArray = Array.CreateInstance(fi.FieldType.GetElementType(), list.Count);
+                    list.CopyTo(enumArray, 0);
+                    fi.SetValue(data, Convert.ChangeType(enumArray,fi.FieldType));
 					continue;
 				}
                 if(fi.FieldType == typeof(Dictionary<ArmorType, float>)) {
@@ -844,7 +844,7 @@ public class PrototypController : MonoBehaviour {
 			return null;//not needed
 		}
 		if(idToFertilities.ContainsKey (id)==false){
-			Debug.LogError ("ID was not created before the depending Fertility!");
+			Debug.LogError ("ID was not created before the depending Fertility! " + id);
 			return null;
 		}
 		return idToFertilities [id];

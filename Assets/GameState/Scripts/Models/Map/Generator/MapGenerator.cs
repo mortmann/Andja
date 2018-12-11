@@ -38,7 +38,10 @@ public class MapGenerator : MonoBehaviour {
             return 1 ; }
 	}
 	public bool IsDone {
-		get { return completedIslands == toGeneratorIslands && loadedIslands == toLoadIslands; }
+		get { return 
+                toGeneratorIslands+toLoadIslands > 0 
+                && completedIslands == toGeneratorIslands 
+                && loadedIslands == toLoadIslands; }
 	}
 	int toGeneratorIslands = 0;
     int toLoadIslands = 0;
@@ -112,6 +115,10 @@ public class MapGenerator : MonoBehaviour {
     }
     private string GetRandomIslandFileName(Size size, Climate climate) {
         KeyValuePair<Climate, Size> key = new KeyValuePair<Climate, Size>(climate, size);
+        if(islands.ContainsKey(key) == false) {
+            Debug.LogError("We do not have islands for " + climate + "-" + size + " and needs to be created");
+            return null;
+        }
         List<string> keyIslands = islands[key];
         return keyIslands[Random.Range(0, keyIslands.Count)];
     }
@@ -210,7 +217,7 @@ public class MapGenerator : MonoBehaviour {
             }
             if(loadedIslandsList != null) {
                 foreach (EditorController.SaveIsland save in loadedIslandsList) {
-                    toPlaceIslands.Add(new IslandStruct(save));
+                    toPlaceIslands.Add(new IslandStruct(save, GetFertilitiesForClimate(save.climate,3/*TODO:make nonstatic*/)));
                 }
             }
             //now Place them at point 
@@ -232,8 +239,10 @@ public class MapGenerator : MonoBehaviour {
 					    SetTileAt(x,y,new Tile(x,y));
                 }
             }
-
 			tilesPopulated = true;
+
+            WorldController.Instance.SetGeneratedWorld(GetWorld(), tileToStructure);
+            Destroy(gameObject);
 		}
 	}
 
@@ -359,7 +368,25 @@ public class MapGenerator : MonoBehaviour {
 	    tiles[x * Height + y] = t;
 	}
 		
+    public List<Fertility> GetFertilitiesForClimate(Climate climate, int count) {
+        List<Fertility> fers = new List<Fertility>();
+        if (PrototypController.Instance.GetFertilitiesForClimate(climate) == null) {
+            Debug.LogError("NO fertility found for this climate " + climate);
+            return null;
+        }
+        List<Fertility> climFer = new List<Fertility>(PrototypController.Instance.GetFertilitiesForClimate(climate));
 
+        for (int i = 0; i < count; i++) {
+            if (climFer.Count == 0) {
+                Debug.LogWarning("NOT ENOUGH FERTILITIES FOR CLIMATE " + climate);
+                break;
+            }
+            Fertility f = climFer[UnityEngine.Random.Range(0, climFer.Count)];
+            climFer.Remove(f);
+            fers.Add(f);
+        }
+        return fers;
+    }
 
 	public struct IslandGenInfo {
 		public Range Width;
@@ -386,22 +413,25 @@ public class MapGenerator : MonoBehaviour {
         public int y;
         public Tile[] Tiles;
         public Climate climate;
+        public List<Fertility> fertilities;
         public Dictionary<Tile, Structure> tileToStructure;
 
-        public IslandStruct(int width, int height, Tile[] tiles, Climate climate) : this() {
+        public IslandStruct(int width, int height, Tile[] tiles, Climate climate, List<Fertility> list) : this() {
             Width = width;
             Height = height;
             Tiles = tiles;
             this.climate = climate;
             tileToStructure = new Dictionary<Tile, Structure>();
+            fertilities = list;
             this.name = "";
         }
-        public IslandStruct(EditorController.SaveIsland save) : this() {
+        public IslandStruct(EditorController.SaveIsland save, List<Fertility> fertilities) : this() {
             Width = save.Width;
             Height = save.Height;
             Tiles = save.tiles;
             this.climate = save.climate;
             name = save.Name;
+            this.fertilities = fertilities;
             tileToStructure = new Dictionary<Tile, Structure>();
             foreach(Structure str in save.structures) {
                 tileToStructure.Add(str.BuildTile, str);
@@ -414,6 +444,7 @@ public class MapGenerator : MonoBehaviour {
             this.climate = copy.climate;
             tileToStructure = copy.tileToStructure;
             this.name = copy.name;
+            this.fertilities = copy.fertilities;
             //x = copy.x;
             //y = copy.y;
 

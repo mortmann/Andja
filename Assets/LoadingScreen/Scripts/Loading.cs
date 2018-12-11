@@ -7,7 +7,9 @@ public class Loading : MonoBehaviour {
 	AsyncOperation aso;
 	public Text percentText;
 	public bool loadEditor;
-	float SceneLoadingProgress {
+    internal static bool IsLoading = true;
+
+    float SceneLoadingProgress {
 		get { 
 			if (aso == null)
 				return 0;
@@ -15,7 +17,9 @@ public class Loading : MonoBehaviour {
 	}
 	// Use this for initialization
 	void Start () {
-		if(loadEditor)
+        IsLoading = true;
+
+        if (loadEditor)
 			aso = SceneManager.LoadSceneAsync("IslandEditor");
 	}
 	
@@ -49,5 +53,8 @@ public class Loading : MonoBehaviour {
             percentText.text = percantage + "%";
         }
 
+    }
+    public void OnDestroy() {
+        IsLoading = false;
     }
 }

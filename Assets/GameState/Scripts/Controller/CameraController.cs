@@ -20,38 +20,35 @@ public class CameraController : MonoBehaviour {
 	public HashSet<Structure> structureCurrentInCameraView;
 	public Rect CameraViewRange;
 	Vector2 showBounds = new Vector2 ();
-    static CameraSave save;
     public static CameraController Instance;
 	void Awake () {
 		if (Instance != null) {
 			Debug.LogError ("There should never be two SaveController.");
 		}
 		Instance = this;
-        if(save != null) {
-            LoadSaveCameraData();
-            save = null;
-        }
+        
 	}
 	void Start() {
-		tilesCurrentInCameraView = new HashSet<Tile> ();
-		structureCurrentInCameraView = new HashSet<Structure> ();
-
-		if(WorldController.Instance == null ||WorldController.Instance.isLoaded == false){
-			Camera.main.transform.position = new Vector3 (World.Current.Width / 2, World.Current.Height / 2, Camera.main.transform.position.z);
-		}
-		middle = Camera.main.ScreenToWorldPoint (new Vector3 (Camera.main.pixelWidth/2, Camera.main.pixelHeight/2));
-		lower = Camera.main.ScreenToWorldPoint (Vector3.zero);
-		upper = Camera.main.ScreenToWorldPoint (new Vector3 (Camera.main.pixelWidth, Camera.main.pixelHeight));
-		middle = Camera.main.ScreenToWorldPoint (new Vector3 (Camera.main.pixelWidth/2, Camera.main.pixelHeight/2));
-
-		showBounds.x = World.Current.Width;
-		showBounds.y = World.Current.Height;
 
 	}
+    public void Setup() {
+        tilesCurrentInCameraView = new HashSet<Tile>();
+        structureCurrentInCameraView = new HashSet<Structure>();
 
+        if (WorldController.Instance == null || WorldController.Instance.isLoaded == false) {
+            Camera.main.transform.position = new Vector3(World.Current.Width / 2, World.Current.Height / 2, Camera.main.transform.position.z);
+        }
+        middle = Camera.main.ScreenToWorldPoint(new Vector3(Camera.main.pixelWidth / 2, Camera.main.pixelHeight / 2));
+        lower = Camera.main.ScreenToWorldPoint(Vector3.zero);
+        upper = Camera.main.ScreenToWorldPoint(new Vector3(Camera.main.pixelWidth, Camera.main.pixelHeight));
+        middle = Camera.main.ScreenToWorldPoint(new Vector3(Camera.main.pixelWidth / 2, Camera.main.pixelHeight / 2));
+
+        showBounds.x = World.Current.Width;
+        showBounds.y = World.Current.Height;
+    }
 	void Update () {
         //DO not move atall when Menu is Open
-		if(PauseMenu.isOpen){
+		if(PauseMenu.isOpen || Loading.IsLoading){
 			return;
 		}
 
@@ -147,11 +144,10 @@ public class CameraController : MonoBehaviour {
             }
 		}
 	}
-
-    internal static void SetSaveCameraData(CameraSave camera) {
-        save = camera;
+    internal void SetSaveCameraData(CameraSave camera) {
+            
     }
-
+    
     Vector3 UpdateMouseCameraMovement() {
 		// Handle screen panning
 		if( Input.GetMouseButton(1) || Input.GetMouseButton(2) ) {	// Right or Middle Mouse Button
@@ -229,6 +225,7 @@ public class CameraController : MonoBehaviour {
     void OnDestroy() {
         Instance = null;
     }
+    
     public void MoveCameraToPosition(Vector2 pos){
 		Camera.main.transform.position = new Vector3 (pos.x, pos.y, Camera.main.transform.position.z);
 		currFramePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
@@ -242,13 +239,9 @@ public class CameraController : MonoBehaviour {
         };
         return cs;
 	}
-	public void LoadSaveCameraData(){
-		Camera.main.transform.position = save.pos.Vec;
-		Camera.main.orthographicSize = save.orthographicSize;
-	}
 }
 [Serializable]
-public class CameraSave {
+public class CameraSave : BaseSaveData {
 	public SeriaziableVector3 pos;
 	public float orthographicSize;
 }

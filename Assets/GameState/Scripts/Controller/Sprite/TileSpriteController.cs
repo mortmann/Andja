@@ -205,8 +205,10 @@ public class TileSpriteController : MonoBehaviour {
             if (generateMask) {
                 masktexture = new Texture2D(islandWidth, islandHeight, TextureFormat.Alpha8, false, true);
                 masktexture.SetPixels32(new Color32[(islandWidth) * (islandHeight)]);
-                masktexture.filterMode = FilterMode.Point;
+                
             }
+            masktexture.filterMode = FilterMode.Point;
+
             if (generateImage || generateMask) {
                 foreach (Tile tile_data in i.Tiles) {
                     int x = (int)(tile_data.X - xTileOffset);

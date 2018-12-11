@@ -150,7 +150,7 @@ public class World : IGEventable{
 		IslandList = new List<Island>();
 		Units = new List<Unit>();
         Crates = new List<Crate>();
-
+        Projectiles = new List<Projectile>();
     }
     internal void Update(float deltaTime) {
         foreach(Island i in IslandList) {
@@ -174,30 +174,11 @@ public class World : IGEventable{
     }
 
 	public void CreateIsland(MapGenerator.IslandStruct islandStruct){
-		Fertility[] fers = new Fertility[3];
-		if(PrototypController.Instance.GetFertilitiesForClimate(islandStruct.climate) ==null){
-            Debug.LogError("NO fertility found for this climate " + islandStruct.climate);
-			return;
-		}
-		List<Fertility> climFer = new List<Fertility>(PrototypController.Instance.GetFertilitiesForClimate(islandStruct.climate));
-
-		for (int i = 0; i < fers.Length; i++) {
-			if(climFer.Count==0){
-				Debug.LogWarning("NOT ENOUGH FERTILITIES FOR CLIMATE " + islandStruct.climate);
-				break;
-			}
-			Fertility f = climFer[UnityEngine.Random.Range (0,climFer.Count)];
-			climFer.Remove (f);
-			fers [i] = f;
-		}
-        foreach(Fertility f in fers) {
-        }
         Island island = new Island(islandStruct.Tiles, islandStruct.climate) {
-            myFertilities = new List<Fertility>(fers),
+            myFertilities = new List<Fertility>(islandStruct.fertilities),
             Placement = new Vector2(islandStruct.x, islandStruct.y)
         };
         IslandList.Add (island);
-
 	}
 	public void SetTileAt(int x,int y,Tile t){
         if (t == null)

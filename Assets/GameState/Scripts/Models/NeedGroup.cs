@@ -36,6 +36,7 @@ public class NeedGroup {
     public NeedGroup(int ID) {
         Needs = new List<Need>();
         this.ID = ID;
+        CombinedNeeds = new List<Need>();
     }
 
     public NeedGroup(NeedGroup needGroup) {

@@ -10,7 +10,7 @@ using System.IO;
 /// </summary>
 public class PlayerController : MonoBehaviour {
 	public static int currentPlayerNumber;
-	int piratePlayerNumber = int.MaxValue; // so it isnt the same like the number of wilderness
+    readonly int piratePlayerNumber = int.MaxValue; // so it isnt the same like the number of wilderness
 	public Player CurrPlayer{get {return players [currentPlayerNumber];}}
 	HashSet<War> playerWars;
     const float BalanceFullTime = 60f;
@@ -20,33 +20,33 @@ public class PlayerController : MonoBehaviour {
 	List<Player> players;
 	EventUIManager euim;
 
-    static PlayerControllerSave save;
-
     // Use this for initialization
-    void OnEnable () {			
+    void OnEnable () {
 		if (Instance != null) {
 			Debug.LogError("There should never be two mouse controllers.");
 		}
 		Instance = this;
-		players = new List<Player> ();
-		currentPlayerNumber = 0;
-		Player p = new Player (currentPlayerNumber);
-		players.Add (p); 
-		players.Add (new Player(1)); 
-		players.Add (new Player(2)); 
-		playerWars = new HashSet<War> ();
-		AddPlayersWar (0,1);
-		AddPlayersWar (1,0);
-		balanceTickTimer = BalanceTicksTime;
-        BuildController.Instance.RegisterCityCreated (OnCityCreated);
-        BuildController.Instance.RegisterStructureCreated (OnStructureCreated);
-		euim = GameObject.FindObjectOfType<EventUIManager> ();
-        GameObject.FindObjectOfType<EventController>().RegisterOnEvent (OnEventCreated, OnEventEnded);
-        if(save != null) {
-            LoadPlayerData();
-            save = null;
-        }
+        if(SaveController.IsLoadingSave == false)
+            Setup();
+        
 	}
+
+    public void Setup() {
+        players = new List<Player>();
+		currentPlayerNumber = 0;
+		Player p = new Player(currentPlayerNumber);
+        players.Add(p); 
+		players.Add(new Player(1)); 
+		players.Add(new Player(2)); 
+		playerWars = new HashSet<War>();
+		AddPlayersWar(0,1);
+        AddPlayersWar(1,0);
+        balanceTickTimer = BalanceTicksTime;
+        BuildController.Instance.RegisterCityCreated(OnCityCreated);
+        BuildController.Instance.RegisterStructureCreated(OnStructureCreated);
+		euim = GameObject.FindObjectOfType<EventUIManager>();
+        GameObject.FindObjectOfType<EventController>().RegisterOnEvent(OnEventCreated, OnEventEnded);
+    }
 
     internal bool HasEnoughMoney(int playerNumber, int buildCost) {
         if(playerNumber<0 || playerNumber >= players.Count) {
@@ -58,7 +58,9 @@ public class PlayerController : MonoBehaviour {
 
     // Update is called once per frame
     void Update () {
-		balanceTickTimer -= Time.deltaTime;
+        if (WorldController.Instance.IsPaused)
+            return;
+		balanceTickTimer -= WorldController.Instance.DeltaTime;
 		if(balanceTickTimer<=0){
 			foreach(Player p in players){
 				if(p == null){
@@ -134,8 +136,11 @@ public class PlayerController : MonoBehaviour {
 		}
 	}
 
-    internal static void SetPlayerData(PlayerControllerSave pcs) {
-        save = pcs;
+    internal void SetPlayerData(PlayerControllerSave pcs) {
+        players = pcs.players;
+        playerWars = pcs.playerWars;
+        balanceTickTimer = pcs.tickTimer;
+        currentPlayerNumber = pcs.currentPlayerNumber;
     }
 
     public void OnEventEnded(GameEvent ge){
@@ -211,18 +216,13 @@ public class PlayerController : MonoBehaviour {
 		// Create/overwrite the save file with the xml text.
 		return new PlayerControllerSave(currentPlayerNumber, balanceTickTimer, players,playerWars);
 	}
-	public void LoadPlayerData(){
-		currentPlayerNumber = save.currentPlayerNumber;
-		players = save.players;
-		playerWars = save.playerWars;
-		balanceTickTimer = save.tickTimer;
-	}
+	
     void OnDestroy() {
         Instance = null;
     }
 }
 [Serializable]
-public class PlayerControllerSave {
+public class PlayerControllerSave : BaseSaveData {
 
 	public int currentPlayerNumber;
 	public float tickTimer;

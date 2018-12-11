@@ -43,7 +43,6 @@ public enum InfluenceTyp {Building, Unit}
 */
 public class EventController : MonoBehaviour {
 	public static EventController Instance { get; protected set; }
-    static GameEventSave save;
 
     private uint lastID = 0;
 	Dictionary<EventType,GameEvent[]> typeToEvents;
@@ -71,10 +70,6 @@ public class EventController : MonoBehaviour {
 		}
 		x /= s;
 		y /= s;
-        if(save != null) {
-            LoadGameEventData();
-            save = null;
-        }
 	}
 	void Start() {
 //		var a = CreateReusableAction<GameEvent,bool,Structure> ("OutputStructure_Efficiency");
@@ -120,8 +115,9 @@ public class EventController : MonoBehaviour {
 		CreateGameEvent( RandomEvent (type) );
 	}
 
-    internal static void SetGameEventData(GameEventSave ges) {
-        save = ges;
+    internal void SetGameEventData(GameEventSave ges) {
+        idToActiveEvent = ges.idToActiveEvent;
+        UnityEngine.Random.state = ges.Random;
     }
 
     public void CreateGameEvent(GameEvent ge){
@@ -279,12 +275,9 @@ public class EventController : MonoBehaviour {
 		GameEventSave ges = new GameEventSave (idToActiveEvent);
 		return ges;
 	}
-	public void LoadGameEventData(){
-		idToActiveEvent = save.idToActiveEvent;
-	}
 }
 
-public class GameEventSave {
+public class GameEventSave : BaseSaveData {
 	public Dictionary<uint,GameEvent> idToActiveEvent;
 	public UnityEngine.Random.State Random;
 	public GameEventSave(Dictionary<uint,GameEvent> idToActiveEvent ){

@@ -1,12 +1,13 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 using System;
+using Newtonsoft.Json;
 
 public class FertilityPrototypeData : LanguageVariables {
 	public Climate[] climates;
 }
 
-
+[JsonObject(MemberSerialization.OptIn)]
 public class Fertility : IComparable<Fertility>, IEqualityComparer<Fertility> {
 	public int ID;
 

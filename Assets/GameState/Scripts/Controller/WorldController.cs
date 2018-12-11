@@ -8,7 +8,6 @@ using Newtonsoft.Json;
 
 public class WorldController : MonoBehaviour {
     public static WorldController Instance { get; protected set; }
-    static WorldSaveState save;
 
     // The world and tile data
     public World World { get; protected set; }
@@ -19,7 +18,7 @@ public class WorldController : MonoBehaviour {
 	private bool _isPaused = false;
 	public bool IsPaused {
 		get {
-			return  _isPaused || IsModal;
+			return  _isPaused || IsModal || Loading.IsLoading;
 		}
 		set {
 			_isPaused = value;
@@ -32,29 +31,23 @@ public class WorldController : MonoBehaviour {
 
 	public bool isLoaded = true;
     // Use this for initialization
-    void Awake() {
-		if (Instance != null) {
+    void OnEnable() {
+        Debug.Log("Intializing World Controller");
+        if (Instance != null) {
 			Debug.LogError ("There should never be two world controllers.");
-		}
-		Instance = this;
-
-		offworldMarket = new OffworldMarket ();
-		if (SaveController.IsLoadingSave) {
-            LoadWorldData();
-            save = null;
-        } else {
-			MapGenerator mg = MapGenerator.Instance;
-            if (mg == null) {
-                return;
-            }
-            Dictionary<Tile,Structure> tileToStructure = mg.GetStructures();
-            World = mg.GetWorld();
-            BuildController.Instance.PlaceWorldGeneratedStructure(tileToStructure);
-
-            isLoaded = false;
-		}
-        
+		} else {
+            Instance = this;
+        }
     }
+
+    public void SetGeneratedWorld(World world, Dictionary<Tile,Structure> tileToStructure) {
+        this.World = world;
+        if(SaveController.IsLoadingSave == false)
+            BuildController.Instance.PlaceWorldGeneratedStructure(tileToStructure);
+        isLoaded = false;
+        offworldMarket = new OffworldMarket();
+    }
+
     void OnDestroy() {
         Instance = null;
     }
@@ -131,17 +124,15 @@ public class WorldController : MonoBehaviour {
 		SceneManager.LoadScene( "GameStateLoadingScreen" );
 	}
 	public void LoadWorldData() {
-		offworldMarket = save.offworld;
 		// Create a world from our save file data.
-		World = save.world;
         World.LoadData(MapGenerator.Instance.GetTiles(),GameDataHolder.Instance.Width,GameDataHolder.Instance.Height);
-
         List<MapGenerator.IslandStruct> structs = MapGenerator.Instance.GetIslandStructs();
         foreach (Island island in World.IslandList) {
             MapGenerator.IslandStruct thisStruct = structs.Find(s =>
                     island.StartTile.X >= s.x && (s.x + s.Width) >= island.StartTile.X &&
                     island.StartTile.Y >= s.y && (s.y + s.Height) >= island.StartTile.Y
             );
+            island.myFertilities = thisStruct.fertilities;
             structs.Remove(thisStruct);
             if (thisStruct.Tiles == null)
                 Debug.LogError("thisStruct.Tiles is null " + island.StartTile.X + " " + island.StartTile.Y);
@@ -160,15 +151,17 @@ public class WorldController : MonoBehaviour {
 		Debug.Log ("LOAD ENDED");
 	}
 
-    internal static void SetWorldData(WorldSaveState world) {
-        save = world;
+    internal void SetWorldData(WorldSaveState worldsave) {
+        World = worldsave.world;
+        offworldMarket = worldsave.offworld;
+        LoadWorldData();
     }
 
 	
 
 }
 
-public class WorldSaveState {
+public class WorldSaveState : BaseSaveData {
 	public OffworldMarket offworld;
 	public World world;
 }

@@ -17,9 +17,10 @@ public class SaveController : MonoBehaviour {
     public const string islandFileEnding = ".isl";
     public const string islandImageEnding = ".png";
     private static List<Worker> loadWorker;
+    public bool DebugModeSave = true;
 
     //TODO autosave here
-    const string SaveFileVersion = "0.1.3";
+    const string SaveFileVersion = "0.1.4";
     const string islandSaveFileVersion = "i_0.0.2";
 
     GameDataHolder GDH => GameDataHolder.Instance;
@@ -43,6 +44,7 @@ public class SaveController : MonoBehaviour {
 			GDH.loadsavegame = null;
 		} else {
             IsLoadingSave = false;
+            GDH.GenerateMap();//just generate new map
         }
 	}
 
@@ -51,61 +53,7 @@ public class SaveController : MonoBehaviour {
 		//maybe option to choose frequenzy
 	}
 
-	public void SaveGameState(string name = "autosave"){
-		//first pause the world so nothing changes and we can save an 
-		bool wasPaused = WC.IsPaused;
-		if(wasPaused==false){
-			WC.IsPaused = true;
-		}
-		string saveStatePath = System.IO.Path.Combine (GetSaveGamesPath (), name + saveFileEnding);
-        string finalMetaStatePath = System.IO.Path.Combine(GetSaveGamesPath(), name + metaFileEnding);
-
-        SaveState savestate = new SaveState {
-            gamedata = GDH.GetSaveGameData(),
-            pcs = (PC.GetSavePlayerData()),
-            world = (WC.GetSaveWorldData()),
-            ges = (EC.GetSaveGameEventData()),
-            camera = (CC.GetSaveCamera())
-        };
-
-        string save = JsonConvert.SerializeObject(savestate, Formatting.Indented,
-                new JsonSerializerSettings {
-                    NullValueHandling = NullValueHandling.Ignore,
-                    PreserveReferencesHandling = PreserveReferencesHandling.Objects,
-                    ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
-                    TypeNameHandling = TypeNameHandling.Auto
-                }
-        );
-
-        SaveMetaData metaData = new SaveMetaData {
-                safefileversion = SaveFileVersion,
-                saveName = name,
-                saveTime = DateTime.Now,
-                saveFileType = GDH.saveFileType,
-                playTime = GDH.playTime,
-                difficulty = GDH.difficulty
-        };
-        
-        string metadata = JsonConvert.SerializeObject(metaData, Formatting.Indented,
-                new JsonSerializerSettings {
-                    NullValueHandling = NullValueHandling.Ignore,
-                    PreserveReferencesHandling = PreserveReferencesHandling.Objects,
-                    ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
-                    TypeNameHandling = TypeNameHandling.Auto
-                }
-        );
-        if (Application.isEditor) {
-            System.IO.File.WriteAllText(saveStatePath, save);
-        } else {
-            System.IO.File.WriteAllBytes(saveStatePath, Zip(save));
-        }
-        System.IO.File.WriteAllText(finalMetaStatePath, metadata);
-
-        if (wasPaused == false){
-			WC.IsPaused = false;
-		}
-	}
-
+	
     public void SaveIslandState(string name = "autosave") {
         string islandStatePath = System.IO.Path.Combine(GetIslandSavePath(name), name + islandFileEnding);
         string finalMetaStatePath = System.IO.Path.Combine(GetIslandSavePath(name), name + metaFileEnding);
@@ -242,7 +190,7 @@ public class SaveController : MonoBehaviour {
 
     public static Dictionary<KeyValuePair<Climate, Size>, List<string>> GetIslands() {
         Dictionary<KeyValuePair<Climate, Size>, List<string>> islands = new Dictionary<KeyValuePair<Climate, Size>, List<string>>();
-        string[] filePaths = System.IO.Directory.GetFiles(GetIslandSavePath(), "*"+metaFileEnding);
+        string[] filePaths = System.IO.Directory.GetFiles(GetIslandSavePath(), "*"+metaFileEnding,SearchOption.AllDirectories);
         foreach (string file in filePaths) {
             SaveMetaData metaData = null;
             try {
@@ -297,6 +245,11 @@ public class SaveController : MonoBehaviour {
                 continue;
             saveMetaDatas.Add(metaData);
         }
+        if (editor) {
+            saveMetaDatas.RemoveAll(x => x.safefileversion != islandSaveFileVersion);
+        } else {
+            saveMetaDatas.RemoveAll(x => x.safefileversion != SaveFileVersion);
+        }
         return saveMetaDatas.ToArray();
     }
     void OnDestroy() {
@@ -320,6 +273,71 @@ public class SaveController : MonoBehaviour {
 		//TODO FIXME change this to documentspath
 		return System.IO.Path.Combine(ConstantPathHolder.ApplicationDataPath.Replace ("/Assets","") , "saves");
 	}
+    public void SaveGameState(string name = "autosave") {
+        //first pause the world so nothing changes and we can save an 
+        bool wasPaused = WC.IsPaused;
+        if (wasPaused == false) {
+            WC.IsPaused = true;
+        }
+        string saveStatePath = System.IO.Path.Combine(GetSaveGamesPath(), name + saveFileEnding);
+        string finalMetaStatePath = System.IO.Path.Combine(GetSaveGamesPath(), name + metaFileEnding);
+
+        SaveState savestate = new SaveState {
+            gamedata = GDH.GetSaveGameData().Serialize(),
+            pcs = PC.GetSavePlayerData().Serialize(),
+            world = WC.GetSaveWorldData().Serialize(),
+            ges = EC.GetSaveGameEventData().Serialize(),
+            camera = CC.GetSaveCamera().Serialize()
+        };
+        string save = "";
+        if (DebugModeSave) {
+            foreach (System.Reflection.FieldInfo field in typeof(SaveState).GetFields()) {
+                    string bsd = field.GetValue(savestate) as String;
+                    save += bsd;
+                    save += "##\n";
+            }
+        } else {
+            save = JsonConvert.SerializeObject(savestate, Formatting.Indented,
+                    new JsonSerializerSettings {
+                        NullValueHandling = NullValueHandling.Ignore,
+                        PreserveReferencesHandling = PreserveReferencesHandling.Objects,
+                        ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+                        TypeNameHandling = TypeNameHandling.Auto
+                    }
+            );
+        }
+
+
+
+        SaveMetaData metaData = new SaveMetaData {
+            safefileversion = SaveFileVersion,
+            saveName = name,
+            saveTime = DateTime.Now,
+            saveFileType = GDH.saveFileType,
+            playTime = GDH.playTime,
+            difficulty = GDH.difficulty
+        };
+
+        string metadata = JsonConvert.SerializeObject(metaData, Formatting.Indented,
+                new JsonSerializerSettings {
+                    NullValueHandling = NullValueHandling.Ignore,
+                    PreserveReferencesHandling = PreserveReferencesHandling.Objects,
+                    ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+                    TypeNameHandling = TypeNameHandling.Auto
+                }
+        );
+        if (Application.isEditor) {
+            System.IO.File.WriteAllText(saveStatePath, save);
+        }
+        else {
+            System.IO.File.WriteAllBytes(saveStatePath, Zip(save));
+        }
+        System.IO.File.WriteAllText(finalMetaStatePath, metadata);
+
+        if (wasPaused == false) {
+            WC.IsPaused = false;
+        }
+    }
 
     public IEnumerator LoadGameState(string name = "autosave") {
         //first pause the world so nothing changes and we can save an 		
@@ -336,48 +354,58 @@ public class SaveController : MonoBehaviour {
             yield break;
         }
         SaveState state = null;
+        string save="";
         try {
-            state = JsonConvert.DeserializeObject<SaveState>(Unzip(File.ReadAllBytes(finalSaveStatePath)), new JsonSerializerSettings {
-                NullValueHandling = NullValueHandling.Ignore,
-                PreserveReferencesHandling = PreserveReferencesHandling.Objects,
-                ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
-                TypeNameHandling = TypeNameHandling.Auto
-            });
-
+           save = Unzip(File.ReadAllBytes(finalSaveStatePath));
+            
         } catch {
-            state = JsonConvert.DeserializeObject<SaveState>( File.ReadAllText(finalSaveStatePath), new JsonSerializerSettings {
+            save = File.ReadAllText(finalSaveStatePath);
+        }
+        if (DebugModeSave) {
+            state = new SaveState();
+            string[] lines = save.Split(new string[] { "##\n" }, StringSplitOptions.None);
+            int i = 0;
+            foreach (System.Reflection.FieldInfo field in typeof(SaveState).GetFields()) {
+                field.SetValue(state, lines[i]);
+                i++;
+            }
+        } else {
+            state = JsonConvert.DeserializeObject<SaveState>(save, new JsonSerializerSettings {
                 NullValueHandling = NullValueHandling.Ignore,
                 PreserveReferencesHandling = PreserveReferencesHandling.Objects,
                 ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
                 TypeNameHandling = TypeNameHandling.Auto
+
             });
         }
-        
-		PrototypController.Instance.LoadFromXML ();
 
-		GDH.LoadGameData(state.gamedata); // gamedata
+        PrototypController.Instance.LoadFromXML ();
+
+		GDH.LoadGameData(BaseSaveData.Deserialize<GameData>((string)state.gamedata)); // gamedata
         while (MapGenerator.Instance.IsDone == false)
             yield return null;
         loadingPercantage += 0.2f;
-        PlayerController.SetPlayerData(state.pcs); // player
+        PlayerController.Instance.SetPlayerData(BaseSaveData.Deserialize<PlayerControllerSave>(state.pcs)); // player
         loadingPercantage += 0.2f;
-        WorldController.SetWorldData(state.world); // world
+        WorldController.Instance.SetWorldData(BaseSaveData.Deserialize<WorldSaveState>(state.world)); // world
         loadingPercantage += 0.2f;
-        EventController.SetGameEventData(state.ges); // event
+        EventController.Instance.SetGameEventData(BaseSaveData.Deserialize<GameEventSave>(state.ges)); // event
         loadingPercantage += 0.2f;
-        CameraController.SetSaveCameraData(state.camera); // camera
+        CameraController.Instance.SetSaveCameraData(BaseSaveData.Deserialize<CameraSave>(state.camera)); // camera
         loadingPercantage += 0.2f;
 
         IsDone = true;
         yield return null;
 	}
-	[Serializable]
+
+    [Serializable]
 	public class SaveState {
-		public GameData gamedata;
-		public WorldSaveState world;
-		public PlayerControllerSave pcs;
-		public GameEventSave ges;
-		public CameraSave camera;
+        
+        public string gamedata;
+		public string world;
+		public string pcs;
+		public string ges;
+		public string camera;
 	}
     [Serializable]
     public class SaveMetaData {
@@ -393,3 +421,28 @@ public class SaveController : MonoBehaviour {
 
 }
 
+[Serializable]
+public abstract class BaseSaveData {
+
+    public string Serialize() {
+        Formatting formatting = SaveController.Instance.DebugModeSave ? Formatting.Indented : Formatting.None;
+        string save = JsonConvert.SerializeObject(this, formatting,
+                new JsonSerializerSettings {
+                    NullValueHandling = NullValueHandling.Ignore,
+                    PreserveReferencesHandling = PreserveReferencesHandling.Objects,
+                    ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+                    TypeNameHandling = TypeNameHandling.Auto
+                }
+        );
+        return save;
+    }
+    public static T Deserialize<T>(string save) {
+        T state = JsonConvert.DeserializeObject<T>(save, new JsonSerializerSettings {
+            NullValueHandling = NullValueHandling.Ignore,
+            PreserveReferencesHandling = PreserveReferencesHandling.Objects,
+            ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+            TypeNameHandling = TypeNameHandling.Auto
+        });
+        return state;
+    }
+}

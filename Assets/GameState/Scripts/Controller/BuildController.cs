@@ -147,6 +147,10 @@ public class BuildController : MonoBehaviour {
 		if(tiles.Exists(x => x == null || x.Type == TileType.Ocean)) {
 			return;
 		}
+        if (tiles.Count == 0) {
+            Debug.LogError("tiles is empty");
+            return;
+        }
 		int rotate = s.rotated;
 		if (loading == false) {
 			s = s.Clone ();

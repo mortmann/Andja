@@ -36,9 +36,7 @@ public class GameDataHolder : MonoBehaviour {
             return;
         }
         Instance = this;
-		DontDestroyOnLoad (this);
-        if (loadsavegame == null|| loadsavegame == "")
-            GenerateMap();
+      
 	}
     private void Update() {
         if (WorldController.Instance == null)
@@ -86,7 +84,7 @@ public class GameDataHolder : MonoBehaviour {
 }
 
 [Serializable]
-public class GameData {
+public class GameData : BaseSaveData {
     public int MapSeed;
     public int Height = 100;
     public int Width = 100;

@@ -118,6 +118,8 @@ public class City : IGEventable {
         foreach (PopulationLevel pl in PrototypController.Instance.GetPopulationLevels(this)) {
             if (PopulationLevels.Exists(x => x.Level == pl.Level))
                 continue;
+            if(pl.previousLevel!=null)
+                pl.previousLevel = PopulationLevels[pl.previousLevel.Level]; // so when adding new levels to existing links get updated
             PopulationLevels.Add(pl);
         }
 
@@ -145,16 +147,17 @@ public class City : IGEventable {
             //TODO:Find a better way/ cleaner way todo this
             Balance -= item.Maintenancecost;
 		}
-        for(int i = PopulationLevels.Count-1; i>=0; i--) {
-            if(PopulationLevels[i].Exists() == false) {
-                PopulationLevels.Remove(PopulationLevels[i]);
-                continue;
+        if (IsWilderness() == false) {
+            for (int i = PopulationLevels.Count - 1; i >= 0; i--) {
+                if (PopulationLevels[i].Exists() == false) {
+                    PopulationLevels.Remove(PopulationLevels[i]);
+                    continue;
+                }
+                PopulationLevels[i].Load();
             }
-            PopulationLevels[i].Load();
+            PlayerController.Instance.GetPlayer(playerNumber).OnCityCreated(this);
         }
 
-        if(playerNumber > -1)
-            PlayerController.Instance.GetPlayer(playerNumber).OnCityCreated(this);
         return myStructures;
 	}
 
@@ -552,7 +555,7 @@ public class City : IGEventable {
 		return TargetType;
 	}
     public Player GetOwner() {
-        return PlayerController.Instance.GetPlayer(playerNumber);
+        return new Player();// PlayerController.Instance.GetPlayer(playerNumber);
     }
     public override string ToString() {
         return Name;

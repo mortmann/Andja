@@ -12,14 +12,13 @@ public class Island : IGEventable {
     #region Serialize
 
     [JsonPropertyAttribute] public List<City> myCities;
-    [JsonPropertyAttribute] public List<Fertility> myFertilities;
     [JsonPropertyAttribute] public Climate myClimate;
     [JsonPropertyAttribute] public Dictionary<string, int> myRessources;
     [JsonPropertyAttribute] public Tile StartTile;
 
     #endregion
     #region RuntimeOrOther
-
+    public List<Fertility> myFertilities;
     public Path_TileGraph TileGraphIslandTiles { get; protected set; }
     public int Width {
         get {
@@ -62,7 +61,6 @@ public class Island : IGEventable {
     /// <param name="climate">Climate.</param>
 	public Island(Tile startTile, Climate climate = Climate.Middle) {
 		StartTile = startTile; // if it gets loaded the StartTile will already be set
-		myFertilities = new List<Fertility> ();
 		myRessources = new Dictionary<string, int> ();
 		myCities = new List<City>();
 		
@@ -78,7 +76,6 @@ public class Island : IGEventable {
         Setup();
     }
     public Island(Tile[] tiles, Climate climate = Climate.Middle) {
-        myFertilities = new List<Fertility>();
         myRessources = new Dictionary<string, int>();
         myCities = new List<City>();
         this.myClimate = climate;

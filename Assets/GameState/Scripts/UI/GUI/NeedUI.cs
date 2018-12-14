@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine.UI;
 using UnityEngine;
+using System;
 
 public class NeedUI : MonoBehaviour {
 	public Slider slider;
@@ -11,8 +12,9 @@ public class NeedUI : MonoBehaviour {
 
 	protected Need need;
 	protected HomeBuilding home;
+    private bool locked;
 
-	public void SetNeed(Need need, HomeBuilding home){
+    public void SetNeed(Need need, HomeBuilding home){
 		this.need = need;
 		this.home = home;
 		this.name = need.Name;
@@ -26,15 +28,29 @@ public class NeedUI : MonoBehaviour {
 				return;
 			}
             //TODO: rework needed
+            if (need.Structures.Length == 0)
+                return;
 			name += need.Structures[0].SmallName;
 		}
-		nameText.text = need.Name;
-	}
-	void Update(){
-		if(PlayerController.Instance.CurrPlayer.HasUnlockedNeed(need)==false){
-			percentageText.text = "LOCKED!";
-			return;
-		}
+		nameText.text = name;
+        if (PlayerController.Instance.CurrPlayer.HasUnlockedNeed(need) == false) {
+            percentageText.text = "LOCKED!";
+            locked = true;
+            PlayerController.Instance.CurrPlayer.RegisterNeedUnlock(OnNeedUnlock);
+            return;
+        }
+    }
+
+    private void OnNeedUnlock(Need need) {
+        if (need.ID != this.need.ID)
+            return;
+        PlayerController.Instance.CurrPlayer.UnregisterNeedUnlock(OnNeedUnlock);
+        locked = false;
+    }
+
+    void Update(){
+        if (locked || need == null)
+            return;
 		if (need.IsItemNeed()) {
             float percantage = need.GetFullfiment(home.PopulationLevel) * 100;
             percentageText.text = percantage + "%";

@@ -363,7 +363,7 @@ public class SaveController : MonoBehaviour {
         }
         if (DebugModeSave) {
             state = new SaveState();
-            string[] lines = save.Split(new string[] { "##\n" }, StringSplitOptions.None);
+            string[] lines = save.Split(new string[] { "##"+ Environment.NewLine }, StringSplitOptions.None);
             int i = 0;
             foreach (System.Reflection.FieldInfo field in typeof(SaveState).GetFields()) {
                 field.SetValue(state, lines[i]);

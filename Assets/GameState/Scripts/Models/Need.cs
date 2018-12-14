@@ -8,7 +8,7 @@ public class NeedPrototypeData : LanguageVariables {
 	public Item item;
 	public NeedsBuilding[] structures;
     public NeedGroupPrototypData group; // only for the typ of the group needed!
-	public float[] uses;
+	public float[] UsageAmounts;
 	public int startLevel;
 	public int popCount;
 }
@@ -44,7 +44,7 @@ public class Need {
 	}
 
     public float[] Uses{
-		get { return Data.uses;}	
+		get { return Data.UsageAmounts;}	
 	}
 	public int StartLevel{
 		get { return Data.startLevel;}	
@@ -70,13 +70,22 @@ public class Need {
 	public Need(){
         lastNeededNotConsumed = new List<float>();
         percantageAvailability = new List<float>();
+        CreateLists();
     }
 	public Need Clone() {
 		return new Need (this);
 	}
 	protected Need(Need other) : this() {
 		this.ID = other.ID;
+        CreateLists();
 	}
+
+    private void CreateLists() {
+        for(int i = 0; i < PrototypController.NumberOfPopulationLevels; i++) {
+            lastNeededNotConsumed.Add(0);
+            percantageAvailability.Add(0);
+        }
+    }
 
     public void CalculateFullfillment(City city, PopulationLevel level) {
         TryToConsumThisIn(city, level.populationCount, level.Level);

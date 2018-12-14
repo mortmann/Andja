@@ -141,6 +141,7 @@ public class PrototypController : MonoBehaviour {
         //Why cant it be both -Fry
         //Good News everyone! Setting it to GB fixes that stupid thing! -Professor
         System.Threading.Thread.CurrentThread.CurrentCulture = System.Globalization.CultureInfo.CreateSpecificCulture("en-GB");
+
         //fertilities
         allFertilities = new Dictionary<Climate,List<Fertility>> ();
 		idToFertilities = new Dictionary<int, Fertility> ();
@@ -303,9 +304,6 @@ public class PrototypController : MonoBehaviour {
 			idToFertilities.Add (fer.ID,fer); 
 			fertilityPrototypeDatas [ID] = fpd;
 			foreach (Climate item in fer.Climates) {
-                if(item == Climate.Middle) {
-                    Debug.Log(fer);
-                }
 				if (allFertilities.ContainsKey (item)==false) {
                     List<Fertility> f = new List<Fertility> {
                         fer
@@ -335,14 +333,10 @@ public class PrototypController : MonoBehaviour {
 			NeedPrototypeData npd = new NeedPrototypeData ();
 			int ID = int.Parse(node.GetAttribute("ID"));
 			SetData<NeedPrototypeData> (node,ref npd);
-
-			float[] fs = new float[4];
-			fs[0] = float.Parse(node.SelectSingleNode("Peasent").InnerText);
-			fs[1] = float.Parse(node.SelectSingleNode("Citizen").InnerText);
-			fs[2] = float.Parse(node.SelectSingleNode("Patrician").InnerText);
-			fs[3] = float.Parse(node.SelectSingleNode("Nobleman").InnerText);
-			npd.uses = fs;
+			
 			needPrototypeDatas.Add (ID,npd);
+            if (npd.item == null && npd.structures == null)
+                continue;
             Need n = new Need(ID, npd);
             allNeeds.Add (n);
 
@@ -696,6 +690,15 @@ public class PrototypController : MonoBehaviour {
                     List<Unit> items = new List<Unit>();
                     foreach (XmlNode item in n.ChildNodes) {
                         items.Add(NodeToUnit(item));
+                    }
+                    fi.SetValue(data, items.ToArray());
+                    continue;
+                }
+                if (fi.FieldType == (typeof(float[]))) {
+                    List<float> items = new List<float>();
+                    foreach (XmlNode item in n.ChildNodes) {
+                        int id = int.Parse(item.Attributes[0].InnerXml);
+                        items.Insert(id, float.Parse(item.InnerXml));
                     }
                     fi.SetValue(data, items.ToArray());
                     continue;

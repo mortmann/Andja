@@ -66,14 +66,18 @@ public class HomeBuilding : TargetStructure {
 			t.RegisterTileOldNewStructureChangedCallback (OnTStructureChange);
 		}
         StructureNeeds = new List<Need>();
-        AddStructureNeeds(City.GetOwner().GetCopyStructureNeeds(buildingLevel));
         AddNeedsToGroup(City.GetPopulationALLNeedGroups(buildingLevel));
+        AddStructureNeeds(City.GetOwner().GetCopyStructureNeeds(buildingLevel));
+
         City.GetOwner().RegisterStructureNeedUnlock(OnNeedUnlock);
         City.GetPopulationLevel(buildingLevel).RegisterNeedUnlock(OnNeedUnlock);
         City.AddPeople (buildingLevel,people);
         foreach (Tile t in myBuildingTiles) {
             ((LandTile)t).RegisterOnNeedStructureChange(OnNeedsBuildingChange);
-            foreach (NeedsBuilding ns in t.GetListOfInRangeCityNeedBuildings()) {
+            List<NeedsBuilding> needsBuildings = t.GetListOfInRangeCityNeedBuildings();
+            if (needsBuildings == null)
+                continue;
+            foreach (NeedsBuilding ns in needsBuildings) {
                 OnNeedsBuildingChange(t, ns, true);
             }
         }

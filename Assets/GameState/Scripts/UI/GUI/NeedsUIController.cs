@@ -19,28 +19,30 @@ public class NeedsUIController : MonoBehaviour {
 		if(this.home == home){
 			return;
 		}
-		foreach (Transform child in contentCanvas.transform) {
-			Destroy (child.gameObject);
-		}
-
 		this.home = home;
 
 		needToUI = new Dictionary<Need, NeedUI> ();
         List<NeedGroup> ns = new List<NeedGroup>();
         ns.AddRange(home.NeedGroups);
-        Debug.LogError("Not working atm!");
+        
 		Player p = PlayerController.Instance.CurrPlayer;
 
 		citizenCanvas.GetComponentInChildren<Text> ().text=home.people+"/"+home.MaxLivingSpaces;
 		needs = new List<Need>[PrototypController.NumberOfPopulationLevels];
-		
+		for(int i = 0; i< PrototypController.NumberOfPopulationLevels; i++) {
+            needs[i] = new List<Need>();
+        }
+        foreach(Transform child in needGroupCanvas.transform) {
+            Destroy(child.gameObject);
+        }
 		for (int i = 0; i < ns.Count; i++) {
             GameObject go = Instantiate(needGroupCanvas); //TODO: make it look good
-            go.GetComponent<NeedGroupUI>().Show(ns[i]);
+            NeedGroupUI ngui = go.GetComponent<NeedGroupUI>();
+            ngui.Show(ns[i]);
             go.transform.SetParent(contentCanvas.transform);
             foreach (Need need in ns[i].Needs) {
                 GameObject b = Instantiate(needPrefab);
-                b.transform.SetParent(go.transform);
+                b.transform.SetParent(ngui.listGO.transform);
                 NeedUI ui = b.GetComponent<NeedUI>();
                 ui.SetNeed(need, home);
                 needToUI[need] = ui;

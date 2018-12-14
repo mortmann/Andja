@@ -45,6 +45,8 @@ public class NeedGroup {
         foreach (Need n in needGroup.Needs) {
             Needs.Add(n.Clone());
         }
+        CombinedNeeds = new List<Need>();
+
     }
 
     public NeedGroup Clone() {

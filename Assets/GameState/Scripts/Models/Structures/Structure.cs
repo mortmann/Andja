@@ -56,8 +56,10 @@ public class StructurePrototypeData : LanguageVariables {
     public ExtraBuildUI ExtraBuildUITyp;
 
     public Item[] buildingItems;
+    public Item[] UpgradeItems = null; // set inside prototypecontoller
+    public int UpgradeCost = 0; // set inside prototypecontoller
 
-	public string spriteBaseName;
+    public string spriteBaseName;
 
 	private void CalculatePrototypTiles(){
 		_myPrototypeTiles = new List<Tile> ();
@@ -203,6 +205,7 @@ public abstract class Structure : IGEventable {
 	public int BuildingRange { get {return Data.buildingRange;} }
 	public int PopulationLevel { get {return Data.PopulationLevel;} }
 	public int PopulationCount { get {return Data.PopulationCount;} }
+    public int StructureLevel { get { return Data.StructureLevel; } }
 
     public int _tileWidth { get {return Data.tileWidth;} }
 	public int _tileHeight { get {return Data.tileHeight;} }
@@ -231,8 +234,10 @@ public abstract class Structure : IGEventable {
     public ExtraBuildUI ExtraBuildUITyp { get { return Data.ExtraBuildUITyp; } }
 
     public Item[] BuildingItems{ get {return Data.buildingItems;} }
+    public Item[] UpgradeItems { get { return Data.UpgradeItems; } }
+    public int UpgradeCost { get { return Data.UpgradeCost; } } // set inside prototypecontoller
 
-	public string SpriteName{ get { return Data.spriteBaseName/*TODO: make multiple saved sprites possible*/; } }
+    public string SpriteName{ get { return Data.spriteBaseName/*TODO: make multiple saved sprites possible*/; } }
 
 	protected Action<Structure> cbStructureChanged;
 	protected Action<Structure> cbStructureDestroy;

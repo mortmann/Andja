@@ -84,7 +84,7 @@ public class City : IGEventable {
         _name = "<City>" + UnityEngine.Random.Range(0, 1000);
 
         Setup();
-        useTick = 30f;
+        useTick = 15f;
 
 		//		useTickTimer = useTick;
     }
@@ -218,14 +218,12 @@ public class City : IGEventable {
 		useTickTimer -= deltaTime;
 		if(useTickTimer<=0){
 			useTickTimer = useTick;
-
-			//CalculateNeeds ();
-
+			CalculateNeeds ();
 		}
 	}
 	public void CalculateNeeds(){
         foreach(PopulationLevel pop in PopulationLevels) {
-            pop.FullfillNeedsCalcHappiness(this);
+            pop.FullfillNeedsAndCalcHappiness(this);
         }
 		//foreach(Need need in itemNeeds){
 		//	need.TryToConsumThisIn (this,citizienCount);

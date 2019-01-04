@@ -41,10 +41,14 @@ public class TextLanguageSetter : MonoBehaviour {
 		myText.text = UILanguageController.Instance.GetText (name);
 	}
 	void OnDestroy(){
+        if (UILanguageController.Instance == null)
+            return;
 		UILanguageController.Instance.UnregisterLanguageChange (OnChangeLanguage);
 	}
 	void OnDisable(){
-		UILanguageController.Instance.UnregisterLanguageChange (OnChangeLanguage);
+        if (UILanguageController.Instance == null)
+            return;
+        UILanguageController.Instance.UnregisterLanguageChange (OnChangeLanguage);
 	}
 	public void OnMouseEnter(){
 		GameObject.FindObjectOfType<HoverOverScript> ().Show (UILanguageController.Instance.GetHoverOverText (name));

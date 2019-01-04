@@ -57,17 +57,20 @@ public class PopulationLevel  {
     public PopulationLevel(PopulationLevel pl) {
         this.Level = pl.Level;
     }
-    internal void FullfillNeedsCalcHappiness(City city) {
+    internal void FullfillNeedsAndCalcHappiness(City city) {
         float fullfilled = 0;
         bool missingNeed = false;
+        float summedImportance = 0;
         foreach(NeedGroup group in AllNeedGroupList) {
             group.CalculateFullfillment(city, this);
             fullfilled += group.LastFullfillmentPercentage;
+            summedImportance += group.ImportanceLevel;
             if (group.HasMissingNeed)
                 missingNeed = true;
         }
         criticalMissingNeed = missingNeed;
-        fullfilled /= NeedGroupList.Count;
+        fullfilled /= summedImportance;
+        Debug.Log("City " + city.Name + " - " + Level + " Fullfilled: " + fullfilled);
         //TODO: make it trend towards the happiness? so it doesnt swing like crazy
     }
 

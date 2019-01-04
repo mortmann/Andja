@@ -68,13 +68,17 @@ public class NeedGroup {
 
     internal void CalculateFullfillment(City city, PopulationLevel populationLevel) {
         float currentValue = 0;
+        int number = 0;
         foreach (Need need in Needs) {
+            if (need.IsStructureNeed()) {
+                continue;
+            }
+            number++;
             need.CalculateFullfillment(city, populationLevel);
             currentValue += need.GetCombinedFullfillment();
         }
-        currentValue /= Needs.Count;
-        currentValue *= ImportanceLevel;
-        LastFullfillmentPercentage = currentValue;
+        currentValue = CalculateRealPercantage(currentValue, number);
+        LastFullfillmentPercentage = currentValue; // currently not needed! but maybe nice to have
     }
 
     public void CombineGroup(NeedGroup ng) {
@@ -95,5 +99,23 @@ public class NeedGroup {
                 Needs.Remove(need);
             }
         }
+    }
+
+    private float CalculateRealPercantage(float percentage, int number) {
+        percentage /= number;
+        percentage = percentage * Mathf.Clamp(ImportanceLevel,0.4f,1.6f);
+        return percentage;
+    }
+
+    internal float GetFullfillmentForHome(HomeBuilding homeBuilding) {
+        float currentValue = 0;
+        foreach (Need need in Needs) {
+            if (need.IsStructureNeed()) {
+                currentValue += homeBuilding.StructureNeeds.Find(x => x.ID == need.ID).GetCombinedFullfillment();
+            } else {
+                currentValue += need.GetCombinedFullfillment();
+            }
+        }
+        return CalculateRealPercantage(currentValue, Needs.Count);
     }
 }

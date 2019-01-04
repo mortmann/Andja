@@ -59,6 +59,8 @@ public class UIController : MonoBehaviour {
 
         CloseInfoUI();
         CloseRightUI();
+        if (openStructure != null)
+            UnselectStructure();
 
         str.RegisterOnDestroyCallback(OnStructureDestroy);
         openStructure = str;
@@ -210,7 +212,7 @@ public class UIController : MonoBehaviour {
 			TileSpriteController.Instance.RemoveDecider (StrcutureTileDecider);
 			openStructure.CloseExtraUI ();
             openStructure.UnregisterOnDestroyCallback(OnStructureDestroy);
-            openStructure = null;
+            UnselectStructure();
         } 
         if (openUnit != null) {
             openUnit.UnregisterOnDestroyCallback(OnUnitDestroy);
@@ -226,9 +228,8 @@ public class UIController : MonoBehaviour {
 		chooseBuildCanvas.SetActive (false);
 	}
 	public void CloseRightUI(){
-        if(openStructure is Warehouse)
-            openStructure.CloseExtraUI();
-
+        if (openStructure != null)
+            UnselectStructure();
         otherCityUI.SetActive (false);
 		CityInventoryCanvas.SetActive (false);
 		citizenCanvas.SetActive (false);
@@ -292,13 +293,17 @@ public class UIController : MonoBehaviour {
 		CloseTradeMenu ();
 		CloseOffWorldMenu ();
 
-        if(openStructure != null)
-            openStructure.CloseExtraUI();
-
+        if (openStructure != null)
+            UnselectStructure();
 
         if (TileSpriteController.Instance != null)
 			TileSpriteController.Instance.RemoveDecider (StrcutureTileDecider);
 	}
+    public void UnselectStructure() {
+        if (openStructure != null)
+            openStructure.CloseExtraUI();
+        openStructure = null;
+    }
 	public bool IsPauseMenuOpen(){
 		return pauseMenuCanvas.activeSelf;
 	}

@@ -168,7 +168,7 @@ public class ConsoleUI : MonoBehaviour {
 		if(player<0){ // do we want to be able to console access to wilderness
 			return false;
 		}
-		City c = CameraController.Instance.nearestIsland.FindCityByPlayer (player);
+		City c = CameraController.Instance.nearestIsland?.FindCityByPlayer (player);
 		if(c==null){
 			return false;
 		}

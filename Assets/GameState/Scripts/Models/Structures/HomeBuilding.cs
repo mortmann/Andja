@@ -5,7 +5,8 @@ using System;
 
 public class HomePrototypeData : StructurePrototypeData {
 	public int maxLivingSpaces;
-	public float increaseTime;
+    public int previouseMaxLivingSpaces = 0; // lower bound -> decreasing level
+    public float increaseTime;
 	public float decreaseTime;
 }
 
@@ -15,10 +16,8 @@ public class HomeBuilding : TargetStructure {
     enum CitizienMoods { Mad, Neutral, Happy }
     #region Serialize
     [JsonPropertyAttribute] public int people;
-	[JsonPropertyAttribute] public int buildingLevel;
 	[JsonPropertyAttribute] public float decTimer;
 	[JsonPropertyAttribute] public float incTimer;
-
 	#endregion
 	#region RuntimeOrOther
 	protected HomePrototypeData _homeData;
@@ -34,15 +33,21 @@ public class HomeBuilding : TargetStructure {
     public List<Need> StructureNeeds;
     //List containing the groups which contains those needs this structure has
     public List<NeedGroup> NeedGroups;
-
+    public int PreviouseMaxLivingSpaces { get { return HomeData.previouseMaxLivingSpaces; } }
     public int MaxLivingSpaces {get{ return HomeData.maxLivingSpaces; }}
 	public float IncreaseTime {get{ return HomeData.increaseTime; }}
 	public float DecreaseTime {get{ return HomeData.decreaseTime; }}
-	bool canUpgrade;
-	#endregion
+	public bool CanUpgrade =>  MaxLivingSpaces == people // is full
+                            && currentMood == CitizienMoods.Happy // still wants more people
+                            && IsMaxLevel() // if there is smth to be upgraded to
+                            && CanBeUpgraded // set through xml prototype file 
+                            && City.HasEnoughOfItems(UpgradeItems) // city has enough items to build
+                            && City.GetOwner().HasEnoughMoney(UpgradeCost); // player has enough money
+    public bool isAbandoned;
+    #endregion
 
 
-	public HomeBuilding(int pid, HomePrototypeData proto){
+    public HomeBuilding(int pid, HomePrototypeData proto){
 		this.ID = pid;
 		this._homeData = proto;
 		people = 1;
@@ -66,12 +71,12 @@ public class HomeBuilding : TargetStructure {
 			t.RegisterTileOldNewStructureChangedCallback (OnTStructureChange);
 		}
         StructureNeeds = new List<Need>();
-        AddNeedsToGroup(City.GetPopulationALLNeedGroups(buildingLevel));
-        AddStructureNeeds(City.GetOwner().GetCopyStructureNeeds(buildingLevel));
+        SetNeedGroups(City.GetPopulationALLNeedGroups(StructureLevel));
+        AddStructureNeeds(City.GetOwner().GetCopyStructureNeeds(StructureLevel));
 
         City.GetOwner().RegisterStructureNeedUnlock(OnNeedUnlock);
-        City.GetPopulationLevel(buildingLevel).RegisterNeedUnlock(OnNeedUnlock);
-        City.AddPeople (buildingLevel,people);
+        City.GetPopulationLevel(StructureLevel).RegisterNeedUnlock(OnNeedUnlock);
+        City.AddPeople (StructureLevel, people);
         foreach (Tile t in myBuildingTiles) {
             ((LandTile)t).RegisterOnNeedStructureChange(OnNeedsBuildingChange);
             List<NeedsBuilding> needsBuildings = t.GetListOfInRangeCityNeedBuildings();
@@ -83,20 +88,9 @@ public class HomeBuilding : TargetStructure {
         }
     }
 
-    private void AddNeedsToGroup(IEnumerable<NeedGroup> list) {
-        NeedGroups = new List<NeedGroup>();
-        //this is gonna be ugly! But for now lazy implementation
-        //until i think about something better.
-        foreach(NeedGroup ng in list) {
-            NeedGroup inList = NeedGroups.Find(x => x.ID == ng.ID);
-            if(inList == null) {
-                inList = ng.Clone();
-                NeedGroups.Add(inList);
-            }
-            inList.CombineGroup(ng);
-        }
+    private void SetNeedGroups(IEnumerable<NeedGroup> list) {
+        NeedGroups = new List<NeedGroup>(list);
     }
-
     private void AddStructureNeeds(List<Need> list) {
         foreach(Need n in list) {
             OnNeedUnlock(n);
@@ -104,19 +98,13 @@ public class HomeBuilding : TargetStructure {
     }
 
     private void OnNeedUnlock(Need need) {
-        if(need.StartLevel > buildingLevel) {
+        if(need.StartLevel > StructureLevel) {
             return;
         }
         if (need.IsStructureNeed()) {
             need = need.Clone();
             StructureNeeds.Add(need);
         }
-        NeedGroup ng = NeedGroups.Find(x => x.ID == need.Group.ID);
-        if (ng == null) {
-            ng = (new NeedGroup(need.Group.ID));
-            NeedGroups.Add(ng);
-        }
-        ng.AddNeed(need);
     }
 
     private void OnNeedsBuildingChange(Tile tile, NeedsBuilding type, bool add) {
@@ -128,18 +116,18 @@ public class HomeBuilding : TargetStructure {
     }
 
     public override void Update (float deltaTime) {
-		if(City==null||City.playerNumber==-1){
-			//here the people are very unhappy and will leave veryfast
-			return;
+		if(City==null||City.IsWilderness()){
+            //here the people are very unhappy and will leave veryfast
+            currentMood = CitizienMoods.Mad;
+            return;
 		}
-        
         float summedFullfillment = 0f;
+        float summedImportance = 0;
         foreach(NeedGroup ng in NeedGroups) {
-            summedFullfillment += ng.LastFullfillmentPercentage;
+            summedFullfillment += ng.GetFullfillmentForHome( this );
+            summedImportance += ng.ImportanceLevel;
         }
-
-        float percentage = summedFullfillment /= NeedGroups.Count;
-        
+        float percentage = summedFullfillment / summedImportance;
         if(percentage > 0.9f) {
             currentMood = CitizienMoods.Happy;
         } else 
@@ -149,60 +137,33 @@ public class HomeBuilding : TargetStructure {
         else {
             currentMood = CitizienMoods.Mad;
         }
-
         UpdatePeopleChange(deltaTime);
-
-        if(currentMood == CitizienMoods.Happy && people == MaxLivingSpaces) {
-            OpenExtraUI();
-        }
-  //      int count = structureNeeds.Count;
-  //      if (count > 0) {
-
-        //          if (allPercentage < 0.4f || percCritical) {
-        //	decTimer += deltaTime;
-        //	incTimer -= deltaTime;
-        //	incTimer = Mathf.Clamp (incTimer, 0, IncreaseTime);
-        //	if (decTimer >= DecreaseTime) {
-        //		TryToDecreasePeople();
-        //		decTimer = 0;
-        //	}
-        //} 
-        //else if (allPercentage > 0.4f && allPercentage < 0.85f) {
-        //	incTimer -= deltaTime;
-        //	incTimer = Mathf.Clamp (incTimer, 0, IncreaseTime);
-        //	decTimer -= deltaTime;
-        //	decTimer = Mathf.Clamp (decTimer, 0, DecreaseTime);
-        //}  
-        //else if (allPercentage > 0.85f) {
-        //	incTimer += deltaTime;
-        //	decTimer -= deltaTime;
-        //	decTimer = Mathf.Clamp (decTimer, 0, DecreaseTime);
-        //	if (incTimer >= IncreaseTime) {
-        //		incTimer = 0;
-        //		if(people==MaxLivingSpaces && City.GetOwner().HasUnlockedAllNeeds(buildingLevel)){
-        //			canUpgrade = true;
-        //                  OpenExtraUI();
-        //		}
-        //		TryToIncreasePeople ();
-        //	}
-        //}
     }
 
     private void TryToIncreasePeople(){
 		if(people>=MaxLivingSpaces){
 			return;
 		}
+        if (isAbandoned == true) {
+            isAbandoned = false;
+        }
 		people++;
-		City.AddPeople (buildingLevel,1);
-	}
+		City.AddPeople (StructureLevel, 1);
+        if (currentMood == CitizienMoods.Happy && people == MaxLivingSpaces) {
+            OpenExtraUI();
+        }
+    }
 	private void TryToDecreasePeople(){
 		if(people<=0){
+            isAbandoned = true;
 			return;
 		}
 		people--;
-		City.RemovePeople (buildingLevel,1);
-	}
-	public void OnTStructureChange(Structure now, Structure old){
+		City.RemovePeople (StructureLevel, 1);
+        if (people < PreviouseMaxLivingSpaces)
+            DowngradeHouse();
+    }
+    public void OnTStructureChange(Structure now, Structure old){
 		if(old is Road == false || now is Road == false){
 			return;
 		}
@@ -237,24 +198,28 @@ public class HomeBuilding : TargetStructure {
 		return strs.Contains (str);
 	}
 	protected override void OnCityChange (City old, City newOne) {
-		old.RemovePeople (buildingLevel, people);
-		newOne.AddPeople (buildingLevel, people);
+		old.RemovePeople (StructureLevel, people);
+		newOne.AddPeople (StructureLevel, people);
         NeedGroups.Clear();
         StructureNeeds.Clear();
-        foreach(Need n in newOne.GetOwner().GetALLUnlockedStructureNeedsTill(buildingLevel)) {
+        foreach(Need n in newOne.GetOwner().GetALLUnlockedStructureNeedsTill(StructureLevel)) {
             OnNeedUnlock(n);
         }
-        AddNeedsToGroup(newOne.GetPopulationALLNeedGroups(buildingLevel));
-
+        SetNeedGroups(newOne.GetPopulationALLNeedGroups(StructureLevel));
     }
 
     protected void UpdatePeopleChange(float deltaTime) {
+        
         switch (currentMood) {
             case CitizienMoods.Mad:
+                if (isAbandoned == true)
+                    return;
                 incTimer = Mathf.Clamp(incTimer - deltaTime, 0, IncreaseTime);
                 decTimer = Mathf.Clamp(decTimer + deltaTime, 0, DecreaseTime);
                 break;
             case CitizienMoods.Neutral:
+                if (isAbandoned == true)
+                    return;
                 incTimer = Mathf.Clamp(incTimer - deltaTime, 0, IncreaseTime);
                 decTimer = Mathf.Clamp(decTimer - deltaTime, 0, DecreaseTime);
                 break;
@@ -274,18 +239,21 @@ public class HomeBuilding : TargetStructure {
     }
 
     protected override void OnDestroy () {
-		City.RemovePeople (buildingLevel,people);
+		City.RemovePeople (StructureLevel, people);
 	}
 	public void UpgradeHouse(){
-		if(canUpgrade==false&&IsMaxLevel()){
+		if(CanUpgrade==false&&IsMaxLevel()){
 			return;
 		}
-		ID += 1; // we need to change to the other House type
-		buildingLevel += 1;
-		_homeData = (HomePrototypeData)PrototypController.Instance.GetStructurePrototypDataForID (ID);
-		cbStructureChanged (this);
+        CloseExtraUI();
 
-        List<Need> needs = City.GetOwner().GetCopyStructureNeeds(buildingLevel);
+        ID = PrototypController.Instance.GetStructureIDForTypeNeighbourStructureLevel(GetType(), StructureLevel,true);
+        _homeData = null;
+        City.RemoveRessources(BuildingItems);
+        City.GetOwner().ReduceMoney(Buildcost);
+        cbStructureChanged (this);
+
+        List<Need> needs = City.GetOwner().GetCopyStructureNeeds(StructureLevel);
         foreach(Need n in needs) {
             if (IsStructureNeedFullfilled(n)) {
                 n.SetStructureFullfilled(true);
@@ -293,19 +261,24 @@ public class HomeBuilding : TargetStructure {
                 n.SetStructureFullfilled(false);
             }
         }
+        SetNeedGroups(City.GetPopulationALLNeedGroups(StructureLevel));
         StructureNeeds.AddRange(needs);
-//		Homedata.maxLivingSpaces *= 2; // TODO load this in from somewhere
-		canUpgrade = false;
 	}
 	public void DowngradeHouse(){
-		buildingLevel -= 1;
-//		Homedata.maxLivingSpaces /= 2; // TODO load this in from somewhere
+        //Remove Structure Needs of the old level
+        List<Need> needs = City.GetOwner().GetCopyStructureNeeds(StructureLevel);
+        foreach (Need n in needs) {
+            StructureNeeds.Remove(StructureNeeds.Find(x => x.ID == n.ID));
+        }
+        ID = PrototypController.Instance.GetStructureIDForTypeNeighbourStructureLevel(GetType(), StructureLevel, false);
+        _homeData = null;
+        cbStructureChanged(this);
 
-	}
-	public bool BuildingCanBeUpgraded(){
-		return IsMaxLevel () == false && canUpgrade;
-	}
+        SetNeedGroups(City.GetPopulationALLNeedGroups(StructureLevel));
+        StructureNeeds.AddRange(needs);
+    }
+
 	public bool IsMaxLevel(){
-		return ID == 23; //TODO Change this to smth flexibel not static check
+        return PrototypController.Instance.GetMaxStructureLevelForStructureType(GetType()) == StructureLevel;
 	}
 }

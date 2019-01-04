@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq.Expressions;
+using System.Linq;
 using System.Reflection;
 using System.Xml;
 using System.Xml.Serialization;
@@ -17,6 +17,7 @@ public class PrototypController : MonoBehaviour {
 	public static PrototypController Instance;
 	public Dictionary<int,Structure>  structurePrototypes;
     private Dictionary<int, Unit> unitPrototypes;
+    public Dictionary<Type, int> structureTypeToMaxBuildingLevel;
 
     public Dictionary<int,StructurePrototypeData>  structurePrototypeDatas;
 	public Dictionary<int,ItemPrototypeData>  itemPrototypeDatas;
@@ -163,6 +164,7 @@ public class PrototypController : MonoBehaviour {
         ReadUnitsFromXML();
         // setup all prototypes of structures here 
         // load them from the 
+        structureTypeToMaxBuildingLevel = new Dictionary<Type, int>();
         structurePrototypes = new Dictionary<int, Structure> ();
 		structurePrototypeDatas = new Dictionary<int, StructurePrototypeData> ();
 		ReadStructuresFromXML();
@@ -239,6 +241,35 @@ public class PrototypController : MonoBehaviour {
         }
     }
 
+
+    internal int GetMaxStructureLevelForStructureType(Type type) {
+        if (structureTypeToMaxBuildingLevel.ContainsKey(type) == false)
+            structureTypeToMaxBuildingLevel[type] =
+                new List<Structure>(structurePrototypes.Values).FindAll(x => type == x.GetType())
+                    .OrderByDescending(item => item.StructureLevel).First().StructureLevel;
+        return structureTypeToMaxBuildingLevel[type];
+    }
+    /// <summary>
+    /// Is not optimized! Please do NOT call this too frequent!
+    /// ascending true => +1 | false => -1 for structureLevel
+    /// </summary>
+    /// <param name="type"></param>
+    /// <param name="structureLevel"></param>
+    /// <returns></returns>
+    internal int GetStructureIDForTypeNeighbourStructureLevel(Type type, int structureLevel, bool ascending) {
+        List<Structure> typeListOrdered = new List<Structure>(structurePrototypes.Values);
+        typeListOrdered = typeListOrdered.FindAll(x => type == x.GetType());
+        if (typeListOrdered.Count <= 1) {
+            return -1;
+        }
+        if (ascending) {
+            typeListOrdered.OrderByDescending(item => item.StructureLevel);
+        }
+        else {
+            typeListOrdered.OrderBy(item => item.StructureLevel);
+        }
+        return typeListOrdered[typeListOrdered.FindIndex(x => x.StructureLevel == structureLevel) + 1 ].ID;
+    }
     internal UnitPrototypeData GetUnitPrototypDataForID(int id) {
         return unitPrototypeDatas[id];
     }
@@ -322,21 +353,22 @@ public class PrototypController : MonoBehaviour {
         foreach (XmlElement node in xmlDoc.SelectNodes("needs/NeedGroup")) {
             NeedGroupPrototypData ngpd = new NeedGroupPrototypData();
             int ID = int.Parse(node.GetAttribute("ID"));
-
+            ngpd.ID = ID;
             SetData<NeedGroupPrototypData>(node, ref ngpd);
             needGroupDatas.Add(ID, ngpd);
         }
 
         Dictionary<int, List<Need>> levelToNeedList = new Dictionary<int, List<Need>>();
-
         foreach (XmlElement node in xmlDoc.SelectNodes("needs/Need")){
 			NeedPrototypeData npd = new NeedPrototypeData ();
 			int ID = int.Parse(node.GetAttribute("ID"));
 			SetData<NeedPrototypeData> (node,ref npd);
-			
-			needPrototypeDatas.Add (ID,npd);
+            
+
+            needPrototypeDatas.Add (ID,npd);
             if (npd.item == null && npd.structures == null)
                 continue;
+
             Need n = new Need(ID, npd);
             allNeeds.Add (n);
 
@@ -428,16 +460,6 @@ public class PrototypController : MonoBehaviour {
                 buildcost = 50,
                 maxOutputStorage = 1
             };
-            //!not anymore
-
-            //			growTime = 100f;
-            //			hasHitbox = false;
-            //			canBeBuildOver = true;
-            //			this.name = "Testgrowable";
-            //			canBeBuildOver = true;
-            //			gpd.output = new Item[]{produceItem};
-            //			gpd.fer = fer;
-
             SetData<GrowablePrototypeData> (node,ref  gpd);
 			structurePrototypeDatas.Add (ID,gpd);
 			structurePrototypes [ID] = new Growable (ID,gpd);
@@ -498,15 +520,6 @@ public class PrototypController : MonoBehaviour {
                 Name = "TEST Production",
                 maxNumberOfWorker = 1
             };
-            //			ppd.mustBeBuildOnShore = mustBeBuildOnShore;
-            //			ppd.maintenancecost = maintenancecost;
-            //			ppd.intake = intake;
-            //			ppd.needIntake = needIntake;
-            //			ppd.produceTime = produceTime;
-            //			ppd.output = output;
-            //			ppd.tileWidth = tileWidth;
-            //			ppd.tileHeight = tileHeight;
-
             SetData<ProductionPrototypeData> (node, ref ppd);
 
 			//DO After loading from file
@@ -551,18 +564,18 @@ public class PrototypController : MonoBehaviour {
                 canTakeDamage = true,
                 maintenancecost = 0
             };
-            //!not anymore
-            //			hpd.people = 1;
-            //			hpd.maxLivingSpaces = 8;
-            //			hpd.buildingLevel = 0;
-            //			hpd.Name = "Home";
-            //			hpd.increaseSpeed = 3;
-            //			hpd.decreaseSpeed = 2;
 
             SetData<HomePrototypeData> (node,ref hpd);
+            structurePrototypeDatas.Add(ID, hpd);
+            structurePrototypes[ID] = new HomeBuilding(ID, hpd);
 
-			structurePrototypeDatas.Add (ID,hpd);
-			structurePrototypes [ID] = new HomeBuilding (ID,hpd);
+            int prevID = GetStructureIDForTypeNeighbourStructureLevel(typeof(HomeBuilding), hpd.StructureLevel, false);
+            if(prevID != -1) {
+                HomePrototypeData prev = (HomePrototypeData)structurePrototypeDatas[prevID];
+                ((HomePrototypeData)hpd).previouseMaxLivingSpaces = prev == null ? 0 : prev.maxLivingSpaces;
+                prev.UpgradeItems = hpd.buildingItems;
+                prev.UpgradeCost = hpd.buildcost;
+            } 
 		}
 	}
 
@@ -738,6 +751,7 @@ public class PrototypController : MonoBehaviour {
                 }
 			}
 		}
+
 	}
     
     private object NodeToDamageType(XmlNode n) {
@@ -837,7 +851,8 @@ public class PrototypController : MonoBehaviour {
 		}
 		return structurePrototypes [id];
 	}
-	private Fertility NodeToFertility(XmlNode n){
+    
+    private Fertility NodeToFertility(XmlNode n){
 		int id = -1;
 		if(int.TryParse (n.InnerXml,out id)==false){
 			Debug.LogError ("ID is not an int for Fertility ");

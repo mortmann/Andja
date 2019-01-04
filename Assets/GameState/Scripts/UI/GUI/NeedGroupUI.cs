@@ -10,6 +10,5 @@ public class NeedGroupUI : MonoBehaviour {
         nameText.text = group.Name;
     }
     public void OnDisable() {
-        Debug.Log("WHY?!?!?");
     }
 }

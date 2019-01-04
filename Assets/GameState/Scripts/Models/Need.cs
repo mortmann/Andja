@@ -18,8 +18,6 @@ public class NeedPrototypeData : LanguageVariables {
 /// how important it is for its owngroup fullfillment
 /// </summary>
 
-
-
 [JsonObject(MemberSerialization.OptIn)]
 public class Need {
 	protected NeedPrototypeData _prototypData;
@@ -61,7 +59,7 @@ public class Need {
 	[JsonPropertyAttribute]
 	public List<float> percantageAvailability;
 	[JsonPropertyAttribute]
-	public float notUsedOfTon;
+	public float notUsedOfTon = 0;
 
 	public Need(int id, NeedPrototypeData npd) : this() {
 		this.ID = id;
@@ -70,22 +68,15 @@ public class Need {
 	public Need(){
         lastNeededNotConsumed = new List<float>();
         percantageAvailability = new List<float>();
-        CreateLists();
+        lastNeededNotConsumed.Add(0);
+        percantageAvailability.Add(0);
     }
 	public Need Clone() {
 		return new Need (this);
 	}
 	protected Need(Need other) : this() {
 		this.ID = other.ID;
-        CreateLists();
 	}
-
-    private void CreateLists() {
-        for(int i = 0; i < PrototypController.NumberOfPopulationLevels; i++) {
-            lastNeededNotConsumed.Add(0);
-            percantageAvailability.Add(0);
-        }
-    }
 
     public void CalculateFullfillment(City city, PopulationLevel level) {
         TryToConsumThisIn(city, level.populationCount, level.Level);
@@ -97,19 +88,21 @@ public class Need {
 			percantageAvailability[level] = 0;
 			return;
 		}
-
-		float neededConsumAmount = 0;
+        if (lastNeededNotConsumed.Count < level) {
+            lastNeededNotConsumed.Add(0);
+            percantageAvailability.Add(0);
+        }
+        float neededConsumAmount = 0;
 		// how much do we need to consum?
 		neededConsumAmount += Uses [level] * ((float)people);
-
-		if(neededConsumAmount==0){
-			//we dont need anything to consum so no need to go anyfurther
-			percantageAvailability[level] = 0;
-			return;
-		}
-
-		//IF it has still enough no need to calculate more
-		if(notUsedOfTon>=neededConsumAmount){
+        if (neededConsumAmount == 0) {
+            //we dont need anything to consum so no need to go anyfurther
+            percantageAvailability[level] = 0;
+            return;
+        }
+        Debug.Log("NEED " + ID + " -> " + level + " -> " + neededConsumAmount);
+        //IF it has still enough no need to calculate more
+        if (notUsedOfTon>=neededConsumAmount) {
 			notUsedOfTon -= neededConsumAmount;
 			percantageAvailability[level] = 1;
 			return;
@@ -139,6 +132,7 @@ public class Need {
 		//minimum is 1 because if 0 -> ERROR due dividing through 0
 		//calculate the percantage of availability
 		percantageAvailability[level] = Mathf.RoundToInt (100 * (usedAmount / neededConsumAmount))/100;
+        Debug.Log("NEED " + ID + " -> " +level + " -> "+ percantageAvailability[level]);
 	}
 
     internal bool IsSatisifiedThroughStructure(NeedsBuilding type) {

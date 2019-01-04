@@ -10,18 +10,22 @@ public class NeedsUIController : MonoBehaviour {
 	public GameObject citizenCanvas;
 	public GameObject upgradeButton;
     public GameObject needGroupCanvas;
+    public Text peopleCount;
 
     public Dictionary<Need,NeedUI> needToUI;
 	public List<Need>[] needs;
 	HomeBuilding home;
+    public GameObject needGroupPrefab;
 
-	public void Show (HomeBuilding home) {
-		if(this.home == home){
+    public GameObject debugInformation;
+
+    public void Show (HomeBuilding home) {
+        debugInformation.GetComponent<DebugInformation>().Show(home);
+        if (this.home == home){
 			return;
 		}
 		this.home = home;
-
-		needToUI = new Dictionary<Need, NeedUI> ();
+        needToUI = new Dictionary<Need, NeedUI> ();
         List<NeedGroup> ns = new List<NeedGroup>();
         ns.AddRange(home.NeedGroups);
         
@@ -36,7 +40,7 @@ public class NeedsUIController : MonoBehaviour {
             Destroy(child.gameObject);
         }
 		for (int i = 0; i < ns.Count; i++) {
-            GameObject go = Instantiate(needGroupCanvas); //TODO: make it look good
+            GameObject go = Instantiate(needGroupPrefab); //TODO: make it look good
             NeedGroupUI ngui = go.GetComponent<NeedGroupUI>();
             ngui.Show(ns[i]);
             go.transform.SetParent(contentCanvas.transform);
@@ -53,7 +57,7 @@ public class NeedsUIController : MonoBehaviour {
 
 		for (int i = 0; i < buttonPopulationsLevelContent.transform.childCount; i++) {
 			GameObject g = buttonPopulationsLevelContent.transform.GetChild (i).gameObject;
-			if (i > home.buildingLevel) {
+			if (i > home.StructureLevel) {
 				g.GetComponent<Button>().interactable = false; 
 			} else {
 				g.GetComponent<Button>().interactable = true;
@@ -82,13 +86,23 @@ public class NeedsUIController : MonoBehaviour {
 
 	public void UpgradeHome(){
 		home.UpgradeHouse ();
-	}
+        for (int i = 0; i < buttonPopulationsLevelContent.transform.childCount; i++) {
+            GameObject g = buttonPopulationsLevelContent.transform.GetChild(i).gameObject;
+            if (i > home.StructureLevel) {
+                g.GetComponent<Button>().interactable = false;
+            }
+            else {
+                g.GetComponent<Button>().interactable = true;
+            }
+        }
+    }
 	// Update is called once per frame
 	void Update () {
 		if(home==null){
 			return;
 		}
-		if(home.BuildingCanBeUpgraded()){
+        peopleCount.text = home.people + "/" + home.MaxLivingSpaces;
+        if (home.CanUpgrade){
 			upgradeButton.SetActive (true);
 		} else {
 			upgradeButton.SetActive (false);

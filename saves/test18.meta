@@ -7,5 +7,6 @@
   "saveFileType": 0,
   "playTime": 1.89973974,
   "size": 0,
-  "climate": 0
+  "climate": 0,
+  "isInDebugMode": true
 }

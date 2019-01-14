@@ -53,9 +53,8 @@ public class MouseController : MonoBehaviour {
 
 	public MouseState mouseState = MouseState.Idle;
     MouseUnitState mouseUnitState = MouseUnitState.None;
-    
-    
-	private Path_AStar path;
+
+    private Path_AStar path;
 
 	private Unit _selectedUnit;
 	public Unit SelectedUnit  {
@@ -163,7 +162,8 @@ public class MouseController : MonoBehaviour {
                 SelectedUnit = (Unit)targetableHoldingScript.Holding;
                 SelectedUnit.RegisterOnDestroyCallback(OnUnitDestroy);
                 UIController.OpenUnitUI (SelectedUnit);
-			} else
+                UIDebug(SelectedUnit);
+            } else
             //WHAT?
    //         else {
 			//	if (MouseUnitState.Build != mouseUnitState)
@@ -172,12 +172,13 @@ public class MouseController : MonoBehaviour {
 			if (SelectedUnit == null) {
                 Tile t = GetTileUnderneathMouse ();
 				if (t.Structure != null) {
-					UIController.OpenStructureUI (t.Structure);
-				} else {
-					Debug.Log ("tile " + t.ToString ()); 
-				}
-			}
-		} else {
+                    UIDebug(t.Structure);
+                    UIController.OpenStructureUI (t.Structure);
+				} 
+                
+            }
+        } else {
+            UIDebug(GetTileUnderneathMouse());
             if (mouseState != MouseState.Unit)
                 UIController.CloseInfoUI();
         }
@@ -198,6 +199,13 @@ public class MouseController : MonoBehaviour {
 			Build (structureTiles);
 		}
 	}
+
+    private void UIDebug(object obj) {
+        if (Input.GetKey(KeyCode.LeftControl) && Input.GetKey(KeyCode.LeftShift)
+                    && SaveController.DebugModeSave) {
+            UIController.ShowDebugForObject(obj);
+        }
+    }
 	private void ShowSinglePreview(Tile tile){
 		if(tile == null){
 			return;

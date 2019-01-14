@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using UnityEngine;
 using UnityEngine.UI;
@@ -14,8 +15,9 @@ public class DebugListDataUI : MonoBehaviour {
 
     FieldInfo Field;
     object shownObject;
-    List<object> childs;
 
+    Func<string> GetCount;
+    bool isNull = false;
     public void SetData(FieldInfo field, object obj) {
         if (field.FieldType.GetInterface(nameof(IEnumerable)) == null && field.GetType().IsArray == false) {
             return;
@@ -26,43 +28,90 @@ public class DebugListDataUI : MonoBehaviour {
         nameText.text = field.Name;
         Field = field;
         shownObject = obj;
-        Debug.Log(Field.);
-        if(Field.MemberType.GetType() == typeof(object)) {
-            Debug.Log("jap");
-        }
-        SetChilds<float>();
-
+        MakeList();
         ToggleListDetails();
     }
 
+    private void MakeList() {
+        Type elementType = Field.FieldType.GetElementType();
+        if (elementType == null)
+            elementType = GetListType(Field.FieldType);// Field.FieldType.GetGenericArguments()[0];
+
+        switch (Type.GetTypeCode(elementType)) {
+            case TypeCode.Boolean:
+                SetChilds<bool>();
+                break;
+            case TypeCode.Single:
+                SetChilds<float>();
+                break;
+            case TypeCode.Byte:
+                SetChilds<byte>();
+                break;
+            case TypeCode.Char:
+                SetChilds<char>();
+                break;
+            case TypeCode.Decimal:
+                SetChilds<decimal>();
+                break;
+            case TypeCode.Double:
+                SetChilds<double>();
+                break;
+            case TypeCode.Int32:
+                SetChilds<int>();
+                break;
+            case TypeCode.Object:
+                SetChilds<object>();
+                break;
+            case TypeCode.String:
+                SetChilds<string>();
+                break;
+            default:
+                Debug.LogError("Was to lazy to add this one: " + Type.GetTypeCode(elementType));
+                break;
+        }
+    }
+
     private void SetChilds<T>() {
-        if (Field.GetValue(shownObject) == null)
+        if (Field.GetValue(shownObject) == null) {
+            isNull = true;
+            valueText.text = "";
             return;
+        }
         foreach (Transform t in listgameObject.transform) {
             Destroy(t.gameObject);
         }
-        Debug.Log(Field.Name + " " + Field.GetValue(shownObject));
-
+        List<T> childs = null;
         if (Field.FieldType.GetInterface(nameof(IEnumerable)) != null)
-            childs = new List<object>((IEnumerable<object>)Field.GetValue(shownObject));
+            childs = new List<T>((IEnumerable<T>)Field.GetValue(shownObject));
         else
                 if (Field.GetType().IsArray)
-            childs = new List<object>((object[])Field.GetValue(shownObject));
+            childs = new List<T>((T[])Field.GetValue(shownObject));
         int i = 0;
-        foreach (object o in childs) {
+        foreach (object o in (IList)childs) {
             GameObject fieldGO = Instantiate(debugdataprefab);
             fieldGO.transform.SetParent(listgameObject.gameObject.transform);
             fieldGO.GetComponent<DebugDataUI>().SetData(i + ".", o);
             i++;
         }
+        valueText.text = ((IList)childs)?.Count.ToString();
+        GetCount = () => ((IList)childs)?.Count.ToString();
     }
 
     public void Update() {
-        valueText.text = childs?.Count.ToString();
-        //if (childs == null)
-        //    SetChilds(); //maybe after some time?
+        if(GetCount != null)
+            valueText.text = GetCount();
+        if (isNull)
+            MakeList(); //maybe after some time?
     }
     public void ToggleListDetails() {
         listgameObject.SetActive(!listgameObject.activeSelf);
+    }
+
+    static Type GetListType(Type enumerable) {
+        var enumerableType = enumerable
+            .GetInterfaces()
+            .Where(x =>x.IsGenericType && x.GetGenericTypeDefinition() == typeof(IEnumerable<>))
+            .First();
+        return enumerableType.GetGenericArguments()[0];
     }
 }

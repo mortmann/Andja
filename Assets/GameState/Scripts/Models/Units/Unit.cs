@@ -35,7 +35,7 @@ public enum UnitMainModes { Idle, Moving, Aggroing, Attack, Patrol, Capture, Tra
 
 [JsonObject(MemberSerialization.OptIn)]
 public class Unit : IWarfare {
-    readonly float EscortDistance = 2f;
+    public readonly float EscortDistance = 2f;
 
     //save these Variables
     #region Serialize

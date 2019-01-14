@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Reflection;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class DebugInformation : MonoBehaviour {
     public GameObject buttons;
@@ -9,6 +10,8 @@ public class DebugInformation : MonoBehaviour {
     public GameObject debugdataprefab;
     public GameObject debuglistdataprefab;
     object currentObject;
+    private Vector2 dragOffset;
+
     public void OnEnable() {
         foreach(Transform t in transform) {
             if (t == buttons.transform)
@@ -17,9 +20,16 @@ public class DebugInformation : MonoBehaviour {
         }
     }
     public void Show(object obj) {
+        Debug.Log(obj.GetType());
+        transform.SetParent(UIController.Instance.mainCanvas.transform);
+        transform.position = new Vector3(Screen.width / 2, Screen.height / 2);
+
         currentObject = obj;
-        foreach (FieldInfo field in obj.GetType().GetFields()) {
-            if (field.FieldType.GetInterface(nameof(IEnumerable)) == null && field.GetType().IsArray == false) {
+        List<FieldInfo> all = new List<FieldInfo>(obj.GetType().GetFields()); //public fields
+        all.AddRange(obj.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance)); //private,protected fields
+        foreach (FieldInfo field in all) {
+            if (field.FieldType.GetInterface(nameof(IEnumerable)) == null && field.GetType().IsArray == false 
+                || field.FieldType == typeof (string)) {
                 GameObject fieldGO = Instantiate(debugdataprefab);
                 fieldGO.transform.SetParent(this.transform);
                 fieldGO.GetComponent<DebugDataUI>().SetData(field, obj);
@@ -34,9 +44,31 @@ public class DebugInformation : MonoBehaviour {
                 Debug.LogWarning("!?!?!?");
             }
         }
+        EventTrigger trigger = GetComponent<EventTrigger>();
+        EventTrigger.Entry drag = new EventTrigger.Entry {
+            eventID = EventTriggerType.Drag
+        };
+        EventTrigger.Entry beginDrag = new EventTrigger.Entry {
+            eventID = EventTriggerType.BeginDrag
+        };
+        beginDrag.callback.AddListener((data) => { OnBeginDragDelegate((PointerEventData)data); });
+        drag.callback.AddListener((data) => { OnDragDelegate((PointerEventData)data); });
+        trigger.triggers.Add(beginDrag);
+        trigger.triggers.Add(drag);
     }
+
+    private void OnBeginDragDelegate(PointerEventData data) {
+        dragOffset = new Vector2(transform.position.x, transform.position.y) - data.pressPosition;
+    }
+
+    private void OnDragDelegate(PointerEventData data) {
+        transform.position = data.position + (dragOffset);
+    }
+
     public void Reload() {
         foreach (Transform t in transform) {
+            if (t.gameObject == buttons.gameObject)
+                continue;
             Destroy(t.gameObject);
         }
         Show(currentObject);
@@ -46,6 +78,6 @@ public class DebugInformation : MonoBehaviour {
 		
 	}
     public void Close() {
-        Destroy(this);
+        Destroy(this.gameObject);
     }
 }

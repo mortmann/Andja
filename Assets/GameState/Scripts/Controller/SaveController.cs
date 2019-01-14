@@ -17,7 +17,7 @@ public class SaveController : MonoBehaviour {
     public const string islandFileEnding = ".isl";
     public const string islandImageEnding = ".png";
     private static List<Worker> loadWorker;
-    public bool DebugModeSave = true;
+    public static bool DebugModeSave = true;
 
     //TODO autosave here
     const string SaveFileVersion = "0.1.4";
@@ -315,7 +315,8 @@ public class SaveController : MonoBehaviour {
             saveTime = DateTime.Now,
             saveFileType = GDH.saveFileType,
             playTime = GDH.playTime,
-            difficulty = GDH.difficulty
+            difficulty = GDH.difficulty,
+            isInDebugMode = DebugModeSave
         };
 
         string metadata = JsonConvert.SerializeObject(metaData, Formatting.Indented,
@@ -353,11 +354,11 @@ public class SaveController : MonoBehaviour {
             Debug.LogError("Mismatch of SaveFile Versions " + metaData.safefileversion + " & " + SaveFileVersion);
             yield break;
         }
+        DebugModeSave = metaData.isInDebugMode;
         SaveState state = null;
         string save="";
         try {
            save = Unzip(File.ReadAllBytes(finalSaveStatePath));
-            
         } catch {
             save = File.ReadAllText(finalSaveStatePath);
         }
@@ -417,6 +418,7 @@ public class SaveController : MonoBehaviour {
         public float playTime;
         public Size size;
         public Climate climate;
+        public bool isInDebugMode;
     }
 
 }
@@ -425,7 +427,7 @@ public class SaveController : MonoBehaviour {
 public abstract class BaseSaveData {
 
     public string Serialize() {
-        Formatting formatting = SaveController.Instance.DebugModeSave ? Formatting.Indented : Formatting.None;
+        Formatting formatting = SaveController.DebugModeSave ? Formatting.Indented : Formatting.None;
         string save = JsonConvert.SerializeObject(this, formatting,
                 new JsonSerializerSettings {
                     NullValueHandling = NullValueHandling.Ignore,

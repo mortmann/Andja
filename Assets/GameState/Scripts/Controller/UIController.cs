@@ -26,7 +26,9 @@ public class UIController : MonoBehaviour {
 	public GameObject offWorldMapCanvas;
 	public GameObject otherCityUI;
 
-	Structure openStructure;
+    public GameObject debugInformation;
+    private DebugInformation debug;
+    Structure openStructure;
     Unit openUnit;
 	public static Dictionary<string,Sprite> ItemImages;
 	public static string itemSpriteName = "item_";
@@ -334,7 +336,12 @@ public class UIController : MonoBehaviour {
 		return ItemImages [itemSpriteName + id];
 	}
 
-	public static bool IsTextFieldFocused(){
+    public void ShowDebugForObject(object toDebug) {
+        debug = Instantiate(debugInformation).GetComponent<DebugInformation>();
+        debug.Show(toDebug);
+    }
+
+    public static bool IsTextFieldFocused(){
 		if(EventSystem.current.currentSelectedGameObject==null || EventSystem.current.currentSelectedGameObject.GetComponent<InputField>() ==null){
 			return false;
 		}

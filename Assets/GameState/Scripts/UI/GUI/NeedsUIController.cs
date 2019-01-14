@@ -17,14 +17,13 @@ public class NeedsUIController : MonoBehaviour {
 	HomeBuilding home;
     public GameObject needGroupPrefab;
 
-    public GameObject debugInformation;
+    
 
     public void Show (HomeBuilding home) {
-        debugInformation.GetComponent<DebugInformation>().Show(home);
         if (this.home == home){
 			return;
 		}
-		this.home = home;
+        this.home = home;
         needToUI = new Dictionary<Need, NeedUI> ();
         List<NeedGroup> ns = new List<NeedGroup>();
         ns.AddRange(home.NeedGroups);
@@ -64,9 +63,10 @@ public class NeedsUIController : MonoBehaviour {
 			}
 		}
 		PlayerController.Instance.CurrPlayer.RegisterNeedUnlock (OnNeedUnlock);
-	}
 
-	public void OnNeedUnlock(Need need){
+    }
+
+    public void OnNeedUnlock(Need need){
 		//highlight it or so
 	}
 
@@ -108,4 +108,8 @@ public class NeedsUIController : MonoBehaviour {
 			upgradeButton.SetActive (false);
 		}
 	}
+
+    public void OnDisable() {
+        home = null;
+    }
 }

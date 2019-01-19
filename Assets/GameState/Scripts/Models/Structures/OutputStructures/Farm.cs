@@ -45,7 +45,6 @@ public class Farm : OutputStructure {
 	}
 	protected Farm(Farm f){
 		OutputCopyData (f);
-
 	}
 	/// <summary>
 	/// DO NOT USE

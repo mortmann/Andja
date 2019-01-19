@@ -73,27 +73,14 @@ public class StructurePrototypeData : LanguageVariables {
         float w = (float)tileWidth / 2f -0.5f;
         float h = (float)tileHeight / 2f -0.5f;
         Vector2 center = new Vector2 (buildingRange + w, buildingRange + h);
-        //GameObject gos = new GameObject();
-        //gos.transform.position = center;
-        //gos.transform.localScale = new Vector3(5, 5, 1);
-        //gos.AddComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("Textures/MISC/Debug");
-
-        //if (tileWidth > 1) {
-        //    center.x += 0.5f + ((float)tileWidth) / 2f - 1;
-        //}
-        //if (tileHeight > 1) {
-        //    center.y += 0.5f + ((float)tileHeight) / 2f - 1;
-        //}
+        
         World world = World.Current;
 		HashSet<Tile> temp = new HashSet<Tile> ();
 		float radius = this.buildingRange + 1f;
 		for (float a = 0; a < 360; a += 0.5f) {
 			x = center.x + radius * Mathf.Cos (a);
 			y = center.y + radius * Mathf.Sin (a);
-            //GameObject go = new GameObject();
-            //go.transform.position = new Vector3(x, y);
-            //go.AddComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("Textures/MISC/Debug");
-            x = Mathf.RoundToInt (x);
+                    x = Mathf.RoundToInt (x);
 			y = Mathf.RoundToInt (y);
 			for (int i = 0; i < buildingRange; i++) {
 				Tile circleTile = world.GetTileAt (x, y);
@@ -161,6 +148,8 @@ public abstract class Structure : IGEventable {
 	public HashSet<Tile> myRangeTiles;
 	public string connectOrientation;
     public bool HasExtraUI { get { return ExtraUITyp != ExtraUI.None; } }
+
+
 
     //player id
     public int PlayerNumber {
@@ -337,56 +326,21 @@ public abstract class Structure : IGEventable {
 		//using this for e.g. farm efficiency bar!
 	}
 	public virtual void OnEventCreateVirtual(GameEvent ge){
-		ge.InfluenceTarget (this, true);
+		ge.EffectTarget (this, true);
 	}
 	public virtual void OnEventEndedVirtual(GameEvent ge){
-		ge.InfluenceTarget (this, false);
+		ge.EffectTarget (this, false);
 	}
-	public virtual string GetSpriteName(){
+    
+
+
+    public virtual string GetSpriteName(){
 		return SpriteName;
 	}
 	#endregion 
 
 	#region callbacks
-	/// <summary>
-	/// Do not override this function!
-	/// USE virtual to override the reaction to an event that
-	/// influences this Structure.
-	/// </summary>
-	/// <param name="ge">Ge.</param>
-	public void OnEventCreate(GameEvent ge){
-		//every subtype has do decide what todo
-		//maybe some above reactions here 
-		if(ge.target is Structure){
-			if(ge.target==this){
-				OnEventCreateVirtual (ge);
-			}
-			return;
-		}
-		if(ge.IsTarget (this)){
-			OnEventCreateVirtual (ge);
-		}
-	}
-	/// <summary>
-	/// Do not override this function!
-	/// USE virtual to override the reaction to an event that
-	/// influences this Structure.
-	/// </summary>
-	/// <param name="ge">Ge.</param>
-	public void OnEventEnded(GameEvent ge){
-		//every subtype has do decide what todo
-		//maybe some above reactions here 
-		if(ge.target is Structure){
-			if(ge.target==this){
-				OnEventEndedVirtual (ge);
-			}
-			return;
-		}
-		if(ge.IsTarget (this)){
-			OnEventEndedVirtual (ge);
-		}
-	}
-	public void CallbackChangeIfnotNull(){
+    public void CallbackChangeIfnotNull(){
         cbStructureChanged?.Invoke(this);
     }
     public void RegisterOnChangedCallback(Action<Structure> cb) {
@@ -473,9 +427,52 @@ public abstract class Structure : IGEventable {
 	public virtual bool SpecialCheckForBuild(List<Tile> tiles){
 		return true;
 	}
-	#endregion
-	#region List<Tile>
-	public List<Tile> GetBuildingTiles(float x , float y, bool ignoreRotation = false){
+    #endregion
+    #region igeventable
+    /// <summary>
+    /// Do not override this function!
+    /// USE virtual to override the reaction to an event that
+    /// influences this Structure.
+    /// </summary>
+    /// <param name="ge">Ge.</param>
+    public override void OnEventCreate(GameEvent ge) {
+        //every subtype has do decide what todo
+        //maybe some above reactions here 
+        if (ge.target is Structure) {
+            if (ge.target == this) {
+                OnEventCreateVirtual(ge);
+            }
+            return;
+        }
+        if (ge.IsTarget(this)) {
+            OnEventCreateVirtual(ge);
+        }
+    }
+    /// <summary>
+    /// Do not override this function!
+    /// USE virtual to override the reaction to an event that
+    /// influences this Structure.
+    /// </summary>
+    /// <param name="ge">Ge.</param>
+    public override void OnEventEnded(GameEvent ge) {
+        //every subtype has do decide what todo
+        //maybe some above reactions here 
+        if (ge.target is Structure) {
+            if (ge.target == this) {
+                OnEventEndedVirtual(ge);
+            }
+            return;
+        }
+        if (ge.IsTarget(this)) {
+            OnEventEndedVirtual(ge);
+        }
+    }
+    public override int GetPlayerNumber() {
+        return PlayerNumber;
+    }
+    #endregion
+    #region List<Tile>
+    public List<Tile> GetBuildingTiles(float x , float y, bool ignoreRotation = false){
 		x = Mathf.FloorToInt (x);
 		y = Mathf.FloorToInt (y);
 		List<Tile> tiles = new List<Tile> ();
@@ -534,15 +531,6 @@ public abstract class Structure : IGEventable {
 	}
 	#endregion
 	#region other
-	public int GetPlayerNumber(){
-		return PlayerNumber;
-	}
-	public int GetTargetType(){
-		return TargetType + ID;
-	}
-	public void RegisterOnEvent(Action<GameEvent> create,Action<GameEvent> ending){
-		Debug.LogError ("Not implemented! Because nothing yet needs it and would take to much RAM!" );
-	}
 	public void TakeDamage(float damage){
 		if(CanTakeDamage==false){
 			return;

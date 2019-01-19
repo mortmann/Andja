@@ -22,8 +22,8 @@ using System.IO;
 /// TODO: TO DECIDE IF QUEST ARE HANDLED HERE
 /// </summary>
 public enum EventType {Weather, City, Structure, Quest,  Disaster, Other }
-public enum InfluenceRange {World, Island, City, Structure, Range, Player } 
-public enum InfluenceTyp {Building, Unit}
+public enum InfluenceRange { World, Island, City, Structure, Range, Player } 
+public enum InfluenceTyp { Building, Unit }
 
 /*
  *Every Event has to have:

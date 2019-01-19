@@ -6,7 +6,7 @@ using Newtonsoft.Json;
 using EpPathFinding.cs;
 
 [JsonObject(MemberSerialization.OptIn)]
-public class World : IGEventable{
+public class World : IGEventable {
 	public const int TargetType = 10;
 	public static World Current { get; protected set; }
 
@@ -64,8 +64,6 @@ public class World : IGEventable{
 	Action<Worker> cbWorkerCreated;
 	Action<Tile> cbTileChanged;
 	Action<World> cbTileGraphChanged;
-	Action<GameEvent> cbEventCreated;
-	Action<GameEvent> cbEventEnded;
     Action<Crate> cbCrateSpawn;
     Action<Crate> cbCrateDespawned;
 
@@ -321,31 +319,27 @@ public class World : IGEventable{
     public void OnTileChanged(Tile t) {
         cbTileChanged?.Invoke(t);
     }
-	public void RegisterOnEvent(Action<GameEvent> create,Action<GameEvent> ending){
-		cbEventCreated += create;
-		cbEventEnded += ending;
-	}
-	public void OnEventCreate(GameEvent ge){
-		if(ge.HasWorldEffect ()==false){
-			return;
-		}
+
+    #endregion
+    #region igeventable
+    public override void OnEventCreate(GameEvent ge) {
+        if (ge.HasWorldEffect() == false) {
+            return;
+        }
         cbEventCreated?.Invoke(ge);
     }
-	public void OnEventEnded(GameEvent ge){
-		if(ge.HasWorldEffect ()==false){
-			return;
-		}
+    public override void OnEventEnded(GameEvent ge) {
+        if (ge.HasWorldEffect() == false) {
+            return;
+        }
         cbEventEnded?.Invoke(ge);
     }
-	public int GetPlayerNumber(){
-		return -2;
-	}
-	public int GetTargetType(){
-		return TargetType;
-	}
-	#endregion
 
-	public string GetJsonSave(){
+    public override int GetPlayerNumber() {
+        return -2;
+    }
+    #endregion
+    public string GetJsonSave(){
 		WorldSave ws = new WorldSave (Units, IslandList);
 		return JsonUtility.ToJson (ws);
 	}

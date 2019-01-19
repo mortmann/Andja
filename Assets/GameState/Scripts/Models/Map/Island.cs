@@ -48,9 +48,6 @@ public class Island : IGEventable {
 	public Vector2 max;
     private City _wilderness;
     public bool allReadyHighlighted;
-	Action<GameEvent> cbEventCreated;
-	Action<GameEvent> cbEventEnded;
-
 	#endregion
     /// <summary>
     /// Initializes a new instance of the <see cref="Island"/> class.
@@ -89,7 +86,7 @@ public class Island : IGEventable {
 	}
 	private void Setup(){
         allReadyHighlighted = false;
-        World.Current.RegisterOnEvent(OnEventCreated, OnEventEnded);
+        World.Current.RegisterOnEvent(OnEventCreate, OnEventEnded);
         //city that contains all the structures like trees that doesnt belong to any player
         //so it has the playernumber -1 -> needs to be checked for when buildings are placed
         //have a function like is notplayer city
@@ -208,17 +205,14 @@ public class Island : IGEventable {
 		myCities.Remove (c);
 	}
 
-	public void RegisterOnEvent(Action<GameEvent> create,Action<GameEvent> ending){
-		cbEventCreated += create;
-		cbEventEnded += ending;
-	}
-	public void OnEventCreated(GameEvent ge){
+    #region igeventable
+    public override void OnEventCreate(GameEvent ge){
 		OnEvent (ge,cbEventCreated,true);
 	}
 	void OnEvent(GameEvent ge, Action<GameEvent> ac,bool start){
 		if(ge.target is Island){
 			if(ge.target == this){
-				ge.InfluenceTarget (this, start);
+				ge.EffectTarget (this, start);
                 ac?.Invoke(ge);
             }
 			return;
@@ -227,16 +221,14 @@ public class Island : IGEventable {
             return;	
 		}
 	}
-	public void OnEventEnded(GameEvent ge){
+	public override void OnEventEnded(GameEvent ge){
 		OnEvent (ge,cbEventEnded,false);
 	}
-	public int GetPlayerNumber(){
+
+    public override int GetPlayerNumber(){
 		return -1;
 	}
-	public int GetTargetType(){
-		return TargetType;
-	}
-
+    #endregion
     public static MapGenerator.Range GetRangeForSize(Size sizeType) {
         switch (sizeType) {
             case Size.VerySmall:

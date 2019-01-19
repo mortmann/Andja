@@ -7,8 +7,6 @@ using System;
 public class Player : IGEventable {
 	#region Not Serialized
 	public const int TargetType = 1;
-	Action<GameEvent> cbEventCreated;
-	Action<GameEvent> cbEventEnded;
 	List<City> myCities;
     internal bool HasEnoughMoney(int buildCost) {
         return Balance + maximumDebt > buildCost;
@@ -265,14 +263,16 @@ public class Player : IGEventable {
 	public void UnregisterMaxPopulationCountChange(Action<int,int> callbackfunc) {
 		cbMaxPopulationMLCountChange -= callbackfunc;
 	}
-	public void RegisterOnEvent(Action<GameEvent> create,Action<GameEvent> ending){
-		
-	}
-	public int GetPlayerNumber(){
+
+    #region igeventable
+    public override void OnEventCreate(GameEvent ge) {
+
+    }
+    public override void OnEventEnded(GameEvent ge) {
+        
+    }
+    public override int GetPlayerNumber(){
 		return Number;
 	}
-	public int GetTargetType(){
-		return TargetType;
-	}
-
+    #endregion
 }

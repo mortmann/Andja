@@ -68,8 +68,6 @@ public class City : IGEventable {
 	Action<City> cbCityDestroy;
 
 	Action<Structure> cbRegisterTradeOffer;
-	Action<GameEvent> cbEventCreated;
-	Action<GameEvent> cbEventEnded;
 	#endregion
 
 	public City(int playerNr,Island island) {
@@ -515,47 +513,43 @@ public class City : IGEventable {
 	public void UnregisterStructureRemove(Action<Structure> callbackfunc) {
 		cbStructureRemoved -= callbackfunc;
 	}
-	public void RegisterOnEvent(Action<GameEvent> create,Action<GameEvent> ending){
-		cbEventCreated += create;
-		cbEventEnded += ending;
-	}
-	public void OnEventCreate(GameEvent ge){
+    #region igeventable
+    public override void OnEventCreate(GameEvent ge){
 		//this only gets called in two cases
 		//either event is on this island or in one of its cities
 		if(ge.IsTarget (island)||ge.IsTarget(this)){
-			ge.InfluenceTarget (this, true);
+			ge.EffectTarget (this, true);
             cbEventCreated?.Invoke(ge);
         }
 	}
-	public void OnEventEnded(GameEvent ge){
+	public override void OnEventEnded(GameEvent ge){
 		//this only gets called in two cases
 		//either event is on this island or in one of its cities
 		if(ge.IsTarget (island)||ge.IsTarget(this)){
-			ge.InfluenceTarget (this, false);
+			ge.EffectTarget (this, false);
             cbEventEnded?.Invoke(ge);
         }
 	}
-
 	public bool HasFertility(Fertility fer){
 		//this is here so we could make it 
 		//That cities can have additional fertirilies as the island
 		//for now its an easier way to get the information
 		return island.myFertilities.Contains (fer);
 	}
-
-	public int GetPlayerNumber(){
+	public override int GetPlayerNumber(){
 		return playerNumber;
 	}
-	public bool IsCurrPlayerCity(){
+    #endregion
+
+    public bool IsCurrPlayerCity(){
 		return playerNumber == PlayerController.currentPlayerNumber;
 	}
-	public int GetTargetType(){
-		return TargetType;
-	}
+
     public Player GetOwner() {
         return new Player();// PlayerController.Instance.GetPlayer(playerNumber);
     }
     public override string ToString() {
         return Name;
     }
+
 }

@@ -105,7 +105,7 @@ public class PlayerController : MonoBehaviour {
 	}
 	public void OnEventCreated(GameEvent ge){
 		if(ge.target == null){
-			euim.AddEVENT (ge.id,ge.name,ge.position);
+			euim.AddEVENT (ge.id,ge.Name,ge.position);
 			InformAIaboutEvent (ge, true);
 			return;
 		}
@@ -114,7 +114,7 @@ public class PlayerController : MonoBehaviour {
 		if(ge.target is Island){
 			foreach (City item in ((Island)ge.target).myCities) {
 				if(item.playerNumber == currentPlayerNumber){
-					euim.AddEVENT (ge.id,ge.name,ge.position);
+					euim.AddEVENT (ge.id,ge.Name,ge.position);
 				} else {
 					InformAIaboutEvent (ge, true);
 				}
@@ -125,12 +125,12 @@ public class PlayerController : MonoBehaviour {
 		//then inform all... it could be global effect on type of structure
 		//should be pretty rare
 		if(ge.target.GetPlayerNumber()<0&&ge.target is Structure){
-			euim.AddEVENT (ge.id,ge.name,ge.position);
+			euim.AddEVENT (ge.id,ge.Name,ge.position);
 			InformAIaboutEvent (ge, true);
 		}
 		//just check if the target is owned by the player
 		if(ge.target.GetPlayerNumber() == currentPlayerNumber){
-			euim.AddEVENT (ge.id,ge.name,ge.position);
+			euim.AddEVENT (ge.id,ge.Name,ge.position);
 		} else {
 			InformAIaboutEvent (ge, true);
 		}

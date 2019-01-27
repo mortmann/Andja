@@ -11,7 +11,7 @@ public class ToggleBase : MonoBehaviour {
     protected Text displayValue;
 
     protected bool IsOn => toggle.isOn;
-    protected int DiplayValue => toggle.isOn? 0 : 1;
+    protected int DiplayValue => toggle.isOn ? 0 : 1;
 
     // Use this for initialization
     void OnEnable() {

@@ -1,22 +1,17 @@
 ﻿/// Credit ömer faruk sayılır
 /// Sourced from - https://bitbucket.org/snippets/Lordinarius/nrn4L
 
-namespace UnityEngine.UI.Extensions
-{
-    public class ShineEffect : MaskableGraphic
-    {
+namespace UnityEngine.UI.Extensions {
+    public class ShineEffect : MaskableGraphic {
 
         [SerializeField]
         float yoffset = -1;
 
-        public float Yoffset
-        {
-            get
-            {
+        public float Yoffset {
+            get {
                 return yoffset;
             }
-            set
-            {
+            set {
                 SetVerticesDirty();
                 yoffset = value;
             }
@@ -25,21 +20,17 @@ namespace UnityEngine.UI.Extensions
         [SerializeField]
         float width = 1;
 
-        public float Width
-        {
-            get
-            {
+        public float Width {
+            get {
                 return width;
             }
-            set
-            {
+            set {
                 SetAllDirty();
                 width = value;
             }
         }
 
-        protected override void OnPopulateMesh(VertexHelper vh)
-        {
+        protected override void OnPopulateMesh(VertexHelper vh) {
             var r = GetPixelAdjustedRect();
             var v = new Vector4(r.x, r.y, r.x + r.width, r.y + r.height);
             float dif = (v.w - v.y) * 2;
@@ -73,20 +64,17 @@ namespace UnityEngine.UI.Extensions
             vh.AddTriangle(6, 7, 5);
         }
 
-        public void Triangulate(VertexHelper vh)
-        {
+        public void Triangulate(VertexHelper vh) {
             int triangleCount = vh.currentVertCount - 2;
             Debug.Log(triangleCount);
-            for (int i = 0; i <= triangleCount / 2 + 1; i += 2)
-            {
+            for (int i = 0; i <= triangleCount / 2 + 1; i += 2) {
                 vh.AddTriangle(i, i + 1, i + 2);
                 vh.AddTriangle(i + 2, i + 3, i + 1);
             }
         }
 
 #if UNITY_EDITOR
-        public override void OnRebuildRequested()
-        {
+        public override void OnRebuildRequested() {
             base.OnRebuildRequested();
         }
 #endif

@@ -39,76 +39,61 @@ using System;
 using System.Collections.Generic;
 using System.Collections;
 
-namespace EpPathFinding.cs
-{
-    public class NodePool
-    {
+namespace EpPathFinding.cs {
+    public class NodePool {
         protected Dictionary<GridPos, Node> m_nodes;
 
-        public NodePool()
-        {
+        public NodePool() {
             m_nodes = new Dictionary<GridPos, Node>();
         }
 
-        public Dictionary<GridPos, Node> Nodes
-        {
+        public Dictionary<GridPos, Node> Nodes {
             get { return m_nodes; }
         }
-        public Node GetNode(int iX, int iY)
-        {
+        public Node GetNode(int iX, int iY) {
             GridPos pos = new GridPos(iX, iY);
             return GetNode(pos);
         }
 
-        public Node GetNode(GridPos iPos)
-        {
+        public Node GetNode(GridPos iPos) {
             Node retVal = null;
             m_nodes.TryGetValue(iPos, out retVal);
             return retVal;
         }
 
-        public Node SetNode(int iX, int iY, bool? iWalkable = null)
-        {
+        public Node SetNode(int iX, int iY, bool? iWalkable = null) {
             GridPos pos = new GridPos(iX, iY);
             return SetNode(pos, iWalkable);
         }
 
-        public Node SetNode(GridPos iPos, bool? iWalkable = null)
-        {
-            if (iWalkable.HasValue)
-            {
-                if (iWalkable.Value == true)
-                {
+        public Node SetNode(GridPos iPos, bool? iWalkable = null) {
+            if (iWalkable.HasValue) {
+                if (iWalkable.Value == true) {
                     Node retVal = null;
-                    if (m_nodes.TryGetValue(iPos, out retVal))
-                    {
+                    if (m_nodes.TryGetValue(iPos, out retVal)) {
                         return retVal;
                     }
                     Node newNode = new Node(iPos.x, iPos.y, iWalkable);
                     m_nodes.Add(iPos, newNode);
                     return newNode;
                 }
-                else
-                {
+                else {
                     removeNode(iPos);
                 }
 
             }
-            else
-            {
+            else {
                 Node newNode = new Node(iPos.x, iPos.y, true);
                 m_nodes.Add(iPos, newNode);
                 return newNode;
             }
             return null;
         }
-        protected void removeNode(int iX, int iY)
-        {
+        protected void removeNode(int iX, int iY) {
             GridPos pos = new GridPos(iX, iY);
             removeNode(pos);
         }
-        protected void removeNode(GridPos iPos)
-        {
+        protected void removeNode(GridPos iPos) {
             if (m_nodes.ContainsKey(iPos))
                 m_nodes.Remove(iPos);
         }

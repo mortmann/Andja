@@ -16,12 +16,10 @@
 ///
 /// </summary>
 
-namespace UnityEngine.UI.Extensions
-{
+namespace UnityEngine.UI.Extensions {
     [AddComponentMenu("UI/Extensions/Primitives/Cut Corners")]
-    public class UICornerCut : UIPrimitiveBase
-    {
-         public Vector2 cornerSize = new Vector2(16, 16);
+    public class UICornerCut : UIPrimitiveBase {
+        public Vector2 cornerSize = new Vector2(16, 16);
 
         [Header("Corners to cut")]
         [SerializeField]
@@ -32,7 +30,7 @@ namespace UnityEngine.UI.Extensions
         private bool m_cutLL;
         [SerializeField]
         private bool m_cutLR;
-        
+
         [Tooltip("Up-Down colors become Left-Right colors")]
         [SerializeField]
         private bool m_makeColumns;
@@ -47,62 +45,52 @@ namespace UnityEngine.UI.Extensions
         [SerializeField]
         private Color32 m_colorDown;
 
-        public bool CutUL
-        {
+        public bool CutUL {
             get { return m_cutUL; }
             set { m_cutUL = value; SetAllDirty(); }
         }
-        
-        public bool CutUR
-        {
+
+        public bool CutUR {
             get { return m_cutUR; }
             set { m_cutUR = value; SetAllDirty(); }
         }
 
-        public bool CutLL
-        {
+        public bool CutLL {
             get { return m_cutLL; }
             set { m_cutLL = value; SetAllDirty(); }
         }
-        
-        public bool CutLR
-        {
+
+        public bool CutLR {
             get { return m_cutLR; }
             set { m_cutLR = value; SetAllDirty(); }
         }
-        
-        public bool MakeColumns
-        {
+
+        public bool MakeColumns {
             get { return m_makeColumns; }
             set { m_makeColumns = value; SetAllDirty(); }
         }
-        
-        public bool UseColorUp
-        {
+
+        public bool UseColorUp {
             get { return m_useColorUp; }
             set { m_useColorUp = value; }
         }
-        
-        public Color32 ColorUp
-        {
+
+        public Color32 ColorUp {
             get { return m_colorUp; }
             set { m_colorUp = value; }
         }
-        
-        public bool UseColorDown
-        {
+
+        public bool UseColorDown {
             get { return m_useColorDown; }
             set { m_useColorDown = value; }
         }
-        
-        public Color32 ColorDown
-        {
+
+        public Color32 ColorDown {
             get { return m_colorDown; }
             set { m_colorDown = value; }
         }
 
-        protected override void OnPopulateMesh(VertexHelper vh)
-        {
+        protected override void OnPopulateMesh(VertexHelper vh) {
             var rect = rectTransform.rect;
             var rectNew = rect;
 
@@ -113,8 +101,7 @@ namespace UnityEngine.UI.Extensions
             bool right = m_cutLR | m_cutUR;
             bool any = up | down;
 
-            if (any && cornerSize.sqrMagnitude > 0)
-            {
+            if (any && cornerSize.sqrMagnitude > 0) {
 
                 //nibble off the sides
                 vh.Clear();
@@ -130,8 +117,7 @@ namespace UnityEngine.UI.Extensions
                 //add two squares to the main square
                 Vector2 ul, ur, ll, lr;
 
-                if (m_makeColumns)
-                {
+                if (m_makeColumns) {
                     ul = new Vector2(rect.xMin, m_cutUL ? rectNew.yMax : rect.yMax);
                     ur = new Vector2(rect.xMax, m_cutUR ? rectNew.yMax : rect.yMax);
                     ll = new Vector2(rect.xMin, m_cutLL ? rectNew.yMin : rect.yMin);
@@ -150,8 +136,7 @@ namespace UnityEngine.UI.Extensions
                             new Vector2(rectNew.xMax, rect.yMax),
                             rect, m_useColorDown ? m_colorDown : color32, vh);
                 }
-                else
-                {
+                else {
                     ul = new Vector2(m_cutUL ? rectNew.xMin : rect.xMin, rect.yMax);
                     ur = new Vector2(m_cutUR ? rectNew.xMax : rect.xMax, rect.yMax);
                     ll = new Vector2(m_cutLL ? rectNew.xMin : rect.xMin, rect.yMin);
@@ -178,27 +163,27 @@ namespace UnityEngine.UI.Extensions
 
             }
         }
- 
+
         private static void AddSquare(Rect rect, Rect rectUV, Color32 color32, VertexHelper vh) {
             int v0 = AddVert(rect.xMin, rect.yMin, rectUV, color32, vh);
             int v1 = AddVert(rect.xMin, rect.yMax, rectUV, color32, vh);
             int v2 = AddVert(rect.xMax, rect.yMax, rectUV, color32, vh);
             int v3 = AddVert(rect.xMax, rect.yMin, rectUV, color32, vh);
- 
+
             vh.AddTriangle(v0, v1, v2);
             vh.AddTriangle(v2, v3, v0);
         }
- 
+
         private static void AddSquare(Vector2 a, Vector2 b, Vector2 c, Vector2 d, Rect rectUV, Color32 color32, VertexHelper vh) {
             int v0 = AddVert(a.x, a.y, rectUV, color32, vh);
             int v1 = AddVert(b.x, b.y, rectUV, color32, vh);
             int v2 = AddVert(c.x, c.y, rectUV, color32, vh);
             int v3 = AddVert(d.x, d.y, rectUV, color32, vh);
- 
+
             vh.AddTriangle(v0, v1, v2);
             vh.AddTriangle(v2, v3, v0);
         }
- 
+
         /// <summary>
         /// Auto UV handler within the assigned area
         /// </summary>

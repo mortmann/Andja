@@ -3,37 +3,30 @@
 /// Updated by SimonDarksideJ - Refactored to be a more generic component
 
 
-namespace UnityEngine.UI.Extensions
-{
-    public abstract class Menu<T> : Menu where T : Menu<T>
-    {
+namespace UnityEngine.UI.Extensions {
+    public abstract class Menu<T> : Menu where T : Menu<T> {
         public static T Instance { get; private set; }
 
-        protected virtual void Awake()
-        {
+        protected virtual void Awake() {
             Instance = (T)this;
         }
 
-        protected virtual void OnDestroy()
-        {
+        protected virtual void OnDestroy() {
             Instance = null;
         }
 
-        protected static void Open()
-        {
+        protected static void Open() {
             if (Instance == null)
                 MenuManager.Instance.CreateInstance(typeof(T).Name);
-                //MenuManager.Instance.CreateInstance<T>();
+            //MenuManager.Instance.CreateInstance<T>();
             else
                 Instance.gameObject.SetActive(true);
 
             MenuManager.Instance.OpenMenu(Instance);
         }
 
-        protected static void Close()
-        {
-            if (Instance == null)
-            {
+        protected static void Close() {
+            if (Instance == null) {
                 Debug.LogErrorFormat("Trying to close menu {0} but Instance is null", typeof(T));
                 return;
             }
@@ -41,14 +34,12 @@ namespace UnityEngine.UI.Extensions
             MenuManager.Instance.CloseMenu(Instance);
         }
 
-        public override void OnBackPressed()
-        {
+        public override void OnBackPressed() {
             Close();
         }
     }
 
-    public abstract class Menu : MonoBehaviour
-    {
+    public abstract class Menu : MonoBehaviour {
         [Tooltip("Destroy the Game Object when menu is closed (reduces memory usage)")]
         public bool DestroyWhenClosed = true;
 

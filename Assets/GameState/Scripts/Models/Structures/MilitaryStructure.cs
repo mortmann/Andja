@@ -1,10 +1,7 @@
 ﻿using Newtonsoft.Json;
-using System;
-using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 
-public class MilitaryBuildingPrototypeData : StructurePrototypeData {
+public class MilitaryStructurePrototypeData : StructurePrototypeData {
     public Unit[] canBeBuildUnits;
     public float buildTimeModifier;
     public int buildQueueLength = 1;
@@ -13,29 +10,29 @@ public class MilitaryBuildingPrototypeData : StructurePrototypeData {
 }
 
 [JsonObject(MemberSerialization.OptIn)]
-public class MilitaryBuilding : TargetStructure, IWarfare {
+public class MilitaryStructure : TargetStructure, IWarfare {
     [JsonPropertyAttribute] float buildTimer;
     [JsonPropertyAttribute] Queue<Unit> toBuildUnits;
 
     List<Tile> toPlaceUnitTiles;
-    public float ProgressPercentage => CurrentlyBuildingUnit!=null ? buildTimer / CurrentlyBuildingUnit.BuildTime : 0;
-    public Unit[] CanBeBuildUnits => MilitaryBuildingData.canBeBuildUnits;
-    public float BuildTimeModifier => MilitaryBuildingData.buildTimeModifier;
-    public int BuildQueueLength => MilitaryBuildingData.buildQueueLength;
-    public Unit CurrentlyBuildingUnit => toBuildUnits.Count>0 ? toBuildUnits.Peek() : null;
+    public float ProgressPercentage => CurrentlyBuildingUnit != null ? buildTimer / CurrentlyBuildingUnit.BuildTime : 0;
+    public Unit[] CanBeBuildUnits => MilitaryStructureData.canBeBuildUnits;
+    public float BuildTimeModifier => MilitaryStructureData.buildTimeModifier;
+    public int BuildQueueLength => MilitaryStructureData.buildQueueLength;
+    public Unit CurrentlyBuildingUnit => toBuildUnits.Count > 0 ? toBuildUnits.Peek() : null;
 
-    protected MilitaryBuildingPrototypeData _militaryBuildingData;
-    public MilitaryBuildingPrototypeData MilitaryBuildingData {
+    protected MilitaryStructurePrototypeData _militaryStructureData;
+    public MilitaryStructurePrototypeData MilitaryStructureData {
         get {
-            if (_militaryBuildingData == null) {
-                _militaryBuildingData = (MilitaryBuildingPrototypeData)PrototypController.Instance.GetStructurePrototypDataForID(ID);
+            if (_militaryStructureData == null) {
+                _militaryStructureData = (MilitaryStructurePrototypeData)PrototypController.Instance.GetStructurePrototypDataForID(ID);
             }
-            return _militaryBuildingData;
+            return _militaryStructureData;
         }
     }
-    public MilitaryBuilding() {
+    public MilitaryStructure() {
     }
-    public MilitaryBuilding(MilitaryBuilding mb) {
+    public MilitaryStructure(MilitaryStructure mb) {
         BaseCopyData(mb);
     }
 
@@ -46,13 +43,13 @@ public class MilitaryBuilding : TargetStructure, IWarfare {
         return City.HasEnoughOfItems(u.BuildingItems);
     }
 
-    public MilitaryBuilding(int iD, MilitaryBuildingPrototypeData mpd) {
+    public MilitaryStructure(int iD, MilitaryStructurePrototypeData mpd) {
         ID = iD;
-        this._militaryBuildingData = mpd;
+        this._militaryStructureData = mpd;
     }
 
     public override Structure Clone() {
-        return new MilitaryBuilding(this);
+        return new MilitaryStructure(this);
     }
 
     public override void OnBuild() {
@@ -63,13 +60,13 @@ public class MilitaryBuilding : TargetStructure, IWarfare {
             if (t.Structure != null && t.Structure.IsWalkable == false) {
                 return;
             }
-            if(MustBeBuildOnShore && t.Type != TileType.Ocean) {
+            if (MustBeBuildOnShore && t.Type != TileType.Ocean) {
                 continue;
             }
             toPlaceUnitTiles.Add(t);
         }
     }
-    public void OnNeighbourTileStructureChange(Tile tile,Structure str) {
+    public void OnNeighbourTileStructureChange(Tile tile, Structure str) {
         if (str != null && str.IsWalkable == false) {
             if (toPlaceUnitTiles.Contains(tile)) {
                 toPlaceUnitTiles.Remove(tile);
@@ -78,11 +75,11 @@ public class MilitaryBuilding : TargetStructure, IWarfare {
         toPlaceUnitTiles.Add(tile);
     }
     public override void Update(float deltaTime) {
-        if(CurrentlyBuildingUnit == null) {
+        if (CurrentlyBuildingUnit == null) {
             return;
         }
         buildTimer += deltaTime * BuildTimeModifier;
-        if(buildTimer > CurrentlyBuildingUnit.BuildTime) {
+        if (buildTimer > CurrentlyBuildingUnit.BuildTime) {
             //Spawn Unit here and reset the timer!
             buildTimer = 0;
             SpawnUnit(toBuildUnits.Dequeue());
@@ -98,7 +95,7 @@ public class MilitaryBuilding : TargetStructure, IWarfare {
             return false;
         }
         City.RemoveRessources(u.BuildingItems);
-        PlayerController.Instance.ReduceMoney(u.BuildCost,PlayerNumber);
+        PlayerController.Instance.ReduceMoney(u.BuildCost, PlayerNumber);
         toBuildUnits.Enqueue(u);
         return true;
     }
@@ -119,8 +116,8 @@ public class MilitaryBuilding : TargetStructure, IWarfare {
     public float GetCurrentDamage(Combat.ArmorType armorType) {
         return MyDamageType.GetDamageMultiplier(armorType) * CurrentDamage;
     }
-    public float CurrentDamage => isActive? 0 : MilitaryBuildingData.damage;
-    public float MaximumDamage => MilitaryBuildingData.damage;
-    public Combat.DamageType MyDamageType => MilitaryBuildingData.MyDamageType;
+    public float CurrentDamage => isActive ? 0 : MilitaryStructureData.damage;
+    public float MaximumDamage => MilitaryStructureData.damage;
+    public Combat.DamageType MyDamageType => MilitaryStructureData.MyDamageType;
     #endregion
 }

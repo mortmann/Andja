@@ -4,12 +4,10 @@
 
 using UnityEngine.Events;
 
-namespace UnityEngine.UI.Extensions
-{
+namespace UnityEngine.UI.Extensions {
     [RequireComponent(typeof(ScrollRect))]
     [AddComponentMenu("Layout/Extensions/Vertical Scroller")]
-    public class UIVerticalScroller : MonoBehaviour
-    {
+    public class UIVerticalScroller : MonoBehaviour {
         [Tooltip("Scrollable area (content of desired ScrollRect)")]
         public RectTransform _scrollingPanel;
         [Tooltip("Elements to populate inside the scroller")]
@@ -37,43 +35,34 @@ namespace UnityEngine.UI.Extensions
 
         public UIVerticalScroller() { }
 
-        public UIVerticalScroller(RectTransform scrollingPanel, GameObject[] arrayOfElements, RectTransform center)
-        {
+        public UIVerticalScroller(RectTransform scrollingPanel, GameObject[] arrayOfElements, RectTransform center) {
             _scrollingPanel = scrollingPanel;
             _arrayOfElements = arrayOfElements;
             _center = center;
         }
 
 
-        public void Awake()
-        {
+        public void Awake() {
             var scrollRect = GetComponent<ScrollRect>();
-            if (!_scrollingPanel)
-            {
+            if (!_scrollingPanel) {
                 _scrollingPanel = scrollRect.content;
             }
-            if (!_center)
-            {
+            if (!_center) {
                 Debug.LogError("Please define the RectTransform for the Center viewport of the scrollable area");
             }
-            if (_arrayOfElements == null || _arrayOfElements.Length == 0)
-            {
+            if (_arrayOfElements == null || _arrayOfElements.Length == 0) {
                 var childCount = scrollRect.content.childCount;
-                if (childCount > 0)
-                {
+                if (childCount > 0) {
                     _arrayOfElements = new GameObject[childCount];
-                    for (int i = 0; i < childCount; i++)
-                    {
+                    for (int i = 0; i < childCount; i++) {
                         _arrayOfElements[i] = scrollRect.content.GetChild(i).gameObject;
-                    }                    
+                    }
                 }
             }
         }
 
-        public void Start()
-        {
-            if (_arrayOfElements.Length < 1)
-            {
+        public void Start() {
+            if (_arrayOfElements.Length < 1) {
                 Debug.Log("No child content found, exiting..");
                 return;
             }
@@ -88,8 +77,7 @@ namespace UnityEngine.UI.Extensions
             Vector2 startPosition = new Vector2(_scrollingPanel.anchoredPosition.x, -deltaY);
             _scrollingPanel.anchoredPosition = startPosition;
 
-            for (var i = 0; i < _arrayOfElements.Length; i++)
-            {
+            for (var i = 0; i < _arrayOfElements.Length; i++) {
                 AddListener(_arrayOfElements[i], i);
             }
 
@@ -99,35 +87,28 @@ namespace UnityEngine.UI.Extensions
             if (ScrollDownButton)
                 ScrollDownButton.GetComponent<Button>().onClick.AddListener(() => { ScrollDown(); });
 
-            if (StartingIndex > -1)
-            {
+            if (StartingIndex > -1) {
                 StartingIndex = StartingIndex > _arrayOfElements.Length ? _arrayOfElements.Length - 1 : StartingIndex;
                 SnapToElement(StartingIndex);
             }
         }
 
-        private void AddListener(GameObject button, int index)
-        {
+        private void AddListener(GameObject button, int index) {
             button.GetComponent<Button>().onClick.AddListener(() => DoSomething(index));
         }
 
-        private void DoSomething(int index)
-        {
-            if (ButtonClicked != null)
-            {
+        private void DoSomething(int index) {
+            if (ButtonClicked != null) {
                 ButtonClicked.Invoke(index);
             }
         }
 
-        public void Update()
-        {
-            if (_arrayOfElements.Length < 1)
-            {
+        public void Update() {
+            if (_arrayOfElements.Length < 1) {
                 return;
             }
 
-            for (var i = 0; i < elementLength; i++)
-            {
+            for (var i = 0; i < elementLength; i++) {
                 distReposition[i] = _center.GetComponent<RectTransform>().position.y - _arrayOfElements[i].GetComponent<RectTransform>().position.y;
                 distance[i] = Mathf.Abs(distReposition[i]);
 
@@ -137,11 +118,9 @@ namespace UnityEngine.UI.Extensions
             }
             float minDistance = Mathf.Min(distance);
 
-            for (var i = 0; i < elementLength; i++)
-            {
+            for (var i = 0; i < elementLength; i++) {
                 _arrayOfElements[i].GetComponent<CanvasGroup>().interactable = false;
-                if (minDistance == distance[i])
-                {
+                if (minDistance == distance[i]) {
                     minElementsNum = i;
                     _arrayOfElements[i].GetComponent<CanvasGroup>().interactable = true;
                     result = _arrayOfElements[i].GetComponentInChildren<Text>().text;
@@ -151,35 +130,30 @@ namespace UnityEngine.UI.Extensions
             ScrollingElements(-_arrayOfElements[minElementsNum].GetComponent<RectTransform>().anchoredPosition.y);
         }
 
-        private void ScrollingElements(float position)
-        {
+        private void ScrollingElements(float position) {
             float newY = Mathf.Lerp(_scrollingPanel.anchoredPosition.y, position, Time.deltaTime * 1f);
             Vector2 newPosition = new Vector2(_scrollingPanel.anchoredPosition.x, newY);
             _scrollingPanel.anchoredPosition = newPosition;
         }
 
-        public string GetResults()
-        {
+        public string GetResults() {
             return result;
         }
 
-        public void SnapToElement(int element)
-        {
+        public void SnapToElement(int element) {
             float deltaElementPositionY = _arrayOfElements[0].GetComponent<RectTransform>().rect.height * element;
             Vector2 newPosition = new Vector2(_scrollingPanel.anchoredPosition.x, -deltaElementPositionY);
             _scrollingPanel.anchoredPosition = newPosition;
 
         }
 
-        public void ScrollUp()
-        {
+        public void ScrollUp() {
             float deltaUp = _arrayOfElements[0].GetComponent<RectTransform>().rect.height / 1.2f;
             Vector2 newPositionUp = new Vector2(_scrollingPanel.anchoredPosition.x, _scrollingPanel.anchoredPosition.y - deltaUp);
             _scrollingPanel.anchoredPosition = Vector2.Lerp(_scrollingPanel.anchoredPosition, newPositionUp, 1);
         }
 
-        public void ScrollDown()
-        {
+        public void ScrollDown() {
             float deltaDown = _arrayOfElements[0].GetComponent<RectTransform>().rect.height / 1.2f;
             Vector2 newPositionDown = new Vector2(_scrollingPanel.anchoredPosition.x, _scrollingPanel.anchoredPosition.y + deltaDown);
             _scrollingPanel.anchoredPosition = newPositionDown;

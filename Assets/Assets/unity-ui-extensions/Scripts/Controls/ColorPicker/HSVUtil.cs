@@ -3,20 +3,16 @@
 
 using System;
 
-namespace UnityEngine.UI.Extensions.ColorPicker
-{
+namespace UnityEngine.UI.Extensions.ColorPicker {
     #region ColorUtilities
 
-    public static class HSVUtil
-    {
-        public static HsvColor ConvertRgbToHsv(Color color)
-        {
+    public static class HSVUtil {
+        public static HsvColor ConvertRgbToHsv(Color color) {
             return ConvertRgbToHsv((int)(color.r * 255), (int)(color.g * 255), (int)(color.b * 255));
         }
 
         //Converts an RGB color to an HSV color.
-        public static HsvColor ConvertRgbToHsv(double r, double b, double g)
-        {
+        public static HsvColor ConvertRgbToHsv(double r, double b, double g) {
             double delta, min;
             double h = 0, s, v;
 
@@ -31,8 +27,7 @@ namespace UnityEngine.UI.Extensions.ColorPicker
 
             if (s == 0)
                 h = 360;
-            else
-            {
+            else {
                 if (r == v)
                     h = (g - b) / delta;
                 else if (g == v)
@@ -45,8 +40,7 @@ namespace UnityEngine.UI.Extensions.ColorPicker
                     h += 360;
             }
 
-            HsvColor hsvColor = new HsvColor()
-            {
+            HsvColor hsvColor = new HsvColor() {
                 H = 360 - h,
                 S = s,
                 V = v / 255
@@ -56,20 +50,17 @@ namespace UnityEngine.UI.Extensions.ColorPicker
         }
 
         // Converts an HSV color to an RGB color.
-        public static Color ConvertHsvToRgb(double h, double s, double v, float alpha)
-        {
+        public static Color ConvertHsvToRgb(double h, double s, double v, float alpha) {
 
             double r = 0, g = 0, b = 0;
 
-            if (s == 0)
-            {
+            if (s == 0) {
                 r = v;
                 g = v;
                 b = v;
             }
 
-            else
-            {
+            else {
                 int i;
                 double f, p, q, t;
 
@@ -87,8 +78,7 @@ namespace UnityEngine.UI.Extensions.ColorPicker
                 t = v * (1.0 - (s * (1.0f - f)));
 
 
-                switch (i)
-                {
+                switch (i) {
                     case 0:
                         r = v;
                         g = t;
@@ -138,8 +128,7 @@ namespace UnityEngine.UI.Extensions.ColorPicker
     // Describes a color in terms of
     // Hue, Saturation, and Value (brightness)
     #region HsvColor
-    public struct HsvColor
-    {
+    public struct HsvColor {
         /// <summary>
         /// The Hue, ranges between 0 and 360
         /// </summary>
@@ -153,52 +142,41 @@ namespace UnityEngine.UI.Extensions.ColorPicker
         // The value (brightness), ranges between 0 and 1
         public double V;
 
-        public float NormalizedH
-        {
-            get
-            {
+        public float NormalizedH {
+            get {
                 return (float)H / 360f;
             }
 
-            set
-            {
+            set {
                 H = (double)value * 360;
             }
         }
 
-        public float NormalizedS
-        {
-            get
-            {
+        public float NormalizedS {
+            get {
                 return (float)S;
             }
-            set
-            {
+            set {
                 S = value;
             }
         }
 
-        public float NormalizedV
-        {
-            get
-            {
+        public float NormalizedV {
+            get {
                 return (float)V;
             }
-            set
-            {
+            set {
                 V = (double)value;
             }
         }
 
-        public HsvColor(double h, double s, double v)
-        {
+        public HsvColor(double h, double s, double v) {
             this.H = h;
             this.S = s;
             this.V = v;
         }
 
-        public override string ToString()
-        {
+        public override string ToString() {
             return "{" + H.ToString("f2") + "," + S.ToString("f2") + "," + V.ToString("f2") + "}";
         }
     }

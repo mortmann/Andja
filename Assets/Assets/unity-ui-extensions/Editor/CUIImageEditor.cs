@@ -3,13 +3,10 @@
 
 using UnityEditor;
 
-namespace UnityEngine.UI.Extensions
-{
+namespace UnityEngine.UI.Extensions {
     [CustomEditor(typeof(CUIImage))]
-    public class CUIImageEditor : CUIGraphicEditor
-    {
-        public override void OnInspectorGUI()
-        {
+    public class CUIImageEditor : CUIGraphicEditor {
+        public override void OnInspectorGUI() {
             base.OnInspectorGUI();
 
             CUIImage script = (CUIImage)this.target;
@@ -20,48 +17,40 @@ namespace UnityEngine.UI.Extensions
 
             EditorGUI.BeginDisabledGroup(!(script.UIImage.type == Image.Type.Sliced || script.UIImage.type == Image.Type.Tiled));
             Vector2 newCornerRatio = EditorGUILayout.Vector2Field("Corner Ratio", script.cornerPosRatio);
-            if (EditorGUI.EndChangeCheck())
-            {
+            if (EditorGUI.EndChangeCheck()) {
                 Undo.RecordObject(script, "Change Corner Ratio");
                 EditorUtility.SetDirty(script);
                 script.cornerPosRatio = newCornerRatio;
             }
 
-            if (GUILayout.Button("Use native corner ratio"))
-            {
+            if (GUILayout.Button("Use native corner ratio")) {
                 Undo.RecordObject(script, "Change Corner Ratio");
                 EditorUtility.SetDirty(script);
                 script.cornerPosRatio = script.OriCornerPosRatio;
             }
 
-            if (script.UIImage.type == Image.Type.Sliced || script.UIImage.type == Image.Type.Filled)
-            {
+            if (script.UIImage.type == Image.Type.Sliced || script.UIImage.type == Image.Type.Filled) {
                 EditorGUILayout.HelpBox("With CUIImage, you can also adjust the size of the corners for filled or sliced Image. The grey sphere in the editor scene could also be moved to change the corner's size.", MessageType.Info);
             }
-            else
-            {
+            else {
                 EditorGUILayout.HelpBox("With CUIImage, you can also adjust the size of the corners for filled or sliced Image. You need to set Image to filled or sliced to use this feature.", MessageType.Info);
             }
 
             EditorGUI.EndDisabledGroup();
         }
 
-        protected override void OnSceneGUI()
-        {
+        protected override void OnSceneGUI() {
             base.OnSceneGUI();
 
             CUIImage script = (CUIImage)this.target;
 
-            if (script.UIImage.type == Image.Type.Sliced || script.UIImage.type == Image.Type.Tiled)
-            {
+            if (script.UIImage.type == Image.Type.Sliced || script.UIImage.type == Image.Type.Tiled) {
                 Vector3 cornerPos = Vector3.zero;//
 
-                if (script.IsCurved)
-                {
+                if (script.IsCurved) {
                     cornerPos = script.GetBCurveSandwichSpacePoint(script.cornerPosRatio.x, script.cornerPosRatio.y);
                 }
-                else
-                {
+                else {
                     cornerPos.x = script.cornerPosRatio.x * script.RectTrans.rect.width - script.RectTrans.pivot.x * script.RectTrans.rect.width;
                     cornerPos.y = script.cornerPosRatio.y * script.RectTrans.rect.height - script.RectTrans.pivot.y * script.RectTrans.rect.height;
                 }
@@ -73,8 +62,7 @@ namespace UnityEngine.UI.Extensions
 
                 newCornerPos = script.transform.InverseTransformPoint(newCornerPos);
 
-                if (EditorGUI.EndChangeCheck())
-                {
+                if (EditorGUI.EndChangeCheck()) {
                     Undo.RecordObject(script, "Move Corner");
                     EditorUtility.SetDirty(script);
 

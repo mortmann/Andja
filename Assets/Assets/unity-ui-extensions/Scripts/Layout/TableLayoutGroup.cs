@@ -1,16 +1,13 @@
 /// Credit RahulOfTheRamanEffect
 /// Sourced from - https://forum.unity3d.com/members/rahuloftheramaneffect.773241/
 
-namespace UnityEngine.UI.Extensions
-{
+namespace UnityEngine.UI.Extensions {
     /// <summary>
     /// Arranges child objects into a non-uniform grid, with fixed column widths and flexible row heights
     /// </summary>
     [AddComponentMenu("Layout/Extensions/Table Layout Group")]
-    public class TableLayoutGroup : LayoutGroup
-    {
-        public enum Corner
-        {
+    public class TableLayoutGroup : LayoutGroup {
+        public enum Corner {
             UpperLeft = 0,
             UpperRight = 1,
             LowerLeft = 2,
@@ -22,11 +19,9 @@ namespace UnityEngine.UI.Extensions
         /// <summary>
         /// The corner starting from which the cells should be arranged
         /// </summary>
-        public Corner StartCorner
-        {
+        public Corner StartCorner {
             get { return startCorner; }
-            set
-            {
+            set {
                 SetProperty(ref startCorner, value);
             }
         }
@@ -36,11 +31,9 @@ namespace UnityEngine.UI.Extensions
         /// <summary>
         /// The widths of all the columns in the table
         /// </summary>
-        public float[] ColumnWidths
-        {
+        public float[] ColumnWidths {
             get { return columnWidths; }
-            set
-            {
+            set {
                 SetProperty(ref columnWidths, value);
             }
         }
@@ -50,11 +43,9 @@ namespace UnityEngine.UI.Extensions
         /// <summary>
         /// The minimum height for any row in the table
         /// </summary>
-        public float MinimumRowHeight
-        {
+        public float MinimumRowHeight {
             get { return minimumRowHeight; }
-            set
-            {
+            set {
                 SetProperty(ref minimumRowHeight, value);
             }
         }
@@ -64,11 +55,9 @@ namespace UnityEngine.UI.Extensions
         /// <summary>
         /// Expand rows to fit the cell with the highest preferred height?
         /// </summary>
-        public bool FlexibleRowHeight
-        {
+        public bool FlexibleRowHeight {
             get { return flexibleRowHeight; }
-            set
-            {
+            set {
                 SetProperty(ref flexibleRowHeight, value);
             }
         }
@@ -78,11 +67,9 @@ namespace UnityEngine.UI.Extensions
         /// <summary>
         /// The horizontal spacing between each cell in the table
         /// </summary>
-        public float ColumnSpacing
-        {
+        public float ColumnSpacing {
             get { return columnSpacing; }
-            set
-            {
+            set {
                 SetProperty(ref columnSpacing, value);
             }
         }
@@ -92,11 +79,9 @@ namespace UnityEngine.UI.Extensions
         /// <summary>
         /// The vertical spacing between each row in the table
         /// </summary>
-        public float RowSpacing
-        {
+        public float RowSpacing {
             get { return rowSpacing; }
-            set
-            {
+            set {
                 SetProperty(ref rowSpacing, value);
             }
         }
@@ -104,8 +89,7 @@ namespace UnityEngine.UI.Extensions
         // Temporarily stores data generated during the execution CalculateLayoutInputVertical for use in SetLayoutVertical
         private float[] preferredRowHeights;
 
-        public override void CalculateLayoutInputHorizontal()
-        {
+        public override void CalculateLayoutInputHorizontal() {
             base.CalculateLayoutInputHorizontal();
 
             float horizontalSize = padding.horizontal;
@@ -113,8 +97,7 @@ namespace UnityEngine.UI.Extensions
             // We calculate the actual cell count for cases where the number of children is lesser than the number of columns
             int actualCellCount = Mathf.Min(rectChildren.Count, columnWidths.Length);
 
-            for (int i = 0; i < actualCellCount; i++)
-            {
+            for (int i = 0; i < actualCellCount; i++) {
                 horizontalSize += columnWidths[i];
                 horizontalSize += columnSpacing;
             }
@@ -124,8 +107,7 @@ namespace UnityEngine.UI.Extensions
             SetLayoutInputForAxis(horizontalSize, horizontalSize, 0, 0);
         }
 
-        public override void CalculateLayoutInputVertical()
-        {
+        public override void CalculateLayoutInputVertical() {
             int columnCount = columnWidths.Length;
             int rowCount = Mathf.CeilToInt(rectChildren.Count / (float)columnCount);
 
@@ -134,27 +116,23 @@ namespace UnityEngine.UI.Extensions
             float totalMinHeight = padding.vertical;
             float totalPreferredHeight = padding.vertical;
 
-            if (rowCount > 1)
-            {
+            if (rowCount > 1) {
                 float heightFromSpacing = ((rowCount - 1) * rowSpacing);
                 totalMinHeight += heightFromSpacing;
                 totalPreferredHeight += heightFromSpacing;
             }
 
-            if (flexibleRowHeight)
-            {
+            if (flexibleRowHeight) {
                 // If flexibleRowHeight is enabled, find the max value for minimum and preferred heights in each row
 
                 float maxMinimumHeightInRow = 0;
                 float maxPreferredHeightInRow = 0;
 
-                for (int i = 0; i < rowCount; i++)
-                {
+                for (int i = 0; i < rowCount; i++) {
                     maxMinimumHeightInRow = minimumRowHeight;
                     maxPreferredHeightInRow = minimumRowHeight;
 
-                    for (int j = 0; j < columnCount; j++)
-                    {
+                    for (int j = 0; j < columnCount; j++) {
                         int childIndex = (i * columnCount) + j;
 
                         // Safeguard against tables with incomplete rows
@@ -172,8 +150,7 @@ namespace UnityEngine.UI.Extensions
                     preferredRowHeights[i] = maxPreferredHeightInRow;
                 }
             }
-            else
-            {
+            else {
                 // If flexibleRowHeight is disabled, then use the minimumRowHeight to calculate vertical layout information
                 for (int i = 0; i < rowCount; i++)
                     preferredRowHeights[i] = minimumRowHeight;
@@ -186,8 +163,7 @@ namespace UnityEngine.UI.Extensions
             SetLayoutInputForAxis(totalMinHeight, totalPreferredHeight, 1, 1);
         }
 
-        public override void SetLayoutHorizontal()
-        {
+        public override void SetLayoutHorizontal() {
             // If no column width is defined, then assign a reasonable default
             if (columnWidths.Length == 0)
                 columnWidths = new float[1] { 0f };
@@ -201,8 +177,7 @@ namespace UnityEngine.UI.Extensions
             // We calculate the actual cell count for cases where the number of children is lesser than the number of columns
             int actualCellCount = Mathf.Min(rectChildren.Count, columnWidths.Length);
 
-            for (int i = 0; i < actualCellCount; i++)
-            {
+            for (int i = 0; i < actualCellCount; i++) {
                 requiredSizeWithoutPadding += columnWidths[i];
                 requiredSizeWithoutPadding += columnSpacing;
             }
@@ -216,8 +191,7 @@ namespace UnityEngine.UI.Extensions
 
             float positionX = startOffset;
 
-            for (int i = 0; i < rectChildren.Count; i++)
-            {
+            for (int i = 0; i < rectChildren.Count; i++) {
                 int currentColumnIndex = i % columnCount;
 
                 // If it's the first cell in the row, reset positionX
@@ -236,8 +210,7 @@ namespace UnityEngine.UI.Extensions
             }
         }
 
-        public override void SetLayoutVertical()
-        {
+        public override void SetLayoutVertical() {
             int columnCount = columnWidths.Length;
             int rowCount = preferredRowHeights.Length;
 
@@ -259,13 +232,11 @@ namespace UnityEngine.UI.Extensions
 
             float positionY = startOffset;
 
-            for (int i = 0; i < rowCount; i++)
-            {
+            for (int i = 0; i < rowCount; i++) {
                 if (cornerY == 1)
                     positionY -= preferredRowHeights[i];
 
-                for (int j = 0; j < columnCount; j++)
-                {
+                for (int j = 0; j < columnCount; j++) {
                     int childIndex = (i * columnCount) + j;
 
                     // Safeguard against tables with incomplete rows

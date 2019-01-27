@@ -4,7 +4,7 @@ using UnityEngine;
 public class TargetStructurePrototypeData : StructurePrototypeData {
 
 }
-public abstract class TargetStructure : Structure,ITargetable {
+public abstract class TargetStructure : Structure, ITargetable {
 
     #region ITargetableImplementation
     public float CurrentHealth => Health;

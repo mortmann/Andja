@@ -1,6 +1,13 @@
 ﻿using UnityEngine;
 using System;
 
+
+public enum Target {
+    World, Unit, Island, City, AllStructure, Road, NeedsStructure, MilitaryStructure, HomeStructure,
+    ServiceStructure, Growable, OutputStructure, MarketStructure, WarehouseStructure, MineStructure,
+    Farm, ProduktionStructure
+}
+
 public abstract class IGEventable {
 
     protected Action<GameEvent> cbEventCreated;

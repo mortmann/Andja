@@ -15,7 +15,7 @@ public class Combat {
 
         public float GetDamageMultiplier(ArmorType armorType) {
             if (damageMultiplier.ContainsKey(armorType) == false) {
-                Debug.Log("This damagetype " + Name + " " + ID + " is missing " 
+                Debug.Log("This damagetype " + Name + " " + ID + " is missing "
                     + armorType.Name + " " + armorType.ID + " multiplier value.");
                 return 1; // if it doesnt contain it take this default value
             }

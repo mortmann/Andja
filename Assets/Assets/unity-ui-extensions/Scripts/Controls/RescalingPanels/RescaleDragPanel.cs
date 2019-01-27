@@ -3,36 +3,30 @@
 
 using UnityEngine.EventSystems;
 
-namespace UnityEngine.UI.Extensions
-{
+namespace UnityEngine.UI.Extensions {
     [AddComponentMenu("UI/Extensions/RescalePanels/RescaleDragPanel")]
-    public class RescaleDragPanel : MonoBehaviour, IPointerDownHandler, IDragHandler
-    {
+    public class RescaleDragPanel : MonoBehaviour, IPointerDownHandler, IDragHandler {
         private Vector2 pointerOffset;
         private RectTransform canvasRectTransform;
         private RectTransform panelRectTransform;
 
         private Transform goTransform;
 
-        void Awake()
-        {
+        void Awake() {
             Canvas canvas = GetComponentInParent<Canvas>();
-            if (canvas != null)
-            {
+            if (canvas != null) {
                 canvasRectTransform = canvas.transform as RectTransform;
                 panelRectTransform = transform.parent as RectTransform;
                 goTransform = transform.parent;
             }
         }
 
-        public void OnPointerDown(PointerEventData data)
-        {
+        public void OnPointerDown(PointerEventData data) {
             panelRectTransform.SetAsLastSibling();
             RectTransformUtility.ScreenPointToLocalPointInRectangle(panelRectTransform, data.position, data.pressEventCamera, out pointerOffset);
         }
 
-        public void OnDrag(PointerEventData data)
-        {
+        public void OnDrag(PointerEventData data) {
             if (panelRectTransform == null)
                 return;
 
@@ -41,14 +35,12 @@ namespace UnityEngine.UI.Extensions
             Vector2 localPointerPosition;
             if (RectTransformUtility.ScreenPointToLocalPointInRectangle(
                 canvasRectTransform, pointerPosition, data.pressEventCamera, out localPointerPosition
-                ))
-            {
+                )) {
                 panelRectTransform.localPosition = localPointerPosition - new Vector2(pointerOffset.x * goTransform.localScale.x, pointerOffset.y * goTransform.localScale.y);
             }
         }
 
-        Vector2 ClampToWindow(PointerEventData data)
-        {
+        Vector2 ClampToWindow(PointerEventData data) {
             Vector2 rawPointerPosition = data.position;
 
             Vector3[] canvasCorners = new Vector3[4];

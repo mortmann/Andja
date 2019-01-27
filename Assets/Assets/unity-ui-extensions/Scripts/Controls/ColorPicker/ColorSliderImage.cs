@@ -1,11 +1,9 @@
 ﻿///Credit judah4
 ///Sourced from - http://forum.unity3d.com/threads/color-picker.267043/
 
-namespace UnityEngine.UI.Extensions.ColorPicker
-{
+namespace UnityEngine.UI.Extensions.ColorPicker {
     [RequireComponent(typeof(RawImage)), ExecuteInEditMode()]
-    public class ColorSliderImage : MonoBehaviour
-    {
+    public class ColorSliderImage : MonoBehaviour {
         public ColorPickerControl picker;
 
         /// <summary>
@@ -17,70 +15,55 @@ namespace UnityEngine.UI.Extensions.ColorPicker
 
         private RawImage image;
 
-        private RectTransform RectTransform
-        {
-            get
-            {
+        private RectTransform RectTransform {
+            get {
                 return transform as RectTransform;
             }
         }
 
-        private void Awake()
-        {
+        private void Awake() {
             image = GetComponent<RawImage>();
-            if (image)
-            {
+            if (image) {
                 RegenerateTexture();
             }
-            else
-            {
+            else {
                 Debug.LogWarning("Missing RawImage on object [" + name + "]");
             }
         }
 
-        private void OnEnable()
-        {
-            if (picker != null && Application.isPlaying)
-            {
+        private void OnEnable() {
+            if (picker != null && Application.isPlaying) {
                 picker.onValueChanged.AddListener(ColorChanged);
                 picker.onHSVChanged.AddListener(ColorChanged);
             }
         }
 
-        private void OnDisable()
-        {
-            if (picker != null)
-            {
+        private void OnDisable() {
+            if (picker != null) {
                 picker.onValueChanged.RemoveListener(ColorChanged);
                 picker.onHSVChanged.RemoveListener(ColorChanged);
             }
         }
 
-        private void OnDestroy()
-        {
+        private void OnDestroy() {
             if (image.texture != null)
                 DestroyImmediate(image.texture);
         }
 
 #if UNITY_EDITOR
-        private void OnValidate()
-        {
+        private void OnValidate() {
             image = GetComponent<RawImage>();
-            if (image)
-            {
+            if (image) {
                 RegenerateTexture();
             }
-            else
-            {
+            else {
                 Debug.LogWarning("Missing RawImage on object [" + name + "]");
             }
         }
 #endif
 
-        private void ColorChanged(Color newColor)
-        {
-            switch (type)
-            {
+        private void ColorChanged(Color newColor) {
+            switch (type) {
                 case ColorValues.R:
                 case ColorValues.G:
                 case ColorValues.B:
@@ -95,10 +78,8 @@ namespace UnityEngine.UI.Extensions.ColorPicker
             }
         }
 
-        private void ColorChanged(float hue, float saturation, float value)
-        {
-            switch (type)
-            {
+        private void ColorChanged(float hue, float saturation, float value) {
+            switch (type) {
                 case ColorValues.R:
                 case ColorValues.G:
                 case ColorValues.B:
@@ -113,10 +94,8 @@ namespace UnityEngine.UI.Extensions.ColorPicker
             }
         }
 
-        private void RegenerateTexture()
-        {
-            if (!picker)
-            {
+        private void RegenerateTexture() {
+            if (!picker) {
                 Debug.LogWarning("Missing Picker on object [" + name + "]");
             }
             Color32 baseColor = picker != null ? picker.CurrentColor : Color.black;
@@ -132,8 +111,7 @@ namespace UnityEngine.UI.Extensions.ColorPicker
             bool inverted = direction == Slider.Direction.TopToBottom || direction == Slider.Direction.RightToLeft;
 
             int size;
-            switch (type)
-            {
+            switch (type) {
                 case ColorValues.R:
                 case ColorValues.G:
                 case ColorValues.B:
@@ -158,47 +136,39 @@ namespace UnityEngine.UI.Extensions.ColorPicker
             texture.hideFlags = HideFlags.DontSave;
             colors = new Color32[size];
 
-            switch (type)
-            {
+            switch (type) {
                 case ColorValues.R:
-                    for (byte i = 0; i < size; i++)
-                    {
+                    for (byte i = 0; i < size; i++) {
                         colors[inverted ? size - 1 - i : i] = new Color32(i, baseColor.g, baseColor.b, 255);
                     }
                     break;
                 case ColorValues.G:
-                    for (byte i = 0; i < size; i++)
-                    {
+                    for (byte i = 0; i < size; i++) {
                         colors[inverted ? size - 1 - i : i] = new Color32(baseColor.r, i, baseColor.b, 255);
                     }
                     break;
                 case ColorValues.B:
-                    for (byte i = 0; i < size; i++)
-                    {
+                    for (byte i = 0; i < size; i++) {
                         colors[inverted ? size - 1 - i : i] = new Color32(baseColor.r, baseColor.g, i, 255);
                     }
                     break;
                 case ColorValues.A:
-                    for (byte i = 0; i < size; i++)
-                    {
+                    for (byte i = 0; i < size; i++) {
                         colors[inverted ? size - 1 - i : i] = new Color32(i, i, i, 255);
                     }
                     break;
                 case ColorValues.Hue:
-                    for (int i = 0; i < size; i++)
-                    {
+                    for (int i = 0; i < size; i++) {
                         colors[inverted ? size - 1 - i : i] = HSVUtil.ConvertHsvToRgb(i, 1, 1, 1);
                     }
                     break;
                 case ColorValues.Saturation:
-                    for (int i = 0; i < size; i++)
-                    {
+                    for (int i = 0; i < size; i++) {
                         colors[inverted ? size - 1 - i : i] = HSVUtil.ConvertHsvToRgb(h * 360, (float)i / size, v, 1);
                     }
                     break;
                 case ColorValues.Value:
-                    for (int i = 0; i < size; i++)
-                    {
+                    for (int i = 0; i < size; i++) {
                         colors[inverted ? size - 1 - i : i] = HSVUtil.ConvertHsvToRgb(h * 360, s, (float)i / size, 1);
                     }
                     break;
@@ -212,8 +182,7 @@ namespace UnityEngine.UI.Extensions.ColorPicker
                 DestroyImmediate(image.texture);
             image.texture = texture;
 
-            switch (direction)
-            {
+            switch (direction) {
                 case Slider.Direction.BottomToTop:
                 case Slider.Direction.TopToBottom:
                     image.uvRect = new Rect(0, 0, 2, 1);

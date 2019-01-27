@@ -27,7 +27,7 @@ public class Crate {
 
     internal void RemoveItemAmount(int pickedup) {
         item.count -= pickedup;
-        if(item.count <= 0) {
+        if (item.count <= 0) {
             onDespawn?.Invoke(this);
         }
     }

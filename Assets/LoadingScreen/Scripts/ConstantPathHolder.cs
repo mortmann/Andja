@@ -6,7 +6,7 @@ public class ConstantPathHolder : MonoBehaviour {
     public static string ApplicationDataPath;
 
     // Use this for initialization
-    void Awake () {
+    void Awake() {
         ApplicationDataPath = Application.dataPath;
 
         ClearConsole();

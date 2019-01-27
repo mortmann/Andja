@@ -10,7 +10,7 @@ public class UnitBuildUI : MonoBehaviour {
     public Text nameOfUnit;
     public Unit unit;
     public Button button;
-	public void Show(Unit u) {
+    public void Show(Unit u) {
         if (u == null) {
             nameOfUnit.text = "";
             return;

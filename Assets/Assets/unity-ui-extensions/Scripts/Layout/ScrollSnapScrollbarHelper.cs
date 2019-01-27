@@ -4,49 +4,39 @@
 
 using UnityEngine.EventSystems;
 
-namespace UnityEngine.UI.Extensions
-{
-    public class ScrollSnapScrollbarHelper : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IBeginDragHandler, IEndDragHandler, IDragHandler
-    {
+namespace UnityEngine.UI.Extensions {
+    public class ScrollSnapScrollbarHelper : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IBeginDragHandler, IEndDragHandler, IDragHandler {
 
         internal IScrollSnap ss;
 
-        public void OnBeginDrag(PointerEventData eventData)
-        {
+        public void OnBeginDrag(PointerEventData eventData) {
             OnScrollBarDown();
         }
 
-        public void OnDrag(PointerEventData eventData)
-        {
+        public void OnDrag(PointerEventData eventData) {
             ss.CurrentPage();
         }
 
-        public void OnEndDrag(PointerEventData eventData)
-        {
+        public void OnEndDrag(PointerEventData eventData) {
             OnScrollBarUp();
         }
 
-        public void OnPointerDown(PointerEventData eventData)
-        {
+        public void OnPointerDown(PointerEventData eventData) {
             OnScrollBarDown();
         }
 
-        public void OnPointerUp(PointerEventData eventData)
-        {
+        public void OnPointerUp(PointerEventData eventData) {
             OnScrollBarUp();
         }
 
-        void OnScrollBarDown()
-        {
-            if (ss != null)
-            {
+        void OnScrollBarDown() {
+            if (ss != null) {
                 ss.SetLerp(false);
                 ss.StartScreenChange();
             }
         }
 
-        void OnScrollBarUp()
-        {
+        void OnScrollBarUp() {
             ss.SetLerp(true);
             ss.ChangePage(ss.CurrentPage());
         }

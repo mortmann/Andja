@@ -3,11 +3,9 @@
 
 using System;
 
-namespace UnityEngine.UI.Extensions
-{
+namespace UnityEngine.UI.Extensions {
     [AddComponentMenu("UI/Extensions/Primitives/Diamond Graph")]
-    public class DiamondGraph : UIPrimitiveBase
-    {
+    public class DiamondGraph : UIPrimitiveBase {
         [SerializeField]
         private float m_a = 1;
         [SerializeField]
@@ -18,33 +16,28 @@ namespace UnityEngine.UI.Extensions
         private float m_d = 1;
 
 
-        public float A
-        {
+        public float A {
             get { return m_a; }
             set { m_a = value; }
         }
 
-        public float B
-        {
+        public float B {
             get { return m_b; }
             set { m_b = value; }
         }
 
-        public float C
-        {
+        public float C {
             get { return m_c; }
             set { m_c = value; }
         }
 
-        public float D
-        {
+        public float D {
             get { return m_d; }
             set { m_d = value; }
         }
 
 
-        protected override void OnPopulateMesh(VertexHelper vh)
-        {
+        protected override void OnPopulateMesh(VertexHelper vh) {
             vh.Clear();
             float wHalf = rectTransform.rect.width / 2;
             //float hHalf = rectTransform.rect.height / 2;

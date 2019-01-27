@@ -4,6 +4,6 @@ using UnityEngine;
 
 public class CrateHoldingScript : MonoBehaviour {
 
-    public Crate thisCrate; 
+    public Crate thisCrate;
 
 }

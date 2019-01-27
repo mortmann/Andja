@@ -5,45 +5,36 @@
 
 using UnityEditor;
 
-namespace UnityEngine.UI.Extensions
-{
-    public class CanvasGroupActivator : EditorWindow
-    {
+namespace UnityEngine.UI.Extensions {
+    public class CanvasGroupActivator : EditorWindow {
         [MenuItem("Window/UI/Extensions/Canvas Groups Activator")]
-        public static void InitWindow()
-        {
+        public static void InitWindow() {
             EditorWindow.GetWindow<CanvasGroupActivator>();
         }
 
         CanvasGroup[] canvasGroups;
 
-        void OnEnable()
-        {
+        void OnEnable() {
             ObtainCanvasGroups();
         }
 
-        void OnFocus()
-        {
+        void OnFocus() {
             ObtainCanvasGroups();
         }
 
-        void ObtainCanvasGroups()
-        {
+        void ObtainCanvasGroups() {
             canvasGroups = GameObject.FindObjectsOfType<CanvasGroup>();
         }
 
-        void OnGUI()
-        {
-            if (canvasGroups == null)
-            {
+        void OnGUI() {
+            if (canvasGroups == null) {
                 return;
             }
 
             GUILayout.Space(10f);
             GUILayout.Label("Canvas Groups");
 
-            for (int i = 0; i < canvasGroups.Length; i++)
-            {
+            for (int i = 0; i < canvasGroups.Length; i++) {
                 if (canvasGroups[i] == null) { continue; }
 
                 bool initialActive = false;
@@ -51,19 +42,16 @@ namespace UnityEngine.UI.Extensions
                     initialActive = true;
 
                 bool active = EditorGUILayout.Toggle(canvasGroups[i].name, initialActive);
-                if (active != initialActive)
-                {
+                if (active != initialActive) {
                     //If deactivated and initially active
-                    if (!active && initialActive)
-                    {
+                    if (!active && initialActive) {
                         //Deactivate this
                         canvasGroups[i].alpha = 0f;
                         canvasGroups[i].interactable = false;
                         canvasGroups[i].blocksRaycasts = false;
                     }
                     //If activated and initially deactive
-                    else if (active && !initialActive)
-                    {
+                    else if (active && !initialActive) {
                         //Deactivate all others and activate this
                         HideAllGroups();
 
@@ -76,23 +64,18 @@ namespace UnityEngine.UI.Extensions
 
             GUILayout.Space(5f);
 
-            if (GUILayout.Button("Show All"))
-            {
+            if (GUILayout.Button("Show All")) {
                 ShowAllGroups();
             }
 
-            if (GUILayout.Button("Hide All"))
-            {
+            if (GUILayout.Button("Hide All")) {
                 HideAllGroups();
             }
         }
 
-        void ShowAllGroups()
-        {
-            foreach (var group in canvasGroups)
-            {
-                if (group != null)
-                {
+        void ShowAllGroups() {
+            foreach (var group in canvasGroups) {
+                if (group != null) {
                     group.alpha = 1.0f;
                     group.interactable = true;
                     group.blocksRaycasts = true;
@@ -100,12 +83,9 @@ namespace UnityEngine.UI.Extensions
             }
         }
 
-        void HideAllGroups()
-        {
-            foreach (var group in canvasGroups)
-            {
-                if (group != null)
-                {
+        void HideAllGroups() {
+            foreach (var group in canvasGroups) {
+                if (group != null) {
                     group.alpha = 0;
                     group.interactable = false;
                     group.blocksRaycasts = false;

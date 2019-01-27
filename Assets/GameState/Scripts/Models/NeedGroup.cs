@@ -91,7 +91,7 @@ public class NeedGroup {
     }
 
     internal void UpdateNeeds(Player player) {
-        foreach(Need need in Needs) {
+        foreach (Need need in Needs) {
             if (player.HasUnlockedNeed(need) == false) {
                 Needs.Remove(need);
             }
@@ -103,16 +103,17 @@ public class NeedGroup {
 
     private float CalculateRealPercantage(float percentage, int number) {
         percentage /= number;
-        percentage = percentage * Mathf.Clamp(ImportanceLevel,0.4f,1.6f);
+        percentage = percentage * Mathf.Clamp(ImportanceLevel, 0.4f, 1.6f);
         return percentage;
     }
 
-    internal float GetFullfillmentForHome(HomeBuilding homeBuilding) {
+    internal float GetFullfillmentForHome(HomeStructure homeStructure) {
         float currentValue = 0;
         foreach (Need need in Needs) {
             if (need.IsStructureNeed()) {
-                currentValue += homeBuilding.StructureNeeds.Find(x => x.ID == need.ID).GetCombinedFullfillment();
-            } else {
+                currentValue += homeStructure.StructureNeeds.Find(x => x.ID == need.ID).GetCombinedFullfillment();
+            }
+            else {
                 currentValue += need.GetCombinedFullfillment();
             }
         }

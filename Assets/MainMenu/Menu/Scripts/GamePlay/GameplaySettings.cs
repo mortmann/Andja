@@ -8,7 +8,7 @@ public enum GameplaySetting { autorotate }
 public class GameplaySettings : MonoBehaviour {
     public static GameplaySettings Instance;
     // Use this for initialization
-    void Start () {
+    void Start() {
         Instance = this;
         gameplayOptions = new Dictionary<GameplaySetting, string>();
         gameplayOptionsToSave = new Dictionary<GameplaySetting, string>();
@@ -56,11 +56,11 @@ public class GameplaySettings : MonoBehaviour {
             string val = options[optionName];
             switch (optionName) {
                 case GameplaySetting.autorotate:
-                MouseController.autorotate = bool.Parse(val);
-                break;
+                    MouseController.autorotate = bool.Parse(val);
+                    break;
                 default:
-                Debug.LogWarning("No case for " + optionName);
-                break;
+                    Debug.LogWarning("No case for " + optionName);
+                    break;
             }
         }
     }

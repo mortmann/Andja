@@ -1,12 +1,10 @@
 /// Credit Chris Trueman
 /// Sourced from - http://forum.unity3d.com/threads/use-reticle-like-mouse-for-worldspace-uis.295271/
 
-namespace UnityEngine.EventSystems.Extensions
-{
+namespace UnityEngine.EventSystems.Extensions {
     [RequireComponent(typeof(EventSystem))]
     [AddComponentMenu("Event/Extensions/Aimer Input Module")]
-    public class AimerInputModule : PointerInputModule
-    {
+    public class AimerInputModule : PointerInputModule {
         /// <summary>
         /// The Input axis name used to activate the object under the reticle.
         /// </summary>
@@ -25,19 +23,16 @@ namespace UnityEngine.EventSystems.Extensions
 
         protected AimerInputModule() { }
 
-        public override void ActivateModule()
-        {
+        public override void ActivateModule() {
             StandaloneInputModule StandAloneSystem = GetComponent<StandaloneInputModule>();
 
-            if (StandAloneSystem != null && StandAloneSystem.enabled)
-            {
+            if (StandAloneSystem != null && StandAloneSystem.enabled) {
                 Debug.LogError("Aimer Input Module is incompatible with the StandAloneInputSystem, " +
                     "please remove it from the Event System in this scene or disable it when this module is in use");
             }
         }
 
-        public override void Process()
-        {
+        public override void Process() {
             bool pressed = Input.GetButtonDown(activateAxis);
             bool released = Input.GetButtonUp(activateAxis);
 
@@ -51,8 +46,7 @@ namespace UnityEngine.EventSystems.Extensions
                 RemovePointerData(pointer);
         }
 
-        protected virtual PointerEventData GetAimerPointerEventData()
-        {
+        protected virtual PointerEventData GetAimerPointerEventData() {
             PointerEventData pointerData;
 
             //Not certain on the use of this.
@@ -71,14 +65,12 @@ namespace UnityEngine.EventSystems.Extensions
             return pointerData;
         }
 
-        private void ProcessInteraction(PointerEventData pointer, bool pressed, bool released)
-        {
+        private void ProcessInteraction(PointerEventData pointer, bool pressed, bool released) {
             var currentOverGo = pointer.pointerCurrentRaycast.gameObject;
 
             objectUnderAimer = ExecuteEvents.GetEventHandler<ISubmitHandler>(currentOverGo);//we only want objects that we can submit on.
 
-            if (pressed)
-            {
+            if (pressed) {
                 pointer.eligibleForClick = true;
                 pointer.delta = Vector2.zero;
                 pointer.pressPosition = pointer.position;
@@ -90,19 +82,16 @@ namespace UnityEngine.EventSystems.Extensions
                 var newPressed = ExecuteEvents.ExecuteHierarchy(currentOverGo, pointer, ExecuteEvents.submitHandler);
 
                 // didnt find a press handler... search for a click handler
-                if (newPressed == null)
-                {
+                if (newPressed == null) {
                     newPressed = ExecuteEvents.ExecuteHierarchy(currentOverGo, pointer, ExecuteEvents.pointerDownHandler);
                     if (newPressed == null)
                         newPressed = ExecuteEvents.GetEventHandler<IPointerClickHandler>(currentOverGo);
                 }
-                else
-                {
+                else {
                     pointer.eligibleForClick = false;
                 }
 
-                if (newPressed != pointer.pointerPress)
-                {
+                if (newPressed != pointer.pointerPress) {
                     pointer.pointerPress = newPressed;
                     pointer.rawPointerPress = currentOverGo;
                     pointer.clickCount = 0;
@@ -115,8 +104,7 @@ namespace UnityEngine.EventSystems.Extensions
                     ExecuteEvents.Execute<IBeginDragHandler>(pointer.pointerDrag, pointer, ExecuteEvents.beginDragHandler);
             }
 
-            if (released)
-            {
+            if (released) {
                 //Debug.Log("Executing pressup on: " + pointer.pointerPress);
                 ExecuteEvents.Execute(pointer.pointerPress, pointer, ExecuteEvents.pointerUpHandler);
 
@@ -126,8 +114,7 @@ namespace UnityEngine.EventSystems.Extensions
                 var pointerUpHandler = ExecuteEvents.GetEventHandler<IPointerClickHandler>(currentOverGo);
 
                 // PointerClick
-                if (pointer.pointerPress == pointerUpHandler && pointer.eligibleForClick)
-                {
+                if (pointer.pointerPress == pointerUpHandler && pointer.eligibleForClick) {
                     float time = Time.unscaledTime;
 
                     if (time - pointer.clickTime < 0.3f)
@@ -138,8 +125,7 @@ namespace UnityEngine.EventSystems.Extensions
 
                     ExecuteEvents.Execute(pointer.pointerPress, pointer, ExecuteEvents.pointerClickHandler);
                 }
-                else if (pointer.pointerDrag != null)
-                {
+                else if (pointer.pointerDrag != null) {
                     ExecuteEvents.ExecuteHierarchy(currentOverGo, pointer, ExecuteEvents.dropHandler);
                 }
 
@@ -154,8 +140,7 @@ namespace UnityEngine.EventSystems.Extensions
             }
         }
 
-        public override void DeactivateModule()
-        {
+        public override void DeactivateModule() {
             base.DeactivateModule();
             ClearSelection();
         }

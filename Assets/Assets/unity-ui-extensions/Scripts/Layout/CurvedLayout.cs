@@ -7,8 +7,7 @@
 /// 
 /// </summary>
 
-namespace UnityEngine.UI.Extensions
-{
+namespace UnityEngine.UI.Extensions {
     /// <summary>
     /// TODO:
     /// - add automatic child sizing, like in the HorizontalOrVerticalLayoutGroup.cs

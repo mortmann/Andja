@@ -17,7 +17,7 @@
          <isWalkable>false</isWalkable>
          <hasHitbox>false</hasHitbox>
          <MaxHealth>0.0</MaxHealth>
-         <buildingRange>0</buildingRange>
+         <structureRange>0</structureRange>
          <PopulationLevel>0</PopulationLevel>
          <PopulationCount>0</PopulationCount>
          <StructureLevel>0</StructureLevel>
@@ -32,7 +32,7 @@
          <maintenancecost>0</maintenancecost>
          <buildcost>15</buildcost>
          <BuildTyp>Path</BuildTyp>
-         <myBuildingTyp>Pathfinding</myBuildingTyp>
+         <myStructureTyp>Pathfinding</myStructureTyp>
          <ExtraUITyp>None</ExtraUITyp>
          <ExtraBuildUITyp>None</ExtraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
@@ -55,7 +55,7 @@
          <isWalkable>false</isWalkable>
          <hasHitbox>false</hasHitbox>
          <MaxHealth>0.0</MaxHealth>
-         <buildingRange>0</buildingRange>
+         <structureRange>0</structureRange>
          <PopulationLevel>0</PopulationLevel>
          <PopulationCount>1</PopulationCount>
          <StructureLevel>1</StructureLevel>
@@ -70,7 +70,7 @@
          <maintenancecost>0</maintenancecost>
          <buildcost>50</buildcost>
          <BuildTyp>Path</BuildTyp>
-         <myBuildingTyp>Pathfinding</myBuildingTyp>
+         <myStructureTyp>Pathfinding</myStructureTyp>
          <ExtraUITyp>None</ExtraUITyp>
          <ExtraBuildUITyp>None</ExtraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
@@ -94,7 +94,7 @@
          <isWalkable>false</isWalkable>
          <hasHitbox>false</hasHitbox>
          <MaxHealth>0.0</MaxHealth>
-         <buildingRange>0</buildingRange>
+         <structureRange>0</structureRange>
          <PopulationLevel>0</PopulationLevel>
          <PopulationCount>2</PopulationCount>
          <StructureLevel>2</StructureLevel>
@@ -109,7 +109,7 @@
          <maintenancecost>0</maintenancecost>
          <buildcost>100</buildcost>
          <BuildTyp>Path</BuildTyp>
-         <myBuildingTyp>Pathfinding</myBuildingTyp>
+         <myStructureTyp>Pathfinding</myStructureTyp>
          <ExtraUITyp>None</ExtraUITyp>
          <ExtraBuildUITyp>None</ExtraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
@@ -137,7 +137,7 @@
          <isWalkable>false</isWalkable>
          <hasHitbox>false</hasHitbox>
          <MaxHealth>0.0</MaxHealth>
-         <buildingRange>0</buildingRange>
+         <structureRange>0</structureRange>
          <PopulationLevel>0</PopulationLevel>
          <PopulationCount>3</PopulationCount>
          <StructureLevel>3</StructureLevel>
@@ -152,7 +152,7 @@
          <maintenancecost>0</maintenancecost>
          <buildcost>0</buildcost>
          <BuildTyp>Path</BuildTyp>
-         <myBuildingTyp>Pathfinding</myBuildingTyp>
+         <myStructureTyp>Pathfinding</myStructureTyp>
          <ExtraUITyp>None</ExtraUITyp>
          <ExtraBuildUITyp>None</ExtraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
@@ -177,7 +177,7 @@
          <isWalkable>false</isWalkable>
          <hasHitbox>true</hasHitbox>
          <MaxHealth>0.0</MaxHealth>
-         <buildingRange>3</buildingRange>
+         <structureRange>3</structureRange>
          <PopulationLevel>0</PopulationLevel>
          <PopulationCount>0</PopulationCount>
          <StructureLevel>0</StructureLevel>
@@ -192,7 +192,7 @@
          <maintenancecost>25</maintenancecost>
          <buildcost>250</buildcost>
          <BuildTyp>Single</BuildTyp>
-         <myBuildingTyp>Blocking</myBuildingTyp>
+         <myStructureTyp>Blocking</myStructureTyp>
          <ExtraUITyp>None</ExtraUITyp>
          <ExtraBuildUITyp>None</ExtraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
@@ -242,7 +242,7 @@
          <isWalkable>false</isWalkable>
          <hasHitbox>true</hasHitbox>
          <MaxHealth>50.0</MaxHealth>
-         <buildingRange>2</buildingRange>
+         <structureRange>2</structureRange>
          <PopulationLevel>0</PopulationLevel>
          <PopulationCount>0</PopulationCount>
          <StructureLevel>0</StructureLevel>
@@ -257,7 +257,7 @@
          <maintenancecost>20</maintenancecost>
          <buildcost>0</buildcost>
          <BuildTyp>Single</BuildTyp>
-         <myBuildingTyp>Blocking</myBuildingTyp>
+         <myStructureTyp>Blocking</myStructureTyp>
          <ExtraUITyp>None</ExtraUITyp>
          <ExtraBuildUITyp>None</ExtraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
@@ -300,7 +300,7 @@
          <isWalkable>false</isWalkable>
          <hasHitbox>true</hasHitbox>
          <MaxHealth>150.0</MaxHealth>
-         <buildingRange>4</buildingRange>
+         <structureRange>4</structureRange>
          <PopulationLevel>0</PopulationLevel>
          <PopulationCount>500</PopulationCount>
          <StructureLevel>0</StructureLevel>
@@ -315,7 +315,7 @@
          <maintenancecost>60</maintenancecost>
          <buildcost>500</buildcost>
          <BuildTyp>Single</BuildTyp>
-         <myBuildingTyp>Blocking</myBuildingTyp>
+         <myStructureTyp>Blocking</myStructureTyp>
          <ExtraUITyp>None</ExtraUITyp>
          <ExtraBuildUITyp>None</ExtraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
@@ -358,7 +358,7 @@
          <isWalkable>false</isWalkable>
          <hasHitbox>true</hasHitbox>
          <MaxHealth>0.0</MaxHealth>
-         <buildingRange>2</buildingRange>
+         <structureRange>2</structureRange>
          <PopulationLevel>0</PopulationLevel>
          <PopulationCount>500</PopulationCount>
          <StructureLevel>0</StructureLevel>
@@ -373,7 +373,7 @@
          <maintenancecost>75</maintenancecost>
          <buildcost>650</buildcost>
          <BuildTyp>Single</BuildTyp>
-         <myBuildingTyp>Blocking</myBuildingTyp>
+         <myStructureTyp>Blocking</myStructureTyp>
          <ExtraUITyp>None</ExtraUITyp>
          <ExtraBuildUITyp>None</ExtraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
@@ -416,7 +416,7 @@
          <isWalkable>false</isWalkable>
          <hasHitbox>true</hasHitbox>
          <MaxHealth>250.0</MaxHealth>
-         <buildingRange>2</buildingRange>
+         <structureRange>2</structureRange>
          <PopulationLevel>0</PopulationLevel>
          <PopulationCount>500</PopulationCount>
          <StructureLevel>0</StructureLevel>
@@ -431,7 +431,7 @@
          <maintenancecost>100</maintenancecost>
          <buildcost>1000</buildcost>
          <BuildTyp>Single</BuildTyp>
-         <myBuildingTyp>Blocking</myBuildingTyp>
+         <myStructureTyp>Blocking</myStructureTyp>
          <ExtraUITyp>None</ExtraUITyp>
          <ExtraBuildUITyp>None</ExtraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
@@ -474,7 +474,7 @@
          <isWalkable>false</isWalkable>
          <hasHitbox>true</hasHitbox>
          <MaxHealth>0.0</MaxHealth>
-         <buildingRange>0</buildingRange>
+         <structureRange>0</structureRange>
          <PopulationLevel>1</PopulationLevel>
          <PopulationCount>0</PopulationCount>
          <StructureLevel>0</StructureLevel>
@@ -489,7 +489,7 @@
          <maintenancecost>65</maintenancecost>
          <buildcost>1250</buildcost>
          <BuildTyp>Single</BuildTyp>
-         <myBuildingTyp>Blocking</myBuildingTyp>
+         <myStructureTyp>Blocking</myStructureTyp>
          <ExtraUITyp>None</ExtraUITyp>
          <ExtraBuildUITyp>None</ExtraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
@@ -535,7 +535,7 @@
          <isWalkable>false</isWalkable>
          <hasHitbox>true</hasHitbox>
          <MaxHealth>50.0</MaxHealth>
-         <buildingRange>6</buildingRange>
+         <structureRange>6</structureRange>
          <PopulationLevel>1</PopulationLevel>
          <PopulationCount>750</PopulationCount>
          <StructureLevel>0</StructureLevel>
@@ -550,7 +550,7 @@
          <maintenancecost>25</maintenancecost>
          <buildcost>250</buildcost>
          <BuildTyp>Single</BuildTyp>
-         <myBuildingTyp>Blocking</myBuildingTyp>
+         <myStructureTyp>Blocking</myStructureTyp>
          <ExtraUITyp>None</ExtraUITyp>
          <ExtraBuildUITyp>None</ExtraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
@@ -593,7 +593,7 @@
          <isWalkable>false</isWalkable>
          <hasHitbox>true</hasHitbox>
          <MaxHealth>50.0</MaxHealth>
-         <buildingRange>4</buildingRange>
+         <structureRange>4</structureRange>
          <PopulationLevel>1</PopulationLevel>
          <PopulationCount>750</PopulationCount>
          <StructureLevel>0</StructureLevel>
@@ -608,7 +608,7 @@
          <maintenancecost>75</maintenancecost>
          <buildcost>450</buildcost>
          <BuildTyp>Single</BuildTyp>
-         <myBuildingTyp>Blocking</myBuildingTyp>
+         <myStructureTyp>Blocking</myStructureTyp>
          <ExtraUITyp>None</ExtraUITyp>
          <ExtraBuildUITyp>None</ExtraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
@@ -654,7 +654,7 @@
          <isWalkable>false</isWalkable>
          <hasHitbox>true</hasHitbox>
          <MaxHealth>230.0</MaxHealth>
-         <buildingRange>5</buildingRange>
+         <structureRange>5</structureRange>
          <PopulationLevel>1</PopulationLevel>
          <PopulationCount>1500</PopulationCount>
          <StructureLevel>0</StructureLevel>
@@ -669,7 +669,7 @@
          <maintenancecost>100</maintenancecost>
          <buildcost>600</buildcost>
          <BuildTyp>Single</BuildTyp>
-         <myBuildingTyp>Blocking</myBuildingTyp>
+         <myStructureTyp>Blocking</myStructureTyp>
          <ExtraUITyp>None</ExtraUITyp>
          <ExtraBuildUITyp>None</ExtraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
@@ -715,7 +715,7 @@
          <isWalkable>false</isWalkable>
          <hasHitbox>true</hasHitbox>
          <MaxHealth>250.0</MaxHealth>
-         <buildingRange>4</buildingRange>
+         <structureRange>4</structureRange>
          <PopulationLevel>1</PopulationLevel>
          <PopulationCount>1500</PopulationCount>
          <StructureLevel>0</StructureLevel>
@@ -730,7 +730,7 @@
          <maintenancecost>110</maintenancecost>
          <buildcost>720</buildcost>
          <BuildTyp>Single</BuildTyp>
-         <myBuildingTyp>Blocking</myBuildingTyp>
+         <myStructureTyp>Blocking</myStructureTyp>
          <ExtraUITyp>None</ExtraUITyp>
          <ExtraBuildUITyp>None</ExtraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
@@ -778,7 +778,7 @@
          <isWalkable>false</isWalkable>
          <hasHitbox>false</hasHitbox>
          <MaxHealth>0.0</MaxHealth>
-         <buildingRange>0</buildingRange>
+         <structureRange>0</structureRange>
          <PopulationLevel>0</PopulationLevel>
          <PopulationCount>0</PopulationCount>
          <StructureLevel>0</StructureLevel>
@@ -793,7 +793,7 @@
          <maintenancecost>0</maintenancecost>
          <buildcost>5</buildcost>
          <BuildTyp>Drag</BuildTyp>
-         <myBuildingTyp>Free</myBuildingTyp>
+         <myStructureTyp>Free</myStructureTyp>
          <ExtraUITyp>None</ExtraUITyp>
          <ExtraBuildUITyp>None</ExtraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
@@ -823,7 +823,7 @@
          <isWalkable>false</isWalkable>
          <hasHitbox>false</hasHitbox>
          <MaxHealth>15.0</MaxHealth>
-         <buildingRange>0</buildingRange>
+         <structureRange>0</structureRange>
          <PopulationLevel>0</PopulationLevel>
          <PopulationCount>0</PopulationCount>
          <StructureLevel>0</StructureLevel>
@@ -838,7 +838,7 @@
          <maintenancecost>0</maintenancecost>
          <buildcost>0</buildcost>
          <BuildTyp>Drag</BuildTyp>
-         <myBuildingTyp>Free</myBuildingTyp>
+         <myStructureTyp>Free</myStructureTyp>
          <ExtraUITyp>None</ExtraUITyp>
          <ExtraBuildUITyp>None</ExtraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
@@ -874,7 +874,7 @@
          <isWalkable>false</isWalkable>
          <hasHitbox>false</hasHitbox>
          <MaxHealth>0.0</MaxHealth>
-         <buildingRange>0</buildingRange>
+         <structureRange>0</structureRange>
          <PopulationLevel>0</PopulationLevel>
          <PopulationCount>0</PopulationCount>
          <StructureLevel>0</StructureLevel>
@@ -889,7 +889,7 @@
          <maintenancecost>0</maintenancecost>
          <buildcost>0</buildcost>
          <BuildTyp>Drag</BuildTyp>
-         <myBuildingTyp>Free</myBuildingTyp>
+         <myStructureTyp>Free</myStructureTyp>
          <ExtraUITyp>None</ExtraUITyp>
          <ExtraBuildUITyp>None</ExtraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
@@ -924,7 +924,7 @@
          <isWalkable>false</isWalkable>
          <hasHitbox>false</hasHitbox>
          <MaxHealth>0.0</MaxHealth>
-         <buildingRange>0</buildingRange>
+         <structureRange>0</structureRange>
          <PopulationLevel>0</PopulationLevel>
          <PopulationCount>500</PopulationCount>
          <StructureLevel>0</StructureLevel>
@@ -939,7 +939,7 @@
          <maintenancecost>0</maintenancecost>
          <buildcost>25</buildcost>
          <BuildTyp>Drag</BuildTyp>
-         <myBuildingTyp>Free</myBuildingTyp>
+         <myStructureTyp>Free</myStructureTyp>
          <ExtraUITyp>None</ExtraUITyp>
          <ExtraBuildUITyp>None</ExtraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
@@ -974,7 +974,7 @@
          <isWalkable>false</isWalkable>
          <hasHitbox>false</hasHitbox>
          <MaxHealth>0.0</MaxHealth>
-         <buildingRange>0</buildingRange>
+         <structureRange>0</structureRange>
          <PopulationLevel>0</PopulationLevel>
          <PopulationCount>500</PopulationCount>
          <StructureLevel>0</StructureLevel>
@@ -989,7 +989,7 @@
          <maintenancecost>0</maintenancecost>
          <buildcost>25</buildcost>
          <BuildTyp>Drag</BuildTyp>
-         <myBuildingTyp>Free</myBuildingTyp>
+         <myStructureTyp>Free</myStructureTyp>
          <ExtraUITyp>None</ExtraUITyp>
          <ExtraBuildUITyp>None</ExtraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
@@ -1024,7 +1024,7 @@
          <isWalkable>false</isWalkable>
          <hasHitbox>false</hasHitbox>
          <MaxHealth>0.0</MaxHealth>
-         <buildingRange>0</buildingRange>
+         <structureRange>0</structureRange>
          <PopulationLevel>0</PopulationLevel>
          <PopulationCount>500</PopulationCount>
          <StructureLevel>0</StructureLevel>
@@ -1039,7 +1039,7 @@
          <maintenancecost>0</maintenancecost>
          <buildcost>25</buildcost>
          <BuildTyp>Drag</BuildTyp>
-         <myBuildingTyp>Free</myBuildingTyp>
+         <myStructureTyp>Free</myStructureTyp>
          <ExtraUITyp>None</ExtraUITyp>
          <ExtraBuildUITyp>None</ExtraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
@@ -1074,7 +1074,7 @@
          <isWalkable>false</isWalkable>
          <hasHitbox>false</hasHitbox>
          <MaxHealth>0.0</MaxHealth>
-         <buildingRange>0</buildingRange>
+         <structureRange>0</structureRange>
          <PopulationLevel>1</PopulationLevel>
          <PopulationCount>0</PopulationCount>
          <StructureLevel>0</StructureLevel>
@@ -1089,7 +1089,7 @@
          <maintenancecost>0</maintenancecost>
          <buildcost>45</buildcost>
          <BuildTyp>Drag</BuildTyp>
-         <myBuildingTyp>Free</myBuildingTyp>
+         <myStructureTyp>Free</myStructureTyp>
          <ExtraUITyp>None</ExtraUITyp>
          <ExtraBuildUITyp>None</ExtraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
@@ -1125,7 +1125,7 @@
          <isWalkable>false</isWalkable>
          <hasHitbox>false</hasHitbox>
          <MaxHealth>0.0</MaxHealth>
-         <buildingRange>0</buildingRange>
+         <structureRange>0</structureRange>
          <PopulationLevel>1</PopulationLevel>
          <PopulationCount>1500</PopulationCount>
          <StructureLevel>0</StructureLevel>
@@ -1140,7 +1140,7 @@
          <maintenancecost>0</maintenancecost>
          <buildcost>0</buildcost>
          <BuildTyp>Drag</BuildTyp>
-         <myBuildingTyp>Free</myBuildingTyp>
+         <myStructureTyp>Free</myStructureTyp>
          <ExtraUITyp>None</ExtraUITyp>
          <ExtraBuildUITyp>None</ExtraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
@@ -1177,7 +1177,7 @@
          <isWalkable>false</isWalkable>
          <hasHitbox>true</hasHitbox>
          <MaxHealth>0.0</MaxHealth>
-         <buildingRange>18</buildingRange>
+         <structureRange>18</structureRange>
          <PopulationLevel>0</PopulationLevel>
          <PopulationCount>0</PopulationCount>
          <StructureLevel>1</StructureLevel>
@@ -1192,7 +1192,7 @@
          <maintenancecost>10</maintenancecost>
          <buildcost>200</buildcost>
          <BuildTyp>Single</BuildTyp>
-         <myBuildingTyp>Blocking</myBuildingTyp>
+         <myStructureTyp>Blocking</myStructureTyp>
          <ExtraUITyp>None</ExtraUITyp>
          <ExtraBuildUITyp>None</ExtraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
@@ -1231,7 +1231,7 @@
          <isWalkable>false</isWalkable>
          <hasHitbox>true</hasHitbox>
          <MaxHealth>25.0</MaxHealth>
-         <buildingRange>0</buildingRange>
+         <structureRange>0</structureRange>
          <PopulationLevel>1</PopulationLevel>
          <PopulationCount>0</PopulationCount>
          <StructureLevel>0</StructureLevel>
@@ -1246,7 +1246,7 @@
          <maintenancecost>90</maintenancecost>
          <buildcost>1000</buildcost>
          <BuildTyp>Single</BuildTyp>
-         <myBuildingTyp>Blocking</myBuildingTyp>
+         <myStructureTyp>Blocking</myStructureTyp>
          <ExtraUITyp>None</ExtraUITyp>
          <ExtraBuildUITyp>None</ExtraBuildUITyp>
          <hasToBuildOnRestriktion>Mountain</hasToBuildOnRestriktion>
@@ -1288,7 +1288,7 @@
          <isWalkable>false</isWalkable>
          <hasHitbox>true</hasHitbox>
          <MaxHealth>360.0</MaxHealth>
-         <buildingRange>0</buildingRange>
+         <structureRange>0</structureRange>
          <PopulationLevel>1</PopulationLevel>
          <PopulationCount>750</PopulationCount>
          <StructureLevel>0</StructureLevel>
@@ -1303,7 +1303,7 @@
          <maintenancecost>55</maintenancecost>
          <buildcost>800</buildcost>
          <BuildTyp>Single</BuildTyp>
-         <myBuildingTyp>Blocking</myBuildingTyp>
+         <myStructureTyp>Blocking</myStructureTyp>
          <ExtraUITyp>None</ExtraUITyp>
          <ExtraBuildUITyp>None</ExtraBuildUITyp>
          <hasToBuildOnRestriktion>Mountain</hasToBuildOnRestriktion>
@@ -1345,7 +1345,7 @@
          <isWalkable>false</isWalkable>
          <hasHitbox>true</hasHitbox>
          <MaxHealth>90.0</MaxHealth>
-         <buildingRange>0</buildingRange>
+         <structureRange>0</structureRange>
          <PopulationLevel>1</PopulationLevel>
          <PopulationCount>750</PopulationCount>
          <StructureLevel>0</StructureLevel>
@@ -1360,7 +1360,7 @@
          <maintenancecost>80</maintenancecost>
          <buildcost>1100</buildcost>
          <BuildTyp>Single</BuildTyp>
-         <myBuildingTyp>Blocking</myBuildingTyp>
+         <myStructureTyp>Blocking</myStructureTyp>
          <ExtraUITyp>None</ExtraUITyp>
          <ExtraBuildUITyp>None</ExtraBuildUITyp>
          <hasToBuildOnRestriktion>Mountain</hasToBuildOnRestriktion>
@@ -1389,8 +1389,8 @@
          <myRessource>Salt</myRessource>
       </mine>
    </mines>
-   <needsbuildings>
-      <needsbuilding ID="401">
+   <needstructures>
+      <needstructure ID="401">
          <Name>
             <entry lang="English">Marketplace</entry>
             <entry lang="German">Gemeinschaftsplatz</entry>
@@ -1407,7 +1407,7 @@
          <isWalkable>false</isWalkable>
          <hasHitbox>false</hasHitbox>
          <MaxHealth>1000.0</MaxHealth>
-         <buildingRange>12</buildingRange>
+         <structureRange>12</structureRange>
          <PopulationLevel>0</PopulationLevel>
          <PopulationCount>0</PopulationCount>
          <StructureLevel>0</StructureLevel>
@@ -1422,7 +1422,7 @@
          <maintenancecost>15</maintenancecost>
          <buildcost>200</buildcost>
          <BuildTyp>Single</BuildTyp>
-         <myBuildingTyp>Blocking</myBuildingTyp>
+         <myStructureTyp>Blocking</myStructureTyp>
          <ExtraUITyp>None</ExtraUITyp>
          <ExtraBuildUITyp>None</ExtraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
@@ -1435,8 +1435,8 @@
             </Item>
          </buildingItems>
          <spriteBaseName>marketplace</spriteBaseName>
-      </needsbuilding>
-      <needsbuilding ID="402">
+      </needstructure>
+      <needstructure ID="402">
          <Name>
             <entry lang="English">Chapel</entry>
             <entry lang="German">Kapelle</entry>
@@ -1453,7 +1453,7 @@
          <isWalkable>false</isWalkable>
          <hasHitbox>false</hasHitbox>
          <MaxHealth>150.0</MaxHealth>
-         <buildingRange>9</buildingRange>
+         <structureRange>9</structureRange>
          <PopulationLevel>0</PopulationLevel>
          <PopulationCount>500</PopulationCount>
          <StructureLevel>0</StructureLevel>
@@ -1468,7 +1468,7 @@
          <maintenancecost>120</maintenancecost>
          <buildcost>1500</buildcost>
          <BuildTyp>Single</BuildTyp>
-         <myBuildingTyp>Blocking</myBuildingTyp>
+         <myStructureTyp>Blocking</myStructureTyp>
          <ExtraUITyp>None</ExtraUITyp>
          <ExtraBuildUITyp>None</ExtraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
@@ -1481,8 +1481,8 @@
             </Item>
          </buildingItems>
          <spriteBaseName>chapel</spriteBaseName>
-      </needsbuilding>
-      <needsbuilding ID="403">
+      </needstructure>
+      <needstructure ID="403">
          <Name>
             <entry lang="English">Inn</entry>
             <entry lang="German">Gasthaus</entry>
@@ -1499,7 +1499,7 @@
          <isWalkable>false</isWalkable>
          <hasHitbox>false</hasHitbox>
          <MaxHealth>250.0</MaxHealth>
-         <buildingRange>9</buildingRange>
+         <structureRange>9</structureRange>
          <PopulationLevel>0</PopulationLevel>
          <PopulationCount>1250</PopulationCount>
          <StructureLevel>0</StructureLevel>
@@ -1514,7 +1514,7 @@
          <maintenancecost>225</maintenancecost>
          <buildcost>2000</buildcost>
          <BuildTyp>Single</BuildTyp>
-         <myBuildingTyp>Blocking</myBuildingTyp>
+         <myStructureTyp>Blocking</myStructureTyp>
          <ExtraUITyp>None</ExtraUITyp>
          <ExtraBuildUITyp>None</ExtraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
@@ -1527,8 +1527,8 @@
             </Item>
          </buildingItems>
          <spriteBaseName>inn</spriteBaseName>
-      </needsbuilding>
-   </needsbuildings>
+      </needstructure>
+   </needstructures>
    <productions>
       <production ID="801">
          <Name>
@@ -1547,7 +1547,7 @@
          <isWalkable>false</isWalkable>
          <hasHitbox>true</hasHitbox>
          <MaxHealth>100.0</MaxHealth>
-         <buildingRange>0</buildingRange>
+         <structureRange>0</structureRange>
          <PopulationLevel>0</PopulationLevel>
          <PopulationCount>0</PopulationCount>
          <StructureLevel>0</StructureLevel>
@@ -1562,7 +1562,7 @@
          <maintenancecost>0</maintenancecost>
          <buildcost>100</buildcost>
          <BuildTyp>Single</BuildTyp>
-         <myBuildingTyp>Blocking</myBuildingTyp>
+         <myStructureTyp>Blocking</myStructureTyp>
          <ExtraUITyp>None</ExtraUITyp>
          <ExtraBuildUITyp>None</ExtraBuildUITyp>
          <hasToBuildOnRestriktion>Shore</hasToBuildOnRestriktion>
@@ -1604,7 +1604,7 @@
          <isWalkable>false</isWalkable>
          <hasHitbox>true</hasHitbox>
          <MaxHealth>100.0</MaxHealth>
-         <buildingRange>15</buildingRange>
+         <structureRange>15</structureRange>
          <PopulationLevel>0</PopulationLevel>
          <PopulationCount>0</PopulationCount>
          <StructureLevel>0</StructureLevel>
@@ -1619,7 +1619,7 @@
          <maintenancecost>25</maintenancecost>
          <buildcost>300</buildcost>
          <BuildTyp>Single</BuildTyp>
-         <myBuildingTyp>Blocking</myBuildingTyp>
+         <myStructureTyp>Blocking</myStructureTyp>
          <ExtraUITyp>None</ExtraUITyp>
          <ExtraBuildUITyp>None</ExtraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
@@ -1666,7 +1666,7 @@
          <isWalkable>false</isWalkable>
          <hasHitbox>true</hasHitbox>
          <MaxHealth>200.0</MaxHealth>
-         <buildingRange>15</buildingRange>
+         <structureRange>15</structureRange>
          <PopulationLevel>0</PopulationLevel>
          <PopulationCount>0</PopulationCount>
          <StructureLevel>0</StructureLevel>
@@ -1681,7 +1681,7 @@
          <maintenancecost>40</maintenancecost>
          <buildcost>750</buildcost>
          <BuildTyp>Single</BuildTyp>
-         <myBuildingTyp>Blocking</myBuildingTyp>
+         <myStructureTyp>Blocking</myStructureTyp>
          <ExtraUITyp>None</ExtraUITyp>
          <ExtraBuildUITyp>None</ExtraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
@@ -1728,7 +1728,7 @@
          <isWalkable>false</isWalkable>
          <hasHitbox>true</hasHitbox>
          <MaxHealth>200.0</MaxHealth>
-         <buildingRange>10</buildingRange>
+         <structureRange>10</structureRange>
          <PopulationLevel>0</PopulationLevel>
          <PopulationCount>500</PopulationCount>
          <StructureLevel>0</StructureLevel>
@@ -1743,7 +1743,7 @@
          <maintenancecost>50</maintenancecost>
          <buildcost>500</buildcost>
          <BuildTyp>Single</BuildTyp>
-         <myBuildingTyp>Blocking</myBuildingTyp>
+         <myStructureTyp>Blocking</myStructureTyp>
          <ExtraUITyp>None</ExtraUITyp>
          <ExtraBuildUITyp>None</ExtraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
@@ -1796,7 +1796,7 @@
          <isWalkable>false</isWalkable>
          <hasHitbox>true</hasHitbox>
          <MaxHealth>25.0</MaxHealth>
-         <buildingRange>4</buildingRange>
+         <structureRange>4</structureRange>
          <PopulationLevel>0</PopulationLevel>
          <PopulationCount>1250</PopulationCount>
          <StructureLevel>0</StructureLevel>
@@ -1811,7 +1811,7 @@
          <maintenancecost>80</maintenancecost>
          <buildcost>1200</buildcost>
          <BuildTyp>Single</BuildTyp>
-         <myBuildingTyp>Blocking</myBuildingTyp>
+         <myStructureTyp>Blocking</myStructureTyp>
          <ExtraUITyp>None</ExtraUITyp>
          <ExtraBuildUITyp>None</ExtraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
@@ -1854,7 +1854,7 @@
          <isWalkable>false</isWalkable>
          <hasHitbox>true</hasHitbox>
          <MaxHealth>200.0</MaxHealth>
-         <buildingRange>8</buildingRange>
+         <structureRange>8</structureRange>
          <PopulationLevel>1</PopulationLevel>
          <PopulationCount>0</PopulationCount>
          <StructureLevel>0</StructureLevel>
@@ -1869,7 +1869,7 @@
          <maintenancecost>50</maintenancecost>
          <buildcost>1500</buildcost>
          <BuildTyp>Single</BuildTyp>
-         <myBuildingTyp>Blocking</myBuildingTyp>
+         <myStructureTyp>Blocking</myStructureTyp>
          <ExtraUITyp>None</ExtraUITyp>
          <ExtraBuildUITyp>None</ExtraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
@@ -1919,7 +1919,7 @@
          <isWalkable>false</isWalkable>
          <hasHitbox>true</hasHitbox>
          <MaxHealth>75.0</MaxHealth>
-         <buildingRange>0</buildingRange>
+         <structureRange>0</structureRange>
          <PopulationLevel>1</PopulationLevel>
          <PopulationCount>0</PopulationCount>
          <StructureLevel>0</StructureLevel>
@@ -1934,7 +1934,7 @@
          <maintenancecost>100</maintenancecost>
          <buildcost>500</buildcost>
          <BuildTyp>Single</BuildTyp>
-         <myBuildingTyp>Blocking</myBuildingTyp>
+         <myStructureTyp>Blocking</myStructureTyp>
          <ExtraUITyp>None</ExtraUITyp>
          <ExtraBuildUITyp>None</ExtraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
@@ -1984,7 +1984,7 @@
          <isWalkable>false</isWalkable>
          <hasHitbox>true</hasHitbox>
          <MaxHealth>350.0</MaxHealth>
-         <buildingRange>7</buildingRange>
+         <structureRange>7</structureRange>
          <PopulationLevel>1</PopulationLevel>
          <PopulationCount>750</PopulationCount>
          <StructureLevel>0</StructureLevel>
@@ -1999,7 +1999,7 @@
          <maintenancecost>100</maintenancecost>
          <buildcost>1250</buildcost>
          <BuildTyp>Single</BuildTyp>
-         <myBuildingTyp>Blocking</myBuildingTyp>
+         <myStructureTyp>Blocking</myStructureTyp>
          <ExtraUITyp>None</ExtraUITyp>
          <ExtraBuildUITyp>None</ExtraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
@@ -2052,7 +2052,7 @@
          <isWalkable>false</isWalkable>
          <hasHitbox>true</hasHitbox>
          <MaxHealth>250.0</MaxHealth>
-         <buildingRange>5</buildingRange>
+         <structureRange>5</structureRange>
          <PopulationLevel>1</PopulationLevel>
          <PopulationCount>750</PopulationCount>
          <StructureLevel>0</StructureLevel>
@@ -2067,7 +2067,7 @@
          <maintenancecost>75</maintenancecost>
          <buildcost>750</buildcost>
          <BuildTyp>Single</BuildTyp>
-         <myBuildingTyp>Blocking</myBuildingTyp>
+         <myStructureTyp>Blocking</myStructureTyp>
          <ExtraUITyp>None</ExtraUITyp>
          <ExtraBuildUITyp>None</ExtraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
@@ -2117,7 +2117,7 @@
          <isWalkable>false</isWalkable>
          <hasHitbox>true</hasHitbox>
          <MaxHealth>150.0</MaxHealth>
-         <buildingRange>9</buildingRange>
+         <structureRange>9</structureRange>
          <PopulationLevel>1</PopulationLevel>
          <PopulationCount>750</PopulationCount>
          <StructureLevel>0</StructureLevel>
@@ -2132,7 +2132,7 @@
          <maintenancecost>45</maintenancecost>
          <buildcost>1400</buildcost>
          <BuildTyp>Single</BuildTyp>
-         <myBuildingTyp>Blocking</myBuildingTyp>
+         <myStructureTyp>Blocking</myStructureTyp>
          <ExtraUITyp>None</ExtraUITyp>
          <ExtraBuildUITyp>None</ExtraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
@@ -2182,7 +2182,7 @@
          <isWalkable>false</isWalkable>
          <hasHitbox>true</hasHitbox>
          <MaxHealth>450.0</MaxHealth>
-         <buildingRange>9</buildingRange>
+         <structureRange>9</structureRange>
          <PopulationLevel>1</PopulationLevel>
          <PopulationCount>750</PopulationCount>
          <StructureLevel>0</StructureLevel>
@@ -2197,7 +2197,7 @@
          <maintenancecost>150</maintenancecost>
          <buildcost>1500</buildcost>
          <BuildTyp>Single</BuildTyp>
-         <myBuildingTyp>Blocking</myBuildingTyp>
+         <myStructureTyp>Blocking</myStructureTyp>
          <ExtraUITyp>None</ExtraUITyp>
          <ExtraBuildUITyp>None</ExtraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
@@ -2247,7 +2247,7 @@
          <isWalkable>false</isWalkable>
          <hasHitbox>true</hasHitbox>
          <MaxHealth>500.0</MaxHealth>
-         <buildingRange>9</buildingRange>
+         <structureRange>9</structureRange>
          <PopulationLevel>1</PopulationLevel>
          <PopulationCount>1500</PopulationCount>
          <StructureLevel>0</StructureLevel>
@@ -2262,7 +2262,7 @@
          <maintenancecost>160</maintenancecost>
          <buildcost>1700</buildcost>
          <BuildTyp>Single</BuildTyp>
-         <myBuildingTyp>Blocking</myBuildingTyp>
+         <myStructureTyp>Blocking</myStructureTyp>
          <ExtraUITyp>None</ExtraUITyp>
          <ExtraBuildUITyp>None</ExtraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
@@ -2317,7 +2317,7 @@
          <isWalkable>false</isWalkable>
          <hasHitbox>true</hasHitbox>
          <MaxHealth>1000.0</MaxHealth>
-         <buildingRange>18</buildingRange>
+         <structureRange>18</structureRange>
          <PopulationLevel>0</PopulationLevel>
          <PopulationCount>0</PopulationCount>
          <StructureLevel>0</StructureLevel>
@@ -2332,7 +2332,7 @@
          <maintenancecost>10</maintenancecost>
          <buildcost>300</buildcost>
          <BuildTyp>Single</BuildTyp>
-         <myBuildingTyp>Blocking</myBuildingTyp>
+         <myStructureTyp>Blocking</myStructureTyp>
          <ExtraUITyp>Range</ExtraUITyp>
          <ExtraBuildUITyp>None</ExtraBuildUITyp>
          <hasToBuildOnRestriktion>Shore</hasToBuildOnRestriktion>
@@ -2371,7 +2371,7 @@
          <isWalkable>false</isWalkable>
          <hasHitbox>true</hasHitbox>
          <MaxHealth>50.0</MaxHealth>
-         <buildingRange>0</buildingRange>
+         <structureRange>0</structureRange>
          <PopulationLevel>0</PopulationLevel>
          <PopulationCount>0</PopulationCount>
          <StructureLevel>0</StructureLevel>
@@ -2386,7 +2386,7 @@
          <maintenancecost>0</maintenancecost>
          <buildcost>0</buildcost>
          <BuildTyp>Drag</BuildTyp>
-         <myBuildingTyp>Blocking</myBuildingTyp>
+         <myStructureTyp>Blocking</myStructureTyp>
          <ExtraUITyp>Upgrade</ExtraUITyp>
          <ExtraBuildUITyp>None</ExtraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
@@ -2417,7 +2417,7 @@
          <isWalkable>false</isWalkable>
          <hasHitbox>true</hasHitbox>
          <MaxHealth>50.0</MaxHealth>
-         <buildingRange>0</buildingRange>
+         <structureRange>0</structureRange>
          <PopulationLevel>1</PopulationLevel>
          <PopulationCount>0</PopulationCount>
          <StructureLevel>0</StructureLevel>
@@ -2432,7 +2432,7 @@
          <maintenancecost>0</maintenancecost>
          <buildcost>0</buildcost>
          <BuildTyp>Drag</BuildTyp>
-         <myBuildingTyp>Blocking</myBuildingTyp>
+         <myStructureTyp>Blocking</myStructureTyp>
          <ExtraUITyp>Upgrade</ExtraUITyp>
          <ExtraBuildUITyp>None</ExtraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
@@ -2466,7 +2466,7 @@
          <isWalkable>false</isWalkable>
          <hasHitbox>true</hasHitbox>
          <MaxHealth>50.0</MaxHealth>
-         <buildingRange>0</buildingRange>
+         <structureRange>0</structureRange>
          <PopulationLevel>2</PopulationLevel>
          <PopulationCount>0</PopulationCount>
          <StructureLevel>0</StructureLevel>
@@ -2481,7 +2481,7 @@
          <maintenancecost>0</maintenancecost>
          <buildcost>0</buildcost>
          <BuildTyp>Drag</BuildTyp>
-         <myBuildingTyp>Blocking</myBuildingTyp>
+         <myStructureTyp>Blocking</myStructureTyp>
          <ExtraUITyp>Upgrade</ExtraUITyp>
          <ExtraBuildUITyp>None</ExtraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
@@ -2518,7 +2518,7 @@
          <isWalkable>false</isWalkable>
          <hasHitbox>true</hasHitbox>
          <MaxHealth>50.0</MaxHealth>
-         <buildingRange>0</buildingRange>
+         <structureRange>0</structureRange>
          <PopulationLevel>3</PopulationLevel>
          <PopulationCount>0</PopulationCount>
          <StructureLevel>0</StructureLevel>
@@ -2533,7 +2533,7 @@
          <maintenancecost>0</maintenancecost>
          <buildcost>0</buildcost>
          <BuildTyp>Drag</BuildTyp>
-         <myBuildingTyp>Blocking</myBuildingTyp>
+         <myStructureTyp>Blocking</myStructureTyp>
          <ExtraUITyp>Upgrade</ExtraUITyp>
          <ExtraBuildUITyp>None</ExtraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
@@ -2557,8 +2557,8 @@
          <decreaseTime>8.0</decreaseTime>
       </home>
    </homes>
-   <militarybuildings>
-      <militarybuilding ID="1002">
+   <militarystructures>
+      <militarystructure ID="1002">
          <Name>
             <entry lang="English">Shipyard</entry>
             <entry lang="German">Werft</entry>
@@ -2575,7 +2575,7 @@
          <isWalkable>false</isWalkable>
          <hasHitbox>false</hasHitbox>
          <MaxHealth>5000.0</MaxHealth>
-         <buildingRange>0</buildingRange>
+         <structureRange>0</structureRange>
          <PopulationLevel>1</PopulationLevel>
          <PopulationCount>0</PopulationCount>
          <StructureLevel>0</StructureLevel>
@@ -2590,7 +2590,7 @@
          <maintenancecost>50</maintenancecost>
          <buildcost>1500</buildcost>
          <BuildTyp>Single</BuildTyp>
-         <myBuildingTyp>Blocking</myBuildingTyp>
+         <myStructureTyp>Blocking</myStructureTyp>
          <ExtraUITyp>None</ExtraUITyp>
          <ExtraBuildUITyp>None</ExtraBuildUITyp>
          <hasToBuildOnRestriktion>Shore</hasToBuildOnRestriktion>
@@ -2610,8 +2610,8 @@
             <Unit>1</Unit>
          </canBeBuildUnits>
          <buildTimeModifier>1.0</buildTimeModifier>
-      </militarybuilding>
-      <militarybuilding ID="1003">
+      </militarystructure>
+      <militarystructure ID="1003">
          <Name>
             <entry lang="English">Fort</entry>
             <entry lang="German">Kastell</entry>
@@ -2628,7 +2628,7 @@
          <isWalkable>false</isWalkable>
          <hasHitbox>true</hasHitbox>
          <MaxHealth>2500.0</MaxHealth>
-         <buildingRange>0</buildingRange>
+         <structureRange>0</structureRange>
          <PopulationLevel>1</PopulationLevel>
          <PopulationCount>0</PopulationCount>
          <StructureLevel>0</StructureLevel>
@@ -2643,7 +2643,7 @@
          <maintenancecost>250</maintenancecost>
          <buildcost>5000</buildcost>
          <BuildTyp>Single</BuildTyp>
-         <myBuildingTyp>Blocking</myBuildingTyp>
+         <myStructureTyp>Blocking</myStructureTyp>
          <ExtraUITyp>None</ExtraUITyp>
          <ExtraBuildUITyp>None</ExtraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
@@ -2660,6 +2660,6 @@
             <Unit>0</Unit>
          </canBeBuildUnits>
          <buildTimeModifier>1.0</buildTimeModifier>
-      </militarybuilding>
-   </militarybuildings>
+      </militarystructure>
+   </militarystructures>
 </structures>

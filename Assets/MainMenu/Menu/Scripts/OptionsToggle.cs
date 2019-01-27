@@ -5,9 +5,9 @@ public class OptionsToggle : MonoBehaviour {
 
     public GameObject[] childrens;
     int lastOpen = 0;
-    void OnEnable(){
-		Show (lastOpen);
-	}
+    void OnEnable() {
+        Show(lastOpen);
+    }
     public void Show(int numberOfChildToShow) {
         if (childrens == null)
             return;

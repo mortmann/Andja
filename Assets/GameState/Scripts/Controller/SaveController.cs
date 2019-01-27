@@ -29,31 +29,32 @@ public class SaveController : MonoBehaviour {
     CameraController CC => CameraController.Instance;
     PlayerController PC => PlayerController.Instance;
 
-    void Awake () {
-		if (Instance != null) {
-			Debug.LogError ("There should never be two SaveController.");
-		}
-		Instance = this;
+    void Awake() {
+        if (Instance != null) {
+            Debug.LogError("There should never be two SaveController.");
+        }
+        Instance = this;
     }
-	// Use this for initialization
-	void Start () {
-        if (GDH!=null && GDH.loadsavegame!=null && GDH.loadsavegame.Length > 0) {
+    // Use this for initialization
+    void Start() {
+        if (GDH != null && GDH.loadsavegame != null && GDH.loadsavegame.Length > 0) {
             Debug.Log("LOADING SAVEGAME " + GDH.loadsavegame);
             IsLoadingSave = true;
-            StartCoroutine(LoadGameState (GDH.loadsavegame));
-			GDH.loadsavegame = null;
-		} else {
+            StartCoroutine(LoadGameState(GDH.loadsavegame));
+            GDH.loadsavegame = null;
+        }
+        else {
             IsLoadingSave = false;
             GDH.GenerateMap();//just generate new map
         }
-	}
+    }
 
-    public void Update(){
-		//autosave every soandso 
-		//maybe option to choose frequenzy
-	}
+    public void Update() {
+        //autosave every soandso 
+        //maybe option to choose frequenzy
+    }
 
-	
+
     public void SaveIslandState(string name = "autosave") {
         string islandStatePath = System.IO.Path.Combine(GetIslandSavePath(name), name + islandFileEnding);
         string finalMetaStatePath = System.IO.Path.Combine(GetIslandSavePath(name), name + metaFileEnding);
@@ -130,7 +131,7 @@ public class SaveController : MonoBehaviour {
 
 
     public void LoadIsland(string name) {
-        EditorController.Instance.LoadIsland( GetIslandSave(name) ); 
+        EditorController.Instance.LoadIsland(GetIslandSave(name));
     }
 
     public static string GetIslandSavePath(string name = null) {
@@ -143,10 +144,10 @@ public class SaveController : MonoBehaviour {
     public static byte[] Zip(string str) {
         var bytes = System.Text.Encoding.UTF8.GetBytes(str);
         using (var msi = new MemoryStream(bytes))
-            using (var mso = new MemoryStream()) {
-                using (var gs = new GZipStream(mso, CompressionMode.Compress)) {
-                    CopyTo(msi, gs);
-                }
+        using (var mso = new MemoryStream()) {
+            using (var gs = new GZipStream(mso, CompressionMode.Compress)) {
+                CopyTo(msi, gs);
+            }
 
             return mso.ToArray();
         }
@@ -171,10 +172,10 @@ public class SaveController : MonoBehaviour {
     }
     public static string Unzip(byte[] bytes) {
         using (var msi = new MemoryStream(bytes))
-            using (var mso = new MemoryStream()) {
-                using (var gs = new GZipStream(msi, CompressionMode.Decompress)) {
-                    CopyTo(gs, mso);
-                }
+        using (var mso = new MemoryStream()) {
+            using (var gs = new GZipStream(msi, CompressionMode.Decompress)) {
+                CopyTo(gs, mso);
+            }
             return System.Text.Encoding.UTF8.GetString(mso.ToArray());
         }
     }
@@ -190,7 +191,7 @@ public class SaveController : MonoBehaviour {
 
     public static Dictionary<KeyValuePair<Climate, Size>, List<string>> GetIslands() {
         Dictionary<KeyValuePair<Climate, Size>, List<string>> islands = new Dictionary<KeyValuePair<Climate, Size>, List<string>>();
-        string[] filePaths = System.IO.Directory.GetFiles(GetIslandSavePath(), "*"+metaFileEnding,SearchOption.AllDirectories);
+        string[] filePaths = System.IO.Directory.GetFiles(GetIslandSavePath(), "*" + metaFileEnding, SearchOption.AllDirectories);
         foreach (string file in filePaths) {
             SaveMetaData metaData = null;
             try {
@@ -200,14 +201,15 @@ public class SaveController : MonoBehaviour {
                     ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
                     TypeNameHandling = TypeNameHandling.Auto
                 });
-            } catch {
+            }
+            catch {
                 continue;
-            } 
-            if(metaData.safefileversion != islandSaveFileVersion) {
+            }
+            if (metaData.safefileversion != islandSaveFileVersion) {
                 continue;
             }
             KeyValuePair<Climate, Size> key = new KeyValuePair<Climate, Size>(metaData.climate, metaData.size);
-            if(islands.ContainsKey(key) == false) {
+            if (islands.ContainsKey(key) == false) {
                 islands.Add(key, new List<string>());
             }
             islands[key].Add(metaData.saveName);
@@ -216,14 +218,14 @@ public class SaveController : MonoBehaviour {
     }
 
     internal static void SaveIslandImage(string name, byte[] imagePNG, string addon = "") {
-        string path = Path.Combine(GetIslandSavePath(name), name+ addon + islandImageEnding);
+        string path = Path.Combine(GetIslandSavePath(name), name + addon + islandImageEnding);
         File.WriteAllBytes(path, imagePNG);
     }
 
     public static SaveMetaData[] GetMetaFiles(bool editor) {
         string path = editor ? GetIslandSavePath() : GetSaveGamesPath();
         List<SaveMetaData> saveMetaDatas = new List<SaveMetaData>();
-        foreach (string file in Directory.GetFiles(path, "*"+metaFileEnding)) {
+        foreach (string file in Directory.GetFiles(path, "*" + metaFileEnding)) {
             SaveMetaData metaData = null;
             try {
                 metaData = JsonConvert.DeserializeObject<SaveMetaData>(File.ReadAllText(file), new JsonSerializerSettings {
@@ -247,7 +249,8 @@ public class SaveController : MonoBehaviour {
         }
         if (editor) {
             saveMetaDatas.RemoveAll(x => x.safefileversion != islandSaveFileVersion);
-        } else {
+        }
+        else {
             saveMetaDatas.RemoveAll(x => x.safefileversion != SaveFileVersion);
         }
         return saveMetaDatas.ToArray();
@@ -269,10 +272,10 @@ public class SaveController : MonoBehaviour {
         loadWorker = null;
         return tempLoadWorker;
     }
-    public static string GetSaveGamesPath(){
-		//TODO FIXME change this to documentspath
-		return System.IO.Path.Combine(ConstantPathHolder.ApplicationDataPath.Replace ("/Assets","") , "saves");
-	}
+    public static string GetSaveGamesPath() {
+        //TODO FIXME change this to documentspath
+        return System.IO.Path.Combine(ConstantPathHolder.ApplicationDataPath.Replace("/Assets", ""), "saves");
+    }
     public void SaveGameState(string name = "autosave") {
         //first pause the world so nothing changes and we can save an 
         bool wasPaused = WC.IsPaused;
@@ -292,11 +295,12 @@ public class SaveController : MonoBehaviour {
         string save = "";
         if (DebugModeSave) {
             foreach (System.Reflection.FieldInfo field in typeof(SaveState).GetFields()) {
-                    string bsd = field.GetValue(savestate) as String;
-                    save += bsd;
-                    save += "##\n";
+                string bsd = field.GetValue(savestate) as String;
+                save += bsd;
+                save += "##\n";
             }
-        } else {
+        }
+        else {
             save = JsonConvert.SerializeObject(savestate, Formatting.Indented,
                     new JsonSerializerSettings {
                         NullValueHandling = NullValueHandling.Ignore,
@@ -356,21 +360,23 @@ public class SaveController : MonoBehaviour {
         }
         DebugModeSave = metaData.isInDebugMode;
         SaveState state = null;
-        string save="";
+        string save = "";
         try {
-           save = Unzip(File.ReadAllBytes(finalSaveStatePath));
-        } catch {
+            save = Unzip(File.ReadAllBytes(finalSaveStatePath));
+        }
+        catch {
             save = File.ReadAllText(finalSaveStatePath);
         }
         if (DebugModeSave) {
             state = new SaveState();
-            string[] lines = save.Split(new string[] { "##"+ Environment.NewLine }, StringSplitOptions.None);
+            string[] lines = save.Split(new string[] { "##" + Environment.NewLine }, StringSplitOptions.None);
             int i = 0;
             foreach (System.Reflection.FieldInfo field in typeof(SaveState).GetFields()) {
                 field.SetValue(state, lines[i]);
                 i++;
             }
-        } else {
+        }
+        else {
             state = JsonConvert.DeserializeObject<SaveState>(save, new JsonSerializerSettings {
                 NullValueHandling = NullValueHandling.Ignore,
                 PreserveReferencesHandling = PreserveReferencesHandling.Objects,
@@ -380,9 +386,9 @@ public class SaveController : MonoBehaviour {
             });
         }
 
-        PrototypController.Instance.LoadFromXML ();
+        PrototypController.Instance.LoadFromXML();
 
-		GDH.LoadGameData(BaseSaveData.Deserialize<GameData>((string)state.gamedata)); // gamedata
+        GDH.LoadGameData(BaseSaveData.Deserialize<GameData>((string)state.gamedata)); // gamedata
         while (MapGenerator.Instance.IsDone == false)
             yield return null;
         loadingPercantage += 0.2f;
@@ -397,17 +403,17 @@ public class SaveController : MonoBehaviour {
 
         IsDone = true;
         yield return null;
-	}
+    }
 
     [Serializable]
-	public class SaveState {
-        
+    public class SaveState {
+
         public string gamedata;
-		public string world;
-		public string pcs;
-		public string ges;
-		public string camera;
-	}
+        public string world;
+        public string pcs;
+        public string ges;
+        public string camera;
+    }
     [Serializable]
     public class SaveMetaData {
         public string saveName;

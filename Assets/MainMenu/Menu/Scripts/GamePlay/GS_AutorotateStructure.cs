@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GS_AutorotateBuilding : ToggleBase {
+public class GS_AutorotateStructure : ToggleBase {
     protected override void OnStart() {
         setting = GameplaySetting.autorotate;
         if (GameplaySettings.Instance.HasSavedGameplayOption(setting))

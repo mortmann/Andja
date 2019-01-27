@@ -1,11 +1,9 @@
 ﻿/// Credit drHogan 
 /// Sourced from - http://www.hammerandravens.com/multi-use-tooltip-system-in-unity3d/
 
-namespace UnityEngine.UI.Extensions
-{
+namespace UnityEngine.UI.Extensions {
     [AddComponentMenu("UI/Extensions/HoverTooltip")]
-    public class HoverTooltip : MonoBehaviour
-    {
+    public class HoverTooltip : MonoBehaviour {
         //manually selectable padding for the background image
         public int horizontalPadding;
         public int verticalPadding;
@@ -57,8 +55,7 @@ namespace UnityEngine.UI.Extensions
         float tooltipRealWidth;
 
         // Use this for initialization
-        void Start()
-        {
+        void Start() {
             //in this line you need to change the string in order to get your Camera //TODO MAYBE DO IT FROM THE INSPECTOR
             GUICamera = GameObject.Find("GUICamera").GetComponent<Camera>();
             GUIMode = this.transform.parent.parent.GetComponent<Canvas>().renderMode;
@@ -78,8 +75,7 @@ namespace UnityEngine.UI.Extensions
 
 
         //single string input tooltip
-        public void SetTooltip(string text)
-        {
+        public void SetTooltip(string text) {
             NewTooltip();
 
             //init tooltip string
@@ -91,21 +87,17 @@ namespace UnityEngine.UI.Extensions
 
 
         //multi string/line input tooltip (each string of the input array is a new line)
-        public void SetTooltip(string[] texts)
-        {
+        public void SetTooltip(string[] texts) {
             NewTooltip();
 
             //build up the tooltip line after line with the input
             string tooltipText = "";
             int index = 0;
-            foreach (string newLine in texts)
-            {
-                if (index == 0)
-                {
+            foreach (string newLine in texts) {
+                if (index == 0) {
                     tooltipText += newLine;
                 }
-                else
-                {
+                else {
                     tooltipText += ("\n" + newLine);
                 }
                 index++;
@@ -121,8 +113,7 @@ namespace UnityEngine.UI.Extensions
 
 
         //temporary call to don't fuck up old code, will be removed
-        public void SetTooltip(string text, bool test)
-        {
+        public void SetTooltip(string text, bool test) {
             NewTooltip();
 
             //init tooltip string
@@ -134,8 +125,7 @@ namespace UnityEngine.UI.Extensions
 
 
         //position function, currently not working correctly due to the use of pivots and not manual offsets, soon to be fixed
-        public void OnScreenSpaceCamera()
-        {
+        public void OnScreenSpaceCamera() {
             //get the dynamic position of the pous in viewport coordinates
             Vector3 newPos = GUICamera.ScreenToViewportPoint(Input.mousePosition);
 
@@ -151,17 +141,14 @@ namespace UnityEngine.UI.Extensions
             val = ((GUICamera.ViewportToScreenPoint(newPos).x) + (tooltipRealWidth * bgImage.pivot.x));
 
             //evaluate if the right edge of the tooltip goes out of screen
-            if (val > (upperRight.x))
-            {
+            if (val > (upperRight.x)) {
                 float distFromRight = upperRight.x - val;
 
-                if (distFromRight > (defaultXOffset * 0.75))
-                {
+                if (distFromRight > (defaultXOffset * 0.75)) {
                     //shorten the temporary offset up to a certain distance from the tooltip
                     xOffSet = distFromRight;
                 }
-                else
-                {
+                else {
                     //if the distance becomes too short flip the tooltip to below the pointer (by offset+twice the height of the tooltip)
                     xOffSet = ((defaultXOffset) - (tooltipRealWidth) * 2f);
                 }
@@ -177,17 +164,14 @@ namespace UnityEngine.UI.Extensions
             val = ((GUICamera.ViewportToScreenPoint(newPos).x) - (tooltipRealWidth * bgImage.pivot.x));
 
             //evaluate if the left edge of the tooltip goes out of screen
-            if (val < (lowerLeft.x))
-            {
+            if (val < (lowerLeft.x)) {
                 float distFromLeft = lowerLeft.x - val;
 
-                if (distFromLeft < (defaultXOffset * 0.75 - tooltipRealWidth))
-                {
+                if (distFromLeft < (defaultXOffset * 0.75 - tooltipRealWidth)) {
                     //shorten the temporary offset up to a certain distance from the tooltip
                     xOffSet = -distFromLeft;
                 }
-                else
-                {
+                else {
                     //if the distance becomes too short flip the tooltip to above the pointer (by twice the height of the tooltip)
                     xOffSet = ((tooltipRealWidth) * 2f);
                 }
@@ -202,18 +186,15 @@ namespace UnityEngine.UI.Extensions
             //obtain the y coordinate of the upper edge of the tooltip
             val = ((GUICamera.ViewportToScreenPoint(newPos).y) - ((bgImage.sizeDelta.y * currentYScaleFactor * (bgImage.pivot.y)) - (tooltipRealHeight)));
             //evaluate if the upper edge of the tooltip goes out of screen
-            if (val > (upperRight.y))
-            {
+            if (val > (upperRight.y)) {
                 float distFromUpper = upperRight.y - val;
                 yOffSet = (bgImage.sizeDelta.y * currentYScaleFactor * (bgImage.pivot.y));
 
-                if (distFromUpper > (defaultYOffset * 0.75))
-                {
+                if (distFromUpper > (defaultYOffset * 0.75)) {
                     //shorten the temporary offset up to a certain distance from the tooltip
                     yOffSet = distFromUpper;
                 }
-                else
-                {
+                else {
                     //if the distance becomes too short flip the tooltip to below the pointer (by offset+twice the height of the tooltip)
                     yOffSet = ((defaultYOffset) - (tooltipRealHeight) * 2f);
                 }
@@ -228,18 +209,15 @@ namespace UnityEngine.UI.Extensions
             val = ((GUICamera.ViewportToScreenPoint(newPos).y) - ((bgImage.sizeDelta.y * currentYScaleFactor * (bgImage.pivot.y))));
 
             //evaluate if the upper edge of the tooltip goes out of screen
-            if (val < (lowerLeft.y))
-            {
+            if (val < (lowerLeft.y)) {
                 float distFromLower = lowerLeft.y - val;
                 yOffSet = (bgImage.sizeDelta.y * currentYScaleFactor * (bgImage.pivot.y));
 
-                if (distFromLower < (defaultYOffset * 0.75 - tooltipRealHeight))
-                {
+                if (distFromLower < (defaultYOffset * 0.75 - tooltipRealHeight)) {
                     //shorten the temporary offset up to a certain distance from the tooltip
                     yOffSet = distFromLower;
                 }
-                else
-                {
+                else {
                     //if the distance becomes too short flip the tooltip to above the pointer (by twice the height of the tooltip)
                     yOffSet = ((tooltipRealHeight) * 2f);
                 }
@@ -255,12 +233,9 @@ namespace UnityEngine.UI.Extensions
         }
 
         //call to hide tooltip when hovering out from the object
-        public void HideTooltip()
-        {
-            if (GUIMode == RenderMode.ScreenSpaceCamera)
-            {
-                if (this != null)
-                {
+        public void HideTooltip() {
+            if (GUIMode == RenderMode.ScreenSpaceCamera) {
+                if (this != null) {
                     this.transform.parent.gameObject.SetActive(false);
                     inside = false;
                     HideTooltipVisibility();
@@ -269,23 +244,18 @@ namespace UnityEngine.UI.Extensions
         }
 
         // Update is called once per frame
-        void Update()
-        {
+        void Update() {
             LayoutInit();
-            if (inside)
-            {
-                if (GUIMode == RenderMode.ScreenSpaceCamera)
-                {
+            if (inside) {
+                if (GUIMode == RenderMode.ScreenSpaceCamera) {
                     OnScreenSpaceCamera();
                 }
             }
         }
 
         //this function is used in order to setup the size of the tooltip by cheating on the HorizontalLayoutBehavior. The resize is done in the first update.
-        void LayoutInit()
-        {
-            if (firstUpdate)
-            {
+        void LayoutInit() {
+            if (firstUpdate) {
                 firstUpdate = false;
 
                 bgImage.sizeDelta = new Vector2(hlG.preferredWidth + horizontalPadding, hlG.preferredHeight + verticalPadding);
@@ -301,8 +271,7 @@ namespace UnityEngine.UI.Extensions
         }
 
         //init basic variables on a new tooltip set
-        void NewTooltip()
-        {
+        void NewTooltip() {
             firstUpdate = true;
 
             lowerLeft = GUICamera.ViewportToScreenPoint(new Vector3(0.0f, 0.0f, 0.0f));
@@ -314,16 +283,14 @@ namespace UnityEngine.UI.Extensions
         }
 
         //used to visualize the tooltip one update call after it has been built (to avoid flickers)
-        public void ActivateTooltipVisibility()
-        {
+        public void ActivateTooltipVisibility() {
             Color textColor = thisText.color;
             thisText.color = new Color(textColor.r, textColor.g, textColor.b, 1f);
             bgImageSource.color = new Color(bgImageSource.color.r, bgImageSource.color.g, bgImageSource.color.b, 0.8f);
         }
 
         //used to hide the tooltip so that it can be made visible one update call after it has been built (to avoid flickers)
-        public void HideTooltipVisibility()
-        {
+        public void HideTooltipVisibility() {
             Color textColor = thisText.color;
             thisText.color = new Color(textColor.r, textColor.g, textColor.b, 0f);
             bgImageSource.color = new Color(bgImageSource.color.r, bgImageSource.color.g, bgImageSource.color.b, 0f);

@@ -3,33 +3,28 @@ using UnityEngine.Events;
 using UnityEngine.EventSystems;
 using UnityEngine.Serialization;
 
-namespace UnityEngine.UI
-{
+namespace UnityEngine.UI {
     /// <summary>
     /// Simple toggle -- something that has an 'on' and 'off' states: checkbox, toggle button, radio button, etc.
     /// </summary>
     [AddComponentMenu("UI/Extensions/Extensions Toggle", 31)]
     [RequireComponent(typeof(RectTransform))]
-    public class ExtensionsToggle : Selectable, IPointerClickHandler, ISubmitHandler, ICanvasElement
-    {
+    public class ExtensionsToggle : Selectable, IPointerClickHandler, ISubmitHandler, ICanvasElement {
         /// <summary>
         /// Variable to identify this script, change the datatype if needed to fit your use case 
         /// </summary>
         public string UniqueID;
 
-        public enum ToggleTransition
-        {
+        public enum ToggleTransition {
             None,
             Fade
         }
 
         [Serializable]
-        public class ToggleEvent : UnityEvent<bool>
-        { }
+        public class ToggleEvent : UnityEvent<bool> { }
 
         [Serializable]
-        public class ToggleEventObject : UnityEvent<ExtensionsToggle>
-        { }
+        public class ToggleEventObject : UnityEvent<ExtensionsToggle> { }
 
         /// <summary>
         /// Transition type.
@@ -45,11 +40,9 @@ namespace UnityEngine.UI
         [SerializeField]
         private ExtensionsToggleGroup m_Group;
 
-        public ExtensionsToggleGroup Group
-        {
+        public ExtensionsToggleGroup Group {
             get { return m_Group; }
-            set
-            {
+            set {
                 m_Group = value;
 #if UNITY_EDITOR
                 if (Application.isPlaying)
@@ -80,12 +73,10 @@ namespace UnityEngine.UI
         [SerializeField]
         private bool m_IsOn;
 
-        protected ExtensionsToggle()
-        { }
+        protected ExtensionsToggle() { }
 
 #if UNITY_EDITOR
-        protected override void OnValidate()
-        {
+        protected override void OnValidate() {
             base.OnValidate();
             Set(m_IsOn, false);
             PlayEffect(toggleTransition == ToggleTransition.None);
@@ -97,45 +88,36 @@ namespace UnityEngine.UI
 
 #endif // if UNITY_EDITOR
 
-        public virtual void Rebuild(CanvasUpdate executing)
-        {
+        public virtual void Rebuild(CanvasUpdate executing) {
 #if UNITY_EDITOR
-            if (executing == CanvasUpdate.Prelayout)
-            {
+            if (executing == CanvasUpdate.Prelayout) {
                 onValueChanged.Invoke(m_IsOn);
                 onToggleChanged.Invoke(this);
             }
 #endif
         }
 
-        public virtual void LayoutComplete()
-        { }
+        public virtual void LayoutComplete() { }
 
-        public virtual void GraphicUpdateComplete()
-        { }
+        public virtual void GraphicUpdateComplete() { }
 
-        protected override void OnEnable()
-        {
+        protected override void OnEnable() {
             base.OnEnable();
             SetToggleGroup(m_Group, false);
             PlayEffect(true);
         }
 
-        protected override void OnDisable()
-        {
+        protected override void OnDisable() {
             SetToggleGroup(null, false);
             base.OnDisable();
         }
 
-        protected override void OnDidApplyAnimationProperties()
-        {
+        protected override void OnDidApplyAnimationProperties() {
             // Check if isOn has been changed by the animation.
             // Unfortunately there is no way to check if we don't have a graphic.
-            if (graphic != null)
-            {
+            if (graphic != null) {
                 bool oldValue = !Mathf.Approximately(graphic.canvasRenderer.GetColor().a, 0);
-                if (m_IsOn != oldValue)
-                {
+                if (m_IsOn != oldValue) {
                     m_IsOn = oldValue;
                     Set(!oldValue);
                 }
@@ -144,8 +126,7 @@ namespace UnityEngine.UI
             base.OnDidApplyAnimationProperties();
         }
 
-        private void SetToggleGroup(ExtensionsToggleGroup newGroup, bool setMemberValue)
-        {
+        private void SetToggleGroup(ExtensionsToggleGroup newGroup, bool setMemberValue) {
             ExtensionsToggleGroup oldGroup = m_Group;
 
             // Sometimes IsActive returns false in OnDisable so don't check for it.
@@ -171,31 +152,25 @@ namespace UnityEngine.UI
         /// <summary>
         /// Whether the toggle is currently active.
         /// </summary>
-        public bool IsOn
-        {
+        public bool IsOn {
             get { return m_IsOn; }
-            set
-            {
+            set {
                 Set(value);
             }
         }
 
-        void Set(bool value)
-        {
+        void Set(bool value) {
             Set(value, true);
         }
 
-        void Set(bool value, bool sendCallback)
-        {
+        void Set(bool value, bool sendCallback) {
             if (m_IsOn == value)
                 return;
 
             // if we are in a group and set to true, do group logic
             m_IsOn = value;
-            if (m_Group != null && IsActive())
-            {
-                if (m_IsOn || (!m_Group.AnyTogglesOn() && !m_Group.AllowSwitchOff))
-                {
+            if (m_Group != null && IsActive()) {
+                if (m_IsOn || (!m_Group.AnyTogglesOn() && !m_Group.AllowSwitchOff)) {
                     m_IsOn = true;
                     m_Group.NotifyToggleOn(this);
                 }
@@ -206,8 +181,7 @@ namespace UnityEngine.UI
             // Controls like Dropdown rely on this.
             // It's up to the user to ignore a selection being set to the same value it already was, if desired.
             PlayEffect(toggleTransition == ToggleTransition.None);
-            if (sendCallback)
-            {
+            if (sendCallback) {
                 onValueChanged.Invoke(m_IsOn);
                 onToggleChanged.Invoke(this);
             }
@@ -216,8 +190,7 @@ namespace UnityEngine.UI
         /// <summary>
         /// Play the appropriate effect.
         /// </summary>
-        private void PlayEffect(bool instant)
-        {
+        private void PlayEffect(bool instant) {
             if (graphic == null)
                 return;
 
@@ -232,13 +205,11 @@ namespace UnityEngine.UI
         /// <summary>
         /// Assume the correct visual state.
         /// </summary>
-        protected override void Start()
-        {
+        protected override void Start() {
             PlayEffect(true);
         }
 
-        private void InternalToggle()
-        {
+        private void InternalToggle() {
             if (!IsActive() || !IsInteractable())
                 return;
 
@@ -248,16 +219,14 @@ namespace UnityEngine.UI
         /// <summary>
         /// React to clicks.
         /// </summary>
-        public virtual void OnPointerClick(PointerEventData eventData)
-        {
+        public virtual void OnPointerClick(PointerEventData eventData) {
             if (eventData.button != PointerEventData.InputButton.Left)
                 return;
 
             InternalToggle();
         }
 
-        public virtual void OnSubmit(BaseEventData eventData)
-        {
+        public virtual void OnSubmit(BaseEventData eventData) {
             InternalToggle();
         }
     }

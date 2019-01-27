@@ -9,12 +9,10 @@ and drag'n'drop the RectTransform of the options "container" that we'll be scrol
 
 using UnityEngine.EventSystems;
 
-namespace UnityEngine.UI.Extensions
-{
+namespace UnityEngine.UI.Extensions {
     [AddComponentMenu("UI/Extensions/UI ScrollTo Selection XY")]
     [RequireComponent(typeof(ScrollRect))]
-    public class UIScrollToSelectionXY : MonoBehaviour
-    {
+    public class UIScrollToSelectionXY : MonoBehaviour {
 
         #region Variables
 
@@ -35,28 +33,24 @@ namespace UnityEngine.UI.Extensions
         #endregion
 
         // Use this for initialization
-        private void Start()
-        {
+        private void Start() {
             targetScrollRect = GetComponent<ScrollRect>();
             scrollWindow = targetScrollRect.GetComponent<RectTransform>();
         }
 
         // Update is called once per frame
-        private void Update()
-        {
+        private void Update() {
             ScrollRectToLevelSelection();
         }
 
-        private void ScrollRectToLevelSelection()
-        {
-			// FIX: if you dont do that here events can have null value
-			var events = EventSystem.current;
+        private void ScrollRectToLevelSelection() {
+            // FIX: if you dont do that here events can have null value
+            var events = EventSystem.current;
 
             // check main references
             bool referencesAreIncorrect =
                 (targetScrollRect == null || layoutListGroup == null || scrollWindow == null);
-            if (referencesAreIncorrect == true)
-            {
+            if (referencesAreIncorrect == true) {
                 return;
             }
 
@@ -65,62 +59,58 @@ namespace UnityEngine.UI.Extensions
                 events.currentSelectedGameObject.GetComponent<RectTransform>() :
                 null;
 
-            if (selection != targetScrollObject)
-			{
-				scrollToSelection = true;
-			}
+            if (selection != targetScrollObject) {
+                scrollToSelection = true;
+            }
 
             // check if scrolling is possible
             bool isScrollDirectionUnknown = (selection == null || scrollToSelection == false);
 
-            if (isScrollDirectionUnknown == true || selection.transform.parent != layoutListGroup.transform)
-			{
-				return;
-			}
+            if (isScrollDirectionUnknown == true || selection.transform.parent != layoutListGroup.transform) {
+                return;
+            }
 
-			bool finishedX = false, finishedY = false;
-            
-			if (targetScrollRect.vertical)
-			{
-				// move the current scroll rect to correct position
-				float selectionPos = -selection.anchoredPosition.y;
+            bool finishedX = false, finishedY = false;
 
-				//float elementHeight = layoutListGroup.sizeDelta.y / layoutListGroup.transform.childCount;
-				//float maskHeight = currentCanvas.sizeDelta.y + scrollWindow.sizeDelta.y;
-				float listPixelAnchor = layoutListGroup.anchoredPosition.y;
+            if (targetScrollRect.vertical) {
+                // move the current scroll rect to correct position
+                float selectionPos = -selection.anchoredPosition.y;
 
-				// get the element offset value depending on the cursor move direction
-				float offlimitsValue = 0;
+                //float elementHeight = layoutListGroup.sizeDelta.y / layoutListGroup.transform.childCount;
+                //float maskHeight = currentCanvas.sizeDelta.y + scrollWindow.sizeDelta.y;
+                float listPixelAnchor = layoutListGroup.anchoredPosition.y;
 
-				offlimitsValue = listPixelAnchor - selectionPos;
-				// move the target scroll rect
-				targetScrollRect.verticalNormalizedPosition += (offlimitsValue / layoutListGroup.sizeDelta.y) * Time.deltaTime * scrollSpeed;
+                // get the element offset value depending on the cursor move direction
+                float offlimitsValue = 0;
 
-				finishedY = Mathf.Abs(offlimitsValue) < 2f;
-			}
+                offlimitsValue = listPixelAnchor - selectionPos;
+                // move the target scroll rect
+                targetScrollRect.verticalNormalizedPosition += (offlimitsValue / layoutListGroup.sizeDelta.y) * Time.deltaTime * scrollSpeed;
 
-			if (targetScrollRect.horizontal)
-			{
-				// move the current scroll rect to correct position
-				float selectionPos = -selection.anchoredPosition.x;
+                finishedY = Mathf.Abs(offlimitsValue) < 2f;
+            }
 
-				//float elementWidth = layoutListGroup.sizeDelta.x / layoutListGroup.transform.childCount;
-				//float maskWidth = currentCanvas.sizeDelta.y + scrollWindow.sizeDelta.y;
-				float listPixelAnchor = layoutListGroup.anchoredPosition.x;
-				
-				// get the element offset value depending on the cursor move direction
-				float offlimitsValue = 0;
-				
-				offlimitsValue = listPixelAnchor - selectionPos;
-				// move the target scroll rect
-				targetScrollRect.horizontalNormalizedPosition += (offlimitsValue / layoutListGroup.sizeDelta.x) * Time.deltaTime * scrollSpeed;
+            if (targetScrollRect.horizontal) {
+                // move the current scroll rect to correct position
+                float selectionPos = -selection.anchoredPosition.x;
 
-				finishedX = Mathf.Abs(offlimitsValue) < 2f;
-			}
-			// check if we reached our destination
-			if (finishedX && finishedY) {
-				scrollToSelection = false;
-			}
+                //float elementWidth = layoutListGroup.sizeDelta.x / layoutListGroup.transform.childCount;
+                //float maskWidth = currentCanvas.sizeDelta.y + scrollWindow.sizeDelta.y;
+                float listPixelAnchor = layoutListGroup.anchoredPosition.x;
+
+                // get the element offset value depending on the cursor move direction
+                float offlimitsValue = 0;
+
+                offlimitsValue = listPixelAnchor - selectionPos;
+                // move the target scroll rect
+                targetScrollRect.horizontalNormalizedPosition += (offlimitsValue / layoutListGroup.sizeDelta.x) * Time.deltaTime * scrollSpeed;
+
+                finishedX = Mathf.Abs(offlimitsValue) < 2f;
+            }
+            // check if we reached our destination
+            if (finishedX && finishedY) {
+                scrollToSelection = false;
+            }
             // save last object we were "heading to" to prevent blocking
             targetScrollObject = selection;
         }

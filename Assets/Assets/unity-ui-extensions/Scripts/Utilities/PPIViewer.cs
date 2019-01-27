@@ -4,23 +4,18 @@
 /*USAGE:
 Simply place the script on A Text control in the scene to display the current PPI / DPI of the sceen*/
 
-namespace UnityEngine.UI.Extensions
-{
+namespace UnityEngine.UI.Extensions {
     [RequireComponent(typeof(Text))]
     [AddComponentMenu("UI/Extensions/PPIViewer")]
-    public class PPIViewer : MonoBehaviour
-    {
+    public class PPIViewer : MonoBehaviour {
         private Text label;
 
-        void Awake()
-        {
+        void Awake() {
             label = GetComponent<Text>();
         }
 
-        void Start()
-        {
-            if (label != null)
-            {
+        void Start() {
+            if (label != null) {
                 label.text = "PPI: " + Screen.dpi.ToString();
             }
         }

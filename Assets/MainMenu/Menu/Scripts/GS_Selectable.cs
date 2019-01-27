@@ -7,8 +7,8 @@ public class GS_Selectable : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
 
     // The colors for the states for this button.
     public Color normalColor;
-    Color highlightColorInitial = new Color32(120,120,120,120);
-    Color highlightColorFadeTo = new Color32(80,80,80,80);
+    Color highlightColorInitial = new Color32(120, 120, 120, 120);
+    Color highlightColorFadeTo = new Color32(80, 80, 80, 80);
     public float fadeSpeed = 0.75f;
     float t;
     bool fadeDown = true;
@@ -39,7 +39,7 @@ public class GS_Selectable : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
     void Update() {
         // If we're currently hovering over the button and we moved our mouse
         // switch the selection to this button.
-		if (MenuController.instance.currentMouseOverGameObject == gameObject && Input.mousePosition != lastPointerPositon) {
+        if (MenuController.instance.currentMouseOverGameObject == gameObject && Input.mousePosition != lastPointerPositon) {
             EventSystem.current.SetSelectedGameObject(gameObject);
         }
 
@@ -72,11 +72,11 @@ public class GS_Selectable : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
      * Handle hovering over the button with the mouse.
      */
     public void OnPointerEnter(PointerEventData eventData) {
-		MenuController.instance.currentMouseOverGameObject = gameObject;
+        MenuController.instance.currentMouseOverGameObject = gameObject;
         EventSystem.current.SetSelectedGameObject(gameObject);
     }
     public void OnPointerExit(PointerEventData eventData) {
-		MenuController.instance.currentMouseOverGameObject = null;
+        MenuController.instance.currentMouseOverGameObject = null;
     }
 
     /**
@@ -97,7 +97,7 @@ public class GS_Selectable : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
 
         // Set the selected game object in the event system to this button so
         // it works properly if we switch to the keyboard.
-		MenuController.instance.currentButton = button;
+        MenuController.instance.currentButton = button;
         MenuAudioManager.instance.PlayClickSound();
     }
 
@@ -110,7 +110,7 @@ public class GS_Selectable : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
             return;
         }
 
-		MenuController.instance.currentButton = button;
+        MenuController.instance.currentButton = button;
         MenuAudioManager.instance.PlayClickSound();
     }
 
@@ -118,6 +118,6 @@ public class GS_Selectable : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
      * Play the 'tick' sound when we move a slider.
      */
     public void OnSliderValueChange() {
-//        MenuAudioManager.instance.PlaySliderSound();
+        //        MenuAudioManager.instance.PlaySliderSound();
     }
 }

@@ -10,7 +10,7 @@ public class PopulationLevelPrototypData : LanguageVariables {
     public int Level; // cant be negative!
 }
 [JsonObject(MemberSerialization.OptIn)]
-public class PopulationLevel  {
+public class PopulationLevel {
     #region Serialize
     [JsonPropertyAttribute] public int populationCount = 0;
     [JsonPropertyAttribute] public bool criticalMissingNeed = false;
@@ -61,7 +61,7 @@ public class PopulationLevel  {
         float fullfilled = 0;
         bool missingNeed = false;
         float summedImportance = 0;
-        foreach(NeedGroup group in AllNeedGroupList) {
+        foreach (NeedGroup group in AllNeedGroupList) {
             group.CalculateFullfillment(city, this);
             fullfilled += group.LastFullfillmentPercentage;
             summedImportance += group.ImportanceLevel;
@@ -114,7 +114,7 @@ public class PopulationLevel  {
         Player player = PlayerController.Instance.GetPlayer(city.playerNumber);
         player.RegisterNeedUnlock(OnUnlockedNeed);
         foreach (NeedGroup ng in Data.needGroupList) {
-            NeedGroup inList = NeedGroupList.Find (x => x.ID == ng.ID);
+            NeedGroup inList = NeedGroupList.Find(x => x.ID == ng.ID);
             if (inList != null) {
                 inList.UpdateNeeds(city.GetOwner());
                 continue;
@@ -131,8 +131,8 @@ public class PopulationLevel  {
         if (need.StartLevel != Level)
             return;
         NeedGroup ng = NeedGroupList.Find(x => x.ID == need.Group.ID);
-        if(ng == null) {
-            Debug.LogError("UnlockedNeed " + need + " doesnt have the right group inside this level" + Level );
+        if (ng == null) {
+            Debug.LogError("UnlockedNeed " + need + " doesnt have the right group inside this level" + Level);
             return;
         }
         Need clone = need.Clone();

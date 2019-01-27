@@ -6,7 +6,7 @@ using UnityEngine.SceneManagement;
 
 public class MenuController : MonoBehaviour {
     public static MenuController instance;
-	public bool saved;
+    public bool saved;
     public GameObject menu;
     public GameObject[] panels;
 
@@ -27,16 +27,16 @@ public class MenuController : MonoBehaviour {
     [HideInInspector]
     public bool vignetteEnabled;
 
-	static bool mainMenuOpen = false;
+    static bool mainMenuOpen = false;
     bool panelOpen = false;
-	void OnEnable(){
-		foreach(Transform t in transform){
-			if(t != menu.transform){
-				t.gameObject.SetActive (false);
-			} 
-		}
-		menu.SetActive (true);
-	}
+    void OnEnable() {
+        foreach (Transform t in transform) {
+            if (t != menu.transform) {
+                t.gameObject.SetActive(false);
+            }
+        }
+        menu.SetActive(true);
+    }
     void Awake() {
         instance = this;
     }
@@ -70,10 +70,11 @@ public class MenuController : MonoBehaviour {
 
     public void ShowPanel(int id) {
         panels[id].SetActive(true);
-		if(panels[id].GetComponent<GS_Panel>()==null){
-			Debug.LogWarning ("first select is null");
-		} else
-        panels[id].GetComponent<GS_Panel>().SelectFirstElement();
+        if (panels[id].GetComponent<GS_Panel>() == null) {
+            Debug.LogWarning("first select is null");
+        }
+        else
+            panels[id].GetComponent<GS_Panel>().SelectFirstElement();
         panelOpen = true;
         HideMenu();
     }
@@ -86,25 +87,25 @@ public class MenuController : MonoBehaviour {
         menu.SetActive(false);
         mainMenuOpen = false;
     }
-	public void Saved() {
-		saved = true;
-	}
-	public void OnDisabled(){
-		saved = false;
-	}
-	public bool hasSaved() {
-		return saved;
-	}
+    public void Saved() {
+        saved = true;
+    }
+    public void OnDisabled() {
+        saved = false;
+    }
+    public bool hasSaved() {
+        return saved;
+    }
     public void Quit() {
-		if(saved==false){
-			ShowWarning ();
-			scene = "Close";
-			return;
-		}
+        if (saved == false) {
+            ShowWarning();
+            scene = "Close";
+            return;
+        }
         //If we are running in a standalone build of the game
 #if UNITY_STANDALONE
-		//Quit the application
-		Application.Quit();
+        //Quit the application
+        Application.Quit();
 #endif
 
         //If we are running in the editor
@@ -114,41 +115,41 @@ public class MenuController : MonoBehaviour {
 #endif
     }
 
-	public GameObject dialog;
-	string scene;
+    public GameObject dialog;
+    string scene;
 
-	public void ChangeToGameStateLoadScreen(){
-		if(saved==false){
-			ShowWarning ();
-			scene = "GameStateLoadingScreen";
-			return;
-		}
-		SceneManager.LoadScene ("GameStateLoadingScreen"); 
-	}
-	public void ChangeToEditorLoadScreen(){
-		SceneManager.LoadScene ("EditorLoadingScreen"); 
-	}
-	public void ChangeToGameStateScreen(){
-		SceneManager.LoadScene ("GameState"); 
-	}
-	public void ChangeToMainMenuScreen(){
-		if(saved==false){
-			ShowWarning ();
-			scene = "MainMenu";
-			return;
-		}
-		SceneManager.LoadScene ("MainMenu"); 
-	}
-	public void ShowWarning (){
-		dialog.SetActive (true);
-	}
-	public void DialogYesOption () {
-		if(scene=="Close"){
-			Quit ();
-			return; // should not be needed
-		}
-		SceneManager.LoadScene (scene); 
-	}
+    public void ChangeToGameStateLoadScreen() {
+        if (saved == false) {
+            ShowWarning();
+            scene = "GameStateLoadingScreen";
+            return;
+        }
+        SceneManager.LoadScene("GameStateLoadingScreen");
+    }
+    public void ChangeToEditorLoadScreen() {
+        SceneManager.LoadScene("EditorLoadingScreen");
+    }
+    public void ChangeToGameStateScreen() {
+        SceneManager.LoadScene("GameState");
+    }
+    public void ChangeToMainMenuScreen() {
+        if (saved == false) {
+            ShowWarning();
+            scene = "MainMenu";
+            return;
+        }
+        SceneManager.LoadScene("MainMenu");
+    }
+    public void ShowWarning() {
+        dialog.SetActive(true);
+    }
+    public void DialogYesOption() {
+        if (scene == "Close") {
+            Quit();
+            return; // should not be needed
+        }
+        SceneManager.LoadScene(scene);
+    }
 
 
 }

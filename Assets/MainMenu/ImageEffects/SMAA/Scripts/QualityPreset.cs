@@ -21,38 +21,36 @@
  *    distribution.
  */
 
-namespace Smaa
-{
-	/// <summary>
-	/// A bunch of quality presets. Use <see cref="QualityPreset.Custom"/> to fine tune every setting.
-	/// </summary>
-	public enum QualityPreset
-	{
-		/// <summary>
-		/// 60% of the quality.
-		/// </summary>
-		Low = 0,
+namespace Smaa {
+    /// <summary>
+    /// A bunch of quality presets. Use <see cref="QualityPreset.Custom"/> to fine tune every setting.
+    /// </summary>
+    public enum QualityPreset {
+        /// <summary>
+        /// 60% of the quality.
+        /// </summary>
+        Low = 0,
 
-		/// <summary>
-		/// 80% of the quality.
-		/// </summary>
-		Medium = 1,
+        /// <summary>
+        /// 80% of the quality.
+        /// </summary>
+        Medium = 1,
 
-		/// <summary>
-		/// 90% of the quality.
-		/// </summary>
-		High = 2,
+        /// <summary>
+        /// 90% of the quality.
+        /// </summary>
+        High = 2,
 
-		/// <summary>
-		/// 99% of the quality (generally overkill).
-		/// </summary>
-		Ultra = 3,
+        /// <summary>
+        /// 99% of the quality (generally overkill).
+        /// </summary>
+        Ultra = 3,
 
-		/// <summary>
-		/// Custom quality settings.
-		/// </summary>
-		/// <seealso cref="Preset"/>
-		/// <seealso cref="SMAA.CustomPreset"/>
-		Custom
-	}
+        /// <summary>
+        /// Custom quality settings.
+        /// </summary>
+        /// <seealso cref="Preset"/>
+        /// <seealso cref="SMAA.CustomPreset"/>
+        Custom
+    }
 }

@@ -1,13 +1,11 @@
 ﻿/// Credit Titinious (https://github.com/Titinious)
 /// Sourced from - https://github.com/Titinious/CurlyUI
 
-namespace UnityEngine.UI.Extensions
-{
+namespace UnityEngine.UI.Extensions {
     /// <summary>
     /// Assume to be a cubic bezier curve at the moment.
     /// </summary>
-    public class CUIBezierCurve : MonoBehaviour
-    {
+    public class CUIBezierCurve : MonoBehaviour {
         public readonly static int CubicBezierCurvePtNum = 4;
 
         #region Descriptions
@@ -15,10 +13,8 @@ namespace UnityEngine.UI.Extensions
         [SerializeField]
         protected Vector3[] controlPoints;
 
-        public Vector3[] ControlPoints
-        {
-            get
-            {
+        public Vector3[] ControlPoints {
+            get {
                 return controlPoints;
             }
 
@@ -28,10 +24,8 @@ namespace UnityEngine.UI.Extensions
         /// <summary>
         /// Reserve for editor only
         /// </summary>
-        public Vector3[] EDITOR_ControlPoints
-        {
-            set
-            {
+        public Vector3[] EDITOR_ControlPoints {
+            set {
                 controlPoints = value;
             }
         }
@@ -42,14 +36,12 @@ namespace UnityEngine.UI.Extensions
         #region Events
 
 #if UNITY_EDITOR
-        protected void OnValidate()
-        {
+        protected void OnValidate() {
             Refresh();
         }
 #endif
 
-        public void Refresh()
-        {
+        public void Refresh() {
 
             if (OnRefresh != null)
                 OnRefresh();
@@ -63,8 +55,7 @@ namespace UnityEngine.UI.Extensions
         /// </summary>
         /// <param name="_time"></param>
         /// <returns>sample returned by said time</returns>
-        public Vector3 GetPoint(float _time)
-        {
+        public Vector3 GetPoint(float _time) {
             float oneMinusTime = 1 - _time;
 
             return oneMinusTime * oneMinusTime * oneMinusTime * controlPoints[0] +
@@ -73,8 +64,7 @@ namespace UnityEngine.UI.Extensions
                 _time * _time * _time * controlPoints[3];
         }
 
-        public Vector3 GetTangent(float _time)
-        {
+        public Vector3 GetTangent(float _time) {
             float oneMinusTime = 1 - _time;
 
             return 3 * oneMinusTime * oneMinusTime * (controlPoints[1] - controlPoints[0]) +
@@ -86,10 +76,8 @@ namespace UnityEngine.UI.Extensions
 
         #region Configurations
 
-        public void ReportSet()
-        {
-            if (controlPoints == null)
-            {
+        public void ReportSet() {
+            if (controlPoints == null) {
                 controlPoints = new Vector3[CUIBezierCurve.CubicBezierCurvePtNum];
                 controlPoints[0] = new Vector3(0, 0, 0);
                 controlPoints[1] = new Vector3(0, 1, 0);

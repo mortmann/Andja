@@ -5,13 +5,13 @@ using UnityEngine;
 public class MasterController : MonoBehaviour {
     public bool isLoadingScreen;
     static GameObject loadMaster;
-	// Use this for initialization
-	void OnEnable() {
+    // Use this for initialization
+    void OnEnable() {
         //Get the FIRST active master -> when loaded to gamestate
         //this will be the loadstate one
-        if(loadMaster != null && loadMaster != this && isLoadingScreen == false) {
+        if (loadMaster != null && loadMaster != this && isLoadingScreen == false) {
             //to make it look better in hierachy we will resume the parent state of controller
-            for(int i = loadMaster.transform.childCount-1; i>=0; i-- ) {
+            for (int i = loadMaster.transform.childCount - 1; i >= 0; i--) {
                 Transform child = loadMaster.transform.GetChild(i);
                 //if we find this child already
                 //kill it because the new one is better
@@ -24,11 +24,12 @@ public class MasterController : MonoBehaviour {
 
             //TODO: find a better fix for this:
             CameraController.Instance.Setup();
-        } else if(isLoadingScreen) {
+        }
+        else if (isLoadingScreen) {
             loadMaster = gameObject;
             //if there is no other master yet -- we are loadstate
             DontDestroyOnLoad(this);
         }
     }
-	
+
 }

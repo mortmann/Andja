@@ -7,7 +7,7 @@ using UnityEngine.EventSystems;
 public class TradeRouteElement : MonoBehaviour {
     public InputField NameText;
     public Button DeleteButton;
-    Action<TradeRoute> onSelect; 
+    Action<TradeRoute> onSelect;
     Action<TradeRoute> onDelete;
     TradeRoute tradeRoute;
     void Start() {

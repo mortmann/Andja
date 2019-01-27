@@ -17,14 +17,15 @@ public class SaveDetails : MonoBehaviour {
         creationDate.text = saveFile.saveTime.ToString("dd.MM.yyyy");
         size.text = saveFile.size + "";
         if (EditorController.IsEditor) {
-            climate.text = saveFile.climate +"";
-        } else {
+            climate.text = saveFile.climate + "";
+        }
+        else {
             climate.text = saveFile.saveFileType + "";
         }
     }
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
+
+    // Update is called once per frame
+    void Update() {
+
+    }
 }

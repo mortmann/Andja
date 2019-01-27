@@ -4,7 +4,7 @@ using System;
 using Newtonsoft.Json;
 using System.Linq;
 
-public enum Climate {Cold,Middle,Warm};
+public enum Climate { Cold, Middle, Warm };
 
 [JsonObject(MemberSerialization.OptIn)]
 public class Island : IGEventable {
@@ -22,12 +22,12 @@ public class Island : IGEventable {
     public Path_TileGraph TileGraphIslandTiles { get; protected set; }
     public int Width {
         get {
-            return Mathf.CeilToInt (max.x - min.x);
+            return Mathf.CeilToInt(max.x - min.x);
         }
     }
     public int Height {
         get {
-            return Mathf.CeilToInt (max.y - min.y);
+            return Mathf.CeilToInt(max.y - min.y);
         }
     }
     public City Wilderness {
@@ -45,22 +45,22 @@ public class Island : IGEventable {
     public List<Tile> myTiles;
     public Vector2 Placement;
     public Vector2 min;
-	public Vector2 max;
+    public Vector2 max;
     private City _wilderness;
     public bool allReadyHighlighted;
-	#endregion
+    #endregion
     /// <summary>
     /// Initializes a new instance of the <see cref="Island"/> class.
-	/// DO not change anything in here unless(!!) it should not happen on load also
-	/// IF both times should happen then put it into Setup!
+    /// DO not change anything in here unless(!!) it should not happen on load also
+    /// IF both times should happen then put it into Setup!
     /// </summary>
     /// <param name="startTile">Start tile.</param>
     /// <param name="climate">Climate.</param>
-	public Island(Tile startTile, Climate climate = Climate.Middle) {
-		StartTile = startTile; // if it gets loaded the StartTile will already be set
-		myRessources = new Dictionary<string, int> ();
-		myCities = new List<City>();
-		
+    public Island(Tile startTile, Climate climate = Climate.Middle) {
+        StartTile = startTile; // if it gets loaded the StartTile will already be set
+        myRessources = new Dictionary<string, int>();
+        myCities = new List<City>();
+
         this.myClimate = climate;
         //TODO REMOVE THIS
         //LOAD this from map file?
@@ -82,9 +82,9 @@ public class Island : IGEventable {
         //LOAD this from map file?
         myRessources["stone"] = int.MaxValue;
     }
-    public Island(){
-	}
-	private void Setup(){
+    public Island() {
+    }
+    private void Setup() {
         allReadyHighlighted = false;
         World.Current.RegisterOnEvent(OnEventCreate, OnEventEnded);
         //city that contains all the structures like trees that doesnt belong to any player
@@ -96,20 +96,20 @@ public class Island : IGEventable {
         }
         myCities.Add(new City(myTiles, this));
         Wilderness = myCities[0];
-	}
+    }
 
-	public IEnumerable<Structure> Load(){
-		Setup ();
-		List<Structure> structs = new List<Structure>();
-		foreach(City c in myCities){
-			if(c.playerNumber == -1){
-				Wilderness = c;
-			}
-			c.island = this;
-			structs.AddRange(c.Load ());
-		}
-		return structs;
-	}
+    public IEnumerable<Structure> Load() {
+        Setup();
+        List<Structure> structs = new List<Structure>();
+        foreach (City c in myCities) {
+            if (c.playerNumber == -1) {
+                Wilderness = c;
+            }
+            c.island = this;
+            structs.AddRange(c.Load());
+        }
+        return structs;
+    }
 
     internal void SetTiles(Tile[] tiles) {
         this.myTiles = new List<Tile>(tiles);
@@ -131,7 +131,7 @@ public class Island : IGEventable {
                 max.y = t.Y;
             }
         }
-        if(Wilderness!=null)
+        if (Wilderness != null)
             Wilderness.AddTiles(myTiles);
         TileGraphIslandTiles = new Path_TileGraph(this);
     }
@@ -150,7 +150,7 @@ public class Island : IGEventable {
             // Water is the border of every island :>
             return;
         }
-        if(tile.MyIsland == this) {
+        if (tile.MyIsland == this) {
             // already in there
             return;
         }
@@ -159,20 +159,20 @@ public class Island : IGEventable {
         Queue<Tile> tilesToCheck = new Queue<Tile>();
         tilesToCheck.Enqueue(tile);
         while (tilesToCheck.Count > 0) {
-			
+
             Tile t = tilesToCheck.Dequeue();
-			if (min.x > t.X) {
-				min.x = t.X;
-			}
-			if (min.y > t.Y) {
-				min.y= t.Y;
-			}
-			if (max.x < t.X) {
-				max.x = t.X;
-			}
-			if (max.y < t.Y) {
-				max.y = t.Y;
-			}
+            if (min.x > t.X) {
+                min.x = t.X;
+            }
+            if (min.y > t.Y) {
+                min.y = t.Y;
+            }
+            if (max.x < t.X) {
+                max.x = t.X;
+            }
+            if (max.y < t.Y) {
+                max.y = t.Y;
+            }
 
 
             if (t.Type != TileType.Ocean && t.MyIsland != this) {
@@ -188,73 +188,74 @@ public class Island : IGEventable {
     }
 
     public void Update(float deltaTime) {
-		for (int i = 0; i < myCities.Count; i++) {
-			myCities[i].Update(deltaTime);
+        for (int i = 0; i < myCities.Count; i++) {
+            myCities[i].Update(deltaTime);
         }
     }
-	public City FindCityByPlayer(int playerNumber) {
-		return myCities.Find(x=> x.playerNumber == playerNumber);
-	}
-	public City CreateCity(int playerNumber) {
-		allReadyHighlighted = false;
-		City c = new City(playerNumber,this);
-		myCities.Add (c);
+    public City FindCityByPlayer(int playerNumber) {
+        return myCities.Find(x => x.playerNumber == playerNumber);
+    }
+    public City CreateCity(int playerNumber) {
+        allReadyHighlighted = false;
+        City c = new City(playerNumber, this);
+        myCities.Add(c);
         return c;
     }
-	public void RemoveCity(City c) {
-		myCities.Remove (c);
-	}
+    public void RemoveCity(City c) {
+        myCities.Remove(c);
+    }
 
     #region igeventable
-    public override void OnEventCreate(GameEvent ge){
-		OnEvent (ge,cbEventCreated,true);
-	}
-	void OnEvent(GameEvent ge, Action<GameEvent> ac,bool start){
-		if(ge.target is Island){
-			if(ge.target == this){
-				ge.EffectTarget (this, start);
+    public override void OnEventCreate(GameEvent ge) {
+        OnEvent(ge, cbEventCreated, true);
+    }
+    void OnEvent(GameEvent ge, Action<GameEvent> ac, bool start) {
+        if (ge.target is Island) {
+            if (ge.target == this) {
+                ge.EffectTarget(this, start);
                 ac?.Invoke(ge);
             }
-			return;
-		} else {
+            return;
+        }
+        else {
             ac?.Invoke(ge);
-            return;	
-		}
-	}
-	public override void OnEventEnded(GameEvent ge){
-		OnEvent (ge,cbEventEnded,false);
-	}
+            return;
+        }
+    }
+    public override void OnEventEnded(GameEvent ge) {
+        OnEvent(ge, cbEventEnded, false);
+    }
 
-    public override int GetPlayerNumber(){
-		return -1;
-	}
+    public override int GetPlayerNumber() {
+        return -1;
+    }
     #endregion
     public static MapGenerator.Range GetRangeForSize(Size sizeType) {
         switch (sizeType) {
             case Size.VerySmall:
-            return new MapGenerator.Range(40, 60);
+                return new MapGenerator.Range(40, 60);
             case Size.Small:
-            return new MapGenerator.Range(60, 80);
+                return new MapGenerator.Range(60, 80);
             case Size.Medium:
-            return new MapGenerator.Range(80, 120);
+                return new MapGenerator.Range(80, 120);
             case Size.Large:
-            return new MapGenerator.Range(120, 140);
+                return new MapGenerator.Range(120, 140);
             case Size.VeryLarge:
-            return new MapGenerator.Range(140, 160);
+                return new MapGenerator.Range(140, 160);
             default:
-            //Debug.LogError("NOT RECOGNISED ISLAND SIZE! Nothing has no size!");
-            return new MapGenerator.Range(0, 0);
+                //Debug.LogError("NOT RECOGNISED ISLAND SIZE! Nothing has no size!");
+                return new MapGenerator.Range(0, 0);
         }
     }
     public static Size GetSizeTyp(int widht, int height) {
-        foreach(Size size in Enum.GetValues(typeof(Size))) {
+        foreach (Size size in Enum.GetValues(typeof(Size))) {
             int middle = widht + height;
             middle /= 2;
             if (GetRangeForSize(size).IsBetween(middle)) {
                 return size;
             }
         }
-        Debug.LogError("The Island does not fit any Range! Widht = " + widht + " : Height " + height );
+        Debug.LogError("The Island does not fit any Range! Widht = " + widht + " : Height " + height);
         return Size.Other;
     }
 

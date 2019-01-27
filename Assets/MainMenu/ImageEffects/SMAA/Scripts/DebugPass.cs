@@ -21,26 +21,24 @@
  *    distribution.
  */
 
-namespace Smaa
-{
-	/// <summary>
-	/// Helps debugging and fine tuning settings when working with <see cref="QualityPreset.Custom"/>.
-	/// </summary>
-	public enum DebugPass
-	{
-		/// <summary>
-		/// Standard rendering, no debug pass is shown.
-		/// </summary>
-		Off,
+namespace Smaa {
+    /// <summary>
+    /// Helps debugging and fine tuning settings when working with <see cref="QualityPreset.Custom"/>.
+    /// </summary>
+    public enum DebugPass {
+        /// <summary>
+        /// Standard rendering, no debug pass is shown.
+        /// </summary>
+        Off,
 
-		/// <summary>
-		/// Shows the detected edges.
-		/// </summary>
-		Edges,
+        /// <summary>
+        /// Shows the detected edges.
+        /// </summary>
+        Edges,
 
-		/// <summary>
-		/// Shows the computed blend weights.
-		/// </summary>
-		Weights
-	}
+        /// <summary>
+        /// Shows the computed blend weights.
+        /// </summary>
+        Weights
+    }
 }

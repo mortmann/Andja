@@ -40,7 +40,7 @@ public class UnitUI : MonoBehaviour {
         }
         unitGoalGOs = new List<GameObject>();
         if (unitGoalGOs != null)
-            foreach(GameObject goal in unitGoalGOs)
+            foreach (GameObject goal in unitGoalGOs)
                 goal.SetActive(unit.IsPlayerUnit());
         if (unit.IsPlayerUnit() == false) {
             return;
@@ -136,25 +136,25 @@ public class UnitUI : MonoBehaviour {
                 //if (unitGoalGOs[0].activeSelf == false)
                 //    unitGoalGOs[0].SetActive(true);
                 //unitGoalGOs[0].transform.position = new Vector3(unit.pathfinding.dest_X, unit.pathfinding.dest_Y);
-                for (int i=0; i < unit.QueuedCommands.Count; i++) {
+                for (int i = 0; i < unit.QueuedCommands.Count; i++) {
                     Command c = unit.QueuedCommands[i];
                     if (c is MoveCommand == false) {
                         continue; // TODO: make it otherwise visible
                     }
-                    if (unitGoalGOs.Count-1 < i)
+                    if (unitGoalGOs.Count - 1 < i)
                         unitGoalGOs.Add(Instantiate(unitGoalPrefab));
                     unitGoalGOs[i].transform.position = ((MoveCommand)c).position;
                 }
-                while(unit.QueuedCommands.Count < unitGoalGOs.Count) {
+                while (unit.QueuedCommands.Count < unitGoalGOs.Count) {
                     Destroy(unitGoalGOs[unitGoalGOs.Count - 1]);
-                    unitGoalGOs.RemoveAt(unitGoalGOs.Count-1);
+                    unitGoalGOs.RemoveAt(unitGoalGOs.Count - 1);
                 }
             }
         }
     }
     //TODO: make this possible with 
     public void AddCannons() {
-        if(IsCurrentShipUI == false) {
+        if (IsCurrentShipUI == false) {
             return;
         }
         Ship ship = ((Ship)unit);

@@ -8,7 +8,7 @@ public class MapCitySelect : MonoBehaviour {
     public Text CityName;
     public Text Number;
     public Toggle toggle;
-    
+
     public void SelectAs(int number) {
         Number.text = "" + number;
         toggle.isOn = true;

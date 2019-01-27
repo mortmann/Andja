@@ -1,6 +1,5 @@
 ﻿using UnityEngine.Events;
 
-public class HSVChangedEvent : UnityEvent<float, float, float>
-{
+public class HSVChangedEvent : UnityEvent<float, float, float> {
 
 }

@@ -3,7 +3,6 @@ using UnityEngine;
 using UnityEngine.Events;
 
 [Serializable]
-public class ColorChangedEvent : UnityEvent<Color>
-{
+public class ColorChangedEvent : UnityEvent<Color> {
 
 }

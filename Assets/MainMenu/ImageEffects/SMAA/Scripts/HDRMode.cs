@@ -21,15 +21,13 @@
  *    distribution.
  */
 
-namespace Smaa
-{
-	/// <summary>
-	/// Render target mode. Keep it to <see cref="HDRMode.Auto"/> unless you know what you're doing.
-	/// </summary>
-	public enum HDRMode
-	{
-		Auto,
-		On,
-		Off
-	}
+namespace Smaa {
+    /// <summary>
+    /// Render target mode. Keep it to <see cref="HDRMode.Auto"/> unless you know what you're doing.
+    /// </summary>
+    public enum HDRMode {
+        Auto,
+        On,
+        Off
+    }
 }

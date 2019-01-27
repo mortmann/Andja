@@ -2,18 +2,18 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MilitaryBuildingUI : MonoBehaviour {
+public class MilitaryStructureUI : MonoBehaviour {
     public GameObject unitSelectionPanel;
     public CurrentlyBuildingUnitUI currentlyBuildingUnit;
     public UnitBuildUI unitSelectPrefab;
-    private MilitaryBuilding military;
+    private MilitaryStructure military;
     Dictionary<Unit, UnitBuildUI> unitToBuildUI;
     public void Show(Structure str) {
-        if (str is MilitaryBuilding == false) {
+        if (str is MilitaryStructure == false) {
             Debug.Log("Structure is not a Military!");
             return;
         }
-        military = (MilitaryBuilding)str;
+        military = (MilitaryStructure)str;
         foreach (Transform child in unitSelectionPanel.transform) {
             Destroy(child.gameObject);
         }

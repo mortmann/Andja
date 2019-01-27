@@ -4,8 +4,7 @@
 
 using System.Collections.Generic;
 
-namespace UnityEngine.UI.Extensions
-{
+namespace UnityEngine.UI.Extensions {
     /// <summary>
     /// ScrollRectOcclusion - disables the objects outside of the scrollrect viewport. 
     /// Useful for scrolls with lots of content, reduces geometry and drawcalls (if content is not batched)
@@ -23,8 +22,7 @@ namespace UnityEngine.UI.Extensions
     /// </summary>
 
     [AddComponentMenu("UI/Extensions/UI Scrollrect Occlusion")]
-    public class UI_ScrollRectOcclusion : MonoBehaviour
-    {
+    public class UI_ScrollRectOcclusion : MonoBehaviour {
         //if true user will need to call Init() method manually (in case the contend of the scrollview is generated from code or requires special initialization)
         public bool InitByUser = false;
         private ScrollRect _scrollRect;
@@ -39,8 +37,7 @@ namespace UnityEngine.UI.Extensions
         private bool hasDisabledGridComponents = false;
         private List<RectTransform> items = new List<RectTransform>();
 
-        void Awake()
-        {
+        void Awake() {
             if (InitByUser)
                 return;
 
@@ -48,113 +45,88 @@ namespace UnityEngine.UI.Extensions
 
         }
 
-        public void Init()
-        {
-            if (GetComponent<ScrollRect>() != null)
-            {
+        public void Init() {
+            if (GetComponent<ScrollRect>() != null) {
                 _scrollRect = GetComponent<ScrollRect>();
                 _scrollRect.onValueChanged.AddListener(OnScroll);
 
                 _isHorizontal = _scrollRect.horizontal;
                 _isVertical = _scrollRect.vertical;
 
-                for (int i = 0; i < _scrollRect.content.childCount; i++)
-                {
+                for (int i = 0; i < _scrollRect.content.childCount; i++) {
                     items.Add(_scrollRect.content.GetChild(i).GetComponent<RectTransform>());
                 }
-                if (_scrollRect.content.GetComponent<VerticalLayoutGroup>() != null)
-                {
+                if (_scrollRect.content.GetComponent<VerticalLayoutGroup>() != null) {
                     _verticalLayoutGroup = _scrollRect.content.GetComponent<VerticalLayoutGroup>();
                 }
-                if (_scrollRect.content.GetComponent<HorizontalLayoutGroup>() != null)
-                {
+                if (_scrollRect.content.GetComponent<HorizontalLayoutGroup>() != null) {
                     _horizontalLayoutGroup = _scrollRect.content.GetComponent<HorizontalLayoutGroup>();
                 }
-                if (_scrollRect.content.GetComponent<GridLayoutGroup>() != null)
-                {
+                if (_scrollRect.content.GetComponent<GridLayoutGroup>() != null) {
                     _gridLayoutGroup = _scrollRect.content.GetComponent<GridLayoutGroup>();
                 }
-                if (_scrollRect.content.GetComponent<ContentSizeFitter>() != null)
-                {
+                if (_scrollRect.content.GetComponent<ContentSizeFitter>() != null) {
                     _contentSizeFitter = _scrollRect.content.GetComponent<ContentSizeFitter>();
                 }
 
             }
-            else
-            {
+            else {
                 Debug.LogError("UI_ScrollRectOcclusion => No ScrollRect component found");
             }
         }
 
-        void DisableGridComponents()
-        {
+        void DisableGridComponents() {
             if (_isVertical)
                 _disableMarginY = _scrollRect.GetComponent<RectTransform>().rect.height / 2 + items[0].sizeDelta.y;
 
             if (_isHorizontal)
                 _disableMarginX = _scrollRect.GetComponent<RectTransform>().rect.width / 2 + items[0].sizeDelta.x;
 
-            if (_verticalLayoutGroup)
-            {
+            if (_verticalLayoutGroup) {
                 _verticalLayoutGroup.enabled = false;
             }
-            if (_horizontalLayoutGroup)
-            {
+            if (_horizontalLayoutGroup) {
                 _horizontalLayoutGroup.enabled = false;
             }
-            if (_contentSizeFitter)
-            {
+            if (_contentSizeFitter) {
                 _contentSizeFitter.enabled = false;
             }
-            if (_gridLayoutGroup)
-            {
+            if (_gridLayoutGroup) {
                 _gridLayoutGroup.enabled = false;
             }
             hasDisabledGridComponents = true;
         }
 
-        public void OnScroll(Vector2 pos)
-        {
+        public void OnScroll(Vector2 pos) {
 
             if (!hasDisabledGridComponents)
                 DisableGridComponents();
 
-            for (int i = 0; i < items.Count; i++)
-            {
-                if (_isVertical && _isHorizontal)
-                {
+            for (int i = 0; i < items.Count; i++) {
+                if (_isVertical && _isHorizontal) {
                     if (_scrollRect.transform.InverseTransformPoint(items[i].position).y < -_disableMarginY || _scrollRect.transform.InverseTransformPoint(items[i].position).y > _disableMarginY
-                    || _scrollRect.transform.InverseTransformPoint(items[i].position).x < -_disableMarginX || _scrollRect.transform.InverseTransformPoint(items[i].position).x > _disableMarginX)
-                    {
+                    || _scrollRect.transform.InverseTransformPoint(items[i].position).x < -_disableMarginX || _scrollRect.transform.InverseTransformPoint(items[i].position).x > _disableMarginX) {
                         items[i].gameObject.SetActive(false);
                     }
-                    else
-                    {
+                    else {
                         items[i].gameObject.SetActive(true);
                     }
                 }
-                else
-                {
-                    if (_isVertical)
-                    {
-                        if (_scrollRect.transform.InverseTransformPoint(items[i].position).y < -_disableMarginY || _scrollRect.transform.InverseTransformPoint(items[i].position).y > _disableMarginY)
-                        {
+                else {
+                    if (_isVertical) {
+                        if (_scrollRect.transform.InverseTransformPoint(items[i].position).y < -_disableMarginY || _scrollRect.transform.InverseTransformPoint(items[i].position).y > _disableMarginY) {
                             items[i].gameObject.SetActive(false);
                         }
-                        else
-                        {
+                        else {
                             items[i].gameObject.SetActive(true);
                         }
                     }
 
-                    if (_isHorizontal)
-                    {
-                        if (_scrollRect.transform.InverseTransformPoint(items[i].position).x < -_disableMarginX || _scrollRect.transform.InverseTransformPoint(items[i].position).x > _disableMarginX)
-                        {
+                    if (_isHorizontal) {
+                        if (_scrollRect.transform.InverseTransformPoint(items[i].position).x < -_disableMarginX || _scrollRect.transform.InverseTransformPoint(items[i].position).x > _disableMarginX) {
                             items[i].gameObject.SetActive(false);
                         }
-                        else
-                        {
+                        else {
                             items[i].gameObject.SetActive(true);
                         }
                     }

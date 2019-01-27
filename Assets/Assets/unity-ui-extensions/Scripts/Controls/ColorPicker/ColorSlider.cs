@@ -1,14 +1,12 @@
 ﻿///Credit judah4
 ///Sourced from - http://forum.unity3d.com/threads/color-picker.267043/
 
-namespace UnityEngine.UI.Extensions.ColorPicker
-{
+namespace UnityEngine.UI.Extensions.ColorPicker {
     /// <summary>
     /// Displays one of the color values of aColorPicker
     /// </summary>
     [RequireComponent(typeof(Slider))]
-    public class ColorSlider : MonoBehaviour
-    {
+    public class ColorSlider : MonoBehaviour {
         public ColorPickerControl ColorPicker;
 
         /// <summary>
@@ -20,8 +18,7 @@ namespace UnityEngine.UI.Extensions.ColorPicker
 
         private bool listen = true;
 
-        private void Awake()
-        {
+        private void Awake() {
             slider = GetComponent<Slider>();
 
             ColorPicker.onValueChanged.AddListener(ColorChanged);
@@ -29,18 +26,15 @@ namespace UnityEngine.UI.Extensions.ColorPicker
             slider.onValueChanged.AddListener(SliderChanged);
         }
 
-        private void OnDestroy()
-        {
+        private void OnDestroy() {
             ColorPicker.onValueChanged.RemoveListener(ColorChanged);
             ColorPicker.onHSVChanged.RemoveListener(HSVChanged);
             slider.onValueChanged.RemoveListener(SliderChanged);
         }
 
-        private void ColorChanged(Color newColor)
-        {
+        private void ColorChanged(Color newColor) {
             listen = false;
-            switch (type)
-            {
+            switch (type) {
                 case ColorValues.R:
                     slider.normalizedValue = newColor.r;
                     break;
@@ -58,11 +52,9 @@ namespace UnityEngine.UI.Extensions.ColorPicker
             }
         }
 
-        private void HSVChanged(float hue, float saturation, float value)
-        {
+        private void HSVChanged(float hue, float saturation, float value) {
             listen = false;
-            switch (type)
-            {
+            switch (type) {
                 case ColorValues.Hue:
                     slider.normalizedValue = hue; //1 - hue;
                     break;
@@ -77,10 +69,8 @@ namespace UnityEngine.UI.Extensions.ColorPicker
             }
         }
 
-        private void SliderChanged(float newValue)
-        {
-            if (listen)
-            {
+        private void SliderChanged(float newValue) {
+            if (listen) {
                 newValue = slider.normalizedValue;
                 //if (type == ColorValues.Hue)
                 //    newValue = 1 - newValue;

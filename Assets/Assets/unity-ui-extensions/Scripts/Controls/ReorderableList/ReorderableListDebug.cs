@@ -1,22 +1,17 @@
 ﻿/// Credit Ziboo
 /// Sourced from - http://forum.unity3d.com/threads/free-reorderable-list.364600/
 
-namespace UnityEngine.UI.Extensions
-{
-    public class ReorderableListDebug : MonoBehaviour
-    {
+namespace UnityEngine.UI.Extensions {
+    public class ReorderableListDebug : MonoBehaviour {
         public Text DebugLabel;
 
-        void Awake()
-        {
-            foreach (var list in FindObjectsOfType<ReorderableList>())
-            {
+        void Awake() {
+            foreach (var list in FindObjectsOfType<ReorderableList>()) {
                 list.OnElementDropped.AddListener(ElementDropped);
             }
         }
 
-        private void ElementDropped(ReorderableList.ReorderableListEventStruct droppedStruct)
-        {
+        private void ElementDropped(ReorderableList.ReorderableListEventStruct droppedStruct) {
             DebugLabel.text = "";
             DebugLabel.text += "Dropped Object: " + droppedStruct.DroppedObject.name + "\n";
             DebugLabel.text += "Is Clone ?: " + droppedStruct.IsAClone + "\n";

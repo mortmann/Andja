@@ -1,41 +1,35 @@
 ﻿/// Credit setchi (https://github.com/setchi)
 /// Sourced from - https://github.com/setchi/FancyScrollView
 
-namespace UnityEngine.UI.Extensions
-{
+namespace UnityEngine.UI.Extensions {
 
-    public class FancyScrollViewCell<TData, TContext> : MonoBehaviour where TContext : class
-    {
+    public class FancyScrollViewCell<TData, TContext> : MonoBehaviour where TContext : class {
         /// <summary>
         /// コンテキストを設定します
         /// </summary>
         /// <param name="context"></param>
-        public virtual void SetContext(TContext context)
-        {
+        public virtual void SetContext(TContext context) {
         }
 
         /// <summary>
         /// セルの内容を更新します
         /// </summary>
         /// <param name="itemData"></param>
-        public virtual void UpdateContent(TData itemData)
-        {
+        public virtual void UpdateContent(TData itemData) {
         }
 
         /// <summary>
         /// セルの位置を更新します
         /// </summary>
         /// <param name="position"></param>
-        public virtual void UpdatePosition(float position)
-        {
+        public virtual void UpdatePosition(float position) {
         }
 
         /// <summary>
         /// セルの表示/非表示を設定します
         /// </summary>
         /// <param name="visible"></param>
-        public virtual void SetVisible(bool visible)
-        {
+        public virtual void SetVisible(bool visible) {
             gameObject.SetActive(visible);
         }
 
@@ -45,8 +39,7 @@ namespace UnityEngine.UI.Extensions
         public int DataIndex { get; set; }
     }
 
-    public class FancyScrollViewCell<TData> : FancyScrollViewCell<TData, FancyScrollViewNullContext>
-    {
+    public class FancyScrollViewCell<TData> : FancyScrollViewCell<TData, FancyScrollViewNullContext> {
 
     }
 }

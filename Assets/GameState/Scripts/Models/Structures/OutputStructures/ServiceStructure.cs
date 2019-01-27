@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 
-public enum ServiceTarget { All, Damageable, Military, Homes, Production, Service, NeedsBuilding,  SpecificRange, City, None }
+public enum ServiceTarget { All, Damageable, Military, Homes, Production, Service, NeedStructure, SpecificRange, City, None }
 
 public class ServicePrototypeData : OutputPrototypData {
     public ServiceTarget targets = ServiceTarget.All;
@@ -27,7 +27,7 @@ public class ServiceStructure : OutputStructure {
     }
 
     public override void OnBuild() {
-        
+
     }
 
     public void ExtinguishStructurefire(Structure str) {
@@ -42,7 +42,7 @@ public class ServiceStructure : OutputStructure {
     public void RemoveIllness(Structure str) {
 
     }
-    
+
     public void ImproveCity() {
         //Will run once on build and needs to be removed on destroy
     }

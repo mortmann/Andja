@@ -4,18 +4,15 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace UnityEngine.UI.Extensions
-{
-    public enum AutoCompleteSearchType
-    {
+namespace UnityEngine.UI.Extensions {
+    public enum AutoCompleteSearchType {
         ArraySort,
         Linq
     }
 
     [RequireComponent(typeof(RectTransform))]
     [AddComponentMenu("UI/Extensions/AutoComplete ComboBox")]
-    public class AutoCompleteComboBox : MonoBehaviour
-    {
+    public class AutoCompleteComboBox : MonoBehaviour {
         public Color disabledTextColor;
         public DropDownListItem SelectedItem { get; private set; } //outside world gets to get this, not set it
 
@@ -28,7 +25,7 @@ namespace UnityEngine.UI.Extensions
         private InputField _mainInput;
         private RectTransform _inputRT;
 
-		//private Button _arrow_Button;
+        //private Button _arrow_Button;
 
         private RectTransform _rectTransform;
 
@@ -47,18 +44,16 @@ namespace UnityEngine.UI.Extensions
         private List<string> _prunedPanelItems; //items that used to show in the dropdown
 
         private Dictionary<string, GameObject> panelObjects;
-        
+
         private GameObject itemTemplate;
 
         public string Text { get; private set; }
 
         [SerializeField]
         private float _scrollBarWidth = 20.0f;
-        public float ScrollBarWidth
-        {
+        public float ScrollBarWidth {
             get { return _scrollBarWidth; }
-            set
-            {
+            set {
                 _scrollBarWidth = value;
                 RedrawPanel();
             }
@@ -69,81 +64,74 @@ namespace UnityEngine.UI.Extensions
 
         [SerializeField]
         private int _itemsToDisplay;
-        public int ItemsToDisplay
-        {
+        public int ItemsToDisplay {
             get { return _itemsToDisplay; }
-            set
-            {
+            set {
                 _itemsToDisplay = value;
                 RedrawPanel();
             }
         }
 
-		public bool SelectFirstItemOnStart = false;
+        public bool SelectFirstItemOnStart = false;
 
-		[SerializeField]
+        [SerializeField]
         [Tooltip("Change input text color based on matching items")]
         private bool _ChangeInputTextColorBasedOnMatchingItems = false;
-		public bool InputColorMatching{
-			get { return _ChangeInputTextColorBasedOnMatchingItems; }
-			set 
-			{
-				_ChangeInputTextColorBasedOnMatchingItems = value;
-				if (_ChangeInputTextColorBasedOnMatchingItems) {
-					SetInputTextColor ();
-				}
-			}
-		}
+        public bool InputColorMatching {
+            get { return _ChangeInputTextColorBasedOnMatchingItems; }
+            set {
+                _ChangeInputTextColorBasedOnMatchingItems = value;
+                if (_ChangeInputTextColorBasedOnMatchingItems) {
+                    SetInputTextColor();
+                }
+            }
+        }
 
-		public Color ValidSelectionTextColor = Color.green;
-		public Color MatchingItemsRemainingTextColor = Color.black;
-		public Color NoItemsRemainingTextColor = Color.red;
+        public Color ValidSelectionTextColor = Color.green;
+        public Color MatchingItemsRemainingTextColor = Color.black;
+        public Color NoItemsRemainingTextColor = Color.red;
 
         public AutoCompleteSearchType autocompleteSearchType = AutoCompleteSearchType.Linq;
 
         private bool _selectionIsValid = false;
 
-		[System.Serializable]
-		public class SelectionChangedEvent :  UnityEngine.Events.UnityEvent<string, bool> {
-		}
+        [System.Serializable]
+        public class SelectionChangedEvent : UnityEngine.Events.UnityEvent<string, bool> {
+        }
 
         [System.Serializable]
-		public class SelectionTextChangedEvent :  UnityEngine.Events.UnityEvent<string> {
-		}
+        public class SelectionTextChangedEvent : UnityEngine.Events.UnityEvent<string> {
+        }
 
-		[System.Serializable]
-		public class SelectionValidityChangedEvent :  UnityEngine.Events.UnityEvent<bool> {
-		}
+        [System.Serializable]
+        public class SelectionValidityChangedEvent : UnityEngine.Events.UnityEvent<bool> {
+        }
 
-		// fires when input text is changed;
-		public SelectionTextChangedEvent OnSelectionTextChanged;
-		// fires when when an Item gets selected / deselected (including when items are added/removed once this is possible)
-		public SelectionValidityChangedEvent OnSelectionValidityChanged;
-		// fires in both cases
-		public SelectionChangedEvent OnSelectionChanged;
+        // fires when input text is changed;
+        public SelectionTextChangedEvent OnSelectionTextChanged;
+        // fires when when an Item gets selected / deselected (including when items are added/removed once this is possible)
+        public SelectionValidityChangedEvent OnSelectionValidityChanged;
+        // fires in both cases
+        public SelectionChangedEvent OnSelectionChanged;
 
-        public void Awake()
-        {
+        public void Awake() {
             Initialize();
         }
-		public void Start()
-		{
-			if (SelectFirstItemOnStart && AvailableOptions.Count > 0) {
-				ToggleDropdownPanel (false);
-				OnItemClicked (AvailableOptions [0]);
-			}
-		}
+        public void Start() {
+            if (SelectFirstItemOnStart && AvailableOptions.Count > 0) {
+                ToggleDropdownPanel(false);
+                OnItemClicked(AvailableOptions[0]);
+            }
+        }
 
-        private bool Initialize()
-        {
+        private bool Initialize() {
             bool success = true;
-            try
-            {
+            try {
                 _rectTransform = GetComponent<RectTransform>();
                 _inputRT = _rectTransform.Find("InputField").GetComponent<RectTransform>();
                 _mainInput = _inputRT.GetComponent<InputField>();
 
-				//_arrow_Button = _rectTransform.FindChild ("ArrowBtn").GetComponent<Button> ();
+                //_arrow_Button = _rectTransform.FindChild ("ArrowBtn").GetComponent<Button> ();
 
                 _overlayRT = _rectTransform.Find("Overlay").GetComponent<RectTransform>();
                 _overlayRT.gameObject.SetActive(false);
@@ -167,8 +155,7 @@ namespace UnityEngine.UI.Extensions
                 itemTemplate = _rectTransform.Find("ItemTemplate").gameObject;
                 itemTemplate.SetActive(false);
             }
-            catch (System.NullReferenceException ex)
-            {
+            catch (System.NullReferenceException ex) {
                 Debug.LogException(ex);
                 Debug.LogError("Something is setup incorrectly with the dropdownlist component causing a Null Refernece Exception");
                 success = false;
@@ -215,23 +202,20 @@ namespace UnityEngine.UI.Extensions
         /// <summary>
         /// Rebuilds the contents of the panel in response to items being added.
         /// </summary>
-        private void RebuildPanel()
-        {
+        private void RebuildPanel() {
             //panel starts with all options
             _panelItems.Clear();
             _prunedPanelItems.Clear();
             panelObjects.Clear();
 
-            foreach (string option in AvailableOptions)
-            {
+            foreach (string option in AvailableOptions) {
                 _panelItems.Add(option.ToLower());
             }
 
             List<GameObject> itemObjs = new List<GameObject>(panelObjects.Values);
 
             int indx = 0;
-            while (itemObjs.Count < AvailableOptions.Count)
-            {
+            while (itemObjs.Count < AvailableOptions.Count) {
                 GameObject newItem = Instantiate(itemTemplate) as GameObject;
                 newItem.name = "Item " + indx;
                 newItem.transform.SetParent(_itemsPanelRT, false);
@@ -239,33 +223,29 @@ namespace UnityEngine.UI.Extensions
                 indx++;
             }
 
-            for (int i = 0; i < itemObjs.Count; i++)
-            {
+            for (int i = 0; i < itemObjs.Count; i++) {
                 itemObjs[i].SetActive(i <= AvailableOptions.Count);
-                if (i < AvailableOptions.Count)
-                {
+                if (i < AvailableOptions.Count) {
                     itemObjs[i].name = "Item " + i + " " + _panelItems[i];
                     itemObjs[i].transform.Find("Text").GetComponent<Text>().text = _panelItems[i]; //set the text value
 
                     Button itemBtn = itemObjs[i].GetComponent<Button>();
                     itemBtn.onClick.RemoveAllListeners();
                     string textOfItem = _panelItems[i]; //has to be copied for anonymous function or it gets garbage collected away
-                    itemBtn.onClick.AddListener(() =>
-                    {
+                    itemBtn.onClick.AddListener(() => {
                         OnItemClicked(textOfItem);
                     });
                     panelObjects[_panelItems[i]] = itemObjs[i];
                 }
             }
-			SetInputTextColor ();
+            SetInputTextColor();
         }
 
         /// <summary>
         /// what happens when an item in the list is selected
         /// </summary>
         /// <param name="item"></param>
-        private void OnItemClicked(string item)
-        {
+        private void OnItemClicked(string item) {
             //Debug.Log("item " + item + " clicked");
             Text = item;
             _mainInput.text = Text;
@@ -301,12 +281,10 @@ namespace UnityEngine.UI.Extensions
         //}
 
 
-        private void RedrawPanel()
-        {
+        private void RedrawPanel() {
             float scrollbarWidth = _panelItems.Count > ItemsToDisplay ? _scrollBarWidth : 0f;//hide the scrollbar if there's not enough items
             _scrollBarRT.gameObject.SetActive(_panelItems.Count > ItemsToDisplay);
-            if (!_hasDrawnOnce || _rectTransform.sizeDelta != _inputRT.sizeDelta)
-            {
+            if (!_hasDrawnOnce || _rectTransform.sizeDelta != _inputRT.sizeDelta) {
                 _hasDrawnOnce = true;
                 _inputRT.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, _rectTransform.sizeDelta.x);
                 _inputRT.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, _rectTransform.sizeDelta.y);
@@ -340,45 +318,44 @@ namespace UnityEngine.UI.Extensions
             _slidingAreaRT.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, dropdownHeight - _scrollBarRT.sizeDelta.x);
         }
 
-        public void OnValueChanged(string currText)
-        {
+        public void OnValueChanged(string currText) {
             Text = currText;
             PruneItems(currText);
             RedrawPanel();
             //Debug.Log("value changed to: " + currText);
 
-            if (_panelItems.Count == 0)
-            {
+            if (_panelItems.Count == 0) {
                 _isPanelActive = true;//this makes it get turned off
                 ToggleDropdownPanel(false);
             }
-            else if (!_isPanelActive)
-            {
+            else if (!_isPanelActive) {
                 ToggleDropdownPanel(false);
             }
 
-			bool validity_changed = (_panelItems.Contains (Text) != _selectionIsValid);
-			_selectionIsValid = _panelItems.Contains (Text);
-			OnSelectionChanged.Invoke (Text, _selectionIsValid);
-			OnSelectionTextChanged.Invoke (Text);
-			if(validity_changed){
-				OnSelectionValidityChanged.Invoke (_selectionIsValid);
-			}
+            bool validity_changed = (_panelItems.Contains(Text) != _selectionIsValid);
+            _selectionIsValid = _panelItems.Contains(Text);
+            OnSelectionChanged.Invoke(Text, _selectionIsValid);
+            OnSelectionTextChanged.Invoke(Text);
+            if (validity_changed) {
+                OnSelectionValidityChanged.Invoke(_selectionIsValid);
+            }
 
-			SetInputTextColor ();
+            SetInputTextColor();
         }
 
-		private void SetInputTextColor(){
-			if (InputColorMatching) {
-				if (_selectionIsValid) {
-					_mainInput.textComponent.color = ValidSelectionTextColor;
-				} else if (_panelItems.Count > 0) {
-					_mainInput.textComponent.color = MatchingItemsRemainingTextColor;
-				} else {
-					_mainInput.textComponent.color = NoItemsRemainingTextColor;
-				}
-			}
-		}
+        private void SetInputTextColor() {
+            if (InputColorMatching) {
+                if (_selectionIsValid) {
+                    _mainInput.textComponent.color = ValidSelectionTextColor;
+                }
+                else if (_panelItems.Count > 0) {
+                    _mainInput.textComponent.color = MatchingItemsRemainingTextColor;
+                }
+                else {
+                    _mainInput.textComponent.color = NoItemsRemainingTextColor;
+                }
+            }
+        }
 
 
 
@@ -386,47 +363,38 @@ namespace UnityEngine.UI.Extensions
         /// Toggle the drop down list
         /// </summary>
         /// <param name="directClick"> whether an item was directly clicked on</param>
-        public void ToggleDropdownPanel(bool directClick)
-        {
+        public void ToggleDropdownPanel(bool directClick) {
             _isPanelActive = !_isPanelActive;
 
             _overlayRT.gameObject.SetActive(_isPanelActive);
-            if (_isPanelActive)
-            {
+            if (_isPanelActive) {
                 transform.SetAsLastSibling();
             }
-            else if (directClick)
-            {
+            else if (directClick) {
                 // scrollOffset = Mathf.RoundToInt(itemsPanelRT.anchoredPosition.y / _rectTransform.sizeDelta.y); 
             }
         }
 
-        private void PruneItems(string currText)
-        {
-            if (autocompleteSearchType == AutoCompleteSearchType.Linq)
-            {
+        private void PruneItems(string currText) {
+            if (autocompleteSearchType == AutoCompleteSearchType.Linq) {
                 PruneItemsLinq(currText);
             }
-            else
-            {
+            else {
                 PruneItemsArray(currText);
             }
         }
 
-        private void PruneItemsLinq(string currText)
-        {
+        private void PruneItemsLinq(string currText) {
             currText = currText.ToLower();
             var toPrune = _panelItems.Where(x => !x.Contains(currText)).ToArray();
-            foreach (string key in toPrune)
-            {
+            foreach (string key in toPrune) {
                 panelObjects[key].SetActive(false);
                 _panelItems.Remove(key);
                 _prunedPanelItems.Add(key);
             }
 
             var toAddBack = _prunedPanelItems.Where(x => x.Contains(currText)).ToArray();
-            foreach (string key in toAddBack)
-            {
+            foreach (string key in toAddBack) {
                 panelObjects[key].SetActive(true);
                 _panelItems.Add(key);
                 _prunedPanelItems.Remove(key);
@@ -434,25 +402,20 @@ namespace UnityEngine.UI.Extensions
         }
 
         //Updated to not use Linq
-        private void PruneItemsArray(string currText)
-        {
+        private void PruneItemsArray(string currText) {
             string _currText = currText.ToLower();
 
-            for (int i = _panelItems.Count - 1; i >= 0; i--)
-            {
+            for (int i = _panelItems.Count - 1; i >= 0; i--) {
                 string _item = _panelItems[i];
-                if (!_item.Contains(_currText))
-                {
+                if (!_item.Contains(_currText)) {
                     panelObjects[_panelItems[i]].SetActive(false);
                     _panelItems.RemoveAt(i);
                     _prunedPanelItems.Add(_item);
                 }
             }
-            for (int i = _prunedPanelItems.Count - 1; i >= 0; i--)
-            {
+            for (int i = _prunedPanelItems.Count - 1; i >= 0; i--) {
                 string _item = _prunedPanelItems[i];
-                if (_item.Contains(_currText))
-                {
+                if (_item.Contains(_currText)) {
                     panelObjects[_prunedPanelItems[i]].SetActive(true);
                     _prunedPanelItems.RemoveAt(i);
                     _panelItems.Add(_item);

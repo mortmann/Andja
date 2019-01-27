@@ -1,11 +1,9 @@
 /// Credit CiaccoDavide
 /// Sourced from - http://ciaccodavi.de/unity/UIPolygon
 
-namespace UnityEngine.UI.Extensions
-{
+namespace UnityEngine.UI.Extensions {
     [AddComponentMenu("UI/Extensions/Primitives/UI Polygon")]
-    public class UIPolygon : UIPrimitiveBase
-    {
+    public class UIPolygon : UIPrimitiveBase {
         public bool fill = true;
         public float thickness = 5;
         [Range(3, 360)]
@@ -16,30 +14,26 @@ namespace UnityEngine.UI.Extensions
         public float[] VerticesDistances = new float[3];
         private float size = 0;
 
-        public void DrawPolygon(int _sides)
-        {
+        public void DrawPolygon(int _sides) {
             sides = _sides;
             VerticesDistances = new float[_sides + 1];
             for (int i = 0; i < _sides; i++) VerticesDistances[i] = 1; ;
             rotation = 0;
             SetAllDirty();
         }
-        public void DrawPolygon(int _sides, float[] _VerticesDistances)
-        {
+        public void DrawPolygon(int _sides, float[] _VerticesDistances) {
             sides = _sides;
             VerticesDistances = _VerticesDistances;
             rotation = 0;
             SetAllDirty();
         }
-        public void DrawPolygon(int _sides, float[] _VerticesDistances, float _rotation)
-        {
+        public void DrawPolygon(int _sides, float[] _VerticesDistances, float _rotation) {
             sides = _sides;
             VerticesDistances = _VerticesDistances;
             rotation = _rotation;
             SetAllDirty();
         }
-        void Update()
-        {
+        void Update() {
             size = rectTransform.rect.width;
             if (rectTransform.rect.width > rectTransform.rect.height)
                 size = rectTransform.rect.height;
@@ -48,8 +42,7 @@ namespace UnityEngine.UI.Extensions
             thickness = (float)Mathf.Clamp(thickness, 0, size / 2);
         }
 
-        protected override void OnPopulateMesh(VertexHelper vh)
-        {
+        protected override void OnPopulateMesh(VertexHelper vh) {
             vh.Clear();
 
             Vector2 prevX = Vector2.zero;
@@ -64,15 +57,13 @@ namespace UnityEngine.UI.Extensions
             Vector2 pos3;
             float degrees = 360f / sides;
             int vertices = sides + 1;
-            if (VerticesDistances.Length != vertices)
-            {
+            if (VerticesDistances.Length != vertices) {
                 VerticesDistances = new float[vertices];
                 for (int i = 0; i < vertices - 1; i++) VerticesDistances[i] = 1;
             }
             // last vertex is also the first!
             VerticesDistances[vertices - 1] = VerticesDistances[0];
-            for (int i = 0; i < vertices; i++)
-            {
+            for (int i = 0; i < vertices; i++) {
                 float outer = -rectTransform.pivot.x * size * VerticesDistances[i];
                 float inner = -rectTransform.pivot.x * size * VerticesDistances[i] + thickness;
                 float rad = Mathf.Deg2Rad * (i * degrees + rotation);
@@ -84,13 +75,11 @@ namespace UnityEngine.UI.Extensions
                 uv3 = new Vector2(0, 0);
                 pos0 = prevX;
                 pos1 = new Vector2(outer * c, outer * s);
-                if (fill)
-                {
+                if (fill) {
                     pos2 = Vector2.zero;
                     pos3 = Vector2.zero;
                 }
-                else
-                {
+                else {
                     pos2 = new Vector2(inner * c, inner * s);
                     pos3 = prevY;
                 }

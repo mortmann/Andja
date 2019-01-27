@@ -6,8 +6,7 @@
 
 using System.Collections;
 
-namespace UnityEngine.UI.Extensions
-{
+namespace UnityEngine.UI.Extensions {
     /// <summary>
     /// Dynamic scalling of text or image (including button) based on curves
     /// 
@@ -27,8 +26,7 @@ namespace UnityEngine.UI.Extensions
     /// 
     /// </summary>
     [AddComponentMenu("UI/Extensions/UI Tween Scale")]
-    public class UI_TweenScale : MonoBehaviour
-    {
+    public class UI_TweenScale : MonoBehaviour {
         //ANIMATION FOR X AND Y, OR X IF isUniform set to false 
         public AnimationCurve animCurve;
         [Tooltip("Animation speed multiplier")]
@@ -52,42 +50,35 @@ namespace UnityEngine.UI.Extensions
         private Vector3 initScale;
         private Transform myTransform;
 
-        void Awake()
-        {
+        void Awake() {
             myTransform = GetComponent<Transform>();
             initScale = myTransform.localScale;
-            if (playAtAwake)
-            {
+            if (playAtAwake) {
                 Play();
             }
         }
 
-        public void Play()
-        {
+        public void Play() {
             StartCoroutine("Tween");
         }
 
         Vector3 newScale = Vector3.one;
 
-        IEnumerator Tween()
-        {
+        IEnumerator Tween() {
             myTransform.localScale = initScale;
             float t = 0;
             float maxT = animCurve.keys[animCurve.length - 1].time;
 
-            while (t < maxT || isLoop)
-            {
+            while (t < maxT || isLoop) {
                 t += speed * Time.deltaTime;
 
-                if (!isUniform)
-                {
+                if (!isUniform) {
                     newScale.x = 1 * animCurve.Evaluate(t);
                     newScale.y = 1 * animCurveY.Evaluate(t);
 
                     myTransform.localScale = newScale;
                 }
-                else
-                {
+                else {
                     myTransform.localScale = Vector3.one * animCurve.Evaluate(t);
                 }
 
@@ -95,8 +86,7 @@ namespace UnityEngine.UI.Extensions
             }
         }
 
-        public void ResetTween()
-        {
+        public void ResetTween() {
             StopCoroutine("Tween");
             myTransform.localScale = initScale;
         }

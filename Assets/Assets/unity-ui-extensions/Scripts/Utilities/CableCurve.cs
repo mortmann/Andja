@@ -4,11 +4,9 @@
 
 using System;
 
-namespace UnityEngine.UI.Extensions
-{
+namespace UnityEngine.UI.Extensions {
     [System.Serializable]
-    public class CableCurve
-    {
+    public class CableCurve {
         [SerializeField]
         Vector2 m_start;
         [SerializeField]
@@ -24,75 +22,59 @@ namespace UnityEngine.UI.Extensions
         [SerializeField]
         Vector2[] points;
 
-        public bool regenPoints
-        {
+        public bool regenPoints {
             get { return m_regen; }
-            set
-            {
+            set {
                 m_regen = value;
             }
         }
 
-        public Vector2 start
-        {
+        public Vector2 start {
             get { return m_start; }
-            set
-            {
+            set {
                 if (value != m_start)
                     m_regen = true;
                 m_start = value;
             }
         }
 
-        public Vector2 end
-        {
+        public Vector2 end {
             get { return m_end; }
-            set
-            {
+            set {
                 if (value != m_end)
                     m_regen = true;
                 m_end = value;
             }
         }
-        public float slack
-        {
+        public float slack {
             get { return m_slack; }
-            set
-            {
+            set {
                 if (value != m_slack)
                     m_regen = true;
                 m_slack = Mathf.Max(0.0f, value);
             }
         }
-        public int steps
-        {
+        public int steps {
             get { return m_steps; }
-            set
-            {
+            set {
                 if (value != m_steps)
                     m_regen = true;
                 m_steps = Mathf.Max(2, value);
             }
         }
 
-        public Vector2 midPoint
-        {
-            get
-            {
+        public Vector2 midPoint {
+            get {
                 Vector2 mid = Vector2.zero;
-                if (m_steps == 2)
-                {
+                if (m_steps == 2) {
                     return (points[0] + points[1]) * 0.5f;
                 }
-                else if (m_steps > 2)
-                {
+                else if (m_steps > 2) {
                     int m = m_steps / 2;
-                    if ((m_steps % 2) == 0)
-                    {
+                    if ((m_steps % 2) == 0) {
                         mid = (points[m] + points[m + 1]) * 0.5f;
                     }
-                    else
-                    {
+                    else {
                         mid = points[m];
                     }
                 }
@@ -100,8 +82,7 @@ namespace UnityEngine.UI.Extensions
             }
         }
 
-        public CableCurve()
-        {
+        public CableCurve() {
             points = emptyCurve;
             m_start = Vector2.up;
             m_end = Vector2.up + Vector2.right;
@@ -110,8 +91,7 @@ namespace UnityEngine.UI.Extensions
             m_regen = true;
         }
 
-        public CableCurve(Vector2[] inputPoints)
-        {
+        public CableCurve(Vector2[] inputPoints) {
             points = inputPoints;
             m_start = inputPoints[0];
             m_end = inputPoints[1];
@@ -120,8 +100,7 @@ namespace UnityEngine.UI.Extensions
             m_regen = true;
         }
 
-        public CableCurve(CableCurve v)
-        {
+        public CableCurve(CableCurve v) {
             points = v.Points();
             m_start = v.start;
             m_end = v.end;
@@ -130,8 +109,7 @@ namespace UnityEngine.UI.Extensions
             m_regen = v.regenPoints;
         }
 
-        public Vector2[] Points()
-        {
+        public Vector2[] Points() {
             if (!m_regen)
                 return points;
 
@@ -160,10 +138,8 @@ namespace UnityEngine.UI.Extensions
             float ztest = 0.0f;
             float zstep = 100.0f;
             float ztesttarget = 0.0f;
-            for (int i = 0; i < loops; i++)
-            {
-                for (int j = 0; j < 10; j++)
-                {
+            for (int i = 0; i < loops; i++) {
+                for (int j = 0; j < 10; j++) {
                     iterationCount++;
                     ztest = z + zstep;
                     ztesttarget = (float)Math.Sinh(ztest) / ztest;
@@ -171,23 +147,19 @@ namespace UnityEngine.UI.Extensions
                     if (float.IsInfinity(ztesttarget))
                         continue;
 
-                    if (ztesttarget == ztarget)
-                    {
+                    if (ztesttarget == ztarget) {
                         found = true;
                         z = ztest;
                         break;
                     }
-                    else if (ztesttarget > ztarget)
-                    {
+                    else if (ztesttarget > ztarget) {
                         break;
                     }
-                    else
-                    {
+                    else {
                         z = ztest;
                     }
 
-                    if (iterationCount > maxIterations)
-                    {
+                    if (iterationCount > maxIterations) {
                         found = true;
                         break;
                     }
@@ -206,8 +178,7 @@ namespace UnityEngine.UI.Extensions
             points = new Vector2[m_steps];
             float stepsf = m_steps - 1;
             float stepf;
-            for (int i = 0; i < m_steps; i++)
-            {
+            for (int i = 0; i < m_steps; i++) {
                 stepf = i / stepsf;
                 Vector2 pos = Vector2.zero;
                 pos.x = Mathf.Lerp(start.x, end.x, stepf);

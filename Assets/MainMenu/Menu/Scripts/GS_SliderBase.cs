@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public class GS_SliderBase : MonoBehaviour {
 
-	protected GraphicsSetting setting;
+    protected GraphicsSetting setting;
     // The camera in use.
     protected Camera cam;
     // The text we display to the user for the slider value.
@@ -17,7 +17,7 @@ public class GS_SliderBase : MonoBehaviour {
         get { return (int)slider.value; }
     }
 
-	protected GraphicsSettings graphicsSettings;
+    protected GraphicsSettings graphicsSettings;
 
     public string[] displayLabels;
 
@@ -28,7 +28,7 @@ public class GS_SliderBase : MonoBehaviour {
         slider = GetComponent<Slider>();
 
         // Register the graphics preset listeners.
-		graphicsSettings = FindObjectOfType<GraphicsSettings>();
+        graphicsSettings = FindObjectOfType<GraphicsSettings>();
         graphicsSettings.lowPresetEvent.AddListener(GraphicsPresetLow);
         graphicsSettings.mediumPresetEvent.AddListener(GraphicsPresetMedium);
         graphicsSettings.highPresetEvent.AddListener(GraphicsPresetHigh);
@@ -49,18 +49,18 @@ public class GS_SliderBase : MonoBehaviour {
         if (displayLabels.Length > 0) {
             displayValue.text = displayLabels[Value];
         }
-		OnStart ();
+        OnStart();
     }
-	public virtual void OnStart (){
-		
-	}
+    public virtual void OnStart() {
+
+    }
     /**
      * The settings to apply when a preset is selected. Overriden in each
      * respective settings class. Here you can turn off an effect on a lower
      * quality setting or adjust some of it's values, lower shadow distance
      * perhaps or whatever you want.
      */
-	protected virtual void GraphicsPresetLow() { 
+    protected virtual void GraphicsPresetLow() {
     }
     protected virtual void GraphicsPresetMedium() {
     }

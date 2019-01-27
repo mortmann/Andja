@@ -26,23 +26,19 @@ THE SOFTWARE.
 \***************************************************************************/
 
 
-namespace UnityEngine.UI.Extensions
-{
+namespace UnityEngine.UI.Extensions {
     [RequireComponent(typeof(RectTransform))]
     [RequireComponent(typeof(Image))]
     [AddComponentMenu("UI/Extensions/Raycast Mask")]
-    public class RaycastMask : MonoBehaviour, ICanvasRaycastFilter
-    {
+    public class RaycastMask : MonoBehaviour, ICanvasRaycastFilter {
         private Image _image;
         private Sprite _sprite;
 
-        void Start()
-        {
+        void Start() {
             _image = GetComponent<Image>();
         }
 
-        public bool IsRaycastLocationValid(Vector2 sp, Camera eventCamera)
-        {
+        public bool IsRaycastLocationValid(Vector2 sp, Camera eventCamera) {
             _sprite = _image.sprite;
 
             var rectTransform = (RectTransform)transform;
@@ -59,63 +55,52 @@ namespace UnityEngine.UI.Extensions
             var x = 0;
             var y = 0;
             // convert to texture space
-            switch (_image.type)
-            {
+            switch (_image.type) {
 
-                case Image.Type.Sliced:
-                    {
-                        var border = _sprite.border;
-                        // x slicing
-                        if (localPosition.x < border.x)
-                        {
-                            x = Mathf.FloorToInt(spriteRect.x + localPosition.x);
-                        }
-                        else if (localPosition.x > maskRect.width - border.z)
-                        {
-                            x = Mathf.FloorToInt(spriteRect.x + spriteRect.width - (maskRect.width - localPosition.x));
-                        }
-                        else
-                        {
-                            x = Mathf.FloorToInt(spriteRect.x + border.x +
-                                                 ((localPosition.x - border.x) /
-                                                 (maskRect.width - border.x - border.z)) *
-                                                 (spriteRect.width - border.x - border.z));
-                        }
-                        // y slicing
-                        if (localPosition.y < border.y)
-                        {
-                            y = Mathf.FloorToInt(spriteRect.y + localPosition.y);
-                        }
-                        else if (localPosition.y > maskRect.height - border.w)
-                        {
-                            y = Mathf.FloorToInt(spriteRect.y + spriteRect.height - (maskRect.height - localPosition.y));
-                        }
-                        else
-                        {
-                            y = Mathf.FloorToInt(spriteRect.y + border.y +
-                                                 ((localPosition.y - border.y) /
-                                                 (maskRect.height - border.y - border.w)) *
-                                                 (spriteRect.height - border.y - border.w));
-                        }
+                case Image.Type.Sliced: {
+                    var border = _sprite.border;
+                    // x slicing
+                    if (localPosition.x < border.x) {
+                        x = Mathf.FloorToInt(spriteRect.x + localPosition.x);
                     }
-                    break;
+                    else if (localPosition.x > maskRect.width - border.z) {
+                        x = Mathf.FloorToInt(spriteRect.x + spriteRect.width - (maskRect.width - localPosition.x));
+                    }
+                    else {
+                        x = Mathf.FloorToInt(spriteRect.x + border.x +
+                                             ((localPosition.x - border.x) /
+                                             (maskRect.width - border.x - border.z)) *
+                                             (spriteRect.width - border.x - border.z));
+                    }
+                    // y slicing
+                    if (localPosition.y < border.y) {
+                        y = Mathf.FloorToInt(spriteRect.y + localPosition.y);
+                    }
+                    else if (localPosition.y > maskRect.height - border.w) {
+                        y = Mathf.FloorToInt(spriteRect.y + spriteRect.height - (maskRect.height - localPosition.y));
+                    }
+                    else {
+                        y = Mathf.FloorToInt(spriteRect.y + border.y +
+                                             ((localPosition.y - border.y) /
+                                             (maskRect.height - border.y - border.w)) *
+                                             (spriteRect.height - border.y - border.w));
+                    }
+                }
+                break;
                 case Image.Type.Simple:
-                default:
-                    {
-                        // conversion to uniform UV space
-                        x = Mathf.FloorToInt(spriteRect.x + spriteRect.width * localPosition.x / maskRect.width);
-                        y = Mathf.FloorToInt(spriteRect.y + spriteRect.height * localPosition.y / maskRect.height);
-                    }
-                    break;
+                default: {
+                    // conversion to uniform UV space
+                    x = Mathf.FloorToInt(spriteRect.x + spriteRect.width * localPosition.x / maskRect.width);
+                    y = Mathf.FloorToInt(spriteRect.y + spriteRect.height * localPosition.y / maskRect.height);
+                }
+                break;
             }
 
             // destroy component if texture import settings are wrong
-            try
-            {
+            try {
                 return _sprite.texture.GetPixel(x, y).a > 0;
             }
-            catch (UnityException)
-            {
+            catch (UnityException) {
                 Debug.LogWarning("Mask texture not readable, set your sprite to Texture Type 'Advanced' and check 'Read/Write Enabled'");
                 Destroy(this);
                 return false;

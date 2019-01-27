@@ -1,7 +1,5 @@
-﻿namespace Priority_Queue
-{
-    public class FastPriorityQueueNode
-    {
+﻿namespace Priority_Queue {
+    public class FastPriorityQueueNode {
         /// <summary>
         /// The Priority to insert this node at.  Must be set BEFORE adding a node to the queue
         /// </summary>

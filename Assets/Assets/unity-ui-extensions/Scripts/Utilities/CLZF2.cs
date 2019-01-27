@@ -84,13 +84,11 @@
 
 using System;
 
-namespace UnityEngine.UI.Extensions
-{
+namespace UnityEngine.UI.Extensions {
     /// <summary>
     /// Improved C# LZF Compressor, a very small data compression library. The compression algorithm is extremely fast.
     /// Note for strings, ensure you only use Unicode else specaial characters may get corrupted.
-    public static class CLZF2
-    {
+    public static class CLZF2 {
         private static readonly uint HLOG = 14;
         private static readonly uint HSIZE = (1 << 14);
         private static readonly uint MAX_LIT = (1 << 5);
@@ -103,16 +101,14 @@ namespace UnityEngine.UI.Extensions
         private static readonly long[] HashTable = new long[HSIZE];
 
         // Compresses inputBytes
-        public static byte[] Compress(byte[] inputBytes)
-        {
+        public static byte[] Compress(byte[] inputBytes) {
             // Starting guess, increase it later if needed
             int outputByteCountGuess = inputBytes.Length * 2;
             byte[] tempBuffer = new byte[outputByteCountGuess];
             int byteCount = lzf_compress(inputBytes, ref tempBuffer);
 
             // If byteCount is 0, then increase buffer and try again
-            while (byteCount == 0)
-            {
+            while (byteCount == 0) {
                 outputByteCountGuess *= 2;
                 tempBuffer = new byte[outputByteCountGuess];
                 byteCount = lzf_compress(inputBytes, ref tempBuffer);
@@ -124,16 +120,14 @@ namespace UnityEngine.UI.Extensions
         }
 
         // Decompress outputBytes
-        public static byte[] Decompress(byte[] inputBytes)
-        {
+        public static byte[] Decompress(byte[] inputBytes) {
             // Starting guess, increase it later if needed
             int outputByteCountGuess = inputBytes.Length * 2;
             byte[] tempBuffer = new byte[outputByteCountGuess];
             int byteCount = lzf_decompress(inputBytes, ref tempBuffer);
 
             // If byteCount is 0, then increase buffer and try again
-            while (byteCount == 0)
-            {
+            while (byteCount == 0) {
                 outputByteCountGuess *= 2;
                 tempBuffer = new byte[outputByteCountGuess];
                 byteCount = lzf_decompress(inputBytes, ref tempBuffer);
@@ -150,8 +144,7 @@ namespace UnityEngine.UI.Extensions
         /// <param name="input">Reference to the data to compress</param>
         /// <param name="output">Reference to a buffer which will contain the compressed data</param>
         /// <returns>The size of the compressed archive in the output buffer</returns>
-        public static int lzf_compress(byte[] input, ref byte[] output)
-        {
+        public static int lzf_compress(byte[] input, ref byte[] output) {
             int inputLength = input.Length;
             int outputLength = output.Length;
 
@@ -166,10 +159,9 @@ namespace UnityEngine.UI.Extensions
             long off;
             int lit = 0;
 
-            for (;;)
+            for (; ; )
             {
-                if (iidx < inputLength - 2)
-                {
+                if (iidx < inputLength - 2) {
                     hval = (hval << 8) | input[iidx + 2];
                     hslot = ((hval ^ (hval << 5)) >> (int)(((3 * 8 - HLOG)) - hval * 5) & (HSIZE - 1));
                     reference = HashTable[hslot];
@@ -182,8 +174,7 @@ namespace UnityEngine.UI.Extensions
                         && input[reference + 0] == input[iidx + 0]
                         && input[reference + 1] == input[iidx + 1]
                         && input[reference + 2] == input[iidx + 2]
-                        )
-                    {
+                        ) {
                         /* match found at *reference++ */
                         uint len = 2;
                         uint maxlen = (uint)inputLength - iidx - len;
@@ -196,8 +187,7 @@ namespace UnityEngine.UI.Extensions
                             len++;
                         while (len < maxlen && input[reference + len] == input[iidx + len]);
 
-                        if (lit != 0)
-                        {
+                        if (lit != 0) {
                             output[oidx++] = (byte)(lit - 1);
                             lit = -lit;
                             do
@@ -208,12 +198,10 @@ namespace UnityEngine.UI.Extensions
                         len -= 2;
                         iidx++;
 
-                        if (len < 7)
-                        {
+                        if (len < 7) {
                             output[oidx++] = (byte)((off >> 8) + (len << 5));
                         }
-                        else
-                        {
+                        else {
                             output[oidx++] = (byte)((off >> 8) + (7 << 5));
                             output[oidx++] = (byte)(len - 7);
                         }
@@ -240,8 +228,7 @@ namespace UnityEngine.UI.Extensions
                 lit++;
                 iidx++;
 
-                if (lit == MAX_LIT)
-                {
+                if (lit == MAX_LIT) {
                     if (oidx + 1 + MAX_LIT >= outputLength)
                         return 0;
 
@@ -253,8 +240,7 @@ namespace UnityEngine.UI.Extensions
                 }
             }
 
-            if (lit != 0)
-            {
+            if (lit != 0) {
                 if (oidx + lit + 1 >= outputLength)
                     return 0;
 
@@ -275,24 +261,21 @@ namespace UnityEngine.UI.Extensions
         /// <param name="input">Reference to the data to decompress</param>
         /// <param name="output">Reference to a buffer which will contain the decompressed data</param>
         /// <returns>Returns decompressed size</returns>
-        public static int lzf_decompress(byte[] input, ref byte[] output)
-        {
+        public static int lzf_decompress(byte[] input, ref byte[] output) {
             int inputLength = input.Length;
             int outputLength = output.Length;
 
             uint iidx = 0;
             uint oidx = 0;
 
-            do
-            {
+            do {
                 uint ctrl = input[iidx++];
 
                 if (ctrl < (1 << 5)) /* literal run */
                 {
                     ctrl++;
 
-                    if (oidx + ctrl > outputLength)
-                    {
+                    if (oidx + ctrl > outputLength) {
                         //SET_ERRNO (E2BIG);
                         return 0;
                     }
@@ -312,14 +295,12 @@ namespace UnityEngine.UI.Extensions
 
                     reference -= input[iidx++];
 
-                    if (oidx + len + 2 > outputLength)
-                    {
+                    if (oidx + len + 2 > outputLength) {
                         //SET_ERRNO (E2BIG);
                         return 0;
                     }
 
-                    if (reference < 0)
-                    {
+                    if (reference < 0) {
                         //SET_ERRNO (EINVAL);
                         return 0;
                     }

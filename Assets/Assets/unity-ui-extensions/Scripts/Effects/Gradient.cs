@@ -3,11 +3,9 @@
 
 using System.Collections.Generic;
 
-namespace UnityEngine.UI.Extensions
-{
+namespace UnityEngine.UI.Extensions {
     [AddComponentMenu("UI/Effects/Extensions/Gradient")]
-    public class Gradient : BaseMeshEffect
-    {
+    public class Gradient : BaseMeshEffect {
         [SerializeField]
         private GradientMode _gradientMode = GradientMode.Global;
         [SerializeField]
@@ -28,25 +26,20 @@ namespace UnityEngine.UI.Extensions
         public Color Vertex2 { get { return _vertex2; } set { _vertex2 = value; graphic.SetAllDirty(); } }
         #endregion
 
-        protected override void Awake()
-        {
+        protected override void Awake() {
             targetGraphic = GetComponent<Graphic>();
         }
 
-        public override void ModifyMesh(VertexHelper vh)
-        {
+        public override void ModifyMesh(VertexHelper vh) {
             int count = vh.currentVertCount;
-            if (!IsActive() || count == 0)
-            {
+            if (!IsActive() || count == 0) {
                 return;
             }
             var vertexList = new List<UIVertex>();
             vh.GetUIVertexStream(vertexList);
             UIVertex uiVertex = new UIVertex();
-            if (_gradientMode == GradientMode.Global)
-            {
-                if (_gradientDir == GradientDir.DiagonalLeftToRight || _gradientDir == GradientDir.DiagonalRightToLeft)
-                {
+            if (_gradientMode == GradientMode.Global) {
+                if (_gradientDir == GradientDir.DiagonalLeftToRight || _gradientDir == GradientDir.DiagonalRightToLeft) {
 #if UNITY_EDITOR
                     Debug.LogWarning("Diagonal dir is not supported in Global mode");
 #endif
@@ -57,8 +50,7 @@ namespace UnityEngine.UI.Extensions
 
                 float uiElementHeight = topY - bottomY;
 
-                for (int i = 0; i < count; i++)
-                {
+                for (int i = 0; i < count; i++) {
                     vh.PopulateUIVertex(ref uiVertex, i);
                     if (!_overwriteAllColor && uiVertex.color != targetGraphic.color)
                         continue;
@@ -66,15 +58,12 @@ namespace UnityEngine.UI.Extensions
                     vh.SetUIVertex(uiVertex, i);
                 }
             }
-            else
-            {
-                for (int i = 0; i < count; i++)
-                {
+            else {
+                for (int i = 0; i < count; i++) {
                     vh.PopulateUIVertex(ref uiVertex, i);
                     if (!_overwriteAllColor && !CompareCarefully(uiVertex.color, targetGraphic.color))
                         continue;
-                    switch (_gradientDir)
-                    {
+                    switch (_gradientDir) {
                         case GradientDir.Vertical:
                             uiVertex.color *= (i % 4 == 0 || (i - 1) % 4 == 0) ? _vertex1 : _vertex2;
                             break;
@@ -93,22 +82,19 @@ namespace UnityEngine.UI.Extensions
                 }
             }
         }
-        private bool CompareCarefully(Color col1, Color col2)
-        {
+        private bool CompareCarefully(Color col1, Color col2) {
             if (Mathf.Abs(col1.r - col2.r) < 0.003f && Mathf.Abs(col1.g - col2.g) < 0.003f && Mathf.Abs(col1.b - col2.b) < 0.003f && Mathf.Abs(col1.a - col2.a) < 0.003f)
                 return true;
             return false;
         }
     }
 
-    public enum GradientMode
-    {
+    public enum GradientMode {
         Global,
         Local
     }
 
-    public enum GradientDir
-    {
+    public enum GradientDir {
         Vertical,
         Horizontal,
         DiagonalLeftToRight,

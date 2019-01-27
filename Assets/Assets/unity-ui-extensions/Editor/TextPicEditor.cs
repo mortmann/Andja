@@ -3,20 +3,17 @@
 
 using UnityEditor;
 
-namespace UnityEngine.UI.Extensions
-{
+namespace UnityEngine.UI.Extensions {
     [CanEditMultipleObjects]
     [CustomEditor(typeof(TextPic))]
-    public class TextPicEditor : UnityEditor.UI.TextEditor
-    {
+    public class TextPicEditor : UnityEditor.UI.TextEditor {
 
         private SerializedProperty ImageScalingFactorProp;
         private SerializedProperty hyperlinkColorProp;
         private SerializedProperty imageOffsetProp;
         private SerializedProperty iconList;
 
-        protected override void OnEnable()
-        {
+        protected override void OnEnable() {
             base.OnEnable();
             ImageScalingFactorProp = serializedObject.FindProperty("ImageScalingFactor");
             hyperlinkColorProp = serializedObject.FindProperty("hyperlinkColor");
@@ -24,8 +21,7 @@ namespace UnityEngine.UI.Extensions
             iconList = serializedObject.FindProperty("inspectorIconList");
         }
 
-        public override void OnInspectorGUI()
-        {
+        public override void OnInspectorGUI() {
             base.OnInspectorGUI();
             serializedObject.Update();
             EditorGUILayout.PropertyField(imageOffsetProp, new GUIContent("Image Offset"));

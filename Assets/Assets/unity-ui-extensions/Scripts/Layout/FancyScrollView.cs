@@ -3,10 +3,8 @@
 
 using System.Collections.Generic;
 
-namespace UnityEngine.UI.Extensions
-{
-    public class FancyScrollView<TData, TContext> : MonoBehaviour where TContext : class
-    {
+namespace UnityEngine.UI.Extensions {
+    public class FancyScrollView<TData, TContext> : MonoBehaviour where TContext : class {
         [SerializeField, Range(float.Epsilon, 1f)]
         float cellInterval;
         [SerializeField, Range(0f, 1f)]
@@ -23,8 +21,7 @@ namespace UnityEngine.UI.Extensions
         protected TContext context;
         protected List<TData> cellData = new List<TData>();
 
-        protected void Awake()
-        {
+        protected void Awake() {
             cellBase.SetActive(false);
         }
 
@@ -32,12 +29,10 @@ namespace UnityEngine.UI.Extensions
         /// コンテキストを設定します
         /// </summary>
         /// <param name="context"></param>
-        protected void SetContext(TContext context)
-        {
+        protected void SetContext(TContext context) {
             this.context = context;
 
-            for (int i = 0; i < cells.Count; i++)
-            {
+            for (int i = 0; i < cells.Count; i++) {
                 cells[i].SetContext(context);
             }
         }
@@ -46,8 +41,7 @@ namespace UnityEngine.UI.Extensions
         /// セルを生成して返します
         /// </summary>
         /// <returns></returns>
-        FancyScrollViewCell<TData, TContext> CreateCell()
-        {
+        FancyScrollViewCell<TData, TContext> CreateCell() {
             var cellObject = Instantiate(cellBase);
             cellObject.SetActive(true);
             var cell = cellObject.GetComponent<FancyScrollViewCell<TData, TContext>>();
@@ -60,8 +54,7 @@ namespace UnityEngine.UI.Extensions
             var offsetMin = Vector2.zero;
             var offsetMax = Vector2.zero;
 
-            if (cellRectTransform)
-            {
+            if (cellRectTransform) {
                 sizeDelta = cellRectTransform.sizeDelta;
                 offsetMin = cellRectTransform.offsetMin;
                 offsetMax = cellRectTransform.offsetMax;
@@ -70,8 +63,7 @@ namespace UnityEngine.UI.Extensions
             cell.transform.SetParent(cellBase.transform.parent);
 
             cell.transform.localScale = scale;
-            if (cellRectTransform)
-            {
+            if (cellRectTransform) {
                 cellRectTransform.sizeDelta = sizeDelta;
                 cellRectTransform.offsetMin = offsetMin;
                 cellRectTransform.offsetMax = offsetMax;
@@ -87,12 +79,10 @@ namespace UnityEngine.UI.Extensions
         float prevCellInterval, prevCellOffset;
         bool prevLoop;
 
-        void LateUpdate()
-        {
+        void LateUpdate() {
             if (prevLoop != loop ||
                 prevCellOffset != cellOffset ||
-                prevCellInterval != cellInterval)
-            {
+                prevCellInterval != cellInterval) {
                 UpdatePosition(currentPosition);
 
                 prevLoop = loop;
@@ -107,14 +97,11 @@ namespace UnityEngine.UI.Extensions
         /// </summary>
         /// <param name="cell"></param>
         /// <param name="dataIndex"></param>
-        void UpdateCellForIndex(FancyScrollViewCell<TData, TContext> cell, int dataIndex)
-        {
-            if (loop)
-            {
+        void UpdateCellForIndex(FancyScrollViewCell<TData, TContext> cell, int dataIndex) {
+            if (loop) {
                 dataIndex = GetLoopIndex(dataIndex, cellData.Count);
             }
-            else if (dataIndex < 0 || dataIndex > cellData.Count - 1)
-            {
+            else if (dataIndex < 0 || dataIndex > cellData.Count - 1) {
                 // セルに対応するデータが存在しなければセルを表示しない
                 cell.SetVisible(false);
                 return;
@@ -131,14 +118,11 @@ namespace UnityEngine.UI.Extensions
         /// <param name="index"></param>
         /// <param name="length"></param>
         /// <returns></returns>
-        int GetLoopIndex(int index, int length)
-        {
-            if (index < 0)
-            {
+        int GetLoopIndex(int index, int length) {
+            if (index < 0) {
                 index = (length - 1) + (index + 1) % length;
             }
-            else if (index > length - 1)
-            {
+            else if (index > length - 1) {
                 index = index % length;
             }
             return index;
@@ -147,8 +131,7 @@ namespace UnityEngine.UI.Extensions
         /// <summary>
         /// 表示内容を更新します
         /// </summary>
-        protected void UpdateContents()
-        {
+        protected void UpdateContents() {
             UpdatePosition(currentPosition);
         }
 
@@ -156,8 +139,7 @@ namespace UnityEngine.UI.Extensions
         /// スクロール位置を更新します
         /// </summary>
         /// <param name="position"></param>
-        protected void UpdatePosition(float position)
-        {
+        protected void UpdatePosition(float position) {
             currentPosition = position;
 
             var visibleMinPosition = position - (cellOffset / cellInterval);
@@ -166,22 +148,18 @@ namespace UnityEngine.UI.Extensions
             var count = 0;
             var cellIndex = 0;
 
-            for (float pos = firstCellPosition; pos <= 1f; pos += cellInterval, count++)
-            {
-                if (count >= cells.Count)
-                {
+            for (float pos = firstCellPosition; pos <= 1f; pos += cellInterval, count++) {
+                if (count >= cells.Count) {
                     cells.Add(CreateCell());
                 }
             }
 
             count = 0;
 
-            for (float pos = firstCellPosition; pos <= 1f; count++, pos += cellInterval)
-            {
+            for (float pos = firstCellPosition; pos <= 1f; count++, pos += cellInterval) {
                 var dataIndex = dataStartIndex + count;
                 cellIndex = GetLoopIndex(dataIndex, cells.Count);
-                if (cells[cellIndex].gameObject.activeSelf)
-                {
+                if (cells[cellIndex].gameObject.activeSelf) {
                     cells[cellIndex].UpdatePosition(pos);
                 }
                 UpdateCellForIndex(cells[cellIndex], dataIndex);
@@ -189,20 +167,17 @@ namespace UnityEngine.UI.Extensions
 
             cellIndex = GetLoopIndex(dataStartIndex + count, cells.Count);
 
-            for (; count < cells.Count; count++, cellIndex = GetLoopIndex(dataStartIndex + count, cells.Count))
-            {
+            for (; count < cells.Count; count++, cellIndex = GetLoopIndex(dataStartIndex + count, cells.Count)) {
                 cells[cellIndex].SetVisible(false);
             }
         }
     }
 
-    public sealed class FancyScrollViewNullContext
-    {
+    public sealed class FancyScrollViewNullContext {
 
     }
 
-    public class FancyScrollView<TData> : FancyScrollView<TData, FancyScrollViewNullContext>
-    {
+    public class FancyScrollView<TData> : FancyScrollView<TData, FancyScrollViewNullContext> {
 
     }
 }

@@ -16,13 +16,13 @@ public class ProjectileHoldingScript : MonoBehaviour {
     }
 
     // Update is called once per frame
-    void Update () {
+    void Update() {
         transform.position = myProjectile.Position;
-	}
+    }
     //Doesnt get triggerd on hit because itself is a trigger
     private void OnCollisionEnter2D(Collision2D collision) {
         ITargetableHoldingScript iths = collision.collider.GetComponent<ITargetableHoldingScript>();
-        if(iths == null) {
+        if (iths == null) {
             return;
         }
         if (myProjectile.OnHit(iths.Holding)) {

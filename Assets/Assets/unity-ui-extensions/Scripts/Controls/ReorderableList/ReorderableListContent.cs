@@ -4,29 +4,24 @@
 using System.Collections;
 using System.Collections.Generic;
 
-namespace UnityEngine.UI.Extensions
-{
-    public class ReorderableListContent : MonoBehaviour
-    {
+namespace UnityEngine.UI.Extensions {
+    public class ReorderableListContent : MonoBehaviour {
         private List<Transform> _cachedChildren;
         private List<ReorderableListElement> _cachedListElement;
         private ReorderableListElement _ele;
         private ReorderableList _extList;
         private RectTransform _rect;
 
-        private void OnEnable()
-        {
-            if(_rect)StartCoroutine(RefreshChildren());
+        private void OnEnable() {
+            if (_rect) StartCoroutine(RefreshChildren());
         }
 
 
-        public void OnTransformChildrenChanged()
-        {
-            if(this.isActiveAndEnabled)StartCoroutine(RefreshChildren());
+        public void OnTransformChildrenChanged() {
+            if (this.isActiveAndEnabled) StartCoroutine(RefreshChildren());
         }
 
-        public void Init(ReorderableList extList)
-        {
+        public void Init(ReorderableList extList) {
             _extList = extList;
             _rect = GetComponent<RectTransform>();
             _cachedChildren = new List<Transform>();
@@ -35,11 +30,9 @@ namespace UnityEngine.UI.Extensions
             StartCoroutine(RefreshChildren());
         }
 
-        private IEnumerator RefreshChildren()
-        {
+        private IEnumerator RefreshChildren() {
             //Handle new chilren
-            for (int i = 0; i < _rect.childCount; i++)
-            {
+            for (int i = 0; i < _rect.childCount; i++) {
                 if (_cachedChildren.Contains(_rect.GetChild(i)))
                     continue;
 
@@ -55,10 +48,8 @@ namespace UnityEngine.UI.Extensions
             yield return 0;
 
             //Remove deleted child
-            for (int i = _cachedChildren.Count - 1; i >= 0; i--)
-            {
-                if (_cachedChildren[i] == null)
-                {
+            for (int i = _cachedChildren.Count - 1; i >= 0; i--) {
+                if (_cachedChildren[i] == null) {
                     _cachedChildren.RemoveAt(i);
                     _cachedListElement.RemoveAt(i);
                 }

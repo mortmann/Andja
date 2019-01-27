@@ -4,12 +4,10 @@
 using System.Collections;
 using UnityEngine.EventSystems;
 
-namespace UnityEngine.UI.Extensions
-{
+namespace UnityEngine.UI.Extensions {
     [AddComponentMenu("UI/Extensions/Selectable Scalar")]
     [RequireComponent(typeof(Button))]
-    public class SelectableScaler : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
-    {
+    public class SelectableScaler : MonoBehaviour, IPointerDownHandler, IPointerUpHandler {
         public AnimationCurve animCurve;
         [Tooltip("Animation speed multiplier")]
         public float speed = 1;
@@ -17,10 +15,8 @@ namespace UnityEngine.UI.Extensions
         public Transform target;
 
         Selectable selectable;
-        public Selectable Target
-        {
-            get
-            {
+        public Selectable Target {
+            get {
                 if (selectable == null)
                     selectable = GetComponent<Selectable>();
 
@@ -28,27 +24,23 @@ namespace UnityEngine.UI.Extensions
             }
         }
         // Use this for initialization
-        void Awake()
-        {
+        void Awake() {
             if (target == null)
                 target = transform;
 
             initScale = target.localScale;
         }
-        void OnEnable()
-        {
+        void OnEnable() {
             target.localScale = initScale;
         }
-        public void OnPointerDown(PointerEventData eventData)
-        {
+        public void OnPointerDown(PointerEventData eventData) {
             if (Target != null && !Target.interactable)
                 return;
 
             StopCoroutine("ScaleOUT");
             StartCoroutine("ScaleIN");
         }
-        public void OnPointerUp(PointerEventData eventData)
-        {
+        public void OnPointerUp(PointerEventData eventData) {
             if (Target != null && !Target.interactable)
                 return;
 
@@ -56,32 +48,26 @@ namespace UnityEngine.UI.Extensions
             StartCoroutine("ScaleOUT");
         }
 
-        IEnumerator ScaleIN()
-        {
-            if (animCurve.keys.Length > 0)
-            {
+        IEnumerator ScaleIN() {
+            if (animCurve.keys.Length > 0) {
                 target.localScale = initScale;
                 float t = 0;
                 float maxT = animCurve.keys[animCurve.length - 1].time;
 
-                while (t < maxT)
-                {
+                while (t < maxT) {
                     t += speed * Time.unscaledDeltaTime;
                     target.localScale = Vector3.one * animCurve.Evaluate(t);
                     yield return null;
                 }
             }
         }
-        IEnumerator ScaleOUT()
-        {
-            if (animCurve.keys.Length > 0)
-            {
+        IEnumerator ScaleOUT() {
+            if (animCurve.keys.Length > 0) {
                 //target.localScale = initScale;
                 float t = 0;
                 float maxT = animCurve.keys[animCurve.length - 1].time;
 
-                while (t < maxT)
-                {
+                while (t < maxT) {
                     t += speed * Time.unscaledDeltaTime;
                     target.localScale = Vector3.one * animCurve.Evaluate(maxT - t);
                     yield return null;

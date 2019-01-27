@@ -8,19 +8,19 @@ public class CurrentlyBuildingUnitUI : MonoBehaviour {
 
     public CircleProgressBar progressBar;
     public UnitBuildUI currently;
-    MilitaryBuilding uiBuilding;
+    MilitaryStructure uiStructure;
     // Use this for initialization
-    public void Show (MilitaryBuilding mb) {
+    public void Show(MilitaryStructure mb) {
         currently.Show(mb.CurrentlyBuildingUnit);
-        uiBuilding = mb;
-        progressBar.SetProgress(uiBuilding.ProgressPercentage);
+        uiStructure = mb;
+        progressBar.SetProgress(uiStructure.ProgressPercentage);
     }
 
     // Update is called once per frame
-    void Update () {
-        if(uiBuilding.CurrentlyBuildingUnit != null) {
-            currently.Show(uiBuilding.CurrentlyBuildingUnit);
+    void Update() {
+        if (uiStructure.CurrentlyBuildingUnit != null) {
+            currently.Show(uiStructure.CurrentlyBuildingUnit);
         }
-        progressBar.SetProgress(uiBuilding.ProgressPercentage);
+        progressBar.SetProgress(uiStructure.ProgressPercentage);
     }
 }

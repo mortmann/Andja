@@ -22,7 +22,7 @@ public class DebugListDataUI : MonoBehaviour {
         if (field.FieldType.GetInterface(nameof(IEnumerable)) == null && field.GetType().IsArray == false) {
             return;
         }
-        foreach(Transform t in listgameObject.transform) {
+        foreach (Transform t in listgameObject.transform) {
             Destroy(t.gameObject);
         }
         nameText.text = field.Name;
@@ -98,7 +98,7 @@ public class DebugListDataUI : MonoBehaviour {
     }
 
     public void Update() {
-        if(GetCount != null)
+        if (GetCount != null)
             valueText.text = GetCount();
         if (isNull)
             MakeList(); //maybe after some time?
@@ -110,7 +110,7 @@ public class DebugListDataUI : MonoBehaviour {
     static Type GetListType(Type enumerable) {
         var enumerableType = enumerable
             .GetInterfaces()
-            .Where(x =>x.IsGenericType && x.GetGenericTypeDefinition() == typeof(IEnumerable<>))
+            .Where(x => x.IsGenericType && x.GetGenericTypeDefinition() == typeof(IEnumerable<>))
             .First();
         return enumerableType.GetGenericArguments()[0];
     }

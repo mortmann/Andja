@@ -1505,7 +1505,7 @@ MonoBehaviour:
   consoleCanvas: {fileID: 157207983}
   buildingCanvas: {fileID: 1753813432}
   unitCanvas: {fileID: 782353739}
-  militaryBuildingCanvas: {fileID: 1845186998}
+  militaryStructureInfo: {fileID: 1845186998}
   rightCanvas: {fileID: 563858574}
   CityInventoryCanvas: {fileID: 882585333}
   citizenCanvas: {fileID: 2090199421}
@@ -5377,7 +5377,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 93.599976, y: 0.000015258789}
+  m_AnchoredPosition: {x: 93.599976, y: 0.000045776367}
   m_SizeDelta: {x: 187.2, y: 343.1}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!1 &430709615
@@ -8835,7 +8835,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 164425182}
   m_Direction: 2
   m_Value: 0
-  m_Size: 0.99999994
+  m_Size: 0.99999976
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -25146,7 +25146,7 @@ MonoBehaviour:
   uiSource: {fileID: 716179961}
   soundEffectSource: {fileID: 1528187282}
   soundEffect2DGO: {fileID: 1111706883}
-  placeBuildingSound: {fileID: 8300000, guid: 4f01852c9cbd1f34c8eed733df589855, type: 3}
+  placeStructureSound: {fileID: 8300000, guid: 4f01852c9cbd1f34c8eed733df589855, type: 3}
   cityCreateSound: {fileID: 8300000, guid: 16868382a415abf46a11f6727fe5a5db, type: 3}
   mixer: {fileID: 24100000, guid: 67c981402fe73a84f807ad231f412b64, type: 2}
 --- !u!1 &1834598324
@@ -25335,7 +25335,7 @@ GameObject:
   - component: {fileID: 1845187002}
   - component: {fileID: 1845187001}
   m_Layer: 5
-  m_Name: MilitaryBuilding Info
+  m_Name: MilitaryStructure Info
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

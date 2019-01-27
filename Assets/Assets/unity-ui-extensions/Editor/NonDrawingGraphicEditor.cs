@@ -4,13 +4,10 @@
 using UnityEditor;
 using UnityEditor.UI;
 
-namespace UnityEngine.UI.Extensions
-{
+namespace UnityEngine.UI.Extensions {
     [CanEditMultipleObjects, CustomEditor(typeof(NonDrawingGraphic), false)]
-    public class NonDrawingGraphicEditor : GraphicEditor
-    {
-        public override void OnInspectorGUI()
-        {
+    public class NonDrawingGraphicEditor : GraphicEditor {
+        public override void OnInspectorGUI() {
             base.serializedObject.Update();
             EditorGUILayout.PropertyField(base.m_Script, new GUILayoutOption[0]);
             // skipping AppearanceControlsGUI

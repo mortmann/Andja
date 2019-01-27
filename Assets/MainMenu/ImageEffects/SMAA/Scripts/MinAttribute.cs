@@ -23,25 +23,22 @@
 
 using UnityEngine;
 
-namespace Smaa
-{
-	/// <summary>
-	/// Attribute used to make a float or int variable in a script be restricted to a specific minimum value.
-	/// </summary>
-	public sealed class MinAttribute : PropertyAttribute
-	{
-		/// <summary>
-		/// The minimum value to clamp to.
-		/// </summary>
-		public readonly float min;
+namespace Smaa {
+    /// <summary>
+    /// Attribute used to make a float or int variable in a script be restricted to a specific minimum value.
+    /// </summary>
+    public sealed class MinAttribute : PropertyAttribute {
+        /// <summary>
+        /// The minimum value to clamp to.
+        /// </summary>
+        public readonly float min;
 
-		/// <summary>
-		/// Constructor.
-		/// </summary>
-		/// <param name="min">The minimum value to clamp to.</param>
-		public MinAttribute(float min)
-		{
-			this.min = min;
-		}
-	}
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        /// <param name="min">The minimum value to clamp to.</param>
+        public MinAttribute(float min) {
+            this.min = min;
+        }
+    }
 }

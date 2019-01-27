@@ -15,7 +15,7 @@ public class MoveCommand : Command {
     public override UnitMainModes MainMode => UnitMainModes.Moving;
     bool isFinsihed;
     public override bool IsFinished => isFinsihed;
-    public MoveCommand(Vector2 destination){
+    public MoveCommand(Vector2 destination) {
         position = destination;
     }
 
@@ -29,7 +29,7 @@ public class AttackCommand : Command {
     public override UnitMainModes MainMode => UnitMainModes.Attack;
 
     public ITargetable target;
-    public AttackCommand(ITargetable target){
+    public AttackCommand(ITargetable target) {
         this.target = target;
     }
 }
@@ -38,7 +38,7 @@ public class CaptureCommand : Command {
     public override bool IsFinished => target.Captured;
     public override UnitMainModes MainMode => UnitMainModes.Capture;
     public ICapturable target;
-    public CaptureCommand(ICapturable target){
+    public CaptureCommand(ICapturable target) {
         this.target = target;
     }
 }

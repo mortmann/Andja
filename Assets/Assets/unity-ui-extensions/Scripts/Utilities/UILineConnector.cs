@@ -1,13 +1,11 @@
 ﻿/// Credit Alastair Aitchison
 /// Sourced from - https://bitbucket.org/UnityUIExtensions/unity-ui-extensions/issues/123/uilinerenderer-issues-with-specifying
 
-namespace UnityEngine.UI.Extensions
-{
+namespace UnityEngine.UI.Extensions {
     [AddComponentMenu("UI/Extensions/UI Line Connector")]
     [RequireComponent(typeof(UILineRenderer))]
     [ExecuteInEditMode]
-    public class UILineConnector : MonoBehaviour
-    {
+    public class UILineConnector : MonoBehaviour {
 
         // The elements between which line segments should be drawn
         public RectTransform[] transforms;
@@ -16,28 +14,22 @@ namespace UnityEngine.UI.Extensions
         private RectTransform rt;
         private UILineRenderer lr;
 
-        private void Awake()
-        {
+        private void Awake() {
             canvas = GetComponentInParent<RectTransform>().GetParentCanvas().GetComponent<RectTransform>();
             rt = GetComponent<RectTransform>();
             lr = GetComponent<UILineRenderer>();
         }
 
         // Update is called once per frame
-        void Update()
-        {
-            if (transforms == null || transforms.Length < 1)
-            {
+        void Update() {
+            if (transforms == null || transforms.Length < 1) {
                 return;
             }
             //Performance check to only redraw when the child transforms move
-            if (previousPositions != null && previousPositions.Length == transforms.Length)
-            {
+            if (previousPositions != null && previousPositions.Length == transforms.Length) {
                 bool updateLine = false;
-                for (int i = 0; i < transforms.Length; i++)
-                {
-                    if (!updateLine && previousPositions[i] != transforms[i].anchoredPosition)
-                    {
+                for (int i = 0; i < transforms.Length; i++) {
+                    if (!updateLine && previousPositions[i] != transforms[i].anchoredPosition) {
                         updateLine = true;
                     }
                 }
@@ -54,20 +46,17 @@ namespace UnityEngine.UI.Extensions
             Vector2[] points = new Vector2[transforms.Length];
 
             // First, convert the pivot to worldspace
-            for (int i = 0; i < transforms.Length; i++)
-            {
+            for (int i = 0; i < transforms.Length; i++) {
                 worldSpaces[i] = transforms[i].TransformPoint(thisPivot);
             }
 
             // Then, convert to canvas space
-            for (int i = 0; i < transforms.Length; i++)
-            {
+            for (int i = 0; i < transforms.Length; i++) {
                 canvasSpaces[i] = canvas.InverseTransformPoint(worldSpaces[i]);
             }
 
             // Calculate delta from the canvas pivot point
-            for (int i = 0; i < transforms.Length; i++)
-            {
+            for (int i = 0; i < transforms.Length; i++) {
                 points[i] = new Vector2(canvasSpaces[i].x, canvasSpaces[i].y);
             }
 
@@ -77,8 +66,7 @@ namespace UnityEngine.UI.Extensions
             lr.drivenExternally = true;
 
             previousPositions = new Vector2[transforms.Length];
-            for (int i = 0; i < transforms.Length; i++)
-            {
+            for (int i = 0; i < transforms.Length; i++) {
                 previousPositions[i] = transforms[i].anchoredPosition;
             }
         }

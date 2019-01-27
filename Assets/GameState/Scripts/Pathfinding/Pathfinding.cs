@@ -11,16 +11,16 @@ public enum Turn_type { OnPoint, TurnRadius };
 
 [JsonObject(MemberSerialization.OptIn)]
 public abstract class Pathfinding {
-	#region Serialize
+    #region Serialize
 
-	[JsonPropertyAttribute] public float dest_X;
-	[JsonPropertyAttribute] public float dest_Y;
-    [JsonPropertyAttribute] protected bool _IsAtDest; 
-	// If we aren't moving, then destTile = currTile
-	[JsonPropertyAttribute] protected Tile _destTile;
-	[JsonPropertyAttribute] public float rotation;
-	[JsonPropertyAttribute] protected float _y;
-	[JsonPropertyAttribute] protected float _x;
+    [JsonPropertyAttribute] public float dest_X;
+    [JsonPropertyAttribute] public float dest_Y;
+    [JsonPropertyAttribute] protected bool _IsAtDest;
+    // If we aren't moving, then destTile = currTile
+    [JsonPropertyAttribute] protected Tile _destTile;
+    [JsonPropertyAttribute] public float rotation;
+    [JsonPropertyAttribute] protected float _y;
+    [JsonPropertyAttribute] protected float _x;
     [JsonPropertyAttribute] public Tile startTile;
 
     #endregion
@@ -28,46 +28,47 @@ public abstract class Pathfinding {
     public bool IsAtDestination { get { return _IsAtDest; } set { _IsAtDest = value; cbIsAtDestination?.Invoke(value); } }
     public Action<bool> cbIsAtDestination;
 
-	public Vector3 Position {
-		get { return new Vector3 (X,Y);}
-	}
-	public Queue<Tile> worldPath;
-	public Queue<Tile> backPath;
+    public Vector3 Position {
+        get { return new Vector3(X, Y); }
+    }
+    public Queue<Tile> worldPath;
+    public Queue<Tile> backPath;
 
-	protected Path_dest pathDest;
+    protected Path_dest pathDest;
 
-	public Vector3 LastMove { get; protected set;}
+    public Vector3 LastMove { get; protected set; }
 
-	protected float rotationSpeed=90;
+    protected float rotationSpeed = 90;
     protected Thread calculatingPathThread;
     protected bool IsCalculating => calculatingPathThread != null && calculatingPathThread.IsAlive;
-	protected float _speed = 1;
-	private float Speed {
-		get {
-			return _speed;
-		}
-		set {
-			if (value == 0) {
-				_speed = 1;
-			}
-			else {
-				_speed = value;
-			}
-		}
-	}
+    protected float _speed = 1;
+    private float Speed {
+        get {
+            return _speed;
+        }
+        set {
+            if (value == 0) {
+                _speed = 1;
+            }
+            else {
+                _speed = value;
+            }
+        }
+    }
 
-	protected Path_mode pathmode;
-	protected Turn_type myTurnType=Turn_type.OnPoint;
-	public float turnSpeed;
+    protected Path_mode pathmode;
+    protected Turn_type myTurnType = Turn_type.OnPoint;
+    public float turnSpeed;
 
-	#endregion
+    #endregion
 
     public Tile DestTile {
-        get { 
-			if (_destTile == null){
-				return CurrTile;
-			}
-			return _destTile; }
+        get {
+            if (_destTile == null) {
+                return CurrTile;
+            }
+            return _destTile;
+        }
         set {
             _destTile = value;
             if (_destTile != value) {
@@ -94,15 +95,16 @@ public abstract class Pathfinding {
     public Tile NextTile { get; protected set; }  // The next tile in the pathfinding sequence
     Tile _currTile;
     public Tile CurrTile {
-        get { 
-			if(_currTile == null){
-				return World.Current.GetTileAt (X, Y);
-			}
-			return _currTile; }
+        get {
+            if (_currTile == null) {
+                return World.Current.GetTileAt(X, Y);
+            }
+            return _currTile;
+        }
         set {
-			if(value==null){
-				return;
-			}
+            if (value == null) {
+                return;
+            }
             if (_currTile == null) {
                 X = value.X;
                 Y = value.Y;
@@ -127,31 +129,31 @@ public abstract class Pathfinding {
     public virtual void Update_DoMovement(float deltaTime) {
         //for loading purpose or any other strange reason
         //we have a destination & are not there atm && we have no path then calculate it!
-        if (DestTile != null && DestTile != CurrTile && IsAtDestination == false && NextTile != DestTile && worldPath == null )
+        if (DestTile != null && DestTile != CurrTile && IsAtDestination == false && NextTile != DestTile && worldPath == null)
             SetDestination(dest_X, dest_Y);
 
         if (CurrTile == DestTile) {
-			IsAtDestination = true;				
-			LastMove = Vector3.zero;
-			return;
+            IsAtDestination = true;
+            LastMove = Vector3.zero;
+            return;
         }
 
         //if were standing or if we can turn OnPoint(OnSpot) turn to face the rightway
-        if (myTurnType==Turn_type.OnPoint||LastMove.sqrMagnitude<=0.1){
-			//so we can turn on point but not move
-			//so rotate around with the turnspeed
-			//we can only rotate if we know the next tile we are going to visit
-			if(IsAtDestination==false&&CurrTile!=DestTile && UpdateRotationOnPoint(deltaTime)==false){		
-				Debug.Log ("UpdateRotationOnPoint(deltaTime)");
-				return;
-			}
-		}
+        if (myTurnType == Turn_type.OnPoint || LastMove.sqrMagnitude <= 0.1) {
+            //so we can turn on point but not move
+            //so rotate around with the turnspeed
+            //we can only rotate if we know the next tile we are going to visit
+            if (IsAtDestination == false && CurrTile != DestTile && UpdateRotationOnPoint(deltaTime) == false) {
+                Debug.Log("UpdateRotationOnPoint(deltaTime)");
+                return;
+            }
+        }
         if (pathDest == Path_dest.exact && NextTile == DestTile) {
             worldPath.Clear();
             LastMove = AccurateMove(deltaTime);
-			return;
+            return;
         }
-		LastMove = DoWorldPath(deltaTime);
+        LastMove = DoWorldPath(deltaTime);
 
     }
     public abstract void SetDestination(Tile end);
@@ -160,13 +162,13 @@ public abstract class Pathfinding {
     private Vector3 DoWorldPath(float deltaTime) {
         //no move command so return!
         if (DestTile == CurrTile) {
-			IsAtDestination = true;				
+            IsAtDestination = true;
             return Vector3.zero;
         }
 
         if (NextTile == null || NextTile == CurrTile) {
             // Get the next tile from the pathfinder.
-			if (worldPath == null || worldPath.Count == 0) {
+            if (worldPath == null || worldPath.Count == 0) {
                 return Vector3.zero;
             }
             NextTile = worldPath.Dequeue();
@@ -180,9 +182,9 @@ public abstract class Pathfinding {
 
         X += temp.x;
         Y += temp.y;
-		if(World.Current.IsInTileAt(NextTile,X,Y)){
-			CurrTile = NextTile;
-		}
+        if (World.Current.IsInTileAt(NextTile, X, Y)) {
+            CurrTile = NextTile;
+        }
 
         return temp;
     }
@@ -213,42 +215,42 @@ public abstract class Pathfinding {
         IsAtDestination = false;
         DestTile = startTile;
         startTile = backPath.Peek();
-		worldPath = backPath;
-	}
+        worldPath = backPath;
+    }
 
-	public void CreateReversePath(){
-		backPath =  new Queue<Tile>(worldPath.Reverse ());
-	}
+    public void CreateReversePath() {
+        backPath = new Queue<Tile>(worldPath.Reverse());
+    }
 
-	float t = 0;
-	public bool UpdateRotationOnPoint(float delta) {
-		if(rotationDirection.magnitude==0||CurrTile==NextTile){
-			return true;
-		}
+    float t = 0;
+    public bool UpdateRotationOnPoint(float delta) {
+        if (rotationDirection.magnitude == 0 || CurrTile == NextTile) {
+            return true;
+        }
         Vector2 PointA = new Vector2(rotationDirection.x, rotationDirection.y);
         Vector2 PointB = new Vector2(X, Y);
         Vector2 moveDirection = PointA - PointB;
-		float angle = Mathf.Atan2(moveDirection.y, moveDirection.x) * Mathf.Rad2Deg;
-//		if(angle<0){
-//			angle =360+ angle;
-//		}
-		rotation = angle;
+        float angle = Mathf.Atan2(moveDirection.y, moveDirection.x) * Mathf.Rad2Deg;
+        //		if(angle<0){
+        //			angle =360+ angle;
+        //		}
+        rotation = angle;
 
-		if (rotation < angle + 0.1f 
-			&& rotation > angle - 0.1f) {
-			//no need to rotate so set the rotation to the correct one
-			rotation = angle;
-			t = 0;
-			return true;
-		}
-		t += delta;
+        if (rotation < angle + 0.1f
+            && rotation > angle - 0.1f) {
+            //no need to rotate so set the rotation to the correct one
+            rotation = angle;
+            t = 0;
+            return true;
+        }
+        t += delta;
 
-		rotation = Mathf.LerpAngle (rotation , angle,t*rotationSpeed);//Mathf.LerpAngle ( rotation , angle , t);
-		return false;
+        rotation = Mathf.LerpAngle(rotation, angle, t * rotationSpeed);//Mathf.LerpAngle ( rotation , angle , t);
+        return false;
     }
-		
-	protected virtual void CalculatePath (){
-		
-	}
+
+    protected virtual void CalculatePath() {
+
+    }
 
 }

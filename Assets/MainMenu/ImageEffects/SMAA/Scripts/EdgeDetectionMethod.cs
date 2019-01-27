@@ -21,29 +21,27 @@
  *    distribution.
  */
 
-namespace Smaa
-{
-	/// <summary>
-	/// You have three edge detection methods to choose from: luma, color or depth.
-	/// They represent different quality/performance and anti-aliasing/sharpness tradeoffs, so our recommendation is
-	/// for you to choose the one that best suits your particular scenario.
-	/// </summary>
-	public enum EdgeDetectionMethod
-	{
-		/// <summary>
-		/// Luma edge detection is usually more expensive than depth edge detection, but catches visible edges that
-		/// depth edge detection can miss.
-		/// </summary>
-		Luma = 1,
+namespace Smaa {
+    /// <summary>
+    /// You have three edge detection methods to choose from: luma, color or depth.
+    /// They represent different quality/performance and anti-aliasing/sharpness tradeoffs, so our recommendation is
+    /// for you to choose the one that best suits your particular scenario.
+    /// </summary>
+    public enum EdgeDetectionMethod {
+        /// <summary>
+        /// Luma edge detection is usually more expensive than depth edge detection, but catches visible edges that
+        /// depth edge detection can miss.
+        /// </summary>
+        Luma = 1,
 
-		/// <summary>
-		/// Color edge detection is usually the most expensive one but catches chroma-only edges.
-		/// </summary>
-		Color = 2,
+        /// <summary>
+        /// Color edge detection is usually the most expensive one but catches chroma-only edges.
+        /// </summary>
+        Color = 2,
 
-		/// <summary>
-		/// Depth edge detection is usually the fastest but it may miss some edges.
-		/// </summary>
-		Depth = 3
-	}
+        /// <summary>
+        /// Depth edge detection is usually the fastest but it may miss some edges.
+        /// </summary>
+        Depth = 3
+    }
 }

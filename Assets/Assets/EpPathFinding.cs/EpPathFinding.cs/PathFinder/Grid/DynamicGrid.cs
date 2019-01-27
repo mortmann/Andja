@@ -40,45 +40,36 @@ using System.Collections.Generic;
 using System.Collections;
 
 
-namespace EpPathFinding.cs
-{
-    public class DynamicGrid : BaseGrid
-    {
+namespace EpPathFinding.cs {
+    public class DynamicGrid : BaseGrid {
         protected Dictionary<GridPos, Node> m_nodes;
         private bool m_notSet;
 
 
-        public override int width
-        {
-            get
-            {
+        public override int width {
+            get {
                 if (m_notSet)
                     setBoundingBox();
                 return m_gridRect.maxX - m_gridRect.minX;
             }
-            protected set
-            {
+            protected set {
 
             }
         }
 
-        public override int height
-        {
-            get
-            {
+        public override int height {
+            get {
                 if (m_notSet)
                     setBoundingBox();
                 return m_gridRect.maxY - m_gridRect.minY;
             }
-            protected set
-            {
+            protected set {
 
             }
         }
 
         public DynamicGrid(List<GridPos> iWalkableGridList = null)
-            : base()
-        {
+            : base() {
             m_gridRect = new GridRect {
                 minX = 0,
                 minY = 0,
@@ -90,42 +81,35 @@ namespace EpPathFinding.cs
         }
 
         public DynamicGrid(DynamicGrid b)
-            : base(b)
-        {
+            : base(b) {
             m_notSet = b.m_notSet;
             m_nodes = new Dictionary<GridPos, Node>(b.m_nodes);
         }
 
-        protected void buildNodes(List<GridPos> iWalkableGridList)
-        {
+        protected void buildNodes(List<GridPos> iWalkableGridList) {
 
             m_nodes = new Dictionary<GridPos, Node>();
             if (iWalkableGridList == null)
                 return;
-            foreach (GridPos gridPos in iWalkableGridList)
-            {
+            foreach (GridPos gridPos in iWalkableGridList) {
                 SetWalkableAt(gridPos.x, gridPos.y, true);
             }
         }
 
 
-        public override Node GetNodeAt(int iX, int iY)
-        {
+        public override Node GetNodeAt(int iX, int iY) {
             GridPos pos = new GridPos(iX, iY);
             return GetNodeAt(pos);
         }
 
-        public override bool IsWalkableAt(int iX, int iY)
-        {
+        public override bool IsWalkableAt(int iX, int iY) {
             GridPos pos = new GridPos(iX, iY);
             return IsWalkableAt(pos);
         }
 
-        private void setBoundingBox()
-        {
+        private void setBoundingBox() {
             m_notSet = true;
-            foreach (KeyValuePair<GridPos, Node> pair in m_nodes)
-            {
+            foreach (KeyValuePair<GridPos, Node> pair in m_nodes) {
                 if (pair.Key.x < m_gridRect.minX || m_notSet)
                     m_gridRect.minX = pair.Key.x;
                 if (pair.Key.x > m_gridRect.maxX || m_notSet)
@@ -139,19 +123,15 @@ namespace EpPathFinding.cs
             m_notSet = false;
         }
 
-        public override bool SetWalkableAt(int iX, int iY, bool iWalkable)
-        {
+        public override bool SetWalkableAt(int iX, int iY, bool iWalkable) {
             GridPos pos = new GridPos(iX, iY);
 
-            if (iWalkable)
-            {
-                if (m_nodes.ContainsKey(pos))
-                {
-                   // this.m_nodes[pos].walkable = iWalkable;
+            if (iWalkable) {
+                if (m_nodes.ContainsKey(pos)) {
+                    // this.m_nodes[pos].walkable = iWalkable;
                     return true;
                 }
-                else
-                {
+                else {
                     if (iX < m_gridRect.minX || m_notSet)
                         m_gridRect.minX = iX;
                     if (iX > m_gridRect.maxX || m_notSet)
@@ -164,10 +144,8 @@ namespace EpPathFinding.cs
                     m_notSet = false;
                 }
             }
-            else
-            {
-                if (m_nodes.ContainsKey(pos))
-                {
+            else {
+                if (m_nodes.ContainsKey(pos)) {
                     m_nodes.Remove(pos);
                     if (iX == m_gridRect.minX || iX == m_gridRect.maxX || iY == m_gridRect.minY || iY == m_gridRect.maxY)
                         m_notSet = true;
@@ -176,42 +154,34 @@ namespace EpPathFinding.cs
             return true;
         }
 
-        public override Node GetNodeAt(GridPos iPos)
-        {
-            if (m_nodes.ContainsKey(iPos))
-            {
+        public override Node GetNodeAt(GridPos iPos) {
+            if (m_nodes.ContainsKey(iPos)) {
                 return m_nodes[iPos];
             }
             return null;
         }
 
-        public override bool IsWalkableAt(GridPos iPos)
-        {
+        public override bool IsWalkableAt(GridPos iPos) {
             return m_nodes.ContainsKey(iPos);
         }
 
-        public override bool SetWalkableAt(GridPos iPos, bool iWalkable)
-        {
+        public override bool SetWalkableAt(GridPos iPos, bool iWalkable) {
             return SetWalkableAt(iPos.x, iPos.y, iWalkable);
         }
 
-        public override void Reset()
-        {
+        public override void Reset() {
             Reset(null);
         }
 
-        public void Reset(List<GridPos> iWalkableGridList)
-        {
+        public void Reset(List<GridPos> iWalkableGridList) {
 
-            foreach (KeyValuePair<GridPos, Node> keyValue in m_nodes)
-            {
+            foreach (KeyValuePair<GridPos, Node> keyValue in m_nodes) {
                 keyValue.Value.Reset();
             }
 
             if (iWalkableGridList == null)
                 return;
-            foreach (KeyValuePair<GridPos, Node> keyValue in m_nodes)
-            {
+            foreach (KeyValuePair<GridPos, Node> keyValue in m_nodes) {
                 if (iWalkableGridList.Contains(keyValue.Key))
                     SetWalkableAt(keyValue.Key, true);
                 else
@@ -219,12 +189,10 @@ namespace EpPathFinding.cs
             }
         }
 
-        public override BaseGrid Clone()
-        {
+        public override BaseGrid Clone() {
             DynamicGrid tNewGrid = new DynamicGrid();
 
-            foreach (KeyValuePair<GridPos, Node> keyValue in m_nodes)
-            {
+            foreach (KeyValuePair<GridPos, Node> keyValue in m_nodes) {
                 tNewGrid.SetWalkableAt(keyValue.Key.x, keyValue.Key.y, true);
 
             }

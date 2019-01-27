@@ -39,10 +39,8 @@ using System;
 using System.Collections.Generic;
 using System.Collections;
 
-namespace EpPathFinding.cs
-{
-    public class Node : IComparable<Node>
-    {
+namespace EpPathFinding.cs {
+    public class Node : IComparable<Node> {
         public int x;
         public int y;
         public bool walkable;
@@ -53,8 +51,7 @@ namespace EpPathFinding.cs
         public bool isClosed;
         public Object parent;
 
-        public Node(int iX, int iY, bool? iWalkable = null)
-        {
+        public Node(int iX, int iY, bool? iWalkable = null) {
             this.x = iX;
             this.y = iY;
             this.walkable = (iWalkable.HasValue ? iWalkable.Value : false);
@@ -69,8 +66,7 @@ namespace EpPathFinding.cs
 
         }
 
-        public Node(Node b)
-        {
+        public Node(Node b) {
             this.x = b.x;
             this.y = b.y;
             this.walkable = b.walkable;
@@ -82,22 +78,20 @@ namespace EpPathFinding.cs
             this.parent = b.parent;
         }
 
-        public void Reset(bool? iWalkable = null)
-        {
+        public void Reset(bool? iWalkable = null) {
             if (iWalkable.HasValue)
                 walkable = iWalkable.Value;
             this.heuristicStartToEndLen = 0;
             this.startToCurNodeLen = 0;
             // this must be initialized as null to verify that its value never initialized
             // 0 is not good candidate!!
-            this.heuristicCurNodeToEndLen = null ;
+            this.heuristicCurNodeToEndLen = null;
             this.isOpened = false;
             this.isClosed = false;
             this.parent = null;
         }
 
-        public int CompareTo(Node iObj)
-        {
+        public int CompareTo(Node iObj) {
             float result = this.heuristicStartToEndLen - iObj.heuristicStartToEndLen;
             if (result > 0.0f)
                 return 1;
@@ -105,14 +99,12 @@ namespace EpPathFinding.cs
                 return 0;
             return -1;
         }
- 
 
-        public static List<GridPos> Backtrace(Node iNode)
-        {
+
+        public static List<GridPos> Backtrace(Node iNode) {
             List<GridPos> path = new List<GridPos>();
             path.Add(new GridPos(iNode.x, iNode.y));
-            while (iNode.parent != null)
-            {
+            while (iNode.parent != null) {
                 iNode = (Node)iNode.parent;
                 path.Add(new GridPos(iNode.x, iNode.y));
             }
@@ -121,23 +113,19 @@ namespace EpPathFinding.cs
         }
 
 
-        public override int GetHashCode()
-        {
+        public override int GetHashCode() {
             return x ^ y;
         }
 
-        public override bool Equals(System.Object obj)
-        {
+        public override bool Equals(System.Object obj) {
             // If parameter is null return false.
-            if (obj == null)
-            {
+            if (obj == null) {
                 return false;
             }
 
             // If parameter cannot be cast to Point return false.
             Node p = obj as Node;
-            if ((System.Object)p == null)
-            {
+            if ((System.Object)p == null) {
                 return false;
             }
 
@@ -145,11 +133,9 @@ namespace EpPathFinding.cs
             return (x == p.x) && (y == p.y);
         }
 
-        public bool Equals(Node p)
-        {
+        public bool Equals(Node p) {
             // If parameter is null return false:
-            if ((object)p == null)
-            {
+            if ((object)p == null) {
                 return false;
             }
 
@@ -157,17 +143,14 @@ namespace EpPathFinding.cs
             return (x == p.x) && (y == p.y);
         }
 
-        public static bool operator ==(Node a, Node b)
-        {
+        public static bool operator ==(Node a, Node b) {
             // If both are null, or both are same instance, return true.
-            if (System.Object.ReferenceEquals(a, b))
-            {
+            if (System.Object.ReferenceEquals(a, b)) {
                 return true;
             }
 
             // If one is null, but not both, return false.
-            if (((object)a == null) || ((object)b == null))
-            {
+            if (((object)a == null) || ((object)b == null)) {
                 return false;
             }
 
@@ -175,31 +158,26 @@ namespace EpPathFinding.cs
             return a.x == b.x && a.y == b.y;
         }
 
-        public static bool operator !=(Node a, Node b)
-        {
+        public static bool operator !=(Node a, Node b) {
             return !(a == b);
         }
 
     }
 
-    public abstract class BaseGrid
-    {
+    public abstract class BaseGrid {
 
-        public BaseGrid()
-        {
+        public BaseGrid() {
             m_gridRect = new GridRect();
         }
 
-        public BaseGrid(BaseGrid b)
-        {
+        public BaseGrid(BaseGrid b) {
             m_gridRect = new GridRect(b.m_gridRect);
             width = b.width;
             height = b.height;
         }
 
         protected GridRect m_gridRect;
-        public GridRect gridRect
-        {
+        public GridRect gridRect {
             get { return m_gridRect; }
         }
 
@@ -219,8 +197,7 @@ namespace EpPathFinding.cs
 
         public abstract bool SetWalkableAt(GridPos iPos, bool iWalkable);
 
-        public List<Node> GetNeighbors(Node iNode, DiagonalMovement diagonalMovement)
-        {
+        public List<Node> GetNeighbors(Node iNode, DiagonalMovement diagonalMovement) {
             int tX = iNode.x;
             int tY = iNode.y;
             List<Node> neighbors = new List<Node>();
@@ -230,29 +207,24 @@ namespace EpPathFinding.cs
                 tS3 = false, tD3 = false;
 
             GridPos pos = new GridPos();
-            if (this.IsWalkableAt(pos.Set(tX, tY - 1)))
-            {
+            if (this.IsWalkableAt(pos.Set(tX, tY - 1))) {
                 neighbors.Add(GetNodeAt(pos));
                 tS0 = true;
             }
-            if (this.IsWalkableAt(pos.Set(tX + 1, tY)))
-            {
+            if (this.IsWalkableAt(pos.Set(tX + 1, tY))) {
                 neighbors.Add(GetNodeAt(pos));
                 tS1 = true;
             }
-            if (this.IsWalkableAt(pos.Set(tX, tY + 1)))
-            {
+            if (this.IsWalkableAt(pos.Set(tX, tY + 1))) {
                 neighbors.Add(GetNodeAt(pos));
                 tS2 = true;
             }
-            if (this.IsWalkableAt(pos.Set(tX - 1, tY)))
-            {
+            if (this.IsWalkableAt(pos.Set(tX - 1, tY))) {
                 neighbors.Add(GetNodeAt(pos));
                 tS3 = true;
             }
 
-            switch (diagonalMovement)
-            {
+            switch (diagonalMovement) {
                 case DiagonalMovement.Always:
                     tD0 = true;
                     tD1 = true;
@@ -277,20 +249,16 @@ namespace EpPathFinding.cs
                     break;
             }
 
-            if (tD0 && this.IsWalkableAt(pos.Set(tX - 1, tY - 1)))
-            {
+            if (tD0 && this.IsWalkableAt(pos.Set(tX - 1, tY - 1))) {
                 neighbors.Add(GetNodeAt(pos));
             }
-            if (tD1 && this.IsWalkableAt(pos.Set(tX + 1, tY - 1)))
-            {
+            if (tD1 && this.IsWalkableAt(pos.Set(tX + 1, tY - 1))) {
                 neighbors.Add(GetNodeAt(pos));
             }
-            if (tD2 && this.IsWalkableAt(pos.Set(tX + 1, tY + 1)))
-            {
+            if (tD2 && this.IsWalkableAt(pos.Set(tX + 1, tY + 1))) {
                 neighbors.Add(GetNodeAt(pos));
             }
-            if (tD3 && this.IsWalkableAt(pos.Set(tX - 1, tY + 1)))
-            {
+            if (tD3 && this.IsWalkableAt(pos.Set(tX - 1, tY + 1))) {
                 neighbors.Add(GetNodeAt(pos));
             }
             return neighbors;

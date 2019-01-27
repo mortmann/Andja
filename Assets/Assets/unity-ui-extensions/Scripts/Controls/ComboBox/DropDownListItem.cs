@@ -3,24 +3,19 @@
 
 using System;
 
-namespace UnityEngine.UI.Extensions
-{
+namespace UnityEngine.UI.Extensions {
     [Serializable]
-    public class DropDownListItem
-    {
+    public class DropDownListItem {
         [SerializeField]
         private string _caption;
         /// <summary>
         /// Caption of the Item
         /// </summary>
-        public string Caption
-        {
-            get
-            {
+        public string Caption {
+            get {
                 return _caption;
             }
-            set
-            {
+            set {
                 _caption = value;
                 if (OnUpdate != null)
                     OnUpdate();
@@ -32,14 +27,11 @@ namespace UnityEngine.UI.Extensions
         /// <summary>
         /// Image component of the Item
         /// </summary>
-        public Sprite Image
-        {
-            get
-            {
+        public Sprite Image {
+            get {
                 return _image;
             }
-            set
-            {
+            set {
                 _image = value;
                 if (OnUpdate != null)
                     OnUpdate();
@@ -51,14 +43,11 @@ namespace UnityEngine.UI.Extensions
         /// <summary>
         /// Is the Item currently enabled?
         /// </summary>
-        public bool IsDisabled
-        {
-            get
-            {
+        public bool IsDisabled {
+            get {
                 return _isDisabled;
             }
-            set
-            {
+            set {
                 _isDisabled = value;
                 if (OnUpdate != null)
                     OnUpdate();
@@ -70,8 +59,7 @@ namespace UnityEngine.UI.Extensions
         ///<summary>
         ///ID exists so that an item can have a caption and a value like in traditional windows forms. Ie. an item may be a student's name, and the ID can be the student's ID number
         ///</summary>
-        public string ID
-        {
+        public string ID {
             get { return _id; }
             set { _id = value; }
         }
@@ -88,8 +76,7 @@ namespace UnityEngine.UI.Extensions
         /// <param name="image"></param>
         /// <param name="disabled">Should the item start disabled</param>
         /// <param name="onSelect">Action to be called when this item is selected</param>
-        public DropDownListItem(string caption = "", string inId = "", Sprite image = null, bool disabled = false, Action onSelect = null)
-        {
+        public DropDownListItem(string caption = "", string inId = "", Sprite image = null, bool disabled = false, Action onSelect = null) {
             _caption = caption;
             _image = image;
             _id = inId;

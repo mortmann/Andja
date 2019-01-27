@@ -5,13 +5,11 @@ using System;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
 
-namespace UnityEngine.UI.Extensions
-{
+namespace UnityEngine.UI.Extensions {
     // Stepper control
     [AddComponentMenu("UI/Extensions/Stepper")]
     [RequireComponent(typeof(RectTransform))]
-    public class Stepper : UIBehaviour
-    {
+    public class Stepper : UIBehaviour {
         private Selectable[] _sides;
         [SerializeField]
         [Tooltip("The current step value of the control")]
@@ -33,12 +31,9 @@ namespace UnityEngine.UI.Extensions
         private Graphic _separator;
         private float _separatorWidth = 0;
 
-        private float separatorWidth
-        {
-            get
-            {
-                if (_separatorWidth == 0 && separator)
-                {
+        private float separatorWidth {
+            get {
+                if (_separatorWidth == 0 && separator) {
                     _separatorWidth = separator.rectTransform.rect.width;
                     var image = separator.GetComponent<Image>();
                     if (image)
@@ -55,12 +50,9 @@ namespace UnityEngine.UI.Extensions
         [Serializable]
         public class StepperValueChangedEvent : UnityEvent<int> { }
 
-        public Selectable[] sides
-        {
-            get
-            {
-                if (_sides == null || _sides.Length == 0)
-                {
+        public Selectable[] sides {
+            get {
+                if (_sides == null || _sides.Length == 0) {
                     _sides = GetSides();
                 }
                 return _sides;
@@ -79,49 +71,40 @@ namespace UnityEngine.UI.Extensions
 
         public Graphic separator { get { return _separator; } set { _separator = value; _separatorWidth = 0; LayoutSides(sides); } }
 
-        public StepperValueChangedEvent onValueChanged
-        {
+        public StepperValueChangedEvent onValueChanged {
             get { return _onValueChanged; }
             set { _onValueChanged = value; }
         }
 
-        protected Stepper()
-        { }
+        protected Stepper() { }
 
 #if UNITY_EDITOR
-        protected override void OnValidate()
-        {
+        protected override void OnValidate() {
             base.OnValidate();
 
             if (separator)
                 LayoutSides();
 
-            if (!wrap)
-            {
+            if (!wrap) {
                 DisableAtExtremes(sides);
             }
         }
 #endif
 
-        private Selectable[] GetSides()
-        {
+        private Selectable[] GetSides() {
             var buttons = GetComponentsInChildren<Selectable>();
-            if (buttons.Length != 2)
-            {
+            if (buttons.Length != 2) {
                 throw new InvalidOperationException("A stepper must have two Button children");
             }
 
-            for (int i = 0; i < 2; i++)
-            {
+            for (int i = 0; i < 2; i++) {
                 var side = buttons[i].GetComponent<StepperSide>();
-                if (side == null)
-                {
+                if (side == null) {
                     side = buttons[i].gameObject.AddComponent<StepperSide>();
                 }
             }
 
-            if (!wrap)
-            {
+            if (!wrap) {
                 DisableAtExtremes(buttons);
             }
             LayoutSides(buttons);
@@ -129,27 +112,22 @@ namespace UnityEngine.UI.Extensions
             return buttons;
         }
 
-        public void StepUp()
-        {
+        public void StepUp() {
             Step(step);
         }
 
-        public void StepDown()
-        {
+        public void StepDown() {
             Step(-step);
         }
 
-        private void Step(int amount)
-        {
+        private void Step(int amount) {
             value += amount;
 
-            if (wrap)
-            {
+            if (wrap) {
                 if (value > maximum) value = minimum;
                 if (value < minimum) value = maximum;
             }
-            else
-            {
+            else {
                 value = Math.Max(minimum, value);
                 value = Math.Min(maximum, value);
 
@@ -159,16 +137,13 @@ namespace UnityEngine.UI.Extensions
             _onValueChanged.Invoke(value);
         }
 
-        private void DisableAtExtremes(Selectable[] sides)
-        {
+        private void DisableAtExtremes(Selectable[] sides) {
             sides[0].interactable = wrap || value > minimum;
             sides[1].interactable = wrap || value < maximum;
         }
 
-        private void RecreateSprites(Selectable[] sides)
-        {
-            for (int i = 0; i < 2; i++)
-            {
+        private void RecreateSprites(Selectable[] sides) {
+            for (int i = 0; i < 2; i++) {
                 if (sides[i].image == null)
                     continue;
 
@@ -179,13 +154,11 @@ namespace UnityEngine.UI.Extensions
                 var rect = sprite.rect;
                 var border = sprite.border;
 
-                if (i == 0)
-                {
+                if (i == 0) {
                     rect.xMax = border.z;
                     border.z = 0;
                 }
-                else
-                {
+                else {
                     rect.xMin = border.x;
                     border.x = 0;
                 }
@@ -194,8 +167,7 @@ namespace UnityEngine.UI.Extensions
             }
         }
 
-        public void LayoutSides(Selectable[] sides = null)
-        {
+        public void LayoutSides(Selectable[] sides = null) {
             sides = sides ?? this.sides;
 
             RecreateSprites(sides);
@@ -203,8 +175,7 @@ namespace UnityEngine.UI.Extensions
             RectTransform transform = this.transform as RectTransform;
             float width = (transform.rect.width / 2) - separatorWidth;
 
-            for (int i = 0; i < 2; i++)
-            {
+            for (int i = 0; i < 2; i++) {
                 float insetX = i == 0 ? 0 : width + separatorWidth;
 
                 var rectTransform = sides[i].GetComponent<RectTransform>();
@@ -215,8 +186,7 @@ namespace UnityEngine.UI.Extensions
 
             }
 
-            if (separator)
-            {
+            if (separator) {
                 var sepTransform = gameObject.transform.Find("Separator");
                 Graphic sep = (sepTransform != null) ? sepTransform.GetComponent<Graphic>() : (GameObject.Instantiate(separator.gameObject) as GameObject).GetComponent<Graphic>();
                 sep.gameObject.name = "Separator";
@@ -231,41 +201,34 @@ namespace UnityEngine.UI.Extensions
     }
 
     [RequireComponent(typeof(Selectable))]
-    public class StepperSide : UIBehaviour, IPointerClickHandler, ISubmitHandler
-    {
+    public class StepperSide : UIBehaviour, IPointerClickHandler, ISubmitHandler {
         Selectable button { get { return GetComponent<Selectable>(); } }
 
         Stepper stepper { get { return GetComponentInParent<Stepper>(); } }
 
         bool leftmost { get { return button == stepper.sides[0]; } }
 
-        protected StepperSide()
-        { }
+        protected StepperSide() { }
 
-        public virtual void OnPointerClick(PointerEventData eventData)
-        {
+        public virtual void OnPointerClick(PointerEventData eventData) {
             if (eventData.button != PointerEventData.InputButton.Left)
                 return;
 
             Press();
         }
 
-        public virtual void OnSubmit(BaseEventData eventData)
-        {
+        public virtual void OnSubmit(BaseEventData eventData) {
             Press();
         }
 
-        private void Press()
-        {
+        private void Press() {
             if (!button.IsActive() || !button.IsInteractable())
                 return;
 
-            if (leftmost)
-            {
+            if (leftmost) {
                 stepper.StepDown();
             }
-            else
-            {
+            else {
                 stepper.StepUp();
             }
         }

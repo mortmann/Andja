@@ -13,7 +13,7 @@ public class DebugInformation : MonoBehaviour {
     private Vector2 dragOffset;
 
     public void OnEnable() {
-        foreach(Transform t in transform) {
+        foreach (Transform t in transform) {
             if (t == buttons.transform)
                 continue;
             Destroy(t.gameObject);
@@ -28,8 +28,8 @@ public class DebugInformation : MonoBehaviour {
         List<FieldInfo> all = new List<FieldInfo>(obj.GetType().GetFields()); //public fields
         all.AddRange(obj.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance)); //private,protected fields
         foreach (FieldInfo field in all) {
-            if (field.FieldType.GetInterface(nameof(IEnumerable)) == null && field.GetType().IsArray == false 
-                || field.FieldType == typeof (string)) {
+            if (field.FieldType.GetInterface(nameof(IEnumerable)) == null && field.GetType().IsArray == false
+                || field.FieldType == typeof(string)) {
                 GameObject fieldGO = Instantiate(debugdataprefab);
                 fieldGO.transform.SetParent(this.transform);
                 fieldGO.GetComponent<DebugDataUI>().SetData(field, obj);
@@ -73,10 +73,10 @@ public class DebugInformation : MonoBehaviour {
         }
         Show(currentObject);
     }
-	// Update is called once per frame
-	void Update () {
-		
-	}
+    // Update is called once per frame
+    void Update() {
+
+    }
     public void Close() {
         Destroy(this.gameObject);
     }

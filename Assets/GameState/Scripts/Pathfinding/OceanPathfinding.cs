@@ -6,48 +6,48 @@ using EpPathFinding.cs;
 using UnityEngine;
 
 public class OceanPathfinding : Pathfinding {
-	Tile start; 
+    Tile start;
 
-	StaticGrid tileGrid;
+    StaticGrid tileGrid;
 
-	public OceanPathfinding() : base(){
-	}
+    public OceanPathfinding() : base() {
+    }
 
-	public OceanPathfinding(Tile t, Ship s){
-		_speed = s.Speed;
-		rotationSpeed = s.RotationSpeed;
-		CurrTile = t;
-	}
+    public OceanPathfinding(Tile t, Ship s) {
+        _speed = s.Speed;
+        rotationSpeed = s.RotationSpeed;
+        CurrTile = t;
+    }
 
 
-	public override void SetDestination(Tile end){
+    public override void SetDestination(Tile end) {
         SetDestination(end.X, end.Y);
     }
-	public override void SetDestination(float x , float y){
+    public override void SetDestination(float x, float y) {
         if (x == dest_X || dest_Y == y)
             return;
         pathDest = Path_dest.exact;
-		dest_X = x;
-		dest_Y = y;
-		this.start = World.Current.GetTileAt(X, Y);
-		this.DestTile = World.Current.GetTileAt(x, y);
-		tileGrid = World.Current.TilesGrid;
+        dest_X = x;
+        dest_Y = y;
+        this.start = World.Current.GetTileAt(X, Y);
+        this.DestTile = World.Current.GetTileAt(x, y);
+        tileGrid = World.Current.TilesGrid;
         IsAtDestination = false;
-        Thread calcPath = new Thread (CalculatePath);
-		calcPath.Start ();
-	}
-	protected override void CalculatePath(){
+        Thread calcPath = new Thread(CalculatePath);
+        calcPath.Start();
+    }
+    protected override void CalculatePath() {
         pathDest = Path_dest.exact;
         System.Diagnostics.Stopwatch StopWatch = new System.Diagnostics.Stopwatch();
         StopWatch.Start();
-        JumpPointParam jpParam = new JumpPointParam(tileGrid,new GridPos(start.X,start.Y), new GridPos(DestTile.X,DestTile.Y),true,DiagonalMovement.OnlyWhenNoObstacles);
-		List<GridPos> pos = JumpPointFinder.FindPath (jpParam);
-		worldPath = new Queue<Tile> ();
+        JumpPointParam jpParam = new JumpPointParam(tileGrid, new GridPos(start.X, start.Y), new GridPos(DestTile.X, DestTile.Y), true, DiagonalMovement.OnlyWhenNoObstacles);
+        List<GridPos> pos = JumpPointFinder.FindPath(jpParam);
+        worldPath = new Queue<Tile>();
         //we probably needs to remove the first tile cause it may interfere with smooth pathing
-        for (int i =0; i < pos.Count; i++) {
-			worldPath.Enqueue (World.Current.GetTileAt (pos [i].x, pos [i].y));
-		}
-		CreateReversePath ();
+        for (int i = 0; i < pos.Count; i++) {
+            worldPath.Enqueue(World.Current.GetTileAt(pos[i].x, pos[i].y));
+        }
+        CreateReversePath();
         if (worldPath.Count > 0) {
             worldPath.Dequeue();
         }

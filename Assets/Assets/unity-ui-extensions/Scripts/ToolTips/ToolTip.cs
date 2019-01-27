@@ -19,12 +19,10 @@
 //IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
 //WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 
-namespace UnityEngine.UI.Extensions
-{
+namespace UnityEngine.UI.Extensions {
     [RequireComponent(typeof(RectTransform))]
     [AddComponentMenu("UI/Extensions/Tooltip")]
-    public class ToolTip : MonoBehaviour
-    {
+    public class ToolTip : MonoBehaviour {
         //text of the tooltip
         private Text _text;
         private RectTransform _rectTransform;
@@ -38,15 +36,14 @@ namespace UnityEngine.UI.Extensions
 
         // private int screenWidth, screenHeight;
 
-        private float YShift,xShift;
+        private float YShift, xShift;
 
         private RenderMode _guiMode;
 
         private Camera _guiCamera;
 
         // Use this for initialization
-        public void Awake()
-        {
+        public void Awake() {
             var _canvas = GetComponentInParent<Canvas>();
             _guiCamera = _canvas.worldCamera;
             _guiMode = _canvas.renderMode;
@@ -69,11 +66,9 @@ namespace UnityEngine.UI.Extensions
         }
 
         //Call this function externally to set the text of the template and activate the tooltip
-        public void SetTooltip(string ttext)
-        {
+        public void SetTooltip(string ttext) {
 
-            if (_guiMode == RenderMode.ScreenSpaceCamera)
-            {
+            if (_guiMode == RenderMode.ScreenSpaceCamera) {
                 //set the text and fit the tooltip panel to the text size
                 _text.text = ttext;
 
@@ -85,30 +80,24 @@ namespace UnityEngine.UI.Extensions
         }
 
         //call this function on mouse exit to deactivate the template
-        public void HideTooltip()
-        {
-            if (_guiMode == RenderMode.ScreenSpaceCamera)
-            {
+        public void HideTooltip() {
+            if (_guiMode == RenderMode.ScreenSpaceCamera) {
                 this.gameObject.SetActive(false);
                 _inside = false;
             }
         }
 
         // Update is called once per frame
-        void FixedUpdate()
-        {
-            if (_inside)
-            {
-                if (_guiMode == RenderMode.ScreenSpaceCamera)
-                {
+        void FixedUpdate() {
+            if (_inside) {
+                if (_guiMode == RenderMode.ScreenSpaceCamera) {
                     OnScreenSpaceCamera();
                 }
             }
         }
 
         //main tooltip edge of screen guard and movement
-        public void OnScreenSpaceCamera()
-        {
+        public void OnScreenSpaceCamera() {
             Vector3 newPos = _guiCamera.ScreenToViewportPoint(Input.mousePosition - new Vector3(xShift, YShift, 0f));
             Vector3 newPosWVP = _guiCamera.ViewportToWorldPoint(newPos);
 
@@ -123,16 +112,14 @@ namespace UnityEngine.UI.Extensions
 
             //check for right edge of screen
             val = (newPosWVP.x + width / 2);
-            if (val > upperRight.x)
-            {
+            if (val > upperRight.x) {
                 Vector3 shifter = new Vector3(val - upperRight.x, 0f, 0f);
                 Vector3 newWorldPos = new Vector3(newPosWVP.x - shifter.x, newPos.y, 0f);
                 newPos.x = _guiCamera.WorldToViewportPoint(newWorldPos).x;
             }
             //check for left edge of screen
             val = (newPosWVP.x - width / 2);
-            if (val < lowerLeft.x)
-            {
+            if (val < lowerLeft.x) {
                 Vector3 shifter = new Vector3(lowerLeft.x - val, 0f, 0f);
                 Vector3 newWorldPos = new Vector3(newPosWVP.x + shifter.x, newPos.y, 0f);
                 newPos.x = _guiCamera.WorldToViewportPoint(newWorldPos).x;
@@ -142,8 +129,7 @@ namespace UnityEngine.UI.Extensions
 
             //check for upper edge of the screen
             val = (newPosWVP.y + height / 2);
-            if (val > upperRight.y)
-            {
+            if (val > upperRight.y) {
                 Vector3 shifter = new Vector3(0f, 35f + height / 2, 0f);
                 Vector3 newWorldPos = new Vector3(newPos.x, newPosWVP.y - shifter.y, 0f);
                 newPos.y = _guiCamera.WorldToViewportPoint(newWorldPos).y;
@@ -151,8 +137,7 @@ namespace UnityEngine.UI.Extensions
 
             //check for lower edge of the screen (if the shifts of the tooltip are kept as in this code, no need for this as the tooltip always appears above the mouse bu default)
             val = (newPosWVP.y - height / 2);
-            if (val < lowerLeft.y)
-            {
+            if (val < lowerLeft.y) {
                 Vector3 shifter = new Vector3(0f, 35f + height / 2, 0f);
                 Vector3 newWorldPos = new Vector3(newPos.x, newPosWVP.y + shifter.y, 0f);
                 newPos.y = _guiCamera.WorldToViewportPoint(newWorldPos).y;

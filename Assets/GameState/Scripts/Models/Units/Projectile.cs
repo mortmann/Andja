@@ -9,7 +9,7 @@ public class Projectile {
     //for now there will be NO friendly fire!
     [JsonPropertyAttribute] IWarfare origin;
     [JsonPropertyAttribute] float remainingTravelDistance;
-    [JsonPropertyAttribute] SeriaziableVector3 _position ;
+    [JsonPropertyAttribute] SeriaziableVector3 _position;
     [JsonPropertyAttribute] SeriaziableVector3 _destination;
     [JsonPropertyAttribute] ITargetable target;
     const float Speed = 2f;
@@ -22,7 +22,7 @@ public class Projectile {
 
     public Projectile() { }
     public Projectile(IWarfare origin, ITargetable target) {
-        _position = new SeriaziableVector3(origin.CurrentPosition );// needs some kind of random factor
+        _position = new SeriaziableVector3(origin.CurrentPosition);// needs some kind of random factor
         _destination = new SeriaziableVector3(target.CurrentPosition); // needs some kind of random factor
         this.origin = origin;
         this.target = target;
@@ -55,7 +55,7 @@ public class Projectile {
             return true;
         if (hit.PlayerNumber == origin.PlayerNumber)
             return false;
-        if(PlayerController.Instance.ArePlayersAtWar(origin.PlayerNumber, hit.PlayerNumber)) {
+        if (PlayerController.Instance.ArePlayersAtWar(origin.PlayerNumber, hit.PlayerNumber)) {
             return true;
         }
         return false;

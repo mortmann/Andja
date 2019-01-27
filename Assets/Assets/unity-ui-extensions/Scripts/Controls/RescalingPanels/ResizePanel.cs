@@ -3,11 +3,9 @@
 
 using UnityEngine.EventSystems;
 
-namespace UnityEngine.UI.Extensions
-{
+namespace UnityEngine.UI.Extensions {
     [AddComponentMenu("UI/Extensions/RescalePanels/ResizePanel")]
-    public class ResizePanel : MonoBehaviour, IPointerDownHandler, IDragHandler
-    {
+    public class ResizePanel : MonoBehaviour, IPointerDownHandler, IDragHandler {
         public Vector2 minSize;
         public Vector2 maxSize;
 
@@ -18,8 +16,7 @@ namespace UnityEngine.UI.Extensions
         private float ratio;
 
 
-        void Awake()
-        {
+        void Awake() {
             rectTransform = transform.parent.GetComponent<RectTransform>();
             float originalWidth;
             float originalHeight;
@@ -30,14 +27,12 @@ namespace UnityEngine.UI.Extensions
             maxSize = new Vector2(10f * originalWidth, 10f * originalHeight);
         }
 
-        public void OnPointerDown(PointerEventData data)
-        {
+        public void OnPointerDown(PointerEventData data) {
             rectTransform.SetAsLastSibling();
             RectTransformUtility.ScreenPointToLocalPointInRectangle(rectTransform, data.position, data.pressEventCamera, out previousPointerPosition);
         }
 
-        public void OnDrag(PointerEventData data)
-        {
+        public void OnDrag(PointerEventData data) {
             if (rectTransform == null)
                 return;
 

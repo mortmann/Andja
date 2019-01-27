@@ -22,129 +22,129 @@ Shader "UI Extensions/SoftMaskShader"
 		_NoOuterClip("Outer Clip",int) = 0
 	}
 
-	SubShader
-	{
-		Tags
+		SubShader
 		{
-			"Queue" = "Transparent"
-			"IgnoreProjector" = "True"
-			"RenderType" = "Transparent"
-			"PreviewType" = "Plane"
-			"CanUseSpriteAtlas" = "True"
-		}
-
-		Stencil
-		{
-			Ref[_Stencil]
-			Comp[_StencilComp]
-			Pass[_StencilOp]
-			ReadMask[_StencilReadMask]
-			WriteMask[_StencilWriteMask]
-		}
-
-		LOD 0
-
-		Cull Off
-		Lighting Off
-		ZWrite Off
-		ZTest[unity_GUIZTestMode]
-		Blend SrcAlpha OneMinusSrcAlpha
-		ColorMask[_ColorMask]
-
-		Pass
-		{
-			CGPROGRAM
-			#pragma vertex vert
-			#pragma fragment frag
-
-			#include "UnityCG.cginc"
-
-			struct appdata_t
+			Tags
 			{
-				float4 vertex   : POSITION;
-				float4 color    : COLOR;
-				float2 texcoord : TEXCOORD0;
-			};
-
-			struct v2f
-			{
-				float4 vertex   : SV_POSITION;
-				fixed4 color : COLOR;
-				half2 texcoord  : TEXCOORD0;
-				float2 maskTexcoord : TEXCOORD1;
-			};
-
-			inline float UnityGet2DClipping (in float2 position, in float4 clipRect)
-			{
-				float2 inside = step(clipRect.xy, position.xy) * step(position.xy, clipRect.zw);
-				return inside.x * inside.y;
+				"Queue" = "Transparent"
+				"IgnoreProjector" = "True"
+				"RenderType" = "Transparent"
+				"PreviewType" = "Plane"
+				"CanUseSpriteAtlas" = "True"
 			}
 
-			fixed4 _Color;
-			fixed4 _TextureSampleAdd;
-			sampler2D _MainTex;
-
-			bool _UseAlphaClip;
-			int _FlipAlphaMask = 0;
-			float4 _AlphaMask_ST;
-			sampler2D _AlphaMask;
-
-			v2f vert(appdata_t IN)
+			Stencil
 			{
-				v2f OUT;
-				float4 wolrdPos = IN.vertex;
-				OUT.maskTexcoord = TRANSFORM_TEX(wolrdPos.xy, _AlphaMask);
-				OUT.vertex = UnityObjectToClipPos(IN.vertex);
-				OUT.texcoord = IN.texcoord;
-
-				#ifdef UNITY_HALF_TEXEL_OFFSET
-					OUT.vertex.xy += (_ScreenParams.zw - 1.0)*float2(-1,1);
-				#endif
-
-				OUT.color = IN.color * _Color;
-				return OUT;
+				Ref[_Stencil]
+				Comp[_StencilComp]
+				Pass[_StencilOp]
+				ReadMask[_StencilReadMask]
+				WriteMask[_StencilWriteMask]
 			}
 
-			float _CutOff;
-			bool _HardBlend = false;
-			bool _NoOuterClip = false;
+			LOD 0
 
-			fixed4 frag(v2f IN) : SV_Target
+			Cull Off
+			Lighting Off
+			ZWrite Off
+			ZTest[unity_GUIZTestMode]
+			Blend SrcAlpha OneMinusSrcAlpha
+			ColorMask[_ColorMask]
+
+			Pass
 			{
-				half4 color = (tex2D(_MainTex, IN.texcoord) + _TextureSampleAdd) * IN.color;
-				float4 inMask = float4( 
-					step(float2(0.0f, 0.0f), IN.maskTexcoord), 
-					step(IN.maskTexcoord, float2(1.0f, 1.0f)) );
+				CGPROGRAM
+				#pragma vertex vert
+				#pragma fragment frag
 
-				// Do we want to clip the image to the Mask Rectangle?
-				if (_NoOuterClip == false && all(inMask) == false )
+				#include "UnityCG.cginc"
+
+				struct appdata_t
 				{
-					color.a = 0;
+					float4 vertex   : POSITION;
+					float4 color    : COLOR;
+					float2 texcoord : TEXCOORD0;
+				};
+
+				struct v2f
+				{
+					float4 vertex   : SV_POSITION;
+					fixed4 color : COLOR;
+					half2 texcoord  : TEXCOORD0;
+					float2 maskTexcoord : TEXCOORD1;
+				};
+
+				inline float UnityGet2DClipping(in float2 position, in float4 clipRect)
+				{
+					float2 inside = step(clipRect.xy, position.xy) * step(position.xy, clipRect.zw);
+					return inside.x * inside.y;
 				}
-				else // It's in the mask rectangle, so apply the alpha of the mask provided.
+
+				fixed4 _Color;
+				fixed4 _TextureSampleAdd;
+				sampler2D _MainTex;
+
+				bool _UseAlphaClip;
+				int _FlipAlphaMask = 0;
+				float4 _AlphaMask_ST;
+				sampler2D _AlphaMask;
+
+				v2f vert(appdata_t IN)
 				{
+					v2f OUT;
+					float4 wolrdPos = IN.vertex;
+					OUT.maskTexcoord = TRANSFORM_TEX(wolrdPos.xy, _AlphaMask);
+					OUT.vertex = UnityObjectToClipPos(IN.vertex);
+					OUT.texcoord = IN.texcoord;
 
-					float a = tex2D(_AlphaMask, IN.maskTexcoord).a;
+					#ifdef UNITY_HALF_TEXEL_OFFSET
+						OUT.vertex.xy += (_ScreenParams.zw - 1.0)*float2(-1,1);
+					#endif
 
-					if (a <= _CutOff)
-						a = 0;
-					else
+					OUT.color = IN.color * _Color;
+					return OUT;
+				}
+
+				float _CutOff;
+				bool _HardBlend = false;
+				bool _NoOuterClip = false;
+
+				fixed4 frag(v2f IN) : SV_Target
+				{
+					half4 color = (tex2D(_MainTex, IN.texcoord) + _TextureSampleAdd) * IN.color;
+					float4 inMask = float4(
+						step(float2(0.0f, 0.0f), IN.maskTexcoord),
+						step(IN.maskTexcoord, float2(1.0f, 1.0f)));
+
+					// Do we want to clip the image to the Mask Rectangle?
+					if (_NoOuterClip == false && all(inMask) == false)
 					{
-						if(_HardBlend)
-							a = 1;
+						color.a = 0;
+					}
+					else // It's in the mask rectangle, so apply the alpha of the mask provided.
+					{
+
+						float a = tex2D(_AlphaMask, IN.maskTexcoord).a;
+
+						if (a <= _CutOff)
+							a = 0;
+						else
+						{
+							if (_HardBlend)
+								a = 1;
+						}
+
+						if (_FlipAlphaMask == 1)
+							a = 1 - a;
+
+						color.a *= a;
 					}
 
-					if (_FlipAlphaMask == 1)
-						a = 1 - a;
-
-					color.a *= a;
+					if (_UseAlphaClip)
+						clip(color.a - 0.001);
+					return color;
 				}
-
-				if (_UseAlphaClip)
-					clip(color.a - 0.001);
-				return color;
+				ENDCG
 			}
-			ENDCG
 		}
-	}
 }

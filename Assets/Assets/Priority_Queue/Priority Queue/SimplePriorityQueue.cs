@@ -2,16 +2,12 @@
 using System.Collections;
 using System.Collections.Generic;
 
-namespace Priority_Queue
-{
-    public sealed class SimplePriorityQueue<T> : IPriorityQueue<T>
-    {
-        private class SimpleNode : FastPriorityQueueNode
-        {
+namespace Priority_Queue {
+    public sealed class SimplePriorityQueue<T> : IPriorityQueue<T> {
+        private class SimpleNode : FastPriorityQueueNode {
             public T Data { get; private set; }
 
-            public SimpleNode(T data)
-            {
+            public SimpleNode(T data) {
                 Data = data;
             }
         }
@@ -19,21 +15,17 @@ namespace Priority_Queue
         private const int INITIAL_QUEUE_SIZE = 10;
         private readonly FastPriorityQueue<SimpleNode> _queue;
 
-        public SimplePriorityQueue()
-        {
+        public SimplePriorityQueue() {
             _queue = new FastPriorityQueue<SimpleNode>(INITIAL_QUEUE_SIZE);
         }
 
         /// <summary>
         /// Given an item of type T, returns the exist SimpleNode in the queue
         /// </summary>
-        private SimpleNode GetExistingNode(T item)
-        {
+        private SimpleNode GetExistingNode(T item) {
             var comparer = EqualityComparer<T>.Default;
-            foreach(var node in _queue)
-            {
-                if(comparer.Equals(node.Data, item))
-                {
+            foreach (var node in _queue) {
+                if (comparer.Equals(node.Data, item)) {
                     return node;
                 }
             }
@@ -44,12 +36,9 @@ namespace Priority_Queue
         /// Returns the number of nodes in the queue.
         /// O(1)
         /// </summary>
-        public int Count
-        {
-            get
-            {
-                lock(_queue)
-                {
+        public int Count {
+            get {
+                lock (_queue) {
                     return _queue.Count;
                 }
             }
@@ -60,14 +49,10 @@ namespace Priority_Queue
         /// Throws an exception when the queue is empty.
         /// O(1)
         /// </summary>
-        public T First
-        {
-            get
-            {
-                lock(_queue)
-                {
-                    if(_queue.Count <= 0)
-                    {
+        public T First {
+            get {
+                lock (_queue) {
+                    if (_queue.Count <= 0) {
                         throw new InvalidOperationException("Cannot call .First on an empty queue");
                     }
 
@@ -81,10 +66,8 @@ namespace Priority_Queue
         /// Removes every node from the queue.
         /// O(n)
         /// </summary>
-        public void Clear()
-        {
-            lock(_queue)
-            {
+        public void Clear() {
+            lock (_queue) {
                 _queue.Clear();
             }
         }
@@ -93,15 +76,11 @@ namespace Priority_Queue
         /// Returns whether the given item is in the queue.
         /// O(n)
         /// </summary>
-        public bool Contains(T item)
-        {
-            lock(_queue)
-            {
+        public bool Contains(T item) {
+            lock (_queue) {
                 var comparer = EqualityComparer<T>.Default;
-                foreach (var node in _queue)
-                {
-                    if (comparer.Equals(node.Data, item))
-                    {
+                foreach (var node in _queue) {
+                    if (comparer.Equals(node.Data, item)) {
                         return true;
                     }
                 }
@@ -114,16 +93,13 @@ namespace Priority_Queue
         /// If queue is empty, throws an exception
         /// O(log n)
         /// </summary>
-        public T Dequeue()
-        {
-            lock(_queue)
-            {
-                if(_queue.Count <= 0)
-                {
+        public T Dequeue() {
+            lock (_queue) {
+                if (_queue.Count <= 0) {
                     throw new InvalidOperationException("Cannot call Dequeue() on an empty queue");
                 }
 
-                SimpleNode node =_queue.Dequeue();
+                SimpleNode node = _queue.Dequeue();
                 return node.Data;
             }
         }
@@ -134,14 +110,11 @@ namespace Priority_Queue
         /// Duplicates are allowed.
         /// O(log n)
         /// </summary>
-        public void Enqueue(T item, double priority)
-        {
-            lock(_queue)
-            {
+        public void Enqueue(T item, double priority) {
+            lock (_queue) {
                 SimpleNode node = new SimpleNode(item);
-                if(_queue.Count == _queue.MaxSize)
-                {
-                    _queue.Resize(_queue.MaxSize*2 + 1);
+                if (_queue.Count == _queue.MaxSize) {
+                    _queue.Resize(_queue.MaxSize * 2 + 1);
                 }
                 _queue.Enqueue(node, priority);
             }
@@ -153,16 +126,12 @@ namespace Priority_Queue
         /// If multiple copies of the item are enqueued, only the first one is removed. 
         /// O(n)
         /// </summary>
-        public void Remove(T item)
-        {
-            lock(_queue)
-            {
-                try
-                {
+        public void Remove(T item) {
+            lock (_queue) {
+                try {
                     _queue.Remove(GetExistingNode(item));
                 }
-                catch(InvalidOperationException ex)
-                {
+                catch (InvalidOperationException ex) {
                     throw new InvalidOperationException("Cannot call Remove() on a node which is not enqueued: " + item, ex);
                 }
             }
@@ -176,30 +145,23 @@ namespace Priority_Queue
         /// to update all of them, please wrap your items in a wrapper class so they can be distinguished).
         /// O(n)
         /// </summary>
-        public void UpdatePriority(T item, double priority)
-        {
-            lock (_queue)
-            {
-                try
-                {
+        public void UpdatePriority(T item, double priority) {
+            lock (_queue) {
+                try {
                     SimpleNode updateMe = GetExistingNode(item);
                     _queue.UpdatePriority(updateMe, priority);
                 }
-                catch(InvalidOperationException ex)
-                {
+                catch (InvalidOperationException ex) {
                     throw new InvalidOperationException("Cannot call UpdatePriority() on a node which is not enqueued: " + item, ex);
                 }
             }
         }
 
-        public IEnumerator<T> GetEnumerator()
-        {
+        public IEnumerator<T> GetEnumerator() {
             List<T> queueData = new List<T>();
-            lock (_queue)
-            {
+            lock (_queue) {
                 //Copy to a separate list because we don't want to 'yield return' inside a lock
-                foreach(var node in _queue)
-                {
+                foreach (var node in _queue) {
                     queueData.Add(node.Data);
                 }
             }
@@ -207,15 +169,12 @@ namespace Priority_Queue
             return queueData.GetEnumerator();
         }
 
-        IEnumerator IEnumerable.GetEnumerator()
-        {
+        IEnumerator IEnumerable.GetEnumerator() {
             return GetEnumerator();
         }
 
-        public bool IsValidQueue()
-        {
-            lock(_queue)
-            {
+        public bool IsValidQueue() {
+            lock (_queue) {
                 return _queue.IsValidQueue();
             }
         }

@@ -2,26 +2,20 @@
 ///Sourced from - http://forum.unity3d.com/threads/color-picker.267043/
 
 
-namespace UnityEngine.UI.Extensions.ColorPicker
-{
-    public class ColorPickerPresets : MonoBehaviour
-    {
+namespace UnityEngine.UI.Extensions.ColorPicker {
+    public class ColorPickerPresets : MonoBehaviour {
         public ColorPickerControl picker;
         public GameObject[] presets;
         public Image createPresetImage;
 
-        void Awake()
-        {
+        void Awake() {
             //		picker.onHSVChanged.AddListener(HSVChanged);
             picker.onValueChanged.AddListener(ColorChanged);
         }
 
-        public void CreatePresetButton()
-        {
-            for (var i = 0; i < presets.Length; i++)
-            {
-                if (!presets[i].activeSelf)
-                {
+        public void CreatePresetButton() {
+            for (var i = 0; i < presets.Length; i++) {
+                if (!presets[i].activeSelf) {
                     presets[i].SetActive(true);
                     presets[i].GetComponent<Image>().color = picker.CurrentColor;
                     break;
@@ -29,8 +23,7 @@ namespace UnityEngine.UI.Extensions.ColorPicker
             }
         }
 
-        public void PresetSelect(Image sender)
-        {
+        public void PresetSelect(Image sender) {
             picker.CurrentColor = sender.color;
         }
 
@@ -40,8 +33,7 @@ namespace UnityEngine.UI.Extensions.ColorPicker
         //	{
         //		createPresetImage.color = HSVUtil.ConvertHsvToRgb(h, s, v, 1);
         //	}
-        private void ColorChanged(Color color)
-        {
+        private void ColorChanged(Color color) {
             createPresetImage.color = color;
         }
     }

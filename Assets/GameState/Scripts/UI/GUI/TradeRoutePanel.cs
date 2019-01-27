@@ -5,11 +5,11 @@ using UnityEngine.EventSystems;
 using System;
 public class TradeRoutePanel : MonoBehaviour {
     public const int TradeAmountMaximum = 100;
-	public Text text;
-	public City city;
-	public GameObject fromShip;
-	public GameObject toShip;
-	public GameObject itemPrefab;
+    public Text text;
+    public City city;
+    public GameObject fromShip;
+    public GameObject toShip;
+    public GameObject itemPrefab;
     public GameObject shipTradeRoutePrefab;
     public GameObject tradeRouteElementPrefab;
 
@@ -24,24 +24,24 @@ public class TradeRoutePanel : MonoBehaviour {
         set {
             if (_currentlySelectedItem != null && itemToGameObject.ContainsKey(_currentlySelectedItem))
                 itemToGameObject[_currentlySelectedItem].SetSelected(false);
-            if(value != null)
+            if (value != null)
                 itemToGameObject[value].SetSelected(true);
             _currentlySelectedItem = value;
         }
     }
 
-    Dictionary<Item,ItemUI> itemToGameObject;
+    Dictionary<Item, ItemUI> itemToGameObject;
     Dictionary<TradeRoute, GameObject> tradeRouteToGameObject;
     Dictionary<Ship, ShipElement> shipToGOElement;
     public int tradeRouteCityState = 0;
     public TradeRoute tradeRoute;
-	MapImage mi;
-	public Slider amountSlider;
-	void Start(){
-		if (itemToGameObject == null)//if thats null its not started yet
-			Initialize ();
-	}
-	public void Initialize(){
+    MapImage mi;
+    public Slider amountSlider;
+    void Start() {
+        if (itemToGameObject == null)//if thats null its not started yet
+            Initialize();
+    }
+    public void Initialize() {
         foreach (Transform child in allTradeRoutesList.transform) {
             Destroy(child.gameObject);
         }
@@ -50,68 +50,68 @@ public class TradeRoutePanel : MonoBehaviour {
         }
         tradeRouteToGameObject = new Dictionary<TradeRoute, GameObject>();
         shipToGOElement = new Dictionary<Ship, ShipElement>();
-        itemToGameObject = new Dictionary<Item, ItemUI> ();
-		//intToItem = new Dictionary<int, Item> ();
-		mi = GameObject.FindObjectOfType<MapImage> ();
+        itemToGameObject = new Dictionary<Item, ItemUI>();
+        //intToItem = new Dictionary<int, Item> ();
+        mi = GameObject.FindObjectOfType<MapImage>();
         amountSlider.maxValue = TradeAmountMaximum;
         amountSlider.value = 50;
-        amountSlider.onValueChanged.AddListener (OnAmountSliderMoved);
+        amountSlider.onValueChanged.AddListener(OnAmountSliderMoved);
         World.Current.RegisterUnitCreated(OnShipCreate);
         foreach (Unit item in World.Current.Units) {
-			if(item.IsShip==false||item.IsPlayerUnit() == false){
-				continue;
-			}
+            if (item.IsShip == false || item.IsPlayerUnit() == false) {
+                continue;
+            }
             OnShipCreate(item);
-		}
-        foreach(TradeRoute tr in PlayerController.Instance.CurrPlayer.MyTradeRoutes) {
+        }
+        foreach (TradeRoute tr in PlayerController.Instance.CurrPlayer.MyTradeRoutes) {
             AddTradeRouteToList(tr);
         }
-        if(tradeRoute == null)
+        if (tradeRoute == null)
             CreateNewTradeRoute();
-	}
+    }
     public void RemoveTradeRoute(TradeRoute tradeRoute) {
         PlayerController.Instance.CurrPlayer.RemoveTradeRoute(tradeRoute);
         Destroy(tradeRouteToGameObject[tradeRoute]);
         tradeRouteToGameObject.Remove(tradeRoute);
     }
-	public void OnShipDestroy(Unit unit){
+    public void OnShipDestroy(Unit unit) {
         if (unit.IsPlayerUnit() == false || unit is Ship == false)
             return;
         Ship ship = (Ship)unit;
         Destroy(shipToGOElement[ship].gameObject);
         shipToGOElement.Remove(ship);
     }
-	public void OnShipCreate(Unit unit) {
+    public void OnShipCreate(Unit unit) {
         if (unit is Ship == false)
             return;
         Ship ship = (Ship)unit;
         unit.RegisterOnDestroyCallback(OnShipDestroy);
         AddShipToList(ship);
-	}
+    }
     public void RemoveShipFromTradeRoute(Ship ship) {
         ship.StopTradeRoute();
         UpdateShipListOrder();
     }
-	public void OnAmountSliderMoved(float f){
-		if(CurrentlySelectedItem == null || itemToGameObject.ContainsKey (CurrentlySelectedItem) ==false){
-			return;
-		}
-        CurrentlySelectedItem.count = (int)f; 
-		itemToGameObject [CurrentlySelectedItem].ChangeItemCount (f);
+    public void OnAmountSliderMoved(float f) {
+        if (CurrentlySelectedItem == null || itemToGameObject.ContainsKey(CurrentlySelectedItem) == false) {
+            return;
+        }
+        CurrentlySelectedItem.count = (int)f;
+        itemToGameObject[CurrentlySelectedItem].ChangeItemCount(f);
         //tradeRoute.ChangeItemAmount(city, CurrentlySelectedItem);
     }
 
     public void OnItemClick(Item i, PointerEventData.InputButton button) {
         switch (button) {
-                //SELECT ITEM 
+            //SELECT ITEM 
             case PointerEventData.InputButton.Left:
                 CurrentlySelectedItem = i;
                 break;
-                //REMOVE ITEM 
+            //REMOVE ITEM 
             case PointerEventData.InputButton.Right:
                 OnItemRemove(i);
                 break;
-                //NOTHING
+            //NOTHING
             case PointerEventData.InputButton.Middle:
                 break;
         }
@@ -125,25 +125,26 @@ public class TradeRoutePanel : MonoBehaviour {
 
     private void AddTradeRouteToList(TradeRoute tradeRoute) {
         GameObject go = Instantiate(tradeRouteElementPrefab);
-        go.GetComponentInChildren<TradeRouteElement>().SetTradeRoute(tradeRoute,ShowTradeRoute, RemoveTradeRoute);
+        go.GetComponentInChildren<TradeRouteElement>().SetTradeRoute(tradeRoute, ShowTradeRoute, RemoveTradeRoute);
         go.transform.SetParent(allTradeRoutesList);
         tradeRouteToGameObject.Add(tradeRoute, go);
     }
 
-    public void ShowTradeRoute(TradeRoute tr){
+    public void ShowTradeRoute(TradeRoute tr) {
         tradeRoute = tr;
-		foreach(Warehouse w in mi.warehouseToGO.Keys){
-			GameObject go = mi.warehouseToGO [w];
-			if (tradeRoute.Contains (w.City) == false) {
+        foreach (WarehouseStructure w in mi.warehouseToGO.Keys) {
+            GameObject go = mi.warehouseToGO[w];
+            if (tradeRoute.Contains(w.City) == false) {
                 go.GetComponent<MapCitySelect>().Unselect();
-			} else {
+            }
+            else {
                 go.GetComponent<MapCitySelect>().SelectAs(tradeRoute.GetNumberFor(w));
-			}
-		}
-        foreach(Ship ship in tradeRoute.shipToNextStop.Keys) {
+            }
+        }
+        foreach (Ship ship in tradeRoute.shipToNextStop.Keys) {
             AddShipToList(ship);
         }
-	}
+    }
     private void AddShipToList(Ship ship) {
         GameObject shipGO = Instantiate(shipTradeRoutePrefab);
         ShipElement se = shipGO.GetComponentInChildren<ShipElement>();
@@ -166,12 +167,12 @@ public class TradeRoutePanel : MonoBehaviour {
         UpdateShipListOrder();
     }
 
-    public void OnWarehouseClick(City c){
-		if(tradeRoute.Contains (c)==false){
-			return;
-		}
-		SetCity (c);
-	}
+    public void OnWarehouseClick(City c) {
+        if (tradeRoute.Contains(c) == false) {
+            return;
+        }
+        SetCity(c);
+    }
     public void OnShipAdd(Ship ship) {
         ship.SetTradeRoute(tradeRoute);
         AddShipToList(ship);
@@ -197,13 +198,12 @@ public class TradeRoutePanel : MonoBehaviour {
         GameObject gameObject = Instantiate(itemPrefab);
         ItemUI ui = gameObject.GetComponent<ItemUI>();
         ui.SetItem(item, TradeAmountMaximum);
-        ui.AddClickListener((PointerEventData) => 
-            {
-                OnItemClick(item, ((PointerEventData)PointerEventData).button);
-            }
+        ui.AddClickListener((PointerEventData) => {
+            OnItemClick(item, ((PointerEventData)PointerEventData).button);
+        }
         );
         ui.ChangeItemCount(amountSlider.value);
-        item.count = (int) amountSlider.value;
+        item.count = (int)amountSlider.value;
         switch (typ) {
             case TradeTyp.Load:
                 gameObject.transform.SetParent(loadItemParent);
@@ -225,31 +225,32 @@ public class TradeRoutePanel : MonoBehaviour {
         tradeRoute.RemoveItemFromTrade(city, item);
         itemToGameObject.Remove(item);
     }
-    public void OnWarehouseToggleClicked(Warehouse warehouse,Toggle t){
-		if(tradeRoute == null){
-			Debug.LogError ("NO TRADEROUTE"); 
-			return;
-		}
-		if(t.isOn){
-			SetCity (warehouse.City);
-			//not that good
-			tradeRoute.AddWarehouse (warehouse);
-			t.GetComponentInChildren<Text> ().text=""+tradeRoute.GetLastNumber();
-			text.text = warehouse.City.Name;
-		} else {
-			t.GetComponentInChildren<Text> ().text="";
-			tradeRoute.RemoveWarehouse (warehouse);
-		}
-	}
+    public void OnWarehouseToggleClicked(WarehouseStructure warehouse, Toggle t) {
+        if (tradeRoute == null) {
+            Debug.LogError("NO TRADEROUTE");
+            return;
+        }
+        if (t.isOn) {
+            SetCity(warehouse.City);
+            //not that good
+            tradeRoute.AddWarehouse(warehouse);
+            t.GetComponentInChildren<Text>().text = "" + tradeRoute.GetLastNumber();
+            text.text = warehouse.City.Name;
+        }
+        else {
+            t.GetComponentInChildren<Text>().text = "";
+            tradeRoute.RemoveWarehouse(warehouse);
+        }
+    }
 
-	public void ResetItemIcons(){
-        foreach(ItemUI i in itemToGameObject.Values) {
+    public void ResetItemIcons() {
+        foreach (ItemUI i in itemToGameObject.Values) {
             GameObject.Destroy(i.transform.gameObject);
         }
         itemToGameObject.Clear();
-	}
+    }
 
-	public void NextCity(bool right){
+    public void NextCity(bool right) {
         if (tradeRoute.TradeStopNumber == 0)
             return;
         ResetItemIcons();
@@ -257,19 +258,19 @@ public class TradeRoutePanel : MonoBehaviour {
         tradeRouteCityState %= tradeRoute.TradeStopNumber;
         if (tradeRouteCityState < 0)
             tradeRouteCityState = tradeRoute.TradeStopNumber - 1;
-        TradeRoute.Trade t = tradeRoute.GetTrade (tradeRouteCityState);
-        
-		SetCity (t.city);
+        TradeRoute.Trade t = tradeRoute.GetTrade(tradeRouteCityState);
+
+        SetCity(t.city);
     }
 
-	public void SetCity(City c){
-		text.text = c.Name;
-		ResetItemIcons ();
-		city = c;
-		TradeRoute.Trade t = tradeRoute.GetTradeFor (city);
-		if(t==null){
-			return;
-		}
+    public void SetCity(City c) {
+        text.text = c.Name;
+        ResetItemIcons();
+        city = c;
+        TradeRoute.Trade t = tradeRoute.GetTradeFor(city);
+        if (t == null) {
+            return;
+        }
         foreach (Item i in t.load) {
             AddItem(i, TradeTyp.Load);
         }
@@ -278,7 +279,7 @@ public class TradeRoutePanel : MonoBehaviour {
         }
     }
 
-    void OnDisable(){
-		
-	}
+    void OnDisable() {
+
+    }
 }

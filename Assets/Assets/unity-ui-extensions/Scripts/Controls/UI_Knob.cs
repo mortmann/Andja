@@ -21,12 +21,10 @@ using UnityEngine.EventSystems;
 /// - while dragging outside of control, the rotation will be cancelled
 /// </summary>
 /// 
-namespace UnityEngine.UI.Extensions
-{
+namespace UnityEngine.UI.Extensions {
     [RequireComponent(typeof(Image))]
     [AddComponentMenu("UI/Extensions/UI_Knob")]
-    public class UI_Knob : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IPointerEnterHandler, IPointerExitHandler, IBeginDragHandler, IDragHandler
-    {
+    public class UI_Knob : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IPointerEnterHandler, IPointerExitHandler, IBeginDragHandler, IDragHandler {
         public enum Direction { CW, CCW };
         [Tooltip("Direction of rotation CW - clockwise, CCW - counterClockwise")]
         public Direction direction = Direction.CW;
@@ -53,37 +51,29 @@ namespace UnityEngine.UI.Extensions
         private bool _canDrag = false;
 
         //ONLY ALLOW ROTATION WITH POINTER OVER THE CONTROL
-        public void OnPointerDown(PointerEventData eventData)
-        {
+        public void OnPointerDown(PointerEventData eventData) {
             _canDrag = true;
         }
-        public void OnPointerUp(PointerEventData eventData)
-        {
+        public void OnPointerUp(PointerEventData eventData) {
             _canDrag = false;
         }
-        public void OnPointerEnter(PointerEventData eventData)
-        {
+        public void OnPointerEnter(PointerEventData eventData) {
             _canDrag = true;
         }
-        public void OnPointerExit(PointerEventData eventData)
-        {
+        public void OnPointerExit(PointerEventData eventData) {
             _canDrag = false;
         }
-        public void OnBeginDrag(PointerEventData eventData)
-        {
+        public void OnBeginDrag(PointerEventData eventData) {
             SetInitPointerData(eventData);
         }
-        void SetInitPointerData(PointerEventData eventData)
-        {
+        void SetInitPointerData(PointerEventData eventData) {
             _initRotation = transform.rotation;
             _currentVector = eventData.position - (Vector2)transform.position;
             _initAngle = Mathf.Atan2(_currentVector.y, _currentVector.x) * Mathf.Rad2Deg;
         }
-        public void OnDrag(PointerEventData eventData)
-        {
+        public void OnDrag(PointerEventData eventData) {
             //CHECK IF CAN DRAG
-            if (!_canDrag)
-            {
+            if (!_canDrag) {
                 SetInitPointerData(eventData);
                 return;
             }
@@ -95,50 +85,40 @@ namespace UnityEngine.UI.Extensions
 
             Quaternion finalRotation = _initRotation * addRotation;
 
-            if (direction == Direction.CW)
-            {
+            if (direction == Direction.CW) {
                 knobValue = 1 - (finalRotation.eulerAngles.z / 360f);
 
-                if (snapToPosition)
-                {
+                if (snapToPosition) {
                     SnapToPosition(ref knobValue);
                     finalRotation.eulerAngles = new Vector3(0, 0, 360 - 360 * knobValue);
                 }
             }
-            else
-            {
+            else {
                 knobValue = (finalRotation.eulerAngles.z / 360f);
 
-                if (snapToPosition)
-                {
+                if (snapToPosition) {
                     SnapToPosition(ref knobValue);
                     finalRotation.eulerAngles = new Vector3(0, 0, 360 * knobValue);
                 }
             }
 
             //PREVENT OVERROTATION
-            if (Mathf.Abs(knobValue - _previousValue) > 0.5f)
-            {
-                if (knobValue < 0.5f && loops > 1 && _currentLoops < loops - 1)
-                {
+            if (Mathf.Abs(knobValue - _previousValue) > 0.5f) {
+                if (knobValue < 0.5f && loops > 1 && _currentLoops < loops - 1) {
                     _currentLoops++;
                 }
-                else if (knobValue > 0.5f && _currentLoops >= 1)
-                {
+                else if (knobValue > 0.5f && _currentLoops >= 1) {
                     _currentLoops--;
                 }
-                else
-                {
-                    if (knobValue > 0.5f && _currentLoops == 0)
-                    {
+                else {
+                    if (knobValue > 0.5f && _currentLoops == 0) {
                         knobValue = 0;
                         transform.localEulerAngles = Vector3.zero;
                         SetInitPointerData(eventData);
                         InvokeEvents(knobValue + _currentLoops);
                         return;
                     }
-                    else if (knobValue < 0.5f && _currentLoops == loops - 1)
-                    {
+                    else if (knobValue < 0.5f && _currentLoops == loops - 1) {
                         knobValue = 1;
                         transform.localEulerAngles = Vector3.zero;
                         SetInitPointerData(eventData);
@@ -149,10 +129,8 @@ namespace UnityEngine.UI.Extensions
             }
 
             //CHECK MAX VALUE
-            if (maxValue > 0)
-            {
-                if (knobValue + _currentLoops > maxValue)
-                {
+            if (maxValue > 0) {
+                if (knobValue + _currentLoops > maxValue) {
                     knobValue = maxValue;
                     float maxAngle = direction == Direction.CW ? 360f - 360f * maxValue : 360f * maxValue;
                     transform.localEulerAngles = new Vector3(0, 0, maxAngle);
@@ -167,14 +145,12 @@ namespace UnityEngine.UI.Extensions
 
             _previousValue = knobValue;
         }
-        private void SnapToPosition(ref float knobValue)
-        {
+        private void SnapToPosition(ref float knobValue) {
             float snapStep = 1 / (float)snapStepsPerLoop;
             float newValue = Mathf.Round(knobValue / snapStep) * snapStep;
             knobValue = newValue;
         }
-        private void InvokeEvents(float value)
-        {
+        private void InvokeEvents(float value) {
             if (clampOutput01)
                 value /= loops;
             OnValueChanged.Invoke(value);

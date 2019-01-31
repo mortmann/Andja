@@ -146,7 +146,7 @@ public class City : IGEventable {
                 myHomes.Add((HomeStructure)item);
             }
             //TODO:Find a better way/ cleaner way todo this
-            Balance -= item.Maintenancecost;
+            Balance -= item.MaintenanceCost;
         }
         if (IsWilderness() == false) {
             for (int i = PopulationLevels.Count - 1; i >= 0; i--) {
@@ -207,7 +207,7 @@ public class City : IGEventable {
             }
             myWarehouse = (WarehouseStructure)str;
         }
-        Balance += str.Maintenancecost;
+        Balance += str.MaintenanceCost;
         RemoveRessources(str.GetBuildingItems());
 
         myStructures.Add(str);
@@ -459,7 +459,7 @@ public class City : IGEventable {
                 inventory.AddItems(res);
             }
             myStructures.Remove(structure);
-            Balance -= structure.Maintenancecost;
+            Balance -= structure.MaintenanceCost;
             cbStructureRemoved?.Invoke(structure);
         }
         else {

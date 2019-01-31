@@ -20,7 +20,7 @@ public class NeedUI : MonoBehaviour {
         this.name = need.Name;
         string name = need.Name + " | ";
         if (need.IsItemNeed()) {
-            name += need.Item.name;
+            name += need.Item.Name;
         }
         else {
             if (need.Structures == null) {

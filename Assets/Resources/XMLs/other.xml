@@ -1,5 +1,5 @@
 <Other>
-   <PopulationLevel Level="0">
+   <PopulationLevel LEVEL="0">
       <Name>
          <entry lang="English">Peasent</entry>
          <entry lang="German">Bauer</entry>
@@ -9,7 +9,7 @@
          <entry lang="German">Arme Bauern.</entry>
       </Description>
    </PopulationLevel>
-   <PopulationLevel Level="1">
+   <PopulationLevel LEVEL="1">
       <Name>
          <entry lang="English">Citizen</entry>
          <entry lang="German">Bürger</entry>
@@ -19,7 +19,7 @@
          <entry lang="German">&quot;Mittlere Klasse&quot;</entry>
       </Description>
    </PopulationLevel>
-   <PopulationLevel Level="2">
+   <PopulationLevel LEVEL="2">
       <Name>
          <entry lang="English">Patrician</entry>
          <entry lang="German">Patrizier</entry>
@@ -29,7 +29,7 @@
          <entry lang="German">Gewerbe besitzende Klasse.</entry>
       </Description>
    </PopulationLevel>
-   <PopulationLevel Level="3">
+   <PopulationLevel LEVEL="3">
       <Name>
          <entry lang="English">Nobleman</entry>
          <entry lang="German">Adliger</entry>

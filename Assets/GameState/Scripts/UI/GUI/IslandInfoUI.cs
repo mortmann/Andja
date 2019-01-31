@@ -38,7 +38,7 @@ public class IslandInfoUI : MonoBehaviour {
                     continue;
                 }
 
-                text += " | " + items[i].name + "=" + items[i].count;
+                text += " | " + items[i].Name + "=" + items[i].count;
             }
         }
         fertilityText.text = text;

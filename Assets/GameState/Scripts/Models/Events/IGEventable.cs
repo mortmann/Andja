@@ -13,11 +13,11 @@ public abstract class IGEventable {
     /// <summary>
     /// For integer and float modifier
     /// </summary>
-    protected Dictionary<string, float> variablenameToFloat;
-
+    protected Dictionary<string, float> VariablenameToFloat;
+    protected List<Effect> Effects;
     protected Action<GameEvent> cbEventCreated;
     protected Action<GameEvent> cbEventEnded;
-    protected TargetGroup _targetGroup;
+    private TargetGroup _targetGroup;
     public TargetGroup TargetGroups {
         get {
             if (_targetGroup == null)
@@ -70,11 +70,13 @@ public abstract class IGEventable {
             targets.Add(Target.FarmStructure);
         if (this is ProductionStructure)
             targets.Add(Target.ProductionStructure);
+
         return new TargetGroup(targets);
     }
 
     public void RegisterOnEvent(Action<GameEvent> create, Action<GameEvent> ending) {
-
+        cbEventCreated += create;
+        cbEventEnded += ending;
     }
     public virtual int GetPlayerNumber() {
         return -1;
@@ -93,18 +95,53 @@ public abstract class IGEventable {
         if(TargetGroups.IsTargeted(effect.Targets) == false) {
             return;
         }
-        Debug.Log("No implementation for effect " + effect.ID);
-
-        if(effect.IsSpecial) {
-            //ExecuteSpecialEffect(effect);
-        } else {
-            if (variablenameToFloat == null)
-                variablenameToFloat = new Dictionary<string, float>();
-            //we change a float or integer variable 
-            float change = 0f;
-            float.TryParse(effect.Change, out change);
-            variablenameToFloat[effect.NameOfVariable + effect.ModifierType] += change;
+        if(effect.IsUnique && HasEffect(effect)) {
+            return;
         }
+        Effects.Add(effect);
+        if(effect.IsSpecial) {
+            ExecuteSpecialEffect(effect);
+        } else {
+            if (VariablenameToFloat == null)
+                VariablenameToFloat = new Dictionary<string, float>();
+            //we change a float or integer variable 
+            VariablenameToFloat[effect.NameOfVariable + effect.ModifierType] += effect.Change;
+        }
+    }
+
+    public bool HasEffect(Effect effect) {
+        return Effects.Find(x => x.ID == effect.ID) != null;
+    }
+
+    public virtual void RemoveEffect(Effect effect) {
+        if (Effects.Contains(effect) == false) {
+            return;
+        }
+        if (effect.IsSpecial) {
+            RemoveSpecialEffect(effect);
+        }
+        else {
+            //we change a float or integer variable 
+            if (VariablenameToFloat.ContainsKey(effect.NameOfVariable + effect.ModifierType)) {
+                VariablenameToFloat[effect.NameOfVariable + effect.ModifierType] -= effect.Change;
+            } else {
+                Debug.LogWarning("Tried to remove an Effect that didnt have a value yet.");
+            }
+        }
+    }
+
+
+    /// <summary>
+    /// USE this for any variable thats supposed to be able to be modified
+    /// </summary>
+    /// <param name="name"></param>
+    /// <param name="currentValue"></param>
+    /// <returns></returns>
+    protected float CalculateRealValue(string name, float currentValue, bool clampToZero = true) {
+        float value = (currentValue + GetAdditiveValue(name)) * GetMultiplicative(name);
+        if (clampToZero)
+            return Mathf.Clamp(value, 0, value);
+        return value;
     }
     /// <summary>
     /// USE this for any variable thats supposed to be able to be modified
@@ -112,21 +149,26 @@ public abstract class IGEventable {
     /// <param name="name"></param>
     /// <param name="currentValue"></param>
     /// <returns></returns>
-    protected float CalculateRealValue(string name, float currentValue) {
-        return (currentValue + GetAdditiveValue(name)) * GetMultiplicative(name);
+    protected int CalculateRealValue(string name, int currentValue, bool clampToZero = true) {
+        return Mathf.RoundToInt(CalculateRealValue(name,(float)currentValue,clampToZero));
     }
-
     private float GetMultiplicative(string name) {
-        if (variablenameToFloat.ContainsKey(name + EffectModifier.Multiplicative) == false)
+        if (VariablenameToFloat.ContainsKey(name + EffectModifier.Multiplicative) == false)
             return 0f;
-        return variablenameToFloat[name + EffectModifier.Multiplicative];
+        return VariablenameToFloat[name + EffectModifier.Multiplicative];
     }
 
     private float GetAdditiveValue(string name) {
-        if (variablenameToFloat.ContainsKey(name + EffectModifier.Additive) == false)
+        if (VariablenameToFloat.ContainsKey(name + EffectModifier.Additive) == false)
             return 0f;
-        return variablenameToFloat[name + EffectModifier.Additive];
+        return VariablenameToFloat[name + EffectModifier.Additive];
     }
 
-    //protected abstract void ExecuteSpecialEffect(Effect effect);
+    protected virtual void ExecuteSpecialEffect(Effect effect) {
+        Debug.LogError("Not implemented Add Special Effect " + effect.ID + " for this object: " + this.ToString());
+    }
+    protected virtual void RemoveSpecialEffect(Effect effect) {
+        Debug.LogError("Not implemented Remove Special Effect " + effect.ID + " for this object: " + this.ToString());
+    }
+
 }

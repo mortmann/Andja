@@ -1,8 +1,8 @@
 <units>
    <unit ID="0">
-      <MaxHealth>100.0</MaxHealth>
-      <PopulationLevel>0</PopulationLevel>
-      <PopulationCount>0</PopulationCount>
+      <maxHealth>100.0</maxHealth>
+      <populationLevel>0</populationLevel>
+      <populationCount>0</populationCount>
       <inventoryPlaces>0</inventoryPlaces>
       <inventorySize>0</inventorySize>
       <Name>
@@ -28,9 +28,9 @@
       <spriteBaseName>basicunit</spriteBaseName>
    </unit>
    <ship ID="1">
-      <MaxHealth>1250.0</MaxHealth>
-      <PopulationLevel>0</PopulationLevel>
-      <PopulationCount>0</PopulationCount>
+      <maxHealth>1250.0</maxHealth>
+      <populationLevel>0</populationLevel>
+      <populationCount>0</populationCount>
       <inventoryPlaces>6</inventoryPlaces>
       <inventorySize>50</inventorySize>
       <Name>
@@ -54,8 +54,8 @@
          </Item>
       </buildingItems>
       <aggroTimer>1.0</aggroTimer>
-      <attackRange>10.0</attackRange>
-      <damage>0.0</damage>
+      <attackRange>1.0</attackRange>
+      <damage>10.0</damage>
       <myDamageType>1</myDamageType>
       <myArmorType>1</myArmorType>
       <attackCooldown>1.0</attackCooldown>
@@ -64,9 +64,9 @@
       <turnSpeed>1.0</turnSpeed>
       <spriteBaseName>ship</spriteBaseName>
       <maximumAmountOfCannons>15</maximumAmountOfCannons>
-      <damagePerCannon>10</damagePerCannon>
+      <damagePerCannon>1</damagePerCannon>
       <cannonType ID="1006">
-         <count>10</count>
+         <count>0</count>
       </cannonType>
    </ship>
 </units>

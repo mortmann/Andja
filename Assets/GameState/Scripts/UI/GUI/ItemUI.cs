@@ -26,7 +26,7 @@ public class ItemUI : MonoBehaviour {
             itemName = "Empty";//FIXME not hardcoded
         }
         else {
-            itemName = i.name;
+            itemName = i.Name;
             ChangeItemCount(i);
             image.sprite = UIController.GetItemImageForID(i.ID);
         }

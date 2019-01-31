@@ -7,7 +7,7 @@ using System;
 [JsonObject]
 public class PopulationLevelPrototypData : LanguageVariables {
     public List<NeedGroup> needGroupList; //not used as "copy" of the USED in "ticks" just as a reference which Needs gets unlocked with this level!
-    public int Level; // cant be negative!
+    public int LEVEL; // cant be negative!
 }
 [JsonObject(MemberSerialization.OptIn)]
 public class PopulationLevel {

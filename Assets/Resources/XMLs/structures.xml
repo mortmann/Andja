@@ -16,11 +16,11 @@
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
          <hasHitbox>false</hasHitbox>
-         <MaxHealth>0.0</MaxHealth>
+         <maxHealth>0.0</maxHealth>
          <structureRange>0</structureRange>
-         <PopulationLevel>0</PopulationLevel>
-         <PopulationCount>0</PopulationCount>
-         <StructureLevel>0</StructureLevel>
+         <populationLevel>0</populationLevel>
+         <populationCount>0</populationCount>
+         <structureLevel>0</structureLevel>
          <tileWidth>1</tileWidth>
          <tileHeight>1</tileHeight>
          <canRotate>true</canRotate>
@@ -29,12 +29,12 @@
          <canTakeDamage>false</canTakeDamage>
          <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
-         <maintenancecost>0</maintenancecost>
-         <buildcost>15</buildcost>
-         <BuildTyp>Path</BuildTyp>
+         <maintenanceCost>0</maintenanceCost>
+         <buildCost>15</buildCost>
+         <buildTyp>Path</buildTyp>
          <myStructureTyp>Pathfinding</myStructureTyp>
-         <ExtraUITyp>None</ExtraUITyp>
-         <ExtraBuildUITyp>None</ExtraBuildUITyp>
+         <extraUITyp>None</extraUITyp>
+         <extraBuildUITyp>None</extraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
          <spriteBaseName>dirtroad</spriteBaseName>
       </road>
@@ -54,11 +54,11 @@
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
          <hasHitbox>false</hasHitbox>
-         <MaxHealth>0.0</MaxHealth>
+         <maxHealth>0.0</maxHealth>
          <structureRange>0</structureRange>
-         <PopulationLevel>0</PopulationLevel>
-         <PopulationCount>1</PopulationCount>
-         <StructureLevel>1</StructureLevel>
+         <populationLevel>0</populationLevel>
+         <populationCount>1</populationCount>
+         <structureLevel>1</structureLevel>
          <tileWidth>1</tileWidth>
          <tileHeight>1</tileHeight>
          <canRotate>true</canRotate>
@@ -67,12 +67,12 @@
          <canTakeDamage>false</canTakeDamage>
          <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
-         <maintenancecost>0</maintenancecost>
-         <buildcost>50</buildcost>
-         <BuildTyp>Path</BuildTyp>
+         <maintenanceCost>0</maintenanceCost>
+         <buildCost>50</buildCost>
+         <buildTyp>Path</buildTyp>
          <myStructureTyp>Pathfinding</myStructureTyp>
-         <ExtraUITyp>None</ExtraUITyp>
-         <ExtraBuildUITyp>None</ExtraBuildUITyp>
+         <extraUITyp>None</extraUITyp>
+         <extraBuildUITyp>None</extraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
          <buildingItems length="0"/>
          <spriteBaseName>stoneroad</spriteBaseName>
@@ -93,11 +93,11 @@
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
          <hasHitbox>false</hasHitbox>
-         <MaxHealth>0.0</MaxHealth>
+         <maxHealth>0.0</maxHealth>
          <structureRange>0</structureRange>
-         <PopulationLevel>0</PopulationLevel>
-         <PopulationCount>2</PopulationCount>
-         <StructureLevel>2</StructureLevel>
+         <populationLevel>0</populationLevel>
+         <populationCount>2</populationCount>
+         <structureLevel>2</structureLevel>
          <tileWidth>1</tileWidth>
          <tileHeight>1</tileHeight>
          <canRotate>true</canRotate>
@@ -106,12 +106,12 @@
          <canTakeDamage>false</canTakeDamage>
          <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
-         <maintenancecost>0</maintenancecost>
-         <buildcost>100</buildcost>
-         <BuildTyp>Path</BuildTyp>
+         <maintenanceCost>0</maintenanceCost>
+         <buildCost>100</buildCost>
+         <buildTyp>Path</buildTyp>
          <myStructureTyp>Pathfinding</myStructureTyp>
-         <ExtraUITyp>None</ExtraUITyp>
-         <ExtraBuildUITyp>None</ExtraBuildUITyp>
+         <extraUITyp>None</extraUITyp>
+         <extraBuildUITyp>None</extraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
          <buildingItems length="1">
             <Item ID="4">
@@ -136,11 +136,11 @@
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
          <hasHitbox>false</hasHitbox>
-         <MaxHealth>0.0</MaxHealth>
+         <maxHealth>0.0</maxHealth>
          <structureRange>0</structureRange>
-         <PopulationLevel>0</PopulationLevel>
-         <PopulationCount>3</PopulationCount>
-         <StructureLevel>3</StructureLevel>
+         <populationLevel>0</populationLevel>
+         <populationCount>3</populationCount>
+         <structureLevel>3</structureLevel>
          <tileWidth>1</tileWidth>
          <tileHeight>1</tileHeight>
          <canRotate>true</canRotate>
@@ -149,12 +149,12 @@
          <canTakeDamage>false</canTakeDamage>
          <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
-         <maintenancecost>0</maintenancecost>
-         <buildcost>0</buildcost>
-         <BuildTyp>Path</BuildTyp>
+         <maintenanceCost>0</maintenanceCost>
+         <buildCost>0</buildCost>
+         <buildTyp>Path</buildTyp>
          <myStructureTyp>Pathfinding</myStructureTyp>
-         <ExtraUITyp>None</ExtraUITyp>
-         <ExtraBuildUITyp>None</ExtraBuildUITyp>
+         <extraUITyp>None</extraUITyp>
+         <extraBuildUITyp>None</extraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
          <spriteBaseName>marbelroad</spriteBaseName>
       </road>
@@ -176,11 +176,11 @@
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
          <hasHitbox>true</hasHitbox>
-         <MaxHealth>0.0</MaxHealth>
+         <maxHealth>0.0</maxHealth>
          <structureRange>3</structureRange>
-         <PopulationLevel>0</PopulationLevel>
-         <PopulationCount>0</PopulationCount>
-         <StructureLevel>0</StructureLevel>
+         <populationLevel>0</populationLevel>
+         <populationCount>0</populationCount>
+         <structureLevel>0</structureLevel>
          <tileWidth>2</tileWidth>
          <tileHeight>2</tileHeight>
          <canRotate>true</canRotate>
@@ -189,12 +189,12 @@
          <canTakeDamage>true</canTakeDamage>
          <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
-         <maintenancecost>25</maintenancecost>
-         <buildcost>250</buildcost>
-         <BuildTyp>Single</BuildTyp>
+         <maintenanceCost>25</maintenanceCost>
+         <buildCost>250</buildCost>
+         <buildTyp>Single</buildTyp>
          <myStructureTyp>Blocking</myStructureTyp>
-         <ExtraUITyp>None</ExtraUITyp>
-         <ExtraBuildUITyp>None</ExtraBuildUITyp>
+         <extraUITyp>None</extraUITyp>
+         <extraBuildUITyp>None</extraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
          <buildingItems length="1">
             <Item ID="1">
@@ -241,11 +241,11 @@
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
          <hasHitbox>true</hasHitbox>
-         <MaxHealth>50.0</MaxHealth>
+         <maxHealth>50.0</maxHealth>
          <structureRange>2</structureRange>
-         <PopulationLevel>0</PopulationLevel>
-         <PopulationCount>0</PopulationCount>
-         <StructureLevel>0</StructureLevel>
+         <populationLevel>0</populationLevel>
+         <populationCount>0</populationCount>
+         <structureLevel>0</structureLevel>
          <tileWidth>2</tileWidth>
          <tileHeight>2</tileHeight>
          <canRotate>true</canRotate>
@@ -254,12 +254,12 @@
          <canTakeDamage>true</canTakeDamage>
          <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
-         <maintenancecost>20</maintenancecost>
-         <buildcost>0</buildcost>
-         <BuildTyp>Single</BuildTyp>
+         <maintenanceCost>20</maintenanceCost>
+         <buildCost>0</buildCost>
+         <buildTyp>Single</buildTyp>
          <myStructureTyp>Blocking</myStructureTyp>
-         <ExtraUITyp>None</ExtraUITyp>
-         <ExtraBuildUITyp>None</ExtraBuildUITyp>
+         <extraUITyp>None</extraUITyp>
+         <extraBuildUITyp>None</extraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
          <buildingItems length="2">
             <Item ID="1">
@@ -299,11 +299,11 @@
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
          <hasHitbox>true</hasHitbox>
-         <MaxHealth>150.0</MaxHealth>
+         <maxHealth>150.0</maxHealth>
          <structureRange>4</structureRange>
-         <PopulationLevel>0</PopulationLevel>
-         <PopulationCount>500</PopulationCount>
-         <StructureLevel>0</StructureLevel>
+         <populationLevel>0</populationLevel>
+         <populationCount>500</populationCount>
+         <structureLevel>0</structureLevel>
          <tileWidth>2</tileWidth>
          <tileHeight>2</tileHeight>
          <canRotate>true</canRotate>
@@ -312,12 +312,12 @@
          <canTakeDamage>true</canTakeDamage>
          <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
-         <maintenancecost>60</maintenancecost>
-         <buildcost>500</buildcost>
-         <BuildTyp>Single</BuildTyp>
+         <maintenanceCost>60</maintenanceCost>
+         <buildCost>500</buildCost>
+         <buildTyp>Single</buildTyp>
          <myStructureTyp>Blocking</myStructureTyp>
-         <ExtraUITyp>None</ExtraUITyp>
-         <ExtraBuildUITyp>None</ExtraBuildUITyp>
+         <extraUITyp>None</extraUITyp>
+         <extraBuildUITyp>None</extraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
          <buildingItems length="2">
             <Item ID="1">
@@ -357,11 +357,11 @@
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
          <hasHitbox>true</hasHitbox>
-         <MaxHealth>0.0</MaxHealth>
+         <maxHealth>0.0</maxHealth>
          <structureRange>2</structureRange>
-         <PopulationLevel>0</PopulationLevel>
-         <PopulationCount>500</PopulationCount>
-         <StructureLevel>0</StructureLevel>
+         <populationLevel>0</populationLevel>
+         <populationCount>500</populationCount>
+         <structureLevel>0</structureLevel>
          <tileWidth>2</tileWidth>
          <tileHeight>2</tileHeight>
          <canRotate>true</canRotate>
@@ -370,12 +370,12 @@
          <canTakeDamage>true</canTakeDamage>
          <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
-         <maintenancecost>75</maintenancecost>
-         <buildcost>650</buildcost>
-         <BuildTyp>Single</BuildTyp>
+         <maintenanceCost>75</maintenanceCost>
+         <buildCost>650</buildCost>
+         <buildTyp>Single</buildTyp>
          <myStructureTyp>Blocking</myStructureTyp>
-         <ExtraUITyp>None</ExtraUITyp>
-         <ExtraBuildUITyp>None</ExtraBuildUITyp>
+         <extraUITyp>None</extraUITyp>
+         <extraBuildUITyp>None</extraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
          <buildingItems length="2">
             <Item ID="1">
@@ -415,11 +415,11 @@
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
          <hasHitbox>true</hasHitbox>
-         <MaxHealth>250.0</MaxHealth>
+         <maxHealth>250.0</maxHealth>
          <structureRange>2</structureRange>
-         <PopulationLevel>0</PopulationLevel>
-         <PopulationCount>500</PopulationCount>
-         <StructureLevel>0</StructureLevel>
+         <populationLevel>0</populationLevel>
+         <populationCount>500</populationCount>
+         <structureLevel>0</structureLevel>
          <tileWidth>3</tileWidth>
          <tileHeight>2</tileHeight>
          <canRotate>true</canRotate>
@@ -428,12 +428,12 @@
          <canTakeDamage>true</canTakeDamage>
          <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
-         <maintenancecost>100</maintenancecost>
-         <buildcost>1000</buildcost>
-         <BuildTyp>Single</BuildTyp>
+         <maintenanceCost>100</maintenanceCost>
+         <buildCost>1000</buildCost>
+         <buildTyp>Single</buildTyp>
          <myStructureTyp>Blocking</myStructureTyp>
-         <ExtraUITyp>None</ExtraUITyp>
-         <ExtraBuildUITyp>None</ExtraBuildUITyp>
+         <extraUITyp>None</extraUITyp>
+         <extraBuildUITyp>None</extraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
          <buildingItems length="2">
             <Item ID="1">
@@ -473,11 +473,11 @@
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
          <hasHitbox>true</hasHitbox>
-         <MaxHealth>0.0</MaxHealth>
+         <maxHealth>0.0</maxHealth>
          <structureRange>0</structureRange>
-         <PopulationLevel>1</PopulationLevel>
-         <PopulationCount>0</PopulationCount>
-         <StructureLevel>0</StructureLevel>
+         <populationLevel>1</populationLevel>
+         <populationCount>0</populationCount>
+         <structureLevel>0</structureLevel>
          <tileWidth>2</tileWidth>
          <tileHeight>2</tileHeight>
          <canRotate>true</canRotate>
@@ -486,12 +486,12 @@
          <canTakeDamage>true</canTakeDamage>
          <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
-         <maintenancecost>65</maintenancecost>
-         <buildcost>1250</buildcost>
-         <BuildTyp>Single</BuildTyp>
+         <maintenanceCost>65</maintenanceCost>
+         <buildCost>1250</buildCost>
+         <buildTyp>Single</buildTyp>
          <myStructureTyp>Blocking</myStructureTyp>
-         <ExtraUITyp>None</ExtraUITyp>
-         <ExtraBuildUITyp>None</ExtraBuildUITyp>
+         <extraUITyp>None</extraUITyp>
+         <extraBuildUITyp>None</extraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
          <buildingItems length="3">
             <Item ID="1">
@@ -534,11 +534,11 @@
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
          <hasHitbox>true</hasHitbox>
-         <MaxHealth>50.0</MaxHealth>
+         <maxHealth>50.0</maxHealth>
          <structureRange>6</structureRange>
-         <PopulationLevel>1</PopulationLevel>
-         <PopulationCount>750</PopulationCount>
-         <StructureLevel>0</StructureLevel>
+         <populationLevel>1</populationLevel>
+         <populationCount>750</populationCount>
+         <structureLevel>0</structureLevel>
          <tileWidth>2</tileWidth>
          <tileHeight>2</tileHeight>
          <canRotate>true</canRotate>
@@ -547,12 +547,12 @@
          <canTakeDamage>true</canTakeDamage>
          <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
-         <maintenancecost>25</maintenancecost>
-         <buildcost>250</buildcost>
-         <BuildTyp>Single</BuildTyp>
+         <maintenanceCost>25</maintenanceCost>
+         <buildCost>250</buildCost>
+         <buildTyp>Single</buildTyp>
          <myStructureTyp>Blocking</myStructureTyp>
-         <ExtraUITyp>None</ExtraUITyp>
-         <ExtraBuildUITyp>None</ExtraBuildUITyp>
+         <extraUITyp>None</extraUITyp>
+         <extraBuildUITyp>None</extraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
          <buildingItems length="2">
             <Item ID="1">
@@ -592,11 +592,11 @@
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
          <hasHitbox>true</hasHitbox>
-         <MaxHealth>50.0</MaxHealth>
+         <maxHealth>50.0</maxHealth>
          <structureRange>4</structureRange>
-         <PopulationLevel>1</PopulationLevel>
-         <PopulationCount>750</PopulationCount>
-         <StructureLevel>0</StructureLevel>
+         <populationLevel>1</populationLevel>
+         <populationCount>750</populationCount>
+         <structureLevel>0</structureLevel>
          <tileWidth>2</tileWidth>
          <tileHeight>2</tileHeight>
          <canRotate>true</canRotate>
@@ -605,12 +605,12 @@
          <canTakeDamage>true</canTakeDamage>
          <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
-         <maintenancecost>75</maintenancecost>
-         <buildcost>450</buildcost>
-         <BuildTyp>Single</BuildTyp>
+         <maintenanceCost>75</maintenanceCost>
+         <buildCost>450</buildCost>
+         <buildTyp>Single</buildTyp>
          <myStructureTyp>Blocking</myStructureTyp>
-         <ExtraUITyp>None</ExtraUITyp>
-         <ExtraBuildUITyp>None</ExtraBuildUITyp>
+         <extraUITyp>None</extraUITyp>
+         <extraBuildUITyp>None</extraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
          <buildingItems length="3">
             <Item ID="1">
@@ -653,11 +653,11 @@
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
          <hasHitbox>true</hasHitbox>
-         <MaxHealth>230.0</MaxHealth>
+         <maxHealth>230.0</maxHealth>
          <structureRange>5</structureRange>
-         <PopulationLevel>1</PopulationLevel>
-         <PopulationCount>1500</PopulationCount>
-         <StructureLevel>0</StructureLevel>
+         <populationLevel>1</populationLevel>
+         <populationCount>1500</populationCount>
+         <structureLevel>0</structureLevel>
          <tileWidth>2</tileWidth>
          <tileHeight>2</tileHeight>
          <canRotate>true</canRotate>
@@ -666,12 +666,12 @@
          <canTakeDamage>true</canTakeDamage>
          <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
-         <maintenancecost>100</maintenancecost>
-         <buildcost>600</buildcost>
-         <BuildTyp>Single</BuildTyp>
+         <maintenanceCost>100</maintenanceCost>
+         <buildCost>600</buildCost>
+         <buildTyp>Single</buildTyp>
          <myStructureTyp>Blocking</myStructureTyp>
-         <ExtraUITyp>None</ExtraUITyp>
-         <ExtraBuildUITyp>None</ExtraBuildUITyp>
+         <extraUITyp>None</extraUITyp>
+         <extraBuildUITyp>None</extraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
          <buildingItems length="3">
             <Item ID="1">
@@ -714,11 +714,11 @@
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
          <hasHitbox>true</hasHitbox>
-         <MaxHealth>250.0</MaxHealth>
+         <maxHealth>250.0</maxHealth>
          <structureRange>4</structureRange>
-         <PopulationLevel>1</PopulationLevel>
-         <PopulationCount>1500</PopulationCount>
-         <StructureLevel>0</StructureLevel>
+         <populationLevel>1</populationLevel>
+         <populationCount>1500</populationCount>
+         <structureLevel>0</structureLevel>
          <tileWidth>2</tileWidth>
          <tileHeight>2</tileHeight>
          <canRotate>true</canRotate>
@@ -727,12 +727,12 @@
          <canTakeDamage>true</canTakeDamage>
          <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
-         <maintenancecost>110</maintenancecost>
-         <buildcost>720</buildcost>
-         <BuildTyp>Single</BuildTyp>
+         <maintenanceCost>110</maintenanceCost>
+         <buildCost>720</buildCost>
+         <buildTyp>Single</buildTyp>
          <myStructureTyp>Blocking</myStructureTyp>
-         <ExtraUITyp>None</ExtraUITyp>
-         <ExtraBuildUITyp>None</ExtraBuildUITyp>
+         <extraUITyp>None</extraUITyp>
+         <extraBuildUITyp>None</extraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
          <buildingItems length="3">
             <Item ID="1">
@@ -777,11 +777,11 @@
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
          <hasHitbox>false</hasHitbox>
-         <MaxHealth>0.0</MaxHealth>
+         <maxHealth>0.0</maxHealth>
          <structureRange>0</structureRange>
-         <PopulationLevel>0</PopulationLevel>
-         <PopulationCount>0</PopulationCount>
-         <StructureLevel>0</StructureLevel>
+         <populationLevel>0</populationLevel>
+         <populationCount>0</populationCount>
+         <structureLevel>0</structureLevel>
          <tileWidth>1</tileWidth>
          <tileHeight>1</tileHeight>
          <canRotate>true</canRotate>
@@ -790,12 +790,12 @@
          <canTakeDamage>false</canTakeDamage>
          <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
-         <maintenancecost>0</maintenancecost>
-         <buildcost>5</buildcost>
-         <BuildTyp>Drag</BuildTyp>
+         <maintenanceCost>0</maintenanceCost>
+         <buildCost>5</buildCost>
+         <buildTyp>Drag</buildTyp>
          <myStructureTyp>Free</myStructureTyp>
-         <ExtraUITyp>None</ExtraUITyp>
-         <ExtraBuildUITyp>None</ExtraBuildUITyp>
+         <extraUITyp>None</extraUITyp>
+         <extraBuildUITyp>None</extraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
          <spriteBaseName>farmland</spriteBaseName>
          <contactRange>0.0</contactRange>
@@ -822,11 +822,11 @@
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
          <hasHitbox>false</hasHitbox>
-         <MaxHealth>15.0</MaxHealth>
+         <maxHealth>15.0</maxHealth>
          <structureRange>0</structureRange>
-         <PopulationLevel>0</PopulationLevel>
-         <PopulationCount>0</PopulationCount>
-         <StructureLevel>0</StructureLevel>
+         <populationLevel>0</populationLevel>
+         <populationCount>0</populationCount>
+         <structureLevel>0</structureLevel>
          <tileWidth>1</tileWidth>
          <tileHeight>1</tileHeight>
          <canRotate>true</canRotate>
@@ -835,12 +835,12 @@
          <canTakeDamage>false</canTakeDamage>
          <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
-         <maintenancecost>0</maintenancecost>
-         <buildcost>0</buildcost>
-         <BuildTyp>Drag</BuildTyp>
+         <maintenanceCost>0</maintenanceCost>
+         <buildCost>0</buildCost>
+         <buildTyp>Drag</buildTyp>
          <myStructureTyp>Free</myStructureTyp>
-         <ExtraUITyp>None</ExtraUITyp>
-         <ExtraBuildUITyp>None</ExtraBuildUITyp>
+         <extraUITyp>None</extraUITyp>
+         <extraBuildUITyp>None</extraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
          <buildingItems length="0"/>
          <spriteBaseName>tree</spriteBaseName>
@@ -873,11 +873,11 @@
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
          <hasHitbox>false</hasHitbox>
-         <MaxHealth>0.0</MaxHealth>
+         <maxHealth>0.0</maxHealth>
          <structureRange>0</structureRange>
-         <PopulationLevel>0</PopulationLevel>
-         <PopulationCount>0</PopulationCount>
-         <StructureLevel>0</StructureLevel>
+         <populationLevel>0</populationLevel>
+         <populationCount>0</populationCount>
+         <structureLevel>0</structureLevel>
          <tileWidth>1</tileWidth>
          <tileHeight>1</tileHeight>
          <canRotate>true</canRotate>
@@ -886,12 +886,12 @@
          <canTakeDamage>false</canTakeDamage>
          <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
-         <maintenancecost>0</maintenancecost>
-         <buildcost>0</buildcost>
-         <BuildTyp>Drag</BuildTyp>
+         <maintenanceCost>0</maintenanceCost>
+         <buildCost>0</buildCost>
+         <buildTyp>Drag</buildTyp>
          <myStructureTyp>Free</myStructureTyp>
-         <ExtraUITyp>None</ExtraUITyp>
-         <ExtraBuildUITyp>None</ExtraBuildUITyp>
+         <extraUITyp>None</extraUITyp>
+         <extraBuildUITyp>None</extraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
          <spriteBaseName>hempfield</spriteBaseName>
          <contactRange>0.0</contactRange>
@@ -923,11 +923,11 @@
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
          <hasHitbox>false</hasHitbox>
-         <MaxHealth>0.0</MaxHealth>
+         <maxHealth>0.0</maxHealth>
          <structureRange>0</structureRange>
-         <PopulationLevel>0</PopulationLevel>
-         <PopulationCount>500</PopulationCount>
-         <StructureLevel>0</StructureLevel>
+         <populationLevel>0</populationLevel>
+         <populationCount>500</populationCount>
+         <structureLevel>0</structureLevel>
          <tileWidth>1</tileWidth>
          <tileHeight>1</tileHeight>
          <canRotate>true</canRotate>
@@ -936,12 +936,12 @@
          <canTakeDamage>false</canTakeDamage>
          <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
-         <maintenancecost>0</maintenancecost>
-         <buildcost>25</buildcost>
-         <BuildTyp>Drag</BuildTyp>
+         <maintenanceCost>0</maintenanceCost>
+         <buildCost>25</buildCost>
+         <buildTyp>Drag</buildTyp>
          <myStructureTyp>Free</myStructureTyp>
-         <ExtraUITyp>None</ExtraUITyp>
-         <ExtraBuildUITyp>None</ExtraBuildUITyp>
+         <extraUITyp>None</extraUITyp>
+         <extraBuildUITyp>None</extraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
          <spriteBaseName>potatoefield</spriteBaseName>
          <contactRange>0.0</contactRange>
@@ -973,11 +973,11 @@
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
          <hasHitbox>false</hasHitbox>
-         <MaxHealth>0.0</MaxHealth>
+         <maxHealth>0.0</maxHealth>
          <structureRange>0</structureRange>
-         <PopulationLevel>0</PopulationLevel>
-         <PopulationCount>500</PopulationCount>
-         <StructureLevel>0</StructureLevel>
+         <populationLevel>0</populationLevel>
+         <populationCount>500</populationCount>
+         <structureLevel>0</structureLevel>
          <tileWidth>1</tileWidth>
          <tileHeight>1</tileHeight>
          <canRotate>true</canRotate>
@@ -986,12 +986,12 @@
          <canTakeDamage>false</canTakeDamage>
          <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
-         <maintenancecost>0</maintenancecost>
-         <buildcost>25</buildcost>
-         <BuildTyp>Drag</BuildTyp>
+         <maintenanceCost>0</maintenanceCost>
+         <buildCost>25</buildCost>
+         <buildTyp>Drag</buildTyp>
          <myStructureTyp>Free</myStructureTyp>
-         <ExtraUITyp>None</ExtraUITyp>
-         <ExtraBuildUITyp>None</ExtraBuildUITyp>
+         <extraUITyp>None</extraUITyp>
+         <extraBuildUITyp>None</extraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
          <spriteBaseName>sugarcanefield</spriteBaseName>
          <contactRange>0.0</contactRange>
@@ -1023,11 +1023,11 @@
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
          <hasHitbox>false</hasHitbox>
-         <MaxHealth>0.0</MaxHealth>
+         <maxHealth>0.0</maxHealth>
          <structureRange>0</structureRange>
-         <PopulationLevel>0</PopulationLevel>
-         <PopulationCount>500</PopulationCount>
-         <StructureLevel>0</StructureLevel>
+         <populationLevel>0</populationLevel>
+         <populationCount>500</populationCount>
+         <structureLevel>0</structureLevel>
          <tileWidth>1</tileWidth>
          <tileHeight>1</tileHeight>
          <canRotate>true</canRotate>
@@ -1036,12 +1036,12 @@
          <canTakeDamage>false</canTakeDamage>
          <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
-         <maintenancecost>0</maintenancecost>
-         <buildcost>25</buildcost>
-         <BuildTyp>Drag</BuildTyp>
+         <maintenanceCost>0</maintenanceCost>
+         <buildCost>25</buildCost>
+         <buildTyp>Drag</buildTyp>
          <myStructureTyp>Free</myStructureTyp>
-         <ExtraUITyp>None</ExtraUITyp>
-         <ExtraBuildUITyp>None</ExtraBuildUITyp>
+         <extraUITyp>None</extraUITyp>
+         <extraBuildUITyp>None</extraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
          <spriteBaseName>orchard</spriteBaseName>
          <contactRange>0.0</contactRange>
@@ -1073,11 +1073,11 @@
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
          <hasHitbox>false</hasHitbox>
-         <MaxHealth>0.0</MaxHealth>
+         <maxHealth>0.0</maxHealth>
          <structureRange>0</structureRange>
-         <PopulationLevel>1</PopulationLevel>
-         <PopulationCount>0</PopulationCount>
-         <StructureLevel>0</StructureLevel>
+         <populationLevel>1</populationLevel>
+         <populationCount>0</populationCount>
+         <structureLevel>0</structureLevel>
          <tileWidth>1</tileWidth>
          <tileHeight>1</tileHeight>
          <canRotate>true</canRotate>
@@ -1086,12 +1086,12 @@
          <canTakeDamage>false</canTakeDamage>
          <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
-         <maintenancecost>0</maintenancecost>
-         <buildcost>45</buildcost>
-         <BuildTyp>Drag</BuildTyp>
+         <maintenanceCost>0</maintenanceCost>
+         <buildCost>45</buildCost>
+         <buildTyp>Drag</buildTyp>
          <myStructureTyp>Free</myStructureTyp>
-         <ExtraUITyp>None</ExtraUITyp>
-         <ExtraBuildUITyp>None</ExtraBuildUITyp>
+         <extraUITyp>None</extraUITyp>
+         <extraBuildUITyp>None</extraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
          <buildingItems length="0"/>
          <spriteBaseName>wheatfield</spriteBaseName>
@@ -1124,11 +1124,11 @@
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
          <hasHitbox>false</hasHitbox>
-         <MaxHealth>0.0</MaxHealth>
+         <maxHealth>0.0</maxHealth>
          <structureRange>0</structureRange>
-         <PopulationLevel>1</PopulationLevel>
-         <PopulationCount>1500</PopulationCount>
-         <StructureLevel>0</StructureLevel>
+         <populationLevel>1</populationLevel>
+         <populationCount>1500</populationCount>
+         <structureLevel>0</structureLevel>
          <tileWidth>1</tileWidth>
          <tileHeight>1</tileHeight>
          <canRotate>true</canRotate>
@@ -1137,12 +1137,12 @@
          <canTakeDamage>false</canTakeDamage>
          <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
-         <maintenancecost>0</maintenancecost>
-         <buildcost>0</buildcost>
-         <BuildTyp>Drag</BuildTyp>
+         <maintenanceCost>0</maintenanceCost>
+         <buildCost>0</buildCost>
+         <buildTyp>Drag</buildTyp>
          <myStructureTyp>Free</myStructureTyp>
-         <ExtraUITyp>None</ExtraUITyp>
-         <ExtraBuildUITyp>None</ExtraBuildUITyp>
+         <extraUITyp>None</extraUITyp>
+         <extraBuildUITyp>None</extraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
          <spriteBaseName>hopvines</spriteBaseName>
          <contactRange>0.0</contactRange>
@@ -1176,11 +1176,11 @@
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
          <hasHitbox>true</hasHitbox>
-         <MaxHealth>0.0</MaxHealth>
+         <maxHealth>0.0</maxHealth>
          <structureRange>18</structureRange>
-         <PopulationLevel>0</PopulationLevel>
-         <PopulationCount>0</PopulationCount>
-         <StructureLevel>1</StructureLevel>
+         <populationLevel>0</populationLevel>
+         <populationCount>0</populationCount>
+         <structureLevel>1</structureLevel>
          <tileWidth>4</tileWidth>
          <tileHeight>4</tileHeight>
          <canRotate>true</canRotate>
@@ -1189,12 +1189,12 @@
          <canTakeDamage>true</canTakeDamage>
          <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
-         <maintenancecost>10</maintenancecost>
-         <buildcost>200</buildcost>
-         <BuildTyp>Single</BuildTyp>
+         <maintenanceCost>10</maintenanceCost>
+         <buildCost>200</buildCost>
+         <buildTyp>Single</buildTyp>
          <myStructureTyp>Blocking</myStructureTyp>
-         <ExtraUITyp>None</ExtraUITyp>
-         <ExtraBuildUITyp>None</ExtraBuildUITyp>
+         <extraUITyp>None</extraUITyp>
+         <extraBuildUITyp>None</extraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
          <buildingItems length="2">
             <Item ID="1">
@@ -1230,11 +1230,11 @@
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
          <hasHitbox>true</hasHitbox>
-         <MaxHealth>25.0</MaxHealth>
+         <maxHealth>25.0</maxHealth>
          <structureRange>0</structureRange>
-         <PopulationLevel>1</PopulationLevel>
-         <PopulationCount>0</PopulationCount>
-         <StructureLevel>0</StructureLevel>
+         <populationLevel>1</populationLevel>
+         <populationCount>0</populationCount>
+         <structureLevel>0</structureLevel>
          <tileWidth>2</tileWidth>
          <tileHeight>3</tileHeight>
          <canRotate>true</canRotate>
@@ -1243,12 +1243,12 @@
          <canTakeDamage>false</canTakeDamage>
          <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
-         <maintenancecost>90</maintenancecost>
-         <buildcost>1000</buildcost>
-         <BuildTyp>Single</BuildTyp>
+         <maintenanceCost>90</maintenanceCost>
+         <buildCost>1000</buildCost>
+         <buildTyp>Single</buildTyp>
          <myStructureTyp>Blocking</myStructureTyp>
-         <ExtraUITyp>None</ExtraUITyp>
-         <ExtraBuildUITyp>None</ExtraBuildUITyp>
+         <extraUITyp>None</extraUITyp>
+         <extraBuildUITyp>None</extraBuildUITyp>
          <hasToBuildOnRestriktion>Mountain</hasToBuildOnRestriktion>
          <buildingItems length="2">
             <Item ID="1">
@@ -1287,11 +1287,11 @@
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
          <hasHitbox>true</hasHitbox>
-         <MaxHealth>360.0</MaxHealth>
+         <maxHealth>360.0</maxHealth>
          <structureRange>0</structureRange>
-         <PopulationLevel>1</PopulationLevel>
-         <PopulationCount>750</PopulationCount>
-         <StructureLevel>0</StructureLevel>
+         <populationLevel>1</populationLevel>
+         <populationCount>750</populationCount>
+         <structureLevel>0</structureLevel>
          <tileWidth>2</tileWidth>
          <tileHeight>3</tileHeight>
          <canRotate>true</canRotate>
@@ -1300,12 +1300,12 @@
          <canTakeDamage>false</canTakeDamage>
          <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
-         <maintenancecost>55</maintenancecost>
-         <buildcost>800</buildcost>
-         <BuildTyp>Single</BuildTyp>
+         <maintenanceCost>55</maintenanceCost>
+         <buildCost>800</buildCost>
+         <buildTyp>Single</buildTyp>
          <myStructureTyp>Blocking</myStructureTyp>
-         <ExtraUITyp>None</ExtraUITyp>
-         <ExtraBuildUITyp>None</ExtraBuildUITyp>
+         <extraUITyp>None</extraUITyp>
+         <extraBuildUITyp>None</extraBuildUITyp>
          <hasToBuildOnRestriktion>Mountain</hasToBuildOnRestriktion>
          <buildingItems length="2">
             <Item ID="1">
@@ -1344,11 +1344,11 @@
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
          <hasHitbox>true</hasHitbox>
-         <MaxHealth>90.0</MaxHealth>
+         <maxHealth>90.0</maxHealth>
          <structureRange>0</structureRange>
-         <PopulationLevel>1</PopulationLevel>
-         <PopulationCount>750</PopulationCount>
-         <StructureLevel>0</StructureLevel>
+         <populationLevel>1</populationLevel>
+         <populationCount>750</populationCount>
+         <structureLevel>0</structureLevel>
          <tileWidth>2</tileWidth>
          <tileHeight>3</tileHeight>
          <canRotate>true</canRotate>
@@ -1357,12 +1357,12 @@
          <canTakeDamage>false</canTakeDamage>
          <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
-         <maintenancecost>80</maintenancecost>
-         <buildcost>1100</buildcost>
-         <BuildTyp>Single</BuildTyp>
+         <maintenanceCost>80</maintenanceCost>
+         <buildCost>1100</buildCost>
+         <buildTyp>Single</buildTyp>
          <myStructureTyp>Blocking</myStructureTyp>
-         <ExtraUITyp>None</ExtraUITyp>
-         <ExtraBuildUITyp>None</ExtraBuildUITyp>
+         <extraUITyp>None</extraUITyp>
+         <extraBuildUITyp>None</extraBuildUITyp>
          <hasToBuildOnRestriktion>Mountain</hasToBuildOnRestriktion>
          <buildingItems length="3">
             <Item ID="1">
@@ -1406,11 +1406,11 @@
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
          <hasHitbox>false</hasHitbox>
-         <MaxHealth>1000.0</MaxHealth>
+         <maxHealth>1000.0</maxHealth>
          <structureRange>12</structureRange>
-         <PopulationLevel>0</PopulationLevel>
-         <PopulationCount>0</PopulationCount>
-         <StructureLevel>0</StructureLevel>
+         <populationLevel>0</populationLevel>
+         <populationCount>0</populationCount>
+         <structureLevel>0</structureLevel>
          <tileWidth>4</tileWidth>
          <tileHeight>5</tileHeight>
          <canRotate>true</canRotate>
@@ -1419,12 +1419,12 @@
          <canTakeDamage>false</canTakeDamage>
          <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
-         <maintenancecost>15</maintenancecost>
-         <buildcost>200</buildcost>
-         <BuildTyp>Single</BuildTyp>
+         <maintenanceCost>15</maintenanceCost>
+         <buildCost>200</buildCost>
+         <buildTyp>Single</buildTyp>
          <myStructureTyp>Blocking</myStructureTyp>
-         <ExtraUITyp>None</ExtraUITyp>
-         <ExtraBuildUITyp>None</ExtraBuildUITyp>
+         <extraUITyp>None</extraUITyp>
+         <extraBuildUITyp>None</extraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
          <buildingItems length="2">
             <Item ID="1">
@@ -1452,11 +1452,11 @@
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
          <hasHitbox>false</hasHitbox>
-         <MaxHealth>150.0</MaxHealth>
+         <maxHealth>150.0</maxHealth>
          <structureRange>9</structureRange>
-         <PopulationLevel>0</PopulationLevel>
-         <PopulationCount>500</PopulationCount>
-         <StructureLevel>0</StructureLevel>
+         <populationLevel>0</populationLevel>
+         <populationCount>500</populationCount>
+         <structureLevel>0</structureLevel>
          <tileWidth>2</tileWidth>
          <tileHeight>4</tileHeight>
          <canRotate>true</canRotate>
@@ -1465,12 +1465,12 @@
          <canTakeDamage>false</canTakeDamage>
          <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
-         <maintenancecost>120</maintenancecost>
-         <buildcost>1500</buildcost>
-         <BuildTyp>Single</BuildTyp>
+         <maintenanceCost>120</maintenanceCost>
+         <buildCost>1500</buildCost>
+         <buildTyp>Single</buildTyp>
          <myStructureTyp>Blocking</myStructureTyp>
-         <ExtraUITyp>None</ExtraUITyp>
-         <ExtraBuildUITyp>None</ExtraBuildUITyp>
+         <extraUITyp>None</extraUITyp>
+         <extraBuildUITyp>None</extraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
          <buildingItems length="2">
             <Item ID="2">
@@ -1498,11 +1498,11 @@
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
          <hasHitbox>false</hasHitbox>
-         <MaxHealth>250.0</MaxHealth>
+         <maxHealth>250.0</maxHealth>
          <structureRange>9</structureRange>
-         <PopulationLevel>0</PopulationLevel>
-         <PopulationCount>1250</PopulationCount>
-         <StructureLevel>0</StructureLevel>
+         <populationLevel>0</populationLevel>
+         <populationCount>1250</populationCount>
+         <structureLevel>0</structureLevel>
          <tileWidth>2</tileWidth>
          <tileHeight>3</tileHeight>
          <canRotate>true</canRotate>
@@ -1511,12 +1511,12 @@
          <canTakeDamage>false</canTakeDamage>
          <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
-         <maintenancecost>225</maintenancecost>
-         <buildcost>2000</buildcost>
-         <BuildTyp>Single</BuildTyp>
+         <maintenanceCost>225</maintenanceCost>
+         <buildCost>2000</buildCost>
+         <buildTyp>Single</buildTyp>
          <myStructureTyp>Blocking</myStructureTyp>
-         <ExtraUITyp>None</ExtraUITyp>
-         <ExtraBuildUITyp>None</ExtraBuildUITyp>
+         <extraUITyp>None</extraUITyp>
+         <extraBuildUITyp>None</extraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
          <buildingItems length="2">
             <Item ID="2">
@@ -1546,11 +1546,11 @@
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
          <hasHitbox>true</hasHitbox>
-         <MaxHealth>100.0</MaxHealth>
+         <maxHealth>100.0</maxHealth>
          <structureRange>0</structureRange>
-         <PopulationLevel>0</PopulationLevel>
-         <PopulationCount>0</PopulationCount>
-         <StructureLevel>0</StructureLevel>
+         <populationLevel>0</populationLevel>
+         <populationCount>0</populationCount>
+         <structureLevel>0</structureLevel>
          <tileWidth>3</tileWidth>
          <tileHeight>4</tileHeight>
          <canRotate>true</canRotate>
@@ -1559,12 +1559,12 @@
          <canTakeDamage>true</canTakeDamage>
          <mustFrontBuildDir>N</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
-         <maintenancecost>0</maintenancecost>
-         <buildcost>100</buildcost>
-         <BuildTyp>Single</BuildTyp>
+         <maintenanceCost>0</maintenanceCost>
+         <buildCost>100</buildCost>
+         <buildTyp>Single</buildTyp>
          <myStructureTyp>Blocking</myStructureTyp>
-         <ExtraUITyp>None</ExtraUITyp>
-         <ExtraBuildUITyp>None</ExtraBuildUITyp>
+         <extraUITyp>None</extraUITyp>
+         <extraBuildUITyp>None</extraBuildUITyp>
          <hasToBuildOnRestriktion>Shore</hasToBuildOnRestriktion>
          <buildingItems length="2">
             <Item ID="1">
@@ -1603,11 +1603,11 @@
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
          <hasHitbox>true</hasHitbox>
-         <MaxHealth>100.0</MaxHealth>
+         <maxHealth>100.0</maxHealth>
          <structureRange>15</structureRange>
-         <PopulationLevel>0</PopulationLevel>
-         <PopulationCount>0</PopulationCount>
-         <StructureLevel>0</StructureLevel>
+         <populationLevel>0</populationLevel>
+         <populationCount>0</populationCount>
+         <structureLevel>0</structureLevel>
          <tileWidth>2</tileWidth>
          <tileHeight>2</tileHeight>
          <canRotate>true</canRotate>
@@ -1616,12 +1616,12 @@
          <canTakeDamage>true</canTakeDamage>
          <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
-         <maintenancecost>25</maintenancecost>
-         <buildcost>300</buildcost>
-         <BuildTyp>Single</BuildTyp>
+         <maintenanceCost>25</maintenanceCost>
+         <buildCost>300</buildCost>
+         <buildTyp>Single</buildTyp>
          <myStructureTyp>Blocking</myStructureTyp>
-         <ExtraUITyp>None</ExtraUITyp>
-         <ExtraBuildUITyp>None</ExtraBuildUITyp>
+         <extraUITyp>None</extraUITyp>
+         <extraBuildUITyp>None</extraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
          <buildingItems length="2">
             <Item ID="1">
@@ -1665,11 +1665,11 @@
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
          <hasHitbox>true</hasHitbox>
-         <MaxHealth>200.0</MaxHealth>
+         <maxHealth>200.0</maxHealth>
          <structureRange>15</structureRange>
-         <PopulationLevel>0</PopulationLevel>
-         <PopulationCount>0</PopulationCount>
-         <StructureLevel>0</StructureLevel>
+         <populationLevel>0</populationLevel>
+         <populationCount>0</populationCount>
+         <structureLevel>0</structureLevel>
          <tileWidth>2</tileWidth>
          <tileHeight>3</tileHeight>
          <canRotate>true</canRotate>
@@ -1678,12 +1678,12 @@
          <canTakeDamage>true</canTakeDamage>
          <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
-         <maintenancecost>40</maintenancecost>
-         <buildcost>750</buildcost>
-         <BuildTyp>Single</BuildTyp>
+         <maintenanceCost>40</maintenanceCost>
+         <buildCost>750</buildCost>
+         <buildTyp>Single</buildTyp>
          <myStructureTyp>Blocking</myStructureTyp>
-         <ExtraUITyp>None</ExtraUITyp>
-         <ExtraBuildUITyp>None</ExtraBuildUITyp>
+         <extraUITyp>None</extraUITyp>
+         <extraBuildUITyp>None</extraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
          <buildingItems length="2">
             <Item ID="1">
@@ -1727,11 +1727,11 @@
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
          <hasHitbox>true</hasHitbox>
-         <MaxHealth>200.0</MaxHealth>
+         <maxHealth>200.0</maxHealth>
          <structureRange>10</structureRange>
-         <PopulationLevel>0</PopulationLevel>
-         <PopulationCount>500</PopulationCount>
-         <StructureLevel>0</StructureLevel>
+         <populationLevel>0</populationLevel>
+         <populationCount>500</populationCount>
+         <structureLevel>0</structureLevel>
          <tileWidth>3</tileWidth>
          <tileHeight>3</tileHeight>
          <canRotate>true</canRotate>
@@ -1740,12 +1740,12 @@
          <canTakeDamage>true</canTakeDamage>
          <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
-         <maintenancecost>50</maintenancecost>
-         <buildcost>500</buildcost>
-         <BuildTyp>Single</BuildTyp>
+         <maintenanceCost>50</maintenanceCost>
+         <buildCost>500</buildCost>
+         <buildTyp>Single</buildTyp>
          <myStructureTyp>Blocking</myStructureTyp>
-         <ExtraUITyp>None</ExtraUITyp>
-         <ExtraBuildUITyp>None</ExtraBuildUITyp>
+         <extraUITyp>None</extraUITyp>
+         <extraBuildUITyp>None</extraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
          <buildingItems length="2">
             <Item ID="1">
@@ -1795,11 +1795,11 @@
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
          <hasHitbox>true</hasHitbox>
-         <MaxHealth>25.0</MaxHealth>
+         <maxHealth>25.0</maxHealth>
          <structureRange>4</structureRange>
-         <PopulationLevel>0</PopulationLevel>
-         <PopulationCount>1250</PopulationCount>
-         <StructureLevel>0</StructureLevel>
+         <populationLevel>0</populationLevel>
+         <populationCount>1250</populationCount>
+         <structureLevel>0</structureLevel>
          <tileWidth>1</tileWidth>
          <tileHeight>1</tileHeight>
          <canRotate>true</canRotate>
@@ -1808,12 +1808,12 @@
          <canTakeDamage>true</canTakeDamage>
          <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
-         <maintenancecost>80</maintenancecost>
-         <buildcost>1200</buildcost>
-         <BuildTyp>Single</BuildTyp>
+         <maintenanceCost>80</maintenanceCost>
+         <buildCost>1200</buildCost>
+         <buildTyp>Single</buildTyp>
          <myStructureTyp>Blocking</myStructureTyp>
-         <ExtraUITyp>None</ExtraUITyp>
-         <ExtraBuildUITyp>None</ExtraBuildUITyp>
+         <extraUITyp>None</extraUITyp>
+         <extraBuildUITyp>None</extraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
          <buildingItems length="2">
             <Item ID="1">
@@ -1853,11 +1853,11 @@
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
          <hasHitbox>true</hasHitbox>
-         <MaxHealth>200.0</MaxHealth>
+         <maxHealth>200.0</maxHealth>
          <structureRange>8</structureRange>
-         <PopulationLevel>1</PopulationLevel>
-         <PopulationCount>0</PopulationCount>
-         <StructureLevel>0</StructureLevel>
+         <populationLevel>1</populationLevel>
+         <populationCount>0</populationCount>
+         <structureLevel>0</structureLevel>
          <tileWidth>3</tileWidth>
          <tileHeight>3</tileHeight>
          <canRotate>true</canRotate>
@@ -1866,12 +1866,12 @@
          <canTakeDamage>true</canTakeDamage>
          <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
-         <maintenancecost>50</maintenancecost>
-         <buildcost>1500</buildcost>
-         <BuildTyp>Single</BuildTyp>
+         <maintenanceCost>50</maintenanceCost>
+         <buildCost>1500</buildCost>
+         <buildTyp>Single</buildTyp>
          <myStructureTyp>Blocking</myStructureTyp>
-         <ExtraUITyp>None</ExtraUITyp>
-         <ExtraBuildUITyp>None</ExtraBuildUITyp>
+         <extraUITyp>None</extraUITyp>
+         <extraBuildUITyp>None</extraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
          <buildingItems length="3">
             <Item ID="1">
@@ -1918,11 +1918,11 @@
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
          <hasHitbox>true</hasHitbox>
-         <MaxHealth>75.0</MaxHealth>
+         <maxHealth>75.0</maxHealth>
          <structureRange>0</structureRange>
-         <PopulationLevel>1</PopulationLevel>
-         <PopulationCount>0</PopulationCount>
-         <StructureLevel>0</StructureLevel>
+         <populationLevel>1</populationLevel>
+         <populationCount>0</populationCount>
+         <structureLevel>0</structureLevel>
          <tileWidth>3</tileWidth>
          <tileHeight>2</tileHeight>
          <canRotate>true</canRotate>
@@ -1931,12 +1931,12 @@
          <canTakeDamage>true</canTakeDamage>
          <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
-         <maintenancecost>100</maintenancecost>
-         <buildcost>500</buildcost>
-         <BuildTyp>Single</BuildTyp>
+         <maintenanceCost>100</maintenanceCost>
+         <buildCost>500</buildCost>
+         <buildTyp>Single</buildTyp>
          <myStructureTyp>Blocking</myStructureTyp>
-         <ExtraUITyp>None</ExtraUITyp>
-         <ExtraBuildUITyp>None</ExtraBuildUITyp>
+         <extraUITyp>None</extraUITyp>
+         <extraBuildUITyp>None</extraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
          <buildingItems length="3">
             <Item ID="1">
@@ -1983,11 +1983,11 @@
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
          <hasHitbox>true</hasHitbox>
-         <MaxHealth>350.0</MaxHealth>
+         <maxHealth>350.0</maxHealth>
          <structureRange>7</structureRange>
-         <PopulationLevel>1</PopulationLevel>
-         <PopulationCount>750</PopulationCount>
-         <StructureLevel>0</StructureLevel>
+         <populationLevel>1</populationLevel>
+         <populationCount>750</populationCount>
+         <structureLevel>0</structureLevel>
          <tileWidth>3</tileWidth>
          <tileHeight>3</tileHeight>
          <canRotate>true</canRotate>
@@ -1996,12 +1996,12 @@
          <canTakeDamage>true</canTakeDamage>
          <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
-         <maintenancecost>100</maintenancecost>
-         <buildcost>1250</buildcost>
-         <BuildTyp>Single</BuildTyp>
+         <maintenanceCost>100</maintenanceCost>
+         <buildCost>1250</buildCost>
+         <buildTyp>Single</buildTyp>
          <myStructureTyp>Blocking</myStructureTyp>
-         <ExtraUITyp>None</ExtraUITyp>
-         <ExtraBuildUITyp>None</ExtraBuildUITyp>
+         <extraUITyp>None</extraUITyp>
+         <extraBuildUITyp>None</extraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
          <buildingItems length="3">
             <Item ID="1">
@@ -2051,11 +2051,11 @@
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
          <hasHitbox>true</hasHitbox>
-         <MaxHealth>250.0</MaxHealth>
+         <maxHealth>250.0</maxHealth>
          <structureRange>5</structureRange>
-         <PopulationLevel>1</PopulationLevel>
-         <PopulationCount>750</PopulationCount>
-         <StructureLevel>0</StructureLevel>
+         <populationLevel>1</populationLevel>
+         <populationCount>750</populationCount>
+         <structureLevel>0</structureLevel>
          <tileWidth>2</tileWidth>
          <tileHeight>3</tileHeight>
          <canRotate>true</canRotate>
@@ -2064,12 +2064,12 @@
          <canTakeDamage>true</canTakeDamage>
          <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
-         <maintenancecost>75</maintenancecost>
-         <buildcost>750</buildcost>
-         <BuildTyp>Single</BuildTyp>
+         <maintenanceCost>75</maintenanceCost>
+         <buildCost>750</buildCost>
+         <buildTyp>Single</buildTyp>
          <myStructureTyp>Blocking</myStructureTyp>
-         <ExtraUITyp>None</ExtraUITyp>
-         <ExtraBuildUITyp>None</ExtraBuildUITyp>
+         <extraUITyp>None</extraUITyp>
+         <extraBuildUITyp>None</extraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
          <buildingItems length="3">
             <Item ID="1">
@@ -2116,11 +2116,11 @@
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
          <hasHitbox>true</hasHitbox>
-         <MaxHealth>150.0</MaxHealth>
+         <maxHealth>150.0</maxHealth>
          <structureRange>9</structureRange>
-         <PopulationLevel>1</PopulationLevel>
-         <PopulationCount>750</PopulationCount>
-         <StructureLevel>0</StructureLevel>
+         <populationLevel>1</populationLevel>
+         <populationCount>750</populationCount>
+         <structureLevel>0</structureLevel>
          <tileWidth>3</tileWidth>
          <tileHeight>3</tileHeight>
          <canRotate>true</canRotate>
@@ -2129,12 +2129,12 @@
          <canTakeDamage>true</canTakeDamage>
          <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
-         <maintenancecost>45</maintenancecost>
-         <buildcost>1400</buildcost>
-         <BuildTyp>Single</BuildTyp>
+         <maintenanceCost>45</maintenanceCost>
+         <buildCost>1400</buildCost>
+         <buildTyp>Single</buildTyp>
          <myStructureTyp>Blocking</myStructureTyp>
-         <ExtraUITyp>None</ExtraUITyp>
-         <ExtraBuildUITyp>None</ExtraBuildUITyp>
+         <extraUITyp>None</extraUITyp>
+         <extraBuildUITyp>None</extraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
          <buildingItems length="3">
             <Item ID="1">
@@ -2181,11 +2181,11 @@
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
          <hasHitbox>true</hasHitbox>
-         <MaxHealth>450.0</MaxHealth>
+         <maxHealth>450.0</maxHealth>
          <structureRange>9</structureRange>
-         <PopulationLevel>1</PopulationLevel>
-         <PopulationCount>750</PopulationCount>
-         <StructureLevel>0</StructureLevel>
+         <populationLevel>1</populationLevel>
+         <populationCount>750</populationCount>
+         <structureLevel>0</structureLevel>
          <tileWidth>3</tileWidth>
          <tileHeight>4</tileHeight>
          <canRotate>true</canRotate>
@@ -2194,12 +2194,12 @@
          <canTakeDamage>true</canTakeDamage>
          <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
-         <maintenancecost>150</maintenancecost>
-         <buildcost>1500</buildcost>
-         <BuildTyp>Single</BuildTyp>
+         <maintenanceCost>150</maintenanceCost>
+         <buildCost>1500</buildCost>
+         <buildTyp>Single</buildTyp>
          <myStructureTyp>Blocking</myStructureTyp>
-         <ExtraUITyp>None</ExtraUITyp>
-         <ExtraBuildUITyp>None</ExtraBuildUITyp>
+         <extraUITyp>None</extraUITyp>
+         <extraBuildUITyp>None</extraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
          <buildingItems length="3">
             <Item ID="1">
@@ -2246,11 +2246,11 @@
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
          <hasHitbox>true</hasHitbox>
-         <MaxHealth>500.0</MaxHealth>
+         <maxHealth>500.0</maxHealth>
          <structureRange>9</structureRange>
-         <PopulationLevel>1</PopulationLevel>
-         <PopulationCount>1500</PopulationCount>
-         <StructureLevel>0</StructureLevel>
+         <populationLevel>1</populationLevel>
+         <populationCount>1500</populationCount>
+         <structureLevel>0</structureLevel>
          <tileWidth>3</tileWidth>
          <tileHeight>4</tileHeight>
          <canRotate>true</canRotate>
@@ -2259,12 +2259,12 @@
          <canTakeDamage>true</canTakeDamage>
          <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
-         <maintenancecost>160</maintenancecost>
-         <buildcost>1700</buildcost>
-         <BuildTyp>Single</BuildTyp>
+         <maintenanceCost>160</maintenanceCost>
+         <buildCost>1700</buildCost>
+         <buildTyp>Single</buildTyp>
          <myStructureTyp>Blocking</myStructureTyp>
-         <ExtraUITyp>None</ExtraUITyp>
-         <ExtraBuildUITyp>None</ExtraBuildUITyp>
+         <extraUITyp>None</extraUITyp>
+         <extraBuildUITyp>None</extraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
          <buildingItems length="3">
             <Item ID="1">
@@ -2316,11 +2316,11 @@
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
          <hasHitbox>true</hasHitbox>
-         <MaxHealth>1000.0</MaxHealth>
+         <maxHealth>1000.0</maxHealth>
          <structureRange>18</structureRange>
-         <PopulationLevel>0</PopulationLevel>
-         <PopulationCount>0</PopulationCount>
-         <StructureLevel>0</StructureLevel>
+         <populationLevel>0</populationLevel>
+         <populationCount>0</populationCount>
+         <structureLevel>0</structureLevel>
          <tileWidth>4</tileWidth>
          <tileHeight>4</tileHeight>
          <canRotate>true</canRotate>
@@ -2329,12 +2329,12 @@
          <canTakeDamage>true</canTakeDamage>
          <mustFrontBuildDir>W</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
-         <maintenancecost>10</maintenancecost>
-         <buildcost>300</buildcost>
-         <BuildTyp>Single</BuildTyp>
+         <maintenanceCost>10</maintenanceCost>
+         <buildCost>300</buildCost>
+         <buildTyp>Single</buildTyp>
          <myStructureTyp>Blocking</myStructureTyp>
-         <ExtraUITyp>Range</ExtraUITyp>
-         <ExtraBuildUITyp>None</ExtraBuildUITyp>
+         <extraUITyp>Range</extraUITyp>
+         <extraBuildUITyp>None</extraBuildUITyp>
          <hasToBuildOnRestriktion>Shore</hasToBuildOnRestriktion>
          <buildingItems length="2">
             <Item ID="1">
@@ -2370,11 +2370,11 @@
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
          <hasHitbox>true</hasHitbox>
-         <MaxHealth>50.0</MaxHealth>
+         <maxHealth>50.0</maxHealth>
          <structureRange>0</structureRange>
-         <PopulationLevel>0</PopulationLevel>
-         <PopulationCount>0</PopulationCount>
-         <StructureLevel>0</StructureLevel>
+         <populationLevel>0</populationLevel>
+         <populationCount>0</populationCount>
+         <structureLevel>0</structureLevel>
          <tileWidth>2</tileWidth>
          <tileHeight>2</tileHeight>
          <canRotate>true</canRotate>
@@ -2383,12 +2383,12 @@
          <canTakeDamage>true</canTakeDamage>
          <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
-         <maintenancecost>0</maintenancecost>
-         <buildcost>0</buildcost>
-         <BuildTyp>Drag</BuildTyp>
+         <maintenanceCost>0</maintenanceCost>
+         <buildCost>0</buildCost>
+         <buildTyp>Drag</buildTyp>
          <myStructureTyp>Blocking</myStructureTyp>
-         <ExtraUITyp>Upgrade</ExtraUITyp>
-         <ExtraBuildUITyp>None</ExtraBuildUITyp>
+         <extraUITyp>Upgrade</extraUITyp>
+         <extraBuildUITyp>None</extraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
          <buildingItems length="1">
             <Item ID="1">
@@ -2416,11 +2416,11 @@
          <canBeBuild>false</canBeBuild>
          <isWalkable>false</isWalkable>
          <hasHitbox>true</hasHitbox>
-         <MaxHealth>50.0</MaxHealth>
+         <maxHealth>50.0</maxHealth>
          <structureRange>0</structureRange>
-         <PopulationLevel>1</PopulationLevel>
-         <PopulationCount>0</PopulationCount>
-         <StructureLevel>0</StructureLevel>
+         <populationLevel>1</populationLevel>
+         <populationCount>0</populationCount>
+         <structureLevel>0</structureLevel>
          <tileWidth>3</tileWidth>
          <tileHeight>3</tileHeight>
          <canRotate>true</canRotate>
@@ -2429,12 +2429,12 @@
          <canTakeDamage>true</canTakeDamage>
          <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
-         <maintenancecost>0</maintenancecost>
-         <buildcost>0</buildcost>
-         <BuildTyp>Drag</BuildTyp>
+         <maintenanceCost>0</maintenanceCost>
+         <buildCost>0</buildCost>
+         <buildTyp>Drag</buildTyp>
          <myStructureTyp>Blocking</myStructureTyp>
-         <ExtraUITyp>Upgrade</ExtraUITyp>
-         <ExtraBuildUITyp>None</ExtraBuildUITyp>
+         <extraUITyp>Upgrade</extraUITyp>
+         <extraBuildUITyp>None</extraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
          <buildingItems length="2">
             <Item ID="1">
@@ -2465,11 +2465,11 @@
          <canBeBuild>false</canBeBuild>
          <isWalkable>false</isWalkable>
          <hasHitbox>true</hasHitbox>
-         <MaxHealth>50.0</MaxHealth>
+         <maxHealth>50.0</maxHealth>
          <structureRange>0</structureRange>
-         <PopulationLevel>2</PopulationLevel>
-         <PopulationCount>0</PopulationCount>
-         <StructureLevel>0</StructureLevel>
+         <populationLevel>2</populationLevel>
+         <populationCount>0</populationCount>
+         <structureLevel>0</structureLevel>
          <tileWidth>3</tileWidth>
          <tileHeight>3</tileHeight>
          <canRotate>true</canRotate>
@@ -2478,12 +2478,12 @@
          <canTakeDamage>true</canTakeDamage>
          <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
-         <maintenancecost>0</maintenancecost>
-         <buildcost>0</buildcost>
-         <BuildTyp>Drag</BuildTyp>
+         <maintenanceCost>0</maintenanceCost>
+         <buildCost>0</buildCost>
+         <buildTyp>Drag</buildTyp>
          <myStructureTyp>Blocking</myStructureTyp>
-         <ExtraUITyp>Upgrade</ExtraUITyp>
-         <ExtraBuildUITyp>None</ExtraBuildUITyp>
+         <extraUITyp>Upgrade</extraUITyp>
+         <extraBuildUITyp>None</extraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
          <buildingItems length="3">
             <Item ID="1">
@@ -2517,11 +2517,11 @@
          <canBeBuild>false</canBeBuild>
          <isWalkable>false</isWalkable>
          <hasHitbox>true</hasHitbox>
-         <MaxHealth>50.0</MaxHealth>
+         <maxHealth>50.0</maxHealth>
          <structureRange>0</structureRange>
-         <PopulationLevel>3</PopulationLevel>
-         <PopulationCount>0</PopulationCount>
-         <StructureLevel>0</StructureLevel>
+         <populationLevel>3</populationLevel>
+         <populationCount>0</populationCount>
+         <structureLevel>0</structureLevel>
          <tileWidth>3</tileWidth>
          <tileHeight>3</tileHeight>
          <canRotate>true</canRotate>
@@ -2530,12 +2530,12 @@
          <canTakeDamage>true</canTakeDamage>
          <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
-         <maintenancecost>0</maintenancecost>
-         <buildcost>0</buildcost>
-         <BuildTyp>Drag</BuildTyp>
+         <maintenanceCost>0</maintenanceCost>
+         <buildCost>0</buildCost>
+         <buildTyp>Drag</buildTyp>
          <myStructureTyp>Blocking</myStructureTyp>
-         <ExtraUITyp>Upgrade</ExtraUITyp>
-         <ExtraBuildUITyp>None</ExtraBuildUITyp>
+         <extraUITyp>Upgrade</extraUITyp>
+         <extraBuildUITyp>None</extraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
          <buildingItems length="4">
             <Item ID="1">
@@ -2574,11 +2574,11 @@
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
          <hasHitbox>false</hasHitbox>
-         <MaxHealth>5000.0</MaxHealth>
+         <maxHealth>5000.0</maxHealth>
          <structureRange>0</structureRange>
-         <PopulationLevel>1</PopulationLevel>
-         <PopulationCount>0</PopulationCount>
-         <StructureLevel>0</StructureLevel>
+         <populationLevel>1</populationLevel>
+         <populationCount>0</populationCount>
+         <structureLevel>0</structureLevel>
          <tileWidth>3</tileWidth>
          <tileHeight>4</tileHeight>
          <canRotate>true</canRotate>
@@ -2587,12 +2587,12 @@
          <canTakeDamage>true</canTakeDamage>
          <mustFrontBuildDir>E</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
-         <maintenancecost>50</maintenancecost>
-         <buildcost>1500</buildcost>
-         <BuildTyp>Single</BuildTyp>
+         <maintenanceCost>50</maintenanceCost>
+         <buildCost>1500</buildCost>
+         <buildTyp>Single</buildTyp>
          <myStructureTyp>Blocking</myStructureTyp>
-         <ExtraUITyp>None</ExtraUITyp>
-         <ExtraBuildUITyp>None</ExtraBuildUITyp>
+         <extraUITyp>None</extraUITyp>
+         <extraBuildUITyp>None</extraBuildUITyp>
          <hasToBuildOnRestriktion>Shore</hasToBuildOnRestriktion>
          <buildingItems length="3">
             <Item ID="1">
@@ -2627,11 +2627,11 @@
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
          <hasHitbox>true</hasHitbox>
-         <MaxHealth>2500.0</MaxHealth>
+         <maxHealth>2500.0</maxHealth>
          <structureRange>0</structureRange>
-         <PopulationLevel>1</PopulationLevel>
-         <PopulationCount>0</PopulationCount>
-         <StructureLevel>0</StructureLevel>
+         <populationLevel>1</populationLevel>
+         <populationCount>0</populationCount>
+         <structureLevel>0</structureLevel>
          <tileWidth>3</tileWidth>
          <tileHeight>3</tileHeight>
          <canRotate>true</canRotate>
@@ -2640,12 +2640,12 @@
          <canTakeDamage>true</canTakeDamage>
          <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
-         <maintenancecost>250</maintenancecost>
-         <buildcost>5000</buildcost>
-         <BuildTyp>Single</BuildTyp>
+         <maintenanceCost>250</maintenanceCost>
+         <buildCost>5000</buildCost>
+         <buildTyp>Single</buildTyp>
          <myStructureTyp>Blocking</myStructureTyp>
-         <ExtraUITyp>None</ExtraUITyp>
-         <ExtraBuildUITyp>None</ExtraBuildUITyp>
+         <extraUITyp>None</extraUITyp>
+         <extraBuildUITyp>None</extraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
          <buildingItems length="2">
             <Item ID="2">

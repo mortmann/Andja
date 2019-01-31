@@ -17,7 +17,7 @@ public abstract class TargetStructure : Structure, ITargetable {
     public void TakeDamageFrom(IWarfare warfare) {
         Health -= warfare.GetCurrentDamage(MyArmorType);
     }
-    public float MaximumHealth => Data.MaxHealth;
+    public float MaximumHealth => Data.maxHealth;
 
     public Vector2 NextDestinationPosition => CurrentPosition;
     public Vector2 LastMovement => Vector2.zero;

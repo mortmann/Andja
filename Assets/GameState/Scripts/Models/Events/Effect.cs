@@ -8,12 +8,12 @@ public enum EffectModifier { Additive, Multiplicative, Special }
 
 public class EffectPrototypeData : LanguageVariables {
 
-    public string NameOfVariable; // what does it change
-    public string Change; // how it changes the Variable?
-    public TargetGroup Targets; // what it can target
-    public EffectTypes AddType;
-    public EffectModifier ModifierType;
-    public bool Unique;
+    public string nameOfVariable; // what does it change
+    public float change; // how it changes the Variable?
+    public TargetGroup targets; // what it can target
+    public EffectTypes addType;
+    public EffectModifier modifierType;
+    public bool unique;
 
 }
 
@@ -23,15 +23,15 @@ public class Effect {
 
     public InfluenceTyp InfluenceTyp { protected set; get; }
     public InfluenceRange InfluenceRange { protected set; get; }
-    public EffectTypes AddType => EffectPrototypData.AddType;
-    public EffectModifier ModifierType => EffectPrototypData.ModifierType;
-    public bool Unique => EffectPrototypData.Unique;
+    public EffectTypes AddType => EffectPrototypData.addType;
+    public EffectModifier ModifierType => EffectPrototypData.modifierType;
+    public bool IsUnique => EffectPrototypData.unique;
 
     protected EffectPrototypeData _effectPrototypData;
 
-    public TargetGroup Targets => EffectPrototypData.Targets;
-    public string NameOfVariable => EffectPrototypData.NameOfVariable;
-    public string Change => EffectPrototypData.Change;
+    public TargetGroup Targets => EffectPrototypData.targets;
+    public string NameOfVariable => EffectPrototypData.nameOfVariable;
+    public float Change => EffectPrototypData.change;
 
     //Some special function will be called for it 
     //so it isnt very flexible and must be either precoded or we need to add support for lua

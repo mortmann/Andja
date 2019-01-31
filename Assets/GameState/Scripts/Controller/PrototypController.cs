@@ -82,7 +82,7 @@ public class PrototypController : MonoBehaviour {
         List<PopulationLevel> populationLevels = new List<PopulationLevel>();
         PopulationLevel previous = null;
         foreach (PopulationLevelPrototypData item in populationLevelDatas.Values) {
-            PopulationLevel clone = new PopulationLevel(item.Level, city, previous);
+            PopulationLevel clone = new PopulationLevel(item.LEVEL, city, previous);
             previous = clone;
             populationLevels.Add(clone);
         }
@@ -216,7 +216,7 @@ public class PrototypController : MonoBehaviour {
             PopulationLevelPrototypData plpd = new PopulationLevelPrototypData();
             int level = int.Parse(node.GetAttribute("Level"));
             SetData<PopulationLevelPrototypData>(node, ref plpd);
-            plpd.needGroupList = populationLevelToNeedGroup[plpd.Level];
+            plpd.needGroupList = populationLevelToNeedGroup[plpd.LEVEL];
             populationLevelDatas.Add(level, plpd);
         }
     }
@@ -442,15 +442,15 @@ public class PrototypController : MonoBehaviour {
                 //THESE are fix and are not changed for any road
                 tileWidth = 1,
                 tileHeight = 1,
-                BuildTyp = BuildTypes.Path,
+                buildTyp = BuildTypes.Path,
                 myStructureTyp = StructureTyp.Pathfinding,
                 canBeUpgraded = true,
                 //!not anymore
-                maintenancecost = 0,
+                maintenanceCost = 0,
                 buildcost = 25,
                 Name = "Testroad",
                 structureRange = 0,
-                StructureLevel = 0
+                structureLevel = 0
             };
 
             SetData<StructurePrototypeData>(node, ref spd);
@@ -471,7 +471,7 @@ public class PrototypController : MonoBehaviour {
                 tileWidth = 1,
                 tileHeight = 1,
                 myStructureTyp = StructureTyp.Free,
-                BuildTyp = BuildTypes.Drag,
+                buildTyp = BuildTypes.Drag,
                 buildcost = 50,
                 maxOutputStorage = 1
             };
@@ -500,14 +500,14 @@ public class PrototypController : MonoBehaviour {
                 hasHitbox = true,
                 tileWidth = 4,
                 tileHeight = 4,
-                BuildTyp = BuildTypes.Single,
+                buildTyp = BuildTypes.Single,
                 myStructureTyp = StructureTyp.Blocking,
                 structureRange = 18,
                 canTakeDamage = true,
 
                 Name = "market",
                 buildcost = 500,
-                maintenancecost = 10
+                maintenanceCost = 10
             };
 
             SetData<MarketPrototypData>(node, ref mpd);
@@ -527,7 +527,7 @@ public class PrototypController : MonoBehaviour {
                 maxOutputStorage = 5, // hardcoded 5 ? need this to change?
                 hasHitbox = true,
                 myStructureTyp = StructureTyp.Blocking,
-                BuildTyp = BuildTypes.Single,
+                buildTyp = BuildTypes.Single,
                 canTakeDamage = true,
                 forMarketplace = true,
                 //!not anymore
@@ -552,10 +552,10 @@ public class PrototypController : MonoBehaviour {
                 //!not anymore
                 tileWidth = 2,
                 tileHeight = 2,
-                BuildTyp = BuildTypes.Single,
+                buildTyp = BuildTypes.Single,
                 myStructureTyp = StructureTyp.Blocking,
                 Name = "NeedStructure",
-                maintenancecost = 100
+                maintenanceCost = 100
             };
 
             SetData<StructurePrototypeData>(node, ref spd);
@@ -572,24 +572,24 @@ public class PrototypController : MonoBehaviour {
                 //THESE are fix and are not changed for any HomeStructure
                 tileWidth = 2,
                 tileHeight = 2,
-                BuildTyp = BuildTypes.Drag,
+                buildTyp = BuildTypes.Drag,
                 myStructureTyp = StructureTyp.Blocking,
                 structureRange = 0,
                 hasHitbox = true,
                 canTakeDamage = true,
-                maintenancecost = 0
+                maintenanceCost = 0
             };
 
             SetData<HomePrototypeData>(node, ref hpd);
             structurePrototypeDatas.Add(ID, hpd);
             structurePrototypes[ID] = new HomeStructure(ID, hpd);
 
-            int prevID = GetStructureIDForTypeNeighbourStructureLevel(typeof(HomeStructure), hpd.StructureLevel, false);
+            int prevID = GetStructureIDForTypeNeighbourStructureLevel(typeof(HomeStructure), hpd.structureLevel, false);
             if (prevID != -1) {
                 HomePrototypeData prev = (HomePrototypeData)structurePrototypeDatas[prevID];
                 ((HomePrototypeData)hpd).previouseMaxLivingSpaces = prev == null ? 0 : prev.maxLivingSpaces;
-                prev.UpgradeItems = hpd.buildingItems;
-                prev.UpgradeCost = hpd.buildcost;
+                prev.upgradeItems = hpd.buildingItems;
+                prev.upgradeCost = hpd.buildcost;
             }
         }
     }
@@ -600,7 +600,7 @@ public class PrototypController : MonoBehaviour {
             MarketPrototypData mpd = new MarketPrototypData {
                 //THESE are fix and are not changed for any Warehouse
                 contactRange = 6.3f,
-                BuildTyp = BuildTypes.Single,
+                buildTyp = BuildTypes.Single,
                 hasHitbox = true,
                 canTakeDamage = true,
                 structureRange = 18,
@@ -610,7 +610,7 @@ public class PrototypController : MonoBehaviour {
                 tileHeight = 3,
                 Name = "warehouse",
                 buildcost = 500,
-                maintenancecost = 10,
+                maintenanceCost = 10,
                 mustFrontBuildDir = Direction.W
             };
 
@@ -629,7 +629,7 @@ public class PrototypController : MonoBehaviour {
                 tileHeight = 3,
                 Name = "Mine",
                 myStructureTyp = StructureTyp.Blocking,
-                BuildTyp = BuildTypes.Single,
+                buildTyp = BuildTypes.Single,
                 hasHitbox = true,
                 structureRange = 0,
 

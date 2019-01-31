@@ -1,8 +1,6 @@
 ﻿using UnityEngine;
-using System.Collections;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using Newtonsoft.Json;
 
 public enum BuildTypes { Drag, Path, Single };
@@ -14,12 +12,12 @@ public enum BuildRestriktions { Land, Shore, Mountain };
 
 public class StructurePrototypeData : LanguageVariables {
     public bool hasHitbox;// { get; protected set; }
-    public float MaxHealth;
+    public float maxHealth;
 
     public int structureRange = 0;
-    public int PopulationLevel = 0;
-    public int PopulationCount = 0;
-    public int StructureLevel = 0;
+    public int populationLevel = 0;
+    public int populationCount = 0;
+    public int structureLevel = 0;
 
     public int tileWidth;
     public int tileHeight;
@@ -42,19 +40,19 @@ public class StructurePrototypeData : LanguageVariables {
             return _myPrototypeTiles;
         }
     }
-    public ExtraUI ExtraUITyp;
+    public ExtraUI extraUITyp;
     public StructureTyp myStructureTyp = StructureTyp.Blocking;
     public bool canStartBurning;
-    public int maintenancecost;
+    public int maintenanceCost;
 
     public BuildRestriktions hasToBuildOnRestriktion;
     public bool canBeBuild = true;
     public int buildcost;
-    public BuildTypes BuildTyp;
-    public ExtraBuildUI ExtraBuildUITyp;
+    public BuildTypes buildTyp;
+    public ExtraBuildUI extraBuildUITyp;
     public Item[] buildingItems;
-    public Item[] UpgradeItems = null; // set inside prototypecontoller
-    public int UpgradeCost = 0; // set inside prototypecontoller
+    public Item[] upgradeItems = null; // set inside prototypecontoller
+    public int upgradeCost = 0; // set inside prototypecontoller
 
     public string spriteBaseName;
 
@@ -147,8 +145,6 @@ public abstract class Structure : IGEventable {
     public string connectOrientation;
     public bool HasExtraUI { get { return ExtraUITyp != ExtraUI.None; } }
 
-
-
     //player id
     public int PlayerNumber {
         get {
@@ -185,17 +181,19 @@ public abstract class Structure : IGEventable {
         }
     }
 
+    public bool CanBeBuild { get { return Data.canBeBuild; } }
     public bool IsWalkable { get { return this.MyStructureTyp != StructureTyp.Blocking; } }
     public bool HasHitbox { get { return Data.hasHitbox; } }
-    public float MaxHealth { get { return Data.MaxHealth; } }
 
-    public bool CanBeBuild { get { return Data.canBeBuild; } }
+    #region EffectVariables
+    public float MaxHealth { get { return CalculateRealValue("maxHealth", Data.maxHealth); } }
+    public int MaintenanceCost { get { return CalculateRealValue("maintenancecost", Data.maintenanceCost); } }
+    #endregion
 
     public int StructureRange { get { return Data.structureRange; } }
-    public int PopulationLevel { get { return Data.PopulationLevel; } }
-    public int PopulationCount { get { return Data.PopulationCount; } }
-    public int StructureLevel { get { return Data.StructureLevel; } }
-
+    public int PopulationLevel { get { return Data.populationLevel; } }
+    public int PopulationCount { get { return Data.populationCount; } }
+    public int StructureLevel { get { return Data.structureLevel; } }
     public int _tileWidth { get { return Data.tileWidth; } }
     public int _tileHeight { get { return Data.tileHeight; } }
 
@@ -204,27 +202,24 @@ public abstract class Structure : IGEventable {
     public bool CanBeUpgraded { get { return Data.canBeUpgraded; } }
     public bool CanTakeDamage { get { return Data.canTakeDamage; } }
 
-
     public Direction MustFrontBuildDir { get { return Data.mustFrontBuildDir; } }
+    public BuildRestriktions HasToBuildOnRestriktion { get { return Data.hasToBuildOnRestriktion; } }
+    public BuildTypes BuildTyp { get { return Data.buildTyp; } }
+    public StructureTyp MyStructureTyp { get { return Data.myStructureTyp; } }
+    public ExtraUI ExtraUITyp { get { return Data.extraUITyp; } }
+    public ExtraBuildUI ExtraBuildUITyp { get { return Data.extraBuildUITyp; } }
 
     public List<Tile> MyPrototypeTiles { get { return Data.MyPrototypeTiles; } }
 
     public bool CanStartBurning { get { return Data.canStartBurning; } }
     public bool MustBeBuildOnShore { get { return Data.hasToBuildOnRestriktion == BuildRestriktions.Shore; } }
     public bool MustBeBuildOnMountain { get { return Data.hasToBuildOnRestriktion == BuildRestriktions.Mountain; } }
-    public BuildRestriktions HasToBuildOnRestriktion { get { return Data.hasToBuildOnRestriktion; } }
 
-    public int Maintenancecost { get { return Data.maintenancecost; } }
     public int Buildcost { get { return Data.buildcost; } }
 
-    public BuildTypes BuildTyp { get { return Data.BuildTyp; } }
-    public StructureTyp MyStructureTyp { get { return Data.myStructureTyp; } }
-    public ExtraUI ExtraUITyp { get { return Data.ExtraUITyp; } }
-    public ExtraBuildUI ExtraBuildUITyp { get { return Data.ExtraBuildUITyp; } }
-
     public Item[] BuildingItems { get { return Data.buildingItems; } }
-    public Item[] UpgradeItems { get { return Data.UpgradeItems; } }
-    public int UpgradeCost { get { return Data.UpgradeCost; } } // set inside prototypecontoller
+    public Item[] UpgradeItems { get { return Data.upgradeItems; } }
+    public int UpgradeCost { get { return Data.upgradeCost; } } // set inside prototypecontoller
 
     public string SpriteName { get { return Data.spriteBaseName/*TODO: make multiple saved sprites possible*/; } }
 

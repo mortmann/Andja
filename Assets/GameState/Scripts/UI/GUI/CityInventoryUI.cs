@@ -31,7 +31,7 @@ public class CityInventoryUI : MonoBehaviour {
         itemToGO = new Dictionary<int, ItemUI>();
         foreach (Item item in city.inventory.Items.Values) {
             GameObject go_i = GameObject.Instantiate(itemPrefab);
-            go_i.name = item.name + " Item";
+            go_i.name = item.Name + " Item";
             ItemUI iui = go_i.GetComponent<ItemUI>();
             itemToGO.Add(item.ID, iui);
             iui.SetItem(item, city.inventory.MaxStackSize, true);

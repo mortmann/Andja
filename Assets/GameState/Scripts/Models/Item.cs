@@ -1,15 +1,11 @@
-﻿using UnityEngine;
-using System.Collections;
-using System;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 
 
 public enum ItemType { Build, Intermediate, Luxury }
 
 public class ItemPrototypeData : LanguageVariables {
-    public ItemType Type;
+    public ItemType type;
 }
-
 
 [JsonObject(MemberSerialization.OptIn)]
 public class Item {
@@ -17,7 +13,7 @@ public class Item {
     [JsonPropertyAttribute] public int count;
 
     protected ItemPrototypeData _prototypData;
-    public ItemPrototypeData data {
+    public ItemPrototypeData Data {
         get {
             if (_prototypData == null) {
                 _prototypData = PrototypController.Instance.GetItemPrototypDataForID(ID);
@@ -27,12 +23,12 @@ public class Item {
     }
     public ItemType Type {
         get {
-            return data.Type;
+            return Data.type;
         }
     }
-    public string name {
+    public string Name {
         get {
-            return data.Name;
+            return Data.Name;
         }
     }
     public Item(int id, int count = 0) {
@@ -61,11 +57,11 @@ public class Item {
     }
 
     internal string ToSmallString() {
-        return string.Format(name + ":" + count + "t");
+        return string.Format(Name + ":" + count + "t");
     }
 
     public override string ToString() {
-        return string.Format("[Item] " + ID + ":" + name + ":" + count);
+        return string.Format("[Item] " + ID + ":" + Name + ":" + count);
     }
 
 

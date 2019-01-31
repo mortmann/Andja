@@ -7,7 +7,7 @@ using System;
 [JsonObject]
 public class NeedGroupPrototypData : LanguageVariables {
     public int ID;
-    public float ImportanceLevel;
+    public float importanceLevel;
 }
 
 [JsonObject(MemberSerialization.OptIn)]
@@ -22,7 +22,7 @@ public class NeedGroup {
             return _prototypData;
         }
     }
-    public float ImportanceLevel => Data.ImportanceLevel;
+    public float ImportanceLevel => Data.importanceLevel;
     public string Name => Data.Name;
     #endregion
     [JsonPropertyAttribute] public List<Need> Needs;

@@ -26,6 +26,11 @@ public class PrototypController : MonoBehaviour {
     public Dictionary<int, UnitPrototypeData> unitPrototypeDatas;
 
     public Dictionary<int, DamageType> damageTypeDatas;
+
+    internal EffectPrototypeData GetEffectPrototypDataForID(int iD) {
+        throw new NotImplementedException();
+    }
+
     public Dictionary<int, ArmorType> armorTypeDatas;
     public Dictionary<int, PopulationLevelPrototypData> populationLevelDatas;
     public Dictionary<int, NeedGroupPrototypData> needGroupDatas;
@@ -181,7 +186,16 @@ public class PrototypController : MonoBehaviour {
         ReadOtherFromXML();
 
         Debug.Log("Read in fertilities types: " + allFertilities.Count + " with all " + fertilityPrototypeDatas.Count);
-        Debug.Log("Read in structures: " + structurePrototypes.Count);
+        string str = "";
+        List<Structure> all = new List<Structure>(structurePrototypes.Values);
+        while (all.Count > 0) {
+            List<Structure> temp = all.FindAll(x => all[0].GetType() == x.GetType());
+            foreach (Structure s in temp) {
+                all.Remove(s);
+            }
+            str += "    -> " + temp[0].GetType() + " = " + temp.Count + " \n";
+        }
+        Debug.Log("Read in structures: " + structurePrototypes.Count + "\n" + str);
         Debug.Log("Read in units: " + unitPrototypes.Count);
         Debug.Log("Read in items: " + allItems.Count);
         Debug.Log("Read in needs: " + allNeeds.Count);
@@ -190,8 +204,8 @@ public class PrototypController : MonoBehaviour {
         Debug.Log("Read in armortypes: " + armorTypeDatas.Count);
         Debug.Log("Read in populationLevel: " + populationLevelDatas.Count);
 
-        //Set it to default so it doesnt interfer with user interface informations
-        System.Threading.Thread.CurrentThread.CurrentCulture = System.Globalization.CultureInfo.InstalledUICulture;
+    //Set it to default so it doesnt interfer with user interface informations
+    System.Threading.Thread.CurrentThread.CurrentCulture = System.Globalization.CultureInfo.InstalledUICulture;
     }
 
     private void ReadOtherFromXML() {

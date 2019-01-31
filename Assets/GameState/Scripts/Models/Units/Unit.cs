@@ -34,7 +34,7 @@ public enum UnitDoModes { Idle, Move, Fight, Capture, Trade, OffWorld }
 public enum UnitMainModes { Idle, Moving, Aggroing, Attack, Patrol, Capture, TradeRoute, OffWorldMarket, Escort }
 
 [JsonObject(MemberSerialization.OptIn)]
-public class Unit : IWarfare {
+public class Unit : IGEventable,IWarfare {
     public readonly float EscortDistance = 2f;
 
     //save these Variables
@@ -645,4 +645,11 @@ public class Unit : IWarfare {
         return MyDamageType.GetDamageMultiplier(armorType) * CurrentDamage;
     }
 
+    public override void OnEventCreate(GameEvent ge) {
+        throw new NotImplementedException();
+    }
+
+    public override void OnEventEnded(GameEvent ge) {
+        throw new NotImplementedException();
+    }
 }

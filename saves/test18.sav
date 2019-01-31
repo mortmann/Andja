@@ -70,7 +70,7 @@
             "myStructures": [
               {
                 "$id": "14",
-                "$type": "Growable, Assembly-CSharp",
+                "$type": "GrowableStructure, Assembly-CSharp",
                 "age": 1.89973974,
                 "currentStage": 1,
                 "hasProduced": false,
@@ -102,7 +102,7 @@
               },
               {
                 "$id": "17",
-                "$type": "Growable, Assembly-CSharp",
+                "$type": "GrowableStructure, Assembly-CSharp",
                 "age": 1.89973974,
                 "currentStage": 1,
                 "hasProduced": false,
@@ -134,7 +134,7 @@
               },
               {
                 "$id": "20",
-                "$type": "Growable, Assembly-CSharp",
+                "$type": "GrowableStructure, Assembly-CSharp",
                 "age": 1.89973974,
                 "currentStage": 1,
                 "hasProduced": false,
@@ -166,7 +166,7 @@
               },
               {
                 "$id": "23",
-                "$type": "Growable, Assembly-CSharp",
+                "$type": "GrowableStructure, Assembly-CSharp",
                 "age": 1.89973974,
                 "currentStage": 1,
                 "hasProduced": false,
@@ -198,7 +198,7 @@
               },
               {
                 "$id": "26",
-                "$type": "Growable, Assembly-CSharp",
+                "$type": "GrowableStructure, Assembly-CSharp",
                 "age": 1.89973974,
                 "currentStage": 1,
                 "hasProduced": false,
@@ -230,7 +230,7 @@
               },
               {
                 "$id": "29",
-                "$type": "Growable, Assembly-CSharp",
+                "$type": "GrowableStructure, Assembly-CSharp",
                 "age": 1.89973974,
                 "currentStage": 1,
                 "hasProduced": false,
@@ -262,7 +262,7 @@
               },
               {
                 "$id": "32",
-                "$type": "Growable, Assembly-CSharp",
+                "$type": "GrowableStructure, Assembly-CSharp",
                 "age": 1.89973974,
                 "currentStage": 1,
                 "hasProduced": false,
@@ -294,7 +294,7 @@
               },
               {
                 "$id": "35",
-                "$type": "Growable, Assembly-CSharp",
+                "$type": "GrowableStructure, Assembly-CSharp",
                 "age": 1.89973974,
                 "currentStage": 1,
                 "hasProduced": false,
@@ -326,7 +326,7 @@
               },
               {
                 "$id": "38",
-                "$type": "Growable, Assembly-CSharp",
+                "$type": "GrowableStructure, Assembly-CSharp",
                 "age": 1.89973974,
                 "currentStage": 1,
                 "hasProduced": false,

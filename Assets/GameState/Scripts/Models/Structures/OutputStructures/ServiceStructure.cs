@@ -16,7 +16,15 @@ public class ServicePrototypeData : OutputPrototypData {
 public class ServiceStructure : OutputStructure {
 
     Action<Structure> workOnTarget;
-
+    protected ServicePrototypeData _servicveData;
+    public ServicePrototypeData ServiceData {
+        get {
+            if (_servicveData == null) {
+                _servicveData = (ServicePrototypeData)PrototypController.Instance.GetStructurePrototypDataForID(ID);
+            }
+            return _servicveData;
+        }
+    }
 
     protected ServiceStructure(ServiceStructure s) {
         OutputCopyData(s);

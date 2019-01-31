@@ -6,8 +6,19 @@ using System;
 public class GameEvent {
     public EventType EventType { protected set; get; }
 
-    public Effect[] Effects { protected set; get; }
-    public Dictionary<int, Effect> targetToEffects;
+    public Effect[] _Effects { protected set; get; }
+    public Effect[] Effects {
+        set {
+            _Effects = value;
+            Targeted = new TargetGroup();
+            foreach (Effect e in _Effects) {
+                Targeted.AddTargets(e.Targets);
+            }
+        }
+        get { return _Effects; }
+    }
+
+    TargetGroup Targeted;
 
     public bool IsDone { get { return currentDuration <= 0; } }
     public bool IsOneTime { get { return maxDuration <= 0; } }
@@ -26,9 +37,13 @@ public class GameEvent {
     // can be null if its not set to which type
     public IGEventable target;  //TODO make a check for it!
 
+    /// <summary>
+    /// Needed for Serializing
+    /// </summary>
     public GameEvent() {
 
     }
+
     public GameEvent(GameEvent ge) {
         this.Effects = ge.Effects;
         this.maxDuration = ge.maxDuration;
@@ -101,27 +116,30 @@ public class GameEvent {
         //if we are here the IGEventable t is in "range" (specified target eg island andso)
         //or there is no range atall
         //is there an influence targeting t?
-        if (targetToEffects.ContainsKey(t.GetTargetType()) == false) {
-            return false;
-        }
+        //if (targetToEffects.ContainsKey(t.GetTargetType()) == false) {
+        //    return false;
+        //}
         return true;
     }
 
     public void EffectTarget(IGEventable t, bool start) {
-        Effect i = GetInfluenceForTarget(t);
-        if (i == null) {
+        Effect[] effectsForTarget = GetEffectsForTarget(t);
+        if (effectsForTarget == null) {
             Debug.LogError("Influence is null!");
             return;
         }
-        i.Function(this, start, t);
+        t.AddEffects(effectsForTarget);
     }
 
-    public Effect GetInfluenceForTarget(IGEventable t) {
-        if (targetToEffects.ContainsKey(t.GetTargetType()) == false) {
-            Debug.LogError("target was not in influences! why?");
-            return null;
+    public Effect[] GetEffectsForTarget(IGEventable t) {
+        List<Effect> effectsForTarget = new List<Effect>();
+        foreach (Effect eff in Effects) {
+            if (t.TargetGroups.IsTargeted(eff.Targets) == false) {
+                continue;
+            }
+            effectsForTarget.Add(eff);
         }
-        return targetToEffects[t.GetTargetType()];
+        return effectsForTarget.ToArray();
     }
 
 }

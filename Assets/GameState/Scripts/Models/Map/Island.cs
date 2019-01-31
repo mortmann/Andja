@@ -8,7 +8,6 @@ public enum Climate { Cold, Middle, Warm };
 
 [JsonObject(MemberSerialization.OptIn)]
 public class Island : IGEventable {
-    public const int TargetType = 11;
     #region Serialize
 
     [JsonPropertyAttribute] public List<City> myCities;

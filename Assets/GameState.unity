@@ -1503,7 +1503,7 @@ MonoBehaviour:
   uiInfoCanvas: {fileID: 1120049208}
   chooseBuildCanvas: {fileID: 1517557695}
   consoleCanvas: {fileID: 157207983}
-  buildingCanvas: {fileID: 1753813432}
+  productionStructureInfo: {fileID: 1753813432}
   unitCanvas: {fileID: 782353739}
   militaryStructureInfo: {fileID: 1845186998}
   rightCanvas: {fileID: 563858574}
@@ -1851,7 +1851,7 @@ GameObject:
   - component: {fileID: 157482295}
   - component: {fileID: 157482296}
   m_Layer: 5
-  m_Name: Building Canvas
+  m_Name: Structures Canvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5377,7 +5377,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 93.599976, y: 0.000045776367}
+  m_AnchoredPosition: {x: 93.599976, y: 0}
   m_SizeDelta: {x: 187.2, y: 343.1}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!1 &430709615
@@ -8834,8 +8834,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 164425183}
   m_HandleRect: {fileID: 164425182}
   m_Direction: 2
-  m_Value: 0
-  m_Size: 0.99999976
+  m_Value: 1
+  m_Size: 0.9999999
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -20312,10 +20312,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9212a8008c333ce4eb05c74a5bb9b2d0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  buttonBuildingContent: {fileID: 108635441}
+  buttonBuildStructuresContent: {fileID: 157482290}
   buttonPopulationsLevelContent: {fileID: 1524612870}
-  buttonPrefab: {fileID: 192280, guid: e3f726c85554f6648a558d5a23310610, type: 2}
-  enableAllBuildings: 1
+  buildButtonPrefab: {fileID: 192280, guid: e3f726c85554f6648a558d5a23310610, type: 2}
+  enableAllStructures: 0
 --- !u!114 &1517557701
 MonoBehaviour:
   m_ObjectHideFlags: 0

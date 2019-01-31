@@ -112,7 +112,6 @@ public class StructurePrototypeData : LanguageVariables {
 [JsonObject(MemberSerialization.OptIn)]
 public abstract class Structure : IGEventable {
     #region variables
-    public const int TargetType = 100;
     #region Serialize
     //prototype id
     [JsonPropertyAttribute] public int ID;

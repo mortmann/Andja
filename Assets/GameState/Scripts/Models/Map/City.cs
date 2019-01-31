@@ -5,7 +5,6 @@ using Newtonsoft.Json;
 
 [JsonObject(MemberSerialization.OptIn)]
 public class City : IGEventable {
-    public const int TargetType = 12;
 
     #region Serialize
     [JsonPropertyAttribute] public int playerNumber = 0;

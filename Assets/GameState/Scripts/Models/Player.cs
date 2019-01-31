@@ -6,7 +6,6 @@ using System;
 [JsonObject(MemberSerialization.OptIn)]
 public class Player : IGEventable {
     #region Not Serialized
-    public const int TargetType = 1;
     List<City> myCities;
     internal bool HasEnoughMoney(int buildCost) {
         return Balance + maximumDebt > buildCost;

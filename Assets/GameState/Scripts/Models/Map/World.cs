@@ -7,7 +7,6 @@ using EpPathFinding.cs;
 
 [JsonObject(MemberSerialization.OptIn)]
 public class World : IGEventable {
-    public const int TargetType = 10;
     public static World Current { get; protected set; }
 
     #region Serialize

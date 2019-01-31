@@ -39,6 +39,7 @@ public class WorldController : MonoBehaviour {
         else {
             Instance = this;
         }
+
     }
 
     public void SetGeneratedWorld(World world, Dictionary<Tile, Structure> tileToStructure) {

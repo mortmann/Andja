@@ -83,7 +83,7 @@ public class Route {
             //we have tiles that the flood fill didnt reach 
             //that means we have to create new routes and floodfill them from there
             foreach (Tile item in oldTiles) {
-                if (((Road)item.Structure).Route != this) {
+                if (((RoadStructure)item.Structure).Route != this) {
                     continue;
                 }
                 //create and add the new route to our city 
@@ -97,7 +97,7 @@ public class Route {
 
     public void addRoute(Route route) {
         foreach (Tile item in route.myTiles) {
-            ((Road)item.Structure).Route = this;
+            ((RoadStructure)item.Structure).Route = this;
         }
         tileGraph.addNodes(route.tileGraph);
         myTiles[0].MyCity.RemoveRoute(route);

@@ -6,7 +6,7 @@ using Newtonsoft.Json;
 [JsonObject(MemberSerialization.OptIn)]
 public class Worker {
     #region Serialize
-    [JsonPropertyAttribute] public OutputStructure myHome;
+    [JsonPropertyAttribute] public Structure myHome;
     [JsonPropertyAttribute] Pathfinding path;
     [JsonPropertyAttribute] float doTimer;
     [JsonPropertyAttribute] Item[] toGetItems;
@@ -14,11 +14,21 @@ public class Worker {
     [JsonPropertyAttribute] Inventory inventory;
     [JsonPropertyAttribute] bool goingToWork;
     [JsonPropertyAttribute] public bool isAtHome;
-    [JsonPropertyAttribute] private OutputStructure _workStructure;
+    [JsonPropertyAttribute] private Structure _workStructure;
 
     #endregion
     #region runtimeVariables
-    public OutputStructure WorkStructure {
+    public OutputStructure WorkOutputStructure {
+        set {
+            _workStructure = value;
+        }
+        get {
+            if(_workStructure is OutputStructure)
+                return (OutputStructure)_workStructure;
+            return null;
+        }
+    }
+    public Structure WorkStructure {
         set {
             _workStructure = value;
         }
@@ -26,6 +36,15 @@ public class Worker {
             return _workStructure;
         }
     }
+
+    Action<Structure> WorkOnStructure {
+        get {
+            if (myHome is ServiceStructure)
+                return ((ServiceStructure)myHome).WorkOnTarget;
+            return null;
+        }
+    }
+
     Action<Worker> cbWorkerChanged;
     Action<Worker> cbWorkerDestroy;
     Action<Worker, string> cbSoundCallback;
@@ -52,13 +71,9 @@ public class Worker {
             return path.Y;
         }
     }
-    public Worker(OutputStructure myHome, OutputStructure structure, Item[] toGetItems = null, bool hasToFollowRoads = true) {
-        if (myHome is OutputStructure == false) {
-            Debug.LogError("Home is not OutputStructure--if this should be possible redesign");
-            return;
-        }
+    public Worker(Structure myHome, OutputStructure structure, Item[] toGetItems = null, bool hasToFollowRoads = true) {
         this.myHome = myHome;
-        WorkStructure = structure;
+        WorkOutputStructure = structure;
         this.hasToFollowRoads = hasToFollowRoads;
         if (structure is MarketStructure == false) {
             structure.outputClaimed = true;
@@ -70,16 +85,24 @@ public class Worker {
         SetGoalStructure(structure);
         this.toGetItems = toGetItems;
     }
+    public Worker(ServiceStructure myHome, Structure structure, Action<Structure> workOnStructure, bool hasToFollowRoads = true) {
+        this.myHome = myHome;
+        WorkStructure = structure;
+        this.hasToFollowRoads = hasToFollowRoads;
+        goingToWork = true;
+        doTimer = workTime;
+        SetGoalStructure(structure);
+    }
 
     public Worker() {
         SaveController.AddWorkerForLoad(this);
     }
     public void OnWorkStructureDestroy(Structure str) {
-        if (str != WorkStructure) {
+        if (str != WorkOutputStructure) {
             Debug.LogError("OnWorkStructureDestroy called on not workstructure destroy!");
             return;
         }
-        WorkStructure = null;
+        WorkOutputStructure = null;
         GoHome();
     }
     public void Update(float deltaTime) {
@@ -87,10 +110,7 @@ public class Worker {
             Debug.LogError("worker has no myHome -> for now set it manually");
             return;
         }
-        if (myHome.isActive == false) {
-            GoHome();
-        }
-        if (myHome.Efficiency <= 0) {
+        if (myHome.IsActiveAndWorking == false) {
             GoHome();
         }
         if (hasRegistered == false) {
@@ -147,9 +167,9 @@ public class Worker {
         if (myHome is ProductionStructure) {
             ((ProductionStructure)myHome).AddToIntake(inventory);
         }
-        else {
+        else if (myHome is OutputStructure) {
             //this home is a OutputStructures or smth that takes it to output
-            myHome.AddToOutput(inventory);
+            ((OutputStructure)myHome).AddToOutput(inventory);
         }
         isAtHome = true;
         path = null;
@@ -165,44 +185,47 @@ public class Worker {
             cbSoundCallback?.Invoke(this, soundWorkName);
             return;
         }
-        if (WorkStructure == null && path.DestTile != null && path.DestTile.Structure is OutputStructure) {
-            WorkStructure = (OutputStructure)path.DestTile.Structure;
+        if (WorkStructure == null && path.DestTile != null) {
+            WorkStructure = path.DestTile.Structure;
         }
-        if (WorkStructure != null) {
+        if (WorkOutputStructure != null) {
             if (toGetItems == null) {
-                foreach (Item item in WorkStructure.GetOutput()) {
+                foreach (Item item in WorkOutputStructure.GetOutput()) {
                     inventory.AddItem(item);
                 }
             }
             if (toGetItems != null) {
-                foreach (Item item in WorkStructure.GetOutputWithItemCountAsMax(toGetItems)) {
+                foreach (Item item in WorkOutputStructure.GetOutputWithItemCountAsMax(toGetItems)) {
                     inventory.AddItem(item);
                 }
             }
-            if (WorkStructure is MarketStructure) {
-                foreach (Item item in WorkStructure.GetOutputWithItemCountAsMax(toGetItems)) {
+            if (WorkOutputStructure is MarketStructure) {
+                foreach (Item item in WorkOutputStructure.GetOutputWithItemCountAsMax(toGetItems)) {
                     if (item == null) {
-                        Debug.LogError("item is null for to get item! Worker is from " + WorkStructure);
+                        Debug.LogError("item is null for to get item! Worker is from " + WorkOutputStructure);
                     }
                     inventory.AddItem(item);
                 }
             }
-            WorkStructure.UnregisterOnDestroyCallback(OnWorkStructureDestroy);
-            WorkStructure.outputClaimed = false;
-            doTimer = workTime / 2;
-            goingToWork = false;
-            path.Reverse();
+            WorkOutputStructure.outputClaimed = false;
         }
-        //		Debug.Log ("WORK completed!");
+        else {
+            WorkOnStructure?.Invoke(WorkStructure);
+        }
+        WorkOutputStructure.UnregisterOnDestroyCallback(OnWorkStructureDestroy);
+        doTimer = workTime / 2;
+        goingToWork = false;
+        path.Reverse();
+//		Debug.Log ("WORK completed!");
     }
 
 
     public void Destroy() {
         if (goingToWork)
-            WorkStructure.ResetOutputClaimed();
+            WorkOutputStructure.ResetOutputClaimed();
         cbWorkerDestroy?.Invoke(this);
     }
-    public void SetGoalStructure(OutputStructure structure) {
+    public void SetGoalStructure(Structure structure) {
         if (structure == null) {
             return;
         }

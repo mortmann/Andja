@@ -24,6 +24,8 @@ public class GrowableStructure : OutputStructure {
     public int AgeStages { get { return GrowableData.ageStages; } }
 
     protected GrowablePrototypeData _growableData;
+    private float landGrowModifier;
+
     public GrowablePrototypeData GrowableData {
         get {
             if (_growableData == null) {
@@ -56,18 +58,18 @@ public class GrowableStructure : OutputStructure {
 
     public override void OnBuild() {
         if (Fertility != null && City.HasFertility(Fertility) == false) {
-            efficiencyModifier = 0;
+            landGrowModifier = 0;
         }
         else {
             //maybe have ground type be factor? stone etc
-            efficiencyModifier = 1;
+            landGrowModifier = 1;
         }
     }
     public override void Update(float deltaTime) {
-        if (hasProduced || efficiencyModifier <= 0) {
+        if (hasProduced || landGrowModifier <= 0) {
             return;
         }
-        age += efficiencyModifier * (deltaTime);
+        age += Efficiency * landGrowModifier * (deltaTime);
         if ((age) > currentStage * TimePerStage) {
             currentStage++;
             if (currentStage >= AgeStages) {

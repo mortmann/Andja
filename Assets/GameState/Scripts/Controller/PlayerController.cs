@@ -13,9 +13,13 @@ public class PlayerController : MonoBehaviour {
     readonly int piratePlayerNumber = int.MaxValue; // so it isnt the same like the number of wilderness
     public Player CurrPlayer { get { return players[currentPlayerNumber]; } }
     HashSet<War> playerWars;
-    const float BalanceFullTime = 60f;
-    const float BalanceTicksTime = 4f;
+    PlayerPrototypeData PlayerPrototypeData => PrototypController.CurrentPlayerPrototypData;
+
+    float BalanceFullTime => PlayerPrototypeData.BalanceFullTime;
+    float BalanceTicksTime => PlayerPrototypeData.BalanceTicksTime;
+
     float balanceTickTimer;
+
     public static PlayerController Instance { get; protected set; }
     List<Player> players;
     EventUIManager euim;

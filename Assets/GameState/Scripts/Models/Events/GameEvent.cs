@@ -2,6 +2,18 @@
 using System.Collections.Generic;
 using System;
 
+public class GameEventPrototypData : LanguageVariables {
+    public int ID = -1;
+
+    public float probability = 10;
+    public float minDuration = 50;
+    public float maxDuration = 100;
+    public float minRange = 50;
+    public float maxRange = 100;
+    public Effect[] effects;
+
+}
+
 
 public class GameEvent {
     public EventType EventType { protected set; get; }
@@ -113,12 +125,12 @@ public class GameEvent {
                 }
             }
         }
-        //if we are here the IGEventable t is in "range" (specified target eg island andso)
+        //if we are here the IGEventable t is in "range"(specified target eg island andso)
         //or there is no range atall
-        //is there an influence targeting t?
-        //if (targetToEffects.ContainsKey(t.GetTargetType()) == false) {
-        //    return false;
-        //}
+        //is there an influence targeting t ?
+        if (Targeted.IsTargeted(t.TargetGroups) == false) {
+            return false;
+        }
         return true;
     }
 

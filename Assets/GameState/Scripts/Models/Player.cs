@@ -3,25 +3,37 @@ using System.Collections.Generic;
 using Newtonsoft.Json;
 using System;
 
+public class PlayerPrototypeData {
+    //This will contain stuff from the difficulty settings 
+    //like maximumdebt
+    public int maximumDebt = 0;
+    public float BalanceFullTime = 60f;
+    public float BalanceTicksTime = 4f;
+
+
+}
+
 [JsonObject(MemberSerialization.OptIn)]
 public class Player : IGEventable {
     #region Not Serialized
     List<City> myCities;
     internal bool HasEnoughMoney(int buildCost) {
-        return Balance + maximumDebt > buildCost;
+        return Balance + MaximumDebt > buildCost;
     }
     public HashSet<Need>[] LockedNeeds { get; protected set; }
     public HashSet<Need> UnlockedItemNeeds { get; protected set; }
     public HashSet<Need>[] UnlockedStructureNeeds { get; protected set; }
 
-    private int maximumDebt = 0; // if we want a maximum debt where you still can buy things
+    PlayerPrototypeData PlayerPrototypeData => PrototypController.CurrentPlayerPrototypData;
+
+    private int MaximumDebt => PlayerPrototypeData.maximumDebt; // if we want a maximum debt where you still can buy things
 
     private int _change;
     /// <summary>
     /// How the Balance CHANGES foreach Tick that happens
     /// </summary>
 	public int Change {
-        get { return _change; }
+        get { return CalculateRealValue("change", _change); }
         protected set { _change = value; }
     } //should be calculated after reload anyway
 
@@ -30,6 +42,7 @@ public class Player : IGEventable {
         get { return _lastChange; }
         protected set { _lastChange = value; }
     }
+
     Action<int, int> cbMaxPopulationMLCountChange;
     Action<Need> cbNeedUnlocked;
     Action<Need> cbStructureNeedUnlocked;

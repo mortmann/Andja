@@ -118,7 +118,7 @@ public class ProduktionUI : MonoBehaviour {
             itemToGO[item].ChangeItemCount(item);
         }
         progress.value = currentStructure.produceCountdown;
-        efficiency.text = currentStructure.Efficiency + "%";
+        efficiency.text = currentStructure.EfficiencyPercent + "%";
 
     }
 }

@@ -26,6 +26,8 @@ public class PrototypController : MonoBehaviour {
     public Dictionary<int, UnitPrototypeData> unitPrototypeDatas;
 
     public Dictionary<int, DamageType> damageTypeDatas;
+    public Dictionary<int, EffectPrototypeData> effectPrototypeDatas;
+    public Dictionary<int, GameEventPrototypData> gameEventPrototypeDatas;
 
     internal EffectPrototypeData GetEffectPrototypDataForID(int iD) {
         throw new NotImplementedException();
@@ -46,6 +48,9 @@ public class PrototypController : MonoBehaviour {
 
 
     public Dictionary<int, Fertility> idToFertilities;
+
+    //current valid player prototyp data
+    internal static PlayerPrototypeData CurrentPlayerPrototypData = new PlayerPrototypeData();
 
     //TODO: need a way to get this to load in! probably with the rest
     //      of the data thats still needs to be read in like time for money ticks
@@ -148,6 +153,11 @@ public class PrototypController : MonoBehaviour {
         //Good News everyone! Setting it to GB fixes that stupid thing! -Professor
         System.Threading.Thread.CurrentThread.CurrentCulture = System.Globalization.CultureInfo.CreateSpecificCulture("en-GB");
 
+        //GAMEEVENTS
+        effectPrototypeDatas = new Dictionary<int, EffectPrototypeData>();
+        gameEventPrototypeDatas = new Dictionary<int, GameEventPrototypData>();
+        ReadEventsFromXML();
+
         //fertilities
         allFertilities = new Dictionary<Climate, List<Fertility>>();
         idToFertilities = new Dictionary<int, Fertility>();
@@ -181,6 +191,7 @@ public class PrototypController : MonoBehaviour {
         needGroupDatas = new Dictionary<int, NeedGroupPrototypData>();
         ReadNeedsFromXML();
 
+
         //other
         populationLevelDatas = new Dictionary<int, PopulationLevelPrototypData>();
         ReadOtherFromXML();
@@ -206,6 +217,24 @@ public class PrototypController : MonoBehaviour {
 
     //Set it to default so it doesnt interfer with user interface informations
     System.Threading.Thread.CurrentThread.CurrentCulture = System.Globalization.CultureInfo.InstalledUICulture;
+    }
+
+    private void ReadEventsFromXML() {
+        XmlDocument xmlDoc = new XmlDocument(); // xmlDoc is the new xml document.
+        TextAsset ta = ((TextAsset)Resources.Load("XMLs/events", typeof(TextAsset)));
+        xmlDoc.LoadXml(ta.text); // load the file.
+        foreach (XmlElement node in xmlDoc.SelectNodes("Events/Effect")) {
+            EffectPrototypeData epd = new EffectPrototypeData();
+            int id = int.Parse(node.GetAttribute("ID"));
+            SetData<EffectPrototypeData>(node, ref epd);
+            effectPrototypeDatas.Add(id, epd);
+        }
+        foreach (XmlElement node in xmlDoc.SelectNodes("Events/GameEvent")) {
+            GameEventPrototypData gepd = new GameEventPrototypData();
+            int id = int.Parse(node.GetAttribute("ID"));
+            SetData<GameEventPrototypData>(node, ref gepd);
+            gameEventPrototypeDatas.Add(id, gepd);
+        }
     }
 
     private void ReadOtherFromXML() {
@@ -456,7 +485,7 @@ public class PrototypController : MonoBehaviour {
             SetData<StructurePrototypeData>(node, ref spd);
 
             structurePrototypeDatas.Add(ID, spd);
-            structurePrototypes[ID] = new Road(ID, spd);
+            structurePrototypes[ID] = new RoadStructure(ID, spd);
 
         }
     }
@@ -722,6 +751,14 @@ public class PrototypController : MonoBehaviour {
                     fi.SetValue(data, items.ToArray());
                     continue;
                 }
+                if (fi.FieldType == (typeof(Effect[]))) {
+                    List<Effect> items = new List<Effect>();
+                    foreach (XmlNode item in n.ChildNodes) {
+                        items.Add(NodeToEffect(item));
+                    }
+                    fi.SetValue(data, items.ToArray());
+                    continue;
+                }
                 if (fi.FieldType == (typeof(float[]))) {
                     List<float> items = new List<float>();
                     foreach (XmlNode item in n.ChildNodes) {
@@ -767,6 +804,22 @@ public class PrototypController : MonoBehaviour {
             }
         }
 
+    }
+
+    private Effect NodeToEffect(XmlNode item) {
+        int id = -1;
+        if (int.TryParse(item.InnerXml, out id) == false) {
+            Debug.LogError("ID is not an int for DamageType ");
+            return null;
+        }
+        if (id == -1) {
+            return null;//not needed
+        }
+        if (effectPrototypeDatas.ContainsKey(id) == false) {
+            Debug.LogError("ID was not created before the depending DamageType! " + id);
+            return null;
+        }
+        return new Effect(id);
     }
 
     private object NodeToDamageType(XmlNode n) {

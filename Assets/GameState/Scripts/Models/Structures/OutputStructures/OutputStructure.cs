@@ -9,6 +9,7 @@ public class OutputPrototypData : StructurePrototypeData {
     public int maxNumberOfWorker = 1;
     public float produceTime;
     public int maxOutputStorage;
+    public float efficiency = 1f;
     public Item[] output;
 }
 
@@ -42,14 +43,15 @@ public abstract class OutputStructure : TargetStructure {
     public Dictionary<OutputStructure, Item[]> jobsToDo;
     public bool outputClaimed;
     protected Action<Structure> cbOutputChange;
-    bool CanWork { get { return Efficiency > 0; } }
-    public float efficiencyModifier = 1;
+    bool CanWork { get { return EfficiencyPercent > 0; } }
     public bool workersHasToFollowRoads = false;
     public float ContactRange { get { return OutputData.contactRange; } }
     public bool ForMarketplace { get { return OutputData.forMarketplace; } }
-    protected int MaxNumberOfWorker { get { return OutputData.maxNumberOfWorker; } }
-    public float ProduceTime { get { return OutputData.produceTime; } }
-    public int MaxOutputStorage { get { return OutputData.maxOutputStorage; } }
+
+    public float ProduceTime { get { return CalculateRealValue("produceTime", OutputData.produceTime); } }
+    public int MaxNumberOfWorker { get { return CalculateRealValue("maxNumberOfWorker", OutputData.maxNumberOfWorker); } }
+    public float Efficiency { get { return CalculateRealValue("efficiency", OutputData.efficiency); } }
+    public int MaxOutputStorage { get { return CalculateRealValue("maxOutputStorage", OutputData.maxOutputStorage); } }
 
     protected OutputPrototypData _outputData;
     public OutputPrototypData OutputData {
@@ -71,9 +73,11 @@ public abstract class OutputStructure : TargetStructure {
         BaseCopyData(o);
     }
 
-    public virtual float Efficiency {
+    public override bool IsActiveAndWorking => base.IsActiveAndWorking && Efficiency > 0; 
+
+    public virtual float EfficiencyPercent {
         get {
-            return 100 * efficiencyModifier;
+            return 100 * Efficiency;
         }
     }
     protected Tile _jobTile;
@@ -123,6 +127,9 @@ public abstract class OutputStructure : TargetStructure {
             if (items == null || items.Length <= 0) {
                 continue;
             }
+            if(workersHasToFollowRoads && CanReachStructure(jobStr) == false) {
+                continue;
+            }
             Worker ws = new Worker(this, jobStr, items, workersHasToFollowRoads);
 
             givenJobs.Add(jobStr);
@@ -132,7 +139,7 @@ public abstract class OutputStructure : TargetStructure {
         foreach (OutputStructure giveJob in givenJobs) {
             if (giveJob != null) {
                 if (giveJob is ProductionStructure) {
-                    return;
+                    continue;
                 }
                 jobsToDo.Remove(giveJob);
             }
@@ -264,8 +271,8 @@ public abstract class OutputStructure : TargetStructure {
             if (t.Structure == null) {
                 continue;
             }
-            if (t.Structure is Road) {
-                myRoutes.Add(((Road)t.Structure).Route);
+            if (t.Structure is RoadStructure) {
+                myRoutes.Add(((RoadStructure)t.Structure).Route);
             }
         }
         return myRoutes;

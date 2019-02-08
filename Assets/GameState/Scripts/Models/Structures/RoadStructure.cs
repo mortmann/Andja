@@ -4,7 +4,7 @@ using System;
 using Newtonsoft.Json;
 
 [JsonObject(MemberSerialization.OptIn)]
-public class Road : Structure {
+public class RoadStructure : Structure {
     #region Serialize
     #endregion
     #region RuntimeOrOther
@@ -20,21 +20,21 @@ public class Road : Structure {
     #endregion
 
 
-    Action<Road> cbRoadChanged;
+    Action<RoadStructure> cbRoadChanged;
 
-    public Road(int ID, StructurePrototypeData spd) {
+    public RoadStructure(int ID, StructurePrototypeData spd) {
         this.ID = ID;
         this._prototypData = spd;
     }
-    protected Road(Road str) {
+    protected RoadStructure(RoadStructure str) {
         BaseCopyData(str);
     }
     /// <summary>
     /// DO NOT USE
     /// </summary>
-    public Road() { }
+    public RoadStructure() { }
     public override Structure Clone() {
-        return new Road(this);
+        return new RoadStructure(this);
     }
 
     public override void OnBuild() {
@@ -47,13 +47,13 @@ public class Road : Structure {
             if (t.Structure.BuildTyp != BuildTypes.Path) {
                 continue;
             }
-            if (t.Structure is Road) {
-                if (((Road)t.Structure).Route != null) {
-                    if (routes.Contains(((Road)t.Structure).Route) == false) {
-                        routes.Add(((Road)t.Structure).Route);
+            if (t.Structure is RoadStructure) {
+                if (((RoadStructure)t.Structure).Route != null) {
+                    if (routes.Contains(((RoadStructure)t.Structure).Route) == false) {
+                        routes.Add(((RoadStructure)t.Structure).Route);
                         routeCount++;
                     }
-                    ((Road)t.Structure).UpdateOrientation();
+                    ((RoadStructure)t.Structure).UpdateOrientation();
                 }
             }
         }
@@ -85,22 +85,22 @@ public class Road : Structure {
         connectOrientation = "_";
 
         if (neig[0].Structure != null) {
-            if (neig[0].Structure is Road) {
+            if (neig[0].Structure is RoadStructure) {
                 connectOrientation += "N";
             }
         }
         if (neig[1].Structure != null) {
-            if (neig[1].Structure is Road) {
+            if (neig[1].Structure is RoadStructure) {
                 connectOrientation += "E";
             }
         }
         if (neig[2].Structure != null) {
-            if (neig[2].Structure is Road) {
+            if (neig[2].Structure is RoadStructure) {
                 connectOrientation += "S";
             }
         }
         if (neig[3].Structure != null) {
-            if (neig[3].Structure is Road) {
+            if (neig[3].Structure is RoadStructure) {
                 connectOrientation += "W";
             }
         }
@@ -115,11 +115,11 @@ public class Road : Structure {
         return base.GetSpriteName() + connectOrientation;
     }
 
-    public void RegisterOnRoadCallback(Action<Road> cb) {
+    public void RegisterOnRoadCallback(Action<RoadStructure> cb) {
         cbRoadChanged += cb;
     }
 
-    public void UnregisterOnRoadCallback(Action<Road> cb) {
+    public void UnregisterOnRoadCallback(Action<RoadStructure> cb) {
         cbRoadChanged -= cb;
     }
 

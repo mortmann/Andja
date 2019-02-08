@@ -17,7 +17,7 @@ public class MineStructure : OutputStructure {
 
     public string myRessource { get { return MineData.myRessource; } }
 
-    public override float Efficiency {
+    public override float EfficiencyPercent {
         get {
             if (BuildTile.MyIsland.myRessources[myRessource] == 0) {
                 return 0;

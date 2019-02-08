@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 
 public enum Target {
-    World, Player, AllUnit, Ship, LandUnit, Island, City, AllStructure, Road, NeedStructure, MilitaryStructure, HomeStructure,
+    World, Player, AllUnit, Ship, LandUnit, Island, City, AllStructure, RoadStructure, NeedStructure, MilitaryStructure, HomeStructure,
     ServiceStructure, GrowableStructure, OutputStructure, MarketStructure, WarehouseStructure, MineStructure,
     FarmStructure, ProductionStructure
 }
@@ -15,6 +15,11 @@ public abstract class IGEventable {
     /// </summary>
     protected Dictionary<string, float> VariablenameToFloat;
     protected List<Effect> Effects;
+    
+    /// <summary>
+    /// Target, Effect, added=true removed=false 
+    /// </summary>
+    protected Action<IGEventable, Effect, bool> cbEffectChange;
     protected Action<GameEvent> cbEventCreated;
     protected Action<GameEvent> cbEventEnded;
     private TargetGroup _targetGroup;
@@ -48,7 +53,7 @@ public abstract class IGEventable {
             targets.Add(Target.City);
         if (this is Structure)
             targets.Add(Target.AllStructure);
-        if (this is Road)
+        if (this is RoadStructure)
             targets.Add(Target.HomeStructure);
         if (this is NeedStructure)
             targets.Add(Target.NeedStructure);
@@ -70,7 +75,6 @@ public abstract class IGEventable {
             targets.Add(Target.FarmStructure);
         if (this is ProductionStructure)
             targets.Add(Target.ProductionStructure);
-
         return new TargetGroup(targets);
     }
 
@@ -99,7 +103,9 @@ public abstract class IGEventable {
             return;
         }
         Effects.Add(effect);
-        if(effect.IsSpecial) {
+
+        cbEffectChange?.Invoke(this, effect, true);
+        if (effect.IsSpecial) {
             ExecuteSpecialEffect(effect);
         } else {
             if (VariablenameToFloat == null)
@@ -114,9 +120,12 @@ public abstract class IGEventable {
     }
 
     public virtual void RemoveEffect(Effect effect) {
-        if (Effects.Contains(effect) == false) {
+        if (Effects.Find(e => e.ID == effect.ID) == null) {
             return;
         }
+        Effects.RemoveAll(e => e.ID == effect.ID);
+        cbEffectChange?.Invoke(this, effect, false);
+
         if (effect.IsSpecial) {
             RemoveSpecialEffect(effect);
         }
@@ -170,5 +179,10 @@ public abstract class IGEventable {
     protected virtual void RemoveSpecialEffect(Effect effect) {
         Debug.LogError("Not implemented Remove Special Effect " + effect.ID + " for this object: " + this.ToString());
     }
-
+    public void RegisterOnEffectChangedCallback(Action<IGEventable, Effect, bool> cb) {
+        cbEffectChange += cb;
+    }
+    public void UnregisterOnEffectChangedCallback(Action<IGEventable, Effect, bool> cb) {
+        cbEffectChange -= cb;
+    }
 }

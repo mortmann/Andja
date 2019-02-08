@@ -36,8 +36,10 @@ public class HomeStructure : TargetStructure {
     public List<NeedGroup> NeedGroups;
     public int PreviouseMaxLivingSpaces { get { return HomeData.previouseMaxLivingSpaces; } }
     public int MaxLivingSpaces { get { return HomeData.maxLivingSpaces; } }
-    public float IncreaseTime { get { return HomeData.increaseTime; } }
-    public float DecreaseTime { get { return HomeData.decreaseTime; } }
+
+    public float IncreaseTime { get { return CalculateRealValue("IncreaseTime", HomeData.increaseTime); } }
+    public float DecreaseTime { get { return CalculateRealValue("decreaseTime", HomeData.decreaseTime); } }
+
     public bool CanUpgrade => MaxLivingSpaces == people // is full
                             && currentMood == CitizienMoods.Happy // still wants more people
                             && IsMaxLevel() // if there is smth to be upgraded to
@@ -166,7 +168,7 @@ public class HomeStructure : TargetStructure {
             DowngradeHouse();
     }
     public void OnTStructureChange(Structure now, Structure old) {
-        if (old is Road == false || now is Road == false) {
+        if (old is RoadStructure == false || now is RoadStructure == false) {
             return;
         }
     }

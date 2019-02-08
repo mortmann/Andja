@@ -18,7 +18,8 @@ public class FarmStructure : OutputStructure {
     #region RuntimeOrOther
 
     public GrowableStructure Growable { get { return FarmData.growable; } }
-    public int NeededHarvestForProduce { get { return FarmData.neededHarvestToProduce; } }
+
+    public int NeededHarvestForProduce { get { return CalculateRealValue("neededHarvestToProduce", FarmData.neededHarvestToProduce); } }
 
     public int growableReadyCount;
     public int OnRegisterCallbacks;
@@ -35,7 +36,7 @@ public class FarmStructure : OutputStructure {
     }
     #endregion
 
-    public override float Efficiency {
+    public override float EfficiencyPercent {
         get {
             return Mathf.Round(((float)OnRegisterCallbacks / (float)myRangeTiles.Count) * 1000) / 10f;
         }
@@ -152,7 +153,7 @@ public class FarmStructure : OutputStructure {
         }
     }
     public override object GetExtraBuildUIData() {
-        return Efficiency;
+        return EfficiencyPercent;
     }
     public override void UpdateExtraBuildUI(GameObject parent, Tile t) {
         //FIXME

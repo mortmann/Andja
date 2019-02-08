@@ -23,10 +23,13 @@ public class Ship : Unit {
         get { if (_cannonItem == null) { _cannonItem = ShipData.cannonType.CloneWithCount(); } return _cannonItem; }
     }
     protected ShipPrototypeData _shipPrototypData;
-    public int MaximumAmountOfCannons => ShipData.maximumAmountOfCannons;
+
+    public int DamagePerCannon => CalculateRealValue("damagePerCannon", ShipData.damagePerCannon);
+    public int MaximumAmountOfCannons => CalculateRealValue("maximumAmountOfCannons", ShipData.maximumAmountOfCannons);
+    public override float CurrentDamage => CalculateRealValue("CurrentDamage", DamagePerCannon);
+    public override float MaximumDamage => CalculateRealValue("MaximumDamage", MaximumAmountOfCannons * DamagePerCannon);
+
     public override bool IsShip => true;
-    public override float CurrentDamage => CannonItem.count * ShipData.damagePerCannon;
-    public override float MaximumDamage => ShipData.maximumAmountOfCannons * ShipData.damagePerCannon;
 
     public ShipPrototypeData ShipData {
         get {
@@ -64,10 +67,10 @@ public class Ship : Unit {
 
     public override void DoAttack(float deltaTime) {
         if (CurrentTarget != null) {
-            if (attackTimer > 0) {
+            if (attackCooldownTimer > 0) {
                 return;
             }
-            attackTimer = AttackRate;
+            attackCooldownTimer = AttackRate;
             for (int i = 0; i < CannonItem.count; i++) {
                 cbCreateProjectile?.Invoke(new Projectile(this, CurrentTarget));
             }

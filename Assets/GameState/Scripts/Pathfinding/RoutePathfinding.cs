@@ -58,15 +58,15 @@ public class RoutePathfinding : Pathfinding {
         List<Route> checkedRoutes = new List<Route>();
         IsAtDestination = false;
         foreach (Tile st in startTiles) {
-            if (st.Structure == null || st.Structure.GetType() != typeof(Road)) {
+            if (st.Structure == null || st.Structure.GetType() != typeof(RoadStructure)) {
                 continue;
             }
-            Road r1 = st.Structure as Road;
+            RoadStructure r1 = st.Structure as RoadStructure;
             foreach (Tile et in endTiles) {
-                if (et.Structure.GetType() != typeof(Road)) {
+                if (et.Structure.GetType() != typeof(RoadStructure)) {
                     continue;
                 }
-                Road r2 = et.Structure as Road;
+                RoadStructure r2 = et.Structure as RoadStructure;
                 if (r1.Route != r2.Route) {
                     continue;
                 }

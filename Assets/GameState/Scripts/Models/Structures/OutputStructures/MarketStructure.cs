@@ -21,7 +21,7 @@ public class MarketStructure : OutputStructure, ICapturable {
     public List<Structure> RegisteredSturctures;
     public List<Structure> OutputMarkedSturctures;
 
-    public float TakeOverStartGoal { get { return MarketData.takeOverStartGoal; } }
+    public float TakeOverStartGoal { get { return CalculateRealValue("TakeOverStartGoal", MarketData.takeOverStartGoal); } }
 
     protected MarketPrototypData _marketData;
     public MarketPrototypData MarketData {
@@ -163,8 +163,8 @@ public class MarketStructure : OutputStructure, ICapturable {
             if (myRoutes == null || myRoutes.Count == 0)
                 return;
             if (neighbourTiles.Contains(structure.myStructureTiles[0])) {
-                if (myRoutes.Contains(((Road)structure).Route) == false) {
-                    myRoutes.Add(((Road)structure).Route);
+                if (myRoutes.Contains(((RoadStructure)structure).Route) == false) {
+                    myRoutes.Add(((RoadStructure)structure).Route);
                 }
             }
             for (int i = 0; i < OutputMarkedSturctures.Count; i++) {

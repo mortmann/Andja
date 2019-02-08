@@ -64,8 +64,8 @@ public class StructureSpriteController : MonoBehaviour {
         SpriteRenderer sr = go.AddComponent<SpriteRenderer>();
         sr.sortingLayerName = "Structures";
         structureGameObjectMap.Add(structure, go);
-        if (structure is Road) {
-            ((Road)structure).RegisterOnRoadCallback(OnRoadChange);
+        if (structure is RoadStructure) {
+            ((RoadStructure)structure).RegisterOnRoadCallback(OnRoadChange);
             GameObject gos = new GameObject();
             TextMesh text = gos.AddComponent<TextMesh>();
             text.characterSize = 0.1f;
@@ -74,7 +74,7 @@ public class StructureSpriteController : MonoBehaviour {
             gos.transform.SetParent(go.transform);
             gos.transform.localPosition = Vector3.zero;
             gos.GetComponent<MeshRenderer>().sortingLayerName = "StructuresUI";
-            if (((Road)structure).Route != null) {
+            if (((RoadStructure)structure).Route != null) {
                 //				text.text = ((Road)structure).Route.toString ();
             }
             Font ArialFont = (Font)Resources.GetBuiltinResource(typeof(Font), "Arial.ttf");
@@ -209,7 +209,7 @@ public class StructureSpriteController : MonoBehaviour {
         structureGameObjectMap.Remove(structure);
     }
 
-    public void OnRoadChange(Road road) {
+    public void OnRoadChange(RoadStructure road) {
         Structure s = road;
         SetSpriteRendererStructureSprite(structureGameObjectMap[s], s);
         if (road.Route != null) {

@@ -136,7 +136,7 @@ public abstract class Structure : IGEventable {
     }
     [JsonPropertyAttribute] public int rotated = 0;
     [JsonPropertyAttribute] public bool buildInWilderniss = false;
-    [JsonPropertyAttribute] public bool isActive = true;
+    [JsonPropertyAttribute] protected bool isActive = true;
     #endregion
     #region RuntimeOrOther
     public List<Tile> myStructureTiles;
@@ -188,9 +188,10 @@ public abstract class Structure : IGEventable {
     #region EffectVariables
     public float MaxHealth { get { return CalculateRealValue("maxHealth", Data.maxHealth); } }
     public int MaintenanceCost { get { return CalculateRealValue("maintenancecost", Data.maintenanceCost); } }
+    public int StructureRange { get { return CalculateRealValue("structureRange", Data.structureRange); } } 
+
     #endregion
 
-    public int StructureRange { get { return Data.structureRange; } }
     public int PopulationLevel { get { return Data.populationLevel; } }
     public int PopulationCount { get { return Data.populationCount; } }
     public int StructureLevel { get { return Data.structureLevel; } }
@@ -237,6 +238,8 @@ public abstract class Structure : IGEventable {
     #endregion
     #endregion
     #region Properties 
+    public virtual bool IsActiveAndWorking => isActive;
+
     public Vector2 MiddleVector { get { return new Vector2(BuildTile.X + (float)TileWidth / 2f, BuildTile.Y + (float)TileHeight / 2f); } }
     public string SmallName { get { return SpriteName.ToLower(); } }
     public City City {
@@ -263,6 +266,7 @@ public abstract class Structure : IGEventable {
             _health = value;
         }
     }
+    public bool NeedsRepair => Health < MaxHealth;
     public int TileWidth {
         get {
             if (rotated == 0 || rotated == 180) {
@@ -518,13 +522,20 @@ public abstract class Structure : IGEventable {
         foreach (Tile item in myStructureTiles) {
             foreach (Tile n in item.GetNeighbours()) {
                 if (n.Structure != null) {
-                    if (n.Structure is Road) {
+                    if (n.Structure is RoadStructure) {
                         roads.Add(n);
                     }
                 }
             }
         }
         return roads;
+    }
+    public HashSet<Route> GetRoutes() {
+        HashSet<Route> r = new HashSet<Route>();
+        foreach(Tile t in RoadsAroundStructure()) {
+            r.Add(((RoadStructure)t.Structure).Route);
+        }
+        return r;
     }
     #endregion
     #region other
@@ -556,6 +567,14 @@ public abstract class Structure : IGEventable {
         //TODO: add here for getting res back 
         City.RemoveStructure(this);
         cbStructureDestroy?.Invoke(this);
+    }
+    public bool CanReachStructure(Structure s) {
+        HashSet<Route> otherRoutes = s.GetRoutes();
+        foreach (Route route in GetRoutes()) {
+            if (otherRoutes.Contains(route))
+                return true;
+        }
+        return false;
     }
     #endregion
     #region correctspot
@@ -692,6 +711,10 @@ public abstract class Structure : IGEventable {
             return SpriteName + "@error";
         }
         return SpriteName + "@ X=" + BuildTile.X + " Y=" + BuildTile.Y;
+    }
+
+    internal void Repair(float amount) {
+        throw new NotImplementedException();
     }
     #endregion
 

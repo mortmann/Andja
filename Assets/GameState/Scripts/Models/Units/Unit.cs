@@ -18,13 +18,13 @@ public class UnitPrototypeData : LanguageVariables {
     public Item[] buildingItems;
     public string spriteBaseName;
     public float buildTime = 1f;
-    public float MaxHealth;
+    public float maximumHealth;
     public float attackRange = 1f;
     public float damage = 10;
-    public float attackCooldown = 1;
     public float attackRate = 1;
     public float speed;
     public float rotationSpeed = 2f;
+    public float aggroTime = 2f;
 
     public float width;
     public float height;
@@ -44,14 +44,14 @@ public class Unit : IGEventable,IWarfare {
     [JsonPropertyAttribute] protected string _UserSetName;
     [JsonPropertyAttribute] protected float _currHealth;
 
-    [JsonPropertyAttribute] float aggroCooldown = 1f;
+    [JsonPropertyAttribute] float aggroCooldownTimer = 1f;
 
     [JsonPropertyAttribute] public RotatingList<Vector2> PatrolPositions;
 
     [JsonPropertyAttribute] Queue<Command> queuedCommands;
 
     [JsonPropertyAttribute] public float tradeTime = 1.5f;
-
+    [JsonPropertyAttribute] public float attackCooldownTimer = 1;
     [JsonPropertyAttribute] public Pathfinding pathfinding;
     [JsonPropertyAttribute] public Inventory inventory;
     [JsonPropertyAttribute] public UnitDoModes CurrentDoingMode = UnitDoModes.Idle;
@@ -124,20 +124,23 @@ public class Unit : IGEventable,IWarfare {
     #endregion
     //gets from prototyp / being loaded in from masterfile
     #region prototype
-    float aggroTimer = 1f;
-    public float attackTimer = 1;
 
-    public float AttackRange => Data.attackRange;
-    public float Damage => Data.damage;
-    public float MaxHealth => Data.MaxHealth;
-    public float AttackRate => Data.attackRange;
-    public float Speed => Data.speed;
-    public float RotationSpeed => Data.rotationSpeed;
+    public float AttackRange => CalculateRealValue("attackRange", Data.attackRange);
+    public float Damage => CalculateRealValue("damage", Data.damage);
+    public float MaxHealth => CalculateRealValue("maximumHealth", Data.maximumHealth);
+    public float AttackRate => CalculateRealValue("attackRange", Data.attackRange);
+    public float Speed => CalculateRealValue("speed", Data.speed);
+    public float RotationSpeed => CalculateRealValue("rotationSpeed", Data.rotationSpeed);
+    public int InventoryPlaces => CalculateRealValue("inventoryPlaces", Data.inventoryPlaces); //UNTESTED HOW THIS WILL WORK
+    public int InventorySize => CalculateRealValue("inventorySize", Data.inventorySize); //UNTESTED HOW THIS WILL WORK
+    public float AggroTime => CalculateRealValue("aggroTime", Data.aggroTime); //UNTESTED HOW THIS WILL WORK
+    public int MaintenanceCost => CalculateRealValue("maintenancecost", Data.maintenancecost); //UNTESTED HOW THIS WILL WORK
+
+
+    public virtual bool IsShip => false;
+
     public float BuildTime => Data.buildTime;
     public int BuildCost => Data.buildcost;
-    public int InventoryPlaces => Data.inventoryPlaces;
-    public int InventorySize => Data.inventorySize;
-    public virtual bool IsShip => false;
 
     public virtual Unit Clone(int playerNumber, Tile t) {
         return new Unit(this, playerNumber, t);
@@ -165,10 +168,13 @@ public class Unit : IGEventable,IWarfare {
     public Vector2 LastMovement => pathfinding.LastMove;
 
     public int PlayerNumber => playerNumber;
-    public float MaximumHealth => Data.MaxHealth;
+
+    public float MaximumHealth { get { return CalculateRealValue("maximumHealth", Data.maximumHealth); } }
+    public virtual float CurrentDamage => CalculateRealValue("CurrentDamage", Data.damage);
+    public virtual float MaximumDamage => CalculateRealValue("MaximumDamage", Data.damage);
+
     public float CurrentHealth => _currHealth;
-    public virtual float CurrentDamage => Damage;
-    public virtual float MaximumDamage => Damage;
+    
     public DamageType MyDamageType => Data.myDamageType;
     public ArmorType MyArmorType => Data.myArmorType;
     public bool IsDestroyed => IsDead;
@@ -284,11 +290,11 @@ public class Unit : IGEventable,IWarfare {
         if (CurrentTarget != null) {
             return;
         }
-        aggroTimer -= deltaTime;
-        if (aggroTimer > 0) {
+        aggroCooldownTimer -= deltaTime;
+        if (aggroCooldownTimer > 0) {
             return;
         }
-        aggroTimer = aggroCooldown;
+        aggroCooldownTimer = AggroTime;
 
         Collider2D[] c2d = Physics2D.OverlapCircleAll(new Vector2(X, Y), Data.attackRange * 2);
         foreach (var item in c2d) {
@@ -398,7 +404,7 @@ public class Unit : IGEventable,IWarfare {
             return false;
         }
         DoAttack(deltaTime);
-        attackTimer -= deltaTime;
+        attackCooldownTimer -= deltaTime;
         return true;
     }
     public bool UpdateCapture(float deltaTime) {
@@ -426,10 +432,10 @@ public class Unit : IGEventable,IWarfare {
     }
     public virtual void DoAttack(float deltaTime) {
         if (CurrentTarget != null) {
-            if (attackTimer > 0) {
+            if (attackCooldownTimer > 0) {
                 return;
             }
-            attackTimer = AttackRate;
+            attackCooldownTimer = AttackRate;
             CurrentTarget.TakeDamageFrom(this);
         }
     }

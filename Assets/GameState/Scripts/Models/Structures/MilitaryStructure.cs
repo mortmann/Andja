@@ -17,8 +17,10 @@ public class MilitaryStructure : TargetStructure, IWarfare {
     List<Tile> toPlaceUnitTiles;
     public float ProgressPercentage => CurrentlyBuildingUnit != null ? buildTimer / CurrentlyBuildingUnit.BuildTime : 0;
     public Unit[] CanBeBuildUnits => MilitaryStructureData.canBeBuildUnits;
-    public float BuildTimeModifier => MilitaryStructureData.buildTimeModifier;
-    public int BuildQueueLength => MilitaryStructureData.buildQueueLength;
+
+    public float BuildTimeModifier { get { return CalculateRealValue("buildTimeModifier", MilitaryStructureData.buildTimeModifier); } }
+    public int BuildQueueLength { get { return CalculateRealValue("buildQueueLength", MilitaryStructureData.buildQueueLength); } }
+
     public Unit CurrentlyBuildingUnit => toBuildUnits.Count > 0 ? toBuildUnits.Peek() : null;
 
     protected MilitaryStructurePrototypeData _militaryStructureData;

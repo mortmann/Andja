@@ -1,6 +1,6 @@
 <units>
    <unit ID="0">
-      <maxHealth>100.0</maxHealth>
+      <maximumHealth>100.0</maximumHealth>
       <populationLevel>0</populationLevel>
       <populationCount>0</populationCount>
       <inventoryPlaces>0</inventoryPlaces>
@@ -28,7 +28,7 @@
       <spriteBaseName>basicunit</spriteBaseName>
    </unit>
    <ship ID="1">
-      <maxHealth>1250.0</maxHealth>
+      <maximumHealth>1250.0</maximumHealth>
       <populationLevel>0</populationLevel>
       <populationCount>0</populationCount>
       <inventoryPlaces>6</inventoryPlaces>

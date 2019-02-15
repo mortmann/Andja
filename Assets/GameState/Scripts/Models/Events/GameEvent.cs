@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 using System;
+using Newtonsoft.Json;
 
 public class GameEventPrototypData : LanguageVariables {
     public int ID = -1;
@@ -11,11 +12,25 @@ public class GameEventPrototypData : LanguageVariables {
     public float minRange = 50;
     public float maxRange = 100;
     public Effect[] effects;
+    public Dictionary<Target, List<int>> specialRange;
 
 }
 
-
+[JsonObject(MemberSerialization.OptIn)]
 public class GameEvent {
+    [JsonPropertyAttribute] public int ID;
+
+    protected GameEventPrototypData _PrototypData;
+    public GameEventPrototypData PrototypData {
+        get {
+            if (_PrototypData == null) {
+                _PrototypData = (GameEventPrototypData)PrototypController.Instance.GetGameEventPrototypDataForID(ID);
+            }
+            return _PrototypData;
+        }
+    }
+    public Dictionary<Target, List<int>> SpecialRange => PrototypData.specialRange;
+
     public EventType EventType { protected set; get; }
 
     public Effect[] _Effects { protected set; get; }
@@ -29,25 +44,23 @@ public class GameEvent {
         }
         get { return _Effects; }
     }
-
-    TargetGroup Targeted;
-
+    public float Probability => PrototypData.probability;
+    public float MinDuration => PrototypData.minDuration;
+    public float MaxDuration => PrototypData.maxDuration;
     public bool IsDone { get { return currentDuration <= 0; } }
-    public bool IsOneTime { get { return maxDuration <= 0; } }
-    public int id;
+    public bool IsOneTime { get { return MaxDuration <= 0; } }
     public string Name { get { return EventType.ToString() + " - " + "EMPTY FOR NOW"; } }
-    public float probability = 10;
-    float minDuration = 50;
-    float maxDuration = 100;
-    float currentDuration;
+
+    [JsonPropertyAttribute] TargetGroup Targeted;
+    [JsonPropertyAttribute] public float currentDuration;
     //MAYBE range can also be a little random...?
     //around this as middle? Range+(-1^RandomInt(1,2)*Random(0,(Random(2,3)*Range)/(Range*Random(0.75,1)));
-    float Range;
-    public Vector2 position;
+    [JsonPropertyAttribute] public float range;
+    [JsonPropertyAttribute] public Vector2 position;
     // this one says what it is... 
     // so if complete island/city/player or only a single structuretype is the goal
     // can be null if its not set to which type
-    public IGEventable target;  //TODO make a check for it!
+    [JsonPropertyAttribute] public IGEventable target;  //TODO make a check for it!
 
     /// <summary>
     /// Needed for Serializing
@@ -58,9 +71,6 @@ public class GameEvent {
 
     public GameEvent(GameEvent ge) {
         this.Effects = ge.Effects;
-        this.maxDuration = ge.maxDuration;
-        this.minDuration = ge.minDuration;
-        this.Range = ge.Range;
     }
     public GameEvent Clone() {
         return new GameEvent(this);
@@ -84,9 +94,9 @@ public class GameEvent {
     float WeightedRandomDuration(int numDice = 5) {
         float num = 0;
         for (var i = 0; i < numDice; i++) {
-            num += UnityEngine.Random.Range(0, 1.1f) * ((maxDuration - minDuration) / numDice);
+            num += UnityEngine.Random.Range(0, 1.1f) * ((MaxDuration - MinDuration) / numDice);
         }
-        num += minDuration;
+        num += MinDuration;
         return num;
     }
     public bool HasWorldEffect() {
@@ -113,16 +123,8 @@ public class GameEvent {
             }
             else
             //needs to be tested if works if not every city/island needs identification
-            if (target is Island) {
-                if (target != t) {
-                    return false;
-                }
-            }
-            else
-            if (target is City) {
-                if (target != t) {
-                    return false;
-                }
+            if (target != t) {
+                return false;
             }
         }
         //if we are here the IGEventable t is in "range"(specified target eg island andso)
@@ -130,6 +132,15 @@ public class GameEvent {
         //is there an influence targeting t ?
         if (Targeted.IsTargeted(t.TargetGroups) == false) {
             return false;
+        }
+        if(SpecialRange != null) {
+            foreach (Target target in t.TargetGroups.Targets) {
+                if (SpecialRange.ContainsKey(target)) {
+                    if(SpecialRange[target].Contains(t.GetID()) == false) {
+                        return false;
+                    }
+                }
+            }
         }
         return true;
     }

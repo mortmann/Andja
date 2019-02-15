@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 
 public enum Target {
     World, Player, AllUnit, Ship, LandUnit, Island, City, AllStructure, RoadStructure, NeedStructure, MilitaryStructure, HomeStructure,
@@ -14,7 +15,7 @@ public abstract class IGEventable {
     /// For integer and float modifier
     /// </summary>
     protected Dictionary<string, float> VariablenameToFloat;
-    protected List<Effect> Effects;
+    [JsonPropertyAttribute] protected List<Effect> Effects;
     
     /// <summary>
     /// Target, Effect, added=true removed=false 
@@ -30,6 +31,9 @@ public abstract class IGEventable {
             return _targetGroup;
         }
     }
+
+    public virtual int GetID() { return 0; } // only needs to get changed WHEN there is diffrent ids
+
     /// <summary>
     /// TODO: think about ways to make it better
     /// 
@@ -103,7 +107,6 @@ public abstract class IGEventable {
             return;
         }
         Effects.Add(effect);
-
         cbEffectChange?.Invoke(this, effect, true);
         if (effect.IsSpecial) {
             ExecuteSpecialEffect(effect);

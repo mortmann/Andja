@@ -470,6 +470,7 @@ public abstract class Structure : IGEventable {
     public override int GetPlayerNumber() {
         return PlayerNumber;
     }
+    public override int GetID() { return ID; } // only needs to get changed WHEN there is diffrent ids
     #endregion
     #region List<Tile>
     public List<Tile> GetBuildingTiles(float x, float y, bool ignoreRotation = false) {

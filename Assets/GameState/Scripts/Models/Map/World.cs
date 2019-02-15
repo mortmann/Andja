@@ -101,6 +101,7 @@ public class World : IGEventable {
         Width = width;
         Height = height;
         foreach (Unit u in Units) {
+            u.Load();
             u.RegisterOnDestroyCallback(OnUnitDestroy);
         }
     }
@@ -324,14 +325,14 @@ public class World : IGEventable {
     #endregion
     #region igeventable
     public override void OnEventCreate(GameEvent ge) {
-        if (ge.HasWorldEffect() == false) {
-            return;
+        if (ge.HasWorldEffect()) {
+             
         }
         cbEventCreated?.Invoke(ge);
     }
     public override void OnEventEnded(GameEvent ge) {
-        if (ge.HasWorldEffect() == false) {
-            return;
+        if (ge.HasWorldEffect()) {
+            
         }
         cbEventEnded?.Invoke(ge);
     }

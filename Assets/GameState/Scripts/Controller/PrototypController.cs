@@ -21,6 +21,8 @@ public class PrototypController : MonoBehaviour {
 
     public Dictionary<int, StructurePrototypeData> structurePrototypeDatas;
     public Dictionary<int, ItemPrototypeData> itemPrototypeDatas;
+
+
     public Dictionary<int, NeedPrototypeData> needPrototypeDatas;
     public Dictionary<int, FertilityPrototypeData> fertilityPrototypeDatas;
     public Dictionary<int, UnitPrototypeData> unitPrototypeDatas;
@@ -132,6 +134,9 @@ public class PrototypController : MonoBehaviour {
     }
     internal NeedGroupPrototypData GetNeedGroupPrototypDataForID(int ID) {
         return needGroupDatas[ID];
+    }
+    internal GameEventPrototypData GetGameEventPrototypDataForID(int ID) {
+        return gameEventPrototypeDatas[ID];
     }
     internal List<NeedGroup> GetNeedPrototypDataForLevel(int level) {
         return populationLevelToNeedGroup[level];
@@ -494,7 +499,7 @@ public class PrototypController : MonoBehaviour {
             int ID = int.Parse(node.GetAttribute("ID"));
 
             GrowablePrototypeData gpd = new GrowablePrototypeData {
-                //THESE are fix and are not changed for any growable
+                //THESE are fix and should not be changed for any growable
                 forMarketplace = false,
                 maxNumberOfWorker = 0,
                 tileWidth = 1,
@@ -684,68 +689,68 @@ public class PrototypController : MonoBehaviour {
             langs.Add(f.Name);
         }
         foreach (FieldInfo fi in fields) {
-            XmlNode n = node.SelectSingleNode(fi.Name);
+            XmlNode currentNode = node.SelectSingleNode(fi.Name);
             if (langs.Contains(fi.Name)) {
-                if (n == null) {
+                if (currentNode == null) {
                     //TODO activate this warning when all data is correctly created
                     //				Debug.LogWarning (fi.Name + " selected language not avaible!");
                     continue;
                 }
-                XmlNode textNode = n.SelectSingleNode("entry[@lang='" + UILanguageController.selectedLanguage.ToString() + "']");
+                XmlNode textNode = currentNode.SelectSingleNode("entry[@lang='" + UILanguageController.selectedLanguage.ToString() + "']");
 
                 if (textNode != null) {
                     fi.SetValue(data, Convert.ChangeType(textNode.InnerXml, fi.FieldType));
                 }
                 continue;
             }
-            if (n != null) {
+            if (currentNode != null) {
                 if (fi.FieldType == typeof(Item)) {
-                    fi.SetValue(data, NodeToItem(n));
+                    fi.SetValue(data, NodeToItem(currentNode));
                     continue;
                 }
                 if (fi.FieldType == typeof(Item[])) {
                     List<Item> items = new List<Item>();
-                    foreach (XmlNode item in n.ChildNodes) {
+                    foreach (XmlNode item in currentNode.ChildNodes) {
                         items.Add(NodeToItem(item));
                     }
                     fi.SetValue(data, items.ToArray());
                     continue;
                 }
                 if (fi.FieldType.IsSubclassOf(typeof(Structure))) {
-                    fi.SetValue(data, NodeToStructure(n));
+                    fi.SetValue(data, NodeToStructure(currentNode));
                     continue;
                 }
                 if (fi.FieldType.IsSubclassOf(typeof(Structure[])) || fi.FieldType == (typeof(Structure[]))) {
                     List<Structure> items = new List<Structure>();
-                    foreach (XmlNode item in n.ChildNodes) {
+                    foreach (XmlNode item in currentNode.ChildNodes) {
                         items.Add(NodeToStructure(item));
                     }
                     fi.SetValue(data, items.ToArray());
                     continue;
                 }
                 if (fi.FieldType == typeof(NeedGroupPrototypData)) {
-                    fi.SetValue(data, NodeToNeedGroupPrototypData(n));
+                    fi.SetValue(data, NodeToNeedGroupPrototypData(currentNode));
                     continue;
                 }
                 if (fi.FieldType == typeof(ArmorType)) {
-                    fi.SetValue(data, NodeToArmorType(n));
+                    fi.SetValue(data, NodeToArmorType(currentNode));
                     continue;
                 }
                 if (fi.FieldType == typeof(DamageType)) {
-                    fi.SetValue(data, NodeToDamageType(n));
+                    fi.SetValue(data, NodeToDamageType(currentNode));
                     continue;
                 }
                 if (fi.FieldType == typeof(Fertility)) {
-                    fi.SetValue(data, NodeToFertility(n));
+                    fi.SetValue(data, NodeToFertility(currentNode));
                     continue;
                 }
                 if (fi.FieldType.IsSubclassOf(typeof(Unit))) {
-                    fi.SetValue(data, NodeToUnit(n));
+                    fi.SetValue(data, NodeToUnit(currentNode));
                     continue;
                 }
                 if (fi.FieldType.IsSubclassOf(typeof(Unit[])) || fi.FieldType == (typeof(Unit[]))) {
                     List<Unit> items = new List<Unit>();
-                    foreach (XmlNode item in n.ChildNodes) {
+                    foreach (XmlNode item in currentNode.ChildNodes) {
                         items.Add(NodeToUnit(item));
                     }
                     fi.SetValue(data, items.ToArray());
@@ -753,7 +758,7 @@ public class PrototypController : MonoBehaviour {
                 }
                 if (fi.FieldType == (typeof(Effect[]))) {
                     List<Effect> items = new List<Effect>();
-                    foreach (XmlNode item in n.ChildNodes) {
+                    foreach (XmlNode item in currentNode.ChildNodes) {
                         items.Add(NodeToEffect(item));
                     }
                     fi.SetValue(data, items.ToArray());
@@ -761,7 +766,7 @@ public class PrototypController : MonoBehaviour {
                 }
                 if (fi.FieldType == (typeof(float[]))) {
                     List<float> items = new List<float>();
-                    foreach (XmlNode item in n.ChildNodes) {
+                    foreach (XmlNode item in currentNode.ChildNodes) {
                         int id = int.Parse(item.Attributes[0].InnerXml);
                         items.Insert(id, float.Parse(item.InnerXml));
                     }
@@ -769,17 +774,15 @@ public class PrototypController : MonoBehaviour {
                     continue;
                 }
                 if (fi.FieldType.IsEnum) {
-                    fi.SetValue(data, Enum.Parse(fi.FieldType, n.InnerXml, true));
+                    fi.SetValue(data, Enum.Parse(fi.FieldType, currentNode.InnerXml, true));
                     continue;
                 }
                 if (fi.FieldType.IsArray && fi.FieldType.GetElementType().IsEnum) {
                     var listType = typeof(List<>);
                     var constructedListType = listType.MakeGenericType(fi.FieldType.GetElementType());
-
                     var list = (IList)Activator.CreateInstance(constructedListType);
-
                     int i = 0;
-                    foreach (XmlNode item in n.ChildNodes) {
+                    foreach (XmlNode item in currentNode.ChildNodes) {
                         if (item.Name != fi.FieldType.GetElementType().ToString()) {
                             continue;
                         }
@@ -795,8 +798,35 @@ public class PrototypController : MonoBehaviour {
                     // this will get set in load xml directly and not here!
                     continue;
                 }
+                if (fi.FieldType == typeof(Dictionary<Target, List<int>>)) {
+                    Dictionary<Target, List<int>> range = new Dictionary<Target, List<int>>();
+                    foreach (XmlNode child in currentNode.ChildNodes) {
+                        Target target = Target.World;
+                        Enum.TryParse<Target>(currentNode.InnerXml, true, out target);
+                        if (target == Target.World)
+                            continue;
+                        range.Add(target, new List<int>());
+                        foreach (XmlNode childChild in currentNode.ChildNodes) {
+                            int id = -1;
+                            int.TryParse(childChild.InnerXml, out id);
+                            if (id == -1)
+                                continue;
+                            range[target].Add(id);
+                        }
+                    }
+                    //clean up empty target groups
+                    List<Target> targets = new List<Target>(range.Keys);
+                    foreach(Target t in targets) {
+                        if (range[t].Count == 0)
+                            targets.Remove(t);
+                    }
+                    //only if it has stuff we need to set it
+                    if(range.Count > 0)
+                        fi.SetValue(data, range);
+                    continue;
+                }
                 try {
-                    fi.SetValue(data, Convert.ChangeType(n.InnerXml, fi.FieldType, System.Globalization.CultureInfo.InvariantCulture));
+                    fi.SetValue(data, Convert.ChangeType(currentNode.InnerXml, fi.FieldType, System.Globalization.CultureInfo.InvariantCulture));
                 }
                 catch {
                     Debug.Log(fi.Name + " is faulty!");

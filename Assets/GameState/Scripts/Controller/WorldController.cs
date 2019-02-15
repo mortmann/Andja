@@ -30,6 +30,7 @@ public class WorldController : MonoBehaviour {
     public bool IsModal; // If true, a modal dialog box is open so normal inputs should be ignored.
 
     public bool isLoaded = true;
+
     // Use this for initialization
     void OnEnable() {
         Debug.Log("Intializing World Controller");
@@ -39,7 +40,7 @@ public class WorldController : MonoBehaviour {
         else {
             Instance = this;
         }
-
+        EventController.Instance.RegisterOnEvent(OnEventCreated, OnEventEnded);
     }
 
     public void SetGeneratedWorld(World world, Dictionary<Tile, Structure> tileToStructure) {
@@ -50,9 +51,13 @@ public class WorldController : MonoBehaviour {
         offworldMarket = new OffworldMarket();
     }
 
-    void OnDestroy() {
-        Instance = null;
+    protected void OnEventCreated(GameEvent ge) {
+        World.OnEventCreate(ge);
     }
+    protected void OnEventEnded(GameEvent ge) {
+        World.OnEventEnded(ge);
+    }
+    
     // Update is called once per frame
     void Update() {
         if (World == null || IsPaused) {
@@ -101,6 +106,11 @@ public class WorldController : MonoBehaviour {
                 break;
         }
     }
+
+    void OnDestroy() {
+        Instance = null;
+    }
+
     ///
     ///
     /// ONLY SAVE/LOAD SUFF UNDERNEATH HERE

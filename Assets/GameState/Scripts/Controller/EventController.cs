@@ -192,12 +192,12 @@ public class EventController : MonoBehaviour {
         //TODO move this to the load -> dic<type,sum>
         float sumOfProbability = 0;
         foreach (GameEvent item in ges) {
-            sumOfProbability += item.probability;
+            sumOfProbability += item.Probability;
         }
         float randomNumber = UnityEngine.Random.Range(0, sumOfProbability);
         float sum = 0;
         foreach (GameEvent item in ges) {
-            sum += item.probability;
+            sum += item.Probability;
             if (sum <= randomNumber) {
                 return item.Clone();
             }
@@ -268,6 +268,7 @@ public class EventController : MonoBehaviour {
         cbEventCreated += create;
         cbEventEnded += ending;
     }
+
     void OnDestroy() {
         Instance = null;
     }

@@ -51,8 +51,5 @@ public class Effect {
     public Effect(int ID) {
         this.ID = ID;
     }
-    public void ApplyEffect(IGEventable target) {
-        
-    }
 
 }

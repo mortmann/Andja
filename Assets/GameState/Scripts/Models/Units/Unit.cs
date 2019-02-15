@@ -112,6 +112,15 @@ public class Unit : IGEventable,IWarfare {
             return pathfinding.rotation;
         }
     }
+
+    internal void Load() {
+        Setup();
+    }
+
+    private void Setup() {
+        World.Current.RegisterOnEvent(OnEventCreate, OnEventEnded);
+    }
+
     public Vector3 VectorPosition {
         get { return new Vector3(X, Y); }
     }
@@ -180,6 +189,7 @@ public class Unit : IGEventable,IWarfare {
     public bool IsDestroyed => IsDead;
 
     public List<Command> QueuedCommands => queuedCommands == null ? null : new List<Command>(queuedCommands);
+    public override int GetID() { return ID; } // only needs to get changed WHEN there is diffrent ids
 
     [JsonConstructor]
     public Unit() {
@@ -200,6 +210,7 @@ public class Unit : IGEventable,IWarfare {
         PlayerSetName = "Unit " + UnityEngine.Random.Range(0, 1000000000);
         pathfinding = new IslandPathfinding(this, t);
         queuedCommands = new Queue<Command>();
+        Setup();
     }
     public virtual void Update(float deltaTime) {
         if (CurrentCommand != null && CurrentCommand.IsFinished) {
@@ -652,10 +663,14 @@ public class Unit : IGEventable,IWarfare {
     }
 
     public override void OnEventCreate(GameEvent ge) {
-        throw new NotImplementedException();
+        if (ge.IsTarget(this)) {
+            ge.EffectTarget(this, true);
+        }
     }
 
     public override void OnEventEnded(GameEvent ge) {
-        throw new NotImplementedException();
+        if (ge.IsTarget(this)) {
+            ge.EffectTarget(this, false);
+        }
     }
 }

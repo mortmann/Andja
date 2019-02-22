@@ -18,6 +18,7 @@ public class HomeStructure : TargetStructure {
     [JsonPropertyAttribute] public int people;
     [JsonPropertyAttribute] public float decTimer;
     [JsonPropertyAttribute] public float incTimer;
+    [JsonPropertyAttribute] public bool isAbandoned;
     #endregion
     #region RuntimeOrOther
     protected HomePrototypeData _homeData;
@@ -46,7 +47,7 @@ public class HomeStructure : TargetStructure {
                             && CanBeUpgraded // set through xml prototype file 
                             && City.HasEnoughOfItems(UpgradeItems) // city has enough items to build
                             && City.GetOwner().HasEnoughMoney(UpgradeCost); // player has enough money
-    public bool isAbandoned;
+    public bool hasIllness;
     #endregion
 
 
@@ -119,6 +120,8 @@ public class HomeStructure : TargetStructure {
     }
 
     public override void Update(float deltaTime) {
+        base.Update(deltaTime);
+
         if (City == null || City.IsWilderness()) {
             //here the people are very unhappy and will leave veryfast
             currentMood = CitizienMoods.Mad;
@@ -141,6 +144,9 @@ public class HomeStructure : TargetStructure {
         else {
             currentMood = CitizienMoods.Mad;
         }
+        if(hasIllness)
+            currentMood = CitizienMoods.Mad;
+
         UpdatePeopleChange(deltaTime);
     }
 
@@ -285,5 +291,14 @@ public class HomeStructure : TargetStructure {
 
     public bool IsMaxLevel() {
         return PrototypController.Instance.GetMaxStructureLevelForStructureType(GetType()) == StructureLevel;
+    }
+
+    protected override void AddSpecialEffect(Effect effect) {
+        base.AddSpecialEffect(effect);
+        
+    }
+    protected override void RemoveSpecialEffect(Effect effect) {
+        base.RemoveSpecialEffect(effect);
+
     }
 }

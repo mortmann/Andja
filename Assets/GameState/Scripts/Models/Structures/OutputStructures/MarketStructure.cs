@@ -53,6 +53,8 @@ public class MarketStructure : OutputStructure, ICapturable {
     }
 
     public override void Update(float deltaTime) {
+        base.Update(deltaTime);
+
         base.Update_Worker(deltaTime);
         if (currentCaptureSpeed > 0) {
             capturedProgress += currentCaptureSpeed * deltaTime;

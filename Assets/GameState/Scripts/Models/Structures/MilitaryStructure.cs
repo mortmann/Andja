@@ -77,6 +77,8 @@ public class MilitaryStructure : TargetStructure, IWarfare {
         toPlaceUnitTiles.Add(tile);
     }
     public override void Update(float deltaTime) {
+        base.Update(deltaTime);
+
         if (CurrentlyBuildingUnit == null) {
             return;
         }

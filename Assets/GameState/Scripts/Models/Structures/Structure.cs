@@ -144,7 +144,7 @@ public abstract class Structure : IGEventable {
     public HashSet<Tile> myRangeTiles;
     public string connectOrientation;
     public bool HasExtraUI { get { return ExtraUITyp != ExtraUI.None; } }
-
+    public bool isBurning = false;
     //player id
     public int PlayerNumber {
         get {
@@ -238,7 +238,7 @@ public abstract class Structure : IGEventable {
     #endregion
     #endregion
     #region Properties 
-    public virtual bool IsActiveAndWorking => isActive;
+    public virtual bool IsActiveAndWorking => isActive && isBurning == false;
 
     public Vector2 MiddleVector { get { return new Vector2(BuildTile.X + (float)TileWidth / 2f, BuildTile.Y + (float)TileHeight / 2f); } }
     public string SmallName { get { return SpriteName.ToLower(); } }
@@ -302,7 +302,14 @@ public abstract class Structure : IGEventable {
     #endregion
     #region Virtual/Abstract
     public abstract Structure Clone();
+    /// <summary>
+    /// IF OVERRIDEN please still call this 
+    /// </summary>
+    /// <param name="deltaTime"></param>
     public virtual void Update(float deltaTime) {
+        if(isBurning) {
+            Health = Effects.fi
+        }
     }
     public abstract void OnBuild();
 
@@ -466,6 +473,20 @@ public abstract class Structure : IGEventable {
         if (ge.IsTarget(this)) {
             OnEventEndedVirtual(ge);
         }
+    }
+    protected override void AddSpecialEffect(Effect effect) {
+        if(effect.NameOfVariable == "isBurning") {
+            if (CanStartBurning == false)
+                return;
+            isBurning = true;
+        }
+        Debug.Log("TEST");
+    }
+    protected override void RemoveSpecialEffect(Effect effect) {
+        if (effect.NameOfVariable == "isBurning") {
+            isBurning = false;
+        }
+        Debug.Log("TEST");
     }
     public override int GetPlayerNumber() {
         return PlayerNumber;

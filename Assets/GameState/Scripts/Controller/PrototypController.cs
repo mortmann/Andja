@@ -5,7 +5,6 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reflection;
 using System.Xml;
-using System.Xml.Serialization;
 using UnityEngine;
 using static Combat;
 
@@ -219,14 +218,20 @@ public class PrototypController : MonoBehaviour {
         Debug.Log("Read in damagetypes: " + damageTypeDatas.Count);
         Debug.Log("Read in armortypes: " + armorTypeDatas.Count);
         Debug.Log("Read in populationLevel: " + populationLevelDatas.Count);
+        Debug.Log("Read in effects: " + effectPrototypeDatas.Count);
+        Debug.Log("Read in gameevents: " + gameEventPrototypeDatas.Count);
 
-    //Set it to default so it doesnt interfer with user interface informations
-    System.Threading.Thread.CurrentThread.CurrentCulture = System.Globalization.CultureInfo.InstalledUICulture;
+        //Set it to default so it doesnt interfer with user interface informations
+        System.Threading.Thread.CurrentThread.CurrentCulture = System.Globalization.CultureInfo.InstalledUICulture;
     }
 
     private void ReadEventsFromXML() {
         XmlDocument xmlDoc = new XmlDocument(); // xmlDoc is the new xml document.
         TextAsset ta = ((TextAsset)Resources.Load("XMLs/events", typeof(TextAsset)));
+        if(ta == null) {
+            Debug.LogError("Missing Events XML File -- This will cause a crash.");
+            return;
+        }
         xmlDoc.LoadXml(ta.text); // load the file.
         foreach (XmlElement node in xmlDoc.SelectNodes("Events/Effect")) {
             EffectPrototypeData epd = new EffectPrototypeData();
@@ -248,7 +253,7 @@ public class PrototypController : MonoBehaviour {
         xmlDoc.LoadXml(ta.text); // load the file.
         foreach (XmlElement node in xmlDoc.SelectNodes("Other/PopulationLevel")) {
             PopulationLevelPrototypData plpd = new PopulationLevelPrototypData();
-            int level = int.Parse(node.GetAttribute("Level"));
+            int level = int.Parse(node.GetAttribute("LEVEL"));
             SetData<PopulationLevelPrototypData>(node, ref plpd);
             plpd.needGroupList = populationLevelToNeedGroup[plpd.LEVEL];
             populationLevelDatas.Add(level, plpd);

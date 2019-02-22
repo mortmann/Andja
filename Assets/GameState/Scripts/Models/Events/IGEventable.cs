@@ -15,6 +15,7 @@ public abstract class IGEventable {
     /// For integer and float modifier
     /// </summary>
     protected Dictionary<string, float> VariablenameToFloat;
+
     [JsonPropertyAttribute] protected List<Effect> Effects;
     
     /// <summary>
@@ -31,7 +32,6 @@ public abstract class IGEventable {
             return _targetGroup;
         }
     }
-
     public virtual int GetID() { return 0; } // only needs to get changed WHEN there is diffrent ids
 
     /// <summary>
@@ -100,7 +100,7 @@ public abstract class IGEventable {
     }
 
     public virtual void AddEffect(Effect effect) {
-        if(TargetGroups.IsTargeted(effect.Targets) == false) {
+        if (TargetGroups.IsTargeted(effect.Targets) == false) {
             return;
         }
         if(effect.IsUnique && HasEffect(effect)) {
@@ -109,7 +109,7 @@ public abstract class IGEventable {
         Effects.Add(effect);
         cbEffectChange?.Invoke(this, effect, true);
         if (effect.IsSpecial) {
-            ExecuteSpecialEffect(effect);
+            AddSpecialEffect(effect);
         } else {
             if (VariablenameToFloat == null)
                 VariablenameToFloat = new Dictionary<string, float>();
@@ -165,18 +165,18 @@ public abstract class IGEventable {
         return Mathf.RoundToInt(CalculateRealValue(name,(float)currentValue,clampToZero));
     }
     private float GetMultiplicative(string name) {
-        if (VariablenameToFloat.ContainsKey(name + EffectModifier.Multiplicative) == false)
+        if (VariablenameToFloat == null || VariablenameToFloat.ContainsKey(name + EffectModifier.Multiplicative) == false)
             return 0f;
         return VariablenameToFloat[name + EffectModifier.Multiplicative];
     }
 
     private float GetAdditiveValue(string name) {
-        if (VariablenameToFloat.ContainsKey(name + EffectModifier.Additive) == false)
+        if (VariablenameToFloat == null || VariablenameToFloat.ContainsKey(name + EffectModifier.Additive) == false)
             return 0f;
         return VariablenameToFloat[name + EffectModifier.Additive];
     }
 
-    protected virtual void ExecuteSpecialEffect(Effect effect) {
+    protected virtual void AddSpecialEffect(Effect effect) {
         Debug.LogError("Not implemented Add Special Effect " + effect.ID + " for this object: " + this.ToString());
     }
     protected virtual void RemoveSpecialEffect(Effect effect) {

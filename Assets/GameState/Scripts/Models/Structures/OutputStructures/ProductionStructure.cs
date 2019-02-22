@@ -115,6 +115,8 @@ public class ProductionStructure : OutputStructure {
     }
 
     public override void Update(float deltaTime) {
+        base.Update(deltaTime);
+
         if (Output == null) {
             return;
         }

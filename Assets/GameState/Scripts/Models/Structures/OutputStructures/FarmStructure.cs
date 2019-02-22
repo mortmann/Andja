@@ -83,6 +83,8 @@ public class FarmStructure : OutputStructure {
         }
     }
     public override void Update(float deltaTime) {
+        base.Update(deltaTime);
+
         if (growableReadyCount == 0) {
             return;
         }

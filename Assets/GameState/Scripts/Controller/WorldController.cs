@@ -33,6 +33,8 @@ public class WorldController : MonoBehaviour {
 
     // Use this for initialization
     void OnEnable() {
+        new HomeStructure().AddEffect(new Effect());
+
         Debug.Log("Intializing World Controller");
         if (Instance != null) {
             Debug.LogError("There should never be two world controllers.");

@@ -148,9 +148,11 @@ public class ServiceStructure : Structure {
         }
     }
     public override void Update(float deltaTime) {
+        base.Update(deltaTime);
+
         if (WorkOnTarget == null)
             return;
-        base.Update(deltaTime);
+
 
         SendOutWorkerIfCan();
         for (int i = workers.Count - 1; i >= 0; i--) {

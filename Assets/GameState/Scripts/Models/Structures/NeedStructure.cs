@@ -33,6 +33,8 @@ public class NeedStructure : TargetStructure {
         }
     }
     public override void Update(float deltaTime) {
+        base.Update(deltaTime);
+
     }
 
 }

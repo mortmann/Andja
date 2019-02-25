@@ -124,7 +124,7 @@ public class ServiceStructure : Structure {
     }
 
     public void RepairStructure(Structure str) {
-        str.Repair(WorkSpeed);
+        str.RepairHealth(WorkSpeed);
     }
     public void ImproveStructure(Structure str) {
         foreach(Effect eff in EffectsOnTargets) {

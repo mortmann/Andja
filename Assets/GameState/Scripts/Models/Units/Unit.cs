@@ -83,7 +83,7 @@ public class Unit : IGEventable,IWarfare {
             _UserSetName = value;
         }
     }
-    public float CurrHealth {
+    public float CurrentHealth {
         get { return _currHealth; }
         protected set {
             if (value <= 0) {
@@ -92,6 +92,16 @@ public class Unit : IGEventable,IWarfare {
             _currHealth = value;
         }
     }
+
+    internal void ReduceHealth(float damage) {
+        if (damage < 0) {
+            damage = -damage;
+            Debug.LogWarning("Damage should be never smaller than 0 - Fixed it!");
+        }
+        CurrentHealth -= damage;
+        CurrentHealth = Mathf.Clamp(CurrentHealth, 0, MaxHealth);
+    }
+
     public OutputStructure rangeUStructure;
     protected Action<Unit> cbUnitChanged;
     protected Action<Unit> cbUnitDestroyed;
@@ -180,10 +190,7 @@ public class Unit : IGEventable,IWarfare {
 
     public float MaximumHealth { get { return CalculateRealValue("maximumHealth", Data.maximumHealth); } }
     public virtual float CurrentDamage => CalculateRealValue("CurrentDamage", Data.damage);
-    public virtual float MaximumDamage => CalculateRealValue("MaximumDamage", Data.damage);
-
-    public float CurrentHealth => _currHealth;
-    
+    public virtual float MaximumDamage => CalculateRealValue("MaximumDamage", Data.damage);    
     public DamageType MyDamageType => Data.myDamageType;
     public ArmorType MyArmorType => Data.myArmorType;
     public bool IsDestroyed => IsDead;
@@ -205,7 +212,7 @@ public class Unit : IGEventable,IWarfare {
     public Unit(Unit unit, int playerNumber, Tile t) {
         this.ID = unit.ID;
         this._prototypData = unit.Data;
-        this.CurrHealth = MaxHealth;
+        this.CurrentHealth = MaxHealth;
         this.playerNumber = playerNumber;
         PlayerSetName = "Unit " + UnityEngine.Random.Range(0, 1000000000);
         pathfinding = new IslandPathfinding(this, t);
@@ -651,7 +658,7 @@ public class Unit : IGEventable,IWarfare {
         return warfare.MyDamageType.GetDamageMultiplier(MyArmorType) > 0;
     }
     public void TakeDamageFrom(IWarfare warfare) {
-        CurrHealth -= warfare.GetCurrentDamage(MyArmorType);
+        ReduceHealth( warfare.GetCurrentDamage(MyArmorType) );
     }
 
     internal bool IsPlayerUnit() {

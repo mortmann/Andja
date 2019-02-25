@@ -144,7 +144,6 @@ public abstract class Structure : IGEventable {
     public HashSet<Tile> myRangeTiles;
     public string connectOrientation;
     public bool HasExtraUI { get { return ExtraUITyp != ExtraUI.None; } }
-    public bool isBurning = false;
     //player id
     public int PlayerNumber {
         get {
@@ -238,7 +237,8 @@ public abstract class Structure : IGEventable {
     #endregion
     #endregion
     #region Properties 
-    public virtual bool IsActiveAndWorking => isActive && isBurning == false;
+    public virtual bool IsActiveAndWorking => isActive;
+    public bool IsDestroyed => CurrentHealth <= 0;
 
     public Vector2 MiddleVector { get { return new Vector2(BuildTile.X + (float)TileWidth / 2f, BuildTile.Y + (float)TileHeight / 2f); } }
     public string SmallName { get { return SpriteName.ToLower(); } }
@@ -252,7 +252,7 @@ public abstract class Structure : IGEventable {
             _city = value;
         }
     }
-    public float Health {
+    public float CurrentHealth {
         get {
             return _health;
         }
@@ -266,7 +266,7 @@ public abstract class Structure : IGEventable {
             _health = value;
         }
     }
-    public bool NeedsRepair => Health < MaxHealth;
+    public bool NeedsRepair => CurrentHealth < MaxHealth;
     public int TileWidth {
         get {
             if (rotated == 0 || rotated == 180) {
@@ -307,9 +307,7 @@ public abstract class Structure : IGEventable {
     /// </summary>
     /// <param name="deltaTime"></param>
     public virtual void Update(float deltaTime) {
-        if(isBurning) {
-            Health = Effects.fi
-        }
+        
     }
     public abstract void OnBuild();
 
@@ -475,18 +473,10 @@ public abstract class Structure : IGEventable {
         }
     }
     protected override void AddSpecialEffect(Effect effect) {
-        if(effect.NameOfVariable == "isBurning") {
-            if (CanStartBurning == false)
-                return;
-            isBurning = true;
-        }
-        Debug.Log("TEST");
+        Debug.Log("NO Special Effect handeld! " + effect);
     }
     protected override void RemoveSpecialEffect(Effect effect) {
-        if (effect.NameOfVariable == "isBurning") {
-            isBurning = false;
-        }
-        Debug.Log("TEST");
+        Debug.Log("NO Special Effect handeld! " + effect);
     }
     public override int GetPlayerNumber() {
         return PlayerNumber;
@@ -561,7 +551,7 @@ public abstract class Structure : IGEventable {
     }
     #endregion
     #region other
-    public void TakeDamage(float damage) {
+    public void ReduceHealth(float damage) {
         if (CanTakeDamage == false) {
             return;
         }
@@ -569,17 +559,18 @@ public abstract class Structure : IGEventable {
             damage = -damage;
             Debug.LogWarning("Damage should be never smaller than 0 - Fixed it!");
         }
-        Health -= damage;
-        Health = Mathf.Clamp(Health, 0, MaxHealth);
+        CurrentHealth -= damage;
+        CurrentHealth = Mathf.Clamp(CurrentHealth, 0, MaxHealth);
     }
-    public void HealHealth(float heal) {
+    public void RepairHealth(float heal) {
         if (heal < 0) {
             heal = -heal;
             Debug.LogWarning("Healing should be never smaller than 0 - Fixed it!");
         }
-        Health += heal;
-        Health = Mathf.Clamp(Health, 0, MaxHealth);
+        CurrentHealth += heal;
+        CurrentHealth = Mathf.Clamp(CurrentHealth, 0, MaxHealth);
     }
+
     public void Destroy() {
         _health = 0;
         OnDestroy();
@@ -735,9 +726,6 @@ public abstract class Structure : IGEventable {
         return SpriteName + "@ X=" + BuildTile.X + " Y=" + BuildTile.Y;
     }
 
-    internal void Repair(float amount) {
-        throw new NotImplementedException();
-    }
     #endregion
 
 }

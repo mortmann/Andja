@@ -51,7 +51,7 @@ public class Ship : Unit {
     public Ship(Unit unit, int playerNumber, Tile t) {
         this.ID = unit.ID;
         this._prototypData = unit.Data;
-        this.CurrHealth = MaxHealth;
+        this.CurrentHealth = MaxHealth;
         this.playerNumber = playerNumber;
         inventory = new Inventory(InventoryPlaces, InventorySize);
         PlayerSetName = "Ship " + UnityEngine.Random.Range(0, 1000000000);

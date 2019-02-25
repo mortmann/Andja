@@ -34,6 +34,8 @@ public abstract class IGEventable {
     }
     public virtual int GetID() { return 0; } // only needs to get changed WHEN there is diffrent ids
 
+    public bool HasNegativEffect { get; protected set; }
+
     /// <summary>
     /// TODO: think about ways to make it better
     /// 
@@ -116,6 +118,9 @@ public abstract class IGEventable {
             //we change a float or integer variable 
             VariablenameToFloat[effect.NameOfVariable + effect.ModifierType] += effect.Change;
         }
+
+        if (effect.IsNegativ)
+            HasNegativEffect = true;
     }
 
     public bool HasEffect(Effect effect) {
@@ -140,8 +145,9 @@ public abstract class IGEventable {
                 Debug.LogWarning("Tried to remove an Effect that didnt have a value yet.");
             }
         }
+        if (effect.IsNegativ)
+            HasNegativEffect = Effects.Find(x=>x.IsNegativ) != null;
     }
-
 
     /// <summary>
     /// USE this for any variable thats supposed to be able to be modified

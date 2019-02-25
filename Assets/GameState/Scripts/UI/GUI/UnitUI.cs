@@ -115,10 +115,10 @@ public class UnitUI : MonoBehaviour {
 
     }
     public void Update() {
-        if (unit.CurrHealth <= 0) {
+        if (unit.CurrentHealth <= 0) {
             UIController.Instance.CloseUnitUI();
         }
-        healthText.text = Mathf.CeilToInt(unit.CurrHealth) + "/" + unit.MaxHealth + "HP";
+        healthText.text = Mathf.CeilToInt(unit.CurrentHealth) + "/" + unit.MaxHealth + "HP";
         if (unit.IsPlayerUnit()) {
             if (IsCurrentShipUI) {
                 Ship ship = ((Ship)unit);

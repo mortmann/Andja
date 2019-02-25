@@ -4,15 +4,19 @@ using UnityEngine;
 using System;
 
 public enum EffectTypes { Integer, Float, Special }
-public enum EffectModifier { Additive, Multiplicative, Special }
+public enum EffectModifier { Additive, Multiplicative, Update, Special }
+public enum EffectUpdateChanges { None, Health }
+public enum EffectClassification { Negativ, Neutral, Positiv }
 
 public class EffectPrototypeData : LanguageVariables {
 
     public string nameOfVariable; // what does it change
-    public float change; // how it changes the Variable?
+    public float change; // how it changes the Variable? -- for update this will per *second* 
     public TargetGroup targets; // what it can target
     public EffectTypes addType;
     public EffectModifier modifierType;
+    public EffectUpdateChanges updateChange;
+    public EffectClassification classification;
     public bool unique;
 
 }
@@ -20,23 +24,23 @@ public class EffectPrototypeData : LanguageVariables {
 public class Effect {
 
     public int ID;
-
     public InfluenceTyp InfluenceTyp { protected set; get; }
     public InfluenceRange InfluenceRange { protected set; get; }
     public EffectTypes AddType => EffectPrototypData.addType;
     public EffectModifier ModifierType => EffectPrototypData.modifierType;
     public bool IsUnique => EffectPrototypData.unique;
-
-    protected EffectPrototypeData _effectPrototypData;
+    public EffectUpdateChanges UpdateChange => EffectPrototypData.updateChange;
+    public EffectClassification Classification => EffectPrototypData.classification;
 
     public TargetGroup Targets => EffectPrototypData.targets;
     public string NameOfVariable => EffectPrototypData.nameOfVariable;
     public float Change => EffectPrototypData.change;
-
     //Some special function will be called for it 
     //so it isnt very flexible and must be either precoded or we need to add support for lua
     public bool IsSpecial => AddType == EffectTypes.Special || ModifierType == EffectModifier.Special;
+    public bool IsUpdateChange => ModifierType == EffectModifier.Update && UpdateChange != EffectUpdateChanges.None;
 
+    protected EffectPrototypeData _effectPrototypData;
     public EffectPrototypeData EffectPrototypData {
         get {
             if (_effectPrototypData == null) {
@@ -45,6 +49,9 @@ public class Effect {
             return _effectPrototypData;
         }
     }
+
+    public bool IsNegativ => EffectClassification.Negativ == Classification;
+
     public Effect() {
 
     }
@@ -52,4 +59,23 @@ public class Effect {
         this.ID = ID;
     }
 
+    public void Update(float deltaTime, IGEventable target) {
+        if (IsUpdateChange == false) {
+            return;
+        }
+        if(target is Structure) {
+            switch (UpdateChange) {
+                case EffectUpdateChanges.Health:
+                    ((Structure)target).ReduceHealth(Change * deltaTime);
+                    break;
+            }
+        } else
+        if (target is Unit) {
+            switch (UpdateChange) {
+                case EffectUpdateChanges.Health:
+                    ((Unit)target).ReduceHealth(Change * deltaTime);
+                    break;
+            }
+        }
+    }
 }

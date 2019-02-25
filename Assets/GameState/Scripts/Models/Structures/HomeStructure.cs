@@ -47,7 +47,6 @@ public class HomeStructure : TargetStructure {
                             && CanBeUpgraded // set through xml prototype file 
                             && City.HasEnoughOfItems(UpgradeItems) // city has enough items to build
                             && City.GetOwner().HasEnoughMoney(UpgradeCost); // player has enough money
-    public bool hasIllness;
     #endregion
 
 
@@ -144,9 +143,8 @@ public class HomeStructure : TargetStructure {
         else {
             currentMood = CitizienMoods.Mad;
         }
-        if(hasIllness)
+        if(HasNegativEffect)
             currentMood = CitizienMoods.Mad;
-
         UpdatePeopleChange(deltaTime);
     }
 

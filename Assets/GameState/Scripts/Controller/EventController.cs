@@ -129,6 +129,51 @@ public class EventController : MonoBehaviour {
         lastID++;
 
     }
+
+    internal void TriggerEvent(int id) {
+        GameEvent gameEvent = new GameEvent(id);
+        //gameEvent.Targeted.Targets
+    }
+
+    public List<IGEventable> GetTargets(TargetGroup targetGroup) {
+        List<IGEventable> targets = new List<IGEventable>();
+        foreach(Target target in targetGroup.Targets) {
+            switch (target) {
+                case Target.World:
+                    break;
+                case Target.Player:
+                    targets.AddRange(PlayerController.Instance.Players);
+                    break;
+                case Target.AllUnit:
+                    targets.AddRange(World.Current.Units);
+                    break;
+                case Target.Ship:
+                    targets.AddRange(World.Current.GetShipUnits());
+                    break;
+                case Target.LandUnit:
+                    targets.AddRange(World.Current.GetLandUnits());
+                    break;
+                case Target.Island:
+                    targets.AddRange(World.Current.IslandList);
+                    break;
+                case Target.City:
+                    foreach(Island i in World.Current.IslandList) {
+                        targets.AddRange(i.myCities);
+                    }
+                    break;
+                case Target.AllStructure:
+                    foreach (Island i in World.Current.IslandList) {
+                        foreach (City c in i.myCities) {
+                            targets.AddRange(c.myStructures);
+                        }
+                    }
+                    break;
+            }
+        }
+        return targets;
+    }
+
+
     IGEventable GetEventTargetForEventType(EventType type) {
         IGEventable ige = null;
         //some times should be target all cities...

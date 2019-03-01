@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using Newtonsoft.Json;
 
 public enum EffectTypes { Integer, Float, Special }
 public enum EffectModifier { Additive, Multiplicative, Update, Special }
@@ -20,7 +21,7 @@ public class EffectPrototypeData : LanguageVariables {
     public bool unique;
 
 }
-
+[JsonObject(MemberSerialization.OptIn)]
 public class Effect {
 
     public int ID;
@@ -31,7 +32,6 @@ public class Effect {
     public bool IsUnique => EffectPrototypData.unique;
     public EffectUpdateChanges UpdateChange => EffectPrototypData.updateChange;
     public EffectClassification Classification => EffectPrototypData.classification;
-
     public TargetGroup Targets => EffectPrototypData.targets;
     public string NameOfVariable => EffectPrototypData.nameOfVariable;
     public float Change => EffectPrototypData.change;
@@ -39,6 +39,7 @@ public class Effect {
     //so it isnt very flexible and must be either precoded or we need to add support for lua
     public bool IsSpecial => AddType == EffectTypes.Special || ModifierType == EffectModifier.Special;
     public bool IsUpdateChange => ModifierType == EffectModifier.Update && UpdateChange != EffectUpdateChanges.None;
+    public bool IsNegativ => EffectClassification.Negativ == Classification;
 
     protected EffectPrototypeData _effectPrototypData;
     public EffectPrototypeData EffectPrototypData {
@@ -50,7 +51,8 @@ public class Effect {
         }
     }
 
-    public bool IsNegativ => EffectClassification.Negativ == Classification;
+
+    [JsonPropertyAttribute] public bool Serialize; 
 
     public Effect() {
 
@@ -77,5 +79,10 @@ public class Effect {
                     break;
             }
         }
+    }
+
+    //for Serializing if it should be saved -- not needed for structure effects etc
+    public bool ShouldSerializeEffect() {
+        return Serialize;
     }
 }

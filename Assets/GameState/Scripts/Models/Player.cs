@@ -47,6 +47,8 @@ public class Player : IGEventable {
     Action<Need> cbNeedUnlocked;
     Action<Need> cbStructureNeedUnlocked;
 
+
+
     #endregion
     #region Serialized
     [JsonPropertyAttribute]

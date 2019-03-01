@@ -61,6 +61,7 @@ public class ConsoleUI : MonoBehaviour {
                 happend = HandleSpawnCommands(parameters.Skip(1).ToArray());
                 break;
             case "event":
+                happend = HandleEventCommands(parameters.Skip(1).ToArray());
                 break;
             case "camera":
                 int num = 0;
@@ -111,6 +112,24 @@ public class ConsoleUI : MonoBehaviour {
         inputField.text = "";
         inputField.Select();
         inputField.ActivateInputField();
+    }
+
+    private bool HandleEventCommands(string[] parameters) {
+        if (parameters.Length < 1) {
+            return false;
+        }
+        switch(parameters[0]) {
+            case "trigger":
+                int id = -1;
+                if (int.TryParse(parameters[1], out id) == false) {
+                    return false;
+                }
+                EventController.Instance.TriggerEvent(id);
+                break;
+            default:
+                return false;
+        }
+        return true;
     }
 
     private bool HandleSpawnCommands(string[] parameters) {

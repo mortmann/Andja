@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
-using System;
 using Newtonsoft.Json;
 
 public class GameEventPrototypData : LanguageVariables {
@@ -33,25 +32,26 @@ public class GameEvent {
 
     public EventType EventType { protected set; get; }
 
-    public Effect[] _Effects { protected set; get; }
-    public Effect[] Effects {
-        set {
-            _Effects = value;
-            Targeted = new TargetGroup();
-            foreach (Effect e in _Effects) {
-                Targeted.AddTargets(e.Targets);
-            }
-        }
-        get { return _Effects; }
-    }
+    public Effect[] Effects => PrototypData.effects;
     public float Probability => PrototypData.probability;
     public float MinDuration => PrototypData.minDuration;
     public float MaxDuration => PrototypData.maxDuration;
     public bool IsDone { get { return currentDuration <= 0; } }
     public bool IsOneTime { get { return MaxDuration <= 0; } }
     public string Name { get { return EventType.ToString() + " - " + "EMPTY FOR NOW"; } }
+    TargetGroup _Targeted;
+    public TargetGroup Targeted {
+        get {
+            if(_Targeted == null) {
+                _Targeted = new TargetGroup();
+                foreach (Effect e in Effects) {
+                    Targeted.AddTargets(e.Targets);
+                }
+            }
+            return _Targeted;
+        }
+    }
 
-    [JsonPropertyAttribute] TargetGroup Targeted;
     [JsonPropertyAttribute] public float currentDuration;
     //MAYBE range can also be a little random...?
     //around this as middle? Range+(-1^RandomInt(1,2)*Random(0,(Random(2,3)*Range)/(Range*Random(0.75,1)));
@@ -68,9 +68,11 @@ public class GameEvent {
     public GameEvent() {
 
     }
-
+    public GameEvent(int id) {
+        ID = id;
+    }
     public GameEvent(GameEvent ge) {
-        this.Effects = ge.Effects;
+        ID = ge.ID;
     }
     public GameEvent Clone() {
         return new GameEvent(this);

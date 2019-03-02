@@ -30,9 +30,6 @@ public class PrototypController : MonoBehaviour {
     public Dictionary<int, EffectPrototypeData> effectPrototypeDatas;
     public Dictionary<int, GameEventPrototypData> gameEventPrototypeDatas;
 
-    internal EffectPrototypeData GetEffectPrototypDataForID(int iD) {
-        throw new NotImplementedException();
-    }
 
     public Dictionary<int, ArmorType> armorTypeDatas;
     public Dictionary<int, PopulationLevelPrototypData> populationLevelDatas;
@@ -140,6 +137,9 @@ public class PrototypController : MonoBehaviour {
     internal List<NeedGroup> GetNeedPrototypDataForLevel(int level) {
         return populationLevelToNeedGroup[level];
     }
+    internal EffectPrototypeData GetEffectPrototypDataForID(int id) {
+        return effectPrototypeDatas[id];
+    }
     public ICollection<Fertility> GetFertilitiesForClimate(Climate c) {
         if (allFertilities.ContainsKey(c) == false) {
             Debug.Log(c);
@@ -233,13 +233,13 @@ public class PrototypController : MonoBehaviour {
             return;
         }
         xmlDoc.LoadXml(ta.text); // load the file.
-        foreach (XmlElement node in xmlDoc.SelectNodes("Events/Effect")) {
+        foreach (XmlElement node in xmlDoc.SelectNodes("events/Effect")) {
             EffectPrototypeData epd = new EffectPrototypeData();
             int id = int.Parse(node.GetAttribute("ID"));
             SetData<EffectPrototypeData>(node, ref epd);
             effectPrototypeDatas.Add(id, epd);
         }
-        foreach (XmlElement node in xmlDoc.SelectNodes("Events/GameEvent")) {
+        foreach (XmlElement node in xmlDoc.SelectNodes("events/GameEvent")) {
             GameEventPrototypData gepd = new GameEventPrototypData();
             int id = int.Parse(node.GetAttribute("ID"));
             SetData<GameEventPrototypData>(node, ref gepd);

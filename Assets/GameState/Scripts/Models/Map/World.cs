@@ -161,6 +161,18 @@ public class World : IGEventable {
         }
     }
 
+    internal IEnumerable<IGEventable> GetShipUnits() {
+        List<IGEventable> list = new List<IGEventable>(Units);
+        list.RemoveAll(x => ((Unit)x).IsShip);
+        return list;
+    }
+    internal IEnumerable<IGEventable> GetLandUnits() {
+        List<IGEventable> list = new List<IGEventable>(Units);
+        list.RemoveAll(x => ((Unit)x).IsShip == false);
+        return list;
+    }
+
+
     internal void Fixedupdate(float deltaTime) {
         for (int i = Units.Count - 1; i >= 0; i--) {
             Units[i].Update(deltaTime);

@@ -11,7 +11,7 @@ using System.IO;
 public class PlayerController : MonoBehaviour {
     public static int currentPlayerNumber;
     readonly int piratePlayerNumber = int.MaxValue; // so it isnt the same like the number of wilderness
-    public Player CurrPlayer { get { return players[currentPlayerNumber]; } }
+    public Player CurrPlayer { get { return Players[currentPlayerNumber]; } }
     HashSet<War> playerWars;
     PlayerPrototypeData PlayerPrototypeData => PrototypController.CurrentPlayerPrototypData;
 
@@ -21,7 +21,7 @@ public class PlayerController : MonoBehaviour {
     float balanceTickTimer;
 
     public static PlayerController Instance { get; protected set; }
-    List<Player> players;
+    public List<Player> Players { get; protected set; }
     EventUIManager euim;
 
     // Use this for initialization
@@ -36,12 +36,12 @@ public class PlayerController : MonoBehaviour {
     }
 
     public void Setup() {
-        players = new List<Player>();
+        Players = new List<Player>();
         currentPlayerNumber = 0;
         Player p = new Player(currentPlayerNumber);
-        players.Add(p);
-        players.Add(new Player(1));
-        players.Add(new Player(2));
+        Players.Add(p);
+        Players.Add(new Player(1));
+        Players.Add(new Player(2));
         playerWars = new HashSet<War>();
         AddPlayersWar(0, 1);
         AddPlayersWar(1, 0);
@@ -53,11 +53,11 @@ public class PlayerController : MonoBehaviour {
     }
 
     internal bool HasEnoughMoney(int playerNumber, int buildCost) {
-        if (playerNumber < 0 || playerNumber >= players.Count) {
+        if (playerNumber < 0 || playerNumber >= Players.Count) {
             Debug.LogError("The given number was too large or negative! No such player! " + playerNumber);
             return false;
         }
-        return players[playerNumber].HasEnoughMoney(buildCost);
+        return Players[playerNumber].HasEnoughMoney(buildCost);
     }
 
     // Update is called once per frame
@@ -66,7 +66,7 @@ public class PlayerController : MonoBehaviour {
             return;
         balanceTickTimer -= WorldController.Instance.DeltaTime;
         if (balanceTickTimer <= 0) {
-            foreach (Player p in players) {
+            foreach (Player p in Players) {
                 if (p == null) {
                     continue;
                 }
@@ -143,7 +143,7 @@ public class PlayerController : MonoBehaviour {
     }
 
     internal void SetPlayerData(PlayerControllerSave pcs) {
-        players = pcs.players;
+        Players = pcs.players;
         playerWars = pcs.playerWars;
         balanceTickTimer = pcs.tickTimer;
         currentPlayerNumber = pcs.currentPlayerNumber;
@@ -164,19 +164,19 @@ public class PlayerController : MonoBehaviour {
 
 
     public void ReduceMoney(int money, int playerNr) {
-        players[playerNr].ReduceMoney(money);
+        Players[playerNr].ReduceMoney(money);
     }
     public void AddMoney(int money, int playerNr) {
-        players[playerNr].AddMoney(money);
+        Players[playerNr].AddMoney(money);
     }
     public void ReduceChange(int amount, int playerNr) {
-        players[playerNr].ReduceChange(amount);
+        Players[playerNr].ReduceChange(amount);
     }
     public void AddChange(int amount, int playerNr) {
-        players[playerNr].AddChange(amount);
+        Players[playerNr].AddChange(amount);
     }
     public void OnCityCreated(City city) {
-        players[city.playerNumber].OnCityCreated(city);
+        Players[city.playerNumber].OnCityCreated(city);
     }
     public void OnStructureCreated(Structure structure, bool loading = false) {
         if (loading) {
@@ -212,15 +212,15 @@ public class PlayerController : MonoBehaviour {
         playerWars.Remove(new War(pnum1, pnum2));
     }
     public Player GetPlayer(int i) {
-        if (i < 0 || players.Count <= i) {
+        if (i < 0 || Players.Count <= i) {
             return null;
         }
-        return players[i];
+        return Players[i];
     }
 
     public PlayerControllerSave GetSavePlayerData() {
         // Create/overwrite the save file with the xml text.
-        return new PlayerControllerSave(currentPlayerNumber, balanceTickTimer, players, playerWars);
+        return new PlayerControllerSave(currentPlayerNumber, balanceTickTimer, Players, playerWars);
     }
 
     void OnDestroy() {

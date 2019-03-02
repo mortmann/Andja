@@ -33,7 +33,6 @@ public class WorldController : MonoBehaviour {
 
     // Use this for initialization
     void OnEnable() {
-        new HomeStructure().AddEffect(new Effect());
 
         Debug.Log("Intializing World Controller");
         if (Instance != null) {
@@ -42,9 +41,10 @@ public class WorldController : MonoBehaviour {
         else {
             Instance = this;
         }
+    }
+    public void Start() {
         EventController.Instance.RegisterOnEvent(OnEventCreated, OnEventEnded);
     }
-
     public void SetGeneratedWorld(World world, Dictionary<Tile, Structure> tileToStructure) {
         this.World = world;
         if (SaveController.IsLoadingSave == false)

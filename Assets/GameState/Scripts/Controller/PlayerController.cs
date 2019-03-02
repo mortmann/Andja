@@ -182,7 +182,7 @@ public class PlayerController : MonoBehaviour {
         if (loading) {
             return; // getsloaded in so no need to subtract any money
         }
-        ReduceMoney(structure.Buildcost, structure.PlayerNumber);
+        ReduceMoney(structure.BuildCost, structure.PlayerNumber);
     }
     public bool ArePlayersAtWar(int pnum1, int pnum2) {
         if (pnum1 == pnum2) {

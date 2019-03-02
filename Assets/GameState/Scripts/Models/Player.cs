@@ -23,6 +23,8 @@ public class Player : IGEventable {
     public HashSet<Need>[] LockedNeeds { get; protected set; }
     public HashSet<Need> UnlockedItemNeeds { get; protected set; }
     public HashSet<Need>[] UnlockedStructureNeeds { get; protected set; }
+    public HashSet<Structure> AllStructures;
+    public HashSet<Unit> AllUnits;
 
     PlayerPrototypeData PlayerPrototypeData => PrototypController.CurrentPlayerPrototypData;
 
@@ -128,7 +130,8 @@ public class Player : IGEventable {
         UnlockedStructureNeeds = new HashSet<Need>[PrototypController.NumberOfPopulationLevels];
         UnlockedItemNeeds = new HashSet<Need>();
         MyTradeRoutes = new List<TradeRoute>();
-
+        AllStructures = new HashSet<Structure>();
+        AllUnits = new HashSet<Unit>();
         for (int i = 0; i < PrototypController.NumberOfPopulationLevels; i++) {
             LockedNeeds[i] = new HashSet<Need>();
             UnlockedStructureNeeds[i] = new HashSet<Need>();
@@ -145,6 +148,8 @@ public class Player : IGEventable {
         }
         RegisterMaxPopulationCountChange(NeedUnlockCheck);
         CalculateBalance();
+        BuildController.Instance.RegisterCityCreated(OnCityCreated);
+        World.Current.RegisterUnitCreated(OnUnitCreated);
     }
 
     private void CalculateBalance() {
@@ -252,13 +257,36 @@ public class Player : IGEventable {
         if (city.playerNumber != Number)
             return;
         myCities.Add(city);
+        city.RegisterStructureAdded(OnStructureCreated);
+        city.RegisterCityDestroy(OnCityDestroy);
     }
+    public void OnCityDestroy(City city) {
+        city.UnregisterStructureAdded(OnStructureCreated);
+        myCities.Remove(city);
+    }
+
     public void OnStructureCreated(Structure structure) {
-        ReduceMoney(structure.Buildcost);
+        ReduceMoney(structure.BuildCost);
         structure.RegisterOnDestroyCallback(OnStructureDestroy);
+        AllStructures.Add(structure);
     }
     public void OnStructureDestroy(Structure structure) {
         //dosmth
+        structure.UnregisterOnDestroyCallback(OnStructureDestroy);
+        AllStructures.Remove(structure);
+
+    }
+    public void OnUnitCreated(Unit unit) {
+        if (unit.playerNumber != Number)
+            return;
+        //ReduceMoney(unit.BuildCost); -- will be removed when starting to build one -- not when finished
+        unit.RegisterOnDestroyCallback(OnUnitDestroy);
+        AllUnits.Add(unit);
+    }
+    public void OnUnitDestroy(Unit unit) {
+        //dosmth
+        unit.UnregisterOnDestroyCallback(OnUnitDestroy);
+        AllUnits.Remove(unit);
     }
     public void UnregisterNeedUnlock(Action<Need> callbackfunc) {
         cbNeedUnlocked -= callbackfunc;

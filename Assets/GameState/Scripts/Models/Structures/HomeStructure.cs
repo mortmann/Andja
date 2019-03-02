@@ -258,7 +258,7 @@ public class HomeStructure : TargetStructure {
         ID = PrototypController.Instance.GetStructureIDForTypeNeighbourStructureLevel(GetType(), StructureLevel, true);
         _homeData = null;
         City.RemoveRessources(BuildingItems);
-        City.GetOwner().ReduceMoney(Buildcost);
+        City.GetOwner().ReduceMoney(BuildCost);
         cbStructureChanged(this);
 
         List<Need> needs = City.GetOwner().GetCopyStructureNeeds(StructureLevel);

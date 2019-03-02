@@ -215,7 +215,7 @@ public abstract class Structure : IGEventable {
     public bool MustBeBuildOnShore { get { return Data.hasToBuildOnRestriktion == BuildRestriktions.Shore; } }
     public bool MustBeBuildOnMountain { get { return Data.hasToBuildOnRestriktion == BuildRestriktions.Mountain; } }
 
-    public int Buildcost { get { return Data.buildcost; } }
+    public int BuildCost { get { return Data.buildcost; } }
 
     public Item[] BuildingItems { get { return Data.buildingItems; } }
     public Item[] UpgradeItems { get { return Data.upgradeItems; } }

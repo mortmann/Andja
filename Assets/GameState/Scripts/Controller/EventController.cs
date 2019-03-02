@@ -123,7 +123,6 @@ public class EventController : MonoBehaviour {
     public void CreateGameEvent(GameEvent ge) {
         //fill the type
         cbEventCreated(ge);
-
         idToActiveEvent.Add(lastID, ge);
         ge.StartEvent(Vector2.zero);
         lastID++;
@@ -133,8 +132,6 @@ public class EventController : MonoBehaviour {
         IGEventable ige = null;
         //some times should be target all cities...
         //idk how todo do it tho...
-
-
         switch (type) {
             case EventType.City:
                 List<City> cities = new List<City>();
@@ -158,12 +155,10 @@ public class EventController : MonoBehaviour {
                 //  random city
                 //  random structure
                 //  random effect for structure type?
-
                 float r = UnityEngine.Random.Range(0f, 1f);
                 if (r < 0.4f) { //idk
                     return null; // there is no specific target
                 }
-
                 Island i = RandomItemFromList<Island>(world.IslandList);
                 City c = RandomItemFromList<City>(i.myCities);
                 if (c.playerNumber == -1) { // random decided there will be no event? 

@@ -6,7 +6,7 @@ using Newtonsoft.Json;
 
 public enum ServiceTarget { All, Damageable, Military, Homes, Production, Service, NeedStructure, SpecificRange, City, None }
 public enum ServiceFunction { None, Repair, AddEffect, RemoveEffect, PreventEffect }
-public class ServicePrototypeData : StructurePrototypeData {
+public class ServiceStructurePrototypeData : StructurePrototypeData {
     public ServiceTarget targets = ServiceTarget.All;
     public ServiceFunction function;
     public Structure[] specificRange = null;
@@ -32,11 +32,11 @@ public class ServiceStructure : Structure {
     Action<IGEventable, Effect, bool> onTargetEffectChange;
 
 
-    protected ServicePrototypeData _servicveData;
-    public ServicePrototypeData ServiceData {
+    protected ServiceStructurePrototypeData _servicveData;
+    public ServiceStructurePrototypeData ServiceData {
         get {
             if (_servicveData == null) {
-                _servicveData = (ServicePrototypeData)PrototypController.Instance.GetStructurePrototypDataForID(ID);
+                _servicveData = (ServiceStructurePrototypeData)PrototypController.Instance.GetStructurePrototypDataForID(ID);
             }
             return _servicveData;
         }
@@ -46,6 +46,10 @@ public class ServiceStructure : Structure {
     }
     protected ServiceStructure(ServiceStructure s) : base() {
         BaseCopyData(s);
+    }
+
+    public ServiceStructure(int iD) {
+        ID = iD;
     }
 
     public override Structure Clone() {

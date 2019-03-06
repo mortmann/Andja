@@ -101,7 +101,7 @@ public class EventController : MonoBehaviour {
         if (RandomIf() == false) {
             return;
         }
-        CreateRandomEvent();
+        //CreateRandomEvent();
         timeSinceLastEvent = 0;
 
     }
@@ -128,50 +128,48 @@ public class EventController : MonoBehaviour {
         lastID++;
 
     }
-
+    /// <summary>
+    /// Random Player or ALL will be chosen depending on TargetTypes
+    /// </summary>
+    /// <param name="id"></param>
     internal void TriggerEvent(int id) {
         GameEvent gameEvent = new GameEvent(id);
-        //gameEvent.Targeted.Targets
+        TriggerEventForPlayer(gameEvent, PlayerController.Instance.GetRandomPlayer());
     }
-
-    public List<IGEventable> GetTargets(TargetGroup targetGroup) {
+    internal void TriggerEventForPlayer(GameEvent gameEvent, Player player) {
+        List<IGEventable> playerTargets = GetPlayerTargets(gameEvent.Targeted, player);
+        TriggerEventForEventable(gameEvent, playerTargets[UnityEngine.Random.Range(0, playerTargets.Count)]);
+    }
+    internal void TriggerEventForEventable(GameEvent gameEvent, IGEventable eventable) {
+        gameEvent.target = eventable;
+        CreateGameEvent(gameEvent);
+    }
+    public List<IGEventable> GetPlayerTargets(TargetGroup targetGroup, Player player) {
         List<IGEventable> targets = new List<IGEventable>();
         foreach(Target target in targetGroup.Targets) {
             switch (target) {
-                case Target.World:
-                    break;
-                case Target.Player:
-                    targets.AddRange(PlayerController.Instance.Players);
-                    break;
                 case Target.AllUnit:
-                    targets.AddRange(World.Current.Units);
+                    targets.AddRange(player.AllUnits);
                     break;
                 case Target.Ship:
-                    targets.AddRange(World.Current.GetShipUnits());
+                    targets.AddRange(player.GetShipUnits());
                     break;
                 case Target.LandUnit:
-                    targets.AddRange(World.Current.GetLandUnits());
+                    targets.AddRange(player.GetLandUnits());
                     break;
                 case Target.Island:
-                    targets.AddRange(World.Current.IslandList);
+                    targets.AddRange(player.GetIslandList());
                     break;
                 case Target.City:
-                    foreach(Island i in World.Current.IslandList) {
-                        targets.AddRange(i.myCities);
-                    }
+                    targets.AddRange(player.myCities);
                     break;
                 case Target.AllStructure:
-                    foreach (Island i in World.Current.IslandList) {
-                        foreach (City c in i.myCities) {
-                            targets.AddRange(c.myStructures);
-                        }
-                    }
+                    targets.AddRange(player.AllStructures);
                     break;
             }
         }
         return targets;
     }
-
 
     IGEventable GetEventTargetForEventType(EventType type) {
         IGEventable ige = null;

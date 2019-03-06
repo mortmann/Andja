@@ -3,12 +3,7 @@ using System;
 using System.Collections.Generic;
 using Newtonsoft.Json;
 
-public enum Target {
-    World, Player, AllUnit, Ship, LandUnit, Island, City, AllStructure, RoadStructure, NeedStructure, MilitaryStructure, HomeStructure,
-    ServiceStructure, GrowableStructure, OutputStructure, MarketStructure, WarehouseStructure, MineStructure,
-    FarmStructure, ProductionStructure
-}
-
+[JsonObject(MemberSerialization.OptIn)]
 public abstract class IGEventable {
 
     /// <summary>
@@ -17,7 +12,6 @@ public abstract class IGEventable {
     protected Dictionary<string, float> VariablenameToFloat;
 
     [JsonPropertyAttribute] protected List<Effect> Effects;
-    
     /// <summary>
     /// Target, Effect, added=true removed=false 
     /// </summary>
@@ -33,7 +27,6 @@ public abstract class IGEventable {
         }
     }
     public virtual int GetID() { return 0; } // only needs to get changed WHEN there is diffrent ids
-
     public bool HasNegativEffect { get; protected set; }
 
     /// <summary>
@@ -57,8 +50,12 @@ public abstract class IGEventable {
             targets.Add(Target.Island);
         if (this is City)
             targets.Add(Target.City);
-        if (this is Structure)
+        if (this is Structure) {
             targets.Add(Target.AllStructure);
+            Structure str = this as Structure;
+            if(str.CanTakeDamage)
+                targets.Add(Target.DamagableStructure);
+        }
         if (this is RoadStructure)
             targets.Add(Target.HomeStructure);
         if (this is NeedStructure)

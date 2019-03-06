@@ -3,6 +3,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum Target {
+    World, Player, Island, City,
+    AllUnit, Ship, LandUnit, 
+    AllStructure, DamagableStructure,
+    RoadStructure, NeedStructure, MilitaryStructure, HomeStructure, ServiceStructure,
+    GrowableStructure, OutputStructure, MarketStructure, WarehouseStructure, MineStructure,
+    FarmStructure, ProductionStructure
+}
 public class TargetGroup  {
 
     public HashSet<Target> Targets;

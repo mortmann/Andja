@@ -550,7 +550,22 @@ public abstract class Structure : IGEventable {
         return r;
     }
     #endregion
-    #region other
+    #region Functions
+    internal List<Structure> GetNeighbourStructuresInRange(int spreadTileRange) {
+        Vector2 lower = MiddlePoint - new Vector2(TileWidth + spreadTileRange, TileHeight + spreadTileRange);
+        Vector2 upper = MiddlePoint + new Vector2(TileWidth + spreadTileRange, TileHeight + spreadTileRange);
+        List<Structure> structures = new List<Structure>();
+        for (float x = lower.x; x <= upper.x; x++) {
+            for (float y = lower.y; y <= upper.y; y++) {
+                Tile t = World.Current.GetTileAt(x, y);
+                if(t.Structure == null || t.Structure == this) {
+                    continue;
+                }
+                structures.Add(t.Structure);
+            }
+        }
+        return structures;
+    }
     public void ReduceHealth(float damage) {
         if (CanTakeDamage == false) {
             return;
@@ -725,7 +740,6 @@ public abstract class Structure : IGEventable {
         }
         return SpriteName + "@ X=" + BuildTile.X + " Y=" + BuildTile.Y;
     }
-
     #endregion
 
 }

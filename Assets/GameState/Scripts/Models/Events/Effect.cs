@@ -20,6 +20,9 @@ public class EffectPrototypeData : LanguageVariables {
     public EffectClassification classification;
     public bool unique;
 
+    public bool canSpread;
+    public float spreadProbability;
+    public int spreadTileRange = 1;
 }
 [JsonObject(MemberSerialization.OptIn)]
 public class Effect {
@@ -35,6 +38,11 @@ public class Effect {
     public TargetGroup Targets => EffectPrototypData.targets;
     public string NameOfVariable => EffectPrototypData.nameOfVariable;
     public float Change => EffectPrototypData.change;
+
+    public bool CanSpread => EffectPrototypData.canSpread;
+    public int SpreadTileRange => EffectPrototypData.spreadTileRange;
+    public float SpreadProbability => EffectPrototypData.spreadProbability;
+
     //Some special function will be called for it 
     //so it isnt very flexible and must be either precoded or we need to add support for lua
     public bool IsSpecial => AddType == EffectTypes.Special || ModifierType == EffectModifier.Special;
@@ -50,9 +58,7 @@ public class Effect {
             return _effectPrototypData;
         }
     }
-
-
-    [JsonPropertyAttribute] public bool Serialize; 
+    public bool Serialize = true; 
 
     public Effect() {
 
@@ -62,16 +68,46 @@ public class Effect {
     }
 
     public void Update(float deltaTime, IGEventable target) {
-        if (IsUpdateChange == false) {
-            return;
+        if (IsUpdateChange) {
+            CalculateUpdateChange(deltaTime, target);
         }
+        if (CanSpread) {
+            CalculateSpread(deltaTime, target);
+        }
+    }
+
+    private void CalculateSpread(float deltaTime, IGEventable target) {
+        //we need some kind increased probability over time that it spread
+        //if it happens it will need to check for a valid target 
+        //if valid is found it needs to add itself as new effect to that target
+
+        IGEventable newTarget = GetValidTarget(target);
+        if (newTarget == null)
+            return;
+        newTarget.AddEffect(new Effect(ID));
+    }
+
+    private IGEventable GetValidTarget(IGEventable target) {
         if(target is Structure) {
+            List<Structure> strs = ((Structure)target).GetNeighbourStructuresInRange(SpreadTileRange);
+            strs.RemoveAll(x=> Targets.IsTargeted(x.TargetGroups) == false);
+            //now we have a list we can effect 
+            //maybe smth more complex but for now just random
+            return strs[UnityEngine.Random.Range(0, strs.Count)];
+        }
+        Debug.LogError("CheckForValidTarget has not been implemented for " + target.GetType());
+        return null;
+    }
+
+    private void CalculateUpdateChange(float deltaTime, IGEventable target) {
+        if (target is Structure) {
             switch (UpdateChange) {
                 case EffectUpdateChanges.Health:
                     ((Structure)target).ReduceHealth(Change * deltaTime);
                     break;
             }
-        } else
+        }
+        else
         if (target is Unit) {
             switch (UpdateChange) {
                 case EffectUpdateChanges.Health:

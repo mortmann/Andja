@@ -124,7 +124,11 @@ public class ConsoleUI : MonoBehaviour {
                 if (int.TryParse(parameters[1], out id) == false) {
                     return false;
                 }
-                EventController.Instance.TriggerEvent(id);
+                int player = PlayerController.currentPlayerNumber;
+                if (parameters.Length == 3) {
+                    int.TryParse(parameters[2], out player);
+                }
+                EventController.Instance.TriggerEventForPlayer(new GameEvent(id), PlayerController.Instance.GetPlayer(player));
                 break;
             default:
                 return false;

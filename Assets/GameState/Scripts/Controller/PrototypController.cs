@@ -457,7 +457,24 @@ public class PrototypController : MonoBehaviour {
         ReadHomeStructures(xmlDoc.SelectSingleNode("structures/homes"));
         ReadWarehouse(xmlDoc.SelectSingleNode("structures/warehouses"));
         ReadMilitaryStructures(xmlDoc.SelectSingleNode("structures/militarystructures"));
+        ReadServiceStructures(xmlDoc.SelectSingleNode("structures/servicestructures"));
 
+    }
+
+    private void ReadServiceStructures(XmlNode xmlDoc) {
+        foreach (XmlElement node in xmlDoc.SelectNodes("servicestructure")) {
+            int ID = int.Parse(node.GetAttribute("ID"));
+
+            ServiceStructurePrototypeData sspd = new ServiceStructurePrototypeData();
+            //THESE are fix and are not changed for any 
+            //!not anymore
+            SetData<ServiceStructurePrototypeData>(node, ref sspd);
+            foreach(Effect effect in sspd.effectsOnTargets) {
+                effect.Serialize = false;
+            }
+            structurePrototypeDatas.Add(ID, sspd);
+            structurePrototypes[ID] = new ServiceStructure(ID);
+        }
     }
 
     private void ReadMilitaryStructures(XmlNode xmlDoc) {

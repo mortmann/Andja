@@ -16,7 +16,6 @@ public class PlayerPrototypeData {
 [JsonObject(MemberSerialization.OptIn)]
 public class Player : IGEventable {
     #region Not Serialized
-    List<City> myCities;
     internal bool HasEnoughMoney(int buildCost) {
         return Balance + MaximumDebt > buildCost;
     }
@@ -25,7 +24,8 @@ public class Player : IGEventable {
     public HashSet<Need>[] UnlockedStructureNeeds { get; protected set; }
     public HashSet<Structure> AllStructures;
     public HashSet<Unit> AllUnits;
-
+    public List<City> myCities;
+    public bool HasLost => Balance < MaximumDebt;
     PlayerPrototypeData PlayerPrototypeData => PrototypController.CurrentPlayerPrototypData;
 
     private int MaximumDebt => PlayerPrototypeData.maximumDebt; // if we want a maximum debt where you still can buy things
@@ -159,6 +159,25 @@ public class Player : IGEventable {
         for (int i = 0; i < myCities.Count; i++) {
             LastChange += myCities[i].Balance;
         }
+    }
+
+    internal IEnumerable<Island> GetIslandList() {
+        HashSet<Island> islands = new HashSet<Island>();
+        foreach (City c in myCities)
+            islands.Add(c.island);
+        return islands;
+    }
+
+    internal IEnumerable<Unit> GetLandUnits() {
+        HashSet<Unit> units = new HashSet<Unit>(AllUnits);
+        units.RemoveWhere(x => x.IsShip);
+        return units;
+    }
+
+    internal IEnumerable<Ship> GetShipUnits() {
+        HashSet<Unit> units = new HashSet<Unit>(AllUnits);
+        units.RemoveWhere(x => x.IsShip == false);
+        return (IEnumerable<Ship>)units; //should be safe cause removing non ship
     }
 
     public void UpdateBalance(float partialPayAmount) {

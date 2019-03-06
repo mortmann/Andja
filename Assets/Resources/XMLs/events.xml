@@ -4,7 +4,7 @@
       <nameOfVariable>CurrentHealth</nameOfVariable>
       <change>1.0</change>
       <targets>
-         <Target>AllStructure</Target>
+         <Target>DamagableStructure</Target>
       </targets>
       <addType>Float</addType>
       <modifierType>Update</modifierType>

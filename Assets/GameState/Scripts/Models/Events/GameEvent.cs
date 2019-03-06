@@ -77,7 +77,14 @@ public class GameEvent {
     public GameEvent Clone() {
         return new GameEvent(this);
     }
+    public void StartEvent() {
+        //DO smth on start event?!
+    }
     public void StartEvent(Vector2 pos) {
+        if(target != null) {
+            Debug.LogError("Events that have a position/range can't only target specific target.");
+            return;
+        }
         position = pos;
         currentDuration = WeightedRandomDuration();
     }

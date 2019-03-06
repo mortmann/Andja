@@ -142,6 +142,12 @@ public class PlayerController : MonoBehaviour {
         }
     }
 
+    internal Player GetRandomPlayer() {
+        List<Player> players = new List<Player>(Players);
+        players.RemoveAll(p => p.HasLost);
+        return players[UnityEngine.Random.Range(0, players.Count)];
+    }
+
     internal void SetPlayerData(PlayerControllerSave pcs) {
         Players = pcs.players;
         playerWars = pcs.playerWars;

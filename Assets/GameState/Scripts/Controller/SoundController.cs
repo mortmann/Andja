@@ -270,7 +270,7 @@ public class SoundController : MonoBehaviour {
 
     //TODO implement a way of playing these sounds
     public void OnEventStart(GameEvent ge) {
-        Debug.LogWarning("Not implemented yet!");
+        //Debug.LogWarning("Not implemented yet!");
     }
     public void OnEventEnd(GameEvent ge) {
         //Maybe never used?

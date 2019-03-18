@@ -1,8 +1,6 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using Newtonsoft.Json;
 using System;
-using Newtonsoft.Json;
+using System.Collections.Generic;
 
 public enum ServiceTarget { All, Damageable, Military, Homes, Production, Service, NeedStructure, SpecificRange, City, None }
 public enum ServiceFunction { None, Repair, AddEffect, RemoveEffect, PreventEffect }
@@ -26,7 +24,7 @@ public class ServiceStructure : Structure {
     int MaxNumberOfWorker => ServiceData.maxNumberOfWorker;
     public float WorkSpeed => ServiceData.workSpeed;
 
-    public Action<Structure> WorkOnTarget { get; protected set; }
+    public Func<Structure, float, bool> WorkOnTarget { get; protected set; }
     Action<Structure> todoOnNewTarget;
     Action<Structure> onTargetChanged;
     Action<IGEventable, Effect, bool> onTargetEffectChange;
@@ -127,8 +125,11 @@ public class ServiceStructure : Structure {
         todoOnNewTarget(obj);
     }
 
-    public void RepairStructure(Structure str) {
-        str.RepairHealth(WorkSpeed);
+    public bool RepairStructure(Structure str,float deltaTime) {
+        str.RepairHealth(WorkSpeed * deltaTime);
+        if (str.CurrentHealth >= str.MaxHealth)
+            return true;
+        return false;
     }
     public void ImproveStructure(Structure str) {
         foreach(Effect eff in EffectsOnTargets) {
@@ -136,11 +137,15 @@ public class ServiceStructure : Structure {
             str.AddEffect(eff);
         }
     }
-    public void RemoveEffect(Structure str) {
+    public bool RemoveEffect(Structure str, float deltaTime) {
+        //structure will check if its a valid effect
         foreach (Effect eff in EffectsOnTargets) {
-            //structure will check if its a valid effect
-            str.RemoveEffect(eff);
+            Effect strEffect = str.GetEffect(eff.ID);
+            strEffect.WorkAmount += deltaTime * WorkSpeed;
+            if(strEffect.WorkAmount >= 1)
+                str.RemoveEffect(eff);
         }
+        return true;
     }
     public void PreventEffect(IGEventable str, Effect effect, bool added) {
         if (added == false)
@@ -151,13 +156,9 @@ public class ServiceStructure : Structure {
             }
         }
     }
-    public override void Update(float deltaTime) {
-        base.Update(deltaTime);
-
+    public override void OnUpdate(float deltaTime) {
         if (WorkOnTarget == null)
             return;
-
-
         SendOutWorkerIfCan();
         for (int i = workers.Count - 1; i >= 0; i--) {
             workers[i].Update(deltaTime);
@@ -171,15 +172,17 @@ public class ServiceStructure : Structure {
             return;
         }
         int i = 0;
-        Structure s = jobsToDo[i];
-        while (CanReachStructure(s) || i >= jobsToDo.Count) {
-            s = jobsToDo[i++];
+        Structure s = null;
+        foreach(Structure str in jobsToDo) {
+            if (Function == ServiceFunction.Repair && str.HasNegativEffect)
+                continue;
+            if (CanReachStructure(s) == false)
+                continue;
+            s = str;
+            break;
         }
-        if (i >= jobsToDo.Count)
-            return; // there is no avaible or reachable job so dont do smth
         jobsToDo.RemoveAt(i);
-        Worker w = new Worker(this, s , WorkOnTarget);
-
+        Worker w = new Worker(this, s, WorkSpeed);
         workers.Add(w);
     }
 
@@ -218,7 +221,6 @@ public class ServiceStructure : Structure {
                     if (str.ID == t.Structure.ID) {
                         UnregisterOnStructureChange(t.Structure);
                         UnregisterOnStructureEffectChanged(t.Structure);
-                        RemoveEffect(t.Structure);
                         continue;
                     }
                 }

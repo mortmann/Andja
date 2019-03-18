@@ -61,6 +61,7 @@ public class GameEvent {
     // so if complete island/city/player or only a single structuretype is the goal
     // can be null if its not set to which type
     [JsonPropertyAttribute] public IGEventable target;  //TODO make a check for it!
+    [JsonPropertyAttribute] internal uint eventID;
 
     /// <summary>
     /// Needed for Serializing

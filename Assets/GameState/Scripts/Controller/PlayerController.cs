@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System;
 using System.IO;
+using UnityEngine.SceneManagement;
 
 /// <summary>
 /// Player controller.
@@ -30,11 +31,18 @@ public class PlayerController : MonoBehaviour {
             Debug.LogError("There should never be two mouse controllers.");
         }
         Instance = this;
-        if (SaveController.IsLoadingSave == false)
-            Setup();
 
     }
+    private void Start() {
+        BuildController.Instance.RegisterCityCreated(OnCityCreated);
+        BuildController.Instance.RegisterStructureCreated(OnStructureCreated);
+        GameObject.FindObjectOfType<EventController>().RegisterOnEvent(OnEventCreated, OnEventEnded);
+        SceneManager.sceneLoaded += OnLevelLoad; 
+        if (SaveController.IsLoadingSave == false)
+            Setup();
+    }
 
+    
     public void Setup() {
         Players = new List<Player>();
         currentPlayerNumber = 0;
@@ -46,10 +54,6 @@ public class PlayerController : MonoBehaviour {
         AddPlayersWar(0, 1);
         AddPlayersWar(1, 0);
         balanceTickTimer = BalanceTicksTime;
-        BuildController.Instance.RegisterCityCreated(OnCityCreated);
-        BuildController.Instance.RegisterStructureCreated(OnStructureCreated);
-        euim = GameObject.FindObjectOfType<EventUIManager>();
-        GameObject.FindObjectOfType<EventController>().RegisterOnEvent(OnEventCreated, OnEventEnded);
     }
 
     internal bool HasEnoughMoney(int playerNumber, int buildCost) {
@@ -109,7 +113,7 @@ public class PlayerController : MonoBehaviour {
     }
     public void OnEventCreated(GameEvent ge) {
         if (ge.target == null) {
-            euim.AddEVENT(ge.ID, ge.Name, ge.position);
+            euim.AddEVENT(ge.eventID, ge.Name, ge.position);
             InformAIaboutEvent(ge, true);
             return;
         }
@@ -118,7 +122,7 @@ public class PlayerController : MonoBehaviour {
         if (ge.target is Island) {
             foreach (City item in ((Island)ge.target).myCities) {
                 if (item.playerNumber == currentPlayerNumber) {
-                    euim.AddEVENT(ge.ID, ge.Name, ge.position);
+                    euim.AddEVENT(ge.eventID, ge.Name, ge.position);
                 }
                 else {
                     InformAIaboutEvent(ge, true);
@@ -130,17 +134,27 @@ public class PlayerController : MonoBehaviour {
         //then inform all... it could be global effect on type of structure
         //should be pretty rare
         if (ge.target.GetPlayerNumber() < 0 && ge.target is Structure) {
-            euim.AddEVENT(ge.ID, ge.Name, ge.position);
+            euim.AddEVENT(ge.eventID, ge.Name, ge.position);
             InformAIaboutEvent(ge, true);
         }
         //just check if the target is owned by the player
         if (ge.target.GetPlayerNumber() == currentPlayerNumber) {
-            euim.AddEVENT(ge.ID, ge.Name, ge.position);
+            euim.AddEVENT(ge.eventID, ge.Name, ge.position);
         }
         else {
             InformAIaboutEvent(ge, true);
         }
     }
+
+    private void OnLevelLoad(Scene scene, LoadSceneMode arg1) {
+        if(scene.name != "GameState") {
+            Debug.LogWarning("OnLevelLoad wrong scene!");
+            return;
+        }
+        SceneManager.sceneLoaded -= OnLevelLoad;
+        euim = GameObject.FindObjectOfType<EventUIManager>();
+    }
+
 
     internal Player GetRandomPlayer() {
         List<Player> players = new List<Player>(Players);

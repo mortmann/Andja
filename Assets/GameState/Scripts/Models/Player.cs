@@ -128,13 +128,13 @@ public class Player : IGEventable {
     }
     private void Setup() {
         myCities = new List<City>();
-        LockedNeeds = new HashSet<Need>[PrototypController.NumberOfPopulationLevels];
-        UnlockedStructureNeeds = new HashSet<Need>[PrototypController.NumberOfPopulationLevels];
+        LockedNeeds = new HashSet<Need>[PrototypController.Instance.NumberOfPopulationLevels];
+        UnlockedStructureNeeds = new HashSet<Need>[PrototypController.Instance.NumberOfPopulationLevels];
         UnlockedItemNeeds = new HashSet<Need>();
         MyTradeRoutes = new List<TradeRoute>();
         AllStructures = new HashSet<Structure>();
         AllUnits = new HashSet<Unit>();
-        for (int i = 0; i < PrototypController.NumberOfPopulationLevels; i++) {
+        for (int i = 0; i < PrototypController.Instance.NumberOfPopulationLevels; i++) {
             LockedNeeds[i] = new HashSet<Need>();
             UnlockedStructureNeeds[i] = new HashSet<Need>();
         }
@@ -151,7 +151,7 @@ public class Player : IGEventable {
         RegisterMaxPopulationCountChange(NeedUnlockCheck);
         CalculateBalance();
         BuildController.Instance.RegisterCityCreated(OnCityCreated);
-        World.Current.RegisterUnitCreated(OnUnitCreated);
+        //World.Current.RegisterUnitCreated(OnUnitCreated);
     }
 
     private void CalculateBalance() {

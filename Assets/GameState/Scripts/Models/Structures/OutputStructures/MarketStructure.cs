@@ -52,8 +52,7 @@ public class MarketStructure : OutputStructure, ICapturable {
         return new MarketStructure(this);
     }
 
-    public override void Update(float deltaTime) {
-        base.Update(deltaTime);
+    public override void OnUpdate(float deltaTime) {
 
         base.Update_Worker(deltaTime);
         if (currentCaptureSpeed > 0) {

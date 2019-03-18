@@ -347,7 +347,7 @@ public class Inventory {
         //there are 10 ids reserved for buildingmaterial
         //currently there are 7 builditems
         List<Item> itemlist = new List<Item>();
-        foreach (Item i in PrototypController.buildItems) {
+        foreach (Item i in PrototypController.BuildItems) {
             if (ContainsItemWithID(i.ID)) {
                 itemlist.Add(GetItemWithID(i.ID));
             }

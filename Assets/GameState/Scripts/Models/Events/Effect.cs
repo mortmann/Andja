@@ -58,7 +58,8 @@ public class Effect {
             return _effectPrototypData;
         }
     }
-    public bool Serialize = true; 
+    public bool Serialize = true;
+    [JsonPropertyAttribute] public float WorkAmount = 0; // THIS is used for servicestructure workers -- for example when removing this effect
 
     public Effect() {
 
@@ -103,7 +104,7 @@ public class Effect {
         if (target is Structure) {
             switch (UpdateChange) {
                 case EffectUpdateChanges.Health:
-                    ((Structure)target).ReduceHealth(Change * deltaTime);
+                    ((Structure)target).ChangeHealth(Change * deltaTime);
                     break;
             }
         }
@@ -111,7 +112,7 @@ public class Effect {
         if (target is Unit) {
             switch (UpdateChange) {
                 case EffectUpdateChanges.Health:
-                    ((Unit)target).ReduceHealth(Change * deltaTime);
+                    ((Unit)target).ChangeHealth(Change * deltaTime);
                     break;
             }
         }

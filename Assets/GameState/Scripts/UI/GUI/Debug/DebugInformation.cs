@@ -20,7 +20,6 @@ public class DebugInformation : MonoBehaviour {
         }
     }
     public void Show(object obj) {
-        Debug.Log(obj.GetType());
         transform.SetParent(UIController.Instance.mainCanvas.transform);
         transform.position = new Vector3(Screen.width / 2, Screen.height / 2);
 
@@ -55,6 +54,12 @@ public class DebugInformation : MonoBehaviour {
         drag.callback.AddListener((data) => { OnDragDelegate((PointerEventData)data); });
         trigger.triggers.Add(beginDrag);
         trigger.triggers.Add(drag);
+        RectTransform rectTransform = GetComponent<RectTransform>();
+        UnityEngine.UI.LayoutRebuilder.ForceRebuildLayoutImmediate(rectTransform);
+        transform.position = new Vector3(
+            Mathf.Clamp(Screen.width / 2 - rectTransform.sizeDelta.x / 2, 0,Screen.width),
+            Mathf.Clamp(Screen.height / 2 + rectTransform.sizeDelta.y / 2, 0, Screen.height)
+        );
     }
 
     private void OnBeginDragDelegate(PointerEventData data) {

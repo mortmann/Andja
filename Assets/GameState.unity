@@ -1502,7 +1502,7 @@ MonoBehaviour:
   shortCutCanvas: {fileID: 1070861931}
   uiInfoCanvas: {fileID: 1120049208}
   chooseBuildCanvas: {fileID: 1517557695}
-  consoleCanvas: {fileID: 157207983}
+  consoleCanvas: {fileID: 477251503}
   productionStructureInfo: {fileID: 1753813432}
   unitCanvas: {fileID: 782353739}
   militaryStructureInfo: {fileID: 1845186998}
@@ -1802,7 +1802,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &157207984
 RectTransform:
   m_ObjectHideFlags: 0
@@ -6217,12 +6217,12 @@ GameObject:
   - component: {fileID: 477251506}
   - component: {fileID: 477251505}
   m_Layer: 5
-  m_Name: Layout+Background
+  m_Name: Console Layout+Background
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &477251504
 RectTransform:
   m_ObjectHideFlags: 0
@@ -8835,7 +8835,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 164425182}
   m_Direction: 2
   m_Value: 1
-  m_Size: 0.99999994
+  m_Size: 0.9999999
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -11971,7 +11971,7 @@ Prefab:
     - target: {fileID: 224660141376739180, guid: 8de6535dbf681994c8f5c0d3bb501985,
         type: 2}
       propertyPath: m_AnchoredPosition.x
-      value: 420
+      value: 658
       objectReference: {fileID: 0}
     - target: {fileID: 224660141376739180, guid: 8de6535dbf681994c8f5c0d3bb501985,
         type: 2}
@@ -11981,7 +11981,7 @@ Prefab:
     - target: {fileID: 224660141376739180, guid: 8de6535dbf681994c8f5c0d3bb501985,
         type: 2}
       propertyPath: m_SizeDelta.x
-      value: 830
+      value: 1306
       objectReference: {fileID: 0}
     - target: {fileID: 224660141376739180, guid: 8de6535dbf681994c8f5c0d3bb501985,
         type: 2}
@@ -16089,7 +16089,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: -193.20001}
+  m_SizeDelta: {x: 0, y: -460.2}
   m_Pivot: {x: 0, y: 0}
 --- !u!114 &1196182187
 MonoBehaviour:
@@ -19576,29 +19576,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1470472602}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1517557700}
-        m_MethodName: OnCivilisationLevelClick
-        m_Mode: 3
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 0}
-        m_MethodName: 
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
 --- !u!114 &1470472602
@@ -19643,7 +19621,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1470472599}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1b5e01526a8f99145b7b92b7d43dbe24, type: 3}
+  m_Script: {fileID: 11500000, guid: 6af54699cfbd9934cbbef14099e49c1b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &1470642145
@@ -20312,9 +20290,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9212a8008c333ce4eb05c74a5bb9b2d0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  buttonBuildStructuresContent: {fileID: 157482290}
+  buttonBuildStructuresContent: {fileID: 108635441}
   buttonPopulationsLevelContent: {fileID: 1524612870}
   buildButtonPrefab: {fileID: 192280, guid: e3f726c85554f6648a558d5a23310610, type: 2}
+  populationButtonPrefab: {fileID: 1131662025828860, guid: 18952b8e8d924b243b240797623cd017,
+    type: 2}
   enableAllStructures: 0
 --- !u!114 &1517557701
 MonoBehaviour:
@@ -20470,6 +20450,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1524612871}
   - component: {fileID: 1524612875}
+  - component: {fileID: 1524612872}
   m_Layer: 5
   m_Name: Build Selection Button
   m_TagString: Untagged
@@ -20499,6 +20480,28 @@ RectTransform:
   m_AnchoredPosition: {x: -0.0500412, y: -20.911987}
   m_SizeDelta: {x: 0, y: 42.177}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1524612872
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1524612870}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -405508275, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Padding:
+    m_Left: 0
+    m_Right: 0
+    m_Top: 0
+    m_Bottom: 0
+  m_ChildAlignment: 0
+  m_Spacing: 0
+  m_ChildForceExpandWidth: 1
+  m_ChildForceExpandHeight: 1
+  m_ChildControlWidth: 0
+  m_ChildControlHeight: 0
 --- !u!114 &1524612875
 MonoBehaviour:
   m_ObjectHideFlags: 0

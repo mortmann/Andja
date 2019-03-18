@@ -105,7 +105,7 @@ public class Island : IGEventable {
                 Wilderness = c;
             }
             c.island = this;
-            structs.AddRange(c.Load());
+            structs.AddRange(c.Load(this));
         }
         return structs;
     }

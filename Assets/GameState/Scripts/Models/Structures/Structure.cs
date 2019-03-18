@@ -134,6 +134,7 @@ public abstract class Structure : IGEventable {
             myStructureTiles.Add(value);
         }
     }
+
     [JsonPropertyAttribute] public int rotated = 0;
     [JsonPropertyAttribute] public bool buildInWilderniss = false;
     [JsonPropertyAttribute] protected bool isActive = true;
@@ -141,6 +142,8 @@ public abstract class Structure : IGEventable {
     #region RuntimeOrOther
     public List<Tile> myStructureTiles;
     public HashSet<Tile> neighbourTiles;
+
+
     public HashSet<Tile> myRangeTiles;
     public string connectOrientation;
     public bool HasExtraUI { get { return ExtraUITyp != ExtraUI.None; } }
@@ -260,10 +263,10 @@ public abstract class Structure : IGEventable {
             if (CanTakeDamage == false) {
                 return;
             }
+            _health = value;
             if (_health <= 0) {
                 Destroy();
             }
-            _health = value;
         }
     }
     public bool NeedsRepair => CurrentHealth < MaxHealth;
@@ -302,12 +305,12 @@ public abstract class Structure : IGEventable {
     #endregion
     #region Virtual/Abstract
     public abstract Structure Clone();
-    /// <summary>
-    /// IF OVERRIDEN please still call this 
-    /// </summary>
-    /// <param name="deltaTime"></param>
-    public virtual void Update(float deltaTime) {
+    public virtual void OnUpdate(float deltaTime) {
         
+    }
+    public void Update(float deltaTime) {
+        UpdateEffects(deltaTime);
+        OnUpdate(deltaTime);
     }
     public abstract void OnBuild();
 
@@ -375,7 +378,7 @@ public abstract class Structure : IGEventable {
     #region placestructure
     public bool PlaceStructure(List<Tile> tiles) {
         myStructureTiles = new List<Tile>();
-
+        CurrentHealth = MaxHealth;
         //test if the place is buildable
         // if it has to be on land
         if (CanBuildOnSpot(tiles) == false) {
@@ -585,7 +588,12 @@ public abstract class Structure : IGEventable {
         CurrentHealth += heal;
         CurrentHealth = Mathf.Clamp(CurrentHealth, 0, MaxHealth);
     }
-
+    internal void ChangeHealth(float change) {
+        if (change < 0)
+            ReduceHealth(-change); //damage should not be negativ
+        if (change > 0)
+            RepairHealth(change);
+    }
     public void Destroy() {
         _health = 0;
         OnDestroy();

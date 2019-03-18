@@ -37,7 +37,7 @@ public class Worker {
         }
     }
 
-    Action<Structure> WorkOnStructure {
+    Func<Structure, float, bool> WorkOnStructure {
         get {
             if (myHome is ServiceStructure)
                 return ((ServiceStructure)myHome).WorkOnTarget;
@@ -54,7 +54,7 @@ public class Worker {
     #endregion
     #region readInVariables
     bool hasToFollowRoads;
-    float workTime = 1f;
+    private bool isDone;
     #endregion
     public float X {
         get {
@@ -71,7 +71,7 @@ public class Worker {
             return path.Y;
         }
     }
-    public Worker(Structure myHome, OutputStructure structure, Item[] toGetItems = null, bool hasToFollowRoads = true) {
+    public Worker(Structure myHome, OutputStructure structure, float workTime = 1f, Item[] toGetItems = null, bool hasToFollowRoads = true) {
         this.myHome = myHome;
         WorkOutputStructure = structure;
         this.hasToFollowRoads = hasToFollowRoads;
@@ -85,7 +85,7 @@ public class Worker {
         SetGoalStructure(structure);
         this.toGetItems = toGetItems;
     }
-    public Worker(ServiceStructure myHome, Structure structure, Action<Structure> workOnStructure, bool hasToFollowRoads = true) {
+    public Worker(ServiceStructure myHome, Structure structure, float workTime, bool hasToFollowRoads = true) {
         this.myHome = myHome;
         WorkStructure = structure;
         this.hasToFollowRoads = hasToFollowRoads;
@@ -178,47 +178,59 @@ public class Worker {
         SetGoalStructure(myHome);
     }
     public void DoWork(float deltaTime) {
+        if (WorkStructure == null && path.DestTile != null) {
+            WorkStructure = path.DestTile.Structure;
+        }
         //we are here at the job tile
         //do its job -- get the items in tile
+        if (WorkOutputStructure is OutputStructure) {
+            DoOutPutStructureWork(deltaTime);
+        } else 
+        if(WorkOnStructure != null) {
+            DoWorkOnStructure(deltaTime);
+        } else {
+            Debug.LogError("Worker has nothing todo -- why does he exist? He is from " + myHome.ToString() + "! Killing him now.");
+            Destroy();
+        }
+        if(isDone) {
+            WorkOutputStructure.UnregisterOnDestroyCallback(OnWorkStructureDestroy);
+            //doTimer = workTime / 2;
+            goingToWork = false;
+            path.Reverse();
+        }
+    }
+
+    private void DoWorkOnStructure(float deltaTime) {
+        isDone = WorkOnStructure(WorkStructure,deltaTime);
+    }
+
+    public void DoOutPutStructureWork(float deltaTime) {
         doTimer -= deltaTime;
         if (doTimer > 0) {
             cbSoundCallback?.Invoke(this, soundWorkName);
             return;
         }
-        if (WorkStructure == null && path.DestTile != null) {
-            WorkStructure = path.DestTile.Structure;
-        }
-        if (WorkOutputStructure != null) {
-            if (toGetItems == null) {
-                foreach (Item item in WorkOutputStructure.GetOutput()) {
-                    inventory.AddItem(item);
-                }
+        if (toGetItems == null) {
+            foreach (Item item in WorkOutputStructure.GetOutput()) {
+                inventory.AddItem(item);
             }
-            if (toGetItems != null) {
-                foreach (Item item in WorkOutputStructure.GetOutputWithItemCountAsMax(toGetItems)) {
-                    inventory.AddItem(item);
-                }
-            }
-            if (WorkOutputStructure is MarketStructure) {
-                foreach (Item item in WorkOutputStructure.GetOutputWithItemCountAsMax(toGetItems)) {
-                    if (item == null) {
-                        Debug.LogError("item is null for to get item! Worker is from " + WorkOutputStructure);
-                    }
-                    inventory.AddItem(item);
-                }
-            }
-            WorkOutputStructure.outputClaimed = false;
         }
-        else {
-            WorkOnStructure?.Invoke(WorkStructure);
+        if (toGetItems != null) {
+            foreach (Item item in WorkOutputStructure.GetOutputWithItemCountAsMax(toGetItems)) {
+                inventory.AddItem(item);
+            }
         }
-        WorkOutputStructure.UnregisterOnDestroyCallback(OnWorkStructureDestroy);
-        doTimer = workTime / 2;
-        goingToWork = false;
-        path.Reverse();
-//		Debug.Log ("WORK completed!");
+        if (WorkOutputStructure is MarketStructure) {
+            foreach (Item item in WorkOutputStructure.GetOutputWithItemCountAsMax(toGetItems)) {
+                if (item == null) {
+                    Debug.LogError("item is null for to get item! Worker is from " + WorkOutputStructure);
+                }
+                inventory.AddItem(item);
+            }
+        }
+        WorkOutputStructure.outputClaimed = false;
+        isDone = true;
     }
-
 
     public void Destroy() {
         if (goingToWork)

@@ -11,42 +11,51 @@ using static Combat;
 public class PrototypController : MonoBehaviour {
     public const int StartID = 1;
 
-    public static int NumberOfPopulationLevels => 4;
+    public int NumberOfPopulationLevels => populationLevelDatas.Count;
 
     public static PrototypController Instance;
-    public Dictionary<int, Structure> structurePrototypes;
-    private Dictionary<int, Unit> unitPrototypes;
-    public Dictionary<Type, int> structureTypeToMaxStructureLevel;
+    public IReadOnlyDictionary<int, Structure> StructurePrototypes => structurePrototypes;
+    public IReadOnlyDictionary<int, Unit> UnitPrototypes => unitPrototypes;
+    public IReadOnlyDictionary<Type, int> StructureTypeToMaxStructureLevel => structureTypeToMaxStructureLevel;
+    public IReadOnlyDictionary<int, StructurePrototypeData> StructurePrototypeDatas => structurePrototypeDatas;
+    public IReadOnlyDictionary<int, NeedPrototypeData> NeedPrototypeDatas => needPrototypeDatas;
+    public IReadOnlyDictionary<int, FertilityPrototypeData> FertilityPrototypeDatas => fertilityPrototypeDatas;
+    public IReadOnlyDictionary<int, UnitPrototypeData> UnitPrototypeDatas => unitPrototypeDatas;
+    public IReadOnlyDictionary<int, ItemPrototypeData> ItemPrototypeDatas => itemPrototypeDatas;
+    public IReadOnlyDictionary<int, DamageType> DamageTypeDatas => damageTypeDatas;
+    public IReadOnlyDictionary<int, EffectPrototypeData> EffectPrototypeDatas => effectPrototypeDatas;
+    public IReadOnlyDictionary<int, ArmorType> ArmorTypeDatas => armorTypeDatas;
+    public IReadOnlyDictionary<int, GameEventPrototypData> GameEventPrototypeDatas => gameEventPrototypeDatas;
+    public IReadOnlyDictionary<int, Item> AllItems => allItems;
+    public IReadOnlyDictionary<int, List<NeedGroup>> PopulationLevelToNeedGroup => populationLevelToNeedGroup;
+    public IReadOnlyDictionary<Climate, List<Fertility>> AllFertilities => allFertilities;
+    public IReadOnlyDictionary<int, Fertility> IdToFertilities => idToFertilities;
+    public IReadOnlyDictionary<int, PopulationLevelPrototypData> PopulationLevelDatas => populationLevelDatas;
 
-    public Dictionary<int, StructurePrototypeData> structurePrototypeDatas;
-    public Dictionary<int, ItemPrototypeData> itemPrototypeDatas;
+    // SHOULD BE READ ONLY -- cant be done because Unity Error for multiple implementations
+    public static List<Item> BuildItems => buildItems;
 
+    Dictionary<int, Structure> structurePrototypes;
+    Dictionary<int, Unit> unitPrototypes;
+    Dictionary<Type, int> structureTypeToMaxStructureLevel;
+    Dictionary<int, StructurePrototypeData> structurePrototypeDatas;
+    Dictionary<int, ItemPrototypeData> itemPrototypeDatas;
+    Dictionary<int, NeedPrototypeData> needPrototypeDatas;
+    Dictionary<int, FertilityPrototypeData> fertilityPrototypeDatas;
+    Dictionary<int, UnitPrototypeData> unitPrototypeDatas;
+    Dictionary<int, DamageType> damageTypeDatas;
+    Dictionary<int, EffectPrototypeData> effectPrototypeDatas;
+    Dictionary<int, GameEventPrototypData> gameEventPrototypeDatas;
+    Dictionary<int, ArmorType> armorTypeDatas;
+    Dictionary<int, PopulationLevelPrototypData> populationLevelDatas;
+    Dictionary<int, NeedGroupPrototypData> needGroupDatas;
+    Dictionary<int, Item> allItems;
+    Dictionary<int, List<NeedGroup>> populationLevelToNeedGroup;
+    Dictionary<Climate, List<Fertility>> allFertilities;
+    Dictionary<int, Fertility> idToFertilities;
 
-    public Dictionary<int, NeedPrototypeData> needPrototypeDatas;
-    public Dictionary<int, FertilityPrototypeData> fertilityPrototypeDatas;
-    public Dictionary<int, UnitPrototypeData> unitPrototypeDatas;
-
-    public Dictionary<int, DamageType> damageTypeDatas;
-    public Dictionary<int, EffectPrototypeData> effectPrototypeDatas;
-    public Dictionary<int, GameEventPrototypData> gameEventPrototypeDatas;
-
-
-    public Dictionary<int, ArmorType> armorTypeDatas;
-    public Dictionary<int, PopulationLevelPrototypData> populationLevelDatas;
-    public Dictionary<int, NeedGroupPrototypData> needGroupDatas;
-
-
-    public Dictionary<int, Item> allItems;
-    public static List<Item> buildItems;
-
-    private List<Need> allNeeds;
-    private Dictionary<int, List<NeedGroup>> populationLevelToNeedGroup;
-    public Dictionary<Climate, List<Fertility>> allFertilities;
-
-
-
-    public Dictionary<int, Fertility> idToFertilities;
-
+    static List<Item> buildItems;
+    List<Need> allNeeds;
     //current valid player prototyp data
     internal static PlayerPrototypeData CurrentPlayerPrototypData = new PlayerPrototypeData();
 
@@ -254,8 +263,12 @@ public class PrototypController : MonoBehaviour {
         foreach (XmlElement node in xmlDoc.SelectNodes("Other/PopulationLevel")) {
             PopulationLevelPrototypData plpd = new PopulationLevelPrototypData();
             int level = int.Parse(node.GetAttribute("LEVEL"));
+            plpd.LEVEL = level;
             SetData<PopulationLevelPrototypData>(node, ref plpd);
-            plpd.needGroupList = populationLevelToNeedGroup[plpd.LEVEL];
+            if (populationLevelToNeedGroup.ContainsKey(level))
+                plpd.needGroupList = populationLevelToNeedGroup[level];
+            else
+                Debug.LogWarning("PopulationLevel " + plpd.Name + " " + plpd.LEVEL + " is missing its own needs!");
             populationLevelDatas.Add(level, plpd);
         }
     }
@@ -422,10 +435,20 @@ public class PrototypController : MonoBehaviour {
             needPrototypeDatas.Add(ID, npd);
             if (npd.item == null && npd.structures == null)
                 continue;
-
+            if(npd.structures != null) {
+                foreach(Structure str in npd.structures) {
+                    if(npd.startLevel > str.PopulationLevel) {
+                        npd.startLevel = str.PopulationLevel;
+                    } 
+                    if(npd.startLevel == str.PopulationLevel) {
+                        if (npd.popCount > str.PopulationCount) {
+                            npd.popCount = str.PopulationCount;
+                        }
+                    }
+                }
+            }
             Need n = new Need(ID, npd);
             allNeeds.Add(n);
-
             if (levelToNeedList.ContainsKey(npd.startLevel) == false) {
                 levelToNeedList[npd.startLevel] = new List<Need>();
             }
@@ -462,6 +485,8 @@ public class PrototypController : MonoBehaviour {
     }
 
     private void ReadServiceStructures(XmlNode xmlDoc) {
+        if (xmlDoc == null)
+            return;
         foreach (XmlElement node in xmlDoc.SelectNodes("servicestructure")) {
             int ID = int.Parse(node.GetAttribute("ID"));
 
@@ -824,13 +849,18 @@ public class PrototypController : MonoBehaviour {
                     Dictionary<Target, List<int>> range = new Dictionary<Target, List<int>>();
                     foreach (XmlNode child in currentNode.ChildNodes) {
                         Target target = Target.World;
-                        Enum.TryParse<Target>(currentNode.InnerXml, true, out target);
-                        if (target == Target.World)
+                        if(child.Attributes[0] == null)
                             continue;
+                        if (Enum.TryParse<Target>(child.Attributes[0].InnerXml, true, out target) == false)
+                            continue;
+                        String[] ids = child.InnerXml.Split(',');
+                        if(ids.Length == 0) {
+                            continue;
+                        }
                         range.Add(target, new List<int>());
-                        foreach (XmlNode childChild in currentNode.ChildNodes) {
+                        foreach (String stringid in ids) {
                             int id = -1;
-                            int.TryParse(childChild.InnerXml, out id);
+                            int.TryParse(stringid, out id);
                             if (id == -1)
                                 continue;
                             range[target].Add(id);
@@ -847,11 +877,22 @@ public class PrototypController : MonoBehaviour {
                         fi.SetValue(data, range);
                     continue;
                 }
+                if (fi.FieldType == typeof(TargetGroup)) {
+                    List<Target> targets = new List<Target>();
+                    foreach (XmlNode child in currentNode.ChildNodes) {
+                        Target target = Target.World;
+                        if (Enum.TryParse<Target>(child.InnerXml, true, out target) == false)
+                            continue;
+                        targets.Add(target);
+                    }
+                    fi.SetValue(data, new TargetGroup(targets));
+                    continue;
+                }
                 try {
                     fi.SetValue(data, Convert.ChangeType(currentNode.InnerXml, fi.FieldType, System.Globalization.CultureInfo.InvariantCulture));
                 }
                 catch {
-                    Debug.Log(fi.Name + " is faulty!");
+                    Debug.Log(data.ToString() + " -> " + fi.Name + " is faulty!");
                 }
             }
         }

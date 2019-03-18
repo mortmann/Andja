@@ -130,7 +130,7 @@ public abstract class OutputStructure : TargetStructure {
             if(workersHasToFollowRoads && CanReachStructure(jobStr) == false) {
                 continue;
             }
-            Worker ws = new Worker(this, jobStr, items, workersHasToFollowRoads);
+            Worker ws = new Worker(this, jobStr, 1, items, workersHasToFollowRoads);
 
             givenJobs.Add(jobStr);
             World.Current.CreateWorkerGameObject(ws);

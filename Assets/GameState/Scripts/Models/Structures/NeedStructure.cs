@@ -32,8 +32,7 @@ public class NeedStructure : TargetStructure {
             t.AddNeedStructure(this);
         }
     }
-    public override void Update(float deltaTime) {
-        base.Update(deltaTime);
+    public override void OnUpdate(float deltaTime) {
 
     }
 

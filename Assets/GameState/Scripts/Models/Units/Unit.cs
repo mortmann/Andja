@@ -92,7 +92,6 @@ public class Unit : IGEventable,IWarfare {
             _currHealth = value;
         }
     }
-
     internal void ReduceHealth(float damage) {
         if (damage < 0) {
             damage = -damage;
@@ -101,7 +100,20 @@ public class Unit : IGEventable,IWarfare {
         CurrentHealth -= damage;
         CurrentHealth = Mathf.Clamp(CurrentHealth, 0, MaxHealth);
     }
-
+    public void RepairHealth(float heal) {
+        if (heal < 0) {
+            heal = -heal;
+            Debug.LogWarning("Healing should be never smaller than 0 - Fixed it!");
+        }
+        CurrentHealth += heal;
+        CurrentHealth = Mathf.Clamp(CurrentHealth, 0, MaxHealth);
+    }
+    internal void ChangeHealth(float change) {
+        if (change < 0)
+            ReduceHealth(-change); //damage should not be negativ
+        if (change > 0)
+            RepairHealth(change);
+    }
     public OutputStructure rangeUStructure;
     protected Action<Unit> cbUnitChanged;
     protected Action<Unit> cbUnitDestroyed;
@@ -149,6 +161,7 @@ public class Unit : IGEventable,IWarfare {
     public float MaxHealth => CalculateRealValue("maximumHealth", Data.maximumHealth);
     public float AttackRate => CalculateRealValue("attackRange", Data.attackRange);
     public float Speed => CalculateRealValue("speed", Data.speed);
+
     public float RotationSpeed => CalculateRealValue("rotationSpeed", Data.rotationSpeed);
     public int InventoryPlaces => CalculateRealValue("inventoryPlaces", Data.inventoryPlaces); //UNTESTED HOW THIS WILL WORK
     public int InventorySize => CalculateRealValue("inventorySize", Data.inventorySize); //UNTESTED HOW THIS WILL WORK

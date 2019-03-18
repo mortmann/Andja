@@ -90,11 +90,11 @@ public class EventController : MonoBehaviour {
         //update and remove inactive events
         List<uint> ids = new List<uint>(idToActiveEvent.Keys);
         foreach (uint i in ids) {
-            Debug.Log("update " + i);
-            idToActiveEvent[i].Update(WorldController.Instance.DeltaTime);
             if (idToActiveEvent[i].IsDone) {
                 cbEventEnded(idToActiveEvent[i]);
                 idToActiveEvent.Remove(i);
+            } else {
+                idToActiveEvent[i].Update(WorldController.Instance.DeltaTime);
             }
         }
         //Now will there be an event or not?
@@ -122,11 +122,11 @@ public class EventController : MonoBehaviour {
 
     public void CreateGameEvent(GameEvent ge) {
         //fill the type
-        cbEventCreated(ge);
         idToActiveEvent.Add(lastID, ge);
-        ge.StartEvent(Vector2.zero);
+        ge.eventID = lastID;
+        ge.StartEvent();
+        cbEventCreated(ge);
         lastID++;
-
     }
     /// <summary>
     /// Random Player or ALL will be chosen depending on TargetTypes

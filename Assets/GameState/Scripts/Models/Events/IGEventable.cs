@@ -12,6 +12,18 @@ public abstract class IGEventable {
     protected Dictionary<string, float> VariablenameToFloat;
 
     [JsonPropertyAttribute] protected List<Effect> Effects;
+    List<Effect> _UpdateEffectList;
+    protected List<Effect> UpdateEffectList {
+        get {
+            if (Effects == null)
+                return null;
+            if (_UpdateEffectList == null) {
+                _UpdateEffectList = new List<Effect>(Effects);
+                _UpdateEffectList.RemoveAll(x => x.IsUpdateChange == false);
+            }
+            return _UpdateEffectList;
+        }
+    }
     /// <summary>
     /// Target, Effect, added=true removed=false 
     /// </summary>
@@ -92,8 +104,17 @@ public abstract class IGEventable {
     public abstract void OnEventCreate(GameEvent ge);
     public abstract void OnEventEnded(GameEvent ge);
 
+    public void UpdateEffects(float deltaTime) {
+        if (UpdateEffectList == null || UpdateEffectList.Count == 0)
+            return;
+        for(int i = UpdateEffectList.Count - 1; i >= 0; i--) {
+            UpdateEffectList[i].Update(deltaTime, this);
+        }
+    }
 
     public void AddEffects(Effect[] effects) {
+        if (Effects == null)
+            Effects = new List<Effect>();
         foreach (Effect effect in effects)
             AddEffect(effect);
     }
@@ -113,11 +134,19 @@ public abstract class IGEventable {
             if (VariablenameToFloat == null)
                 VariablenameToFloat = new Dictionary<string, float>();
             //we change a float or integer variable 
-            VariablenameToFloat[effect.NameOfVariable + effect.ModifierType] += effect.Change;
+            if (effect.ModifierType != EffectModifier.Update || effect.ModifierType != EffectModifier.Special) {
+                if (VariablenameToFloat.ContainsKey(effect.NameOfVariable + effect.ModifierType) == false) {
+                    VariablenameToFloat.Add(effect.NameOfVariable + effect.ModifierType, 0);
+                }
+                VariablenameToFloat[effect.NameOfVariable + effect.ModifierType] += effect.Change;
+            }
         }
 
         if (effect.IsNegativ)
             HasNegativEffect = true;
+    }
+    internal Effect GetEffect(int ID) {
+        return Effects.Find(x => x.ID == ID);
     }
 
     public bool HasEffect(Effect effect) {
@@ -153,7 +182,7 @@ public abstract class IGEventable {
     /// <param name="currentValue"></param>
     /// <returns></returns>
     protected float CalculateRealValue(string name, float currentValue, bool clampToZero = true) {
-        float value = (currentValue + GetAdditiveValue(name)) * GetMultiplicative(name);
+        float value = (currentValue + GetAdditiveValue(name)) * (1 + GetMultiplicative(name));
         if (clampToZero)
             return Mathf.Clamp(value, 0, value);
         return value;

@@ -114,8 +114,7 @@ public class ProductionStructure : OutputStructure {
         return new ProductionStructure(this);
     }
 
-    public override void Update(float deltaTime) {
-        base.Update(deltaTime);
+    public override void OnUpdate(float deltaTime) {
 
         if (Output == null) {
             return;
@@ -189,7 +188,7 @@ public class ProductionStructure : OutputStructure {
             if (getItems.Count <= 0) {
                 return;
             }
-            myWorker.Add(new Worker(this, nearestMarketStructure, getItems.ToArray(), false));
+            myWorker.Add(new Worker(this, nearestMarketStructure, 1, getItems.ToArray(), false));
             World.Current.CreateWorkerGameObject(myWorker[0]);
         }
         else {

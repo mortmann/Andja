@@ -118,8 +118,7 @@ public class HomeStructure : TargetStructure {
         }
     }
 
-    public override void Update(float deltaTime) {
-        base.Update(deltaTime);
+    public override void OnUpdate(float deltaTime) {
 
         if (City == null || City.IsWilderness()) {
             //here the people are very unhappy and will leave veryfast

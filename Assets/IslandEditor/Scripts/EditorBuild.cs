@@ -15,10 +15,10 @@ public class EditorBuild : MonoBehaviour {
     // Use this for initialization
     void Start() {
         bool first = true;
-        foreach (int item in PrototypController.Instance.structurePrototypes.Keys) {
+        foreach (int item in PrototypController.Instance.StructurePrototypes.Keys) {
             GameObject g = GameObject.Instantiate(prefabListItem);
             g.transform.SetParent(BuildingSelectContent.transform);
-            g.GetComponentInChildren<Text>().text = PrototypController.Instance.structurePrototypes[item].SpriteName;
+            g.GetComponentInChildren<Text>().text = PrototypController.Instance.StructurePrototypes[item].SpriteName;
             int temp = item;
             EventTrigger eventTrigger = g.GetComponent<EventTrigger>();
             EventTrigger.Entry entry = new EventTrigger.Entry {
@@ -35,10 +35,10 @@ public class EditorBuild : MonoBehaviour {
 
     public void OnBuildingSelect(int id) {
         EditorController.Instance.SetStructure(id);
-        if (PrototypController.Instance.structurePrototypes[id] is GrowableStructure == false) {
+        if (PrototypController.Instance.StructurePrototypes[id] is GrowableStructure == false) {
             return;
         }
-        GrowableStructure gr = PrototypController.Instance.structurePrototypes[id] as GrowableStructure;
+        GrowableStructure gr = PrototypController.Instance.StructurePrototypes[id] as GrowableStructure;
         int ages = gr.AgeStages;
         foreach (Transform item in BuildingSettingsContent.transform) {
             GameObject.Destroy(item.gameObject);

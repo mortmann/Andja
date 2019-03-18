@@ -35,6 +35,7 @@ public class SaveController : MonoBehaviour {
         }
         Instance = this;
     }
+
     // Use this for initialization
     void Start() {
         if (GDH != null && GDH.loadsavegame != null && GDH.loadsavegame.Length > 0) {

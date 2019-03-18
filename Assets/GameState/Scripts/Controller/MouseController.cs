@@ -38,16 +38,16 @@ public class MouseController : MonoBehaviour {
 
     BuildController BuildController => BuildController.Instance;
     UIController UIController => UIController.Instance;
-
-    protected Structure _structure;
-    public Structure Structure {
+    private Structure SelectedStructure;
+    protected Structure _toBuildstructure;
+    public Structure ToBuildStructure {
         get {
-            return _structure;
+            return _toBuildstructure;
         }
         set {
             GameObject.Destroy(previewGO);
             ResetBuild(null);
-            _structure = value;
+            _toBuildstructure = value;
         }
     }
 
@@ -69,6 +69,17 @@ public class MouseController : MonoBehaviour {
             else {
                 mouseUnitState = MouseUnitState.Normal;
             }
+        }
+    }
+
+
+    public IGEventable CurrentlySelectedIGEventable {
+        get {
+            if (SelectedUnit != null)
+                return SelectedUnit;
+            if(SelectedStructure != null)
+                return SelectedStructure;
+            return null;
         }
     }
 
@@ -160,7 +171,7 @@ public class MouseController : MonoBehaviour {
             ITargetableHoldingScript targetableHoldingScript = hit.transform.GetComponent<ITargetableHoldingScript>();
             if (targetableHoldingScript != null && targetableHoldingScript.IsUnit) {
                 mouseState = MouseState.Unit;
-                SelectedUnit = (Unit)targetableHoldingScript.Holding;
+                SelectedUnit = (Unit) targetableHoldingScript.Holding;
                 SelectedUnit.RegisterOnDestroyCallback(OnUnitDestroy);
                 UIController.OpenUnitUI(SelectedUnit);
                 UIDebug(SelectedUnit);
@@ -171,14 +182,18 @@ public class MouseController : MonoBehaviour {
                 if (t.Structure != null) {
                     UIDebug(t.Structure);
                     UIController.OpenStructureUI(t.Structure);
+                    SelectedStructure = t.Structure;
                 }
 
             }
         }
         else {
             UIDebug(GetTileUnderneathMouse());
-            if (mouseState != MouseState.Unit)
+            if (mouseState != MouseState.Unit) {
                 UIController.CloseInfoUI();
+                SelectedUnit = null;
+                SelectedStructure = null;
+            }
         }
     }
     private void UpdateSingle() {
@@ -187,13 +202,13 @@ public class MouseController : MonoBehaviour {
             HighlightTiles = null;
             return;
         }
-        if (Structure == null) {
+        if (ToBuildStructure == null) {
             HighlightTiles = null;
             return;
         }
         ShowSinglePreview(GetTileUnderneathMouse());
         if (Input.GetMouseButtonDown(0)) {
-            List<Tile> structureTiles = Structure.GetBuildingTiles(GetTileUnderneathMouse().X, GetTileUnderneathMouse().Y);
+            List<Tile> structureTiles = ToBuildStructure.GetBuildingTiles(GetTileUnderneathMouse().X, GetTileUnderneathMouse().Y);
             Build(structureTiles);
         }
     }
@@ -208,13 +223,13 @@ public class MouseController : MonoBehaviour {
         if (tile == null) {
             return;
         }
-        int tempTest = Structure.rotated;
+        int tempTest = ToBuildStructure.rotated;
         Dictionary<Tile, bool> tileToCanBuild = null;
         if (autorotate) {
             for (int r = 0; r < 4; r++) {
-                Structure.AddTimes90ToRotate(r);
-                List<Tile> structureTiles = Structure.GetBuildingTiles(tile.X, tile.Y);
-                tileToCanBuild = Structure.CorrectSpot(structureTiles);
+                ToBuildStructure.AddTimes90ToRotate(r);
+                List<Tile> structureTiles = ToBuildStructure.GetBuildingTiles(tile.X, tile.Y);
+                tileToCanBuild = ToBuildStructure.CorrectSpot(structureTiles);
                 if (tileToCanBuild.Values.ToList().Contains(false) == false) {
                     break;
                 }
@@ -228,14 +243,14 @@ public class MouseController : MonoBehaviour {
         if (tileToCanBuild.Values.ToList().Contains(false)) {
             //TODO fix this temporary fix
             // it is so that previews dont spinn like crazy BUT find better way todo this
-            Structure.rotated = tempTest;
+            ToBuildStructure.rotated = tempTest;
         }
         foreach (Tile t in tileToCanBuild.Keys) {
             if (t == null) {
                 continue;
             }
             //not viable city overrides everything
-            if (Structure.IsTileCityViable(t, PlayerController.currentPlayerNumber) == false) {
+            if (ToBuildStructure.IsTileCityViable(t, PlayerController.currentPlayerNumber) == false) {
                 ShowRedPrefabOnTile(t);
                 continue;
             }
@@ -260,7 +275,7 @@ public class MouseController : MonoBehaviour {
 
         SpriteRenderer sr = previewGO.AddComponent<SpriteRenderer>();
 
-        sr.sprite = ssc.GetStructureSprite(Structure);
+        sr.sprite = ssc.GetStructureSprite(ToBuildStructure);
         sr.sortingLayerName = "StructuresUI";
         sr.color = new Color(sr.color.a, sr.color.b, sr.color.g, 0.5f);
         //Structure.GetExtraBuildUIData ();
@@ -279,18 +294,18 @@ public class MouseController : MonoBehaviour {
         //this is for extra ui when building like 
         //how effective it is to build there
         //this may move from this place
-        Structure.UpdateExtraBuildUI(previewGO, t);
+        ToBuildStructure.UpdateExtraBuildUI(previewGO, t);
         float x = 0;
         float y = 0;
-        if (Structure.TileWidth > 1) {
-            x = 0.5f + ((float)Structure.TileWidth) / 2 - 1;
+        if (ToBuildStructure.TileWidth > 1) {
+            x = 0.5f + ((float)ToBuildStructure.TileWidth) / 2 - 1;
         }
-        if (Structure.TileHeight > 1) {
-            y = 0.5f + ((float)Structure.TileHeight) / 2 - 1;
+        if (ToBuildStructure.TileHeight > 1) {
+            y = 0.5f + ((float)ToBuildStructure.TileHeight) / 2 - 1;
         }
         previewGO.transform.position = new Vector3(GetTileUnderneathMouse().X + x,
                                                     GetTileUnderneathMouse().Y + y, 0);
-        previewGO.transform.eulerAngles = new Vector3(0, 0, 360 - Structure.rotated);
+        previewGO.transform.eulerAngles = new Vector3(0, 0, 360 - ToBuildStructure.rotated);
     }
     public void RemovePrefabs() {
         while (previewGameObjects.Count > 0) {
@@ -328,17 +343,17 @@ public class MouseController : MonoBehaviour {
         if (EventSystem.current.IsPointerOverGameObject()) {
             yield break;
         }
-        if (Structure.StructureRange == 0) {
+        if (ToBuildStructure.StructureRange == 0) {
             yield break;
         }
         if (highlightGO != null)
             yield break;
-        HighlightTiles = new HashSet<Tile>(Structure.MyPrototypeTiles);
+        HighlightTiles = new HashSet<Tile>(ToBuildStructure.MyPrototypeTiles);
         highlightGO = new GameObject();
 
-        int range = Structure.StructureRange * 2; // cause its the radius
-        int width = range + Structure.TileWidth;
-        int height = range + Structure.TileWidth;
+        int range = ToBuildStructure.StructureRange * 2; // cause its the radius
+        int width = range + ToBuildStructure.TileWidth;
+        int height = range + ToBuildStructure.TileWidth;
 
         Texture2D tex = new Texture2D(width, height, TextureFormat.RGBA32, true);
         tex.SetPixels32(new Color32[width * height]);
@@ -352,8 +367,8 @@ public class MouseController : MonoBehaviour {
 
         SpriteRenderer sr = highlightGO.AddComponent<SpriteRenderer>();
         // offset based on even or uneven so it is centered properly
-        float xoffset = Structure.TileWidth % 2 == 0 ? 0f : -0.5f;
-        float yoffset = Structure.TileHeight % 2 == 0 ? 0f : -0.5f;
+        float xoffset = ToBuildStructure.TileWidth % 2 == 0 ? 0f : -0.5f;
+        float yoffset = ToBuildStructure.TileHeight % 2 == 0 ? 0f : -0.5f;
         sr.sprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(0.5f, 0.5f), 1);
         sr.sortingLayerName = "DarkLayer";
         highlightGO.transform.parent = previewGO.transform;
@@ -373,6 +388,7 @@ public class MouseController : MonoBehaviour {
                     break;
                 case MouseUnitState.Normal:
                     SelectedUnit = null;
+                    SelectedStructure = null;
                     UIController.CloseInfoUI();
                     mouseState = MouseState.Idle;
                     mouseUnitState = MouseUnitState.None;
@@ -485,7 +501,7 @@ public class MouseController : MonoBehaviour {
                     BuildController.DestroyStructureOnTiles(ts, PlayerController.Instance.CurrPlayer);
                 }
                 else {
-                    if (Structure == null) {
+                    if (ToBuildStructure == null) {
                         return;
                     }
                     Build(ts, true);
@@ -498,9 +514,9 @@ public class MouseController : MonoBehaviour {
         int width = 1;
         int height = 1;
         List<Tile> tiles = new List<Tile>();
-        if (Structure != null) {
-            width = Structure.TileWidth;
-            height = Structure.TileHeight;
+        if (ToBuildStructure != null) {
+            width = ToBuildStructure.TileWidth;
+            height = ToBuildStructure.TileHeight;
         }
         for (int x = start_x; x <= end_x; x += width) {
             for (int y = start_y; y <= end_y; y += height) {

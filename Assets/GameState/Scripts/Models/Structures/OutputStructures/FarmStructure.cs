@@ -82,9 +82,7 @@ public class FarmStructure : OutputStructure {
             rangeTile.RegisterTileOldNewStructureChangedCallback(OnTileStructureChange);
         }
     }
-    public override void Update(float deltaTime) {
-        base.Update(deltaTime);
-
+    public override void OnUpdate(float deltaTime) {
         if (growableReadyCount == 0) {
             return;
         }

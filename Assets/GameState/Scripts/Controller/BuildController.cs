@@ -34,8 +34,8 @@ public class BuildController : MonoBehaviour {
     public bool noBuildCost = false;
     public bool noUnitRestriction = false;
 
-    public Dictionary<int, Structure> StructurePrototypes {
-        get { return PrototypController.Instance.structurePrototypes; }
+    public IReadOnlyDictionary<int, Structure> StructurePrototypes {
+        get { return PrototypController.Instance.StructurePrototypes; }
     }
     public Structure toBuildStructure;
 
@@ -94,15 +94,15 @@ public class BuildController : MonoBehaviour {
         toBuildStructure = StructurePrototypes[id].Clone();
         if (StructurePrototypes[id].BuildTyp == BuildTypes.Path) {
             MouseController.Instance.mouseState = MouseState.Path;
-            MouseController.Instance.Structure = toBuildStructure;
+            MouseController.Instance.ToBuildStructure = toBuildStructure;
         }
         if (StructurePrototypes[id].BuildTyp == BuildTypes.Single) {
             MouseController.Instance.mouseState = MouseState.Single;
-            MouseController.Instance.Structure = toBuildStructure;
+            MouseController.Instance.ToBuildStructure = toBuildStructure;
         }
         if (StructurePrototypes[id].BuildTyp == BuildTypes.Drag) {
             MouseController.Instance.mouseState = MouseState.Drag;
-            MouseController.Instance.Structure = toBuildStructure;
+            MouseController.Instance.ToBuildStructure = toBuildStructure;
         }
         BuildState = BuildStateModes.Build;
     }
@@ -208,7 +208,8 @@ public class BuildController : MonoBehaviour {
                         inv = buildInRangeUnit.inventory;
                     }
                     else {
-                        inv = hasCity.MyCity.inventory;
+                        if(hasCity != null)
+                            inv = hasCity.MyCity.inventory;
                     }
                     if (inv == null) {
                         Debug.LogError("Build something with smth that has no inventory");

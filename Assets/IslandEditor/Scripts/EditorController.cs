@@ -316,7 +316,7 @@ public class EditorController : MonoBehaviour {
             ((GrowableStructure)structure).currentStage = age;
     }
     public void SetStructure(int id) {
-        structure = PrototypController.Instance.structurePrototypes[id];
+        structure = PrototypController.Instance.StructurePrototypes[id];
     }
     public void RegisterOnStructureCreated(Action<Structure> strs) {
         cbStructureCreated += strs;

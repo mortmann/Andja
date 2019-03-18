@@ -8,13 +8,17 @@ public class BuildMenuUIController : MonoBehaviour {
     public GameObject buttonPopulationsLevelContent;
 
     public GameObject buildButtonPrefab;
+    public GameObject populationButtonPrefab;
+
     public Dictionary<string, GameObject> nameToGOMap;
     public Dictionary<string, int> nameToIDMap;
-    public List<string>[] buttons;
 
+    public Dictionary<int, GameObject> popLevelToGO;
+
+    public List<string>[] buttons;
     BuildController buildController;
     GameObject oldButton;
-    int selectedCivLevel = 0;
+    static int selectedPopulationLevel = 0;
     Player player;
     public bool enableAllStructures = false;
     // Use this for initialization
@@ -23,6 +27,17 @@ public class BuildMenuUIController : MonoBehaviour {
         nameToIDMap = new Dictionary<string, int>();
         buildController = BuildController.Instance;
         buttons = new List<string>[4];
+
+        foreach(Transform child in buttonPopulationsLevelContent.transform) {
+            Destroy(child.gameObject);
+        }
+        popLevelToGO = new Dictionary<int, GameObject>();
+        foreach (PopulationLevelPrototypData pl in PrototypController.Instance.PopulationLevelDatas.Values) {
+            GameObject go = Instantiate(populationButtonPrefab);
+            go.transform.SetParent(buttonPopulationsLevelContent.transform);
+            go.GetComponent<ButtonSetter>().Set(pl.Name, () => { OnPopulationLevelButtonClick(pl.LEVEL); });
+            popLevelToGO.Add(pl.LEVEL, go);
+        }
 
         player = PlayerController.Instance.CurrPlayer;
 
@@ -44,13 +59,13 @@ public class BuildMenuUIController : MonoBehaviour {
             nameToGOMap[b.name] = b.gameObject;
             nameToIDMap[b.name] = s.ID;
             buttons[s.PopulationLevel].Add(b.name);
-            if (s.PopulationLevel != 0) {
+            if (s.PopulationLevel != selectedPopulationLevel) {
                 b.SetActive(false);
             }
         }
         OnMaxPopLevelChange(player.MaxPopulationLevel);
-
-        player.RegisterMaxPopulationCountChange(OnMaxPopLevelChange);
+        OnMaxPopLevelCountChange(player.MaxPopulationLevel, player.MaxPopulationCount);
+        player.RegisterMaxPopulationCountChange(OnMaxPopLevelCountChange);
         buildController.RegisterBuildStateChange(OnBuildModeChange);
     }
     void OnEnable() {
@@ -62,10 +77,10 @@ public class BuildMenuUIController : MonoBehaviour {
                 oldButton.GetComponent<Image>().color = Color.white;
         }
     }
-    public void OnMaxPopLevelChange(int level) {
-        for (int i = 0; i < buttonPopulationsLevelContent.transform.childCount; i++) {
-            GameObject g = buttonPopulationsLevelContent.transform.GetChild(i).gameObject;
-            if (i > level && enableAllStructures == false) {
+    public void OnMaxPopLevelChange(int setlevel) {
+        foreach (int level in popLevelToGO.Keys) {
+            GameObject g = popLevelToGO[level];
+            if (level > setlevel && enableAllStructures == false) {
                 g.GetComponent<Button>().interactable = false;
             }
             else {
@@ -73,14 +88,16 @@ public class BuildMenuUIController : MonoBehaviour {
             }
         }
     }
-    public void OnMaxPopLevelChange(int level, int count) {
+    public void OnMaxPopLevelCountChange(int level, int count) {
         OnMaxPopLevelChange(level);
-        if (level != selectedCivLevel) {
+        if (level != selectedPopulationLevel) {
             return;
         }
         foreach (string name in buttons[level]) {
             if (count >= buildController.StructurePrototypes[nameToIDMap[name]].PopulationCount) {
                 nameToGOMap[name].SetActive(true);
+            } else {
+                nameToGOMap[name].SetActive(false);
             }
         }
     }
@@ -103,8 +120,8 @@ public class BuildMenuUIController : MonoBehaviour {
         buildController.OnClick(nameToIDMap[name]);
     }
 
-    public void OnCivilisationLevelClick(int i) {
-        foreach (string item in buttons[selectedCivLevel]) {
+    public void OnPopulationLevelButtonClick(int i) {
+        foreach (string item in buttons[selectedPopulationLevel]) {
             nameToGOMap[item].SetActive(false);
         }
         foreach (string name in buttons[i]) {
@@ -112,7 +129,7 @@ public class BuildMenuUIController : MonoBehaviour {
                 nameToGOMap[name].SetActive(true);
             }
         }
-        selectedCivLevel = i;
+        selectedPopulationLevel = i;
     }
     public void OnDisable() {
         if (oldButton != null)

@@ -31,8 +31,8 @@ public class NeedsUIController : MonoBehaviour {
         Player p = PlayerController.Instance.CurrPlayer;
 
         citizenCanvas.GetComponentInChildren<Text>().text = home.people + "/" + home.MaxLivingSpaces;
-        needs = new List<Need>[PrototypController.NumberOfPopulationLevels];
-        for (int i = 0; i < PrototypController.NumberOfPopulationLevels; i++) {
+        needs = new List<Need>[PrototypController.Instance.NumberOfPopulationLevels];
+        for (int i = 0; i < PrototypController.Instance.NumberOfPopulationLevels; i++) {
             needs[i] = new List<Need>();
         }
         foreach (Transform child in needGroupCanvas.transform) {
@@ -72,7 +72,7 @@ public class NeedsUIController : MonoBehaviour {
     }
 
     public void ChangeNeedLevel(int level) {
-        for (int i = 0; i < PrototypController.NumberOfPopulationLevels; i++) {
+        for (int i = 0; i < PrototypController.Instance.NumberOfPopulationLevels; i++) {
             if (i == level) {
                 continue;
             }

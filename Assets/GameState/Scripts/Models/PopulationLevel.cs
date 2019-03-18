@@ -88,7 +88,10 @@ public class PopulationLevel {
         populationCount -= count;
     }
     public List<NeedGroup> GetAllPreviousNeedGroups() {
-        List<NeedGroup> temp = new List<NeedGroup>(NeedGroupList);
+        List<NeedGroup> temp = new List<NeedGroup>();
+        if (NeedGroupList != null) {
+            temp.AddRange(NeedGroupList);
+        }
         if (previousLevel != null)
             temp.AddRange(previousLevel.GetAllPreviousNeedGroups());
         return temp;

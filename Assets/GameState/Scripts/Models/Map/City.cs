@@ -106,7 +106,6 @@ public class City : IGEventable {
     /// </summary>
     public City() {
         MyTiles = new HashSet<Tile>();
-        Setup();
     }
 
     private void Setup() {
@@ -122,8 +121,7 @@ public class City : IGEventable {
                 pl.previousLevel = PopulationLevels[pl.previousLevel.Level]; // so when adding new levels to existing links get updated
             PopulationLevels.Add(pl);
         }
-
-
+        island.RegisterOnEvent(OnEventCreate, OnEventEnded);
     }
 
     internal PopulationLevel GetPreviousPopulationLevel(int level) {
@@ -135,7 +133,8 @@ public class City : IGEventable {
         return null;
     }
 
-    public IEnumerable<Structure> Load() {
+    public IEnumerable<Structure> Load(Island island) {
+        this.island = island;
         Setup();
         foreach (Structure item in myStructures) {
             if (item is WarehouseStructure) {
@@ -522,18 +521,26 @@ public class City : IGEventable {
     }
     #region igeventable
     public override void OnEventCreate(GameEvent ge) {
+        if (ge.target is City && ge.target != this)
+            return;
         //this only gets called in two cases
         //either event is on this island or in one of its cities
-        if (ge.IsTarget(island) || ge.IsTarget(this)) {
+        if (ge.IsTarget(this)) {
             ge.EffectTarget(this, true);
+            cbEventCreated?.Invoke(ge);
+        } else {
             cbEventCreated?.Invoke(ge);
         }
     }
     public override void OnEventEnded(GameEvent ge) {
+        if (ge.target is City && ge.target != this)
+            return;
         //this only gets called in two cases
         //either event is on this island or in one of its cities
-        if (ge.IsTarget(island) || ge.IsTarget(this)) {
+        if (ge.IsTarget(this)) {
             ge.EffectTarget(this, false);
+            cbEventEnded?.Invoke(ge);
+        } else {
             cbEventEnded?.Invoke(ge);
         }
     }

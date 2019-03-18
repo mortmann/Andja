@@ -84,12 +84,15 @@ public class Need {
     }
 
     public void TryToConsumThisIn(City city, int people, int level) {
+        if(people == 0) {
+            return;
+        }
         if (Item == null) {
             //this does not require any item -> it needs a structure
             percantageAvailability[level] = 0;
             return;
         }
-        if (lastNeededNotConsumed.Count < level) {
+        if (lastNeededNotConsumed.Count <= level) {
             lastNeededNotConsumed.Add(0);
             percantageAvailability.Add(0);
         }
@@ -101,7 +104,6 @@ public class Need {
             percantageAvailability[level] = 0;
             return;
         }
-        Debug.Log("NEED " + ID + " -> " + level + " -> " + neededConsumAmount);
         //IF it has still enough no need to calculate more
         if (notUsedOfTon >= neededConsumAmount) {
             notUsedOfTon -= neededConsumAmount;

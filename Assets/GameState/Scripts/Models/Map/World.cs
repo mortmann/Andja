@@ -25,8 +25,8 @@ public class World : IGEventable {
     public static List<Need> GetCopieOfAllNeeds() {
         return PrototypController.Instance.GetCopieOfAllNeeds();
     }
-    public Dictionary<Climate, List<Fertility>> allFertilities;
-    public Dictionary<int, Fertility> idToFertilities;
+    public IReadOnlyDictionary<Climate, List<Fertility>> allFertilities;
+    public IReadOnlyDictionary<int, Fertility> idToFertilities;
 
 
     protected bool[][] _tilesmap;
@@ -138,14 +138,14 @@ public class World : IGEventable {
         }
         LoadWaterTiles();
         Current = this;
-        allFertilities = PrototypController.Instance.allFertilities;
-        idToFertilities = PrototypController.Instance.idToFertilities;
+        allFertilities = PrototypController.Instance.AllFertilities;
+        idToFertilities = PrototypController.Instance.IdToFertilities;
     }
 
     public void SetupWorld() {
         Current = this;
-        allFertilities = PrototypController.Instance.allFertilities;
-        idToFertilities = PrototypController.Instance.idToFertilities;
+        allFertilities = PrototypController.Instance.AllFertilities;
+        idToFertilities = PrototypController.Instance.IdToFertilities;
         //		EventController.Instance.RegisterOnEvent (OnEventCreate,OnEventEnded);
         IslandList = new List<Island>();
         Units = new List<Unit>();

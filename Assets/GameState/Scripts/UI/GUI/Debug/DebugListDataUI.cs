@@ -81,20 +81,46 @@ public class DebugListDataUI : MonoBehaviour {
             Destroy(t.gameObject);
         }
         List<T> childs = null;
+        List<string> strings = new List<string>();
+
         if (Field.FieldType.GetInterface(nameof(IEnumerable)) != null)
-            childs = new List<T>((IEnumerable<T>)Field.GetValue(shownObject));
+            try {
+                if(Field.FieldType.GetInterface(nameof(IDictionary)) != null) {
+                    IDictionary dic = ((IDictionary)Field.GetValue(shownObject));
+                    foreach (object o in dic.Keys) {
+                        strings.Add(o.ToString() + " = " + dic[o].ToString());
+                    }
+                } else {
+                    childs = new List<T>((IEnumerable<T>)Field.GetValue(shownObject));
+                }
+            } catch {
+                Debug.LogError("Cant show this?" + Field.GetValue(shownObject));
+            }
         else
                 if (Field.GetType().IsArray)
             childs = new List<T>((T[])Field.GetValue(shownObject));
         int i = 0;
-        foreach (object o in (IList)childs) {
-            GameObject fieldGO = Instantiate(debugdataprefab);
-            fieldGO.transform.SetParent(listgameObject.gameObject.transform);
-            fieldGO.GetComponent<DebugDataUI>().SetData(i + ".", o);
-            i++;
+
+        if (childs != null) {
+            foreach (object o in (IList)childs) {
+                GameObject fieldGO = Instantiate(debugdataprefab);
+                fieldGO.transform.SetParent(listgameObject.gameObject.transform);
+                fieldGO.GetComponent<DebugDataUI>().SetData(i + ".", o);
+                i++;
+            }
+            valueText.text = ((IList)childs)?.Count.ToString();
+            GetCount = () => ((IList)childs)?.Count.ToString();
         }
-        valueText.text = ((IList)childs)?.Count.ToString();
-        GetCount = () => ((IList)childs)?.Count.ToString();
+        if (strings != null) {
+            foreach (string o in strings) {
+                GameObject fieldGO = Instantiate(debugdataprefab);
+                fieldGO.transform.SetParent(listgameObject.gameObject.transform);
+                fieldGO.GetComponent<DebugDataUI>().SetData(i + ".", o);
+                i++;
+            }
+            valueText.text = (strings)?.Count.ToString();
+            GetCount = () => (strings)?.Count.ToString();
+        }
     }
 
     public void Update() {

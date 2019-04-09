@@ -25,14 +25,16 @@ public class NeedGroup {
     public float ImportanceLevel => Data.importanceLevel;
     public string Name => Data.Name;
     #endregion
+    [JsonPropertyAttribute] public int ID;
     [JsonPropertyAttribute] public List<Need> Needs;
     [JsonPropertyAttribute] public float LastFullfillmentPercentage;
     #region Runtime
     public bool HasMissingNeed { get; internal set; }
-    public readonly int ID;
     public List<Need> CombinedNeeds;
     #endregion
+    public NeedGroup() {
 
+    }
     public NeedGroup(int ID) {
         Needs = new List<Need>();
         this.ID = ID;
@@ -46,7 +48,6 @@ public class NeedGroup {
             Needs.Add(n.Clone());
         }
         CombinedNeeds = new List<Need>();
-
     }
 
     public NeedGroup Clone() {
@@ -91,11 +92,12 @@ public class NeedGroup {
     }
 
     internal void UpdateNeeds(Player player) {
-        foreach (Need need in Needs) {
+        List<Need> currNeeds = new List<Need>(Needs);
+        foreach (Need need in currNeeds) {
             if (player.HasUnlockedNeed(need) == false) {
                 Needs.Remove(need);
-            }
-            if (need.Exists() || need.IsStructureNeed()) {
+            } 
+            if (need.Exists() == false || need.IsStructureNeed()) {
                 Needs.Remove(need);
             }
         }

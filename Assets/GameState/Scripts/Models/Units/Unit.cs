@@ -490,7 +490,7 @@ public class Unit : IGEventable,IWarfare {
                 rangeUStructure.City.TradeFromShip(this, clicked);
             }
             else {
-                Player p = PlayerController.Instance.GetPlayer(playerNumber);
+                Player p = PlayerController.GetPlayer(playerNumber);
                 rangeUStructure.City.SellToCity(clicked.ID, p, (Ship)this, clicked.count);
             }
         }

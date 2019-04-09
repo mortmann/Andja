@@ -58,8 +58,9 @@ public class MarketStructure : OutputStructure, ICapturable {
         if (currentCaptureSpeed > 0) {
             capturedProgress += currentCaptureSpeed * deltaTime;
         }
-        else {
+        else if(capturedProgress>0) {
             capturedProgress -= decreaseCaptureSpeed * deltaTime;
+            capturedProgress = Mathf.Clamp01(capturedProgress);
         }
     }
     public override void OnBuild() {

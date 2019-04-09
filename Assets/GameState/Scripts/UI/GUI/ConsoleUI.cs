@@ -14,26 +14,20 @@ public class ConsoleUI : MonoBehaviour {
 
     // Use this for initialization
     void Start() {
-        WriteToConsole("StartUP");
-        inputField.Select();
         foreach (string s in ConsoleController.logs)
             WriteToConsole(s);
-        ConsoleController.Instance.RegisterOnLogAdded(WriteToConsole); 
-
-        Debug.LogAssertion("sad");
-        Debug.LogError("sad");
-        Debug.LogException(new Exception());
+        ConsoleController.Instance.RegisterOnLogAdded(WriteToConsole);
     }
 
     void OnEnable() {
         inputField.Select();
         inputField.ActivateInputField();
     }
-
-
+    private void OnDisable() {
+        
+    }
     // Update is called once per frame
     void Update() {
-
     }
     public void WriteToConsole(string text) {
         GameObject go = Instantiate(TextPrefab);

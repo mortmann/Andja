@@ -61,7 +61,10 @@ public class City : IGEventable {
     private HashSet<Tile> _myTiles;
     public List<Route> myRoutes;
     public Unit tradeUnit;
-    public int Balance;
+
+    public int Expanses = 0;
+    public int Income = 0;
+    public int Balance => Income - Expanses;
     public float useTick;
     public WarehouseStructure myWarehouse;
 
@@ -113,7 +116,8 @@ public class City : IGEventable {
         myRoutes = new List<Route>();
         if (PopulationLevels == null)
             PopulationLevels = new List<PopulationLevel>();
-
+        if (playerNumber < 0)
+            return;
         foreach (PopulationLevel pl in PrototypController.Instance.GetPopulationLevels(this)) {
             if (PopulationLevels.Exists(x => x.Level == pl.Level))
                 continue;
@@ -144,8 +148,6 @@ public class City : IGEventable {
             if (item is HomeStructure) {
                 myHomes.Add((HomeStructure)item);
             }
-            //TODO:Find a better way/ cleaner way todo this
-            Balance -= item.MaintenanceCost;
         }
         if (IsWilderness() == false) {
             for (int i = PopulationLevels.Count - 1; i >= 0; i--) {
@@ -155,20 +157,27 @@ public class City : IGEventable {
                 }
                 PopulationLevels[i].Load();
             }
-            PlayerController.Instance.GetPlayer(playerNumber).OnCityCreated(this);
+            PlayerController.GetPlayer(playerNumber).OnCityCreated(this);
         }
 
         return myStructures;
     }
 
     internal void Update(float deltaTime) {
-        for (int i = 0; i < myStructures.Count; i++) {
+        Expanses = 0;
+        for (int i = myStructures.Count-1; i >= 0; i--) {
+            Expanses += myStructures[i].MaintenanceCost;
             myStructures[i].Update(deltaTime);
         }
         if (playerNumber == -1 || myHomes.Count == 0) {
             return;
         }
         UpdateNeeds(deltaTime);
+        //TODO: check for better spot?
+        Income = 0;
+        foreach (PopulationLevel pl in PopulationLevels) {
+            Income += pl.GetTaxIncome(this);
+        }
     }
     /// <summary>
     /// USE only for the creation of non player city aka Wilderness
@@ -206,7 +215,6 @@ public class City : IGEventable {
             }
             myWarehouse = (WarehouseStructure)str;
         }
-        Balance += str.MaintenanceCost;
         RemoveRessources(str.GetBuildingItems());
 
         myStructures.Add(str);
@@ -358,7 +366,7 @@ public class City : IGEventable {
             return;
         }
         Item i = ti.SellItemAmount(inventory.GetItemWithIDClone(itemID));
-        Player myPlayer = PlayerController.Instance.GetPlayer(playerNumber);
+        Player myPlayer = PlayerController.GetPlayer(playerNumber);
         int am = TradeWithShip(i, Mathf.Clamp(amount, 0, i.count), ship);
         myPlayer.AddMoney(am * ti.price);
         player.ReduceMoney(am * ti.price);
@@ -383,7 +391,7 @@ public class City : IGEventable {
             return;
         }
         Item i = ti.BuyItemAmount(inventory.GetItemWithIDClone(itemID));
-        Player myPlayer = PlayerController.Instance.GetPlayer(playerNumber);
+        Player myPlayer = PlayerController.GetPlayer(playerNumber);
         int am = TradeFromShip(ship, i, Mathf.Clamp(amount, 0, i.count));
         myPlayer.ReduceMoney(am * ti.price);
         player.AddMoney(am * ti.price);
@@ -458,7 +466,6 @@ public class City : IGEventable {
                 inventory.AddItems(res);
             }
             myStructures.Remove(structure);
-            Balance -= structure.MaintenanceCost;
             cbStructureRemoved?.Invoke(structure);
         }
         else {
@@ -560,7 +567,7 @@ public class City : IGEventable {
     }
 
     public Player GetOwner() {
-        return new Player();// PlayerController.Instance.GetPlayer(playerNumber);
+        return PlayerController.GetPlayer(playerNumber);
     }
     public override string ToString() {
         return Name;

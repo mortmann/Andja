@@ -23,6 +23,9 @@ public class EffectPrototypeData : LanguageVariables {
     public bool canSpread;
     public float spreadProbability;
     public int spreadTileRange = 1;
+
+    public string uiSpriteName;
+    public string onMapSpriteName;
 }
 [JsonObject(MemberSerialization.OptIn)]
 public class Effect {
@@ -38,10 +41,14 @@ public class Effect {
     public TargetGroup Targets => EffectPrototypData.targets;
     public string NameOfVariable => EffectPrototypData.nameOfVariable;
     public float Change => EffectPrototypData.change;
-
+    public string UiSpritreName => EffectPrototypData.uiSpriteName;
+    public string OnMapSpriteName => EffectPrototypData.onMapSpriteName;
     public bool CanSpread => EffectPrototypData.canSpread;
     public int SpreadTileRange => EffectPrototypData.spreadTileRange;
     public float SpreadProbability => EffectPrototypData.spreadProbability;
+    public string Name => EffectPrototypData.Name;
+    public string Description => EffectPrototypData.Description;
+    public string HoverOver => EffectPrototypData.HoverOver;
 
     //Some special function will be called for it 
     //so it isnt very flexible and must be either precoded or we need to add support for lua
@@ -67,7 +74,9 @@ public class Effect {
     public Effect(int ID) {
         this.ID = ID;
     }
-
+    public Effect(Effect e) {
+        this.ID = e.ID;
+    }
     public void Update(float deltaTime, IGEventable target) {
         if (IsUpdateChange) {
             CalculateUpdateChange(deltaTime, target);

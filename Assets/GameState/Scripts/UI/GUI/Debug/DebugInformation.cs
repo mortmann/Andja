@@ -6,16 +6,14 @@ using UnityEngine.EventSystems;
 
 public class DebugInformation : MonoBehaviour {
     public GameObject buttons;
-
+    public GameObject contentList;
     public GameObject debugdataprefab;
     public GameObject debuglistdataprefab;
     object currentObject;
     private Vector2 dragOffset;
 
     public void OnEnable() {
-        foreach (Transform t in transform) {
-            if (t == buttons.transform)
-                continue;
+        foreach (Transform t in contentList.transform) {
             Destroy(t.gameObject);
         }
     }
@@ -25,18 +23,18 @@ public class DebugInformation : MonoBehaviour {
 
         currentObject = obj;
         List<FieldInfo> all = new List<FieldInfo>(obj.GetType().GetFields()); //public fields
-        all.AddRange(obj.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance)); //private,protected fields
+        all.AddRange(obj.GetType().GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)); //private,protected fields
         foreach (FieldInfo field in all) {
             if (field.FieldType.GetInterface(nameof(IEnumerable)) == null && field.GetType().IsArray == false
                 || field.FieldType == typeof(string)) {
                 GameObject fieldGO = Instantiate(debugdataprefab);
-                fieldGO.transform.SetParent(this.transform);
+                fieldGO.transform.SetParent(contentList.transform);
                 fieldGO.GetComponent<DebugDataUI>().SetData(field, obj);
             }
             else
             if (field.FieldType.GetInterface(nameof(IEnumerable)) != null || field.GetType().IsArray) {
                 GameObject fieldGO = Instantiate(debuglistdataprefab);
-                fieldGO.transform.SetParent(this.transform);
+                fieldGO.transform.SetParent(contentList.transform);
                 fieldGO.GetComponent<DebugListDataUI>().SetData(field, obj);
             }
             else {
@@ -60,6 +58,7 @@ public class DebugInformation : MonoBehaviour {
             Mathf.Clamp(Screen.width / 2 - rectTransform.sizeDelta.x / 2, 0,Screen.width),
             Mathf.Clamp(Screen.height / 2 + rectTransform.sizeDelta.y / 2, 0, Screen.height)
         );
+
     }
 
     private void OnBeginDragDelegate(PointerEventData data) {

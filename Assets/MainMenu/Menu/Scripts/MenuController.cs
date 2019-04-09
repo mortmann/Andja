@@ -9,7 +9,7 @@ public class MenuController : MonoBehaviour {
     public bool saved;
     public GameObject menu;
     public GameObject[] panels;
-
+    public bool IsMainMenu = false;
     // Used by the buttons which open panels so we can return to the same button
     // after closing the panel.
     [HideInInspector]
@@ -29,6 +29,9 @@ public class MenuController : MonoBehaviour {
 
     static bool mainMenuOpen = false;
     bool panelOpen = false;
+
+    bool _QuitToMenu = false;
+
     void OnEnable() {
         foreach (Transform t in transform) {
             if (t != menu.transform) {
@@ -42,6 +45,8 @@ public class MenuController : MonoBehaviour {
     }
 
     void Update() {
+        if (IsMainMenu)
+            return;
         if (InputHandler.GetButtonDown(InputName.Cancel)) {
             if (panelOpen) {
                 HideAllPanels();
@@ -93,13 +98,19 @@ public class MenuController : MonoBehaviour {
     public void OnDisabled() {
         saved = false;
     }
-    public bool hasSaved() {
+    public bool HasSaved() {
         return saved;
     }
-    public void Quit() {
-        if (saved == false) {
+    public void QuitToMenu(bool force = false) {
+        if (saved == false && force == false) {
             ShowWarning();
-            scene = "Close";
+            return;
+        }
+        ChangeToGameStateLoadScreen();
+    }
+    public void QuitToDesktop(bool force = false) {
+        if (saved == false && force == false) {
+            ShowWarning();
             return;
         }
         //If we are running in a standalone build of the game
@@ -116,12 +127,10 @@ public class MenuController : MonoBehaviour {
     }
 
     public GameObject dialog;
-    string scene;
 
     public void ChangeToGameStateLoadScreen() {
         if (saved == false) {
             ShowWarning();
-            scene = "GameStateLoadingScreen";
             return;
         }
         SceneManager.LoadScene("GameStateLoadingScreen");
@@ -135,7 +144,6 @@ public class MenuController : MonoBehaviour {
     public void ChangeToMainMenuScreen() {
         if (saved == false) {
             ShowWarning();
-            scene = "MainMenu";
             return;
         }
         SceneManager.LoadScene("MainMenu");
@@ -143,12 +151,12 @@ public class MenuController : MonoBehaviour {
     public void ShowWarning() {
         dialog.SetActive(true);
     }
-    public void DialogYesOption() {
-        if (scene == "Close") {
-            Quit();
-            return; // should not be needed
-        }
-        SceneManager.LoadScene(scene);
+    public void SaveDialogYesOption() {
+        if (_QuitToMenu == false)
+            QuitToDesktop(true);
+        else
+            QuitToMenu(true);
+
     }
 
 

@@ -1,0 +1,132 @@
+Warning: PopulationLevel Citizen 1 is missing its own needs!
+UnityEngine.Debug:LogWarning(Object)
+PrototypController:ReadOtherFromXML() (at Assets/GameState/Scripts/Controller/PrototypController.cs:276)
+PrototypController:LoadFromXML() (at Assets/GameState/Scripts/Controller/PrototypController.cs:210)
+PrototypController:Awake() (at Assets/GameState/Scripts/Controller/PrototypController.cs:113)
+Warning: PopulationLevel Patrician 2 is missing its own needs!
+UnityEngine.Debug:LogWarning(Object)
+PrototypController:ReadOtherFromXML() (at Assets/GameState/Scripts/Controller/PrototypController.cs:276)
+PrototypController:LoadFromXML() (at Assets/GameState/Scripts/Controller/PrototypController.cs:210)
+PrototypController:Awake() (at Assets/GameState/Scripts/Controller/PrototypController.cs:113)
+Warning: PopulationLevel Nobleman 3 is missing its own needs!
+UnityEngine.Debug:LogWarning(Object)
+PrototypController:ReadOtherFromXML() (at Assets/GameState/Scripts/Controller/PrototypController.cs:276)
+PrototypController:LoadFromXML() (at Assets/GameState/Scripts/Controller/PrototypController.cs:210)
+PrototypController:Awake() (at Assets/GameState/Scripts/Controller/PrototypController.cs:113)
+Log: Read in fertilities types: 3 with all 11
+UnityEngine.Debug:Log(Object)
+PrototypController:LoadFromXML() (at Assets/GameState/Scripts/Controller/PrototypController.cs:212)
+PrototypController:Awake() (at Assets/GameState/Scripts/Controller/PrototypController.cs:113)
+Log: Read in structures: 49
+    -> RoadStructure = 4 
+    -> GrowableStructure = 8 
+    -> FarmStructure = 10 
+    -> MarketStructure = 1 
+    -> ProductionStructure = 12 
+    -> NeedStructure = 3 
+    -> MineStructure = 3 
+    -> HomeStructure = 4 
+    -> WarehouseStructure = 1 
+    -> MilitaryStructure = 2 
+    -> ServiceStructure = 1 
+
+UnityEngine.Debug:Log(Object)
+PrototypController:LoadFromXML() (at Assets/GameState/Scripts/Controller/PrototypController.cs:222)
+PrototypController:Awake() (at Assets/GameState/Scripts/Controller/PrototypController.cs:113)
+Log: Read in units: 2
+UnityEngine.Debug:Log(Object)
+PrototypController:LoadFromXML() (at Assets/GameState/Scripts/Controller/PrototypController.cs:223)
+PrototypController:Awake() (at Assets/GameState/Scripts/Controller/PrototypController.cs:113)
+Log: Read in items: 84
+UnityEngine.Debug:Log(Object)
+PrototypController:LoadFromXML() (at Assets/GameState/Scripts/Controller/PrototypController.cs:224)
+PrototypController:Awake() (at Assets/GameState/Scripts/Controller/PrototypController.cs:113)
+Log: Read in needs: 4 ([0: 4][1: 0][2: 0][3: 0])
+UnityEngine.Debug:Log(Object)
+PrototypController:LoadFromXML() (at Assets/GameState/Scripts/Controller/PrototypController.cs:230)
+PrototypController:Awake() (at Assets/GameState/Scripts/Controller/PrototypController.cs:113)
+Log: Read in needGroups: 9
+UnityEngine.Debug:Log(Object)
+PrototypController:LoadFromXML() (at Assets/GameState/Scripts/Controller/PrototypController.cs:231)
+PrototypController:Awake() (at Assets/GameState/Scripts/Controller/PrototypController.cs:113)
+Log: Read in damagetypes: 2
+UnityEngine.Debug:Log(Object)
+PrototypController:LoadFromXML() (at Assets/GameState/Scripts/Controller/PrototypController.cs:232)
+PrototypController:Awake() (at Assets/GameState/Scripts/Controller/PrototypController.cs:113)
+Log: Read in armortypes: 2
+UnityEngine.Debug:Log(Object)
+PrototypController:LoadFromXML() (at Assets/GameState/Scripts/Controller/PrototypController.cs:233)
+PrototypController:Awake() (at Assets/GameState/Scripts/Controller/PrototypController.cs:113)
+Log: Read in populationLevel: 4
+UnityEngine.Debug:Log(Object)
+PrototypController:LoadFromXML() (at Assets/GameState/Scripts/Controller/PrototypController.cs:234)
+PrototypController:Awake() (at Assets/GameState/Scripts/Controller/PrototypController.cs:113)
+Log: Read in effects: 2
+UnityEngine.Debug:Log(Object)
+PrototypController:LoadFromXML() (at Assets/GameState/Scripts/Controller/PrototypController.cs:235)
+PrototypController:Awake() (at Assets/GameState/Scripts/Controller/PrototypController.cs:113)
+Log: Read in gameevents: 1
+UnityEngine.Debug:Log(Object)
+PrototypController:LoadFromXML() (at Assets/GameState/Scripts/Controller/PrototypController.cs:236)
+PrototypController:Awake() (at Assets/GameState/Scripts/Controller/PrototypController.cs:113)
+Warning: Cheats are activated.
+UnityEngine.Debug:LogWarning(Object)
+BuildController:Awake() (at Assets/GameState/Scripts/Controller/BuildController.cs:56)
+Log: Intializing World Controller
+UnityEngine.Debug:Log(Object)
+WorldController:OnEnable() (at Assets/GameState/Scripts/Controller/WorldController.cs:37)
+Log: LOADING SAVEGAME firewelltest
+UnityEngine.Debug:Log(Object)
+SaveController:Start() (at Assets/GameState/Scripts/Controller/SaveController.cs:42)
+Log: Generated map with island number 3 in a Map 500 : 500 in 8ms (0,0081481s)! 
+UnityEngine.Debug:Log(Object)
+MapGenerator:PlaceIslandOnMap(List`1) (at Assets/GameState/Scripts/Models/Map/Generator/MapGenerator.cs:323)
+MapGenerator:Update() (at Assets/GameState/Scripts/Models/Map/Generator/MapGenerator.cs:233)
+Log: Islandimage 460ms (0,4603255s)! 
+UnityEngine.Debug:Log(Object)
+TileSpriteController:CreateIslandSprites(List`1, Boolean) (at Assets/GameState/Scripts/Controller/Sprite/TileSpriteController.cs:240)
+MapGenerator:PlaceIslandOnMap(List`1) (at Assets/GameState/Scripts/Models/Map/Generator/MapGenerator.cs:325)
+MapGenerator:Update() (at Assets/GameState/Scripts/Models/Map/Generator/MapGenerator.cs:233)
+Log: LOAD ENDED
+UnityEngine.Debug:Log(Object)
+WorldController:LoadWorldData() (at Assets/GameState/Scripts/Controller/WorldController.cs:174)
+WorldController:SetWorldData(WorldSaveState) (at Assets/GameState/Scripts/Controller/WorldController.cs:180)
+<LoadGameState>c__Iterator0:MoveNext() (at Assets/GameState/Scripts/Controller/SaveController.cs:400)
+UnityEngine.SetupCoroutine:InvokeMoveNext(IEnumerator, IntPtr)
+Log: 86 Item Sprite
+UnityEngine.Debug:Log(Object)
+UIController:Start() (at Assets/GameState/Scripts/Controller/UIController.cs:46)
+Log: OnEffectRemoved Effect
+UnityEngine.Debug:Log(Object)
+GenericStructureUI:OnEffectAdded(Effect) (at Assets/GameState/Scripts/UI/GUI/GenericStructureUI.cs:40)
+GenericStructureUI:OnEffectChange(IGEventable, Effect, Boolean) (at Assets/GameState/Scripts/UI/GUI/GenericStructureUI.cs:34)
+IGEventable:AddEffect(Effect) (at Assets/GameState/Scripts/Models/Events/IGEventable.cs:135)
+GameEvent:EffectTarget(IGEventable, Boolean) (at Assets/GameState/Scripts/Models/Events/GameEvent.cs:165)
+Structure:OnEventCreateVirtual(GameEvent) (at Assets/GameState/Scripts/Models/Structures/Structure.cs:344)
+Structure:OnEventCreate(GameEvent) (at Assets/GameState/Scripts/Models/Structures/Structure.cs:459)
+City:OnEventCreate(GameEvent) (at Assets/GameState/Scripts/Models/Map/City.cs:539)
+Island:OnEvent(GameEvent, Action`1, Boolean) (at Assets/GameState/Scripts/Models/Map/Island.cs:220)
+Island:OnEventCreate(GameEvent) (at Assets/GameState/Scripts/Models/Map/Island.cs:209)
+World:OnEventCreate(GameEvent) (at Assets/GameState/Scripts/Models/Map/World.cs:343)
+WorldController:OnEventCreated(GameEvent) (at Assets/GameState/Scripts/Controller/WorldController.cs:57)
+EventController:CreateGameEvent(GameEvent) (at Assets/GameState/Scripts/Controller/EventController.cs:128)
+EventController:TriggerEventForEventable(GameEvent, IGEventable) (at Assets/GameState/Scripts/Controller/EventController.cs:145)
+ConsoleController:HandleEventCommands(String[]) (at Assets/GameState/Scripts/Controller/ConsoleController.cs:155)
+ConsoleController:HandleInput(String[]) (at Assets/GameState/Scripts/Controller/ConsoleController.cs:93)
+ConsoleUI:ReadFromConsole() (at Assets/GameState/Scripts/UI/GUI/ConsoleUI.cs:54)
+UnityEngine.EventSystems.EventSystem:Update()
+Log: OnEffectRemoved False
+UnityEngine.Debug:Log(Object)
+GenericStructureUI:OnEffectRemoved(Effect) (at Assets/GameState/Scripts/UI/GUI/GenericStructureUI.cs:50)
+GenericStructureUI:OnEffectChange(IGEventable, Effect, Boolean) (at Assets/GameState/Scripts/UI/GUI/GenericStructureUI.cs:36)
+IGEventable:RemoveEffect(Effect) (at Assets/GameState/Scripts/Models/Events/IGEventable.cs:171)
+ServiceStructure:RemoveEffect(Structure, Single) (at Assets/GameState/Scripts/Models/Structures/OutputStructures/ServiceStructure.cs:176)
+Worker:DoWorkOnStructure(Single) (at Assets/GameState/Scripts/Models/Units/Worker.cs:210)
+Worker:DoWork(Single) (at Assets/GameState/Scripts/Models/Units/Worker.cs:199)
+Worker:Update(Single) (at Assets/GameState/Scripts/Models/Units/Worker.cs:151)
+ServiceStructure:OnUpdate(Single) (at Assets/GameState/Scripts/Models/Structures/OutputStructures/ServiceStructure.cs:196)
+Structure:Update(Single) (at Assets/GameState/Scripts/Models/Structures/Structure.cs:321)
+City:Update(Single) (at Assets/GameState/Scripts/Models/Map/City.cs:170)
+Island:Update(Single) (at Assets/GameState/Scripts/Models/Map/Island.cs:191)
+World:Update(Single) (at Assets/GameState/Scripts/Models/Map/World.cs:157)
+WorldController:Update() (at Assets/GameState/Scripts/Controller/WorldController.cs:68)

@@ -22,11 +22,11 @@ public class PlayerController : MonoBehaviour {
     float balanceTickTimer;
 
     public static PlayerController Instance { get; protected set; }
-    public List<Player> Players { get; protected set; }
+    public static List<Player> Players { get; protected set; }
     EventUIManager euim;
 
     // Use this for initialization
-    void OnEnable() {
+    void Awake() {
         if (Instance != null) {
             Debug.LogError("There should never be two mouse controllers.");
         }
@@ -164,6 +164,8 @@ public class PlayerController : MonoBehaviour {
 
     internal void SetPlayerData(PlayerControllerSave pcs) {
         Players = pcs.players;
+        foreach (Player p in Players)
+            p.Load();
         playerWars = pcs.playerWars;
         balanceTickTimer = pcs.tickTimer;
         currentPlayerNumber = pcs.currentPlayerNumber;
@@ -231,8 +233,9 @@ public class PlayerController : MonoBehaviour {
         }
         playerWars.Remove(new War(pnum1, pnum2));
     }
-    public Player GetPlayer(int i) {
+    public static Player GetPlayer(int i) {
         if (i < 0 || Players.Count <= i) {
+            Debug.LogError("PlayerNumber " + i + " does not exist!");
             return null;
         }
         return Players[i];

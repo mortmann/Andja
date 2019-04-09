@@ -222,7 +222,12 @@ public class PrototypController : MonoBehaviour {
         Debug.Log("Read in structures: " + structurePrototypes.Count + "\n" + str);
         Debug.Log("Read in units: " + unitPrototypes.Count);
         Debug.Log("Read in items: " + allItems.Count);
-        Debug.Log("Read in needs: " + allNeeds.Count);
+
+        string needslevel = "";
+        foreach (PopulationLevelPrototypData pl in populationLevelDatas.Values) {
+            needslevel += "[" + pl.LEVEL + ": " + allNeeds.Count(x => x.StartLevel == pl.LEVEL) + "]";
+        }
+        Debug.Log("Read in needs: " + allNeeds.Count + " (" + needslevel + ")");
         Debug.Log("Read in needGroups: " + needGroupDatas.Count);
         Debug.Log("Read in damagetypes: " + damageTypeDatas.Count);
         Debug.Log("Read in armortypes: " + armorTypeDatas.Count);

@@ -99,7 +99,7 @@ public class Need {
         float neededConsumAmount = 0;
         // how much do we need to consum?
         neededConsumAmount += Uses[level] * ((float)people);
-        if (neededConsumAmount == 0) {
+        if (neededConsumAmount <= 0) {
             //we dont need anything to consum so no need to go anyfurther
             percantageAvailability[level] = 0;
             return;

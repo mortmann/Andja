@@ -207,6 +207,7 @@
          <maxNumberOfWorker>1</maxNumberOfWorker>
          <produceTime>0.0</produceTime>
          <maxOutputStorage>5</maxOutputStorage>
+         <efficiency>1.0</efficiency>
          <output length="1">
             <Item ID="1">
                <count>1</count>
@@ -275,6 +276,7 @@
          <maxNumberOfWorker>1</maxNumberOfWorker>
          <produceTime>5.0</produceTime>
          <maxOutputStorage>5</maxOutputStorage>
+         <efficiency>1.0</efficiency>
          <output length="1">
             <Item ID="107">
                <count>1</count>
@@ -333,6 +335,7 @@
          <maxNumberOfWorker>1</maxNumberOfWorker>
          <produceTime>7.0</produceTime>
          <maxOutputStorage>5</maxOutputStorage>
+         <efficiency>1.0</efficiency>
          <output length="1">
             <Item ID="102">
                <count>1</count>
@@ -391,6 +394,7 @@
          <maxNumberOfWorker>1</maxNumberOfWorker>
          <produceTime>10.0</produceTime>
          <maxOutputStorage>5</maxOutputStorage>
+         <efficiency>1.0</efficiency>
          <output length="1">
             <Item ID="105">
                <count>1</count>
@@ -449,6 +453,7 @@
          <maxNumberOfWorker>1</maxNumberOfWorker>
          <produceTime>9.0</produceTime>
          <maxOutputStorage>5</maxOutputStorage>
+         <efficiency>1.0</efficiency>
          <output length="1">
             <Item ID="104">
                <count>1</count>
@@ -510,6 +515,7 @@
          <maxNumberOfWorker>1</maxNumberOfWorker>
          <produceTime>45.0</produceTime>
          <maxOutputStorage>5</maxOutputStorage>
+         <efficiency>1.0</efficiency>
          <output length="1">
             <Item ID="201">
                <count>1</count>
@@ -568,6 +574,7 @@
          <maxNumberOfWorker>1</maxNumberOfWorker>
          <produceTime>40.0</produceTime>
          <maxOutputStorage>5</maxOutputStorage>
+         <efficiency>1.0</efficiency>
          <output length="1">
             <Item ID="208">
                <count>1</count>
@@ -629,6 +636,7 @@
          <maxNumberOfWorker>1</maxNumberOfWorker>
          <produceTime>35.0</produceTime>
          <maxOutputStorage>0</maxOutputStorage>
+         <efficiency>1.0</efficiency>
          <output length="1">
             <Item ID="209">
                <count>1</count>
@@ -690,6 +698,7 @@
          <maxNumberOfWorker>1</maxNumberOfWorker>
          <produceTime>90.0</produceTime>
          <maxOutputStorage>0</maxOutputStorage>
+         <efficiency>1.0</efficiency>
          <output length="1">
             <Item ID="211">
                <count>1</count>
@@ -751,6 +760,7 @@
          <maxNumberOfWorker>1</maxNumberOfWorker>
          <produceTime>120.0</produceTime>
          <maxOutputStorage>0</maxOutputStorage>
+         <efficiency>1.0</efficiency>
          <output length="1">
             <Item ID="219">
                <count>1</count>
@@ -803,6 +813,7 @@
          <maxNumberOfWorker>0</maxNumberOfWorker>
          <produceTime>0.0</produceTime>
          <maxOutputStorage>1</maxOutputStorage>
+         <efficiency>1.0</efficiency>
          <fertility>-1</fertility>
          <ageStages>0</ageStages>
       </growable>
@@ -849,6 +860,7 @@
          <maxNumberOfWorker>0</maxNumberOfWorker>
          <produceTime>5.0</produceTime>
          <maxOutputStorage>1</maxOutputStorage>
+         <efficiency>1.0</efficiency>
          <output length="1">
             <Item ID="1">
                <count>0</count>
@@ -899,6 +911,7 @@
          <maxNumberOfWorker>0</maxNumberOfWorker>
          <produceTime>5.0</produceTime>
          <maxOutputStorage>1</maxOutputStorage>
+         <efficiency>1.0</efficiency>
          <output length="1">
             <Item ID="107">
                <count>0</count>
@@ -949,6 +962,7 @@
          <maxNumberOfWorker>0</maxNumberOfWorker>
          <produceTime>5.0</produceTime>
          <maxOutputStorage>1</maxOutputStorage>
+         <efficiency>1.0</efficiency>
          <output length="1">
             <Item ID="102">
                <count>1</count>
@@ -999,6 +1013,7 @@
          <maxNumberOfWorker>0</maxNumberOfWorker>
          <produceTime>5.0</produceTime>
          <maxOutputStorage>1</maxOutputStorage>
+         <efficiency>1.0</efficiency>
          <output length="1">
             <Item ID="104">
                <count>0</count>
@@ -1049,6 +1064,7 @@
          <maxNumberOfWorker>0</maxNumberOfWorker>
          <produceTime>5.0</produceTime>
          <maxOutputStorage>1</maxOutputStorage>
+         <efficiency>1.0</efficiency>
          <output length="1">
             <Item ID="105">
                <count>1</count>
@@ -1100,6 +1116,7 @@
          <maxNumberOfWorker>0</maxNumberOfWorker>
          <produceTime>35.0</produceTime>
          <maxOutputStorage>1</maxOutputStorage>
+         <efficiency>1.0</efficiency>
          <output length="1">
             <Item ID="201">
                <count>1</count>
@@ -1150,6 +1167,7 @@
          <maxNumberOfWorker>0</maxNumberOfWorker>
          <produceTime>15.0</produceTime>
          <maxOutputStorage>1</maxOutputStorage>
+         <efficiency>1.0</efficiency>
          <output length="1">
             <Item ID="219">
                <count>0</count>
@@ -1210,6 +1228,7 @@
          <maxNumberOfWorker>1</maxNumberOfWorker>
          <produceTime>0.0</produceTime>
          <maxOutputStorage>0</maxOutputStorage>
+         <efficiency>1.0</efficiency>
          <takeOverStartGoal>100.0</takeOverStartGoal>
       </market>
    </markets>
@@ -1264,6 +1283,7 @@
          <maxNumberOfWorker>1</maxNumberOfWorker>
          <produceTime>30.0</produceTime>
          <maxOutputStorage>5</maxOutputStorage>
+         <efficiency>1.0</efficiency>
          <output length="1">
             <Item ID="3">
                <count>1</count>
@@ -1321,6 +1341,7 @@
          <maxNumberOfWorker>1</maxNumberOfWorker>
          <produceTime>35.0</produceTime>
          <maxOutputStorage>0</maxOutputStorage>
+         <efficiency>1.0</efficiency>
          <output length="1">
             <Item ID="206">
                <count>0</count>
@@ -1381,6 +1402,7 @@
          <maxNumberOfWorker>1</maxNumberOfWorker>
          <produceTime>70.0</produceTime>
          <maxOutputStorage>0</maxOutputStorage>
+         <efficiency>1.0</efficiency>
          <output length="1">
             <Item ID="204">
                <count>1</count>
@@ -1580,6 +1602,7 @@
          <maxNumberOfWorker>1</maxNumberOfWorker>
          <produceTime>30.0</produceTime>
          <maxOutputStorage>5</maxOutputStorage>
+         <efficiency>1.0</efficiency>
          <output length="1">
             <Item ID="101">
                <count>1</count>
@@ -1637,6 +1660,7 @@
          <maxNumberOfWorker>1</maxNumberOfWorker>
          <produceTime>10.0</produceTime>
          <maxOutputStorage>5</maxOutputStorage>
+         <efficiency>1.0</efficiency>
          <output length="1">
             <Item ID="108">
                <count>1</count>
@@ -1699,6 +1723,7 @@
          <maxNumberOfWorker>1</maxNumberOfWorker>
          <produceTime>10.0</produceTime>
          <maxOutputStorage>5</maxOutputStorage>
+         <efficiency>1.0</efficiency>
          <output length="1">
             <Item ID="109">
                <count>1</count>
@@ -1761,6 +1786,7 @@
          <maxNumberOfWorker>1</maxNumberOfWorker>
          <produceTime>45.0</produceTime>
          <maxOutputStorage>5</maxOutputStorage>
+         <efficiency>1.0</efficiency>
          <output length="1">
             <Item ID="106">
                <count>1</count>
@@ -1829,6 +1855,7 @@
          <maxNumberOfWorker>1</maxNumberOfWorker>
          <produceTime>30.0</produceTime>
          <maxOutputStorage>5</maxOutputStorage>
+         <efficiency>1.0</efficiency>
          <output length="1">
             <Item ID="103">
                <count>0</count>
@@ -1890,6 +1917,7 @@
          <maxNumberOfWorker>1</maxNumberOfWorker>
          <produceTime>25.0</produceTime>
          <maxOutputStorage>5</maxOutputStorage>
+         <efficiency>1.0</efficiency>
          <output length="1">
             <Item ID="202">
                <count>1</count>
@@ -1955,6 +1983,7 @@
          <maxNumberOfWorker>1</maxNumberOfWorker>
          <produceTime>50.0</produceTime>
          <maxOutputStorage>5</maxOutputStorage>
+         <efficiency>1.0</efficiency>
          <output length="1">
             <Item ID="203">
                <count>1</count>
@@ -2020,6 +2049,7 @@
          <maxNumberOfWorker>1</maxNumberOfWorker>
          <produceTime>45.0</produceTime>
          <maxOutputStorage>5</maxOutputStorage>
+         <efficiency>1.0</efficiency>
          <output length="1">
             <Item ID="207">
                <count>1</count>
@@ -2088,6 +2118,7 @@
          <maxNumberOfWorker>1</maxNumberOfWorker>
          <produceTime>22.5</produceTime>
          <maxOutputStorage>5</maxOutputStorage>
+         <efficiency>1.0</efficiency>
          <output length="1">
             <Item ID="2">
                <count>1</count>
@@ -2153,6 +2184,7 @@
          <maxNumberOfWorker>1</maxNumberOfWorker>
          <produceTime>180.0</produceTime>
          <maxOutputStorage>5</maxOutputStorage>
+         <efficiency>1.0</efficiency>
          <output length="1">
             <Item ID="205">
                <count>2</count>
@@ -2218,6 +2250,7 @@
          <maxNumberOfWorker>1</maxNumberOfWorker>
          <produceTime>35.0</produceTime>
          <maxOutputStorage>5</maxOutputStorage>
+         <efficiency>1.0</efficiency>
          <output length="1">
             <Item ID="210">
                <count>1</count>
@@ -2283,6 +2316,7 @@
          <maxNumberOfWorker>1</maxNumberOfWorker>
          <produceTime>45.0</produceTime>
          <maxOutputStorage>5</maxOutputStorage>
+         <efficiency>1.0</efficiency>
          <output length="2">
             <Item ID="212">
                <count>2</count>
@@ -2350,6 +2384,7 @@
          <maxNumberOfWorker>1</maxNumberOfWorker>
          <produceTime>0.0</produceTime>
          <maxOutputStorage>0</maxOutputStorage>
+         <efficiency>1.0</efficiency>
          <takeOverStartGoal>100.0</takeOverStartGoal>
       </warehouse>
    </warehouses>
@@ -2421,8 +2456,8 @@
          <populationLevel>1</populationLevel>
          <populationCount>0</populationCount>
          <structureLevel>0</structureLevel>
-         <tileWidth>3</tileWidth>
-         <tileHeight>3</tileHeight>
+         <tileWidth>2</tileWidth>
+         <tileHeight>2</tileHeight>
          <canRotate>true</canRotate>
          <canBeBuildOver>false</canBeBuildOver>
          <canBeUpgraded>false</canBeUpgraded>
@@ -2470,8 +2505,8 @@
          <populationLevel>2</populationLevel>
          <populationCount>0</populationCount>
          <structureLevel>0</structureLevel>
-         <tileWidth>3</tileWidth>
-         <tileHeight>3</tileHeight>
+         <tileWidth>2</tileWidth>
+         <tileHeight>2</tileHeight>
          <canRotate>true</canRotate>
          <canBeBuildOver>false</canBeBuildOver>
          <canBeUpgraded>false</canBeUpgraded>
@@ -2522,8 +2557,8 @@
          <populationLevel>3</populationLevel>
          <populationCount>0</populationCount>
          <structureLevel>0</structureLevel>
-         <tileWidth>3</tileWidth>
-         <tileHeight>3</tileHeight>
+         <tileWidth>2</tileWidth>
+         <tileHeight>2</tileHeight>
          <canRotate>true</canRotate>
          <canBeBuildOver>false</canBeBuildOver>
          <canBeUpgraded>false</canBeUpgraded>
@@ -2662,4 +2697,59 @@
          <buildTimeModifier>1.0</buildTimeModifier>
       </militarystructure>
    </militarystructures>
+   <servicestructures>
+      <servicestructure ID="301">
+         <Name>
+            <entry lang="English">Well</entry>
+            <entry lang="German">Brunnen</entry>
+         </Name>
+         <Description>
+            <entry lang="English">Worker can use it to slowly put out fires.</entry>
+            <entry lang="German">Arbeiter können damit langsam Feuer löschen.</entry>
+         </Description>
+         <HoverOver>
+            <entry lang="English">Well</entry>
+            <entry lang="German">Brunnen</entry>
+         </HoverOver>
+         <canBeBuild>true</canBeBuild>
+         <isWalkable>false</isWalkable>
+         <hasHitbox>false</hasHitbox>
+         <maxHealth>40.0</maxHealth>
+         <structureRange>8</structureRange>
+         <populationLevel>0</populationLevel>
+         <populationCount>0</populationCount>
+         <structureLevel>0</structureLevel>
+         <tileWidth>1</tileWidth>
+         <tileHeight>1</tileHeight>
+         <canRotate>true</canRotate>
+         <canBeBuildOver>false</canBeBuildOver>
+         <canBeUpgraded>false</canBeUpgraded>
+         <canTakeDamage>false</canTakeDamage>
+         <mustFrontBuildDir>None</mustFrontBuildDir>
+         <canStartBurning>false</canStartBurning>
+         <maintenanceCost>25</maintenanceCost>
+         <buildCost>500</buildCost>
+         <buildTyp>Single</buildTyp>
+         <myStructureTyp>Blocking</myStructureTyp>
+         <extraUITyp>None</extraUITyp>
+         <extraBuildUITyp>None</extraBuildUITyp>
+         <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
+         <buildingItems length="2">
+            <Item ID="1">
+               <count>5</count>
+            </Item>
+            <Item ID="2">
+               <count>5</count>
+            </Item>
+         </buildingItems>
+         <spriteBaseName>firewell</spriteBaseName>
+         <targets>Damageable</targets>
+         <function>RemoveEffect</function>
+         <effectsOnTargets length="1">
+            <Effect>0</Effect>
+         </effectsOnTargets>
+         <maxNumberOfWorker>1</maxNumberOfWorker>
+         <workSpeed>0.1</workSpeed>
+      </servicestructure>
+   </servicestructures>
 </structures>

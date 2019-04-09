@@ -12,11 +12,14 @@ public abstract class IGEventable {
     protected Dictionary<string, float> VariablenameToFloat;
 
     [JsonPropertyAttribute] protected List<Effect> Effects;
+    //TODO: when can use here only IReadOnlyList -> but it is bugged for now -- so dont change list outside here
+    public List<Effect> ReadOnlyEffects => Effects;
     List<Effect> _UpdateEffectList;
     protected List<Effect> UpdateEffectList {
         get {
             if (Effects == null)
                 return null;
+            //for loading -- makes it ez to get them again without doing in load functions
             if (_UpdateEffectList == null) {
                 _UpdateEffectList = new List<Effect>(Effects);
                 _UpdateEffectList.RemoveAll(x => x.IsUpdateChange == false);
@@ -123,7 +126,9 @@ public abstract class IGEventable {
         if (TargetGroups.IsTargeted(effect.Targets) == false) {
             return;
         }
-        if(effect.IsUnique && HasEffect(effect)) {
+        if (Effects == null)
+            Effects = new List<Effect>();
+        if (effect.IsUnique && HasEffect(effect)) {
             return;
         }
         Effects.Add(effect);
@@ -141,7 +146,11 @@ public abstract class IGEventable {
                 VariablenameToFloat[effect.NameOfVariable + effect.ModifierType] += effect.Change;
             }
         }
-
+        if (effect.IsUpdateChange) {
+            if (_UpdateEffectList == null)
+                _UpdateEffectList = new List<Effect>();
+            UpdateEffectList.Add(effect);
+        }
         if (effect.IsNegativ)
             HasNegativEffect = true;
     }
@@ -153,11 +162,16 @@ public abstract class IGEventable {
         return Effects.Find(x => x.ID == effect.ID) != null;
     }
 
-    public virtual void RemoveEffect(Effect effect) {
+    public virtual void RemoveEffect(Effect effect, bool all = false) {
         if (Effects.Find(e => e.ID == effect.ID) == null) {
             return;
         }
-        Effects.RemoveAll(e => e.ID == effect.ID);
+
+        if (all)
+            Effects.RemoveAll(e => e.ID == effect.ID);
+        else
+            Effects.Remove(effect);
+        UpdateEffectList.RemoveAll(e => e.ID == effect.ID);
         cbEffectChange?.Invoke(this, effect, false);
 
         if (effect.IsSpecial) {

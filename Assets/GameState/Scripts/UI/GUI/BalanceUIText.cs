@@ -14,20 +14,20 @@ public class BalanceUIText : MonoBehaviour {
 
     // Update is called once per frame
     void Update() {
-        if (player.Balance < 0) {
+        if (player.TreasuryBalance < 0) {
             balanceText.color = Color.red;
         }
-        if (player.Balance >= 0) {
+        if (player.TreasuryBalance >= 0) {
             balanceText.color = Color.black;
         }
-        if (player.LastChange < 0) {
+        if (player.LastTreasuryChange < 0) {
             changeText.color = Color.red;
         }
-        if (player.LastChange >= 0) {
+        if (player.LastTreasuryChange >= 0) {
             changeText.color = Color.green;
         }
-        balanceText.text = player.Balance + " ";
-        changeText.text = "" + player.LastChange + " ";
+        balanceText.text = player.TreasuryBalance + " ";
+        changeText.text = "" + player.LastTreasuryChange + " ";
 
     }
 }

@@ -117,7 +117,7 @@ public abstract class Structure : IGEventable {
     //build id -- when it was build
     [JsonPropertyAttribute] public uint buildID;
 
-    [JsonPropertyAttribute] private City _city;
+    [JsonPropertyAttribute] protected City _city;
 
     [JsonPropertyAttribute] protected float _health;
 
@@ -189,10 +189,16 @@ public abstract class Structure : IGEventable {
 
     #region EffectVariables
     public float MaxHealth { get { return CalculateRealValue("maxHealth", Data.maxHealth); } }
-    public int MaintenanceCost { get { return CalculateRealValue("maintenancecost", Data.maintenanceCost); } }
-    public int StructureRange { get { return CalculateRealValue("structureRange", Data.structureRange); } } 
+    public int MaintenanceCost { get {
+            //Is not allowed to be negativ AND it is not allowed to be <0
+            return Mathf.Clamp(CalculateRealValue("maintenancecost", Data.maintenanceCost),0,int.MaxValue);
+    } }
+    public int StructureRange { get { return CalculateRealValue("structureRange", Data.structureRange); } }
 
     #endregion
+    public string Name { get { return Data.Name; } }
+    public string Description { get { return Data.Description; } }
+    public string HoverOver { get { return Data.HoverOver; } }
 
     public int PopulationLevel { get { return Data.populationLevel; } }
     public int PopulationCount { get { return Data.populationCount; } }
@@ -244,6 +250,8 @@ public abstract class Structure : IGEventable {
     public bool IsDestroyed => CurrentHealth <= 0;
 
     public Vector2 MiddleVector { get { return new Vector2(BuildTile.X + (float)TileWidth / 2f, BuildTile.Y + (float)TileHeight / 2f); } }
+
+
     public string SmallName { get { return SpriteName.ToLower(); } }
     public City City {
         get { return _city; }
@@ -573,12 +581,13 @@ public abstract class Structure : IGEventable {
         if (CanTakeDamage == false) {
             return;
         }
+        if (CurrentHealth <= 0) // fix for killing it too many times -- triggering destroy multiple times
+            return;
         if (damage < 0) {
             damage = -damage;
             Debug.LogWarning("Damage should be never smaller than 0 - Fixed it!");
         }
-        CurrentHealth -= damage;
-        CurrentHealth = Mathf.Clamp(CurrentHealth, 0, MaxHealth);
+        CurrentHealth = Mathf.Clamp(CurrentHealth - damage, 0, MaxHealth);
     }
     public void RepairHealth(float heal) {
         if (heal < 0) {

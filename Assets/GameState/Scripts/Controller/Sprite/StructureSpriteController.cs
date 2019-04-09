@@ -6,7 +6,7 @@ using System;
 public class StructureSpriteController : MonoBehaviour {
     public Dictionary<Structure, GameObject> structureGameObjectMap;
     public Dictionary<Structure, GameObject> structureExtraUIMap;
-
+    public readonly static string EffectFilePath = "Textures/Effects/Structures/";
     public Dictionary<string, Sprite> structureSprites = new Dictionary<string, Sprite>();
     public Sprite circleSprite;
     public Sprite upgradeSprite;
@@ -47,7 +47,7 @@ public class StructureSpriteController : MonoBehaviour {
         structure.RegisterOnChangedCallback(OnStructureChanged);
         structure.RegisterOnDestroyCallback(OnStructureDestroyed);
         structure.RegisterOnExtraUICallback(OnStructureExtraUI);
-
+        structure.RegisterOnEffectChangedCallback(OnStructureEffectChange);
         float x = 0;
         float y = 0;
         if (structure.TileWidth > 1) {
@@ -99,7 +99,43 @@ public class StructureSpriteController : MonoBehaviour {
             BoxCollider2D col = go.AddComponent<BoxCollider2D>();
             col.size = new Vector2(sr.sprite.textureRect.size.x / sr.sprite.pixelsPerUnit, sr.sprite.textureRect.size.y / sr.sprite.pixelsPerUnit);
         }
+        if (structure.ReadOnlyEffects != null) {
+            foreach(Effect e in structure.ReadOnlyEffects) {
+              OnStructureEffectChange(structure, e, true);
+            }
+        }
+        
     }
+
+    private void OnStructureEffectChange(IGEventable target, Effect effect, bool added) {
+        if (effect.OnMapSpriteName == null || effect.OnMapSpriteName.Length == 0)
+            return;
+        Structure structure = target as Structure;
+        if (structure == null || structureGameObjectMap.ContainsKey(structure) == false)
+            return;
+        GameObject strgo = structureGameObjectMap[structure];
+        if (added == false) {
+            EffectAnimator[] effectsanimators = strgo.GetComponentsInChildren<EffectAnimator>();
+            if (effectsanimators == null || effectsanimators.Length == 0)
+                return;
+            EffectAnimator removeEffect = Array.Find<EffectAnimator>(effectsanimators, x => x.effect.ID == effect.ID);
+            if (removeEffect == null)
+                return;
+            Destroy(removeEffect.gameObject);
+        }
+        else {
+            GameObject effectGO = new GameObject();
+            effectGO.transform.SetParent(strgo.transform);
+            effectGO.transform.localPosition = new Vector3(0, 0, 0);
+            EffectAnimator ea = effectGO.AddComponent<EffectAnimator>();
+            string path = EffectFilePath + effect.OnMapSpriteName + "_" + structure.SpriteName;
+            Sprite[] sprites = Resources.LoadAll<Sprite>(path);
+            if (sprites.Length == 0)
+                return;
+            ea.Show(sprites, 0.25f, "Structures",effect);
+        }
+    }
+
     void OnStructureChanged(Structure structure) {
         if (structure == null) {
             Debug.LogError("Structure change and its empty?");
@@ -221,7 +257,7 @@ public class StructureSpriteController : MonoBehaviour {
         structureSprites = new Dictionary<string, Sprite>();
         Sprite[] sprites = Resources.LoadAll<Sprite>("Textures/Structures/");
         foreach (Sprite s in sprites) {
-            //			Debug.Log (s.name);
+//            Debug.Log(s.name);
             structureSprites[s.name] = s;
         }
     }

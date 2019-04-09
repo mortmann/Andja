@@ -27,6 +27,7 @@ public class ServiceStructure : Structure {
     public Func<Structure, float, bool> WorkOnTarget { get; protected set; }
     Action<Structure> todoOnNewTarget;
     Action<Structure> onTargetChanged;
+    Action<Structure> onTargetDestroy;
     Action<IGEventable, Effect, bool> onTargetEffectChange;
 
 
@@ -39,6 +40,8 @@ public class ServiceStructure : Structure {
             return _servicveData;
         }
     }
+
+
     public ServiceStructure() {
         jobsToDo = new List<Structure>();
     }
@@ -68,20 +71,26 @@ public class ServiceStructure : Structure {
                 onTargetChanged = CheckHealth;
                 break;
             case ServiceFunction.AddEffect:
-                todoOnNewTarget += RegisterOnStructureChange;
+                todoOnNewTarget += RegisterOnStructureEffectChanged;
                 todoOnNewTarget += ImproveStructure;
                 break;
             case ServiceFunction.RemoveEffect:
+                //what to do on new structure
                 WorkOnTarget = RemoveEffect;
-                todoOnNewTarget = RegisterOnStructureChange;
+                todoOnNewTarget = RegisterOnStructureEffectChanged;
+                //what to do on effect on a target changed
                 onTargetEffectChange += CheckEffect;
+                //what to do on structure gets destroyed
+                onTargetDestroy += UnregisterOnStructureEffectChanged;
+                onTargetDestroy += RemoveFromJobs;
                 break;
             case ServiceFunction.PreventEffect:
-                todoOnNewTarget += RegisterOnStructureChange;
+                todoOnNewTarget += RegisterOnStructureEffectChanged;
                 onTargetEffectChange += PreventEffect;
                 break;
         }
-        foreach(Tile t in myRangeTiles) {
+        todoOnNewTarget += RegisterOnStructureDestroy;
+        foreach (Tile t in myRangeTiles) {
             if (t.Structure == null)
                 continue;
             if(SpecificRange != null) {
@@ -98,8 +107,28 @@ public class ServiceStructure : Structure {
         City.RegisterStructureAdded(OnAddedStructure);
     }
 
-    private void CheckEffect(IGEventable arg1, Effect arg2, bool arg3) {
-        throw new NotImplementedException();
+    private void RemoveFromJobs(Structure str) {
+        if (jobsToDo.Contains(str))
+            jobsToDo.Remove(str);
+    }
+
+    private void RegisterOnStructureDestroy(Structure str) {
+        str.RegisterOnDestroyCallback(onTargetDestroy);
+    }
+
+    private void CheckEffect(IGEventable eventable, Effect eff, bool started) {
+        Structure structure = eventable as Structure;
+        if (structure == null)
+            return;
+        if(Array.Exists(EffectsOnTargets, element => element.ID == eff.ID) == false) {
+            return;
+        }
+        if (started == false) {
+            if (jobsToDo.Contains(structure))
+                jobsToDo.Remove(structure);
+            return;
+        }
+        EnqueueJob(structure);
     }
 
     private void CheckHealth(Structure obj) {
@@ -109,20 +138,18 @@ public class ServiceStructure : Structure {
     }
 
     private void EnqueueJob(Structure structure) {
+        if (jobsToDo == null)
+            jobsToDo = new List<Structure>();
         jobsToDo.Add(structure);
     }
 
     private void OnAddedStructure(Structure obj) {
-        bool InRange = false;
         foreach(Tile t in obj.myStructureTiles) {
             if (myRangeTiles.Contains(t)) {
-                InRange = true;
-                break;
+                todoOnNewTarget(obj);
+                return;
             }
         }
-        if (InRange == false)
-            return;
-        todoOnNewTarget(obj);
     }
 
     public bool RepairStructure(Structure str,float deltaTime) {
@@ -138,21 +165,24 @@ public class ServiceStructure : Structure {
         }
     }
     public bool RemoveEffect(Structure str, float deltaTime) {
+        // does the structure have a effect that this handles? if not worker is done
+        if (str.ReadOnlyEffects.Find( x => Array.Exists<Effect>(EffectsOnTargets, y => x.ID == y.ID)) == null)
+            return true;
         //structure will check if its a valid effect
         foreach (Effect eff in EffectsOnTargets) {
             Effect strEffect = str.GetEffect(eff.ID);
             strEffect.WorkAmount += deltaTime * WorkSpeed;
             if(strEffect.WorkAmount >= 1)
-                str.RemoveEffect(eff);
+                str.RemoveEffect(strEffect);
         }
-        return true;
+        return false;
     }
     public void PreventEffect(IGEventable str, Effect effect, bool added) {
         if (added == false)
             return;
         foreach (Effect eff in EffectsOnTargets) {
             if(eff.ID == effect.ID) {
-                str.RemoveEffect(effect);
+                str.RemoveEffect(effect,true);
             }
         }
     }
@@ -160,29 +190,38 @@ public class ServiceStructure : Structure {
         if (WorkOnTarget == null)
             return;
         SendOutWorkerIfCan();
+        if (workers == null)
+            return;
         for (int i = workers.Count - 1; i >= 0; i--) {
             workers[i].Update(deltaTime);
-            if (workers[i].isAtHome)
+            if (workers[i].isAtHome) {
+                workers[i].Destroy();
                 workers.RemoveAt(i);
+            }
+                
         }
     }
 
     private void SendOutWorkerIfCan() {
-        if(workers.Count >= MaxNumberOfWorker) {
+        if (jobsToDo == null || jobsToDo.Count == 0)
+            return;
+        if (workers == null)
+            workers = new List<Worker>();
+        if (workers.Count >= MaxNumberOfWorker) {
             return;
         }
-        int i = 0;
         Structure s = null;
         foreach(Structure str in jobsToDo) {
             if (Function == ServiceFunction.Repair && str.HasNegativEffect)
                 continue;
-            if (CanReachStructure(s) == false)
+            if (CanReachStructure(str) == false)
                 continue;
             s = str;
             break;
         }
-        jobsToDo.RemoveAt(i);
+        jobsToDo.Remove(s);
         Worker w = new Worker(this, s, WorkSpeed);
+        World.Current.CreateWorkerGameObject(w);
         workers.Add(w);
     }
 

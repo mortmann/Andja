@@ -31,10 +31,10 @@ public class IslandPathfinding : Pathfinding {
         dest_X = x;
         dest_Y = y;
         pathDest = Path_dest.exact;
-        Thread calcPath = new Thread(CalculatePath);
-        calcPath.Start();
+        StartCalculatingThread();
     }
     protected override void CalculatePath() {
+        IsDoneCalculating = false;
         if (start == null)
             start = World.Current.GetTileAt(X, Y);
         Path_AStar pa = new Path_AStar(start.MyIsland, start, DestTile);
@@ -46,7 +46,8 @@ public class IslandPathfinding : Pathfinding {
         if (worldPath.Count > 0) {
             NextTile = worldPath.Dequeue();
         }
-
+        //important 
+        IsDoneCalculating = true;
     }
 
 

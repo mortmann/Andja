@@ -109,6 +109,14 @@ public class WorldController : MonoBehaviour {
         }
     }
 
+    internal void SetSpeed(float speed) {
+        timeMultiplier = Mathf.Clamp(speed, 0, 100);
+        if (timeMultiplier == 0)
+            IsPaused = true;
+        else
+            IsPaused = false;
+    }
+
     void OnDestroy() {
         Instance = null;
     }

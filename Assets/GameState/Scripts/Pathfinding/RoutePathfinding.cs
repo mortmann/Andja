@@ -20,32 +20,25 @@ public class RoutePathfinding : Pathfinding {
     public void SetDestination(List<Tile> startTiles, List<Tile> endTiles) {
         this.startTiles = startTiles;
         this.endTiles = endTiles;
-
         myTurnType = Turn_type.OnPoint;
-        Thread calcPath = new Thread(CalculatePath);
-        calcPath.Start();
-
+        StartCalculatingThread();
     }
 
     public override void SetDestination(Tile end) {
         DestTile = end;
-        Thread calcPath = new Thread(CalculatePath);
-        calcPath.Start();
-
+        StartCalculatingThread();
     }
 
     public override void SetDestination(float x, float y) {
         //get the tiles from the world to get a current reference and not an empty from the load
         DestTile = World.Current.GetTileAt(x, y);
         startTile = World.Current.GetTileAt(startTile.X, startTile.Y);
-        Thread calcPath = new Thread(CalculatePath);
-        calcPath.Start();
-
+        StartCalculatingThread();
     }
 
     protected override void CalculatePath() {
-        pathDest = Path_dest.tile;
 
+        pathDest = Path_dest.tile;
         if (startTiles == null) {
             startTiles = new List<Tile> {
                 startTile
@@ -54,9 +47,9 @@ public class RoutePathfinding : Pathfinding {
                 DestTile
             };
         }
+
         Queue<Tile> currentQueue = null;
         List<Route> checkedRoutes = new List<Route>();
-        IsAtDestination = false;
         foreach (Tile st in startTiles) {
             if (st.Structure == null || st.Structure.GetType() != typeof(RoadStructure)) {
                 continue;
@@ -84,25 +77,28 @@ public class RoutePathfinding : Pathfinding {
         if (worldPath == null || worldPath.Count == 0) {
             return;
         }
-        if (startTile != null && startTile != CurrTile) {
-            CreateReversePath();
-            while (worldPath.Peek() != CurrTile) {
-                // remove as long as it is not the current tile 
-                worldPath.Dequeue();
-            }
-            worldPath.Dequeue();
+        //if (startTile != null && startTile != CurrTile) {
+        //    CreateReversePath();
+        //    while (worldPath.Peek() != CurrTile) {
+        //        // remove as long as it is not the current tile 
+        //        worldPath.Dequeue();
+        //    }
+        //    worldPath.Dequeue();
 
-        }
-        else {
+        //}
+        //else {
             CurrTile = worldPath.Peek();
             startTile = CurrTile;
             CreateReversePath();
             DestTile = backPath.Peek();
-        }
+        //}
         worldPath.Dequeue();
-
+        X = startTile.X;
+        Y = startTile.Y;
         dest_X = DestTile.X;
         dest_Y = DestTile.Y;
+        //important
+        IsDoneCalculating = true;
     }
 
 }

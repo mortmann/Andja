@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class MilitaryStructureUI : MonoBehaviour {
+    public GenericStructureUI StructureUI;
     public GameObject unitSelectionPanel;
     public CurrentlyBuildingUnitUI currentlyBuildingUnit;
     public UnitBuildUI unitSelectPrefab;
@@ -13,6 +14,8 @@ public class MilitaryStructureUI : MonoBehaviour {
             Debug.Log("Structure is not a Military!");
             return;
         }
+        StructureUI.gameObject.SetActive(true);
+        StructureUI.Show(str);
         military = (MilitaryStructure)str;
         foreach (Transform child in unitSelectionPanel.transform) {
             Destroy(child.gameObject);
@@ -40,5 +43,8 @@ public class MilitaryStructureUI : MonoBehaviour {
         foreach (Unit u in military.CanBeBuildUnits) {
             unitToBuildUI[u].SetIsBuildable(military.HasEnoughResources(u));
         }
+    }
+    private void OnDisable() {
+        StructureUI.gameObject.SetActive(false);
     }
 }

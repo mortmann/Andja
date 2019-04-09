@@ -132,6 +132,12 @@ public class HomeStructure : TargetStructure {
             summedImportance += ng.ImportanceLevel;
         }
         float percentage = summedFullfillment / summedImportance;
+
+        //Tax can offset some unhappines from missing stuff
+        //this needs to be balanced tho
+        //for now just 1:1 % from 1.5 to 0.5 happiness offset 
+        percentage += 1 / Mathf.Clamp(City.GetPopulationLevel(PopulationLevel).taxPercantage,0.66f,2);
+        percentage /= 2;
         if (percentage > 0.9f) {
             currentMood = CitizienMoods.Happy;
         }

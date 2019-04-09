@@ -17,7 +17,7 @@ public class PlayerPrototypeData {
 public class Player : IGEventable {
     #region Not Serialized
     internal bool HasEnoughMoney(int buildCost) {
-        return Balance + MaximumDebt > buildCost;
+        return TreasuryBalance + MaximumDebt > buildCost;
     }
     public HashSet<Need>[] LockedNeeds { get; protected set; }
     public HashSet<Need> UnlockedItemNeeds { get; protected set; }
@@ -25,24 +25,25 @@ public class Player : IGEventable {
     public HashSet<Structure> AllStructures;
     public HashSet<Unit> AllUnits;
     public List<City> myCities;
-    public bool HasLost => Balance < MaximumDebt;
+    public bool HasLost => TreasuryBalance < MaximumDebt;
     PlayerPrototypeData PlayerPrototypeData => PrototypController.CurrentPlayerPrototypData;
 
     private int MaximumDebt => PlayerPrototypeData.maximumDebt; // if we want a maximum debt where you still can buy things
 
-    private int _change;
+    private int _treasuryChange;
     /// <summary>
     /// How the Balance CHANGES foreach Tick that happens
     /// </summary>
-	public int Change {
-        get { return CalculateRealValue("change", _change); }
-        protected set { _change = value; }
+	public int TreasuryChange {
+        get { return CalculateRealValue("change", _treasuryChange); }
+        protected set { _treasuryChange = value; }
     } //should be calculated after reload anyway
 
-    private int _lastChange;
-    public int LastChange {
-        get { return _lastChange; }
-        protected set { _lastChange = value; }
+    [JsonPropertyAttribute]
+    private int _lastTreasuryChange;
+    public int LastTreasuryChange {
+        get { return _lastTreasuryChange; }
+        protected set { _lastTreasuryChange = value; }
     }
 
     Action<int, int> cbMaxPopulationMLCountChange;
@@ -54,13 +55,13 @@ public class Player : IGEventable {
     #endregion
     #region Serialized
     [JsonPropertyAttribute]
-    private int _balance;
+    private int _treasuryBalance;
     /// <summary>
     /// How much Money you have to spend
     /// </summary>
-	public int Balance {
-        get { return _balance; }
-        protected set { _balance = value; }
+	public int TreasuryBalance {
+        get { return _treasuryBalance; }
+        protected set { _treasuryBalance = value; }
     }
     // because only the new level popcount is interesting
     // needs to be saved because you can lose pop due
@@ -122,8 +123,8 @@ public class Player : IGEventable {
         Number = number;
         MaxPopulationCount = 0;
         MaxPopulationLevel = 0;
-        Change = 0;
-        Balance = 50000;
+        TreasuryChange = 0;
+        TreasuryBalance = 50000;
         Setup();
     }
     private void Setup() {
@@ -155,9 +156,10 @@ public class Player : IGEventable {
     }
 
     private void CalculateBalance() {
-        LastChange = Change;
+        LastTreasuryChange = TreasuryChange;
+        TreasuryChange = 0;
         for (int i = 0; i < myCities.Count; i++) {
-            LastChange += myCities[i].Balance;
+            LastTreasuryChange += myCities[i].Balance;
         }
     }
 
@@ -180,11 +182,15 @@ public class Player : IGEventable {
         return (IEnumerable<Ship>)units; //should be safe cause removing non ship
     }
 
+    internal void Load() {
+        //Setup();
+    }
+
     public void UpdateBalance(float partialPayAmount) {
         CalculateBalance();
-        Balance += Mathf.RoundToInt(LastChange / partialPayAmount);
+        TreasuryBalance += Mathf.RoundToInt( LastTreasuryChange / partialPayAmount );
 
-        if (Balance < -1000000) {
+        if (TreasuryBalance < -1000000) {
             // game over !
         }
     }
@@ -234,7 +240,10 @@ public class Player : IGEventable {
             Debug.Log("??? lockedNeeds is null!");
             return false;
         }
-        return LockedNeeds[n.StartLevel].Contains(n) == false;
+        //either StartLevel is smaller so unlocked
+        return n.StartLevel < MaxPopulationLevel 
+            //is equal so count matters too
+            || n.StartLevel == MaxPopulationLevel && n.PopCount <= MaxPopulationCount; // LockedNeeds[n.StartLevel].Contains(n) == false;
     }
     public bool HasNeedUnlocked(Need need) {
         if (need.IsItemNeed())
@@ -254,25 +263,25 @@ public class Player : IGEventable {
         if (money < 0) {
             return;
         }
-        Balance -= money;
+        TreasuryBalance -= money;
     }
     public void AddMoney(int money) {
         if (money < 0) {
             return;
         }
-        Balance += money;
+        TreasuryBalance += money;
     }
     public void ReduceChange(int amount) {
         if (amount < 0) {
             return;
         }
-        Change -= amount;
+        TreasuryChange -= amount;
     }
     public void AddChange(int amount) {
         if (amount < 0) {
             return;
         }
-        Change += amount;
+        TreasuryChange += amount;
     }
     public void OnCityCreated(City city) {
         if (city.playerNumber != Number)

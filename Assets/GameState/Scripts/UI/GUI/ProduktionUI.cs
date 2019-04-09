@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine.UI;
 public class ProduktionUI : MonoBehaviour {
-
+    public GenericStructureUI StructureUI;
     public Transform inputContent;
     public Transform outputContent;
     public GameObject progressContent;
@@ -21,6 +21,8 @@ public class ProduktionUI : MonoBehaviour {
         if (this.currentStructure == ustr) {
             return;
         }
+        StructureUI.gameObject.SetActive(true);
+        StructureUI.Show(ustr);
         this.currentStructure = ustr;
         efficiency = progressContent.GetComponentInChildren<Text>();
         progress = progressContent.GetComponentInChildren<Slider>();
@@ -120,5 +122,8 @@ public class ProduktionUI : MonoBehaviour {
         progress.value = currentStructure.produceCountdown;
         efficiency.text = currentStructure.EfficiencyPercent + "%";
 
+    }
+    private void OnDisable() {
+        StructureUI.gameObject.SetActive(false);
     }
 }

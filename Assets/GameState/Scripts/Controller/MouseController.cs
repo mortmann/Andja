@@ -367,8 +367,9 @@ public class MouseController : MonoBehaviour {
 
         SpriteRenderer sr = highlightGO.AddComponent<SpriteRenderer>();
         // offset based on even or uneven so it is centered properly
-        float xoffset = ToBuildStructure.TileWidth % 2 == 0 ? 0f : -0.5f;
-        float yoffset = ToBuildStructure.TileHeight % 2 == 0 ? 0f : -0.5f;
+        // its working now?!? -- but leaving it in if its makes problems in the future
+        float xoffset = 0; // ToBuildStructure.TileWidth % 2 == 0 ? 0f : -0.5f;
+        float yoffset = 0; // ToBuildStructure.TileHeight % 2 == 0 ? 0f : -0.5f;
         sr.sprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(0.5f, 0.5f), 1);
         sr.sortingLayerName = "DarkLayer";
         highlightGO.transform.parent = previewGO.transform;

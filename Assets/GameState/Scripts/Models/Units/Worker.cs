@@ -89,6 +89,7 @@ public class Worker {
         this.myHome = myHome;
         WorkStructure = structure;
         this.hasToFollowRoads = hasToFollowRoads;
+        isAtHome = false;
         goingToWork = true;
         doTimer = workTime;
         SetGoalStructure(structure);
@@ -98,11 +99,10 @@ public class Worker {
         SaveController.AddWorkerForLoad(this);
     }
     public void OnWorkStructureDestroy(Structure str) {
-        if (str != WorkOutputStructure) {
+        if (str != WorkStructure) {
             Debug.LogError("OnWorkStructureDestroy called on not workstructure destroy!");
             return;
         }
-        WorkOutputStructure = null;
         GoHome();
     }
     public void Update(float deltaTime) {
@@ -114,7 +114,7 @@ public class Worker {
             GoHome();
         }
         if (hasRegistered == false) {
-            _workStructure.RegisterOnDestroyCallback(OnWorkStructureDestroy);
+            WorkStructure.RegisterOnDestroyCallback(OnWorkStructureDestroy);
             hasRegistered = true;
         }
         //worker can only work if
@@ -137,6 +137,7 @@ public class Worker {
         }
 
         //do the movement 
+        
         path.Update_DoMovement(deltaTime);
 
         cbWorkerChanged?.Invoke(this);
@@ -152,7 +153,11 @@ public class Worker {
         else {
             // coming home from doing the work
             // drop off the items its carrying
-            DropOffItems(deltaTime);
+            if(toGetItems != null) {
+                DropOffItems(deltaTime);
+            } else {
+                isAtHome = true;
+            }
         }
     }
     public void DropOffItems(float deltaTime) {
@@ -172,10 +177,14 @@ public class Worker {
             ((OutputStructure)myHome).AddToOutput(inventory);
         }
         isAtHome = true;
-        path = null;
     }
     public void GoHome() {
-        SetGoalStructure(myHome);
+        isDone = false;
+        goingToWork = false;
+        WorkStructure?.UnregisterOnDestroyCallback(OnWorkStructureDestroy);
+        WorkStructure = null;
+        SetGoalStructure(myHome,true); //todo: think about some optimisation for just "reverse path"
+        //doTimer = workTime / 2;
     }
     public void DoWork(float deltaTime) {
         if (WorkStructure == null && path.DestTile != null) {
@@ -193,10 +202,7 @@ public class Worker {
             Destroy();
         }
         if(isDone) {
-            WorkOutputStructure.UnregisterOnDestroyCallback(OnWorkStructureDestroy);
-            //doTimer = workTime / 2;
-            goingToWork = false;
-            path.Reverse();
+            GoHome();
         }
     }
 
@@ -234,20 +240,30 @@ public class Worker {
 
     public void Destroy() {
         if (goingToWork)
-            WorkOutputStructure.ResetOutputClaimed();
+            WorkOutputStructure?.ResetOutputClaimed();
         cbWorkerDestroy?.Invoke(this);
     }
-    public void SetGoalStructure(Structure structure) {
+    public void SetGoalStructure(Structure structure, bool goHome = false) {
         if (structure == null) {
             return;
         }
         if (hasToFollowRoads == false) {
-            path = new TilesPathfinding();
-            ((TilesPathfinding)path).SetDestination(new List<Tile>(myHome.neighbourTiles), new List<Tile>(structure.neighbourTiles));
+            if(path == null)
+                path = new TilesPathfinding();
+            if (goHome == false) {
+                ((TilesPathfinding)path).SetDestination(new List<Tile>(myHome.neighbourTiles), new List<Tile>(structure.neighbourTiles));
+            } else {
+                ((TilesPathfinding)path).SetDestination(new List<Tile>() { path.CurrTile }, new List<Tile>(myHome.neighbourTiles));
+            }
         }
         else {
-            path = new RoutePathfinding();
-            ((RoutePathfinding)path).SetDestination(myHome.RoadsAroundStructure(), structure.RoadsAroundStructure());
+            if (path == null)
+                path = new RoutePathfinding();
+            if(goHome == false) {
+                ((RoutePathfinding)path).SetDestination(myHome.RoadsAroundStructure(), structure.RoadsAroundStructure());
+            } else {
+                ((RoutePathfinding)path).SetDestination(new List<Tile>() { path.CurrTile }, new List<Tile>(myHome.RoadsAroundStructure()));
+            }
         }
         _workStructure = structure;
     }

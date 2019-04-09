@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using UnityEngine;
 
@@ -11,13 +12,31 @@ public class ConsoleController : MonoBehaviour {
     public static List<string> logs = new List<string>();
     Dictionary<GameObject, Vector3> GOtoPosition;
     Action<string> writeToConsole;
+    StreamWriter logWriter;
     // Use this for initialization
     void OnEnable() {
         Instance = this;
         Application.logMessageReceived += LogCallbackHandler;
+        string path = Path.Combine(SaveController.GetSaveGamesPath(), "logs");
+        string filepath = Path.Combine(path,SaveController.SaveName + "_" + DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss") +".log");
+        if (Directory.Exists(path) == false) {
+            Directory.CreateDirectory(path);
+        } 
+        if (File.Exists(filepath) == false) {
+            logWriter = File.CreateText(filepath);
+        }
+        int fCount = Directory.GetFiles(path, "*.log", SearchOption.TopDirectoryOnly).Length;
+        if(fCount>5) {
+            FileSystemInfo fileInfo = new DirectoryInfo(path)
+                         .GetFileSystemInfos().OrderBy(fi => fi.CreationTime).First();
+            fileInfo.Delete();
+        }
+
+
     }
     public void LogCallbackHandler(string condition, string stackTrace, LogType type) {
         string color = "";
+        string typestring = "<b> " + type + "</b>: ";
         switch (type) {
             case LogType.Error:
                 color = "ff0000ff";
@@ -29,15 +48,21 @@ public class ConsoleController : MonoBehaviour {
                 color = "ffa500ff";
                 break;
             case LogType.Log:
+                typestring = "";
                 color = "c0c0c0ff";
                 break;
             case LogType.Exception:
                 color = "ff00ffff";
                 break;
         }
-        string log = type + ": " + condition + " -> " + stackTrace;
-        writeToConsole?.Invoke("<color=#" + color + ">" + log + "</color> ");
-        logs.Add(log);
+        string log = "<color=#" + color + ">"+ typestring + " <i>" + condition + "</i> "/* +Environment.NewLine +"<size=9>" + stackTrace + "</size>"*/ + "</color> ";
+        if(writeToConsole == null) {
+            logs.Add(log);
+        }
+        else {
+            writeToConsole?.Invoke(log);
+        }
+        logWriter.Write(type + ": " + condition + Environment.NewLine + stackTrace);
     }
 
     internal void RegisterOnLogAdded(Action<string> writeToConsole) {
@@ -47,6 +72,12 @@ public class ConsoleController : MonoBehaviour {
     public bool HandleInput(string[] parameters) {
         bool happend = false;
         switch (parameters[0]) {
+            case "speed":
+                float speed = 1;
+                happend = float.TryParse(parameters[1], out speed);
+                if (happend)
+                    WorldController.Instance.SetSpeed(speed);
+                break;
             case "city":
                 happend = HandleCityCommands(parameters.Skip(1).ToArray());
                 break;
@@ -118,7 +149,7 @@ public class ConsoleController : MonoBehaviour {
                 if (parameters.Length == 3) {
                     int.TryParse(parameters[2], out player);
                 }
-                EventController.Instance.TriggerEventForPlayer(new GameEvent(id), PlayerController.Instance.GetPlayer(player));
+                EventController.Instance.TriggerEventForPlayer(new GameEvent(id), PlayerController.GetPlayer(player));
                 break;
             case "trigger":
                 EventController.Instance.TriggerEventForEventable(new GameEvent(id), MouseController.Instance.CurrentlySelectedIGEventable);
@@ -164,7 +195,7 @@ public class ConsoleController : MonoBehaviour {
         if (u.IsShip == false && t.Type == TileType.Ocean) {
             return false;
         }
-        if (PlayerController.Instance.GetPlayer(player) == null)
+        if (PlayerController.GetPlayer(player) == null)
             return false;
         World.Current.CreateUnit(u.Clone(player, t));
         return true;
@@ -288,5 +319,9 @@ public class ConsoleController : MonoBehaviour {
             inv.AddItem(new Item(i.ID, int.MaxValue));
         }
         return true;
+    }
+    private void OnDestroy() {
+        logWriter.Flush();
+        logWriter.Close();
     }
 }

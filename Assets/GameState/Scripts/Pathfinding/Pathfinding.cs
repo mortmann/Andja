@@ -19,13 +19,16 @@ public abstract class Pathfinding {
     // If we aren't moving, then destTile = currTile
     [JsonPropertyAttribute] protected Tile _destTile;
     [JsonPropertyAttribute] public float rotation;
-    [JsonPropertyAttribute] protected float _y;
-    [JsonPropertyAttribute] protected float _x;
+    [JsonPropertyAttribute] protected float _y = -1;
+    [JsonPropertyAttribute] protected float _x = -1;
     [JsonPropertyAttribute] public Tile startTile;
 
     #endregion
     #region RuntimeOrPrototyp
-    public bool IsAtDestination { get { return _IsAtDest; } set { _IsAtDest = value; cbIsAtDestination?.Invoke(value); } }
+    public bool IsAtDestination {
+        get { return _IsAtDest; }
+        set { _IsAtDest = value; cbIsAtDestination?.Invoke(value); }
+    }
     public Action<bool> cbIsAtDestination;
 
     public Vector3 Position {
@@ -40,7 +43,7 @@ public abstract class Pathfinding {
 
     protected float rotationSpeed = 90;
     protected Thread calculatingPathThread;
-    protected bool IsCalculating => calculatingPathThread != null && calculatingPathThread.IsAlive;
+    public bool IsDoneCalculating = false;
     protected float _speed = 1;
     private float Speed {
         get {
@@ -64,16 +67,13 @@ public abstract class Pathfinding {
 
     public Tile DestTile {
         get {
-            if (_destTile == null) {
-                return CurrTile;
-            }
             return _destTile;
         }
         set {
-            _destTile = value;
             if (_destTile != value) {
                 IsAtDestination = false;
             }
+            _destTile = value;
         }
     }
     public float X {
@@ -131,6 +131,9 @@ public abstract class Pathfinding {
         //we have a destination & are not there atm && we have no path then calculate it!
         if (DestTile != null && DestTile != CurrTile && IsAtDestination == false && NextTile != DestTile && worldPath == null)
             SetDestination(dest_X, dest_Y);
+
+        if (IsDoneCalculating == false)
+            return;
 
         if (CurrTile == DestTile) {
             IsAtDestination = true;
@@ -251,6 +254,13 @@ public abstract class Pathfinding {
 
     protected virtual void CalculatePath() {
 
+    }
+
+    protected void StartCalculatingThread() {
+        IsDoneCalculating = false;
+        IsAtDestination = false;
+        Thread calcPath = new Thread(CalculatePath);
+        calcPath.Start();
     }
 
 }

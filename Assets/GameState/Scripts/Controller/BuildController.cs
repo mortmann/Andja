@@ -254,7 +254,7 @@ public class BuildController : MonoBehaviour {
         //		str.City.removeStructure (str);
     }
     public bool PlayerHasEnoughMoney(Structure s, int playerNumber) {
-        if (PlayerController.Instance.GetPlayer(playerNumber).Balance >= s.BuildCost) {
+        if (PlayerController.GetPlayer(playerNumber).TreasuryBalance >= s.BuildCost) {
             return true;
         }
         return false;

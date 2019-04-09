@@ -427,7 +427,7 @@
   "players": [
     {
       "$id": "2",
-      "_balance": 50000,
+      "_treasuryBalance": 50000,
       "_maxPopulationLevel": 0,
       "_maxPopulationCount": 0,
       "Number": 0,
@@ -435,7 +435,7 @@
     },
     {
       "$id": "3",
-      "_balance": 50000,
+      "_treasuryBalance": 50000,
       "_maxPopulationLevel": 0,
       "_maxPopulationCount": 0,
       "Number": 1,
@@ -443,7 +443,7 @@
     },
     {
       "$id": "4",
-      "_balance": 50000,
+      "_treasuryBalance": 50000,
       "_maxPopulationLevel": 0,
       "_maxPopulationCount": 0,
       "Number": 2,

@@ -8,15 +8,21 @@ using System;
 public class PopulationLevelPrototypData : LanguageVariables {
     public List<NeedGroup> needGroupList; //not used as "copy" of the USED in "ticks" just as a reference which Needs gets unlocked with this level!
     public int LEVEL; // cant be negative!
+
+    public int taxPerPerson = 1;
+
 }
 [JsonObject(MemberSerialization.OptIn)]
 public class PopulationLevel {
     #region Serialize
-    [JsonPropertyAttribute] public int populationCount = 0;
+    public int populationCount = 0;
     [JsonPropertyAttribute] public bool criticalMissingNeed = false;
     [JsonPropertyAttribute] public int Level;
     [JsonPropertyAttribute] public List<NeedGroup> NeedGroupList;
     [JsonPropertyAttribute] public PopulationLevel previousLevel;
+    [JsonPropertyAttribute] public float taxPercantage = 1f;
+    [JsonPropertyAttribute] City city;
+
     #endregion
 
     #region Runtime
@@ -38,10 +44,9 @@ public class PopulationLevel {
             return _AllNeedGroupList;
         }
     }
-
+    public int TaxPerPerson => Data.taxPerPerson;
     public float Happiness { get; internal set; }
 
-    City city;
     #endregion
     public PopulationLevel() {
 
@@ -70,10 +75,12 @@ public class PopulationLevel {
         }
         criticalMissingNeed = missingNeed;
         fullfilled /= summedImportance;
-        Debug.Log("City " + city.Name + " - " + Level + " Fullfilled: " + fullfilled);
+        //Debug.Log("City " + city.Name + " - " + Level + " Fullfilled: " + fullfilled);
         //TODO: make it trend towards the happiness? so it doesnt swing like crazy
     }
-
+    public int GetTaxIncome(City city) {
+        return Mathf.FloorToInt(taxPercantage * TaxPerPerson * populationCount); 
+    }
     internal void RegisterNeedUnlock(Action<Need> onNeedUnlock) {
         cbNeedUnlockAdded += onNeedUnlock;
     }
@@ -101,28 +108,29 @@ public class PopulationLevel {
     }
 
     internal void Load() {
-        UpdateNeeds();
-        if (previousLevel.Exists() == false)
+        if (previousLevel == null || previousLevel.Exists() == false)
             previousLevel = city.GetPreviousPopulationLevel(Level);
+        UpdateNeeds();
     }
 
     private void UpdateNeeds() {
         if (NeedGroupList == null)
             NeedGroupList = new List<NeedGroup>();
         for (int i = 0; i < NeedGroupList.Count; i++) {
-            if (Data.needGroupList.Contains(NeedGroupList[i]) == false) {
+            if (Data.needGroupList.Find(x=> x.ID == NeedGroupList[i].ID) == null) {
                 NeedGroupList.Remove(NeedGroupList[i]);
             }
         }
-        Player player = PlayerController.Instance.GetPlayer(city.playerNumber);
+        if (Data.needGroupList == null)
+            return;
+        Player player = PlayerController.GetPlayer(city.playerNumber);
         player.RegisterNeedUnlock(OnUnlockedNeed);
         foreach (NeedGroup ng in Data.needGroupList) {
             NeedGroup inList = NeedGroupList.Find(x => x.ID == ng.ID);
-            if (inList != null) {
-                inList.UpdateNeeds(city.GetOwner());
-                continue;
+            if (inList == null) {
+                inList = new NeedGroup(ng.ID);
             }
-            NeedGroupList.Add(ng);
+            inList.UpdateNeeds(city.GetOwner());
         }
     }
 

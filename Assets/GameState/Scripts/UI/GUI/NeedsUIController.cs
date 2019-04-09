@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine.UI;
 
 public class NeedsUIController : MonoBehaviour {
-
+    public GenericStructureUI structureUI;
     public GameObject needPrefab;
     public GameObject buttonPopulationsLevelContent;
     public GameObject contentCanvas;
@@ -23,6 +23,7 @@ public class NeedsUIController : MonoBehaviour {
         if (this.home == home) {
             return;
         }
+        structureUI.Show(home);
         this.home = home;
         needToUI = new Dictionary<Need, NeedUI>();
         List<NeedGroup> ns = new List<NeedGroup>();

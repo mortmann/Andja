@@ -126,7 +126,7 @@ public class Ship : Unit {
         offWorldTime = 3;
         OffworldMarket om = WorldController.Instance.offworldMarket;
         //FIRST SELL everything in inventory to make space for all the things
-        Player myPlayer = PlayerController.Instance.GetPlayer(playerNumber);
+        Player myPlayer = PlayerController.GetPlayer(playerNumber);
         Item[] i = inventory.GetAllItemsAndRemoveThem();
         foreach (Item item in i) {
             om.SellItemToOffWorldMarket(item, myPlayer);

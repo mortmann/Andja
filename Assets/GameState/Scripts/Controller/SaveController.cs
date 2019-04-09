@@ -18,7 +18,7 @@ public class SaveController : MonoBehaviour {
     public const string islandImageEnding = ".png";
     private static List<Worker> loadWorker;
     public static bool DebugModeSave = true;
-
+    public static string SaveName = "unsaved";
     //TODO autosave here
     const string SaveFileVersion = "0.1.4";
     const string islandSaveFileVersion = "i_0.0.2";
@@ -59,7 +59,7 @@ public class SaveController : MonoBehaviour {
     public void SaveIslandState(string name = "autosave") {
         string islandStatePath = System.IO.Path.Combine(GetIslandSavePath(name), name + islandFileEnding);
         string finalMetaStatePath = System.IO.Path.Combine(GetIslandSavePath(name), name + metaFileEnding);
-
+        SaveName = name;
         SaveMetaData metaData = new SaveMetaData {
             safefileversion = islandSaveFileVersion,
             saveName = name,
@@ -278,6 +278,7 @@ public class SaveController : MonoBehaviour {
         return System.IO.Path.Combine(ConstantPathHolder.ApplicationDataPath.Replace("/Assets", ""), "saves");
     }
     public void SaveGameState(string name = "autosave") {
+        SaveName = name;
         //first pause the world so nothing changes and we can save an 
         bool wasPaused = WC.IsPaused;
         if (wasPaused == false) {
@@ -298,7 +299,7 @@ public class SaveController : MonoBehaviour {
             foreach (System.Reflection.FieldInfo field in typeof(SaveState).GetFields()) {
                 string bsd = field.GetValue(savestate) as String;
                 save += bsd;
-                save += "##\n";
+                save += "##" + Environment.NewLine;
             }
         }
         else {
@@ -346,6 +347,7 @@ public class SaveController : MonoBehaviour {
     }
 
     public IEnumerator LoadGameState(string name = "autosave") {
+        SaveName = name;
         //first pause the world so nothing changes and we can save an 		
         string finalSaveStatePath = System.IO.Path.Combine(GetSaveGamesPath(), name + saveFileEnding);
         string finalMetaStatePath = System.IO.Path.Combine(GetSaveGamesPath(), name + metaFileEnding);

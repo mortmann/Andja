@@ -32,9 +32,7 @@ public class OceanPathfinding : Pathfinding {
         this.start = World.Current.GetTileAt(X, Y);
         this.DestTile = World.Current.GetTileAt(x, y);
         tileGrid = World.Current.TilesGrid;
-        IsAtDestination = false;
-        Thread calcPath = new Thread(CalculatePath);
-        calcPath.Start();
+        StartCalculatingThread();
     }
     protected override void CalculatePath() {
         pathDest = Path_dest.exact;
@@ -56,6 +54,7 @@ public class OceanPathfinding : Pathfinding {
         }
         StopWatch.Stop();
         //Debug.Log("CalculatePath Steps:" + worldPath.Count + " - "+ StopWatch.ElapsedMilliseconds + "ms (" + StopWatch.Elapsed.TotalSeconds + "s)! ");
-
+        //important
+        IsDoneCalculating = true;
     }
 }

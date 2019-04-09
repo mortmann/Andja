@@ -161,7 +161,9 @@ public class GameEvent {
             Debug.LogError("Influence is null!");
             return;
         }
-        t.AddEffects(effectsForTarget);
+        foreach(Effect e in effectsForTarget) {
+            t.AddEffect(new Effect(e));
+        }
     }
 
     public Effect[] GetEffectsForTarget(IGEventable t) {

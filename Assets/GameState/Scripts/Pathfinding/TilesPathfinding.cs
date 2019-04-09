@@ -25,18 +25,18 @@ public class TilesPathfinding : Pathfinding {
         //get the tiles from the world to get a current reference and not an empty from the load
         DestTile = World.Current.GetTileAt(x, y);
         startTile = World.Current.GetTileAt(startTile.X, startTile.Y);
-        CalculatePath();
+        //CalculatePath();
+        StartCalculatingThread();
     }
     public void SetDestination(List<Tile> startTiles, List<Tile> endTiles) {
         this.startTiles = startTiles;
         this.endTiles = endTiles;
-        Thread calcPath = new Thread(CalculatePath);
-        calcPath.Start();
+        StartCalculatingThread();
     }
 
     protected override void CalculatePath() {
-        pathDest = Path_dest.tile;
 
+        pathDest = Path_dest.tile;
         if (startTiles == null) {
             startTiles = new List<Tile> {
                 startTile
@@ -64,6 +64,9 @@ public class TilesPathfinding : Pathfinding {
         DestTile = backPath.Peek();
         dest_X = DestTile.X;
         dest_Y = DestTile.Y;
+
+        //important
+        IsDoneCalculating = true;
     }
 
 }

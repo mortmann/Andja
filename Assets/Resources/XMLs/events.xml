@@ -1,5 +1,9 @@
 <events>
    <Effect ID="0">
+      <Name>
+         <entry lang="English">Fire</entry>
+         <entry lang="German">Feuer</entry>
+      </Name>
       <unique>true</unique>
       <nameOfVariable>CurrentHealth</nameOfVariable>
       <change>-1.0</change>
@@ -14,6 +18,10 @@
       <onMapSpriteName>fire</onMapSpriteName>
    </Effect>
    <Effect ID="1">
+      <Name>
+         <entry lang="English">Illness</entry>
+         <entry lang="German">Krankheit</entry>
+      </Name>
       <unique>true</unique>
       <nameOfVariable>decreaseTime</nameOfVariable>
       <change>2.0</change>

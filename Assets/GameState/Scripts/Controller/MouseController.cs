@@ -127,6 +127,10 @@ public class MouseController : MonoBehaviour {
 
         switch (mouseState) {
             case MouseState.Idle:
+                if (Input.GetMouseButtonDown(0)) {
+                    //mouse press decide what it hit 
+                    DecideWhatUIToShow(Physics2D.Raycast(new Vector2(currFramePosition.x, currFramePosition.y), Vector2.zero, 200));
+                }
                 break;
             case MouseState.Drag:
                 UpdateDragging();
@@ -148,11 +152,7 @@ public class MouseController : MonoBehaviour {
                 UpdateDragging();
                 break;
         }
-        if (Input.GetMouseButtonDown(0)) {
-            //mouse press decide what it hit 
-            DecideWhatUIToShow(Physics2D.Raycast(new Vector2(currFramePosition.x, currFramePosition.y), Vector2.zero, 200));
-
-        }
+        
         if (Input.GetMouseButtonDown(1) && mouseState != MouseState.Unit) {
             ResetBuild(null);
             mouseState = MouseState.Idle;

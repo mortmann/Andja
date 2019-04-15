@@ -249,7 +249,7 @@ public class StructureSpriteController : MonoBehaviour {
         Structure s = road;
         SetSpriteRendererStructureSprite(structureGameObjectMap[s], s);
         if (road.Route != null) {
-            structureGameObjectMap[s].GetComponentInChildren<TextMesh>().text = road.Route.toString();
+            structureGameObjectMap[s].GetComponentInChildren<TextMesh>().text = road.Route.ToString();
         }
     }
 

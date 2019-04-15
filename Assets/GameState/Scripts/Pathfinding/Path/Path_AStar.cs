@@ -37,7 +37,7 @@ public class Path_AStar {
         this.startTiles = startTiles;
         this.endTiles = endTiles;
         // A dictionary of all valid, walkable nodes.
-        Dictionary<Tile, Path_Node<Tile>> nodes = route.tileGraph.nodes;
+        Dictionary<Tile, Path_Node<Tile>> nodes = route.TileGraph.nodes;
         Calculate(nodes, tileStart, tileEnd, false);
 
     }

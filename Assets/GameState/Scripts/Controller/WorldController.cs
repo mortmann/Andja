@@ -6,19 +6,20 @@ using UnityEngine.SceneManagement;
 using System.IO;
 using Newtonsoft.Json;
 
+
+public enum GameSpeed { Paused, StopMotion, Slowest, Slow, Normal, Fast, Fastest, LudicrousSpeed }
 public class WorldController : MonoBehaviour {
     public static WorldController Instance { get; protected set; }
 
-    // The world and tile data
     public World World { get; protected set; }
-
+    public Action<GameSpeed> onGameSpeedChange;
     public OffworldMarket offworldMarket;
 
     public float timeMultiplier = 1;
     private bool _isPaused = false;
     public bool IsPaused {
         get {
-            return _isPaused || IsModal || Loading.IsLoading;
+            return _isPaused || Loading.IsLoading;
         }
         set {
             _isPaused = value;
@@ -27,10 +28,19 @@ public class WorldController : MonoBehaviour {
     public float DeltaTime { get { return Time.deltaTime * timeMultiplier; } }
     public float FixedDeltaTime { get { return Time.fixedDeltaTime * timeMultiplier; } }
 
-    public bool IsModal; // If true, a modal dialog box is open so normal inputs should be ignored.
-
     public bool isLoaded = true;
-
+    public GameSpeed CurrentSpeed {
+        get {
+            if (timeMultiplier == 0 || IsPaused) return GameSpeed.Paused;
+            if (timeMultiplier < 0.5f ) return GameSpeed.StopMotion;
+            if (timeMultiplier < 0.75f) return GameSpeed.Slowest;
+            if (timeMultiplier < 1f) return GameSpeed.Slow;
+            if (timeMultiplier == 1f) return GameSpeed.Normal;
+            if (timeMultiplier <= 1.5f) return GameSpeed.Fast;
+            if (timeMultiplier <= 2f) return GameSpeed.Fastest;
+            return GameSpeed.LudicrousSpeed;
+        }
+    }
     // Use this for initialization
     void OnEnable() {
 
@@ -76,35 +86,31 @@ public class WorldController : MonoBehaviour {
 
     public void TogglePause() {
         if (IsPaused) {
-            OnClickChangeTimeMultiplier(0);
+            ChangeGameSpeed(GameSpeed.Paused);
         }
         else {
-            OnClickChangeTimeMultiplier(-1);
+            ChangeGameSpeed(GameSpeed.Paused);
         }
     }
-    public void OnClickChangeTimeMultiplier(int multi) {
+    public void ChangeGameSpeed(GameSpeed multi) {
         switch (multi) {
-            case -1:
-                IsPaused = !IsPaused;
+            case GameSpeed.Paused:
+                SetSpeed(0f);
                 break;
-            case 0:
-                IsPaused = !IsPaused;
+            case GameSpeed.Slowest:
+                SetSpeed(0.5f);
                 break;
-            case 1:
-                timeMultiplier = 0.5f;
-                IsPaused = false;
+            case GameSpeed.Slow:
+                SetSpeed(0.75f);
                 break;
-            case 2:
-                timeMultiplier = 0.75f;
-                IsPaused = false;
+            case GameSpeed.Normal:
+                SetSpeed(1f);
                 break;
-            case 3:
-                timeMultiplier = 1.5f;
-                IsPaused = false;
+            case GameSpeed.Fast:
+                SetSpeed(1.5f);
                 break;
-            case 4:
-                timeMultiplier = 2;
-                IsPaused = false;
+            case GameSpeed.Fastest:
+                SetSpeed(2f);
                 break;
         }
     }
@@ -115,6 +121,7 @@ public class WorldController : MonoBehaviour {
             IsPaused = true;
         else
             IsPaused = false;
+        onGameSpeedChange?.Invoke(CurrentSpeed);
     }
 
     void OnDestroy() {
@@ -159,6 +166,12 @@ public class WorldController : MonoBehaviour {
             structs.Remove(thisStruct);
             if (thisStruct.Tiles == null)
                 Debug.LogError("thisStruct.Tiles is null " + island.StartTile.X + " " + island.StartTile.Y);
+
+            foreach(int id in thisStruct.Ressources.Keys) {
+                if (island.HasRessource(id))
+                    continue;
+                island.Ressources[id] = thisStruct.Ressources[id];
+            }
             island.SetTiles(thisStruct.Tiles);
             island.Placement = thisStruct.GetPosition();
         }

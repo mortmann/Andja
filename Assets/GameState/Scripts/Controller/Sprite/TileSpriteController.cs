@@ -98,6 +98,7 @@ public class TileSpriteController : MonoBehaviour {
                 Vector2 key = i.Placement;
                 //Island Sprites
                 GameObject islandGO = new GameObject("Island");
+                islandGO.layer = 8;
                 islandToGO.Add(i, islandGO);
                 islandGO.transform.position = new Vector3(i.Placement.x - 0.5f, i.Placement.y - 0.5f, 0);
                 SpriteRenderer sr = islandGO.AddComponent<SpriteRenderer>();

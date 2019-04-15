@@ -25,31 +25,31 @@ public class MapImage : MonoBehaviour {
         warehouseToGO = new Dictionary<WarehouseStructure, GameObject>();
         unitToGO = new Dictionary<Unit, GameObject>();
         World w = World.Current;
-        tex = new Texture2D(w.Width, w.Height);
-        Color[] p = tex.GetPixels();
-        int pixel = p.Length - 1;
-        for (int x = 0; x < w.Width; x++) {
-            for (int y = 0; y < w.Height; y++) {
-                if (w.GetTileAt(x, y).Type == TileType.Ocean) {
-                    p[y * w.Width + x] = Color.blue;
-                }
-                else {
-                    p[y * w.Width + x] = Color.green;
-                }
-                pixel--;
-            }
-        }
+        //tex = new Texture2D(w.Width, w.Height);
+        //Color[] p = tex.GetPixels();
+        //int pixel = p.Length - 1;
+        //for (int x = 0; x < w.Width; x++) {
+        //    for (int y = 0; y < w.Height; y++) {
+        //        if (w.GetTileAt(x, y).Type == TileType.Ocean) {
+        //            p[y * w.Width + x] = Color.blue;
+        //        }
+        //        else {
+        //            p[y * w.Width + x] = Color.green;
+        //        }
+        //        pixel--;
+        //    }
+        //}
 
 
-        tex.SetPixels(p);
-        tex.Apply();
-        Sprite s = Sprite.Create(tex, new Rect(0, 0, w.Width, w.Height), new Vector2(100, 100));
+        //tex.SetPixels(p);
+        //tex.Apply();
+        //Sprite s = Sprite.Create(tex, new Rect(0, 0, w.Width, w.Height), new Vector2(100, 100));
 
-        image.sprite = s;
+        //image.sprite = s;
 
-        cameraRect = Instantiate(cameraRectPrefab);
-        cameraRect.name = "CameraRect";
-        cameraRect.transform.SetParent(mapParts.transform);
+        //cameraRect = Instantiate(cameraRectPrefab);
+        //cameraRect.name = "CameraRect";
+        //cameraRect.transform.SetParent(mapParts.transform);
         tradeRoutePanel = tradingMenu.GetComponent<TradeRoutePanel>();
         BuildController.Instance.RegisterCityCreated(OnCityCreated);
         foreach (Island item in w.IslandList) {
@@ -76,6 +76,7 @@ public class MapImage : MonoBehaviour {
             return;
         }
         c.RegisterStructureAdded(OnWarehouseBuild);
+        OnWarehouseBuild(c.myWarehouse);
     }
 
     private void OnWarehouseBuild(Structure structure) {
@@ -145,10 +146,10 @@ public class MapImage : MonoBehaviour {
         World w = World.Current;
         //if something changes reset it 
         RectTransform rt = mapParts.GetComponent<RectTransform>();
-        cameraRect.transform.localPosition = cc.middle * rt.rect.width / w.Width;
+        //cameraRect.transform.localPosition = cc.middle * rt.rect.width / w.Width;
         Vector3 vec = cc.upper - cc.lower;
         vec /= cc.zoomLevel; // Mathf.Clamp(cc.zoomLevel,CameraController.MaxZoomLevel,cc.zoomLevel);
-        cameraRect.transform.localScale = vec * (cc.zoomLevel / CameraController.MaxZoomLevel) * (rt.rect.width / w.Width);
+        //cameraRect.transform.localScale = vec * (cc.zoomLevel / CameraController.MaxZoomLevel) * (rt.rect.width / w.Width);
         foreach (Unit item in w.Units) {
             if (item.IsShip == false) {
                 continue;

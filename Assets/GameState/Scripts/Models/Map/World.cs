@@ -188,7 +188,8 @@ public class World : IGEventable {
     public void CreateIsland(MapGenerator.IslandStruct islandStruct) {
         Island island = new Island(islandStruct.Tiles, islandStruct.climate) {
             myFertilities = new List<Fertility>(islandStruct.fertilities),
-            Placement = new Vector2(islandStruct.x, islandStruct.y)
+            Placement = new Vector2(islandStruct.x, islandStruct.y),
+            Ressources = new Dictionary<int, int>(islandStruct.Ressources)
         };
         IslandList.Add(island);
     }

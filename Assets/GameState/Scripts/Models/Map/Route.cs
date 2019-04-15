@@ -4,15 +4,16 @@ using System.Linq;
 //DOESNT NEED TO BE SAVED
 //GETS CREATED WHEN NEEDED
 public class Route {
-    public Path_TileGraph tileGraph { get; protected set; }
+    public Path_TileGraph TileGraph { get; protected set; }
     public List<Tile> myTiles;
     public Route(Tile startTile, bool floodfill = false) {
-        myTiles = new List<Tile>();
-        myTiles.Add(startTile);
+        myTiles = new List<Tile> {
+            startTile
+        };
         if (floodfill) {
             RouteFloodFill(startTile);
         }
-        tileGraph = new Path_TileGraph(this);
+        TileGraph = new Path_TileGraph(this);
     }
     protected void RouteFloodFill(Tile tile) {
         if (tile == null) {
@@ -49,16 +50,17 @@ public class Route {
 
     }
 
-    public void addRoadTile(Tile tile) {
+    public void AddRoadTile(Tile tile) {
         myTiles.Add(tile);
-        tileGraph.AddNodeToRouteTileGraph(tile);
+        TileGraph.AddNodeToRouteTileGraph(tile);
     }
-    public void removeRoadTile(Tile tile) {
-        myTiles.Remove(tile);
-        if (myTiles.Count == 0) {
+    public void RemoveRoadTile(Tile tile) {
+        if (myTiles.Count == 1) {
             //this route does not have any more roadtiles so kill it
             myTiles[0].MyCity.RemoveRoute(this);
+            return;
         }
+        myTiles.Remove(tile);
         //cheack if it can split up in to routes
         int neighboursOfRoute = 0;
         foreach (Tile t in tile.GetNeighbours(false)) {
@@ -95,17 +97,17 @@ public class Route {
         }
     }
 
-    public void addRoute(Route route) {
+    public void AddRoute(Route route) {
         foreach (Tile item in route.myTiles) {
             ((RoadStructure)item.Structure).Route = this;
         }
-        tileGraph.addNodes(route.tileGraph);
+        TileGraph.addNodes(route.TileGraph);
         myTiles[0].MyCity.RemoveRoute(route);
 
     }
 
     ///for debug purpose only if no longer needed delete
-    public string toString() {
+    public override string ToString() {
         return myTiles[0].ToString() + "_Route";
     }
 

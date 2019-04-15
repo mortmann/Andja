@@ -429,6 +429,6 @@ public class IslandGenerator {
     }
 
     public MapGenerator.IslandStruct GetIslandStruct() {
-        return new MapGenerator.IslandStruct(Width, Height, Tiles, climate, MapGenerator.Instance.GetFertilitiesForClimate(climate, 3/*TODO:nonstatic*/));
+        return new MapGenerator.IslandStruct(Width, Height, Tiles, climate, MapGenerator.Instance.GetFertilitiesForClimate(climate, 3/*TODO:nonstatic*/), new Dictionary<int, int>());
     }
 }

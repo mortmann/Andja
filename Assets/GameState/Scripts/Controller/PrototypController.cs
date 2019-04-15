@@ -54,6 +54,8 @@ public class PrototypController : MonoBehaviour {
     Dictionary<Climate, List<Fertility>> allFertilities;
     Dictionary<int, Fertility> idToFertilities;
 
+    public List<Item> MineableItems;
+
     static List<Item> buildItems;
     List<Need> allNeeds;
     //current valid player prototyp data
@@ -208,6 +210,13 @@ public class PrototypController : MonoBehaviour {
         //other
         populationLevelDatas = new Dictionary<int, PopulationLevelPrototypData>();
         ReadOtherFromXML();
+
+        MineableItems = new List<Item>();
+        List<Structure> mines = new List<Structure>(structurePrototypes.Values);
+        mines.RemoveAll(x => x.GetType() != typeof(MineStructure));
+        foreach (Structure s in mines) {
+            MineableItems.Add(((MineStructure)s).Output[0]);
+        }
 
         Debug.Log("Read in fertilities types: " + allFertilities.Count + " with all " + fertilityPrototypeDatas.Count);
         string str = "";
@@ -717,15 +726,8 @@ public class PrototypController : MonoBehaviour {
                 myStructureTyp = StructureTyp.Blocking,
                 buildTyp = BuildTypes.Single,
                 hasHitbox = true,
-                structureRange = 0,
-
-                //!not anymore
-                output = new Item[1]
+                structureRange = 0
             };
-            mpd.output[0] = PrototypController.Instance.allItems[3];
-            mpd.myRessource = "stone";
-            mpd.maxOutputStorage = 5;
-            mpd.produceTime = 15f;
 
             SetData<MinePrototypData>(node, ref mpd);
 

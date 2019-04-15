@@ -23,6 +23,7 @@ GameObject:
   - component: {fileID: 114679611743258316}
   - component: {fileID: 114133372772778930}
   - component: {fileID: 114366592133062166}
+  - component: {fileID: 114295001658923948}
   m_Layer: 5
   m_Name: EffectUI
   m_TagString: Untagged
@@ -49,6 +50,31 @@ MonoBehaviour:
   m_FlexibleWidth: -1
   m_FlexibleHeight: -1
   m_LayoutPriority: 1
+--- !u!114 &114295001658923948
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1834280822812272}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -1862395651, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Delegates:
+  - eventID: 0
+    callback:
+      m_PersistentCalls:
+        m_Calls: []
+      m_TypeName: UnityEngine.EventSystems.EventTrigger+TriggerEvent, UnityEngine.UI,
+        Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+  - eventID: 1
+    callback:
+      m_PersistentCalls:
+        m_Calls: []
+      m_TypeName: UnityEngine.EventSystems.EventTrigger+TriggerEvent, UnityEngine.UI,
+        Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+  delegates: []
 --- !u!114 &114366592133062166
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -60,7 +86,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a56112692ee07b04aae1884a4a9886c7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  EffectImage: {fileID: 0}
+  EffectImage: {fileID: 114679611743258316}
 --- !u!114 &114679611743258316
 MonoBehaviour:
   m_ObjectHideFlags: 1

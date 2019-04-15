@@ -4,9 +4,6 @@ using System.Collections.Generic;
 using Newtonsoft.Json;
 
 public class MinePrototypData : OutputPrototypData {
-
-    public string myRessource;
-
 }
 
 [JsonObject(MemberSerialization.OptIn)]
@@ -15,14 +12,16 @@ public class MineStructure : OutputStructure {
     #endregion
     #region RuntimeOrOther
 
-    public string myRessource { get { return MineData.myRessource; } }
+    public int Ressource { get {
+            if (OutputData.output[0] == null) return -1;
+            return OutputData.output[0].ID; } }
 
     public override float EfficiencyPercent {
         get {
-            if (BuildTile.MyIsland.myRessources[myRessource] == 0) {
-                return 0;
+            if (BuildTile.MyIsland.HasRessource(Ressource)) {
+                return 100;
             }
-            return 100;
+            return 0;
         }
     }
 
@@ -53,7 +52,7 @@ public class MineStructure : OutputStructure {
     public override bool SpecialCheckForBuild(List<Tile> tiles) {
         for (int i = 0; i < tiles.Count; i++) {
             if (tiles[i].Type == TileType.Mountain) {
-                if (BuildTile.MyIsland.myRessources[myRessource] <= 0) {
+                if (BuildTile.MyIsland.HasRessource(Ressource) == false) {
                     return false;
                 }
             }
@@ -62,19 +61,17 @@ public class MineStructure : OutputStructure {
     }
 
     public override void OnUpdate(float deltaTime) {
-
-        if (BuildTile.MyIsland.myRessources[myRessource] <= 0) {
+        if (BuildTile.MyIsland.HasRessource(Ressource) == false) {
             return;
         }
         if (Output[0].count >= MaxOutputStorage) {
             return;
         }
-
         produceCountdown += deltaTime;
         if (produceCountdown >= ProduceTime) {
             produceCountdown = 0;
-            Output[0].count++;
-
+            Output[0].count += OutputData.output[0].count;
+            City.island.RemoveRessources(Ressource, OutputData.output[0].count);
             cbOutputChange?.Invoke(this);
         }
     }

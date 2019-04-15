@@ -1006,7 +1006,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1875351409}
   - component: {fileID: 1875351408}
-  - component: {fileID: 1875351407}
   - component: {fileID: 1875351406}
   - component: {fileID: 1875351405}
   m_Layer: 0
@@ -1024,13 +1023,6 @@ AudioListener:
   m_GameObject: {fileID: 1875351404}
   m_Enabled: 1
 --- !u!124 &1875351406
-Behaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1875351404}
-  m_Enabled: 1
---- !u!92 &1875351407
 Behaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1131,5 +1123,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   timeMultiplier: 1
-  IsModal: 0
   isLoaded: 1

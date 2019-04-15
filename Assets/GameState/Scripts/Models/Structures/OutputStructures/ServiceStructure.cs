@@ -28,6 +28,8 @@ public class ServiceStructure : Structure {
     Action<Structure> todoOnNewTarget;
     Action<Structure> onTargetChanged;
     Action<Structure> onTargetDestroy;
+    Action<Structure> onSelfDestroy;
+
     Action<IGEventable, Effect, bool> onTargetEffectChange;
 
 
@@ -69,14 +71,22 @@ public class ServiceStructure : Structure {
                 WorkOnTarget = RepairStructure;
                 todoOnNewTarget = RegisterOnStructureChange;
                 onTargetChanged = CheckHealth;
+                onTargetDestroy += UnregisterOnStructureChange;
+                onTargetDestroy += RemoveFromJobs;
                 break;
             case ServiceFunction.AddEffect:
-                todoOnNewTarget += RegisterOnStructureEffectChanged;
+                //only needed when a structure can have a effect once else always add it
+                if(Array.Exists(EffectsOnTargets, element => element.IsUnique)) {
+                    todoOnNewTarget += RegisterOnStructureEffectChanged;
+                    onTargetDestroy += UnregisterOnStructureEffectChanged;
+                    onTargetEffectChange += CheckForMissingEffect;
+                }
                 todoOnNewTarget += ImproveStructure;
+                onSelfDestroy += RemoveEffect;
                 break;
             case ServiceFunction.RemoveEffect:
                 //what to do on new structure
-                WorkOnTarget = RemoveEffect;
+                WorkOnTarget = RemoveEffectOverTime;
                 todoOnNewTarget = RegisterOnStructureEffectChanged;
                 //what to do on effect on a target changed
                 onTargetEffectChange += CheckEffect;
@@ -107,6 +117,22 @@ public class ServiceStructure : Structure {
         City.RegisterStructureAdded(OnAddedStructure);
     }
 
+
+    private void CheckForMissingEffect(IGEventable eventable, Effect eff, bool started) {
+        if (started) {
+            return;
+        }
+        Structure structure = eventable as Structure;
+        if (structure == null)
+            return;
+        if (Array.Exists(EffectsOnTargets, element => element.ID == eff.ID) == false) {
+            return;
+        }
+        if (eventable.HasEffect(eff) && eff.IsUnique)
+            return;
+        eventable.AddEffect(new Effect(eff.ID)); 
+    }
+
     private void RemoveFromJobs(Structure str) {
         if (jobsToDo.Contains(str))
             jobsToDo.Remove(str);
@@ -132,8 +158,11 @@ public class ServiceStructure : Structure {
     }
 
     private void CheckHealth(Structure obj) {
-        if (obj.NeedsRepair == false)
+        if (obj.NeedsRepair == false) {
+            if (jobsToDo.Contains(obj))
+                jobsToDo.Remove(obj);
             return;
+        }
         EnqueueJob(obj);
     }
 
@@ -164,7 +193,7 @@ public class ServiceStructure : Structure {
             str.AddEffect(eff);
         }
     }
-    public bool RemoveEffect(Structure str, float deltaTime) {
+    public bool RemoveEffectOverTime(Structure str, float deltaTime) {
         // does the structure have a effect that this handles? if not worker is done
         if (str.ReadOnlyEffects.Find( x => Array.Exists<Effect>(EffectsOnTargets, y => x.ID == y.ID)) == null)
             return true;
@@ -177,13 +206,19 @@ public class ServiceStructure : Structure {
         }
         return false;
     }
+    public void RemoveEffect(Structure str) {
+        //structure will check if its a valid effect
+        foreach (Effect eff in EffectsOnTargets) {
+            Effect strEffect = str.GetEffect(eff.ID);
+            str.RemoveEffect(strEffect);
+        }
+    }
+
     public void PreventEffect(IGEventable str, Effect effect, bool added) {
         if (added == false)
             return;
-        foreach (Effect eff in EffectsOnTargets) {
-            if(eff.ID == effect.ID) {
-                str.RemoveEffect(effect,true);
-            }
+        if (Array.Exists<Effect>(EffectsOnTargets, x => x.ID == effect.ID)) {
+            str.RemoveEffect(effect, true);
         }
     }
     public override void OnUpdate(float deltaTime) {
@@ -237,32 +272,41 @@ public class ServiceStructure : Structure {
     public void UnregisterOnStructureEffectChanged(Structure str) {
         str.UnregisterOnEffectChangedCallback(onTargetEffectChange);
     }
-
     public void EffectCity() {
-        //Will run once on build
+        foreach (Effect eff in EffectsOnTargets) {
+            //will check if its a valid effect
+            City.AddEffect(eff);
+        }
     }
     public void RemoveEffectCity() {
         //removed on destroy
+        foreach (Effect eff in EffectsOnTargets) {
+            //will check if its a valid effect
+            City.RemoveEffect(eff);
+        }
     }
     protected override void OnDestroy() {
         if (Targets == ServiceTarget.City) {
             RemoveEffectCity();
             return;
         }
-        for (int i = workers.Count - 1; i >= 0; i--) {
-            workers[i].Destroy();
+        if (workers != null) {
+            for (int i = workers.Count - 1; i >= 0; i--) {
+                workers[i].Destroy();
+            }
         }
-        foreach (Tile t in myRangeTiles) {
-            if (t.Structure == null)
-                continue;
-            if (SpecificRange != null) {
-                foreach (Structure str in SpecificRange) {
-                    if (str.ID == t.Structure.ID) {
-                        UnregisterOnStructureChange(t.Structure);
-                        UnregisterOnStructureEffectChanged(t.Structure);
+        if(myRangeTiles!=null) {
+            foreach (Tile t in myRangeTiles) {
+                if (t.Structure == null)
+                    continue;
+                if (SpecificRange != null) {
+                    if (Array.Exists<Structure>(SpecificRange, x => t.Structure.ID == x.ID) == false) {
                         continue;
                     }
                 }
+                UnregisterOnStructureChange(t.Structure);
+                UnregisterOnStructureEffectChanged(t.Structure);
+                onSelfDestroy?.Invoke(t.Structure);
             }
         }
         City.UnregisterStructureAdded(OnAddedStructure);

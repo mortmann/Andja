@@ -68,13 +68,13 @@ public class RoadStructure : Structure {
         if (routeCount == 1) {
             // there is already a route 
             // so add it and return
-            routes[0].addRoadTile(myStructureTiles[0]);
+            routes[0].AddRoadTile(myStructureTiles[0]);
             Route = routes[0];
             return;
         }
         //add all Roads from the others to road 1!
         for (int i = 1; i < routes.Count; i++) {
-            routes[0].addRoute(routes[i]);
+            routes[0].AddRoute(routes[i]);
             Route = routes[0];
         }
 
@@ -108,7 +108,7 @@ public class RoadStructure : Structure {
     }
     protected override void OnDestroy() {
         if (Route != null) {
-            Route.removeRoadTile(BuildTile);
+            Route.RemoveRoadTile(BuildTile);
         }
     }
     public override string GetSpriteName() {

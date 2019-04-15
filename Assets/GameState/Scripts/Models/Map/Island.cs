@@ -12,7 +12,7 @@ public class Island : IGEventable {
 
     [JsonPropertyAttribute] public List<City> myCities;
     [JsonPropertyAttribute] public Climate myClimate;
-    [JsonPropertyAttribute] public Dictionary<string, int> myRessources;
+    [JsonPropertyAttribute] public Dictionary<int, int> Ressources;
     [JsonPropertyAttribute] public Tile StartTile;
 
     #endregion
@@ -57,13 +57,11 @@ public class Island : IGEventable {
     /// <param name="climate">Climate.</param>
     public Island(Tile startTile, Climate climate = Climate.Middle) {
         StartTile = startTile; // if it gets loaded the StartTile will already be set
-        myRessources = new Dictionary<string, int>();
+        Ressources = new Dictionary<int, int>();
         myCities = new List<City>();
 
         this.myClimate = climate;
-        //TODO REMOVE THIS
-        //LOAD this from map file?
-        myRessources["stone"] = int.MaxValue;
+        
         myTiles = new List<Tile>();
         StartTile.MyIsland = this;
         foreach (Tile t in StartTile.GetNeighbours()) {
@@ -71,15 +69,25 @@ public class Island : IGEventable {
         }
         Setup();
     }
+
+    internal void RemoveRessources(int ressourceID, int count) {
+        if (Ressources.ContainsKey(ressourceID) == false)
+            return;
+        Ressources[ressourceID] -= count;
+    }
+
+    internal bool HasRessource(int ressourceID) {
+        if (Ressources.ContainsKey(ressourceID) == false)
+            return false;
+        return Ressources[ressourceID] > 0;
+    }
+
     public Island(Tile[] tiles, Climate climate = Climate.Middle) {
-        myRessources = new Dictionary<string, int>();
+        Ressources = new Dictionary<int, int>();
         myCities = new List<City>();
         this.myClimate = climate;
         SetTiles(tiles);
         Setup();
-        //TODO REMOVE THIS
-        //LOAD this from map file?
-        myRessources["stone"] = int.MaxValue;
     }
     public Island() {
     }

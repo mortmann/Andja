@@ -46,8 +46,18 @@ public class SaveController : MonoBehaviour {
         }
         else {
             IsLoadingSave = false;
-            GDH.GenerateMap();//just generate new map
+            GDH?.GenerateMap();//just generate new map
         }
+    }
+
+    internal void QuickSave() {
+        //TODO: make this work
+        throw new NotImplementedException();
+    }
+
+    internal void QuickLoad() {
+        //TODO: make this work
+        throw new NotImplementedException();
     }
 
     public void Update() {

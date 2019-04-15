@@ -14,6 +14,8 @@ public class CityInventoryUI : MonoBehaviour {
 
     Action<Item> onItemPressed;
 
+    public CityUI CityInfo;
+
     public void ShowInventory(City city, Action<Item> onItemPressed = null) {
         if (city == null && this.city == city) {
             return;
@@ -42,7 +44,10 @@ public class CityInventoryUI : MonoBehaviour {
             go_i.transform.SetParent(contentCanvas.transform);
         }
     }
-
+    public void OnCityUIToggle() {
+        CityInfo.city = city;
+        CityInfo.gameObject.SetActive(!CityInfo.gameObject.activeSelf);
+    }
     public void OnCityDestroy(City c) {
         if (city != c) {
             return;

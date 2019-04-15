@@ -163,9 +163,11 @@ public class HomeStructure : TargetStructure {
         people++;
         City.AddPeople(StructureLevel, 1);
         if (currentMood == CitizienMoods.Happy && people == MaxLivingSpaces) {
+            TryToUpgrade();
             OpenExtraUI();
         }
     }
+
     private void TryToDecreasePeople() {
         if (people <= 0) {
             isAbandoned = true;
@@ -176,6 +178,22 @@ public class HomeStructure : TargetStructure {
         if (people < PreviouseMaxLivingSpaces)
             DowngradeHouse();
     }
+
+    private void TryToUpgrade() {
+        if(City.AutoUpgradeHomes == false) {
+            return;
+        }
+        //TODO: check for performance impact
+        // if bad change to boolean in city that gets non frequent set
+        if (City.HasEnoughOfItems(UpgradeItems) == false) {
+            return;
+        }
+        if (City.GetOwner().HasEnoughMoney(UpgradeCost) == false) {
+            return;
+        }
+        UpgradeHouse();
+    }
+
     public void OnTStructureChange(Structure now, Structure old) {
         if (old is RoadStructure == false || now is RoadStructure == false) {
             return;
@@ -259,13 +277,11 @@ public class HomeStructure : TargetStructure {
             return;
         }
         CloseExtraUI();
-
         ID = PrototypController.Instance.GetStructureIDForTypeNeighbourStructureLevel(GetType(), StructureLevel, true);
         _homeData = null;
-        City.RemoveRessources(BuildingItems);
-        City.GetOwner().ReduceMoney(BuildCost);
+        City.RemoveRessources(UpgradeItems);
+        City.GetOwner().ReduceMoney(UpgradeCost);
         cbStructureChanged(this);
-
         List<Need> needs = City.GetOwner().GetCopyStructureNeeds(StructureLevel);
         foreach (Need n in needs) {
             if (IsStructureNeedFullfilled(n)) {

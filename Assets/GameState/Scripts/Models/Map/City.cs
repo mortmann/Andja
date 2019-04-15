@@ -7,6 +7,7 @@ using Newtonsoft.Json;
 public class City : IGEventable {
 
     #region Serialize
+    [JsonPropertyAttribute] public bool AutoUpgradeHomes;
     [JsonPropertyAttribute] public int playerNumber = 0;
     [JsonPropertyAttribute] public Inventory inventory;
     [JsonPropertyAttribute] public List<Structure> myStructures;
@@ -34,6 +35,9 @@ public class City : IGEventable {
                 return "City " + island.myCities.IndexOf(this);
             }
             return _name;
+        }
+        set {
+            _name = value;
         }
     }
 

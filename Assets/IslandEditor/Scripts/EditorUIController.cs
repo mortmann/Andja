@@ -16,6 +16,7 @@ public class EditorUIController : MonoBehaviour {
     public Button BuildBuildButton;
     public static EditorUIController Instance;
     public GameObject newIsland;
+    public GameObject RessourcesSetter;
 
 
 
@@ -55,5 +56,8 @@ public class EditorUIController : MonoBehaviour {
     }
     public void NewIslandToggle() {
         newIsland.SetActive(!newIsland.activeSelf);
+    }
+    public void RessourcesSetterToggle() {
+        RessourcesSetter.SetActive(!RessourcesSetter.activeSelf);
     }
 }

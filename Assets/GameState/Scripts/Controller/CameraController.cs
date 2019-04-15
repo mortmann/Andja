@@ -4,9 +4,11 @@ using UnityEngine.EventSystems;
 using System;
 
 public class CameraController : MonoBehaviour {
-    public static int MaxZoomLevel => devCameraZoom ? 4 * MaxZoomLevel : 25;
+    public static int MaxZoomLevel => devCameraZoom ? 100 : 25;
     public static bool devCameraZoom = false;
     public static int minZoomLevel = 3;
+    SpriteRenderer MiniMapCameraShadow;
+    public Camera MiniMapCamera;
     Vector3 lastFramePosition;
     Vector3 currFramePosition;
     public Vector3 upper = new Vector3(1, 1);
@@ -21,6 +23,8 @@ public class CameraController : MonoBehaviour {
     public Rect CameraViewRange;
     Vector2 showBounds = new Vector2();
     public static CameraController Instance;
+    private CameraSave cameraSave;
+
     void Awake() {
         if (Instance != null) {
             Debug.LogError("There should never be two SaveController.");
@@ -29,14 +33,20 @@ public class CameraController : MonoBehaviour {
 
     }
     void Start() {
-
-    }
-    public void Setup() {
         tilesCurrentInCameraView = new HashSet<Tile>();
         structureCurrentInCameraView = new HashSet<Structure>();
-
-        if (WorldController.Instance == null || WorldController.Instance.isLoaded == false) {
+    }
+    public void Setup() {
+        MiniMapCameraShadow = Camera.main.gameObject.GetComponentInChildren<SpriteRenderer>();
+        MiniMapCamera = GameObject.FindGameObjectWithTag("MiniMapCamera").GetComponent<Camera>();
+        MiniMapCamera.orthographicSize = World.Current.Width / 2;
+        MiniMapCamera.rect = new Rect(0, 0, World.Current.Width, World.Current.Height);
+        MiniMapCamera.transform.position = new Vector3(World.Current.Width / 2, World.Current.Height / 2, Camera.main.transform.position.z);
+        if (cameraSave == null) {
             Camera.main.transform.position = new Vector3(World.Current.Width / 2, World.Current.Height / 2, Camera.main.transform.position.z);
+        } else {
+            Camera.main.transform.position = cameraSave.pos.Vec;
+            Camera.main.orthographicSize = cameraSave.orthographicSize;
         }
         middle = Camera.main.ScreenToWorldPoint(new Vector3(Camera.main.pixelWidth / 2, Camera.main.pixelHeight / 2));
         lower = Camera.main.ScreenToWorldPoint(Vector3.zero);
@@ -57,11 +67,22 @@ public class CameraController : MonoBehaviour {
         currFramePosition.z = 0;
         UpdateZoom();
         zoomLevel = Mathf.Clamp(Camera.main.orthographicSize - 2, minZoomLevel, MaxZoomLevel);
+        if(EditorController.IsEditor == false) {
+            float height = 2f * Camera.main.orthographicSize;
+            float width = height * Camera.main.aspect;
+            MiniMapCameraShadow.transform.localScale = new Vector3(width, height);
+        }
         cameraMove += UpdateKeyboardCameraMovement();
         cameraMove += UpdateMouseCameraMovement();
 
-        lower = Camera.main.ScreenToWorldPoint(Vector3.zero);
-        upper = Camera.main.ScreenToWorldPoint(new Vector3(Camera.main.pixelWidth, Camera.main.pixelHeight));
+        Vector3 leftBottom = Camera.main.ScreenToWorldPoint(Vector3.zero);
+        Vector3 leftTop = Camera.main.ScreenToWorldPoint(new Vector3(0, Camera.main.pixelHeight));
+        lower = new Vector3(Mathf.Min(leftBottom.x, leftTop.x), Mathf.Min(leftBottom.y, leftTop.y), Mathf.Min(leftBottom.z, leftTop.z));
+        Vector3 rightBottom = Camera.main.ScreenToWorldPoint(new Vector3(Camera.main.pixelWidth, 0));
+        Vector3 rightTop = Camera.main.ScreenToWorldPoint(new Vector3(Camera.main.pixelWidth, Camera.main.pixelHeight));
+        upper = new Vector3(Mathf.Max(rightBottom.x, rightTop.x), Mathf.Max(rightBottom.y, rightTop.y), Mathf.Max(rightBottom.z, rightTop.z));
+        //lower = Camera.main.ScreenToWorldPoint(Vector3.zero);
+        //upper = Camera.main.ScreenToWorldPoint(new Vector3(Camera.main.pixelWidth, Camera.main.pixelHeight));
         middle = Camera.main.ScreenToWorldPoint(new Vector3(Camera.main.pixelWidth / 2, Camera.main.pixelHeight / 2));
 
         middleTile = World.Current.GetTileAt(middle.x, middle.y);
@@ -123,7 +144,6 @@ public class CameraController : MonoBehaviour {
                     if (EditorController.IsEditor) {
                         //all after this are in the view so we have to maybe update em
                         World.Current.OnTileChanged(tile_data);
-
                         tilesCurrentInCameraView.Add(tile_data);
                     }
 
@@ -145,7 +165,7 @@ public class CameraController : MonoBehaviour {
         }
     }
     internal void SetSaveCameraData(CameraSave camera) {
-
+        this.cameraSave = camera;
     }
 
     Vector3 UpdateMouseCameraMovement() {

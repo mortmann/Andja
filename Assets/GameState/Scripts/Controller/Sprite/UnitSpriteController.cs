@@ -136,7 +136,7 @@ public class UnitSpriteController : MonoBehaviour {
         go.AddComponent<CrateHoldingScript>().thisCrate = c;
         go.transform.SetParent(this.transform);
         go.name = "Crate";
-        go.layer = 10;
+        sr.sortingLayerName = "Units";
         BoxCollider2D col = go.AddComponent<BoxCollider2D>();
         go.AddComponent<Rigidbody2D>().gravityScale = 0; //TODO: think about if this is good so!
         col.size = new Vector2(sr.sprite.textureRect.size.x / sr.sprite.pixelsPerUnit, sr.sprite.textureRect.size.y / sr.sprite.pixelsPerUnit);

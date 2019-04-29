@@ -11,11 +11,14 @@ public class ITargetableHoldingScript : MonoBehaviour {
     public float y;
     public float rot;
     public int playerNumber;
-    public bool Debug_Mode => true; //TODO make this somewhere GLOBAL
-
+    public bool Debug_Mode => false; //TODO make this somewhere GLOBAL
+    public void Start() {
+        line = gameObject.GetComponentInChildren<LineRenderer>();
+    }
 
     public UnitDoModes currentUnitDO = UnitDoModes.Idle;
     public UnitMainModes currentUnitMain = UnitMainModes.Idle;
+    private LineRenderer line;
 
     //FIXME TODO REMOVE DIS
     public void Update() {
@@ -32,22 +35,34 @@ public class ITargetableHoldingScript : MonoBehaviour {
             return;
         }
         if (Debug_Mode && unit.pathfinding.worldPath != null) {
-            LineRenderer line = gameObject.GetComponentInChildren<LineRenderer>();
-            line.positionCount = unit.pathfinding.worldPath.Count + 3;
+            List<Vector3> lineVecs = new List<Vector3>();
+
+            if (unit.CurrentDoingMode != UnitDoModes.Move) {
+                line.gameObject.SetActive(false);
+            } else {
+                line.gameObject.SetActive(true);
+            }
+            line.positionCount = unit.pathfinding.worldPath.Count + 2;
             line.useWorldSpace = true;
-            int s = 0;
-            line.SetPosition(s, unit.pathfinding.Position);
-            s++;
+            lineVecs.Add(unit.pathfinding.Position);
             if (unit.pathfinding.NextTile != null) {
-                line.SetPosition(s, unit.pathfinding.NextTile.Vector);
-                s++;
+                lineVecs.Add(unit.pathfinding.NextTile.Vector);
             }
             foreach (Tile t in unit.pathfinding.worldPath) {
-                line.SetPosition(s, t.Vector + Vector3.back);
-                s++;
+                if (lineVecs.Count == unit.pathfinding.worldPath.Count - 2)
+                    break;
+                lineVecs.Add(t.Vector + Vector3.back);
             }
-            line.SetPosition(s, new Vector3(unit.pathfinding.dest_X, unit.pathfinding.dest_Y, -1));
+            if(unit.pathfinding.IsAtDestination==false) {
+                lineVecs.Add(new Vector3(unit.pathfinding.dest_X, unit.pathfinding.dest_Y, -1));
+            }
+
+            line.positionCount = lineVecs.Count;
+            for(int i = 0; i < lineVecs.Count; i++) {
+                line.SetPosition(i,lineVecs[i]);
+            }
         }
+        
         x = unit.pathfinding.CurrTile.X;
         y = unit.pathfinding.CurrTile.Y;
         rot = unit.pathfinding.rotation;

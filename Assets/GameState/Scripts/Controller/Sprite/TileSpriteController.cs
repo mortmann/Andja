@@ -426,6 +426,7 @@ public class TileSpriteController : MonoBehaviour {
     }
     void OnDestroy() {
         World.UnregisterTileChanged(OnTileChanged);
+        createdIslandsSprites = 0;
         Instance = null;
     }
     public void AddDecider(TileDecider addDeciderFunc, bool isCityDecider = false) {

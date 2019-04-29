@@ -14,6 +14,8 @@ public interface ITargetable {
     Vector2 NextDestinationPosition { get; }
     Vector2 LastMovement { get; }
     ArmorType MyArmorType { get; }
+    float Speed { get; }
+
     bool IsAttackableFrom(IWarfare warfare);
     void TakeDamageFrom(IWarfare warfare);
 }

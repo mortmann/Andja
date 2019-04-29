@@ -19,6 +19,8 @@ public class Inventory {
     }
 
     protected Action<Inventory> cbInventoryChanged;
+    private float amountInInventory;
+
     public bool HasLimitedSpace {
         get { return NumberOfSpaces != -1; }
     }
@@ -35,11 +37,14 @@ public class Inventory {
             Items = BuildController.Instance.GetCopieOfAllItems();
         }
         this.NumberOfSpaces = numberOfSpaces;
+        RegisterOnChangedCallback(OnMeChanged);
     }
     /// <summary>
     /// DO NOT USE
     /// </summary>
-    public Inventory() { }
+    public Inventory() {
+        RegisterOnChangedCallback(OnMeChanged);
+    }
     /// <summary>
 	/// returns amount  
 	/// </summary>
@@ -77,7 +82,14 @@ public class Inventory {
         }
         return amount;
     }
-
+    /// <summary>
+    /// Only works with Limited Inventory Spaces!
+    /// -- if needed change amountInInventory to be caluclated each time smth is added/removed (increased/decreased)
+    /// </summary>
+    /// <returns></returns>
+    internal float GetFilledPercantage() {
+        return amountInInventory / (float)(NumberOfSpaces * MaxStackSize);
+    }
 
     public virtual int GetPlaceInItems(Item item) {
         for (int i = 0; i < NumberOfSpaces; i++) {
@@ -439,7 +451,15 @@ public class Inventory {
         }
         this.MaxStackSize -= value;
     }
-
+    //TODO: make this not relay on load function?
+    public void OnMeChanged(Inventory me) {
+        if (HasLimitedSpace == false)
+            return;
+        amountInInventory = 0;
+        foreach (Item i in Items.Values) {
+            amountInInventory += i.count;
+        }
+    }
     public void RegisterOnChangedCallback(Action<Inventory> cb) {
         cbInventoryChanged += cb;
     }

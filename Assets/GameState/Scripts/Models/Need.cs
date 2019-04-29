@@ -112,10 +112,10 @@ public class Need {
         }
         //so just remove from needed what we have
         neededConsumAmount -= notUsedOfTon;
+        notUsedOfTon = 0;
         //now we have a amount that still needs to be fullfilled by the cities inventory
 
         float availableAmount = city.GetAmountForThis(Item, neededConsumAmount);
-        notUsedOfTon = Mathf.CeilToInt(neededConsumAmount) - neededConsumAmount;
         //either we need to get 1 ton or as much as we need
         neededConsumAmount = Mathf.CeilToInt(neededConsumAmount);
         //now how much do we have in the city
@@ -128,9 +128,12 @@ public class Need {
         }
 
         // how much to we consum of the avaible?
-        int usedAmount = (int)Mathf.Clamp(availableAmount, 0, neededConsumAmount);
+        float usedAmount = Mathf.Clamp(availableAmount, 0, neededConsumAmount);
         //now remove that amount of items
-        city.RemoveRessource(Item, usedAmount);
+        if(usedAmount>neededConsumAmount)
+            notUsedOfTon = usedAmount - neededConsumAmount;
+
+        city.RemoveRessource(Item, Mathf.CeilToInt(usedAmount));
 
         //minimum is 1 because if 0 -> ERROR due dividing through 0
         //calculate the percantage of availability

@@ -12,7 +12,7 @@ public class OffWorldPanelUI : MonoBehaviour {
     public Dropdown shipDP;
 
     int _pressedItem;
-    int pressedItem {
+    int PressedItem {
         get { return _pressedItem; }
         set {
             _pressedItem = value;
@@ -45,7 +45,7 @@ public class OffWorldPanelUI : MonoBehaviour {
         }
         RefreshDropDownValues();
         shipDP.onValueChanged.AddListener(OnDropDownChange);
-        pressedItem = 0;
+        PressedItem = 0;
         if (ships.Count > 0) {
             Show(ships[0]);
         }
@@ -69,8 +69,8 @@ public class OffWorldPanelUI : MonoBehaviour {
         shipDP.RefreshShownValue();
     }
     public void OnDeleteClick() {
-        intToGameObject[pressedItem].SetItem(null, ship.inventory.MaxStackSize);
-        intToItem.Remove(pressedItem);
+        intToGameObject[PressedItem].SetItem(null, ship.inventory.MaxStackSize);
+        intToItem.Remove(PressedItem);
     }
     public void OnSendClick() {
         List<Item> list = new List<Item>(intToItem.Values);
@@ -84,11 +84,11 @@ public class OffWorldPanelUI : MonoBehaviour {
     }
 
     public void OnAmountSliderMoved(float f) {
-        if (intToGameObject.ContainsKey(pressedItem) == false) {
+        if (intToGameObject.ContainsKey(PressedItem) == false) {
             return;
         }
-        intToGameObject[this.pressedItem].ChangeItemCount(f);
-        intToItem[pressedItem].count = (int)f;
+        intToGameObject[this.PressedItem].ChangeItemCount(f);
+        intToItem[PressedItem].count = (int)f;
     }
     public void Show(Ship unit) {
         amountSlider.maxValue = unit.inventory.MaxStackSize;
@@ -107,14 +107,13 @@ public class OffWorldPanelUI : MonoBehaviour {
 
     }
     public void OnItemClick(int i) {
-        pressedItem = i;
+        PressedItem = i;
     }
     public void OnOffWorldItemClick(Item i) {
-        intToGameObject[pressedItem].RefreshItem(i);
-        intToItem.Add(pressedItem, i);
+        intToGameObject[PressedItem].RefreshItem(i);
+        intToItem.Add(PressedItem, i);
     }
     public void ResetItemIcons() {
-        Debug.Log("Reset");
         intToGameObject = new Dictionary<int, ItemUI>();
         foreach (Transform t in onShip.transform) {
             GameObject.Destroy(t.gameObject);

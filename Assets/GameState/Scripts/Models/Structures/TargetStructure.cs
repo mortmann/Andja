@@ -19,5 +19,7 @@ public abstract class TargetStructure : Structure, ITargetable {
 
     public Vector2 NextDestinationPosition => CurrentPosition;
     public Vector2 LastMovement => Vector2.zero;
+
+    public float Speed => 0;
     #endregion
 }

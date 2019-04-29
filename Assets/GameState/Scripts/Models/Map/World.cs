@@ -1,9 +1,8 @@
-﻿using UnityEngine;
-using System.Collections;
+﻿using EpPathFinding.cs;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using Newtonsoft.Json;
-using EpPathFinding.cs;
+using UnityEngine;
 
 [JsonObject(MemberSerialization.OptIn)]
 public class World : IGEventable {
@@ -103,6 +102,7 @@ public class World : IGEventable {
         foreach (Unit u in Units) {
             u.Load();
             u.RegisterOnDestroyCallback(OnUnitDestroy);
+            u.RegisterOnbCreateProjectileCallback(OnCreateProjectile);
         }
     }
 
@@ -173,7 +173,7 @@ public class World : IGEventable {
     }
 
 
-    internal void Fixedupdate(float deltaTime) {
+    internal void FixedUpdate(float deltaTime) {
         for (int i = Units.Count - 1; i >= 0; i--) {
             Units[i].Update(deltaTime);
             if (Units[i].IsDead == true) {

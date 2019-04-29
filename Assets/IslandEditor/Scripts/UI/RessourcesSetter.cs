@@ -14,13 +14,21 @@ public class RessourcesSetter : MonoBehaviour {
             GameObject go = Instantiate(ResourceSet);
             go.transform.SetParent(Content);
             go.GetComponentInChildren<Text>().text = item.Name;
-            InputField amountField = go.GetComponentInChildren<InputField>();
-            amountField.onEndEdit.AddListener(x => {
+            InputField upperAmountField = go.transform.Find("UpperLimit").gameObject.GetComponent<InputField>( );
+            upperAmountField.onEndEdit.AddListener(x => {
                 if (x.Length == 0)
-                    amountField.text = "0";
+                    upperAmountField.text = "0";
                 int amount = 0;
                 int.TryParse(x, out amount);
-                EditorController.Instance.OnRessourceChange(item.ID, amount);
+                EditorController.Instance.OnRessourceChange(item.ID, amount, false);
+            });
+            InputField lowerAmountField = go.transform.Find("LowerLimit").gameObject.GetComponent<InputField>();
+            lowerAmountField.onEndEdit.AddListener(x => {
+                if (x.Length == 0)
+                    lowerAmountField.text = "0";
+                int amount = 0;
+                int.TryParse(x, out amount);
+                EditorController.Instance.OnRessourceChange(item.ID, amount, true);
             });
         }
     }

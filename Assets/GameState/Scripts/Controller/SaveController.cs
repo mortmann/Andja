@@ -5,10 +5,12 @@ using System.IO.Compression;
 using System.Collections.Generic;
 using Newtonsoft.Json;
 using System;
-
+using UnityEngine.SceneManagement;
 
 public class SaveController : MonoBehaviour {
     public static SaveController Instance;
+
+    string quickSaveName = "quicksave";//TODO CHANGE THIS TO smth not hardcoded
     public static bool IsLoadingSave = false;
     public bool IsDone = false;
     public float loadingPercantage = 0;
@@ -22,7 +24,8 @@ public class SaveController : MonoBehaviour {
     //TODO autosave here
     const string SaveFileVersion = "0.1.4";
     const string islandSaveFileVersion = "i_0.0.2";
-
+    float timeToAutoSave = AutoSaveInterval;
+    const float AutoSaveInterval = 15 * 60; // every 15 min -- TODO: add game option to change this
     GameDataHolder GDH => GameDataHolder.Instance;
     WorldController WC => WorldController.Instance;
     EventController EC => EventController.Instance;
@@ -38,11 +41,11 @@ public class SaveController : MonoBehaviour {
 
     // Use this for initialization
     void Start() {
-        if (GDH != null && GDH.loadsavegame != null && GDH.loadsavegame.Length > 0) {
-            Debug.Log("LOADING SAVEGAME " + GDH.loadsavegame);
+        if (GDH != null && GDH.Loadsavegame != null && GDH.Loadsavegame.Length > 0) {
+            Debug.Log("LOADING SAVEGAME " + GDH.Loadsavegame);
             IsLoadingSave = true;
-            StartCoroutine(LoadGameState(GDH.loadsavegame));
-            GDH.loadsavegame = null;
+            StartCoroutine(LoadGameState(GDH.Loadsavegame));
+            GameDataHolder.setloadsavegame = null;
         }
         else {
             IsLoadingSave = false;
@@ -51,18 +54,28 @@ public class SaveController : MonoBehaviour {
     }
 
     internal void QuickSave() {
-        //TODO: make this work
-        throw new NotImplementedException();
+        SaveGameState(quickSaveName);
     }
 
     internal void QuickLoad() {
-        //TODO: make this work
-        throw new NotImplementedException();
+        //TODO: NEEDS CHECK
+        LoadWorld(true);
     }
-
+    public void LoadWorld(bool quickload = false) {
+        Debug.Log("LoadWorld button was clicked.");
+        if (quickload) {
+            GameDataHolder.setloadsavegame = quickSaveName;
+        }
+        // set to loadscreen to reset all data (and purge old references)
+        SceneManager.LoadScene("GameStateLoadingScreen");
+    }
     public void Update() {
-        //autosave every soandso 
-        //maybe option to choose frequenzy
+        if (timeToAutoSave > 0) {
+            timeToAutoSave -= Time.deltaTime;
+            return;
+        }
+        timeToAutoSave = AutoSaveInterval;
+        SaveGameState();
     }
 
 
@@ -404,16 +417,16 @@ public class SaveController : MonoBehaviour {
         GDH.LoadGameData(BaseSaveData.Deserialize<GameData>((string)state.gamedata)); // gamedata
         while (MapGenerator.Instance.IsDone == false)
             yield return null;
-        loadingPercantage += 0.2f;
+        loadingPercantage += 0.3f;
         PlayerController.Instance.SetPlayerData(BaseSaveData.Deserialize<PlayerControllerSave>(state.pcs)); // player
-        loadingPercantage += 0.2f;
+        loadingPercantage += 0.1f;
         WorldController.Instance.SetWorldData(BaseSaveData.Deserialize<WorldSaveState>(state.world)); // world
-        loadingPercantage += 0.2f;
+        loadingPercantage += 0.3f;
         EventController.Instance.SetGameEventData(BaseSaveData.Deserialize<GameEventSave>(state.ges)); // event
         loadingPercantage += 0.2f;
         CameraController.Instance.SetSaveCameraData(BaseSaveData.Deserialize<CameraSave>(state.camera)); // camera
-        loadingPercantage += 0.2f;
-
+        loadingPercantage += 0.1f;
+        Debug.Log("LOAD ENDED");
         IsDone = true;
         yield return null;
     }

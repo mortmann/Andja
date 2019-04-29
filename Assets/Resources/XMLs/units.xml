@@ -54,7 +54,7 @@
          </Item>
       </buildingItems>
       <aggroTimer>1.0</aggroTimer>
-      <attackRange>1.0</attackRange>
+      <attackRange>10.0</attackRange>
       <damage>10.0</damage>
       <myDamageType>1</myDamageType>
       <myArmorType>1</myArmorType>

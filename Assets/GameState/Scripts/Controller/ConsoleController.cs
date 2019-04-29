@@ -17,6 +17,7 @@ public class ConsoleController : MonoBehaviour {
     void OnEnable() {
         Instance = this;
         Application.logMessageReceived += LogCallbackHandler;
+#if UNITY_EDITOR == false
         string path = Path.Combine(SaveController.GetSaveGamesPath(), "logs");
         string filepath = Path.Combine(path,SaveController.SaveName + "_" + DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss") +".log");
         if (Directory.Exists(path) == false) {
@@ -31,7 +32,7 @@ public class ConsoleController : MonoBehaviour {
                          .GetFileSystemInfos().OrderBy(fi => fi.CreationTime).First();
             fileInfo.Delete();
         }
-
+#endif
 
     }
     public void LogCallbackHandler(string condition, string stackTrace, LogType type) {
@@ -62,7 +63,9 @@ public class ConsoleController : MonoBehaviour {
         else {
             writeToConsole?.Invoke(log);
         }
+#if UNITY_EDITOR == false
         logWriter.Write(type + ": " + condition + Environment.NewLine + stackTrace);
+#endif
     }
 
     internal void RegisterOnLogAdded(Action<string> writeToConsole) {
@@ -78,11 +81,17 @@ public class ConsoleController : MonoBehaviour {
                 if (happend)
                     WorldController.Instance.SetSpeed(speed);
                 break;
+            case "player":
+                happend = HandlePlayerCommands(parameters.Skip(1).ToArray());
+                break;
             case "city":
                 happend = HandleCityCommands(parameters.Skip(1).ToArray());
                 break;
             case "unit":
                 happend = HandleUnitCommands(parameters.Skip(1).ToArray());
+                break;
+            case "ship":
+                happend = HandleShipCommands(parameters.Skip(1).ToArray());
                 break;
             case "island":
                 break;
@@ -133,6 +142,32 @@ public class ConsoleController : MonoBehaviour {
                 break;
         }
         return happend;
+    }
+
+    private bool HandleShipCommands(string[] parameters) {
+        Ship ship = MouseController.Instance.SelectedUnit as Ship;
+        if (ship == null) {
+            Debug.Log("no ship selected");
+            return false;
+        }
+        switch (parameters[0]) {
+            case "cannon":
+                return ShipAddCannon(parameters.Skip(1).ToArray(),ship);
+            default:
+                break;
+        }
+        return false;
+    }
+
+    private bool ShipAddCannon(string[] parameters,Ship ship) {
+        if (parameters.Length == 0)
+            return false;
+        int amount = -1;
+        if (int.TryParse(parameters[0], out amount) == false) {
+            return false;
+        }
+        ship.CannonItem.count = amount;
+        return true;
     }
 
     private bool HandleEventCommands(string[] parameters) {
@@ -239,6 +274,84 @@ public class ConsoleController : MonoBehaviour {
         }
         return false;
     }
+    bool HandlePlayerCommands(string[] parameters) {
+        switch (parameters[0]) {
+            case "change":
+                return ChangePlayer(parameters.Skip(1).ToArray());
+            case "money":
+                return ChangePlayerMoney(parameters.Skip(1).ToArray());
+            case "war":
+                return ChangeWar(parameters.Skip(1).ToArray());
+            default:
+                break;
+        }
+        return false;
+    }
+
+    private bool ChangeWar(string[] parameters) {
+        if (parameters.Length == 0)
+            return false;
+        int playerOne = PlayerController.currentPlayerNumber;
+        int pos = 0;
+        // anything can thats not a number can be the current player
+        if (parameters.Length > 1) {
+            if (int.TryParse(parameters[pos], out playerOne) == false) {
+                return false;
+            }
+            else {
+                pos++;
+            }
+        }
+        int playerTwo = 0;
+        if (int.TryParse(parameters[pos], out playerTwo) == false) {
+            return false;
+        }
+        if (playerOne < 0 || playerOne >= PlayerController.PlayerCount)
+            return false;
+        if (playerTwo < 0 || playerTwo >= PlayerController.PlayerCount)
+            return false;
+
+        if (PlayerController.Instance.ArePlayersAtWar(playerOne, playerTwo) == false)
+            PlayerController.Instance.AddPlayersWar(playerOne, playerTwo);
+        else
+            PlayerController.Instance.RemovePlayerWar(playerOne, playerTwo);
+        return true;
+    }
+
+    private bool ChangePlayerMoney(string[] parameters) {
+        if (parameters.Length == 0)
+            return false;
+        int player = PlayerController.currentPlayerNumber;
+        int pos = 0;
+        // anything can thats not a number can be the current player
+        if (parameters.Length > 1) { 
+            if (int.TryParse(parameters[pos], out player) == false) {
+                return false;
+            }
+            else {
+                pos++;
+            }
+        }
+        int money = 0;
+        if (int.TryParse(parameters[pos], out money) == false) {
+            return false;
+        }
+        PlayerController.Instance.AddMoney(money,player);
+        return true;
+    }
+
+    private bool ChangePlayer(string[] parameters) {
+        if (parameters.Length == 0)
+            return false;
+        int player = -1000;
+        int pos = 0;
+        // anything can thats not a number can be the current player
+        if (int.TryParse(parameters[pos], out player) == false) {
+            return false;
+        }
+        return PlayerController.Instance.ChangeCurrentPlayer(player);
+    }
+
     bool HandleUnitCommands(string[] parameters) {
         if (parameters.Length < 1) {
             return false;
@@ -321,7 +434,9 @@ public class ConsoleController : MonoBehaviour {
         return true;
     }
     private void OnDestroy() {
+#if UNITY_EDITOR == false
         logWriter.Flush();
         logWriter.Close();
+#endif
     }
 }

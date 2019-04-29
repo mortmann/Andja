@@ -8,15 +8,16 @@ public class PriceTagUI : MonoBehaviour {
     public Text sellText;
     public Text buyText;
     public ItemUI itemUI;
-
-    public void Show(Item item, int sell, int buy) {
+    OffworldMarket.Price Price;
+    public void Show(Item item, OffworldMarket.Price price) {
         item.count = 1;
         itemUI.SetItem(item, 1);
-        UpdatePrice(sell, buy);
+        this.Price = price;
+        UpdatePrice();
     }
-    public void UpdatePrice(int sell, int buy) {
-        sellText.text = "+" + sell;
-        buyText.text = "-" + buy;
+    public void UpdatePrice() {
+        sellText.text = "+" + Price.Sell;
+        buyText.text = "-" + Price.Buy;
     }
     public void AddListener(UnityAction<BaseEventData> ueb) {
         EventTrigger trigger = GetComponentInChildren<EventTrigger>();
@@ -26,5 +27,8 @@ public class PriceTagUI : MonoBehaviour {
 
         entry.callback.AddListener(ueb);
         trigger.triggers.Add(entry);
+    }
+    public void Update() {
+        UpdatePrice();
     }
 }

@@ -352,7 +352,7 @@ public class MapGenerator : MonoBehaviour {
         return tiles;
     }
     public void Destroy() {
-        Destroy(this.gameObject);
+        Destroy(gameObject);
     }
     public Tile GetTileAt(int x, int y) {
         if (x >= Width || y >= Height) {

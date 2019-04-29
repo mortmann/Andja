@@ -596,6 +596,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0958238ee6371c5429d80a17aa29c909, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  MiniMapCamera: {fileID: 0}
   upper: {x: 1, y: 1, z: 0}
   lower: {x: 0, y: 0, z: 0}
   middle: {x: 0, y: 0, z: 0}
@@ -884,6 +885,10 @@ Prefab:
     - target: {fileID: 11473390, guid: dfbb72e7b75263b4da3c1b05eaa385c6, type: 2}
       propertyPath: loadsavegame
       value: firewelltest
+      objectReference: {fileID: 0}
+    - target: {fileID: 11473390, guid: dfbb72e7b75263b4da3c1b05eaa385c6, type: 2}
+      propertyPath: editorloadsavegame
+      value: shiptest
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: dfbb72e7b75263b4da3c1b05eaa385c6, type: 2}

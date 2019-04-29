@@ -23,6 +23,7 @@ public class PlayerController : MonoBehaviour {
 
     public static PlayerController Instance { get; protected set; }
     public static List<Player> Players { get; protected set; }
+    public static int PlayerCount => Players.Count;
     EventUIManager euim;
 
     // Use this for initialization
@@ -248,6 +249,13 @@ public class PlayerController : MonoBehaviour {
 
     void OnDestroy() {
         Instance = null;
+    }
+
+    internal bool ChangeCurrentPlayer(int player) {
+        if (PlayerController.PlayerCount <= player || player < 0)
+            return false;
+        currentPlayerNumber = player;
+        return true;
     }
 }
 [Serializable]

@@ -5,7 +5,7 @@ using UnityEngine.EventSystems;
 using System;
 
 public class UnitUI : MonoBehaviour {
-    public Canvas content;
+    public Transform content;
     public GameObject itemPrefab;
     public GameObject settleButton;
     public GameObject patrolButton;
@@ -131,19 +131,22 @@ public class UnitUI : MonoBehaviour {
                 cannonsItem.RefreshItem(((Ship)unit).CannonItem);
             }
             if (unit.QueuedCommands != null) {
+
                 //if (unitGoalGOs[0] == null)
                 //    unitGoalGOs.Add(Instantiate(unitGoalPrefab));
                 //if (unitGoalGOs[0].activeSelf == false)
                 //    unitGoalGOs[0].SetActive(true);
                 //unitGoalGOs[0].transform.position = new Vector3(unit.pathfinding.dest_X, unit.pathfinding.dest_Y);
+                int moveCommandCount = 0;
                 for (int i = 0; i < unit.QueuedCommands.Count; i++) {
                     Command c = unit.QueuedCommands[i];
                     if (c is MoveCommand == false) {
                         continue; // TODO: make it otherwise visible
                     }
-                    if (unitGoalGOs.Count - 1 < i)
+                    if (unitGoalGOs.Count - 1 <= moveCommandCount)
                         unitGoalGOs.Add(Instantiate(unitGoalPrefab));
-                    unitGoalGOs[i].transform.position = ((MoveCommand)c).position;
+                    unitGoalGOs[moveCommandCount].transform.position = ((MoveCommand)c).position;
+                    moveCommandCount++;
                 }
                 while (unit.QueuedCommands.Count < unitGoalGOs.Count) {
                     Destroy(unitGoalGOs[unitGoalGOs.Count - 1]);

@@ -24,7 +24,7 @@ public class MouseController : MonoBehaviour {
     private Vector3 pathStartPosition;
     StructureSpriteController ssc;
     public static bool autorotate = true;
-    public static bool AdditiveCommands => InputHandler.ShiftKey;
+    public static bool OverrideCommands => InputHandler.ShiftKey == false;
 
     private HashSet<Tile> _highlightTiles;
     HashSet<Tile> HighlightTiles {
@@ -413,7 +413,7 @@ public class MouseController : MonoBehaviour {
                         Debug.LogWarning("MouseController is in the wrong state!");
                         break;
                     case MouseUnitState.Normal:
-                        SelectedUnit.GiveMovementCommand(currFramePosition.x, currFramePosition.y, AdditiveCommands);
+                        SelectedUnit.GiveMovementCommand(currFramePosition.x, currFramePosition.y, OverrideCommands);
                         break;
                     case MouseUnitState.Patrol:
                         mouseUnitState = MouseUnitState.Normal;
@@ -426,7 +426,7 @@ public class MouseController : MonoBehaviour {
             else {
                 ITargetableHoldingScript targetableHoldingScript = hit.transform.GetComponent<ITargetableHoldingScript>();
                 if (targetableHoldingScript != null) {
-                    SelectedUnit.GiveAttackCommand(hit.transform.gameObject.GetComponent<ITargetableHoldingScript>().Holding, AdditiveCommands);
+                    SelectedUnit.GiveAttackCommand(hit.transform.gameObject.GetComponent<ITargetableHoldingScript>().Holding, OverrideCommands);
                 }
                 else
                 if (hit.transform.GetComponent<CrateHoldingScript>() != null) {
@@ -437,11 +437,11 @@ public class MouseController : MonoBehaviour {
                     Tile t = GetTileUnderneathMouse();
                     if (t.Structure != null) {
                         if (t.Structure is ICapturable) {
-                            SelectedUnit.GiveCaptureCommand((ICapturable)t.Structure, AdditiveCommands);
+                            SelectedUnit.GiveCaptureCommand((ICapturable)t.Structure, OverrideCommands);
                         }
                         else
                         if (t.Structure is TargetStructure) {
-                            SelectedUnit.GiveAttackCommand((TargetStructure)t.Structure, AdditiveCommands);
+                            SelectedUnit.GiveAttackCommand((TargetStructure)t.Structure, OverrideCommands);
                         }
                         return;
                     }

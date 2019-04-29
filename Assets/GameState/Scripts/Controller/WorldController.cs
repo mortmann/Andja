@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Linq;
 using UnityEngine;
 using System.Collections.Generic;
-using UnityEngine.SceneManagement;
-using System.IO;
-using Newtonsoft.Json;
 
 
 public enum GameSpeed { Paused, StopMotion, Slowest, Slow, Normal, Fast, Fastest, LudicrousSpeed }
@@ -43,7 +39,6 @@ public class WorldController : MonoBehaviour {
     }
     // Use this for initialization
     void OnEnable() {
-
         Debug.Log("Intializing World Controller");
         if (Instance != null) {
             Debug.LogError("There should never be two world controllers.");
@@ -53,6 +48,7 @@ public class WorldController : MonoBehaviour {
         }
     }
     public void Start() {
+
         EventController.Instance.RegisterOnEvent(OnEventCreated, OnEventEnded);
     }
     public void SetGeneratedWorld(World world, Dictionary<Tile, Structure> tileToStructure) {
@@ -76,12 +72,13 @@ public class WorldController : MonoBehaviour {
             return;
         }
         World.Update(Time.deltaTime * timeMultiplier);
+        offworldMarket.Update(Time.deltaTime * timeMultiplier);
     }
     void FixedUpdate() {
         if (World == null || IsPaused) {
             return;
         }
-        World.Fixedupdate(Time.fixedDeltaTime * timeMultiplier);
+        World.FixedUpdate(Time.fixedDeltaTime * timeMultiplier);
     }
 
     public void TogglePause() {
@@ -144,15 +141,7 @@ public class WorldController : MonoBehaviour {
         };
         return wss;
     }
-    public void LoadWorld(bool quickload = false) {
-        Debug.Log("LoadWorld button was clicked.");
-        if (quickload) {
-            GameDataHolder gdh = GameDataHolder.Instance;
-            gdh.loadsavegame = "QuickSave";//TODO CHANGE THIS TO smth not hardcoded
-        }
-        // set to loadscreen to reset all data (and purge old references)
-        SceneManager.LoadScene("GameStateLoadingScreen");
-    }
+    
     public void LoadWorldData() {
         // Create a world from our save file data.
         World.LoadData(MapGenerator.Instance.GetTiles(), GameDataHolder.Instance.Width, GameDataHolder.Instance.Height);
@@ -176,7 +165,7 @@ public class WorldController : MonoBehaviour {
             island.Placement = thisStruct.GetPosition();
         }
         MapGenerator.Instance.Destroy();
-
+        offworldMarket = new OffworldMarket();
         //Now turn the loaded World into a playable World
         List<Structure> loadedStructures = new List<Structure>();
         foreach (Island island in World.IslandList) {
@@ -184,7 +173,6 @@ public class WorldController : MonoBehaviour {
         }
         loadedStructures.Sort((x, y) => x.buildID.CompareTo(y.buildID));
         BuildController.Instance.PlaceAllLoadedStructure(loadedStructures);
-        Debug.Log("LOAD ENDED");
     }
 
     internal void SetWorldData(WorldSaveState worldsave) {

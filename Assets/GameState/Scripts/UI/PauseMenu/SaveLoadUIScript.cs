@@ -108,9 +108,8 @@ public class SaveLoadUIScript : MonoBehaviour {
         SaveController.Instance.SaveIslandState(name);
     }
     private void GameLoad() {
-        GameDataHolder.Instance.loadsavegame = selected;
         if (WorldController.Instance != null)
-            WorldController.Instance.LoadWorld();
+            SaveController.Instance.LoadGameState(selected);
         else
             GameObject.FindObjectOfType<MenuController>().ChangeToGameStateLoadScreen();
     }

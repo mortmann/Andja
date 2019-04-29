@@ -45,7 +45,7 @@ public abstract class Pathfinding {
     protected Thread calculatingPathThread;
     public bool IsDoneCalculating = false;
     protected float _speed = 1;
-    private float Speed {
+    protected virtual float Speed {
         get {
             return _speed;
         }
@@ -89,6 +89,8 @@ public abstract class Pathfinding {
             return _y;
         }
         protected set {
+            if(value<=0)
+                Debug.Log(value);
             _y = value;
         }
     }
@@ -134,8 +136,10 @@ public abstract class Pathfinding {
 
         if (IsDoneCalculating == false)
             return;
+        if(IsAtDestination)
+            LastMove = Vector3.zero;
 
-        if (CurrTile == DestTile) {
+        if (CurrTile == DestTile && pathDest != Path_dest.exact) {
             IsAtDestination = true;
             LastMove = Vector3.zero;
             return;

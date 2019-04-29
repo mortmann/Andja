@@ -10,11 +10,21 @@ public class OceanPathfinding : Pathfinding {
 
     StaticGrid tileGrid;
 
+    public Ship Ship;
+
+    protected override float Speed {
+        get {
+            return Ship.Speed;
+        }
+        set { // cant set it
+        }
+    }
+
     public OceanPathfinding() : base() {
     }
 
     public OceanPathfinding(Tile t, Ship s) {
-        _speed = s.Speed;
+        Ship = s;
         rotationSpeed = s.RotationSpeed;
         CurrTile = t;
     }

@@ -18,4 +18,5 @@ public class SeriaziableVector3 {
         Y = vec.y;
         Z = vec.z;
     }
+    public SeriaziableVector3() { }
 }

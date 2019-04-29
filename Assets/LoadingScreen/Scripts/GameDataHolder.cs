@@ -19,7 +19,12 @@ public class GameDataHolder : MonoBehaviour {
 
     public int Height = 100;
     public int Width = 100;
-    public string loadsavegame;
+    //if nothing is set take that what is set by the editor in unity
+    //if there is nothing set it is null so new world
+    public string Loadsavegame => setloadsavegame ?? editorloadsavegame;
+    public string editorloadsavegame;
+    public static string setloadsavegame;
+
     public int MapSeed;
 
     public int[] bots; // this is for from being in anykind relevant so 

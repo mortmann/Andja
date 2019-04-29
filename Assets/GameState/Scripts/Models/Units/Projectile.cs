@@ -21,19 +21,19 @@ public class Projectile {
     Action<Projectile> cbOnChange;
 
     public Projectile() { }
-    public Projectile(IWarfare origin, ITargetable target) {
+    public Projectile(IWarfare origin, ITargetable target, Vector2 destination) {
         _position = new SeriaziableVector3(origin.CurrentPosition);// needs some kind of random factor
-        _destination = new SeriaziableVector3(target.CurrentPosition); // needs some kind of random factor
+        _destination = new SeriaziableVector3(destination); // needs some kind of random factor
         this.origin = origin;
         this.target = target;
     }
 
     public void Update(float deltaTime) {
-        Vector3 dir = Destination - Position;
-        if (dir.magnitude < 0.1f) {
-            Destroy();
-        }
-        dir = dir.normalized * Speed * deltaTime;
+        //Vector3 dir = Destination - Position;
+        //if (dir.magnitude < 0.1f) {
+        //    Destroy();
+        //}
+        Vector3 dir = Destination * Speed * deltaTime;
         Position += dir;
     }
 

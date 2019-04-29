@@ -1,0 +1,12 @@
+{
+  "$id": "1",
+  "saveName": "shiptest",
+  "safefileversion": "0.1.4",
+  "saveTime": "2019-04-22T21:54:18.8161426+02:00",
+  "difficulty": 0,
+  "saveFileType": 0,
+  "playTime": 51.981945,
+  "size": 0,
+  "climate": 0,
+  "isInDebugMode": true
+}

@@ -19,9 +19,9 @@ public class OffWorldMarketUI : MonoBehaviour {
         idToGO = new Dictionary<int, GameObject>();
         OffworldMarket ofm = WorldController.Instance.offworldMarket;
         items = BuildController.Instance.GetCopieOfAllItems();
-        foreach (int i in ofm.itemIDtoBuyPrice.Keys) {
+        foreach (int i in ofm.itemIDtoPrice.Keys) {
             GameObject g = GameObject.Instantiate(itemPricePrefab);
-            g.GetComponent<PriceTagUI>().Show(items[i], ofm.itemIDtoSellPrice[i], ofm.itemIDtoBuyPrice[i]);
+            g.GetComponent<PriceTagUI>().Show(items[i], ofm.itemIDtoPrice[i]);
             g.transform.SetParent(content.transform);
             //			EventTrigger trigger = g.GetComponent<EventTrigger> ();
             //			EventTrigger.Entry entry = new EventTrigger.Entry( );
@@ -38,11 +38,9 @@ public class OffWorldMarketUI : MonoBehaviour {
 
 
     void OnClick(int t) {
-        Debug.Log(t);
         panel.OnOffWorldItemClick(items[t]);
     }
     // Update is called once per frame
     void Update() {
-        //UPDATE PRICES IF THEY CHANGE HERE OR IN A CALLBACK
     }
 }

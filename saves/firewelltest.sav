@@ -57,7 +57,7 @@
                         "percantageAvailability": [
                           0.0
                         ],
-                        "notUsedOfTon": 0.99
+                        "notUsedOfTon": 0
                       },
                       {
                         "$id": "11",
@@ -68,7 +68,7 @@
                         "percantageAvailability": [
                           0.0
                         ],
-                        "notUsedOfTon": 0.99
+                        "notUsedOfTon": 0
                       },
                       {
                         "$id": "12",

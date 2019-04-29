@@ -54,8 +54,26 @@ public class Unit : IGEventable,IWarfare {
     [JsonPropertyAttribute] public float attackCooldownTimer = 1;
     [JsonPropertyAttribute] public Pathfinding pathfinding;
     [JsonPropertyAttribute] public Inventory inventory;
-    [JsonPropertyAttribute] public UnitDoModes CurrentDoingMode = UnitDoModes.Idle;
-    [JsonPropertyAttribute] public UnitMainModes CurrentMainMode = UnitMainModes.Idle;
+    [JsonPropertyAttribute] public UnitDoModes _CurrentDoingMode = UnitDoModes.Idle;
+    [JsonPropertyAttribute] public UnitMainModes _CurrentMainMode = UnitMainModes.Idle;
+    [JsonPropertyAttribute] public UnitDoModes CurrentDoingMode {
+        get {
+            return _CurrentDoingMode;
+        }
+        set {
+            Debug.Log(value);
+            _CurrentDoingMode = value;
+        }
+    }
+    [JsonPropertyAttribute] public UnitMainModes CurrentMainMode {
+        get {
+            return _CurrentMainMode;
+        }
+        set {
+            Debug.Log(value);
+            _CurrentMainMode = value;
+        }
+    }
     #endregion
     //being calculated at runtime
     #region calculated 
@@ -141,6 +159,9 @@ public class Unit : IGEventable,IWarfare {
 
     private void Setup() {
         World.Current.RegisterOnEvent(OnEventCreate, OnEventEnded);
+        inventory.OnMeChanged(inventory);
+        if (IsShip)
+            ((OceanPathfinding)pathfinding).Ship = (Ship)this;
     }
 
     public Vector3 VectorPosition {
@@ -160,7 +181,9 @@ public class Unit : IGEventable,IWarfare {
     public float Damage => CalculateRealValue("damage", Data.damage);
     public float MaxHealth => CalculateRealValue("maximumHealth", Data.maximumHealth);
     public float AttackRate => CalculateRealValue("attackRange", Data.attackRange);
-    public float Speed => CalculateRealValue("speed", Data.speed);
+    public float Speed => CalculateRealValue("speed", Data.speed) * SpeedModifier;
+
+    public virtual float SpeedModifier => 1f;
 
     public float RotationSpeed => CalculateRealValue("rotationSpeed", Data.rotationSpeed);
     public int InventoryPlaces => CalculateRealValue("inventoryPlaces", Data.inventoryPlaces); //UNTESTED HOW THIS WILL WORK
@@ -239,7 +262,8 @@ public class Unit : IGEventable,IWarfare {
         }
         switch (CurrentMainMode) {
             case UnitMainModes.Idle:
-                CurrentDoingMode = UnitDoModes.Idle;
+                if(CurrentDoingMode!=UnitDoModes.Idle)
+                    CurrentDoingMode = UnitDoModes.Idle;
                 if (CurrentCommand != null) {
                     CurrentMainMode = CurrentCommand.MainMode;
                 }
@@ -259,10 +283,20 @@ public class Unit : IGEventable,IWarfare {
                     CurrentMainMode = UnitMainModes.Idle;
                 break;
             case UnitMainModes.Attack:
-                if (IsInRange() == false && CurrentDoingMode != UnitDoModes.Move)
-                    CurrentDoingMode = UnitDoModes.Move;
-                if (CurrentDoingMode == UnitDoModes.Fight && IsInRange() == false)
-                    FollowTarget();
+                if (IsInRange() == false) {
+                    if (CurrentDoingMode != UnitDoModes.Move) {
+                        //pathfinding.cbIsAtDestination += OnArriveDestination;
+                        Vector2 dest = CurrentTarget.CurrentPosition;
+                        SetDestinationIfPossible(dest.x, dest.y);
+                    }
+                }
+                else 
+                if(CurrentDoingMode != UnitDoModes.Fight) {
+                    //is in range start fighting
+                    if (CurrentCommand is MoveCommand)
+                        queuedCommands.Dequeue();
+                    CurrentDoingMode = UnitDoModes.Fight;
+                }
                 break;
             case UnitMainModes.Patrol:
                 if (IsInRange() == false)
@@ -309,12 +343,10 @@ public class Unit : IGEventable,IWarfare {
         CurrentMainMode = UnitMainModes.Idle;
     }
     private void FollowTarget() {
-
-
-        GiveMovementCommand(CurrentTarget.CurrentPosition);
+        GiveAttackCommand(CurrentTarget);
     }
     protected void UpdateMovement(float deltaTime) {
-        pathfinding?.Update_DoMovement(deltaTime);
+        pathfinding.Update_DoMovement(deltaTime);
         cbUnitChanged?.Invoke(this);
     }
     protected void UpdateAggroRange(float deltaTime) {
@@ -327,10 +359,9 @@ public class Unit : IGEventable,IWarfare {
         }
         aggroCooldownTimer = AggroTime;
 
-        Collider2D[] c2d = Physics2D.OverlapCircleAll(new Vector2(X, Y), Data.attackRange * 2);
+        Collider2D[] c2d = Physics2D.OverlapCircleAll(new Vector2(X, Y), Data.attackRange);
         foreach (var item in c2d) {
             //check for not null = only to be sure its not null
-
             if (item == null) {
                 continue;
             }
@@ -338,8 +369,8 @@ public class Unit : IGEventable,IWarfare {
             if (targetableHoldingScript == null || targetableHoldingScript.IsUnit == false) {
                 continue;
             }
-            Unit u = (Unit)targetableHoldingScript.Holding;
-            if (u.playerNumber == playerNumber) {
+            Unit u = targetableHoldingScript.Holding as Unit;
+            if (u == null || u.playerNumber == playerNumber) {
                 continue;
             }
             //see if players are at war
@@ -362,21 +393,32 @@ public class Unit : IGEventable,IWarfare {
         AddCommand(new CaptureCommand(warfare), overrideCurrent);
         return true;
     }
-    public bool GiveAttackCommand(ITargetable warfare, bool overrideCurrent = false) {
-        if (warfare.IsAttackableFrom(this) == false) {
+    public bool GiveAttackCommand(ITargetable target, bool overrideCurrent = false) {
+        if (target.IsAttackableFrom(this) == false) {
             return false;
         }
-        if (PlayerController.Instance.ArePlayersAtWar(PlayerNumber, warfare.PlayerNumber) == false) {
+        if (PlayerController.Instance.ArePlayersAtWar(PlayerNumber, target.PlayerNumber) == false) {
             return false;
         }
         //can it reach it?
-        if (IsInRange() == false && GiveMovementCommand(ClosestTargetPosition(warfare)) == false)
-            return false;
-        AddCommand(new AttackCommand(warfare), overrideCurrent);
+
+        if (IsInRange() == false) {
+            if (CanReach(ClosestTargetPosition(target)) == false) {
+                return false;
+            }
+            //if (GiveMovementCommand(ClosestTargetPosition(target), overrideCurrent) == false)
+            //    return false;
+            //else
+            //    overrideCurrent = false; // dont override movement command that got added for attacking
+        }
+        AddCommand(new AttackCommand(target), overrideCurrent);
         return true;
     }
-    public void AddCommand(Command command, bool add) {
-        if (add == false)
+
+   
+
+    public void AddCommand(Command command, bool overrideCurrent) {
+        if (overrideCurrent)
             GoIdle();
         queuedCommands.Enqueue(command);
     }
@@ -390,7 +432,7 @@ public class Unit : IGEventable,IWarfare {
     public bool IsInRange() {
         if (CurrentTarget == null)
             return false;
-        return (CurrentTarget.CurrentPosition - CurrentPosition).magnitude > AttackRange;
+        return (CurrentTarget.CurrentPosition - CurrentPosition).magnitude <= AttackRange;
     }
     public Vector2 ClosestTargetPosition(ITargetable target) {
         Tile nearstTile = World.Current.GetTileAt(target.CurrentPosition);
@@ -431,7 +473,7 @@ public class Unit : IGEventable,IWarfare {
             GoIdle();
             return false;
         }
-        if (IsInRange()) {
+        if (IsInRange()==false) {
             return false;
         }
         DoAttack(deltaTime);
@@ -594,7 +636,9 @@ public class Unit : IGEventable,IWarfare {
         }
         return true;
     }
-
+    private bool CanReach(Vector2 vec) {
+        return CanReach(vec.x, vec.y);
+    }
     public bool CanReach(float x, float y) {
         Tile tile = World.Current.GetTileAt(x, y);
         if (tile == null) {

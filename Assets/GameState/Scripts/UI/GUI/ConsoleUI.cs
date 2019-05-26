@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -11,9 +11,11 @@ public class ConsoleUI : MonoBehaviour {
     public Transform outputTransform;
     public InputField inputField;
     public bool cheats_enabled;
-
+    List<string> Commands;
+    int currentCommandIndex=0;
     // Use this for initialization
     void Start() {
+        Commands = new List<string>();
         foreach (string s in ConsoleController.logs)
             WriteToConsole(s);
         ConsoleController.Instance.RegisterOnLogAdded(WriteToConsole);
@@ -28,6 +30,18 @@ public class ConsoleUI : MonoBehaviour {
     }
     // Update is called once per frame
     void Update() {
+        if (Input.GetKeyDown(KeyCode.UpArrow)) {
+            currentCommandIndex = Mathf.Clamp(currentCommandIndex-1, 0, currentCommandIndex);
+            if(Commands.Count>0)
+                inputField.text = Commands[currentCommandIndex];
+        }
+        if (Input.GetKeyDown(KeyCode.DownArrow)) {
+            currentCommandIndex = Mathf.Clamp(currentCommandIndex + 1, 0, Commands.Count);
+            if(currentCommandIndex==Commands.Count)
+                inputField.text = "";
+            else
+                inputField.text = Commands[currentCommandIndex];
+        }
     }
     public void WriteToConsole(string text) {
         GameObject go = Instantiate(TextPrefab);
@@ -41,17 +55,14 @@ public class ConsoleUI : MonoBehaviour {
     }
     public void ReadFromConsole() {
         string command = inputField.text;
-        if (command.Trim().Length <= 0) {
-            return;
-        }
-        string[] parameters = command.Split(' ');
-        if (parameters.Length < 1) {
-            return;
-        }
         if (cheats_enabled == false) {
             return;
         }
-        if (ConsoleController.Instance.HandleInput(parameters)) {
+        Commands.Add(command);
+        if (Commands.Count > 100)
+            Commands.RemoveAt(0);
+        currentCommandIndex = Commands.Count;
+        if (ConsoleController.Instance.HandleInput(command)) {
             WriteToConsole(command + "! Command succesful executed!");
         }
         else {

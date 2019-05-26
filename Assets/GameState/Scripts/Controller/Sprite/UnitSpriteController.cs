@@ -1,7 +1,8 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using System;
+using DigitalRuby.AdvancedPolygonCollider;
 
 public class UnitSpriteController : MonoBehaviour {
     private Dictionary<string, Sprite> unitSprites;
@@ -59,9 +60,14 @@ public class UnitSpriteController : MonoBehaviour {
         unit_go.AddComponent<ITargetableHoldingScript>().Holding = u;
         Rigidbody2D r2d = unit_go.AddComponent<Rigidbody2D>();
         r2d.gravityScale = 0;
-        BoxCollider2D col = unit_go.AddComponent<BoxCollider2D>();
-        col.size = new Vector2(sr.sprite.textureRect.size.x / sr.sprite.pixelsPerUnit,
-                                sr.sprite.textureRect.size.y / sr.sprite.pixelsPerUnit);
+        AdvancedPolygonCollider apc = unit_go.AddComponent<AdvancedPolygonCollider>();
+        apc.AlphaTolerance = 20;
+        apc.Scale = 1.15f;
+        apc.DistanceThreshold = 2;
+        StartCoroutine(UpdateHitbox(apc));  
+        //BoxCollider2D col = unit_go.AddComponent<BoxCollider2D>();
+        //col.size = new Vector2(sr.sprite.textureRect.size.x / sr.sprite.pixelsPerUnit,
+        //                        sr.sprite.textureRect.size.y / sr.sprite.pixelsPerUnit);
 
         //u.width = sr.sprite.textureRect.size.x / sr.sprite.pixelsPerUnit;
         //u.height = sr.sprite.textureRect.size.y / sr.sprite.pixelsPerUnit;
@@ -69,8 +75,18 @@ public class UnitSpriteController : MonoBehaviour {
         // the object's into changes.
         u.RegisterOnChangedCallback(OnUnitChanged);
         u.RegisterOnDestroyCallback(OnUnitDestroy);
-        u.RegisterOnbCreateProjectileCallback(OnProjectileCreated);
+        u.RegisterOnCreateProjectileCallback(OnProjectileCreated);
         OnUnitChanged(u);
+    }
+    /// <summary>
+    /// just so it finds the spriterenderer -- making a prefab would make this prob easier -- just setting sprite then?
+    /// </summary>
+    /// <param name="apc"></param>
+    /// <returns></returns>
+    private IEnumerator UpdateHitbox(AdvancedPolygonCollider apc) {
+        yield return new WaitForSeconds(0.0001f);
+        apc.RecalculatePolygon();
+        yield return null;
     }
 
     private void OnProjectileCreated(Projectile projectile) {
@@ -107,8 +123,10 @@ public class UnitSpriteController : MonoBehaviour {
                 char_go.SetActive(true);
             }
             //change this so it does use the rigidbody to move
-            char_go.transform.position = new Vector3(c.X, c.Y, 0);
-            char_go.transform.rotation = new Quaternion(0, 0, c.Rotation, 0);
+            //char_go.transform.position = new Vector3(c.X, c.Y, 0);
+            //Quaternion q = char_go.transform.rotation;
+            //q.eulerAngles = new Vector3(0, 0, c.Rotation);
+            //char_go.transform.rotation = q;
         }
         else {
             char_go.transform.position = new Vector3(c.X, c.Y, 0);

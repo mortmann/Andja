@@ -93,15 +93,15 @@ public class BuildController : MonoBehaviour {
         }
         toBuildStructure = StructurePrototypes[id].Clone();
         if (StructurePrototypes[id].BuildTyp == BuildTypes.Path) {
-            MouseController.Instance.mouseState = MouseState.Path;
+            MouseController.Instance.mouseState = MouseState.BuildPath;
             MouseController.Instance.ToBuildStructure = toBuildStructure;
         }
         if (StructurePrototypes[id].BuildTyp == BuildTypes.Single) {
-            MouseController.Instance.mouseState = MouseState.Single;
+            MouseController.Instance.mouseState = MouseState.BuildSingle;
             MouseController.Instance.ToBuildStructure = toBuildStructure;
         }
         if (StructurePrototypes[id].BuildTyp == BuildTypes.Drag) {
-            MouseController.Instance.mouseState = MouseState.Drag;
+            MouseController.Instance.mouseState = MouseState.BuildDrag;
             MouseController.Instance.ToBuildStructure = toBuildStructure;
         }
         BuildState = BuildStateModes.Build;

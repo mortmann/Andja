@@ -494,7 +494,7 @@ namespace DigitalRuby.AdvancedPolygonCollider
 
 #endif
 
-                Debug.Log("Updated polygon.");
+                //Debug.Log("Updated polygon.");
             }
             catch (Exception ex)
             {

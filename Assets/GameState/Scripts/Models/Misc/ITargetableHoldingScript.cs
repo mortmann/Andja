@@ -6,6 +6,7 @@ using UnityEngine;
 public class ITargetableHoldingScript : MonoBehaviour {
 
     public ITargetable Holding;
+    Rigidbody2D rigid;
     public bool IsUnit => Holding is Unit;
     public float x;
     public float y;
@@ -14,10 +15,15 @@ public class ITargetableHoldingScript : MonoBehaviour {
     public bool Debug_Mode => false; //TODO make this somewhere GLOBAL
     public void Start() {
         line = gameObject.GetComponentInChildren<LineRenderer>();
+        rigid = gameObject.GetComponent<Rigidbody2D>();
+
+        transform.position = unit.VectorPosition;
     }
+    Unit unit => (Unit)Holding;
 
     public UnitDoModes currentUnitDO = UnitDoModes.Idle;
     public UnitMainModes currentUnitMain = UnitMainModes.Idle;
+    public Turn_type turnType;
     private LineRenderer line;
 
     //FIXME TODO REMOVE DIS
@@ -30,7 +36,6 @@ public class ITargetableHoldingScript : MonoBehaviour {
         playerNumber = Holding.PlayerNumber;
         if (Holding is Unit == false)
             return;
-        Unit unit = (Unit)Holding;
         if (unit.pathfinding == null) {
             return;
         }
@@ -68,5 +73,11 @@ public class ITargetableHoldingScript : MonoBehaviour {
         rot = unit.pathfinding.rotation;
         currentUnitDO = unit.CurrentDoingMode;
         currentUnitMain = unit.CurrentMainMode;
+    }
+    public void FixedUpdate() {
+        turnType = unit.pathfinding.myTurnType;
+        //rigid.AddForce(unit.pathfinding.LastMove);
+        rigid.MoveRotation(unit.Rotation);
+        rigid.MovePosition(unit.VectorPosition);
     }
 }

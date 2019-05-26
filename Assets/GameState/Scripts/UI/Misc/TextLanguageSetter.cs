@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine.UI;
 using UnityEngine;
 using UnityEngine.EventSystems;
+
 [RequireComponent(typeof(EventTrigger))]
 public class TextLanguageSetter : MonoBehaviour {
     // Use this for initialization
@@ -14,18 +15,16 @@ public class TextLanguageSetter : MonoBehaviour {
     public string GetRealName() {
         string realname = "";
         Transform current = transform;
-        // if it contains * then its used in other with same name
         if (name.StartsWith("*") == false) {
-            while (current.parent != null) {
-                realname = current.name + "/" + realname;
-                current = current.parent;
-            }
+            //have to make this like this cause you cant compare transform to null transform
+                while (current.parent != null && current.name.StartsWith("#")==false) {
+                    realname = current.name + "/" + realname;
+                    current = current.parent;
+                }
         }
         else {
             realname = name + "/";
         }
-        if (realname == "Health/")
-            Debug.Log("blub " + gameObject);
         return realname;
     }
 
@@ -47,24 +46,24 @@ public class TextLanguageSetter : MonoBehaviour {
                 this.gameObject.AddComponent<EventTrigger>();
             }
         }
-        hoverHoverText = UILanguageController.Instance.GetHoverOverText(realname);
         if (UILanguageController.Instance.HasHoverOverText(realname) == false) {
             return;
         }
+        hoverHoverText = UILanguageController.Instance.GetHoverOverText(realname);
 
         EventTrigger trigger = GetComponent<EventTrigger>();
         EventTrigger.Entry enter = new EventTrigger.Entry {
             eventID = EventTriggerType.PointerEnter
         };
         enter.callback.AddListener((data) => {
-            OnMouseEnter();
+            OnMousePointerEnter();
         });
         trigger.triggers.Add(enter);
         EventTrigger.Entry exit = new EventTrigger.Entry {
             eventID = EventTriggerType.PointerExit
         };
         exit.callback.AddListener((data) => {
-            OnMouseExit();
+            OnMousePointerExit();
         });
         trigger.triggers.Add(exit);
     }
@@ -81,10 +80,10 @@ public class TextLanguageSetter : MonoBehaviour {
             return;
         UILanguageController.Instance.UnregisterLanguageChange(OnChangeLanguage);
     }
-    public void OnMouseEnter() {
+    public void OnMousePointerEnter() {
         GameObject.FindObjectOfType<HoverOverScript>().Show(hoverHoverText);
     }
-    public void OnMouseExit() {
+    public void OnMousePointerExit() {
         GameObject.FindObjectOfType<HoverOverScript>().Unshow();
     }
 }

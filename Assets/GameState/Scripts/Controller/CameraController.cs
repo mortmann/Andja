@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections.Generic;
 using UnityEngine.EventSystems;
 using System;
@@ -7,6 +7,10 @@ public class CameraController : MonoBehaviour {
     public static int MaxZoomLevel => devCameraZoom ? 100 : 25;
     public static bool devCameraZoom = false;
     public static int minZoomLevel = 3;
+
+    float Height => 2f * Camera.main.orthographicSize;
+    float Width => Height * Camera.main.aspect;
+
     SpriteRenderer MiniMapCameraShadow;
     public Camera MiniMapCamera;
     Vector3 lastFramePosition;
@@ -30,12 +34,17 @@ public class CameraController : MonoBehaviour {
             Debug.LogError("There should never be two SaveController.");
         }
         Instance = this;
-
+#if UNITY_EDITOR
+        Debug.Log("LOCKED FRAMERATE 100");
+        QualitySettings.vSyncCount = 0;
+        Application.targetFrameRate = 100;
+#endif
     }
     void Start() {
         tilesCurrentInCameraView = new HashSet<Tile>();
         structureCurrentInCameraView = new HashSet<Structure>();
     }
+
     public void Setup() {
         MiniMapCameraShadow = Camera.main.gameObject.GetComponentInChildren<SpriteRenderer>();
         MiniMapCamera = GameObject.FindGameObjectWithTag("MiniMapCamera").GetComponent<Camera>();
@@ -56,6 +65,11 @@ public class CameraController : MonoBehaviour {
         showBounds.x = World.Current.Width;
         showBounds.y = World.Current.Height;
     }
+
+    internal void CenterMainCameraPosition(Vector3 vectorPosition) {
+        Camera.main.transform.position = vectorPosition - new Vector3(Width/2,Height/2);
+    }
+
     void Update() {
         //DO not move atall when Menu is Open
         if (PauseMenu.isOpen || Loading.IsLoading) {
@@ -68,9 +82,8 @@ public class CameraController : MonoBehaviour {
         UpdateZoom();
         zoomLevel = Mathf.Clamp(Camera.main.orthographicSize - 2, minZoomLevel, MaxZoomLevel);
         if(EditorController.IsEditor == false) {
-            float height = 2f * Camera.main.orthographicSize;
-            float width = height * Camera.main.aspect;
-            MiniMapCameraShadow.transform.localScale = new Vector3(width, height);
+            
+            MiniMapCameraShadow.transform.localScale = new Vector3(Width, Height);
         }
         cameraMove += UpdateKeyboardCameraMovement();
         cameraMove += UpdateMouseCameraMovement();

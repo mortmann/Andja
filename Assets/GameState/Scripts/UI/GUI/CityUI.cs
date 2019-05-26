@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 public class CityUI : MonoBehaviour {
 
-    public InputField NameText;
+    public NameInputField NameField;
     public City city;
     public ValueNameSetter Income;
     public ValueNameSetter Expanses;
@@ -19,34 +19,13 @@ public class CityUI : MonoBehaviour {
             return;
         }
         AutoUpgradeHomesToggle.isOn = city.AutoUpgradeHomes;
+        NameField.SetName(city.Name, OnNameEdit);
         //Make the Name editable
-        NameText.onEndEdit.AddListener(OnNameEdit);
-        NameText.readOnly = true;
-        NameText.interactable = false;
-        NameText.text = city.Name;
-        EventTrigger trigger = NameText.GetComponent<EventTrigger>();
-        EventTrigger.Entry click = new EventTrigger.Entry {
-            eventID = EventTriggerType.PointerClick
-        };
-        click.callback.AddListener((data) => {
-            PointerEventData ped = ((PointerEventData)data);
-            if (ped.button == PointerEventData.InputButton.Right)
-                OnInputFieldClick();
-        });
-        trigger.triggers.Add(click);
     }
 
-    private void OnInputFieldClick() {
-        if (NameText.readOnly == false)
-            return;
-        NameText.readOnly = false;
-        NameText.interactable = true;
-        NameText.Select();
-    }
 
     private void OnNameEdit(string name) {
         city.Name = name;
-        NameText.readOnly = true;
     }
     public void OnEnableAutoUpgrade(bool change) {
         city.AutoUpgradeHomes = change;

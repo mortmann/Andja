@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -77,10 +77,12 @@ public class TileSpriteController : MonoBehaviour {
         if (EditorController.IsEditor == false) {
             //CreateIslandSprites(World.Current.IslandList);
             water.transform.position = new Vector3((World.Width / 2) - 0.5f, (World.Height / 2) - 0.5f, 0.1f);
-            water.transform.localScale = new Vector3(6 + World.Width / 10, 0.1f, 6 + World.Height / 10);
-            //		water.GetComponent<Renderer> ().material = waterMaterial;
-            water.GetComponent<Renderer>().material.mainTextureScale = new Vector2(World.Width, World.Height * 3);
-
+            Vector3 size = new Vector3(6 + World.Width / 10, 0.1f, 6 + World.Height / 10);
+            Vector2 tile = new Vector2(6 + World.Width, 6 + World.Height);
+            water.transform.localScale = size;
+            //water.GetComponent<Renderer>().material = waterMaterial;
+            Renderer wr = water.GetComponent<Renderer>();
+            wr.material.mainTextureScale = tile;
             darkLayer = new GameObject();
             darkLayer.transform.position = new Vector3((World.Width / 2) - 0.5f, (World.Height / 2) - 0.5f, 0);
             SpriteRenderer darksr = darkLayer.AddComponent<SpriteRenderer>();

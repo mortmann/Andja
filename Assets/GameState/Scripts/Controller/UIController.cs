@@ -17,7 +17,7 @@ public class UIController : MonoBehaviour {
 
     public GameObject productionStructureInfo;
     public GameObject unitCanvas;
-
+    public GameObject unitGroupUI;
     public GameObject militaryStructureInfo;
 
     public GameObject rightCanvas;
@@ -201,9 +201,22 @@ public class UIController : MonoBehaviour {
     public void OnUnitDestroy(Unit u) {
         CloseInfoUI();
     }
-
     public void CloseUnitUI() {
         unitCanvas.SetActive(false);
+        CloseInfoUI();
+    }
+    public void OpenUnitGroupUI(Unit[] units) {
+        if (units == null) {
+            Debug.LogError("UnitGroup is null");
+            return;
+        }
+        CloseInfoUI();
+        OpenInfoUI();
+        unitGroupUI.SetActive(true);
+        unitGroupUI.GetComponent<UnitGroupUI>().Show(units);
+    }
+    public void CloseUnitGroupUI() {
+        unitGroupUI.SetActive(false);
         CloseInfoUI();
     }
     public void OpenInfoUI() {
@@ -226,6 +239,7 @@ public class UIController : MonoBehaviour {
         unitCanvas.SetActive(false);
         productionStructureInfo.SetActive(false);
         militaryStructureInfo.SetActive(false);
+        unitGroupUI.SetActive(false);
         uiInfoCanvas.SetActive(false);
     }
 

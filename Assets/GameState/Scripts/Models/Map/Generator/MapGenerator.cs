@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Threading;
@@ -246,7 +246,7 @@ public class MapGenerator : MonoBehaviour {
             tilesPopulated = true;
 
             WorldController.Instance.SetGeneratedWorld(GetWorld(), tileToStructure);
-            Destroy(gameObject);
+            transform.SetParent(null);
         }
     }
 
@@ -352,7 +352,8 @@ public class MapGenerator : MonoBehaviour {
         return tiles;
     }
     public void Destroy() {
-        Destroy(gameObject);
+        if (gameObject!=null)
+            Destroy(gameObject);
     }
     public Tile GetTileAt(int x, int y) {
         if (x >= Width || y >= Height) {

@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -31,7 +31,7 @@ public class UnitPrototypeData : LanguageVariables {
 }
 
 public enum UnitDoModes { Idle, Move, Fight, Capture, Trade, OffWorld }
-public enum UnitMainModes { Idle, Moving, Aggroing, Attack, Patrol, Capture, TradeRoute, OffWorldMarket, Escort }
+public enum UnitMainModes { Idle, Moving, Aggroing, Attack, Patrol, Capture, TradeRoute, OffWorldMarket, Escort, PickUpCrate }
 
 [JsonObject(MemberSerialization.OptIn)]
 public class Unit : IGEventable,IWarfare {
@@ -56,21 +56,23 @@ public class Unit : IGEventable,IWarfare {
     [JsonPropertyAttribute] public Inventory inventory;
     [JsonPropertyAttribute] public UnitDoModes _CurrentDoingMode = UnitDoModes.Idle;
     [JsonPropertyAttribute] public UnitMainModes _CurrentMainMode = UnitMainModes.Idle;
-    [JsonPropertyAttribute] public UnitDoModes CurrentDoingMode {
+    public UnitDoModes CurrentDoingMode {
         get {
             return _CurrentDoingMode;
         }
         set {
-            Debug.Log(value);
+            if (_CurrentDoingMode != value)
+                Debug.Log(value);
             _CurrentDoingMode = value;
         }
     }
-    [JsonPropertyAttribute] public UnitMainModes CurrentMainMode {
+    public UnitMainModes CurrentMainMode {
         get {
             return _CurrentMainMode;
         }
         set {
-            Debug.Log(value);
+            if(_CurrentMainMode != value)
+                Debug.Log(value);
             _CurrentMainMode = value;
         }
     }
@@ -155,6 +157,8 @@ public class Unit : IGEventable,IWarfare {
 
     internal void Load() {
         Setup();
+        if (pathfinding.IsAtDestination == false)
+            pathfinding.cbIsAtDestination += OnArriveDestination;
     }
 
     private void Setup() {
@@ -257,8 +261,9 @@ public class Unit : IGEventable,IWarfare {
     }
     public virtual void Update(float deltaTime) {
         if (CurrentCommand != null && CurrentCommand.IsFinished) {
-            if (queuedCommands.Count > 0)
-                queuedCommands.Dequeue();
+            queuedCommands.Dequeue();
+            if (CurrentCommand == null)
+                CurrentMainMode = UnitMainModes.Idle; // no commands so be lazy
         }
         switch (CurrentMainMode) {
             case UnitMainModes.Idle:
@@ -271,7 +276,7 @@ public class Unit : IGEventable,IWarfare {
             case UnitMainModes.Moving:
                 if (CurrentDoingMode != UnitDoModes.Move) {
                     pathfinding.cbIsAtDestination += OnArriveDestination;
-                    Vector2 dest = ((MoveCommand)CurrentCommand).position;
+                    Vector2 dest = CurrentCommand.Position;
                     SetDestinationIfPossible(dest.x, dest.y);
                     CurrentDoingMode = UnitDoModes.Move;
                 }
@@ -316,6 +321,9 @@ public class Unit : IGEventable,IWarfare {
             case UnitMainModes.OffWorldMarket:
                 if (pathfinding.IsAtDestination)
                     UpdateWorldMarket(deltaTime);
+                break;
+            case UnitMainModes.PickUpCrate:
+                    TryToAddCrate(((PickUpCrateCommand)CurrentCommand).crate);
                 break;
             case UnitMainModes.Escort:
                 Debug.LogError("Not implemented yet!");
@@ -605,7 +613,7 @@ public class Unit : IGEventable,IWarfare {
                 break;
             case UnitMainModes.Patrol:
                 UpdateOnArriveDestinationPatrol();
-                break;
+                return;//dont unregister from arrivedestination
             case UnitMainModes.Capture:
                 CurrentDoingMode = UnitDoModes.Capture;
                 break;
@@ -617,7 +625,6 @@ public class Unit : IGEventable,IWarfare {
                 break;
         }
         pathfinding.cbIsAtDestination -= OnArriveDestination;
-
     }
 
     /// <summary>
@@ -631,14 +638,27 @@ public class Unit : IGEventable,IWarfare {
         if (CanReach(x, y) == false) {
             return false;
         }
-        if (pathfinding is IslandPathfinding) {
-            ((IslandPathfinding)pathfinding).SetDestination(x, y);
-        }
+        pathfinding.SetDestination(x, y);
         return true;
     }
     private bool CanReach(Vector2 vec) {
         return CanReach(vec.x, vec.y);
     }
+
+    internal void GivePickUpCrateCommand(Crate crate, bool overrideCurrent) {
+        if(crate.IsInRange(CurrentPosition)&&overrideCurrent) {
+            TryToAddCrate(crate);
+        }
+        else {
+            CurrentMainMode = UnitMainModes.PickUpCrate;
+            CurrentDoingMode = UnitDoModes.Move;
+            SetDestinationIfPossible(crate.position.x,crate.position.y);
+            //GiveMovementCommand(crate.position,overrideCurrent);
+            AddCommand(new PickUpCrateCommand(crate), false);
+            pathfinding.cbIsAtDestination += OnArriveDestination;
+        }
+    }
+
     public bool CanReach(float x, float y) {
         Tile tile = World.Current.GetTileAt(x, y);
         if (tile == null) {
@@ -670,8 +690,7 @@ public class Unit : IGEventable,IWarfare {
     internal bool TryToAddCrate(Crate thisCrate) {
         if (inventory == null)
             return false;
-        Vector2 distance = Vector2Position - thisCrate.position;
-        if (distance.magnitude > Crate.pickUpDistance)
+        if (thisCrate.IsInRange(CurrentPosition)==false)
             return false;
         int pickedup = TryToAddItem(thisCrate.item);
         thisCrate.RemoveItemAmount(pickedup);
@@ -702,10 +721,10 @@ public class Unit : IGEventable,IWarfare {
     public void UnregisterOnSoundCallback(Action<Unit, string> cb) {
         cbUnitSound -= cb;
     }
-    public void RegisterOnbCreateProjectileCallback(Action<Projectile> cb) {
+    public void RegisterOnCreateProjectileCallback(Action<Projectile> cb) {
         cbCreateProjectile += cb;
     }
-    public void UnregisterOnbCreateProjectileCallback(Action<Projectile> cb) {
+    public void UnregisterOnCreateProjectileCallback(Action<Projectile> cb) {
         cbCreateProjectile -= cb;
     }
     #endregion

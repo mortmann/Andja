@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -115,18 +115,13 @@ public class PrototypController : MonoBehaviour {
         LoadFromXML();
     }
 
-    // Update is called once per frame
-    void Update() {
-
-    }
-
     public StructurePrototypeData GetStructurePrototypDataForID(int ID) {
         return structurePrototypeDatas[ID];
     }
     public ItemPrototypeData GetItemPrototypDataForID(int ID) {
         if (itemPrototypeDatas.ContainsKey(ID) == false) {
             Debug.Log(ID + "missing data!");
-            return null;
+            return new ItemPrototypeData() { type = ItemType.Missing };
         }
         return itemPrototypeDatas[ID];
     }

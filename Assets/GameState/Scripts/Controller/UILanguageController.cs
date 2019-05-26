@@ -5,7 +5,7 @@ using System;
 using System.IO;
 using System.Xml.Serialization;
 using System.Xml;
-
+using UnityEditor; 
 public enum Language { English, German }
 
 public class UILanguageController : MonoBehaviour {
@@ -28,7 +28,7 @@ public class UILanguageController : MonoBehaviour {
         nameToHover = new Dictionary<string, string>();
         TextLanguageSetter[] texts = Resources.FindObjectsOfTypeAll<TextLanguageSetter>();
         foreach(TextLanguageSetter t in texts){
-            if(t.OnlyHoverOver)
+            if(t.OnlyHoverOver==false)
                 missingLocalizationData.Add(t.GetRealName() + "text");
             missingLocalizationData.Add(t.GetRealName() + "hover");
         }
@@ -93,9 +93,9 @@ public class UILanguageController : MonoBehaviour {
 
             //} while (currentNode != node);
         }
-        foreach(String s in nameToText.Keys) {
-            Debug.Log(s);
-        }
+        //foreach(String s in nameToText.Keys) {
+        //    Debug.Log(s);
+        //}
     }
     public void ForChilds(string path, XmlNodeList list) {
         foreach(XmlNode node in list) {

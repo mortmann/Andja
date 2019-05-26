@@ -71,5 +71,5 @@ public class TradeItemUI : MonoBehaviour {
         entry.callback.AddListener(ueb);
         trigger.triggers.Add(entry);
     }
-
+    
 }

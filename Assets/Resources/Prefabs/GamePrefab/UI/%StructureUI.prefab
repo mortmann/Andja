@@ -176,7 +176,7 @@ GameObject:
   - component: {fileID: 114001767056250134}
   - component: {fileID: 114596683271250416}
   m_Layer: 5
-  m_Name: StructureUI
+  m_Name: '%StructureUI'
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

@@ -21,12 +21,15 @@ public class OceanPathfinding : Pathfinding {
     }
 
     public OceanPathfinding() : base() {
+        myTurnType = Turn_type.TurnRadius;
+
     }
 
     public OceanPathfinding(Tile t, Ship s) {
         Ship = s;
         rotationSpeed = s.RotationSpeed;
         CurrTile = t;
+        myTurnType = Turn_type.TurnRadius;
     }
 
 
@@ -45,6 +48,8 @@ public class OceanPathfinding : Pathfinding {
         StartCalculatingThread();
     }
     protected override void CalculatePath() {
+        myTurnType = Turn_type.TurnRadius;
+
         pathDest = Path_dest.exact;
         System.Diagnostics.Stopwatch StopWatch = new System.Diagnostics.Stopwatch();
         StopWatch.Start();

@@ -3540,7 +3540,7 @@ GameObject:
   - component: {fileID: 114298697838135946}
   - component: {fileID: 114932351963611754}
   m_Layer: 5
-  m_Name: Menu
+  m_Name: '%Menu'
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3600,7 +3600,7 @@ GameObject:
   - component: {fileID: 114629849053910054}
   - component: {fileID: 114339088833316646}
   m_Layer: 5
-  m_Name: Back
+  m_Name: '*Back'
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

@@ -1,10 +1,10 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using UnityEngine;
-
+//TDOD: arrow keys for switching between old commands
 public class ConsoleController : MonoBehaviour {
 
     public static ConsoleController Instance;
@@ -72,7 +72,16 @@ public class ConsoleController : MonoBehaviour {
         this.writeToConsole += writeToConsole;
     }
 
-    public bool HandleInput(string[] parameters) {
+    public bool HandleInput(string command) {
+        if (command.Trim().Length <= 0) {
+            return false;
+        }
+        string[] parameters = command.Split(' ');
+        if (parameters.Length < 1) {
+            return false;
+        }
+        for (int i = 0; i < parameters.Length; i++)
+            parameters[i]=parameters[i].Trim();
         bool happend = false;
         switch (parameters[0]) {
             case "speed":
@@ -83,6 +92,12 @@ public class ConsoleController : MonoBehaviour {
                 break;
             case "player":
                 happend = HandlePlayerCommands(parameters.Skip(1).ToArray());
+                break;
+            case "maxfps":
+                int fps = -1;
+                happend = int.TryParse(parameters[1], out fps);
+                if(happend)
+                    Application.targetFrameRate = fps;
                 break;
             case "city":
                 happend = HandleCityCommands(parameters.Skip(1).ToArray());
@@ -196,44 +211,57 @@ public class ConsoleController : MonoBehaviour {
     }
 
     private bool HandleSpawnCommands(string[] parameters) {
-        if (parameters.Length < 1) {
+        if (parameters.Length < 2) {
             return false;
         }
         //spawn unit UID playerid 
         //spawn building BID playerid --> not currently implementing
-        int pos = 0;
-        // switch(parameters[pos]) case unit : case building
-        pos++;
+        int pos = 1;
         int id = -1000;
         // anything can thats not a number can be the current player
         if (int.TryParse(parameters[pos], out id) == false) {
             return false;
         }
         pos++;
-        int player = PlayerController.currentPlayerNumber;
-        if (parameters.Length > pos) {
-            if (int.TryParse(parameters[pos], out player) == false) {
-                return false;
-            }
-            else {
-                pos++;
-            }
+        switch (parameters[0]) {
+            case "unit":
+                int player = PlayerController.currentPlayerNumber;
+                if (parameters.Length > pos) {
+                    if (int.TryParse(parameters[pos], out player) == false) {
+                        return false;
+                    }
+                    else {
+                        pos++;
+                    }
+                }
+                Unit u = PrototypController.Instance.GetUnitForID(id);
+                if (u == null)
+                    return false;
+                Tile t = MouseController.Instance.GetTileUnderneathMouse();
+                if (u.IsShip && t.Type != TileType.Ocean) {
+                    return false;
+                }
+                if (u.IsShip == false && t.Type == TileType.Ocean) {
+                    return false;
+                }
+                if (PlayerController.GetPlayer(player) == null)
+                    return false;
+                World.Current.CreateUnit(u.Clone(player, t));
+                return true;
+            case "crate":
+                Item i = new Item(id);
+                if (i.Exists() == false) {
+                    return false;
+                }
+                if (parameters.Length > pos) {
+                    if (int.TryParse(parameters[pos], out i.count) == false) {
+                        i.count = 1;
+                    }
+                }
+                World.Current.SpawnItemOnMap(i, MouseController.Instance.GetMousePosition());
+                return true;
         }
-
-        Unit u = PrototypController.Instance.GetUnitForID(id);
-        if (u == null)
-            return false;
-        Tile t = MouseController.Instance.GetTileUnderneathMouse();
-        if (u.IsShip && t.Type != TileType.Ocean) {
-            return false;
-        }
-        if (u.IsShip == false && t.Type == TileType.Ocean) {
-            return false;
-        }
-        if (PlayerController.GetPlayer(player) == null)
-            return false;
-        World.Current.CreateUnit(u.Clone(player, t));
-        return true;
+        return false;
     }
 
     bool HandleCityCommands(string[] parameters) {

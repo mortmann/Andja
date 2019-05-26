@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections.Generic;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
@@ -13,8 +13,9 @@ public class UnitUI : MonoBehaviour {
     public GameObject buttonCanvas;
     public ItemUI cannonsItem;
     public GameObject unitCombatInfo;
+    public UnitHealthUI unitHealth;
+    public NameInputField unitName;
 
-    public Text healthText;
     public Inventory inv;
     Dictionary<int, ItemUI> itemToGO;
     Unit unit;
@@ -28,7 +29,7 @@ public class UnitUI : MonoBehaviour {
     public void Show(Unit unit) {
 
         this.unit = unit;
-
+        unitHealth.Show(unit);
         settleButton.SetActive(unit.IsPlayerUnit());
         patrolButton.SetActive(unit.IsPlayerUnit());
         cannonsItem.gameObject.SetActive(unit.IsPlayerUnit());
@@ -118,7 +119,6 @@ public class UnitUI : MonoBehaviour {
         if (unit.CurrentHealth <= 0) {
             UIController.Instance.CloseUnitUI();
         }
-        healthText.text = Mathf.CeilToInt(unit.CurrentHealth) + "/" + unit.MaxHealth + "HP";
         if (unit.IsPlayerUnit()) {
             if (IsCurrentShipUI) {
                 Ship ship = ((Ship)unit);
@@ -131,7 +131,6 @@ public class UnitUI : MonoBehaviour {
                 cannonsItem.RefreshItem(((Ship)unit).CannonItem);
             }
             if (unit.QueuedCommands != null) {
-
                 //if (unitGoalGOs[0] == null)
                 //    unitGoalGOs.Add(Instantiate(unitGoalPrefab));
                 //if (unitGoalGOs[0].activeSelf == false)
@@ -145,7 +144,7 @@ public class UnitUI : MonoBehaviour {
                     }
                     if (unitGoalGOs.Count - 1 <= moveCommandCount)
                         unitGoalGOs.Add(Instantiate(unitGoalPrefab));
-                    unitGoalGOs[moveCommandCount].transform.position = ((MoveCommand)c).position;
+                    unitGoalGOs[moveCommandCount].transform.position = c.Position;
                     moveCommandCount++;
                 }
                 while (unit.QueuedCommands.Count < unitGoalGOs.Count) {
@@ -161,14 +160,14 @@ public class UnitUI : MonoBehaviour {
             return;
         }
         Ship ship = ((Ship)unit);
-        ship.AddCannonsFromInventory();
+        ship.AddCannonsFromInventory(InputHandler.ShiftKey);
     }
     public void RemoveCannons() {
         if (IsCurrentShipUI == false) {
             return;
         }
         Ship ship = ((Ship)unit);
-        ship.RemoveCannonsToInventory();
+        ship.RemoveCannonsToInventory(InputHandler.ShiftKey);
     }
     private void OnDisable() {
         if (unitGoalGOs == null)

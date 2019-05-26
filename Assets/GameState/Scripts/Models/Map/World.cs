@@ -1,4 +1,4 @@
-﻿using EpPathFinding.cs;
+using EpPathFinding.cs;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -102,7 +102,10 @@ public class World : IGEventable {
         foreach (Unit u in Units) {
             u.Load();
             u.RegisterOnDestroyCallback(OnUnitDestroy);
-            u.RegisterOnbCreateProjectileCallback(OnCreateProjectile);
+            u.RegisterOnCreateProjectileCallback(OnCreateProjectile);
+        }
+        foreach (Crate c in Crates) {
+            cbCrateSpawn?.Invoke(c);
         }
     }
 
@@ -239,7 +242,7 @@ public class World : IGEventable {
     public Unit CreateUnit(Unit unit) {
         Units.Add(unit);
         unit.RegisterOnDestroyCallback(OnUnitDestroy);
-        unit.RegisterOnbCreateProjectileCallback(OnCreateProjectile);
+        unit.RegisterOnCreateProjectileCallback(OnCreateProjectile);
         cbUnitCreated?.Invoke(unit);
         return unit;
     }

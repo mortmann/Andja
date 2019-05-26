@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections.Generic;
 using Newtonsoft.Json;
 using System;
@@ -6,6 +6,9 @@ using System;
 public class ShipPrototypeData : UnitPrototypeData {
     public int maximumAmountOfCannons = 0;
     public int damagePerCannon = 1;
+    public float cannonSpeedDebuffMultiplier=0.1f;
+    public float inventorySpeedDebuffMultiplier = 0.15f;
+    public float damageSpeedDebuffMultiplier = 0.7f;
     //TODO: think about a way it doesnt require each ship to have this 
     //      OR are there sometyp like HEAVY and prototype returns the associated cannon
     public Item cannonType = null;
@@ -30,10 +33,10 @@ public class Ship : Unit {
     public override float MaximumDamage => CalculateRealValue("MaximumDamage", MaximumAmountOfCannons * DamagePerCannon);
 
     public override bool IsShip => true;
-    public override float SpeedModifier => 1 - 0.1f*CannonSpeedDebuff - 0.15f*InventorySpeedDebuff - 0.7f*DamageSpeedDebuff;
-    protected float CannonSpeedDebuff => CannonItem.count==0? 0 : CannonItem.count / (float)MaximumAmountOfCannons;
-    protected float InventorySpeedDebuff => inventory.GetFilledPercantage();
-    protected float DamageSpeedDebuff => 1 - CurrentHealth/MaximumHealth;
+    public override float SpeedModifier => 1 - CannonSpeedDebuff - InventorySpeedDebuff - DamageSpeedDebuff;
+    protected float CannonSpeedDebuff => MaximumAmountOfCannons == 0? 0 : ShipData.cannonSpeedDebuffMultiplier * (CannonItem.count / (float)MaximumAmountOfCannons);
+    protected float InventorySpeedDebuff => ShipData.inventorySpeedDebuffMultiplier * inventory.GetFilledPercantage();
+    protected float DamageSpeedDebuff => ShipData.damageSpeedDebuffMultiplier * (1 - CurrentHealth/MaximumHealth);
 
     public ShipPrototypeData ShipData {
         get {
@@ -44,7 +47,7 @@ public class Ship : Unit {
         }
     }
     public Ship() {
-
+        
     }
     public Ship(Tile t, int playernumber) {
         this.playerNumber = playernumber;
@@ -168,14 +171,27 @@ public class Ship : Unit {
         CurrentMainMode = UnitMainModes.Idle;
     }
 
-    internal void RemoveCannonsToInventory() {
-        CannonItem.count -= inventory.AddItem(CannonItem);
+    internal void RemoveCannonsToInventory(bool all) {
+        if(all)
+            CannonItem.count -= inventory.AddItem(CannonItem);
+        else {
+            Item temp = CannonItem.Clone();
+            temp.count = 1;
+            CannonItem.count -= inventory.AddItem(temp);
+        }
     }
 
-    internal void AddCannonsFromInventory() {
-        Item temp = CannonItem.Clone();
-        temp.count = MaximumAmountOfCannons - CannonItem.count;
-        CannonItem.count += inventory.GetItemWithMaxItemCount(temp).count;
+    internal void AddCannonsFromInventory(bool all) {
+        if (all) {
+            Item temp = CannonItem.Clone();
+            temp.count = MaximumAmountOfCannons - CannonItem.count;
+            CannonItem.count += inventory.GetItemWithMaxItemCount(temp).count;
+        }
+        else {
+            Item temp = CannonItem.Clone();
+            temp.count = Mathf.Min(1,MaximumAmountOfCannons - CannonItem.count);
+            CannonItem.count += inventory.GetItemWithMaxItemCount(temp).count;
+        }
     }
 
     internal bool CanRemoveCannons() {
@@ -234,8 +250,6 @@ public class Ship : Unit {
     public override float GetCurrentDamage(Combat.ArmorType armorType) {
         return MyDamageType.GetDamageMultiplier(armorType) * ShipData.damagePerCannon;
     }
-
-
 
     //////////////////////////////////////////////////////////////////////////////
     //This implies that no solution exists for this situation as the target may literally outrun the projectile with its current direction

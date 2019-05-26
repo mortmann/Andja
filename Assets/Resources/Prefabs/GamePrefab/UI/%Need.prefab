@@ -98,7 +98,7 @@ GameObject:
   - component: {fileID: 114624534131649202}
   - component: {fileID: 114460381328917516}
   m_Layer: 5
-  m_Name: Need
+  m_Name: '%Need'
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

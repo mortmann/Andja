@@ -9,18 +9,17 @@ public class HoverOverScript : MonoBehaviour {
     public float hovertime = HoverDuration;
     public const float HoverDuration = 3f;
     bool isDebug = false;
-
+    public RectTransform rect;
     bool show;
     public Text Header;
     public Text Description;
+    public RectTransform fitForm;
+    private void Start() {
+        rect = GetComponent<RectTransform>();
+    }
     public void Show(string header, string description = null) {
-        //		if(GetComponentInParent<Mask>()!=null){
-        //			while(GetComponentInParent<Mask>()!=null){
-        //				transform.SetParent (transform.parent.parent);
-        //			}
-        //		}
         transform.GetChild(0).gameObject.SetActive(true);
-        GetComponentInChildren<Text>().text = header;
+        Header.text = header;
         if (description != null) {
             Description.gameObject.SetActive(true);
             Description.text = description;
@@ -28,6 +27,7 @@ public class HoverOverScript : MonoBehaviour {
         else {
             Description.gameObject.SetActive(false);
         }
+        
         transform.GetChild(0).gameObject.SetActive(isDebug);
         show = true;
     }
@@ -36,7 +36,7 @@ public class HoverOverScript : MonoBehaviour {
         show = false;
         isDebug = false;
     }
-    void FixedUpdate() {
+    void Update() {
         if (show == false && hovertime == HoverDuration)
             return;
         if (show) {
@@ -53,9 +53,23 @@ public class HoverOverScript : MonoBehaviour {
         if (hovertime > 0) {
             return;
         }
-
         transform.GetChild(0).gameObject.SetActive(true);
-        this.transform.position = Input.mousePosition;
+        //rect.sizeDelta = fitForm.sizeDelta;
+        Vector3 offset = Vector3.zero;
+        if (fitForm.sizeDelta.x + Input.mousePosition.x > Screen.width) {
+            offset.x = Screen.width - (fitForm.sizeDelta.x + Input.mousePosition.x);
+        }
+        if (fitForm.sizeDelta.y + Input.mousePosition.y > Screen.height) {
+            offset.y = Screen.height - (fitForm.sizeDelta.y + Input.mousePosition.y);
+        }
+        Vector3 pos = Input.mousePosition;
+        if ( Input.mousePosition.x < 0 ) {
+            pos.x = 0;
+        }
+        if ( Input.mousePosition.y < 0 ) {
+            pos.y = 0;
+        }
+        this.transform.position = pos + offset;
         lifetime -= Time.deltaTime;
     }
 

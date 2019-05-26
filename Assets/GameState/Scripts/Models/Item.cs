@@ -1,10 +1,12 @@
-﻿using Newtonsoft.Json;
+using System;
+using Newtonsoft.Json;
 
 
-public enum ItemType { Build, Intermediate, Luxury }
+public enum ItemType { Missing, Build, Intermediate, Luxury }
 
 public class ItemPrototypeData : LanguageVariables {
     public ItemType type;
+
 }
 
 [JsonObject(MemberSerialization.OptIn)]
@@ -64,5 +66,7 @@ public class Item {
         return string.Format("[Item] " + ID + ":" + Name + ":" + count);
     }
 
-
+    internal bool Exists() {
+        return Data.type != ItemType.Missing;
+    }
 }

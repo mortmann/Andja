@@ -25,9 +25,10 @@ public class UnitPrototypeData : LanguageVariables {
     public float speed;
     public float rotationSpeed = 2f;
     public float aggroTime = 2f;
+    public float captureSpeed=0.01f;
 
-    public float width;
-    public float height;
+    public float width = 0;
+    public float height = 0;
 }
 
 public enum UnitDoModes { Idle, Move, Fight, Capture, Trade, OffWorld }
@@ -180,6 +181,7 @@ public class Unit : IGEventable,IWarfare {
     #endregion
     //gets from prototyp / being loaded in from masterfile
     #region prototype
+    public float CaptureSpeed => Data.captureSpeed;
 
     public float AttackRange => CalculateRealValue("attackRange", Data.attackRange);
     public float Damage => CalculateRealValue("damage", Data.damage);
@@ -205,8 +207,8 @@ public class Unit : IGEventable,IWarfare {
         return new Unit(this, playerNumber, t);
     }
 
-    protected internal float Width => Data.width;
-    protected internal float Height => Data.height;
+    public float Width => Data.width;
+    public float Height => Data.height;
     public Item[] BuildingItems => Data.buildingItems;
     public string Name => Data.Name;
 
@@ -236,6 +238,8 @@ public class Unit : IGEventable,IWarfare {
     public bool IsDestroyed => IsDead;
 
     public List<Command> QueuedCommands => queuedCommands == null ? null : new List<Command>(queuedCommands);
+
+
     public override int GetID() { return ID; } // only needs to get changed WHEN there is diffrent ids
 
     [JsonConstructor]
@@ -343,6 +347,7 @@ public class Unit : IGEventable,IWarfare {
                 UpdateCapture(deltaTime);
                 break;
         }
+        pathfinding.Update_DoRotate(deltaTime);
     }
     protected virtual void UpdateWorldMarket(float deltaTime) {
         CurrentMainMode = UnitMainModes.Idle;
@@ -485,7 +490,6 @@ public class Unit : IGEventable,IWarfare {
             return false;
         }
         DoAttack(deltaTime);
-        attackCooldownTimer -= deltaTime;
         return true;
     }
     public bool UpdateCapture(float deltaTime) {
@@ -508,12 +512,13 @@ public class Unit : IGEventable,IWarfare {
         if (IsInRange()) {
             return false;
         }
-        ((ICapturable)CurrentTarget).Capture(this, 0.01f);
+        ((ICapturable)CurrentTarget).Capture(this, CaptureSpeed);
         return true;
     }
     public virtual void DoAttack(float deltaTime) {
         if (CurrentTarget != null) {
             if (attackCooldownTimer > 0) {
+                attackCooldownTimer -= deltaTime;
                 return;
             }
             attackCooldownTimer = AttackRate;

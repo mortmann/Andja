@@ -66,9 +66,6 @@ public class CameraController : MonoBehaviour {
         showBounds.y = World.Current.Height;
     }
 
-    internal void CenterMainCameraPosition(Vector3 vectorPosition) {
-        Camera.main.transform.position = vectorPosition - new Vector3(Width/2,Height/2);
-    }
 
     void Update() {
         //DO not move atall when Menu is Open

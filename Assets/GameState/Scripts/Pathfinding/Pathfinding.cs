@@ -19,6 +19,8 @@ public abstract class Pathfinding {
     // If we aren't moving, then destTile = currTile
     [JsonPropertyAttribute] protected Tile _destTile;
     [JsonPropertyAttribute] public float rotation;
+    [JsonPropertyAttribute] public float rotateTo;
+
     [JsonPropertyAttribute] protected float _y = -1;
     [JsonPropertyAttribute] protected float _x = -1;
     [JsonPropertyAttribute] public Tile startTile;
@@ -146,7 +148,7 @@ public abstract class Pathfinding {
 
         if (IsDoneCalculating == false)
             return;
-        if(IsAtDestination)
+        if (IsAtDestination)
             LastMove = Vector3.zero;
 
         if (CurrTile == DestTile && pathDest != Path_dest.exact) {
@@ -154,7 +156,7 @@ public abstract class Pathfinding {
             LastMove = Vector3.zero;
             return;
         }
-        
+
         //if were standing or if we can turn OnPoint(OnSpot) turn to face the rightway
         if (myTurnType == Turn_type.OnPoint && LastMove.sqrMagnitude <= 0.1) {
             //so we can turn on point but not move
@@ -163,7 +165,8 @@ public abstract class Pathfinding {
             if (IsAtDestination == false && CurrTile != DestTile && UpdateRotationOnPoint(deltaTime) == false) {
                 return;
             }
-        } else {
+        }
+        else {
             UpdateRotationOnMove(deltaTime);
         }
         if (pathDest == Path_dest.exact && NextTile == DestTile) {
@@ -174,6 +177,23 @@ public abstract class Pathfinding {
         LastMove = DoWorldPath(deltaTime);
 
     }
+    float rotateTime;
+    float rotateTimer;
+    float rotateAngle;
+    public void Update_DoRotate(float deltaTime) {
+        //if ((rotateTo + 0.1f <= rotation && rotateTo + 0.1f >= rotation)==false) {
+        //    rotateTimer += deltaTime * rotationSpeed;
+        //    rotation = Mathf.LerpAngle(rotation, rotateTo, rotateTimer/rotateTime);
+        //    Debug.Log(rotateTimer / rotateTime);
+        //}
+        if(Mathf.Abs(rotateAngle) > 0) {
+            float deltaRotate = rotateAngle > 0.5f || rotateAngle < -0.5f ? deltaTime * rotationSpeed : rotateAngle;
+            deltaRotate *= Mathf.Sign(rotateAngle);
+            rotateAngle -= deltaRotate;
+            rotation += deltaRotate;
+            rotation %= 360; 
+        }
+    }
 
     private void UpdateRotationOnMove(float deltaTime) {
         Vector2 PointA = new Vector2(rotationDirection.x, rotationDirection.y);
@@ -183,12 +203,24 @@ public abstract class Pathfinding {
         float angle = Mathf.Atan2(moveDirection.y, moveDirection.x) * Mathf.Rad2Deg;
         float timeForTurning = Mathf.Abs(angle - rotation) / turnSpeed;
         float timeToTurn = distanceToTurn / Speed;
-
         if (timeToTurn < timeForTurning / 2) {
             rotation = Mathf.LerpAngle(rotation, angle, deltaTime * rotationSpeed);//Mathf.LerpAngle ( rotation , angle , t);
         }
         rotation = Mathf.LerpAngle(rotation, angle, deltaTime * rotationSpeed);//Mathf.LerpAngle ( rotation , angle , t);
 
+    }
+    /// <summary>
+    /// Rotates for the given amount over time.
+    /// NOT IN THIS FUNCTION - ONLY SETS HOW TO ROTATE
+    /// DOES NOT SET IT TO THE ANGLE
+    /// </summary>
+    /// <param name="angle"></param>
+    internal void Rotate(float angle) {
+        rotateTimer = 0f;
+        rotateAngle = angle;
+        rotateTo = rotation + angle;
+        rotateTime = Mathf.Abs(angle / rotationSpeed);
+        //rotation %= 360;
     }
 
     public abstract void SetDestination(Tile end);

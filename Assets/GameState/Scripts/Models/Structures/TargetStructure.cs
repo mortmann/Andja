@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 public class TargetStructurePrototypeData : StructurePrototypeData {
@@ -21,5 +21,9 @@ public abstract class TargetStructure : Structure, ITargetable {
     public Vector2 LastMovement => Vector2.zero;
 
     public float Speed => 0;
+
+    public float Width => TileWidth;
+    public float Height => TileHeight;
+    public float Rotation => 0;
     #endregion
 }

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using UnityEngine;
 using System.Collections.Generic;
 
@@ -37,6 +37,11 @@ public class WorldController : MonoBehaviour {
             return GameSpeed.LudicrousSpeed;
         }
     }
+
+    internal void SetRandomSeed() {
+        UnityEngine.Random.InitState((int)System.DateTime.Now.Ticks);
+    }
+
     // Use this for initialization
     void OnEnable() {
         Debug.Log("Intializing World Controller");
@@ -48,7 +53,6 @@ public class WorldController : MonoBehaviour {
         }
     }
     public void Start() {
-
         EventController.Instance.RegisterOnEvent(OnEventCreated, OnEventEnded);
     }
     public void SetGeneratedWorld(World world, Dictionary<Tile, Structure> tileToStructure) {
@@ -57,6 +61,7 @@ public class WorldController : MonoBehaviour {
             BuildController.Instance.PlaceWorldGeneratedStructure(tileToStructure);
         isLoaded = false;
         offworldMarket = new OffworldMarket();
+
     }
 
     protected void OnEventCreated(GameEvent ge) {
@@ -72,6 +77,7 @@ public class WorldController : MonoBehaviour {
             return;
         }
         World.Update(Time.deltaTime * timeMultiplier);
+
         offworldMarket.Update(Time.deltaTime * timeMultiplier);
     }
     void FixedUpdate() {

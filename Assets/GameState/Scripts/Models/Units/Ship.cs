@@ -6,6 +6,7 @@ using System;
 public class ShipPrototypeData : UnitPrototypeData {
     public int maximumAmountOfCannons = 0;
     public int damagePerCannon = 1;
+    public float length;
     public float cannonSpeedDebuffMultiplier=0.1f;
     public float inventorySpeedDebuffMultiplier = 0.15f;
     public float damageSpeedDebuffMultiplier = 0.7f;
@@ -17,6 +18,9 @@ public class ShipPrototypeData : UnitPrototypeData {
 //TODO: think about how if ships could be capturable if they are low, at war and the capturing ship can do it?
 [JsonObject(MemberSerialization.OptIn)]
 public class Ship : Unit {
+    float projectileSpeed = 2; //TODO: somewhere you goota read this in
+
+
     [JsonPropertyAttribute] public TradeRoute tradeRoute;
     [JsonPropertyAttribute] public bool isOffWorld;
     [JsonPropertyAttribute] Item[] toBuy;
@@ -38,6 +42,8 @@ public class Ship : Unit {
     protected float InventorySpeedDebuff => ShipData.inventorySpeedDebuffMultiplier * inventory.GetFilledPercantage();
     protected float DamageSpeedDebuff => ShipData.damageSpeedDebuffMultiplier * (1 - CurrentHealth/MaximumHealth);
 
+    protected int CannonPerSide => Mathf.CeilToInt(CannonItem.count / 2);
+     
     public ShipPrototypeData ShipData {
         get {
             if (_shipPrototypData == null) {
@@ -75,32 +81,67 @@ public class Ship : Unit {
     public override void DoAttack(float deltaTime) {
         if (CurrentTarget != null) {
             if (attackCooldownTimer > 0) {
+                attackCooldownTimer -= deltaTime;
                 return;
             }
+            Vector3 position = CurrentPosition;
+            Vector3 velocity = new Vector3();
+            Vector3 targetPosition = CurrentTarget.CurrentPosition;
+            Vector3 lastMove = CurrentTarget.LastMovement;
+            Vector3 projectileDestination = CurrentTarget.CurrentPosition;
+            if (PredictiveAim( CurrentPosition, projectileSpeed, targetPosition, lastMove, 0, out velocity, out projectileDestination) ==false) {
+                return;
+            }
+            float distance = (projectileDestination - VectorPosition).magnitude;
 
-            float projectileSpeed = 2;
-            Vector3 dest = new Vector3();
-            if (PredictiveAim( CurrentPosition, projectileSpeed, CurrentTarget.CurrentPosition, CurrentTarget.LastMovement,0, out dest)==false) {
-                return;
-            }
-            attackCooldownTimer = AttackRate;
-            for (int i = 0; i < CannonItem.count; i++) {
-                cbCreateProjectile?.Invoke(new Projectile(this, CurrentTarget, dest));
+            for (int i = 1; i <= CannonPerSide; i++) {
+                Vector3 offset = new Vector3(Width / 2, (i) * (Height / MaximumAmountOfCannons));
+                offset = Quaternion.Euler(0, 0, pathfinding.rotation) * offset;
+                cbCreateProjectile?.Invoke(new Projectile(this, position + offset, CurrentTarget, velocity, distance));
             }
         }
     }
-    /*
-            float targetM = CurrentTarget.LastMovement.y / CurrentTarget.LastMovement.x;
-            float targetB = (CurrentTarget.CurrentPosition.y - (CurrentTarget.CurrentPosition.x * targetM));
-            float meB = CurrentPosition.y - CurrentPosition.x * projectileSpeed;
+    public void ShotAtPosition(Vector3 destination) {
+        float arc = 30f;
+        Vector3 targetSize = new Vector3(1, 1, 0);
+        Vector3 position = CurrentPosition;
+        Vector2 forward = Quaternion.Euler(0, 0, pathfinding.rotation) * new Vector2(1, 0);
+        Vector2 direction = destination - position;
+        float sideAngle = Vector2.SignedAngle(direction, forward);
+        Vector2 side;
 
-            float realTargetX = (targetB-meB)/(targetM-projectileSpeed);
-            float realTargetY = targetM * realTargetX + targetB;
+        float widthOffset = 0;
+        if(sideAngle<0) {
+            side = Quaternion.Euler(0, 0, pathfinding.rotation) * new Vector2(0, 1);
+            widthOffset = Width / 2;
+        }
+        else {
+            side = Quaternion.Euler(0, 0, pathfinding.rotation) * new Vector2(0, -1);
+            widthOffset = - Width / 2;
+        }
+        float shootAngle = Vector2.SignedAngle(direction, side);
+        bool canShoot = shootAngle <= arc && shootAngle >= -arc;
+        float rotateTime = shootAngle / RotationSpeed;
+        if (canShoot == false) 
+            pathfinding.Rotate(-shootAngle);
+        Debug.Log(rotateTime + " " + shootAngle + " " + pathfinding.rotation);
+        //if (attackCooldownTimer > 0) {
+        //    return;
+        //}
+        for (int i = 1; i <= CannonPerSide; i++) {
+            Vector3 offset = new Vector3( (i) * (Height / MaximumAmountOfCannons) - Height/2, widthOffset);
+            offset = Quaternion.Euler(0, 0, Rotation) * offset;
+            Vector3 targetOffset = new Vector3(
+                    UnityEngine.Random.Range(-targetSize.x / 2, targetSize.x / 2),
+                    UnityEngine.Random.Range(-targetSize.y / 2, targetSize.y / 2),
+                    UnityEngine.Random.Range(-targetSize.z / 2, targetSize.z / 2));
 
-            Vector2 dest = new Vector2(realTargetX,realTargetY);
-            Debug.Log(dest);
-         
-         */
+            Vector3 velocity = (destination + targetOffset - VectorPosition - offset).normalized * projectileSpeed;
+            float distance = (destination+ targetOffset - VectorPosition - offset).magnitude;
+            cbCreateProjectile?.Invoke(new Projectile(this, position+offset, CurrentTarget, velocity, distance));
+        }
+        attackCooldownTimer = AttackRate;
+    }
     protected override void UpdateTradeRoute(float deltaTime) {
         if (tradeRoute == null || tradeRoute.Valid == false) {
             CurrentMainMode = UnitMainModes.Idle;
@@ -268,12 +309,13 @@ public class Ship : Unit {
     //Full derivation by Kain Shin exists here:
     //http://www.gamasutra.com/blogs/KainShin/20090515/83954/Predictive_Aim_Mathematics_for_AI_Targeting.php
     //gravity is assumed to be a positive number. It will be calculated in the downward direction, feel free to change that if you game takes place in Spaaaaaaaace
-    static public bool PredictiveAim(Vector3 muzzlePosition, float projectileSpeed, Vector3 targetPosition, Vector3 targetVelocity, float gravity, out Vector3 projectileVelocity) {
+    static public bool PredictiveAim(Vector3 muzzlePosition, float projectileSpeed, Vector3 targetPosition, Vector3 targetVelocity, float gravity, out Vector3 projectileVelocity, out Vector3 projectileDestination) {
         Debug.Assert(projectileSpeed > 0, "What are you doing shooting at something with a projectile that doesn't move?");
         if (muzzlePosition == targetPosition) {
             //Why dost thou hate thyself so?
             //Do something smart here. I dunno... whatever.
             projectileVelocity = projectileSpeed * (UnityEngine.Random.rotation * Vector3.forward);
+            projectileDestination = muzzlePosition;
             return true;
         }
 
@@ -349,6 +391,7 @@ public class Ship : Unit {
                     //No real solution was found, take a wild shot at the target's future location
                     validSolutionFound = false;
                     projectileVelocity = Vector3.zero;
+                    projectileDestination = muzzlePosition;
                     return false;
                     //t = PredictiveAimWildGuessAtImpactTime();
                 }
@@ -383,7 +426,7 @@ public class Ship : Unit {
         //float calculatedprojectilespeed = projectileVelocity.magnitude;
         //bool projectilespeedmatchesexpectations = (projectileSpeed == calculatedprojectilespeed);
         //...FOR CHECKING ONLY
-
+        projectileDestination = targetPosition + t * targetVelocity;
         return validSolutionFound;
     }
 }

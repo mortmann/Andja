@@ -1,13 +1,15 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using System.Diagnostics;
 
 public class Loading : MonoBehaviour {
     AsyncOperation aso;
     public Text percentText;
     public bool loadEditor;
     internal static bool IsLoading = true;
+    private Stopwatch loadingStopWatch;
 
     float SceneLoadingProgress {
         get {
@@ -19,19 +21,26 @@ public class Loading : MonoBehaviour {
     // Use this for initialization
     void Start() {
         IsLoading = true;
-
-        if (loadEditor)
-            aso = SceneManager.LoadSceneAsync("IslandEditor");
+        loadingStopWatch = new Stopwatch();
+        loadingStopWatch.Start();
     }
 
     void Update() {
+        if(aso == null) {
+            if (loadEditor)
+                aso = SceneManager.LoadSceneAsync("IslandEditor");
+            else {
+                aso = SceneManager.LoadSceneAsync("GameState");
+                aso.allowSceneActivation = false;
+            }
+        }
         int percantage = 0;
         if (loadEditor == false) {
             if (SaveController.IsLoadingSave) {
                 percantage = (int)(100 * (SceneLoadingProgress * 0.3f
                     + MapGenerator.Instance.PercantageProgress * 0.2f
                     + SaveController.Instance.loadingPercantage * 0.2f
-                    + TileSpriteController.SpriteCreationPercantage * 0.3));
+                    + TileSpriteController.CreationPercantage * 0.3));
             }
             else {
                 percantage = (int)(SceneLoadingProgress * 0.7f + MapGenerator.Instance.PercantageProgress * 0.3f);
@@ -45,10 +54,11 @@ public class Loading : MonoBehaviour {
             if (SaveController.IsLoadingSave && SaveController.Instance.IsDone == false) {
                 return;
             }
-            if (TileSpriteController.SpriteCreationDone == false)
+            if (TileSpriteController.CreationDone == false)
                 return;
-            if (aso == null)
-                aso = SceneManager.LoadSceneAsync("GameState");
+            UnityEngine.Debug.Log("Load Async after " + loadingStopWatch.ElapsedMilliseconds + "ms (" + loadingStopWatch.Elapsed.TotalSeconds + "s)! ");
+
+            aso.allowSceneActivation = true;
         }
         else {
             percantage = (int)(SceneLoadingProgress);
@@ -57,6 +67,8 @@ public class Loading : MonoBehaviour {
 
     }
     public void OnDestroy() {
+        loadingStopWatch.Stop();
+        UnityEngine.Debug.Log("Loading took " + loadingStopWatch.ElapsedMilliseconds + "ms (" + loadingStopWatch.Elapsed.TotalSeconds + "s)! ");
         IsLoading = false;
     }
 }

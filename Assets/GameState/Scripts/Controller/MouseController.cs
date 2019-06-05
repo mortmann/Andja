@@ -172,7 +172,7 @@ public class MouseController : MonoBehaviour {
                 UpdateDragSelect(); // update the rect so no ghosts
             }
         }
-        if (Input.GetMouseButtonDown(1) && mouseState != MouseState.Unit) {
+        if (Input.GetMouseButtonDown(1) && mouseState != MouseState.Unit && mouseState != MouseState.UnitGroup) {
             ResetBuild(null);
             mouseState = MouseState.Idle;
         }
@@ -276,10 +276,12 @@ public class MouseController : MonoBehaviour {
                 SelectUnitGroup(selectedUnitGroup);
             else if (selectedUnitGroup.Count == 1)
                 SelectUnit(selectedUnitGroup[0]);
-            else
+            else {
                 mouseState = MouseState.Idle; // nothing selected
+                UnselectUnit();
+                ClearUnitGroup();
+            }
             draw_rect = Rect.zero;
-            
         }
 
         // If we're over a UI element, then bail out from this.
@@ -336,6 +338,8 @@ public class MouseController : MonoBehaviour {
     }
 
     private void SelectUnit(Unit unit) {
+        if (SelectedUnit == unit)
+            return;
         mouseState = MouseState.Unit;
         mouseUnitState = MouseUnitState.Normal;
         SelectedUnit = unit;
@@ -535,17 +539,29 @@ public class MouseController : MonoBehaviour {
         if (EventSystem.current.IsPointerOverGameObject()) {
             return;
         }
+        //TEMPORARY FOR TESTING
+        if (Input.GetKeyDown(KeyCode.U)) {
+            if (SelectedUnit.IsShip) {
+                ((Ship)SelectedUnit).ShotAtPosition(currFramePosition);
+            }
+        }
         if (Input.GetMouseButtonUp(0)) {
             switch (mouseUnitState) {
                 case MouseUnitState.None:
                     Debug.LogWarning("MouseController is in the wrong state!");
                     break;
                 case MouseUnitState.Normal:
-                    SelectedUnit = null;
-                    SelectedStructure = null;
-                    UIController.CloseInfoUI();
-                    mouseState = MouseState.Idle;
-                    mouseUnitState = MouseUnitState.None;
+                    //TODO: Better way?
+                    RaycastHit2D hit = Physics2D.Raycast(new Vector2(currFramePosition.x, currFramePosition.y), Vector2.zero, 200);
+                    if (hit) {
+                        ITargetableHoldingScript iths = hit.collider.GetComponent<ITargetableHoldingScript>();
+                        if (iths != null) {
+                            if (iths.Holding == SelectedUnit) {
+                                return;
+                            }
+                        }
+                    }
+                    UnselectUnit();
                     break;
                 case MouseUnitState.Patrol:
                     SelectedUnit.AddPatrolCommand(currFramePosition.x, currFramePosition.y);
@@ -601,6 +617,16 @@ public class MouseController : MonoBehaviour {
                 }
             }
         }
+    }
+
+    private void UnselectUnit() {
+        if (SelectedUnit != null)
+            SelectedUnit.UnregisterOnDestroyCallback(OnUnitDestroy);
+        SelectedUnit = null;
+        SelectedStructure = null;
+        UIController.CloseInfoUI();
+        mouseState = MouseState.Idle;
+        mouseUnitState = MouseUnitState.None;
     }
 
     void UpdateBuildDragging() {
@@ -757,6 +783,8 @@ public class MouseController : MonoBehaviour {
     }
 
     internal void ClearUnitGroup() {
+        if (selectedUnitGroup == null)
+            return;
         selectedUnitGroup.ForEach(x => x.UnregisterOnDestroyCallback(OnUnitDestroy));
         selectedUnitGroup.Clear();
         UIController.CloseInfoUI();
@@ -799,7 +827,7 @@ public class MouseController : MonoBehaviour {
     /// </summary>
     public void Escape() {
         dragStartPosition = currFramePosition;
-        SelectedUnit = null;
+        UnselectUnit();
         ClearUnitGroup();
         ResetBuild(null);
         mouseState = MouseState.Idle;

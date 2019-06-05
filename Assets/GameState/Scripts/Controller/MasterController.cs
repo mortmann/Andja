@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -24,6 +24,7 @@ public class MasterController : MonoBehaviour {
 
             //TODO: find a better fix for this:
             CameraController.Instance.Setup();
+            WorldController.Instance.SetRandomSeed();
         }
         else if (isLoadingScreen) {
             loadMaster = gameObject;

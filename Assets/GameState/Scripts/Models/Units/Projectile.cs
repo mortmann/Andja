@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+using Newtonsoft.Json;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -21,8 +21,9 @@ public class Projectile {
     Action<Projectile> cbOnChange;
 
     public Projectile() { }
-    public Projectile(IWarfare origin, ITargetable target, Vector2 destination) {
-        _position = new SeriaziableVector3(origin.CurrentPosition);// needs some kind of random factor
+    public Projectile(IWarfare origin, Vector3 startPosition, ITargetable target, Vector2 destination, float travelDistance) {
+        remainingTravelDistance = travelDistance;
+        _position = new SeriaziableVector3(startPosition);
         _destination = new SeriaziableVector3(destination); // needs some kind of random factor
         this.origin = origin;
         this.target = target;
@@ -33,7 +34,12 @@ public class Projectile {
         //if (dir.magnitude < 0.1f) {
         //    Destroy();
         //}
+        if (remainingTravelDistance < 0) {
+            Destroy();
+            return;
+        }
         Vector3 dir = Destination * Speed * deltaTime;
+        remainingTravelDistance -= dir.magnitude;
         Position += dir;
     }
 
@@ -51,8 +57,9 @@ public class Projectile {
         return true;
     }
     private bool ConfirmHit(ITargetable hit) {
-        if (hit == target)
-            return true;
+        //Does it have to be the targeted unit it damages???
+        //if (hit == target)
+        //    return true;
         if (hit.PlayerNumber == origin.PlayerNumber)
             return false;
         if (PlayerController.Instance.ArePlayersAtWar(origin.PlayerNumber, hit.PlayerNumber)) {

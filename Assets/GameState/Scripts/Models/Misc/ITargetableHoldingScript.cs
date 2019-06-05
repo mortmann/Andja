@@ -1,4 +1,4 @@
-﻿
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -78,6 +78,7 @@ public class ITargetableHoldingScript : MonoBehaviour {
         turnType = unit.pathfinding.myTurnType;
         //rigid.AddForce(unit.pathfinding.LastMove);
         rigid.MoveRotation(unit.Rotation);
+        //transform.rotation = new Quaternion(0, 0, unit.Rotation, 0);
         rigid.MovePosition(unit.VectorPosition);
     }
 }

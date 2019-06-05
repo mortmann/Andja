@@ -391,6 +391,8 @@ public class PrototypController : MonoBehaviour {
             ShipPrototypeData spd = new ShipPrototypeData();
             int id = int.Parse(node.GetAttribute("ID"));
             SetData<ShipPrototypeData>(node, ref spd);
+            spd.width = 1;
+            spd.height = 1;
             unitPrototypeDatas[id] = spd;
             unitPrototypes.Add(id, new Ship(id, spd));
         }

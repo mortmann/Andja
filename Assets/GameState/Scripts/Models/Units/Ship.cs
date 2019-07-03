@@ -60,9 +60,12 @@ public class Ship : Unit {
         inventory = new Inventory(6, 50);
         offWorldTime = 5f;
         pathfinding = new OceanPathfinding(t, this);
+        patrolCommand = new PatrolCommand();
     }
     public Ship(Unit unit, int playerNumber, Tile t) {
         this.ID = unit.ID;
+        patrolCommand = new PatrolCommand();
+
         this._prototypData = unit.Data;
         this.CurrentHealth = MaxHealth;
         this.playerNumber = playerNumber;
@@ -92,15 +95,42 @@ public class Ship : Unit {
             if (PredictiveAim( CurrentPosition, projectileSpeed, targetPosition, lastMove, 0, out velocity, out projectileDestination) ==false) {
                 return;
             }
-            float distance = (projectileDestination - VectorPosition).magnitude;
-
-            for (int i = 1; i <= CannonPerSide; i++) {
-                Vector3 offset = new Vector3(Width / 2, (i) * (Height / MaximumAmountOfCannons));
-                offset = Quaternion.Euler(0, 0, pathfinding.rotation) * offset;
-                cbCreateProjectile?.Invoke(new Projectile(this, position + offset, CurrentTarget, velocity, distance));
-            }
+            ShotAtPosition(projectileDestination);
+            //float distance = (projectileDestination - VectorPosition).magnitude;
+            //for (int i = 1; i <= CannonPerSide; i++) {
+            //    Vector3 offset = new Vector3(Width / 2, (i) * (Height / MaximumAmountOfCannons));
+            //    offset = Quaternion.Euler(0, 0, pathfinding.rotation) * offset;
+            //    cbCreateProjectile?.Invoke(new Projectile(this, position + offset, CurrentTarget, velocity, distance));
+            //}
         }
     }
+
+    public override bool IsInRange() {
+        if (CurrentTarget == null)
+            return false;
+        if(CurrentTarget.LastMovement.sqrMagnitude==0)
+            return (CurrentTarget.CurrentPosition - CurrentPosition).magnitude <= AttackRange;
+        Vector3 position = CurrentPosition;
+        Vector3 velocity = new Vector3();
+        Vector3 targetPosition = CurrentTarget.CurrentPosition;
+        Vector3 lastMove = CurrentTarget.LastMovement;
+        Vector3 projectileDestination = CurrentTarget.CurrentPosition;
+        bool can = PredictiveAim(CurrentPosition, projectileSpeed, targetPosition, lastMove, 0, out velocity, out projectileDestination);
+        if (can == false && Vector3.Distance(CurrentPosition, projectileDestination) > AttackRange)
+            return false;
+        nextShoot = CalculateShootAngle(projectileDestination);
+        float rotateTime = CalculateRotateTime(nextShoot.rotateAngle);
+        targetPosition += rotateTime * lastMove;
+        can = PredictiveAim(CurrentPosition, projectileSpeed, targetPosition, lastMove, 0, out velocity, out projectileDestination);
+        if (can == false && Vector3.Distance(CurrentPosition, projectileDestination) > AttackRange)
+            return false;
+        nextShoot = CalculateShootAngle(projectileDestination);
+
+        return true;
+    }
+    //TODO: think about making it like this?
+    //calculate in the check range and if in range and possible then just do the shoot calculate there?
+    Shoot nextShoot;
     public void ShotAtPosition(Vector3 destination) {
         float arc = 30f;
         Vector3 targetSize = new Vector3(1, 1, 0);
@@ -121,13 +151,11 @@ public class Ship : Unit {
         }
         float shootAngle = Vector2.SignedAngle(direction, side);
         bool canShoot = shootAngle <= arc && shootAngle >= -arc;
-        float rotateTime = shootAngle / RotationSpeed;
         if (canShoot == false) 
             pathfinding.Rotate(-shootAngle);
-        Debug.Log(rotateTime + " " + shootAngle + " " + pathfinding.rotation);
-        //if (attackCooldownTimer > 0) {
-        //    return;
-        //}
+        if (attackCooldownTimer > 0) {
+            return;
+        }
         for (int i = 1; i <= CannonPerSide; i++) {
             Vector3 offset = new Vector3( (i) * (Height / MaximumAmountOfCannons) - Height/2, widthOffset);
             offset = Quaternion.Euler(0, 0, Rotation) * offset;
@@ -142,6 +170,29 @@ public class Ship : Unit {
         }
         attackCooldownTimer = AttackRate;
     }
+    protected Shoot CalculateShootAngle(Vector3 destination) {
+        Vector3 position = CurrentPosition;
+        Vector2 forward = Quaternion.Euler(0, 0, pathfinding.rotation) * new Vector2(1, 0);
+        Vector2 direction = destination - position;
+        float sideAngle = Vector2.SignedAngle(direction, forward);
+        Vector2 side;
+
+        if (sideAngle < 0) {
+            side = Quaternion.Euler(0, 0, pathfinding.rotation) * new Vector2(0, 1);
+        }
+        else {
+            side = Quaternion.Euler(0, 0, pathfinding.rotation) * new Vector2(0, -1);
+        }
+        float shootAngle = Vector2.SignedAngle(direction, side);
+        return new Shoot {
+            sideAngle = sideAngle,
+            rotateAngle = shootAngle
+        };
+    }
+    public float CalculateRotateTime(float angle) {
+        return angle / RotationSpeed;
+    }
+
     protected override void UpdateTradeRoute(float deltaTime) {
         if (tradeRoute == null || tradeRoute.Valid == false) {
             CurrentMainMode = UnitMainModes.Idle;
@@ -428,5 +479,9 @@ public class Ship : Unit {
         //...FOR CHECKING ONLY
         projectileDestination = targetPosition + t * targetVelocity;
         return validSolutionFound;
+    }
+    protected struct Shoot {
+        public float rotateAngle;
+        public float sideAngle;
     }
 }

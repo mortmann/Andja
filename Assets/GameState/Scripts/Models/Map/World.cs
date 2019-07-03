@@ -103,6 +103,7 @@ public class World : IGEventable {
             u.Load();
             u.RegisterOnDestroyCallback(OnUnitDestroy);
             u.RegisterOnCreateProjectileCallback(OnCreateProjectile);
+            cbUnitCreated?.Invoke(u);
         }
         foreach (Crate c in Crates) {
             cbCrateSpawn?.Invoke(c);

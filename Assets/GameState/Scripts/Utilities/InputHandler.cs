@@ -1,11 +1,11 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
-public enum InputName { BuildMenu, TradeMenu, Offworld, TogglePause, Rotate, Console, Cancel, Screenshot }
+public enum InputName { BuildMenu, TradeMenu, Offworld, TogglePause, Rotate, Console, Cancel, Screenshot, Stop }
 
 public class InputHandler {
 
@@ -56,6 +56,9 @@ public class InputHandler {
                     break;
                 case InputName.Screenshot:
                     keyCode = KeyCode.F12;
+                    break;
+                case InputName.Stop:
+                    keyCode = KeyCode.P;
                     break;
             }
             ChangePrimaryNameToKey(name, keyCode);

@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using System.IO;
 using System.IO.Compression;
@@ -414,18 +414,34 @@ public class SaveController : MonoBehaviour {
 
         PrototypController.Instance.LoadFromXML();
 
-        GDH.LoadGameData(BaseSaveData.Deserialize<GameData>((string)state.gamedata)); // gamedata
+        GDH.LoadGameData(BaseSaveData.Deserialize<GameData>((string)state.gamedata));  
+        loadingPercantage += 0.3f;
+        PlayerControllerSave pcs = BaseSaveData.Deserialize<PlayerControllerSave>(state.pcs);
+        loadingPercantage += 0.05f;
+        yield return null;
+        WorldSaveState wss = BaseSaveData.Deserialize<WorldSaveState>(state.world);
+        loadingPercantage += 0.15f;
+        yield return null;
+        GameEventSave ges = BaseSaveData.Deserialize<GameEventSave>(state.ges);
+        loadingPercantage += 0.1f;
+        yield return null;
+        CameraSave cs = BaseSaveData.Deserialize<CameraSave>(state.camera);
+        loadingPercantage += 0.05f;
+        yield return null;
         while (MapGenerator.Instance.IsDone == false)
             yield return null;
-        loadingPercantage += 0.3f;
-        PlayerController.Instance.SetPlayerData(BaseSaveData.Deserialize<PlayerControllerSave>(state.pcs)); // player
+        PlayerController.Instance.SetPlayerData(pcs); 
+        loadingPercantage += 0.05f;
+        yield return null;
+        WorldController.Instance.SetWorldData(wss); 
+        loadingPercantage += 0.15f;
+        yield return null;
+        EventController.Instance.SetGameEventData(ges); 
         loadingPercantage += 0.1f;
-        WorldController.Instance.SetWorldData(BaseSaveData.Deserialize<WorldSaveState>(state.world)); // world
-        loadingPercantage += 0.3f;
-        EventController.Instance.SetGameEventData(BaseSaveData.Deserialize<GameEventSave>(state.ges)); // event
-        loadingPercantage += 0.2f;
-        CameraController.Instance.SetSaveCameraData(BaseSaveData.Deserialize<CameraSave>(state.camera)); // camera
-        loadingPercantage += 0.1f;
+        yield return null;
+        CameraController.Instance.SetSaveCameraData(cs); 
+        loadingPercantage += 0.05f;
+        yield return null;
         Debug.Log("LOAD ENDED");
         IsDone = true;
         yield return null;

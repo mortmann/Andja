@@ -7,15 +7,14 @@ using System;
 public class UnitUI : MonoBehaviour {
     public Transform content;
     public GameObject itemPrefab;
-    public GameObject settleButton;
-    public GameObject patrolButton;
-
+    public Button settleButton;
+    public Button patrolButton;
+    Button currentlySelectedButton;
     public GameObject buttonCanvas;
     public ItemUI cannonsItem;
     public GameObject unitCombatInfo;
     public UnitHealthUI unitHealth;
     public NameInputField unitName;
-
     public Inventory inv;
     Dictionary<int, ItemUI> itemToGO;
     Unit unit;
@@ -24,14 +23,23 @@ public class UnitUI : MonoBehaviour {
     public Button addCannon;
     public Button removeCannon;
     private List<GameObject> unitGoalGOs;
+    private List<GameObject> unitPatrolGoalGOs;
+
     public GameObject unitGoalPrefab;
+    public GameObject unitPatrolGoalPrefab;
+    public LineRenderer PatrolLineRendererPrefab;
+    private List<LineRenderer> PatrolLineRendererList;
+
+    public void Start() {
+        patrolButton.onClick.AddListener(() => TogglePatrol());
+        settleButton.onClick.AddListener(() => ToggleSettle());
+    }
 
     public void Show(Unit unit) {
-
         this.unit = unit;
         unitHealth.Show(unit);
-        settleButton.SetActive(unit.IsPlayerUnit());
-        patrolButton.SetActive(unit.IsPlayerUnit());
+        settleButton.gameObject.SetActive(unit.IsPlayerUnit());
+        patrolButton.gameObject.SetActive(unit.IsPlayerUnit());
         cannonsItem.gameObject.SetActive(unit.IsPlayerUnit());
         addCannon.gameObject.SetActive(unit.IsPlayerUnit());
         removeCannon.gameObject.SetActive(unit.IsPlayerUnit());
@@ -39,13 +47,19 @@ public class UnitUI : MonoBehaviour {
         foreach (Transform item in content.transform) {
             GameObject.Destroy(item.gameObject);
         }
-        unitGoalGOs = new List<GameObject>();
         if (unitGoalGOs != null)
             foreach (GameObject goal in unitGoalGOs)
-                goal.SetActive(unit.IsPlayerUnit());
+                Destroy(goal);
+        if (unitPatrolGoalGOs != null)
+            foreach (GameObject goal in unitPatrolGoalGOs)
+                Destroy(goal);
+        unitGoalGOs = new List<GameObject>();
+        unitPatrolGoalGOs = new List<GameObject>();
         if (unit.IsPlayerUnit() == false) {
             return;
         }
+        OnPatrolRouteChange(unit.patrolCommand);
+        unit.patrolCommand.RegisterOnRouteChange(OnPatrolRouteChange);
 
         inv = unit.inventory;
         buttonCanvas.SetActive(true);
@@ -55,11 +69,11 @@ public class UnitUI : MonoBehaviour {
             Ship ship = ((Ship)unit);
             cannonsItem.gameObject.transform.parent.gameObject.SetActive(true);
             cannonsItem.SetItem(ship.CannonItem, ship.MaximumAmountOfCannons);
-            settleButton.SetActive(true);
+            settleButton.gameObject.SetActive(true);
         }
         else {
             cannonsItem.gameObject.transform.parent.gameObject.SetActive(false);
-            settleButton.SetActive(false);
+            settleButton.gameObject.SetActive(false);
         }
 
         if (inv == null) {
@@ -76,6 +90,76 @@ public class UnitUI : MonoBehaviour {
         }
     }
 
+    private void OnPatrolRouteChange(PatrolCommand change) {
+        if (unitPatrolGoalGOs != null)
+            foreach (GameObject goal in unitPatrolGoalGOs)
+                Destroy(goal);
+        if (PatrolLineRendererList == null) {
+            PatrolLineRendererList = new List<LineRenderer>();
+        } else {
+            PatrolLineRendererList.Clear();
+            if (unitPatrolGoalGOs != null)
+                foreach (LineRenderer goal in PatrolLineRendererList)
+                    Destroy(goal.gameObject);
+        }
+        Vector2[] array = unit.patrolCommand.ToPositionArray();
+        if (array.Length == 0)
+            return;
+        foreach (Vector2 v in array) {
+            GameObject target = Instantiate(unitPatrolGoalPrefab);
+            target.transform.position = new Vector3(v.x, v.y, -1);
+        }
+        if (array.Length == 1)
+            return;
+
+        for (int i = 0; i < array.Length; i++) {
+            Vector2 v1 = array[i];
+            Vector2 v2 = i < array.Length - 1 ? array[i + 1] : array[0];
+
+            LineRenderer PatrolLineRenderer = Instantiate(PatrolLineRendererPrefab);
+            PatrolLineRenderer.positionCount = 2;
+            PatrolLineRenderer.SetPosition(0, new Vector3(v1.x, v1.y, -1));
+            PatrolLineRenderer.SetPosition(1, new Vector3(v2.x, v2.y, -1));
+            PatrolLineRendererList.Add(PatrolLineRenderer);
+            //for 2 dest make it look better with 1 line
+            if (array.Length == 2)
+                return;
+        }
+        unit.patrolCommand.RegisterOnRouteChange(OnPatrolRouteChange);
+    }
+
+    private void TogglePatrol() {
+        if (MouseController.Instance.mouseUnitState != MouseUnitState.Patrol) {
+            SelectButton(patrolButton);
+            MouseController.Instance.mouseUnitState = MouseUnitState.Patrol;
+        }
+        else {
+            DeselectButton();
+        }
+    }
+    private void ToggleSettle() {
+        if (MouseController.Instance.mouseUnitState != MouseUnitState.Build) {
+            SelectButton(settleButton);
+            MouseController.Instance.mouseUnitState = MouseUnitState.Build;
+        }
+        else {
+            DeselectButton();
+        }
+    }
+    private void SelectButton(Button button) {
+        DeselectButton();
+        currentlySelectedButton = button;
+        currentlySelectedButton.image.color = Color.blue;
+    }
+    private void DeselectButton() {
+        if (currentlySelectedButton != null) {
+            currentlySelectedButton.image.color = Color.white;
+        }
+        //for the case it is open when scene change or game closes
+        if(MouseController.Instance!=null)
+            MouseController.Instance.mouseUnitState = MouseUnitState.Normal;
+        currentlySelectedButton = null;
+    }
     private void AddItemGameObject(int i) {
         GameObject go = GameObject.Instantiate(itemPrefab);
         go.transform.SetParent(content.transform);
@@ -131,11 +215,6 @@ public class UnitUI : MonoBehaviour {
                 cannonsItem.RefreshItem(((Ship)unit).CannonItem);
             }
             if (unit.QueuedCommands != null) {
-                //if (unitGoalGOs[0] == null)
-                //    unitGoalGOs.Add(Instantiate(unitGoalPrefab));
-                //if (unitGoalGOs[0].activeSelf == false)
-                //    unitGoalGOs[0].SetActive(true);
-                //unitGoalGOs[0].transform.position = new Vector3(unit.pathfinding.dest_X, unit.pathfinding.dest_Y);
                 int moveCommandCount = 0;
                 for (int i = 0; i < unit.QueuedCommands.Count; i++) {
                     Command c = unit.QueuedCommands[i];
@@ -170,11 +249,23 @@ public class UnitUI : MonoBehaviour {
         ship.RemoveCannonsToInventory(InputHandler.ShiftKey);
     }
     private void OnDisable() {
+        if(unit!=null)
+            unit.patrolCommand.UnregisterOnRouteChange(OnPatrolRouteChange);
+        DeselectButton();
         if (unitGoalGOs == null)
             return;
         foreach (var unitGoalGO in unitGoalGOs) {
             Destroy(unitGoalGO);
         }
         unitGoalGOs.Clear();
+        if (unitPatrolGoalGOs != null)
+            foreach (GameObject goal in unitPatrolGoalGOs)
+                Destroy(goal);
+        if (PatrolLineRendererList != null)
+            foreach (LineRenderer goal in PatrolLineRendererList) {
+                if (goal == null)
+                    continue;
+                Destroy(goal.gameObject);
+            }
     }
 }

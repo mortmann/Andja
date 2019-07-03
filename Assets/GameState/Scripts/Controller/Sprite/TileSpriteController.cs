@@ -146,7 +146,6 @@ public class TileSpriteController : MonoBehaviour {
         //		BuildController.Instance.RegisterBuildStateChange (OnBuildStateChance);
         
     }
-    Tilemap tilemap;
     public void Update() {
         if (apply) {
             foreach (SpriteMask sm in islandToCityMask.Values) {
@@ -172,10 +171,7 @@ public class TileSpriteController : MonoBehaviour {
         islandSpriteStopWatch.Start();
         islandPosToTilemap = new Dictionary<Vector2, GameObject>();
         islandToMaskTexture = new Dictionary<Vector2, Texture2D>();
-        Dictionary<string, Texture2D> spriteNameToTexture2D = new Dictionary<string, Texture2D>();
-        foreach (string name in nameToSprite.Keys) {
-            spriteNameToTexture2D.Add(name, ConvertSpriteToTexture(nameToSprite[name]));
-        }
+       
         foreach (MapGenerator.IslandStruct i in islands) {
             int islandWidth = (i.Width + 1);
             int islandHeight = (i.Height + 1);
@@ -219,7 +215,10 @@ public class TileSpriteController : MonoBehaviour {
                 //TILEMAP
                 int x = (int)(tile_data.X - xTileOffset);
                 int y = (int)(tile_data.Y - yTileOffset);
-                string temp = nameToBaseTile.ContainsKey(tile_data.SpriteName) ? tile_data.SpriteName : "nosprite";
+                if(nameToBaseTile.ContainsKey(tile_data.SpriteName)==false) {
+                    Debug.Log(tile_data.SpriteName);
+                }
+                string temp = nameToBaseTile.ContainsKey(tile_data.SpriteName) ? tile_data.SpriteName : "nosprite" ;
                 tilemap.SetTile(new Vector3Int( x, y, 0 ) , nameToBaseTile[temp]);
                 //MASK TEXTURE
                 masktexture.SetPixel(x, y, new Color32(128, 128, 128, 128));
@@ -242,34 +241,6 @@ public class TileSpriteController : MonoBehaviour {
             return nameToSprite[spriteName];
         }
         return nameToSprite["nosprite"];
-    }
-
-    static Texture2D ConvertSpriteToTexture(Sprite sprite) {
-        try {
-            if (sprite.rect.width != sprite.texture.width) {
-                Texture2D newText = new Texture2D((int)sprite.rect.width, (int)sprite.rect.height);
-                try {
-                    Color[] newColors = sprite.texture.GetPixels((int)System.Math.Ceiling(sprite.textureRect.x),
-                                                                 (int)System.Math.Ceiling(sprite.textureRect.y),
-                                                                 (int)System.Math.Ceiling(sprite.textureRect.width),
-                                                                 (int)System.Math.Ceiling(sprite.textureRect.height));
-                    //Debug.Log(sprite.name);
-                    newText.SetPixels(newColors);
-                    newText.Apply();
-                }
-                catch (Exception e) {
-                    Debug.Log(sprite.name + "/n - " + e.Message);
-                }
-
-                return newText;
-            }
-            else
-                return sprite.texture;
-        }
-        catch {
-            Debug.LogError("ConvertSpriteToTexture failed with " + sprite.name);
-            return sprite.texture;
-        }
     }
 
     void OnTileChanged(Tile tile_data) {

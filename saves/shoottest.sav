@@ -1,0 +1,1838 @@
+{
+  "$id": "1",
+  "MapSeed": 10,
+  "Height": 500,
+  "Width": 500,
+  "usedIslands": [
+    "middle_m1",
+    "north_m2",
+    "south_s1"
+  ]
+}##
+{
+  "$id": "1",
+  "offworld": {
+    "$id": "2",
+    "itemIDtoPrice": {
+      "$id": "3",
+      "1": {
+        "$id": "4",
+        "DemandChange": 0
+      },
+      "2": {
+        "$id": "5",
+        "DemandChange": 0
+      },
+      "3": {
+        "$id": "6",
+        "DemandChange": 0
+      },
+      "4": {
+        "$id": "7",
+        "DemandChange": 0
+      },
+      "5": {
+        "$id": "8",
+        "DemandChange": 0
+      },
+      "6": {
+        "$id": "9",
+        "DemandChange": 0
+      },
+      "7": {
+        "$id": "10",
+        "DemandChange": 0
+      },
+      "101": {
+        "$id": "11",
+        "DemandChange": 0
+      },
+      "102": {
+        "$id": "12",
+        "DemandChange": 0
+      },
+      "103": {
+        "$id": "13",
+        "DemandChange": 0
+      },
+      "104": {
+        "$id": "14",
+        "DemandChange": 0
+      },
+      "105": {
+        "$id": "15",
+        "DemandChange": 0
+      },
+      "106": {
+        "$id": "16",
+        "DemandChange": 0
+      },
+      "107": {
+        "$id": "17",
+        "DemandChange": 0
+      },
+      "108": {
+        "$id": "18",
+        "DemandChange": 0
+      },
+      "109": {
+        "$id": "19",
+        "DemandChange": 0
+      },
+      "201": {
+        "$id": "20",
+        "DemandChange": 0
+      },
+      "202": {
+        "$id": "21",
+        "DemandChange": 0
+      },
+      "203": {
+        "$id": "22",
+        "DemandChange": 0
+      },
+      "204": {
+        "$id": "23",
+        "DemandChange": 0
+      },
+      "205": {
+        "$id": "24",
+        "DemandChange": 0
+      },
+      "206": {
+        "$id": "25",
+        "DemandChange": 0
+      },
+      "207": {
+        "$id": "26",
+        "DemandChange": 0
+      },
+      "208": {
+        "$id": "27",
+        "DemandChange": 0
+      },
+      "209": {
+        "$id": "28",
+        "DemandChange": 0
+      },
+      "210": {
+        "$id": "29",
+        "DemandChange": 0
+      },
+      "211": {
+        "$id": "30",
+        "DemandChange": 0
+      },
+      "212": {
+        "$id": "31",
+        "DemandChange": 0
+      },
+      "213": {
+        "$id": "32",
+        "DemandChange": 0
+      },
+      "214": {
+        "$id": "33",
+        "DemandChange": 0
+      },
+      "215": {
+        "$id": "34",
+        "DemandChange": 0
+      },
+      "216": {
+        "$id": "35",
+        "DemandChange": 0
+      },
+      "217": {
+        "$id": "36",
+        "DemandChange": 0
+      },
+      "218": {
+        "$id": "37",
+        "DemandChange": 0
+      },
+      "219": {
+        "$id": "38",
+        "DemandChange": 0
+      },
+      "220": {
+        "$id": "39",
+        "DemandChange": 0
+      },
+      "301": {
+        "$id": "40",
+        "DemandChange": 0
+      },
+      "302": {
+        "$id": "41",
+        "DemandChange": 0
+      },
+      "303": {
+        "$id": "42",
+        "DemandChange": 0
+      },
+      "305": {
+        "$id": "43",
+        "DemandChange": 0
+      },
+      "306": {
+        "$id": "44",
+        "DemandChange": 0
+      },
+      "307": {
+        "$id": "45",
+        "DemandChange": 0
+      },
+      "308": {
+        "$id": "46",
+        "DemandChange": 0
+      },
+      "309": {
+        "$id": "47",
+        "DemandChange": 0
+      },
+      "310": {
+        "$id": "48",
+        "DemandChange": 0
+      },
+      "311": {
+        "$id": "49",
+        "DemandChange": 0
+      },
+      "312": {
+        "$id": "50",
+        "DemandChange": 0
+      },
+      "313": {
+        "$id": "51",
+        "DemandChange": 0
+      },
+      "314": {
+        "$id": "52",
+        "DemandChange": 0
+      },
+      "315": {
+        "$id": "53",
+        "DemandChange": 0
+      },
+      "316": {
+        "$id": "54",
+        "DemandChange": 0
+      },
+      "317": {
+        "$id": "55",
+        "DemandChange": 0
+      },
+      "318": {
+        "$id": "56",
+        "DemandChange": 0
+      },
+      "319": {
+        "$id": "57",
+        "DemandChange": 0
+      },
+      "320": {
+        "$id": "58",
+        "DemandChange": 0
+      },
+      "321": {
+        "$id": "59",
+        "DemandChange": 0
+      },
+      "322": {
+        "$id": "60",
+        "DemandChange": 0
+      },
+      "323": {
+        "$id": "61",
+        "DemandChange": 0
+      },
+      "401": {
+        "$id": "62",
+        "DemandChange": 0
+      },
+      "402": {
+        "$id": "63",
+        "DemandChange": 0
+      },
+      "403": {
+        "$id": "64",
+        "DemandChange": 0
+      },
+      "404": {
+        "$id": "65",
+        "DemandChange": 0
+      },
+      "405": {
+        "$id": "66",
+        "DemandChange": 0
+      },
+      "406": {
+        "$id": "67",
+        "DemandChange": 0
+      },
+      "407": {
+        "$id": "68",
+        "DemandChange": 0
+      },
+      "408": {
+        "$id": "69",
+        "DemandChange": 0
+      },
+      "409": {
+        "$id": "70",
+        "DemandChange": 0
+      },
+      "410": {
+        "$id": "71",
+        "DemandChange": 0
+      },
+      "411": {
+        "$id": "72",
+        "DemandChange": 0
+      },
+      "412": {
+        "$id": "73",
+        "DemandChange": 0
+      },
+      "413": {
+        "$id": "74",
+        "DemandChange": 0
+      },
+      "414": {
+        "$id": "75",
+        "DemandChange": 0
+      },
+      "415": {
+        "$id": "76",
+        "DemandChange": 0
+      },
+      "416": {
+        "$id": "77",
+        "DemandChange": 0
+      },
+      "417": {
+        "$id": "78",
+        "DemandChange": 0
+      },
+      "418": {
+        "$id": "79",
+        "DemandChange": 0
+      },
+      "1001": {
+        "$id": "80",
+        "DemandChange": 0
+      },
+      "1002": {
+        "$id": "81",
+        "DemandChange": 0
+      },
+      "1003": {
+        "$id": "82",
+        "DemandChange": 0
+      },
+      "1004": {
+        "$id": "83",
+        "DemandChange": 0
+      },
+      "1005": {
+        "$id": "84",
+        "DemandChange": 0
+      },
+      "1006": {
+        "$id": "85",
+        "DemandChange": 0
+      },
+      "1007": {
+        "$id": "86",
+        "DemandChange": 0
+      },
+      "1008": {
+        "$id": "87",
+        "DemandChange": 0
+      }
+    },
+    "demandChangeTimer": 27.20998
+  },
+  "world": {
+    "$id": "88",
+    "IslandList": [
+      {
+        "$id": "89",
+        "myCities": [
+          {
+            "$id": "90",
+            "AutoUpgradeHomes": false,
+            "playerNumber": -1,
+            "inventory": {
+              "$id": "91",
+              "MaxStackSize": 50,
+              "Items": {
+                "$id": "92"
+              },
+              "NumberOfSpaces": 0
+            },
+            "myStructures": [],
+            "useTickTimer": 0.0,
+            "_name": "",
+            "island": {
+              "$ref": "89"
+            },
+            "PopulationLevels": [
+              {
+                "$id": "93",
+                "criticalMissingNeed": false,
+                "Level": 0,
+                "NeedGroupList": [
+                  {
+                    "$id": "94",
+                    "ID": 0,
+                    "Needs": [
+                      {
+                        "$id": "95",
+                        "ID": 4,
+                        "lastNeededNotConsumed": [
+                          0.0,
+                          0.0,
+                          0.0,
+                          0.0,
+                          1.0
+                        ],
+                        "percantageAvailability": [
+                          0.0,
+                          0.0,
+                          0.0,
+                          0.0,
+                          0.0
+                        ],
+                        "notUsedOfTon": 0.0
+                      },
+                      {
+                        "$id": "96",
+                        "ID": 41,
+                        "lastNeededNotConsumed": [
+                          0.0,
+                          0.0,
+                          0.0,
+                          0.0,
+                          3.0
+                        ],
+                        "percantageAvailability": [
+                          0.0,
+                          0.0,
+                          0.0,
+                          0.0,
+                          0.0
+                        ],
+                        "notUsedOfTon": 0.0
+                      }
+                    ],
+                    "LastFullfillmentPercentage": 0.0
+                  },
+                  {
+                    "$id": "97",
+                    "ID": 1,
+                    "Needs": [],
+                    "LastFullfillmentPercentage": "NaN"
+                  }
+                ],
+                "taxPercantage": 1.0,
+                "city": {
+                  "$ref": "90"
+                }
+              },
+              {
+                "$id": "98",
+                "criticalMissingNeed": false,
+                "Level": 1,
+                "previousLevel": {
+                  "$ref": "93"
+                },
+                "taxPercantage": 1.0,
+                "city": {
+                  "$ref": "90"
+                }
+              },
+              {
+                "$id": "99",
+                "criticalMissingNeed": false,
+                "Level": 2,
+                "previousLevel": {
+                  "$ref": "98"
+                },
+                "taxPercantage": 1.0,
+                "city": {
+                  "$ref": "90"
+                }
+              },
+              {
+                "$id": "100",
+                "criticalMissingNeed": false,
+                "Level": 3,
+                "previousLevel": {
+                  "$ref": "99"
+                },
+                "taxPercantage": 1.0,
+                "city": {
+                  "$ref": "90"
+                }
+              }
+            ]
+          }
+        ],
+        "myClimate": 2,
+        "StartTile": {
+          "$id": "101",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 140,
+          "y": 71,
+          "_type": 4,
+          "SpriteName": "warm_dirt_1"
+        }
+      },
+      {
+        "$id": "102",
+        "myCities": [
+          {
+            "$id": "103",
+            "AutoUpgradeHomes": false,
+            "playerNumber": -1,
+            "inventory": {
+              "$id": "104",
+              "MaxStackSize": 50,
+              "Items": {
+                "$id": "105"
+              },
+              "NumberOfSpaces": 0
+            },
+            "myStructures": [
+              {
+                "$id": "106",
+                "$type": "GrowableStructure, Assembly-CSharp",
+                "age": 5.337999,
+                "currentStage": 3,
+                "hasProduced": true,
+                "produceCountdown": 0.0,
+                "ID": 502,
+                "buildID": 0,
+                "_city": {
+                  "$ref": "103"
+                },
+                "_health": 0.0,
+                "rotated": 0,
+                "buildInWilderniss": false,
+                "isActive": true,
+                "Output": [
+                  {
+                    "$id": "107",
+                    "ID": 1,
+                    "count": 1
+                  }
+                ],
+                "BuildTile": {
+                  "$id": "108",
+                  "$type": "LandTile, Assembly-CSharp",
+                  "x": 280,
+                  "y": 276,
+                  "_type": 4,
+                  "SpriteName": "cold_dirt_1"
+                }
+              },
+              {
+                "$id": "109",
+                "$type": "GrowableStructure, Assembly-CSharp",
+                "age": 5.337999,
+                "currentStage": 3,
+                "hasProduced": true,
+                "produceCountdown": 0.0,
+                "ID": 502,
+                "buildID": 0,
+                "_city": {
+                  "$ref": "103"
+                },
+                "_health": 0.0,
+                "rotated": 0,
+                "buildInWilderniss": false,
+                "isActive": true,
+                "Output": [
+                  {
+                    "$id": "110",
+                    "ID": 1,
+                    "count": 1
+                  }
+                ],
+                "BuildTile": {
+                  "$id": "111",
+                  "$type": "LandTile, Assembly-CSharp",
+                  "x": 282,
+                  "y": 275,
+                  "_type": 4,
+                  "SpriteName": "cold_dirt_0"
+                }
+              },
+              {
+                "$id": "112",
+                "$type": "GrowableStructure, Assembly-CSharp",
+                "age": 5.337999,
+                "currentStage": 3,
+                "hasProduced": true,
+                "produceCountdown": 0.0,
+                "ID": 502,
+                "buildID": 0,
+                "_city": {
+                  "$ref": "103"
+                },
+                "_health": 0.0,
+                "rotated": 0,
+                "buildInWilderniss": false,
+                "isActive": true,
+                "Output": [
+                  {
+                    "$id": "113",
+                    "ID": 1,
+                    "count": 1
+                  }
+                ],
+                "BuildTile": {
+                  "$id": "114",
+                  "$type": "LandTile, Assembly-CSharp",
+                  "x": 282,
+                  "y": 276,
+                  "_type": 4,
+                  "SpriteName": "cold_dirt_1"
+                }
+              },
+              {
+                "$id": "115",
+                "$type": "GrowableStructure, Assembly-CSharp",
+                "age": 5.337999,
+                "currentStage": 3,
+                "hasProduced": true,
+                "produceCountdown": 0.0,
+                "ID": 502,
+                "buildID": 0,
+                "_city": {
+                  "$ref": "103"
+                },
+                "_health": 0.0,
+                "rotated": 0,
+                "buildInWilderniss": false,
+                "isActive": true,
+                "Output": [
+                  {
+                    "$id": "116",
+                    "ID": 1,
+                    "count": 1
+                  }
+                ],
+                "BuildTile": {
+                  "$id": "117",
+                  "$type": "LandTile, Assembly-CSharp",
+                  "x": 282,
+                  "y": 278,
+                  "_type": 4,
+                  "SpriteName": "cold_dirt_1"
+                }
+              },
+              {
+                "$id": "118",
+                "$type": "GrowableStructure, Assembly-CSharp",
+                "age": 5.337999,
+                "currentStage": 3,
+                "hasProduced": true,
+                "produceCountdown": 0.0,
+                "ID": 502,
+                "buildID": 0,
+                "_city": {
+                  "$ref": "103"
+                },
+                "_health": 0.0,
+                "rotated": 0,
+                "buildInWilderniss": false,
+                "isActive": true,
+                "Output": [
+                  {
+                    "$id": "119",
+                    "ID": 1,
+                    "count": 1
+                  }
+                ],
+                "BuildTile": {
+                  "$id": "120",
+                  "$type": "LandTile, Assembly-CSharp",
+                  "x": 284,
+                  "y": 274,
+                  "_type": 4,
+                  "SpriteName": "cold_dirt_0"
+                }
+              },
+              {
+                "$id": "121",
+                "$type": "GrowableStructure, Assembly-CSharp",
+                "age": 5.337999,
+                "currentStage": 3,
+                "hasProduced": true,
+                "produceCountdown": 0.0,
+                "ID": 502,
+                "buildID": 0,
+                "_city": {
+                  "$ref": "103"
+                },
+                "_health": 0.0,
+                "rotated": 0,
+                "buildInWilderniss": false,
+                "isActive": true,
+                "Output": [
+                  {
+                    "$id": "122",
+                    "ID": 1,
+                    "count": 1
+                  }
+                ],
+                "BuildTile": {
+                  "$id": "123",
+                  "$type": "LandTile, Assembly-CSharp",
+                  "x": 284,
+                  "y": 276,
+                  "_type": 4,
+                  "SpriteName": "cold_dirt_1"
+                }
+              },
+              {
+                "$id": "124",
+                "$type": "GrowableStructure, Assembly-CSharp",
+                "age": 5.337999,
+                "currentStage": 3,
+                "hasProduced": true,
+                "produceCountdown": 0.0,
+                "ID": 502,
+                "buildID": 0,
+                "_city": {
+                  "$ref": "103"
+                },
+                "_health": 0.0,
+                "rotated": 0,
+                "buildInWilderniss": false,
+                "isActive": true,
+                "Output": [
+                  {
+                    "$id": "125",
+                    "ID": 1,
+                    "count": 1
+                  }
+                ],
+                "BuildTile": {
+                  "$id": "126",
+                  "$type": "LandTile, Assembly-CSharp",
+                  "x": 284,
+                  "y": 277,
+                  "_type": 4,
+                  "SpriteName": "cold_dirt_1"
+                }
+              },
+              {
+                "$id": "127",
+                "$type": "GrowableStructure, Assembly-CSharp",
+                "age": 5.337999,
+                "currentStage": 3,
+                "hasProduced": true,
+                "produceCountdown": 0.0,
+                "ID": 502,
+                "buildID": 0,
+                "_city": {
+                  "$ref": "103"
+                },
+                "_health": 0.0,
+                "rotated": 0,
+                "buildInWilderniss": false,
+                "isActive": true,
+                "Output": [
+                  {
+                    "$id": "128",
+                    "ID": 1,
+                    "count": 1
+                  }
+                ],
+                "BuildTile": {
+                  "$id": "129",
+                  "$type": "LandTile, Assembly-CSharp",
+                  "x": 284,
+                  "y": 278,
+                  "_type": 4,
+                  "SpriteName": "cold_dirt_0"
+                }
+              },
+              {
+                "$id": "130",
+                "$type": "GrowableStructure, Assembly-CSharp",
+                "age": 5.337999,
+                "currentStage": 3,
+                "hasProduced": true,
+                "produceCountdown": 0.0,
+                "ID": 502,
+                "buildID": 0,
+                "_city": {
+                  "$ref": "103"
+                },
+                "_health": 0.0,
+                "rotated": 0,
+                "buildInWilderniss": false,
+                "isActive": true,
+                "Output": [
+                  {
+                    "$id": "131",
+                    "ID": 1,
+                    "count": 1
+                  }
+                ],
+                "BuildTile": {
+                  "$id": "132",
+                  "$type": "LandTile, Assembly-CSharp",
+                  "x": 284,
+                  "y": 279,
+                  "_type": 4,
+                  "SpriteName": "cold_dirt_0"
+                }
+              }
+            ],
+            "useTickTimer": 0.0,
+            "_name": "",
+            "island": {
+              "$ref": "102"
+            },
+            "PopulationLevels": [
+              {
+                "$id": "133",
+                "criticalMissingNeed": false,
+                "Level": 0,
+                "NeedGroupList": [
+                  {
+                    "$ref": "94"
+                  },
+                  {
+                    "$ref": "97"
+                  }
+                ],
+                "taxPercantage": 1.0,
+                "city": {
+                  "$ref": "103"
+                }
+              },
+              {
+                "$id": "134",
+                "criticalMissingNeed": false,
+                "Level": 1,
+                "previousLevel": {
+                  "$ref": "133"
+                },
+                "taxPercantage": 1.0,
+                "city": {
+                  "$ref": "103"
+                }
+              },
+              {
+                "$id": "135",
+                "criticalMissingNeed": false,
+                "Level": 2,
+                "previousLevel": {
+                  "$ref": "134"
+                },
+                "taxPercantage": 1.0,
+                "city": {
+                  "$ref": "103"
+                }
+              },
+              {
+                "$id": "136",
+                "criticalMissingNeed": false,
+                "Level": 3,
+                "previousLevel": {
+                  "$ref": "135"
+                },
+                "taxPercantage": 1.0,
+                "city": {
+                  "$ref": "103"
+                }
+              }
+            ]
+          },
+          {
+            "$id": "137",
+            "AutoUpgradeHomes": false,
+            "playerNumber": 0,
+            "inventory": {
+              "$id": "138",
+              "$type": "CityInventory, Assembly-CSharp",
+              "MaxStackSize": 50,
+              "Items": {
+                "$id": "139",
+                "1": {
+                  "$id": "140",
+                  "ID": 1,
+                  "count": 0
+                },
+                "2": {
+                  "$id": "141",
+                  "ID": 2,
+                  "count": 0
+                },
+                "3": {
+                  "$id": "142",
+                  "ID": 3,
+                  "count": 0
+                },
+                "4": {
+                  "$id": "143",
+                  "ID": 4,
+                  "count": 0
+                },
+                "5": {
+                  "$id": "144",
+                  "ID": 5,
+                  "count": 0
+                },
+                "6": {
+                  "$id": "145",
+                  "ID": 6,
+                  "count": 0
+                },
+                "7": {
+                  "$id": "146",
+                  "ID": 7,
+                  "count": 0
+                },
+                "101": {
+                  "$id": "147",
+                  "ID": 101,
+                  "count": 0
+                },
+                "102": {
+                  "$id": "148",
+                  "ID": 102,
+                  "count": 0
+                },
+                "103": {
+                  "$id": "149",
+                  "ID": 103,
+                  "count": 0
+                },
+                "104": {
+                  "$id": "150",
+                  "ID": 104,
+                  "count": 0
+                },
+                "105": {
+                  "$id": "151",
+                  "ID": 105,
+                  "count": 0
+                },
+                "106": {
+                  "$id": "152",
+                  "ID": 106,
+                  "count": 0
+                },
+                "107": {
+                  "$id": "153",
+                  "ID": 107,
+                  "count": 0
+                },
+                "108": {
+                  "$id": "154",
+                  "ID": 108,
+                  "count": 0
+                },
+                "109": {
+                  "$id": "155",
+                  "ID": 109,
+                  "count": 0
+                },
+                "201": {
+                  "$id": "156",
+                  "ID": 201,
+                  "count": 0
+                },
+                "202": {
+                  "$id": "157",
+                  "ID": 202,
+                  "count": 0
+                },
+                "203": {
+                  "$id": "158",
+                  "ID": 203,
+                  "count": 0
+                },
+                "204": {
+                  "$id": "159",
+                  "ID": 204,
+                  "count": 0
+                },
+                "205": {
+                  "$id": "160",
+                  "ID": 205,
+                  "count": 0
+                },
+                "206": {
+                  "$id": "161",
+                  "ID": 206,
+                  "count": 0
+                },
+                "207": {
+                  "$id": "162",
+                  "ID": 207,
+                  "count": 0
+                },
+                "208": {
+                  "$id": "163",
+                  "ID": 208,
+                  "count": 0
+                },
+                "209": {
+                  "$id": "164",
+                  "ID": 209,
+                  "count": 0
+                },
+                "210": {
+                  "$id": "165",
+                  "ID": 210,
+                  "count": 0
+                },
+                "211": {
+                  "$id": "166",
+                  "ID": 211,
+                  "count": 0
+                },
+                "212": {
+                  "$id": "167",
+                  "ID": 212,
+                  "count": 0
+                },
+                "213": {
+                  "$id": "168",
+                  "ID": 213,
+                  "count": 0
+                },
+                "214": {
+                  "$id": "169",
+                  "ID": 214,
+                  "count": 0
+                },
+                "215": {
+                  "$id": "170",
+                  "ID": 215,
+                  "count": 0
+                },
+                "216": {
+                  "$id": "171",
+                  "ID": 216,
+                  "count": 0
+                },
+                "217": {
+                  "$id": "172",
+                  "ID": 217,
+                  "count": 0
+                },
+                "218": {
+                  "$id": "173",
+                  "ID": 218,
+                  "count": 0
+                },
+                "219": {
+                  "$id": "174",
+                  "ID": 219,
+                  "count": 0
+                },
+                "220": {
+                  "$id": "175",
+                  "ID": 220,
+                  "count": 0
+                },
+                "301": {
+                  "$id": "176",
+                  "ID": 301,
+                  "count": 0
+                },
+                "302": {
+                  "$id": "177",
+                  "ID": 302,
+                  "count": 0
+                },
+                "303": {
+                  "$id": "178",
+                  "ID": 303,
+                  "count": 0
+                },
+                "305": {
+                  "$id": "179",
+                  "ID": 305,
+                  "count": 0
+                },
+                "306": {
+                  "$id": "180",
+                  "ID": 306,
+                  "count": 0
+                },
+                "307": {
+                  "$id": "181",
+                  "ID": 307,
+                  "count": 0
+                },
+                "308": {
+                  "$id": "182",
+                  "ID": 308,
+                  "count": 0
+                },
+                "309": {
+                  "$id": "183",
+                  "ID": 309,
+                  "count": 0
+                },
+                "310": {
+                  "$id": "184",
+                  "ID": 310,
+                  "count": 0
+                },
+                "311": {
+                  "$id": "185",
+                  "ID": 311,
+                  "count": 0
+                },
+                "312": {
+                  "$id": "186",
+                  "ID": 312,
+                  "count": 0
+                },
+                "313": {
+                  "$id": "187",
+                  "ID": 313,
+                  "count": 0
+                },
+                "314": {
+                  "$id": "188",
+                  "ID": 314,
+                  "count": 0
+                },
+                "315": {
+                  "$id": "189",
+                  "ID": 315,
+                  "count": 0
+                },
+                "316": {
+                  "$id": "190",
+                  "ID": 316,
+                  "count": 0
+                },
+                "317": {
+                  "$id": "191",
+                  "ID": 317,
+                  "count": 0
+                },
+                "318": {
+                  "$id": "192",
+                  "ID": 318,
+                  "count": 0
+                },
+                "319": {
+                  "$id": "193",
+                  "ID": 319,
+                  "count": 0
+                },
+                "320": {
+                  "$id": "194",
+                  "ID": 320,
+                  "count": 0
+                },
+                "321": {
+                  "$id": "195",
+                  "ID": 321,
+                  "count": 0
+                },
+                "322": {
+                  "$id": "196",
+                  "ID": 322,
+                  "count": 0
+                },
+                "323": {
+                  "$id": "197",
+                  "ID": 323,
+                  "count": 0
+                },
+                "401": {
+                  "$id": "198",
+                  "ID": 401,
+                  "count": 0
+                },
+                "402": {
+                  "$id": "199",
+                  "ID": 402,
+                  "count": 0
+                },
+                "403": {
+                  "$id": "200",
+                  "ID": 403,
+                  "count": 0
+                },
+                "404": {
+                  "$id": "201",
+                  "ID": 404,
+                  "count": 0
+                },
+                "405": {
+                  "$id": "202",
+                  "ID": 405,
+                  "count": 0
+                },
+                "406": {
+                  "$id": "203",
+                  "ID": 406,
+                  "count": 0
+                },
+                "407": {
+                  "$id": "204",
+                  "ID": 407,
+                  "count": 0
+                },
+                "408": {
+                  "$id": "205",
+                  "ID": 408,
+                  "count": 0
+                },
+                "409": {
+                  "$id": "206",
+                  "ID": 409,
+                  "count": 0
+                },
+                "410": {
+                  "$id": "207",
+                  "ID": 410,
+                  "count": 0
+                },
+                "411": {
+                  "$id": "208",
+                  "ID": 411,
+                  "count": 0
+                },
+                "412": {
+                  "$id": "209",
+                  "ID": 412,
+                  "count": 0
+                },
+                "413": {
+                  "$id": "210",
+                  "ID": 413,
+                  "count": 0
+                },
+                "414": {
+                  "$id": "211",
+                  "ID": 414,
+                  "count": 0
+                },
+                "415": {
+                  "$id": "212",
+                  "ID": 415,
+                  "count": 0
+                },
+                "416": {
+                  "$id": "213",
+                  "ID": 416,
+                  "count": 0
+                },
+                "417": {
+                  "$id": "214",
+                  "ID": 417,
+                  "count": 0
+                },
+                "418": {
+                  "$id": "215",
+                  "ID": 418,
+                  "count": 0
+                },
+                "1001": {
+                  "$id": "216",
+                  "ID": 1001,
+                  "count": 0
+                },
+                "1002": {
+                  "$id": "217",
+                  "ID": 1002,
+                  "count": 0
+                },
+                "1003": {
+                  "$id": "218",
+                  "ID": 1003,
+                  "count": 0
+                },
+                "1004": {
+                  "$id": "219",
+                  "ID": 1004,
+                  "count": 0
+                },
+                "1005": {
+                  "$id": "220",
+                  "ID": 1005,
+                  "count": 0
+                },
+                "1006": {
+                  "$id": "221",
+                  "ID": 1006,
+                  "count": 0
+                },
+                "1007": {
+                  "$id": "222",
+                  "ID": 1007,
+                  "count": 0
+                },
+                "1008": {
+                  "$id": "223",
+                  "ID": 1008,
+                  "count": 0
+                }
+              },
+              "NumberOfSpaces": -1
+            },
+            "myStructures": [
+              {
+                "$id": "224",
+                "$type": "WarehouseStructure, Assembly-CSharp",
+                "level": 1,
+                "capturedProgress": 0.0,
+                "myWorker": [],
+                "produceCountdown": 0.0,
+                "ID": 1,
+                "buildID": 0,
+                "_city": {
+                  "$ref": "137"
+                },
+                "_health": 1000.0,
+                "rotated": 0,
+                "buildInWilderniss": false,
+                "isActive": true,
+                "BuildTile": {
+                  "$id": "225",
+                  "$type": "LandTile, Assembly-CSharp",
+                  "x": 258,
+                  "y": 273,
+                  "_type": 1,
+                  "SpriteName": "shore_NS_E"
+                }
+              },
+              {
+                "$id": "226",
+                "$type": "ServiceStructure, Assembly-CSharp",
+                "ID": 301,
+                "buildID": 1,
+                "_city": {
+                  "$ref": "137"
+                },
+                "_health": 0.0,
+                "rotated": 0,
+                "buildInWilderniss": false,
+                "isActive": true,
+                "BuildTile": {
+                  "$id": "227",
+                  "$type": "LandTile, Assembly-CSharp",
+                  "x": 265,
+                  "y": 280,
+                  "_type": 4,
+                  "SpriteName": "cold_dirt_0"
+                }
+              },
+              {
+                "$id": "228",
+                "$type": "RoadStructure, Assembly-CSharp",
+                "ID": 101,
+                "buildID": 2,
+                "_city": {
+                  "$ref": "137"
+                },
+                "_health": 0.0,
+                "rotated": 0,
+                "buildInWilderniss": false,
+                "isActive": true,
+                "BuildTile": {
+                  "$id": "229",
+                  "$type": "LandTile, Assembly-CSharp",
+                  "x": 266,
+                  "y": 280,
+                  "_type": 4,
+                  "SpriteName": "cold_dirt_1"
+                }
+              },
+              {
+                "$id": "230",
+                "$type": "RoadStructure, Assembly-CSharp",
+                "ID": 101,
+                "buildID": 3,
+                "_city": {
+                  "$ref": "137"
+                },
+                "_health": 0.0,
+                "rotated": 0,
+                "buildInWilderniss": false,
+                "isActive": true,
+                "BuildTile": {
+                  "$id": "231",
+                  "$type": "LandTile, Assembly-CSharp",
+                  "x": 267,
+                  "y": 280,
+                  "_type": 4,
+                  "SpriteName": "cold_dirt_1"
+                }
+              },
+              {
+                "$id": "232",
+                "$type": "RoadStructure, Assembly-CSharp",
+                "ID": 101,
+                "buildID": 4,
+                "_city": {
+                  "$ref": "137"
+                },
+                "_health": 0.0,
+                "rotated": 0,
+                "buildInWilderniss": false,
+                "isActive": true,
+                "BuildTile": {
+                  "$id": "233",
+                  "$type": "LandTile, Assembly-CSharp",
+                  "x": 268,
+                  "y": 280,
+                  "_type": 4,
+                  "SpriteName": "cold_dirt_1"
+                }
+              },
+              {
+                "$id": "234",
+                "$type": "RoadStructure, Assembly-CSharp",
+                "ID": 101,
+                "buildID": 5,
+                "_city": {
+                  "$ref": "137"
+                },
+                "_health": 0.0,
+                "rotated": 0,
+                "buildInWilderniss": false,
+                "isActive": true,
+                "BuildTile": {
+                  "$id": "235",
+                  "$type": "LandTile, Assembly-CSharp",
+                  "x": 269,
+                  "y": 280,
+                  "_type": 4,
+                  "SpriteName": "cold_dirt_1"
+                }
+              },
+              {
+                "$id": "236",
+                "$type": "HomeStructure, Assembly-CSharp",
+                "people": 0,
+                "decTimer": 0.0,
+                "incTimer": 0.0,
+                "isAbandoned": true,
+                "ID": 201,
+                "buildID": 6,
+                "_city": {
+                  "$ref": "137"
+                },
+                "_health": 50.0,
+                "rotated": 0,
+                "buildInWilderniss": false,
+                "isActive": true,
+                "BuildTile": {
+                  "$id": "237",
+                  "$type": "LandTile, Assembly-CSharp",
+                  "x": 270,
+                  "y": 280,
+                  "_type": 4,
+                  "SpriteName": "cold_dirt_0"
+                }
+              }
+            ],
+            "useTickTimer": 0.0,
+            "itemIDtoTradeItem": {
+              "$id": "238"
+            },
+            "_name": "<City>0",
+            "island": {
+              "$ref": "102"
+            },
+            "PopulationLevels": [
+              {
+                "$id": "239",
+                "criticalMissingNeed": false,
+                "Level": 0,
+                "NeedGroupList": [
+                  {
+                    "$ref": "94"
+                  },
+                  {
+                    "$ref": "97"
+                  }
+                ],
+                "taxPercantage": 1.0,
+                "city": {
+                  "$ref": "137"
+                }
+              },
+              {
+                "$id": "240",
+                "criticalMissingNeed": false,
+                "Level": 1,
+                "NeedGroupList": [],
+                "previousLevel": {
+                  "$ref": "239"
+                },
+                "taxPercantage": 1.0,
+                "city": {
+                  "$ref": "137"
+                }
+              },
+              {
+                "$id": "241",
+                "criticalMissingNeed": false,
+                "Level": 2,
+                "NeedGroupList": [],
+                "previousLevel": {
+                  "$ref": "240"
+                },
+                "taxPercantage": 1.0,
+                "city": {
+                  "$ref": "137"
+                }
+              },
+              {
+                "$id": "242",
+                "criticalMissingNeed": false,
+                "Level": 3,
+                "NeedGroupList": [],
+                "previousLevel": {
+                  "$ref": "241"
+                },
+                "taxPercantage": 1.0,
+                "city": {
+                  "$ref": "137"
+                }
+              }
+            ]
+          }
+        ],
+        "myClimate": 0,
+        "StartTile": {
+          "$id": "243",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 258,
+          "y": 271,
+          "_type": 1,
+          "SpriteName": "shore_NE"
+        }
+      },
+      {
+        "$id": "244",
+        "myCities": [
+          {
+            "$id": "245",
+            "AutoUpgradeHomes": false,
+            "playerNumber": -1,
+            "inventory": {
+              "$id": "246",
+              "MaxStackSize": 50,
+              "Items": {
+                "$id": "247"
+              },
+              "NumberOfSpaces": 0
+            },
+            "myStructures": [],
+            "useTickTimer": 0.0,
+            "_name": "",
+            "island": {
+              "$ref": "244"
+            },
+            "PopulationLevels": [
+              {
+                "$id": "248",
+                "criticalMissingNeed": false,
+                "Level": 0,
+                "NeedGroupList": [
+                  {
+                    "$ref": "94"
+                  },
+                  {
+                    "$ref": "97"
+                  }
+                ],
+                "taxPercantage": 1.0,
+                "city": {
+                  "$ref": "245"
+                }
+              },
+              {
+                "$id": "249",
+                "criticalMissingNeed": false,
+                "Level": 1,
+                "previousLevel": {
+                  "$ref": "248"
+                },
+                "taxPercantage": 1.0,
+                "city": {
+                  "$ref": "245"
+                }
+              },
+              {
+                "$id": "250",
+                "criticalMissingNeed": false,
+                "Level": 2,
+                "previousLevel": {
+                  "$ref": "249"
+                },
+                "taxPercantage": 1.0,
+                "city": {
+                  "$ref": "245"
+                }
+              },
+              {
+                "$id": "251",
+                "criticalMissingNeed": false,
+                "Level": 3,
+                "previousLevel": {
+                  "$ref": "250"
+                },
+                "taxPercantage": 1.0,
+                "city": {
+                  "$ref": "245"
+                }
+              }
+            ]
+          }
+        ],
+        "myClimate": 1,
+        "StartTile": {
+          "$id": "252",
+          "$type": "LandTile, Assembly-CSharp",
+          "x": 352,
+          "y": 57,
+          "_type": 4,
+          "SpriteName": "middle_dirt_1"
+        }
+      }
+    ],
+    "Units": [
+      {
+        "$id": "253",
+        "$type": "Ship, Assembly-CSharp",
+        "isOffWorld": false,
+        "offWorldTime": 0.0,
+        "_cannonItem": {
+          "$id": "254",
+          "ID": 1006,
+          "count": 20
+        },
+        "ID": 1,
+        "playerNumber": 0,
+        "_UserSetName": "Ship 0",
+        "_currHealth": 1250.0,
+        "patrolCommand": {
+          "$id": "255",
+          "Positions": {
+            "$id": "256",
+            "list": [],
+            "currentIndex": 0
+          }
+        },
+        "tradeTime": 1.5,
+        "attackCooldownTimer": 1.0,
+        "pathfinding": {
+          "$id": "257",
+          "$type": "OceanPathfinding, Assembly-CSharp",
+          "dest_X": 0.0,
+          "dest_Y": 0.0,
+          "_IsAtDest": false,
+          "rotation": 0.0,
+          "rotateTo": 0.0,
+          "_y": 284.0,
+          "_x": 236.0
+        },
+        "inventory": {
+          "$id": "258",
+          "MaxStackSize": 50,
+          "Items": {
+            "$id": "259",
+            "0": {
+              "$id": "260",
+              "ID": 1,
+              "count": 50
+            },
+            "1": {
+              "$id": "261",
+              "ID": 2,
+              "count": 50
+            }
+          },
+          "NumberOfSpaces": 6
+        },
+        "_CurrentDoingMode": 0,
+        "_CurrentMainMode": 0,
+        "aggroCooldownTimer": 0.70000124,
+        "queuedCommands": []
+      },
+      {
+        "$id": "262",
+        "$type": "Ship, Assembly-CSharp",
+        "isOffWorld": false,
+        "offWorldTime": 0.0,
+        "_cannonItem": {
+          "$id": "263",
+          "ID": 1006,
+          "count": 20
+        },
+        "ID": 1,
+        "playerNumber": 1,
+        "_UserSetName": "Ship 0",
+        "_currHealth": 1250.0,
+        "patrolCommand": {
+          "$id": "264",
+          "Positions": {
+            "$id": "265",
+            "list": [
+              {
+                "$id": "266",
+                "X": 224.571884,
+                "Y": 274.0777
+              },
+              {
+                "$id": "267",
+                "X": 196.970032,
+                "Y": 273.026031
+              }
+            ],
+            "currentIndex": 1
+          }
+        },
+        "tradeTime": 1.5,
+        "attackCooldownTimer": 1.0,
+        "pathfinding": {
+          "$id": "268",
+          "$type": "OceanPathfinding, Assembly-CSharp",
+          "dest_X": 196.970032,
+          "dest_Y": 273.026031,
+          "_IsAtDest": false,
+          "_destTile": {
+            "$id": "269",
+            "x": 196,
+            "y": 273,
+            "_type": 0
+          },
+          "rotation": -158.359589,
+          "rotateTo": 0.0,
+          "_y": 273.9172,
+          "_x": 224.414124
+        },
+        "inventory": {
+          "$id": "270",
+          "MaxStackSize": 50,
+          "Items": {
+            "$id": "271",
+            "0": {
+              "$id": "272",
+              "ID": 1,
+              "count": 50
+            },
+            "1": {
+              "$id": "273",
+              "ID": 2,
+              "count": 50
+            },
+            "2": {
+              "$id": "274",
+              "ID": 1,
+              "count": 50
+            },
+            "3": {
+              "$id": "275",
+              "ID": 2,
+              "count": 50
+            },
+            "4": {
+              "$id": "276",
+              "ID": 1,
+              "count": 50
+            },
+            "5": {
+              "$id": "277",
+              "ID": 2,
+              "count": 50
+            }
+          },
+          "NumberOfSpaces": 6
+        },
+        "_CurrentDoingMode": 1,
+        "_CurrentMainMode": 4,
+        "aggroCooldownTimer": 1.36000061,
+        "queuedCommands": [
+          {
+            "$ref": "264"
+          }
+        ]
+      }
+    ],
+    "Crates": [],
+    "Projectiles": []
+  }
+}##
+{
+  "$id": "1",
+  "currentPlayerNumber": 0,
+  "tickTimer": 0.496716052,
+  "players": [
+    {
+      "$id": "2",
+      "_lastTreasuryChange": -35,
+      "_treasuryBalance": 45639,
+      "_maxPopulationLevel": 0,
+      "_maxPopulationCount": 0,
+      "Number": 0,
+      "MyTradeRoutes": []
+    },
+    {
+      "$id": "3",
+      "_lastTreasuryChange": 0,
+      "_treasuryBalance": 50000,
+      "_maxPopulationLevel": 0,
+      "_maxPopulationCount": 0,
+      "Number": 1,
+      "MyTradeRoutes": []
+    },
+    {
+      "$id": "4",
+      "_lastTreasuryChange": 0,
+      "_treasuryBalance": 50000,
+      "_maxPopulationLevel": 0,
+      "_maxPopulationCount": 0,
+      "Number": 2,
+      "MyTradeRoutes": []
+    }
+  ],
+  "playerWars": [
+    {
+      "$id": "5",
+      "playerOne": 0,
+      "playerTwo": 1
+    }
+  ]
+}##
+{
+  "$id": "1",
+  "idToActiveEvent": {
+    "$id": "2"
+  },
+  "Random": {
+    "$id": "3"
+  }
+}##
+{
+  "$id": "1",
+  "pos": {
+    "$id": "2",
+    "X": 213.9346,
+    "Y": 273.6349,
+    "Z": -10.0
+  },
+  "orthographicSize": 12.2823629
+}##

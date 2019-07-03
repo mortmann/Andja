@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
 using System.Linq;
@@ -37,8 +37,6 @@ public class OceanPathfinding : Pathfinding {
         SetDestination(end.X, end.Y);
     }
     public override void SetDestination(float x, float y) {
-        if (x == dest_X || dest_Y == y)
-            return;
         pathDest = Path_dest.exact;
         dest_X = x;
         dest_Y = y;

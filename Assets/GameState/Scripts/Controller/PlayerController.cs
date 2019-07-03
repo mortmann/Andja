@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections.Generic;
 using System;
 using System.IO;
@@ -304,9 +304,14 @@ public class War {
         // Return true if the fields match:
         return p == this;
     }
+
     public override int GetHashCode() {
-        return playerOne ^ playerTwo;
+        var hashCode = 971533886;
+        hashCode = hashCode * -1521134295 + playerOne.GetHashCode();
+        hashCode = hashCode * -1521134295 + playerTwo.GetHashCode();
+        return hashCode;
     }
+
     public static bool operator ==(War a, War b) {
         // If both are null, or both are same instance, return true.
         if (System.Object.ReferenceEquals(a, b)) {

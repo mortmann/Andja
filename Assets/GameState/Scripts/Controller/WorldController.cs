@@ -178,6 +178,7 @@ public class WorldController : MonoBehaviour {
             loadedStructures.AddRange(island.Load());
         }
         loadedStructures.Sort((x, y) => x.buildID.CompareTo(y.buildID));
+
         BuildController.Instance.PlaceAllLoadedStructure(loadedStructures);
     }
 

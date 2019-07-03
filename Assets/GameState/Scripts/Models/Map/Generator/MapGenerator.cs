@@ -244,8 +244,8 @@ public class MapGenerator : MonoBehaviour {
                 }
             }
             tilesPopulated = true;
-
-            WorldController.Instance.SetGeneratedWorld(GetWorld(), tileToStructure);
+            if(SaveController.IsLoadingSave==false)
+                WorldController.Instance.SetGeneratedWorld(GetWorld(), tileToStructure);
             transform.SetParent(null);
         }
     }

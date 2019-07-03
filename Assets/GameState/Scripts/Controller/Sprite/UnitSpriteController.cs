@@ -5,6 +5,8 @@ using System;
 using DigitalRuby.AdvancedPolygonCollider;
 
 public class UnitSpriteController : MonoBehaviour {
+
+
     private Dictionary<string, Sprite> unitSprites;
     public Dictionary<Unit, GameObject> unitGameObjectMap;
     public GameObject unitPathPrefab;
@@ -20,6 +22,10 @@ public class UnitSpriteController : MonoBehaviour {
     }
     // Use this for initialization
     void Start() {
+        Setup();
+    }
+
+    public void Setup() {
         unitGameObjectMap = new Dictionary<Unit, GameObject>();
         crateGameObjectMap = new Dictionary<Crate, GameObject>();
         projectileGameObjectMap = new Dictionary<Projectile, GameObject>();
@@ -37,7 +43,6 @@ public class UnitSpriteController : MonoBehaviour {
         mouseController = MouseController.Instance;
         BuildController.Instance.RegisterBuildStateChange(OnBuildStateChange);
     }
-
 
     void Update() {
     }

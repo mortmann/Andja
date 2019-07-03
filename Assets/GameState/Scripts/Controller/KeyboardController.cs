@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 
 //TODO REMOVE
@@ -38,6 +38,9 @@ public class KeyboardController : MonoBehaviour {
         }
         if (InputHandler.GetButtonDown(InputName.TogglePause)) {
             WorldController.Instance.TogglePause();
+        }
+        if (InputHandler.GetButtonDown(InputName.Stop)) {
+            MouseC.StopUnit();
         }
         if (InputHandler.GetButtonDown(InputName.Console)) {
             UIC.ToggleConsole();

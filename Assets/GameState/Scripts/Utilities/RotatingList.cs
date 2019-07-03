@@ -1,7 +1,9 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Newtonsoft.Json;
+using System;
+
 [JsonObject(MemberSerialization.OptIn)]
 public class RotatingList<T> {
     [JsonPropertyAttribute] List<T> list;
@@ -36,6 +38,10 @@ public class RotatingList<T> {
         currentIndex = 0;
     }
     public void GoToNext() {
+        if(list.Count == 0) {
+            Debug.LogError("List has nothing to rotate!");
+            return;
+        }
         currentIndex++;
         currentIndex %= list.Count;
     }
@@ -49,5 +55,14 @@ public class RotatingList<T> {
             temp.Add(list[i]);
         }
         return temp;
+    }
+    public List<X> ConvertAll<X>(Converter<T, X> converter) {
+        return list.ConvertAll<X>(converter);
+    }
+    public X[] ConvertAllToArray<X>(Converter<T, X> converter) {
+        return list.ConvertAll<X>(converter).ToArray();
+    }
+    internal T[] ToArray() {
+        return list.ToArray();
     }
 }

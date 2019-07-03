@@ -41,6 +41,8 @@ public class MouseController : MonoBehaviour {
             _highlightTiles = value;
         }
     }
+
+
     // The world-position start of our left-mouse drag operation
     List<GameObject> previewGameObjects;
 
@@ -60,7 +62,7 @@ public class MouseController : MonoBehaviour {
     }
 
     public MouseState mouseState = MouseState.Idle;
-    MouseUnitState mouseUnitState = MouseUnitState.None;
+    public MouseUnitState mouseUnitState = MouseUnitState.None;
 
     private Path_AStar path;
 
@@ -815,6 +817,13 @@ public class MouseController : MonoBehaviour {
             if (selectedUnitGroup.Contains(unit))
                 selectedUnitGroup.Remove(unit);
         }
+    }
+    internal void StopUnit() {
+        //if null or not player unit return without doing anything
+        if (SelectedUnit == null || SelectedUnit.IsPlayerUnit() == false) {
+            return;
+        }
+        SelectedUnit.GoIdle();
     }
     void OnDestroy() {
         Instance = null;

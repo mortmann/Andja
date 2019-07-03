@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using UnityEngine;
 using System.Collections;
@@ -230,19 +230,21 @@ public class EditorController : MonoBehaviour {
             neighbours++;
         }
         if (neighbours > 0) {
-            connectOrientation += "_";
+            string temp = "_";
             if (neig[0] != null && neig[0].Type != TileType.Shore && neig[0].Type != TileType.Ocean) {
-                connectOrientation += "N";
+                temp += "N";
             }
             if (neig[1] != null && neig[1].Type != TileType.Shore && neig[1].Type != TileType.Ocean) {
-                connectOrientation += "E";
+                temp += "E";
             }
             if (neig[2] != null && neig[2].Type != TileType.Shore && neig[2].Type != TileType.Ocean) {
-                connectOrientation += "S";
+                temp += "S";
             }
             if (neig[3] != null && neig[3].Type != TileType.Shore && neig[3].Type != TileType.Ocean) {
-                connectOrientation += "W";
+                temp += "W";
             }
+            if (temp.Length > 1)
+                connectOrientation += temp;
         }
         return connectOrientation;
     }

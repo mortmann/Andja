@@ -29,7 +29,13 @@ public abstract class Pathfinding {
     #region RuntimeOrPrototyp
     public bool IsAtDestination {
         get { return _IsAtDest; }
-        set { _IsAtDest = value; cbIsAtDestination?.Invoke(value); }
+        set {
+            //TODO: remove these cases were it sets it multiple times to the same value
+            bool old = _IsAtDest;
+            _IsAtDest = value;
+            if (old != _IsAtDest)
+                cbIsAtDestination?.Invoke(value);
+        }
     }
     public Action<bool> cbIsAtDestination;
 
@@ -86,6 +92,9 @@ public abstract class Pathfinding {
             return _x;
         }
         protected set {
+            //TODO: REMOVE FOR RELEASE
+            if (Mathf.Abs(value - _x) > 0.05f)
+                Debug.LogWarning("UNIT JUMPED -- FIX ME");
             _x = value;
         }
     }
@@ -94,8 +103,9 @@ public abstract class Pathfinding {
             return _y;
         }
         protected set {
-            if(value<=0)
-                Debug.Log(value);
+            //TODO: REMOVE FOR RELEASE
+            if (Mathf.Abs(value - _y) > 0.05f)
+                Debug.LogWarning("UNIT JUMPED -- FIX ME");
             _y = value;
         }
     }
@@ -104,7 +114,7 @@ public abstract class Pathfinding {
     public Tile CurrTile {
         get {
             if (_currTile == null) {
-                return World.Current.GetTileAt(X, Y);
+                _currTile = World.Current.GetTileAt(X, Y);
             }
             return _currTile;
         }
@@ -141,15 +151,19 @@ public abstract class Pathfinding {
     private Vector3 rotationDirection;
 
     public virtual void Update_DoMovement(float deltaTime) {
+        
+
         //for loading purpose or any other strange reason
         //we have a destination & are not there atm && we have no path then calculate it!
         if (DestTile != null && DestTile != CurrTile && IsAtDestination == false && NextTile != DestTile && worldPath == null)
             SetDestination(dest_X, dest_Y);
-
         if (IsDoneCalculating == false)
             return;
-        if (IsAtDestination)
+        
+        if (IsAtDestination) {
             LastMove = Vector3.zero;
+            return;
+        }
 
         if (CurrTile == DestTile && pathDest != Path_dest.exact) {
             IsAtDestination = true;
@@ -178,7 +192,6 @@ public abstract class Pathfinding {
 
     }
     float rotateTime;
-    float rotateTimer;
     float rotateAngle;
     public void Update_DoRotate(float deltaTime) {
         //if ((rotateTo + 0.1f <= rotation && rotateTo + 0.1f >= rotation)==false) {
@@ -216,12 +229,11 @@ public abstract class Pathfinding {
     /// </summary>
     /// <param name="angle"></param>
     internal void Rotate(float angle) {
-        rotateTimer = 0f;
         rotateAngle = angle;
         rotateTo = rotation + angle;
         rotateTime = Mathf.Abs(angle / rotationSpeed);
         //rotation %= 360;
-    }
+    } 
 
     public abstract void SetDestination(Tile end);
     public abstract void SetDestination(float x, float y);
@@ -252,7 +264,6 @@ public abstract class Pathfinding {
         if (World.Current.IsInTileAt(NextTile, X, Y)) {
             CurrTile = NextTile;
         }
-
         return temp;
     }
     private Vector3 AccurateMove(float deltaTime) {
@@ -323,6 +334,7 @@ public abstract class Pathfinding {
     protected void StartCalculatingThread() {
         IsDoneCalculating = false;
         IsAtDestination = false;
+
         Thread calcPath = new Thread(CalculatePath);
         calcPath.Start();
     }

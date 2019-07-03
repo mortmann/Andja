@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections.Generic;
 using System;
 using Newtonsoft.Json;
@@ -17,7 +17,7 @@ using Newtonsoft.Json;
 /// Mountain = you cant build anything here except mines(andso)
 /// </summary>
 public enum TileType { Ocean, Shore, Cliff, Water, Dirt, Grass, Stone, Desert, Steppe, Jungle, Mountain };
-public enum TileMark { None, Highlight, Dark, Reset }
+public enum TileMark { None, Highlight, Dark }
 
 [JsonObject(MemberSerialization.OptIn)]
 public class Tile : IComparable<Tile>, IEqualityComparer<Tile> {

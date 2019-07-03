@@ -47,16 +47,15 @@ public class Unit : IGEventable,IWarfare {
 
     [JsonPropertyAttribute] float aggroCooldownTimer = 1f;
 
-    [JsonPropertyAttribute] public RotatingList<Vector2> PatrolPositions;
-
     [JsonPropertyAttribute] Queue<Command> queuedCommands;
+    [JsonPropertyAttribute] public PatrolCommand patrolCommand;
 
     [JsonPropertyAttribute] public float tradeTime = 1.5f;
     [JsonPropertyAttribute] public float attackCooldownTimer = 1;
     [JsonPropertyAttribute] public Pathfinding pathfinding;
     [JsonPropertyAttribute] public Inventory inventory;
-    [JsonPropertyAttribute] public UnitDoModes _CurrentDoingMode = UnitDoModes.Idle;
-    [JsonPropertyAttribute] public UnitMainModes _CurrentMainMode = UnitMainModes.Idle;
+    [JsonPropertyAttribute] protected UnitDoModes _CurrentDoingMode = UnitDoModes.Idle;
+    [JsonPropertyAttribute] protected UnitMainModes _CurrentMainMode = UnitMainModes.Idle;
     public UnitDoModes CurrentDoingMode {
         get {
             return _CurrentDoingMode;
@@ -246,15 +245,19 @@ public class Unit : IGEventable,IWarfare {
     public Unit() {
         if (queuedCommands == null)
             queuedCommands = new Queue<Command>();
+        if (patrolCommand == null)
+            patrolCommand = new PatrolCommand();
     }
 
     public Unit(int id, UnitPrototypeData upd) {
         this.ID = id;
         this._prototypData = upd;
+        patrolCommand = new PatrolCommand();
     }
 
     public Unit(Unit unit, int playerNumber, Tile t) {
         this.ID = unit.ID;
+        patrolCommand = new PatrolCommand();
         this._prototypData = unit.Data;
         this.CurrentHealth = MaxHealth;
         this.playerNumber = playerNumber;
@@ -302,16 +305,19 @@ public class Unit : IGEventable,IWarfare {
                 else 
                 if(CurrentDoingMode != UnitDoModes.Fight) {
                     //is in range start fighting
-                    if (CurrentCommand is MoveCommand)
-                        queuedCommands.Dequeue();
+                    //if (CurrentCommand is MoveCommand)
+                    //    queuedCommands.Dequeue();
                     CurrentDoingMode = UnitDoModes.Fight;
                 }
                 break;
             case UnitMainModes.Patrol:
-                if (IsInRange() == false)
+                //UpdateAggroRange(deltaTime);
+                if (CurrentDoingMode != UnitDoModes.Move) {
                     CurrentDoingMode = UnitDoModes.Move;
-                else
-                    CurrentDoingMode = UnitDoModes.Fight;
+                    SetDestinationIfPossible(CurrentCommand.Position);
+                    //pathfinding.cbIsAtDestination = null;
+                    //pathfinding.cbIsAtDestination += OnArriveDestination;
+                }
                 break;
             case UnitMainModes.Capture:
                 if (IsInRange() == false)
@@ -327,7 +333,7 @@ public class Unit : IGEventable,IWarfare {
                     UpdateWorldMarket(deltaTime);
                 break;
             case UnitMainModes.PickUpCrate:
-                    TryToAddCrate(((PickUpCrateCommand)CurrentCommand).crate);
+                TryToAddCrate(((PickUpCrateCommand)CurrentCommand).crate);
                 break;
             case UnitMainModes.Escort:
                 Debug.LogError("Not implemented yet!");
@@ -349,6 +355,11 @@ public class Unit : IGEventable,IWarfare {
         }
         pathfinding.Update_DoRotate(deltaTime);
     }
+
+    private void SetDestinationIfPossible(Vector2 position) {
+        SetDestinationIfPossible(position.x, position.y);
+    }
+
     protected virtual void UpdateWorldMarket(float deltaTime) {
         CurrentMainMode = UnitMainModes.Idle;
     }
@@ -442,7 +453,7 @@ public class Unit : IGEventable,IWarfare {
         queuedCommands.Clear();
     }
 
-    public bool IsInRange() {
+    public virtual bool IsInRange() {
         if (CurrentTarget == null)
             return false;
         return (CurrentTarget.CurrentPosition - CurrentPosition).magnitude <= AttackRange;
@@ -528,8 +539,9 @@ public class Unit : IGEventable,IWarfare {
 
     protected void UpdateOnArriveDestinationPatrol() {
         //PATROL
-        Vector2 vec = PatrolPositions.First;
-        pathfinding.SetDestination(vec.x, vec.y);
+        patrolCommand.ChangeToNextPosition();
+        SetDestinationIfPossible(patrolCommand.Position);
+
     }
     public void IsInRangeOfWarehouse(OutputStructure ware) {
         if (ware == null) {
@@ -565,12 +577,28 @@ public class Unit : IGEventable,IWarfare {
         if (tile.Type == TileType.Mountain) {
             return;
         }
-        PatrolPositions.Add(new Vector2(targetX, targetY));
-        if (PatrolPositions.Count > 0)
+        if (patrolCommand == null)
+            patrolCommand = new PatrolCommand();
+        patrolCommand.AddPosition(new Vector2(targetX, targetY));
+        if (patrolCommand.PositionCount > 1) {
+            AddCommand(patrolCommand, true);
             CurrentMainMode = UnitMainModes.Patrol;
+        }
+    }
+    public void ResumePatrolCommand() {
+        if (CurrentMainMode == UnitMainModes.Patrol) {
+            return;
+        }
+        AddCommand(patrolCommand, true);
+    }
+    public void StopPatrolCommand() {
+        if (CurrentMainMode == UnitMainModes.Patrol) {
+            queuedCommands.Dequeue();
+        }
     }
     public void ClearPatrolCommands() {
-        PatrolPositions.Clear();
+        StopPatrolCommand();
+        patrolCommand.ClearPositions();
     }
     public bool GiveMovementCommand(Vector2 vec2, bool overrideCurrent = false) {
         return GiveMovementCommand(vec2.x, vec2.y, overrideCurrent);

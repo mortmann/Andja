@@ -158,8 +158,9 @@ public class SaveController : MonoBehaviour {
         EditorController.Instance.LoadIsland(GetIslandSave(name));
     }
 
-    public static string GetIslandSavePath(string name = null) {
-        string path = Path.Combine(ConstantPathHolder.ApplicationDataPath.Replace("/Assets", ""), "islands");
+    public static string GetIslandSavePath(string name = null, bool userCustom = false) {
+        string path = Path.Combine("Resources", "Islands");
+        // Path.Combine(ConstantPathHolder.ApplicationDataPath.Replace("/Assets", ""), "islands");
         if (name == null)
             return path;
         return Path.Combine(path, name);

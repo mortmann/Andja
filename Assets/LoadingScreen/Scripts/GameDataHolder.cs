@@ -21,7 +21,8 @@ public class GameDataHolder : MonoBehaviour {
     public int Width = 100;
     //if nothing is set take that what is set by the editor in unity
     //if there is nothing set it is null so new world
-    public string Loadsavegame => setloadsavegame ?? editorloadsavegame;
+    //only load the set value if not using ingame loading method
+    public string Loadsavegame => Application.isEditor && (setloadsavegame == null || setloadsavegame.Length==0)? editorloadsavegame : setloadsavegame;
     public string editorloadsavegame;
     public static string setloadsavegame;
 

@@ -888,7 +888,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 11473390, guid: dfbb72e7b75263b4da3c1b05eaa385c6, type: 2}
       propertyPath: editorloadsavegame
-      value: shoottest
+      value: 
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: dfbb72e7b75263b4da3c1b05eaa385c6, type: 2}

@@ -103,10 +103,11 @@ public class MenuController : MonoBehaviour {
     }
     public void QuitToMenu(bool force = false) {
         if (saved == false && force == false) {
+            _QuitToMenu = true;
             ShowWarning();
             return;
         }
-        ChangeToGameStateLoadScreen();
+        ChangeToMainMenuScreen();
     }
     public void QuitToDesktop(bool force = false) {
         if (saved == false && force == false) {
@@ -129,10 +130,6 @@ public class MenuController : MonoBehaviour {
     public GameObject dialog;
 
     public void ChangeToGameStateLoadScreen() {
-        if (saved == false) {
-            ShowWarning();
-            return;
-        }
         SceneManager.LoadScene("GameStateLoadingScreen");
     }
     public void ChangeToEditorLoadScreen() {
@@ -142,10 +139,6 @@ public class MenuController : MonoBehaviour {
         SceneManager.LoadScene("GameState");
     }
     public void ChangeToMainMenuScreen() {
-        if (saved == false) {
-            ShowWarning();
-            return;
-        }
         SceneManager.LoadScene("MainMenu");
     }
     public void ShowWarning() {
@@ -156,8 +149,12 @@ public class MenuController : MonoBehaviour {
             QuitToDesktop(true);
         else
             QuitToMenu(true);
-
+        _QuitToMenu = false;
     }
-
-
+    public void SaveDialogNoOption() {
+        _QuitToMenu = false;
+    }
+    public void OnDisable() {
+        _QuitToMenu = false;
+    }
 }

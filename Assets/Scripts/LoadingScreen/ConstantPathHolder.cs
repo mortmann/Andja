@@ -8,9 +8,10 @@ public class ConstantPathHolder : MonoBehaviour {
     // Use this for initialization
     void Awake() {
         ApplicationDataPath = Application.dataPath;
-
-        ClearConsole();
+        if(Application.isEditor)
+            ClearConsole();
     }
+
     static void ClearConsole() {
         var logEntries = System.Type.GetType("UnityEditor.LogEntries, UnityEditor.dll");
 

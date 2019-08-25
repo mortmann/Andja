@@ -55,6 +55,8 @@ public class ConsoleUI : MonoBehaviour {
     }
     public void ReadFromConsole() {
         string command = inputField.text;
+        if (command.Length < 0)
+            return;
         if (cheats_enabled == false) {
             return;
         }

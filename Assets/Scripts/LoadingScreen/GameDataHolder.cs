@@ -10,15 +10,12 @@ public enum Size { VerySmall, Small, Medium, Large, VeryLarge, Other }
 public class GameDataHolder : MonoBehaviour {
     public static GameDataHolder Instance;
     //TODO: make a way to set this either from world width/height or user
-    public Size WorldSize {
-        get { return Size.Medium; }
-    }
-    public Difficulty difficulty;
+    public static Size WorldSize = Size.Medium;
+    public Difficulty difficulty; //should be calculated
     public GameType saveFileType;
     public float playTime;
-
-    public int Height = 100;
-    public int Width = 100;
+    public static int Height = 100;
+    public static int Width = 100;
     //if nothing is set take that what is set by the editor in unity
     //if there is nothing set it is null so new world
     //only load the set value if not using ingame loading method
@@ -26,14 +23,14 @@ public class GameDataHolder : MonoBehaviour {
     public string editorloadsavegame;
     public static string setloadsavegame;
 
-    public int MapSeed;
+    public static int MapSeed;
 
-    public int[] bots; // this is for from being in anykind relevant so 
-    public int playerCount = 1;
-    public bool pirates = true;
-    public bool fire = true;
-    public bool[] catastrophics;
-    public List<MapGenerator.IslandGenInfo> islandGenInfos;
+    public static int bots; // this is far from being in anykind relevant so 
+    public static int playerCount = 1;
+    public static bool pirates = true;
+    public static bool fire = true;
+    public static bool[] disasters;
+    public static List<MapGenerator.IslandGenInfo> islandGenInfos;
     public string[] usedIslands; // this has to be changed to some generation from the random code or smth
 
     public void Start() {
@@ -42,6 +39,8 @@ public class GameDataHolder : MonoBehaviour {
             return;
         }
         Instance = this;
+
+        MapSeed = UnityEngine.Random.Range(0, int.MaxValue);
 
     }
     private void Update() {

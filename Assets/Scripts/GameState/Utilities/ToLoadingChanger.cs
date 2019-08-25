@@ -10,8 +10,14 @@ public class ToLoadingChanger : MonoBehaviour {
             Destroy(this);
             return;
         }
-        SceneManager.LoadScene("GameStateLoadingScreen");
+        else if(SceneManager.GetActiveScene().name == "GameState")
+            GameState();
     }
 
-
+    public void GameState() {
+        SceneManager.LoadScene("GameStateLoadingScreen");
+    }
+    public void Editor() {
+        SceneManager.LoadScene("EditorLoadingScreen");
+    }
 }

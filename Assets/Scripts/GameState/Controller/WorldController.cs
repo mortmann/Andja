@@ -150,7 +150,7 @@ public class WorldController : MonoBehaviour {
     
     public void LoadWorldData() {
         // Create a world from our save file data.
-        World.LoadData(MapGenerator.Instance.GetTiles(), GameDataHolder.Instance.Width, GameDataHolder.Instance.Height);
+        World.LoadData(MapGenerator.Instance.GetTiles(), GameDataHolder.Width, GameDataHolder.Height);
         List<MapGenerator.IslandStruct> structs = MapGenerator.Instance.GetIslandStructs();
         foreach (Island island in World.IslandList) {
             MapGenerator.IslandStruct thisStruct = structs.Find(s =>

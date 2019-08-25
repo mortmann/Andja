@@ -93,6 +93,10 @@
     <string>PauseMenu/%Menu/SoundPanel/Title/hover</string>
     <string>Info Canvas/UnitGroup/Units/%UnitHealth/Health/hover</string>
     <string>Info Canvas/Unit Panel/%UnitHealth/Health/hover</string>
+    <string>Layout/Prices/Sell/hover</string>
+    <string>Layout/Prices/Buy/hover</string>
+    <string>Health/hover</string>
+    <string>Health/hover</string>
     <string>%Menu/SoundPanel/Title/text</string>
     <string>%Menu/SoundPanel/Title/hover</string>
     <string>%Menu/NotSavedDialog/WarningTitle/text</string>
@@ -179,10 +183,6 @@
     <string>%Menu/GraphicsPanel/Content/ScrollRect/VerticalLayoutGroup/TextureQuality/Label/hover</string>
     <string>%Menu/GraphicsPanel/Content/ScrollRect/VerticalLayoutGroup/Vsync/Value/text</string>
     <string>%Menu/GraphicsPanel/Content/ScrollRect/VerticalLayoutGroup/Vsync/Value/hover</string>
-    <string>Layout/Prices/Sell/hover</string>
-    <string>Layout/Prices/Buy/hover</string>
-    <string>Health/hover</string>
-    <string>Health/hover</string>
     <string>OffWorldMarket/OFFWORLD-Panel/Delete/text</string>
     <string>OffWorldMarket/OFFWORLD-Panel/Delete/hover</string>
     <string>Right Canvas/CityInventory/CityInfoToggle/text</string>

@@ -14,9 +14,7 @@ public class InputFieldNumberRange : MonoBehaviour {
             Debug.LogWarning("Maximum is lower than Minimum! Please fix.");
         inputfield = GetComponent<InputField>();
         inputfield.onEndEdit.AddListener(CheckForNegative);
-
     }
-
     private void CheckForNegative(string text) {
         float value = 0;
         if(float.TryParse(text, out value) == false && text.Length>0) {
@@ -29,6 +27,7 @@ public class InputFieldNumberRange : MonoBehaviour {
         inputfield.text = text;
     }
     private void OnDisable() {
-        CheckForNegative(inputfield.text);
+        if(inputfield!=null)
+            CheckForNegative(inputfield.text);
     }
 }

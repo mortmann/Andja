@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Newtonsoft.Json;
 
 public class GameEventPrototypData : LanguageVariables {
-    public int ID = -1;
+    public string ID;
 
     public float probability = 10;
     public float minDuration = 50;
@@ -17,7 +17,7 @@ public class GameEventPrototypData : LanguageVariables {
 
 [JsonObject(MemberSerialization.OptIn)]
 public class GameEvent {
-    [JsonPropertyAttribute] public int ID;
+    [JsonPropertyAttribute] public string ID;
 
     protected GameEventPrototypData _PrototypData;
     public GameEventPrototypData PrototypData {

@@ -237,12 +237,12 @@ public class MapGenerator : MonoBehaviour {
                 tiles = islandGenerators[0].Tiles;
             }
 
-            for (int x = 0; x < Width; x++) {
-                for (int y = 0; y < Height; y++) {
-                    if (GetTileAt(x, y) == null)
-                        SetTileAt(x, y, new Tile(x, y));
-                }
-            }
+            //for (int x = 0; x < Width; x++) {
+            //    for (int y = 0; y < Height; y++) {
+            //        if (GetTileAt(x, y) == null)
+            //            SetTileAt(x, y, new Tile(x, y));
+            //    }
+            //}
             tilesPopulated = true;
             if(SaveController.IsLoadingSave==false)
                 WorldController.Instance.SetGeneratedWorld(GetWorld(), tileToStructure);

@@ -245,7 +245,7 @@ public class PrototypController : MonoBehaviour {
 
     private void ReadEventsFromXML() {
         XmlDocument xmlDoc = new XmlDocument(); // xmlDoc is the new xml document.
-        TextAsset ta = ((TextAsset)Resources.Load("XMLs/events", typeof(TextAsset)));
+        TextAsset ta = ((TextAsset)Resources.Load("XMLs/GameState/events", typeof(TextAsset)));
         if(ta == null) {
             Debug.LogError("Missing Events XML File -- This will cause a crash.");
             return;
@@ -267,7 +267,7 @@ public class PrototypController : MonoBehaviour {
 
     private void ReadOtherFromXML() {
         XmlDocument xmlDoc = new XmlDocument(); // xmlDoc is the new xml document.
-        TextAsset ta = ((TextAsset)Resources.Load("XMLs/other", typeof(TextAsset)));
+        TextAsset ta = ((TextAsset)Resources.Load("XMLs/GameState/other", typeof(TextAsset)));
         xmlDoc.LoadXml(ta.text); // load the file.
         foreach (XmlElement node in xmlDoc.SelectNodes("Other/PopulationLevel")) {
             PopulationLevelPrototypData plpd = new PopulationLevelPrototypData();
@@ -284,7 +284,7 @@ public class PrototypController : MonoBehaviour {
 
     private void ReadCombatFromXML() {
         XmlDocument xmlDoc = new XmlDocument(); // xmlDoc is the new xml document.
-        TextAsset ta = ((TextAsset)Resources.Load("XMLs/combat", typeof(TextAsset)));
+        TextAsset ta = ((TextAsset)Resources.Load("XMLs/GameState/combat", typeof(TextAsset)));
         xmlDoc.LoadXml(ta.text); // load the file.
         foreach (XmlElement node in xmlDoc.SelectNodes("combatTypes/armorType")) {
             ArmorType at = new ArmorType();
@@ -359,7 +359,7 @@ public class PrototypController : MonoBehaviour {
     ///////////////////////////////////////
     private void ReadItemsFromXML() {
         XmlDocument xmlDoc = new XmlDocument(); // xmlDoc is the new xml document.
-        TextAsset ta = ((TextAsset)Resources.Load("XMLs/items", typeof(TextAsset)));
+        TextAsset ta = ((TextAsset)Resources.Load("XMLs/GameState/items", typeof(TextAsset)));
         xmlDoc.LoadXml(ta.text); // load the file.
         foreach (XmlElement node in xmlDoc.SelectNodes("items/Item")) {
             ItemPrototypeData ipd = new ItemPrototypeData();
@@ -378,7 +378,7 @@ public class PrototypController : MonoBehaviour {
     }
     private void ReadUnitsFromXML() {
         XmlDocument xmlDoc = new XmlDocument(); // xmlDoc is the new xml document.
-        TextAsset ta = ((TextAsset)Resources.Load("XMLs/units", typeof(TextAsset)));
+        TextAsset ta = ((TextAsset)Resources.Load("XMLs/GameState/units", typeof(TextAsset)));
         xmlDoc.LoadXml(ta.text); // load the file.
         foreach (XmlElement node in xmlDoc.SelectNodes("units/unit")) {
             UnitPrototypeData upd = new UnitPrototypeData();
@@ -399,7 +399,7 @@ public class PrototypController : MonoBehaviour {
     }
     private void ReadFertilitiesFromXML() {
         XmlDocument xmlDoc = new XmlDocument(); // xmlDoc is the new xml document.
-        TextAsset ta = ((TextAsset)Resources.Load("XMLs/fertilities", typeof(TextAsset)));
+        TextAsset ta = ((TextAsset)Resources.Load("XMLs/GameState/fertilities", typeof(TextAsset)));
         xmlDoc.LoadXml(ta.text); // load the file.
         foreach (XmlElement node in xmlDoc.SelectNodes("fertilities/Fertility")) {
             int ID = int.Parse(node.GetAttribute("ID"));
@@ -426,7 +426,7 @@ public class PrototypController : MonoBehaviour {
     }
     private void ReadNeedsFromXML() {
         XmlDocument xmlDoc = new XmlDocument(); // xmlDoc is the new xml document.
-        TextAsset ta = ((TextAsset)Resources.Load("XMLs/needs", typeof(TextAsset)));
+        TextAsset ta = ((TextAsset)Resources.Load("XMLs/GameState/needs", typeof(TextAsset)));
         xmlDoc.LoadXml(ta.text); // load the file.
         foreach (XmlElement node in xmlDoc.SelectNodes("needs/NeedGroup")) {
             NeedGroupPrototypData ngpd = new NeedGroupPrototypData();
@@ -479,7 +479,7 @@ public class PrototypController : MonoBehaviour {
     }
     private void ReadStructuresFromXML() {
         XmlDocument xmlDoc = new XmlDocument();
-        TextAsset ta = ((TextAsset)Resources.Load("XMLs/structures", typeof(TextAsset)));
+        TextAsset ta = ((TextAsset)Resources.Load("XMLs/GameState/structures", typeof(TextAsset)));
         xmlDoc.LoadXml(ta.text); // load the file.
         ReadRoads(xmlDoc.SelectSingleNode("structures/roads"));
         ReadGrowables(xmlDoc.SelectSingleNode("structures/growables"));

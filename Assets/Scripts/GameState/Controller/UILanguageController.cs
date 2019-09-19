@@ -73,7 +73,7 @@ public class UILanguageController : MonoBehaviour {
     }
     public void LoadLocalization() {
         XmlDocument xmlDoc = new XmlDocument(); // xmlDoc is the new xml document.
-        TextAsset ta = ((TextAsset)Resources.Load("XMLs/localization-"+selectedLanguage, typeof(TextAsset)));
+        TextAsset ta = ((TextAsset)Resources.Load("XMLs/UILocalizations/localization-"+selectedLanguage, typeof(TextAsset)));
         xmlDoc.LoadXml(ta.text); // load the file.
         foreach (XmlElement node in xmlDoc.SelectNodes("UI/element")) {
             string path = node.GetAttribute("name") +"/";

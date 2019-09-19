@@ -30,6 +30,14 @@ public class LandTile : Tile {
         }
     }
 
+    [JsonPropertyAttribute] protected TileType _type = TileType.Ocean;
+    public override TileType Type {
+        get { return _type; }
+        set {
+            _type = value;
+        }
+    }
+
     protected Island _myIsland;
 
     public override Island MyIsland {
@@ -105,13 +113,13 @@ public class LandTile : Tile {
     private Action<Tile, NeedStructure, bool> cbNeedStructureChange;
     public LandTile() { }
     public LandTile(int x, int y) {
-        this.x = x;
-        this.y = y;
+        this.x = (ushort)x;
+        this.y = (ushort)y;
         _type = TileType.Ocean;
     }
     public LandTile(int x, int y, Tile t) {
-        this.x = x;
-        this.y = y;
+        this.x = (ushort)x;
+        this.y = (ushort)y;
         Elevation = t.Elevation;
         SpriteName = t.SpriteName;
         _type = t.Type;

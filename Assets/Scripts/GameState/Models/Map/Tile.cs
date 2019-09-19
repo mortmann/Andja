@@ -22,8 +22,8 @@ public enum TileMark { None, Highlight, Dark }
 [JsonObject(MemberSerialization.OptIn)]
 public class Tile : IComparable<Tile>, IEqualityComparer<Tile> {
 
-    [JsonPropertyAttribute] protected int x;
-    [JsonPropertyAttribute] protected int y;
+    [JsonPropertyAttribute] protected ushort x;
+    [JsonPropertyAttribute] protected ushort y;
     public int X {
         get {
             return x;
@@ -48,16 +48,13 @@ public class Tile : IComparable<Tile>, IEqualityComparer<Tile> {
 
     public Tile() { }
     public Tile(int x, int y) {
-        this.x = x;
-        this.y = y;
-        _type = TileType.Ocean;
+        this.x = (ushort)x;
+        this.y = (ushort)y;
     }
 
-    [JsonPropertyAttribute] protected TileType _type = TileType.Ocean;
-    public TileType Type {
-        get { return _type; }
+    public virtual TileType Type {
+        get { return TileType.Ocean; }
         set {
-            _type = value;
         }
     }
 

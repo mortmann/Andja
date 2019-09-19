@@ -93,9 +93,9 @@
     <string>PauseMenu/%Menu/SoundPanel/Title/hover</string>
     <string>Info Canvas/UnitGroup/Units/%UnitHealth/Health/hover</string>
     <string>Info Canvas/Unit Panel/%UnitHealth/Health/hover</string>
+    <string>Health/hover</string>
     <string>Layout/Prices/Sell/hover</string>
     <string>Layout/Prices/Buy/hover</string>
-    <string>Health/hover</string>
     <string>Health/hover</string>
     <string>%Menu/SoundPanel/Title/text</string>
     <string>%Menu/SoundPanel/Title/hover</string>

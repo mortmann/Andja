@@ -863,7 +863,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 224393287907558394}
-  - component: {fileID: 114185393037756710}
   - component: {fileID: 114259767437527252}
   m_Layer: 5
   m_Name: Settings
@@ -1447,6 +1446,7 @@ GameObject:
   - component: {fileID: 224415287104761066}
   - component: {fileID: 114964668912645314}
   - component: {fileID: 114776268693082772}
+  - component: {fileID: 114996347189183750}
   m_Layer: 5
   m_Name: Fire
   m_TagString: Untagged
@@ -2361,6 +2361,7 @@ GameObject:
   - component: {fileID: 224170794532626744}
   - component: {fileID: 114544785374744838}
   - component: {fileID: 114206949043163826}
+  - component: {fileID: 114513378533312820}
   m_Layer: 5
   m_Name: Width
   m_TagString: Untagged
@@ -2401,7 +2402,6 @@ GameObject:
   - component: {fileID: 225701545510643726}
   - component: {fileID: 114489535849548602}
   - component: {fileID: 114351987878640876}
-  - component: {fileID: 114838335935423616}
   m_Layer: 5
   m_Name: NewGame
   m_TagString: Untagged
@@ -3082,6 +3082,7 @@ GameObject:
   - component: {fileID: 224873588311368418}
   - component: {fileID: 114883673131758280}
   - component: {fileID: 114405454494278968}
+  - component: {fileID: 114635017025165910}
   m_Layer: 5
   m_Name: Height
   m_TagString: Untagged
@@ -3705,6 +3706,7 @@ GameObject:
   - component: {fileID: 224263014668825628}
   - component: {fileID: 114110533600533836}
   - component: {fileID: 114011371545061494}
+  - component: {fileID: 114627318704600726}
   m_Layer: 5
   m_Name: Seed
   m_TagString: Untagged
@@ -4152,6 +4154,7 @@ GameObject:
   - component: {fileID: 224278207074627872}
   - component: {fileID: 114534332077837760}
   - component: {fileID: 114699056808182990}
+  - component: {fileID: 114024305717466580}
   m_Layer: 5
   m_Name: Pirate
   m_TagString: Untagged
@@ -4676,6 +4679,19 @@ MonoBehaviour:
     m_VerticalOverflow: 0
     m_LineSpacing: 1
   m_Text: 
+--- !u!114 &114024305717466580
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1956697417786302}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ff7301457bbbd854bb6b1ac232575768, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Setting: 3
+  TextIsNumber: 0
 --- !u!114 &114026548145978664
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -6210,17 +6226,6 @@ MonoBehaviour:
   m_ChildForceExpandHeight: 1
   m_ChildControlWidth: 1
   m_ChildControlHeight: 1
---- !u!114 &114185393037756710
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1206948235771814}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c35d89de8c6fd7b4fb06b60b44dc913a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &114188321287430960
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -10517,7 +10522,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Minimum: 250
-  Maximum: 100000
+  Maximum: 10000
 --- !u!114 &114504420818510934
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -10622,6 +10627,19 @@ MonoBehaviour:
         m_CallState: 2
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
+--- !u!114 &114513378533312820
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1559254163875972}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ff7301457bbbd854bb6b1ac232575768, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Setting: 1
+  TextIsNumber: 1
 --- !u!114 &114518058795287214
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -10925,18 +10943,7 @@ MonoBehaviour:
       Culture=neutral, PublicKeyToken=null
   m_OnValueChanged:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 114838335935423616}
-        m_MethodName: SetHeight
-        m_Mode: 5
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
     m_TypeName: UnityEngine.UI.InputField+OnChangeEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
   m_CaretColor: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
@@ -11283,18 +11290,7 @@ MonoBehaviour:
       Culture=neutral, PublicKeyToken=null
   m_OnValueChanged:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 114838335935423616}
-        m_MethodName: SetPirate
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
     m_TypeName: UnityEngine.UI.InputField+OnChangeEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
   m_CaretColor: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
@@ -11913,7 +11909,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Minimum: 250
-  Maximum: 100000
+  Maximum: 10000
 --- !u!114 &114619238563633250
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -12117,6 +12113,19 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.ScrollRect+ScrollRectEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
+--- !u!114 &114627318704600726
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1842448215800140}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ff7301457bbbd854bb6b1ac232575768, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Setting: 0
+  TextIsNumber: 0
 --- !u!114 &114633252256170326
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -12166,6 +12175,19 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
+--- !u!114 &114635017025165910
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1712218179550724}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ff7301457bbbd854bb6b1ac232575768, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Setting: 2
+  TextIsNumber: 1
 --- !u!114 &114638822443047716
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -14139,17 +14161,6 @@ MonoBehaviour:
   m_FlexibleWidth: -1
   m_FlexibleHeight: -1
   m_LayoutPriority: 1
---- !u!114 &114838335935423616
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1564675005798316}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c35d89de8c6fd7b4fb06b60b44dc913a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &114839618920617616
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -16056,6 +16067,19 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
+--- !u!114 &114996347189183750
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1319511665135390}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ff7301457bbbd854bb6b1ac232575768, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Setting: 4
+  TextIsNumber: 0
 --- !u!114 &114996637877870442
 MonoBehaviour:
   m_ObjectHideFlags: 1

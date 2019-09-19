@@ -1,0 +1,56 @@
+<events>
+   <Effect ID="0">
+      <Name>
+         <entry lang="English">Fire</entry>
+         <entry lang="German">Feuer</entry>
+      </Name>
+      <unique>true</unique>
+      <nameOfVariable>CurrentHealth</nameOfVariable>
+      <change>-1.0</change>
+      <targets>
+         <Target>AllStructure</Target>
+      </targets>
+      <addType>Float</addType>
+      <modifierType>Update</modifierType>
+      <updateChange>Health</updateChange>
+      <classification>Negativ</classification>
+      <uiSpriteName>fire</uiSpriteName>
+      <onMapSpriteName>fire</onMapSpriteName>
+   </Effect>
+   <Effect ID="1">
+      <Name>
+         <entry lang="English">Illness</entry>
+         <entry lang="German">Krankheit</entry>
+      </Name>
+      <unique>true</unique>
+      <nameOfVariable>decreaseTime</nameOfVariable>
+      <change>2.0</change>
+      <targets>
+         <Target>HomeStructure</Target>
+      </targets>
+      <addType>Float</addType>
+      <modifierType>Multiplicative</modifierType>
+      <updateChange>None</updateChange>
+      <classification>Negativ</classification>
+      <uiSpriteName>illness</uiSpriteName>
+      <onMapSpriteName>illness</onMapSpriteName>
+   </Effect>
+   <GameEvent ID="0">
+      <Name>
+         <entry lang="English">Fire</entry>
+         <entry lang="German">Feuer</entry>
+      </Name>
+      <Description>
+         <entry lang="English">A building caught fire.</entry>
+         <entry lang="German">Ein Gebäude hat Feuer gefangen.</entry>
+      </Description>
+      <probability>10.0</probability>
+      <minDuration>50.0</minDuration>
+      <maxDuration>100.0</maxDuration>
+      <minRange>0.0</minRange>
+      <maxRange>0.0</maxRange>
+      <effects length="1">
+         <Effect>0</Effect>
+      </effects>
+   </GameEvent>
+</events>

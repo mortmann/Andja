@@ -3,16 +3,31 @@ using System.Collections.Generic;
 using UnityEngine;
 using Newtonsoft.Json;
 using System.IO;
+using System;
 
 public enum GameplaySetting { autorotate }
 public class GameplaySettings : MonoBehaviour {
     public static GameplaySettings Instance;
+
+    public static readonly string localizationFilePrefix = "localization-";
+    public static readonly string localizationFileType = ".xml";
+    public static readonly string localizationDirectory = ".xml";
+
+    List<string> Localizations;
     // Use this for initialization
     void Start() {
         Instance = this;
         gameplayOptions = new Dictionary<GameplaySetting, string>();
         gameplayOptionsToSave = new Dictionary<GameplaySetting, string>();
         ReadGameplayOption();
+        GetPossibleLocalizations();
+    }
+
+    private void GetPossibleLocalizations() {
+        Localizations = new List<string>();
+        //DirectoryInfo directory = Resources.get
+        //FileInfo[] taskFiles = directory.GetFiles(localizationFilePrefix + "*"+ localizationFileType);
+
     }
 
     Dictionary<GameplaySetting, string> gameplayOptions;

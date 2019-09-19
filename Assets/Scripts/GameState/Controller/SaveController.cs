@@ -14,12 +14,13 @@ public class SaveController : MonoBehaviour {
     public static bool IsLoadingSave = false;
     public bool IsDone = false;
     public float loadingPercantage = 0;
-    private const string metaFileEnding = ".meta";
+    private const string saveMetaFileEnding = ".meta";
     private const string saveFileEnding = ".sav";
+    public const string islandMetaFileEnding = ".islmeta"; // TODO: thing of a better extension
     public const string islandFileEnding = ".isl";
     public const string islandImageEnding = ".png";
     private static List<Worker> loadWorker;
-    public static bool DebugModeSave = true;
+    public static bool DebugModeSave = true; 
     public static string SaveName = "unsaved";
     //TODO autosave here
     const string SaveFileVersion = "0.1.4";
@@ -81,7 +82,7 @@ public class SaveController : MonoBehaviour {
 
     public void SaveIslandState(string name = "autosave") {
         string islandStatePath = System.IO.Path.Combine(GetIslandSavePath(name), name + islandFileEnding);
-        string finalMetaStatePath = System.IO.Path.Combine(GetIslandSavePath(name), name + metaFileEnding);
+        string finalMetaStatePath = System.IO.Path.Combine(GetIslandSavePath(name), name + saveMetaFileEnding);
         SaveName = name;
         SaveMetaData metaData = new SaveMetaData {
             safefileversion = islandSaveFileVersion,
@@ -121,7 +122,7 @@ public class SaveController : MonoBehaviour {
 
     public EditorController.SaveIsland GetIslandSave(string name) {
         string saveStatePath = System.IO.Path.Combine(GetIslandSavePath(name), name + islandFileEnding);
-        string finalMetaStatePath = System.IO.Path.Combine(GetIslandSavePath(name), name + metaFileEnding);
+        string finalMetaStatePath = System.IO.Path.Combine(GetIslandSavePath(name), name + islandMetaFileEnding);
 
         SaveMetaData metaData = JsonConvert.DeserializeObject<SaveMetaData>(File.ReadAllText(finalMetaStatePath), new JsonSerializerSettings {
             NullValueHandling = NullValueHandling.Ignore,
@@ -159,7 +160,7 @@ public class SaveController : MonoBehaviour {
     }
 
     public static string GetIslandSavePath(string name = null, bool userCustom = false) {
-        string path = Path.Combine(ConstantPathHolder.ApplicationDataPath.Replace("/Assets", ""), "Islands");
+        string path = Path.Combine(ConstantPathHolder.StreamingAssets, "Islands");
         if (name == null)
             return path;
         return Path.Combine(path, name);
@@ -215,7 +216,7 @@ public class SaveController : MonoBehaviour {
 
     public static Dictionary<KeyValuePair<Climate, Size>, List<string>> GetIslands() {
         Dictionary<KeyValuePair<Climate, Size>, List<string>> islands = new Dictionary<KeyValuePair<Climate, Size>, List<string>>();
-        string[] filePaths = System.IO.Directory.GetFiles(GetIslandSavePath(), "*" + metaFileEnding, SearchOption.AllDirectories);
+        string[] filePaths = System.IO.Directory.GetFiles(GetIslandSavePath(), "*" + islandMetaFileEnding, SearchOption.AllDirectories);
         foreach (string file in filePaths) {
             SaveMetaData metaData = null;
             try {
@@ -248,8 +249,10 @@ public class SaveController : MonoBehaviour {
 
     public static SaveMetaData[] GetMetaFiles(bool editor) {
         string path = editor ? GetIslandSavePath() : GetSaveGamesPath();
+        string metaEnding = editor ? islandMetaFileEnding : saveMetaFileEnding;
+
         List<SaveMetaData> saveMetaDatas = new List<SaveMetaData>();
-        foreach (string file in Directory.GetFiles(path, "*" + metaFileEnding)) {
+        foreach (string file in Directory.GetFiles(path, "*" + metaEnding)) {
             SaveMetaData metaData = null;
             try {
                 metaData = JsonConvert.DeserializeObject<SaveMetaData>(File.ReadAllText(file), new JsonSerializerSettings {
@@ -308,7 +311,7 @@ public class SaveController : MonoBehaviour {
             WC.IsPaused = true;
         }
         string saveStatePath = System.IO.Path.Combine(GetSaveGamesPath(), name + saveFileEnding);
-        string finalMetaStatePath = System.IO.Path.Combine(GetSaveGamesPath(), name + metaFileEnding);
+        string finalMetaStatePath = System.IO.Path.Combine(GetSaveGamesPath(), name + saveMetaFileEnding);
 
         SaveState savestate = new SaveState {
             gamedata = GDH.GetSaveGameData().Serialize(),
@@ -373,7 +376,7 @@ public class SaveController : MonoBehaviour {
         SaveName = name;
         //first pause the world so nothing changes and we can save an 		
         string finalSaveStatePath = System.IO.Path.Combine(GetSaveGamesPath(), name + saveFileEnding);
-        string finalMetaStatePath = System.IO.Path.Combine(GetSaveGamesPath(), name + metaFileEnding);
+        string finalMetaStatePath = System.IO.Path.Combine(GetSaveGamesPath(), name + saveMetaFileEnding);
         SaveMetaData metaData = JsonConvert.DeserializeObject<SaveMetaData>(File.ReadAllText(finalMetaStatePath), new JsonSerializerSettings {
             NullValueHandling = NullValueHandling.Ignore,
             PreserveReferencesHandling = PreserveReferencesHandling.Objects,

@@ -50,7 +50,7 @@ public class HomeStructure : TargetStructure {
     #endregion
 
 
-    public HomeStructure(int pid, HomePrototypeData proto) {
+    public HomeStructure(string pid, HomePrototypeData proto) {
         this.ID = pid;
         this._homeData = proto;
         people = 1;

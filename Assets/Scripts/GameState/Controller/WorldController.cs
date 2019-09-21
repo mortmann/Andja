@@ -162,7 +162,7 @@ public class WorldController : MonoBehaviour {
             if (thisStruct.Tiles == null)
                 Debug.LogError("thisStruct.Tiles is null " + island.StartTile.X + " " + island.StartTile.Y);
 
-            foreach(int id in thisStruct.Ressources.Keys) {
+            foreach(string id in thisStruct.Ressources.Keys) {
                 if (island.HasRessource(id))
                     continue;
                 island.Ressources[id] = thisStruct.Ressources[id];

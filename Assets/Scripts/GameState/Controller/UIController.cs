@@ -347,7 +347,7 @@ public class UIController : MonoBehaviour {
     public void CloseConsole() {
         consoleCanvas.SetActive(false);
     }
-    public static Sprite GetItemImageForID(int id) {
+    public static Sprite GetItemImageForID(string id) {
         if (ItemImages.ContainsKey(itemSpriteName + id) == false) {
             Debug.LogWarning("Item " + id + " is missing image!");
             return null;

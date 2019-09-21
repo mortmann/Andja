@@ -34,7 +34,7 @@ public class MarketStructure : OutputStructure, ICapturable {
     }
     #endregion
 
-    public MarketStructure(int id, MarketPrototypData MarketData) {
+    public MarketStructure(string id, MarketPrototypData MarketData) {
         this.ID = id;
         _marketData = MarketData;
     }

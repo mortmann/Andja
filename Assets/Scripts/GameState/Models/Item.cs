@@ -11,7 +11,7 @@ public class ItemPrototypeData : LanguageVariables {
 
 [JsonObject(MemberSerialization.OptIn)]
 public class Item {
-    [JsonPropertyAttribute] public int ID;
+    [JsonPropertyAttribute] public string ID;
     [JsonPropertyAttribute] public int count;
 
     protected ItemPrototypeData _prototypData;
@@ -33,11 +33,11 @@ public class Item {
             return Data.Name;
         }
     }
-    public Item(int id, int count = 0) {
+    public Item(string id, int count = 0) {
         this.ID = id;
         this.count = count;
     }
-    public Item(int id, ItemPrototypeData ipd) {
+    public Item(string id, ItemPrototypeData ipd) {
         this.ID = id;
         this._prototypData = ipd;
         this.count = 0;

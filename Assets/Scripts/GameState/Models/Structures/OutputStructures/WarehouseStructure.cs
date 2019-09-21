@@ -15,7 +15,7 @@ public class WarehouseStructure : MarketStructure {
     public List<Unit> inRangeUnits;
 
     #endregion
-    public WarehouseStructure(int id, MarketPrototypData mpd) {
+    public WarehouseStructure(string id, MarketPrototypData mpd) {
         this.ID = id;
         inRangeUnits = new List<Unit>();
         this._marketData = mpd;

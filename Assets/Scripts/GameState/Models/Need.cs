@@ -54,7 +54,7 @@ public class Need {
     }
 
     [JsonPropertyAttribute]
-    public int ID;
+    public string ID;
     [JsonPropertyAttribute]
     public List<float> lastNeededNotConsumed;
     [JsonPropertyAttribute]
@@ -62,7 +62,7 @@ public class Need {
     [JsonPropertyAttribute]
     public float notUsedOfTon = 0;
 
-    public Need(int id, NeedPrototypeData npd) : this() {
+    public Need(string id, NeedPrototypeData npd) : this() {
         this.ID = id;
         this._prototypData = npd;
     }

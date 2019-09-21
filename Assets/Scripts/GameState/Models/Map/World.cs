@@ -25,7 +25,7 @@ public class World : IGEventable {
         return PrototypController.Instance.GetCopieOfAllNeeds();
     }
     public IReadOnlyDictionary<Climate, List<Fertility>> allFertilities;
-    public IReadOnlyDictionary<int, Fertility> idToFertilities;
+    public IReadOnlyDictionary<string, Fertility> idToFertilities;
 
 
     protected bool[][] _tilesmap;
@@ -193,7 +193,7 @@ public class World : IGEventable {
         Island island = new Island(islandStruct.Tiles, islandStruct.climate) {
             myFertilities = new List<Fertility>(islandStruct.fertilities),
             Placement = new Vector2(islandStruct.x, islandStruct.y),
-            Ressources = new Dictionary<int, int>(islandStruct.Ressources)
+            Ressources = new Dictionary<string, int>(islandStruct.Ressources)
         };
         IslandList.Add(island);
     }
@@ -296,7 +296,7 @@ public class World : IGEventable {
         Tilesmap[t.X][t.Y] = b;
     }
 
-    public Fertility GetFertility(int ID) {
+    public Fertility GetFertility(string ID) {
         return idToFertilities[ID];
     }
 

@@ -12,7 +12,7 @@ public class Island : IGEventable {
 
     [JsonPropertyAttribute] public List<City> myCities;
     [JsonPropertyAttribute] public Climate myClimate;
-    [JsonPropertyAttribute] public Dictionary<int, int> Ressources;
+    [JsonPropertyAttribute] public Dictionary<string, int> Ressources;
     [JsonPropertyAttribute] public Tile StartTile;
 
     #endregion
@@ -57,7 +57,7 @@ public class Island : IGEventable {
     /// <param name="climate">Climate.</param>
     public Island(Tile startTile, Climate climate = Climate.Middle) {
         StartTile = startTile; // if it gets loaded the StartTile will already be set
-        Ressources = new Dictionary<int, int>();
+        Ressources = new Dictionary<string, int>();
         myCities = new List<City>();
 
         this.myClimate = climate;
@@ -70,20 +70,20 @@ public class Island : IGEventable {
         Setup();
     }
 
-    internal void RemoveRessources(int ressourceID, int count) {
+    internal void RemoveRessources(string ressourceID, int count) {
         if (Ressources.ContainsKey(ressourceID) == false)
             return;
         Ressources[ressourceID] -= count;
     }
 
-    internal bool HasRessource(int ressourceID) {
+    internal bool HasRessource(string ressourceID) {
         if (Ressources.ContainsKey(ressourceID) == false)
             return false;
         return Ressources[ressourceID] > 0;
     }
 
     public Island(Tile[] tiles, Climate climate = Climate.Middle) {
-        Ressources = new Dictionary<int, int>();
+        Ressources = new Dictionary<string, int>();
         myCities = new List<City>();
         this.myClimate = climate;
         SetTiles(tiles);

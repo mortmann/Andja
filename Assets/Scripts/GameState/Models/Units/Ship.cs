@@ -76,7 +76,7 @@ public class Ship : Unit {
     public override Unit Clone(int playerNumber, Tile t) {
         return new Ship(this, playerNumber, t);
     }
-    public Ship(int id, ShipPrototypeData spd) {
+    public Ship(string id, ShipPrototypeData spd) {
         this.ID = id;
         this._shipPrototypData = spd;
     }

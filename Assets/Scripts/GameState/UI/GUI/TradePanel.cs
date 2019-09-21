@@ -23,7 +23,7 @@ public class TradePanel : MonoBehaviour {
             GameObject.Destroy(t.gameObject);
         }
         intToTradeItemUI = new Dictionary<int, TradeItemUI>();
-        List<int> items = new List<int>(c.itemIDtoTradeItem.Keys);
+        List<string> items = new List<string>(c.itemIDtoTradeItem.Keys);
         for (int i = 0; i < 3; i++) {
             GameObject g = GameObject.Instantiate(ItemPrefab);
             g.transform.SetParent(TradeCanvas.transform);

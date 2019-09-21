@@ -132,7 +132,7 @@ public class EventController : MonoBehaviour {
     /// Random Player or ALL will be chosen depending on TargetTypes
     /// </summary>
     /// <param name="id"></param>
-    internal void TriggerEvent(int id) {
+    internal void TriggerEvent(string id) {
         GameEvent gameEvent = new GameEvent(id);
         TriggerEventForPlayer(gameEvent, PlayerController.Instance.GetRandomPlayer());
     }

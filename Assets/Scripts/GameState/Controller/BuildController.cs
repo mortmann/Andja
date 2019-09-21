@@ -34,7 +34,7 @@ public class BuildController : MonoBehaviour {
     public bool noBuildCost = false;
     public bool noUnitRestriction = false;
 
-    public IReadOnlyDictionary<int, Structure> StructurePrototypes {
+    public IReadOnlyDictionary<string, Structure> StructurePrototypes {
         get { return PrototypController.Instance.StructurePrototypes; }
     }
     public Structure toBuildStructure;
@@ -43,7 +43,7 @@ public class BuildController : MonoBehaviour {
     Action<City> cbCityCreated;
     Action<BuildStateModes> cbBuildStateChange;
 
-    public Dictionary<int, Item> GetCopieOfAllItems() {
+    public Dictionary<string, Item> GetCopieOfAllItems() {
         return PrototypController.Instance.GetCopieOfAllItems();
     }
 
@@ -65,9 +65,11 @@ public class BuildController : MonoBehaviour {
         }
     }
 
+    string settleStructure = null;
     public void SettleFromUnit(Unit buildUnit = null) {
-        //FIXME: get a way to get this id for warehouse
-        OnClick(6, buildUnit);
+        if (settleStructure == null)
+            settleStructure = PrototypController.Instance.GetFirstLevelStructureIDForStructureType(typeof(WarehouseStructure));
+        OnClick(settleStructure, buildUnit);
     }
     public void DestroyStructureOnTiles(IEnumerable<Tile> tiles, Player destroyPlayer) {
         foreach (Tile t in tiles) {
@@ -86,7 +88,7 @@ public class BuildController : MonoBehaviour {
             t.Structure.Destroy();
         }
     }
-    public void OnClick(int id, Unit buildInRangeUnit = null) {
+    public void OnClick(string id, Unit buildInRangeUnit = null) {
         if (StructurePrototypes.ContainsKey(id) == false) {
             Debug.LogError("BUTTON has ID that is not a structure prototypes ->o_O<- ");
             return;
@@ -259,7 +261,7 @@ public class BuildController : MonoBehaviour {
         }
         return false;
     }
-    public void BuildOnTile(int id, List<Tile> tiles, int playerNumber) {
+    public void BuildOnTile(string id, List<Tile> tiles, int playerNumber) {
         if (StructurePrototypes.ContainsKey(id) == false) {
             return;
         }

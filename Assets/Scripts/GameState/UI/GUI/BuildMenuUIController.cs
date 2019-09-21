@@ -11,7 +11,7 @@ public class BuildMenuUIController : MonoBehaviour {
     public GameObject populationButtonPrefab;
 
     public Dictionary<string, GameObject> nameToGOMap;
-    public Dictionary<string, int> nameToIDMap;
+    public Dictionary<string, string> nameToIDMap;
 
     public Dictionary<int, GameObject> popLevelToGO;
 
@@ -24,7 +24,7 @@ public class BuildMenuUIController : MonoBehaviour {
     // Use this for initialization
     void Start() {
         nameToGOMap = new Dictionary<string, GameObject>();
-        nameToIDMap = new Dictionary<string, int>();
+        nameToIDMap = new Dictionary<string, string>();
         buildController = BuildController.Instance;
         buttons = new List<string>[4];
 

@@ -9,7 +9,7 @@ public class CityInventoryUI : MonoBehaviour {
     public GameObject itemPrefab;
     public GameObject tradePanel;
 
-    Dictionary<int, ItemUI> itemToGO;
+    Dictionary<string, ItemUI> itemToGO;
     public City city;
 
     Action<Item> onItemPressed;
@@ -30,7 +30,7 @@ public class CityInventoryUI : MonoBehaviour {
         foreach (Transform child in contentCanvas.transform) {
             Destroy(child.gameObject);
         }
-        itemToGO = new Dictionary<int, ItemUI>();
+        itemToGO = new Dictionary<string, ItemUI>();
         foreach (Item item in city.inventory.Items.Values) {
             GameObject go_i = GameObject.Instantiate(itemPrefab);
             go_i.name = item.Name + " Item";
@@ -81,7 +81,7 @@ public class CityInventoryUI : MonoBehaviour {
         onItemPressed += (item) => tradePanel.GetComponent<TradePanel>().OnItemSelected(city.inventory.GetItemInInventoryClone(item));
     }
     public void OnInventoryChange(Inventory changedInv) {
-        foreach (int i in changedInv.Items.Keys) {
+        foreach (string i in changedInv.Items.Keys) {
             itemToGO[i].ChangeItemCount(city.inventory.Items[i].count);
             itemToGO[i].ChangeMaxValue(city.inventory.MaxStackSize);
         }

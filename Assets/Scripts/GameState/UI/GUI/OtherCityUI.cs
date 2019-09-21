@@ -18,7 +18,7 @@ public class OtherCityUI : MonoBehaviour {
         foreach (Transform item in ItemsCanvas.transform) {
             Destroy(item.gameObject);
         }
-        foreach (int itemID in city.itemIDtoTradeItem.Keys) {
+        foreach (string itemID in city.itemIDtoTradeItem.Keys) {
             TradeItem ti = city.itemIDtoTradeItem[itemID];
             GameObject g = Instantiate(TradeItemPrefab);
             g.transform.SetParent(ItemCanvas.transform);
@@ -35,11 +35,11 @@ public class OtherCityUI : MonoBehaviour {
                 tiui.Show(i, city.inventory.MaxStackSize, ti.selling);
             }
             tiui.UpdatePriceText(ti.price);
-            int id = itemID;
+            string id = itemID;
             tiui.AddListener((data) => { OnClickItemToTrade(id); });
         }
     }
-    public void OnClickItemToTrade(int itemID, int amount = 50) {
+    public void OnClickItemToTrade(string itemID, int amount = 50) {
         Unit u = city.myWarehouse.inRangeUnits.Find(x => x.playerNumber == PlayerController.currentPlayerNumber);
         if (u == null && u.IsShip == false) {
             Debug.Log("No Ship in Range");

@@ -9,7 +9,7 @@ public class Combat {
     public List<ArmorType> armorTypes;
 
     public class DamageType : LanguageVariables {
-        public int ID;
+        public string ID;
         public String spriteBaseName;
         public Dictionary<ArmorType, float> damageMultiplier;
 
@@ -24,7 +24,7 @@ public class Combat {
 
     }
     public class ArmorType : LanguageVariables {
-        public int ID;
+        public string ID;
         public String spriteBaseName;
     }
 }

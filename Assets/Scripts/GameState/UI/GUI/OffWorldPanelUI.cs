@@ -126,7 +126,7 @@ public class OffWorldPanelUI : MonoBehaviour {
         }
         for (int i = 0; i < ship.inventory.NumberOfSpaces; i++) {
             AddItemPrefabTo(toBuy.transform);
-            Item item = ship.inventory.GetItemWithNRinItems(i);
+            Item item = ship.inventory.GetItemInSpace(i);
             GameObject g = GameObject.Instantiate(itemPrefab);
             g.GetComponent<ItemUI>().SetItem(item, ship.inventory.MaxStackSize);
             g.transform.SetParent(onShip.transform);

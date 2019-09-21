@@ -4,12 +4,12 @@ using Newtonsoft.Json;
 
 [JsonObject(MemberSerialization.OptIn)]
 public class TradeItem {
-    [JsonPropertyAttribute] public int ItemId;
+    [JsonPropertyAttribute] public string ItemId;
     [JsonPropertyAttribute] public int count;
     [JsonPropertyAttribute] public int price;
     [JsonPropertyAttribute] public bool selling;
 
-    public TradeItem(int ItemId, int count, int price, bool selling) {
+    public TradeItem(string ItemId, int count, int price, bool selling) {
         this.ItemId = ItemId;
         this.count = count;
         this.price = price;

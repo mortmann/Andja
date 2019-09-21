@@ -18,7 +18,7 @@ public class EditorController : MonoBehaviour {
 
     public World world;
     Dictionary<Tile, Structure> tileToStructure;
-    Dictionary<int, int[]> Ressources;
+    Dictionary<string, int[]> Ressources;
 
 
     public static int width = 100;
@@ -53,7 +53,7 @@ public class EditorController : MonoBehaviour {
             Debug.LogError("There should never be two world controllers.");
         }
         tileToStructure = new Dictionary<Tile, Structure>();
-        Ressources = new Dictionary<int, int[]>();
+        Ressources = new Dictionary<string, int[]>();
         IsEditor = true;
         Instance = this;
         new InputHandler();
@@ -320,7 +320,7 @@ public class EditorController : MonoBehaviour {
         if (structure is GrowableStructure)
             ((GrowableStructure)structure).currentStage = age;
     }
-    public void SetStructure(int id) {
+    public void SetStructure(string id) {
         structure = PrototypController.Instance.StructurePrototypes[id];
     }
     public void RegisterOnStructureCreated(Action<Structure> strs) {
@@ -336,7 +336,7 @@ public class EditorController : MonoBehaviour {
         cbStructureDestroyed -= strs;
     }
     
-    internal void OnRessourceChange(int ID, int amount, bool lower) {
+    internal void OnRessourceChange(string ID, int amount, bool lower) {
         if (Ressources.ContainsKey(ID) == false)
             Ressources[ID] = new int[2];
         int index = lower ? 0 : 1;
@@ -384,20 +384,20 @@ public class EditorController : MonoBehaviour {
         [JsonPropertyAttribute] public Climate climate;
         [JsonPropertyAttribute(TypeNameHandling = TypeNameHandling.Auto)] public List<Structure> structures;
         [JsonPropertyAttribute(TypeNameHandling = TypeNameHandling.None)] public Tile[] tiles;
-        [JsonPropertyAttribute] public Dictionary<int, int[]> Ressources;
+        [JsonPropertyAttribute] public Dictionary<string, int[]> Ressources;
 
         [JsonIgnore] public string Name; // for loading in image or similar things
         public SaveIsland() {
 
         }
-        public SaveIsland(Dictionary<Tile, Structure> tileToStructure, Tile[] tiles, int Width, int Height, Climate climate, Dictionary<int, int[]> Ressources) {
+        public SaveIsland(Dictionary<Tile, Structure> tileToStructure, Tile[] tiles, int Width, int Height, Climate climate, Dictionary<string, int[]> Ressources) {
             this.Width = Width;
             this.Height = Height;
             this.climate = climate;
             this.structures = new List<Structure>(tileToStructure.Values);
             this.tiles = tiles;
-            this.Ressources = new Dictionary<int, int[]>();
-            foreach(int id in Ressources.Keys) {
+            this.Ressources = new Dictionary<string, int[]>();
+            foreach(string id in Ressources.Keys) {
                 if (Ressources[id][1] <= 0)
                     continue;
                 this.Ressources[id] = Ressources[id];

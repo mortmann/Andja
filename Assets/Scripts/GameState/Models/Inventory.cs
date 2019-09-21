@@ -8,7 +8,7 @@ public class Inventory {
     [JsonPropertyAttribute] public int MaxStackSize { get; protected set; }
 
     [JsonPropertyAttribute]
-    public Dictionary<int, Item> Items {
+    public Dictionary<string, Item> Items {
         get;
         protected set;
     }
@@ -31,11 +31,8 @@ public class Inventory {
     /// <param name="numberOfSpaces"></param>
 	public Inventory(int numberOfSpaces = -1, int maxStackSize = 50) {
         this.MaxStackSize = maxStackSize;
-        Items = new Dictionary<int, Item>();
-        if (numberOfSpaces == -1) {
-            //for cities
-            Items = BuildController.Instance.GetCopieOfAllItems();
-        }
+        Items = new Dictionary<string, Item>();
+        
         this.NumberOfSpaces = numberOfSpaces;
         RegisterOnChangedCallback(OnMeChanged);
     }
@@ -51,7 +48,7 @@ public class Inventory {
     /// <param name="item"></param>
     /// <returns></returns>
 	public virtual int AddItem(Item toAdd) {
-        if (toAdd.ID <= -1) {
+        if (String.IsNullOrEmpty(toAdd.ID)) {
             Debug.LogError("ITEM ID is smaller or equal to -1");
             return 0;
         }
@@ -73,8 +70,8 @@ public class Inventory {
             Item temp = toAdd.Clone();
             amount += MoveAmountFromItemToInv(toAdd, temp);
             for (int i = 0; i < NumberOfSpaces; i++) {
-                if (Items.ContainsKey(i) == false) {
-                    Items.Add(i, temp);
+                if (Items.ContainsKey("" + i) == false) {
+                    Items.Add("" + i, temp);
                     break;
                 }
             }
@@ -91,19 +88,33 @@ public class Inventory {
         return amountInInventory / (float)(NumberOfSpaces * MaxStackSize);
     }
 
-    public virtual int GetPlaceInItems(Item item) {
+    protected virtual string GetPlaceInItems(Item item) {
         for (int i = 0; i < NumberOfSpaces; i++) {
-            if (Items.ContainsKey(i) && Items[i].ID == item.ID) {
-                return i;
+            if (Items.ContainsKey("" + i) && Items["" + i].ID == item.ID) {
+                return "" + i;
             }
         }
-        return -1;
+        return "";
     }
-    public Item GetItemWithNRinItems(int i) {
-        if (Items.ContainsKey(i) == false) {
+    /// <summary>
+    /// Dont use this with CITY Inventory
+    /// </summary>
+    /// <param name="i"></param>
+    /// <returns></returns>
+    public bool HasItemInSpace(int i) {
+        return Items.ContainsKey("" + i);
+    }
+
+    /// <summary>
+    /// Dont use this with CITY Inventory
+    /// </summary>
+    /// <param name="i"></param>
+    /// <returns></returns>
+    public Item GetItemInSpace(int i) {
+        if (Items.ContainsKey(""+ i) == false) {
             return null;
         }
-        return Items[i];
+        return Items["" +i];
     }
 
     public Item GetAllOfItem(Item item) {
@@ -148,8 +159,8 @@ public class Inventory {
     }
 
     protected Item GetFirstItemInInventory(Item item) {
-        int pos = GetPlaceInItems(item);
-        if (pos < 0) {
+        string pos = GetPlaceInItems(item);
+        if (String.IsNullOrEmpty(pos)) {
             return null;
         }
         return Items[pos];
@@ -310,7 +321,7 @@ public class Inventory {
         //get all items in a list
         List<Item> temp = new List<Item>(Items.Values);
         //reset the inventory here
-        Items = new Dictionary<int, Item>();
+        Items = new Dictionary<string, Item>();
         cbInventoryChanged?.Invoke(this);
         return temp.ToArray();
     }
@@ -325,8 +336,8 @@ public class Inventory {
         }
         if (i.count == 0) {
             for (int d = 0; d < Items.Count; d++) {
-                if (Items[d].count == 0) {
-                    Items.Remove(d);
+                if (Items[""+d].count == 0) {
+                    Items.Remove(""+d);
                 }
             }
         }
@@ -366,7 +377,7 @@ public class Inventory {
         }
         return itemlist.ToArray();
     }
-    protected virtual Item GetItemWithID(int id) {
+    protected virtual Item GetItemWithID(string id) {
         Item i = null;
         foreach (Item item in Items.Values) {
             if (item.ID == id) {
@@ -380,7 +391,7 @@ public class Inventory {
         }
         return i;
     }
-    public virtual Item GetItemWithIDClone(int id) {
+    public virtual Item GetItemWithIDClone(string id) {
         Item i = null;
         foreach (Item item in Items.Values) {
             if (item.ID == id) {
@@ -406,7 +417,7 @@ public class Inventory {
             AddItem(item);
         }
     }
-    public virtual bool ContainsItemWithID(int id) {
+    public virtual bool ContainsItemWithID(string id) {
         foreach (Item item in Items.Values) {
             if (item.ID == id) {
                 return true;

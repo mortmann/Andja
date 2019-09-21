@@ -94,7 +94,7 @@ public class ProductionStructure : OutputStructure {
     //		}
     //	}
 
-    public ProductionStructure(int id, ProductionPrototypeData ProductionData) {
+    public ProductionStructure(string id, ProductionPrototypeData ProductionData) {
         this.ID = id;
         this._productionData = ProductionData;
     }
@@ -236,7 +236,7 @@ public class ProductionStructure : OutputStructure {
     public override Item[] GetRequieredItems(OutputStructure str, Item[] items) {
         List<Item> all = new List<Item>();
         for (int i = MyIntake.Length - 1; i >= 0; i--) {
-            int id = MyIntake[i].ID;
+            string id = MyIntake[i].ID;
             for (int s = 0; s < items.Length; s++) {
                 if (items[i].ID == id) {
                     Item item = items[i].Clone();

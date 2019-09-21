@@ -41,7 +41,7 @@ public class FarmStructure : OutputStructure {
             return Mathf.Round(((float)OnRegisterCallbacks / (float)myRangeTiles.Count) * 1000) / 10f;
         }
     }
-    public FarmStructure(int id, FarmPrototypData fpd) {
+    public FarmStructure(string id, FarmPrototypData fpd) {
         _farmData = fpd;
         this.ID = id;
     }

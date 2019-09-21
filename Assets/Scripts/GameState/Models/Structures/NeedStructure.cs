@@ -8,11 +8,11 @@ public class NeedStructure : TargetStructure {
     #endregion
     #region RuntimeOrOther
     #endregion
-    public NeedStructure(int pid, StructurePrototypeData spd) {
+    public NeedStructure(string pid, StructurePrototypeData spd) {
         this.ID = pid;
         this._prototypData = spd;
     }
-    public NeedStructure(int pid) {
+    public NeedStructure(string pid) {
         this.ID = pid;
     }
     public NeedStructure(NeedStructure b) {

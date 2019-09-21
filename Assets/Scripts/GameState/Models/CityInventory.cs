@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Newtonsoft.Json;
-
+using System;
 [JsonObject(MemberSerialization.OptIn)]
 public class CityInventory : Inventory {
 
@@ -14,8 +14,8 @@ public class CityInventory : Inventory {
 
 
     public override int AddItem(Item toAdd) {
-        if (toAdd.ID <= -1) {
-            Debug.LogError("ITEM ID is smaller or equal to -1");
+        if (String.IsNullOrEmpty( toAdd.ID )) {
+            Debug.LogError("ITEM ID is empty or null");
             return 0;
         }
         Item inInv = GetItemWithID(toAdd.ID);
@@ -26,19 +26,19 @@ public class CityInventory : Inventory {
         }
         return MoveAmountFromItemToInv(toAdd, inInv);
     }
-    public override int GetPlaceInItems(Item item) {
+    protected override string GetPlaceInItems(Item item) {
         return item.ID;
     }
     public override int GetTotalAmountFor(Item item) {
         return GetAmountForItem(item);
     }
-    protected override Item GetItemWithID(int id) {
+    protected override Item GetItemWithID(string id) {
         return Items[id];
     }
-    public override Item GetItemWithIDClone(int id) {
+    public override Item GetItemWithIDClone(string id) {
         return Items[id].CloneWithCount();
     }
-    public override bool ContainsItemWithID(int id) {
+    public override bool ContainsItemWithID(string id) {
         return true;
     }
     protected override int RemainingSpaceForItem(Item item) {

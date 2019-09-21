@@ -9,7 +9,7 @@ public class FertilityPrototypeData : LanguageVariables {
 
 [JsonObject(MemberSerialization.OptIn)]
 public class Fertility : IComparable<Fertility>, IEqualityComparer<Fertility> {
-    public int ID;
+    [JsonPropertyAttribute] public string ID;
 
     protected FertilityPrototypeData _prototypData;
     public FertilityPrototypeData Data {
@@ -31,7 +31,7 @@ public class Fertility : IComparable<Fertility>, IEqualityComparer<Fertility> {
 
     }
 
-    public Fertility(int ID, FertilityPrototypeData fpd) {
+    public Fertility(string ID, FertilityPrototypeData fpd) {
         this.ID = ID;
         this._prototypData = fpd;
     }

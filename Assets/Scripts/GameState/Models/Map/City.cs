@@ -17,7 +17,7 @@ public class City : IGEventable {
     /// bool = true -> SELL
     /// 	 = false -> BUY
     /// </summary>
-    [JsonPropertyAttribute] public Dictionary<int, TradeItem> itemIDtoTradeItem;
+    [JsonPropertyAttribute] public Dictionary<string, TradeItem> itemIDtoTradeItem;
     [JsonPropertyAttribute] private string _name = "";
 
     [JsonPropertyAttribute] public Island island;
@@ -85,7 +85,7 @@ public class City : IGEventable {
 
         MyTiles = new HashSet<Tile>();
 
-        itemIDtoTradeItem = new Dictionary<int, TradeItem>();
+        itemIDtoTradeItem = new Dictionary<string, TradeItem>();
         myStructures = new List<Structure>();
         inventory = new CityInventory();
         _name = "<City>" + UnityEngine.Random.Range(0, 1000);
@@ -359,7 +359,7 @@ public class City : IGEventable {
     /// <param name="player">Player.</param>
     /// <param name="ship">Ship.</param>
     /// <param name="amount">Amount.</param>
-    public void BuyFromCity(int itemID, Player player, Ship ship, int amount = 50) {
+    public void BuyFromCity(string itemID, Player player, Ship ship, int amount = 50) {
         if (itemIDtoTradeItem.ContainsKey(itemID) == false) {
             return;
         }
@@ -384,7 +384,7 @@ public class City : IGEventable {
     /// <param name="player">Player.</param>
     /// <param name="ship">Ship.</param>
     /// <param name="amount">Amount.</param>
-    public void SellToCity(int itemID, Player player, Ship ship, int amount = 50) {
+    public void SellToCity(string itemID, Player player, Ship ship, int amount = 50) {
         if (itemIDtoTradeItem.ContainsKey(itemID) == false) {
             return;
         }
@@ -428,7 +428,7 @@ public class City : IGEventable {
     public void ChangeTradeItemAmount(Item item) {
         itemIDtoTradeItem[item.ID].count = item.count;
     }
-    public void ChangeTradeItemPrice(int id, int price) {
+    public void ChangeTradeItemPrice(string id, int price) {
         itemIDtoTradeItem[id].price = price;
     }
     public int GetAmountForThis(Item item, float amount) {

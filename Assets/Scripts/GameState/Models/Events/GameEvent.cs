@@ -11,7 +11,7 @@ public class GameEventPrototypData : LanguageVariables {
     public float minRange = 50;
     public float maxRange = 100;
     public Effect[] effects;
-    public Dictionary<Target, List<int>> specialRange;
+    public Dictionary<Target, List<string>> specialRange;
 
 }
 
@@ -28,7 +28,7 @@ public class GameEvent {
             return _PrototypData;
         }
     }
-    public Dictionary<Target, List<int>> SpecialRange => PrototypData.specialRange;
+    public Dictionary<Target, List<string>> SpecialRange => PrototypData.specialRange;
 
     public EventType EventType { protected set; get; }
 
@@ -69,7 +69,7 @@ public class GameEvent {
     public GameEvent() {
 
     }
-    public GameEvent(int id) {
+    public GameEvent(string id) {
         ID = id;
     }
     public GameEvent(GameEvent ge) {

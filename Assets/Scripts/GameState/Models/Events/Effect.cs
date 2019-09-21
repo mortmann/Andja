@@ -30,7 +30,7 @@ public class EffectPrototypeData : LanguageVariables {
 [JsonObject(MemberSerialization.OptIn)]
 public class Effect {
 
-    public int ID;
+    [JsonPropertyAttribute] public string ID;
     public InfluenceTyp InfluenceTyp { protected set; get; }
     public InfluenceRange InfluenceRange { protected set; get; }
     public EffectTypes AddType => EffectPrototypData.addType;
@@ -71,7 +71,7 @@ public class Effect {
     public Effect() {
 
     }
-    public Effect(int ID) {
+    public Effect(string ID) {
         this.ID = ID;
     }
     public Effect(Effect e) {

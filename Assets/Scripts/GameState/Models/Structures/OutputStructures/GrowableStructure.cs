@@ -40,7 +40,7 @@ public class GrowableStructure : OutputStructure {
 
     #endregion
 
-    public GrowableStructure(int id, GrowablePrototypeData _growableData) {
+    public GrowableStructure(string id, GrowablePrototypeData _growableData) {
         this.ID = id;
         this._growableData = _growableData;
     }

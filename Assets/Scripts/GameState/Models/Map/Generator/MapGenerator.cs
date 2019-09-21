@@ -421,7 +421,7 @@ public class MapGenerator : MonoBehaviour {
         public Climate climate;
         public List<Fertility> fertilities;
         public Dictionary<Tile, Structure> tileToStructure;
-        public Dictionary<int, int> Ressources;
+        public Dictionary<string, int> Ressources;
 
         public IslandStruct(int width, int height, Tile[] tiles, Climate climate, List<Fertility> list, Dictionary<int, int> Ressources) : this() {
             Width = width;
@@ -438,9 +438,9 @@ public class MapGenerator : MonoBehaviour {
             Height = save.Height;
             Tiles = save.tiles;
             this.climate = save.climate;
-            Ressources = new Dictionary<int, int>();
+            Ressources = new Dictionary<string, int>();
             if (save.Ressources != null) {
-                foreach (int id in save.Ressources.Keys) {
+                foreach (string id in save.Ressources.Keys) {
                     Ressources[id] = Random.Range(save.Ressources[id][0], save.Ressources[id][1] + 1);
                 }
             }

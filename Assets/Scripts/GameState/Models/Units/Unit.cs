@@ -40,7 +40,7 @@ public class Unit : IGEventable,IWarfare {
 
     //save these Variables
     #region Serialize
-    [JsonPropertyAttribute] public int ID;
+    [JsonPropertyAttribute] public string ID;
     [JsonPropertyAttribute] public int playerNumber;
     [JsonPropertyAttribute] protected string _UserSetName;
     [JsonPropertyAttribute] protected float _currHealth;
@@ -239,7 +239,7 @@ public class Unit : IGEventable,IWarfare {
     public List<Command> QueuedCommands => queuedCommands == null ? null : new List<Command>(queuedCommands);
 
 
-    public override int GetID() { return ID; } // only needs to get changed WHEN there is diffrent ids
+    public override string GetID() { return ID; } // only needs to get changed WHEN there is diffrent ids
 
     [JsonConstructor]
     public Unit() {
@@ -249,7 +249,7 @@ public class Unit : IGEventable,IWarfare {
             patrolCommand = new PatrolCommand();
     }
 
-    public Unit(int id, UnitPrototypeData upd) {
+    public Unit(string id, UnitPrototypeData upd) {
         this.ID = id;
         this._prototypData = upd;
         patrolCommand = new PatrolCommand();

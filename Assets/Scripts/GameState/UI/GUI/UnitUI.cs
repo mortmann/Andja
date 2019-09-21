@@ -164,15 +164,15 @@ public class UnitUI : MonoBehaviour {
         GameObject go = GameObject.Instantiate(itemPrefab);
         go.transform.SetParent(content.transform);
         ItemUI iui = go.GetComponent<ItemUI>();
-        if (inv.Items.ContainsKey(i) == false) {
+        if (inv.HasItemInSpace(i) == false) {
             go.name = "item " + i;
             iui.SetItem(null, inv.MaxStackSize);
             itemToGO.Add(i, iui);
             return;
         }
-        Item item = inv.Items[i];
+        Item item = inv.GetItemInSpace(i);
         go.name = "item " + i;
-        if (item.ID != -1) {
+        if (item.ID!=null||item.ID.Length==0) {
             iui.SetItem(item, inv.MaxStackSize);
             iui.AddClickListener((data) => { OnItemClick(i); });
             //			EventTrigger trigger = go.GetComponent<EventTrigger> ();
@@ -186,7 +186,7 @@ public class UnitUI : MonoBehaviour {
     }
     void OnItemClick(int clicked) {
         Debug.Log("clicked " + clicked);
-        unit.ToTradeItemToNearbyWarehouse(inv.Items[clicked]);
+        unit.ToTradeItemToNearbyWarehouse(inv.GetItemInSpace(clicked));
     }
     public void OnInvChange(Inventory changedInv) {
         foreach (int i in itemToGO.Keys) {

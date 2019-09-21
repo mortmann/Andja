@@ -189,8 +189,8 @@ public class ConsoleController : MonoBehaviour {
         if (parameters.Length < 1) {
             return false;
         }
-        int id = -1;
-        if (int.TryParse(parameters[1], out id) == false) {
+        string id = parameters[1];
+        if (PrototypController.Instance.GameEventPrototypeDatas.ContainsKey(id) == false) {
             return false;
         }
         switch (parameters[0]) {
@@ -217,9 +217,9 @@ public class ConsoleController : MonoBehaviour {
         //spawn unit UID playerid 
         //spawn building BID playerid --> not currently implementing
         int pos = 1;
-        int id = -1000;
+        string id = parameters[pos];
         // anything can thats not a number can be the current player
-        if (int.TryParse(parameters[pos], out id) == false) {
+        if (PrototypController.Instance.AllItems.ContainsKey(id) == false) {
             return false;
         }
         pos++;
@@ -406,8 +406,8 @@ public class ConsoleController : MonoBehaviour {
             case "item":
                 return ChangeItemInInventory(parameters.Skip(1).ToArray(), u.inventory);
             case "build":
-                u.inventory.AddItem(new Item(1, 50));
-                u.inventory.AddItem(new Item(2, 50));
+                u.inventory.AddItem(new Item("wood", 50));
+                u.inventory.AddItem(new Item("tools", 50));
                 return true;
             case "kill":
                 u.Destroy();
@@ -424,20 +424,17 @@ public class ConsoleController : MonoBehaviour {
         return false;
     }
     public bool ChangeItemInInventory(string[] parameters, Inventory inv) {
-        int id = -1;
+        string id = null;
         int amount = 0; // amount can be plus for add or negative for remove
         if (parameters.Length != 2) {
             return false;
         }
-        if (int.TryParse(parameters[0], out id) == false) {
+        id = parameters[0];
 
-            return false;
-        }
         if (int.TryParse(parameters[1], out amount) == false) {
-
             return false;
         }
-        if (id < PrototypController.StartID) {
+        if (PrototypController.Instance.AllItems.ContainsKey(id) == false) {
             return false;
         }
         Item i = new Item(id, Mathf.Abs(amount));

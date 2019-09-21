@@ -22,7 +22,7 @@ public class RoadStructure : Structure {
 
     Action<RoadStructure> cbRoadChanged;
 
-    public RoadStructure(int ID, StructurePrototypeData spd) {
+    public RoadStructure(string ID, StructurePrototypeData spd) {
         this.ID = ID;
         this._prototypData = spd;
     }

@@ -45,7 +45,7 @@ public class MilitaryStructure : TargetStructure, IWarfare {
         return City.HasEnoughOfItems(u.BuildingItems);
     }
 
-    public MilitaryStructure(int iD, MilitaryStructurePrototypeData mpd) {
+    public MilitaryStructure(string iD, MilitaryStructurePrototypeData mpd) {
         ID = iD;
         this._militaryStructureData = mpd;
     }

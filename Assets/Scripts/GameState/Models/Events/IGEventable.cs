@@ -41,7 +41,7 @@ public abstract class IGEventable {
             return _targetGroup;
         }
     }
-    public virtual int GetID() { return 0; } // only needs to get changed WHEN there is diffrent ids
+    public virtual string GetID() { return null; } // only needs to get changed WHEN there is diffrent ids
     public bool HasNegativEffect { get; protected set; }
 
     /// <summary>
@@ -154,7 +154,7 @@ public abstract class IGEventable {
         if (effect.IsNegativ)
             HasNegativEffect = true;
     }
-    internal Effect GetEffect(int ID) {
+    internal Effect GetEffect(string ID) {
         return Effects.Find(x => x.ID == ID);
     }
 

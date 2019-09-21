@@ -51,7 +51,7 @@ public class ServiceStructure : Structure {
         BaseCopyData(s);
     }
 
-    public ServiceStructure(int iD) {
+    public ServiceStructure(string iD) {
         ID = iD;
     }
 

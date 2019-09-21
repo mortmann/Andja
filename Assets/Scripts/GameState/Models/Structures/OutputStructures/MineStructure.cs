@@ -12,8 +12,8 @@ public class MineStructure : OutputStructure {
     #endregion
     #region RuntimeOrOther
 
-    public int Ressource { get {
-            if (OutputData.output[0] == null) return -1;
+    public string Ressource { get {
+            if (OutputData.output[0] == null) return null;
             return OutputData.output[0].ID; } }
 
     public override float EfficiencyPercent {
@@ -36,7 +36,7 @@ public class MineStructure : OutputStructure {
     }
     #endregion
 
-    public MineStructure(int pid, MinePrototypData MineData) {
+    public MineStructure(string pid, MinePrototypData MineData) {
         this.ID = pid;
         _mineData = MineData;
     }

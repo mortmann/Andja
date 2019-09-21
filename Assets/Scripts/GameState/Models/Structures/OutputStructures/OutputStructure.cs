@@ -151,7 +151,7 @@ public abstract class OutputStructure : TargetStructure {
         }
         List<Item> all = new List<Item>();
         for (int i = Output.Length - 1; i >= 0; i--) {
-            int id = Output[i].ID;
+            string id = Output[i].ID;
             for (int s = 0; s < items.Length; s++) {
                 if (items[i].ID == id) {
                     Item item = items[i].Clone();

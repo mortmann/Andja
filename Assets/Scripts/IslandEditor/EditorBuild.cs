@@ -15,11 +15,11 @@ public class EditorBuild : MonoBehaviour {
     // Use this for initialization
     void Start() {
         bool first = true;
-        foreach (int item in PrototypController.Instance.StructurePrototypes.Keys) {
+        foreach (string item in PrototypController.Instance.StructurePrototypes.Keys) {
             GameObject g = GameObject.Instantiate(prefabListItem);
             g.transform.SetParent(BuildingSelectContent.transform);
             g.GetComponentInChildren<Text>().text = PrototypController.Instance.StructurePrototypes[item].SpriteName;
-            int temp = item;
+            string temp = item;
             EventTrigger eventTrigger = g.GetComponent<EventTrigger>();
             EventTrigger.Entry entry = new EventTrigger.Entry {
                 eventID = EventTriggerType.Select,
@@ -33,7 +33,7 @@ public class EditorBuild : MonoBehaviour {
 
     }
 
-    public void OnBuildingSelect(int id) {
+    public void OnBuildingSelect(string id) {
         EditorController.Instance.SetStructure(id);
         if (PrototypController.Instance.StructurePrototypes[id] is GrowableStructure == false) {
             return;

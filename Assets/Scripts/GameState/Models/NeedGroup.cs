@@ -6,7 +6,7 @@ using System;
 
 [JsonObject]
 public class NeedGroupPrototypData : LanguageVariables {
-    public int ID;
+    public string ID;
     public float importanceLevel;
 }
 
@@ -25,7 +25,7 @@ public class NeedGroup {
     public float ImportanceLevel => Data.importanceLevel;
     public string Name => Data.Name;
     #endregion
-    [JsonPropertyAttribute] public int ID;
+    [JsonPropertyAttribute] public string ID;
     [JsonPropertyAttribute] public List<Need> Needs;
     [JsonPropertyAttribute] public float LastFullfillmentPercentage;
     #region Runtime
@@ -35,7 +35,7 @@ public class NeedGroup {
     public NeedGroup() {
 
     }
-    public NeedGroup(int ID) {
+    public NeedGroup(string ID) {
         Needs = new List<Need>();
         this.ID = ID;
         CombinedNeeds = new List<Need>();

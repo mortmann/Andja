@@ -9,7 +9,7 @@ using Newtonsoft.Json;
 
 [JsonObject(MemberSerialization.OptIn)]
 public class OffworldMarket {
-    [JsonPropertyAttribute] public Dictionary<int, Price> itemIDtoPrice;
+    [JsonPropertyAttribute] public Dictionary<string, Price> itemIDtoPrice;
     [JsonPropertyAttribute] float demandChangeTimer = 5f;
     float DemandChangeTime = 30f;
     public OffworldMarket() {
@@ -19,11 +19,11 @@ public class OffworldMarket {
         //on how much per timeunit? is it the same for all the items or are they gonna
         //differ in some way
 
-        itemIDtoPrice = new Dictionary<int, Price>();
+        itemIDtoPrice = new Dictionary<string, Price>();
         //_____TEMPORARY?_____________
         //get all the diffrent
-        Dictionary<int, Item> temp = BuildController.Instance.GetCopieOfAllItems();
-        foreach (int id in temp.Keys) {
+        Dictionary<string, Item> temp = BuildController.Instance.GetCopieOfAllItems();
+        foreach (string id in temp.Keys) {
             itemIDtoPrice.Add(id, new Price(50,50)); //eg Random.Range (10,20)
             //itemIDtoPrice[id].DemandChange += Random.Range(-10, 10);
         }

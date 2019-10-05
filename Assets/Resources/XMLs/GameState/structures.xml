@@ -1,6 +1,6 @@
 <structures>
    <roads>
-      <road ID="101">
+      <road ID="dirtroad">
          <Name>
             <entry lang="English">Dirtroad</entry>
             <entry lang="German">Feldweg</entry>
@@ -38,7 +38,7 @@
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
          <spriteBaseName>dirtroad</spriteBaseName>
       </road>
-      <road ID="102">
+      <road ID="stoneroad">
          <Name>
             <entry lang="English">Stoneroad</entry>
             <entry lang="German">Steinstraße</entry>
@@ -77,7 +77,7 @@
          <buildingItems length="0"/>
          <spriteBaseName>stoneroad</spriteBaseName>
       </road>
-      <road ID="103">
+      <road ID="brickroad">
          <Name>
             <entry lang="English">Brickroad</entry>
             <entry lang="German">Ziegelstraße</entry>
@@ -114,13 +114,13 @@
          <extraBuildUITyp>None</extraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
          <buildingItems length="1">
-            <Item ID="4">
+            <Item ID="brick">
                <count>2</count>
             </Item>
          </buildingItems>
          <spriteBaseName>brickroad</spriteBaseName>
       </road>
-      <road ID="104">
+      <road ID="marbelroad">
          <Name>
             <entry lang="English">Marbelroad</entry>
             <entry lang="German">Marmorstraße</entry>
@@ -160,7 +160,7 @@
       </road>
    </roads>
    <farms>
-      <farm ID="601">
+      <farm ID="lumberjack">
          <Name>
             <entry lang="English">Lumberjack Hut</entry>
             <entry lang="German">Holzfällerhütte</entry>
@@ -197,7 +197,7 @@
          <extraBuildUITyp>None</extraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
          <buildingItems length="1">
-            <Item ID="1">
+            <Item ID="wood">
                <count>10</count>
             </Item>
          </buildingItems>
@@ -209,14 +209,14 @@
          <maxOutputStorage>5</maxOutputStorage>
          <efficiency>1.0</efficiency>
          <output length="1">
-            <Item ID="1">
+            <Item ID="wood">
                <count>1</count>
             </Item>
          </output>
-         <growable>502</growable>
+         <growable>tree</growable>
          <neededHarvestToProduce>5</neededHarvestToProduce>
       </farm>
-      <farm ID="605">
+      <farm ID="hempplantation">
          <Name>
             <entry lang="English">Hemp plantation</entry>
             <entry lang="German">Hanfplantage</entry>
@@ -263,10 +263,10 @@
          <extraBuildUITyp>None</extraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
          <buildingItems length="2">
-            <Item ID="1">
+            <Item ID="wood">
                <count>5</count>
             </Item>
-            <Item ID="2">
+            <Item ID="tools">
                <count>5</count>
             </Item>
          </buildingItems>
@@ -278,14 +278,14 @@
          <maxOutputStorage>5</maxOutputStorage>
          <efficiency>1.0</efficiency>
          <output length="1">
-            <Item ID="107">
+            <Item ID="hemp">
                <count>1</count>
             </Item>
          </output>
-         <growable>506</growable>
+         <growable>hempfield</growable>
          <neededHarvestToProduce>5</neededHarvestToProduce>
       </farm>
-      <farm ID="602">
+      <farm ID="potatoefarm">
          <Name>
             <entry lang="English">Potatoefarm</entry>
             <entry lang="German">Kartoffelfarm</entry>
@@ -322,10 +322,10 @@
          <extraBuildUITyp>None</extraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
          <buildingItems length="2">
-            <Item ID="1">
+            <Item ID="wood">
                <count>6</count>
             </Item>
-            <Item ID="2">
+            <Item ID="tools">
                <count>3</count>
             </Item>
          </buildingItems>
@@ -337,14 +337,14 @@
          <maxOutputStorage>5</maxOutputStorage>
          <efficiency>1.0</efficiency>
          <output length="1">
-            <Item ID="102">
+            <Item ID="potatoes">
                <count>1</count>
             </Item>
          </output>
-         <growable>503</growable>
+         <growable>potatoefield</growable>
          <neededHarvestToProduce>5</neededHarvestToProduce>
       </farm>
-      <farm ID="603">
+      <farm ID="orchardfarm">
          <Name>
             <entry lang="English">Orchard Farm</entry>
             <entry lang="German">Obstplantage</entry>
@@ -381,10 +381,10 @@
          <extraBuildUITyp>None</extraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
          <buildingItems length="2">
-            <Item ID="1">
+            <Item ID="wood">
                <count>15</count>
             </Item>
-            <Item ID="2">
+            <Item ID="tools">
                <count>2</count>
             </Item>
          </buildingItems>
@@ -396,14 +396,14 @@
          <maxOutputStorage>5</maxOutputStorage>
          <efficiency>1.0</efficiency>
          <output length="1">
-            <Item ID="105">
+            <Item ID="fruits">
                <count>1</count>
             </Item>
          </output>
-         <growable>505</growable>
+         <growable>orchard</growable>
          <neededHarvestToProduce>5</neededHarvestToProduce>
       </farm>
-      <farm ID="604">
+      <farm ID="sugarplantation">
          <Name>
             <entry lang="English">Sugar Plantation</entry>
             <entry lang="German">Zuckerplantage</entry>
@@ -440,10 +440,10 @@
          <extraBuildUITyp>None</extraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
          <buildingItems length="2">
-            <Item ID="1">
+            <Item ID="wood">
                <count>10</count>
             </Item>
-            <Item ID="2">
+            <Item ID="tools">
                <count>5</count>
             </Item>
          </buildingItems>
@@ -455,14 +455,14 @@
          <maxOutputStorage>5</maxOutputStorage>
          <efficiency>1.0</efficiency>
          <output length="1">
-            <Item ID="104">
+            <Item ID="sugar">
                <count>1</count>
             </Item>
          </output>
-         <growable>504</growable>
+         <growable>sugarcanefield</growable>
          <neededHarvestToProduce>5</neededHarvestToProduce>
       </farm>
-      <farm ID="606">
+      <farm ID="wheatfarm">
          <Name>
             <entry lang="English">Wheatfarm</entry>
             <entry lang="German">Getreidefarm</entry>
@@ -499,13 +499,13 @@
          <extraBuildUITyp>None</extraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
          <buildingItems length="3">
-            <Item ID="1">
+            <Item ID="wood">
                <count>3</count>
             </Item>
-            <Item ID="2">
+            <Item ID="tools">
                <count>4</count>
             </Item>
-            <Item ID="3">
+            <Item ID="stone">
                <count>2</count>
             </Item>
          </buildingItems>
@@ -517,14 +517,14 @@
          <maxOutputStorage>5</maxOutputStorage>
          <efficiency>1.0</efficiency>
          <output length="1">
-            <Item ID="201">
+            <Item ID="wheat">
                <count>1</count>
             </Item>
          </output>
-         <growable>507</growable>
+         <growable>wheatfield</growable>
          <neededHarvestToProduce>5</neededHarvestToProduce>
       </farm>
-      <farm ID="607">
+      <farm ID="charcoalburnershut">
          <Name>
             <entry lang="English">Charcoal Burner&apos;s Hut</entry>
             <entry lang="German">Köhler</entry>
@@ -561,10 +561,10 @@
          <extraBuildUITyp>None</extraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
          <buildingItems length="2">
-            <Item ID="1">
+            <Item ID="wood">
                <count>6</count>
             </Item>
-            <Item ID="2">
+            <Item ID="tools">
                <count>6</count>
             </Item>
          </buildingItems>
@@ -576,14 +576,14 @@
          <maxOutputStorage>5</maxOutputStorage>
          <efficiency>1.0</efficiency>
          <output length="1">
-            <Item ID="208">
+            <Item ID="coal">
                <count>1</count>
             </Item>
          </output>
-         <growable>502</growable>
+         <growable>tree</growable>
          <neededHarvestToProduce>5</neededHarvestToProduce>
       </farm>
-      <farm ID="608">
+      <farm ID="goatfarm">
          <Name>
             <entry lang="English">Goat Farm</entry>
             <entry lang="German">Ziegenfarm</entry>
@@ -620,13 +620,13 @@
          <extraBuildUITyp>None</extraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
          <buildingItems length="3">
-            <Item ID="1">
+            <Item ID="wood">
                <count>4</count>
             </Item>
-            <Item ID="2">
+            <Item ID="tools">
                <count>4</count>
             </Item>
-            <Item ID="3">
+            <Item ID="stone">
                <count>4</count>
             </Item>
          </buildingItems>
@@ -638,14 +638,14 @@
          <maxOutputStorage>0</maxOutputStorage>
          <efficiency>1.0</efficiency>
          <output length="1">
-            <Item ID="209">
+            <Item ID="milk">
                <count>1</count>
             </Item>
          </output>
-         <growable>501</growable>
+         <growable>farmland</growable>
          <neededHarvestToProduce>5</neededHarvestToProduce>
       </farm>
-      <farm ID="609">
+      <farm ID="pigfarm">
          <Name>
             <entry lang="English">Pig Farm</entry>
             <entry lang="German">Schweinefarm</entry>
@@ -682,13 +682,13 @@
          <extraBuildUITyp>None</extraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
          <buildingItems length="3">
-            <Item ID="1">
+            <Item ID="wood">
                <count>3</count>
             </Item>
-            <Item ID="2">
+            <Item ID="tools">
                <count>6</count>
             </Item>
-            <Item ID="3">
+            <Item ID="stone">
                <count>5</count>
             </Item>
          </buildingItems>
@@ -700,14 +700,14 @@
          <maxOutputStorage>0</maxOutputStorage>
          <efficiency>1.0</efficiency>
          <output length="1">
-            <Item ID="211">
+            <Item ID="pig">
                <count>1</count>
             </Item>
          </output>
-         <growable>501</growable>
+         <growable>farmland</growable>
          <neededHarvestToProduce>5</neededHarvestToProduce>
       </farm>
-      <farm ID="610">
+      <farm ID="hopsplantation">
          <Name>
             <entry lang="English">Hops Plantation</entry>
             <entry lang="German">Hopfenplantage</entry>
@@ -744,13 +744,13 @@
          <extraBuildUITyp>None</extraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
          <buildingItems length="3">
-            <Item ID="1">
+            <Item ID="wood">
                <count>7</count>
             </Item>
-            <Item ID="2">
+            <Item ID="tools">
                <count>3</count>
             </Item>
-            <Item ID="3">
+            <Item ID="stone">
                <count>1</count>
             </Item>
          </buildingItems>
@@ -762,16 +762,16 @@
          <maxOutputStorage>0</maxOutputStorage>
          <efficiency>1.0</efficiency>
          <output length="1">
-            <Item ID="219">
+            <Item ID="hopfen">
                <count>1</count>
             </Item>
          </output>
-         <growable>508</growable>
+         <growable>hopvines</growable>
          <neededHarvestToProduce>5</neededHarvestToProduce>
       </farm>
    </farms>
    <growables>
-      <growable ID="501">
+      <growable ID="farmland">
          <Name>
             <entry lang="English">Farmland</entry>
             <entry lang="German">Ackerland</entry>
@@ -814,10 +814,9 @@
          <produceTime>0.0</produceTime>
          <maxOutputStorage>1</maxOutputStorage>
          <efficiency>1.0</efficiency>
-         <fertility>-1</fertility>
          <ageStages>0</ageStages>
       </growable>
-      <growable ID="502">
+      <growable ID="tree">
          <Name>
             <entry lang="English">Tree</entry>
             <entry lang="German">Baum</entry>
@@ -862,14 +861,13 @@
          <maxOutputStorage>1</maxOutputStorage>
          <efficiency>1.0</efficiency>
          <output length="1">
-            <Item ID="1">
+            <Item ID="wood">
                <count>0</count>
             </Item>
          </output>
-         <fertility>-1</fertility>
          <ageStages>3</ageStages>
       </growable>
-      <growable ID="506">
+      <growable ID="hempfield">
          <Name>
             <entry lang="English">Hempfield</entry>
             <entry lang="German">Hanffeld</entry>
@@ -913,14 +911,14 @@
          <maxOutputStorage>1</maxOutputStorage>
          <efficiency>1.0</efficiency>
          <output length="1">
-            <Item ID="107">
+            <Item ID="hemp">
                <count>0</count>
             </Item>
          </output>
-         <fertility>0</fertility>
+         <fertility>hemp</fertility>
          <ageStages>2</ageStages>
       </growable>
-      <growable ID="503">
+      <growable ID="potatoefield">
          <Name>
             <entry lang="English">Potatoefield</entry>
             <entry lang="German">Kartoffelfeld</entry>
@@ -964,14 +962,13 @@
          <maxOutputStorage>1</maxOutputStorage>
          <efficiency>1.0</efficiency>
          <output length="1">
-            <Item ID="102">
+            <Item ID="potatoes">
                <count>1</count>
             </Item>
          </output>
-         <fertility>-1</fertility>
          <ageStages>2</ageStages>
       </growable>
-      <growable ID="504">
+      <growable ID="sugarcanefield">
          <Name>
             <entry lang="English">Sugarcanefield</entry>
             <entry lang="German">Zuckerrohrfeld</entry>
@@ -1015,14 +1012,14 @@
          <maxOutputStorage>1</maxOutputStorage>
          <efficiency>1.0</efficiency>
          <output length="1">
-            <Item ID="104">
+            <Item ID="sugar">
                <count>0</count>
             </Item>
          </output>
-         <fertility>8</fertility>
+         <fertility>sugarcone</fertility>
          <ageStages>2</ageStages>
       </growable>
-      <growable ID="505">
+      <growable ID="orchard">
          <Name>
             <entry lang="English">Orchard</entry>
             <entry lang="German">Obstgarten</entry>
@@ -1066,14 +1063,13 @@
          <maxOutputStorage>1</maxOutputStorage>
          <efficiency>1.0</efficiency>
          <output length="1">
-            <Item ID="105">
+            <Item ID="fruits">
                <count>1</count>
             </Item>
          </output>
-         <fertility>-1</fertility>
          <ageStages>2</ageStages>
       </growable>
-      <growable ID="507">
+      <growable ID="wheatfield">
          <Name>
             <entry lang="English">Wheatfield</entry>
             <entry lang="German">Getreidefeld</entry>
@@ -1118,14 +1114,14 @@
          <maxOutputStorage>1</maxOutputStorage>
          <efficiency>1.0</efficiency>
          <output length="1">
-            <Item ID="201">
+            <Item ID="wheat">
                <count>1</count>
             </Item>
          </output>
-         <fertility>1</fertility>
+         <fertility>wheat</fertility>
          <ageStages>5</ageStages>
       </growable>
-      <growable ID="508">
+      <growable ID="hopvines">
          <Name>
             <entry lang="English">Hop Vines</entry>
             <entry lang="German">Hopfenreben</entry>
@@ -1169,16 +1165,16 @@
          <maxOutputStorage>1</maxOutputStorage>
          <efficiency>1.0</efficiency>
          <output length="1">
-            <Item ID="219">
+            <Item ID="hopfen">
                <count>0</count>
             </Item>
          </output>
-         <fertility>2</fertility>
+         <fertility>hop</fertility>
          <ageStages>2</ageStages>
       </growable>
    </growables>
    <markets>
-      <market ID="51">
+      <market ID="smallmarketbuilding">
          <Name>
             <entry lang="English">Market Building I</entry>
             <entry lang="German">Markthaus I</entry>
@@ -1215,10 +1211,10 @@
          <extraBuildUITyp>None</extraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
          <buildingItems length="2">
-            <Item ID="1">
+            <Item ID="wood">
                <count>3</count>
             </Item>
-            <Item ID="2">
+            <Item ID="tools">
                <count>2</count>
             </Item>
          </buildingItems>
@@ -1233,7 +1229,7 @@
       </market>
    </markets>
    <mines>
-      <mine ID="701">
+      <mine ID="stonequarry">
          <Name>
             <entry lang="English">Stone Quarry</entry>
             <entry lang="German">Steinbruch</entry>
@@ -1270,10 +1266,10 @@
          <extraBuildUITyp>None</extraBuildUITyp>
          <hasToBuildOnRestriktion>Mountain</hasToBuildOnRestriktion>
          <buildingItems length="2">
-            <Item ID="1">
+            <Item ID="wood">
                <count>0</count>
             </Item>
-            <Item ID="2">
+            <Item ID="tools">
                <count>0</count>
             </Item>
          </buildingItems>
@@ -1285,13 +1281,12 @@
          <maxOutputStorage>5</maxOutputStorage>
          <efficiency>1.0</efficiency>
          <output length="1">
-            <Item ID="3">
+            <Item ID="stone">
                <count>1</count>
             </Item>
          </output>
-         <myRessource>Stone</myRessource>
       </mine>
-      <mine ID="702">
+      <mine ID="ironmine">
          <Name>
             <entry lang="English">Iron Mine</entry>
             <entry lang="German">Eisenbergwerk</entry>
@@ -1328,10 +1323,10 @@
          <extraBuildUITyp>None</extraBuildUITyp>
          <hasToBuildOnRestriktion>Mountain</hasToBuildOnRestriktion>
          <buildingItems length="2">
-            <Item ID="1">
+            <Item ID="wood">
                <count>10</count>
             </Item>
-            <Item ID="2">
+            <Item ID="tools">
                <count>3</count>
             </Item>
          </buildingItems>
@@ -1343,13 +1338,12 @@
          <maxOutputStorage>0</maxOutputStorage>
          <efficiency>1.0</efficiency>
          <output length="1">
-            <Item ID="206">
+            <Item ID="iron ore">
                <count>0</count>
             </Item>
          </output>
-         <myRessource>Iron</myRessource>
       </mine>
-      <mine ID="703">
+      <mine ID="saltmine">
          <Name>
             <entry lang="English">Saltmine</entry>
             <entry lang="German">Salzbergwerk</entry>
@@ -1386,13 +1380,13 @@
          <extraBuildUITyp>None</extraBuildUITyp>
          <hasToBuildOnRestriktion>Mountain</hasToBuildOnRestriktion>
          <buildingItems length="3">
-            <Item ID="1">
+            <Item ID="wood">
                <count>12</count>
             </Item>
-            <Item ID="2">
+            <Item ID="tools">
                <count>5</count>
             </Item>
-            <Item ID="3">
+            <Item ID="stone">
                <count>1</count>
             </Item>
          </buildingItems>
@@ -1404,15 +1398,14 @@
          <maxOutputStorage>0</maxOutputStorage>
          <efficiency>1.0</efficiency>
          <output length="1">
-            <Item ID="204">
+            <Item ID="grain salt">
                <count>1</count>
             </Item>
          </output>
-         <myRessource>Salt</myRessource>
       </mine>
    </mines>
    <needstructures>
-      <needstructure ID="401">
+      <needstructure ID="marketplace">
          <Name>
             <entry lang="English">Marketplace</entry>
             <entry lang="German">Gemeinschaftsplatz</entry>
@@ -1449,16 +1442,16 @@
          <extraBuildUITyp>None</extraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
          <buildingItems length="2">
-            <Item ID="1">
+            <Item ID="wood">
                <count>10</count>
             </Item>
-            <Item ID="2">
+            <Item ID="tools">
                <count>5</count>
             </Item>
          </buildingItems>
          <spriteBaseName>marketplace</spriteBaseName>
       </needstructure>
-      <needstructure ID="402">
+      <needstructure ID="chapel">
          <Name>
             <entry lang="English">Chapel</entry>
             <entry lang="German">Kapelle</entry>
@@ -1495,16 +1488,16 @@
          <extraBuildUITyp>None</extraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
          <buildingItems length="2">
-            <Item ID="2">
+            <Item ID="tools">
                <count>7</count>
             </Item>
-            <Item ID="1">
+            <Item ID="wood">
                <count>15</count>
             </Item>
          </buildingItems>
          <spriteBaseName>chapel</spriteBaseName>
       </needstructure>
-      <needstructure ID="403">
+      <needstructure ID="inn">
          <Name>
             <entry lang="English">Inn</entry>
             <entry lang="German">Gasthaus</entry>
@@ -1541,10 +1534,10 @@
          <extraBuildUITyp>None</extraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
          <buildingItems length="2">
-            <Item ID="2">
+            <Item ID="tools">
                <count>15</count>
             </Item>
-            <Item ID="1">
+            <Item ID="wood">
                <count>15</count>
             </Item>
          </buildingItems>
@@ -1552,7 +1545,7 @@
       </needstructure>
    </needstructures>
    <productions>
-      <production ID="801">
+      <production ID="fishermanshut">
          <Name>
             <entry lang="English">Fisherman&apos;s hut</entry>
             <entry lang="German">Fischerhütte</entry>
@@ -1589,10 +1582,10 @@
          <extraBuildUITyp>None</extraBuildUITyp>
          <hasToBuildOnRestriktion>Shore</hasToBuildOnRestriktion>
          <buildingItems length="2">
-            <Item ID="1">
+            <Item ID="wood">
                <count>3</count>
             </Item>
-            <Item ID="2">
+            <Item ID="tools">
                <count>2</count>
             </Item>
          </buildingItems>
@@ -1604,13 +1597,13 @@
          <maxOutputStorage>5</maxOutputStorage>
          <efficiency>1.0</efficiency>
          <output length="1">
-            <Item ID="101">
+            <Item ID="fish">
                <count>1</count>
             </Item>
          </output>
          <myInputTyp>AND</myInputTyp>
       </production>
-      <production ID="804">
+      <production ID="hempweaver">
          <Name>
             <entry lang="English">Hemp Weaver&apos;s Hut</entry>
             <entry lang="German">Hanfweberei</entry>
@@ -1647,10 +1640,10 @@
          <extraBuildUITyp>None</extraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
          <buildingItems length="2">
-            <Item ID="1">
+            <Item ID="wood">
                <count>15</count>
             </Item>
-            <Item ID="2">
+            <Item ID="tools">
                <count>5</count>
             </Item>
          </buildingItems>
@@ -1662,18 +1655,18 @@
          <maxOutputStorage>5</maxOutputStorage>
          <efficiency>1.0</efficiency>
          <output length="1">
-            <Item ID="108">
+            <Item ID="hemp fabric">
                <count>1</count>
             </Item>
          </output>
          <intake length="1">
-            <Item ID="107">
+            <Item ID="hemp">
                <count>2</count>
             </Item>
          </intake>
          <myInputTyp>AND</myInputTyp>
       </production>
-      <production ID="805">
+      <production ID="hemptailor">
          <Name>
             <entry lang="English">Hemp Tailor´s Hut</entry>
             <entry lang="German">Hanfschneider</entry>
@@ -1710,10 +1703,10 @@
          <extraBuildUITyp>None</extraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
          <buildingItems length="2">
-            <Item ID="1">
+            <Item ID="wood">
                <count>20</count>
             </Item>
-            <Item ID="2">
+            <Item ID="tools">
                <count>10</count>
             </Item>
          </buildingItems>
@@ -1725,18 +1718,18 @@
          <maxOutputStorage>5</maxOutputStorage>
          <efficiency>1.0</efficiency>
          <output length="1">
-            <Item ID="109">
+            <Item ID="hemp clothes">
                <count>1</count>
             </Item>
          </output>
          <intake length="1">
-            <Item ID="108">
+            <Item ID="hemp fabric">
                <count>1</count>
             </Item>
          </intake>
          <myInputTyp>AND</myInputTyp>
       </production>
-      <production ID="803">
+      <production ID="distellery">
          <Name>
             <entry lang="English">Distellery</entry>
             <entry lang="German">Brennerei</entry>
@@ -1773,10 +1766,10 @@
          <extraBuildUITyp>None</extraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
          <buildingItems length="2">
-            <Item ID="1">
+            <Item ID="wood">
                <count>5</count>
             </Item>
-            <Item ID="2">
+            <Item ID="tools">
                <count>5</count>
             </Item>
          </buildingItems>
@@ -1788,24 +1781,24 @@
          <maxOutputStorage>5</maxOutputStorage>
          <efficiency>1.0</efficiency>
          <output length="1">
-            <Item ID="106">
+            <Item ID="liquor">
                <count>1</count>
             </Item>
          </output>
          <intake length="3">
-            <Item ID="102">
+            <Item ID="potatoes">
                <count>1</count>
             </Item>
-            <Item ID="104">
+            <Item ID="sugar">
                <count>1</count>
             </Item>
-            <Item ID="105">
+            <Item ID="fruits">
                <count>1</count>
             </Item>
          </intake>
          <myInputTyp>OR</myInputTyp>
       </production>
-      <production ID="802">
+      <production ID="huntershut">
          <Name>
             <entry lang="English">Hunters&apos; Hut</entry>
             <entry lang="German">Jägerhütte</entry>
@@ -1842,10 +1835,10 @@
          <extraBuildUITyp>None</extraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
          <buildingItems length="2">
-            <Item ID="1">
+            <Item ID="wood">
                <count>10</count>
             </Item>
-            <Item ID="2">
+            <Item ID="tools">
                <count>6</count>
             </Item>
          </buildingItems>
@@ -1857,14 +1850,14 @@
          <maxOutputStorage>5</maxOutputStorage>
          <efficiency>1.0</efficiency>
          <output length="1">
-            <Item ID="103">
+            <Item ID="venison">
                <count>0</count>
             </Item>
          </output>
          <intake length="0"/>
          <myInputTyp>AND</myInputTyp>
       </production>
-      <production ID="806">
+      <production ID="flourmill">
          <Name>
             <entry lang="English">Flour Mill</entry>
             <entry lang="German">Getreidemühle</entry>
@@ -1901,13 +1894,13 @@
          <extraBuildUITyp>None</extraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
          <buildingItems length="3">
-            <Item ID="1">
+            <Item ID="wood">
                <count>10</count>
             </Item>
-            <Item ID="2">
+            <Item ID="tools">
                <count>5</count>
             </Item>
-            <Item ID="3">
+            <Item ID="stone">
                <count>4</count>
             </Item>
          </buildingItems>
@@ -1919,18 +1912,18 @@
          <maxOutputStorage>5</maxOutputStorage>
          <efficiency>1.0</efficiency>
          <output length="1">
-            <Item ID="202">
+            <Item ID="flour">
                <count>1</count>
             </Item>
          </output>
          <intake length="1">
-            <Item ID="201">
+            <Item ID="wheat">
                <count>2</count>
             </Item>
          </intake>
          <myInputTyp>AND</myInputTyp>
       </production>
-      <production ID="807">
+      <production ID="bakery">
          <Name>
             <entry lang="English">Bakery</entry>
             <entry lang="German">Bäckerei</entry>
@@ -1967,13 +1960,13 @@
          <extraBuildUITyp>None</extraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
          <buildingItems length="3">
-            <Item ID="1">
+            <Item ID="wood">
                <count>5</count>
             </Item>
-            <Item ID="2">
+            <Item ID="tools">
                <count>4</count>
             </Item>
-            <Item ID="3">
+            <Item ID="stone">
                <count>1</count>
             </Item>
          </buildingItems>
@@ -1985,18 +1978,18 @@
          <maxOutputStorage>5</maxOutputStorage>
          <efficiency>1.0</efficiency>
          <output length="1">
-            <Item ID="203">
+            <Item ID="bread">
                <count>1</count>
             </Item>
          </output>
          <intake length="1">
-            <Item ID="202">
+            <Item ID="flour">
                <count>1</count>
             </Item>
          </intake>
          <myInputTyp>AND</myInputTyp>
       </production>
-      <production ID="808">
+      <production ID="ironsmelter">
          <Name>
             <entry lang="English">Iron Smelter</entry>
             <entry lang="German">Eisenerzschmelze</entry>
@@ -2033,13 +2026,13 @@
          <extraBuildUITyp>None</extraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
          <buildingItems length="3">
-            <Item ID="1">
+            <Item ID="wood">
                <count>8</count>
             </Item>
-            <Item ID="2">
+            <Item ID="tools">
                <count>10</count>
             </Item>
-            <Item ID="3">
+            <Item ID="stone">
                <count>5</count>
             </Item>
          </buildingItems>
@@ -2051,21 +2044,21 @@
          <maxOutputStorage>5</maxOutputStorage>
          <efficiency>1.0</efficiency>
          <output length="1">
-            <Item ID="207">
+            <Item ID="iron ingot">
                <count>1</count>
             </Item>
          </output>
          <intake length="2">
-            <Item ID="206">
+            <Item ID="iron ore">
                <count>1</count>
             </Item>
-            <Item ID="208">
+            <Item ID="coal">
                <count>1</count>
             </Item>
          </intake>
          <myInputTyp>AND</myInputTyp>
       </production>
-      <production ID="809">
+      <production ID="toolmakersworkshop">
          <Name>
             <entry lang="English">Toolmaker&apos;s Workshop</entry>
             <entry lang="German">Werkzeugemacher</entry>
@@ -2102,13 +2095,13 @@
          <extraBuildUITyp>None</extraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
          <buildingItems length="3">
-            <Item ID="1">
+            <Item ID="wood">
                <count>5</count>
             </Item>
-            <Item ID="2">
+            <Item ID="tools">
                <count>5</count>
             </Item>
-            <Item ID="3">
+            <Item ID="stone">
                <count>5</count>
             </Item>
          </buildingItems>
@@ -2120,18 +2113,18 @@
          <maxOutputStorage>5</maxOutputStorage>
          <efficiency>1.0</efficiency>
          <output length="1">
-            <Item ID="2">
+            <Item ID="tools">
                <count>1</count>
             </Item>
          </output>
          <intake length="1">
-            <Item ID="207">
+            <Item ID="iron ingot">
                <count>1</count>
             </Item>
          </intake>
          <myInputTyp>AND</myInputTyp>
       </production>
-      <production ID="810">
+      <production ID="saltmill">
          <Name>
             <entry lang="English">Salt Mill</entry>
             <entry lang="German">Salzmühle</entry>
@@ -2168,13 +2161,13 @@
          <extraBuildUITyp>None</extraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
          <buildingItems length="3">
-            <Item ID="1">
+            <Item ID="wood">
                <count>12</count>
             </Item>
-            <Item ID="2">
+            <Item ID="tools">
                <count>4</count>
             </Item>
-            <Item ID="3">
+            <Item ID="stone">
                <count>2</count>
             </Item>
          </buildingItems>
@@ -2186,18 +2179,18 @@
          <maxOutputStorage>5</maxOutputStorage>
          <efficiency>1.0</efficiency>
          <output length="1">
-            <Item ID="205">
+            <Item ID="salt">
                <count>2</count>
             </Item>
          </output>
          <intake length="1">
-            <Item ID="204">
+            <Item ID="grain salt">
                <count>1</count>
             </Item>
          </intake>
          <myInputTyp>AND</myInputTyp>
       </production>
-      <production ID="811">
+      <production ID="cheesedairy">
          <Name>
             <entry lang="English">Cheese Dairy</entry>
             <entry lang="German">Käserei</entry>
@@ -2234,13 +2227,13 @@
          <extraBuildUITyp>None</extraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
          <buildingItems length="3">
-            <Item ID="1">
+            <Item ID="wood">
                <count>6</count>
             </Item>
-            <Item ID="2">
+            <Item ID="tools">
                <count>4</count>
             </Item>
-            <Item ID="3">
+            <Item ID="stone">
                <count>9</count>
             </Item>
          </buildingItems>
@@ -2252,18 +2245,18 @@
          <maxOutputStorage>5</maxOutputStorage>
          <efficiency>1.0</efficiency>
          <output length="1">
-            <Item ID="210">
+            <Item ID="cheese">
                <count>1</count>
             </Item>
          </output>
          <intake length="1">
-            <Item ID="209">
+            <Item ID="milk">
                <count>2</count>
             </Item>
          </intake>
          <myInputTyp>AND</myInputTyp>
       </production>
-      <production ID="812">
+      <production ID="pigbutcher">
          <Name>
             <entry lang="English">Pig Butcher</entry>
             <entry lang="German">Schweinemetzger</entry>
@@ -2300,13 +2293,13 @@
          <extraBuildUITyp>None</extraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
          <buildingItems length="3">
-            <Item ID="1">
+            <Item ID="wood">
                <count>10</count>
             </Item>
-            <Item ID="2">
+            <Item ID="tools">
                <count>4</count>
             </Item>
-            <Item ID="3">
+            <Item ID="stone">
                <count>12</count>
             </Item>
          </buildingItems>
@@ -2318,15 +2311,15 @@
          <maxOutputStorage>5</maxOutputStorage>
          <efficiency>1.0</efficiency>
          <output length="2">
-            <Item ID="212">
+            <Item ID="pig-meat">
                <count>2</count>
             </Item>
-            <Item ID="213">
+            <Item ID="leather">
                <count>1</count>
             </Item>
          </output>
          <intake length="1">
-            <Item ID="211">
+            <Item ID="pig">
                <count>2</count>
             </Item>
          </intake>
@@ -2334,7 +2327,7 @@
       </production>
    </productions>
    <warehouses>
-      <warehouse ID="1">
+      <warehouse ID="warehouse1">
          <Name>
             <entry lang="English">Warehouse I</entry>
             <entry lang="German">Kontor I</entry>
@@ -2371,10 +2364,10 @@
          <extraBuildUITyp>None</extraBuildUITyp>
          <hasToBuildOnRestriktion>Shore</hasToBuildOnRestriktion>
          <buildingItems length="2">
-            <Item ID="1">
+            <Item ID="wood">
                <count>3</count>
             </Item>
-            <Item ID="2">
+            <Item ID="tools">
                <count>2</count>
             </Item>
          </buildingItems>
@@ -2389,7 +2382,7 @@
       </warehouse>
    </warehouses>
    <homes>
-      <home ID="201">
+      <home ID="peasanthouse">
          <Name>
             <entry lang="English">Peasant house</entry>
             <entry lang="German">Bauernhaus</entry>
@@ -2426,7 +2419,7 @@
          <extraBuildUITyp>None</extraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
          <buildingItems length="1">
-            <Item ID="1">
+            <Item ID="wood">
                <count>2</count>
             </Item>
          </buildingItems>
@@ -2435,7 +2428,7 @@
          <increaseTime>1.0</increaseTime>
          <decreaseTime>2.0</decreaseTime>
       </home>
-      <home ID="202">
+      <home ID="citizenhouse">
          <Name>
             <entry lang="English">Citizen house</entry>
             <entry lang="German">Bürgerhaus</entry>
@@ -2472,10 +2465,10 @@
          <extraBuildUITyp>None</extraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
          <buildingItems length="2">
-            <Item ID="1">
+            <Item ID="wood">
                <count>1</count>
             </Item>
-            <Item ID="2">
+            <Item ID="tools">
                <count>1</count>
             </Item>
          </buildingItems>
@@ -2484,7 +2477,7 @@
          <increaseTime>2.0</increaseTime>
          <decreaseTime>4.0</decreaseTime>
       </home>
-      <home ID="203">
+      <home ID="patricianhouse">
          <Name>
             <entry lang="English">Patrician house</entry>
             <entry lang="German">Patrizierhaus</entry>
@@ -2521,13 +2514,13 @@
          <extraBuildUITyp>None</extraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
          <buildingItems length="3">
-            <Item ID="1">
+            <Item ID="wood">
                <count>1</count>
             </Item>
-            <Item ID="2">
+            <Item ID="tools">
                <count>1</count>
             </Item>
-            <Item ID="3">
+            <Item ID="stone">
                <count>4</count>
             </Item>
          </buildingItems>
@@ -2536,7 +2529,7 @@
          <increaseTime>3.0</increaseTime>
          <decreaseTime>6.0</decreaseTime>
       </home>
-      <home ID="204">
+      <home ID="noblemanhouse">
          <Name>
             <entry lang="English">Nobleman house</entry>
             <entry lang="German">Adligenhaus</entry>
@@ -2573,16 +2566,16 @@
          <extraBuildUITyp>None</extraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
          <buildingItems length="4">
-            <Item ID="1">
+            <Item ID="wood">
                <count>1</count>
             </Item>
-            <Item ID="2">
+            <Item ID="tools">
                <count>1</count>
             </Item>
-            <Item ID="3">
+            <Item ID="stone">
                <count>3</count>
             </Item>
-            <Item ID="5">
+            <Item ID="glas">
                <count>3</count>
             </Item>
          </buildingItems>
@@ -2593,60 +2586,7 @@
       </home>
    </homes>
    <militarystructures>
-      <militarystructure ID="1002">
-         <Name>
-            <entry lang="English">Shipyard</entry>
-            <entry lang="German">Werft</entry>
-         </Name>
-         <Description>
-            <entry lang="English">Builds ships.</entry>
-            <entry lang="German">Baut Schiffe.</entry>
-         </Description>
-         <HoverOver>
-            <entry lang="English">Shipyard</entry>
-            <entry lang="German">Werft</entry>
-         </HoverOver>
-         <canBeBuild>true</canBeBuild>
-         <isWalkable>false</isWalkable>
-         <hasHitbox>false</hasHitbox>
-         <maxHealth>5000.0</maxHealth>
-         <structureRange>0</structureRange>
-         <populationLevel>1</populationLevel>
-         <populationCount>0</populationCount>
-         <structureLevel>0</structureLevel>
-         <tileWidth>3</tileWidth>
-         <tileHeight>4</tileHeight>
-         <canRotate>true</canRotate>
-         <canBeBuildOver>false</canBeBuildOver>
-         <canBeUpgraded>false</canBeUpgraded>
-         <canTakeDamage>true</canTakeDamage>
-         <mustFrontBuildDir>E</mustFrontBuildDir>
-         <canStartBurning>false</canStartBurning>
-         <maintenanceCost>50</maintenanceCost>
-         <buildCost>1500</buildCost>
-         <buildTyp>Single</buildTyp>
-         <myStructureTyp>Blocking</myStructureTyp>
-         <extraUITyp>None</extraUITyp>
-         <extraBuildUITyp>None</extraBuildUITyp>
-         <hasToBuildOnRestriktion>Shore</hasToBuildOnRestriktion>
-         <buildingItems length="3">
-            <Item ID="1">
-               <count>10</count>
-            </Item>
-            <Item ID="2">
-               <count>5</count>
-            </Item>
-            <Item ID="3">
-               <count>5</count>
-            </Item>
-         </buildingItems>
-         <spriteBaseName>shipyard</spriteBaseName>
-         <canBeBuildUnits length="1">
-            <Unit>1</Unit>
-         </canBeBuildUnits>
-         <buildTimeModifier>1.0</buildTimeModifier>
-      </militarystructure>
-      <militarystructure ID="1003">
+      <militarystructure ID="fort">
          <Name>
             <entry lang="English">Fort</entry>
             <entry lang="German">Kastell</entry>
@@ -2683,22 +2623,75 @@
          <extraBuildUITyp>None</extraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
          <buildingItems length="2">
-            <Item ID="2">
+            <Item ID="tools">
                <count>10</count>
             </Item>
-            <Item ID="3">
+            <Item ID="stone">
                <count>20</count>
             </Item>
          </buildingItems>
          <spriteBaseName>fort</spriteBaseName>
          <canBeBuildUnits length="1">
-            <Unit>0</Unit>
+            <Unit>basicunit</Unit>
+         </canBeBuildUnits>
+         <buildTimeModifier>1.0</buildTimeModifier>
+      </militarystructure>
+      <militarystructure ID="shipyard">
+         <Name>
+            <entry lang="English">Shipyard</entry>
+            <entry lang="German">Werft</entry>
+         </Name>
+         <Description>
+            <entry lang="English">Builds ships.</entry>
+            <entry lang="German">Baut Schiffe.</entry>
+         </Description>
+         <HoverOver>
+            <entry lang="English">Shipyard</entry>
+            <entry lang="German">Werft</entry>
+         </HoverOver>
+         <canBeBuild>true</canBeBuild>
+         <isWalkable>false</isWalkable>
+         <hasHitbox>false</hasHitbox>
+         <maxHealth>5000.0</maxHealth>
+         <structureRange>0</structureRange>
+         <populationLevel>1</populationLevel>
+         <populationCount>0</populationCount>
+         <structureLevel>0</structureLevel>
+         <tileWidth>3</tileWidth>
+         <tileHeight>4</tileHeight>
+         <canRotate>true</canRotate>
+         <canBeBuildOver>false</canBeBuildOver>
+         <canBeUpgraded>false</canBeUpgraded>
+         <canTakeDamage>true</canTakeDamage>
+         <mustFrontBuildDir>E</mustFrontBuildDir>
+         <canStartBurning>false</canStartBurning>
+         <maintenanceCost>50</maintenanceCost>
+         <buildCost>1500</buildCost>
+         <buildTyp>Single</buildTyp>
+         <myStructureTyp>Blocking</myStructureTyp>
+         <extraUITyp>None</extraUITyp>
+         <extraBuildUITyp>None</extraBuildUITyp>
+         <hasToBuildOnRestriktion>Shore</hasToBuildOnRestriktion>
+         <buildingItems length="3">
+            <Item ID="wood">
+               <count>10</count>
+            </Item>
+            <Item ID="tools">
+               <count>5</count>
+            </Item>
+            <Item ID="stone">
+               <count>5</count>
+            </Item>
+         </buildingItems>
+         <spriteBaseName>shipyard</spriteBaseName>
+         <canBeBuildUnits length="1">
+            <Unit>ship</Unit>
          </canBeBuildUnits>
          <buildTimeModifier>1.0</buildTimeModifier>
       </militarystructure>
    </militarystructures>
    <servicestructures>
-      <servicestructure ID="301">
+      <servicestructure ID="firewell">
          <Name>
             <entry lang="English">Well</entry>
             <entry lang="German">Brunnen</entry>
@@ -2735,10 +2728,10 @@
          <extraBuildUITyp>None</extraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
          <buildingItems length="2">
-            <Item ID="1">
+            <Item ID="wood">
                <count>5</count>
             </Item>
-            <Item ID="2">
+            <Item ID="tools">
                <count>5</count>
             </Item>
          </buildingItems>
@@ -2746,10 +2739,10 @@
          <targets>Damageable</targets>
          <function>RemoveEffect</function>
          <effectsOnTargets length="1">
-            <Effect>0</Effect>
+            <Effect>fire</Effect>
          </effectsOnTargets>
          <maxNumberOfWorker>1</maxNumberOfWorker>
-         <workSpeed>0.1</workSpeed>
+         <workSpeed>0.01</workSpeed>
       </servicestructure>
    </servicestructures>
 </structures>

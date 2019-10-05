@@ -119,12 +119,7 @@ public class World : IGEventable {
     public World(int width, int height) {
         this.Width = width;
         this.Height = height;
-        Tiles = new Tile[Width * Height];
-        for (int x = 0; x < Width; x++) {
-            for (int y = 0; y < Height; y++) {
-                SetTileAt(x, y, new Tile(x, y));
-            }
-        }
+        
         Current = this;
 
         if (Crates == null)

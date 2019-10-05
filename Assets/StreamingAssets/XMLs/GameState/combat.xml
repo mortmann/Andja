@@ -1,44 +1,37 @@
 <combatTypes>
-   <armorType ID="0">
-      <Name>
-         <entry lang="English">Leather</entry>
-         <entry lang="German">Leder</entry>
-      </Name>
-      <damageMultiplier>
-         <entry DamageType="0">1.0</entry>
-      </damageMultiplier>
-      <spriteBaseName>leatherarmor</spriteBaseName>
-   </armorType>
-   <armorType ID="1">
+   <armorType ID="woodenwall">
       <Name>
          <entry lang="English">Wooden Wall</entry>
          <entry lang="German">Holzwand</entry>
       </Name>
-      <damageMultiplier>
-         <entry DamageType="0">0.0</entry>
-         <entry DamageType="1">1.0</entry>
-      </damageMultiplier>
       <spriteBaseName>woodwall</spriteBaseName>
    </armorType>
-   <damageType ID="0">
+   <armorType ID="leather">
       <Name>
-         <entry lang="English">Slashing</entry>
-         <entry lang="German">Schlagen</entry>
+         <entry lang="English">Leather</entry>
+         <entry lang="German">Leder</entry>
       </Name>
-      <damageMultiplier>
-         <entry ArmorTyp="0">1.0</entry>
-      </damageMultiplier>
-      <spriteBaseName>Slash</spriteBaseName>
-   </damageType>
-   <damageType ID="1">
+      <spriteBaseName>leatherarmor</spriteBaseName>
+   </armorType>
+   <damageType ID="cannonball" tempID="cannonball">
       <Name>
          <entry lang="English">Cannonball</entry>
          <entry lang="German">Kanonenkugel</entry>
       </Name>
       <damageMultiplier>
-         <entry ArmorTyp="0">3.0</entry>
-         <entry ArmorTyp="1">1.0</entry>
+         <entry ArmorTyp="woodenwall">1.0</entry>
+         <entry ArmorTyp="leather">3.0</entry>
       </damageMultiplier>
       <spriteBaseName>cannonball</spriteBaseName>
+   </damageType>
+   <damageType ID="slashing" tempID="slashing">
+      <Name>
+         <entry lang="English">Slashing</entry>
+         <entry lang="German">Schlagen</entry>
+      </Name>
+      <damageMultiplier>
+         <entry ArmorTyp="leather">1.0</entry>
+      </damageMultiplier>
+      <spriteBaseName>Slash</spriteBaseName>
    </damageType>
 </combatTypes>

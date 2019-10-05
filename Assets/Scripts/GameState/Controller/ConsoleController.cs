@@ -218,13 +218,14 @@ public class ConsoleController : MonoBehaviour {
         //spawn building BID playerid --> not currently implementing
         int pos = 1;
         string id = parameters[pos];
-        // anything can thats not a number can be the current player
-        if (PrototypController.Instance.AllItems.ContainsKey(id) == false) {
-            return false;
-        }
+       
         pos++;
         switch (parameters[0]) {
             case "unit":
+                // anything can thats not a number can be the current player
+                if (PrototypController.Instance.UnitPrototypes.ContainsKey(id) == false) {
+                    return false;
+                }
                 int player = PlayerController.currentPlayerNumber;
                 if (parameters.Length > pos) {
                     if (int.TryParse(parameters[pos], out player) == false) {
@@ -249,6 +250,10 @@ public class ConsoleController : MonoBehaviour {
                 World.Current.CreateUnit(u.Clone(player, t));
                 return true;
             case "crate":
+                // anything can thats not a number can be the current player
+                if (PrototypController.Instance.AllItems.ContainsKey(id) == false) {
+                    return false;
+                }
                 Item i = new Item(id);
                 if (i.Exists() == false) {
                     return false;

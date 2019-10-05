@@ -166,7 +166,7 @@ public class MouseController : MonoBehaviour {
                 break;
         }
         if (Input.GetMouseButton(0) 
-            && mouseState != (MouseState.BuildPath | MouseState.BuildSingle | MouseState.Destroy | MouseState.BuildDrag | MouseState.DragSelect)) {
+            && mouseState == MouseState.Idle) {
             float sqrdist = (Input.mousePosition - lastFrameGUIPosition).sqrMagnitude;
             if (sqrdist > 5) {
                 dragStartPosition = currFramePosition;

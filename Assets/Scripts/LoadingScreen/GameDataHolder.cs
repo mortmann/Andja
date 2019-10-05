@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections.Generic;
 using UnityEngine.UI;
 using System;
@@ -14,8 +14,8 @@ public class GameDataHolder : MonoBehaviour {
     public Difficulty difficulty; //should be calculated
     public GameType saveFileType;
     public float playTime;
-    public static int Height = 100;
-    public static int Width = 100;
+    public static int Height = 500;
+    public static int Width = 500;
     //if nothing is set take that what is set by the editor in unity
     //if there is nothing set it is null so new world
     //only load the set value if not using ingame loading method
@@ -23,7 +23,7 @@ public class GameDataHolder : MonoBehaviour {
     public string editorloadsavegame;
     public static string setloadsavegame;
 
-    public static int MapSeed;
+    public static int MapSeed=10;
 
     public static int bots; // this is far from being in anykind relevant so 
     public static int playerCount = 1;
@@ -40,7 +40,7 @@ public class GameDataHolder : MonoBehaviour {
         }
         Instance = this;
 
-        MapSeed = UnityEngine.Random.Range(0, int.MaxValue);
+        //MapSeed = UnityEngine.Random.Range(0, int.MaxValue);
 
     }
     private void Update() {

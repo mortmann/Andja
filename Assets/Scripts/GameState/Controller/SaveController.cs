@@ -23,8 +23,8 @@ public class SaveController : MonoBehaviour {
     public static bool DebugModeSave = true; 
     public static string SaveName = "unsaved";
     //TODO autosave here
-    const string SaveFileVersion = "0.1.4";
-    const string islandSaveFileVersion = "i_0.0.2";
+    const string SaveFileVersion = "0.1.5";
+    const string islandSaveFileVersion = "i_0.0.3";
     float timeToAutoSave = AutoSaveInterval;
     const float AutoSaveInterval = 15 * 60; // every 15 min -- TODO: add game option to change this
     GameDataHolder GDH => GameDataHolder.Instance;

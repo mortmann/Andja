@@ -1,5 +1,5 @@
 <fertilities>
-   <Fertility ID="0">
+   <Fertility ID="hemp">
       <Name>
          <entry lang="English">Hemp</entry>
          <entry lang="German">Hanf</entry>
@@ -8,17 +8,43 @@
          <Climate>Middle</Climate>
       </climates>
    </Fertility>
-   <Fertility ID="1">
+   <Fertility ID="silk">
       <Name>
-         <entry lang="English">Wheat</entry>
-         <entry lang="German">Getreide</entry>
+         <entry lang="English">Silk</entry>
+         <entry lang="German">Seide</entry>
       </Name>
       <climates>
-         <Climate>Cold</Climate>
-         <Climate>Middle</Climate>
+         <Climate>Warm</Climate>
       </climates>
    </Fertility>
-   <Fertility ID="2">
+   <Fertility ID="coca">
+      <Name>
+         <entry lang="English">Coca</entry>
+         <entry lang="German">Kakao</entry>
+      </Name>
+      <climates>
+         <Climate>Warm</Climate>
+      </climates>
+   </Fertility>
+   <Fertility ID="oilves">
+      <Name>
+         <entry lang="English">Oilves</entry>
+         <entry lang="German">Oliven</entry>
+      </Name>
+      <climates>
+         <Climate>Warm</Climate>
+      </climates>
+   </Fertility>
+   <Fertility ID="coffee">
+      <Name>
+         <entry lang="English">Coffee</entry>
+         <entry lang="German">Kaffee</entry>
+      </Name>
+      <climates>
+         <Climate>Warm</Climate>
+      </climates>
+   </Fertility>
+   <Fertility ID="hop">
       <Name>
          <entry lang="English">Hop</entry>
          <entry lang="German">Hopfen</entry>
@@ -28,7 +54,17 @@
          <Climate>Middle</Climate>
       </climates>
    </Fertility>
-   <Fertility ID="3">
+   <Fertility ID="wheat">
+      <Name>
+         <entry lang="English">Wheat</entry>
+         <entry lang="German">Getreide</entry>
+      </Name>
+      <climates>
+         <Climate>Cold</Climate>
+         <Climate>Middle</Climate>
+      </climates>
+   </Fertility>
+   <Fertility ID="spices">
       <Name>
          <entry lang="English">Spices</entry>
          <entry lang="German">Gewürze</entry>
@@ -37,43 +73,7 @@
          <Climate>Warm</Climate>
       </climates>
    </Fertility>
-   <Fertility ID="4">
-      <Name>
-         <entry lang="English">Coffee</entry>
-         <entry lang="German">Kaffee</entry>
-      </Name>
-      <climates>
-         <Climate>Warm</Climate>
-      </climates>
-   </Fertility>
-   <Fertility ID="5">
-      <Name>
-         <entry lang="English">Oilves</entry>
-         <entry lang="German">Oliven</entry>
-      </Name>
-      <climates>
-         <Climate>Warm</Climate>
-      </climates>
-   </Fertility>
-   <Fertility ID="6">
-      <Name>
-         <entry lang="English">Silk</entry>
-         <entry lang="German">Seide</entry>
-      </Name>
-      <climates>
-         <Climate>Warm</Climate>
-      </climates>
-   </Fertility>
-   <Fertility ID="7">
-      <Name>
-         <entry lang="English">Coca</entry>
-         <entry lang="German">Kakao</entry>
-      </Name>
-      <climates>
-         <Climate>Warm</Climate>
-      </climates>
-   </Fertility>
-   <Fertility ID="8">
+   <Fertility ID="sugarcone">
       <Name>
          <entry lang="English">Sugarcone</entry>
          <entry lang="German">Zuckerrohr</entry>
@@ -82,7 +82,7 @@
          <Climate>Warm</Climate>
       </climates>
    </Fertility>
-   <Fertility ID="9">
+   <Fertility ID="wine">
       <Name>
          <entry lang="English">Wine</entry>
          <entry lang="German">Wein</entry>
@@ -92,7 +92,7 @@
          <Climate>Middle</Climate>
       </climates>
    </Fertility>
-   <Fertility ID="10">
+   <Fertility ID="herbs">
       <Name>
          <entry lang="English">Herbs</entry>
          <entry lang="German">Heilkräuter</entry>

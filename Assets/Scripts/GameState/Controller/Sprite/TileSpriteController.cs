@@ -99,7 +99,7 @@ public class TileSpriteController : MonoBehaviour {
                 GameObject islandGO = Instantiate(islandPosToTilemap[key]);
                 Destroy(islandPosToTilemap[key]);
                 islandToGameObject[i] = islandGO;
-                islandGO.transform.position = key;
+                islandGO.transform.position = key - new Vector2(0.5f,0.5f);
                 islandGO.layer = LayerMask.NameToLayer("Islands");
                 //Now we create the masks for the islands 
                 GameObject cityMaskGameobject = new GameObject("IslandCityMask");
@@ -216,7 +216,7 @@ public class TileSpriteController : MonoBehaviour {
                 int x = (int)(tile_data.X - xTileOffset);
                 int y = (int)(tile_data.Y - yTileOffset);
                 if(nameToBaseTile.ContainsKey(tile_data.SpriteName)==false) {
-                    Debug.Log(tile_data.SpriteName);
+                    Debug.Log("Missing tilesprite " + tile_data.SpriteName);
                 }
                 string temp = nameToBaseTile.ContainsKey(tile_data.SpriteName) ? tile_data.SpriteName : "nosprite" ;
                 tilemap.SetTile(new Vector3Int( x, y, 0 ) , nameToBaseTile[temp]);

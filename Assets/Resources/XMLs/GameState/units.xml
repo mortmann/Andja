@@ -1,71 +1,71 @@
 <units>
-   <unit ID="0">
-      <maximumHealth>100.0</maximumHealth>
+   <unit ID="basicunit">
       <populationLevel>0</populationLevel>
       <populationCount>0</populationCount>
-      <inventoryPlaces>0</inventoryPlaces>
-      <inventorySize>0</inventorySize>
       <Name>
          <entry lang="English">Basic Unit</entry>
          <entry lang="German">Standard Einheit</entry>
       </Name>
-      <maintenancecost>10</maintenancecost>
-      <buildcost>1000</buildcost>
       <buildingItems length="1">
-         <Item ID="1003">
+         <Item ID="swords">
             <count>5</count>
          </Item>
       </buildingItems>
+      <buildcost>1000</buildcost>
+      <inventoryPlaces>0</inventoryPlaces>
+      <inventorySize>0</inventorySize>
+      <maintenancecost>10</maintenancecost>
+      <maximumHealth>100.0</maximumHealth>
       <aggroTimer>1.0</aggroTimer>
       <attackRange>1.0</attackRange>
       <damage>10.0</damage>
-      <myDamageType>0</myDamageType>
-      <myArmorType>0</myArmorType>
-      <attackCooldown>1.0</attackCooldown>
+      <myDamageType>slashing</myDamageType>
+      <myArmorType>leather</myArmorType>
       <attackRate>1.0</attackRate>
       <speed>1.0</speed>
       <turnSpeed>1.0</turnSpeed>
+      <aggroTime>0.0</aggroTime>
       <spriteBaseName>basicunit</spriteBaseName>
    </unit>
-   <ship ID="1">
-      <maximumHealth>1250.0</maximumHealth>
+   <ship ID="ship">
       <populationLevel>0</populationLevel>
       <populationCount>0</populationCount>
-      <inventoryPlaces>6</inventoryPlaces>
-      <inventorySize>50</inventorySize>
       <Name>
          <entry lang="English">Flagship</entry>
          <entry lang="German">Flaggschiff</entry>
       </Name>
-      <maintenancecost>25</maintenancecost>
-      <buildcost>2500</buildcost>
       <buildingItems length="4">
-         <Item ID="1">
+         <Item ID="wood">
             <count>20</count>
          </Item>
-         <Item ID="2">
+         <Item ID="tools">
             <count>2</count>
          </Item>
-         <Item ID="1001">
+         <Item ID="ropes">
             <count>4</count>
          </Item>
-         <Item ID="108">
+         <Item ID="hemp fabric">
             <count>6</count>
          </Item>
       </buildingItems>
+      <buildcost>2500</buildcost>
+      <inventoryPlaces>6</inventoryPlaces>
+      <inventorySize>50</inventorySize>
+      <maintenancecost>25</maintenancecost>
+      <maximumHealth>1250.0</maximumHealth>
       <aggroTimer>1.0</aggroTimer>
-      <attackRange>10.0</attackRange>
+      <attackRange>1.0</attackRange>
       <damage>10.0</damage>
-      <myDamageType>1</myDamageType>
-      <myArmorType>1</myArmorType>
-      <attackCooldown>1.0</attackCooldown>
+      <myDamageType>cannonball</myDamageType>
+      <myArmorType>woodenwall</myArmorType>
       <attackRate>1.0</attackRate>
       <speed>2.0</speed>
       <turnSpeed>1.0</turnSpeed>
+      <aggroTime>0.0</aggroTime>
       <spriteBaseName>ship</spriteBaseName>
       <maximumAmountOfCannons>15</maximumAmountOfCannons>
       <damagePerCannon>1</damagePerCannon>
-      <cannonType ID="1006">
+      <cannonType ID="cannons">
          <count>0</count>
       </cannonType>
    </ship>

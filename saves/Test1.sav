@@ -1,0 +1,1610 @@
+{
+  "$id": "1",
+  "MapSeed": 10,
+  "Height": 500,
+  "Width": 500,
+  "usedIslands": [
+    "middle_m1",
+    "north_m2",
+    "south_s1"
+  ]
+}##
+{
+  "$id": "1",
+  "offworld": {
+    "$id": "2",
+    "itemIDtoPrice": {
+      "$id": "3",
+      "armors": {
+        "$id": "4",
+        "DemandChange": 0
+      },
+      "beer": {
+        "$id": "5",
+        "DemandChange": 0
+      },
+      "beeswax": {
+        "$id": "6",
+        "DemandChange": 0
+      },
+      "better clothes": {
+        "$id": "7",
+        "DemandChange": 0
+      },
+      "books": {
+        "$id": "8",
+        "DemandChange": 0
+      },
+      "bows": {
+        "$id": "9",
+        "DemandChange": 0
+      },
+      "bread": {
+        "$id": "10",
+        "DemandChange": 0
+      },
+      "brick": {
+        "$id": "11",
+        "DemandChange": 0
+      },
+      "candleholder": {
+        "$id": "12",
+        "DemandChange": 0
+      },
+      "candles": {
+        "$id": "13",
+        "DemandChange": 0
+      },
+      "cannons": {
+        "$id": "14",
+        "DemandChange": 0
+      },
+      "carpets": {
+        "$id": "15",
+        "DemandChange": 0
+      },
+      "casks": {
+        "$id": "16",
+        "DemandChange": 0
+      },
+      "cheese": {
+        "$id": "17",
+        "DemandChange": 0
+      },
+      "clay": {
+        "$id": "18",
+        "DemandChange": 0
+      },
+      "coal": {
+        "$id": "19",
+        "DemandChange": 0
+      },
+      "cocoa": {
+        "$id": "20",
+        "DemandChange": 0
+      },
+      "coffee": {
+        "$id": "21",
+        "DemandChange": 0
+      },
+      "coffee beans": {
+        "$id": "22",
+        "DemandChange": 0
+      },
+      "color": {
+        "$id": "23",
+        "DemandChange": 0
+      },
+      "cooper ore": {
+        "$id": "24",
+        "DemandChange": 0
+      },
+      "copper ingots": {
+        "$id": "25",
+        "DemandChange": 0
+      },
+      "cow-meat": {
+        "$id": "26",
+        "DemandChange": 0
+      },
+      "cows": {
+        "$id": "27",
+        "DemandChange": 0
+      },
+      "cutlery": {
+        "$id": "28",
+        "DemandChange": 0
+      },
+      "diamonds": {
+        "$id": "29",
+        "DemandChange": 0
+      },
+      "fish": {
+        "$id": "30",
+        "DemandChange": 0
+      },
+      "flour": {
+        "$id": "31",
+        "DemandChange": 0
+      },
+      "flowers": {
+        "$id": "32",
+        "DemandChange": 0
+      },
+      "fruits": {
+        "$id": "33",
+        "DemandChange": 0
+      },
+      "fur": {
+        "$id": "34",
+        "DemandChange": 0
+      },
+      "glas": {
+        "$id": "35",
+        "DemandChange": 0
+      },
+      "goggles": {
+        "$id": "36",
+        "DemandChange": 0
+      },
+      "gold": {
+        "$id": "37",
+        "DemandChange": 0
+      },
+      "gold ore": {
+        "$id": "38",
+        "DemandChange": 0
+      },
+      "grain salt": {
+        "$id": "39",
+        "DemandChange": 0
+      },
+      "hemp": {
+        "$id": "40",
+        "DemandChange": 0
+      },
+      "hemp clothes": {
+        "$id": "41",
+        "DemandChange": 0
+      },
+      "hemp fabric": {
+        "$id": "42",
+        "DemandChange": 0
+      },
+      "honey": {
+        "$id": "43",
+        "DemandChange": 0
+      },
+      "hopfen": {
+        "$id": "44",
+        "DemandChange": 0
+      },
+      "horses": {
+        "$id": "45",
+        "DemandChange": 0
+      },
+      "iron ingot": {
+        "$id": "46",
+        "DemandChange": 0
+      },
+      "iron ore": {
+        "$id": "47",
+        "DemandChange": 0
+      },
+      "jewelry": {
+        "$id": "48",
+        "DemandChange": 0
+      },
+      "leather": {
+        "$id": "49",
+        "DemandChange": 0
+      },
+      "leather shoe": {
+        "$id": "50",
+        "DemandChange": 0
+      },
+      "liquor": {
+        "$id": "51",
+        "DemandChange": 0
+      },
+      "luxury clothes": {
+        "$id": "52",
+        "DemandChange": 0
+      },
+      "luxury cutlery": {
+        "$id": "53",
+        "DemandChange": 0
+      },
+      "luxury wood": {
+        "$id": "54",
+        "DemandChange": 0
+      },
+      "marble": {
+        "$id": "55",
+        "DemandChange": 0
+      },
+      "medicinal herbs": {
+        "$id": "56",
+        "DemandChange": 0
+      },
+      "milk": {
+        "$id": "57",
+        "DemandChange": 0
+      },
+      "olives": {
+        "$id": "58",
+        "DemandChange": 0
+      },
+      "perfume": {
+        "$id": "59",
+        "DemandChange": 0
+      },
+      "perfume bottle": {
+        "$id": "60",
+        "DemandChange": 0
+      },
+      "pig": {
+        "$id": "61",
+        "DemandChange": 0
+      },
+      "pig-meat": {
+        "$id": "62",
+        "DemandChange": 0
+      },
+      "pike": {
+        "$id": "63",
+        "DemandChange": 0
+      },
+      "potatoes": {
+        "$id": "64",
+        "DemandChange": 0
+      },
+      "rifles": {
+        "$id": "65",
+        "DemandChange": 0
+      },
+      "ropes": {
+        "$id": "66",
+        "DemandChange": 0
+      },
+      "rough diamonds": {
+        "$id": "67",
+        "DemandChange": 0
+      },
+      "salt": {
+        "$id": "68",
+        "DemandChange": 0
+      },
+      "sand": {
+        "$id": "69",
+        "DemandChange": 0
+      },
+      "sheep-wool cloth": {
+        "$id": "70",
+        "DemandChange": 0
+      },
+      "sheep´s wool": {
+        "$id": "71",
+        "DemandChange": 0
+      },
+      "silk": {
+        "$id": "72",
+        "DemandChange": 0
+      },
+      "soap": {
+        "$id": "73",
+        "DemandChange": 0
+      },
+      "spice": {
+        "$id": "74",
+        "DemandChange": 0
+      },
+      "stone": {
+        "$id": "75",
+        "DemandChange": 0
+      },
+      "sugar": {
+        "$id": "76",
+        "DemandChange": 0
+      },
+      "sweets": {
+        "$id": "77",
+        "DemandChange": 0
+      },
+      "swords": {
+        "$id": "78",
+        "DemandChange": 0
+      },
+      "tobacco": {
+        "$id": "79",
+        "DemandChange": 0
+      },
+      "tobacco products": {
+        "$id": "80",
+        "DemandChange": 0
+      },
+      "tools": {
+        "$id": "81",
+        "DemandChange": 0
+      },
+      "venison": {
+        "$id": "82",
+        "DemandChange": 0
+      },
+      "whale oil": {
+        "$id": "83",
+        "DemandChange": 0
+      },
+      "wheat": {
+        "$id": "84",
+        "DemandChange": 0
+      },
+      "wine": {
+        "$id": "85",
+        "DemandChange": 0
+      },
+      "wine grapes": {
+        "$id": "86",
+        "DemandChange": 0
+      },
+      "wood": {
+        "$id": "87",
+        "DemandChange": 0
+      }
+    },
+    "demandChangeTimer": 9.667681
+  },
+  "world": {
+    "$id": "88",
+    "IslandList": [
+      {
+        "$id": "89",
+        "myCities": [
+          {
+            "$id": "90",
+            "AutoUpgradeHomes": false,
+            "playerNumber": -1,
+            "inventory": {
+              "$id": "91",
+              "MaxStackSize": 50,
+              "Items": {
+                "$id": "92"
+              },
+              "NumberOfSpaces": 0
+            },
+            "myStructures": [],
+            "useTickTimer": 0.0,
+            "_name": "",
+            "island": {
+              "$ref": "89"
+            }
+          }
+        ],
+        "myClimate": 2,
+        "Ressources": {
+          "$id": "93"
+        },
+        "StartTile": {
+          "$id": "94",
+          "$type": "LandTile, Assembly-CSharp",
+          "_type": 4,
+          "x": 140,
+          "y": 71,
+          "SpriteName": "warm_dirt_1"
+        }
+      },
+      {
+        "$id": "95",
+        "myCities": [
+          {
+            "$id": "96",
+            "AutoUpgradeHomes": false,
+            "playerNumber": -1,
+            "inventory": {
+              "$id": "97",
+              "MaxStackSize": 50,
+              "Items": {
+                "$id": "98"
+              },
+              "NumberOfSpaces": 0
+            },
+            "myStructures": [
+              {
+                "$id": "99",
+                "$type": "GrowableStructure, Assembly-CSharp",
+                "age": 5.3346405,
+                "currentStage": 3,
+                "hasProduced": true,
+                "produceCountdown": 0.0,
+                "ID": "tree",
+                "buildID": 0,
+                "_city": {
+                  "$ref": "96"
+                },
+                "_health": 0.0,
+                "rotated": 0,
+                "buildInWilderniss": true,
+                "isActive": true,
+                "Output": [
+                  {
+                    "$id": "100",
+                    "ID": "1",
+                    "count": 1
+                  }
+                ],
+                "BuildTile": {
+                  "$id": "101",
+                  "$type": "LandTile, Assembly-CSharp",
+                  "_type": 4,
+                  "x": 280,
+                  "y": 276,
+                  "SpriteName": "cold_dirt_1"
+                }
+              },
+              {
+                "$id": "102",
+                "$type": "GrowableStructure, Assembly-CSharp",
+                "age": 5.3346405,
+                "currentStage": 3,
+                "hasProduced": true,
+                "produceCountdown": 0.0,
+                "ID": "tree",
+                "buildID": 0,
+                "_city": {
+                  "$ref": "96"
+                },
+                "_health": 0.0,
+                "rotated": 0,
+                "buildInWilderniss": true,
+                "isActive": true,
+                "Output": [
+                  {
+                    "$id": "103",
+                    "ID": "1",
+                    "count": 1
+                  }
+                ],
+                "BuildTile": {
+                  "$id": "104",
+                  "$type": "LandTile, Assembly-CSharp",
+                  "_type": 4,
+                  "x": 282,
+                  "y": 275,
+                  "SpriteName": "cold_dirt_0"
+                }
+              },
+              {
+                "$id": "105",
+                "$type": "GrowableStructure, Assembly-CSharp",
+                "age": 5.3346405,
+                "currentStage": 3,
+                "hasProduced": true,
+                "produceCountdown": 0.0,
+                "ID": "tree",
+                "buildID": 0,
+                "_city": {
+                  "$ref": "96"
+                },
+                "_health": 0.0,
+                "rotated": 0,
+                "buildInWilderniss": true,
+                "isActive": true,
+                "Output": [
+                  {
+                    "$id": "106",
+                    "ID": "1",
+                    "count": 1
+                  }
+                ],
+                "BuildTile": {
+                  "$id": "107",
+                  "$type": "LandTile, Assembly-CSharp",
+                  "_type": 4,
+                  "x": 282,
+                  "y": 276,
+                  "SpriteName": "cold_dirt_1"
+                }
+              },
+              {
+                "$id": "108",
+                "$type": "GrowableStructure, Assembly-CSharp",
+                "age": 5.3346405,
+                "currentStage": 3,
+                "hasProduced": true,
+                "produceCountdown": 0.0,
+                "ID": "tree",
+                "buildID": 0,
+                "_city": {
+                  "$ref": "96"
+                },
+                "_health": 0.0,
+                "rotated": 0,
+                "buildInWilderniss": true,
+                "isActive": true,
+                "Output": [
+                  {
+                    "$id": "109",
+                    "ID": "1",
+                    "count": 1
+                  }
+                ],
+                "BuildTile": {
+                  "$id": "110",
+                  "$type": "LandTile, Assembly-CSharp",
+                  "_type": 4,
+                  "x": 282,
+                  "y": 278,
+                  "SpriteName": "cold_dirt_1"
+                }
+              },
+              {
+                "$id": "111",
+                "$type": "GrowableStructure, Assembly-CSharp",
+                "age": 5.3346405,
+                "currentStage": 3,
+                "hasProduced": true,
+                "produceCountdown": 0.0,
+                "ID": "tree",
+                "buildID": 0,
+                "_city": {
+                  "$ref": "96"
+                },
+                "_health": 0.0,
+                "rotated": 0,
+                "buildInWilderniss": true,
+                "isActive": true,
+                "Output": [
+                  {
+                    "$id": "112",
+                    "ID": "1",
+                    "count": 1
+                  }
+                ],
+                "BuildTile": {
+                  "$id": "113",
+                  "$type": "LandTile, Assembly-CSharp",
+                  "_type": 4,
+                  "x": 284,
+                  "y": 274,
+                  "SpriteName": "cold_dirt_0"
+                }
+              },
+              {
+                "$id": "114",
+                "$type": "GrowableStructure, Assembly-CSharp",
+                "age": 5.3346405,
+                "currentStage": 3,
+                "hasProduced": true,
+                "produceCountdown": 0.0,
+                "ID": "tree",
+                "buildID": 0,
+                "_city": {
+                  "$ref": "96"
+                },
+                "_health": 0.0,
+                "rotated": 0,
+                "buildInWilderniss": true,
+                "isActive": true,
+                "Output": [
+                  {
+                    "$id": "115",
+                    "ID": "1",
+                    "count": 1
+                  }
+                ],
+                "BuildTile": {
+                  "$id": "116",
+                  "$type": "LandTile, Assembly-CSharp",
+                  "_type": 4,
+                  "x": 284,
+                  "y": 276,
+                  "SpriteName": "cold_dirt_1"
+                }
+              },
+              {
+                "$id": "117",
+                "$type": "GrowableStructure, Assembly-CSharp",
+                "age": 5.3346405,
+                "currentStage": 3,
+                "hasProduced": true,
+                "produceCountdown": 0.0,
+                "ID": "tree",
+                "buildID": 0,
+                "_city": {
+                  "$ref": "96"
+                },
+                "_health": 0.0,
+                "rotated": 0,
+                "buildInWilderniss": true,
+                "isActive": true,
+                "Output": [
+                  {
+                    "$id": "118",
+                    "ID": "1",
+                    "count": 1
+                  }
+                ],
+                "BuildTile": {
+                  "$id": "119",
+                  "$type": "LandTile, Assembly-CSharp",
+                  "_type": 4,
+                  "x": 284,
+                  "y": 277,
+                  "SpriteName": "cold_dirt_1"
+                }
+              },
+              {
+                "$id": "120",
+                "$type": "GrowableStructure, Assembly-CSharp",
+                "age": 5.3346405,
+                "currentStage": 3,
+                "hasProduced": true,
+                "produceCountdown": 0.0,
+                "ID": "tree",
+                "buildID": 0,
+                "_city": {
+                  "$ref": "96"
+                },
+                "_health": 0.0,
+                "rotated": 0,
+                "buildInWilderniss": true,
+                "isActive": true,
+                "Output": [
+                  {
+                    "$id": "121",
+                    "ID": "1",
+                    "count": 1
+                  }
+                ],
+                "BuildTile": {
+                  "$id": "122",
+                  "$type": "LandTile, Assembly-CSharp",
+                  "_type": 4,
+                  "x": 284,
+                  "y": 278,
+                  "SpriteName": "cold_dirt_0"
+                }
+              },
+              {
+                "$id": "123",
+                "$type": "GrowableStructure, Assembly-CSharp",
+                "age": 5.3346405,
+                "currentStage": 3,
+                "hasProduced": true,
+                "produceCountdown": 0.0,
+                "ID": "tree",
+                "buildID": 0,
+                "_city": {
+                  "$ref": "96"
+                },
+                "_health": 0.0,
+                "rotated": 0,
+                "buildInWilderniss": true,
+                "isActive": true,
+                "Output": [
+                  {
+                    "$id": "124",
+                    "ID": "1",
+                    "count": 1
+                  }
+                ],
+                "BuildTile": {
+                  "$id": "125",
+                  "$type": "LandTile, Assembly-CSharp",
+                  "_type": 4,
+                  "x": 284,
+                  "y": 279,
+                  "SpriteName": "cold_dirt_0"
+                }
+              }
+            ],
+            "useTickTimer": 0.0,
+            "_name": "",
+            "island": {
+              "$ref": "95"
+            }
+          },
+          {
+            "$id": "126",
+            "AutoUpgradeHomes": false,
+            "playerNumber": 0,
+            "inventory": {
+              "$id": "127",
+              "$type": "CityInventory, Assembly-CSharp",
+              "MaxStackSize": 50,
+              "Items": {
+                "$id": "128",
+                "armors": {
+                  "$id": "129",
+                  "ID": "armors",
+                  "count": 0
+                },
+                "beer": {
+                  "$id": "130",
+                  "ID": "beer",
+                  "count": 0
+                },
+                "beeswax": {
+                  "$id": "131",
+                  "ID": "beeswax",
+                  "count": 0
+                },
+                "better clothes": {
+                  "$id": "132",
+                  "ID": "better clothes",
+                  "count": 0
+                },
+                "books": {
+                  "$id": "133",
+                  "ID": "books",
+                  "count": 0
+                },
+                "bows": {
+                  "$id": "134",
+                  "ID": "bows",
+                  "count": 0
+                },
+                "bread": {
+                  "$id": "135",
+                  "ID": "bread",
+                  "count": 0
+                },
+                "brick": {
+                  "$id": "136",
+                  "ID": "brick",
+                  "count": 0
+                },
+                "candleholder": {
+                  "$id": "137",
+                  "ID": "candleholder",
+                  "count": 0
+                },
+                "candles": {
+                  "$id": "138",
+                  "ID": "candles",
+                  "count": 0
+                },
+                "cannons": {
+                  "$id": "139",
+                  "ID": "cannons",
+                  "count": 0
+                },
+                "carpets": {
+                  "$id": "140",
+                  "ID": "carpets",
+                  "count": 0
+                },
+                "casks": {
+                  "$id": "141",
+                  "ID": "casks",
+                  "count": 0
+                },
+                "cheese": {
+                  "$id": "142",
+                  "ID": "cheese",
+                  "count": 0
+                },
+                "clay": {
+                  "$id": "143",
+                  "ID": "clay",
+                  "count": 0
+                },
+                "coal": {
+                  "$id": "144",
+                  "ID": "coal",
+                  "count": 0
+                },
+                "cocoa": {
+                  "$id": "145",
+                  "ID": "cocoa",
+                  "count": 0
+                },
+                "coffee": {
+                  "$id": "146",
+                  "ID": "coffee",
+                  "count": 0
+                },
+                "coffee beans": {
+                  "$id": "147",
+                  "ID": "coffee beans",
+                  "count": 0
+                },
+                "color": {
+                  "$id": "148",
+                  "ID": "color",
+                  "count": 0
+                },
+                "cooper ore": {
+                  "$id": "149",
+                  "ID": "cooper ore",
+                  "count": 0
+                },
+                "copper ingots": {
+                  "$id": "150",
+                  "ID": "copper ingots",
+                  "count": 0
+                },
+                "cow-meat": {
+                  "$id": "151",
+                  "ID": "cow-meat",
+                  "count": 0
+                },
+                "cows": {
+                  "$id": "152",
+                  "ID": "cows",
+                  "count": 0
+                },
+                "cutlery": {
+                  "$id": "153",
+                  "ID": "cutlery",
+                  "count": 0
+                },
+                "diamonds": {
+                  "$id": "154",
+                  "ID": "diamonds",
+                  "count": 0
+                },
+                "fish": {
+                  "$id": "155",
+                  "ID": "fish",
+                  "count": 0
+                },
+                "flour": {
+                  "$id": "156",
+                  "ID": "flour",
+                  "count": 0
+                },
+                "flowers": {
+                  "$id": "157",
+                  "ID": "flowers",
+                  "count": 0
+                },
+                "fruits": {
+                  "$id": "158",
+                  "ID": "fruits",
+                  "count": 0
+                },
+                "fur": {
+                  "$id": "159",
+                  "ID": "fur",
+                  "count": 0
+                },
+                "glas": {
+                  "$id": "160",
+                  "ID": "glas",
+                  "count": 0
+                },
+                "goggles": {
+                  "$id": "161",
+                  "ID": "goggles",
+                  "count": 0
+                },
+                "gold": {
+                  "$id": "162",
+                  "ID": "gold",
+                  "count": 0
+                },
+                "gold ore": {
+                  "$id": "163",
+                  "ID": "gold ore",
+                  "count": 0
+                },
+                "grain salt": {
+                  "$id": "164",
+                  "ID": "grain salt",
+                  "count": 0
+                },
+                "hemp": {
+                  "$id": "165",
+                  "ID": "hemp",
+                  "count": 0
+                },
+                "hemp clothes": {
+                  "$id": "166",
+                  "ID": "hemp clothes",
+                  "count": 0
+                },
+                "hemp fabric": {
+                  "$id": "167",
+                  "ID": "hemp fabric",
+                  "count": 0
+                },
+                "honey": {
+                  "$id": "168",
+                  "ID": "honey",
+                  "count": 0
+                },
+                "hopfen": {
+                  "$id": "169",
+                  "ID": "hopfen",
+                  "count": 0
+                },
+                "horses": {
+                  "$id": "170",
+                  "ID": "horses",
+                  "count": 0
+                },
+                "iron ingot": {
+                  "$id": "171",
+                  "ID": "iron ingot",
+                  "count": 0
+                },
+                "iron ore": {
+                  "$id": "172",
+                  "ID": "iron ore",
+                  "count": 0
+                },
+                "jewelry": {
+                  "$id": "173",
+                  "ID": "jewelry",
+                  "count": 0
+                },
+                "leather": {
+                  "$id": "174",
+                  "ID": "leather",
+                  "count": 0
+                },
+                "leather shoe": {
+                  "$id": "175",
+                  "ID": "leather shoe",
+                  "count": 0
+                },
+                "liquor": {
+                  "$id": "176",
+                  "ID": "liquor",
+                  "count": 0
+                },
+                "luxury clothes": {
+                  "$id": "177",
+                  "ID": "luxury clothes",
+                  "count": 0
+                },
+                "luxury cutlery": {
+                  "$id": "178",
+                  "ID": "luxury cutlery",
+                  "count": 0
+                },
+                "luxury wood": {
+                  "$id": "179",
+                  "ID": "luxury wood",
+                  "count": 0
+                },
+                "marble": {
+                  "$id": "180",
+                  "ID": "marble",
+                  "count": 0
+                },
+                "medicinal herbs": {
+                  "$id": "181",
+                  "ID": "medicinal herbs",
+                  "count": 0
+                },
+                "milk": {
+                  "$id": "182",
+                  "ID": "milk",
+                  "count": 0
+                },
+                "olives": {
+                  "$id": "183",
+                  "ID": "olives",
+                  "count": 0
+                },
+                "perfume": {
+                  "$id": "184",
+                  "ID": "perfume",
+                  "count": 0
+                },
+                "perfume bottle": {
+                  "$id": "185",
+                  "ID": "perfume bottle",
+                  "count": 0
+                },
+                "pig": {
+                  "$id": "186",
+                  "ID": "pig",
+                  "count": 0
+                },
+                "pig-meat": {
+                  "$id": "187",
+                  "ID": "pig-meat",
+                  "count": 0
+                },
+                "pike": {
+                  "$id": "188",
+                  "ID": "pike",
+                  "count": 0
+                },
+                "potatoes": {
+                  "$id": "189",
+                  "ID": "potatoes",
+                  "count": 0
+                },
+                "rifles": {
+                  "$id": "190",
+                  "ID": "rifles",
+                  "count": 0
+                },
+                "ropes": {
+                  "$id": "191",
+                  "ID": "ropes",
+                  "count": 0
+                },
+                "rough diamonds": {
+                  "$id": "192",
+                  "ID": "rough diamonds",
+                  "count": 0
+                },
+                "salt": {
+                  "$id": "193",
+                  "ID": "salt",
+                  "count": 0
+                },
+                "sand": {
+                  "$id": "194",
+                  "ID": "sand",
+                  "count": 0
+                },
+                "sheep-wool cloth": {
+                  "$id": "195",
+                  "ID": "sheep-wool cloth",
+                  "count": 0
+                },
+                "sheep´s wool": {
+                  "$id": "196",
+                  "ID": "sheep´s wool",
+                  "count": 0
+                },
+                "silk": {
+                  "$id": "197",
+                  "ID": "silk",
+                  "count": 0
+                },
+                "soap": {
+                  "$id": "198",
+                  "ID": "soap",
+                  "count": 0
+                },
+                "spice": {
+                  "$id": "199",
+                  "ID": "spice",
+                  "count": 0
+                },
+                "stone": {
+                  "$id": "200",
+                  "ID": "stone",
+                  "count": 0
+                },
+                "sugar": {
+                  "$id": "201",
+                  "ID": "sugar",
+                  "count": 0
+                },
+                "sweets": {
+                  "$id": "202",
+                  "ID": "sweets",
+                  "count": 0
+                },
+                "swords": {
+                  "$id": "203",
+                  "ID": "swords",
+                  "count": 0
+                },
+                "tobacco": {
+                  "$id": "204",
+                  "ID": "tobacco",
+                  "count": 0
+                },
+                "tobacco products": {
+                  "$id": "205",
+                  "ID": "tobacco products",
+                  "count": 0
+                },
+                "tools": {
+                  "$id": "206",
+                  "ID": "tools",
+                  "count": 0
+                },
+                "venison": {
+                  "$id": "207",
+                  "ID": "venison",
+                  "count": 0
+                },
+                "whale oil": {
+                  "$id": "208",
+                  "ID": "whale oil",
+                  "count": 0
+                },
+                "wheat": {
+                  "$id": "209",
+                  "ID": "wheat",
+                  "count": 0
+                },
+                "wine": {
+                  "$id": "210",
+                  "ID": "wine",
+                  "count": 0
+                },
+                "wine grapes": {
+                  "$id": "211",
+                  "ID": "wine grapes",
+                  "count": 0
+                },
+                "wood": {
+                  "$id": "212",
+                  "ID": "wood",
+                  "count": 0
+                }
+              },
+              "NumberOfSpaces": -1
+            },
+            "myStructures": [
+              {
+                "$id": "213",
+                "$type": "WarehouseStructure, Assembly-CSharp",
+                "level": 1,
+                "capturedProgress": 0.0,
+                "myWorker": [],
+                "produceCountdown": 0.0,
+                "ID": "warehouse1",
+                "buildID": 0,
+                "_city": {
+                  "$ref": "126"
+                },
+                "_health": 1000.0,
+                "rotated": 0,
+                "buildInWilderniss": false,
+                "isActive": true,
+                "BuildTile": {
+                  "$id": "214",
+                  "$type": "LandTile, Assembly-CSharp",
+                  "_type": 1,
+                  "x": 258,
+                  "y": 274,
+                  "SpriteName": "shore_NS_E"
+                }
+              },
+              {
+                "$id": "215",
+                "$type": "RoadStructure, Assembly-CSharp",
+                "ID": "dirtroad",
+                "buildID": 1,
+                "_city": {
+                  "$ref": "126"
+                },
+                "_health": 0.0,
+                "rotated": 0,
+                "buildInWilderniss": false,
+                "isActive": true,
+                "BuildTile": {
+                  "$id": "216",
+                  "$type": "LandTile, Assembly-CSharp",
+                  "_type": 4,
+                  "x": 266,
+                  "y": 280,
+                  "SpriteName": "cold_dirt_1"
+                }
+              },
+              {
+                "$id": "217",
+                "$type": "RoadStructure, Assembly-CSharp",
+                "ID": "dirtroad",
+                "buildID": 2,
+                "_city": {
+                  "$ref": "126"
+                },
+                "_health": 0.0,
+                "rotated": 0,
+                "buildInWilderniss": false,
+                "isActive": true,
+                "BuildTile": {
+                  "$id": "218",
+                  "$type": "LandTile, Assembly-CSharp",
+                  "_type": 4,
+                  "x": 267,
+                  "y": 280,
+                  "SpriteName": "cold_dirt_1"
+                }
+              },
+              {
+                "$id": "219",
+                "$type": "RoadStructure, Assembly-CSharp",
+                "ID": "dirtroad",
+                "buildID": 3,
+                "_city": {
+                  "$ref": "126"
+                },
+                "_health": 0.0,
+                "rotated": 0,
+                "buildInWilderniss": false,
+                "isActive": true,
+                "BuildTile": {
+                  "$id": "220",
+                  "$type": "LandTile, Assembly-CSharp",
+                  "_type": 4,
+                  "x": 268,
+                  "y": 280,
+                  "SpriteName": "cold_dirt_1"
+                }
+              },
+              {
+                "$id": "221",
+                "$type": "RoadStructure, Assembly-CSharp",
+                "ID": "dirtroad",
+                "buildID": 4,
+                "_city": {
+                  "$ref": "126"
+                },
+                "_health": 0.0,
+                "rotated": 0,
+                "buildInWilderniss": false,
+                "isActive": true,
+                "BuildTile": {
+                  "$id": "222",
+                  "$type": "LandTile, Assembly-CSharp",
+                  "_type": 4,
+                  "x": 268,
+                  "y": 281,
+                  "SpriteName": "cold_dirt_0"
+                }
+              },
+              {
+                "$id": "223",
+                "$type": "RoadStructure, Assembly-CSharp",
+                "ID": "dirtroad",
+                "buildID": 5,
+                "_city": {
+                  "$ref": "126"
+                },
+                "_health": 0.0,
+                "rotated": 0,
+                "buildInWilderniss": false,
+                "isActive": true,
+                "BuildTile": {
+                  "$id": "224",
+                  "$type": "LandTile, Assembly-CSharp",
+                  "_type": 4,
+                  "x": 269,
+                  "y": 281,
+                  "SpriteName": "cold_dirt_1"
+                }
+              },
+              {
+                "$id": "225",
+                "$type": "RoadStructure, Assembly-CSharp",
+                "ID": "dirtroad",
+                "buildID": 6,
+                "_city": {
+                  "$ref": "126"
+                },
+                "_health": 0.0,
+                "rotated": 0,
+                "buildInWilderniss": false,
+                "isActive": true,
+                "BuildTile": {
+                  "$id": "226",
+                  "$type": "LandTile, Assembly-CSharp",
+                  "_type": 4,
+                  "x": 269,
+                  "y": 282,
+                  "SpriteName": "cold_dirt_1"
+                }
+              },
+              {
+                "$id": "227",
+                "$type": "RoadStructure, Assembly-CSharp",
+                "ID": "dirtroad",
+                "buildID": 7,
+                "_city": {
+                  "$ref": "126"
+                },
+                "_health": 0.0,
+                "rotated": 0,
+                "buildInWilderniss": false,
+                "isActive": true,
+                "BuildTile": {
+                  "$id": "228",
+                  "$type": "LandTile, Assembly-CSharp",
+                  "_type": 4,
+                  "x": 270,
+                  "y": 282,
+                  "SpriteName": "cold_dirt_1"
+                }
+              },
+              {
+                "$id": "229",
+                "$type": "RoadStructure, Assembly-CSharp",
+                "ID": "dirtroad",
+                "buildID": 8,
+                "_city": {
+                  "$ref": "126"
+                },
+                "_health": 0.0,
+                "rotated": 0,
+                "buildInWilderniss": false,
+                "isActive": true,
+                "BuildTile": {
+                  "$id": "230",
+                  "$type": "LandTile, Assembly-CSharp",
+                  "_type": 4,
+                  "x": 269,
+                  "y": 279,
+                  "SpriteName": "cold_dirt_1"
+                }
+              },
+              {
+                "$id": "231",
+                "$type": "RoadStructure, Assembly-CSharp",
+                "ID": "dirtroad",
+                "buildID": 9,
+                "_city": {
+                  "$ref": "126"
+                },
+                "_health": 0.0,
+                "rotated": 0,
+                "buildInWilderniss": false,
+                "isActive": true,
+                "BuildTile": {
+                  "$id": "232",
+                  "$type": "LandTile, Assembly-CSharp",
+                  "_type": 4,
+                  "x": 269,
+                  "y": 278,
+                  "SpriteName": "cold_dirt_0"
+                }
+              },
+              {
+                "$id": "233",
+                "$type": "RoadStructure, Assembly-CSharp",
+                "ID": "dirtroad",
+                "buildID": 10,
+                "_city": {
+                  "$ref": "126"
+                },
+                "_health": 0.0,
+                "rotated": 0,
+                "buildInWilderniss": false,
+                "isActive": true,
+                "BuildTile": {
+                  "$id": "234",
+                  "$type": "LandTile, Assembly-CSharp",
+                  "_type": 4,
+                  "x": 270,
+                  "y": 278,
+                  "SpriteName": "cold_dirt_0"
+                }
+              },
+              {
+                "$id": "235",
+                "$type": "RoadStructure, Assembly-CSharp",
+                "ID": "dirtroad",
+                "buildID": 11,
+                "_city": {
+                  "$ref": "126"
+                },
+                "_health": 0.0,
+                "rotated": 0,
+                "buildInWilderniss": false,
+                "isActive": true,
+                "BuildTile": {
+                  "$id": "236",
+                  "$type": "LandTile, Assembly-CSharp",
+                  "_type": 4,
+                  "x": 270,
+                  "y": 277,
+                  "SpriteName": "cold_dirt_0"
+                }
+              },
+              {
+                "$id": "237",
+                "$type": "RoadStructure, Assembly-CSharp",
+                "ID": "dirtroad",
+                "buildID": 12,
+                "_city": {
+                  "$ref": "126"
+                },
+                "_health": 0.0,
+                "rotated": 0,
+                "buildInWilderniss": false,
+                "isActive": true,
+                "BuildTile": {
+                  "$id": "238",
+                  "$type": "LandTile, Assembly-CSharp",
+                  "_type": 4,
+                  "x": 270,
+                  "y": 276,
+                  "SpriteName": "cold_dirt_1"
+                }
+              }
+            ],
+            "useTickTimer": 0.0,
+            "itemIDtoTradeItem": {
+              "$id": "239"
+            },
+            "_name": "<City>825",
+            "island": {
+              "$ref": "95"
+            },
+            "PopulationLevels": [
+              {
+                "$id": "240",
+                "criticalMissingNeed": false,
+                "Level": 0,
+                "NeedGroupList": [
+                  {
+                    "$id": "241",
+                    "ID": "food",
+                    "Needs": [
+                      {
+                        "$id": "242",
+                        "ID": "food",
+                        "lastNeededNotConsumed": [
+                          0.0
+                        ],
+                        "percantageAvailability": [
+                          0.0
+                        ],
+                        "notUsedOfTon": 0.0
+                      }
+                    ],
+                    "LastFullfillmentPercentage": 0.0
+                  }
+                ],
+                "taxPercantage": 1.0,
+                "city": {
+                  "$ref": "126"
+                }
+              },
+              {
+                "$id": "243",
+                "criticalMissingNeed": false,
+                "Level": 1,
+                "previousLevel": {
+                  "$ref": "240"
+                },
+                "taxPercantage": 1.0,
+                "city": {
+                  "$ref": "126"
+                }
+              },
+              {
+                "$id": "244",
+                "criticalMissingNeed": false,
+                "Level": 2,
+                "previousLevel": {
+                  "$ref": "243"
+                },
+                "taxPercantage": 1.0,
+                "city": {
+                  "$ref": "126"
+                }
+              },
+              {
+                "$id": "245",
+                "criticalMissingNeed": false,
+                "Level": 3,
+                "previousLevel": {
+                  "$ref": "244"
+                },
+                "taxPercantage": 1.0,
+                "city": {
+                  "$ref": "126"
+                }
+              }
+            ]
+          }
+        ],
+        "myClimate": 0,
+        "Ressources": {
+          "$id": "246"
+        },
+        "StartTile": {
+          "$id": "247",
+          "$type": "LandTile, Assembly-CSharp",
+          "_type": 1,
+          "x": 258,
+          "y": 271,
+          "SpriteName": "shore_NE"
+        }
+      },
+      {
+        "$id": "248",
+        "myCities": [
+          {
+            "$id": "249",
+            "AutoUpgradeHomes": false,
+            "playerNumber": -1,
+            "inventory": {
+              "$id": "250",
+              "MaxStackSize": 50,
+              "Items": {
+                "$id": "251"
+              },
+              "NumberOfSpaces": 0
+            },
+            "myStructures": [],
+            "useTickTimer": 0.0,
+            "_name": "",
+            "island": {
+              "$ref": "248"
+            }
+          }
+        ],
+        "myClimate": 1,
+        "Ressources": {
+          "$id": "252"
+        },
+        "StartTile": {
+          "$id": "253",
+          "$type": "LandTile, Assembly-CSharp",
+          "_type": 4,
+          "x": 352,
+          "y": 57,
+          "SpriteName": "middle_dirt_1"
+        }
+      }
+    ],
+    "Units": [],
+    "Crates": [],
+    "Projectiles": []
+  }
+}##
+{
+  "$id": "1",
+  "currentPlayerNumber": 0,
+  "tickTimer": 0.861865759,
+  "players": [
+    {
+      "$id": "2",
+      "_lastTreasuryChange": -20,
+      "_treasuryBalance": 47597,
+      "_maxPopulationLevel": 0,
+      "_maxPopulationCount": 0,
+      "Number": 0,
+      "MyTradeRoutes": []
+    },
+    {
+      "$id": "3",
+      "_lastTreasuryChange": 0,
+      "_treasuryBalance": 50000,
+      "_maxPopulationLevel": 0,
+      "_maxPopulationCount": 0,
+      "Number": 1,
+      "MyTradeRoutes": []
+    },
+    {
+      "$id": "4",
+      "_lastTreasuryChange": 0,
+      "_treasuryBalance": 50000,
+      "_maxPopulationLevel": 0,
+      "_maxPopulationCount": 0,
+      "Number": 2,
+      "MyTradeRoutes": []
+    }
+  ],
+  "playerWars": [
+    {
+      "$id": "5",
+      "playerOne": 0,
+      "playerTwo": 1
+    }
+  ]
+}##
+{
+  "$id": "1",
+  "idToActiveEvent": {
+    "$id": "2"
+  },
+  "Random": {
+    "$id": "3"
+  }
+}##
+{
+  "$id": "1",
+  "pos": {
+    "$id": "2",
+    "X": 271.895966,
+    "Y": 273.011169,
+    "Z": -10.0
+  },
+  "orthographicSize": 14.6410007
+}##

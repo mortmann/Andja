@@ -245,12 +245,8 @@ public class PrototypController : MonoBehaviour {
 
     private void ReadEventsFromXML() {
         XmlDocument xmlDoc = new XmlDocument(); // xmlDoc is the new xml document.
-        TextAsset ta = ((TextAsset)Resources.Load("XMLs/GameState/events", typeof(TextAsset)));
-        if(ta == null) {
-            Debug.LogError("Missing Events XML File -- This will cause a crash.");
-            return;
-        }
-        xmlDoc.LoadXml(ta.text); // load the file.
+        string file = LoadXML("events");// ((TextAsset)Resources.Load("XMLs/GameState/events", typeof(TextAsset)));
+        xmlDoc.LoadXml(file); // load the file.
         foreach (XmlElement node in xmlDoc.SelectNodes("events/Effect")) {
             EffectPrototypeData epd = new EffectPrototypeData();
             string id = node.GetAttribute("ID");
@@ -267,8 +263,8 @@ public class PrototypController : MonoBehaviour {
 
     private void ReadOtherFromXML() {
         XmlDocument xmlDoc = new XmlDocument(); // xmlDoc is the new xml document.
-        TextAsset ta = ((TextAsset)Resources.Load("XMLs/GameState/other", typeof(TextAsset)));
-        xmlDoc.LoadXml(ta.text); // load the file.
+        string file = LoadXML("other");//((TextAsset)Resources.Load("XMLs/GameState/other", typeof(TextAsset)));
+        xmlDoc.LoadXml(file); // load the file.
         foreach (XmlElement node in xmlDoc.SelectNodes("Other/PopulationLevel")) {
             PopulationLevelPrototypData plpd = new PopulationLevelPrototypData();
             int level = int.Parse(node.GetAttribute("LEVEL"));
@@ -284,8 +280,8 @@ public class PrototypController : MonoBehaviour {
 
     private void ReadCombatFromXML() {
         XmlDocument xmlDoc = new XmlDocument(); // xmlDoc is the new xml document.
-        TextAsset ta = ((TextAsset)Resources.Load("XMLs/GameState/combat", typeof(TextAsset)));
-        xmlDoc.LoadXml(ta.text); // load the file.
+        string file = LoadXML("combat"); // ((TextAsset)Resources.Load("XMLs/GameState/combat", typeof(TextAsset)));
+        xmlDoc.LoadXml(file); // load the file.
         foreach (XmlElement node in xmlDoc.SelectNodes("combatTypes/armorType")) {
             ArmorType at = new ArmorType();
             string id = node.GetAttribute("ID");
@@ -307,6 +303,7 @@ public class PrototypController : MonoBehaviour {
                 if (float.TryParse(child.InnerText, out multiplier) == false) {
                     Debug.LogError("ID is not an float for ArmorType ");
                 }
+
                 at.damageMultiplier[armorTypeDatas[armorID]] = multiplier;
             }
             damageTypeDatas.Add(id, at);
@@ -361,8 +358,8 @@ public class PrototypController : MonoBehaviour {
     ///////////////////////////////////////
     private void ReadItemsFromXML() {
         XmlDocument xmlDoc = new XmlDocument(); // xmlDoc is the new xml document.
-        TextAsset ta = ((TextAsset)Resources.Load("XMLs/GameState/items", typeof(TextAsset)));
-        xmlDoc.LoadXml(ta.text); // load the file.
+        string file = LoadXML("items");// ((TextAsset)Resources.Load("XMLs/GameState/items", typeof(TextAsset)));
+        xmlDoc.LoadXml(file); // load the file.
         foreach (XmlElement node in xmlDoc.SelectNodes("items/Item")) {
             ItemPrototypeData ipd = new ItemPrototypeData();
             string id = node.GetAttribute("ID");
@@ -380,8 +377,8 @@ public class PrototypController : MonoBehaviour {
     }
     private void ReadUnitsFromXML() {
         XmlDocument xmlDoc = new XmlDocument(); // xmlDoc is the new xml document.
-        TextAsset ta = ((TextAsset)Resources.Load("XMLs/GameState/units", typeof(TextAsset)));
-        xmlDoc.LoadXml(ta.text); // load the file.
+        string file = LoadXML("units");// ((TextAsset)Resources.Load("XMLs/GameState/units", typeof(TextAsset)));
+        xmlDoc.LoadXml(file); // load the file.
         foreach (XmlElement node in xmlDoc.SelectNodes("units/unit")) {
             UnitPrototypeData upd = new UnitPrototypeData();
             string id = node.GetAttribute("ID");
@@ -401,8 +398,8 @@ public class PrototypController : MonoBehaviour {
     }
     private void ReadFertilitiesFromXML() {
         XmlDocument xmlDoc = new XmlDocument(); // xmlDoc is the new xml document.
-        TextAsset ta = ((TextAsset)Resources.Load("XMLs/GameState/fertilities", typeof(TextAsset)));
-        xmlDoc.LoadXml(ta.text); // load the file.
+        string file = LoadXML("fertilities");// ((TextAsset)Resources.Load("XMLs/GameState/fertilities", typeof(TextAsset)));
+        xmlDoc.LoadXml(file); // load the file.
         foreach (XmlElement node in xmlDoc.SelectNodes("fertilities/Fertility")) {
             string ID = node.GetAttribute("ID");
 
@@ -428,8 +425,8 @@ public class PrototypController : MonoBehaviour {
     }
     private void ReadNeedsFromXML() {
         XmlDocument xmlDoc = new XmlDocument(); // xmlDoc is the new xml document.
-        TextAsset ta = ((TextAsset)Resources.Load("XMLs/GameState/needs", typeof(TextAsset)));
-        xmlDoc.LoadXml(ta.text); // load the file.
+        string file = LoadXML("needs");// ((TextAsset)Resources.Load("XMLs/GameState/needs", typeof(TextAsset)));
+        xmlDoc.LoadXml(file); // load the file.
         foreach (XmlElement node in xmlDoc.SelectNodes("needs/NeedGroup")) {
             NeedGroupPrototypData ngpd = new NeedGroupPrototypData();
             string ID = node.GetAttribute("ID");
@@ -482,8 +479,8 @@ public class PrototypController : MonoBehaviour {
     }
     private void ReadStructuresFromXML() {
         XmlDocument xmlDoc = new XmlDocument();
-        TextAsset ta = ((TextAsset)Resources.Load("XMLs/GameState/structures", typeof(TextAsset)));
-        xmlDoc.LoadXml(ta.text); // load the file.
+        string file = LoadXML("structures");// ((TextAsset)Resources.Load("XMLs/GameState/structures", typeof(TextAsset)));
+        xmlDoc.LoadXml(file); // load the file.
         ReadRoads(xmlDoc.SelectSingleNode("structures/roads"));
         ReadGrowables(xmlDoc.SelectSingleNode("structures/growables"));
         ReadFarms(xmlDoc.SelectSingleNode("structures/farms"));
@@ -680,7 +677,7 @@ public class PrototypController : MonoBehaviour {
             structurePrototypes[ID] = new HomeStructure(ID, hpd);
 
             string prevID = GetStructureIDForTypeNeighbourStructureLevel(typeof(HomeStructure), hpd.structureLevel, false);
-            if (String.IsNullOrEmpty(prevID)) {
+            if (String.IsNullOrEmpty(prevID)==false) {
                 HomePrototypeData prev = (HomePrototypeData)structurePrototypeDatas[prevID];
                 ((HomePrototypeData)hpd).previouseMaxLivingSpaces = prev == null ? 0 : prev.maxLivingSpaces;
                 prev.upgradeItems = hpd.buildingItems;
@@ -1007,7 +1004,10 @@ public class PrototypController : MonoBehaviour {
         }
         return idToFertilities[id];
     }
-    
+    private string LoadXML(string name) {
+        string path = System.IO.Path.Combine(ConstantPathHolder.StreamingAssets,"XMLs", "GameState", name + ".xml");
+        return System.IO.File.ReadAllText(path);
+    }
     void OnDestroy() {
         Instance = null;
     }

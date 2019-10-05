@@ -1,0 +1,12 @@
+{
+  "$id": "1",
+  "saveName": "Test1",
+  "safefileversion": "0.1.5",
+  "saveTime": "2019-09-28T18:23:38.9080112+02:00",
+  "difficulty": 0,
+  "saveFileType": 0,
+  "playTime": 175.446121,
+  "size": 0,
+  "climate": 0,
+  "isInDebugMode": true
+}

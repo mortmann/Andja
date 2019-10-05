@@ -1,4 +1,4 @@
-﻿//=======================================================================
+//=======================================================================
 // Copyright Martin "quill18" Glaude 2015.
 //		http://quill18.com
 //=======================================================================
@@ -135,6 +135,9 @@ public class Path_TileGraph {
             // If neighbour is walkable, create an edge to the relevant node.
             for (int i = 0; i < neighbours.Length; i++) {
                 // neighbours[i] != null && neighbours[i].Type != TileType.Water && IsClippingCorner(t, neighbours[i]) == false
+                if(neighbours[i] == null) {
+                    continue;
+                }
                 if (nodes.ContainsKey(neighbours[i])) {
                     // This neighbour exists, is walkable, and doesn't requiring clipping a corner --> so create an edge.
 

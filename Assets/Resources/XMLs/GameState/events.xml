@@ -1,5 +1,5 @@
 <events>
-   <Effect ID="0">
+   <Effect ID="fire">
       <Name>
          <entry lang="English">Fire</entry>
          <entry lang="German">Feuer</entry>
@@ -17,7 +17,7 @@
       <uiSpriteName>fire</uiSpriteName>
       <onMapSpriteName>fire</onMapSpriteName>
    </Effect>
-   <Effect ID="1">
+   <Effect ID="illness">
       <Name>
          <entry lang="English">Illness</entry>
          <entry lang="German">Krankheit</entry>
@@ -35,10 +35,10 @@
       <uiSpriteName>illness</uiSpriteName>
       <onMapSpriteName>illness</onMapSpriteName>
    </Effect>
-   <GameEvent ID="0">
+   <GameEvent ID="fireoutbreak">
       <Name>
-         <entry lang="English">Fire</entry>
-         <entry lang="German">Feuer</entry>
+         <entry lang="English">Fire outbreak</entry>
+         <entry lang="German">Feuerausbruch</entry>
       </Name>
       <Description>
          <entry lang="English">A building caught fire.</entry>
@@ -50,7 +50,7 @@
       <minRange>0.0</minRange>
       <maxRange>0.0</maxRange>
       <effects length="1">
-         <Effect>0</Effect>
+         <Effect>fire</Effect>
       </effects>
    </GameEvent>
 </events>

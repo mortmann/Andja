@@ -81,7 +81,11 @@ public class MapGenerator : MonoBehaviour {
         Width = width;
         Height = height;
         tiles = new Tile[Width * Height];
-
+        for (int x = 0; x < Width; x++) {
+            for (int y = 0; y < Height; y++) {
+                SetTileAt(x, y, new Tile(x, y));
+            }
+        }
         if (hasToUseIslands == null) {
             hasToUseIslands = new List<string>();
         }

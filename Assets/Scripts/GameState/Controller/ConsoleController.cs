@@ -71,12 +71,13 @@ public class ConsoleController : MonoBehaviour {
     internal void RegisterOnLogAdded(Action<string> writeToConsole) {
         this.writeToConsole += writeToConsole;
     }
-
+    public List<string> FirstLevelCommands = new List<string> 
+        { "speed", "player", "maxfps", "city", "unit", "ship", "island", "spawn", "event", "camera" };
     public bool HandleInput(string command) {
         if (command.Trim().Length <= 0) {
             return false;
         }
-        string[] parameters = command.Split(' ');
+        string[] parameters = command.Split(null); // splits  whitespaces
         if (parameters.Length < 1) {
             return false;
         }
@@ -158,7 +159,8 @@ public class ConsoleController : MonoBehaviour {
         }
         return happend;
     }
-
+    public List<string> ShipCommands = new List<string>
+        { "cannon" };
     private bool HandleShipCommands(string[] parameters) {
         Ship ship = MouseController.Instance.SelectedUnit as Ship;
         if (ship == null) {
@@ -184,6 +186,8 @@ public class ConsoleController : MonoBehaviour {
         ship.CannonItem.count = amount;
         return true;
     }
+    public List<string> EventsCommands = new List<string>
+        { "trigger" };
 
     private bool HandleEventCommands(string[] parameters) {
         if (parameters.Length < 1) {
@@ -194,22 +198,23 @@ public class ConsoleController : MonoBehaviour {
             return false;
         }
         switch (parameters[0]) {
-            case "triggerplayer":
-                int player = PlayerController.currentPlayerNumber;
+            case "trigger":
+                int player = -1;
                 if (parameters.Length == 3) {
                     int.TryParse(parameters[2], out player);
                 }
-                EventController.Instance.TriggerEventForPlayer(new GameEvent(id), PlayerController.GetPlayer(player));
-                break;
-            case "trigger":
-                EventController.Instance.TriggerEventForEventable(new GameEvent(id), MouseController.Instance.CurrentlySelectedIGEventable);
+                if(player < 0)
+                    EventController.Instance.TriggerEventForEventable(new GameEvent(id), MouseController.Instance.CurrentlySelectedIGEventable);
+                else
+                    EventController.Instance.TriggerEventForPlayer(new GameEvent(id), PlayerController.GetPlayer(player));
                 break;
             default:
                 return false;
         }
         return true;
     }
-
+    public List<string> SpawnCommands = new List<string>
+        { "unit", "crate" };
     private bool HandleSpawnCommands(string[] parameters) {
         if (parameters.Length < 2) {
             return false;
@@ -268,7 +273,8 @@ public class ConsoleController : MonoBehaviour {
         }
         return false;
     }
-
+    public List<string> CityCommands = new List<string>
+        { "item","fillitup","builditems", "name", "player" };
     bool HandleCityCommands(string[] parameters) {
         if (parameters.Length < 1) {
             return false;
@@ -294,19 +300,23 @@ public class ConsoleController : MonoBehaviour {
                 return ChangeItemInInventory(parameters.Skip(2).ToArray(), c.inventory);
             case "fillitup":
                 return AddAllItems(c.inventory);
-            case "build":
+            case "builditems":
                 return AddAllItems(c.inventory, true);
             case "name":
                 break;
             case "player":
+                Debug.Log("Console Command not implemented!");
                 break;
             case "event":
+                Debug.Log("Console Command not implemented!");
                 break;
             default:
                 break;
         }
         return false;
     }
+    public List<string> PlayerCommands = new List<string>
+        { "change","money","war" };
     bool HandlePlayerCommands(string[] parameters) {
         switch (parameters[0]) {
             case "change":
@@ -384,7 +394,8 @@ public class ConsoleController : MonoBehaviour {
         }
         return PlayerController.Instance.ChangeCurrentPlayer(player);
     }
-
+    public List<string> UnitCommands = new List<string>
+        { "item","build","kill", "name", "player", "event" };
     bool HandleUnitCommands(string[] parameters) {
         if (parameters.Length < 1) {
             return false;
@@ -418,10 +429,13 @@ public class ConsoleController : MonoBehaviour {
                 u.Destroy();
                 return true;
             case "name":
+                Debug.Log("Console Command not implemented!");
                 break;
             case "player":
+                Debug.Log("Console Command not implemented!");
                 break;
             case "event":
+                Debug.Log("Console Command not implemented!");
                 break;
             default:
                 break;

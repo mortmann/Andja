@@ -354,7 +354,12 @@ public class TileSpriteController : MonoBehaviour {
         foreach (Sprite s in sprites) {
             nameToSprite.Add(s.name, s);
         }
-
+        Sprite[] custom = CustomSpriteLoader.Load("Structures");
+        if (custom != null) {
+            foreach (Sprite s in custom) {
+                nameToSprite[s.name] = s;
+            }
+        }
         typeTotileSpriteNames = new Dictionary<TileType, Dictionary<string, List<string>>>();
 
         foreach (string s in TileSpriteController.nameToSprite.Keys) {

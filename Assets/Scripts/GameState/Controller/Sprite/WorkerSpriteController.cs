@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 
 public class WorkerSpriteController : MonoBehaviour {
-    private Dictionary<string, Sprite> unitSprites;
+    private Dictionary<string, Sprite> workerSprites;
     public Dictionary<Worker, GameObject> workerToGO;
     CameraController cc;
     public List<Worker> loadedWorker;
@@ -48,7 +48,7 @@ public class WorkerSpriteController : MonoBehaviour {
         char_go.transform.SetParent(this.transform, true);
 
         SpriteRenderer sr = char_go.AddComponent<SpriteRenderer>();
-        sr.sprite = unitSprites["worker"];
+        sr.sprite = workerSprites["worker"];
         sr.sortingLayerName = "Persons";
     }
     void OnWorkerChanged(Worker w) {
@@ -71,10 +71,16 @@ public class WorkerSpriteController : MonoBehaviour {
         workerToGO.Remove(w);
     }
     void LoadSprites() {
-        unitSprites = new Dictionary<string, Sprite>();
+        workerSprites = new Dictionary<string, Sprite>();
         Sprite[] sprites = Resources.LoadAll<Sprite>("Textures/Worker/");
         foreach (Sprite s in sprites) {
-            unitSprites[s.name] = s;
+            workerSprites[s.name] = s;
+        }
+        Sprite[] custom = CustomSpriteLoader.Load("Structures");
+        if (custom == null)
+            return;
+        foreach (Sprite s in custom) {
+            workerSprites[s.name] = s;
         }
     }
     void OnDestroy() {

@@ -1146,7 +1146,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 3.81, y: -0.000004318298}
+  m_AnchoredPosition: {x: 3.81, y: 0.000003940101}
   m_SizeDelta: {x: -8.16, y: 235}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &246330040
@@ -3026,7 +3026,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 973592710}
-  m_RootOrder: 1
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &699884305
 MonoBehaviour:
@@ -4066,12 +4066,12 @@ Transform:
   m_LocalPosition: {x: 323.81473, y: 175.02608, z: -3.375}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
+  - {fileID: 1286709653}
   - {fileID: 1624401327}
   - {fileID: 699884304}
   - {fileID: 1264538839}
   - {fileID: 1320614034}
   - {fileID: 1489915868}
-  - {fileID: 1286709653}
   - {fileID: 1832695669}
   m_Father: {fileID: 0}
   m_RootOrder: 3
@@ -5475,7 +5475,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 973592710}
-  m_RootOrder: 2
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1264538840
 MonoBehaviour:
@@ -5819,7 +5819,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 973592710}
-  m_RootOrder: 5
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1286709654
 MonoBehaviour:
@@ -6012,7 +6012,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 973592710}
-  m_RootOrder: 3
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1320614035
 MonoBehaviour:
@@ -6874,7 +6874,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 973592710}
-  m_RootOrder: 4
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1496737687
 GameObject:
@@ -7484,7 +7484,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 973592710}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1624401328
 MonoBehaviour:
@@ -8270,7 +8270,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 1862044380}
   m_Direction: 2
   m_Value: 0
-  m_Size: 0.68228865
+  m_Size: 0.9999567
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:

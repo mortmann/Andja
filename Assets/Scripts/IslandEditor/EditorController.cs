@@ -66,9 +66,15 @@ public class EditorController : MonoBehaviour {
             world = new World(mg.GetTiles(), mg.Width, mg.Height);
         }
         else {
-            world = new World(width, height);
+            Tile[] tiles = new Tile[width * height];
+            for (int x = 0; x < width; x++) {
+                for (int y = 0; y < height; y++) {
+                    tiles[x * height + y] = new Tile(x, y);
+                }
+            }
+            world = new World(tiles,width, height);
         }
-
+        DontDestroyOnLoad(this);
         Camera.main.transform.position = new Vector3(width / 2, height / 2, Camera.main.transform.position.z);
     }
     public IEnumerator NewIsland(int w, int h, Climate clim) {

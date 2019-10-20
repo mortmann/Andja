@@ -2,7 +2,7 @@ using System;
 using Newtonsoft.Json;
 
 
-public enum ItemType { Missing, Build, Intermediate, Luxury }
+public enum ItemType { Missing, Build, Intermediate, Luxury, Military }
 
 public class ItemPrototypeData : LanguageVariables {
     public ItemType type;

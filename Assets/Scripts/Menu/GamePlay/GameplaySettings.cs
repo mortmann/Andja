@@ -13,7 +13,7 @@ public class GameplaySettings : MonoBehaviour {
     public static readonly string localizationFileType = ".xml";
     public static readonly string localizationDirectory = ".xml";
 
-    List<string> Localizations;
+    public List<string> Localizations;
     // Use this for initialization
     void Start() {
         Instance = this;

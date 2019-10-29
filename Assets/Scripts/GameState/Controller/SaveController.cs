@@ -339,8 +339,6 @@ public class SaveController : MonoBehaviour {
             );
         }
 
-
-
         SaveMetaData metaData = new SaveMetaData {
             safefileversion = SaveFileVersion,
             saveName = name,
@@ -348,7 +346,8 @@ public class SaveController : MonoBehaviour {
             saveFileType = GDH.saveFileType,
             playTime = GDH.playTime,
             difficulty = GDH.difficulty,
-            isInDebugMode = DebugModeSave
+            isInDebugMode = DebugModeSave,
+            usedMods = ModLoader.GetActiveMods()
         };
 
         string metadata = JsonConvert.SerializeObject(metaData, Formatting.Indented,
@@ -387,6 +386,16 @@ public class SaveController : MonoBehaviour {
             Debug.LogError("Mismatch of SaveFile Versions " + metaData.safefileversion + " & " + SaveFileVersion);
             yield break;
         }
+        List<Mod> mods = ModLoader.AvaibleMods();
+        if(mods!=null && metaData.usedMods!=null) {
+            foreach (string mod in metaData.usedMods) {
+                if (mods.Exists((x) => x.name == mod) == false) {
+                    Debug.LogError("Missing Mod " + mod);
+                    yield break;
+                }
+            }
+        }
+        
         DebugModeSave = metaData.isInDebugMode;
         SaveState state = null;
         string save = "";
@@ -470,6 +479,7 @@ public class SaveController : MonoBehaviour {
         public Size size;
         public Climate climate;
         public bool isInDebugMode;
+        public List<string> usedMods;
     }
 
 }

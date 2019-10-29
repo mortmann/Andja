@@ -176,7 +176,7 @@ public class UnitSpriteController : MonoBehaviour {
         foreach (Sprite s in sprites) {
             unitSprites[s.name] = s;
         }
-        Sprite[] custom = CustomSpriteLoader.Load("Structures");
+        Sprite[] custom = ModLoader.LoadSprites(SpriteType.Unit);
         if (custom == null)
             return;
         foreach (Sprite s in custom) {

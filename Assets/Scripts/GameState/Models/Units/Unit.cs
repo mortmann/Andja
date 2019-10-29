@@ -17,6 +17,7 @@ public class UnitPrototypeData : LanguageVariables {
 
     public Item[] buildingItems;
     public string spriteBaseName;
+
     public float buildTime = 1f;
     public float maximumHealth;
     public float attackRange = 1f;
@@ -26,6 +27,7 @@ public class UnitPrototypeData : LanguageVariables {
     public float rotationSpeed = 2f;
     public float aggroTime = 2f;
     public float captureSpeed=0.01f;
+    public float projectileSpeed = 4.5f;
 
     public float width = 0;
     public float height = 0;

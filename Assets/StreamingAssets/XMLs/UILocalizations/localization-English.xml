@@ -1,4 +1,4 @@
-<UI>
+<UI language="English">
    <element name="Right Canvas">
       <element name="CityInventory">
          <textelement name="CityInfoToggle"/>

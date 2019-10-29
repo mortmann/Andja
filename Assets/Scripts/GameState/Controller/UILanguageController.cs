@@ -6,16 +6,20 @@ using System.IO;
 using System.Xml.Serialization;
 using System.Xml;
 using UnityEditor; 
-public enum Language { English, German }
 
 public class UILanguageController : MonoBehaviour {
     public static UILanguageController Instance { get; protected set; }
     Action cbLanguageChange;
-    public static Language selectedLanguage = Language.English;
+    public static string selectedLanguage = "English";
     Dictionary<string, string> nameToText;
     Dictionary<string, string> nameToHover;
 
     List<string> missingLocalizationData;
+    public Dictionary<string, string> LocalizationsToFile;
+
+    public static readonly string localizationFilePrefix = "localization-";
+    public static readonly string localizationFileType = ".xml";
+    public static readonly string localizationXMLDirectory = "UILocalizations";
 
     // Use this for initialization
     void Awake() {
@@ -32,7 +36,21 @@ public class UILanguageController : MonoBehaviour {
                 missingLocalizationData.Add(t.GetRealName() + "text");
             missingLocalizationData.Add(t.GetRealName() + "hover");
         }
-        LoadLocalization();
+        LocalizationsToFile = new Dictionary<string, string>();
+
+        string fullpath = Path.Combine(ConstantPathHolder.StreamingAssets, "XMLs", UILanguageController.localizationXMLDirectory);
+        string[] allLocalizationsFiles = Directory.GetFiles(fullpath, UILanguageController.localizationFilePrefix
+                                                                    + "*" + UILanguageController.localizationFileType);
+        //Check the files if they are readable
+        foreach (string file in allLocalizationsFiles) {
+            XmlDocument xmlDoc = new XmlDocument(); 
+            xmlDoc.LoadXml(System.IO.File.ReadAllText(file));
+            LocalizationsToFile.Add(xmlDoc.DocumentElement.Attributes[0].InnerXml,file);
+        }
+        if (LocalizationsToFile.ContainsKey(selectedLanguage) == false) {
+            selectedLanguage = new List<string>(LocalizationsToFile.Keys)[0]; //just for the edge case of someone deleting english
+        }
+        LoadLocalization(LocalizationsToFile[selectedLanguage]);
     }
     public string GetText(string name) {
         if (nameToText.ContainsKey(name) == false) {
@@ -41,6 +59,7 @@ public class UILanguageController : MonoBehaviour {
         }
         return nameToText[name];
     }
+
     public string GetHoverOverText(string name) {
         if (nameToHover.ContainsKey(name) == false) {
             missingLocalizationData.Add(name + "hover");
@@ -51,7 +70,11 @@ public class UILanguageController : MonoBehaviour {
     public bool HasHoverOverText(string name) {
         return nameToHover.ContainsKey(name);
     }
-    public void ChangeLanguage(Language language) {
+    public void ChangeLanguage(string language) {
+        if (LocalizationsToFile.ContainsKey(language) == false) {
+            Debug.LogWarning("Old selected Language not available!");
+            return;
+        }
         selectedLanguage = language;
         cbLanguageChange?.Invoke();
     }
@@ -71,10 +94,12 @@ public class UILanguageController : MonoBehaviour {
         xml.Serialize(file,missing);
         Instance = null;
     }
-    public void LoadLocalization() {
+    public void LoadLocalization(string file) {
         XmlDocument xmlDoc = new XmlDocument(); // xmlDoc is the new xml document.
-        TextAsset ta = ((TextAsset)Resources.Load("XMLs/UILocalizations/localization-"+selectedLanguage, typeof(TextAsset)));
-        xmlDoc.LoadXml(ta.text); // load the file.
+        //string filename = localizationFilePrefix + selectedLanguage + localizationFileType;
+        //string filepath = System.IO.Path.Combine(ConstantPathHolder.StreamingAssets, "XMLs", localizationXMLDirectory, filename);
+        //TextAsset ta = ((TextAsset)Resources.Load("XMLs/UILocalizations/localization-"+selectedLanguage, typeof(TextAsset)));
+        xmlDoc.LoadXml(System.IO.File.ReadAllText(file)); // load the file.
         foreach (XmlElement node in xmlDoc.SelectNodes("UI/element")) {
             string path = node.GetAttribute("name") +"/";
             if (node.Name == "textelements") {

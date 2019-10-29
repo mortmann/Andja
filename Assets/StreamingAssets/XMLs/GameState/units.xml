@@ -54,7 +54,7 @@
       <maintenancecost>25</maintenancecost>
       <maximumHealth>1250.0</maximumHealth>
       <aggroTimer>1.0</aggroTimer>
-      <attackRange>1.0</attackRange>
+      <attackRange>12.0</attackRange>
       <damage>10.0</damage>
       <myDamageType>cannonball</myDamageType>
       <myArmorType>woodenwall</myArmorType>

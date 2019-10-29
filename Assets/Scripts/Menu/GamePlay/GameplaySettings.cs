@@ -5,13 +5,9 @@ using Newtonsoft.Json;
 using System.IO;
 using System;
 
-public enum GameplaySetting { autorotate }
+public enum GameplaySetting { Autorotate,Language }
 public class GameplaySettings : MonoBehaviour {
     public static GameplaySettings Instance;
-
-    public static readonly string localizationFilePrefix = "localization-";
-    public static readonly string localizationFileType = ".xml";
-    public static readonly string localizationDirectory = ".xml";
 
     public List<string> Localizations;
     // Use this for initialization
@@ -19,16 +15,12 @@ public class GameplaySettings : MonoBehaviour {
         Instance = this;
         gameplayOptions = new Dictionary<GameplaySetting, string>();
         gameplayOptionsToSave = new Dictionary<GameplaySetting, string>();
+        Localizations = new List<string>(UILanguageController.Instance.LocalizationsToFile.Keys);
         ReadGameplayOption();
-        GetPossibleLocalizations();
+        SaveGameplayOption();
     }
 
-    private void GetPossibleLocalizations() {
-        Localizations = new List<string>();
-        //DirectoryInfo directory = Resources.get
-        //FileInfo[] taskFiles = directory.GetFiles(localizationFilePrefix + "*"+ localizationFileType);
-
-    }
+    
 
     Dictionary<GameplaySetting, string> gameplayOptions;
     Dictionary<GameplaySetting, string> gameplayOptionsToSave;
@@ -63,6 +55,21 @@ public class GameplaySettings : MonoBehaviour {
         }
         gameplayOptions = JsonConvert.DeserializeObject<Dictionary<GameplaySetting, string>>(File.ReadAllText(filePath));
         SetOptions(gameplayOptions);
+        foreach(GameplaySetting s in Enum.GetValues(typeof(GameplaySetting))) {
+            if(HasSavedGameplayOption(s) == false) {
+                switch (s) {
+                    case GameplaySetting.Autorotate:
+                        SetSavedGameplayOption(s, true);
+                        break;
+                    case GameplaySetting.Language:
+                        SetSavedGameplayOption(s, UILanguageController.selectedLanguage);
+                        break;
+                    default:
+                        Debug.Log("ADD DEFAULT SETTING TO GAMEPLAYSETTING " + s);
+                        break;
+                }
+            }
+        }
         return true;
     }
 
@@ -70,8 +77,11 @@ public class GameplaySettings : MonoBehaviour {
         foreach (GameplaySetting optionName in options.Keys) {
             string val = options[optionName];
             switch (optionName) {
-                case GameplaySetting.autorotate:
+                case GameplaySetting.Autorotate:
                     MouseController.autorotate = bool.Parse(val);
+                    break;
+                case GameplaySetting.Language:
+                    UILanguageController.Instance.ChangeLanguage(val);
                     break;
                 default:
                     Debug.LogWarning("No case for " + optionName);

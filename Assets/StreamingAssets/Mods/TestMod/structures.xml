@@ -1,0 +1,55 @@
+<structures>
+   <growables>
+      <growable ID="tree">
+         <Name>
+            <entry lang="English">Modded Tree</entry>
+            <entry lang="German">Modded Baum</entry>
+         </Name>
+         <Description>
+            <entry lang="English">Its a tree.</entry>
+            <entry lang="German">Es ist ein Baum.</entry>
+         </Description>
+         <HoverOver>
+            <entry lang="English">Tree</entry>
+            <entry lang="German">Baum</entry>
+         </HoverOver>
+         <canBeBuild>true</canBeBuild>
+         <isWalkable>false</isWalkable>
+         <hasHitbox>false</hasHitbox>
+         <maxHealth>15.0</maxHealth>
+         <structureRange>0</structureRange>
+         <populationLevel>0</populationLevel>
+         <populationCount>0</populationCount>
+         <structureLevel>0</structureLevel>
+         <tileWidth>1</tileWidth>
+         <tileHeight>1</tileHeight>
+         <canRotate>true</canRotate>
+         <canBeBuildOver>true</canBeBuildOver>
+         <canBeUpgraded>false</canBeUpgraded>
+         <canTakeDamage>false</canTakeDamage>
+         <mustFrontBuildDir>None</mustFrontBuildDir>
+         <canStartBurning>false</canStartBurning>
+         <maintenanceCost>0</maintenanceCost>
+         <buildCost>0</buildCost>
+         <buildTyp>Drag</buildTyp>
+         <myStructureTyp>Free</myStructureTyp>
+         <extraUITyp>None</extraUITyp>
+         <extraBuildUITyp>None</extraBuildUITyp>
+         <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
+         <buildingItems length="0"/>
+         <spriteBaseName>tree</spriteBaseName>
+         <contactRange>0.0</contactRange>
+         <forMarketplace>false</forMarketplace>
+         <maxNumberOfWorker>0</maxNumberOfWorker>
+         <produceTime>5.0</produceTime>
+         <maxOutputStorage>1</maxOutputStorage>
+         <efficiency>1.0</efficiency>
+         <output length="1">
+            <Item ID="wood">
+               <count>0</count>
+            </Item>
+         </output>
+         <ageStages>3</ageStages>
+      </growable>
+   </growables>
+</structures>

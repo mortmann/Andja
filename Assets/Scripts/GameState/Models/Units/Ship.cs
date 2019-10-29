@@ -18,7 +18,7 @@ public class ShipPrototypeData : UnitPrototypeData {
 //TODO: think about how if ships could be capturable if they are low, at war and the capturing ship can do it?
 [JsonObject(MemberSerialization.OptIn)]
 public class Ship : Unit {
-    float projectileSpeed = 2; //TODO: somewhere you goota read this in
+    float ProjectileSpeed => ShipData.projectileSpeed; //TODO: somewhere you gotta read this in
 
 
     [JsonPropertyAttribute] public TradeRoute tradeRoute;
@@ -35,7 +35,6 @@ public class Ship : Unit {
     public int MaximumAmountOfCannons => CalculateRealValue("maximumAmountOfCannons", ShipData.maximumAmountOfCannons);
     public override float CurrentDamage => CalculateRealValue("CurrentDamage", DamagePerCannon);
     public override float MaximumDamage => CalculateRealValue("MaximumDamage", MaximumAmountOfCannons * DamagePerCannon);
-
     public override bool IsShip => true;
     public override float SpeedModifier => 1 - CannonSpeedDebuff - InventorySpeedDebuff - DamageSpeedDebuff;
     protected float CannonSpeedDebuff => MaximumAmountOfCannons == 0? 0 : ShipData.cannonSpeedDebuffMultiplier * (CannonItem.count / (float)MaximumAmountOfCannons);
@@ -92,7 +91,7 @@ public class Ship : Unit {
             Vector3 targetPosition = CurrentTarget.CurrentPosition;
             Vector3 lastMove = CurrentTarget.LastMovement;
             Vector3 projectileDestination = CurrentTarget.CurrentPosition;
-            if (PredictiveAim( CurrentPosition, projectileSpeed, targetPosition, lastMove, 0, out velocity, out projectileDestination) ==false) {
+            if (PredictiveAim( CurrentPosition, ProjectileSpeed, targetPosition, lastMove, 0, out velocity, out projectileDestination) ==false) {
                 return;
             }
             ShotAtPosition(projectileDestination);
@@ -115,13 +114,13 @@ public class Ship : Unit {
         Vector3 targetPosition = CurrentTarget.CurrentPosition;
         Vector3 lastMove = CurrentTarget.LastMovement;
         Vector3 projectileDestination = CurrentTarget.CurrentPosition;
-        bool can = PredictiveAim(CurrentPosition, projectileSpeed, targetPosition, lastMove, 0, out velocity, out projectileDestination);
+        bool can = PredictiveAim(CurrentPosition, ProjectileSpeed, targetPosition, lastMove, 0, out velocity, out projectileDestination);
         if (can == false && Vector3.Distance(CurrentPosition, projectileDestination) > AttackRange)
             return false;
         nextShoot = CalculateShootAngle(projectileDestination);
         float rotateTime = CalculateRotateTime(nextShoot.rotateAngle);
         targetPosition += rotateTime * lastMove;
-        can = PredictiveAim(CurrentPosition, projectileSpeed, targetPosition, lastMove, 0, out velocity, out projectileDestination);
+        can = PredictiveAim(CurrentPosition, ProjectileSpeed, targetPosition, lastMove, 0, out velocity, out projectileDestination);
         if (can == false && Vector3.Distance(CurrentPosition, projectileDestination) > AttackRange)
             return false;
         nextShoot = CalculateShootAngle(projectileDestination);
@@ -164,7 +163,7 @@ public class Ship : Unit {
                     UnityEngine.Random.Range(-targetSize.y / 2, targetSize.y / 2),
                     UnityEngine.Random.Range(-targetSize.z / 2, targetSize.z / 2));
 
-            Vector3 velocity = (destination + targetOffset - VectorPosition - offset).normalized * projectileSpeed;
+            Vector3 velocity = (destination + targetOffset - VectorPosition - offset).normalized * ProjectileSpeed;
             float distance = (destination+ targetOffset - VectorPosition - offset).magnitude;
             cbCreateProjectile?.Invoke(new Projectile(this, position+offset, CurrentTarget, velocity, distance));
         }

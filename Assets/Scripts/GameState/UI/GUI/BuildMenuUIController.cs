@@ -4,6 +4,7 @@ using UnityEngine.UI;
 using UnityEngine.EventSystems;
 
 public class BuildMenuUIController : MonoBehaviour {
+
     public GameObject buttonBuildStructuresContent;
     public GameObject buttonPopulationsLevelContent;
 
@@ -13,7 +14,7 @@ public class BuildMenuUIController : MonoBehaviour {
     public Dictionary<string, GameObject> nameToGOMap;
     public Dictionary<string, string> nameToIDMap;
 
-    public Dictionary<int, GameObject> popLevelToGO;
+    public Dictionary<int, ButtonSetter> popLevelToGO;
 
     public List<string>[] buttons;
     BuildController buildController;
@@ -23,25 +24,27 @@ public class BuildMenuUIController : MonoBehaviour {
     public bool enableAllStructures = false;
     // Use this for initialization
     void Start() {
+
         nameToGOMap = new Dictionary<string, GameObject>();
         nameToIDMap = new Dictionary<string, string>();
         buildController = BuildController.Instance;
-        buttons = new List<string>[4];
+        buttons = new List<string>[PrototypController.Instance.NumberOfPopulationLevels];
 
         foreach(Transform child in buttonPopulationsLevelContent.transform) {
             Destroy(child.gameObject);
         }
-        popLevelToGO = new Dictionary<int, GameObject>();
+        popLevelToGO = new Dictionary<int, ButtonSetter>();
         foreach (PopulationLevelPrototypData pl in PrototypController.Instance.PopulationLevelDatas.Values) {
             GameObject go = Instantiate(populationButtonPrefab);
             go.transform.SetParent(buttonPopulationsLevelContent.transform);
-            go.GetComponent<ButtonSetter>().Set(pl.Name, () => { OnPopulationLevelButtonClick(pl.LEVEL); });
-            popLevelToGO.Add(pl.LEVEL, go);
+            ButtonSetter bs = go.GetComponent<ButtonSetter>();
+            bs.Set(pl.Name, () => { OnPopulationLevelButtonClick(pl.LEVEL); }, IconSpriteController.GetIcon(pl.iconSpriteName),pl.Name);
+            popLevelToGO.Add(pl.LEVEL, bs);
         }
 
         player = PlayerController.Instance.CurrPlayer;
 
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < PrototypController.Instance.NumberOfPopulationLevels; i++) {
             buttons[i] = new List<string>();
         }
         foreach (Structure s in buildController.StructurePrototypes.Values) {
@@ -49,8 +52,8 @@ public class BuildMenuUIController : MonoBehaviour {
                 continue;
             }
             GameObject b = Instantiate(buildButtonPrefab);
-            b.name = s.SpriteName;
-            b.GetComponentInChildren<Text>().text = s.SpriteName;
+            b.name = s.ID;
+            
             b.transform.SetParent(buttonBuildStructuresContent.transform);
 
             b.GetComponent<Button>().onClick.AddListener(() => { OnClick(b.name); });
@@ -79,12 +82,12 @@ public class BuildMenuUIController : MonoBehaviour {
     }
     public void OnMaxPopLevelChange(int setlevel) {
         foreach (int level in popLevelToGO.Keys) {
-            GameObject g = popLevelToGO[level];
+            ButtonSetter g = popLevelToGO[level];
             if (level > setlevel && enableAllStructures == false) {
-                g.GetComponent<Button>().interactable = false;
+                g.Interactable(false);
             }
             else {
-                g.GetComponent<Button>().interactable = true;
+                g.Interactable(true);
             }
         }
     }

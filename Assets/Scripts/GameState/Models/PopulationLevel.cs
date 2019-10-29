@@ -8,7 +8,7 @@ using System;
 public class PopulationLevelPrototypData : LanguageVariables {
     public List<NeedGroup> needGroupList; //not used as "copy" of the USED in "ticks" just as a reference which Needs gets unlocked with this level!
     public int LEVEL; // cant be negative!
-
+    public string iconSpriteName;
     public int taxPerPerson = 1;
 
 }
@@ -22,6 +22,7 @@ public class PopulationLevel {
     [JsonPropertyAttribute] public PopulationLevel previousLevel;
     [JsonPropertyAttribute] public float taxPercantage = 1f;
     [JsonPropertyAttribute] City city;
+    [JsonPropertyAttribute] public string IconSpriteName => Data.iconSpriteName;
 
     #endregion
 

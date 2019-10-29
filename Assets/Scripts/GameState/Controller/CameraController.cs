@@ -28,7 +28,7 @@ public class CameraController : MonoBehaviour {
     Vector2 showBounds = new Vector2();
     public static CameraController Instance;
     private CameraSave cameraSave;
-
+    GameObject plane;
     void Awake() {
         if (Instance != null) {
             Debug.LogError("There should never be two SaveController.");
@@ -41,6 +41,7 @@ public class CameraController : MonoBehaviour {
 #endif
     }
     void Start() {
+
         tilesCurrentInCameraView = new HashSet<Tile>();
         structureCurrentInCameraView = new HashSet<Structure>();
     }
@@ -85,12 +86,20 @@ public class CameraController : MonoBehaviour {
         cameraMove += UpdateKeyboardCameraMovement();
         cameraMove += UpdateMouseCameraMovement();
 
+        
+
         Vector3 leftBottom = Camera.main.ScreenToWorldPoint(Vector3.zero);
         Vector3 leftTop = Camera.main.ScreenToWorldPoint(new Vector3(0, Camera.main.pixelHeight));
-        lower = new Vector3(Mathf.Min(leftBottom.x, leftTop.x), Mathf.Min(leftBottom.y, leftTop.y), Mathf.Min(leftBottom.z, leftTop.z));
         Vector3 rightBottom = Camera.main.ScreenToWorldPoint(new Vector3(Camera.main.pixelWidth, 0));
         Vector3 rightTop = Camera.main.ScreenToWorldPoint(new Vector3(Camera.main.pixelWidth, Camera.main.pixelHeight));
-        upper = new Vector3(Mathf.Max(rightBottom.x, rightTop.x), Mathf.Max(rightBottom.y, rightTop.y), Mathf.Max(rightBottom.z, rightTop.z));
+
+        lower = new Vector3(Mathf.Min(leftBottom.x, leftTop.x, rightBottom.x, rightTop.x), 
+                            Mathf.Min(leftBottom.y, leftTop.y, rightBottom.y, rightTop.y), 
+                            Mathf.Min(leftBottom.z, leftTop.z, rightBottom.z, rightTop.z));
+        upper = new Vector3(Mathf.Max(leftBottom.x, leftTop.x, rightBottom.x, rightTop.x), 
+                            Mathf.Max(leftBottom.y, leftTop.y, rightBottom.y, rightTop.y), 
+                            Mathf.Max(leftBottom.z, leftTop.z, rightBottom.z, rightTop.z));
+
         //lower = Camera.main.ScreenToWorldPoint(Vector3.zero);
         //upper = Camera.main.ScreenToWorldPoint(new Vector3(Camera.main.pixelWidth, Camera.main.pixelHeight));
         middle = Camera.main.ScreenToWorldPoint(new Vector3(Camera.main.pixelWidth / 2, Camera.main.pixelHeight / 2));
@@ -174,6 +183,65 @@ public class CameraController : MonoBehaviour {
             }
         }
     }
+
+    void OnDrawGizmos() {
+        Vector3 a = Camera.main.ScreenToWorldPoint(Vector3.zero);
+        Vector3 b = Camera.main.ScreenToWorldPoint(new Vector3(0, Camera.main.pixelHeight));
+        Vector3 c = Camera.main.ScreenToWorldPoint(new Vector3(Camera.main.pixelWidth, 0));
+        Vector3 d = Camera.main.ScreenToWorldPoint(new Vector3(Camera.main.pixelWidth, Camera.main.pixelHeight));
+        
+        var plane = new Plane(a, c, d);
+
+        // Draw our three input points in world space.
+        // b and c are drawn as lollipops from the preceding point,
+        // so that you can see the clockwise winding direction.
+
+        Gizmos.color = Color.green;
+        Gizmos.DrawWireSphere(a, 0.1f);
+
+        Gizmos.color = Color.green;
+        Gizmos.DrawLine(a, b);
+        Gizmos.DrawWireSphere(b, 0.1f);
+
+        Gizmos.color = Color.green;
+        Gizmos.DrawLine(b, c);
+        Gizmos.DrawWireSphere(c, 0.1f);
+
+        Gizmos.color = Color.green;
+        Gizmos.DrawLine(c, d);
+        Gizmos.DrawWireSphere(d, 0.1f);
+
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawLine(lower, upper);
+        Gizmos.DrawWireSphere(lower, 0.1f);
+        Gizmos.DrawWireSphere(upper, 0.1f);
+
+
+        // Draw this object's position, 
+        // as a lollipop sticking out from our plane,
+        // blue-green if in front (in the positive half-space),
+        // and red if behind (negative half-space).           
+        Gizmos.color = plane.GetSide(transform.position) ? Color.cyan : Color.red;
+        Gizmos.DrawLine(plane.ClosestPointOnPlane(transform.position), transform.position);
+        Gizmos.DrawWireSphere(transform.position, 0.2f);
+
+        //// Draw plane normal.
+        //Gizmos.color = Color.yellow;
+        //var center = (a + b + c) / 3f;
+        //Gizmos.DrawLine(center, center + plane.normal);
+
+        //// Draw planar grid.
+        //Gizmos.color = Color.blue;
+        //var matrix = Gizmos.matrix;
+        //Gizmos.matrix = Matrix4x4.TRS(center, Quaternion.LookRotation(plane.normal), Vector3.one);
+        //for (int i = -10; i <= 10; i++) {
+        //    Gizmos.DrawLine(new Vector3(i, -10, 0), new Vector3(i, 10, 0));
+        //    Gizmos.DrawLine(new Vector3(-10, i, 0), new Vector3(10, i, 0));
+        //}
+        //Gizmos.matrix = matrix;
+    }
+
+
     internal void SetSaveCameraData(CameraSave camera) {
         this.cameraSave = camera;
     }

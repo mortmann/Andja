@@ -9,6 +9,8 @@ using UnityEngine;
 using static Combat;
 
 public class PrototypController : MonoBehaviour {
+    public const string GameVersion = "0.1.5"; //TODO: think about this position 
+
     public const int StartID = 1;
 
     public int NumberOfPopulationLevels => populationLevelDatas.Count;
@@ -82,7 +84,7 @@ public class PrototypController : MonoBehaviour {
     }
 
     internal bool ExistsNeed(Need need) {
-        throw new NotImplementedException();
+        return allNeeds.Contains(need);
     }
 
     /// <summary>
@@ -102,6 +104,7 @@ public class PrototypController : MonoBehaviour {
         }
         return populationLevels;
     }
+
     public ReadOnlyCollection<Need> GetAllNeeds() {
         return new ReadOnlyCollection<Need>(allNeeds);
     }
@@ -111,13 +114,15 @@ public class PrototypController : MonoBehaviour {
             Debug.LogError("There should never be two world controllers.");
         }
         Instance = this;
-
+        ModLoader.LoadMods();
+        ModLoader.AvaibleMods();
         LoadFromXML();
     }
 
     public StructurePrototypeData GetStructurePrototypDataForID(string ID) {
         return structurePrototypeDatas[ID];
     }
+
     public ItemPrototypeData GetItemPrototypDataForID(string ID) {
         if (itemPrototypeDatas.ContainsKey(ID) == false) {
             Debug.Log(ID + "missing data!");
@@ -167,31 +172,31 @@ public class PrototypController : MonoBehaviour {
         effectPrototypeDatas = new Dictionary<string, EffectPrototypeData>();
         gameEventPrototypeDatas = new Dictionary<string, GameEventPrototypData>();
         ReadEventsFromXML(LoadXML("events"));
-        CustomXMLLoader.Load("events", ReadEventsFromXML);
+        ModLoader.LoadXMLs("events", ReadEventsFromXML);
 
         //fertilities
         allFertilities = new Dictionary<Climate, List<Fertility>>();
         idToFertilities = new Dictionary<string, Fertility>();
         fertilityPrototypeDatas = new Dictionary<string, FertilityPrototypeData>();
         ReadFertilitiesFromXML(LoadXML("fertilities"));
-        CustomXMLLoader.Load("fertilities", ReadFertilitiesFromXML);
+        ModLoader.LoadXMLs("fertilities", ReadFertilitiesFromXML);
 
         // prototypes of items
         allItems = new Dictionary<string, Item>();
         buildItems = new List<Item>();
         itemPrototypeDatas = new Dictionary<string, ItemPrototypeData>();
         ReadItemsFromXML(LoadXML("items"));
-        CustomXMLLoader.Load("items", ReadItemsFromXML);
+        ModLoader.LoadXMLs("items", ReadItemsFromXML);
 
         armorTypeDatas = new Dictionary<string, ArmorType>();
         damageTypeDatas = new Dictionary<string, DamageType>();
         ReadCombatFromXML(LoadXML("combat"));
-        CustomXMLLoader.Load("combat", ReadCombatFromXML);
+        ModLoader.LoadXMLs("combat", ReadCombatFromXML);
 
         unitPrototypes = new Dictionary<string, Unit>();
         unitPrototypeDatas = new Dictionary<string, UnitPrototypeData>();
         ReadUnitsFromXML(LoadXML("units"));
-        CustomXMLLoader.Load("units", ReadUnitsFromXML);
+        ModLoader.LoadXMLs("units", ReadUnitsFromXML);
 
         // setup all prototypes of structures here 
         // load them from the 
@@ -199,7 +204,7 @@ public class PrototypController : MonoBehaviour {
         structurePrototypes = new Dictionary<string, Structure>();
         structurePrototypeDatas = new Dictionary<string, StructurePrototypeData>();
         ReadStructuresFromXML(LoadXML("structures"));
-        CustomXMLLoader.Load("structures", ReadStructuresFromXML);
+        ModLoader.LoadXMLs("structures", ReadStructuresFromXML);
 
         //needs
         allNeeds = new List<Need>();
@@ -207,12 +212,12 @@ public class PrototypController : MonoBehaviour {
         needPrototypeDatas = new Dictionary<string, NeedPrototypeData>();
         needGroupDatas = new Dictionary<string, NeedGroupPrototypData>();
         ReadNeedsFromXML(LoadXML("needs"));
-        CustomXMLLoader.Load("needs", ReadNeedsFromXML);
+        ModLoader.LoadXMLs("needs", ReadNeedsFromXML);
 
         //other
         populationLevelDatas = new Dictionary<int, PopulationLevelPrototypData>();
         ReadOtherFromXML(LoadXML("other"));
-        CustomXMLLoader.Load("other", ReadOtherFromXML);
+        ModLoader.LoadXMLs("other", ReadOtherFromXML);
 
         MineableItems = new List<Item>();
         List<Structure> mines = new List<Structure>(structurePrototypes.Values);
@@ -261,7 +266,7 @@ public class PrototypController : MonoBehaviour {
                 EffectPrototypeData epd = new EffectPrototypeData();
                 string id = node.GetAttribute("ID");
                 SetData<EffectPrototypeData>(node, ref epd);
-                effectPrototypeDatas.Add(id, epd);
+                effectPrototypeDatas[id]=epd;
             }
         }
         XmlNodeList listGameEvent = xmlDoc.SelectNodes("events/GameEvent");
@@ -270,7 +275,7 @@ public class PrototypController : MonoBehaviour {
                 GameEventPrototypData gepd = new GameEventPrototypData();
                 string id = node.GetAttribute("ID");
                 SetData<GameEventPrototypData>(node, ref gepd);
-                gameEventPrototypeDatas.Add(id, gepd);
+                gameEventPrototypeDatas[id] = gepd;
             }
         }
         
@@ -289,7 +294,7 @@ public class PrototypController : MonoBehaviour {
                 plpd.needGroupList = populationLevelToNeedGroup[level];
             else
                 Debug.LogWarning("PopulationLevel " + plpd.Name + " " + plpd.LEVEL + " is missing its own needs!");
-            populationLevelDatas.Add(level, plpd);
+            populationLevelDatas[level] = plpd;
         }
     }
 
@@ -303,7 +308,7 @@ public class PrototypController : MonoBehaviour {
                 ArmorType at = new ArmorType();
                 string id = node.GetAttribute("ID");
                 SetData<ArmorType>(node, ref at);
-                armorTypeDatas.Add(id, at);
+                armorTypeDatas[id] = at;
             }
         }
         XmlNodeList listDamageType = xmlDoc.SelectNodes("combatTypes/damageType");
@@ -326,7 +331,7 @@ public class PrototypController : MonoBehaviour {
 
                     at.damageMultiplier[armorTypeDatas[armorID]] = multiplier;
                 }
-                damageTypeDatas.Add(id, at);
+                damageTypeDatas[id] = at;
             }
         }
         
@@ -408,7 +413,7 @@ public class PrototypController : MonoBehaviour {
                 string id = node.GetAttribute("ID");
                 SetData<UnitPrototypeData>(node, ref upd);
                 unitPrototypeDatas[id] = upd;
-                unitPrototypes.Add(id, new Unit(id, upd));
+                unitPrototypes[id] = new Unit(id, upd);
             }
         }
         XmlNodeList listShip = xmlDoc.SelectNodes("units/ship");
@@ -420,7 +425,7 @@ public class PrototypController : MonoBehaviour {
                 spd.width = 1;
                 spd.height = 1;
                 unitPrototypeDatas[id] = spd;
-                unitPrototypes.Add(id, new Ship(id, spd));
+                unitPrototypes[id] = new Ship(id, spd);
             }
         }
         
@@ -463,7 +468,7 @@ public class PrototypController : MonoBehaviour {
                 string ID = node.GetAttribute("ID");
                 ngpd.ID = ID;
                 SetData<NeedGroupPrototypData>(node, ref ngpd);
-                needGroupDatas.Add(ID, ngpd);
+                needGroupDatas[ID] = ngpd;
             }
         }
         Dictionary<int, List<Need>> levelToNeedList = new Dictionary<int, List<Need>>();
@@ -475,7 +480,7 @@ public class PrototypController : MonoBehaviour {
                 SetData<NeedPrototypeData>(node, ref npd);
 
 
-                needPrototypeDatas.Add(ID, npd);
+                needPrototypeDatas[ID] = npd;
                 if (npd.item == null && npd.structures == null)
                     continue;
                 if (npd.structures != null) {
@@ -540,7 +545,7 @@ public class PrototypController : MonoBehaviour {
             foreach(Effect effect in sspd.effectsOnTargets) {
                 effect.Serialize = false;
             }
-            structurePrototypeDatas.Add(ID, sspd);
+            structurePrototypeDatas[ID] = sspd;
             structurePrototypes[ID] = new ServiceStructure(ID);
         }
     }
@@ -555,7 +560,7 @@ public class PrototypController : MonoBehaviour {
             //THESE are fix and are not changed for any 
             //!not anymore
             SetData<MilitaryStructurePrototypeData>(node, ref mpd);
-            structurePrototypeDatas.Add(ID, mpd);
+            structurePrototypeDatas[ID] = mpd;
             structurePrototypes[ID] = new MilitaryStructure(ID, mpd);
         }
     }
@@ -583,7 +588,7 @@ public class PrototypController : MonoBehaviour {
 
             SetData<StructurePrototypeData>(node, ref spd);
 
-            structurePrototypeDatas.Add(ID, spd);
+            structurePrototypeDatas[ID] = spd;
             structurePrototypes[ID] = new RoadStructure(ID, spd);
 
         }
@@ -606,7 +611,7 @@ public class PrototypController : MonoBehaviour {
                 maxOutputStorage = 1
             };
             SetData<GrowablePrototypeData>(node, ref gpd);
-            structurePrototypeDatas.Add(ID, gpd);
+            structurePrototypeDatas[ID] = gpd;
             structurePrototypes[ID] = new GrowableStructure(ID, gpd);
         }
     }
@@ -620,7 +625,7 @@ public class PrototypController : MonoBehaviour {
             //THESE are fix and are not changed for any 
             //!not anymore
             SetData<FarmPrototypData>(node, ref fpd);
-            structurePrototypeDatas.Add(ID, fpd);
+            structurePrototypeDatas[ID] = fpd;
             structurePrototypes[ID] = new FarmStructure(ID, fpd);
         }
     }
@@ -646,7 +651,7 @@ public class PrototypController : MonoBehaviour {
 
             SetData<MarketPrototypData>(node, ref mpd);
 
-            structurePrototypeDatas.Add(ID, mpd);
+            structurePrototypeDatas[ID] = mpd;
             structurePrototypes[ID] = new MarketStructure(ID, mpd);
         }
     }
@@ -675,7 +680,7 @@ public class PrototypController : MonoBehaviour {
 
             //DO After loading from file
 
-            structurePrototypeDatas.Add(ID, ppd);
+            structurePrototypeDatas[ID] = ppd;
             structurePrototypes[ID] = new ProductionStructure(ID, ppd);
         }
     }
@@ -698,7 +703,7 @@ public class PrototypController : MonoBehaviour {
 
             SetData<StructurePrototypeData>(node, ref spd);
 
-            structurePrototypeDatas.Add(ID, spd);
+            structurePrototypeDatas[ID] = spd;
             structurePrototypes[ID] = new NeedStructure(ID, spd);
         }
     }
@@ -721,7 +726,8 @@ public class PrototypController : MonoBehaviour {
             };
 
             SetData<HomePrototypeData>(node, ref hpd);
-            structurePrototypeDatas.Add(ID, hpd);
+
+            structurePrototypeDatas[ID] = hpd;
             structurePrototypes[ID] = new HomeStructure(ID, hpd);
 
             string prevID = GetStructureIDForTypeNeighbourStructureLevel(typeof(HomeStructure), hpd.structureLevel, false);
@@ -757,7 +763,8 @@ public class PrototypController : MonoBehaviour {
             };
 
             SetData<MarketPrototypData>(node, ref mpd);
-            structurePrototypeDatas.Add(ID, mpd);
+
+            structurePrototypeDatas[ID] = mpd;
             structurePrototypes[ID] = new WarehouseStructure(ID, mpd);
         }
     }
@@ -780,7 +787,7 @@ public class PrototypController : MonoBehaviour {
 
             SetData<MinePrototypData>(node, ref mpd);
 
-            structurePrototypeDatas.Add(ID, mpd);
+            structurePrototypeDatas[ID] = mpd;
             structurePrototypes[ID] = new MineStructure(ID, mpd);
 
         }

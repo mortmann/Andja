@@ -76,7 +76,7 @@ public class WorkerSpriteController : MonoBehaviour {
         foreach (Sprite s in sprites) {
             workerSprites[s.name] = s;
         }
-        Sprite[] custom = CustomSpriteLoader.Load("Structures");
+        Sprite[] custom = ModLoader.LoadSprites(SpriteType.Worker);
         if (custom == null)
             return;
         foreach (Sprite s in custom) {

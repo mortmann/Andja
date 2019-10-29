@@ -6,6 +6,7 @@ using System;
 
 [JsonObject]
 public class NeedGroupPrototypData : LanguageVariables {
+
     public string ID;
     public float importanceLevel;
 }
@@ -22,6 +23,7 @@ public class NeedGroup {
             return _prototypData;
         }
     }
+
     public float ImportanceLevel => Data.importanceLevel;
     public string Name => Data.Name;
     #endregion

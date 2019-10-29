@@ -41,7 +41,12 @@ public class MouseController : MonoBehaviour {
             _highlightTiles = value;
         }
     }
-
+    public Vector2 MapClampedMousePosition {
+        get {
+            return new Vector2(Mathf.Clamp(currFramePosition.x, 0, World.Current.Width), 
+                               Mathf.Clamp(currFramePosition.y, 0, World.Current.Height));
+        }
+    }
 
     // The world-position start of our left-mouse drag operation
     List<GameObject> previewGameObjects;
@@ -566,7 +571,7 @@ public class MouseController : MonoBehaviour {
                     UnselectUnit();
                     break;
                 case MouseUnitState.Patrol:
-                    SelectedUnit.AddPatrolCommand(currFramePosition.x, currFramePosition.y);
+                    SelectedUnit.AddPatrolCommand(MapClampedMousePosition.x, MapClampedMousePosition.y);
                     break;
                 case MouseUnitState.Build:
                     break;
@@ -584,7 +589,7 @@ public class MouseController : MonoBehaviour {
                         Debug.LogWarning("MouseController is in the wrong state!");
                         break;
                     case MouseUnitState.Normal:
-                        SelectedUnit.GiveMovementCommand(currFramePosition.x, currFramePosition.y, OverrideCurrentStuff);
+                        SelectedUnit.GiveMovementCommand(MapClampedMousePosition, OverrideCurrentStuff);
                         break;
                     case MouseUnitState.Patrol:
                         mouseUnitState = MouseUnitState.Normal;

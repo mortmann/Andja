@@ -354,7 +354,7 @@ public class TileSpriteController : MonoBehaviour {
         foreach (Sprite s in sprites) {
             nameToSprite.Add(s.name, s);
         }
-        Sprite[] custom = CustomSpriteLoader.Load("Structures");
+        Sprite[] custom = ModLoader.LoadSprites(SpriteType.Tile);
         if (custom != null) {
             foreach (Sprite s in custom) {
                 nameToSprite[s.name] = s;

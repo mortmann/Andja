@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System;
 
 public class StructureSpriteController : MonoBehaviour {
+    public static StructureSpriteController Instance { get; protected set; }
+
     public Dictionary<Structure, GameObject> structureGameObjectMap;
     public Dictionary<Structure, GameObject> structureExtraUIMap;
     public readonly static string EffectFilePath = "Textures/Effects/Structures/";
@@ -18,6 +20,11 @@ public class StructureSpriteController : MonoBehaviour {
         get { return World.Current; }
     }
     void Start() {
+        if (Instance != null) {
+            Debug.LogError("There should never be two StructureSpriteController.");
+        }
+        Instance = this;
+
         structureGameObjectMap = new Dictionary<Structure, GameObject>();
         structureExtraUIMap = new Dictionary<Structure, GameObject>();
 
@@ -259,7 +266,7 @@ public class StructureSpriteController : MonoBehaviour {
         foreach (Sprite s in sprites) {
             structureSprites[s.name] = s;
         }
-        Sprite[] custom = CustomSpriteLoader.Load("Structures");
+        Sprite[] custom = ModLoader.LoadSprites(SpriteType.Structure);
         if (custom == null)
             return;
         foreach (Sprite s in custom) {

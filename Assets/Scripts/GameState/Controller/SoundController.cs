@@ -4,7 +4,10 @@ using UnityEngine.Audio;
 using System.IO;
 using System;
 
-enum AmbientSound { Water, North, Middle, South }
+public enum AmbientType { Water, North, Middle, South, Wind }
+public enum MusicType { Idle, War, Combat, Lose, Win, Disaster, Doom }
+public enum SoundType { Music, SoundEffect, Ambient }
+
 // TODO: 
 //		-Make sounds for tiles on screen possible eg. beach, river.
 //		-sounds for units
@@ -19,20 +22,25 @@ public class SoundController : MonoBehaviour {
     public GameObject soundEffect2DGO;
     List<AudioSource> playedAudios;
 
-    public AudioClip placeStructureSound;
-    public AudioClip cityCreateSound;
-
     CameraController cameraController;
     StructureSpriteController ssc;
     WorkerSpriteController wsc;
     UnitSpriteController usc;
 
-    public static string MusicLocation = "Audio/Music/";
-    public static string SoundEffectLocation = "Audio/Game/SoundEffects/";
-    public static string AmbientLocation = "Audio/Game/Ambient/";
+    public static string[] MusicLocation = new string[] { "Audio" , "Music" };
+    public static string[] SoundEffectLocation = new string[] { "Audio","Game","SoundEffects" };
+    public static string[] AmbientLocation = new string[] { "Audio", "Game", "Ambient"};
+
+
+    AudioType standardAudioType = AudioType.WAV;
     public AudioMixer mixer;
 
-    AmbientSound currentAmbient;
+    Dictionary<string, SoundMetaData> nameToMetaData;
+    Dictionary<MusicType, List<string>> musictypeToName;
+    Dictionary<AmbientType, List<string>> ambienttypeToName;
+
+    public AmbientType currentAmbient;
+    public MusicType currentMusicType = MusicType.Idle;
 
     // Use this for initialization
     void Start() {
@@ -41,14 +49,14 @@ public class SoundController : MonoBehaviour {
             return;
         }
         Instance = this;
+
         cameraController = CameraController.Instance;
         BuildController.Instance.RegisterStructureCreated(OnBuild);
         BuildController.Instance.RegisterCityCreated(OnCityCreate);
         EventController.Instance.RegisterOnEvent(OnEventStart, OnEventEnd);
         playedAudios = new List<AudioSource>();
+        nameToMetaData = new Dictionary<string, SoundMetaData>();
         windAmbientSource.loop = true;
-        windAmbientSource.clip = Resources.Load(AmbientLocation + "wind-1") as AudioClip;
-        windAmbientSource.Play();
         ssc = FindObjectOfType<StructureSpriteController>();
         wsc = FindObjectOfType<WorkerSpriteController>();
         usc = FindObjectOfType<UnitSpriteController>();
@@ -61,12 +69,23 @@ public class SoundController : MonoBehaviour {
                 }
             }
         }
+        musictypeToName = new Dictionary<MusicType, List<string>>();
+        foreach (MusicType v in Enum.GetValues(typeof(MusicType))) {
+            musictypeToName[v] = new List<string>();
+        }
+        ambienttypeToName = new Dictionary<AmbientType, List<string>>();
+        foreach (AmbientType v in Enum.GetValues(typeof(AmbientType))) {
+            ambienttypeToName[v] = new List<string>();
+        }
+        LoadFiles();
+        StartCoroutine(StartFile(nameToMetaData["wind-1"], windAmbientSource));
+
     }
 
     // Update is called once per frame
     void Update() {
         if (musicSource.isPlaying == false) {
-            musicSource.PlayOneShot(GetMusicAudioClip());
+            StartCoroutine(StartFile(nameToMetaData[GetMusicFileName()], musicSource));
         }
         if (WorldController.Instance.IsPaused) {
             return;
@@ -83,6 +102,73 @@ public class SoundController : MonoBehaviour {
         }
 
     }
+
+    public void LoadFiles() {
+        string musicPath = Path.Combine(ConstantPathHolder.StreamingAssets,Path.Combine(MusicLocation));
+        string soundEffectPath = Path.Combine(ConstantPathHolder.StreamingAssets, Path.Combine(SoundEffectLocation));
+        string ambientPath = Path.Combine(ConstantPathHolder.StreamingAssets, Path.Combine(AmbientLocation));
+
+        string[] musicfiles = Directory.GetFiles(musicPath, "*.wav", SearchOption.AllDirectories);
+        foreach(string path in musicfiles) {
+            string dir = new DirectoryInfo(path).Parent.Name;
+            string name = Path.GetFileNameWithoutExtension(path);
+            SoundMetaData meta = new SoundMetaData() {
+                name = name,
+                author = "Andja",
+                type = SoundType.Music,
+                musicType = (MusicType)Enum.Parse(typeof(MusicType), dir),
+                fileExtension = standardAudioType,
+                file = path
+            };
+            nameToMetaData[name] = meta;
+            musictypeToName[meta.musicType].Add(name);
+        }
+        string[] soundeffectfiles = Directory.GetFiles(soundEffectPath,"*.wav", SearchOption.AllDirectories);
+        foreach (string path in soundeffectfiles) {
+            string name = Path.GetFileNameWithoutExtension(path);
+            SoundMetaData meta = new SoundMetaData() {
+                name = name,
+                author = "Andja",
+                type = SoundType.SoundEffect,
+                fileExtension = standardAudioType,
+                file = path
+            };
+            nameToMetaData[name] = meta;
+        }
+        string[] ambientfiles = Directory.GetFiles(ambientPath, "*.wav", SearchOption.AllDirectories);
+        foreach (string path in ambientfiles) {
+            string name = Path.GetFileNameWithoutExtension(path);
+            string dir = new DirectoryInfo(path).Parent.Name;
+
+            SoundMetaData meta = new SoundMetaData() {
+                name = name,
+                author = "Andja",
+                type = SoundType.Ambient,
+                ambientType = (AmbientType)Enum.Parse(typeof(AmbientType), dir),
+                fileExtension = standardAudioType,
+                file = path
+            };
+            nameToMetaData[name] = meta;
+            ambienttypeToName[meta.ambientType].Add(name);
+        }
+
+        SoundMetaData[] custom = ModLoader.LoadSoundMetaDatas();
+        foreach (SoundMetaData meta in custom) {
+            nameToMetaData[meta.name] = meta;
+            switch (meta.type) {
+                case SoundType.Music:
+                    musictypeToName[meta.musicType].Add(name);
+                    break;
+                case SoundType.SoundEffect:
+                    break;
+                case SoundType.Ambient:
+                    ambienttypeToName[meta.ambientType].Add(name);
+                    break;
+            }
+        }
+
+    }
+
 
     void UpdateSoundEffects() {
         //We add to any gameobject that has been created from
@@ -126,7 +212,7 @@ public class SoundController : MonoBehaviour {
         }
     }
 
-    public void PlaySoundEffectStructure(Structure str, string filePath) {
+    public void PlaySoundEffectStructure(Structure str, string fileName) {
         GameObject go = ssc.GetGameObject(str);
         if (go == null) {
             str.UnregisterOnSoundCallback(PlaySoundEffectStructure);
@@ -137,9 +223,7 @@ public class SoundController : MonoBehaviour {
             str.UnregisterOnSoundCallback(PlaySoundEffectStructure);
             return;
         }
-        AudioClip ac = Resources.Load(SoundEffectLocation + filePath) as AudioClip;
-        ac.LoadAudioData();
-        goal.PlayOneShot(ac);
+        StartCoroutine(StartFile(nameToMetaData[fileName], goal));
     }
     public void PlaySoundEffectWorker(Worker worker, string filePath) {
         GameObject go = wsc.workerToGO[worker];
@@ -173,7 +257,7 @@ public class SoundController : MonoBehaviour {
         ac.LoadAudioData();
         goal.PlayOneShot(ac);
     }
-    AudioClip GetMusicAudioClip() {
+    string GetMusicFileName() {
         //This function has to decide which Music is to play atm
         //this means if the player is a war or is in combat play
         //Diffrent musicclips then if he is building/at peace.
@@ -181,9 +265,14 @@ public class SoundController : MonoBehaviour {
         //TODO CHANGE THIS-
         //for now it will choose a song random from the music folder
         //maybe add a User addable song loader into this
-        AudioClip ac = Resources.Load(MusicLocation + "idle-1") as AudioClip;
-        ac.LoadAudioData();
-        return ac;
+        //TODO: dont loop into the same sound overagain
+        int count = musictypeToName[currentMusicType].Count;
+        if (count == 0)
+            return "";
+        string soundFileName = musictypeToName[currentMusicType][UnityEngine.Random.Range(0, count)];
+
+
+        return soundFileName;
     }
 
     public void OnBuild(Structure str, bool loading) {
@@ -202,9 +291,7 @@ public class SoundController : MonoBehaviour {
         g.name = name;
         g.transform.SetParent(soundEffect2DGO.transform);
         AudioSource ac = g.GetComponent<AudioSource>();
-        ac.clip = placeStructureSound;
-        ac.volume = 0.75f;
-        ac.Play();
+        StartCoroutine(StartFile(nameToMetaData["build"], ac));
         playedAudios.Add(ac);
     }
     public void OnCityCreate(City c) {
@@ -215,57 +302,50 @@ public class SoundController : MonoBehaviour {
         GameObject g = Instantiate(soundEffect2DGO);
         g.transform.SetParent(soundEffect2DGO.transform);
         AudioSource ac = g.GetComponent<AudioSource>();
-        ac.clip = cityCreateSound;
-        ac.volume = 0.75f;
-        ac.Play();
+        StartCoroutine(StartFile(nameToMetaData["citybuild"], ac));
         playedAudios.Add(ac);
     }
     public void UpdateAmbient() {
-        AmbientSound ambient = AmbientSound.Water;
+        AmbientType ambient = AmbientType.Water;
         if (cameraController.nearestIsland != null) {
             switch (cameraController.nearestIsland.myClimate) {
                 case Climate.Cold:
-                    ambient = AmbientSound.North;
+                    ambient = AmbientType.North;
                     break;
                 case Climate.Middle:
-                    ambient = AmbientSound.Middle;
+                    ambient = AmbientType.Middle;
                     break;
                 case Climate.Warm:
-                    ambient = AmbientSound.South;
+                    ambient = AmbientType.South;
                     break;
             }
         }
         else {
-            ambient = AmbientSound.Water;
+            ambient = AmbientType.Water;
         }
-        //If its the same no need to change the music
-        if (ambient == currentAmbient) {
+        //If its the same no need to change && still playin
+        if (ambient == currentAmbient && ambientSource.isPlaying) {
             return;
         }
-        currentAmbient = ambient;
-        string soundFileName = "";
-        switch (currentAmbient) {
-            case AmbientSound.Water:
-                soundFileName = "water-medium-";
-                break;
-            case AmbientSound.North:
-                soundFileName = "north-";
-                break;
-            case AmbientSound.Middle:
-                soundFileName = "middle-";
-                break;
-            case AmbientSound.South:
-                soundFileName = "south-";
-                break;
-        }
-        //find out which one exact- number for now only 1
-        soundFileName += "1";
-        AudioClip ac = Resources.Load(AmbientLocation + soundFileName) as AudioClip;
-        ac.LoadAudioData();
-        ambientSource.clip = ac;
-        ambientSource.Play();
-        //TODO make this like it should be :D, better make it sound nice 
 
+        currentAmbient = ambient;
+        if (ambienttypeToName[currentAmbient].Count == 0)
+            return;
+        //TODO: dont loop into the same sound overagain
+        int count = ambienttypeToName[currentAmbient].Count;
+        string soundFileName = ambienttypeToName[currentAmbient][UnityEngine.Random.Range(0,count)];
+        
+        if(nameToMetaData.ContainsKey(soundFileName))
+            StartCoroutine(StartFile(nameToMetaData[soundFileName], ambientSource));
+        //TODO make this like it should be :D, better make it sound nice 
+    }
+
+    public void PlayAudioClip(string name, AudioSource toPlay) {
+        if(nameToMetaData.ContainsKey(name)) {
+            StartCoroutine(StartFile(nameToMetaData[name], toPlay));
+            return;
+        }
+        Debug.LogError("File missing! Wanted to play: " + name);
     }
 
     //TODO implement a way of playing these sounds
@@ -275,7 +355,41 @@ public class SoundController : MonoBehaviour {
     public void OnEventEnd(GameEvent ge) {
         //Maybe never used?
     }
+
+    IEnumerator<WWW> StartFile(SoundMetaData meta, AudioSource toPlay) {
+        string musicFile = nameToMetaData[meta.name].file;
+        if (File.Exists(musicFile) == false)
+            yield return null;
+        //System.Diagnostics.Stopwatch loadingStopWatch = new System.Diagnostics.Stopwatch();
+        //loadingStopWatch.Start();
+        string url = string.Format("file://{0}", musicFile);
+        using (var www = new WWW(url)) {
+            if(meta.fileExtension == AudioType.ACC || meta.fileExtension == AudioType.UNKNOWN) // not supported so it has to be unkown audiotype
+                toPlay.clip = www.GetAudioClip(false,true);
+            else // it is faster when knwon file to load it
+                toPlay.clip = www.GetAudioClip(false, true, meta.fileExtension);
+
+            if (toPlay.clip.loadState != AudioDataLoadState.Loaded)
+                yield return www;
+            if (!toPlay.isPlaying && toPlay.clip!=null&& toPlay.clip.loadState==AudioDataLoadState.Loaded)
+                toPlay.Play();
+            www.Dispose();
+        }
+        //Debug.Log("StartFile " +loadingStopWatch.Elapsed);
+        yield return null;
+    }
+
+
     void OnDestroy() {
         Instance = null;
     }
+}
+public class SoundMetaData {
+    public string name;
+    public string author;
+    public SoundType type;
+    public AmbientType ambientType;
+    public MusicType musicType;
+    public AudioType fileExtension;
+    internal string file;
 }

@@ -37,16 +37,22 @@ public class StructureSpriteController : MonoBehaviour {
 
     void Update() {
         List<Structure> ts = new List<Structure>(structureGameObjectMap.Keys);
+        HashSet<Structure> inView = new HashSet<Structure>(cc.structureCurrentInCameraView);
         foreach (Structure str in ts) {
-            if (cc.structureCurrentInCameraView.Contains(str) == false) {
+            if (inView.Contains(str) == false) {
+                if (str.HasHitbox)
+                    continue; // TODO: check performance impact -- if we need to remove those aswell
                 GameObject.Destroy(structureGameObjectMap[str]);
                 structureGameObjectMap.Remove(str);
+            } else {
+                inView.Remove(str); // already exist as a gameobject so no need to check to create it
             }
         }
-        foreach (Structure str in cc.structureCurrentInCameraView) {
-            if (structureGameObjectMap.ContainsKey(str) == false) {
-                OnStrucutureCreated(str);
-            }
+        //inView should only contain structures that dont exist as gameobject
+        foreach (Structure str in inView) {
+            //if (structureGameObjectMap.ContainsKey(str) == false) {
+            OnStrucutureCreated(str);
+            //}
         }
     }
     public void OnStrucutureCreated(Structure structure) {

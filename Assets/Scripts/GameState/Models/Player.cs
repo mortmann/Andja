@@ -55,6 +55,14 @@ public class Player : IGEventable {
     #endregion
     #region Serialized
     [JsonPropertyAttribute]
+    private string _name;
+    public string Name => _name ?? "Number " + Number; //FOR NOW
+    [JsonPropertyAttribute]
+    private bool _IsHuman;
+
+    public bool IsHuman => _IsHuman;
+
+    [JsonPropertyAttribute]
     private int _treasuryBalance;
     /// <summary>
     /// How much Money you have to spend
@@ -92,6 +100,11 @@ public class Player : IGEventable {
     internal void RegisterStructureNeedUnlock(Action<Need> onStructureNeedUnlock) {
         cbStructureNeedUnlocked += onStructureNeedUnlock;
     }
+
+    internal bool IsCurrent() {
+        return PlayerController.currentPlayerNumber == Number;
+    }
+
     internal void UnregisterStructureNeedUnlock(Action<Need> onStructureNeedUnlock) {
         cbStructureNeedUnlocked -= onStructureNeedUnlock;
     }
@@ -119,7 +132,8 @@ public class Player : IGEventable {
         Setup();
     }
 
-    public Player(int number) {
+    public Player(int number, bool isHuman) {
+        this._IsHuman = isHuman;
         Number = number;
         MaxPopulationCount = 0;
         MaxPopulationLevel = 0;

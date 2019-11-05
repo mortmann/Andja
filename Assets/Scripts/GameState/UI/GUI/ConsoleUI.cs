@@ -204,6 +204,8 @@ public class ConsoleUI : MonoBehaviour {
                 return UnitIDs;
             case "event":
                 return EventIDs;
+            case "diplomatic":
+                return new List<string>(Enum.GetNames(typeof(DiplomacyType)));
             default:
                 Debug.Log("Predicte-List not found.");
                 return new List<string>();

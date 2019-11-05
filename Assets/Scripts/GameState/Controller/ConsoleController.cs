@@ -316,14 +316,14 @@ public class ConsoleController : MonoBehaviour {
         return false;
     }
     public List<string> PlayerCommands = new List<string>
-        { "change","money","war" };
+        { "change","money","diplomatic" };
     bool HandlePlayerCommands(string[] parameters) {
         switch (parameters[0]) {
             case "change":
                 return ChangePlayer(parameters.Skip(1).ToArray());
             case "money":
                 return ChangePlayerMoney(parameters.Skip(1).ToArray());
-            case "war":
+            case "diplomatic":
                 return ChangeWar(parameters.Skip(1).ToArray());
             default:
                 break;
@@ -337,7 +337,7 @@ public class ConsoleController : MonoBehaviour {
         int playerOne = PlayerController.currentPlayerNumber;
         int pos = 0;
         // anything can thats not a number can be the current player
-        if (parameters.Length > 1) {
+        if (parameters.Length > 2) {
             if (int.TryParse(parameters[pos], out playerOne) == false) {
                 return false;
             }
@@ -355,9 +355,9 @@ public class ConsoleController : MonoBehaviour {
             return false;
 
         if (PlayerController.Instance.ArePlayersAtWar(playerOne, playerTwo) == false)
-            PlayerController.Instance.AddPlayersWar(playerOne, playerTwo);
+            PlayerController.Instance.ChangeDiplomaticStanding(playerOne, playerTwo, DiplomacyType.War);
         else
-            PlayerController.Instance.RemovePlayerWar(playerOne, playerTwo);
+            PlayerController.Instance.ChangeDiplomaticStanding(playerOne, playerTwo, DiplomacyType.Neutral);
         return true;
     }
 

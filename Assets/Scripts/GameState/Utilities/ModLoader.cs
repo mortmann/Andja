@@ -8,7 +8,7 @@ using System;
 
 public static class ModLoader {
     static readonly string savedActiveModsFile = "mods.ini";
-    public static List<string> ActiveMods = new List<string> { };
+    public static List<string> ActiveMods = new List<string> {  };
 
     static readonly string inStreamingAssetsPath = "Mods";
     static readonly string customMetaDataExtension = ".md";
@@ -43,6 +43,7 @@ public static class ModLoader {
             mod.soundDatas = LoadSoundsForMod(modName);
             LoadedMods.Add(mod);
         }
+        Debug.Log("Found " + avaible.Count +" Mods. Active & Loaded Mods "+ LoadedMods.Count);
     }
 
     private static List<Sprite> LoadIconsForMod(string mod) {
@@ -122,6 +123,37 @@ public static class ModLoader {
                                     loadedSprites.Add(sprite);
                                     spriteNumber++;
                                 }
+                            }
+                            break;
+                        case SpriteMode.DefinedMultiple:
+                            if (metaData.nameToDefined == null){
+                                Debug.Log("Loading custom sprite failed! Reason: nameToCoordinats does not exist for DefinedMultiple " + pictureFilePath + ".");
+                                continue;
+                            }
+                            foreach(string definedSpriteName in metaData.nameToDefined.Keys) {
+                                string[] defind = metaData.nameToDefined[definedSpriteName].Split(':');
+                                if (defind.Length < 2) {
+                                    Debug.Log("Loading defined sprite failed! Reason: coordinats missing for definedSpriteName " + definedSpriteName 
+                                        +" in " + pictureFilePath + ".");
+                                    continue;
+                                }
+                                int dx = 0;
+                                int dy = 0;
+                                if(int.TryParse(defind[0],out dx) == false||int.TryParse(defind[1], out dy) == false) {
+                                    Debug.Log("Loading defined sprite failed! Reason: faulty coordinats for definedSpriteName " + definedSpriteName
+                                        + " in " + pictureFilePath + ".");
+                                    continue;
+                                }
+                                int dwidth = metaData.width;
+                                int dheight = metaData.height;
+                                if (defind.Length > 4 && (int.TryParse(defind[2], out dx) == false || int.TryParse(defind[3], out dy) == false)) {
+                                    Debug.Log("Loading defined sprite failed! Reason: faulty size parameters for definedSpriteName " + definedSpriteName
+                                        + " in " + pictureFilePath + ".");
+                                    continue;
+                                }
+                                Sprite sprite = Sprite.Create(texture, new Rect(dx, dy, dwidth, dheight), new Vector2(0.5f, 0.5f), metaData.pixelsPerUnit);
+                                sprite.name = definedSpriteName;
+                                loadedSprites.Add(sprite);
                             }
                             break;
                     }
@@ -209,6 +241,7 @@ public static class ModLoader {
                 readFromXML(mod.xmlTypeToXMLString[type]);
             } catch(Exception e) {
                 Debug.Log("Loading XML-Mod failed: Reason XML faulty for mod " + mod.name + " " + type + ". " + e.StackTrace);
+                UnityEngine.SceneManagement.SceneManager.LoadScene("MainMenu");
             }
         }
     }
@@ -218,6 +251,7 @@ public static class ModLoader {
         foreach (Mod mod in LoadedMods) {
             loadedIcons.AddRange(mod.iconSprites);
         }
+        loadedIcons.AddRange(LoadSprites(SpriteType.Icon));
         return loadedIcons.ToArray();
     }
     public static SoundMetaData[] LoadSoundMetaDatas() {
@@ -302,8 +336,8 @@ public struct Mod {
     public List<SoundMetaData> soundDatas;
 }
 
-public enum SpriteType { Structure, Worker, Unit, Tile }
-public enum SpriteMode { Single, Multiple }
+public enum SpriteType { Structure, Worker, Unit, Tile, Icon, Item }
+public enum SpriteMode { Single, Multiple, DefinedMultiple }
 public class CustomSpriteMetaData {
     public SpriteType type;
     public SpriteMode spriteMode;
@@ -314,4 +348,5 @@ public class CustomSpriteMetaData {
     public int yPivot;
     public bool generateMipMap = true;
     public TextureFormat format = TextureFormat.RGBA32;
+    public Dictionary<string, string> nameToDefined;
 }

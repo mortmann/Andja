@@ -11,6 +11,7 @@ public enum ExtraBuildUI { None, Range, Efficiency };
 public enum BuildRestriktions { Land, Shore, Mountain };
 
 public class StructurePrototypeData : LanguageVariables {
+    public string ID;
     public bool hasHitbox;// { get; protected set; }
     public float maxHealth;
 

@@ -5,7 +5,7 @@ using System.Linq;
 using System;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
-public enum InputName { BuildMenu, TradeMenu, Offworld, TogglePause, Rotate, Console, Cancel, Screenshot, Stop }
+public enum InputName { BuildMenu, TradeMenu, Offworld, TogglePause, Rotate, Console, Cancel, Screenshot, Stop, DiplomacyMenu }
 
 public class InputHandler {
 
@@ -59,6 +59,9 @@ public class InputHandler {
                     break;
                 case InputName.Stop:
                     keyCode = KeyCode.P;
+                    break;
+                case InputName.DiplomacyMenu:
+                    keyCode = KeyCode.N;
                     break;
             }
             ChangePrimaryNameToKey(name, keyCode);

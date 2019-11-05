@@ -25,6 +25,7 @@
       <speed>1.0</speed>
       <turnSpeed>1.0</turnSpeed>
       <aggroTime>0.0</aggroTime>
+      <projectileSpeed>0.0</projectileSpeed>
       <spriteBaseName>basicunit</spriteBaseName>
    </unit>
    <ship ID="ship">
@@ -44,7 +45,7 @@
          <Item ID="ropes">
             <count>4</count>
          </Item>
-         <Item ID="hemp fabric">
+         <Item ID="hempfabric">
             <count>6</count>
          </Item>
       </buildingItems>
@@ -54,7 +55,7 @@
       <maintenancecost>25</maintenancecost>
       <maximumHealth>1250.0</maximumHealth>
       <aggroTimer>1.0</aggroTimer>
-      <attackRange>12.0</attackRange>
+      <attackRange>1.0</attackRange>
       <damage>10.0</damage>
       <myDamageType>cannonball</myDamageType>
       <myArmorType>woodenwall</myArmorType>
@@ -62,6 +63,7 @@
       <speed>2.0</speed>
       <turnSpeed>1.0</turnSpeed>
       <aggroTime>0.0</aggroTime>
+      <projectileSpeed>0.0</projectileSpeed>
       <spriteBaseName>ship</spriteBaseName>
       <maximumAmountOfCannons>15</maximumAmountOfCannons>
       <damagePerCannon>1</damagePerCannon>

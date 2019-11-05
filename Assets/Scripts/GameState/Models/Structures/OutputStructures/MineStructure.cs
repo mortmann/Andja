@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Newtonsoft.Json;
 
-public class MinePrototypData : OutputPrototypData {
+public class MinePrototypeData : OutputPrototypData {
 }
 
 [JsonObject(MemberSerialization.OptIn)]
@@ -25,18 +25,18 @@ public class MineStructure : OutputStructure {
         }
     }
 
-    protected MinePrototypData _mineData;
-    public MinePrototypData MineData {
+    protected MinePrototypeData _mineData;
+    public MinePrototypeData MineData {
         get {
             if (_mineData == null) {
-                _mineData = (MinePrototypData)PrototypController.Instance.GetStructurePrototypDataForID(ID);
+                _mineData = (MinePrototypeData)PrototypController.Instance.GetStructurePrototypDataForID(ID);
             }
             return _mineData;
         }
     }
     #endregion
 
-    public MineStructure(string pid, MinePrototypData MineData) {
+    public MineStructure(string pid, MinePrototypeData MineData) {
         this.ID = pid;
         _mineData = MineData;
     }

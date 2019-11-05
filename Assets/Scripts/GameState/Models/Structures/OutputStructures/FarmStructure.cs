@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Newtonsoft.Json;
 
-public class FarmPrototypData : OutputPrototypData {
+public class FarmPrototypeData : OutputPrototypData {
     public GrowableStructure growable;
     public int neededHarvestToProduce;
 }
@@ -25,11 +25,11 @@ public class FarmStructure : OutputStructure {
     public int OnRegisterCallbacks;
     List<GrowableStructure> workingGrowables;
 
-    protected FarmPrototypData _farmData;
-    public FarmPrototypData FarmData {
+    protected FarmPrototypeData _farmData;
+    public FarmPrototypeData FarmData {
         get {
             if (_farmData == null) {
-                _farmData = (FarmPrototypData)PrototypController.Instance.GetStructurePrototypDataForID(ID);
+                _farmData = (FarmPrototypeData)PrototypController.Instance.GetStructurePrototypDataForID(ID);
             }
             return _farmData;
         }
@@ -41,7 +41,7 @@ public class FarmStructure : OutputStructure {
             return Mathf.Round(((float)OnRegisterCallbacks / (float)myRangeTiles.Count) * 1000) / 10f;
         }
     }
-    public FarmStructure(string id, FarmPrototypData fpd) {
+    public FarmStructure(string id, FarmPrototypeData fpd) {
         _farmData = fpd;
         this.ID = id;
     }

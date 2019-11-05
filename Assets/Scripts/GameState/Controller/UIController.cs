@@ -33,7 +33,6 @@ public class UIController : MonoBehaviour {
     Structure openStructure;
     Unit openUnit;
     public static Dictionary<string, Sprite> ItemImages;
-    public static string itemSpriteName = "item_";
     public static UIController Instance;
 
     void Start() {
@@ -46,6 +45,9 @@ public class UIController : MonoBehaviour {
         Debug.Log(sprites.Length + " Item Sprite");
         ItemImages = new Dictionary<string, Sprite>();
         foreach (Sprite item in sprites) {
+            ItemImages[item.name] = item;
+        }
+        foreach (Sprite item in ModLoader.LoadSprites(SpriteType.Item)) {
             ItemImages[item.name] = item;
         }
     }
@@ -348,11 +350,11 @@ public class UIController : MonoBehaviour {
         consoleCanvas.SetActive(false);
     }
     public static Sprite GetItemImageForID(string id) {
-        if (ItemImages.ContainsKey(itemSpriteName + id) == false) {
+        if (ItemImages.ContainsKey(id) == false) {
             Debug.LogWarning("Item " + id + " is missing image!");
             return null;
         }
-        return ItemImages[itemSpriteName + id];
+        return ItemImages[id];
     }
 
     public void ShowDebugForObject(object toDebug) {

@@ -197,63 +197,63 @@
       <popCount>0</popCount>
       <group>food</group>
    </Need>
-   <NeedGroup ID="beverages" tempID="beverages">
+   <NeedGroup ID="beverages">
       <Name>
          <entry lang="English">Beverages</entry>
          <entry lang="German">Getränke</entry>
       </Name>
       <importanceLevel>1.3</importanceLevel>
    </NeedGroup>
-   <NeedGroup ID="security" tempID="security">
+   <NeedGroup ID="security">
       <Name>
          <entry lang="English">Security</entry>
          <entry lang="German">Sicherheit</entry>
       </Name>
       <importanceLevel>1.2</importanceLevel>
    </NeedGroup>
-   <NeedGroup ID="education" tempID="education">
+   <NeedGroup ID="education">
       <Name>
          <entry lang="English">Education</entry>
          <entry lang="German">Bildung</entry>
       </Name>
       <importanceLevel>0.9</importanceLevel>
    </NeedGroup>
-   <NeedGroup ID="entertainment" tempID="entertainment">
+   <NeedGroup ID="entertainment">
       <Name>
          <entry lang="English">Entertainment</entry>
          <entry lang="German">Unterhaltung</entry>
       </Name>
       <importanceLevel>1.0</importanceLevel>
    </NeedGroup>
-   <NeedGroup ID="luxury" tempID="luxury">
+   <NeedGroup ID="luxury">
       <Name>
          <entry lang="English">Luxury</entry>
          <entry lang="German">Luxus</entry>
       </Name>
       <importanceLevel>1.0</importanceLevel>
    </NeedGroup>
-   <NeedGroup ID="clothing" tempID="clothing">
+   <NeedGroup ID="clothing">
       <Name>
          <entry lang="English">Clothing</entry>
          <entry lang="German">Bekleidung</entry>
       </Name>
       <importanceLevel>1.2</importanceLevel>
    </NeedGroup>
-   <NeedGroup ID="community" tempID="community">
+   <NeedGroup ID="community">
       <Name>
          <entry lang="English">Community</entry>
          <entry lang="German">Gemeinschaft</entry>
       </Name>
       <importanceLevel>1.0</importanceLevel>
    </NeedGroup>
-   <NeedGroup ID="belief" tempID="belief">
+   <NeedGroup ID="belief">
       <Name>
          <entry lang="English">Belief</entry>
          <entry lang="German">Relegion</entry>
       </Name>
       <importanceLevel>1.5</importanceLevel>
    </NeedGroup>
-   <NeedGroup ID="food" tempID="food">
+   <NeedGroup ID="food">
       <Name>
          <entry lang="English">Food</entry>
          <entry lang="German">Nahrung</entry>

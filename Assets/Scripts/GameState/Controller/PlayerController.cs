@@ -4,6 +4,8 @@ using System;
 using System.IO;
 using UnityEngine.SceneManagement;
 
+public enum DiplomacyType { War, Neutral, TradeAggrement, Alliance }
+
 /// <summary>
 /// Player controller.
 /// this is mostly for the currentplayer
@@ -13,7 +15,7 @@ public class PlayerController : MonoBehaviour {
     public static int currentPlayerNumber;
     readonly int piratePlayerNumber = int.MaxValue; // so it isnt the same like the number of wilderness
     public Player CurrPlayer { get { return Players[currentPlayerNumber]; } }
-    HashSet<War> playerWars;
+    List<DiplomaticStatus> playerDiplomaticStatus;
     PlayerPrototypeData PlayerPrototypeData => PrototypController.CurrentPlayerPrototypData;
 
     float BalanceFullTime => PlayerPrototypeData.BalanceFullTime;
@@ -24,8 +26,14 @@ public class PlayerController : MonoBehaviour {
     public static PlayerController Instance { get; protected set; }
     public static List<Player> Players { get; protected set; }
     public static int PlayerCount => Players.Count;
-    EventUIManager euim;
 
+    public static Player CurrentPlayer;
+
+    EventUIManager euim;
+    /// <summary>
+    /// FIRST&SECOND Player OldType -> NewType
+    /// </summary>
+    Action<Player, Player, DiplomacyType, DiplomacyType> cbDiplomaticChangePlayer;
     // Use this for initialization
     void Awake() {
         if (Instance != null) {
@@ -38,22 +46,46 @@ public class PlayerController : MonoBehaviour {
         BuildController.Instance.RegisterCityCreated(OnCityCreated);
         BuildController.Instance.RegisterStructureCreated(OnStructureCreated);
         GameObject.FindObjectOfType<EventController>().RegisterOnEvent(OnEventCreated, OnEventEnded);
-        SceneManager.sceneLoaded += OnLevelLoad; 
+        SceneManager.sceneLoaded += OnLevelLoad;
         if (SaveController.IsLoadingSave == false)
             Setup();
+        if(playerDiplomaticStatus==null) {//only when changing stuff
+            playerDiplomaticStatus = new List<DiplomaticStatus>();
+            for (int i = 0; i < PlayerCount; i++) {
+                for (int s = i + 1; s < PlayerCount; s++) {
+                    playerDiplomaticStatus.Add(new DiplomaticStatus(i, s));
+                }
+            }
+            ChangeDiplomaticStanding(0, 1, DiplomacyType.War);
+            ChangeDiplomaticStanding(0, 2, DiplomacyType.TradeAggrement);
+
+        }
+
     }
 
-    
+    internal DiplomacyType GetDiplomaticStatusType(Player firstPlayer, Player secondPlayer) {
+        if (firstPlayer == secondPlayer) // ONLY BE NEUTRAL TO ONESELF :)
+            return DiplomacyType.Neutral;
+        return GetDiplomaticStatus(firstPlayer.Number, secondPlayer.Number).currentStatus; 
+    }
+
     public void Setup() {
         Players = new List<Player>();
         currentPlayerNumber = 0;
-        Player p = new Player(currentPlayerNumber);
+        Player p = new Player(currentPlayerNumber,true);
         Players.Add(p);
-        Players.Add(new Player(1));
-        Players.Add(new Player(2));
-        playerWars = new HashSet<War>();
-        AddPlayersWar(0, 1);
-        AddPlayersWar(1, 0);
+        Players.Add(new Player(1, false));
+        Players.Add(new Player(2, false));
+        playerDiplomaticStatus = new List<DiplomaticStatus>();
+        for(int i = 0; i < PlayerCount; i++) {
+            for (int s = i+1; s < PlayerCount; s++) {
+                playerDiplomaticStatus.Add(new DiplomaticStatus(i, s));
+            }
+        }
+        ChangeDiplomaticStanding(0, 1, DiplomacyType.War);
+        ChangeDiplomaticStanding(0, 2, DiplomacyType.TradeAggrement);
+        CurrentPlayer = Players.Find(x => x.Number == currentPlayerNumber);
+
         balanceTickTimer = BalanceTicksTime;
     }
 
@@ -112,6 +144,29 @@ public class PlayerController : MonoBehaviour {
             }
         }
     }
+
+    internal void IncreaseDiplomaticStanding(Player playerOne, Player playerTwo) {
+        DiplomaticStatus ds = GetDiplomaticStatus(playerOne, playerTwo);
+        if (ds.currentStatus == DiplomacyType.Alliance)
+            return;
+        ChangeDiplomaticStanding(playerOne.Number, playerTwo.Number, (DiplomacyType)((int)ds.currentStatus + 1));
+    }
+
+    internal void DecreaseDiplomaticStanding(Player playerOne, Player playerTwo) {
+        DiplomaticStatus ds = GetDiplomaticStatus(playerOne, playerTwo);
+        if (ds.currentStatus == DiplomacyType.War)
+            return;
+        ChangeDiplomaticStanding(playerOne.Number, playerTwo.Number, (DiplomacyType)((int)ds.currentStatus - 1));
+    }
+
+    internal void SendMoneyFromTo(Player currentPlayer, Player selectedPlayer, int amount) {
+        if (CurrentPlayer.HasEnoughMoney(amount) == false)
+            return;
+        //TODO: Notify Player that he received gift or demand
+        selectedPlayer.AddMoney(amount);
+        currentPlayer.ReduceMoney(amount);
+    }
+
     public void OnEventCreated(GameEvent ge) {
         if (ge.target == null) {
             euim.AddEVENT(ge.eventID, ge.Name, ge.position);
@@ -167,9 +222,10 @@ public class PlayerController : MonoBehaviour {
         Players = pcs.players;
         foreach (Player p in Players)
             p.Load();
-        playerWars = pcs.playerWars;
+        playerDiplomaticStatus = pcs.playerWars;
         balanceTickTimer = pcs.tickTimer;
         currentPlayerNumber = pcs.currentPlayerNumber;
+        CurrentPlayer = Players.Find(x => x.Number == currentPlayerNumber);
     }
 
     public void OnEventEnded(GameEvent ge) {
@@ -207,32 +263,33 @@ public class PlayerController : MonoBehaviour {
         }
         ReduceMoney(structure.BuildCost, structure.PlayerNumber);
     }
-    public bool ArePlayersAtWar(int pnum1, int pnum2) {
-        if (pnum1 == pnum2) {
+    public bool ArePlayersAtWar(int playerOne, int playerTwo) {
+        if (playerOne == playerTwo) {
             return false; // LUL same player cant attack himself
         }
-        if (pnum1 == piratePlayerNumber || pnum2 == piratePlayerNumber) {
+        if (playerOne == piratePlayerNumber || playerTwo == piratePlayerNumber) {
             return true;//could add here be at peace with pirates through money 
         }
-        return playerWars.Contains(new War(pnum1, pnum2));
+        return GetDiplomaticStatus(playerOne, playerTwo).currentStatus == DiplomacyType.War;
     }
-    public void AddPlayersWar(int pnum1, int pnum2) {
-        if (pnum1 == pnum2) {
-            return; // LUL same player cant attack himself
+    
+
+    public void ChangeDiplomaticStanding(int playerOne, int playerTwo, DiplomacyType changeTo) {
+        if (playerOne == playerTwo) {
+            return; 
         }
-        if (ArePlayersAtWar(pnum1, pnum2)) {
-            return; // already at war no need for same to be added
+        DiplomaticStatus ds = GetDiplomaticStatus( playerOne, playerTwo );
+        if(ds.currentStatus == changeTo) {
+            return;
         }
-        playerWars.Add(new War(pnum1, pnum2));
+        cbDiplomaticChangePlayer?.Invoke(GetPlayer(playerOne), GetPlayer(playerTwo), ds.currentStatus, changeTo);
+        ds.currentStatus = changeTo;
     }
-    public void RemovePlayerWar(int pnum1, int pnum2) {
-        if (pnum1 == pnum2) {
-            return; // LUL same player cant attack himself
-        }
-        if (ArePlayersAtWar(pnum1, pnum2) == false) {
-            return; // they werent at war to begin with
-        }
-        playerWars.Remove(new War(pnum1, pnum2));
+    public DiplomaticStatus GetDiplomaticStatus(Player playerOne, Player playerTwo) {
+        return GetDiplomaticStatus(playerOne.Number, playerTwo.Number);
+    }
+    public DiplomaticStatus GetDiplomaticStatus(int playerOne, int playerTwo) {
+        return playerDiplomaticStatus.Find(x => x == new DiplomaticStatus(playerOne,playerTwo));
     }
     public static Player GetPlayer(int i) {
         if (i < 0 || Players.Count <= i) {
@@ -243,8 +300,7 @@ public class PlayerController : MonoBehaviour {
     }
 
     public PlayerControllerSave GetSavePlayerData() {
-        // Create/overwrite the save file with the xml text.
-        return new PlayerControllerSave(currentPlayerNumber, balanceTickTimer, Players, playerWars);
+        return new PlayerControllerSave(currentPlayerNumber, balanceTickTimer, Players, playerDiplomaticStatus);
     }
 
     void OnDestroy() {
@@ -257,6 +313,14 @@ public class PlayerController : MonoBehaviour {
         currentPlayerNumber = player;
         return true;
     }
+    public void RegisterPlayersDiplomacyStatusChange(Action<Player, Player, DiplomacyType, DiplomacyType> callbackfunc) {
+        cbDiplomaticChangePlayer += callbackfunc;
+    }
+
+    public void UnregisterPlayersDiplomacyStatusChange(Action<Player, Player, DiplomacyType, DiplomacyType> callbackfunc) {
+        cbDiplomaticChangePlayer -= callbackfunc;
+    }
+
 }
 [Serializable]
 public class PlayerControllerSave : BaseSaveData {
@@ -264,9 +328,9 @@ public class PlayerControllerSave : BaseSaveData {
     public int currentPlayerNumber;
     public float tickTimer;
     public List<Player> players;
-    public HashSet<War> playerWars;
+    public List<DiplomaticStatus> playerWars;
 
-    public PlayerControllerSave(int cpn, float tickTimer, List<Player> players, HashSet<War> playerWars) {
+    public PlayerControllerSave(int cpn, float tickTimer, List<Player> players, List<DiplomaticStatus> playerWars) {
         currentPlayerNumber = cpn;
         this.players = players;
         this.tickTimer = tickTimer;
@@ -278,14 +342,15 @@ public class PlayerControllerSave : BaseSaveData {
 }
 
 [Serializable]
-public class War {
+public class DiplomaticStatus {
     public int playerOne;
     public int playerTwo;
+    public DiplomacyType currentStatus;
 
-    public War() {
+    public DiplomaticStatus() {
     }
 
-    public War(int one, int two) {
+    public DiplomaticStatus(int one, int two) {
         if (one > two) {
             playerOne = two;
             playerTwo = one;
@@ -294,10 +359,11 @@ public class War {
             playerOne = one;
             playerTwo = two;
         }
+        currentStatus = DiplomacyType.Neutral;
     }
     public override bool Equals(object obj) {
         // If parameter cannot be cast to War return false:
-        War p = obj as War;
+        DiplomaticStatus p = obj as DiplomaticStatus;
         if ((object)p == null) {
             return false;
         }
@@ -312,7 +378,7 @@ public class War {
         return hashCode;
     }
 
-    public static bool operator ==(War a, War b) {
+    public static bool operator ==(DiplomaticStatus a, DiplomaticStatus b) {
         // If both are null, or both are same instance, return true.
         if (System.Object.ReferenceEquals(a, b)) {
             return true;
@@ -327,7 +393,7 @@ public class War {
         return a.playerOne == b.playerOne && a.playerTwo == b.playerTwo
             || a.playerTwo == b.playerOne && a.playerOne == b.playerTwo;
     }
-    public static bool operator !=(War a, War b) {
+    public static bool operator !=(DiplomaticStatus a, DiplomaticStatus b) {
         // If both are null, or both are same instance, return false.
         if (System.Object.ReferenceEquals(a, b)) {
             return false;

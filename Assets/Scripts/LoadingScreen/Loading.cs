@@ -19,7 +19,10 @@ public class Loading : MonoBehaviour {
         }
     }
     // Use this for initialization
-    void Start() {
+    void Awake() {
+        if (Application.isEditor)
+            ClearConsole();
+
         IsLoading = true;
         loadingStopWatch = new Stopwatch();
         loadingStopWatch.Start();
@@ -66,8 +69,17 @@ public class Loading : MonoBehaviour {
         }
 
     }
+    static void ClearConsole() {
+        var logEntries = System.Type.GetType("UnityEditor.LogEntries, UnityEditor.dll");
+
+        var clearMethod = logEntries.GetMethod("Clear", System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.Public);
+
+        clearMethod.Invoke(null, null);
+    }
+
+
     public void OnDestroy() {
-        loadingStopWatch.Stop();
+        loadingStopWatch?.Stop();
         UnityEngine.Debug.Log("Loading took " + loadingStopWatch.ElapsedMilliseconds + "ms (" + loadingStopWatch.Elapsed.TotalSeconds + "s)! ");
         IsLoading = false;
     }

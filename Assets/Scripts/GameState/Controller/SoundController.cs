@@ -1,9 +1,10 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
+using System.Collections;
 using UnityEngine.Audio;
 using System.IO;
 using System;
-
+using UnityEngine.Networking;
 public enum AmbientType { Water, North, Middle, South, Wind }
 public enum MusicType { Idle, War, Combat, Lose, Win, Disaster, Doom }
 public enum SoundType { Music, SoundEffect, Ambient }
@@ -362,13 +363,13 @@ public class SoundController : MonoBehaviour {
         //Maybe never used?
     }
 
-    IEnumerator<WWW> StartFile(SoundMetaData meta, AudioSource toPlay) {
+    IEnumerator StartFile(SoundMetaData meta, AudioSource toPlay) {
         string musicFile = nameToMetaData[meta.name].file;
         if (File.Exists(musicFile) == false)
             yield return null;
         //System.Diagnostics.Stopwatch loadingStopWatch = new System.Diagnostics.Stopwatch();
         //loadingStopWatch.Start();
-        string url = string.Format("file://{0}", musicFile);
+        /* outdated
         using (var www = new WWW(url)) {
             if(meta.fileExtension == AudioType.ACC || meta.fileExtension == AudioType.UNKNOWN) // not supported so it has to be unkown audiotype
                 toPlay.clip = www.GetAudioClip(false,true);
@@ -381,11 +382,29 @@ public class SoundController : MonoBehaviour {
                 toPlay.Play();
             www.Dispose();
         }
+        */
+        string url = string.Format("file://{0}", musicFile);
+        AudioType audioType = meta.fileExtension;
+        using (UnityWebRequest www = UnityWebRequestMultimedia.GetAudioClip(url, audioType)) {
+            yield return www.SendWebRequest();
+            if (www.isNetworkError) {
+                Debug.Log(www.error);
+            }
+            else {
+                toPlay.clip = DownloadHandlerAudioClip.GetContent(www);
+            }
+
+            www.Dispose();
+        }
+        if (toPlay.clip.loadState != AudioDataLoadState.Loaded)
+            yield return toPlay.clip.loadState;
+        if (!toPlay.isPlaying && toPlay.clip != null && toPlay.clip.loadState == AudioDataLoadState.Loaded)
+            toPlay.Play();
         //Debug.Log("StartFile " +loadingStopWatch.Elapsed);
         yield return null;
     }
 
-
+     
     void OnDestroy() {
         Instance = null;
     }

@@ -1,58 +1,141 @@
 fileFormatVersion: 2
 guid: 035dbfda1f6262042a3e4df750956c82
-timeCreated: 1480874286
-licenseType: Free
 TextureImporter:
-  fileIDToRecycleName:
-    21300000: dirtroad_
-    21300002: dirtroad_2
-    21300004: dirtroad_S
-    21300006: dirtroad_7
-    21300008: dirtroad_10
-    21300010: dirtroad_NES
-    21300012: dirtroad_W
-    21300014: dirtroad_E
-    21300016: dirtroad_NSW
-    21300018: dirtroad_22
-    21300020: dirtroad_NESW
-    21300022: dirtroad_24
-    21300024: dirtroad_ES
-    21300026: dirtroad_26
-    21300028: dirtroad_SW
-    21300030: dirtroad_N
-    21300032: dirtroad_33
-    21300034: dirtroad_36
-    21300036: dirtroad_NS
-    21300038: dirtroad_40
-    21300040: dirtroad_43
-    21300042: dirtroad_44
-    21300044: dirtroad_NE
-    21300046: dirtroad_52
-    21300048: dirtroad_NW
-    21300050: dirtroad_56
-    21300052: dirtroad_NEW
-    21300054: dirtroad_58
-    21300056: dirtroad_61
-    21300058: dirtroad_62
-    21300060: dirtroad_63
-    21300062: dirtroad_74
-    21300064: dirtroad_EW
-    21300066: dirtroad_76
-    21300068: dirtroad_78
-    21300070: dirtroad_ESW
-    21300072: dirtroad_80
-    21300074: dirtroad_83
-    21300076: dirtroad_84
-    21300078: dirtroad_85
-    21300080: dirtroad_88
-  serializedVersion: 2
+  internalIDToNameTable:
+  - first:
+      213: 21300000
+    second: dirtroad_
+  - first:
+      213: 21300002
+    second: dirtroad_2
+  - first:
+      213: 21300004
+    second: dirtroad_S
+  - first:
+      213: 21300006
+    second: dirtroad_7
+  - first:
+      213: 21300008
+    second: dirtroad_10
+  - first:
+      213: 21300010
+    second: dirtroad_NES
+  - first:
+      213: 21300012
+    second: dirtroad_W
+  - first:
+      213: 21300014
+    second: dirtroad_E
+  - first:
+      213: 21300016
+    second: dirtroad_NSW
+  - first:
+      213: 21300018
+    second: dirtroad_22
+  - first:
+      213: 21300020
+    second: dirtroad_NESW
+  - first:
+      213: 21300022
+    second: dirtroad_24
+  - first:
+      213: 21300024
+    second: dirtroad_ES
+  - first:
+      213: 21300026
+    second: dirtroad_26
+  - first:
+      213: 21300028
+    second: dirtroad_SW
+  - first:
+      213: 21300030
+    second: dirtroad_N
+  - first:
+      213: 21300032
+    second: dirtroad_33
+  - first:
+      213: 21300034
+    second: dirtroad_36
+  - first:
+      213: 21300036
+    second: dirtroad_NS
+  - first:
+      213: 21300038
+    second: dirtroad_40
+  - first:
+      213: 21300040
+    second: dirtroad_43
+  - first:
+      213: 21300042
+    second: dirtroad_44
+  - first:
+      213: 21300044
+    second: dirtroad_NE
+  - first:
+      213: 21300046
+    second: dirtroad_52
+  - first:
+      213: 21300048
+    second: dirtroad_NW
+  - first:
+      213: 21300050
+    second: dirtroad_56
+  - first:
+      213: 21300052
+    second: dirtroad_NEW
+  - first:
+      213: 21300054
+    second: dirtroad_58
+  - first:
+      213: 21300056
+    second: dirtroad_61
+  - first:
+      213: 21300058
+    second: dirtroad_62
+  - first:
+      213: 21300060
+    second: dirtroad_63
+  - first:
+      213: 21300062
+    second: dirtroad_74
+  - first:
+      213: 21300064
+    second: dirtroad_EW
+  - first:
+      213: 21300066
+    second: dirtroad_76
+  - first:
+      213: 21300068
+    second: dirtroad_78
+  - first:
+      213: 21300070
+    second: dirtroad_ESW
+  - first:
+      213: 21300072
+    second: dirtroad_80
+  - first:
+      213: 21300074
+    second: dirtroad_83
+  - first:
+      213: 21300076
+    second: dirtroad_84
+  - first:
+      213: 21300078
+    second: dirtroad_85
+  - first:
+      213: 21300080
+    second: dirtroad_88
+  externalObjects: {}
+  serializedVersion: 10
   mipmaps:
     mipMapMode: 0
     enableMipMap: 1
+    sRGBTexture: 1
     linearTexture: 0
-    correctGamma: 0
     fadeOut: 0
     borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
     mipMapFadeDistanceStart: 1
     mipMapFadeDistanceEnd: 3
   bumpmap:
@@ -61,37 +144,60 @@ TextureImporter:
     heightScale: 0.25
     normalMapFilter: 0
   isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
   grayScaleToAlpha: 0
-  generateCubemap: 0
+  generateCubemap: 6
   cubemapConvolution: 0
-  cubemapConvolutionSteps: 7
-  cubemapConvolutionExponent: 1.5
   seamlessCubemap: 0
   textureFormat: -1
   maxTextureSize: 2048
   textureSettings:
+    serializedVersion: 2
     filterMode: -1
     aniso: 16
-    mipBias: -1
-    wrapMode: 1
+    mipBias: -100
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
   nPOTScale: 0
   lightmap: 0
-  rGBM: 0
   compressionQuality: 50
-  allowsAlphaSplitting: 0
   spriteMode: 2
   spriteExtrude: 1
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spritePixelsToUnits: 32
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
   alphaIsTransparency: 1
+  spriteTessellationDetail: -1
   textureType: 8
-  buildTargetSettings: []
+  textureShape: 1
+  singleChannelComponent: 0
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  platformSettings:
+  - serializedVersion: 3
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
+    serializedVersion: 2
     sprites:
-    - name: dirtroad_
+    - serializedVersion: 2
+      name: dirtroad_
       rect:
         serializedVersion: 2
         x: 0
@@ -101,12 +207,18 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
-      outline:
-      - - {x: -16, y: 16}
-        - {x: -16, y: -16}
-        - {x: 16, y: -16}
-        - {x: 16, y: 16}
-    - name: dirtroad_S
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 02305410000000000800000000000000
+      internalID: 21300000
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: dirtroad_S
       rect:
         serializedVersion: 2
         x: 128
@@ -116,12 +228,18 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
-      outline:
-      - - {x: -16, y: 16}
-        - {x: -16, y: -16}
-        - {x: 16, y: -16}
-        - {x: 16, y: 16}
-    - name: dirtroad_NES
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 42305410000000000800000000000000
+      internalID: 21300004
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: dirtroad_NES
       rect:
         serializedVersion: 2
         x: 128
@@ -131,12 +249,18 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
-      outline:
-      - - {x: -16, y: 16}
-        - {x: -16, y: -16}
-        - {x: 16, y: -16}
-        - {x: 16, y: 16}
-    - name: dirtroad_W
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a2305410000000000800000000000000
+      internalID: 21300010
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: dirtroad_W
       rect:
         serializedVersion: 2
         x: 160
@@ -146,12 +270,18 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
-      outline:
-      - - {x: -16, y: 16}
-        - {x: -16, y: -16}
-        - {x: 16, y: -16}
-        - {x: 16, y: 16}
-    - name: dirtroad_E
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c2305410000000000800000000000000
+      internalID: 21300012
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: dirtroad_E
       rect:
         serializedVersion: 2
         x: 224
@@ -161,12 +291,18 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
-      outline:
-      - - {x: -16, y: 16}
-        - {x: -16, y: -16}
-        - {x: 16, y: -16}
-        - {x: 16, y: 16}
-    - name: dirtroad_NSW
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e2305410000000000800000000000000
+      internalID: 21300014
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: dirtroad_NSW
       rect:
         serializedVersion: 2
         x: 256
@@ -176,12 +312,18 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
-      outline:
-      - - {x: -16, y: 16}
-        - {x: -16, y: -16}
-        - {x: 16, y: -16}
-        - {x: 16, y: 16}
-    - name: dirtroad_NESW
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 03305410000000000800000000000000
+      internalID: 21300016
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: dirtroad_NESW
       rect:
         serializedVersion: 2
         x: 352
@@ -191,12 +333,18 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
-      outline:
-      - - {x: -16, y: 16}
-        - {x: -16, y: -16}
-        - {x: 16, y: -16}
-        - {x: 16, y: 16}
-    - name: dirtroad_ES
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 43305410000000000800000000000000
+      internalID: 21300020
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: dirtroad_ES
       rect:
         serializedVersion: 2
         x: 0
@@ -206,12 +354,18 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
-      outline:
-      - - {x: -16, y: 16}
-        - {x: -16, y: -16}
-        - {x: 16, y: -16}
-        - {x: 16, y: 16}
-    - name: dirtroad_SW
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 83305410000000000800000000000000
+      internalID: 21300024
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: dirtroad_SW
       rect:
         serializedVersion: 2
         x: 64
@@ -221,12 +375,18 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
-      outline:
-      - - {x: -16, y: 16}
-        - {x: -16, y: -16}
-        - {x: 16, y: -16}
-        - {x: 16, y: 16}
-    - name: dirtroad_N
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c3305410000000000800000000000000
+      internalID: 21300028
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: dirtroad_N
       rect:
         serializedVersion: 2
         x: 128
@@ -236,12 +396,18 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
-      outline:
-      - - {x: -16, y: 16}
-        - {x: -16, y: -16}
-        - {x: 16, y: -16}
-        - {x: 16, y: 16}
-    - name: dirtroad_NS
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e3305410000000000800000000000000
+      internalID: 21300030
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: dirtroad_NS
       rect:
         serializedVersion: 2
         x: 0
@@ -251,12 +417,18 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
-      outline:
-      - - {x: -16, y: 16}
-        - {x: -16, y: -16}
-        - {x: 16, y: -16}
-        - {x: 16, y: 16}
-    - name: dirtroad_NE
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 44305410000000000800000000000000
+      internalID: 21300036
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: dirtroad_NE
       rect:
         serializedVersion: 2
         x: 0
@@ -266,12 +438,18 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
-      outline:
-      - - {x: -16, y: 16}
-        - {x: -16, y: -16}
-        - {x: 16, y: -16}
-        - {x: 16, y: 16}
-    - name: dirtroad_NW
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c4305410000000000800000000000000
+      internalID: 21300044
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: dirtroad_NW
       rect:
         serializedVersion: 2
         x: 64
@@ -281,12 +459,18 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
-      outline:
-      - - {x: -16, y: 16}
-        - {x: -16, y: -16}
-        - {x: 16, y: -16}
-        - {x: 16, y: 16}
-    - name: dirtroad_NEW
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 05305410000000000800000000000000
+      internalID: 21300048
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: dirtroad_NEW
       rect:
         serializedVersion: 2
         x: 192
@@ -296,12 +480,18 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
-      outline:
-      - - {x: -16, y: 16}
-        - {x: -16, y: -16}
-        - {x: 16, y: -16}
-        - {x: 16, y: 16}
-    - name: dirtroad_EW
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 45305410000000000800000000000000
+      internalID: 21300052
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: dirtroad_EW
       rect:
         serializedVersion: 2
         x: 32
@@ -311,12 +501,18 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
-      outline:
-      - - {x: -16, y: 16}
-        - {x: -16, y: -16}
-        - {x: 16, y: -16}
-        - {x: 16, y: 16}
-    - name: dirtroad_ESW
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 06305410000000000800000000000000
+      internalID: 21300064
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: dirtroad_ESW
       rect:
         serializedVersion: 2
         x: 192
@@ -326,13 +522,29 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
-      outline:
-      - - {x: -16, y: 16}
-        - {x: -16, y: -16}
-        - {x: 16, y: -16}
-        - {x: 16, y: 16}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 66305410000000000800000000000000
+      internalID: 21300070
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     outline: []
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
   spritePackingTag: 
+  pSDRemoveMatte: 1
+  pSDShowRemoveMatteOption: 1
   userData: 
   assetBundleName: 
   assetBundleVariant: 

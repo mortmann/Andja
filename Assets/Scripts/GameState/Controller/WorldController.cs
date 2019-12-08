@@ -170,7 +170,6 @@ public class WorldController : MonoBehaviour {
             island.SetTiles(thisStruct.Tiles);
             island.Placement = thisStruct.GetPosition();
         }
-        MapGenerator.Instance.Destroy();
         offworldMarket = new OffworldMarket();
         //Now turn the loaded World into a playable World
         List<Structure> loadedStructures = new List<Structure>();

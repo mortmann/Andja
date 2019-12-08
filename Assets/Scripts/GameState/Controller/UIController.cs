@@ -3,6 +3,7 @@ using System.Collections;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using System.Collections.Generic;
+using System;
 
 public class UIController : MonoBehaviour {
 
@@ -23,10 +24,13 @@ public class UIController : MonoBehaviour {
     public GameObject rightCanvas;
     public GameObject CityInventoryCanvas;
     public GameObject citizenCanvas;
-    public GameObject tradeMapCanvas;
-    public GameObject pauseMenuCanvas;
+    public GameObject tradeRouteCanvas;
+    public PauseMenu pauseMenu;
     public GameObject offWorldMapCanvas;
     public GameObject otherCityUI;
+    public GameObject diplomacyCanvas;
+
+    public GameObject centerParent;
 
     public GameObject debugInformation;
     private DebugInformation debug;
@@ -34,6 +38,7 @@ public class UIController : MonoBehaviour {
     Unit openUnit;
     public static Dictionary<string, Sprite> ItemImages;
     public static UIController Instance;
+    private static UIControllerSave uIControllerSave;
 
     void Start() {
         Escape(true);
@@ -50,8 +55,18 @@ public class UIController : MonoBehaviour {
         foreach (Sprite item in ModLoader.LoadSprites(SpriteType.Item)) {
             ItemImages[item.name] = item;
         }
+        if(uIControllerSave!=null) {
+            LoadUISaveData();
+        }
     }
 
+    internal void ToggleDiplomacyMenu() {
+        if(diplomacyCanvas.activeSelf) {
+            CloseCenter();
+        } else {
+            OpenDiplomacyUI();
+        }
+    }
     public void OpenStructureUI(Structure str) {
         if (openStructure == str || str == null) {
             return;
@@ -91,7 +106,21 @@ public class UIController : MonoBehaviour {
     public void OnStructureDestroy(Structure str) {
         CloseInfoUI();
     }
+    public void OpenDiplomacyUI () {
+        CloseCenter();
+        OpenCenter();
+        diplomacyCanvas.SetActive(true);
+    }
 
+    public void OpenCenter() {
+        centerParent.SetActive(true);
+    }
+    public void CloseCenter() {
+        foreach(Transform t in centerParent.transform) {
+            t.gameObject.SetActive(false);
+        }
+        centerParent.SetActive(false);
+    }
 
     public void OpenOtherCity(City city) {
         if (city == null) {
@@ -149,8 +178,8 @@ public class UIController : MonoBehaviour {
     }
 
     public void TogglePauseMenu() {
-        pauseMenuCanvas.SetActive(!pauseMenuCanvas.activeSelf);
-        WorldController.Instance.IsPaused = pauseMenuCanvas.activeSelf;
+        pauseMenu.Toggle();
+        WorldController.Instance.IsPaused = PauseMenu.IsOpen;
     }
     public void OpenProduceUI(OutputStructure str) {
         if (str == null) {
@@ -267,14 +296,15 @@ public class UIController : MonoBehaviour {
     public void CloseHomeUI() {
         CloseRightUI();
     }
-    public void OpenTradeMenu() {
+    public void OpenTradeRouteMenu() {
         CloseChooseBuild();
-        if (tradeMapCanvas.activeSelf) {
+        CloseCenter();
+        OpenCenter();
+        if (tradeRouteCanvas.activeSelf) {
             return;
         }
-        offWorldMapCanvas.SetActive(false);
-        tradeMapCanvas.SetActive(true);
-        tradeMapCanvas.GetComponent<MapImage>().Show();
+        tradeRouteCanvas.SetActive(true);
+        tradeRouteCanvas.GetComponent<MapImage>().Show();
     }
     public void ToggleOffWorldMenu() {
         if (offWorldMapCanvas.activeSelf) {
@@ -288,33 +318,31 @@ public class UIController : MonoBehaviour {
         offWorldMapCanvas.SetActive(false);
     }
     public void OpenOffWorldMenu() {
-        tradeMapCanvas.SetActive(false);
+        CloseCenter();
+        OpenCenter();
+        tradeRouteCanvas.SetActive(false);
         offWorldMapCanvas.SetActive(true);
     }
     public void ToggleTradeMenu() {
-        if (tradeMapCanvas.activeSelf) {
+        if (tradeRouteCanvas.activeSelf) {
             CloseTradeMenu();
         }
         else {
-            OpenTradeMenu();
+            OpenTradeRouteMenu();
         }
     }
     public void CloseTradeMenu() {
-        tradeMapCanvas.SetActive(false);
+        tradeRouteCanvas.SetActive(false);
     }
     public void Escape(bool dontOpenPause = false) {
         if (AnyMenuOpen() == false && dontOpenPause == false && MouseController.Instance.mouseState == MouseState.Idle) {
             TogglePauseMenu();
         }
+        CloseCenter();
         CloseConsole();
         CloseRightUI();
-        //CloseHomeUI();
         CloseInfoUI();
-        //CloseProduktionUI ();
-        //CloseUnitUI ();
         CloseChooseBuild();
-        CloseTradeMenu();
-        CloseOffWorldMenu();
 
         if (openStructure != null)
             UnselectStructure();
@@ -328,16 +356,16 @@ public class UIController : MonoBehaviour {
         openStructure = null;
     }
     public bool IsPauseMenuOpen() {
-        return pauseMenuCanvas.activeSelf;
+        return PauseMenu.IsOpen;
     }
     public bool AnyMenuOpen() {
         return rightCanvas.activeSelf || uiInfoCanvas.activeSelf ||
-            chooseBuildCanvas.activeSelf || tradeMapCanvas.activeSelf ||
-            consoleCanvas.activeSelf;
+            chooseBuildCanvas.activeSelf || tradeRouteCanvas.activeSelf ||
+            consoleCanvas.activeSelf || centerParent.activeSelf;
     }
 
-    public void SetDragAndDropBuild(GameObject go) {
-        shortCutCanvas.GetComponent<ShortcutUI>().SetDragAndDropBuild(go);
+    public void SetDragAndDropBuild(GameObject go,Vector2 offset) {
+        shortCutCanvas.GetComponent<ShortcutUI>().SetDragAndDropBuild(go,offset);
     }
 
     public void StopDragAndDropBuild() {
@@ -368,7 +396,30 @@ public class UIController : MonoBehaviour {
         }
         return (EventSystem.current.currentSelectedGameObject.GetComponent<InputField>()).isFocused;
     }
+    public UIControllerSave GetUISaveData() {
+        return new UIControllerSave(FindObjectOfType<ShortcutUI>().GetShortCutSave());
+    }
+    public void LoadUISaveData() {
+        FindObjectOfType<ShortcutUI>().LoadShortCuts(uIControllerSave.shortcuts);
+        uIControllerSave = null;
+    }
     void OnDestroy() {
         Instance = null;
+    }
+
+    internal static void SetSaveUIData(UIControllerSave uics) {
+        uIControllerSave = uics;
+    }
+}
+[Serializable]
+public class UIControllerSave : BaseSaveData {
+
+    public Dictionary<int, string> shortcuts;
+
+    public UIControllerSave(Dictionary<int,string> shortcuts) {
+        this.shortcuts = shortcuts;
+    }
+    public UIControllerSave() {
+
     }
 }

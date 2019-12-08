@@ -21,7 +21,6 @@ public class TileSpriteController : MonoBehaviour {
 
     public static TileSpriteController Instance { get; protected set; }
 
-    Dictionary<Tile, SpriteRenderer> tileSpriteRendererMap;
     public static Dictionary<string, Sprite> nameToSprite;
     private static Dictionary<TileType, Dictionary<string, List<string>>> typeTotileSpriteNames;
 
@@ -30,7 +29,7 @@ public class TileSpriteController : MonoBehaviour {
 
     public GameObject karoOverlay;
     public GameObject tilePrefab;
-    public GameObject darkLayer;
+    GameObject darkLayer;
     public GameObject waterLayer;
     public GameObject water;
 
@@ -55,6 +54,9 @@ public class TileSpriteController : MonoBehaviour {
     private static Dictionary<Island, GameObject> islandToGameObject;
 
     private bool apply;
+    private Tilemap editorTilemap;
+    private static Dictionary<string, TileBase> nameToBaseTile;
+
     public delegate TileMark TileDecider(Tile tile);
     public event TileDecider TileDeciderFunc;
 
@@ -101,6 +103,7 @@ public class TileSpriteController : MonoBehaviour {
                 islandToGameObject[i] = islandGO;
                 islandGO.transform.position = key - new Vector2(0.5f,0.5f);
                 islandGO.layer = LayerMask.NameToLayer("Islands");
+                islandGO.name = "Island " + i.StartTile.Vector2; 
                 //Now we create the masks for the islands 
                 GameObject cityMaskGameobject = new GameObject("IslandCityMask");
                 cityMaskGameobject.transform.parent = islandGO.transform;
@@ -115,6 +118,7 @@ public class TileSpriteController : MonoBehaviour {
                 sm.alphaCutoff = 1;
                 islandToCityMask.Add(i, sm);
             }
+            World.RegisterTileChanged(OnTileChanged);
 
             foreach (Island i in World.Current.IslandList) {
                 City c = i.FindCityByPlayer(PlayerController.currentPlayerNumber);
@@ -125,26 +129,32 @@ public class TileSpriteController : MonoBehaviour {
                     OnTileChanged(t);
                 }
             }
-
         }
         else {
-            //			karoOverlayInstance = Instantiate ( karoOverlay );
-            //			karoOverlayInstance.GetComponent <MeshRenderer> ().material.mainTextureScale = new Vector2 (world.Width, world.Height);
-            //			karoOverlayInstance.transform.position = new Vector3((world.Width/2)-0.5f,(world.Height/2)-0.5f , 0);
-            //			karoOverlayInstance.transform.localScale =  new Vector3 (world.Width,1f,world.Height);
+            GameObject island_tilemap = new GameObject();
+            island_tilemap.transform.position = new Vector3(-0.5f, -0.5f, 0);
+            editorTilemap = island_tilemap.AddComponent<Tilemap>();
+            Grid g = island_tilemap.AddComponent<Grid>();
+            g.cellSize = new Vector3(1, 1, 0);
+            g.cellSwizzle = GridLayout.CellSwizzle.XYZ;
+            g.cellLayout = GridLayout.CellLayout.Rectangle;
+            TilemapRenderer trr = island_tilemap.AddComponent<TilemapRenderer>();
+            trr.sortingLayerName = "Tile";
+            editorTilemap.size = new Vector3Int(EditorController.Width, EditorController.Height, 0);
             water.transform.position = new Vector3((World.Width / 2) - 0.5f, (World.Height / 2) - 0.5f, 0.1f);
             water.transform.localScale = new Vector3(World.Width / 10, 0.1f, World.Height / 10);
             water.GetComponent<Renderer>().material = waterMaterial;
             water.GetComponent<Renderer>().material.mainTextureScale = new Vector2(World.Width, World.Height);
             LoadSprites();
-            tileSpriteRendererMap = new Dictionary<Tile, SpriteRenderer>();
+            CreateBaseTiles();
+            foreach (Tile t in World.Current.Tiles) {
+                ChangeEditorTile(t);
+            }
+            World.RegisterTileChanged(ChangeEditorTile);
         }
 
-        // Register our callback so that our GameObject gets updated whenever
-        // the tile's type changes.
-        World.RegisterTileChanged(OnTileChanged);
-        //		BuildController.Instance.RegisterBuildStateChange (OnBuildStateChance);
-        
+        //BuildController.Instance.RegisterBuildStateChange (OnBuildStateChance);
+
     }
     public void Update() {
         if (apply) {
@@ -161,6 +171,25 @@ public class TileSpriteController : MonoBehaviour {
         }
         
     }
+    private static void CreateBaseTiles() {
+        nameToBaseTile = new Dictionary<string, TileBase>();
+        foreach (string name in nameToSprite.Keys) {
+            if (name.Contains("animated")) {
+                //AnimatedTile tileBase = ScriptableObject.CreateInstance<AnimatedTile>();
+                //tileBase.m_AnimatedSprites = tests.ToArray();
+                //tileBase.m_MinSpeed = 0.05f;
+                //tileBase.m_MaxSpeed = 0.05f;
+                //nameToBaseTile[name] = tileBase;
+            }
+            else {
+                UnityEngine.Tilemaps.Tile tileBase = ScriptableObject.CreateInstance<UnityEngine.Tilemaps.Tile>();
+                tileBase.sprite = nameToSprite[name];
+                tileBase.colliderType = UnityEngine.Tilemaps.Tile.ColliderType.None;
+                nameToBaseTile[name] = tileBase;
+            }
+        }
+    }
+
     public static void CreateIslandSprites(List<MapGenerator.IslandStruct> islands) {
         if (EditorController.IsEditor)
             return;
@@ -171,7 +200,8 @@ public class TileSpriteController : MonoBehaviour {
         islandSpriteStopWatch.Start();
         islandPosToTilemap = new Dictionary<Vector2, GameObject>();
         islandToMaskTexture = new Dictionary<Vector2, Texture2D>();
-       
+        CreateBaseTiles();
+
         foreach (MapGenerator.IslandStruct i in islands) {
             int islandWidth = (i.Width + 1);
             int islandHeight = (i.Height + 1);
@@ -187,23 +217,7 @@ public class TileSpriteController : MonoBehaviour {
             TilemapRenderer trr = island_tilemap.AddComponent<TilemapRenderer>();
             trr.sortingLayerName = "Tile";
             tilemap.size = new Vector3Int(i.Width, i.Height, 0);
-            Dictionary<string, TileBase> nameToBaseTile = new Dictionary<string, TileBase>();
             
-
-            foreach (string name in nameToSprite.Keys) {
-                if(name.Contains("animated")) {
-                    //AnimatedTile tileBase = ScriptableObject.CreateInstance<AnimatedTile>();
-                    //tileBase.m_AnimatedSprites = tests.ToArray();
-                    //tileBase.m_MinSpeed = 0.05f;
-                    //tileBase.m_MaxSpeed = 0.05f;
-                    //nameToBaseTile[name] = tileBase;
-                } else {
-                    UnityEngine.Tilemaps.Tile tileBase = ScriptableObject.CreateInstance<UnityEngine.Tilemaps.Tile>();
-                    tileBase.sprite = nameToSprite[name];
-                    tileBase.colliderType = UnityEngine.Tilemaps.Tile.ColliderType.None;
-                    nameToBaseTile[name] = tileBase;
-                }
-            }
             DontDestroyOnLoad(tilemap.gameObject);
 
             Texture2D masktexture = null;
@@ -244,20 +258,6 @@ public class TileSpriteController : MonoBehaviour {
     }
 
     void OnTileChanged(Tile tile_data) {
-        //this is cheaper to compare than to look it up in a dictionary
-        if (tile_data == null || tile_data.Type == TileType.Ocean) {
-            if (EditorController.IsEditor && tileSpriteRendererMap.ContainsKey(tile_data)) {
-                Destroy(tileSpriteRendererMap[tile_data].gameObject);
-                tileSpriteRendererMap.Remove(tile_data);
-            }
-            return;
-        }
-        if (EditorController.IsEditor && tileSpriteRendererMap.ContainsKey(tile_data) == false) {
-            SpawnTile(tile_data);
-        }
-        if (EditorController.IsEditor)
-            return;
-
         int x = (int)(tile_data.X - tile_data.MyIsland.Placement.x);
         int y = (int)(tile_data.Y - tile_data.MyIsland.Placement.y);
         if (tile_data.MyCity.playerNumber == PlayerController.currentPlayerNumber) {
@@ -286,57 +286,19 @@ public class TileSpriteController : MonoBehaviour {
         }
 
     }
-    /// <summary>
-    /// Only for editor
-    /// </summary>
-    /// <param name="t"></param>
-    public void DespawnTile(Tile t) {
-        if (tileSpriteRendererMap.ContainsKey(t) == false) {
+
+    public void ChangeEditorTile(Tile tile_data) {
+        if (EditorController.IsEditor==false) {
             return;
         }
-        tileSpriteRendererMap[t].sprite = null; //removing for now because not everything has a sprite
-        SimplePool.Despawn(tileSpriteRendererMap[t].gameObject);
-        tileSpriteRendererMap.Remove(t);
-    }
-    /// <summary>
-    /// Only for editor
-    /// </summary>
-    /// <param name="tile_data"></param>
-	public void SpawnTile(Tile tile_data) {
-        if (EditorController.IsEditor && tileSpriteRendererMap.ContainsKey(tile_data)) {
-            return;
+        if(String.IsNullOrEmpty(tile_data.SpriteName)) {
+            editorTilemap.SetTile(new Vector3Int(tile_data.X, tile_data.Y, 0), null);
+        } else {
+            string temp = nameToBaseTile.ContainsKey(tile_data.SpriteName) ? tile_data.SpriteName : "nosprite";
+            if (nameToBaseTile.ContainsKey(tile_data.SpriteName) == false)
+                Debug.Log(tile_data.SpriteName);
+            editorTilemap.SetTile(new Vector3Int(tile_data.X, tile_data.Y, 0), nameToBaseTile[temp]);
         }
-
-        GameObject tile_go = SimplePool.Spawn(tilePrefab, new Vector3(tile_data.X, tile_data.Y, 0), Quaternion.identity);
-        tile_go.name = "Tile_" + tile_data.X + "_" + tile_data.Y;
-        tile_go.transform.position = new Vector3(tile_data.X, tile_data.Y, 0);
-        SpriteRenderer sr = tile_go.GetComponent<SpriteRenderer>();
-        sr.sortingLayerName = "Tile";
-        tile_go.transform.SetParent(this.transform, true);
-        tileSpriteRendererMap.Add(tile_data, sr);
-        if (clearMaterial == null) {
-            clearMaterial = sr.material;
-        }
-        //for now the tile knows what a sprite has for one for know
-        if (tile_data.SpriteName != null && nameToSprite.ContainsKey(tile_data.SpriteName)) {
-            sr.sprite = nameToSprite[tile_data.SpriteName];
-        }
-        //TODO: Fix it so far that this temporary fix isnt needed anymore
-        if (tile_data.Type == TileType.Shore) {
-            if (sr.sprite == null) {
-                if (EditorController.IsEditor)
-                    Debug.Log("Missing Sprite for Shore " + tile_data.SpriteName);
-                sr.sprite = nameToSprite["shore_"];
-            }
-        }
-
-        if (sr.sprite == null) {
-            sr.sprite = noSprite;
-        }
-        OnTileChanged(tile_data);
-
-
-
     }
 
     TileMark TileCityDecider(Tile t) {
@@ -452,12 +414,20 @@ public class TileSpriteController : MonoBehaviour {
             }
         }
     }
-    public static List<string> GetSpriteNamesForType(TileType type, Climate climate) {
+    public static List<string> GetSpriteNamesForType(TileType type, Climate climate, string spriteAddon = null) {
         string climateString = climate.ToString();
         if (typeTotileSpriteNames == null)
             LoadSprites();
         if (typeTotileSpriteNames.ContainsKey(type) == false)
             return null;
+        if(type == TileType.Shore) {
+            //TODO: FIX this -- For now only one type of shore
+            return new List<string> { type.ToString().ToLower()+spriteAddon};
+            //if (typeTotileSpriteNames.ContainsKey(type) || typeTotileSpriteNames[type].ContainsKey(climateString)) {
+            //    return null;
+            //}
+            //return typeTotileSpriteNames[type][climateString]?.Where(x => x == type + spriteAddon).ToList();
+        }
         if (typeTotileSpriteNames[type].ContainsKey(climateString) == false) {
             if (typeTotileSpriteNames[type].ContainsKey(TileSpriteClimate.all.ToString()) == false) {
                 return null;

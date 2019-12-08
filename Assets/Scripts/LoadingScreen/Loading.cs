@@ -22,7 +22,7 @@ public class Loading : MonoBehaviour {
     void Awake() {
         if (Application.isEditor)
             ClearConsole();
-
+        EditorController.IsEditor = loadEditor;
         IsLoading = true;
         loadingStopWatch = new Stopwatch();
         loadingStopWatch.Start();
@@ -30,8 +30,10 @@ public class Loading : MonoBehaviour {
 
     void Update() {
         if(aso == null) {
-            if (loadEditor)
+            if (loadEditor) {
                 aso = SceneManager.LoadSceneAsync("IslandEditor");
+                aso.allowSceneActivation = false;
+            }
             else {
                 aso = SceneManager.LoadSceneAsync("GameState");
                 aso.allowSceneActivation = false;
@@ -41,12 +43,12 @@ public class Loading : MonoBehaviour {
         if (loadEditor == false) {
             if (SaveController.IsLoadingSave) {
                 percantage = (int)(100 * (SceneLoadingProgress * 0.3f
-                    + MapGenerator.Instance.PercantageProgress * 0.2f
+                    + MapGenerator.Instance.GeneratedProgressPercantage * 0.2f
                     + SaveController.Instance.loadingPercantage * 0.2f
                     + TileSpriteController.CreationPercantage * 0.3));
             }
             else {
-                percantage = (int)(SceneLoadingProgress * 0.7f + MapGenerator.Instance.PercantageProgress * 0.3f);
+                percantage = (int)(100 * (SceneLoadingProgress * 0.7f + MapGenerator.Instance.GeneratedProgressPercantage * 0.3f));
             }
             percentText.text = percantage + "%";
             //First wait for MapGeneration
@@ -64,8 +66,17 @@ public class Loading : MonoBehaviour {
             aso.allowSceneActivation = true;
         }
         else {
-            percantage = (int)(SceneLoadingProgress);
-            percentText.text = percantage + "%";
+            percantage = (int)(SceneLoadingProgress * 100);
+            if (MapGenerator.Instance != null) {
+                percantage = (int)(MapGenerator.Instance.GeneratedProgressPercantage * 100 * 0.7f + percantage * 0.3f);
+                percentText.text = percantage + "%";
+            }
+            else
+                percentText.text = percantage + "%";
+            if (EditorController.generate && MapGenerator.Instance.IsDone == false) {
+                return;
+            }
+            aso.allowSceneActivation = true;
         }
 
     }

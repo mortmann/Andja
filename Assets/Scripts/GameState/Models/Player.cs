@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Newtonsoft.Json;
 using System;
+using System.Linq;
 
 public class PlayerPrototypeData {
     //This will contain stuff from the difficulty settings 
@@ -185,15 +186,13 @@ public class Player : IGEventable {
     }
 
     internal IEnumerable<Unit> GetLandUnits() {
-        HashSet<Unit> units = new HashSet<Unit>(AllUnits);
-        units.RemoveWhere(x => x.IsShip);
-        return units;
+        List<Unit> units = new List<Unit>(AllUnits);
+        return units.OfType<Unit>();
     }
 
     internal IEnumerable<Ship> GetShipUnits() {
-        HashSet<Unit> units = new HashSet<Unit>(AllUnits);
-        units.RemoveWhere(x => x.IsShip == false);
-        return (IEnumerable<Ship>)units; //should be safe cause removing non ship
+        List<Unit> units = new List<Unit>(AllUnits);
+        return units.OfType<Ship>(); //should be safe cause removing non ship
     }
 
     internal void Load() {

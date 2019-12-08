@@ -32,6 +32,8 @@ public class StructureSpriteController : MonoBehaviour {
         cc = CameraController.Instance;
         if (EditorController.IsEditor) {
             EditorController.Instance.RegisterOnStructureDestroyed(OnTileStructureDestroyed);
+        } else {
+            BuildController.Instance.RegisterStructureCreated(OnBuildStrucutureCreated);
         }
     }
 
@@ -50,10 +52,15 @@ public class StructureSpriteController : MonoBehaviour {
         }
         //inView should only contain structures that dont exist as gameobject
         foreach (Structure str in inView) {
-            //if (structureGameObjectMap.ContainsKey(str) == false) {
-            OnStrucutureCreated(str);
-            //}
+            if (str.HasHitbox == false) { //only structures without hitbox need to dynamically be created
+                OnStrucutureCreated(str);
+            }
         }
+    }
+    public void OnBuildStrucutureCreated(Structure structure, bool onLoad) {
+        if (structure.HasHitbox == false)
+            return;
+        OnStrucutureCreated(structure);
     }
     public void OnStrucutureCreated(Structure structure) {
         GameObject go = new GameObject();

@@ -23,7 +23,7 @@ public class MasterController : MonoBehaviour {
             Destroy(loadMaster);
 
             //TODO: find a better fix for this:
-            CameraController.Instance.Setup();
+            CameraController.Instance.GameScreenSetup();
             WorldController.Instance.SetRandomSeed();
         }
         else if (isLoadingScreen) {

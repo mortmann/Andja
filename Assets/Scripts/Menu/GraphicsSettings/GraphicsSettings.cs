@@ -38,15 +38,12 @@ public class GraphicsSettings : MonoBehaviour {
         highPresetEvent = new UnityEvent();
         ultraPresetEvent = new UnityEvent();
         presetSlider.onValueChanged.AddListener(SetGraphicsPreset);
+        OptionsToggle.ChangedState += OnOptionChanged;
     }
 
     // So we can invoke safely invoke them in Start().
     void Start() {
-        if (hasLoaded) {
-            return;
-        }
-        //no file found set to preset
-        SetGraphicsPreset(3);
+        
     }
 
     public void SetGraphicsPreset(float value) {
@@ -225,6 +222,19 @@ public class GraphicsSettings : MonoBehaviour {
         }
         public override string ToString() {
             return string.Format(width + " x " + height + " @ " + refreshRate);
+        }
+    }
+
+    private void OnOptionChanged(bool open) {
+        if (open) {
+            if (hasLoaded) {
+                return;
+            }
+            //no file found set to preset
+            SetGraphicsPreset(3);
+        }
+        else {
+            SaveGraphicsOption();
         }
     }
 }

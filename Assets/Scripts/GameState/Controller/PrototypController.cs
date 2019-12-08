@@ -27,6 +27,11 @@ public class PrototypController : MonoBehaviour {
     public IReadOnlyDictionary<string, ArmorType> ArmorTypeDatas => armorTypeDatas;
     public IReadOnlyDictionary<string, GameEventPrototypData> GameEventPrototypeDatas => gameEventPrototypeDatas;
     public IReadOnlyDictionary<string, Item> AllItems => allItems;
+
+    public WarehouseStructure FirstLevelWarehouse { get; private set; }
+
+   
+
     public IReadOnlyDictionary<Climate, List<Fertility>> AllFertilities => allFertilities;
     public IReadOnlyDictionary<string, Fertility> IdToFertilities => idToFertilities;
     public IReadOnlyDictionary<int, PopulationLevelPrototypData> PopulationLevelDatas => populationLevelDatas;
@@ -87,6 +92,12 @@ public class PrototypController : MonoBehaviour {
             needs.Add(item.Clone());
         }
         return needs;
+    }
+
+    internal Structure GetStructure(string id) {
+        if (StructurePrototypes.ContainsKey(id) == false)
+            return null;
+        return StructurePrototypes[id];
     }
 
     internal bool ExistsNeed(Need need) {
@@ -266,22 +277,11 @@ public class PrototypController : MonoBehaviour {
 
     private void CalculateOptimalProportions() {
         List<StructurePrototypeData> structures = new List<StructurePrototypeData>( structurePrototypeDatas.Values);
-        List<GrowablePrototypeData> growables = new List<GrowablePrototypeData>(structures.OfType<GrowablePrototypeData>());
         List<FarmPrototypeData> farms = new List<FarmPrototypeData>(structures.OfType<FarmPrototypeData>());
         List<MinePrototypeData> mines = new List<MinePrototypeData>(structures.OfType<MinePrototypeData>());
         List<ProductionPrototypeData> productions = new List<ProductionPrototypeData>(structures.OfType<ProductionPrototypeData>());
         List<Produce> productionsProduces = new List<Produce>();
         itemIDToProduce = new Dictionary<string, List<Produce>>();
-        //foreach(GrowablePrototypeData gpd in growables) {
-        //    foreach(Item outItem in gpd.output) {
-        //        Produce p = new Produce {
-        //            item = outItem,
-        //            producePerMinute = gpd.produceTime / 60f,
-        //            producingStructurePD = gpd
-        //        };
-        //        produces.Add(p);
-        //    }
-        //}
         foreach (FarmPrototypeData fpd in farms) {
             foreach (Item outItem in fpd.output) {
                 float ptime = (fpd.growable.ProduceTime + fpd.produceTime);
@@ -316,6 +316,8 @@ public class PrototypController : MonoBehaviour {
             }
         }
         foreach (ProductionPrototypeData ppd in productions) {
+            if (ppd.output == null)
+                continue;
             foreach (Item outItem in ppd.output) {
                 float ppm = ppd.produceTime == 0 ? float.MaxValue : outItem.count * (60f / ppd.produceTime);
                 Produce p = new Produce {
@@ -347,13 +349,10 @@ public class PrototypController : MonoBehaviour {
                     continue;
                 }
                 foreach(Produce produce in itemIDToProduce[need.ID]) {
-                    if (prodProduce.item.ID == "wheat" || prodProduce.item.ID == "flour")
-                        Debug.Log("Blargh");
                     float f1 = (1f/(float)prodProduce.item.count * prodProduce.producePerMinute);
                     float f2 = (1f/(float)produce.item.count * produce.producePerMinute);
                     if (f2 == 0)
                         continue;
-                    Debug.Log(prodProduce.item + " " + (f1 / f2));
                     np.neededRatio[produce] = f1 / f2;
                 }
             }
@@ -880,14 +879,16 @@ public class PrototypController : MonoBehaviour {
                 Name = "warehouse",
                 buildcost = 500,
                 maintenanceCost = 10,
-                mustFrontBuildDir = Direction.W
             };
 
             mpd.ID = ID;
             SetData<MarketPrototypData>(node, ref mpd);
-
             structurePrototypeDatas[ID] = mpd;
             structurePrototypes[ID] = new WarehouseStructure(ID, mpd);
+
+            if (FirstLevelWarehouse==null || mpd.structureLevel < FirstLevelWarehouse.StructureLevel) {
+                FirstLevelWarehouse = (WarehouseStructure)structurePrototypes[ID];
+            }
         }
     }
     private void ReadMineStructure(XmlNode xmlDoc) {
@@ -1010,7 +1011,7 @@ public class PrototypController : MonoBehaviour {
                     fi.SetValue(data, Enum.Parse(fi.FieldType, currentNode.InnerXml, true));
                     continue;
                 }
-                if (fi.FieldType.IsArray && fi.FieldType.GetElementType().IsEnum) {
+                if (fi.FieldType.IsArray && fi.FieldType.GetArrayRank()==1 && fi.FieldType.GetElementType().IsEnum) {
                     var listType = typeof(List<>);
                     var constructedListType = listType.MakeGenericType(fi.FieldType.GetElementType());
                     var list = (IList)Activator.CreateInstance(constructedListType);
@@ -1025,6 +1026,48 @@ public class PrototypController : MonoBehaviour {
                     Array enumArray = Array.CreateInstance(fi.FieldType.GetElementType(), list.Count);
                     list.CopyTo(enumArray, 0);
                     fi.SetValue(data, Convert.ChangeType(enumArray, fi.FieldType));
+                    continue;
+                }
+                if (fi.FieldType.IsArray && fi.FieldType.GetArrayRank() == 2 && fi.FieldType.GetElementType()==typeof(TileType?)) {
+                    int firstLength = 0;
+                    int secondLength = 0;
+
+                    if (int.TryParse(currentNode.Attributes.GetNamedItem("length").Value,out firstLength) ==false){
+
+                        continue;
+                    }
+                    var listType = typeof(List<>);
+                    var constructedfirstListType = listType.MakeGenericType(fi.FieldType.GetElementType().MakeArrayType());
+                    var firstlist = (IList)Activator.CreateInstance(constructedfirstListType);
+                    foreach (XmlNode item in currentNode.ChildNodes) {
+                        if (int.TryParse(item.Attributes.GetNamedItem("length").Value, out secondLength) == false) {
+                            continue;
+                        }
+                        var constructedSecondListType = listType.MakeGenericType(fi.FieldType.GetElementType());
+                        var secondlist = (IList)Activator.CreateInstance(constructedSecondListType);
+                        string[] singleValues = item.InnerXml.Split(',');
+                        if(singleValues.Length < secondLength) {
+                            continue;
+                        }
+                        foreach(string single in singleValues) {
+                            //own try parse because in needs non nullable
+                            try {
+                                secondlist.Add(Enum.Parse(typeof(TileType), single.Trim(), true));
+                            } catch {
+                                secondlist.Add(null);
+                            }
+                        }
+                        Array enumArray = Array.CreateInstance(fi.FieldType.GetElementType(), secondLength);
+                        secondlist.CopyTo(enumArray, 0);
+                        firstlist.Add(enumArray);
+                    }
+                    Array twoDimEnumArray = Array.CreateInstance(fi.FieldType.GetElementType(), firstLength, secondLength);
+                    for (int i = 0; i < firstlist.Count; i++) {
+                        for (int j = 0; j < ((TileType?[])firstlist[i]).Length; j++) {
+                            twoDimEnumArray.SetValue(((TileType?[])firstlist[i])[j], i, j);
+                        }
+                    }
+                    fi.SetValue(data, Convert.ChangeType(twoDimEnumArray, fi.FieldType));
                     continue;
                 }
                 if (fi.FieldType == typeof(Dictionary<ArmorType, float>)) {

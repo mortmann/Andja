@@ -11,7 +11,6 @@ public class ConstantPathHolder : MonoBehaviour {
     void Awake() {
         ApplicationDataPath = Application.dataPath;
         StreamingAssets = Application.streamingAssetsPath;
-
     }
 
 }

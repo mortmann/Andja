@@ -9,7 +9,6 @@ public class NewIsland : MonoBehaviour {
     public Button create;
     // Use this for initialization
     void Start() {
-        //TODO create new island after these standards
         create.onClick.AddListener(OnCreateClick);
     }
 
@@ -17,6 +16,6 @@ public class NewIsland : MonoBehaviour {
         int h = int.Parse(height.text);
         int w = int.Parse(width.text);
         Climate cli = (Climate)zone.value;
-        StartCoroutine(EditorController.Instance.NewIsland(w, h, cli));
+        EditorController.Instance.NewIsland(w, h, cli);
     }
 }

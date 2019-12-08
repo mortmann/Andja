@@ -202,6 +202,6 @@ public class LandTile : Tile {
         cbNeedStructureChange -= func;
     }
     public override string ToString() {
-        return string.Format("[LAND: X={0}, Y={1}, Structure={2}, myCity={3}]", X, Y, Structure, MyCity.ToString());
+        return string.Format("[{0}:{1}]Type:{2}|Structure:{3}|Player:{4}", X, Y, Type, Structure, MyCity.playerNumber.ToString());
     }
 }

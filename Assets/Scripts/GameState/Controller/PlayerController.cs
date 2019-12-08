@@ -152,6 +152,10 @@ public class PlayerController : MonoBehaviour {
         ChangeDiplomaticStanding(playerOne.Number, playerTwo.Number, (DiplomacyType)((int)ds.currentStatus + 1));
     }
 
+    internal List<Player> GetPlayers() {
+        return new List<Player>(Players);
+    }
+
     internal void DecreaseDiplomaticStanding(Player playerOne, Player playerTwo) {
         DiplomaticStatus ds = GetDiplomaticStatus(playerOne, playerTwo);
         if (ds.currentStatus == DiplomacyType.War)

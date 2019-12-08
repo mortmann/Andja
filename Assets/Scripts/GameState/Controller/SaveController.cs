@@ -13,12 +13,15 @@ public class SaveController : MonoBehaviour {
     string quickSaveName = "quicksave";//TODO CHANGE THIS TO smth not hardcoded
     public static bool IsLoadingSave = false;
     public bool IsDone = false;
+
     public float loadingPercantage = 0;
     private const string saveMetaFileEnding = ".meta";
     private const string saveFileEnding = ".sav";
     public const string islandMetaFileEnding = ".islmeta"; // TODO: thing of a better extension
     public const string islandFileEnding = ".isl";
     public const string islandImageEnding = ".png";
+    public const string saveFileScreenShotEnding = ".jpg";
+
     private static List<Worker> loadWorker;
     public static bool DebugModeSave = true; 
     public static string SaveName = "unsaved";
@@ -32,12 +35,17 @@ public class SaveController : MonoBehaviour {
     EventController EC => EventController.Instance;
     CameraController CC => CameraController.Instance;
     PlayerController PC => PlayerController.Instance;
+    UIController UI => UIController.Instance;
+
+    float lastSaved = -1;
+    public bool UnsavedProgress => lastSaved != GameDataHolder.Instance.playTime;
 
     void Awake() {
         if (Instance != null) {
             Debug.LogError("There should never be two SaveController.");
         }
         Instance = this;
+        lastSaved = -1;
     }
 
     // Use this for initialization
@@ -78,11 +86,34 @@ public class SaveController : MonoBehaviour {
         timeToAutoSave = AutoSaveInterval;
         SaveGameState();
     }
-
+    public void DeleteSaveGame(string name) {
+        string filePath = System.IO.Path.Combine(GetSaveGamesPath(), name);
+        string saveStatePath = filePath + saveFileEnding;
+        string finalMetaStatePath = filePath + saveMetaFileEnding;
+        string fileImagePath = filePath + saveFileScreenShotEnding;
+        try {
+            File.Delete(saveStatePath);
+        } catch(Exception e) {
+            Debug.Log("Deleting File cant be deleted. " + e.Message);
+        }
+        try {
+            File.Delete(finalMetaStatePath);
+        }
+        catch (Exception e) {
+            Debug.Log("Deleting File cant be deleted. " + e.Message);
+        }
+        try {
+            File.Delete(fileImagePath);
+        }
+        catch (Exception e) {
+            Debug.Log("Deleting File cant be deleted. " + e.Message);
+        }
+    }
 
     public void SaveIslandState(string name = "autosave") {
-        string islandStatePath = System.IO.Path.Combine(GetIslandSavePath(name), name + islandFileEnding);
-        string finalMetaStatePath = System.IO.Path.Combine(GetIslandSavePath(name), name + saveMetaFileEnding);
+        string folderPath = GetIslandSavePath(name);
+        string islandStatePath = System.IO.Path.Combine(folderPath, name + islandFileEnding);
+        string finalMetaStatePath = System.IO.Path.Combine(folderPath, name + islandMetaFileEnding);
         SaveName = name;
         SaveMetaData metaData = new SaveMetaData {
             safefileversion = islandSaveFileVersion,
@@ -109,7 +140,9 @@ public class SaveController : MonoBehaviour {
                 TypeNameHandling = TypeNameHandling.Auto
             }
         );
-
+        if(Directory.Exists(folderPath)==false) {
+            Directory.CreateDirectory(folderPath);
+        }
         if (Application.isEditor) {
             System.IO.File.WriteAllText(islandStatePath, save);
         }
@@ -178,6 +211,20 @@ public class SaveController : MonoBehaviour {
         }
     }
 
+    internal Sprite GetSaveFileScreenShot(string saveName) {
+        string filePath = Path.Combine(GetSaveGamesPath(), saveName + saveFileScreenShotEnding);
+        Texture2D tex = null;
+        byte[] fileData;
+        if (File.Exists(filePath) == false) {
+            Debug.Log("Missing Thumbnail for savegame " + filePath);
+            return null;
+        }
+        fileData = File.ReadAllBytes(filePath);
+        tex = new Texture2D(2, 2);
+        tex.LoadImage(fileData); //..this will auto-resize the texture dimensions.
+        return Sprite.Create(tex, new Rect(0,0,tex.width,tex.height),Vector2.zero);
+    }
+
     internal static bool IslandImageExists(string name) {
         return File.Exists(Path.Combine(GetIslandSavePath(name), name + islandImageEnding));
     }
@@ -233,7 +280,9 @@ public class SaveController : MonoBehaviour {
             if (metaData.safefileversion != islandSaveFileVersion) {
                 continue;
             }
-            KeyValuePair<Climate, Size> key = new KeyValuePair<Climate, Size>(metaData.climate, metaData.size);
+            if (metaData.climate == null || metaData.size == null)
+                continue;
+            KeyValuePair<Climate, Size> key = new KeyValuePair<Climate, Size>((Climate)metaData.climate, (Size)metaData.size);
             if (islands.ContainsKey(key) == false) {
                 islands.Add(key, new List<string>());
             }
@@ -252,7 +301,7 @@ public class SaveController : MonoBehaviour {
         string metaEnding = editor ? islandMetaFileEnding : saveMetaFileEnding;
 
         List<SaveMetaData> saveMetaDatas = new List<SaveMetaData>();
-        foreach (string file in Directory.GetFiles(path, "*" + metaEnding)) {
+        foreach (string file in Directory.GetFiles(path, "*" + metaEnding,SearchOption.AllDirectories)) {
             SaveMetaData metaData = null;
             try {
                 metaData = JsonConvert.DeserializeObject<SaveMetaData>(File.ReadAllText(file), new JsonSerializerSettings {
@@ -310,15 +359,17 @@ public class SaveController : MonoBehaviour {
         if (wasPaused == false) {
             WC.IsPaused = true;
         }
-        string saveStatePath = System.IO.Path.Combine(GetSaveGamesPath(), name + saveFileEnding);
-        string finalMetaStatePath = System.IO.Path.Combine(GetSaveGamesPath(), name + saveMetaFileEnding);
+        string filePath = System.IO.Path.Combine(GetSaveGamesPath(), name);
+        string saveStatePath = filePath + saveFileEnding;
+        string finalMetaStatePath = filePath + saveMetaFileEnding; 
 
         SaveState savestate = new SaveState {
             gamedata = GDH.GetSaveGameData().Serialize(),
             pcs = PC.GetSavePlayerData().Serialize(),
             world = WC.GetSaveWorldData().Serialize(),
             ges = EC.GetSaveGameEventData().Serialize(),
-            camera = CC.GetSaveCamera().Serialize()
+            camera = CC.GetSaveCamera().Serialize(),
+            ui = UI.GetUISaveData().Serialize()
         };
         string save = "";
         if (DebugModeSave) {
@@ -358,6 +409,8 @@ public class SaveController : MonoBehaviour {
                     TypeNameHandling = TypeNameHandling.Auto
                 }
         );
+
+        System.IO.File.WriteAllBytes(filePath + saveFileScreenShotEnding, GetSaveGameThumbnail());
         if (Application.isEditor) {
             System.IO.File.WriteAllText(saveStatePath, save);
         }
@@ -365,7 +418,7 @@ public class SaveController : MonoBehaviour {
             System.IO.File.WriteAllBytes(saveStatePath, Zip(save));
         }
         System.IO.File.WriteAllText(finalMetaStatePath, metadata);
-
+        lastSaved = GDH.playTime;
         if (wasPaused == false) {
             WC.IsPaused = false;
         }
@@ -426,7 +479,9 @@ public class SaveController : MonoBehaviour {
 
         PrototypController.Instance.LoadFromXML();
 
-        GDH.LoadGameData(BaseSaveData.Deserialize<GameData>((string)state.gamedata));  
+        GDH.LoadGameData(BaseSaveData.Deserialize<GameData>((string)state.gamedata));
+        lastSaved = GDH.playTime;
+
         loadingPercantage += 0.3f;
         PlayerControllerSave pcs = BaseSaveData.Deserialize<PlayerControllerSave>(state.pcs);
         loadingPercantage += 0.05f;
@@ -438,7 +493,9 @@ public class SaveController : MonoBehaviour {
         loadingPercantage += 0.1f;
         yield return null;
         CameraSave cs = BaseSaveData.Deserialize<CameraSave>(state.camera);
-        loadingPercantage += 0.05f;
+        loadingPercantage += 0.025f;
+        UIControllerSave uics = BaseSaveData.Deserialize<UIControllerSave>(state.ui);
+        loadingPercantage += 0.025f;
         yield return null;
         while (MapGenerator.Instance.IsDone == false)
             yield return null;
@@ -452,36 +509,83 @@ public class SaveController : MonoBehaviour {
         loadingPercantage += 0.1f;
         yield return null;
         CameraController.Instance.SetSaveCameraData(cs); 
-        loadingPercantage += 0.05f;
+        loadingPercantage += 0.025f;
+        yield return null;
+        UIController.SetSaveUIData(uics);
+        loadingPercantage += 0.025f;
         yield return null;
         Debug.Log("LOAD ENDED");
         IsDone = true;
         yield return null;
     }
 
+    public byte[] GetSaveGameThumbnail() {
+        Camera currentCamera = Camera.main;
+        float ratio = Screen.currentResolution.width / Screen.currentResolution.height;
+        int widht = 190;
+        int height = 90;
+        if (ratio <= 1.34) {
+            widht = 200;
+            height = 150;
+        }
+        else
+        if (ratio <= 1.61) {
+            widht = 190;
+            height = 100;
+        }
+        else
+        if (ratio >= 1.77) {
+            widht = 190;
+            height = 90;
+        }
+
+        RenderTexture rt = new RenderTexture(widht, height, 24, RenderTextureFormat.ARGB32);
+        rt.antiAliasing = 4;
+
+        currentCamera.targetTexture = rt;
+
+        currentCamera.Render();//
+
+        //Create the blank texture container
+        Texture2D thumb = new Texture2D(widht, height, TextureFormat.RGB24, false);
+
+        //Assign rt as the main render texture, so everything is drawn at the higher resolution
+        RenderTexture.active = rt;
+
+        //Read the current render into the texture container, thumb
+        thumb.ReadPixels(new Rect(0, 0, widht, height), 0, 0, false);
+
+        byte[] bytes = thumb.EncodeToJPG(90);
+
+        //--Clean up--
+        RenderTexture.active = null;
+        currentCamera.targetTexture = null;
+        rt.DiscardContents();
+        return bytes;
+    }
+
     [Serializable]
     public class SaveState {
-
         public string gamedata;
         public string world;
         public string pcs;
         public string ges;
         public string camera;
+        public string ui;
     }
     [Serializable]
     public class SaveMetaData {
         public string saveName;
         public string safefileversion;
         public DateTime saveTime;
-        public Difficulty difficulty;
-        public GameType saveFileType;
+        public Difficulty? difficulty;
+        public GameType? saveFileType;
         public float playTime;
-        public Size size;
-        public Climate climate;
+        public Size? size;
+        public Climate? climate;
         public bool isInDebugMode;
         public List<string> usedMods;
     }
-
 }
 
 [Serializable]

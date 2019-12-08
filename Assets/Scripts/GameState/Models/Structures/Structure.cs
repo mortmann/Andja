@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using Newtonsoft.Json;
+using System.Linq;
 
 public enum BuildTypes { Drag, Path, Single };
 public enum StructureTyp { Pathfinding, Blocking, Free };
@@ -27,6 +28,10 @@ public class StructurePrototypeData : LanguageVariables {
     public bool canBeBuildOver = false;
     public bool canBeUpgraded = false;
     public bool canTakeDamage = false;
+    /// <summary>
+    /// Null means no restrikiton so all buildable tiles
+    /// </summary>
+    public TileType?[,] buildTileTypes;
 
     public Direction mustFrontBuildDir = Direction.None;
 
@@ -206,6 +211,7 @@ public abstract class Structure : IGEventable {
     public int StructureLevel { get { return Data.structureLevel; } }
     public int _tileWidth { get { return Data.tileWidth; } }
     public int _tileHeight { get { return Data.tileHeight; } }
+    public TileType?[,] BuildTileTypes => Data.buildTileTypes;
 
     public bool CanRotate { get { return Data.canRotate; } }
     public bool CanBeBuildOver { get { return Data.canBeBuildOver; } }
@@ -230,6 +236,7 @@ public abstract class Structure : IGEventable {
     public Item[] BuildingItems { get { return Data.buildingItems; } }
     public Item[] UpgradeItems { get { return Data.upgradeItems; } }
     public int UpgradeCost { get { return Data.upgradeCost; } } // set inside prototypecontoller
+
 
     public string SpriteName { get { return Data.spriteBaseName/*TODO: make multiple saved sprites possible*/; } }
 
@@ -496,13 +503,30 @@ public abstract class Structure : IGEventable {
     public override string GetID() { return ID; } // only needs to get changed WHEN there is diffrent ids
     #endregion
     #region List<Tile>
-    public List<Tile> GetBuildingTiles(float x, float y, bool ignoreRotation = false) {
+    /// <summary>
+    /// x/y = position of tile
+    /// left = true = start tile is on the top right going to bottom left -> used by bots 
+    /// left = false = start tile is on the bottom left going to top right 
+    /// ignoreRotation = takes structure how it was designed
+    /// </summary>
+    /// <param name="x"></param>
+    /// <param name="y"></param>
+    /// <param name="ignoreRotation"></param>
+    /// <param name="left"></param>
+    /// <returns></returns>
+    public List<Tile> GetBuildingTiles(float x, float y, bool ignoreRotation = false,bool left = false) {
         x = Mathf.FloorToInt(x);
         y = Mathf.FloorToInt(y);
         List<Tile> tiles = new List<Tile>();
+        if(left) {
+            for (int w = 0; w < TileWidth; w++) {
+                for (int h = 0; h < TileHeight; h++) {
+                    tiles.Add(World.Current.GetTileAt(x - w, y - h));
+                }
+            }
+        } else
         if (ignoreRotation == false) {
             for (int w = 0; w < TileWidth; w++) {
-                //				tiles.Add (World.current.GetTileAt (x + w, y));
                 for (int h = 0; h < TileHeight; h++) {
                     tiles.Add(World.Current.GetTileAt(x + w, y + h));
                 }
@@ -516,7 +540,6 @@ public abstract class Structure : IGEventable {
                 }
             }
         }
-
         return tiles;
     }
     /// <summary>
@@ -628,14 +651,20 @@ public abstract class Structure : IGEventable {
         return BuildingItems;
     }
     public bool CanBuildOnSpot(List<Tile> tiles) {
-        List<bool> bools = new List<bool>(CorrectSpot(tiles).Values);
+        List<bool> bools = new List<bool>(CheckForCorrectSpot(tiles).Values);
         return bools.Contains(false) == false;
     }
 
-    public Dictionary<Tile, bool> CorrectSpot(List<Tile> tiles) {
+    public Dictionary<Tile, bool> CheckForCorrectSpot(List<Tile> tiles) {
+        if (tiles.Count == 0)
+            return null;
+
+
+
+
         Dictionary<Tile, bool> tileToCanBuild = new Dictionary<Tile, bool>();
         //to make it faster
-        if (MustFrontBuildDir == Direction.None && MustBeBuildOnShore == false && MustBeBuildOnMountain == false) {
+        if (BuildTileTypes==null) {
             foreach (Tile item in tiles) {
                 tileToCanBuild.Add(item, item.CheckTile());
             }
@@ -646,102 +675,69 @@ public abstract class Structure : IGEventable {
         //from the coordinationsystem that means 0,0->width,height
         int max = Mathf.Max(TileWidth, TileHeight);
         Tile[,] sortedTiles = new Tile[max, max];
-
-        List<Tile> ts = new List<Tile>(tiles);
-
-        if (ts.Count == 0)
-            return null;
-
-        //ts.RemoveAll (x=>x==null);
-        ts.Sort((x, y) => x.X.CompareTo(y.X) * x.Y.CompareTo(y.Y));
-        foreach (Tile t in ts) {
-            int x = t.X - ts[0].X;
-            int y = t.Y - ts[0].Y;
+        tiles = tiles.OrderBy(x => x.X).ThenBy(x => x.Y).ToList();
+        foreach (Tile t in tiles) {
+            int x = t.X - tiles[0].X;
+            int y = t.Y - tiles[0].Y;
             if (TileWidth <= x || TileHeight <= y || x < 0 || y < 0) {
-                Debug.Log(ts.Count);
+                Debug.Log(tiles.Count);
             }
             sortedTiles[x, y] = t; // so we have the tile at the correct spot
         }
-
-        Direction row = RowToTest();
-        switch (row) {
-            case Direction.None:
-                Debug.LogWarning("Not implementet! How are we gonna do this?");
-                return tileToCanBuild;
-            case Direction.N:
-                return CheckTilesWithRowFix(tileToCanBuild, sortedTiles, TileWidth, TileHeight, false);
-            case Direction.E:
-                return CheckTilesWithRowFix(tileToCanBuild, sortedTiles, TileWidth, TileHeight, true);
-            case Direction.S:
-                return CheckTilesWithRowFix(tileToCanBuild, sortedTiles, TileWidth, 0, false);
-            case Direction.W:
-                return CheckTilesWithRowFix(tileToCanBuild, sortedTiles, 0, TileHeight, true);
-            default:
-                return null;
-        }
-    }
-    private Dictionary<Tile, bool> CheckTilesWithRowFix(Dictionary<Tile, bool> tileToCanBuild, Tile[,] tiles, int x, int y, bool fixX) {
-        if (fixX) {
-            x = Mathf.Max(x - 1, 0);
-            for (int i = 0; i < y; i++) {
-                if (tiles[x, i] == null) {
-                    continue;
+        for (int y = 0; y < TileHeight; y++) {
+            for (int x = 0; x < TileWidth; x++) {
+                int cX = x;
+                int cY = y;
+                int startX = 0;
+                int startY = 0;
+                if (rotated == 90) {
+                    cX = -y;
+                    cY = x;
+                    startX = _tileWidth - 1;
+                    startY = 0;
+                } else
+                if (rotated == 180) {
+                    cX = -x;
+                    cY = -y;
+                    startX = _tileWidth - 1;
+                    startY = _tileHeight - 1;
+                } else
+                if (rotated == 270) {
+                    cX = y;
+                    cY = -x;
+                    startX = 0;
+                    startY = _tileHeight - 1;
                 }
-                tileToCanBuild.Add(tiles[x, i], tiles[x, i].CheckTile(MustBeBuildOnShore, MustBeBuildOnMountain));
-                tiles[x, i] = null;
-            }
-        }
-        else {
-            y = Mathf.Max(y - 1, 0);
-            for (int i = 0; i < x; i++) {
-                if (tiles[i, y] == null) {
-                    continue;
+                if((startX + cX)>= BuildTileTypes.GetLength(0) || (startY + cY)>= BuildTileTypes.GetLength(1)) {
+                    Debug.Log(rotated + " "+ (startX +"+"+ cX) + " " + (startX + cX) + " " + " " + (startY + "+" + cY) + " " + + (startY + cY) + " " + BuildTileTypes.GetLength(0) + " " + BuildTileTypes.GetLength(1));
                 }
-                tileToCanBuild.Add(tiles[i, y], tiles[i, y].CheckTile(MustBeBuildOnShore, MustBeBuildOnMountain));
-                tiles[i, y] = null;
+                else {
+                    TileType? requiredTile = BuildTileTypes[startX + cX, startY + cY];
+                    if (requiredTile == null) {
+                        tileToCanBuild.Add(sortedTiles[x, y], sortedTiles[x, y].CheckTile());
+                    }
+                    else {
+                        tileToCanBuild.Add(sortedTiles[x, y], requiredTile == sortedTiles[x, y].Type);
+                    }
+                }
             }
-        }
-        foreach (Tile t in tiles) {
-            if (t == null) {
-                continue;
-            }
-            tileToCanBuild.Add(t, t.CheckTile());
         }
         return tileToCanBuild;
-    }
-    private Direction RowToTest() {
-        if (MustFrontBuildDir == Direction.None) {
-            return Direction.None;
-        }
-        int must = (int)MustFrontBuildDir;
-        //so we have either 1,2,3 or 4
-        //so just loop through those and add per 90: 1
-        int rotNum = rotated / 90; // so we have now 1,2,3
-                                   //we add this to the must be correct one
-        must += rotNum;
-        if (must > 4) {
-            must -= 4;
-        }
-        return (Direction)must;
+
     }
 
     #endregion
     #region rotation
     public int ChangeRotation(int x, int y, int rotate = 0) {
-        if (rotate == 360) {
-            return 0;
-        }
-        this.rotated = rotate;
-        return rotate;
+        this.rotated = rotate % 360;
+        return rotated;
     }
     public void RotateStructure() {
         if (CanRotate == false) {
             return;
         }
         rotated += 90;
-        if (rotated == 360) {
-            rotated = 0;
-        }
+        rotated %= 360;
     }
     public void AddTimes90ToRotate(int times) {
         if (CanRotate == false) {

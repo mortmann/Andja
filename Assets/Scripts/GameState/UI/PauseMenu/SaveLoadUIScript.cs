@@ -4,6 +4,8 @@ using System.IO;
 using System.Linq;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
+using System;
+
 public class SaveLoadUIScript : MonoBehaviour {
     public SaveDetails saveInfo;
 
@@ -16,39 +18,34 @@ public class SaveLoadUIScript : MonoBehaviour {
 
     // Use this for initialization
     void OnEnable() {
+        LoadSaveFiles();
+    }
+
+    private void LoadSaveFiles() {
         nameToFile = new Dictionary<string, SaveController.SaveMetaData>();
         foreach (Transform item in canvasGO.transform) {
             GameObject.Destroy(item.gameObject);
         }
         SaveController.SaveMetaData[] saveMetaDatas = SaveController.GetMetaFiles(EditorController.IsEditor);
-
         // Build file list by instantiating fileListItemPrefab
         for (int i = saveMetaDatas.Length - 1; i >= 0; i--) {
-            GameObject go = (GameObject)GameObject.Instantiate(listPrefab);
+            SaveGameSelectableScript go = Instantiate(listPrefab).GetComponent<SaveGameSelectableScript>();
+
+            go.Show(saveMetaDatas[i], OnSaveGameSelect, OnSaveGameDeleteClick);
 
             // Make sure this gameobject is a child of our list box
             go.transform.SetParent(canvasGO.transform);
 
-            EventTrigger trigger = go.GetComponent<EventTrigger>();
-            EventTrigger.Entry entry = new EventTrigger.Entry {
-                eventID = EventTriggerType.PointerClick
-            };
-            string name = Path.GetFileNameWithoutExtension(saveMetaDatas[i].saveName);
-            entry.callback.AddListener((data) => { OnSaveGameSelect(name, go); });
-            trigger.triggers.Add(entry);
-            string date = saveMetaDatas[i].saveTime.ToString("dd-MM-yyyy");
-            go.GetComponentInChildren<Text>().text = name + " [" + date + "]";
-
-            nameToFile.Add(name, saveMetaDatas[i]);
+            nameToFile.Add(saveMetaDatas[i].saveName, saveMetaDatas[i]);
         }
         if (saveGameInput != null) {
             saveGameInput.onValueChanged.AddListener((data) => OnInputChange());
         }
-
     }
+
     public void OnInputChange() {
         if (selectedGO != null)
-            selectedGO.GetComponent<SelectableScript>().OnDeselectCall();
+            selectedGO.GetComponent<SaveGameSelectableScript>().OnDeselectCall();
         selectedGO = null;
     }
     public void OnSaveGameSelect(string fi, GameObject go) {
@@ -62,7 +59,7 @@ public class SaveLoadUIScript : MonoBehaviour {
             saveInfo.ShowDetails(nameToFile[fi]);
 
         if (selectedGO != null)
-            selectedGO.GetComponent<SelectableScript>().OnDeselectCall();
+            selectedGO.GetComponent<SaveGameSelectableScript>().OnDeselectCall();
         selectedGO = go;
 
     }
@@ -70,17 +67,25 @@ public class SaveLoadUIScript : MonoBehaviour {
         if (selected == null) {
             return;
         }
-        //TODO ASK IF he wants to load it
-        //and warn losing ansaved data
-
+        if(SaveController.Instance.UnsavedProgress) {
+            FindObjectOfType<YesNoDialog>().Show(YesNoDialogTypes.UnsavedProgress, DoLoad, null);
+        }
+    }
+    private void DoLoad() {
         if (EditorController.IsEditor == false) {
             GameLoad();
         }
         else {
             EditorLoad();
         }
-
     }
+    public void OnSaveGameDeleteClick(string name) {
+        FindObjectOfType<YesNoDialog>().Show(YesNoDialogTypes.DeleteSave,()=> {
+            SaveController.Instance.DeleteSaveGame(name);
+            LoadSaveFiles();
+        }, null);
+    }
+
     public void OnSavePressed() {
         string name = "";
         if (selected != null && (saveGameInput.text == null || saveGameInput.text == "")) {
@@ -98,7 +103,6 @@ public class SaveLoadUIScript : MonoBehaviour {
             EditorSave(name);
         }
 
-
     }
 
     private void GameSave(string name) {
@@ -108,10 +112,12 @@ public class SaveLoadUIScript : MonoBehaviour {
         SaveController.Instance.SaveIslandState(name);
     }
     private void GameLoad() {
-        if (WorldController.Instance != null)
-            SaveController.Instance.LoadGameState(selected);
-        else
-            GameObject.FindObjectOfType<MenuController>().ChangeToGameStateLoadScreen();
+        //if (WorldController.Instance != null)
+        //    WorldController.Instance.
+        //    //SaveController.Instance.LoadGameState(selected);
+        //else
+        GameDataHolder.setloadsavegame = selected;
+        GameObject.FindObjectOfType<MenuController>().ChangeToGameStateLoadScreen();
     }
     private void EditorLoad() {
         SaveController.Instance.LoadIsland(nameToFile[selected].saveName);

@@ -56,7 +56,7 @@ public class GameDataHolder : MonoBehaviour {
             //Temporary fill this list, later generate this from selected/number of player, map size, difficulty, and other
             {new MapGenerator.IslandGenInfo(new MapGenerator.Range(100,100), new MapGenerator.Range(100, 100), Climate.Middle),new MapGenerator.Range(1,1)
             },
-            {new MapGenerator.IslandGenInfo(new MapGenerator.Range(100, 100), new MapGenerator.Range(100, 100), Climate.Cold),new MapGenerator.Range(1,1)
+            {new MapGenerator.IslandGenInfo(new MapGenerator.Range(100, 100), new MapGenerator.Range(100, 100), Climate.Cold),new MapGenerator.Range(1,2)
             },
             {new MapGenerator.IslandGenInfo(new MapGenerator.Range(60, 60), new MapGenerator.Range(60, 60), Climate.Warm),new MapGenerator.Range(1,1)
             }};

@@ -4,27 +4,29 @@ using UnityEngine.UI;
 using UnityEngine.EventSystems;
 
 public class StructureBuildUI : MonoBehaviour {
-
+    public static StructureBuildUI Instance { get; protected set; }
     public GameObject mouseOverPrefab;
     public Structure structure;
-
     // Use this for initialization
     public void Show(Structure str, bool hoverOver = true) {
         this.structure = str;
         if (IconSpriteController.HasIcon(str.ID) == false) {
             GetComponentInChildren<Text>().text = str.SpriteName;
-            GetComponentsInChildren<Image>()[1].gameObject.SetActive(false);
+            if(GetComponentsInChildren<Image>().Length>1)
+                GetComponentsInChildren<Image>()[1].gameObject.SetActive(false);
         }
         else {
-            GetComponentInChildren<Text>().gameObject.SetActive(false);
+            GetComponentInChildren<Text>()?.gameObject.SetActive(false);
             GetComponentsInChildren<Image>()[1].overrideSprite = IconSpriteController.GetIcon(str.ID);
         }
+
         EventTrigger trigger = GetComponent<EventTrigger>();
         if (hoverOver) {
             EventTrigger.Entry enter = new EventTrigger.Entry {
                 eventID = EventTriggerType.PointerEnter
             };
             enter.callback.AddListener((data) => {
+                
                 OnMouseEnter();
             });
             trigger.triggers.Add(enter);
@@ -44,7 +46,7 @@ public class StructureBuildUI : MonoBehaviour {
             eventID = EventTriggerType.BeginDrag
         };
         dragStart.callback.AddListener((data) => {
-            OnDragStart();
+            OnDragStart(((PointerEventData)data).pressPosition);
         });
         trigger.triggers.Add(dragStart);
 
@@ -58,7 +60,6 @@ public class StructureBuildUI : MonoBehaviour {
         trigger.triggers.Add(dragStop);
     }
     public void OnMouseEnter() {
-        //		hoverover = true;
         GameObject.FindObjectOfType<HoverOverScript>().Show(structure.Name);
     }
     public void OnMouseExit() {
@@ -66,8 +67,9 @@ public class StructureBuildUI : MonoBehaviour {
         GameObject.FindObjectOfType<HoverOverScript>().Unshow();
 
     }
-    public void OnDragStart() {
-        UIController.Instance.SetDragAndDropBuild(this.gameObject);
+    public void OnDragStart(Vector3 position) {
+        //RectTransformUtility.ScreenPointToLocalPointInRectangle(GetComponent<RectTransform>(), Input.mousePosition, Camera.main, out offset);
+        UIController.Instance.SetDragAndDropBuild(this.gameObject, transform.InverseTransformPoint(position));
     }
     public void OnDragEnd() {
         UIController.Instance.StopDragAndDropBuild();

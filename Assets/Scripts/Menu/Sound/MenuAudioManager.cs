@@ -10,60 +10,50 @@ public enum VolumeType { MasterVolume, SoundEffectsVolume, AmbientVolume, MusicV
 public class MenuAudioManager : MonoBehaviour {
     public static string fileName = "volume.ini";
     public AudioMixer mixer;
-    public static MenuAudioManager instance;
+    public static MenuAudioManager Instance;
 
     public AudioClip hoverSound;
     public AudioClip sliderSound;
     public AudioClip clickSound;
 
-    Dictionary<string, int> volumes;
+    Dictionary<VolumeType, int> volumes;
 
     void Start() {
-        instance = this;
-        volumes = new Dictionary<string, int>();
-        ReadSoundVolumes();
+        Instance = this;
+        volumes = new Dictionary<VolumeType, int>();
+        OptionsToggle.ChangedState += OnOptionClosed;
+        ReadVolumes();
+    }
+
+    private void OnOptionClosed(bool open) {
+        if (open)
+            return;
+        SaveVolumes();
     }
 
     public void PlayClickSound() {
-        GetComponent<AudioSource>().clip = clickSound;
-        GetComponent<AudioSource>().Play();
+        GetComponentInChildren<AudioSource>().clip = clickSound;
+        GetComponentInChildren<AudioSource>().Play();
     }
     public void PlayHoverSound() {
-        GetComponent<AudioSource>().clip = hoverSound;
-        GetComponent<AudioSource>().Play();
+        GetComponentInChildren<AudioSource>().clip = hoverSound;
+        GetComponentInChildren<AudioSource>().Play();
     }
     public void PlaySliderSound() {
-        GetComponent<AudioSource>().clip = sliderSound;
-        GetComponent<AudioSource>().Play();
+        GetComponentInChildren<AudioSource>().clip = sliderSound;
+        GetComponentInChildren<AudioSource>().Play();
     }
 
-    public void SetMusicVolume(float value) {
-        mixer.SetFloat(VolumeType.MusicVolume.ToString(), ConvertToDecibel(value));
-        volumes[VolumeType.MusicVolume.ToString()] = Mathf.RoundToInt(value);
+    public void SetVolume(float value, VolumeType type) {
+        mixer.SetFloat(type.ToString(), ConvertToDecibel(value));
+        volumes[type] = Mathf.RoundToInt(value);
     }
-    public void SetSoundEffectsVolume(float value) {
-        mixer.SetFloat(VolumeType.SoundEffectsVolume.ToString(), ConvertToDecibel(value));
-        volumes[VolumeType.SoundEffectsVolume.ToString()] = Mathf.RoundToInt(value);
-    }
-    public void SetMasterVolume(float value) {
-        mixer.SetFloat(VolumeType.MasterVolume.ToString(), ConvertToDecibel(value));
-        volumes[VolumeType.MasterVolume.ToString()] = Mathf.RoundToInt(value);
-    }
-    public void SetAmbientVolume(float value) {
-        mixer.SetFloat(VolumeType.AmbientVolume.ToString(), ConvertToDecibel(value));
-        volumes[VolumeType.AmbientVolume.ToString()] = Mathf.RoundToInt(value);
-    }
-    public void SetUIVolume(float value) {
-        mixer.SetFloat(VolumeType.UIVolume.ToString(), ConvertToDecibel(value));
-        volumes[VolumeType.UIVolume.ToString()] = Mathf.RoundToInt(value);
-    }
-
     public float GetVolumeFor(VolumeType volType) {
-        if (volumes.ContainsKey(volType.ToString()) == false) {
+        if (volumes.ContainsKey(volType) == false) {
             Debug.LogError("VolumeType not in Dictionary");
             return -1;
         }
-        return volumes[volType.ToString()];
+        return volumes[volType];
     }
 
     /**
@@ -87,7 +77,7 @@ public class MenuAudioManager : MonoBehaviour {
 
         return decibel;
     }
-    public void SaveVolumetSchema() {
+    public void SaveVolumes() {
         string path = Application.dataPath.Replace("/Assets", "");
         if (Directory.Exists(path) == false) {
             // NOTE: This can throw an exception if we can't create the folder,
@@ -104,22 +94,22 @@ public class MenuAudioManager : MonoBehaviour {
     }
 
 
-    public void ReadSoundVolumes() {
+    public void ReadVolumes() {
         string filePath = System.IO.Path.Combine(Application.dataPath.Replace("/Assets", ""), fileName);
         if (File.Exists(filePath) == false) {
-            SetMasterVolume(100);
-            SetMusicVolume(100);
-            SetUIVolume(100);
-            SetSoundEffectsVolume(100);
-            SetAmbientVolume(100);
+            SetVolume(100,VolumeType.MasterVolume);
+            SetVolume(50, VolumeType.MusicVolume);
+            SetVolume(80, VolumeType.AmbientVolume);
+            SetVolume(50, VolumeType.UIVolume);
+            SetVolume(70, VolumeType.SoundEffectsVolume);
             return;
         }
-        volumes = JsonConvert.DeserializeObject<Dictionary<string, int>>(File.ReadAllText(filePath));
-        SetAmbientVolume(GetVolumeFor(VolumeType.AmbientVolume));
-        SetMasterVolume(GetVolumeFor(VolumeType.MasterVolume));
-        SetMusicVolume(GetVolumeFor(VolumeType.MusicVolume));
-        SetUIVolume(GetVolumeFor(VolumeType.UIVolume));
-        SetSoundEffectsVolume(GetVolumeFor(VolumeType.SoundEffectsVolume));
+        volumes = JsonConvert.DeserializeObject<Dictionary<VolumeType, int>>(File.ReadAllText(filePath));
+        SetVolume(GetVolumeFor(VolumeType.AmbientVolume), VolumeType.AmbientVolume);
+        SetVolume(GetVolumeFor(VolumeType.MasterVolume), VolumeType.MasterVolume);
+        SetVolume(GetVolumeFor(VolumeType.MusicVolume), VolumeType.MusicVolume);
+        SetVolume(GetVolumeFor(VolumeType.UIVolume), VolumeType.UIVolume);
+        SetVolume(GetVolumeFor(VolumeType.SoundEffectsVolume), VolumeType.SoundEffectsVolume);
     }
     public static Dictionary<string, int> StaticReadSoundVolumes() {
         string filePath = System.IO.Path.Combine(Application.dataPath.Replace("/Assets", ""), fileName);
@@ -128,9 +118,5 @@ public class MenuAudioManager : MonoBehaviour {
         }
         return JsonConvert.DeserializeObject<Dictionary<string, int>>(File.ReadAllText(filePath));
     }
-    void OnDisable() {
-        SaveVolumetSchema();
-    }
-
 
 }

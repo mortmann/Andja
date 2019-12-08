@@ -21,12 +21,12 @@ public class Island : IGEventable {
     public Path_TileGraph TileGraphIslandTiles { get; protected set; }
     public int Width {
         get {
-            return Mathf.CeilToInt(max.x - min.x);
+            return Mathf.CeilToInt(Maximum.x - Minimum.x);
         }
     }
     public int Height {
         get {
-            return Mathf.CeilToInt(max.y - min.y);
+            return Mathf.CeilToInt(Maximum.y - Minimum.y);
         }
     }
     public City Wilderness {
@@ -43,8 +43,9 @@ public class Island : IGEventable {
 
     public List<Tile> myTiles;
     public Vector2 Placement;
-    public Vector2 min;
-    public Vector2 max;
+    public Vector2 Minimum;
+    public Vector2 Maximum;
+    public Vector2 Center;
     private City _wilderness;
     public bool allReadyHighlighted;
     #endregion
@@ -121,23 +122,24 @@ public class Island : IGEventable {
     internal void SetTiles(Tile[] tiles) {
         this.myTiles = new List<Tile>(tiles);
         StartTile = tiles[0];
-        min = new Vector2(tiles[0].X, tiles[0].Y);
-        max = new Vector2(tiles[0].X, tiles[0].Y);
+        Minimum = new Vector2(tiles[0].X, tiles[0].Y);
+        Maximum = new Vector2(tiles[0].X, tiles[0].Y);
         foreach (Tile t in tiles) {
             t.MyIsland = this;
-            if (min.x > t.X) {
-                min.x = t.X;
+            if (Minimum.x > t.X) {
+                Minimum.x = t.X;
             }
-            if (min.y > t.Y) {
-                min.y = t.Y;
+            if (Minimum.y > t.Y) {
+                Minimum.y = t.Y;
             }
-            if (max.x < t.X) {
-                max.x = t.X;
+            if (Maximum.x < t.X) {
+                Maximum.x = t.X;
             }
-            if (max.y < t.Y) {
-                max.y = t.Y;
+            if (Maximum.y < t.Y) {
+                Maximum.y = t.Y;
             }
         }
+        Center = Minimum + ((Maximum - Minimum) / 2);
         if (Wilderness != null)
             Wilderness.AddTiles(myTiles);
         TileGraphIslandTiles = new Path_TileGraph(this);
@@ -161,24 +163,24 @@ public class Island : IGEventable {
             // already in there
             return;
         }
-        min = new Vector2(tile.X, tile.Y);
-        max = new Vector2(tile.X, tile.Y);
+        Minimum = new Vector2(tile.X, tile.Y);
+        Maximum = new Vector2(tile.X, tile.Y);
         Queue<Tile> tilesToCheck = new Queue<Tile>();
         tilesToCheck.Enqueue(tile);
         while (tilesToCheck.Count > 0) {
 
             Tile t = tilesToCheck.Dequeue();
-            if (min.x > t.X) {
-                min.x = t.X;
+            if (Minimum.x > t.X) {
+                Minimum.x = t.X;
             }
-            if (min.y > t.Y) {
-                min.y = t.Y;
+            if (Minimum.y > t.Y) {
+                Minimum.y = t.Y;
             }
-            if (max.x < t.X) {
-                max.x = t.X;
+            if (Maximum.x < t.X) {
+                Maximum.x = t.X;
             }
-            if (max.y < t.Y) {
-                max.y = t.Y;
+            if (Maximum.y < t.Y) {
+                Maximum.y = t.Y;
             }
 
 
@@ -203,6 +205,10 @@ public class Island : IGEventable {
         return myCities.Find(x => x.playerNumber == playerNumber);
     }
     public City CreateCity(int playerNumber) {
+        if (myCities.Exists(x => x.playerNumber == playerNumber)) {
+            Debug.LogError("TRIED TO CREATE A SECOND CITY -- IS NEVER ALLOWED TO HAPPEN!");
+            return myCities.Find(x => x.playerNumber == playerNumber);
+        }
         allReadyHighlighted = false;
         City c = new City(playerNumber, this);
         myCities.Add(c);
@@ -240,15 +246,15 @@ public class Island : IGEventable {
     public static MapGenerator.Range GetRangeForSize(Size sizeType) {
         switch (sizeType) {
             case Size.VerySmall:
-                return new MapGenerator.Range(40, 60);
+                return new MapGenerator.Range(40, 80);
             case Size.Small:
-                return new MapGenerator.Range(60, 80);
-            case Size.Medium:
                 return new MapGenerator.Range(80, 120);
+            case Size.Medium:
+                return new MapGenerator.Range(120, 160);
             case Size.Large:
-                return new MapGenerator.Range(120, 140);
+                return new MapGenerator.Range(160, 200);
             case Size.VeryLarge:
-                return new MapGenerator.Range(140, 160);
+                return new MapGenerator.Range(200, int.MaxValue);
             default:
                 //Debug.LogError("NOT RECOGNISED ISLAND SIZE! Nothing has no size!");
                 return new MapGenerator.Range(0, 0);

@@ -816,7 +816,7 @@
          <efficiency>1.0</efficiency>
          <output length="1">
             <Item ID="hemp">
-               <count>1</count>
+               <count>0</count>
             </Item>
          </output>
          <fertility>hemp</fertility>
@@ -913,7 +913,7 @@
          <efficiency>1.0</efficiency>
          <output length="1">
             <Item ID="wood">
-               <count>1</count>
+               <count>0</count>
             </Item>
          </output>
          <ageStages>3</ageStages>
@@ -1063,7 +1063,7 @@
          <efficiency>1.0</efficiency>
          <output length="1">
             <Item ID="sugar">
-               <count>1</count>
+               <count>0</count>
             </Item>
          </output>
          <fertility>sugarcone</fertility>
@@ -1166,7 +1166,7 @@
          <efficiency>1.0</efficiency>
          <output length="1">
             <Item ID="hops">
-               <count>1</count>
+               <count>0</count>
             </Item>
          </output>
          <fertility>hop</fertility>
@@ -1247,11 +1247,15 @@
          <hasHitbox>true</hasHitbox>
          <maxHealth>25.0</maxHealth>
          <structureRange>0</structureRange>
-         <populationLevel>1</populationLevel>
+         <populationLevel>0</populationLevel>
          <populationCount>0</populationCount>
          <structureLevel>0</structureLevel>
          <tileWidth>2</tileWidth>
          <tileHeight>3</tileHeight>
+         <buildTileTypes length="2">
+            <tileType length="3">BuildLand, Mountain, Mountain</tileType>
+            <tileType length="3">BuildLand, Mountain, Mountain</tileType>
+         </buildTileTypes>
          <canRotate>true</canRotate>
          <canBeBuildOver>false</canBeBuildOver>
          <canBeUpgraded>false</canBeUpgraded>
@@ -1267,10 +1271,10 @@
          <hasToBuildOnRestriktion>Mountain</hasToBuildOnRestriktion>
          <buildingItems length="2">
             <Item ID="wood">
-               <count>4</count>
+               <count>0</count>
             </Item>
             <Item ID="tools">
-               <count>4</count>
+               <count>0</count>
             </Item>
          </buildingItems>
          <spriteBaseName>stonequarry</spriteBaseName>
@@ -1339,7 +1343,7 @@
          <efficiency>1.0</efficiency>
          <output length="1">
             <Item ID="ironore">
-               <count>1</count>
+               <count>0</count>
             </Item>
          </output>
       </mine>
@@ -1851,7 +1855,7 @@
          <efficiency>1.0</efficiency>
          <output length="1">
             <Item ID="venison">
-               <count>1</count>
+               <count>0</count>
             </Item>
          </output>
          <intake length="0"/>
@@ -1974,7 +1978,7 @@
          <contactRange>0.0</contactRange>
          <forMarketplace>true</forMarketplace>
          <maxNumberOfWorker>1</maxNumberOfWorker>
-         <produceTime>30.0</produceTime>
+         <produceTime>25.0</produceTime>
          <maxOutputStorage>5</maxOutputStorage>
          <efficiency>1.0</efficiency>
          <output length="1">
@@ -2350,6 +2354,12 @@
          <structureLevel>0</structureLevel>
          <tileWidth>4</tileWidth>
          <tileHeight>4</tileHeight>
+         <buildTileTypes length="4">
+            <tileType length="4">Shore, Shore, Shore, Shore</tileType>
+            <tileType length="4">BuildLand, BuildLand, BuildLand, BuildLand</tileType>
+            <tileType length="4">BuildLand, BuildLand, BuildLand, BuildLand</tileType>
+            <tileType length="4">BuildLand, BuildLand, BuildLand, BuildLand</tileType>
+         </buildTileTypes>
          <canRotate>true</canRotate>
          <canBeBuildOver>false</canBeBuildOver>
          <canBeUpgraded>true</canBeUpgraded>

@@ -167,6 +167,12 @@ public class Tile : IComparable<Tile>, IEqualityComparer<Tile> {
         if (Type == TileType.Ocean) {
             return false;
         }
+        if (Type == TileType.Water) {
+            return false;
+        }
+        if (Type == TileType.Cliff) {
+            return false;
+        }
         if (Type == TileType.Mountain) {
             return false;
         }
@@ -270,8 +276,8 @@ public class Tile : IComparable<Tile>, IEqualityComparer<Tile> {
     public virtual List<NeedStructure> GetListOfInRangeNeedStructures(int playernumber) {
         return null;
     }
-    override public String ToString() {
-        return "tile_" + X + "_" + Y + "_" + Type + "";
+    public override string ToString() {
+        return string.Format("[{0}:{1}]Type:{2}", X, Y, Type);
     }
 
     public static Vector2 ToStringToTileVector(String tileToString) {
@@ -329,6 +335,52 @@ public class Tile : IComparable<Tile>, IEqualityComparer<Tile> {
         // Return true if the fields not match:
         return a.X != b.X || a.Y != b.Y;
     }
+
+    public static string GetSpriteAddonForTile(Tile t, Tile[] neighbours) {
+        //FOR now only Shore is rotating to face the other tiles
+        if (t.Type != TileType.Shore) {
+            return "";
+        }
+        string connectOrientation = "";
+
+        connectOrientation = "_";
+        int numNeighbours = 0;
+        if (neighbours[0] != null && neighbours[0].Type == TileType.Shore) {
+            connectOrientation += "N";
+            numNeighbours++;
+        }
+        if (neighbours[1] != null && neighbours[1].Type == TileType.Shore) {
+            connectOrientation += "E";
+            numNeighbours++;
+        }
+        if (neighbours[2] != null && neighbours[2].Type == TileType.Shore) {
+            connectOrientation += "S";
+            numNeighbours++;
+        }
+        if (neighbours[3] != null && neighbours[3].Type == TileType.Shore) {
+            connectOrientation += "W";
+            numNeighbours++;
+        }
+        if (numNeighbours > 0) {
+            string temp = "_";
+            if (neighbours[0] != null && neighbours[0].Type != TileType.Shore && neighbours[0].Type != TileType.Ocean) {
+                temp += "N";
+            }
+            if (neighbours[1] != null && neighbours[1].Type != TileType.Shore && neighbours[1].Type != TileType.Ocean) {
+                temp += "E";
+            }
+            if (neighbours[2] != null && neighbours[2].Type != TileType.Shore && neighbours[2].Type != TileType.Ocean) {
+                temp += "S";
+            }
+            if (neighbours[3] != null && neighbours[3].Type != TileType.Shore && neighbours[3].Type != TileType.Ocean) {
+                temp += "W";
+            }
+            if (temp.Length > 1)
+                connectOrientation += temp;
+        }
+        return connectOrientation;
+    }
+
 
     #region IComparable implementation
     public int CompareTo(Tile other) {

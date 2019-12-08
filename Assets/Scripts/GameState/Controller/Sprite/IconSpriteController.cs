@@ -6,7 +6,7 @@ public class IconSpriteController : MonoBehaviour {
 
     static Dictionary<string, Sprite> idToIcon;
     static string iconNameAdd = "_icon";
-    void Start() {
+    void Awake() {
         LoadSprites();
     }
     public static bool HasIcon(string id) {

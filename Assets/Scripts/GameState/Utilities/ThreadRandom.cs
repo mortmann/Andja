@@ -20,4 +20,8 @@ public class ThreadRandom {
     public int Integer() {
         return rand.Value.Next();
     }
+    public bool Bool() {
+        //either 0 or 1
+        return rand.Value.Next(0, 2) == 0; 
+    }
 }

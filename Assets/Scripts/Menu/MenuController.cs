@@ -6,7 +6,7 @@ using UnityEngine.SceneManagement;
 
 public class MenuController : MonoBehaviour {
     public static MenuController instance;
-    public bool saved;
+
     public GameObject menu;
     public GameObject[] panels;
     public bool IsMainMenu = false;
@@ -29,8 +29,6 @@ public class MenuController : MonoBehaviour {
 
     static bool mainMenuOpen = false;
     bool panelOpen = false;
-
-    bool _QuitToMenu = false;
 
     void OnEnable() {
         foreach (Transform t in transform) {
@@ -92,38 +90,36 @@ public class MenuController : MonoBehaviour {
         menu.SetActive(false);
         mainMenuOpen = false;
     }
-    public void Saved() {
-        saved = true;
-    }
-    public void OnDisabled() {
-        saved = false;
-    }
-    public bool HasSaved() {
-        return saved;
-    }
     public void QuitToMenu(bool force = false) {
-        if (saved == false && force == false) {
-            _QuitToMenu = true;
-            ShowWarning();
+        if (SaveController.Instance.UnsavedProgress == false && force == false) {
             return;
         }
-        ChangeToMainMenuScreen();
+        FindObjectOfType<YesNoDialog>().Show(YesNoDialogTypes.UnsavedProgress, ChangeToMainMenuScreen, null);
     }
     public void QuitToDesktop(bool force = false) {
-        if (saved == false && force == false) {
-            ShowWarning();
+        if (SaveController.Instance?.UnsavedProgress == false && force == false) {
             return;
         }
         //If we are running in a standalone build of the game
 #if UNITY_STANDALONE
-        //Quit the application
-        Application.Quit();
+        if (IsMainMenu) {
+            Application.Quit();
+        } else {
+            //Quit the application
+            FindObjectOfType<YesNoDialog>().Show(YesNoDialogTypes.UnsavedProgress, Application.Quit, null);
+        }
 #endif
 
         //If we are running in the editor
-#if UNITY_EDITOR
         //Stop playing the scene
-        UnityEditor.EditorApplication.isPlaying = false;
+#if UNITY_EDITOR
+        if (IsMainMenu) {
+            UnityEditor.EditorApplication.isPlaying = false;
+        } else {
+            FindObjectOfType<YesNoDialog>().Show(YesNoDialogTypes.UnsavedProgress, () => {
+                UnityEditor.EditorApplication.isPlaying = false;
+            }, null);
+        }
 #endif
     }
 
@@ -140,21 +136,5 @@ public class MenuController : MonoBehaviour {
     }
     public void ChangeToMainMenuScreen() {
         SceneManager.LoadScene("MainMenu");
-    }
-    public void ShowWarning() {
-        dialog.SetActive(true);
-    }
-    public void SaveDialogYesOption() {
-        if (_QuitToMenu == false)
-            QuitToDesktop(true);
-        else
-            QuitToMenu(true);
-        _QuitToMenu = false;
-    }
-    public void SaveDialogNoOption() {
-        _QuitToMenu = false;
-    }
-    public void OnDisable() {
-        _QuitToMenu = false;
     }
 }

@@ -34,6 +34,7 @@ public class EditorBuild : MonoBehaviour {
     }
 
     public void OnBuildingSelect(string id) {
+        EditorController.Instance.changeTileType = false;
         EditorController.Instance.SetStructure(id);
         if (PrototypController.Instance.StructurePrototypes[id] is GrowableStructure == false) {
             return;

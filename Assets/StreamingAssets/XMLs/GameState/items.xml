@@ -323,15 +323,6 @@
       <type>Intermediate</type>
       <decays>-1</decays>
    </Item>
-   <Item ID="leathershoe">
-      <count>0</count>
-      <Name>
-         <entry lang="English">Leather Shoe</entry>
-         <entry lang="German">Lederschuhe</entry>
-      </Name>
-      <type>Intermediate</type>
-      <decays>-1</decays>
-   </Item>
    <Item ID="medicinalherbs">
       <count>0</count>
       <Name>
@@ -625,6 +616,15 @@
       <Name>
          <entry lang="English">Jewelry</entry>
          <entry lang="German">Schmuck</entry>
+      </Name>
+      <type>Luxury</type>
+      <decays>-1</decays>
+   </Item>
+   <Item ID="leathershoes">
+      <count>0</count>
+      <Name>
+         <entry lang="English">Leather Shoes</entry>
+         <entry lang="German">Lederschuhe</entry>
       </Name>
       <type>Luxury</type>
       <decays>-1</decays>

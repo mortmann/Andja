@@ -83,7 +83,7 @@ public class GS_Selectable : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
      * Handle navigating to the button with the arrow keys on the keyboard.
      */
     public void OnSelect(BaseEventData eventData) {
-        MenuAudioManager.instance.PlayHoverSound();
+        MenuAudioManager.Instance.PlayHoverSound();
     }
 
     /**
@@ -98,7 +98,7 @@ public class GS_Selectable : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
         // Set the selected game object in the event system to this button so
         // it works properly if we switch to the keyboard.
         MenuController.instance.currentButton = button;
-        MenuAudioManager.instance.PlayClickSound();
+        MenuAudioManager.Instance.PlayClickSound();
     }
 
     /**
@@ -111,7 +111,7 @@ public class GS_Selectable : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
         }
 
         MenuController.instance.currentButton = button;
-        MenuAudioManager.instance.PlayClickSound();
+        MenuAudioManager.Instance.PlayClickSound();
     }
 
     /**

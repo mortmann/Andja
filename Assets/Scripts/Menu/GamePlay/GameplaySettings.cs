@@ -18,15 +18,19 @@ public class GameplaySettings : MonoBehaviour {
         Localizations = new List<string>(UILanguageController.Instance.LocalizationsToFile.Keys);
         ReadGameplayOption();
         SaveGameplayOption();
+
+        OptionsToggle.ChangedState += OnOptionClosed;
     }
 
-    
+
 
     Dictionary<GameplaySetting, string> gameplayOptions;
     Dictionary<GameplaySetting, string> gameplayOptionsToSave;
 
     string fileName = "gameplay.ini";
     public void SaveGameplayOption() {
+        if (gameplayOptionsToSave == null)
+            return; //only happens if pausemenu is active wenn gamestate is loaded 
 
         SetOptions(gameplayOptionsToSave);
         foreach (GameplaySetting s in gameplayOptionsToSave.Keys) {
@@ -101,7 +105,9 @@ public class GameplaySettings : MonoBehaviour {
             return null;
         return gameplayOptions[name];
     }
-    private void OnDisable() {
+    private void OnOptionClosed(bool open) {
+        if (open)
+            return;
         SaveGameplayOption();
     }
 }

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class IslandGenerator {
+    public float Progress;
     public readonly int seed;
 
     static readonly float shoreElevation = 0.29f;
@@ -11,7 +12,7 @@ public class IslandGenerator {
     static readonly float dirtElevation = 0.43f;
     static readonly float mountainElevation = 1.15f;
     static readonly float landThreshold = cliffElevation;
-    static readonly float islandThreshold = shoreElevation;
+    static readonly float islandThreshold = dirtElevation;
     ThreadRandom random;
     public int Width;
     public int Height;
@@ -24,7 +25,7 @@ public class IslandGenerator {
         this.Height = Height;
         this.seed = seed;
         random = new ThreadRandom(seed);
-        //		Start ();
+        Progress = 0.01f;
     }
     public void Start() {
         System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
@@ -41,7 +42,7 @@ public class IslandGenerator {
             float centerHeight = (float)(Height - y + Width - x) / (float)(Height + Width);
             ElevateCircleArea(x, y, range, centerHeight * 0.1f);
         }
-
+        Progress += 0.05f;
 
         int numOfSquares = random.Range(2, 6);
         for (int i = 0; i < numOfSquares; i++) {
@@ -69,6 +70,7 @@ public class IslandGenerator {
             }
 
         }
+        Progress += 0.1f;
 
         //		GetTileAt (0, 0).Elevation = .5f;
         FastNoise cubicfractal = new FastNoise(random.Range(0, int.MaxValue));
@@ -84,6 +86,8 @@ public class IslandGenerator {
             t.Elevation += GetOvalDistanceToCenter(t) * 1f;
             t.Elevation += cubicfractal.GetCubicFractal(t.X, t.Y);
         }
+        Progress += 0.3f;
+
         //		for (int i = 0; i < 5; i++) {
         //			//make the it more even spread
         //			foreach(Tile t in tiles){
@@ -101,12 +105,13 @@ public class IslandGenerator {
         // Make some kind of raised area
         for (int i = 0; i < numSplats; i++) {
             int range = random.Range(size / 20, size / 10);
-            int x = random.Range(range, Width - 2 * range);
-            int y = random.Range(range, Height - 2 * range);
+            int x = random.Range(range, (int)(Width - 0.5f * range));
+            int y = random.Range(range, (int)(Height - 0.5f * range));
 
             float centerHeight = (float)(Height - y + Width - x) / (float)(Height + Width);
             ElevateCircleArea(x, y, range, centerHeight * 0.8f, true);
         }
+        Progress += 0.05f;
 
         for (int i = 0; i < 1; i++) {
             //make the it more even spread
@@ -121,6 +126,7 @@ public class IslandGenerator {
                 t.Elevation /= 2;
             }
         }
+        Progress += 0.04f;
 
         //		FastNoise fn = new FastNoise (random.Range(0,int.MaxValue));
         //		fn.SetFractalGain (0.3f);
@@ -138,27 +144,69 @@ public class IslandGenerator {
 
         //Debug.Log ("FloodFillLands");
         HashSet<Tile> island = FloodFillLands();
-        List<Tile> all = new List<Tile>(Tiles);
-        all.ForEach(x => {
+        //List<Tile> all = new List<Tile>(Tiles);
+        //all.ForEach(x => {
+        //    if (island.Contains(x) == false) {
+        //        x.Elevation = 0f;
+        //    }
+        //}
+        //);
+        List<Tile> ocean = new List<Tile>(FloodFillOcean(island));
+        ocean.ForEach(x => {
             if (island.Contains(x) == false) {
                 x.Elevation = 0f;
             }
         }
         );
+        List<Tile> biggest = new List<Tile>(FloodFillLands());
+        biggest.ForEach(x => {
+            if (island.Contains(x) == false) {
+                x.Elevation = 0f;
+            }
+        }
+        );
+        Progress += 0.15f;
+
+        int numberOfShores = random.Range(2, 8);
+        for(int ns = 0; ns <= numberOfShores; ns++) {
+            int x = 0;
+            int y = 0;
+            int direction = random.Range(0, 4);
+            int length = random.Range(8, 20);
+
+            if (direction == 0) { // Bottom
+                x = random.Range(0, Width + 1);
+                y = 0;
+            }
+            if (direction == 1) { // Top
+                x = random.Range(0, Width + 1);
+                y = Height;
+            }
+            if (direction == 2) { //left
+                x = 0;
+                y = random.Range(0, Height + 1);
+            }
+            if (direction == 3) { // right
+                x = Width;
+                y = random.Range(0, Height + 1);
+            }
+
+            FindIslandMakeShore(x, y, length);
+        }
+
         //Debug.Log ("FloodFillOcean");
-        FloodFillOcean(island);
 
         for (int x = 0; x < Width; x++) {
             for (int y = 0; y < Height; y++) {
                 Tile t = GetTileAt(x, y);
-                if (t.Elevation > islandThreshold) {
+                if (t.Elevation >= shoreElevation) {
                     t = new LandTile(x, y, t);
                     SetTileAt(x, y, t);
                 }
-                if (t.Elevation > mountainElevation) {
+                if (t.Elevation >= mountainElevation) {
                     t.Type = TileType.Mountain;
                 }
-                else if (t.Elevation > dirtElevation) {
+                else if (t.Elevation >= dirtElevation) {
                     t.Type = TileType.Dirt;
                 }
                 //				else if(t.Elevation > cliffElevation){
@@ -173,26 +221,44 @@ public class IslandGenerator {
                 //						}
                 //					}
                 //				}
-                //else if(t.Elevation > shoreElevation){
-                //	t.Type = TileType.Shore;
-                //} 
-                //We need to give it a random tilesprite
+                else if (t.Elevation >= shoreElevation && HasNeighbourOcean(t,true)) {
+                    t.Type = TileType.Shore;
+                } else
+                if (t.Elevation < shoreElevation && ocean.Contains(t) == false || t.Elevation >= shoreElevation) {
+                    t = new LandTile(x, y, t);
+                    SetTileAt(x, y, t);
+                    t.Type = TileType.Water;
+                }
+            }
+        }
+        Progress += 0.2f;
+
+        //We need to give it a random tilesprite
+        //giving sprite needs to be done somewhere else?
+        //some depend on already set types
+        for (int x = 0; x < Width; x++) {
+            for (int y = 0; y < Height; y++) {
+                Tile t = GetTileAt(x, y);
                 t.SpriteName = GetRandomSprite(t);
             }
         }
+        Progress += 0.1f;
+
         sw.Stop();
         Debug.Log("Generated island with size " + Width + ":" + Height + " in " + sw.ElapsedMilliseconds + "ms (" + sw.Elapsed.TotalSeconds + "s)! ");
     }
 
     private string GetRandomSprite(Tile t) {
-        List<string> all = TileSpriteController.GetSpriteNamesForType(t.Type, climate);
+        List<string> all = TileSpriteController.GetSpriteNamesForType(t.Type, climate, Tile.GetSpriteAddonForTile(t, GetNeighbours(t)));
         if (all == null) {
             Debug.Log(t.Type);
             return "";
         }
         int rand = random.Range(0, all.Count - 1);
+
         return all[rand];
     }
+
     //Returns biggest land mass as list
     protected HashSet<Tile> FloodFillLands() {
         List<Tile> allTiles = new List<Tile>(Tiles);
@@ -291,7 +357,7 @@ public class IslandGenerator {
             }
             else {
                 if (t.Elevation < islandThreshold && tilesToCheck.Count < 2)
-                    Debug.Log(tilesToCheck.Count + "<2 " + islandTiles.Count + "<" + (Width * Height) / 4);
+                    Debug.Log(tilesToCheck.Count + "<2 " + islandTiles.Count + "<" + (Width * Height) / 8);
             }
         }
         return islandTiles;
@@ -329,9 +395,18 @@ public class IslandGenerator {
 
         return ns;
     }
-    public bool HasNeighbourLand(Tile t) {
-        foreach (Tile tile in GetNeighbours(t)) {
+
+    public bool HasNeighbourLand(Tile t, bool diag = false) {
+        foreach (Tile tile in GetNeighbours(t, diag)) {
             if (tile.Elevation > landThreshold) {
+                return true;
+            }
+        }
+        return false;
+    }
+    public bool HasNeighbourOcean(Tile t,bool diag = false) {
+        foreach (Tile tile in GetNeighbours(t,diag)) {
+            if (tile.Elevation == 0) {
                 return true;
             }
         }
@@ -360,19 +435,10 @@ public class IslandGenerator {
         return A * Mathf.Pow(randomX, 2) + B * randomX + C;
     }
     public float GetSquareElevation(Tile tile, Vector2 center, Vector2 dimension) {
-        //		float centerX = (float) Width / 2 - Random.Range(-5f,5f);
-        //		float centerY = (float) Height / 2 - Random.Range(-5f,5f);
-        float[] distances = new float[]{
-            (float)tile.Y / center.y,(float)(dimension.x - tile.Y) / center.y,
+        return Mathf.Min(
+            (float)tile.Y / center.y, (float)(dimension.x - tile.Y) / center.y,
             (float)tile.X / center.x, (float)(dimension.y - tile.X) / center.x
-        };
-        float min = float.MaxValue;
-        foreach (var val in distances) {
-            if (val < min) {
-                min = val;
-            }
-        }
-        return min;
+        ); ;
     }
 
     public float GetOvalDistanceToCenter(Tile tile) {
@@ -403,19 +469,21 @@ public class IslandGenerator {
         }
         return Tiles[x * Height + y];
     }
-
+    public Tile GetTileAt(float x, float y) {
+        return GetTileAt(Mathf.FloorToInt(x), Mathf.FloorToInt(y));
+    }
     void ElevateCircleArea(int q, int r, int range, float centerHeight = .8f, bool hastobeland = false) {
-        Tile centerHex = GetTileAt(q, r);
+        Tile centerTile = GetTileAt(q, r);
 
-        Tile[] areaHexes = GetTilesWithinRangeOf(centerHex, range);
+        Tile[] areaTiles = GetTilesWithinRangeOf(centerTile, range);
 
-        foreach (Tile h in areaHexes) {
+        foreach (Tile h in areaTiles) {
             //if(h.Elevation < 0)
             //h.Elevation = 0;
-            if (h.Elevation < dirtElevation && hastobeland == true) {
+            if (h==null || h.Elevation < dirtElevation && hastobeland == true) {
                 continue;
             }
-            h.Elevation += centerHeight * Mathf.Lerp(1f, 0.25f, Mathf.Pow(centerHex.DistanceFromVector(h.Vector) / range, 2f));
+            h.Elevation += centerHeight * Mathf.Lerp(1f, 0.25f, Mathf.Pow(centerTile.DistanceFromVector(h.Vector) / range, 2f));
         }
     }
     Tile[] GetTilesWithinRangeOf(Tile center, float range) {
@@ -429,6 +497,56 @@ public class IslandGenerator {
     }
 
     public MapGenerator.IslandStruct GetIslandStruct() {
-        return new MapGenerator.IslandStruct(Width, Height, Tiles, climate, MapGenerator.Instance.GetFertilitiesForClimate(climate, 3/*TODO:nonstatic*/), new Dictionary<int, int>());
+        return new MapGenerator.IslandStruct(Width, Height, Tiles, climate, 
+            MapGenerator.Instance.GetFertilitiesForClimate(climate, 3/*TODO:nonstatic*/), new Dictionary<int, int>());
     }
+
+    public bool FindIslandMakeShore(float x, float y, int width) {
+        Vector2 pos = new Vector2(x, y);
+        Vector2 center = new Vector2(Width/2, Height/2);
+        Vector2 dir = center - pos;
+        dir.Normalize();
+        Tile current = GetTileAt(x, y);
+        while(current!=null && current.Elevation<dirtElevation) {
+            pos += dir;
+            current = GetTileAt(pos.x, pos.y);
+        }
+        if (current == null)
+            return false;
+        List<Tile> coast = new List<Tile> {
+            current
+        };
+        Tile last = current;
+        for (int i = 1; i < width; i++) {
+            Tile next = null;
+            Tile[] neighbours = GetNeighbours(last,false);
+            foreach(Tile t in neighbours) {
+                if (t == null || t.Elevation < dirtElevation)
+                    continue;
+                if (coast.Contains(t))
+                    continue;
+                //Tile[] newNeighbours = GetNeighbours(t,true);
+                if (HasNeighbourOcean(t,true) == false)
+                    continue;
+                next = t;
+            }
+            if (next == null && current == last) {
+                break;
+            }
+            else if(next==null) {
+                next = current;
+            }
+            coast.Add(next);
+            last = next;
+        }
+        //if (coast.Count < width)
+        //    return false;
+        foreach(Tile cTile in coast) {
+            cTile.Elevation = shoreElevation+0.01f;
+        }
+        Debug.Log("Made coast: " + coast.Count);
+
+        return true;
+    }
+
 }

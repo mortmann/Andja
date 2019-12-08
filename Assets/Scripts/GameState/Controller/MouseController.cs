@@ -106,8 +106,9 @@ public class MouseController : MonoBehaviour {
         if (Instance != null) {
             Debug.LogError("There should never be two mouse controllers.");
         }
-        selectedUnitGroup = new List<Unit>(); 
         Instance = this;
+
+        selectedUnitGroup = new List<Unit>(); 
         previewGameObjects = new List<GameObject>();
         BuildController.RegisterStructureCreated(ResetBuild);
         _highlightTiles = new HashSet<Tile>();
@@ -172,11 +173,13 @@ public class MouseController : MonoBehaviour {
         }
         if (Input.GetMouseButton(0) 
             && mouseState == MouseState.Idle) {
-            float sqrdist = (Input.mousePosition - lastFrameGUIPosition).sqrMagnitude;
-            if (sqrdist > 5) {
-                dragStartPosition = currFramePosition;
-                mouseState = MouseState.DragSelect;
-                UpdateDragSelect(); // update the rect so no ghosts
+            if (EventSystem.current.IsPointerOverGameObject()==false && ShortcutUI.Instance.IsDragging==false) {
+                float sqrdist = (Input.mousePosition - lastFrameGUIPosition).sqrMagnitude;
+                if (sqrdist > 5) {
+                    dragStartPosition = currFramePosition;
+                    mouseState = MouseState.DragSelect;
+                    UpdateDragSelect(); // update the rect so no ghosts
+                }
             }
         }
         if (Input.GetMouseButtonDown(1) && mouseState != MouseState.Unit && mouseState != MouseState.UnitGroup) {
@@ -394,12 +397,15 @@ public class MouseController : MonoBehaviour {
             for (int r = 0; r < 4; r++) {
                 ToBuildStructure.AddTimes90ToRotate(r);
                 List<Tile> structureTiles = ToBuildStructure.GetBuildingTiles(tile.X, tile.Y);
-                tileToCanBuild = ToBuildStructure.CorrectSpot(structureTiles);
+                tileToCanBuild = ToBuildStructure.CheckForCorrectSpot(structureTiles);
                 if (tileToCanBuild.Values.ToList().Contains(false) == false) {
                     break;
                 }
 
             }
+        } else {
+            List<Tile> structureTiles = ToBuildStructure.GetBuildingTiles(tile.X, tile.Y);
+            tileToCanBuild = ToBuildStructure.CheckForCorrectSpot(structureTiles);
         }
 
         ShowPreviewStructureOnTiles(tile);
@@ -761,10 +767,10 @@ public class MouseController : MonoBehaviour {
     }
     void Build(List<Tile> t, bool single = false) {
         if (mouseState == MouseState.Unit && mouseUnitState == MouseUnitState.Build) {
-            BuildController.BuildOnTile(t, single, PlayerController.currentPlayerNumber, false, SelectedUnit);
+            BuildController.CurrentPlayerBuildOnTile(t, single, PlayerController.currentPlayerNumber, false, SelectedUnit);
         }
         else {
-            BuildController.BuildOnTile(t, single, PlayerController.currentPlayerNumber, false);
+            BuildController.CurrentPlayerBuildOnTile(t, single, PlayerController.currentPlayerNumber, false);
         }
     }
     public void BuildFromUnit() {

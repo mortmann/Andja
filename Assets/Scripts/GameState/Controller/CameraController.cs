@@ -44,9 +44,13 @@ public class CameraController : MonoBehaviour {
 
         tilesCurrentInCameraView = new HashSet<Tile>();
         structureCurrentInCameraView = new HashSet<Structure>();
+        if (EditorController.IsEditor) {
+            showBounds.x = EditorController.Width;
+            showBounds.y = EditorController.Height;
+        }
     }
 
-    public void Setup() {
+    public void GameScreenSetup() {
         MiniMapCameraShadow = Camera.main.gameObject.GetComponentInChildren<SpriteRenderer>();
         MiniMapCamera = GameObject.FindGameObjectWithTag("MiniMapCamera").GetComponent<Camera>();
         MiniMapCamera.orthographicSize = World.Current.Width / 2;
@@ -62,15 +66,14 @@ public class CameraController : MonoBehaviour {
         lower = Camera.main.ScreenToWorldPoint(Vector3.zero);
         upper = Camera.main.ScreenToWorldPoint(new Vector3(Camera.main.pixelWidth, Camera.main.pixelHeight));
         middle = Camera.main.ScreenToWorldPoint(new Vector3(Camera.main.pixelWidth / 2, Camera.main.pixelHeight / 2));
-
         showBounds.x = World.Current.Width;
         showBounds.y = World.Current.Height;
-    }
+    } 
 
 
     void Update() {
         //DO not move atall when Menu is Open
-        if (PauseMenu.isOpen || Loading.IsLoading) {
+        if (PauseMenu.IsOpen || Loading.IsLoading) {
             return;
         }
 
@@ -80,7 +83,6 @@ public class CameraController : MonoBehaviour {
         UpdateZoom();
         zoomLevel = Mathf.Clamp(Camera.main.orthographicSize - 2, minZoomLevel, MaxZoomLevel);
         if(EditorController.IsEditor == false) {
-            
             MiniMapCameraShadow.transform.localScale = new Vector3(Width, Height);
         }
         cameraMove += UpdateKeyboardCameraMovement();
@@ -100,8 +102,6 @@ public class CameraController : MonoBehaviour {
                             Mathf.Max(leftBottom.y, leftTop.y, rightBottom.y, rightTop.y), 
                             Mathf.Max(leftBottom.z, leftTop.z, rightBottom.z, rightTop.z));
 
-        //lower = Camera.main.ScreenToWorldPoint(Vector3.zero);
-        //upper = Camera.main.ScreenToWorldPoint(new Vector3(Camera.main.pixelWidth, Camera.main.pixelHeight));
         middle = Camera.main.ScreenToWorldPoint(new Vector3(Camera.main.pixelWidth / 2, Camera.main.pixelHeight / 2));
 
         middleTile = World.Current.GetTileAt(middle.x, middle.y);
@@ -161,25 +161,12 @@ public class CameraController : MonoBehaviour {
 
                 if (isInNew) {
                     if (EditorController.IsEditor) {
-                        //all after this are in the view so we have to maybe update em
-                        World.Current.OnTileChanged(tile_data);
                         tilesCurrentInCameraView.Add(tile_data);
                     }
-
                     if (tile_data.Structure != null) {
                         structureCurrentInCameraView.Add(tile_data.Structure);
                     }
                 }
-                if (EditorController.IsEditor) {
-                    if (isInOld == false && isInNew) {
-                        tsc.SpawnTile(tile_data);
-                    }
-                    else
-                    if (isInNew == false) {
-                        tsc.DespawnTile(tile_data);
-                    }
-                }
-
             }
         }
     }

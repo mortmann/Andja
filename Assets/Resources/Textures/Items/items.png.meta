@@ -22,7 +22,7 @@ TextureImporter:
     21300034: items_17
     21300036: items_18
     21300038: ironore
-    21300040: ironingot
+    21300040: ironingots
     21300042: coal
     21300044: venison
     21300046: clay
@@ -33,7 +33,7 @@ TextureImporter:
     21300056: flour
     21300058: bread
     21300060: pig
-    21300062: Pork
+    21300062: pork
     21300064: hops
     21300066: beer
     21300068: sugar
@@ -53,10 +53,10 @@ TextureImporter:
     21300096: hempclothes
     21300098: ropes
     21300100: cooperore
-    21300102: coperingots
+    21300102: copperingots
     21300104: cutlery
     21300106: spice
-    21300108: cow
+    21300108: cows
     21300110: beef
     21300112: leather
     21300114: paper
@@ -67,14 +67,14 @@ TextureImporter:
     21300124: tobacco
     21300126: tobaccoproducts
     21300128: grainsalt
-    21300130: slat
+    21300130: salt
     21300132: honey
     21300134: beeswax
     21300136: candles
-    21300138: candleholder
+    21300138: candleholders
     21300140: sheepwool
     21300142: sheepwoolcloth
-    21300144: sheepwoolclothes
+    21300144: betterclothes
     21300146: olives
     21300148: soap
     21300150: medicinalherbs
@@ -82,7 +82,7 @@ TextureImporter:
     21300154: lampoil
     21300156: perfumebottle
     21300158: perfume
-    21300160: rawsilk
+    21300160: silk
     21300162: silkbales
     21300164: fur
     21300166: luxuryclothes
@@ -93,9 +93,9 @@ TextureImporter:
     21300176: jewelry
     21300178: luxurycutlery
     21300180: carpets
-    21300182: items_91
-    21300184: items_92
-    21300186: items_93
+    21300182: milk
+    21300184: cheese
+    21300186: leathershoes
     21300188: items_94
     21300190: items_95
     21300192: items_96
@@ -689,7 +689,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: ironingot
+      name: ironingots
       rect:
         serializedVersion: 2
         x: 128
@@ -909,7 +909,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Pork
+      name: pork
       rect:
         serializedVersion: 2
         x: 480
@@ -1192,7 +1192,7 @@ TextureImporter:
       name: sweets
       rect:
         serializedVersion: 2
-        x: 416
+        x: 417
         y: 416
         width: 32
         height: 32
@@ -1309,7 +1309,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: coperingots
+      name: copperingots
       rect:
         serializedVersion: 2
         x: 96
@@ -1369,7 +1369,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: cow
+      name: cows
       rect:
         serializedVersion: 2
         x: 192
@@ -1392,7 +1392,7 @@ TextureImporter:
       name: beef
       rect:
         serializedVersion: 2
-        x: 224
+        x: 225
         y: 384
         width: 32
         height: 32
@@ -1589,7 +1589,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: slat
+      name: salt
       rect:
         serializedVersion: 2
         x: 32
@@ -1669,7 +1669,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: candleholder
+      name: candleholders
       rect:
         serializedVersion: 2
         x: 160
@@ -1729,7 +1729,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: sheepwoolclothes
+      name: betterclothes
       rect:
         serializedVersion: 2
         x: 256
@@ -1889,7 +1889,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: rawsilk
+      name: silk
       rect:
         serializedVersion: 2
         x: 0
@@ -2109,7 +2109,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: items_91
+      name: milk
       rect:
         serializedVersion: 2
         x: 352
@@ -2129,11 +2129,11 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: items_92
+      name: cheese
       rect:
         serializedVersion: 2
         x: 384
-        y: 320
+        y: 321
         width: 32
         height: 32
       alignment: 0
@@ -2149,7 +2149,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: items_93
+      name: leathershoes
       rect:
         serializedVersion: 2
         x: 416

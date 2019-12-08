@@ -60,6 +60,8 @@ public class World : IGEventable {
         }
     }
 
+    public Vector2 Center => new Vector2(Width / 2, Height / 2);
+
     Action<Unit> cbUnitCreated;
     Action<Worker> cbWorkerCreated;
     Action<Tile> cbTileChanged;

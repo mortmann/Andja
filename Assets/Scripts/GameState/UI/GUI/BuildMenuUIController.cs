@@ -22,8 +22,14 @@ public class BuildMenuUIController : MonoBehaviour {
     static int selectedPopulationLevel = 0;
     Player player;
     public bool enableAllStructures = false;
+    internal static BuildMenuUIController Instance;
+
     // Use this for initialization
-    void Start() {
+    void Awake() {
+        if (Instance != null) {
+            Debug.LogError("There should never be two BuildMenuUIController.");
+        }
+        Instance = this;
 
         nameToGOMap = new Dictionary<string, GameObject>();
         nameToIDMap = new Dictionary<string, string>();

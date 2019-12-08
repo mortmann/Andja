@@ -169,6 +169,12 @@ public class SoundController : MonoBehaviour {
 
     }
 
+    internal void ChangeMusicPlayback(bool pause) {
+        if (pause)
+            musicSource.Pause();
+        else
+            musicSource.UnPause();
+    }
 
     void UpdateSoundEffects() {
         //We add to any gameobject that has been created from

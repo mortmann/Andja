@@ -323,7 +323,7 @@ public class EditorController : MonoBehaviour {
     /// 
     public void LoadIsland(SaveIsland file) {
         loadsavegame = file;
-        MenuController.instance.ChangeToEditorLoadScreen();
+        MenuController.Instance.ChangeToEditorLoadScreen();
     }
     void LoadSaveState(SaveIsland load) {
         Width = load.Width;

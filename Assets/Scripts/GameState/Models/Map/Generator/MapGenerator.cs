@@ -90,7 +90,7 @@ public class MapGenerator : MonoBehaviour {
             EditorGenerate(EditorController.Width, EditorController.Height, EditorController.GetEditorGenInfo());
         }
         if(EditorController.IsEditor&&EditorController.generate == false) {
-            Destroy(this);
+            Destroy();
         } 
         DontDestroyOnLoad(this.gameObject);
         
@@ -98,7 +98,7 @@ public class MapGenerator : MonoBehaviour {
         tileToStructure = new Dictionary<Tile, Structure>();
         islands = SaveController.GetIslands();
         if (WorldController.Instance!=null && WorldController.Instance.World != null)
-            Destroy(gameObject);
+            Destroy();
     }
 
     internal Dictionary<Tile, Structure> GetStructures() {

@@ -62,6 +62,17 @@ public class SaveController : MonoBehaviour {
         }
     }
 
+    internal static string GetLastSaveName() {
+        List<SaveMetaData> saveMetaDatas = new List<SaveMetaData>(GetMetaFiles(false));
+        if (saveMetaDatas.Count == 0)
+            return null;
+        saveMetaDatas.Sort((x, y) => x.saveTime.CompareTo(y.saveTime));
+        if(saveMetaDatas[0].safefileversion!=SaveFileVersion) {
+            return null;
+        } 
+        return saveMetaDatas[0].saveName;
+    }
+
     internal void QuickSave() {
         SaveGameState(quickSaveName);
     }

@@ -3,17 +3,19 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 using System;
+using UnityEngine.Tilemaps;
 
 public class AIController : MonoBehaviour {
     public static AIController Instance { get; protected set; }
     public Dictionary<Island, List<TileValue>> islandToMapSpaceValuedTiles;
     public Dictionary<Island, List<TileValue>> islandToCurrentSpaceValuedTiles;
+    public Dictionary<Island, Dictionary<Tile,TileValue>> islandsTileToValue;
 
     // Use this for initialization
     void Start () {
         islandToMapSpaceValuedTiles = new Dictionary<Island, List<TileValue>>();
         islandToCurrentSpaceValuedTiles = new Dictionary<Island, List<TileValue>>();
-        Debug.Log(Vector2.Max(new Vector2(8, 4), new Vector2(10, 1)));
+        islandsTileToValue = new Dictionary<Island, Dictionary<Tile, TileValue>>();
         if (Instance != null) {
             Debug.LogError("There should never be two AIController.");
         }
@@ -22,57 +24,76 @@ public class AIController : MonoBehaviour {
         AIPlayer test = new AIPlayer(PlayerController.GetPlayer(1));
         test.CalculatePlayersCombatValue();
         World world = World.Current;
+        Dictionary<string, TileBase> stringToBase = new Dictionary<string, TileBase>();
         foreach (Island island in World.Current.IslandList) {
-            Vector2[,] seValue = new Vector2[island.Width, island.Height];
-            Dictionary<TileType, Vector2[,]> typeToSEValue = new Dictionary<TileType, Vector2[,]>();
-            Dictionary<TileType, Vector2[,]> typeToNWValue = new Dictionary<TileType, Vector2[,]>();
+            Vector2[,] swValue = new Vector2[island.Width, island.Height];
+            Vector2[,] neValue = new Vector2[island.Width, island.Height];
+            Dictionary<TileType, Vector2[,]> typeToSWValue = new Dictionary<TileType, Vector2[,]>();
+            Dictionary<TileType, Vector2[,]> typeToNEValue = new Dictionary<TileType, Vector2[,]>();
             foreach (TileType tt in typeof(TileType).GetEnumValues()) {
-                typeToSEValue[tt] = new Vector2[island.Width, island.Height];
-                typeToNWValue[tt] = new Vector2[island.Width, island.Height];
+                typeToSWValue[tt] = new Vector2[island.Width, island.Height];
+                typeToNEValue[tt] = new Vector2[island.Width, island.Height];
             }
-            for (int y = 1; y < island.Height; y++) {
-                for (int x = 1; x < island.Width; x++) {
+            for (int y = 0; y < island.Height; y++) {
+                for (int x = 0; x < island.Width; x++) {
                     Tile t = world.GetTileAt(island.Minimum.x + x, island.Minimum.y + y);
+                    float startX = 0;
+                    float startY = 0;
                     if (t.CheckTile()) {
-                        seValue[x, y].x = seValue[x - 1, y].x + 1;
-                        seValue[x, y].y = seValue[x, y - 1].y + 1;
+                        if (x > 0)
+                            startX = swValue[x - 1, y].x;
+                        if (y > 0)
+                            startY = swValue[x, y - 1].y;
+                        swValue[x, y].x = startX + 1;
+                        swValue[x, y].y = startY + 1;
                     }
-                    typeToSEValue[t.Type][x, y].x = typeToSEValue[t.Type][x - 1, y].x + 1;
-                    typeToSEValue[t.Type][x, y].y = typeToSEValue[t.Type][x, y - 1].y + 1;
+                    if (x > 0)
+                        startX = typeToSWValue[t.Type][x - 1, y].x;
+                    if (y > 0)
+                        startY = typeToSWValue[t.Type][x, y - 1].y;
+                    typeToSWValue[t.Type][x, y].x = startX + 1;
+                    typeToSWValue[t.Type][x, y].y = startY + 1;
                 }
             }
-            Vector2[,] nwValue = new Vector2[island.Width, island.Height];
-            for (int y = island.Height-2; y > 1; y--) {
-                for (int x = island.Width-2; x > 1; x--) {
+            for (int y = island.Height-1; y > 0; y--) {
+                for (int x = island.Width-1; x > 0; x--) {
                     Tile t = world.GetTileAt(island.Minimum.x + x, island.Minimum.y + y);
+                    float startX = 0;
+                    float startY = 0;
                     if (t.CheckTile()) {
-                        nwValue[x, y].x = nwValue[x + 1, y].x + 1;
-                        nwValue[x, y].y = nwValue[x, y + 1].y + 1;
+                        if (x < island.Width - 1)
+                            startX = neValue[x + 1, y].x;
+                        if (y < island.Height - 1)
+                            startY = neValue[x, y + 1].y;
+                        neValue[x, y].x = startX + 1;
+                        neValue[x, y].y = startY + 1;
                     }
-                    typeToNWValue[t.Type][x, y].x = typeToNWValue[t.Type][x - 1, y].x + 1;
-                    typeToNWValue[t.Type][x, y].y = typeToNWValue[t.Type][x, y - 1].y + 1;
-
+                    if (x < island.Width - 1)
+                        startX = typeToNEValue[t.Type][x + 1, y].x;
+                    if (y < island.Height - 1)
+                        startY = typeToNEValue[t.Type][x, y + 1].y;
+                    typeToNEValue[t.Type][x, y].x = startX + 1;
+                    typeToNEValue[t.Type][x, y].y = startY + 1;
                 }
             }
             List<TileValue> values = new List<TileValue>();
-            for (int y = 1; y < island.Height; y++) {
-                for (int x = 1; x < island.Width; x++) {
+            for (int y = 0; y < island.Height; y++) {
+                for (int x = 0; x < island.Width; x++) {
                     Tile t = world.GetTileAt(island.Minimum.x + x, island.Minimum.y + y);
                     if (t.CheckTile()) {
                         values.Add(new TileValue(t,
-                                        seValue[x,y],
-                                        nwValue[x,y]
+                                        swValue[x,y],
+                                        neValue[x,y]
                               ));
                     } else {
                         values.Add(new TileValue(t,
-                                                typeToSEValue[t.Type][x, y],
-                                                typeToNWValue[t.Type][x, y]
+                                                typeToSWValue[t.Type][x, y],
+                                                typeToNEValue[t.Type][x, y]
                                         ));
                     }
                 }
             }
-            values.RemoveAll(x => x.MaxValue == 0);
-            islandToMapSpaceValuedTiles[island] = values;
+            //values.RemoveAll(x => x.MaxValue == 0);
             //Dictionary<int, List<TileValue>> maxToValue = new Dictionary<int, List<TileValue>>();
             //int i = 1;
             //while (values.Count > 0) {
@@ -84,15 +105,114 @@ public class AIController : MonoBehaviour {
             //    i++;
             //}
 
+            islandToMapSpaceValuedTiles[island] = values;
             islandToCurrentSpaceValuedTiles[island] = new List<TileValue>(from TileValue in values
                                                                           select new TileValue(TileValue)); //copy them
+            islandsTileToValue[island] = new Dictionary<Tile, TileValue>();
+            foreach (TileValue tv in islandToCurrentSpaceValuedTiles[island]) {
+                islandsTileToValue[island][tv.tile] = tv;
+            }
         }
         BuildController.Instance.RegisterStructureCreated(OnStructureCreated);
+        BuildController.Instance.RegisterStructureDestroyed(OnStructureDestroyed);
+
+        //TextToTexture = new TextToTexture(font, 32, 32, false);
+        //foreach (TileValue tv in values) {
+        //    string n = tv.ToString();
+        //    if (stringToBase.ContainsKey(n) == false) {
+        //        UnityEngine.Tilemaps.Tile tileBase = ScriptableObject.CreateInstance<UnityEngine.Tilemaps.Tile>();
+        //        tileBase.sprite = Sprite.Create(TextToTexture.CreateTextToTexture(n, 1, 1, 256, 1, 0.2f), new Rect(0, 0, 256, 256), Vector2.zero);
+        //        tileBase.colliderType = UnityEngine.Tilemaps.Tile.ColliderType.None;
+        //        stringToBase[n] = tileBase;
+        //    }
+        //}
+        //islandToMap = new Dictionary<Island, Tilemap>();
+        //foreach(Island i in world.IslandList) {
+        //    GameObject island_tilemap = new GameObject();
+        //    island_tilemap.transform.position = i.Placement;
+        //    Tilemap tilemap = island_tilemap.AddComponent<Tilemap>();
+        //    Grid g = island_tilemap.AddComponent<Grid>();
+        //    g.cellSize = new Vector3(1, 1, 0);
+        //    g.cellSwizzle = GridLayout.CellSwizzle.XYZ;
+        //    g.cellLayout = GridLayout.CellLayout.Rectangle;
+        //    TilemapRenderer trr = island_tilemap.AddComponent<TilemapRenderer>();
+        //    trr.sortingLayerName = "Tile";
+        //    tilemap.size = new Vector3Int(i.Width, i.Height, 0);
+        //    islandToMap.Add(i, tilemap);
+        //    foreach (Tile t in islandsTileToValue[i].Keys) {
+        //        TileValue tv = islandsTileToValue[i][t];
+        //        tilemap.SetTile(new Vector3Int((int)(t.X - i.Placement.x), (int)(t.Y - i.Placement.y), 0), stringToBase[tv.ToString()]);
+        //    }
+
+        //}
+
+
+    }
+
+    internal string GetTileValue(Tile tile) {
+        if (tile.Type == TileType.Ocean)
+            return "";
+        if(islandsTileToValue[tile.MyIsland].ContainsKey(tile)==false) {
+            return "ERROR";
+        }
+        return islandsTileToValue[tile.MyIsland][tile].ToString();
+    }
+
+    private void OnStructureDestroyed(Structure obj) {
     }
 
     private void OnStructureCreated(Structure structure, bool load) {
+        if (structure.CanBeBuildOver)
+            return;
+        Island island = structure.City.island;
+        List<Tile> toChange = new List<Tile>();
+        Dictionary<Tile, TileValue> tileValue = islandsTileToValue[island];
+        
+        foreach (Tile t in structure.myStructureTiles) {
+            tileValue[t].neValue = Vector2.zero;
+            tileValue[t].swValue = Vector2.zero;
+        }
+        foreach (Tile t in structure.myStructureTiles) {
+            ChangeTileValue(t.North(), 1, Direction.N);
+            ChangeTileValue(t.East(), 1, Direction.E);
+            ChangeTileValue(t.South(), 1, Direction.S);
+            ChangeTileValue(t.West(), 1, Direction.W);
+        }
         
     }
+
+    private void ChangeTileValue(Tile t,int value, Direction direction) {
+        if(t.Type == TileType.Ocean) {
+            return;
+        }
+        Dictionary<Tile, TileValue> tileValue = islandsTileToValue[t.MyIsland];
+        if (tileValue.ContainsKey(t) ==false) {
+            return;
+        }
+        if (tileValue[t].MaxValue == 0)
+            return;
+        Debug.Log(value +" Update Tile" + t );
+        switch (direction) {
+            case Direction.N:
+                tileValue[t].swValue.y = value;
+                ChangeTileValue(t.North(), ++value, Direction.N);
+                break;
+            case Direction.W:
+                tileValue[t].neValue.x = value;
+                ChangeTileValue(t.East(), ++value, Direction.E);
+                break;
+            case Direction.S:
+                tileValue[t].neValue.y = value;
+                ChangeTileValue(t.South(), ++value, Direction.S);
+                break;
+            case Direction.E:
+                tileValue[t].swValue.x = value;
+                ChangeTileValue(t.West(), ++value, Direction.W);
+                break;
+        }
+
+    }
+
 
     // Update is called once per frame
     void Update () {
@@ -108,24 +228,24 @@ public class TileValue {
     public TileType Type => tile.Type;
     public int X => tile.X;
     public int Y => tile.Y;
-    public int MaxValue => (int)Mathf.Max(seValue.x, seValue.y, nwValue.x, seValue.y);
-    public int MinValue => (int)Mathf.Min(seValue.x, seValue.y, nwValue.x, seValue.y);
-    public Vector2 MaxVector => Vector2.Max(seValue, nwValue);
-    public Vector2 MinVector => Vector2.Min(seValue, nwValue);
+    public int MaxValue => (int)Mathf.Max(swValue.x, swValue.y, neValue.x, swValue.y);
+    public int MinValue => (int)Mathf.Min(swValue.x, swValue.y, neValue.x, swValue.y);
+    public Vector2 MaxVector => Vector2.Max(swValue, neValue);
+    public Vector2 MinVector => Vector2.Min(swValue, neValue);
     public Tile tile;
-    public Vector2 seValue;
-    public Vector2 nwValue;
+    public Vector2 swValue;
+    public Vector2 neValue;
 
     public TileValue(Tile tile, Vector2 seValue, Vector2 nwValue) {
         this.tile = tile;
-        this.seValue = seValue;
-        this.nwValue = nwValue;
+        this.swValue = seValue;
+        this.neValue = nwValue;
     }
 
     public TileValue(TileValue tileValue) {
         this.tile = tileValue.tile;
-        this.seValue = tileValue.seValue;
-        this.nwValue = tileValue.nwValue;
+        this.swValue = tileValue.swValue;
+        this.neValue = tileValue.neValue;
     }
 
     public override bool Equals(object obj) {
@@ -139,8 +259,8 @@ public class TileValue {
 
     public override int GetHashCode() {
         var hashCode = 971533886;
-        hashCode = hashCode * -1521134295 + seValue.GetHashCode();
-        hashCode = hashCode * -1521134295 + nwValue.GetHashCode();
+        hashCode = hashCode * -1521134295 + swValue.GetHashCode();
+        hashCode = hashCode * -1521134295 + neValue.GetHashCode();
         return hashCode;
     }
 
@@ -156,7 +276,7 @@ public class TileValue {
         }
 
         // Return true if the fields match:
-        return a.seValue == b.seValue && a.nwValue == b.nwValue;
+        return a.swValue == b.swValue && a.neValue == b.neValue;
     }
     public static bool operator !=(TileValue a, TileValue b) {
         // If both are null, or both are same instance, return false.
@@ -170,7 +290,11 @@ public class TileValue {
         }
 
         // Return true if the fields not match:
-        return a.seValue != b.seValue && a.nwValue != b.nwValue;
+        return a.swValue != b.swValue && a.neValue != b.neValue;
+    }
+
+    public override string ToString() {
+        return "N" + neValue.y + "\nW" + swValue.x +"  E" + neValue.x + "\nS" + swValue.y ;
     }
 }	
 public class AIPlayer {

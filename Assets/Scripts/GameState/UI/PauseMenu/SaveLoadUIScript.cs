@@ -67,8 +67,11 @@ public class SaveLoadUIScript : MonoBehaviour {
         if (selected == null) {
             return;
         }
-        if(SaveController.Instance.UnsavedProgress) {
+        if(SaveController.Instance?.UnsavedProgress == true) {
             FindObjectOfType<YesNoDialog>().Show(YesNoDialogTypes.UnsavedProgress, DoLoad, null);
+        }
+        if(SaveController.Instance==null) {
+            DoLoad();
         }
     }
     private void DoLoad() {
@@ -112,12 +115,7 @@ public class SaveLoadUIScript : MonoBehaviour {
         SaveController.Instance.SaveIslandState(name);
     }
     private void GameLoad() {
-        //if (WorldController.Instance != null)
-        //    WorldController.Instance.
-        //    //SaveController.Instance.LoadGameState(selected);
-        //else
-        GameDataHolder.setloadsavegame = selected;
-        GameObject.FindObjectOfType<MenuController>().ChangeToGameStateLoadScreen();
+        MenuController.Instance.LoadSaveGame(selected);
     }
     private void EditorLoad() {
         SaveController.Instance.LoadIsland(nameToFile[selected].saveName);

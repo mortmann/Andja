@@ -21,7 +21,7 @@ public class SoundController : MonoBehaviour {
     public AudioSource uiSource;
     public AudioSource soundEffectSource;
     public GameObject soundEffect2DGO;
-    List<AudioSource> playedAudios;
+    List<AudioSource> deleteOnPlayedAudios;
 
     CameraController cameraController;
     StructureSpriteController ssc;
@@ -55,7 +55,7 @@ public class SoundController : MonoBehaviour {
         BuildController.Instance.RegisterStructureCreated(OnBuild);
         BuildController.Instance.RegisterCityCreated(OnCityCreate);
         EventController.Instance.RegisterOnEvent(OnEventStart, OnEventEnd);
-        playedAudios = new List<AudioSource>();
+        deleteOnPlayedAudios = new List<AudioSource>();
         nameToMetaData = new Dictionary<string, SoundMetaData>();
         windAmbientSource.loop = true;
         ssc = FindObjectOfType<StructureSpriteController>();
@@ -95,10 +95,10 @@ public class SoundController : MonoBehaviour {
         windAmbientSource.volume = Mathf.Clamp(1 - ambientSource.volume - 0.7f, 0.03f, 0.15f);
         UpdateAmbient();
         UpdateSoundEffects();
-        for (int i = playedAudios.Count - 1; i >= 0; i--) {
-            if (playedAudios[i].isPlaying == false) {
-                Destroy(playedAudios[i].gameObject);
-                playedAudios.RemoveAt(i);
+        for (int i = deleteOnPlayedAudios.Count - 1; i >= 0; i--) {
+            if (deleteOnPlayedAudios[i].isPlaying == false) {
+                Destroy(deleteOnPlayedAudios[i].gameObject);
+                deleteOnPlayedAudios.RemoveAt(i);
             }
         }
 
@@ -298,8 +298,7 @@ public class SoundController : MonoBehaviour {
         g.name = name;
         g.transform.SetParent(soundEffect2DGO.transform);
         AudioSource ac = g.GetComponent<AudioSource>();
-        StartCoroutine(StartFile(nameToMetaData["build"], ac));
-        playedAudios.Add(ac);
+        StartCoroutine(StartFile(nameToMetaData["build"], ac, true));
     }
     public void OnCityCreate(City c) {
         if (c.playerNumber != PlayerController.currentPlayerNumber) {
@@ -309,8 +308,7 @@ public class SoundController : MonoBehaviour {
         GameObject g = Instantiate(soundEffect2DGO);
         g.transform.SetParent(soundEffect2DGO.transform);
         AudioSource ac = g.GetComponent<AudioSource>();
-        StartCoroutine(StartFile(nameToMetaData["citybuild"], ac));
-        playedAudios.Add(ac);
+        StartCoroutine(StartFile(nameToMetaData["citybuild"], ac,true));
     }
     public void UpdateAmbient() {
         AmbientType ambient = AmbientType.Water;
@@ -363,29 +361,19 @@ public class SoundController : MonoBehaviour {
         //Maybe never used?
     }
 
-    IEnumerator StartFile(SoundMetaData meta, AudioSource toPlay) {
+    IEnumerator StartFile(SoundMetaData meta, AudioSource toPlay, bool deleteOnDone = false) {
         string musicFile = nameToMetaData[meta.name].file;
         if (File.Exists(musicFile) == false)
             yield return null;
         //System.Diagnostics.Stopwatch loadingStopWatch = new System.Diagnostics.Stopwatch();
         //loadingStopWatch.Start();
-        /* outdated
-        using (var www = new WWW(url)) {
-            if(meta.fileExtension == AudioType.ACC || meta.fileExtension == AudioType.UNKNOWN) // not supported so it has to be unkown audiotype
-                toPlay.clip = www.GetAudioClip(false,true);
-            else // it is faster when knwon file to load it
-                toPlay.clip = www.GetAudioClip(false, true, meta.fileExtension);
-
-            if (toPlay.clip.loadState != AudioDataLoadState.Loaded)
-                yield return www;
-            if (!toPlay.isPlaying && toPlay.clip!=null&& toPlay.clip.loadState==AudioDataLoadState.Loaded)
-                toPlay.Play();
-            www.Dispose();
-        }
-        */
+        //Using www is outdated so using unitywebrequest 
         string url = string.Format("file://{0}", musicFile);
         AudioType audioType = meta.fileExtension;
         using (UnityWebRequest www = UnityWebRequestMultimedia.GetAudioClip(url, audioType)) {
+            //not sure if it has any benefit at all -- but should not be negativ ...
+            //hopefully atleast 
+            ((DownloadHandlerAudioClip)www.downloadHandler).streamAudio = true;
             yield return www.SendWebRequest();
             if (www.isNetworkError) {
                 Debug.Log(www.error);
@@ -400,7 +388,9 @@ public class SoundController : MonoBehaviour {
             yield return toPlay.clip.loadState;
         if (!toPlay.isPlaying && toPlay.clip != null && toPlay.clip.loadState == AudioDataLoadState.Loaded)
             toPlay.Play();
-        //Debug.Log("StartFile " +loadingStopWatch.Elapsed);
+        if(deleteOnDone)
+            deleteOnPlayedAudios.Add(toPlay);
+        //Debug.Log("StartFile " + loadingStopWatch.Elapsed);
         yield return null;
     }
 

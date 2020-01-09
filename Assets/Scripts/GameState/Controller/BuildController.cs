@@ -41,6 +41,7 @@ public class BuildController : MonoBehaviour {
     public Structure toBuildStructure;
 
     Action<Structure, bool> cbStructureCreated;
+    Action<Structure> cbAnyStructureDestroyed;
     Action<City> cbCityCreated;
     Action<BuildStateModes> cbBuildStateChange;
 
@@ -256,7 +257,7 @@ public class BuildController : MonoBehaviour {
         RealBuild(s.GetBuildingTiles(t.X, t.Y), s, -1, true, false);
     }
     public void OnDestroyStructure(Structure str) {
-        //		str.City.removeStructure (str);
+        cbAnyStructureDestroyed?.Invoke(str);
     }
     public bool PlayerHasEnoughMoney(Structure s, int playerNumber) {
         if (PlayerController.GetPlayer(playerNumber).TreasuryBalance >= s.BuildCost) {
@@ -302,6 +303,12 @@ public class BuildController : MonoBehaviour {
     }
     public void UnregisterStructureCreated(Action<Structure, bool> callbackfunc) {
         cbStructureCreated -= callbackfunc;
+    }
+    public void RegisterStructureDestroyed(Action<Structure> callbackfunc) {
+        cbAnyStructureDestroyed += callbackfunc;
+    }
+    public void UnregisterStructureDestroyed(Action<Structure> callbackfunc) {
+        cbAnyStructureDestroyed -= callbackfunc;
     }
     public void RegisterCityCreated(Action<City> callbackfunc) {
         cbCityCreated += callbackfunc;

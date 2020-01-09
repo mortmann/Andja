@@ -39,10 +39,12 @@ public class GS_Selectable : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
     void Update() {
         // If we're currently hovering over the button and we moved our mouse
         // switch the selection to this button.
-        if (MenuController.instance.currentMouseOverGameObject == gameObject && Input.mousePosition != lastPointerPositon) {
+        if (MenuController.Instance.currentMouseOverGameObject == gameObject && Input.mousePosition != lastPointerPositon) {
             EventSystem.current.SetSelectedGameObject(gameObject);
         }
-
+        if(button!=null&&button.interactable==false) {
+            return;
+        }
         // Set the color of the button depending on the selected state.
         if (EventSystem.current.currentSelectedGameObject == gameObject) {
             if (t <= 1f) {
@@ -72,11 +74,11 @@ public class GS_Selectable : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
      * Handle hovering over the button with the mouse.
      */
     public void OnPointerEnter(PointerEventData eventData) {
-        MenuController.instance.currentMouseOverGameObject = gameObject;
+        MenuController.Instance.currentMouseOverGameObject = gameObject;
         EventSystem.current.SetSelectedGameObject(gameObject);
     }
     public void OnPointerExit(PointerEventData eventData) {
-        MenuController.instance.currentMouseOverGameObject = null;
+        MenuController.Instance.currentMouseOverGameObject = null;
     }
 
     /**
@@ -97,7 +99,7 @@ public class GS_Selectable : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
 
         // Set the selected game object in the event system to this button so
         // it works properly if we switch to the keyboard.
-        MenuController.instance.currentButton = button;
+        MenuController.Instance.currentButton = button;
         MenuAudioManager.Instance.PlayClickSound();
     }
 
@@ -110,7 +112,7 @@ public class GS_Selectable : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
             return;
         }
 
-        MenuController.instance.currentButton = button;
+        MenuController.Instance.currentButton = button;
         MenuAudioManager.Instance.PlayClickSound();
     }
 

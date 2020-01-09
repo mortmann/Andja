@@ -17,7 +17,7 @@ public class TextLanguageSetter : MonoBehaviour {
         Transform current = transform;
         if (name.StartsWith("*") == false) {
             //have to make this like this cause you cant compare transform to null transform
-                while (current.parent != null && current.name.StartsWith("#")==false) {
+                while (current.parent != null && current.name.StartsWith("%")==false) {
                     realname = current.name + "/" + realname;
                     current = current.parent;
                 }

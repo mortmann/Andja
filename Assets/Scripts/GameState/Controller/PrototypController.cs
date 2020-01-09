@@ -30,7 +30,7 @@ public class PrototypController : MonoBehaviour {
 
     public WarehouseStructure FirstLevelWarehouse { get; private set; }
 
-   
+
 
     public IReadOnlyDictionary<Climate, List<Fertility>> AllFertilities => allFertilities;
     public IReadOnlyDictionary<string, Fertility> IdToFertilities => idToFertilities;
@@ -268,7 +268,7 @@ public class PrototypController : MonoBehaviour {
         Debug.Log("Read in populationLevel: " + populationLevelDatas.Count);
         Debug.Log("Read in effects: " + effectPrototypeDatas.Count);
         Debug.Log("Read in gameevents: " + gameEventPrototypeDatas.Count);
-        
+
         //Set it to default so it doesnt interfer with user interface informations
         System.Threading.Thread.CurrentThread.CurrentCulture = System.Globalization.CultureInfo.InstalledUICulture;
 
@@ -276,7 +276,7 @@ public class PrototypController : MonoBehaviour {
     }
 
     private void CalculateOptimalProportions() {
-        List<StructurePrototypeData> structures = new List<StructurePrototypeData>( structurePrototypeDatas.Values);
+        List<StructurePrototypeData> structures = new List<StructurePrototypeData>(structurePrototypeDatas.Values);
         List<FarmPrototypeData> farms = new List<FarmPrototypeData>(structures.OfType<FarmPrototypeData>());
         List<MinePrototypeData> mines = new List<MinePrototypeData>(structures.OfType<MinePrototypeData>());
         List<ProductionPrototypeData> productions = new List<ProductionPrototypeData>(structures.OfType<ProductionPrototypeData>());
@@ -288,7 +288,7 @@ public class PrototypController : MonoBehaviour {
                 float ppm = ptime == 0 ? float.MaxValue : 60f / ptime;
                 Produce p = new Produce {
                     item = outItem,
-                    producePerMinute = ppm ,
+                    producePerMinute = ppm,
                     producingStructurePD = fpd
                 };
                 if (itemIDToProduce.ContainsKey(outItem.ID)) {
@@ -335,8 +335,8 @@ public class PrototypController : MonoBehaviour {
                 }
             }
         }
-        proportions = new Dictionary<string,List<NeededProportions>>();
-        foreach(Produce prodProduce in productionsProduces) {
+        proportions = new Dictionary<string, List<NeededProportions>>();
+        foreach (Produce prodProduce in productionsProduces) {
             NeededProportions np = new NeededProportions {
                 produce = prodProduce,
                 neededRatio = new Dictionary<Produce, float>()
@@ -344,13 +344,13 @@ public class PrototypController : MonoBehaviour {
             if (prodProduce.needed == null)
                 continue;
             foreach (Item need in prodProduce.needed) {
-                if(itemIDToProduce.ContainsKey(need.ID) == false) {
+                if (itemIDToProduce.ContainsKey(need.ID) == false) {
                     Debug.LogWarning("NEEDED ITEM CANNOT BE PRODUCED! -- Wanted beahivour? Item-ID:" + need.ID);
                     continue;
                 }
-                foreach(Produce produce in itemIDToProduce[need.ID]) {
-                    float f1 = (1f/(float)prodProduce.item.count * prodProduce.producePerMinute);
-                    float f2 = (1f/(float)produce.item.count * produce.producePerMinute);
+                foreach (Produce produce in itemIDToProduce[need.ID]) {
+                    float f1 = (1f / (float)prodProduce.item.count * prodProduce.producePerMinute);
+                    float f2 = (1f / (float)produce.item.count * produce.producePerMinute);
                     if (f2 == 0)
                         continue;
                     np.neededRatio[produce] = f1 / f2;
@@ -366,7 +366,7 @@ public class PrototypController : MonoBehaviour {
 
     }
 
-    
+
 
 
     internal int GetMaxStructureLevelForStructureType(Type type) {
@@ -424,7 +424,7 @@ public class PrototypController : MonoBehaviour {
                 EffectPrototypeData epd = new EffectPrototypeData();
                 string id = node.GetAttribute("ID");
                 SetData<EffectPrototypeData>(node, ref epd);
-                effectPrototypeDatas[id]=epd;
+                effectPrototypeDatas[id] = epd;
             }
         }
         XmlNodeList listGameEvent = xmlDoc.SelectNodes("events/GameEvent");
@@ -436,7 +436,7 @@ public class PrototypController : MonoBehaviour {
                 gameEventPrototypeDatas[id] = gepd;
             }
         }
-        
+
     }
 
     private void ReadOtherFromXML(string file) {
@@ -492,7 +492,7 @@ public class PrototypController : MonoBehaviour {
                 damageTypeDatas[id] = at;
             }
         }
-        
+
     }
     private void ReadItemsFromXML(string file) {
         XmlDocument xmlDoc = new XmlDocument(); // xmlDoc is the new xml document.
@@ -539,7 +539,7 @@ public class PrototypController : MonoBehaviour {
                 unitPrototypes[id] = new Ship(id, spd);
             }
         }
-        
+
     }
     private void ReadFertilitiesFromXML(string file) {
         XmlDocument xmlDoc = new XmlDocument(); // xmlDoc is the new xml document.
@@ -627,7 +627,7 @@ public class PrototypController : MonoBehaviour {
     }
     private void ReadStructuresFromXML(string file) {
         XmlDocument xmlDoc = new XmlDocument();
-         // ((TextAsset)Resources.Load("XMLs/GameState/structures", typeof(TextAsset)));
+        // ((TextAsset)Resources.Load("XMLs/GameState/structures", typeof(TextAsset)));
         xmlDoc.LoadXml(file); // load the file.
         ReadRoads(xmlDoc.SelectSingleNode("structures/roads"));
         ReadGrowables(xmlDoc.SelectSingleNode("structures/growables"));
@@ -654,7 +654,7 @@ public class PrototypController : MonoBehaviour {
             //THESE are fix and are not changed for any 
             //!not anymore
             SetData<ServiceStructurePrototypeData>(node, ref sspd);
-            foreach(Effect effect in sspd.effectsOnTargets) {
+            foreach (Effect effect in sspd.effectsOnTargets) {
                 effect.Serialize = false;
             }
             structurePrototypeDatas[ID] = sspd;
@@ -669,10 +669,12 @@ public class PrototypController : MonoBehaviour {
             string ID = node.GetAttribute("ID");
             MilitaryStructurePrototypeData mpd = new MilitaryStructurePrototypeData();
             mpd.ID = ID;
-
-            //THESE are fix and are not changed for any 
-            //!not anymore
             SetData<MilitaryStructurePrototypeData>(node, ref mpd);
+            foreach (Unit u in mpd.canBeBuildUnits) {
+                if (u.IsShip) {
+                    mpd.canBuildShips = true;
+                }
+            }
             structurePrototypeDatas[ID] = mpd;
             structurePrototypes[ID] = new MilitaryStructure(ID, mpd);
         }
@@ -851,7 +853,7 @@ public class PrototypController : MonoBehaviour {
             structurePrototypes[ID] = new HomeStructure(ID, hpd);
 
             string prevID = GetStructureIDForTypeNeighbourStructureLevel(typeof(HomeStructure), hpd.structureLevel, false);
-            if (String.IsNullOrEmpty(prevID)==false) {
+            if (String.IsNullOrEmpty(prevID) == false) {
                 HomePrototypeData prev = (HomePrototypeData)structurePrototypeDatas[prevID];
                 ((HomePrototypeData)hpd).previouseMaxLivingSpaces = prev == null ? 0 : prev.maxLivingSpaces;
                 prev.upgradeItems = hpd.buildingItems;
@@ -886,7 +888,7 @@ public class PrototypController : MonoBehaviour {
             structurePrototypeDatas[ID] = mpd;
             structurePrototypes[ID] = new WarehouseStructure(ID, mpd);
 
-            if (FirstLevelWarehouse==null || mpd.structureLevel < FirstLevelWarehouse.StructureLevel) {
+            if (FirstLevelWarehouse == null || mpd.structureLevel < FirstLevelWarehouse.StructureLevel) {
                 FirstLevelWarehouse = (WarehouseStructure)structurePrototypes[ID];
             }
         }
@@ -1011,7 +1013,7 @@ public class PrototypController : MonoBehaviour {
                     fi.SetValue(data, Enum.Parse(fi.FieldType, currentNode.InnerXml, true));
                     continue;
                 }
-                if (fi.FieldType.IsArray && fi.FieldType.GetArrayRank()==1 && fi.FieldType.GetElementType().IsEnum) {
+                if (fi.FieldType.IsArray && fi.FieldType.GetArrayRank() == 1 && fi.FieldType.GetElementType().IsEnum) {
                     var listType = typeof(List<>);
                     var constructedListType = listType.MakeGenericType(fi.FieldType.GetElementType());
                     var list = (IList)Activator.CreateInstance(constructedListType);
@@ -1028,11 +1030,11 @@ public class PrototypController : MonoBehaviour {
                     fi.SetValue(data, Convert.ChangeType(enumArray, fi.FieldType));
                     continue;
                 }
-                if (fi.FieldType.IsArray && fi.FieldType.GetArrayRank() == 2 && fi.FieldType.GetElementType()==typeof(TileType?)) {
+                if (fi.FieldType.IsArray && fi.FieldType.GetArrayRank() == 2 && fi.FieldType.GetElementType() == typeof(TileType?)) {
                     int firstLength = 0;
                     int secondLength = 0;
 
-                    if (int.TryParse(currentNode.Attributes.GetNamedItem("length").Value,out firstLength) ==false){
+                    if (int.TryParse(currentNode.Attributes.GetNamedItem("length").Value, out firstLength) == false) {
 
                         continue;
                     }
@@ -1046,10 +1048,10 @@ public class PrototypController : MonoBehaviour {
                         var constructedSecondListType = listType.MakeGenericType(fi.FieldType.GetElementType());
                         var secondlist = (IList)Activator.CreateInstance(constructedSecondListType);
                         string[] singleValues = item.InnerXml.Split(',');
-                        if(singleValues.Length < secondLength) {
+                        if (singleValues.Length < secondLength) {
                             continue;
                         }
-                        foreach(string single in singleValues) {
+                        foreach (string single in singleValues) {
                             //own try parse because in needs non nullable
                             try {
                                 secondlist.Add(Enum.Parse(typeof(TileType), single.Trim(), true));
@@ -1078,12 +1080,12 @@ public class PrototypController : MonoBehaviour {
                     Dictionary<Target, List<int>> range = new Dictionary<Target, List<int>>();
                     foreach (XmlNode child in currentNode.ChildNodes) {
                         Target target = Target.World;
-                        if(child.Attributes[0] == null)
+                        if (child.Attributes[0] == null)
                             continue;
                         if (Enum.TryParse<Target>(child.Attributes[0].InnerXml, true, out target) == false)
                             continue;
                         String[] ids = child.InnerXml.Split(',');
-                        if(ids.Length == 0) {
+                        if (ids.Length == 0) {
                             continue;
                         }
                         range.Add(target, new List<int>());
@@ -1097,12 +1099,12 @@ public class PrototypController : MonoBehaviour {
                     }
                     //clean up empty target groups
                     List<Target> targets = new List<Target>(range.Keys);
-                    foreach(Target t in targets) {
+                    foreach (Target t in targets) {
                         if (range[t].Count == 0)
                             targets.Remove(t);
                     }
                     //only if it has stuff we need to set it
-                    if(range.Count > 0)
+                    if (range.Count > 0)
                         fi.SetValue(data, range);
                     continue;
                 }
@@ -1230,12 +1232,35 @@ public class PrototypController : MonoBehaviour {
         return idToFertilities[id];
     }
     private string LoadXML(string name) {
-        string path = System.IO.Path.Combine(ConstantPathHolder.StreamingAssets,"XMLs", "GameState", name + ".xml");
+        string path = System.IO.Path.Combine(ConstantPathHolder.StreamingAssets, "XMLs", "GameState", name + ".xml");
         return System.IO.File.ReadAllText(path);
     }
     void OnDestroy() {
         Instance = null;
     }
+    Dictionary<string, Func<StructurePrototypeData, string>> StructurePlaceholderToResult = new Dictionary<string, Func<StructurePrototypeData, string>> {
+        { "$b", (x)=> x.buildcost.ToString() },
+        { "$m", (x)=> x.maintenanceCost.ToString() },
+        { "$u", (x)=> x.upgradeCost.ToString() },
+        { "$pc", (x)=> x.populationCount.ToString() },
+        { "$pl", (x)=> x.populationLevel.ToString() },
+        { "$r", (x)=> x.structureRange.ToString() },
+        { "$b$", (x)=> { string s=""; x.buildingItems.ToList().ForEach(i=>s+= ", "+ i.count + " " + i.Name); return s; } },
+    };
+    Dictionary<string, Func<ProductionPrototypeData, string>> ProductionPrototypePlaceholderToResult = new Dictionary<string, Func<ProductionPrototypeData, string>> {
+        { "$i$", (x)=> { string s=""; x.intake.ToList().ForEach(i=>s+= ", " + i.count + " " + i.Name); return s; } },
+        { "$o$", (x)=> { string s=""; x.output.ToList().ForEach(i=>s+= ", " + i.count + " " + i.Name); return s; } },
+        { "$pt", (x)=> x.produceTime.ToString() },
+    };
+    public string ConvertStructureStringPlaceholders(string toReplace, StructurePrototypeData data) {
+        foreach(string find in StructurePlaceholderToResult.Keys) {
+            find.Replace(find, StructurePlaceholderToResult[find]?.Invoke(data));
+        }
+        return null;
+    }
+
+
+
 }
 
 

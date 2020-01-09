@@ -7,6 +7,8 @@ public class MilitaryStructurePrototypeData : StructurePrototypeData {
     public int buildQueueLength = 1;
     public Combat.DamageType MyDamageType;
     public int damage;
+    public bool canBuildShips; //is set in prototypcontroller
+
 }
 
 [JsonObject(MemberSerialization.OptIn)]
@@ -14,6 +16,7 @@ public class MilitaryStructure : TargetStructure, IWarfare {
     [JsonPropertyAttribute] float buildTimer;
     [JsonPropertyAttribute] Queue<Unit> toBuildUnits;
 
+    bool CanBuildShips => MilitaryStructureData.canBuildShips;
     List<Tile> toPlaceUnitTiles;
     public float ProgressPercentage => CurrentlyBuildingUnit != null ? buildTimer / CurrentlyBuildingUnit.BuildTime : 0;
     public Unit[] CanBeBuildUnits => MilitaryStructureData.canBeBuildUnits;
@@ -62,7 +65,7 @@ public class MilitaryStructure : TargetStructure, IWarfare {
             if (t.Structure != null && t.Structure.IsWalkable == false) {
                 return;
             }
-            if (MustBeBuildOnShore && t.Type != TileType.Ocean) {
+            if (CanBuildShips && t.Type != TileType.Ocean) {
                 continue;
             }
             toPlaceUnitTiles.Add(t);

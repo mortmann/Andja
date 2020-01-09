@@ -95,6 +95,10 @@ public class Tile : IComparable<Tile>, IEqualityComparer<Tile> {
 
     }
 
+    internal string ToBaseString() {
+        return string.Format("[{0}:{1}]Type:{2}", X, Y, Type);
+    }
+
     /// <summary>
     /// Gets the neighbours.
     /// </summary>

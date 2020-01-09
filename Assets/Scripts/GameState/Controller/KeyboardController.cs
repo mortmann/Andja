@@ -69,7 +69,7 @@ public class KeyboardController : MonoBehaviour {
             }
         }
         if (InputHandler.GetButtonDown(InputName.Screenshot)) {
-            ScreenCapture.CaptureScreenshot("screenshot_" + System.DateTime.Now.ToString("dd_MM_yyyy-hh_mm_ss_ff") + ".jpg");
+            ScreenCapture.CaptureScreenshot("screenshot_" + System.DateTime.Now.ToString("dd_MM_yyyy-hh_mm_ss_ff") + ".png");
         }
         if (Application.isEditor) {
             if (Input.GetKey(KeyCode.LeftShift)) {
@@ -139,7 +139,7 @@ public class KeyboardController : MonoBehaviour {
         videoPlayer.source = VideoSource.Url;
         videoPlayer.url = "https://ia801602.us.archive.org/11/items/Rick_Astley_Never_Gonna_Give_You_Up/Rick_Astley_Never_Gonna_Give_You_Up.mp4";
         videoPlayer.audioOutputMode = VideoAudioOutputMode.Direct;
-        float musicVolume = MenuAudioManager.Instance.GetVolumeFor(VolumeType.MusicVolume) / 100; //returns int %
+        float musicVolume = MenuAudioManager.Instance.GetVolumeFor(VolumeType.Music) / 100; //returns int %
         videoPlayer.SetDirectAudioVolume(0, SoundController.Instance.musicSource.volume * musicVolume);
         videoPlayer.EnableAudioTrack(0, true);
         videoPlayer.renderMode = VideoRenderMode.CameraNearPlane;

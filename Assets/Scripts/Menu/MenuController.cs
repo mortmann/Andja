@@ -3,29 +3,26 @@ using UnityEngine.Audio;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
+using System;
 
 public class MenuController : MonoBehaviour {
-    public static MenuController instance;
+    public static MenuController Instance;
 
     public GameObject menu;
     public GameObject[] panels;
-    public bool IsMainMenu = false;
+    public GameObject[] ActiveMainMenu;
+    public GameObject[] ActiveNotMainMenu;
+    public Button ResumeButton;
+
     // Used by the buttons which open panels so we can return to the same button
     // after closing the panel.
     [HideInInspector]
     public Button currentButton;
-
     // Used to determine which game object our mouse pointer is currently hovering over.
     [HideInInspector]
     public GameObject currentMouseOverGameObject;
 
-    // Chromatic abbrevation and vignetting share an image effect so we have
-    // some public variables here so each of them can check if the other is
-    // active or not before disabling/enabling the image effect component.
-    [HideInInspector]
-    public bool chromaticEnabled;
-    [HideInInspector]
-    public bool vignetteEnabled;
+    public bool IsMainMenu => SceneManager.GetActiveScene().name=="MainMenu";
 
     static bool mainMenuOpen = false;
     bool panelOpen = false;
@@ -37,9 +34,26 @@ public class MenuController : MonoBehaviour {
             }
         }
         menu.SetActive(true);
+        if(IsMainMenu) {
+            string lastsave = SaveController.GetLastSaveName();
+            if (lastsave == null) {
+                ResumeButton.GetComponentInChildren<Text>().text = " ";
+                ResumeButton.interactable = false;
+            }
+            else {
+                ResumeButton.GetComponentInChildren<Text>().text += " " + lastsave;
+            }
+        }
+        
+        foreach (GameObject g in ActiveMainMenu) {
+            g.SetActive(IsMainMenu);
+        }
+        foreach (GameObject g in ActiveNotMainMenu) {
+            g.SetActive(IsMainMenu == false);
+        }
     }
     void Awake() {
-        instance = this;
+        Instance = this;
     }
 
     void Update() {
@@ -61,7 +75,13 @@ public class MenuController : MonoBehaviour {
     public void GenericBackButton() {
         HideAllPanels();
     }
-
+    public void Resume() {
+        if(IsMainMenu) {
+            LoadSaveGame(SaveController.GetLastSaveName());
+        } else {
+            UIController.Instance?.TogglePauseMenu();
+        }
+    }
     void HideAllPanels() {
         foreach (GameObject panel in panels) {
             panel.SetActive(false);
@@ -90,14 +110,14 @@ public class MenuController : MonoBehaviour {
         menu.SetActive(false);
         mainMenuOpen = false;
     }
-    public void QuitToMenu(bool force = false) {
-        if (SaveController.Instance.UnsavedProgress == false && force == false) {
+    public void QuitToMenu() {
+        if (SaveController.Instance.UnsavedProgress == false) {
             return;
         }
         FindObjectOfType<YesNoDialog>().Show(YesNoDialogTypes.UnsavedProgress, ChangeToMainMenuScreen, null);
     }
-    public void QuitToDesktop(bool force = false) {
-        if (SaveController.Instance?.UnsavedProgress == false && force == false) {
+    public void QuitToDesktop() {
+        if (SaveController.Instance?.UnsavedProgress == false) {
             return;
         }
         //If we are running in a standalone build of the game
@@ -123,7 +143,10 @@ public class MenuController : MonoBehaviour {
 #endif
     }
 
-    public GameObject dialog;
+    internal void LoadSaveGame(string selected) {
+        GameDataHolder.setloadsavegame = selected;
+        ChangeToGameStateLoadScreen();
+    }
 
     public void ChangeToGameStateLoadScreen() {
         SceneManager.LoadScene("GameStateLoadingScreen");

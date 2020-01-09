@@ -5,7 +5,7 @@ using System.IO;
 using Newtonsoft.Json;
 using System;
 
-public enum VolumeType { MasterVolume, SoundEffectsVolume, AmbientVolume, MusicVolume, UIVolume }
+public enum VolumeType { Master, SoundEffects, Ambient, Music, UI }
 
 public class MenuAudioManager : MonoBehaviour {
     public static string fileName = "volume.ini";
@@ -97,19 +97,19 @@ public class MenuAudioManager : MonoBehaviour {
     public void ReadVolumes() {
         string filePath = System.IO.Path.Combine(Application.dataPath.Replace("/Assets", ""), fileName);
         if (File.Exists(filePath) == false) {
-            SetVolume(100,VolumeType.MasterVolume);
-            SetVolume(50, VolumeType.MusicVolume);
-            SetVolume(80, VolumeType.AmbientVolume);
-            SetVolume(50, VolumeType.UIVolume);
-            SetVolume(70, VolumeType.SoundEffectsVolume);
+            SetVolume(100,VolumeType.Master);
+            SetVolume(50, VolumeType.Music);
+            SetVolume(80, VolumeType.Ambient);
+            SetVolume(50, VolumeType.UI);
+            SetVolume(70, VolumeType.SoundEffects);
             return;
         }
         volumes = JsonConvert.DeserializeObject<Dictionary<VolumeType, int>>(File.ReadAllText(filePath));
-        SetVolume(GetVolumeFor(VolumeType.AmbientVolume), VolumeType.AmbientVolume);
-        SetVolume(GetVolumeFor(VolumeType.MasterVolume), VolumeType.MasterVolume);
-        SetVolume(GetVolumeFor(VolumeType.MusicVolume), VolumeType.MusicVolume);
-        SetVolume(GetVolumeFor(VolumeType.UIVolume), VolumeType.UIVolume);
-        SetVolume(GetVolumeFor(VolumeType.SoundEffectsVolume), VolumeType.SoundEffectsVolume);
+        SetVolume(GetVolumeFor(VolumeType.Ambient), VolumeType.Ambient);
+        SetVolume(GetVolumeFor(VolumeType.Master), VolumeType.Master);
+        SetVolume(GetVolumeFor(VolumeType.Music), VolumeType.Music);
+        SetVolume(GetVolumeFor(VolumeType.UI), VolumeType.UI);
+        SetVolume(GetVolumeFor(VolumeType.SoundEffects), VolumeType.SoundEffects);
     }
     public static Dictionary<string, int> StaticReadSoundVolumes() {
         string filePath = System.IO.Path.Combine(Application.dataPath.Replace("/Assets", ""), fileName);

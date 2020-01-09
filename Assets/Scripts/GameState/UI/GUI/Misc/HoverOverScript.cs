@@ -17,12 +17,21 @@ public class HoverOverScript : MonoBehaviour {
     private void Start() {
         rect = GetComponent<RectTransform>();
     }
-    public void Show(string header, string description = null) {
+    public void Show(string header) {
+        Show(header, null);
+    }
+    public void Show(string header, params string[] descriptions) {
         transform.GetChild(0).gameObject.SetActive(true);
         Header.text = header;
-        if (description != null) {
+        if (descriptions != null) {
             Description.gameObject.SetActive(true);
-            Description.text = description;
+            string description = "";
+            foreach(string s in descriptions) {
+                if (s == null)
+                    continue;
+                description += "\n" + s;
+            }
+            Description.text = description.Trim();
         }
         else {
             Description.gameObject.SetActive(false);
@@ -77,7 +86,7 @@ public class HoverOverScript : MonoBehaviour {
         isDebug = true;
         hovertime = 0;
         //show tile info and when structure not null that as well
-        Show(tile.ToString(), tile.Structure?.ToString());
+        Show(tile.ToBaseString(), tile.Structure?.ToString(), AIController.Instance?.GetTileValue(tile));
     }
 
 }

@@ -51,7 +51,6 @@ public class StructurePrototypeData : LanguageVariables {
     public bool canStartBurning;
     public int maintenanceCost;
 
-    public BuildRestriktions hasToBuildOnRestriktion;
     public bool canBeBuild = true;
     public int buildcost;
     public BuildTypes buildTyp;
@@ -219,7 +218,6 @@ public abstract class Structure : IGEventable {
     public bool CanTakeDamage { get { return Data.canTakeDamage; } }
 
     public Direction MustFrontBuildDir { get { return Data.mustFrontBuildDir; } }
-    public BuildRestriktions HasToBuildOnRestriktion { get { return Data.hasToBuildOnRestriktion; } }
     public BuildTypes BuildTyp { get { return Data.buildTyp; } }
     public StructureTyp MyStructureTyp { get { return Data.myStructureTyp; } }
     public ExtraUI ExtraUITyp { get { return Data.extraUITyp; } }
@@ -228,8 +226,6 @@ public abstract class Structure : IGEventable {
     public List<Tile> MyPrototypeTiles { get { return Data.MyPrototypeTiles; } }
 
     public bool CanStartBurning { get { return Data.canStartBurning; } }
-    public bool MustBeBuildOnShore { get { return Data.hasToBuildOnRestriktion == BuildRestriktions.Shore; } }
-    public bool MustBeBuildOnMountain { get { return Data.hasToBuildOnRestriktion == BuildRestriktions.Mountain; } }
 
     public int BuildCost { get { return Data.buildcost; } }
 

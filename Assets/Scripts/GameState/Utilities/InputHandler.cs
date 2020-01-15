@@ -12,7 +12,12 @@ public class InputHandler {
     public static bool ShiftKey => Input.GetKey(KeyCode.RightShift) || Input.GetKey(KeyCode.LeftShift);
 
     static Dictionary<InputName, KeyBind> nameToKeyBinds;
-    static string fileName = "keybinds.ini";
+    static string fileName = "input.ini";
+    public static float MouseSensitivity { private set; get; }
+    internal static void SetSensitivity(float value) {
+        //TODO: make it save and even matter
+    }
+
     //TODO add a between layer for mouse buttons -> so it can be switched
 
     // Use this for initialization
@@ -125,7 +130,11 @@ public class InputHandler {
             Directory.CreateDirectory(path);
         }
         string filePath = System.IO.Path.Combine(path, fileName);
-        File.WriteAllText(filePath, JsonConvert.SerializeObject(nameToKeyBinds,
+        InputSave save = new InputSave {
+            nameToKeyBinds = nameToKeyBinds,
+            MouseSensitivity = MouseSensitivity
+        };
+        File.WriteAllText(filePath, JsonConvert.SerializeObject(save,
             new JsonSerializerSettings() {
                 Formatting = Newtonsoft.Json.Formatting.Indented
             }));
@@ -136,7 +145,9 @@ public class InputHandler {
             if (File.Exists(filePath)) {
                 nameToKeyBinds = new Dictionary<InputName, KeyBind>();
                 string lines = File.ReadAllText(filePath);
-                nameToKeyBinds = JsonConvert.DeserializeObject<Dictionary<InputName, KeyBind>>(lines);
+                InputSave save = JsonConvert.DeserializeObject<InputSave>(lines);
+                nameToKeyBinds = save.nameToKeyBinds;
+                MouseSensitivity = save.MouseSensitivity;
             }
         }
         finally {
@@ -215,5 +226,8 @@ public class InputHandler {
                 Secondary = notSetCode;
         }
     }
-
+    class InputSave {
+        public Dictionary<InputName, KeyBind> nameToKeyBinds;
+        public float MouseSensitivity;
+    }
 }

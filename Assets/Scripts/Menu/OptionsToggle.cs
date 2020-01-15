@@ -12,7 +12,6 @@ public class OptionsToggle : MonoBehaviour {
         Show(lastOpen);
     }
     public void Show(int numberOfChildToShow) {
-        Debug.Log("Show");
         if (childrens == null)
             return;
         for (int i = 0; i < childrens.Length; i++) {

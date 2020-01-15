@@ -27,11 +27,7 @@ public class GS_Vsync : GS_SliderBase {
     }
 
     void SetVsync(int value) {
-        graphicsSettings.SetSavedGraphicsOption(setting, value);
-        // Set the actual slider value. For the OnSliderValueChange() callback
-        // this is uneccesary, but it shouldn't cause any harm. We do however
-        // need to do it when the value is set from an outside source like the
-        // graphics presets.
+        graphicsSettings.SetVsync(value);
         slider.value = value;
     }
 }

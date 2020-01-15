@@ -32,9 +32,7 @@ public class GS_Resolution : MonoBehaviour {
     public void OnChange() {
         string res = dp.options[dp.value].text;
         if (resolutions.ContainsKey(res))
-            graphicsSettings.SetSavedGraphicsOption(setting,
-                JsonUtility.ToJson(new GraphicsSettings.CustomResolution(resolutions[res]))
-            );
+            graphicsSettings.SetResolution(new GraphicsSettings.CustomResolution(resolutions[res]));
     }
 
 }

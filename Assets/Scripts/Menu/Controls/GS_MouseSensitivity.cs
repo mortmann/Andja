@@ -17,12 +17,13 @@ public class GS_MouseSensitivity : MonoBehaviour {
 
     void OnSliderValueChange(float value) {
         input.text = "" + value;
+        InputHandler.SetSensitivity(value);
     }
     void OnInputValueChange(string value) {
         if (value == "") {
             return;
         }
-        slider.value = float.Parse(value);
+        slider.value = (float.Parse(value));
     }
 
 }

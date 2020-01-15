@@ -12812,6 +12812,7 @@ GameObject:
   - component: {fileID: 796261706}
   - component: {fileID: 796261705}
   - component: {fileID: 796261704}
+  - component: {fileID: 796261708}
   m_Layer: 5
   m_Name: PauseMenu
   m_TagString: Untagged
@@ -12881,6 +12882,20 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 796261703}
   m_CullTransparentMesh: 0
+--- !u!114 &796261708
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 796261703}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2253374350c68914daec1afbcaea5871, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  contentTransform: {fileID: 1673925716}
+  keyPrefab: {fileID: 116462, guid: 074603463d0903949aae76ab5692d136, type: 3}
 --- !u!1 &796346084
 GameObject:
   m_ObjectHideFlags: 0
@@ -28435,6 +28450,12 @@ PrefabInstance:
 --- !u!224 &1673925715 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 224166799462766330, guid: de0eb05575940d742b25c72d1265cc60,
+    type: 3}
+  m_PrefabInstance: {fileID: 1673925714}
+  m_PrefabAsset: {fileID: 0}
+--- !u!224 &1673925716 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 224482254306332232, guid: de0eb05575940d742b25c72d1265cc60,
     type: 3}
   m_PrefabInstance: {fileID: 1673925714}
   m_PrefabAsset: {fileID: 0}

@@ -112,7 +112,9 @@ public class GraphicsSettings : MonoBehaviour {
     }
 
     private void SetOptions(Dictionary<GraphicsSetting, string> options) {
-        foreach (GraphicsSetting optionName in options.Keys) {
+        foreach (GraphicsSetting optionName in typeof(GraphicsSetting).GetEnumValues()) {
+            if (options.ContainsKey(optionName) == false)
+                continue;
             string val = options[optionName];
             switch (optionName) {
                 case GraphicsSetting.Preset:
@@ -128,7 +130,7 @@ public class GraphicsSettings : MonoBehaviour {
                     SetBrightness(float.Parse(val));
                     break;
                 case GraphicsSetting.Fullscreen:
-                    SetFullscreen(bool.Parse(val));
+                    SetFullscreen(int.Parse(val));
                     break;
                 case GraphicsSetting.Resolution:
                     SetResolution(JsonUtility.FromJson<CustomResolution>(val));
@@ -164,6 +166,7 @@ public class GraphicsSettings : MonoBehaviour {
         else {
             QualitySettings.anisotropicFiltering = AnisotropicFiltering.Disable;
         }
+        SetSavedGraphicsOption(GraphicsSetting.AnisotropicFiltering, value);
     }
 
     public void SetAntiAliasing(int value) {
@@ -179,26 +182,33 @@ public class GraphicsSettings : MonoBehaviour {
             cam.GetComponent<Antialiasing>().enabled = false;
             cam.GetComponent<SMAA>().enabled = false;
         }
+        SetSavedGraphicsOption(GraphicsSetting.AntiAliasing, value);
     }
     public void SetVsync(int value) {
         QualitySettings.vSyncCount = value;
+        SetSavedGraphicsOption(GraphicsSetting.Vsync, value);
     }
 
-    public void SetFullscreen(bool value) {
-        Screen.fullScreen = value;
+    public void SetFullscreen(int value) {
+        Screen.SetResolution(Screen.currentResolution.width, Screen.currentResolution.height,
+                                (FullScreenMode)value, Screen.currentResolution.refreshRate);
+        SetSavedGraphicsOption(GraphicsSetting.Fullscreen, value);
     }
 
     public void SetResolution(CustomResolution res) {
         Screen.SetResolution(res.width, res.height, Screen.fullScreen, res.refreshRate);
+        SetSavedGraphicsOption(GraphicsSetting.Resolution, res);
     }
 
     public void SetTextureQuality(int value) {
         // In the quality settings 0 is full quality textures, while 3 is the lowest.
         QualitySettings.masterTextureLimit = 3 - value;
+        SetSavedGraphicsOption(GraphicsSetting.TextureQuality, value);
     }
     public void SetBrightness(float value) {
         // In the quality settings 0 is full quality textures, while 3 is the lowest.
         cam.GetComponent<Brightness>().brightness = value;
+        SetSavedGraphicsOption(GraphicsSetting.Brightness, value);
     }
 
     public void OnOpen() {

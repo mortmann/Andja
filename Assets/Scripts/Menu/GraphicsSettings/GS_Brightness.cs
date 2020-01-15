@@ -10,7 +10,7 @@ public class GS_Brightness : GS_SliderBase {
     }
 
     protected override void OnSliderValueChange() {
-        graphicsSettings.SetSavedGraphicsOption(setting, slider.value);
+        graphicsSettings.SetBrightness(slider.value);
     }
 
     protected override void OnSliderValueChangeSetDisplayText() {

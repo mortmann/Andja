@@ -31,6 +31,8 @@ public class KeyInputSettings : MonoBehaviour {
         primaryChange = primary;
         Cursor.visible = false;
     }
+    public static void SetMouseSensitivity( float value ) {
+    }
     // Update is called once per frame
     void Update() {
 

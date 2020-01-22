@@ -191,7 +191,6 @@ public class AIController : MonoBehaviour {
         }
         if (tileValue[t].MaxValue == 0)
             return;
-        Debug.Log(value +" Update Tile" + t );
         switch (direction) {
             case Direction.N:
                 tileValue[t].swValue.y = value;

@@ -58,6 +58,17 @@ public class StructureBuildUI : MonoBehaviour {
             OnDragEnd();
         });
         trigger.triggers.Add(dragStop);
+
+        if (GetComponentInParent<ScrollRect>() != null) {
+            EventTrigger.Entry scroll = new EventTrigger.Entry {
+                eventID = EventTriggerType.Scroll
+            };
+            scroll.callback.AddListener((data) => {
+                ScrollRect sr = GetComponentInParent<ScrollRect>();
+                sr.verticalScrollbar.value += sr.scrollSensitivity * Time.deltaTime * ((PointerEventData)data).scrollDelta.y;
+            });
+            trigger.triggers.Add(scroll);
+        }
     }
     public void OnMouseEnter() {
         GameObject.FindObjectOfType<HoverOverScript>().Show(structure.Name);

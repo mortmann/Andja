@@ -10,6 +10,7 @@ public class BuildMenuUIController : MonoBehaviour {
 
     public GameObject buildButtonPrefab;
     public GameObject populationButtonPrefab;
+    public Foldable GroupPrefab;
 
     public Dictionary<string, GameObject> nameToGOMap;
     public Dictionary<string, string> nameToIDMap;
@@ -23,6 +24,7 @@ public class BuildMenuUIController : MonoBehaviour {
     Player player;
     public bool enableAllStructures = false;
     internal static BuildMenuUIController Instance;
+    private Dictionary<string, Foldable> groupGameObjects;
 
     // Use this for initialization
     void Awake() {
@@ -53,14 +55,22 @@ public class BuildMenuUIController : MonoBehaviour {
         for (int i = 0; i < PrototypController.Instance.NumberOfPopulationLevels; i++) {
             buttons[i] = new List<string>();
         }
+
+        groupGameObjects = new Dictionary<string, Foldable>();
+
         foreach (Structure s in buildController.StructurePrototypes.Values) {
             if (s.CanBeBuild == false) {
                 continue;
             }
             GameObject b = Instantiate(buildButtonPrefab);
             b.name = s.ID;
-            
-            b.transform.SetParent(buttonBuildStructuresContent.transform);
+            string type = s.GetType().Name;
+            if (groupGameObjects.ContainsKey(type)==false) {
+                groupGameObjects[type] = Instantiate(GroupPrefab);
+                groupGameObjects[type].transform.SetParent(buttonBuildStructuresContent.transform);
+                groupGameObjects[type].Set(type);
+            }
+            groupGameObjects[type].Add(b);
 
             b.GetComponent<Button>().onClick.AddListener(() => { OnClick(b.name); });
             b.GetComponent<Image>().color = Color.white;
@@ -72,12 +82,16 @@ public class BuildMenuUIController : MonoBehaviour {
                 b.SetActive(false);
             }
         }
+        //check em if they are active
+        foreach (Foldable f in groupGameObjects.Values)
+            f.Check();
+        //Update Canvas required because groups are not displayed correctly
+        Canvas.ForceUpdateCanvases();
+
         OnMaxPopLevelChange(player.MaxPopulationLevel);
         OnMaxPopLevelCountChange(player.MaxPopulationLevel, player.MaxPopulationCount);
         player.RegisterMaxPopulationCountChange(OnMaxPopLevelCountChange);
         buildController.RegisterBuildStateChange(OnBuildModeChange);
-    }
-    void OnEnable() {
 
     }
     public void OnBuildModeChange(BuildStateModes mode) {
@@ -104,9 +118,10 @@ public class BuildMenuUIController : MonoBehaviour {
         }
         foreach (string name in buttons[level]) {
             if (count >= buildController.StructurePrototypes[nameToIDMap[name]].PopulationCount) {
-                nameToGOMap[name].SetActive(true);
-            } else {
-                nameToGOMap[name].SetActive(false);
+                ChangeButton(name, true);
+            }
+            else {
+                ChangeButton(name, false);
             }
         }
     }
@@ -131,14 +146,18 @@ public class BuildMenuUIController : MonoBehaviour {
 
     public void OnPopulationLevelButtonClick(int i) {
         foreach (string item in buttons[selectedPopulationLevel]) {
-            nameToGOMap[item].SetActive(false);
+            ChangeButton(item, false);
         }
         foreach (string name in buttons[i]) {
             if (player.MaxPopulationCount >= buildController.StructurePrototypes[nameToIDMap[name]].PopulationCount) {
-                nameToGOMap[name].SetActive(true);
+                ChangeButton(name,true);
             }
         }
         selectedPopulationLevel = i;
+    }
+    void ChangeButton(string item, bool change) {
+        nameToGOMap[item].SetActive(change);
+        nameToGOMap[item].GetComponentInParent<Foldable>().Check();
     }
     public void OnDisable() {
         if (oldButton != null)

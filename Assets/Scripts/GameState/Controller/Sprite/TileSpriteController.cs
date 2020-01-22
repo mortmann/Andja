@@ -247,7 +247,7 @@ public class TileSpriteController : MonoBehaviour {
         }
 
         islandSpriteStopWatch.Stop();
-        Debug.Log("Islandimage " + islandSpriteStopWatch.ElapsedMilliseconds + "ms (" + islandSpriteStopWatch.Elapsed.TotalSeconds + "s)! ");
+        Debug.Log("Island Visuals " + islandSpriteStopWatch.ElapsedMilliseconds + "ms (" + islandSpriteStopWatch.Elapsed.TotalSeconds + "s)! ");
     }
 
     private Sprite GetSpriteForName(string spriteName) {

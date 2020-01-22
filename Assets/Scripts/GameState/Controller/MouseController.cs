@@ -14,6 +14,8 @@ public class MouseController : MonoBehaviour {
 
     public GameObject greenTileCursorPrefab;
     public GameObject redTileCursorPrefab;
+    public ExtraStructureBuildUI[] extraStructureBuildUIPrefabsEditor;
+    Dictionary<ExtraBuildUI, GameObject> ExtraStructureBuildUIPrefabs;
     GameObject previewGO;
     GameObject highlightGO;
 
@@ -113,6 +115,11 @@ public class MouseController : MonoBehaviour {
         BuildController.RegisterStructureCreated(ResetBuild);
         _highlightTiles = new HashSet<Tile>();
         ssc = GameObject.FindObjectOfType<StructureSpriteController>();
+        ExtraStructureBuildUIPrefabs = new Dictionary<ExtraBuildUI, GameObject>();
+        foreach (ExtraStructureBuildUI esbu in extraStructureBuildUIPrefabsEditor) {
+            ExtraStructureBuildUIPrefabs[esbu.Type] = esbu.Prefab;
+        }
+
     }
 
     /// <summary>
@@ -171,7 +178,7 @@ public class MouseController : MonoBehaviour {
                 UpdateUnitGroup();
                 break;
         }
-        if (Input.GetMouseButton(0) 
+        if (Input.GetMouseButtonDown(0) 
             && mouseState == MouseState.Idle) {
             if (EventSystem.current.IsPointerOverGameObject()==false && ShortcutUI.Instance.IsDragging==false) {
                 float sqrdist = (Input.mousePosition - lastFrameGUIPosition).sqrMagnitude;
@@ -443,7 +450,14 @@ public class MouseController : MonoBehaviour {
         previewGO = new GameObject();
         previewGO.transform.SetParent(this.transform, true);
         previewGO.name = "PreviewGO";
-
+        if(ToBuildStructure.ExtraBuildUITyp!=ExtraBuildUI.None) {
+            if (ExtraStructureBuildUIPrefabs.ContainsKey(ToBuildStructure.ExtraBuildUITyp) == false)
+                Debug.LogError(ToBuildStructure.ExtraBuildUITyp + " ExtraBuildPreview has no Prefab assigned!");
+            else {
+                GameObject extra = Instantiate(ExtraStructureBuildUIPrefabs[ToBuildStructure.ExtraBuildUITyp]);
+                extra.transform.SetParent(previewGO.transform);
+            }
+        }
         SpriteRenderer sr = previewGO.AddComponent<SpriteRenderer>();
 
         sr.sprite = ssc.GetStructureSprite(ToBuildStructure);
@@ -868,4 +882,10 @@ public class MouseController : MonoBehaviour {
             return TileMark.Dark;
         }
     }
+    [Serializable]
+    public struct ExtraStructureBuildUI {
+        public ExtraBuildUI Type;
+        public GameObject Prefab;
+    }
+
 }

@@ -263,7 +263,7 @@
          <buildTyp>Single</buildTyp>
          <myStructureTyp>Blocking</myStructureTyp>
          <extraUITyp>None</extraUITyp>
-         <extraBuildUITyp>None</extraBuildUITyp>
+         <extraBuildUITyp>Efficiency</extraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
          <buildingItems length="1">
             <Item ID="wood">

@@ -41,7 +41,6 @@ public class CameraController : MonoBehaviour {
 #endif
     }
     void Start() {
-
         tilesCurrentInCameraView = new HashSet<Tile>();
         structureCurrentInCameraView = new HashSet<Structure>();
         if (EditorController.IsEditor) {

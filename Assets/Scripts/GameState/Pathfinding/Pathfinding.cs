@@ -104,7 +104,7 @@ public abstract class Pathfinding {
         }
         protected set {
             //TODO: REMOVE FOR RELEASE
-            if (Mathf.Abs(value - _y) > 0.05f)
+            if (Mathf.Abs(value - _y) > 0.1f)
                 Debug.LogWarning("UNIT JUMPED -- FIX ME");
             _y = value;
         }
@@ -151,8 +151,6 @@ public abstract class Pathfinding {
     private Vector3 rotationDirection;
 
     public virtual void Update_DoMovement(float deltaTime) {
-        
-
         //for loading purpose or any other strange reason
         //we have a destination & are not there atm && we have no path then calculate it!
         if (DestTile != null && DestTile != CurrTile && IsAtDestination == false && NextTile != DestTile && worldPath == null)
@@ -309,10 +307,6 @@ public abstract class Pathfinding {
         Vector2 PointB = new Vector2(X, Y);
         Vector2 moveDirection = PointA - PointB;
         float angle = Mathf.Atan2(moveDirection.y, moveDirection.x) * Mathf.Rad2Deg;
-        //		if(angle<0){
-        //			angle =360+ angle;
-        //		}
-        //rotation = angle;
 
         if (rotation < angle + 0.1f
             && rotation > angle - 0.1f) {
@@ -322,8 +316,8 @@ public abstract class Pathfinding {
             return true;
         }
         t += delta;
-
-        rotation = Mathf.LerpAngle(rotation, angle, delta * rotationSpeed);//Mathf.LerpAngle ( rotation , angle , t);
+        
+        rotation = Mathf.MoveTowardsAngle(rotation, angle, delta * rotationSpeed);
         return false;
     }
 

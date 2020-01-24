@@ -29,12 +29,26 @@ public class Loading : MonoBehaviour {
     }
 
     void Update() {
-        if(aso == null) {
+        if (aso == null) {
             if (loadEditor) {
+                if (SaveController.Instance.DoesEditorSaveExist(GameDataHolder.Instance.Loadsavegame) == false) {
+                    UnityEngine.Debug.LogError(GameDataHolder.Instance.Loadsavegame + " Save does not exist!");
+                    SceneManager.LoadScene("MainMenu");
+                    Destroy(FindObjectOfType<MasterController>().gameObject);
+                    Destroy(FindObjectOfType<MapGenerator>().gameObject);
+                    return;
+                }
                 aso = SceneManager.LoadSceneAsync("IslandEditor");
                 aso.allowSceneActivation = false;
             }
             else {
+                if (SaveController.Instance.DoesGameSaveExist(GameDataHolder.Instance.Loadsavegame) == false) {
+                    UnityEngine.Debug.LogError(GameDataHolder.Instance.Loadsavegame + " Save does not exist!");
+                    SceneManager.LoadScene("MainMenu");
+                    Destroy(FindObjectOfType<MasterController>().gameObject);
+                    Destroy(FindObjectOfType<MapGenerator>().gameObject);
+                    return;
+                }
                 aso = SceneManager.LoadSceneAsync("GameState");
                 aso.allowSceneActivation = false;
             }
@@ -42,8 +56,9 @@ public class Loading : MonoBehaviour {
         int percantage = 0;
         if (loadEditor == false) {
             if (SaveController.IsLoadingSave) {
+                float mapGenValue = MapGenerator.Instance != null ? MapGenerator.Instance.GeneratedProgressPercantage : 1;
                 percantage = (int)(100 * (SceneLoadingProgress * 0.3f
-                    + MapGenerator.Instance.GeneratedProgressPercantage * 0.2f
+                    + mapGenValue * 0.2f
                     + SaveController.Instance.loadingPercantage * 0.2f
                     + TileSpriteController.CreationPercantage * 0.3));
             }
@@ -52,7 +67,7 @@ public class Loading : MonoBehaviour {
             }
             percentText.text = percantage + "%";
             //First wait for MapGeneration
-            if (MapGenerator.Instance.IsDone == false) {
+            if (MapGenerator.Instance!=null&&MapGenerator.Instance.IsDone == false) {
                 return;
             }
             //Wait for Loading Save to be done when it is loading one

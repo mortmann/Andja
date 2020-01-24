@@ -32,7 +32,7 @@ public class EditorUIController : MonoBehaviour {
     // Update is called once per frame
     void Update() {
         if (Input.GetKeyDown(KeyCode.Escape)) {
-            PauseMenuToggle();
+            TogglePauseMenu();
         }
     }
     public void ChangeBuild(bool type) {
@@ -51,7 +51,7 @@ public class EditorUIController : MonoBehaviour {
         BuildDestroyButton.interactable = !b;
         BuildBuildButton.interactable = b;
     }
-    public void PauseMenuToggle() {
+    public void TogglePauseMenu() {
         pauseMenu.SetActive(!pauseMenu.activeSelf);
     }
     public void NewIslandToggle() {

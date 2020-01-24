@@ -129,7 +129,7 @@ public abstract class Structure : IGEventable {
     [JsonPropertyAttribute]
     public Tile BuildTile {
         get {
-            if (myStructureTiles == null)
+            if (myStructureTiles == null|| myStructureTiles.Count==0) 
                 return null;
             return myStructureTiles[0];
         }

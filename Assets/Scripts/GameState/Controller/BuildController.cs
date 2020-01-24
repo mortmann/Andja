@@ -38,12 +38,16 @@ public class BuildController : MonoBehaviour {
     public IReadOnlyDictionary<string, Structure> StructurePrototypes {
         get { return PrototypController.Instance.StructurePrototypes; }
     }
+
+    public List<Structure> LoadedStructures { get; private set; }
+
     public Structure toBuildStructure;
 
     Action<Structure, bool> cbStructureCreated;
     Action<Structure> cbAnyStructureDestroyed;
     Action<City> cbCityCreated;
     Action<BuildStateModes> cbBuildStateChange;
+
 
     public Dictionary<string, Item> GetCopieOfAllItems() {
         return PrototypController.Instance.GetCopieOfAllItems();
@@ -279,6 +283,7 @@ public class BuildController : MonoBehaviour {
 
 
     public void PlaceAllLoadedStructure(List<Structure> loadedStructures) {
+        this.LoadedStructures = loadedStructures;
         for (int i = 0; i < loadedStructures.Count; i++) {
             LoadBuildOnTile(loadedStructures[i], loadedStructures[i].BuildTile);
             loadedStructures[i].City.TriggerAddCallBack(loadedStructures[i]);

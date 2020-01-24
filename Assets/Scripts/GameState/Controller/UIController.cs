@@ -369,7 +369,7 @@ public class UIController : MonoBehaviour {
     }
 
     public void StopDragAndDropBuild() {
-        shortCutCanvas.GetComponent<ShortcutUI>().StopDragAndDropBuild();
+        shortCutCanvas.GetComponent<ShortcutUI>().EndDragAndDropBuild();
     }
     public void ToggleConsole() {
         consoleCanvas.SetActive(!consoleCanvas.activeSelf);

@@ -16,7 +16,7 @@
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
          <hasHitbox>false</hasHitbox>
-         <maxHealth>0.0</maxHealth>
+         <maxHealth>50.0</maxHealth>
          <structureRange>0</structureRange>
          <populationLevel>0</populationLevel>
          <populationCount>0</populationCount>
@@ -54,7 +54,7 @@
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
          <hasHitbox>false</hasHitbox>
-         <maxHealth>0.0</maxHealth>
+         <maxHealth>50.0</maxHealth>
          <structureRange>0</structureRange>
          <populationLevel>0</populationLevel>
          <populationCount>1</populationCount>
@@ -93,7 +93,7 @@
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
          <hasHitbox>false</hasHitbox>
-         <maxHealth>0.0</maxHealth>
+         <maxHealth>50.0</maxHealth>
          <structureRange>0</structureRange>
          <populationLevel>0</populationLevel>
          <populationCount>2</populationCount>
@@ -136,7 +136,7 @@
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
          <hasHitbox>false</hasHitbox>
-         <maxHealth>0.0</maxHealth>
+         <maxHealth>50.0</maxHealth>
          <structureRange>0</structureRange>
          <populationLevel>0</populationLevel>
          <populationCount>3</populationCount>
@@ -245,7 +245,7 @@
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
          <hasHitbox>true</hasHitbox>
-         <maxHealth>0.0</maxHealth>
+         <maxHealth>50.0</maxHealth>
          <structureRange>3</structureRange>
          <populationLevel>0</populationLevel>
          <populationCount>0</populationCount>
@@ -360,7 +360,7 @@
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
          <hasHitbox>true</hasHitbox>
-         <maxHealth>0.0</maxHealth>
+         <maxHealth>50.0</maxHealth>
          <structureRange>2</structureRange>
          <populationLevel>0</populationLevel>
          <populationCount>500</populationCount>
@@ -478,7 +478,7 @@
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
          <hasHitbox>true</hasHitbox>
-         <maxHealth>0.0</maxHealth>
+         <maxHealth>50.0</maxHealth>
          <structureRange>0</structureRange>
          <populationLevel>1</populationLevel>
          <populationCount>0</populationCount>
@@ -787,7 +787,7 @@
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
          <hasHitbox>false</hasHitbox>
-         <maxHealth>0.0</maxHealth>
+         <maxHealth>50.0</maxHealth>
          <structureRange>0</structureRange>
          <populationLevel>0</populationLevel>
          <populationCount>0</populationCount>
@@ -838,7 +838,7 @@
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
          <hasHitbox>false</hasHitbox>
-         <maxHealth>0.0</maxHealth>
+         <maxHealth>50.0</maxHealth>
          <structureRange>0</structureRange>
          <populationLevel>0</populationLevel>
          <populationCount>0</populationCount>
@@ -934,7 +934,7 @@
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
          <hasHitbox>false</hasHitbox>
-         <maxHealth>0.0</maxHealth>
+         <maxHealth>50.0</maxHealth>
          <structureRange>0</structureRange>
          <populationLevel>0</populationLevel>
          <populationCount>500</populationCount>
@@ -984,7 +984,7 @@
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
          <hasHitbox>false</hasHitbox>
-         <maxHealth>0.0</maxHealth>
+         <maxHealth>50.0</maxHealth>
          <structureRange>0</structureRange>
          <populationLevel>0</populationLevel>
          <populationCount>500</populationCount>
@@ -1034,7 +1034,7 @@
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
          <hasHitbox>false</hasHitbox>
-         <maxHealth>0.0</maxHealth>
+         <maxHealth>50.0</maxHealth>
          <structureRange>0</structureRange>
          <populationLevel>0</populationLevel>
          <populationCount>500</populationCount>
@@ -1085,7 +1085,7 @@
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
          <hasHitbox>false</hasHitbox>
-         <maxHealth>0.0</maxHealth>
+         <maxHealth>50.0</maxHealth>
          <structureRange>0</structureRange>
          <populationLevel>1</populationLevel>
          <populationCount>0</populationCount>
@@ -1137,7 +1137,7 @@
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
          <hasHitbox>false</hasHitbox>
-         <maxHealth>0.0</maxHealth>
+         <maxHealth>50.0</maxHealth>
          <structureRange>0</structureRange>
          <populationLevel>1</populationLevel>
          <populationCount>1500</populationCount>
@@ -1190,7 +1190,7 @@
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
          <hasHitbox>true</hasHitbox>
-         <maxHealth>0.0</maxHealth>
+         <maxHealth>50.0</maxHealth>
          <structureRange>18</structureRange>
          <populationLevel>0</populationLevel>
          <populationCount>0</populationCount>

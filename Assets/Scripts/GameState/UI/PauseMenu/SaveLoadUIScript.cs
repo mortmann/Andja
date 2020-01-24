@@ -91,28 +91,46 @@ public class SaveLoadUIScript : MonoBehaviour {
 
     public void OnSavePressed() {
         string name = "";
-        if (selected != null && (saveGameInput.text == null || saveGameInput.text == "")) {
-            name = selected; //SaveController.Instance.SaveGameState (selected); // overwrite
-                             //TODO ask if you want to overwrite
+        if (selected != null && string.IsNullOrWhiteSpace(saveGameInput.text)) {
+            name = selected; 
         }
         else {
             name = saveGameInput.text;
         }
 
+        if (string.IsNullOrWhiteSpace(name))
+            return;
         if (EditorController.IsEditor == false) {
+            //if it file with name exists ask user if it supposed to be overwritten
+            if (SaveController.Instance.DoesGameSaveExist(name)) {
+                FindObjectOfType<YesNoDialog>().Show(YesNoDialogTypes.OverwriteSave, () => {
+                    GameSave(name);
+                }, null);
+                return;
+            }
+            //if it doesnt exist save it
             GameSave(name);
         }
         else {
+            //if it file with name exists ask user if it supposed to be overwritten
+            if (SaveController.Instance.DoesEditorSaveExist(name)) {
+                FindObjectOfType<YesNoDialog>().Show(YesNoDialogTypes.OverwriteSave, () => {
+                    EditorSave(name);
+                }, null);
+                return;
+            }
+            //if it doesnt exist save it
             EditorSave(name);
         }
-
     }
 
     private void GameSave(string name) {
         SaveController.Instance.SaveGameState(name);
+        UIController.Instance.TogglePauseMenu();
     }
     private void EditorSave(string name) {
         SaveController.Instance.SaveIslandState(name);
+        EditorUIController.Instance.TogglePauseMenu();
     }
     private void GameLoad() {
         MenuController.Instance.LoadSaveGame(selected);

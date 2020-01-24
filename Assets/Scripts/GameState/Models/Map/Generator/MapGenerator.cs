@@ -236,6 +236,9 @@ public class MapGenerator : MonoBehaviour {
         if (startedGenerating == false) {
             return;
         }
+        if(IsDone) {
+            return;
+        }
         if (generatorsTasks != null) {
             for (int i = 0; i < generatorsTasks.Count; i++) {
                 Task t = generatorsTasks[i];

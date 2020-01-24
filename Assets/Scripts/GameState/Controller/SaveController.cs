@@ -97,6 +97,15 @@ public class SaveController : MonoBehaviour {
         timeToAutoSave = AutoSaveInterval;
         SaveGameState();
     }
+
+    internal bool DoesGameSaveExist(string name) {
+        return File.Exists(Path.Combine(GetSaveGamesPath(), name + saveFileEnding));
+    }
+
+    internal bool DoesEditorSaveExist(string name) {
+        return File.Exists(Path.Combine(GetIslandSavePath(), name + islandFileEnding));
+    }
+
     public void DeleteSaveGame(string name) {
         string filePath = System.IO.Path.Combine(GetSaveGamesPath(), name);
         string saveStatePath = filePath + saveFileEnding;
@@ -436,6 +445,9 @@ public class SaveController : MonoBehaviour {
     }
 
     public IEnumerator LoadGameState(string name = "autosave") {
+        if (SaveController.Instance.DoesEditorSaveExist(name) == false) {
+            yield return null;
+        }
         SaveName = name;
         //first pause the world so nothing changes and we can save an 		
         string finalSaveStatePath = System.IO.Path.Combine(GetSaveGamesPath(), name + saveFileEnding);

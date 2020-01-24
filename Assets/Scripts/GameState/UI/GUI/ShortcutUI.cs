@@ -41,7 +41,7 @@ public class ShortcutUI : MonoBehaviour {
             shortCutDraggedParent = go.transform.parent.gameObject;
         }
     }
-    public void StopDragAndDropBuild() {
+    public void EndDragAndDropBuild() {
         IsDragging = false;
         GameObject parent = null;
         foreach (GameObject shortcut in shortcutsGO) {
@@ -75,6 +75,10 @@ public class ShortcutUI : MonoBehaviour {
             }
             CreateButton(dragADropGO.GetComponentInChildren<StructureBuildUI>().structure, parent);
         }
+        // stopping drag everytime so delete dragged & unshow spots
+        StopDragAndDropBuild();
+    }
+    public void StopDragAndDropBuild() {
         // stopping drag everytime so delete dragged & unshow spots
         GameObject.Destroy(dragADropGO);
         dragADropGO = null;

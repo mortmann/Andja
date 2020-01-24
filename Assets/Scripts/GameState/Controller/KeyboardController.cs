@@ -32,6 +32,7 @@ public class KeyboardController : MonoBehaviour {
             MouseC.Escape();
             BuildController.Escape();
             UIC.Escape(BuildController.BuildState != BuildStateModes.None);
+            ShortcutUI.Instance.StopDragAndDropBuild();
             EndVideoReached(null);
         }
         if (UIController.IsTextFieldFocused()) {

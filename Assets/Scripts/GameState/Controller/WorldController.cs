@@ -151,6 +151,7 @@ public class WorldController : MonoBehaviour {
     public void LoadWorldData() {
         // Create a world from our save file data.
         World.LoadData(MapGenerator.Instance.GetTiles(), GameDataHolder.Width, GameDataHolder.Height);
+        MapGenerator.Instance.Destroy();
         List<MapGenerator.IslandStruct> structs = MapGenerator.Instance.GetIslandStructs();
         foreach (Island island in World.IslandList) {
             MapGenerator.IslandStruct thisStruct = structs.Find(s =>
@@ -177,7 +178,7 @@ public class WorldController : MonoBehaviour {
             loadedStructures.AddRange(island.Load());
         }
         loadedStructures.Sort((x, y) => x.buildID.CompareTo(y.buildID));
-
+        BuildController.Instance.buildID = loadedStructures[loadedStructures.Count - 1].buildID++; //set the build id so it continues
         BuildController.Instance.PlaceAllLoadedStructure(loadedStructures);
     }
 

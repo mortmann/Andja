@@ -29,7 +29,7 @@ public class MenuController : MonoBehaviour {
 
     void OnEnable() {
         foreach (Transform t in transform) {
-            if (t != menu.transform) {
+            if (t != menu.transform && t.GetComponent<YesNoDialog>()==null) {
                 t.gameObject.SetActive(false);
             }
         }

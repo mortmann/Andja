@@ -35,7 +35,6 @@ public class MouseController : MonoBehaviour {
     ///  is true if smth is overriding the current states and commands for units
     /// </summary>
     public static bool OverrideCurrentStuff => InputHandler.ShiftKey == false; // TODO: better name
-
     private HashSet<Tile> _highlightTiles;
     HashSet<Tile> HighlightTiles {
         get { return _highlightTiles; }
@@ -109,7 +108,6 @@ public class MouseController : MonoBehaviour {
             Debug.LogError("There should never be two mouse controllers.");
         }
         Instance = this;
-
         selectedUnitGroup = new List<Unit>(); 
         previewGameObjects = new List<GameObject>();
         BuildController.RegisterStructureCreated(ResetBuild);

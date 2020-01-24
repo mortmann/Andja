@@ -57,29 +57,28 @@ public class RoadStructure : Structure {
                 }
             }
         }
-        UpdateOrientation();
         if (routeCount == 0) {
             //If there is no route next to it 
             //so create a new route 
             Route = new Route(myStructureTiles[0]);
             myStructureTiles[0].MyCity.AddRoute(Route);
-            return;
-        }
+        } else
         if (routeCount == 1) {
             // there is already a route 
             // so add it and return
             routes[0].AddRoadTile(myStructureTiles[0]);
             Route = routes[0];
-            return;
         }
-        //add all Roads from the others to road 1!
-        for (int i = 1; i < routes.Count; i++) {
-            routes[0].AddRoute(routes[i]);
-            Route = routes[0];
+        else {
+            //add all Roads from the others to road 1!
+            for (int i = 1; i < routes.Count; i++) {
+                routes[0].AddRoute(routes[i]);
+                Route = routes[0];
+            }
         }
-
+        UpdateOrientation();
     }
-    public void UpdateOrientation(IEnumerable<Tile> futureRoads = null) {
+    public void UpdateOrientation() {
         Tile[] neig = myStructureTiles[0].GetNeighbours();
 
         connectOrientation = "_";

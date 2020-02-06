@@ -74,8 +74,6 @@ public class TypeGraphicsSelect : MonoBehaviour {
         }
         foreach (TileType tt in Enum.GetValues(typeof(TileType))) {
             typeTotileSpriteNames.Add(tt.ToString(), TileSpriteController.GetSpriteNamesForType(tt, EditorController.climate));
-            if (typeTotileSpriteNames[tt.ToString()] != null)
-                Debug.Log(tt + "  " + typeTotileSpriteNames[tt.ToString()].Count);
         }
     }
 }

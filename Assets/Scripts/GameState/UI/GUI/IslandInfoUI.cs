@@ -21,11 +21,11 @@ public class IslandInfoUI : MonoBehaviour {
         }
         cg.alpha = 1;
         string text = "| ";
-        foreach (Fertility item in cc.nearestIsland.myFertilities) {
+        foreach (Fertility item in cc.nearestIsland.Fertilities) {
             text += item.Name + " | ";
 
         }
-        City c = cc.nearestIsland.myCities.Find(x => x.playerNumber == PlayerController.currentPlayerNumber);
+        City c = cc.nearestIsland.Cities.Find(x => x.playerNumber == PlayerController.currentPlayerNumber);
         if (c != null) {
             int count = c.PopulationCount;
 

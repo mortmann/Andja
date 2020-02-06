@@ -10,7 +10,7 @@ public class IslandGenerator {
     static readonly float shoreElevation = 0.29f;
     static readonly float cliffElevation = 0.37f;
     static readonly float dirtElevation = 0.43f;
-    static readonly float mountainElevation = 1.15f;
+    static readonly float mountainElevation = 1.2f;
     static readonly float landThreshold = cliffElevation;
     static readonly float islandThreshold = dirtElevation;
     ThreadRandom random;
@@ -151,13 +151,12 @@ public class IslandGenerator {
         //    }
         //}
         //);
-        List<Tile> ocean = new List<Tile>(FloodFillOcean(island));
-        ocean.ForEach(x => {
-            if (island.Contains(x) == false) {
-                x.Elevation = 0f;
+        HashSet<Tile> ocean = new HashSet<Tile>(FloodFillOcean(island));
+        foreach(Tile t in ocean) {
+            if (island.Contains(t) == false) {
+                t.Elevation = 0f;
             }
         }
-        );
         List<Tile> biggest = new List<Tile>(FloodFillLands());
         biggest.ForEach(x => {
             if (island.Contains(x) == false) {
@@ -168,7 +167,7 @@ public class IslandGenerator {
         Progress += 0.15f;
 
         int numberOfShores = random.Range(2, 8);
-        for(int ns = 0; ns <= numberOfShores; ns++) {
+        for(int ns = 0; ns < numberOfShores; ns++) {
             int x = 0;
             int y = 0;
             int direction = random.Range(0, 4);
@@ -190,9 +189,10 @@ public class IslandGenerator {
                 x = Width;
                 y = random.Range(0, Height + 1);
             }
-
+            Debug.Log("SHORE " + x + " " + y + " " + direction);
             FindIslandMakeShore(x, y, length);
         }
+        Progress += 0.1f;
 
         //Debug.Log ("FloodFillOcean");
 
@@ -231,7 +231,7 @@ public class IslandGenerator {
                 }
             }
         }
-        Progress += 0.2f;
+        Progress += 0.1f;
 
         //We need to give it a random tilesprite
         //giving sprite needs to be done somewhere else?
@@ -507,7 +507,7 @@ public class IslandGenerator {
         Vector2 dir = center - pos;
         dir.Normalize();
         Tile current = GetTileAt(x, y);
-        while(current!=null && current.Elevation<dirtElevation) {
+        while(current!=null && current.Elevation<=dirtElevation) {
             pos += dir;
             current = GetTileAt(pos.x, pos.y);
         }

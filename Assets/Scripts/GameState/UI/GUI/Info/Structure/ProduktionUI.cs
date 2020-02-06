@@ -45,18 +45,18 @@ public class ProduktionUI : MonoBehaviour {
 
         if (ustr is ProductionStructure) {
             ProductionStructure pstr = (ProductionStructure)ustr;
-            if (pstr.MyIntake == null) {
+            if (pstr.Intake == null) {
                 return;
             }
-            if (pstr.MyInputTyp == InputTyp.AND) {
-                for (int i = 0; i < pstr.MyIntake.Length; i++) {
+            if (pstr.InputTyp == InputTyp.AND) {
+                for (int i = 0; i < pstr.Intake.Length; i++) {
                     ItemUI go = GameObject.Instantiate(itemPrefab).GetComponent<ItemUI>();
-                    go.SetItem(pstr.MyIntake[i], pstr.GetMaxIntakeForIntakeIndex(i));
+                    go.SetItem(pstr.Intake[i], pstr.GetMaxIntakeForIntakeIndex(i));
                     go.transform.SetParent(inputContent);
-                    itemToGO.Add(pstr.MyIntake[i], go);
+                    itemToGO.Add(pstr.Intake[i], go);
                 }
             }
-            else if (pstr.MyInputTyp == InputTyp.OR) {
+            else if (pstr.InputTyp == InputTyp.OR) {
                 for (int i = 0; i < pstr.ProductionData.intake.Length; i++) {
                     ItemUI go = GameObject.Instantiate(itemPrefab).GetComponent<ItemUI>();
                     if (i > 0) {
@@ -64,9 +64,9 @@ public class ProduktionUI : MonoBehaviour {
                         or.transform.SetParent(inputContent);
                     }
                     if (i == pstr.OrItemIndex) {
-                        go.SetItem(pstr.MyIntake[0], pstr.GetMaxIntakeForIntakeIndex(pstr.OrItemIndex));
-                        currORItem = pstr.MyIntake[0];
-                        itemToGO.Add(pstr.MyIntake[0], go);
+                        go.SetItem(pstr.Intake[0], pstr.GetMaxIntakeForIntakeIndex(pstr.OrItemIndex));
+                        currORItem = pstr.Intake[0];
+                        itemToGO.Add(pstr.Intake[0], go);
                     }
                     else {
                         go.SetItem(pstr.ProductionData.intake[i], pstr.GetMaxIntakeForIntakeIndex(i));
@@ -102,8 +102,8 @@ public class ProduktionUI : MonoBehaviour {
         }
         go = itemToGO[item];
         go.ClearAllTriggers();
-        SwitchItemKey(item, ((ProductionStructure)currentStructure).MyIntake[0]);
-        currORItem = ((ProductionStructure)currentStructure).MyIntake[0];
+        SwitchItemKey(item, ((ProductionStructure)currentStructure).Intake[0]);
+        currORItem = ((ProductionStructure)currentStructure).Intake[0];
     }
     private void SwitchItemKey(Item oldKey, Item newKey) {
         ItemUI go = itemToGO[oldKey];

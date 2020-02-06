@@ -2,21 +2,24 @@
 using System.Collections.Generic;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
-
+using System.Reflection;
+using System;
 
 /// <summary>
 /// TODO: change building over to structure names!
 /// </summary>
 public class EditorBuild : MonoBehaviour {
-    public GameObject prefabListItem;
+    public GameObject toggleListItem;
+    public GameObject sliderListItem;
+    public GameObject listItem;
+
     public GameObject BuildingSelectContent;
     public GameObject BuildingSettingsContent;
-
     // Use this for initialization
     void Start() {
         bool first = true;
         foreach (string item in PrototypController.Instance.StructurePrototypes.Keys) {
-            GameObject g = GameObject.Instantiate(prefabListItem);
+            GameObject g = GameObject.Instantiate(listItem);
             g.transform.SetParent(BuildingSelectContent.transform);
             g.GetComponentInChildren<Text>().text = PrototypController.Instance.StructurePrototypes[item].SpriteName;
             string temp = item;
@@ -27,39 +30,86 @@ public class EditorBuild : MonoBehaviour {
             };
             entry.callback.AddListener((data) => { OnBuildingSelect(temp); });
             eventTrigger.triggers.Add(entry);
-            if (first)
+            if (first) {
                 OnBuildingSelect(temp);
+                first = false;
+            }
         }
 
     }
-
     public void OnBuildingSelect(string id) {
         EditorController.Instance.changeTileType = false;
         EditorController.Instance.SetStructure(id);
-        if (PrototypController.Instance.StructurePrototypes[id] is GrowableStructure == false) {
-            return;
-        }
-        GrowableStructure gr = PrototypController.Instance.StructurePrototypes[id] as GrowableStructure;
-        int ages = gr.AgeStages;
+        Structure str = PrototypController.Instance.StructurePrototypes[id];
+
         foreach (Transform item in BuildingSettingsContent.transform) {
             GameObject.Destroy(item.gameObject);
         }
-        for (int i = 0; i <= ages; i++) {
-            GameObject g = GameObject.Instantiate(prefabListItem);
-            g.transform.SetParent(BuildingSettingsContent.transform);
-            g.GetComponentInChildren<Text>().text = i.ToString();
-            int temp = i;
-            EventTrigger eventTrigger = g.GetComponent<EventTrigger>();
-            EventTrigger.Entry entry = new EventTrigger.Entry {
-                eventID = EventTriggerType.Select,
-                callback = new EventTrigger.TriggerEvent()
-            };
-            entry.callback.AddListener((data) => { OnAgeSelect(temp); });
-            eventTrigger.triggers.Add(entry);
+        EditorController.Instance.ResetSetStructure();
+        Type strType = str.GetType();
+        HashSet<FieldInfo> all = new HashSet<FieldInfo>(strType.GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance));
+        foreach (FieldInfo fi in all) {
+            EditorSetFieldAttribute edsfa = fi.GetCustomAttribute<EditorSetFieldAttribute>();
+            if (edsfa == null)
+                continue;
+            if(IsNumeric(fi.FieldType)) {
+                GameObject g = GameObject.Instantiate(sliderListItem);
+                g.transform.SetParent(BuildingSettingsContent.transform);
+                g.GetComponentInChildren<Text>().text = fi.Name;
+                Slider s = g.GetComponentInChildren<Slider>();
+                s.minValue = edsfa.minValue;
+                if(edsfa.minValueName!=null)
+                    s.minValue = (int)strType.GetProperty(edsfa.minValueName)?.GetValue(str);
+                s.maxValue = edsfa.maxValue;
+                if (edsfa.maxValueName != null)
+                    s.maxValue = (int)strType.GetProperty(edsfa.maxValueName)?.GetValue(str);
+
+                s.wholeNumbers = edsfa.wholeNumbers;
+                s.onValueChanged.AddListener(x => s.GetComponentInChildren<Text>().text = "" + x);
+                EditorController.Instance.SetStructureVariablesList.Add(
+                        x => fi.SetValue(x, System.Convert.ChangeType(s.value, fi.FieldType))
+                );
+                Action<Structure> random = y => fi.SetValue(y, System.Convert.ChangeType(
+                                                    UnityEngine.Random.Range(s.minValue, s.maxValue),
+                                                    fi.FieldType));
+                g.GetComponentInChildren<Toggle>().onValueChanged.AddListener((x) => {
+                    if (x) {
+                        EditorController.Instance.SetStructureVariablesList.Add(random);
+                    } else {
+                        EditorController.Instance.SetStructureVariablesList.Remove(random);
+                    }
+                });
+                //trigger listener
+                s.value = s.maxValue;
+                s.value = s.minValue;
+            }
+            else
+            if(fi.FieldType == typeof(bool)) {
+                GameObject g = GameObject.Instantiate(toggleListItem);
+                g.transform.SetParent(BuildingSettingsContent.transform);
+                g.GetComponentInChildren<Text>().text = fi.Name;
+                g.GetComponentInChildren<Toggle>().onValueChanged.AddListener(x => fi.SetValue(str, x));
+            }
         }
     }
-    public void OnAgeSelect(int age) {
-        EditorController.Instance.SetAge(age);
-        //		EditorStructureSpriteController.Instance.growableLevel = age;
+
+    private static readonly HashSet<Type> NumericTypes = new HashSet<Type> {
+        typeof(int),  typeof(double),  typeof(decimal),
+        typeof(long), typeof(short),   typeof(sbyte),
+        typeof(byte), typeof(ulong),   typeof(ushort),
+        typeof(uint), typeof(float)
+    };
+
+    public static bool IsNumeric(Type myType) {
+        return NumericTypes.Contains(Nullable.GetUnderlyingType(myType) ?? myType);
     }
+}
+
+public class EditorSetFieldAttribute : Attribute {
+    public string maxValueName;
+    public float maxValue = 1000;
+    public string minValueName;
+    public float minValue = 0;
+    public bool wholeNumbers = true;
+    public Func<object> change;
 }

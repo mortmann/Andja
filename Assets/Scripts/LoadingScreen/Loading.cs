@@ -29,15 +29,8 @@ public class Loading : MonoBehaviour {
     }
 
     void Update() {
-        if (aso == null) {
+        if (aso == null && Application.isEditor==false) {
             if (loadEditor) {
-                if (SaveController.Instance.DoesEditorSaveExist(GameDataHolder.Instance.Loadsavegame) == false) {
-                    UnityEngine.Debug.LogError(GameDataHolder.Instance.Loadsavegame + " Save does not exist!");
-                    SceneManager.LoadScene("MainMenu");
-                    Destroy(FindObjectOfType<MasterController>().gameObject);
-                    Destroy(FindObjectOfType<MapGenerator>().gameObject);
-                    return;
-                }
                 aso = SceneManager.LoadSceneAsync("IslandEditor");
                 aso.allowSceneActivation = false;
             }
@@ -77,7 +70,8 @@ public class Loading : MonoBehaviour {
             if (TileSpriteController.CreationDone == false)
                 return;
             UnityEngine.Debug.Log("Load Async after " + loadingStopWatch.ElapsedMilliseconds + "ms (" + loadingStopWatch.Elapsed.TotalSeconds + "s)! ");
-
+            if(Application.isEditor && aso==null)
+                aso = SceneManager.LoadSceneAsync("GameState");
             aso.allowSceneActivation = true;
         }
         else {
@@ -91,6 +85,8 @@ public class Loading : MonoBehaviour {
             if (EditorController.generate && MapGenerator.Instance.IsDone == false) {
                 return;
             }
+            if (Application.isEditor && aso == null)
+                aso = SceneManager.LoadSceneAsync("IslandEditor");
             aso.allowSceneActivation = true;
         }
 

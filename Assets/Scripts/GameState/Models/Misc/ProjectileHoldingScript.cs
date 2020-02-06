@@ -5,10 +5,10 @@ using UnityEngine;
 
 public class ProjectileHoldingScript : MonoBehaviour {
 
-    public Projectile myProjectile;
+    public Projectile Projectile;
 
     private void Start() {
-        myProjectile.RegisterOnDestroyCallback(OnProjectileDestroy);
+        Projectile.RegisterOnDestroyCallback(OnProjectileDestroy);
     }
 
     private void OnProjectileDestroy(Projectile obj) {
@@ -17,7 +17,7 @@ public class ProjectileHoldingScript : MonoBehaviour {
 
     // Update is called once per frame
     void Update() {
-        transform.position = myProjectile.Position;
+        transform.position = Projectile.Position;
     }
     //Doesnt get triggerd on hit because itself is a trigger
     private void OnCollisionEnter2D(Collision2D collision) {
@@ -25,7 +25,7 @@ public class ProjectileHoldingScript : MonoBehaviour {
         if (iths == null) {
             return;
         }
-        if (myProjectile.OnHit(iths.Holding)) {
+        if (Projectile.OnHit(iths.Holding)) {
             Destroy(this);
         }
     }
@@ -35,7 +35,7 @@ public class ProjectileHoldingScript : MonoBehaviour {
         if (iths == null) {
             return;
         }
-        if (myProjectile.OnHit(iths.Holding)) {
+        if (Projectile.OnHit(iths.Holding)) {
             Destroy(this);
         }
     }

@@ -13,7 +13,8 @@ public class SaveGameSelectableScript : MonoBehaviour {
     public Button DeleteButton;
 
     internal void Show(SaveController.SaveMetaData saveMetaData, Action<string, GameObject> clickedFunction, Action<string> deleteFunction) {
-        SavegameImage.sprite = SaveController.Instance.GetSaveFileScreenShot(saveMetaData.saveName);
+        if(EditorController.IsEditor==false)
+            SavegameImage.sprite = SaveController.Instance.GetSaveFileScreenShot(saveMetaData.saveName);
         TitleText.text = saveMetaData.saveName;
         TimeText.text = saveMetaData.saveTime.ToString("G", System.Threading.Thread.CurrentThread.CurrentCulture);
         EventTrigger trigger = GetComponent<EventTrigger>();

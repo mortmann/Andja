@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using Newtonsoft.Json;
+using System;
 
 public class GrowablePrototypeData : OutputPrototypData {
     public Fertility fertility;
@@ -13,7 +14,9 @@ public class GrowableStructure : OutputStructure {
 
     #region Serialize
 
-    [JsonPropertyAttribute] float age = 0;
+    [JsonPropertyAttribute]
+    float age = 0;
+    [EditorSetField(minValue = 0, maxValueName = "AgeStages")]
     [JsonPropertyAttribute] public int currentStage = 0;
     [JsonPropertyAttribute] public bool hasProduced = false;
 
@@ -63,6 +66,9 @@ public class GrowableStructure : OutputStructure {
         else {
             //maybe have ground type be factor? stone etc
             landGrowModifier = 1;
+        }
+        if(age < currentStage * TimePerStage) {
+            age = currentStage * TimePerStage;
         }
     }
     public override void OnUpdate(float deltaTime) {

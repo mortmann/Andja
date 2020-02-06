@@ -18,7 +18,7 @@ public class CityUI : MonoBehaviour {
         if(city == null) {
             return;
         }
-        AutoUpgradeHomesToggle.isOn = city.AutoUpgradeHomes;
+        AutoUpgradeHomesToggle.isOn = city.autoUpgradeHomes;
         NameField.SetName(city.Name, OnNameEdit);
         //Make the Name editable
     }
@@ -28,11 +28,11 @@ public class CityUI : MonoBehaviour {
         city.Name = name;
     }
     public void OnEnableAutoUpgrade(bool change) {
-        city.AutoUpgradeHomes = change;
+        city.autoUpgradeHomes = change;
     }
     private void Update() {
-        Income.Show(city.Income);
-        Expanses.Show(city.Expanses);
+        Income.Show(city.income);
+        Expanses.Show(city.expanses);
         Balance.Show(city.Balance);
         PeopleCount.Show(city.PopulationCount);
     }

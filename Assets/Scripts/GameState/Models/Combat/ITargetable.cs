@@ -13,7 +13,7 @@ public interface ITargetable {
     Vector2 CurrentPosition { get; }
     Vector2 NextDestinationPosition { get; }
     Vector2 LastMovement { get; }
-    ArmorType MyArmorType { get; }
+    ArmorType ArmorType { get; }
     float Speed { get; }
     float Width { get; }
     float Height { get; }

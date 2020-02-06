@@ -3,6 +3,7 @@ using UnityEngine;
 using System;
 using Newtonsoft.Json;
 using System.Linq;
+using EpPathFinding.cs;
 
 public enum Climate { Cold, Middle, Warm };
 
@@ -10,20 +11,21 @@ public enum Climate { Cold, Middle, Warm };
 public class Island : IGEventable {
     #region Serialize
 
-    [JsonPropertyAttribute] public List<City> myCities;
-    [JsonPropertyAttribute] public Climate myClimate;
+    [JsonPropertyAttribute] public List<City> Cities;
+    [JsonPropertyAttribute] public Climate Climate;
     [JsonPropertyAttribute] public Dictionary<string, int> Ressources;
     [JsonPropertyAttribute] public Tile StartTile;
 
     #endregion
     #region RuntimeOrOther
-    public List<Fertility> myFertilities;
+    public List<Fertility> Fertilities;
     public Path_TileGraph TileGraphIslandTiles { get; protected set; }
     public int Width {
         get {
             return Mathf.CeilToInt(Maximum.x - Minimum.x);
         }
     }
+
     public int Height {
         get {
             return Mathf.CeilToInt(Maximum.y - Minimum.y);
@@ -32,7 +34,7 @@ public class Island : IGEventable {
     public City Wilderness {
         get {
             if (_wilderness == null)
-                _wilderness = myCities.Find(x => x.playerNumber == -1);
+                _wilderness = Cities.Find(x => x.playerNumber == -1);
             return _wilderness;
         }
 
@@ -41,7 +43,7 @@ public class Island : IGEventable {
         }
     }
 
-    public List<Tile> myTiles;
+    public List<Tile> Tiles;
     public Vector2 Placement;
     public Vector2 Minimum;
     public Vector2 Maximum;
@@ -59,12 +61,12 @@ public class Island : IGEventable {
     public Island(Tile startTile, Climate climate = Climate.Middle) {
         StartTile = startTile; // if it gets loaded the StartTile will already be set
         Ressources = new Dictionary<string, int>();
-        myCities = new List<City>();
+        Cities = new List<City>();
 
-        this.myClimate = climate;
+        this.Climate = climate;
         
-        myTiles = new List<Tile>();
-        StartTile.MyIsland = this;
+        Tiles = new List<Tile>();
+        StartTile.Island = this;
         foreach (Tile t in StartTile.GetNeighbours()) {
             IslandFloodFill(t);
         }
@@ -85,8 +87,8 @@ public class Island : IGEventable {
 
     public Island(Tile[] tiles, Climate climate = Climate.Middle) {
         Ressources = new Dictionary<string, int>();
-        myCities = new List<City>();
-        this.myClimate = climate;
+        Cities = new List<City>();
+        this.Climate = climate;
         SetTiles(tiles);
         Setup();
     }
@@ -99,17 +101,17 @@ public class Island : IGEventable {
         //so it has the playernumber -1 -> needs to be checked for when buildings are placed
         //have a function like is notplayer city
         //it does not need NEEDs
-        if (myCities.Count > 0) {
+        if (Cities.Count > 0) {
             return; // this means it got loaded in so there is already a wilderness
         }
-        myCities.Add(new City(myTiles, this));
-        Wilderness = myCities[0];
+        Cities.Add(new City(Tiles, this));
+        Wilderness = Cities[0];
     }
 
     public IEnumerable<Structure> Load() {
         Setup();
         List<Structure> structs = new List<Structure>();
-        foreach (City c in myCities) {
+        foreach (City c in Cities) {
             if (c.playerNumber == -1) {
                 Wilderness = c;
             }
@@ -120,12 +122,12 @@ public class Island : IGEventable {
     }
 
     internal void SetTiles(Tile[] tiles) {
-        this.myTiles = new List<Tile>(tiles);
+        this.Tiles = new List<Tile>(tiles);
         StartTile = tiles[0];
         Minimum = new Vector2(tiles[0].X, tiles[0].Y);
         Maximum = new Vector2(tiles[0].X, tiles[0].Y);
         foreach (Tile t in tiles) {
-            t.MyIsland = this;
+            t.Island = this;
             if (Minimum.x > t.X) {
                 Minimum.x = t.X;
             }
@@ -141,7 +143,7 @@ public class Island : IGEventable {
         }
         Center = Minimum + ((Maximum - Minimum) / 2);
         if (Wilderness != null)
-            Wilderness.AddTiles(myTiles);
+            Wilderness.AddTiles(Tiles);
         TileGraphIslandTiles = new Path_TileGraph(this);
     }
 
@@ -159,7 +161,7 @@ public class Island : IGEventable {
             // Water is the border of every island :>
             return;
         }
-        if (tile.MyIsland == this) {
+        if (tile.Island == this) {
             // already in there
             return;
         }
@@ -184,9 +186,9 @@ public class Island : IGEventable {
             }
 
 
-            if (t.Type != TileType.Ocean && t.MyIsland != this) {
-                myTiles.Add(t);
-                t.MyIsland = this;
+            if (t.Type != TileType.Ocean && t.Island != this) {
+                Tiles.Add(t);
+                t.Island = this;
                 Tile[] ns = t.GetNeighbours();
                 foreach (Tile t2 in ns) {
                     tilesToCheck.Enqueue(t2);
@@ -197,25 +199,25 @@ public class Island : IGEventable {
     }
 
     public void Update(float deltaTime) {
-        for (int i = 0; i < myCities.Count; i++) {
-            myCities[i].Update(deltaTime);
+        for (int i = 0; i < Cities.Count; i++) {
+            Cities[i].Update(deltaTime);
         }
     }
     public City FindCityByPlayer(int playerNumber) {
-        return myCities.Find(x => x.playerNumber == playerNumber);
+        return Cities.Find(x => x.playerNumber == playerNumber);
     }
     public City CreateCity(int playerNumber) {
-        if (myCities.Exists(x => x.playerNumber == playerNumber)) {
+        if (Cities.Exists(x => x.playerNumber == playerNumber)) {
             Debug.LogError("TRIED TO CREATE A SECOND CITY -- IS NEVER ALLOWED TO HAPPEN!");
-            return myCities.Find(x => x.playerNumber == playerNumber);
+            return Cities.Find(x => x.playerNumber == playerNumber);
         }
         allReadyHighlighted = false;
         City c = new City(playerNumber, this);
-        myCities.Add(c);
+        Cities.Add(c);
         return c;
     }
     public void RemoveCity(City c) {
-        myCities.Remove(c);
+        Cities.Remove(c);
     }
 
     #region igeventable

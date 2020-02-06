@@ -106,7 +106,6 @@ public static class ModLoader {
                         mipMapBias = -0.25f
                     };
                     texture.LoadImage(File.ReadAllBytes(pictureFilePath));
-
                     Vector2 pivot = new Vector2(metaData.xPivot, metaData.yPivot);
                     switch (metaData.spriteMode) {
                         case SpriteMode.Single:

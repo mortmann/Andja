@@ -12,7 +12,7 @@ public class IslandPathfinding : Pathfinding {
         this._speed = u.Speed;
         this.rotationSpeed = u.RotationSpeed;
         CurrTile = start;
-        NextTile = CurrTile;
+        NextDestination = CurrTile.Vector2;
         dest_X = start.X;
         dest_Y = start.Y;
     }
@@ -30,21 +30,27 @@ public class IslandPathfinding : Pathfinding {
         this.DestTile = World.Current.GetTileAt(x, y);
         dest_X = x;
         dest_Y = y;
-        pathDest = Path_dest.exact;
+        pathDest = Path_Destination.Exact;
         StartCalculatingThread();
     }
     protected override void CalculatePath() {
         IsDoneCalculating = false;
         if (start == null)
             start = World.Current.GetTileAt(X, Y);
-        Path_AStar pa = new Path_AStar(start.MyIsland, start, DestTile);
-        worldPath = pa.path;
+        Path_AStar pa = new Path_AStar(start.Island, start, DestTile);
+
+        worldPath = new Queue<Vector2>();
+        while (pa.path.Count > 0) {
+            worldPath.Enqueue(pa.path.Dequeue().Vector2);
+        }
+        worldPath.Enqueue(Destination);
         CreateReversePath();
+        backPath.Enqueue(Position2);
         if (worldPath.Count > 0) {
             worldPath.Dequeue();
         }
         if (worldPath.Count > 0) {
-            NextTile = worldPath.Dequeue();
+            NextDestination = worldPath.Dequeue();
         }
         //important 
         IsDoneCalculating = true;

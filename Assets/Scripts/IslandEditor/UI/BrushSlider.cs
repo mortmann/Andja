@@ -1,20 +1,24 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
+
+public enum BrushType { Size, Random }
 public class BrushSlider : MonoBehaviour {
     public Slider s;
     public Text t;
-    public bool size;
+    public BrushType Type;
     // Use this for initialization
     void Start() {
-        if (size) {
-            s.onValueChanged.AddListener(OnSizeSliderChange);
-            t.text = 1.ToString();
-        }
-        else {
-            EditorController.Instance.OnBrushRandomChange(100);
-            s.onValueChanged.AddListener(OnRandomSliderChange);
-            t.text = "Off";
+        switch (Type) {
+            case BrushType.Size:
+                s.onValueChanged.AddListener(OnSizeSliderChange);
+                t.text = 1.ToString();
+                break;
+            case BrushType.Random:
+                EditorController.Instance.OnBrushRandomChange(100);
+                s.onValueChanged.AddListener(OnRandomSliderChange);
+                t.text = "Off";
+                break;
         }
     }
     public void OnSizeSliderChange(float f) {

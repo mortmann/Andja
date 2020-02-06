@@ -97,17 +97,6 @@ public class ConsoleUI : MonoBehaviour {
                 return;
             }
             predicted = GetThirdLevelCommands(second).FindAll(x => x.StartsWith(toPredicte));
-
-            //if (last == "item" || last == "crate") {
-            //    predicted = ItemIDs.Find(x => x.StartsWith(toPredicte));
-            //}
-            //if(first == "spawn" && last == "unit") {
-            //    predicted = UnitIDs.Find(x => x.StartsWith(toPredicte));
-            //}
-            ////event
-            //if (first == "event" && last == "trigger") {
-            //    predicted = EventIDs.Find(x => x.StartsWith(toPredicte));
-            //}
             
         }
         if (String.IsNullOrEmpty(toPredicte)) {
@@ -127,11 +116,11 @@ public class ConsoleUI : MonoBehaviour {
                 allPredicatedText += "\n";  
         }
         predictiveText.text = allPredicatedText;
-        //predicted = predicted.Remove(0, toPredicte.Length);
-        //predictiveText.text = text + "<color=yellow>" + predicted + "</color>";
 
         if (Input.GetKeyDown(KeyCode.Tab)) {
-            inputField.text = text + predicted[0] + " ";
+            string add = predicted[predicted.Count-1];
+            add = add.Remove(0, toPredicte.Length);
+            inputField.text = text + add + " ";
             inputField.MoveTextEnd(false);
             predictiveText.text = "";
         }

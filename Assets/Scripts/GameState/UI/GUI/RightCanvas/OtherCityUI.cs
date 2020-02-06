@@ -23,16 +23,16 @@ public class OtherCityUI : MonoBehaviour {
             GameObject g = Instantiate(TradeItemPrefab);
             g.transform.SetParent(ItemCanvas.transform);
             TradeItemUI tiui = g.GetComponent<TradeItemUI>();
-            if (ti.selling) {
+            if (ti.IsSelling) {
                 //SELL show how much it has
                 Item temp = city.inventory.GetItemWithIDClone(itemID);
                 Item i = ti.SellItemAmount(temp);
-                tiui.Show(i, city.inventory.MaxStackSize, ti.selling);
+                tiui.Show(i, city.inventory.MaxStackSize, ti.IsSelling);
             }
-            else {
+            if(ti.IsBuying) {
                 //BUY show how much it wants
                 Item i = ti.BuyItemAmount(city.inventory.GetItemWithIDClone(itemID));
-                tiui.Show(i, city.inventory.MaxStackSize, ti.selling);
+                tiui.Show(i, city.inventory.MaxStackSize, ti.IsBuying);
             }
             tiui.UpdatePriceText(ti.price);
             string id = itemID;
@@ -40,13 +40,13 @@ public class OtherCityUI : MonoBehaviour {
         }
     }
     public void OnClickItemToTrade(string itemID, int amount = 50) {
-        Unit u = city.myWarehouse.inRangeUnits.Find(x => x.playerNumber == PlayerController.currentPlayerNumber);
+        Unit u = city.warehouse.inRangeUnits.Find(x => x.playerNumber == PlayerController.currentPlayerNumber);
         if (u == null && u.IsShip == false) {
             Debug.Log("No Ship in Range");
             return;
         }
 
-        city.BuyFromCity(itemID, PlayerController.Instance.CurrPlayer, ((Ship)u), amount);
+        city.SellingTradeItem(itemID, PlayerController.Instance.CurrPlayer, ((Ship)u), amount);
     }
     public void OnCityDestroy(City c) {
         if (city != c) {

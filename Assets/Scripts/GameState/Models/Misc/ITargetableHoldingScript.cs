@@ -23,7 +23,7 @@ public class ITargetableHoldingScript : MonoBehaviour {
 
     public UnitDoModes currentUnitDO = UnitDoModes.Idle;
     public UnitMainModes currentUnitMain = UnitMainModes.Idle;
-    public Turn_type turnType;
+    public Turning_Type turnType;
     private LineRenderer line;
 
     //FIXME TODO REMOVE DIS
@@ -50,13 +50,14 @@ public class ITargetableHoldingScript : MonoBehaviour {
             line.positionCount = unit.pathfinding.worldPath.Count + 2;
             line.useWorldSpace = true;
             lineVecs.Add(unit.pathfinding.Position);
-            if (unit.pathfinding.NextTile != null) {
-                lineVecs.Add(unit.pathfinding.NextTile.Vector);
+            if (unit.pathfinding.NextDestination != null) {
+                lineVecs.Add((Vector3)unit.pathfinding.NextDestination.Value);
             }
-            foreach (Tile t in unit.pathfinding.worldPath) {
+            foreach (Vector2 t in unit.pathfinding.worldPath) {
                 if (lineVecs.Count == unit.pathfinding.worldPath.Count - 2)
                     break;
-                lineVecs.Add(t.Vector + Vector3.back);
+                Vector3 temp = t;
+                lineVecs.Add(temp + Vector3.back);
             }
             if(unit.pathfinding.IsAtDestination==false) {
                 lineVecs.Add(new Vector3(unit.pathfinding.dest_X, unit.pathfinding.dest_Y, -1));
@@ -75,7 +76,7 @@ public class ITargetableHoldingScript : MonoBehaviour {
         currentUnitMain = unit.CurrentMainMode;
     }
     public void FixedUpdate() {
-        turnType = unit.pathfinding.myTurnType;
+        turnType = unit.pathfinding.TurnType;
         //rigid.AddForce(unit.pathfinding.LastMove);
         rigid.MoveRotation(unit.Rotation);
         //transform.rotation = new Quaternion(0, 0, unit.Rotation, 0);

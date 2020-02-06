@@ -25,7 +25,7 @@ public class Player : IGEventable {
     public HashSet<Need>[] UnlockedStructureNeeds { get; protected set; }
     public HashSet<Structure> AllStructures;
     public HashSet<Unit> AllUnits;
-    public List<City> myCities;
+    public List<City> Cities;
     public bool HasLost => TreasuryBalance < MaximumDebt;
     PlayerPrototypeData PlayerPrototypeData => PrototypController.CurrentPlayerPrototypData;
 
@@ -123,7 +123,7 @@ public class Player : IGEventable {
         }
     }
     [JsonPropertyAttribute]
-    public List<TradeRoute> MyTradeRoutes { get; protected set; }
+    public List<TradeRoute> TradeRoutes { get; protected set; }
 
     [JsonPropertyAttribute]
     public int Number;
@@ -135,6 +135,8 @@ public class Player : IGEventable {
 
     public Player(int number, bool isHuman) {
         this._IsHuman = isHuman;
+        if (isHuman)
+            _name = "itsMeAnTotallyHumanHuman"; 
         Number = number;
         MaxPopulationCount = 0;
         MaxPopulationLevel = 0;
@@ -143,11 +145,11 @@ public class Player : IGEventable {
         Setup();
     }
     private void Setup() {
-        myCities = new List<City>();
+        Cities = new List<City>();
         LockedNeeds = new HashSet<Need>[PrototypController.Instance.NumberOfPopulationLevels];
         UnlockedStructureNeeds = new HashSet<Need>[PrototypController.Instance.NumberOfPopulationLevels];
         UnlockedItemNeeds = new HashSet<Need>();
-        MyTradeRoutes = new List<TradeRoute>();
+        TradeRoutes = new List<TradeRoute>();
         AllStructures = new HashSet<Structure>();
         AllUnits = new HashSet<Unit>();
         for (int i = 0; i < PrototypController.Instance.NumberOfPopulationLevels; i++) {
@@ -173,14 +175,14 @@ public class Player : IGEventable {
     private void CalculateBalance() {
         LastTreasuryChange = TreasuryChange;
         TreasuryChange = 0;
-        for (int i = 0; i < myCities.Count; i++) {
-            LastTreasuryChange += myCities[i].Balance;
+        for (int i = 0; i < Cities.Count; i++) {
+            LastTreasuryChange += Cities[i].Balance;
         }
     }
 
     internal IEnumerable<Island> GetIslandList() {
         HashSet<Island> islands = new HashSet<Island>();
-        foreach (City c in myCities)
+        foreach (City c in Cities)
             islands.Add(c.island);
         return islands;
     }
@@ -264,13 +266,13 @@ public class Player : IGEventable {
         return UnlockedStructureNeeds[need.StartLevel].Contains(need);
     }
     public void AddTradeRoute(TradeRoute route) {
-        if (MyTradeRoutes == null)
-            MyTradeRoutes = new List<TradeRoute>();
-        MyTradeRoutes.Add(route);
+        if (TradeRoutes == null)
+            TradeRoutes = new List<TradeRoute>();
+        TradeRoutes.Add(route);
     }
     public bool RemoveTradeRoute(TradeRoute route) {
         route.Destroy();
-        return MyTradeRoutes.Remove(route);
+        return TradeRoutes.Remove(route);
     }
     public void ReduceMoney(int money) {
         if (money < 0) {
@@ -299,13 +301,13 @@ public class Player : IGEventable {
     public void OnCityCreated(City city) {
         if (city.playerNumber != Number)
             return;
-        myCities.Add(city);
+        Cities.Add(city);
         city.RegisterStructureAdded(OnStructureCreated);
         city.RegisterCityDestroy(OnCityDestroy);
     }
     public void OnCityDestroy(City city) {
         city.UnregisterStructureAdded(OnStructureCreated);
-        myCities.Remove(city);
+        Cities.Remove(city);
     }
 
     public void OnStructureCreated(Structure structure) {

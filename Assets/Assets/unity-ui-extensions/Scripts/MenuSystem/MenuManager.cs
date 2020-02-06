@@ -34,7 +34,7 @@ namespace UnityEngine.UI.Extensions
 
         public static MenuManager Instance { get; set; }
 
-        private void Start()
+        private void Start() 
         {
             Instance = this;
             if (MenuScreens.Length > 0 + StartScreen)

@@ -32,7 +32,7 @@
          <maintenanceCost>0</maintenanceCost>
          <buildCost>15</buildCost>
          <buildTyp>Path</buildTyp>
-         <myStructureTyp>Pathfinding</myStructureTyp>
+         <structureTyp>Pathfinding</structureTyp>
          <extraUITyp>None</extraUITyp>
          <extraBuildUITyp>None</extraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
@@ -70,7 +70,7 @@
          <maintenanceCost>0</maintenanceCost>
          <buildCost>50</buildCost>
          <buildTyp>Path</buildTyp>
-         <myStructureTyp>Pathfinding</myStructureTyp>
+         <structureTyp>Pathfinding</structureTyp>
          <extraUITyp>None</extraUITyp>
          <extraBuildUITyp>None</extraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
@@ -109,7 +109,7 @@
          <maintenanceCost>0</maintenanceCost>
          <buildCost>100</buildCost>
          <buildTyp>Path</buildTyp>
-         <myStructureTyp>Pathfinding</myStructureTyp>
+         <structureTyp>Pathfinding</structureTyp>
          <extraUITyp>None</extraUITyp>
          <extraBuildUITyp>None</extraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
@@ -152,7 +152,7 @@
          <maintenanceCost>0</maintenanceCost>
          <buildCost>0</buildCost>
          <buildTyp>Path</buildTyp>
-         <myStructureTyp>Pathfinding</myStructureTyp>
+         <structureTyp>Pathfinding</structureTyp>
          <extraUITyp>None</extraUITyp>
          <extraBuildUITyp>None</extraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
@@ -202,7 +202,7 @@
          <maintenanceCost>20</maintenanceCost>
          <buildCost>0</buildCost>
          <buildTyp>Single</buildTyp>
-         <myStructureTyp>Blocking</myStructureTyp>
+         <structureTyp>Blocking</structureTyp>
          <extraUITyp>None</extraUITyp>
          <extraBuildUITyp>None</extraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
@@ -261,7 +261,7 @@
          <maintenanceCost>25</maintenanceCost>
          <buildCost>250</buildCost>
          <buildTyp>Single</buildTyp>
-         <myStructureTyp>Blocking</myStructureTyp>
+         <structureTyp>Blocking</structureTyp>
          <extraUITyp>None</extraUITyp>
          <extraBuildUITyp>Efficiency</extraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
@@ -317,7 +317,7 @@
          <maintenanceCost>100</maintenanceCost>
          <buildCost>1000</buildCost>
          <buildTyp>Single</buildTyp>
-         <myStructureTyp>Blocking</myStructureTyp>
+         <structureTyp>Blocking</structureTyp>
          <extraUITyp>None</extraUITyp>
          <extraBuildUITyp>None</extraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
@@ -376,7 +376,7 @@
          <maintenanceCost>75</maintenanceCost>
          <buildCost>650</buildCost>
          <buildTyp>Single</buildTyp>
-         <myStructureTyp>Blocking</myStructureTyp>
+         <structureTyp>Blocking</structureTyp>
          <extraUITyp>None</extraUITyp>
          <extraBuildUITyp>None</extraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
@@ -435,7 +435,7 @@
          <maintenanceCost>60</maintenanceCost>
          <buildCost>500</buildCost>
          <buildTyp>Single</buildTyp>
-         <myStructureTyp>Blocking</myStructureTyp>
+         <structureTyp>Blocking</structureTyp>
          <extraUITyp>None</extraUITyp>
          <extraBuildUITyp>None</extraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
@@ -494,7 +494,7 @@
          <maintenanceCost>65</maintenanceCost>
          <buildCost>1250</buildCost>
          <buildTyp>Single</buildTyp>
-         <myStructureTyp>Blocking</myStructureTyp>
+         <structureTyp>Blocking</structureTyp>
          <extraUITyp>None</extraUITyp>
          <extraBuildUITyp>None</extraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
@@ -556,7 +556,7 @@
          <maintenanceCost>25</maintenanceCost>
          <buildCost>250</buildCost>
          <buildTyp>Single</buildTyp>
-         <myStructureTyp>Blocking</myStructureTyp>
+         <structureTyp>Blocking</structureTyp>
          <extraUITyp>None</extraUITyp>
          <extraBuildUITyp>None</extraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
@@ -615,7 +615,7 @@
          <maintenanceCost>75</maintenanceCost>
          <buildCost>450</buildCost>
          <buildTyp>Single</buildTyp>
-         <myStructureTyp>Blocking</myStructureTyp>
+         <structureTyp>Blocking</structureTyp>
          <extraUITyp>None</extraUITyp>
          <extraBuildUITyp>None</extraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
@@ -677,7 +677,7 @@
          <maintenanceCost>100</maintenanceCost>
          <buildCost>600</buildCost>
          <buildTyp>Single</buildTyp>
-         <myStructureTyp>Blocking</myStructureTyp>
+         <structureTyp>Blocking</structureTyp>
          <extraUITyp>None</extraUITyp>
          <extraBuildUITyp>None</extraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
@@ -739,7 +739,7 @@
          <maintenanceCost>110</maintenanceCost>
          <buildCost>720</buildCost>
          <buildTyp>Single</buildTyp>
-         <myStructureTyp>Blocking</myStructureTyp>
+         <structureTyp>Blocking</structureTyp>
          <extraUITyp>None</extraUITyp>
          <extraBuildUITyp>None</extraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
@@ -803,7 +803,7 @@
          <maintenanceCost>0</maintenanceCost>
          <buildCost>0</buildCost>
          <buildTyp>Drag</buildTyp>
-         <myStructureTyp>Free</myStructureTyp>
+         <structureTyp>Free</structureTyp>
          <extraUITyp>None</extraUITyp>
          <extraBuildUITyp>None</extraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
@@ -854,7 +854,7 @@
          <maintenanceCost>0</maintenanceCost>
          <buildCost>5</buildCost>
          <buildTyp>Drag</buildTyp>
-         <myStructureTyp>Free</myStructureTyp>
+         <structureTyp>Free</structureTyp>
          <extraUITyp>None</extraUITyp>
          <extraBuildUITyp>None</extraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
@@ -899,7 +899,7 @@
          <maintenanceCost>0</maintenanceCost>
          <buildCost>0</buildCost>
          <buildTyp>Drag</buildTyp>
-         <myStructureTyp>Free</myStructureTyp>
+         <structureTyp>Free</structureTyp>
          <extraUITyp>None</extraUITyp>
          <extraBuildUITyp>None</extraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
@@ -950,7 +950,7 @@
          <maintenanceCost>0</maintenanceCost>
          <buildCost>25</buildCost>
          <buildTyp>Drag</buildTyp>
-         <myStructureTyp>Free</myStructureTyp>
+         <structureTyp>Free</structureTyp>
          <extraUITyp>None</extraUITyp>
          <extraBuildUITyp>None</extraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
@@ -1000,7 +1000,7 @@
          <maintenanceCost>0</maintenanceCost>
          <buildCost>25</buildCost>
          <buildTyp>Drag</buildTyp>
-         <myStructureTyp>Free</myStructureTyp>
+         <structureTyp>Free</structureTyp>
          <extraUITyp>None</extraUITyp>
          <extraBuildUITyp>None</extraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
@@ -1050,7 +1050,7 @@
          <maintenanceCost>0</maintenanceCost>
          <buildCost>25</buildCost>
          <buildTyp>Drag</buildTyp>
-         <myStructureTyp>Free</myStructureTyp>
+         <structureTyp>Free</structureTyp>
          <extraUITyp>None</extraUITyp>
          <extraBuildUITyp>None</extraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
@@ -1101,7 +1101,7 @@
          <maintenanceCost>0</maintenanceCost>
          <buildCost>45</buildCost>
          <buildTyp>Drag</buildTyp>
-         <myStructureTyp>Free</myStructureTyp>
+         <structureTyp>Free</structureTyp>
          <extraUITyp>None</extraUITyp>
          <extraBuildUITyp>None</extraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
@@ -1153,7 +1153,7 @@
          <maintenanceCost>0</maintenanceCost>
          <buildCost>0</buildCost>
          <buildTyp>Drag</buildTyp>
-         <myStructureTyp>Free</myStructureTyp>
+         <structureTyp>Free</structureTyp>
          <extraUITyp>None</extraUITyp>
          <extraBuildUITyp>None</extraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
@@ -1206,7 +1206,7 @@
          <maintenanceCost>10</maintenanceCost>
          <buildCost>200</buildCost>
          <buildTyp>Single</buildTyp>
-         <myStructureTyp>Blocking</myStructureTyp>
+         <structureTyp>Blocking</structureTyp>
          <extraUITyp>None</extraUITyp>
          <extraBuildUITyp>None</extraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
@@ -1265,7 +1265,7 @@
          <maintenanceCost>90</maintenanceCost>
          <buildCost>1000</buildCost>
          <buildTyp>Single</buildTyp>
-         <myStructureTyp>Blocking</myStructureTyp>
+         <structureTyp>Blocking</structureTyp>
          <extraUITyp>None</extraUITyp>
          <extraBuildUITyp>None</extraBuildUITyp>
          <hasToBuildOnRestriktion>Mountain</hasToBuildOnRestriktion>
@@ -1322,7 +1322,7 @@
          <maintenanceCost>55</maintenanceCost>
          <buildCost>800</buildCost>
          <buildTyp>Single</buildTyp>
-         <myStructureTyp>Blocking</myStructureTyp>
+         <structureTyp>Blocking</structureTyp>
          <extraUITyp>None</extraUITyp>
          <extraBuildUITyp>None</extraBuildUITyp>
          <hasToBuildOnRestriktion>Mountain</hasToBuildOnRestriktion>
@@ -1379,7 +1379,7 @@
          <maintenanceCost>80</maintenanceCost>
          <buildCost>1100</buildCost>
          <buildTyp>Single</buildTyp>
-         <myStructureTyp>Blocking</myStructureTyp>
+         <structureTyp>Blocking</structureTyp>
          <extraUITyp>None</extraUITyp>
          <extraBuildUITyp>None</extraBuildUITyp>
          <hasToBuildOnRestriktion>Mountain</hasToBuildOnRestriktion>
@@ -1441,7 +1441,7 @@
          <maintenanceCost>15</maintenanceCost>
          <buildCost>200</buildCost>
          <buildTyp>Single</buildTyp>
-         <myStructureTyp>Blocking</myStructureTyp>
+         <structureTyp>Blocking</structureTyp>
          <extraUITyp>None</extraUITyp>
          <extraBuildUITyp>None</extraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
@@ -1487,7 +1487,7 @@
          <maintenanceCost>120</maintenanceCost>
          <buildCost>1500</buildCost>
          <buildTyp>Single</buildTyp>
-         <myStructureTyp>Blocking</myStructureTyp>
+         <structureTyp>Blocking</structureTyp>
          <extraUITyp>None</extraUITyp>
          <extraBuildUITyp>None</extraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
@@ -1533,7 +1533,7 @@
          <maintenanceCost>225</maintenanceCost>
          <buildCost>2000</buildCost>
          <buildTyp>Single</buildTyp>
-         <myStructureTyp>Blocking</myStructureTyp>
+         <structureTyp>Blocking</structureTyp>
          <extraUITyp>None</extraUITyp>
          <extraBuildUITyp>None</extraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
@@ -1581,7 +1581,7 @@
          <maintenanceCost>0</maintenanceCost>
          <buildCost>100</buildCost>
          <buildTyp>Single</buildTyp>
-         <myStructureTyp>Blocking</myStructureTyp>
+         <structureTyp>Blocking</structureTyp>
          <extraUITyp>None</extraUITyp>
          <extraBuildUITyp>None</extraBuildUITyp>
          <hasToBuildOnRestriktion>Shore</hasToBuildOnRestriktion>
@@ -1605,7 +1605,7 @@
                <count>1</count>
             </Item>
          </output>
-         <myInputTyp>AND</myInputTyp>
+         <inputTyp>AND</inputTyp>
       </production>
       <production ID="hempweaver">
          <Name>
@@ -1639,7 +1639,7 @@
          <maintenanceCost>25</maintenanceCost>
          <buildCost>300</buildCost>
          <buildTyp>Single</buildTyp>
-         <myStructureTyp>Blocking</myStructureTyp>
+         <structureTyp>Blocking</structureTyp>
          <extraUITyp>None</extraUITyp>
          <extraBuildUITyp>None</extraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
@@ -1668,7 +1668,7 @@
                <count>2</count>
             </Item>
          </intake>
-         <myInputTyp>AND</myInputTyp>
+         <inputTyp>AND</inputTyp>
       </production>
       <production ID="hemptailor">
          <Name>
@@ -1702,7 +1702,7 @@
          <maintenanceCost>40</maintenanceCost>
          <buildCost>750</buildCost>
          <buildTyp>Single</buildTyp>
-         <myStructureTyp>Blocking</myStructureTyp>
+         <structureTyp>Blocking</structureTyp>
          <extraUITyp>None</extraUITyp>
          <extraBuildUITyp>None</extraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
@@ -1731,7 +1731,7 @@
                <count>1</count>
             </Item>
          </intake>
-         <myInputTyp>AND</myInputTyp>
+         <inputTyp>AND</inputTyp>
       </production>
       <production ID="distellery">
          <Name>
@@ -1765,7 +1765,7 @@
          <maintenanceCost>50</maintenanceCost>
          <buildCost>500</buildCost>
          <buildTyp>Single</buildTyp>
-         <myStructureTyp>Blocking</myStructureTyp>
+         <structureTyp>Blocking</structureTyp>
          <extraUITyp>None</extraUITyp>
          <extraBuildUITyp>None</extraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
@@ -1800,7 +1800,7 @@
                <count>1</count>
             </Item>
          </intake>
-         <myInputTyp>OR</myInputTyp>
+         <inputTyp>OR</inputTyp>
       </production>
       <production ID="huntershut">
          <Name>
@@ -1834,7 +1834,7 @@
          <maintenanceCost>80</maintenanceCost>
          <buildCost>1200</buildCost>
          <buildTyp>Single</buildTyp>
-         <myStructureTyp>Blocking</myStructureTyp>
+         <structureTyp>Blocking</structureTyp>
          <extraUITyp>None</extraUITyp>
          <extraBuildUITyp>None</extraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
@@ -1859,7 +1859,7 @@
             </Item>
          </output>
          <intake length="0"/>
-         <myInputTyp>AND</myInputTyp>
+         <inputTyp>AND</inputTyp>
       </production>
       <production ID="bakery">
          <Name>
@@ -1893,7 +1893,7 @@
          <maintenanceCost>100</maintenanceCost>
          <buildCost>500</buildCost>
          <buildTyp>Single</buildTyp>
-         <myStructureTyp>Blocking</myStructureTyp>
+         <structureTyp>Blocking</structureTyp>
          <extraUITyp>None</extraUITyp>
          <extraBuildUITyp>None</extraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
@@ -1925,7 +1925,7 @@
                <count>1</count>
             </Item>
          </intake>
-         <myInputTyp>AND</myInputTyp>
+         <inputTyp>AND</inputTyp>
       </production>
       <production ID="flourmill">
          <Name>
@@ -1959,7 +1959,7 @@
          <maintenanceCost>50</maintenanceCost>
          <buildCost>1500</buildCost>
          <buildTyp>Single</buildTyp>
-         <myStructureTyp>Blocking</myStructureTyp>
+         <structureTyp>Blocking</structureTyp>
          <extraUITyp>None</extraUITyp>
          <extraBuildUITyp>None</extraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
@@ -1991,7 +1991,7 @@
                <count>2</count>
             </Item>
          </intake>
-         <myInputTyp>AND</myInputTyp>
+         <inputTyp>AND</inputTyp>
       </production>
       <production ID="ironsmelter">
          <Name>
@@ -2025,7 +2025,7 @@
          <maintenanceCost>100</maintenanceCost>
          <buildCost>1250</buildCost>
          <buildTyp>Single</buildTyp>
-         <myStructureTyp>Blocking</myStructureTyp>
+         <structureTyp>Blocking</structureTyp>
          <extraUITyp>None</extraUITyp>
          <extraBuildUITyp>None</extraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
@@ -2060,7 +2060,7 @@
                <count>1</count>
             </Item>
          </intake>
-         <myInputTyp>AND</myInputTyp>
+         <inputTyp>AND</inputTyp>
       </production>
       <production ID="saltmill">
          <Name>
@@ -2094,7 +2094,7 @@
          <maintenanceCost>45</maintenanceCost>
          <buildCost>1400</buildCost>
          <buildTyp>Single</buildTyp>
-         <myStructureTyp>Blocking</myStructureTyp>
+         <structureTyp>Blocking</structureTyp>
          <extraUITyp>None</extraUITyp>
          <extraBuildUITyp>None</extraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
@@ -2126,7 +2126,7 @@
                <count>1</count>
             </Item>
          </intake>
-         <myInputTyp>AND</myInputTyp>
+         <inputTyp>AND</inputTyp>
       </production>
       <production ID="cheesedairy">
          <Name>
@@ -2160,7 +2160,7 @@
          <maintenanceCost>150</maintenanceCost>
          <buildCost>1500</buildCost>
          <buildTyp>Single</buildTyp>
-         <myStructureTyp>Blocking</myStructureTyp>
+         <structureTyp>Blocking</structureTyp>
          <extraUITyp>None</extraUITyp>
          <extraBuildUITyp>None</extraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
@@ -2192,7 +2192,7 @@
                <count>2</count>
             </Item>
          </intake>
-         <myInputTyp>AND</myInputTyp>
+         <inputTyp>AND</inputTyp>
       </production>
       <production ID="toolmakersworkshop">
          <Name>
@@ -2226,7 +2226,7 @@
          <maintenanceCost>75</maintenanceCost>
          <buildCost>750</buildCost>
          <buildTyp>Single</buildTyp>
-         <myStructureTyp>Blocking</myStructureTyp>
+         <structureTyp>Blocking</structureTyp>
          <extraUITyp>None</extraUITyp>
          <extraBuildUITyp>None</extraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
@@ -2258,7 +2258,7 @@
                <count>1</count>
             </Item>
          </intake>
-         <myInputTyp>AND</myInputTyp>
+         <inputTyp>AND</inputTyp>
       </production>
       <production ID="pigbutcher">
          <Name>
@@ -2292,7 +2292,7 @@
          <maintenanceCost>160</maintenanceCost>
          <buildCost>1700</buildCost>
          <buildTyp>Single</buildTyp>
-         <myStructureTyp>Blocking</myStructureTyp>
+         <structureTyp>Blocking</structureTyp>
          <extraUITyp>None</extraUITyp>
          <extraBuildUITyp>None</extraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
@@ -2327,7 +2327,7 @@
                <count>2</count>
             </Item>
          </intake>
-         <myInputTyp>AND</myInputTyp>
+         <inputTyp>AND</inputTyp>
       </production>
    </productions>
    <warehouses>
@@ -2369,7 +2369,7 @@
          <maintenanceCost>10</maintenanceCost>
          <buildCost>300</buildCost>
          <buildTyp>Single</buildTyp>
-         <myStructureTyp>Blocking</myStructureTyp>
+         <structureTyp>Blocking</structureTyp>
          <extraUITyp>Range</extraUITyp>
          <extraBuildUITyp>None</extraBuildUITyp>
          <hasToBuildOnRestriktion>Shore</hasToBuildOnRestriktion>
@@ -2424,7 +2424,7 @@
          <maintenanceCost>0</maintenanceCost>
          <buildCost>0</buildCost>
          <buildTyp>Drag</buildTyp>
-         <myStructureTyp>Blocking</myStructureTyp>
+         <structureTyp>Blocking</structureTyp>
          <extraUITyp>Upgrade</extraUITyp>
          <extraBuildUITyp>None</extraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
@@ -2470,7 +2470,7 @@
          <maintenanceCost>0</maintenanceCost>
          <buildCost>0</buildCost>
          <buildTyp>Drag</buildTyp>
-         <myStructureTyp>Blocking</myStructureTyp>
+         <structureTyp>Blocking</structureTyp>
          <extraUITyp>Upgrade</extraUITyp>
          <extraBuildUITyp>None</extraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
@@ -2519,7 +2519,7 @@
          <maintenanceCost>0</maintenanceCost>
          <buildCost>0</buildCost>
          <buildTyp>Drag</buildTyp>
-         <myStructureTyp>Blocking</myStructureTyp>
+         <structureTyp>Blocking</structureTyp>
          <extraUITyp>Upgrade</extraUITyp>
          <extraBuildUITyp>None</extraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
@@ -2571,7 +2571,7 @@
          <maintenanceCost>0</maintenanceCost>
          <buildCost>0</buildCost>
          <buildTyp>Drag</buildTyp>
-         <myStructureTyp>Blocking</myStructureTyp>
+         <structureTyp>Blocking</structureTyp>
          <extraUITyp>Upgrade</extraUITyp>
          <extraBuildUITyp>None</extraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
@@ -2628,7 +2628,7 @@
          <maintenanceCost>50</maintenanceCost>
          <buildCost>1500</buildCost>
          <buildTyp>Single</buildTyp>
-         <myStructureTyp>Blocking</myStructureTyp>
+         <structureTyp>Blocking</structureTyp>
          <extraUITyp>None</extraUITyp>
          <extraBuildUITyp>None</extraBuildUITyp>
          <hasToBuildOnRestriktion>Shore</hasToBuildOnRestriktion>
@@ -2681,7 +2681,7 @@
          <maintenanceCost>250</maintenanceCost>
          <buildCost>5000</buildCost>
          <buildTyp>Single</buildTyp>
-         <myStructureTyp>Blocking</myStructureTyp>
+         <structureTyp>Blocking</structureTyp>
          <extraUITyp>None</extraUITyp>
          <extraBuildUITyp>None</extraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>
@@ -2733,7 +2733,7 @@
          <maintenanceCost>25</maintenanceCost>
          <buildCost>500</buildCost>
          <buildTyp>Single</buildTyp>
-         <myStructureTyp>Blocking</myStructureTyp>
+         <structureTyp>Blocking</structureTyp>
          <extraUITyp>None</extraUITyp>
          <extraBuildUITyp>None</extraBuildUITyp>
          <hasToBuildOnRestriktion>Land</hasToBuildOnRestriktion>

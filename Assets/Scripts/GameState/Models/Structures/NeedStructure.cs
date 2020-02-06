@@ -28,7 +28,7 @@ public class NeedStructure : TargetStructure {
         return new NeedStructure(this);
     }
     public override void OnBuild() {
-        foreach (Tile t in myRangeTiles) {
+        foreach (Tile t in RangeTiles) {
             t.AddNeedStructure(this);
         }
     }

@@ -17,7 +17,7 @@ public class Path_TileGraph {
     public List<Tile> myTiles;
 
     public Path_TileGraph(Route route) {
-        this.myTiles = route.myTiles;
+        this.myTiles = route.Tiles;
         nodes = new Dictionary<Tile, Path_Node<Tile>>();
         foreach (Tile t in myTiles) {
             Path_Node<Tile> n = new Path_Node<Tile> {
@@ -107,7 +107,7 @@ public class Path_TileGraph {
     }
 
     public Path_TileGraph(Island island) {
-        this.myTiles = island.myTiles;
+        this.myTiles = island.Tiles;
         nodes = new Dictionary<Tile, Path_Node<Tile>>();
         foreach (Tile t in myTiles) {
             Path_Node<Tile> n = new Path_Node<Tile> {

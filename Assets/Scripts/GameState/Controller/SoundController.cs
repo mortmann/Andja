@@ -313,7 +313,7 @@ public class SoundController : MonoBehaviour {
     public void UpdateAmbient() {
         AmbientType ambient = AmbientType.Water;
         if (cameraController.nearestIsland != null) {
-            switch (cameraController.nearestIsland.myClimate) {
+            switch (cameraController.nearestIsland.Climate) {
                 case Climate.Cold:
                     ambient = AmbientType.North;
                     break;

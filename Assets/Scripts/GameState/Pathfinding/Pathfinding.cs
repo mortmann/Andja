@@ -5,9 +5,9 @@ using Newtonsoft.Json;
 using System.Threading;
 using System;
 
-public enum Path_mode { world, islandMultipleStartpoints, islandSingleStartpoint, route };
-public enum Path_dest { tile, exact };
-public enum Turn_type { OnPoint, TurnRadius };
+public enum Pathing_Mode { World, IslandMultipleStartpoints, IslandSingleStartpoint, Route };
+public enum Path_Destination { Tile, Exact };
+public enum Turning_Type { OnPoint, TurnRadius };
 
 [JsonObject(MemberSerialization.OptIn)]
 public abstract class Pathfinding {
@@ -15,6 +15,8 @@ public abstract class Pathfinding {
 
     [JsonPropertyAttribute] public float dest_X;
     [JsonPropertyAttribute] public float dest_Y;
+    [JsonPropertyAttribute] public float start_X; //not that important -- only for when we need to go back
+    [JsonPropertyAttribute] public float start_Y; //not that important -- only for when we need to go back
     [JsonPropertyAttribute] protected bool _IsAtDest;
     // If we aren't moving, then destTile = currTile
     [JsonPropertyAttribute] protected Tile _destTile;
@@ -38,6 +40,8 @@ public abstract class Pathfinding {
         }
     }
     public Action<bool> cbIsAtDestination;
+    public Vector2 Destination => new Vector2(dest_X, dest_Y);
+    public Vector2 Start => new Vector2(start_X, start_Y);
 
     public Vector3 Position {
         get { return new Vector3(X, Y); }
@@ -45,16 +49,17 @@ public abstract class Pathfinding {
     public Vector2 Position2 {
         get { return new Vector2(X, Y); }
     }
-    public Queue<Tile> worldPath;
-    public Queue<Tile> backPath;
+    public Queue<Vector2> worldPath;
+    public Queue<Vector2> backPath;
 
-    protected Path_dest pathDest;
+    protected Path_Destination pathDest;
 
     public Vector3 LastMove { get; protected set; }
 
-    protected float rotationSpeed = 5;
+    protected float rotationSpeed = 90;
     protected Thread calculatingPathThread;
     public bool IsDoneCalculating = false;
+
     protected float _speed = 1;
     protected virtual float Speed {
         get {
@@ -70,11 +75,9 @@ public abstract class Pathfinding {
         }
     }
 
-    protected Path_mode pathmode;
-    public Turn_type myTurnType = Turn_type.OnPoint;
+    protected Pathing_Mode pathmode;
+    public Turning_Type TurnType = Turning_Type.OnPoint;
     public float turnSpeed = 10;
-
-    #endregion
 
     public Tile DestTile {
         get {
@@ -93,8 +96,8 @@ public abstract class Pathfinding {
         }
         protected set {
             //TODO: REMOVE FOR RELEASE
-            if (Mathf.Abs(value - _x) > 0.05f)
-                Debug.LogWarning("UNIT JUMPED -- FIX ME");
+            if (_x>0&&Mathf.Abs(value - _x) > 0.5f)
+                Debug.LogWarning("UNIT JUMPED -- FIX ME -- " + Mathf.Abs(value - _x));
             _x = value;
         }
     }
@@ -104,12 +107,13 @@ public abstract class Pathfinding {
         }
         protected set {
             //TODO: REMOVE FOR RELEASE
-            if (Mathf.Abs(value - _y) > 0.1f)
-                Debug.LogWarning("UNIT JUMPED -- FIX ME");
+            if (_y > 0 &&Mathf.Abs( value - _y) > 0.5f)
+                Debug.LogWarning("UNIT JUMPED -- FIX ME -- " + Mathf.Abs(value - _y));
             _y = value;
         }
     }
-    public Tile NextTile { get; protected set; }  // The next tile in the pathfinding sequence
+    private Vector3 rotationDirection;
+    public Vector2? NextDestination { get; protected set; }  // The next tile in the pathfinding sequence
     Tile _currTile;
     public Tile CurrTile {
         get {
@@ -130,30 +134,31 @@ public abstract class Pathfinding {
         }
     }
 
-    public Vector2 NextDestination {
-        get {
-            if (NextTile == null)
-                return new Vector2(dest_X, dest_Y);
-            return NextTile.Vector2;
-        }
-    }
+    //public Vector2 NextDestination {
+    //    get {
+    //        if (NextDestination == null)
+    //            return new Vector2(dest_X, dest_Y);
+    //        return NextDestination.Vector2;
+    //    }
+    //}
     public Vector2 PeekNextDestination {
         get {
             if(worldPath!=null) {
-                return worldPath.Peek().Vector2;
+                return worldPath.Peek();
             }
             return new Vector2(dest_X, dest_Y);
         }
     }
-    public Pathfinding() {
-    }
+    #endregion
 
-    private Vector3 rotationDirection;
+    public Pathfinding() { }
+
 
     public virtual void Update_DoMovement(float deltaTime) {
         //for loading purpose or any other strange reason
         //we have a destination & are not there atm && we have no path then calculate it!
-        if (DestTile != null && DestTile != CurrTile && IsAtDestination == false && NextTile != DestTile && worldPath == null)
+        if (DestTile != null && DestTile != CurrTile && IsAtDestination == false 
+            && NextDestination != Destination && worldPath == null)
             SetDestination(dest_X, dest_Y);
         if (IsDoneCalculating == false)
             return;
@@ -163,31 +168,18 @@ public abstract class Pathfinding {
             return;
         }
 
-        if (CurrTile == DestTile && pathDest != Path_dest.exact) {
-            IsAtDestination = true;
-            LastMove = Vector3.zero;
-            return;
-        }
-
         //if were standing or if we can turn OnPoint(OnSpot) turn to face the rightway
-        if (myTurnType == Turn_type.OnPoint && LastMove.sqrMagnitude <= 0.1) {
-            //so we can turn on point but not move
-            //so rotate around with the turnspeed
-            //we can only rotate if we know the next tile we are going to visit
-            if (IsAtDestination == false && CurrTile != DestTile && UpdateRotationOnPoint(deltaTime) == false) {
-                return;
-            }
+        //so we can turn on point but not move
+        //so rotate around with the turnspeed
+        //we can only rotate if we know the next tile we are going to visit
+        if (TurnType == Turning_Type.OnPoint && LastMove.sqrMagnitude <= 0.1 &&
+            IsAtDestination == false && CurrTile != DestTile && UpdateRotationOnPoint(deltaTime) == false) {
+            return;
         }
         else {
             UpdateRotationOnMove(deltaTime);
         }
-        if (pathDest == Path_dest.exact && NextTile == DestTile) {
-            worldPath.Clear();
-            LastMove = AccurateMove(deltaTime);
-            return;
-        }
-        LastMove = DoWorldPath(deltaTime);
-
+        LastMove = Do_Movement(deltaTime);
     }
     float rotateTime;
     float rotateAngle;
@@ -214,10 +206,11 @@ public abstract class Pathfinding {
         float angle = Mathf.Atan2(moveDirection.y, moveDirection.x) * Mathf.Rad2Deg;
         float timeForTurning = Mathf.Abs(angle - rotation) / turnSpeed;
         float timeToTurn = distanceToTurn / Speed;
-        if (timeToTurn < timeForTurning / 2) {
-            rotation = Mathf.LerpAngle(rotation, angle, deltaTime * rotationSpeed);//Mathf.LerpAngle ( rotation , angle , t);
-        }
-        rotation = Mathf.LerpAngle(rotation, angle, deltaTime * rotationSpeed);//Mathf.LerpAngle ( rotation , angle , t);
+        //if (timeToTurn < timeForTurning / 2) {
+        //    rotation = Mathf.LerpAngle(rotation, angle, deltaTime * rotationSpeed);//Mathf.LerpAngle ( rotation , angle , t);
+        //}
+        //rotation = Mathf.LerpAngle(rotation, angle, deltaTime * rotationSpeed);//Mathf.LerpAngle ( rotation , angle , t);
+        rotation = Mathf.MoveTowardsAngle(rotation, angle, deltaTime * rotationSpeed);
 
     }
     /// <summary>
@@ -236,86 +229,56 @@ public abstract class Pathfinding {
     public abstract void SetDestination(Tile end);
     public abstract void SetDestination(float x, float y);
 
-    private Vector3 DoWorldPath(float deltaTime) {
+    private Vector3 Do_Movement(float deltaTime) {
         //no move command so return!
-        if (DestTile == CurrTile) {
+        if (Position2 == Destination) {
             IsAtDestination = true;
             return Vector3.zero;
         }
 
-        if (NextTile == null || NextTile == CurrTile) {
+        if (NextDestination == null || NextDestination == Position2) {
             // Get the next tile from the pathfinder.
             if (worldPath == null || worldPath.Count == 0) {
                 return Vector3.zero;
             }
-            NextTile = worldPath.Dequeue();
+            NextDestination = worldPath.Dequeue();
         }
 
-        rotationDirection = new Vector3(NextTile.X, NextTile.Y);
-        Vector3 dir = new Vector3(NextTile.X - X, NextTile.Y - Y);
-        dir = dir.normalized;
+        rotationDirection = new Vector3(NextDestination.Value.x, NextDestination.Value.y);
 
-        Vector3 temp = deltaTime * dir * Speed;
-
-        X += temp.x;
-        Y += temp.y;
-        if (World.Current.IsInTileAt(NextTile, X, Y)) {
-            CurrTile = NextTile;
-        }
-        return temp;
-    }
-    private Vector3 AccurateMove(float deltaTime) {
-        // we are one tile from destination tile away...
-        // now we have to go to the correct x/y coordinations
-        if (X >= dest_X - 0.1f && X <= dest_X + 0.1f && Y >= dest_Y - 0.1f && Y <= dest_Y + 0.1f) {
-            //we are near enough
-            CurrTile = World.Current.GetTileAt(X, Y);
-            NextTile = null;
-            DestTile = CurrTile;
-            IsAtDestination = true;
-            return Vector3.zero;
-        }
-        Vector3 dir = new Vector3(dest_X - X, dest_Y - Y);
-        rotationDirection = new Vector3(dest_X, dest_Y);
-        dir = dir.normalized;
-        Vector3 temp = dir * Speed;
-        // DUNNO why this works and not vector * deltaTime
-        temp.x *= deltaTime;
-        temp.y *= deltaTime;
-        X += temp.x;
-        Y += temp.y;
-        return temp;
+        Vector3 dest = NextDestination.Value;
+        Vector3 newPos = Vector3.MoveTowards(Position, dest, Speed * deltaTime);
+        Vector3 move = newPos - Position;
+        X = newPos.x;
+        Y = newPos.y;
+        if(NextDestination==Position2)
+            CurrTile = World.Current.GetTileAt(Position2);
+        return move;
     }
 
     public void Reverse() {
         IsAtDestination = false;
         DestTile = startTile;
-        startTile = backPath.Peek();
+        startTile = World.Current.GetTileAt(X, Y);
         worldPath = backPath;
     }
 
     public void CreateReversePath() {
-        backPath = new Queue<Tile>(worldPath.Reverse());
+        backPath = new Queue<Vector2>(worldPath.Reverse());
     }
 
-    float t = 0;
     public bool UpdateRotationOnPoint(float delta) {
-        if (rotationDirection.magnitude == 0 || CurrTile == NextTile) {
+        if (rotationDirection.magnitude == 0 || Position2 == NextDestination) {
             return true;
         }
         Vector2 PointA = new Vector2(rotationDirection.x, rotationDirection.y);
         Vector2 PointB = new Vector2(X, Y);
         Vector2 moveDirection = PointA - PointB;
         float angle = Mathf.Atan2(moveDirection.y, moveDirection.x) * Mathf.Rad2Deg;
-
-        if (rotation < angle + 0.1f
-            && rotation > angle - 0.1f) {
-            //no need to rotate so set the rotation to the correct one
+        if (Mathf.Approximately(rotation,angle)) {
             rotation = angle;
-            t = 0;
             return true;
         }
-        t += delta;
         
         rotation = Mathf.MoveTowardsAngle(rotation, angle, delta * rotationSpeed);
         return false;
@@ -328,7 +291,8 @@ public abstract class Pathfinding {
     protected void StartCalculatingThread() {
         IsDoneCalculating = false;
         IsAtDestination = false;
-
+        start_X = X;
+        start_Y = Y;
         Thread calcPath = new Thread(CalculatePath);
         calcPath.Start();
     }

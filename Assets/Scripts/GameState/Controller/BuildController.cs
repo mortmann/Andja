@@ -86,20 +86,22 @@ public class BuildController : MonoBehaviour {
     /// Works only for current player not for someone else
     /// </summary>
     /// <param name="t">T.</param>
-    public void DestroyStructureOnTile(Tile t, Player destroyPlayer) {
+    public void DestroyStructureOnTile(Tile t, Player destroyPlayer, bool isGod = false) {
         if (t.Structure == null) {
             return;
         }
-        if (t.Structure.PlayerNumber == destroyPlayer.Number) {
+        if (isGod || t.Structure.PlayerNumber == destroyPlayer.Number) {
             t.Structure.Destroy();
         }
     }
-    public void OnClick(string id, Unit buildInRangeUnit = null) {
+    public void OnClick(string id, Unit buildInRangeUnit = null, Structure EditorStructure = null) {
         if (StructurePrototypes.ContainsKey(id) == false) {
             Debug.LogError("BUTTON has ID that is not a structure prototypes ->o_O<- ");
             return;
         }
         toBuildStructure = StructurePrototypes[id].Clone();
+        if(EditorStructure!=null)
+            toBuildStructure = EditorStructure;
         if (StructurePrototypes[id].BuildTyp == BuildTypes.Path) {
             MouseController.Instance.mouseState = MouseState.BuildPath;
             MouseController.Instance.ToBuildStructure = toBuildStructure;
@@ -124,7 +126,7 @@ public class BuildController : MonoBehaviour {
         BuildOnTile(structure, tiles, playerNumber, true);
     }
     public void BuildOnTile(Structure structure, List<Tile> tiles, int playerNumber, bool forEachTileOnce, bool wild = false, Unit buildInRange = null) {
-        if (tiles == null || tiles.Count == 0 || WorldController.Instance.IsPaused) {
+        if (tiles == null || tiles.Count == 0 || WorldController.Instance?.IsPaused == true) {
             return;
         }
         if (forEachTileOnce == false) {
@@ -136,6 +138,16 @@ public class BuildController : MonoBehaviour {
                 t.AddRange(structure.GetBuildingTiles(tile.X, tile.Y));
                 RealBuild(t, structure, playerNumber, false, wild, buildInRange);
             }
+        }
+    }
+    public void EditorBuildOnTile(Structure str, Tile tile) {
+        RealBuild(str.GetBuildingTiles(tile.X, tile.Y), str, -1, true, true);
+    }
+    internal void EditorBuildOnTile(Structure toPlace, List<Tile> t, bool single) {
+        if (single) {
+            BuildOnTile(toPlace, t, -1, single, true);
+        } else {
+            RealBuild(t, toPlace, -1, true, true);
         }
     }
 
@@ -185,20 +197,20 @@ public class BuildController : MonoBehaviour {
                 return;
             }
             //Is the player allowed to place it here? -> city
-            Tile block = tiles.Find(x => x.MyCity.IsWilderness() == false && x.MyCity.playerNumber != playerNumber);
+            Tile block = tiles.Find(x => x.City.IsWilderness() == false && x.City.playerNumber != playerNumber);
             if (block != null) {
                 return; // there is a tile that is owned by another player
             }
-            structure.City = tiles.Find(x => x.MyCity.playerNumber == playerNumber)?.MyCity;
+            structure.City = tiles.Find(x => x.City.playerNumber == playerNumber)?.City;
             if (structure.City == null && structure.GetType() != typeof(WarehouseStructure)) {
                 return; // SO no city found and no warehouse to create on
             } else
             if (structure.GetType() == typeof(WarehouseStructure)) {
-                City c = tiles[0].MyIsland.FindCityByPlayer(playerNumber);
-                if(c!=null && c.myWarehouse!=null) {
+                City c = tiles[0].Island.FindCityByPlayer(playerNumber);
+                if(c!=null && c.warehouse!=null) {
                     return; // Already City existing here && has already a Warehouse
                 }
-                structure.City = CreateCity(tiles[0].MyIsland, playerNumber);
+                structure.City = CreateCity(tiles[0].Island, playerNumber);
             }
             if (noBuildCost == false) {
                 if (structure.GetBuildingItems() != null) {
@@ -222,13 +234,13 @@ public class BuildController : MonoBehaviour {
             }
         }
         if (wild) {
-            structure.City = tiles[0].MyIsland.Wilderness;
+            structure.City = tiles[0].Island.Wilderness;
         }
         //now we know that we COULD build that structure
         //but CAN WE?
         //check to see if the structure can be placed there
         if (structure.PlaceStructure(tiles) == false) {
-            if (loading) {
+            if (loading && EditorController.IsEditor == false) {
                 Debug.LogError("PLACING FAILED WHILE LOADING! " + structure.buildID + " - " + structure.SmallName);
             }
             return;
@@ -249,6 +261,8 @@ public class BuildController : MonoBehaviour {
         }
         structure.RegisterOnDestroyCallback(OnDestroyStructure);
     }
+
+
     /// <summary>
     /// USED ONLY FOR LOADING
     /// DONT USE THIS FOR ANYTHING ELSE!!

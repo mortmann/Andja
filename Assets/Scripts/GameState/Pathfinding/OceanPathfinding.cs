@@ -21,7 +21,7 @@ public class OceanPathfinding : Pathfinding {
     }
 
     public OceanPathfinding() : base() {
-        myTurnType = Turn_type.TurnRadius;
+        TurnType = Turning_Type.TurnRadius;
 
     }
 
@@ -29,7 +29,7 @@ public class OceanPathfinding : Pathfinding {
         Ship = s;
         rotationSpeed = s.RotationSpeed;
         CurrTile = t;
-        myTurnType = Turn_type.TurnRadius;
+        TurnType = Turning_Type.TurnRadius;
     }
 
 
@@ -37,7 +37,7 @@ public class OceanPathfinding : Pathfinding {
         SetDestination(end.X, end.Y);
     }
     public override void SetDestination(float x, float y) {
-        pathDest = Path_dest.exact;
+        pathDest = Path_Destination.Exact;
         dest_X = x;
         dest_Y = y;
         this.start = World.Current.GetTileAt(X, Y);
@@ -46,24 +46,26 @@ public class OceanPathfinding : Pathfinding {
         StartCalculatingThread();
     }
     protected override void CalculatePath() {
-        myTurnType = Turn_type.TurnRadius;
+        TurnType = Turning_Type.TurnRadius;
 
-        pathDest = Path_dest.exact;
+        pathDest = Path_Destination.Exact;
         System.Diagnostics.Stopwatch StopWatch = new System.Diagnostics.Stopwatch();
         StopWatch.Start();
         JumpPointParam jpParam = new JumpPointParam(tileGrid, new GridPos(start.X, start.Y), new GridPos(DestTile.X, DestTile.Y), true, DiagonalMovement.OnlyWhenNoObstacles);
         List<GridPos> pos = JumpPointFinder.FindPath(jpParam);
-        worldPath = new Queue<Tile>();
+        worldPath = new Queue<Vector2>();
         //we probably needs to remove the first tile cause it may interfere with smooth pathing
         for (int i = 0; i < pos.Count; i++) {
-            worldPath.Enqueue(World.Current.GetTileAt(pos[i].x, pos[i].y));
+            worldPath.Enqueue(World.Current.GetTileAt(pos[i].x, pos[i].y).Vector2); //make sure it is correct tile etc
         }
+        worldPath.Enqueue(Destination);
         CreateReversePath();
+        backPath.Enqueue(Position2);
         if (worldPath.Count > 0) {
             worldPath.Dequeue();
         }
         if (worldPath.Count > 0) {
-            NextTile = worldPath.Dequeue();
+            NextDestination = worldPath.Dequeue();
         }
         StopWatch.Stop();
         //Debug.Log("CalculatePath Steps:" + worldPath.Count + " - "+ StopWatch.ElapsedMilliseconds + "ms (" + StopWatch.Elapsed.TotalSeconds + "s)! ");

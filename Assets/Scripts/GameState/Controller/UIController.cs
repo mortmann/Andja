@@ -192,7 +192,7 @@ public class UIController : MonoBehaviour {
         TileSpriteController.Instance.AddDecider(StrcutureTileDecider);
     }
     TileMark StrcutureTileDecider(Tile t) {
-        if (openStructure != null && (openStructure.myRangeTiles.Contains(t) || openStructure.myStructureTiles.Contains(t))) {
+        if (openStructure != null && (openStructure.RangeTiles.Contains(t) || openStructure.StructureTiles.Contains(t))) {
             return TileMark.None;
         }
         else {

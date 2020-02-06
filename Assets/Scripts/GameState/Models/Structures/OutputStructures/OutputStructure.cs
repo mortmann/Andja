@@ -17,7 +17,7 @@ public class OutputPrototypData : StructurePrototypeData {
 [JsonObject(MemberSerialization.OptIn)]
 public abstract class OutputStructure : TargetStructure {
     #region Serialize
-    [JsonPropertyAttribute] public List<Worker> myWorker;
+    [JsonPropertyAttribute] public List<Worker> Worker;
     [JsonPropertyAttribute] public float produceCountdown;
     protected Item[] _output; // FIXME DOESNT GET LOADED IN!??!? why? fixed?
     #endregion
@@ -84,7 +84,7 @@ public abstract class OutputStructure : TargetStructure {
     public Tile JobTile {
         get {
             if (_jobTile == null) {
-                return myStructureTiles[0];
+                return StructureTiles[0];
             }
             else {
                 return _jobTile;
@@ -98,11 +98,11 @@ public abstract class OutputStructure : TargetStructure {
         if (MaxNumberOfWorker <= 0) {
             return;
         }
-        if (myWorker == null) {
-            myWorker = new List<Worker>();
+        if (Worker == null) {
+            Worker = new List<Worker>();
         }
-        for (int i = myWorker.Count - 1; i >= 0; i--) {
-            Worker w = myWorker[i];
+        for (int i = Worker.Count - 1; i >= 0; i--) {
+            Worker w = Worker[i];
             w.Update(deltaTime);
             if (w.isAtHome) {
                 WorkerComeBack(w);
@@ -117,7 +117,7 @@ public abstract class OutputStructure : TargetStructure {
         }
         List<OutputStructure> givenJobs = new List<OutputStructure>();
         foreach (OutputStructure jobStr in jobsToDo.Keys) {
-            if (myWorker.Count >= MaxNumberOfWorker) {
+            if (Worker.Count >= MaxNumberOfWorker) {
                 break;
             }
             if (jobStr.outputClaimed) {
@@ -134,7 +134,7 @@ public abstract class OutputStructure : TargetStructure {
 
             givenJobs.Add(jobStr);
             World.Current.CreateWorkerGameObject(ws);
-            myWorker.Add(ws);
+            Worker.Add(ws);
         }
         foreach (OutputStructure giveJob in givenJobs) {
             if (giveJob != null) {
@@ -165,12 +165,12 @@ public abstract class OutputStructure : TargetStructure {
     }
 
     public void WorkerComeBack(Worker w) {
-        if (myWorker.Contains(w) == false) {
+        if (Worker.Contains(w) == false) {
             Debug.LogError("WorkerComeBack - Worker comesback, but doesnt live here!");
             return;
         }
         w.Destroy();
-        myWorker.Remove(w);
+        Worker.Remove(w);
     }
 
     public void AddToOutput(Inventory inv) {
@@ -257,26 +257,7 @@ public abstract class OutputStructure : TargetStructure {
     public void UnregisterOutputChanged(Action<Structure> callbackfunc) {
         cbOutputChange -= callbackfunc;
     }
-    public List<Route> GetMyRoutes() {
-        List<Route> myRoutes = new List<Route>();
-        HashSet<Tile> neighbourTiles = new HashSet<Tile>();
-        foreach (Tile item in myStructureTiles) {
-            foreach (Tile nbt in item.GetNeighbours()) {
-                if (myStructureTiles.Contains(nbt) == false) {
-                    neighbourTiles.Add(nbt);
-                }
-            }
-        }
-        foreach (Tile t in neighbourTiles) {
-            if (t.Structure == null) {
-                continue;
-            }
-            if (t.Structure is RoadStructure) {
-                myRoutes.Add(((RoadStructure)t.Structure).Route);
-            }
-        }
-        return myRoutes;
-    }
+
     public void ResetOutputClaimed() {
         this.outputClaimed = false;
         foreach (Item item in Output) {
@@ -287,8 +268,8 @@ public abstract class OutputStructure : TargetStructure {
         }
     }
     protected override void OnDestroy() {
-        if (myWorker != null) {
-            foreach (Worker item in myWorker) {
+        if (Worker != null) {
+            foreach (Worker item in Worker) {
                 item.Destroy();
             }
         }

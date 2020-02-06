@@ -100,7 +100,7 @@ public class ServiceStructure : Structure {
                 break;
         }
         todoOnNewTarget += RegisterOnStructureDestroy;
-        foreach (Tile t in myRangeTiles) {
+        foreach (Tile t in RangeTiles) {
             if (t.Structure == null)
                 continue;
             if(SpecificRange != null) {
@@ -173,8 +173,8 @@ public class ServiceStructure : Structure {
     }
 
     private void OnAddedStructure(Structure obj) {
-        foreach(Tile t in obj.myStructureTiles) {
-            if (myRangeTiles.Contains(t)) {
+        foreach(Tile t in obj.StructureTiles) {
+            if (RangeTiles.Contains(t)) {
                 todoOnNewTarget(obj);
                 return;
             }
@@ -295,8 +295,8 @@ public class ServiceStructure : Structure {
                 workers[i].Destroy();
             }
         }
-        if(myRangeTiles!=null) {
-            foreach (Tile t in myRangeTiles) {
+        if(RangeTiles!=null) {
+            foreach (Tile t in RangeTiles) {
                 if (t.Structure == null)
                     continue;
                 if (SpecificRange != null) {

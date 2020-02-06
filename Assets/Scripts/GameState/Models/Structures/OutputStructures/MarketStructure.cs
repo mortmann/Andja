@@ -70,9 +70,9 @@ public class MarketStructure : OutputStructure, ICapturable {
         jobsToDo = new Dictionary<OutputStructure, Item[]>();
         // add all the tiles to the city it was build in
         //dostuff thats happen when build
-        City.AddTiles(myRangeTiles);
-        foreach (Tile rangeTile in myRangeTiles) {
-            if (rangeTile.MyCity != City) {
+        City.AddTiles(RangeTiles);
+        foreach (Tile rangeTile in RangeTiles) {
+            if (rangeTile.City != City) {
                 continue;
             }
             OnStructureAdded(rangeTile.Structure);
@@ -105,11 +105,11 @@ public class MarketStructure : OutputStructure, ICapturable {
             jobsToDo.Remove((OutputStructure)str);
         }
 
-        List<Route> myRoutes = GetMyRoutes();
+        HashSet<Route> Routes = GetRoutes();
         //get the roads around the structure
-        foreach (Route item in ((OutputStructure)str).GetMyRoutes()) {
+        foreach (Route item in ((OutputStructure)str).GetRoutes()) {
             //if one of them is in my roads
-            if (myRoutes.Contains(item)) {
+            if (Routes.Contains(item)) {
                 //if we are here we can get there through atleast 1 road
                 if (((OutputStructure)str).outputClaimed == false) {
                     jobsToDo.Add((OutputStructure)str, null);
@@ -129,8 +129,8 @@ public class MarketStructure : OutputStructure, ICapturable {
     }
     protected override void OnDestroy() {
         base.OnDestroy();
-        List<Tile> h = new List<Tile>(myStructureTiles);
-        h.AddRange(myRangeTiles);
+        List<Tile> h = new List<Tile>(StructureTiles);
+        h.AddRange(RangeTiles);
         City.RemoveTiles(h);
     }
 
@@ -150,8 +150,8 @@ public class MarketStructure : OutputStructure, ICapturable {
             if (((OutputStructure)structure).ForMarketplace == false) {
                 return;
             }
-            foreach (Tile item in structure.myStructureTiles) {
-                if (myRangeTiles.Contains(item)) {
+            foreach (Tile item in structure.StructureTiles) {
+                if (RangeTiles.Contains(item)) {
                     ((OutputStructure)structure).RegisterOutputChanged(OnOutputChangedStructure);
                     break;
                 }
@@ -160,18 +160,18 @@ public class MarketStructure : OutputStructure, ICapturable {
         //IF THIS is a pathfinding structure check for new road
         //if true added that to the myroads
 
-        if (structure.MyStructureTyp == StructureTyp.Pathfinding) {
-            List<Route> myRoutes = GetMyRoutes();
-            if (myRoutes == null || myRoutes.Count == 0)
+        if (structure.StructureTyp == StructureTyp.Pathfinding) {
+            HashSet<Route> Routes = GetRoutes();
+            if (Routes == null || Routes.Count == 0)
                 return;
-            if (neighbourTiles.Contains(structure.myStructureTiles[0])) {
-                if (myRoutes.Contains(((RoadStructure)structure).Route) == false) {
-                    myRoutes.Add(((RoadStructure)structure).Route);
+            if (NeighbourTiles.Contains(structure.StructureTiles[0])) {
+                if (Routes.Contains(((RoadStructure)structure).Route) == false) {
+                    Routes.Add(((RoadStructure)structure).Route);
                 }
             }
             for (int i = 0; i < OutputMarkedSturctures.Count; i++) {
-                foreach (Route item in ((OutputStructure)OutputMarkedSturctures[i]).GetMyRoutes()) {
-                    if (myRoutes.Contains(item)) {
+                foreach (Route item in ((OutputStructure)OutputMarkedSturctures[i]).GetRoutes()) {
+                    if (Routes.Contains(item)) {
                         OnOutputChangedStructure(OutputMarkedSturctures[i]);
                         break;//breaks only the innerloop eg the routes loop
                     }
@@ -241,7 +241,7 @@ public class MarketStructure : OutputStructure, ICapturable {
 
     private void DoneCapturing(IWarfare warfare) {
         //either capture it or destroy based on if is a city of that player on that island
-        City c = BuildTile.MyIsland.myCities.Find(x => x.playerNumber == warfare.PlayerNumber);
+        City c = BuildTile.Island.Cities.Find(x => x.playerNumber == warfare.PlayerNumber);
         if (c != null) {
             OnDestroy();
             City = c;

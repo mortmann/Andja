@@ -8,12 +8,12 @@ public abstract class TargetStructure : Structure, ITargetable {
 
     #region ITargetableImplementation
     public Vector2 CurrentPosition => MiddlePoint;
-    public Combat.ArmorType MyArmorType => PrototypController.Instance.StructureArmor;
+    public Combat.ArmorType ArmorType => PrototypController.Instance.StructureArmor;
     public bool IsAttackableFrom(IWarfare warfare) {
-        return warfare.MyDamageType.GetDamageMultiplier(MyArmorType) > 0;
+        return warfare.DamageType.GetDamageMultiplier(ArmorType) > 0;
     }
     public void TakeDamageFrom(IWarfare warfare) {
-        ReduceHealth(warfare.GetCurrentDamage(MyArmorType));
+        ReduceHealth(warfare.GetCurrentDamage(ArmorType));
     }
     public float MaximumHealth => Data.maxHealth;
 

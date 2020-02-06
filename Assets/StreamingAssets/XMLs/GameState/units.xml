@@ -19,11 +19,11 @@
       <aggroTimer>1.0</aggroTimer>
       <attackRange>1.0</attackRange>
       <damage>10.0</damage>
-      <myDamageType>slashing</myDamageType>
-      <myArmorType>leather</myArmorType>
+      <damageType>slashing</damageType>
+      <armorType>leather</armorType>
       <attackRate>1.0</attackRate>
-      <speed>1.0</speed>
-      <turnSpeed>1.0</turnSpeed>
+      <speed>3.0</speed>
+      <turnSpeed>180.0</turnSpeed>
       <aggroTime>0.0</aggroTime>
       <projectileSpeed>0.0</projectileSpeed>
       <spriteBaseName>basicunit</spriteBaseName>
@@ -57,8 +57,8 @@
       <aggroTimer>1.0</aggroTimer>
       <attackRange>1.0</attackRange>
       <damage>10.0</damage>
-      <myDamageType>cannonball</myDamageType>
-      <myArmorType>woodenwall</myArmorType>
+      <damageType>cannonball</damageType>
+      <armorType>woodenwall</armorType>
       <attackRate>1.0</attackRate>
       <speed>2.0</speed>
       <turnSpeed>1.0</turnSpeed>

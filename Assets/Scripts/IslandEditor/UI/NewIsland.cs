@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
-using System.Collections;
-
+using System;
+using System.Linq;
 public class NewIsland : MonoBehaviour {
     public InputField height;
     public InputField width;
@@ -10,6 +10,11 @@ public class NewIsland : MonoBehaviour {
     // Use this for initialization
     void Start() {
         create.onClick.AddListener(OnCreateClick);
+        height.text = EditorController.Height+"";
+        width.text = EditorController.Width+"";
+        zone.ClearOptions();
+        zone.AddOptions(Enum.GetNames(typeof(Climate)).ToList());
+        zone.value = (int)EditorController.climate;
     }
 
     public void OnCreateClick() {

@@ -43,8 +43,9 @@ public class WorkerSpriteController : MonoBehaviour {
 
         char_go.name = " - Worker";
         char_go.transform.position = new Vector3(w.X, w.Y, 0);
-        Vector3 v = char_go.transform.rotation.eulerAngles;
-        char_go.transform.rotation.eulerAngles.Set(v.x, v.y, w.Z);
+        Quaternion q = char_go.transform.rotation;
+        q.eulerAngles = new Vector3(0, 0, w.Rotation);
+        char_go.transform.rotation = q;
         char_go.transform.SetParent(this.transform, true);
 
         SpriteRenderer sr = char_go.AddComponent<SpriteRenderer>();
@@ -61,6 +62,9 @@ public class WorkerSpriteController : MonoBehaviour {
         }
         GameObject char_go = workerToGO[w];
         char_go.transform.position = new Vector3(w.X, w.Y, 0);
+        Quaternion q = char_go.transform.rotation;
+        q.eulerAngles = new Vector3(0, 0, w.Rotation);
+        char_go.transform.rotation = q;
     }
     void OnWorkerDestroy(Worker w) {
         if (workerToGO.ContainsKey(w) == false) {

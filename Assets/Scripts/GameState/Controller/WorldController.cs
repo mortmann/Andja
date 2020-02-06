@@ -129,6 +129,7 @@ public class WorldController : MonoBehaviour {
 
     void OnDestroy() {
         Instance = null;
+        World?.Destroy();
     }
 
     ///
@@ -158,7 +159,7 @@ public class WorldController : MonoBehaviour {
                     island.StartTile.X >= s.x && (s.x + s.Width) >= island.StartTile.X &&
                     island.StartTile.Y >= s.y && (s.y + s.Height) >= island.StartTile.Y
             );
-            island.myFertilities = thisStruct.fertilities;
+            island.Fertilities = thisStruct.fertilities;
             structs.Remove(thisStruct);
             if (thisStruct.Tiles == null)
                 Debug.LogError("thisStruct.Tiles is null " + island.StartTile.X + " " + island.StartTile.Y);

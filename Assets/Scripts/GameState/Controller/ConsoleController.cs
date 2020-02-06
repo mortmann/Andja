@@ -227,6 +227,7 @@ public class ConsoleController : MonoBehaviour {
         pos++;
         switch (parameters[0]) {
             case "unit":
+                pos++;
                 // anything can thats not a number can be the current player
                 if (PrototypController.Instance.UnitPrototypes.ContainsKey(id) == false) {
                     return false;
@@ -255,6 +256,7 @@ public class ConsoleController : MonoBehaviour {
                 World.Current.CreateUnit(u.Clone(player, t));
                 return true;
             case "crate":
+                pos++;
                 // anything can thats not a number can be the current player
                 if (PrototypController.Instance.AllItems.ContainsKey(id) == false) {
                     return false;

@@ -133,14 +133,13 @@ public class CameraController : MonoBehaviour {
         lastFramePosition.z = 0;
 
         Rect oldViewRange = new Rect(CameraViewRange);
-
         int mod = 2 + (int)zoomLevel / 2;//TODO: optimize this
         int lX = (int)lower.x - mod;
         int uX = (int)upper.x + mod;
         int lY = (int)lower.y - mod;
         int uY = (int)upper.y + mod;
         CameraViewRange = new Rect(lX, lY, uX - lX, uY - lY);
-
+        
         tilesCurrentInCameraView.Clear();
         structureCurrentInCameraView.Clear();
         TileSpriteController tsc = TileSpriteController.Instance;
@@ -289,8 +288,8 @@ public class CameraController : MonoBehaviour {
             if (t == null) {
                 return;
             }
-            if (t.MyIsland != null) {
-                nearestIsland = t.MyIsland;
+            if (t.Island != null) {
+                nearestIsland = t.Island;
                 break;
             }
             if (tiles.Count > 100) {
@@ -315,7 +314,6 @@ public class CameraController : MonoBehaviour {
         currFramePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         lastFramePosition = currFramePosition;
     }
-
     public CameraSave GetSaveCamera() {
         CameraSave cs = new CameraSave {
             orthographicSize = Camera.main.orthographicSize,

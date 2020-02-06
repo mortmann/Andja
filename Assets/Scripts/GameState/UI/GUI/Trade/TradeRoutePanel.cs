@@ -63,7 +63,7 @@ public class TradeRoutePanel : MonoBehaviour {
             }
             OnShipCreate(item);
         }
-        foreach (TradeRoute tr in PlayerController.Instance.CurrPlayer.MyTradeRoutes) {
+        foreach (TradeRoute tr in PlayerController.Instance.CurrPlayer.TradeRoutes) {
             AddTradeRouteToList(tr);
         }
         if (tradeRoute == null)

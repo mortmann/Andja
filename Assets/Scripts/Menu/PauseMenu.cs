@@ -23,4 +23,7 @@ public class PauseMenu : MonoBehaviour {
         transform.GetChild(0).gameObject.SetActive(false);
         ChangedState?.Invoke(false);
     }
+    private void OnDestroy() {
+        IsOpen = false;
+    }
 }

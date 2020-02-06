@@ -29,6 +29,7 @@ public class MouseController : MonoBehaviour {
     private Vector3 dragStartPosition;
 
     private Vector3 pathStartPosition;
+
     StructureSpriteController ssc;
     public static bool autorotate = true;
     /// <summary>
@@ -141,14 +142,48 @@ public class MouseController : MonoBehaviour {
         if (currFramePosition.y < 0 || currFramePosition.x < 0) {
             return;
         }
-        RemovePrefabs();
 
+        RemovePrefabs();
+        UpdateMouseStates();
+        if (EditorController.IsEditor == false) {
+            UpdateDragBox();
+        } else {
+            
+        }
+
+        if (Input.GetMouseButtonDown(1) && mouseState != MouseState.Unit && mouseState != MouseState.UnitGroup) {
+            ResetBuild(null);
+            mouseState = MouseState.Idle;
+        }
+
+        // Save the mouse position from this frame
+        // We don't use currFramePosition because we may have moved the camera.
+        lastFrameGUIPosition = Input.mousePosition;
+        lastFramePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        lastFramePosition.z = 0;
+    }
+
+    private void UpdateDragBox() {
+        if (Input.GetMouseButtonDown(0)
+            && mouseState == MouseState.Idle) {
+            if (EventSystem.current.IsPointerOverGameObject() == false && ShortcutUI.Instance.IsDragging == false) {
+                float sqrdist = (Input.mousePosition - lastFrameGUIPosition).sqrMagnitude;
+                if (sqrdist > 5) {
+                    dragStartPosition = currFramePosition;
+                    mouseState = MouseState.DragSelect;
+                    UpdateDragSelect(); // update the rect so no ghosts
+                }
+            }
+        }
+    }
+
+    public void UpdateMouseStates() {
         switch (mouseState) {
             case MouseState.Idle:
-                if (Input.GetMouseButtonUp(0)) {
+                if (Input.GetMouseButtonUp(0)&&EditorController.IsEditor==false) {
                     //mouse press decide what it hit 
                     DecideWhatUIToShow(Physics2D.Raycast(new Vector2(currFramePosition.x, currFramePosition.y), Vector2.zero, 200));
-                } 
+                }
                 break;
             case MouseState.BuildDrag:
                 UpdateBuildDragging();
@@ -176,26 +211,6 @@ public class MouseController : MonoBehaviour {
                 UpdateUnitGroup();
                 break;
         }
-        if (Input.GetMouseButtonDown(0) 
-            && mouseState == MouseState.Idle) {
-            if (EventSystem.current.IsPointerOverGameObject()==false && ShortcutUI.Instance.IsDragging==false) {
-                float sqrdist = (Input.mousePosition - lastFrameGUIPosition).sqrMagnitude;
-                if (sqrdist > 5) {
-                    dragStartPosition = currFramePosition;
-                    mouseState = MouseState.DragSelect;
-                    UpdateDragSelect(); // update the rect so no ghosts
-                }
-            }
-        }
-        if (Input.GetMouseButtonDown(1) && mouseState != MouseState.Unit && mouseState != MouseState.UnitGroup) {
-            ResetBuild(null);
-            mouseState = MouseState.Idle;
-        }
-        // Save the mouse position from this frame
-        // We don't use currFramePosition because we may have moved the camera.
-        lastFrameGUIPosition = Input.mousePosition;
-        lastFramePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        lastFramePosition.z = 0;
     }
 
     private void UpdateUnitGroup() {
@@ -426,7 +441,8 @@ public class MouseController : MonoBehaviour {
                 continue;
             }
             //not viable city overrides everything
-            if (ToBuildStructure.IsTileCityViable(t, PlayerController.currentPlayerNumber) == false) {
+            if (ToBuildStructure.IsTileCityViable(t, PlayerController.currentPlayerNumber) == false
+                && EditorController.IsEditor==false) {
                 ShowRedPrefabOnTile(t);
                 continue;
             }
@@ -457,13 +473,11 @@ public class MouseController : MonoBehaviour {
             }
         }
         SpriteRenderer sr = previewGO.AddComponent<SpriteRenderer>();
-
         sr.sprite = ssc.GetStructureSprite(ToBuildStructure);
         sr.sortingLayerName = "StructuresUI";
         sr.color = new Color(sr.color.a, sr.color.b, sr.color.g, 0.5f);
-        //Structure.GetExtraBuildUIData ();
-        //TODO: create extra ui here
-        TileSpriteController.Instance.AddDecider(TileCityDecider, true);
+        if(EditorController.IsEditor==false)
+            TileSpriteController.Instance.AddDecider(TileCityDecider, true);
     }
 
     //FIXME this is not optimal 
@@ -477,7 +491,8 @@ public class MouseController : MonoBehaviour {
         //this is for extra ui when building like 
         //how effective it is to build there
         //this may move from this place
-        ToBuildStructure.UpdateExtraBuildUI(previewGO, t);
+        if (EditorController.IsEditor == false)
+            ToBuildStructure.UpdateExtraBuildUI(previewGO, t);
         float x = 0;
         float y = 0;
         if (ToBuildStructure.TileWidth > 1) {
@@ -530,7 +545,7 @@ public class MouseController : MonoBehaviour {
         }
         if (highlightGO != null)
             yield break;
-        HighlightTiles = new HashSet<Tile>(ToBuildStructure.MyPrototypeTiles);
+        HighlightTiles = new HashSet<Tile>(ToBuildStructure.PrototypeTiles);
         highlightGO = new GameObject();
 
         int range = ToBuildStructure.StructureRange * 2; // cause its the radius
@@ -550,8 +565,13 @@ public class MouseController : MonoBehaviour {
         SpriteRenderer sr = highlightGO.AddComponent<SpriteRenderer>();
         // offset based on even or uneven so it is centered properly
         // its working now?!? -- but leaving it in if its makes problems in the future
-        float xoffset = 0; // ToBuildStructure.TileWidth % 2 == 0 ? 0f : -0.5f;
-        float yoffset = 0; // ToBuildStructure.TileHeight % 2 == 0 ? 0f : -0.5f;
+        // nope? 0 not working again
+        float xoffset = 0;// ToBuildStructure.TileWidth % 3 == 0 ? - 0.5f : 0f;
+        float yoffset = 0;// ToBuildStructure.TileHeight % 3 == 0 ? - 0.5f : 0f;
+        if(ToBuildStructure.TileWidth != ToBuildStructure.TileHeight ) {
+            xoffset = ToBuildStructure.TileWidth % 3 == 0 ? 0f : -0.5f;
+            yoffset = ToBuildStructure.TileHeight % 3 == 0 ? 0f : -0.5f;
+        }
         sr.sprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(0.5f, 0.5f), 1);
         sr.sortingLayerName = "DarkLayer";
         highlightGO.transform.parent = previewGO.transform;
@@ -747,7 +767,7 @@ public class MouseController : MonoBehaviour {
             int start_y = Mathf.FloorToInt(pathStartPosition.y + 0.5f);
             Tile pathStartTile = World.Current.GetTileAt(start_x, start_y);
 
-            if (pathStartTile == null || pathStartTile.MyIsland == null) {
+            if (pathStartTile == null || pathStartTile.Island == null) {
                 return;
             }
             int end_x = Mathf.FloorToInt(currFramePosition.x + 0.5f);
@@ -756,8 +776,8 @@ public class MouseController : MonoBehaviour {
             if (pathEndTile == null) {
                 return;
             }
-            if (pathStartTile.MyIsland != null && pathEndTile.MyIsland != null) {
-                path = new Path_AStar(pathStartTile.MyIsland, pathStartTile, pathEndTile, false);
+            if (pathStartTile.Island != null && pathEndTile.Island != null) {
+                path = new Path_AStar(pathStartTile.Island, pathStartTile, pathEndTile, false, Path_Heuristics.Manhattan);
             }
             if (path.path == null) {
                 return;
@@ -778,11 +798,15 @@ public class MouseController : MonoBehaviour {
 
     }
     void Build(List<Tile> t, bool single = false) {
-        if (mouseState == MouseState.Unit && mouseUnitState == MouseUnitState.Build) {
-            BuildController.CurrentPlayerBuildOnTile(t, single, PlayerController.currentPlayerNumber, false, SelectedUnit);
-        }
-        else {
-            BuildController.CurrentPlayerBuildOnTile(t, single, PlayerController.currentPlayerNumber, false);
+        if(EditorController.IsEditor) {
+            EditorController.Instance.BuildOn(t, single);
+        } else {
+            if (mouseState == MouseState.Unit && mouseUnitState == MouseUnitState.Build) {
+                BuildController.CurrentPlayerBuildOnTile(t, single, PlayerController.currentPlayerNumber, false, SelectedUnit);
+            }
+            else {
+                BuildController.CurrentPlayerBuildOnTile(t, single, PlayerController.currentPlayerNumber, false);
+            }
         }
     }
     public void BuildFromUnit() {
@@ -873,7 +897,7 @@ public class MouseController : MonoBehaviour {
         if (HighlightTiles != null && HighlightTiles.Contains(t)) {
             return TileMark.Highlight;
         }
-        else if (t.MyCity != null && t.MyCity.IsCurrPlayerCity()) {
+        else if (t.City != null && t.City.IsCurrPlayerCity()) {
             return TileMark.None;
         }
         else {

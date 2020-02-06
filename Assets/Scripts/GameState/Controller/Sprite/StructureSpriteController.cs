@@ -21,10 +21,7 @@ public class StructureSpriteController : MonoBehaviour {
     Dictionary<Route, TextMesh> RouteToTextMash;
     public bool RoadDebug = false;
     private void Awake() {
-        if (EditorController.IsEditor) {
-            EditorController.Instance.RegisterOnStructureDestroyed(OnTileStructureDestroyed);
-        }
-        else {
+        if (EditorController.IsEditor == false) {
             BuildController.Instance.RegisterStructureCreated(OnBuildStrucutureCreated);
         }
     }
@@ -39,8 +36,18 @@ public class StructureSpriteController : MonoBehaviour {
 
         LoadSprites();
         cc = CameraController.Instance;
-        foreach(Structure str in BuildController.Instance.LoadedStructures) {
-            OnBuildStrucutureCreated(str,true);
+        if(EditorController.IsEditor==false) {
+            foreach (Structure str in BuildController.Instance.LoadedStructures) {
+                OnBuildStrucutureCreated(str, true);
+            }
+        }
+        //if(EditorController.IsEditor) {
+        //    foreach (Structure str in EditorController.Instance.) {
+        //        OnBuildStrucutureCreated(str, true);
+        //    }
+        //}
+        if (EditorController.IsEditor) {
+            EditorController.Instance.RegisterOnStructureDestroyed(OnTileStructureDestroyed);
         }
 
     }
@@ -88,7 +95,7 @@ public class StructureSpriteController : MonoBehaviour {
         go.transform.position = new Vector3(t.X + x, t.Y + y);
         go.transform.transform.eulerAngles = new Vector3(0, 0, 360 - structure.rotated);
         go.transform.SetParent(this.transform, true);
-        go.name = structure.SmallName + "_" + structure.myStructureTiles[0].ToString();
+        go.name = structure.SmallName + "_" + structure.StructureTiles[0].ToString();
         SpriteRenderer sr = go.AddComponent<SpriteRenderer>();
         sr.sortingLayerName = "Structures";
         structureGameObjectMap.Add(structure, go);
@@ -249,6 +256,7 @@ public class StructureSpriteController : MonoBehaviour {
             sr.sprite = structureSprites[str.GetSpriteName()];
         }
         else {
+            Debug.LogWarning("Missing Structure Sprite "+ str.GetSpriteName());
             sr.sprite = structureSprites["nosprite"];
             go.transform.localScale = new Vector3(str.TileWidth, str.TileHeight);
             go.transform.localRotation = Quaternion.identity;
@@ -267,6 +275,8 @@ public class StructureSpriteController : MonoBehaviour {
         OnStructureDestroyed(t.Structure);
     }
     void OnStructureDestroyed(Structure structure) {
+        if (structure == null)
+            return;
         if (structureGameObjectMap.ContainsKey(structure) == false) {
             return;
         }
@@ -316,5 +326,8 @@ public class StructureSpriteController : MonoBehaviour {
             return null;
         }
         return structureGameObjectMap[str];
+    }
+    private void OnDestroy() {
+        Instance = null;
     }
 }

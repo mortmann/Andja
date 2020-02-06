@@ -79,10 +79,10 @@ public class TradeRoute {
         if (Trades.Count == 0) {
             return null;
         }
-        if (Trades[shipToNextStop[ship]].city.myWarehouse == null) {
+        if (Trades[shipToNextStop[ship]].city.warehouse == null) {
             return null;
         }
-        return Trades[shipToNextStop[ship]].city.myWarehouse.GetTradeTile();
+        return Trades[shipToNextStop[ship]].city.warehouse.GetTradeTile();
     }
     public Tile GetNextDestination(Ship ship) {
         //if theres only one destination
@@ -94,8 +94,8 @@ public class TradeRoute {
 
         for (int i = 0; i < NumberOfStops; i++) {
             IncreaseDestination(ship);
-            if (Trades[shipToNextStop[ship]].city.myWarehouse != null) {
-                return Trades[shipToNextStop[ship]].city.myWarehouse.GetTradeTile();
+            if (Trades[shipToNextStop[ship]].city.warehouse != null) {
+                return Trades[shipToNextStop[ship]].city.warehouse.GetTradeTile();
             }
         }
         return null;

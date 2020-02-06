@@ -4,11 +4,11 @@ using System.Collections.Generic;
 public class Pirate : MonoBehaviour {
 
     float startCooldown = 5f;
-    List<Ship> myShips;
+    List<Ship> Ships;
 
     // Use this for initialization
     void Start() {
-        myShips = new List<Ship>();
+        Ships = new List<Ship>();
     }
 
     // Update is called once per frame
@@ -20,11 +20,11 @@ public class Pirate : MonoBehaviour {
             startCooldown -= Time.deltaTime;
             return;
         }
-        if (myShips.Count < 2) {
+        if (Ships.Count < 2) {
             AddShip();
         }
 
-        foreach (Ship s in myShips) {
+        foreach (Ship s in Ships) {
             //check for ships that needs commands?
             if (s.pathfinding.IsAtDestination) {
                 int x = Random.Range(0, World.Current.Width);
@@ -43,7 +43,7 @@ public class Pirate : MonoBehaviour {
         //myShips.Add (s);
     }
     public void OnShipDestroy(Unit u) {
-        myShips.Remove((Ship)u);
+        Ships.Remove((Ship)u);
     }
 
 }

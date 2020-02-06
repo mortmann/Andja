@@ -5,7 +5,7 @@ public class MilitaryStructurePrototypeData : StructurePrototypeData {
     public Unit[] canBeBuildUnits;
     public float buildTimeModifier;
     public int buildQueueLength = 1;
-    public Combat.DamageType MyDamageType;
+    public Combat.DamageType damageType;
     public int damage;
     public bool canBuildShips; //is set in prototypcontroller
 
@@ -60,7 +60,7 @@ public class MilitaryStructure : TargetStructure, IWarfare {
     public override void OnBuild() {
         toBuildUnits = new Queue<Unit>();
         toPlaceUnitTiles = new List<Tile>();
-        foreach (Tile t in neighbourTiles) {
+        foreach (Tile t in NeighbourTiles) {
             t.RegisterTileStructureChangedCallback(OnNeighbourTileStructureChange);
             if (t.Structure != null && t.Structure.IsWalkable == false) {
                 return;
@@ -120,10 +120,10 @@ public class MilitaryStructure : TargetStructure, IWarfare {
         target = null;
     }
     public float GetCurrentDamage(Combat.ArmorType armorType) {
-        return MyDamageType.GetDamageMultiplier(armorType) * CurrentDamage;
+        return DamageType.GetDamageMultiplier(armorType) * CurrentDamage;
     }
     public float CurrentDamage => isActive ? 0 : MilitaryStructureData.damage;
     public float MaximumDamage => MilitaryStructureData.damage;
-    public Combat.DamageType MyDamageType => MilitaryStructureData.MyDamageType;
+    public Combat.DamageType DamageType => MilitaryStructureData.damageType;
     #endregion
 }

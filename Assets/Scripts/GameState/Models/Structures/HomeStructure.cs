@@ -70,7 +70,7 @@ public class HomeStructure : TargetStructure {
     }
 
     public override void OnBuild() {
-        foreach (Tile t in neighbourTiles) {
+        foreach (Tile t in NeighbourTiles) {
             t.RegisterTileOldNewStructureChangedCallback(OnTStructureChange);
         }
         StructureNeeds = new List<Need>();
@@ -80,7 +80,7 @@ public class HomeStructure : TargetStructure {
         City.GetOwner().RegisterStructureNeedUnlock(OnNeedUnlock);
         City.GetPopulationLevel(StructureLevel).RegisterNeedUnlock(OnNeedUnlock);
         City.AddPeople(StructureLevel, people);
-        foreach (Tile t in myStructureTiles) {
+        foreach (Tile t in StructureTiles) {
             ((LandTile)t).RegisterOnNeedStructureChange(OnNeedStructureChange);
             List<NeedStructure> needsStructures = t.GetListOfInRangeCityNeedStructures();
             if (needsStructures == null)
@@ -180,7 +180,7 @@ public class HomeStructure : TargetStructure {
     }
 
     private void TryToUpgrade() {
-        if(City.AutoUpgradeHomes == false) {
+        if(City.autoUpgradeHomes == false) {
             return;
         }
         //TODO: check for performance impact
@@ -217,7 +217,7 @@ public class HomeStructure : TargetStructure {
             return false;
         }
         List<NeedStructure> strs = new List<NeedStructure>();
-        foreach (Tile item in myStructureTiles) {
+        foreach (Tile item in StructureTiles) {
             if (item.GetListOfInRangeCityNeedStructures() == null) {
                 continue;
             }

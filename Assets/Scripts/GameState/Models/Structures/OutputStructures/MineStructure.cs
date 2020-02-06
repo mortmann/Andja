@@ -18,7 +18,7 @@ public class MineStructure : OutputStructure {
 
     public override float EfficiencyPercent {
         get {
-            if (BuildTile.MyIsland.HasRessource(Ressource)) {
+            if (BuildTile.Island.HasRessource(Ressource)) {
                 return 100;
             }
             return 0;
@@ -52,7 +52,7 @@ public class MineStructure : OutputStructure {
     public override bool SpecialCheckForBuild(List<Tile> tiles) {
         for (int i = 0; i < tiles.Count; i++) {
             if (tiles[i].Type == TileType.Mountain) {
-                if (BuildTile.MyIsland.HasRessource(Ressource) == false) {
+                if (BuildTile.Island.HasRessource(Ressource) == false) {
                     return false;
                 }
             }
@@ -61,7 +61,7 @@ public class MineStructure : OutputStructure {
     }
 
     public override void OnUpdate(float deltaTime) {
-        if (BuildTile.MyIsland.HasRessource(Ressource) == false) {
+        if (BuildTile.Island.HasRessource(Ressource) == false) {
             return;
         }
         if (Output[0].count >= MaxOutputStorage) {

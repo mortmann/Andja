@@ -12,8 +12,8 @@ public class UnitPrototypeData : LanguageVariables {
     public int maintenancecost;
     public int buildcost;
 
-    public DamageType myDamageType;
-    public ArmorType myArmorType;
+    public DamageType damageType;
+    public ArmorType armorType;
 
     public Item[] buildingItems;
     public string spriteBaseName;
@@ -24,7 +24,7 @@ public class UnitPrototypeData : LanguageVariables {
     public float damage = 10;
     public float attackRate = 1;
     public float speed;
-    public float rotationSpeed = 2f;
+    public float rotationSpeed = 90f;
     public float aggroTime = 2f;
     public float captureSpeed=0.01f;
     public float projectileSpeed = 4.5f;
@@ -165,7 +165,7 @@ public class Unit : IGEventable,IWarfare {
 
     private void Setup() {
         World.Current.RegisterOnEvent(OnEventCreate, OnEventEnded);
-        inventory.OnMeChanged(inventory);
+        inventory?.OnMeChanged(inventory);
         if (IsShip)
             ((OceanPathfinding)pathfinding).Ship = (Ship)this;
     }
@@ -226,7 +226,7 @@ public class Unit : IGEventable,IWarfare {
     }
 
     public Vector2 CurrentPosition => VectorPosition;
-    public Vector2 NextDestinationPosition => pathfinding.NextDestination;
+    public Vector2 NextDestinationPosition => pathfinding.NextDestination.Value;
     public Vector2 LastMovement => pathfinding.LastMove;
 
     public int PlayerNumber => playerNumber;
@@ -234,8 +234,8 @@ public class Unit : IGEventable,IWarfare {
     public float MaximumHealth { get { return CalculateRealValue("maximumHealth", Data.maximumHealth); } }
     public virtual float CurrentDamage => CalculateRealValue("CurrentDamage", Data.damage);
     public virtual float MaximumDamage => CalculateRealValue("MaximumDamage", Data.damage);    
-    public DamageType MyDamageType => Data.myDamageType;
-    public ArmorType MyArmorType => Data.myArmorType;
+    public DamageType DamageType => Data.damageType;
+    public ArmorType ArmorType => Data.armorType;
     public bool IsDestroyed => IsDead;
 
     public List<Command> QueuedCommands => queuedCommands == null ? null : new List<Command>(queuedCommands);
@@ -406,7 +406,7 @@ public class Unit : IGEventable,IWarfare {
                 return;
             }
         }
-        CurrentMainMode = UnitMainModes.Idle;
+        //CurrentMainMode = UnitMainModes.Idle;
     }
 
 
@@ -467,7 +467,7 @@ public class Unit : IGEventable,IWarfare {
         if (nearstTile.Structure.IsWalkable)
             return target.CurrentPosition;
         float nearDist = float.MaxValue;
-        foreach (Tile item in nearstTile.Structure.neighbourTiles) {
+        foreach (Tile item in nearstTile.Structure.NeighbourTiles) {
             if (IsShip) {
                 if (item.Type != TileType.Ocean) {
                     continue;
@@ -560,7 +560,7 @@ public class Unit : IGEventable,IWarfare {
             }
             else {
                 Player p = PlayerController.GetPlayer(playerNumber);
-                rangeUStructure.City.SellToCity(clicked.ID, p, (Ship)this, clicked.count);
+                rangeUStructure.City.BuyingTradeItem(clicked.ID, p, (Ship)this, clicked.count);
             }
         }
     }
@@ -624,6 +624,7 @@ public class Unit : IGEventable,IWarfare {
     }
 
     private void OnArriveDestination(bool atDest) {
+        Debug.Log("?");
         if (atDest == false) {
             return;
         }
@@ -705,7 +706,7 @@ public class Unit : IGEventable,IWarfare {
         if (tile.Type == TileType.Mountain) {
             return false;
         }
-        if (pathfinding.CurrTile.MyIsland != tile.MyIsland) {
+        if (pathfinding.CurrTile.Island != tile.Island) {
             return false;
         }
         return true;
@@ -766,10 +767,10 @@ public class Unit : IGEventable,IWarfare {
 
 
     public bool IsAttackableFrom(IWarfare warfare) {
-        return warfare.MyDamageType.GetDamageMultiplier(MyArmorType) > 0;
+        return warfare.DamageType.GetDamageMultiplier(ArmorType) > 0;
     }
     public void TakeDamageFrom(IWarfare warfare) {
-        ReduceHealth( warfare.GetCurrentDamage(MyArmorType) );
+        ReduceHealth( warfare.GetCurrentDamage(ArmorType) );
     }
 
     internal bool IsPlayerUnit() {
@@ -777,7 +778,7 @@ public class Unit : IGEventable,IWarfare {
     }
 
     public virtual float GetCurrentDamage(ArmorType armorType) {
-        return MyDamageType.GetDamageMultiplier(armorType) * CurrentDamage;
+        return DamageType.GetDamageMultiplier(armorType) * CurrentDamage;
     }
 
     public override void OnEventCreate(GameEvent ge) {

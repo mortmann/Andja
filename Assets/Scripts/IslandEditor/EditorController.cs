@@ -15,7 +15,6 @@ public class EditorController : MonoBehaviour {
 
     public static EditorController Instance { get; protected set; }
     World world;
-    Dictionary<Tile, Structure> tileToStructure;
     Dictionary<string, int[]> Ressources;
 
 
@@ -43,6 +42,7 @@ public class EditorController : MonoBehaviour {
 
     Action<Structure> cbStructureCreated;
     Action<Tile> cbStructureDestroyed;
+    public List<Action<Structure>> SetStructureVariablesList = new List<Action<Structure>>();
 
     public bool IsModal; // If true, a modal dialog box is open so normal inputs should be ignored.
 
@@ -51,22 +51,12 @@ public class EditorController : MonoBehaviour {
         if (Instance != null) {
             Debug.LogError("There should never be two EditorController.");
         }
-        tileToStructure = new Dictionary<Tile, Structure>();
         Ressources = new Dictionary<string, int[]>();
         IsEditor = true;
         
         Instance = this;
         new InputHandler();
-        if (loadsavegame != null) {
-            LoadSaveState(loadsavegame);
-            loadsavegame = null;
-        }
-        else if (generate) {
-            world = new World(MapGenerator.Instance.GetTiles(), Width, Height);
-            MapGenerator.Instance.Destroy();
-            generate = false;
-        }
-        else {
+        if (generate==false&&loadsavegame==null) {
             Tile[] tiles = new Tile[Width * Height];
             for (int x = 0; x < Width; x++) {
                 for (int y = 0; y < Height; y++) {
@@ -75,10 +65,27 @@ public class EditorController : MonoBehaviour {
             }
             world = new World(tiles,Width, Height);
         }
-        //Destroy(MapGenerator.Instance.gameObject);
         Camera.main.transform.position = new Vector3(Width / 2, Height / 2, Camera.main.transform.position.z);
+        SceneManager.activeSceneChanged += OnLevelLoaded;
+    }
+    internal void ResetSetStructure() {
+        SetStructureVariablesList.Clear();
     }
 
+    private void OnLevelLoaded(Scene o, Scene n) {
+        if (SceneManager.GetActiveScene().name != "IslandEditor")
+            return;
+        if (generate) {
+            world = new World(MapGenerator.Instance.GetTiles(), Width, Height,true);
+            MapGenerator.Instance.Destroy();
+            generate = false;
+        }
+        if (loadsavegame != null) {
+            LoadSaveState(loadsavegame);
+            loadsavegame = null;
+        }
+        TileSpriteController.Instance.EditorFix();
+    }
     internal static MapGenerator.IslandGenInfo[] GetEditorGenInfo() {
         return new MapGenerator.IslandGenInfo[1] { new MapGenerator.IslandGenInfo(new MapGenerator.Range(Width, Width), new MapGenerator.Range(Height, Height), climate) };
     }
@@ -90,7 +97,10 @@ public class EditorController : MonoBehaviour {
         generate = true;
         SceneManager.LoadScene("EditorLoadingScreen");
     }
-
+    public void RandomizeIsland() {
+        generate = true;
+        SceneManager.LoadScene("EditorLoadingScreen");
+    }
     void Update() {
         if (Input.GetMouseButton(0)) {
             if (EventSystem.current.IsPointerOverGameObject()) {
@@ -101,6 +111,11 @@ public class EditorController : MonoBehaviour {
             }
             else {
                 CreateStructure();
+            }
+        }
+        if (InputHandler.GetButtonDown(InputName.Rotate)) {
+            if (BuildController.Instance.toBuildStructure != null) {
+                BuildController.Instance.toBuildStructure.RotateStructure();
             }
         }
     }
@@ -166,7 +181,7 @@ public class EditorController : MonoBehaviour {
     private void RandomModifier(Action<Tile> action, Tile et) {
         if (randomChange == 100) {
             action(et);
-        }
+        } else
         if (Input.GetMouseButtonDown(0) || Input.GetKey(KeyCode.LeftShift)) {
             float f = UnityEngine.Random.Range(0, 100);
             if (f <= randomChange) {
@@ -211,8 +226,13 @@ public class EditorController : MonoBehaviour {
         World.Current.OnTileChanged(t);
     }
 
-    public void SetDestroyMode(bool destroy) {
-        DestroyStructure = destroy;
+    public void SetDestroyMode() {
+        DestroyStructure = true;
+        EditorUIController.Instance.DestroyToggle(DestroyStructure);
+    }
+    public void SetBuildMode() {
+        DestroyStructure = false;
+        EditorUIController.Instance.DestroyToggle(DestroyStructure);
     }
     public void CreateStructure() {
         if (Input.GetMouseButtonDown(0)) {
@@ -233,10 +253,10 @@ public class EditorController : MonoBehaviour {
             else {
                 switch (brushType) {
                     case BrushTypes.Square:
-                        SquareBrush(CreateStructureOnTile, et);
+                        SquareBrush(BuildOn, et);
                         break;
                     case BrushTypes.Round:
-                        RoundBrush(CreateStructureOnTile, et);
+                        RoundBrush(BuildOn, et);
                         break;
                     default:
                         throw new ArgumentOutOfRangeException();
@@ -245,32 +265,21 @@ public class EditorController : MonoBehaviour {
         }
     }
     public void DestroyStructureOnTile(Tile et) {
-        tileToStructure.Remove(et);
+        BuildController.Instance.DestroyStructureOnTile(et, null, true);
         cbStructureDestroyed?.Invoke(et);
     }
     public void ChangeBrushType(int type) {
         brushType = (BrushTypes)type;
     }
-    private void CreateStructureOnTile(Tile et) {
-        if (structure==null|| tileToStructure.ContainsKey(et)) {
-            return;
-        }
-        if (Tile.IsBuildType(et.Type) == false) {
-            return;
-        }
+    internal void BuildOn(Tile t) {
+        BuildOn(structure.GetBuildingTiles(t.X, t.Y),true);
+    }
+    internal void BuildOn(List<Tile> t, bool single) {
         Structure toPlace = structure.Clone();
-        //Set Variables of Structure somehow
-        if (toPlace is GrowableStructure)
-            ((GrowableStructure)toPlace).currentStage = structureStage;
-
-        PlaceStructureOnTile(toPlace, et);
+        SetStructureVariablesList.ForEach(x => x?.Invoke(toPlace));
+        BuildController.Instance.EditorBuildOnTile(toPlace, t, single);
     }
-    void PlaceStructureOnTile(Structure toPlace, Tile placeOn) {
-        placeOn.Structure = toPlace;
-        toPlace.BuildTile = placeOn;
-        tileToStructure.Add(placeOn, toPlace);
-        cbStructureCreated?.Invoke(toPlace);
-    }
+    
     public void SetBrushSize(int size) {
         brushSize = size;
     }
@@ -278,12 +287,9 @@ public class EditorController : MonoBehaviour {
         changeTileType = type;
     }
 
-    public void SetAge(int age) {
-        if (structure is GrowableStructure)
-            ((GrowableStructure)structure).currentStage = age;
-    }
     public void SetStructure(string id) {
         structure = PrototypController.Instance.StructurePrototypes[id];
+        BuildController.Instance.OnClick(id,null,structure);
     }
     public void RegisterOnStructureCreated(Action<Structure> strs) {
         cbStructureCreated += strs;
@@ -315,6 +321,9 @@ public class EditorController : MonoBehaviour {
     }
     public void OnDestroy() {
         IsEditor = false;
+        Instance = null;
+        world.Destroy();
+        SceneManager.activeSceneChanged -= OnLevelLoaded; //only the newest should get the event
     }
     /// 
     /// 
@@ -323,22 +332,24 @@ public class EditorController : MonoBehaviour {
     /// 
     public void LoadIsland(SaveIsland file) {
         loadsavegame = file;
+        Width = loadsavegame.Width;
+        Height = loadsavegame.Height;
+        climate = loadsavegame.climate;
         MenuController.Instance.ChangeToEditorLoadScreen();
     }
     void LoadSaveState(SaveIsland load) {
         Width = load.Width;
         Height = load.Height;
-        world = new World(load.tiles, load.Width, load.Height);
-        tileToStructure = new Dictionary<Tile, Structure>();
+        world = new World(load.tiles, load.Width, load.Height,true);
         Ressources = load.Ressources;
         foreach (Structure s in load.structures) {
-            PlaceStructureOnTile(s, s.BuildTile);
+            BuildController.Instance.EditorBuildOnTile(s, s.GetBuildingTiles(s.BuildTile.X, s.BuildTile.Y), true);
         }
     }
     public SaveIsland GetSaveState() {
         HashSet<Tile> toSave = new HashSet<Tile>(world.Tiles);
         toSave.RemoveWhere(x => x.Type == TileType.Ocean);
-        return new SaveIsland(tileToStructure, toSave.ToArray(), Width, Height, climate, Ressources);
+        return new SaveIsland(world.IslandList[0].Cities[0].structures, toSave.ToArray(), Width, Height, climate, Ressources);
     }
 
     [JsonObject]
@@ -354,11 +365,11 @@ public class EditorController : MonoBehaviour {
         public SaveIsland() {
 
         }
-        public SaveIsland(Dictionary<Tile, Structure> tileToStructure, Tile[] tiles, int Width, int Height, Climate climate, Dictionary<string, int[]> Ressources) {
+        public SaveIsland(List<Structure> structures, Tile[] tiles, int Width, int Height, Climate climate, Dictionary<string, int[]> Ressources) {
             this.Width = Width;
             this.Height = Height;
             this.climate = climate;
-            this.structures = new List<Structure>(tileToStructure.Values);
+            this.structures = new List<Structure>(structures);
             this.tiles = tiles.Cast<LandTile>().ToArray();
             this.Ressources = new Dictionary<string, int[]>();
             foreach(string id in Ressources.Keys) {
@@ -368,4 +379,5 @@ public class EditorController : MonoBehaviour {
             }
         }
     }
+
 }

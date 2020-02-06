@@ -73,10 +73,10 @@ public class Tile : IComparable<Tile>, IEqualityComparer<Tile> {
             if (Structure == null) {
                 return 1;
             }
-            if (Structure.MyStructureTyp != StructureTyp.Pathfinding && Structure.CanBeBuildOver == false) {
+            if (Structure.StructureTyp != StructureTyp.Pathfinding && Structure.CanBeBuildOver == false) {
                 return float.PositiveInfinity;
             }
-            if (Structure.MyStructureTyp == StructureTyp.Pathfinding) {
+            if (Structure.StructureTyp == StructureTyp.Pathfinding) {
                 return 0.25f;
             }
             return 1;
@@ -236,8 +236,8 @@ public class Tile : IComparable<Tile>, IEqualityComparer<Tile> {
         set {
         }
     }
-    public virtual Island MyIsland { get { return null; } set { } }
-    public virtual City MyCity {
+    public virtual Island Island { get { return null; } set { } }
+    public virtual City City {
         get {
             return null;
         }

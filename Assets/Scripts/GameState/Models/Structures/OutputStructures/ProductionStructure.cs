@@ -8,7 +8,7 @@ public enum InputTyp { AND, OR }
 
 public class ProductionPrototypeData : OutputPrototypData {
     public Item[] intake;
-    public InputTyp myInputTyp;
+    public InputTyp inputTyp;
 }
 
 [JsonObject(MemberSerialization.OptIn)]
@@ -17,19 +17,19 @@ public class ProductionStructure : OutputStructure {
     #region Serialize
     private Item[] _intake;
     [JsonPropertyAttribute]
-    public Item[] MyIntake {
+    public Item[] Intake {
         get {
             if (_intake == null) {
                 if (ProductionData.intake == null) {
                     return null;
                 }
-                if (ProductionData.myInputTyp == InputTyp.AND) {
+                if (ProductionData.inputTyp == InputTyp.AND) {
                     _intake = new Item[ProductionData.intake.Length];
                     for (int i = 0; i < ProductionData.intake.Length; i++) {
                         _intake[i] = ProductionData.intake[i].Clone();
                     }
                 }
-                if (ProductionData.myInputTyp == InputTyp.OR) {
+                if (ProductionData.inputTyp == InputTyp.OR) {
                     _intake = new Item[1];
                     _intake[0] = ProductionData.intake[0].Clone();
                 }
@@ -49,7 +49,7 @@ public class ProductionStructure : OutputStructure {
             if (_orItemIndex == int.MinValue) {
                 for (int i = 0; i < ProductionData.intake.Length; i++) {
                     Item item = ProductionData.intake[i];
-                    if (item.ID == MyIntake[0].ID) {
+                    if (item.ID == Intake[0].ID) {
                         _orItemIndex = i;
                     }
                 }
@@ -63,7 +63,7 @@ public class ProductionStructure : OutputStructure {
 
     public Dictionary<OutputStructure, Item[]> RegisteredStructures;
     MarketStructure nearestMarketStructure;
-    public InputTyp MyInputTyp { get { return ProductionData.myInputTyp; } }
+    public InputTyp InputTyp { get { return ProductionData.inputTyp; } }
 
     #endregion
 
@@ -133,9 +133,9 @@ public class ProductionStructure : OutputStructure {
         produceCountdown += deltaTime;
         if (produceCountdown >= ProduceTime) {
             produceCountdown = 0;
-            if (MyIntake != null) {
-                for (int i = 0; i < MyIntake.Length; i++) {
-                    MyIntake[i].count--;
+            if (Intake != null) {
+                for (int i = 0; i < Intake.Length; i++) {
+                    Intake[i].count--;
                 }
             }
             for (int i = 0; i < Output.Length; i++) {
@@ -148,15 +148,15 @@ public class ProductionStructure : OutputStructure {
         if (ProductionData.intake == null) {
             return true;
         }
-        if (MyInputTyp == InputTyp.AND) {
-            for (int i = 0; i < MyIntake.Length; i++) {
-                if (ProductionData.intake[i].count > MyIntake[i].count) {
+        if (InputTyp == InputTyp.AND) {
+            for (int i = 0; i < Intake.Length; i++) {
+                if (ProductionData.intake[i].count > Intake[i].count) {
                     return false;
                 }
             }
         }
-        else if (MyInputTyp == InputTyp.OR) {
-            if (ProductionData.intake[OrItemIndex].count > MyIntake[0].count) {
+        else if (InputTyp == InputTyp.OR) {
+            if (ProductionData.intake[OrItemIndex].count > Intake[0].count) {
                 return false;
             }
         }
@@ -164,13 +164,13 @@ public class ProductionStructure : OutputStructure {
     }
 
     public override void SendOutWorkerIfCan() {
-        if (myWorker.Count >= MaxNumberOfWorker || jobsToDo.Count == 0 && nearestMarketStructure == null) {
+        if (Worker.Count >= MaxNumberOfWorker || jobsToDo.Count == 0 && nearestMarketStructure == null) {
             return;
         }
         Dictionary<Item, int> needItems = new Dictionary<Item, int>();
-        for (int i = 0; i < MyIntake.Length; i++) {
-            if (GetMaxIntakeForIntakeIndex(i) > MyIntake[i].count) {
-                needItems.Add(MyIntake[i].Clone(), GetMaxIntakeForIntakeIndex(i) - MyIntake[i].count);
+        for (int i = 0; i < Intake.Length; i++) {
+            if (GetMaxIntakeForIntakeIndex(i) > Intake[i].count) {
+                needItems.Add(Intake[i].Clone(), GetMaxIntakeForIntakeIndex(i) - Intake[i].count);
             }
         }
         if (needItems.Count == 0) {
@@ -178,18 +178,18 @@ public class ProductionStructure : OutputStructure {
         }
         if (jobsToDo.Count == 0 && nearestMarketStructure != null) {
             List<Item> getItems = new List<Item>();
-            for (int i = MyIntake.Length - 1; i >= 0; i--) {
-                if (City.HasAnythingOfItem(MyIntake[i])) {
-                    Item item = MyIntake[i].Clone();
-                    item.count = GetMaxIntakeForIntakeIndex(i) - MyIntake[i].count;
+            for (int i = Intake.Length - 1; i >= 0; i--) {
+                if (City.HasAnythingOfItem(Intake[i])) {
+                    Item item = Intake[i].Clone();
+                    item.count = GetMaxIntakeForIntakeIndex(i) - Intake[i].count;
                     getItems.Add(item);
                 }
             }
             if (getItems.Count <= 0) {
                 return;
             }
-            myWorker.Add(new Worker(this, nearestMarketStructure, 1, getItems.ToArray(), false));
-            World.Current.CreateWorkerGameObject(myWorker[0]);
+            Worker.Add(new Worker(this, nearestMarketStructure, 1, getItems.ToArray(), false));
+            World.Current.CreateWorkerGameObject(Worker[0]);
         }
         else {
             base.SendOutWorkerIfCan();
@@ -218,15 +218,15 @@ public class ProductionStructure : OutputStructure {
     }
 
     public bool AddToIntake(Inventory toAdd) {
-        if (MyIntake == null) {
+        if (Intake == null) {
             return false;
         }
-        for (int i = 0; i < MyIntake.Length; i++) {
-            if ((MyIntake[i].count + toAdd.GetAmountForItem(MyIntake[i])) > GetMaxIntakeForIntakeIndex(i)) {
+        for (int i = 0; i < Intake.Length; i++) {
+            if ((Intake[i].count + toAdd.GetAmountForItem(Intake[i])) > GetMaxIntakeForIntakeIndex(i)) {
                 return false;
             }
-            MyIntake[i].count += toAdd.GetAmountForItem(MyIntake[i]);
-            toAdd.SetItemCountNull(MyIntake[i]);
+            Intake[i].count += toAdd.GetAmountForItem(Intake[i]);
+            toAdd.SetItemCountNull(Intake[i]);
             CallbackChangeIfnotNull();
         }
 
@@ -235,12 +235,12 @@ public class ProductionStructure : OutputStructure {
 
     public override Item[] GetRequieredItems(OutputStructure str, Item[] items) {
         List<Item> all = new List<Item>();
-        for (int i = MyIntake.Length - 1; i >= 0; i--) {
-            string id = MyIntake[i].ID;
+        for (int i = Intake.Length - 1; i >= 0; i--) {
+            string id = Intake[i].ID;
             for (int s = 0; s < items.Length; s++) {
                 if (items[i].ID == id) {
                     Item item = items[i].Clone();
-                    item.count = GetMaxIntakeForIntakeIndex(i) - MyIntake[i].count;
+                    item.count = GetMaxIntakeForIntakeIndex(i) - Intake[i].count;
                     if (item.count > 0)
                         all.Add(item);
                 }
@@ -254,8 +254,8 @@ public class ProductionStructure : OutputStructure {
         //		for (int i = 0; i < intake.Length; i++) {
         //			intake [i].count = maxIntake [i];
         //		}
-        if (myRangeTiles != null) {
-            foreach (Tile rangeTile in myRangeTiles) {
+        if (RangeTiles != null) {
+            foreach (Tile rangeTile in RangeTiles) {
                 if (rangeTile.Structure == null) {
                     continue;
                 }
@@ -281,9 +281,9 @@ public class ProductionStructure : OutputStructure {
         // bug is that myHome doesnt get set by json for this kind of structures
         // but it works for warehouse for example
         // to save save space we could always set it here but that would mean for every kind extra or in place structure???
-        if (myWorker != null) {
-            foreach (Worker w in myWorker) {
-                w.myHome = this;
+        if (Worker != null) {
+            foreach (Worker w in Worker) {
+                w.Home = this;
             }
         }
 
@@ -293,13 +293,13 @@ public class ProductionStructure : OutputStructure {
         if (change == null) {
             return;
         }
-        if (MyInputTyp == InputTyp.AND) {
+        if (InputTyp == InputTyp.AND) {
             return;
         }
         for (int i = 0; i < ProductionData.intake.Length; i++) {
             Item item = ProductionData.intake[i];
             if (item.ID == change.ID) {
-                MyIntake[0] = item.Clone();
+                Intake[0] = item.Clone();
                 break;
             }
         }
@@ -321,8 +321,8 @@ public class ProductionStructure : OutputStructure {
     public Item[] HasNeedItem(Item[] output) {
         List<Item> items = new List<Item>();
         for (int i = 0; i < output.Length; i++) {
-            for (int s = 0; s < MyIntake.Length; s++) {
-                if (output[i].ID == MyIntake[s].ID) {
+            for (int s = 0; s < Intake.Length; s++) {
+                if (output[i].ID == Intake[s].ID) {
                     items.Add(output[i]);
                 }
             }
@@ -334,8 +334,8 @@ public class ProductionStructure : OutputStructure {
             return;
         }
         bool inRange = false;
-        for (int i = 0; i < str.myStructureTiles.Count; i++) {
-            if (myRangeTiles.Contains(str.myStructureTiles[i]) == true) {
+        for (int i = 0; i < str.StructureTiles.Count; i++) {
+            if (RangeTiles.Contains(str.StructureTiles[i]) == true) {
                 inRange = true;
                 break;
             }

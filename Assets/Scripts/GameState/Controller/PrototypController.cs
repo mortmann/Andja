@@ -691,7 +691,7 @@ public class PrototypController : MonoBehaviour {
                 tileWidth = 1,
                 tileHeight = 1,
                 buildTyp = BuildTypes.Path,
-                myStructureTyp = StructureTyp.Pathfinding,
+                structureTyp = StructureTyp.Pathfinding,
                 canBeUpgraded = true,
                 //!not anymore
                 maintenanceCost = 0,
@@ -721,7 +721,7 @@ public class PrototypController : MonoBehaviour {
                 maxNumberOfWorker = 0,
                 tileWidth = 1,
                 tileHeight = 1,
-                myStructureTyp = StructureTyp.Free,
+                structureTyp = StructureTyp.Free,
                 buildTyp = BuildTypes.Drag,
                 buildcost = 50,
                 maxOutputStorage = 1
@@ -758,7 +758,7 @@ public class PrototypController : MonoBehaviour {
                 tileWidth = 4,
                 tileHeight = 4,
                 buildTyp = BuildTypes.Single,
-                myStructureTyp = StructureTyp.Blocking,
+                structureTyp = StructureTyp.Blocking,
                 structureRange = 18,
                 canTakeDamage = true,
 
@@ -786,7 +786,7 @@ public class PrototypController : MonoBehaviour {
                 //THESE are fix and are not changed for any ProduktionStructure
                 maxOutputStorage = 5, // hardcoded 5 ? need this to change?
                 hasHitbox = true,
-                myStructureTyp = StructureTyp.Blocking,
+                structureTyp = StructureTyp.Blocking,
                 buildTyp = BuildTypes.Single,
                 canTakeDamage = true,
                 forMarketplace = true,
@@ -816,7 +816,7 @@ public class PrototypController : MonoBehaviour {
                 tileWidth = 2,
                 tileHeight = 2,
                 buildTyp = BuildTypes.Single,
-                myStructureTyp = StructureTyp.Blocking,
+                structureTyp = StructureTyp.Blocking,
                 Name = "NeedStructure",
                 maintenanceCost = 100
             };
@@ -839,7 +839,7 @@ public class PrototypController : MonoBehaviour {
                 tileWidth = 2,
                 tileHeight = 2,
                 buildTyp = BuildTypes.Drag,
-                myStructureTyp = StructureTyp.Blocking,
+                structureTyp = StructureTyp.Blocking,
                 structureRange = 0,
                 hasHitbox = true,
                 canTakeDamage = true,
@@ -904,7 +904,7 @@ public class PrototypController : MonoBehaviour {
                 tileWidth = 2,
                 tileHeight = 3,
                 Name = "Mine",
-                myStructureTyp = StructureTyp.Blocking,
+                structureTyp = StructureTyp.Blocking,
                 buildTyp = BuildTypes.Single,
                 hasHitbox = true,
                 structureRange = 0

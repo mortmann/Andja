@@ -146,16 +146,17 @@ public class AIController : MonoBehaviour {
 
         //}
 
-
     }
-
+    private void OnDestroy() {
+        Instance = null;
+    }
     internal string GetTileValue(Tile tile) {
         if (tile.Type == TileType.Ocean)
             return "";
-        if(islandsTileToValue[tile.MyIsland].ContainsKey(tile)==false) {
+        if(islandsTileToValue[tile.Island].ContainsKey(tile)==false) {
             return "ERROR";
         }
-        return islandsTileToValue[tile.MyIsland][tile].ToString();
+        return islandsTileToValue[tile.Island][tile].ToString();
     }
 
     private void OnStructureDestroyed(Structure obj) {
@@ -168,11 +169,11 @@ public class AIController : MonoBehaviour {
         List<Tile> toChange = new List<Tile>();
         Dictionary<Tile, TileValue> tileValue = islandsTileToValue[island];
         
-        foreach (Tile t in structure.myStructureTiles) {
+        foreach (Tile t in structure.StructureTiles) {
             tileValue[t].neValue = Vector2.zero;
             tileValue[t].swValue = Vector2.zero;
         }
-        foreach (Tile t in structure.myStructureTiles) {
+        foreach (Tile t in structure.StructureTiles) {
             ChangeTileValue(t.North(), 1, Direction.N);
             ChangeTileValue(t.East(), 1, Direction.E);
             ChangeTileValue(t.South(), 1, Direction.S);
@@ -185,7 +186,7 @@ public class AIController : MonoBehaviour {
         if(t.Type == TileType.Ocean) {
             return;
         }
-        Dictionary<Tile, TileValue> tileValue = islandsTileToValue[t.MyIsland];
+        Dictionary<Tile, TileValue> tileValue = islandsTileToValue[t.Island];
         if (tileValue.ContainsKey(t) ==false) {
             return;
         }
@@ -295,6 +296,7 @@ public class TileValue {
     public override string ToString() {
         return "N" + neValue.y + "\nW" + swValue.x +"  E" + neValue.x + "\nS" + swValue.y ;
     }
+    
 }	
 public class AIPlayer {
     public int PlayerNummer => player.Number;
@@ -319,8 +321,6 @@ public class AIPlayer {
         //TODO:set here desires
         CalculateIslandScores();
         islandScores = islandScores.OrderByDescending(x => x.EndScore).ToList();
-        //List<Tile> tiles = new List<Tile>(islandScores[0].Island.myTiles);
-        //tiles.RemoveAll(x => x.Type != TileType.Shore);
         WarehouseStructure warehouse = PrototypController.Instance.FirstLevelWarehouse;
         //TODO: optimize
         List<TileValue> values = new List<TileValue>(AIController.Instance.islandToMapSpaceValuedTiles[islandScores[0].Island]);
@@ -349,10 +349,10 @@ public class AIPlayer {
         Dictionary<string, int> ressourceIDtoExisting = new Dictionary<string, int>();
         Dictionary<Fertility, int> fertilitytoExisting = new Dictionary<Fertility, int>();
         foreach (Island island in islands) {
-            if (island.myTiles.Count > maxSize)
-                maxSize = island.myTiles.Count;
-            averageSize += island.myTiles.Count;
-            averageSize -= island.myTiles.FindAll(x => x.CheckTile()).Count;
+            if (island.Tiles.Count > maxSize)
+                maxSize = island.Tiles.Count;
+            averageSize += island.Tiles.Count;
+            averageSize -= island.Tiles.FindAll(x => x.CheckTile()).Count;
             if (island.Ressources != null || island.Ressources.Count != 0) {
                 foreach (string resid in island.Ressources.Keys) {
                     if (ressourceIDtoAverageAmount.ContainsKey(resid)) {
@@ -364,7 +364,7 @@ public class AIPlayer {
                         ressourceIDtoExisting[resid]=1;
                     }
                 }
-                foreach (Fertility fer in island.myFertilities) {
+                foreach (Fertility fer in island.Fertilities) {
                     if (fertilitytoExisting.ContainsKey(fer)) {
                         fertilitytoExisting[fer]++;
                     }
@@ -400,12 +400,12 @@ public class AIPlayer {
                 }
             }
 
-            score.SizeScore = (float)island.myTiles.Count;
-            score.SizeScore -= island.myTiles.FindAll(x => x.CheckTile()).Count;
+            score.SizeScore = (float)island.Tiles.Count;
+            score.SizeScore -= island.Tiles.FindAll(x => x.CheckTile()).Count;
             score.SizeScore /= averageSize;
 
             //Calculate Fertility Score
-            foreach (Fertility fertility in island.myFertilities) {
+            foreach (Fertility fertility in island.Fertilities) {
                 // add how rare it is in the world -- multiple this??
                 if (neededFertilities.Contains(fertility)) {
                     score.FertilityScore += fertilitytoExisting[fertility];
@@ -413,28 +413,28 @@ public class AIPlayer {
                 // its always nice to have -- add how rare it is in the world
                 score.FertilityScore += fertilitytoExisting[fertility];
             }
-            List<Island> myIslands = new List<Island>(player.GetIslandList());
+            List<Island> Islands = new List<Island>(player.GetIslandList());
             //Distance Score is either how far it is from other islands OR how far from center
-            if (myIslands.Count > 0) {
+            if (Islands.Count > 0) {
                 float distance = 0;
-                foreach(Island isl in myIslands) {
+                foreach(Island isl in Islands) {
                     distance += Vector2.Distance(island.Center , isl.Center);
                 }
-                distance /= myIslands.Count;
+                distance /= Islands.Count;
                 score.DistanceScore = distance;
             } else {
                 score.DistanceScore = Vector2.Distance(island.Center, World.Current.Center);
             }
             //Competition Score is the percentage of unclaimed Tiles multiplied through how many diffrent players
-            if(island.myCities.Count>0) {
-                float avaibleTiles = island.myTiles.Count;
-                foreach (City c in island.myCities) {
+            if(island.Cities.Count>0) {
+                float avaibleTiles = island.Tiles.Count;
+                foreach (City c in island.Cities) {
                     if (c.IsWilderness())
                         continue;
-                    avaibleTiles -= c.MyTiles.Count;
+                    avaibleTiles -= c.Tiles.Count;
                 }
-                score.CompetitionScore = avaibleTiles / island.myTiles.Count;
-                score.CompetitionScore *= island.myCities.Count;
+                score.CompetitionScore = avaibleTiles / island.Tiles.Count;
+                score.CompetitionScore *= island.Cities.Count;
             }
             islandScores.Add(score);
             Debug.Log("Calculated Island Score " + score.EndScore + " " + score.Island.StartTile.Vector2);
@@ -459,11 +459,11 @@ public class AIPlayer {
             ////imitates a guess how much the player makes 
             ////also guess the money in the bank?
             //value.MoneyValue = Random.Range(p.TreasuryChange - p.TreasuryChange / 4, p.TreasuryChange + p.TreasuryChange / 4);
-            Debug.Log("Calculated PlayerCombat Score " + value.EndScore);
+            //Debug.Log("Calculated PlayerCombat Score " + value.EndScore);
             combatValues.Add(value);
         }
     }
-
+    
 }
 public class PlayerCombatValue {
     public Player Player;

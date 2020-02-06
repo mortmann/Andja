@@ -20,7 +20,7 @@ public class RoutePathfinding : Pathfinding {
     public void SetDestination(List<Tile> startTiles, List<Tile> endTiles) {
         this.startTiles = startTiles;
         this.endTiles = endTiles;
-        myTurnType = Turn_type.OnPoint;
+        TurnType = Turning_Type.OnPoint;
         StartCalculatingThread();
     }
 
@@ -38,7 +38,7 @@ public class RoutePathfinding : Pathfinding {
 
     protected override void CalculatePath() {
 
-        pathDest = Path_dest.tile;
+        pathDest = Path_Destination.Tile;
         if (startTiles == null) {
             startTiles = new List<Tile> {
                 startTile
@@ -73,25 +73,17 @@ public class RoutePathfinding : Pathfinding {
                 }
             }
         }
-        worldPath = currentQueue;
+        CurrTile = currentQueue.Peek();
+        worldPath = new Queue<Vector2>();
+        while (currentQueue.Count>0) {
+            worldPath.Enqueue(currentQueue.Dequeue().Vector2);
+        }
         if (worldPath == null || worldPath.Count == 0) {
             return;
         }
-        //if (startTile != null && startTile != CurrTile) {
-        //    CreateReversePath();
-        //    while (worldPath.Peek() != CurrTile) {
-        //        // remove as long as it is not the current tile 
-        //        worldPath.Dequeue();
-        //    }
-        //    worldPath.Dequeue();
-
-        //}
-        //else {
-            CurrTile = worldPath.Peek();
-            startTile = CurrTile;
-            CreateReversePath();
-            DestTile = backPath.Peek();
-        //}
+        startTile = CurrTile;
+        CreateReversePath();
+        DestTile = World.Current.GetTileAt(backPath.Peek());
         worldPath.Dequeue();
         X = startTile.X;
         Y = startTile.Y;

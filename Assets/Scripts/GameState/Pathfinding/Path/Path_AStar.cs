@@ -3,10 +3,13 @@ using System.Collections.Generic;
 using Priority_Queue;
 using System.Linq;
 
+public enum Path_Heuristics { Euclidean, Manhattan, Diagonal }
+
 public class Path_AStar {
-
+    public Path_Heuristics Heuristic;
     public Queue<Tile> path;
-
+    public const float DIAGONAL_MOVE_COST = 1.41421356237f;
+    public const float NORMAL_MOVE_COST = 1;
     List<Tile> startTiles;
     List<Tile> endTiles;
 
@@ -16,19 +19,21 @@ public class Path_AStar {
         path = backPath;
     }
 
-    public Path_AStar(Island island, Tile tileStart, Tile tileEnd, bool diag = true) {
+    public Path_AStar(Island island, Tile tileStart, Tile tileEnd, bool diag = true, Path_Heuristics Heuristic = Path_Heuristics.Euclidean) {
         if (island == null || tileStart == null || tileEnd == null) {
             return;
         }
+        this.Heuristic = Heuristic;
         // A dictionary of all valid, walkable nodes.
         Dictionary<Tile, Path_Node<Tile>> nodes = island.TileGraphIslandTiles.nodes;
         Calculate(nodes, tileStart, tileEnd, diag);
     }
 
-    public Path_AStar(Route route, Tile tileStart, Tile tileEnd, List<Tile> startTiles, List<Tile> endTiles) {
+    public Path_AStar(Route route, Tile tileStart, Tile tileEnd, List<Tile> startTiles, List<Tile> endTiles, Path_Heuristics Heuristic = Path_Heuristics.Manhattan) {
         if (route == null || tileStart == null || tileEnd == null) {
             return;
         }
+        this.Heuristic = Heuristic;
         startTiles.RemoveAll(x => x.Structure != null && x.Structure.IsWalkable == false);
         endTiles.RemoveAll(x => x.Structure != null && x.Structure.IsWalkable == false);
         if (startTiles.Count == 0 || endTiles.Count == 0) {
@@ -41,10 +46,11 @@ public class Path_AStar {
         Calculate(nodes, tileStart, tileEnd, false);
 
     }
-    public Path_AStar(Island island, List<Tile> startTiles, List<Tile> endTiles) {
+    public Path_AStar(Island island, List<Tile> startTiles, List<Tile> endTiles, Path_Heuristics Heuristic = Path_Heuristics.Euclidean) {
         if (island == null || startTiles == null || endTiles == null || startTiles.Count == 0 || endTiles.Count == 0) {
             return;
         }
+        this.Heuristic = Heuristic;
         startTiles.RemoveAll(x => x.Structure != null && x.Structure.IsWalkable == false);
         endTiles.RemoveAll(x => x.Structure != null && x.Structure.IsWalkable == false);
         if (startTiles.Count == 0 || endTiles.Count == 0) {
@@ -74,10 +80,6 @@ public class Path_AStar {
         // https://en.wikipedia.org/wiki/A*_search_algorithm
 
         List<Path_Node<Tile>> ClosedSet = new List<Path_Node<Tile>>();
-
-        /*		List<Path_Node<Tile>> OpenSet = new List<Path_Node<Tile>>();
-                OpenSet.Add( start );
-        */
 
         SimplePriorityQueue<Path_Node<Tile>> OpenSet = new SimplePriorityQueue<Path_Node<Tile>>();
         OpenSet.Enqueue(start, 0);
@@ -151,34 +153,40 @@ public class Path_AStar {
 
 
     float Heuristic_cost_estimate(Path_Node<Tile> a, Path_Node<Tile> b) {
-
-        return Mathf.Sqrt(
-            Mathf.Pow(a.data.X - b.data.X, 2) +
-            Mathf.Pow(a.data.Y - b.data.Y, 2)
-        );
-
+        switch (Heuristic) {
+            case Path_Heuristics.Euclidean:
+                return Mathf.Sqrt(
+                            Mathf.Pow(a.data.X - b.data.X, 2) +
+                            Mathf.Pow(a.data.Y - b.data.Y, 2)
+                        );
+            case Path_Heuristics.Manhattan:
+                return NORMAL_MOVE_COST * (Mathf.Abs(a.data.X - b.data.X) + Mathf.Abs(a.data.Y - b.data.Y));
+            case Path_Heuristics.Diagonal:
+                float dx = Mathf.Abs(a.data.X - b.data.X);
+                float dy = Mathf.Abs(a.data.Y - b.data.Y);
+                return NORMAL_MOVE_COST * (dx + dy) + (DIAGONAL_MOVE_COST - 2 * NORMAL_MOVE_COST) * Mathf.Min(dx, dy);
+        }
+        Debug.LogError("Path_Heuristics is not implemented!");
+        return 0f;
     }
 
     float Dist_between(Path_Node<Tile> a, Path_Node<Tile> b) {
         // We can make assumptions because we know we're working
         // on a grid at this point.
-
         // Hori/Vert neighbours have a distance of 1
         if (Mathf.Abs(a.data.X - b.data.X) + Mathf.Abs(a.data.Y - b.data.Y) == 1) {
-            return 1f;
+            return NORMAL_MOVE_COST;
         }
 
-        // Diag neighbours have a distance of 1.41421356237	
+        //Diag neighbours have a distance of 1.41421356237
         if (Mathf.Abs(a.data.X - b.data.X) == 1 && Mathf.Abs(a.data.Y - b.data.Y) == 1) {
-            return 1.41421356237f;
+            return DIAGONAL_MOVE_COST;
         }
-
-        // Otherwise, do the actual math.
+        //// Otherwise, do the actual math.
         return Mathf.Sqrt(
             Mathf.Pow(a.data.X - b.data.X, 2) +
             Mathf.Pow(a.data.Y - b.data.Y, 2)
         );
-
     }
     float Dist_between_without_diag(Path_Node<Tile> a, Path_Node<Tile> b) {
         // We can make assumptions because we know we're working
@@ -186,14 +194,13 @@ public class Path_AStar {
 
         // Hori/Vert neighbours have a distance of 1
         if (Mathf.Abs(a.data.X - b.data.X) + Mathf.Abs(a.data.Y - b.data.Y) == 1) {
-            return 1f;
+            return NORMAL_MOVE_COST;
         }
         // Otherwise, do the actual math.
         return Mathf.Sqrt(
             Mathf.Pow(a.data.X - b.data.X, 2) +
             Mathf.Pow(a.data.Y - b.data.Y, 2)
         );
-
     }
     void Reconstruct_path(
         Dictionary<Path_Node<Tile>, Path_Node<Tile>> Came_From,

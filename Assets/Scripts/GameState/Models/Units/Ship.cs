@@ -241,13 +241,13 @@ public class Ship : Unit {
         offWorldTime = 3;
         OffworldMarket om = WorldController.Instance.offworldMarket;
         //FIRST SELL everything in inventory to make space for all the things
-        Player myPlayer = PlayerController.GetPlayer(playerNumber);
+        Player Player = PlayerController.GetPlayer(playerNumber);
         Item[] i = inventory.GetAllItemsAndRemoveThem();
         foreach (Item item in i) {
-            om.SellItemToOffWorldMarket(item, myPlayer);
+            om.SellItemToOffWorldMarket(item, Player);
         }
         foreach (Item item in toBuy) {
-            inventory.AddItem(om.BuyItemToOffWorldMarket(item, item.count, myPlayer));
+            inventory.AddItem(om.BuyItemToOffWorldMarket(item, item.count, Player));
         }
         isOffWorld = false;
         CurrentMainMode = UnitMainModes.Idle;
@@ -339,7 +339,7 @@ public class Ship : Unit {
         toAdd.count -= added;
     }
     public override float GetCurrentDamage(Combat.ArmorType armorType) {
-        return MyDamageType.GetDamageMultiplier(armorType) * ShipData.damagePerCannon;
+        return DamageType.GetDamageMultiplier(armorType) * ShipData.damagePerCannon;
     }
 
     //////////////////////////////////////////////////////////////////////////////

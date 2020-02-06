@@ -67,7 +67,7 @@ public class TradePanel : MonoBehaviour {
         if (city.itemIDtoTradeItem.ContainsKey(item.ID) == false) {
             return;
         }
-        city.itemIDtoTradeItem[item.ID].selling = sell;
+        city.itemIDtoTradeItem[item.ID].IsSelling = sell;
     }
     public void OnItemClick(int press) {
         pressedItem = press;

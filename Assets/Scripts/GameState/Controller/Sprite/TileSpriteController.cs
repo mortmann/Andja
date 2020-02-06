@@ -56,6 +56,7 @@ public class TileSpriteController : MonoBehaviour {
     private bool apply;
     private Tilemap editorTilemap;
     private static Dictionary<string, TileBase> nameToBaseTile;
+    private GameObject editor_island_tilemap;
 
     public delegate TileMark TileDecider(Tile tile);
     public event TileDecider TileDeciderFunc;
@@ -125,35 +126,46 @@ public class TileSpriteController : MonoBehaviour {
                 if (c == null) {
                     continue;
                 }
-                foreach (Tile t in c.MyTiles) {
+                foreach (Tile t in c.Tiles) {
                     OnTileChanged(t);
                 }
             }
         }
         else {
-            GameObject island_tilemap = new GameObject();
-            island_tilemap.transform.position = new Vector3(-0.5f, -0.5f, 0);
-            editorTilemap = island_tilemap.AddComponent<Tilemap>();
-            Grid g = island_tilemap.AddComponent<Grid>();
-            g.cellSize = new Vector3(1, 1, 0);
-            g.cellSwizzle = GridLayout.CellSwizzle.XYZ;
-            g.cellLayout = GridLayout.CellLayout.Rectangle;
-            TilemapRenderer trr = island_tilemap.AddComponent<TilemapRenderer>();
-            trr.sortingLayerName = "Tile";
-            editorTilemap.size = new Vector3Int(EditorController.Width, EditorController.Height, 0);
-            water.transform.position = new Vector3((World.Width / 2) - 0.5f, (World.Height / 2) - 0.5f, 0.1f);
-            water.transform.localScale = new Vector3(World.Width / 10, 0.1f, World.Height / 10);
-            water.GetComponent<Renderer>().material = waterMaterial;
-            water.GetComponent<Renderer>().material.mainTextureScale = new Vector2(World.Width, World.Height);
             LoadSprites();
             CreateBaseTiles();
-            foreach (Tile t in World.Current.Tiles) {
-                ChangeEditorTile(t);
-            }
-            World.RegisterTileChanged(ChangeEditorTile);
+            //if(EditorController.generate==false)
+            //    EditorFix();
+            //foreach (Tile t in World.Current.Tiles) {
+            //    ChangeEditorTile(t);
+            //}
         }
 
         //BuildController.Instance.RegisterBuildStateChange (OnBuildStateChance);
+
+    }
+    public void EditorFix() {
+        //if (editor_island_tilemap != null)
+        //    Destroy(editor_island_tilemap);
+        editor_island_tilemap = new GameObject();
+        editor_island_tilemap.transform.position = new Vector3(-0.5f, -0.5f, 0);
+        editorTilemap = editor_island_tilemap.AddComponent<Tilemap>();
+        Grid g = editor_island_tilemap.AddComponent<Grid>();
+        g.cellSize = new Vector3(1, 1, 0);
+        g.cellSwizzle = GridLayout.CellSwizzle.XYZ;
+        g.cellLayout = GridLayout.CellLayout.Rectangle;
+        TilemapRenderer trr = editor_island_tilemap.AddComponent<TilemapRenderer>();
+        trr.sortingLayerName = "Tile";
+        editorTilemap.size = new Vector3Int(EditorController.Width, EditorController.Height, 0);
+        water.transform.position = new Vector3((World.Width / 2) - 0.5f, (World.Height / 2) - 0.5f, 0.1f);
+        water.transform.localScale = new Vector3(World.Width / 10, 0.1f, World.Height / 10);
+        water.GetComponent<Renderer>().material = waterMaterial;
+        water.GetComponent<Renderer>().material.mainTextureScale = new Vector2(World.Width, World.Height);
+
+        foreach (Tile t in World.Current.Tiles) {
+            ChangeEditorTile(t);
+        }
+        World.RegisterTileChanged(ChangeEditorTile);
 
     }
     public void Update() {
@@ -258,10 +270,10 @@ public class TileSpriteController : MonoBehaviour {
     }
 
     void OnTileChanged(Tile tile_data) {
-        int x = (int)(tile_data.X - tile_data.MyIsland.Placement.x);
-        int y = (int)(tile_data.Y - tile_data.MyIsland.Placement.y);
-        if (tile_data.MyCity.playerNumber == PlayerController.currentPlayerNumber) {
-            islandToCityMask[tile_data.MyIsland].sprite.texture.SetPixel(x, y, new Color32(128, 128, 128, 255));
+        int x = (int)(tile_data.X - tile_data.Island.Placement.x);
+        int y = (int)(tile_data.Y - tile_data.Island.Placement.y);
+        if (tile_data.City.playerNumber == PlayerController.currentPlayerNumber) {
+            islandToCityMask[tile_data.Island].sprite.texture.SetPixel(x, y, new Color32(128, 128, 128, 255));
         }
         apply = true;
         if (TileDeciderFunc != null && islandToCustomMask != null) {
@@ -270,12 +282,12 @@ public class TileSpriteController : MonoBehaviour {
             TileMark tm = TileDeciderFunc(tile_data);
             switch (tm) {
                 case TileMark.None:
-                    islandToCustomMask[tile_data.MyIsland].sprite.texture.SetPixel(x, y, new Color32(128, 128, 128, 255));
+                    islandToCustomMask[tile_data.Island].sprite.texture.SetPixel(x, y, new Color32(128, 128, 128, 255));
                     break;
                 case TileMark.Highlight:
                     break;
                 case TileMark.Dark:
-                    islandToCustomMask[tile_data.MyIsland].sprite.texture.SetPixel(x, y, new Color32(128, 128, 128, 0));
+                    islandToCustomMask[tile_data.Island].sprite.texture.SetPixel(x, y, new Color32(128, 128, 128, 0));
                     break;
             }
         }
@@ -302,7 +314,7 @@ public class TileSpriteController : MonoBehaviour {
     }
 
     TileMark TileCityDecider(Tile t) {
-        if (t.MyCity.IsCurrPlayerCity()) {
+        if (t.City.IsCurrPlayerCity()) {
             return TileMark.None;
         }
         else {
@@ -386,7 +398,7 @@ public class TileSpriteController : MonoBehaviour {
 
                 islandToCustomMask.Add(i, sm);
                 //TODO: call this again or just ontilechanged when the corresponding decider needs updating 
-                i.myTiles.ForEach(x => OnTileChanged(x));
+                i.Tiles.ForEach(x => OnTileChanged(x));
 
             }
         }
@@ -397,6 +409,8 @@ public class TileSpriteController : MonoBehaviour {
         darkLayer.SetActive(false);
     }
     public void RemoveDecider(TileDecider removeFunc, bool isCityDecider = false) {
+        if (EditorController.IsEditor)
+            return;
         TileDeciderFunc -= removeFunc;
         if (TileDeciderFunc == null || TileDeciderFunc.GetInvocationList().Length == 0)
             darkLayer.SetActive(false);

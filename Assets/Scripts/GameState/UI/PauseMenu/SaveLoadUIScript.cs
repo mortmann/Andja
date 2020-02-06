@@ -67,7 +67,11 @@ public class SaveLoadUIScript : MonoBehaviour {
         if (selected == null) {
             return;
         }
-        if(SaveController.Instance?.UnsavedProgress == true) {
+        if(EditorController.IsEditor) {
+            FindObjectOfType<YesNoDialog>().Show(YesNoDialogTypes.UnsavedProgress, DoLoad, null);
+            return;
+        }
+        if (SaveController.Instance?.UnsavedProgress == true) {
             FindObjectOfType<YesNoDialog>().Show(YesNoDialogTypes.UnsavedProgress, DoLoad, null);
         }
         if(SaveController.Instance==null) {
@@ -113,7 +117,7 @@ public class SaveLoadUIScript : MonoBehaviour {
         }
         else {
             //if it file with name exists ask user if it supposed to be overwritten
-            if (SaveController.Instance.DoesEditorSaveExist(name)) {
+            if (SaveController.DoesEditorSaveExist(name)) {
                 FindObjectOfType<YesNoDialog>().Show(YesNoDialogTypes.OverwriteSave, () => {
                     EditorSave(name);
                 }, null);

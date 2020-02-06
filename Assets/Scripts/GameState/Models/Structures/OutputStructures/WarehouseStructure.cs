@@ -34,10 +34,10 @@ public class WarehouseStructure : MarketStructure {
 
     public override bool SpecialCheckForBuild(List<Tile> tiles) {
         foreach (Tile item in tiles) {
-            if (item.MyCity == null || item.MyCity.IsWilderness()) {
+            if (item.City == null || item.City.IsWilderness()) {
                 continue;
             }
-            if (item.MyCity.myWarehouse != null) {
+            if (item.City.warehouse != null) {
                 return false;
             }
         }
@@ -54,7 +54,7 @@ public class WarehouseStructure : MarketStructure {
         workersHasToFollowRoads = true; // DUNNO HOW where to set it without the need to copy it extra
 
         Tile[,] sortedTiles = new Tile[TileWidth, TileHeight];
-        List<Tile> ts = new List<Tile>(myStructureTiles);
+        List<Tile> ts = new List<Tile>(StructureTiles);
         ts.Sort((x, y) => x.X.CompareTo(y.X) + x.Y.CompareTo(y.Y));
         foreach (Tile ti in ts) {
             int x = ti.X - ts[0].X;
@@ -71,25 +71,25 @@ public class WarehouseStructure : MarketStructure {
         rot = Rotate(rot, rotated);
         tradeTile = World.Current.GetTileAt(Mathf.FloorToInt(MiddlePoint.x - rot.x), Mathf.FloorToInt(MiddlePoint.y + rot.y));
 
-        this.City.myWarehouse = this;
+        this.City.warehouse = this;
 
         if (City == null) {
             return;
         }
-        if (myRangeTiles == null || myRangeTiles.Count == 0) {
-            myRangeTiles = GetInRangeTiles(BuildTile);
+        if (RangeTiles == null || RangeTiles.Count == 0) {
+            RangeTiles = GetInRangeTiles(BuildTile);
         }
         //dostuff thats happen when build
-        City.AddTiles(myRangeTiles);
-        City.AddTiles(new HashSet<Tile>(myStructureTiles));
+        City.AddTiles(RangeTiles);
+        City.AddTiles(new HashSet<Tile>(StructureTiles));
         RegisteredSturctures = new List<Structure>();
         OutputMarkedSturctures = new List<Structure>();
         jobsToDo = new Dictionary<OutputStructure, Item[]>();
 
         // add all the tiles to the city it was build in
         //dostuff thats happen when build
-        foreach (Tile rangeTile in myRangeTiles) {
-            if (rangeTile.MyCity != City) {
+        foreach (Tile rangeTile in RangeTiles) {
+            if (rangeTile.City != City) {
                 continue;
             }
             OnStructureAdded(rangeTile.Structure);
@@ -109,11 +109,11 @@ public class WarehouseStructure : MarketStructure {
         return tradeTile; //maybe this changes or not s
     }
     protected override void OnDestroy() {
-        List<Tile> h = new List<Tile>(myStructureTiles);
-        h.AddRange(myRangeTiles);
+        List<Tile> h = new List<Tile>(StructureTiles);
+        h.AddRange(RangeTiles);
         City.RemoveTiles(h);
         //you lose any res that the worker is carrying
-        foreach (Worker item in myWorker) {
+        foreach (Worker item in Worker) {
             item.Destroy();
         }
     }

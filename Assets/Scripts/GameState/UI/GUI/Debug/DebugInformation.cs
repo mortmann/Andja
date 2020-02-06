@@ -22,8 +22,7 @@ public class DebugInformation : MonoBehaviour {
         transform.position = new Vector3(Screen.width / 2, Screen.height / 2);
 
         currentObject = obj;
-        List<FieldInfo> all = new List<FieldInfo>(obj.GetType().GetFields()); //public fields
-        all.AddRange(obj.GetType().GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)); //private,protected fields
+        List<FieldInfo> all = new List<FieldInfo>(obj.GetType().GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)); 
         foreach (FieldInfo field in all) {
             if (field.FieldType.GetInterface(nameof(IEnumerable)) == null && field.GetType().IsArray == false
                 || field.FieldType == typeof(string)) {

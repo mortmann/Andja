@@ -6,7 +6,7 @@ using Newtonsoft.Json;
 [JsonObject(MemberSerialization.OptIn)]
 public class Worker {
     #region Serialize
-    [JsonPropertyAttribute] public Structure myHome;
+    [JsonPropertyAttribute] public Structure Home;
     [JsonPropertyAttribute] Pathfinding path;
     [JsonPropertyAttribute] float doTimer;
     [JsonPropertyAttribute] Item[] toGetItems;
@@ -39,8 +39,8 @@ public class Worker {
 
     Func<Structure, float, bool> WorkOnStructure {
         get {
-            if (myHome is ServiceStructure)
-                return ((ServiceStructure)myHome).WorkOnTarget;
+            if (Home is ServiceStructure)
+                return ((ServiceStructure)Home).WorkOnTarget;
             return null;
         }
     }
@@ -66,13 +66,13 @@ public class Worker {
             return path.Y;
         }
     }
-    public float Z {
+    public float Rotation {
         get {
-            return path.Y;
+            return path.rotation;
         }
     }
-    public Worker(Structure myHome, OutputStructure structure, float workTime = 1f, Item[] toGetItems = null, bool hasToFollowRoads = true) {
-        this.myHome = myHome;
+    public Worker(Structure Home, OutputStructure structure, float workTime = 1f, Item[] toGetItems = null, bool hasToFollowRoads = true) {
+        this.Home = Home;
         WorkOutputStructure = structure;
         this.hasToFollowRoads = hasToFollowRoads;
         if (structure is MarketStructure == false) {
@@ -85,8 +85,8 @@ public class Worker {
         SetGoalStructure(structure);
         this.toGetItems = toGetItems;
     }
-    public Worker(ServiceStructure myHome, Structure structure, float workTime, bool hasToFollowRoads = true) {
-        this.myHome = myHome;
+    public Worker(ServiceStructure Home, Structure structure, float workTime, bool hasToFollowRoads = true) {
+        this.Home = Home;
         WorkStructure = structure;
         this.hasToFollowRoads = hasToFollowRoads;
         isAtHome = false;
@@ -106,11 +106,11 @@ public class Worker {
         GoHome();
     }
     public void Update(float deltaTime) {
-        if (myHome == null) {
-            Debug.LogError("worker has no myHome -> for now set it manually");
+        if (Home == null) {
+            Debug.LogError("worker has no Home -> for now set it manually");
             return;
         }
-        if (myHome.IsActiveAndWorking == false) {
+        if (Home.IsActiveAndWorking == false) {
             GoHome();
         }
         if (hasRegistered == false) {
@@ -165,16 +165,16 @@ public class Worker {
         if (doTimer > 0) {
             return;
         }
-        if (myHome is MarketStructure) {
-            ((MarketStructure)myHome).City.inventory.AddIventory(inventory);
+        if (Home is MarketStructure) {
+            ((MarketStructure)Home).City.inventory.AddIventory(inventory);
         }
         else
-        if (myHome is ProductionStructure) {
-            ((ProductionStructure)myHome).AddToIntake(inventory);
+        if (Home is ProductionStructure) {
+            ((ProductionStructure)Home).AddToIntake(inventory);
         }
-        else if (myHome is OutputStructure) {
+        else if (Home is OutputStructure) {
             //this home is a OutputStructures or smth that takes it to output
-            ((OutputStructure)myHome).AddToOutput(inventory);
+            ((OutputStructure)Home).AddToOutput(inventory);
         }
         isAtHome = true;
     }
@@ -183,7 +183,7 @@ public class Worker {
         goingToWork = false;
         WorkStructure?.UnregisterOnDestroyCallback(OnWorkStructureDestroy);
         WorkStructure = null;
-        SetGoalStructure(myHome,true); //todo: think about some optimisation for just "reverse path"
+        SetGoalStructure(Home,true); //todo: think about some optimisation for just "reverse path"
         //doTimer = workTime / 2;
     }
     public void DoWork(float deltaTime) {
@@ -198,7 +198,7 @@ public class Worker {
         if(WorkOnStructure != null) {
             DoWorkOnStructure(deltaTime);
         } else {
-            Debug.LogError("Worker has nothing todo -- why does he exist? He is from " + myHome.ToString() + "! Killing him now.");
+            Debug.LogError("Worker has nothing todo -- why does he exist? He is from " + Home.ToString() + "! Killing him now.");
             Destroy();
         }
         if(isDone) {
@@ -251,18 +251,18 @@ public class Worker {
             if(path == null)
                 path = new TilesPathfinding();
             if (goHome == false) {
-                ((TilesPathfinding)path).SetDestination(new List<Tile>(myHome.neighbourTiles), new List<Tile>(structure.neighbourTiles));
+                ((TilesPathfinding)path).SetDestination(new List<Tile>(Home.NeighbourTiles), new List<Tile>(structure.NeighbourTiles));
             } else {
-                ((TilesPathfinding)path).SetDestination(new List<Tile>() { path.CurrTile }, new List<Tile>(myHome.neighbourTiles));
+                ((TilesPathfinding)path).SetDestination(new List<Tile>() { path.CurrTile }, new List<Tile>(Home.NeighbourTiles));
             }
         }
         else {
             if (path == null)
                 path = new RoutePathfinding();
             if(goHome == false) {
-                ((RoutePathfinding)path).SetDestination(myHome.RoadsAroundStructure(), structure.RoadsAroundStructure());
+                ((RoutePathfinding)path).SetDestination(Home.RoadsAroundStructure(), structure.RoadsAroundStructure());
             } else {
-                ((RoutePathfinding)path).SetDestination(new List<Tile>() { path.CurrTile }, new List<Tile>(myHome.RoadsAroundStructure()));
+                ((RoutePathfinding)path).SetDestination(new List<Tile>() { path.CurrTile }, new List<Tile>(Home.RoadsAroundStructure()));
             }
         }
         _workStructure = structure;

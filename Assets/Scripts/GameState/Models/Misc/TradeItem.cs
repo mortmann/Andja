@@ -2,18 +2,41 @@
 using System.Collections;
 using Newtonsoft.Json;
 
+public enum Trade { Buy, Sell }
 [JsonObject(MemberSerialization.OptIn)]
 public class TradeItem {
     [JsonPropertyAttribute] public string ItemId;
     [JsonPropertyAttribute] public int count;
     [JsonPropertyAttribute] public int price;
-    [JsonPropertyAttribute] public bool selling;
+    [JsonPropertyAttribute] public Trade trade;
+    public bool IsSelling {
+        set {
+            if (value)
+                trade = Trade.Sell;
+            else
+                IsBuying = true;
+        }
+        get {
+            return trade == Trade.Sell;
+        }
+    }
+    public bool IsBuying {
+        set {
+            if (value)
+                trade = Trade.Buy;
+            else
+                IsSelling = true;
+        }
+        get {
+            return trade == Trade.Buy;
+        }
+    }
 
-    public TradeItem(string ItemId, int count, int price, bool selling) {
+    public TradeItem(string ItemId, int count, int price, bool trade) {
         this.ItemId = ItemId;
         this.count = count;
         this.price = price;
-        this.selling = selling;
+        this.IsBuying = trade; // will set it correctly
     }
     /// <summary>
     /// DO NOT USE IT
@@ -21,7 +44,7 @@ public class TradeItem {
     public TradeItem() { }
 
     public Item SellItemAmount(Item inINV) {
-        if (selling == false) {
+        if (IsSelling == false) {
             Debug.Log("Wrong function call - This item is not to sell here");
             return null;
         }
@@ -34,7 +57,7 @@ public class TradeItem {
         return i;
     }
     public Item BuyItemAmount(Item inINV) {
-        if (selling == true) {
+        if (IsBuying == false) {
             Debug.Log("Wrong function call - This item is not to buy here");
             return null;
         }

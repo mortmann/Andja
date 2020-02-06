@@ -106,7 +106,7 @@ public class UnitSpriteController : MonoBehaviour {
         col.isTrigger = true;
         col.size = new Vector2(sr.sprite.textureRect.size.x / sr.sprite.pixelsPerUnit,
                                 sr.sprite.textureRect.size.y / sr.sprite.pixelsPerUnit);
-        pro_go.AddComponent<ProjectileHoldingScript>().myProjectile = projectile;
+        pro_go.AddComponent<ProjectileHoldingScript>().Projectile = projectile;
     }
 
     private void OnProjectileDestroy(Projectile pro) {

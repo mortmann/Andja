@@ -102,7 +102,7 @@ public class SaveController : MonoBehaviour {
         return File.Exists(Path.Combine(GetSaveGamesPath(), name + saveFileEnding));
     }
 
-    internal bool DoesEditorSaveExist(string name) {
+    internal static bool DoesEditorSaveExist(string name) {
         return File.Exists(Path.Combine(GetIslandSavePath(), name + islandFileEnding));
     }
 
@@ -445,7 +445,7 @@ public class SaveController : MonoBehaviour {
     }
 
     public IEnumerator LoadGameState(string name = "autosave") {
-        if (SaveController.Instance.DoesEditorSaveExist(name) == false) {
+        if (DoesEditorSaveExist(name) == false) {
             yield return null;
         }
         SaveName = name;

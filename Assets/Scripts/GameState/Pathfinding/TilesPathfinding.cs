@@ -36,7 +36,7 @@ public class TilesPathfinding : Pathfinding {
 
     protected override void CalculatePath() {
 
-        pathDest = Path_dest.tile;
+        pathDest = Path_Destination.Tile;
         if (startTiles == null) {
             startTiles = new List<Tile> {
                 startTile
@@ -46,24 +46,29 @@ public class TilesPathfinding : Pathfinding {
             };
         }
         IsAtDestination = false;
-        Path_AStar pa = new Path_AStar(startTiles[0].MyIsland, startTiles, endTiles);
-        worldPath = pa.path;
-        CreateReversePath();
-
+        Path_AStar pa = new Path_AStar(startTiles[0].Island, startTiles, endTiles);
         if (startTile == null) {
-            CurrTile = worldPath.Peek();
+            CurrTile = pa.path.Peek();
             startTile = CurrTile;
         }
         else {
-            while (CurrTile != worldPath.Peek() && worldPath.Count > 0) {
-                worldPath.Dequeue();
+            while (startTile == pa.path.Peek()  && worldPath.Count > 0) {
+                pa.Dequeue();
             }
             CurrTile = World.Current.GetTileAt(X, Y);
-            //worldPath.Dequeue();
         }
-        DestTile = backPath.Peek();
+        worldPath = new Queue<Vector2>();
+        while (pa.path.Count > 0) {
+            worldPath.Enqueue(pa.path.Dequeue().Vector2);
+        }
+
+        DestTile = World.Current.GetTileAt(backPath.Peek());
         dest_X = DestTile.X;
         dest_Y = DestTile.Y;
+
+        worldPath.Enqueue(Destination);
+        CreateReversePath();
+        backPath.Enqueue(Position2);
 
         //important
         IsDoneCalculating = true;

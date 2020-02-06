@@ -6,7 +6,15 @@ using UnityEngine;
 
 [JsonObject(MemberSerialization.OptIn)]
 public class World : IGEventable {
-    public static World Current { get; protected set; }
+    static World _Current { get; set; }
+    public static World Current {
+        get { return _Current; }
+        set {
+            if (value != null && _Current != null)
+                Debug.LogWarning("WARNING WORLD OVERWRITTEN!");
+            _Current = value;
+        }
+    }
 
     #region Serialize
 
@@ -78,13 +86,15 @@ public class World : IGEventable {
     /// <param name="tiles">Tiles.</param>
     /// <param name="width">Width.</param>
     /// <param name="height">Height.</param>
-    public World(Tile[] addTiles, int width = 1000, int height = 1000) {
+    public World(Tile[] addTiles, int width = 1000, int height = 1000, bool isIslandEditor = true) {
         this.Width = width;
         this.Height = height;
         this.Tiles = new Tile[Width * Height];
         foreach (Tile t in addTiles) {
             if (t != null)
                 SetTileAt(t.X, t.Y, t);
+            if (t.Structure != null)
+                Debug.Log(t.Structure);
         }
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
@@ -92,8 +102,12 @@ public class World : IGEventable {
                     SetTileAt(x, y, new Tile(x, y));
             }
         }
-
         SetupWorld();
+        //whole world IS 1 Island -- so add all tiles to single island        
+        if(isIslandEditor) {
+            Island isl = new Island(addTiles);
+            IslandList.Add(isl);
+        }
     }
 
 
@@ -188,7 +202,7 @@ public class World : IGEventable {
 
     public void CreateIsland(MapGenerator.IslandStruct islandStruct) {
         Island island = new Island(islandStruct.Tiles, islandStruct.climate) {
-            myFertilities = new List<Fertility>(islandStruct.fertilities),
+            Fertilities = new List<Fertility>(islandStruct.fertilities),
             Placement = new Vector2(islandStruct.x, islandStruct.y),
             Ressources = new Dictionary<string, int>(islandStruct.Ressources)
         };
@@ -386,5 +400,7 @@ public class World : IGEventable {
 
     }
 
-
+    public void Destroy() {
+        Current = null;
+    }
 }

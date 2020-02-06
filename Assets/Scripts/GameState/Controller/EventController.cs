@@ -161,7 +161,7 @@ public class EventController : MonoBehaviour {
                     targets.AddRange(player.GetIslandList());
                     break;
                 case Target.City:
-                    targets.AddRange(player.myCities);
+                    targets.AddRange(player.Cities);
                     break;
                 case Target.AllStructure:
                     targets.AddRange(player.AllStructures);
@@ -179,7 +179,7 @@ public class EventController : MonoBehaviour {
             case EventType.City:
                 List<City> cities = new List<City>();
                 foreach (Island item in world.IslandList) {
-                    cities.AddRange(item.myCities);
+                    cities.AddRange(item.Cities);
                 }
                 ige = RandomItemFromList<City>(cities);
                 break;
@@ -203,12 +203,12 @@ public class EventController : MonoBehaviour {
                     return null; // there is no specific target
                 }
                 Island i = RandomItemFromList<Island>(world.IslandList);
-                City c = RandomItemFromList<City>(i.myCities);
+                City c = RandomItemFromList<City>(i.Cities);
                 if (c.playerNumber == -1) { // random decided there will be no event? 
                                             // are there events for wilderniss structures?
                 }
                 else {
-                    ige = RandomItemFromList<Structure>(c.myStructures);
+                    ige = RandomItemFromList<Structure>(c.structures);
                 }
                 break;
             case EventType.Quest:

@@ -38,7 +38,7 @@ public class FarmStructure : OutputStructure {
 
     public override float EfficiencyPercent {
         get {
-            return Mathf.Round(((float)OnRegisterCallbacks / (float)myRangeTiles.Count) * 1000) / 10f;
+            return Mathf.Round(((float)OnRegisterCallbacks / (float)RangeTiles.Count) * 1000) / 10f;
         }
     }
     public FarmStructure(string id, FarmPrototypeData fpd) {
@@ -66,7 +66,7 @@ public class FarmStructure : OutputStructure {
             return;
         }
         //farm has it needs plant if it can 
-        foreach (Tile rangeTile in myRangeTiles) {
+        foreach (Tile rangeTile in RangeTiles) {
             if (rangeTile.Structure != null) {
                 if (rangeTile.Structure.ID == Growable.ID) {
                     rangeTile.Structure.RegisterOnChangedCallback(OnGrowableChanged);
@@ -78,7 +78,7 @@ public class FarmStructure : OutputStructure {
                 }
             }
         }
-        foreach (Tile rangeTile in myRangeTiles) {
+        foreach (Tile rangeTile in RangeTiles) {
             rangeTile.RegisterTileOldNewStructureChangedCallback(OnTileStructureChange);
         }
     }
@@ -145,10 +145,10 @@ public class FarmStructure : OutputStructure {
         }
     }
     protected override void OnDestroy() {
-        if (myWorker == null) {
+        if (Worker == null) {
             return;
         }
-        foreach (Worker item in myWorker) {
+        foreach (Worker item in Worker) {
             item.Destroy();
         }
     }
@@ -179,10 +179,10 @@ public class FarmStructure : OutputStructure {
         percentage = Mathf.RoundToInt(((float)count / (float)hs.Count) * 100);
 
         if (Growable.Fertility != null) {
-            if (t.MyIsland == null) {
+            if (t.Island == null) {
                 return;
             }
-            if (t.MyIsland.myFertilities.Contains(Growable.Fertility) == false) {
+            if (t.Island.Fertilities.Contains(Growable.Fertility) == false) {
                 percentage = 0;
             }
             else {
@@ -190,7 +190,6 @@ public class FarmStructure : OutputStructure {
 
             }
         }
-
         parent.GetComponentInChildren<SpriteSlider>().ChangePercent(percentage);
 
     }

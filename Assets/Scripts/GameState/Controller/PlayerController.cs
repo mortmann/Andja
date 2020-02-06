@@ -180,7 +180,7 @@ public class PlayerController : MonoBehaviour {
         //if its a island check if the player needs to know about it
         //eg. if he has a city on it
         if (ge.target is Island) {
-            foreach (City item in ((Island)ge.target).myCities) {
+            foreach (City item in ((Island)ge.target).Cities) {
                 if (item.playerNumber == currentPlayerNumber) {
                     euim.AddEVENT(ge.eventID, ge.Name, ge.position);
                 }

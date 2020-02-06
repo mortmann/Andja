@@ -10,7 +10,7 @@ public class EditorUIController : MonoBehaviour {
     public GameObject TypeList;
     public GameObject BuildList;
     public GameObject TypeListExact;
-    public GameObject pauseMenu;
+    public PauseMenu pauseMenu;
     public GameObject BuildListExact;
     public Button BuildDestroyButton;
     public Button BuildBuildButton;
@@ -52,12 +52,15 @@ public class EditorUIController : MonoBehaviour {
         BuildBuildButton.interactable = b;
     }
     public void TogglePauseMenu() {
-        pauseMenu.SetActive(!pauseMenu.activeSelf);
+        pauseMenu.Toggle();
     }
     public void NewIslandToggle() {
         newIsland.SetActive(!newIsland.activeSelf);
     }
     public void RessourcesSetterToggle() {
         RessourcesSetter.SetActive(!RessourcesSetter.activeSelf);
+    }
+    private void OnDestroy() {
+        Instance = null;
     }
 }

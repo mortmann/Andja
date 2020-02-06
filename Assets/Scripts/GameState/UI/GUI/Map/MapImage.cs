@@ -53,7 +53,7 @@ public class MapImage : MonoBehaviour {
         tradeRoutePanel = tradingMenu.GetComponent<TradeRoutePanel>();
         BuildController.Instance.RegisterCityCreated(OnCityCreated);
         foreach (Island item in w.IslandList) {
-            foreach (City c in item.myCities) {
+            foreach (City c in item.Cities) {
                 if (c.IsWilderness()) {
                     continue;
                 }
@@ -76,7 +76,7 @@ public class MapImage : MonoBehaviour {
             return;
         }
         c.RegisterStructureAdded(OnWarehouseBuild);
-        OnWarehouseBuild(c.myWarehouse);
+        OnWarehouseBuild(c.warehouse);
     }
 
     private void OnWarehouseBuild(Structure structure) {

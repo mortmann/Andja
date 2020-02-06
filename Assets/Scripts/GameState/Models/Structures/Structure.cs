@@ -36,18 +36,18 @@ public class StructurePrototypeData : LanguageVariables {
     public Direction mustFrontBuildDir = Direction.None;
 
     //doenst get loaded in anyway
-    private List<Tile> _myPrototypeTiles;
+    private List<Tile> _PrototypeTiles;
 
-    public List<Tile> MyPrototypeTiles {
+    public List<Tile> PrototypeTiles {
         get {
-            if (_myPrototypeTiles == null) {
+            if (_PrototypeTiles == null) {
                 CalculatePrototypTiles();
             }
-            return _myPrototypeTiles;
+            return _PrototypeTiles;
         }
     }
     public ExtraUI extraUITyp;
-    public StructureTyp myStructureTyp = StructureTyp.Blocking;
+    public StructureTyp structureTyp = StructureTyp.Blocking;
     public bool canStartBurning;
     public int maintenanceCost;
 
@@ -62,7 +62,7 @@ public class StructurePrototypeData : LanguageVariables {
     public string spriteBaseName;
 
     private void CalculatePrototypTiles() {
-        _myPrototypeTiles = new List<Tile>();
+        _PrototypeTiles = new List<Tile>();
         if (structureRange == 0) {
             return;
         }
@@ -94,8 +94,8 @@ public class StructurePrototypeData : LanguageVariables {
         tilesToCheck.Enqueue(firstTile.South());
         while (tilesToCheck.Count > 0) {
             Tile t = tilesToCheck.Dequeue();
-            if (temp.Contains(t) == false && _myPrototypeTiles.Contains(t) == false) {
-                _myPrototypeTiles.Add(t);
+            if (temp.Contains(t) == false && _PrototypeTiles.Contains(t) == false) {
+                _PrototypeTiles.Add(t);
                 Tile[] ns = t.GetNeighbours(false);
                 foreach (Tile t2 in ns) {
                     tilesToCheck.Enqueue(t2);
@@ -103,9 +103,9 @@ public class StructurePrototypeData : LanguageVariables {
             }
         }
         for (int width = 0; width < tileWidth; width++) {
-            MyPrototypeTiles.Remove(World.Current.GetTileAt(firstTile.X + width, firstTile.Y));
+            PrototypeTiles.Remove(World.Current.GetTileAt(firstTile.X + width, firstTile.Y));
             for (int height = 1; height < tileHeight; height++) {
-                MyPrototypeTiles.Remove(World.Current.GetTileAt(firstTile.X + width, firstTile.Y + height));
+                PrototypeTiles.Remove(World.Current.GetTileAt(firstTile.X + width, firstTile.Y + height));
             }
         }
     }
@@ -129,14 +129,14 @@ public abstract class Structure : IGEventable {
     [JsonPropertyAttribute]
     public Tile BuildTile {
         get {
-            if (myStructureTiles == null|| myStructureTiles.Count==0) 
+            if (StructureTiles == null|| StructureTiles.Count==0) 
                 return null;
-            return myStructureTiles[0];
+            return StructureTiles[0];
         }
         set {
-            if (myStructureTiles == null)
-                myStructureTiles = new List<Tile>();
-            myStructureTiles.Add(value);
+            if (StructureTiles == null)
+                StructureTiles = new List<Tile>();
+            StructureTiles.Add(value);
         }
     }
 
@@ -145,11 +145,11 @@ public abstract class Structure : IGEventable {
     [JsonPropertyAttribute] protected bool isActive = true;
     #endregion
     #region RuntimeOrOther
-    public List<Tile> myStructureTiles;
-    public HashSet<Tile> neighbourTiles;
+    public List<Tile> StructureTiles;
+    public HashSet<Tile> NeighbourTiles;
 
 
-    public HashSet<Tile> myRangeTiles;
+    public HashSet<Tile> RangeTiles;
     public string connectOrientation;
     public bool HasExtraUI { get { return ExtraUITyp != ExtraUI.None; } }
     //player id
@@ -176,7 +176,7 @@ public abstract class Structure : IGEventable {
             if (_middlePoint != Vector2.zero)
                 return _middlePoint;
             Tile[,] sortedTiles = new Tile[TileWidth, TileHeight];
-            List<Tile> ts = new List<Tile>(myStructureTiles);
+            List<Tile> ts = new List<Tile>(StructureTiles);
             ts.Sort((x, y) => x.X.CompareTo(y.X) + x.Y.CompareTo(y.Y));
             foreach (Tile ti in ts) {
                 int x = ti.X - ts[0].X;
@@ -189,7 +189,7 @@ public abstract class Structure : IGEventable {
     }
 
     public bool CanBeBuild { get { return Data.canBeBuild; } }
-    public bool IsWalkable { get { return this.MyStructureTyp != StructureTyp.Blocking; } }
+    public bool IsWalkable { get { return this.StructureTyp != StructureTyp.Blocking; } }
     public bool HasHitbox { get { return Data.hasHitbox; } }
 
     #region EffectVariables
@@ -219,11 +219,11 @@ public abstract class Structure : IGEventable {
 
     public Direction MustFrontBuildDir { get { return Data.mustFrontBuildDir; } }
     public BuildTypes BuildTyp { get { return Data.buildTyp; } }
-    public StructureTyp MyStructureTyp { get { return Data.myStructureTyp; } }
+    public StructureTyp StructureTyp { get { return Data.structureTyp; } }
     public ExtraUI ExtraUITyp { get { return Data.extraUITyp; } }
     public ExtraBuildUI ExtraBuildUITyp { get { return Data.extraBuildUITyp; } }
 
-    public List<Tile> MyPrototypeTiles { get { return Data.MyPrototypeTiles; } }
+    public List<Tile> PrototypeTiles { get { return Data.PrototypeTiles; } }
 
     public bool CanStartBurning { get { return Data.canStartBurning; } }
 
@@ -389,7 +389,7 @@ public abstract class Structure : IGEventable {
     #endregion
     #region placestructure
     public bool PlaceStructure(List<Tile> tiles) {
-        myStructureTiles = new List<Tile>();
+        StructureTiles = new List<Tile>();
         CurrentHealth = MaxHealth;
         //test if the place is buildable
         // if it has to be on land
@@ -404,21 +404,21 @@ public abstract class Structure : IGEventable {
             return false;
         }
 
-        myStructureTiles.AddRange(tiles);
+        StructureTiles.AddRange(tiles);
         //if we are here we can build this and
         //set the tiles to the this structure -> claim the tiles!
-        neighbourTiles = new HashSet<Tile>();
-        foreach (Tile mt in myStructureTiles) {
+        NeighbourTiles = new HashSet<Tile>();
+        foreach (Tile mt in StructureTiles) {
             mt.Structure = this;
             foreach (Tile nbt in mt.GetNeighbours()) {
-                if (myStructureTiles.Contains(nbt) == false) {
-                    neighbourTiles.Add(nbt);
+                if (StructureTiles.Contains(nbt) == false) {
+                    NeighbourTiles.Add(nbt);
                 }
             }
         }
 
         //it searches all the tiles it has in its reach!
-        myRangeTiles = GetInRangeTiles(myStructureTiles[0]);
+        RangeTiles = GetInRangeTiles(StructureTiles[0]);
 
         // do on place structure stuff here!
         OnBuild();
@@ -428,9 +428,9 @@ public abstract class Structure : IGEventable {
     }
 
     public bool IsTileCityViable(Tile t, int player) {
-        if (t.MyCity != null && t.MyCity.playerNumber != player) {
+        if (t.City != null && t.City.playerNumber != player) {
             //here it cant build cause someoneelse owns it
-            if (t.MyCity.IsWilderness() == false) {
+            if (t.City.IsWilderness() == false) {
                 return false;
             }
             else {
@@ -552,17 +552,17 @@ public abstract class Structure : IGEventable {
             return null;
         }
         World w = World.Current;
-        myRangeTiles = new HashSet<Tile>();
+        RangeTiles = new HashSet<Tile>();
         float width = firstTile.X - StructureRange;
         float height = firstTile.Y - StructureRange;
-        foreach (Tile t in MyPrototypeTiles) {
-            myRangeTiles.Add(w.GetTileAt(t.X + width, t.Y + height));
+        foreach (Tile t in PrototypeTiles) {
+            RangeTiles.Add(w.GetTileAt(t.X + width, t.Y + height));
         }
-        return myRangeTiles;
+        return RangeTiles;
     }
     public List<Tile> RoadsAroundStructure() {
         List<Tile> roads = new List<Tile>();
-        foreach (Tile item in myStructureTiles) {
+        foreach (Tile item in StructureTiles) {
             foreach (Tile n in item.GetNeighbours()) {
                 if (n.Structure != null) {
                     if (n.Structure is RoadStructure) {
@@ -626,7 +626,7 @@ public abstract class Structure : IGEventable {
     public void Destroy() {
         _health = 0;
         OnDestroy();
-        foreach (Tile t in myStructureTiles) {
+        foreach (Tile t in StructureTiles) {
             t.Structure = null;
         }
         //TODO: add here for getting res back 
@@ -654,10 +654,6 @@ public abstract class Structure : IGEventable {
     public Dictionary<Tile, bool> CheckForCorrectSpot(List<Tile> tiles) {
         if (tiles.Count == 0)
             return null;
-
-
-
-
         Dictionary<Tile, bool> tileToCanBuild = new Dictionary<Tile, bool>();
         //to make it faster
         if (BuildTileTypes==null) {

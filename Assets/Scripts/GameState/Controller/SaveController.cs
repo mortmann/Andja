@@ -146,18 +146,20 @@ public class SaveController : MonoBehaviour {
         string metadata = JsonConvert.SerializeObject(metaData, Formatting.Indented,
                 new JsonSerializerSettings {
                     NullValueHandling = NullValueHandling.Ignore,
-                    PreserveReferencesHandling = PreserveReferencesHandling.Objects,
                     ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
-                    TypeNameHandling = TypeNameHandling.Auto
+                    TypeNameHandling = TypeNameHandling.Auto,
+                    DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate
                 }
         );
 
         EditorController.SaveIsland savestate = EditorController.Instance.GetSaveState();
-        string save = JsonConvert.SerializeObject(savestate,//Formatting.Indented,
+        string save = JsonConvert.SerializeObject(savestate, Application.isEditor ? Formatting.Indented : Formatting.None,
             new JsonSerializerSettings {
                 NullValueHandling = NullValueHandling.Ignore,
                 ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
-                TypeNameHandling = TypeNameHandling.Auto
+                TypeNameHandling = TypeNameHandling.Auto,
+                //PreserveReferencesHandling = PreserveReferencesHandling.Objects,
+                DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate
             }
         );
         if(Directory.Exists(folderPath)==false) {
@@ -200,7 +202,8 @@ public class SaveController : MonoBehaviour {
                 NullValueHandling = NullValueHandling.Ignore,
                 PreserveReferencesHandling = PreserveReferencesHandling.Objects,
                 ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
-                TypeNameHandling = TypeNameHandling.Auto
+                TypeNameHandling = TypeNameHandling.Auto,
+                DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate
             });
         }
         state.Name = name;
@@ -231,16 +234,15 @@ public class SaveController : MonoBehaviour {
         }
     }
 
-    internal Sprite GetSaveFileScreenShot(string saveName) {
+    internal static Sprite GetSaveFileScreenShot(string saveName) {
         string filePath = Path.Combine(GetSaveGamesPath(), saveName + saveFileScreenShotEnding);
-        Texture2D tex = null;
         byte[] fileData;
         if (File.Exists(filePath) == false) {
             Debug.Log("Missing Thumbnail for savegame " + filePath);
             return null;
         }
         fileData = File.ReadAllBytes(filePath);
-        tex = new Texture2D(2, 2);
+        Texture2D tex = new Texture2D(2, 2);
         tex.LoadImage(fileData); //..this will auto-resize the texture dimensions.
         return Sprite.Create(tex, new Rect(0,0,tex.width,tex.height),Vector2.zero);
     }
@@ -495,8 +497,8 @@ public class SaveController : MonoBehaviour {
                 NullValueHandling = NullValueHandling.Ignore,
                 PreserveReferencesHandling = PreserveReferencesHandling.Objects,
                 ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
-                TypeNameHandling = TypeNameHandling.Auto
-
+                TypeNameHandling = TypeNameHandling.Auto,
+                DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate
             });
         }
 

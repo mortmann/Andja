@@ -1,49 +1,168 @@
 fileFormatVersion: 2
 guid: a19645b2dfa19b243a633bdd96d525da
 TextureImporter:
-  fileIDToRecycleName:
-    21300000: shore_
-    21300002: shore_1
-    21300004: shore_S_E
-    21300006: shore_S_W
-    21300008: shore_ES
-    21300010: shore_EW_S
-    21300012: shore_SW
-    21300014: shore_N_W
-    21300016: shore_ES
-    21300018: shore_NS_E
-    21300020: shore_NE
-    21300022: shore_11
-    21300024: shore_NW
-    21300026: shore_NS_W
-    21300028: shore_NE
-    21300030: shore_EW_N
-    21300032: shore_NW
-    21300034: shore_17
-    21300036: shore_4
-    21300038: shore_5
-    21300040: shore_N_E
-    21300042: shore_EW_S
-    21300044: shore_SW
-    21300046: shore_NS_E
-    21300048: shore_S
-    21300050: shore_E
-    21300052: shore_NSW
-    21300054: shore_N
-    21300056: shore_E_S
-    21300058: shore_W_S
-    21300060: shore_3
-    21300062: shore_6
-    21300064: shore_E_N
-    21300066: shore_W_N
-    21300068: shore_SW_NE
-    21300070: shore_NW_ES
-    21300072: shore_ES_NW
-    21300074: shore_NE_SW
-    21300076: shore_NESW
-    21300078: shore_W
+  internalIDToNameTable:
+  - first:
+      213: 21300000
+    second: shore_
+  - first:
+      213: 21300002
+    second: shore_NSW_E
+  - first:
+      213: 21300004
+    second: shore_S_E
+  - first:
+      213: 21300006
+    second: shore_S_W
+  - first:
+      213: 21300008
+    second: shore_ES
+  - first:
+      213: 21300010
+    second: shore_EW_S
+  - first:
+      213: 21300012
+    second: shore_SW
+  - first:
+      213: 21300014
+    second: shore_N_W
+  - first:
+      213: 21300016
+    second: shore_ES
+  - first:
+      213: 21300018
+    second: shore_NS_E
+  - first:
+      213: 21300020
+    second: shore_NE
+  - first:
+      213: 21300022
+    second: shore_11
+  - first:
+      213: 21300024
+    second: shore_NW
+  - first:
+      213: 21300026
+    second: shore_NS_W
+  - first:
+      213: 21300028
+    second: shore_NE
+  - first:
+      213: 21300030
+    second: shore_EW_N
+  - first:
+      213: 21300032
+    second: shore_NW
+  - first:
+      213: 21300034
+    second: shore_17
+  - first:
+      213: 21300036
+    second: shore_NES
+  - first:
+      213: 21300038
+    second: shore_5
+  - first:
+      213: 21300040
+    second: shore_N_E
+  - first:
+      213: 21300042
+    second: shore_EW_S
+  - first:
+      213: 21300044
+    second: shore_SW
+  - first:
+      213: 21300046
+    second: shore_NS_E
+  - first:
+      213: 21300048
+    second: shore_S
+  - first:
+      213: 21300050
+    second: shore_E
+  - first:
+      213: 21300052
+    second: shore_NSW
+  - first:
+      213: 21300054
+    second: shore_N
+  - first:
+      213: 21300056
+    second: shore_E_S
+  - first:
+      213: 21300058
+    second: shore_W_S
+  - first:
+      213: 21300060
+    second: shore_W_NE
+  - first:
+      213: 21300062
+    second: shore_E_NW
+  - first:
+      213: 21300064
+    second: shore_E_N
+  - first:
+      213: 21300066
+    second: shore_W_N
+  - first:
+      213: 21300068
+    second: shore_SW_NE
+  - first:
+      213: 21300070
+    second: shore_NW_ES
+  - first:
+      213: 21300072
+    second: shore_ES_NW
+  - first:
+      213: 21300074
+    second: shore_NE_SW
+  - first:
+      213: 21300076
+    second: shore_NESW
+  - first:
+      213: 21300078
+    second: shore_W
+  - first:
+      213: -8689118425468562290
+    second: shore_N_ES
+  - first:
+      213: 6933616782793992843
+    second: shore_N_SW
+  - first:
+      213: -6789832750741149751
+    second: shore_W_ES
+  - first:
+      213: -3731008314585771772
+    second: shore_E_SW
+  - first:
+      213: 1030903943075255573
+    second: shore_S_NE
+  - first:
+      213: 1545243500163700084
+    second: shore_S_NW
+  - first:
+      213: -6786412295472628860
+    second: shore__NE
+  - first:
+      213: -13777499214046833
+    second: shore__NW
+  - first:
+      213: -147134945124614337
+    second: shore__ES
+  - first:
+      213: -4578042357357764850
+    second: shore__SW
+  - first:
+      213: -793873789167220832
+    second: shore_ESW_N
+  - first:
+      213: -4163218009464251735
+    second: shore_NEW_S
+  - first:
+      213: 9019312718012962500
+    second: shore_NES_W
   externalObjects: {}
-  serializedVersion: 7
+  serializedVersion: 10
   mipmaps:
     mipMapMode: 0
     enableMipMap: 1
@@ -98,7 +217,7 @@ TextureImporter:
   compressionQualitySet: 0
   textureFormatSet: 0
   platformSettings:
-  - serializedVersion: 2
+  - serializedVersion: 3
     buildTarget: DefaultTexturePlatform
     maxTextureSize: 2048
     resizeAlgorithm: 0
@@ -109,7 +228,8 @@ TextureImporter:
     allowsAlphaSplitting: 0
     overridden: 0
     androidETC2FallbackOverride: 0
-  - serializedVersion: 2
+    forceMaximumCompressionQuality_BC6H_BC7: 1
+  - serializedVersion: 3
     buildTarget: Standalone
     maxTextureSize: 2048
     resizeAlgorithm: 0
@@ -120,6 +240,7 @@ TextureImporter:
     allowsAlphaSplitting: 0
     overridden: 0
     androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 1
   spriteSheet:
     serializedVersion: 2
     sprites:
@@ -139,26 +260,7 @@ TextureImporter:
       tessellationDetail: 0
       bones: []
       spriteID: bcecacdecef34f845a89b441c8cf0ee2
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: shore_1
-      rect:
-        serializedVersion: 2
-        x: 128
-        y: 224
-        width: 32
-        height: 32
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: ed0de806c9cdf2747ad8b29feaedf50c
+      internalID: 21300000
       vertices: []
       indices: 
       edges: []
@@ -179,6 +281,7 @@ TextureImporter:
       tessellationDetail: 0
       bones: []
       spriteID: 1814fd26c428cd242a891da2f993f0eb
+      internalID: 21300004
       vertices: []
       indices: 
       edges: []
@@ -199,46 +302,7 @@ TextureImporter:
       tessellationDetail: 0
       bones: []
       spriteID: 322ae0dea07035142911bbdeca5f03f2
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: shore_4
-      rect:
-        serializedVersion: 2
-        x: 128
-        y: 192
-        width: 32
-        height: 32
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 153c0040d560f6d40aec198f15207f17
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: shore_5
-      rect:
-        serializedVersion: 2
-        x: 160
-        y: 192
-        width: 32
-        height: 32
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 0787ab841c9ede84396db26618fad0bd
+      internalID: 21300006
       vertices: []
       indices: 
       edges: []
@@ -259,6 +323,7 @@ TextureImporter:
       tessellationDetail: 0
       bones: []
       spriteID: 7e8e719f91d622d418083df16ebb41a4
+      internalID: 21300040
       vertices: []
       indices: 
       edges: []
@@ -279,6 +344,7 @@ TextureImporter:
       tessellationDetail: 0
       bones: []
       spriteID: 5f4c27046e6c16443a7e8c858675d5f5
+      internalID: 21300014
       vertices: []
       indices: 
       edges: []
@@ -299,6 +365,7 @@ TextureImporter:
       tessellationDetail: 0
       bones: []
       spriteID: 9312c58e8ce9237409c286a3b8eb598b
+      internalID: 21300008
       vertices: []
       indices: 
       edges: []
@@ -319,6 +386,7 @@ TextureImporter:
       tessellationDetail: 0
       bones: []
       spriteID: 2747b7b2889b2904d8c02798d553506b
+      internalID: 21300010
       vertices: []
       indices: 
       edges: []
@@ -339,26 +407,7 @@ TextureImporter:
       tessellationDetail: 0
       bones: []
       spriteID: 860039328ecd44748bc9751fd43cf50c
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: shore_11
-      rect:
-        serializedVersion: 2
-        x: 128
-        y: 160
-        width: 32
-        height: 32
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 2167581ac6ac43f4580895fe6161f50c
+      internalID: 21300012
       vertices: []
       indices: 
       edges: []
@@ -379,6 +428,7 @@ TextureImporter:
       tessellationDetail: 0
       bones: []
       spriteID: 3ba235aa79ddbc645a6dd21592e3470b
+      internalID: 21300018
       vertices: []
       indices: 
       edges: []
@@ -399,6 +449,7 @@ TextureImporter:
       tessellationDetail: 0
       bones: []
       spriteID: 49cb02e630e9ad143ba02d14a1593bb3
+      internalID: 21300026
       vertices: []
       indices: 
       edges: []
@@ -419,6 +470,7 @@ TextureImporter:
       tessellationDetail: 0
       bones: []
       spriteID: 9019b0aeb3223a14cb79cdd38ec4d564
+      internalID: 21300020
       vertices: []
       indices: 
       edges: []
@@ -439,6 +491,7 @@ TextureImporter:
       tessellationDetail: 0
       bones: []
       spriteID: 58e0ad0cc0971fb4da7342fe88f99179
+      internalID: 21300030
       vertices: []
       indices: 
       edges: []
@@ -459,6 +512,7 @@ TextureImporter:
       tessellationDetail: 0
       bones: []
       spriteID: 62911ac2591b36243837761dec74c060
+      internalID: 21300024
       vertices: []
       indices: 
       edges: []
@@ -479,6 +533,7 @@ TextureImporter:
       tessellationDetail: 0
       bones: []
       spriteID: 4202f1dc5143ab547bd9304860601050
+      internalID: 21300048
       vertices: []
       indices: 
       edges: []
@@ -499,6 +554,7 @@ TextureImporter:
       tessellationDetail: 0
       bones: []
       spriteID: 0f95b0e4ecbc76640ad548820d31dd57
+      internalID: 21300050
       vertices: []
       indices: 
       edges: []
@@ -519,6 +575,7 @@ TextureImporter:
       tessellationDetail: 0
       bones: []
       spriteID: c2ba2b3586f58114b975906958e0e5d5
+      internalID: 21300054
       vertices: []
       indices: 
       edges: []
@@ -539,6 +596,7 @@ TextureImporter:
       tessellationDetail: 0
       bones: []
       spriteID: 9071d5c418c2fc9488872a632443af1d
+      internalID: 21300056
       vertices: []
       indices: 
       edges: []
@@ -559,6 +617,7 @@ TextureImporter:
       tessellationDetail: 0
       bones: []
       spriteID: 32f82b07eeb236e47b972ca3a4f87898
+      internalID: 21300058
       vertices: []
       indices: 
       edges: []
@@ -579,6 +638,7 @@ TextureImporter:
       tessellationDetail: 0
       bones: []
       spriteID: cbfdc0bd9f06c0948aef283bc6390eee
+      internalID: 21300064
       vertices: []
       indices: 
       edges: []
@@ -599,6 +659,7 @@ TextureImporter:
       tessellationDetail: 0
       bones: []
       spriteID: e1bd8fee6edb3fc439caf6c4b572b8d7
+      internalID: 21300066
       vertices: []
       indices: 
       edges: []
@@ -619,6 +680,7 @@ TextureImporter:
       tessellationDetail: 0
       bones: []
       spriteID: bccaa37d414f8394c8994f834c42ffd3
+      internalID: 21300068
       vertices: []
       indices: 
       edges: []
@@ -639,6 +701,7 @@ TextureImporter:
       tessellationDetail: 0
       bones: []
       spriteID: b71333c3010ff2043a5817b322e75db7
+      internalID: 21300070
       vertices: []
       indices: 
       edges: []
@@ -659,6 +722,7 @@ TextureImporter:
       tessellationDetail: 0
       bones: []
       spriteID: 2b148cd475d94c14eb72a33031db9d0a
+      internalID: 21300072
       vertices: []
       indices: 
       edges: []
@@ -679,6 +743,7 @@ TextureImporter:
       tessellationDetail: 0
       bones: []
       spriteID: 7ceb3fbacfc36f543b40f48e2f73ed9a
+      internalID: 21300074
       vertices: []
       indices: 
       edges: []
@@ -699,6 +764,7 @@ TextureImporter:
       tessellationDetail: 0
       bones: []
       spriteID: a87ab7eeed92ec44089a823e4d5729e9
+      internalID: 21300076
       vertices: []
       indices: 
       edges: []
@@ -719,6 +785,343 @@ TextureImporter:
       tessellationDetail: 0
       bones: []
       spriteID: fc4b4e12e9acc1c4f9d5f4c593a80101
+      internalID: 21300078
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: shore_N_ES
+      rect:
+        serializedVersion: 2
+        x: 288
+        y: 160
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: dec130536070d7d4ca2e23fd8f50c5ad
+      internalID: -8689118425468562290
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: shore_N_SW
+      rect:
+        serializedVersion: 2
+        x: 320
+        y: 160
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a310d49597c0da745b4d18901aeb3eca
+      internalID: 6933616782793992843
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: shore_W_NE
+      rect:
+        serializedVersion: 2
+        x: 288
+        y: 128
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0e37048b4cafd6845ba1043ae414cc7b
+      internalID: 21300060
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: shore_E_NW
+      rect:
+        serializedVersion: 2
+        x: 320
+        y: 128
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: efae56fcbce46b64698e50524800ba0c
+      internalID: 21300062
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: shore_W_ES
+      rect:
+        serializedVersion: 2
+        x: 288
+        y: 96
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5f347a55718e3864b9caac3272141d40
+      internalID: -6789832750741149751
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: shore_E_SW
+      rect:
+        serializedVersion: 2
+        x: 320
+        y: 96
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: fff3f0dfe21a0934f9ab3021d5595c3f
+      internalID: -3731008314585771772
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: shore_S_NE
+      rect:
+        serializedVersion: 2
+        x: 288
+        y: 64
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d5ace34cc134db7428469148f22c55f6
+      internalID: 1030903943075255573
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: shore_S_NW
+      rect:
+        serializedVersion: 2
+        x: 320
+        y: 64
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8949b184852018345bad902b98995402
+      internalID: 1545243500163700084
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: shore__NE
+      rect:
+        serializedVersion: 2
+        x: 352
+        y: 192
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4c00ef2e3be790e4ba0bb724e0b655c5
+      internalID: -6786412295472628860
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: shore__NW
+      rect:
+        serializedVersion: 2
+        x: 384
+        y: 192
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3f62519a6d139344c8684c1d098ffce6
+      internalID: -13777499214046833
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: shore__ES
+      rect:
+        serializedVersion: 2
+        x: 352
+        y: 224
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 16ed7526cf1287844bc569ebb7ef5cec
+      internalID: -147134945124614337
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: shore__SW
+      rect:
+        serializedVersion: 2
+        x: 384
+        y: 224
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 71c22878439cc2b4a8e9ed65bb0afb40
+      internalID: -4578042357357764850
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: shore_ESW_N
+      rect:
+        serializedVersion: 2
+        x: 128
+        y: 160
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 67ea0a9bcc54d30489fa4a101f9ba296
+      internalID: -793873789167220832
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: shore_NSW_E
+      rect:
+        serializedVersion: 2
+        x: 96
+        y: 192
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3f8345f0feb28e8419e790cc456e5361
+      internalID: 21300002
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: shore_NEW_S
+      rect:
+        serializedVersion: 2
+        x: 128
+        y: 224
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2780e3ec19f0ba846a1dafe70eebb5a8
+      internalID: -4163218009464251735
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: shore_NES_W
+      rect:
+        serializedVersion: 2
+        x: 160
+        y: 192
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 802216fa0eebe8f4096a177bdc161076
+      internalID: 9019312718012962500
       vertices: []
       indices: 
       edges: []
@@ -727,10 +1130,12 @@ TextureImporter:
     physicsShape: []
     bones: []
     spriteID: e65bcd1228a629940bac62b7e9a5dd2d
+    internalID: 0
     vertices: []
     indices: 
     edges: []
     weights: []
+    secondaryTextures: []
   spritePackingTag: 32
   pSDRemoveMatte: 0
   pSDShowRemoveMatteOption: 0

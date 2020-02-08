@@ -341,7 +341,8 @@ public class EditorController : MonoBehaviour {
         Width = load.Width;
         Height = load.Height;
         world = new World(load.tiles, load.Width, load.Height,true);
-        Ressources = load.Ressources;
+        if(load.Ressources!=null)
+            Ressources = load.Ressources;
         foreach (Structure s in load.structures) {
             BuildController.Instance.EditorBuildOnTile(s, s.GetBuildingTiles(s.BuildTile.X, s.BuildTile.Y), true);
         }
@@ -357,8 +358,8 @@ public class EditorController : MonoBehaviour {
         [JsonPropertyAttribute] public int Width;
         [JsonPropertyAttribute] public int Height;
         [JsonPropertyAttribute] public Climate climate;
-        [JsonPropertyAttribute(TypeNameHandling = TypeNameHandling.Auto)] public List<Structure> structures;
         [JsonPropertyAttribute(TypeNameHandling = TypeNameHandling.None)] public LandTile[] tiles;
+        [JsonPropertyAttribute(TypeNameHandling = TypeNameHandling.Auto)] public List<Structure> structures;
         [JsonPropertyAttribute] public Dictionary<string, int[]> Ressources;
 
         [JsonIgnore] public string Name; // for loading in image or similar things

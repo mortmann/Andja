@@ -125,18 +125,18 @@ public class BuildController : MonoBehaviour {
     public void BuildOnEachTile(Structure structure, List<Tile> tiles, int playerNumber) {
         BuildOnTile(structure, tiles, playerNumber, true);
     }
-    public void BuildOnTile(Structure structure, List<Tile> tiles, int playerNumber, bool forEachTileOnce, bool wild = false, Unit buildInRange = null) {
+    public void BuildOnTile(Structure structure, List<Tile> tiles, int playerNumber, bool forEachTileOnce, bool wild = false, Unit buildInRange = null, bool loading = false) {
         if (tiles == null || tiles.Count == 0 || WorldController.Instance?.IsPaused == true) {
             return;
         }
         if (forEachTileOnce == false) {
-            RealBuild(tiles, structure, playerNumber, false, wild, buildInRange);
+            RealBuild(tiles, structure, playerNumber, loading, wild, buildInRange);
         }
         else {
             foreach (Tile tile in tiles) {
                 List<Tile> t = new List<Tile>();
                 t.AddRange(structure.GetBuildingTiles(tile.X, tile.Y));
-                RealBuild(t, structure, playerNumber, false, wild, buildInRange);
+                RealBuild(t, structure, playerNumber, loading, wild, buildInRange);
             }
         }
     }
@@ -145,7 +145,7 @@ public class BuildController : MonoBehaviour {
     }
     internal void EditorBuildOnTile(Structure toPlace, List<Tile> t, bool single) {
         if (single) {
-            BuildOnTile(toPlace, t, -1, single, true);
+            BuildOnTile(toPlace, t, -1, single, true, null, true);
         } else {
             RealBuild(t, toPlace, -1, true, true);
         }
@@ -183,7 +183,10 @@ public class BuildController : MonoBehaviour {
         //if is build in wilderniss city
         structure.buildInWilderniss = wild;
 
-
+        //search for a city that is from the placing player
+        //it doesnt matter if we can place it -- its needed for loading!
+        //and the structure gets deleted if it cant be placed anyway
+        structure.City = tiles.Find(x => x.City.playerNumber == playerNumber)?.City;
         //before we need to check if we can build THERE
         //we need to know if there is if we COULD build 
         //it anyway? that means enough ressources and enough Money
@@ -201,7 +204,6 @@ public class BuildController : MonoBehaviour {
             if (block != null) {
                 return; // there is a tile that is owned by another player
             }
-            structure.City = tiles.Find(x => x.City.playerNumber == playerNumber)?.City;
             if (structure.City == null && structure.GetType() != typeof(WarehouseStructure)) {
                 return; // SO no city found and no warehouse to create on
             } else

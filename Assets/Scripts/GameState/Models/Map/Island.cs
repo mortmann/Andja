@@ -78,7 +78,11 @@ public class Island : IGEventable {
             return;
         Ressources[ressourceID] -= count;
     }
-
+    internal void AddRessources(string ressourceID, int count) {
+        if (Ressources.ContainsKey(ressourceID) == false)
+            return;
+        Ressources[ressourceID] += count;
+    }
     internal bool HasRessource(string ressourceID) {
         if (Ressources.ContainsKey(ressourceID) == false)
             return false;
@@ -92,6 +96,7 @@ public class Island : IGEventable {
         SetTiles(tiles);
         Setup();
     }
+
     public Island() {
     }
     private void Setup() {

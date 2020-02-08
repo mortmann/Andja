@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 
 public class MinePrototypeData : OutputPrototypData {
 }
-
+public enum RessourceMode { None, PerProduce, PerMine }
 [JsonObject(MemberSerialization.OptIn)]
 public class MineStructure : OutputStructure {
     #region Serialize
@@ -35,7 +35,7 @@ public class MineStructure : OutputStructure {
         }
     }
     #endregion
-
+    public static RessourceMode CurrentRessourceMode;
     public MineStructure(string pid, MinePrototypeData MineData) {
         this.ID = pid;
         _mineData = MineData;
@@ -50,28 +50,25 @@ public class MineStructure : OutputStructure {
     }
 
     public override bool SpecialCheckForBuild(List<Tile> tiles) {
-        for (int i = 0; i < tiles.Count; i++) {
-            if (tiles[i].Type == TileType.Mountain) {
-                if (BuildTile.Island.HasRessource(Ressource) == false) {
-                    return false;
-                }
-            }
+        if (BuildTile.Island.HasRessource(Ressource) == false) {
+            return false;
         }
         return true;
     }
 
     public override void OnUpdate(float deltaTime) {
-        if (BuildTile.Island.HasRessource(Ressource) == false) {
+        if (Output[0].count >= MaxOutputStorage) {
             return;
         }
-        if (Output[0].count >= MaxOutputStorage) {
+        if (CurrentRessourceMode == RessourceMode.PerProduce && BuildTile.Island.HasRessource(Ressource) == false) {
             return;
         }
         produceCountdown += deltaTime;
         if (produceCountdown >= ProduceTime) {
             produceCountdown = 0;
             Output[0].count += OutputData.output[0].count;
-            City.island.RemoveRessources(Ressource, OutputData.output[0].count);
+            if(CurrentRessourceMode==RessourceMode.PerProduce)
+                City.island.RemoveRessources(Ressource, OutputData.output[0].count);
             cbOutputChange?.Invoke(this);
         }
     }
@@ -80,7 +77,13 @@ public class MineStructure : OutputStructure {
         return new MineStructure(this);
     }
     public override void OnBuild() {
-
+        if (CurrentRessourceMode == RessourceMode.PerMine) {
+            City.island.RemoveRessources(Ressource, 1);
+        }
     }
-
+    protected override void OnDestroy() {
+        if (CurrentRessourceMode == RessourceMode.PerMine) {
+            City.island.AddRessources(Ressource, 1);
+        }
+    }
 }

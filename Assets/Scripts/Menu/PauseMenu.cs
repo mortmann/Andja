@@ -6,6 +6,9 @@ using System;
 public class PauseMenu : MonoBehaviour {
     public static bool IsOpen = false;
     public static Action<bool> ChangedState;
+    private void Awake() {
+        Disable();
+    }
     public void Toggle() {
         if(IsOpen) {
             Disable();

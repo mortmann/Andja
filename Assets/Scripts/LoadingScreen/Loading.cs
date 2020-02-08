@@ -10,7 +10,7 @@ public class Loading : MonoBehaviour {
     public bool loadEditor;
     internal static bool IsLoading = false;
     private Stopwatch loadingStopWatch;
-
+    bool AsyncLoadDebug = false;
     float SceneLoadingProgress {
         get {
             if (aso == null)
@@ -69,8 +69,11 @@ public class Loading : MonoBehaviour {
             }
             if (TileSpriteController.CreationDone == false)
                 return;
-            UnityEngine.Debug.Log("Load Async after " + loadingStopWatch.ElapsedMilliseconds + "ms (" + loadingStopWatch.Elapsed.TotalSeconds + "s)! ");
-            if(Application.isEditor && aso==null)
+            if (AsyncLoadDebug == false) {
+                AsyncLoadDebug = true;
+                UnityEngine.Debug.Log("Load Async after " + loadingStopWatch.ElapsedMilliseconds + "ms (" + loadingStopWatch.Elapsed.TotalSeconds + "s)! ");
+            }
+            if (Application.isEditor && aso==null)
                 aso = SceneManager.LoadSceneAsync("GameState");
             aso.allowSceneActivation = true;
         }

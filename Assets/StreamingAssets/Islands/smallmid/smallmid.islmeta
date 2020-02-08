@@ -1,10 +1,7 @@
 {
-  "$id": "1",
-  "saveName": "smallmid",
+  "saveName": "test2",
   "safefileversion": "i_0.0.3",
-  "saveTime": "2020-02-03T23:05:35.7134046+01:00",
-  "playTime": 0.0,
+  "saveTime": "2020-02-07T00:03:51.6818466+01:00",
   "size": 1,
-  "climate": 1,
-  "isInDebugMode": false
+  "climate": 1
 }

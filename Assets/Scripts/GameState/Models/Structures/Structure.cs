@@ -122,8 +122,6 @@ public abstract class Structure : IGEventable {
     //build id -- when it was build
     [JsonPropertyAttribute] public uint buildID;
 
-    [JsonPropertyAttribute] protected City _city;
-
     [JsonPropertyAttribute] protected float _health;
 
     [JsonPropertyAttribute]
@@ -147,8 +145,7 @@ public abstract class Structure : IGEventable {
     #region RuntimeOrOther
     public List<Tile> StructureTiles;
     public HashSet<Tile> NeighbourTiles;
-
-
+    protected City _city;
     public HashSet<Tile> RangeTiles;
     public string connectOrientation;
     public bool HasExtraUI { get { return ExtraUITyp != ExtraUI.None; } }
@@ -422,8 +419,8 @@ public abstract class Structure : IGEventable {
 
         // do on place structure stuff here!
         OnBuild();
-        City.RegisterOnEvent(OnEventCreate, OnEventEnded);
 
+        City.RegisterOnEvent(OnEventCreate, OnEventEnded);
         return true;
     }
 

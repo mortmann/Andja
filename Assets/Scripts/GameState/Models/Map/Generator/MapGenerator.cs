@@ -8,7 +8,7 @@ using System.IO;
 
 public class MapGenerator : MonoBehaviour {
     public static MapGenerator Instance;
-
+    public readonly int MinTilesAroundIsland = 5;
     bool startedGenerating = false;
     bool tilesPopulated = false;
     Tile[] tiles;
@@ -309,6 +309,7 @@ public class MapGenerator : MonoBehaviour {
 
         List<Rect> rectangleIslands = new List<Rect>();
         Dictionary<Rect, IslandStruct> placeToIsland = new Dictionary<Rect, IslandStruct>();
+        List<Rect> recantgleEmptySpaces = new List<Rect>();
         int retriesWorld = 32;
         bool worldFailed = false;
         List<IslandStruct> toPlaceIslands = new List<IslandStruct>(islandStructs);
@@ -317,6 +318,8 @@ public class MapGenerator : MonoBehaviour {
             yield return new WaitForEndOfFrame();
             placeToIsland.Clear();
             rectangleIslands.Clear();
+            Vector2 worldMin = Vector2.zero;
+            Vector2 worldMax = new Vector2(Width, Height);
             //if we have to try again clear the done islands
             foreach (IslandStruct island in toPlaceIslands) {
                 int islandTries = 0;
@@ -325,7 +328,7 @@ public class MapGenerator : MonoBehaviour {
                     int x = Random.Range(0, Width - island.Width);
                     int y = Random.Range(0, Height - island.Height);
                     islandTries++;
-                    Rect toTest = new Rect(x, y, island.Width, island.Height);
+                    Rect toTest = new Rect(x, y, island.Width + MinTilesAroundIsland, island.Height + MinTilesAroundIsland);
                     foreach (Rect inWorld in rectangleIslands) {
                         if (toTest.Overlaps(inWorld)) {
                             failed = true;
@@ -335,6 +338,16 @@ public class MapGenerator : MonoBehaviour {
                     if (failed) {
                         continue;
                     }
+                    //remove all spaces that got invalid through placing it here
+                    recantgleEmptySpaces.RemoveAll(r => r.Overlaps(toTest));
+                    //next generate new rect
+                    Rect Top = new Rect(worldMin.x, toTest.yMax, worldMax.x, worldMax.y);
+                    Rect Right = new Rect(toTest.xMax, worldMin.y, worldMax.x, worldMax.y);
+                    Rect Bottom = new Rect(worldMin.x, worldMin.y, worldMax.x, toTest.yMax);
+                    Rect Left = new Rect(worldMin.x, worldMin.y, toTest.xMax, worldMax.y);
+                    
+
+
                     rectangleIslands.Add(toTest);
                     placeToIsland.Add(toTest, island);
                     yield return new WaitForEndOfFrame();
@@ -354,7 +367,7 @@ public class MapGenerator : MonoBehaviour {
         } while (worldFailed && retriesWorld > 0);
         placeProgress += 0.8f;
         if (worldFailed) {
-            Debug.Log("World did not generate correctly! -- Couldnt fit all of the island! ");
+            Debug.LogError("World did not generate correctly! -- Couldnt fit all of the island! ");
         }
         doneIslands = new List<IslandStruct>();
         foreach (Rect place in placeToIsland.Keys) {
@@ -379,6 +392,47 @@ public class MapGenerator : MonoBehaviour {
 
         tilesPopulated = true;
         yield return null;
+    }
+
+    Rect[] GetNewRect(List<Rect> islands, Rect newRect, Rect Island) {
+        if (islands.Count == 0)
+            return new Rect[] { newRect };
+        List<Rect> Overlaping = new List<Rect>();
+        foreach(Rect isl in islands) {
+            if(newRect.Overlaps(isl)) {
+                Overlaping.Add(isl);
+            }
+        }
+        Rect minRect = new Rect(newRect);
+        Rect maxRect = new Rect(newRect);
+        foreach (Rect over in Overlaping) {
+            //first we need to calculate foreach either the maxY or Y it can go
+            if (Island.xMax <= over.xMin && minRect.xMax > over.xMin) {
+                minRect.xMax = over.xMin;
+            }
+            if (Island.yMin>=over.yMax && maxRect.yMin > over.yMax) {
+                maxRect.yMin = over.yMax;
+            }
+            if (Island.yMax >= over.yMin && maxRect.yMax > over.yMin) {
+                maxRect.yMax = over.yMin;
+            }
+        }
+        foreach (Rect over in Overlaping) {
+            //first we need to calculate foreach either the maxY or Y it can go
+            if (Island.xMax <= over.xMin && maxRect.Overlaps(over) && maxRect.xMax > over.xMin) {
+                maxRect.xMax = over.xMin;
+            }
+            if (Island.yMin >= over.yMax && minRect.Overlaps(over) && minRect.yMin > over.yMax) {
+                minRect.yMin = over.yMax;
+            }
+            if (Island.yMax >= over.yMin && minRect.Overlaps(over) && minRect.yMax > over.yMin) {
+                minRect.yMax = over.yMin;
+            }
+        }
+
+        if (minRect == maxRect)
+            return new Rect[] { minRect };
+        return new Rect[] { minRect,maxRect };
     }
 
     private Tile SetNewLandTileAt(int x, int y, Tile t) {

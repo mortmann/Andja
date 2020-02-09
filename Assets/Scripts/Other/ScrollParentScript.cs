@@ -14,7 +14,7 @@ public class ScrollParentScript : MonoBehaviour {
         };
         scroll.callback.AddListener((data) => {
             ScrollRect sr = GetComponentInParent<ScrollRect>();
-            sr.verticalScrollbar.value += sr.scrollSensitivity * Time.deltaTime * ((PointerEventData)data).scrollDelta.y;
+            sr.verticalScrollbar.value = Mathf.Clamp01(sr.verticalScrollbar.value + sr.scrollSensitivity * Time.deltaTime * ((PointerEventData)data).scrollDelta.y);
         });
         trigger.triggers.Add(scroll);
         trigger.triggers.Add(click);

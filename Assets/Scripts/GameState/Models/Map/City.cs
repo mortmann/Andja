@@ -222,30 +222,10 @@ public class City : IGEventable {
         useTickTimer -= deltaTime;
         if (useTickTimer <= 0) {
             useTickTimer = useTick;
-            CalculateNeeds();
+            foreach (PopulationLevel pop in populationLevels) {
+                pop.FullfillNeedsAndCalcHappiness(this);
+            }
         }
-    }
-    public void CalculateNeeds() {
-        foreach (PopulationLevel pop in populationLevels) {
-            pop.FullfillNeedsAndCalcHappiness(this);
-        }
-        //foreach(Need need in itemNeeds){
-        //	need.TryToConsumThisIn (this,citizienCount);
-        //	levelCount [need.StartLevel]++;
-        //	sumOfPerc [need.StartLevel] += need.percantageAvailability;
-        //	if(need.percantageAvailability<0.4f){
-        //		criticalAvaibilityNeed [need.StartLevel] = true;
-        //	}
-        //}
-        //float[] percentagesPerLevel = new float[citizienLevels];
-        //float percantageSummed=0;
-        //for (int i = 0; i < citizienLevels; i++) {
-        //	percentagesPerLevel [i] = sumOfPerc [i] / levelCount [i];
-        //	for (int s = 0; s <= i; s++) { 
-        //		percantageSummed = percentagesPerLevel [s]; 
-        //	}
-        //	citizienHappiness [i] = percantageSummed / (i+1);
-        //}
     }
 
     public void TriggerAddCallBack(Structure str) {

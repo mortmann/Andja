@@ -23,8 +23,8 @@ public class GameDataHolder : MonoBehaviour {
     public string editorloadsavegame;
     public static string setloadsavegame;
 
-    public static int MapSeed=10;
-
+    public int MapSeed = 10;
+    public bool RandomSeed;
     public static int bots; // this is far from being in anykind relevant so 
     public static int playerCount = 1;
     public static bool pirates = true;
@@ -51,6 +51,9 @@ public class GameDataHolder : MonoBehaviour {
         playTime += WorldController.Instance.DeltaTime;
     }
     public void GenerateMap() {
+        if(RandomSeed) {
+            MapSeed = UnityEngine.Random.Range(int.MinValue, int.MaxValue);
+        }
         if (SaveController.IsLoadingSave == false) {
             Dictionary<MapGenerator.IslandGenInfo, MapGenerator.Range> dict = new Dictionary<MapGenerator.IslandGenInfo, MapGenerator.Range> { 
             //Temporary fill this list, later generate this from selected/number of player, map size, difficulty, and other

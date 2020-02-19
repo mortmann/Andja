@@ -208,8 +208,6 @@ public class CameraController : MonoBehaviour {
         // and red if behind (negative half-space).           
         Gizmos.color = plane.GetSide(transform.position) ? Color.cyan : Color.red;
         Gizmos.DrawLine(plane.ClosestPointOnPlane(transform.position), transform.position);
-        Gizmos.DrawWireSphere(transform.position, 0.2f);
-
         //// Draw plane normal.
         //Gizmos.color = Color.yellow;
         //var center = (a + b + c) / 3f;

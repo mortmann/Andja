@@ -325,10 +325,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_UiScaleMode: 0
+  m_UiScaleMode: 1
   m_ReferencePixelsPerUnit: 100
   m_ScaleFactor: 1
-  m_ReferenceResolution: {x: 800, y: 600}
+  m_ReferenceResolution: {x: 1920, y: 1080}
   m_ScreenMatchMode: 0
   m_MatchWidthOrHeight: 0
   m_PhysicalUnit: 3
@@ -352,7 +352,7 @@ Canvas:
   m_OverrideSorting: 0
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
-  m_AdditionalShaderChannelsFlag: 25
+  m_AdditionalShaderChannelsFlag: 0
   m_SortingLayerID: 0
   m_SortingOrder: 0
   m_TargetDisplay: 0
@@ -610,8 +610,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9767ca9dd98fe7149bf69136c8ebc82a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  RandomSeed: 0
-  MapSeed: 0
+  MapSeed: 1850640813
   Width: 0
   Height: 0
 --- !u!4 &709694499
@@ -973,7 +972,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 11473390, guid: dfbb72e7b75263b4da3c1b05eaa385c6, type: 3}
       propertyPath: editorloadsavegame
-      value: ttest2
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 11473390, guid: dfbb72e7b75263b4da3c1b05eaa385c6, type: 3}
+      propertyPath: RandomSeed
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 11473390, guid: dfbb72e7b75263b4da3c1b05eaa385c6, type: 3}
+      propertyPath: MapSeed
+      value: 1850640813
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: dfbb72e7b75263b4da3c1b05eaa385c6, type: 3}

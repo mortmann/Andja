@@ -21,7 +21,7 @@ public class EditorController : MonoBehaviour {
     public static int Width = 100;
     public static int Height = 100;
     public static Climate climate = Climate.Middle;
-    public static bool generate;
+    public static bool Generate { protected set; get; }
     static SaveIsland loadsavegame;
 
     public bool changeTileType;
@@ -45,6 +45,7 @@ public class EditorController : MonoBehaviour {
     public List<Action<Structure>> SetStructureVariablesList = new List<Action<Structure>>();
 
     public bool IsModal; // If true, a modal dialog box is open so normal inputs should be ignored.
+    private bool dragging;
 
     // Use this for initialization
     void OnEnable() {
@@ -56,7 +57,7 @@ public class EditorController : MonoBehaviour {
         
         Instance = this;
         new InputHandler();
-        if (generate==false&&loadsavegame==null) {
+        if (Generate==false&&loadsavegame==null) {
             Tile[] tiles = new Tile[Width * Height];
             for (int x = 0; x < Width; x++) {
                 for (int y = 0; y < Height; y++) {
@@ -75,10 +76,10 @@ public class EditorController : MonoBehaviour {
     private void OnLevelLoaded(Scene o, Scene n) {
         if (SceneManager.GetActiveScene().name != "IslandEditor")
             return;
-        if (generate) {
+        if (Generate) {
             world = new World(MapGenerator.Instance.GetTiles(), Width, Height,true);
             MapGenerator.Instance.Destroy();
-            generate = false;
+            Generate = false;
         }
         if (loadsavegame != null) {
             LoadSaveState(loadsavegame);
@@ -94,24 +95,28 @@ public class EditorController : MonoBehaviour {
         Width = w;
         Height = h;
         climate = clim;
-        generate = true;
+        Generate = true;
         SceneManager.LoadScene("EditorLoadingScreen");
     }
     public void RandomizeIsland() {
-        generate = true;
+        Generate = true;
         SceneManager.LoadScene("EditorLoadingScreen");
     }
     void Update() {
-        if (Input.GetMouseButton(0)) {
+        if (Input.GetMouseButtonDown(0) || dragging) {
             if (EventSystem.current.IsPointerOverGameObject()) {
                 return;
             }
+            dragging = true;
             if (changeTileType) {
                 ChangeTileType();
             }
             else {
                 CreateStructure();
             }
+        }
+        if(Input.GetMouseButtonUp(0)) {
+            dragging = false;
         }
         if (InputHandler.GetButtonDown(InputName.Rotate)) {
             if (BuildController.Instance.toBuildStructure != null) {
@@ -347,6 +352,11 @@ public class EditorController : MonoBehaviour {
             BuildController.Instance.EditorBuildOnTile(s, s.GetBuildingTiles(s.BuildTile.X, s.BuildTile.Y), true);
         }
     }
+
+    internal void SetWorld(World world) {
+        this.world = world;
+    }
+
     public SaveIsland GetSaveState() {
         HashSet<Tile> toSave = new HashSet<Tile>(world.Tiles);
         toSave.RemoveWhere(x => x.Type == TileType.Ocean);

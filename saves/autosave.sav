@@ -1,10 +1,11 @@
 {
   "$id": "1",
-  "MapSeed": 10,
+  "MapSeed": 1850640813,
   "Height": 500,
   "Width": 500,
   "usedIslands": [
-    "middle_m1",
+    "smallmid",
+    "north_m1",
     "north_m2",
     "south_s1"
   ]
@@ -15,354 +16,354 @@
     "$id": "2",
     "itemIDtoPrice": {
       "$id": "3",
-      "1": {
+      "brick": {
         "$id": "4",
         "DemandChange": 0
       },
-      "2": {
+      "glas": {
         "$id": "5",
         "DemandChange": 0
       },
-      "3": {
+      "luxurywood": {
         "$id": "6",
         "DemandChange": 0
       },
-      "4": {
+      "marble": {
         "$id": "7",
         "DemandChange": 0
       },
-      "5": {
+      "stone": {
         "$id": "8",
         "DemandChange": 0
       },
-      "6": {
+      "tools": {
         "$id": "9",
         "DemandChange": 0
       },
-      "7": {
+      "wood": {
         "$id": "10",
         "DemandChange": 0
       },
-      "101": {
+      "armors": {
         "$id": "11",
         "DemandChange": 0
       },
-      "102": {
+      "beeswax": {
         "$id": "12",
         "DemandChange": 0
       },
-      "103": {
+      "bows": {
         "$id": "13",
         "DemandChange": 0
       },
-      "104": {
+      "candles": {
         "$id": "14",
         "DemandChange": 0
       },
-      "105": {
+      "cannons": {
         "$id": "15",
         "DemandChange": 0
       },
-      "106": {
+      "casks": {
         "$id": "16",
         "DemandChange": 0
       },
-      "107": {
+      "clay": {
         "$id": "17",
         "DemandChange": 0
       },
-      "108": {
+      "coal": {
         "$id": "18",
         "DemandChange": 0
       },
-      "109": {
+      "cocoa": {
         "$id": "19",
         "DemandChange": 0
       },
-      "201": {
+      "coffeebeans": {
         "$id": "20",
         "DemandChange": 0
       },
-      "202": {
+      "color": {
         "$id": "21",
         "DemandChange": 0
       },
-      "203": {
+      "cooperore": {
         "$id": "22",
         "DemandChange": 0
       },
-      "204": {
+      "copperingots": {
         "$id": "23",
         "DemandChange": 0
       },
-      "205": {
+      "cows": {
         "$id": "24",
         "DemandChange": 0
       },
-      "206": {
+      "diamonds": {
         "$id": "25",
         "DemandChange": 0
       },
-      "207": {
+      "flour": {
         "$id": "26",
         "DemandChange": 0
       },
-      "208": {
+      "flowers": {
         "$id": "27",
         "DemandChange": 0
       },
-      "209": {
+      "fruits": {
         "$id": "28",
         "DemandChange": 0
       },
-      "210": {
+      "fur": {
         "$id": "29",
         "DemandChange": 0
       },
-      "211": {
+      "goldingots": {
         "$id": "30",
         "DemandChange": 0
       },
-      "212": {
+      "goldore": {
         "$id": "31",
         "DemandChange": 0
       },
-      "213": {
+      "grainsalt": {
         "$id": "32",
         "DemandChange": 0
       },
-      "214": {
+      "hemp": {
         "$id": "33",
         "DemandChange": 0
       },
-      "215": {
+      "hempfabric": {
         "$id": "34",
         "DemandChange": 0
       },
-      "216": {
+      "hops": {
         "$id": "35",
         "DemandChange": 0
       },
-      "217": {
+      "horses": {
         "$id": "36",
         "DemandChange": 0
       },
-      "218": {
+      "ironingots": {
         "$id": "37",
         "DemandChange": 0
       },
-      "219": {
+      "ironore": {
         "$id": "38",
         "DemandChange": 0
       },
-      "220": {
+      "leather": {
         "$id": "39",
         "DemandChange": 0
       },
-      "301": {
+      "medicinalherbs": {
         "$id": "40",
         "DemandChange": 0
       },
-      "302": {
+      "olives": {
         "$id": "41",
         "DemandChange": 0
       },
-      "303": {
+      "perfumebottle": {
         "$id": "42",
         "DemandChange": 0
       },
-      "305": {
+      "pig": {
         "$id": "43",
         "DemandChange": 0
       },
-      "306": {
+      "pike": {
         "$id": "44",
         "DemandChange": 0
       },
-      "307": {
+      "pork": {
         "$id": "45",
         "DemandChange": 0
       },
-      "308": {
+      "rifles": {
         "$id": "46",
         "DemandChange": 0
       },
-      "309": {
+      "roughdiamonds": {
         "$id": "47",
         "DemandChange": 0
       },
-      "310": {
+      "sand": {
         "$id": "48",
         "DemandChange": 0
       },
-      "311": {
+      "sheepwool": {
         "$id": "49",
         "DemandChange": 0
       },
-      "312": {
+      "sheepwoolcloth": {
         "$id": "50",
         "DemandChange": 0
       },
-      "313": {
+      "silk": {
         "$id": "51",
         "DemandChange": 0
       },
-      "314": {
+      "sugar": {
         "$id": "52",
         "DemandChange": 0
       },
-      "315": {
+      "swords": {
         "$id": "53",
         "DemandChange": 0
       },
-      "316": {
+      "tobacco": {
         "$id": "54",
         "DemandChange": 0
       },
-      "317": {
+      "whaleoil": {
         "$id": "55",
         "DemandChange": 0
       },
-      "318": {
+      "wheat": {
         "$id": "56",
         "DemandChange": 0
       },
-      "319": {
+      "winegrapes": {
         "$id": "57",
         "DemandChange": 0
       },
-      "320": {
+      "beef": {
         "$id": "58",
         "DemandChange": 0
       },
-      "321": {
+      "beer": {
         "$id": "59",
         "DemandChange": 0
       },
-      "322": {
+      "betterclothes": {
         "$id": "60",
         "DemandChange": 0
       },
-      "323": {
+      "books": {
         "$id": "61",
         "DemandChange": 0
       },
-      "401": {
+      "bread": {
         "$id": "62",
         "DemandChange": 0
       },
-      "402": {
+      "candleholders": {
         "$id": "63",
         "DemandChange": 0
       },
-      "403": {
+      "carpets": {
         "$id": "64",
         "DemandChange": 0
       },
-      "404": {
+      "cheese": {
         "$id": "65",
         "DemandChange": 0
       },
-      "405": {
+      "coffee": {
         "$id": "66",
         "DemandChange": 0
       },
-      "406": {
+      "cutlery": {
         "$id": "67",
         "DemandChange": 0
       },
-      "407": {
+      "fish": {
         "$id": "68",
         "DemandChange": 0
       },
-      "408": {
+      "goggles": {
         "$id": "69",
         "DemandChange": 0
       },
-      "409": {
+      "hempclothes": {
         "$id": "70",
         "DemandChange": 0
       },
-      "410": {
+      "honey": {
         "$id": "71",
         "DemandChange": 0
       },
-      "411": {
+      "jewelry": {
         "$id": "72",
         "DemandChange": 0
       },
-      "412": {
+      "leathershoes": {
         "$id": "73",
         "DemandChange": 0
       },
-      "413": {
+      "liquor": {
         "$id": "74",
         "DemandChange": 0
       },
-      "414": {
+      "luxuryclothes": {
         "$id": "75",
         "DemandChange": 0
       },
-      "415": {
+      "luxurycutlery": {
         "$id": "76",
         "DemandChange": 0
       },
-      "416": {
+      "milk": {
         "$id": "77",
         "DemandChange": 0
       },
-      "417": {
+      "perfume": {
         "$id": "78",
         "DemandChange": 0
       },
-      "418": {
+      "potatoes": {
         "$id": "79",
         "DemandChange": 0
       },
-      "1001": {
+      "ropes": {
         "$id": "80",
         "DemandChange": 0
       },
-      "1002": {
+      "salt": {
         "$id": "81",
         "DemandChange": 0
       },
-      "1003": {
+      "soap": {
         "$id": "82",
         "DemandChange": 0
       },
-      "1004": {
+      "spice": {
         "$id": "83",
         "DemandChange": 0
       },
-      "1005": {
+      "sweets": {
         "$id": "84",
         "DemandChange": 0
       },
-      "1006": {
+      "tobaccoproducts": {
         "$id": "85",
         "DemandChange": 0
       },
-      "1007": {
+      "venison": {
         "$id": "86",
         "DemandChange": 0
       },
-      "1008": {
+      "wine": {
         "$id": "87",
         "DemandChange": 0
       }
     },
-    "demandChangeTimer": 5.667367
+    "demandChangeTimer": 6.82968044
   },
   "world": {
     "$id": "88",
     "IslandList": [
       {
         "$id": "89",
-        "myCities": [
+        "Cities": [
           {
             "$id": "90",
-            "AutoUpgradeHomes": false,
+            "autoUpgradeHomes": false,
             "playerNumber": -1,
             "inventory": {
               "$id": "91",
@@ -372,425 +373,301 @@
               },
               "NumberOfSpaces": 0
             },
-            "myStructures": [],
+            "structures": [],
             "useTickTimer": 0.0,
             "_name": "",
             "island": {
               "$ref": "89"
-            },
-            "PopulationLevels": [
-              {
-                "$id": "93",
-                "criticalMissingNeed": false,
-                "Level": 0,
-                "NeedGroupList": [
-                  {
-                    "$id": "94",
-                    "ID": 0,
-                    "Needs": [
-                      {
-                        "$id": "95",
-                        "ID": 4,
-                        "lastNeededNotConsumed": [
-                          0.0,
-                          0.0,
-                          0.0,
-                          0.0,
-                          1.0
-                        ],
-                        "percantageAvailability": [
-                          0.0,
-                          0.0,
-                          0.0,
-                          0.0,
-                          0.0
-                        ],
-                        "notUsedOfTon": 0.0
-                      },
-                      {
-                        "$id": "96",
-                        "ID": 41,
-                        "lastNeededNotConsumed": [
-                          0.0,
-                          0.0,
-                          0.0,
-                          0.0,
-                          3.0
-                        ],
-                        "percantageAvailability": [
-                          0.0,
-                          0.0,
-                          0.0,
-                          0.0,
-                          0.0
-                        ],
-                        "notUsedOfTon": 0.0
-                      }
-                    ],
-                    "LastFullfillmentPercentage": 0.0
-                  },
-                  {
-                    "$id": "97",
-                    "ID": 1,
-                    "Needs": [],
-                    "LastFullfillmentPercentage": "NaN"
-                  }
-                ],
-                "taxPercantage": 1.0,
-                "city": {
-                  "$ref": "90"
-                }
-              },
-              {
-                "$id": "98",
-                "criticalMissingNeed": false,
-                "Level": 1,
-                "previousLevel": {
-                  "$ref": "93"
-                },
-                "taxPercantage": 1.0,
-                "city": {
-                  "$ref": "90"
-                }
-              },
-              {
-                "$id": "99",
-                "criticalMissingNeed": false,
-                "Level": 2,
-                "previousLevel": {
-                  "$ref": "98"
-                },
-                "taxPercantage": 1.0,
-                "city": {
-                  "$ref": "90"
-                }
-              },
-              {
-                "$id": "100",
-                "criticalMissingNeed": false,
-                "Level": 3,
-                "previousLevel": {
-                  "$ref": "99"
-                },
-                "taxPercantage": 1.0,
-                "city": {
-                  "$ref": "90"
-                }
-              }
-            ]
+            }
           }
         ],
-        "myClimate": 2,
+        "Climate": 2,
+        "Ressources": {
+          "$id": "93"
+        },
         "StartTile": {
-          "$id": "101",
+          "$id": "94",
           "$type": "LandTile, Assembly-CSharp",
-          "x": 140,
-          "y": 71,
           "_type": 4,
+          "x": 447,
+          "y": 69,
           "SpriteName": "warm_dirt_1"
         }
       },
       {
-        "$id": "102",
-        "myCities": [
+        "$id": "95",
+        "Cities": [
           {
-            "$id": "103",
-            "AutoUpgradeHomes": false,
+            "$id": "96",
+            "autoUpgradeHomes": false,
             "playerNumber": -1,
             "inventory": {
-              "$id": "104",
+              "$id": "97",
               "MaxStackSize": 50,
               "Items": {
-                "$id": "105"
+                "$id": "98"
               },
               "NumberOfSpaces": 0
             },
-            "myStructures": [
+            "structures": [
               {
-                "$id": "106",
+                "$id": "99",
                 "$type": "GrowableStructure, Assembly-CSharp",
-                "age": 5.337999,
+                "age": 5.33843327,
                 "currentStage": 3,
                 "hasProduced": true,
                 "produceCountdown": 0.0,
-                "ID": 502,
+                "ID": "tree",
                 "buildID": 0,
-                "_city": {
-                  "$ref": "103"
-                },
                 "_health": 0.0,
                 "rotated": 0,
-                "buildInWilderniss": false,
+                "buildInWilderniss": true,
                 "isActive": true,
                 "Output": [
                   {
-                    "$id": "107",
-                    "ID": 1,
+                    "$id": "100",
+                    "ID": "wood",
                     "count": 1
                   }
                 ],
                 "BuildTile": {
-                  "$id": "108",
+                  "$id": "101",
                   "$type": "LandTile, Assembly-CSharp",
-                  "x": 280,
-                  "y": 276,
                   "_type": 4,
+                  "x": 69,
+                  "y": 438,
                   "SpriteName": "cold_dirt_1"
                 }
               },
               {
-                "$id": "109",
+                "$id": "102",
                 "$type": "GrowableStructure, Assembly-CSharp",
-                "age": 5.337999,
+                "age": 5.33843327,
                 "currentStage": 3,
                 "hasProduced": true,
                 "produceCountdown": 0.0,
-                "ID": 502,
+                "ID": "tree",
                 "buildID": 0,
-                "_city": {
-                  "$ref": "103"
-                },
                 "_health": 0.0,
                 "rotated": 0,
-                "buildInWilderniss": false,
+                "buildInWilderniss": true,
                 "isActive": true,
                 "Output": [
                   {
-                    "$id": "110",
-                    "ID": 1,
+                    "$id": "103",
+                    "ID": "wood",
                     "count": 1
                   }
                 ],
                 "BuildTile": {
-                  "$id": "111",
+                  "$id": "104",
                   "$type": "LandTile, Assembly-CSharp",
-                  "x": 282,
-                  "y": 275,
                   "_type": 4,
+                  "x": 71,
+                  "y": 437,
                   "SpriteName": "cold_dirt_0"
                 }
               },
               {
-                "$id": "112",
+                "$id": "105",
                 "$type": "GrowableStructure, Assembly-CSharp",
-                "age": 5.337999,
+                "age": 5.33843327,
                 "currentStage": 3,
                 "hasProduced": true,
                 "produceCountdown": 0.0,
-                "ID": 502,
+                "ID": "tree",
                 "buildID": 0,
-                "_city": {
-                  "$ref": "103"
-                },
                 "_health": 0.0,
                 "rotated": 0,
-                "buildInWilderniss": false,
+                "buildInWilderniss": true,
                 "isActive": true,
                 "Output": [
                   {
-                    "$id": "113",
-                    "ID": 1,
+                    "$id": "106",
+                    "ID": "wood",
                     "count": 1
                   }
                 ],
                 "BuildTile": {
-                  "$id": "114",
+                  "$id": "107",
                   "$type": "LandTile, Assembly-CSharp",
-                  "x": 282,
-                  "y": 276,
                   "_type": 4,
+                  "x": 71,
+                  "y": 438,
                   "SpriteName": "cold_dirt_1"
                 }
               },
               {
-                "$id": "115",
+                "$id": "108",
                 "$type": "GrowableStructure, Assembly-CSharp",
-                "age": 5.337999,
+                "age": 5.33843327,
                 "currentStage": 3,
                 "hasProduced": true,
                 "produceCountdown": 0.0,
-                "ID": 502,
+                "ID": "tree",
                 "buildID": 0,
-                "_city": {
-                  "$ref": "103"
-                },
                 "_health": 0.0,
                 "rotated": 0,
-                "buildInWilderniss": false,
+                "buildInWilderniss": true,
                 "isActive": true,
                 "Output": [
                   {
-                    "$id": "116",
-                    "ID": 1,
+                    "$id": "109",
+                    "ID": "wood",
                     "count": 1
                   }
                 ],
                 "BuildTile": {
-                  "$id": "117",
+                  "$id": "110",
                   "$type": "LandTile, Assembly-CSharp",
-                  "x": 282,
-                  "y": 278,
                   "_type": 4,
+                  "x": 71,
+                  "y": 440,
                   "SpriteName": "cold_dirt_1"
                 }
               },
               {
-                "$id": "118",
+                "$id": "111",
                 "$type": "GrowableStructure, Assembly-CSharp",
-                "age": 5.337999,
+                "age": 5.33843327,
                 "currentStage": 3,
                 "hasProduced": true,
                 "produceCountdown": 0.0,
-                "ID": 502,
+                "ID": "tree",
                 "buildID": 0,
-                "_city": {
-                  "$ref": "103"
-                },
                 "_health": 0.0,
                 "rotated": 0,
-                "buildInWilderniss": false,
+                "buildInWilderniss": true,
                 "isActive": true,
                 "Output": [
                   {
-                    "$id": "119",
-                    "ID": 1,
+                    "$id": "112",
+                    "ID": "wood",
                     "count": 1
                   }
                 ],
                 "BuildTile": {
-                  "$id": "120",
+                  "$id": "113",
                   "$type": "LandTile, Assembly-CSharp",
-                  "x": 284,
-                  "y": 274,
                   "_type": 4,
+                  "x": 73,
+                  "y": 436,
                   "SpriteName": "cold_dirt_0"
                 }
               },
               {
-                "$id": "121",
+                "$id": "114",
                 "$type": "GrowableStructure, Assembly-CSharp",
-                "age": 5.337999,
+                "age": 5.33843327,
                 "currentStage": 3,
                 "hasProduced": true,
                 "produceCountdown": 0.0,
-                "ID": 502,
+                "ID": "tree",
                 "buildID": 0,
-                "_city": {
-                  "$ref": "103"
-                },
                 "_health": 0.0,
                 "rotated": 0,
-                "buildInWilderniss": false,
+                "buildInWilderniss": true,
                 "isActive": true,
                 "Output": [
                   {
-                    "$id": "122",
-                    "ID": 1,
+                    "$id": "115",
+                    "ID": "wood",
                     "count": 1
                   }
                 ],
                 "BuildTile": {
-                  "$id": "123",
+                  "$id": "116",
                   "$type": "LandTile, Assembly-CSharp",
-                  "x": 284,
-                  "y": 276,
                   "_type": 4,
+                  "x": 73,
+                  "y": 438,
                   "SpriteName": "cold_dirt_1"
                 }
               },
               {
-                "$id": "124",
+                "$id": "117",
                 "$type": "GrowableStructure, Assembly-CSharp",
-                "age": 5.337999,
+                "age": 5.33843327,
                 "currentStage": 3,
                 "hasProduced": true,
                 "produceCountdown": 0.0,
-                "ID": 502,
+                "ID": "tree",
                 "buildID": 0,
-                "_city": {
-                  "$ref": "103"
-                },
                 "_health": 0.0,
                 "rotated": 0,
-                "buildInWilderniss": false,
+                "buildInWilderniss": true,
                 "isActive": true,
                 "Output": [
                   {
-                    "$id": "125",
-                    "ID": 1,
+                    "$id": "118",
+                    "ID": "wood",
                     "count": 1
                   }
                 ],
                 "BuildTile": {
-                  "$id": "126",
+                  "$id": "119",
                   "$type": "LandTile, Assembly-CSharp",
-                  "x": 284,
-                  "y": 277,
                   "_type": 4,
+                  "x": 73,
+                  "y": 439,
                   "SpriteName": "cold_dirt_1"
                 }
               },
               {
-                "$id": "127",
+                "$id": "120",
                 "$type": "GrowableStructure, Assembly-CSharp",
-                "age": 5.337999,
+                "age": 5.33843327,
                 "currentStage": 3,
                 "hasProduced": true,
                 "produceCountdown": 0.0,
-                "ID": 502,
+                "ID": "tree",
                 "buildID": 0,
-                "_city": {
-                  "$ref": "103"
-                },
                 "_health": 0.0,
                 "rotated": 0,
-                "buildInWilderniss": false,
+                "buildInWilderniss": true,
                 "isActive": true,
                 "Output": [
                   {
-                    "$id": "128",
-                    "ID": 1,
+                    "$id": "121",
+                    "ID": "wood",
                     "count": 1
                   }
                 ],
                 "BuildTile": {
-                  "$id": "129",
+                  "$id": "122",
                   "$type": "LandTile, Assembly-CSharp",
-                  "x": 284,
-                  "y": 278,
                   "_type": 4,
+                  "x": 73,
+                  "y": 440,
                   "SpriteName": "cold_dirt_0"
                 }
               },
               {
-                "$id": "130",
+                "$id": "123",
                 "$type": "GrowableStructure, Assembly-CSharp",
-                "age": 5.337999,
+                "age": 5.33843327,
                 "currentStage": 3,
                 "hasProduced": true,
                 "produceCountdown": 0.0,
-                "ID": 502,
+                "ID": "tree",
                 "buildID": 0,
-                "_city": {
-                  "$ref": "103"
-                },
                 "_health": 0.0,
                 "rotated": 0,
-                "buildInWilderniss": false,
+                "buildInWilderniss": true,
                 "isActive": true,
                 "Output": [
                   {
-                    "$id": "131",
-                    "ID": 1,
+                    "$id": "124",
+                    "ID": "wood",
                     "count": 1
                   }
                 ],
                 "BuildTile": {
-                  "$id": "132",
+                  "$id": "125",
                   "$type": "LandTile, Assembly-CSharp",
-                  "x": 284,
-                  "y": 279,
                   "_type": 4,
+                  "x": 73,
+                  "y": 441,
                   "SpriteName": "cold_dirt_0"
                 }
               }
@@ -798,911 +675,1606 @@
             "useTickTimer": 0.0,
             "_name": "",
             "island": {
-              "$ref": "102"
-            },
-            "PopulationLevels": [
-              {
-                "$id": "133",
-                "criticalMissingNeed": false,
-                "Level": 0,
-                "NeedGroupList": [
-                  {
-                    "$ref": "94"
-                  },
-                  {
-                    "$ref": "97"
-                  }
-                ],
-                "taxPercantage": 1.0,
-                "city": {
-                  "$ref": "103"
-                }
-              },
-              {
-                "$id": "134",
-                "criticalMissingNeed": false,
-                "Level": 1,
-                "previousLevel": {
-                  "$ref": "133"
-                },
-                "taxPercantage": 1.0,
-                "city": {
-                  "$ref": "103"
-                }
-              },
-              {
-                "$id": "135",
-                "criticalMissingNeed": false,
-                "Level": 2,
-                "previousLevel": {
-                  "$ref": "134"
-                },
-                "taxPercantage": 1.0,
-                "city": {
-                  "$ref": "103"
-                }
-              },
-              {
-                "$id": "136",
-                "criticalMissingNeed": false,
-                "Level": 3,
-                "previousLevel": {
-                  "$ref": "135"
-                },
-                "taxPercantage": 1.0,
-                "city": {
-                  "$ref": "103"
-                }
-              }
-            ]
-          },
+              "$ref": "95"
+            }
+          }
+        ],
+        "Climate": 0,
+        "Ressources": {
+          "$id": "126"
+        },
+        "StartTile": {
+          "$id": "127",
+          "$type": "LandTile, Assembly-CSharp",
+          "_type": 1,
+          "x": 47,
+          "y": 433,
+          "SpriteName": "shore_NE"
+        }
+      },
+      {
+        "$id": "128",
+        "Cities": [
           {
-            "$id": "137",
-            "AutoUpgradeHomes": false,
-            "playerNumber": 0,
+            "$id": "129",
+            "autoUpgradeHomes": false,
+            "playerNumber": -1,
             "inventory": {
-              "$id": "138",
-              "$type": "CityInventory, Assembly-CSharp",
+              "$id": "130",
               "MaxStackSize": 50,
               "Items": {
-                "$id": "139",
-                "1": {
-                  "$id": "140",
-                  "ID": 1,
-                  "count": 0
-                },
-                "2": {
-                  "$id": "141",
-                  "ID": 2,
-                  "count": 0
-                },
-                "3": {
-                  "$id": "142",
-                  "ID": 3,
-                  "count": 0
-                },
-                "4": {
-                  "$id": "143",
-                  "ID": 4,
-                  "count": 0
-                },
-                "5": {
-                  "$id": "144",
-                  "ID": 5,
-                  "count": 0
-                },
-                "6": {
-                  "$id": "145",
-                  "ID": 6,
-                  "count": 0
-                },
-                "7": {
-                  "$id": "146",
-                  "ID": 7,
-                  "count": 0
-                },
-                "101": {
-                  "$id": "147",
-                  "ID": 101,
-                  "count": 0
-                },
-                "102": {
-                  "$id": "148",
-                  "ID": 102,
-                  "count": 0
-                },
-                "103": {
-                  "$id": "149",
-                  "ID": 103,
-                  "count": 0
-                },
-                "104": {
-                  "$id": "150",
-                  "ID": 104,
-                  "count": 0
-                },
-                "105": {
-                  "$id": "151",
-                  "ID": 105,
-                  "count": 0
-                },
-                "106": {
-                  "$id": "152",
-                  "ID": 106,
-                  "count": 0
-                },
-                "107": {
-                  "$id": "153",
-                  "ID": 107,
-                  "count": 0
-                },
-                "108": {
-                  "$id": "154",
-                  "ID": 108,
-                  "count": 0
-                },
-                "109": {
-                  "$id": "155",
-                  "ID": 109,
-                  "count": 0
-                },
-                "201": {
-                  "$id": "156",
-                  "ID": 201,
-                  "count": 0
-                },
-                "202": {
-                  "$id": "157",
-                  "ID": 202,
-                  "count": 0
-                },
-                "203": {
-                  "$id": "158",
-                  "ID": 203,
-                  "count": 0
-                },
-                "204": {
-                  "$id": "159",
-                  "ID": 204,
-                  "count": 0
-                },
-                "205": {
-                  "$id": "160",
-                  "ID": 205,
-                  "count": 0
-                },
-                "206": {
-                  "$id": "161",
-                  "ID": 206,
-                  "count": 0
-                },
-                "207": {
-                  "$id": "162",
-                  "ID": 207,
-                  "count": 0
-                },
-                "208": {
-                  "$id": "163",
-                  "ID": 208,
-                  "count": 0
-                },
-                "209": {
-                  "$id": "164",
-                  "ID": 209,
-                  "count": 0
-                },
-                "210": {
-                  "$id": "165",
-                  "ID": 210,
-                  "count": 0
-                },
-                "211": {
-                  "$id": "166",
-                  "ID": 211,
-                  "count": 0
-                },
-                "212": {
-                  "$id": "167",
-                  "ID": 212,
-                  "count": 0
-                },
-                "213": {
-                  "$id": "168",
-                  "ID": 213,
-                  "count": 0
-                },
-                "214": {
-                  "$id": "169",
-                  "ID": 214,
-                  "count": 0
-                },
-                "215": {
-                  "$id": "170",
-                  "ID": 215,
-                  "count": 0
-                },
-                "216": {
-                  "$id": "171",
-                  "ID": 216,
-                  "count": 0
-                },
-                "217": {
-                  "$id": "172",
-                  "ID": 217,
-                  "count": 0
-                },
-                "218": {
-                  "$id": "173",
-                  "ID": 218,
-                  "count": 0
-                },
-                "219": {
-                  "$id": "174",
-                  "ID": 219,
-                  "count": 0
-                },
-                "220": {
-                  "$id": "175",
-                  "ID": 220,
-                  "count": 0
-                },
-                "301": {
-                  "$id": "176",
-                  "ID": 301,
-                  "count": 0
-                },
-                "302": {
-                  "$id": "177",
-                  "ID": 302,
-                  "count": 0
-                },
-                "303": {
-                  "$id": "178",
-                  "ID": 303,
-                  "count": 0
-                },
-                "305": {
-                  "$id": "179",
-                  "ID": 305,
-                  "count": 0
-                },
-                "306": {
-                  "$id": "180",
-                  "ID": 306,
-                  "count": 0
-                },
-                "307": {
-                  "$id": "181",
-                  "ID": 307,
-                  "count": 0
-                },
-                "308": {
-                  "$id": "182",
-                  "ID": 308,
-                  "count": 0
-                },
-                "309": {
-                  "$id": "183",
-                  "ID": 309,
-                  "count": 0
-                },
-                "310": {
-                  "$id": "184",
-                  "ID": 310,
-                  "count": 0
-                },
-                "311": {
-                  "$id": "185",
-                  "ID": 311,
-                  "count": 0
-                },
-                "312": {
-                  "$id": "186",
-                  "ID": 312,
-                  "count": 0
-                },
-                "313": {
-                  "$id": "187",
-                  "ID": 313,
-                  "count": 0
-                },
-                "314": {
-                  "$id": "188",
-                  "ID": 314,
-                  "count": 0
-                },
-                "315": {
-                  "$id": "189",
-                  "ID": 315,
-                  "count": 0
-                },
-                "316": {
-                  "$id": "190",
-                  "ID": 316,
-                  "count": 0
-                },
-                "317": {
-                  "$id": "191",
-                  "ID": 317,
-                  "count": 0
-                },
-                "318": {
-                  "$id": "192",
-                  "ID": 318,
-                  "count": 0
-                },
-                "319": {
-                  "$id": "193",
-                  "ID": 319,
-                  "count": 0
-                },
-                "320": {
-                  "$id": "194",
-                  "ID": 320,
-                  "count": 0
-                },
-                "321": {
-                  "$id": "195",
-                  "ID": 321,
-                  "count": 0
-                },
-                "322": {
-                  "$id": "196",
-                  "ID": 322,
-                  "count": 0
-                },
-                "323": {
-                  "$id": "197",
-                  "ID": 323,
-                  "count": 0
-                },
-                "401": {
-                  "$id": "198",
-                  "ID": 401,
-                  "count": 0
-                },
-                "402": {
-                  "$id": "199",
-                  "ID": 402,
-                  "count": 0
-                },
-                "403": {
-                  "$id": "200",
-                  "ID": 403,
-                  "count": 0
-                },
-                "404": {
-                  "$id": "201",
-                  "ID": 404,
-                  "count": 0
-                },
-                "405": {
-                  "$id": "202",
-                  "ID": 405,
-                  "count": 0
-                },
-                "406": {
-                  "$id": "203",
-                  "ID": 406,
-                  "count": 0
-                },
-                "407": {
-                  "$id": "204",
-                  "ID": 407,
-                  "count": 0
-                },
-                "408": {
-                  "$id": "205",
-                  "ID": 408,
-                  "count": 0
-                },
-                "409": {
-                  "$id": "206",
-                  "ID": 409,
-                  "count": 0
-                },
-                "410": {
-                  "$id": "207",
-                  "ID": 410,
-                  "count": 0
-                },
-                "411": {
-                  "$id": "208",
-                  "ID": 411,
-                  "count": 0
-                },
-                "412": {
-                  "$id": "209",
-                  "ID": 412,
-                  "count": 0
-                },
-                "413": {
-                  "$id": "210",
-                  "ID": 413,
-                  "count": 0
-                },
-                "414": {
-                  "$id": "211",
-                  "ID": 414,
-                  "count": 0
-                },
-                "415": {
-                  "$id": "212",
-                  "ID": 415,
-                  "count": 0
-                },
-                "416": {
-                  "$id": "213",
-                  "ID": 416,
-                  "count": 0
-                },
-                "417": {
-                  "$id": "214",
-                  "ID": 417,
-                  "count": 0
-                },
-                "418": {
-                  "$id": "215",
-                  "ID": 418,
-                  "count": 0
-                },
-                "1001": {
-                  "$id": "216",
-                  "ID": 1001,
-                  "count": 0
-                },
-                "1002": {
-                  "$id": "217",
-                  "ID": 1002,
-                  "count": 0
-                },
-                "1003": {
-                  "$id": "218",
-                  "ID": 1003,
-                  "count": 0
-                },
-                "1004": {
-                  "$id": "219",
-                  "ID": 1004,
-                  "count": 0
-                },
-                "1005": {
-                  "$id": "220",
-                  "ID": 1005,
-                  "count": 0
-                },
-                "1006": {
-                  "$id": "221",
-                  "ID": 1006,
-                  "count": 0
-                },
-                "1007": {
-                  "$id": "222",
-                  "ID": 1007,
-                  "count": 0
-                },
-                "1008": {
-                  "$id": "223",
-                  "ID": 1008,
-                  "count": 0
-                }
+                "$id": "131"
               },
-              "NumberOfSpaces": -1
+              "NumberOfSpaces": 0
             },
-            "myStructures": [
-              {
-                "$id": "224",
-                "$type": "WarehouseStructure, Assembly-CSharp",
-                "level": 1,
-                "capturedProgress": 0.0,
-                "myWorker": [],
-                "produceCountdown": 0.0,
-                "ID": 1,
-                "buildID": 0,
-                "_city": {
-                  "$ref": "137"
-                },
-                "_health": 1000.0,
-                "rotated": 0,
-                "buildInWilderniss": false,
-                "isActive": true,
-                "BuildTile": {
-                  "$id": "225",
-                  "$type": "LandTile, Assembly-CSharp",
-                  "x": 258,
-                  "y": 273,
-                  "_type": 1,
-                  "SpriteName": "shore_NS_E"
-                }
+            "structures": [],
+            "useTickTimer": 0.0,
+            "_name": "",
+            "island": {
+              "$ref": "128"
+            }
+          }
+        ],
+        "Climate": 0,
+        "Ressources": {
+          "$id": "132"
+        },
+        "StartTile": {
+          "$id": "133",
+          "$type": "LandTile, Assembly-CSharp",
+          "_type": 1,
+          "x": 277,
+          "y": 325,
+          "SpriteName": "shore_N_E"
+        }
+      },
+      {
+        "$id": "134",
+        "Cities": [
+          {
+            "$id": "135",
+            "autoUpgradeHomes": false,
+            "playerNumber": -1,
+            "inventory": {
+              "$id": "136",
+              "MaxStackSize": 50,
+              "Items": {
+                "$id": "137"
               },
+              "NumberOfSpaces": 0
+            },
+            "structures": [
               {
-                "$id": "226",
-                "$type": "ServiceStructure, Assembly-CSharp",
-                "ID": 301,
-                "buildID": 1,
-                "_city": {
-                  "$ref": "137"
-                },
+                "$id": "138",
+                "$type": "GrowableStructure, Assembly-CSharp",
+                "age": 5.34333324,
+                "currentStage": 3,
+                "hasProduced": true,
+                "produceCountdown": 0.0,
+                "ID": "tree",
+                "buildID": 0,
                 "_health": 0.0,
                 "rotated": 0,
-                "buildInWilderniss": false,
+                "buildInWilderniss": true,
                 "isActive": true,
+                "Output": [
+                  {
+                    "$id": "139",
+                    "ID": "wood",
+                    "count": 1
+                  }
+                ],
+                "BuildTile": {
+                  "$id": "140",
+                  "$type": "LandTile, Assembly-CSharp",
+                  "_type": 4,
+                  "x": 365,
+                  "y": 229,
+                  "SpriteName": "middle_dirt_0"
+                }
+              },
+              {
+                "$id": "141",
+                "$type": "GrowableStructure, Assembly-CSharp",
+                "age": 8.01,
+                "currentStage": 3,
+                "hasProduced": true,
+                "produceCountdown": 0.0,
+                "ID": "tree",
+                "buildID": 0,
+                "_health": 0.0,
+                "rotated": 0,
+                "buildInWilderniss": true,
+                "isActive": true,
+                "Output": [
+                  {
+                    "$id": "142",
+                    "ID": "wood",
+                    "count": 1
+                  }
+                ],
+                "BuildTile": {
+                  "$id": "143",
+                  "$type": "LandTile, Assembly-CSharp",
+                  "_type": 4,
+                  "x": 366,
+                  "y": 227,
+                  "SpriteName": "middle_dirt_1"
+                }
+              },
+              {
+                "$id": "144",
+                "$type": "GrowableStructure, Assembly-CSharp",
+                "age": 5.34333324,
+                "currentStage": 3,
+                "hasProduced": true,
+                "produceCountdown": 0.0,
+                "ID": "tree",
+                "buildID": 0,
+                "_health": 0.0,
+                "rotated": 0,
+                "buildInWilderniss": true,
+                "isActive": true,
+                "Output": [
+                  {
+                    "$id": "145",
+                    "ID": "wood",
+                    "count": 1
+                  }
+                ],
+                "BuildTile": {
+                  "$id": "146",
+                  "$type": "LandTile, Assembly-CSharp",
+                  "_type": 4,
+                  "x": 367,
+                  "y": 233,
+                  "SpriteName": "middle_dirt_1"
+                }
+              },
+              {
+                "$id": "147",
+                "$type": "GrowableStructure, Assembly-CSharp",
+                "age": 5.33718252,
+                "currentStage": 3,
+                "hasProduced": true,
+                "produceCountdown": 0.0,
+                "ID": "tree",
+                "buildID": 0,
+                "_health": 0.0,
+                "rotated": 0,
+                "buildInWilderniss": true,
+                "isActive": true,
+                "Output": [
+                  {
+                    "$id": "148",
+                    "ID": "wood",
+                    "count": 1
+                  }
+                ],
+                "BuildTile": {
+                  "$id": "149",
+                  "$type": "LandTile, Assembly-CSharp",
+                  "_type": 4,
+                  "x": 369,
+                  "y": 216,
+                  "SpriteName": "middle_dirt_0"
+                }
+              },
+              {
+                "$id": "150",
+                "$type": "GrowableStructure, Assembly-CSharp",
+                "age": 8.01,
+                "currentStage": 3,
+                "hasProduced": true,
+                "produceCountdown": 0.0,
+                "ID": "tree",
+                "buildID": 0,
+                "_health": 0.0,
+                "rotated": 0,
+                "buildInWilderniss": true,
+                "isActive": true,
+                "Output": [
+                  {
+                    "$id": "151",
+                    "ID": "wood",
+                    "count": 1
+                  }
+                ],
+                "BuildTile": {
+                  "$id": "152",
+                  "$type": "LandTile, Assembly-CSharp",
+                  "_type": 4,
+                  "x": 369,
+                  "y": 227,
+                  "SpriteName": "middle_dirt_0"
+                }
+              },
+              {
+                "$id": "153",
+                "$type": "GrowableStructure, Assembly-CSharp",
+                "age": 5.33718252,
+                "currentStage": 3,
+                "hasProduced": true,
+                "produceCountdown": 0.0,
+                "ID": "tree",
+                "buildID": 0,
+                "_health": 0.0,
+                "rotated": 0,
+                "buildInWilderniss": true,
+                "isActive": true,
+                "Output": [
+                  {
+                    "$id": "154",
+                    "ID": "wood",
+                    "count": 1
+                  }
+                ],
+                "BuildTile": {
+                  "$id": "155",
+                  "$type": "LandTile, Assembly-CSharp",
+                  "_type": 4,
+                  "x": 369,
+                  "y": 231,
+                  "SpriteName": "middle_dirt_1"
+                }
+              },
+              {
+                "$id": "156",
+                "$type": "GrowableStructure, Assembly-CSharp",
+                "age": 5.34333324,
+                "currentStage": 3,
+                "hasProduced": true,
+                "produceCountdown": 0.0,
+                "ID": "tree",
+                "buildID": 0,
+                "_health": 0.0,
+                "rotated": 0,
+                "buildInWilderniss": true,
+                "isActive": true,
+                "Output": [
+                  {
+                    "$id": "157",
+                    "ID": "wood",
+                    "count": 1
+                  }
+                ],
+                "BuildTile": {
+                  "$id": "158",
+                  "$type": "LandTile, Assembly-CSharp",
+                  "_type": 4,
+                  "x": 370,
+                  "y": 233,
+                  "SpriteName": "middle_dirt_1"
+                }
+              },
+              {
+                "$id": "159",
+                "$type": "GrowableStructure, Assembly-CSharp",
+                "age": 8.01,
+                "currentStage": 3,
+                "hasProduced": true,
+                "produceCountdown": 0.0,
+                "ID": "tree",
+                "buildID": 0,
+                "_health": 0.0,
+                "rotated": 0,
+                "buildInWilderniss": true,
+                "isActive": true,
+                "Output": [
+                  {
+                    "$id": "160",
+                    "ID": "wood",
+                    "count": 1
+                  }
+                ],
+                "BuildTile": {
+                  "$id": "161",
+                  "$type": "LandTile, Assembly-CSharp",
+                  "_type": 4,
+                  "x": 370,
+                  "y": 235,
+                  "SpriteName": "middle_dirt_1"
+                }
+              },
+              {
+                "$id": "162",
+                "$type": "GrowableStructure, Assembly-CSharp",
+                "age": 8.01,
+                "currentStage": 3,
+                "hasProduced": true,
+                "produceCountdown": 0.0,
+                "ID": "tree",
+                "buildID": 0,
+                "_health": 0.0,
+                "rotated": 0,
+                "buildInWilderniss": true,
+                "isActive": true,
+                "Output": [
+                  {
+                    "$id": "163",
+                    "ID": "wood",
+                    "count": 1
+                  }
+                ],
+                "BuildTile": {
+                  "$id": "164",
+                  "$type": "LandTile, Assembly-CSharp",
+                  "_type": 4,
+                  "x": 370,
+                  "y": 236,
+                  "SpriteName": "middle_dirt_1"
+                }
+              },
+              {
+                "$id": "165",
+                "$type": "GrowableStructure, Assembly-CSharp",
+                "age": 8.01,
+                "currentStage": 3,
+                "hasProduced": true,
+                "produceCountdown": 0.0,
+                "ID": "tree",
+                "buildID": 0,
+                "_health": 0.0,
+                "rotated": 0,
+                "buildInWilderniss": true,
+                "isActive": true,
+                "Output": [
+                  {
+                    "$id": "166",
+                    "ID": "wood",
+                    "count": 1
+                  }
+                ],
+                "BuildTile": {
+                  "$id": "167",
+                  "$type": "LandTile, Assembly-CSharp",
+                  "_type": 4,
+                  "x": 372,
+                  "y": 214,
+                  "SpriteName": "middle_dirt_0"
+                }
+              },
+              {
+                "$id": "168",
+                "$type": "GrowableStructure, Assembly-CSharp",
+                "age": 8.01,
+                "currentStage": 3,
+                "hasProduced": true,
+                "produceCountdown": 0.0,
+                "ID": "tree",
+                "buildID": 0,
+                "_health": 0.0,
+                "rotated": 0,
+                "buildInWilderniss": true,
+                "isActive": true,
+                "Output": [
+                  {
+                    "$id": "169",
+                    "ID": "wood",
+                    "count": 1
+                  }
+                ],
+                "BuildTile": {
+                  "$id": "170",
+                  "$type": "LandTile, Assembly-CSharp",
+                  "_type": 4,
+                  "x": 372,
+                  "y": 236,
+                  "SpriteName": "middle_dirt_1"
+                }
+              },
+              {
+                "$id": "171",
+                "$type": "GrowableStructure, Assembly-CSharp",
+                "age": 5.33718252,
+                "currentStage": 3,
+                "hasProduced": true,
+                "produceCountdown": 0.0,
+                "ID": "tree",
+                "buildID": 0,
+                "_health": 0.0,
+                "rotated": 0,
+                "buildInWilderniss": true,
+                "isActive": true,
+                "Output": [
+                  {
+                    "$id": "172",
+                    "ID": "wood",
+                    "count": 1
+                  }
+                ],
+                "BuildTile": {
+                  "$id": "173",
+                  "$type": "LandTile, Assembly-CSharp",
+                  "_type": 4,
+                  "x": 372,
+                  "y": 241,
+                  "SpriteName": "middle_dirt_1"
+                }
+              },
+              {
+                "$id": "174",
+                "$type": "GrowableStructure, Assembly-CSharp",
+                "age": 5.33718252,
+                "currentStage": 3,
+                "hasProduced": true,
+                "produceCountdown": 0.0,
+                "ID": "tree",
+                "buildID": 0,
+                "_health": 0.0,
+                "rotated": 0,
+                "buildInWilderniss": true,
+                "isActive": true,
+                "Output": [
+                  {
+                    "$id": "175",
+                    "ID": "wood",
+                    "count": 1
+                  }
+                ],
+                "BuildTile": {
+                  "$id": "176",
+                  "$type": "LandTile, Assembly-CSharp",
+                  "_type": 4,
+                  "x": 373,
+                  "y": 216,
+                  "SpriteName": "middle_dirt_0"
+                }
+              },
+              {
+                "$id": "177",
+                "$type": "GrowableStructure, Assembly-CSharp",
+                "age": 5.34333324,
+                "currentStage": 3,
+                "hasProduced": true,
+                "produceCountdown": 0.0,
+                "ID": "tree",
+                "buildID": 0,
+                "_health": 0.0,
+                "rotated": 0,
+                "buildInWilderniss": true,
+                "isActive": true,
+                "Output": [
+                  {
+                    "$id": "178",
+                    "ID": "wood",
+                    "count": 1
+                  }
+                ],
+                "BuildTile": {
+                  "$id": "179",
+                  "$type": "LandTile, Assembly-CSharp",
+                  "_type": 4,
+                  "x": 373,
+                  "y": 218,
+                  "SpriteName": "middle_dirt_1"
+                }
+              },
+              {
+                "$id": "180",
+                "$type": "GrowableStructure, Assembly-CSharp",
+                "age": 5.33843327,
+                "currentStage": 3,
+                "hasProduced": true,
+                "produceCountdown": 0.0,
+                "ID": "tree",
+                "buildID": 0,
+                "_health": 0.0,
+                "rotated": 0,
+                "buildInWilderniss": true,
+                "isActive": true,
+                "Output": [
+                  {
+                    "$id": "181",
+                    "ID": "wood",
+                    "count": 1
+                  }
+                ],
+                "BuildTile": {
+                  "$id": "182",
+                  "$type": "LandTile, Assembly-CSharp",
+                  "_type": 4,
+                  "x": 373,
+                  "y": 235,
+                  "SpriteName": "middle_dirt_0"
+                }
+              },
+              {
+                "$id": "183",
+                "$type": "GrowableStructure, Assembly-CSharp",
+                "age": 8.01,
+                "currentStage": 3,
+                "hasProduced": true,
+                "produceCountdown": 0.0,
+                "ID": "tree",
+                "buildID": 0,
+                "_health": 0.0,
+                "rotated": 0,
+                "buildInWilderniss": true,
+                "isActive": true,
+                "Output": [
+                  {
+                    "$id": "184",
+                    "ID": "wood",
+                    "count": 1
+                  }
+                ],
+                "BuildTile": {
+                  "$id": "185",
+                  "$type": "LandTile, Assembly-CSharp",
+                  "_type": 4,
+                  "x": 373,
+                  "y": 241,
+                  "SpriteName": "middle_dirt_1"
+                }
+              },
+              {
+                "$id": "186",
+                "$type": "GrowableStructure, Assembly-CSharp",
+                "age": 5.34333324,
+                "currentStage": 3,
+                "hasProduced": true,
+                "produceCountdown": 0.0,
+                "ID": "tree",
+                "buildID": 0,
+                "_health": 0.0,
+                "rotated": 0,
+                "buildInWilderniss": true,
+                "isActive": true,
+                "Output": [
+                  {
+                    "$id": "187",
+                    "ID": "wood",
+                    "count": 1
+                  }
+                ],
+                "BuildTile": {
+                  "$id": "188",
+                  "$type": "LandTile, Assembly-CSharp",
+                  "_type": 4,
+                  "x": 375,
+                  "y": 214,
+                  "SpriteName": "middle_dirt_0"
+                }
+              },
+              {
+                "$id": "189",
+                "$type": "GrowableStructure, Assembly-CSharp",
+                "age": 5.34333324,
+                "currentStage": 3,
+                "hasProduced": true,
+                "produceCountdown": 0.0,
+                "ID": "tree",
+                "buildID": 0,
+                "_health": 0.0,
+                "rotated": 0,
+                "buildInWilderniss": true,
+                "isActive": true,
+                "Output": [
+                  {
+                    "$id": "190",
+                    "ID": "wood",
+                    "count": 1
+                  }
+                ],
+                "BuildTile": {
+                  "$id": "191",
+                  "$type": "LandTile, Assembly-CSharp",
+                  "_type": 4,
+                  "x": 375,
+                  "y": 231,
+                  "SpriteName": "middle_dirt_0"
+                }
+              },
+              {
+                "$id": "192",
+                "$type": "GrowableStructure, Assembly-CSharp",
+                "age": 5.33718252,
+                "currentStage": 3,
+                "hasProduced": true,
+                "produceCountdown": 0.0,
+                "ID": "tree",
+                "buildID": 0,
+                "_health": 0.0,
+                "rotated": 0,
+                "buildInWilderniss": true,
+                "isActive": true,
+                "Output": [
+                  {
+                    "$id": "193",
+                    "ID": "wood",
+                    "count": 1
+                  }
+                ],
+                "BuildTile": {
+                  "$id": "194",
+                  "$type": "LandTile, Assembly-CSharp",
+                  "_type": 4,
+                  "x": 375,
+                  "y": 242,
+                  "SpriteName": "middle_dirt_0"
+                }
+              },
+              {
+                "$id": "195",
+                "$type": "GrowableStructure, Assembly-CSharp",
+                "age": 5.34333324,
+                "currentStage": 3,
+                "hasProduced": true,
+                "produceCountdown": 0.0,
+                "ID": "tree",
+                "buildID": 0,
+                "_health": 0.0,
+                "rotated": 0,
+                "buildInWilderniss": true,
+                "isActive": true,
+                "Output": [
+                  {
+                    "$id": "196",
+                    "ID": "wood",
+                    "count": 1
+                  }
+                ],
+                "BuildTile": {
+                  "$id": "197",
+                  "$type": "LandTile, Assembly-CSharp",
+                  "_type": 4,
+                  "x": 376,
+                  "y": 208,
+                  "SpriteName": "middle_dirt_1"
+                }
+              },
+              {
+                "$id": "198",
+                "$type": "GrowableStructure, Assembly-CSharp",
+                "age": 5.34333324,
+                "currentStage": 3,
+                "hasProduced": true,
+                "produceCountdown": 0.0,
+                "ID": "tree",
+                "buildID": 0,
+                "_health": 0.0,
+                "rotated": 0,
+                "buildInWilderniss": true,
+                "isActive": true,
+                "Output": [
+                  {
+                    "$id": "199",
+                    "ID": "wood",
+                    "count": 1
+                  }
+                ],
+                "BuildTile": {
+                  "$id": "200",
+                  "$type": "LandTile, Assembly-CSharp",
+                  "_type": 4,
+                  "x": 376,
+                  "y": 215,
+                  "SpriteName": "middle_dirt_0"
+                }
+              },
+              {
+                "$id": "201",
+                "$type": "GrowableStructure, Assembly-CSharp",
+                "age": 5.33718252,
+                "currentStage": 3,
+                "hasProduced": true,
+                "produceCountdown": 0.0,
+                "ID": "tree",
+                "buildID": 0,
+                "_health": 0.0,
+                "rotated": 0,
+                "buildInWilderniss": true,
+                "isActive": true,
+                "Output": [
+                  {
+                    "$id": "202",
+                    "ID": "wood",
+                    "count": 1
+                  }
+                ],
+                "BuildTile": {
+                  "$id": "203",
+                  "$type": "LandTile, Assembly-CSharp",
+                  "_type": 4,
+                  "x": 376,
+                  "y": 224,
+                  "SpriteName": "middle_dirt_0"
+                }
+              },
+              {
+                "$id": "204",
+                "$type": "GrowableStructure, Assembly-CSharp",
+                "age": 5.34333324,
+                "currentStage": 3,
+                "hasProduced": true,
+                "produceCountdown": 0.0,
+                "ID": "tree",
+                "buildID": 0,
+                "_health": 0.0,
+                "rotated": 0,
+                "buildInWilderniss": true,
+                "isActive": true,
+                "Output": [
+                  {
+                    "$id": "205",
+                    "ID": "wood",
+                    "count": 1
+                  }
+                ],
+                "BuildTile": {
+                  "$id": "206",
+                  "$type": "LandTile, Assembly-CSharp",
+                  "_type": 4,
+                  "x": 376,
+                  "y": 233,
+                  "SpriteName": "middle_dirt_0"
+                }
+              },
+              {
+                "$id": "207",
+                "$type": "GrowableStructure, Assembly-CSharp",
+                "age": 5.33718252,
+                "currentStage": 3,
+                "hasProduced": true,
+                "produceCountdown": 0.0,
+                "ID": "tree",
+                "buildID": 0,
+                "_health": 0.0,
+                "rotated": 0,
+                "buildInWilderniss": true,
+                "isActive": true,
+                "Output": [
+                  {
+                    "$id": "208",
+                    "ID": "wood",
+                    "count": 1
+                  }
+                ],
+                "BuildTile": {
+                  "$id": "209",
+                  "$type": "LandTile, Assembly-CSharp",
+                  "_type": 4,
+                  "x": 376,
+                  "y": 242,
+                  "SpriteName": "middle_dirt_1"
+                }
+              },
+              {
+                "$id": "210",
+                "$type": "GrowableStructure, Assembly-CSharp",
+                "age": 5.34333324,
+                "currentStage": 3,
+                "hasProduced": true,
+                "produceCountdown": 0.0,
+                "ID": "tree",
+                "buildID": 0,
+                "_health": 0.0,
+                "rotated": 0,
+                "buildInWilderniss": true,
+                "isActive": true,
+                "Output": [
+                  {
+                    "$id": "211",
+                    "ID": "wood",
+                    "count": 1
+                  }
+                ],
+                "BuildTile": {
+                  "$id": "212",
+                  "$type": "LandTile, Assembly-CSharp",
+                  "_type": 4,
+                  "x": 377,
+                  "y": 209,
+                  "SpriteName": "middle_dirt_1"
+                }
+              },
+              {
+                "$id": "213",
+                "$type": "GrowableStructure, Assembly-CSharp",
+                "age": 5.33718252,
+                "currentStage": 3,
+                "hasProduced": true,
+                "produceCountdown": 0.0,
+                "ID": "tree",
+                "buildID": 0,
+                "_health": 0.0,
+                "rotated": 0,
+                "buildInWilderniss": true,
+                "isActive": true,
+                "Output": [
+                  {
+                    "$id": "214",
+                    "ID": "wood",
+                    "count": 1
+                  }
+                ],
+                "BuildTile": {
+                  "$id": "215",
+                  "$type": "LandTile, Assembly-CSharp",
+                  "_type": 4,
+                  "x": 377,
+                  "y": 213,
+                  "SpriteName": "middle_dirt_0"
+                }
+              },
+              {
+                "$id": "216",
+                "$type": "GrowableStructure, Assembly-CSharp",
+                "age": 5.33718252,
+                "currentStage": 3,
+                "hasProduced": true,
+                "produceCountdown": 0.0,
+                "ID": "tree",
+                "buildID": 0,
+                "_health": 0.0,
+                "rotated": 0,
+                "buildInWilderniss": true,
+                "isActive": true,
+                "Output": [
+                  {
+                    "$id": "217",
+                    "ID": "wood",
+                    "count": 1
+                  }
+                ],
+                "BuildTile": {
+                  "$id": "218",
+                  "$type": "LandTile, Assembly-CSharp",
+                  "_type": 4,
+                  "x": 377,
+                  "y": 235,
+                  "SpriteName": "middle_dirt_1"
+                }
+              },
+              {
+                "$id": "219",
+                "$type": "GrowableStructure, Assembly-CSharp",
+                "age": 5.33718252,
+                "currentStage": 3,
+                "hasProduced": true,
+                "produceCountdown": 0.0,
+                "ID": "tree",
+                "buildID": 0,
+                "_health": 0.0,
+                "rotated": 0,
+                "buildInWilderniss": true,
+                "isActive": true,
+                "Output": [
+                  {
+                    "$id": "220",
+                    "ID": "wood",
+                    "count": 1
+                  }
+                ],
+                "BuildTile": {
+                  "$id": "221",
+                  "$type": "LandTile, Assembly-CSharp",
+                  "_type": 4,
+                  "x": 378,
+                  "y": 224,
+                  "SpriteName": "middle_dirt_0"
+                }
+              },
+              {
+                "$id": "222",
+                "$type": "GrowableStructure, Assembly-CSharp",
+                "age": 5.33718252,
+                "currentStage": 3,
+                "hasProduced": true,
+                "produceCountdown": 0.0,
+                "ID": "tree",
+                "buildID": 0,
+                "_health": 0.0,
+                "rotated": 0,
+                "buildInWilderniss": true,
+                "isActive": true,
+                "Output": [
+                  {
+                    "$id": "223",
+                    "ID": "wood",
+                    "count": 1
+                  }
+                ],
+                "BuildTile": {
+                  "$id": "224",
+                  "$type": "LandTile, Assembly-CSharp",
+                  "_type": 4,
+                  "x": 378,
+                  "y": 227,
+                  "SpriteName": "middle_dirt_0"
+                }
+              },
+              {
+                "$id": "225",
+                "$type": "GrowableStructure, Assembly-CSharp",
+                "age": 5.33718252,
+                "currentStage": 3,
+                "hasProduced": true,
+                "produceCountdown": 0.0,
+                "ID": "tree",
+                "buildID": 0,
+                "_health": 0.0,
+                "rotated": 0,
+                "buildInWilderniss": true,
+                "isActive": true,
+                "Output": [
+                  {
+                    "$id": "226",
+                    "ID": "wood",
+                    "count": 1
+                  }
+                ],
                 "BuildTile": {
                   "$id": "227",
                   "$type": "LandTile, Assembly-CSharp",
-                  "x": 265,
-                  "y": 280,
                   "_type": 4,
-                  "SpriteName": "cold_dirt_0"
+                  "x": 379,
+                  "y": 210,
+                  "SpriteName": "middle_dirt_1"
                 }
               },
               {
                 "$id": "228",
-                "$type": "RoadStructure, Assembly-CSharp",
-                "ID": 101,
-                "buildID": 2,
-                "_city": {
-                  "$ref": "137"
-                },
+                "$type": "GrowableStructure, Assembly-CSharp",
+                "age": 5.34333324,
+                "currentStage": 3,
+                "hasProduced": true,
+                "produceCountdown": 0.0,
+                "ID": "tree",
+                "buildID": 0,
                 "_health": 0.0,
                 "rotated": 0,
-                "buildInWilderniss": false,
+                "buildInWilderniss": true,
                 "isActive": true,
+                "Output": [
+                  {
+                    "$id": "229",
+                    "ID": "wood",
+                    "count": 1
+                  }
+                ],
                 "BuildTile": {
-                  "$id": "229",
+                  "$id": "230",
                   "$type": "LandTile, Assembly-CSharp",
-                  "x": 266,
-                  "y": 280,
                   "_type": 4,
-                  "SpriteName": "cold_dirt_1"
+                  "x": 379,
+                  "y": 214,
+                  "SpriteName": "middle_dirt_1"
                 }
               },
               {
-                "$id": "230",
-                "$type": "RoadStructure, Assembly-CSharp",
-                "ID": 101,
-                "buildID": 3,
-                "_city": {
-                  "$ref": "137"
-                },
+                "$id": "231",
+                "$type": "GrowableStructure, Assembly-CSharp",
+                "age": 5.33843327,
+                "currentStage": 3,
+                "hasProduced": true,
+                "produceCountdown": 0.0,
+                "ID": "tree",
+                "buildID": 0,
                 "_health": 0.0,
                 "rotated": 0,
-                "buildInWilderniss": false,
+                "buildInWilderniss": true,
                 "isActive": true,
-                "BuildTile": {
-                  "$id": "231",
-                  "$type": "LandTile, Assembly-CSharp",
-                  "x": 267,
-                  "y": 280,
-                  "_type": 4,
-                  "SpriteName": "cold_dirt_1"
-                }
-              },
-              {
-                "$id": "232",
-                "$type": "RoadStructure, Assembly-CSharp",
-                "ID": 101,
-                "buildID": 4,
-                "_city": {
-                  "$ref": "137"
-                },
-                "_health": 0.0,
-                "rotated": 0,
-                "buildInWilderniss": false,
-                "isActive": true,
+                "Output": [
+                  {
+                    "$id": "232",
+                    "ID": "wood",
+                    "count": 1
+                  }
+                ],
                 "BuildTile": {
                   "$id": "233",
                   "$type": "LandTile, Assembly-CSharp",
-                  "x": 268,
-                  "y": 280,
                   "_type": 4,
-                  "SpriteName": "cold_dirt_1"
+                  "x": 379,
+                  "y": 225,
+                  "SpriteName": "middle_dirt_0"
                 }
               },
               {
                 "$id": "234",
-                "$type": "RoadStructure, Assembly-CSharp",
-                "ID": 101,
-                "buildID": 5,
-                "_city": {
-                  "$ref": "137"
-                },
+                "$type": "GrowableStructure, Assembly-CSharp",
+                "age": 8.01,
+                "currentStage": 3,
+                "hasProduced": true,
+                "produceCountdown": 0.0,
+                "ID": "tree",
+                "buildID": 0,
                 "_health": 0.0,
                 "rotated": 0,
-                "buildInWilderniss": false,
+                "buildInWilderniss": true,
                 "isActive": true,
+                "Output": [
+                  {
+                    "$id": "235",
+                    "ID": "wood",
+                    "count": 1
+                  }
+                ],
                 "BuildTile": {
-                  "$id": "235",
+                  "$id": "236",
                   "$type": "LandTile, Assembly-CSharp",
-                  "x": 269,
-                  "y": 280,
                   "_type": 4,
-                  "SpriteName": "cold_dirt_1"
+                  "x": 379,
+                  "y": 226,
+                  "SpriteName": "middle_dirt_0"
                 }
               },
               {
-                "$id": "236",
-                "$type": "HomeStructure, Assembly-CSharp",
-                "people": 0,
-                "decTimer": 0.0,
-                "incTimer": 0.0,
-                "isAbandoned": true,
-                "ID": 201,
-                "buildID": 6,
-                "_city": {
-                  "$ref": "137"
-                },
-                "_health": 50.0,
+                "$id": "237",
+                "$type": "GrowableStructure, Assembly-CSharp",
+                "age": 5.34333324,
+                "currentStage": 3,
+                "hasProduced": true,
+                "produceCountdown": 0.0,
+                "ID": "tree",
+                "buildID": 0,
+                "_health": 0.0,
                 "rotated": 0,
-                "buildInWilderniss": false,
+                "buildInWilderniss": true,
                 "isActive": true,
-                "BuildTile": {
-                  "$id": "237",
-                  "$type": "LandTile, Assembly-CSharp",
-                  "x": 270,
-                  "y": 280,
-                  "_type": 4,
-                  "SpriteName": "cold_dirt_0"
-                }
-              }
-            ],
-            "useTickTimer": 0.0,
-            "itemIDtoTradeItem": {
-              "$id": "238"
-            },
-            "_name": "<City>0",
-            "island": {
-              "$ref": "102"
-            },
-            "PopulationLevels": [
-              {
-                "$id": "239",
-                "criticalMissingNeed": false,
-                "Level": 0,
-                "NeedGroupList": [
+                "Output": [
                   {
-                    "$ref": "94"
-                  },
-                  {
-                    "$ref": "97"
+                    "$id": "238",
+                    "ID": "wood",
+                    "count": 1
                   }
                 ],
-                "taxPercantage": 1.0,
-                "city": {
-                  "$ref": "137"
+                "BuildTile": {
+                  "$id": "239",
+                  "$type": "LandTile, Assembly-CSharp",
+                  "_type": 4,
+                  "x": 380,
+                  "y": 222,
+                  "SpriteName": "middle_dirt_0"
                 }
               },
               {
                 "$id": "240",
-                "criticalMissingNeed": false,
-                "Level": 1,
-                "NeedGroupList": [],
-                "previousLevel": {
-                  "$ref": "239"
-                },
-                "taxPercantage": 1.0,
-                "city": {
-                  "$ref": "137"
-                }
-              },
-              {
-                "$id": "241",
-                "criticalMissingNeed": false,
-                "Level": 2,
-                "NeedGroupList": [],
-                "previousLevel": {
-                  "$ref": "240"
-                },
-                "taxPercantage": 1.0,
-                "city": {
-                  "$ref": "137"
-                }
-              },
-              {
-                "$id": "242",
-                "criticalMissingNeed": false,
-                "Level": 3,
-                "NeedGroupList": [],
-                "previousLevel": {
-                  "$ref": "241"
-                },
-                "taxPercantage": 1.0,
-                "city": {
-                  "$ref": "137"
-                }
-              }
-            ]
-          }
-        ],
-        "myClimate": 0,
-        "StartTile": {
-          "$id": "243",
-          "$type": "LandTile, Assembly-CSharp",
-          "x": 258,
-          "y": 271,
-          "_type": 1,
-          "SpriteName": "shore_NE_"
-        }
-      },
-      {
-        "$id": "244",
-        "myCities": [
-          {
-            "$id": "245",
-            "AutoUpgradeHomes": false,
-            "playerNumber": -1,
-            "inventory": {
-              "$id": "246",
-              "MaxStackSize": 50,
-              "Items": {
-                "$id": "247"
-              },
-              "NumberOfSpaces": 0
-            },
-            "myStructures": [],
-            "useTickTimer": 0.0,
-            "_name": "",
-            "island": {
-              "$ref": "244"
-            },
-            "PopulationLevels": [
-              {
-                "$id": "248",
-                "criticalMissingNeed": false,
-                "Level": 0,
-                "NeedGroupList": [
+                "$type": "GrowableStructure, Assembly-CSharp",
+                "age": 5.33718252,
+                "currentStage": 3,
+                "hasProduced": true,
+                "produceCountdown": 0.0,
+                "ID": "tree",
+                "buildID": 0,
+                "_health": 0.0,
+                "rotated": 0,
+                "buildInWilderniss": true,
+                "isActive": true,
+                "Output": [
                   {
-                    "$ref": "94"
-                  },
-                  {
-                    "$ref": "97"
+                    "$id": "241",
+                    "ID": "wood",
+                    "count": 1
                   }
                 ],
-                "taxPercantage": 1.0,
-                "city": {
-                  "$ref": "245"
+                "BuildTile": {
+                  "$id": "242",
+                  "$type": "LandTile, Assembly-CSharp",
+                  "_type": 4,
+                  "x": 381,
+                  "y": 207,
+                  "SpriteName": "middle_dirt_1"
+                }
+              },
+              {
+                "$id": "243",
+                "$type": "GrowableStructure, Assembly-CSharp",
+                "age": 8.01,
+                "currentStage": 3,
+                "hasProduced": true,
+                "produceCountdown": 0.0,
+                "ID": "tree",
+                "buildID": 0,
+                "_health": 0.0,
+                "rotated": 0,
+                "buildInWilderniss": true,
+                "isActive": true,
+                "Output": [
+                  {
+                    "$id": "244",
+                    "ID": "wood",
+                    "count": 1
+                  }
+                ],
+                "BuildTile": {
+                  "$id": "245",
+                  "$type": "LandTile, Assembly-CSharp",
+                  "_type": 4,
+                  "x": 381,
+                  "y": 216,
+                  "SpriteName": "middle_dirt_1"
+                }
+              },
+              {
+                "$id": "246",
+                "$type": "GrowableStructure, Assembly-CSharp",
+                "age": 8.01,
+                "currentStage": 3,
+                "hasProduced": true,
+                "produceCountdown": 0.0,
+                "ID": "tree",
+                "buildID": 0,
+                "_health": 0.0,
+                "rotated": 0,
+                "buildInWilderniss": true,
+                "isActive": true,
+                "Output": [
+                  {
+                    "$id": "247",
+                    "ID": "wood",
+                    "count": 1
+                  }
+                ],
+                "BuildTile": {
+                  "$id": "248",
+                  "$type": "LandTile, Assembly-CSharp",
+                  "_type": 4,
+                  "x": 381,
+                  "y": 227,
+                  "SpriteName": "middle_dirt_0"
                 }
               },
               {
                 "$id": "249",
-                "criticalMissingNeed": false,
-                "Level": 1,
-                "previousLevel": {
-                  "$ref": "248"
-                },
-                "taxPercantage": 1.0,
-                "city": {
-                  "$ref": "245"
+                "$type": "GrowableStructure, Assembly-CSharp",
+                "age": 5.33718252,
+                "currentStage": 3,
+                "hasProduced": true,
+                "produceCountdown": 0.0,
+                "ID": "tree",
+                "buildID": 0,
+                "_health": 0.0,
+                "rotated": 0,
+                "buildInWilderniss": true,
+                "isActive": true,
+                "Output": [
+                  {
+                    "$id": "250",
+                    "ID": "wood",
+                    "count": 1
+                  }
+                ],
+                "BuildTile": {
+                  "$id": "251",
+                  "$type": "LandTile, Assembly-CSharp",
+                  "_type": 4,
+                  "x": 382,
+                  "y": 245,
+                  "SpriteName": "middle_dirt_0"
                 }
               },
               {
-                "$id": "250",
-                "criticalMissingNeed": false,
-                "Level": 2,
-                "previousLevel": {
-                  "$ref": "249"
-                },
-                "taxPercantage": 1.0,
-                "city": {
-                  "$ref": "245"
+                "$id": "252",
+                "$type": "GrowableStructure, Assembly-CSharp",
+                "age": 8.01,
+                "currentStage": 3,
+                "hasProduced": true,
+                "produceCountdown": 0.0,
+                "ID": "tree",
+                "buildID": 0,
+                "_health": 0.0,
+                "rotated": 0,
+                "buildInWilderniss": true,
+                "isActive": true,
+                "Output": [
+                  {
+                    "$id": "253",
+                    "ID": "wood",
+                    "count": 1
+                  }
+                ],
+                "BuildTile": {
+                  "$id": "254",
+                  "$type": "LandTile, Assembly-CSharp",
+                  "_type": 4,
+                  "x": 383,
+                  "y": 231,
+                  "SpriteName": "middle_dirt_0"
                 }
               },
               {
-                "$id": "251",
-                "criticalMissingNeed": false,
-                "Level": 3,
-                "previousLevel": {
-                  "$ref": "250"
-                },
-                "taxPercantage": 1.0,
-                "city": {
-                  "$ref": "245"
+                "$id": "255",
+                "$type": "GrowableStructure, Assembly-CSharp",
+                "age": 8.01,
+                "currentStage": 3,
+                "hasProduced": true,
+                "produceCountdown": 0.0,
+                "ID": "tree",
+                "buildID": 0,
+                "_health": 0.0,
+                "rotated": 0,
+                "buildInWilderniss": true,
+                "isActive": true,
+                "Output": [
+                  {
+                    "$id": "256",
+                    "ID": "wood",
+                    "count": 1
+                  }
+                ],
+                "BuildTile": {
+                  "$id": "257",
+                  "$type": "LandTile, Assembly-CSharp",
+                  "_type": 4,
+                  "x": 384,
+                  "y": 245,
+                  "SpriteName": "middle_dirt_0"
+                }
+              },
+              {
+                "$id": "258",
+                "$type": "GrowableStructure, Assembly-CSharp",
+                "age": 8.01,
+                "currentStage": 3,
+                "hasProduced": true,
+                "produceCountdown": 0.0,
+                "ID": "tree",
+                "buildID": 0,
+                "_health": 0.0,
+                "rotated": 0,
+                "buildInWilderniss": true,
+                "isActive": true,
+                "Output": [
+                  {
+                    "$id": "259",
+                    "ID": "wood",
+                    "count": 1
+                  }
+                ],
+                "BuildTile": {
+                  "$id": "260",
+                  "$type": "LandTile, Assembly-CSharp",
+                  "_type": 4,
+                  "x": 385,
+                  "y": 225,
+                  "SpriteName": "middle_dirt_0"
+                }
+              },
+              {
+                "$id": "261",
+                "$type": "GrowableStructure, Assembly-CSharp",
+                "age": 5.34333324,
+                "currentStage": 3,
+                "hasProduced": true,
+                "produceCountdown": 0.0,
+                "ID": "tree",
+                "buildID": 0,
+                "_health": 0.0,
+                "rotated": 0,
+                "buildInWilderniss": true,
+                "isActive": true,
+                "Output": [
+                  {
+                    "$id": "262",
+                    "ID": "wood",
+                    "count": 1
+                  }
+                ],
+                "BuildTile": {
+                  "$id": "263",
+                  "$type": "LandTile, Assembly-CSharp",
+                  "_type": 4,
+                  "x": 385,
+                  "y": 227,
+                  "SpriteName": "middle_dirt_1"
+                }
+              },
+              {
+                "$id": "264",
+                "$type": "GrowableStructure, Assembly-CSharp",
+                "age": 5.34333324,
+                "currentStage": 3,
+                "hasProduced": true,
+                "produceCountdown": 0.0,
+                "ID": "tree",
+                "buildID": 0,
+                "_health": 0.0,
+                "rotated": 0,
+                "buildInWilderniss": true,
+                "isActive": true,
+                "Output": [
+                  {
+                    "$id": "265",
+                    "ID": "wood",
+                    "count": 1
+                  }
+                ],
+                "BuildTile": {
+                  "$id": "266",
+                  "$type": "LandTile, Assembly-CSharp",
+                  "_type": 4,
+                  "x": 385,
+                  "y": 239,
+                  "SpriteName": "middle_dirt_0"
+                }
+              },
+              {
+                "$id": "267",
+                "$type": "GrowableStructure, Assembly-CSharp",
+                "age": 8.01,
+                "currentStage": 3,
+                "hasProduced": true,
+                "produceCountdown": 0.0,
+                "ID": "tree",
+                "buildID": 0,
+                "_health": 0.0,
+                "rotated": 0,
+                "buildInWilderniss": true,
+                "isActive": true,
+                "Output": [
+                  {
+                    "$id": "268",
+                    "ID": "wood",
+                    "count": 1
+                  }
+                ],
+                "BuildTile": {
+                  "$id": "269",
+                  "$type": "LandTile, Assembly-CSharp",
+                  "_type": 4,
+                  "x": 385,
+                  "y": 240,
+                  "SpriteName": "middle_dirt_1"
+                }
+              },
+              {
+                "$id": "270",
+                "$type": "GrowableStructure, Assembly-CSharp",
+                "age": 5.34333324,
+                "currentStage": 3,
+                "hasProduced": true,
+                "produceCountdown": 0.0,
+                "ID": "tree",
+                "buildID": 0,
+                "_health": 0.0,
+                "rotated": 0,
+                "buildInWilderniss": true,
+                "isActive": true,
+                "Output": [
+                  {
+                    "$id": "271",
+                    "ID": "wood",
+                    "count": 1
+                  }
+                ],
+                "BuildTile": {
+                  "$id": "272",
+                  "$type": "LandTile, Assembly-CSharp",
+                  "_type": 4,
+                  "x": 385,
+                  "y": 246,
+                  "SpriteName": "middle_dirt_1"
+                }
+              },
+              {
+                "$id": "273",
+                "$type": "GrowableStructure, Assembly-CSharp",
+                "age": 5.34333324,
+                "currentStage": 3,
+                "hasProduced": true,
+                "produceCountdown": 0.0,
+                "ID": "tree",
+                "buildID": 0,
+                "_health": 0.0,
+                "rotated": 0,
+                "buildInWilderniss": true,
+                "isActive": true,
+                "Output": [
+                  {
+                    "$id": "274",
+                    "ID": "wood",
+                    "count": 1
+                  }
+                ],
+                "BuildTile": {
+                  "$id": "275",
+                  "$type": "LandTile, Assembly-CSharp",
+                  "_type": 4,
+                  "x": 386,
+                  "y": 226,
+                  "SpriteName": "middle_dirt_1"
+                }
+              },
+              {
+                "$id": "276",
+                "$type": "GrowableStructure, Assembly-CSharp",
+                "age": 5.33718252,
+                "currentStage": 3,
+                "hasProduced": true,
+                "produceCountdown": 0.0,
+                "ID": "tree",
+                "buildID": 0,
+                "_health": 0.0,
+                "rotated": 0,
+                "buildInWilderniss": true,
+                "isActive": true,
+                "Output": [
+                  {
+                    "$id": "277",
+                    "ID": "wood",
+                    "count": 1
+                  }
+                ],
+                "BuildTile": {
+                  "$id": "278",
+                  "$type": "LandTile, Assembly-CSharp",
+                  "_type": 4,
+                  "x": 387,
+                  "y": 238,
+                  "SpriteName": "middle_dirt_0"
+                }
+              },
+              {
+                "$id": "279",
+                "$type": "GrowableStructure, Assembly-CSharp",
+                "age": 5.34333324,
+                "currentStage": 3,
+                "hasProduced": true,
+                "produceCountdown": 0.0,
+                "ID": "tree",
+                "buildID": 0,
+                "_health": 0.0,
+                "rotated": 0,
+                "buildInWilderniss": true,
+                "isActive": true,
+                "Output": [
+                  {
+                    "$id": "280",
+                    "ID": "wood",
+                    "count": 1
+                  }
+                ],
+                "BuildTile": {
+                  "$id": "281",
+                  "$type": "LandTile, Assembly-CSharp",
+                  "_type": 4,
+                  "x": 388,
+                  "y": 245,
+                  "SpriteName": "middle_dirt_1"
+                }
+              },
+              {
+                "$id": "282",
+                "$type": "GrowableStructure, Assembly-CSharp",
+                "age": 5.34333324,
+                "currentStage": 3,
+                "hasProduced": true,
+                "produceCountdown": 0.0,
+                "ID": "tree",
+                "buildID": 0,
+                "_health": 0.0,
+                "rotated": 0,
+                "buildInWilderniss": true,
+                "isActive": true,
+                "Output": [
+                  {
+                    "$id": "283",
+                    "ID": "wood",
+                    "count": 1
+                  }
+                ],
+                "BuildTile": {
+                  "$id": "284",
+                  "$type": "LandTile, Assembly-CSharp",
+                  "_type": 4,
+                  "x": 389,
+                  "y": 240,
+                  "SpriteName": "middle_dirt_1"
+                }
+              },
+              {
+                "$id": "285",
+                "$type": "GrowableStructure, Assembly-CSharp",
+                "age": 5.33718252,
+                "currentStage": 3,
+                "hasProduced": true,
+                "produceCountdown": 0.0,
+                "ID": "tree",
+                "buildID": 0,
+                "_health": 0.0,
+                "rotated": 0,
+                "buildInWilderniss": true,
+                "isActive": true,
+                "Output": [
+                  {
+                    "$id": "286",
+                    "ID": "wood",
+                    "count": 1
+                  }
+                ],
+                "BuildTile": {
+                  "$id": "287",
+                  "$type": "LandTile, Assembly-CSharp",
+                  "_type": 4,
+                  "x": 389,
+                  "y": 245,
+                  "SpriteName": "middle_dirt_1"
+                }
+              },
+              {
+                "$id": "288",
+                "$type": "GrowableStructure, Assembly-CSharp",
+                "age": 5.34333324,
+                "currentStage": 3,
+                "hasProduced": true,
+                "produceCountdown": 0.0,
+                "ID": "tree",
+                "buildID": 0,
+                "_health": 0.0,
+                "rotated": 0,
+                "buildInWilderniss": true,
+                "isActive": true,
+                "Output": [
+                  {
+                    "$id": "289",
+                    "ID": "wood",
+                    "count": 1
+                  }
+                ],
+                "BuildTile": {
+                  "$id": "290",
+                  "$type": "LandTile, Assembly-CSharp",
+                  "_type": 4,
+                  "x": 391,
+                  "y": 239,
+                  "SpriteName": "middle_dirt_0"
+                }
+              },
+              {
+                "$id": "291",
+                "$type": "GrowableStructure, Assembly-CSharp",
+                "age": 5.34333324,
+                "currentStage": 3,
+                "hasProduced": true,
+                "produceCountdown": 0.0,
+                "ID": "tree",
+                "buildID": 1,
+                "_health": 0.0,
+                "rotated": 0,
+                "buildInWilderniss": true,
+                "isActive": true,
+                "Output": [
+                  {
+                    "$id": "292",
+                    "ID": "wood",
+                    "count": 1
+                  }
+                ],
+                "BuildTile": {
+                  "$id": "293",
+                  "$type": "LandTile, Assembly-CSharp",
+                  "_type": 4,
+                  "x": 391,
+                  "y": 244,
+                  "SpriteName": "middle_dirt_0"
                 }
               }
-            ]
+            ],
+            "useTickTimer": 0.0,
+            "_name": "",
+            "island": {
+              "$ref": "134"
+            }
           }
         ],
-        "myClimate": 1,
+        "Climate": 1,
+        "Ressources": {
+          "$id": "294"
+        },
         "StartTile": {
-          "$id": "252",
+          "$id": "295",
           "$type": "LandTile, Assembly-CSharp",
-          "x": 352,
-          "y": 57,
           "_type": 4,
-          "SpriteName": "middle_dirt_1"
+          "x": 358,
+          "y": 231,
+          "SpriteName": "middle_dirt_0"
         }
       }
     ],
-    "Units": [
-      {
-        "$id": "253",
-        "$type": "Ship, Assembly-CSharp",
-        "isOffWorld": false,
-        "offWorldTime": 0.0,
-        "_cannonItem": {
-          "$id": "254",
-          "ID": 1006,
-          "count": 20
-        },
-        "ID": 1,
-        "playerNumber": 0,
-        "_UserSetName": "Ship 0",
-        "_currHealth": 1250.0,
-        "tradeTime": 1.5,
-        "attackCooldownTimer": 10.0,
-        "pathfinding": {
-          "$id": "255",
-          "$type": "OceanPathfinding, Assembly-CSharp",
-          "dest_X": 0.0,
-          "dest_Y": 0.0,
-          "_IsAtDest": false,
-          "rotation": -292.265869,
-          "_y": 284.0,
-          "_x": 236.0
-        },
-        "inventory": {
-          "$id": "256",
-          "MaxStackSize": 50,
-          "Items": {
-            "$id": "257",
-            "0": {
-              "$id": "258",
-              "ID": 1,
-              "count": 50
-            },
-            "1": {
-              "$id": "259",
-              "ID": 2,
-              "count": 50
-            }
-          },
-          "NumberOfSpaces": 6
-        },
-        "_CurrentDoingMode": 0,
-        "_CurrentMainMode": 0,
-        "aggroCooldownTimer": 1.30000067,
-        "queuedCommands": []
-      },
-      {
-        "$id": "260",
-        "$type": "Ship, Assembly-CSharp",
-        "isOffWorld": false,
-        "offWorldTime": 0.0,
-        "_cannonItem": {
-          "$id": "261",
-          "ID": 1006,
-          "count": 20
-        },
-        "ID": 1,
-        "playerNumber": 1,
-        "_UserSetName": "Ship 0",
-        "_currHealth": 1250.0,
-        "tradeTime": 1.5,
-        "attackCooldownTimer": 1.0,
-        "pathfinding": {
-          "$id": "262",
-          "$type": "OceanPathfinding, Assembly-CSharp",
-          "dest_X": 0.0,
-          "dest_Y": 0.0,
-          "_IsAtDest": false,
-          "rotation": 0.0,
-          "_y": 274.0,
-          "_x": 226.0
-        },
-        "inventory": {
-          "$id": "263",
-          "MaxStackSize": 50,
-          "Items": {
-            "$id": "264"
-          },
-          "NumberOfSpaces": 6
-        },
-        "_CurrentDoingMode": 0,
-        "_CurrentMainMode": 0,
-        "aggroCooldownTimer": 0.580001354,
-        "queuedCommands": []
-      }
-    ],
+    "Units": [],
     "Crates": [],
     "Projectiles": []
   }
@@ -1710,41 +2282,58 @@
 {
   "$id": "1",
   "currentPlayerNumber": 0,
-  "tickTimer": 3.89263773,
+  "tickTimer": 2.37392378,
   "players": [
     {
       "$id": "2",
-      "_lastTreasuryChange": -35,
-      "_treasuryBalance": 45207,
+      "_lastTreasuryChange": 0,
+      "_name": "itsMeAnTotallyHumanHuman",
+      "_IsHuman": true,
+      "_treasuryBalance": 50000,
       "_maxPopulationLevel": 0,
       "_maxPopulationCount": 0,
       "Number": 0,
-      "MyTradeRoutes": []
+      "TradeRoutes": []
     },
     {
       "$id": "3",
       "_lastTreasuryChange": 0,
+      "_IsHuman": false,
       "_treasuryBalance": 50000,
       "_maxPopulationLevel": 0,
       "_maxPopulationCount": 0,
       "Number": 1,
-      "MyTradeRoutes": []
+      "TradeRoutes": []
     },
     {
       "$id": "4",
       "_lastTreasuryChange": 0,
+      "_IsHuman": false,
       "_treasuryBalance": 50000,
       "_maxPopulationLevel": 0,
       "_maxPopulationCount": 0,
       "Number": 2,
-      "MyTradeRoutes": []
+      "TradeRoutes": []
     }
   ],
   "playerWars": [
     {
       "$id": "5",
       "playerOne": 0,
-      "playerTwo": 1
+      "playerTwo": 1,
+      "currentStatus": 0
+    },
+    {
+      "$id": "6",
+      "playerOne": 0,
+      "playerTwo": 2,
+      "currentStatus": 2
+    },
+    {
+      "$id": "7",
+      "playerOne": 1,
+      "playerTwo": 2,
+      "currentStatus": 1
     }
   ]
 }##
@@ -1761,9 +2350,15 @@
   "$id": "1",
   "pos": {
     "$id": "2",
-    "X": 234.88887,
-    "Y": 282.003479,
+    "X": 250.0,
+    "Y": 250.0,
     "Z": -10.0
   },
-  "orthographicSize": 8.938264
+  "orthographicSize": 10.0
+}##
+{
+  "$id": "1",
+  "shortcuts": {
+    "$id": "2"
+  }
 }##

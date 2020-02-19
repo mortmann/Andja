@@ -69,6 +69,9 @@ public class BuildController : MonoBehaviour {
         foreach (Tile t in tileToStructure.Keys) {
             RealBuild(new List<Tile>() { t }, tileToStructure[t], -1, true, true);
         }
+        LoadedStructures = new List<Structure>(tileToStructure.Values);
+        LoadedStructures.OrderBy(x => x.buildID);
+        buildID = LoadedStructures[LoadedStructures.Count - 1].buildID++;
     }
 
     string settleStructure = null;
@@ -274,7 +277,7 @@ public class BuildController : MonoBehaviour {
             Debug.LogError("Something went wrong by loading Structure! " + t + " " + s);
             return;
         }
-        RealBuild(s.GetBuildingTiles(t.X, t.Y), s, -1, true, false);
+        RealBuild(s.GetBuildingTiles(t.X, t.Y), s, -1, true, s.buildInWilderniss);
     }
     public void OnDestroyStructure(Structure str) {
         cbAnyStructureDestroyed?.Invoke(str);
@@ -302,8 +305,9 @@ public class BuildController : MonoBehaviour {
         this.LoadedStructures = loadedStructures;
         for (int i = 0; i < loadedStructures.Count; i++) {
             LoadBuildOnTile(loadedStructures[i], loadedStructures[i].BuildTile);
-            loadedStructures[i].City.TriggerAddCallBack(loadedStructures[i]);
+            loadedStructures[i].City?.TriggerAddCallBack(loadedStructures[i]);
         }
+        buildID = loadedStructures[loadedStructures.Count - 1].buildID++;
     }
     public void ResetBuild() {
         BuildState = BuildStateModes.None;

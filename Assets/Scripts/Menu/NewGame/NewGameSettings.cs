@@ -5,7 +5,7 @@ using UnityEngine;
 public enum NewGameSetting { Seed, Width, Height, Pirate, Fire }
 public class NewGameSettings {
     public static void SetSeed(string value) {
-        GameDataHolder.MapSeed = Mathf.Abs(value.GetHashCode());
+        GameDataHolder.Instance.MapSeed = Mathf.Abs(value.GetHashCode());
     }
     public static void SetHeight(int value) {
         GameDataHolder.Height = Mathf.Abs(value);

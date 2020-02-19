@@ -78,7 +78,7 @@ public class GrowableStructure : OutputStructure {
         }
         age += Efficiency * landGrowModifier * (deltaTime);
         if ((age) > currentStage * TimePerStage) {
-            currentStage++;
+            currentStage = Mathf.Clamp(currentStage+1, 0, AgeStages);
             if (currentStage >= AgeStages) {
                 Produce();
                 return;

@@ -20,8 +20,8 @@ public class Loading : MonoBehaviour {
     }
     // Use this for initialization
     void Awake() {
-        if (Application.isEditor)
-            ClearConsole();
+        //if (Application.isEditor)
+        //    ClearConsole();
         EditorController.IsEditor = loadEditor;
         IsLoading = true;
         loadingStopWatch = new Stopwatch();
@@ -85,7 +85,7 @@ public class Loading : MonoBehaviour {
             }
             else
                 percentText.text = percantage + "%";
-            if (EditorController.generate && MapGenerator.Instance.IsDone == false) {
+            if (EditorController.Generate && MapGenerator.Instance.IsDone == false) {
                 return;
             }
             if (Application.isEditor && aso == null)

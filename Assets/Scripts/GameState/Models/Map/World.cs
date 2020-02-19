@@ -399,7 +399,6 @@ public class World : IGEventable {
         }
 
     }
-
     public void Destroy() {
         Current = null;
     }

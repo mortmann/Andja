@@ -57,11 +57,11 @@ public class WorldController : MonoBehaviour {
     }
     public void SetGeneratedWorld(World world, Dictionary<Tile, Structure> tileToStructure) {
         this.World = world;
-        if (SaveController.IsLoadingSave == false)
+        if (SaveController.IsLoadingSave == false && tileToStructure!=null && tileToStructure.Count>0) {
             BuildController.Instance.PlaceWorldGeneratedStructure(tileToStructure);
+        }
         isLoaded = false;
         offworldMarket = new OffworldMarket();
-
     }
 
     protected void OnEventCreated(GameEvent ge) {
@@ -151,7 +151,7 @@ public class WorldController : MonoBehaviour {
     
     public void LoadWorldData() {
         // Create a world from our save file data.
-        World.LoadData(MapGenerator.Instance.GetTiles(), GameDataHolder.Width, GameDataHolder.Height);
+        //World.LoadData(MapGenerator.Instance.GetTiles(), GameDataHolder.Width, GameDataHolder.Height);
         MapGenerator.Instance.Destroy();
         List<MapGenerator.IslandStruct> structs = MapGenerator.Instance.GetIslandStructs();
         foreach (Island island in World.IslandList) {
@@ -179,7 +179,6 @@ public class WorldController : MonoBehaviour {
             loadedStructures.AddRange(island.Load());
         }
         loadedStructures.Sort((x, y) => x.buildID.CompareTo(y.buildID));
-        BuildController.Instance.buildID = loadedStructures[loadedStructures.Count - 1].buildID++; //set the build id so it continues
         BuildController.Instance.PlaceAllLoadedStructure(loadedStructures);
     }
 

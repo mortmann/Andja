@@ -25,8 +25,8 @@ public class SaveController : MonoBehaviour {
     private static List<Worker> loadWorker;
     public static bool DebugModeSave = true; 
     public static string SaveName = "unsaved";
-    //TODO autosave here
-    const string SaveFileVersion = "0.1.5";
+
+    const string SaveFileVersion = "0.1.6";
     const string islandSaveFileVersion = "i_0.0.3";
     float timeToAutoSave = AutoSaveInterval;
     const float AutoSaveInterval = 15 * 60; // every 15 min -- TODO: add game option to change this
@@ -564,8 +564,9 @@ public class SaveController : MonoBehaviour {
             height = 90;
         }
 
-        RenderTexture rt = new RenderTexture(widht, height, 24, RenderTextureFormat.ARGB32);
-        rt.antiAliasing = 4;
+        RenderTexture rt = new RenderTexture(widht, height, 24, RenderTextureFormat.ARGB32) {
+            antiAliasing = 4
+        };
 
         currentCamera.targetTexture = rt;
 

@@ -13,8 +13,6 @@ public class StructureSpriteController : MonoBehaviour {
     public Sprite circleSprite;
     public Sprite upgradeSprite;
     public Sprite unitCircleSprite;
-    BuildController bm;
-    CameraController cc;
     World World {
         get { return World.Current; }
     }
@@ -35,8 +33,7 @@ public class StructureSpriteController : MonoBehaviour {
         structureExtraUIMap = new Dictionary<Structure, GameObject>();
 
         LoadSprites();
-        cc = CameraController.Instance;
-        if(EditorController.IsEditor==false) {
+        if(EditorController.IsEditor==false && BuildController.Instance.LoadedStructures!=null) {
             foreach (Structure str in BuildController.Instance.LoadedStructures) {
                 OnBuildStrucutureCreated(str, true);
             }
@@ -54,7 +51,7 @@ public class StructureSpriteController : MonoBehaviour {
 
     void Update() {
         List<Structure> ts = new List<Structure>(structureGameObjectMap.Keys);
-        HashSet<Structure> inView = new HashSet<Structure>(cc.structureCurrentInCameraView);
+        HashSet<Structure> inView = new HashSet<Structure>(CameraController.Instance.structureCurrentInCameraView);
         foreach (Structure str in ts) {
             if (inView.Contains(str) == false) {
                 if (str.HasHitbox)

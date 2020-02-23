@@ -41,7 +41,7 @@ public class StructurePrototypeData : LanguageVariables {
     public List<Tile> PrototypeTiles {
         get {
             if (_PrototypeTiles == null) {
-                CalculatePrototypTiles();
+                _PrototypeTiles = Util.CalculateCircleTiles(structureRange, tileWidth, tileHeight);
             }
             return _PrototypeTiles;
         }
@@ -60,55 +60,6 @@ public class StructurePrototypeData : LanguageVariables {
     public int upgradeCost = 0; // set inside prototypecontoller
 
     public string spriteBaseName;
-
-    private void CalculatePrototypTiles() {
-        _PrototypeTiles = new List<Tile>();
-        if (structureRange == 0) {
-            return;
-        }
-        float x;
-        float y;
-        //get the tile at bottom left to create a "prototype circle"
-        Tile firstTile = World.Current.GetTileAt(0 + structureRange, 0 + structureRange);
-        float w = (float)tileWidth / 2f - 0.5f;
-        float h = (float)tileHeight / 2f - 0.5f;
-        Vector2 center = new Vector2(structureRange + w, structureRange + h);
-
-        World world = World.Current;
-        HashSet<Tile> temp = new HashSet<Tile>();
-        float radius = this.structureRange + 1f;
-        for (float a = 0; a < 360; a += 0.5f) {
-            x = center.x + radius * Mathf.Cos(a);
-            y = center.y + radius * Mathf.Sin(a);
-            x = Mathf.RoundToInt(x);
-            y = Mathf.RoundToInt(y);
-            for (int i = 0; i < structureRange; i++) {
-                Tile circleTile = world.GetTileAt(x, y);
-                if (temp.Contains(circleTile) == false) {
-                    temp.Add(circleTile);
-                }
-            }
-        }
-        //like flood fill the inner circle
-        Queue<Tile> tilesToCheck = new Queue<Tile>();
-        tilesToCheck.Enqueue(firstTile.South());
-        while (tilesToCheck.Count > 0) {
-            Tile t = tilesToCheck.Dequeue();
-            if (temp.Contains(t) == false && _PrototypeTiles.Contains(t) == false) {
-                _PrototypeTiles.Add(t);
-                Tile[] ns = t.GetNeighbours(false);
-                foreach (Tile t2 in ns) {
-                    tilesToCheck.Enqueue(t2);
-                }
-            }
-        }
-        for (int width = 0; width < tileWidth; width++) {
-            PrototypeTiles.Remove(World.Current.GetTileAt(firstTile.X + width, firstTile.Y));
-            for (int height = 1; height < tileHeight; height++) {
-                PrototypeTiles.Remove(World.Current.GetTileAt(firstTile.X + width, firstTile.Y + height));
-            }
-        }
-    }
 
 }
 

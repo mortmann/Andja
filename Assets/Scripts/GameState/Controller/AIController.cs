@@ -25,7 +25,7 @@ public class AIController : MonoBehaviour {
         test.CalculatePlayersCombatValue();
         World world = World.Current;
         Dictionary<string, TileBase> stringToBase = new Dictionary<string, TileBase>();
-        foreach (Island island in World.Current.IslandList) {
+        foreach (Island island in World.Current.Islands) {
             Vector2[,] swValue = new Vector2[island.Width, island.Height];
             Vector2[,] neValue = new Vector2[island.Width, island.Height];
             Dictionary<TileType, Vector2[,]> typeToSWValue = new Dictionary<TileType, Vector2[,]>();
@@ -341,7 +341,7 @@ public class AIPlayer {
         }
     }
     public void CalculateIslandScores() {
-        List<Island> islands = World.Current.IslandList;
+        List<Island> islands = World.Current.Islands;
         islandScores = new List<IslandScore>();
         int maxSize = 0;
         int averageSize = 0;

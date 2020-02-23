@@ -165,13 +165,14 @@ public class IslandGenerator {
         }
         );
         Progress += 0.15f;
-
-        int numberOfShores = random.Range(2, 8);
+        int averageSize = Width + Height;
+        averageSize /= 2;
+        int numberOfShores = random.Range(Mathf.RoundToInt(averageSize * 0.025f), Mathf.RoundToInt(averageSize * 0.05f)+1);
         for(int ns = 0; ns < numberOfShores; ns++) {
             int x = 0;
             int y = 0;
             int direction = random.Range(0, 4);
-            int length = random.Range(8, 20);
+            int length = random.Range(Mathf.RoundToInt(averageSize * 0.075f), Mathf.RoundToInt(averageSize * 0.15f));
 
             if (direction == 0) { // Bottom
                 x = random.Range(0, Width + 1);

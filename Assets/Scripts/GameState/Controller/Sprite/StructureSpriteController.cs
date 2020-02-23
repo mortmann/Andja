@@ -19,9 +19,7 @@ public class StructureSpriteController : MonoBehaviour {
     Dictionary<Route, TextMesh> RouteToTextMash;
     public bool RoadDebug = false;
     private void Awake() {
-        if (EditorController.IsEditor == false) {
-            BuildController.Instance.RegisterStructureCreated(OnBuildStrucutureCreated);
-        }
+        BuildController.Instance.RegisterStructureCreated(OnBuildStrucutureCreated);
     }
     void Start() {
         if (Instance != null) {
@@ -65,16 +63,16 @@ public class StructureSpriteController : MonoBehaviour {
         //inView should only contain structures that dont exist as gameobject
         foreach (Structure str in inView) {
             if (str.HasHitbox == false) { //only structures without hitbox need to dynamically be created
-                OnStrucutureCreated(str);
+                CreateStructureGameObject(str);
             }
         }
     }
     public void OnBuildStrucutureCreated(Structure structure, bool onLoad) {
         if (structure.HasHitbox == false)
             return;
-        OnStrucutureCreated(structure);
+        CreateStructureGameObject(structure);
     }
-    public void OnStrucutureCreated(Structure structure) {
+    public void CreateStructureGameObject(Structure structure) {
         GameObject go = new GameObject();
         structure.RegisterOnChangedCallback(OnStructureChanged);
         structure.RegisterOnDestroyCallback(OnStructureDestroyed);

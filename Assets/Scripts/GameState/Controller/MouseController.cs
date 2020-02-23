@@ -102,13 +102,15 @@ public class MouseController : MonoBehaviour {
             return null;
         }
     }
-
-    // Use this for initialization
-    void Start() {
+    public void OnEnable() {
         if (Instance != null) {
             Debug.LogError("There should never be two mouse controllers.");
         }
         Instance = this;
+
+    }
+
+    void Start() {
         selectedUnitGroup = new List<Unit>(); 
         previewGameObjects = new List<GameObject>();
         BuildController.RegisterStructureCreated(ResetBuild);
@@ -118,7 +120,6 @@ public class MouseController : MonoBehaviour {
         foreach (ExtraStructureBuildUI esbu in extraStructureBuildUIPrefabsEditor) {
             ExtraStructureBuildUIPrefabs[esbu.Type] = esbu.Prefab;
         }
-
     }
 
     /// <summary>
@@ -142,13 +143,12 @@ public class MouseController : MonoBehaviour {
         if (currFramePosition.y < 0 || currFramePosition.x < 0) {
             return;
         }
-
         RemovePrefabs();
         UpdateMouseStates();
         if (EditorController.IsEditor == false) {
             UpdateDragBox();
         } else {
-            
+            UpdateEditorStuff();
         }
 
         if (Input.GetMouseButtonDown(1) && mouseState != MouseState.Unit && mouseState != MouseState.UnitGroup) {
@@ -161,6 +161,15 @@ public class MouseController : MonoBehaviour {
         lastFrameGUIPosition = Input.mousePosition;
         lastFramePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         lastFramePosition.z = 0;
+    }
+
+    private void UpdateEditorStuff() {
+        if(highlightGO != null) {
+            Tile t = GetTileUnderneathMouse();
+            if (t == null)
+                return;
+            highlightGO.transform.position = new Vector3(t.X,t.Y, 0) + EditorController.Instance.BrushOffset;
+        }
     }
 
     private void UpdateDragBox() {
@@ -331,6 +340,18 @@ public class MouseController : MonoBehaviour {
         // Create Rect
         draw_rect = Rect.MinMaxRect(topLeft.x, topLeft.y, bottomRight.x, bottomRight.y);
     }
+
+    internal void SetEditorHighlight(int size, List<Tile> toHighlightTiles) {
+        if (toHighlightTiles == null)
+            return;
+        if (highlightGO != null)
+            Destroy(highlightGO);
+        HighlightTiles = new HashSet<Tile>(toHighlightTiles);
+        highlightGO = GetHighlightGameObject(size, size, toHighlightTiles);
+        highlightGO.GetComponent<SpriteRenderer>().sortingLayerName = "StructuresUI";
+        highlightGO.SetActive(true);
+    }
+
     public void OnGUI() {
         if(mouseState == MouseState.DragSelect) {
             Util.DrawScreenRectBorder(draw_rect, 2, new Color(0.9f, 0.9f, 0.9f,0.9f));
@@ -354,7 +375,6 @@ public class MouseController : MonoBehaviour {
                     UIController.OpenStructureUI(t.Structure);
                     SelectedStructure = t.Structure;
                 }
-
             }
         }
         else {
@@ -429,7 +449,7 @@ public class MouseController : MonoBehaviour {
         }
 
         ShowPreviewStructureOnTiles(tile);
-        StartCoroutine(ShowHighlightOnTiles());
+        ShowHighlightOnTiles();
 
         if (tileToCanBuild.Values.ToList().Contains(false)) {
             //TODO fix this temporary fix
@@ -536,33 +556,23 @@ public class MouseController : MonoBehaviour {
         go.transform.SetParent(this.transform, true);
         previewGameObjects.Add(go);
     }
-    IEnumerator ShowHighlightOnTiles() {
+    void ShowHighlightOnTiles() {
         if (EventSystem.current.IsPointerOverGameObject()) {
-            yield break;
+            return;
         }
         if (ToBuildStructure.StructureRange == 0) {
-            yield break;
+            return;
         }
         if (highlightGO != null)
-            yield break;
+            return;
         HighlightTiles = new HashSet<Tile>(ToBuildStructure.PrototypeTiles);
-        highlightGO = new GameObject();
 
         int range = ToBuildStructure.StructureRange * 2; // cause its the radius
         int width = range + ToBuildStructure.TileWidth;
         int height = range + ToBuildStructure.TileWidth;
 
-        Texture2D tex = new Texture2D(width, height, TextureFormat.RGBA32, true);
-        tex.SetPixels32(new Color32[width * height]);
+        highlightGO = GetHighlightGameObject(width, height, HighlightTiles);
 
-        foreach (Tile t in HighlightTiles) {
-            tex.SetPixel(t.X, t.Y, new Color32(255, 255, 255, 20));
-        }
-
-        tex.filterMode = FilterMode.Point;
-        tex.Apply();
-
-        SpriteRenderer sr = highlightGO.AddComponent<SpriteRenderer>();
         // offset based on even or uneven so it is centered properly
         // its working now?!? -- but leaving it in if its makes problems in the future
         // nope? 0 not working again
@@ -572,12 +582,23 @@ public class MouseController : MonoBehaviour {
             xoffset = ToBuildStructure.TileWidth % 3 == 0 ? 0f : -0.5f;
             yoffset = ToBuildStructure.TileHeight % 3 == 0 ? 0f : -0.5f;
         }
-        sr.sprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(0.5f, 0.5f), 1);
-        sr.sortingLayerName = "DarkLayer";
         highlightGO.transform.parent = previewGO.transform;
         highlightGO.transform.localPosition = new Vector3(xoffset, yoffset);
     }
 
+    GameObject GetHighlightGameObject(int width, int height, IEnumerable<Tile> tiles) {
+        GameObject highGO = new GameObject();
+        SpriteRenderer sr = highGO.AddComponent<SpriteRenderer>();
+        Texture2D tex = new Texture2D(width, height, TextureFormat.RGBA32, true);
+        tex.SetPixels32(new Color32[width * height]);
+        foreach (Tile t in tiles) {
+            tex.SetPixel(t.X, t.Y, new Color32(255, 255, 255, 20));
+        }
+        tex.filterMode = FilterMode.Point;
+        tex.Apply();
+        sr.sprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(0.5f, 0.5f), 1);
+        return highGO;
+    }
 
     private void UpdateUnit() {
         // If we're over a UI element, then bail out from this.

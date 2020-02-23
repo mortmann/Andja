@@ -64,7 +64,7 @@ public class TypeGraphicsSelect : MonoBehaviour {
         OnSelect(0);
     }
     public void OnSelect(int number) {
-        EditorController.Instance.changeTileType = true;
+        EditorController.Instance.changeMode = ChangeMode.Tile;
         EditorController.Instance.spriteName = typeTotileSpriteNames[currentSelected.ToString()][number];
     }
 

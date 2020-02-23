@@ -66,6 +66,7 @@ public class LandTile : Tile {
         }
         set {
             if (Island == null) {
+                Debug.LogWarning("TRYING TO SET CITY -- BUT TILE DOES NOT HAVE A ISLAND!");
                 return;
             }
             //if the tile gets unclaimed by the current owner of this
@@ -115,7 +116,6 @@ public class LandTile : Tile {
     public LandTile(int x, int y) {
         this.x = (ushort)x;
         this.y = (ushort)y;
-        _type = TileType.Ocean;
     }
     public LandTile(int x, int y, Tile t) {
         this.x = (ushort)x;

@@ -35,10 +35,9 @@ public class EditorBuild : MonoBehaviour {
                 first = false;
             }
         }
-
     }
     public void OnBuildingSelect(string id) {
-        EditorController.Instance.changeTileType = false;
+        EditorController.Instance.changeMode = ChangeMode.Structure;
         EditorController.Instance.SetStructure(id);
         Structure str = PrototypController.Instance.StructurePrototypes[id];
 

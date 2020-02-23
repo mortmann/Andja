@@ -18,7 +18,7 @@ public class World : IGEventable {
 
     #region Serialize
 
-    [JsonPropertyAttribute] public List<Island> IslandList { get; protected set; }
+    [JsonPropertyAttribute] public List<Island> Islands { get; protected set; }
     [JsonPropertyAttribute] public List<Unit> Units { get; protected set; }
     [JsonPropertyAttribute] public List<Crate> Crates { get; protected set; }
     [JsonPropertyAttribute] public List<Projectile> Projectiles { get; protected set; }
@@ -106,7 +106,7 @@ public class World : IGEventable {
         //whole world IS 1 Island -- so add all tiles to single island        
         if(isIslandEditor) {
             Island isl = new Island(addTiles);
-            IslandList.Add(isl);
+            Islands.Add(isl);
         }
     }
 
@@ -162,13 +162,13 @@ public class World : IGEventable {
         allFertilities = PrototypController.Instance.AllFertilities;
         idToFertilities = PrototypController.Instance.IdToFertilities;
         //		EventController.Instance.RegisterOnEvent (OnEventCreate,OnEventEnded);
-        IslandList = new List<Island>();
+        Islands = new List<Island>();
         Units = new List<Unit>();
         Crates = new List<Crate>();
         Projectiles = new List<Projectile>();
     }
     internal void Update(float deltaTime) {
-        foreach (Island i in IslandList) {
+        foreach (Island i in Islands) {
             i.Update(deltaTime);
         }
         for (int pos = Crates.Count - 1; pos >= 0; pos--) {
@@ -206,7 +206,7 @@ public class World : IGEventable {
             Placement = new Vector2(islandStruct.x, islandStruct.y),
             Ressources = new Dictionary<string, int>(islandStruct.Ressources)
         };
-        IslandList.Add(island);
+        Islands.Add(island);
     }
     public void SetTileAt(int x, int y, Tile t) {
         if (t == null)
@@ -370,7 +370,7 @@ public class World : IGEventable {
     }
     #endregion
     public string GetJsonSave() {
-        WorldSave ws = new WorldSave(Units, IslandList);
+        WorldSave ws = new WorldSave(Units, Islands);
         return JsonUtility.ToJson(ws);
     }
     public void LoadWaterTiles() {

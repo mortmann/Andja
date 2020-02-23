@@ -165,7 +165,7 @@ public class Unit : IGEventable,IWarfare {
 
     private void Setup() {
         World.Current.RegisterOnEvent(OnEventCreate, OnEventEnded);
-        inventory?.OnMeChanged(inventory);
+        inventory?.OnChanged(inventory);
         if (IsShip)
             ((OceanPathfinding)pathfinding).Ship = (Ship)this;
     }

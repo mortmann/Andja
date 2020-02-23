@@ -52,7 +52,7 @@ public class MapImage : MonoBehaviour {
         //cameraRect.transform.SetParent(mapParts.transform);
         tradeRoutePanel = tradingMenu.GetComponent<TradeRoutePanel>();
         BuildController.Instance.RegisterCityCreated(OnCityCreated);
-        foreach (Island item in w.IslandList) {
+        foreach (Island item in w.Islands) {
             foreach (City c in item.Cities) {
                 if (c.IsWilderness()) {
                     continue;

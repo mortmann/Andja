@@ -1,152 +1,54 @@
 <?xml version="1.0"?>
 <UILanguageLocalizations xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <missingLocalization>
-    <string>GraphicsPanel/Content/ScrollRect/VerticalLayoutGroup/Vsync/Value/text</string>
-    <string>GraphicsPanel/Content/ScrollRect/VerticalLayoutGroup/Vsync/Value/hover</string>
-    <string>GraphicsPanel/Content/ScrollRect/VerticalLayoutGroup/TextureQuality/Label/text</string>
-    <string>GraphicsPanel/Content/ScrollRect/VerticalLayoutGroup/TextureQuality/Label/hover</string>
-    <string>GraphicsPanel/Content/ScrollRect/VerticalLayoutGroup/Fullscreen/Value/text</string>
-    <string>GraphicsPanel/Content/ScrollRect/VerticalLayoutGroup/Fullscreen/Value/hover</string>
-    <string>GraphicsPanel/Content/ScrollRect/VerticalLayoutGroup/Resolutions/Label/text</string>
-    <string>GraphicsPanel/Content/ScrollRect/VerticalLayoutGroup/Resolutions/Label/hover</string>
-    <string>GraphicsPanel/Content/ScrollRect/VerticalLayoutGroup/Brightness/Label/text</string>
-    <string>GraphicsPanel/Content/ScrollRect/VerticalLayoutGroup/Brightness/Label/hover</string>
-    <string>SoundPanel/Content/VerticalLayoutGroup/Master/Label/text</string>
-    <string>SoundPanel/Content/VerticalLayoutGroup/Master/Label/hover</string>
-    <string>SoundPanel/Content/VerticalLayoutGroup/Music/Label/text</string>
-    <string>SoundPanel/Content/VerticalLayoutGroup/Music/Label/hover</string>
-    <string>ControlPanel/Content/VerticalLayoutGroup/KEYTitles/PrimaryKeyText/text</string>
-    <string>ControlPanel/Content/VerticalLayoutGroup/KEYTitles/PrimaryKeyText/hover</string>
-    <string>SoundPanel/Content/VerticalLayoutGroup/SoundEffects/Label/text</string>
-    <string>SoundPanel/Content/VerticalLayoutGroup/SoundEffects/Label/hover</string>
-    <string>SoundPanel/Content/VerticalLayoutGroup/Ambient/Label/text</string>
-    <string>SoundPanel/Content/VerticalLayoutGroup/Ambient/Label/hover</string>
-    <string>SoundPanel/Content/VerticalLayoutGroup/UI/Label/text</string>
-    <string>SoundPanel/Content/VerticalLayoutGroup/UI/Label/hover</string>
-    <string>LoadPanel/MenuButtons/SaveDetails/Descriptons/Size/text</string>
-    <string>LoadPanel/MenuButtons/SaveDetails/Descriptons/Size/hover</string>
-    <string>LoadPanel/MenuButtons/SaveDetails/Descriptons/Climate/text</string>
-    <string>LoadPanel/MenuButtons/SaveDetails/Descriptons/Climate/hover</string>
-    <string>ControlPanel/Content/VerticalLayoutGroup/Mouse Sensitivity/Label/text</string>
-    <string>ControlPanel/Content/VerticalLayoutGroup/Mouse Sensitivity/Label/hover</string>
-    <string>ControlPanel/Content/VerticalLayoutGroup/KEYTitles/SecondaryKeyText/text</string>
-    <string>ControlPanel/Content/VerticalLayoutGroup/KEYTitles/SecondaryKeyText/hover</string>
-    <string>ControlPanel/Content/VerticalLayoutGroup/KEYTitles/HotkeyText/text</string>
-    <string>ControlPanel/Content/VerticalLayoutGroup/KEYTitles/HotkeyText/hover</string>
-    <string>LoadPanel/MenuButtons/SaveDetails/Descriptons/CreationDate/text</string>
-    <string>LoadPanel/MenuButtons/SaveDetails/Descriptons/CreationDate/hover</string>
-    <string>PauseMenu/DarkLayer/YesNoDialog/Dialog/Content/VerticalLayoutGroup/OverwriteSave/text</string>
-    <string>PauseMenu/DarkLayer/YesNoDialog/Dialog/Content/VerticalLayoutGroup/OverwriteSave/hover</string>
-    <string>LoadPanel/MenuButtons/Load/text</string>
-    <string>LoadPanel/MenuButtons/Load/hover</string>
-    <string>PauseMenu/DarkLayer/YesNoDialog/Dialog/Content/VerticalLayoutGroup/DeleteSave/text</string>
-    <string>PauseMenu/DarkLayer/YesNoDialog/Dialog/Content/VerticalLayoutGroup/DeleteSave/hover</string>
-    <string>OptionsPanel/MenuButtons/Controls/text</string>
-    <string>OptionsPanel/MenuButtons/Controls/hover</string>
-    <string>OptionsPanel/MenuButtons/Gameplay/text</string>
-    <string>OptionsPanel/MenuButtons/Gameplay/hover</string>
-    <string>PauseMenu/DarkLayer/YesNoDialog/Dialog/Content/VerticalLayoutGroup/Buttons/Yes/text</string>
-    <string>PauseMenu/DarkLayer/YesNoDialog/Dialog/Content/VerticalLayoutGroup/Buttons/Yes/hover</string>
-    <string>PauseMenu/DarkLayer/YesNoDialog/Dialog/Content/VerticalLayoutGroup/Buttons/No/text</string>
-    <string>PauseMenu/DarkLayer/YesNoDialog/Dialog/Content/VerticalLayoutGroup/Buttons/No/hover</string>
-    <string>*Back/text</string>
-    <string>*Back/hover</string>
-    <string>LoadPanel/Title/TitleText/text</string>
-    <string>LoadPanel/Title/TitleText/hover</string>
-    <string>OptionsPanel/MenuButtons/Graphics/text</string>
-    <string>OptionsPanel/MenuButtons/Graphics/hover</string>
-    <string>PauseMenu/DarkLayer/YesNoDialog/Dialog/Content/VerticalLayoutGroup/UnsavedProgress/text</string>
-    <string>PauseMenu/DarkLayer/YesNoDialog/Dialog/Content/VerticalLayoutGroup/UnsavedProgress/hover</string>
-    <string>OptionsPanel/MenuButtons/Sound/text</string>
-    <string>OptionsPanel/MenuButtons/Sound/hover</string>
-    <string>*Back/text</string>
-    <string>*Back/hover</string>
-    <string>GraphicsPanel/Title/text</string>
-    <string>GraphicsPanel/Title/hover</string>
-    <string>PauseMenu/DarkLayer/YesNoDialog/Dialog/Title/text</string>
-    <string>PauseMenu/DarkLayer/YesNoDialog/Dialog/Title/hover</string>
-    <string>SoundPanel/Title/text</string>
-    <string>SoundPanel/Title/hover</string>
-    <string>SavePanel/Title/TitleText/text</string>
-    <string>SavePanel/Title/TitleText/hover</string>
-    <string>MenuPanel/Title/text</string>
-    <string>MenuPanel/Title/hover</string>
-    <string>GameplayPanel/Title/text</string>
-    <string>GameplayPanel/Title/hover</string>
-    <string>GameplayPanel/Content/ScrollRect/VerticalLayoutGroup/Language/Label/text</string>
-    <string>GameplayPanel/Content/ScrollRect/VerticalLayoutGroup/Language/Label/hover</string>
-    <string>GameplayPanel/Content/ScrollRect/VerticalLayoutGroup/Autorotate Buildings/Label/text</string>
-    <string>GameplayPanel/Content/ScrollRect/VerticalLayoutGroup/Autorotate Buildings/Label/hover</string>
-    <string>MenuPanel/MenuButtons/Options/text</string>
-    <string>MenuPanel/MenuButtons/Options/hover</string>
-    <string>SavePanel/MenuButtons/Save/text</string>
-    <string>SavePanel/MenuButtons/Save/hover</string>
-    <string>MenuPanel/MenuButtons (1)/Quit/text</string>
-    <string>MenuPanel/MenuButtons (1)/Quit/hover</string>
-    <string>*Back/text</string>
-    <string>*Back/hover</string>
-    <string>*Back/text</string>
-    <string>*Back/hover</string>
-    <string>MenuPanel/MenuButtons/Load/text</string>
-    <string>MenuPanel/MenuButtons/Load/hover</string>
-    <string>MenuPanel/MenuButtons/Save/text</string>
-    <string>MenuPanel/MenuButtons/Save/hover</string>
-    <string>MenuPanel/MenuButtons (1)/QuitMenu/text</string>
-    <string>MenuPanel/MenuButtons (1)/QuitMenu/hover</string>
-    <string>Delete/text</string>
-    <string>Delete/hover</string>
-    <string>MenuPanel/MenuButtons (1)/QuitMenu/text</string>
-    <string>MenuPanel/MenuButtons (1)/QuitMenu/hover</string>
-    <string>MenuPanel/MenuButtons/Save/text</string>
-    <string>MenuPanel/MenuButtons/Save/hover</string>
-    <string>MenuPanel/MenuButtons/Load/text</string>
-    <string>MenuPanel/MenuButtons/Load/hover</string>
-    <string>*Back/text</string>
-    <string>*Back/hover</string>
-    <string>*Back/text</string>
-    <string>*Back/hover</string>
-    <string>MenuPanel/MenuButtons (1)/Quit/text</string>
-    <string>MenuPanel/MenuButtons (1)/Quit/hover</string>
-    <string>SavePanel/MenuButtons/Save/text</string>
-    <string>SavePanel/MenuButtons/Save/hover</string>
-    <string>MenuPanel/MenuButtons/Options/text</string>
-    <string>MenuPanel/MenuButtons/Options/hover</string>
-    <string>GameplayPanel/Content/ScrollRect/VerticalLayoutGroup/Autorotate Buildings/Label/text</string>
-    <string>GameplayPanel/Content/ScrollRect/VerticalLayoutGroup/Autorotate Buildings/Label/hover</string>
-    <string>GameplayPanel/Content/ScrollRect/VerticalLayoutGroup/Language/Label/text</string>
-    <string>GameplayPanel/Content/ScrollRect/VerticalLayoutGroup/Language/Label/hover</string>
-    <string>GameplayPanel/Title/text</string>
-    <string>GameplayPanel/Title/hover</string>
-    <string>MenuPanel/Title/text</string>
-    <string>MenuPanel/Title/hover</string>
-    <string>SavePanel/Title/TitleText/text</string>
-    <string>SavePanel/Title/TitleText/hover</string>
     <string>SoundPanel/Title/text</string>
     <string>SoundPanel/Title/hover</string>
     <string>DarkLayer/YesNoDialog/Dialog/Title/text</string>
     <string>DarkLayer/YesNoDialog/Dialog/Title/hover</string>
+    <string>MenuPanel/Title/text</string>
+    <string>MenuPanel/Title/hover</string>
+    <string>GameplayPanel/Title/text</string>
+    <string>GameplayPanel/Title/hover</string>
     <string>GraphicsPanel/Title/text</string>
     <string>GraphicsPanel/Title/hover</string>
     <string>*Back/text</string>
     <string>*Back/hover</string>
     <string>OptionsPanel/MenuButtons/Sound/text</string>
     <string>OptionsPanel/MenuButtons/Sound/hover</string>
+    <string>MenuPanel/MenuButtons (1)/QuitMenu/text</string>
+    <string>MenuPanel/MenuButtons (1)/QuitMenu/hover</string>
+    <string>MenuPanel/MenuButtons/Save/text</string>
+    <string>MenuPanel/MenuButtons/Save/hover</string>
     <string>DarkLayer/YesNoDialog/Dialog/Content/VerticalLayoutGroup/UnsavedProgress/text</string>
     <string>DarkLayer/YesNoDialog/Dialog/Content/VerticalLayoutGroup/UnsavedProgress/hover</string>
     <string>OptionsPanel/MenuButtons/Graphics/text</string>
     <string>OptionsPanel/MenuButtons/Graphics/hover</string>
     <string>LoadPanel/Title/TitleText/text</string>
     <string>LoadPanel/Title/TitleText/hover</string>
+    <string>MenuPanel/MenuButtons/Load/text</string>
+    <string>MenuPanel/MenuButtons/Load/hover</string>
+    <string>*Back/text</string>
+    <string>*Back/hover</string>
     <string>*Back/text</string>
     <string>*Back/hover</string>
     <string>DarkLayer/YesNoDialog/Dialog/Content/VerticalLayoutGroup/Buttons/No/text</string>
     <string>DarkLayer/YesNoDialog/Dialog/Content/VerticalLayoutGroup/Buttons/No/hover</string>
+    <string>*Back/text</string>
+    <string>*Back/hover</string>
     <string>DarkLayer/YesNoDialog/Dialog/Content/VerticalLayoutGroup/Buttons/Yes/text</string>
     <string>DarkLayer/YesNoDialog/Dialog/Content/VerticalLayoutGroup/Buttons/Yes/hover</string>
     <string>OptionsPanel/MenuButtons/Gameplay/text</string>
     <string>OptionsPanel/MenuButtons/Gameplay/hover</string>
+    <string>MenuPanel/MenuButtons (1)/Quit/text</string>
+    <string>MenuPanel/MenuButtons (1)/Quit/hover</string>
     <string>OptionsPanel/MenuButtons/Controls/text</string>
     <string>OptionsPanel/MenuButtons/Controls/hover</string>
+    <string>SavePanel/MenuButtons/Save/text</string>
+    <string>SavePanel/MenuButtons/Save/hover</string>
+    <string>SavePanel/Title/TitleText/text</string>
+    <string>SavePanel/Title/TitleText/hover</string>
+    <string>MenuPanel/MenuButtons/Options/text</string>
+    <string>MenuPanel/MenuButtons/Options/hover</string>
     <string>DarkLayer/YesNoDialog/Dialog/Content/VerticalLayoutGroup/DeleteSave/text</string>
     <string>DarkLayer/YesNoDialog/Dialog/Content/VerticalLayoutGroup/DeleteSave/hover</string>
     <string>LoadPanel/MenuButtons/Load/text</string>
@@ -177,31 +79,113 @@
     <string>SoundPanel/Content/VerticalLayoutGroup/Music/Label/hover</string>
     <string>SoundPanel/Content/VerticalLayoutGroup/Master/Label/text</string>
     <string>SoundPanel/Content/VerticalLayoutGroup/Master/Label/hover</string>
+    <string>Delete/text</string>
+    <string>Delete/hover</string>
+    <string>GameplayPanel/Content/ScrollRect/VerticalLayoutGroup/Autorotate Buildings/Label/text</string>
+    <string>GameplayPanel/Content/ScrollRect/VerticalLayoutGroup/Autorotate Buildings/Label/hover</string>
     <string>GraphicsPanel/Content/ScrollRect/VerticalLayoutGroup/Brightness/Label/text</string>
     <string>GraphicsPanel/Content/ScrollRect/VerticalLayoutGroup/Brightness/Label/hover</string>
     <string>GraphicsPanel/Content/ScrollRect/VerticalLayoutGroup/Resolutions/Label/text</string>
     <string>GraphicsPanel/Content/ScrollRect/VerticalLayoutGroup/Resolutions/Label/hover</string>
+    <string>GameplayPanel/Content/ScrollRect/VerticalLayoutGroup/Language/Label/text</string>
+    <string>GameplayPanel/Content/ScrollRect/VerticalLayoutGroup/Language/Label/hover</string>
     <string>GraphicsPanel/Content/ScrollRect/VerticalLayoutGroup/Fullscreen/Value/text</string>
     <string>GraphicsPanel/Content/ScrollRect/VerticalLayoutGroup/Fullscreen/Value/hover</string>
     <string>GraphicsPanel/Content/ScrollRect/VerticalLayoutGroup/TextureQuality/Label/text</string>
     <string>GraphicsPanel/Content/ScrollRect/VerticalLayoutGroup/TextureQuality/Label/hover</string>
     <string>GraphicsPanel/Content/ScrollRect/VerticalLayoutGroup/Vsync/Value/text</string>
     <string>GraphicsPanel/Content/ScrollRect/VerticalLayoutGroup/Vsync/Value/hover</string>
-    <string>MenuPanel/MenuButtons (1)/QuitMenu/text</string>
-    <string>MenuPanel/MenuButtons/Save/text</string>
-    <string>MenuPanel/MenuButtons/Load/text</string>
+    <string>GraphicsPanel/Title/text</string>
+    <string>GraphicsPanel/Title/hover</string>
+    <string>SoundPanel/Title/text</string>
+    <string>SoundPanel/Title/hover</string>
+    <string>SoundPanel/Content/VerticalLayoutGroup/UI/Label/text</string>
+    <string>SoundPanel/Content/VerticalLayoutGroup/UI/Label/hover</string>
+    <string>PauseMenu/DarkLayer/YesNoDialog/Dialog/Content/VerticalLayoutGroup/DeleteSave/text</string>
+    <string>PauseMenu/DarkLayer/YesNoDialog/Dialog/Content/VerticalLayoutGroup/DeleteSave/hover</string>
     <string>*Back/text</string>
-    <string>MenuPanel/MenuButtons (1)/Quit/text</string>
-    <string>MenuPanel/MenuButtons/Options/text</string>
+    <string>*Back/hover</string>
     <string>MenuPanel/Title/text</string>
-    <string>SavePanel/MenuButtons/Scroll View/Viewport/Content/SaveGameSelectable(Clone)/Delete/text</string>
-    <string>SavePanel/MenuButtons/Scroll View/Viewport/Content/SaveGameSelectable(Clone)/Delete/text</string>
-    <string>SavePanel/MenuButtons/Scroll View/Viewport/Content/SaveGameSelectable(Clone)/Delete/text</string>
-    <string>SavePanel/MenuButtons/Scroll View/Viewport/Content/SaveGameSelectable(Clone)/Delete/text</string>
-    <string>SavePanel/MenuButtons/Scroll View/Viewport/Content/SaveGameSelectable(Clone)/Delete/text</string>
-    <string>SavePanel/MenuButtons/Scroll View/Viewport/Content/SaveGameSelectable(Clone)/Delete/text</string>
+    <string>MenuPanel/Title/hover</string>
+    <string>MenuPanel/MenuButtons/Load/text</string>
+    <string>MenuPanel/MenuButtons/Load/hover</string>
+    <string>MenuPanel/MenuButtons/Save/text</string>
+    <string>MenuPanel/MenuButtons/Save/hover</string>
+    <string>ControlPanel/Content/VerticalLayoutGroup/KEYTitles/SecondaryKeyText/text</string>
+    <string>ControlPanel/Content/VerticalLayoutGroup/KEYTitles/SecondaryKeyText/hover</string>
     <string>*Back/text</string>
+    <string>*Back/hover</string>
     <string>SavePanel/MenuButtons/Save/text</string>
+    <string>SavePanel/MenuButtons/Save/hover</string>
+    <string>ControlPanel/Content/VerticalLayoutGroup/KEYTitles/HotkeyText/text</string>
+    <string>ControlPanel/Content/VerticalLayoutGroup/KEYTitles/HotkeyText/hover</string>
+    <string>GraphicsPanel/Content/ScrollRect/VerticalLayoutGroup/Vsync/Value/text</string>
+    <string>GraphicsPanel/Content/ScrollRect/VerticalLayoutGroup/Vsync/Value/hover</string>
+    <string>ControlPanel/Content/VerticalLayoutGroup/KEYTitles/PrimaryKeyText/text</string>
+    <string>ControlPanel/Content/VerticalLayoutGroup/KEYTitles/PrimaryKeyText/hover</string>
+    <string>PauseMenu/DarkLayer/YesNoDialog/Dialog/Content/VerticalLayoutGroup/Buttons/Yes/text</string>
+    <string>PauseMenu/DarkLayer/YesNoDialog/Dialog/Content/VerticalLayoutGroup/Buttons/Yes/hover</string>
+    <string>LoadPanel/Title/TitleText/text</string>
+    <string>LoadPanel/Title/TitleText/hover</string>
+    <string>GameplayPanel/Content/ScrollRect/VerticalLayoutGroup/Autorotate Buildings/Label/text</string>
+    <string>GameplayPanel/Content/ScrollRect/VerticalLayoutGroup/Autorotate Buildings/Label/hover</string>
+    <string>*Back/text</string>
+    <string>*Back/hover</string>
+    <string>SoundPanel/Content/VerticalLayoutGroup/Music/Label/text</string>
+    <string>SoundPanel/Content/VerticalLayoutGroup/Music/Label/hover</string>
+    <string>PauseMenu/DarkLayer/YesNoDialog/Dialog/Content/VerticalLayoutGroup/Buttons/No/text</string>
+    <string>PauseMenu/DarkLayer/YesNoDialog/Dialog/Content/VerticalLayoutGroup/Buttons/No/hover</string>
+    <string>SoundPanel/Content/VerticalLayoutGroup/SoundEffects/Label/text</string>
+    <string>SoundPanel/Content/VerticalLayoutGroup/SoundEffects/Label/hover</string>
+    <string>ControlPanel/Content/VerticalLayoutGroup/Mouse Sensitivity/Label/text</string>
+    <string>ControlPanel/Content/VerticalLayoutGroup/Mouse Sensitivity/Label/hover</string>
+    <string>OptionsPanel/MenuButtons/Sound/text</string>
+    <string>OptionsPanel/MenuButtons/Sound/hover</string>
+    <string>PauseMenu/DarkLayer/YesNoDialog/Dialog/Content/VerticalLayoutGroup/UnsavedProgress/text</string>
+    <string>PauseMenu/DarkLayer/YesNoDialog/Dialog/Content/VerticalLayoutGroup/UnsavedProgress/hover</string>
+    <string>MenuPanel/MenuButtons (1)/Quit/text</string>
+    <string>MenuPanel/MenuButtons (1)/Quit/hover</string>
+    <string>MenuPanel/MenuButtons/Options/text</string>
+    <string>MenuPanel/MenuButtons/Options/hover</string>
+    <string>MenuPanel/MenuButtons (1)/QuitMenu/text</string>
+    <string>MenuPanel/MenuButtons (1)/QuitMenu/hover</string>
+    <string>GraphicsPanel/Content/ScrollRect/VerticalLayoutGroup/Resolutions/Label/text</string>
+    <string>GraphicsPanel/Content/ScrollRect/VerticalLayoutGroup/Resolutions/Label/hover</string>
+    <string>SoundPanel/Content/VerticalLayoutGroup/Master/Label/text</string>
+    <string>SoundPanel/Content/VerticalLayoutGroup/Master/Label/hover</string>
+    <string>OptionsPanel/MenuButtons/Gameplay/text</string>
+    <string>OptionsPanel/MenuButtons/Gameplay/hover</string>
+    <string>GraphicsPanel/Content/ScrollRect/VerticalLayoutGroup/TextureQuality/Label/text</string>
+    <string>GraphicsPanel/Content/ScrollRect/VerticalLayoutGroup/TextureQuality/Label/hover</string>
+    <string>LoadPanel/MenuButtons/SaveDetails/Descriptons/Size/text</string>
+    <string>LoadPanel/MenuButtons/SaveDetails/Descriptons/Size/hover</string>
+    <string>LoadPanel/MenuButtons/SaveDetails/Descriptons/Climate/text</string>
+    <string>LoadPanel/MenuButtons/SaveDetails/Descriptons/Climate/hover</string>
+    <string>GameplayPanel/Title/text</string>
+    <string>GameplayPanel/Title/hover</string>
+    <string>GameplayPanel/Content/ScrollRect/VerticalLayoutGroup/Language/Label/text</string>
+    <string>GameplayPanel/Content/ScrollRect/VerticalLayoutGroup/Language/Label/hover</string>
+    <string>LoadPanel/MenuButtons/SaveDetails/Descriptons/CreationDate/text</string>
+    <string>LoadPanel/MenuButtons/SaveDetails/Descriptons/CreationDate/hover</string>
+    <string>GraphicsPanel/Content/ScrollRect/VerticalLayoutGroup/Brightness/Label/text</string>
+    <string>GraphicsPanel/Content/ScrollRect/VerticalLayoutGroup/Brightness/Label/hover</string>
+    <string>LoadPanel/MenuButtons/Load/text</string>
+    <string>LoadPanel/MenuButtons/Load/hover</string>
+    <string>OptionsPanel/MenuButtons/Controls/text</string>
+    <string>OptionsPanel/MenuButtons/Controls/hover</string>
+    <string>OptionsPanel/MenuButtons/Graphics/text</string>
+    <string>OptionsPanel/MenuButtons/Graphics/hover</string>
+    <string>PauseMenu/DarkLayer/YesNoDialog/Dialog/Title/text</string>
+    <string>PauseMenu/DarkLayer/YesNoDialog/Dialog/Title/hover</string>
+    <string>GraphicsPanel/Content/ScrollRect/VerticalLayoutGroup/Fullscreen/Value/text</string>
+    <string>GraphicsPanel/Content/ScrollRect/VerticalLayoutGroup/Fullscreen/Value/hover</string>
+    <string>*Back/text</string>
+    <string>*Back/hover</string>
+    <string>SoundPanel/Content/VerticalLayoutGroup/Ambient/Label/text</string>
+    <string>SoundPanel/Content/VerticalLayoutGroup/Ambient/Label/hover</string>
+    <string>PauseMenu/DarkLayer/YesNoDialog/Dialog/Content/VerticalLayoutGroup/OverwriteSave/text</string>
+    <string>PauseMenu/DarkLayer/YesNoDialog/Dialog/Content/VerticalLayoutGroup/OverwriteSave/hover</string>
     <string>SavePanel/Title/TitleText/text</string>
+    <string>SavePanel/Title/TitleText/hover</string>
   </missingLocalization>
 </UILanguageLocalizations>

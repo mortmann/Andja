@@ -9,7 +9,7 @@ using UnityEngine.EventSystems;
 using Newtonsoft.Json;
 
 public enum BrushTypes { Square, Round }
-
+public enum ChangeMode { Tile, Structure }
 public class EditorController : MonoBehaviour {
     public static bool IsEditor = false;
 
@@ -24,20 +24,31 @@ public class EditorController : MonoBehaviour {
     public static bool Generate { protected set; get; }
     static SaveIsland loadsavegame;
 
-    public bool changeTileType;
     public TileType selectedTileType = TileType.Dirt;
 
     public Structure structure;
     public int structureStage;
     public bool DestroyStructure = false;
-
+    public ChangeMode changeMode = ChangeMode.Tile;
     public BrushTypes brushType = BrushTypes.Square;
     public float randomChange = 100;
     public string spriteName;
     int brushSize = 1;
-
+    public bool brushBuild;
     public Size IslandSize {
         get { return Island.GetSizeTyp(Width, Height); }
+    }
+    public Vector3 BrushOffset { get {
+            switch (brushType) {
+                case BrushTypes.Square:
+                    if (brushSize % 2 != 0)
+                        return Vector3.zero;
+                    return new Vector3(0.5f, 0.5f, 0);
+                case BrushTypes.Round:
+                    return new Vector3(0, 0, 0);
+            }
+            return Vector3.zero;
+        }
     }
 
     Action<Structure> cbStructureCreated;
@@ -86,16 +97,17 @@ public class EditorController : MonoBehaviour {
             loadsavegame = null;
         }
         TileSpriteController.Instance.EditorFix();
+        UpdateHighLights();
     }
     internal static MapGenerator.IslandGenInfo[] GetEditorGenInfo() {
         return new MapGenerator.IslandGenInfo[1] { new MapGenerator.IslandGenInfo(new MapGenerator.Range(Width, Width), new MapGenerator.Range(Height, Height), climate) };
     }
 
-    public void NewIsland(int w, int h, Climate clim) {
+    public void NewIsland(int w, int h, Climate clim, bool random) {
         Width = w;
         Height = h;
         climate = clim;
-        Generate = true;
+        Generate = random;
         SceneManager.LoadScene("EditorLoadingScreen");
     }
     public void RandomizeIsland() {
@@ -108,11 +120,12 @@ public class EditorController : MonoBehaviour {
                 return;
             }
             dragging = true;
-            if (changeTileType) {
+            if (changeMode == ChangeMode.Tile) {
                 ChangeTileType();
             }
             else {
-                CreateStructure();
+                if(brushBuild)
+                    CreateStructure();
             }
         }
         if(Input.GetMouseButtonUp(0)) {
@@ -139,48 +152,16 @@ public class EditorController : MonoBehaviour {
         }
     }
     private void SquareBrush(Action<Tile> action, Tile t) {
-        for (int x = -Mathf.FloorToInt((float)brushSize / 2f); x < Mathf.CeilToInt((float)brushSize / 2f); x++) {
-            for (int y = -Mathf.FloorToInt((float)brushSize / 2f); y < Mathf.CeilToInt((float)brushSize / 2f); y++) {
+        for (int x = Mathf.FloorToInt((float)brushSize / 2f); x > -Mathf.CeilToInt((float)brushSize / 2f); x--) {
+            for (int y = Mathf.FloorToInt((float)brushSize / 2f); y > -Mathf.CeilToInt((float)brushSize / 2f); y--) {
                 RandomModifier(action, GetTileAtWorldCoord(t.X + x, t.Y + y));
             }
         }
     }
     private void RoundBrush(Action<Tile> action, Tile t) {
-        List<Tile> temp = new List<Tile>();
-        float x = 0;
-        float y = 0;
-        float radius = brushSize + 1f;
-        for (float a = 0; a < 360; a += 0.5f) {
-            x = t.X + radius * Mathf.Cos(a);
-            y = t.Y + radius * Mathf.Sin(a);
-            //			GameObject go = new GameObject ();
-            //			go.transform.position = new Vector3 (x, y);
-            //			go.AddComponent<SpriteRenderer> ().sprite = Resources.Load<Sprite> ("Debug");
-            x = Mathf.RoundToInt(x);
-            y = Mathf.RoundToInt(y);
-            for (int i = 0; i < brushSize; i++) {
-                Tile circleTile = GetTileAtWorldCoord(Mathf.RoundToInt(x), Mathf.RoundToInt(y));
-                if (temp.Contains(circleTile) == false) {
-                    temp.Add(circleTile);
-                }
-            }
-        }
-        List<Tile> tempInner = new List<Tile>();
-        //like flood fill the inner circle
-        Queue<Tile> tilesToCheck = new Queue<Tile>();
-        tilesToCheck.Enqueue(t);
-        while (tilesToCheck.Count > 0) {
-            Tile et = tilesToCheck.Dequeue();
-            if (temp.Contains(et) == false && tempInner.Contains(et) == false) {
-                tempInner.Add(et);
-                Tile[] ns = et.GetNeighbours(false);
-                foreach (Tile t2 in ns) {
-                    tilesToCheck.Enqueue(t2);
-                }
-            }
-        }
-        foreach (Tile item in tempInner) {
-            RandomModifier(action, item);
+        List<Tile> temp = Util.CalculateCircleTiles(brushSize, 0, 0);
+        foreach (Tile item in temp) {
+            RandomModifier(action, World.Current.GetTileAt(t.Vector2+item.Vector2-new Vector2(brushSize,brushSize)));
         }
     }
     private void RandomModifier(Action<Tile> action, Tile et) {
@@ -202,27 +183,31 @@ public class EditorController : MonoBehaviour {
             return;
         }
         if (t.Type == TileType.Ocean) {
-            World.Current.SetTileAt(t.X, t.Y, new LandTile(t.X, t.Y));
+            LandTile landTile = new LandTile(t.X, t.Y);
+            landTile.Island = World.Current.Islands[0];
+            landTile.City = World.Current.Islands[0].Wilderness;
+            World.Current.Islands[0].Tiles.Add(t);
+            World.Current.SetTileAt(t.X, t.Y, landTile);
         }
         t = World.Current.GetTileAt(t.X, t.Y);
 
-        
-        t.Type = selectedTileType;
-        if (t.Type == TileType.Shore) {
+        if (selectedTileType == TileType.Shore) {
             t.SpriteName = "shore" + Tile.GetSpriteAddonForTile(t, t.GetNeighbours());
         }
         else {
             t.SpriteName = spriteName;
         }
-        if (selectedTileType == TileType.Ocean) {
+        if (selectedTileType == TileType.Ocean && t.Type != TileType.Ocean) {
             if (t.Structure != null) {
                 DestroyStructureOnTile(t);
             }
             World.Current.SetTileAt(t.X, t.Y, new Tile(t.X, t.Y));
+            World.Current.Islands[0].Tiles.Remove(t);
             t.SpriteName = null;
         }
+        t.Type = selectedTileType;
         foreach (Tile neigh in t.GetNeighbours()) {
-            if (neigh.Type != TileType.Shore) {
+            if (neigh!=null&&neigh.Type != TileType.Shore) {
                 continue;
             }
             neigh.SpriteName = "shore" + Tile.GetSpriteAddonForTile(neigh, neigh.GetNeighbours());
@@ -258,10 +243,10 @@ public class EditorController : MonoBehaviour {
             else {
                 switch (brushType) {
                     case BrushTypes.Square:
-                        SquareBrush(BuildOn, et);
+                        SquareBrush(BrushBuildOn, et);
                         break;
                     case BrushTypes.Round:
-                        RoundBrush(BuildOn, et);
+                        RoundBrush(BrushBuildOn, et);
                         break;
                     default:
                         throw new ArgumentOutOfRangeException();
@@ -275,21 +260,49 @@ public class EditorController : MonoBehaviour {
     }
     public void ChangeBrushType(int type) {
         brushType = (BrushTypes)type;
+        UpdateHighLights();
     }
-    internal void BuildOn(Tile t) {
-        BuildOn(structure.GetBuildingTiles(t.X, t.Y),true);
+
+    private void UpdateHighLights() {
+        switch (brushType) {
+            case BrushTypes.Square:
+                MouseController.Instance.SetEditorHighlight(brushSize, Util.CalculateSquareTiles(brushSize, 0, 0));
+                break;
+            case BrushTypes.Round:
+                MouseController.Instance.SetEditorHighlight(2*brushSize + 1, Util.CalculateCircleTiles(brushSize, 0, 0));
+                break;
+        }
     }
-    internal void BuildOn(List<Tile> t, bool single) {
-        Structure toPlace = structure.Clone();
-        SetStructureVariablesList.ForEach(x => x?.Invoke(toPlace));
-        BuildController.Instance.EditorBuildOnTile(toPlace, t, single);
+
+    internal void BrushBuildOn(Tile t) {
+        BuildOn(structure.GetBuildingTiles(t.X, t.Y),true, true);
+    }
+    internal void BuildOn(List<Tile> tiles, bool foreachTileNewStructure, bool isBrushBuilt = false) {
+        if (brushBuild != isBrushBuilt)
+            return;
+        if(foreachTileNewStructure==false) {
+            Structure toPlace = structure.Clone();
+            SetStructureVariablesList.ForEach(x => x?.Invoke(toPlace));
+            BuildController.Instance.EditorBuildOnTile(toPlace, tiles, foreachTileNewStructure);
+        } else {
+            tiles.RemoveAll(x => x.Type == TileType.Ocean);
+            foreach(Tile t in tiles) {
+                Structure toPlace = structure.Clone();
+                SetStructureVariablesList.ForEach(x => x?.Invoke(toPlace));
+                BuildController.Instance.EditorBuildOnTile(toPlace, structure.GetBuildingTiles(t.X, t.Y), true);
+            }
+        }
     }
     
     public void SetBrushSize(int size) {
         brushSize = size;
+        UpdateHighLights();
     }
     public void ChangeBuild(bool type) {
-        changeTileType = type;
+        changeMode = type ? ChangeMode.Tile : ChangeMode.Structure;
+        if(changeMode == ChangeMode.Tile) {
+            BuildController.Instance.ResetBuild();
+        }
     }
 
     public void SetStructure(string id) {
@@ -360,7 +373,7 @@ public class EditorController : MonoBehaviour {
     public SaveIsland GetSaveState() {
         HashSet<Tile> toSave = new HashSet<Tile>(world.Tiles);
         toSave.RemoveWhere(x => x.Type == TileType.Ocean);
-        return new SaveIsland(world.IslandList[0].Cities[0].structures, toSave.ToArray(), Width, Height, climate, Ressources);
+        return new SaveIsland(world.Islands[0].Cities[0].structures, toSave.ToArray(), Width, Height, climate, Ressources);
     }
 
     [JsonObject]

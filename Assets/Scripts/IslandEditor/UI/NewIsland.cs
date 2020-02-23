@@ -7,6 +7,8 @@ public class NewIsland : MonoBehaviour {
     public InputField width;
     public Dropdown zone;
     public Button create;
+    public Toggle randomGeneration;
+
     // Use this for initialization
     void Start() {
         create.onClick.AddListener(OnCreateClick);
@@ -21,6 +23,7 @@ public class NewIsland : MonoBehaviour {
         int h = int.Parse(height.text);
         int w = int.Parse(width.text);
         Climate cli = (Climate)zone.value;
-        EditorController.Instance.NewIsland(w, h, cli);
+        bool randomize = randomGeneration.isOn;
+        EditorController.Instance.NewIsland(w, h, cli, randomize);
     }
 }

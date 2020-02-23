@@ -34,13 +34,13 @@ public class Inventory {
         Items = new Dictionary<string, Item>();
         
         this.NumberOfSpaces = numberOfSpaces;
-        RegisterOnChangedCallback(OnMeChanged);
+        RegisterOnChangedCallback(OnChanged);
     }
     /// <summary>
     /// DO NOT USE
     /// </summary>
     public Inventory() {
-        RegisterOnChangedCallback(OnMeChanged);
+        RegisterOnChangedCallback(OnChanged);
     }
     /// <summary>
 	/// returns amount  
@@ -367,8 +367,6 @@ public class Inventory {
         }
     }
     public virtual Item[] GetBuildMaterial() {
-        //there are 10 ids reserved for buildingmaterial
-        //currently there are 7 builditems
         List<Item> itemlist = new List<Item>();
         foreach (Item i in PrototypController.BuildItems) {
             if (ContainsItemWithID(i.ID)) {
@@ -463,7 +461,7 @@ public class Inventory {
         this.MaxStackSize -= value;
     }
     //TODO: make this not relay on load function?
-    public void OnMeChanged(Inventory me) {
+    public void OnChanged(Inventory me) {
         if (HasLimitedSpace == false)
             return;
         amountInInventory = 0;

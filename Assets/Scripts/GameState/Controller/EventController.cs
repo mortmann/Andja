@@ -178,13 +178,13 @@ public class EventController : MonoBehaviour {
         switch (type) {
             case EventType.City:
                 List<City> cities = new List<City>();
-                foreach (Island item in world.IslandList) {
+                foreach (Island item in world.Islands) {
                     cities.AddRange(item.Cities);
                 }
                 ige = RandomItemFromList<City>(cities);
                 break;
             case EventType.Disaster:
-                ige = RandomItemFromList<Island>(world.IslandList);
+                ige = RandomItemFromList<Island>(world.Islands);
                 break;
             case EventType.Weather:
                 //????
@@ -202,7 +202,7 @@ public class EventController : MonoBehaviour {
                 if (r < 0.4f) { //idk
                     return null; // there is no specific target
                 }
-                Island i = RandomItemFromList<Island>(world.IslandList);
+                Island i = RandomItemFromList<Island>(world.Islands);
                 City c = RandomItemFromList<City>(i.Cities);
                 if (c.playerNumber == -1) { // random decided there will be no event? 
                                             // are there events for wilderniss structures?

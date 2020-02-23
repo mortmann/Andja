@@ -9,7 +9,7 @@ public class KeyboardController : MonoBehaviour {
 
     // Use this for initialization
     UIController UIC => UIController.Instance;
-    MouseController MouseC => MouseController.Instance;
+    MouseController MouseController => MouseController.Instance;
     BuildController BuildController => BuildController.Instance;
     enum CheatCode { GodMode }
     Dictionary<KeyCode[], CheatCode> cheatCodes = new Dictionary<KeyCode[], CheatCode> {
@@ -29,7 +29,7 @@ public class KeyboardController : MonoBehaviour {
     // Update is called once per frame
     void Update() {
         if (Input.GetKeyDown(KeyCode.Escape)) {
-            MouseC.Escape();
+            MouseController.Escape();
             BuildController.Escape();
             UIC.Escape(BuildController.BuildState != BuildStateModes.None);
             ShortcutUI.Instance.StopDragAndDropBuild();
@@ -56,7 +56,7 @@ public class KeyboardController : MonoBehaviour {
             WorldController.Instance.TogglePause();
         }
         if (InputHandler.GetButtonDown(InputName.Stop)) {
-            MouseC.StopUnit();
+            MouseController.StopUnit();
         }
         if (InputHandler.GetButtonDown(InputName.Console)) {
             UIC.ToggleConsole();
@@ -75,7 +75,7 @@ public class KeyboardController : MonoBehaviour {
         if (Application.isEditor) {
             if (Input.GetKey(KeyCode.LeftShift)) {
                 if (EventSystem.current.IsPointerOverGameObject() == false) {
-                    FindObjectOfType<HoverOverScript>().DebugTileInfo(MouseC.GetTileUnderneathMouse());
+                    FindObjectOfType<HoverOverScript>().DebugTileInfo(MouseController.GetTileUnderneathMouse());
                 }
             }
             if (Input.GetKeyUp(KeyCode.LeftShift)) {

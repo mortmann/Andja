@@ -97,7 +97,7 @@ public class TileSpriteController : MonoBehaviour {
 
             islandToCityMask = new Dictionary<Island, SpriteMask>();
             islandToGameObject = new Dictionary<Island, GameObject>();
-            foreach (Island i in World.Current.IslandList) {
+            foreach (Island i in World.Current.Islands) {
                 Vector2 key = i.Placement;
                 GameObject islandGO = Instantiate(islandPosToTilemap[key]);
                 Destroy(islandPosToTilemap[key]);
@@ -121,7 +121,7 @@ public class TileSpriteController : MonoBehaviour {
             }
             World.RegisterTileChanged(OnTileChanged);
 
-            foreach (Island i in World.Current.IslandList) {
+            foreach (Island i in World.Current.Islands) {
                 City c = i.FindCityByPlayer(PlayerController.currentPlayerNumber);
                 if (c == null) {
                     continue;
@@ -134,11 +134,6 @@ public class TileSpriteController : MonoBehaviour {
         else {
             LoadSprites();
             CreateBaseTiles();
-            //if(EditorController.generate==false)
-            //    EditorFix();
-            //foreach (Tile t in World.Current.Tiles) {
-            //    ChangeEditorTile(t);
-            //}
         }
 
         //BuildController.Instance.RegisterBuildStateChange (OnBuildStateChance);
@@ -148,6 +143,7 @@ public class TileSpriteController : MonoBehaviour {
         //if (editor_island_tilemap != null)
         //    Destroy(editor_island_tilemap);
         editor_island_tilemap = new GameObject();
+        editor_island_tilemap.name = "EditorIsland TileMap";
         editor_island_tilemap.transform.position = new Vector3(-0.5f, -0.5f, 0);
         editorTilemap = editor_island_tilemap.AddComponent<Tilemap>();
         Grid g = editor_island_tilemap.AddComponent<Grid>();
@@ -384,7 +380,7 @@ public class TileSpriteController : MonoBehaviour {
         }
         else {
             islandToCustomMask = new Dictionary<Island, SpriteMask>();
-            foreach (Island i in World.Current.IslandList) {
+            foreach (Island i in World.Current.Islands) {
                 GameObject cityMaskGameobject = new GameObject("IslandCustomMask " + addDeciderFunc.Method.Name);
                 cityMaskGameobject.transform.parent = islandToGameObject[i].transform;
                 cityMaskGameobject.transform.localPosition = -new Vector3(0, 0);

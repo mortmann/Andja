@@ -58,6 +58,10 @@ public class BuildController : MonoBehaviour {
             Debug.LogError("There should never be two BuildController.");
         }
         Instance = this;
+        if(EditorController.IsEditor) {
+            noBuildCost = true;
+            noUnitRestriction = true;
+        } else
         if (noBuildCost && noUnitRestriction) {
             Debug.LogWarning("Cheats are activated.");
         }
@@ -154,7 +158,7 @@ public class BuildController : MonoBehaviour {
         }
     }
 
-    protected void RealBuild(List<Tile> tiles, Structure structure, int playerNumber, bool loading = false, bool wild = false, Unit buildInRangeUnit = null) {
+    protected void RealBuild(List<Tile> tiles, Structure structure, int playerNumber, bool loading = false, bool buildInWilderness = false, Unit buildInRangeUnit = null) {
         if (tiles == null) {
             Debug.LogError("tiles is null");
             return;
@@ -184,16 +188,19 @@ public class BuildController : MonoBehaviour {
         //FIXME find a better solution for this?
         structure.rotated = rotate;
         //if is build in wilderniss city
-        structure.buildInWilderniss = wild;
+        structure.buildInWilderniss = buildInWilderness;
 
         //search for a city that is from the placing player
         //it doesnt matter if we can place it -- its needed for loading!
         //and the structure gets deleted if it cant be placed anyway
-        structure.City = tiles.Find(x => x.City.playerNumber == playerNumber)?.City;
+        if (buildInWilderness == false)
+            structure.City = tiles.Find(x => x?.City.playerNumber == playerNumber)?.City;
+        else
+            structure.City = tiles[0].City;
         //before we need to check if we can build THERE
         //we need to know if there is if we COULD build 
         //it anyway? that means enough ressources and enough Money
-        if (loading == false && wild == false) {
+        if (loading == false && buildInWilderness == false) {
             //TODO: Check for Event restricting building from players
             //return;
             //find a city that matches the player 
@@ -232,15 +239,14 @@ public class BuildController : MonoBehaviour {
                         return;
                     }
                     if (inv.ContainsItemsWithRequiredAmount(structure.GetBuildingItems()) == false) {
-                        Debug.Log("ContainsItemsWithRequiredAmount==null");
+                        Debug.Log("UI FEEDBACK NEEDED -- NOT ENOUGH MATERIAL TO BUILD");
                         return;
                     }
+                    inv.RemoveItemsAmount(structure.GetBuildingItems());
                 }
             }
         }
-        if (wild) {
-            structure.City = tiles[0].Island.Wilderness;
-        }
+        
         //now we know that we COULD build that structure
         //but CAN WE?
         //check to see if the structure can be placed there
@@ -250,14 +256,9 @@ public class BuildController : MonoBehaviour {
             }
             return;
         }
-
-        if (buildInRangeUnit != null && noBuildCost == false) {
-            buildInRangeUnit.inventory.RemoveItemsAmount(structure.GetBuildingItems());
-        }
         structure.City.AddStructure(structure);
-
         //call all callbacks on structure created
-        //FIXME remove this or smth
+        //FIXME remove this or smth -- why?
         cbStructureCreated?.Invoke(structure, loading);
         if (loading == false) {
             // this is for loading so everything will be placed in order
@@ -310,6 +311,12 @@ public class BuildController : MonoBehaviour {
         buildID = loadedStructures[loadedStructures.Count - 1].buildID++;
     }
     public void ResetBuild() {
+        if (BuildState != BuildStateModes.None) {
+            //Reset MouseController out of BuildMode that this set it to 
+            //when a structure gets selected 
+            MouseController.Instance.mouseState = MouseState.Idle;
+            MouseController.Instance.ResetBuild(null);
+        }
         BuildState = BuildStateModes.None;
         this.toBuildStructure = null;
     }

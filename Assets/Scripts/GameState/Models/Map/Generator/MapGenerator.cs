@@ -768,12 +768,8 @@ public class MapGenerator : MonoBehaviour {
                 }
             }
         }
-
-
-
         internal bool Overlaps(Rect toTest) {
             return rect.Overlaps(toTest);
         }
-
     }
 }

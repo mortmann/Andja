@@ -154,7 +154,7 @@ public class WorldController : MonoBehaviour {
         //World.LoadData(MapGenerator.Instance.GetTiles(), GameDataHolder.Width, GameDataHolder.Height);
         MapGenerator.Instance.Destroy();
         List<MapGenerator.IslandStruct> structs = MapGenerator.Instance.GetIslandStructs();
-        foreach (Island island in World.IslandList) {
+        foreach (Island island in World.Islands) {
             MapGenerator.IslandStruct thisStruct = structs.Find(s =>
                     island.StartTile.X >= s.x && (s.x + s.Width) >= island.StartTile.X &&
                     island.StartTile.Y >= s.y && (s.y + s.Height) >= island.StartTile.Y
@@ -175,7 +175,7 @@ public class WorldController : MonoBehaviour {
         offworldMarket = new OffworldMarket();
         //Now turn the loaded World into a playable World
         List<Structure> loadedStructures = new List<Structure>();
-        foreach (Island island in World.IslandList) {
+        foreach (Island island in World.Islands) {
             loadedStructures.AddRange(island.Load());
         }
         loadedStructures.Sort((x, y) => x.buildID.CompareTo(y.buildID));

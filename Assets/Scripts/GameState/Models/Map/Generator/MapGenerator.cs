@@ -25,7 +25,7 @@ public class MapGenerator : MonoBehaviour {
     List<Task> generatorsTasks;
 
     int completedIslands = 0;
-    Dictionary<Tile, Structure> tileToStructure;
+    public Dictionary<Tile, Structure> tileToStructure;
 
     List<IslandGenerator> islandGenerators;
     ConcurrentBag<EditorController.SaveIsland> loadedIslandsList;
@@ -96,6 +96,7 @@ public class MapGenerator : MonoBehaviour {
         }
         Instance = this;
         this.gameObject.transform.parent = null;
+        TileSpriteController.LoadSprites();
         if (EditorController.Generate) {
             EditorGenerate(EditorController.Width, EditorController.Height, EditorController.GetEditorGenInfo());
         }
@@ -133,19 +134,16 @@ public class MapGenerator : MonoBehaviour {
         if (hasToUseIslands == null) {
             hasToUseIslands = new List<string>();
         }
-        if (generatedIslands) {
-            islandsToGenerate = new List<IslandGenInfo>();
-            Debug.LogWarning("Has not been correctly implemented! TODO: Make it work! Otherwise => Do not use!");
-            foreach (IslandGenInfo genInfo in numberRangeOfIslandsSizes.Keys) {
+        islandsToGenerate = new List<IslandGenInfo>();
+        foreach (IslandGenInfo genInfo in numberRangeOfIslandsSizes.Keys) {
+            if(genInfo.generate) {
+                Debug.LogWarning("Generating Island still in alpha! Use with absolute caution. Note: it is still not guaranteed to have usable islands.");
                 Range range = numberRangeOfIslandsSizes[genInfo];
                 int numberOfIslands = Random.Range(range.min, range.max + 1);
                 for (int i = 0; i < numberOfIslands; i++) {
                     islandsToGenerate.Add(new IslandGenInfo(genInfo)); // TODO: rethink this !
                 }
-            }
-        }
-        else if (numberRangeOfIslandsSizes != null) {
-            foreach (IslandGenInfo genInfo in numberRangeOfIslandsSizes.Keys) {
+            } else {
                 Range range = numberRangeOfIslandsSizes[genInfo];
                 int numberOfIslands = Random.Range(range.min, range.max + 1);
                 for (int i = 0; i < numberOfIslands; i++) {
@@ -154,7 +152,6 @@ public class MapGenerator : MonoBehaviour {
                 }
             }
         }
-
         float percantage = 0.225f;
         float overlap = 0.025f;
         float percantageOverlap = percantage - overlap;
@@ -313,6 +310,7 @@ public class MapGenerator : MonoBehaviour {
                 else {
                     //the islands is the whole map! so just set the tiles to the map tiles
                     tiles = islandGenerators[0].Tiles;
+                    tileToStructure = islandGenerators[0].tileToStructure;
                     tilesPopulated = true;
                 }
                 if (tilesPopulated == false)
@@ -328,7 +326,7 @@ public class MapGenerator : MonoBehaviour {
 
             if (SaveController.IsLoadingSave == false && WorldController.Instance != null) {
                 WorldController.Instance.SetGeneratedWorld(GetWorld(false), tileToStructure);
-                Destroy();
+                MakeOnLoadDestroy();
             }
             else if(SaveController.IsLoadingSave == true && WorldController.Instance != null) {
                 World.Current.LoadData(GetTiles(), Width, Height);
@@ -338,6 +336,12 @@ public class MapGenerator : MonoBehaviour {
             transform.SetParent(null);
         }
     }
+
+    private void MakeOnLoadDestroy() {
+        GameObject go = new GameObject("DestroyLoad");
+        transform.SetParent(go.transform);
+    }
+
     List<DirectionalRect> recantgleEmptySpaces;
     Dictionary<Rect, IslandStruct> placeToIsland;
     Dictionary<DirectionalRect, Color> rectToColor;
@@ -575,8 +579,8 @@ public class MapGenerator : MonoBehaviour {
         return tiles;
     }
     public void Destroy() {
-        //if (gameObject!=null)
-        //    Destroy(gameObject);
+        if (gameObject != null)
+            Destroy(gameObject);
     }
     public void OnDestroy() {
         Instance = null;
@@ -621,6 +625,7 @@ public class MapGenerator : MonoBehaviour {
     }
 
     public struct IslandGenInfo {
+        public bool generate;
         public Range Width;
         public Range Height;
         public Climate climate;
@@ -630,10 +635,11 @@ public class MapGenerator : MonoBehaviour {
             this.Height = genInfo.Height;
             this.climate = genInfo.climate;
         }
-        public IslandGenInfo(Range Width, Range Height, Climate climate) {
+        public IslandGenInfo(Range Width, Range Height, Climate climate, bool generate) {
             this.Width = Width;
             this.Height = Height;
             this.climate = climate;
+            this.generate = generate;
         }
         //Maybe add any SpecialFeature it may contain? eg vulkan, 
     }
@@ -649,15 +655,15 @@ public class MapGenerator : MonoBehaviour {
         public Dictionary<Tile, Structure> tileToStructure;
         public Dictionary<string, int> Ressources;
 
-        public IslandStruct(int width, int height, Tile[] tiles, Climate climate, List<Fertility> list, Dictionary<int, int> Ressources) : this() {
+        public IslandStruct(int width, int height, Tile[] tiles, Climate climate, List<Fertility> list, Dictionary<string, int> Ressources, Dictionary<Tile, Structure> tileToStructure) : this() {
             Width = width;
             Height = height;
             Tiles = tiles;
             this.climate = climate;
-            tileToStructure = new Dictionary<Tile, Structure>();
             fertilities = list;
             this.name = "";
-
+            this.Ressources = Ressources;
+            this.tileToStructure = tileToStructure;
         }
         public IslandStruct(EditorController.SaveIsland save, List<Fertility> fertilities) : this() {
             Width = save.Width;

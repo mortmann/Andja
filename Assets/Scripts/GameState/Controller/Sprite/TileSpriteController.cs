@@ -234,11 +234,13 @@ public class TileSpriteController : MonoBehaviour {
             masktexture.SetPixels32(new Color32[(islandWidth) * (islandHeight)]);
             masktexture.filterMode = FilterMode.Point;
             foreach (Tile tile_data in i.Tiles) {
+                if (tile_data.Type == TileType.Ocean)
+                    continue;
                 //TILEMAP
                 int x = (int)(tile_data.X - xTileOffset);
                 int y = (int)(tile_data.Y - yTileOffset);
-                if(nameToBaseTile.ContainsKey(tile_data.SpriteName)==false) {
-                    Debug.Log("Missing tilesprite " + tile_data.SpriteName);
+                if(tile_data.SpriteName==null||nameToBaseTile.ContainsKey(tile_data.SpriteName)==false) {
+                    Debug.Log("Missing "+ tile_data.Type + " tilesprite " + tile_data.SpriteName);
                 }
                 string temp = nameToBaseTile.ContainsKey(tile_data.SpriteName) ? tile_data.SpriteName : "nosprite" ;
                 tilemap.SetTile(new Vector3Int( x, y, 0 ) , nameToBaseTile[temp]);
@@ -318,7 +320,7 @@ public class TileSpriteController : MonoBehaviour {
         }
     }
 
-    static void LoadSprites() {
+   public static void LoadSprites() {
         nameToSprite = new Dictionary<string, Sprite>();
         Sprite[] sprites = Resources.LoadAll<Sprite>("Textures/TileSprites/");
         foreach (Sprite s in sprites) {

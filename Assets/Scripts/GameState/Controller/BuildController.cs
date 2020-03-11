@@ -84,9 +84,9 @@ public class BuildController : MonoBehaviour {
             settleStructure = PrototypController.Instance.GetFirstLevelStructureIDForStructureType(typeof(WarehouseStructure));
         OnClick(settleStructure, buildUnit);
     }
-    public void DestroyStructureOnTiles(IEnumerable<Tile> tiles, Player destroyPlayer) {
+    public void DestroyStructureOnTiles(IEnumerable<Tile> tiles, Player destroyPlayer, bool isGod=false) {
         foreach (Tile t in tiles) {
-            DestroyStructureOnTile(t, destroyPlayer);
+            DestroyStructureOnTile(t, destroyPlayer, isGod);
         }
     }
     /// <summary>
@@ -101,6 +101,11 @@ public class BuildController : MonoBehaviour {
             t.Structure.Destroy();
         }
     }
+
+    internal void SetLoadedStructures(IEnumerable<Structure> values) {
+        LoadedStructures = new List<Structure>(values);
+    }
+
     public void OnClick(string id, Unit buildInRangeUnit = null, Structure EditorStructure = null) {
         if (StructurePrototypes.ContainsKey(id) == false) {
             Debug.LogError("BUTTON has ID that is not a structure prototypes ->o_O<- ");

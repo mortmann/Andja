@@ -31,7 +31,8 @@ public class StructureSpriteController : MonoBehaviour {
         structureExtraUIMap = new Dictionary<Structure, GameObject>();
 
         LoadSprites();
-        if(EditorController.IsEditor==false && BuildController.Instance.LoadedStructures!=null) {
+        Debug.Log("StructureSpriteController START!");
+        if(BuildController.Instance.LoadedStructures!=null) {
             foreach (Structure str in BuildController.Instance.LoadedStructures) {
                 OnBuildStrucutureCreated(str, true);
             }

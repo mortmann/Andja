@@ -21,7 +21,7 @@ public class EditorController : MonoBehaviour {
     public static int Width = 100;
     public static int Height = 100;
     public static Climate climate = Climate.Middle;
-    public static bool Generate { protected set; get; }
+    public static bool Generate = false; 
     static SaveIsland loadsavegame;
 
     public TileType selectedTileType = TileType.Dirt;
@@ -89,6 +89,12 @@ public class EditorController : MonoBehaviour {
             return;
         if (Generate) {
             world = new World(MapGenerator.Instance.GetTiles(), Width, Height,true);
+            foreach (Tile t in MapGenerator.Instance.tileToStructure.Keys) {
+                Structure str = MapGenerator.Instance.tileToStructure[t];
+                BuildController.Instance.EditorBuildOnTile(str, str.GetBuildingTiles(t.X, t.Y), false);
+            }
+            Debug.Log("BuildController.Instance.SetLoadedStructures!");
+            BuildController.Instance.SetLoadedStructures(MapGenerator.Instance.tileToStructure.Values);
             MapGenerator.Instance.Destroy();
             Generate = false;
         }
@@ -100,7 +106,7 @@ public class EditorController : MonoBehaviour {
         UpdateHighLights();
     }
     internal static MapGenerator.IslandGenInfo[] GetEditorGenInfo() {
-        return new MapGenerator.IslandGenInfo[1] { new MapGenerator.IslandGenInfo(new MapGenerator.Range(Width, Width), new MapGenerator.Range(Height, Height), climate) };
+        return new MapGenerator.IslandGenInfo[1] { new MapGenerator.IslandGenInfo(new MapGenerator.Range(Width, Width), new MapGenerator.Range(Height, Height), climate, true) };
     }
 
     public void NewIsland(int w, int h, Climate clim, bool random) {
@@ -139,7 +145,6 @@ public class EditorController : MonoBehaviour {
     }
     public void ChangeTileType() {
         Tile t = GetTileAtWorldCoord(Camera.main.ScreenToWorldPoint(Input.mousePosition));
-        ChangeTileTypeForTile(t);
         switch (brushType) {
             case BrushTypes.Square:
                 SquareBrush(ChangeTileTypeForTile, t);
@@ -152,16 +157,20 @@ public class EditorController : MonoBehaviour {
         }
     }
     private void SquareBrush(Action<Tile> action, Tile t) {
-        for (int x = Mathf.FloorToInt((float)brushSize / 2f); x > -Mathf.CeilToInt((float)brushSize / 2f); x--) {
-            for (int y = Mathf.FloorToInt((float)brushSize / 2f); y > -Mathf.CeilToInt((float)brushSize / 2f); y--) {
-                RandomModifier(action, GetTileAtWorldCoord(t.X + x, t.Y + y));
-            }
+        List<Tile> temp = Util.CalculateRectangleTiles(brushSize,brushSize, 0, 0, t.X, t.Y);
+        foreach (Tile item in temp) {
+            RandomModifier(action, item);
         }
+        //for (int x = Mathf.FloorToInt((float)brushSize / 2f); x > -Mathf.CeilToInt((float)brushSize / 2f); x--) {
+        //    for (int y = Mathf.FloorToInt((float)brushSize / 2f); y > -Mathf.CeilToInt((float)brushSize / 2f); y--) {
+        //        RandomModifier(action, GetTileAtWorldCoord(t.X + x, t.Y + y));
+        //    }
+        //}
     }
     private void RoundBrush(Action<Tile> action, Tile t) {
-        List<Tile> temp = Util.CalculateCircleTiles(brushSize, 0, 0);
+        List<Tile> temp = Util.CalculateCircleTiles(brushSize, 0, 0, t.X, t.Y);
         foreach (Tile item in temp) {
-            RandomModifier(action, World.Current.GetTileAt(t.Vector2+item.Vector2-new Vector2(brushSize,brushSize)));
+            RandomModifier(action, item);// World.Current.GetTileAt(t.Vector2+item.Vector2-new Vector2(brushSize,brushSize)));
         }
     }
     private void RandomModifier(Action<Tile> action, Tile et) {
@@ -219,10 +228,12 @@ public class EditorController : MonoBehaviour {
     public void SetDestroyMode() {
         DestroyStructure = true;
         EditorUIController.Instance.DestroyToggle(DestroyStructure);
+        MouseController.Instance.mouseState = MouseState.Destroy;
     }
     public void SetBuildMode() {
         DestroyStructure = false;
         EditorUIController.Instance.DestroyToggle(DestroyStructure);
+        MouseController.Instance.mouseState = MouseState.Idle;
     }
     public void CreateStructure() {
         if (Input.GetMouseButtonDown(0)) {
@@ -264,12 +275,16 @@ public class EditorController : MonoBehaviour {
     }
 
     private void UpdateHighLights() {
+        //if build structure mode go if brush build is selected otherwise always true
+        bool show = changeMode == ChangeMode.Structure ? brushBuild : true;
         switch (brushType) {
             case BrushTypes.Square:
-                MouseController.Instance.SetEditorHighlight(brushSize, Util.CalculateSquareTiles(brushSize, 0, 0));
+                MouseController.Instance.SetEditorHighlight(brushSize, 
+                    Util.CalculateSquareTiles(brushSize), show);
                 break;
             case BrushTypes.Round:
-                MouseController.Instance.SetEditorHighlight(2*brushSize + 1, Util.CalculateCircleTiles(brushSize, 0, 0));
+                MouseController.Instance.SetEditorHighlight(2*brushSize + 1, 
+                    Util.CalculateCircleTiles(brushSize, 0, 0), show);
                 break;
         }
     }
@@ -280,6 +295,12 @@ public class EditorController : MonoBehaviour {
     internal void BuildOn(List<Tile> tiles, bool foreachTileNewStructure, bool isBrushBuilt = false) {
         if (brushBuild != isBrushBuilt)
             return;
+        if(isBrushBuilt==false) {
+            float f = UnityEngine.Random.Range(0, 100);
+            if (f > randomChange) {
+                return;
+            }
+        }
         if(foreachTileNewStructure==false) {
             Structure toPlace = structure.Clone();
             SetStructureVariablesList.ForEach(x => x?.Invoke(toPlace));
@@ -303,11 +324,20 @@ public class EditorController : MonoBehaviour {
         if(changeMode == ChangeMode.Tile) {
             BuildController.Instance.ResetBuild();
         }
+        if(changeMode==ChangeMode.Structure) {
+            MouseController.Instance.SetEditorBrushHighlightActive(brushBuild);
+        } else {
+            MouseController.Instance.SetEditorBrushHighlightActive(true);
+        }
     }
 
     public void SetStructure(string id) {
         structure = PrototypController.Instance.StructurePrototypes[id];
         BuildController.Instance.OnClick(id,null,structure);
+        if(brushBuild) {
+            MouseController.Instance.mouseState = MouseState.Idle;
+            MouseController.Instance.ToBuildStructure = null;
+        }
     }
     public void RegisterOnStructureCreated(Action<Structure> strs) {
         cbStructureCreated += strs;

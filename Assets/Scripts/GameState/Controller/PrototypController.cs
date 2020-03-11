@@ -73,7 +73,7 @@ public class PrototypController : MonoBehaviour {
     /// If 
     /// </summary>
     private Dictionary<string, List<NeededProportions>> proportions;
-
+    private Dictionary<int, int> circleSizeToTileCount;
     //TODO: need a way to get this to load in! probably with the rest
     //      of the data thats still needs to be read in like time for money ticks
     public ArmorType StructureArmor => armorTypeDatas["woodenwall"];
@@ -93,7 +93,11 @@ public class PrototypController : MonoBehaviour {
         }
         return needs;
     }
-
+    internal Structure GetStructureCopy(string id) {
+        if (StructurePrototypes.ContainsKey(id) == false)
+            return null;
+        return StructurePrototypes[id].Clone();
+    }
     internal Structure GetStructure(string id) {
         if (StructurePrototypes.ContainsKey(id) == false)
             return null;
@@ -272,7 +276,17 @@ public class PrototypController : MonoBehaviour {
         //Set it to default so it doesnt interfer with user interface informations
         System.Threading.Thread.CurrentThread.CurrentCulture = System.Globalization.CultureInfo.InstalledUICulture;
 
+        CalculateSizeTileCount();
         CalculateOptimalProportions();
+    }
+
+    private void CalculateSizeTileCount() {
+        circleSizeToTileCount = new Dictionary<int, int>();
+        int maxRange = StructurePrototypeDatas.Values.Max(x => x.structureRange);
+        circleSizeToTileCount.Add(0, 0);
+        for (int i = 1; i < maxRange; i++) {
+            circleSizeToTileCount.Add(i, Util.CalculateCircleTiles(i, 0, 0).Count);
+        }   
     }
 
     private void CalculateOptimalProportions() {
@@ -284,8 +298,16 @@ public class PrototypController : MonoBehaviour {
         itemIDToProduce = new Dictionary<string, List<Produce>>();
         foreach (FarmPrototypeData fpd in farms) {
             foreach (Item outItem in fpd.output) {
-                float ptime = (fpd.growable.ProduceTime + fpd.produceTime);
-                float ppm = ptime == 0 ? float.MaxValue : 60f / ptime;
+                //float ptime = (fpd.growable.ProduceTime + fpd.produceTime);
+                //float ppm = ptime == 0 ? float.MaxValue : 60f / ptime;
+                float ppm = 0;
+                int tileCount = circleSizeToTileCount[fpd.structureRange];
+                int numGrowablesPerTon = fpd.neededHarvestToProduce;
+                float growtime = fpd.growable.ProduceTime;
+                float produceTime = fpd.produceTime;
+                if(produceTime!=0)
+                    ppm = ((((float)tileCount / (float)numGrowablesPerTon) * growtime) / 60f) / produceTime;
+                ppm /= outItem.count;
                 Produce p = new Produce {
                     item = outItem,
                     producePerMinute = ppm,

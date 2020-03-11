@@ -5,6 +5,7 @@ using System.Threading;
 
 public class ThreadRandom {
     private ThreadLocal<System.Random> rand;
+
     public ThreadRandom(int seed) {
         rand = new ThreadLocal<System.Random>(() => new System.Random(seed));
     }

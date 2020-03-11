@@ -53,8 +53,6 @@ public class MouseController : MonoBehaviour {
     // The world-position start of our left-mouse drag operation
     List<GameObject> previewGameObjects;
 
-    BuildController BuildController => BuildController.Instance;
-    UIController UIController => UIController.Instance;
     private Structure SelectedStructure;
     protected Structure _toBuildstructure;
     public Structure ToBuildStructure {
@@ -113,7 +111,7 @@ public class MouseController : MonoBehaviour {
     void Start() {
         selectedUnitGroup = new List<Unit>(); 
         previewGameObjects = new List<GameObject>();
-        BuildController.RegisterStructureCreated(ResetBuild);
+        BuildController.Instance.RegisterStructureCreated(ResetBuild);
         _highlightTiles = new HashSet<Tile>();
         ssc = GameObject.FindObjectOfType<StructureSpriteController>();
         ExtraStructureBuildUIPrefabs = new Dictionary<ExtraBuildUI, GameObject>();
@@ -341,7 +339,11 @@ public class MouseController : MonoBehaviour {
         draw_rect = Rect.MinMaxRect(topLeft.x, topLeft.y, bottomRight.x, bottomRight.y);
     }
 
-    internal void SetEditorHighlight(int size, List<Tile> toHighlightTiles) {
+    internal void SetEditorBrushHighlightActive(bool brushBuild) {
+        highlightGO.SetActive(brushBuild);
+    }
+
+    internal void SetEditorHighlight(int size, List<Tile> toHighlightTiles, bool active) {
         if (toHighlightTiles == null)
             return;
         if (highlightGO != null)
@@ -349,7 +351,7 @@ public class MouseController : MonoBehaviour {
         HighlightTiles = new HashSet<Tile>(toHighlightTiles);
         highlightGO = GetHighlightGameObject(size, size, toHighlightTiles);
         highlightGO.GetComponent<SpriteRenderer>().sortingLayerName = "StructuresUI";
-        highlightGO.SetActive(true);
+        highlightGO.SetActive(active);
     }
 
     public void OnGUI() {
@@ -372,7 +374,7 @@ public class MouseController : MonoBehaviour {
                 Tile t = GetTileUnderneathMouse();
                 if (t.Structure != null) {
                     UIDebug(t.Structure);
-                    UIController.OpenStructureUI(t.Structure);
+                    UIController.Instance.OpenStructureUI(t.Structure);
                     SelectedStructure = t.Structure;
                 }
             }
@@ -380,7 +382,7 @@ public class MouseController : MonoBehaviour {
         else {
             UIDebug(GetTileUnderneathMouse());
             if (mouseState != (MouseState.Unit | MouseState.UnitGroup) ) {
-                UIController.CloseInfoUI();
+                UIController.Instance.CloseInfoUI();
                 SelectedUnit = null;
                 SelectedStructure = null;
             }
@@ -394,7 +396,7 @@ public class MouseController : MonoBehaviour {
         mouseUnitState = MouseUnitState.Normal;
         SelectedUnit = unit;
         SelectedUnit.RegisterOnDestroyCallback(OnUnitDestroy);
-        UIController.OpenUnitUI(SelectedUnit);
+        UIController.Instance.OpenUnitUI(SelectedUnit);
         UIDebug(SelectedUnit);
     }
     private void SelectUnitGroup(List<Unit> units) {
@@ -402,7 +404,7 @@ public class MouseController : MonoBehaviour {
         mouseUnitState = MouseUnitState.Normal;
         selectedUnitGroup = units;
         selectedUnitGroup.ForEach(x=>x.RegisterOnDestroyCallback(OnUnitDestroy));
-        UIController.OpenUnitGroupUI(selectedUnitGroup.ToArray());
+        UIController.Instance.OpenUnitGroupUI(selectedUnitGroup.ToArray());
     }
     private void UpdateSingle() {
         // If we're over a UI element, then bail out from this.
@@ -424,7 +426,7 @@ public class MouseController : MonoBehaviour {
     private void UIDebug(object obj) {
         if (Input.GetKey(KeyCode.LeftControl) && Input.GetKey(KeyCode.LeftShift)
                     && SaveController.DebugModeSave) {
-            UIController.ShowDebugForObject(obj);
+            UIController.Instance.ShowDebugForObject(obj);
         }
     }
     private void ShowSinglePreview(Tile tile) {
@@ -690,7 +692,7 @@ public class MouseController : MonoBehaviour {
             SelectedUnit.UnregisterOnDestroyCallback(OnUnitDestroy);
         SelectedUnit = null;
         SelectedStructure = null;
-        UIController.CloseInfoUI();
+        UIController.Instance.CloseInfoUI();
         mouseState = MouseState.Idle;
         mouseUnitState = MouseUnitState.None;
     }
@@ -745,7 +747,8 @@ public class MouseController : MonoBehaviour {
             List<Tile> ts = new List<Tile>(GetTilesStructures(start_x, end_x, start_y, end_y));
             if (ts != null) {
                 if (mouseState == MouseState.Destroy) {
-                    BuildController.DestroyStructureOnTiles(ts, PlayerController.Instance.CurrPlayer);
+                    bool isGod = EditorController.IsEditor; //TODO: add cheat to set this
+                    BuildController.Instance.DestroyStructureOnTiles(ts, PlayerController.Instance?.CurrPlayer, isGod);
                 }
                 else {
                     if (ToBuildStructure == null) {
@@ -823,16 +826,16 @@ public class MouseController : MonoBehaviour {
             EditorController.Instance.BuildOn(t, single);
         } else {
             if (mouseState == MouseState.Unit && mouseUnitState == MouseUnitState.Build) {
-                BuildController.CurrentPlayerBuildOnTile(t, single, PlayerController.currentPlayerNumber, false, SelectedUnit);
+                BuildController.Instance.CurrentPlayerBuildOnTile(t, single, PlayerController.currentPlayerNumber, false, SelectedUnit);
             }
             else {
-                BuildController.CurrentPlayerBuildOnTile(t, single, PlayerController.currentPlayerNumber, false);
+                BuildController.Instance.CurrentPlayerBuildOnTile(t, single, PlayerController.currentPlayerNumber, false);
             }
         }
     }
     public void BuildFromUnit() {
         mouseUnitState = MouseUnitState.Build;
-        BuildController.SettleFromUnit(SelectedUnit);
+        BuildController.Instance.SettleFromUnit(SelectedUnit);
     }
     public void SetToPatrolMode() {
         mouseUnitState = MouseUnitState.Patrol;
@@ -857,7 +860,7 @@ public class MouseController : MonoBehaviour {
             return;
         selectedUnitGroup.ForEach(x => x.UnregisterOnDestroyCallback(OnUnitDestroy));
         selectedUnitGroup.Clear();
-        UIController.CloseInfoUI();
+        UIController.Instance.CloseInfoUI();
         mouseState = MouseState.Idle;
         mouseUnitState = MouseUnitState.None;
         selectedUnitGroup.Clear();

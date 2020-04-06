@@ -124,7 +124,7 @@ public class PopulationLevel {
         }
         if (Data.needGroupList == null)
             return;
-        Player player = PlayerController.GetPlayer(city.playerNumber);
+        Player player = PlayerController.GetPlayer(city.PlayerNumber);
         player.RegisterNeedUnlock(OnUnlockedNeed);
         foreach (NeedGroup ng in Data.needGroupList) {
             NeedGroup inList = NeedGroupList.Find(x => x.ID == ng.ID);

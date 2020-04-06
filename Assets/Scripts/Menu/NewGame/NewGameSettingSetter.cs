@@ -34,7 +34,8 @@ public class NewGameSettingSetter : MonoBehaviour {
                 NewGameSettings.SetPirate(value);
                 break;
             case NewGameSetting.Fire:
-                NewGameSettings.SetFire(value);
+                //NewGameSettings.SetFire(value);
+                Debug.LogError("NOT WORKING");
                 break;
         }
     }

@@ -28,7 +28,7 @@ public class UnitPrototypeData : LanguageVariables {
     public float aggroTime = 2f;
     public float captureSpeed=0.01f;
     public float projectileSpeed = 4.5f;
-
+    public float buildRange = 15;
     public float width = 0;
     public float height = 0;
 }
@@ -82,11 +82,6 @@ public class Unit : IGEventable,IWarfare {
     //being calculated at runtime
     #region calculated 
     //TODO decide on this:
-    public float BuildRange {
-        get {
-            return AttackRange;
-        }
-    }
 
     public Command CurrentCommand => queuedCommands.Count == 0 ? null : queuedCommands.Peek();
     public ITargetable CurrentTarget {
@@ -170,10 +165,10 @@ public class Unit : IGEventable,IWarfare {
             ((OceanPathfinding)pathfinding).Ship = (Ship)this;
     }
 
-    public Vector3 VectorPosition {
+    public Vector3 PositionVector {
         get { return new Vector3(X, Y); }
     }
-    public Vector2 Vector2Position {
+    public Vector2 PositionVector2 {
         get { return new Vector2(X, Y); }
     }
     public bool IsDead {
@@ -198,14 +193,14 @@ public class Unit : IGEventable,IWarfare {
     public float AggroTime => CalculateRealValue("aggroTime", Data.aggroTime); //UNTESTED HOW THIS WILL WORK
     public int MaintenanceCost => CalculateRealValue("maintenancecost", Data.maintenancecost); //UNTESTED HOW THIS WILL WORK
 
-
+    public float BuildRange => CalculateRealValue("buildRange", Data.buildRange); 
     public virtual bool IsShip => false;
 
     public float BuildTime => Data.buildTime;
     public int BuildCost => Data.buildcost;
 
-    public virtual Unit Clone(int playerNumber, Tile t) {
-        return new Unit(this, playerNumber, t);
+    public virtual Unit Clone(int playerNumber, Tile startTile) {
+        return new Unit(this, playerNumber, startTile);
     }
 
     public float Width => Data.width;
@@ -225,7 +220,7 @@ public class Unit : IGEventable,IWarfare {
         }
     }
 
-    public Vector2 CurrentPosition => VectorPosition;
+    public Vector2 CurrentPosition => PositionVector;
     public Vector2 NextDestinationPosition => pathfinding.NextDestination.Value;
     public Vector2 LastMovement => pathfinding.LastMove;
 
@@ -624,7 +619,6 @@ public class Unit : IGEventable,IWarfare {
     }
 
     private void OnArriveDestination(bool atDest) {
-        Debug.Log("?");
         if (atDest == false) {
             return;
         }

@@ -17,7 +17,7 @@ public class ITargetableHoldingScript : MonoBehaviour {
         line = gameObject.GetComponentInChildren<LineRenderer>();
         rigid = gameObject.GetComponent<Rigidbody2D>();
 
-        transform.position = unit.VectorPosition;
+        transform.position = unit.PositionVector;
     }
     Unit unit => (Unit)Holding;
 
@@ -80,6 +80,6 @@ public class ITargetableHoldingScript : MonoBehaviour {
         //rigid.AddForce(unit.pathfinding.LastMove);
         rigid.MoveRotation(unit.Rotation);
         //transform.rotation = new Quaternion(0, 0, unit.Rotation, 0);
-        rigid.MovePosition(unit.VectorPosition);
+        rigid.MovePosition(unit.PositionVector);
     }
 }

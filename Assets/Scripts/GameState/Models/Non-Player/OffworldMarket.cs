@@ -50,7 +50,7 @@ public class OffworldMarket {
             itemIDtoPrice[item.ID].DemandChange -= i;
             money += Mathf.RoundToInt(itemIDtoPrice[item.ID].Sell);
         }
-        player.AddMoney(money);
+        player.AddToTreasure(money);
     }
     public Item BuyItemToOffWorldMarket(Item item, int amount, Player player) {
         if (itemIDtoPrice.ContainsKey(item.ID) == false) {
@@ -62,7 +62,7 @@ public class OffworldMarket {
             itemIDtoPrice[item.ID].DemandChange += i;
             money += Mathf.RoundToInt(itemIDtoPrice[item.ID].Buy);
         }
-        player.ReduceMoney(money);
+        player.ReduceTreasure(money);
         return item;
     }
     public void Update(float deltaTime){

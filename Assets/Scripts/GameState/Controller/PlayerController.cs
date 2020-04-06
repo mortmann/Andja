@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 using System;
-using System.IO;
+using System.Linq;
 using UnityEngine.SceneManagement;
 
 public enum DiplomacyType { War, Neutral, TradeAggrement, Alliance }
@@ -37,7 +37,7 @@ public class PlayerController : MonoBehaviour {
     // Use this for initialization
     void Awake() {
         if (Instance != null) {
-            Debug.LogError("There should never be two mouse controllers.");
+            Debug.LogError("There should never be two player controllers.");
         }
         Instance = this;
 
@@ -45,22 +45,12 @@ public class PlayerController : MonoBehaviour {
     private void Start() {
         BuildController.Instance.RegisterCityCreated(OnCityCreated);
         BuildController.Instance.RegisterStructureCreated(OnStructureCreated);
-        GameObject.FindObjectOfType<EventController>().RegisterOnEvent(OnEventCreated, OnEventEnded);
+        EventController.Instance.RegisterOnEvent(OnEventCreated, OnEventEnded);
+        WorldController.Instance.RegisterWorldUnitCreated(OnUnitCreated);
         SceneManager.sceneLoaded += OnLevelLoad;
         if (SaveController.IsLoadingSave == false)
-            Setup();
-        if(playerDiplomaticStatus==null) {//only when changing stuff
-            playerDiplomaticStatus = new List<DiplomaticStatus>();
-            for (int i = 0; i < PlayerCount; i++) {
-                for (int s = i + 1; s < PlayerCount; s++) {
-                    playerDiplomaticStatus.Add(new DiplomaticStatus(i, s));
-                }
-            }
-            ChangeDiplomaticStanding(0, 1, DiplomacyType.War);
-            ChangeDiplomaticStanding(0, 2, DiplomacyType.TradeAggrement);
-
-        }
-
+            NewGameSetup();
+        Debug.Log("NewGameSetup");
     }
 
     internal DiplomacyType GetDiplomaticStatusType(Player firstPlayer, Player secondPlayer) {
@@ -69,24 +59,42 @@ public class PlayerController : MonoBehaviour {
         return GetDiplomaticStatus(firstPlayer.Number, secondPlayer.Number).currentStatus; 
     }
 
-    public void Setup() {
+    public void NewGameSetup() {
         Players = new List<Player>();
         currentPlayerNumber = 0;
-        Player p = new Player(currentPlayerNumber,true);
+        Player p = new Player(currentPlayerNumber,true, GameDataHolder.Instance.Loadout.Money);
         Players.Add(p);
-        Players.Add(new Player(1, false));
-        Players.Add(new Player(2, false));
+        p.RegisterHasLost(OnPlayerLost);
+        Players.Add(new Player(1, false, GameDataHolder.Instance.Loadout.Money));
+        Players.Add(new Player(2, false, GameDataHolder.Instance.Loadout.Money));
         playerDiplomaticStatus = new List<DiplomaticStatus>();
-        for(int i = 0; i < PlayerCount; i++) {
-            for (int s = i+1; s < PlayerCount; s++) {
-                playerDiplomaticStatus.Add(new DiplomaticStatus(i, s));
-            }
-        }
-        ChangeDiplomaticStanding(0, 1, DiplomacyType.War);
-        ChangeDiplomaticStanding(0, 2, DiplomacyType.TradeAggrement);
+        //for(int i = 0; i < PlayerCount; i++) {
+        //    for (int s = i+1; s < PlayerCount; s++) {
+        //        playerDiplomaticStatus.Add(new DiplomaticStatus(i, s));
+        //    }
+        //}
+        //ChangeDiplomaticStanding(0, 1, DiplomacyType.War);
+        //ChangeDiplomaticStanding(0, 2, DiplomacyType.TradeAggrement);
         CurrentPlayer = Players.Find(x => x.Number == currentPlayerNumber);
 
         balanceTickTimer = BalanceTicksTime;
+    }
+
+    private void OnPlayerLost(Player player) {
+        Debug.Log("Player " + player.Number + " " + player.Name + " has lost!");
+        if(player.IsHuman && player.IsCurrent()) {
+            Debug.Log("HUMAN YOU HAVE LOST THE GAME -- WE WILL DOMINATE ");
+            SceneManager.LoadScene("MainMenu"); //TODO: show endscore
+        }
+        playerDiplomaticStatus.RemoveAll(x => x.playerOne == player.Number || x.playerTwo == player.Number);
+        List<Unit> units = new List<Unit>(player.Units);
+        for (int i = units.Count-1; i >= 0; i--) {
+            units[i].Destroy();
+        }
+        List<Structure> marketbuildings = new List<Structure>(player.AllStructures.Where(x => x is MarketStructure));
+        foreach(Structure s in marketbuildings) {
+            s.Destroy();
+        }
     }
 
     internal bool HasEnoughMoney(int playerNumber, int buildCost) {
@@ -167,8 +175,8 @@ public class PlayerController : MonoBehaviour {
         if (CurrentPlayer.HasEnoughMoney(amount) == false)
             return;
         //TODO: Notify Player that he received gift or demand
-        selectedPlayer.AddMoney(amount);
-        currentPlayer.ReduceMoney(amount);
+        selectedPlayer.AddToTreasure(amount);
+        currentPlayer.ReduceTreasure(amount);
     }
 
     public void OnEventCreated(GameEvent ge) {
@@ -181,7 +189,7 @@ public class PlayerController : MonoBehaviour {
         //eg. if he has a city on it
         if (ge.target is Island) {
             foreach (City item in ((Island)ge.target).Cities) {
-                if (item.playerNumber == currentPlayerNumber) {
+                if (item.PlayerNumber == currentPlayerNumber) {
                     euim.AddEVENT(ge.eventID, ge.Name, ge.position);
                 }
                 else {
@@ -205,7 +213,9 @@ public class PlayerController : MonoBehaviour {
             InformAIaboutEvent(ge, true);
         }
     }
-
+    private void OnUnitCreated(Unit unit) {
+        Players[unit.PlayerNumber].OnUnitCreated(unit);
+    }
     private void OnLevelLoad(Scene scene, LoadSceneMode arg1) {
         if(scene.name != "GameState") {
             Debug.LogWarning("OnLevelLoad wrong scene!");
@@ -247,25 +257,25 @@ public class PlayerController : MonoBehaviour {
 
 
     public void ReduceMoney(int money, int playerNr) {
-        Players[playerNr].ReduceMoney(money);
+        Players[playerNr].ReduceTreasure(money);
     }
     public void AddMoney(int money, int playerNr) {
-        Players[playerNr].AddMoney(money);
+        Players[playerNr].AddToTreasure(money);
     }
     public void ReduceChange(int amount, int playerNr) {
-        Players[playerNr].ReduceChange(amount);
+        Players[playerNr].ReduceTreasureChange(amount);
     }
     public void AddChange(int amount, int playerNr) {
-        Players[playerNr].AddChange(amount);
+        Players[playerNr].AddTreasureChange(amount);
     }
     public void OnCityCreated(City city) {
-        Players[city.playerNumber].OnCityCreated(city);
+        Players[city.PlayerNumber].OnCityCreated(city);
     }
     public void OnStructureCreated(Structure structure, bool loading = false) {
         if (loading) {
-            return; // getsloaded in so no need to subtract any money
+            return; 
         }
-        ReduceMoney(structure.BuildCost, structure.PlayerNumber);
+
     }
     public bool ArePlayersAtWar(int playerOne, int playerTwo) {
         if (playerOne == playerTwo) {
@@ -274,7 +284,7 @@ public class PlayerController : MonoBehaviour {
         if (playerOne == piratePlayerNumber || playerTwo == piratePlayerNumber) {
             return true;//could add here be at peace with pirates through money 
         }
-        return GetDiplomaticStatus(playerOne, playerTwo).currentStatus == DiplomacyType.War;
+        return GetDiplomaticStatus(playerOne, playerTwo)?.currentStatus == DiplomacyType.War;
     }
     
 

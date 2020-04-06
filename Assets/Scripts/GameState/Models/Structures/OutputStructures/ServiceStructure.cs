@@ -173,7 +173,7 @@ public class ServiceStructure : Structure {
     }
 
     private void OnAddedStructure(Structure obj) {
-        foreach(Tile t in obj.StructureTiles) {
+        foreach(Tile t in obj.Tiles) {
             if (RangeTiles.Contains(t)) {
                 todoOnNewTarget(obj);
                 return;

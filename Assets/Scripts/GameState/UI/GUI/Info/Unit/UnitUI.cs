@@ -140,7 +140,7 @@ public class UnitUI : MonoBehaviour {
     private void ToggleSettle() {
         if (MouseController.Instance.mouseUnitState != MouseUnitState.Build) {
             SelectButton(settleButton);
-            MouseController.Instance.mouseUnitState = MouseUnitState.Build;
+            MouseController.Instance.BuildFromUnit();
         }
         else {
             DeselectButton();

@@ -25,14 +25,14 @@ public class IslandInfoUI : MonoBehaviour {
             text += item.Name + " | ";
 
         }
-        City c = cc.nearestIsland.Cities.Find(x => x.playerNumber == PlayerController.currentPlayerNumber);
+        City c = cc.nearestIsland.Cities.Find(x => x.PlayerNumber == PlayerController.currentPlayerNumber);
         if (c != null) {
             int count = c.PopulationCount;
 
             text += count + "P";
             text += " | " + c.Balance + "$";
             text += "\n";
-            Item[] items = c.inventory.GetBuildMaterial();
+            Item[] items = c.Inventory.GetBuildMaterial();
             for (int i = 0; i < items.Length; i++) {
                 if (items[i] == null) {
                     continue;

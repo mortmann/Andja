@@ -334,8 +334,8 @@ public class ProductionStructure : OutputStructure {
             return;
         }
         bool inRange = false;
-        for (int i = 0; i < str.StructureTiles.Count; i++) {
-            if (RangeTiles.Contains(str.StructureTiles[i]) == true) {
+        for (int i = 0; i < str.Tiles.Count; i++) {
+            if (RangeTiles.Contains(str.Tiles[i]) == true) {
                 inRange = true;
                 break;
             }

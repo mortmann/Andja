@@ -26,7 +26,7 @@ public class SaveController : MonoBehaviour {
     public static bool DebugModeSave = true; 
     public static string SaveName = "unsaved";
 
-    const string SaveFileVersion = "0.1.6";
+    const string SaveFileVersion = "0.1.7";
     const string islandSaveFileVersion = "i_0.0.3";
     float timeToAutoSave = AutoSaveInterval;
     const float AutoSaveInterval = 15 * 60; // every 15 min -- TODO: add game option to change this

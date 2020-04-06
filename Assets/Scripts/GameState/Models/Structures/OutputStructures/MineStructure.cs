@@ -68,7 +68,7 @@ public class MineStructure : OutputStructure {
             produceCountdown = 0;
             Output[0].count += OutputData.output[0].count;
             if(CurrentRessourceMode==RessourceMode.PerProduce)
-                City.island.RemoveRessources(Ressource, OutputData.output[0].count);
+                City.Island.RemoveRessources(Ressource, OutputData.output[0].count);
             cbOutputChange?.Invoke(this);
         }
     }
@@ -78,12 +78,12 @@ public class MineStructure : OutputStructure {
     }
     public override void OnBuild() {
         if (CurrentRessourceMode == RessourceMode.PerMine) {
-            City.island.RemoveRessources(Ressource, 1);
+            City.Island.RemoveRessources(Ressource, 1);
         }
     }
     protected override void OnDestroy() {
         if (CurrentRessourceMode == RessourceMode.PerMine) {
-            City.island.AddRessources(Ressource, 1);
+            City.Island.AddRessources(Ressource, 1);
         }
     }
 }

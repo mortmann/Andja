@@ -72,7 +72,7 @@ public class MapImage : MonoBehaviour {
         //do smth when it gets shown
     }
     public void OnCityCreated(City c) {
-        if (c == null || c.playerNumber != PlayerController.currentPlayerNumber) {
+        if (c == null || c.PlayerNumber != PlayerController.currentPlayerNumber) {
             return;
         }
         c.RegisterStructureAdded(OnWarehouseBuild);

@@ -108,7 +108,7 @@ public class MilitaryStructure : TargetStructure, IWarfare {
     private void SpawnUnit(Unit unit) {
         if (toPlaceUnitTiles.Count == 0)
             return;
-        World.Current.CreateUnit(unit.Clone(PlayerNumber, toPlaceUnitTiles[0]));
+        World.Current.CreateUnit(unit,PlayerController.GetPlayer(PlayerNumber), toPlaceUnitTiles[0]);
     }
 
     #region IWarfareImplementation

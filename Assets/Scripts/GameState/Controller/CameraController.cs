@@ -2,7 +2,7 @@ using UnityEngine;
 using System.Collections.Generic;
 using UnityEngine.EventSystems;
 using System;
-
+using System.Linq;
 public class CameraController : MonoBehaviour {
     public static int MaxZoomLevel => devCameraZoom ? 100 : 25;
     public static bool devCameraZoom = false;
@@ -56,7 +56,19 @@ public class CameraController : MonoBehaviour {
         MiniMapCamera.rect = new Rect(0, 0, World.Current.Width, World.Current.Height);
         MiniMapCamera.transform.position = new Vector3(World.Current.Width / 2, World.Current.Height / 2, Camera.main.transform.position.z);
         if (cameraSave == null) {
-            Camera.main.transform.position = new Vector3(World.Current.Width / 2, World.Current.Height / 2, Camera.main.transform.position.z);
+            if (WorldController.Instance.SpawningRect == null) {
+                Camera.main.transform.position = new Vector3(World.Current.Width / 2, World.Current.Height / 2, Camera.main.transform.position.z);
+            } else {
+                Structure str = PlayerController.Instance.CurrPlayer.AllStructures?.FirstOrDefault(x => x is WarehouseStructure);
+                if (str == null) {
+                    Camera.main.transform.position = new Vector3(WorldController.Instance.SpawningRect.center.x,
+                                WorldController.Instance.SpawningRect.center.y, Camera.main.transform.position.z);
+                    Camera.main.orthographicSize = WorldController.Instance.SpawningRect.size.magnitude / 2;
+                } else {
+                    Camera.main.transform.position = new Vector3(str.Center.x, str.Center.y, Camera.main.transform.position.z);
+                    Camera.main.orthographicSize = 15;
+                }
+            }
         } else {
             Camera.main.transform.position = cameraSave.pos.Vec;
             Camera.main.orthographicSize = cameraSave.orthographicSize;

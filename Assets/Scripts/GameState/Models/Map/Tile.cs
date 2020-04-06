@@ -207,6 +207,9 @@ public class Tile : IComparable<Tile>, IEqualityComparer<Tile> {
         if (t == TileType.Shore) {
             return false;
         }
+        if(t == TileType.Water) {
+            return false;
+        }
         return true;
     }
     /// <summary>

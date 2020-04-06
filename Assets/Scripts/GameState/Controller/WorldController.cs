@@ -8,9 +8,10 @@ public class WorldController : MonoBehaviour {
     public static WorldController Instance { get; protected set; }
 
     public World World { get; protected set; }
+    public Rect SpawningRect;
     public Action<GameSpeed> onGameSpeedChange;
     public OffworldMarket offworldMarket;
-
+    public Action<Unit> cbWorldCreatedUnit;
     public float timeMultiplier = 1;
     private bool _isPaused = false;
     public bool IsPaused {
@@ -55,13 +56,51 @@ public class WorldController : MonoBehaviour {
     public void Start() {
         EventController.Instance.RegisterOnEvent(OnEventCreated, OnEventEnded);
     }
-    public void SetGeneratedWorld(World world, Dictionary<Tile, Structure> tileToStructure) {
+    public void SetGeneratedWorld(World world, Dictionary<Tile, Structure> tileToStructure, Rect spawnRect, Vector2[] spawnPoints) {
         this.World = world;
+        World.RegisterUnitCreated(OnUnitCreated);
         if (SaveController.IsLoadingSave == false && tileToStructure!=null && tileToStructure.Count>0) {
             BuildController.Instance.PlaceWorldGeneratedStructure(tileToStructure);
+            CreatePlayerStarts(spawnPoints);
         }
+        SpawningRect = spawnRect;
         isLoaded = false;
         offworldMarket = new OffworldMarket();
+    }
+
+    private void CreatePlayerStarts(Vector2[] spawnPoints) {
+        StartingLoadout loadout = GameDataHolder.Instance.Loadout;
+        if (loadout == null)
+            return;
+        for (int i = 0; i < PlayerController.Players.Count; i++) {
+            Item[] startItems = loadout.GetItemsCopy();
+            Player player = PlayerController.Players[i];
+            //TODO: place structures! -- for now only warehouse?
+            if(loadout.Structures!=null && player.IsHuman && Array.Exists(loadout.Structures,x=>x is WarehouseStructure)) {
+                //here then place em
+                AIPlayer temp = new AIPlayer(player);
+                temp.DecideIsland(true);
+                if(player.Cities.Count==0) {
+                    Debug.LogError("-- Could not fit any Warehouse on the selected island --");
+                } else {
+                    player.Cities[0].Inventory.AddItems(startItems);
+                }
+            }
+            if (loadout.Units != null) {
+                foreach (Unit prefab in loadout.Units) {
+                    if (prefab.IsShip == false) {
+                        Debug.LogWarning("Unit is not a ship -- currently not supported to spawn!");
+                        continue;
+                    }
+                    Tile start = World.GetTileAt(spawnPoints[i % spawnPoints.Length]);
+                    Unit unit = World.CreateUnit(prefab, player, start);
+                    foreach (Item item in startItems) {
+                        unit.TryToAddItem(item);
+                    }
+                }
+            }
+            
+        }
     }
 
     protected void OnEventCreated(GameEvent ge) {
@@ -126,7 +165,15 @@ public class WorldController : MonoBehaviour {
             IsPaused = false;
         onGameSpeedChange?.Invoke(CurrentSpeed);
     }
-
+    private void OnUnitCreated(Unit unit) {
+        cbWorldCreatedUnit?.Invoke(unit);
+    }
+    public void RegisterWorldUnitCreated(Action<Unit> callbackfunc) {
+        cbWorldCreatedUnit += callbackfunc;
+    }
+    public void UnregisterWorldUnitCreated(Action<Unit> callbackfunc) {
+        cbWorldCreatedUnit -= callbackfunc;
+    }
     void OnDestroy() {
         Instance = null;
         World?.Destroy();

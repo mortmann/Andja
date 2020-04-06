@@ -7,112 +7,46 @@ using UnityEngine.Tilemaps;
 
 public class AIController : MonoBehaviour {
     public static AIController Instance { get; protected set; }
-    public Dictionary<Island, List<TileValue>> islandToMapSpaceValuedTiles;
-    public Dictionary<Island, List<TileValue>> islandToCurrentSpaceValuedTiles;
-    public Dictionary<Island, Dictionary<Tile,TileValue>> islandsTileToValue;
+    public static Dictionary<Island, Dictionary<Tile, TileValue>> IslandsTileToValue {
+        get {
+            if (_islandsTileToValue == null)
+                CalculateIslandTileValues();
+            return _islandsTileToValue;
+        }
+        set => _islandsTileToValue = value; 
+    }
 
-    // Use this for initialization
-    void Start () {
-        islandToMapSpaceValuedTiles = new Dictionary<Island, List<TileValue>>();
-        islandToCurrentSpaceValuedTiles = new Dictionary<Island, List<TileValue>>();
-        islandsTileToValue = new Dictionary<Island, Dictionary<Tile, TileValue>>();
+    public static Dictionary<Island, List<TileValue>> IslandToMapSpaceValuedTiles {
+        get {
+            if (_islandToMapSpaceValuedTiles == null)
+                CalculateIslandTileValues();
+            return _islandToMapSpaceValuedTiles;
+        }
+        set => _islandToMapSpaceValuedTiles = value; }
+    public static Dictionary<Island, List<TileValue>> IslandToCurrentSpaceValuedTiles {
+        get {
+            if (_islandToCurrentSpaceValuedTiles == null)
+                CalculateIslandTileValues();
+            return _islandToCurrentSpaceValuedTiles;
+        }
+        set => _islandToCurrentSpaceValuedTiles = value; }
+
+    private static Dictionary<Island, List<TileValue>> _islandToMapSpaceValuedTiles;
+    private static Dictionary<Island, List<TileValue>> _islandToCurrentSpaceValuedTiles;
+    private static Dictionary<Island, Dictionary<Tile, TileValue>> _islandsTileToValue;
+    private void Awake() {
         if (Instance != null) {
             Debug.LogError("There should never be two AIController.");
         }
         Instance = this;
+    }
+    // Use this for initialization
+    void Start () {
+        
 
         AIPlayer test = new AIPlayer(PlayerController.GetPlayer(1));
         test.CalculatePlayersCombatValue();
-        World world = World.Current;
-        Dictionary<string, TileBase> stringToBase = new Dictionary<string, TileBase>();
-        foreach (Island island in World.Current.Islands) {
-            Vector2[,] swValue = new Vector2[island.Width, island.Height];
-            Vector2[,] neValue = new Vector2[island.Width, island.Height];
-            Dictionary<TileType, Vector2[,]> typeToSWValue = new Dictionary<TileType, Vector2[,]>();
-            Dictionary<TileType, Vector2[,]> typeToNEValue = new Dictionary<TileType, Vector2[,]>();
-            foreach (TileType tt in typeof(TileType).GetEnumValues()) {
-                typeToSWValue[tt] = new Vector2[island.Width, island.Height];
-                typeToNEValue[tt] = new Vector2[island.Width, island.Height];
-            }
-            for (int y = 0; y < island.Height; y++) {
-                for (int x = 0; x < island.Width; x++) {
-                    Tile t = world.GetTileAt(island.Minimum.x + x, island.Minimum.y + y);
-                    float startX = 0;
-                    float startY = 0;
-                    if (t.CheckTile()) {
-                        if (x > 0)
-                            startX = swValue[x - 1, y].x;
-                        if (y > 0)
-                            startY = swValue[x, y - 1].y;
-                        swValue[x, y].x = startX + 1;
-                        swValue[x, y].y = startY + 1;
-                    }
-                    if (x > 0)
-                        startX = typeToSWValue[t.Type][x - 1, y].x;
-                    if (y > 0)
-                        startY = typeToSWValue[t.Type][x, y - 1].y;
-                    typeToSWValue[t.Type][x, y].x = startX + 1;
-                    typeToSWValue[t.Type][x, y].y = startY + 1;
-                }
-            }
-            for (int y = island.Height-1; y > 0; y--) {
-                for (int x = island.Width-1; x > 0; x--) {
-                    Tile t = world.GetTileAt(island.Minimum.x + x, island.Minimum.y + y);
-                    float startX = 0;
-                    float startY = 0;
-                    if (t.CheckTile()) {
-                        if (x < island.Width - 1)
-                            startX = neValue[x + 1, y].x;
-                        if (y < island.Height - 1)
-                            startY = neValue[x, y + 1].y;
-                        neValue[x, y].x = startX + 1;
-                        neValue[x, y].y = startY + 1;
-                    }
-                    if (x < island.Width - 1)
-                        startX = typeToNEValue[t.Type][x + 1, y].x;
-                    if (y < island.Height - 1)
-                        startY = typeToNEValue[t.Type][x, y + 1].y;
-                    typeToNEValue[t.Type][x, y].x = startX + 1;
-                    typeToNEValue[t.Type][x, y].y = startY + 1;
-                }
-            }
-            List<TileValue> values = new List<TileValue>();
-            for (int y = 0; y < island.Height; y++) {
-                for (int x = 0; x < island.Width; x++) {
-                    Tile t = world.GetTileAt(island.Minimum.x + x, island.Minimum.y + y);
-                    if (t.CheckTile()) {
-                        values.Add(new TileValue(t,
-                                        swValue[x,y],
-                                        neValue[x,y]
-                              ));
-                    } else {
-                        values.Add(new TileValue(t,
-                                                typeToSWValue[t.Type][x, y],
-                                                typeToNEValue[t.Type][x, y]
-                                        ));
-                    }
-                }
-            }
-            //values.RemoveAll(x => x.MaxValue == 0);
-            //Dictionary<int, List<TileValue>> maxToValue = new Dictionary<int, List<TileValue>>();
-            //int i = 1;
-            //while (values.Count > 0) {
-            //    List<TileValue> selected = new List<TileValue>(from TileValue in values
-            //                                                   where TileValue.MinValue == i
-            //                                                   select new TileValue(TileValue));
-            //    maxToValue[i] = selected;
-            //    values.RemoveAll(x => x.MaxValue == i);
-            //    i++;
-            //}
-
-            islandToMapSpaceValuedTiles[island] = values;
-            islandToCurrentSpaceValuedTiles[island] = new List<TileValue>(from TileValue in values
-                                                                          select new TileValue(TileValue)); //copy them
-            islandsTileToValue[island] = new Dictionary<Tile, TileValue>();
-            foreach (TileValue tv in islandToCurrentSpaceValuedTiles[island]) {
-                islandsTileToValue[island][tv.tile] = tv;
-            }
-        }
+        
         BuildController.Instance.RegisterStructureCreated(OnStructureCreated);
         BuildController.Instance.RegisterStructureDestroyed(OnStructureDestroyed);
 
@@ -149,49 +83,75 @@ public class AIController : MonoBehaviour {
     }
     private void OnDestroy() {
         Instance = null;
+        _islandToMapSpaceValuedTiles = null;
+        _islandToCurrentSpaceValuedTiles = null;
+        _islandsTileToValue = null;
     }
+
     internal string GetTileValue(Tile tile) {
         if (tile.Type == TileType.Ocean)
             return "";
-        if(islandsTileToValue[tile.Island].ContainsKey(tile)==false) {
+        if(IslandsTileToValue[tile.Island].ContainsKey(tile)==false) {
             return "ERROR";
         }
-        return islandsTileToValue[tile.Island][tile].ToString();
+        return IslandsTileToValue[tile.Island][tile].ToString();
     }
 
-    private void OnStructureDestroyed(Structure obj) {
+    private void OnStructureDestroyed(Structure structure) {
+        Dictionary<Tile, TileValue> tileValue = IslandsTileToValue[structure.City.Island];
+        
+        for (int y = 0; y < structure.TileHeight; y++) {
+            for (int x = 0; x < structure.TileWidth; x++) {
+                Tile t = structure.Tiles[x + y * structure.TileHeight];
+                if(x == 0) {
+                    ChangeTileValue(t, (int)tileValue[t.West()].swValue.x + 1, Direction.E);
+                }
+                if (x < structure.TileWidth) {
+                    ChangeTileValue(t, (int)tileValue[t.South()].swValue.y + 1, Direction.N);
+                }
+                if (x == structure.TileWidth - 1) {
+                    ChangeTileValue(t, (int)tileValue[t.East()].neValue.x + 1, Direction.W);
+                }
+                if (y == structure.TileHeight - 1) {
+                    ChangeTileValue(t, (int)tileValue[t.North()].neValue.y + 1, Direction.S);
+                }
+            }
+        }
+
     }
 
     private void OnStructureCreated(Structure structure, bool load) {
         if (structure.CanBeBuildOver)
             return;
-        Island island = structure.City.island;
-        List<Tile> toChange = new List<Tile>();
-        Dictionary<Tile, TileValue> tileValue = islandsTileToValue[island];
-        
-        foreach (Tile t in structure.StructureTiles) {
-            tileValue[t].neValue = Vector2.zero;
-            tileValue[t].swValue = Vector2.zero;
+        Island island = structure.City.Island;
+        Dictionary<Tile, TileValue> tileValue = IslandsTileToValue[island];
+        for (int y = 0; y < structure.TileHeight; y++) {
+            for (int x = 0; x < structure.TileWidth; x++) {
+                Tile t = structure.Tiles[x + y * structure.TileHeight];
+                tileValue[t].neValue = Vector2.zero;
+                tileValue[t].swValue = Vector2.zero;
+                if (x == 0) {
+                    ChangeTileValue(t, 0, Direction.W);
+                }
+                if (y == structure.TileHeight - 1) {
+                    ChangeTileValue(t, 0, Direction.N);
+                }
+                if (x == structure.TileWidth - 1) {
+                    ChangeTileValue(t, 0, Direction.E);
+                }
+                if (y == 0) {
+                    ChangeTileValue(t, 0, Direction.S);
+                }
+            }
         }
-        foreach (Tile t in structure.StructureTiles) {
-            ChangeTileValue(t.North(), 1, Direction.N);
-            ChangeTileValue(t.East(), 1, Direction.E);
-            ChangeTileValue(t.South(), 1, Direction.S);
-            ChangeTileValue(t.West(), 1, Direction.W);
-        }
-        
+
     }
 
     private void ChangeTileValue(Tile t,int value, Direction direction) {
         if(t.Type == TileType.Ocean) {
             return;
         }
-        Dictionary<Tile, TileValue> tileValue = islandsTileToValue[t.Island];
-        if (tileValue.ContainsKey(t) ==false) {
-            return;
-        }
-        if (tileValue[t].MaxValue == 0)
-            return;
+        Dictionary<Tile, TileValue> tileValue = IslandsTileToValue[t.Island];
         switch (direction) {
             case Direction.N:
                 tileValue[t].swValue.y = value;
@@ -199,7 +159,7 @@ public class AIController : MonoBehaviour {
                 break;
             case Direction.W:
                 tileValue[t].neValue.x = value;
-                ChangeTileValue(t.East(), ++value, Direction.E);
+                ChangeTileValue(t.West(), ++value, Direction.W);
                 break;
             case Direction.S:
                 tileValue[t].neValue.y = value;
@@ -207,20 +167,116 @@ public class AIController : MonoBehaviour {
                 break;
             case Direction.E:
                 tileValue[t].swValue.x = value;
-                ChangeTileValue(t.West(), ++value, Direction.W);
+                ChangeTileValue(t.East(), ++value, Direction.E);
                 break;
         }
 
     }
 
-
     // Update is called once per frame
     void Update () {
 		
 	}
-    public bool PlaceStructure(AIPlayer player, Structure structure, List<Tile> tiles, Unit buildUnit = null) {
-        BuildController.Instance.BuildOnTile(structure, tiles, player.PlayerNummer, false, false, buildUnit);
+    public static bool PlaceStructure(AIPlayer player, Structure structure, List<Tile> tiles, Unit buildUnit = null, bool onStart = false) {
+        BuildController.Instance.BuildOnTile(structure, tiles, player.PlayerNummer, false, false, buildUnit, false, onStart);
         return true;
+    }
+
+    public static void CalculateIslandTileValues() {
+        _islandToMapSpaceValuedTiles = new Dictionary<Island, List<TileValue>>();
+        _islandToCurrentSpaceValuedTiles = new Dictionary<Island, List<TileValue>>();
+        _islandsTileToValue = new Dictionary<Island, Dictionary<Tile, TileValue>>();
+
+        World world = World.Current;
+        foreach (Island island in World.Current.Islands) {
+            Vector2[,] swValue = new Vector2[island.Width, island.Height];
+            Vector2[,] neValue = new Vector2[island.Width, island.Height];
+            Dictionary<TileType, Vector2[,]> typeToSWValue = new Dictionary<TileType, Vector2[,]>();
+            Dictionary<TileType, Vector2[,]> typeToNEValue = new Dictionary<TileType, Vector2[,]>();
+            foreach (TileType tt in typeof(TileType).GetEnumValues()) {
+                typeToSWValue[tt] = new Vector2[island.Width, island.Height];
+                typeToNEValue[tt] = new Vector2[island.Width, island.Height];
+            }
+            for (int y = 0; y < island.Height; y++) {
+                for (int x = 0; x < island.Width; x++) {
+                    Tile t = world.GetTileAt(island.Minimum.x + x, island.Minimum.y + y);
+                    float startX = 0;
+                    float startY = 0;
+                    if (t.CheckTile()) {
+                        if (x > 0)
+                            startX = swValue[x - 1, y].x;
+                        if (y > 0)
+                            startY = swValue[x, y - 1].y;
+                        swValue[x, y].x = startX + 1;
+                        swValue[x, y].y = startY + 1;
+                    }
+                    if (x > 0)
+                        startX = typeToSWValue[t.Type][x - 1, y].x;
+                    if (y > 0)
+                        startY = typeToSWValue[t.Type][x, y - 1].y;
+                    typeToSWValue[t.Type][x, y].x = startX + 1;
+                    typeToSWValue[t.Type][x, y].y = startY + 1;
+                }
+            }
+            for (int y = island.Height - 1; y > 0; y--) {
+                for (int x = island.Width - 1; x > 0; x--) {
+                    Tile t = world.GetTileAt(island.Minimum.x + x, island.Minimum.y + y);
+                    float startX = 0;
+                    float startY = 0;
+                    if (t.CheckTile()) {
+                        if (x < island.Width - 1)
+                            startX = neValue[x + 1, y].x;
+                        if (y < island.Height - 1)
+                            startY = neValue[x, y + 1].y;
+                        neValue[x, y].x = startX + 1;
+                        neValue[x, y].y = startY + 1;
+                    }
+                    if (x < island.Width - 1)
+                        startX = typeToNEValue[t.Type][x + 1, y].x;
+                    if (y < island.Height - 1)
+                        startY = typeToNEValue[t.Type][x, y + 1].y;
+                    typeToNEValue[t.Type][x, y].x = startX + 1;
+                    typeToNEValue[t.Type][x, y].y = startY + 1;
+                }
+            }
+            List<TileValue> values = new List<TileValue>();
+            for (int y = 0; y < island.Height; y++) {
+                for (int x = 0; x < island.Width; x++) {
+                    Tile t = world.GetTileAt(island.Minimum.x + x, island.Minimum.y + y);
+                    if (t.CheckTile()) {
+                        values.Add(new TileValue(t,
+                                        swValue[x, y],
+                                        neValue[x, y]
+                              ));
+                    }
+                    else {
+                        values.Add(new TileValue(t,
+                                                typeToSWValue[t.Type][x, y],
+                                                typeToNEValue[t.Type][x, y]
+                                        ));
+                    }
+                }
+            }
+            //values.RemoveAll(x => x.MaxValue == 0);
+            //Dictionary<int, List<TileValue>> maxToValue = new Dictionary<int, List<TileValue>>();
+            //int i = 1;
+            //while (values.Count > 0) {
+            //    List<TileValue> selected = new List<TileValue>(from TileValue in values
+            //                                                   where TileValue.MinValue == i
+            //                                                   select new TileValue(TileValue));
+            //    maxToValue[i] = selected;
+            //    values.RemoveAll(x => x.MaxValue == i);
+            //    i++;
+            //}
+
+            IslandToMapSpaceValuedTiles[island] = values;
+            IslandToCurrentSpaceValuedTiles[island] = new List<TileValue>(from TileValue in values
+                                                                          select new TileValue(TileValue)); //copy them
+            IslandsTileToValue[island] = new Dictionary<Tile, TileValue>();
+            foreach (TileValue tv in IslandToCurrentSpaceValuedTiles[island]) {
+                IslandsTileToValue[island][tv.tile] = tv;
+            }
+        }
     }
 
 }
@@ -317,22 +373,25 @@ public class AIPlayer {
         missingItems = new List<Item>();
         CombatValue = new PlayerCombatValue(player, null);
     }
-    public void DecideIsland() {
+    public void DecideIsland(bool onStart = false) {
         //TODO:set here desires
         CalculateIslandScores();
         islandScores = islandScores.OrderByDescending(x => x.EndScore).ToList();
         WarehouseStructure warehouse = PrototypController.Instance.FirstLevelWarehouse;
         //TODO: optimize
-        List<TileValue> values = new List<TileValue>(AIController.Instance.islandToMapSpaceValuedTiles[islandScores[0].Island]);
+        List<TileValue> values = new List<TileValue>(AIController.IslandToMapSpaceValuedTiles[islandScores[0].Island]);
         values.RemoveAll(x => x.Type != TileType.Shore);
         List<TileValue> selected = new List<TileValue>(from TileValue in values
                                                        where TileValue.MaxValue >= warehouse.Height
                                                        select new TileValue(TileValue));
         foreach (TileValue t in selected) {
-            List <Tile> buildtiles = warehouse.GetBuildingTiles(t.X, t.Y, false, true);
             for(int i=0;i<4;i++) {
+                //bool left = warehouse.Rotation == 90 || warehouse.Rotation == 180;
+                List<Tile> buildtiles = warehouse.GetBuildingTiles(t.X, t.Y, false, false);
+                if (buildtiles.Exists(x => x.Type == TileType.Ocean))
+                    continue;
                 if (warehouse.CanBuildOnSpot(buildtiles)) {
-                    AIController.Instance.PlaceStructure(this, warehouse, buildtiles);
+                    AIController.PlaceStructure(this, warehouse, buildtiles, null, onStart);
                     return;
                 }
                 warehouse.RotateStructure();
@@ -351,8 +410,7 @@ public class AIPlayer {
         foreach (Island island in islands) {
             if (island.Tiles.Count > maxSize)
                 maxSize = island.Tiles.Count;
-            averageSize += island.Tiles.Count;
-            averageSize -= island.Tiles.FindAll(x => x.CheckTile()).Count;
+            averageSize += island.Tiles.FindAll(x => x.CheckTile()).Count;
             if (island.Ressources != null || island.Ressources.Count != 0) {
                 foreach (string resid in island.Ressources.Keys) {
                     if (ressourceIDtoAverageAmount.ContainsKey(resid)) {
@@ -376,7 +434,7 @@ public class AIPlayer {
         }
         foreach (string resid in ressourceIDtoAverageAmount.Keys) {
             ressourceIDtoAverageAmount[resid] /= islands.Count;
-            ressourceIDtoExisting[resid] = 1 - (ressourceIDtoExisting[resid]/islands.Count);
+            ressourceIDtoExisting[resid] = 1 - (ressourceIDtoExisting[resid] / islands.Count);
         }
         averageSize /= islands.Count;
         foreach (Island island in islands) {
@@ -400,8 +458,7 @@ public class AIPlayer {
                 }
             }
 
-            score.SizeScore = (float)island.Tiles.Count;
-            score.SizeScore -= island.Tiles.FindAll(x => x.CheckTile()).Count;
+            score.SizeScore = (float)island.Tiles.FindAll(x => x.CheckTile()).Count;
             score.SizeScore /= averageSize;
 
             //Calculate Fertility Score
@@ -423,7 +480,7 @@ public class AIPlayer {
                 distance /= Islands.Count;
                 score.DistanceScore = distance;
             } else {
-                score.DistanceScore = Vector2.Distance(island.Center, World.Current.Center);
+                score.DistanceScore = 1 / (Vector2.Distance(island.Center, World.Current.Center) / ((World.Current.Width + World.Current.Height)/2));
             }
             //Competition Score is the percentage of unclaimed Tiles multiplied through how many diffrent players
             if(island.Cities.Count>0) {
@@ -437,7 +494,7 @@ public class AIPlayer {
                 score.CompetitionScore *= island.Cities.Count;
             }
             islandScores.Add(score);
-            Debug.Log("Calculated Island Score " + score.EndScore + " " + score.Island.StartTile.Vector2);
+            Debug.Log("Calculated Island Score " + score.EndScore+ " " + score.Island.StartTile.Vector2);
         }
         Debug.Log("Calculated Islands Scores");
     }
@@ -511,7 +568,7 @@ public class PlayerCombatValue {
 }
 public struct IslandScore {
     public Island Island;
-    public float EndScore => SizeScore * 0.5f + SizeSimilarIslandScore * 0.2f + 
+    public float EndScore => SizeScore * 0.5f + SizeSimilarIslandScore * 0.2f +
                              RessourceScore * 0.1f + FertilityScore * 0.1f + 
                              DistanceScore * 0.3f;
     public float SizeScore;
@@ -521,4 +578,9 @@ public struct IslandScore {
     public float CompetitionScore;
     public float DistanceScore;
     public float ShapeScore;//Not sure if this is feasible!
+
+    public override string ToString() {
+        return "SIZE:"+SizeScore + " SIMSIZE:" + SizeSimilarIslandScore + " RES:" + RessourceScore + " FER:" + FertilityScore 
+            + " COM:" + CompetitionScore + " DIST:" + DistanceScore + " SHA:" + ShapeScore;
+    }
 }

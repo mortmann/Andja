@@ -34,7 +34,7 @@ public class Island : IGEventable {
     public City Wilderness {
         get {
             if (_wilderness == null)
-                _wilderness = Cities.Find(x => x.playerNumber == -1);
+                _wilderness = Cities.Find(x => x.PlayerNumber == -1);
             return _wilderness;
         }
 
@@ -117,10 +117,10 @@ public class Island : IGEventable {
         Setup();
         List<Structure> structs = new List<Structure>();
         foreach (City c in Cities) {
-            if (c.playerNumber == -1) {
+            if (c.PlayerNumber == -1) {
                 Wilderness = c;
             }
-            c.island = this;
+            c.Island = this;
             structs.AddRange(c.Load(this));
         }
         return structs;
@@ -209,12 +209,12 @@ public class Island : IGEventable {
         }
     }
     public City FindCityByPlayer(int playerNumber) {
-        return Cities.Find(x => x.playerNumber == playerNumber);
+        return Cities.Find(x => x.PlayerNumber == playerNumber);
     }
     public City CreateCity(int playerNumber) {
-        if (Cities.Exists(x => x.playerNumber == playerNumber)) {
+        if (Cities.Exists(x => x.PlayerNumber == playerNumber)) {
             Debug.LogError("TRIED TO CREATE A SECOND CITY -- IS NEVER ALLOWED TO HAPPEN!");
-            return Cities.Find(x => x.playerNumber == playerNumber);
+            return Cities.Find(x => x.PlayerNumber == playerNumber);
         }
         allReadyHighlighted = false;
         City c = new City(playerNumber, this);

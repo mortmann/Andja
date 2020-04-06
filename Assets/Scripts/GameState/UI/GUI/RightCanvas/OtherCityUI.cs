@@ -11,8 +11,8 @@ public class OtherCityUI : MonoBehaviour {
         city = c;
         city.RegisterCityDestroy(OnCityDestroy);
 
-        city.inventory.RegisterOnChangedCallback(OnInventoryChange);
-        OnInventoryChange(city.inventory);
+        city.Inventory.RegisterOnChangedCallback(OnInventoryChange);
+        OnInventoryChange(city.Inventory);
     }
     public void OnInventoryChange(Inventory inventory) {
         foreach (Transform item in ItemsCanvas.transform) {
@@ -25,14 +25,14 @@ public class OtherCityUI : MonoBehaviour {
             TradeItemUI tiui = g.GetComponent<TradeItemUI>();
             if (ti.IsSelling) {
                 //SELL show how much it has
-                Item temp = city.inventory.GetItemWithIDClone(itemID);
+                Item temp = city.Inventory.GetItemWithIDClone(itemID);
                 Item i = ti.SellItemAmount(temp);
-                tiui.Show(i, city.inventory.MaxStackSize, ti.IsSelling);
+                tiui.Show(i, city.Inventory.MaxStackSize, ti.IsSelling);
             }
             if(ti.IsBuying) {
                 //BUY show how much it wants
-                Item i = ti.BuyItemAmount(city.inventory.GetItemWithIDClone(itemID));
-                tiui.Show(i, city.inventory.MaxStackSize, ti.IsBuying);
+                Item i = ti.BuyItemAmount(city.Inventory.GetItemWithIDClone(itemID));
+                tiui.Show(i, city.Inventory.MaxStackSize, ti.IsBuying);
             }
             tiui.UpdatePriceText(ti.price);
             string id = itemID;

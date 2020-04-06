@@ -7,7 +7,7 @@ public class TargetStructurePrototypeData : StructurePrototypeData {
 public abstract class TargetStructure : Structure, ITargetable {
 
     #region ITargetableImplementation
-    public Vector2 CurrentPosition => MiddlePoint;
+    public Vector2 CurrentPosition => Center;
     public Combat.ArmorType ArmorType => PrototypController.Instance.StructureArmor;
     public bool IsAttackableFrom(IWarfare warfare) {
         return warfare.DamageType.GetDamageMultiplier(ArmorType) > 0;

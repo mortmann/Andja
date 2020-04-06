@@ -149,7 +149,7 @@ public class EventController : MonoBehaviour {
         foreach(Target target in targetGroup.Targets) {
             switch (target) {
                 case Target.AllUnit:
-                    targets.AddRange(player.AllUnits);
+                    targets.AddRange(player.Units);
                     break;
                 case Target.Ship:
                     targets.AddRange(player.GetShipUnits());
@@ -204,11 +204,11 @@ public class EventController : MonoBehaviour {
                 }
                 Island i = RandomItemFromList<Island>(world.Islands);
                 City c = RandomItemFromList<City>(i.Cities);
-                if (c.playerNumber == -1) { // random decided there will be no event? 
+                if (c.PlayerNumber == -1) { // random decided there will be no event? 
                                             // are there events for wilderniss structures?
                 }
                 else {
-                    ige = RandomItemFromList<Structure>(c.structures);
+                    ige = RandomItemFromList<Structure>(c.Structures);
                 }
                 break;
             case EventType.Quest:

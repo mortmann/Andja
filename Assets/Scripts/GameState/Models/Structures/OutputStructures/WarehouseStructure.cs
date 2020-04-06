@@ -54,7 +54,7 @@ public class WarehouseStructure : MarketStructure {
         workersHasToFollowRoads = true; // DUNNO HOW where to set it without the need to copy it extra
 
         Tile[,] sortedTiles = new Tile[TileWidth, TileHeight];
-        List<Tile> ts = new List<Tile>(StructureTiles);
+        List<Tile> ts = new List<Tile>(Tiles);
         ts.Sort((x, y) => x.X.CompareTo(y.X) + x.Y.CompareTo(y.Y));
         foreach (Tile ti in ts) {
             int x = ti.X - ts[0].X;
@@ -68,20 +68,17 @@ public class WarehouseStructure : MarketStructure {
         //Vector3 rot = new Vector3 (-_tileWidth/2 - 1, _tileHeight / 2 - 1, 0);
         //rot = Quaternion.AngleAxis (rotated, Vector3.forward) * rot;
         Vector2 rot = new Vector2((float)TileWidth / 2f + 0.5f, 0);
-        rot = Rotate(rot, rotated);
-        tradeTile = World.Current.GetTileAt(Mathf.FloorToInt(MiddlePoint.x - rot.x), Mathf.FloorToInt(MiddlePoint.y + rot.y));
+        rot = Rotate(rot, rotation);
+        tradeTile = World.Current.GetTileAt(Mathf.FloorToInt(Center.x - rot.x), Mathf.FloorToInt(Center.y + rot.y));
 
         this.City.warehouse = this;
 
-        if (City == null) {
-            return;
-        }
         if (RangeTiles == null || RangeTiles.Count == 0) {
             RangeTiles = GetInRangeTiles(BuildTile);
         }
         //dostuff thats happen when build
         City.AddTiles(RangeTiles);
-        City.AddTiles(new HashSet<Tile>(StructureTiles));
+        City.AddTiles(new HashSet<Tile>(Tiles));
         RegisteredSturctures = new List<Structure>();
         OutputMarkedSturctures = new List<Structure>();
         jobsToDo = new Dictionary<OutputStructure, Item[]>();
@@ -109,7 +106,7 @@ public class WarehouseStructure : MarketStructure {
         return tradeTile; //maybe this changes or not s
     }
     protected override void OnDestroy() {
-        List<Tile> h = new List<Tile>(StructureTiles);
+        List<Tile> h = new List<Tile>(Tiles);
         h.AddRange(RangeTiles);
         City.RemoveTiles(h);
         //you lose any res that the worker is carrying

@@ -1,7 +1,5 @@
-using UnityEngine;
-using System.Collections.Generic;
 using Newtonsoft.Json;
-using System;
+using UnityEngine;
 
 public class ShipPrototypeData : UnitPrototypeData {
     public int maximumAmountOfCannons = 0;
@@ -18,7 +16,7 @@ public class ShipPrototypeData : UnitPrototypeData {
 //TODO: think about how if ships could be capturable if they are low, at war and the capturing ship can do it?
 [JsonObject(MemberSerialization.OptIn)]
 public class Ship : Unit {
-    float ProjectileSpeed => ShipData.projectileSpeed; //TODO: somewhere you gotta read this in
+    float ProjectileSpeed => ShipData.projectileSpeed; 
 
 
     [JsonPropertyAttribute] public TradeRoute tradeRoute;
@@ -61,6 +59,7 @@ public class Ship : Unit {
         pathfinding = new OceanPathfinding(t, this);
         patrolCommand = new PatrolCommand();
     }
+
     public Ship(Unit unit, int playerNumber, Tile t) {
         this.ID = unit.ID;
         patrolCommand = new PatrolCommand();
@@ -72,8 +71,8 @@ public class Ship : Unit {
         PlayerSetName = "Ship " + UnityEngine.Random.Range(0, 1000000000);
         pathfinding = new OceanPathfinding(t, this);
     }
-    public override Unit Clone(int playerNumber, Tile t) {
-        return new Ship(this, playerNumber, t);
+    public override Unit Clone(int playerNumber, Tile startTile) {
+        return new Ship(this, playerNumber, startTile);
     }
     public Ship(string id, ShipPrototypeData spd) {
         this.ID = id;
@@ -163,8 +162,8 @@ public class Ship : Unit {
                     UnityEngine.Random.Range(-targetSize.y / 2, targetSize.y / 2),
                     UnityEngine.Random.Range(-targetSize.z / 2, targetSize.z / 2));
 
-            Vector3 velocity = (destination + targetOffset - VectorPosition - offset).normalized * ProjectileSpeed;
-            float distance = (destination+ targetOffset - VectorPosition - offset).magnitude;
+            Vector3 velocity = (destination + targetOffset - PositionVector - offset).normalized * ProjectileSpeed;
+            float distance = (destination+ targetOffset - PositionVector - offset).magnitude;
             cbCreateProjectile?.Invoke(new Projectile(this, position+offset, CurrentTarget, velocity, distance));
         }
         attackCooldownTimer = AttackRate;

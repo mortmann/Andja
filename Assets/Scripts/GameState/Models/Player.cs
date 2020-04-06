@@ -24,9 +24,11 @@ public class Player : IGEventable {
     public HashSet<Need> UnlockedItemNeeds { get; protected set; }
     public HashSet<Need>[] UnlockedStructureNeeds { get; protected set; }
     public HashSet<Structure> AllStructures;
-    public HashSet<Unit> AllUnits;
+    public HashSet<Unit> Units;
+    public HashSet<Ship> Ships;
+    public Action<Player> cbHasLost;
     public List<City> Cities;
-    public bool HasLost => TreasuryBalance < MaximumDebt;
+    public bool HasLost => _hasLost;
     PlayerPrototypeData PlayerPrototypeData => PrototypController.CurrentPlayerPrototypData;
 
     private int MaximumDebt => PlayerPrototypeData.maximumDebt; // if we want a maximum debt where you still can buy things
@@ -127,13 +129,15 @@ public class Player : IGEventable {
 
     [JsonPropertyAttribute]
     public int Number;
+    [JsonPropertyAttribute]
+    protected bool _hasLost;
     #endregion
 
     public Player() {
         Setup();
     }
 
-    public Player(int number, bool isHuman) {
+    public Player(int number, bool isHuman, int startingTreasure) {
         this._IsHuman = isHuman;
         if (isHuman)
             _name = "itsMeAnTotallyHumanHuman"; 
@@ -141,17 +145,19 @@ public class Player : IGEventable {
         MaxPopulationCount = 0;
         MaxPopulationLevel = 0;
         TreasuryChange = 0;
-        TreasuryBalance = 50000;
+        TreasuryBalance = startingTreasure;
         Setup();
     }
     private void Setup() {
         Cities = new List<City>();
+        Ships = new HashSet<Ship>();
         LockedNeeds = new HashSet<Need>[PrototypController.Instance.NumberOfPopulationLevels];
         UnlockedStructureNeeds = new HashSet<Need>[PrototypController.Instance.NumberOfPopulationLevels];
         UnlockedItemNeeds = new HashSet<Need>();
         TradeRoutes = new List<TradeRoute>();
         AllStructures = new HashSet<Structure>();
-        AllUnits = new HashSet<Unit>();
+        Units = new HashSet<Unit>();
+
         for (int i = 0; i < PrototypController.Instance.NumberOfPopulationLevels; i++) {
             LockedNeeds[i] = new HashSet<Need>();
             UnlockedStructureNeeds[i] = new HashSet<Need>();
@@ -168,8 +174,6 @@ public class Player : IGEventable {
         }
         RegisterMaxPopulationCountChange(NeedUnlockCheck);
         CalculateBalance();
-        BuildController.Instance.RegisterCityCreated(OnCityCreated);
-        //World.Current.RegisterUnitCreated(OnUnitCreated);
     }
 
     private void CalculateBalance() {
@@ -183,18 +187,17 @@ public class Player : IGEventable {
     internal IEnumerable<Island> GetIslandList() {
         HashSet<Island> islands = new HashSet<Island>();
         foreach (City c in Cities)
-            islands.Add(c.island);
+            islands.Add(c.Island);
         return islands;
     }
 
     internal IEnumerable<Unit> GetLandUnits() {
-        List<Unit> units = new List<Unit>(AllUnits);
+        List<Unit> units = new List<Unit>(Units);
         return units.OfType<Unit>();
     }
 
     internal IEnumerable<Ship> GetShipUnits() {
-        List<Unit> units = new List<Unit>(AllUnits);
-        return units.OfType<Ship>(); //should be safe cause removing non ship
+        return Ships; 
     }
 
     internal void Load() {
@@ -274,32 +277,33 @@ public class Player : IGEventable {
         route.Destroy();
         return TradeRoutes.Remove(route);
     }
-    public void ReduceMoney(int money) {
+    public void ReduceTreasure(int money) {
         if (money < 0) {
             return;
         }
         TreasuryBalance -= money;
+        CheckIfLost();
     }
-    public void AddMoney(int money) {
+    public void AddToTreasure(int money) {
         if (money < 0) {
             return;
         }
         TreasuryBalance += money;
     }
-    public void ReduceChange(int amount) {
+    public void ReduceTreasureChange(int amount) {
         if (amount < 0) {
             return;
         }
         TreasuryChange -= amount;
     }
-    public void AddChange(int amount) {
+    public void AddTreasureChange(int amount) {
         if (amount < 0) {
             return;
         }
         TreasuryChange += amount;
     }
     public void OnCityCreated(City city) {
-        if (city.playerNumber != Number)
+        if (city.PlayerNumber != Number)
             return;
         Cities.Add(city);
         city.RegisterStructureAdded(OnStructureCreated);
@@ -308,10 +312,19 @@ public class Player : IGEventable {
     public void OnCityDestroy(City city) {
         city.UnregisterStructureAdded(OnStructureCreated);
         Cities.Remove(city);
+        CheckIfLost();
+    }
+
+    private void CheckIfLost() {
+        if (TreasuryBalance < PlayerPrototypeData.maximumDebt)
+            _hasLost = true;
+        if (Cities.Count == 0 && Ships.Count == 0)
+            _hasLost = true;
+        if(_hasLost)
+            cbHasLost(this);
     }
 
     public void OnStructureCreated(Structure structure) {
-        ReduceMoney(structure.BuildCost);
         structure.RegisterOnDestroyCallback(OnStructureDestroy);
         AllStructures.Add(structure);
     }
@@ -324,20 +337,30 @@ public class Player : IGEventable {
     public void OnUnitCreated(Unit unit) {
         if (unit.playerNumber != Number)
             return;
-        //ReduceMoney(unit.BuildCost); -- will be removed when starting to build one -- not when finished
         unit.RegisterOnDestroyCallback(OnUnitDestroy);
-        AllUnits.Add(unit);
+        Units.Add(unit);
+        if (unit.IsShip)
+            Ships.Add((Ship)unit);
     }
     public void OnUnitDestroy(Unit unit) {
         //dosmth
         unit.UnregisterOnDestroyCallback(OnUnitDestroy);
-        AllUnits.Remove(unit);
+        Units.Remove(unit);
+        if (unit.IsShip)
+            Ships.Remove((Ship)unit);
+        CheckIfLost();
     }
     public void UnregisterNeedUnlock(Action<Need> callbackfunc) {
         cbNeedUnlocked -= callbackfunc;
     }
     public void RegisterNeedUnlock(Action<Need> callbackfunc) {
         cbNeedUnlocked += callbackfunc;
+    }
+    public void UnregisterHasLost(Action<Player> callbackfunc) {
+        cbHasLost -= callbackfunc;
+    }
+    public void RegisterHasLost(Action<Player> callbackfunc) {
+        cbHasLost += callbackfunc;
     }
     /// <summary>
     /// Registers the population count change.

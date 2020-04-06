@@ -17,6 +17,7 @@ public class IslandGenerator {
     ThreadRandom random;
     public int Width;
     public int Height;
+    string debug_string; //TODO: remove when done with generator
     public Tile[] Tiles { get; protected set; }
     public Climate climate;
     public Dictionary<Tile, Structure> tileToStructure;
@@ -182,7 +183,7 @@ public class IslandGenerator {
         int averageSize = Width + Height;
         averageSize /= 2;
         int numberOfShores = random.Range(Mathf.RoundToInt(averageSize * 0.025f), Mathf.RoundToInt(averageSize * 0.05f) + 1);
-        Debug.Log("Create Number of Shores: " + numberOfShores);
+        debug_string += ("\nCreate Number of Shores: " + numberOfShores);
         for (int ns = 0; ns < numberOfShores; ns++) {
             MakeShore(averageSize);
         }
@@ -241,31 +242,31 @@ public class IslandGenerator {
         PlaceStructures();
         Progress += 0.1f;
         sw.Stop();
-        Debug.Log("Generated island "+ seed +" with size " + Width + ":" + Height + " in " + sw.ElapsedMilliseconds + "ms (" + sw.Elapsed.TotalSeconds + "s)! ");
+        Debug.Log("Generated island "+ seed +" with size " + Width + ":" + Height + " in " + sw.ElapsedMilliseconds + "ms (" + sw.Elapsed.TotalSeconds + "s)! \n"+ debug_string);
     }
 
     private void PlaceStructures() {
         FastNoise cubicNoise = new FastNoise();
-        cubicNoise.SetFractalGain(0.5f);
+        cubicNoise.SetFractalGain(1f);
         cubicNoise.SetFractalOctaves(5);
         cubicNoise.SetFractalLacunarity(2f);
         cubicNoise.SetFrequency(0.05f);
         cubicNoise.SetFractalType(FastNoise.FractalType.Billow);
-        cubicNoise.SetNoiseType(FastNoise.NoiseType.CubicFractal);
+        cubicNoise.SetNoiseType(FastNoise.NoiseType.Cubic);
         cubicNoise.SetSeed(random.Integer());
         FastNoise valueNoise = new FastNoise();
         valueNoise.SetFractalGain(1f);
         valueNoise.SetFractalOctaves(5);
         valueNoise.SetFractalLacunarity(2f);
         valueNoise.SetFrequency(0.75f);
-        valueNoise.SetNoiseType(FastNoise.NoiseType.Value);
+        valueNoise.SetNoiseType(FastNoise.NoiseType.ValueFractal);
         valueNoise.SetSeed(random.Integer());
 
         for (int x = 0; x < Width; x++) {
             for (int y = 0; y < Height; y++) {
                 Tile curr = GetTileAt(x, y);
                 if (Tile.IsBuildType(curr.Type)) {
-                    if (Mathf.Abs(cubicNoise.GetCubicFractal(x, y))>0.75f || valueNoise.GetValue(x,y)>.87f) {
+                    if (Mathf.Abs(cubicNoise.GetCubic(x, y)) + Mathf.Abs(cubicNoise.GetCubicFractal(x, y)) > 1.0045f || Mathf.Abs(valueNoise.GetValueFractal(x,y))>.53f) {
                         GrowableStructure gs = PrototypController.Instance.GetStructureCopy("tree") as GrowableStructure;
                         gs.currentStage = random.Range(0, gs.AgeStages);
                         tileToStructure.Add(curr, gs) ;
@@ -298,7 +299,6 @@ public class IslandGenerator {
     private string GetRandomSprite(Tile t) {
         List<string> all = TileSpriteController.GetSpriteNamesForType(t.Type, climate, Tile.GetSpriteAddonForTile(t, GetNeighbours(t)));
         if (all == null) {
-            Debug.Log(t.Type);
             return "";
         }
         int rand = random.Range(0, all.Count - 1);
@@ -547,7 +547,7 @@ public class IslandGenerator {
         int depth = random.Range(Mathf.CeilToInt(averageSize * 0.02f), Mathf.CeilToInt(averageSize * 0.03f));
         int width = length;
         int height = depth;
-        Debug.Log("Shore direction " + direction +  " with length:" + length);
+        debug_string +=("\nShore direction " + direction +  " with length:" + length);
         if (direction == Direction.S) { // Bottom
             //width = length;
             //height = depth;
@@ -584,7 +584,7 @@ public class IslandGenerator {
             current = GetTileAt(pos.x, pos.y);
         }
         if (current == null) {
-            Debug.Log("FindIslandMakeShore failed to find middle");
+            debug_string +=("\nFindIslandMakeShore failed to find middle");
             return false;
         }
         HashSet<Tile> border = new HashSet<Tile> {
@@ -693,7 +693,8 @@ public class IslandGenerator {
         //        curr.Elevation /= 2;
         //    }
         //}
-        Debug.Log("Made coast: " + border.Count);
+
+        debug_string += ("\nMade coast: " + border.Count);
         return true;
     }
 

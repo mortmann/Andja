@@ -5,6 +5,14 @@ using Newtonsoft.Json;
 public class FarmPrototypeData : OutputPrototypData {
     public GrowableStructure growable;
     public int neededHarvestToProduce;
+    public float ProducePerMinute() {
+        float tileCount = PrototypeRangeTiles.Count;
+        if (growable == null || produceTime * efficiency <= 0 || growable.ProduceTime <= 0)
+            return 0;
+        if (produceTime * efficiency >= growable.ProduceTime)
+            return 60f / produceTime;
+        return Mathf.Min(60f / (produceTime * efficiency), ((tileCount / (float)neededHarvestToProduce) * (60f / growable.ProduceTime)));//((((tileCount / (float)neededHarvestToProduce) * (grow.produceTime)) / 60f) / produceTime * efficiency) ;
+    }
 }
 
 
@@ -90,7 +98,7 @@ public class FarmStructure : OutputStructure {
             return;
         }
         //TODO: send out worker to collect goods
-        produceCountdown += deltaTime;
+        produceCountdown += deltaTime * Efficiency;
         if (produceCountdown >= ProduceTime) {
             produceCountdown = 0;
             if (Growable != null) {

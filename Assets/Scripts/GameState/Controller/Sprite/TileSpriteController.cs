@@ -270,7 +270,7 @@ public class TileSpriteController : MonoBehaviour {
     void OnTileChanged(Tile tile_data) {
         int x = (int)(tile_data.X - tile_data.Island.Placement.x);
         int y = (int)(tile_data.Y - tile_data.Island.Placement.y);
-        if (tile_data.City.playerNumber == PlayerController.currentPlayerNumber) {
+        if (tile_data.City.PlayerNumber == PlayerController.currentPlayerNumber) {
             islandToCityMask[tile_data.Island].sprite.texture.SetPixel(x, y, new Color32(128, 128, 128, 255));
         }
         apply = true;

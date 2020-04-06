@@ -323,9 +323,21 @@ public class MapGenerator : MonoBehaviour {
             stopwatch.Stop();
             Debug.Log("Generated map (Seed:"+ MapSeed + ")  with island number " + toPlaceIslands.Count + " in a Map " + Width + " : " + Height
                 + " in " + stopwatch.ElapsedMilliseconds + "ms (" + stopwatch.Elapsed.TotalSeconds + "s)! ");
-
             if (SaveController.IsLoadingSave == false && WorldController.Instance != null) {
-                WorldController.Instance.SetGeneratedWorld(GetWorld(false), tileToStructure);
+                //Find the "spawn" of the ships
+                Vector2 center = new Vector2(Width / 2, Height / 2);
+                recantgleEmptySpaces = recantgleEmptySpaces.OrderBy ((x) => Vector2.Distance(x.Center, center)).ToList();
+                Vector2[] spawnPoints = new Vector2[PlayerController.PlayerCount];
+                Rect spawnRect = recantgleEmptySpaces[0].rect;
+                float radius = Mathf.Min(Random.Range(spawnRect.width / 6, spawnRect.width / 4), 15 , Random.Range(spawnRect.height / 6, spawnRect.height / 4));
+                float degreesPerPlayer = (360 / (float) PlayerController.PlayerCount) * Mathf.Deg2Rad;
+                for (int i = 0; i < PlayerController.PlayerCount; i++) {
+                    Vector2 vec2 = new Vector2(Mathf.RoundToInt(spawnRect.center.x + radius * Mathf.Cos(degreesPerPlayer * i)),
+                                               Mathf.RoundToInt(spawnRect.center.y + radius * Mathf.Sin(degreesPerPlayer * i))
+                                              );
+                    spawnPoints[i] = vec2;
+                }
+                WorldController.Instance.SetGeneratedWorld(GetWorld(false), tileToStructure, spawnRect, spawnPoints);
                 MakeOnLoadDestroy();
             }
             else if(SaveController.IsLoadingSave == true && WorldController.Instance != null) {
@@ -713,7 +725,6 @@ public class MapGenerator : MonoBehaviour {
         public int min;
         public int max;
         public int Middle => (min + max) / 2;
-
         public Range(int min, int max) {
             this.min = min;
             this.max = max;
@@ -733,7 +744,7 @@ public class MapGenerator : MonoBehaviour {
         public Direction direction;
         public Rect rect;
         public Rect Island;
-
+        public Vector2 Center => rect.center;
         public void UpdateRect(Rect over) {
             if (direction == Direction.None) { 
                 rect = Rect.zero; //its the first one so just set to zero

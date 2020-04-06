@@ -49,7 +49,7 @@ public class Inventory {
     /// <returns></returns>
 	public virtual int AddItem(Item toAdd) {
         if (String.IsNullOrEmpty(toAdd.ID)) {
-            Debug.LogError("ITEM ID is smaller or equal to -1");
+            Debug.LogError("ITEM ID is not set!");
             return 0;
         }
         int amount = 0;
@@ -60,7 +60,6 @@ public class Inventory {
                 }
                 // move
                 amount = MoveAmountFromItemToInv(toAdd, inInv);
-                toAdd.count -= amount;
                 if (toAdd.count == 0) {
                     break;
                 }
@@ -350,6 +349,7 @@ public class Inventory {
         //clamp it to the maximum it can be
         amount = Mathf.Clamp(amount, 0, MaxStackSize - toReceive.count);
         IncreaseItemAmount(toReceive, amount);
+        toBeMoved.count -= amount;
         return amount;
     }
     protected void IncreaseItemAmount(Item item, int amount) {

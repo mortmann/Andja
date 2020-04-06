@@ -40,11 +40,11 @@ public class RoadStructure : Structure {
     public override void OnBuild() {
         List<Route> routes = new List<Route>();
         int routeCount = 0;
-        foreach (Tile t in StructureTiles[0].GetNeighbours()) {
+        foreach (Tile t in Tiles[0].GetNeighbours()) {
             if (t.Structure == null) {
                 continue;
             }
-            if (t.Structure.BuildTyp != BuildTypes.Path) {
+            if (t.Structure.BuildTyp != BuildType.Path) {
                 continue;
             }
             if (t.Structure is RoadStructure) {
@@ -60,13 +60,13 @@ public class RoadStructure : Structure {
         if (routeCount == 0) {
             //If there is no route next to it 
             //so create a new route 
-            Route = new Route(StructureTiles[0]);
-            StructureTiles[0].City.AddRoute(Route);
+            Route = new Route(Tiles[0]);
+            Tiles[0].City.AddRoute(Route);
         } else
         if (routeCount == 1) {
             // there is already a route 
             // so add it and return
-            routes[0].AddRoadTile(StructureTiles[0]);
+            routes[0].AddRoadTile(Tiles[0]);
             Route = routes[0];
         }
         else {
@@ -79,7 +79,7 @@ public class RoadStructure : Structure {
         UpdateOrientation();
     }
     public void UpdateOrientation() {
-        Tile[] neig = StructureTiles[0].GetNeighbours();
+        Tile[] neig = Tiles[0].GetNeighbours();
 
         connectOrientation = "_";
 

@@ -31,7 +31,7 @@ public class StructureSpriteController : MonoBehaviour {
         structureExtraUIMap = new Dictionary<Structure, GameObject>();
 
         LoadSprites();
-        Debug.Log("StructureSpriteController START!");
+
         if(BuildController.Instance.LoadedStructures!=null) {
             foreach (Structure str in BuildController.Instance.LoadedStructures) {
                 OnBuildStrucutureCreated(str, true);
@@ -89,9 +89,9 @@ public class StructureSpriteController : MonoBehaviour {
         }
         Tile t = structure.BuildTile;
         go.transform.position = new Vector3(t.X + x, t.Y + y);
-        go.transform.transform.eulerAngles = new Vector3(0, 0, 360 - structure.rotated);
+        go.transform.transform.eulerAngles = new Vector3(0, 0, 360 - structure.rotation);
         go.transform.SetParent(this.transform, true);
-        go.name = structure.SmallName + "_" + structure.StructureTiles[0].ToString();
+        go.name = structure.SmallName + "_" + structure.Tiles[0].ToString();
         SpriteRenderer sr = go.AddComponent<SpriteRenderer>();
         sr.sortingLayerName = "Structures";
         structureGameObjectMap.Add(structure, go);

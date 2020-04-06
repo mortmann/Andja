@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using Newtonsoft.Json;
 using System.Linq;
 
-public enum BuildTypes { Drag, Path, Single };
+public enum BuildType { Drag, Path, Single };
 public enum StructureTyp { Pathfinding, Blocking, Free };
 public enum Direction { None, N, E, S, W };
 public enum ExtraUI { None, Range, Upgrade, Efficiency };
@@ -36,16 +36,27 @@ public class StructurePrototypeData : LanguageVariables {
     public Direction mustFrontBuildDir = Direction.None;
 
     //doenst get loaded in anyway
-    private List<Tile> _PrototypeTiles;
+    private List<Tile> _PrototypeRangeTiles;
 
-    public List<Tile> PrototypeTiles {
+    public List<Tile> PrototypeRangeTiles {
         get {
-            if (_PrototypeTiles == null) {
-                _PrototypeTiles = Util.CalculateCircleTiles(structureRange, tileWidth, tileHeight);
+            if (_PrototypeRangeTiles == null) {
+                _PrototypeRangeTiles = Util.CalculateRangeTiles(structureRange, tileWidth, tileHeight);
             }
-            return _PrototypeTiles;
+            return _PrototypeRangeTiles;
         }
     }
+    [JsonIgnoreAttribute]
+    public int _RangeTileCount=-1;
+
+    public int RangeTileCount {
+        get {
+            if (_RangeTileCount < 0)
+                _RangeTileCount = Util.CalculateRangeTilesVector2(structureRange, tileWidth, tileHeight).Count;
+            return _RangeTileCount; 
+        }
+    }
+
     public ExtraUI extraUITyp;
     public StructureTyp structureTyp = StructureTyp.Blocking;
     public bool canStartBurning;
@@ -53,7 +64,7 @@ public class StructurePrototypeData : LanguageVariables {
 
     public bool canBeBuild = true;
     public int buildcost;
-    public BuildTypes buildTyp;
+    public BuildType buildTyp;
     public ExtraBuildUI extraBuildUITyp;
     public Item[] buildingItems;
     public Item[] upgradeItems = null; // set inside prototypecontoller
@@ -78,23 +89,23 @@ public abstract class Structure : IGEventable {
     [JsonPropertyAttribute]
     public Tile BuildTile {
         get {
-            if (StructureTiles == null|| StructureTiles.Count==0) 
+            if (Tiles == null|| Tiles.Count==0) 
                 return null;
-            return StructureTiles[0];
+            return Tiles[0];
         }
         set {
-            if (StructureTiles == null)
-                StructureTiles = new List<Tile>();
-            StructureTiles.Add(value);
+            if (Tiles == null)
+                Tiles = new List<Tile>();
+            Tiles.Add(value);
         }
     }
 
-    [JsonPropertyAttribute] public int rotated = 0;
+    [JsonPropertyAttribute] public int rotation = 0;
     [JsonPropertyAttribute] public bool buildInWilderniss = false;
     [JsonPropertyAttribute] protected bool isActive = true;
     #endregion
     #region RuntimeOrOther
-    public List<Tile> StructureTiles;
+    public List<Tile> Tiles;
     public HashSet<Tile> NeighbourTiles;
     protected City _city;
     public HashSet<Tile> RangeTiles;
@@ -118,21 +129,21 @@ public abstract class Structure : IGEventable {
             return _prototypData;
         }
     }
-    public Vector2 _middlePoint;
-    public Vector2 MiddlePoint {
+    private Vector2 _Center;
+    public Vector2 Center {
         get {
-            if (_middlePoint != Vector2.zero)
-                return _middlePoint;
-            Tile[,] sortedTiles = new Tile[TileWidth, TileHeight];
-            List<Tile> ts = new List<Tile>(StructureTiles);
-            ts.Sort((x, y) => x.X.CompareTo(y.X) + x.Y.CompareTo(y.Y));
-            foreach (Tile ti in ts) {
-                int x = ti.X - ts[0].X;
-                int y = ti.Y - ts[0].Y;
-                sortedTiles[x, y] = ti; // so we have the tile at the correct spot
-            }
-            _middlePoint = sortedTiles[0, 0].Vector2 + new Vector2(TileWidth / 2, TileHeight / 2);
-            return _middlePoint;
+            if (_Center != Vector2.zero)
+                return _Center;
+            //Tile[,] sortedTiles = new Tile[TileWidth, TileHeight];
+            //List<Tile> ts = new List<Tile>(Tiles);
+            //ts.Sort((x, y) => x.X.CompareTo(y.X) + x.Y.CompareTo(y.Y));
+            //foreach (Tile ti in ts) {
+            //    int x = ti.X - ts[0].X;
+            //    int y = ti.Y - ts[0].Y;
+            //    sortedTiles[x, y] = ti; // so we have the tile at the correct spot
+            //}
+            _Center = Tiles[0].Vector2 + new Vector2(TileWidth / 2, TileHeight / 2);
+            return _Center;
         }
     }
 
@@ -166,12 +177,12 @@ public abstract class Structure : IGEventable {
     public bool CanTakeDamage { get { return Data.canTakeDamage; } }
 
     public Direction MustFrontBuildDir { get { return Data.mustFrontBuildDir; } }
-    public BuildTypes BuildTyp { get { return Data.buildTyp; } }
+    public BuildType BuildTyp { get { return Data.buildTyp; } }
     public StructureTyp StructureTyp { get { return Data.structureTyp; } }
     public ExtraUI ExtraUITyp { get { return Data.extraUITyp; } }
     public ExtraBuildUI ExtraBuildUITyp { get { return Data.extraBuildUITyp; } }
 
-    public List<Tile> PrototypeTiles { get { return Data.PrototypeTiles; } }
+    public List<Tile> PrototypeTiles { get { return Data.PrototypeRangeTiles; } }
 
     public bool CanStartBurning { get { return Data.canStartBurning; } }
 
@@ -232,27 +243,27 @@ public abstract class Structure : IGEventable {
     public bool NeedsRepair => CurrentHealth < MaxHealth;
     public int TileWidth {
         get {
-            if (rotated == 0 || rotated == 180) {
+            if (rotation == 0 || rotation == 180) {
                 return _tileWidth;
             }
-            if (rotated == 90 || rotated == 270) {
+            if (rotation == 90 || rotation == 270) {
                 return _tileHeight;
             }
             // should never come to this if its an error
-            Debug.LogError("Structure was rotated out of angle bounds: " + rotated);
+            Debug.LogError("Structure was rotated out of angle bounds: " + rotation);
             return 0;
         }
     }
     public int TileHeight {
         get {
-            if (rotated == 0 || rotated == 180) {
+            if (rotation == 0 || rotation == 180) {
                 return _tileHeight;
             }
-            if (rotated == 90 || rotated == 270) {
+            if (rotation == 90 || rotation == 270) {
                 return _tileWidth;
             }
             // should never come to this if its an error
-            Debug.LogError("Structure was rotated out of angle bounds: " + rotated);
+            Debug.LogError("Structure was rotated out of angle bounds: " + rotation);
             return 0;
         }
     }
@@ -336,47 +347,48 @@ public abstract class Structure : IGEventable {
     }
     #endregion
     #region placestructure
-    public bool PlaceStructure(List<Tile> tiles) {
-        StructureTiles = new List<Tile>();
+    public bool CheckPlaceStructure(List<Tile> tiles) {
+        if(tiles.Count==0 || tiles.Contains(null)) {
+            Debug.LogError("PlaceStructure FAILED -- tiles is empty or contains null tile!");
+            return false;
+        }
+        Tiles = new List<Tile>();
         CurrentHealth = MaxHealth;
         //test if the place is buildable
         // if it has to be on land
         if (CanBuildOnSpot(tiles) == false) {
-            Debug.Log("canBuildOnSpot FAILED -- Give UI feedback");
+            Debug.LogWarning("canBuildOnSpot FAILED -- Give UI feedback");
             return false;
         }
 
         //special check for some structures 
         if (SpecialCheckForBuild(tiles) == false) {
-            Debug.Log("specialcheck failed -- Give UI feedback");
+            Debug.LogWarning("specialcheck failed -- Give UI feedback");
             return false;
         }
-
-        StructureTiles.AddRange(tiles);
+        return true;
+    }
+    public void PlaceStructure(List<Tile> tiles) {
+        Tiles.AddRange(tiles);
         //if we are here we can build this and
         //set the tiles to the this structure -> claim the tiles!
         NeighbourTiles = new HashSet<Tile>();
-        foreach (Tile mt in StructureTiles) {
+        foreach (Tile mt in Tiles) {
             mt.Structure = this;
             foreach (Tile nbt in mt.GetNeighbours()) {
-                if (StructureTiles.Contains(nbt) == false) {
+                if (Tiles.Contains(nbt) == false) {
                     NeighbourTiles.Add(nbt);
                 }
             }
         }
-
         //it searches all the tiles it has in its reach!
-        RangeTiles = GetInRangeTiles(StructureTiles[0]);
-
+        RangeTiles = GetInRangeTiles(Tiles[0]);
         // do on place structure stuff here!
         OnBuild();
-
-        City.RegisterOnEvent(OnEventCreate, OnEventEnded);
-        return true;
+        City?.RegisterOnEvent(OnEventCreate, OnEventEnded);
     }
-
     public bool IsTileCityViable(Tile t, int player) {
-        if (t.City != null && t.City.playerNumber != player) {
+        if (t.City != null && t.City.PlayerNumber != player) {
             //here it cant build cause someoneelse owns it
             if (t.City.IsWilderness() == false) {
                 return false;
@@ -510,7 +522,7 @@ public abstract class Structure : IGEventable {
     }
     public List<Tile> RoadsAroundStructure() {
         List<Tile> roads = new List<Tile>();
-        foreach (Tile item in StructureTiles) {
+        foreach (Tile item in Tiles) {
             foreach (Tile n in item.GetNeighbours()) {
                 if (n.Structure != null) {
                     if (n.Structure is RoadStructure) {
@@ -531,8 +543,8 @@ public abstract class Structure : IGEventable {
     #endregion
     #region Functions
     internal List<Structure> GetNeighbourStructuresInRange(int spreadTileRange) {
-        Vector2 lower = MiddlePoint - new Vector2(TileWidth + spreadTileRange, TileHeight + spreadTileRange);
-        Vector2 upper = MiddlePoint + new Vector2(TileWidth + spreadTileRange, TileHeight + spreadTileRange);
+        Vector2 lower = Center - new Vector2(TileWidth + spreadTileRange, TileHeight + spreadTileRange);
+        Vector2 upper = Center + new Vector2(TileWidth + spreadTileRange, TileHeight + spreadTileRange);
         List<Structure> structures = new List<Structure>();
         for (float x = lower.x; x <= upper.x; x++) {
             for (float y = lower.y; y <= upper.y; y++) {
@@ -574,7 +586,7 @@ public abstract class Structure : IGEventable {
     public void Destroy() {
         _health = 0;
         OnDestroy();
-        foreach (Tile t in StructureTiles) {
+        foreach (Tile t in Tiles) {
             t.Structure = null;
         }
         //TODO: add here for getting res back 
@@ -630,26 +642,26 @@ public abstract class Structure : IGEventable {
                 int cY = y;
                 int startX = 0;
                 int startY = 0;
-                if (rotated == 90) {
+                if (rotation == 90) {
                     cX = -y;
                     cY = x;
                     startX = _tileWidth - 1;
                     startY = 0;
                 } else
-                if (rotated == 180) {
+                if (rotation == 180) {
                     cX = -x;
                     cY = -y;
                     startX = _tileWidth - 1;
                     startY = _tileHeight - 1;
                 } else
-                if (rotated == 270) {
+                if (rotation == 270) {
                     cX = y;
                     cY = -x;
                     startX = 0;
                     startY = _tileHeight - 1;
                 }
                 if((startX + cX)>= BuildTileTypes.GetLength(0) || (startY + cY)>= BuildTileTypes.GetLength(1)) {
-                    Debug.Log(rotated + " "+ (startX +"+"+ cX) + " " + (startX + cX) + " " + " " + (startY + "+" + cY) + " " + + (startY + cY) + " " + BuildTileTypes.GetLength(0) + " " + BuildTileTypes.GetLength(1));
+                    //Debug.Log(rotation + " "+ (startX +"+"+ cX) + " " + (startX + cX) + " " + " " + (startY + "+" + cY) + " " + + (startY + cY) + " " + BuildTileTypes.GetLength(0) + " " + BuildTileTypes.GetLength(1));
                 }
                 else {
                     TileType? requiredTile = BuildTileTypes[startX + cX, startY + cY];
@@ -668,23 +680,23 @@ public abstract class Structure : IGEventable {
 
     #endregion
     #region rotation
-    public int ChangeRotation(int x, int y, int rotate = 0) {
-        this.rotated = rotate % 360;
-        return rotated;
+    public int ChangeRotation(int rotate = 0) {
+        this.rotation = rotate % 360;
+        return rotation;
     }
     public void RotateStructure() {
         if (CanRotate == false) {
             return;
         }
-        rotated += 90;
-        rotated %= 360;
+        rotation += 90;
+        rotation %= 360;
     }
     public void AddTimes90ToRotate(int times) {
         if (CanRotate == false) {
             return;
         }
-        rotated += 90 * times;
-        rotated %= 360;
+        rotation += 90 * times;
+        rotation %= 360;
     }
     #endregion
     #region override

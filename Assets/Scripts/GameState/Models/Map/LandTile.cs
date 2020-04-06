@@ -87,7 +87,7 @@ public class LandTile : Tile {
             //warns about double wilderniss
             //can be removed for performance if 
             //necessary but it helps for development
-            if (_City != null && _City.playerNumber == -1 && value.playerNumber == -1) {
+            if (_City != null && _City.PlayerNumber == -1 && value.PlayerNumber == -1) {
                 _City = value;
                 return;
             }
@@ -180,7 +180,7 @@ public class LandTile : Tile {
         if (ListOfInRangeNeedStructures == null)
             return null;
         List<NeedStructure> playerAll = new List<NeedStructure>(ListOfInRangeNeedStructures);
-        playerAll.RemoveAll(x => x.PlayerNumber != City.playerNumber);
+        playerAll.RemoveAll(x => x.PlayerNumber != City.PlayerNumber);
         return playerAll;
     }
     /// <summary>
@@ -204,6 +204,6 @@ public class LandTile : Tile {
     public override string ToString() {
         if(EditorController.IsEditor)
             return string.Format("[{0}:{1}]Type:{2}|Structure:{3}", X, Y, Type, Structure);
-        return string.Format("[{0}:{1}]Type:{2}|Structure:{3}|Player:{4}", X, Y, Type, Structure, City.playerNumber.ToString());
+        return string.Format("[{0}:{1}]Type:{2}|Structure:{3}|Player:{4}", X, Y, Type, Structure, City.PlayerNumber.ToString());
     }
 }

@@ -129,7 +129,7 @@ public class MarketStructure : OutputStructure, ICapturable {
     }
     protected override void OnDestroy() {
         base.OnDestroy();
-        List<Tile> h = new List<Tile>(StructureTiles);
+        List<Tile> h = new List<Tile>(Tiles);
         h.AddRange(RangeTiles);
         City.RemoveTiles(h);
     }
@@ -150,7 +150,7 @@ public class MarketStructure : OutputStructure, ICapturable {
             if (((OutputStructure)structure).ForMarketplace == false) {
                 return;
             }
-            foreach (Tile item in structure.StructureTiles) {
+            foreach (Tile item in structure.Tiles) {
                 if (RangeTiles.Contains(item)) {
                     ((OutputStructure)structure).RegisterOutputChanged(OnOutputChangedStructure);
                     break;
@@ -164,7 +164,7 @@ public class MarketStructure : OutputStructure, ICapturable {
             HashSet<Route> Routes = GetRoutes();
             if (Routes == null || Routes.Count == 0)
                 return;
-            if (NeighbourTiles.Contains(structure.StructureTiles[0])) {
+            if (NeighbourTiles.Contains(structure.Tiles[0])) {
                 if (Routes.Contains(((RoadStructure)structure).Route) == false) {
                     Routes.Add(((RoadStructure)structure).Route);
                 }
@@ -187,7 +187,7 @@ public class MarketStructure : OutputStructure, ICapturable {
         }
         List<Item> all = new List<Item>();
         for (int i = items.Length - 1; i >= 0; i--) {
-            int space = City.inventory.GetSpaceFor(items[i]);
+            int space = City.Inventory.GetSpaceFor(items[i]);
             if (space == 0) {
 
             }
@@ -206,7 +206,7 @@ public class MarketStructure : OutputStructure, ICapturable {
             //if(City.inventory.GetAmountForItem (getItems[i]) == 0){
             //	continue;
             //}	
-            temp[i] = City.inventory.GetItemWithMaxAmount(getItems[i], getItems[i].count);
+            temp[i] = City.Inventory.GetItemWithMaxAmount(getItems[i], getItems[i].count);
         }
         return temp;
     }
@@ -221,7 +221,7 @@ public class MarketStructure : OutputStructure, ICapturable {
             if (getItems[i] == null || maxAmounts == null) {
                 Debug.Log("s");
             }
-            temp[i] = City.inventory.GetItemWithMaxAmount(getItems[i], maxAmounts[i]);
+            temp[i] = City.Inventory.GetItemWithMaxAmount(getItems[i], maxAmounts[i]);
         }
         return temp;
     }
@@ -241,7 +241,7 @@ public class MarketStructure : OutputStructure, ICapturable {
 
     private void DoneCapturing(IWarfare warfare) {
         //either capture it or destroy based on if is a city of that player on that island
-        City c = BuildTile.Island.Cities.Find(x => x.playerNumber == warfare.PlayerNumber);
+        City c = BuildTile.Island.Cities.Find(x => x.PlayerNumber == warfare.PlayerNumber);
         if (c != null) {
             OnDestroy();
             City = c;

@@ -166,7 +166,7 @@ public class Worker {
             return;
         }
         if (Home is MarketStructure) {
-            ((MarketStructure)Home).City.inventory.AddIventory(inventory);
+            ((MarketStructure)Home).City.Inventory.AddIventory(inventory);
         }
         else
         if (Home is ProductionStructure) {

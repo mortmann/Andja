@@ -16,7 +16,5 @@ public class NewGameSettings {
     public static void SetPirate(bool value) {
         GameDataHolder.pirates = value;
     }
-    public static void SetFire(bool value) {
-        GameDataHolder.fire = value;
-    }
+
 }

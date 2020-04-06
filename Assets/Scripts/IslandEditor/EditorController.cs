@@ -284,7 +284,7 @@ public class EditorController : MonoBehaviour {
                 break;
             case BrushTypes.Round:
                 MouseController.Instance.SetEditorHighlight(2*brushSize + 1, 
-                    Util.CalculateCircleTiles(brushSize, 0, 0), show);
+                    Util.CalculateRangeTiles(brushSize, 2, 3, brushSize, brushSize), show);
                 break;
         }
     }
@@ -333,7 +333,7 @@ public class EditorController : MonoBehaviour {
 
     public void SetStructure(string id) {
         structure = PrototypController.Instance.StructurePrototypes[id];
-        BuildController.Instance.OnClick(id,null,structure);
+        BuildController.Instance.StartStructureBuild(id,null,structure);
         if(brushBuild) {
             MouseController.Instance.mouseState = MouseState.Idle;
             MouseController.Instance.ToBuildStructure = null;
@@ -403,7 +403,7 @@ public class EditorController : MonoBehaviour {
     public SaveIsland GetSaveState() {
         HashSet<Tile> toSave = new HashSet<Tile>(world.Tiles);
         toSave.RemoveWhere(x => x.Type == TileType.Ocean);
-        return new SaveIsland(world.Islands[0].Cities[0].structures, toSave.ToArray(), Width, Height, climate, Ressources);
+        return new SaveIsland(world.Islands[0].Cities[0].Structures, toSave.ToArray(), Width, Height, climate, Ressources);
     }
 
     [JsonObject]

@@ -25,18 +25,18 @@ public class CityInventoryUI : MonoBehaviour {
         this.city = city;
         this.onItemPressed = onItemPressed;
 
-        city.inventory.RegisterOnChangedCallback(OnInventoryChange);
+        city.Inventory.RegisterOnChangedCallback(OnInventoryChange);
 
         foreach (Transform child in contentCanvas.transform) {
             Destroy(child.gameObject);
         }
         itemToGO = new Dictionary<string, ItemUI>();
-        foreach (Item item in city.inventory.Items.Values) {
+        foreach (Item item in city.Inventory.Items.Values) {
             GameObject go_i = GameObject.Instantiate(itemPrefab);
             go_i.name = item.Name + " Item";
             ItemUI iui = go_i.GetComponent<ItemUI>();
             itemToGO.Add(item.ID, iui);
-            iui.SetItem(item, city.inventory.MaxStackSize, true);
+            iui.SetItem(item, city.Inventory.MaxStackSize, true);
             Item i = item.Clone();
             iui.AddClickListener((data) => {
                 OnItemClick(i);
@@ -78,12 +78,12 @@ public class CityInventoryUI : MonoBehaviour {
         if (!tradePanel.activeSelf)
             tradePanel.GetComponent<TradePanel>().Show(city);
         tradePanel.SetActive(!tradePanel.activeSelf);
-        onItemPressed += (item) => tradePanel.GetComponent<TradePanel>().OnItemSelected(city.inventory.GetItemInInventoryClone(item));
+        onItemPressed += (item) => tradePanel.GetComponent<TradePanel>().OnItemSelected(city.Inventory.GetItemInInventoryClone(item));
     }
     public void OnInventoryChange(Inventory changedInv) {
         foreach (string i in changedInv.Items.Keys) {
-            itemToGO[i].ChangeItemCount(city.inventory.Items[i].count);
-            itemToGO[i].ChangeMaxValue(city.inventory.MaxStackSize);
+            itemToGO[i].ChangeItemCount(city.Inventory.Items[i].count);
+            itemToGO[i].ChangeMaxValue(city.Inventory.MaxStackSize);
         }
     }
 

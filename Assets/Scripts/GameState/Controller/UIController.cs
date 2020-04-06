@@ -192,7 +192,7 @@ public class UIController : MonoBehaviour {
         TileSpriteController.Instance.AddDecider(StrcutureTileDecider);
     }
     TileMark StrcutureTileDecider(Tile t) {
-        if (openStructure != null && (openStructure.RangeTiles.Contains(t) || openStructure.StructureTiles.Contains(t))) {
+        if (openStructure != null && (openStructure.RangeTiles.Contains(t) || openStructure.Tiles.Contains(t))) {
             return TileMark.None;
         }
         else {
@@ -216,7 +216,7 @@ public class UIController : MonoBehaviour {
                     CloseRightUI();
                     u.rangeUStructure.City.tradeUnit = u;
                     City c = u.rangeUStructure.City;
-                    OpenCityInventory(c, item => c.TradeWithShip(c.inventory.GetItemInInventoryClone(item)));
+                    OpenCityInventory(c, item => c.TradeWithShip(c.Inventory.GetItemInInventoryClone(item)));
                 }
             }
         }

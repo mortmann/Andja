@@ -35,6 +35,10 @@
          <entry lang="English">Flagship</entry>
          <entry lang="German">Flaggschiff</entry>
       </Name>
+      <Description>
+         <entry lang="English">McShipFace</entry>
+         <entry lang="German">Shippy Das Schiff</entry>
+      </Description>
       <buildingItems length="4">
          <Item ID="wood">
             <count>20</count>
@@ -59,11 +63,11 @@
       <damage>10.0</damage>
       <damageType>cannonball</damageType>
       <armorType>woodenwall</armorType>
-      <attackRate>1.0</attackRate>
-      <speed>2.0</speed>
+      <attackRate>15.0</attackRate>
+      <speed>8.0</speed>
       <turnSpeed>1.0</turnSpeed>
       <aggroTime>0.0</aggroTime>
-      <projectileSpeed>0.0</projectileSpeed>
+      <projectileSpeed>15.0</projectileSpeed>
       <spriteBaseName>ship</spriteBaseName>
       <maximumAmountOfCannons>15</maximumAmountOfCannons>
       <damagePerCannon>1</damagePerCannon>

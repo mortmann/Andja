@@ -169,8 +169,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   buildID: 0
-  noBuildCost: 1
-  noUnitRestriction: 1
+  noBuildCost: 0
+  noUnitRestriction: 0
 --- !u!1 &65370476
 GameObject:
   m_ObjectHideFlags: 0
@@ -1235,5 +1235,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6137e420bfcaf4b4f98b5091f9082641, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  SpawningRect:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 0
+    height: 0
   timeMultiplier: 1
   isLoaded: 1

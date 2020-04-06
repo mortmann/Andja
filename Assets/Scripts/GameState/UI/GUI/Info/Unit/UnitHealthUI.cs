@@ -34,7 +34,7 @@ public class UnitHealthUI : MonoBehaviour {
             if (((PointerEventData)(data)).button != PointerEventData.InputButton.Left) {
                 return;
             }
-            CameraController.Instance.MoveCameraToPosition(unit.VectorPosition);
+            CameraController.Instance.MoveCameraToPosition(unit.PositionVector);
         });
         triggers.triggers.Add(leftclick);
     }

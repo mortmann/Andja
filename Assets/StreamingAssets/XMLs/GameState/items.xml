@@ -755,4 +755,13 @@
       <type>Luxury</type>
       <decays>-1</decays>
    </Item>
+   <Item ID="sail">
+      <count>0</count>
+      <Name>
+         <entry lang="English">Sail</entry>
+         <entry lang="German">Seil</entry>
+      </Name>
+      <type>Military</type>
+      <decays>0</decays>
+   </Item>
 </items>

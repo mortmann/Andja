@@ -31,6 +31,24 @@ public static class Util {
         // Bottom
         Util.DrawScreenRect(new Rect(rect.xMin, rect.yMax - thickness, rect.width, thickness), color);
     }
+
+
+    public static List<Tile> CalculateRangeTiles(int range, int centerWidth, int centerHeight, float offset_x = 0, float offset_y = 0) {
+        offset_x += (float)centerWidth / 2f;
+        offset_y += (float)centerHeight / 2f;
+        if (centerWidth != centerHeight)
+            return CalculateMidPointEllipseFill(range, range, centerWidth, centerHeight, offset_x, offset_y);
+        else
+            return CalculateCircleTiles(range, centerWidth, centerHeight, offset_x, offset_y);
+    }
+    public static List<Vector2> CalculateRangeTilesVector2(int range, int centerWidth, int centerHeight, float offset_x = 0, float offset_y = 0) {
+        offset_x += (float)centerWidth / 2f;
+        offset_y += (float)centerHeight / 2f;
+        if (centerWidth != centerHeight)
+            return new List<Vector2>(CalculateMidPointEllipseFillVector2(range, range, centerWidth, centerHeight, offset_x, offset_y));
+        else
+            return CalculateCircleTilesVector2(range, centerWidth, centerHeight, offset_x, offset_y);
+    }
     /// <summary>
     /// World Tiles ONLY!
     /// Center Tiles will be empty!
@@ -39,13 +57,23 @@ public static class Util {
     /// <param name="centerWidth"></param>
     /// <param name="centerHeight"></param>
     /// <returns></returns>
-    public static List<Tile> CalculateCircleTiles(int range, int centerWidth, int centerHeight, int offset_x = 0, int offset_y = 0) {
-        List<Tile> CircleTiles = new List<Tile>();
+    public static List<Tile> CalculateCircleTiles(int range, int centerWidth, int centerHeight, float offset_x = 0, float offset_y = 0) {
         if (range == 0) {
-            return CircleTiles;
+            return new List<Tile>();
         }
-        CircleTiles = new List<Tile>(CalculateMidPointCircle(range, centerWidth, centerHeight, offset_x, offset_y));
-        return CircleTiles;
+        if (centerWidth % 2 == 0 && centerHeight % 2 == 0) {
+            return new List<Tile>(CalculateEvenCirclesTile(range, centerWidth, centerHeight, offset_x, offset_y));
+        }
+        return new List<Tile>(CalculateMidPointCircle(range, centerWidth, centerHeight, offset_x, offset_y));
+    }
+    public static List<Vector2> CalculateCircleTilesVector2(int range, int centerWidth, int centerHeight, float offset_x = 0, float offset_y = 0) {
+        if (range == 0) {
+            return new List<Vector2>();
+        }
+        if (centerWidth % 2 == 0 && centerHeight % 2 == 0) {
+            return new List<Vector2>(CalculateEvenCirclesTileVector2(range, centerWidth, centerHeight, offset_x, offset_y));
+        }
+        return new List<Vector2>(CalculateMidPointCircleVector2(range, centerWidth, centerHeight, offset_x, offset_y));
     }
     public static List<Tile> CalculateSquareTiles(int range, int centerWidth = 0, int centerHeight = 0) {
         return CalculateRectangleTiles(range, range, centerWidth, centerHeight);
@@ -111,22 +139,22 @@ public static class Util {
     /// <param name="centerWidth"></param>
     /// <param name="centerHeight"></param>
     /// <returns></returns>
-    public static HashSet<Tile> CalculateMidPointCircle(int radius, int centerWidth, int centerHeight, int offset_x = 0, int offset_y = 0) {
+    public static HashSet<Tile> CalculateMidPointCircle(float radius, int centerWidth, int centerHeight, float offset_x = 0, float offset_y = 0) {
         HashSet<Tile> tiles = new HashSet<Tile>();
-        int center_x = radius;
-        int center_y = radius;
-        int P = (5 - radius * 4) / 4;
-        int circle_x = 0;
-        int circle_y = radius;
-        if(offset_x > 0)
+        float center_x = radius;
+        float center_y = radius;
+        float P = (5 - radius * 4) / 4;
+        float circle_x = 0;
+        float circle_y = radius;
+        if (offset_x > 0)
             offset_x -= radius;
         if (offset_y > 0)
             offset_y -= radius;
         do {
             //Fill the circle 
-            for (int actual_x = center_x - circle_x; actual_x <= center_x + circle_x; actual_x++) {
+            for (float actual_x = center_x - circle_x; actual_x <= center_x + circle_x; actual_x++) {
                 //-----
-                int actual_y = center_y + circle_y;
+                float actual_y = center_y + circle_y;
                 if (CircleCheck(radius, centerWidth, actual_x) || CircleCheck(radius, centerHeight, actual_y))
                     tiles.Add(World.Current.GetTileAt(actual_x + offset_x, actual_y + offset_y));
                 //-----
@@ -134,9 +162,9 @@ public static class Util {
                 if (CircleCheck(radius, centerWidth, actual_x) || CircleCheck(radius, centerHeight, actual_y))
                     tiles.Add(World.Current.GetTileAt(actual_x + offset_x, actual_y + offset_y));
             }
-            for (int actual_x = center_x - circle_y; actual_x <= center_x + circle_y; actual_x++) {
+            for (float actual_x = center_x - circle_y; actual_x <= center_x + circle_y; actual_x++) {
                 //-----
-                int actual_y = center_y + circle_x;
+                float actual_y = center_y + circle_x;
                 if (CircleCheck(radius, centerWidth, actual_x) || CircleCheck(radius, centerHeight, actual_y))
                     tiles.Add(World.Current.GetTileAt(actual_x + offset_x, actual_y + offset_y));
                 //-----
@@ -155,16 +183,49 @@ public static class Util {
         } while (circle_x <= circle_y);
         return tiles;
     }
-    /// <summary>
-    /// Circle at offset and center will be not in it!
-    /// </summary>
-    /// <param name="radius"></param>
-    /// <param name="centerWidth"></param>
-    /// <param name="centerHeight"></param>
-    /// <param name="offset_x"></param>
-    /// <param name="offset_y"></param>
-    /// <returns></returns>
-    public static HashSet<Vector2> CalculateMidPointCircleVector2(int radius, int centerWidth, int centerHeight, int offset_x, int offset_y) {
+
+    public static HashSet<Tile> CalculateEvenCirclesTile(float radius, int centerWidth, int centerHeight, float offset_x = 0, float offset_y = 0) {
+        HashSet<Tile> tiles = new HashSet<Tile>();
+        for (float x = -radius + 0.5f; x <= radius - 0.5f; x++) {
+            for (float y = -radius + 0.5f; y <= radius - 0.5f; y++) {
+                if (-centerWidth / 2 <= x && centerWidth / 2 >= x && -centerHeight / 2 <= y && centerHeight / 2 >= y) {
+                    continue;
+                }
+                if (CircleDistance(x, y, 1) <= radius - 1f) {
+                    tiles.Add(World.Current.GetTileAt(x + offset_x + radius, y + offset_y + radius));
+                }
+            }
+        }
+        return tiles;
+    }
+    public static HashSet<Vector2> CalculateEvenCirclesTileVector2(float radius, int centerWidth, int centerHeight, float offset_x = 0, float offset_y = 0) {
+        HashSet<Vector2> vectors = new HashSet<Vector2>();
+        for (float x = -radius + 0.5f; x <= radius - 0.5f; x++) {
+            for (float y = -radius + 0.5f; y <= radius - 0.5f; y++) {
+                if (-centerWidth / 2 <= x && centerWidth / 2 >= x && -centerHeight / 2 <= y && centerHeight / 2 >= y) {
+                    continue;
+                }
+                if (CircleDistance(x, y, 1) <= radius - 1f) {
+                    vectors.Add(new Vector2(x + offset_x, y + offset_y));
+                }
+            }
+        }
+        return vectors;
+    }
+    static float CircleDistance(float x, float y, float ratio) {
+		return Mathf.FloorToInt(Mathf.Sqrt((Mathf.Pow(y* ratio, 2))+ Mathf.Pow(x, 2)));
+	}
+
+/// <summary>
+/// Circle at offset and center will be not in it!
+/// </summary>
+/// <param name="radius"></param>
+/// <param name="centerWidth"></param>
+/// <param name="centerHeight"></param>
+/// <param name="offset_x"></param>
+/// <param name="offset_y"></param>
+/// <returns></returns>
+public static HashSet<Vector2> CalculateMidPointCircleVector2(int radius, int centerWidth, int centerHeight, float offset_x, float offset_y) {
         HashSet<Vector2> circleVectors = new HashSet<Vector2>();
         int center_x = radius;
         int center_y = radius;
@@ -208,22 +269,27 @@ public static class Util {
         } while (circle_x <= circle_y);
         return circleVectors;
     }
-    private static bool CircleCheck(int radius, int centerHeight, int actual_y) {
-        return (centerHeight > 0 && actual_y >= radius && actual_y < radius + centerHeight) == false;
+    private static bool CircleCheck(int radius, int center, int actual) {
+        return (center > 0 && actual >= radius && actual < radius + center) == false;
+    }
+    private static bool CircleCheck(float radius, float center, float actual) {
+        return (center > 0 && actual >= radius && actual < radius + center) == false;
     }
     public static List<Tile> CalculateMidPointEllipse(float radius_x, float radius_y, float center_x, float center_y) {
         List<Tile> tiles = new List<Tile>();
         HashSet<Vector2> vecs = CalculateMidPointEllipseVector2(radius_x, radius_y, center_x, center_y);
         foreach(Vector2 v in vecs) {
-            tiles.Add(World.Current.GetTileAt(v));
+            tiles.Add(World.Current.GetTileAt(v + new Vector2(radius_x, radius_y)));
         }
         return tiles;
     }
     public static HashSet<Vector2> CalculateMidPointEllipseVector2(float radius_x, float radius_y, float center_x, float center_y) {
         HashSet<Vector2> ellipseVectors = new HashSet<Vector2>();
+        radius_x -= 0.5f;
+        radius_y -= 0.5f;
         float dx, dy, d1, d2; 
-        float e_x = 0;
-        float e_y = radius_y;
+        float e_x = 0.5f;
+        float e_y = radius_y+0.5f;
 
         // Initial decision parameter of region 1 
         d1 = (radius_y * radius_y) - (radius_x * radius_x * radius_y) + (0.25f * radius_x * radius_x);
@@ -282,44 +348,57 @@ public static class Util {
         }
         return ellipseVectors;
     }
-    public static List<Tile> CalculateMidPointEllipseFill(int radius_x, int radius_y, int center_x, int center_y) {
+    public static List<Tile> CalculateMidPointEllipseFill(float radius_x, float radius_y, float centerWidth, float centerHeight, float center_x, float center_y) {
         List<Tile> tiles = new List<Tile>();
-        HashSet<Vector2> vecs = CalculateMidPointEllipseFillVector2(radius_x, radius_y, center_x, center_y);
+        HashSet<Vector2> vecs = CalculateMidPointEllipseFillVector2(radius_x, radius_y, centerWidth, centerHeight,  center_x, center_y);
         foreach (Vector2 v in vecs) {
-            tiles.Add(World.Current.GetTileAt(v));
+            tiles.Add(World.Current.GetTileAt(v + new Vector2(radius_x, radius_y)));
         }
         tiles.RemoveAll(x => x == null);
         return tiles;
     }
-    public static HashSet<Vector2> CalculateMidPointEllipseFillVector2(int width, int height, int center_x, int center_y) {
+    public static HashSet<Vector2> CalculateMidPointEllipseFillVector2(float radius_x, float radius_y, float centerWidth, float centerHeight, float offset_x, float offset_y) {
         HashSet<Vector2> ellipseVectors = new HashSet<Vector2>();
         //INEFFICIENT ALGORITHMUS
         //TODO: make it with midpoint algo
-        int hh = height * height;
-        int ww = width * width;
-        int hhww = hh * ww;
-        int x0 = width;
-        int dx = 0;
+        //float hh = height * height;
+        //float ww = width * width;
+        //float hhww = hh * ww;
+        //float x0 = width;
+        //float dx = 0;
 
-        // do the horizontal diameter
-        for (int x = -width; x <= width; x++)
-            ellipseVectors.Add(new Vector2(center_x + x, center_y));
+        //// do the horizontal diameter
+        //for (float x = -width; x <= width; x++)
+        //    ellipseVectors.Add(new Vector2(center_x + x, center_y));
 
-        // now do both halves at the same time, away from the diameter
-        for (int y = 1; y <= height; y++) {
-            int x1 = x0 - (dx - 1);  // try slopes of dx - 1 or more
-            for (; x1 > 0; x1--)
-                if (x1 * x1 * hh + y * y * ww <= hhww)
-                    break;
-            dx = x0 - x1;  // current approximation of the slope
-            x0 = x1;
+        //// now do both halves at the same time, away from the diameter
+        //for (float y = 1; y <= height; y++) {
+        //    float x1 = x0 - (dx - 1);  // try slopes of dx - 1 or more
+        //    for (; x1 > 0; x1--)
+        //        if (x1 * x1 * hh + y * y * ww <= hhww)
+        //            break;
+        //    dx = x0 - x1;  // current approximation of the slope
+        //    x0 = x1;
 
-            for (int x = -x0; x <= x0; x++) {
-                ellipseVectors.Add(new Vector2(center_x + x, center_y - y));
-                ellipseVectors.Add(new Vector2(center_x + x, center_y + y));
+        //    for (float x = -x0; x <= x0; x++) {
+        //        ellipseVectors.Add(new Vector2(center_x + x, center_y - y));
+        //        ellipseVectors.Add(new Vector2(center_x + x, center_y + y));
+        //    }
+        //}
+        float r_x = centerWidth % 2 == 0 ? 0.5f : 0;
+        float r_y = centerHeight % 2 == 0 ? 0.5f : 0;
+
+        float ratio = radius_x / radius_y;
+        for (float x = -radius_x + r_x; x <= radius_x - r_x; x++) {
+            for (float y = -radius_y + r_y; y <= radius_y - r_y; y++) {
+                if (-centerWidth / 2 <= x && centerWidth / 2 >= x && -centerHeight / 2 <= y && centerHeight / 2 >= y) {
+                    continue;
+                }
+                if (CircleDistance(x, y, ratio) <= radius_x - (r_x + r_y)) {
+                    ellipseVectors.Add(new Vector2(x + offset_x, y + offset_y));
+                }
             }
         }
-
         return ellipseVectors;
     }
 

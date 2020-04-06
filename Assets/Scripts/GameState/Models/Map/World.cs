@@ -93,8 +93,6 @@ public class World : IGEventable {
         foreach (Tile t in addTiles) {
             if (t != null)
                 SetTileAt(t.X, t.Y, t);
-            if (t.Structure != null)
-                Debug.Log(t.Structure);
         }
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
@@ -251,7 +249,8 @@ public class World : IGEventable {
         int y = Mathf.FloorToInt(fy);
         return GetTileAt(x, y);
     }
-    public Unit CreateUnit(Unit unit) {
+    public Unit CreateUnit(Unit prefabUnit, Player player, Tile startTile) {
+        Unit unit = prefabUnit.Clone(player.Number, startTile);
         Units.Add(unit);
         unit.RegisterOnDestroyCallback(OnUnitDestroy);
         unit.RegisterOnCreateProjectileCallback(OnCreateProjectile);
@@ -270,7 +269,7 @@ public class World : IGEventable {
         //Spawn items from Inventory on the map
         if (u.inventory != null) {
             foreach (Item i in u.inventory.GetAllItemsAndRemoveThem()) {
-                SpawnItemOnMap(i, u.VectorPosition);
+                SpawnItemOnMap(i, u.PositionVector);
             }
         }
     }

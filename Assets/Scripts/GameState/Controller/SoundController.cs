@@ -187,6 +187,8 @@ public class SoundController : MonoBehaviour {
             if (go == null || go.GetComponent<AudioSource>() != null) {
                 continue;
             }
+            if (item.HasHitbox == false)
+                continue;
             ADDCopiedAudioSource(go, soundEffectSource);
             item.RegisterOnSoundCallback(PlaySoundEffectStructure);
         }
@@ -301,7 +303,7 @@ public class SoundController : MonoBehaviour {
         StartCoroutine(StartFile(nameToMetaData["build"], ac, true));
     }
     public void OnCityCreate(City c) {
-        if (c.playerNumber != PlayerController.currentPlayerNumber) {
+        if (c.PlayerNumber != PlayerController.currentPlayerNumber) {
             return;
         }
         //diffrent sounds for diffrent locations of City? North,middle,South?

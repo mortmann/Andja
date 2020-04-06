@@ -61,7 +61,6 @@ public class MouseController : MonoBehaviour {
         }
         set {
             GameObject.Destroy(previewGO);
-            ResetBuild(null);
             _toBuildstructure = value;
         }
     }
@@ -433,7 +432,7 @@ public class MouseController : MonoBehaviour {
         if (tile == null) {
             return;
         }
-        int tempTest = ToBuildStructure.rotated;
+        int tempTest = ToBuildStructure.rotation;
         Dictionary<Tile, bool> tileToCanBuild = null;
         if (autorotate) {
             for (int r = 0; r < 4; r++) {
@@ -456,7 +455,7 @@ public class MouseController : MonoBehaviour {
         if (tileToCanBuild.Values.ToList().Contains(false)) {
             //TODO fix this temporary fix
             // it is so that previews dont spinn like crazy BUT find better way todo this
-            ToBuildStructure.rotated = tempTest;
+            ToBuildStructure.rotation = tempTest;
         }
         foreach (Tile t in tileToCanBuild.Keys) {
             if (t == null) {
@@ -525,7 +524,7 @@ public class MouseController : MonoBehaviour {
         }
         previewGO.transform.position = new Vector3(GetTileUnderneathMouse().X + x,
                                                     GetTileUnderneathMouse().Y + y, 0);
-        previewGO.transform.eulerAngles = new Vector3(0, 0, 360 - ToBuildStructure.rotated);
+        previewGO.transform.eulerAngles = new Vector3(0, 0, 360 - ToBuildStructure.rotation);
     }
     public void RemovePrefabs() {
         while (previewGameObjects.Count > 0) {
@@ -574,15 +573,19 @@ public class MouseController : MonoBehaviour {
         int height = range + ToBuildStructure.TileWidth;
 
         highlightGO = GetHighlightGameObject(width, height, HighlightTiles);
-
         // offset based on even or uneven so it is centered properly
         // its working now?!? -- but leaving it in if its makes problems in the future
         // nope? 0 not working again
         float xoffset = 0;// ToBuildStructure.TileWidth % 3 == 0 ? - 0.5f : 0f;
         float yoffset = 0;// ToBuildStructure.TileHeight % 3 == 0 ? - 0.5f : 0f;
         if(ToBuildStructure.TileWidth != ToBuildStructure.TileHeight ) {
-            xoffset = ToBuildStructure.TileWidth % 3 == 0 ? 0f : -0.5f;
-            yoffset = ToBuildStructure.TileHeight % 3 == 0 ? 0f : -0.5f;
+            if(ToBuildStructure.TileWidth % 3 == ToBuildStructure.TileHeight % 3) {
+                xoffset = ToBuildStructure.TileWidth % 3 == 0 ? 0f : -0.5f;
+                yoffset = ToBuildStructure.TileHeight % 3 == 0 ? 0f : -0.5f;
+            } else {
+                xoffset = ToBuildStructure.TileWidth % 2 == 0 ? 0f : 0.5f;
+                yoffset = ToBuildStructure.TileHeight % 2 == 0 ? 0f : 0.5f;
+            }
         }
         highlightGO.transform.parent = previewGO.transform;
         highlightGO.transform.localPosition = new Vector3(xoffset, yoffset);
@@ -594,9 +597,12 @@ public class MouseController : MonoBehaviour {
         Texture2D tex = new Texture2D(width, height, TextureFormat.RGBA32, true);
         tex.SetPixels32(new Color32[width * height]);
         foreach (Tile t in tiles) {
+            if (t == null)
+                continue;
             tex.SetPixel(t.X, t.Y, new Color32(255, 255, 255, 20));
         }
         tex.filterMode = FilterMode.Point;
+        sr.sortingLayerName = "Structures";
         tex.Apply();
         sr.sprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(0.5f, 0.5f), 1);
         return highGO;
@@ -825,7 +831,7 @@ public class MouseController : MonoBehaviour {
         if(EditorController.IsEditor) {
             EditorController.Instance.BuildOn(t, single);
         } else {
-            if (mouseState == MouseState.Unit && mouseUnitState == MouseUnitState.Build) {
+            if (mouseUnitState == MouseUnitState.Build) {
                 BuildController.Instance.CurrentPlayerBuildOnTile(t, single, PlayerController.currentPlayerNumber, false, SelectedUnit);
             }
             else {
@@ -845,13 +851,14 @@ public class MouseController : MonoBehaviour {
             return;// there is no need to call any following
         }
         TileSpriteController.Instance.RemoveDecider(TileCityDecider);
+        if(BuildController.Instance.BuildState != BuildStateModes.None)
+            BuildController.Instance.ResetBuild();
         GameObject.Destroy(previewGO);
         previewGO = null;
-        structure = null;
+        ToBuildStructure = null;
         HighlightTiles = null;
-        if (mouseUnitState == MouseUnitState.Build) {
-            SelectedUnit = null;
-            mouseUnitState = MouseUnitState.Normal;
+        if(mouseUnitState == MouseUnitState.Build) {
+            UnselectUnit();
         }
     }
 

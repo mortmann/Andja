@@ -84,7 +84,7 @@ public abstract class OutputStructure : TargetStructure {
     public Tile JobTile {
         get {
             if (_jobTile == null) {
-                return StructureTiles[0];
+                return Tiles[0];
             }
             else {
                 return _jobTile;

@@ -152,7 +152,7 @@ public class ConsoleController : MonoBehaviour {
                 break;
             case "1":
                 City c = CameraController.Instance.nearestIsland.FindCityByPlayer(PlayerController.currentPlayerNumber);
-                happend = AddAllItems(c.inventory);
+                happend = AddAllItems(c.Inventory);
                 break;
             default:
                 break;
@@ -253,7 +253,7 @@ public class ConsoleController : MonoBehaviour {
                 }
                 if (PlayerController.GetPlayer(player) == null)
                     return false;
-                World.Current.CreateUnit(u.Clone(player, t));
+                World.Current.CreateUnit(u, PlayerController.GetPlayer(player), t);
                 return true;
             case "crate":
                 pos++;
@@ -299,11 +299,11 @@ public class ConsoleController : MonoBehaviour {
         }
         switch (parameters[pos]) {
             case "item":
-                return ChangeItemInInventory(parameters.Skip(2).ToArray(), c.inventory);
+                return ChangeItemInInventory(parameters.Skip(2).ToArray(), c.Inventory);
             case "fillitup":
-                return AddAllItems(c.inventory);
+                return AddAllItems(c.Inventory);
             case "builditems":
-                return AddAllItems(c.inventory, true);
+                return AddAllItems(c.Inventory, true);
             case "name":
                 break;
             case "player":

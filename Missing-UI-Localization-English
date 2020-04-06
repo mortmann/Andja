@@ -1,30 +1,6 @@
 <?xml version="1.0"?>
 <UILanguageLocalizations xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <missingLocalization>
-    <string>Health/hover</string>
-    <string>Health/hover</string>
-    <string>GameplayPanel/Content/ScrollRect/VerticalLayoutGroup/Language/Label/text</string>
-    <string>GameplayPanel/Content/ScrollRect/VerticalLayoutGroup/Language/Label/hover</string>
-    <string>YesNoDialog/Dialog/Content/VerticalLayoutGroup/OverwriteSave/text</string>
-    <string>YesNoDialog/Dialog/Content/VerticalLayoutGroup/OverwriteSave/hover</string>
-    <string>YesNoDialog/Dialog/Content/VerticalLayoutGroup/Buttons/Yes/text</string>
-    <string>YesNoDialog/Dialog/Content/VerticalLayoutGroup/Buttons/Yes/hover</string>
-    <string>YesNoDialog/Dialog/Content/VerticalLayoutGroup/DeleteSave/text</string>
-    <string>YesNoDialog/Dialog/Content/VerticalLayoutGroup/DeleteSave/hover</string>
-    <string>YesNoDialog/Dialog/Content/VerticalLayoutGroup/UnsavedProgress/text</string>
-    <string>YesNoDialog/Dialog/Content/VerticalLayoutGroup/UnsavedProgress/hover</string>
-    <string>YesNoDialog/Dialog/Content/VerticalLayoutGroup/Buttons/No/text</string>
-    <string>YesNoDialog/Dialog/Content/VerticalLayoutGroup/Buttons/No/hover</string>
-    <string>YesNoDialog/Dialog/Title/text</string>
-    <string>YesNoDialog/Dialog/Title/hover</string>
-    <string>MenuPanel/MenuButtons (1)/QuitMenu/text</string>
-    <string>MenuPanel/MenuButtons (1)/QuitMenu/hover</string>
-    <string>MenuPanel/MenuButtons/Save/text</string>
-    <string>MenuPanel/MenuButtons/Save/hover</string>
-    <string>Right Canvas/CityInventory/TradePanel/Trade-Canvas/ItemTrade/Layout/Prices/Buy/hover</string>
-    <string>Right Canvas/CityInventory/TradePanel/Trade-Canvas/ItemTrade/Layout/Prices/Sell/hover</string>
-    <string>Health/hover</string>
-    <string>Health/hover</string>
     <string>Layout/Prices/Sell/hover</string>
     <string>Layout/Prices/Buy/hover</string>
     <string>MenuPanel/MenuButtons/Save/text</string>
@@ -51,52 +27,76 @@
     <string>Delete/hover</string>
     <string>Center/OffWorldMarket/OFFWORLD-Panel/Delete/text</string>
     <string>Center/OffWorldMarket/OFFWORLD-Panel/Delete/hover</string>
+    <string>Right Canvas/CityInventory/TradePanel/Trade-Canvas/ItemTrade/Layout/Prices/Buy/hover</string>
     <string>Right Canvas/CityInventory/CityInfoToggle/text</string>
     <string>Right Canvas/CityInventory/CityInfoToggle/hover</string>
+    <string>Health/hover</string>
     <string>Right Canvas/CityInventory/City UI/Statistics/Income/text</string>
     <string>Right Canvas/CityInventory/City UI/Statistics/Income/hover</string>
+    <string>Right Canvas/CityInventory/TradePanel/Trade-Canvas/ItemTrade/Layout/Prices/Sell/hover</string>
     <string>Right Canvas/CityInventory/TradePanel/DeleteTrade/text</string>
     <string>Right Canvas/CityInventory/TradePanel/DeleteTrade/hover</string>
     <string>Center/OffWorldMarket/OFFWORLD-Panel/ONSHIP/text</string>
     <string>Center/OffWorldMarket/OFFWORLD-Panel/ONSHIP/hover</string>
     <string>Menu Canvas/Menu Button/QuickSave/hover</string>
+    <string>YesNoDialog/Dialog/Title/text</string>
+    <string>YesNoDialog/Dialog/Title/hover</string>
+    <string>YesNoDialog/Dialog/Content/VerticalLayoutGroup/OverwriteSave/text</string>
+    <string>YesNoDialog/Dialog/Content/VerticalLayoutGroup/OverwriteSave/hover</string>
     <string>Info Canvas/Unit Panel/Name Input/hover</string>
     <string>Info Canvas/MilitaryStructure Info/CurrentlyBuilding/Active Building/BuildProgress/hover</string>
     <string>Menu Canvas/Menu Button/Destroytool/hover</string>
+    <string>GameplayPanel/Content/ScrollRect/VerticalLayoutGroup/Language/Label/text</string>
+    <string>GameplayPanel/Content/ScrollRect/VerticalLayoutGroup/Language/Label/hover</string>
     <string>Menu Canvas/Menu Button/Fast/hover</string>
     <string>Right Canvas/CityInventory/TradeMenuButton/text</string>
     <string>Right Canvas/CityInventory/TradeMenuButton/hover</string>
     <string>Menu Canvas/Menu Button/Slow/hover</string>
     <string>Menu Canvas/Menu Button/QuickLoad/hover</string>
+    <string>Health/hover</string>
     <string>Info Canvas/InfoButtons/Info/hover</string>
     <string>Right Canvas/CityInventory/City UI/Statistics/People/text</string>
     <string>Right Canvas/CityInventory/City UI/Statistics/People/hover</string>
     <string>Right Canvas/CityInventory/City UI/Settings/AutoUpgrade/text</string>
     <string>Right Canvas/CityInventory/City UI/Settings/AutoUpgrade/hover</string>
+    <string>Health/hover</string>
     <string>Menu Canvas/Menu Button/NormalSpeed/hover</string>
+    <string>YesNoDialog/Dialog/Content/VerticalLayoutGroup/DeleteSave/text</string>
+    <string>YesNoDialog/Dialog/Content/VerticalLayoutGroup/DeleteSave/hover</string>
     <string>Info Canvas/Unit Panel/CombatInfo/Text/MaximumDamage/text</string>
     <string>Info Canvas/Unit Panel/CombatInfo/Text/MaximumDamage/hover</string>
     <string>Info Canvas/Unit Panel/CombatInfo/Text/Speed/text</string>
     <string>Info Canvas/Unit Panel/CombatInfo/Text/Speed/hover</string>
+    <string>YesNoDialog/Dialog/Content/VerticalLayoutGroup/Buttons/Yes/text</string>
+    <string>YesNoDialog/Dialog/Content/VerticalLayoutGroup/Buttons/Yes/hover</string>
     <string>Right Canvas/CityInventory/City UI/CityName Input/hover</string>
     <string>Info Canvas/Unit Panel/CombatInfo/Text/CurrentDamage/text</string>
     <string>Info Canvas/Unit Panel/CombatInfo/Text/CurrentDamage/hover</string>
     <string>Info Canvas/InfoButtons/Close/hover</string>
     <string>Right Canvas/CityInventory/City UI/Statistics/Expanses/text</string>
     <string>Right Canvas/CityInventory/City UI/Statistics/Expanses/hover</string>
+    <string>MenuPanel/MenuButtons (1)/QuitMenu/text</string>
+    <string>MenuPanel/MenuButtons (1)/QuitMenu/hover</string>
     <string>Right Canvas/CityInventory/City UI/Statistics/Balance/text</string>
     <string>Right Canvas/CityInventory/City UI/Statistics/Balance/hover</string>
     <string>Info Canvas/Unit Panel/Buttons/Settle/text</string>
     <string>Info Canvas/Unit Panel/Buttons/Settle/hover</string>
     <string>Menu Canvas/Menu Button/Fastest/hover</string>
     <string>Menu Canvas/Menu Button/Pause/hover</string>
+    <string>YesNoDialog/Dialog/Content/VerticalLayoutGroup/UnsavedProgress/text</string>
+    <string>YesNoDialog/Dialog/Content/VerticalLayoutGroup/UnsavedProgress/hover</string>
     <string>Center/OffWorldMarket/OFFWORLD-Panel/TOBUY/text</string>
     <string>Center/OffWorldMarket/OFFWORLD-Panel/TOBUY/hover</string>
     <string>Info Canvas/Unit Panel/Buttons/Patrol/text</string>
     <string>Info Canvas/Unit Panel/Buttons/Patrol/hover</string>
     <string>Info Canvas/Produktion Panel/Sleep/hover</string>
+    <string>Health/hover</string>
     <string>Menu Canvas/Menu Button/Options/hover</string>
+    <string>MenuPanel/MenuButtons/Save/text</string>
+    <string>MenuPanel/MenuButtons/Save/hover</string>
     <string>Info Canvas/Produktion Panel/ProduceProgress/hover</string>
     <string>Menu Canvas/Menu Button/Slowest/hover</string>
+    <string>YesNoDialog/Dialog/Content/VerticalLayoutGroup/Buttons/No/text</string>
+    <string>YesNoDialog/Dialog/Content/VerticalLayoutGroup/Buttons/No/hover</string>
   </missingLocalization>
 </UILanguageLocalizations>

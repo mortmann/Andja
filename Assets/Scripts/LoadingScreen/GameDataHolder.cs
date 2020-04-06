@@ -13,9 +13,10 @@ public class GameDataHolder : MonoBehaviour {
     public static Size WorldSize = Size.Medium;
     public Difficulty difficulty; //should be calculated
     public GameType saveFileType;
-    public float playTime;
     public static int Height = 500;
     public static int Width = 500;
+    public int MapSeed = 10;
+    public StartingLoadout Loadout;
     //if nothing is set take that what is set by the editor in unity
     //if there is nothing set it is null so new world
     //only load the set value if not using ingame loading method
@@ -23,15 +24,15 @@ public class GameDataHolder : MonoBehaviour {
     public string editorloadsavegame;
     public static string setloadsavegame;
 
-    public int MapSeed = 10;
     public bool RandomSeed;
     public static int bots; // this is far from being in anykind relevant so 
     public static int playerCount = 1;
     public static bool pirates = true;
-    public static bool fire = true;
     public static bool[] disasters;
     public static List<MapGenerator.IslandGenInfo> islandGenInfos;
     public string[] usedIslands; // this has to be changed to some generation from the random code or smth
+
+    public float playTime;
 
     public void Start() {
         if (Instance != null) {
@@ -41,7 +42,7 @@ public class GameDataHolder : MonoBehaviour {
         Instance = this;
 
         //MapSeed = UnityEngine.Random.Range(0, int.MaxValue);
-
+        
     }
     private void Update() {
         if (WorldController.Instance == null)
@@ -73,17 +74,17 @@ public class GameDataHolder : MonoBehaviour {
         else {
             MapGenerator.Instance.DefineParameters(MapSeed, Width, Height, null, new List<string>(usedIslands));
         }
-
+        Loadout = PrototypController.Instance.StartingLoadouts[0];
+        //Loadout = new StartingLoadout {
+        //    Items = new Item[] { new Item("wood") { count = 100 }, new Item("tools") { count = 66 }, new Item("fish") { count = 25 } },
+        //    Structures = new Structure[] { PrototypController.Instance.GetStructure("warehouse1") },
+        //    Units = new Unit[] { PrototypController.Instance.GetUnitForID("ship") },
+        //    Money = 50005,
+        //};
     }
     public void SetMapSeed(int seed) {
         MapSeed = seed;
         GenerateMap();
-    }
-    public void SetHeight(Text go) {
-        Height = int.Parse(go.text);
-    }
-    public void SetWidht(Text go) {
-        Width = int.Parse(go.text);
     }
 
     public GameData GetSaveGameData() {
@@ -110,5 +111,17 @@ public class GameData : BaseSaveData {
         Width = width;
         MapSeed = mapSeed;
         this.usedIslands = usedIslands;
+    }
+}
+
+[Serializable]
+public class StartingLoadout {
+    public Item[] Items;
+    public Unit[] Units;
+    public Structure[] Structures;
+    public int Money;
+
+    internal Item[] GetItemsCopy() {
+        return Array.ConvertAll(Items, a => a.CloneWithCount());
     }
 }

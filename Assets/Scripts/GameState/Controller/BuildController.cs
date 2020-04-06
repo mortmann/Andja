@@ -6,9 +6,7 @@
 using System;
 using System.Linq;
 using System.Collections.Generic;
-using System.IO;
 using UnityEngine;
-using UnityEngine.Events;
 
 /// <summary>
 /// Build state modes.
@@ -82,7 +80,7 @@ public class BuildController : MonoBehaviour {
     public void SettleFromUnit(Unit buildUnit = null) {
         if (settleStructure == null)
             settleStructure = PrototypController.Instance.GetFirstLevelStructureIDForStructureType(typeof(WarehouseStructure));
-        OnClick(settleStructure, buildUnit);
+        StartStructureBuild(settleStructure, buildUnit);
     }
     public void DestroyStructureOnTiles(IEnumerable<Tile> tiles, Player destroyPlayer, bool isGod=false) {
         foreach (Tile t in tiles) {
@@ -106,7 +104,7 @@ public class BuildController : MonoBehaviour {
         LoadedStructures = new List<Structure>(values);
     }
 
-    public void OnClick(string id, Unit buildInRangeUnit = null, Structure EditorStructure = null) {
+    public void StartStructureBuild(string id, Unit buildInRangeUnit = null, Structure EditorStructure = null) {
         if (StructurePrototypes.ContainsKey(id) == false) {
             Debug.LogError("BUTTON has ID that is not a structure prototypes ->o_O<- ");
             return;
@@ -114,15 +112,15 @@ public class BuildController : MonoBehaviour {
         toBuildStructure = StructurePrototypes[id].Clone();
         if(EditorStructure!=null)
             toBuildStructure = EditorStructure;
-        if (StructurePrototypes[id].BuildTyp == BuildTypes.Path) {
+        if (StructurePrototypes[id].BuildTyp == BuildType.Path) {
             MouseController.Instance.mouseState = MouseState.BuildPath;
             MouseController.Instance.ToBuildStructure = toBuildStructure;
         }
-        if (StructurePrototypes[id].BuildTyp == BuildTypes.Single) {
+        if (StructurePrototypes[id].BuildTyp == BuildType.Single) {
             MouseController.Instance.mouseState = MouseState.BuildSingle;
             MouseController.Instance.ToBuildStructure = toBuildStructure;
         }
-        if (StructurePrototypes[id].BuildTyp == BuildTypes.Drag) {
+        if (StructurePrototypes[id].BuildTyp == BuildType.Drag) {
             MouseController.Instance.mouseState = MouseState.BuildDrag;
             MouseController.Instance.ToBuildStructure = toBuildStructure;
         }
@@ -137,12 +135,13 @@ public class BuildController : MonoBehaviour {
     public void BuildOnEachTile(Structure structure, List<Tile> tiles, int playerNumber) {
         BuildOnTile(structure, tiles, playerNumber, true);
     }
-    public void BuildOnTile(Structure structure, List<Tile> tiles, int playerNumber, bool forEachTileOnce, bool wild = false, Unit buildInRange = null, bool loading = false) {
-        if (tiles == null || tiles.Count == 0 || WorldController.Instance?.IsPaused == true) {
+    public void BuildOnTile(Structure structure, List<Tile> tiles, int playerNumber, bool forEachTileOnce, 
+                                bool wild = false, Unit buildInRange = null, bool loading = false, bool onStart = false) {
+        if (tiles == null || tiles.Count == 0 || WorldController.Instance?.IsPaused == true && loading == false && onStart == false) {
             return;
         }
         if (forEachTileOnce == false) {
-            RealBuild(tiles, structure, playerNumber, loading, wild, buildInRange);
+            RealBuild(tiles, structure, playerNumber, loading, wild, buildInRange, onStart);
         }
         else {
             foreach (Tile tile in tiles) {
@@ -163,27 +162,26 @@ public class BuildController : MonoBehaviour {
         }
     }
 
-    protected void RealBuild(List<Tile> tiles, Structure structure, int playerNumber, bool loading = false, bool buildInWilderness = false, Unit buildInRangeUnit = null) {
-        if (tiles == null) {
-            Debug.LogError("tiles is null");
+    protected void RealBuild(List<Tile> tiles, Structure structure, int playerNumber, bool loading = false, 
+        bool buildInWilderness = false, Unit buildInRangeUnit = null, bool onStart = false) {
+        if (tiles == null || tiles.Count == 0) {
+            Debug.LogError("tiles is null or empty");
+            return;
+        }
+        if (buildInWilderness == false && PlayerController.GetPlayer(playerNumber)?.HasLost == true) {
             return;
         }
         if (tiles.Exists(x => x == null || x.Type == TileType.Ocean)) {
             return;
         }
-        if (tiles.Count == 0) {
-            Debug.LogError("tiles is empty");
-            return;
-        }
-        tiles = tiles.OrderBy(x => x.X).ThenBy(x => x.Y).ToList();
-
-        int rotate = structure.rotated;
+        tiles = tiles.OrderBy(x => x.Y).ThenBy(x => x.X).ToList();
+        int rotate = structure.rotation;
         if (loading == false) {
             structure = structure.Clone();
         }
-
+        Inventory inv = null;
         if (buildInRangeUnit != null && noUnitRestriction == false) {
-            Vector3 unitPos = buildInRangeUnit.pathfinding.Position;
+            Vector3 unitPos = buildInRangeUnit.PositionVector2;
             Tile t = tiles.Find(x => { return x.IsInRange(unitPos, buildInRangeUnit.BuildRange); });
             if (t == null) {
                 Debug.LogWarning("failed Range check -- Give UI feedback");
@@ -191,7 +189,7 @@ public class BuildController : MonoBehaviour {
             }
         }
         //FIXME find a better solution for this?
-        structure.rotated = rotate;
+        structure.ChangeRotation(rotate);
         //if is build in wilderniss city
         structure.buildInWilderniss = buildInWilderness;
 
@@ -199,7 +197,7 @@ public class BuildController : MonoBehaviour {
         //it doesnt matter if we can place it -- its needed for loading!
         //and the structure gets deleted if it cant be placed anyway
         if (buildInWilderness == false)
-            structure.City = tiles.Find(x => x?.City.playerNumber == playerNumber)?.City;
+            structure.City = tiles.Find(x => x?.City.PlayerNumber == playerNumber)?.City;
         else
             structure.City = tiles[0].City;
         //before we need to check if we can build THERE
@@ -210,34 +208,26 @@ public class BuildController : MonoBehaviour {
             //return;
             //find a city that matches the player 
             //and check for money
-            if (PlayerHasEnoughMoney(structure, playerNumber) == false) {
-                Debug.Log("not playerHasEnoughMoney -- Give UI feedback");
+            if (PlayerHasEnoughMoney(structure, playerNumber) == false && noBuildCost == false && onStart == false) {
+                Debug.LogWarning("Building failed -> Player has not enough money -- Give UI feedback");
                 return;
             }
             //Is the player allowed to place it here? -> city
-            Tile block = tiles.Find(x => x.City.IsWilderness() == false && x.City.playerNumber != playerNumber);
+            Tile block = tiles.Find(x => x.City.IsWilderness() == false && x.City.PlayerNumber != playerNumber);
             if (block != null) {
                 return; // there is a tile that is owned by another player
             }
             if (structure.City == null && structure.GetType() != typeof(WarehouseStructure)) {
                 return; // SO no city found and no warehouse to create on
-            } else
-            if (structure.GetType() == typeof(WarehouseStructure)) {
-                City c = tiles[0].Island.FindCityByPlayer(playerNumber);
-                if(c!=null && c.warehouse!=null) {
-                    return; // Already City existing here && has already a Warehouse
-                }
-                structure.City = CreateCity(tiles[0].Island, playerNumber);
-            }
-            if (noBuildCost == false) {
+            } 
+            if (noBuildCost == false && onStart == false) {
                 if (structure.GetBuildingItems() != null) {
-                    Inventory inv = null;
                     if (buildInRangeUnit != null) {
                         inv = buildInRangeUnit.inventory;
                     }
                     else {
                         if(structure.City != null)
-                            inv = structure.City.inventory;
+                            inv = structure.City.Inventory;
                     }
                     if (inv == null) {
                         Debug.LogError("Build something with smth that has no inventory");
@@ -247,20 +237,32 @@ public class BuildController : MonoBehaviour {
                         Debug.Log("UI FEEDBACK NEEDED -- NOT ENOUGH MATERIAL TO BUILD");
                         return;
                     }
-                    inv.RemoveItemsAmount(structure.GetBuildingItems());
                 }
             }
         }
-        
         //now we know that we COULD build that structure
         //but CAN WE?
         //check to see if the structure can be placed there
-        if (structure.PlaceStructure(tiles) == false) {
+        if (structure.CheckPlaceStructure(tiles) == false) {
             if (loading && EditorController.IsEditor == false) {
                 Debug.LogError("PLACING FAILED WHILE LOADING! " + structure.buildID + " - " + structure.SmallName);
             }
             return;
         }
+        //WE ARE HERE -- MEANS ALL CHECKS ARE DONE
+        //IT WILL BE BUILD!
+        //ALLOWS CREATION OF CITY when warehouse
+        if (structure is WarehouseStructure && structure.City == null) {
+            structure.City = BuildController.Instance.CreateCity(tiles[0].Island, playerNumber);
+        }
+        structure.PlaceStructure(tiles);
+
+        //pay for it -- if not otherwise disabled
+        if (noBuildCost == false && onStart == false && buildInWilderness == false) {
+            inv.RemoveItemsAmount(structure.GetBuildingItems());
+            PlayerController.GetPlayer(playerNumber).ReduceTreasure(structure.BuildCost);
+        }
+
         structure.City.AddStructure(structure);
         //call all callbacks on structure created
         //FIXME remove this or smth -- why?
@@ -269,6 +271,11 @@ public class BuildController : MonoBehaviour {
             // this is for loading so everything will be placed in order
             structure.buildID = buildID;
             buildID++;
+        }
+        if(onStart) {
+            if (LoadedStructures == null) //should never happen but just in case
+                LoadedStructures = new List<Structure>();
+            LoadedStructures.Add(structure);
         }
         structure.RegisterOnDestroyCallback(OnDestroyStructure);
     }
@@ -316,13 +323,13 @@ public class BuildController : MonoBehaviour {
         buildID = loadedStructures[loadedStructures.Count - 1].buildID++;
     }
     public void ResetBuild() {
-        if (BuildState != BuildStateModes.None) {
+        BuildState = BuildStateModes.None;
+        if (MouseController.Instance.mouseState != MouseState.Idle) {
             //Reset MouseController out of BuildMode that this set it to 
             //when a structure gets selected 
             MouseController.Instance.mouseState = MouseState.Idle;
             MouseController.Instance.ResetBuild(null);
         }
-        BuildState = BuildStateModes.None;
         this.toBuildStructure = null;
     }
     public void DestroyToolSelect() {

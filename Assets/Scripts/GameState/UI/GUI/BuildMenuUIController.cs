@@ -141,7 +141,7 @@ public class BuildMenuUIController : MonoBehaviour {
         }
         oldButton = nameToGOMap[name];
         nameToGOMap[name].GetComponent<Image>().color = Color.red;
-        buildController.OnClick(nameToIDMap[name]);
+        buildController.StartStructureBuild(nameToIDMap[name]);
     }
 
     public void OnPopulationLevelButtonClick(int i) {

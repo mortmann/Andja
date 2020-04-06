@@ -18,7 +18,7 @@ public class CityUI : MonoBehaviour {
         if(city == null) {
             return;
         }
-        AutoUpgradeHomesToggle.isOn = city.autoUpgradeHomes;
+        AutoUpgradeHomesToggle.isOn = city.AutoUpgradeHomes;
         NameField.SetName(city.Name, OnNameEdit);
         //Make the Name editable
     }
@@ -28,7 +28,7 @@ public class CityUI : MonoBehaviour {
         city.Name = name;
     }
     public void OnEnableAutoUpgrade(bool change) {
-        city.autoUpgradeHomes = change;
+        city.AutoUpgradeHomes = change;
     }
     private void Update() {
         Income.Show(city.income);

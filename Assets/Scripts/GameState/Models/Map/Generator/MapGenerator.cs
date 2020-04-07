@@ -254,13 +254,11 @@ public class MapGenerator : MonoBehaviour {
         for (int i = 0; i < islandGenerators.Count; i++) {
             IslandGenerator isg = islandGenerators[i];
             Task t = Task.Factory.StartNew(() => {
-                Debug.Log("Start");
                 isg.Start();
-                Debug.Log("Finished");
             });
             t.ConfigureAwait(false);
             generatorsTasks.Add(t);
-            //			await t;
+
         }
         toGeneratorIslands = islandGenerators.Count;
     }

@@ -352,15 +352,12 @@ public abstract class Structure : IGEventable {
             Debug.LogError("PlaceStructure FAILED -- tiles is empty or contains null tile!");
             return false;
         }
-        Tiles = new List<Tile>();
-        CurrentHealth = MaxHealth;
         //test if the place is buildable
         // if it has to be on land
         if (CanBuildOnSpot(tiles) == false) {
             Debug.LogWarning("canBuildOnSpot FAILED -- Give UI feedback");
             return false;
         }
-
         //special check for some structures 
         if (SpecialCheckForBuild(tiles) == false) {
             Debug.LogWarning("specialcheck failed -- Give UI feedback");
@@ -369,6 +366,8 @@ public abstract class Structure : IGEventable {
         return true;
     }
     public void PlaceStructure(List<Tile> tiles) {
+        CurrentHealth = MaxHealth;
+        Tiles = new List<Tile>();
         Tiles.AddRange(tiles);
         //if we are here we can build this and
         //set the tiles to the this structure -> claim the tiles!

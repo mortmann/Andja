@@ -56,6 +56,15 @@ public class OceanPathfinding : Pathfinding {
         worldPath = new Queue<Vector2>();
         //we probably needs to remove the first tile cause it may interfere with smooth pathing
         for (int i = 0; i < pos.Count; i++) {
+            if(i == pos.Count - 1 && pos.Count > 2) {
+                Vector2 curr = new Vector2(pos[i].x, pos[i].y);
+                Vector2 dir = curr - new Vector2(pos[i - 2].x, pos[i - 2].y);
+                dir = dir.normalized;
+                if(World.Current.GetTileAt(new Vector2(pos[i].x + dir.x, pos[i].y)).Type == TileType.Ocean && 
+                    World.Current.GetTileAt(new Vector2(pos[i].x, pos[i].y + dir.y)).Type == TileType.Ocean) {
+                    continue;
+                }
+            }
             worldPath.Enqueue(World.Current.GetTileAt(pos[i].x, pos[i].y).Vector2); //make sure it is correct tile etc
         }
         worldPath.Enqueue(Destination);

@@ -39,16 +39,20 @@ public class AIController : MonoBehaviour {
             Debug.LogError("There should never be two AIController.");
         }
         Instance = this;
+        BuildController.Instance.RegisterStructureCreated(OnStructureCreated);
+        BuildController.Instance.RegisterStructureDestroyed(OnStructureDestroyed);
     }
     // Use this for initialization
     void Start () {
-        
-
+        foreach (Island island in World.Current.Islands) {
+            foreach (City c in island.Cities) {
+                foreach (Structure str in c.Structures)
+                    OnStructureCreated(str, true);
+            }
+        }
         AIPlayer test = new AIPlayer(PlayerController.GetPlayer(1));
         test.CalculatePlayersCombatValue();
         
-        BuildController.Instance.RegisterStructureCreated(OnStructureCreated);
-        BuildController.Instance.RegisterStructureDestroyed(OnStructureDestroyed);
 
         //TextToTexture = new TextToTexture(font, 32, 32, false);
         //foreach (TileValue tv in values) {
@@ -97,7 +101,7 @@ public class AIController : MonoBehaviour {
         return IslandsTileToValue[tile.Island][tile].ToString();
     }
 
-    private void OnStructureDestroyed(Structure structure) {
+    private static void OnStructureDestroyed(Structure structure) {
         Dictionary<Tile, TileValue> tileValue = IslandsTileToValue[structure.City.Island];
         
         for (int y = 0; y < structure.TileHeight; y++) {
@@ -120,7 +124,7 @@ public class AIController : MonoBehaviour {
 
     }
 
-    private void OnStructureCreated(Structure structure, bool load) {
+    private static void OnStructureCreated(Structure structure, bool load) {
         if (structure.CanBeBuildOver)
             return;
         Island island = structure.City.Island;
@@ -147,7 +151,7 @@ public class AIController : MonoBehaviour {
 
     }
 
-    private void ChangeTileValue(Tile t,int value, Direction direction) {
+    private static void ChangeTileValue(Tile t,int value, Direction direction) {
         if(t.Type == TileType.Ocean) {
             return;
         }

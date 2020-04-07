@@ -64,7 +64,7 @@
       <damageType>cannonball</damageType>
       <armorType>woodenwall</armorType>
       <attackRate>15.0</attackRate>
-      <speed>8.0</speed>
+      <speed>3.5</speed>
       <turnSpeed>1.0</turnSpeed>
       <aggroTime>0.0</aggroTime>
       <projectileSpeed>15.0</projectileSpeed>

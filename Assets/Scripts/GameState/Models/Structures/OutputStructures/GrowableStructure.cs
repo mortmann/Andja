@@ -72,7 +72,6 @@ public class GrowableStructure : OutputStructure {
         }
     }
     public override void OnUpdate(float deltaTime) {
-
         if (hasProduced || landGrowModifier <= 0) {
             return;
         }

@@ -212,7 +212,8 @@ public class UnitSpriteController : MonoBehaviour {
         Transform parent = unitGameObjectMap[u].transform;
         GameObject go = Instantiate(unitCirclePrefab);
         go.name = circleGOname;
-        go.transform.localScale = new Vector3(u.BuildRange, u.BuildRange);
+        //buildrange is radius
+        go.transform.localScale = new Vector3(u.BuildRange , u.BuildRange);
         go.transform.SetParent(parent);
         go.transform.localPosition = new Vector3(0, 0, -0.5f);
         circleUnit = u;

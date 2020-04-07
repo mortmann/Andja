@@ -467,6 +467,12 @@ public class MouseController : MonoBehaviour {
                 ShowRedPrefabOnTile(t);
                 continue;
             }
+            if(mouseUnitState == MouseUnitState.Build) {
+                if(Vector2.Distance(t.Vector2, SelectedUnit.PositionVector2) > SelectedUnit.BuildRange) {
+                    ShowRedPrefabOnTile(t);
+                    continue;
+                }
+            }
             if (tileToCanBuild[t]) {
                 ShowPrefabOnTile(t);
             }
@@ -818,15 +824,13 @@ public class MouseController : MonoBehaviour {
         }
         // End path
         if (Input.GetMouseButtonUp(0)) {
-            // Loop through all the tiles
             if (path == null || path.path == null) {
                 return;
             }
             Build(new List<Tile>(path.path), true);
         }
-
-
     }
+
     void Build(List<Tile> t, bool single = false) {
         if(EditorController.IsEditor) {
             EditorController.Instance.BuildOn(t, single);

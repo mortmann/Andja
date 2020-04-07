@@ -253,19 +253,21 @@ public class BuildController : MonoBehaviour {
         //IT WILL BE BUILD!
         //ALLOWS CREATION OF CITY when warehouse
         if (structure is WarehouseStructure && structure.City == null) {
-            structure.City = BuildController.Instance.CreateCity(tiles[0].Island, playerNumber);
+            structure.City = CreateCity(tiles[0].Island, playerNumber);
         }
         structure.PlaceStructure(tiles);
 
         //pay for it -- if not otherwise disabled
         if (noBuildCost == false && onStart == false && buildInWilderness == false) {
-            inv.RemoveItemsAmount(structure.GetBuildingItems());
+            if(structure.GetBuildingItems()!=null)
+                inv.RemoveItemsAmount(structure.GetBuildingItems());
             PlayerController.GetPlayer(playerNumber).ReduceTreasure(structure.BuildCost);
         }
 
         structure.City.AddStructure(structure);
         //call all callbacks on structure created
         //FIXME remove this or smth -- why?
+        Debug.Log("INOVE");
         cbStructureCreated?.Invoke(structure, loading);
         if (loading == false) {
             // this is for loading so everything will be placed in order

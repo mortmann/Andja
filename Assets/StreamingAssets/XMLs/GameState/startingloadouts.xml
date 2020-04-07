@@ -14,10 +14,9 @@
 	  <Units>
 		<unit>ship</unit>
 	  </Units>
-<!--	  <Structures>
+	  <Structures>
 		<Structure>warehouse1</Structure>
 	  </Structures> 
--->
       <Money>50000</Money>
    </startingloadout>
 </startingloadouts>

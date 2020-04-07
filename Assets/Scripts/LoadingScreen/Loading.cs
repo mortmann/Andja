@@ -20,8 +20,8 @@ public class Loading : MonoBehaviour {
     }
     // Use this for initialization
     void Awake() {
-        //if (Application.isEditor)
-        //    ClearConsole();
+        if (Application.isEditor)
+            ClearConsole();
         EditorController.IsEditor = loadEditor;
         IsLoading = true;
         loadingStopWatch = new Stopwatch();

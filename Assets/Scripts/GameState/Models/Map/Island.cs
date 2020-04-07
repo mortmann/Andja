@@ -190,7 +190,6 @@ public class Island : IGEventable {
                 Maximum.y = t.Y;
             }
 
-
             if (t.Type != TileType.Ocean && t.Island != this) {
                 Tiles.Add(t);
                 t.Island = this;

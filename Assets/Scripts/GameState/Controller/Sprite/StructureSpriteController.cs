@@ -13,10 +13,8 @@ public class StructureSpriteController : MonoBehaviour {
     public Sprite circleSprite;
     public Sprite upgradeSprite;
     public Sprite unitCircleSprite;
-    World World {
-        get { return World.Current; }
-    }
-    Dictionary<Route, TextMesh> RouteToTextMash;
+    
+    Dictionary<Route, TextMesh> RouteToTextMesh;
     public bool RoadDebug = false;
     private void Awake() {
         BuildController.Instance.RegisterStructureCreated(OnBuildStrucutureCreated);
@@ -37,15 +35,10 @@ public class StructureSpriteController : MonoBehaviour {
                 OnBuildStrucutureCreated(str, true);
             }
         }
-        //if(EditorController.IsEditor) {
-        //    foreach (Structure str in EditorController.Instance.) {
-        //        OnBuildStrucutureCreated(str, true);
-        //    }
-        //}
+        
         if (EditorController.IsEditor) {
             EditorController.Instance.RegisterOnStructureDestroyed(OnTileStructureDestroyed);
         }
-
     }
 
     void Update() {
@@ -82,10 +75,10 @@ public class StructureSpriteController : MonoBehaviour {
         float x = 0;
         float y = 0;
         if (structure.TileWidth > 1) {
-            x = 0.5f + ((float)structure.TileWidth) / 2 - 1;
+            x = ((float)structure.TileWidth) / 2 - 0.5f;
         }
         if (structure.TileHeight > 1) {
-            y = 0.5f + ((float)structure.TileHeight) / 2 - 1;
+            y = ((float)structure.TileHeight) / 2 - 0.5f;
         }
         Tile t = structure.BuildTile;
         go.transform.position = new Vector3(t.X + x, t.Y + y);
@@ -129,8 +122,8 @@ public class StructureSpriteController : MonoBehaviour {
     }
 
     private void AddRoadDebug(GameObject go, RoadStructure road) {
-        if (RouteToTextMash == null)
-            RouteToTextMash = new Dictionary<Route, TextMesh>();
+        if (RouteToTextMesh == null)
+            RouteToTextMesh = new Dictionary<Route, TextMesh>();
         GameObject gos = new GameObject();
         TextMesh text = gos.AddComponent<TextMesh>();
         text.characterSize = 0.1f;
@@ -140,7 +133,7 @@ public class StructureSpriteController : MonoBehaviour {
         gos.GetComponent<MeshRenderer>().sortingLayerName = "StructuresUI";
         Font ArialFont = (Font)Resources.GetBuiltinResource(typeof(Font), "Arial.ttf");
         text.font = ArialFont;
-        RouteToTextMash[road.Route] = text;
+        RouteToTextMesh[road.Route] = text;
         text.text = road.Route.ToString();
     }
 
@@ -289,9 +282,9 @@ public class StructureSpriteController : MonoBehaviour {
         Structure s = road;
         SetSpriteRendererStructureSprite(structureGameObjectMap[s], s);
         if(RoadDebug&&road.Route!=null) {
-            if (RouteToTextMash == null||RouteToTextMash.ContainsKey(road.Route)==false)
+            if (RouteToTextMesh == null||RouteToTextMesh.ContainsKey(road.Route)==false)
                 AddRoadDebug(structureGameObjectMap[s], road);
-            RouteToTextMash[road.Route].text = road.Route.ToString();
+            RouteToTextMesh[road.Route].text = road.Route.ToString();
         }
     }
 

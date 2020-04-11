@@ -214,6 +214,8 @@ public class PlayerController : MonoBehaviour {
         }
     }
     private void OnUnitCreated(Unit unit) {
+        if (unit.playerNumber < 0)
+            return;
         Players[unit.PlayerNumber].OnUnitCreated(unit);
     }
     private void OnLevelLoad(Scene scene, LoadSceneMode arg1) {

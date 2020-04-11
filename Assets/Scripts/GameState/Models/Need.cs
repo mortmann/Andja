@@ -115,7 +115,7 @@ public class Need {
         notUsedOfTon = 0;
         //now we have a amount that still needs to be fullfilled by the cities inventory
 
-        float availableAmount = city.GetAmountForThis(Item, neededConsumAmount);
+        float availableAmount = city.GetAmountForThis(Item);
         //either we need to get 1 ton or as much as we need
         neededConsumAmount = Mathf.CeilToInt(neededConsumAmount);
         //now how much do we have in the city

@@ -18,7 +18,6 @@ using System.Collections.Concurrent;
 /// climate_tiletyp_2ndTileType_version_connectionSameType_connection2ndType
 /// </summary>
 public class TileSpriteController : MonoBehaviour {
-
     public static TileSpriteController Instance { get; protected set; }
 
     public static Dictionary<string, Sprite> nameToSprite;
@@ -67,7 +66,7 @@ public class TileSpriteController : MonoBehaviour {
     World World {
         get { return World.Current; }
     }
-
+    public static float offset = 0;
     // Use this for initialization
     void OnEnable() {
         if (Instance != null) {
@@ -77,7 +76,7 @@ public class TileSpriteController : MonoBehaviour {
         water = Instantiate(waterLayer);
         //DarkLayer probably gonna be changed
         if (EditorController.IsEditor == false) {
-            water.transform.position = new Vector3((World.Width / 2) - 0.5f, (World.Height / 2) - 0.5f, 0.1f);
+            water.transform.position = new Vector3((World.Width / 2) - offset, (World.Height / 2) - offset, 0.1f);
             Vector3 size = new Vector3(6 + World.Width / 10, 0.1f, 6 + World.Height / 10);
             Vector2 tile = new Vector2(6 + World.Width, 6 + World.Height);
             water.transform.localScale = size;
@@ -85,7 +84,7 @@ public class TileSpriteController : MonoBehaviour {
             Renderer wr = water.GetComponent<Renderer>();
             wr.material.mainTextureScale = tile;
             darkLayer = new GameObject();
-            darkLayer.transform.position = new Vector3((World.Width / 2) - 0.5f, (World.Height / 2) - 0.5f, 0);
+            darkLayer.transform.position = new Vector3((World.Width / 2) - offset, (World.Height / 2) - offset, 0);
             SpriteRenderer darksr = darkLayer.AddComponent<SpriteRenderer>();
             darksr.sprite = darkLayerSprite;
             darksr.sortingLayerName = "DarkLayer";
@@ -102,7 +101,7 @@ public class TileSpriteController : MonoBehaviour {
                 GameObject islandGO = Instantiate(islandPosToTilemap[key]);
                 Destroy(islandPosToTilemap[key]);
                 islandToGameObject[i] = islandGO;
-                islandGO.transform.position = key - new Vector2(0.5f,0.5f);
+                islandGO.transform.position = key - new Vector2(offset, offset);
                 islandGO.layer = LayerMask.NameToLayer("Islands");
                 islandGO.name = "Island " + i.StartTile.Vector2; 
                 //Now we create the masks for the islands 
@@ -144,7 +143,7 @@ public class TileSpriteController : MonoBehaviour {
         //    Destroy(editor_island_tilemap);
         editor_island_tilemap = new GameObject();
         editor_island_tilemap.name = "EditorIsland TileMap";
-        editor_island_tilemap.transform.position = new Vector3(-0.5f, -0.5f, 0);
+        editor_island_tilemap.transform.position = new Vector3(-offset, -offset, 0);
         editorTilemap = editor_island_tilemap.AddComponent<Tilemap>();
         Grid g = editor_island_tilemap.AddComponent<Grid>();
         g.cellSize = new Vector3(1, 1, 0);
@@ -153,7 +152,7 @@ public class TileSpriteController : MonoBehaviour {
         TilemapRenderer trr = editor_island_tilemap.AddComponent<TilemapRenderer>();
         trr.sortingLayerName = "Tile";
         editorTilemap.size = new Vector3Int(EditorController.Width, EditorController.Height, 0);
-        water.transform.position = new Vector3((World.Width / 2) - 0.5f, (World.Height / 2) - 0.5f, 0.1f);
+        water.transform.position = new Vector3((World.Width / 2) - offset, (World.Height / 2) - offset, 0.1f);
         water.transform.localScale = new Vector3(World.Width / 10, 0.1f, World.Height / 10);
         water.GetComponent<Renderer>().material = waterMaterial;
         water.GetComponent<Renderer>().material.mainTextureScale = new Vector2(World.Width, World.Height);

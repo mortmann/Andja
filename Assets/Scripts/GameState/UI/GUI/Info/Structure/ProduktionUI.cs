@@ -124,6 +124,7 @@ public class ProduktionUI : MonoBehaviour {
 
     }
     private void OnDisable() {
+        currentStructure = null;
         StructureUI.gameObject.SetActive(false);
     }
 }

@@ -72,14 +72,8 @@ public class StructureSpriteController : MonoBehaviour {
         structure.RegisterOnDestroyCallback(OnStructureDestroyed);
         structure.RegisterOnExtraUICallback(OnStructureExtraUI);
         structure.RegisterOnEffectChangedCallback(OnStructureEffectChange);
-        float x = 0;
-        float y = 0;
-        if (structure.TileWidth > 1) {
-            x = ((float)structure.TileWidth) / 2 - 0.5f;
-        }
-        if (structure.TileHeight > 1) {
-            y = ((float)structure.TileHeight) / 2 - 0.5f;
-        }
+        float x = ((float)structure.TileWidth) / 2f - TileSpriteController.offset;
+        float y = ((float)structure.TileHeight) / 2f - TileSpriteController.offset;
         Tile t = structure.BuildTile;
         go.transform.position = new Vector3(t.X + x, t.Y + y);
         go.transform.transform.eulerAngles = new Vector3(0, 0, 360 - structure.rotation);
@@ -124,6 +118,8 @@ public class StructureSpriteController : MonoBehaviour {
     private void AddRoadDebug(GameObject go, RoadStructure road) {
         if (RouteToTextMesh == null)
             RouteToTextMesh = new Dictionary<Route, TextMesh>();
+        if (RouteToTextMesh.ContainsKey(road.Route))
+            return;
         GameObject gos = new GameObject();
         TextMesh text = gos.AddComponent<TextMesh>();
         text.characterSize = 0.1f;
@@ -282,9 +278,15 @@ public class StructureSpriteController : MonoBehaviour {
         Structure s = road;
         SetSpriteRendererStructureSprite(structureGameObjectMap[s], s);
         if(RoadDebug&&road.Route!=null) {
-            if (RouteToTextMesh == null||RouteToTextMesh.ContainsKey(road.Route)==false)
-                AddRoadDebug(structureGameObjectMap[s], road);
-            RouteToTextMesh[road.Route].text = road.Route.ToString();
+            AddRoadDebug(structureGameObjectMap[s], road);
+            //RouteToTextMesh[road.Route].text = road.Route.ToString();
+            List<Route> temp = new List<Route>(RouteToTextMesh.Keys);
+            foreach (Route r in temp) {
+                if (r.Tiles.Count == 0) {
+                    Destroy(RouteToTextMesh[r]);
+                    RouteToTextMesh.Remove(r);
+                }
+            }
         }
     }
 

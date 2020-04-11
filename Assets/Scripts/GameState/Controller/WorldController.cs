@@ -11,6 +11,8 @@ public class WorldController : MonoBehaviour {
     public Rect SpawningRect;
     public Action<GameSpeed> onGameSpeedChange;
     public OffworldMarket offworldMarket;
+    public FlyingTrader flyingTrader;
+    public Pirate pirate;
     public Action<Unit> cbWorldCreatedUnit;
     public float timeMultiplier = 1;
     private bool _isPaused = false;
@@ -61,11 +63,15 @@ public class WorldController : MonoBehaviour {
         World.RegisterUnitCreated(OnUnitCreated);
         if (SaveController.IsLoadingSave == false && tileToStructure!=null && tileToStructure.Count>0) {
             BuildController.Instance.PlaceWorldGeneratedStructure(tileToStructure);
-            CreatePlayerStarts(spawnPoints);
+            CreatePlayerStarts(spawnPoints);        
+            offworldMarket = new OffworldMarket();
+            if(GameDataHolder.flyingTraders)
+                flyingTrader = new FlyingTrader();
+            if(GameDataHolder.pirates)
+                pirate = new Pirate();
         }
         SpawningRect = spawnRect;
         isLoaded = false;
-        offworldMarket = new OffworldMarket();
     }
 
     private void CreatePlayerStarts(Vector2[] spawnPoints) {
@@ -75,6 +81,7 @@ public class WorldController : MonoBehaviour {
         for (int i = 0; i < PlayerController.Players.Count; i++) {
             Item[] startItems = loadout.GetItemsCopy();
             Player player = PlayerController.Players[i];
+            Vector2 shipSpawn = new Vector2(-1,-1);
             //TODO: place structures! -- for now only warehouse?
             if(loadout.Structures!=null && player.IsHuman && Array.Exists(loadout.Structures,x=>x is WarehouseStructure)) {
                 //here then place em
@@ -83,6 +90,7 @@ public class WorldController : MonoBehaviour {
                 if(player.Cities.Count==0) {
                     Debug.LogError("-- Could not fit any Warehouse on the selected island --");
                 } else {
+                    shipSpawn = player.Cities[0].warehouse.tradeTile.Vector2;
                     player.Cities[0].Inventory.AddItems(startItems);
                 }
             }
@@ -92,7 +100,10 @@ public class WorldController : MonoBehaviour {
                         Debug.LogWarning("Unit is not a ship -- currently not supported to spawn!");
                         continue;
                     }
-                    Tile start = World.GetTileAt(spawnPoints[i % spawnPoints.Length]);
+                    if (shipSpawn.x == -1) {
+                        shipSpawn = spawnPoints[i % spawnPoints.Length];
+                    }
+                    Tile start = World.GetTileAt(shipSpawn);
                     Unit unit = World.CreateUnit(prefab, player, start);
                     foreach (Item item in startItems) {
                         unit.TryToAddItem(item);
@@ -115,9 +126,9 @@ public class WorldController : MonoBehaviour {
         if (World == null || IsPaused) {
             return;
         }
-        World.Update(Time.deltaTime * timeMultiplier);
-
-        offworldMarket.Update(Time.deltaTime * timeMultiplier);
+        World.Update(DeltaTime);
+        offworldMarket.Update(DeltaTime);
+        flyingTrader.Update(DeltaTime);
     }
     void FixedUpdate() {
         if (World == null || IsPaused) {
@@ -176,6 +187,7 @@ public class WorldController : MonoBehaviour {
     }
     void OnDestroy() {
         Instance = null;
+        flyingTrader?.OnDestroy();
         World?.Destroy();
     }
 
@@ -191,7 +203,9 @@ public class WorldController : MonoBehaviour {
     public WorldSaveState GetSaveWorldData() {
         WorldSaveState wss = new WorldSaveState {
             world = World,
-            offworld = offworldMarket
+            offworld = offworldMarket,
+            flyingTrader = flyingTrader,
+            pirate = pirate,
         };
         return wss;
     }
@@ -232,6 +246,8 @@ public class WorldController : MonoBehaviour {
     internal void SetWorldData(WorldSaveState worldsave) {
         World = worldsave.world;
         offworldMarket = worldsave.offworld;
+        flyingTrader = worldsave.flyingTrader;
+        pirate = worldsave.pirate;
         LoadWorldData();
     }
 
@@ -242,4 +258,6 @@ public class WorldController : MonoBehaviour {
 public class WorldSaveState : BaseSaveData {
     public OffworldMarket offworld;
     public World world;
+    public FlyingTrader flyingTrader;
+    public Pirate pirate;
 }

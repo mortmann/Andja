@@ -250,7 +250,10 @@ public class World : IGEventable {
         return GetTileAt(x, y);
     }
     public Unit CreateUnit(Unit prefabUnit, Player player, Tile startTile) {
-        Unit unit = prefabUnit.Clone(player.Number, startTile);
+        int playerNumber = -1;
+        if (player != null)
+            playerNumber = player.Number;
+        Unit unit = prefabUnit.Clone(playerNumber, startTile);
         Units.Add(unit);
         unit.RegisterOnDestroyCallback(OnUnitDestroy);
         unit.RegisterOnCreateProjectileCallback(OnCreateProjectile);
@@ -267,6 +270,11 @@ public class World : IGEventable {
     }
     public void OnUnitDestroy(Unit u) {
         //Spawn items from Inventory on the map
+        if (u.IsShip) {
+            Ship ship = u as Ship;
+            if (ship.isOffWorld)
+                return;
+        }
         if (u.inventory != null) {
             foreach (Item i in u.inventory.GetAllItemsAndRemoveThem()) {
                 SpawnItemOnMap(i, u.PositionVector);

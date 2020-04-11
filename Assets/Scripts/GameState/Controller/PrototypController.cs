@@ -102,7 +102,10 @@ public class PrototypController : MonoBehaviour {
             return null;
         return StructurePrototypes[id];
     }
-
+    internal Ship GetPirateShipPrototyp() {
+        //TODO: have pirateship prototyp
+        return (Ship)UnitPrototypes["ship"];
+    }
     internal bool ExistsNeed(Need need) {
         return allNeeds.Contains(need);
     }

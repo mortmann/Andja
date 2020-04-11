@@ -331,10 +331,10 @@ public class City : IGEventable {
     /// SELLING IT from perspectiv City
     /// </summary>
     /// <param name="itemID">Item I.</param>
-    /// <param name="player">Player.</param>
+    /// <param name="unitPlayer">Player.</param>
     /// <param name="ship">Ship.</param>
     /// <param name="amount">Amount.</param>
-    public void SellingTradeItem(string itemID, Player player, Ship ship, int amount = 50) {
+    public void SellingTradeItem(string itemID, Player unitPlayer, Ship ship, int amount = 50) {
         if (itemIDtoTradeItem.ContainsKey(itemID) == false) {
             return;
         }
@@ -344,11 +344,10 @@ public class City : IGEventable {
             return;
         }
         Item i = ti.SellItemAmount(Inventory.GetItemWithIDClone(itemID));
-        Player Player = PlayerController.GetPlayer(PlayerNumber);
+        Player CityPlayer = PlayerController.GetPlayer(PlayerNumber);
         int am = TradeWithShip(i, Mathf.Clamp(amount, 0, i.count), ship);
-        Player.AddToTreasure(am * ti.price);
-        player.ReduceTreasure(am * ti.price);
-
+        CityPlayer.AddToTreasure(am * ti.price);
+        unitPlayer?.ReduceTreasure(am * ti.price);
     }
     /// <summary>
     /// Ship sells to city.
@@ -404,10 +403,9 @@ public class City : IGEventable {
     public void ChangeTradeItemPrice(string id, int price) {
         itemIDtoTradeItem[id].price = price;
     }
-    public int GetAmountForThis(Item item, float amount) {
+    public int GetAmountForThis(Item item) {
         return Inventory.GetAmountForItem(item);
     }
-
     public void AddRoute(Route route) {
         if (routes == null) {
             routes = new List<Route>(); // i dont get why its null while loading

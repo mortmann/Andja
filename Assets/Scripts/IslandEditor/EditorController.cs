@@ -359,7 +359,7 @@ public class EditorController : MonoBehaviour {
         Ressources[ID][index] = amount;
     }
     internal Tile GetTileAtWorldCoord(Vector3 currFramePosition) {
-        return World.Current.GetTileAt(currFramePosition.x + 0.5f, currFramePosition.y + 0.5f);
+        return World.Current.GetTileAt(currFramePosition.x + TileSpriteController.offset, currFramePosition.y + TileSpriteController.offset);
     }
     internal Tile GetTileAtWorldCoord(int x, int y) {
         return World.Current.GetTileAt(x, y);

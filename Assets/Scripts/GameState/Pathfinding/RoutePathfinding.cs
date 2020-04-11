@@ -7,7 +7,7 @@ using System.Linq;
 using UnityEngine;
 
 public class RoutePathfinding : Pathfinding {
-
+    const float workerSize = 0.25f;
     List<Tile> startTiles;
     List<Tile> endTiles;
     public RoutePathfinding() : base() { }
@@ -73,22 +73,63 @@ public class RoutePathfinding : Pathfinding {
                 }
             }
         }
-        CurrTile = currentQueue.Peek();
         worldPath = new Queue<Vector2>();
+        //Queue<Vector2> tempPath = new Queue<Vector2>(worldPath.Reverse());
+        Vector2 offset = new Vector2();
+        Vector2 dir = new Vector2();
+        Vector2 curr;
+        bool addFirst = CurrTile != null; //if it is already moving add extra step to move over first
         while (currentQueue.Count>0) {
-            worldPath.Enqueue(currentQueue.Dequeue().Vector2);
+            curr = currentQueue.Dequeue().Vector2;
+            if (currentQueue.Count > 0) {
+                Vector2 next = currentQueue.Peek().Vector2;
+                dir = next - curr;
+                if (dir.x > 0) {
+                    offset.y = workerSize;
+                }
+                if (dir.x < 0) {
+                    offset.y = 1 - workerSize;
+                }
+                if (dir.y > 0) {
+                    offset.x = 1 - workerSize;
+                }
+                if (dir.y < 0) {
+                    offset.x = workerSize;
+                }
+            } else {
+                if(dir.x>0||dir.y>0)
+                    offset += dir * (1 - workerSize);
+            }
+            //TODO: FIX THIS! -- it works but it is ugly
+            if(addFirst) {
+                Vector2 pos = new Vector2(X, Y);
+                if (offset.x > 0)
+                    pos.x = Mathf.FloorToInt(X) + offset.x;
+                if (offset.y > 0)
+                    pos.y = Mathf.FloorToInt(Y) + offset.y;
+                worldPath.Enqueue(new Vector2(pos.x, pos.y));
+                addFirst = false;
+            }
+            worldPath.Enqueue(curr + offset);
         }
+
         if (worldPath == null || worldPath.Count == 0) {
+            Debug.LogError("FAILED ROUTE PATHFINDING");
             return;
         }
-        startTile = CurrTile;
         CreateReversePath();
+        dest_X = backPath.Peek().x;
+        dest_Y = backPath.Peek().y;
         DestTile = World.Current.GetTileAt(backPath.Peek());
-        worldPath.Dequeue();
-        X = startTile.X;
-        Y = startTile.Y;
-        dest_X = DestTile.X;
-        dest_Y = DestTile.Y;
+
+        if (CurrTile==null) {
+            CurrTile = World.Current.GetTileAt(worldPath.Peek());
+            X = worldPath.Peek().x;
+            Y = worldPath.Peek().y;
+            worldPath.Dequeue();
+        }
+        startTile = CurrTile;
+        
         //important
         IsDoneCalculating = true;
     }

@@ -27,6 +27,7 @@ public class GameDataHolder : MonoBehaviour {
     public bool RandomSeed;
     public static int bots; // this is far from being in anykind relevant so 
     public static int playerCount = 1;
+    public static bool flyingTraders = true;
     public static bool pirates = true;
     public static bool[] disasters;
     public static List<MapGenerator.IslandGenInfo> islandGenInfos;

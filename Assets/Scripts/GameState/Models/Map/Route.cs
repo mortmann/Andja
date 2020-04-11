@@ -102,13 +102,14 @@ public class Route {
             ((RoadStructure)item.Structure).Route = this;
         }
         TileGraph.addNodes(route.TileGraph);
+        route.Tiles.Clear();
         Tiles[0].City.RemoveRoute(route);
 
     }
 
     ///for debug purpose only if no longer needed delete
     public override string ToString() {
-        return Tiles[0].ToString() + "_Route";
+        return Tiles[0].ToBaseString() + "_Route" + Tiles[0].City.routes.IndexOf(this);
     }
 
 }

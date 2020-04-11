@@ -267,7 +267,6 @@ public class BuildController : MonoBehaviour {
         structure.City.AddStructure(structure);
         //call all callbacks on structure created
         //FIXME remove this or smth -- why?
-        Debug.Log("INOVE");
         cbStructureCreated?.Invoke(structure, loading);
         if (loading == false) {
             // this is for loading so everything will be placed in order

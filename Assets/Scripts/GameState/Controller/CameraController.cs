@@ -99,8 +99,6 @@ public class CameraController : MonoBehaviour {
         cameraMove += UpdateKeyboardCameraMovement();
         cameraMove += UpdateMouseCameraMovement();
 
-        
-
         Vector3 leftBottom = Camera.main.ScreenToWorldPoint(Vector3.zero);
         Vector3 leftTop = Camera.main.ScreenToWorldPoint(new Vector3(0, Camera.main.pixelHeight));
         Vector3 rightBottom = Camera.main.ScreenToWorldPoint(new Vector3(Camera.main.pixelWidth, 0));

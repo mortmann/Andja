@@ -35,10 +35,12 @@ public class KeyboardController : MonoBehaviour {
             ShortcutUI.Instance.StopDragAndDropBuild();
             EndVideoReached(null);
         }
+        if (InputHandler.GetButtonDown(InputName.Console)) {
+            UIC.ToggleConsole();
+        }
         if (UIController.IsTextFieldFocused()) {
             return;
         }
-
         UpdateCheatCodes();
         if (UIC.IsPauseMenuOpen()) {
             return;
@@ -57,9 +59,6 @@ public class KeyboardController : MonoBehaviour {
         }
         if (InputHandler.GetButtonDown(InputName.Stop)) {
             MouseController.StopUnit();
-        }
-        if (InputHandler.GetButtonDown(InputName.Console)) {
-            UIC.ToggleConsole();
         }
         if (InputHandler.GetButtonDown(InputName.DiplomacyMenu)) {
             UIC.ToggleDiplomacyMenu();

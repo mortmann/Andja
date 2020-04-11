@@ -63,8 +63,6 @@ public class Unit : IGEventable,IWarfare {
             return _CurrentDoingMode;
         }
         set {
-            if (_CurrentDoingMode != value)
-                Debug.Log(value);
             _CurrentDoingMode = value;
         }
     }
@@ -134,6 +132,8 @@ public class Unit : IGEventable,IWarfare {
     public OutputStructure rangeUStructure;
     protected Action<Unit> cbUnitChanged;
     protected Action<Unit> cbUnitDestroyed;
+    protected Action<Unit,bool> cbUnitArrivedDestination;
+
     protected Action<Projectile> cbCreateProjectile;
     protected Action<Unit, string> cbUnitSound;
     public float X {
@@ -559,7 +559,6 @@ public class Unit : IGEventable,IWarfare {
             }
         }
     }
-
     public void AddPatrolCommand(float targetX, float targetY) {
         Tile tile = World.Current.GetTileAt(targetX, targetY);
         if (tile == null) {
@@ -690,7 +689,7 @@ public class Unit : IGEventable,IWarfare {
     }
 
     public bool CanReach(float x, float y) {
-        Tile tile = World.Current.GetTileAt(x, y);
+        Tile tile = World.Current.GetTileAt(x + TileSpriteController.offset, y + TileSpriteController.offset);
         if (tile == null) {
             return false;
         }
@@ -744,6 +743,12 @@ public class Unit : IGEventable,IWarfare {
     }
     public void UnregisterOnDestroyCallback(Action<Unit> cb) {
         cbUnitDestroyed -= cb;
+    }
+    public void RegisterOnArrivedAtDestinationCallback(Action<Unit,bool> cb) {
+        cbUnitArrivedDestination += cb;
+    }
+    public void UnregisterOnArrivedAtDestinationCallback(Action<Unit, bool> cb) {
+        cbUnitArrivedDestination -= cb;
     }
     public void RegisterOnSoundCallback(Action<Unit, string> cb) {
         cbUnitSound += cb;

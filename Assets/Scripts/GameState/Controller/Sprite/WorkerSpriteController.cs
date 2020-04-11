@@ -37,10 +37,9 @@ public class WorkerSpriteController : MonoBehaviour {
 
         // Create a visual GameObject linked to this data.
         GameObject char_go = new GameObject();
-
+        char_go.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
         // Add our tile/GO pair to the dictionary.
         workerToGO.Add(w, char_go);
-
         char_go.name = " - Worker";
         char_go.transform.position = new Vector3(w.X, w.Y, 0);
         Quaternion q = char_go.transform.rotation;

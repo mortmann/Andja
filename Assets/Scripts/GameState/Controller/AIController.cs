@@ -127,6 +127,8 @@ public class AIController : MonoBehaviour {
     private static void OnStructureCreated(Structure structure, bool load) {
         if (structure.CanBeBuildOver)
             return;
+        if (structure.Tiles == null)
+            Debug.Log("DAFUQ");
         Island island = structure.City.Island;
         Dictionary<Tile, TileValue> tileValue = IslandsTileToValue[island];
         for (int y = 0; y < structure.TileHeight; y++) {

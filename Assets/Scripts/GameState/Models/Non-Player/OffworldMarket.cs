@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 using Newtonsoft.Json;
+using System;
 
 /// <summary>
 /// Offworld market.
@@ -64,6 +65,13 @@ public class OffworldMarket {
         }
         player.ReduceTreasure(money);
         return item;
+    }
+
+    internal int GetSellPrice(string item_id) {
+        return itemIDtoPrice[item_id].Sell;
+    }
+    internal int GetBuyPrice(string item_id) {
+        return itemIDtoPrice[item_id].Buy;
     }
     public void Update(float deltaTime){
         //update price so they go back to the equilibriums demand

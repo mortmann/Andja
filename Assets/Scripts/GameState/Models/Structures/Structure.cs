@@ -196,9 +196,9 @@ public abstract class Structure : IGEventable {
     public string SpriteName { get { return Data.spriteBaseName/*TODO: make multiple saved sprites possible*/; } }
 
     protected Action<Structure> cbStructureChanged;
-    protected Action<Structure> cbStructureDestroy;
+    protected Action<Structure, IWarfare> cbStructureDestroy;
     protected Action<Structure, bool> cbStructureExtraUI;
-    protected Action<Structure, string> cbStructureSound;
+    protected Action<Structure, string, bool> cbStructureSound;
 
 
     protected void BaseCopyData(Structure str) {
@@ -327,16 +327,16 @@ public abstract class Structure : IGEventable {
     public void UnregisterOnChangedCallback(Action<Structure> cb) {
         cbStructureChanged -= cb;
     }
-    public void RegisterOnDestroyCallback(Action<Structure> cb) {
+    public void RegisterOnDestroyCallback(Action<Structure, IWarfare> cb) {
         cbStructureDestroy += cb;
     }
-    public void UnregisterOnDestroyCallback(Action<Structure> cb) {
+    public void UnregisterOnDestroyCallback(Action<Structure, IWarfare> cb) {
         cbStructureDestroy -= cb;
     }
-    public void RegisterOnSoundCallback(Action<Structure, string> cb) {
+    public void RegisterOnSoundCallback(Action<Structure, string, bool> cb) {
         cbStructureSound += cb;
     }
-    public void UnregisterOnSoundCallback(Action<Structure, string> cb) {
+    public void UnregisterOnSoundCallback(Action<Structure, string, bool> cb) {
         cbStructureSound -= cb;
     }
     public void RegisterOnExtraUICallback(Action<Structure, bool> cb) {
@@ -582,15 +582,15 @@ public abstract class Structure : IGEventable {
         if (change > 0)
             RepairHealth(change);
     }
-    public void Destroy() {
+    public void Destroy(IWarfare destroyer = null) {
         _health = 0;
         OnDestroy();
         foreach (Tile t in Tiles) {
             t.Structure = null;
         }
-        //TODO: add here for getting res back 
+        //TODO: add here for getting res back when destroyer = null? negative effect?
         City.RemoveStructure(this);
-        cbStructureDestroy?.Invoke(this);
+        cbStructureDestroy?.Invoke(this, destroyer);
     }
     public bool CanReachStructure(Structure s) {
         HashSet<Route> otherRoutes = s.GetRoutes();

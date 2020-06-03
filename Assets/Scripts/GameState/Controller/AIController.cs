@@ -101,7 +101,7 @@ public class AIController : MonoBehaviour {
         return IslandsTileToValue[tile.Island][tile].ToString();
     }
 
-    private static void OnStructureDestroyed(Structure structure) {
+    private static void OnStructureDestroyed(Structure structure, IWarfare iwarfare) {
         Dictionary<Tile, TileValue> tileValue = IslandsTileToValue[structure.City.Island];
         
         for (int y = 0; y < structure.TileHeight; y++) {
@@ -127,8 +127,6 @@ public class AIController : MonoBehaviour {
     private static void OnStructureCreated(Structure structure, bool load) {
         if (structure.CanBeBuildOver)
             return;
-        if (structure.Tiles == null)
-            Debug.Log("DAFUQ");
         Island island = structure.City.Island;
         Dictionary<Tile, TileValue> tileValue = IslandsTileToValue[island];
         for (int y = 0; y < structure.TileHeight; y++) {

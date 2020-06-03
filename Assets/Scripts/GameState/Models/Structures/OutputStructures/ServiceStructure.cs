@@ -27,7 +27,7 @@ public class ServiceStructure : Structure {
     public Func<Structure, float, bool> WorkOnTarget { get; protected set; }
     Action<Structure> todoOnNewTarget;
     Action<Structure> onTargetChanged;
-    Action<Structure> onTargetDestroy;
+    Action<Structure, IWarfare> onTargetDestroy;
     Action<Structure> onSelfDestroy;
 
     Action<IGEventable, Effect, bool> onTargetEffectChange;
@@ -133,7 +133,7 @@ public class ServiceStructure : Structure {
         eventable.AddEffect(new Effect(eff.ID)); 
     }
 
-    private void RemoveFromJobs(Structure str) {
+    private void RemoveFromJobs(Structure str, IWarfare destroyer) {
         if (jobsToDo.Contains(str))
             jobsToDo.Remove(str);
     }
@@ -263,13 +263,13 @@ public class ServiceStructure : Structure {
     public void RegisterOnStructureChange(Structure str) {
         str.RegisterOnChangedCallback(onTargetChanged);
     }
-    public void UnregisterOnStructureChange(Structure str) {
+    public void UnregisterOnStructureChange(Structure str, IWarfare destroyer) {
         str.UnregisterOnChangedCallback(onTargetChanged);
     }
     public void RegisterOnStructureEffectChanged(Structure str) {
         str.RegisterOnEffectChangedCallback(onTargetEffectChange);
     }
-    public void UnregisterOnStructureEffectChanged(Structure str) {
+    public void UnregisterOnStructureEffectChanged(Structure str, IWarfare destroyer) {
         str.UnregisterOnEffectChangedCallback(onTargetEffectChange);
     }
     public void EffectCity() {
@@ -304,8 +304,8 @@ public class ServiceStructure : Structure {
                         continue;
                     }
                 }
-                UnregisterOnStructureChange(t.Structure);
-                UnregisterOnStructureEffectChanged(t.Structure);
+                UnregisterOnStructureChange(t.Structure, null);
+                UnregisterOnStructureEffectChanged(t.Structure, null);
                 onSelfDestroy?.Invoke(t.Structure);
             }
         }

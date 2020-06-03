@@ -28,6 +28,8 @@ public class KeyboardController : MonoBehaviour {
     }
     // Update is called once per frame
     void Update() {
+        if (PlayerController.GameOver)
+            return;
         if (Input.GetKeyDown(KeyCode.Escape)) {
             MouseController.Escape();
             BuildController.Escape();

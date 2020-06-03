@@ -130,9 +130,9 @@ public class ProductionStructure : OutputStructure {
         if (HasRequiredInput() == false) {
             return;
         }
-        produceCountdown += deltaTime;
-        if (produceCountdown >= ProduceTime) {
-            produceCountdown = 0;
+        produceTimer += deltaTime;
+        if (produceTimer >= ProduceTime) {
+            produceTimer = 0;
             if (Intake != null) {
                 for (int i = 0; i < Intake.Length; i++) {
                     Intake[i].count--;
@@ -163,8 +163,8 @@ public class ProductionStructure : OutputStructure {
         return true;
     }
 
-    public override void SendOutWorkerIfCan() {
-        if (Worker.Count >= MaxNumberOfWorker || jobsToDo.Count == 0 && nearestMarketStructure == null) {
+    public override void SendOutWorkerIfCan(float workTime = 1) {
+        if (Workers.Count >= MaxNumberOfWorker || jobsToDo.Count == 0 && nearestMarketStructure == null) {
             return;
         }
         Dictionary<Item, int> needItems = new Dictionary<Item, int>();
@@ -188,8 +188,8 @@ public class ProductionStructure : OutputStructure {
             if (getItems.Count <= 0) {
                 return;
             }
-            Worker.Add(new Worker(this, nearestMarketStructure, 1, getItems.ToArray(), false));
-            World.Current.CreateWorkerGameObject(Worker[0]);
+            Workers.Add(new Worker(this, nearestMarketStructure, workTime, getItems.ToArray(), WorkerWorkSound, false));
+            World.Current.CreateWorkerGameObject(Workers[0]);
         }
         else {
             base.SendOutWorkerIfCan();
@@ -281,8 +281,8 @@ public class ProductionStructure : OutputStructure {
         // bug is that myHome doesnt get set by json for this kind of structures
         // but it works for warehouse for example
         // to save save space we could always set it here but that would mean for every kind extra or in place structure???
-        if (Worker != null) {
-            foreach (Worker w in Worker) {
+        if (Workers != null) {
+            foreach (Worker w in Workers) {
                 w.Home = this;
             }
         }

@@ -46,13 +46,13 @@ public class Path_AStar {
         Calculate(nodes, tileStart, tileEnd, false);
 
     }
-    public Path_AStar(Island island, List<Tile> startTiles, List<Tile> endTiles, Path_Heuristics Heuristic = Path_Heuristics.Euclidean) {
+    public Path_AStar(Island island, Tile start, Tile end, List<Tile> startTiles, List<Tile> endTiles, Path_Heuristics Heuristic = Path_Heuristics.Euclidean) {
         if (island == null || startTiles == null || endTiles == null || startTiles.Count == 0 || endTiles.Count == 0) {
             return;
         }
         this.Heuristic = Heuristic;
-        startTiles.RemoveAll(x => x.Structure != null && x.Structure.IsWalkable == false);
-        endTiles.RemoveAll(x => x.Structure != null && x.Structure.IsWalkable == false);
+        //startTiles.RemoveAll(x => x.Structure != null && x.Structure.IsWalkable == false);
+        //endTiles.RemoveAll(x => x.Structure != null && x.Structure.IsWalkable == false);
         if (startTiles.Count == 0 || endTiles.Count == 0) {
             return;
         }
@@ -60,7 +60,7 @@ public class Path_AStar {
         this.endTiles = endTiles;
         // A dictionary of all valid, walkable nodes.
         Dictionary<Tile, Path_Node<Tile>> nodes = island.TileGraphIslandTiles.nodes;
-        Calculate(nodes, startTiles[0], endTiles[0]);
+        Calculate(nodes, start, end);
     }
     private void Calculate(Dictionary<Tile, Path_Node<Tile>> nodes, Tile tileStart, Tile tileEnd, bool diag = true) {
         // Make sure our start/end tiles are in the list of nodes!

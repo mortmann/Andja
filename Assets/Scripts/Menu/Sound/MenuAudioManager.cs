@@ -44,7 +44,7 @@ public class MenuAudioManager : MonoBehaviour {
         GetComponentInChildren<AudioSource>().Play();
     }
 
-    public void SetVolume(float value, VolumeType type) {
+    public void SetVolumeFor(VolumeType type, float value) {
         mixer.SetFloat(type.ToString(), ConvertToDecibel(value));
         volumes[type] = Mathf.RoundToInt(value);
     }
@@ -97,19 +97,22 @@ public class MenuAudioManager : MonoBehaviour {
     public void ReadVolumes() {
         string filePath = System.IO.Path.Combine(Application.dataPath.Replace("/Assets", ""), fileName);
         if (File.Exists(filePath) == false) {
-            SetVolume(100,VolumeType.Master);
-            SetVolume(50, VolumeType.Music);
-            SetVolume(80, VolumeType.Ambient);
-            SetVolume(50, VolumeType.UI);
-            SetVolume(70, VolumeType.SoundEffects);
+            SetVolumeFor(VolumeType.Master,100);
+            SetVolumeFor(VolumeType.Music,50);
+            SetVolumeFor(VolumeType.Ambient,80);
+            SetVolumeFor(VolumeType.UI,50);
+            SetVolumeFor(VolumeType.SoundEffects, 70);
             return;
         }
         volumes = JsonConvert.DeserializeObject<Dictionary<VolumeType, int>>(File.ReadAllText(filePath));
-        SetVolume(GetVolumeFor(VolumeType.Ambient), VolumeType.Ambient);
-        SetVolume(GetVolumeFor(VolumeType.Master), VolumeType.Master);
-        SetVolume(GetVolumeFor(VolumeType.Music), VolumeType.Music);
-        SetVolume(GetVolumeFor(VolumeType.UI), VolumeType.UI);
-        SetVolume(GetVolumeFor(VolumeType.SoundEffects), VolumeType.SoundEffects);
+        foreach(VolumeType vt in Enum.GetValues(typeof(VolumeType))) {
+            if (volumes.ContainsKey(vt) == false) {
+                SetVolumeFor(vt, 75);
+            }
+            else {
+                SetVolumeFor(vt, volumes[vt]);
+            }
+        }
     }
     public static Dictionary<string, int> StaticReadSoundVolumes() {
         string filePath = System.IO.Path.Combine(Application.dataPath.Replace("/Assets", ""), fileName);

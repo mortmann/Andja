@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
-
 public class WorkerSpriteController : MonoBehaviour {
     private Dictionary<string, Sprite> workerSprites;
     public Dictionary<Worker, GameObject> workerToGO;
@@ -26,30 +25,27 @@ public class WorkerSpriteController : MonoBehaviour {
         //maybe they should be created if NOT updated AND they are on screen
         //TODO rethink this
     }
-    private void OnWorkerCreated(Worker w) {
+    private void OnWorkerCreated(Worker worker) {
         // Register our callback so that our GameObject gets updated whenever
         // the object's into changes.
-        w.RegisterOnChangedCallback(OnWorkerChanged);
-        w.RegisterOnDestroyCallback(OnWorkerDestroy);
-        //		if (cc.CameraViewRange.Contains (new Vector2 (w.X, w.Y))==false){
-        //			return;
-        //		}
+        worker.RegisterOnChangedCallback(OnWorkerChanged);
+        worker.RegisterOnDestroyCallback(OnWorkerDestroy);
 
-        // Create a visual GameObject linked to this data.
-        GameObject char_go = new GameObject();
-        char_go.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
-        // Add our tile/GO pair to the dictionary.
-        workerToGO.Add(w, char_go);
-        char_go.name = " - Worker";
-        char_go.transform.position = new Vector3(w.X, w.Y, 0);
-        Quaternion q = char_go.transform.rotation;
-        q.eulerAngles = new Vector3(0, 0, w.Rotation);
-        char_go.transform.rotation = q;
-        char_go.transform.SetParent(this.transform, true);
+        GameObject go = new GameObject();
+        go.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
+        workerToGO.Add(worker, go);
+        go.name = " - Worker";
+        go.transform.position = new Vector3(worker.X, worker.Y, 0);
+        Quaternion q = go.transform.rotation;
+        q.eulerAngles = new Vector3(0, 0, worker.Rotation);
+        go.transform.rotation = q;
+        go.transform.SetParent(this.transform, true);
 
-        SpriteRenderer sr = char_go.AddComponent<SpriteRenderer>();
+        SpriteRenderer sr = go.AddComponent<SpriteRenderer>();
         sr.sprite = workerSprites["worker"];
         sr.sortingLayerName = "Persons";
+        //SOUND PART -- IMPORTANT
+        SoundController.Instance.OnWorkerCreated(worker, go);
     }
     void OnWorkerChanged(Worker w) {
         if (workerToGO.ContainsKey(w) == false) {

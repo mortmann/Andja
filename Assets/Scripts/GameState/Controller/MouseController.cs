@@ -135,6 +135,8 @@ public class MouseController : MonoBehaviour {
 
     // Update is called once per frame
     void Update() {
+        if (PlayerController.GameOver)
+            return;
         currFramePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         currFramePosition.z = 0;
         if (currFramePosition.y < 0 || currFramePosition.x < 0) {
@@ -882,7 +884,7 @@ public class MouseController : MonoBehaviour {
         }
         unit.UnregisterOnDestroyCallback(OnUnitDestroy);
     }
-    private void OnUnitDestroy(Unit unit) {
+    private void OnUnitDestroy(Unit unit, IWarfare warfare) {
         if (SelectedUnit == unit) {
             mouseState = MouseState.Idle;
             _selectedUnit = null;

@@ -52,13 +52,13 @@ public abstract class Pathfinding {
     public Queue<Vector2> worldPath;
     public Queue<Vector2> backPath;
 
-    protected Path_Destination pathDest;
+    protected Path_Destination pathDestination;
 
     public Vector3 LastMove { get; protected set; }
 
     protected float rotationSpeed = 90;
     protected Thread calculatingPathThread;
-    public bool IsDoneCalculating = false;
+    public bool IsDoneCalculating = true;
 
     protected float _speed = 1;
     protected virtual float Speed {
@@ -96,8 +96,8 @@ public abstract class Pathfinding {
         }
         protected set {
             //TODO: REMOVE FOR RELEASE
-            if (_x>0&&Mathf.Abs(value - _x) > 0.5f)
-                Debug.LogWarning("UNIT JUMPED -- FIX ME -- " + Mathf.Abs(value - _x));
+            if (_x>0&&Mathf.Abs(value - _x) > 0.2f * WorldController.Instance.timeMultiplier)
+                Debug.LogWarning(" UNIT JUMPED -- FIX ME -- " + Mathf.Abs(value - _x));
             _x = value;
         }
     }
@@ -107,7 +107,7 @@ public abstract class Pathfinding {
         }
         protected set {
             //TODO: REMOVE FOR RELEASE
-            if (_y > 0 &&Mathf.Abs( value - _y) > 0.5f)
+            if (_y > 0 &&Mathf.Abs( value - _y) > 0.2f*WorldController.Instance.timeMultiplier)
                 Debug.LogWarning("UNIT JUMPED -- FIX ME -- " + Mathf.Abs(value - _y));
             _y = value;
         }
@@ -125,10 +125,6 @@ public abstract class Pathfinding {
         set {
             if (value == null) {
                 return;
-            }
-            if (_currTile == null) {
-                X = value.X;
-                Y = value.Y;
             }
             _currTile = value;
         }
@@ -158,7 +154,7 @@ public abstract class Pathfinding {
         //for loading purpose or any other strange reason
         //we have a destination & are not there atm && we have no path then calculate it!
         if (DestTile != null && DestTile != CurrTile && IsAtDestination == false 
-            && NextDestination != Destination && worldPath == null)
+            && NextDestination != Destination && worldPath == null && IsDoneCalculating != false)
             SetDestination(dest_X, dest_Y);
         if (IsDoneCalculating == false)
             return;
@@ -210,6 +206,7 @@ public abstract class Pathfinding {
         //    rotation = Mathf.LerpAngle(rotation, angle, deltaTime * rotationSpeed);//Mathf.LerpAngle ( rotation , angle , t);
         //}
         //rotation = Mathf.LerpAngle(rotation, angle, deltaTime * rotationSpeed);//Mathf.LerpAngle ( rotation , angle , t);
+        Debug.Log(angle);
         rotation = Mathf.MoveTowardsAngle(rotation, angle, deltaTime * rotationSpeed);
 
     }

@@ -6,6 +6,8 @@ using System;
 public class GrowablePrototypeData : OutputPrototypData {
     public Fertility fertility;
     public int ageStages = 2;
+    public string harvestSound;
+
 }
 
 [JsonObject(MemberSerialization.OptIn)]
@@ -111,6 +113,7 @@ public class GrowableStructure : OutputStructure {
         age = 0f;
         CallbackChangeIfnotNull();
         hasProduced = false;
+        cbStructureSound?.Invoke(this, GrowableData.harvestSound, true);
     }
     #region override
     public override string GetSpriteName() {

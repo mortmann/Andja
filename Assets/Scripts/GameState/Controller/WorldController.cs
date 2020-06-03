@@ -9,11 +9,12 @@ public class WorldController : MonoBehaviour {
 
     public World World { get; protected set; }
     public Rect SpawningRect;
-    public Action<GameSpeed> onGameSpeedChange;
+    public Action<GameSpeed, float> cbGameSpeedChange;
     public OffworldMarket offworldMarket;
     public FlyingTrader flyingTrader;
     public Pirate pirate;
     public Action<Unit> cbWorldCreatedUnit;
+    public Action<Unit, IWarfare> cbWorldUnitDestroyed;
     public float timeMultiplier = 1;
     private bool _isPaused = false;
     public bool IsPaused {
@@ -60,15 +61,17 @@ public class WorldController : MonoBehaviour {
     }
     public void SetGeneratedWorld(World world, Dictionary<Tile, Structure> tileToStructure, Rect spawnRect, Vector2[] spawnPoints) {
         this.World = world;
-        World.RegisterUnitCreated(OnUnitCreated);
+        World.RegisterUnitCreated(cbWorldCreatedUnit);
+        World.RegisterAnyUnitDestroyed(cbWorldUnitDestroyed);
         if (SaveController.IsLoadingSave == false && tileToStructure!=null && tileToStructure.Count>0) {
             BuildController.Instance.PlaceWorldGeneratedStructure(tileToStructure);
-            CreatePlayerStarts(spawnPoints);        
-            offworldMarket = new OffworldMarket();
-            if(GameDataHolder.flyingTraders)
+            if (GameDataHolder.flyingTraders)
                 flyingTrader = new FlyingTrader();
-            if(GameDataHolder.pirates)
+            if (GameDataHolder.pirates)
                 pirate = new Pirate();
+            offworldMarket = new OffworldMarket();
+            CreatePlayerStarts(spawnPoints);        
+            
         }
         SpawningRect = spawnRect;
         isLoaded = false;
@@ -113,7 +116,18 @@ public class WorldController : MonoBehaviour {
             
         }
     }
-
+    /// <summary>
+    /// Does not change the gamespeed.
+    /// </summary>
+    internal void Pause() {
+        IsPaused = true;
+    }
+    /// <summary>
+    /// Does not change the gamespeed.
+    /// </summary>
+    internal void Unpause() {
+        IsPaused = false;
+    }
     protected void OnEventCreated(GameEvent ge) {
         World.OnEventCreate(ge);
     }
@@ -134,7 +148,7 @@ public class WorldController : MonoBehaviour {
         if (World == null || IsPaused) {
             return;
         }
-        World.FixedUpdate(Time.fixedDeltaTime * timeMultiplier);
+        World.FixedUpdate(DeltaTime);
     }
 
     public void TogglePause() {
@@ -169,21 +183,32 @@ public class WorldController : MonoBehaviour {
     }
 
     internal void SetSpeed(float speed) {
-        timeMultiplier = Mathf.Clamp(speed, 0, 100);
-        if (timeMultiplier == 0)
+        if (speed == 0) {
             IsPaused = true;
-        else
+        }
+        else {
             IsPaused = false;
-        onGameSpeedChange?.Invoke(CurrentSpeed);
-    }
-    private void OnUnitCreated(Unit unit) {
-        cbWorldCreatedUnit?.Invoke(unit);
+        }
+        timeMultiplier = Mathf.Clamp(speed, 0, 100);
+        cbGameSpeedChange?.Invoke(CurrentSpeed, speed);
     }
     public void RegisterWorldUnitCreated(Action<Unit> callbackfunc) {
         cbWorldCreatedUnit += callbackfunc;
     }
     public void UnregisterWorldUnitCreated(Action<Unit> callbackfunc) {
         cbWorldCreatedUnit -= callbackfunc;
+    }
+    public void RegisterWorldUnitDestroyed(Action<Unit, IWarfare> callbackfunc) {
+        cbWorldUnitDestroyed += callbackfunc;
+    }
+    public void UnregisterWorldUnitDestroyed(Action<Unit, IWarfare> callbackfunc) {
+        cbWorldUnitDestroyed -= callbackfunc;
+    }
+    public void RegisterSpeedChange(Action<GameSpeed, float> callbackfunc) {
+        cbGameSpeedChange += callbackfunc;
+    }
+    public void UnregisterSpeedChange(Action<GameSpeed, float> callbackfunc) {
+        cbGameSpeedChange -= callbackfunc;
     }
     void OnDestroy() {
         Instance = null;

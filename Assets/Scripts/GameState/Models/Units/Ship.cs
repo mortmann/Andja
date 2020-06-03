@@ -18,7 +18,6 @@ public class ShipPrototypeData : UnitPrototypeData {
 public class Ship : Unit {
     float ProjectileSpeed => ShipData.projectileSpeed; 
 
-
     [JsonPropertyAttribute] public TradeRoute tradeRoute;
     [JsonPropertyAttribute] public bool isOffWorld;
     [JsonPropertyAttribute] Item[] toBuy;
@@ -31,7 +30,7 @@ public class Ship : Unit {
 
     public int DamagePerCannon => CalculateRealValue("damagePerCannon", ShipData.damagePerCannon);
     public int MaximumAmountOfCannons => CalculateRealValue("maximumAmountOfCannons", ShipData.maximumAmountOfCannons);
-    public override float CurrentDamage => CalculateRealValue("CurrentDamage", DamagePerCannon);
+    public override float CurrentDamage => CalculateRealValue("CurrentDamage", DamagePerCannon * CannonItem.count);
     public override float MaximumDamage => CalculateRealValue("MaximumDamage", MaximumAmountOfCannons * DamagePerCannon);
     public override bool IsShip => true;
     public override float SpeedModifier => 1 - CannonSpeedDebuff - InventorySpeedDebuff - DamageSpeedDebuff;
@@ -52,24 +51,18 @@ public class Ship : Unit {
     public Ship() {
         
     }
-    public Ship(Tile t, int playernumber) {
-        this.playerNumber = playernumber;
-        inventory = new Inventory(6, 50);
-        offWorldTime = 5f;
-        pathfinding = new OceanPathfinding(t, this);
-        patrolCommand = new PatrolCommand();
-    }
 
     public Ship(Unit unit, int playerNumber, Tile t) {
         this.ID = unit.ID;
         patrolCommand = new PatrolCommand();
-
         this._prototypData = unit.Data;
         this.CurrentHealth = MaxHealth;
         this.playerNumber = playerNumber;
         inventory = new Inventory(InventoryPlaces, InventorySize);
         PlayerSetName = "Ship " + UnityEngine.Random.Range(0, 1000000000);
         pathfinding = new OceanPathfinding(t, this);
+        pathfinding.cbIsAtDestination += OnPathfindingAtDestination;
+        
     }
     public override Unit Clone(int playerNumber, Tile startTile) {
         return new Ship(this, playerNumber, startTile);
@@ -80,6 +73,8 @@ public class Ship : Unit {
     }
 
     public override void DoAttack(float deltaTime) {
+        if (CannonItem.count == 0)
+            return;
         if (CurrentTarget != null) {
             if (attackCooldownTimer > 0) {
                 attackCooldownTimer -= deltaTime;
@@ -94,11 +89,12 @@ public class Ship : Unit {
                 return;
             }
             ShotAtPosition(projectileDestination);
-            //float distance = (projectileDestination - VectorPosition).magnitude;
+            //float distance = (projectileDestination - PositionVector).magnitude;
             //for (int i = 1; i <= CannonPerSide; i++) {
             //    Vector3 offset = new Vector3(Width / 2, (i) * (Height / MaximumAmountOfCannons));
             //    offset = Quaternion.Euler(0, 0, pathfinding.rotation) * offset;
             //    cbCreateProjectile?.Invoke(new Projectile(this, position + offset, CurrentTarget, velocity, distance));
+
             //}
         }
     }
@@ -130,6 +126,8 @@ public class Ship : Unit {
     //calculate in the check range and if in range and possible then just do the shoot calculate there?
     Shoot nextShoot;
     public void ShotAtPosition(Vector3 destination) {
+        if (CannonItem.count == 0)
+            return;
         float arc = 30f;
         Vector3 targetSize = new Vector3(1, 1, 0);
         Vector3 position = CurrentPosition;
@@ -164,9 +162,10 @@ public class Ship : Unit {
 
             Vector3 velocity = (destination + targetOffset - PositionVector - offset).normalized * ProjectileSpeed;
             float distance = (destination+ targetOffset - PositionVector - offset).magnitude;
-            cbCreateProjectile?.Invoke(new Projectile(this, position+offset, CurrentTarget, velocity, distance));
+            cbCreateProjectile?.Invoke(new Projectile(this, position + offset, CurrentTarget, destination + targetOffset, velocity, distance));
         }
         attackCooldownTimer = AttackRate;
+        cbSoundCallback?.Invoke(this, "broadside", true);
     }
     protected Shoot CalculateShootAngle(Vector3 destination) {
         Vector3 position = CurrentPosition;
@@ -229,6 +228,8 @@ public class Ship : Unit {
     }
 
     protected override void UpdateWorldMarket(float deltaTime) {
+        if (IsNonPlayer)
+            return;
         if (pathfinding.IsAtDestination && isOffWorld == false) {
             isOffWorld = true;
             CallChangedCallback();
@@ -297,10 +298,10 @@ public class Ship : Unit {
     public void SendToOffworldMarket(Item[] toBuy) {
         //TODO OPTIMISE THIS SO IT CHECKS THE ROUTE FOR ANY
         //ISLANDS SO IT CAN TAKE A OTHER ROUTE
-        if (X >= Y) {
+        if (Mathf.Abs(World.Current.Width - X) >= Mathf.Abs(World.Current.Height - Y)) {
             SetDestinationIfPossible(0, Y);
         }
-        if (X < Y) {
+        else {
             SetDestinationIfPossible(X, 0);
         }
         this.toBuy = toBuy;
@@ -338,7 +339,7 @@ public class Ship : Unit {
         toAdd.count -= added;
     }
     public override float GetCurrentDamage(Combat.ArmorType armorType) {
-        return DamageType.GetDamageMultiplier(armorType) * ShipData.damagePerCannon;
+        return DamageType.GetDamageMultiplier(armorType) * DamagePerCannon;
     }
 
     //////////////////////////////////////////////////////////////////////////////

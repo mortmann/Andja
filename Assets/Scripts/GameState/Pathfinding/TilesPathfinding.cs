@@ -10,7 +10,10 @@ public class TilesPathfinding : Pathfinding {
     protected List<Tile> startTiles;
     protected List<Tile> endTiles;
 
-    public TilesPathfinding() : base() {
+    public TilesPathfinding(float Speed, float RotationSpeed) : base() {
+        this.Speed = Speed;
+        this.rotationSpeed = RotationSpeed;
+        TurnType = Turning_Type.TurnRadius;
     }
     public override void SetDestination(Tile end) {
         DestTile = end;
@@ -36,7 +39,7 @@ public class TilesPathfinding : Pathfinding {
 
     protected override void CalculatePath() {
 
-        pathDest = Path_Destination.Tile;
+        pathDestination = Path_Destination.Tile;
         if (startTiles == null) {
             startTiles = new List<Tile> {
                 startTile
@@ -46,29 +49,37 @@ public class TilesPathfinding : Pathfinding {
             };
         }
         IsAtDestination = false;
-        Path_AStar pa = new Path_AStar(startTiles[0].Island, startTiles, endTiles);
-        if (startTile == null) {
-            CurrTile = pa.path.Peek();
-            startTile = CurrTile;
-        }
-        else {
-            while (startTile == pa.path.Peek()  && worldPath.Count > 0) {
-                pa.Dequeue();
+        Queue<Tile> currentQueue = null;
+        foreach (Tile st in startTiles) {
+            foreach(Tile et in endTiles) {
+                Path_AStar pa = new Path_AStar(startTiles[0].Island, st, et, startTiles, endTiles);
+                if (pa.path == null || currentQueue != null && currentQueue.Count < pa.path.Count) {
+                    continue;
+                }
+                currentQueue = pa.path;
             }
-            CurrTile = World.Current.GetTileAt(X, Y);
         }
+
         worldPath = new Queue<Vector2>();
-        while (pa.path.Count > 0) {
-            worldPath.Enqueue(pa.path.Dequeue().Vector2);
+        while (currentQueue.Count > 0) {
+            worldPath.Enqueue(currentQueue.Dequeue().Vector2+new Vector2(0.5f,0.5f));
         }
-
-        DestTile = World.Current.GetTileAt(backPath.Peek());
-        dest_X = DestTile.X;
-        dest_Y = DestTile.Y;
-
-        worldPath.Enqueue(Destination);
+        
+        if (CurrTile == null) {
+            CurrTile = World.Current.GetTileAt(worldPath.Peek());
+            X = worldPath.Peek().x;
+            Y = worldPath.Peek().y;
+            worldPath.Dequeue();
+        }
+        
         CreateReversePath();
-        backPath.Enqueue(Position2);
+        DestTile = World.Current.GetTileAt(backPath.Peek());
+
+        dest_X = backPath.Peek().x;
+        dest_Y = backPath.Peek().y;
+
+        //worldPath.Enqueue(Destination);
+        //backPath.Enqueue(Position2);
 
         //important
         IsDoneCalculating = true;

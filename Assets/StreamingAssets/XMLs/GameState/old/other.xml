@@ -1,0 +1,46 @@
+<Other>
+   <PopulationLevel LEVEL="0">
+      <Name>
+         <entry lang="English">Peasent</entry>
+         <entry lang="German">Bauer</entry>
+      </Name>
+      <Description>
+         <entry lang="English">Poor farmers and agricultural workers.</entry>
+         <entry lang="German">Arme Bauern.</entry>
+      </Description>
+      <iconSpriteName>peasent</iconSpriteName>
+   </PopulationLevel>
+   <PopulationLevel LEVEL="1">
+      <Name>
+         <entry lang="English">Citizen</entry>
+         <entry lang="German">Bürger</entry>
+      </Name>
+      <Description>
+         <entry lang="English">&quot;middle class&quot;</entry>
+         <entry lang="German">&quot;Mittlere Klasse&quot;</entry>
+      </Description>
+      <iconSpriteName>citizen</iconSpriteName>
+   </PopulationLevel>
+   <PopulationLevel LEVEL="2">
+      <Name>
+         <entry lang="English">Patrician</entry>
+         <entry lang="German">Patrizier</entry>
+      </Name>
+      <Description>
+         <entry lang="English">Business class.</entry>
+         <entry lang="German">Gewerbe besitzende Klasse.</entry>
+      </Description>
+      <iconSpriteName>patrician</iconSpriteName>
+   </PopulationLevel>
+   <PopulationLevel LEVEL="3">
+      <Name>
+         <entry lang="English">Nobleman</entry>
+         <entry lang="German">Adliger</entry>
+      </Name>
+      <Description>
+         <entry lang="English">Highest ranking class.</entry>
+         <entry lang="German">Höchste Klasse der Einwohner.</entry>
+      </Description>
+      <iconSpriteName>nobleman</iconSpriteName>
+   </PopulationLevel>
+</Other>

@@ -6,9 +6,13 @@ using UnityEngine;
 public class ProjectileHoldingScript : MonoBehaviour {
 
     public Projectile Projectile;
-
+    Rigidbody2D body;
     private void Start() {
         Projectile.RegisterOnDestroyCallback(OnProjectileDestroy);
+        body = gameObject.AddComponent<Rigidbody2D>();
+        body.collisionDetectionMode = CollisionDetectionMode2D.Continuous;
+        body.velocity = Projectile.Velocity;
+        body.gravityScale = 0;
     }
 
     private void OnProjectileDestroy(Projectile obj) {
@@ -17,7 +21,7 @@ public class ProjectileHoldingScript : MonoBehaviour {
 
     // Update is called once per frame
     void Update() {
-        transform.position = Projectile.Position;
+        //transform.position = Projectile.Position;
     }
     //Doesnt get triggerd on hit because itself is a trigger
     private void OnCollisionEnter2D(Collision2D collision) {

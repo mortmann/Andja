@@ -7,62 +7,62 @@ using System;
 public class TradeItemUI : MonoBehaviour {
 
     ItemUI itemUI;
-    private bool _sell = true;
-    public bool Sell {
-        get { return _sell; }
-    }
+    public Trade Trade; 
     public Button sellButton;
     public Button buyButton;
     public Action<Item, bool> onButtonClick;
-    public Item item { get; protected set; }
+    public Item Item { get; protected set; }
     public Text priceText;
     public EventTrigger trigger;
-
+    public Image Highlight;
     public void Show(Item item, int maxStacksize, Action<Item, bool> cbButton) {
         itemUI = GetComponentInChildren<ItemUI>();
         itemUI.SetItem(item, maxStacksize);
-        sellButton.interactable = false;
         onButtonClick += cbButton;
         if (item == null) {
             return;
         }
-        this.item = item.CloneWithCount();
+        this.Item = item.CloneWithCount();
         ChangeItemCount(maxStacksize / 2);
+        UpdateSellBuy(true);
     }
     public void UpdatePriceText(int price) {
         priceText.text = "" + price;
     }
-    public void Show(Item item, int maxStacksize, bool sell) {
+    public void Show(Item item, int maxStacksize, Trade trade) {
         itemUI = GetComponentInChildren<ItemUI>();
         itemUI.SetItem(item, maxStacksize);
         sellButton.interactable = false;
-        this.item = item;
-        UpdateSellBuy(sell);
+        this.Item = item;
+        UpdateSellBuy(trade==Trade.Sell);
     }
     public void ChangeItemCount(int amount) {
         itemUI.ChangeItemCount(amount);
-        item.count = amount;
+        Item.count = amount;
     }
     public void SetItem(Item i, int maxValue, bool changeColor = false) {
-        itemUI.SetItem(item, maxValue, changeColor);
-        item = i;
+        Item = i;
+        itemUI.SetItem(i, maxValue, changeColor); 
+        UpdateSellBuy(true);
     }
     public void RefreshItem(Item i) {
-        item = i;
-        itemUI.RefreshItem(null);
+        Item = i;
+        itemUI.RefreshItem(i);
     }
     public void UpdateSellBuy(bool sell) {
         if (sell) {
             sellButton.interactable = false;
             buyButton.interactable = true;
+            Trade = Trade.Sell;
         }
         else {
             sellButton.interactable = true;
             buyButton.interactable = false;
+            Trade = Trade.Buy;
         }
-        _sell = sell;
-        onButtonClick?.Invoke(item, sell);
+        onButtonClick?.Invoke(Item, sell);
     }
+    
     public void AddListener(UnityAction<BaseEventData> ueb) {
         //FIRST EVENTTRIGGER is the item itself
         EventTrigger.Entry entry = new EventTrigger.Entry {
@@ -71,5 +71,13 @@ public class TradeItemUI : MonoBehaviour {
         entry.callback.AddListener(ueb);
         trigger.triggers.Add(entry);
     }
-    
+
+    internal void OnSelect() {
+        Highlight.gameObject.SetActive(true);
+        trigger.gameObject.SetActive(false);
+    }
+    internal void OnUnselect() {
+        Highlight.gameObject.SetActive(false);
+        trigger.gameObject.SetActive(true);
+    }
 }

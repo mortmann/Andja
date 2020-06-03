@@ -42,8 +42,9 @@ public class BuildController : MonoBehaviour {
     public Structure toBuildStructure;
 
     Action<Structure, bool> cbStructureCreated;
-    Action<Structure> cbAnyStructureDestroyed;
+    Action<Structure, IWarfare> cbAnyStructureDestroyed;
     Action<City> cbCityCreated;
+    Action<City> cbAnyCityDestroyed;
     Action<BuildStateModes> cbBuildStateChange;
 
 
@@ -92,6 +93,8 @@ public class BuildController : MonoBehaviour {
     /// </summary>
     /// <param name="t">T.</param>
     public void DestroyStructureOnTile(Tile t, Player destroyPlayer, bool isGod = false) {
+        if (EditorController.IsEditor == false && WorldController.Instance.IsPaused)
+            return; // Not Editor but Paused Game -> no destruction
         if (t.Structure == null) {
             return;
         }
@@ -293,8 +296,8 @@ public class BuildController : MonoBehaviour {
         }
         RealBuild(s.GetBuildingTiles(t.X, t.Y), s, -1, true, s.buildInWilderniss);
     }
-    public void OnDestroyStructure(Structure str) {
-        cbAnyStructureDestroyed?.Invoke(str);
+    public void OnDestroyStructure(Structure str, IWarfare destroyer) {
+        cbAnyStructureDestroyed?.Invoke(str, destroyer);
     }
     public bool PlayerHasEnoughMoney(Structure s, int playerNumber) {
         if (PlayerController.GetPlayer(playerNumber).TreasuryBalance >= s.BuildCost) {
@@ -309,6 +312,7 @@ public class BuildController : MonoBehaviour {
             return null;
         }
         City c = i.CreateCity(playernumber);
+        c.RegisterCityDestroy(cbAnyCityDestroyed);
         // needed for mapimage
         cbCityCreated?.Invoke(c);
         return c;
@@ -349,10 +353,10 @@ public class BuildController : MonoBehaviour {
     public void UnregisterStructureCreated(Action<Structure, bool> callbackfunc) {
         cbStructureCreated -= callbackfunc;
     }
-    public void RegisterStructureDestroyed(Action<Structure> callbackfunc) {
+    public void RegisterStructureDestroyed(Action<Structure, IWarfare> callbackfunc) {
         cbAnyStructureDestroyed += callbackfunc;
     }
-    public void UnregisterStructureDestroyed(Action<Structure> callbackfunc) {
+    public void UnregisterStructureDestroyed(Action<Structure, IWarfare> callbackfunc) {
         cbAnyStructureDestroyed -= callbackfunc;
     }
     public void RegisterCityCreated(Action<City> callbackfunc) {
@@ -360,6 +364,12 @@ public class BuildController : MonoBehaviour {
     }
     public void UnregisterCityCreated(Action<City> callbackfunc) {
         cbCityCreated -= callbackfunc;
+    }
+    public void RegisterAnyCityDestroyed(Action<City> callbackfunc) {
+        cbAnyCityDestroyed += callbackfunc;
+    }
+    public void UnregisterAnyCityDestroyed(Action<City> callbackfunc) {
+        cbAnyCityDestroyed -= callbackfunc;
     }
     public void RegisterBuildStateChange(Action<BuildStateModes> callbackfunc) {
         cbBuildStateChange += callbackfunc;

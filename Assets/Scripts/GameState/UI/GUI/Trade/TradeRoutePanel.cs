@@ -74,7 +74,7 @@ public class TradeRoutePanel : MonoBehaviour {
         Destroy(tradeRouteToGameObject[tradeRoute]);
         tradeRouteToGameObject.Remove(tradeRoute);
     }
-    public void OnShipDestroy(Unit unit) {
+    public void OnShipDestroy(Unit unit, IWarfare warfare) {
         if (unit.IsPlayerUnit() == false || unit is Ship == false)
             return;
         Ship ship = (Ship)unit;

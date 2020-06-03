@@ -18,7 +18,7 @@ public class CityInventory : Inventory {
             Debug.LogError("ITEM ID is empty or null");
             return 0;
         }
-        Item inInv = GetItemWithID(toAdd.ID);
+        Item inInv = GetItem(toAdd.ID);
         //if its already full no need to put it in there
         if (inInv.count == MaxStackSize) {
             Debug.Log("inventory-item is full " + inInv.count);
@@ -32,10 +32,10 @@ public class CityInventory : Inventory {
     public override int GetTotalAmountFor(Item item) {
         return GetAmountForItem(item);
     }
-    protected override Item GetItemWithID(string id) {
+    protected override Item GetItem(string id) {
         return Items[id];
     }
-    public override Item GetItemWithIDClone(string id) {
+    public override Item GetItemClone(string id) {
         return Items[id].CloneWithCount();
     }
     public override bool ContainsItemWithID(string id) {

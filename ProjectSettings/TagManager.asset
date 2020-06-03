@@ -51,11 +51,14 @@ TagManager:
   - name: Tile
     uniqueID: 1661614767
     locked: 0
-  - name: Structures
-    uniqueID: 807683865
+  - name: Road
+    uniqueID: 4093347095
     locked: 0
   - name: Persons
     uniqueID: 2120903147
+    locked: 0
+  - name: Structures
+    uniqueID: 807683865
     locked: 0
   - name: DarkLayer
     uniqueID: 1213898929

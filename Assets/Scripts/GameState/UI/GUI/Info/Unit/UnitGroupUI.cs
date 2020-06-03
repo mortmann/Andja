@@ -22,6 +22,9 @@ public class UnitGroupUI : MonoBehaviour {
         unitToUI.Remove(unit);
         MouseController.Instance.RemoveUnitFromGroup(unit);
     }
+    public void RemoveUnit(Unit unit, IWarfare warfare) {
+        RemoveUnit(unit);
+    }
     public void AddUnit(Unit unit) {
         UnitHealthUI uhu = Instantiate(unitHealthPrefab);
         uhu.Show(unit);

@@ -17,6 +17,8 @@ public class UnitPrototypeData : LanguageVariables {
 
     public Item[] buildingItems;
     public string spriteBaseName;
+    public string[] movementSoundName;
+    public string[] mainAttackSoundName;
 
     public float buildTime = 1f;
     public float maximumHealth;
@@ -58,6 +60,10 @@ public class Unit : IGEventable,IWarfare {
     [JsonPropertyAttribute] public Inventory inventory;
     [JsonPropertyAttribute] protected UnitDoModes _CurrentDoingMode = UnitDoModes.Idle;
     [JsonPropertyAttribute] protected UnitMainModes _CurrentMainMode = UnitMainModes.Idle;
+
+
+    public virtual bool CanAttack => CurrentDamage > 0;
+
     public UnitDoModes CurrentDoingMode {
         get {
             return _CurrentDoingMode;
@@ -101,19 +107,18 @@ public class Unit : IGEventable,IWarfare {
     public float CurrentHealth {
         get { return _currHealth; }
         protected set {
-            if (value <= 0) {
-                Destroy();
-            }
             _currHealth = value;
         }
     }
-    internal void ReduceHealth(float damage) {
+    internal void ReduceHealth(float damage, IWarfare warfare) {
         if (damage < 0) {
             damage = -damage;
             Debug.LogWarning("Damage should be never smaller than 0 - Fixed it!");
         }
-        CurrentHealth -= damage;
-        CurrentHealth = Mathf.Clamp(CurrentHealth, 0, MaxHealth);
+        CurrentHealth = Mathf.Clamp(CurrentHealth - damage, 0, MaxHealth);
+        if (CurrentHealth <= 0) {
+            Destroy(warfare);
+        }
     }
     public void RepairHealth(float heal) {
         if (heal < 0) {
@@ -123,19 +128,19 @@ public class Unit : IGEventable,IWarfare {
         CurrentHealth += heal;
         CurrentHealth = Mathf.Clamp(CurrentHealth, 0, MaxHealth);
     }
-    internal void ChangeHealth(float change) {
+    internal void ChangeHealth(float change, IWarfare warfare = null) {
         if (change < 0)
-            ReduceHealth(-change); //damage should not be negativ
+            ReduceHealth(-change, warfare); //damage should not be negativ
         if (change > 0)
             RepairHealth(change);
     }
     public OutputStructure rangeUStructure;
     protected Action<Unit> cbUnitChanged;
-    protected Action<Unit> cbUnitDestroyed;
+    protected Action<Unit, IWarfare> cbUnitDestroyed;
     protected Action<Unit,bool> cbUnitArrivedDestination;
 
     protected Action<Projectile> cbCreateProjectile;
-    protected Action<Unit, string> cbUnitSound;
+    protected Action<Unit, string, bool> cbSoundCallback;
     public float X {
         get {
             return pathfinding.X;
@@ -219,7 +224,7 @@ public class Unit : IGEventable,IWarfare {
             return _prototypData;
         }
     }
-
+    public bool IsNonPlayer => PlayerNumber == Pirate.Number || PlayerNumber == FlyingTrader.Number;
     public Vector2 CurrentPosition => PositionVector;
     public Vector2 NextDestinationPosition => pathfinding.NextDestination.Value;
     public Vector2 LastMovement => pathfinding.LastMove;
@@ -260,9 +265,15 @@ public class Unit : IGEventable,IWarfare {
         this.playerNumber = playerNumber;
         PlayerSetName = "Unit " + UnityEngine.Random.Range(0, 1000000000);
         pathfinding = new IslandPathfinding(this, t);
+        pathfinding.cbIsAtDestination += OnPathfindingAtDestination;
         queuedCommands = new Queue<Command>();
         Setup();
     }
+
+    protected void OnPathfindingAtDestination(bool atDestination) {
+        cbUnitArrivedDestination?.Invoke(this, atDestination);
+    }
+
     public virtual void Update(float deltaTime) {
         if (CurrentCommand != null && CurrentCommand.IsFinished) {
             queuedCommands.Dequeue();
@@ -279,6 +290,7 @@ public class Unit : IGEventable,IWarfare {
                 break;
             case UnitMainModes.Moving:
                 if (CurrentDoingMode != UnitDoModes.Move) {
+                    Debug.Log("CurrentDoingMode " + CurrentDoingMode);
                     pathfinding.cbIsAtDestination += OnArriveDestination;
                     Vector2 dest = CurrentCommand.Position;
                     SetDestinationIfPossible(dest.x, dest.y);
@@ -286,13 +298,17 @@ public class Unit : IGEventable,IWarfare {
                 }
                 break;
             case UnitMainModes.Aggroing:
+                if (CanAttack) {
+                    CurrentMainMode = UnitMainModes.Idle;
+                    return;
+                }
                 if (CurrentTarget != null)
                     CurrentDoingMode = UnitDoModes.Fight;
                 if (IsInRange() == false) // TODO: make it possible to have small range where it can "walk" to the enemy!
                     CurrentMainMode = UnitMainModes.Idle;
                 break;
             case UnitMainModes.Attack:
-                if (IsInRange() == false) {
+                if (CanAttack && IsInRange() == false) {
                     if (CurrentDoingMode != UnitDoModes.Move) {
                         //pathfinding.cbIsAtDestination += OnArriveDestination;
                         Vector2 dest = CurrentTarget.CurrentPosition;
@@ -371,7 +387,7 @@ public class Unit : IGEventable,IWarfare {
         cbUnitChanged?.Invoke(this);
     }
     protected void UpdateAggroRange(float deltaTime) {
-        if (CurrentTarget != null) {
+        if (CanAttack || CurrentTarget != null) {
             return;
         }
         aggroCooldownTimer -= deltaTime;
@@ -439,8 +455,10 @@ public class Unit : IGEventable,IWarfare {
    
 
     public void AddCommand(Command command, bool overrideCurrent) {
-        if (overrideCurrent)
+        if (overrideCurrent) {
             GoIdle();
+            CurrentMainMode = command.MainMode;
+        }
         queuedCommands.Enqueue(command);
     }
 
@@ -726,9 +744,9 @@ public class Unit : IGEventable,IWarfare {
         return true;
     }
 
-    public virtual void Destroy() {
+    public virtual void Destroy(IWarfare warfare) {
         //Do stuff here when on destroyed
-        cbUnitDestroyed?.Invoke(this);
+        cbUnitDestroyed?.Invoke(this,warfare);
         _currHealth = 0;
     }
     #region RegisterCallback
@@ -738,10 +756,15 @@ public class Unit : IGEventable,IWarfare {
     public void UnregisterOnChangedCallback(Action<Unit> cb) {
         cbUnitChanged -= cb;
     }
-    public void RegisterOnDestroyCallback(Action<Unit> cb) {
+    /// <summary>
+    /// UNIT = destroyed
+    /// IWARFARE = destroyed by! CAN BE NULL
+    /// </summary>
+    /// <param name="cb"></param>
+    public void RegisterOnDestroyCallback(Action<Unit, IWarfare> cb) {
         cbUnitDestroyed += cb;
     }
-    public void UnregisterOnDestroyCallback(Action<Unit> cb) {
+    public void UnregisterOnDestroyCallback(Action<Unit, IWarfare> cb) {
         cbUnitDestroyed -= cb;
     }
     public void RegisterOnArrivedAtDestinationCallback(Action<Unit,bool> cb) {
@@ -750,11 +773,11 @@ public class Unit : IGEventable,IWarfare {
     public void UnregisterOnArrivedAtDestinationCallback(Action<Unit, bool> cb) {
         cbUnitArrivedDestination -= cb;
     }
-    public void RegisterOnSoundCallback(Action<Unit, string> cb) {
-        cbUnitSound += cb;
+    public void RegisterOnSoundCallback(Action<Unit, string, bool> cb) {
+        cbSoundCallback += cb;
     }
-    public void UnregisterOnSoundCallback(Action<Unit, string> cb) {
-        cbUnitSound -= cb;
+    public void UnregisterOnSoundCallback(Action<Unit, string, bool> cb) {
+        cbSoundCallback -= cb;
     }
     public void RegisterOnCreateProjectileCallback(Action<Projectile> cb) {
         cbCreateProjectile += cb;
@@ -769,7 +792,7 @@ public class Unit : IGEventable,IWarfare {
         return warfare.DamageType.GetDamageMultiplier(ArmorType) > 0;
     }
     public void TakeDamageFrom(IWarfare warfare) {
-        ReduceHealth( warfare.GetCurrentDamage(ArmorType) );
+        ReduceHealth( warfare.GetCurrentDamage(ArmorType), warfare );
     }
 
     internal bool IsPlayerUnit() {

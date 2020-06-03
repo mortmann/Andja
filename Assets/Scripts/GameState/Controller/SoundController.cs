@@ -5,7 +5,9 @@ using UnityEngine.Audio;
 using System.IO;
 using System;
 using UnityEngine.Networking;
-public enum AmbientType { Water, North, Middle, South, Wind }
+using System.Linq;
+
+public enum AmbientType { Ocean, North, Middle, South, Wind }
 public enum MusicType { Idle, War, Combat, Lose, Win, Disaster, Doom }
 public enum SoundType { Music, SoundEffect, Ambient }
 
@@ -15,12 +17,13 @@ public enum SoundType { Music, SoundEffect, Ambient }
 public class SoundController : MonoBehaviour {
     public static SoundController Instance;
     public AudioSource musicSource;
-    public AudioSource ambientSource;
+    public AudioSource oceanAmbientSource;
+    public AudioSource landAmbientSource;
     public AudioSource windAmbientSource;
 
     public AudioSource uiSource;
     public AudioSource soundEffectSource;
-    public GameObject soundEffect2DGO;
+    public AudioSource soundEffect2DGO;
     List<AudioSource> deleteOnPlayedAudios;
 
     CameraController cameraController;
@@ -29,35 +32,35 @@ public class SoundController : MonoBehaviour {
     UnitSpriteController usc;
 
     public static string[] MusicLocation = new string[] { "Audio" , "Music" };
-    public static string[] SoundEffectLocation = new string[] { "Audio","Game","SoundEffects" };
+    public static string[] SoundEffectLocation = new string[] { "Audio", "Game","SoundEffects" };
     public static string[] AmbientLocation = new string[] { "Audio", "Game", "Ambient"};
 
-
-    AudioType standardAudioType = AudioType.WAV;
     public AudioMixer mixer;
 
     Dictionary<string, SoundMetaData> nameToMetaData;
     Dictionary<MusicType, List<string>> musictypeToName;
-    Dictionary<AmbientType, List<string>> ambienttypeToName;
-
+    Dictionary<AmbientType, List<string>> ambientTypeToName;
+    Dictionary<object, AudioSource> objectToAudioSource;
     public AmbientType currentAmbient;
     public MusicType currentMusicType = MusicType.Idle;
-
-    // Use this for initialization
-    void Start() {
+    string lastPlayedMusicTrack;
+    private void Awake() {
         if (Instance != null) {
             Debug.LogError("Only 1 Instance should be created.");
             return;
         }
         Instance = this;
-
+    }
+    // Use this for initialization
+    void Start() {
         cameraController = CameraController.Instance;
         BuildController.Instance.RegisterStructureCreated(OnBuild);
         BuildController.Instance.RegisterCityCreated(OnCityCreate);
+        PlayerController.Instance.RegisterPlayersDiplomacyStatusChange(OnDiplomacyChange);
         EventController.Instance.RegisterOnEvent(OnEventStart, OnEventEnd);
         deleteOnPlayedAudios = new List<AudioSource>();
+        objectToAudioSource = new Dictionary<object, AudioSource>();
         nameToMetaData = new Dictionary<string, SoundMetaData>();
-        windAmbientSource.loop = true;
         ssc = FindObjectOfType<StructureSpriteController>();
         wsc = FindObjectOfType<WorkerSpriteController>();
         usc = FindObjectOfType<UnitSpriteController>();
@@ -74,27 +77,84 @@ public class SoundController : MonoBehaviour {
         foreach (MusicType v in Enum.GetValues(typeof(MusicType))) {
             musictypeToName[v] = new List<string>();
         }
-        ambienttypeToName = new Dictionary<AmbientType, List<string>>();
+        ambientTypeToName = new Dictionary<AmbientType, List<string>>();
         foreach (AmbientType v in Enum.GetValues(typeof(AmbientType))) {
-            ambienttypeToName[v] = new List<string>();
+            ambientTypeToName[v] = new List<string>();
         }
+        WorldController.Instance.RegisterSpeedChange(OnGameSpeedChange);
         LoadFiles();
-        StartCoroutine(StartFile(nameToMetaData["wind-1"], windAmbientSource));
+    }
 
+    private void OnGameSpeedChange(GameSpeed gameSpeed, float speed) {
+        foreach(AudioSource source in objectToAudioSource.Values) {
+            source.pitch = speed;
+        }
+        mixer.SetFloat("SoundEffectPitchBend", 1f / speed);
+    }
+
+    private void OnDiplomacyChange(Player one, Player two, DiplomacyType oldType, DiplomacyType newType) {
+        if(one.IsCurrent() == false && two.IsCurrent() == false) {
+            return;
+        }
+        switch (newType) {
+            case DiplomacyType.War:
+                ChangeMusicType(MusicType.War);
+                PlaySingle2DSoundEffect("war");
+                break;
+            case DiplomacyType.Neutral:
+                if (one.IsCurrent() || two.IsCurrent()) {
+                    if (PlayerController.Instance.IsAtWar(PlayerController.Instance.CurrPlayer)==false) {
+                        ChangeMusicType(MusicType.Idle);
+                    }
+                }
+                if (oldType == DiplomacyType.TradeAggrement) {
+                    PlaySingle2DSoundEffect("papertear");
+                } else {
+                    PlaySingle2DSoundEffect("signing1");
+                }
+                break;
+            case DiplomacyType.TradeAggrement:
+                if (oldType == DiplomacyType.Alliance) {
+                    PlaySingle2DSoundEffect("papertear");
+                }
+                else {
+                    PlaySingle2DSoundEffect("signing1");
+                }
+                break;
+            case DiplomacyType.Alliance:
+                PlaySingle2DSoundEffect("signing2");
+                break;
+        }
+    }
+
+    private void ChangeMusicType(MusicType type) {
+        if (type == currentMusicType)
+            return;
+        currentMusicType = type;
+        StartCoroutine(StartFile(nameToMetaData[GetMusicFileName()], musicSource));
+    }
+
+    private void PlaySingle2DSoundEffect(string filename, string goname ="_2DSoundEffect") {
+        if (filename == null)
+            return;
+        if (nameToMetaData.ContainsKey(filename) == false) {
+            Debug.LogError("SoundEffect "+ filename +" File missing.");
+            return;
+        }
+        AudioSource ac = Instantiate(soundEffect2DGO);
+        ac.gameObject.name = filename + goname;
+        ac.transform.SetParent(soundEffect2DGO.transform);
+        StartCoroutine(StartFile(nameToMetaData[filename], ac, true));
     }
 
     // Update is called once per frame
     void Update() {
-        if (musicSource.isPlaying == false) {
-            StartCoroutine(StartFile(nameToMetaData[GetMusicFileName()], musicSource));
-        }
+        UpdateMusic();
         if (WorldController.Instance.IsPaused) {
             return;
         }
-        ambientSource.volume = Mathf.Clamp((CameraController.MaxZoomLevel - cameraController.zoomLevel) / CameraController.MaxZoomLevel, 0, 1f);
-        windAmbientSource.volume = Mathf.Clamp(1 - ambientSource.volume - 0.7f, 0.03f, 0.15f);
+        UpdateWindEffect();
         UpdateAmbient();
-        UpdateSoundEffects();
         for (int i = deleteOnPlayedAudios.Count - 1; i >= 0; i--) {
             if (deleteOnPlayedAudios[i].isPlaying == false) {
                 Destroy(deleteOnPlayedAudios[i].gameObject);
@@ -104,53 +164,73 @@ public class SoundController : MonoBehaviour {
 
     }
 
+    private void UpdateMusic() {
+        if (musicSource.isPlaying == false && Application.isFocused) {
+            StartCoroutine(StartFile(nameToMetaData[GetMusicFileName()], musicSource));
+        }
+    }
+
+    private void UpdateWindEffect() {
+        windAmbientSource.volume = Mathf.Clamp(1 - CameraController.Instance.SoundAmbientValues.z - 0.7f, 0.03f, 0.15f);
+        if (windAmbientSource.isPlaying == false) {
+            //TODO: make this nicer
+            int num = UnityEngine.Random.Range(0, ambientTypeToName[AmbientType.Wind].Count);
+            StartCoroutine(StartFile(nameToMetaData[ambientTypeToName[AmbientType.Wind][num]], windAmbientSource));
+        }
+    }
+
     public void LoadFiles() {
         string musicPath = Path.Combine(ConstantPathHolder.StreamingAssets,Path.Combine(MusicLocation));
         string soundEffectPath = Path.Combine(ConstantPathHolder.StreamingAssets, Path.Combine(SoundEffectLocation));
         string ambientPath = Path.Combine(ConstantPathHolder.StreamingAssets, Path.Combine(AmbientLocation));
 
-        string[] musicfiles = Directory.GetFiles(musicPath, "*.wav", SearchOption.AllDirectories);
-        foreach(string path in musicfiles) {
+        string[] musicfiles = Directory.GetFiles(musicPath, "*.*", SearchOption.AllDirectories)
+            .Where(s => s.ToLower().EndsWith(".ogg") || s.ToLower().EndsWith(".wav")).ToArray();
+        foreach (string path in musicfiles) {
             string dir = new DirectoryInfo(path).Parent.Name;
             string name = Path.GetFileNameWithoutExtension(path);
+            string extension = Path.GetExtension(path);
             SoundMetaData meta = new SoundMetaData() {
                 name = name,
                 author = "Andja",
                 type = SoundType.Music,
                 musicType = (MusicType)Enum.Parse(typeof(MusicType), dir),
-                fileExtension = standardAudioType,
+                fileExtension = extension.Contains("wav") ? AudioType.WAV : AudioType.OGGVORBIS,
                 file = path
             };
             nameToMetaData[name] = meta;
             musictypeToName[meta.musicType].Add(name);
         }
-        string[] soundeffectfiles = Directory.GetFiles(soundEffectPath,"*.wav", SearchOption.AllDirectories);
+        string[] soundeffectfiles = Directory.GetFiles(soundEffectPath, "*.*", SearchOption.AllDirectories)
+            .Where(s => s.ToLower().EndsWith(".ogg") || s.ToLower().EndsWith(".wav")).ToArray();
         foreach (string path in soundeffectfiles) {
             string name = Path.GetFileNameWithoutExtension(path);
+            string extension = Path.GetExtension(path);
             SoundMetaData meta = new SoundMetaData() {
                 name = name,
                 author = "Andja",
                 type = SoundType.SoundEffect,
-                fileExtension = standardAudioType,
+                fileExtension = extension.Contains("wav") ? AudioType.WAV : AudioType.OGGVORBIS,
                 file = path
             };
             nameToMetaData[name] = meta;
         }
-        string[] ambientfiles = Directory.GetFiles(ambientPath, "*.wav", SearchOption.AllDirectories);
+        string[] ambientfiles = Directory.GetFiles(ambientPath, "*.*", SearchOption.AllDirectories)
+            .Where(s => s.ToLower().EndsWith(".ogg") || s.ToLower().EndsWith(".wav")).ToArray();
         foreach (string path in ambientfiles) {
             string name = Path.GetFileNameWithoutExtension(path);
             string dir = new DirectoryInfo(path).Parent.Name;
-
+            string extension = Path.GetExtension(path);
             SoundMetaData meta = new SoundMetaData() {
                 name = name,
                 author = "Andja",
                 type = SoundType.Ambient,
                 ambientType = (AmbientType)Enum.Parse(typeof(AmbientType), dir),
-                fileExtension = standardAudioType,
+                fileExtension = extension.Contains("wav") ? AudioType.WAV : AudioType.OGGVORBIS,
                 file = path
             };
             nameToMetaData[name] = meta;
-            ambienttypeToName[meta.ambientType].Add(name);
+            ambientTypeToName[meta.ambientType].Add(name);
         }
 
         SoundMetaData[] custom = ModLoader.LoadSoundMetaDatas();
@@ -163,7 +243,7 @@ public class SoundController : MonoBehaviour {
                 case SoundType.SoundEffect:
                     break;
                 case SoundType.Ambient:
-                    ambienttypeToName[meta.ambientType].Add(name);
+                    ambientTypeToName[meta.ambientType].Add(name);
                     break;
             }
         }
@@ -177,94 +257,95 @@ public class SoundController : MonoBehaviour {
             musicSource.UnPause();
     }
 
-    void UpdateSoundEffects() {
-        //We add to any gameobject that has been created from
-        //the StructurespriteController AND its in the list provided
-        //by the CameraController an audiosource so that it 
-        //can play a sound if it needs too. 
-        foreach (Structure item in cameraController.structureCurrentInCameraView) {
-            GameObject go = ssc.GetGameObject(item);
-            if (go == null || go.GetComponent<AudioSource>() != null) {
-                continue;
-            }
-            if (item.HasHitbox == false)
-                continue;
-            ADDCopiedAudioSource(go, soundEffectSource);
-            item.RegisterOnSoundCallback(PlaySoundEffectStructure);
-        }
-        foreach (Worker item in wsc.workerToGO.Keys) {
-            GameObject go = wsc.workerToGO[item];
-            if (go == null || go.GetComponent<AudioSource>() != null) {
-                continue;
-            }
-            ADDCopiedAudioSource(go, soundEffectSource);
-            item.RegisterOnSoundCallback(PlaySoundEffectWorker);
-        }
-        foreach (Unit item in usc.unitGameObjectMap.Keys) {
-            GameObject go = usc.unitGameObjectMap[item];
-            if (go == null || go.GetComponent<AudioSource>() != null) {
-                continue;
-            }
-            ADDCopiedAudioSource(go, soundEffectSource);
-            item.RegisterOnSoundCallback(PlaySoundEffectUnit);
-        }
-    }
-    private void ADDCopiedAudioSource(GameObject goal, AudioSource copied) {
-        if (goal.GetComponent<AudioSource>() != null) {
+    public void OnStructureGOCreated(Structure structure, GameObject go) {
+        if (go == null) {
             return;
         }
-        AudioSource audio = goal.AddComponent<AudioSource>();
-        // Copied fields can be restricted with BindingFlags
-        System.Reflection.FieldInfo[] fields = audio.GetType().GetFields();
-        foreach (System.Reflection.FieldInfo field in fields) {
-            field.SetValue(audio, field.GetValue(copied));
+        structure.RegisterOnSoundCallback(PlaySoundEffectStructure);
+    }
+    public void OnStructureGODestroyed(Structure structure, GameObject go) {
+        if (go == null) {
+            return;
         }
+        structure.UnregisterOnSoundCallback(PlaySoundEffectStructure);
+    }
+    public void OnUnitCreated(Unit unit, GameObject go) {
+        if (go == null) {
+            return;
+        }
+        unit.RegisterOnSoundCallback(PlaySoundEffectUnit);
+    }
+    public void OnWorkerCreated(Worker worker, GameObject go) {
+        if (go == null) {
+            return;
+        }
+        worker.RegisterOnSoundCallback(PlaySoundEffectWorker);
     }
 
-    public void PlaySoundEffectStructure(Structure str, string fileName) {
+    private AudioSource ADDCopiedAudioSource(GameObject goal, AudioSource copied) {
+        AudioSource a = goal.AddComponent(copied);
+        objectToAudioSource[goal] = a;
+        return a;
+    }
+
+    public void PlaySoundEffectStructure(Structure str, string fileName, bool play) {
+        if (String.IsNullOrWhiteSpace(fileName))
+            return;
         GameObject go = ssc.GetGameObject(str);
         if (go == null) {
             str.UnregisterOnSoundCallback(PlaySoundEffectStructure);
             return;
         }
-        AudioSource goal = go.GetComponent<AudioSource>();
-        if (goal == null) {
-            str.UnregisterOnSoundCallback(PlaySoundEffectStructure);
+        if (objectToAudioSource.ContainsKey(go)==false) {
+            objectToAudioSource[go] = ADDCopiedAudioSource(go, soundEffectSource);
+        }
+        AudioSource goal = objectToAudioSource[go];
+        if (play == false) {
+            goal.Stop();
             return;
         }
+        if (goal.isPlaying)
+            return;
         StartCoroutine(StartFile(nameToMetaData[fileName], goal));
     }
-    public void PlaySoundEffectWorker(Worker worker, string filePath) {
+    public void PlaySoundEffectWorker(Worker worker, string fileName, bool play) {
+        if (String.IsNullOrWhiteSpace(fileName))
+            return;
         GameObject go = wsc.workerToGO[worker];
         if (go == null) {
             worker.UnregisterOnSoundCallback(PlaySoundEffectWorker);
             return;
         }
-        AudioSource goal = go.GetComponent<AudioSource>();
-        if (goal == null) {
-            worker.UnregisterOnSoundCallback(PlaySoundEffectWorker);
+        if (objectToAudioSource.ContainsKey(go) == false) {
+            objectToAudioSource[go] = ADDCopiedAudioSource(go, soundEffectSource);
+        }
+        AudioSource goal = objectToAudioSource[go];
+        if (play == false) {
+            goal.Stop();
             return;
         }
-        AudioClip ac = Resources.Load(SoundEffectLocation + filePath) as AudioClip;
-        if (ac == null)
+        if (goal.isPlaying)
             return;
-        ac.LoadAudioData();
-        goal.PlayOneShot(ac);
+        StartCoroutine(StartFile(nameToMetaData[fileName], goal));
     }
-    public void PlaySoundEffectUnit(Unit unit, string filePath) {
+    public void PlaySoundEffectUnit(Unit unit, string fileName, bool play) {
+        if (String.IsNullOrWhiteSpace(fileName))
+            return;
         GameObject go = usc.unitGameObjectMap[unit];
         if (go == null) {
             unit.UnregisterOnSoundCallback(PlaySoundEffectUnit);
             return;
         }
-        AudioSource goal = go.GetComponent<AudioSource>();
-        if (goal == null) {
-            unit.UnregisterOnSoundCallback(PlaySoundEffectUnit);
-            return;
+        if (objectToAudioSource.ContainsKey(go) == false) {
+            objectToAudioSource[go] = ADDCopiedAudioSource(go, soundEffectSource);
         }
-        AudioClip ac = Resources.Load(SoundEffectLocation + filePath) as AudioClip;
-        ac.LoadAudioData();
-        goal.PlayOneShot(ac);
+        AudioSource goal = objectToAudioSource[go];
+        if (goal == null) {
+            goal = ADDCopiedAudioSource(go, soundEffectSource);
+        }
+        if (goal.isPlaying)
+            return;
+        PlayAudioClip(fileName, goal);
     }
     string GetMusicFileName() {
         //This function has to decide which Music is to play atm
@@ -272,15 +353,15 @@ public class SoundController : MonoBehaviour {
         //Diffrent musicclips then if he is building/at peace.
         //also when there is a disaster it should play smth diffrent
         //TODO CHANGE THIS-
-        //for now it will choose a song random from the music folder
-        //maybe add a User addable song loader into this
-        //TODO: dont loop into the same sound overagain
         int count = musictypeToName[currentMusicType].Count;
         if (count == 0)
             return "";
-        string soundFileName = musictypeToName[currentMusicType][UnityEngine.Random.Range(0, count)];
-
-
+        string soundFileName;
+        do {
+            soundFileName = musictypeToName[currentMusicType][UnityEngine.Random.Range(0, count)];
+        } while (soundFileName == lastPlayedMusicTrack && count > 1);
+        lastPlayedMusicTrack = soundFileName;
+        Debug.Log("PLAYING: " + soundFileName);
         return soundFileName;
     }
 
@@ -291,29 +372,23 @@ public class SoundController : MonoBehaviour {
         if (str.PlayerNumber != PlayerController.currentPlayerNumber) {
             return;
         }
-        string name = "BuildSound_" + Time.frameCount;
-        if (GameObject.Find(name) != null) {
+        string name = "_sound_" + Time.frameCount;
+        if (GameObject.Find("build" + name) != null) {
             return;
         }
-        //Maybe make diffrent sound when diffrent buildingtyps are placed
-        GameObject g = Instantiate(soundEffect2DGO);
-        g.name = name;
-        g.transform.SetParent(soundEffect2DGO.transform);
-        AudioSource ac = g.GetComponent<AudioSource>();
-        StartCoroutine(StartFile(nameToMetaData["build"], ac, true));
+        PlaySingle2DSoundEffect("build", name);
     }
     public void OnCityCreate(City c) {
         if (c.PlayerNumber != PlayerController.currentPlayerNumber) {
             return;
         }
         //diffrent sounds for diffrent locations of City? North,middle,South?
-        GameObject g = Instantiate(soundEffect2DGO);
-        g.transform.SetParent(soundEffect2DGO.transform);
-        AudioSource ac = g.GetComponent<AudioSource>();
-        StartCoroutine(StartFile(nameToMetaData["citybuild"], ac,true));
+        PlaySingle2DSoundEffect("citybuild");
     }
     public void UpdateAmbient() {
-        AmbientType ambient = AmbientType.Water;
+        landAmbientSource.volume = CameraController.Instance.SoundAmbientValues.y * CameraController.Instance.SoundAmbientValues.z;
+        oceanAmbientSource.volume = CameraController.Instance.SoundAmbientValues.x * CameraController.Instance.SoundAmbientValues.z;
+        AmbientType ambient = AmbientType.Ocean;
         if (cameraController.nearestIsland != null) {
             switch (cameraController.nearestIsland.Climate) {
                 case Climate.Cold:
@@ -326,29 +401,33 @@ public class SoundController : MonoBehaviour {
                     ambient = AmbientType.South;
                     break;
             }
-        }
-        else {
-            ambient = AmbientType.Water;
-        }
-        //If its the same no need to change && still playin
-        if (ambient == currentAmbient && ambientSource.isPlaying) {
-            return;
+        } 
+        
+        if(oceanAmbientSource.isPlaying == false) {
+            int count = ambientTypeToName[AmbientType.Ocean].Count;
+            string soundFileName = ambientTypeToName[AmbientType.Ocean][UnityEngine.Random.Range(0, count)];
+            StartCoroutine(StartFile(nameToMetaData[soundFileName], oceanAmbientSource));
         }
 
-        currentAmbient = ambient;
-        if (ambienttypeToName[currentAmbient].Count == 0)
-            return;
+        //If its the same no need to change && still playin
+        if (ambient != currentAmbient || landAmbientSource.isPlaying == false) {        
+            currentAmbient = ambient;
+            if (ambientTypeToName[currentAmbient].Count == 0)
+                return;
+            int count = ambientTypeToName[currentAmbient].Count;
+            string soundFileName = ambientTypeToName[currentAmbient][UnityEngine.Random.Range(0, count)];
+            StartCoroutine(StartFile(nameToMetaData[soundFileName], landAmbientSource));
+        }
+
         //TODO: dont loop into the same sound overagain
-        int count = ambienttypeToName[currentAmbient].Count;
-        string soundFileName = ambienttypeToName[currentAmbient][UnityEngine.Random.Range(0,count)];
-        
-        if(nameToMetaData.ContainsKey(soundFileName))
-            StartCoroutine(StartFile(nameToMetaData[soundFileName], ambientSource));
+
         //TODO make this like it should be :D, better make it sound nice 
     }
 
     public void PlayAudioClip(string name, AudioSource toPlay) {
-        if(nameToMetaData.ContainsKey(name)) {
+        if (name == null)
+            return;
+        if (nameToMetaData.ContainsKey(name)) {
             StartCoroutine(StartFile(nameToMetaData[name], toPlay));
             return;
         }

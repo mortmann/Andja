@@ -26,7 +26,7 @@ public class ProduktionUI : MonoBehaviour {
         this.currentStructure = ustr;
         efficiency = progressContent.GetComponentInChildren<Text>();
         progress = progressContent.GetComponentInChildren<Slider>();
-        progress.maxValue = currentStructure.ProduceTime;
+        progress.maxValue = currentStructure.TotalProgress;
         progress.value = 0;
         if (itemToGO != null) {
             foreach (ItemUI go in itemToGO.Values) {
@@ -119,7 +119,7 @@ public class ProduktionUI : MonoBehaviour {
         foreach (Item item in itemToGO.Keys) {
             itemToGO[item].ChangeItemCount(item);
         }
-        progress.value = currentStructure.produceCountdown;
+        progress.value = currentStructure.Progress;
         efficiency.text = currentStructure.EfficiencyPercent + "%";
 
     }

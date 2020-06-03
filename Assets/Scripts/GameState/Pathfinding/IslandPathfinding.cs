@@ -12,6 +12,8 @@ public class IslandPathfinding : Pathfinding {
         this._speed = u.Speed;
         this.rotationSpeed = u.RotationSpeed;
         CurrTile = start;
+        X = start.X;
+        Y = start.Y;
         NextDestination = CurrTile.Vector2;
         dest_X = start.X;
         dest_Y = start.Y;
@@ -30,7 +32,7 @@ public class IslandPathfinding : Pathfinding {
         this.DestTile = World.Current.GetTileAt(x, y);
         dest_X = x;
         dest_Y = y;
-        pathDest = Path_Destination.Exact;
+        pathDestination = Path_Destination.Exact;
         StartCalculatingThread();
     }
     protected override void CalculatePath() {

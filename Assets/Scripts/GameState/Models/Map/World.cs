@@ -73,10 +73,9 @@ public class World : IGEventable {
     Action<Unit> cbUnitCreated;
     Action<Worker> cbWorkerCreated;
     Action<Tile> cbTileChanged;
-    Action<World> cbTileGraphChanged;
     Action<Crate> cbCrateSpawn;
     Action<Crate> cbCrateDespawned;
-
+    Action<Unit, IWarfare> cbAnyUnitDestroyed;
     #endregion
 
     /// <summary>
@@ -249,8 +248,8 @@ public class World : IGEventable {
         int y = Mathf.FloorToInt(fy);
         return GetTileAt(x, y);
     }
-    public Unit CreateUnit(Unit prefabUnit, Player player, Tile startTile) {
-        int playerNumber = -1;
+    public Unit CreateUnit(Unit prefabUnit, Player player, Tile startTile, int nonPlayerNumber = 0) {
+        int playerNumber = nonPlayerNumber;
         if (player != null)
             playerNumber = player.Number;
         Unit unit = prefabUnit.Clone(playerNumber, startTile);
@@ -268,7 +267,7 @@ public class World : IGEventable {
     private void ProjectileDestroyed(Projectile pro) {
         Projectiles.Remove(pro);
     }
-    public void OnUnitDestroy(Unit u) {
+    public void OnUnitDestroy(Unit u, IWarfare warfare) {
         //Spawn items from Inventory on the map
         if (u.IsShip) {
             Ship ship = u as Ship;
@@ -280,6 +279,7 @@ public class World : IGEventable {
                 SpawnItemOnMap(i, u.PositionVector);
             }
         }
+        cbAnyUnitDestroyed?.Invoke(u, warfare);
     }
     public void SpawnItemOnMap(Item i, Vector2 toSpawnPosition) {
         Vector2 randomFactor = new Vector2(UnityEngine.Random.Range(-0.5f, 0.5f), UnityEngine.Random.Range(-0.5f, 0.5f));
@@ -308,6 +308,12 @@ public class World : IGEventable {
     internal void UnregisterCrateDespawned(Action<Crate> onDespawned) {
         cbCrateDespawned -= onDespawned;
     }
+    internal void RegisterAnyUnitDestroyed(Action<Unit,IWarfare> onAnyUnitDestroyed) {
+        cbAnyUnitDestroyed += onAnyUnitDestroyed;
+    }
+    internal void UnregisterUnitDestroyed(Action<Unit, IWarfare> onAnyUnitDestroyed) {
+        cbAnyUnitDestroyed -= onAnyUnitDestroyed;
+    }
     // we dont need this right now because str cant be build on Ocean tiles only
     // on shore tiles 
     public void ChangeWorldGraph(Tile t, bool b) {
@@ -322,13 +328,6 @@ public class World : IGEventable {
         cbWorkerCreated?.Invoke(worker);
     }
     #region callbacks
-    public void RegisterTileGraphChanged(Action<World> callbackfunc) {
-        cbTileGraphChanged += callbackfunc;
-    }
-
-    public void UnregisterTileGraphChanged(Action<World> callbackfunc) {
-        cbTileGraphChanged -= callbackfunc;
-    }
     public void RegisterTileChanged(Action<Tile> callbackfunc) {
         cbTileChanged += callbackfunc;
     }
@@ -376,10 +375,7 @@ public class World : IGEventable {
         return -2;
     }
     #endregion
-    public string GetJsonSave() {
-        WorldSave ws = new WorldSave(Units, Islands);
-        return JsonUtility.ToJson(ws);
-    }
+
     public void LoadWaterTiles() {
         for (int x = 0; x < Width; x++) {
             for (int y = 0; y < Height; y++) {
@@ -390,22 +386,6 @@ public class World : IGEventable {
         }
     }
 
-    [Serializable]
-    public class WorldSave {
-
-        public List<Unit> units;
-        public List<Island> islands;
-
-
-
-        public WorldSave() {
-        }
-        public WorldSave(List<Unit> units, List<Island> islands) {
-            this.units = units;
-            this.islands = islands;
-        }
-
-    }
     public void Destroy() {
         Current = null;
     }

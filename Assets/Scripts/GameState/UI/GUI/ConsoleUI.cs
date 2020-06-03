@@ -54,7 +54,7 @@ public class ConsoleUI : MonoBehaviour {
                 inputField.text = Commands[currentCommandIndex];
         }
 
-        string text = inputField.text;
+        string text = inputField.text.ToLower();
         if (String.IsNullOrEmpty(text)) {
             predictiveText.text = "";
             return;

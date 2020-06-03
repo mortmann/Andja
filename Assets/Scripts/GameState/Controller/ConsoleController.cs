@@ -77,6 +77,7 @@ public class ConsoleController : MonoBehaviour {
         if (command.Trim().Length <= 0) {
             return false;
         }
+        command = command.ToLower();
         string[] parameters = command.Split(null); // splits  whitespaces
         if (parameters.Length < 1) {
             return false;
@@ -428,7 +429,7 @@ public class ConsoleController : MonoBehaviour {
                 u.inventory.AddItem(new Item("tools", 50));
                 return true;
             case "kill":
-                u.Destroy();
+                u.Destroy(null);
                 return true;
             case "name":
                 Debug.Log("Console Command not implemented!");

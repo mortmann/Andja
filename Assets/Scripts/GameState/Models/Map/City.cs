@@ -43,7 +43,13 @@ public class City : IGEventable {
             _Tiles = value;
         }
     }
-
+    public int TradeItemCount {
+        get {
+            if (warehouse == null)
+                return 0;
+            return warehouse.TradeItemCount;
+        }
+    }
     public int PopulationCount {
         get {
             int sum = 0;
@@ -81,14 +87,28 @@ public class City : IGEventable {
         itemIDtoTradeItem = new Dictionary<string, TradeItem>();
         Structures = new List<Structure>();
         Inventory = new CityInventory();
-        _Name = "<City>" + UnityEngine.Random.Range(0, 1000);
+        _Name = "<City> " + UnityEngine.Random.Range(0, 1000);
 
         Setup();
-        useTick = 15f;
+        useTick = 60f;
 
         //		useTickTimer = useTick;
     }
 
+    internal void AddTradeItem(TradeItem ti) {
+        if (itemIDtoTradeItem.ContainsKey(ti.ItemId)) {
+            Debug.LogError("Tried to add Trade Item that exists");
+            return;
+        }
+        itemIDtoTradeItem.Add(ti.ItemId, ti);
+    }
+    internal void DeleteTradeItem(TradeItem ti) {
+        if (itemIDtoTradeItem.ContainsKey(ti.ItemId) == false) {
+            Debug.LogError("Tried to remove Trade Item that doesnt exist");
+            return;
+        }
+        itemIDtoTradeItem.Remove(ti.ItemId);
+    }
     internal bool HasAnythingOfItems(Item[] buildingItems) {
         foreach (Item i in buildingItems) {
             if (HasAnythingOfItem(i) == false)
@@ -156,7 +176,6 @@ public class City : IGEventable {
             }
             PlayerController.GetPlayer(PlayerNumber).OnCityCreated(this);
         }
-
         return Structures;
     }
 
@@ -343,7 +362,7 @@ public class City : IGEventable {
             Debug.Log("this item is not to buy");
             return;
         }
-        Item i = ti.SellItemAmount(Inventory.GetItemWithIDClone(itemID));
+        Item i = ti.SellItemAmount(Inventory.GetItemClone(itemID));
         Player CityPlayer = PlayerController.GetPlayer(PlayerNumber);
         int am = TradeWithShip(i, Mathf.Clamp(amount, 0, i.count), ship);
         CityPlayer.AddToTreasure(am * ti.price);
@@ -366,11 +385,11 @@ public class City : IGEventable {
             Debug.Log("this item is not to sell here");
             return;
         }
-        Item i = ti.BuyItemAmount(Inventory.GetItemWithIDClone(itemID));
+        Item i = ti.BuyItemAmount(Inventory.GetItemClone(itemID));
         Player Player = PlayerController.GetPlayer(PlayerNumber);
         int am = TradeFromShip(ship, i, Mathf.Clamp(amount, 0, i.count));
         Player.ReduceTreasure(am * ti.price);
-        player.AddToTreasure(am * ti.price);
+        player?.AddToTreasure(am * ti.price);
     }
     public int TradeWithShip(Item toTrade, int amount = 50, Unit ship = null) {
         if (warehouse == null || warehouse.inRangeUnits.Count == 0 || toTrade == null) {

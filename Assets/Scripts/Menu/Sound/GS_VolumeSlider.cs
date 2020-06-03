@@ -7,4 +7,8 @@ public class GS_VolumeSlider : GS_SliderBase {
     public override void OnStart() {
         slider.value = MenuAudioManager.Instance.GetVolumeFor(myType);
     }
+    protected override void OnSliderValueChange() {
+        MenuAudioManager.Instance.SetVolumeFor(myType, slider.value);
+    }
+
 }

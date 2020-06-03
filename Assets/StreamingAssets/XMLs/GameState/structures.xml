@@ -216,6 +216,7 @@
          <produceTime>20.0</produceTime>
          <maxOutputStorage>5</maxOutputStorage>
          <efficiency>1.0</efficiency>
+         <workerWorkSound>scythecutting</workerWorkSound>
          <output length="1">
             <Item ID="hemp">
                <count>1</count>
@@ -271,6 +272,7 @@
          <produceTime>20.0</produceTime>
          <maxOutputStorage>5</maxOutputStorage>
          <efficiency>1.0</efficiency>
+         <workerWorkSound>chopping</workerWorkSound>
          <output length="1">
             <Item ID="wood">
                <count>1</count>
@@ -329,6 +331,7 @@
          <produceTime>40.0</produceTime>
          <maxOutputStorage>5</maxOutputStorage>
          <efficiency>1.0</efficiency>
+         <workerWorkSound>machetecutting</workerWorkSound>
          <output length="1">
             <Item ID="sugar">
                <count>1</count>
@@ -387,6 +390,7 @@
          <produceTime>46.0</produceTime>
          <maxOutputStorage>5</maxOutputStorage>
          <efficiency>1.0</efficiency>
+         <workerWorkSound>leafrustle</workerWorkSound>
          <output length="1">
             <Item ID="fruits">
                <count>1</count>
@@ -1014,6 +1018,7 @@
                <count>0</count>
             </Item>
          </output>
+         <harvestSound>treefalling</harvestSound>
          <ageStages>3</ageStages>
       </growable>
       <growable ID="potatoefield">
@@ -2746,6 +2751,7 @@
          <maxOutputStorage>0</maxOutputStorage>
          <efficiency>1.0</efficiency>
          <takeOverStartGoal>100.0</takeOverStartGoal>
+         <tradeItemCount>0</tradeItemCount>
       </warehouse>
    </warehouses>
    <homes>

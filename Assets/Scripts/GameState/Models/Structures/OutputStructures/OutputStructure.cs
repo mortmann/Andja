@@ -11,14 +11,17 @@ public class OutputPrototypData : StructurePrototypeData {
     public int maxOutputStorage;
     public float efficiency = 1f;
     public Item[] output;
+
+    public string workerWorkSound;
+    public string workSound;
 }
 
 
 [JsonObject(MemberSerialization.OptIn)]
 public abstract class OutputStructure : TargetStructure {
     #region Serialize
-    [JsonPropertyAttribute] public List<Worker> Worker;
-    [JsonPropertyAttribute] public float produceCountdown;
+    [JsonPropertyAttribute] public List<Worker> Workers;
+    [JsonPropertyAttribute] public float produceTimer;
     protected Item[] _output; // FIXME DOESNT GET LOADED IN!??!? why? fixed?
     #endregion
     #region RuntimeOrOther
@@ -52,6 +55,7 @@ public abstract class OutputStructure : TargetStructure {
     public int MaxNumberOfWorker { get { return CalculateRealValue("maxNumberOfWorker", OutputData.maxNumberOfWorker); } }
     public float Efficiency { get { return CalculateRealValue("efficiency", OutputData.efficiency); } }
     public int MaxOutputStorage { get { return CalculateRealValue("maxOutputStorage", OutputData.maxOutputStorage); } }
+    public string WorkerWorkSound => OutputData.workerWorkSound;
 
     protected OutputPrototypData _outputData;
     public OutputPrototypData OutputData {
@@ -94,30 +98,33 @@ public abstract class OutputStructure : TargetStructure {
             _jobTile = value;
         }
     }
+
+    public virtual float Progress => produceTimer;
+    public virtual float TotalProgress => ProduceTime;
+
     public void Update_Worker(float deltaTime) {
         if (MaxNumberOfWorker <= 0) {
             return;
         }
-        if (Worker == null) {
-            Worker = new List<Worker>();
+        if (Workers == null) {
+            Workers = new List<Worker>();
         }
-        for (int i = Worker.Count - 1; i >= 0; i--) {
-            Worker w = Worker[i];
+        for (int i = Workers.Count - 1; i >= 0; i--) {
+            Worker w = Workers[i];
             w.Update(deltaTime);
             if (w.isAtHome) {
                 WorkerComeBack(w);
             }
         }
-
         SendOutWorkerIfCan();
     }
-    public virtual void SendOutWorkerIfCan() {
+    public virtual void SendOutWorkerIfCan(float workTime = 1) {
         if (jobsToDo.Count == 0) {
             return;
         }
         List<OutputStructure> givenJobs = new List<OutputStructure>();
         foreach (OutputStructure jobStr in jobsToDo.Keys) {
-            if (Worker.Count >= MaxNumberOfWorker) {
+            if (Workers.Count >= MaxNumberOfWorker) {
                 break;
             }
             if (jobStr.outputClaimed) {
@@ -130,11 +137,10 @@ public abstract class OutputStructure : TargetStructure {
             if(workersHasToFollowRoads && CanReachStructure(jobStr) == false) {
                 continue;
             }
-            Worker ws = new Worker(this, jobStr, 1, items, workersHasToFollowRoads);
-
+            Worker ws = new Worker(this, jobStr, workTime, items, WorkerWorkSound, workersHasToFollowRoads);
             givenJobs.Add(jobStr);
             World.Current.CreateWorkerGameObject(ws);
-            Worker.Add(ws);
+            Workers.Add(ws);
         }
         foreach (OutputStructure giveJob in givenJobs) {
             if (giveJob != null) {
@@ -165,12 +171,12 @@ public abstract class OutputStructure : TargetStructure {
     }
 
     public void WorkerComeBack(Worker w) {
-        if (Worker.Contains(w) == false) {
+        if (Workers.Contains(w) == false) {
             Debug.LogError("WorkerComeBack - Worker comesback, but doesnt live here!");
             return;
         }
         w.Destroy();
-        Worker.Remove(w);
+        Workers.Remove(w);
     }
 
     public void AddToOutput(Inventory inv) {
@@ -268,8 +274,8 @@ public abstract class OutputStructure : TargetStructure {
         }
     }
     protected override void OnDestroy() {
-        if (Worker != null) {
-            foreach (Worker item in Worker) {
+        if (Workers != null) {
+            foreach (Worker item in Workers) {
                 item.Destroy();
             }
         }

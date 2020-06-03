@@ -1,0 +1,3165 @@
+<structures>
+   <roads>
+      <road ID="dirtroad">
+         <Name>
+            <entry lang="English">Dirtroad</entry>
+            <entry lang="German">Feldweg</entry>
+         </Name>
+         <Description>
+            <entry lang="English">Simple road to connect Structures.</entry>
+            <entry lang="German">Einfacher Weg um Gebäude mit einander zuverbinden.</entry>
+         </Description>
+         <HoverOver>
+            <entry lang="English">Dirtroad</entry>
+            <entry lang="German">Feldweg</entry>
+         </HoverOver>
+         <canBeBuild>true</canBeBuild>
+         <isWalkable>false</isWalkable>
+         <hasHitbox>false</hasHitbox>
+         <maxHealth>50.0</maxHealth>
+         <structureRange>0</structureRange>
+         <populationLevel>0</populationLevel>
+         <populationCount>0</populationCount>
+         <structureLevel>0</structureLevel>
+         <tileWidth>1</tileWidth>
+         <tileHeight>1</tileHeight>
+         <canRotate>true</canRotate>
+         <canBeBuildOver>false</canBeBuildOver>
+         <canBeUpgraded>true</canBeUpgraded>
+         <canTakeDamage>false</canTakeDamage>
+         <mustFrontBuildDir>None</mustFrontBuildDir>
+         <canStartBurning>false</canStartBurning>
+         <maintenanceCost>0</maintenanceCost>
+         <buildCost>15</buildCost>
+         <buildTyp>Path</buildTyp>
+         <structureTyp>Pathfinding</structureTyp>
+         <extraUITyp>None</extraUITyp>
+         <extraBuildUITyp>None</extraBuildUITyp>
+         <spriteBaseName>dirtroad</spriteBaseName>
+      </road>
+      <road ID="stoneroad">
+         <Name>
+            <entry lang="English">Stoneroad</entry>
+            <entry lang="German">Steinstraße</entry>
+         </Name>
+         <Description>
+            <entry lang="English">People can move faster on it.</entry>
+            <entry lang="German">Leute bewegen sich schneller auf ihr.</entry>
+         </Description>
+         <HoverOver>
+            <entry lang="English">Stoneroad</entry>
+            <entry lang="German">Steinstraße</entry>
+         </HoverOver>
+         <canBeBuild>true</canBeBuild>
+         <isWalkable>false</isWalkable>
+         <hasHitbox>false</hasHitbox>
+         <maxHealth>50.0</maxHealth>
+         <structureRange>0</structureRange>
+         <populationLevel>0</populationLevel>
+         <populationCount>1</populationCount>
+         <structureLevel>1</structureLevel>
+         <tileWidth>1</tileWidth>
+         <tileHeight>1</tileHeight>
+         <canRotate>true</canRotate>
+         <canBeBuildOver>false</canBeBuildOver>
+         <canBeUpgraded>true</canBeUpgraded>
+         <canTakeDamage>false</canTakeDamage>
+         <mustFrontBuildDir>None</mustFrontBuildDir>
+         <canStartBurning>false</canStartBurning>
+         <maintenanceCost>0</maintenanceCost>
+         <buildCost>50</buildCost>
+         <buildTyp>Path</buildTyp>
+         <structureTyp>Pathfinding</structureTyp>
+         <extraUITyp>None</extraUITyp>
+         <extraBuildUITyp>None</extraBuildUITyp>
+         <buildingItems length="0"/>
+         <spriteBaseName>stoneroad</spriteBaseName>
+      </road>
+      <road ID="brickroad">
+         <Name>
+            <entry lang="English">Brickroad</entry>
+            <entry lang="German">Ziegelstraße</entry>
+         </Name>
+         <Description>
+            <entry lang="English">Improve the movementspeed of people.</entry>
+            <entry lang="German">Erhöht die Laufgeschwindigkeit der Menschen.</entry>
+         </Description>
+         <HoverOver>
+            <entry lang="English">Brickroad</entry>
+            <entry lang="German">Ziegelstraße</entry>
+         </HoverOver>
+         <canBeBuild>true</canBeBuild>
+         <isWalkable>false</isWalkable>
+         <hasHitbox>false</hasHitbox>
+         <maxHealth>50.0</maxHealth>
+         <structureRange>0</structureRange>
+         <populationLevel>0</populationLevel>
+         <populationCount>2</populationCount>
+         <structureLevel>2</structureLevel>
+         <tileWidth>1</tileWidth>
+         <tileHeight>1</tileHeight>
+         <canRotate>true</canRotate>
+         <canBeBuildOver>false</canBeBuildOver>
+         <canBeUpgraded>true</canBeUpgraded>
+         <canTakeDamage>false</canTakeDamage>
+         <mustFrontBuildDir>None</mustFrontBuildDir>
+         <canStartBurning>false</canStartBurning>
+         <maintenanceCost>0</maintenanceCost>
+         <buildCost>100</buildCost>
+         <buildTyp>Path</buildTyp>
+         <structureTyp>Pathfinding</structureTyp>
+         <extraUITyp>None</extraUITyp>
+         <extraBuildUITyp>None</extraBuildUITyp>
+         <buildingItems length="1">
+            <Item ID="brick">
+               <count>2</count>
+            </Item>
+         </buildingItems>
+         <spriteBaseName>brickroad</spriteBaseName>
+      </road>
+      <road ID="marbelroad">
+         <Name>
+            <entry lang="English">Marbelroad</entry>
+            <entry lang="German">Marmorstraße</entry>
+         </Name>
+         <Description>
+            <entry lang="English">Nice to look at and even better to walk on.</entry>
+            <entry lang="German">Gut zum ansehen und noch besser um darauf zulaufen.</entry>
+         </Description>
+         <HoverOver>
+            <entry lang="English">Marbelroad</entry>
+            <entry lang="German">Marmorstraße</entry>
+         </HoverOver>
+         <canBeBuild>true</canBeBuild>
+         <isWalkable>false</isWalkable>
+         <hasHitbox>false</hasHitbox>
+         <maxHealth>50.0</maxHealth>
+         <structureRange>0</structureRange>
+         <populationLevel>0</populationLevel>
+         <populationCount>3</populationCount>
+         <structureLevel>3</structureLevel>
+         <tileWidth>1</tileWidth>
+         <tileHeight>1</tileHeight>
+         <canRotate>true</canRotate>
+         <canBeBuildOver>false</canBeBuildOver>
+         <canBeUpgraded>true</canBeUpgraded>
+         <canTakeDamage>false</canTakeDamage>
+         <mustFrontBuildDir>None</mustFrontBuildDir>
+         <canStartBurning>false</canStartBurning>
+         <maintenanceCost>0</maintenanceCost>
+         <buildCost>0</buildCost>
+         <buildTyp>Path</buildTyp>
+         <structureTyp>Pathfinding</structureTyp>
+         <extraUITyp>None</extraUITyp>
+         <extraBuildUITyp>None</extraBuildUITyp>
+         <spriteBaseName>marbelroad</spriteBaseName>
+      </road>
+   </roads>
+   <farms>
+      <farm ID="hempplantation">
+         <Name>
+            <entry lang="English">Hemp plantation</entry>
+            <entry lang="German">Hanfplantage</entry>
+         </Name>
+         <Description>
+            <entry lang="English">Plantation that produces hemp.</entry>
+            <entry lang="German">Produziert Hanf.</entry>
+         </Description>
+         <HoverOver>
+            <entry lang="English">Hemp plantation</entry>
+            <entry lang="German">Hanfplantage</entry>
+         </HoverOver>
+         <Short>
+            <entry>
+               <lang>English</lang>
+               <string>Hemp </string>
+            </entry>
+            <entry>
+               <lang>German</lang>
+               <string>Hanf</string>
+            </entry>
+         </Short>
+         <canBeBuild>true</canBeBuild>
+         <isWalkable>false</isWalkable>
+         <hasHitbox>true</hasHitbox>
+         <maxHealth>50.0</maxHealth>
+         <structureRange>5</structureRange>
+         <populationLevel>0</populationLevel>
+         <populationCount>0</populationCount>
+         <structureLevel>0</structureLevel>
+         <tileWidth>2</tileWidth>
+         <tileHeight>2</tileHeight>
+         <canRotate>true</canRotate>
+         <canBeBuildOver>false</canBeBuildOver>
+         <canBeUpgraded>false</canBeUpgraded>
+         <canTakeDamage>true</canTakeDamage>
+         <mustFrontBuildDir>None</mustFrontBuildDir>
+         <canStartBurning>false</canStartBurning>
+         <maintenanceCost>20</maintenanceCost>
+         <buildCost>0</buildCost>
+         <buildTyp>Single</buildTyp>
+         <structureTyp>Blocking</structureTyp>
+         <extraUITyp>None</extraUITyp>
+         <extraBuildUITyp>None</extraBuildUITyp>
+         <buildingItems length="2">
+            <Item ID="wood">
+               <count>5</count>
+            </Item>
+            <Item ID="tools">
+               <count>5</count>
+            </Item>
+         </buildingItems>
+         <spriteBaseName>hempplantation</spriteBaseName>
+         <contactRange>0.0</contactRange>
+         <forMarketplace>true</forMarketplace>
+         <maxNumberOfWorker>1</maxNumberOfWorker>
+         <produceTime>20.0</produceTime>
+         <maxOutputStorage>5</maxOutputStorage>
+         <efficiency>1.0</efficiency>
+         <output length="1">
+            <Item ID="hemp">
+               <count>1</count>
+            </Item>
+         </output>
+         <growable>hempfield</growable>
+         <neededHarvestToProduce>4</neededHarvestToProduce>
+      </farm>
+      <farm ID="lumberjack">
+         <Name>
+            <entry lang="English">Lumberjack Hut</entry>
+            <entry lang="German">Holzfällerhütte</entry>
+         </Name>
+         <Description>
+            <entry lang="English">Produces wood over time.</entry>
+            <entry lang="German">Erzeugt Holz.</entry>
+         </Description>
+         <HoverOver>
+            <entry lang="English">Lumberjack</entry>
+            <entry lang="German">Holzfäller</entry>
+         </HoverOver>
+         <canBeBuild>true</canBeBuild>
+         <isWalkable>false</isWalkable>
+         <hasHitbox>true</hasHitbox>
+         <maxHealth>50.0</maxHealth>
+         <structureRange>3</structureRange>
+         <populationLevel>0</populationLevel>
+         <populationCount>0</populationCount>
+         <structureLevel>0</structureLevel>
+         <tileWidth>2</tileWidth>
+         <tileHeight>2</tileHeight>
+         <canRotate>true</canRotate>
+         <canBeBuildOver>false</canBeBuildOver>
+         <canBeUpgraded>false</canBeUpgraded>
+         <canTakeDamage>true</canTakeDamage>
+         <mustFrontBuildDir>None</mustFrontBuildDir>
+         <canStartBurning>false</canStartBurning>
+         <maintenanceCost>25</maintenanceCost>
+         <buildCost>250</buildCost>
+         <buildTyp>Single</buildTyp>
+         <structureTyp>Blocking</structureTyp>
+         <extraUITyp>None</extraUITyp>
+         <extraBuildUITyp>Efficiency</extraBuildUITyp>
+         <buildingItems length="1">
+            <Item ID="wood">
+               <count>10</count>
+            </Item>
+         </buildingItems>
+         <spriteBaseName>lumberjack</spriteBaseName>
+         <contactRange>0.0</contactRange>
+         <forMarketplace>true</forMarketplace>
+         <maxNumberOfWorker>1</maxNumberOfWorker>
+         <produceTime>20.0</produceTime>
+         <maxOutputStorage>5</maxOutputStorage>
+         <efficiency>1.0</efficiency>
+         <output length="1">
+            <Item ID="wood">
+               <count>1</count>
+            </Item>
+         </output>
+         <growable>tree</growable>
+		 <workerWorkSound>chopping</workerWorkSound>
+         <neededHarvestToProduce>1</neededHarvestToProduce>
+      </farm>
+      <farm ID="sugarplantation">
+         <Name>
+            <entry lang="English">Sugar Plantation</entry>
+            <entry lang="German">Zuckerplantage</entry>
+         </Name>
+         <Description>
+            <entry lang="English">Produces sugar.</entry>
+            <entry lang="German">Produziert Zucker.</entry>
+         </Description>
+         <HoverOver>
+            <entry lang="English">Sugar Plantation</entry>
+            <entry lang="German">Zuckerplantage</entry>
+         </HoverOver>
+         <canBeBuild>true</canBeBuild>
+         <isWalkable>false</isWalkable>
+         <hasHitbox>true</hasHitbox>
+         <maxHealth>250.0</maxHealth>
+         <structureRange>3</structureRange>
+         <populationLevel>0</populationLevel>
+         <populationCount>500</populationCount>
+         <structureLevel>0</structureLevel>
+         <tileWidth>3</tileWidth>
+         <tileHeight>2</tileHeight>
+         <canRotate>true</canRotate>
+         <canBeBuildOver>false</canBeBuildOver>
+         <canBeUpgraded>false</canBeUpgraded>
+         <canTakeDamage>true</canTakeDamage>
+         <mustFrontBuildDir>None</mustFrontBuildDir>
+         <canStartBurning>false</canStartBurning>
+         <maintenanceCost>100</maintenanceCost>
+         <buildCost>1000</buildCost>
+         <buildTyp>Single</buildTyp>
+         <structureTyp>Blocking</structureTyp>
+         <extraUITyp>None</extraUITyp>
+         <extraBuildUITyp>None</extraBuildUITyp>
+         <buildingItems length="2">
+            <Item ID="wood">
+               <count>10</count>
+            </Item>
+            <Item ID="tools">
+               <count>5</count>
+            </Item>
+         </buildingItems>
+         <spriteBaseName>sugarplantation</spriteBaseName>
+         <contactRange>0.0</contactRange>
+         <forMarketplace>true</forMarketplace>
+         <maxNumberOfWorker>1</maxNumberOfWorker>
+         <produceTime>40.0</produceTime>
+         <maxOutputStorage>5</maxOutputStorage>
+         <efficiency>1.0</efficiency>
+         <output length="1">
+            <Item ID="sugar">
+               <count>1</count>
+            </Item>
+         </output>
+         <growable>sugarcanefield</growable>
+         <neededHarvestToProduce>3</neededHarvestToProduce>
+      </farm>
+      <farm ID="orchardfarm">
+         <Name>
+            <entry lang="English">Orchard Farm</entry>
+            <entry lang="German">Obstplantage</entry>
+         </Name>
+         <Description>
+            <entry lang="English">Produces fruits.</entry>
+            <entry lang="German">Produziert Früchte.</entry>
+         </Description>
+         <HoverOver>
+            <entry lang="English">Orchard </entry>
+            <entry lang="German">Obstplantage</entry>
+         </HoverOver>
+         <canBeBuild>true</canBeBuild>
+         <isWalkable>false</isWalkable>
+         <hasHitbox>true</hasHitbox>
+         <maxHealth>50.0</maxHealth>
+         <structureRange>4</structureRange>
+         <populationLevel>0</populationLevel>
+         <populationCount>500</populationCount>
+         <structureLevel>0</structureLevel>
+         <tileWidth>2</tileWidth>
+         <tileHeight>2</tileHeight>
+         <canRotate>true</canRotate>
+         <canBeBuildOver>false</canBeBuildOver>
+         <canBeUpgraded>false</canBeUpgraded>
+         <canTakeDamage>true</canTakeDamage>
+         <mustFrontBuildDir>None</mustFrontBuildDir>
+         <canStartBurning>false</canStartBurning>
+         <maintenanceCost>75</maintenanceCost>
+         <buildCost>650</buildCost>
+         <buildTyp>Single</buildTyp>
+         <structureTyp>Blocking</structureTyp>
+         <extraUITyp>None</extraUITyp>
+         <extraBuildUITyp>None</extraBuildUITyp>
+         <buildingItems length="2">
+            <Item ID="wood">
+               <count>15</count>
+            </Item>
+            <Item ID="tools">
+               <count>2</count>
+            </Item>
+         </buildingItems>
+         <spriteBaseName>orchardfarm</spriteBaseName>
+         <contactRange>0.0</contactRange>
+         <forMarketplace>true</forMarketplace>
+         <maxNumberOfWorker>1</maxNumberOfWorker>
+         <produceTime>46.0</produceTime>
+         <maxOutputStorage>5</maxOutputStorage>
+         <efficiency>1.0</efficiency>
+         <output length="1">
+            <Item ID="fruits">
+               <count>1</count>
+            </Item>
+         </output>
+         <growable>orchard</growable>
+         <neededHarvestToProduce>1</neededHarvestToProduce>
+      </farm>
+      <farm ID="potatoefarm">
+         <Name>
+            <entry lang="English">Potatoefarm</entry>
+            <entry lang="German">Kartoffelfarm</entry>
+         </Name>
+         <Description>
+            <entry lang="English">Grows Potatoe.</entry>
+            <entry lang="German">Produziert Kartoffeln.</entry>
+         </Description>
+         <HoverOver>
+            <entry lang="English">Potatoefarm</entry>
+            <entry lang="German">Kartoffelfarm</entry>
+         </HoverOver>
+         <canBeBuild>true</canBeBuild>
+         <isWalkable>false</isWalkable>
+         <hasHitbox>true</hasHitbox>
+         <maxHealth>150.0</maxHealth>
+         <structureRange>3</structureRange>
+         <populationLevel>0</populationLevel>
+         <populationCount>500</populationCount>
+         <structureLevel>0</structureLevel>
+         <tileWidth>2</tileWidth>
+         <tileHeight>2</tileHeight>
+         <canRotate>true</canRotate>
+         <canBeBuildOver>false</canBeBuildOver>
+         <canBeUpgraded>false</canBeUpgraded>
+         <canTakeDamage>true</canTakeDamage>
+         <mustFrontBuildDir>None</mustFrontBuildDir>
+         <canStartBurning>false</canStartBurning>
+         <maintenanceCost>60</maintenanceCost>
+         <buildCost>500</buildCost>
+         <buildTyp>Single</buildTyp>
+         <structureTyp>Blocking</structureTyp>
+         <extraUITyp>None</extraUITyp>
+         <extraBuildUITyp>None</extraBuildUITyp>
+         <buildingItems length="2">
+            <Item ID="wood">
+               <count>6</count>
+            </Item>
+            <Item ID="tools">
+               <count>3</count>
+            </Item>
+         </buildingItems>
+         <spriteBaseName>potatoefarm</spriteBaseName>
+         <contactRange>0.0</contactRange>
+         <forMarketplace>true</forMarketplace>
+         <maxNumberOfWorker>1</maxNumberOfWorker>
+         <produceTime>40.0</produceTime>
+         <maxOutputStorage>5</maxOutputStorage>
+         <efficiency>1.0</efficiency>
+         <output length="1">
+            <Item ID="potatoes">
+               <count>1</count>
+            </Item>
+         </output>
+         <growable>potatoefield</growable>
+         <neededHarvestToProduce>2</neededHarvestToProduce>
+      </farm>
+      <farm ID="huntershut">
+         <Name>
+            <entry lang="English">Hunters&apos; Hut</entry>
+            <entry lang="German">Jägerhütte</entry>
+         </Name>
+         <Description>
+            <entry lang="English">Hunts wild life to produce meat.</entry>
+            <entry lang="German">Jagt Wild um Fleisch zu produzieren.</entry>
+         </Description>
+         <HoverOver>
+            <entry lang="English">Hunter</entry>
+            <entry lang="German">Jäger</entry>
+         </HoverOver>
+         <canBeBuild>true</canBeBuild>
+         <isWalkable>false</isWalkable>
+         <hasHitbox>true</hasHitbox>
+         <maxHealth>25.0</maxHealth>
+         <structureRange>4</structureRange>
+         <populationLevel>0</populationLevel>
+         <populationCount>1250</populationCount>
+         <structureLevel>0</structureLevel>
+         <tileWidth>1</tileWidth>
+         <tileHeight>1</tileHeight>
+         <canRotate>true</canRotate>
+         <canBeBuildOver>false</canBeBuildOver>
+         <canBeUpgraded>false</canBeUpgraded>
+         <canTakeDamage>true</canTakeDamage>
+         <mustFrontBuildDir>None</mustFrontBuildDir>
+         <canStartBurning>false</canStartBurning>
+         <maintenanceCost>80</maintenanceCost>
+         <buildCost>1200</buildCost>
+         <buildTyp>Single</buildTyp>
+         <structureTyp>Blocking</structureTyp>
+         <extraUITyp>None</extraUITyp>
+         <extraBuildUITyp>None</extraBuildUITyp>
+         <buildingItems length="2">
+            <Item ID="wood">
+               <count>10</count>
+            </Item>
+            <Item ID="tools">
+               <count>6</count>
+            </Item>
+         </buildingItems>
+         <spriteBaseName>huntershut</spriteBaseName>
+         <contactRange>0.0</contactRange>
+         <forMarketplace>true</forMarketplace>
+         <maxNumberOfWorker>1</maxNumberOfWorker>
+         <produceTime>30.0</produceTime>
+         <maxOutputStorage>5</maxOutputStorage>
+         <efficiency>1.0</efficiency>
+         <output length="1">
+            <Item ID="venison">
+               <count>1</count>
+            </Item>
+         </output>
+         <growable>farmland</growable>
+         <neededHarvestToProduce>5</neededHarvestToProduce>
+      </farm>
+      <farm ID="wheatfarm">
+         <Name>
+            <entry lang="English">Wheatfarm</entry>
+            <entry lang="German">Getreidefarm</entry>
+         </Name>
+         <Description>
+            <entry lang="English">Produces Wheat.</entry>
+            <entry lang="German">Produziert Getreide.</entry>
+         </Description>
+         <HoverOver>
+            <entry lang="English">Wheatfarm</entry>
+            <entry lang="German">Getreidefarm</entry>
+         </HoverOver>
+         <canBeBuild>true</canBeBuild>
+         <isWalkable>false</isWalkable>
+         <hasHitbox>true</hasHitbox>
+         <maxHealth>50.0</maxHealth>
+         <structureRange>0</structureRange>
+         <populationLevel>1</populationLevel>
+         <populationCount>0</populationCount>
+         <structureLevel>0</structureLevel>
+         <tileWidth>2</tileWidth>
+         <tileHeight>2</tileHeight>
+         <canRotate>true</canRotate>
+         <canBeBuildOver>false</canBeBuildOver>
+         <canBeUpgraded>false</canBeUpgraded>
+         <canTakeDamage>true</canTakeDamage>
+         <mustFrontBuildDir>None</mustFrontBuildDir>
+         <canStartBurning>false</canStartBurning>
+         <maintenanceCost>65</maintenanceCost>
+         <buildCost>1250</buildCost>
+         <buildTyp>Single</buildTyp>
+         <structureTyp>Blocking</structureTyp>
+         <extraUITyp>None</extraUITyp>
+         <extraBuildUITyp>None</extraBuildUITyp>
+         <buildingItems length="3">
+            <Item ID="wood">
+               <count>3</count>
+            </Item>
+            <Item ID="tools">
+               <count>4</count>
+            </Item>
+            <Item ID="stone">
+               <count>2</count>
+            </Item>
+         </buildingItems>
+         <spriteBaseName>wheatfarm</spriteBaseName>
+         <contactRange>0.0</contactRange>
+         <forMarketplace>true</forMarketplace>
+         <maxNumberOfWorker>1</maxNumberOfWorker>
+         <produceTime>15.0</produceTime>
+         <maxOutputStorage>5</maxOutputStorage>
+         <efficiency>1.0</efficiency>
+         <output length="1">
+            <Item ID="wheat">
+               <count>1</count>
+            </Item>
+         </output>
+         <growable>wheatfield</growable>
+         <neededHarvestToProduce>5</neededHarvestToProduce>
+      </farm>
+      <farm ID="charcoalburnershut">
+         <Name>
+            <entry lang="English">Charcoal Burner&apos;s Hut</entry>
+            <entry lang="German">Köhler</entry>
+         </Name>
+         <Description>
+            <entry lang="English">Needs trees to create coal.</entry>
+            <entry lang="German">Benötigt Bäume um daraus Kohle zu produzieren.</entry>
+         </Description>
+         <HoverOver>
+            <entry lang="English">Charcoal Burner&apos;s Hut</entry>
+            <entry lang="German">Köhler</entry>
+         </HoverOver>
+         <canBeBuild>true</canBeBuild>
+         <isWalkable>false</isWalkable>
+         <hasHitbox>true</hasHitbox>
+         <maxHealth>50.0</maxHealth>
+         <structureRange>6</structureRange>
+         <populationLevel>1</populationLevel>
+         <populationCount>750</populationCount>
+         <structureLevel>0</structureLevel>
+         <tileWidth>2</tileWidth>
+         <tileHeight>2</tileHeight>
+         <canRotate>true</canRotate>
+         <canBeBuildOver>false</canBeBuildOver>
+         <canBeUpgraded>false</canBeUpgraded>
+         <canTakeDamage>true</canTakeDamage>
+         <mustFrontBuildDir>None</mustFrontBuildDir>
+         <canStartBurning>false</canStartBurning>
+         <maintenanceCost>25</maintenanceCost>
+         <buildCost>250</buildCost>
+         <buildTyp>Single</buildTyp>
+         <structureTyp>Blocking</structureTyp>
+         <extraUITyp>None</extraUITyp>
+         <extraBuildUITyp>None</extraBuildUITyp>
+         <buildingItems length="2">
+            <Item ID="wood">
+               <count>6</count>
+            </Item>
+            <Item ID="tools">
+               <count>6</count>
+            </Item>
+         </buildingItems>
+         <spriteBaseName>charcoalburnershut</spriteBaseName>
+         <contactRange>0.0</contactRange>
+         <forMarketplace>true</forMarketplace>
+         <maxNumberOfWorker>1</maxNumberOfWorker>
+         <produceTime>40.0</produceTime>
+         <maxOutputStorage>5</maxOutputStorage>
+         <efficiency>1.0</efficiency>
+         <output length="1">
+            <Item ID="coal">
+               <count>1</count>
+            </Item>
+         </output>
+         <growable>tree</growable>
+         <neededHarvestToProduce>5</neededHarvestToProduce>
+      </farm>
+      <farm ID="goatfarm">
+         <Name>
+            <entry lang="English">Goat Farm</entry>
+            <entry lang="German">Ziegenfarm</entry>
+         </Name>
+         <Description>
+            <entry lang="English">Produces milk.	</entry>
+            <entry lang="German">Produziert Milch.</entry>
+         </Description>
+         <HoverOver>
+            <entry lang="English">Goat Farm</entry>
+            <entry lang="German">Ziegenfarm</entry>
+         </HoverOver>
+         <canBeBuild>true</canBeBuild>
+         <isWalkable>false</isWalkable>
+         <hasHitbox>true</hasHitbox>
+         <maxHealth>50.0</maxHealth>
+         <structureRange>4</structureRange>
+         <populationLevel>1</populationLevel>
+         <populationCount>750</populationCount>
+         <structureLevel>0</structureLevel>
+         <tileWidth>2</tileWidth>
+         <tileHeight>2</tileHeight>
+         <canRotate>true</canRotate>
+         <canBeBuildOver>false</canBeBuildOver>
+         <canBeUpgraded>false</canBeUpgraded>
+         <canTakeDamage>true</canTakeDamage>
+         <mustFrontBuildDir>None</mustFrontBuildDir>
+         <canStartBurning>false</canStartBurning>
+         <maintenanceCost>75</maintenanceCost>
+         <buildCost>450</buildCost>
+         <buildTyp>Single</buildTyp>
+         <structureTyp>Blocking</structureTyp>
+         <extraUITyp>None</extraUITyp>
+         <extraBuildUITyp>None</extraBuildUITyp>
+         <buildingItems length="3">
+            <Item ID="wood">
+               <count>4</count>
+            </Item>
+            <Item ID="tools">
+               <count>4</count>
+            </Item>
+            <Item ID="stone">
+               <count>4</count>
+            </Item>
+         </buildingItems>
+         <spriteBaseName>goatfarm</spriteBaseName>
+         <contactRange>0.0</contactRange>
+         <forMarketplace>true</forMarketplace>
+         <maxNumberOfWorker>1</maxNumberOfWorker>
+         <produceTime>35.0</produceTime>
+         <maxOutputStorage>0</maxOutputStorage>
+         <efficiency>1.0</efficiency>
+         <output length="1">
+            <Item ID="milk">
+               <count>1</count>
+            </Item>
+         </output>
+         <growable>farmland</growable>
+         <neededHarvestToProduce>5</neededHarvestToProduce>
+      </farm>
+      <farm ID="pigfarm">
+         <Name>
+            <entry lang="English">Pig Farm</entry>
+            <entry lang="German">Schweinefarm</entry>
+         </Name>
+         <Description>
+            <entry lang="English">Needs free land to breed pigs.</entry>
+            <entry lang="German">Braucht freies Land um Schweine zu züchten.</entry>
+         </Description>
+         <HoverOver>
+            <entry lang="English">Pig Farm</entry>
+            <entry lang="German">Schweinefarm</entry>
+         </HoverOver>
+         <canBeBuild>true</canBeBuild>
+         <isWalkable>false</isWalkable>
+         <hasHitbox>true</hasHitbox>
+         <maxHealth>230.0</maxHealth>
+         <structureRange>5</structureRange>
+         <populationLevel>1</populationLevel>
+         <populationCount>1500</populationCount>
+         <structureLevel>0</structureLevel>
+         <tileWidth>2</tileWidth>
+         <tileHeight>2</tileHeight>
+         <canRotate>true</canRotate>
+         <canBeBuildOver>false</canBeBuildOver>
+         <canBeUpgraded>false</canBeUpgraded>
+         <canTakeDamage>true</canTakeDamage>
+         <mustFrontBuildDir>None</mustFrontBuildDir>
+         <canStartBurning>false</canStartBurning>
+         <maintenanceCost>100</maintenanceCost>
+         <buildCost>600</buildCost>
+         <buildTyp>Single</buildTyp>
+         <structureTyp>Blocking</structureTyp>
+         <extraUITyp>None</extraUITyp>
+         <extraBuildUITyp>None</extraBuildUITyp>
+         <buildingItems length="3">
+            <Item ID="wood">
+               <count>3</count>
+            </Item>
+            <Item ID="tools">
+               <count>6</count>
+            </Item>
+            <Item ID="stone">
+               <count>5</count>
+            </Item>
+         </buildingItems>
+         <spriteBaseName>pigfarm</spriteBaseName>
+         <contactRange>0.0</contactRange>
+         <forMarketplace>true</forMarketplace>
+         <maxNumberOfWorker>1</maxNumberOfWorker>
+         <produceTime>90.0</produceTime>
+         <maxOutputStorage>0</maxOutputStorage>
+         <efficiency>1.0</efficiency>
+         <output length="1">
+            <Item ID="pig">
+               <count>1</count>
+            </Item>
+         </output>
+         <growable>farmland</growable>
+         <neededHarvestToProduce>5</neededHarvestToProduce>
+      </farm>
+      <farm ID="hopsplantation">
+         <Name>
+            <entry lang="English">Hops Plantation</entry>
+            <entry lang="German">Hopfenplantage</entry>
+         </Name>
+         <Description>
+            <entry lang="English">Produces hops.</entry>
+            <entry lang="German">Produziert Hopfen.</entry>
+         </Description>
+         <HoverOver>
+            <entry lang="English">Hops Plantation</entry>
+            <entry lang="German">Hopfenplantage</entry>
+         </HoverOver>
+         <canBeBuild>true</canBeBuild>
+         <isWalkable>false</isWalkable>
+         <hasHitbox>true</hasHitbox>
+         <maxHealth>250.0</maxHealth>
+         <structureRange>4</structureRange>
+         <populationLevel>1</populationLevel>
+         <populationCount>1500</populationCount>
+         <structureLevel>0</structureLevel>
+         <tileWidth>2</tileWidth>
+         <tileHeight>2</tileHeight>
+         <canRotate>true</canRotate>
+         <canBeBuildOver>false</canBeBuildOver>
+         <canBeUpgraded>false</canBeUpgraded>
+         <canTakeDamage>true</canTakeDamage>
+         <mustFrontBuildDir>None</mustFrontBuildDir>
+         <canStartBurning>false</canStartBurning>
+         <maintenanceCost>110</maintenanceCost>
+         <buildCost>720</buildCost>
+         <buildTyp>Single</buildTyp>
+         <structureTyp>Blocking</structureTyp>
+         <extraUITyp>None</extraUITyp>
+         <extraBuildUITyp>None</extraBuildUITyp>
+         <buildingItems length="3">
+            <Item ID="wood">
+               <count>7</count>
+            </Item>
+            <Item ID="tools">
+               <count>3</count>
+            </Item>
+            <Item ID="stone">
+               <count>1</count>
+            </Item>
+         </buildingItems>
+         <spriteBaseName>hopsplantation</spriteBaseName>
+         <contactRange>0.0</contactRange>
+         <forMarketplace>true</forMarketplace>
+         <maxNumberOfWorker>1</maxNumberOfWorker>
+         <produceTime>120.0</produceTime>
+         <maxOutputStorage>0</maxOutputStorage>
+         <efficiency>1.0</efficiency>
+         <output length="1">
+            <Item ID="hops">
+               <count>1</count>
+            </Item>
+         </output>
+         <growable>hopvines</growable>
+         <neededHarvestToProduce>5</neededHarvestToProduce>
+      </farm>
+      <farm ID="spiceplantation">
+         <Name>
+            <entry lang="English">Spice Plantation</entry>
+            <entry lang="German">Gewürzplantage</entry>
+         </Name>
+         <Description>
+            <entry lang="English">Produces Spice.</entry>
+            <entry lang="German">Produziert Gewürze.</entry>
+         </Description>
+         <canBeBuild>true</canBeBuild>
+         <isWalkable>false</isWalkable>
+         <hasHitbox>true</hasHitbox>
+         <maxHealth>200.0</maxHealth>
+         <structureRange>0</structureRange>
+         <populationLevel>1</populationLevel>
+         <populationCount>2500</populationCount>
+         <structureLevel>0</structureLevel>
+         <tileWidth>2</tileWidth>
+         <tileHeight>2</tileHeight>
+         <canRotate>true</canRotate>
+         <canBeBuildOver>false</canBeBuildOver>
+         <canBeUpgraded>false</canBeUpgraded>
+         <canTakeDamage>true</canTakeDamage>
+         <mustFrontBuildDir>None</mustFrontBuildDir>
+         <canStartBurning>false</canStartBurning>
+         <maintenanceCost>25</maintenanceCost>
+         <buildCost>1000</buildCost>
+         <buildTyp>Single</buildTyp>
+         <structureTyp>Blocking</structureTyp>
+         <extraUITyp>None</extraUITyp>
+         <extraBuildUITyp>None</extraBuildUITyp>
+         <buildingItems length="3">
+            <Item ID="wood">
+               <count>15</count>
+            </Item>
+            <Item ID="tools">
+               <count>10</count>
+            </Item>
+            <Item ID="stone">
+               <count>5</count>
+            </Item>
+         </buildingItems>
+         <spriteBaseName>spiceplantation</spriteBaseName>
+         <contactRange>0.0</contactRange>
+         <forMarketplace>true</forMarketplace>
+         <maxNumberOfWorker>1</maxNumberOfWorker>
+         <produceTime>30.0</produceTime>
+         <maxOutputStorage>0</maxOutputStorage>
+         <efficiency>1.0</efficiency>
+         <output length="1">
+            <Item ID="spice">
+               <count>1</count>
+            </Item>
+         </output>
+         <growable>spicefield</growable>
+         <neededHarvestToProduce>5</neededHarvestToProduce>
+      </farm>
+   </farms>
+   <growables>
+      <growable ID="hempfield">
+         <Name>
+            <entry lang="English">Hempfield</entry>
+            <entry lang="German">Hanffeld</entry>
+         </Name>
+         <Description>
+            <entry lang="English">Grows hemp.</entry>
+            <entry lang="German">Wächst Hanf an.</entry>
+         </Description>
+         <HoverOver>
+            <entry lang="English">Hemp</entry>
+            <entry lang="German">Hanf</entry>
+         </HoverOver>
+         <canBeBuild>true</canBeBuild>
+         <isWalkable>false</isWalkable>
+         <hasHitbox>false</hasHitbox>
+         <maxHealth>50.0</maxHealth>
+         <structureRange>0</structureRange>
+         <populationLevel>0</populationLevel>
+         <populationCount>0</populationCount>
+         <structureLevel>0</structureLevel>
+         <tileWidth>1</tileWidth>
+         <tileHeight>1</tileHeight>
+         <canRotate>true</canRotate>
+         <canBeBuildOver>true</canBeBuildOver>
+         <canBeUpgraded>false</canBeUpgraded>
+         <canTakeDamage>false</canTakeDamage>
+         <mustFrontBuildDir>None</mustFrontBuildDir>
+         <canStartBurning>false</canStartBurning>
+         <maintenanceCost>0</maintenanceCost>
+         <buildCost>0</buildCost>
+         <buildTyp>Drag</buildTyp>
+         <structureTyp>Free</structureTyp>
+         <extraUITyp>None</extraUITyp>
+         <extraBuildUITyp>None</extraBuildUITyp>
+         <spriteBaseName>hempfield</spriteBaseName>
+         <contactRange>0.0</contactRange>
+         <forMarketplace>false</forMarketplace>
+         <maxNumberOfWorker>0</maxNumberOfWorker>
+         <produceTime>180.0</produceTime>
+         <maxOutputStorage>1</maxOutputStorage>
+         <efficiency>1.0</efficiency>
+         <output length="1">
+            <Item ID="hemp">
+               <count>0</count>
+            </Item>
+         </output>
+         <fertility>hemp</fertility>
+         <ageStages>2</ageStages>
+      </growable>
+      <growable ID="farmland">
+         <Name>
+            <entry lang="English">Farmland</entry>
+            <entry lang="German">Ackerland</entry>
+         </Name>
+         <Description>
+            <entry lang="English">Free spaces for animals.</entry>
+            <entry lang="German">Freies Land für Tiere.</entry>
+         </Description>
+         <HoverOver>
+            <entry lang="English">Farmland</entry>
+            <entry lang="German">Ackerland</entry>
+         </HoverOver>
+         <canBeBuild>true</canBeBuild>
+         <isWalkable>false</isWalkable>
+         <hasHitbox>false</hasHitbox>
+         <maxHealth>50.0</maxHealth>
+         <structureRange>0</structureRange>
+         <populationLevel>0</populationLevel>
+         <populationCount>0</populationCount>
+         <structureLevel>0</structureLevel>
+         <tileWidth>1</tileWidth>
+         <tileHeight>1</tileHeight>
+         <canRotate>true</canRotate>
+         <canBeBuildOver>true</canBeBuildOver>
+         <canBeUpgraded>false</canBeUpgraded>
+         <canTakeDamage>false</canTakeDamage>
+         <mustFrontBuildDir>None</mustFrontBuildDir>
+         <canStartBurning>false</canStartBurning>
+         <maintenanceCost>0</maintenanceCost>
+         <buildCost>5</buildCost>
+         <buildTyp>Drag</buildTyp>
+         <structureTyp>Free</structureTyp>
+         <extraUITyp>None</extraUITyp>
+         <extraBuildUITyp>None</extraBuildUITyp>
+         <spriteBaseName>farmland</spriteBaseName>
+         <contactRange>0.0</contactRange>
+         <forMarketplace>false</forMarketplace>
+         <maxNumberOfWorker>0</maxNumberOfWorker>
+         <produceTime>1.0</produceTime>
+         <maxOutputStorage>1</maxOutputStorage>
+         <efficiency>1.0</efficiency>
+         <ageStages>0</ageStages>
+      </growable>
+      <growable ID="tree">
+         <Name>
+            <entry lang="English">Tree</entry>
+            <entry lang="German">Baum</entry>
+         </Name>
+         <Description>
+            <entry lang="English">Its a tree.</entry>
+            <entry lang="German">Es ist ein Baum.</entry>
+         </Description>
+         <HoverOver>
+            <entry lang="English">Tree</entry>
+            <entry lang="German">Baum</entry>
+         </HoverOver>
+         <canBeBuild>true</canBeBuild>
+		 <harvestSound>treefalling</harvestSound>
+         <isWalkable>false</isWalkable>
+         <hasHitbox>false</hasHitbox>
+         <maxHealth>15.0</maxHealth>
+         <structureRange>0</structureRange>
+         <populationLevel>0</populationLevel>
+         <populationCount>0</populationCount>
+         <structureLevel>0</structureLevel>
+         <tileWidth>1</tileWidth>
+         <tileHeight>1</tileHeight>
+         <canRotate>true</canRotate>
+         <canBeBuildOver>true</canBeBuildOver>
+         <canBeUpgraded>false</canBeUpgraded>
+         <canTakeDamage>false</canTakeDamage>
+         <mustFrontBuildDir>None</mustFrontBuildDir>
+         <canStartBurning>false</canStartBurning>
+         <maintenanceCost>0</maintenanceCost>
+         <buildCost>0</buildCost>
+         <buildTyp>Drag</buildTyp>
+         <structureTyp>Free</structureTyp>
+         <extraUITyp>None</extraUITyp>
+         <extraBuildUITyp>None</extraBuildUITyp>
+         <buildingItems length="0"/>
+         <spriteBaseName>tree</spriteBaseName>
+         <contactRange>0.0</contactRange>
+         <forMarketplace>false</forMarketplace>
+         <maxNumberOfWorker>0</maxNumberOfWorker>
+         <produceTime>105.0</produceTime>
+         <maxOutputStorage>1</maxOutputStorage>
+         <efficiency>1.0</efficiency>
+         <output length="1">
+            <Item ID="wood">
+               <count>0</count>
+            </Item>
+         </output>
+         <ageStages>3</ageStages>
+      </growable>
+      <growable ID="potatoefield">
+         <Name>
+            <entry lang="English">Potatoefield</entry>
+            <entry lang="German">Kartoffelfeld</entry>
+         </Name>
+         <Description>
+            <entry lang="English">Potatoes grow here.</entry>
+            <entry lang="German">Kartoffeln wachsen hier.</entry>
+         </Description>
+         <HoverOver>
+            <entry lang="English">Potatoefield</entry>
+            <entry lang="German">Kartoffelfeld</entry>
+         </HoverOver>
+         <canBeBuild>true</canBeBuild>
+         <isWalkable>false</isWalkable>
+         <hasHitbox>false</hasHitbox>
+         <maxHealth>50.0</maxHealth>
+         <structureRange>0</structureRange>
+         <populationLevel>0</populationLevel>
+         <populationCount>500</populationCount>
+         <structureLevel>0</structureLevel>
+         <tileWidth>1</tileWidth>
+         <tileHeight>1</tileHeight>
+         <canRotate>true</canRotate>
+         <canBeBuildOver>true</canBeBuildOver>
+         <canBeUpgraded>false</canBeUpgraded>
+         <canTakeDamage>false</canTakeDamage>
+         <mustFrontBuildDir>None</mustFrontBuildDir>
+         <canStartBurning>false</canStartBurning>
+         <maintenanceCost>0</maintenanceCost>
+         <buildCost>25</buildCost>
+         <buildTyp>Drag</buildTyp>
+         <structureTyp>Free</structureTyp>
+         <extraUITyp>None</extraUITyp>
+         <extraBuildUITyp>None</extraBuildUITyp>
+         <spriteBaseName>potatoefield</spriteBaseName>
+         <contactRange>0.0</contactRange>
+         <forMarketplace>false</forMarketplace>
+         <maxNumberOfWorker>0</maxNumberOfWorker>
+         <produceTime>5.0</produceTime>
+         <maxOutputStorage>1</maxOutputStorage>
+         <efficiency>1.0</efficiency>
+         <output length="1">
+            <Item ID="potatoes">
+               <count>1</count>
+            </Item>
+         </output>
+         <ageStages>2</ageStages>
+      </growable>
+      <growable ID="orchard">
+         <Name>
+            <entry lang="English">Orchard</entry>
+            <entry lang="German">Obstgarten</entry>
+         </Name>
+         <Description>
+            <entry lang="English">Produces Fruit.</entry>
+            <entry lang="German">Produziert Früchte.</entry>
+         </Description>
+         <HoverOver>
+            <entry lang="English">Orchard</entry>
+            <entry lang="German">Obstgarten</entry>
+         </HoverOver>
+         <canBeBuild>true</canBeBuild>
+         <isWalkable>false</isWalkable>
+         <hasHitbox>false</hasHitbox>
+         <maxHealth>50.0</maxHealth>
+         <structureRange>0</structureRange>
+         <populationLevel>0</populationLevel>
+         <populationCount>500</populationCount>
+         <structureLevel>0</structureLevel>
+         <tileWidth>1</tileWidth>
+         <tileHeight>1</tileHeight>
+         <canRotate>true</canRotate>
+         <canBeBuildOver>true</canBeBuildOver>
+         <canBeUpgraded>false</canBeUpgraded>
+         <canTakeDamage>false</canTakeDamage>
+         <mustFrontBuildDir>None</mustFrontBuildDir>
+         <canStartBurning>false</canStartBurning>
+         <maintenanceCost>0</maintenanceCost>
+         <buildCost>25</buildCost>
+         <buildTyp>Drag</buildTyp>
+         <structureTyp>Free</structureTyp>
+         <extraUITyp>None</extraUITyp>
+         <extraBuildUITyp>None</extraBuildUITyp>
+         <spriteBaseName>orchard</spriteBaseName>
+         <contactRange>0.0</contactRange>
+         <forMarketplace>false</forMarketplace>
+         <maxNumberOfWorker>0</maxNumberOfWorker>
+         <produceTime>120.0</produceTime>
+         <maxOutputStorage>1</maxOutputStorage>
+         <efficiency>1.0</efficiency>
+         <output length="1">
+            <Item ID="fruits">
+               <count>1</count>
+            </Item>
+         </output>
+         <ageStages>2</ageStages>
+      </growable>
+      <growable ID="sugarcanefield">
+         <Name>
+            <entry lang="English">Sugarcanefield</entry>
+            <entry lang="German">Zuckerrohrfeld</entry>
+         </Name>
+         <Description>
+            <entry lang="English">Grows sugar cane.</entry>
+            <entry lang="German">Hier wächst Zuckerrohr.</entry>
+         </Description>
+         <HoverOver>
+            <entry lang="English">Sugarcanefield</entry>
+            <entry lang="German">Zuckerrohrfeld</entry>
+         </HoverOver>
+         <canBeBuild>true</canBeBuild>
+         <isWalkable>false</isWalkable>
+         <hasHitbox>false</hasHitbox>
+         <maxHealth>50.0</maxHealth>
+         <structureRange>0</structureRange>
+         <populationLevel>0</populationLevel>
+         <populationCount>500</populationCount>
+         <structureLevel>0</structureLevel>
+         <tileWidth>1</tileWidth>
+         <tileHeight>1</tileHeight>
+         <canRotate>true</canRotate>
+         <canBeBuildOver>true</canBeBuildOver>
+         <canBeUpgraded>false</canBeUpgraded>
+         <canTakeDamage>false</canTakeDamage>
+         <mustFrontBuildDir>None</mustFrontBuildDir>
+         <canStartBurning>false</canStartBurning>
+         <maintenanceCost>0</maintenanceCost>
+         <buildCost>25</buildCost>
+         <buildTyp>Drag</buildTyp>
+         <structureTyp>Free</structureTyp>
+         <extraUITyp>None</extraUITyp>
+         <extraBuildUITyp>None</extraBuildUITyp>
+         <spriteBaseName>sugarcanefield</spriteBaseName>
+         <contactRange>0.0</contactRange>
+         <forMarketplace>false</forMarketplace>
+         <maxNumberOfWorker>0</maxNumberOfWorker>
+         <produceTime>120.0</produceTime>
+         <maxOutputStorage>1</maxOutputStorage>
+         <efficiency>1.0</efficiency>
+         <output length="1">
+            <Item ID="sugar">
+               <count>0</count>
+            </Item>
+         </output>
+         <fertility>sugarcone</fertility>
+         <ageStages>2</ageStages>
+      </growable>
+      <growable ID="wheatfield">
+         <Name>
+            <entry lang="English">Wheatfield</entry>
+            <entry lang="German">Getreidefeld</entry>
+         </Name>
+         <Description>
+            <entry lang="English">Grows wheat.</entry>
+            <entry lang="German">Getreide wächst hier.</entry>
+         </Description>
+         <HoverOver>
+            <entry lang="English">Wheatfield</entry>
+            <entry lang="German">Getreidefeld</entry>
+         </HoverOver>
+         <canBeBuild>true</canBeBuild>
+         <isWalkable>false</isWalkable>
+         <hasHitbox>false</hasHitbox>
+         <maxHealth>50.0</maxHealth>
+         <structureRange>0</structureRange>
+         <populationLevel>1</populationLevel>
+         <populationCount>0</populationCount>
+         <structureLevel>0</structureLevel>
+         <tileWidth>1</tileWidth>
+         <tileHeight>1</tileHeight>
+         <canRotate>true</canRotate>
+         <canBeBuildOver>true</canBeBuildOver>
+         <canBeUpgraded>false</canBeUpgraded>
+         <canTakeDamage>false</canTakeDamage>
+         <mustFrontBuildDir>None</mustFrontBuildDir>
+         <canStartBurning>false</canStartBurning>
+         <maintenanceCost>0</maintenanceCost>
+         <buildCost>45</buildCost>
+         <buildTyp>Drag</buildTyp>
+         <structureTyp>Free</structureTyp>
+         <extraUITyp>None</extraUITyp>
+         <extraBuildUITyp>None</extraBuildUITyp>
+         <buildingItems length="0"/>
+         <spriteBaseName>wheatfield</spriteBaseName>
+         <contactRange>0.0</contactRange>
+         <forMarketplace>false</forMarketplace>
+         <maxNumberOfWorker>0</maxNumberOfWorker>
+         <produceTime>45.0</produceTime>
+         <maxOutputStorage>1</maxOutputStorage>
+         <efficiency>1.0</efficiency>
+         <output length="1">
+            <Item ID="wheat">
+               <count>1</count>
+            </Item>
+         </output>
+         <fertility>wheat</fertility>
+         <ageStages>5</ageStages>
+      </growable>
+      <growable ID="hopvines">
+         <Name>
+            <entry lang="English">Hop Vines</entry>
+            <entry lang="German">Hopfenreben</entry>
+         </Name>
+         <Description>
+            <entry lang="English">Grows hops.</entry>
+            <entry lang="German">Produziert Hopfen.</entry>
+         </Description>
+         <HoverOver>
+            <entry lang="English">Hop Vines</entry>
+            <entry lang="German">Hopfenreben</entry>
+         </HoverOver>
+         <canBeBuild>true</canBeBuild>
+         <isWalkable>false</isWalkable>
+         <hasHitbox>false</hasHitbox>
+         <maxHealth>50.0</maxHealth>
+         <structureRange>0</structureRange>
+         <populationLevel>1</populationLevel>
+         <populationCount>1500</populationCount>
+         <structureLevel>0</structureLevel>
+         <tileWidth>1</tileWidth>
+         <tileHeight>1</tileHeight>
+         <canRotate>true</canRotate>
+         <canBeBuildOver>true</canBeBuildOver>
+         <canBeUpgraded>false</canBeUpgraded>
+         <canTakeDamage>false</canTakeDamage>
+         <mustFrontBuildDir>None</mustFrontBuildDir>
+         <canStartBurning>false</canStartBurning>
+         <maintenanceCost>0</maintenanceCost>
+         <buildCost>0</buildCost>
+         <buildTyp>Drag</buildTyp>
+         <structureTyp>Free</structureTyp>
+         <extraUITyp>None</extraUITyp>
+         <extraBuildUITyp>None</extraBuildUITyp>
+         <spriteBaseName>hopvines</spriteBaseName>
+         <contactRange>0.0</contactRange>
+         <forMarketplace>false</forMarketplace>
+         <maxNumberOfWorker>0</maxNumberOfWorker>
+         <produceTime>15.0</produceTime>
+         <maxOutputStorage>1</maxOutputStorage>
+         <efficiency>1.0</efficiency>
+         <output length="1">
+            <Item ID="hops">
+               <count>0</count>
+            </Item>
+         </output>
+         <fertility>hop</fertility>
+         <ageStages>2</ageStages>
+      </growable>
+      <growable ID="spicefield">
+         <Name>
+            <entry lang="English">Spicefield</entry>
+            <entry lang="German">Gewürzefeld</entry>
+         </Name>
+         <Description>
+            <entry lang="English">Grows Spices.</entry>
+            <entry lang="German">Gewürze werden hier angebaut.</entry>
+         </Description>
+         <canBeBuild>true</canBeBuild>
+         <isWalkable>false</isWalkable>
+         <hasHitbox>false</hasHitbox>
+         <maxHealth>10.0</maxHealth>
+         <structureRange>0</structureRange>
+         <populationLevel>1</populationLevel>
+         <populationCount>2500</populationCount>
+         <structureLevel>0</structureLevel>
+         <tileWidth>1</tileWidth>
+         <tileHeight>1</tileHeight>
+         <canRotate>true</canRotate>
+         <canBeBuildOver>true</canBeBuildOver>
+         <canBeUpgraded>false</canBeUpgraded>
+         <canTakeDamage>false</canTakeDamage>
+         <mustFrontBuildDir>None</mustFrontBuildDir>
+         <canStartBurning>false</canStartBurning>
+         <maintenanceCost>0</maintenanceCost>
+         <buildCost>100</buildCost>
+         <buildTyp>Drag</buildTyp>
+         <structureTyp>Free</structureTyp>
+         <extraUITyp>None</extraUITyp>
+         <extraBuildUITyp>None</extraBuildUITyp>
+         <spriteBaseName>spicefield</spriteBaseName>
+         <contactRange>0.0</contactRange>
+         <forMarketplace>false</forMarketplace>
+         <maxNumberOfWorker>0</maxNumberOfWorker>
+         <produceTime>0.0</produceTime>
+         <maxOutputStorage>1</maxOutputStorage>
+         <efficiency>1.0</efficiency>
+         <output length="1">
+            <Item ID="spice">
+               <count>1</count>
+            </Item>
+         </output>
+         <fertility>spices</fertility>
+         <ageStages>2</ageStages>
+      </growable>
+   </growables>
+   <markets>
+      <market ID="smallmarketbuilding">
+         <Name>
+            <entry lang="English">Market Building I</entry>
+            <entry lang="German">Markthaus I</entry>
+         </Name>
+         <Description>
+            <entry lang="English">Is required to expand your city and it will collect produced goods in its area, if they are connect with roads.</entry>
+            <entry lang="German">Es ist benötigt um deine Stadt zu erweitern und um produzierte Produkte abzuholen, die in seiner reichweite sind und mit dem es Sraßen verbunden ist.</entry>
+         </Description>
+         <HoverOver>
+            <entry lang="English">Market Building</entry>
+            <entry lang="German">Markthaus </entry>
+         </HoverOver>
+         <canBeBuild>true</canBeBuild>
+         <isWalkable>false</isWalkable>
+         <hasHitbox>true</hasHitbox>
+         <maxHealth>50.0</maxHealth>
+         <structureRange>18</structureRange>
+         <populationLevel>0</populationLevel>
+         <populationCount>0</populationCount>
+         <structureLevel>1</structureLevel>
+         <tileWidth>4</tileWidth>
+         <tileHeight>4</tileHeight>
+         <canRotate>true</canRotate>
+         <canBeBuildOver>false</canBeBuildOver>
+         <canBeUpgraded>true</canBeUpgraded>
+         <canTakeDamage>true</canTakeDamage>
+         <mustFrontBuildDir>None</mustFrontBuildDir>
+         <canStartBurning>false</canStartBurning>
+         <maintenanceCost>10</maintenanceCost>
+         <buildCost>200</buildCost>
+         <buildTyp>Single</buildTyp>
+         <structureTyp>Blocking</structureTyp>
+         <extraUITyp>None</extraUITyp>
+         <extraBuildUITyp>None</extraBuildUITyp>
+         <buildingItems length="2">
+            <Item ID="wood">
+               <count>3</count>
+            </Item>
+            <Item ID="tools">
+               <count>2</count>
+            </Item>
+         </buildingItems>
+         <spriteBaseName>smallmarketbuilding</spriteBaseName>
+         <contactRange>0.0</contactRange>
+         <forMarketplace>true</forMarketplace>
+         <maxNumberOfWorker>1</maxNumberOfWorker>
+         <produceTime>0.0</produceTime>
+         <maxOutputStorage>0</maxOutputStorage>
+         <efficiency>1.0</efficiency>
+         <takeOverStartGoal>100.0</takeOverStartGoal>
+      </market>
+   </markets>
+   <mines>
+      <mine ID="stonequarry">
+         <Name>
+            <entry lang="English">Stone Quarry</entry>
+            <entry lang="German">Steinbruch</entry>
+         </Name>
+         <Description>
+            <entry lang="English">Produces stone for buildings..</entry>
+            <entry lang="German">Produziert Stein zum Bauen.</entry>
+         </Description>
+         <HoverOver>
+            <entry lang="English">Stone Quarry</entry>
+            <entry lang="German">Steinbruch</entry>
+         </HoverOver>
+         <canBeBuild>true</canBeBuild>
+         <isWalkable>false</isWalkable>
+         <hasHitbox>true</hasHitbox>
+         <maxHealth>25.0</maxHealth>
+         <structureRange>0</structureRange>
+         <populationLevel>0</populationLevel>
+         <populationCount>0</populationCount>
+         <structureLevel>0</structureLevel>
+         <tileWidth>2</tileWidth>
+         <tileHeight>3</tileHeight>
+         <buildTileTypes length="2">
+            <tileType length="3">BuildLand, Mountain, Mountain</tileType>
+            <tileType length="3">BuildLand, Mountain, Mountain</tileType>
+         </buildTileTypes>
+         <canRotate>true</canRotate>
+         <canBeBuildOver>false</canBeBuildOver>
+         <canBeUpgraded>false</canBeUpgraded>
+         <canTakeDamage>false</canTakeDamage>
+         <mustFrontBuildDir>None</mustFrontBuildDir>
+         <canStartBurning>false</canStartBurning>
+         <maintenanceCost>90</maintenanceCost>
+         <buildCost>1000</buildCost>
+         <buildTyp>Single</buildTyp>
+         <structureTyp>Blocking</structureTyp>
+         <extraUITyp>None</extraUITyp>
+         <extraBuildUITyp>None</extraBuildUITyp>
+         <buildingItems length="2">
+            <Item ID="wood">
+               <count>0</count>
+            </Item>
+            <Item ID="tools">
+               <count>0</count>
+            </Item>
+         </buildingItems>
+         <spriteBaseName>stonequarry</spriteBaseName>
+         <contactRange>0.0</contactRange>
+         <forMarketplace>true</forMarketplace>
+         <maxNumberOfWorker>1</maxNumberOfWorker>
+         <produceTime>30.0</produceTime>
+         <maxOutputStorage>5</maxOutputStorage>
+         <efficiency>1.0</efficiency>
+         <output length="1">
+            <Item ID="stone">
+               <count>1</count>
+            </Item>
+         </output>
+      </mine>
+      <mine ID="ironmine">
+         <Name>
+            <entry lang="English">Iron Mine</entry>
+            <entry lang="German">Eisenbergwerk</entry>
+         </Name>
+         <Description>
+            <entry lang="English">Produces iron ore.</entry>
+            <entry lang="German">Produziert Eisenerz.</entry>
+         </Description>
+         <HoverOver>
+            <entry lang="English">Iron Mine</entry>
+            <entry lang="German">Eisenbergwerk</entry>
+         </HoverOver>
+         <canBeBuild>true</canBeBuild>
+         <isWalkable>false</isWalkable>
+         <hasHitbox>true</hasHitbox>
+         <maxHealth>360.0</maxHealth>
+         <structureRange>0</structureRange>
+         <populationLevel>1</populationLevel>
+         <populationCount>750</populationCount>
+         <structureLevel>0</structureLevel>
+         <tileWidth>2</tileWidth>
+         <tileHeight>3</tileHeight>
+         <canRotate>true</canRotate>
+         <canBeBuildOver>false</canBeBuildOver>
+         <canBeUpgraded>false</canBeUpgraded>
+         <canTakeDamage>false</canTakeDamage>
+         <mustFrontBuildDir>None</mustFrontBuildDir>
+         <canStartBurning>false</canStartBurning>
+         <maintenanceCost>55</maintenanceCost>
+         <buildCost>800</buildCost>
+         <buildTyp>Single</buildTyp>
+         <structureTyp>Blocking</structureTyp>
+         <extraUITyp>None</extraUITyp>
+         <extraBuildUITyp>None</extraBuildUITyp>
+         <buildingItems length="2">
+            <Item ID="wood">
+               <count>10</count>
+            </Item>
+            <Item ID="tools">
+               <count>3</count>
+            </Item>
+         </buildingItems>
+         <spriteBaseName>ironmine</spriteBaseName>
+         <contactRange>0.0</contactRange>
+         <forMarketplace>true</forMarketplace>
+         <maxNumberOfWorker>1</maxNumberOfWorker>
+         <produceTime>35.0</produceTime>
+         <maxOutputStorage>0</maxOutputStorage>
+         <efficiency>1.0</efficiency>
+         <output length="1">
+            <Item ID="ironore">
+               <count>0</count>
+            </Item>
+         </output>
+      </mine>
+      <mine ID="saltmine">
+         <Name>
+            <entry lang="English">Saltmine</entry>
+            <entry lang="German">Salzbergwerk</entry>
+         </Name>
+         <Description>
+            <entry lang="English">Mines Grain Salt.</entry>
+            <entry lang="German">Produziert grobes Salz.</entry>
+         </Description>
+         <HoverOver>
+            <entry lang="English">Saltmine</entry>
+            <entry lang="German">Salzbergwerk</entry>
+         </HoverOver>
+         <canBeBuild>true</canBeBuild>
+         <isWalkable>false</isWalkable>
+         <hasHitbox>true</hasHitbox>
+         <maxHealth>90.0</maxHealth>
+         <structureRange>0</structureRange>
+         <populationLevel>1</populationLevel>
+         <populationCount>750</populationCount>
+         <structureLevel>0</structureLevel>
+         <tileWidth>2</tileWidth>
+         <tileHeight>3</tileHeight>
+         <canRotate>true</canRotate>
+         <canBeBuildOver>false</canBeBuildOver>
+         <canBeUpgraded>false</canBeUpgraded>
+         <canTakeDamage>false</canTakeDamage>
+         <mustFrontBuildDir>None</mustFrontBuildDir>
+         <canStartBurning>false</canStartBurning>
+         <maintenanceCost>80</maintenanceCost>
+         <buildCost>1100</buildCost>
+         <buildTyp>Single</buildTyp>
+         <structureTyp>Blocking</structureTyp>
+         <extraUITyp>None</extraUITyp>
+         <extraBuildUITyp>None</extraBuildUITyp>
+         <buildingItems length="3">
+            <Item ID="wood">
+               <count>12</count>
+            </Item>
+            <Item ID="tools">
+               <count>5</count>
+            </Item>
+            <Item ID="stone">
+               <count>1</count>
+            </Item>
+         </buildingItems>
+         <spriteBaseName>saltmine</spriteBaseName>
+         <contactRange>0.0</contactRange>
+         <forMarketplace>true</forMarketplace>
+         <maxNumberOfWorker>1</maxNumberOfWorker>
+         <produceTime>70.0</produceTime>
+         <maxOutputStorage>0</maxOutputStorage>
+         <efficiency>1.0</efficiency>
+         <output length="1">
+            <Item ID="grainsalt">
+               <count>1</count>
+            </Item>
+         </output>
+      </mine>
+   </mines>
+   <needstructures>
+      <needstructure ID="marketplace">
+         <Name>
+            <entry lang="English">Marketplace</entry>
+            <entry lang="German">Gemeinschaftsplatz</entry>
+         </Name>
+         <Description>
+            <entry lang="English">Place where people can meet, talk and trade goods.</entry>
+            <entry lang="German">Ort zum Treffen, Reden und Handeln.</entry>
+         </Description>
+         <HoverOver>
+            <entry lang="English">Marketplace</entry>
+            <entry lang="German">Gemeinschaftsplatz</entry>
+         </HoverOver>
+         <canBeBuild>true</canBeBuild>
+         <isWalkable>false</isWalkable>
+         <hasHitbox>false</hasHitbox>
+         <maxHealth>1000.0</maxHealth>
+         <structureRange>17</structureRange>
+         <populationLevel>0</populationLevel>
+         <populationCount>0</populationCount>
+         <structureLevel>0</structureLevel>
+         <tileWidth>4</tileWidth>
+         <tileHeight>5</tileHeight>
+         <canRotate>true</canRotate>
+         <canBeBuildOver>false</canBeBuildOver>
+         <canBeUpgraded>false</canBeUpgraded>
+         <canTakeDamage>false</canTakeDamage>
+         <mustFrontBuildDir>None</mustFrontBuildDir>
+         <canStartBurning>false</canStartBurning>
+         <maintenanceCost>15</maintenanceCost>
+         <buildCost>200</buildCost>
+         <buildTyp>Single</buildTyp>
+         <structureTyp>Blocking</structureTyp>
+         <extraUITyp>None</extraUITyp>
+         <extraBuildUITyp>None</extraBuildUITyp>
+         <buildingItems length="2">
+            <Item ID="wood">
+               <count>10</count>
+            </Item>
+            <Item ID="tools">
+               <count>5</count>
+            </Item>
+         </buildingItems>
+         <spriteBaseName>marketplace</spriteBaseName>
+      </needstructure>
+      <needstructure ID="chapel">
+         <Name>
+            <entry lang="English">Chapel</entry>
+            <entry lang="German">Kapelle</entry>
+         </Name>
+         <Description>
+            <entry lang="English">A holy place.</entry>
+            <entry lang="German">Ein heiliger Platz.</entry>
+         </Description>
+         <HoverOver>
+            <entry lang="English">Chapel</entry>
+            <entry lang="German">Kapelle</entry>
+         </HoverOver>
+         <canBeBuild>true</canBeBuild>
+         <isWalkable>false</isWalkable>
+         <hasHitbox>false</hasHitbox>
+         <maxHealth>150.0</maxHealth>
+         <structureRange>9</structureRange>
+         <populationLevel>0</populationLevel>
+         <populationCount>500</populationCount>
+         <structureLevel>0</structureLevel>
+         <tileWidth>2</tileWidth>
+         <tileHeight>4</tileHeight>
+         <canRotate>true</canRotate>
+         <canBeBuildOver>false</canBeBuildOver>
+         <canBeUpgraded>false</canBeUpgraded>
+         <canTakeDamage>false</canTakeDamage>
+         <mustFrontBuildDir>None</mustFrontBuildDir>
+         <canStartBurning>false</canStartBurning>
+         <maintenanceCost>120</maintenanceCost>
+         <buildCost>1500</buildCost>
+         <buildTyp>Single</buildTyp>
+         <structureTyp>Blocking</structureTyp>
+         <extraUITyp>None</extraUITyp>
+         <extraBuildUITyp>None</extraBuildUITyp>
+         <buildingItems length="2">
+            <Item ID="tools">
+               <count>7</count>
+            </Item>
+            <Item ID="wood">
+               <count>15</count>
+            </Item>
+         </buildingItems>
+         <spriteBaseName>chapel</spriteBaseName>
+      </needstructure>
+      <needstructure ID="inn">
+         <Name>
+            <entry lang="English">Inn</entry>
+            <entry lang="German">Gasthaus</entry>
+         </Name>
+         <Description>
+            <entry lang="English">Place where people meet to drink together and play some games.</entry>
+            <entry lang="German">Platz wo Leuten treffen um zusammen trinken und Spiele zu spielen.</entry>
+         </Description>
+         <HoverOver>
+            <entry lang="English">Inn</entry>
+            <entry lang="German">Gasthaus</entry>
+         </HoverOver>
+         <canBeBuild>true</canBeBuild>
+         <isWalkable>false</isWalkable>
+         <hasHitbox>false</hasHitbox>
+         <maxHealth>250.0</maxHealth>
+         <structureRange>9</structureRange>
+         <populationLevel>0</populationLevel>
+         <populationCount>1250</populationCount>
+         <structureLevel>0</structureLevel>
+         <tileWidth>2</tileWidth>
+         <tileHeight>3</tileHeight>
+         <canRotate>true</canRotate>
+         <canBeBuildOver>false</canBeBuildOver>
+         <canBeUpgraded>false</canBeUpgraded>
+         <canTakeDamage>false</canTakeDamage>
+         <mustFrontBuildDir>None</mustFrontBuildDir>
+         <canStartBurning>false</canStartBurning>
+         <maintenanceCost>225</maintenanceCost>
+         <buildCost>2000</buildCost>
+         <buildTyp>Single</buildTyp>
+         <structureTyp>Blocking</structureTyp>
+         <extraUITyp>None</extraUITyp>
+         <extraBuildUITyp>None</extraBuildUITyp>
+         <buildingItems length="2">
+            <Item ID="tools">
+               <count>15</count>
+            </Item>
+            <Item ID="wood">
+               <count>15</count>
+            </Item>
+         </buildingItems>
+         <spriteBaseName>inn</spriteBaseName>
+      </needstructure>
+      <needstructure ID="cityguardpost">
+         <Name>
+            <entry lang="English">City ​​Guard Post</entry>
+            <entry lang="German">Stadtwache</entry>
+         </Name>
+         <Description>
+            <entry lang="English">Provides a central for the city guard which makes the surrounding area safer.</entry>
+            <entry lang="German">Bietet der Stadtwache eine Stelle von der sie aus die Umgebung sicherer macht.</entry>
+         </Description>
+         <HoverOver>
+            <entry lang="English">City Guard</entry>
+            <entry lang="German">Stadtwache</entry>
+         </HoverOver>
+         <canBeBuild>true</canBeBuild>
+         <isWalkable>false</isWalkable>
+         <hasHitbox>true</hasHitbox>
+         <maxHealth>400.0</maxHealth>
+         <structureRange>20</structureRange>
+         <populationLevel>1</populationLevel>
+         <populationCount>1000</populationCount>
+         <structureLevel>0</structureLevel>
+         <tileWidth>4</tileWidth>
+         <tileHeight>5</tileHeight>
+         <canRotate>true</canRotate>
+         <canBeBuildOver>false</canBeBuildOver>
+         <canBeUpgraded>false</canBeUpgraded>
+         <canTakeDamage>true</canTakeDamage>
+         <mustFrontBuildDir>None</mustFrontBuildDir>
+         <canStartBurning>true</canStartBurning>
+         <maintenanceCost>30</maintenanceCost>
+         <buildCost>4000</buildCost>
+         <buildTyp>Single</buildTyp>
+         <structureTyp>Blocking</structureTyp>
+         <extraUITyp>None</extraUITyp>
+         <extraBuildUITyp>None</extraBuildUITyp>
+         <buildingItems length="3">
+            <Item ID="wood">
+               <count>20</count>
+            </Item>
+            <Item ID="stone">
+               <count>60</count>
+            </Item>
+            <Item ID="tools">
+               <count>10</count>
+            </Item>
+         </buildingItems>
+         <spriteBaseName>cityguardpost</spriteBaseName>
+      </needstructure>
+      <needstructure ID="washhouse">
+         <Name>
+            <entry lang="English">Wash House</entry>
+            <entry lang="German">Waschhaus</entry>
+         </Name>
+         <Description>
+            <entry lang="English">Provides a public space to wash their clothes.</entry>
+            <entry lang="German">Bietet einen öfflichen Platz um die Wäsche zu waschen.</entry>
+         </Description>
+         <canBeBuild>true</canBeBuild>
+         <isWalkable>false</isWalkable>
+         <hasHitbox>false</hasHitbox>
+         <maxHealth>550.0</maxHealth>
+         <structureRange>20</structureRange>
+         <populationLevel>1</populationLevel>
+         <populationCount>1500</populationCount>
+         <structureLevel>0</structureLevel>
+         <tileWidth>3</tileWidth>
+         <tileHeight>4</tileHeight>
+         <canRotate>true</canRotate>
+         <canBeBuildOver>false</canBeBuildOver>
+         <canBeUpgraded>false</canBeUpgraded>
+         <canTakeDamage>true</canTakeDamage>
+         <mustFrontBuildDir>None</mustFrontBuildDir>
+         <canStartBurning>true</canStartBurning>
+         <maintenanceCost>40</maintenanceCost>
+         <buildCost>5500</buildCost>
+         <buildTyp>Single</buildTyp>
+         <structureTyp>Blocking</structureTyp>
+         <extraUITyp>None</extraUITyp>
+         <extraBuildUITyp>None</extraBuildUITyp>
+         <buildingItems length="3">
+            <Item ID="wood">
+               <count>10</count>
+            </Item>
+            <Item ID="tools">
+               <count>15</count>
+            </Item>
+            <Item ID="stone">
+               <count>10</count>
+            </Item>
+         </buildingItems>
+         <spriteBaseName>washhouse</spriteBaseName>
+      </needstructure>
+      <needstructure ID="bathhouse">
+         <Name>
+            <entry lang="English">Bath House</entry>
+            <entry lang="German">Badehaus</entry>
+         </Name>
+         <Description>
+            <entry lang="English">Provides public swimming spaces.</entry>
+            <entry lang="German">Bietet öffentliche Schwimmmöglichkeiten.</entry>
+         </Description>
+         <HoverOver>
+            <entry lang="English">Bath House</entry>
+            <entry lang="German">Badehaus</entry>
+         </HoverOver>
+         <canBeBuild>true</canBeBuild>
+         <isWalkable>false</isWalkable>
+         <hasHitbox>false</hasHitbox>
+         <maxHealth>500.0</maxHealth>
+         <structureRange>30</structureRange>
+         <populationLevel>1</populationLevel>
+         <populationCount>1500</populationCount>
+         <structureLevel>0</structureLevel>
+         <tileWidth>6</tileWidth>
+         <tileHeight>6</tileHeight>
+         <canRotate>true</canRotate>
+         <canBeBuildOver>false</canBeBuildOver>
+         <canBeUpgraded>false</canBeUpgraded>
+         <canTakeDamage>true</canTakeDamage>
+         <mustFrontBuildDir>None</mustFrontBuildDir>
+         <canStartBurning>true</canStartBurning>
+         <maintenanceCost>45</maintenanceCost>
+         <buildCost>5000</buildCost>
+         <buildTyp>Single</buildTyp>
+         <structureTyp>Blocking</structureTyp>
+         <extraUITyp>None</extraUITyp>
+         <extraBuildUITyp>None</extraBuildUITyp>
+         <buildingItems length="2">
+            <Item ID="wood">
+               <count>15</count>
+            </Item>
+            <Item ID="stone">
+               <count>10</count>
+            </Item>
+         </buildingItems>
+         <spriteBaseName>bathhouse</spriteBaseName>
+      </needstructure>
+      <needstructure ID="school">
+         <Name>
+            <entry lang="English">School</entry>
+            <entry lang="German">Schule</entry>
+         </Name>
+         <Description>
+            <entry lang="English">Provides education for children.</entry>
+            <entry lang="German">Bietet Bildung für Kinder.</entry>
+         </Description>
+         <HoverOver>
+            <entry lang="English">School</entry>
+            <entry lang="German">Schule</entry>
+         </HoverOver>
+         <canBeBuild>true</canBeBuild>
+         <isWalkable>false</isWalkable>
+         <hasHitbox>false</hasHitbox>
+         <maxHealth>550.0</maxHealth>
+         <structureRange>32</structureRange>
+         <populationLevel>1</populationLevel>
+         <populationCount>1750</populationCount>
+         <structureLevel>0</structureLevel>
+         <tileWidth>4</tileWidth>
+         <tileHeight>4</tileHeight>
+         <canRotate>true</canRotate>
+         <canBeBuildOver>false</canBeBuildOver>
+         <canBeUpgraded>false</canBeUpgraded>
+         <canTakeDamage>true</canTakeDamage>
+         <mustFrontBuildDir>None</mustFrontBuildDir>
+         <canStartBurning>true</canStartBurning>
+         <maintenanceCost>100</maintenanceCost>
+         <buildCost>6000</buildCost>
+         <buildTyp>Single</buildTyp>
+         <structureTyp>Blocking</structureTyp>
+         <extraUITyp>None</extraUITyp>
+         <extraBuildUITyp>None</extraBuildUITyp>
+         <buildingItems length="2">
+            <Item ID="wood">
+               <count>25</count>
+            </Item>
+            <Item ID="brick">
+               <count>30</count>
+            </Item>
+         </buildingItems>
+         <spriteBaseName>school</spriteBaseName>
+      </needstructure>
+      <needstructure ID="arena">
+         <Name>
+            <entry lang="English">Arena</entry>
+            <entry lang="German">Arena</entry>
+         </Name>
+         <Description>
+            <entry lang="English">Place where fights and other amusements can be found.</entry>
+            <entry lang="German">Platz wo Kämpfe und andere Bespaßungen stattfinden können.</entry>
+         </Description>
+         <HoverOver>
+            <entry lang="English">Arena</entry>
+            <entry lang="German">Arena</entry>
+         </HoverOver>
+         <canBeBuild>true</canBeBuild>
+         <isWalkable>false</isWalkable>
+         <hasHitbox>false</hasHitbox>
+         <maxHealth>800.0</maxHealth>
+         <structureRange>22</structureRange>
+         <populationLevel>2</populationLevel>
+         <populationCount>1500</populationCount>
+         <structureLevel>0</structureLevel>
+         <tileWidth>5</tileWidth>
+         <tileHeight>6</tileHeight>
+         <canRotate>true</canRotate>
+         <canBeBuildOver>false</canBeBuildOver>
+         <canBeUpgraded>false</canBeUpgraded>
+         <canTakeDamage>true</canTakeDamage>
+         <mustFrontBuildDir>None</mustFrontBuildDir>
+         <canStartBurning>true</canStartBurning>
+         <maintenanceCost>70</maintenanceCost>
+         <buildCost>9000</buildCost>
+         <buildTyp>Single</buildTyp>
+         <structureTyp>Blocking</structureTyp>
+         <extraUITyp>None</extraUITyp>
+         <extraBuildUITyp>None</extraBuildUITyp>
+         <buildingItems length="4">
+            <Item ID="wood">
+               <count>30</count>
+            </Item>
+            <Item ID="tools">
+               <count>30</count>
+            </Item>
+            <Item ID="stone">
+               <count>20</count>
+            </Item>
+            <Item ID="brick">
+               <count>20</count>
+            </Item>
+         </buildingItems>
+         <spriteBaseName>arena</spriteBaseName>
+      </needstructure>
+   </needstructures>
+   <productions>
+      <production ID="fishermanshut">
+         <Name>
+            <entry lang="English">Fisherman&apos;s hut</entry>
+            <entry lang="German">Fischerhütte</entry>
+         </Name>
+         <Description>
+            <entry lang="English">Catches Fish to eat.</entry>
+            <entry lang="German">Fischt Fisch zum essen.</entry>
+         </Description>
+         <HoverOver>
+            <entry lang="English">Fisherman</entry>
+            <entry lang="German">Fischer</entry>
+         </HoverOver>
+         <canBeBuild>true</canBeBuild>
+         <isWalkable>false</isWalkable>
+         <hasHitbox>true</hasHitbox>
+         <maxHealth>100.0</maxHealth>
+         <structureRange>0</structureRange>
+         <populationLevel>0</populationLevel>
+         <populationCount>0</populationCount>
+         <structureLevel>0</structureLevel>
+         <tileWidth>3</tileWidth>
+         <tileHeight>4</tileHeight>
+         <buildTileTypes length="3">
+            <tileType length="1">Shore</tileType>
+            <tileType length="1">Shore</tileType>
+            <tileType length="1">Shore</tileType>
+         </buildTileTypes>
+         <canRotate>true</canRotate>
+         <canBeBuildOver>false</canBeBuildOver>
+         <canBeUpgraded>false</canBeUpgraded>
+         <canTakeDamage>true</canTakeDamage>
+         <mustFrontBuildDir>N</mustFrontBuildDir>
+         <canStartBurning>false</canStartBurning>
+         <maintenanceCost>0</maintenanceCost>
+         <buildCost>100</buildCost>
+         <buildTyp>Single</buildTyp>
+         <structureTyp>Blocking</structureTyp>
+         <extraUITyp>None</extraUITyp>
+         <extraBuildUITyp>None</extraBuildUITyp>
+         <buildingItems length="2">
+            <Item ID="wood">
+               <count>3</count>
+            </Item>
+            <Item ID="tools">
+               <count>2</count>
+            </Item>
+         </buildingItems>
+         <spriteBaseName>fishermanshut</spriteBaseName>
+         <contactRange>0.0</contactRange>
+         <forMarketplace>true</forMarketplace>
+         <maxNumberOfWorker>1</maxNumberOfWorker>
+         <produceTime>30.0</produceTime>
+         <maxOutputStorage>5</maxOutputStorage>
+         <efficiency>1.0</efficiency>
+         <output length="1">
+            <Item ID="fish">
+               <count>1</count>
+            </Item>
+         </output>
+         <inputTyp>AND</inputTyp>
+      </production>
+      <production ID="hempweaver">
+         <Name>
+            <entry lang="English">Hemp Weaver&apos;s Hut</entry>
+            <entry lang="German">Hanfweberei</entry>
+         </Name>
+         <Description>
+            <entry lang="English">Uses raw hemp to produce weaved hemp fabric.</entry>
+            <entry lang="German">Benutzt rohen Hanf um gewebten Stoff herzustellen.</entry>
+         </Description>
+         <HoverOver>
+            <entry lang="English">Hemp Weaver</entry>
+            <entry lang="German">Hanfweberei</entry>
+         </HoverOver>
+         <canBeBuild>true</canBeBuild>
+         <isWalkable>false</isWalkable>
+         <hasHitbox>true</hasHitbox>
+         <maxHealth>100.0</maxHealth>
+         <structureRange>15</structureRange>
+         <populationLevel>0</populationLevel>
+         <populationCount>0</populationCount>
+         <structureLevel>0</structureLevel>
+         <tileWidth>2</tileWidth>
+         <tileHeight>2</tileHeight>
+         <canRotate>true</canRotate>
+         <canBeBuildOver>false</canBeBuildOver>
+         <canBeUpgraded>false</canBeUpgraded>
+         <canTakeDamage>true</canTakeDamage>
+         <mustFrontBuildDir>None</mustFrontBuildDir>
+         <canStartBurning>false</canStartBurning>
+         <maintenanceCost>25</maintenanceCost>
+         <buildCost>300</buildCost>
+         <buildTyp>Single</buildTyp>
+         <structureTyp>Blocking</structureTyp>
+         <extraUITyp>None</extraUITyp>
+         <extraBuildUITyp>None</extraBuildUITyp>
+         <buildingItems length="2">
+            <Item ID="wood">
+               <count>15</count>
+            </Item>
+            <Item ID="tools">
+               <count>5</count>
+            </Item>
+         </buildingItems>
+         <spriteBaseName>hempweaver</spriteBaseName>
+         <contactRange>0.0</contactRange>
+         <forMarketplace>true</forMarketplace>
+         <maxNumberOfWorker>1</maxNumberOfWorker>
+         <produceTime>10.0</produceTime>
+         <maxOutputStorage>5</maxOutputStorage>
+         <efficiency>1.0</efficiency>
+         <output length="1">
+            <Item ID="hempfabric">
+               <count>1</count>
+            </Item>
+         </output>
+         <intake length="1">
+            <Item ID="hemp">
+               <count>2</count>
+            </Item>
+         </intake>
+         <inputTyp>AND</inputTyp>
+      </production>
+      <production ID="hemptailor">
+         <Name>
+            <entry lang="English">Hemp Tailor´s Hut</entry>
+            <entry lang="German">Hanfschneider</entry>
+         </Name>
+         <Description>
+            <entry lang="English">Produces hempclothes out of hemp fabric.</entry>
+            <entry lang="German">Produziert Hanfkleidung aus Hanfgewebe.</entry>
+         </Description>
+         <HoverOver>
+            <entry lang="English">Hemp Tailor</entry>
+            <entry lang="German">Hanfschneider</entry>
+         </HoverOver>
+         <canBeBuild>true</canBeBuild>
+         <isWalkable>false</isWalkable>
+         <hasHitbox>true</hasHitbox>
+         <maxHealth>200.0</maxHealth>
+         <structureRange>15</structureRange>
+         <populationLevel>0</populationLevel>
+         <populationCount>0</populationCount>
+         <structureLevel>0</structureLevel>
+         <tileWidth>2</tileWidth>
+         <tileHeight>3</tileHeight>
+         <canRotate>true</canRotate>
+         <canBeBuildOver>false</canBeBuildOver>
+         <canBeUpgraded>false</canBeUpgraded>
+         <canTakeDamage>true</canTakeDamage>
+         <mustFrontBuildDir>None</mustFrontBuildDir>
+         <canStartBurning>false</canStartBurning>
+         <maintenanceCost>40</maintenanceCost>
+         <buildCost>750</buildCost>
+         <buildTyp>Single</buildTyp>
+         <structureTyp>Blocking</structureTyp>
+         <extraUITyp>None</extraUITyp>
+         <extraBuildUITyp>None</extraBuildUITyp>
+         <buildingItems length="2">
+            <Item ID="wood">
+               <count>20</count>
+            </Item>
+            <Item ID="tools">
+               <count>10</count>
+            </Item>
+         </buildingItems>
+         <spriteBaseName>hemptailor</spriteBaseName>
+         <contactRange>0.0</contactRange>
+         <forMarketplace>true</forMarketplace>
+         <maxNumberOfWorker>1</maxNumberOfWorker>
+         <produceTime>10.0</produceTime>
+         <maxOutputStorage>5</maxOutputStorage>
+         <efficiency>1.0</efficiency>
+         <output length="1">
+            <Item ID="hempclothes">
+               <count>1</count>
+            </Item>
+         </output>
+         <intake length="1">
+            <Item ID="hempfabric">
+               <count>1</count>
+            </Item>
+         </intake>
+         <inputTyp>AND</inputTyp>
+      </production>
+      <production ID="distellery">
+         <Name>
+            <entry lang="English">Distellery</entry>
+            <entry lang="German">Brennerei</entry>
+         </Name>
+         <Description>
+            <entry lang="English">Produces Liquor out of either Sugar, Potatoes or Fruit.</entry>
+            <entry lang="German">Produziert Schnaps out of either Kartoffeln, Zucker oder Früchten.</entry>
+         </Description>
+         <HoverOver>
+            <entry lang="English">Distellery</entry>
+            <entry lang="German">Brennerei</entry>
+         </HoverOver>
+         <canBeBuild>true</canBeBuild>
+         <isWalkable>false</isWalkable>
+         <hasHitbox>true</hasHitbox>
+         <maxHealth>200.0</maxHealth>
+         <structureRange>10</structureRange>
+         <populationLevel>0</populationLevel>
+         <populationCount>500</populationCount>
+         <structureLevel>0</structureLevel>
+         <tileWidth>3</tileWidth>
+         <tileHeight>3</tileHeight>
+         <canRotate>true</canRotate>
+         <canBeBuildOver>false</canBeBuildOver>
+         <canBeUpgraded>false</canBeUpgraded>
+         <canTakeDamage>true</canTakeDamage>
+         <mustFrontBuildDir>None</mustFrontBuildDir>
+         <canStartBurning>false</canStartBurning>
+         <maintenanceCost>50</maintenanceCost>
+         <buildCost>500</buildCost>
+         <buildTyp>Single</buildTyp>
+         <structureTyp>Blocking</structureTyp>
+         <extraUITyp>None</extraUITyp>
+         <extraBuildUITyp>None</extraBuildUITyp>
+         <buildingItems length="2">
+            <Item ID="wood">
+               <count>5</count>
+            </Item>
+            <Item ID="tools">
+               <count>5</count>
+            </Item>
+         </buildingItems>
+         <spriteBaseName>distellery</spriteBaseName>
+         <contactRange>0.0</contactRange>
+         <forMarketplace>true</forMarketplace>
+         <maxNumberOfWorker>1</maxNumberOfWorker>
+         <produceTime>45.0</produceTime>
+         <maxOutputStorage>5</maxOutputStorage>
+         <efficiency>1.0</efficiency>
+         <output length="1">
+            <Item ID="liquor">
+               <count>1</count>
+            </Item>
+         </output>
+         <intake length="3">
+            <Item ID="potatoes">
+               <count>1</count>
+            </Item>
+            <Item ID="sugar">
+               <count>1</count>
+            </Item>
+            <Item ID="fruits">
+               <count>1</count>
+            </Item>
+         </intake>
+         <inputTyp>OR</inputTyp>
+      </production>
+      <production ID="bakery">
+         <Name>
+            <entry lang="English">Bakery</entry>
+            <entry lang="German">Bäckerei</entry>
+         </Name>
+         <Description>
+            <entry lang="English">Consums flour to make bread.</entry>
+            <entry lang="German">Produziert aus Mehl Brot.</entry>
+         </Description>
+         <HoverOver>
+            <entry lang="English">Bakery</entry>
+            <entry lang="German">Bäckerei</entry>
+         </HoverOver>
+         <canBeBuild>true</canBeBuild>
+         <isWalkable>false</isWalkable>
+         <hasHitbox>true</hasHitbox>
+         <maxHealth>75.0</maxHealth>
+         <structureRange>0</structureRange>
+         <populationLevel>1</populationLevel>
+         <populationCount>0</populationCount>
+         <structureLevel>0</structureLevel>
+         <tileWidth>3</tileWidth>
+         <tileHeight>2</tileHeight>
+         <canRotate>true</canRotate>
+         <canBeBuildOver>false</canBeBuildOver>
+         <canBeUpgraded>false</canBeUpgraded>
+         <canTakeDamage>true</canTakeDamage>
+         <mustFrontBuildDir>None</mustFrontBuildDir>
+         <canStartBurning>false</canStartBurning>
+         <maintenanceCost>100</maintenanceCost>
+         <buildCost>500</buildCost>
+         <buildTyp>Single</buildTyp>
+         <structureTyp>Blocking</structureTyp>
+         <extraUITyp>None</extraUITyp>
+         <extraBuildUITyp>None</extraBuildUITyp>
+         <buildingItems length="3">
+            <Item ID="wood">
+               <count>5</count>
+            </Item>
+            <Item ID="tools">
+               <count>4</count>
+            </Item>
+            <Item ID="stone">
+               <count>1</count>
+            </Item>
+         </buildingItems>
+         <spriteBaseName>bakery</spriteBaseName>
+         <contactRange>0.0</contactRange>
+         <forMarketplace>true</forMarketplace>
+         <maxNumberOfWorker>1</maxNumberOfWorker>
+         <produceTime>20.0</produceTime>
+         <maxOutputStorage>5</maxOutputStorage>
+         <efficiency>1.0</efficiency>
+         <output length="1">
+            <Item ID="bread">
+               <count>1</count>
+            </Item>
+         </output>
+         <intake length="1">
+            <Item ID="flour">
+               <count>1</count>
+            </Item>
+         </intake>
+         <inputTyp>AND</inputTyp>
+      </production>
+      <production ID="flourmill">
+         <Name>
+            <entry lang="English">Flour Mill</entry>
+            <entry lang="German">Getreidemühle</entry>
+         </Name>
+         <Description>
+            <entry lang="English">Consums wheat to produce flour.</entry>
+            <entry lang="German">Verbraucht Getreide um Mehl zu erstellen.</entry>
+         </Description>
+         <HoverOver>
+            <entry lang="English">Flour Mill</entry>
+            <entry lang="German">Getreidemühle</entry>
+         </HoverOver>
+         <canBeBuild>true</canBeBuild>
+         <isWalkable>false</isWalkable>
+         <hasHitbox>true</hasHitbox>
+         <maxHealth>200.0</maxHealth>
+         <structureRange>8</structureRange>
+         <populationLevel>1</populationLevel>
+         <populationCount>0</populationCount>
+         <structureLevel>0</structureLevel>
+         <tileWidth>3</tileWidth>
+         <tileHeight>3</tileHeight>
+         <canRotate>true</canRotate>
+         <canBeBuildOver>false</canBeBuildOver>
+         <canBeUpgraded>false</canBeUpgraded>
+         <canTakeDamage>true</canTakeDamage>
+         <mustFrontBuildDir>None</mustFrontBuildDir>
+         <canStartBurning>false</canStartBurning>
+         <maintenanceCost>50</maintenanceCost>
+         <buildCost>1500</buildCost>
+         <buildTyp>Single</buildTyp>
+         <structureTyp>Blocking</structureTyp>
+         <extraUITyp>None</extraUITyp>
+         <extraBuildUITyp>None</extraBuildUITyp>
+         <buildingItems length="3">
+            <Item ID="wood">
+               <count>10</count>
+            </Item>
+            <Item ID="tools">
+               <count>5</count>
+            </Item>
+            <Item ID="stone">
+               <count>4</count>
+            </Item>
+         </buildingItems>
+         <spriteBaseName>flourmill</spriteBaseName>
+         <contactRange>0.0</contactRange>
+         <forMarketplace>true</forMarketplace>
+         <maxNumberOfWorker>1</maxNumberOfWorker>
+         <produceTime>25.0</produceTime>
+         <maxOutputStorage>5</maxOutputStorage>
+         <efficiency>1.0</efficiency>
+         <output length="1">
+            <Item ID="flour">
+               <count>1</count>
+            </Item>
+         </output>
+         <intake length="1">
+            <Item ID="wheat">
+               <count>2</count>
+            </Item>
+         </intake>
+         <inputTyp>AND</inputTyp>
+      </production>
+      <production ID="ironsmelter">
+         <Name>
+            <entry lang="English">Iron Smelter</entry>
+            <entry lang="German">Eisenerzschmelze</entry>
+         </Name>
+         <Description>
+            <entry lang="English">Uses coal and iron ore to produce iron ingots.</entry>
+            <entry lang="German">Benötigt Kohle und Eisenerz um Eisenrohling zuerstellen.</entry>
+         </Description>
+         <HoverOver>
+            <entry lang="English">Iron Smelter</entry>
+            <entry lang="German">Eisenerzschmelze</entry>
+         </HoverOver>
+         <canBeBuild>true</canBeBuild>
+         <isWalkable>false</isWalkable>
+         <hasHitbox>true</hasHitbox>
+         <maxHealth>350.0</maxHealth>
+         <structureRange>7</structureRange>
+         <populationLevel>1</populationLevel>
+         <populationCount>750</populationCount>
+         <structureLevel>0</structureLevel>
+         <tileWidth>3</tileWidth>
+         <tileHeight>3</tileHeight>
+         <canRotate>true</canRotate>
+         <canBeBuildOver>false</canBeBuildOver>
+         <canBeUpgraded>false</canBeUpgraded>
+         <canTakeDamage>true</canTakeDamage>
+         <mustFrontBuildDir>None</mustFrontBuildDir>
+         <canStartBurning>false</canStartBurning>
+         <maintenanceCost>100</maintenanceCost>
+         <buildCost>1250</buildCost>
+         <buildTyp>Single</buildTyp>
+         <structureTyp>Blocking</structureTyp>
+         <extraUITyp>None</extraUITyp>
+         <extraBuildUITyp>None</extraBuildUITyp>
+         <buildingItems length="3">
+            <Item ID="wood">
+               <count>8</count>
+            </Item>
+            <Item ID="tools">
+               <count>10</count>
+            </Item>
+            <Item ID="stone">
+               <count>5</count>
+            </Item>
+         </buildingItems>
+         <spriteBaseName>ironsmelter</spriteBaseName>
+         <contactRange>0.0</contactRange>
+         <forMarketplace>true</forMarketplace>
+         <maxNumberOfWorker>1</maxNumberOfWorker>
+         <produceTime>45.0</produceTime>
+         <maxOutputStorage>5</maxOutputStorage>
+         <efficiency>1.0</efficiency>
+         <output length="1">
+            <Item ID="ironingots">
+               <count>1</count>
+            </Item>
+         </output>
+         <intake length="2">
+            <Item ID="ironore">
+               <count>1</count>
+            </Item>
+            <Item ID="coal">
+               <count>1</count>
+            </Item>
+         </intake>
+         <inputTyp>AND</inputTyp>
+      </production>
+      <production ID="saltmill">
+         <Name>
+            <entry lang="English">Salt Mill</entry>
+            <entry lang="German">Salzmühle</entry>
+         </Name>
+         <Description>
+            <entry lang="English">Millt grain salt to produce salt.</entry>
+            <entry lang="German">Mahlt grobes Salz zu Salz.</entry>
+         </Description>
+         <HoverOver>
+            <entry lang="English">Salt Mill</entry>
+            <entry lang="German">Salzmühle</entry>
+         </HoverOver>
+         <canBeBuild>true</canBeBuild>
+         <isWalkable>false</isWalkable>
+         <hasHitbox>true</hasHitbox>
+         <maxHealth>150.0</maxHealth>
+         <structureRange>9</structureRange>
+         <populationLevel>1</populationLevel>
+         <populationCount>750</populationCount>
+         <structureLevel>0</structureLevel>
+         <tileWidth>3</tileWidth>
+         <tileHeight>3</tileHeight>
+         <canRotate>true</canRotate>
+         <canBeBuildOver>false</canBeBuildOver>
+         <canBeUpgraded>false</canBeUpgraded>
+         <canTakeDamage>true</canTakeDamage>
+         <mustFrontBuildDir>None</mustFrontBuildDir>
+         <canStartBurning>false</canStartBurning>
+         <maintenanceCost>45</maintenanceCost>
+         <buildCost>1400</buildCost>
+         <buildTyp>Single</buildTyp>
+         <structureTyp>Blocking</structureTyp>
+         <extraUITyp>None</extraUITyp>
+         <extraBuildUITyp>None</extraBuildUITyp>
+         <buildingItems length="3">
+            <Item ID="wood">
+               <count>12</count>
+            </Item>
+            <Item ID="tools">
+               <count>4</count>
+            </Item>
+            <Item ID="stone">
+               <count>2</count>
+            </Item>
+         </buildingItems>
+         <spriteBaseName>saltmill</spriteBaseName>
+         <contactRange>0.0</contactRange>
+         <forMarketplace>true</forMarketplace>
+         <maxNumberOfWorker>1</maxNumberOfWorker>
+         <produceTime>180.0</produceTime>
+         <maxOutputStorage>5</maxOutputStorage>
+         <efficiency>1.0</efficiency>
+         <output length="1">
+            <Item ID="salt">
+               <count>2</count>
+            </Item>
+         </output>
+         <intake length="1">
+            <Item ID="grainsalt">
+               <count>1</count>
+            </Item>
+         </intake>
+         <inputTyp>AND</inputTyp>
+      </production>
+      <production ID="cheesedairy">
+         <Name>
+            <entry lang="English">Cheese Dairy</entry>
+            <entry lang="German">Käserei</entry>
+         </Name>
+         <Description>
+            <entry lang="English">Uses Milk to produce Cheese.</entry>
+            <entry lang="German">Braucht Milch um Käse zu erstellen.</entry>
+         </Description>
+         <HoverOver>
+            <entry lang="English">Cheese Dairy</entry>
+            <entry lang="German">Käserei</entry>
+         </HoverOver>
+         <canBeBuild>true</canBeBuild>
+         <isWalkable>false</isWalkable>
+         <hasHitbox>true</hasHitbox>
+         <maxHealth>450.0</maxHealth>
+         <structureRange>9</structureRange>
+         <populationLevel>1</populationLevel>
+         <populationCount>750</populationCount>
+         <structureLevel>0</structureLevel>
+         <tileWidth>3</tileWidth>
+         <tileHeight>4</tileHeight>
+         <canRotate>true</canRotate>
+         <canBeBuildOver>false</canBeBuildOver>
+         <canBeUpgraded>false</canBeUpgraded>
+         <canTakeDamage>true</canTakeDamage>
+         <mustFrontBuildDir>None</mustFrontBuildDir>
+         <canStartBurning>false</canStartBurning>
+         <maintenanceCost>150</maintenanceCost>
+         <buildCost>1500</buildCost>
+         <buildTyp>Single</buildTyp>
+         <structureTyp>Blocking</structureTyp>
+         <extraUITyp>None</extraUITyp>
+         <extraBuildUITyp>None</extraBuildUITyp>
+         <buildingItems length="3">
+            <Item ID="wood">
+               <count>6</count>
+            </Item>
+            <Item ID="tools">
+               <count>4</count>
+            </Item>
+            <Item ID="stone">
+               <count>9</count>
+            </Item>
+         </buildingItems>
+         <spriteBaseName>cheesedairy</spriteBaseName>
+         <contactRange>0.0</contactRange>
+         <forMarketplace>true</forMarketplace>
+         <maxNumberOfWorker>1</maxNumberOfWorker>
+         <produceTime>35.0</produceTime>
+         <maxOutputStorage>5</maxOutputStorage>
+         <efficiency>1.0</efficiency>
+         <output length="1">
+            <Item ID="cheese">
+               <count>1</count>
+            </Item>
+         </output>
+         <intake length="1">
+            <Item ID="milk">
+               <count>2</count>
+            </Item>
+         </intake>
+         <inputTyp>AND</inputTyp>
+      </production>
+      <production ID="toolmakersworkshop">
+         <Name>
+            <entry lang="English">Toolmaker&apos;s Workshop</entry>
+            <entry lang="German">Werkzeugemacher</entry>
+         </Name>
+         <Description>
+            <entry lang="English">Uses iron ingots to produce tools.</entry>
+            <entry lang="German">Produzirt aus Eisenerzrohlingen Werkzeuge.</entry>
+         </Description>
+         <HoverOver>
+            <entry lang="English">Toolmaker&apos;s Workshop</entry>
+            <entry lang="German">Werkzeugemacher</entry>
+         </HoverOver>
+         <canBeBuild>true</canBeBuild>
+         <isWalkable>false</isWalkable>
+         <hasHitbox>true</hasHitbox>
+         <maxHealth>250.0</maxHealth>
+         <structureRange>5</structureRange>
+         <populationLevel>1</populationLevel>
+         <populationCount>750</populationCount>
+         <structureLevel>0</structureLevel>
+         <tileWidth>2</tileWidth>
+         <tileHeight>3</tileHeight>
+         <canRotate>true</canRotate>
+         <canBeBuildOver>false</canBeBuildOver>
+         <canBeUpgraded>false</canBeUpgraded>
+         <canTakeDamage>true</canTakeDamage>
+         <mustFrontBuildDir>None</mustFrontBuildDir>
+         <canStartBurning>false</canStartBurning>
+         <maintenanceCost>75</maintenanceCost>
+         <buildCost>750</buildCost>
+         <buildTyp>Single</buildTyp>
+         <structureTyp>Blocking</structureTyp>
+         <extraUITyp>None</extraUITyp>
+         <extraBuildUITyp>None</extraBuildUITyp>
+         <buildingItems length="3">
+            <Item ID="wood">
+               <count>5</count>
+            </Item>
+            <Item ID="tools">
+               <count>5</count>
+            </Item>
+            <Item ID="stone">
+               <count>5</count>
+            </Item>
+         </buildingItems>
+         <spriteBaseName>toolmakersworkshop</spriteBaseName>
+         <contactRange>0.0</contactRange>
+         <forMarketplace>true</forMarketplace>
+         <maxNumberOfWorker>1</maxNumberOfWorker>
+         <produceTime>22.5</produceTime>
+         <maxOutputStorage>5</maxOutputStorage>
+         <efficiency>1.0</efficiency>
+         <output length="1">
+            <Item ID="tools">
+               <count>1</count>
+            </Item>
+         </output>
+         <intake length="1">
+            <Item ID="ironingots">
+               <count>1</count>
+            </Item>
+         </intake>
+         <inputTyp>AND</inputTyp>
+      </production>
+      <production ID="pigbutcher">
+         <Name>
+            <entry lang="English">Pig Butcher</entry>
+            <entry lang="German">Schweinemetzger</entry>
+         </Name>
+         <Description>
+            <entry lang="English">Butchers pigs to produce pig-meat and leather.</entry>
+            <entry lang="German">Schlachtet Schweine um Schweinefleish und Leder zu produzieren.</entry>
+         </Description>
+         <HoverOver>
+            <entry lang="English">Pig Butcher</entry>
+            <entry lang="German">Schweinemetzger</entry>
+         </HoverOver>
+         <canBeBuild>true</canBeBuild>
+         <isWalkable>false</isWalkable>
+         <hasHitbox>true</hasHitbox>
+         <maxHealth>500.0</maxHealth>
+         <structureRange>9</structureRange>
+         <populationLevel>1</populationLevel>
+         <populationCount>1500</populationCount>
+         <structureLevel>0</structureLevel>
+         <tileWidth>3</tileWidth>
+         <tileHeight>4</tileHeight>
+         <canRotate>true</canRotate>
+         <canBeBuildOver>false</canBeBuildOver>
+         <canBeUpgraded>false</canBeUpgraded>
+         <canTakeDamage>true</canTakeDamage>
+         <mustFrontBuildDir>None</mustFrontBuildDir>
+         <canStartBurning>false</canStartBurning>
+         <maintenanceCost>160</maintenanceCost>
+         <buildCost>1700</buildCost>
+         <buildTyp>Single</buildTyp>
+         <structureTyp>Blocking</structureTyp>
+         <extraUITyp>None</extraUITyp>
+         <extraBuildUITyp>None</extraBuildUITyp>
+         <buildingItems length="3">
+            <Item ID="wood">
+               <count>10</count>
+            </Item>
+            <Item ID="tools">
+               <count>4</count>
+            </Item>
+            <Item ID="stone">
+               <count>12</count>
+            </Item>
+         </buildingItems>
+         <spriteBaseName>pigbutcher</spriteBaseName>
+         <contactRange>0.0</contactRange>
+         <forMarketplace>true</forMarketplace>
+         <maxNumberOfWorker>1</maxNumberOfWorker>
+         <produceTime>45.0</produceTime>
+         <maxOutputStorage>5</maxOutputStorage>
+         <efficiency>1.0</efficiency>
+         <output length="2">
+            <Item ID="pork">
+               <count>2</count>
+            </Item>
+            <Item ID="leather">
+               <count>1</count>
+            </Item>
+         </output>
+         <intake length="1">
+            <Item ID="pig">
+               <count>2</count>
+            </Item>
+         </intake>
+         <inputTyp>AND</inputTyp>
+      </production>
+      <production ID="ropery">
+         <Name>
+            <entry lang="English">Ropery</entry>
+            <entry lang="German">Seilerei</entry>
+         </Name>
+         <Description>
+            <entry lang="English">Creates Ropes.</entry>
+            <entry lang="German">Stellt Seile her.</entry>
+         </Description>
+         <canBeBuild>true</canBeBuild>
+         <isWalkable>false</isWalkable>
+         <hasHitbox>true</hasHitbox>
+         <maxHealth>500.0</maxHealth>
+         <structureRange>15</structureRange>
+         <populationLevel>1</populationLevel>
+         <populationCount>1500</populationCount>
+         <structureLevel>0</structureLevel>
+         <tileWidth>3</tileWidth>
+         <tileHeight>3</tileHeight>
+         <canRotate>true</canRotate>
+         <canBeBuildOver>false</canBeBuildOver>
+         <canBeUpgraded>false</canBeUpgraded>
+         <canTakeDamage>true</canTakeDamage>
+         <mustFrontBuildDir>None</mustFrontBuildDir>
+         <canStartBurning>false</canStartBurning>
+         <maintenanceCost>30</maintenanceCost>
+         <buildCost>2500</buildCost>
+         <buildTyp>Single</buildTyp>
+         <structureTyp>Blocking</structureTyp>
+         <extraUITyp>None</extraUITyp>
+         <extraBuildUITyp>None</extraBuildUITyp>
+         <buildingItems length="2">
+            <Item ID="wood">
+               <count>10</count>
+            </Item>
+            <Item ID="tools">
+               <count>5</count>
+            </Item>
+         </buildingItems>
+         <spriteBaseName>ropery</spriteBaseName>
+         <contactRange>0.0</contactRange>
+         <forMarketplace>true</forMarketplace>
+         <maxNumberOfWorker>1</maxNumberOfWorker>
+         <produceTime>30.0</produceTime>
+         <maxOutputStorage>5</maxOutputStorage>
+         <efficiency>1.0</efficiency>
+         <output length="1">
+            <Item ID="sail">
+               <count>1</count>
+            </Item>
+         </output>
+         <intake length="1">
+            <Item ID="hemp">
+               <count>2</count>
+            </Item>
+         </intake>
+         <inputTyp>AND</inputTyp>
+      </production>
+   </productions>
+   <warehouses>
+      <warehouse ID="warehouse1">
+         <Name>
+            <entry lang="English">Warehouse I</entry>
+            <entry lang="German">Kontor I</entry>
+         </Name>
+         <Description>
+            <entry lang="English">First structure of any City and it is used to trade with Ships.</entry>
+            <entry lang="German">Das erste Gebäude einer Stadt und wird dazu genutzt mit Schiffen zu handeln.</entry>
+         </Description>
+         <HoverOver>
+            <entry lang="English">Warehouse</entry>
+            <entry lang="German">Kontor</entry>
+         </HoverOver>
+         <canBeBuild>true</canBeBuild>
+         <isWalkable>false</isWalkable>
+         <hasHitbox>true</hasHitbox>
+         <maxHealth>1000.0</maxHealth>
+         <structureRange>18</structureRange>
+         <populationLevel>0</populationLevel>
+         <populationCount>0</populationCount>
+         <structureLevel>0</structureLevel>
+         <tileWidth>4</tileWidth>
+         <tileHeight>4</tileHeight>
+         <buildTileTypes length="4">
+            <tileType length="4">Shore, Shore, Shore, Shore</tileType>
+            <tileType length="4">BuildLand, BuildLand, BuildLand, BuildLand</tileType>
+            <tileType length="4">BuildLand, BuildLand, BuildLand, BuildLand</tileType>
+            <tileType length="4">BuildLand, BuildLand, BuildLand, BuildLand</tileType>
+         </buildTileTypes>
+         <canRotate>true</canRotate>
+         <canBeBuildOver>false</canBeBuildOver>
+         <canBeUpgraded>true</canBeUpgraded>
+         <canTakeDamage>true</canTakeDamage>
+         <mustFrontBuildDir>W</mustFrontBuildDir>
+         <canStartBurning>false</canStartBurning>
+         <maintenanceCost>10</maintenanceCost>
+         <buildCost>300</buildCost>
+         <buildTyp>Single</buildTyp>
+         <structureTyp>Blocking</structureTyp>
+         <extraUITyp>Range</extraUITyp>
+         <extraBuildUITyp>None</extraBuildUITyp>
+         <buildingItems length="2">
+            <Item ID="wood">
+               <count>3</count>
+            </Item>
+            <Item ID="tools">
+               <count>2</count>
+            </Item>
+         </buildingItems>
+         <spriteBaseName>warehouse</spriteBaseName>
+         <contactRange>6.3</contactRange>
+         <forMarketplace>true</forMarketplace>
+         <maxNumberOfWorker>1</maxNumberOfWorker>
+         <produceTime>0.0</produceTime>
+         <maxOutputStorage>0</maxOutputStorage>
+         <efficiency>1.0</efficiency>
+         <takeOverStartGoal>100.0</takeOverStartGoal>
+      </warehouse>
+   </warehouses>
+   <homes>
+      <home ID="peasanthouse">
+         <Name>
+            <entry lang="English">Peasant house</entry>
+            <entry lang="German">Bauernhaus</entry>
+         </Name>
+         <Description>
+            <entry lang="English">Peasant lives here.</entry>
+            <entry lang="German">Bauern wohnen hier.</entry>
+         </Description>
+         <HoverOver>
+            <entry lang="English">Peasant </entry>
+            <entry lang="German">Bauern</entry>
+         </HoverOver>
+         <canBeBuild>true</canBeBuild>
+         <isWalkable>false</isWalkable>
+         <hasHitbox>true</hasHitbox>
+         <maxHealth>50.0</maxHealth>
+         <structureRange>0</structureRange>
+         <populationLevel>0</populationLevel>
+         <populationCount>0</populationCount>
+         <structureLevel>0</structureLevel>
+         <tileWidth>2</tileWidth>
+         <tileHeight>2</tileHeight>
+         <canRotate>true</canRotate>
+         <canBeBuildOver>false</canBeBuildOver>
+         <canBeUpgraded>false</canBeUpgraded>
+         <canTakeDamage>true</canTakeDamage>
+         <mustFrontBuildDir>None</mustFrontBuildDir>
+         <canStartBurning>false</canStartBurning>
+         <maintenanceCost>0</maintenanceCost>
+         <buildCost>0</buildCost>
+         <buildTyp>Drag</buildTyp>
+         <structureTyp>Blocking</structureTyp>
+         <extraUITyp>Upgrade</extraUITyp>
+         <extraBuildUITyp>None</extraBuildUITyp>
+         <buildingItems length="1">
+            <Item ID="wood">
+               <count>2</count>
+            </Item>
+         </buildingItems>
+         <spriteBaseName>peasanthouse</spriteBaseName>
+         <maxLivingSpaces>8</maxLivingSpaces>
+         <increaseTime>1.0</increaseTime>
+         <decreaseTime>2.0</decreaseTime>
+      </home>
+      <home ID="citizenhouse">
+         <Name>
+            <entry lang="English">Citizen house</entry>
+            <entry lang="German">Bürgerhaus</entry>
+         </Name>
+         <Description>
+            <entry lang="English">Citizen lives here.</entry>
+            <entry lang="German">Bürger leben hier.</entry>
+         </Description>
+         <HoverOver>
+            <entry lang="English">Citizen </entry>
+            <entry lang="German">Bürger </entry>
+         </HoverOver>
+         <canBeBuild>false</canBeBuild>
+         <isWalkable>false</isWalkable>
+         <hasHitbox>true</hasHitbox>
+         <maxHealth>50.0</maxHealth>
+         <structureRange>0</structureRange>
+         <populationLevel>1</populationLevel>
+         <populationCount>0</populationCount>
+         <structureLevel>0</structureLevel>
+         <tileWidth>2</tileWidth>
+         <tileHeight>2</tileHeight>
+         <canRotate>true</canRotate>
+         <canBeBuildOver>false</canBeBuildOver>
+         <canBeUpgraded>false</canBeUpgraded>
+         <canTakeDamage>true</canTakeDamage>
+         <mustFrontBuildDir>None</mustFrontBuildDir>
+         <canStartBurning>false</canStartBurning>
+         <maintenanceCost>0</maintenanceCost>
+         <buildCost>0</buildCost>
+         <buildTyp>Drag</buildTyp>
+         <structureTyp>Blocking</structureTyp>
+         <extraUITyp>Upgrade</extraUITyp>
+         <extraBuildUITyp>None</extraBuildUITyp>
+         <buildingItems length="2">
+            <Item ID="wood">
+               <count>1</count>
+            </Item>
+            <Item ID="tools">
+               <count>1</count>
+            </Item>
+         </buildingItems>
+         <spriteBaseName>citizenhouse</spriteBaseName>
+         <maxLivingSpaces>0</maxLivingSpaces>
+         <increaseTime>2.0</increaseTime>
+         <decreaseTime>4.0</decreaseTime>
+      </home>
+      <home ID="patricianhouse">
+         <Name>
+            <entry lang="English">Patrician house</entry>
+            <entry lang="German">Patrizierhaus</entry>
+         </Name>
+         <Description>
+            <entry lang="English">Patrician lives here.</entry>
+            <entry lang="German">Patrizier leben hier.</entry>
+         </Description>
+         <HoverOver>
+            <entry lang="English">Patrician </entry>
+            <entry lang="German">Patrizier </entry>
+         </HoverOver>
+         <canBeBuild>false</canBeBuild>
+         <isWalkable>false</isWalkable>
+         <hasHitbox>true</hasHitbox>
+         <maxHealth>50.0</maxHealth>
+         <structureRange>0</structureRange>
+         <populationLevel>2</populationLevel>
+         <populationCount>0</populationCount>
+         <structureLevel>0</structureLevel>
+         <tileWidth>2</tileWidth>
+         <tileHeight>2</tileHeight>
+         <canRotate>true</canRotate>
+         <canBeBuildOver>false</canBeBuildOver>
+         <canBeUpgraded>false</canBeUpgraded>
+         <canTakeDamage>true</canTakeDamage>
+         <mustFrontBuildDir>None</mustFrontBuildDir>
+         <canStartBurning>false</canStartBurning>
+         <maintenanceCost>0</maintenanceCost>
+         <buildCost>0</buildCost>
+         <buildTyp>Drag</buildTyp>
+         <structureTyp>Blocking</structureTyp>
+         <extraUITyp>Upgrade</extraUITyp>
+         <extraBuildUITyp>None</extraBuildUITyp>
+         <buildingItems length="3">
+            <Item ID="wood">
+               <count>1</count>
+            </Item>
+            <Item ID="tools">
+               <count>1</count>
+            </Item>
+            <Item ID="stone">
+               <count>4</count>
+            </Item>
+         </buildingItems>
+         <spriteBaseName>patricianhouse</spriteBaseName>
+         <maxLivingSpaces>0</maxLivingSpaces>
+         <increaseTime>3.0</increaseTime>
+         <decreaseTime>6.0</decreaseTime>
+      </home>
+      <home ID="noblemanhouse">
+         <Name>
+            <entry lang="English">Nobleman house</entry>
+            <entry lang="German">Adligenhaus</entry>
+         </Name>
+         <Description>
+            <entry lang="English">Nobleman lives here.</entry>
+            <entry lang="German">Adlige leben hier.</entry>
+         </Description>
+         <HoverOver>
+            <entry lang="English">Nobleman </entry>
+            <entry lang="German">Adlige </entry>
+         </HoverOver>
+         <canBeBuild>false</canBeBuild>
+         <isWalkable>false</isWalkable>
+         <hasHitbox>true</hasHitbox>
+         <maxHealth>50.0</maxHealth>
+         <structureRange>0</structureRange>
+         <populationLevel>3</populationLevel>
+         <populationCount>0</populationCount>
+         <structureLevel>0</structureLevel>
+         <tileWidth>2</tileWidth>
+         <tileHeight>2</tileHeight>
+         <canRotate>true</canRotate>
+         <canBeBuildOver>false</canBeBuildOver>
+         <canBeUpgraded>false</canBeUpgraded>
+         <canTakeDamage>true</canTakeDamage>
+         <mustFrontBuildDir>None</mustFrontBuildDir>
+         <canStartBurning>false</canStartBurning>
+         <maintenanceCost>0</maintenanceCost>
+         <buildCost>0</buildCost>
+         <buildTyp>Drag</buildTyp>
+         <structureTyp>Blocking</structureTyp>
+         <extraUITyp>Upgrade</extraUITyp>
+         <extraBuildUITyp>None</extraBuildUITyp>
+         <buildingItems length="4">
+            <Item ID="wood">
+               <count>1</count>
+            </Item>
+            <Item ID="tools">
+               <count>1</count>
+            </Item>
+            <Item ID="stone">
+               <count>3</count>
+            </Item>
+            <Item ID="glas">
+               <count>3</count>
+            </Item>
+         </buildingItems>
+         <spriteBaseName>noblemanhouse</spriteBaseName>
+         <maxLivingSpaces>0</maxLivingSpaces>
+         <increaseTime>4.0</increaseTime>
+         <decreaseTime>8.0</decreaseTime>
+      </home>
+   </homes>
+   <militarystructures>
+      <militarystructure ID="shipyard">
+         <Name>
+            <entry lang="English">Shipyard</entry>
+            <entry lang="German">Werft</entry>
+         </Name>
+         <Description>
+            <entry lang="English">Builds ships.</entry>
+            <entry lang="German">Baut Schiffe.</entry>
+         </Description>
+         <HoverOver>
+            <entry lang="English">Shipyard</entry>
+            <entry lang="German">Werft</entry>
+         </HoverOver>
+         <canBeBuild>true</canBeBuild>
+         <isWalkable>false</isWalkable>
+         <hasHitbox>false</hasHitbox>
+         <maxHealth>5000.0</maxHealth>
+         <structureRange>0</structureRange>
+         <populationLevel>1</populationLevel>
+         <populationCount>0</populationCount>
+         <structureLevel>0</structureLevel>
+         <tileWidth>3</tileWidth>
+         <tileHeight>4</tileHeight>
+         <canRotate>true</canRotate>
+         <canBeBuildOver>false</canBeBuildOver>
+         <canBeUpgraded>false</canBeUpgraded>
+         <canTakeDamage>true</canTakeDamage>
+         <mustFrontBuildDir>E</mustFrontBuildDir>
+         <canStartBurning>false</canStartBurning>
+         <maintenanceCost>50</maintenanceCost>
+         <buildCost>1500</buildCost>
+         <buildTyp>Single</buildTyp>
+         <structureTyp>Blocking</structureTyp>
+         <extraUITyp>None</extraUITyp>
+         <extraBuildUITyp>None</extraBuildUITyp>
+         <buildingItems length="3">
+            <Item ID="wood">
+               <count>10</count>
+            </Item>
+            <Item ID="tools">
+               <count>5</count>
+            </Item>
+            <Item ID="stone">
+               <count>5</count>
+            </Item>
+         </buildingItems>
+         <spriteBaseName>shipyard</spriteBaseName>
+         <canBeBuildUnits length="1">
+            <Unit>ship</Unit>
+         </canBeBuildUnits>
+         <buildTimeModifier>1.0</buildTimeModifier>
+         <buildQueueLength>1</buildQueueLength>
+         <damage>0</damage>
+      </militarystructure>
+      <militarystructure ID="fort">
+         <Name>
+            <entry lang="English">Fort</entry>
+            <entry lang="German">Kastell</entry>
+         </Name>
+         <Description>
+            <entry lang="English">Can train Units.</entry>
+            <entry lang="German">Kann Einheiten ausbilden.</entry>
+         </Description>
+         <HoverOver>
+            <entry lang="English">Fort</entry>
+            <entry lang="German">Kastell</entry>
+         </HoverOver>
+         <canBeBuild>true</canBeBuild>
+         <isWalkable>false</isWalkable>
+         <hasHitbox>true</hasHitbox>
+         <maxHealth>2500.0</maxHealth>
+         <structureRange>0</structureRange>
+         <populationLevel>1</populationLevel>
+         <populationCount>0</populationCount>
+         <structureLevel>0</structureLevel>
+         <tileWidth>3</tileWidth>
+         <tileHeight>3</tileHeight>
+         <canRotate>true</canRotate>
+         <canBeBuildOver>false</canBeBuildOver>
+         <canBeUpgraded>false</canBeUpgraded>
+         <canTakeDamage>true</canTakeDamage>
+         <mustFrontBuildDir>None</mustFrontBuildDir>
+         <canStartBurning>false</canStartBurning>
+         <maintenanceCost>250</maintenanceCost>
+         <buildCost>5000</buildCost>
+         <buildTyp>Single</buildTyp>
+         <structureTyp>Blocking</structureTyp>
+         <extraUITyp>None</extraUITyp>
+         <extraBuildUITyp>None</extraBuildUITyp>
+         <buildingItems length="2">
+            <Item ID="tools">
+               <count>10</count>
+            </Item>
+            <Item ID="stone">
+               <count>20</count>
+            </Item>
+         </buildingItems>
+         <spriteBaseName>fort</spriteBaseName>
+         <canBeBuildUnits length="1">
+            <Unit>basicunit</Unit>
+         </canBeBuildUnits>
+         <buildTimeModifier>1.0</buildTimeModifier>
+         <buildQueueLength>1</buildQueueLength>
+         <damage>0</damage>
+      </militarystructure>
+   </militarystructures>
+   <servicestructures>
+      <servicestructure ID="firewell">
+         <Name>
+            <entry lang="English">Well</entry>
+            <entry lang="German">Brunnen</entry>
+         </Name>
+         <Description>
+            <entry lang="English">Worker can use it to slowly put out fires.</entry>
+            <entry lang="German">Arbeiter können damit langsam Feuer löschen.</entry>
+         </Description>
+         <HoverOver>
+            <entry lang="English">Well</entry>
+            <entry lang="German">Brunnen</entry>
+         </HoverOver>
+         <canBeBuild>true</canBeBuild>
+         <isWalkable>false</isWalkable>
+         <hasHitbox>false</hasHitbox>
+         <maxHealth>40.0</maxHealth>
+         <structureRange>8</structureRange>
+         <populationLevel>0</populationLevel>
+         <populationCount>0</populationCount>
+         <structureLevel>0</structureLevel>
+         <tileWidth>1</tileWidth>
+         <tileHeight>1</tileHeight>
+         <canRotate>true</canRotate>
+         <canBeBuildOver>false</canBeBuildOver>
+         <canBeUpgraded>false</canBeUpgraded>
+         <canTakeDamage>false</canTakeDamage>
+         <mustFrontBuildDir>None</mustFrontBuildDir>
+         <canStartBurning>false</canStartBurning>
+         <maintenanceCost>25</maintenanceCost>
+         <buildCost>500</buildCost>
+         <buildTyp>Single</buildTyp>
+         <structureTyp>Blocking</structureTyp>
+         <extraUITyp>None</extraUITyp>
+         <extraBuildUITyp>None</extraBuildUITyp>
+         <buildingItems length="2">
+            <Item ID="wood">
+               <count>5</count>
+            </Item>
+            <Item ID="tools">
+               <count>5</count>
+            </Item>
+         </buildingItems>
+         <spriteBaseName>firewell</spriteBaseName>
+         <targets>Damageable</targets>
+         <function>RemoveEffect</function>
+         <effectsOnTargets length="1">
+            <Effect>fire</Effect>
+         </effectsOnTargets>
+         <maxNumberOfWorker>1</maxNumberOfWorker>
+         <workSpeed>0.01</workSpeed>
+      </servicestructure>
+      <servicestructure ID="firebrigade">
+         <Name>
+            <entry lang="English">Fire Brigade</entry>
+            <entry lang="German">Feuerwehr</entry>
+         </Name>
+         <Description>
+            <entry lang="English">Worker can use it to faster than a well to put out fires.</entry>
+            <entry lang="German">Arbeiter können damit schneller als mit dem Brunnen Feuer löschen.</entry>
+         </Description>
+         <canBeBuild>true</canBeBuild>
+         <isWalkable>false</isWalkable>
+         <hasHitbox>false</hasHitbox>
+         <maxHealth>250.0</maxHealth>
+         <structureRange>24</structureRange>
+         <populationLevel>1</populationLevel>
+         <populationCount>1500</populationCount>
+         <structureLevel>0</structureLevel>
+         <tileWidth>2</tileWidth>
+         <tileHeight>4</tileHeight>
+         <canRotate>true</canRotate>
+         <canBeBuildOver>false</canBeBuildOver>
+         <canBeUpgraded>false</canBeUpgraded>
+         <canTakeDamage>false</canTakeDamage>
+         <mustFrontBuildDir>None</mustFrontBuildDir>
+         <canStartBurning>false</canStartBurning>
+         <maintenanceCost>100</maintenanceCost>
+         <buildCost>2500</buildCost>
+         <buildTyp>Single</buildTyp>
+         <structureTyp>Blocking</structureTyp>
+         <extraUITyp>None</extraUITyp>
+         <extraBuildUITyp>None</extraBuildUITyp>
+         <buildingItems length="3">
+            <Item ID="tools">
+               <count>15</count>
+            </Item>
+            <Item ID="wood">
+               <count>5</count>
+            </Item>
+            <Item ID="stone">
+               <count>15</count>
+            </Item>
+         </buildingItems>
+         <spriteBaseName>firebrigade</spriteBaseName>
+         <targets>Damageable</targets>
+         <function>RemoveEffect</function>
+         <effectsOnTargets length="1">
+            <Effect>fire</Effect>
+         </effectsOnTargets>
+         <maxNumberOfWorker>1</maxNumberOfWorker>
+         <workSpeed>0.01</workSpeed>
+      </servicestructure>
+   </servicestructures>
+</structures>

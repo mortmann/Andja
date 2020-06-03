@@ -63,9 +63,9 @@ public class MineStructure : OutputStructure {
         if (CurrentRessourceMode == RessourceMode.PerProduce && BuildTile.Island.HasRessource(Ressource) == false) {
             return;
         }
-        produceCountdown += deltaTime;
-        if (produceCountdown >= ProduceTime) {
-            produceCountdown = 0;
+        produceTimer += deltaTime;
+        if (produceTimer >= ProduceTime) {
+            produceTimer = 0;
             Output[0].count += OutputData.output[0].count;
             if(CurrentRessourceMode==RessourceMode.PerProduce)
                 City.Island.RemoveRessources(Ressource, OutputData.output[0].count);

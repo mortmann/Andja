@@ -20,6 +20,10 @@ public class CameraController : MonoBehaviour {
     public Vector3 middle = new Vector3();
     Tile middleTile;
     public Island nearestIsland;
+    /// <summary>
+    /// X = Ocean Y = Land Z = Height (wind)
+    /// </summary>
+    public Vector3 SoundAmbientValues;
     public float zoomLevel;
     public HashSet<Tile> tilesCurrentInCameraView;
 
@@ -31,7 +35,7 @@ public class CameraController : MonoBehaviour {
     GameObject plane;
     void Awake() {
         if (Instance != null) {
-            Debug.LogError("There should never be two SaveController.");
+            Debug.LogError("There should never be two CameraController.");
         }
         Instance = this;
 #if UNITY_EDITOR
@@ -114,7 +118,6 @@ public class CameraController : MonoBehaviour {
         middle = Camera.main.ScreenToWorldPoint(new Vector3(Camera.main.pixelWidth / 2, Camera.main.pixelHeight / 2));
 
         middleTile = World.Current.GetTileAt(middle.x, middle.y);
-        FindNearestIsland();
 
         Vector3 newLower = cameraMove + lower;
         Vector3 newUpper = cameraMove + upper;
@@ -152,22 +155,24 @@ public class CameraController : MonoBehaviour {
         
         tilesCurrentInCameraView.Clear();
         structureCurrentInCameraView.Clear();
-        TileSpriteController tsc = TileSpriteController.Instance;
+
+        SoundAmbientValues = new Vector3();
         for (int x = Mathf.FloorToInt(Mathf.Min(oldViewRange.xMin, CameraViewRange.xMin)); x < Mathf.CeilToInt(Mathf.Max(oldViewRange.xMax, CameraViewRange.xMax)); x++) {
             for (int y = Mathf.FloorToInt(Mathf.Min(oldViewRange.yMin, CameraViewRange.yMin)); y < Mathf.CeilToInt(Mathf.Max(oldViewRange.yMax, CameraViewRange.yMax)); y++) {
                 Tile tile_data = World.Current.GetTileAt(x, y);
                 if (tile_data == null
                     || tile_data.Type == TileType.Ocean) {
+                    SoundAmbientValues.x++;
                     continue;
                 }
-
+                SoundAmbientValues.y++;
                 bool isInNew = CameraViewRange.Contains(tile_data.Vector);
                 bool isInOld = oldViewRange.Contains(tile_data.Vector);
                 if (isInNew == false && isInOld == false) {
                     continue;
                 }
-
                 if (isInNew) {
+                    nearestIsland = tile_data.Island;
                     if (EditorController.IsEditor) {
                         tilesCurrentInCameraView.Add(tile_data);
                     }
@@ -177,6 +182,10 @@ public class CameraController : MonoBehaviour {
                 }
             }
         }
+        float tileCount = CameraViewRange.width * CameraViewRange.height;
+        SoundAmbientValues.x /= tileCount;
+        SoundAmbientValues.y /= tileCount;
+        SoundAmbientValues.z = Mathf.Clamp((MaxZoomLevel - zoomLevel) / MaxZoomLevel, 0, 1f);
     }
 
     void OnDrawGizmos() {
@@ -286,33 +295,6 @@ public class CameraController : MonoBehaviour {
         return new Vector3(zoomMultiplier * Horizontal * Time.deltaTime, zoomMultiplier * Vertical * Time.deltaTime, 0);
     }
 
-    public void FindNearestIsland() {
-        HashSet<Tile> tiles = new HashSet<Tile>();
-        Queue<Tile> tilesToCheck = new Queue<Tile>();
-        tilesToCheck.Enqueue(middleTile);
-        while (tilesToCheck.Count > 0) {
-
-            Tile t = tilesToCheck.Dequeue();
-            if (t == null) {
-                return;
-            }
-            if (t.Island != null) {
-                nearestIsland = t.Island;
-                break;
-            }
-            if (tiles.Count > 100) {
-                nearestIsland = null;
-                break;
-            }
-            if (tiles.Contains(t) == false) {
-                tiles.Add(t);
-                Tile[] ns = t.GetNeighbours();
-                foreach (Tile t2 in ns) {
-                    tilesToCheck.Enqueue(t2);
-                }
-            }
-        }
-    }
     void OnDestroy() {
         Instance = null;
     }

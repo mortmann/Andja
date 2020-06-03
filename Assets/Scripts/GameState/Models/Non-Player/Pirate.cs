@@ -5,7 +5,8 @@ using Newtonsoft.Json;
 
 [JsonObject(MemberSerialization.OptIn)]
 public class Pirate {
-
+    public static readonly int Number = -1; // so it isnt the same like the number of wilderness
+    
     [JsonPropertyAttribute] float startCooldown = 5f;
     [JsonPropertyAttribute] List<Ship> Ships;
 
@@ -28,7 +29,7 @@ public class Pirate {
     public void AddShip() {
         Ship ship = PrototypController.Instance.GetPirateShipPrototyp();
         Tile t = World.Current.GetTileAt(UnityEngine.Random.Range(0, World.Current.Height), 0);
-        ship = (Ship) World.Current.CreateUnit(ship, null, t);
+        ship = (Ship) World.Current.CreateUnit(ship, null, t, Number);
         ship.RegisterOnDestroyCallback(OnShipDestroy);
         ship.RegisterOnArrivedAtDestinationCallback(OnShipArriveDestination);
         Ships.Add(ship);
@@ -49,7 +50,7 @@ public class Pirate {
         }
     }
 
-    public void OnShipDestroy(Unit u) {
+    public void OnShipDestroy(Unit u, IWarfare warfare) {
         u.UnregisterOnArrivedAtDestinationCallback(OnShipArriveDestination);
         u.UnregisterOnDestroyCallback(OnShipDestroy);
         Ships.Remove((Ship)u);

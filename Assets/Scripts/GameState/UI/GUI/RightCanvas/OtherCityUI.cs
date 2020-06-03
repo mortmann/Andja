@@ -25,14 +25,14 @@ public class OtherCityUI : MonoBehaviour {
             TradeItemUI tiui = g.GetComponent<TradeItemUI>();
             if (ti.IsSelling) {
                 //SELL show how much it has
-                Item temp = city.Inventory.GetItemWithIDClone(itemID);
+                Item temp = city.Inventory.GetItemClone(itemID);
                 Item i = ti.SellItemAmount(temp);
-                tiui.Show(i, city.Inventory.MaxStackSize, ti.IsSelling);
+                tiui.Show(i, city.Inventory.MaxStackSize, ti.trade);
             }
             if(ti.IsBuying) {
                 //BUY show how much it wants
-                Item i = ti.BuyItemAmount(city.Inventory.GetItemWithIDClone(itemID));
-                tiui.Show(i, city.Inventory.MaxStackSize, ti.IsBuying);
+                Item i = ti.BuyItemAmount(city.Inventory.GetItemClone(itemID));
+                tiui.Show(i, city.Inventory.MaxStackSize, ti.trade);
             }
             tiui.UpdatePriceText(ti.price);
             string id = itemID;
@@ -41,11 +41,10 @@ public class OtherCityUI : MonoBehaviour {
     }
     public void OnClickItemToTrade(string itemID, int amount = 50) {
         Unit u = city.warehouse.inRangeUnits.Find(x => x.playerNumber == PlayerController.currentPlayerNumber);
-        if (u == null && u.IsShip == false) {
+        if (u == null || u.IsShip == false) {
             Debug.Log("No Ship in Range");
             return;
         }
-
         city.SellingTradeItem(itemID, PlayerController.Instance.CurrPlayer, ((Ship)u), amount);
     }
     public void OnCityDestroy(City c) {

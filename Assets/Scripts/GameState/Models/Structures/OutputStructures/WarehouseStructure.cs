@@ -2,6 +2,10 @@
 using System.Collections.Generic;
 using Newtonsoft.Json;
 
+public class WarehousePrototypData : MarketPrototypData {
+    public int tradeItemCount;
+}
+
 [JsonObject(MemberSerialization.OptIn)]
 public class WarehouseStructure : MarketStructure {
 
@@ -10,16 +14,24 @@ public class WarehouseStructure : MarketStructure {
 
     #endregion
     #region RuntimeOrOther
-
+    public int TradeItemCount => WarehouseData.tradeItemCount;
     public Tile tradeTile;
     public List<Unit> inRangeUnits;
+    protected WarehousePrototypData _warehouseData;
+    public WarehousePrototypData WarehouseData {
+        get {
+            if (_warehouseData == null) {
+                _warehouseData = (WarehousePrototypData)PrototypController.Instance.GetStructurePrototypDataForID(ID);
+            }
+            return _warehouseData;
+        }
+    }
 
     #endregion
-    public WarehouseStructure(string id, MarketPrototypData mpd) {
+    public WarehouseStructure(string id, WarehousePrototypData wpd) {
         this.ID = id;
         inRangeUnits = new List<Unit>();
-        this._marketData = mpd;
-
+        this._warehouseData = wpd;
     }
     /// <summary>
     /// DO NOT USE
@@ -110,7 +122,7 @@ public class WarehouseStructure : MarketStructure {
         h.AddRange(RangeTiles);
         City.RemoveTiles(h);
         //you lose any res that the worker is carrying
-        foreach (Worker item in Worker) {
+        foreach (Worker item in Workers) {
             item.Destroy();
         }
     }

@@ -84,6 +84,7 @@ public class StructureSpriteController : MonoBehaviour {
         structureGameObjectMap.Add(structure, go);
         if (structure is RoadStructure) {
             ((RoadStructure)structure).RegisterOnRoadCallback(OnRoadChange);
+            sr.sortingLayerName = "Road";
             if(RoadDebug) {
                 AddRoadDebug(go, ((RoadStructure)structure));
             }
@@ -112,7 +113,9 @@ public class StructureSpriteController : MonoBehaviour {
               OnStructureEffectChange(structure, e, true);
             }
         }
-        
+
+        //SOUND PART -- IMPORTANT
+        SoundController.Instance.OnStructureGOCreated(structure, go);
     }
 
     private void AddRoadDebug(GameObject go, RoadStructure road) {
@@ -257,9 +260,9 @@ public class StructureSpriteController : MonoBehaviour {
         }
     }
     void OnTileStructureDestroyed(Tile t) {
-        OnStructureDestroyed(t.Structure);
+        OnStructureDestroyed(t.Structure, null);
     }
-    void OnStructureDestroyed(Structure structure) {
+    void OnStructureDestroyed(Structure structure, IWarfare destroyer) {
         if (structure == null)
             return;
         if (structureGameObjectMap.ContainsKey(structure) == false) {
@@ -270,8 +273,9 @@ public class StructureSpriteController : MonoBehaviour {
         structure.UnregisterOnChangedCallback(OnStructureChanged);
         structure.UnregisterOnDestroyCallback(OnStructureDestroyed);
         structure.UnregisterOnExtraUICallback(OnStructureExtraUI);
-
         structureGameObjectMap.Remove(structure);
+        //SOUND PART -- IMPORTANT
+        SoundController.Instance.OnStructureGODestroyed(structure, go);
     }
 
     public void OnRoadChange(RoadStructure road) {

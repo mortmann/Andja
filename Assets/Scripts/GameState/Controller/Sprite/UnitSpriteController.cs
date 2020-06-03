@@ -46,26 +46,22 @@ public class UnitSpriteController : MonoBehaviour {
 
     void Update() {
     }
-    public void OnUnitCreated(Unit u) {
-        // Create a visual GameObject linked to this data.
-        // Create a 2d box collider around the unit
-
-
+    public void OnUnitCreated(Unit unit) {
         // This creates a new GameObject and adds it to our scene.
-        GameObject unit_go = new GameObject();
+        GameObject go = new GameObject();
         GameObject line_go = Instantiate(unitPathPrefab);
-        line_go.transform.SetParent(unit_go.transform);
+        line_go.transform.SetParent(go.transform);
         // Add our tile/GO pair to the dictionary.
-        unitGameObjectMap.Add(u, unit_go);
-        SpriteRenderer sr = unit_go.AddComponent<SpriteRenderer>();
+        unitGameObjectMap.Add(unit, go);
+        SpriteRenderer sr = go.AddComponent<SpriteRenderer>();
         sr.sortingLayerName = "Units";
-        sr.sprite = unitSprites[u.Data.spriteBaseName];
+        sr.sprite = unitSprites[unit.Data.spriteBaseName];
 
-        unit_go.transform.SetParent(this.transform, true);
-        unit_go.AddComponent<ITargetableHoldingScript>().Holding = u;
-        Rigidbody2D r2d = unit_go.AddComponent<Rigidbody2D>();
+        go.transform.SetParent(this.transform, true);
+        go.AddComponent<ITargetableHoldingScript>().Holding = unit;
+        Rigidbody2D r2d = go.AddComponent<Rigidbody2D>();
         r2d.gravityScale = 0;
-        AdvancedPolygonCollider apc = unit_go.AddComponent<AdvancedPolygonCollider>();
+        AdvancedPolygonCollider apc = go.AddComponent<AdvancedPolygonCollider>();
         apc.AlphaTolerance = 20;
         apc.Scale = 1.15f;
         apc.DistanceThreshold = 2;
@@ -78,10 +74,13 @@ public class UnitSpriteController : MonoBehaviour {
         //u.height = sr.sprite.textureRect.size.y / sr.sprite.pixelsPerUnit;
         // Register our callback so that our GameObject gets updated whenever
         // the object's into changes.
-        u.RegisterOnChangedCallback(OnUnitChanged);
-        u.RegisterOnDestroyCallback(OnUnitDestroy);
-        u.RegisterOnCreateProjectileCallback(OnProjectileCreated);
-        OnUnitChanged(u);
+        unit.RegisterOnChangedCallback(OnUnitChanged);
+        unit.RegisterOnDestroyCallback(OnUnitDestroy);
+        unit.RegisterOnCreateProjectileCallback(OnProjectileCreated);
+        OnUnitChanged(unit);
+
+        //SOUND PART -- IMPORTANT
+        SoundController.Instance.OnUnitCreated(unit, go);
     }
     /// <summary>
     /// just so it finds the spriterenderer -- making a prefab would make this prob easier -- just setting sprite then?
@@ -140,7 +139,7 @@ public class UnitSpriteController : MonoBehaviour {
             char_go.transform.rotation = q;
         }
     }
-    void OnUnitDestroy(Unit c) {
+    void OnUnitDestroy(Unit c, IWarfare warfare) {
         if (unitGameObjectMap.ContainsKey(c) == false) {
             Debug.LogError("OnCharacterChanged -- trying to change visuals for character not in our map.");
             return;

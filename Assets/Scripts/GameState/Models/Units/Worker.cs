@@ -5,6 +5,7 @@ using Newtonsoft.Json;
 
 [JsonObject(MemberSerialization.OptIn)]
 public class Worker {
+    public const float WorldSize = 0.25f;
     #region Serialize
     [JsonPropertyAttribute] public Structure Home;
     [JsonPropertyAttribute] Pathfinding path;
@@ -36,7 +37,7 @@ public class Worker {
             return _workStructure;
         }
     }
-
+    public static float Speed = 1f;
     Func<Structure, float, bool> WorkOnStructure {
         get {
             if (Home is ServiceStructure)
@@ -47,10 +48,9 @@ public class Worker {
 
     Action<Worker> cbWorkerChanged;
     Action<Worker> cbWorkerDestroy;
-    Action<Worker, string> cbSoundCallback;
+    Action<Worker, string, bool> cbSoundCallback;
     bool hasRegistered;
-    //TODO sound
-    string soundWorkName = "";//idk how to load/read this in? has this the workstructure not worker???
+    string soundWorkName = "";
     #endregion
     #region readInVariables
     bool hasToFollowRoads;
@@ -71,7 +71,7 @@ public class Worker {
             return path.rotation;
         }
     }
-    public Worker(Structure Home, OutputStructure structure, float workTime = 1f, Item[] toGetItems = null, bool hasToFollowRoads = true) {
+    public Worker(Structure Home, OutputStructure structure,  float workTime = 1f, Item[] toGetItems = null, string soundWorkName = null, bool hasToFollowRoads = true) {
         this.Home = Home;
         WorkOutputStructure = structure;
         this.hasToFollowRoads = hasToFollowRoads;
@@ -83,6 +83,7 @@ public class Worker {
         inventory = new Inventory(4);
         doTimer = workTime;
         SetGoalStructure(structure);
+        this.soundWorkName = soundWorkName;
         this.toGetItems = toGetItems;
     }
     public Worker(ServiceStructure Home, Structure structure, float workTime, bool hasToFollowRoads = true) {
@@ -98,7 +99,7 @@ public class Worker {
     public Worker() {
         SaveController.AddWorkerForLoad(this);
     }
-    public void OnWorkStructureDestroy(Structure str) {
+    public void OnWorkStructureDestroy(Structure str, IWarfare destroyer) {
         if (str != WorkStructure) {
             Debug.LogError("OnWorkStructureDestroy called on not workstructure destroy!");
             return;
@@ -153,7 +154,12 @@ public class Worker {
         else {
             // coming home from doing the work
             // drop off the items its carrying
-            if(toGetItems != null) {
+            if (Home is FarmStructure) {
+                ((FarmStructure)Home).AddHarvastable();
+                isAtHome = true;
+            }
+            else
+            if (toGetItems != null) {
                 DropOffItems(deltaTime);
             } else {
                 isAtHome = true;
@@ -192,6 +198,9 @@ public class Worker {
         }
         //we are here at the job tile
         //do its job -- get the items in tile
+        if(WorkOutputStructure is GrowableStructure) {
+            DoFarmWork(deltaTime);
+        } else
         if (WorkOutputStructure is OutputStructure) {
             DoOutPutStructureWork(deltaTime);
         } else 
@@ -207,15 +216,33 @@ public class Worker {
     }
 
     private void DoWorkOnStructure(float deltaTime) {
-        isDone = WorkOnStructure(WorkStructure,deltaTime);
+        isDone = WorkOnStructure(WorkStructure, deltaTime);
+    }
+    public void DoFarmWork(float deltaTime) {
+        doTimer -= deltaTime;
+        if (doTimer > 0) {
+            PlaySound(soundWorkName, true);
+            return;
+        }
+        PlaySound(soundWorkName, false);
+        ((GrowableStructure)WorkStructure).Harvest();
+        isDone = true;
+    }
+
+    private void PlaySound(string soundWorkName, bool play) {
+        if (string.IsNullOrWhiteSpace(soundWorkName)) {
+            return;
+        }
+        cbSoundCallback?.Invoke(this, soundWorkName, play);
     }
 
     public void DoOutPutStructureWork(float deltaTime) {
         doTimer -= deltaTime;
         if (doTimer > 0) {
-            cbSoundCallback?.Invoke(this, soundWorkName);
+            PlaySound(soundWorkName, true);
             return;
         }
+        PlaySound(soundWorkName, false);
         if (toGetItems == null) {
             foreach (Item item in WorkOutputStructure.GetOutput()) {
                 inventory.AddItem(item);
@@ -249,11 +276,11 @@ public class Worker {
         }
         if (hasToFollowRoads == false) {
             if(path == null)
-                path = new TilesPathfinding();
+                path = new TilesPathfinding(Speed, 720);
             if (goHome == false) {
-                ((TilesPathfinding)path).SetDestination(new List<Tile>(Home.NeighbourTiles), new List<Tile>(structure.NeighbourTiles));
+                ((TilesPathfinding)path).SetDestination(new List<Tile>(Home.Tiles), new List<Tile>(structure.Tiles));
             } else {
-                ((TilesPathfinding)path).SetDestination(new List<Tile>() { path.CurrTile }, new List<Tile>(Home.NeighbourTiles));
+                ((TilesPathfinding)path).SetDestination(new List<Tile>() { path.CurrTile }, new List<Tile>(Home.Tiles));
             }
         }
         else {
@@ -283,11 +310,11 @@ public class Worker {
         cbWorkerDestroy -= cb;
     }
 
-    public void RegisterOnSoundCallback(Action<Worker, string> cb) {
+    public void RegisterOnSoundCallback(Action<Worker, string, bool> cb) {
         cbSoundCallback += cb;
     }
 
-    public void UnregisterOnSoundCallback(Action<Worker, string> cb) {
+    public void UnregisterOnSoundCallback(Action<Worker, string, bool> cb) {
         cbSoundCallback -= cb;
     }
 

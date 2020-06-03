@@ -32,6 +32,9 @@ public class FarmStructure : OutputStructure {
     public int growableReadyCount;
     public int OnRegisterCallbacks;
     List<GrowableStructure> workingGrowables;
+    List<GrowableStructure> doneGrowable;
+    public override float Progress => produceTimer;
+    public override float TotalProgress => ProduceTime * NeededHarvestForProduce;
 
     protected FarmPrototypeData _farmData;
     public FarmPrototypeData FarmData {
@@ -91,27 +94,54 @@ public class FarmStructure : OutputStructure {
         }
     }
     public override void OnUpdate(float deltaTime) {
-        if (growableReadyCount == 0) {
-            return;
-        }
         if (Output[0].count >= MaxOutputStorage) {
             return;
         }
-        //TODO: send out worker to collect goods
-        produceCountdown += deltaTime * Efficiency;
-        if (produceCountdown >= ProduceTime) {
-            produceCountdown = 0;
-            if (Growable != null) {
-                GrowableStructure g = (GrowableStructure)workingGrowables[0];
-                currentlyHarvested++;
-                ((GrowableStructure)g).Harvest();
+        if (Growable != null) {
+            if (workingGrowables.Count == 0)
+                return;
+            GrowableStructure g = (GrowableStructure)workingGrowables[0];
+            float distance = Vector2.Distance(g.MiddleVector, MiddleVector) - (Width + Height) / 4;
+            float walkTime = (2f * distance + 2) / Worker.Speed;
+            if (walkTime > ProduceTime || MaxNumberOfWorker == 0) {
+                //Display Warning?
+                Debug.LogWarning("FARM " + Name + " can not send worker -- ProduceTime to fast.");
+                produceTimer += deltaTime * Efficiency;
+                if (produceTimer >= ProduceTime) {
+                    if (growableReadyCount == 0) {
+                        return;
+                    }
+                    produceTimer = 0;
+                    if (Growable != null) {
+                        //GrowableStructure g = (GrowableStructure)workingGrowables[0];
+                        AddHarvastable();
+                        ((GrowableStructure)g).Harvest();
+                    }
+                }
+            } else {
+                //does this work?
+                produceTimer += deltaTime * Efficiency;
+                if (Workers == null) {
+                    Workers = new List<Worker>();
+                }
+                for (int i = Workers.Count - 1; i >= 0; i--) {
+                    Worker w = Workers[i];
+                    w.Update(deltaTime * Efficiency);
+                    if (w.isAtHome) {
+                        WorkerComeBack(w);
+                    }
+                }
+                SendOutWorkerIfCan(ProduceTime - walkTime - 3);
             }
-        }
+        } 
         if (currentlyHarvested >= NeededHarvestForProduce) {
             Output[0].count++;
             cbOutputChange?.Invoke(this);
             currentlyHarvested -= NeededHarvestForProduce;
         }
+    }
+    public void AddHarvastable() {
+        currentlyHarvested++;
     }
     public void OnGrowableChanged(Structure str) {
         if (str is GrowableStructure == false) {
@@ -126,6 +156,7 @@ public class FarmStructure : OutputStructure {
         if (((GrowableStructure)grow).hasProduced == false) {
             if (workingGrowables.Contains((GrowableStructure)grow)) {
                 growableReadyCount--;
+                workingGrowables.Remove(grow);
             }
             return;
         }
@@ -152,11 +183,26 @@ public class FarmStructure : OutputStructure {
             }
         }
     }
-    protected override void OnDestroy() {
-        if (Worker == null) {
+
+    public override void SendOutWorkerIfCan(float workTime = 1) {
+        if (growableReadyCount == 0) {
             return;
         }
-        foreach (Worker item in Worker) {
+        if (Workers.Count >= MaxNumberOfWorker) {
+            return;
+        }
+        Worker ws = new Worker(this, workingGrowables[0], workTime, Output, WorkerWorkSound, false);
+        workingGrowables.RemoveAt(0);
+        World.Current.CreateWorkerGameObject(ws);
+        Workers.Add(ws);
+    }
+
+
+    protected override void OnDestroy() {
+        if (Workers == null) {
+            return;
+        }
+        foreach (Worker item in Workers) {
             item.Destroy();
         }
     }

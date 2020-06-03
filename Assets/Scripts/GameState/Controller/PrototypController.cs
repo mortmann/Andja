@@ -924,15 +924,13 @@ public class PrototypController : MonoBehaviour {
             return;
         foreach (XmlElement node in xmlDoc.SelectNodes("warehouse")) {
             string ID = node.GetAttribute("ID");
-            MarketPrototypData mpd = new MarketPrototypData {
-                //THESE are fix and are not changed for any Warehouse
+            WarehousePrototypData wpd = new WarehousePrototypData {
                 contactRange = 6.3f,
                 buildTyp = BuildType.Single,
                 hasHitbox = true,
                 canTakeDamage = true,
                 structureRange = 18,
-
-                //!not anymore
+                tradeItemCount = 3,
                 tileWidth = 3,
                 tileHeight = 3,
                 Name = "warehouse",
@@ -940,12 +938,12 @@ public class PrototypController : MonoBehaviour {
                 maintenanceCost = 10,
             };
 
-            mpd.ID = ID;
-            SetData<MarketPrototypData>(node, ref mpd);
-            structurePrototypeDatas[ID] = mpd;
-            structurePrototypes[ID] = new WarehouseStructure(ID, mpd);
+            wpd.ID = ID;
+            SetData<WarehousePrototypData>(node, ref wpd);
+            structurePrototypeDatas[ID] = wpd;
+            structurePrototypes[ID] = new WarehouseStructure(ID, wpd);
 
-            if (FirstLevelWarehouse == null || mpd.structureLevel < FirstLevelWarehouse.StructureLevel) {
+            if (FirstLevelWarehouse == null || wpd.structureLevel < FirstLevelWarehouse.StructureLevel) {
                 FirstLevelWarehouse = (WarehouseStructure)structurePrototypes[ID];
             }
         }

@@ -47,7 +47,7 @@ public class DiplomacyUI : MonoBehaviour {
         int playerAmount = PlayerController.PlayerCount;
         float degreeBetweenPlayer = Mathf.Min(90, 360f / playerAmount);
         float startDegree = 270;
-        float y = (playerContent.GetComponent<RectTransform>().sizeDelta.y - 1.5f*center.GetComponent<RectTransform>().sizeDelta.y) / 2;
+        float y = (playerContent.GetComponent<RectTransform>().sizeDelta.y - 1.7f*center.GetComponent<RectTransform>().sizeDelta.y) / 2;
         Vector2 distance = new Vector2(0, -y);
         playerToLine = new Dictionary<Player, UILineRenderer>();
         foreach (Player other in PlayerController.Players) {
@@ -57,7 +57,7 @@ public class DiplomacyUI : MonoBehaviour {
             Vector2 pos = new Vector2(distance.x * Mathf.Cos(degree) - distance.y * Mathf.Sin(degree), 
                                       distance.x * Mathf.Sin(degree) + distance.y * Mathf.Cos(degree));
             GameObject otherPlayerGo = Instantiate(playerObjectPrefab);
-            otherPlayerGo.transform.localScale = new Vector3(0.4f, 0.4f, 0.4f);
+            otherPlayerGo.transform.localScale = new Vector3(0.7f, 0.7f, 0.7f);
             otherPlayerGo.GetComponentInChildren<Text>().text = other.Number == PlayerController.currentPlayerNumber ? "You" : other.Name;
             otherPlayerGo.transform.SetParent(playerContent);
             otherPlayerGo.transform.localPosition = pos;
@@ -74,6 +74,7 @@ public class DiplomacyUI : MonoBehaviour {
             line.transform.SetParent(playerContent);
             line.transform.localPosition = Vector2.zero;// center.transform.position;
             UILineRenderer uILineRenderer = line.AddComponent<UILineRenderer>();
+            uILineRenderer.LineThickness = 20f;
             uILineRenderer.color = GetColorForDiplomaticStatus(PlayerController.Instance.GetDiplomaticStatusType(showPlayer,other));
             line.transform.SetAsFirstSibling();
             playerToLine[other] = uILineRenderer;
@@ -138,7 +139,7 @@ public class DiplomacyUI : MonoBehaviour {
             case DiplomacyType.War:
                 return Color.red;
             case DiplomacyType.Neutral:
-                return Color.grey;
+                return new Color(0.7f,0.7f,0.7f,1);
             case DiplomacyType.TradeAggrement:
                 return Color.blue;
             case DiplomacyType.Alliance:
@@ -147,12 +148,14 @@ public class DiplomacyUI : MonoBehaviour {
                 return Color.magenta;
         }
     }
-    // Update is called once per frame
+
     void Update () {
 		
 	}
 
-
+    private void OnEnable() {
+        ShowFor(selectedPlayer ?? PlayerController.CurrentPlayer); 
+    }
     //TODO: IMPLEMENT
     private void PraisePlayer() {
         throw new NotImplementedException();
@@ -176,6 +179,5 @@ public class DiplomacyUI : MonoBehaviour {
     //TODO: IMPLEMENT
     private void TryToIncreaseDiplomaticStatus() {
         PlayerController.Instance.IncreaseDiplomaticStanding(PlayerController.CurrentPlayer, selectedPlayer);
-        throw new NotImplementedException();
     }
 }

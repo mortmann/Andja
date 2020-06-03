@@ -31,6 +31,7 @@ public class UIController : MonoBehaviour {
     public GameObject diplomacyCanvas;
 
     public GameObject centerParent;
+    public GameObject endScoreScreen;
 
     public GameObject debugInformation;
     private DebugInformation debug;
@@ -42,6 +43,7 @@ public class UIController : MonoBehaviour {
 
     void Start() {
         Escape(true);
+        endScoreScreen.SetActive(false);
         if (Instance != null) {
             Debug.LogError("There are two uicontroller");
         }
@@ -103,7 +105,7 @@ public class UIController : MonoBehaviour {
             OpenMilitaryStructureInfo(str);
         }
     }
-    public void OnStructureDestroy(Structure str) {
+    public void OnStructureDestroy(Structure str, IWarfare destroyer) {
         CloseInfoUI();
     }
     public void OpenDiplomacyUI () {
@@ -120,6 +122,11 @@ public class UIController : MonoBehaviour {
             t.gameObject.SetActive(false);
         }
         centerParent.SetActive(false);
+    }
+
+    internal void ShowEndScoreScreen() {
+        WorldController.Instance.Pause();
+        endScoreScreen.SetActive(true);
     }
 
     public void OpenOtherCity(City city) {
@@ -229,7 +236,7 @@ public class UIController : MonoBehaviour {
         unitCanvas.SetActive(true);
         unitCanvas.GetComponent<UnitUI>().Show(u);
     }
-    public void OnUnitDestroy(Unit u) {
+    public void OnUnitDestroy(Unit u, IWarfare warfare) {
         CloseInfoUI();
     }
     public void CloseUnitUI() {

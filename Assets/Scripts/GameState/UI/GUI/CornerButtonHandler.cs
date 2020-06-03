@@ -19,8 +19,8 @@ public class CornerButtonHandler : MonoBehaviour {
 
     // Use this for initialization
     void Start () {
-        WorldController.Instance.onGameSpeedChange += OnSpeedChange;
-        OnSpeedChange(WorldController.Instance.CurrentSpeed);
+        WorldController.Instance.RegisterSpeedChange(OnSpeedChange);
+        OnSpeedChange(WorldController.Instance.CurrentSpeed,1);
         PauseButton.onClick.AddListener(() => WorldController.Instance.ChangeGameSpeed(GameSpeed.Paused));
         SlowestSpeedButton.onClick.AddListener(() => WorldController.Instance.ChangeGameSpeed(GameSpeed.Slowest));
         SlowSpeedButton.onClick.AddListener(() => WorldController.Instance.ChangeGameSpeed(GameSpeed.Slow));
@@ -33,10 +33,10 @@ public class CornerButtonHandler : MonoBehaviour {
         QuickSaveButton.onClick.AddListener(() => SaveController.Instance.QuickSave());
     }
 
-    private void OnSpeedChange(GameSpeed speed) {
+    private void OnSpeedChange(GameSpeed gameSpeed, float speed) {
         if(CurrentSpeedButton!= null)
             CurrentSpeedButton.interactable = true;
-        switch (speed) {
+        switch (gameSpeed) {
             case GameSpeed.Paused:
                 PauseButton.interactable = false;
                 CurrentSpeedButton = PauseButton;

@@ -32,11 +32,11 @@ public class TradeItem {
         }
     }
 
-    public TradeItem(string ItemId, int count, int price, bool trade) {
+    public TradeItem(string ItemId, int count, int price, Trade trade) {
         this.ItemId = ItemId;
         this.count = count;
         this.price = price;
-        this.IsBuying = trade; // will set it correctly
+        this.trade = trade; // will set it correctly
     }
     /// <summary>
     /// DO NOT USE IT

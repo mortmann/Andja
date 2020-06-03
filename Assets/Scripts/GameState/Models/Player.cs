@@ -34,6 +34,7 @@ public class Player : IGEventable {
     private int MaximumDebt => PlayerPrototypeData.maximumDebt; // if we want a maximum debt where you still can buy things
 
     private int _treasuryChange;
+    public bool IsHuman => _IsHuman;
     /// <summary>
     /// How the Balance CHANGES foreach Tick that happens
     /// </summary>
@@ -62,11 +63,10 @@ public class Player : IGEventable {
     public string Name => _name ?? "Number " + Number; //FOR NOW
     [JsonPropertyAttribute]
     private bool _IsHuman;
-
-    public bool IsHuman => _IsHuman;
-
     [JsonPropertyAttribute]
     private int _treasuryBalance;
+    [JsonPropertyAttribute]
+    public Statistics Statistics { get; protected set; }
     /// <summary>
     /// How much Money you have to spend
     /// </summary>
@@ -139,13 +139,15 @@ public class Player : IGEventable {
 
     public Player(int number, bool isHuman, int startingTreasure) {
         this._IsHuman = isHuman;
-        if (isHuman)
-            _name = "itsMeAnTotallyHumanHuman"; 
         Number = number;
         MaxPopulationCount = 0;
         MaxPopulationLevel = 0;
         TreasuryChange = 0;
         TreasuryBalance = startingTreasure;
+        if (isHuman) {
+            _name = "itsMeAnTotallyHumanHuman";
+            Statistics = new Statistics(Number);
+        }
         Setup();
     }
     private void Setup() {
@@ -157,7 +159,6 @@ public class Player : IGEventable {
         TradeRoutes = new List<TradeRoute>();
         AllStructures = new HashSet<Structure>();
         Units = new HashSet<Unit>();
-
         for (int i = 0; i < PrototypController.Instance.NumberOfPopulationLevels; i++) {
             LockedNeeds[i] = new HashSet<Need>();
             UnlockedStructureNeeds[i] = new HashSet<Need>();
@@ -328,7 +329,7 @@ public class Player : IGEventable {
         structure.RegisterOnDestroyCallback(OnStructureDestroy);
         AllStructures.Add(structure);
     }
-    public void OnStructureDestroy(Structure structure) {
+    public void OnStructureDestroy(Structure structure, IWarfare destroyer) {
         //dosmth
         structure.UnregisterOnDestroyCallback(OnStructureDestroy);
         AllStructures.Remove(structure);
@@ -342,7 +343,7 @@ public class Player : IGEventable {
         if (unit.IsShip)
             Ships.Add((Ship)unit);
     }
-    public void OnUnitDestroy(Unit unit) {
+    public void OnUnitDestroy(Unit unit, IWarfare warfare) {
         //dosmth
         unit.UnregisterOnDestroyCallback(OnUnitDestroy);
         Units.Remove(unit);
@@ -359,6 +360,7 @@ public class Player : IGEventable {
     public void UnregisterHasLost(Action<Player> callbackfunc) {
         cbHasLost -= callbackfunc;
     }
+
     public void RegisterHasLost(Action<Player> callbackfunc) {
         cbHasLost += callbackfunc;
     }
@@ -387,3 +389,4 @@ public class Player : IGEventable {
     }
     #endregion
 }
+

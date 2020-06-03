@@ -113,7 +113,7 @@ public class MapImage : MonoBehaviour {
         Toggle t = warehouseToGO[warehouse].GetComponentInChildren<Toggle>();
         tradeRoutePanel.OnWarehouseToggleClicked(warehouse, t);
     }
-    public void OnWarehouseDestroy(Structure str) {
+    public void OnWarehouseDestroy(Structure str, IWarfare destroyer) {
         if (str is WarehouseStructure == false) {
             Debug.LogError("MapImage OnWarehouseDestroy-" + str + " is no Warehouse");
             return;

@@ -5,7 +5,6 @@ using System.Linq;
 using UnityEngine.SceneManagement;
 
 public enum DiplomacyType { War, Neutral, TradeAggrement, Alliance }
-
 /// <summary>
 /// Player controller.
 /// this is mostly for the currentplayer
@@ -13,19 +12,18 @@ public enum DiplomacyType { War, Neutral, TradeAggrement, Alliance }
 /// </summary>
 public class PlayerController : MonoBehaviour {
     public static int currentPlayerNumber;
-    readonly int piratePlayerNumber = int.MaxValue; // so it isnt the same like the number of wilderness
     public Player CurrPlayer { get { return Players[currentPlayerNumber]; } }
-    List<DiplomaticStatus> playerDiplomaticStatus;
+    List<DiplomaticStatus> playerDiplomaticStandings;
     PlayerPrototypeData PlayerPrototypeData => PrototypController.CurrentPlayerPrototypData;
 
     float BalanceFullTime => PlayerPrototypeData.BalanceFullTime;
     float BalanceTicksTime => PlayerPrototypeData.BalanceTicksTime;
-
     float balanceTickTimer;
 
     public static PlayerController Instance { get; protected set; }
     public static List<Player> Players { get; protected set; }
     public static int PlayerCount => Players.Count;
+    public static bool GameOver => CurrentPlayer.HasLost;
 
     public static Player CurrentPlayer;
 
@@ -54,8 +52,8 @@ public class PlayerController : MonoBehaviour {
     }
 
     internal DiplomacyType GetDiplomaticStatusType(Player firstPlayer, Player secondPlayer) {
-        if (firstPlayer == secondPlayer) // ONLY BE NEUTRAL TO ONESELF :)
-            return DiplomacyType.Neutral;
+        if (firstPlayer == secondPlayer) // ONLY BE ALLIED TO ONESELF :)
+            return DiplomacyType.Alliance;
         return GetDiplomaticStatus(firstPlayer.Number, secondPlayer.Number).currentStatus; 
     }
 
@@ -67,12 +65,12 @@ public class PlayerController : MonoBehaviour {
         p.RegisterHasLost(OnPlayerLost);
         Players.Add(new Player(1, false, GameDataHolder.Instance.Loadout.Money));
         Players.Add(new Player(2, false, GameDataHolder.Instance.Loadout.Money));
-        playerDiplomaticStatus = new List<DiplomaticStatus>();
-        //for(int i = 0; i < PlayerCount; i++) {
-        //    for (int s = i+1; s < PlayerCount; s++) {
-        //        playerDiplomaticStatus.Add(new DiplomaticStatus(i, s));
-        //    }
-        //}
+        playerDiplomaticStandings = new List<DiplomaticStatus>();
+        for (int i = 0; i < PlayerCount; i++) {
+            for (int s = i + 1; s < PlayerCount; s++) {
+                playerDiplomaticStandings.Add(new DiplomaticStatus(i, s));
+            }
+        }
         //ChangeDiplomaticStanding(0, 1, DiplomacyType.War);
         //ChangeDiplomaticStanding(0, 2, DiplomacyType.TradeAggrement);
         CurrentPlayer = Players.Find(x => x.Number == currentPlayerNumber);
@@ -84,17 +82,23 @@ public class PlayerController : MonoBehaviour {
         Debug.Log("Player " + player.Number + " " + player.Name + " has lost!");
         if(player.IsHuman && player.IsCurrent()) {
             Debug.Log("HUMAN YOU HAVE LOST THE GAME -- WE WILL DOMINATE ");
-            SceneManager.LoadScene("MainMenu"); //TODO: show endscore
+            UIController.Instance.ShowEndScoreScreen(); //TODO: show endscore
         }
-        playerDiplomaticStatus.RemoveAll(x => x.playerOne == player.Number || x.playerTwo == player.Number);
+        playerDiplomaticStandings.RemoveAll(x => x.playerOne == player.Number || x.playerTwo == player.Number);
         List<Unit> units = new List<Unit>(player.Units);
         for (int i = units.Count-1; i >= 0; i--) {
-            units[i].Destroy();
+            units[i].Destroy(null);
         }
         List<Structure> marketbuildings = new List<Structure>(player.AllStructures.Where(x => x is MarketStructure));
         foreach(Structure s in marketbuildings) {
             s.Destroy();
         }
+    }
+
+    internal bool IsAtWar(Player player) {
+        return playerDiplomaticStandings.Exists(
+            x => (x.playerOne == player.Number || x.playerTwo == player.Number) && x.currentStatus == DiplomacyType.War
+        );
     }
 
     internal bool HasEnoughMoney(int playerNumber, int buildCost) {
@@ -124,30 +128,39 @@ public class PlayerController : MonoBehaviour {
             if (Input.GetKey(KeyCode.LeftShift)) {
                 if (Input.GetKeyDown(KeyCode.Alpha0)) {
                     currentPlayerNumber = 0;
+                    CurrentPlayer = Players.Find(x => x.Number == currentPlayerNumber);
                 }
                 if (Input.GetKeyDown(KeyCode.Alpha1)) {
                     currentPlayerNumber = 1;
+                    CurrentPlayer = Players.Find(x => x.Number == currentPlayerNumber);
                 }
                 if (Input.GetKeyDown(KeyCode.Alpha2)) {
                     currentPlayerNumber = 2;
+                    CurrentPlayer = Players.Find(x => x.Number == currentPlayerNumber);
                 }
                 if (Input.GetKeyDown(KeyCode.Alpha3)) {
                     currentPlayerNumber = 3;
+                    CurrentPlayer = Players.Find(x => x.Number == currentPlayerNumber);
                 }
                 if (Input.GetKeyDown(KeyCode.Alpha4)) {
                     currentPlayerNumber = 4;
+                    CurrentPlayer = Players.Find(x => x.Number == currentPlayerNumber);
                 }
                 if (Input.GetKeyDown(KeyCode.Alpha5)) {
                     currentPlayerNumber = 5;
+                    CurrentPlayer = Players.Find(x => x.Number == currentPlayerNumber);
                 }
                 if (Input.GetKeyDown(KeyCode.Alpha6)) {
                     currentPlayerNumber = 6;
+                    CurrentPlayer = Players.Find(x => x.Number == currentPlayerNumber);
                 }
                 if (Input.GetKeyDown(KeyCode.Alpha7)) {
                     currentPlayerNumber = 8;
+                    CurrentPlayer = Players.Find(x => x.Number == currentPlayerNumber);
                 }
                 if (Input.GetKeyDown(KeyCode.Alpha9)) {
                     currentPlayerNumber = 9;
+                    CurrentPlayer = Players.Find(x => x.Number == currentPlayerNumber);
                 }
             }
         }
@@ -169,6 +182,26 @@ public class PlayerController : MonoBehaviour {
         if (ds.currentStatus == DiplomacyType.War)
             return;
         ChangeDiplomaticStanding(playerOne.Number, playerTwo.Number, (DiplomacyType)((int)ds.currentStatus - 1));
+        if(ds.currentStatus == DiplomacyType.War) {
+            List<DiplomaticStatus> allies = GetAlliesFor(playerOne.Number);
+            foreach(DiplomaticStatus ads in allies) {
+                if(ads.playerOne == playerOne.Number) {
+                    ChangeDiplomaticStanding(ads.playerTwo, playerTwo.Number, DiplomacyType.War);
+                }
+                if (ads.playerTwo == playerOne.Number) {
+                    ChangeDiplomaticStanding(ads.playerOne, playerTwo.Number, DiplomacyType.War);
+                }
+            }
+            allies = GetAlliesFor(playerTwo.Number);
+            foreach (DiplomaticStatus ads in allies) {
+                if (ads.playerOne == playerTwo.Number) {
+                    ChangeDiplomaticStanding(playerOne.Number, ads.playerTwo, DiplomacyType.War);
+                }
+                if (ads.playerTwo == playerTwo.Number) {
+                    ChangeDiplomaticStanding(playerOne.Number, ads.playerOne, DiplomacyType.War);
+                }
+            }
+        }
     }
 
     internal void SendMoneyFromTo(Player currentPlayer, Player selectedPlayer, int amount) {
@@ -214,7 +247,7 @@ public class PlayerController : MonoBehaviour {
         }
     }
     private void OnUnitCreated(Unit unit) {
-        if (unit.playerNumber < 0)
+        if (unit.IsNonPlayer)
             return;
         Players[unit.PlayerNumber].OnUnitCreated(unit);
     }
@@ -238,7 +271,7 @@ public class PlayerController : MonoBehaviour {
         Players = pcs.players;
         foreach (Player p in Players)
             p.Load();
-        playerDiplomaticStatus = pcs.playerWars;
+        playerDiplomaticStandings = pcs.playerDiplomaticStandings;
         balanceTickTimer = pcs.tickTimer;
         currentPlayerNumber = pcs.currentPlayerNumber;
         CurrentPlayer = Players.Find(x => x.Number == currentPlayerNumber);
@@ -281,14 +314,20 @@ public class PlayerController : MonoBehaviour {
     }
     public bool ArePlayersAtWar(int playerOne, int playerTwo) {
         if (playerOne == playerTwo) {
-            return false; // LUL same player cant attack himself
+            return false; // same player cant attack himself
         }
-        if (playerOne == piratePlayerNumber || playerTwo == piratePlayerNumber) {
+        if (playerOne == Pirate.Number || playerTwo == Pirate.Number) {
             return true;//could add here be at peace with pirates through money 
         }
-        return GetDiplomaticStatus(playerOne, playerTwo)?.currentStatus == DiplomacyType.War;
+        if (playerOne == FlyingTrader.Number || playerTwo == FlyingTrader.Number) {
+            return false;//No war with trader ships yet... maybe in the future
+        }
+        return GetDiplomaticStatus(playerOne, playerTwo).currentStatus == DiplomacyType.War;
     }
-    
+
+    private List<DiplomaticStatus> GetAlliesFor(int player) {
+        return playerDiplomaticStandings.FindAll(x => x.currentStatus == DiplomacyType.Alliance && (x.playerOne == player||x.playerTwo == player) ).ToList();
+    }
 
     public void ChangeDiplomaticStanding(int playerOne, int playerTwo, DiplomacyType changeTo) {
         if (playerOne == playerTwo) {
@@ -305,7 +344,7 @@ public class PlayerController : MonoBehaviour {
         return GetDiplomaticStatus(playerOne.Number, playerTwo.Number);
     }
     public DiplomaticStatus GetDiplomaticStatus(int playerOne, int playerTwo) {
-        return playerDiplomaticStatus.Find(x => x == new DiplomaticStatus(playerOne,playerTwo));
+        return playerDiplomaticStandings.Find(x => x == new DiplomaticStatus(playerOne,playerTwo));
     }
     public static Player GetPlayer(int i) {
         if (i < 0 || Players.Count <= i) {
@@ -316,7 +355,7 @@ public class PlayerController : MonoBehaviour {
     }
 
     public PlayerControllerSave GetSavePlayerData() {
-        return new PlayerControllerSave(currentPlayerNumber, balanceTickTimer, Players, playerDiplomaticStatus);
+        return new PlayerControllerSave(currentPlayerNumber, balanceTickTimer, Players, playerDiplomaticStandings);
     }
 
     void OnDestroy() {
@@ -344,13 +383,13 @@ public class PlayerControllerSave : BaseSaveData {
     public int currentPlayerNumber;
     public float tickTimer;
     public List<Player> players;
-    public List<DiplomaticStatus> playerWars;
+    public List<DiplomaticStatus> playerDiplomaticStandings;
 
-    public PlayerControllerSave(int cpn, float tickTimer, List<Player> players, List<DiplomaticStatus> playerWars) {
+    public PlayerControllerSave(int cpn, float tickTimer, List<Player> players, List<DiplomaticStatus> playerDiplomaticStandings) {
         currentPlayerNumber = cpn;
         this.players = players;
         this.tickTimer = tickTimer;
-        this.playerWars = playerWars;
+        this.playerDiplomaticStandings = playerDiplomaticStandings;
     }
     public PlayerControllerSave() {
 

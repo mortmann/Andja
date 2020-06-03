@@ -7,7 +7,6 @@ using System.Linq;
 using UnityEngine;
 
 public class RoutePathfinding : Pathfinding {
-    const float workerSize = 0.25f;
     List<Tile> startTiles;
     List<Tile> endTiles;
     public RoutePathfinding() : base() { }
@@ -38,7 +37,7 @@ public class RoutePathfinding : Pathfinding {
 
     protected override void CalculatePath() {
 
-        pathDest = Path_Destination.Tile;
+        pathDestination = Path_Destination.Tile;
         if (startTiles == null) {
             startTiles = new List<Tile> {
                 startTile
@@ -85,20 +84,20 @@ public class RoutePathfinding : Pathfinding {
                 Vector2 next = currentQueue.Peek().Vector2;
                 dir = next - curr;
                 if (dir.x > 0) {
-                    offset.y = workerSize;
+                    offset.y = Worker.WorldSize;
                 }
                 if (dir.x < 0) {
-                    offset.y = 1 - workerSize;
+                    offset.y = 1 - Worker.WorldSize;
                 }
                 if (dir.y > 0) {
-                    offset.x = 1 - workerSize;
+                    offset.x = 1 - Worker.WorldSize;
                 }
                 if (dir.y < 0) {
-                    offset.x = workerSize;
+                    offset.x = Worker.WorldSize;
                 }
             } else {
                 if(dir.x>0||dir.y>0)
-                    offset += dir * (1 - workerSize);
+                    offset += dir * (1 - Worker.WorldSize);
             }
             //TODO: FIX THIS! -- it works but it is ugly
             if(addFirst) {

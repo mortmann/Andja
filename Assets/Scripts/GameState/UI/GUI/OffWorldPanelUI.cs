@@ -55,7 +55,7 @@ public class OffWorldPanelUI : MonoBehaviour {
         Debug.Log(i);
         Show(ships[i]);
     }
-    public void OnShipDestroy(Unit u) {
+    public void OnShipDestroy(Unit u, IWarfare warfare) {
         unitNames.Remove(u);
         shipDP.RefreshShownValue();
     }
@@ -136,7 +136,7 @@ public class OffWorldPanelUI : MonoBehaviour {
     void OnDisable() {
         foreach (Ship item in ships) {
             item.UnregisterOnChangedCallback(OnShipChanged);
-            item.UnregisterOnChangedCallback(OnShipDestroy);
+            item.UnregisterOnDestroyCallback(OnShipDestroy);
         }
     }
 }

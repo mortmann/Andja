@@ -29,6 +29,8 @@ public class OceanPathfinding : Pathfinding {
         Ship = s;
         rotationSpeed = s.RotationSpeed;
         CurrTile = t;
+        X = t.X;
+        Y = t.Y;
         TurnType = Turning_Type.TurnRadius;
     }
 
@@ -37,7 +39,7 @@ public class OceanPathfinding : Pathfinding {
         SetDestination(end.X, end.Y);
     }
     public override void SetDestination(float x, float y) {
-        pathDest = Path_Destination.Exact;
+        pathDestination = Path_Destination.Exact;
         dest_X = x;
         dest_Y = y;
         this.start = World.Current.GetTileAt(X, Y);
@@ -48,13 +50,13 @@ public class OceanPathfinding : Pathfinding {
     protected override void CalculatePath() {
         TurnType = Turning_Type.TurnRadius;
 
-        pathDest = Path_Destination.Exact;
+        pathDestination = Path_Destination.Exact;
         System.Diagnostics.Stopwatch StopWatch = new System.Diagnostics.Stopwatch();
         StopWatch.Start();
         JumpPointParam jpParam = new JumpPointParam(tileGrid, new GridPos(start.X, start.Y), new GridPos(DestTile.X, DestTile.Y), true, DiagonalMovement.OnlyWhenNoObstacles);
         List<GridPos> pos = JumpPointFinder.FindPath(jpParam);
         worldPath = new Queue<Vector2>();
-        //we probably needs to remove the first tile cause it may interfere with smooth pathing
+        //we probably need to remove the first tile cause it may interfere with smooth pathing
         for (int i = 0; i < pos.Count; i++) {
             if(i == pos.Count - 1 && pos.Count > 2) {
                 Vector2 curr = new Vector2(pos[i].x, pos[i].y);

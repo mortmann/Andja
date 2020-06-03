@@ -19,6 +19,7 @@ public class Inventory {
     }
 
     protected Action<Inventory> cbInventoryChanged;
+    protected Action<Inventory, Item, bool> cbInventoryItemChange;
     private float amountInInventory;
 
     public bool HasLimitedSpace {
@@ -32,7 +33,6 @@ public class Inventory {
 	public Inventory(int numberOfSpaces = -1, int maxStackSize = 50) {
         this.MaxStackSize = maxStackSize;
         Items = new Dictionary<string, Item>();
-        
         this.NumberOfSpaces = numberOfSpaces;
         RegisterOnChangedCallback(OnChanged);
     }
@@ -370,12 +370,12 @@ public class Inventory {
         List<Item> itemlist = new List<Item>();
         foreach (Item i in PrototypController.BuildItems) {
             if (ContainsItemWithID(i.ID)) {
-                itemlist.Add(GetItemWithID(i.ID));
+                itemlist.Add(GetItem(i.ID));
             }
         }
         return itemlist.ToArray();
     }
-    protected virtual Item GetItemWithID(string id) {
+    protected virtual Item GetItem(string id) {
         Item i = null;
         foreach (Item item in Items.Values) {
             if (item.ID == id) {
@@ -389,7 +389,7 @@ public class Inventory {
         }
         return i;
     }
-    public virtual Item GetItemWithIDClone(string id) {
+    public virtual Item GetItemClone(string id) {
         Item i = null;
         foreach (Item item in Items.Values) {
             if (item.ID == id) {
@@ -476,5 +476,11 @@ public class Inventory {
     public void UnregisterOnChangedCallback(Action<Inventory> cb) {
         cbInventoryChanged -= cb;
     }
+    public void RegisterOnChangedCallback(Action<Inventory, Item, bool> cb) {
+        cbInventoryItemChange += cb;
+    }
 
+    public void UnregisterOnChangedCallback(Action<Inventory, Item, bool> cb) {
+        cbInventoryItemChange -= cb;
+    }
 }

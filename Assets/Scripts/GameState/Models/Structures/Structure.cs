@@ -365,6 +365,11 @@ public abstract class Structure : IGEventable {
         }
         return true;
     }
+
+    public virtual bool InCityCheck(IEnumerable<Tile> tiles, int playerNumber) {
+        return tiles.Count(x => x.City?.PlayerNumber == playerNumber) >= tiles.Count() * GameData.nonCityTilesPercantage;
+    }
+
     public void PlaceStructure(List<Tile> tiles) {
         CurrentHealth = MaxHealth;
         Tiles = new List<Tile>();
@@ -386,21 +391,10 @@ public abstract class Structure : IGEventable {
         OnBuild();
         City?.RegisterOnEvent(OnEventCreate, OnEventEnded);
     }
-    public bool IsTileCityViable(Tile t, int player) {
-        if (t.City != null && t.City.PlayerNumber != player) {
-            //here it cant build cause someoneelse owns it
-            if (t.City.IsWilderness() == false) {
-                return false;
-            }
-            else {
-                //HERE it can be build if 
-                //EXCEPTION warehouses can be build on new islands
-                if (this is WarehouseStructure == false) {
-                    return false;
-                }
-            }
-        }
-        return true;
+    public static bool IsTileCityViable(Tile t, int player) {
+        if (t.City == null)
+            return false;
+        return t.City.IsWilderness() || t.City.PlayerNumber == player;
     }
 
     public virtual bool SpecialCheckForBuild(List<Tile> tiles) {
@@ -469,29 +463,27 @@ public abstract class Structure : IGEventable {
     /// <param name="ignoreRotation"></param>
     /// <param name="left"></param>
     /// <returns></returns>
-    public List<Tile> GetBuildingTiles(float x, float y, bool ignoreRotation = false,bool left = false) {
-        x = Mathf.FloorToInt(x);
-        y = Mathf.FloorToInt(y);
+    public List<Tile> GetBuildingTiles(Tile tile, bool ignoreRotation = false,bool left = false) {
         List<Tile> tiles = new List<Tile>();
         if(left) {
             for (int w = 0; w < TileWidth; w++) {
                 for (int h = 0; h < TileHeight; h++) {
-                    tiles.Add(World.Current.GetTileAt(x - w, y - h));
+                    tiles.Add(World.Current.GetTileAt(tile.X - w, tile.Y - h));
                 }
             }
         } else
         if (ignoreRotation == false) {
             for (int w = 0; w < TileWidth; w++) {
                 for (int h = 0; h < TileHeight; h++) {
-                    tiles.Add(World.Current.GetTileAt(x + w, y + h));
+                    tiles.Add(World.Current.GetTileAt(tile.X + w, tile.Y + h));
                 }
             }
         }
         else {
             for (int w = 0; w < _tileWidth; w++) {
-                tiles.Add(World.Current.GetTileAt(x + w, y));
+                tiles.Add(World.Current.GetTileAt(tile.X + w, tile.Y));
                 for (int h = 1; h < _tileHeight; h++) {
-                    tiles.Add(World.Current.GetTileAt(x + w, y + h));
+                    tiles.Add(World.Current.GetTileAt(tile.X + w, tile.Y + h));
                 }
             }
         }
@@ -630,9 +622,6 @@ public abstract class Structure : IGEventable {
         foreach (Tile t in tiles) {
             int x = t.X - tiles[0].X;
             int y = t.Y - tiles[0].Y;
-            if (TileWidth <= x || TileHeight <= y || x < 0 || y < 0) {
-                Debug.Log(tiles.Count);
-            }
             sortedTiles[x, y] = t; // so we have the tile at the correct spot
         }
         for (int y = 0; y < TileHeight; y++) {
@@ -660,7 +649,7 @@ public abstract class Structure : IGEventable {
                     startY = _tileHeight - 1;
                 }
                 if((startX + cX)>= BuildTileTypes.GetLength(0) || (startY + cY)>= BuildTileTypes.GetLength(1)) {
-                    //Debug.Log(rotation + " "+ (startX +"+"+ cX) + " " + (startX + cX) + " " + " " + (startY + "+" + cY) + " " + + (startY + cY) + " " + BuildTileTypes.GetLength(0) + " " + BuildTileTypes.GetLength(1));
+                    tileToCanBuild.Add(sortedTiles[x, y], sortedTiles[x, y].CheckTile());
                 }
                 else {
                     TileType? requiredTile = BuildTileTypes[startX + cX, startY + cY];
@@ -701,9 +690,9 @@ public abstract class Structure : IGEventable {
     #region override
     public override string ToString() {
         if (BuildTile == null) {
-            return SpriteName + "@error";
+            return Name + "@error";
         }
-        return SpriteName + "@ X=" + BuildTile.X + " Y=" + BuildTile.Y;
+        return Name + "@ X=" + BuildTile.X + " Y=" + BuildTile.Y;
     }
     #endregion
 

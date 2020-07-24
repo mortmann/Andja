@@ -7,8 +7,8 @@ public enum GameType { Endless, Campaign, Szenario, Island }
 public enum Difficulty { Easy, Medium, Hard, VeryHard }
 public enum Size { VerySmall, Small, Medium, Large, VeryLarge, Other }
 
-public class GameDataHolder : MonoBehaviour {
-    public static GameDataHolder Instance;
+public class GameData : MonoBehaviour {
+    public static GameData Instance;
     //TODO: make a way to set this either from world width/height or user
     public static Size WorldSize = Size.Medium;
     public Difficulty difficulty; //should be calculated
@@ -27,6 +27,7 @@ public class GameDataHolder : MonoBehaviour {
     public bool RandomSeed;
     public static int bots; // this is far from being in anykind relevant so 
     public static int playerCount = 1;
+    public static float nonCityTilesPercantage = 0.5f;
     public static bool flyingTraders = true;
     public static bool pirates = true;
     public static bool[] disasters;
@@ -35,15 +36,14 @@ public class GameDataHolder : MonoBehaviour {
 
     public float playTime;
 
-    public void Start() {
+    public void Awake() {
         if (Instance != null) {
             Destroy(this.gameObject);
             return;
         }
         Instance = this;
-
-        //MapSeed = UnityEngine.Random.Range(0, int.MaxValue);
-        
+        if(transform.parent == null)
+            DontDestroyOnLoad(this);
     }
     private void Update() {
         if (WorldController.Instance == null)
@@ -56,8 +56,7 @@ public class GameDataHolder : MonoBehaviour {
         if(RandomSeed) {
             MapSeed = UnityEngine.Random.Range(int.MinValue, int.MaxValue);
         }
-        if (SaveController.IsLoadingSave == false) {
-            Dictionary<MapGenerator.IslandGenInfo, MapGenerator.Range> dict = new Dictionary<MapGenerator.IslandGenInfo, MapGenerator.Range> { 
+        Dictionary<MapGenerator.IslandGenInfo, MapGenerator.Range> dict = new Dictionary<MapGenerator.IslandGenInfo, MapGenerator.Range> { 
             //Temporary fill this list, later generate this from selected/number of player, map size, difficulty, and other
             {new MapGenerator.IslandGenInfo(new MapGenerator.Range(100,100), new MapGenerator.Range(100, 100), Climate.Middle,false),new MapGenerator.Range(1,1)
             },
@@ -69,11 +68,12 @@ public class GameDataHolder : MonoBehaviour {
             },
             {new MapGenerator.IslandGenInfo(new MapGenerator.Range(150, 150), new MapGenerator.Range(150, 150), Climate.Middle,true),new MapGenerator.Range(1,1)
             }
-            };
+        };
+        if (SaveController.IsLoadingSave == false) {
             MapGenerator.Instance.DefineParameters(MapSeed, Width, Height, dict, null);
         }
         else {
-            MapGenerator.Instance.DefineParameters(MapSeed, Width, Height, null, new List<string>(usedIslands));
+            MapGenerator.Instance.DefineParameters(MapSeed, Width, Height, dict, new List<string>(usedIslands));
         }
         Loadout = PrototypController.Instance.StartingLoadouts[0];
         //Loadout = new StartingLoadout {
@@ -88,10 +88,10 @@ public class GameDataHolder : MonoBehaviour {
         GenerateMap();
     }
 
-    public GameData GetSaveGameData() {
-        return new GameData(MapSeed, Width, Height, usedIslands);
+    public GameDataSave GetSaveGameData() {
+        return new GameDataSave(MapSeed, Width, Height, usedIslands);
     }
-    public void LoadGameData(GameData data) {
+    public void LoadGameData(GameDataSave data) {
         Width = data.Width;
         Height = data.Height;
         usedIslands = data.usedIslands;
@@ -100,14 +100,14 @@ public class GameDataHolder : MonoBehaviour {
 }
 
 [Serializable]
-public class GameData : BaseSaveData {
+public class GameDataSave : BaseSaveData {
     public int MapSeed;
     public int Height = 100;
     public int Width = 100;
     public string[] usedIslands; // this has to be changed to some generation from the random code or smth
-    public GameData() {
+    public GameDataSave() {
     }
-    public GameData(int mapSeed, int width, int height, string[] usedIslands) {
+    public GameDataSave(int mapSeed, int width, int height, string[] usedIslands) {
         Height = height;
         Width = width;
         MapSeed = mapSeed;

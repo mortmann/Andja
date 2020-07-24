@@ -6,7 +6,6 @@ using System;
 
 [JsonObject]
 public class NeedGroupPrototypData : LanguageVariables {
-
     public string ID;
     public float importanceLevel;
 }
@@ -35,7 +34,7 @@ public class NeedGroup {
     public List<Need> CombinedNeeds;
     #endregion
     public NeedGroup() {
-
+        CombinedNeeds = new List<Need>();
     }
     public NeedGroup(string ID) {
         Needs = new List<Need>();
@@ -96,7 +95,7 @@ public class NeedGroup {
     internal void UpdateNeeds(Player player) {
         List<Need> currNeeds = new List<Need>(Needs);
         foreach (Need need in currNeeds) {
-            if (player.HasUnlockedNeed(need) == false) {
+            if (player.HasNeedUnlocked(need) == false) {
                 Needs.Remove(need);
             } 
             if (need.Exists() == false || need.IsStructureNeed()) {
@@ -106,6 +105,8 @@ public class NeedGroup {
     }
 
     private float CalculateRealPercantage(float percentage, int number) {
+        if (number == 0)
+            return 1;
         percentage /= number;
         percentage = percentage * Mathf.Clamp(ImportanceLevel, 0.4f, 1.6f);
         return percentage;
@@ -115,12 +116,19 @@ public class NeedGroup {
         float currentValue = 0;
         foreach (Need need in Needs) {
             if (need.IsStructureNeed()) {
-                currentValue += homeStructure.StructureNeeds.Find(x => x.ID == need.ID).GetCombinedFullfillment();
+                currentValue += homeStructure.IsStructureNeedFullfilled(need)? 1 : 0;
             }
             else {
                 currentValue += need.GetCombinedFullfillment();
             }
         }
         return CalculateRealPercantage(currentValue, Needs.Count);
+    }
+
+    internal bool HasNeed(Need need) {
+        return Needs.Contains(need); 
+    }
+    internal bool IsUnlocked() {
+        return Needs.Count > 0;
     }
 }

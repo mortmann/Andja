@@ -39,17 +39,18 @@ public class AIController : MonoBehaviour {
             Debug.LogError("There should never be two AIController.");
         }
         Instance = this;
-        BuildController.Instance.RegisterStructureCreated(OnStructureCreated);
-        BuildController.Instance.RegisterStructureDestroyed(OnStructureDestroyed);
     }
     // Use this for initialization
     void Start () {
-        foreach (Island island in World.Current.Islands) {
-            foreach (City c in island.Cities) {
-                foreach (Structure str in c.Structures)
-                    OnStructureCreated(str, true);
-            }
-        }
+        //foreach (Island island in World.Current.Islands) {
+        //    foreach (City c in island.Cities) {
+        //        foreach (Structure str in c.Structures)
+        //            OnStructureCreated(str, true);
+        //    }
+        //}
+        BuildController.Instance.RegisterStructureCreated(OnStructureCreated);
+        BuildController.Instance.RegisterStructureDestroyed(OnStructureDestroyed);
+
         AIPlayer test = new AIPlayer(PlayerController.GetPlayer(1));
         test.CalculatePlayersCombatValue();
         
@@ -102,22 +103,20 @@ public class AIController : MonoBehaviour {
     }
 
     private static void OnStructureDestroyed(Structure structure, IWarfare iwarfare) {
-        Dictionary<Tile, TileValue> tileValue = IslandsTileToValue[structure.City.Island];
-        
         for (int y = 0; y < structure.TileHeight; y++) {
             for (int x = 0; x < structure.TileWidth; x++) {
                 Tile t = structure.Tiles[x + y * structure.TileHeight];
-                if(x == 0) {
-                    ChangeTileValue(t, (int)tileValue[t.West()].swValue.x + 1, Direction.E);
+                if (x == 0) {
+                    ChangeTileValue(t, t.West(), Direction.E);
                 }
                 if (x < structure.TileWidth) {
-                    ChangeTileValue(t, (int)tileValue[t.South()].swValue.y + 1, Direction.N);
+                    ChangeTileValue(t, t.South(), Direction.N);
                 }
                 if (x == structure.TileWidth - 1) {
-                    ChangeTileValue(t, (int)tileValue[t.East()].neValue.x + 1, Direction.W);
+                    ChangeTileValue(t, t.East(), Direction.W);
                 }
                 if (y == structure.TileHeight - 1) {
-                    ChangeTileValue(t, (int)tileValue[t.North()].neValue.y + 1, Direction.S);
+                    ChangeTileValue(t, t.North(), Direction.S);
                 }
             }
         }
@@ -127,51 +126,67 @@ public class AIController : MonoBehaviour {
     private static void OnStructureCreated(Structure structure, bool load) {
         if (structure.CanBeBuildOver)
             return;
-        Island island = structure.City.Island;
+        if (IslandsTileToValue == null)
+            CalculateIslandTileValues();
+        Island island = structure.BuildTile.Island;
+        if (island == null)
+            return;
         Dictionary<Tile, TileValue> tileValue = IslandsTileToValue[island];
         for (int y = 0; y < structure.TileHeight; y++) {
             for (int x = 0; x < structure.TileWidth; x++) {
-                Tile t = structure.Tiles[x + y * structure.TileHeight];
+                Tile t = structure.Tiles[x * structure.TileHeight + y];
                 tileValue[t].neValue = Vector2.zero;
                 tileValue[t].swValue = Vector2.zero;
                 if (x == 0) {
-                    ChangeTileValue(t, 0, Direction.W);
+                    ChangeTileValue(t.East(), t, Direction.E);
                 }
                 if (y == structure.TileHeight - 1) {
-                    ChangeTileValue(t, 0, Direction.N);
+                    ChangeTileValue(t.North(), t, Direction.N);
                 }
                 if (x == structure.TileWidth - 1) {
-                    ChangeTileValue(t, 0, Direction.E);
+                    ChangeTileValue(t.West(), t, Direction.W);
                 }
                 if (y == 0) {
-                    ChangeTileValue(t, 0, Direction.S);
+                    ChangeTileValue(t.South(), t, Direction.S);
                 }
             }
         }
 
     }
 
-    private static void ChangeTileValue(Tile t,int value, Direction direction) {
+    private static void ChangeTileValue(Tile t, Tile tValue, Direction direction) {
         if(t.Type == TileType.Ocean) {
             return;
         }
         Dictionary<Tile, TileValue> tileValue = IslandsTileToValue[t.Island];
+        if (t.IsGenericBuildType() != tValue.IsGenericBuildType()) {
+            if (t.Type != tValue.Type)
+                return;
+        }
         switch (direction) {
             case Direction.N:
-                tileValue[t].swValue.y = value;
-                ChangeTileValue(t.North(), ++value, Direction.N);
+                tileValue[t].swValue.y = tileValue[t.South()].swValue.y + 1;
+                if (t.North().Structure != null)
+                    return;
+                ChangeTileValue(t.North(), t, Direction.N);
                 break;
             case Direction.W:
-                tileValue[t].neValue.x = value;
-                ChangeTileValue(t.West(), ++value, Direction.W);
+                tileValue[t].neValue.x = tileValue[t.East()].neValue.x + 1;
+                if (t.West().Structure != null)
+                    return;
+                ChangeTileValue(t.West(), t, Direction.W);
                 break;
             case Direction.S:
-                tileValue[t].neValue.y = value;
-                ChangeTileValue(t.South(), ++value, Direction.S);
+                tileValue[t].neValue.y = tileValue[t.North()].neValue.y + 1;
+                if (t.South().Structure != null)
+                    return;
+                ChangeTileValue(t.South(), t, Direction.S);
                 break;
             case Direction.E:
-                tileValue[t].swValue.x = value;
-                ChangeTileValue(t.East(), ++value, Direction.E);
+                tileValue[t].swValue.x = tileValue[t.West()].swValue.x + 1;
+                if (t.East().Structure != null)
+                    return;
+                ChangeTileValue(t.East(), t, Direction.E);
                 break;
         }
 
@@ -391,7 +406,7 @@ public class AIPlayer {
         foreach (TileValue t in selected) {
             for(int i=0;i<4;i++) {
                 //bool left = warehouse.Rotation == 90 || warehouse.Rotation == 180;
-                List<Tile> buildtiles = warehouse.GetBuildingTiles(t.X, t.Y, false, false);
+                List<Tile> buildtiles = warehouse.GetBuildingTiles(t.tile, false, false);
                 if (buildtiles.Exists(x => x.Type == TileType.Ocean))
                     continue;
                 if (warehouse.CanBuildOnSpot(buildtiles)) {

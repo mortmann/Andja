@@ -34,6 +34,7 @@ public class ButtonSetter : MonoBehaviour {
             GetComponentInChildren<Text>().text = name;
         } else {
             GetComponentsInChildren<Image>()[1].overrideSprite = Icon;
+            GetComponentsInChildren<Image>()[1].preserveAspect = true;
             GetComponentInChildren<Text>().gameObject.SetActive(false);
         }
         EventTrigger trigger = GetComponent<EventTrigger>();

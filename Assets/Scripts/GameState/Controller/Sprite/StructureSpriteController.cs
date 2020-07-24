@@ -269,7 +269,7 @@ public class StructureSpriteController : MonoBehaviour {
             return;
         }
         GameObject go = structureGameObjectMap[structure];
-        GameObject.Destroy(go);
+        Destroy(go);
         structure.UnregisterOnChangedCallback(OnStructureChanged);
         structure.UnregisterOnDestroyCallback(OnStructureDestroyed);
         structure.UnregisterOnExtraUICallback(OnStructureExtraUI);
@@ -315,6 +315,9 @@ public class StructureSpriteController : MonoBehaviour {
             return null;
         }
         return GetSprite(str.GetSpriteName());
+    }
+    public Sprite GetStructureSprite(String sprite) {
+        return GetSprite(sprite);
     }
     public GameObject GetGameObject(Structure str) {
         if (structureGameObjectMap.ContainsKey(str) == false) {

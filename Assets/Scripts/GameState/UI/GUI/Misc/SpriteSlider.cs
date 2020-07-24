@@ -13,7 +13,7 @@ public class SpriteSlider : MonoBehaviour {
             return;
         }
         setted = true;
-        background.transform.SetParent(go.transform);
+        background.transform.SetParent(go.transform, false);
         background.transform.localPosition = (go.transform.localScale / 2);
     }
     public void ChangePercent(float f) {

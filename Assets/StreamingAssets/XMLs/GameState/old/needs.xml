@@ -1,18 +1,21 @@
 <needs>
    <Need ID="alcohol">
       <UsageAmounts>
-         <entry Level="0">0.0</entry>
-         <entry Level="1">0.0</entry>
-         <entry Level="2">0.0</entry>
-         <entry Level="3">4.595238</entry>
+         <entry Level="0">0.002</entry>
+         <entry Level="1">2.5E-4</entry>
+         <entry Level="2">5.0E-4</entry>
+         <entry Level="3">1.0E-4</entry>
       </UsageAmounts>
       <Name>
          <entry lang="English">Alcohol</entry>
          <entry lang="German">Alkohol</entry>
       </Name>
+      <item ID="liquor">
+         <count>0</count>
+      </item>
       <startLevel>1</startLevel>
       <popCount>0</popCount>
-      <group>food</group>
+      <group>beverages</group>
    </Need>
    <Need ID="education">
       <UsageAmounts>
@@ -25,9 +28,10 @@
          <entry lang="English">Education</entry>
          <entry lang="German">Bildung</entry>
       </Name>
+      <structures length="1">school</structures>
       <startLevel>1</startLevel>
       <popCount>0</popCount>
-      <group>food</group>
+      <group>education</group>
    </Need>
    <Need ID="salt">
       <UsageAmounts>
@@ -40,6 +44,9 @@
          <entry lang="English">Salt?</entry>
          <entry lang="German">Salz?</entry>
       </Name>
+      <item ID="salt">
+         <count>0</count>
+      </item>
       <startLevel>1</startLevel>
       <popCount>0</popCount>
       <group>food</group>
@@ -85,16 +92,17 @@
          <entry lang="English">Clean</entry>
          <entry lang="German">Sauberkeit</entry>
       </Name>
+      <structures length="1">bathhouse</structures>
       <startLevel>1</startLevel>
       <popCount>0</popCount>
-      <group>food</group>
+      <group>luxury</group>
    </Need>
    <Need ID="food">
       <UsageAmounts>
-         <entry Level="0">3.0</entry>
-         <entry Level="1">2.0</entry>
-         <entry Level="2">1.5</entry>
-         <entry Level="3">1.0</entry>
+         <entry Level="0">0.01</entry>
+         <entry Level="1">0.004</entry>
+         <entry Level="2">0.0022</entry>
+         <entry Level="3">0.0016</entry>
       </UsageAmounts>
       <Name>
          <entry lang="English">Food</entry>
@@ -109,18 +117,21 @@
    </Need>
    <Need ID="clothes">
       <UsageAmounts>
-         <entry Level="0">0.0</entry>
-         <entry Level="1">0.0</entry>
-         <entry Level="2">0.0</entry>
-         <entry Level="3">4.5</entry>
+         <entry Level="0">0.005</entry>
+         <entry Level="1">0.0025</entry>
+         <entry Level="2">3.5E-4</entry>
+         <entry Level="3">2.5E-4</entry>
       </UsageAmounts>
       <Name>
          <entry lang="English">Clothes</entry>
          <entry lang="German">Bekleidung</entry>
       </Name>
+      <item ID="hempclothes">
+         <count>0</count>
+      </item>
       <startLevel>1</startLevel>
       <popCount>0</popCount>
-      <group>food</group>
+      <group>clothing</group>
    </Need>
    <Need ID="security">
       <UsageAmounts>
@@ -178,9 +189,10 @@
          <entry lang="English">Belief</entry>
          <entry lang="German">Glauben</entry>
       </Name>
+      <structures length="1">chapel</structures>
       <startLevel>1</startLevel>
       <popCount>0</popCount>
-      <group>food</group>
+      <group>belief</group>
    </Need>
    <Need ID="fun">
       <UsageAmounts>
@@ -193,9 +205,10 @@
          <entry lang="English">Fun</entry>
          <entry lang="German">Spaß</entry>
       </Name>
+      <structures length="1">arena</structures>
       <startLevel>1</startLevel>
       <popCount>0</popCount>
-      <group>food</group>
+      <group>entertainment</group>
    </Need>
    <NeedGroup ID="beverages">
       <Name>

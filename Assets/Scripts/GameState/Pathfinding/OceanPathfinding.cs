@@ -22,7 +22,6 @@ public class OceanPathfinding : Pathfinding {
 
     public OceanPathfinding() : base() {
         TurnType = Turning_Type.TurnRadius;
-
     }
 
     public OceanPathfinding(Tile t, Ship s) {
@@ -62,8 +61,8 @@ public class OceanPathfinding : Pathfinding {
                 Vector2 curr = new Vector2(pos[i].x, pos[i].y);
                 Vector2 dir = curr - new Vector2(pos[i - 2].x, pos[i - 2].y);
                 dir = dir.normalized;
-                if(World.Current.GetTileAt(new Vector2(pos[i].x + dir.x, pos[i].y)).Type == TileType.Ocean && 
-                    World.Current.GetTileAt(new Vector2(pos[i].x, pos[i].y + dir.y)).Type == TileType.Ocean) {
+                if(World.Current.GetTileAt(new Vector2(Mathf.Clamp(pos[i].x + dir.x,0,World.Current.Width-1), pos[i].y)).Type == TileType.Ocean && 
+                    World.Current.GetTileAt(new Vector2(pos[i].x, Mathf.Clamp(pos[i].y + dir.y, 0, World.Current.Height - 1))).Type == TileType.Ocean) {
                     continue;
                 }
             }

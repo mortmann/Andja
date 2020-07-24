@@ -104,7 +104,7 @@ public class DebugListDataUI : MonoBehaviour {
         if (childs != null) {
             foreach (object o in (IList)childs) {
                 GameObject fieldGO = Instantiate(debugdataprefab);
-                fieldGO.transform.SetParent(listgameObject.gameObject.transform);
+                fieldGO.transform.SetParent(listgameObject.gameObject.transform, false);
                 fieldGO.GetComponent<DebugDataUI>().SetData(i + ".", o);
                 i++;
             }
@@ -114,7 +114,7 @@ public class DebugListDataUI : MonoBehaviour {
         if (strings != null) {
             foreach (string o in strings) {
                 GameObject fieldGO = Instantiate(debugdataprefab);
-                fieldGO.transform.SetParent(listgameObject.gameObject.transform);
+                fieldGO.transform.SetParent(listgameObject.gameObject.transform, false);
                 fieldGO.GetComponent<DebugDataUI>().SetData(i + ".", o);
                 i++;
             }

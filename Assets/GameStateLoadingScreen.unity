@@ -171,6 +171,7 @@ MonoBehaviour:
   buildID: 0
   noBuildCost: 0
   noUnitRestriction: 0
+  allStructuresEnabled: 0
 --- !u!1 &65370476
 GameObject:
   m_ObjectHideFlags: 0
@@ -482,7 +483,6 @@ GameObject:
   m_Component:
   - component: {fileID: 563124730}
   - component: {fileID: 563124732}
-  - component: {fileID: 563124731}
   m_Layer: 0
   m_Name: PlayerController
   m_TagString: Untagged
@@ -504,18 +504,6 @@ Transform:
   m_Father: {fileID: 630077613}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &563124731
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 563124729}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0de99b02b9e502240acf14093e377644, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &563124732
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -674,6 +662,7 @@ MonoBehaviour:
   upper: {x: 1, y: 1, z: 0}
   lower: {x: 0, y: 0, z: 0}
   middle: {x: 0, y: 0, z: 0}
+  SoundAmbientValues: {x: 0, y: 0, z: 0}
   zoomLevel: 0
   CameraViewRange:
     serializedVersion: 2
@@ -982,7 +971,13 @@ PrefabInstance:
       propertyPath: MapSeed
       value: 1850640813
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    - target: {fileID: 8624619892147010575, guid: dfbb72e7b75263b4da3c1b05eaa385c6,
+        type: 3}
+      propertyPath: editorloadsavegame
+      value: simplecitytest
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 11473390, guid: dfbb72e7b75263b4da3c1b05eaa385c6, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: dfbb72e7b75263b4da3c1b05eaa385c6, type: 3}
 --- !u!1 &1592929706
 GameObject:

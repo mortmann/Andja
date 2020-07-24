@@ -13,27 +13,20 @@ public class OffWorldMarketUI : MonoBehaviour {
     Dictionary<string, Item> items;
     // Use this for initialization
     void Start() {
-        //		foreach (Transform item in content.transform) {
-        //			Destroy (item.gameObject);
-        //		}
-        idToGO = new Dictionary<string, GameObject>();
         OffworldMarket ofm = WorldController.Instance.offworldMarket;
         items = BuildController.Instance.GetCopieOfAllItems();
+        idToGO = new Dictionary<string, GameObject>();
+        foreach (Transform t in content.transform) {
+            Destroy(t.gameObject);
+        }
         foreach (string i in ofm.itemIDtoPrice.Keys) {
             GameObject g = GameObject.Instantiate(itemPricePrefab);
             g.GetComponent<PriceTagUI>().Show(items[i], ofm.itemIDtoPrice[i]);
-            g.transform.SetParent(content.transform);
-            //			EventTrigger trigger = g.GetComponent<EventTrigger> ();
-            //			EventTrigger.Entry entry = new EventTrigger.Entry( );
-            //			entry.eventID = EventTriggerType.PointerClick;
+            g.transform.SetParent(content.transform, false);
             string t = i;
             g.GetComponent<PriceTagUI>().AddListener((data) => { OnClick(t); });
-            //			entry.callback.AddListener( (data) => {OnClick(t);});
-            //			trigger.triggers.Add( entry );
             idToGO.Add(i, g);
         }
-
-
     }
 
 

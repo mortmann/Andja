@@ -103,7 +103,6 @@ public static class SimplePool {
             obj.transform.rotation = rot;
             obj.SetActive(true);
             return obj;
-
         }
 
         // Return an object to the inactive pool.
@@ -179,7 +178,10 @@ public static class SimplePool {
 
         return pools[prefab].Spawn(pos, rot);
     }
-
+    static public T Spawn<T>(T prefab, Vector3 pos, Quaternion rot) where T : MonoBehaviour {
+        Init(prefab.gameObject);
+        return pools[prefab.gameObject].Spawn(pos, rot).GetComponent<T>();
+    }
     /// <summary>
     /// Despawn the specified gameobject back into its pool.
     /// </summary>

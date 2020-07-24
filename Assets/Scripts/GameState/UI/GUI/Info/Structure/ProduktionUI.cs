@@ -38,7 +38,7 @@ public class ProduktionUI : MonoBehaviour {
             for (int i = 0; i < ustr.Output.Length; i++) {
                 ItemUI go = GameObject.Instantiate(itemPrefab).GetComponent<ItemUI>();
                 go.SetItem(ustr.Output[i], ustr.MaxOutputStorage);
-                go.transform.SetParent(outputContent);
+                go.transform.SetParent(outputContent, false);
                 itemToGO.Add(ustr.Output[i], go);
             }
         }
@@ -52,7 +52,7 @@ public class ProduktionUI : MonoBehaviour {
                 for (int i = 0; i < pstr.Intake.Length; i++) {
                     ItemUI go = GameObject.Instantiate(itemPrefab).GetComponent<ItemUI>();
                     go.SetItem(pstr.Intake[i], pstr.GetMaxIntakeForIntakeIndex(i));
-                    go.transform.SetParent(inputContent);
+                    go.transform.SetParent(inputContent, false);
                     itemToGO.Add(pstr.Intake[i], go);
                 }
             }
@@ -61,7 +61,7 @@ public class ProduktionUI : MonoBehaviour {
                     ItemUI go = GameObject.Instantiate(itemPrefab).GetComponent<ItemUI>();
                     if (i > 0) {
                         GameObject or = GameObject.Instantiate(itemORSeperatorPrefab);
-                        or.transform.SetParent(inputContent);
+                        or.transform.SetParent(inputContent, false);
                     }
                     if (i == pstr.OrItemIndex) {
                         go.SetItem(pstr.Intake[0], pstr.GetMaxIntakeForIntakeIndex(pstr.OrItemIndex));
@@ -75,7 +75,7 @@ public class ProduktionUI : MonoBehaviour {
                         go.SetInactive(true);
                         itemToGO.Add(pstr.ProductionData.intake[i], go);
                     }
-                    go.transform.SetParent(inputContent);
+                    go.transform.SetParent(inputContent, false);
                 }
             }
         }

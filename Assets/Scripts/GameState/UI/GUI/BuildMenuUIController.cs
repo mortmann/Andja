@@ -8,91 +8,88 @@ public class BuildMenuUIController : MonoBehaviour {
     public GameObject buttonBuildStructuresContent;
     public GameObject buttonPopulationsLevelContent;
 
-    public GameObject buildButtonPrefab;
+    public Button buildButtonPrefab;
     public GameObject populationButtonPrefab;
     public Foldable GroupPrefab;
 
-    public Dictionary<string, GameObject> nameToGOMap;
-    public Dictionary<string, string> nameToIDMap;
-
+    public Dictionary<string, Button> nameToGOMap;
     public Dictionary<int, ButtonSetter> popLevelToGO;
-
-    public List<string>[] buttons;
-    BuildController buildController;
-    GameObject oldButton;
+    List<Button>[] buttonsPerLevel; 
+    Button oldButton;
     static int selectedPopulationLevel = 0;
-    Player player;
-    public bool enableAllStructures = false;
+    Player Player => PlayerController.CurrentPlayer;
     internal static BuildMenuUIController Instance;
     private Dictionary<string, Foldable> groupGameObjects;
 
     // Use this for initialization
-    void Awake() {
-        if (Instance != null) {
+    private void Awake() {
+        if(Instance != null) {
             Debug.LogError("There should never be two BuildMenuUIController.");
         }
         Instance = this;
-
-        nameToGOMap = new Dictionary<string, GameObject>();
-        nameToIDMap = new Dictionary<string, string>();
-        buildController = BuildController.Instance;
-        buttons = new List<string>[PrototypController.Instance.NumberOfPopulationLevels];
-
-        foreach(Transform child in buttonPopulationsLevelContent.transform) {
+    }
+    private void Setup() {
+        foreach (Transform child in buttonPopulationsLevelContent.transform) {
             Destroy(child.gameObject);
         }
         popLevelToGO = new Dictionary<int, ButtonSetter>();
+
         foreach (PopulationLevelPrototypData pl in PrototypController.Instance.PopulationLevelDatas.Values) {
             GameObject go = Instantiate(populationButtonPrefab);
-            go.transform.SetParent(buttonPopulationsLevelContent.transform);
+            go.transform.SetParent(buttonPopulationsLevelContent.transform, false);
             ButtonSetter bs = go.GetComponent<ButtonSetter>();
-            bs.Set(pl.Name, () => { OnPopulationLevelButtonClick(pl.LEVEL); }, IconSpriteController.GetIcon(pl.iconSpriteName),pl.Name);
+            bs.Set(pl.Name, () => { OnPopulationLevelButtonClick(pl.LEVEL); }, IconSpriteController.GetIcon(pl.iconSpriteName), pl.Name);
             popLevelToGO.Add(pl.LEVEL, bs);
+            bs.Interactable(Player.MaxPopulationLevel > pl.LEVEL);
         }
-
-        player = PlayerController.Instance.CurrPlayer;
-
+        foreach (Transform child in buttonBuildStructuresContent.transform) {
+            Destroy(child.gameObject);
+        }
+        buttonsPerLevel = new List<Button>[PrototypController.Instance.NumberOfPopulationLevels];
         for (int i = 0; i < PrototypController.Instance.NumberOfPopulationLevels; i++) {
-            buttons[i] = new List<string>();
+            buttonsPerLevel[i] = new List<Button>();
         }
 
+        nameToGOMap = new Dictionary<string, Button>();
         groupGameObjects = new Dictionary<string, Foldable>();
 
-        foreach (Structure s in buildController.StructurePrototypes.Values) {
+        foreach (Structure s in BuildController.Instance.StructurePrototypes.Values) {
             if (s.CanBeBuild == false) {
                 continue;
             }
-            GameObject b = Instantiate(buildButtonPrefab);
+            Button b = Instantiate(buildButtonPrefab);
             b.name = s.ID;
             string type = s.GetType().Name;
-            if (groupGameObjects.ContainsKey(type)==false) {
+            if (groupGameObjects.ContainsKey(type) == false) {
                 groupGameObjects[type] = Instantiate(GroupPrefab);
-                groupGameObjects[type].transform.SetParent(buttonBuildStructuresContent.transform);
+                groupGameObjects[type].transform.SetParent(buttonBuildStructuresContent.transform, false);
                 groupGameObjects[type].Set(type);
             }
-            groupGameObjects[type].Add(b);
+            groupGameObjects[type].Add(b.gameObject);
 
             b.GetComponent<Button>().onClick.AddListener(() => { OnClick(b.name); });
             b.GetComponent<Image>().color = Color.white;
             b.GetComponent<StructureBuildUI>().Show(s);
-            nameToGOMap[b.name] = b.gameObject;
-            nameToIDMap[b.name] = s.ID;
-            buttons[s.PopulationLevel].Add(b.name);
+            nameToGOMap[b.name] = b;
+            buttonsPerLevel[s.PopulationLevel].Add(b);
             if (s.PopulationLevel != selectedPopulationLevel) {
-                b.SetActive(false);
+                b.gameObject.SetActive(false);
             }
+            b.interactable = BuildController.Instance.allStructuresEnabled || Player.HasStructureUnlocked(s.ID);
         }
+
         //check em if they are active
         foreach (Foldable f in groupGameObjects.Values)
             f.Check();
-        //Update Canvas required because groups are not displayed correctly
         Canvas.ForceUpdateCanvases();
-
-        OnMaxPopLevelChange(player.MaxPopulationLevel);
-        OnMaxPopLevelCountChange(player.MaxPopulationLevel, player.MaxPopulationCount);
-        player.RegisterMaxPopulationCountChange(OnMaxPopLevelCountChange);
-        buildController.RegisterBuildStateChange(OnBuildModeChange);
-
+    }
+    void OnEnable() {
+        //first time enabled after start
+        if (buttonsPerLevel == null)
+            Setup();
+        OnMaxPopLevelChange(Player.MaxPopulationLevel);
+        Player.RegisterStructuresUnlock(OnStructuresUnlock);
+        BuildController.Instance.RegisterBuildStateChange(OnBuildModeChange);
     }
     public void OnBuildModeChange(BuildStateModes mode) {
         if (mode != BuildStateModes.Build) {
@@ -103,7 +100,7 @@ public class BuildMenuUIController : MonoBehaviour {
     public void OnMaxPopLevelChange(int setlevel) {
         foreach (int level in popLevelToGO.Keys) {
             ButtonSetter g = popLevelToGO[level];
-            if (level > setlevel && enableAllStructures == false) {
+            if (level > setlevel && BuildController.Instance.allStructuresEnabled == false) {
                 g.Interactable(false);
             }
             else {
@@ -111,18 +108,10 @@ public class BuildMenuUIController : MonoBehaviour {
             }
         }
     }
-    public void OnMaxPopLevelCountChange(int level, int count) {
-        OnMaxPopLevelChange(level);
-        if (level != selectedPopulationLevel) {
-            return;
-        }
-        foreach (string name in buttons[level]) {
-            if (count >= buildController.StructurePrototypes[nameToIDMap[name]].PopulationCount) {
-                ChangeButton(name, true);
-            }
-            else {
-                ChangeButton(name, false);
-            }
+    public void OnStructuresUnlock(IEnumerable<Structure> structures) {
+        OnMaxPopLevelChange(structures.GetEnumerator().Current.PopulationLevel);
+        foreach (Structure structure in structures) {
+            nameToGOMap[structure.ID].interactable = true;
         }
     }
     public void Update() {
@@ -141,26 +130,31 @@ public class BuildMenuUIController : MonoBehaviour {
         }
         oldButton = nameToGOMap[name];
         nameToGOMap[name].GetComponent<Image>().color = Color.red;
-        buildController.StartStructureBuild(nameToIDMap[name]);
+        BuildController.Instance.StartStructureBuild(name);
     }
 
     public void OnPopulationLevelButtonClick(int i) {
-        foreach (string item in buttons[selectedPopulationLevel]) {
+        foreach (Button item in buttonsPerLevel[selectedPopulationLevel]) {
             ChangeButton(item, false);
         }
-        foreach (string name in buttons[i]) {
-            if (player.MaxPopulationCount >= buildController.StructurePrototypes[nameToIDMap[name]].PopulationCount) {
-                ChangeButton(name,true);
-            }
+        foreach (Button name in buttonsPerLevel[i]) {
+            ChangeButton(name,true);
         }
         selectedPopulationLevel = i;
     }
-    void ChangeButton(string item, bool change) {
-        nameToGOMap[item].SetActive(change);
-        nameToGOMap[item].GetComponentInParent<Foldable>().Check();
+    void ChangeButton(Button item, bool change) {
+        item.gameObject.SetActive(change);
+        item.GetComponentInParent<Foldable>().Check();
+        item.interactable = BuildController.Instance.allStructuresEnabled || Player.HasStructureUnlocked(item.name);
     }
     public void OnDisable() {
+#if UNITY_EDITOR
+        if (UnityEditor.EditorApplication.isPlayingOrWillChangePlaymode == false)
+            return;
+#endif
         if (oldButton != null)
             oldButton.GetComponent<Image>().color = Color.white;
+        Player.UnregisterStructuresUnlock(OnStructuresUnlock);
+        BuildController.Instance.UnregisterBuildStateChange(OnBuildModeChange);
     }
 }

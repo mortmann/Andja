@@ -144,7 +144,7 @@ public class MenuController : MonoBehaviour {
     }
 
     internal void LoadSaveGame(string selected) {
-        GameDataHolder.setloadsavegame = selected;
+        GameData.setloadsavegame = selected;
         ChangeToGameStateLoadScreen();
     }
 

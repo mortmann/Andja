@@ -78,6 +78,9 @@ public class FlyingTrader  {
         List<City> visitedCities;
         float tradeTimer;
         bool isAtTrade;
+        public TradeShip() {
+
+        }
         public TradeShip(Ship ship) {
             visitedCities = new List<City>();
             this.Ship = ship;
@@ -164,12 +167,18 @@ public class FlyingTrader  {
                 return;
             }
             CurrentDestination.RegisterCityDestroy(OnNextDestinationDestroy);
+            if (CurrentDestination.warehouse == null) {
+                GoToNextCity();
+                visitedCities.Add(CurrentDestination);
+                return;
+            }
             CurrentDestination.warehouse.RegisterOnDestroyCallback(OnWarehouseDestroy);
             Ship.GiveMovementCommand(CurrentDestination.warehouse.tradeTile);
         }
 
         private void OnWarehouseDestroy(Structure str, IWarfare destroyer) {
             str.UnregisterOnDestroyCallback(OnWarehouseDestroy);
+            visitedCities.Add(CurrentDestination);
             GoToNextCity();
         }
 

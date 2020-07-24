@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using Priority_Queue;
 using System.Linq;
+using System.Threading.Tasks;
+using System;
 
 public enum Path_Heuristics { Euclidean, Manhattan, Diagonal }
 
@@ -10,44 +12,33 @@ public class Path_AStar {
     public Queue<Tile> path;
     public const float DIAGONAL_MOVE_COST = 1.41421356237f;
     public const float NORMAL_MOVE_COST = 1;
-    List<Tile> startTiles;
-    List<Tile> endTiles;
-
-
+    public HashSet<Tile> startTiles;
+    public HashSet<Tile> endTiles;
+    public bool canEndInUnwakable;
+    public int playerCityRequired = int.MinValue;
+    Dictionary<Tile, Path_Node<Tile>> nodes;
     // for the way back to the first tile
     public Path_AStar(Queue<Tile> backPath) {
         path = backPath;
     }
 
-    public Path_AStar(Island island, Tile tileStart, Tile tileEnd, bool diag = true, Path_Heuristics Heuristic = Path_Heuristics.Euclidean) {
+    public Path_AStar(Island island, Tile tileStart, Tile tileEnd, bool diag = true,
+        Path_Heuristics Heuristic = Path_Heuristics.Euclidean, bool canEndInUnwakable = false, int playerCityRequired = int.MinValue) {
         if (island == null || tileStart == null || tileEnd == null) {
             return;
         }
+        this.playerCityRequired = playerCityRequired;
+        this.canEndInUnwakable = canEndInUnwakable;
         this.Heuristic = Heuristic;
         // A dictionary of all valid, walkable nodes.
-        Dictionary<Tile, Path_Node<Tile>> nodes = island.TileGraphIslandTiles.nodes;
-        Calculate(nodes, tileStart, tileEnd, diag);
+        nodes = island.TileGraphIslandTiles.nodes;
+        endTiles = new HashSet<Tile>();
+        endTiles.Add(tileEnd);
+        Calculate(tileStart, tileEnd, diag);
     }
 
-    public Path_AStar(Route route, Tile tileStart, Tile tileEnd, List<Tile> startTiles, List<Tile> endTiles, Path_Heuristics Heuristic = Path_Heuristics.Manhattan) {
+    public Path_AStar(Route route, Path_TileGraph graph, Tile tileStart, Tile tileEnd, List<Tile> startTiles, List<Tile> endTiles, Path_Heuristics Heuristic = Path_Heuristics.Manhattan) {
         if (route == null || tileStart == null || tileEnd == null) {
-            return;
-        }
-        this.Heuristic = Heuristic;
-        startTiles.RemoveAll(x => x.Structure != null && x.Structure.IsWalkable == false);
-        endTiles.RemoveAll(x => x.Structure != null && x.Structure.IsWalkable == false);
-        if (startTiles.Count == 0 || endTiles.Count == 0) {
-            return;
-        }
-        this.startTiles = startTiles;
-        this.endTiles = endTiles;
-        // A dictionary of all valid, walkable nodes.
-        Dictionary<Tile, Path_Node<Tile>> nodes = route.TileGraph.nodes;
-        Calculate(nodes, tileStart, tileEnd, false);
-
-    }
-    public Path_AStar(Island island, Tile start, Tile end, List<Tile> startTiles, List<Tile> endTiles, Path_Heuristics Heuristic = Path_Heuristics.Euclidean) {
-        if (island == null || startTiles == null || endTiles == null || startTiles.Count == 0 || endTiles.Count == 0) {
             return;
         }
         this.Heuristic = Heuristic;
@@ -56,13 +47,34 @@ public class Path_AStar {
         if (startTiles.Count == 0 || endTiles.Count == 0) {
             return;
         }
-        this.startTiles = startTiles;
-        this.endTiles = endTiles;
+        this.startTiles = new HashSet<Tile>(startTiles);
+        this.endTiles = new HashSet<Tile>(endTiles);
         // A dictionary of all valid, walkable nodes.
-        Dictionary<Tile, Path_Node<Tile>> nodes = island.TileGraphIslandTiles.nodes;
-        Calculate(nodes, start, end);
+        //Path_TileGraph path_TileGraph = route.TileGraph.Clone();
+        //startTiles.ForEach(x => path_TileGraph.AddNodeToRouteTileGraph(x));
+        //endTiles.ForEach(x => path_TileGraph.AddNodeToRouteTileGraph(x));
+        canEndInUnwakable = true;
+        nodes = graph.nodes;
+        Calculate(tileStart, tileEnd, false);
     }
-    private void Calculate(Dictionary<Tile, Path_Node<Tile>> nodes, Tile tileStart, Tile tileEnd, bool diag = true) {
+    public Path_AStar(Island island, Tile start, Tile end, List<Tile> startTiles, List<Tile> endTiles, bool canEndInUnwakable = false, Path_Heuristics Heuristic = Path_Heuristics.Euclidean) {
+        if (island == null || startTiles == null || endTiles == null || startTiles.Count == 0 || endTiles.Count == 0) {
+            return;
+        }
+        this.canEndInUnwakable = canEndInUnwakable;
+        this.Heuristic = Heuristic;
+        //startTiles.RemoveAll(x => x.Structure != null && x.Structure.IsWalkable == false);
+        //endTiles.RemoveAll(x => x.Structure != null && x.Structure.IsWalkable == false);
+        if (startTiles.Count == 0 || endTiles.Count == 0) {
+            return;
+        }
+        this.startTiles = new HashSet<Tile>(startTiles);
+        this.endTiles = new HashSet<Tile>(endTiles);
+        // A dictionary of all valid, walkable nodes.
+        nodes = island.TileGraphIslandTiles.nodes;
+        Calculate(start, end);
+    }
+    private void Calculate(Tile tileStart, Tile tileEnd, bool diag = true) {
         // Make sure our start/end tiles are in the list of nodes!
         if (nodes.ContainsKey(tileStart) == false) {
             Debug.LogError("Path_AStar: The starting tile isn't in the list of nodes!");
@@ -87,17 +99,21 @@ public class Path_AStar {
         Dictionary<Path_Node<Tile>, Path_Node<Tile>> Came_From = new Dictionary<Path_Node<Tile>, Path_Node<Tile>>();
 
         Dictionary<Path_Node<Tile>, float> g_score = new Dictionary<Path_Node<Tile>, float>();
-        foreach (Path_Node<Tile> n in nodes.Values) {
-            g_score[n] = Mathf.Infinity;
+        Dictionary<Path_Node<Tile>, float> f_score = new Dictionary<Path_Node<Tile>, float>();
+        foreach(Path_Node<Tile>n in nodes.Values) {
+            g_score.Add(n, Mathf.Infinity);
+            f_score.Add(n, Mathf.Infinity);
         }
         g_score[start] = 0;
-
-        Dictionary<Path_Node<Tile>, float> f_score = new Dictionary<Path_Node<Tile>, float>();
-        foreach (Path_Node<Tile> n in nodes.Values) {
-            f_score[n] = Mathf.Infinity;
-        }
         f_score[start] = Dist_between_without_diag(start, goal);
 
+        if (float.IsInfinity(goal.data.MovementCost) == false) {
+            canEndInUnwakable = false; //just disable it if goal can be walked normally
+        }
+        HashSet<Tile> closestWalkableNeighbours = null;
+        if (canEndInUnwakable) {
+            closestWalkableNeighbours = FindClosestWalkableNeighbours(tileEnd);
+        }
         while (OpenSet.Count > 0) {
             Path_Node<Tile> current = OpenSet.Dequeue();
             if (current == goal || endTiles != null && endTiles.Contains(current.data)) {
@@ -111,23 +127,41 @@ public class Path_AStar {
             if (startTiles != null && startTiles.Contains(current.data)) {
                 Came_From.Clear();
             }
-            foreach (Path_Edge<Tile> edge_neighbor in current.edges) {
+            if(current.edges.Length>8) {
+                Debug.Log("wat");
+            }
+            Parallel.ForEach(current.edges, edge_neighbor => {
                 if (diag == false) {
                     if ((edge_neighbor.node.data.Vector - current.data.Vector).sqrMagnitude > 1.1) {
-                        continue;
+                        return;
                     }
                 }
                 Path_Node<Tile> neighbor = edge_neighbor.node;
-
+                
                 if (ClosedSet.Contains(neighbor) == true)
-                    continue; // ignore this already completed neighbor
+                    return; // ignore this already completed neighbor
                 float movement_cost_to_neighbor = neighbor.data.MovementCost * Dist_between(current, neighbor);
+                if(playerCityRequired>int.MinValue) {
+                    if (neighbor.data.City.PlayerNumber != playerCityRequired) {
+                        movement_cost_to_neighbor = float.PositiveInfinity;
+                    }
+                }
+                if (canEndInUnwakable) {
+                    if (closestWalkableNeighbours.Contains(neighbor.data) || endTiles.Contains(neighbor.data)) {
+                        movement_cost_to_neighbor = Dist_between(current, neighbor)+0.1f;
+                    }
+                }
                 float tentative_g_score = g_score[current] + movement_cost_to_neighbor;
 
                 if (OpenSet.Contains(neighbor) && tentative_g_score >= g_score[neighbor])
-                    continue;
-
-                Came_From[neighbor] = current;
+                    return;
+                try {
+                    Came_From[neighbor] = current;
+                } catch(Exception e) {
+                    //it has nullpointer here no clue why
+                    //TODO: fix this
+                    e.ToString();
+                }
                 g_score[neighbor] = tentative_g_score;
                 f_score[neighbor] = g_score[neighbor] + Heuristic_cost_estimate(neighbor, goal);
 
@@ -138,7 +172,7 @@ public class Path_AStar {
                     OpenSet.UpdatePriority(neighbor, f_score[neighbor]);
                 }
 
-            } // foreach neighbour
+            }); // foreach neighbour
         } // while
 
         // If we reached here, it means that we've burned through the entire
@@ -151,6 +185,19 @@ public class Path_AStar {
 
     }
 
+    private HashSet<Tile> FindClosestWalkableNeighbours(Tile start) {
+        HashSet<Tile> tiles = new HashSet<Tile>();
+        if (nodes.ContainsKey(start) == false)
+            return tiles;
+        foreach(Path_Edge<Tile> x in nodes[start].edges) { 
+            if (x.node.data.Type == TileType.Ocean)
+                continue;
+            tiles.Add(x.node.data);
+            if (tiles.Count == 0)
+                tiles.UnionWith(FindClosestWalkableNeighbours(x.node.data));
+        }
+        return tiles;
+    }
 
     float Heuristic_cost_estimate(Path_Node<Tile> a, Path_Node<Tile> b) {
         switch (Heuristic) {

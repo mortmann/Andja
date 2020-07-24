@@ -13,10 +13,8 @@ public class NeedUI : MonoBehaviour {
     protected Need need;
     protected HomeStructure home;
     private bool locked;
-
-    public void SetNeed(Need need, HomeStructure home) {
+    public void SetNeed(Need need) {
         this.need = need;
-        this.home = home;
         this.name = need.Name;
         string name = need.Name + " | ";
         if (need.IsItemNeed()) {
@@ -34,18 +32,21 @@ public class NeedUI : MonoBehaviour {
             name += need.Structures[0].SmallName;
         }
         nameText.text = name;
-        if (PlayerController.Instance.CurrPlayer.HasUnlockedNeed(need) == false) {
+        if (PlayerController.CurrentPlayer.HasNeedUnlocked(need) == false) {
             percentageText.text = "LOCKED!";
             locked = true;
-            PlayerController.Instance.CurrPlayer.RegisterNeedUnlock(OnNeedUnlock);
+            PlayerController.CurrentPlayer.RegisterNeedUnlock(OnNeedUnlock);
             return;
         }
     }
-
+    public void Show(HomeStructure homeStructure) {
+        home = homeStructure;
+        need = home.NeedGroups.Find(x => x.ID == need.Group.ID)?.Needs.Find(x => x.ID == need.ID);
+    }
     private void OnNeedUnlock(Need need) {
         if (need.ID != this.need.ID)
             return;
-        PlayerController.Instance.CurrPlayer.UnregisterNeedUnlock(OnNeedUnlock);
+        PlayerController.CurrentPlayer.UnregisterNeedUnlock(OnNeedUnlock);
         locked = false;
     }
 

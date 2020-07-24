@@ -14,12 +14,13 @@ public class Path_TileGraph {
     // from a tile is linked via an edge connection.
 
     public Dictionary<Tile, Path_Node<Tile>> nodes;
-    public List<Tile> myTiles;
-
+    public HashSet<Tile> Tiles;
+    Route Route = null;
     public Path_TileGraph(Route route) {
-        this.myTiles = route.Tiles;
+        Route = route;
+        this.Tiles = new HashSet<Tile>(route.Tiles);
         nodes = new Dictionary<Tile, Path_Node<Tile>>();
-        foreach (Tile t in myTiles) {
+        foreach (Tile t in Tiles) {
             Path_Node<Tile> n = new Path_Node<Tile> {
                 data = t
             };
@@ -28,7 +29,6 @@ public class Path_TileGraph {
         }
         // Now loop through all nodes again
         // Create edges for neighbours
-
         int edgeCount = 0;
 
         foreach (Tile t in nodes.Keys) {
@@ -62,15 +62,23 @@ public class Path_TileGraph {
 
     }
     public void AddNodeToRouteTileGraph(Tile toAdd) {
-        if (nodes.ContainsKey(toAdd) == true) {
+        if (nodes.ContainsKey(toAdd)) {
             return;
         }
         Path_Node<Tile> toAdd_node = new Path_Node<Tile> {
             data = toAdd
         };
-        nodes.Add(toAdd, toAdd_node);
         List<Path_Edge<Tile>> toAdd_edges = new List<Path_Edge<Tile>>();
-        foreach (Tile t in toAdd.GetNeighbours()) {
+        List<Tile> tiles = new List<Tile>(toAdd.GetNeighbours());
+        if(Route != null) {
+            tiles.RemoveAll(x => x.Structure is RoadStructure == false);
+            tiles.RemoveAll(x => Route.Tiles.Contains(x) == false);
+            if(tiles.Count == 0) {
+                return;
+            }
+        }
+        nodes.Add(toAdd, toAdd_node);
+        foreach (Tile t in tiles) {
             if (nodes.ContainsKey(t)) {
                 //add the edges to the new node
                 Path_Edge<Tile> newEdge = new Path_Edge<Tile> {
@@ -78,11 +86,11 @@ public class Path_TileGraph {
                     node = nodes[t]
                 };
                 toAdd_edges.Add(newEdge);
-
-
                 //update the present nodes with the new edge to the new node
                 Path_Node<Tile> n = nodes[t];
-                List<Path_Edge<Tile>> neighbours_edges = new List<Path_Edge<Tile>>(n.edges);
+                List<Path_Edge<Tile>> neighbours_edges = new List<Path_Edge<Tile>>();
+                if (n.edges != null)
+                    neighbours_edges.AddRange(n.edges);
                 Path_Edge<Tile> oldEdge = new Path_Edge<Tile> {
                     cost = toAdd.MovementCost,
                     node = nodes[toAdd]
@@ -91,13 +99,15 @@ public class Path_TileGraph {
                 n.edges = neighbours_edges.ToArray();
             }
             toAdd_node.edges = toAdd_edges.ToArray();
-
+        }
+        if (toAdd_edges.Count == 0) {
+            nodes.Remove(toAdd);
+        } else {
+            Tiles.Add(toAdd);
         }
 
-
-
     }
-    public void addNodes(Path_TileGraph ptg) {
+    public void AddNodes(Path_TileGraph ptg) {
         foreach (Tile item in ptg.nodes.Keys) {
             if (this.nodes.ContainsKey(item)) {
                 continue;
@@ -107,9 +117,9 @@ public class Path_TileGraph {
     }
 
     public Path_TileGraph(Island island) {
-        this.myTiles = island.Tiles;
+        this.Tiles = new HashSet<Tile>(island.Tiles);
         nodes = new Dictionary<Tile, Path_Node<Tile>>();
-        foreach (Tile t in myTiles) {
+        foreach (Tile t in Tiles) {
             Path_Node<Tile> n = new Path_Node<Tile> {
                 data = t
             };
@@ -157,7 +167,14 @@ public class Path_TileGraph {
         }
 
     }
-
+    public Path_TileGraph Clone() {
+        return new Path_TileGraph(this.nodes,this.Tiles, this.Route);
+    }
+    private Path_TileGraph(Dictionary<Tile, Path_Node<Tile>> nodes, HashSet<Tile> myTiles, Route route) {
+        this.nodes = new Dictionary<Tile, Path_Node<Tile>>(nodes);
+        this.Tiles = new HashSet<Tile>(myTiles);
+        this.Route = route;
+    }
     public Path_TileGraph(Vector2 lowerBounds, Vector2 upperBounds) {
         World w = World.Current;
 

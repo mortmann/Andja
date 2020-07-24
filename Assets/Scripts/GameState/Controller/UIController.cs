@@ -6,7 +6,9 @@ using System.Collections.Generic;
 using System;
 
 public class UIController : MonoBehaviour {
-
+    public float CanvasScaleWidth => Screen.width / GetComponentInParent<CanvasScaler>().referenceResolution.x;
+    public float CanvasScaleHeight => Screen.height / GetComponentInParent<CanvasScaler>().referenceResolution.y;
+    public Vector2 CanvasScale => new Vector2(CanvasScaleWidth, CanvasScaleHeight);
     public GameObject mainCanvas;
     public GameObject shortCutCanvas;
 

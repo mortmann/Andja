@@ -240,6 +240,8 @@ public class Unit : IGEventable,IWarfare {
 
     public List<Command> QueuedCommands => queuedCommands == null ? null : new List<Command>(queuedCommands);
 
+    public int PopulationLevel => Data.PopulationLevel;
+    public int PopulationCount => Data.PopulationCount;
 
     public override string GetID() { return ID; } // only needs to get changed WHEN there is diffrent ids
 
@@ -559,10 +561,6 @@ public class Unit : IGEventable,IWarfare {
 
     }
     public void IsInRangeOfWarehouse(OutputStructure ware) {
-        if (ware == null) {
-            Debug.LogError("WARNING Range warehouse null");
-            return;
-        }
         rangeUStructure = ware;
     }
     public void ToTradeItemToNearbyWarehouse(Item clicked) {

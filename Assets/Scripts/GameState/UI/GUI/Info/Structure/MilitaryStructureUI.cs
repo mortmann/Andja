@@ -28,7 +28,7 @@ public class MilitaryStructureUI : MonoBehaviour {
             }
 
             UnitBuildUI ubui = Instantiate<UnitBuildUI>(unitSelectPrefab);
-            ubui.transform.SetParent(unitSelectionPanel.transform);
+            ubui.transform.SetParent(unitSelectionPanel.transform, false);
             ubui.Show(u);
             Unit temp = u;
             ubui.SetIsBuildable(military.HasEnoughResources(u));

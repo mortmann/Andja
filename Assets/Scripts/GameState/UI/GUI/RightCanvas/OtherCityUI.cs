@@ -21,7 +21,7 @@ public class OtherCityUI : MonoBehaviour {
         foreach (string itemID in city.itemIDtoTradeItem.Keys) {
             TradeItem ti = city.itemIDtoTradeItem[itemID];
             GameObject g = Instantiate(TradeItemPrefab);
-            g.transform.SetParent(ItemCanvas.transform);
+            g.transform.SetParent(ItemCanvas.transform, false);
             TradeItemUI tiui = g.GetComponent<TradeItemUI>();
             if (ti.IsSelling) {
                 //SELL show how much it has
@@ -45,7 +45,7 @@ public class OtherCityUI : MonoBehaviour {
             Debug.Log("No Ship in Range");
             return;
         }
-        city.SellingTradeItem(itemID, PlayerController.Instance.CurrPlayer, ((Ship)u), amount);
+        city.SellingTradeItem(itemID, PlayerController.CurrentPlayer, ((Ship)u), amount);
     }
     public void OnCityDestroy(City c) {
         if (city != c) {

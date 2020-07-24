@@ -162,7 +162,7 @@ public class UnitUI : MonoBehaviour {
     }
     private void AddItemGameObject(int i) {
         GameObject go = GameObject.Instantiate(itemPrefab);
-        go.transform.SetParent(content.transform);
+        go.transform.SetParent(content.transform, false);
         ItemUI iui = go.GetComponent<ItemUI>();
         if (inv.HasItemInSpace(i) == false) {
             go.name = "item " + i;

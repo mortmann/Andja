@@ -6,9 +6,47 @@ using UnityEngine.UI;
 public class NeedGroupUI : MonoBehaviour {
     public Text nameText;
     public GameObject listGO;
-    public void Show(NeedGroup group) {
-        nameText.text = group.Name;
+    public GameObject needPrefab;
+    Dictionary<Need, NeedUI> needToUI;
+    List<Need>[] Needs;
+
+    NeedGroup NeedGroup;
+    public bool IsEmpty => Needs[NeedsUIController.CurrentSelectedLevel].Count == 0;
+
+    private void OnEnable() {
+        Needs = new List<Need>[PrototypController.Instance.NumberOfPopulationLevels];
+        foreach (Transform t in listGO.transform)
+            Destroy(t.gameObject);
     }
-    public void OnDisable() {
+    public void SetGroup(NeedGroup group) {
+        NeedGroup = group;
+        Needs = new List<Need>[PrototypController.Instance.NumberOfPopulationLevels];
+        for (int i = 0; i < PrototypController.Instance.NumberOfPopulationLevels; i++) {
+            Needs[i] = new List<Need>();
+        }
+        needToUI = new Dictionary<Need, NeedUI>();
+        nameText.text = group.Name;
+        foreach (Need need in group.Needs) {
+            GameObject b = Instantiate(needPrefab);
+            b.transform.SetParent(listGO.transform, false);
+            NeedUI ui = b.GetComponent<NeedUI>();
+            ui.SetNeed(need);
+            needToUI[need] = ui;
+            Needs[need.StartLevel].Add(need);
+        }
+    }
+
+    public void Show(HomeStructure home) {
+        foreach (Need need in NeedGroup.Needs) {
+            needToUI[need].Show(home);
+        }
+    }
+
+    public void UpdateLevel(int level) {
+        for(int i = 0; i < PrototypController.Instance.NumberOfPopulationLevels; i++) {
+            Needs[level].ForEach(x => {
+                needToUI[x].gameObject.SetActive(x.StartLevel == level);
+            });
+        }
     }
 }

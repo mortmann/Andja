@@ -18,7 +18,7 @@ public class DebugInformation : MonoBehaviour {
         }
     }
     public void Show(object obj) {
-        transform.SetParent(UIController.Instance.mainCanvas.transform);
+        transform.SetParent(UIController.Instance.mainCanvas.transform, false);
         transform.position = new Vector3(Screen.width / 2, Screen.height / 2);
 
         currentObject = obj;
@@ -27,13 +27,13 @@ public class DebugInformation : MonoBehaviour {
             if (field.FieldType.GetInterface(nameof(IEnumerable)) == null && field.GetType().IsArray == false
                 || field.FieldType == typeof(string)) {
                 GameObject fieldGO = Instantiate(debugdataprefab);
-                fieldGO.transform.SetParent(contentList.transform);
+                fieldGO.transform.SetParent(contentList.transform, false);
                 fieldGO.GetComponent<DebugDataUI>().SetData(field, obj);
             }
             else
             if (field.FieldType.GetInterface(nameof(IEnumerable)) != null || field.GetType().IsArray) {
                 GameObject fieldGO = Instantiate(debuglistdataprefab);
-                fieldGO.transform.SetParent(contentList.transform);
+                fieldGO.transform.SetParent(contentList.transform, false);
                 fieldGO.GetComponent<DebugListDataUI>().SetData(field, obj);
             }
             else {

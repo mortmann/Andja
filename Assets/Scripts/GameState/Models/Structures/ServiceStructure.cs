@@ -11,6 +11,7 @@ public class ServiceStructurePrototypeData : StructurePrototypeData {
     public Effect[] effectsOnTargets;
     public int maxNumberOfWorker = 1;
     public float workSpeed = 0.01f;
+    public bool hasToEnterWorkStructure = true;
 }
 [JsonObject(MemberSerialization.OptIn)]
 public class ServiceStructure : Structure {
@@ -23,7 +24,7 @@ public class ServiceStructure : Structure {
     Structure[] SpecificRange => ServiceData.specificRange;
     int MaxNumberOfWorker => ServiceData.maxNumberOfWorker;
     public float WorkSpeed => ServiceData.workSpeed;
-
+    public bool HasToEnterWorkStructure => ServiceData.hasToEnterWorkStructure;
     public Func<Structure, float, bool> WorkOnTarget { get; protected set; }
     Action<Structure> todoOnNewTarget;
     Action<Structure> onTargetChanged;
@@ -255,7 +256,7 @@ public class ServiceStructure : Structure {
             break;
         }
         jobsToDo.Remove(s);
-        Worker w = new Worker(this, s, WorkSpeed);
+        Worker w = new Worker(this, s, WorkSpeed, true, HasToEnterWorkStructure);
         World.Current.CreateWorkerGameObject(w);
         workers.Add(w);
     }

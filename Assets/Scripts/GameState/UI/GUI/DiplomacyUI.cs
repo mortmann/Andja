@@ -39,7 +39,7 @@ public class DiplomacyUI : MonoBehaviour {
             Destroy(t.gameObject);
         }
         GameObject center = Instantiate(playerObjectPrefab);
-        center.transform.SetParent(playerContent);
+        center.transform.SetParent(playerContent, false);
         center.transform.localPosition = Vector3.zero;
         string name = showPlayer.Number == PlayerController.currentPlayerNumber ? "You" : showPlayer.Name;
         center.GetComponentInChildren<Text>().text = name;
@@ -59,7 +59,7 @@ public class DiplomacyUI : MonoBehaviour {
             GameObject otherPlayerGo = Instantiate(playerObjectPrefab);
             otherPlayerGo.transform.localScale = new Vector3(0.7f, 0.7f, 0.7f);
             otherPlayerGo.GetComponentInChildren<Text>().text = other.Number == PlayerController.currentPlayerNumber ? "You" : other.Name;
-            otherPlayerGo.transform.SetParent(playerContent);
+            otherPlayerGo.transform.SetParent(playerContent, false);
             otherPlayerGo.transform.localPosition = pos;
             EventTrigger trigger = otherPlayerGo.GetComponentInChildren<EventTrigger>();
             EventTrigger.Entry click = new EventTrigger.Entry();
@@ -71,7 +71,7 @@ public class DiplomacyUI : MonoBehaviour {
             GameObject line = new GameObject {
                 name = "LineRenderer-" + showPlayer.Name + "-" + other.Name
             };
-            line.transform.SetParent(playerContent);
+            line.transform.SetParent(playerContent, false);
             line.transform.localPosition = Vector2.zero;// center.transform.position;
             UILineRenderer uILineRenderer = line.AddComponent<UILineRenderer>();
             uILineRenderer.LineThickness = 20f;

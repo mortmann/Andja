@@ -63,7 +63,7 @@ public class CameraController : MonoBehaviour {
             if (WorldController.Instance.SpawningRect == null) {
                 Camera.main.transform.position = new Vector3(World.Current.Width / 2, World.Current.Height / 2, Camera.main.transform.position.z);
             } else {
-                Structure str = PlayerController.Instance.CurrPlayer.AllStructures?.FirstOrDefault(x => x is WarehouseStructure);
+                Structure str = PlayerController.CurrentPlayer.AllStructures?.FirstOrDefault(x => x is WarehouseStructure);
                 if (str == null) {
                     Camera.main.transform.position = new Vector3(WorldController.Instance.SpawningRect.center.x,
                                 WorldController.Instance.SpawningRect.center.y, Camera.main.transform.position.z);
@@ -307,7 +307,7 @@ public class CameraController : MonoBehaviour {
     public CameraSave GetSaveCamera() {
         CameraSave cs = new CameraSave {
             orthographicSize = Camera.main.orthographicSize,
-            pos = new SeriaziableVector3(Camera.main.transform.position)
+            pos = Camera.main.transform.position
         };
         return cs;
     }

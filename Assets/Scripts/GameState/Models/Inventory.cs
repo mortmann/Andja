@@ -305,7 +305,7 @@ public class Inventory {
     /// </summary>
     /// <returns><c>true</c>, if items amount was removed, <c>false</c> otherwise.</returns>
     /// <param name="coll">Coll.</param>
-    public bool RemoveItemsAmount(ICollection<Item> coll) {
+    public bool RemoveItemsAmount(IEnumerable<Item> coll) {
         bool successful = false;
         foreach (Item i in coll) {
             successful = RemoveItemAmount(i);

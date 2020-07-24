@@ -159,6 +159,7 @@
          <entry lang="English">Companionship </entry>
          <entry lang="German">Gemeinschaft</entry>
       </Name>
+      <structures length="1">marketplace</structures>
       <startLevel>0</startLevel>
       <popCount>0</popCount>
       <group>community</group>

@@ -13,7 +13,7 @@
       </Name>
       <spriteBaseName>leatherarmor</spriteBaseName>
    </armorType>
-   <damageType ID="cannonball" tempID="cannonball">
+   <damageType ID="cannonball">
       <Name>
          <entry lang="English">Cannonball</entry>
          <entry lang="German">Kanonenkugel</entry>
@@ -24,7 +24,7 @@
       </damageMultiplier>
       <spriteBaseName>cannonball</spriteBaseName>
    </damageType>
-   <damageType ID="slashing" tempID="slashing">
+   <damageType ID="slashing">
       <Name>
          <entry lang="English">Slashing</entry>
          <entry lang="German">Schlagen</entry>

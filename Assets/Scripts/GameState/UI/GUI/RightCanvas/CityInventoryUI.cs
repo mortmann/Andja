@@ -41,7 +41,7 @@ public class CityInventoryUI : MonoBehaviour {
             iui.AddClickListener((data) => {
                 OnItemClick(i);
             });
-            go_i.transform.SetParent(contentCanvas.transform);
+            go_i.transform.SetParent(contentCanvas.transform, false);
         }
     }
     public void OnCityUIToggle() {

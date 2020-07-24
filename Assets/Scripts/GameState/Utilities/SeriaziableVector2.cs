@@ -18,12 +18,19 @@ public class SeriaziableVector2 {
         X = vec.x;
         Y = vec.y;
     }
+    public SeriaziableVector2(Vector3 vec) {
+        X = vec.x;
+        Y = vec.y;
+    }
     public SeriaziableVector2() { }
+    public static implicit operator Vector2(SeriaziableVector2 v) { return v.Vec; }
+    public static implicit operator SeriaziableVector2(Vector2 v) { return new SeriaziableVector2(v); }
+    public static implicit operator SeriaziableVector2(Vector3 v) { return new SeriaziableVector2(v); }
 
     public override bool Equals(object obj) {
         // If parameter cannot be cast to War return false:
         SeriaziableVector2 other = obj as SeriaziableVector2;
-        if ((object)other == null) {
+        if (other == null) {
             return false;
         }
         // Return true if the fields match:

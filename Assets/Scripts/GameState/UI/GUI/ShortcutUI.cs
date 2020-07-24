@@ -30,7 +30,7 @@ public class ShortcutUI : MonoBehaviour {
         mouseOffset = offset;
         IsDragging = true;
         dragADropGO = Instantiate(go);
-        dragADropGO.transform.SetParent(transform.parent);
+        dragADropGO.transform.SetParent(transform.parent, false);
         dragADropGO.GetComponent<StructureBuildUI>().Show(go.GetComponent<StructureBuildUI>().structure, false);
         Color c = dragADropGO.GetComponent<Image>().color;
         c.a = 0.3f;
@@ -117,16 +117,16 @@ public class ShortcutUI : MonoBehaviour {
     }
 
     private void CreateButton(Structure structure, GameObject parent) {
-        GameObject go = Instantiate(BuildMenuUIController.Instance.buildButtonPrefab);
+        Button go = Instantiate(BuildMenuUIController.Instance.buildButtonPrefab);
         go.name = "ShortCut" + structure.ID;
         go.GetComponent<StructureBuildUI>().Show(structure, true);
-        go.transform.SetParent(parent.transform);
+        go.transform.SetParent(parent.transform, false);
         go.transform.localPosition = Vector3.zero;
         go.GetComponent<RectTransform>().sizeDelta = parent.GetComponent<RectTransform>().sizeDelta;
         Color c = go.GetComponent<Image>().color;
         c.a = 0.8f;
         go.GetComponent<Image>().color = c;
         parent.transform.GetChild(0).gameObject.SetActive(false);
-        shortcutParentToButton.Add(parent, go);
+        shortcutParentToButton.Add(parent, go.gameObject);
     }
 }

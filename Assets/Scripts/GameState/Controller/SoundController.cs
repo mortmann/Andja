@@ -87,7 +87,8 @@ public class SoundController : MonoBehaviour {
 
     private void OnGameSpeedChange(GameSpeed gameSpeed, float speed) {
         foreach(AudioSource source in objectToAudioSource.Values) {
-            source.pitch = speed;
+            if (source != null)
+                source.pitch = speed;
         }
         mixer.SetFloat("SoundEffectPitchBend", 1f / speed);
     }
@@ -103,7 +104,7 @@ public class SoundController : MonoBehaviour {
                 break;
             case DiplomacyType.Neutral:
                 if (one.IsCurrent() || two.IsCurrent()) {
-                    if (PlayerController.Instance.IsAtWar(PlayerController.Instance.CurrPlayer)==false) {
+                    if (PlayerController.Instance.IsAtWar(PlayerController.CurrentPlayer)==false) {
                         ChangeMusicType(MusicType.Idle);
                     }
                 }

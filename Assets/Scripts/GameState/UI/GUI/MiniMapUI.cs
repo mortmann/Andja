@@ -8,7 +8,9 @@ public class MiniMapUI : MonoBehaviour {
     RectTransform rectTransform;
     Vector2 scale;
     bool isOverMap;
+    Vector2 thisPosition;
     void Start() {
+        rectTransform = GetComponent<RectTransform>();
         EventTrigger trigger = GetComponent<EventTrigger>();
         EventTrigger.Entry drag = new EventTrigger.Entry {
             eventID = EventTriggerType.Drag
@@ -40,9 +42,9 @@ public class MiniMapUI : MonoBehaviour {
         });
         trigger.triggers.Add(leave);
 
-        rectTransform = GetComponent<RectTransform>();
         float canvasScaleWidth = Screen.width / GetComponentInParent<UnityEngine.UI.CanvasScaler>().referenceResolution.x;
         float canvasScaleHeight = Screen.height / GetComponentInParent<UnityEngine.UI.CanvasScaler>().referenceResolution.y;
+        thisPosition = rectTransform.anchoredPosition * new Vector2(canvasScaleWidth, canvasScaleHeight);
         scale = new Vector2 {
             x = ((float)World.Current.Width) / (canvasScaleWidth * rectTransform.sizeDelta.x * rectTransform.localScale.x),
             y = ((float)World.Current.Height) / (canvasScaleHeight * rectTransform.sizeDelta.y * rectTransform.localScale.y)
@@ -52,7 +54,7 @@ public class MiniMapUI : MonoBehaviour {
     private void Move(Vector2 pressPosition) {
         if (isOverMap == false)
             return;
-        CameraController.Instance.MoveCameraToPosition(pressPosition * scale);
+        CameraController.Instance.MoveCameraToPosition(((pressPosition - thisPosition) * scale) );
     }
 
 }

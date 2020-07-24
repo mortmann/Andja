@@ -20,9 +20,11 @@ public class Player : IGEventable {
     internal bool HasEnoughMoney(int buildCost) {
         return TreasuryBalance + MaximumDebt > buildCost;
     }
-    public HashSet<Need>[] LockedNeeds { get; protected set; }
-    public HashSet<Need> UnlockedItemNeeds { get; protected set; }
-    public HashSet<Need>[] UnlockedStructureNeeds { get; protected set; }
+    public HashSet<String>[] UnlockedItemNeeds { get; protected set; }
+    public HashSet<String>[] UnlockedStructureNeeds { get; protected set; }
+    public HashSet<String> UnlockedStructures { get; protected set; }
+    public HashSet<String> UnlockedUnits { get; protected set; }
+
     public HashSet<Structure> AllStructures;
     public HashSet<Unit> Units;
     public HashSet<Ship> Ships;
@@ -53,7 +55,8 @@ public class Player : IGEventable {
     Action<int, int> cbMaxPopulationMLCountChange;
     Action<Need> cbNeedUnlocked;
     Action<Need> cbStructureNeedUnlocked;
-
+    Action<IEnumerable<Structure>> cbStructuresUnlocked;
+    Action<IEnumerable<Unit>> cbUnitsUnlocked;
 
 
     #endregion
@@ -87,15 +90,14 @@ public class Player : IGEventable {
                 return;
             }
             _maxPopulationLevel = value;
-            _maxPopulationCount = 0;
-            cbMaxPopulationMLCountChange?.Invoke(MaxPopulationLevel, _maxPopulationCount);
+            cbMaxPopulationMLCountChange?.Invoke(MaxPopulationLevel, _maxPopulationCounts[MaxPopulationLevel]);
         }
     }
 
     internal List<Need> GetCopyStructureNeeds(int level) {
         List<Need> list = new List<Need>();
-        foreach (Need n in UnlockedStructureNeeds[level]) {
-            list.Add(n.Clone());
+        foreach (String n in UnlockedStructureNeeds[level]) {
+            list.Add(new Need(n));
         }
         return list;
     }
@@ -104,25 +106,34 @@ public class Player : IGEventable {
         cbStructureNeedUnlocked += onStructureNeedUnlock;
     }
 
+    internal bool HasStructureUnlocked(string iD) {
+        return UnlockedStructures.Contains(iD);
+    }
+
     internal bool IsCurrent() {
         return PlayerController.currentPlayerNumber == Number;
     }
 
+    internal void RegisterStructuresUnlock(Action<IEnumerable<Structure>> onStructuresUnlock) {
+        cbStructuresUnlocked += onStructuresUnlock;
+    }
+    internal void UnregisterStructuresUnlock(Action<IEnumerable<Structure>> onStructuresUnlock) {
+        cbStructuresUnlocked -= onStructuresUnlock;
+    }
+    internal void RegisterUnitsUnlock(Action<IEnumerable<Unit>> onUnitsUnlock) {
+        cbUnitsUnlocked += onUnitsUnlock;
+    }
     internal void UnregisterStructureNeedUnlock(Action<Need> onStructureNeedUnlock) {
         cbStructureNeedUnlocked -= onStructureNeedUnlock;
     }
     [JsonPropertyAttribute]
-    private int _maxPopulationCount;
+    private int[] _maxPopulationCounts;
+    public int[] MaxPopulationCounts {
+        get { return _maxPopulationCounts; }
+        protected set { _maxPopulationCounts = value; }
+    }
     public int MaxPopulationCount {
-        get { return _maxPopulationCount; }
-        set {
-            if (value < _maxPopulationCount) {
-                Debug.Log("value < _maxPopulationCount");
-                return;
-            }
-            _maxPopulationCount = value;
-            cbMaxPopulationMLCountChange?.Invoke(MaxPopulationLevel, _maxPopulationCount);
-        }
+        get { return MaxPopulationCounts[MaxPopulationLevel]; }
     }
     [JsonPropertyAttribute]
     public List<TradeRoute> TradeRoutes { get; protected set; }
@@ -140,7 +151,6 @@ public class Player : IGEventable {
     public Player(int number, bool isHuman, int startingTreasure) {
         this._IsHuman = isHuman;
         Number = number;
-        MaxPopulationCount = 0;
         MaxPopulationLevel = 0;
         TreasuryChange = 0;
         TreasuryBalance = startingTreasure;
@@ -153,27 +163,23 @@ public class Player : IGEventable {
     private void Setup() {
         Cities = new List<City>();
         Ships = new HashSet<Ship>();
-        LockedNeeds = new HashSet<Need>[PrototypController.Instance.NumberOfPopulationLevels];
-        UnlockedStructureNeeds = new HashSet<Need>[PrototypController.Instance.NumberOfPopulationLevels];
-        UnlockedItemNeeds = new HashSet<Need>();
+        UnlockedStructureNeeds = new HashSet<String>[PrototypController.Instance.NumberOfPopulationLevels];
+        UnlockedItemNeeds = new HashSet<String>[PrototypController.Instance.NumberOfPopulationLevels];
+        UnlockedStructures = new HashSet<String>();
+        UnlockedUnits = new HashSet<String>();
         TradeRoutes = new List<TradeRoute>();
         AllStructures = new HashSet<Structure>();
         Units = new HashSet<Unit>();
         for (int i = 0; i < PrototypController.Instance.NumberOfPopulationLevels; i++) {
-            LockedNeeds[i] = new HashSet<Need>();
-            UnlockedStructureNeeds[i] = new HashSet<Need>();
+            UnlockedStructureNeeds[i] = new HashSet<String>();
+            UnlockedItemNeeds[i] = new HashSet<String>();
         }
-        foreach (Need n in PrototypController.Instance.GetCopieOfAllNeeds()) {
-            LockedNeeds[n.StartLevel].Add(n);
-        }
+        MaxPopulationCounts = new int[PrototypController.Instance.NumberOfPopulationLevels];
         for (int i = 0; i <= MaxPopulationLevel; i++) {
-            int count = MaxPopulationCount;
-            if (i < MaxPopulationLevel) {
-                count = int.MaxValue;
-            }
-            NeedUnlockCheck(i, count);
+            int count = MaxPopulationCounts[i];
+            UnlockCheck(i, count);
         }
-        RegisterMaxPopulationCountChange(NeedUnlockCheck);
+        RegisterMaxPopulationCountChange(UnlockCheck);
         CalculateBalance();
     }
 
@@ -209,65 +215,59 @@ public class Player : IGEventable {
         CalculateBalance();
         TreasuryBalance += Mathf.RoundToInt( LastTreasuryChange / partialPayAmount );
 
-        if (TreasuryBalance < -1000000) {
-            // game over !
+    }
+
+    public void UpdateMaxPopulationCount(int level, int count) {
+        if(MaxPopulationCounts[level] < count) {
+            MaxPopulationCounts[level] = count;
         }
     }
-    private void NeedUnlockCheck(int level, int count) {
-        //TODO Replace this with a less intense check
-        HashSet<Need> toRemove = new HashSet<Need>();
-        foreach (Need need in LockedNeeds[level]) {
-            if (need.StartLevel != level) {
-                return;
-            }
-            if (need.PopCount > count) {
-                return;
-            }
-            toRemove.Add(need);
-            if (need.IsItemNeed()) {
-                UnlockedItemNeeds.Add(need);
+
+    private void UnlockCheck(int level, int count) {
+        Unlocks unlock = PrototypController.Instance.GetUnlocksFor(level,count);
+        foreach(Need n in unlock.needs) {
+            if (n.IsItemNeed()) {
+                cbNeedUnlocked?.Invoke(n);
             }
             else {
-                cbStructureNeedUnlocked?.Invoke(need);
-                UnlockedStructureNeeds[need.StartLevel].Add(need);
+                cbStructureNeedUnlocked?.Invoke(n);
             }
-            cbNeedUnlocked?.Invoke(need);
+            for (int i = n.StartLevel; i < PrototypController.Instance.NumberOfPopulationLevels; i++) {
+                if (n.IsItemNeed()) {
+                    UnlockedItemNeeds[i].Add(n.ID);
+                }
+                else {
+                    UnlockedStructureNeeds[i].Add(n.ID);
+                }
+            }
         }
-        foreach (Need need in toRemove) {
-            LockedNeeds[level].Remove(need);
+        cbStructuresUnlocked?.Invoke(unlock.structures);
+        foreach (Structure s in unlock.structures) {
+            UnlockedStructures.Add(s.ID);
+        }
+        cbUnitsUnlocked?.Invoke(unlock.units);
+        foreach (Unit u in unlock.units) {
+            UnlockedStructures.Add(u.ID);
         }
     }
-    public HashSet<Need> GetUnlockedStructureNeeds(int level) {
+    public HashSet<String> GetUnlockedStructureNeeds(int level) {
         return UnlockedStructureNeeds[level];
     }
-    public HashSet<Need> GetALLUnlockedStructureNeedsTill(int level) {
-        HashSet<Need> needs = new HashSet<Need>();
+    public HashSet<String> GetALLUnlockedStructureNeedsTill(int level) {
+        HashSet<String> needs = new HashSet<String>();
         for (int i = 0; i <= level; i++) {
             needs.UnionWith(UnlockedStructureNeeds[i]);
         }
         return needs;
     }
     public bool HasUnlockedAllNeeds(int level) {
-        return LockedNeeds[level].Count == 0;
+        return UnlockedItemNeeds[level].Count + UnlockedStructureNeeds[level].Count == PrototypController.Instance.GetNeedCountLevel(level);
     }
-    public bool HasUnlockedNeed(Need n) {
-        if (n == null) {
-            Debug.Log("??? Need is null!");
-            return false;
-        }
-        if (LockedNeeds[n.StartLevel] == null) {
-            Debug.Log("??? lockedNeeds is null!");
-            return false;
-        }
-        //either StartLevel is smaller so unlocked
-        return n.StartLevel < MaxPopulationLevel 
-            //is equal so count matters too
-            || n.StartLevel == MaxPopulationLevel && n.PopCount <= MaxPopulationCount; // LockedNeeds[n.StartLevel].Contains(n) == false;
-    }
+
     public bool HasNeedUnlocked(Need need) {
         if (need.IsItemNeed())
-            return UnlockedItemNeeds.Contains(need);
-        return UnlockedStructureNeeds[need.StartLevel].Contains(need);
+            return UnlockedItemNeeds[need.StartLevel].Contains(need.ID);
+        return UnlockedStructureNeeds[need.StartLevel].Contains(need.ID);
     }
     public void AddTradeRoute(TradeRoute route) {
         if (TradeRoutes == null)
@@ -322,7 +322,7 @@ public class Player : IGEventable {
         if (Cities.Count == 0 && Ships.Count == 0)
             _hasLost = true;
         if(_hasLost)
-            cbHasLost(this);
+            cbHasLost?.Invoke(this);
     }
 
     public void OnStructureCreated(Structure structure) {

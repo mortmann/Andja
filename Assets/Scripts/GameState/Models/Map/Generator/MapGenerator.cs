@@ -116,9 +116,11 @@ public class MapGenerator : MonoBehaviour {
         return tileToStructure;
     }
 
-    public void DefineParameters(int seed, int height, int width, Dictionary<IslandGenInfo, Range> numberRangeOfIslandsSizes, List<string> hasToUseIslands, bool generatedIslands = false) {
+    public void DefineParameters(int seed, int height, int width, Dictionary<IslandGenInfo, Range> numberRangeOfIslandsSizes,
+                                                                    List<string> hasToUseIslands) {
         started = true;
         MapSeed = seed;
+        Debug.Log("GENERATING MAP with Seed: " + seed);
         Random.InitState(seed);
         //THIS MUST BE THE FIRST RANDOM NUMBER!
         //TO make sure that there is no change of the placement 
@@ -131,9 +133,7 @@ public class MapGenerator : MonoBehaviour {
                 SetTileAt(x, y, new Tile(x, y));
             }
         }
-        if (hasToUseIslands == null) {
-            hasToUseIslands = new List<string>();
-        }
+        List<string> newChoosenIslands = new List<string>();
         islandsToGenerate = new List<IslandGenInfo>();
         foreach (IslandGenInfo genInfo in numberRangeOfIslandsSizes.Keys) {
             if(genInfo.generate) {
@@ -147,11 +147,15 @@ public class MapGenerator : MonoBehaviour {
                 Range range = numberRangeOfIslandsSizes[genInfo];
                 int numberOfIslands = Random.Range(range.min, range.max + 1);
                 for (int i = 0; i < numberOfIslands; i++) {
-                    hasToUseIslands.Add(GetRandomIslandFileName(
-                        Island.GetSizeTyp(genInfo.Width.Middle, genInfo.Height.Middle), genInfo.climate));
+                    string island = GetRandomIslandFileName(
+                        Island.GetSizeTyp(genInfo.Width.Middle, genInfo.Height.Middle), genInfo.climate);
+                    if (hasToUseIslands == null) //TODO: stop this fix for loading! -- Needed for now for correct random Values
+                        newChoosenIslands.Add(island);
                 }
             }
         }
+        if (hasToUseIslands == null)
+            hasToUseIslands = newChoosenIslands;
         float percantage = 0.225f;
         float overlap = 0.025f;
         float percantageOverlap = percantage - overlap;
@@ -182,7 +186,7 @@ public class MapGenerator : MonoBehaviour {
         //Load the premade island if there are any 
         LoadIslands(hasToUseIslands);
         //THIS IS TEMPORARY -- replace with an better solution that doesnt require a secondary thing besides seed for a map
-        GameDataHolder.Instance.usedIslands = hasToUseIslands.ToArray();
+        GameData.Instance.usedIslands = hasToUseIslands.ToArray();
         //generate new islands procedurally
         Generate();
         //Let the Update Function do its Job

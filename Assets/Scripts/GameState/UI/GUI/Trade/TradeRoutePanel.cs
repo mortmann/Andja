@@ -63,14 +63,14 @@ public class TradeRoutePanel : MonoBehaviour {
             }
             OnShipCreate(item);
         }
-        foreach (TradeRoute tr in PlayerController.Instance.CurrPlayer.TradeRoutes) {
+        foreach (TradeRoute tr in PlayerController.CurrentPlayer.TradeRoutes) {
             AddTradeRouteToList(tr);
         }
         if (tradeRoute == null)
             CreateNewTradeRoute();
     }
     public void RemoveTradeRoute(TradeRoute tradeRoute) {
-        PlayerController.Instance.CurrPlayer.RemoveTradeRoute(tradeRoute);
+        PlayerController.CurrentPlayer.RemoveTradeRoute(tradeRoute);
         Destroy(tradeRouteToGameObject[tradeRoute]);
         tradeRouteToGameObject.Remove(tradeRoute);
     }
@@ -118,7 +118,7 @@ public class TradeRoutePanel : MonoBehaviour {
     }
     public void CreateNewTradeRoute() {
         tradeRoute = new TradeRoute();
-        PlayerController.Instance.CurrPlayer.AddTradeRoute(tradeRoute);
+        PlayerController.CurrentPlayer.AddTradeRoute(tradeRoute);
         AddTradeRouteToList(tradeRoute);
         ShowTradeRoute(tradeRoute);
     }
@@ -126,7 +126,7 @@ public class TradeRoutePanel : MonoBehaviour {
     private void AddTradeRouteToList(TradeRoute tradeRoute) {
         GameObject go = Instantiate(tradeRouteElementPrefab);
         go.GetComponentInChildren<TradeRouteElement>().SetTradeRoute(tradeRoute, ShowTradeRoute, RemoveTradeRoute);
-        go.transform.SetParent(allTradeRoutesList);
+        go.transform.SetParent(allTradeRoutesList,false);
         tradeRouteToGameObject.Add(tradeRoute, go);
     }
 
@@ -149,7 +149,7 @@ public class TradeRoutePanel : MonoBehaviour {
         GameObject shipGO = Instantiate(shipTradeRoutePrefab);
         ShipElement se = shipGO.GetComponentInChildren<ShipElement>();
         se.SetShip(ship, true, AddShipToTradeRoute, RemoveShipFromTradeRoute);
-        shipGO.transform.SetParent(currentShipList);
+        shipGO.transform.SetParent(currentShipList, false);
         shipToGOElement.Add(ship, se);
         UpdateShipListOrder();
     }
@@ -206,11 +206,11 @@ public class TradeRoutePanel : MonoBehaviour {
         item.count = (int)amountSlider.value;
         switch (typ) {
             case TradeTyp.Load:
-                gameObject.transform.SetParent(loadItemParent);
+                gameObject.transform.SetParent(loadItemParent, false);
                 gameObject.transform.SetSiblingIndex(loadItemParent.childCount - 2);
                 break;
             case TradeTyp.Unload:
-                gameObject.transform.SetParent(unloadItemParent);
+                gameObject.transform.SetParent(unloadItemParent, false);
                 gameObject.transform.SetSiblingIndex(unloadItemParent.childCount - 2);
                 break;
         }

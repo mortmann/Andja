@@ -19,6 +19,7 @@ public class HealthBarUI : MonoBehaviour {
         byte red = (byte) (255 * Mathf.Clamp01( 2.0f * (1 - percantage) ));
         byte green = (byte) (255 * Mathf.Clamp01( 2.0f * percantage) );
         HpFillImage.color = new Color32(red, green, 0, 255);
-        Text.text = Mathf.RoundToInt (hp) + "/" + Mathf.RoundToInt(maxHP);
+        if(Text != null)
+            Text.text = Mathf.RoundToInt (hp) + "/" + Mathf.RoundToInt(maxHP);
     }
 }

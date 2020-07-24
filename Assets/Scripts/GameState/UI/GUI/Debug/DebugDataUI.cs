@@ -33,7 +33,7 @@ public class DebugDataUI : MonoBehaviour {
     public void OnShowObject() {
         GameObject g = Instantiate(debugInformationPrefab);
         g.GetComponent<DebugInformation>().Show(shownObject);
-        g.transform.SetParent(UIController.Instance.mainCanvas.transform);
+        g.transform.SetParent(UIController.Instance.mainCanvas.transform, false);
     }
 
 }

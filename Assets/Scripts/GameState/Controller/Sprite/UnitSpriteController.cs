@@ -5,7 +5,7 @@ using System;
 using DigitalRuby.AdvancedPolygonCollider;
 
 public class UnitSpriteController : MonoBehaviour {
-
+    public static UnitSpriteController Instance;
 
     private Dictionary<string, Sprite> unitSprites;
     public Dictionary<Unit, GameObject> unitGameObjectMap;
@@ -17,8 +17,13 @@ public class UnitSpriteController : MonoBehaviour {
     private Unit circleUnit;
     private const string circleGOname = "buildrange_circle_gameobject";
     MouseController mouseController;
+    public Material SpriteHighlightMaterial;
+
     World World {
         get { return World.Current; }
+    }
+    private void Awake() {
+        Instance = this;
     }
     // Use this for initialization
     void Start() {
@@ -40,6 +45,9 @@ public class UnitSpriteController : MonoBehaviour {
         foreach (Crate c in World.Crates) {
             OnCrateSpawned(c);
         }
+        foreach (Projectile pro in World.Projectiles) {
+            OnProjectileCreated(pro);
+        }
         mouseController = MouseController.Instance;
         BuildController.Instance.RegisterBuildStateChange(OnBuildStateChange);
     }
@@ -53,12 +61,14 @@ public class UnitSpriteController : MonoBehaviour {
         line_go.transform.SetParent(go.transform);
         // Add our tile/GO pair to the dictionary.
         unitGameObjectMap.Add(unit, go);
+        go.AddComponent<SpriteOutline>().enabled = false;
         SpriteRenderer sr = go.AddComponent<SpriteRenderer>();
         sr.sortingLayerName = "Units";
         sr.sprite = unitSprites[unit.Data.spriteBaseName];
-
+        sr.material = SpriteHighlightMaterial;
         go.transform.SetParent(this.transform, true);
         go.AddComponent<ITargetableHoldingScript>().Holding = unit;
+        go.GetComponent<SpriteOutline>().PlayerNumber = unit.PlayerNumber;
         Rigidbody2D r2d = go.AddComponent<Rigidbody2D>();
         r2d.gravityScale = 0;
         AdvancedPolygonCollider apc = go.AddComponent<AdvancedPolygonCollider>();
@@ -216,5 +226,19 @@ public class UnitSpriteController : MonoBehaviour {
         go.transform.SetParent(parent);
         go.transform.localPosition = new Vector3(0, 0, -0.5f);
         circleUnit = u;
+    }
+
+    internal void Highlight(Unit[] units) {
+        foreach(Unit unit in units) {
+            if(unit == null) {
+                continue;
+            }
+            unitGameObjectMap[unit].GetComponent<SpriteOutline>().enabled = true;
+        }
+    }
+    internal void Dehighlight(Unit[] units) {
+        foreach (Unit unit in units) {
+            unitGameObjectMap[unit].GetComponent<SpriteOutline>().enabled = false;
+        }
     }
 }

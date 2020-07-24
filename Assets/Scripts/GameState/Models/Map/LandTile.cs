@@ -204,6 +204,6 @@ public class LandTile : Tile {
     public override string ToString() {
         if(EditorController.IsEditor)
             return string.Format("[{0}:{1}]Type:{2}|Structure:{3}", X, Y, Type, Structure);
-        return string.Format("[{0}:{1}]Type:{2}|Structure:{3}|Player:{4}", X, Y, Type, Structure, City.PlayerNumber.ToString());
+        return string.Format("[{0}:{1}]Type:{2}|Structure:{3}|Player:{4}", X, Y, Type, Structure, City?.PlayerNumber.ToString());
     }
 }

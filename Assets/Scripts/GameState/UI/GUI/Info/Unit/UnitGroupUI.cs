@@ -30,7 +30,7 @@ public class UnitGroupUI : MonoBehaviour {
         uhu.Show(unit);
         uhu.AddRightClick(RemoveUnit);
         unit.RegisterOnDestroyCallback(RemoveUnit);
-        uhu.transform.SetParent(unitsContent);
+        uhu.transform.SetParent(unitsContent, false);
         unitToUI.Add(unit, uhu);
     }
     // Update is called once per frame

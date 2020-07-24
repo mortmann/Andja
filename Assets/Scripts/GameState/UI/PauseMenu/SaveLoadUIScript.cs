@@ -34,7 +34,7 @@ public class SaveLoadUIScript : MonoBehaviour {
             go.Show(saveMetaDatas[i], OnSaveGameSelect, OnSaveGameDeleteClick);
 
             // Make sure this gameobject is a child of our list box
-            go.transform.SetParent(canvasGO.transform);
+            go.transform.SetParent(canvasGO.transform, false);
 
             nameToFile.Add(saveMetaDatas[i].saveName, saveMetaDatas[i]);
         }

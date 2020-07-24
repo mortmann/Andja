@@ -62,13 +62,13 @@ public class City : IGEventable {
     //TODO: set this to the player that creates this
     public List<HomeStructure> homes;
     private HashSet<Tile> _Tiles;
-    public List<Route> routes;
+    public List<Route> Routes;
     public Unit tradeUnit;
 
     public int expanses = 0;
     public int income = 0;
     public int Balance => income - expanses;
-    public float useTick;
+    public float useTick => 60f;
     public WarehouseStructure warehouse;
 
     Action<Structure> cbStructureAdded;
@@ -90,7 +90,6 @@ public class City : IGEventable {
         _Name = "<City> " + UnityEngine.Random.Range(0, 1000);
 
         Setup();
-        useTick = 60f;
 
         //		useTickTimer = useTick;
     }
@@ -130,7 +129,7 @@ public class City : IGEventable {
 
     private void Setup() {
         homes = new List<HomeStructure>();
-        routes = new List<Route>();
+        Routes = new List<Route>();
         if (PopulationLevels == null)
             PopulationLevels = new List<PopulationLevel>();
         if (PlayerNumber < 0)
@@ -165,6 +164,7 @@ public class City : IGEventable {
             if (item is HomeStructure) {
                 homes.Add((HomeStructure)item);
             }
+            item.City = this;
         }
         if (IsWilderness() == false) {
             for (int i = PopulationLevels.Count - 1; i >= 0; i--) {
@@ -230,10 +230,7 @@ public class City : IGEventable {
             }
             warehouse = (WarehouseStructure)str;
         }
-        RemoveRessources(str.GetBuildingItems());
-
         Structures.Add(str);
-
         cbStructureAdded?.Invoke(str);
     }
 
@@ -301,12 +298,16 @@ public class City : IGEventable {
         return PopulationLevels[structureLevel].criticalMissingNeed;
     }
     public void AddPeople(int level, int count) {
+        if (IsWilderness())
+            return;
         if (count < 0) {
             return;
         }
         PopulationLevels[level].AddPeople(count);
     }
     public void RemovePeople(int level, int count) {
+        if (IsWilderness())
+            return;
         if (count < 0) {
             return;
         }
@@ -330,8 +331,17 @@ public class City : IGEventable {
         i.count = amount;
         Inventory.RemoveItemAmount(i);
     }
-    public bool HasEnoughOfItems(IEnumerable<Item> item) {
-        return Inventory.HasEnoughOfItems(item);
+    public bool HasEnoughOfItems(IEnumerable<Item> items, int times = 1) {
+        if (items == null)
+            return true;
+        if(times > 1) {
+            List<Item> clonedItems = new List<Item>();
+            foreach(Item i in items) {
+                clonedItems.Add(new Item(i.ID, i.count * times));
+            }
+            return Inventory.HasEnoughOfItems(clonedItems);
+        }
+        return Inventory.HasEnoughOfItems(items);
     }
     public bool HasEnoughOfItem(Item item) {
         return Inventory.HasEnoughOfItem(item);
@@ -397,7 +407,10 @@ public class City : IGEventable {
             return 0;
         }
         if (tradeUnit == null && ship == null) {
-            return Inventory.MoveItem(warehouse.inRangeUnits[0].inventory, toTrade, amount);
+            ship = warehouse.inRangeUnits.Find(x => x.playerNumber == PlayerNumber);
+            if (ship == null)
+                return 0;
+            return Inventory.MoveItem(ship.inventory, toTrade, amount);
         }
         else if (ship == null) {
             return Inventory.MoveItem(tradeUnit.inventory, toTrade, amount);
@@ -426,16 +439,12 @@ public class City : IGEventable {
         return Inventory.GetAmountForItem(item);
     }
     public void AddRoute(Route route) {
-        if (routes == null) {
-            routes = new List<Route>(); // i dont get why its null while loading
-        }
-        this.routes.Add(route);
+        if(Routes.Contains(route) == false)
+            Routes.Add(route);
     }
 
     public void RemoveRoute(Route route) {
-        if (routes.Contains(route)) {
-            routes.Remove(route);
-        }
+        Routes.Remove(route);
     }
     public void RemoveStructure(Structure structure, bool returnRessources = false) {
         if (structure == null) {

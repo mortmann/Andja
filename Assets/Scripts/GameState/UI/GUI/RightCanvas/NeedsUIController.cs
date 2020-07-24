@@ -7,54 +7,65 @@ public class NeedsUIController : MonoBehaviour {
     public GameObject needPrefab;
     public GameObject buttonPopulationsLevelContent;
     public GameObject contentCanvas;
-    public GameObject citizenCanvas;
+    public Image citizenCanvas;
     public GameObject upgradeButton;
     public GameObject needGroupCanvas;
     public Text peopleCount;
+    public GameObject populationButtonPrefab;
 
-    public Dictionary<Need, NeedUI> needToUI;
-    public List<Need>[] needs;
     HomeStructure home;
     public GameObject needGroupPrefab;
 
-
-
-    public void Show(HomeStructure home) {
-        if (this.home == home) {
-            return;
+    Dictionary<NeedGroup, NeedGroupUI> needGroupToUI;
+    public static int CurrentSelectedLevel = 0;
+    private Dictionary<int, ButtonSetter> popLevelToGO;
+    Player Player => PlayerController.CurrentPlayer;
+    public void Setup() {
+        foreach (Transform child in buttonPopulationsLevelContent.transform) {
+            Destroy(child.gameObject);
         }
-        structureUI.Show(home);
-        this.home = home;
-        needToUI = new Dictionary<Need, NeedUI>();
-        List<NeedGroup> ns = new List<NeedGroup>();
-        ns.AddRange(home.NeedGroups);
+        popLevelToGO = new Dictionary<int, ButtonSetter>();
 
-        Player p = PlayerController.Instance.CurrPlayer;
-
-        citizenCanvas.GetComponentInChildren<Text>().text = home.people + "/" + home.MaxLivingSpaces;
-        needs = new List<Need>[PrototypController.Instance.NumberOfPopulationLevels];
-        for (int i = 0; i < PrototypController.Instance.NumberOfPopulationLevels; i++) {
-            needs[i] = new List<Need>();
+        foreach (PopulationLevelPrototypData pl in PrototypController.Instance.PopulationLevelDatas.Values) {
+            GameObject go = Instantiate(populationButtonPrefab);
+            go.transform.SetParent(buttonPopulationsLevelContent.transform, false);
+            ButtonSetter bs = go.GetComponent<ButtonSetter>();
+            bs.Set(pl.Name, () => { ChangeNeedLevel(pl.LEVEL); }, IconSpriteController.GetIcon(pl.iconSpriteName), pl.Name);
+            popLevelToGO.Add(pl.LEVEL, bs);
+            bs.Interactable(Player.MaxPopulationLevel > pl.LEVEL);
         }
         foreach (Transform child in needGroupCanvas.transform) {
             Destroy(child.gameObject);
         }
-        for (int i = 0; i < ns.Count; i++) {
+
+        needGroupToUI = new Dictionary<NeedGroup, NeedGroupUI>();
+        foreach (NeedGroup needGroup in PrototypController.Instance.NeedGroups.Values) {
             GameObject go = Instantiate(needGroupPrefab); //TODO: make it look good
             NeedGroupUI ngui = go.GetComponent<NeedGroupUI>();
-            ngui.Show(ns[i]);
-            go.transform.SetParent(contentCanvas.transform);
-            foreach (Need need in ns[i].Needs) {
-                GameObject b = Instantiate(needPrefab);
-                b.transform.SetParent(ngui.listGO.transform);
-                NeedUI ui = b.GetComponent<NeedUI>();
-                ui.SetNeed(need, home);
-                needToUI[need] = ui;
-                needs[need.StartLevel].Add(need);
-            }
+            needGroupToUI[needGroup] = ngui;
+            ngui.SetGroup(needGroup);
+            go.transform.SetParent(contentCanvas.transform, false);
         }
-        ChangeNeedLevel(0);
+    }
+    public void Show(HomeStructure home) {
+        if (this.home == home) {
+            return;
+        }
+        contentCanvas.SetActive(home.PlayerNumber != PlayerController.currentPlayerNumber);
+        buttonPopulationsLevelContent.SetActive(home.PlayerNumber != PlayerController.currentPlayerNumber);
+        upgradeButton.SetActive(home.PlayerNumber != PlayerController.currentPlayerNumber);
+        needGroupCanvas.SetActive(home.PlayerNumber != PlayerController.currentPlayerNumber);
+        peopleCount.gameObject.SetActive(home.PlayerNumber != PlayerController.currentPlayerNumber);
 
+        if (needGroupToUI == null)
+            Setup();
+        foreach (NeedGroupUI ngui in needGroupToUI.Values) {
+            ngui.Show(home);
+        }
+
+        structureUI.Show(home);
+        this.home = home;        
+        ChangeNeedLevel(0);
         for (int i = 0; i < buttonPopulationsLevelContent.transform.childCount; i++) {
             GameObject g = buttonPopulationsLevelContent.transform.GetChild(i).gameObject;
             if (i > home.StructureLevel) {
@@ -64,25 +75,13 @@ public class NeedsUIController : MonoBehaviour {
                 g.GetComponent<Button>().interactable = true;
             }
         }
-        PlayerController.Instance.CurrPlayer.RegisterNeedUnlock(OnNeedUnlock);
 
     }
-
-    public void OnNeedUnlock(Need need) {
-        //highlight it or so
-    }
-
     public void ChangeNeedLevel(int level) {
-        for (int i = 0; i < PrototypController.Instance.NumberOfPopulationLevels; i++) {
-            if (i == level) {
-                continue;
-            }
-            for (int s = 0; s < needs[i].Count; s++) {
-                needToUI[needs[i][s]].gameObject.SetActive(false);
-            }
-        }
-        for (int i = 0; i < needs[level].Count; i++) {
-            needToUI[needs[level][i]].gameObject.SetActive(true);
+        CurrentSelectedLevel = level;
+        foreach (NeedGroupUI groupUI in needGroupToUI.Values) {
+            groupUI.UpdateLevel(level);
+            groupUI.gameObject.SetActive(groupUI.IsEmpty == false);
         }
     }
 
@@ -100,7 +99,7 @@ public class NeedsUIController : MonoBehaviour {
     }
     // Update is called once per frame
     void Update() {
-        if (home == null) {
+        if (home == null || home.PlayerNumber != PlayerController.currentPlayerNumber) {
             return;
         }
         peopleCount.text = home.people + "/" + home.MaxLivingSpaces;
@@ -109,6 +108,17 @@ public class NeedsUIController : MonoBehaviour {
         }
         else {
             upgradeButton.SetActive(false);
+        }
+        switch (home.currentMood) {
+            case HomeStructure.CitizienMoods.Mad:
+                citizenCanvas.color = Color.red;
+                break;
+            case HomeStructure.CitizienMoods.Neutral:
+                citizenCanvas.color = Color.white;
+                break;
+            case HomeStructure.CitizienMoods.Happy:
+                citizenCanvas.color = Color.green;
+                break;
         }
     }
 

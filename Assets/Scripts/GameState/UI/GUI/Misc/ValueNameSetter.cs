@@ -9,7 +9,7 @@ public class ValueNameSetter : MonoBehaviour {
         NameText.text = name;
         ValueText.text = value?.ToString();
         if (parent != null)
-            transform.SetParent(parent);
+            transform.SetParent(parent, false);
     }
     public void Show(object value) {
         ValueText.text = value?.ToString();

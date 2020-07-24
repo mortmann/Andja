@@ -1,15 +1,8 @@
-﻿#if (UNITY_EDITOR || UNITY_EDITOR_WIN || UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX || UNITY_STANDALONE_WIN || UNITY_STANDALONE_LINUX || UNITY_STANDALONE || UNITY_WII || UNITY_IOS || UNITY_IPHONE || UNITY_ANDROID || UNITY_PS4 || UNITY_SAMSUNGTV || UNITY_XBOXONE || UNITY_TIZEN || UNITY_TVOS || UNITY_WP_8_1 || UNITY_WSA || UNITY_WSA_8_1 || UNITY_WSA_10_0 || UNITY_WINRT || UNITY_WINRT_8_1 || UNITY_WINRT_10_0 || UNITY_WEBGL || UNITY_ADS || UNITY_ANALYTICS || UNITY_ASSERTIONS)
-#define UNITY
-#else
-using System.Threading.Tasks;
-#endif
+﻿using System.Threading.Tasks;
 using C5;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-
-
-
 
 
 namespace EpPathFinding.cs {
@@ -77,18 +70,11 @@ namespace EpPathFinding.cs {
                 }
 
                 var neighbors = grid.GetNeighbors(node, diagonalMovement);
-
-#if (UNITY)
-                foreach (var neighbor in neighbors)
-#else
+                //foreach (var neighbor in neighbors)
                 Parallel.ForEach(neighbors, neighbor =>
-#endif
                 {
-#if (UNITY)
-                    if (neighbor.isClosed) continue;
-#else
                     if (neighbor.isClosed) return;
-#endif
+
                     var x = neighbor.x;
                     var y = neighbor.y;
                     float ng = node.startToCurNodeLen + (float)((x - node.x == 0 || y - node.y == 0) ? 1 : Math.Sqrt(2));
@@ -108,10 +94,7 @@ namespace EpPathFinding.cs {
 
                         }
                     }
-                }
-#if (!UNITY)
-                );
-#endif
+                });
                 if (openList.Count == 0) return Node.Backtrace(node);
             }
             return new List<GridPos>();

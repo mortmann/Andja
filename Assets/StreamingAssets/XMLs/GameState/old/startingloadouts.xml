@@ -10,9 +10,6 @@
 		  <Item ID="fish">
             <count>25</count>
          </Item>
-		 <Item ID="cannons">
-            <count>15</count>
-         </Item>
       </Items>
 	  <Units>
 		<unit>ship</unit>

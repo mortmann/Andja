@@ -267,6 +267,9 @@ public class TileSpriteController : MonoBehaviour {
     }
 
     void OnTileChanged(Tile tile_data) {
+        if(darkLayer == null) {
+            return;
+        }
         int x = (int)(tile_data.X - tile_data.Island.Placement.x);
         int y = (int)(tile_data.Y - tile_data.Island.Placement.y);
         if (tile_data.City.PlayerNumber == PlayerController.currentPlayerNumber) {
@@ -274,8 +277,6 @@ public class TileSpriteController : MonoBehaviour {
         }
         apply = true;
         if (TileDeciderFunc != null && islandToCustomMask != null) {
-            darkLayer.SetActive(true);
-
             TileMark tm = TileDeciderFunc(tile_data);
             switch (tm) {
                 case TileMark.None:
@@ -288,12 +289,6 @@ public class TileSpriteController : MonoBehaviour {
                     break;
             }
         }
-        else {
-            //sr.material = clearMaterial;
-            if (darkLayer != null)
-                darkLayer.SetActive(false);
-        }
-
     }
 
     public void ChangeEditorTile(Tile tile_data) {
@@ -401,7 +396,6 @@ public class TileSpriteController : MonoBehaviour {
         }
     }
     public void ResetDecider() {
-        //Debug.Log ("RESET");
         TileDeciderFunc = null;
         darkLayer.SetActive(false);
     }
@@ -410,7 +404,7 @@ public class TileSpriteController : MonoBehaviour {
             return;
         TileDeciderFunc -= removeFunc;
         if (TileDeciderFunc == null || TileDeciderFunc.GetInvocationList().Length == 0)
-            darkLayer.SetActive(false);
+            ResetDecider();
 
         if (isCityDecider) {
             islandToCityMask.ToList().ForEach(x => x.Value.gameObject.SetActive(false));

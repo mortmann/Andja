@@ -9,16 +9,20 @@ public class Worker {
     #region Serialize
     [JsonPropertyAttribute] public Structure Home;
     [JsonPropertyAttribute] Pathfinding path;
-    [JsonPropertyAttribute] float doTimer;
+    [JsonPropertyAttribute] float workTimer;
     [JsonPropertyAttribute] Item[] toGetItems;
     //[JsonPropertyAttribute] int[] toGetAmount;
     [JsonPropertyAttribute] Inventory inventory;
     [JsonPropertyAttribute] bool goingToWork;
     [JsonPropertyAttribute] public bool isAtHome;
     [JsonPropertyAttribute] private Structure _workStructure;
-
+    [JsonPropertyAttribute] private bool isDone;
+    [JsonPropertyAttribute] private bool hasToFollowRoads;
+    [JsonPropertyAttribute] private bool hasToEnterWorkStructure;
+    [JsonPropertyAttribute] private bool walkTimeIsWorkTime;
     #endregion
     #region runtimeVariables
+    public float WorkTimer => workTimer;
     public OutputStructure WorkOutputStructure {
         set {
             _workStructure = value;
@@ -50,11 +54,12 @@ public class Worker {
     Action<Worker> cbWorkerDestroy;
     Action<Worker, string, bool> cbSoundCallback;
     bool hasRegistered;
+    float walkTime;
     string soundWorkName = "";
     #endregion
     #region readInVariables
-    bool hasToFollowRoads;
-    private bool isDone;
+    
+    
     #endregion
     public float X {
         get {
@@ -71,34 +76,50 @@ public class Worker {
             return path.rotation;
         }
     }
-    public Worker(Structure Home, OutputStructure structure,  float workTime = 1f, Item[] toGetItems = null, string soundWorkName = null, bool hasToFollowRoads = true) {
+    public Worker(Structure Home, OutputStructure structure,  float workTime = 1f, Item[] toGetItems = null, 
+                    string soundWorkName = null, bool hasToFollowRoads = true,
+                    bool walkTimeIsWorkTime = false, bool hasToEnterWorkStructure = true) {
         this.Home = Home;
         WorkOutputStructure = structure;
         this.hasToFollowRoads = hasToFollowRoads;
+        this.walkTimeIsWorkTime = walkTimeIsWorkTime;
         if (structure is MarketStructure == false) {
             structure.outputClaimed = true;
         }
+        this.hasToEnterWorkStructure = hasToEnterWorkStructure;
         isAtHome = false;
         goingToWork = true;
         inventory = new Inventory(4);
-        doTimer = workTime;
-        SetGoalStructure(structure);
+        workTimer = workTime;
         this.soundWorkName = soundWorkName;
         this.toGetItems = toGetItems;
+        SetGoalStructure(structure);
+        Setup();
     }
-    public Worker(ServiceStructure Home, Structure structure, float workTime, bool hasToFollowRoads = true) {
+    public Worker(ServiceStructure Home, Structure structure, float workTime, bool hasToFollowRoads = true, bool hasToEnterWorkStructure = true) {
         this.Home = Home;
         WorkStructure = structure;
         this.hasToFollowRoads = hasToFollowRoads;
+        this.hasToEnterWorkStructure = hasToEnterWorkStructure;
         isAtHome = false;
         goingToWork = true;
-        doTimer = workTime;
+        workTimer = workTime;
         SetGoalStructure(structure);
+        Setup();
     }
 
     public Worker() {
         SaveController.AddWorkerForLoad(this);
+        Setup();
     }
+
+    private void Setup() {
+        if(Home is FarmStructure) {
+            if(WorkStructure != null)
+                walkTime = Vector3.Distance(Home.Center, WorkStructure.Center);
+        }
+    }
+
     public void OnWorkStructureDestroy(Structure str, IWarfare destroyer) {
         if (str != WorkStructure) {
             Debug.LogError("OnWorkStructureDestroy called on not workstructure destroy!");
@@ -144,6 +165,15 @@ public class Worker {
         cbWorkerChanged?.Invoke(this);
 
         if (path.IsAtDestination == false) {
+            if(walkTimeIsWorkTime) {
+                workTimer -= deltaTime;
+                if(workTimer <= 0) {
+                    DropOffItems(0);
+                    //we have an issue -- done before it is home
+                    Debug.LogWarning("Worker done before it is at Home. Fix this with either smaller Range," +
+                        " longer Worktime or remove Worker. " + Home.ToString() + ". Destination "+ path.Destination);
+                }
+            }
             return;
         }
         if (goingToWork) {
@@ -155,6 +185,10 @@ public class Worker {
             // coming home from doing the work
             // drop off the items its carrying
             if (Home is FarmStructure) {
+                if(workTimer>0.01f) {
+                    workTimer -= deltaTime;
+                    return;
+                }
                 ((FarmStructure)Home).AddHarvastable();
                 isAtHome = true;
             }
@@ -167,8 +201,8 @@ public class Worker {
         }
     }
     public void DropOffItems(float deltaTime) {
-        doTimer -= deltaTime;
-        if (doTimer > 0) {
+        workTimer -= deltaTime;
+        if (workTimer > 0) {
             return;
         }
         if (Home is MarketStructure) {
@@ -188,7 +222,7 @@ public class Worker {
         isDone = false;
         goingToWork = false;
         WorkStructure?.UnregisterOnDestroyCallback(OnWorkStructureDestroy);
-        WorkStructure = null;
+        //WorkStructure = null;
         SetGoalStructure(Home,true); //todo: think about some optimisation for just "reverse path"
         //doTimer = workTime / 2;
     }
@@ -219,8 +253,8 @@ public class Worker {
         isDone = WorkOnStructure(WorkStructure, deltaTime);
     }
     public void DoFarmWork(float deltaTime) {
-        doTimer -= deltaTime;
-        if (doTimer > 0) {
+        workTimer -= deltaTime;
+        if (workTimer > walkTime) {
             PlaySound(soundWorkName, true);
             return;
         }
@@ -237,8 +271,8 @@ public class Worker {
     }
 
     public void DoOutPutStructureWork(float deltaTime) {
-        doTimer -= deltaTime;
-        if (doTimer > 0) {
+        workTimer -= deltaTime;
+        if (workTimer > 0) {
             PlaySound(soundWorkName, true);
             return;
         }
@@ -276,7 +310,7 @@ public class Worker {
         }
         if (hasToFollowRoads == false) {
             if(path == null)
-                path = new TilesPathfinding(Speed, 720);
+                path = new TilesPathfinding(Speed, 720, true);
             if (goHome == false) {
                 ((TilesPathfinding)path).SetDestination(new List<Tile>(Home.Tiles), new List<Tile>(structure.Tiles));
             } else {
@@ -286,13 +320,14 @@ public class Worker {
         else {
             if (path == null)
                 path = new RoutePathfinding();
-            if(goHome == false) {
-                ((RoutePathfinding)path).SetDestination(Home.RoadsAroundStructure(), structure.RoadsAroundStructure());
-            } else {
-                ((RoutePathfinding)path).SetDestination(new List<Tile>() { path.CurrTile }, new List<Tile>(Home.RoadsAroundStructure()));
+            if (goHome == false) {
+                ((RoutePathfinding)path).SetDestination(Home, structure, hasToEnterWorkStructure);
+            }
+            else {
+                ((RoutePathfinding)path).SetDestination(WorkStructure, Home);
             }
         }
-        _workStructure = structure;
+        WorkStructure = structure;
     }
 
     public void RegisterOnChangedCallback(Action<Worker> cb) {

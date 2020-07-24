@@ -24,7 +24,7 @@ public class TradePanel : MonoBehaviour {
         List<string> items = new List<string>(c.itemIDtoTradeItem.Keys);
         for (int i = 0; i < city.TradeItemCount; i++) {
             TradeItemUI tradeItemUI = GameObject.Instantiate(TradeItemPrefab);
-            tradeItemUI.transform.SetParent(TradeCanvas.transform);
+            tradeItemUI.transform.SetParent(TradeCanvas.transform, false);
             if (c.itemIDtoTradeItem.Count <= i) {
                 tradeItemUI.Show(null, c.Inventory.MaxStackSize, OnSellBuyClick);
             }

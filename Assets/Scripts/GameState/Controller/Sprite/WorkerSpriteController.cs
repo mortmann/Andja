@@ -13,6 +13,8 @@ public class WorkerSpriteController : MonoBehaviour {
         loadedWorker = SaveController.GetLoadWorker();
         if (loadedWorker != null) {
             foreach (Worker item in loadedWorker) {
+                if (item.Home.IsDestroyed)
+                    continue;
                 OnWorkerCreated(item);
             }
         }

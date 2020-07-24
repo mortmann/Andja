@@ -1,9 +1,12 @@
 using System;
 using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reflection;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Xml;
 using UnityEngine;
 using static Combat;
@@ -19,6 +22,7 @@ public class PrototypController : MonoBehaviour {
     public IReadOnlyDictionary<Type, int> StructureTypeToMaxStructureLevel => structureTypeToMaxStructureLevel;
     public IReadOnlyDictionary<string, StructurePrototypeData> StructurePrototypeDatas => structurePrototypeDatas;
     public IReadOnlyDictionary<string, NeedPrototypeData> NeedPrototypeDatas => needPrototypeDatas;
+    public IReadOnlyDictionary<string, NeedGroup> NeedGroups => idToNeedGroup;
     public IReadOnlyDictionary<string, FertilityPrototypeData> FertilityPrototypeDatas => fertilityPrototypeDatas;
     public IReadOnlyDictionary<string, UnitPrototypeData> UnitPrototypeDatas => unitPrototypeDatas;
     public IReadOnlyDictionary<string, ItemPrototypeData> ItemPrototypeDatas => itemPrototypeDatas;
@@ -29,7 +33,6 @@ public class PrototypController : MonoBehaviour {
     public IReadOnlyDictionary<string, Item> AllItems => allItems;
 
     public WarehouseStructure FirstLevelWarehouse { get; private set; }
-
     public IReadOnlyDictionary<Climate, List<Fertility>> AllFertilities => allFertilities;
     public IReadOnlyDictionary<string, Fertility> IdToFertilities => idToFertilities;
     public IReadOnlyDictionary<int, PopulationLevelPrototypData> PopulationLevelDatas => populationLevelDatas;
@@ -53,12 +56,14 @@ public class PrototypController : MonoBehaviour {
     Dictionary<string, ArmorType> armorTypeDatas;
     Dictionary<int, PopulationLevelPrototypData> populationLevelDatas;
     Dictionary<string, NeedGroupPrototypData> needGroupDatas;
+    Dictionary<string, NeedGroup> idToNeedGroup;
     Dictionary<string, Item> allItems;
     Dictionary<int, List<NeedGroup>> populationLevelToNeedGroup;
     Dictionary<Climate, List<Fertility>> allFertilities;
     Dictionary<string, Fertility> idToFertilities;
 
     List<StartingLoadout> _startingLoadouts;
+
     public List<Item> MineableItems;
     private static List<Item> _buildItems;
     List<Need> allNeeds;
@@ -153,6 +158,15 @@ public class PrototypController : MonoBehaviour {
         }
         return itemPrototypeDatas[ID];
     }
+
+    internal Unlocks GetUnlocksFor(int level, int count) {
+        if (levelCountToUnlocks.Length <= level)
+            return null;
+        if (levelCountToUnlocks[level].ContainsKey(count) == false)
+            return null;
+        return levelCountToUnlocks[level][count];
+    }
+
     internal PopulationLevelPrototypData GetPopulationLevelPrototypDataForLevel(int level) {
         return populationLevelDatas[level];
     }
@@ -181,15 +195,25 @@ public class PrototypController : MonoBehaviour {
         }
         return allFertilities[c];
     }
+
+    internal int GetNeedCountLevel(int level) {
+        return needsPerLevel[level];
+    }
+
     public void LoadFromXML() {
         if (allItems != null) {
             return;
         }
-
+        System.Diagnostics.Stopwatch stopwatch = new System.Diagnostics.Stopwatch();
+        stopwatch.Start();
         //SO THAT IT DOESNT USE FUCKIN COMMA AS THE DECIMAL SEPERATOR?!? WHY NOT POINT -Zoidberg
         //Why cant it be both -Fry
         //Good News everyone! Setting it to GB fixes that stupid thing! -Professor
         System.Threading.Thread.CurrentThread.CurrentCulture = System.Globalization.CultureInfo.CreateSpecificCulture("en-GB");
+        //other
+        populationLevelDatas = new Dictionary<int, PopulationLevelPrototypData>();
+        ReadOtherFromXML(LoadXML("other"));
+        ModLoader.LoadXMLs("other", ReadOtherFromXML);
 
         //GAMEEVENTS
         effectPrototypeDatas = new Dictionary<string, EffectPrototypeData>();
@@ -234,13 +258,9 @@ public class PrototypController : MonoBehaviour {
         populationLevelToNeedGroup = new Dictionary<int, List<NeedGroup>>();
         needPrototypeDatas = new Dictionary<string, NeedPrototypeData>();
         needGroupDatas = new Dictionary<string, NeedGroupPrototypData>();
+        idToNeedGroup = new Dictionary<string, NeedGroup>();
         ReadNeedsFromXML(LoadXML("needs"));
         ModLoader.LoadXMLs("needs", ReadNeedsFromXML);
-
-        //other
-        populationLevelDatas = new Dictionary<int, PopulationLevelPrototypData>();
-        ReadOtherFromXML(LoadXML("other"));
-        ModLoader.LoadXMLs("other", ReadOtherFromXML);
 
         _startingLoadouts = new List<StartingLoadout>();
         ReadStartingLoadoutsFromXMLs(LoadXML("startingloadouts"));
@@ -266,7 +286,6 @@ public class PrototypController : MonoBehaviour {
         Debug.Log("Read in structures: " + structurePrototypes.Count + "\n" + str);
         Debug.Log("Read in units: " + unitPrototypes.Count);
         Debug.Log("Read in items: " + allItems.Count);
-
         string needslevel = "";
         foreach (PopulationLevelPrototypData pl in populationLevelDatas.Values) {
             needslevel += "[" + pl.LEVEL + ": " + allNeeds.Count(x => x.StartLevel == pl.LEVEL) + "]";
@@ -278,16 +297,92 @@ public class PrototypController : MonoBehaviour {
         Debug.Log("Read in populationLevel: " + populationLevelDatas.Count);
         Debug.Log("Read in effects: " + effectPrototypeDatas.Count);
         Debug.Log("Read in gameevents: " + gameEventPrototypeDatas.Count);
-
+        Debug.Log("Read in took " + stopwatch.Elapsed.TotalSeconds +"s");
         //Set it to default so it doesnt interfer with user interface informations
-        System.Threading.Thread.CurrentThread.CurrentCulture = System.Globalization.CultureInfo.InstalledUICulture;
-
+        Thread.CurrentThread.CurrentCulture = System.Globalization.CultureInfo.InstalledUICulture;
         CalculateOptimalProportions();
+        CalculateNeedUnlocks();
+        CalculatePopulationNeedGroups();
+        CalculateUnlocks();
     }
 
+    private void CalculatePopulationNeedGroups() {
+        foreach(int level in populationLevelDatas.Keys) {
+            if (populationLevelToNeedGroup.ContainsKey(level))
+                populationLevelDatas[level].needGroupList = populationLevelToNeedGroup[level];
+            else
+                Debug.LogWarning("PopulationLevel " + populationLevelDatas[level].Name + " " + level + " is missing its own needs!");
+        }
+    }
+
+    ConcurrentDictionary<int, Unlocks>[] levelCountToUnlocks;
+    int[] needsPerLevel;
+    private void CalculateUnlocks() {
+        levelCountToUnlocks = new ConcurrentDictionary<int, Unlocks>[populationLevelDatas.Count];
+        needsPerLevel = new int[populationLevelDatas.Count];
+        for (int i = 0; i < populationLevelDatas.Count; i++)
+            levelCountToUnlocks[i] = new ConcurrentDictionary<int, Unlocks>();
+        //foreach (Structure structure in StructurePrototypes.Values) {
+        //    if (levelCountToUnlocks[structure.PopulationLevel].ContainsKey(structure.PopulationCount) == false)
+        //        levelCountToUnlocks[structure.PopulationLevel][structure.PopulationCount] = new Unlocks();
+        //    levelCountToUnlocks[structure.PopulationLevel][structure.PopulationCount].structures.Add(structure);
+        //}
+        //foreach (Unit unit in UnitPrototypes.Values) {
+        //    if (levelCountToUnlocks[unit.PopulationLevel].ContainsKey(unit.PopulationCount) == false)
+        //        levelCountToUnlocks[unit.PopulationLevel][unit.PopulationCount] = new Unlocks();
+        //    levelCountToUnlocks[unit.PopulationLevel][unit.PopulationCount].units.Add(unit);
+        //}
+        //foreach (Need need in allNeeds) {
+        //    if (levelCountToUnlocks[need.StartLevel].ContainsKey(need.StartPopulationCount) == false)
+        //        levelCountToUnlocks[need.StartLevel][need.StartPopulationCount] = new Unlocks();
+        //    levelCountToUnlocks[need.StartLevel][need.StartPopulationCount].needs.Add(need);
+        //    needsPerLevel[need.StartLevel]++;
+        //}
+        Parallel.ForEach(StructurePrototypes.Values, structure => {
+            if (levelCountToUnlocks[structure.PopulationLevel].ContainsKey(structure.PopulationCount) == false)
+                levelCountToUnlocks[structure.PopulationLevel].TryAdd(structure.PopulationCount, new Unlocks());
+            levelCountToUnlocks[structure.PopulationLevel].TryGetValue(structure.PopulationCount, out Unlocks value);
+            value.structures.Add(structure);
+        });
+        Parallel.ForEach(UnitPrototypes.Values, unit => {
+            if (levelCountToUnlocks[unit.PopulationLevel].ContainsKey(unit.PopulationCount) == false)
+                levelCountToUnlocks[unit.PopulationLevel].TryAdd(unit.PopulationCount, new Unlocks());
+            levelCountToUnlocks[unit.PopulationLevel].TryGetValue(unit.PopulationCount, out Unlocks value);
+            value.units.Add(unit);
+        });
+        Parallel.ForEach(allNeeds, need => {
+            if (levelCountToUnlocks[need.StartLevel].ContainsKey(need.StartPopulationCount) == false)
+                levelCountToUnlocks[need.StartLevel].TryAdd(need.StartPopulationCount,new Unlocks());
+            levelCountToUnlocks[need.StartLevel].TryGetValue(need.StartPopulationCount, out Unlocks value);
+            value.needs.Add(need);
+            Interlocked.Increment(ref needsPerLevel[need.StartLevel]);
+        });
+    }
+    private void CalculateNeedUnlocks() {
+        foreach (NeedPrototypeData need in needPrototypeDatas.Values){ 
+            if (need.structures != null) {
+                foreach (Structure str in need.structures) {
+                    if (need.startLevel<=str.PopulationLevel  && need.startPopulationCount < str.PopulationCount) {
+                        need.startPopulationCount = str.PopulationCount;
+                        need.startLevel = str.PopulationLevel;
+                        Debug.LogWarning("Need " + need.Name + " is misconfigured to start earlier than supposed. Fixed to unlock time.");
+                    }
+                }
+            }
+            if (need.item != null) {
+                foreach (Produce produce in itemIDToProduce[need.item.ID]) {
+                    StructurePrototypeData str = produce.producingStructurePD;
+                    if (need.startLevel <= str.populationLevel && need.startPopulationCount < str.populationCount) {
+                        need.startPopulationCount = str.populationCount;
+                        need.startLevel = str.populationLevel;
+                        Debug.LogWarning("Need " + need.Name + " is misconfigured to start earlier than supposed. Fixed to unlock time.");
+                    }
+                }
+            }
+        }
+    }
     private void ReadStartingLoadoutsFromXMLs(string xmlText) {
         XmlDocument xmlDoc = new XmlDocument(); // xmlDoc is the new xml document.
-        // ((TextAsset)Resources.Load("XMLs/GameState/events", typeof(TextAsset)));
         xmlDoc.LoadXml(xmlText); // load the file.
         foreach (XmlElement node in xmlDoc.SelectNodes("startingloadouts/startingloadout")) {
             StartingLoadout sl = new StartingLoadout();
@@ -312,11 +407,12 @@ public class PrototypController : MonoBehaviour {
                 int numGrowablesPerTon = fpd.neededHarvestToProduce;
                 float growtime = fpd.growable.ProduceTime;
                 float produceTime = fpd.produceTime;
+                float neededWorkerRatio = fpd.maxNumberOfWorker / fpd.neededHarvestToProduce; 
                 if (fpd.growable == null || produceTime * fpd.efficiency <= 0 || growtime <= 0) {
                     ppm = 0;
                 }
-                else if (produceTime * fpd.efficiency >= growtime) {
-                    ppm = 60f / produceTime;
+                else if (fpd.maxNumberOfWorker * produceTime * fpd.efficiency >= growtime) {
+                    ppm = neededWorkerRatio * (60f / produceTime);
                 }
                 else {
                     ppm = Mathf.Min(60f / (produceTime * fpd.efficiency), (((float)tileCount / (float)numGrowablesPerTon) * (60f / growtime)));
@@ -500,10 +596,6 @@ public class PrototypController : MonoBehaviour {
             int level = int.Parse(node.GetAttribute("LEVEL"));
             plpd.LEVEL = level;
             SetData<PopulationLevelPrototypData>(node, ref plpd);
-            if (populationLevelToNeedGroup.ContainsKey(level))
-                plpd.needGroupList = populationLevelToNeedGroup[level];
-            else
-                Debug.LogWarning("PopulationLevel " + plpd.Name + " " + plpd.LEVEL + " is missing its own needs!");
             populationLevelDatas[level] = plpd;
         }
     }
@@ -632,16 +724,17 @@ public class PrototypController : MonoBehaviour {
                 ngpd.ID = ID;
                 SetData<NeedGroupPrototypData>(node, ref ngpd);
                 needGroupDatas[ID] = ngpd;
+                idToNeedGroup[ID] = new NeedGroup(ID);
             }
         }
         Dictionary<int, List<Need>> levelToNeedList = new Dictionary<int, List<Need>>();
+
         XmlNodeList listNeed = xmlDoc.SelectNodes("needs/Need");
         if (listNeed != null) {
             foreach (XmlElement node in xmlDoc.SelectNodes("needs/Need")) {
                 NeedPrototypeData npd = new NeedPrototypeData();
                 string ID = node.GetAttribute("ID");
                 SetData<NeedPrototypeData>(node, ref npd);
-
 
                 needPrototypeDatas[ID] = npd;
                 if (npd.item == null && npd.structures == null)
@@ -652,13 +745,15 @@ public class PrototypController : MonoBehaviour {
                             npd.startLevel = str.PopulationLevel;
                         }
                         if (npd.startLevel == str.PopulationLevel) {
-                            if (npd.popCount > str.PopulationCount) {
-                                npd.popCount = str.PopulationCount;
+                            if (npd.startPopulationCount > str.PopulationCount) {
+                                npd.startPopulationCount = str.PopulationCount;
                             }
                         }
                     }
                 }
                 Need n = new Need(ID, npd);
+                if(idToNeedGroup.ContainsKey(n.Group.ID)) 
+                    idToNeedGroup[n.Group.ID].AddNeed(n.Clone()); 
                 allNeeds.Add(n);
                 if (levelToNeedList.ContainsKey(npd.startLevel) == false) {
                     levelToNeedList[npd.startLevel] = new List<Need>();
@@ -666,6 +761,16 @@ public class PrototypController : MonoBehaviour {
                 levelToNeedList[npd.startLevel].Add(n.Clone());
             }
         }
+        //for(int i = 0; i < NumberOfPopulationLevels; i++) {
+        //    string level = "";
+        //    if (levelToNeedList.ContainsKey(i) == false)
+        //        return;
+        //    foreach (Need need in levelToNeedList[i]) {
+        //        level += need.Name + "\n";
+        //    }
+        //    Debug.Log(level);
+        //}
+
         foreach (int level in levelToNeedList.Keys) {
             List<NeedGroup> ngs = new List<NeedGroup>();
             populationLevelToNeedGroup.Add(level, ngs);
@@ -1013,12 +1118,16 @@ public class PrototypController : MonoBehaviour {
                     fi.SetValue(data, NodeToStructure(currentNode));
                     continue;
                 }
-                if (fi.FieldType.IsSubclassOf(typeof(Structure[])) || fi.FieldType == (typeof(Structure[]))) {
-                    List<Structure> items = new List<Structure>();
-                    foreach (XmlNode item in currentNode.ChildNodes) {
-                        items.Add(NodeToStructure(item));
+                if (fi.FieldType.IsArray && fi.FieldType.GetElementType().IsSubclassOf(typeof(Structure)) || fi.FieldType == (typeof(Structure[]))) {
+                    Array items = (Array)Activator.CreateInstance(fi.FieldType, currentNode.ChildNodes.Count);
+                    for (int i = 0; i < currentNode.ChildNodes.Count; i++) {
+                        items.SetValue(NodeToStructure(currentNode.ChildNodes[i]), i);
                     }
-                    fi.SetValue(data, items.ToArray());
+                    //int i = 0;
+                    //foreach (XmlNode item in currentNode.ChildNodes) {
+                    //    items.SetValue(NodeToStructure(item), i++);
+                    //}
+                    fi.SetValue(data, items);
                     continue;
                 }
                 if (fi.FieldType == typeof(NeedGroupPrototypData)) {
@@ -1266,7 +1375,7 @@ public class PrototypController : MonoBehaviour {
         return unitPrototypes[id];
     }
     private Structure NodeToStructure(XmlNode n) {
-        string id = n.InnerXml;
+        string id = n.InnerText;
         if (String.IsNullOrEmpty(id)) {
             return null;//not needed
         }
@@ -1276,7 +1385,7 @@ public class PrototypController : MonoBehaviour {
         }
         return structurePrototypes[id];
     }
-
+ 
     private Fertility NodeToFertility(XmlNode n) {
         string id = n.InnerXml;
         if (String.IsNullOrEmpty(id)) {
@@ -1317,6 +1426,13 @@ public class PrototypController : MonoBehaviour {
     }
 
 
+
+}
+
+internal class Unlocks {
+    public ConcurrentBag<Structure> structures = new ConcurrentBag<Structure>();
+    public ConcurrentBag<Unit> units = new ConcurrentBag<Unit>();
+    public ConcurrentBag<Need> needs = new ConcurrentBag<Need>();
 
 }
 

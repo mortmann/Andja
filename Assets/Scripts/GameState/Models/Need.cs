@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
-using System.Collections;
 using Newtonsoft.Json;
 using System;
+using System.Linq;
 using System.Collections.Generic;
 
 public class NeedPrototypeData : LanguageVariables {
@@ -10,7 +10,7 @@ public class NeedPrototypeData : LanguageVariables {
     public NeedGroupPrototypData group; // only for the typ of the group needed!
     public float[] UsageAmounts;
     public int startLevel;
-    public int popCount;
+    public int startPopulationCount;
 }
 /// <summary>
 /// each need needs to be in a group with similar needs
@@ -49,16 +49,15 @@ public class Need {
         get { return Data.startLevel; }
     }
 
-    public int PopCount {
-        get { return Data.popCount; }
+    public int StartPopulationCount {
+        get { return Data.startPopulationCount; }
     }
-
     [JsonPropertyAttribute]
     public string ID;
     [JsonPropertyAttribute]
-    public List<float> lastNeededNotConsumed;
+    public float[] lastNeededNotConsumed;
     [JsonPropertyAttribute]
-    public List<float> percantageAvailability;
+    public float[] percantageAvailability;
     [JsonPropertyAttribute]
     public float notUsedOfTon = 0;
 
@@ -66,17 +65,27 @@ public class Need {
         this.ID = id;
         this._prototypData = npd;
     }
+    [JsonConstructor]
     public Need() {
-        lastNeededNotConsumed = new List<float>();
-        percantageAvailability = new List<float>();
-        lastNeededNotConsumed.Add(0);
-        percantageAvailability.Add(0);
+        if(lastNeededNotConsumed == null) {
+            lastNeededNotConsumed = new float[PrototypController.Instance.NumberOfPopulationLevels];
+            percantageAvailability = new float[PrototypController.Instance.NumberOfPopulationLevels];
+        } else {
+            if(lastNeededNotConsumed.Length < PrototypController.Instance.NumberOfPopulationLevels) {
+                Array.Resize(ref lastNeededNotConsumed, PrototypController.Instance.NumberOfPopulationLevels);
+                Array.Resize(ref percantageAvailability, PrototypController.Instance.NumberOfPopulationLevels);
+            }
+        }
     }
     public Need Clone() {
         return new Need(this);
     }
     protected Need(Need other) : this() {
         this.ID = other.ID;
+    }
+
+    public Need(string id) {
+        this.ID = id;
     }
 
     public void CalculateFullfillment(City city, PopulationLevel level) {
@@ -91,10 +100,6 @@ public class Need {
             //this does not require any item -> it needs a structure
             percantageAvailability[level] = 0;
             return;
-        }
-        if (lastNeededNotConsumed.Count <= level) {
-            lastNeededNotConsumed.Add(0);
-            percantageAvailability.Add(0);
         }
         float neededConsumAmount = 0;
         // how much do we need to consum?
@@ -141,22 +146,18 @@ public class Need {
         Debug.Log("NEED " + ID + " -> " + level + " -> " + percantageAvailability[level]);
     }
 
-    internal bool IsSatisifiedThroughStructure(NeedStructure type) {
-        foreach (Structure s in Structures) {
-            if (type.ID == s.ID)
-                return true;
-        }
-        return false;
+    internal bool IsSatisifiedThroughStructure(List<NeedStructure> strs) {
+        return Array.Exists(Structures, x => strs.Exists(y => y.ID == x.ID));
     }
 
     internal void SetStructureFullfilled(bool fullfilled) {
         if (IsItemNeed())
             return;
         if (fullfilled) {
-            percantageAvailability.ForEach(x => x = 1);
+            Array.ForEach(percantageAvailability, x => x = 1);
         }
         else {
-            percantageAvailability.ForEach(x => x = 0);
+            Array.ForEach(percantageAvailability, x => x = 0);
         }
     }
 
@@ -167,7 +168,7 @@ public class Need {
         float combined = 0f;
         foreach (float ff in percantageAvailability)
             combined += ff;
-        combined /= percantageAvailability.Count;
+        combined /= percantageAvailability.Length;
         return combined;
     }
 
@@ -180,5 +181,15 @@ public class Need {
 
     public bool Exists() {
         return Data != null;
+    }
+    public override bool Equals(object obj) {
+        Need item = obj as Need;
+        if (item == null) {
+            return false;
+        }
+        return this.ID.Equals(item.ID);
+    }
+    public override int GetHashCode() {
+        return this.ID.GetHashCode();
     }
 }

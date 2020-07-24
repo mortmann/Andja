@@ -96,8 +96,8 @@ public abstract class Pathfinding {
         }
         protected set {
             //TODO: REMOVE FOR RELEASE
-            if (_x>0&&Mathf.Abs(value - _x) > 0.2f * WorldController.Instance.timeMultiplier)
-                Debug.LogWarning(" UNIT JUMPED -- FIX ME -- " + Mathf.Abs(value - _x));
+            if (_x>0&&Mathf.Abs(value - _x) > 0.2f * Speed * WorldController.Instance.timeMultiplier)
+                Debug.LogWarning("UNIT JUMPED -- FIX ME -- " + Mathf.Abs(value - _x));
             _x = value;
         }
     }
@@ -107,7 +107,7 @@ public abstract class Pathfinding {
         }
         protected set {
             //TODO: REMOVE FOR RELEASE
-            if (_y > 0 &&Mathf.Abs( value - _y) > 0.2f*WorldController.Instance.timeMultiplier)
+            if (_y > 0 &&Mathf.Abs( value - _y) > 0.2f * Speed * WorldController.Instance.timeMultiplier)
                 Debug.LogWarning("UNIT JUMPED -- FIX ME -- " + Mathf.Abs(value - _y));
             _y = value;
         }
@@ -206,7 +206,7 @@ public abstract class Pathfinding {
         //    rotation = Mathf.LerpAngle(rotation, angle, deltaTime * rotationSpeed);//Mathf.LerpAngle ( rotation , angle , t);
         //}
         //rotation = Mathf.LerpAngle(rotation, angle, deltaTime * rotationSpeed);//Mathf.LerpAngle ( rotation , angle , t);
-        Debug.Log(angle);
+        //Debug.Log(angle);
         rotation = Mathf.MoveTowardsAngle(rotation, angle, deltaTime * rotationSpeed);
 
     }

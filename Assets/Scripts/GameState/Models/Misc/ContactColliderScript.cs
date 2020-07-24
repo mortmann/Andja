@@ -35,4 +35,14 @@ public class ContactColliderScript : MonoBehaviour {
             ((WarehouseStructure)contact).RemoveUnitFromTrade(unit);
         }
     }
+    private void OnTriggerExit2D(Collider2D collision) {
+        ITargetableHoldingScript ihs = collision.gameObject.GetComponent<ITargetableHoldingScript>();
+        if (ihs == null || ihs.IsUnit == false)
+            return;
+        Unit unit = (Unit)ihs.Holding;
+        if (unit.inventory != null) {
+            unit.IsInRangeOfWarehouse(null);
+            ((WarehouseStructure)contact).RemoveUnitFromTrade(unit);
+        }
+    }
 }

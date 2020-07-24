@@ -18,7 +18,8 @@ public class GenericStructureUI : MonoBehaviour {
     }
     public void Show(Structure structure) {
         this.structure = structure;
-        NameText.text = structure.Name;
+        if(NameText != null)
+            NameText.text = structure.Name;
         if(structure.ReadOnlyEffects != null) {
             foreach (Effect e in structure.ReadOnlyEffects) {
                 OnEffectAdded(e);
@@ -41,7 +42,7 @@ public class GenericStructureUI : MonoBehaviour {
             return;
         EffectUI effectUI = Instantiate(EffectPrototyp);
         effectUI.Show(effect);
-        effectUI.transform.SetParent(EffectsTransform);
+        effectUI.transform.SetParent(EffectsTransform, false);
         effectToUI.Add(effect, effectUI);
     }
     void OnEffectRemoved(Effect effect) {

@@ -63,7 +63,7 @@ public class WarehouseStructure : MarketStructure {
             inRangeUnits.Remove(u);
     }
     public override void OnBuild() {
-        workersHasToFollowRoads = true; // DUNNO HOW where to set it without the need to copy it extra
+        workersHasToFollowRoads = true; // DUNNO where to set it without the need to copy it extra
 
         Tile[,] sortedTiles = new Tile[TileWidth, TileHeight];
         List<Tile> ts = new List<Tile>(Tiles);
@@ -119,7 +119,8 @@ public class WarehouseStructure : MarketStructure {
     }
     protected override void OnDestroy() {
         List<Tile> h = new List<Tile>(Tiles);
-        h.AddRange(RangeTiles);
+        if(RangeTiles!=null)
+            h.AddRange(RangeTiles);
         City.RemoveTiles(h);
         //you lose any res that the worker is carrying
         foreach (Worker item in Workers) {
@@ -131,5 +132,7 @@ public class WarehouseStructure : MarketStructure {
         return new WarehouseStructure(this);
     }
 
-
+    public override bool InCityCheck(IEnumerable<Tile> tiles, int playerNumber) {
+        return true;
+    }
 }

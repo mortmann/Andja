@@ -26,11 +26,11 @@ public class SaveController : MonoBehaviour {
     public static bool DebugModeSave = true; 
     public static string SaveName = "unsaved";
 
-    const string SaveFileVersion = "0.1.7";
+    const string SaveFileVersion = "0.1.9";
     const string islandSaveFileVersion = "i_0.0.3";
     float timeToAutoSave = AutoSaveInterval;
     const float AutoSaveInterval = 15 * 60; // every 15 min -- TODO: add game option to change this
-    GameDataHolder GDH => GameDataHolder.Instance;
+    GameData GDH => GameData.Instance;
     WorldController WC => WorldController.Instance;
     EventController EC => EventController.Instance;
     CameraController CC => CameraController.Instance;
@@ -38,7 +38,7 @@ public class SaveController : MonoBehaviour {
     UIController UI => UIController.Instance;
 
     float lastSaved = -1;
-    public bool UnsavedProgress => lastSaved != GameDataHolder.Instance.playTime;
+    public bool UnsavedProgress => lastSaved != GameData.Instance.playTime;
 
     void Awake() {
         if (Instance != null) {
@@ -54,7 +54,7 @@ public class SaveController : MonoBehaviour {
             Debug.Log("LOADING SAVEGAME " + GDH.Loadsavegame);
             IsLoadingSave = true;
             StartCoroutine(LoadGameState(GDH.Loadsavegame));
-            GameDataHolder.setloadsavegame = null;
+            GameData.setloadsavegame = null;
         }
         else {
             IsLoadingSave = false;
@@ -84,7 +84,7 @@ public class SaveController : MonoBehaviour {
     public void LoadWorld(bool quickload = false) {
         Debug.Log("LoadWorld button was clicked.");
         if (quickload) {
-            GameDataHolder.setloadsavegame = quickSaveName;
+            GameData.setloadsavegame = quickSaveName;
         }
         // set to loadscreen to reset all data (and purge old references)
         SceneManager.LoadScene("GameStateLoadingScreen");
@@ -504,7 +504,7 @@ public class SaveController : MonoBehaviour {
 
         PrototypController.Instance.LoadFromXML();
 
-        GDH.LoadGameData(BaseSaveData.Deserialize<GameData>((string)state.gamedata));
+        GDH.LoadGameData(BaseSaveData.Deserialize<GameDataSave>((string)state.gamedata));
         lastSaved = GDH.playTime;
 
         loadingPercantage += 0.3f;

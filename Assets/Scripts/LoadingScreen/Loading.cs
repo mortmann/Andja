@@ -35,8 +35,9 @@ public class Loading : MonoBehaviour {
                 aso.allowSceneActivation = false;
             }
             else {
-                if (SaveController.Instance.DoesGameSaveExist(GameDataHolder.Instance.Loadsavegame) == false) {
-                    UnityEngine.Debug.LogError(GameDataHolder.Instance.Loadsavegame + " Save does not exist!");
+                if (string.IsNullOrEmpty(GameData.Instance.Loadsavegame) == false
+                    && SaveController.Instance.DoesGameSaveExist(GameData.Instance.Loadsavegame) == false) {
+                    UnityEngine.Debug.LogError(GameData.Instance.Loadsavegame + " Save does not exist!");
                     SceneManager.LoadScene("MainMenu");
                     Destroy(FindObjectOfType<MasterController>().gameObject);
                     Destroy(FindObjectOfType<MapGenerator>().gameObject);

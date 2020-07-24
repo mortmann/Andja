@@ -26,7 +26,9 @@ public class ConsoleUI : MonoBehaviour {
         foreach (string s in ConsoleController.logs)
             WriteToConsole(s);
         ConsoleController.Instance.RegisterOnLogAdded(WriteToConsole);
-
+        LayoutElement le = TextPrefab.GetComponent<LayoutElement>();
+        le.preferredWidth = Screen.width;
+        le.minWidth = Screen.width;
         ItemIDs = new List<string>(PrototypController.Instance.AllItems.Keys);
         UnitIDs = new List<string>(PrototypController.Instance.UnitPrototypeDatas.Keys);
         EventIDs = new List<string>(PrototypController.Instance.GameEventPrototypeDatas.Keys);
@@ -128,9 +130,7 @@ public class ConsoleUI : MonoBehaviour {
     public void WriteToConsole(string text) {
         GameObject go = Instantiate(TextPrefab);
         go.GetComponent<Text>().text = text;
-        float width = outputTransform.GetComponent<RectTransform>().rect.width;
-        go.GetComponent<LayoutElement>().minWidth = width;
-        go.transform.SetParent(outputTransform);
+        go.transform.SetParent(outputTransform, false);
         if (outputTransform.childCount > 30) {
             Destroy(outputTransform.GetChild(0).gameObject);
         }

@@ -61,7 +61,7 @@ public class RoadStructure : Structure {
             //If there is no route next to it 
             //so create a new route 
             Route = new Route(Tiles[0]);
-            Tiles[0].City.AddRoute(Route);
+            City.AddRoute(Route);
         } else
         if (routeCount == 1) {
             // there is already a route 
@@ -70,6 +70,7 @@ public class RoadStructure : Structure {
             Route = routes[0];
         }
         else {
+            routes[0].AddRoadTile(Tiles[0]);
             //add all Roads from the others to road 1!
             for (int i = 1; i < routes.Count; i++) {
                 routes[0].AddRoute(routes[i]);
@@ -77,6 +78,13 @@ public class RoadStructure : Structure {
             }
         }
         UpdateOrientation();
+    }
+    protected override void OnCityChange(City old, City newOne) {
+        if(newOne.Routes.Contains(Route) == false) {
+            newOne.AddRoute(Route);
+        } else {
+            Route.CheckForCity(old);
+        }
     }
     public void UpdateOrientation() {
         Tile[] neig = Tiles[0].GetNeighbours();
@@ -105,6 +113,24 @@ public class RoadStructure : Structure {
         }
         cbRoadChanged?.Invoke(this);
     }
+    public static string UpdateOrientation(Tile tile, IEnumerable<Tile> tiles) {
+        Tile[] neig = tile.GetNeighbours();
+        HashSet<Tile> temp = new HashSet<Tile>(tiles);
+        string connectOrientation = "_";
+        if (temp.Contains(neig[0]) || neig[0].Structure is RoadStructure) {
+            connectOrientation += "N";
+        }
+        if (temp.Contains(neig[1]) || neig[1].Structure is RoadStructure) {
+            connectOrientation += "E";
+        }
+        if (temp.Contains(neig[2]) || neig[2].Structure is RoadStructure) {
+            connectOrientation += "S";
+        }
+        if (temp.Contains(neig[3]) || neig[3].Structure is RoadStructure) {
+            connectOrientation += "W";
+        }
+        return connectOrientation;
+    }
     protected override void OnDestroy() {
         if (Route != null) {
             Route.RemoveRoadTile(BuildTile);
@@ -121,5 +147,9 @@ public class RoadStructure : Structure {
     public void UnregisterOnRoadCallback(Action<RoadStructure> cb) {
         cbRoadChanged -= cb;
     }
-
+    public override string ToString() {
+        if (BuildTile == null)
+            return base.ToString();
+        return Name + " " + Route.ToString();
+    }
 }

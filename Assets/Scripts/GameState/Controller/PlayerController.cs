@@ -12,7 +12,6 @@ public enum DiplomacyType { War, Neutral, TradeAggrement, Alliance }
 /// </summary>
 public class PlayerController : MonoBehaviour {
     public static int currentPlayerNumber;
-    public Player CurrPlayer { get { return Players[currentPlayerNumber]; } }
     List<DiplomaticStatus> playerDiplomaticStandings;
     PlayerPrototypeData PlayerPrototypeData => PrototypController.CurrentPlayerPrototypData;
 
@@ -60,11 +59,11 @@ public class PlayerController : MonoBehaviour {
     public void NewGameSetup() {
         Players = new List<Player>();
         currentPlayerNumber = 0;
-        Player p = new Player(currentPlayerNumber,true, GameDataHolder.Instance.Loadout.Money);
+        Player p = new Player(currentPlayerNumber,true, GameData.Instance.Loadout.Money);
         Players.Add(p);
         p.RegisterHasLost(OnPlayerLost);
-        Players.Add(new Player(1, false, GameDataHolder.Instance.Loadout.Money));
-        Players.Add(new Player(2, false, GameDataHolder.Instance.Loadout.Money));
+        Players.Add(new Player(1, false, GameData.Instance.Loadout.Money));
+        Players.Add(new Player(2, false, GameData.Instance.Loadout.Money));
         playerDiplomaticStandings = new List<DiplomaticStatus>();
         for (int i = 0; i < PlayerCount; i++) {
             for (int s = i + 1; s < PlayerCount; s++) {

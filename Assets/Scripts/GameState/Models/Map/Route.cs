@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
+using System;
 //DOESNT NEED TO BE SAVED
 //GETS CREATED WHEN NEEDED
 public class Route {
@@ -55,7 +56,7 @@ public class Route {
         TileGraph.AddNodeToRouteTileGraph(tile);
     }
     public void RemoveRoadTile(Tile tile) {
-        if (Tiles.Count == 1) {
+        if (Tiles.Count == 0) {
             //this route does not have any more roadtiles so kill it
             Tiles[0].City.RemoveRoute(this);
             return;
@@ -97,19 +98,32 @@ public class Route {
         }
     }
 
+    internal void CheckForCity(City old) {
+        if (Tiles.Exists(t => t.City == old) == false) {
+            old.RemoveRoute(this);
+        }
+    }
+
     public void AddRoute(Route route) {
+        Tiles.AddRange(route.Tiles);
         foreach (Tile item in route.Tiles) {
             ((RoadStructure)item.Structure).Route = this;
         }
-        TileGraph.addNodes(route.TileGraph);
+        foreach (City c in route.Tiles.GroupBy(t=> t.City)) {
+            if(c.Routes.Contains(this)==false) {
+                c.AddRoute(this);
+            }
+            c.RemoveRoute(route);
+        }
+        TileGraph.AddNodes(route.TileGraph);
         route.Tiles.Clear();
-        Tiles[0].City.RemoveRoute(route);
-
     }
 
     ///for debug purpose only if no longer needed delete
     public override string ToString() {
-        return Tiles[0].ToBaseString() + "_Route" + Tiles[0].City.routes.IndexOf(this);
+        if (Tiles.Count == 0)
+            return "EMPTY";
+        return Tiles[0].X +":"+ Tiles[0].Y+ "_Route "+ Tiles[0].City + Tiles[0].City.Routes.IndexOf(this);
     }
 
 }

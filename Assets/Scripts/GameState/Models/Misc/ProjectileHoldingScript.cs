@@ -11,7 +11,7 @@ public class ProjectileHoldingScript : MonoBehaviour {
         Projectile.RegisterOnDestroyCallback(OnProjectileDestroy);
         body = gameObject.AddComponent<Rigidbody2D>();
         body.collisionDetectionMode = CollisionDetectionMode2D.Continuous;
-        body.velocity = Projectile.Velocity;
+        body.velocity = Projectile.Velocity.Vec;
         body.gravityScale = 0;
     }
 

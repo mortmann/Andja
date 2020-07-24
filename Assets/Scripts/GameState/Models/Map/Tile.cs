@@ -160,14 +160,7 @@ public class Tile : IComparable<Tile>, IEqualityComparer<Tile> {
     /// </summary>
     /// <returns><c>true</c>, if tile is buildable, <c>false</c> otherwise.</returns>
     /// <param name="t"> if its ok to be build on special tiletypes, forced means if it has to be true for either mountain/shore</param>
-    public virtual bool CheckTile(bool mustBeShore = false, bool mustBeMountain = false) {
-        if (mustBeShore) {
-            return Type == TileType.Shore;
-        }
-        if (mustBeMountain) {
-            return Type == TileType.Mountain;
-        }
-
+    public virtual bool CheckTile() {
         if (Type == TileType.Ocean) {
             return false;
         }
@@ -193,7 +186,9 @@ public class Tile : IComparable<Tile>, IEqualityComparer<Tile> {
         }
         return true;
     }
-
+    public bool IsGenericBuildType() {
+        return IsBuildType(Type);
+    }
     public static bool IsBuildType(TileType t) {
         if (t == TileType.Ocean) {
             return false;

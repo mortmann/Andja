@@ -65,9 +65,9 @@ public class WorldController : MonoBehaviour {
         World.RegisterAnyUnitDestroyed(cbWorldUnitDestroyed);
         if (SaveController.IsLoadingSave == false && tileToStructure!=null && tileToStructure.Count>0) {
             BuildController.Instance.PlaceWorldGeneratedStructure(tileToStructure);
-            if (GameDataHolder.flyingTraders)
+            if (GameData.flyingTraders)
                 flyingTrader = new FlyingTrader();
-            if (GameDataHolder.pirates)
+            if (GameData.pirates)
                 pirate = new Pirate();
             offworldMarket = new OffworldMarket();
             CreatePlayerStarts(spawnPoints);        
@@ -78,7 +78,7 @@ public class WorldController : MonoBehaviour {
     }
 
     private void CreatePlayerStarts(Vector2[] spawnPoints) {
-        StartingLoadout loadout = GameDataHolder.Instance.Loadout;
+        StartingLoadout loadout = GameData.Instance.Loadout;
         if (loadout == null)
             return;
         for (int i = 0; i < PlayerController.Players.Count; i++) {
@@ -264,7 +264,6 @@ public class WorldController : MonoBehaviour {
         foreach (Island island in World.Islands) {
             loadedStructures.AddRange(island.Load());
         }
-        loadedStructures.Sort((x, y) => x.buildID.CompareTo(y.buildID));
         BuildController.Instance.PlaceAllLoadedStructure(loadedStructures);
     }
 

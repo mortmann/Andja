@@ -300,7 +300,7 @@ public class ConsoleController : MonoBehaviour {
         }
         switch (parameters[pos]) {
             case "item":
-                return ChangeItemInInventory(parameters.Skip(2).ToArray(), c.Inventory);
+                return ChangeItemInInventory(parameters.Skip(1).ToArray(), c.Inventory);
             case "fillitup":
                 return AddAllItems(c.Inventory);
             case "builditems":

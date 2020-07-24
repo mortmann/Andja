@@ -130,8 +130,15 @@ public class PopulationLevel {
             NeedGroup inList = NeedGroupList.Find(x => x.ID == ng.ID);
             if (inList == null) {
                 inList = new NeedGroup(ng.ID);
+                NeedGroupList.Add(inList);
             }
             inList.UpdateNeeds(city.GetOwner());
+        }
+        foreach (string needID in player.UnlockedItemNeeds[Level]) {
+            OnUnlockedNeed(new Need(needID));
+        }
+        foreach (string needID in player.UnlockedStructureNeeds[Level]) {
+            OnUnlockedNeed(new Need(needID));
         }
     }
 
@@ -147,6 +154,8 @@ public class PopulationLevel {
             Debug.LogError("UnlockedNeed " + need + " doesnt have the right group inside this level" + Level);
             return;
         }
+        if (ng.HasNeed(need))
+            return;
         Need clone = need.Clone();
         cbNeedUnlockAdded?.Invoke(clone);
         ng.AddNeed(clone);

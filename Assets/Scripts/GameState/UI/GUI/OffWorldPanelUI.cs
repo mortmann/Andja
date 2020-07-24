@@ -97,7 +97,7 @@ public class OffWorldPanelUI : MonoBehaviour {
     }
     private void AddItemPrefabTo(Transform t) {
         GameObject g = GameObject.Instantiate(itemPrefab);
-        g.transform.SetParent(t);
+        g.transform.SetParent(t, false);
         g.GetComponentInChildren<Slider>().maxValue = ship.inventory.MaxStackSize;
         g.GetComponentInChildren<Text>().text = ship.inventory.MaxStackSize + "t";
         //TODO add listener stuff
@@ -129,7 +129,7 @@ public class OffWorldPanelUI : MonoBehaviour {
             Item item = ship.inventory.GetItemInSpace(i);
             GameObject g = GameObject.Instantiate(itemPrefab);
             g.GetComponent<ItemUI>().SetItem(item, ship.inventory.MaxStackSize);
-            g.transform.SetParent(onShip.transform);
+            g.transform.SetParent(onShip.transform, false);
         }
     }
 

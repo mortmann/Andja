@@ -9,11 +9,12 @@ public class TilesPathfinding : Pathfinding {
     //for structure
     protected List<Tile> startTiles;
     protected List<Tile> endTiles;
-
-    public TilesPathfinding(float Speed, float RotationSpeed) : base() {
+    bool canEndInUnwakable;
+    public TilesPathfinding(float Speed, float RotationSpeed, bool canEndInUnwakable) : base() {
         this.Speed = Speed;
         this.rotationSpeed = RotationSpeed;
         TurnType = Turning_Type.TurnRadius;
+        this.canEndInUnwakable = canEndInUnwakable;
     }
     public override void SetDestination(Tile end) {
         DestTile = end;
@@ -38,7 +39,6 @@ public class TilesPathfinding : Pathfinding {
     }
 
     protected override void CalculatePath() {
-
         pathDestination = Path_Destination.Tile;
         if (startTiles == null) {
             startTiles = new List<Tile> {
@@ -52,7 +52,7 @@ public class TilesPathfinding : Pathfinding {
         Queue<Tile> currentQueue = null;
         foreach (Tile st in startTiles) {
             foreach(Tile et in endTiles) {
-                Path_AStar pa = new Path_AStar(startTiles[0].Island, st, et, startTiles, endTiles);
+                Path_AStar pa = new Path_AStar(startTiles[0].Island, st, et, startTiles, endTiles, canEndInUnwakable);
                 if (pa.path == null || currentQueue != null && currentQueue.Count < pa.path.Count) {
                     continue;
                 }
@@ -62,7 +62,13 @@ public class TilesPathfinding : Pathfinding {
 
         worldPath = new Queue<Vector2>();
         while (currentQueue.Count > 0) {
-            worldPath.Enqueue(currentQueue.Dequeue().Vector2+new Vector2(0.5f,0.5f));
+            Vector2 pos = currentQueue.Dequeue().Vector2 + new Vector2(0.5f, 0.5f);
+            worldPath.Enqueue(pos);
+            if(currentQueue.Count == 0) {
+                DestTile = World.Current.GetTileAt(pos);
+                dest_X = pos.x;
+                dest_Y = pos.y;
+            }
         }
         
         if (CurrTile == null) {
@@ -73,13 +79,6 @@ public class TilesPathfinding : Pathfinding {
         }
         
         CreateReversePath();
-        DestTile = World.Current.GetTileAt(backPath.Peek());
-
-        dest_X = backPath.Peek().x;
-        dest_Y = backPath.Peek().y;
-
-        //worldPath.Enqueue(Destination);
-        //backPath.Enqueue(Position2);
 
         //important
         IsDoneCalculating = true;

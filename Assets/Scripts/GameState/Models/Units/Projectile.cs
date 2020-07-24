@@ -13,10 +13,10 @@ public class Projectile {
     [JsonPropertyAttribute] SeriaziableVector3 _destination;
     [JsonPropertyAttribute] ITargetable target;
     const float Speed = 2f;
-    public Vector3 Position { get { return _position.Vec; } protected set { _position.Vec = value; } }
+    public Vector3 Position { get { return _position; } protected set { _position = value; } }
     Vector3 Destination { get { return _destination.Vec; } set { _destination.Vec = value; } }
 
-    public Vector2 Velocity { get; internal set; }
+    public SeriaziableVector2 Velocity { get; internal set; }
 
     Action<Projectile> cbOnDestroy;
     Action<Projectile> cbOnChange;
@@ -24,8 +24,9 @@ public class Projectile {
     public Projectile() { }
     public Projectile(IWarfare origin, Vector3 startPosition, ITargetable target, Vector2 destination, Vector3 move, float travelDistance) {
         remainingTravelDistance = travelDistance;
-        _position = new SeriaziableVector3(startPosition);
-        _destination = new SeriaziableVector3(destination); // needs some kind of random factor
+        Velocity = move;
+        _position = startPosition;
+        _destination = destination; // needs some kind of random factor
         this.origin = origin;
         this.target = target;
     }

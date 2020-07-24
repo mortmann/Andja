@@ -87,7 +87,7 @@ public class MapImage : MonoBehaviour {
         RectTransform rt = mapParts.GetComponent<RectTransform>();
         World w = World.Current;
         GameObject g = GameObject.Instantiate(mapCitySelectPrefab);
-        g.transform.SetParent(mapParts.transform);
+        g.transform.SetParent(mapParts.transform, false);
         Vector3 pos = new Vector3(warehouse.BuildTile.X, warehouse.BuildTile.Y, 0);
         pos.Scale(new Vector3(rt.rect.width / w.Width, rt.rect.height / w.Height));
         g.transform.localPosition = pos;
@@ -134,7 +134,7 @@ public class MapImage : MonoBehaviour {
         World w = World.Current;
 
         GameObject g = GameObject.Instantiate(mapShipIconPrefab);
-        g.transform.SetParent(mapParts.transform);
+        g.transform.SetParent(mapParts.transform, false);
         Vector3 pos = new Vector3(u.X, u.Y, 0);
         pos.Scale(new Vector3(rt.rect.width / w.Width, rt.rect.height / w.Height));
         g.transform.localPosition = pos;

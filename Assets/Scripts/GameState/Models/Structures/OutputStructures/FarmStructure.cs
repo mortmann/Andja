@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 using Newtonsoft.Json;
+using System.Linq;
+using System;
 
 public class FarmPrototypeData : OutputPrototypData {
     public GrowableStructure growable;
@@ -29,11 +31,10 @@ public class FarmStructure : OutputStructure {
 
     public int NeededHarvestForProduce { get { return CalculateRealValue("neededHarvestToProduce", FarmData.neededHarvestToProduce); } }
 
-    public int growableReadyCount;
     public int OnRegisterCallbacks;
     List<GrowableStructure> workingGrowables;
-    List<GrowableStructure> doneGrowable;
-    public override float Progress => produceTimer;
+    public override float Progress => CalculateProgress();
+
     public override float TotalProgress => ProduceTime * NeededHarvestForProduce;
 
     protected FarmPrototypeData _farmData;
@@ -76,6 +77,9 @@ public class FarmStructure : OutputStructure {
         if (Growable == null) {
             return;
         }
+        if(MaxNumberOfWorker>0) {
+            Workers = new List<Worker>();
+        }
         //farm has it needs plant if it can 
         foreach (Tile rangeTile in RangeTiles) {
             if (rangeTile.Structure != null) {
@@ -83,7 +87,6 @@ public class FarmStructure : OutputStructure {
                     rangeTile.Structure.RegisterOnChangedCallback(OnGrowableChanged);
                     OnRegisterCallbacks++;
                     if (((GrowableStructure)rangeTile.Structure).hasProduced == true) {
-                        growableReadyCount++;
                         workingGrowables.Add((GrowableStructure)rangeTile.Structure);
                     }
                 }
@@ -97,41 +100,32 @@ public class FarmStructure : OutputStructure {
         if (Output[0].count >= MaxOutputStorage) {
             return;
         }
+        //update any worker
+        for (int i = Workers.Count - 1; i >= 0; i--) {
+            Worker w = Workers[i];
+            w.Update(deltaTime * Efficiency);
+            if (w.isAtHome) {
+                WorkerComeBack(w);
+            }
+        }
         if (Growable != null) {
-            if (workingGrowables.Count == 0)
-                return;
-            GrowableStructure g = (GrowableStructure)workingGrowables[0];
-            float distance = Vector2.Distance(g.MiddleVector, MiddleVector) - (Width + Height) / 4;
-            float walkTime = (2f * distance + 2) / Worker.Speed;
-            if (walkTime > ProduceTime || MaxNumberOfWorker == 0) {
+            if (MaxNumberOfWorker == 0) {
+                if (workingGrowables.Count == 0)
+                    return;
+                produceTimer += deltaTime * Efficiency;
                 //Display Warning?
                 Debug.LogWarning("FARM " + Name + " can not send worker -- ProduceTime to fast.");
-                produceTimer += deltaTime * Efficiency;
                 if (produceTimer >= ProduceTime) {
-                    if (growableReadyCount == 0) {
+                    if (workingGrowables.Count == 0) {
                         return;
                     }
                     produceTimer = 0;
-                    if (Growable != null) {
-                        //GrowableStructure g = (GrowableStructure)workingGrowables[0];
-                        AddHarvastable();
-                        ((GrowableStructure)g).Harvest();
-                    }
+                    AddHarvastable();
+                    ((GrowableStructure)workingGrowables[0]).Harvest();
                 }
-            } else {
-                //does this work?
-                produceTimer += deltaTime * Efficiency;
-                if (Workers == null) {
-                    Workers = new List<Worker>();
-                }
-                for (int i = Workers.Count - 1; i >= 0; i--) {
-                    Worker w = Workers[i];
-                    w.Update(deltaTime * Efficiency);
-                    if (w.isAtHome) {
-                        WorkerComeBack(w);
-                    }
-                }
-                SendOutWorkerIfCan(ProduceTime - walkTime - 3);
+            } 
+            else if(workingGrowables.Count > Workers.Count){
+                SendOutWorkerIfCan(ProduceTime);
             }
         } 
         if (currentlyHarvested >= NeededHarvestForProduce) {
@@ -155,13 +149,11 @@ public class FarmStructure : OutputStructure {
         }
         if (((GrowableStructure)grow).hasProduced == false) {
             if (workingGrowables.Contains((GrowableStructure)grow)) {
-                growableReadyCount--;
                 workingGrowables.Remove(grow);
             }
             return;
         }
         workingGrowables.Add(grow);
-        growableReadyCount++;
         // send worker todo this job
         // not important right now
     }
@@ -183,20 +175,33 @@ public class FarmStructure : OutputStructure {
             }
         }
     }
-
     public override void SendOutWorkerIfCan(float workTime = 1) {
-        if (growableReadyCount == 0) {
+        if (workingGrowables.Count == 0) {
             return;
         }
         if (Workers.Count >= MaxNumberOfWorker) {
             return;
         }
-        Worker ws = new Worker(this, workingGrowables[0], workTime, Output, WorkerWorkSound, false);
+        Worker ws = new Worker(this, workingGrowables[0], workTime, Output, WorkerWorkSound, false, true);
         workingGrowables.RemoveAt(0);
         World.Current.CreateWorkerGameObject(ws);
         Workers.Add(ws);
     }
 
+    private float CalculateProgress() {
+        if(MaxNumberOfWorker==0) {
+            return produceTimer;
+        }
+        if(MaxNumberOfWorker > NeededHarvestForProduce) {
+            float sum = 0;
+            for(int x = 0; x < MaxNumberOfWorker;x++) {
+                sum = Workers[x].WorkTimer;
+            }
+            sum /= MaxNumberOfWorker;
+            return (ProduceTime - sum);
+        }
+        return (ProduceTime - Workers.Sum(x => x.WorkTimer));
+    }
 
     protected override void OnDestroy() {
         if (Workers == null) {

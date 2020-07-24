@@ -64,7 +64,7 @@ public class UnitHealthUI : MonoBehaviour {
             return;
         EffectUI effectUI = Instantiate(EffectPrototyp);
         effectUI.Show(effect);
-        effectUI.transform.SetParent(EffectsTransform);
+        effectUI.transform.SetParent(EffectsTransform, false);
         effectToUI.Add(effect, effectUI);
     }
     void OnEffectRemoved(Effect effect) {

@@ -11,7 +11,9 @@ public class NewGameSettingSetter : MonoBehaviour {
     void Start () {
         inputField = GetComponentInChildren<InputField>();
         toggle = GetComponentInChildren<Toggle>();
-
+        if(Setting == NewGameSetting.Seed) {
+            inputField.text = UnityEngine.Random.Range(0, int.MaxValue)+"";
+        }
         if (inputField != null) {
             inputField.onEndEdit.AddListener(InputFieldEndEdit);
             InputFieldEndEdit(inputField.text); // mainly for testing -- will set it to what the default text is
@@ -35,7 +37,7 @@ public class NewGameSettingSetter : MonoBehaviour {
                 break;
             case NewGameSetting.Fire:
                 //NewGameSettings.SetFire(value);
-                Debug.LogError("NOT WORKING");
+                Debug.LogWarning("NOT WORKING");
                 break;
         }
     }

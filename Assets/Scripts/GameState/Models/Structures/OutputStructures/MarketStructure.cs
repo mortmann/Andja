@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Newtonsoft.Json;
 using System;
+using System.Linq;
 
 public class MarketPrototypData : OutputPrototypData {
     public float takeOverStartGoal = 100;
@@ -53,7 +54,6 @@ public class MarketStructure : OutputStructure, ICapturable {
     }
 
     public override void OnUpdate(float deltaTime) {
-
         base.Update_Worker(deltaTime);
         if (currentCaptureSpeed > 0) {
             capturedProgress += currentCaptureSpeed * deltaTime;
@@ -211,7 +211,9 @@ public class MarketStructure : OutputStructure, ICapturable {
         return temp;
     }
 
-
+    public override bool InCityCheck(IEnumerable<Tile> tiles, int playerNumber) {
+        return base.InCityCheck(tiles, playerNumber) || GetInRangeTiles(tiles.First()).Count(x => x.City?.PlayerNumber == playerNumber) >= Data.structureRange/5;
+    }
     public override Item[] GetOutput(Item[] getItems, int[] maxAmounts) {
         Item[] temp = new Item[getItems.Length];
         for (int i = 0; i < getItems.Length; i++) {

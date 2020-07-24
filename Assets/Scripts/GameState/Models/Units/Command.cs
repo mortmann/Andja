@@ -86,11 +86,11 @@ public class PatrolCommand : Command {
     }
 
     public void AddPosition(Vector2 pos) {
-        Positions.Add(new SeriaziableVector2(pos));
+        Positions.Add(pos);
         cbRouteChange?.Invoke(this);
     }
     public void RemovePosition(Vector2 pos) {
-        Positions.Remove(new SeriaziableVector2(pos));
+        Positions.Remove(pos);
         cbRouteChange?.Invoke(this);
     }
     internal void ClearPositions() {

@@ -3,14 +3,9 @@ using System.Collections;
 using UnityEngine.UI;
 
 public class BalanceUIText : MonoBehaviour {
-    public Player player;
+    public Player player => PlayerController.CurrentPlayer;
     public Text balanceText;
     public Text changeText;
-
-    // Use this for initialization
-    void Start() {
-        player = PlayerController.Instance.CurrPlayer;
-    }
 
     // Update is called once per frame
     void Update() {
@@ -27,7 +22,6 @@ public class BalanceUIText : MonoBehaviour {
             changeText.color = Color.green;
         }
         balanceText.text = player.TreasuryBalance + " ";
-        changeText.text = "" + player.LastTreasuryChange + " ";
-
+        changeText.text = (player.LastTreasuryChange>0? "+" : "") + player.LastTreasuryChange + " ";
     }
 }

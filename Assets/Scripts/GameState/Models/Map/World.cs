@@ -25,8 +25,8 @@ public class World : IGEventable {
 
     #endregion
     #region RuntimeOrOther
-    public int Width;
-    public int Height;
+    public int Width => GameData.Width;
+    public int Height => GameData.Height;
 
     public Tile[] Tiles { get; protected set; }
     public static List<Need> GetCopieOfAllNeeds() {
@@ -86,8 +86,8 @@ public class World : IGEventable {
     /// <param name="width">Width.</param>
     /// <param name="height">Height.</param>
     public World(Tile[] addTiles, int width = 1000, int height = 1000, bool isIslandEditor = true) {
-        this.Width = width;
-        this.Height = height;
+        //this.Width = width;
+        //this.Height = height;
         this.Tiles = new Tile[Width * Height];
         foreach (Tile t in addTiles) {
             if (t != null)
@@ -110,8 +110,14 @@ public class World : IGEventable {
 
     internal void LoadData(Tile[] tiles, int width, int height) {
         Tiles = tiles;
-        Width = width;
-        Height = height;
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < height; y++) {
+                if (GetTileAt(x, y) == null)
+                    SetTileAt(x, y, new Tile(x, y));
+            }
+        }
+        //Width = width;
+        //Height = height;
         foreach (Unit u in Units) {
             u.Load();
             u.RegisterOnDestroyCallback(OnUnitDestroy);
@@ -130,8 +136,8 @@ public class World : IGEventable {
     /// <param name="height">Height.</param>
     [JsonConstructor]
     public World(int width, int height) {
-        this.Width = width;
-        this.Height = height;
+        //this.Width = width;
+        //this.Height = height;
         
         Current = this;
 
@@ -142,8 +148,8 @@ public class World : IGEventable {
     }
 
     public World(List<Tile> tileList, int Width, int Height) {
-        this.Width = Width;
-        this.Height = Height;
+        //this.Width = Width;
+        //this.Height = Height;
         Tiles = new Tile[Width * Height];
         foreach (Tile item in tileList) {
             SetTileAt(item.X, item.Y, item);
@@ -292,6 +298,7 @@ public class World : IGEventable {
         cbCrateSpawn?.Invoke(c);
 
     }
+
     public void DespawnItem(Crate c) {
         Crates.Remove(c);
         cbCrateDespawned?.Invoke(c);

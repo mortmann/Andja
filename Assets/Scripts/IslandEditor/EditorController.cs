@@ -91,7 +91,7 @@ public class EditorController : MonoBehaviour {
             world = new World(MapGenerator.Instance.GetTiles(), Width, Height,true);
             foreach (Tile t in MapGenerator.Instance.tileToStructure.Keys) {
                 Structure str = MapGenerator.Instance.tileToStructure[t];
-                BuildController.Instance.EditorBuildOnTile(str, str.GetBuildingTiles(t.X, t.Y), false);
+                BuildController.Instance.EditorBuildOnTile(str, str.GetBuildingTiles(t), false);
             }
             Debug.Log("BuildController.Instance.SetLoadedStructures!");
             BuildController.Instance.SetLoadedStructures(MapGenerator.Instance.tileToStructure.Values);
@@ -290,7 +290,7 @@ public class EditorController : MonoBehaviour {
     }
 
     internal void BrushBuildOn(Tile t) {
-        BuildOn(structure.GetBuildingTiles(t.X, t.Y),true, true);
+        BuildOn(structure.GetBuildingTiles(t),true, true);
     }
     internal void BuildOn(List<Tile> tiles, bool foreachTileNewStructure, bool isBrushBuilt = false) {
         if (brushBuild != isBrushBuilt)
@@ -310,7 +310,7 @@ public class EditorController : MonoBehaviour {
             foreach(Tile t in tiles) {
                 Structure toPlace = structure.Clone();
                 SetStructureVariablesList.ForEach(x => x?.Invoke(toPlace));
-                BuildController.Instance.EditorBuildOnTile(toPlace, structure.GetBuildingTiles(t.X, t.Y), true);
+                BuildController.Instance.EditorBuildOnTile(toPlace, structure.GetBuildingTiles(t), true);
             }
         }
     }
@@ -392,7 +392,7 @@ public class EditorController : MonoBehaviour {
         if(load.Ressources!=null)
             Ressources = load.Ressources;
         foreach (Structure s in load.structures) {
-            BuildController.Instance.EditorBuildOnTile(s, s.GetBuildingTiles(s.BuildTile.X, s.BuildTile.Y), true);
+            BuildController.Instance.EditorBuildOnTile(s, s.GetBuildingTiles(s.BuildTile), true);
         }
     }
 

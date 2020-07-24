@@ -7,13 +7,18 @@ using System;
 public class HoverOverScript : MonoBehaviour {
     float lifetime = 1;
     public float hovertime = HoverDuration;
-    public const float HoverDuration = 3f;
+    public const float HoverDuration = 1.5f;
     bool isDebug = false;
     public RectTransform rect;
     bool show;
     public Text Header;
     public Text Description;
     public RectTransform fitForm;
+    Vector2 Position = Vector2.negativeInfinity;
+    bool staticPosition = false;
+    private bool truePosition = true;
+    private bool instantShow = false;
+
     private void Start() {
         rect = GetComponent<RectTransform>();
     }
@@ -36,14 +41,26 @@ public class HoverOverScript : MonoBehaviour {
         else {
             Description.gameObject.SetActive(false);
         }
-        
         transform.GetChild(0).gameObject.SetActive(isDebug);
         show = true;
+    }
+    public void Show(string header, Vector3 position, bool truePosition, bool instantShow, params string[] descriptions) {
+        Show(header, descriptions);
+        Position = position;
+        staticPosition = true;
+        this.truePosition = truePosition;
+        this.instantShow = instantShow;
+        if(instantShow)
+            transform.GetChild(0).gameObject.SetActive(true);
+        fitForm.ForceUpdateRectTransforms();
     }
     public void Unshow() {
         transform.GetChild(0).gameObject.SetActive(false);
         show = false;
         isDebug = false;
+        staticPosition = false;
+        this.instantShow = false;
+        this.truePosition = true;
     }
     void Update() {
         if (show == false && hovertime == HoverDuration)
@@ -54,31 +71,36 @@ public class HoverOverScript : MonoBehaviour {
         else {
             hovertime += Time.deltaTime;
         }
-        if (EventSystem.current.IsPointerOverGameObject() == isDebug) {
-            Unshow();
-            hovertime = HoverDuration;
-        }
+        //if (EventSystem.current.IsPointerOverGameObject() == isDebug &&  .Contains(Input.mousePosition) == false) {
+        //    Unshow();
+        //    hovertime = HoverDuration;
+        //}
         hovertime = Mathf.Clamp(hovertime, 0, HoverDuration);
-        if (hovertime > 0) {
+        if (hovertime > 0 && instantShow == false) {
             return;
         }
         transform.GetChild(0).gameObject.SetActive(true);
-        //rect.sizeDelta = fitForm.sizeDelta;
         Vector3 offset = Vector3.zero;
-        if (fitForm.sizeDelta.x + Input.mousePosition.x > Screen.width) {
-            offset.x = Screen.width - (fitForm.sizeDelta.x + Input.mousePosition.x);
+        if (truePosition == false) {
+            offset = -fitForm.sizeDelta / 2;
+            offset *= UIController.Instance.CanvasScale; //Fix for the scaling ...
         }
-        if (fitForm.sizeDelta.y + Input.mousePosition.y > Screen.height) {
-            offset.y = Screen.height - (fitForm.sizeDelta.y + Input.mousePosition.y);
+        Vector3 position = Input.mousePosition;
+        if (staticPosition)
+            position = Position;
+        if (fitForm.sizeDelta.x + position.x > Screen.width) {
+            offset.x = Screen.width - (fitForm.sizeDelta.x + position.x);
         }
-        Vector3 pos = Input.mousePosition;
-        if ( Input.mousePosition.x < 0 ) {
-            pos.x = 0;
+        if (fitForm.sizeDelta.y + position.y > Screen.height) {
+            offset.y = Screen.height - (fitForm.sizeDelta.y + position.y);
         }
-        if ( Input.mousePosition.y < 0 ) {
-            pos.y = 0;
+        if (position.x < 0 ) {
+            position.x = 0;
         }
-        this.transform.position = pos + offset;
+        if (position.y < 0 ) {
+            position.y = 0;
+        }
+        fitForm.transform.position = position + offset;
         lifetime -= Time.deltaTime;
     }
 

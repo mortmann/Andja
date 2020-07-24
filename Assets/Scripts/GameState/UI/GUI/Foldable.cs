@@ -42,7 +42,7 @@ public class Foldable : MonoBehaviour {
     }
 
     public void Add(GameObject go) {
-        go.transform.SetParent(Content);
+        go.transform.SetParent(Content, false);
     }
 
     internal void Check() {
@@ -50,6 +50,7 @@ public class Foldable : MonoBehaviour {
             if (t.gameObject.activeSelf) {
                 isActive = true;
                 GetComponent<CanvasGroup>().alpha = 1;
+                Content.gameObject.SetActive(true);
                 return;
             }
         }

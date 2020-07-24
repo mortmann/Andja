@@ -23,7 +23,7 @@ public class EventUIManager : MonoBehaviour {
 
     public void AddEVENT(uint id, string name, Vector2 position) {
         GameObject ego = Instantiate(EventMessagePrefab);
-        ego.transform.SetParent(contentTransform);
+        ego.transform.SetParent(contentTransform, false);
         ego.GetComponent<EventMessage>().Setup(name, position);
         idToEventGO.Add(id, ego);
         idToCountTimer.Add(id, onScreenTimer);

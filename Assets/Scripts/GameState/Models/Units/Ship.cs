@@ -28,10 +28,10 @@ public class Ship : Unit {
     }
     protected ShipPrototypeData _shipPrototypData;
 
-    public int DamagePerCannon => CalculateRealValue("damagePerCannon", ShipData.damagePerCannon);
-    public int MaximumAmountOfCannons => CalculateRealValue("maximumAmountOfCannons", ShipData.maximumAmountOfCannons);
-    public override float CurrentDamage => CalculateRealValue("CurrentDamage", DamagePerCannon * CannonItem.count);
-    public override float MaximumDamage => CalculateRealValue("MaximumDamage", MaximumAmountOfCannons * DamagePerCannon);
+    public int DamagePerCannon => CalculateRealValue(nameof(ShipData.damagePerCannon), ShipData.damagePerCannon);
+    public int MaximumAmountOfCannons => CalculateRealValue(nameof(ShipData.maximumAmountOfCannons), ShipData.maximumAmountOfCannons);
+    public override float CurrentDamage => CalculateRealValue(nameof(CurrentDamage), DamagePerCannon * CannonItem.count);
+    public override float MaximumDamage => CalculateRealValue(nameof(MaximumDamage), MaximumAmountOfCannons * DamagePerCannon);
     public override bool IsShip => true;
     public override float SpeedModifier => 1 - CannonSpeedDebuff - InventorySpeedDebuff - DamageSpeedDebuff;
     protected float CannonSpeedDebuff => MaximumAmountOfCannons == 0? 0 : ShipData.cannonSpeedDebuffMultiplier * (CannonItem.count / (float)MaximumAmountOfCannons);

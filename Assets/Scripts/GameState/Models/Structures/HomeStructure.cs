@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Newtonsoft.Json;
 using System.Linq;
+using System;
 
 public class HomePrototypeData : StructurePrototypeData {
     public int maxLivingSpaces;
@@ -32,13 +33,11 @@ public class HomeStructure : TargetStructure {
     }
     public CitizienMoods currentMood { get; protected set; }
     List<NeedStructure> needStructures;
-    //List containing the groups which contains those needs this structure has
-    public List<NeedGroup> NeedGroups;
     public int PreviouseMaxLivingSpaces { get { return HomeData.previouseMaxLivingSpaces; } }
     public int MaxLivingSpaces { get { return HomeData.maxLivingSpaces; } }
 
-    public float IncreaseTime { get { return CalculateRealValue("IncreaseTime", HomeData.increaseTime); } }
-    public float DecreaseTime { get { return CalculateRealValue("decreaseTime", HomeData.decreaseTime); } }
+    public float IncreaseTime { get { return CalculateRealValue(nameof(HomeData.increaseTime), HomeData.increaseTime); } }
+    public float DecreaseTime { get { return CalculateRealValue(nameof(HomeData.decreaseTime), HomeData.decreaseTime); } }
 
     public bool CanUpgrade => MaxLivingSpaces == people // is full
                             && currentMood == CitizienMoods.Happy // still wants more people
@@ -47,6 +46,10 @@ public class HomeStructure : TargetStructure {
                             && City.HasEnoughOfItems(UpgradeItems) // city has enough items to build
                             && City.GetOwner().HasEnoughMoney(UpgradeCost)
                             && City.GetOwner().HasUnlockedAllNeeds(StructureLevel); // player has enough money
+
+    internal List<NeedGroup> GetNeedGroups() {
+        return City.GetPopulationNeedGroups(StructureLevel);
+    }
     #endregion
 
 
@@ -70,9 +73,6 @@ public class HomeStructure : TargetStructure {
     }
 
     public override void OnBuild() {
-        foreach (Tile t in NeighbourTiles) {
-            t.RegisterTileOldNewStructureChangedCallback(OnTStructureChange);
-        }
         needStructures = new List<NeedStructure>();
         if (City.IsWilderness() == false) {
             OnCityChange(null, City);
@@ -88,8 +88,8 @@ public class HomeStructure : TargetStructure {
         }
     }
 
-    private void SetNeedGroups(IEnumerable<NeedGroup> list) {
-        NeedGroups = new List<NeedGroup>(list);
+    internal float GetTaxPercantage() {
+        return City.GetPopulationLevel(StructureLevel).taxPercantage;
     }
 
     private void OnNeedStructureChange(Tile tile, NeedStructure type, bool add) {
@@ -109,7 +109,7 @@ public class HomeStructure : TargetStructure {
         }
         float summedFullfillment = 0f;
         float summedImportance = 0;
-        foreach (NeedGroup ng in NeedGroups) {
+        foreach (NeedGroup ng in GetNeedGroups()) {
             if (ng.IsUnlocked() == false)
                 continue;
             summedFullfillment += ng.GetFullfillmentForHome(this);
@@ -120,7 +120,8 @@ public class HomeStructure : TargetStructure {
         //Tax can offset some unhappines from missing stuff
         //this needs to be balanced tho
         //for now just 1:1 % from 1.5 to 0.5 happiness offset 
-        percentage += 1 / Mathf.Clamp(City.GetPopulationLevel(PopulationLevel).taxPercantage,0.66f,2);
+        float tax = Mathf.Clamp(City.GetPopulationLevel(PopulationLevel).taxPercantage, 0.5f, 1.5f);
+        percentage += 2f- Mathf.Clamp(tax * tax, 0.5f, 2);
         percentage /= 2;
         if (percentage > 0.9f) {
             currentMood = CitizienMoods.Happy;
@@ -182,22 +183,20 @@ public class HomeStructure : TargetStructure {
         UpgradeHouse();
     }
 
-    public void OnTStructureChange(Structure now, Structure old) {
-        if (old is RoadStructure == false || now is RoadStructure == false) {
-            return;
-        }
-    }
     public bool IsStructureNeedFullfilled(Need need) {
+        if (need.HasToReachPerRoad) {
+            if (GetRoutes().Count == 0)
+                return false;
+            need.IsSatisifiedThroughStructure(needStructures.Where((x) => x.City == City && x.GetRoutes().Overlaps(GetRoutes())).ToList());
+        }
         return need.IsSatisifiedThroughStructure(needStructures.Where((x)=> x.City == City).ToList());
     }
 
     protected override void OnCityChange(City old, City newOne) {
         if(old != null && old.IsWilderness() == false) {
             old.RemovePeople(StructureLevel, people);
-            NeedGroups.Clear();
         }
         if (newOne.IsWilderness() == false) {
-            SetNeedGroups(newOne.GetPopulationALLNeedGroups(StructureLevel));
             newOne.AddPeople(StructureLevel, people);
         }
     }
@@ -253,14 +252,12 @@ public class HomeStructure : TargetStructure {
                 n.SetStructureFullfilled(false);
             }
         }
-        SetNeedGroups(City.GetPopulationALLNeedGroups(StructureLevel));
     }
     public void DowngradeHouse() {
         //Remove Structure Needs of the old level
         ID = PrototypController.Instance.GetStructureIDForTypeNeighbourStructureLevel(GetType(), StructureLevel, false);
         _homeData = null;
         cbStructureChanged(this);
-        SetNeedGroups(City.GetPopulationALLNeedGroups(StructureLevel));
     }
 
     public bool IsMaxLevel() {

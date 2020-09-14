@@ -115,7 +115,7 @@ public class StructureSpriteController : MonoBehaviour {
         }
 
         //SOUND PART -- IMPORTANT
-        SoundController.Instance.OnStructureGOCreated(structure, go);
+        SoundController.Instance?.OnStructureGOCreated(structure, go);
     }
 
     private void AddRoadDebug(GameObject go, RoadStructure road) {

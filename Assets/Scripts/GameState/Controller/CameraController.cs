@@ -32,7 +32,7 @@ public class CameraController : MonoBehaviour {
     Vector2 showBounds = new Vector2();
     public static CameraController Instance;
     private CameraSave cameraSave;
-    GameObject plane;
+
     void Awake() {
         if (Instance != null) {
             Debug.LogError("There should never be two CameraController.");
@@ -157,6 +157,7 @@ public class CameraController : MonoBehaviour {
         structureCurrentInCameraView.Clear();
 
         SoundAmbientValues = new Vector3();
+        bool islandInview = false;
         for (int x = Mathf.FloorToInt(Mathf.Min(oldViewRange.xMin, CameraViewRange.xMin)); x < Mathf.CeilToInt(Mathf.Max(oldViewRange.xMax, CameraViewRange.xMax)); x++) {
             for (int y = Mathf.FloorToInt(Mathf.Min(oldViewRange.yMin, CameraViewRange.yMin)); y < Mathf.CeilToInt(Mathf.Max(oldViewRange.yMax, CameraViewRange.yMax)); y++) {
                 Tile tile_data = World.Current.GetTileAt(x, y);
@@ -171,7 +172,9 @@ public class CameraController : MonoBehaviour {
                 if (isInNew == false && isInOld == false) {
                     continue;
                 }
+                
                 if (isInNew) {
+                    islandInview = true;
                     nearestIsland = tile_data.Island;
                     if (EditorController.IsEditor) {
                         tilesCurrentInCameraView.Add(tile_data);
@@ -182,6 +185,8 @@ public class CameraController : MonoBehaviour {
                 }
             }
         }
+        if (islandInview == false)
+            nearestIsland = null;
         float tileCount = CameraViewRange.width * CameraViewRange.height;
         SoundAmbientValues.x /= tileCount;
         SoundAmbientValues.y /= tileCount;

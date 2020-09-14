@@ -162,7 +162,7 @@
             <entry lang="German">Holzfällerhütte</entry>
          </Name>
          <Description>
-            <entry lang="English">Produces wood over time.</entry>
+            <entry lang="English">Produces wood over time. Requires $growable.name in its range to be able to produce.</entry>
             <entry lang="German">Erzeugt Holz.</entry>
          </Description>
          <HoverOver>
@@ -336,7 +336,7 @@
             <entry lang="German">Kartoffelfarm</entry>
          </Name>
          <Description>
-            <entry lang="English">Grows Potatoe.</entry>
+            <entry lang="English">Grows Potatoe. Needs $buildingItems.name to be build.</entry>
             <entry lang="German">Produziert Kartoffeln.</entry>
          </Description>
          <HoverOver>
@@ -1166,7 +1166,7 @@
                <count>0</count>
             </Item>
          </output>
-         <fertility>sugarcone</fertility>
+         <fertility>sugarcane</fertility>
          <ageStages>2</ageStages>
       </growable>
       <growable ID="wheatfield">

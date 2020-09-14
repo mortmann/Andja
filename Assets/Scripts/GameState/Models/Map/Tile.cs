@@ -16,7 +16,7 @@ using Newtonsoft.Json;
 /// Jungle = Exotic goods Love it here
 /// Mountain = you cant build anything here except mines(andso)
 /// </summary>
-public enum TileType { Ocean, Shore, Cliff, Water, Dirt, Grass, Stone, Desert, Steppe, Jungle, Mountain };
+public enum TileType { Ocean, Shore, Cliff, Water, Dirt, Grass, Stone, Desert, Steppe, Jungle, Mountain, Volcano };
 public enum TileMark { None, Highlight, Dark }
 
 [JsonObject(MemberSerialization.OptIn)]
@@ -190,22 +190,24 @@ public class Tile : IComparable<Tile>, IEqualityComparer<Tile> {
         return IsBuildType(Type);
     }
     public static bool IsBuildType(TileType t) {
-        if (t == TileType.Ocean) {
-            return false;
+        switch (t) {
+            case TileType.Ocean:
+            case TileType.Shore:
+            case TileType.Cliff:
+            case TileType.Water:
+            case TileType.Mountain:
+            case TileType.Volcano:            
+                return false;
+            case TileType.Dirt:
+            case TileType.Grass:
+            case TileType.Stone:
+            case TileType.Desert:
+            case TileType.Steppe:
+            case TileType.Jungle:
+                return true;
         }
-        if (t == TileType.Mountain) {
-            return false;
-        }
-        if (t == TileType.Stone) {
-            return false;
-        }
-        if (t == TileType.Shore) {
-            return false;
-        }
-        if(t == TileType.Water) {
-            return false;
-        }
-        return true;
+        Debug.LogError("TileType " + t + " is not defined in IsBuildType. FIX IT!");
+        return false;
     }
     /// <summary>
     /// Water doesnt count as unbuildable!
@@ -339,12 +341,14 @@ public class Tile : IComparable<Tile>, IEqualityComparer<Tile> {
     }
 
     public static string GetSpriteAddonForTile(Tile t, Tile[] neighbours) {
+        string connectOrientation = "_";
         //FOR now only Shore is rotating to face the other tiles
         if (t.Type != TileType.Shore) {
+            for (int i = 0; i < neighbours.Length; i++) {
+                connectOrientation += neighbours[i].Type.ToString().ToUpper()[0];
+            }
             return "";
         }
-        string connectOrientation = "";
-
         connectOrientation = "_";
         int numNeighbours = 0;
         if (neighbours[0] != null && neighbours[0].Type == TileType.Shore) {

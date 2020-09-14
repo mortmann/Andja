@@ -22,7 +22,7 @@ public class MarketStructure : OutputStructure, ICapturable {
     public List<Structure> RegisteredSturctures;
     public List<Structure> OutputMarkedSturctures;
 
-    public float TakeOverStartGoal { get { return CalculateRealValue("TakeOverStartGoal", MarketData.takeOverStartGoal); } }
+    public float TakeOverStartGoal => CalculateRealValue(nameof(MarketData.takeOverStartGoal), MarketData.takeOverStartGoal); 
 
     protected MarketPrototypData _marketData;
     public MarketPrototypData MarketData {

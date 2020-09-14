@@ -9,6 +9,7 @@
          <entry lang="German">Arme Bauern.</entry>
       </Description>
       <iconSpriteName>peasent</iconSpriteName>
+      <taxPerPerson>1</taxPerPerson>
    </PopulationLevel>
    <PopulationLevel LEVEL="1">
       <Name>
@@ -20,6 +21,7 @@
          <entry lang="German">&quot;Mittlere Klasse&quot;</entry>
       </Description>
       <iconSpriteName>citizen</iconSpriteName>
+      <taxPerPerson>1</taxPerPerson>
    </PopulationLevel>
    <PopulationLevel LEVEL="2">
       <Name>
@@ -31,6 +33,7 @@
          <entry lang="German">Gewerbe besitzende Klasse.</entry>
       </Description>
       <iconSpriteName>patrician</iconSpriteName>
+      <taxPerPerson>1</taxPerPerson>
    </PopulationLevel>
    <PopulationLevel LEVEL="3">
       <Name>
@@ -42,5 +45,6 @@
          <entry lang="German">Höchste Klasse der Einwohner.</entry>
       </Description>
       <iconSpriteName>nobleman</iconSpriteName>
+      <taxPerPerson>1</taxPerPerson>
    </PopulationLevel>
 </Other>

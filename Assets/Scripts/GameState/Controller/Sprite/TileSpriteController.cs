@@ -19,9 +19,9 @@ using System.Collections.Concurrent;
 /// </summary>
 public class TileSpriteController : MonoBehaviour {
     public static TileSpriteController Instance { get; protected set; }
-
+    public Material tileMapRendererBlending;
     public static Dictionary<string, Sprite> nameToSprite;
-    private static Dictionary<TileType, Dictionary<string, List<string>>> typeTotileSpriteNames;
+    private static Dictionary<string, Dictionary<string, List<string>>> typeTotileSpriteNames;
 
     public Sprite noSprite;
     public Sprite emptySprite;
@@ -138,6 +138,11 @@ public class TileSpriteController : MonoBehaviour {
         //BuildController.Instance.RegisterBuildStateChange (OnBuildStateChance);
 
     }
+
+    internal static string GetSpriteForSpecial(TileType type, int x, int y) {
+        return type.ToString().ToLower() + "_" + x + "_" + y;
+    }
+
     public void EditorFix() {
         //if (editor_island_tilemap != null)
         //    Destroy(editor_island_tilemap);
@@ -150,6 +155,7 @@ public class TileSpriteController : MonoBehaviour {
         g.cellSwizzle = GridLayout.CellSwizzle.XYZ;
         g.cellLayout = GridLayout.CellLayout.Rectangle;
         TilemapRenderer trr = editor_island_tilemap.AddComponent<TilemapRenderer>();
+        //trr.material = tileMapRendererBlending;
         trr.sortingLayerName = "Tile";
         editorTilemap.size = new Vector3Int(EditorController.Width, EditorController.Height, 0);
         water.transform.position = new Vector3((World.Width / 2) - offset, (World.Height / 2) - offset, 0.1f);
@@ -197,7 +203,7 @@ public class TileSpriteController : MonoBehaviour {
         }
     }
 
-    public static void CreateIslandSprites(List<MapGenerator.IslandStruct> islands) {
+    public static void CreateIslandSprites(List<MapGenerator.IslandData> islands) {
         if (EditorController.IsEditor)
             return;
         CreationStarted = true;
@@ -209,7 +215,7 @@ public class TileSpriteController : MonoBehaviour {
         islandToMaskTexture = new Dictionary<Vector2, Texture2D>();
         CreateBaseTiles();
 
-        foreach (MapGenerator.IslandStruct i in islands) {
+        foreach (MapGenerator.IslandData i in islands) {
             int islandWidth = (i.Width + 1);
             int islandHeight = (i.Height + 1);
             int xTileOffset = i.x;
@@ -295,6 +301,8 @@ public class TileSpriteController : MonoBehaviour {
         if (EditorController.IsEditor==false) {
             return;
         }
+        if (tile_data == null)
+            return;
         if(String.IsNullOrEmpty(tile_data.SpriteName)) {
             editorTilemap.SetTile(new Vector3Int(tile_data.X, tile_data.Y, 0), null);
         } else {
@@ -326,10 +334,11 @@ public class TileSpriteController : MonoBehaviour {
                 nameToSprite[s.name] = s;
             }
         }
-        typeTotileSpriteNames = new Dictionary<TileType, Dictionary<string, List<string>>>();
+        typeTotileSpriteNames = new Dictionary<string, Dictionary<string, List<string>>>();
 
         foreach (string s in TileSpriteController.nameToSprite.Keys) {
-            string part = s.Split('_')[0].ToLower();
+            string[] parts = s.Split('_');
+            string part = parts[0].ToLower();
             string climateIdentifier = TileSpriteClimate.all.ToString();
             //if the first identifier is a climate
             try {
@@ -348,17 +357,20 @@ public class TileSpriteController : MonoBehaviour {
             catch {
                 continue;
             }
-
+            string spriteAddon = "";
+            if (parts.Length > 2)
+                spriteAddon = parts[2];
+            string spriteFull = type.ToString() + spriteAddon;
             //			Debug.Log (type + " / " + s.name);
-            if (typeTotileSpriteNames.ContainsKey(type) == false) {
+            if (typeTotileSpriteNames.ContainsKey(spriteFull) == false) {
                 Dictionary<string, List<string>> dict = new Dictionary<string, List<string>>();
-                typeTotileSpriteNames.Add(type, dict);
+                typeTotileSpriteNames.Add(spriteFull, dict);
             }
-            if (typeTotileSpriteNames[type].ContainsKey(climateIdentifier)) {
-                typeTotileSpriteNames[type][climateIdentifier].Add(s);
+            if (typeTotileSpriteNames[spriteFull].ContainsKey(climateIdentifier)) {
+                typeTotileSpriteNames[spriteFull][climateIdentifier].Add(s);
             }
             else {
-                typeTotileSpriteNames[type].Add(climateIdentifier, new List<string> { s });
+                typeTotileSpriteNames[spriteFull].Add(climateIdentifier, new List<string> { s });
             }
         }
     }
@@ -423,9 +435,15 @@ public class TileSpriteController : MonoBehaviour {
         string climateString = climate.ToString();
         if (typeTotileSpriteNames == null)
             LoadSprites();
-        if (typeTotileSpriteNames.ContainsKey(type) == false)
+        Dictionary<string, List<string>> typeToSpriteList = null;
+        if (typeTotileSpriteNames.ContainsKey(type.ToString())) {
+            typeToSpriteList = typeTotileSpriteNames[type.ToString() + spriteAddon];
+        } else {
+            typeToSpriteList = typeTotileSpriteNames[type.ToString()];
+        }
+        if (typeTotileSpriteNames == null)
             return null;
-        if(type == TileType.Shore) {
+        if (type == TileType.Shore) {
             //TODO: FIX this -- For now only one type of shore
             return new List<string> { type.ToString().ToLower()+spriteAddon};
             //if (typeTotileSpriteNames.ContainsKey(type) || typeTotileSpriteNames[type].ContainsKey(climateString)) {
@@ -433,13 +451,13 @@ public class TileSpriteController : MonoBehaviour {
             //}
             //return typeTotileSpriteNames[type][climateString]?.Where(x => x == type + spriteAddon).ToList();
         }
-        if (typeTotileSpriteNames[type].ContainsKey(climateString) == false) {
-            if (typeTotileSpriteNames[type].ContainsKey(TileSpriteClimate.all.ToString()) == false) {
+        if (typeToSpriteList.ContainsKey(climateString) == false) {
+            if (typeToSpriteList.ContainsKey(TileSpriteClimate.all.ToString()) == false) {
                 return null;
             }
-            return typeTotileSpriteNames[type][TileSpriteClimate.all.ToString()];
+            return typeToSpriteList[TileSpriteClimate.all.ToString()];
         }
-        return typeTotileSpriteNames[type][climateString];
+        return typeToSpriteList[climateString];
     }
 
 }

@@ -17,6 +17,7 @@ public class IconSpriteController : MonoBehaviour {
         if (idToIcon.ContainsKey(id)) {
             return idToIcon[id];
         }
+        Debug.LogWarning("Missing Icon " + id);
         return null;
     }
     static void LoadSprites() {

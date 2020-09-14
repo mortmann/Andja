@@ -11,6 +11,15 @@ public class PopulationLevelPrototypData : LanguageVariables {
     public string iconSpriteName;
     public int taxPerPerson = 1;
 
+    internal List<NeedGroup> GetCopyGroupNeedList() {
+        List<NeedGroup> newList = new List<NeedGroup>();
+        if (needGroupList == null)
+            return newList;
+        for(int i = 0; i<needGroupList.Count; i++) {
+            newList.Add(needGroupList[i].Clone());
+        }
+        return newList;
+    }
 }
 [JsonObject(MemberSerialization.OptIn)]
 public class PopulationLevel {
@@ -37,14 +46,6 @@ public class PopulationLevel {
         }
     }
     Action<Need> cbNeedUnlockAdded;
-    List<NeedGroup> _AllNeedGroupList;
-    public List<NeedGroup> AllNeedGroupList {
-        get {
-            if (_AllNeedGroupList == null)
-                _AllNeedGroupList = GetAllPreviousNeedGroups();
-            return _AllNeedGroupList;
-        }
-    }
     public int TaxPerPerson => Data.taxPerPerson;
     public float Happiness { get; internal set; }
 
@@ -55,7 +56,7 @@ public class PopulationLevel {
 
     public PopulationLevel(int level, City city, PopulationLevel previous) {
         this.Level = level;
-        NeedGroupList = Data.needGroupList;
+        NeedGroupList = Data.GetCopyGroupNeedList();
         this.previousLevel = previous;
         this.city = city;
         city.GetOwner().RegisterNeedUnlock(OnUnlockedNeed);
@@ -67,7 +68,7 @@ public class PopulationLevel {
         float fullfilled = 0;
         bool missingNeed = false;
         float summedImportance = 0;
-        foreach (NeedGroup group in AllNeedGroupList) {
+        foreach (NeedGroup group in NeedGroupList) {
             group.CalculateFullfillment(city, this);
             fullfilled += group.LastFullfillmentPercentage;
             summedImportance += group.ImportanceLevel;
@@ -79,6 +80,11 @@ public class PopulationLevel {
         //Debug.Log("City " + city.Name + " - " + Level + " Fullfilled: " + fullfilled);
         //TODO: make it trend towards the happiness? so it doesnt swing like crazy
     }
+
+    internal void SetTaxPercantage(float percantage) {
+        taxPercantage = Mathf.Clamp(percantage,0,100); //not real restrictions but just a complete fuckup prevention
+    }
+
     public int GetTaxIncome(City city) {
         return Mathf.FloorToInt(taxPercantage * TaxPerPerson * populationCount); 
     }

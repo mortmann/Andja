@@ -14,6 +14,8 @@ public class NeedUI : MonoBehaviour {
     protected HomeStructure home;
     private bool locked;
     public void SetNeed(Need need) {
+        if (need == null)
+            Destroy(gameObject);
         this.need = need;
         this.name = need.Name;
         string name = need.Name + " | ";
@@ -40,8 +42,16 @@ public class NeedUI : MonoBehaviour {
         }
     }
     public void Show(HomeStructure homeStructure) {
+        if (need == null) {
+            Debug.LogError("NEEDUI "+ name +" is missing its need! -- Should not happen");
+            return;
+        }
         home = homeStructure;
-        need = home.NeedGroups.Find(x => x.ID == need.Group.ID)?.Needs.Find(x => x.ID == need.ID);
+        Need n = home.GetNeedGroups()?.Find(x => need.Group != null && x.ID == need.Group.ID)?.Needs.Find(x => x.ID == need.ID);
+        if(n == null) {
+            return;
+        }
+        need = n;
     }
     private void OnNeedUnlock(Need need) {
         if (need.ID != this.need.ID)

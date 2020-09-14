@@ -32904,5 +32904,5 @@
       }
     }
   ],
-  "Ressources": {}
+  "Resources": {}
 }

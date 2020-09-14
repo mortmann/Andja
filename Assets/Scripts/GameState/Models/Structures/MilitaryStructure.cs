@@ -21,8 +21,8 @@ public class MilitaryStructure : TargetStructure, IWarfare {
     public float ProgressPercentage => CurrentlyBuildingUnit != null ? buildTimer / CurrentlyBuildingUnit.BuildTime : 0;
     public Unit[] CanBeBuildUnits => MilitaryStructureData.canBeBuildUnits;
 
-    public float BuildTimeModifier { get { return CalculateRealValue("buildTimeModifier", MilitaryStructureData.buildTimeModifier); } }
-    public int BuildQueueLength { get { return CalculateRealValue("buildQueueLength", MilitaryStructureData.buildQueueLength); } }
+    public float BuildTimeModifier => CalculateRealValue(nameof(MilitaryStructureData.buildTimeModifier), MilitaryStructureData.buildTimeModifier);
+    public int BuildQueueLength => CalculateRealValue(nameof(MilitaryStructureData.buildQueueLength), MilitaryStructureData.buildQueueLength); 
 
     public Unit CurrentlyBuildingUnit => toBuildUnits.Count > 0 ? toBuildUnits.Peek() : null;
 

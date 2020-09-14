@@ -55,6 +55,7 @@ public class WorldController : MonoBehaviour {
         else {
             Instance = this;
         }
+
     }
     public void Start() {
         EventController.Instance.RegisterOnEvent(OnEventCreated, OnEventEnded);
@@ -239,21 +240,21 @@ public class WorldController : MonoBehaviour {
         // Create a world from our save file data.
         //World.LoadData(MapGenerator.Instance.GetTiles(), GameDataHolder.Width, GameDataHolder.Height);
         MapGenerator.Instance.Destroy();
-        List<MapGenerator.IslandStruct> structs = MapGenerator.Instance.GetIslandStructs();
+        List<MapGenerator.IslandData> structs = MapGenerator.Instance.GetIslandStructs();
         foreach (Island island in World.Islands) {
-            MapGenerator.IslandStruct thisStruct = structs.Find(s =>
+            MapGenerator.IslandData thisStruct = structs.Find(s =>
                     island.StartTile.X >= s.x && (s.x + s.Width) >= island.StartTile.X &&
                     island.StartTile.Y >= s.y && (s.y + s.Height) >= island.StartTile.Y
             );
-            island.Fertilities = thisStruct.fertilities;
+            island.Fertilities = thisStruct.GetFertilities();
             structs.Remove(thisStruct);
             if (thisStruct.Tiles == null)
                 Debug.LogError("thisStruct.Tiles is null " + island.StartTile.X + " " + island.StartTile.Y);
 
-            foreach(string id in thisStruct.Ressources.Keys) {
+            foreach(string id in thisStruct.Resources.Keys) {
                 if (island.HasRessource(id))
                     continue;
-                island.Ressources[id] = thisStruct.Ressources[id];
+                island.Ressources[id] = thisStruct.Resources[id];
             }
             island.SetTiles(thisStruct.Tiles);
             island.Placement = thisStruct.GetPosition();

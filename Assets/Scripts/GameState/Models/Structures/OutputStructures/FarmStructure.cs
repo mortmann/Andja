@@ -29,7 +29,7 @@ public class FarmStructure : OutputStructure {
 
     public GrowableStructure Growable { get { return FarmData.growable; } }
 
-    public int NeededHarvestForProduce { get { return CalculateRealValue("neededHarvestToProduce", FarmData.neededHarvestToProduce); } }
+    public int NeededHarvestForProduce { get { return CalculateRealValue(nameof(FarmData.neededHarvestToProduce), FarmData.neededHarvestToProduce); } }
 
     public int OnRegisterCallbacks;
     List<GrowableStructure> workingGrowables;

@@ -451,7 +451,7 @@ public class AIPlayer {
                 }
             }
         }
-        foreach (string resid in ressourceIDtoAverageAmount.Keys) {
+        foreach (string resid in ressourceIDtoAverageAmount.Keys.ToArray()) {
             ressourceIDtoAverageAmount[resid] /= islands.Count;
             ressourceIDtoExisting[resid] = 1 - (ressourceIDtoExisting[resid] / islands.Count);
         }

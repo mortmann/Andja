@@ -40,7 +40,7 @@ public class RoadStructure : Structure {
     public override void OnBuild() {
         List<Route> routes = new List<Route>();
         int routeCount = 0;
-        foreach (Tile t in Tiles[0].GetNeighbours()) {
+        foreach (Tile t in NeighbourTiles) {
             if (t.Structure == null) {
                 continue;
             }
@@ -76,6 +76,9 @@ public class RoadStructure : Structure {
                 routes[0].AddRoute(routes[i]);
                 Route = routes[0];
             }
+        }
+        foreach(Tile t in NeighbourTiles) {
+            t.Structure?.AddRoadStructure(this);
         }
         UpdateOrientation();
     }

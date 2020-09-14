@@ -25426,5 +25426,5 @@
       }
     }
   ],
-  "Ressources": {}
+  "Resources": {}
 }

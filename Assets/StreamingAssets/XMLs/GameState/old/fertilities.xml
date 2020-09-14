@@ -17,18 +17,18 @@
          <Climate>Warm</Climate>
       </climates>
    </Fertility>
-   <Fertility ID="coca">
+   <Fertility ID="cacao">
       <Name>
-         <entry lang="English">Coca</entry>
+         <entry lang="English">Cacao</entry>
          <entry lang="German">Kakao</entry>
       </Name>
       <climates>
          <Climate>Warm</Climate>
       </climates>
    </Fertility>
-   <Fertility ID="oilves">
+   <Fertility ID="olives">
       <Name>
-         <entry lang="English">Oilves</entry>
+         <entry lang="English">Olives</entry>
          <entry lang="German">Oliven</entry>
       </Name>
       <climates>
@@ -73,15 +73,6 @@
          <Climate>Warm</Climate>
       </climates>
    </Fertility>
-   <Fertility ID="sugarcone">
-      <Name>
-         <entry lang="English">Sugarcone</entry>
-         <entry lang="German">Zuckerrohr</entry>
-      </Name>
-      <climates>
-         <Climate>Warm</Climate>
-      </climates>
-   </Fertility>
    <Fertility ID="wine">
       <Name>
          <entry lang="English">Wine</entry>
@@ -99,6 +90,15 @@
       </Name>
       <climates>
          <Climate>Cold</Climate>
+      </climates>
+   </Fertility>
+   <Fertility ID="sugarcane">
+      <Name>
+         <entry lang="English">Sugarcane</entry>
+         <entry lang="German">Zuckerrohr</entry>
+      </Name>
+      <climates>
+         <Climate>Warm</Climate>
       </climates>
    </Fertility>
 </fertilities>

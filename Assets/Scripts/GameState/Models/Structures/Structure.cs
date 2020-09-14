@@ -15,15 +15,12 @@ public class StructurePrototypeData : LanguageVariables {
     public string ID;
     public bool hasHitbox;// { get; protected set; }
     public float maxHealth;
-
     public int structureRange = 0;
     public int populationLevel = 0;
     public int populationCount = 0;
     public int structureLevel = 0;
-
     public int tileWidth;
     public int tileHeight;
-
     public bool canRotate = true;
     public bool canBeBuildOver = false;
     public bool canBeUpgraded = false;
@@ -80,12 +77,9 @@ public abstract class Structure : IGEventable {
     #region Serialize
     //prototype id
     [JsonPropertyAttribute] public string ID;
-
     //build id -- when it was build
     [JsonPropertyAttribute] public uint buildID;
-
     [JsonPropertyAttribute] protected float _health;
-
     [JsonPropertyAttribute]
     public Tile BuildTile {
         get {
@@ -99,7 +93,6 @@ public abstract class Structure : IGEventable {
             Tiles.Add(value);
         }
     }
-
     [JsonPropertyAttribute] public int rotation = 0;
     [JsonPropertyAttribute] public bool buildInWilderniss = false;
     [JsonPropertyAttribute] protected bool isActive = true;
@@ -152,18 +145,17 @@ public abstract class Structure : IGEventable {
     public bool HasHitbox { get { return Data.hasHitbox; } }
 
     #region EffectVariables
-    public float MaxHealth { get { return CalculateRealValue("maxHealth", Data.maxHealth); } }
+    public float MaxHealth { get { return CalculateRealValue(nameof(Data.maxHealth), Data.maxHealth); } }
     public int MaintenanceCost { get {
             //Is not allowed to be negativ AND it is not allowed to be <0
-            return Mathf.Clamp(CalculateRealValue("maintenancecost", Data.maintenanceCost),0,int.MaxValue);
+            return Mathf.Clamp(CalculateRealValue(nameof(Data.maintenanceCost), Data.maintenanceCost),0,int.MaxValue);
     } }
-    public int StructureRange { get { return CalculateRealValue("structureRange", Data.structureRange); } }
+    public int StructureRange { get { return CalculateRealValue(nameof(Data.structureRange), Data.structureRange); } }
 
     #endregion
     public string Name { get { return Data.Name; } }
     public string Description { get { return Data.Description; } }
     public string HoverOver { get { return Data.HoverOver; } }
-
     public int PopulationLevel { get { return Data.populationLevel; } }
     public int PopulationCount { get { return Data.populationCount; } }
     public int StructureLevel { get { return Data.structureLevel; } }
@@ -185,11 +177,13 @@ public abstract class Structure : IGEventable {
     public List<Tile> PrototypeTiles { get { return Data.PrototypeRangeTiles; } }
 
     public bool CanStartBurning { get { return Data.canStartBurning; } }
-
+    [TextReplace("buildcost")]
     public int BuildCost { get { return Data.buildcost; } }
-
+    [TextReplace("builditems")]
     public Item[] BuildingItems { get { return Data.buildingItems; } }
+    [TextReplace("upgradeitems")]
     public Item[] UpgradeItems { get { return Data.upgradeItems; } }
+    [TextReplace("upgradecost")]
     public int UpgradeCost { get { return Data.upgradeCost; } } // set inside prototypecontoller
 
 
@@ -199,7 +193,8 @@ public abstract class Structure : IGEventable {
     protected Action<Structure, IWarfare> cbStructureDestroy;
     protected Action<Structure, bool> cbStructureExtraUI;
     protected Action<Structure, string, bool> cbStructureSound;
-
+    protected HashSet<Route> Routes = new HashSet<Route>();
+    protected List<RoadStructure> Roads = new List<RoadStructure>();
 
     protected void BaseCopyData(Structure str) {
         ID = str.ID;
@@ -379,9 +374,14 @@ public abstract class Structure : IGEventable {
         NeighbourTiles = new HashSet<Tile>();
         foreach (Tile mt in Tiles) {
             mt.Structure = this;
-            foreach (Tile nbt in mt.GetNeighbours()) {
-                if (Tiles.Contains(nbt) == false) {
-                    NeighbourTiles.Add(nbt);
+            if(EditorController.IsEditor == false) {
+                foreach (Tile nbt in mt.GetNeighbours()) {
+                    if (Tiles.Contains(nbt) == false) {
+                        NeighbourTiles.Add(nbt);
+                    }
+                    if (nbt.Structure is RoadStructure) {
+                        AddRoadStructure((RoadStructure)nbt.Structure);
+                    }
                 }
             }
         }
@@ -511,26 +511,27 @@ public abstract class Structure : IGEventable {
         }
         return RangeTiles;
     }
-    public List<Tile> RoadsAroundStructure() {
-        List<Tile> roads = new List<Tile>();
-        foreach (Tile item in Tiles) {
-            foreach (Tile n in item.GetNeighbours()) {
-                if (n.Structure != null) {
-                    if (n.Structure is RoadStructure) {
-                        roads.Add(n);
-                    }
-                }
-            }
-        }
-        return roads;
+    public List<RoadStructure> RoadsAroundStructure() {
+        //List<Tile> roads = new List<Tile>();
+        //foreach (Tile item in Tiles) {
+        //    foreach (Tile n in item.GetNeighbours()) {
+        //        if (n.Structure != null) {
+        //            if (n.Structure is RoadStructure) {
+        //                roads.Add(n);
+        //            }
+        //        }
+        //    }
+        //}
+        return Roads;
     }
     public HashSet<Route> GetRoutes() {
-        HashSet<Route> r = new HashSet<Route>();
-        foreach(Tile t in RoadsAroundStructure()) {
-            r.Add(((RoadStructure)t.Structure).Route);
-        }
-        return r;
-    }
+        //HashSet<Route> r = new HashSet<Route>();
+        //foreach(Tile t in RoadsAroundStructure()) {
+        //    r.Add(((RoadStructure)t.Structure).Route);
+        //}
+        return Routes;
+    }    
+
     #endregion
     #region Functions
     internal List<Structure> GetNeighbourStructuresInRange(int spreadTileRange) {
@@ -693,6 +694,23 @@ public abstract class Structure : IGEventable {
             return Name + "@error";
         }
         return Name + "@ X=" + BuildTile.X + " Y=" + BuildTile.Y;
+    }
+
+    internal void AddRoadStructure(RoadStructure roadStructure) {
+        Roads.Add(roadStructure);
+        if(Routes.Contains(roadStructure.Route) == false) {
+            Routes.Add(roadStructure.Route);
+        }
+        roadStructure.RegisterOnDestroyCallback(OnRoadDestroy);
+    }
+    void OnRoadDestroy(Structure structure, IWarfare warfare) {
+        RoadStructure road = structure as RoadStructure;
+        Roads.Remove(road);
+        Routes.Remove(road.Route);
+        foreach(RoadStructure r in Roads) {
+            if (Routes.Contains(r.Route) == false)
+                Routes.Add(r.Route);
+        }
     }
     #endregion
 

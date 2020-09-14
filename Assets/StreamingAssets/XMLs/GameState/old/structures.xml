@@ -162,7 +162,7 @@
             <entry lang="German">Holzfällerhütte</entry>
          </Name>
          <Description>
-            <entry lang="English">Produces wood over time.</entry>
+            <entry lang="English">Produces wood over time. Requires $growable.name in its range to be able to produce.</entry>
             <entry lang="German">Erzeugt Holz.</entry>
          </Description>
          <HoverOver>
@@ -192,8 +192,8 @@
          <extraUITyp>None</extraUITyp>
          <extraBuildUITyp>Efficiency</extraBuildUITyp>
          <buildingItems length="1">
-            <Item ID="tools">
-               <count>5</count>
+            <Item ID="wood">
+               <count>10</count>
             </Item>
          </buildingItems>
          <spriteBaseName>lumberjack</spriteBaseName>
@@ -1166,7 +1166,7 @@
                <count>0</count>
             </Item>
          </output>
-         <fertility>sugarcone</fertility>
+         <fertility>sugarcane</fertility>
          <ageStages>2</ageStages>
       </growable>
       <growable ID="wheatfield">

@@ -51,10 +51,10 @@ public abstract class OutputStructure : TargetStructure {
     public float ContactRange { get { return OutputData.contactRange; } }
     public bool ForMarketplace { get { return OutputData.forMarketplace; } }
 
-    public float ProduceTime { get { return CalculateRealValue("produceTime", OutputData.produceTime); } }
-    public int MaxNumberOfWorker { get { return CalculateRealValue("maxNumberOfWorker", OutputData.maxNumberOfWorker); } }
-    public float Efficiency { get { return CalculateRealValue("efficiency", OutputData.efficiency); } }
-    public int MaxOutputStorage { get { return CalculateRealValue("maxOutputStorage", OutputData.maxOutputStorage); } }
+    public float ProduceTime { get { return CalculateRealValue(nameof(OutputData.produceTime), OutputData.produceTime); } }
+    public int MaxNumberOfWorker { get { return CalculateRealValue(nameof(OutputData.maxNumberOfWorker), OutputData.maxNumberOfWorker); } }
+    public float Efficiency { get { return CalculateRealValue(nameof(OutputData.efficiency), OutputData.efficiency); } }
+    public int MaxOutputStorage { get { return CalculateRealValue(nameof(OutputData.maxOutputStorage), OutputData.maxOutputStorage); } }
     public string WorkerWorkSound => OutputData.workerWorkSound;
 
     protected OutputPrototypData _outputData;

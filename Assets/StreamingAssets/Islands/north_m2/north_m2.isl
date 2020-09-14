@@ -8531,5 +8531,5 @@
       }
     }
   ],
-  "Ressources": {}
+  "Resources": {}
 }

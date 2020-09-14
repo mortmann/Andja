@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 using UnityEngine.UI;
+using System;
 
 public class NeedsUIController : MonoBehaviour {
     public GenericStructureUI structureUI;
@@ -12,7 +13,7 @@ public class NeedsUIController : MonoBehaviour {
     public GameObject needGroupCanvas;
     public Text peopleCount;
     public GameObject populationButtonPrefab;
-
+    public Slider taxSlider;
     HomeStructure home;
     public GameObject needGroupPrefab;
 
@@ -25,19 +26,21 @@ public class NeedsUIController : MonoBehaviour {
             Destroy(child.gameObject);
         }
         popLevelToGO = new Dictionary<int, ButtonSetter>();
-
+        taxSlider.onValueChanged.AddListener(TaxSliderChange);
         foreach (PopulationLevelPrototypData pl in PrototypController.Instance.PopulationLevelDatas.Values) {
             GameObject go = Instantiate(populationButtonPrefab);
             go.transform.SetParent(buttonPopulationsLevelContent.transform, false);
             ButtonSetter bs = go.GetComponent<ButtonSetter>();
             bs.Set(pl.Name, () => { ChangeNeedLevel(pl.LEVEL); }, IconSpriteController.GetIcon(pl.iconSpriteName), pl.Name);
             popLevelToGO.Add(pl.LEVEL, bs);
-            bs.Interactable(Player.MaxPopulationLevel > pl.LEVEL);
+            bs.Interactable(Player.MaxPopulationLevel >= pl.LEVEL);
         }
         foreach (Transform child in needGroupCanvas.transform) {
             Destroy(child.gameObject);
         }
-
+        taxSlider.maxValue = 150;
+        taxSlider.minValue = 50;
+        taxSlider.wholeNumbers = true;
         needGroupToUI = new Dictionary<NeedGroup, NeedGroupUI>();
         foreach (NeedGroup needGroup in PrototypController.Instance.NeedGroups.Values) {
             GameObject go = Instantiate(needGroupPrefab); //TODO: make it look good
@@ -47,33 +50,35 @@ public class NeedsUIController : MonoBehaviour {
             go.transform.SetParent(contentCanvas.transform, false);
         }
     }
+
+    private void TaxSliderChange(float value) {
+        home.City.SetTaxForPopulationLevel(home.StructureLevel, value/100f);
+    }
+
     public void Show(HomeStructure home) {
         if (this.home == home) {
             return;
         }
-        contentCanvas.SetActive(home.PlayerNumber != PlayerController.currentPlayerNumber);
-        buttonPopulationsLevelContent.SetActive(home.PlayerNumber != PlayerController.currentPlayerNumber);
-        upgradeButton.SetActive(home.PlayerNumber != PlayerController.currentPlayerNumber);
-        needGroupCanvas.SetActive(home.PlayerNumber != PlayerController.currentPlayerNumber);
-        peopleCount.gameObject.SetActive(home.PlayerNumber != PlayerController.currentPlayerNumber);
+        this.home = home;
+
+        bool isPlayerHome = home.PlayerNumber == PlayerController.currentPlayerNumber;
+        contentCanvas.SetActive(isPlayerHome);
+        buttonPopulationsLevelContent.SetActive(isPlayerHome);
+        upgradeButton.SetActive(isPlayerHome);
+        needGroupCanvas.SetActive(isPlayerHome);
+        peopleCount.gameObject.SetActive(isPlayerHome);
 
         if (needGroupToUI == null)
             Setup();
         foreach (NeedGroupUI ngui in needGroupToUI.Values) {
             ngui.Show(home);
         }
-
+        float F = (float)Math.Round(home.GetTaxPercantage() * 100f, 2);
+        taxSlider.value = F;
         structureUI.Show(home);
-        this.home = home;        
         ChangeNeedLevel(0);
-        for (int i = 0; i < buttonPopulationsLevelContent.transform.childCount; i++) {
-            GameObject g = buttonPopulationsLevelContent.transform.GetChild(i).gameObject;
-            if (i > home.StructureLevel) {
-                g.GetComponent<Button>().interactable = false;
-            }
-            else {
-                g.GetComponent<Button>().interactable = true;
-            }
+        for (int i = 0; i < PrototypController.Instance.NumberOfPopulationLevels; i++) {
+            popLevelToGO[i].Interactable(home.StructureLevel >= i);
         }
 
     }

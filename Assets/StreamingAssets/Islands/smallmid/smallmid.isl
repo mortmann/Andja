@@ -10222,5 +10222,5 @@
       }
     }
   ],
-  "Ressources": {}
+  "Resources": {}
 }

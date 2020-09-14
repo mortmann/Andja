@@ -16,6 +16,7 @@
       <startLevel>1</startLevel>
       <popCount>0</popCount>
       <group>beverages</group>
+      <hasToReachPerRoad>false</hasToReachPerRoad>
    </Need>
    <Need ID="education">
       <UsageAmounts>
@@ -32,6 +33,7 @@
       <startLevel>1</startLevel>
       <popCount>0</popCount>
       <group>education</group>
+      <hasToReachPerRoad>false</hasToReachPerRoad>
    </Need>
    <Need ID="salt">
       <UsageAmounts>
@@ -50,6 +52,7 @@
       <startLevel>1</startLevel>
       <popCount>0</popCount>
       <group>food</group>
+      <hasToReachPerRoad>false</hasToReachPerRoad>
    </Need>
    <Need ID="spice?">
       <UsageAmounts>
@@ -65,6 +68,7 @@
       <startLevel>1</startLevel>
       <popCount>0</popCount>
       <group>food</group>
+      <hasToReachPerRoad>false</hasToReachPerRoad>
    </Need>
    <Need ID="monument">
       <UsageAmounts>
@@ -80,6 +84,7 @@
       <startLevel>1</startLevel>
       <popCount>0</popCount>
       <group>food</group>
+      <hasToReachPerRoad>false</hasToReachPerRoad>
    </Need>
    <Need ID="clean">
       <UsageAmounts>
@@ -96,6 +101,7 @@
       <startLevel>1</startLevel>
       <popCount>0</popCount>
       <group>luxury</group>
+      <hasToReachPerRoad>false</hasToReachPerRoad>
    </Need>
    <Need ID="food">
       <UsageAmounts>
@@ -114,6 +120,7 @@
       <startLevel>0</startLevel>
       <popCount>0</popCount>
       <group>food</group>
+      <hasToReachPerRoad>false</hasToReachPerRoad>
    </Need>
    <Need ID="clothes">
       <UsageAmounts>
@@ -132,6 +139,7 @@
       <startLevel>1</startLevel>
       <popCount>0</popCount>
       <group>clothing</group>
+      <hasToReachPerRoad>false</hasToReachPerRoad>
    </Need>
    <Need ID="security">
       <UsageAmounts>
@@ -147,6 +155,7 @@
       <startLevel>1</startLevel>
       <popCount>0</popCount>
       <group>food</group>
+      <hasToReachPerRoad>false</hasToReachPerRoad>
    </Need>
    <Need ID="companionship">
       <UsageAmounts>
@@ -163,6 +172,7 @@
       <startLevel>0</startLevel>
       <popCount>0</popCount>
       <group>community</group>
+      <hasToReachPerRoad>false</hasToReachPerRoad>
    </Need>
    <Need ID="luxury">
       <UsageAmounts>
@@ -178,6 +188,7 @@
       <startLevel>1</startLevel>
       <popCount>0</popCount>
       <group>food</group>
+      <hasToReachPerRoad>false</hasToReachPerRoad>
    </Need>
    <Need ID="belief">
       <UsageAmounts>
@@ -194,6 +205,7 @@
       <startLevel>1</startLevel>
       <popCount>0</popCount>
       <group>belief</group>
+      <hasToReachPerRoad>false</hasToReachPerRoad>
    </Need>
    <Need ID="fun">
       <UsageAmounts>
@@ -210,6 +222,7 @@
       <startLevel>1</startLevel>
       <popCount>0</popCount>
       <group>entertainment</group>
+      <hasToReachPerRoad>false</hasToReachPerRoad>
    </Need>
    <NeedGroup ID="beverages">
       <Name>

@@ -15,7 +15,7 @@ public class EditorController : MonoBehaviour {
 
     public static EditorController Instance { get; protected set; }
     World world;
-    Dictionary<string, int[]> Ressources;
+    Dictionary<string, Range> Ressources;
 
 
     public static int Width = 100;
@@ -41,7 +41,7 @@ public class EditorController : MonoBehaviour {
     public Vector3 BrushOffset { get {
             switch (brushType) {
                 case BrushTypes.Square:
-                    if (brushSize % 2 != 0)
+                    if (brushSize % 2 == 0)
                         return Vector3.zero;
                     return new Vector3(0.5f, 0.5f, 0);
                 case BrushTypes.Round:
@@ -63,7 +63,7 @@ public class EditorController : MonoBehaviour {
         if (Instance != null) {
             Debug.LogError("There should never be two EditorController.");
         }
-        Ressources = new Dictionary<string, int[]>();
+        Ressources = new Dictionary<string, Range>();
         IsEditor = true;
         
         Instance = this;
@@ -93,7 +93,6 @@ public class EditorController : MonoBehaviour {
                 Structure str = MapGenerator.Instance.tileToStructure[t];
                 BuildController.Instance.EditorBuildOnTile(str, str.GetBuildingTiles(t), false);
             }
-            Debug.Log("BuildController.Instance.SetLoadedStructures!");
             BuildController.Instance.SetLoadedStructures(MapGenerator.Instance.tileToStructure.Values);
             MapGenerator.Instance.Destroy();
             Generate = false;
@@ -106,7 +105,7 @@ public class EditorController : MonoBehaviour {
         UpdateHighLights();
     }
     internal static MapGenerator.IslandGenInfo[] GetEditorGenInfo() {
-        return new MapGenerator.IslandGenInfo[1] { new MapGenerator.IslandGenInfo(new MapGenerator.Range(Width, Width), new MapGenerator.Range(Height, Height), climate, true) };
+        return new MapGenerator.IslandGenInfo[1] { new MapGenerator.IslandGenInfo(new Range(Width, Width), new Range(Height, Height), climate, true) };
     }
 
     public void NewIsland(int w, int h, Climate clim, bool random) {
@@ -134,7 +133,12 @@ public class EditorController : MonoBehaviour {
                     CreateStructure();
             }
         }
-        if(Input.GetMouseButtonUp(0)) {
+        if(Input.GetKey(KeyCode.LeftControl)) {
+            FindObjectOfType<HoverOverScript>().Show(MouseController.Instance.GetTileUnderneathMouse().Vector.ToString());
+        } else {
+            FindObjectOfType<HoverOverScript>().Unshow();
+        }
+        if (Input.GetMouseButtonUp(0)) {
             dragging = false;
         }
         if (InputHandler.GetButtonDown(InputName.Rotate)) {
@@ -157,18 +161,17 @@ public class EditorController : MonoBehaviour {
         }
     }
     private void SquareBrush(Action<Tile> action, Tile t) {
+        if (t == null)
+            return;
         List<Tile> temp = Util.CalculateRectangleTiles(brushSize,brushSize, 0, 0, t.X, t.Y);
         foreach (Tile item in temp) {
             RandomModifier(action, item);
         }
-        //for (int x = Mathf.FloorToInt((float)brushSize / 2f); x > -Mathf.CeilToInt((float)brushSize / 2f); x--) {
-        //    for (int y = Mathf.FloorToInt((float)brushSize / 2f); y > -Mathf.CeilToInt((float)brushSize / 2f); y--) {
-        //        RandomModifier(action, GetTileAtWorldCoord(t.X + x, t.Y + y));
-        //    }
-        //}
     }
     private void RoundBrush(Action<Tile> action, Tile t) {
-        List<Tile> temp = Util.CalculateCircleTiles(brushSize, 0, 0, t.X, t.Y);
+        if (t == null)
+            return;
+        List<Tile> temp = Util.CalculateCircleTiles(brushSize, 0, 0, t.X - brushSize, t.Y - brushSize);
         foreach (Tile item in temp) {
             RandomModifier(action, item);// World.Current.GetTileAt(t.Vector2+item.Vector2-new Vector2(brushSize,brushSize)));
         }
@@ -283,8 +286,8 @@ public class EditorController : MonoBehaviour {
                     Util.CalculateSquareTiles(brushSize), show);
                 break;
             case BrushTypes.Round:
-                MouseController.Instance.SetEditorHighlight(2*brushSize + 1, 
-                    Util.CalculateRangeTiles(brushSize, 2, 3, brushSize, brushSize), show);
+                MouseController.Instance.SetEditorHighlight(2*brushSize, 
+                    Util.CalculateRangeTiles(brushSize, 0, 0, 0, 0), show);
                 break;
         }
     }
@@ -354,9 +357,11 @@ public class EditorController : MonoBehaviour {
     
     internal void OnRessourceChange(string ID, int amount, bool lower) {
         if (Ressources.ContainsKey(ID) == false)
-            Ressources[ID] = new int[2];
-        int index = lower ? 0 : 1;
-        Ressources[ID][index] = amount;
+            Ressources[ID] = new Range();
+        if(lower)
+            Ressources[ID].lower = amount;
+        else
+            Ressources[ID].upper = amount;
     }
     internal Tile GetTileAtWorldCoord(Vector3 currFramePosition) {
         return World.Current.GetTileAt(currFramePosition.x + TileSpriteController.offset, currFramePosition.y + TileSpriteController.offset);
@@ -389,8 +394,8 @@ public class EditorController : MonoBehaviour {
         Width = load.Width;
         Height = load.Height;
         world = new World(load.tiles, load.Width, load.Height,true);
-        if(load.Ressources!=null)
-            Ressources = load.Ressources;
+        if(load.Resources!=null)
+            Ressources = load.Resources;
         foreach (Structure s in load.structures) {
             BuildController.Instance.EditorBuildOnTile(s, s.GetBuildingTiles(s.BuildTile), true);
         }
@@ -413,23 +418,23 @@ public class EditorController : MonoBehaviour {
         [JsonPropertyAttribute] public Climate climate;
         [JsonPropertyAttribute(TypeNameHandling = TypeNameHandling.None)] public LandTile[] tiles;
         [JsonPropertyAttribute(TypeNameHandling = TypeNameHandling.Auto)] public List<Structure> structures;
-        [JsonPropertyAttribute] public Dictionary<string, int[]> Ressources;
+        [JsonPropertyAttribute] public Dictionary<string, Range> Resources;
 
         [JsonIgnore] public string Name; // for loading in image or similar things
         public SaveIsland() {
 
         }
-        public SaveIsland(List<Structure> structures, Tile[] tiles, int Width, int Height, Climate climate, Dictionary<string, int[]> Ressources) {
+        public SaveIsland(List<Structure> structures, Tile[] tiles, int Width, int Height, Climate climate, Dictionary<string, Range> Ressources) {
             this.Width = Width;
             this.Height = Height;
             this.climate = climate;
             this.structures = new List<Structure>(structures);
             this.tiles = tiles.Cast<LandTile>().ToArray();
-            this.Ressources = new Dictionary<string, int[]>();
+            this.Resources = new Dictionary<string, Range>();
             foreach(string id in Ressources.Keys) {
-                if (Ressources[id][1] <= 0)
+                if (Ressources[id].upper <= 0)
                     continue;
-                this.Ressources[id] = Ressources[id];
+                this.Resources[id] = Ressources[id];
             }
         }
     }

@@ -94,6 +94,12 @@ public class City : IGEventable {
         //		useTickTimer = useTick;
     }
 
+    internal void SetTaxForPopulationLevel(int structureLevel, float percantage) {
+        if (IsWilderness())
+            return;
+        PopulationLevels[structureLevel].SetTaxPercantage(percantage);
+    }
+
     internal void AddTradeItem(TradeItem ti) {
         if (itemIDtoTradeItem.ContainsKey(ti.ItemId)) {
             Debug.LogError("Tried to add Trade Item that exists");
@@ -484,8 +490,8 @@ public class City : IGEventable {
     public float GetHappinessForCitizenLevel(int level) {
         return PopulationLevels[level].Happiness;
     }
-    internal IEnumerable<NeedGroup> GetPopulationALLNeedGroups(int level) {
-        return PopulationLevels[level].AllNeedGroupList;
+    internal List<NeedGroup> GetPopulationNeedGroups(int level) {
+        return PopulationLevels[level].NeedGroupList;
     }
     public void RemoveTiles(IEnumerable<Tile> tiles) {
         foreach (Tile item in tiles) {

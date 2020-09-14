@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-using System.Collections;
+using System;
 using UnityEngine.UI;
 public class TaxPercentScript : MonoBehaviour {
     Slider mySlider;
@@ -11,6 +11,6 @@ public class TaxPercentScript : MonoBehaviour {
 
     // Update is called once per frame
     void Update() {
-        knobText.text = 2 * Mathf.FloorToInt(mySlider.value * 100) + "%";
+        knobText.text = mySlider.value + "%";
     }
 }

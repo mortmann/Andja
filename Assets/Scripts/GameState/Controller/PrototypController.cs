@@ -39,7 +39,7 @@ public class PrototypController : MonoBehaviour {
     public IReadOnlyDictionary<int, List<NeedGroup>> PopulationLevelToNeedGroup => populationLevelToNeedGroup;
 
     // SHOULD BE READ ONLY -- cant be done because Unity Error for multiple implementations
-    public static List<Item> BuildItems => _buildItems;
+    public static Item[] BuildItems => _buildItems;
     public List<StartingLoadout> StartingLoadouts => _startingLoadouts;
 
     Dictionary<string, Structure> structurePrototypes;
@@ -58,14 +58,21 @@ public class PrototypController : MonoBehaviour {
     Dictionary<string, NeedGroupPrototypData> needGroupDatas;
     Dictionary<string, NeedGroup> idToNeedGroup;
     Dictionary<string, Item> allItems;
+    private List<Item> buildItemsList;
     Dictionary<int, List<NeedGroup>> populationLevelToNeedGroup;
     Dictionary<Climate, List<Fertility>> allFertilities;
+    public Dictionary<Climate, List<FertilityPrototypeData>> AllFertilitiesDatasPerClimate;
+
     Dictionary<string, Fertility> idToFertilities;
+    public Dictionary<Size, IslandSizeGenerationInfo> IslandSizeToGenerationInfo { get; private set; }
+    public Dictionary<Climate, List<ResourceGenerationInfo>> ClimateToResourceGeneration { get; private set; }
+    public List<ResourceGenerationInfo> ResourceGenerations { get; private set; }
 
     List<StartingLoadout> _startingLoadouts;
 
     public List<Item> MineableItems;
-    private static List<Item> _buildItems;
+    public static Item[] _buildItems;
+
     List<Need> allNeeds;
     //current valid player prototyp data
     internal static PlayerPrototypeData CurrentPlayerPrototypData = new PlayerPrototypeData();
@@ -81,6 +88,8 @@ public class PrototypController : MonoBehaviour {
     //TODO: need a way to get this to load in! probably with the rest
     //      of the data thats still needs to be read in like time for money ticks
     public ArmorType StructureArmor => armorTypeDatas["woodenwall"];
+
+    
 
     public Dictionary<string, Item> GetCopieOfAllItems() {
         Dictionary<string, Item> items = new Dictionary<string, Item>();
@@ -141,11 +150,13 @@ public class PrototypController : MonoBehaviour {
         if (Instance != null) {
             Debug.LogError("There should never be two world controllers.");
         }
-
         Instance = this;
         ModLoader.LoadMods();
         ModLoader.AvaibleMods();
         LoadFromXML();
+    }
+    void Test(float[,] fs) {
+        fs[1, 1] = 2;
     }
     public StructurePrototypeData GetStructurePrototypDataForID(string ID) {
         return structurePrototypeDatas[ID];
@@ -224,16 +235,20 @@ public class PrototypController : MonoBehaviour {
         //fertilities
         allFertilities = new Dictionary<Climate, List<Fertility>>();
         idToFertilities = new Dictionary<string, Fertility>();
+        AllFertilitiesDatasPerClimate = new Dictionary<Climate, List<FertilityPrototypeData>>();
         fertilityPrototypeDatas = new Dictionary<string, FertilityPrototypeData>();
         ReadFertilitiesFromXML(LoadXML("fertilities"));
         ModLoader.LoadXMLs("fertilities", ReadFertilitiesFromXML);
 
         // prototypes of items
         allItems = new Dictionary<string, Item>();
-        _buildItems = new List<Item>();
+        buildItemsList = new List<Item>();
+        MineableItems = new List<Item>();
         itemPrototypeDatas = new Dictionary<string, ItemPrototypeData>();
         ReadItemsFromXML(LoadXML("items"));
         ModLoader.LoadXMLs("items", ReadItemsFromXML);
+        _buildItems = buildItemsList.ToArray();
+        buildItemsList = null;
 
         armorTypeDatas = new Dictionary<string, ArmorType>();
         damageTypeDatas = new Dictionary<string, DamageType>();
@@ -266,13 +281,13 @@ public class PrototypController : MonoBehaviour {
         ReadStartingLoadoutsFromXMLs(LoadXML("startingloadouts"));
         ModLoader.LoadXMLs("startingloadouts", ReadStartingLoadoutsFromXMLs);
 
-        MineableItems = new List<Item>();
-        List<Structure> mines = new List<Structure>(structurePrototypes.Values);
-        mines.RemoveAll(x => x.GetType() != typeof(MineStructure));
-        foreach (Structure s in mines) {
-            MineableItems.Add(((MineStructure)s).Output[0]);
-        }
-        
+        IslandSizeToGenerationInfo = new Dictionary<Size, IslandSizeGenerationInfo>();
+        ClimateToResourceGeneration = new Dictionary<Climate, List<ResourceGenerationInfo>>();
+        ResourceGenerations = new List<ResourceGenerationInfo>();
+        ReadMapGenerationInfos(LoadXML("mapgeneration"));
+        ModLoader.LoadXMLs("startingloadouts", ReadMapGenerationInfos);
+
+
         Debug.Log("Read in fertilities types: " + allFertilities.Count + " with all " + fertilityPrototypeDatas.Count);
         string str = "";
         List<Structure> all = new List<Structure>(structurePrototypes.Values);
@@ -306,6 +321,44 @@ public class PrototypController : MonoBehaviour {
         CalculateUnlocks();
     }
 
+    private void ReadMapGenerationInfos(string xmlText) {
+        XmlDocument xmlDoc = new XmlDocument(); // xmlDoc is the new xml document.
+        xmlDoc.LoadXml(xmlText); // load the file.
+
+        foreach (XmlElement node in xmlDoc.SelectNodes("generationInfos/islandSizes/islandSize")) {
+            //SetData<StartingLoadout>(node, ref sl);
+            IslandSizeGenerationInfo islandSize = new IslandSizeGenerationInfo();
+            SetData<IslandSizeGenerationInfo>((XmlElement)node, ref islandSize);
+            Enum.TryParse(node.GetAttribute("size"), true, out Size size);
+            IslandSizeToGenerationInfo[size] = islandSize;
+        }
+        foreach(Climate climate in Enum.GetValues(typeof(Climate))) {
+            ClimateToResourceGeneration[climate] = new List<ResourceGenerationInfo>();
+        }
+        foreach (XmlElement node in xmlDoc.SelectNodes("generationInfos/resources/resource")) {
+            ResourceGenerationInfo generationInfo = new ResourceGenerationInfo();
+            generationInfo.ID = node.GetAttribute("ID");
+            SetData<ResourceGenerationInfo>(node, ref generationInfo);
+            ResourceGenerations.Add(generationInfo);
+            generationInfo.resourceRange = new Dictionary<Size, Range>();
+            foreach (XmlElement child in node["distributionMap"].ChildNodes) {
+                string sizeS = child.GetAttribute("islandSize");
+                Enum.TryParse(sizeS, true, out Size size);
+                Range range = new Range(child["range"]["lower"].GetIntValue(), child["range"]["upper"].GetIntValue());
+                generationInfo.resourceRange[size] = range;
+                if (range.upper > 0) {
+                    IslandSizeToGenerationInfo[size].resourceGenerationsInfo.Add(generationInfo);
+                }
+                if(generationInfo.climate == null) {
+                    generationInfo.climate = (Climate[])Enum.GetValues(typeof(Climate));
+                }
+            }
+            foreach (Climate c in generationInfo.climate) {
+                ClimateToResourceGeneration[c].Add(generationInfo);
+            }
+        }
+    }
+
     private void CalculatePopulationNeedGroups() {
         foreach(int level in populationLevelDatas.Keys) {
             if (populationLevelToNeedGroup.ContainsKey(level))
@@ -322,22 +375,6 @@ public class PrototypController : MonoBehaviour {
         needsPerLevel = new int[populationLevelDatas.Count];
         for (int i = 0; i < populationLevelDatas.Count; i++)
             levelCountToUnlocks[i] = new ConcurrentDictionary<int, Unlocks>();
-        //foreach (Structure structure in StructurePrototypes.Values) {
-        //    if (levelCountToUnlocks[structure.PopulationLevel].ContainsKey(structure.PopulationCount) == false)
-        //        levelCountToUnlocks[structure.PopulationLevel][structure.PopulationCount] = new Unlocks();
-        //    levelCountToUnlocks[structure.PopulationLevel][structure.PopulationCount].structures.Add(structure);
-        //}
-        //foreach (Unit unit in UnitPrototypes.Values) {
-        //    if (levelCountToUnlocks[unit.PopulationLevel].ContainsKey(unit.PopulationCount) == false)
-        //        levelCountToUnlocks[unit.PopulationLevel][unit.PopulationCount] = new Unlocks();
-        //    levelCountToUnlocks[unit.PopulationLevel][unit.PopulationCount].units.Add(unit);
-        //}
-        //foreach (Need need in allNeeds) {
-        //    if (levelCountToUnlocks[need.StartLevel].ContainsKey(need.StartPopulationCount) == false)
-        //        levelCountToUnlocks[need.StartLevel][need.StartPopulationCount] = new Unlocks();
-        //    levelCountToUnlocks[need.StartLevel][need.StartPopulationCount].needs.Add(need);
-        //    needsPerLevel[need.StartLevel]++;
-        //}
         Parallel.ForEach(StructurePrototypes.Values, structure => {
             if (levelCountToUnlocks[structure.PopulationLevel].ContainsKey(structure.PopulationCount) == false)
                 levelCountToUnlocks[structure.PopulationLevel].TryAdd(structure.PopulationCount, new Unlocks());
@@ -651,7 +688,7 @@ public class PrototypController : MonoBehaviour {
             Item item = new Item(id, ipd);
 
             if (item.Type == ItemType.Build) {
-                _buildItems.Add(item);
+                buildItemsList.Add(item);
             }
             allItems[id] = item;
         }
@@ -691,24 +728,21 @@ public class PrototypController : MonoBehaviour {
         xmlDoc.LoadXml(file); // load the file.
         foreach (XmlElement node in xmlDoc.SelectNodes("fertilities/Fertility")) {
             string ID = node.GetAttribute("ID");
-
             FertilityPrototypeData fpd = new FertilityPrototypeData();
-
+            fpd.ID = ID;
             SetData<FertilityPrototypeData>(node, ref fpd);
-
             Fertility fer = new Fertility(ID, fpd);
             idToFertilities.Add(fer.ID, fer);
             fertilityPrototypeDatas[ID] = fpd;
             foreach (Climate item in fer.Climates) {
-                if (allFertilities.ContainsKey(item) == false) {
-                    List<Fertility> f = new List<Fertility> {
-                        fer
-                    };
-                    allFertilities.Add(item, f);
-                }
-                else {
-                    allFertilities[item].Add(fer);
-                }
+                if (allFertilities.ContainsKey(item) == false) 
+                    allFertilities[item] = new List<Fertility>();
+                allFertilities[item].Add(fer);
+
+                if (AllFertilitiesDatasPerClimate.ContainsKey(item) == false)
+                    AllFertilitiesDatasPerClimate[item] = new List<FertilityPrototypeData>();
+                AllFertilitiesDatasPerClimate[item].Add(fpd);
+
             }
         }
     }
@@ -1058,24 +1092,12 @@ public class PrototypController : MonoBehaviour {
             return;
         foreach (XmlElement node in xmlDoc.SelectNodes("mine")) {
             string ID = node.GetAttribute("ID");
-
-            MinePrototypeData mpd = new MinePrototypeData {
-                //THESE are fix and are not changed for any Warehouse
-                tileWidth = 2,
-                tileHeight = 3,
-                Name = "Mine",
-                structureTyp = StructureTyp.Blocking,
-                buildTyp = BuildType.Single,
-                hasHitbox = true,
-                structureRange = 0
-            };
-
+            MinePrototypeData mpd = new MinePrototypeData();
             mpd.ID = ID;
             SetData<MinePrototypeData>(node, ref mpd);
-
+            MineableItems.AddRange(mpd.output);
             structurePrototypeDatas[ID] = mpd;
             structurePrototypes[ID] = new MineStructure(ID, mpd);
-
         }
     }
     private void SetData<T>(XmlElement node, ref T data) {
@@ -1095,9 +1117,9 @@ public class PrototypController : MonoBehaviour {
                     continue;
                 }
                 XmlNode textNode = currentNode.SelectSingleNode("entry[@lang='" + UILanguageController.selectedLanguage.ToString() + "']");
-
                 if (textNode != null) {
-                    fi.SetValue(data, Convert.ChangeType(textNode.InnerXml, fi.FieldType));
+                    string text = ReplacePlaceHolders(data, textNode.InnerXml);
+                    fi.SetValue(data, Convert.ChangeType(text, fi.FieldType));
                 }
                 continue;
             }
@@ -1242,6 +1264,10 @@ public class PrototypController : MonoBehaviour {
                     // this will get set in load xml directly and not here!
                     continue;
                 }
+                if(fi.FieldType == typeof(Range)) {
+                    fi.SetValue(data, new Range(currentNode["lower"].GetIntValue(), currentNode["upper"].GetIntValue()));
+                    continue;
+                }
                 if (fi.FieldType == typeof(Dictionary<Target, List<int>>)) {
                     Dictionary<Target, List<int>> range = new Dictionary<Target, List<int>>();
                     foreach (XmlNode child in currentNode.ChildNodes) {
@@ -1294,6 +1320,61 @@ public class PrototypController : MonoBehaviour {
             }
         }
 
+    }
+
+    private string ReplacePlaceHolders<T>(T data, string text) {
+        if (text.Contains("$") == false)
+            return text;
+        string[] splits = text.Split('$');
+        for (int i = 0; i < splits.Length-1; i+=2) {
+            string[] replaceSplit = splits[i+1].Split(' ');
+            string replace = replaceSplit[0];
+            string replaceWith;
+            if (replace.Contains('.')) {
+                string[] subgetsplits = replace.Split('.');
+                var field = data.GetType().GetField("growable", BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance).GetValue(data);
+                replaceWith = GetFieldString(data, 0, subgetsplits);
+            } else {
+                replaceWith = GetFieldString(data, 0, replace);// data.GetType().GetField(replace, BindingFlags.IgnoreCase)?.ToString();
+            }
+            replaceSplit[0] = replaceWith;
+            splits[i+1] = string.Join(" ", replaceSplit);
+        }
+        return string.Join("", splits); 
+    }
+
+    readonly BindingFlags flags = BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance;
+    private string GetFieldString(object data, int index, params string[] fields) {
+        Type dataType = data.GetType();
+        if (typeof(IEnumerable).IsAssignableFrom(dataType)) {
+            List<string> strings = new List<string>();
+            foreach (object o in data as IEnumerable) {
+                strings.Add(GetFieldString(o, index, fields));
+            }
+            if (strings.Count == 1)
+                return strings[0];
+            string last = strings[strings.Count - 1];
+            strings.RemoveAt(strings.Count - 1);
+            return string.Join(", ", strings) + " " + GetLocalisedAnd() + " " + last;
+        }
+        if (fields.Length - 1 == index) {
+            var field = dataType.GetField(fields[index], flags)?.GetValue(data);
+            if(field == null)
+                field = dataType.GetProperty(fields[index], flags)?.GetValue(data);
+            return field.ToString();
+        }
+        return GetFieldString(dataType.GetField(fields[index], flags)?.GetValue(data), ++index, fields);
+    }
+
+    private string GetLocalisedAnd() {
+        string lang = UILanguageController.selectedLanguage;
+        if(lang == "English") {
+            return "and";
+        }
+        if (lang == "German") {
+            return "und";
+        }
+        return "&";
     }
 
     private Effect NodeToEffect(XmlNode item) {
@@ -1420,7 +1501,7 @@ public class PrototypController : MonoBehaviour {
     };
     public string ConvertStructureStringPlaceholders(string toReplace, StructurePrototypeData data) {
         foreach(string find in StructurePlaceholderToResult.Keys) {
-            find.Replace(find, StructurePlaceholderToResult[find]?.Invoke(data));
+            toReplace.Replace(find, StructurePlaceholderToResult[find]?.Invoke(data));
         }
         return null;
     }

@@ -184,21 +184,21 @@ public class Unit : IGEventable,IWarfare {
     #region prototype
     public float CaptureSpeed => Data.captureSpeed;
 
-    public float AttackRange => CalculateRealValue("attackRange", Data.attackRange);
-    public float Damage => CalculateRealValue("damage", Data.damage);
-    public float MaxHealth => CalculateRealValue("maximumHealth", Data.maximumHealth);
-    public float AttackRate => CalculateRealValue("attackRange", Data.attackRange);
-    public float Speed => CalculateRealValue("speed", Data.speed) * SpeedModifier;
+    public float AttackRange => CalculateRealValue(nameof(Data.attackRange), Data.attackRange);
+    public float Damage => CalculateRealValue(nameof(Data.damage), Data.damage);
+    public float MaxHealth => CalculateRealValue(nameof(Data.maximumHealth), Data.maximumHealth);
+    public float AttackRate => CalculateRealValue(nameof(Data.attackRate), Data.attackRate);
+    public float Speed => CalculateRealValue(nameof(Data.attackRange), Data.speed) * SpeedModifier;
 
     public virtual float SpeedModifier => 1f;
 
-    public float RotationSpeed => CalculateRealValue("rotationSpeed", Data.rotationSpeed);
-    public int InventoryPlaces => CalculateRealValue("inventoryPlaces", Data.inventoryPlaces); //UNTESTED HOW THIS WILL WORK
-    public int InventorySize => CalculateRealValue("inventorySize", Data.inventorySize); //UNTESTED HOW THIS WILL WORK
-    public float AggroTime => CalculateRealValue("aggroTime", Data.aggroTime); //UNTESTED HOW THIS WILL WORK
-    public int MaintenanceCost => CalculateRealValue("maintenancecost", Data.maintenancecost); //UNTESTED HOW THIS WILL WORK
+    public float RotationSpeed => CalculateRealValue(nameof(Data.rotationSpeed), Data.rotationSpeed);
+    public int InventoryPlaces => CalculateRealValue(nameof(Data.inventoryPlaces), Data.inventoryPlaces); //UNTESTED HOW THIS WILL WORK
+    public int InventorySize => CalculateRealValue(nameof(Data.inventorySize), Data.inventorySize); //UNTESTED HOW THIS WILL WORK
+    public float AggroTime => CalculateRealValue(nameof(Data.aggroTime), Data.aggroTime); //UNTESTED HOW THIS WILL WORK
+    public int MaintenanceCost => CalculateRealValue(nameof(Data.maintenancecost), Data.maintenancecost); //UNTESTED HOW THIS WILL WORK
 
-    public float BuildRange => CalculateRealValue("buildRange", Data.buildRange); 
+    public float BuildRange => CalculateRealValue(nameof(Data.buildRange), Data.buildRange); 
     public virtual bool IsShip => false;
 
     public float BuildTime => Data.buildTime;
@@ -231,9 +231,9 @@ public class Unit : IGEventable,IWarfare {
 
     public int PlayerNumber => playerNumber;
 
-    public float MaximumHealth { get { return CalculateRealValue("maximumHealth", Data.maximumHealth); } }
-    public virtual float CurrentDamage => CalculateRealValue("CurrentDamage", Data.damage);
-    public virtual float MaximumDamage => CalculateRealValue("MaximumDamage", Data.damage);    
+    public float MaximumHealth { get { return CalculateRealValue(nameof(Data.maximumHealth), Data.maximumHealth); } }
+    public virtual float CurrentDamage => CalculateRealValue(nameof(CurrentDamage), Data.damage);
+    public virtual float MaximumDamage => CalculateRealValue(nameof(MaximumDamage), Data.damage);    
     public DamageType DamageType => Data.damageType;
     public ArmorType ArmorType => Data.armorType;
     public bool IsDestroyed => IsDead;

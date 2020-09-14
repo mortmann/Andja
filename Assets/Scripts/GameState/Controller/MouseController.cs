@@ -110,7 +110,6 @@ public class MouseController : MonoBehaviour {
             ExtraStructureBuildUIPrefabs[esbu.Type] = esbu.Prefab;
         }
     }
-
     /// <summary>
     /// Gets the mouse position in world space.
     /// </summary>
@@ -127,7 +126,7 @@ public class MouseController : MonoBehaviour {
 
     // Update is called once per frame
     void Update() {
-        if (PlayerController.GameOver)
+        if (EditorController.IsEditor==false && PlayerController.GameOver)
             return;
         currFramePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         currFramePosition.z = 0;
@@ -224,15 +223,19 @@ public class MouseController : MonoBehaviour {
         int end_x = Mathf.FloorToInt(CurrFramePositionOffset.x);
         int start_y = Mathf.FloorToInt(dragStartPosition.y);
         int end_y = Mathf.FloorToInt(CurrFramePositionOffset.y);
-        List<Tile> tiles = GetTilesStructures(start_x, end_x, start_y, end_y);
-        foreach (Tile t in destroyTiles.Except(tiles)) {
-            SimplePool.Despawn(tileToPreviewGO[t].gameObject);
-            destroyTiles.Remove(t);
-        }
-        foreach(Tile t in GetTilesStructures(start_x, end_x, start_y, end_y)) {
-            if (destroyTiles.Contains(t))
-                continue;
-            ShowTilePrefabOnTile(t, TileHighlightType.Red);
+        if (Input.GetMouseButton(0)) {
+            List<Tile> tiles = GetTilesStructures(start_x, end_x, start_y, end_y);
+            foreach (Tile t in destroyTiles.Except(tiles).ToArray()) {
+                SimplePool.Despawn(tileToPreviewGO[t].gameObject);
+                tileToPreviewGO.Remove(t);
+                destroyTiles.Remove(t);
+            }
+            foreach (Tile t in tiles) {
+                if (destroyTiles.Contains(t))
+                    continue;
+                ShowTilePrefabOnTile(t, TileHighlightType.Red);
+                destroyTiles.Add(t);
+            }
         }
         if (Input.GetMouseButtonUp(0)) {
             List<Tile> ts = new List<Tile>(GetTilesStructures(start_x, end_x, start_y, end_y));
@@ -240,6 +243,7 @@ public class MouseController : MonoBehaviour {
                 bool isGod = EditorController.IsEditor; //TODO: add cheat to set this
                 BuildController.Instance.DestroyStructureOnTiles(ts, PlayerController.CurrentPlayer, isGod);
             }
+            ResetBuild(null, false);
         }
     }
 
@@ -666,6 +670,7 @@ public class MouseController : MonoBehaviour {
                 continue;
             tex.SetPixel(t.X, t.Y, new Color32(255, 255, 255, 20));
         }
+        Color32[] temp = tex.GetPixels32();
         tex.filterMode = FilterMode.Point;
         sr.sortingLayerName = "Structures";
         tex.Apply();
@@ -867,6 +872,7 @@ public class MouseController : MonoBehaviour {
         if(BuildController.Instance.BuildState != BuildStateModes.None)
             BuildController.Instance.ResetBuild();
         ResetStructurePreviews();
+        destroyTiles.Clear();
         ToBuildStructure = null;
         if(mouseUnitState == MouseUnitState.Build) {
             UnselectUnit();

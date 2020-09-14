@@ -1,9 +1,10 @@
+using System;
 using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using System.Threading.Tasks;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
+using UnityEngine;
 
 public class MapGenerator : MonoBehaviour {
 
@@ -16,16 +17,21 @@ public class MapGenerator : MonoBehaviour {
     bool startedGenerating = false;
     bool tilesPopulated = false;
     Tile[] tiles;
-    List<IslandStruct> toPlaceIslands;
-    List<IslandStruct> doneIslands;
-    public int MapSeed;
+    List<IslandData> toPlaceIslands;
+    List<IslandData> doneIslands;
+    ThreadRandom mapThreadRandom;
+    ThreadRandom placeIslandThreadRandom;
 
+    public int MapSeed;
     public int Width;
     public int Height;
     List<Task> generatorsTasks;
 
     int completedIslands = 0;
     public Dictionary<Tile, Structure> tileToStructure;
+    List<DirectionalRect> recantgleEmptySpaces;
+    Dictionary<Rect, IslandData> placeToIsland;
+    Dictionary<DirectionalRect, Color> rectToColor;
 
     List<IslandGenerator> islandGenerators;
     ConcurrentBag<EditorController.SaveIsland> loadedIslandsList;
@@ -76,6 +82,9 @@ public class MapGenerator : MonoBehaviour {
               ReadyToPlace && IsFinished == false;
         }
     }
+
+    public static int EditorSeed { get; private set; }
+
     bool IsFinished; //Internal use only
     bool IsPlacing;
     int toGeneratorIslands = 0;
@@ -105,7 +114,7 @@ public class MapGenerator : MonoBehaviour {
         }
         DontDestroyOnLoad(this.gameObject);
 
-        toPlaceIslands = new List<IslandStruct>();
+        toPlaceIslands = new List<IslandData>();
         tileToStructure = new Dictionary<Tile, Structure>();
         islands = SaveController.GetIslands();
         if (WorldController.Instance != null && WorldController.Instance.World != null)
@@ -120,11 +129,11 @@ public class MapGenerator : MonoBehaviour {
                                                                     List<string> hasToUseIslands) {
         started = true;
         MapSeed = seed;
+        mapThreadRandom = new ThreadRandom(seed);
         Debug.Log("GENERATING MAP with Seed: " + seed);
-        Random.InitState(seed);
         //THIS MUST BE THE FIRST RANDOM NUMBER!
         //TO make sure that there is no change of the placement 
-        islandPlaceSeed = Random.Range(0, int.MaxValue);
+        islandPlaceSeed = mapThreadRandom.Range(0, int.MaxValue);
         Width = width;
         Height = height;
         tiles = new Tile[Width * Height];
@@ -139,13 +148,13 @@ public class MapGenerator : MonoBehaviour {
             if(genInfo.generate) {
                 Debug.LogWarning("Generating Island still in alpha! Use with absolute caution. Note: it is still not guaranteed to have usable islands.");
                 Range range = numberRangeOfIslandsSizes[genInfo];
-                int numberOfIslands = Random.Range(range.min, range.max + 1);
+                int numberOfIslands = range.GetRandomCount(mapThreadRandom);
                 for (int i = 0; i < numberOfIslands; i++) {
                     islandsToGenerate.Add(new IslandGenInfo(genInfo)); // TODO: rethink this !
                 }
             } else {
                 Range range = numberRangeOfIslandsSizes[genInfo];
-                int numberOfIslands = Random.Range(range.min, range.max + 1);
+                int numberOfIslands = range.GetRandomCount(mapThreadRandom);
                 for (int i = 0; i < numberOfIslands; i++) {
                     string island = GetRandomIslandFileName(
                         Island.GetSizeTyp(genInfo.Width.Middle, genInfo.Height.Middle), genInfo.climate);
@@ -199,10 +208,10 @@ public class MapGenerator : MonoBehaviour {
             return null;
         }
         List<string> keyIslands = islands[key];
-        return keyIslands[Random.Range(0, keyIslands.Count)];
+        return keyIslands[mapThreadRandom.Range(0, keyIslands.Count)];
     }
 
-    public List<IslandStruct> GetIslandStructs() {
+    public List<IslandData> GetIslandStructs() {
         return doneIslands;
     }
 
@@ -226,7 +235,9 @@ public class MapGenerator : MonoBehaviour {
         started = true;
         Width = width;
         Height = height;
+        toGeneratorIslands = 1;
         islandsToGenerate = new List<IslandGenInfo>(toGenerate);
+        mapThreadRandom = new ThreadRandom();
         Generate();
     }
 
@@ -244,12 +255,16 @@ public class MapGenerator : MonoBehaviour {
         islandGenerators = new List<IslandGenerator>();
         for (int i = 0; i < islandCount; i++) {
             IslandGenInfo igi = islandsToGenerate[i];
+            int seed = mapThreadRandom.Range(0, int.MaxValue);
             IslandGenerator isg = new IslandGenerator(
-                Random.Range(igi.Width.min, igi.Width.max),
-                Random.Range(igi.Height.min, igi.Height.max),
-                Random.Range(0, int.MaxValue), 6,
+                mapThreadRandom.Range(igi.Width.lower, igi.Width.upper),
+                mapThreadRandom.Range(igi.Height.lower, igi.Height.upper),
+                seed,
                 igi.climate
             );
+            if(EditorController.IsEditor) {
+                MapGenerator.EditorSeed = seed;
+            }
             islandGenerators.Add(isg);
             //for now we just put them at fix spots
         }
@@ -294,17 +309,19 @@ public class MapGenerator : MonoBehaviour {
         if (ReadyToPlace) {
             if (IsPlacing == false) {
                 IsPlacing = true;
+
                 //if any island has been generated add them
                 if (generatorsTasks != null) {
                     foreach (IslandGenerator gen in islandGenerators) {
-                        toPlaceIslands.Add(gen.GetIslandStruct());
+                        toPlaceIslands.Add(gen.GetIslandData());
                     }
                 }
                 if (loadedIslandsList != null) {
                     foreach (EditorController.SaveIsland save in loadedIslandsList) {
-                        toPlaceIslands.Add(new IslandStruct(save, GetFertilitiesForClimate(save.climate, 3/*TODO:make nonstatic*/)));
+                        toPlaceIslands.Add(new IslandData(save));
                     }
                 }
+                GenerateIslandDataThings();
                 if (EditorController.IsEditor == false) {
                     //we have multiple islands to place!
                     StartCoroutine(PlaceIslandOnMap(toPlaceIslands));
@@ -331,7 +348,7 @@ public class MapGenerator : MonoBehaviour {
                 recantgleEmptySpaces = recantgleEmptySpaces.OrderBy ((x) => Vector2.Distance(x.Center, center)).ToList();
                 Vector2[] spawnPoints = new Vector2[PlayerController.PlayerCount];
                 Rect spawnRect = recantgleEmptySpaces[0].rect;
-                float radius = Mathf.Min(Random.Range(spawnRect.width / 6, spawnRect.width / 4), 15 , Random.Range(spawnRect.height / 6, spawnRect.height / 4));
+                float radius = Mathf.Min(mapThreadRandom.Range(spawnRect.width / 6, spawnRect.width / 4), 15 , mapThreadRandom.Range(spawnRect.height / 6, spawnRect.height / 4));
                 float degreesPerPlayer = (360 / (float) PlayerController.PlayerCount) * Mathf.Deg2Rad;
                 for (int i = 0; i < PlayerController.PlayerCount; i++) {
                     Vector2 vec2 = new Vector2(Mathf.RoundToInt(spawnRect.center.x + radius * Mathf.Cos(degreesPerPlayer * i)),
@@ -350,29 +367,156 @@ public class MapGenerator : MonoBehaviour {
             transform.SetParent(null);
         }
     }
+    Dictionary<Climate, WeightedRandomList<FertilityPrototypeData>> fertilityRandomListPerClimate;
+    Dictionary<Climate, WeightedRandomList<ResourceGenerationInfo>> resourcesRandomListPerClimate;
+
+    private void GenerateIslandDataThings() {
+        System.Diagnostics.Stopwatch s = new System.Diagnostics.Stopwatch();
+        s.Start();
+        Dictionary<Climate, List<FertilityPrototypeData>> toBeAllocatedFertilities = new Dictionary<Climate, List<FertilityPrototypeData>>();
+        fertilityRandomListPerClimate = new Dictionary<Climate, WeightedRandomList<FertilityPrototypeData>>();
+        resourcesRandomListPerClimate = new Dictionary<Climate, WeightedRandomList<ResourceGenerationInfo>>();
+
+        Dictionary<Climate, List<ResourceGenerationInfo>> toBeAllocatedResources = new Dictionary<Climate, List<ResourceGenerationInfo>>();
+        foreach (Climate climate in Enum.GetValues(typeof(Climate))) {
+            toBeAllocatedFertilities[climate] = new List<FertilityPrototypeData>();
+            toBeAllocatedFertilities[climate].AddRange(PrototypController.Instance.AllFertilitiesDatasPerClimate[climate]);
+            toBeAllocatedResources[climate] = new List<ResourceGenerationInfo>();
+            toBeAllocatedResources[climate].AddRange(PrototypController.Instance.ClimateToResourceGeneration[climate]);
+        }
+        Dictionary<Climate, int> climateNeededFertilities = new Dictionary<Climate, int>();
+        Dictionary<Climate, int> climateNeededResources = new Dictionary<Climate, int>();
+        foreach(IslandData data in toPlaceIslands) {
+            if (data.fertilities != null) {
+                foreach(FertilityPrototypeData fer in data.fertilities) {
+                    foreach(Climate c in fer.climates) {
+                        if(toBeAllocatedFertilities[c].Remove(fer)==false)
+                            fer.Select(1);
+                    }
+                }
+            }
+            if (data.Resources != null) {
+                foreach(string id in data.Resources.Keys) {
+                    if(data.Resources[id] > 0) {
+                        toBeAllocatedResources[data.climate].RemoveAll(x => x.ID == id);
+                    }
+                }
+            }
+        }
+        
+        foreach(Climate climate in Enum.GetValues(typeof(Climate))) {
+            fertilityRandomListPerClimate[climate] = 
+                new WeightedRandomList<FertilityPrototypeData>(PrototypController.Instance.AllFertilitiesDatasPerClimate[climate]);
+            resourcesRandomListPerClimate[climate] = 
+                new WeightedRandomList<ResourceGenerationInfo>(PrototypController.Instance.ClimateToResourceGeneration[climate]);
+            climateNeededFertilities[climate] = 0;
+            climateNeededResources[climate] = 0;
+        }
+        List<IslandData> datas = toPlaceIslands.ToList();
+        foreach (IslandData data in datas) { 
+            if (data.NeedsFertility) {
+                for (int i = 0; i < data.FertilityCount; i++) {
+                    data.AddFertility(fertilityRandomListPerClimate[data.climate].GetRandom(mapThreadRandom, data.fertilities, toPlaceIslands.Count));
+                }
+            }
+            if(data.NeedsResources) {
+                for (int i = 0; i < data.FertilityCount; i++) {
+                    List<ResourceGenerationInfo> exclude = new List<ResourceGenerationInfo>(data.resources);
+                    exclude.AddRange(data.excludedResources);
+                    data.AddResources(resourcesRandomListPerClimate[data.climate].GetRandom(mapThreadRandom, data.resources, toPlaceIslands.Count), mapThreadRandom);
+                }
+            }
+        }
+
+        foreach (Climate climate in Enum.GetValues(typeof(Climate))) {
+            if (fertilityRandomListPerClimate[climate].hasNoMustLeft == false) {
+                List<IslandData> sorted = toPlaceIslands.Where(x => x.climate == climate).OrderBy(x => x.Tiles.Length).ToList();
+                int i = 0;
+                while (fertilityRandomListPerClimate[climate].hasNoMustLeft == false && i < sorted.Count * 2) {
+                    sorted[i % sorted.Count].AddFertility
+                        (fertilityRandomListPerClimate[climate].GetRandom(mapThreadRandom, sorted[i % sorted.Count].fertilities, toPlaceIslands.Count));
+                    i++;
+                }
+            }
+            if (resourcesRandomListPerClimate[climate].hasNoMustLeft == false) {
+                List<IslandData> sorted = toPlaceIslands.Where(x => x.climate == climate).OrderBy(x => x.Tiles.Length).ToList();
+                int i = 0;
+                while (resourcesRandomListPerClimate[climate].hasNoMustLeft == false && i < sorted.Count * 2) {
+                    List<ResourceGenerationInfo> exclude = new List<ResourceGenerationInfo>(sorted[i % sorted.Count].resources);
+                    exclude.AddRange(sorted[i % sorted.Count].excludedResources);
+                    sorted[i % sorted.Count].AddResources(resourcesRandomListPerClimate[climate]
+                            .GetRandom(mapThreadRandom, exclude, toPlaceIslands.Count), mapThreadRandom);
+                    i++;
+                }
+            }
+        }
+        Debug.Log("RANDOM RESOURCES DONE " + s.Elapsed.TotalSeconds);
+        //foreach (IslandData islandData in toPlaceIslands) {
+        //    climateNeededFertilities[islandData.climate] += islandData.FertilityCount;
+        //    climateNeededResources[islandData.climate] += islandData.ResourcesCount;
+        //}
+        //foreach (Climate climate in Enum.GetValues(typeof(Climate))) {
+        //    for (int i = toBeAllocatedFertilities[climate].Count; i < climateNeededFertilities[climate]; i++) {
+        //        toBeAllocatedFertilities[climate].Add(fertilityRandomListPerClimate[climate].GetRandom(mapThreadRandom,climateNeededFertilities[climate]));
+        //    }
+        //    for (int i = toBeAllocatedResources[climate].Count; i < climateNeededFertilities[climate]; i++) {
+        //        toBeAllocatedResources[climate].Add(resourcesRandomListPerClimate[climate].GetRandom(mapThreadRandom, climateNeededResources[climate]));
+        //    }
+        //}
+        //foreach (IslandData islandData in toPlaceIslands) {
+        //    while(islandData.NeedsFertility&&toBeAllocatedFertilities[islandData.climate].Count>0) {
+        //        List<FertilityPrototypeData> avaible = toBeAllocatedFertilities[islandData.climate].Except(islandData.fertilities).ToList();
+        //        if (avaible.Count == 0)
+        //            break;
+        //        islandData.fertilities.Add(avaible[mapThreadRandom.Range(0, avaible.Count)]);
+        //    }
+        //    while (islandData.NeedsResources && toBeAllocatedResources[islandData.climate].Count > 0) {
+        //        List<ResourceGenerationInfo> avaible = toBeAllocatedResources[islandData.climate].Except(islandData.resources).ToList();
+        //        if (avaible.Count == 0)
+        //            break;
+        //        islandData.AddResources(avaible[mapThreadRandom.Range(0, avaible.Count)], mapThreadRandom);
+        //    }
+        //}
+        //List<IslandData> sorted = toPlaceIslands.ToList();
+        //while (toBeAllocatedFertilities.Count>0 && sorted.Count>0) {
+        //    sorted.OrderBy(x => x.Tiles.Length);
+        //    for (int i = sorted.Count-1; i >= 0; i--) {
+        //        IslandData islandData = sorted[i];
+        //        List<FertilityPrototypeData> avaible = toBeAllocatedFertilities[islandData.climate].Except(islandData.fertilities).ToList();
+        //        if (avaible.Count == 0) {
+        //            sorted.RemoveAt(i);
+        //            continue;
+        //        }
+        //        islandData.fertilities.Add(avaible[mapThreadRandom.Range(0, avaible.Count)]);
+        //    }
+        //}
+    }
+
+    private Dictionary<string, int> GetResourcesFromRange(Dictionary<string, Range> resourcesRanges) {
+        Dictionary<string, int> resources = new Dictionary<string, int>();
+        foreach(string id in resourcesRanges.Keys) {
+            resources[id] = mapThreadRandom.Range(resourcesRanges[id].lower, resourcesRanges[id].upper);
+        }
+        return resources;
+    }
 
     private void MakeOnLoadDestroy() {
         GameObject go = new GameObject("DestroyLoad");
         transform.SetParent(go.transform);
     }
 
-    List<DirectionalRect> recantgleEmptySpaces;
-    Dictionary<Rect, IslandStruct> placeToIsland;
-    Dictionary<DirectionalRect, Color> rectToColor;
-
-    private IEnumerator PlaceIslandOnMap(List<IslandStruct> islandStructs) {
+    private IEnumerator PlaceIslandOnMap(List<IslandData> islandStructs) {
         placeProgress = 0;
         //Makes it easier to have the same placement of the islands
-        Random.InitState(islandPlaceSeed);
-
+        placeIslandThreadRandom = new ThreadRandom(islandPlaceSeed);
         List<Rect> rectangleIslands = new List<Rect>();
         rectToColor = new Dictionary<DirectionalRect, Color>();
 
-        placeToIsland = new Dictionary<Rect, IslandStruct>();
+        placeToIsland = new Dictionary<Rect, IslandData>();
         recantgleEmptySpaces = new List<DirectionalRect>();
         int retriesWorld = 32;
         bool worldFailed = false;
-        List<IslandStruct> toPlaceIslands = new List<IslandStruct>(islandStructs);
+        List<IslandData> toPlaceIslands = new List<IslandData>(islandStructs);
         //while it fails repeat it until it was "retriesWorld" times tried
         do {
             yield return new WaitForEndOfFrame();
@@ -386,7 +530,7 @@ public class MapGenerator : MonoBehaviour {
                 rect = new Rect(0, 0, Width, Height)
             });
             //if we have to try again clear the done islands
-            foreach (IslandStruct island in toPlaceIslands) {
+            foreach (IslandData island in toPlaceIslands) {
                 Color color = colors[i%6];
                 int islandTries = 0;
                 bool failed = false;
@@ -407,8 +551,8 @@ public class MapGenerator : MonoBehaviour {
                     int MinY = (int)Mathf.Max(hasToBeIn.yMin, placeIn.yMin);
                     int MaxX = (int)Mathf.Min(hasToBeIn.xMax, placeIn.xMax);
                     int MinX = (int)Mathf.Max(hasToBeIn.xMin, placeIn.xMin);
-                    int x = Random.Range(MinX, MaxX - island.Width);
-                    int y = Random.Range(MinY, MaxY - island.Height);
+                    int x = placeIslandThreadRandom.Range(MinX, MaxX - island.Width);
+                    int y = placeIslandThreadRandom.Range(MinY, MaxY - island.Height);
                     islandTries++;
                     Rect toTest = new Rect(x, y, island.Width + MinTilesAroundIsland, island.Height + MinTilesAroundIsland);
                     //foreach (Rect inWorld in rectangleIslands) {
@@ -486,10 +630,10 @@ public class MapGenerator : MonoBehaviour {
         if (worldFailed) {
             Debug.LogError("World did not generate correctly! -- Couldnt fit all of the island! ");
         }
-        doneIslands = new List<IslandStruct>();
+        doneIslands = new List<IslandData>();
         foreach (Rect place in placeToIsland.Keys) {
             yield return new WaitForEndOfFrame();
-            IslandStruct island = placeToIsland[place];
+            IslandData island = placeToIsland[place];
             Tile[] islandTiles = new Tile[island.Tiles.Length];
             for (int i = 0; i < island.Tiles.Length; i++) {
                 Tile t = island.Tiles[i];
@@ -502,7 +646,7 @@ public class MapGenerator : MonoBehaviour {
                 }
             }
             placeProgress += 0.2f / placeToIsland.Count;
-            IslandStruct placedIslandStruct = new IslandStruct(island, islandTiles, place);
+            IslandData placedIslandStruct = new IslandData(island, islandTiles, place);
             doneIslands.Add(placedIslandStruct);
         }
         TileSpriteController.CreateIslandSprites(doneIslands);
@@ -581,7 +725,7 @@ public class MapGenerator : MonoBehaviour {
         }
         world = new World(tiles, Width, Height, isIslandEditor);
         if(doneIslands != null) {
-            foreach (IslandStruct island in doneIslands) {
+            foreach (IslandData island in doneIslands) {
                 world.CreateIsland(island);
             }
         }
@@ -618,20 +762,25 @@ public class MapGenerator : MonoBehaviour {
         tiles[x * Height + y] = t;
     }
 
-    public List<Fertility> GetFertilitiesForClimate(Climate climate, int count) {
+    public List<Fertility> GetFertilitiesForClimate(Climate climate, int width, int height) {
         List<Fertility> fers = new List<Fertility>();
         if (PrototypController.Instance.GetFertilitiesForClimate(climate) == null) {
             Debug.LogError("NO fertility found for this climate " + climate);
             return null;
         }
-        List<Fertility> climFer = new List<Fertility>(PrototypController.Instance.GetFertilitiesForClimate(climate));
+        
 
+
+        List<Fertility> climFer = new List<Fertility>(PrototypController.Instance.GetFertilitiesForClimate(climate));
+        Range range = PrototypController.Instance.IslandSizeToGenerationInfo[Island.GetSizeTyp(width, height)].fertilityRange;
+        int count = range.GetRandomCount(mapThreadRandom);
+        Island.GetSizeTyp(width, height);
         for (int i = 0; i < count; i++) {
             if (climFer.Count == 0) {
                 Debug.LogWarning("NOT ENOUGH FERTILITIES FOR CLIMATE " + climate);
                 break;
             }
-            Fertility f = climFer[UnityEngine.Random.Range(0, climFer.Count)];
+            Fertility f = climFer[mapThreadRandom.Range(0, climFer.Count)];
             climFer.Remove(f);
             fers.Add(f);
         }
@@ -657,7 +806,7 @@ public class MapGenerator : MonoBehaviour {
         }
         //Maybe add any SpecialFeature it may contain? eg vulkan, 
     }
-    public struct IslandStruct {
+    public class IslandData {
         public string name;
         public int Width;
         public int Height;
@@ -665,83 +814,98 @@ public class MapGenerator : MonoBehaviour {
         public int y;
         public Tile[] Tiles;
         public Climate climate;
-        public List<Fertility> fertilities;
+        public List<FertilityPrototypeData> fertilities = new List<FertilityPrototypeData>();
+        public List<ResourceGenerationInfo> resources = new List<ResourceGenerationInfo>();
         public Dictionary<Tile, Structure> tileToStructure;
-        public Dictionary<string, int> Ressources;
+        public Dictionary<string, int> Resources = new Dictionary<string, int>();
+        public Size Size;
+        public int ResourcesCount;
+        public int FertilityCount;
+        internal List<ResourceGenerationInfo> excludedResources;
 
-        public IslandStruct(int width, int height, Tile[] tiles, Climate climate, List<Fertility> list, Dictionary<string, int> Ressources, Dictionary<Tile, Structure> tileToStructure) : this() {
-            Width = width;
-            Height = height;
-            Tiles = tiles;
-            this.climate = climate;
-            fertilities = list;
-            this.name = "";
-            this.Ressources = Ressources;
-            this.tileToStructure = tileToStructure;
-        }
-        public IslandStruct(EditorController.SaveIsland save, List<Fertility> fertilities) : this() {
+        public bool NeedsFertility => FertilityCount > fertilities.Count;
+        public bool NeedsResources => ResourcesCount > resources.Count;
+
+        public IslandData(EditorController.SaveIsland save) : this(save.Width, save.Height) {
             Width = save.Width;
             Height = save.Height;
             Tiles = save.tiles;
             this.climate = save.climate;
-            Ressources = new Dictionary<string, int>();
-            if (save.Ressources != null) {
-                foreach (string id in save.Ressources.Keys) {
-                    Ressources[id] = Random.Range(save.Ressources[id][0], save.Ressources[id][1] + 1);
-                }
-            }
             name = save.Name;
-            this.fertilities = fertilities;
+            Resources = MapGenerator.Instance.GetResourcesFromRange(save.Resources);
             tileToStructure = new Dictionary<Tile, Structure>();
             foreach (Structure str in save.structures) {
                 tileToStructure.Add(str.BuildTile, str);
             }
         }
-        public IslandStruct(IslandStruct copy) : this() {
-            Width = copy.Width;
-            Height = copy.Height;
+        public IslandData(IslandData copy) : this(copy.Width, copy.Height) {
             Tiles = copy.Tiles;
             this.climate = copy.climate;
             tileToStructure = copy.tileToStructure;
             this.name = copy.name;
             this.fertilities = copy.fertilities;
-            Ressources = copy.Ressources;
+            Resources = copy.Resources;
             //x = copy.x;
             //y = copy.y;
 
         }
 
-        public IslandStruct(IslandStruct copy, Tile[] islandTiles) : this(copy) {
+        public IslandData(IslandData copy, Tile[] islandTiles) : this(copy) {
             this.Tiles = islandTiles;
         }
 
-        public IslandStruct(IslandStruct copy, Tile[] islandTiles, Rect place) : this(copy, islandTiles) {
+        public IslandData(IslandData copy, Tile[] islandTiles, Rect place) : this(copy, islandTiles) {
             this.x = (int)place.x;
             this.y = (int)place.y;
         }
+
+        public IslandData(int Width, int Height) {
+            this.Width = Width;
+            this.Height = Height;
+            Size = Island.GetSizeTyp(Width, Height);
+            IslandSizeGenerationInfo info =PrototypController.Instance.IslandSizeToGenerationInfo[Size];
+            ResourcesCount = info.resourceRange.GetRandomCount(MapGenerator.Instance.mapThreadRandom);
+            FertilityCount = info.fertilityRange.GetRandomCount(MapGenerator.Instance.mapThreadRandom);
+        }
+        IslandData() { }
+        public IslandData(int width, int height, Tile[] tile, Climate climate, Dictionary<Tile, Structure> tileToStructure) : this(width, height) {
+            Width = width;
+            Height = height;
+            this.Tiles = tile;
+            this.climate = climate;
+            this.tileToStructure = tileToStructure;
+            excludedResources = new List<ResourceGenerationInfo>();
+            excludedResources.AddRange(PrototypController.Instance.ClimateToResourceGeneration[climate].FindAll(x =>
+                    x.requiredTile != null && Array.Exists(x.requiredTile, y => Array.Exists(Tiles, z => z.Type == y) == false
+            )));
+        }
+
         public Vector2 GetPosition() {
             return new Vector2(x, y);
         }
-    }
-    public struct Range {
-        public int min;
-        public int max;
-        public int Middle => (min + max) / 2;
-        public Range(int min, int max) {
-            this.min = min;
-            this.max = max;
-        }
-        /// <summary>
-        /// Returns true if the value is bigger/equal than min
-        /// AND smaller(!) than max!
-        /// </summary>
-        /// <param name="value"></param>
-        /// <returns></returns>
-        public bool IsBetween(int value) {
-            return value >= min && value < max;
+
+        internal void AddResources(ResourceGenerationInfo resourceGenerationInfo, ThreadRandom random) {
+            if (resourceGenerationInfo == null)
+                return;
+            resources.Add(resourceGenerationInfo);
+            Resources[resourceGenerationInfo.ID] = resourceGenerationInfo.resourceRange[Size].GetRandomCount(random);
         }
 
+        internal List<Fertility> GetFertilities() {
+            List<Fertility> fer = new List<Fertility>();
+            foreach(FertilityPrototypeData f in fertilities) {
+                fer.Add(new Fertility(f.ID, f));
+            }
+            return fer;
+        }
+
+        internal void AddFertility(FertilityPrototypeData fertilityPrototypeData) {
+            if (fertilityPrototypeData == null)
+                return;
+            fertilities.Add(fertilityPrototypeData);
+        }
     }
+
     class DirectionalRect {
         public Direction direction;
         public Rect rect;
@@ -791,4 +955,32 @@ public class MapGenerator : MonoBehaviour {
             return rect.Overlaps(toTest);
         }
     }
+}
+
+public class IslandSizeGenerationInfo {
+    public Range resourceRange;
+    public Range fertilityRange;
+    public List<ResourceGenerationInfo> resourceGenerationsInfo = new List<ResourceGenerationInfo>();
+}
+
+public class ResourceGenerationInfo : IWeighted {
+    public string ID;
+    public Climate[] climate;
+    public TileType[] requiredTile;
+    public Dictionary<Size, Range> resourceRange;
+    public float percentageOfIslands;
+    int generated;
+
+    public float GetStartWeight() {
+        return percentageOfIslands;
+    }
+    public float GetCurrentWeight(int maximumSelect) {
+        return Mathf.Clamp(percentageOfIslands - generated / maximumSelect, 0.01f, 1);
+    }
+    public float Select(int maximumSelect) {
+        float old = GetCurrentWeight(maximumSelect);
+        generated++;
+        return old - GetCurrentWeight(maximumSelect);
+    }
+
 }

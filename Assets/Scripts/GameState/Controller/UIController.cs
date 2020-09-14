@@ -6,8 +6,9 @@ using System.Collections.Generic;
 using System;
 
 public class UIController : MonoBehaviour {
-    public float CanvasScaleWidth => Screen.width / GetComponentInParent<CanvasScaler>().referenceResolution.x;
-    public float CanvasScaleHeight => Screen.height / GetComponentInParent<CanvasScaler>().referenceResolution.y;
+    Vector2 referenceResolution;
+    public float CanvasScaleWidth => Screen.width / referenceResolution.x;
+    public float CanvasScaleHeight => Screen.height / referenceResolution.y;
     public Vector2 CanvasScale => new Vector2(CanvasScaleWidth, CanvasScaleHeight);
     public GameObject mainCanvas;
     public GameObject shortCutCanvas;
@@ -44,6 +45,7 @@ public class UIController : MonoBehaviour {
     private static UIControllerSave uIControllerSave;
 
     void Start() {
+        referenceResolution = FindObjectOfType<CanvasScaler>().referenceResolution;
         Escape(true);
         endScoreScreen.SetActive(false);
         if (Instance != null) {
@@ -63,7 +65,6 @@ public class UIController : MonoBehaviour {
             LoadUISaveData();
         }
     }
-
     internal void ToggleDiplomacyMenu() {
         if(diplomacyCanvas.activeSelf) {
             CloseCenter();

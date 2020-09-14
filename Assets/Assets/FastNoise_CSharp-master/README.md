@@ -1,3 +1,5 @@
+[![discord](https://img.shields.io/discord/703636892901441577?style=flat-square&logo=discord "Discord")](https://discord.gg/SHVaVfV)
+
 # FastNoise
 
 This is the C# version of [FastNoise](https://github.com/Auburns/FastNoise)

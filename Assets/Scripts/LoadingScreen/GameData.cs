@@ -56,17 +56,17 @@ public class GameData : MonoBehaviour {
         if(RandomSeed) {
             MapSeed = UnityEngine.Random.Range(int.MinValue, int.MaxValue);
         }
-        Dictionary<MapGenerator.IslandGenInfo, MapGenerator.Range> dict = new Dictionary<MapGenerator.IslandGenInfo, MapGenerator.Range> { 
+        Dictionary<MapGenerator.IslandGenInfo, Range> dict = new Dictionary<MapGenerator.IslandGenInfo, Range> { 
             //Temporary fill this list, later generate this from selected/number of player, map size, difficulty, and other
-            {new MapGenerator.IslandGenInfo(new MapGenerator.Range(100,100), new MapGenerator.Range(100, 100), Climate.Middle,false),new MapGenerator.Range(1,1)
+            {new MapGenerator.IslandGenInfo(new Range(100,100), new Range(100, 100), Climate.Middle,false),new Range(1,1)
             },
-            {new MapGenerator.IslandGenInfo(new MapGenerator.Range(100, 100), new MapGenerator.Range(100, 100), Climate.Cold,false),new MapGenerator.Range(1,2)
+            {new MapGenerator.IslandGenInfo(new Range(100, 100), new Range(100, 100), Climate.Cold,false),new Range(1,2)
             },
-            {new MapGenerator.IslandGenInfo(new MapGenerator.Range(60, 60), new MapGenerator.Range(60, 60), Climate.Warm,false),new MapGenerator.Range(1,1)
+            {new MapGenerator.IslandGenInfo(new Range(60, 60), new Range(60, 60), Climate.Warm,false),new Range(1,1)
             },
-            {new MapGenerator.IslandGenInfo(new MapGenerator.Range(100, 100), new MapGenerator.Range(100, 100), Climate.Warm,true),new MapGenerator.Range(1,1)
+            {new MapGenerator.IslandGenInfo(new Range(100, 100), new Range(100, 100), Climate.Warm,true),new Range(1,1)
             },
-            {new MapGenerator.IslandGenInfo(new MapGenerator.Range(150, 150), new MapGenerator.Range(150, 150), Climate.Middle,true),new MapGenerator.Range(1,1)
+            {new MapGenerator.IslandGenInfo(new Range(150, 150), new Range(150, 150), Climate.Middle,true),new Range(1,1)
             }
         };
         if (SaveController.IsLoadingSave == false) {

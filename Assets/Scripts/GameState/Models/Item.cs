@@ -1,6 +1,6 @@
 using System;
 using Newtonsoft.Json;
-
+using UnityEngine.UI;
 
 public enum ItemType { Missing, Build, Intermediate, Luxury, Military }
 
@@ -15,6 +15,8 @@ public class Item {
     [JsonPropertyAttribute] public int count;
 
     protected ItemPrototypeData _prototypData;
+    internal string countString => count+"t";
+
     public ItemPrototypeData Data {
         get {
             if (_prototypData == null) {

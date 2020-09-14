@@ -249,32 +249,32 @@ public class Island : IGEventable {
         return -1;
     }
     #endregion
-    public static MapGenerator.Range GetRangeForSize(Size sizeType) {
+    public static Range GetRangeForSize(Size sizeType) {
         switch (sizeType) {
             case Size.VerySmall:
-                return new MapGenerator.Range(40, 80);
+                return new Range(40, 80);
             case Size.Small:
-                return new MapGenerator.Range(80, 120);
+                return new Range(80, 120);
             case Size.Medium:
-                return new MapGenerator.Range(120, 160);
+                return new Range(120, 160);
             case Size.Large:
-                return new MapGenerator.Range(160, 200);
+                return new Range(160, 200);
             case Size.VeryLarge:
-                return new MapGenerator.Range(200, int.MaxValue);
+                return new Range(200, int.MaxValue);
             default:
                 //Debug.LogError("NOT RECOGNISED ISLAND SIZE! Nothing has no size!");
-                return new MapGenerator.Range(0, 0);
+                return new Range(0, 0);
         }
     }
-    public static Size GetSizeTyp(int widht, int height) {
+    public static Size GetSizeTyp(int width, int height) {
         foreach (Size size in Enum.GetValues(typeof(Size))) {
-            int middle = widht + height;
+            int middle = width + height;
             middle /= 2;
             if (GetRangeForSize(size).IsBetween(middle)) {
                 return size;
             }
         }
-        Debug.LogError("The Island does not fit any Range! Widht = " + widht + " : Height " + height);
+        Debug.LogError("The Island does not fit any Range! Widht = " + width + " : Height " + height);
         return Size.Other;
     }
 

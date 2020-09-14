@@ -41,7 +41,7 @@ public class Player : IGEventable {
     /// How the Balance CHANGES foreach Tick that happens
     /// </summary>
 	public int TreasuryChange {
-        get { return CalculateRealValue("change", _treasuryChange); }
+        get { return CalculateRealValue(nameof(TreasuryChange), _treasuryChange); }
         protected set { _treasuryChange = value; }
     } //should be calculated after reload anyway
 

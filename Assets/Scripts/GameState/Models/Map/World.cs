@@ -203,11 +203,11 @@ public class World : IGEventable {
         }
     }
 
-    public void CreateIsland(MapGenerator.IslandStruct islandStruct) {
+    public void CreateIsland(MapGenerator.IslandData islandStruct) {
         Island island = new Island(islandStruct.Tiles, islandStruct.climate) {
-            Fertilities = new List<Fertility>(islandStruct.fertilities),
+            Fertilities = islandStruct.GetFertilities(),
             Placement = new Vector2(islandStruct.x, islandStruct.y),
-            Ressources = new Dictionary<string, int>(islandStruct.Ressources)
+            Ressources = islandStruct.Resources
         };
         Islands.Add(island);
     }

@@ -11,6 +11,7 @@ public class NeedPrototypeData : LanguageVariables {
     public float[] UsageAmounts;
     public int startLevel;
     public int startPopulationCount;
+    public bool hasToReachPerRoad;
 }
 /// <summary>
 /// each need needs to be in a group with similar needs
@@ -48,7 +49,7 @@ public class Need {
     public int StartLevel {
         get { return Data.startLevel; }
     }
-
+    public bool HasToReachPerRoad => Data.hasToReachPerRoad;
     public int StartPopulationCount {
         get { return Data.startPopulationCount; }
     }
@@ -60,7 +61,7 @@ public class Need {
     public float[] percantageAvailability;
     [JsonPropertyAttribute]
     public float notUsedOfTon = 0;
-
+    
     public Need(string id, NeedPrototypeData npd) : this() {
         this.ID = id;
         this._prototypData = npd;

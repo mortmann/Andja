@@ -65,7 +65,7 @@ public class RoutePathfinding : Pathfinding {
                 endTiles = GoalStructure.Tiles;
                 GoalStructure.Tiles.ForEach(x => route.TileGraph.AddNodeToRouteTileGraph(x));
             } else {
-                endTiles = GoalStructure.RoadsAroundStructure();
+                endTiles = GoalStructure.RoadsAroundStructure().Select(x=>x.BuildTile).ToList();
             }
             endTiles = endTiles.Where(x => route.TileGraph.Tiles.Contains(x)).ToList();
             List<Tile> startTiles = StartStructure.Tiles.Where(x => route.TileGraph.Tiles.Contains(x)).ToList();

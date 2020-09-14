@@ -167,7 +167,7 @@ public class Worker {
         if (path.IsAtDestination == false) {
             if(walkTimeIsWorkTime) {
                 workTimer -= deltaTime;
-                if(workTimer <= 0) {
+                if(workTimer <= -deltaTime) {
                     DropOffItems(0);
                     //we have an issue -- done before it is home
                     Debug.LogWarning("Worker done before it is at Home. Fix this with either smaller Range," +
@@ -185,7 +185,7 @@ public class Worker {
             // coming home from doing the work
             // drop off the items its carrying
             if (Home is FarmStructure) {
-                if(workTimer>0.01f) {
+                if(workTimer>0) {
                     workTimer -= deltaTime;
                     return;
                 }

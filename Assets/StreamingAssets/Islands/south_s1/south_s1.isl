@@ -4385,5 +4385,5 @@
     }
   ],
   "structures": [],
-  "Ressources": {}
+  "Resources": {}
 }

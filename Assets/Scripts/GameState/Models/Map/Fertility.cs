@@ -3,14 +3,28 @@ using System.Collections.Generic;
 using System;
 using Newtonsoft.Json;
 
-public class FertilityPrototypeData : LanguageVariables {
+public class FertilityPrototypeData : LanguageVariables, IWeighted {
+    public string ID;
     public Climate[] climates;
+    public float percentageOfIslands;
+    public float GetStartWeight() {
+        return percentageOfIslands;
+    }
+    public float GetCurrentWeight(int maximumSelect) {
+        return Mathf.Clamp(percentageOfIslands - generated / maximumSelect, 0.01f, 1);
+    }
+    int generated;
+    public float Select(int maximumSelect) {
+        float old = GetCurrentWeight(maximumSelect);
+        generated++;
+        return old - GetCurrentWeight(maximumSelect);
+    }
 }
 
 [JsonObject(MemberSerialization.OptIn)]
 public class Fertility : IComparable<Fertility>, IEqualityComparer<Fertility> {
     [JsonPropertyAttribute] public string ID;
-
+    
     protected FertilityPrototypeData _prototypData;
     public FertilityPrototypeData Data {
         get {

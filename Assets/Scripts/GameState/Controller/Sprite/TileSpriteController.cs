@@ -20,9 +20,8 @@ using System.Collections.Concurrent;
 public class TileSpriteController : MonoBehaviour {
     public static TileSpriteController Instance { get; protected set; }
     public Material tileMapRendererBlending;
-    public static Dictionary<string, Sprite> nameToSprite;
-    private static Dictionary<string, Dictionary<string, List<string>>> typeTotileSpriteNames;
-
+    static Dictionary<string, Sprite> nameToSprite;
+    static Dictionary<Climate, ClimateSprites> climateTileSprites;
     public Sprite noSprite;
     public Sprite emptySprite;
 
@@ -38,6 +37,7 @@ public class TileSpriteController : MonoBehaviour {
     public Material darkMaterial;
     Material clearMaterial;
     public Material highlightMaterial;
+    public Material tileMapMaterial;
 
     private static Dictionary<Vector2, Texture2D> islandToMaskTexture;
     private static Dictionary<Vector2, GameObject> islandPosToTilemap;
@@ -162,10 +162,37 @@ public class TileSpriteController : MonoBehaviour {
         water.transform.localScale = new Vector3(World.Width / 10, 0.1f, World.Height / 10);
         water.GetComponent<Renderer>().material = waterMaterial;
         water.GetComponent<Renderer>().material.mainTextureScale = new Vector2(World.Width, World.Height);
-
+        Texture2D tex = new Texture2D(World.Width, World.Height);
+        Color[] colors = tex.GetPixels();
+        for (int y = 0; y < World.Height; y++) {
+            for (int x = 0; x < World.Width; x++) {
+                //float b = ((((float)x + (float)y) / ((float)World.Width + (float)World.Height)));
+                Tile t = World.GetTileAt(x,y);
+                if (t == null) {
+                    continue;
+                }
+                colors[x  + y* World.Width] = new Color(1, 1, 1, t.Moisture);
+            }
+        }
         foreach (Tile t in World.Current.Tiles) {
             ChangeEditorTile(t);
+            //if (t != null)
+            //    colors[t.X + t.Y * World.Width] = new Color(1, 1, 1, 0);
         }
+        tex.SetPixels(colors);
+        tex.Apply();
+        byte[] bytes = tex.EncodeToPNG();
+        var dirPath = Application.dataPath + "/../SaveImages/";
+        if (!System.IO.Directory.Exists(dirPath)) {
+            System.IO.Directory.CreateDirectory(dirPath);
+        }
+        System.IO.File.WriteAllBytes(dirPath + "Image" + ".png", bytes);
+
+        trr.material = tileMapMaterial;
+        trr.material.SetTexture("_Saturations", tex);
+        trr.material.SetVector("_startPosition", new Vector2(0, 0));
+        trr.material.SetVector("_Size", new Vector2(World.Width, World.Height));
+
         World.RegisterTileChanged(ChangeEditorTile);
 
     }
@@ -249,6 +276,7 @@ public class TileSpriteController : MonoBehaviour {
                 }
                 string temp = nameToBaseTile.ContainsKey(tile_data.SpriteName) ? tile_data.SpriteName : "nosprite" ;
                 tilemap.SetTile(new Vector3Int( x, y, 0 ) , nameToBaseTile[temp]);
+                
                 //MASK TEXTURE
                 masktexture.SetPixel(x, y, new Color32(128, 128, 128, 128));
             }
@@ -334,43 +362,31 @@ public class TileSpriteController : MonoBehaviour {
                 nameToSprite[s.name] = s;
             }
         }
-        typeTotileSpriteNames = new Dictionary<string, Dictionary<string, List<string>>>();
-
+        climateTileSprites = new Dictionary<Climate, ClimateSprites>();
+        foreach (Climate c in Enum.GetValues(typeof(Climate)))
+            climateTileSprites[c] = new ClimateSprites(c);
         foreach (string s in TileSpriteController.nameToSprite.Keys) {
             string[] parts = s.Split('_');
-            string part = parts[0].ToLower();
-            string climateIdentifier = TileSpriteClimate.all.ToString();
-            //if the first identifier is a climate
-            try {
-                Climate climate = (Climate)Enum.Parse(typeof(Climate), part, true);
-                climateIdentifier = climate.ToString();
-                part = s.Split('_')[1].ToLower();
-            }
-            catch {
-
-            }
-
-            TileType type;
-            try {
-                type = (TileType)Enum.Parse(typeof(TileType), part, true);
-            }
-            catch {
+            if (parts.Length < 4) {
+                //Debug.LogError("Tile Sprite in correct formatted - climate_type_connections_variation");
                 continue;
             }
-            string spriteAddon = "";
-            if (parts.Length > 2)
-                spriteAddon = parts[2];
-            string spriteFull = type.ToString() + spriteAddon;
-            //			Debug.Log (type + " / " + s.name);
-            if (typeTotileSpriteNames.ContainsKey(spriteFull) == false) {
-                Dictionary<string, List<string>> dict = new Dictionary<string, List<string>>();
-                typeTotileSpriteNames.Add(spriteFull, dict);
-            }
-            if (typeTotileSpriteNames[spriteFull].ContainsKey(climateIdentifier)) {
-                typeTotileSpriteNames[spriteFull][climateIdentifier].Add(s);
+            TileType type = (TileType)Enum.Parse(typeof(TileType), parts[1], true);
+            string connections = parts[2].ToLower();
+            string variation = parts[3].ToLower();
+            if (parts[0].ToLower() == "all") {
+                foreach(Climate c in Enum.GetValues(typeof(Climate)))
+                    climateTileSprites[c].AddSprite(type, connections, s);
             }
             else {
-                typeTotileSpriteNames[spriteFull].Add(climateIdentifier, new List<string> { s });
+                try {
+                    Climate climate = (Climate)Enum.Parse(typeof(Climate), parts[0], true);
+                    climateTileSprites[climate].AddSprite(type, connections, s);
+                }
+                catch {
+                    //NO correct climate so skip -- TODO: uncomment -- for now to much spam
+                    //Debug.LogError("Tile Sprite in correct formatted Climate - either all or on of the enums (cold,middle,warm)");
+                }
             }
         }
     }
@@ -432,32 +448,74 @@ public class TileSpriteController : MonoBehaviour {
         }
     }
     public static List<string> GetSpriteNamesForType(TileType type, Climate climate, string spriteAddon = null) {
-        string climateString = climate.ToString();
-        if (typeTotileSpriteNames == null)
+        if (climateTileSprites == null)
             LoadSprites();
-        Dictionary<string, List<string>> typeToSpriteList = null;
-        if (typeTotileSpriteNames.ContainsKey(type.ToString())) {
-            typeToSpriteList = typeTotileSpriteNames[type.ToString() + spriteAddon];
-        } else {
-            typeToSpriteList = typeTotileSpriteNames[type.ToString()];
-        }
-        if (typeTotileSpriteNames == null)
+        if (type == TileType.Ocean)
             return null;
-        if (type == TileType.Shore) {
-            //TODO: FIX this -- For now only one type of shore
-            return new List<string> { type.ToString().ToLower()+spriteAddon};
-            //if (typeTotileSpriteNames.ContainsKey(type) || typeTotileSpriteNames[type].ContainsKey(climateString)) {
-            //    return null;
-            //}
-            //return typeTotileSpriteNames[type][climateString]?.Where(x => x == type + spriteAddon).ToList();
-        }
-        if (typeToSpriteList.ContainsKey(climateString) == false) {
-            if (typeToSpriteList.ContainsKey(TileSpriteClimate.all.ToString()) == false) {
-                return null;
-            }
-            return typeToSpriteList[TileSpriteClimate.all.ToString()];
-        }
-        return typeToSpriteList[climateString];
+        if (climateTileSprites[climate].typeTree.ContainsKey(type) == false)
+            return null;
+        return climateTileSprites[climate].typeTree[type].GetClosest(spriteAddon);
     }
+    class ClimateSprites {
+        public Climate climate;
+        public Dictionary<TileType, TileTypeSprites> tileTypeSprites = new Dictionary<TileType, TileTypeSprites>();
+        public Dictionary<TileType, ClosestTree> typeTree = new Dictionary<TileType, ClosestTree>();
+        public ClimateSprites(Climate climate) {
+            this.climate = climate;
+        }
 
+        public void AddSprite(TileType type, string connections, string name) {
+            if (tileTypeSprites.ContainsKey(type) == false) {
+                tileTypeSprites[type] = new TileTypeSprites(type);
+                typeTree[type] = new ClosestTree(type);
+            }
+            typeTree[type].Insert(connections, name);
+            tileTypeSprites[type].AddSprite(connections, name);
+        }
+
+        internal List<string> GetSprites(TileType type, string spriteAddon) {
+            if (tileTypeSprites.ContainsKey(type) == false)
+                return new List<string>();
+            return tileTypeSprites[type].GetSprites(spriteAddon);
+        }
+    }
+    class TileTypeSprites {
+        public TileType type;
+        public Dictionary<string, List<string>> connectionToSprite = new Dictionary<string, List<string>>();
+
+        public TileTypeSprites(TileType type) {
+            this.type = type;
+        }
+
+        public void AddSprite(string connections, string name) {
+            connections = connections.ToLower();
+            if (connectionToSprite.ContainsKey(connections) == false) 
+                connectionToSprite[connections] = new List<string>();
+            connectionToSprite[connections].Add(name);
+        }
+        internal List<string> GetSprites(string spriteAddon) {
+            if (spriteAddon == null)
+                return null;
+            if (type == TileType.Dirt)
+                Debug.Log("");
+            if (connectionToSprite.ContainsKey(spriteAddon) == false) {
+                string newAddon = "";
+                char f = type.ToString().ToLower()[0];
+                foreach (char c in spriteAddon) {
+                    if (c == 'o') {
+                        newAddon += 'o';
+                        continue;
+                    }
+                    newAddon += c == f ? f : 'a';
+                }
+                if (connectionToSprite.ContainsKey(newAddon))
+                    return connectionToSprite[newAddon];
+                newAddon = new string(new char[]{ f, f, f, f });
+                if (connectionToSprite.ContainsKey(newAddon) ==false)
+                    return new List<string>() { "nosprite" };
+                return connectionToSprite[newAddon];
+            }
+            return connectionToSprite[spriteAddon];
+        }
+    }
 }

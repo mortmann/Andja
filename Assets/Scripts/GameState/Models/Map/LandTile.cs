@@ -121,6 +121,7 @@ public class LandTile : Tile {
         this.x = (ushort)x;
         this.y = (ushort)y;
         Elevation = t.Elevation;
+        Moisture = t.Moisture;
         SpriteName = t.SpriteName;
         _type = t.Type;
     }

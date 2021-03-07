@@ -17,32 +17,32 @@ Shader "Sprites/TileBlended" // Name changed
 			_TransparencyRatio("Transparency Ratio", Range(0, 0.5)) = 0.1
 	}
 
-		SubShader
+	SubShader
+	{
+		Tags
 		{
-			Tags
-			{
-				"Queue" = "Transparent"
-				"IgnoreProjector" = "True"
-				"RenderType" = "Transparent"
-				"PreviewType" = "Plane"
-				"CanUseSpriteAtlas" = "True"
-			}
+			"Queue" = "Transparent"
+			"IgnoreProjector" = "True"
+			"RenderType" = "Transparent"
+			"PreviewType" = "Plane"
+			"CanUseSpriteAtlas" = "True"
+		}
 
-			Cull Off
-			Lighting Off
-			ZWrite Off
-			Blend One OneMinusSrcAlpha
+		Cull Off
+		Lighting Off
+		ZWrite Off
+		Blend One OneMinusSrcAlpha
 
-			Pass
-			{
-			CGPROGRAM
-				#pragma vertex SpriteVert
-				#pragma fragment CustomSpriteFrag // Originally SpriteFrag
-				#pragma target 2.0
-				#pragma multi_compile_instancing
-				#pragma multi_compile_local _ PIXELSNAP_ON
-				#pragma multi_compile _ ETC1_EXTERNAL_ALPHA
-				#include "UnitySprites.cginc"
+		Pass
+		{
+		CGPROGRAM
+			#pragma vertex SpriteVert
+			#pragma fragment CustomSpriteFrag // Originally SpriteFrag
+			#pragma target 2.0
+			#pragma multi_compile_instancing
+			#pragma multi_compile_local _ PIXELSNAP_ON
+			#pragma multi_compile _ ETC1_EXTERNAL_ALPHA
+			#include "UnitySprites.cginc"
 
 			// Custom properties
 			float _TransparencyRatio;
@@ -51,7 +51,6 @@ Shader "Sprites/TileBlended" // Name changed
 			{
 				fixed4 c = SampleSpriteTexture(IN.texcoord) * IN.color;
 				c.rgb *= c.a;
-
 				// Apply transparency to edges
 				float multiplier = 1 / _TransparencyRatio;
 				if (IN.texcoord.x > 1 - _TransparencyRatio) c *= (1 - IN.texcoord.x) * multiplier;
@@ -62,7 +61,8 @@ Shader "Sprites/TileBlended" // Name changed
 
 				return c;
 			}
+			
 		ENDCG
 		}
-		}
+	}
 }

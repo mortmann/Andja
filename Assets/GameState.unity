@@ -1656,7 +1656,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0.00012207031}
+  m_AnchoredPosition: {x: 0, y: -0.000030517578}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 1, y: 1}
 --- !u!114 &108635444
@@ -12008,6 +12008,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 89627e930dcaa864a9e6671121d07a0d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  tileMapRendererBlending: {fileID: 0}
   noSprite: {fileID: 21300000, guid: 87e6e5dee78ceb64eb4280a54f794fcc, type: 3}
   emptySprite: {fileID: 0}
   karoOverlay: {fileID: 0}
@@ -12018,6 +12019,7 @@ MonoBehaviour:
   waterMaterial: {fileID: 2100000, guid: 2669decae9483f047ab070ca18c88766, type: 2}
   darkMaterial: {fileID: 2100000, guid: 4d5d2f80a0493544faaf9953f1479bc9, type: 2}
   highlightMaterial: {fileID: 2100000, guid: aef7459fdfc4791468859c716de5eadd, type: 2}
+  tileMapMaterial: {fileID: 0}
 --- !u!4 &656967743
 Transform:
   m_ObjectHideFlags: 0
@@ -27204,7 +27206,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 638755707
-  m_SortingLayer: 10
+  m_SortingLayer: 14
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 4ecdf69a5dff5e2448ccadef782a0c0b, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -39962,7 +39964,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 638755707
-  m_SortingLayer: 10
+  m_SortingLayer: 14
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: d332c559b1d864e41b3a655a6292c6f6, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -40625,7 +40627,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1268507005}
   m_HandleRect: {fileID: 1268507004}
   m_Direction: 2
-  m_Value: 0
+  m_Value: 1
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -43413,7 +43415,7 @@ PrefabInstance:
     - target: {fileID: 7984102018937621737, guid: 25ef0d2764f75d64496f8c0c07171514,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 165
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7984102018937621737, guid: 25ef0d2764f75d64496f8c0c07171514,
         type: 3}
@@ -43468,7 +43470,7 @@ PrefabInstance:
     - target: {fileID: 7984102019592134533, guid: 25ef0d2764f75d64496f8c0c07171514,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 165
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7984102019592134533, guid: 25ef0d2764f75d64496f8c0c07171514,
         type: 3}
@@ -43611,7 +43613,7 @@ PrefabInstance:
     - target: {fileID: 224488513343800366, guid: 1aadd51f88ae4604085af5df01bc7b6b,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 1.199997
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 224488513343800366, guid: 1aadd51f88ae4604085af5df01bc7b6b,
         type: 3}

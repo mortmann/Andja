@@ -8,6 +8,7 @@ public class ProjectileHoldingScript : MonoBehaviour {
     public Projectile Projectile;
     Rigidbody2D body;
     private void Start() {
+        transform.position = Projectile.Position;
         Projectile.RegisterOnDestroyCallback(OnProjectileDestroy);
         body = gameObject.AddComponent<Rigidbody2D>();
         body.collisionDetectionMode = CollisionDetectionMode2D.Continuous;

@@ -162,7 +162,7 @@ public class Ship : Unit {
 
             Vector3 velocity = (destination + targetOffset - PositionVector - offset).normalized * ProjectileSpeed;
             float distance = (destination+ targetOffset - PositionVector - offset).magnitude;
-            cbCreateProjectile?.Invoke(new Projectile(this, position + offset, CurrentTarget, destination + targetOffset, velocity, distance));
+            cbCreateProjectile?.Invoke(new Projectile(this, position + offset, CurrentTarget, destination + targetOffset, velocity, distance, true));
         }
         attackCooldownTimer = AttackRate;
         cbSoundCallback?.Invoke(this, "broadside", true);

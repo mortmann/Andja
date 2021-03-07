@@ -34,7 +34,7 @@ public class World : IGEventable {
     }
     public IReadOnlyDictionary<Climate, List<Fertility>> allFertilities;
     public IReadOnlyDictionary<string, Fertility> idToFertilities;
-
+    protected Action<Projectile> cbCreateProjectile;
 
     protected bool[][] _tilesmap;
     public bool[][] Tilesmap {
@@ -51,6 +51,15 @@ public class World : IGEventable {
             return _tilesmap;
         }
     }
+
+    public void RegisterOnCreateProjectileCallback(Action<Projectile> cb) {
+        cbCreateProjectile += cb;
+    }
+    public void UnregisterOnCreateProjectileCallback(Action<Projectile> cb) {
+        cbCreateProjectile -= cb;
+    }
+
+
     protected StaticGrid _tilesgrid;
     public StaticGrid TilesGrid {
         get {
@@ -83,18 +92,14 @@ public class World : IGEventable {
     /// Used in the GameState!
     /// </summary>
     /// <param name="tiles">Tiles.</param>
-    /// <param name="width">Width.</param>
-    /// <param name="height">Height.</param>
-    public World(Tile[] addTiles, int width = 1000, int height = 1000, bool isIslandEditor = true) {
-        //this.Width = width;
-        //this.Height = height;
+    public World(Tile[] addTiles, bool isIslandEditor = true) {
         this.Tiles = new Tile[Width * Height];
         foreach (Tile t in addTiles) {
             if (t != null)
                 SetTileAt(t.X, t.Y, t);
         }
-        for (int x = 0; x < width; x++) {
-            for (int y = 0; y < height; y++) {
+        for (int x = 0; x < Width; x++) {
+            for (int y = 0; y < Height; y++) {
                 if (GetTileAt(x, y) == null)
                     SetTileAt(x, y, new Tile(x, y));
             }
@@ -207,7 +212,8 @@ public class World : IGEventable {
         Island island = new Island(islandStruct.Tiles, islandStruct.climate) {
             Fertilities = islandStruct.GetFertilities(),
             Placement = new Vector2(islandStruct.x, islandStruct.y),
-            Ressources = islandStruct.Resources
+            Resources = islandStruct.Resources, 
+            Features = islandStruct.features
         };
         Islands.Add(island);
     }
@@ -266,7 +272,8 @@ public class World : IGEventable {
         return unit;
     }
 
-    private void OnCreateProjectile(Projectile pro) {
+    public void OnCreateProjectile(Projectile pro) {
+        cbCreateProjectile?.Invoke(pro);
         pro.RegisterOnDestroyCallback(ProjectileDestroyed);
         Projectiles.Add(pro);
     }
@@ -395,5 +402,22 @@ public class World : IGEventable {
 
     public void Destroy() {
         Current = null;
+    }
+    public class WorldDamage : IWarfare {
+        public int PlayerNumber => GameData.WorldNumber;
+        float Damage;
+        public float CurrentDamage => Damage;
+        public float MaximumDamage => Damage;
+        public WorldDamage(float Damage) {
+            this.Damage = Damage;
+        }
+        public Combat.DamageType DamageType => PrototypController.Instance.GetWorldDamageType();
+
+        public float GetCurrentDamage(Combat.ArmorType armorType) {
+            return CurrentDamage;
+        }
+
+        public bool GiveAttackCommand(ITargetable warfare, bool overrideCurrent = false) { return false; }
+        public void GoIdle() { return; }
     }
 }

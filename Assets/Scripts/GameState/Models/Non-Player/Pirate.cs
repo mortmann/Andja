@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 
 [JsonObject(MemberSerialization.OptIn)]
 public class Pirate {
-    public static readonly int Number = -1; // so it isnt the same like the number of wilderness
+    public static readonly int Number = GameData.PirateNumber; // so it isnt the same like the number of wilderness
     
     [JsonPropertyAttribute] float startCooldown = 5f;
     [JsonPropertyAttribute] List<Ship> Ships;

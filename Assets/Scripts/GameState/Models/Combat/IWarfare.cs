@@ -4,7 +4,8 @@ using System;
 using UnityEngine;
 using static Combat;
 
-public interface IWarfare : ITargetable {
+public interface IWarfare {
+    int PlayerNumber { get; }
     float CurrentDamage { get; }
     float MaximumDamage { get; }
     DamageType DamageType { get; }

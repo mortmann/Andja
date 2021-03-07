@@ -80,10 +80,9 @@ public class EventController : MonoBehaviour {
     }
 
 
-    // Update is called once per frame
     // Handle here Events that will effect whole islands or
     // World-Segments, maybe fire and similars
-    void Update() {
+    void FixedUpdate() {
         if (WorldController.Instance.IsPaused) {
             return;
         }
@@ -94,7 +93,7 @@ public class EventController : MonoBehaviour {
                 cbEventEnded(idToActiveEvent[i]);
                 idToActiveEvent.Remove(i);
             } else {
-                idToActiveEvent[i].Update(WorldController.Instance.DeltaTime);
+                idToActiveEvent[i].Update(WorldController.Instance.FixedDeltaTime);
             }
         }
         //Now will there be an event or not?
@@ -121,6 +120,9 @@ public class EventController : MonoBehaviour {
     }
 
     public void CreateGameEvent(GameEvent ge) {
+        if(ge.IsValid() == false) {
+            return;
+        }
         //fill the type
         idToActiveEvent.Add(lastID, ge);
         ge.eventID = lastID;

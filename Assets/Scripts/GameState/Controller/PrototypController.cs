@@ -17,6 +17,8 @@ public class PrototypController : MonoBehaviour {
     public int NumberOfPopulationLevels => populationLevelDatas.Count;
 
     public static PrototypController Instance;
+    public static PrototypController PCInstance => Instance;
+
     public IReadOnlyDictionary<string, Structure> StructurePrototypes => structurePrototypes;
     public IReadOnlyDictionary<string, Unit> UnitPrototypes => unitPrototypes;
     public IReadOnlyDictionary<Type, int> StructureTypeToMaxStructureLevel => structureTypeToMaxStructureLevel;
@@ -31,12 +33,16 @@ public class PrototypController : MonoBehaviour {
     public IReadOnlyDictionary<string, ArmorType> ArmorTypeDatas => armorTypeDatas;
     public IReadOnlyDictionary<string, GameEventPrototypData> GameEventPrototypeDatas => gameEventPrototypeDatas;
     public IReadOnlyDictionary<string, Item> AllItems => allItems;
+    public IReadOnlyDictionary<string, IslandFeaturePrototypeData> IslandFeaturePrototypeDatas => islandFeaturePrototypeDatas;
+
 
     public WarehouseStructure FirstLevelWarehouse { get; private set; }
+
     public IReadOnlyDictionary<Climate, List<Fertility>> AllFertilities => allFertilities;
     public IReadOnlyDictionary<string, Fertility> IdToFertilities => idToFertilities;
     public IReadOnlyDictionary<int, PopulationLevelPrototypData> PopulationLevelDatas => populationLevelDatas;
     public IReadOnlyDictionary<int, List<NeedGroup>> PopulationLevelToNeedGroup => populationLevelToNeedGroup;
+    public IReadOnlyDictionary<string, List<Produce>> ItemIDToProduce => itemIDToProduce;
 
     // SHOULD BE READ ONLY -- cant be done because Unity Error for multiple implementations
     public static Item[] BuildItems => _buildItems;
@@ -62,6 +68,7 @@ public class PrototypController : MonoBehaviour {
     Dictionary<int, List<NeedGroup>> populationLevelToNeedGroup;
     Dictionary<Climate, List<Fertility>> allFertilities;
     public Dictionary<Climate, List<FertilityPrototypeData>> AllFertilitiesDatasPerClimate;
+    public Dictionary<string, IslandFeaturePrototypeData> islandFeaturePrototypeDatas;
 
     Dictionary<string, Fertility> idToFertilities;
     public Dictionary<Size, IslandSizeGenerationInfo> IslandSizeToGenerationInfo { get; private set; }
@@ -76,15 +83,11 @@ public class PrototypController : MonoBehaviour {
     List<Need> allNeeds;
     //current valid player prototyp data
     internal static PlayerPrototypeData CurrentPlayerPrototypData = new PlayerPrototypeData();
+
     /// <summary>
-    /// Item ID to the list of PRODUCE (which contains structure that PRODUCES it) 
+    /// Item ID to the list of PRODUCE (which contains structure that PRODUCES it and supplychain) 
     /// </summary>
     private Dictionary<string, List<Produce>> itemIDToProduce;
-    /// <summary>
-    /// Item ID to the list of optimal produce proportions.
-    /// If 
-    /// </summary>
-    private Dictionary<string, List<NeededProportions>> proportions;
     //TODO: need a way to get this to load in! probably with the rest
     //      of the data thats still needs to be read in like time for money ticks
     public ArmorType StructureArmor => armorTypeDatas["woodenwall"];
@@ -119,6 +122,11 @@ public class PrototypController : MonoBehaviour {
     internal Ship GetPirateShipPrototyp() {
         //TODO: have pirateship prototyp
         return (Ship)UnitPrototypes["ship"];
+    }
+    internal IslandFeaturePrototypeData GetIslandFeaturePrototypeDataForID(string id) {
+        if (islandFeaturePrototypeDatas.ContainsKey(id) == false)
+            return null;
+        return islandFeaturePrototypeDatas[id];
     }
     internal bool ExistsNeed(Need need) {
         return allNeeds.Contains(need);
@@ -160,6 +168,10 @@ public class PrototypController : MonoBehaviour {
     }
     public StructurePrototypeData GetStructurePrototypDataForID(string ID) {
         return structurePrototypeDatas[ID];
+    }
+
+    internal bool GameEventExists(string id) {
+        return GameEventPrototypeDatas.ContainsKey(id);
     }
 
     public ItemPrototypeData GetItemPrototypDataForID(string ID) {
@@ -254,6 +266,15 @@ public class PrototypController : MonoBehaviour {
         damageTypeDatas = new Dictionary<string, DamageType>();
         ReadCombatFromXML(LoadXML("combat"));
         ModLoader.LoadXMLs("combat", ReadCombatFromXML);
+        Dictionary<ArmorType, float> worldMultiplier = new Dictionary<ArmorType, float>();
+        foreach (ArmorType at in ArmorTypeDatas.Values)
+            worldMultiplier.Add(at, 1);
+        //Hardcoded WorldDamage -- We need it and cant change yo
+        damageTypeDatas.Add("world", new DamageType() {
+            ID="world",
+            damageMultiplier = worldMultiplier,
+        });
+
 
         unitPrototypes = new Dictionary<string, Unit>();
         unitPrototypeDatas = new Dictionary<string, UnitPrototypeData>();
@@ -286,9 +307,13 @@ public class PrototypController : MonoBehaviour {
         ResourceGenerations = new List<ResourceGenerationInfo>();
         ReadMapGenerationInfos(LoadXML("mapgeneration"));
         ModLoader.LoadXMLs("startingloadouts", ReadMapGenerationInfos);
+        islandFeaturePrototypeDatas = new Dictionary<string, IslandFeaturePrototypeData>();
+        //TODO: MAKE WAY TO LOAD DIS STUFF
+        foreach(IslandFeaturePrototypeData d in IslandFeaturePrototypeData.TempSetUp()) {
+            islandFeaturePrototypeDatas.Add(d.ID, d);
+        }
 
 
-        Debug.Log("Read in fertilities types: " + allFertilities.Count + " with all " + fertilityPrototypeDatas.Count);
         string str = "";
         List<Structure> all = new List<Structure>(structurePrototypes.Values);
         while (all.Count > 0) {
@@ -298,27 +323,34 @@ public class PrototypController : MonoBehaviour {
             }
             str += "    -> " + temp[0].GetType() + " = " + temp.Count + " \n";
         }
-        Debug.Log("Read in structures: " + structurePrototypes.Count + "\n" + str);
-        Debug.Log("Read in units: " + unitPrototypes.Count);
-        Debug.Log("Read in items: " + allItems.Count);
+        string readInThings = "###Read In Stuff###\n";
+        readInThings += ("Read in structures: " + structurePrototypes.Count + "\n" + str);
+        readInThings += ("Read in fertilities: " + allFertilities.Count + " with all " + fertilityPrototypeDatas.Count) + "\n";
+        readInThings += ("Read in units: " + unitPrototypes.Count) + "\n";
+        readInThings += ("Read in items: " + allItems.Count) + "\n";
         string needslevel = "";
         foreach (PopulationLevelPrototypData pl in populationLevelDatas.Values) {
             needslevel += "[" + pl.LEVEL + ": " + allNeeds.Count(x => x.StartLevel == pl.LEVEL) + "]";
         }
-        Debug.Log("Read in needs: " + allNeeds.Count + " (" + needslevel + ")");
-        Debug.Log("Read in needGroups: " + needGroupDatas.Count);
-        Debug.Log("Read in damagetypes: " + damageTypeDatas.Count);
-        Debug.Log("Read in armortypes: " + armorTypeDatas.Count);
-        Debug.Log("Read in populationLevel: " + populationLevelDatas.Count);
-        Debug.Log("Read in effects: " + effectPrototypeDatas.Count);
-        Debug.Log("Read in gameevents: " + gameEventPrototypeDatas.Count);
-        Debug.Log("Read in took " + stopwatch.Elapsed.TotalSeconds +"s");
+        readInThings += ("Read in needs: " + allNeeds.Count + " (" + needslevel + ")") + "\n";
+        readInThings += ("Read in needGroups: " + needGroupDatas.Count) + "\n";
+        readInThings += ("Read in damagetypes: " + damageTypeDatas.Count) + "\n";
+        readInThings += ("Read in armortypes: " + armorTypeDatas.Count) + "\n";
+        readInThings += ("Read in populationLevel: " + populationLevelDatas.Count) + "\n";
+        readInThings += ("Read in effects: " + effectPrototypeDatas.Count) + "\n";
+        readInThings += ("Read in gameevents: " + gameEventPrototypeDatas.Count) + "\n";
+        readInThings += ("###Read in took " + stopwatch.Elapsed.TotalSeconds + "s###");
+        Debug.Log(readInThings);
         //Set it to default so it doesnt interfer with user interface informations
         Thread.CurrentThread.CurrentCulture = System.Globalization.CultureInfo.InstalledUICulture;
         CalculateOptimalProportions();
         CalculateNeedUnlocks();
         CalculatePopulationNeedGroups();
         CalculateUnlocks();
+    }
+
+    internal DamageType GetWorldDamageType() {
+        return damageTypeDatas["world"];
     }
 
     private void ReadMapGenerationInfos(string xmlText) {
@@ -408,7 +440,7 @@ public class PrototypController : MonoBehaviour {
             }
             if (need.item != null) {
                 foreach (Produce produce in itemIDToProduce[need.item.ID]) {
-                    StructurePrototypeData str = produce.producingStructurePD;
+                    StructurePrototypeData str = produce.ProducerStructure;
                     if (need.startLevel <= str.populationLevel && need.startPopulationCount < str.populationCount) {
                         need.startPopulationCount = str.populationCount;
                         need.startLevel = str.populationLevel;
@@ -444,7 +476,7 @@ public class PrototypController : MonoBehaviour {
                 int numGrowablesPerTon = fpd.neededHarvestToProduce;
                 float growtime = fpd.growable.ProduceTime;
                 float produceTime = fpd.produceTime;
-                float neededWorkerRatio = fpd.maxNumberOfWorker / fpd.neededHarvestToProduce; 
+                float neededWorkerRatio = (float)fpd.maxNumberOfWorker / (float)fpd.neededHarvestToProduce; 
                 if (fpd.growable == null || produceTime * fpd.efficiency <= 0 || growtime <= 0) {
                     ppm = 0;
                 }
@@ -455,11 +487,13 @@ public class PrototypController : MonoBehaviour {
                     ppm = Mathf.Min(60f / (produceTime * fpd.efficiency), (((float)tileCount / (float)numGrowablesPerTon) * (60f / growtime)));
                 }
                 ppm /= (float)outItem.count;
+                if (ppm == 0)
+                    Debug.LogError("Farm " + fpd.Name + " does not produce anything per minute. FIX IT!");
                 produceDebug += fpd.Name + ": " + ppm + "\n";
                 Produce p = new Produce {
                     item = outItem,
                     producePerMinute = ppm,
-                    producingStructurePD = fpd
+                    ProducerStructure = fpd
                 };
                 if (itemIDToProduce.ContainsKey(outItem.ID)) {
                     itemIDToProduce[outItem.ID].Add(p);
@@ -476,7 +510,7 @@ public class PrototypController : MonoBehaviour {
                 Produce p = new Produce {
                     item = outItem,
                     producePerMinute = ppm,
-                    producingStructurePD = mpd
+                    ProducerStructure = mpd
                 };
                 produceDebug += mpd.Name + ": " + ppm + "\n";
                 if (itemIDToProduce.ContainsKey(outItem.ID)) {
@@ -496,7 +530,7 @@ public class PrototypController : MonoBehaviour {
                 Produce p = new Produce {
                     item = outItem,
                     producePerMinute = ppm,
-                    producingStructurePD = ppd,
+                    ProducerStructure = ppd,
                     needed = ppd.intake
                 };
                 produceDebug += ppd.Name + ": " + ppm + "\n";
@@ -510,48 +544,72 @@ public class PrototypController : MonoBehaviour {
             }
         }
         Debug.Log(produceDebug);
-        proportions = new Dictionary<string, List<NeededProportions>>();
-        foreach (Produce prodProduce in productionsProduces) {
-            NeededProportions np = new NeededProportions {
-                item = prodProduce.item,
-                produce = prodProduce,
-                neededRatio = new Dictionary<Produce, float>()
-            };
-            if (prodProduce.needed == null)
+        foreach (Produce currentProduce in productionsProduces) {
+            if (currentProduce.needed == null)
                 continue;
-            foreach (Item need in prodProduce.needed) {
+            foreach (Item need in currentProduce.needed) {
                 if (itemIDToProduce.ContainsKey(need.ID) == false) {
                     Debug.LogWarning("NEEDED ITEM CANNOT BE PRODUCED! -- Wanted beahivour? Item-ID:" + need.ID);
                     continue;
                 }
-                foreach (Produce produce in itemIDToProduce[need.ID]) {
-                    float f1 = (1f / (float)prodProduce.item.count * prodProduce.producePerMinute);
-                    float f2 = (1f / (float)produce.item.count * produce.producePerMinute);
+                foreach (Produce itemProducer in itemIDToProduce[need.ID]) {
+                    float f1 = (1f / (float)need.count * (60f/currentProduce.ProducerStructure.produceTime));
+                    float f2 = (1f / (float)itemProducer.item.count * itemProducer.producePerMinute);
                     if (f2 == 0)
                         continue;
-                    np.neededRatio[produce] = f1 / f2;
+                    float ratio = f1 / f2;
+                    if(currentProduce.itemProduceRatios.ContainsKey(need.ID) == false) {
+                        currentProduce.itemProduceRatios[need.ID] = new List<ProduceRatio>();
+                    }
+                    currentProduce.itemProduceRatios[need.ID].Add(new ProduceRatio {
+                        Producer = itemProducer,
+                        Ratio = ratio,
+                    });
                 }
             }
-            if (proportions.ContainsKey(prodProduce.item.ID)) {
-                proportions[prodProduce.item.ID].Add(np);
-            }
-            else {
-                proportions.Add(prodProduce.item.ID, new List<NeededProportions> { np });
-            }
+        }
+        foreach (Produce currentProduce in productionsProduces) {
+            currentProduce.CalculateSupplyChains();
         }
         string proportionDebug = "Proportions";
-        foreach(string item in proportions.Keys) {
-            proportionDebug += "\n"+item + ":";
-            if (proportions[item] == null)
-                continue;
-            foreach(NeededProportions np in proportions[item]) {
-                proportionDebug += "\n ->" + np.item.ID;
-                foreach (Produce p in np.neededRatio.Keys) {
-                    proportionDebug += "\n   =>" +p.producingStructurePD.Name+ "= " + np.neededRatio[p];
+        foreach (Produce currentProduce in productionsProduces) {
+            proportionDebug += "\n" + currentProduce.ProducerStructure.ID + ":";
+            foreach (string item in currentProduce.itemProduceRatios.Keys) {
+                proportionDebug += "\n ->" + item;
+                foreach(ProduceRatio pr in currentProduce.itemProduceRatios[item]) {
+                    proportionDebug += "\n  # " + pr.Producer.ProducerStructure.Name + "= " + pr.Ratio;
                 }
             }
         }
         Debug.Log(proportionDebug);
+        string supplyChains = "SupplyChains";
+        foreach (Produce currentProduce in productionsProduces) {
+            supplyChains += "\n" + currentProduce.ProducerStructure.ID + "("+ currentProduce .item.ID+ "): ";
+            foreach (SupplyChain sc in currentProduce.SupplyChains) {
+                supplyChains += "[";
+                for (int i = 0; i < sc.tiers.Count; i++) {
+                    supplyChains += (i + 1) +"| "+ string.Join(", ", sc.tiers[i]);
+                    if (i < sc.tiers.Count - 1)
+                        supplyChains += " ";
+                }
+                supplyChains += "]";
+            }
+        }
+        Debug.Log(supplyChains);
+        string supplyChainsCosts = "SupplyChainsCosts";
+        foreach (Produce currentProduce in productionsProduces) {
+            supplyChainsCosts += "\n" + currentProduce.ProducerStructure.ID + "(" + currentProduce.item.ID + "): ";
+            foreach (SupplyChain sc in currentProduce.SupplyChains) {
+                supplyChainsCosts += "[";
+                supplyChainsCosts += "TBC "+ sc.cost.TotalBuildCost;
+                supplyChainsCosts += " TMC "+sc.cost.TotalMaintenance;
+                supplyChainsCosts += " PL " + sc.cost.PopulationLevel;
+                supplyChainsCosts += " I " + string.Join(", ", (object[])sc.cost.TotalItemCost);
+                supplyChainsCosts += "]";
+            }
+        }
+        Debug.Log(supplyChainsCosts);
+
     }
 
     internal int GetMaxStructureLevelForStructureType(Type type) {
@@ -858,8 +916,9 @@ public class PrototypController : MonoBehaviour {
             return;
         foreach (XmlElement node in xmlDoc.SelectNodes("militarystructure")) {
             string ID = node.GetAttribute("ID");
-            MilitaryStructurePrototypeData mpd = new MilitaryStructurePrototypeData();
-            mpd.ID = ID;
+            MilitaryStructurePrototypeData mpd = new MilitaryStructurePrototypeData {
+                ID = ID
+            };
             SetData<MilitaryStructurePrototypeData>(node, ref mpd);
             foreach (Unit u in mpd.canBeBuildUnits) {
                 if (u.IsShip) {
@@ -886,7 +945,7 @@ public class PrototypController : MonoBehaviour {
                 canBeUpgraded = true,
                 //!not anymore
                 maintenanceCost = 0,
-                buildcost = 25,
+                buildCost = 25,
                 Name = "Testroad",
                 structureRange = 0,
                 structureLevel = 0
@@ -914,7 +973,7 @@ public class PrototypController : MonoBehaviour {
                 tileHeight = 1,
                 structureTyp = StructureTyp.Free,
                 buildTyp = BuildType.Drag,
-                buildcost = 50,
+                buildCost = 50,
                 maxOutputStorage = 1
             };
             gpd.ID = ID;
@@ -931,8 +990,7 @@ public class PrototypController : MonoBehaviour {
 
             FarmPrototypeData fpd = new FarmPrototypeData();
             fpd.ID = ID;
-            //THESE are fix and are not changed for any 
-            //!not anymore
+            
             SetData<FarmPrototypeData>(node, ref fpd);
             if (fpd.output != null && fpd.output.Length > 0 && fpd.output[0].count == 0) {
                 fpd.output[0].count = 1;
@@ -959,7 +1017,7 @@ public class PrototypController : MonoBehaviour {
                 canTakeDamage = true,
 
                 Name = "market",
-                buildcost = 500,
+                buildCost = 500,
                 maintenanceCost = 10
             };
 
@@ -976,9 +1034,7 @@ public class PrototypController : MonoBehaviour {
         foreach (XmlElement node in xmlDoc.SelectNodes("production")) {
 
             string ID = node.GetAttribute("ID");
-
             ProductionPrototypeData ppd = new ProductionPrototypeData {
-
                 //THESE are fix and are not changed for any ProduktionStructure
                 maxOutputStorage = 5, // hardcoded 5 ? need this to change?
                 hasHitbox = true,
@@ -993,11 +1049,9 @@ public class PrototypController : MonoBehaviour {
             };
             ppd.ID = ID;
             SetData<ProductionPrototypeData>(node, ref ppd);
-
             //DO After loading from file
-
             structurePrototypeDatas[ID] = ppd;
-            structurePrototypes[ID] = new ProductionStructure(ID, ppd);
+            structurePrototypes[ID] = new ProductionStructure(ID, ppd); 
         }
     }
 
@@ -1046,14 +1100,17 @@ public class PrototypController : MonoBehaviour {
             SetData<HomePrototypeData>(node, ref hpd);
 
             structurePrototypeDatas[ID] = hpd;
-            structurePrototypes[ID] = new HomeStructure(ID, hpd);
+            HomeStructure hs = new HomeStructure(ID, hpd);
+            structurePrototypes[ID] = hs;
+            populationLevelDatas[structurePrototypes[ID].PopulationLevel].HomeStructure = hs; 
+
 
             string prevID = GetStructureIDForTypeNeighbourStructureLevel(typeof(HomeStructure), hpd.structureLevel, false);
             if (String.IsNullOrEmpty(prevID) == false) {
                 HomePrototypeData prev = (HomePrototypeData)structurePrototypeDatas[prevID];
                 ((HomePrototypeData)hpd).previouseMaxLivingSpaces = prev == null ? 0 : prev.maxLivingSpaces;
                 prev.upgradeItems = hpd.buildingItems;
-                prev.upgradeCost = hpd.buildcost;
+                prev.upgradeCost = hpd.buildCost;
             }
         }
     }
@@ -1073,7 +1130,7 @@ public class PrototypController : MonoBehaviour {
                 tileWidth = 3,
                 tileHeight = 3,
                 Name = "warehouse",
-                buildcost = 500,
+                buildCost = 500,
                 maintenanceCost = 10,
             };
 
@@ -1434,8 +1491,7 @@ public class PrototypController : MonoBehaviour {
         }
         Item clone = allItems[id].Clone();
         if (n.SelectSingleNode("count") != null) {
-            int count = 0;
-            if (int.TryParse(n.SelectSingleNode("count").InnerXml, out count) == false) {
+            if (int.TryParse(n.SelectSingleNode("count").InnerXml, out int count) == false) {
                 Debug.LogError("Count is not an int");
                 return null;
             }
@@ -1486,7 +1542,7 @@ public class PrototypController : MonoBehaviour {
         Instance = null;
     }
     Dictionary<string, Func<StructurePrototypeData, string>> StructurePlaceholderToResult = new Dictionary<string, Func<StructurePrototypeData, string>> {
-        { "$b", (x)=> x.buildcost.ToString() },
+        { "$b", (x)=> x.buildCost.ToString() },
         { "$m", (x)=> x.maintenanceCost.ToString() },
         { "$u", (x)=> x.upgradeCost.ToString() },
         { "$pc", (x)=> x.populationCount.ToString() },
@@ -1514,21 +1570,268 @@ internal class Unlocks {
     public ConcurrentBag<Structure> structures = new ConcurrentBag<Structure>();
     public ConcurrentBag<Unit> units = new ConcurrentBag<Unit>();
     public ConcurrentBag<Need> needs = new ConcurrentBag<Need>();
-
 }
 
-public struct Produce {
+public class Produce {
     public Item item;
     public float producePerMinute;
-    public StructurePrototypeData producingStructurePD;
+    public OutputPrototypData ProducerStructure;
     public Item[] needed;
+    public Dictionary<string, List<ProduceRatio>> itemProduceRatios = new Dictionary<string, List<ProduceRatio>>();
+    public List<SupplyChain> SupplyChains = new List<SupplyChain>();
+    public List<SupplyChain> CalculateSupplyChains() {
+        SupplyChain supplyChain = new SupplyChain(this);
+        if (needed == null) {
+            supplyChain.CalculateCost();
+            SupplyChains = new List<SupplyChain> { supplyChain };
+            return SupplyChains;
+        }
+        if (itemProduceRatios.Count != needed.Length) {
+            Debug.LogError(ProducerStructure.ID + " has not a valid Supply Chain.");
+            return null;
+        }
+        //Dictionary<string, List<SupplyChain>> itemSupplyChains = new Dictionary<string, List<SupplyChain>>();
+        //if (ProducerStructure.ID == "toolmakersworkshop")
+        //    Debug.Log("p");
+        //foreach (string s in itemProduceRatios.Keys) {
+        //    itemSupplyChains[s] = new List<SupplyChain>();
+        //    foreach (ProduceRatio ratio in itemProduceRatios[s]) {
+        //        itemSupplyChains[s].AddRange(ratio.CalculateSupplyChain(supplyChain.Clone(), 0));
+        //    }
+        //}
+        //if(itemSupplyChains.Count != needed.Length) {
+        //    Debug.LogError(ProducerStructure.ID + "->" + item.ID + "-SupplyChain does exist for every Item needed. -- Please Fix");
+        //    return null;
+        //}
+        //List<SupplyChain> toCombineWith = new List<SupplyChain>(itemSupplyChains[needed[0].ID]);
+        //bool skipCombine = false;
+        //if(ProducerStructure is ProductionPrototypeData) {
+        //    ProductionPrototypeData ppd = ProducerStructure as ProductionPrototypeData;
+        //    skipCombine = ppd.inputTyp == InputTyp.OR;
+        //}
+        //if(skipCombine == false) {
+        //    for (int j = 1; j < needed.Length; j++) {
+        //        int count = toCombineWith.Count - 1;
+        //        for (int k = count; k >= 0; k--) {
+        //            for (int l = 0; l < itemSupplyChains[needed[j].ID].Count; l++) {
+        //                toCombineWith.Add(toCombineWith[k].Clone().Combine(itemSupplyChains[needed[j].ID][l]));
+        //            }
+        //        }
+        //    }        
+        //    SupplyChains = itemSupplyChains[needed[0].ID];
+        //} else {
+        //    SupplyChains = new List<SupplyChain>();
+        //    for (int j = 0; j < needed.Length; j++) {
+        //        SupplyChains.AddRange(itemSupplyChains[needed[j].ID]);
+        //    }
+        //}
+        SupplyChains = GetNewSupplyChains(supplyChain, -1); 
+       
+        foreach (SupplyChain chain in SupplyChains) {
+            if (item == null) {
+                Debug.LogError(item + " is null?!");
+            }
+            if (chain.CheckValid(item) == false) {
+                Debug.LogError("SupplyChain for " + item.ID + " with " + string.Join(", ", chain.ProduceRatio));
+            }
+            chain.CalculateCost();
+        }
+        return SupplyChains;
+    }
+
+
+    public override bool Equals(object obj) {
+        return obj is Produce c && this == c;
+    }
+    public override int GetHashCode() {
+        return ProducerStructure.ID.GetHashCode();
+    }
+    public static bool operator ==(Produce x, Produce y) {
+        return x.ProducerStructure.ID == y.ProducerStructure.ID;
+    }
+    public static bool operator !=(Produce x, Produce y) {
+        return !(x == y);
+    }
+
+    internal List<SupplyChain> GetNewSupplyChains(SupplyChain supplyChain, int tier) {
+        List<SupplyChain> chains = new List<SupplyChain>();
+        if (needed == null) {
+            chains.Add(supplyChain);
+            return chains;        
+        }
+        Dictionary<string, List<SupplyChain>> itemSupplyChains = new Dictionary<string, List<SupplyChain>>();
+        tier++;
+        foreach (string s in itemProduceRatios.Keys) {
+            itemSupplyChains[s] = new List<SupplyChain>();
+            foreach (ProduceRatio ratio in itemProduceRatios[s]) {
+                itemSupplyChains[s].AddRange(ratio.CalculateSupplyChain(supplyChain.Clone(), tier));
+            }
+        }
+        List<SupplyChain> toCombineWith = new List<SupplyChain>(itemSupplyChains[needed[0].ID]);
+        bool skipCombine = false;
+        if (ProducerStructure is ProductionPrototypeData) {
+            ProductionPrototypeData ppd = ProducerStructure as ProductionPrototypeData;
+            skipCombine = ppd.inputTyp == InputTyp.OR;
+        }
+        if (skipCombine == false) {
+            for (int j = 1; j < needed.Length; j++) {
+                int count = toCombineWith.Count - 1;
+                for (int k = count; k >= 0; k--) {
+                    for (int l = 0; l < itemSupplyChains[needed[j].ID].Count; l++) {
+                        toCombineWith.Add(toCombineWith[k].Clone().Combine(itemSupplyChains[needed[j].ID][l], tier));
+                    }
+                }
+            }
+            chains = itemSupplyChains[needed[0].ID];
+        }
+        else {
+            SupplyChains = new List<SupplyChain>();
+            for (int j = 0; j < needed.Length; j++) {
+                chains.AddRange(itemSupplyChains[needed[j].ID]);
+            }
+        }
+        return chains;
+    }
+    public override string ToString() {
+        return "P-"+ProducerStructure.ID;
+    }
 }
-public struct NeededProportions {
-    public Produce produce;
-    public Item item;
-    /// <summary>
-    /// Contains the Produce-Structure&InputItem -> float is the amount of that structure needed to be optimal
-    /// for THIS produce!
-    /// </summary>
-    public Dictionary<Produce,float> neededRatio;
+public struct ProduceRatio {
+    public Produce Producer;
+    public float Ratio;
+
+    internal List<SupplyChain> CalculateSupplyChain(SupplyChain supplyChain, int tier) {
+        supplyChain.AddProduce(Producer, Ratio, tier);
+        return Producer.GetNewSupplyChains(supplyChain, tier);
+    }
+    public override string ToString() {
+        return Producer.ToString()+" ("+Ratio+")";
+    }
+}
+
+public class SupplyChain {
+    public bool IsValid { private set; get; }
+    Produce Produce;
+    public Dictionary<Produce, float> ProduceRatio = new Dictionary<Produce, float>();
+    public List<List<ProduceRatio>> tiers = new List<List<ProduceRatio>>();
+    public SupplyChainCost cost;
+    public SupplyChain() {
+
+    }
+    public SupplyChain(Produce produce) {
+        this.Produce = produce;
+    }
+    public void AddProduce(Produce p, float ratio, int tier) {
+        if (tiers.Count<=tier) {
+            tiers.Add(new List<ProduceRatio>());
+        }
+        tiers[tier].Add(new ProduceRatio { Producer = p, Ratio = ratio });
+        ProduceRatio.Add(p, ratio);
+    }
+
+    internal SupplyChain Clone() {
+        return new SupplyChain {
+            Produce = Produce,
+            cost = cost?.Clone(),
+            ProduceRatio = new Dictionary<Produce, float>(ProduceRatio),
+            tiers = new List<List<ProduceRatio>>(tiers),
+        };
+    }
+    public void CalculateCost() {
+        cost = new SupplyChainCost(Produce.ProducerStructure);
+        foreach (Produce p in ProduceRatio.Keys) {
+            cost.Add(p.ProducerStructure, ProduceRatio[p]);
+        }
+    }
+
+    internal SupplyChain Combine(SupplyChain supplyChain, int tier = 0) {
+        var keys = new List<Produce>(supplyChain.ProduceRatio.Keys);
+        foreach (Produce p in keys) {
+            if (ProduceRatio.ContainsKey(p)) {
+                ProduceRatio[p] += supplyChain.ProduceRatio[p];
+            } else {
+                ProduceRatio[p] = supplyChain.ProduceRatio[p];
+            }
+        }
+        for (int i = 0; i < supplyChain.tiers.Count; i++) {
+            if (i < tier)
+                continue;
+            if(tiers.Count<=i) {
+                tiers[i] = new List<ProduceRatio>();
+            }
+            tiers[i].AddRange(supplyChain.tiers[i]);
+        }
+        return this;
+    }
+
+    internal bool CheckValid(Item item) {
+        foreach(Produce p in ProduceRatio.Keys) {
+            if (p.needed == null)
+                continue;
+            if(p.needed.Contains(item)) {
+                IsValid = false;
+                return false;
+            }
+            if(ProduceRatio[p]>10f) {
+                Debug.LogWarning(item.ID + " excessive produce ratio -- " +  Produce.ProducerStructure.ID + " with needed buildings " + ProduceRatio[p] +"!" +
+                    "\n Wanted behaviour? ");
+            }
+        }
+
+        return true;
+    }
+}
+public class SupplyChainCost {
+    public float TotalBuildCost = 0;
+    public float TotalMaintenance = 0;
+    private Item[] totalItemCost;
+    public int PopulationLevel = 0;
+    public Dictionary<string, float> ItemCostTemp = new Dictionary<string, float>();
+    public SupplyChainCost() {
+    }
+    public SupplyChainCost(StructurePrototypeData producerStructure) {
+        Add(producerStructure, 1);
+    }
+
+    public void Add(StructurePrototypeData structure, float ratio) {
+        TotalBuildCost += structure.buildCost * ratio;
+        TotalMaintenance += structure.maintenanceCost * ratio;
+        AddBuildItems(structure.buildingItems, ratio);
+        PopulationLevel = Mathf.Max(structure.populationLevel, PopulationLevel);
+    }
+
+    public Item[] TotalItemCost {
+        get {
+            if (totalItemCost == null)
+                CalculateTotalItemCost();
+            return totalItemCost;
+        }
+        set => totalItemCost = value;
+    }
+    void AddBuildItems(Item[] buildingItems, float ratio) {
+        foreach (Item item in buildingItems) {
+            if (ItemCostTemp.ContainsKey(item.ID) == false)
+                ItemCostTemp[item.ID] = 0;
+            ItemCostTemp[item.ID] += item.count * ratio;
+        }
+    }
+    void CalculateTotalItemCost() {
+        TotalItemCost = new Item[ItemCostTemp.Count];
+        int i = 0;
+        foreach (string id in ItemCostTemp.Keys) {
+            TotalItemCost[i] = new Item(id, Mathf.CeilToInt(ItemCostTemp[id]));
+            i++;
+        }
+    }
+
+    internal SupplyChainCost Clone() {
+        return new SupplyChainCost {
+            ItemCostTemp = new Dictionary<string, float>( ItemCostTemp ),
+            TotalBuildCost = TotalBuildCost,
+            totalItemCost = totalItemCost,
+            PopulationLevel = PopulationLevel,
+            TotalMaintenance = TotalMaintenance,
+        };
+    }
+
 }

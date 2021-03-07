@@ -87,8 +87,10 @@ public class MouseController : MonoBehaviour {
         get {
             if (SelectedUnit != null)
                 return SelectedUnit;
-            if(SelectedStructure != null)
+            if (SelectedStructure != null)
                 return SelectedStructure;
+            if (CameraController.Instance.nearestIsland != null)
+                return CameraController.Instance.nearestIsland;
             return null;
         }
     }

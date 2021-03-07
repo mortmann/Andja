@@ -4,22 +4,22 @@ TextureImporter:
   internalIDToNameTable:
   - first:
       213: 21300000
-    second: middle_grass_0
+    second: middle_grass_gggg_0
   - first:
       213: 21300002
-    second: middle_grass_1
+    second: middle_grass_gggg_1
   - first:
       213: 21300004
-    second: middle_grass_2
+    second: middle_grass_gggg_2
   - first:
       213: 21300006
-    second: middle_dirt_0
+    second: middle_dirt_dddd_0
   - first:
       213: 21300008
-    second: middle_dirt_1
+    second: middle_dirt_dddd_1
   - first:
       213: 21300010
-    second: middle_dirt_2
+    second: middle_dirt_dddd_2
   - first:
       213: 21300012
     second: Ocean_1
@@ -437,7 +437,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: middle_grass_0
+      name: middle_grass_gggg_0
       rect:
         serializedVersion: 2
         x: 0
@@ -458,7 +458,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: middle_grass_1
+      name: middle_grass_gggg_1
       rect:
         serializedVersion: 2
         x: 32
@@ -479,7 +479,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: middle_grass_2
+      name: middle_grass_gggg_2
       rect:
         serializedVersion: 2
         x: 64
@@ -500,7 +500,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: middle_dirt_0
+      name: middle_dirt_dddd_0
       rect:
         serializedVersion: 2
         x: 96
@@ -521,7 +521,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: middle_dirt_1
+      name: middle_dirt_dddd_1
       rect:
         serializedVersion: 2
         x: 128
@@ -542,7 +542,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: middle_dirt_2
+      name: middle_dirt_dddd_2
       rect:
         serializedVersion: 2
         x: 160
@@ -2896,7 +2896,7 @@ TextureImporter:
     outline: []
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: 0c39d50f892529d4fb199c308bdd847c
     internalID: 0
     vertices: []
     indices: 

@@ -4,55 +4,55 @@ TextureImporter:
   internalIDToNameTable:
   - first:
       213: 21300000
-    second: shore_
+    second: all_shore_OOOO_0
   - first:
       213: 21300002
-    second: shore_NSW_E
+    second: all_shore_SASS_0
   - first:
       213: 21300004
-    second: shore_S_E
+    second: all_shore_OASO_0
   - first:
       213: 21300006
-    second: shore_S_W
+    second: all_shore_OOSA_0
   - first:
       213: 21300008
-    second: shore_ES
+    second: all_shore_OSSO_0
   - first:
       213: 21300010
-    second: shore_EW_S
+    second: all_shore_OSAS_0
   - first:
       213: 21300012
-    second: shore_SW
+    second: all_shore_OOSS_0
   - first:
       213: 21300014
-    second: shore_N_W
+    second: all_shore_SOOA_0
   - first:
       213: 21300016
-    second: shore_ES
+    second: all_shore_OSSO_0
   - first:
       213: 21300018
-    second: shore_NS_E
+    second: all_shore_SASO_0
   - first:
       213: 21300020
-    second: shore_NE
+    second: all_shore_SSOO_0
   - first:
       213: 21300022
     second: shore_11
   - first:
       213: 21300024
-    second: shore_NW
+    second: all_shore_SOOS_0
   - first:
       213: 21300026
-    second: shore_NS_W
+    second: all_shore_SOSA_0
   - first:
       213: 21300028
-    second: shore_NE
+    second: all_shore_SSOO_0
   - first:
       213: 21300030
-    second: shore_EW_N
+    second: all_shore_ASOS_0
   - first:
       213: 21300032
-    second: shore_NW
+    second: all_shore_SOOS_0
   - first:
       213: 21300034
     second: shore_17
@@ -64,103 +64,103 @@ TextureImporter:
     second: shore_5
   - first:
       213: 21300040
-    second: shore_N_E
+    second: all_shore_SAOO_0
   - first:
       213: 21300042
-    second: shore_EW_S
+    second: all_shore_OSAS_0
   - first:
       213: 21300044
-    second: shore_SW
+    second: all_shore_OOSS_0
   - first:
       213: 21300046
-    second: shore_NS_E
+    second: all_shore_SASO_0
   - first:
       213: 21300048
-    second: shore_S
+    second: all_shore_OOSO_0
   - first:
       213: 21300050
-    second: shore_E
+    second: all_shore_OSOO_0
   - first:
       213: 21300052
     second: shore_NSW
   - first:
       213: 21300054
-    second: shore_N
+    second: all_shore_SOOO_0
   - first:
       213: 21300056
-    second: shore_E_S
+    second: all_shore_OSAO_0
   - first:
       213: 21300058
-    second: shore_W_S
+    second: all_shore_OOAS_0
   - first:
       213: 21300060
-    second: shore_W_NE
+    second: all_shore_AAOS_0
   - first:
       213: 21300062
-    second: shore_E_NW
+    second: all_shore_ASOA_0
   - first:
       213: 21300064
-    second: shore_E_N
+    second: all_shore_ASOO_0
   - first:
       213: 21300066
-    second: shore_W_N
+    second: all_shore_AOOS_0
   - first:
       213: 21300068
-    second: shore_SW_NE
+    second: all_shore_AASS_0
   - first:
       213: 21300070
-    second: shore_NW_ES
+    second: all_shore_SAAS_0
   - first:
       213: 21300072
-    second: shore_ES_NW
+    second: all_shore_ASSA_0
   - first:
       213: 21300074
-    second: shore_NE_SW
+    second: all_shore_SSAA_0
   - first:
       213: 21300076
-    second: shore_NESW
+    second: all_shore_SSSS_0
   - first:
       213: 21300078
-    second: shore_W
+    second: all_shore_OOOW_0
   - first:
       213: -8689118425468562290
-    second: shore_N_ES
+    second: all_shore_SAAO_0
   - first:
       213: 6933616782793992843
-    second: shore_N_SW
+    second: all_shore_SOAA_0
   - first:
       213: -6789832750741149751
-    second: shore_W_ES
+    second: all_shore_OAAS_0
   - first:
       213: -3731008314585771772
-    second: shore_E_SW
+    second: all_shore_OSAA_0
   - first:
       213: 1030903943075255573
-    second: shore_S_NE
+    second: all_shore_AASO_0
   - first:
       213: 1545243500163700084
-    second: shore_S_NW
+    second: all_shore_AOSA_0
   - first:
       213: -6786412295472628860
-    second: shore__NE
+    second: all_shore_AAOO_0
   - first:
       213: -13777499214046833
-    second: shore__NW
+    second: all_shore_AOOA_0
   - first:
       213: -147134945124614337
-    second: shore__ES
+    second: all_shore_OAAO_0
   - first:
       213: -4578042357357764850
-    second: shore__SW
+    second: all_shore_OOAA_0
   - first:
       213: -793873789167220832
-    second: shore_ESW_N
+    second: all_shore_ASSS_0
   - first:
       213: -4163218009464251735
-    second: shore_NEW_S
+    second: all_shore_SSAS_0
   - first:
       213: 9019312718012962500
-    second: shore_NES_W
+    second: all_shore_SSSA_0
   externalObjects: {}
   serializedVersion: 10
   mipmaps:
@@ -245,7 +245,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: shore_
+      name: all_shore_OOOO_0
       rect:
         serializedVersion: 2
         x: 0
@@ -266,7 +266,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: shore_S_E
+      name: all_shore_OASO_0
       rect:
         serializedVersion: 2
         x: 224
@@ -287,7 +287,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: shore_S_W
+      name: all_shore_OOSA_0
       rect:
         serializedVersion: 2
         x: 256
@@ -308,7 +308,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: shore_N_E
+      name: all_shore_SAOO_0
       rect:
         serializedVersion: 2
         x: 224
@@ -329,7 +329,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: shore_N_W
+      name: all_shore_SOOA_0
       rect:
         serializedVersion: 2
         x: 256
@@ -350,7 +350,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: shore_ES
+      name: all_shore_OSSO_0
       rect:
         serializedVersion: 2
         x: 0
@@ -371,7 +371,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: shore_EW_S
+      name: all_shore_OSAS_0
       rect:
         serializedVersion: 2
         x: 32
@@ -392,7 +392,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: shore_SW
+      name: all_shore_OOSS_0
       rect:
         serializedVersion: 2
         x: 64
@@ -413,7 +413,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: shore_NS_E
+      name: all_shore_SASO_0
       rect:
         serializedVersion: 2
         x: 0
@@ -434,7 +434,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: shore_NS_W
+      name: all_shore_SOSA_0
       rect:
         serializedVersion: 2
         x: 64
@@ -455,7 +455,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: shore_NE
+      name: all_shore_SSOO_0
       rect:
         serializedVersion: 2
         x: 0
@@ -476,7 +476,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: shore_EW_N
+      name: all_shore_ASOS_0
       rect:
         serializedVersion: 2
         x: 32
@@ -497,7 +497,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: shore_NW
+      name: all_shore_SOOS_0
       rect:
         serializedVersion: 2
         x: 64
@@ -518,7 +518,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: shore_S
+      name: all_shore_OOSO_0
       rect:
         serializedVersion: 2
         x: 128
@@ -539,7 +539,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: shore_E
+      name: all_shore_OSOO_0
       rect:
         serializedVersion: 2
         x: 96
@@ -560,7 +560,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: shore_N
+      name: all_shore_SOOO_0
       rect:
         serializedVersion: 2
         x: 128
@@ -581,7 +581,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: shore_E_S
+      name: all_shore_OSAO_0
       rect:
         serializedVersion: 2
         x: 224
@@ -602,7 +602,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: shore_W_S
+      name: all_shore_OOAS_0
       rect:
         serializedVersion: 2
         x: 256
@@ -623,7 +623,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: shore_E_N
+      name: all_shore_ASOO_0
       rect:
         serializedVersion: 2
         x: 224
@@ -644,7 +644,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: shore_W_N
+      name: all_shore_AOOS_0
       rect:
         serializedVersion: 2
         x: 256
@@ -665,7 +665,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: shore_SW_NE
+      name: all_shore_AASS_0
       rect:
         serializedVersion: 2
         x: 288
@@ -686,7 +686,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: shore_NW_ES
+      name: all_shore_SAAS_0
       rect:
         serializedVersion: 2
         x: 288
@@ -707,7 +707,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: shore_ES_NW
+      name: all_shore_ASSA_0
       rect:
         serializedVersion: 2
         x: 320
@@ -728,7 +728,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: shore_NE_SW
+      name: all_shore_SSAA_0
       rect:
         serializedVersion: 2
         x: 320
@@ -749,7 +749,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: shore_NESW
+      name: all_shore_SSSS_0
       rect:
         serializedVersion: 2
         x: 0
@@ -770,7 +770,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: shore_W
+      name: all_shore_OOOW_0
       rect:
         serializedVersion: 2
         x: 160
@@ -791,7 +791,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: shore_N_ES
+      name: all_shore_SAAO_0
       rect:
         serializedVersion: 2
         x: 288
@@ -812,7 +812,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: shore_N_SW
+      name: all_shore_SOAA_0
       rect:
         serializedVersion: 2
         x: 320
@@ -833,7 +833,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: shore_W_NE
+      name: all_shore_AAOS_0
       rect:
         serializedVersion: 2
         x: 288
@@ -854,7 +854,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: shore_E_NW
+      name: all_shore_ASOA_0
       rect:
         serializedVersion: 2
         x: 320
@@ -875,7 +875,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: shore_W_ES
+      name: all_shore_OAAS_0
       rect:
         serializedVersion: 2
         x: 288
@@ -896,7 +896,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: shore_E_SW
+      name: all_shore_OSAA_0
       rect:
         serializedVersion: 2
         x: 320
@@ -917,7 +917,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: shore_S_NE
+      name: all_shore_AASO_0
       rect:
         serializedVersion: 2
         x: 288
@@ -938,7 +938,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: shore_S_NW
+      name: all_shore_AOSA_0
       rect:
         serializedVersion: 2
         x: 320
@@ -959,7 +959,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: shore__NE
+      name: all_shore_AAOO_0
       rect:
         serializedVersion: 2
         x: 352
@@ -980,7 +980,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: shore__NW
+      name: all_shore_AOOA_0
       rect:
         serializedVersion: 2
         x: 384
@@ -1001,7 +1001,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: shore__ES
+      name: all_shore_OAAO_0
       rect:
         serializedVersion: 2
         x: 352
@@ -1022,7 +1022,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: shore__SW
+      name: all_shore_OOAA_0
       rect:
         serializedVersion: 2
         x: 384
@@ -1043,7 +1043,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: shore_ESW_N
+      name: all_shore_ASSS_0
       rect:
         serializedVersion: 2
         x: 128
@@ -1051,7 +1051,7 @@ TextureImporter:
         width: 32
         height: 32
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -1064,7 +1064,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: shore_NSW_E
+      name: all_shore_SASS_0
       rect:
         serializedVersion: 2
         x: 96
@@ -1072,7 +1072,7 @@ TextureImporter:
         width: 32
         height: 32
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -1085,7 +1085,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: shore_NEW_S
+      name: all_shore_SSAS_0
       rect:
         serializedVersion: 2
         x: 128
@@ -1093,7 +1093,7 @@ TextureImporter:
         width: 32
         height: 32
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -1106,7 +1106,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: shore_NES_W
+      name: all_shore_SSSA_0
       rect:
         serializedVersion: 2
         x: 160
@@ -1114,7 +1114,7 @@ TextureImporter:
         width: 32
         height: 32
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []

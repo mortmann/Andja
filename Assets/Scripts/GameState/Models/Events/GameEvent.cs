@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 using Newtonsoft.Json;
+using System;
 
 public class GameEventPrototypData : LanguageVariables {
     public string ID;
@@ -39,11 +40,10 @@ public class GameEvent {
     public bool IsDone { get { return currentDuration <= 0; } }
     public bool IsOneTime { get { return MaxDuration <= 0; } }
     public string Name { get { return EventType.ToString() + " - " + "EMPTY FOR NOW"; } }
-    TargetGroup _Targeted;
+    TargetGroup _Targeted = new TargetGroup();
     public TargetGroup Targeted {
         get {
-            if(_Targeted == null) {
-                _Targeted = new TargetGroup();
+            if(_Targeted == null && Effects != null) {
                 foreach (Effect e in Effects) {
                     Targeted.AddTargets(e.Targets);
                 }
@@ -51,7 +51,7 @@ public class GameEvent {
             return _Targeted;
         }
     }
-
+    [JsonPropertyAttribute] public float Duration;
     [JsonPropertyAttribute] public float currentDuration;
     //MAYBE range can also be a little random...?
     //around this as middle? Range+(-1^RandomInt(1,2)*Random(0,(Random(2,3)*Range)/(Range*Random(0.75,1)));
@@ -62,7 +62,7 @@ public class GameEvent {
     // can be null if its not set to which type
     [JsonPropertyAttribute] public IGEventable target;  //TODO make a check for it!
     [JsonPropertyAttribute] internal uint eventID;
-
+    [JsonPropertyAttribute] float triggerEffectCooldown = UnityEngine.Random.Range(0.1f, 1f);
     /// <summary>
     /// Needed for Serializing
     /// </summary>
@@ -79,7 +79,13 @@ public class GameEvent {
         return new GameEvent(this);
     }
     public void StartEvent() {
+        Duration = WeightedRandomDuration();
+        currentDuration = Duration;
         //DO smth on start event?!
+        if (ID == "volcanic_eruption") {
+            position = ((Island)target).Features.Find(x => x.type == FeatureType.Volcano).position;
+            CreateVolcanicEruption();
+        }
     }
     public void StartEvent(Vector2 pos) {
         if(target != null) {
@@ -87,13 +93,17 @@ public class GameEvent {
             return;
         }
         position = pos;
-        currentDuration = WeightedRandomDuration();
+        StartEvent();
     }
     public void Update(float delta) {
         if (currentDuration <= 0) {
             Debug.LogWarning("This Event is over, but still being updated (active)!");
         }
         currentDuration -= delta;
+        triggerEffectCooldown -= delta;
+        if (ID == "volcanic_eruption") {
+            UpdateVolcanicEruption();
+        }
     }
     /// <summary>
     /// Weights around the middle of the range higher.
@@ -110,6 +120,8 @@ public class GameEvent {
         return num;
     }
     public bool HasWorldEffect() {
+        if (Effects == null)
+            return false;
         foreach (Effect item in Effects) {
             if (item.InfluenceRange == InfluenceRange.World) {
                 return true;
@@ -117,6 +129,19 @@ public class GameEvent {
         }
         return false;
     }
+
+    internal bool IsValid() {
+        if(target is Island) {
+            if(((Island)target).Features != null) {
+                //if(SpecialRange[Target.Island].Exists(t=>((Island)target).Features.Exists(x=>x.ID == t))) {
+                //    return true;
+                //}
+            }
+            //return false
+        }
+        return true;
+    }
+
     /// <summary>
     /// Determines whether this instance is target the specified Event targets.
     /// This includes the Player, City and Island. 
@@ -158,7 +183,6 @@ public class GameEvent {
     public void EffectTarget(IGEventable t, bool start) {
         Effect[] effectsForTarget = GetEffectsForTarget(t);
         if (effectsForTarget == null) {
-            Debug.LogError("Influence is null!");
             return;
         }
         foreach(Effect e in effectsForTarget) {
@@ -167,6 +191,8 @@ public class GameEvent {
     }
 
     public Effect[] GetEffectsForTarget(IGEventable t) {
+        if (Effects == null)
+            return null;
         List<Effect> effectsForTarget = new List<Effect>();
         foreach (Effect eff in Effects) {
             if (t.TargetGroups.IsTargeted(eff.Targets) == false) {
@@ -177,4 +203,45 @@ public class GameEvent {
         return effectsForTarget.ToArray();
     }
 
+
+    //Spezialfunctions!
+    public void CreateVolcanicEruption() {
+        //create the image of lava
+        EventSpriteController.Instance.CreateEventTileSprites(ID, this);
+        //change music (only if it is a player island?)
+        //
+    }
+    public void UpdateVolcanicEruption() {
+        //create the image of lava
+        EventSpriteController.Instance.UpdateEventTileSprites(this, currentDuration/Duration);
+        if(currentDuration>Duration) {
+            StopVolcanicEruption();
+            return;
+        }
+        if (triggerEffectCooldown > 0)
+            return;
+        if(UnityEngine.Random.Range(0f,1f) > 1f - currentDuration / Duration) {
+            for(int i = UnityEngine.Random.Range(1, 3); i>0; i--) {
+                Vector2 goal = position + new Vector2(UnityEngine.Random.Range(-30, 31), UnityEngine.Random.Range(-30, 31));
+                Vector3 move = position - goal;
+                World.Current.OnCreateProjectile(
+                    new Projectile(new World.WorldDamage(200), position, null, goal, move.normalized, move.magnitude, false, 4,true)
+                    );
+            }
+        }
+        triggerEffectCooldown = UnityEngine.Random.Range(0.1f, 1f);
+        //create projectiles flying from it 
+        //  -at random times
+        //  -to random tiles (how far?)
+        //  -make them only "hit" the destination tiles
+        //World.Current.OnC
+        //create sounds 
+        //change music (only if it is a player island?)
+        //
+    }
+
+    private void StopVolcanicEruption() {
+        EventSpriteController.Instance.DestroyEventTileSprites(this);
+
+    }
 }

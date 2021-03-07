@@ -4,7 +4,7 @@ TextureImporter:
   internalIDToNameTable:
   - first:
       213: 21300000
-    second: mountain
+    second: all_mountain_mmmm_0
   - first:
       213: 21300002
     second: mountain_0
@@ -92,7 +92,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: mountain
+      name: all_mountain_mmmm_0
       rect:
         serializedVersion: 2
         x: 0
@@ -115,7 +115,7 @@ TextureImporter:
     outline: []
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: 77a1530ce91b69341adce183ce58a79f
     internalID: 0
     vertices: []
     indices: 

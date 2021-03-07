@@ -82,8 +82,14 @@ public class ConsoleController : MonoBehaviour {
         if (parameters.Length < 1) {
             return false;
         }
-        for (int i = 0; i < parameters.Length; i++)
-            parameters[i]=parameters[i].Trim();
+        int realIndex=0;
+        for (int i = 0; i < parameters.Length; i++) {
+            if (string.IsNullOrEmpty(parameters[i]))
+                continue;
+            parameters[realIndex] = parameters[i].Trim();
+            realIndex++;
+        }
+        parameters = parameters.Take(realIndex).ToArray();
         bool happend = false;
         switch (parameters[0]) {
             case "speed":
@@ -195,13 +201,13 @@ public class ConsoleController : MonoBehaviour {
             return false;
         }
         string id = parameters[1];
-        if (PrototypController.Instance.GameEventPrototypeDatas.ContainsKey(id) == false) {
+        if (PrototypController.Instance.GameEventExists(id) == false) {
             return false;
         }
         switch (parameters[0]) {
             case "trigger":
                 int player = -1;
-                if (parameters.Length == 3) {
+                if (parameters.Length == 3 && string.IsNullOrEmpty(parameters[2]) == false) {
                     int.TryParse(parameters[2], out player);
                 }
                 if(player < 0)

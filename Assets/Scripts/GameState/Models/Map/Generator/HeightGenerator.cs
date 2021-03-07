@@ -218,8 +218,8 @@ public class HeightGenerator {
                 }
             }
         }
-        if((float)tlandCount / landCount > 1)
-            Debug.Log("More land " + ((float)tlandCount / landCount) + " " + tlandCount + " " + landCount);
+        //if((float)tlandCount / landCount > 1)
+        //    Debug.Log("More land " + ((float)tlandCount / landCount) + " " + tlandCount + " " + landCount);
         Progress += 0.125f * maxProgress;
         IslandOceanFloodFill(Width, Height, values);
         Progress += 0.1f * maxProgress;

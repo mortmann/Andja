@@ -60,7 +60,7 @@ public class StructurePrototypeData : LanguageVariables {
     public int maintenanceCost;
 
     public bool canBeBuild = true;
-    public int buildcost;
+    public int buildCost;
     public BuildType buildTyp;
     public ExtraBuildUI extraBuildUITyp;
     public Item[] buildingItems;
@@ -178,7 +178,7 @@ public abstract class Structure : IGEventable {
 
     public bool CanStartBurning { get { return Data.canStartBurning; } }
     [TextReplace("buildcost")]
-    public int BuildCost { get { return Data.buildcost; } }
+    public int BuildCost { get { return Data.buildCost; } }
     [TextReplace("builditems")]
     public Item[] BuildingItems { get { return Data.buildingItems; } }
     [TextReplace("upgradeitems")]

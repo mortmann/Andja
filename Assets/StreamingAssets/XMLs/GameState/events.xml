@@ -17,6 +17,23 @@
       <uiSpriteName>fire</uiSpriteName>
       <onMapSpriteName>fire</onMapSpriteName>
    </Effect>
+   <Effect ID="volcanicearth">
+      <Name>
+         <entry lang="English">Volcanic Earth</entry>
+         <entry lang="German">Vulkanerde</entry>
+      </Name>
+      <unique>false</unique>
+      <nameOfVariable>efficiency</nameOfVariable>
+      <change>0.03</change>
+      <targets>
+         <Target>GrowableStructure</Target>
+      </targets>
+      <addType>Float</addType>
+      <modifierType>Additive</modifierType>
+      <updateChange>None</updateChange>
+      <classification>Positiv</classification>
+      <uiSpriteName>volcanicearth</uiSpriteName>
+   </Effect>
    <Effect ID="illness">
       <Name>
          <entry lang="English">Illness</entry>
@@ -52,5 +69,20 @@
       <effects length="1">
          <Effect>fire</Effect>
       </effects>
+   </GameEvent>
+   <GameEvent ID="volcanic_eruption">
+      <Name>
+         <entry lang="English">Volcanic Eruption</entry>
+         <entry lang="German">Vulkanausbruch</entry>
+      </Name>
+      <Description>
+         <entry lang="English">A vulkan is breaking out.</entry>
+         <entry lang="German">Ein Vulkan bricht aus.</entry>
+      </Description>
+      <probability>10.0</probability>
+      <minDuration>50.0</minDuration>
+      <maxDuration>100.0</maxDuration>
+      <minRange>50.0</minRange>
+      <maxRange>100.0</maxRange>
    </GameEvent>
 </events>

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using UnityEngine;
 
 public class MapGenerator : MonoBehaviour {
-
+     
     Rect ColdIslandSpace;
     Rect MiddleIslandSpace;
     Rect WarmIslandSpace;
@@ -293,7 +293,7 @@ public class MapGenerator : MonoBehaviour {
             for (int i = 0; i < generatorsTasks.Count; i++) {
                 Task t = generatorsTasks[i];
                 if (t.IsCompleted && IsDone == false) {
-                    Debug.Log("TASK Number " + i + " is finished! ");
+                    //Debug.Log("TASK Number " + i + " is finished! ");
                     if (t.IsFaulted) {
                         Debug.LogError("TASK Number " + i + " had an " + t.Exception.InnerException.Message + " exception \n" + t.Exception.InnerException.StackTrace);
                     }
@@ -551,9 +551,14 @@ public class MapGenerator : MonoBehaviour {
                     int MinY = (int)Mathf.Max(hasToBeIn.yMin, placeIn.yMin);
                     int MaxX = (int)Mathf.Min(hasToBeIn.xMax, placeIn.xMax);
                     int MinX = (int)Mathf.Max(hasToBeIn.xMin, placeIn.xMin);
+                    islandTries++;
+                    if (MaxX - MinX < island.Width)
+                        continue;
+                    if (MaxY - MinY < island.Height)
+                        continue;
                     int x = placeIslandThreadRandom.Range(MinX, MaxX - island.Width);
                     int y = placeIslandThreadRandom.Range(MinY, MaxY - island.Height);
-                    islandTries++;
+                    
                     Rect toTest = new Rect(x, y, island.Width + MinTilesAroundIsland, island.Height + MinTilesAroundIsland);
                     //foreach (Rect inWorld in rectangleIslands) {
                     //    if (toTest.Overlaps(inWorld)) {
@@ -642,7 +647,10 @@ public class MapGenerator : MonoBehaviour {
                 if (island.tileToStructure.ContainsKey(t)) {
                     //the tile has a structure associated 
                     //need to update that reference to the new location of that tile
-                    tileToStructure.Add(newTile, island.tileToStructure[t]);
+                    if (tileToStructure.ContainsKey(newTile))
+                        Debug.LogError("Structure is being overwritten! " + newTile.Vector2 + ": "+ 
+                                        tileToStructure[newTile] + " with "  + island.tileToStructure[t]);
+                    tileToStructure[newTile] = island.tileToStructure[t];
                 }
             }
             placeProgress += 0.2f / placeToIsland.Count;
@@ -723,7 +731,7 @@ public class MapGenerator : MonoBehaviour {
             Debug.LogWarning("World wasnt ready when called!");
             return null;
         }
-        world = new World(tiles, Width, Height, isIslandEditor);
+        world = new World(tiles, isIslandEditor);
         if(doneIslands != null) {
             foreach (IslandData island in doneIslands) {
                 world.CreateIsland(island);
@@ -821,8 +829,8 @@ public class MapGenerator : MonoBehaviour {
         public Size Size;
         public int ResourcesCount;
         public int FertilityCount;
-        internal List<ResourceGenerationInfo> excludedResources;
-
+        internal List<ResourceGenerationInfo> excludedResources = new List<ResourceGenerationInfo>();
+        public List<IslandFeature> features;
         public bool NeedsFertility => FertilityCount > fertilities.Count;
         public bool NeedsResources => ResourcesCount > resources.Count;
 
@@ -834,6 +842,7 @@ public class MapGenerator : MonoBehaviour {
             name = save.Name;
             Resources = MapGenerator.Instance.GetResourcesFromRange(save.Resources);
             tileToStructure = new Dictionary<Tile, Structure>();
+            features = save.features;
             foreach (Structure str in save.structures) {
                 tileToStructure.Add(str.BuildTile, str);
             }
@@ -845,6 +854,8 @@ public class MapGenerator : MonoBehaviour {
             this.name = copy.name;
             this.fertilities = copy.fertilities;
             Resources = copy.Resources;
+            features = copy.features;
+
             //x = copy.x;
             //y = copy.y;
 
@@ -857,6 +868,9 @@ public class MapGenerator : MonoBehaviour {
         public IslandData(IslandData copy, Tile[] islandTiles, Rect place) : this(copy, islandTiles) {
             this.x = (int)place.x;
             this.y = (int)place.y;
+            foreach(IslandFeature f in features) {
+                f.position += new Vector2(x, y); //adjust for worldposition
+            }
         }
 
         public IslandData(int Width, int Height) {
@@ -868,16 +882,16 @@ public class MapGenerator : MonoBehaviour {
             FertilityCount = info.fertilityRange.GetRandomCount(MapGenerator.Instance.mapThreadRandom);
         }
         IslandData() { }
-        public IslandData(int width, int height, Tile[] tile, Climate climate, Dictionary<Tile, Structure> tileToStructure) : this(width, height) {
+        public IslandData(int width, int height, Tile[] tile, Climate climate, Dictionary<Tile, Structure> tileToStructure, List<IslandFeature> features) : this(width, height) {
             Width = width;
             Height = height;
             this.Tiles = tile;
             this.climate = climate;
             this.tileToStructure = tileToStructure;
-            excludedResources = new List<ResourceGenerationInfo>();
             excludedResources.AddRange(PrototypController.Instance.ClimateToResourceGeneration[climate].FindAll(x =>
                     x.requiredTile != null && Array.Exists(x.requiredTile, y => Array.Exists(Tiles, z => z.Type == y) == false
             )));
+            this.features = features;
         }
 
         public Vector2 GetPosition() {

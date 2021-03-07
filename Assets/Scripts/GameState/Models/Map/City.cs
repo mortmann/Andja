@@ -68,7 +68,7 @@ public class City : IGEventable {
     public int expanses = 0;
     public int income = 0;
     public int Balance => income - expanses;
-    public float useTick => 60f;
+    public static float useTick => 60f;
     public WarehouseStructure warehouse;
 
     Action<Structure> cbStructureAdded;
@@ -214,7 +214,7 @@ public class City : IGEventable {
             temp[i].City = null;
         }
         Inventory = new Inventory(0);
-        this.PlayerNumber = -1;
+        this.PlayerNumber = GameData.WorldNumber;
         this.Island = island;
         island.Wilderness = this;
         Structures = new List<Structure>();
@@ -356,7 +356,7 @@ public class City : IGEventable {
         return Inventory.HasAnythingOf(item);
     }
     public bool IsWilderness() {
-        if (PlayerNumber == -1 && this != Island.Wilderness) {
+        if (PlayerNumber == GameData.WorldNumber && this != Island.Wilderness) {
             Debug.LogError("NOT WILDERNESS! But -1 playernumber!? ");
         }
         return this == Island.Wilderness;

@@ -53,7 +53,7 @@ public class UIController : MonoBehaviour {
         }
         Instance = this;
         Sprite[] sprites = Resources.LoadAll<Sprite>("Textures/Items/");
-        Debug.Log(sprites.Length + " Item Sprite");
+        //Debug.Log(sprites.Length + " Item Sprite");
         ItemImages = new Dictionary<string, Sprite>();
         foreach (Sprite item in sprites) {
             ItemImages[item.name] = item;

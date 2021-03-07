@@ -21,6 +21,10 @@ public class GameData : MonoBehaviour {
     //if there is nothing set it is null so new world
     //only load the set value if not using ingame loading method
     public string Loadsavegame => Application.isEditor && (setloadsavegame == null || setloadsavegame.Length==0)? editorloadsavegame : setloadsavegame;
+    public static int WorldNumber = -1;
+    public static int PirateNumber = -2;
+    public static int FlyingTraderNumber = -3;
+
     public string editorloadsavegame;
     public static string setloadsavegame;
 
@@ -58,11 +62,11 @@ public class GameData : MonoBehaviour {
         }
         Dictionary<MapGenerator.IslandGenInfo, Range> dict = new Dictionary<MapGenerator.IslandGenInfo, Range> { 
             //Temporary fill this list, later generate this from selected/number of player, map size, difficulty, and other
-            {new MapGenerator.IslandGenInfo(new Range(100,100), new Range(100, 100), Climate.Middle,false),new Range(1,1)
+            {new MapGenerator.IslandGenInfo(new Range(100,100), new Range(100, 100), Climate.Middle,true),new Range(1,1)
             },
-            {new MapGenerator.IslandGenInfo(new Range(100, 100), new Range(100, 100), Climate.Cold,false),new Range(1,2)
+            {new MapGenerator.IslandGenInfo(new Range(100, 100), new Range(100, 100), Climate.Cold,true),new Range(1,2)
             },
-            {new MapGenerator.IslandGenInfo(new Range(60, 60), new Range(60, 60), Climate.Warm,false),new Range(1,1)
+            {new MapGenerator.IslandGenInfo(new Range(60, 60), new Range(60, 60), Climate.Warm,true),new Range(1,1)
             },
             {new MapGenerator.IslandGenInfo(new Range(100, 100), new Range(100, 100), Climate.Warm,true),new Range(1,1)
             },

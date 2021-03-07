@@ -19,6 +19,7 @@ public class IslandGenerator {
     public int Height;
     string debug_string; //TODO: remove when done with generator
     public Tile[] Tiles { get; protected set; }
+    List<IslandFeature> features = new List<IslandFeature>();
     public Climate climate;
     public Dictionary<Tile, Structure> tileToStructure;
     // Use this for initialization
@@ -27,8 +28,9 @@ public class IslandGenerator {
         this.Width = Width;
         this.Height = Height;
         this.seed = seed;
-        Debug.Log("IslandGenerator Seed " + seed);
-        this.seed = 1643854473;
+        //Debug.Log("IslandGenerator Seed " + seed);
+        if(EditorController.IsEditor)
+            this.seed = 1643854473;
         //this.seed = 1828479444;
         //this.seed = 100;
         //this.seed = 10;
@@ -42,9 +44,9 @@ public class IslandGenerator {
         sw.Start();
         SetupTile();
 
-        float[,] values = HeightGenerator.Generate(Width, Height, random, 0.39f, ref Progress);
-        Debug.Log("Generated height float[] in " + sw.ElapsedMilliseconds + "ms (" + sw.Elapsed.TotalSeconds + "s)!" );
-
+        float[,] heightValues = HeightGenerator.Generate(Width, Height, random, 0.39f, ref Progress);
+        //Debug.Log("Generated height float[] in " + sw.ElapsedMilliseconds + "ms (" + sw.Elapsed.TotalSeconds + "s)!" );
+        float[,] moistureValues = MoistureGenerator.Generate(Width, Height, heightValues, random, 0.1f, ref Progress);
         //Progress += 0.1f;
         ////IslandOceanFloodFill(values, out HashSet<Tile> ocean);
         //Debug.Log("IslandOceanFloodFill in " + sw.ElapsedMilliseconds + "ms (" + sw.Elapsed.TotalSeconds + "s)!");
@@ -53,7 +55,6 @@ public class IslandGenerator {
         ////MakeShore(values);
         //Debug.Log("MakeShore in " + sw.ElapsedMilliseconds + "ms (" + sw.Elapsed.TotalSeconds + "s)!");
 
-        Progress += 0.1f;
         //Debug.Log ("FloodFillOcean");
         
         //Debug.Log("IslandOceanFloodFill in " + sw.ElapsedMilliseconds + "ms (" + sw.Elapsed.TotalSeconds + "s)!");
@@ -61,9 +62,10 @@ public class IslandGenerator {
         for (int x = 0; x < Width; x++) {
             for (int y = 0; y < Height; y++) {
                 Tile t = GetTileAt(x, y);
-                t.Elevation = values[x, y];
+                t.Elevation = heightValues[x, y];
                 if (t.Elevation == 0)
                     continue;
+                t.Moisture = moistureValues[x, y];
                 if (t.Elevation >= shoreElevation) {
                     t = new LandTile(x, y, t);
                     t.Type = TileType.Dirt;
@@ -107,12 +109,15 @@ public class IslandGenerator {
         //We need to give it a random tilesprite
         //giving sprite needs to be done somewhere else?
         //some depend on already set types
+        float f = 0;
         for (int x = 0; x < Width; x++) {
             for (int y = 0; y < Height; y++) {
                 Tile t = GetTileAt(x, y);
                 t.SpriteName = GetRandomSprite(t);
+                f += t.Moisture;
             }
         }
+        //Debug.Log(f / (Height * Width));
         Progress += 0.1f;
         PlaceStructures();
         Progress += 0.1f;
@@ -121,26 +126,37 @@ public class IslandGenerator {
     }
 
     private void RandomFeatures() {
-        int[,] xmountains = new int[Width, Height];
-        int[,] ymountains = new int[Width, Height];
-        int volcano = 1;
-        int rivers = 1;
+        TileValue[,] PreTileValues = TileValue.CalculateStartingValues(Width, Height, Tiles);
+        Dictionary<string, int> featureToCount = new Dictionary<string, int>();
+        IslandFeaturePrototypeData[] allFeatures = PrototypController.Instance.islandFeaturePrototypeDatas.Values.ToArray();
+        foreach (IslandFeaturePrototypeData feature in allFeatures) {
+            featureToCount[feature.ID] = 1;
+        }
         for (int y = 0; y < Height; y++) {
             for (int x = 0; x < Width; x++) {
-                if (x == 0 || y == 0 || GetTileAt(x, y).Type != TileType.Mountain)
-                    continue;
-                xmountains[x, y] = xmountains[x - 1, y] + 1;
-                ymountains[x, y] = ymountains[x, y - 1] + 1;
-                if (xmountains[x, y] == 1 || ymountains[x, y] == 1) {
-                    if (random.Range(0f, 1f) < 0.025f/ rivers) {
-                        MakeRiver(GetTileAt(x, y));
-                        rivers++;
-                    }
-                }
-                if (xmountains[x, y] >= 7 && ymountains[x, y] >= 7) {
-                    if (random.Range(0f, 1f) < 0.01f/volcano) {
-                        volcano++;
-                        MakeVolcano(GetTileAt(x - 3, y - 3));
+                foreach(IslandFeaturePrototypeData proto in allFeatures) {
+                    IslandFeature feature = new IslandFeature(proto.ID);
+                    if (feature.RequiredTile == PreTileValues[x,y].Type) {                    
+                        bool fits = false;
+                        switch (feature.fitType) {
+                            case FitType.Exact:
+                                fits = PreTileValues[x, y].Exact(feature.RequiredSpace);
+                                break;
+                            case FitType.Bigger:
+                                fits = PreTileValues[x, y].Fits(feature.RequiredSpace, true);
+                                break;
+                            case FitType.Smaller:
+                                fits = PreTileValues[x, y].Smaller(feature.RequiredSpace, true);
+                                break;
+                        }
+                        if (fits) {
+                            float c = random.Range(0f, 1f);
+                            if (feature.GenerateProbability(featureToCount[feature.ID])>c) {                        
+                                features.Add(feature);
+                                featureToCount[feature.ID]++;
+                                feature.Generate(this, x, y);
+                            }
+                        }
                     }
                 }
             }
@@ -148,65 +164,16 @@ public class IslandGenerator {
 
     }
 
-    private void MakeVolcano(Tile start) {
-        if (start.Type == TileType.Volcano)
+    
+    private void IncreaseMoisture(Vector2 pos, Vector2 move, int length) {
+        if (length<=0)
             return;
-        for (int y = 0; y < 4; y++) {
-            for (int x = 0; x < 4; x++) {
-                Tile tile = GetTileAt(start.X + x, start.Y + y);
-                tile.Type = TileType.Volcano;
-                tile.SpriteName = TileSpriteController.GetSpriteForSpecial(TileType.Volcano, x, y);
-            }
-        }
+        Tile tile = GetTileAt(pos + move);
+        if (tile.Type == TileType.Water || tile.Type == TileType.Ocean)
+            return;
+        tile.Moisture = (tile.Moisture + GetTileAt(pos).Moisture) / 2f;
+        IncreaseMoisture(tile.Vector2, move, --length);
     }
-
-    private void MakeRiver(Tile start) {
-        Stack<Tile> riverTiles = new Stack<Tile>();
-        Tile current = start;
-        bool[,] visited = new bool[Width, Height];
-        Stack<Tile> toCheck = new Stack<Tile>();
-        bool[,] marked = new bool[Width, Height];
-        while (current.Type != TileType.Ocean) {
-            Tile[] tiles = GetNeighbours(current).OrderByDescending(x=>x.Elevation).ToArray();
-            foreach (Tile n in tiles) {
-                if (visited[n.X, n.Y])
-                    continue;
-                toCheck.Push(n);
-            }
-            current = toCheck.Pop();
-            visited[current.X, current.Y] = true;
-            if (current.Type == TileType.Mountain || current.Type == TileType.Water)
-                continue;
-            for (int y = -1; y <= 1; y++) {
-                for (int x = -1; x <= 1; x++) {
-                    if (Mathf.Abs(x) + Mathf.Abs(y) == 2)
-                        continue;
-                    if (current.X + x < 0 || current.X + x > Width - 1 || current.Y - y < 0 || current.Y - y > Height - 1)
-                        continue;
-                    marked[current.X + x, current.Y - y] = true;
-                }
-            }
-            riverTiles.Push(current);
-        }
-        while (riverTiles.Count > 0) {
-            current = riverTiles.Pop();
-            //foreach (Tile n in GetNeighbours(current)) {
-            //    bool hasNonMarked = false;
-            //    foreach (Tile nn in GetNeighbours(n)) {
-            //        if (marked[nn.X, nn.Y])
-            //            continue;
-            //        hasNonMarked = true;
-            //        break;
-            //    }
-            //    marked[n.X, n.Y] = true;
-            //    if (hasNonMarked == false) {
-            //        n.Type = TileType.Water;
-            //    }
-            //}
-            current.Type = TileType.Water;
-        }
-    }
-
     private void PlaceStructures() {
         FastNoise cubicNoise = new FastNoise();
         cubicNoise.SetFractalGain(1f);
@@ -285,10 +252,13 @@ public class IslandGenerator {
         }
     }
     private string GetRandomSprite(Tile t) {
+        if (t.Type == TileType.Ocean)
+            return null;
         if (t.Type == TileType.Volcano)
             return t.SpriteName;
-        List<string> all = TileSpriteController.GetSpriteNamesForType(t.Type, climate, Tile.GetSpriteAddonForTile(t, GetNeighbours(t)));
-        if (all == null) {
+        string s = Tile.GetSpriteAddonForTile(t, GetNeighbours(t));
+        List<string> all = TileSpriteController.GetSpriteNamesForType(t.Type, climate, s);
+        if (all == null || all.Count == 0) {
             return "";
         }
         int rand = random.Range(0, all.Count - 1);
@@ -435,6 +405,9 @@ public class IslandGenerator {
     public Tile GetTileAt(float x, float y) {
         return GetTileAt(Mathf.FloorToInt(x), Mathf.FloorToInt(y));
     }
+    public Tile GetTileAt(Vector2 v) {
+        return GetTileAt(v.x, v.y);
+    }
     Tile[] GetTilesWithinRangeOf(Tile center, float range) {
         List<Tile> tiles = new List<Tile>();
         for (float x = center.X - range; x <= center.X + range; x++) {
@@ -448,7 +421,7 @@ public class IslandGenerator {
     public MapGenerator.IslandData GetIslandData() {
         List<Tile> tiles = new List<Tile>(Tiles);
         tiles.RemoveAll(x => x.Type == TileType.Ocean);
-        return new MapGenerator.IslandData(Width, Height, tiles.ToArray(), climate, tileToStructure);
+        return new MapGenerator.IslandData(Width, Height, tiles.ToArray(), climate, tileToStructure, features);
     }
 
     public bool MakeShore(float[,] heights) {
@@ -704,7 +677,6 @@ public class IslandGenerator {
             this.currDistance = currDistance;
             this.index = index;
             this.length = length;
-
         }
     }
 }

@@ -191,6 +191,7 @@ public class ConsoleUI : MonoBehaviour {
                 return ItemIDs;
             case "unit":
                 return UnitIDs;
+            case "trigger":
             case "event":
                 return EventIDs;
             case "diplomatic":

@@ -11,6 +11,8 @@ public class PopulationLevelPrototypData : LanguageVariables {
     public string iconSpriteName;
     public int taxPerPerson = 1;
 
+    public HomeStructure HomeStructure { get; internal set; }
+
     internal List<NeedGroup> GetCopyGroupNeedList() {
         List<NeedGroup> newList = new List<NeedGroup>();
         if (needGroupList == null)

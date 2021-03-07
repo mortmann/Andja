@@ -49,6 +49,7 @@ public class UnitSpriteController : MonoBehaviour {
             OnProjectileCreated(pro);
         }
         mouseController = MouseController.Instance;
+        World.RegisterOnCreateProjectileCallback(OnProjectileCreated);
         BuildController.Instance.RegisterBuildStateChange(OnBuildStateChange);
     }
 
@@ -86,7 +87,6 @@ public class UnitSpriteController : MonoBehaviour {
         // the object's into changes.
         unit.RegisterOnChangedCallback(OnUnitChanged);
         unit.RegisterOnDestroyCallback(OnUnitDestroy);
-        unit.RegisterOnCreateProjectileCallback(OnProjectileCreated);
         OnUnitChanged(unit);
 
         //SOUND PART -- IMPORTANT
@@ -111,10 +111,12 @@ public class UnitSpriteController : MonoBehaviour {
         sr.sortingLayerName = "Units";
         sr.sprite = unitSprites["cannonball_1"];
         projectile.RegisterOnDestroyCallback(OnProjectileDestroy);
-        BoxCollider2D col = pro_go.AddComponent<BoxCollider2D>();
-        col.isTrigger = true;
-        col.size = new Vector2(sr.sprite.textureRect.size.x / sr.sprite.pixelsPerUnit,
-                                sr.sprite.textureRect.size.y / sr.sprite.pixelsPerUnit);
+        if(projectile.HasHitbox) {
+            BoxCollider2D col = pro_go.AddComponent<BoxCollider2D>();
+            col.isTrigger = true;
+            col.size = new Vector2(sr.sprite.textureRect.size.x / sr.sprite.pixelsPerUnit,
+                                    sr.sprite.textureRect.size.y / sr.sprite.pixelsPerUnit);
+        }
         pro_go.AddComponent<ProjectileHoldingScript>().Projectile = projectile;
     }
 

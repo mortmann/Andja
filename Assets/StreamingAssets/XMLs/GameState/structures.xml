@@ -532,7 +532,7 @@
          <isWalkable>false</isWalkable>
          <hasHitbox>true</hasHitbox>
          <maxHealth>50.0</maxHealth>
-         <structureRange>0</structureRange>
+         <structureRange>4</structureRange>
          <populationLevel>1</populationLevel>
          <populationCount>0</populationCount>
          <structureLevel>0</structureLevel>
@@ -830,7 +830,7 @@
          <isWalkable>false</isWalkable>
          <hasHitbox>true</hasHitbox>
          <maxHealth>200.0</maxHealth>
-         <structureRange>0</structureRange>
+         <structureRange>4</structureRange>
          <populationLevel>1</populationLevel>
          <populationCount>2500</populationCount>
          <structureLevel>0</structureLevel>
@@ -1305,7 +1305,7 @@
          <contactRange>0.0</contactRange>
          <forMarketplace>false</forMarketplace>
          <maxNumberOfWorker>0</maxNumberOfWorker>
-         <produceTime>0.0</produceTime>
+         <produceTime>20.0</produceTime>
          <maxOutputStorage>1</maxOutputStorage>
          <efficiency>1.0</efficiency>
          <output length="1">
@@ -1480,11 +1480,67 @@
          <forMarketplace>true</forMarketplace>
          <maxNumberOfWorker>1</maxNumberOfWorker>
          <produceTime>35.0</produceTime>
-         <maxOutputStorage>0</maxOutputStorage>
+         <maxOutputStorage>5</maxOutputStorage>
          <efficiency>1.0</efficiency>
          <output length="1">
             <Item ID="ironore">
-               <count>0</count>
+               <count>1</count>
+            </Item>
+         </output>
+      </mine>
+	  <mine ID="ironmine1">
+         <Name>
+            <entry lang="English">Iron Mine</entry>
+            <entry lang="German">Eisenbergwerk</entry>
+         </Name>
+         <Description>
+            <entry lang="English">Produces iron ore.</entry>
+            <entry lang="German">Produziert Eisenerz.</entry>
+         </Description>
+         <HoverOver>
+            <entry lang="English">Iron Mine</entry>
+            <entry lang="German">Eisenbergwerk</entry>
+         </HoverOver>
+         <canBeBuild>true</canBeBuild>
+         <isWalkable>false</isWalkable>
+         <hasHitbox>true</hasHitbox>
+         <maxHealth>360.0</maxHealth>
+         <structureRange>0</structureRange>
+         <populationLevel>1</populationLevel>
+         <populationCount>750</populationCount>
+         <structureLevel>0</structureLevel>
+         <tileWidth>2</tileWidth>
+         <tileHeight>3</tileHeight>
+         <canRotate>true</canRotate>
+         <canBeBuildOver>false</canBeBuildOver>
+         <canBeUpgraded>false</canBeUpgraded>
+         <canTakeDamage>false</canTakeDamage>
+         <mustFrontBuildDir>None</mustFrontBuildDir>
+         <canStartBurning>false</canStartBurning>
+         <maintenanceCost>55</maintenanceCost>
+         <buildCost>800</buildCost>
+         <buildTyp>Single</buildTyp>
+         <structureTyp>Blocking</structureTyp>
+         <extraUITyp>None</extraUITyp>
+         <extraBuildUITyp>None</extraBuildUITyp>
+         <buildingItems length="2">
+            <Item ID="wood">
+               <count>10</count>
+            </Item>
+            <Item ID="tools">
+               <count>3</count>
+            </Item>
+         </buildingItems>
+         <spriteBaseName>ironmine</spriteBaseName>
+         <contactRange>0.0</contactRange>
+         <forMarketplace>true</forMarketplace>
+         <maxNumberOfWorker>1</maxNumberOfWorker>
+         <produceTime>35.0</produceTime>
+         <maxOutputStorage>5</maxOutputStorage>
+         <efficiency>1.0</efficiency>
+         <output length="1">
+            <Item ID="ironore">
+               <count>1</count>
             </Item>
          </output>
       </mine>
@@ -1953,7 +2009,7 @@
          <canTakeDamage>true</canTakeDamage>
          <mustFrontBuildDir>N</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
-         <maintenanceCost>0</maintenanceCost>
+         <maintenanceCost>5</maintenanceCost>
          <buildCost>100</buildCost>
          <buildTyp>Single</buildTyp>
          <structureTyp>Blocking</structureTyp>
@@ -2303,6 +2359,75 @@
          </intake>
          <inputTyp>AND</inputTyp>
       </production>
+		<production ID="ironsmelter1">
+         <Name>
+            <entry lang="English">Iron Smelter</entry>
+            <entry lang="German">Eisenerzschmelze</entry>
+         </Name>
+         <Description>
+            <entry lang="English">Uses coal and iron ore to produce iron ingots.</entry>
+            <entry lang="German">Benötigt Kohle und Eisenerz um Eisenrohling zuerstellen.</entry>
+         </Description>
+         <HoverOver>
+            <entry lang="English">Iron Smelter</entry>
+            <entry lang="German">Eisenerzschmelze</entry>
+         </HoverOver>
+         <canBeBuild>true</canBeBuild>
+         <isWalkable>false</isWalkable>
+         <hasHitbox>true</hasHitbox>
+         <maxHealth>350.0</maxHealth>
+         <structureRange>7</structureRange>
+         <populationLevel>1</populationLevel>
+         <populationCount>750</populationCount>
+         <structureLevel>0</structureLevel>
+         <tileWidth>3</tileWidth>
+         <tileHeight>3</tileHeight>
+         <canRotate>true</canRotate>
+         <canBeBuildOver>false</canBeBuildOver>
+         <canBeUpgraded>false</canBeUpgraded>
+         <canTakeDamage>true</canTakeDamage>
+         <mustFrontBuildDir>None</mustFrontBuildDir>
+         <canStartBurning>false</canStartBurning>
+         <maintenanceCost>100</maintenanceCost>
+         <buildCost>1250</buildCost>
+         <buildTyp>Single</buildTyp>
+         <structureTyp>Blocking</structureTyp>
+         <extraUITyp>None</extraUITyp>
+         <extraBuildUITyp>None</extraBuildUITyp>
+         <buildingItems length="3">
+            <Item ID="wood">
+               <count>8</count>
+            </Item>
+            <Item ID="tools">
+               <count>10</count>
+            </Item>
+            <Item ID="stone">
+               <count>5</count>
+            </Item>
+         </buildingItems>
+         <spriteBaseName>ironsmelter</spriteBaseName>
+         <contactRange>0.0</contactRange>
+         <forMarketplace>true</forMarketplace>
+         <maxNumberOfWorker>1</maxNumberOfWorker>
+         <produceTime>45.0</produceTime>
+         <maxOutputStorage>5</maxOutputStorage>
+         <efficiency>1.0</efficiency>
+         <output length="1">
+            <Item ID="ironingots">
+               <count>1</count>
+            </Item>
+         </output>
+         <intake length="2">
+            <Item ID="ironore">
+               <count>1</count>
+            </Item>
+            <Item ID="coal">
+               <count>1</count>
+            </Item>
+         </intake>
+         <inputTyp>AND</inputTyp>
+      </production>
+
       <production ID="ironsmelter">
          <Name>
             <entry lang="English">Iron Smelter</entry>

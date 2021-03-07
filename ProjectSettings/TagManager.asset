@@ -51,6 +51,9 @@ TagManager:
   - name: Tile
     uniqueID: 1661614767
     locked: 0
+  - name: TileModifier
+    uniqueID: 384269193
+    locked: 0
   - name: Road
     uniqueID: 4093347095
     locked: 0
@@ -68,6 +71,15 @@ TagManager:
     locked: 0
   - name: Units
     uniqueID: 3586612951
+    locked: 0
+  - name: UnderSky
+    uniqueID: 1903468975
+    locked: 0
+  - name: Sky
+    uniqueID: 1102286035
+    locked: 0
+  - name: AboveSky
+    uniqueID: 2087545675
     locked: 0
   - name: UI
     uniqueID: 638755707

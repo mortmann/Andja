@@ -13,7 +13,7 @@ public class Island : IGEventable {
 
     [JsonPropertyAttribute] public List<City> Cities;
     [JsonPropertyAttribute] public Climate Climate;
-    [JsonPropertyAttribute] public Dictionary<string, int> Ressources;
+    [JsonPropertyAttribute] public Dictionary<string, int> Resources;
     [JsonPropertyAttribute] public Tile StartTile;
 
     #endregion
@@ -34,7 +34,7 @@ public class Island : IGEventable {
     public City Wilderness {
         get {
             if (_wilderness == null)
-                _wilderness = Cities.Find(x => x.PlayerNumber == -1);
+                _wilderness = Cities.Find(x => x.PlayerNumber == GameData.WorldNumber);
             return _wilderness;
         }
 
@@ -42,6 +42,8 @@ public class Island : IGEventable {
             _wilderness = value;
         }
     }
+
+    public List<IslandFeature> Features { get; internal set; }
 
     public List<Tile> Tiles;
     public Vector2 Placement;
@@ -60,7 +62,7 @@ public class Island : IGEventable {
     /// <param name="climate">Climate.</param>
     public Island(Tile startTile, Climate climate = Climate.Middle) {
         StartTile = startTile; // if it gets loaded the StartTile will already be set
-        Ressources = new Dictionary<string, int>();
+        Resources = new Dictionary<string, int>();
         Cities = new List<City>();
 
         this.Climate = climate;
@@ -74,23 +76,23 @@ public class Island : IGEventable {
     }
 
     internal void RemoveRessources(string ressourceID, int count) {
-        if (Ressources.ContainsKey(ressourceID) == false)
+        if (Resources.ContainsKey(ressourceID) == false)
             return;
-        Ressources[ressourceID] -= count;
+        Resources[ressourceID] -= count;
     }
     internal void AddRessources(string ressourceID, int count) {
-        if (Ressources.ContainsKey(ressourceID) == false)
+        if (Resources.ContainsKey(ressourceID) == false)
             return;
-        Ressources[ressourceID] += count;
+        Resources[ressourceID] += count;
     }
     internal bool HasRessource(string ressourceID) {
-        if (Ressources.ContainsKey(ressourceID) == false)
+        if (Resources.ContainsKey(ressourceID) == false)
             return false;
-        return Ressources[ressourceID] > 0;
+        return Resources[ressourceID] > 0;
     }
 
     public Island(Tile[] tiles, Climate climate = Climate.Middle) {
-        Ressources = new Dictionary<string, int>();
+        Resources = new Dictionary<string, int>();
         Cities = new List<City>();
         this.Climate = climate;
         SetTiles(tiles);

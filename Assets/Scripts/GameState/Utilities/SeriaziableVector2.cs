@@ -23,6 +23,12 @@ public class SeriaziableVector2 {
         Y = vec.y;
     }
     public SeriaziableVector2() { }
+
+    public SeriaziableVector2(int x, int y) {
+        X = x;
+        Y = y;
+    }
+
     public static implicit operator Vector2(SeriaziableVector2 v) { return v.Vec; }
     public static implicit operator SeriaziableVector2(Vector2 v) { return new SeriaziableVector2(v); }
     public static implicit operator SeriaziableVector2(Vector3 v) { return new SeriaziableVector2(v); }

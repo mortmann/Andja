@@ -9,12 +9,16 @@ public class Projectile {
     //for now there will be NO friendly fire!
     [JsonPropertyAttribute] IWarfare origin;
     [JsonPropertyAttribute] float remainingTravelDistance;
-    [JsonPropertyAttribute] SeriaziableVector3 _position;
-    [JsonPropertyAttribute] SeriaziableVector3 _destination;
+    [JsonPropertyAttribute] SeriaziableVector2 _position;
+    [JsonPropertyAttribute] SeriaziableVector2 _destination;
     [JsonPropertyAttribute] ITargetable target;
-    const float Speed = 2f;
-    public Vector3 Position { get { return _position; } protected set { _position = value; } }
-    Vector3 Destination { get { return _destination.Vec; } set { _destination.Vec = value; } }
+    [JsonPropertyAttribute] public bool HasHitbox;
+    [JsonPropertyAttribute] public bool Impact;
+    [JsonPropertyAttribute] public int ImpactRange;
+    [JsonPropertyAttribute] public string SpriteName = "cannonball_1";
+    float Speed = 2f;
+    public Vector2 Position { get { return _position; } protected set { _position = value; } }
+    Vector2 Destination { get { return _destination.Vec; } set { _destination.Vec = value; } }
 
     public SeriaziableVector2 Velocity { get; internal set; }
 
@@ -22,13 +26,18 @@ public class Projectile {
     Action<Projectile> cbOnChange;
 
     public Projectile() { }
-    public Projectile(IWarfare origin, Vector3 startPosition, ITargetable target, Vector2 destination, Vector3 move, float travelDistance) {
+    public Projectile(IWarfare origin, Vector3 startPosition, ITargetable target, Vector2 destination, 
+        Vector3 move, float travelDistance, bool HasHitbox, float speed = 2, bool impact = false, int impactRange = 1) {
+        Speed = speed;
         remainingTravelDistance = travelDistance;
-        Velocity = move;
+        Velocity = move * speed;
         _position = startPosition;
         _destination = destination; // needs some kind of random factor
         this.origin = origin;
         this.target = target;
+        this.HasHitbox = HasHitbox;
+        this.Impact = impact;
+        this.ImpactRange = impactRange;
     }
 
     public void Update(float deltaTime) {
@@ -40,12 +49,21 @@ public class Projectile {
             Destroy();
             return;
         }
-        Vector3 dir = Destination * Speed * deltaTime;
+        Vector2 dir = Velocity.Vec * deltaTime;
         remainingTravelDistance -= dir.magnitude;
         Position += dir;
     }
 
     private void Destroy() {
+        if(Impact) {
+            List<Tile> tiles = Util.CalculateCircleTiles(ImpactRange, 0, 0, Position.x, Position.y);
+            foreach (Tile t in tiles) {
+                if (t.Structure != null) {
+                    t.Structure.ReduceHealth(origin.CurrentDamage); //TODO: think about this.
+                }
+            }
+            //TODO: show impact crater
+        }
         cbOnDestroy?.Invoke(this);
     }
 

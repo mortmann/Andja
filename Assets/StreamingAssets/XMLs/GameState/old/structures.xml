@@ -336,7 +336,7 @@
             <entry lang="German">Kartoffelfarm</entry>
          </Name>
          <Description>
-            <entry lang="English">Grows Potatoe.</entry>
+            <entry lang="English">Grows Potatoe. Needs $buildingItems.name to be build.</entry>
             <entry lang="German">Produziert Kartoffeln.</entry>
          </Description>
          <HoverOver>
@@ -532,7 +532,7 @@
          <isWalkable>false</isWalkable>
          <hasHitbox>true</hasHitbox>
          <maxHealth>50.0</maxHealth>
-         <structureRange>0</structureRange>
+         <structureRange>4</structureRange>
          <populationLevel>1</populationLevel>
          <populationCount>0</populationCount>
          <structureLevel>0</structureLevel>
@@ -830,7 +830,7 @@
          <isWalkable>false</isWalkable>
          <hasHitbox>true</hasHitbox>
          <maxHealth>200.0</maxHealth>
-         <structureRange>0</structureRange>
+         <structureRange>4</structureRange>
          <populationLevel>1</populationLevel>
          <populationCount>2500</populationCount>
          <structureLevel>0</structureLevel>
@@ -1305,7 +1305,7 @@
          <contactRange>0.0</contactRange>
          <forMarketplace>false</forMarketplace>
          <maxNumberOfWorker>0</maxNumberOfWorker>
-         <produceTime>0.0</produceTime>
+         <produceTime>20.0</produceTime>
          <maxOutputStorage>1</maxOutputStorage>
          <efficiency>1.0</efficiency>
          <output length="1">
@@ -1480,7 +1480,7 @@
          <forMarketplace>true</forMarketplace>
          <maxNumberOfWorker>1</maxNumberOfWorker>
          <produceTime>35.0</produceTime>
-         <maxOutputStorage>0</maxOutputStorage>
+         <maxOutputStorage>5</maxOutputStorage>
          <efficiency>1.0</efficiency>
          <output length="1">
             <Item ID="ironore">

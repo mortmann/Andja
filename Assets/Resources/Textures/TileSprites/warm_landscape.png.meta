@@ -355,22 +355,22 @@ TextureImporter:
     second: south_landscape_116
   - first:
       213: 21300234
-    second: warm_grass_0
+    second: warm_grass_gggg_0
   - first:
       213: 21300236
-    second: warm_grass_1
+    second: warm_grass_gggg_1
   - first:
       213: 21300238
-    second: warm_grass_2
+    second: warm_grass_gggg_2
   - first:
       213: 21300240
-    second: warm_dirt_0
+    second: warm_dirt_dddd_0
   - first:
       213: 21300242
-    second: warm_dirt_1
+    second: warm_dirt_dddd_1
   - first:
       213: 21300244
-    second: warm_dirt_2
+    second: warm_dirt_dddd_2
   - first:
       213: 21300246
     second: warm_landscape_6
@@ -788,7 +788,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: warm_grass_0
+      name: warm_grass_gggg_0
       rect:
         serializedVersion: 2
         x: 0
@@ -809,7 +809,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: warm_grass_1
+      name: warm_grass_gggg_1
       rect:
         serializedVersion: 2
         x: 32
@@ -830,7 +830,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: warm_grass_2
+      name: warm_grass_gggg_2
       rect:
         serializedVersion: 2
         x: 64
@@ -851,7 +851,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: warm_dirt_0
+      name: warm_dirt_dddd_0
       rect:
         serializedVersion: 2
         x: 96
@@ -872,7 +872,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: warm_dirt_1
+      name: warm_dirt_dddd_1
       rect:
         serializedVersion: 2
         x: 128
@@ -893,7 +893,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: warm_dirt_2
+      name: warm_dirt_dddd_2
       rect:
         serializedVersion: 2
         x: 160
@@ -3247,7 +3247,7 @@ TextureImporter:
     outline: []
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: f7e2b3aae91cf2646b696e0788172243
     internalID: 0
     vertices: []
     indices: 

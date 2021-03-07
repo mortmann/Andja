@@ -39,7 +39,7 @@ public enum UnitDoModes { Idle, Move, Fight, Capture, Trade, OffWorld }
 public enum UnitMainModes { Idle, Moving, Aggroing, Attack, Patrol, Capture, TradeRoute, OffWorldMarket, Escort, PickUpCrate }
 
 [JsonObject(MemberSerialization.OptIn)]
-public class Unit : IGEventable,IWarfare {
+public class Unit : IGEventable, IWarfare, ITargetable {
     public readonly float EscortDistance = 2f;
 
     //save these Variables
@@ -77,8 +77,8 @@ public class Unit : IGEventable,IWarfare {
             return _CurrentMainMode;
         }
         set {
-            if(_CurrentMainMode != value)
-                Debug.Log(value);
+            //if(_CurrentMainMode != value)
+            //    Debug.Log(value);
             _CurrentMainMode = value;
         }
     }

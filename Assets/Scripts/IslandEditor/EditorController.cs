@@ -75,7 +75,9 @@ public class EditorController : MonoBehaviour {
                     tiles[x * Height + y] = new Tile(x, y);
                 }
             }
-            world = new World(tiles,Width, Height);
+            GameData.Width = Width;
+            GameData.Height = Height;
+            world = new World(tiles);
         }
         Camera.main.transform.position = new Vector3(Width / 2, Height / 2, Camera.main.transform.position.z);
         SceneManager.activeSceneChanged += OnLevelLoaded;
@@ -88,7 +90,9 @@ public class EditorController : MonoBehaviour {
         if (SceneManager.GetActiveScene().name != "IslandEditor")
             return;
         if (Generate) {
-            world = new World(MapGenerator.Instance.GetTiles(), Width, Height,true);
+            GameData.Width = Width;
+            GameData.Height = Height;
+            world = new World(MapGenerator.Instance.GetTiles(),true);
             foreach (Tile t in MapGenerator.Instance.tileToStructure.Keys) {
                 Structure str = MapGenerator.Instance.tileToStructure[t];
                 BuildController.Instance.EditorBuildOnTile(str, str.GetBuildingTiles(t), false);
@@ -204,7 +208,7 @@ public class EditorController : MonoBehaviour {
         t = World.Current.GetTileAt(t.X, t.Y);
 
         if (selectedTileType == TileType.Shore) {
-            t.SpriteName = "shore" + Tile.GetSpriteAddonForTile(t, t.GetNeighbours());
+            t.SpriteName = "all_"+"shore_" + Tile.GetSpriteAddonForTile(t, t.GetNeighbours()) + "_0";
         }
         else {
             t.SpriteName = spriteName;
@@ -219,7 +223,7 @@ public class EditorController : MonoBehaviour {
         }
         t.Type = selectedTileType;
         foreach (Tile neigh in t.GetNeighbours()) {
-            if (neigh!=null&&neigh.Type != TileType.Shore) {
+            if (neigh==null||neigh.Type != TileType.Shore) {
                 continue;
             }
             neigh.SpriteName = "shore" + Tile.GetSpriteAddonForTile(neigh, neigh.GetNeighbours());
@@ -393,7 +397,9 @@ public class EditorController : MonoBehaviour {
     void LoadSaveState(SaveIsland load) {
         Width = load.Width;
         Height = load.Height;
-        world = new World(load.tiles, load.Width, load.Height,true);
+        GameData.Width = Width;
+        GameData.Height = Height;
+        world = new World(load.tiles,true);
         if(load.Resources!=null)
             Ressources = load.Resources;
         foreach (Structure s in load.structures) {
@@ -419,8 +425,10 @@ public class EditorController : MonoBehaviour {
         [JsonPropertyAttribute(TypeNameHandling = TypeNameHandling.None)] public LandTile[] tiles;
         [JsonPropertyAttribute(TypeNameHandling = TypeNameHandling.Auto)] public List<Structure> structures;
         [JsonPropertyAttribute] public Dictionary<string, Range> Resources;
-
+        
         [JsonIgnore] public string Name; // for loading in image or similar things
+        [JsonPropertyAttribute] public List<IslandFeature> features;
+
         public SaveIsland() {
 
         }

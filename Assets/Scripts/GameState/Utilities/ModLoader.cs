@@ -335,7 +335,7 @@ public struct Mod {
     public List<SoundMetaData> soundDatas;
 }
 
-public enum SpriteType { Structure, Worker, Unit, Tile, Icon, Item }
+public enum SpriteType { Structure, Worker, Unit, Tile, Icon, Item, Event }
 public enum SpriteMode { Single, Multiple, DefinedMultiple }
 public class CustomSpriteMetaData {
     public SpriteType type;

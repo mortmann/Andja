@@ -8,7 +8,7 @@ using System.Linq;
 public class FlyingTrader  {
     public static float TradeTime = 5f;
     public static float BuyDifference = 0.9f;
-    public static int Number = int.MaxValue;
+    public static int Number => GameData.FlyingTraderNumber;
     public static float WaitBetweenNewShipsTime = 30f;
     public float WaitBetweenNewShipsTimer = WaitBetweenNewShipsTime;
     public static FlyingTrader Instance { get; protected set; }

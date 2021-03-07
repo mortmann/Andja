@@ -341,48 +341,10 @@ public class Tile : IComparable<Tile>, IEqualityComparer<Tile> {
     }
 
     public static string GetSpriteAddonForTile(Tile t, Tile[] neighbours) {
-        string connectOrientation = "_";
-        //FOR now only Shore is rotating to face the other tiles
-        if (t.Type != TileType.Shore) {
-            for (int i = 0; i < neighbours.Length; i++) {
-                connectOrientation += neighbours[i].Type.ToString().ToUpper()[0];
-            }
-            return "";
-        }
-        connectOrientation = "_";
-        int numNeighbours = 0;
-        if (neighbours[0] != null && neighbours[0].Type == TileType.Shore) {
-            connectOrientation += "N";
-            numNeighbours++;
-        }
-        if (neighbours[1] != null && neighbours[1].Type == TileType.Shore) {
-            connectOrientation += "E";
-            numNeighbours++;
-        }
-        if (neighbours[2] != null && neighbours[2].Type == TileType.Shore) {
-            connectOrientation += "S";
-            numNeighbours++;
-        }
-        if (neighbours[3] != null && neighbours[3].Type == TileType.Shore) {
-            connectOrientation += "W";
-            numNeighbours++;
-        }
-        if (numNeighbours > 0) {
-            string temp = "_";
-            if (neighbours[0] != null && neighbours[0].Type != TileType.Shore && neighbours[0].Type != TileType.Ocean) {
-                temp += "N";
-            }
-            if (neighbours[1] != null && neighbours[1].Type != TileType.Shore && neighbours[1].Type != TileType.Ocean) {
-                temp += "E";
-            }
-            if (neighbours[2] != null && neighbours[2].Type != TileType.Shore && neighbours[2].Type != TileType.Ocean) {
-                temp += "S";
-            }
-            if (neighbours[3] != null && neighbours[3].Type != TileType.Shore && neighbours[3].Type != TileType.Ocean) {
-                temp += "W";
-            }
-            if (temp.Length > 1)
-                connectOrientation += temp;
+        string connectOrientation = "";
+        for (int i = 0; i < neighbours.Length; i++) {
+            if(neighbours[i] != null)
+                connectOrientation += neighbours[i].Type.ToString().ToLower()[0];
         }
         return connectOrientation;
     }

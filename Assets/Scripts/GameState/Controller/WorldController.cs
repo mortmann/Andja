@@ -254,7 +254,7 @@ public class WorldController : MonoBehaviour {
             foreach(string id in thisStruct.Resources.Keys) {
                 if (island.HasRessource(id))
                     continue;
-                island.Ressources[id] = thisStruct.Resources[id];
+                island.Resources[id] = thisStruct.Resources[id];
             }
             island.SetTiles(thisStruct.Tiles);
             island.Placement = thisStruct.GetPosition();

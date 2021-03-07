@@ -6566,6 +6566,7 @@ MonoBehaviour:
   waterMaterial: {fileID: 2100000, guid: ac077958db547504bb55970a5133bede, type: 2}
   darkMaterial: {fileID: 0}
   highlightMaterial: {fileID: 0}
+  tileMapMaterial: {fileID: 2100000, guid: 95ab7d61dc60e1844a7bc25622d3f228, type: 2}
 --- !u!1 &1264749758
 GameObject:
   m_ObjectHideFlags: 0
@@ -10015,8 +10016,8 @@ Light:
   m_Enabled: 1
   serializedVersion: 9
   m_Type: 1
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_Intensity: 1
+  m_Color: {r: 0.98422104, g: 1, b: 0.6462264, a: 1}
+  m_Intensity: 0.6
   m_Range: 10
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
@@ -10768,6 +10769,53 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1990182407}
   m_CullTransparentMesh: 0
+--- !u!1 &1996912670
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1996912672}
+  - component: {fileID: 1996912671}
+  m_Layer: 0
+  m_Name: GameObject
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1996912671
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1996912670}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ca060ec1237951e4181dde3d5f7a380c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  EventParticles:
+  - eventID: volcanic_eruption
+    Prefab: {fileID: 8113707520888759109, guid: 04bdb71c7c90e664d8cfbe9f4e44c877,
+      type: 3}
+--- !u!4 &1996912672
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1996912670}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 323.81473, y: 175.02608, z: -3.375}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 4
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2002441034
 GameObject:
   m_ObjectHideFlags: 0

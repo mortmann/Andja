@@ -4,7 +4,7 @@ using UnityEngine;
 using System.Linq;
 using System;
 using UnityEngine.Tilemaps;
-
+using static PrototypController;
 public class AIController : MonoBehaviour {
     public static AIController Instance { get; protected set; }
     public static Dictionary<Island, Dictionary<Tile, TileValue>> IslandsTileToValue {
@@ -53,7 +53,7 @@ public class AIController : MonoBehaviour {
 
         AIPlayer test = new AIPlayer(PlayerController.GetPlayer(1));
         test.CalculatePlayersCombatValue();
-        
+        //Calculate();
 
         //TextToTexture = new TextToTexture(font, 32, 32, false);
         //foreach (TileValue tv in values) {
@@ -208,74 +208,7 @@ public class AIController : MonoBehaviour {
 
         World world = World.Current;
         foreach (Island island in World.Current.Islands) {
-            Vector2[,] swValue = new Vector2[island.Width, island.Height];
-            Vector2[,] neValue = new Vector2[island.Width, island.Height];
-            Dictionary<TileType, Vector2[,]> typeToSWValue = new Dictionary<TileType, Vector2[,]>();
-            Dictionary<TileType, Vector2[,]> typeToNEValue = new Dictionary<TileType, Vector2[,]>();
-            foreach (TileType tt in typeof(TileType).GetEnumValues()) {
-                typeToSWValue[tt] = new Vector2[island.Width, island.Height];
-                typeToNEValue[tt] = new Vector2[island.Width, island.Height];
-            }
-            for (int y = 0; y < island.Height; y++) {
-                for (int x = 0; x < island.Width; x++) {
-                    Tile t = world.GetTileAt(island.Minimum.x + x, island.Minimum.y + y);
-                    float startX = 0;
-                    float startY = 0;
-                    if (t.CheckTile()) {
-                        if (x > 0)
-                            startX = swValue[x - 1, y].x;
-                        if (y > 0)
-                            startY = swValue[x, y - 1].y;
-                        swValue[x, y].x = startX + 1;
-                        swValue[x, y].y = startY + 1;
-                    }
-                    if (x > 0)
-                        startX = typeToSWValue[t.Type][x - 1, y].x;
-                    if (y > 0)
-                        startY = typeToSWValue[t.Type][x, y - 1].y;
-                    typeToSWValue[t.Type][x, y].x = startX + 1;
-                    typeToSWValue[t.Type][x, y].y = startY + 1;
-                }
-            }
-            for (int y = island.Height - 1; y > 0; y--) {
-                for (int x = island.Width - 1; x > 0; x--) {
-                    Tile t = world.GetTileAt(island.Minimum.x + x, island.Minimum.y + y);
-                    float startX = 0;
-                    float startY = 0;
-                    if (t.CheckTile()) {
-                        if (x < island.Width - 1)
-                            startX = neValue[x + 1, y].x;
-                        if (y < island.Height - 1)
-                            startY = neValue[x, y + 1].y;
-                        neValue[x, y].x = startX + 1;
-                        neValue[x, y].y = startY + 1;
-                    }
-                    if (x < island.Width - 1)
-                        startX = typeToNEValue[t.Type][x + 1, y].x;
-                    if (y < island.Height - 1)
-                        startY = typeToNEValue[t.Type][x, y + 1].y;
-                    typeToNEValue[t.Type][x, y].x = startX + 1;
-                    typeToNEValue[t.Type][x, y].y = startY + 1;
-                }
-            }
-            List<TileValue> values = new List<TileValue>();
-            for (int y = 0; y < island.Height; y++) {
-                for (int x = 0; x < island.Width; x++) {
-                    Tile t = world.GetTileAt(island.Minimum.x + x, island.Minimum.y + y);
-                    if (t.CheckTile()) {
-                        values.Add(new TileValue(t,
-                                        swValue[x, y],
-                                        neValue[x, y]
-                              ));
-                    }
-                    else {
-                        values.Add(new TileValue(t,
-                                                typeToSWValue[t.Type][x, y],
-                                                typeToNEValue[t.Type][x, y]
-                                        ));
-                    }
-                }
-            }
+            
             //values.RemoveAll(x => x.MaxValue == 0);
             //Dictionary<int, List<TileValue>> maxToValue = new Dictionary<int, List<TileValue>>();
             //int i = 1;
@@ -288,8 +221,8 @@ public class AIController : MonoBehaviour {
             //    i++;
             //}
 
-            IslandToMapSpaceValuedTiles[island] = values;
-            IslandToCurrentSpaceValuedTiles[island] = new List<TileValue>(from TileValue in values
+            IslandToMapSpaceValuedTiles[island] = TileValue.CalculateStartingValues(island);
+            IslandToCurrentSpaceValuedTiles[island] = new List<TileValue>(from TileValue in IslandToMapSpaceValuedTiles[island]
                                                                           select new TileValue(TileValue)); //copy them
             IslandsTileToValue[island] = new Dictionary<Tile, TileValue>();
             foreach (TileValue tv in IslandToCurrentSpaceValuedTiles[island]) {
@@ -298,308 +231,211 @@ public class AIController : MonoBehaviour {
         }
     }
 
-}
-public class TileValue {
-    public TileType Type => tile.Type;
-    public int X => tile.X;
-    public int Y => tile.Y;
-    public int MaxValue => (int)Mathf.Max(swValue.x, swValue.y, neValue.x, swValue.y);
-    public int MinValue => (int)Mathf.Min(swValue.x, swValue.y, neValue.x, swValue.y);
-    public Vector2 MaxVector => Vector2.Max(swValue, neValue);
-    public Vector2 MinVector => Vector2.Min(swValue, neValue);
-    public Tile tile;
-    public Vector2 swValue;
-    public Vector2 neValue;
+    //private void Calculate() {
+    //    populationStructures = new PopulationStructures[PCInstance.NumberOfPopulationLevels];
+    //    for (int i = 0; i < PCInstance.NumberOfPopulationLevels; i++) {
+    //        populationStructures[i] = new PopulationStructures();
+    //        CalculatePLevelStuff(PCInstance.GetPopulationLevelPrototypDataForLevel(i));
+    //    }
+    //}
+    //PopulationStructures[] populationStructures;
+    //private void CalculatePLevelStuff(PopulationLevelPrototypData populationLevelPrototypData) {
+    //    int MaxUnlockCount = 0;
+    //    //TODO: make this while loading data in PrototypController
+    //    foreach (NeedGroup ng in populationLevelPrototypData.GetCopyGroupNeedList()) {
+    //        foreach (Need need in ng.Needs) {
+    //            if (need.StartPopulationCount > MaxUnlockCount) {
+    //                MaxUnlockCount = need.StartPopulationCount;
+    //            }
+    //        }
+    //    }
+    //    populationStructures[populationLevelPrototypData.LEVEL].needAtLeastHomes 
+    //        = Mathf.CeilToInt((float)MaxUnlockCount / (float)populationLevelPrototypData.HomeStructure.MaxLivingSpaces);
 
-    public TileValue(Tile tile, Vector2 seValue, Vector2 nwValue) {
-        this.tile = tile;
-        this.swValue = seValue;
-        this.neValue = nwValue;
-    }
 
-    public TileValue(TileValue tileValue) {
-        this.tile = tileValue.tile;
-        this.swValue = tileValue.swValue;
-        this.neValue = tileValue.neValue;
-    }
+    //    foreach (NeedGroup ng in populationLevelPrototypData.GetCopyGroupNeedList()) {
+    //        foreach (Need need in ng.Needs) {
+    //            if (need.IsStructureNeed()) {
+    //                //TODO: calc the needed thingabobs for this :(
+    //                continue;
+    //            }
+    //            //Minimum Needed Amount
+    //            //float neededItemAmount = need.Uses[populationLevelPrototypData.LEVEL] * MaxUnlockCount;
+    //            ProduceChains chains = new ProduceChains {
+    //            };
+    //            List<Produce> produce = PCInstance.ItemIDToProduce[need.Item.ID];
+    //            foreach (Produce p in produce) {
+    //                if (p.ProducerStructure.populationLevel > populationLevelPrototypData.LEVEL)
+    //                    continue;
+    //                if (p.needed == null) {
 
-    public override bool Equals(object obj) {
-        TileValue p = obj as TileValue;
-        if ((object)p == null) {
-            return false;
-        }
-        // Return true if the fields match:
-        return p == this;
-    }
 
-    public override int GetHashCode() {
-        var hashCode = 971533886;
-        hashCode = hashCode * -1521134295 + swValue.GetHashCode();
-        hashCode = hashCode * -1521134295 + neValue.GetHashCode();
-        return hashCode;
-    }
 
-    public static bool operator ==(TileValue a, TileValue b) {
-        // If both are null, or both are same instance, return true.
-        if (System.Object.ReferenceEquals(a, b)) {
-            return true;
-        }
+    //                    continue;
+    //                }
+                        
+    //                StructureProportions thisProp = p.Proportion;
+    //                float Usage = need.Uses[populationLevelPrototypData.LEVEL] * (60f / City.useTick);
+    //                float Produce = p.producePerMinute;
+    //                int count = Mathf.FloorToInt(Produce / Usage);
+    //                List<List<ProportionsRelation>> itemToProportionsRelations = new List<List<ProportionsRelation>>();
+    //                for (int i = 0; i < p.needed.Length; i++) {
 
-        // If one is null, but not both, return false.
-        if (((object)a == null) || ((object)b == null)) {
-            return false;
-        }
+    //                    if (PCInstance.Proportions.ContainsKey(p.needed[i].ID)) {
+    //                        StructureProportions prop = ;
+    //                        itemToProportionsRelations.Add(new List<ProportionsRelation>());
+    //                        GetAllRelations(
+    //                            new ProportionsRelation { PeopleCount = count, proportions = thisProp }, prop, itemToProportionsRelations[i]);
+    //                    } else {
+    //                        itemToProportionsRelations.Add(new List<ProportionsRelation> {
+    //                            new ProportionsRelation (p, count, thisProp.itemToRatios[p.needed[i].ID].Ratio[p])
+    //                        });
+    //                    }
+    //                }
+    //                List<ProportionsRelation> first = itemToProportionsRelations[0];
+    //                itemToProportionsRelations.RemoveAt(0);
+    //                for (int i = 0; i < first.Count; i++) {
+    //                    chains.relations = Combine(first[i],0,itemToProportionsRelations);
+    //                }
+    //                //if (p.produce.needed.Length > 1) { 
+    //                //    List<ProportionsRelation> final = new List<ProportionsRelation>();
+    //                //    List<ProportionsRelation> list = itemToProportionsRelations[p.produce.needed[0].ID];
+    //                //    for (int l = 1; l < p.produce.needed.Length; l++) { // first list loop (1,2,3...) of first item
+    //                //        for (int i = 1; i < p.produce.needed.Length; i++) { //loops over the rest of list items
+    //                //            List<ProportionsRelation> list2 = itemToProportionsRelations[p.produce.needed[i].ID];
+    //                //            for (int y = 2; y < itemToProportionsRelations.Count; y++) { // loops again over the list but only takes the 
+    //                //                ProportionsRelation pr = list[i].CloneAndAdd(list2[i]).Add();
+    //                //            }
+    //                //        }
+    //                //    }
+    //                //}
+    //            }
+    //        }
+    //    }
+    //}
 
-        // Return true if the fields match:
-        return a.swValue == b.swValue && a.neValue == b.neValue;
-    }
-    public static bool operator !=(TileValue a, TileValue b) {
-        // If both are null, or both are same instance, return false.
-        if (System.Object.ReferenceEquals(a, b)) {
-            return false;
-        }
+    ////private List<ProportionsRelation> GetCombinedList(int index, ProportionsRelation first,  List<List<ProportionsRelation>> itemToProportionsRelations) {
+    ////    List<ProportionsRelation> list = new List<ProportionsRelation>();
+    ////    for (int i = 0; i < itemToProportionsRelations.Count; i++) {
+    ////        list.AddRange(Combine(first, i,))
+    ////    }
+    ////    return list;
+    ////}
+    //private List<ProportionsRelation> Combine(ProportionsRelation first, int indexL, List<List<ProportionsRelation>> itemToProportionsRelations) {
+    //    if (indexL == itemToProportionsRelations.Count)
+    //        return new List<ProportionsRelation> { first };
+    //    List<ProportionsRelation> list = new List<ProportionsRelation>();
+    //    for (int i = 0; i < itemToProportionsRelations.Count; i++) {
+    //        list.AddRange(Combine(first.CloneAndAdd(itemToProportionsRelations[indexL][i]), indexL+1, itemToProportionsRelations));
+    //    }
+    //    return list;
+    //}
 
-        // If one is null, but not both, return true.
-        if (((object)a == null) || ((object)b == null)) {
-            return true;
-        }
+    //private void GetAllRelations(ProportionsRelation parentPR, StructureProportions current, List<ProportionsRelation> proportionsRelations) {
+    //    if (current.produce.needed != null) {
+    //        foreach (Item item in current.produce.needed) {
+    //            List<StructureProportions> proportions = PCInstance.Proportions[item.ID];
+    //            foreach (StructureProportions sp in proportions) {
+    //                ProportionsRelation clone = parentPR.CloneAndAdd(current);
+    //                GetAllRelations(clone, sp, proportionsRelations);
+    //            }
+    //        }
+    //    }
+    //    else {
+    //        parentPR.Add(current);
+    //        proportionsRelations.Add(parentPR);
+    //    }
+    //}
+    ////private ProportionsRelation BottomUp(StructureProportions current, List<ProportionsRelation> proportionsRelations) {
+    ////    ProportionsRelation clone = new ProportionsRelation();
+    ////    if (current.produce.needed != null) {
+    ////        foreach(Item item in current.produce.needed) {
+    ////            List<StructureProportions> proportions = PCInstance.Proportions[item.ID];
+    ////            foreach (StructureProportions sp in proportions) {
+    ////                clone = BottomUp(sp, proportionsRelations);
+    ////            }
+    ////        }
+    ////    }
+    ////    clone.TotalBuildCost += current.produce.ProducerStructure.buildcost;
+    ////    clone.TotalMaintenance += current.produce.ProducerStructure.maintenanceCost;
+    ////    clone.AddBuildItems(current.produce.ProducerStructure.buildingItems, 0);
+    ////    proportionsRelations.Add(clone);
+    ////    return clone;
+    ////}
+    //class PopulationStructures {
+    //    public int needAtLeastHomes;
 
-        // Return true if the fields not match:
-        return a.swValue != b.swValue && a.neValue != b.neValue;
-    }
+    //}
+    //class ProduceChains {
+    //    public Item produced;
+    //    public List<ProportionsRelation> relations = new List<ProportionsRelation>();
 
-    public override string ToString() {
-        return "N" + neValue.y + "\nW" + swValue.x +"  E" + neValue.x + "\nS" + swValue.y ;
-    }
-    
-}	
-public class AIPlayer {
-    public int PlayerNummer => player.Number;
-    public Player player;
-    public List<Fertility> neededFertilities;
-    public List<string> neededRessources;
-    public List<Need> newNeeds;
-    public List<Item> missingItems;
-    public List<IslandScore> islandScores;
-    public List<PlayerCombatValue> combatValues;
-    PlayerCombatValue CombatValue;
+    //}
+    //class ProportionsRelation {
+    //    public int PeopleCount;
+    //    public StructureProportions proportions;
+    //    public float TotalBuildCost;
+    //    public float TotalMaintenance;
+    //    public Item[] TotalItemCost;
+    //    public Dictionary<string, float> ItemCostTemp = new Dictionary<string, float>();
+    //    private Produce p;
 
-    public AIPlayer(Player player) {
-        this.player = player;
-        neededFertilities = new List<Fertility>();
-        neededRessources = new List<string>();
-        newNeeds = new List<Need>();
-        missingItems = new List<Item>();
-        CombatValue = new PlayerCombatValue(player, null);
-    }
-    public void DecideIsland(bool onStart = false) {
-        //TODO:set here desires
-        CalculateIslandScores();
-        islandScores = islandScores.OrderByDescending(x => x.EndScore).ToList();
-        WarehouseStructure warehouse = PrototypController.Instance.FirstLevelWarehouse;
-        //TODO: optimize
-        List<TileValue> values = new List<TileValue>(AIController.IslandToMapSpaceValuedTiles[islandScores[0].Island]);
-        values.RemoveAll(x => x.Type != TileType.Shore);
-        List<TileValue> selected = new List<TileValue>(from TileValue in values
-                                                       where TileValue.MaxValue >= warehouse.Height
-                                                       select new TileValue(TileValue));
-        foreach (TileValue t in selected) {
-            for(int i=0;i<4;i++) {
-                //bool left = warehouse.Rotation == 90 || warehouse.Rotation == 180;
-                List<Tile> buildtiles = warehouse.GetBuildingTiles(t.tile, false, false);
-                if (buildtiles.Exists(x => x.Type == TileType.Ocean))
-                    continue;
-                if (warehouse.CanBuildOnSpot(buildtiles)) {
-                    AIController.PlaceStructure(this, warehouse, buildtiles, null, onStart);
-                    return;
-                }
-                warehouse.RotateStructure();
-            }
-            
-        }
-    }
-    public void CalculateIslandScores() {
-        List<Island> islands = World.Current.Islands;
-        islandScores = new List<IslandScore>();
-        int maxSize = 0;
-        int averageSize = 0;
-        Dictionary<string, int> ressourceIDtoAverageAmount = new Dictionary<string, int>();
-        Dictionary<string, int> ressourceIDtoExisting = new Dictionary<string, int>();
-        Dictionary<Fertility, int> fertilitytoExisting = new Dictionary<Fertility, int>();
-        foreach (Island island in islands) {
-            if (island.Tiles.Count > maxSize)
-                maxSize = island.Tiles.Count;
-            averageSize += island.Tiles.FindAll(x => x.CheckTile()).Count;
-            if (island.Ressources != null || island.Ressources.Count != 0) {
-                foreach (string resid in island.Ressources.Keys) {
-                    if (ressourceIDtoAverageAmount.ContainsKey(resid)) {
-                        ressourceIDtoAverageAmount[resid] += island.Ressources[resid];
-                        ressourceIDtoExisting[resid]++;
-                    }
-                    else {
-                        ressourceIDtoAverageAmount[resid] = island.Ressources[resid];
-                        ressourceIDtoExisting[resid]=1;
-                    }
-                }
-                foreach (Fertility fer in island.Fertilities) {
-                    if (fertilitytoExisting.ContainsKey(fer)) {
-                        fertilitytoExisting[fer]++;
-                    }
-                    else {
-                        fertilitytoExisting[fer]=1;
-                    }
-                }
-            }
-        }
-        foreach (string resid in ressourceIDtoAverageAmount.Keys.ToArray()) {
-            ressourceIDtoAverageAmount[resid] /= islands.Count;
-            ressourceIDtoExisting[resid] = 1 - (ressourceIDtoExisting[resid] / islands.Count);
-        }
-        averageSize /= islands.Count;
-        foreach (Island island in islands) {
-            IslandScore score = new IslandScore {
-                Island = island,
-                ShapeScore = 1,
-                SizeSimilarIslandScore = 1,
-            };
-            //Calculate Ressource Score
-            if (island.Ressources == null || island.Ressources.Count == 0)
-                score.RessourceScore = 0; // There is none
-            else {
-                //for each give it a score for each existing on the island
-                foreach(string resid in island.Ressources.Keys) { 
-                    // if it is needed RIGHT NOW score it after how much it exist on this in the average over ALL islands
-                    if(neededRessources.Contains(resid)) {
-                        score.RessourceScore += island.Ressources[resid] / ressourceIDtoAverageAmount[resid];
-                    }
-                    // its always nice to have -- add how rare it is in the world
-                    score.RessourceScore += ressourceIDtoExisting[resid];
-                }
-            }
+    //    public ProportionsRelation(Produce p, int peopleCount, float ratio) {
+    //        PeopleCount = peopleCount;
+    //        TotalBuildCost = p.ProducerStructure.buildcost;
+    //        TotalMaintenance = p.ProducerStructure.maintenanceCost;
+    //        foreach(Item item in p.ProducerStructure.buildingItems) {
+    //            ItemCostTemp[item.ID] = item.count * ratio;
+    //        }
+    //    }
+    //    public ProportionsRelation() {
 
-            score.SizeScore = (float)island.Tiles.FindAll(x => x.CheckTile()).Count;
-            score.SizeScore /= averageSize;
+    //    }
+    //    void CalculateTotalItemCost() {
+    //        TotalItemCost = new Item[ItemCostTemp.Count];
+    //        int i = 0;
+    //        foreach(string id in ItemCostTemp.Keys) {
+    //            TotalItemCost[i] = new Item(id, Mathf.CeilToInt(ItemCostTemp[id]));
+    //            i++;
+    //        } 
+    //    }
+    //    public ProportionsRelation Clone() {
+    //        return new ProportionsRelation {
+    //            PeopleCount = PeopleCount,
+    //            proportions = proportions,
+    //            TotalBuildCost = TotalBuildCost,
+    //            TotalMaintenance = TotalMaintenance,
+    //            TotalItemCost = TotalItemCost,
+    //            ItemCostTemp = ItemCostTemp,
+    //        };
+    //    }
 
-            //Calculate Fertility Score
-            foreach (Fertility fertility in island.Fertilities) {
-                // add how rare it is in the world -- multiple this??
-                if (neededFertilities.Contains(fertility)) {
-                    score.FertilityScore += fertilitytoExisting[fertility];
-                }
-                // its always nice to have -- add how rare it is in the world
-                score.FertilityScore += fertilitytoExisting[fertility];
-            }
-            List<Island> Islands = new List<Island>(player.GetIslandList());
-            //Distance Score is either how far it is from other islands OR how far from center
-            if (Islands.Count > 0) {
-                float distance = 0;
-                foreach(Island isl in Islands) {
-                    distance += Vector2.Distance(island.Center , isl.Center);
-                }
-                distance /= Islands.Count;
-                score.DistanceScore = distance;
-            } else {
-                score.DistanceScore = 1 / (Vector2.Distance(island.Center, World.Current.Center) / ((World.Current.Width + World.Current.Height)/2));
-            }
-            //Competition Score is the percentage of unclaimed Tiles multiplied through how many diffrent players
-            if(island.Cities.Count>0) {
-                float avaibleTiles = island.Tiles.Count;
-                foreach (City c in island.Cities) {
-                    if (c.IsWilderness())
-                        continue;
-                    avaibleTiles -= c.Tiles.Count;
-                }
-                score.CompetitionScore = avaibleTiles / island.Tiles.Count;
-                score.CompetitionScore *= island.Cities.Count;
-            }
-            islandScores.Add(score);
-            Debug.Log("Calculated Island Score " + score.EndScore+ " " + score.Island.StartTile.Vector2);
-        }
-        Debug.Log("Calculated Islands Scores");
-    }
-    public void CalculatePlayersCombatValue() {
-        combatValues = new List<PlayerCombatValue>();
-        List<Player> players = PlayerController.Instance.GetPlayers();
-        foreach(Player p in players) {
-            PlayerCombatValue value = new PlayerCombatValue(p,CombatValue);
-            //foreach(Unit u in p.GetLandUnits()) {
-            //    value.UnitValue += u.Damage/2 + u.MaxHealth/2; 
-            //}
-            //foreach (Ship s in p.GetShipUnits()) {
-            //    value.ShipValue += s.Damage / 2 + s.MaxHealth / 2;
-            //}
-            //List<MilitaryStructure> militaryStructures = new List<MilitaryStructure>(p.AllStructures.OfType<MilitaryStructure>());
-            //foreach(MilitaryStructure structure in militaryStructures) {
-            //    value.MilitaryStructureValue++;
-            //}
-            ////imitates a guess how much the player makes 
-            ////also guess the money in the bank?
-            //value.MoneyValue = Random.Range(p.TreasuryChange - p.TreasuryChange / 4, p.TreasuryChange + p.TreasuryChange / 4);
-            //Debug.Log("Calculated PlayerCombat Score " + value.EndScore);
-            combatValues.Add(value);
-        }
-    }
-    
-}
-public class PlayerCombatValue {
-    public Player Player;
-    public float EndScore => UnitValue * 0.5f + ShipValue * 0.5f + MoneyValue * 0.25f + MilitaryStructureValue * 0.25f;
-    public float UnitValue;
-    public float ShipValue;
-    public float MoneyValue; // are they supposed to know how much they have?
-    public float MilitaryStructureValue;
-    //public float TechnologyValue; // still not implemented
+    //    internal void AddBuildItems(Item[] buildingItems, float ratio) {
+    //        foreach(Item item in buildingItems) {
+    //            if (ItemCostTemp.ContainsKey(item.ID) == false)
+    //                ItemCostTemp[item.ID] = 0;
+    //            ItemCostTemp[item.ID] += item.count * ratio;
+    //        }
+    //    }
 
-    public PlayerCombatValue(Player player, PlayerCombatValue isMe) {
-        Player = player;
-        UnitValue = 0;
-        foreach (Unit u in player.GetLandUnits()) {
-            UnitValue += u.Damage / 2 + u.MaxHealth / 2;
-        }
-        ShipValue = 0;
-        foreach (Ship s in player.GetShipUnits()) {
-            ShipValue += s.Damage / 2 + s.MaxHealth / 2;
-        }
-        List<MilitaryStructure> militaryStructures = new List<MilitaryStructure>(player.AllStructures.OfType<MilitaryStructure>());
-        MilitaryStructureValue = 0;
-        foreach (MilitaryStructure structure in militaryStructures) {
-           MilitaryStructureValue++;
-        }
-        //imitates a guess how much the player makes 
-        //also guess the money in the bank?
-        if(isMe != null) {
-            MoneyValue = UnityEngine.Random.Range(player.TreasuryChange - player.TreasuryChange / 4, player.TreasuryChange + player.TreasuryChange / 4);
-            //compare the value to the calculating player
-            UnitValue = Divide(UnitValue,isMe.UnitValue);
-            ShipValue = Divide(ShipValue, isMe.ShipValue);
-            MoneyValue = Divide(MoneyValue, isMe.MoneyValue);
-            MilitaryStructureValue = Divide(MilitaryStructureValue, isMe.MilitaryStructureValue);
-        }
-        else {
-            MoneyValue = player.TreasuryChange;
-        }
-    }
-    float Divide(float one, float two) {
-        if (two == 0)
-            return one;
-        return one / two;
-    }
-}
-public struct IslandScore {
-    public Island Island;
-    public float EndScore => SizeScore * 0.5f + SizeSimilarIslandScore * 0.2f +
-                             RessourceScore * 0.1f + FertilityScore * 0.1f + 
-                             DistanceScore * 0.3f;
-    public float SizeScore;
-    public float SizeSimilarIslandScore;
-    public float RessourceScore;
-    public float FertilityScore;
-    public float CompetitionScore;
-    public float DistanceScore;
-    public float ShapeScore;//Not sure if this is feasible!
+    //    internal ProportionsRelation CloneAndAdd(StructureProportions sp) {
+    //        ProportionsRelation clone = Clone();
+    //        clone.Add(sp);
+    //        return clone;
+    //    }
 
-    public override string ToString() {
-        return "SIZE:"+SizeScore + " SIMSIZE:" + SizeSimilarIslandScore + " RES:" + RessourceScore + " FER:" + FertilityScore 
-            + " COM:" + CompetitionScore + " DIST:" + DistanceScore + " SHA:" + ShapeScore;
-    }
+    //    internal void Add(StructureProportions current) {
+    //        TotalBuildCost += current.produce.ProducerStructure.buildcost;
+    //        TotalMaintenance += current.produce.ProducerStructure.maintenanceCost;
+    //        AddBuildItems(current.produce.ProducerStructure.buildingItems, 0);
+    //    }
+
+    //    internal ProportionsRelation CloneAndAdd(ProportionsRelation proportionsRelation) {
+    //        ProportionsRelation clone = Clone();
+    //        clone.TotalBuildCost += proportionsRelation.TotalBuildCost;
+    //        clone.TotalMaintenance += proportionsRelation.TotalMaintenance;
+    //        clone.AddBuildItems(proportionsRelation.TotalItemCost, 0);
+    //        return clone;
+    //    }
+    //}
 }

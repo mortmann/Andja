@@ -14,6 +14,7 @@ public class GS_Resolution : MonoBehaviour {
         dp = GetComponent<Dropdown>();
         List<string> resses = new List<string>();
         resolutions = new Dictionary<string, Resolution>();
+        
         foreach (Resolution res in Screen.resolutions) {
             if (resolutions.ContainsKey(res.ToString())) {
                 continue;
@@ -24,7 +25,13 @@ public class GS_Resolution : MonoBehaviour {
         dp.AddOptions(resses);
         if (graphicsSettings.HasSavedGraphicsOption(setting)) {
             dp.value = resses.FindIndex(x => {
-                return x == graphicsSettings.GetSavedGraphicsOption(setting);
+                return x.Equals(graphicsSettings.GetSavedGraphicsOption(setting).ToString());
+            });
+        } else {
+            dp.value = resses.FindIndex(x => {
+                return x.Equals(new GraphicsSettings.CustomResolution {
+                    height = Screen.height, width = Screen.width, refreshRate =Screen.currentResolution.refreshRate
+                }.ToString());
             });
         }
     }

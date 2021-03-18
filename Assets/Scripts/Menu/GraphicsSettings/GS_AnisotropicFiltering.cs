@@ -1,25 +1,11 @@
 ﻿using UnityEngine;
 
 public class GS_AnisotropicFiltering : GS_SliderBase {
+    public static bool[] PresetValues = { false, true, true, true };
     public override void OnStart() {
         setting = GraphicsSetting.AnisotropicFiltering;
         if (graphicsSettings.HasSavedGraphicsOption(setting))
-            SetAnisotropicFiltering(bool.Parse(graphicsSettings.GetSavedGraphicsOption(setting)));
-    }
-    protected override void GraphicsPresetLow() {
-        SetAnisotropicFiltering(false);
-    }
-
-    protected override void GraphicsPresetMedium() {
-        SetAnisotropicFiltering(true);
-    }
-
-    protected override void GraphicsPresetHigh() {
-        SetAnisotropicFiltering(true);
-    }
-
-    protected override void GraphicsPresetUltra() {
-        SetAnisotropicFiltering(true);
+            SetAnisotropicFiltering(graphicsSettings.GetSavedGraphicsOptionBool(setting));
     }
 
     protected override void OnSliderValueChange() {

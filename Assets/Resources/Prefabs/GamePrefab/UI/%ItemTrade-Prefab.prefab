@@ -220,7 +220,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1b5e01526a8f99145b7b92b7d43dbe24, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Identifier: Sell
   OnlyHoverOver: 1
+  OnlyValues: 0
+  OnlyName: 0
+  nameText: {fileID: 0}
+  valueText: {fileID: 0}
+  languageValues: []
 --- !u!114 &114448964763432922
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -632,7 +638,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1b5e01526a8f99145b7b92b7d43dbe24, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Identifier: Buy
   OnlyHoverOver: 1
+  OnlyValues: 0
+  OnlyName: 0
+  nameText: {fileID: 0}
+  valueText: {fileID: 0}
+  languageValues: []
 --- !u!1 &168926
 GameObject:
   m_ObjectHideFlags: 0

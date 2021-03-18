@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -16,6 +17,7 @@ public class GS_SliderBase : MonoBehaviour {
     protected int Value {
         get { return (int)slider.value; }
     }
+    protected TextLanguageSetter tls;
 
     protected GraphicsSettings graphicsSettings;
 
@@ -29,21 +31,24 @@ public class GS_SliderBase : MonoBehaviour {
 
         // Register the graphics preset listeners.
         graphicsSettings = FindObjectOfType<GraphicsSettings>();
-        graphicsSettings.lowPresetEvent.AddListener(GraphicsPresetLow);
-        graphicsSettings.mediumPresetEvent.AddListener(GraphicsPresetMedium);
-        graphicsSettings.highPresetEvent.AddListener(GraphicsPresetHigh);
-        graphicsSettings.ultraPresetEvent.AddListener(GraphicsPresetUltra);
-    }
-
-    protected void Start() {
+        graphicsSettings.GraphicsPreset += OnGraphicsPresetChange;
         // Attach the listener for the method we call when the slider value changes.
         slider.onValueChanged.AddListener(delegate { OnSliderValueChange(); });
         slider.onValueChanged.AddListener(delegate { OnSliderValueChangeSetDisplayText(); });
+        tls = GetComponent<TextLanguageSetter>();
+    }
+
+    protected virtual void OnGraphicsPresetChange(int obj) {
+        
+    }
+
+    protected void Start() {
 
         // Find the Text component for the display value.
         displayValue = transform.Find("Value").GetComponent<Text>();
+        tls.valueText = displayValue;
 
-        // Initialize it to the current slider value.
+// Initialize it to the current slider value.
         displayValue.text = slider.value.ToString();
 
         if (displayLabels.Length > 0) {
@@ -54,21 +59,6 @@ public class GS_SliderBase : MonoBehaviour {
     public virtual void OnStart() {
 
     }
-    /**
-     * The settings to apply when a preset is selected. Overriden in each
-     * respective settings class. Here you can turn off an effect on a lower
-     * quality setting or adjust some of it's values, lower shadow distance
-     * perhaps or whatever you want.
-     */
-    protected virtual void GraphicsPresetLow() {
-    }
-    protected virtual void GraphicsPresetMedium() {
-    }
-    protected virtual void GraphicsPresetHigh() {
-    }
-    protected virtual void GraphicsPresetUltra() {
-    }
-
     /**
      * Each setting class overrides this and changes whatever it wants changed
      * when we modify the slider. For example turns on/off an image effect or
@@ -82,11 +72,12 @@ public class GS_SliderBase : MonoBehaviour {
      * setting class can override this to display whatever it wants in the menu.
      */
     protected virtual void OnSliderValueChangeSetDisplayText() {
-        if (displayLabels.Length > 0) {
-            displayValue.text = displayLabels[Value];
-        }
-        else {
-            displayValue.text = Value.ToString();
-        }
+        //if (displayLabels.Length > 0) {
+        //    displayValue.text = displayLabels[Value];
+        //}
+        //else {
+        //    displayValue.text = Value.ToString();
+        //}
+        tls.ShowValue(Value);
     }
 }

@@ -10,8 +10,8 @@ public class ItemUI : MonoBehaviour {
     public Slider slider;
     public Image selectedMarker;
     public bool changeColor = false;
-    public string itemName;
     public bool IsSelected => selectedMarker.enabled;
+    Item item;
     public void SetItem(Item i, int maxValue, bool changeColor = false) {
         this.changeColor = changeColor;
         RefreshItem(i);
@@ -23,13 +23,12 @@ public class ItemUI : MonoBehaviour {
     public void RefreshItem(Item i) {
         if (i == null) {
             ChangeItemCount(0);
-            itemName = "Empty";//FIXME not hardcoded
         }
         else {
-            itemName = i.Name;
             ChangeItemCount(i);
             image.sprite = UIController.GetItemImageForID(i.ID);
         }
+        item = i;
         EventTrigger trigger = GetComponent<EventTrigger>();
         EventTrigger.Entry enter = new EventTrigger.Entry {
             eventID = EventTriggerType.PointerEnter
@@ -100,7 +99,8 @@ public class ItemUI : MonoBehaviour {
         trigger.triggers.Clear();
     }
     public void OnMouseEnter() {
-        GameObject.FindObjectOfType<HoverOverScript>().Show(itemName);
+        GameObject.FindObjectOfType<HoverOverScript>().Show(
+            item!=null? item.Name : UILanguageController.Instance.GetStaticVariables(StaticLanguageVariables.Empty)[0]);
     }
     public void OnMouseExit() {
         GameObject.FindObjectOfType<HoverOverScript>().Unshow();

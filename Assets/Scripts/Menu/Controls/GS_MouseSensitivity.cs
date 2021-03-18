@@ -11,19 +11,24 @@ public class GS_MouseSensitivity : MonoBehaviour {
         slider = GetComponent<Slider>();
 
         input.onValueChanged.AddListener(OnInputValueChange);
-        input.text = "100";
+        input.text = "1";
         slider.onValueChanged.AddListener(OnSliderValueChange);
     }
 
     void OnSliderValueChange(float value) {
-        input.text = "" + value;
-        InputHandler.SetSensitivity(value);
+        OnValueChange((float)System.Math.Round(value, 2), false);
+    }
+    void OnValueChange(float value, bool text) {
+        if(text)
+            InputHandler.SetSensitivity(value);
+        else
+            input.text = "" + value;
     }
     void OnInputValueChange(string value) {
         if (value == "") {
             return;
         }
-        slider.value = (float.Parse(value));
+        OnValueChange((float)System.Math.Round(float.Parse(value)),true);
     }
 
 }

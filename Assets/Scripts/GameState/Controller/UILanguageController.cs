@@ -5,39 +5,63 @@ using System;
 using System.IO;
 using System.Xml.Serialization;
 using System.Xml;
-using UnityEditor; 
-
+using UnityEditor;
+using System.Linq;
+enum StaticLanguageVariables { On, Off, And, Or, Empty, }
 public class UILanguageController : MonoBehaviour {
     public static UILanguageController Instance { get; protected set; }
     Action cbLanguageChange;
-    public static string selectedLanguage = "English";
-    Dictionary<string, string> nameToText;
-    Dictionary<string, string> nameToHover;
 
-    List<string> missingLocalizationData;
+    public static string selectedLanguage = "English";
+    Dictionary<string, TranslationData> idToTranslation;
+    List<TranslationData> requiredLocalizationData;
     public Dictionary<string, string> LocalizationsToFile;
 
-    public static readonly string localizationFilePrefix = "localization-";
-    public static readonly string localizationFileType = ".xml";
-    public static readonly string localizationXMLDirectory = "UILocalizations";
+    public static readonly string localizationFilePrefix = "";
+    public static readonly string localizationFileType = "-ui.loc";
+    public static readonly string localizationXMLDirectory = "Localizations";
 
-    // Use this for initialization
     void Awake() {
         if (Instance != null) {
             Debug.LogError("There should never be two UILanguageController.");
         }
         Instance = this;
-        missingLocalizationData = new List<string>();
-        nameToText = new Dictionary<string, string>();
-        nameToHover = new Dictionary<string, string>();
+        idToTranslation = new Dictionary<string, TranslationData>();
+        //#if Unity_Editor
         TextLanguageSetter[] texts = Resources.FindObjectsOfTypeAll<TextLanguageSetter>();
-        foreach(TextLanguageSetter t in texts){
-            if(t.OnlyHoverOver==false)
-                missingLocalizationData.Add(t.GetRealName() + "text");
-            missingLocalizationData.Add(t.GetRealName() + "hover");
+        Dictionary<string, TranslationData> localizationDataDictionary = new Dictionary<string, TranslationData>();
+        foreach (TextLanguageSetter t in texts){
+            if (t.Identifier == null || t.Identifier.Trim().Length == 0) {
+                Debug.LogError("Text Identifier is Empty for " + t.GetRealName());
+                continue;
+            }
+            if(localizationDataDictionary.ContainsKey(t.Identifier) == false) {
+                localizationDataDictionary.Add(t.Identifier, t.GetData());
+            }
+            localizationDataDictionary[t.Identifier].AddUIElement(t.GetRealName());
         }
+        foreach (GraphicsOptions go in Enum.GetValues(typeof(GraphicsOptions))) {
+            string name = typeof(GraphicsOptions).Name + "/" + go.ToString();
+            if (idToTranslation.ContainsKey(name) == false) {
+                localizationDataDictionary.Add(name,new TranslationData(name, false, 0));
+            }
+        }
+        foreach (FullScreenMode go in Enum.GetValues(typeof(FullScreenMode))) {
+            string name = typeof(FullScreenMode).Name + "/" + go.ToString();
+            if (idToTranslation.ContainsKey(name) == false) {
+                localizationDataDictionary.Add(name,new TranslationData(name, false, 0));
+            }
+        }
+        foreach (StaticLanguageVariables go in Enum.GetValues(typeof(StaticLanguageVariables))) {
+            string name = typeof(StaticLanguageVariables).Name + "/" + go.ToString();
+            if (idToTranslation.ContainsKey(name) == false) {
+                localizationDataDictionary.Add(name, new TranslationData(name, false, 0));
+            }
+        }
+        requiredLocalizationData = new List<TranslationData>(localizationDataDictionary.Values);
+        requiredLocalizationData.OrderBy(x=>x.id);
+//#endif //Unity_Editor
         LocalizationsToFile = new Dictionary<string, string>();
-
         string fullpath = Path.Combine(ConstantPathHolder.StreamingAssets, "XMLs", UILanguageController.localizationXMLDirectory);
         string[] allLocalizationsFiles = Directory.GetFiles(fullpath, UILanguageController.localizationFilePrefix
                                                                     + "*" + UILanguageController.localizationFileType);
@@ -52,33 +76,24 @@ public class UILanguageController : MonoBehaviour {
         }
         LoadLocalization(LocalizationsToFile[selectedLanguage]);
     }
-    public string GetText(string name) {
-        if (nameToText.ContainsKey(name) == false) {
-            missingLocalizationData.Add(name + "text");
+    public TranslationData GetTranslationData(string name) {
+        if (idToTranslation.ContainsKey(name) == false) {
+            Debug.LogWarning("Translation missing for " + name);
             return null;
         }
-        return nameToText[name];
+        return idToTranslation[name];
     }
 
-    public string GetHoverOverText(string name) {
-        if (nameToHover.ContainsKey(name) == false) {
-            missingLocalizationData.Add(name + "hover");
-            return null;
-        }
-        return nameToHover[name];
-    }
-    public bool HasHoverOverText(string name) {
-        return nameToHover.ContainsKey(name);
-    }
     public void ChangeLanguage(string language) {
         if (LocalizationsToFile.ContainsKey(language) == false) {
-            Debug.LogWarning("Old selected Language not available!");
+            Debug.LogWarning("selected Language not available!");
             return;
         }
         selectedLanguage = language;
+        LoadLocalization(LocalizationsToFile[selectedLanguage]);
+        PrototypController.Instance.ReloadLanguage();
         cbLanguageChange?.Invoke();
     }
-
     public void RegisterLanguageChange(Action callbackfunc) {
         cbLanguageChange += callbackfunc;
     }
@@ -86,63 +101,72 @@ public class UILanguageController : MonoBehaviour {
         cbLanguageChange -= callbackfunc;
     }
     void OnDestroy() {
-        FileStream file = File.Create(Path.Combine(Application.dataPath.Replace("/Assets", ""), "Missing-UI-Localization-"+selectedLanguage));
+//#if Unity_Editor
+        FileStream file = File.Create(Path.Combine(Application.dataPath.Replace("/Assets", ""), selectedLanguage + "-ui.loc"));
         XmlSerializer xml = new XmlSerializer(typeof(UILanguageLocalizations));
-        UILanguageLocalizations missing = new UILanguageLocalizations() {
-            missingLocalization = missingLocalizationData.ToArray()
+        UILanguageLocalizations missing = new UILanguageLocalizations() { 
+            language = selectedLanguage,
+            localizationData = requiredLocalizationData.ToArray()
         };
         xml.Serialize(file,missing);
+//#endif
         Instance = null;
     }
     public void LoadLocalization(string file) {
-        XmlDocument xmlDoc = new XmlDocument(); // xmlDoc is the new xml document.
-        //string filename = localizationFilePrefix + selectedLanguage + localizationFileType;
-        //string filepath = System.IO.Path.Combine(ConstantPathHolder.StreamingAssets, "XMLs", localizationXMLDirectory, filename);
-        //TextAsset ta = ((TextAsset)Resources.Load("XMLs/UILocalizations/localization-"+selectedLanguage, typeof(TextAsset)));
-        xmlDoc.LoadXml(System.IO.File.ReadAllText(file)); // load the file.
-        foreach (XmlElement node in xmlDoc.SelectNodes("UI/element")) {
-            string path = node.GetAttribute("name") +"/";
-            if (node.Name == "textelements") {
-                XmlNode text = node.SelectSingleNode("text");
-                if (text != null)
-                    nameToText.Add(path, text.InnerXml);
-                XmlNode hoverOver = node.SelectSingleNode("hoverOver");
-                if (text != null)
-                    nameToText.Add(path, hoverOver.InnerXml);
-            }
-            ForChilds(path,node.ChildNodes);
-            //do {
-            //    path = node.GetAttribute("name");
-            //    
-               
-
-            //} while (currentNode != node);
-        }
-        //foreach(String s in nameToText.Keys) {
-        //    Debug.Log(s);
-        //}
-    }
-    public void ForChilds(string path, XmlNodeList list) {
-        foreach(XmlNode node in list) {
-            string tempPath = path;
-            if (node is XmlElement)
-                tempPath += ((XmlElement)node).GetAttribute("name") + "/";
-            
-            if (node.Name == "textelement") {
-                XmlNode text = node.SelectSingleNode("text");
-                if (text != null)
-                    nameToText.Add(tempPath, text.InnerXml);
-                XmlNode hoverOver = node.SelectSingleNode("hoverOver");
-                if (text != null)
-                    nameToHover.Add(tempPath, hoverOver.InnerXml);
-            }
-            ForChilds(tempPath,node.ChildNodes);
+        string filename = localizationFilePrefix + selectedLanguage + localizationFileType;
+        XmlSerializer xml = new XmlSerializer(typeof(UILanguageLocalizations));
+        UILanguageLocalizations uiLoc = xml.Deserialize(new StringReader(File.ReadAllText(file))) as UILanguageLocalizations;
+        idToTranslation.Clear();
+        foreach(TranslationData data in uiLoc.localizationData) {
+            idToTranslation[data.id] = data;
         }
     }
 
     [Serializable]
     public class UILanguageLocalizations {
-        [XmlArray] public string[] missingLocalization;
+        [XmlAttribute] public string language;
+        [XmlArray("localizationData")] [XmlArrayItem("translationData")] public TranslationData[] localizationData;
+    }
+
+    internal string[] GetLabels(Type EnumType) {
+        if (EnumType.IsEnum == false)
+            return null;
+        List<string> labels = new List<string>(); 
+        foreach (Enum go in Enum.GetValues(EnumType)) {
+            string name = EnumType.Name + "/" + go.ToString();
+            if (idToTranslation.ContainsKey(name)) {
+                labels.Add(idToTranslation[name].translation);
+            } else {
+                labels.Add("Missing Translation " + go.ToString());
+            }
+        }
+        return labels.ToArray();
+    }
+    internal string[] GetStrings(string[] languageValues) {
+        List<string> labels = new List<string>();
+        foreach (string go in languageValues) {
+            if (idToTranslation.ContainsKey(go)) {
+                labels.Add(idToTranslation[go].translation);
+            }
+            else {
+                labels.Add("Missing Translation " + go.ToString());
+            }
+        }
+        return labels.ToArray();
+    }
+
+    internal string[] GetStaticVariables(params StaticLanguageVariables[] paras) {
+        List<string> labels = new List<string>();
+        foreach (StaticLanguageVariables p in paras) {
+            string name = typeof(StaticLanguageVariables).Name +"/"+ p.ToString();
+            if (idToTranslation.ContainsKey(name)) {
+                labels.Add(idToTranslation[name].translation);
+            }
+            else {
+                labels.Add("Missing Translation " + p.ToString());
+            }
+        }
+        return labels.ToArray();
     }
 
 }

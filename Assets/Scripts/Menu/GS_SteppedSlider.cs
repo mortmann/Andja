@@ -34,8 +34,9 @@ public class GS_SteppedSlider : MonoBehaviour {
         // Calculate the total number of steps for the slider.
         sliderSteps = (int)slider.maxValue - (int)slider.minValue + 1;
 
+        float xScale = 1;// Screen.width / GetComponentInParent<UnityEngine.UI.CanvasScaler>().referenceResolution.x;
         // Set the width of the handle.
-        handleWidth = sliderRect.width / sliderSteps;
+        handleWidth = (sliderRect.width*xScale) / sliderSteps;
         slider.handleRect.sizeDelta = new Vector2(handleWidth, slider.handleRect.sizeDelta.y);
 
         // Set the initial handle position based on the slider value.

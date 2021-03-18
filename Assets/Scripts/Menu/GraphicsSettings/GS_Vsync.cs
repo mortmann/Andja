@@ -2,26 +2,13 @@
 
 public class GS_Vsync : GS_SliderBase {
     public override void OnStart() {
-        setting = GraphicsSetting.Vsync;
+        setting = GraphicsSetting.Vsync;  
+        tls.SetStaticLanguageVariables(StaticLanguageVariables.Off, StaticLanguageVariables.On);
         if (graphicsSettings.HasSavedGraphicsOption(setting))
-            SetVsync(int.Parse(graphicsSettings.GetSavedGraphicsOption(setting)));
+            SetVsync(graphicsSettings.GetSavedGraphicsOptionInt(setting));
+        else
+            SetVsync(0);
     }
-    protected override void GraphicsPresetLow() {
-        SetVsync(0);
-    }
-
-    protected override void GraphicsPresetMedium() {
-        SetVsync(0);
-    }
-
-    protected override void GraphicsPresetHigh() {
-        SetVsync(0);
-    }
-
-    protected override void GraphicsPresetUltra() {
-        SetVsync(0);
-    }
-
     protected override void OnSliderValueChange() {
         SetVsync(Value);
     }
@@ -29,5 +16,6 @@ public class GS_Vsync : GS_SliderBase {
     void SetVsync(int value) {
         graphicsSettings.SetVsync(value);
         slider.value = value;
+        tls.ShowValue(value);
     }
 }

@@ -3,27 +3,14 @@ using UnityStandardAssets.ImageEffects;
 using Smaa;
 
 public class GS_AntiAliasing : GS_SliderBase {
+    public static int[] PresetValues = { 0, 1, 2, 2 };
+
     public override void OnStart() {
+        TextLanguageSetter tls = GetComponent<TextLanguageSetter>();
         setting = GraphicsSetting.AntiAliasing;
         if (graphicsSettings.HasSavedGraphicsOption(setting))
-            SetAntiAliasing(int.Parse(graphicsSettings.GetSavedGraphicsOption(setting)));
+            SetAntiAliasing(graphicsSettings.GetSavedGraphicsOptionInt(setting));
     }
-    protected override void GraphicsPresetLow() {
-        SetAntiAliasing(0);
-    }
-
-    protected override void GraphicsPresetMedium() {
-        SetAntiAliasing(1);
-    }
-
-    protected override void GraphicsPresetHigh() {
-        SetAntiAliasing(2);
-    }
-
-    protected override void GraphicsPresetUltra() {
-        SetAntiAliasing(2);
-    }
-
     protected override void OnSliderValueChange() {
         SetAntiAliasing(Value);
     }

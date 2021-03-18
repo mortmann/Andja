@@ -3,54 +3,109 @@ using System.Collections.Generic;
 using UnityEngine.UI;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using System;
+using System.Xml;
+using System.Xml.Serialization;
+
+[Serializable]
+[XmlRoot("translationData")]
+public class TranslationData {
+    [XmlAttribute]
+    public string id;
+    public string translation;
+    public string hoverOverTranslation;
+    [XmlArray("Values")]
+    public string[] values;
+    [XmlArray("uiElements", IsNullable = true)]
+    public List<string> UIElements = new List<string>();
+    public bool onlyHoverOver;
+    public int valueCount = 0;
+
+    public bool ShouldSerializeUIElements() {
+        return UIElements.Count > 0;
+    }
+    public bool ShouldSerializeonlyHoverOver() {
+        return onlyHoverOver;
+    }
+    public bool ShouldSerializevalueCount() {
+        return valueCount > 0;
+    }
+
+    public TranslationData(string id, string name, string hoverOver, string[] values) {
+        this.id = id;
+        this.translation = name;
+        this.hoverOverTranslation = hoverOver;
+        this.values = values;
+    }
+    public TranslationData(string id, bool OnlyHoverOver, int ValueCount) {
+        this.id = id;
+        this.valueCount = ValueCount;
+        this.onlyHoverOver = OnlyHoverOver;
+    }
+    public TranslationData() {
+    }
+
+    internal void AddUIElement(string v) {
+        UIElements.Add(v);
+    }
+}
 
 [RequireComponent(typeof(EventTrigger))]
-public class TextLanguageSetter : MonoBehaviour {
+public class TextLanguageSetter : MonoBehaviour { 
+    public string Identifier;
+
     // Use this for initialization
     public bool OnlyHoverOver;
+    public int Values;
 
-    Text myText;
-    private string hoverHoverText;
+    public Text nameText;
+    public Text valueText;
+
+
+    public string[] languageValues; // Names To Values
+    //Values from a enum
+    internal Type valueEnumType; //Enum are the Values
+    //Selection of some common Words
+    private StaticLanguageVariables[] staticLanguageVariables;
+    private TranslationData translationData;
 
     public string GetRealName() {
         string realname = "";
         Transform current = transform;
-        if (name.StartsWith("*") == false) {
-            //have to make this like this cause you cant compare transform to null transform
-                while (current.parent != null && current.name.StartsWith("%")==false) {
-                    realname = current.name + "/" + realname;
-                    current = current.parent;
-                }
-        }
-        else {
-            realname = name + "/";
+        while (current != null) {
+            realname = current.name + "/" + realname;
+            current = current.parent;
         }
         return realname;
     }
 
     void Start() {
-        string realname = GetRealName();
+        //realname = GetRealName();
+        translationData = UILanguageController.Instance?.GetTranslationData(Identifier);
+        if (translationData == null) {
+            Debug.LogError("Missing Translations Data for " + Identifier);
+            return;
+        }
         if (OnlyHoverOver == false) {
-            myText = GetComponent<Text>();
-            if (myText == null)
-                myText = GetComponentInChildren<Text>();
-            if (myText == null) {
+            if (nameText == null)
+                nameText = GetComponent<Text>();
+            if (nameText == null)
+                nameText = GetComponentInChildren<Text>(true);
+            if (nameText == null) {
                 Debug.LogError("TextLanguageSetter has no text object! " + name);
                 return;
             }
-            string text = UILanguageController.Instance?.GetText(realname);
-            if(string.IsNullOrEmpty(text) ==false)
-                myText.text = text;
+            
+            if (string.IsNullOrEmpty(translationData.translation) ==false)
+                nameText.text = translationData.translation;
             UILanguageController.Instance.RegisterLanguageChange(OnChangeLanguage);
             if (GetComponent<EventTrigger>() == null) {
                 this.gameObject.AddComponent<EventTrigger>();
             }
         }
-        if (UILanguageController.Instance.HasHoverOverText(realname) == false) {
+        if (translationData.hoverOverTranslation == null) {
             return;
         }
-        hoverHoverText = UILanguageController.Instance.GetHoverOverText(realname);
-
         EventTrigger trigger = GetComponent<EventTrigger>();
         EventTrigger.Entry enter = new EventTrigger.Entry {
             eventID = EventTriggerType.PointerEnter
@@ -68,9 +123,18 @@ public class TextLanguageSetter : MonoBehaviour {
         trigger.triggers.Add(exit);
     }
     void OnChangeLanguage() { 
-        string text = UILanguageController.Instance.GetText(name);
-        if (string.IsNullOrEmpty(text) == false)
-            myText.text = text;
+        translationData = UILanguageController.Instance.GetTranslationData(Identifier);
+        if (OnlyHoverOver)
+            return;
+        if (translationData == null) {
+            Debug.LogError("Missing Translations Data for " + Identifier);
+            return;
+        }
+        if (string.IsNullOrEmpty(translationData.translation) == false)
+            nameText.text = translationData.translation;
+    }
+    internal void SetStaticLanguageVariables(params StaticLanguageVariables[] vals) {
+        staticLanguageVariables = vals;
     }
     void OnDestroy() {
         if (UILanguageController.Instance == null)
@@ -80,12 +144,47 @@ public class TextLanguageSetter : MonoBehaviour {
     void OnDisable() {
         if (UILanguageController.Instance == null)
             return;
-        UILanguageController.Instance.UnregisterLanguageChange(OnChangeLanguage);
+        //UILanguageController.Instance.UnregisterLanguageChange(OnChangeLanguage);
     }
     public void OnMousePointerEnter() {
-        GameObject.FindObjectOfType<HoverOverScript>().Show(hoverHoverText);
+        if(translationData.hoverOverTranslation != null)
+            GameObject.FindObjectOfType<HoverOverScript>().Show(translationData.hoverOverTranslation);
     }
     public void OnMousePointerExit() {
         GameObject.FindObjectOfType<HoverOverScript>().Unshow();
+    }
+    public void ShowValue(int i) {
+        if (languageValues == null && staticLanguageVariables == null && valueEnumType == null)
+            return;
+        if(i<0) {
+            Debug.LogError("Negative Label Value trying to be set. -" + Identifier);
+            return;
+        }
+        if(valueText == null) {
+            Debug.LogError("Label Text is null for " + Identifier);
+            return;
+        }
+        if(translationData == null)
+            translationData = UILanguageController.Instance.GetTranslationData(name);
+        if (translationData.values == null) {
+            if (valueEnumType != null) {
+                translationData.values = UILanguageController.Instance.GetLabels(valueEnumType);
+            } else 
+            if(staticLanguageVariables != null) {
+                translationData.values = UILanguageController.Instance.GetStaticVariables(staticLanguageVariables);
+            }
+            else {
+                translationData.values = UILanguageController.Instance.GetStrings(languageValues);
+            }
+        }
+        if (i >= translationData.values.Length) {
+            Debug.LogWarning("Missing Value for " + Identifier);
+            return;
+        }
+        valueText.text = translationData.values[i];
+    }
+
+    public TranslationData GetData() {
+        return new TranslationData(Identifier, OnlyHoverOver, Values);
     }
 }

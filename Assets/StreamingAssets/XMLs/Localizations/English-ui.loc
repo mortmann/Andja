@@ -1,0 +1,821 @@
+<UILanguageLocalizations language="English">
+   <localizationData>
+      <translationData id="Fullscreen">
+         <translation>Screenmode</translation>
+         <hoverOverTranslation>Select the type of game-window you prefer.</hoverOverTranslation>
+         <uiElements>
+            <string>Menu/GraphicsPanel/Content/ScrollRect/VerticalLayoutGroup/Fullscreen/</string>
+            <string>UI Canvas/PauseMenu/DarkLayer/Menu/GraphicsPanel/Content/ScrollRect/VerticalLayoutGroup/Fullscreen/</string>
+         </uiElements>
+      </translationData>
+      <translationData id="TextureQuality">
+         <translation>Texture Quality</translation>
+         <hoverOverTranslation>How good the textures (images) look.</hoverOverTranslation>
+         <uiElements>
+            <string>Menu/GraphicsPanel/Content/ScrollRect/VerticalLayoutGroup/TextureQuality/</string>
+            <string>UI Canvas/PauseMenu/DarkLayer/Menu/GraphicsPanel/Content/ScrollRect/VerticalLayoutGroup/TextureQuality/</string>
+         </uiElements>
+      </translationData>
+      <translationData id="Vsync">
+         <translation>Vysnc</translation>
+         <hoverOverTranslation>Force game frame rate to be in snyc with your display.</hoverOverTranslation>
+         <uiElements>
+            <string>Menu/GraphicsPanel/Content/ScrollRect/VerticalLayoutGroup/Vsync/</string>
+            <string>UI Canvas/PauseMenu/DarkLayer/Menu/GraphicsPanel/Content/ScrollRect/VerticalLayoutGroup/Vsync/</string>
+         </uiElements>
+      </translationData>
+      <translationData id="HealthUI">
+         <hoverOverTranslation>Health Points</hoverOverTranslation>
+         <uiElements>
+            <string>%StructureUI/Health/</string>
+            <string>%UnitHealth/Health/</string>
+            <string>UI Canvas/Info Canvas/Unit Panel/%UnitHealth/Health/</string>
+            <string>UI Canvas/Info Canvas/%StructureUI/Health/</string>
+            <string>UI Canvas/Info Canvas/UnitGroup/Units/%UnitHealth/Health/</string>
+            <string>UI Canvas/Right Canvas/Citizen Canvas/Background/Health/</string>
+         </uiElements>
+         <onlyHoverOver>true</onlyHoverOver>
+      </translationData>
+      <translationData id="Sell">
+         <hoverOverTranslation>Sell Item</hoverOverTranslation>
+         <uiElements>
+            <string>%ItemTrade-Prefab/Layout/Prices/Sell/</string>
+            <string>UI Canvas/Right Canvas/CityInventory/TradePanel/Trade-Canvas/ItemTrade (6)/Layout/Prices/Sell/</string>
+            <string>UI Canvas/Right Canvas/CityInventory/TradePanel/Trade-Canvas/ItemTrade (3)/Layout/Prices/Sell/</string>
+            <string>UI Canvas/Right Canvas/CityInventory/TradePanel/Trade-Canvas/ItemTrade/Layout/Prices/Sell/</string>
+            <string>UI Canvas/Right Canvas/CityInventory/TradePanel/Trade-Canvas/ItemTrade (7)/Layout/Prices/Sell/</string>
+            <string>UI Canvas/Right Canvas/OtherPlayerCity/Trade-Canvas/ItemTrade/Layout/Prices/Sell/</string>
+            <string>UI Canvas/Right Canvas/CityInventory/TradePanel/Trade-Canvas/ItemTrade (1)/Layout/Prices/Sell/</string>
+            <string>UI Canvas/Right Canvas/CityInventory/TradePanel/Trade-Canvas/ItemTrade (5)/Layout/Prices/Sell/</string>
+            <string>UI Canvas/Right Canvas/CityInventory/TradePanel/Trade-Canvas/ItemTrade (4)/Layout/Prices/Sell/</string>
+            <string>UI Canvas/Right Canvas/CityInventory/TradePanel/Trade-Canvas/ItemTrade (2)/Layout/Prices/Sell/</string>
+         </uiElements>
+         <onlyHoverOver>true</onlyHoverOver>
+      </translationData>
+      <translationData id="Buy">
+         <hoverOverTranslation>Buy Item</hoverOverTranslation>
+         <uiElements>
+            <string>%ItemTrade-Prefab/Layout/Prices/Buy/</string>
+            <string>UI Canvas/Right Canvas/CityInventory/TradePanel/Trade-Canvas/ItemTrade (2)/Layout/Prices/Buy/</string>
+            <string>UI Canvas/Right Canvas/CityInventory/TradePanel/Trade-Canvas/ItemTrade (3)/Layout/Prices/Buy/</string>
+            <string>UI Canvas/Right Canvas/CityInventory/TradePanel/Trade-Canvas/ItemTrade (7)/Layout/Prices/Buy/</string>
+            <string>UI Canvas/Right Canvas/CityInventory/TradePanel/Trade-Canvas/ItemTrade (5)/Layout/Prices/Buy/</string>
+            <string>UI Canvas/Right Canvas/CityInventory/TradePanel/Trade-Canvas/ItemTrade (6)/Layout/Prices/Buy/</string>
+            <string>UI Canvas/Right Canvas/OtherPlayerCity/Trade-Canvas/ItemTrade/Layout/Prices/Buy/</string>
+            <string>UI Canvas/Right Canvas/CityInventory/TradePanel/Trade-Canvas/ItemTrade/Layout/Prices/Buy/</string>
+            <string>UI Canvas/Right Canvas/CityInventory/TradePanel/Trade-Canvas/ItemTrade (1)/Layout/Prices/Buy/</string>
+            <string>UI Canvas/Right Canvas/CityInventory/TradePanel/Trade-Canvas/ItemTrade (4)/Layout/Prices/Buy/</string>
+         </uiElements>
+         <onlyHoverOver>true</onlyHoverOver>
+      </translationData>
+      <translationData id="Mods">
+         <translation>Mods</translation>
+         <hoverOverTranslation>Modification made by Users. 
+Be careful what you use, because it can break the game.</hoverOverTranslation>
+         <uiElements>
+            <string>Menu/ModPanel/Title/</string>
+            <string>Menu/MenuPanel/MenuButtons/Mods/</string>
+            <string>UI Canvas/PauseMenu/DarkLayer/Menu/MenuPanel/MenuButtons/Mods/</string>
+            <string>UI Canvas/PauseMenu/DarkLayer/Menu/ModPanel/Title/</string>
+         </uiElements>
+      </translationData>
+      <translationData id="Gameplay">
+         <translation>Gameplay</translation>
+         <hoverOverTranslation>Options that change how one plays the game.</hoverOverTranslation>
+         <uiElements>
+            <string>Menu/GameplayPanel/Title/</string>
+            <string>Menu/OptionsPanel/MenuButtons/Gameplay/</string>
+            <string>UI Canvas/PauseMenu/DarkLayer/Menu/OptionsPanel/MenuButtons/Gameplay/</string>
+            <string>UI Canvas/PauseMenu/DarkLayer/Menu/GameplayPanel/Title/</string>
+         </uiElements>
+      </translationData>
+      <translationData id="Editor">
+         <translation>Island-Editor</translation>
+         <hoverOverTranslation>Create and customize Islands.
+Save them so you can play them or share them.</hoverOverTranslation>
+         <uiElements>
+            <string>Menu/MenuPanel/MenuButtons/Editor/</string>
+            <string>UI Canvas/PauseMenu/DarkLayer/Menu/MenuPanel/MenuButtons/Editor/</string>
+         </uiElements>
+      </translationData>
+      <translationData id="Back">
+         <translation>Back</translation>
+         <hoverOverTranslation>Go back to the previous screen.</hoverOverTranslation>
+         <uiElements>
+            <string>Menu/ModPanel/Back/</string>
+            <string>Menu/Credits/Back/</string>
+            <string>Menu/OptionsPanel/Back/</string>
+            <string>Menu/SavePanel/MenuButtons/Back/</string>
+            <string>Menu/LoadPanel/MenuButtons/Back/</string>
+            <string>UI Canvas/PauseMenu/DarkLayer/Menu/Credits/Back/</string>
+            <string>UI Canvas/PauseMenu/DarkLayer/Menu/LoadPanel/MenuButtons/Back/</string>
+            <string>UI Canvas/PauseMenu/DarkLayer/Menu/SavePanel/MenuButtons/Back/</string>
+            <string>UI Canvas/PauseMenu/DarkLayer/Menu/OptionsPanel/Back/</string>
+            <string>UI Canvas/PauseMenu/DarkLayer/Menu/ModPanel/Back/</string>
+         </uiElements>
+      </translationData>
+      <translationData id="NewGame">
+         <translation>New Game</translation>
+         <hoverOverTranslation>Start a new game and customize the experience.</hoverOverTranslation>
+         <uiElements>
+            <string>Menu/MenuPanel/MenuButtons/New Game/</string>
+            <string>UI Canvas/PauseMenu/DarkLayer/Menu/MenuPanel/MenuButtons/New Game/</string>
+         </uiElements>
+      </translationData>
+      <translationData id="Controls">
+         <translation>Controls</translation>
+         <hoverOverTranslation>Change Mousesettings or Keyboard bindings.</hoverOverTranslation>
+         <uiElements>
+            <string>Menu/ControlPanel/Title/</string>
+            <string>Menu/OptionsPanel/MenuButtons/Controls/</string>
+            <string>UI Canvas/PauseMenu/DarkLayer/Menu/OptionsPanel/MenuButtons/Controls/</string>
+            <string>UI Canvas/PauseMenu/DarkLayer/Menu/ControlPanel/Title/</string>
+         </uiElements>
+      </translationData>
+      <translationData id="Sound">
+         <translation>Sound</translation>
+         <hoverOverTranslation>Change Volumes of Sounds</hoverOverTranslation>
+         <uiElements>
+            <string>Menu/SoundPanel/Title/</string>
+            <string>UI Canvas/PauseMenu/DarkLayer/Menu/SoundPanel/Title/</string>
+         </uiElements>
+      </translationData>
+      <translationData id="Credits">
+         <translation>Credits</translation>
+         <hoverOverTranslation>Look at those marvelous Credits. Or dont.
+I&apos;m not your father. I&apos;m a game.</hoverOverTranslation>
+         <uiElements>
+            <string>Menu/Credits/Title/</string>
+            <string>Menu/Credits/Title/</string>
+            <string>Menu/MenuPanel/MenuButtons/Credits/</string>
+            <string>UI Canvas/PauseMenu/DarkLayer/Menu/Credits/Title/</string>
+            <string>UI Canvas/PauseMenu/DarkLayer/Menu/Credits/Title/</string>
+            <string>UI Canvas/PauseMenu/DarkLayer/Menu/MenuPanel/MenuButtons/Credits/</string>
+         </uiElements>
+      </translationData>
+      <translationData id="Graphics">
+         <translation>Graphics</translation>
+         <hoverOverTranslation>Change how the game looks or performs.</hoverOverTranslation>
+         <uiElements>
+            <string>Menu/GraphicsPanel/Title/</string>
+            <string>Menu/OptionsPanel/MenuButtons/Graphics/</string>
+            <string>UI Canvas/PauseMenu/DarkLayer/Menu/OptionsPanel/MenuButtons/Graphics/</string>
+            <string>UI Canvas/PauseMenu/DarkLayer/Menu/GraphicsPanel/Title/</string>
+         </uiElements>
+      </translationData>
+      <translationData id="Save">
+         <translation>Save</translation>
+         <hoverOverTranslation>Save your progress here.</hoverOverTranslation>
+         <uiElements>
+            <string>Menu/MenuPanel/MenuButtons/Save/</string>
+            <string>Menu/SavePanel/MenuButtons/Save/</string>
+            <string>UI Canvas/PauseMenu/DarkLayer/Menu/SavePanel/MenuButtons/Save/</string>
+            <string>UI Canvas/PauseMenu/DarkLayer/Menu/MenuPanel/MenuButtons/Save/</string>
+         </uiElements>
+      </translationData>
+      <translationData id="QuitToMenu">
+         <translation>Quit to Menu</translation>
+         <hoverOverTranslation>Stops the current save, but doesn&apos;t save your progress.</hoverOverTranslation>
+         <uiElements>
+            <string>Menu/MenuPanel/MenuButtons (1)/QuitMenu/</string>
+            <string>UI Canvas/PauseMenu/DarkLayer/Menu/MenuPanel/MenuButtons (1)/QuitMenu/</string>
+         </uiElements>
+      </translationData>
+      <translationData id="Saveing">
+         <translation>Saveing</translation>
+         <hoverOverTranslation>Save current progress.</hoverOverTranslation>
+         <uiElements>
+            <string>Menu/SavePanel/Title/TitleText/</string>
+            <string>UI Canvas/PauseMenu/DarkLayer/Menu/SavePanel/Title/TitleText/</string>
+         </uiElements>
+      </translationData>
+      <translationData id="Options">
+         <translation>Options</translation>
+         <hoverOverTranslation>Change Settings here.</hoverOverTranslation>
+         <uiElements>
+            <string>Menu/MenuPanel/MenuButtons/Options/</string>
+            <string>UI Canvas/PauseMenu/DarkLayer/Menu/MenuPanel/MenuButtons/Options/</string>
+         </uiElements>
+      </translationData>
+      <translationData id="Presets">
+         <translation>Presets</translation>
+         <hoverOverTranslation>Predefined Settings. Choose your preferred Quality.</hoverOverTranslation>
+         <uiElements>
+            <string>Menu/GraphicsPanel/Content/Text/</string>
+            <string>UI Canvas/PauseMenu/DarkLayer/Menu/GraphicsPanel/Content/Text/</string>
+         </uiElements>
+      </translationData>
+      <translationData id="QuitToOS">
+         <translation>Quit</translation>
+         <hoverOverTranslation>Close the Game. Does not save progress.</hoverOverTranslation>
+         <uiElements>
+            <string>Menu/MenuPanel/MenuButtons (1)/Quit/</string>
+            <string>UI Canvas/PauseMenu/DarkLayer/Menu/MenuPanel/MenuButtons (1)/Quit/</string>
+         </uiElements>
+      </translationData>
+      <translationData id="Load">
+         <translation>Load</translation>
+         <hoverOverTranslation>Load your saved games.</hoverOverTranslation>
+         <uiElements>
+            <string>Menu/LoadPanel/MenuButtons/Load/</string>
+            <string>Menu/MenuPanel/MenuButtons/Load/</string>
+            <string>UI Canvas/PauseMenu/DarkLayer/Menu/LoadPanel/MenuButtons/Load/</string>
+            <string>UI Canvas/PauseMenu/DarkLayer/Menu/MenuPanel/MenuButtons/Load/</string>
+         </uiElements>
+      </translationData>
+      <translationData id="Loading">
+         <translation>Loading</translation>
+         <hoverOverTranslation>Press to load selected savefile.</hoverOverTranslation>
+         <uiElements>
+            <string>Menu/LoadPanel/Title/TitleText/</string>
+            <string>UI Canvas/PauseMenu/DarkLayer/Menu/LoadPanel/Title/TitleText/</string>
+         </uiElements>
+      </translationData>
+      <translationData id="Warning">
+         <translation>Warning</translation>
+         <uiElements>
+            <string>Menu/YesNoDialog/Dialog/Title/</string>
+            <string>UI Canvas/PauseMenu/DarkLayer/Menu/YesNoDialog/Dialog/Title/</string>
+         </uiElements>
+      </translationData>
+      <translationData id="ResumeGame">
+         <translation>Resume Game</translation>
+         <hoverOverTranslation>Continue your last saved game.</hoverOverTranslation>
+         <uiElements>
+            <string>Menu/MenuPanel/MenuButtons/Resume/</string>
+            <string>UI Canvas/PauseMenu/DarkLayer/Menu/MenuPanel/MenuButtons/Resume/</string>
+         </uiElements>
+      </translationData>
+      <translationData id="No">
+         <translation>No.</translation>
+         <uiElements>
+            <string>Menu/YesNoDialog/Dialog/Content/VerticalLayoutGroup/Buttons/No/</string>
+            <string>UI Canvas/PauseMenu/DarkLayer/Menu/YesNoDialog/Dialog/Content/VerticalLayoutGroup/Buttons/No/</string>
+         </uiElements>
+      </translationData>
+      <translationData id="DiscardUnsaved">
+         <translation>Do you want to discard any 
+unsaved changes?</translation>
+         <uiElements>
+            <string>Menu/YesNoDialog/Dialog/Content/VerticalLayoutGroup/UnsavedProgress/</string>
+            <string>UI Canvas/PauseMenu/DarkLayer/Menu/YesNoDialog/Dialog/Content/VerticalLayoutGroup/UnsavedProgress/</string>
+         </uiElements>
+      </translationData>
+      <translationData id="DeleteSaves">
+         <translation>Are you sure you want to permanently delete this savegame?</translation>
+         <uiElements>
+            <string>Menu/YesNoDialog/Dialog/Content/VerticalLayoutGroup/DeleteSave/</string>
+            <string>UI Canvas/PauseMenu/DarkLayer/Menu/YesNoDialog/Dialog/Content/VerticalLayoutGroup/DeleteSave/</string>
+         </uiElements>
+      </translationData>
+      <translationData id="Yes">
+         <translation>Yes.</translation>
+         <uiElements>
+            <string>Menu/YesNoDialog/Dialog/Content/VerticalLayoutGroup/Buttons/Yes/</string>
+            <string>UI Canvas/PauseMenu/DarkLayer/Menu/YesNoDialog/Dialog/Content/VerticalLayoutGroup/Buttons/Yes/</string>
+         </uiElements>
+      </translationData>
+      <translationData id="OverwriteSave">
+         <translation>Are you sure you want to overwrite this savegame?</translation>
+         <uiElements>
+            <string>Menu/YesNoDialog/Dialog/Content/VerticalLayoutGroup/OverwriteSave/</string>
+            <string>UI Canvas/PauseMenu/DarkLayer/Menu/YesNoDialog/Dialog/Content/VerticalLayoutGroup/OverwriteSave/</string>
+         </uiElements>
+      </translationData>
+      <translationData id="AmbientSoundVolume">
+         <translation>Ambient Volume</translation>
+         <hoverOverTranslation>e.g. Background Sounds</hoverOverTranslation>
+         <uiElements>
+            <string>Menu/SoundPanel/Content/VerticalLayoutGroup/Ambient/Label/</string>
+            <string>UI Canvas/PauseMenu/DarkLayer/Menu/SoundPanel/Content/VerticalLayoutGroup/Ambient/Label/</string>
+         </uiElements>
+      </translationData>
+      <translationData id="MusicVolume">
+         <translation>Music Volume</translation>
+         <hoverOverTranslation>Music that plays in the background.</hoverOverTranslation>
+         <uiElements>
+            <string>Menu/SoundPanel/Content/VerticalLayoutGroup/Music/Label/</string>
+            <string>UI Canvas/PauseMenu/DarkLayer/Menu/SoundPanel/Content/VerticalLayoutGroup/Music/Label/</string>
+         </uiElements>
+      </translationData>
+      <translationData id="Ultra">
+         <translation>Ultra</translation>
+         <uiElements>
+            <string>Menu/GraphicsPanel/Content/GraphicsPreset/GameObject/Label (3)/</string>
+            <string>UI Canvas/PauseMenu/DarkLayer/Menu/GraphicsPanel/Content/GraphicsPreset/GameObject/Label (3)/</string>
+         </uiElements>
+      </translationData>
+      <translationData id="MasterSoundVolume">
+         <translation>Master Volume</translation>
+         <hoverOverTranslation>Affects all kinds of Volumes.</hoverOverTranslation>
+         <uiElements>
+            <string>Menu/SoundPanel/Content/VerticalLayoutGroup/Master/Label/</string>
+            <string>UI Canvas/PauseMenu/DarkLayer/Menu/SoundPanel/Content/VerticalLayoutGroup/Master/Label/</string>
+         </uiElements>
+      </translationData>
+      <translationData id="IslandSize">
+         <translation>Island Size</translation>
+         <hoverOverTranslation>How big an Island is.</hoverOverTranslation>
+         <uiElements>
+            <string>Menu/LoadPanel/MenuButtons/SaveDetails/Descriptons/Size/</string>
+            <string>UI Canvas/PauseMenu/DarkLayer/Menu/LoadPanel/MenuButtons/SaveDetails/Descriptons/Size/</string>
+         </uiElements>
+      </translationData>
+      <translationData id="UISoundVolume">
+         <translation>UI Volumes</translation>
+         <hoverOverTranslation>e.g. Buttonsounds</hoverOverTranslation>
+         <uiElements>
+            <string>Menu/SoundPanel/Content/VerticalLayoutGroup/UI/Label/</string>
+            <string>UI Canvas/PauseMenu/DarkLayer/Menu/SoundPanel/Content/VerticalLayoutGroup/UI/Label/</string>
+         </uiElements>
+      </translationData>
+      <translationData id="Custom">
+         <translation>Custom</translation>
+         <uiElements>
+            <string>Menu/GraphicsPanel/Content/GraphicsPreset/GameObject/Label (4)/</string>
+            <string>UI Canvas/PauseMenu/DarkLayer/Menu/GraphicsPanel/Content/GraphicsPreset/GameObject/Label (4)/</string>
+         </uiElements>
+      </translationData>
+      <translationData id="Low">
+         <translation>Low</translation>
+         <uiElements>
+            <string>Menu/GraphicsPanel/Content/GraphicsPreset/GameObject/Label/</string>
+            <string>UI Canvas/PauseMenu/DarkLayer/Menu/GraphicsPanel/Content/GraphicsPreset/GameObject/Label/</string>
+         </uiElements>
+      </translationData>
+      <translationData id="CreationDate">
+         <translation>Creation Date</translation>
+         <hoverOverTranslation>Date when the file was created.</hoverOverTranslation>
+         <uiElements>
+            <string>Menu/LoadPanel/MenuButtons/SaveDetails/Descriptons/CreationDate/</string>
+            <string>UI Canvas/PauseMenu/DarkLayer/Menu/LoadPanel/MenuButtons/SaveDetails/Descriptons/CreationDate/</string>
+         </uiElements>
+      </translationData>
+      <translationData id="Resolutions">
+         <translation>Resolutions</translation>
+         <hoverOverTranslation>How many Pixels times Pixel the game will be displayed at.</hoverOverTranslation>
+         <uiElements>
+            <string>Menu/GraphicsPanel/Content/ScrollRect/VerticalLayoutGroup/Resolutions/</string>
+            <string>UI Canvas/PauseMenu/DarkLayer/Menu/GraphicsPanel/Content/ScrollRect/VerticalLayoutGroup/Resolutions/</string>
+         </uiElements>
+      </translationData>
+      <translationData id="IslandClimate">
+         <translation>Island Climate</translation>
+         <hoverOverTranslation>To which climate the island corresponds.</hoverOverTranslation>
+         <uiElements>
+            <string>Menu/LoadPanel/MenuButtons/SaveDetails/Descriptons/Climate/</string>
+            <string>UI Canvas/PauseMenu/DarkLayer/Menu/LoadPanel/MenuButtons/SaveDetails/Descriptons/Climate/</string>
+         </uiElements>
+      </translationData>
+      <translationData id="MouseSensitivity">
+         <translation>Mouse Sensitivity.</translation>
+         <hoverOverTranslation>How fast your Mouse moves ingame. </hoverOverTranslation>
+         <uiElements>
+            <string>Menu/ControlPanel/Content/VerticalLayoutGroup/Mouse Sensitivity/Label/</string>
+            <string>UI Canvas/PauseMenu/DarkLayer/Menu/ControlPanel/Content/VerticalLayoutGroup/Mouse Sensitivity/Label/</string>
+         </uiElements>
+      </translationData>
+      <translationData id="Brightness">
+         <translation>Brightness</translation>
+         <hoverOverTranslation>How bright you are. Oh, no the game.</hoverOverTranslation>
+         <uiElements>
+            <string>Menu/GraphicsPanel/Content/ScrollRect/VerticalLayoutGroup/Brightness/</string>
+            <string>UI Canvas/PauseMenu/DarkLayer/Menu/GraphicsPanel/Content/ScrollRect/VerticalLayoutGroup/Brightness/</string>
+         </uiElements>
+      </translationData>
+      <translationData id="SoundEffectsVolume">
+         <translation>Sound Effect Volume</translation>
+         <hoverOverTranslation>e.g. Structures/Units</hoverOverTranslation>
+         <uiElements>
+            <string>Menu/SoundPanel/Content/VerticalLayoutGroup/SoundEffects/Label/</string>
+            <string>UI Canvas/PauseMenu/DarkLayer/Menu/SoundPanel/Content/VerticalLayoutGroup/SoundEffects/Label/</string>
+         </uiElements>
+      </translationData>
+      <translationData id="Medium">
+         <translation>Medium</translation>
+         <uiElements>
+            <string>Menu/GraphicsPanel/Content/GraphicsPreset/GameObject/Label (1)/</string>
+            <string>UI Canvas/PauseMenu/DarkLayer/Menu/GraphicsPanel/Content/GraphicsPreset/GameObject/Label (1)/</string>
+         </uiElements>
+      </translationData>
+      <translationData id="High">
+         <translation>High</translation>
+         <uiElements>
+            <string>Menu/GraphicsPanel/Content/GraphicsPreset/GameObject/Label (2)/</string>
+            <string>UI Canvas/PauseMenu/DarkLayer/Menu/GraphicsPanel/Content/GraphicsPreset/GameObject/Label (2)/</string>
+         </uiElements>
+      </translationData>
+      <translationData id="AutorotateBuildings">
+         <translation>Autorotate Structures</translation>
+         <hoverOverTranslation>If the structures should automatically rotate to fit
+if they can.</hoverOverTranslation>
+         <uiElements>
+            <string>Menu/GameplayPanel/Content/ScrollRect/VerticalLayoutGroup/Autorotate Buildings/Label/</string>
+            <string>UI Canvas/PauseMenu/DarkLayer/Menu/GameplayPanel/Content/ScrollRect/VerticalLayoutGroup/Autorotate Buildings/Label/</string>
+         </uiElements>
+      </translationData>
+      <translationData id="PrimaryKey">
+         <translation>Primary</translation>
+         <hoverOverTranslation>First key todo the action.</hoverOverTranslation>
+         <uiElements>
+            <string>Menu/ControlPanel/Content/VerticalLayoutGroup/GameObject/KEYTitles/PrimaryKeyText/</string>
+            <string>UI Canvas/PauseMenu/DarkLayer/Menu/ControlPanel/Content/VerticalLayoutGroup/GameObject/KEYTitles/PrimaryKeyText/</string>
+         </uiElements>
+      </translationData>
+      <translationData id="Hotkey">
+         <translation>Hotkey</translation>
+         <hoverOverTranslation>Which action happens.</hoverOverTranslation>
+         <uiElements>
+            <string>Menu/ControlPanel/Content/VerticalLayoutGroup/GameObject/KEYTitles/HotkeyText/</string>
+            <string>UI Canvas/PauseMenu/DarkLayer/Menu/ControlPanel/Content/VerticalLayoutGroup/GameObject/KEYTitles/HotkeyText/</string>
+         </uiElements>
+      </translationData>
+      <translationData id="Language">
+         <translation>Language</translation>
+         <hoverOverTranslation>Which Language the game displays.</hoverOverTranslation>
+         <uiElements>
+            <string>Menu/GameplayPanel/Content/ScrollRect/VerticalLayoutGroup/Language/Label/</string>
+            <string>UI Canvas/PauseMenu/DarkLayer/Menu/GameplayPanel/Content/ScrollRect/VerticalLayoutGroup/Language/Label/</string>
+         </uiElements>
+      </translationData>
+      <translationData id="SecondaryKey">
+         <translation>Secondary</translation>
+         <hoverOverTranslation>Second key todo the action.</hoverOverTranslation>
+         <uiElements>
+            <string>Menu/ControlPanel/Content/VerticalLayoutGroup/GameObject/KEYTitles/SecondaryKeyText/</string>
+            <string>UI Canvas/PauseMenu/DarkLayer/Menu/ControlPanel/Content/VerticalLayoutGroup/GameObject/KEYTitles/SecondaryKeyText/</string>
+         </uiElements>
+      </translationData>
+      <translationData id="Delete">
+         <translation>Delete</translation>
+         <hoverOverTranslation>Delete the file.</hoverOverTranslation>
+         <uiElements>
+            <string>SaveGameSelectable/Delete/</string>
+            <string>UI Canvas/Center/OffWorldMarket/OFFWORLD-Panel/GameObject/Delete/</string>
+         </uiElements>
+      </translationData>
+      <translationData id="CityInformationToggle">
+         <translation>Details</translation>
+         <hoverOverTranslation>Show more Information about this City.</hoverOverTranslation>
+         <uiElements>
+            <string>UI Canvas/Right Canvas/CityInventory/CityInfoToggle/</string>
+         </uiElements>
+      </translationData>
+      <translationData id="DecreaseDiplomaticStatus">
+         <translation>Decrease Diplomatic Status</translation>
+         <hoverOverTranslation>Decrease your current Diplomatic Status with this Player.</hoverOverTranslation>
+         <uiElements>
+            <string>UI Canvas/Center/Diplomacy/Decisions/Options/DecreaseDiplomaticStatus/Text/</string>
+         </uiElements>
+      </translationData>
+      <translationData id="Income">
+         <translation>Income</translation>
+         <hoverOverTranslation>Your current Income from this City.</hoverOverTranslation>
+         <uiElements>
+            <string>UI Canvas/Right Canvas/CityInventory/City UI/Statistics/Income/</string>
+         </uiElements>
+      </translationData>
+      <translationData id="DeleteTrade">
+         <translation>Delete Route</translation>
+         <hoverOverTranslation>Delete the current Trade Route</hoverOverTranslation>
+         <uiElements>
+            <string>UI Canvas/Right Canvas/CityInventory/TradePanel/GameObject/DeleteTrade/</string>
+         </uiElements>
+      </translationData>
+      <translationData id="DiplomacyOptions">
+         <translation>Diplomacy Options</translation>
+         <hoverOverTranslation>The diffrent interaction with Players.</hoverOverTranslation>
+         <uiElements>
+            <string>UI Canvas/Center/Diplomacy/Decisions/Title/</string>
+         </uiElements>
+      </translationData>
+      <translationData id="ShipContentToSell">
+         <translation>Contents to Sell</translation>
+         <hoverOverTranslation>All items the ship contains will be sold of when sent to the markt.</hoverOverTranslation>
+         <uiElements>
+            <string>UI Canvas/Center/OffWorldMarket/OFFWORLD-Panel/ONSHIP/</string>
+         </uiElements>
+      </translationData>
+      <translationData id="QuickSave">
+         <hoverOverTranslation>Quicksave your game.</hoverOverTranslation>
+         <uiElements>
+            <string>UI Canvas/Menu Canvas/Menu Button/QuickSave/</string>
+         </uiElements>
+         <onlyHoverOver>true</onlyHoverOver>
+      </translationData>
+      <translationData id="ItemPrice">
+         <translation>Price</translation>
+         <hoverOverTranslation>How much the Item costs.</hoverOverTranslation>
+         <uiElements>
+            <string>UI Canvas/Right Canvas/CityInventory/TradePanel/GameObject/PriceSlider/</string>
+         </uiElements>
+      </translationData>
+      <translationData id="BuildProgress">
+         <hoverOverTranslation>Buildprogress</hoverOverTranslation>
+         <uiElements>
+            <string>UI Canvas/Info Canvas/MilitaryStructure Info/CurrentlyBuilding/Active Building/BuildProgress/</string>
+         </uiElements>
+         <onlyHoverOver>true</onlyHoverOver>
+      </translationData>
+      <translationData id="DestroyTool">
+         <hoverOverTranslation>Destroy tool.</hoverOverTranslation>
+         <uiElements>
+            <string>UI Canvas/Menu Canvas/Menu Button/Destroytool/</string>
+         </uiElements>
+         <onlyHoverOver>true</onlyHoverOver>
+      </translationData>
+      <translationData id="Fast">
+         <hoverOverTranslation>Fast gamespeed</hoverOverTranslation>
+         <uiElements>
+            <string>UI Canvas/Menu Canvas/Menu Button/Fast/</string>
+         </uiElements>
+         <onlyHoverOver>true</onlyHoverOver>
+      </translationData>
+      <translationData id="TradeMenu">
+         <translation>Trademenu</translation>
+         <uiElements>
+            <string>UI Canvas/Right Canvas/CityInventory/TradeMenuButton/</string>
+         </uiElements>
+      </translationData>
+      <translationData id="Slow">
+         <hoverOverTranslation>Slow gamespeed</hoverOverTranslation>
+         <uiElements>
+            <string>UI Canvas/Menu Canvas/Menu Button/Slow/</string>
+         </uiElements>
+         <onlyHoverOver>true</onlyHoverOver>
+      </translationData>
+      <translationData id="ItemAmount">
+         <translation>Item Amount</translation>
+         <uiElements>
+            <string>UI Canvas/Right Canvas/CityInventory/TradePanel/GameObject/AmountSlider/</string>
+         </uiElements>
+      </translationData>
+      <translationData id="UpgradeHome">
+         <hoverOverTranslation>Upgrade this Home to the next Level.</hoverOverTranslation>
+         <uiElements>
+            <string>UI Canvas/Right Canvas/Citizen Canvas/Background/Upgrade/</string>
+         </uiElements>
+      </translationData>
+      <translationData id="QuickLoad">
+         <hoverOverTranslation>Load the last save.</hoverOverTranslation>
+         <uiElements>
+            <string>UI Canvas/Menu Canvas/Menu Button/QuickLoad/</string>
+         </uiElements>
+         <onlyHoverOver>true</onlyHoverOver>
+      </translationData>
+      <translationData id="Information">
+         <hoverOverTranslation>Further Informations</hoverOverTranslation>
+         <uiElements>
+            <string>UI Canvas/Info Canvas/InfoButtons/Info/</string>
+         </uiElements>
+         <onlyHoverOver>true</onlyHoverOver>
+      </translationData>
+      <translationData id="People">
+         <translation>People</translation>
+         <hoverOverTranslation>How many live in this City.</hoverOverTranslation>
+         <uiElements>
+            <string>UI Canvas/Right Canvas/CityInventory/City UI/Statistics/People/</string>
+         </uiElements>
+      </translationData>
+      <translationData id="AutoUpgradeHomes">
+         <translation>Auto Upgrade Homes</translation>
+         <hoverOverTranslation>If set Homes will automatically upgrade when they can
+and the Resources are avaible.</hoverOverTranslation>
+         <uiElements>
+            <string>UI Canvas/Right Canvas/CityInventory/City UI/Settings/AutoUpgrade/</string>
+         </uiElements>
+      </translationData>
+      <translationData id="NormalSpeed">
+         <hoverOverTranslation>Normal Speed</hoverOverTranslation>
+         <uiElements>
+            <string>UI Canvas/Menu Canvas/Menu Button/NormalSpeed/</string>
+         </uiElements>
+         <onlyHoverOver>true</onlyHoverOver>
+      </translationData>
+      <translationData id="IncreaseDiplomaticStatus">
+         <translation>Increase Diplomatic Status</translation>
+         <hoverOverTranslation>Try to increase your Diplomatic Status with this Player.</hoverOverTranslation>
+         <uiElements>
+            <string>UI Canvas/Center/Diplomacy/Decisions/Options/IncreaseDiplomaticStatus/Text/</string>
+         </uiElements>
+      </translationData>
+      <translationData id="MaximumDamage">
+         <translation>MD</translation>
+         <hoverOverTranslation>Maximal Damage this can do.</hoverOverTranslation>
+         <uiElements>
+            <string>UI Canvas/Info Canvas/Unit Panel/CombatInfo/Text/MaximumDamage/</string>
+         </uiElements>
+      </translationData>
+      <translationData id="UnitSpeed">
+         <translation>Speed</translation>
+         <hoverOverTranslation>How fast this Unit can move.</hoverOverTranslation>
+         <uiElements>
+            <string>UI Canvas/Info Canvas/Unit Panel/CombatInfo/Text/Speed/</string>
+         </uiElements>
+      </translationData>
+      <translationData id="PraisePlayer">
+         <translation>Praise the Player</translation>
+         <hoverOverTranslation>Praise the Player to try to increase your Favour.</hoverOverTranslation>
+         <uiElements>
+            <string>UI Canvas/Center/Diplomacy/Decisions/Options/PraisePlayer/Text/</string>
+         </uiElements>
+      </translationData>
+      <translationData id="ChangeName">
+         <hoverOverTranslation>Change the name by clicking here.</hoverOverTranslation>
+         <uiElements>
+            <string>UI Canvas/Right Canvas/CityInventory/City UI/CityName Input/</string>
+         </uiElements>
+         <onlyHoverOver>true</onlyHoverOver>
+      </translationData>
+      <translationData id="SendShipOffworld">
+         <translation>Send to Offworld Market</translation>
+         <hoverOverTranslation>When clicked send Ship to Offworld Market.</hoverOverTranslation>
+         <uiElements>
+            <string>UI Canvas/Center/OffWorldMarket/OFFWORLD-Panel/GameObject/SendButton/</string>
+         </uiElements>
+      </translationData>
+      <translationData id="CurrentDamage">
+         <translation>CD</translation>
+         <hoverOverTranslation>How much damage the unit can do at the moment.</hoverOverTranslation>
+         <uiElements>
+            <string>UI Canvas/Info Canvas/Unit Panel/CombatInfo/Text/CurrentDamage/</string>
+         </uiElements>
+      </translationData>
+      <translationData id="Close">
+         <hoverOverTranslation>Close the window.</hoverOverTranslation>
+         <uiElements>
+            <string>UI Canvas/Info Canvas/InfoButtons/Close/</string>
+         </uiElements>
+         <onlyHoverOver>true</onlyHoverOver>
+      </translationData>
+      <translationData id="Expanses">
+         <translation>Expanses</translation>
+         <hoverOverTranslation>How much all Structures cost to maintain.</hoverOverTranslation>
+         <uiElements>
+            <string>UI Canvas/Right Canvas/CityInventory/City UI/Statistics/Expanses/</string>
+         </uiElements>
+      </translationData>
+      <translationData id="Balance">
+         <translation>Balance</translation>
+         <hoverOverTranslation>How much this City costs or makes.</hoverOverTranslation>
+         <uiElements>
+            <string>UI Canvas/Right Canvas/CityInventory/City UI/Statistics/Balance/</string>
+         </uiElements>
+      </translationData>
+      <translationData id="NewTradeRoute">
+         <translation>New Traderoute</translation>
+         <hoverOverTranslation>Create a new Traderoute.</hoverOverTranslation>
+         <uiElements>
+            <string>UI Canvas/Center/TradeRoutePanel/TradePanel/Right/NewTraderRoute/</string>
+         </uiElements>
+      </translationData>
+      <translationData id="SettleIsland">
+         <translation>Settle</translation>
+         <hoverOverTranslation>Create a new City when in range of an Island that
+you currently have no City.</hoverOverTranslation>
+         <uiElements>
+            <string>UI Canvas/Info Canvas/Unit Panel/Buttons/Settle/</string>
+         </uiElements>
+      </translationData>
+      <translationData id="Fastest">
+         <hoverOverTranslation>Fastest Gamespeed</hoverOverTranslation>
+         <uiElements>
+            <string>UI Canvas/Menu Canvas/Menu Button/Fastest/</string>
+         </uiElements>
+         <onlyHoverOver>true</onlyHoverOver>
+      </translationData>
+      <translationData id="Pause">
+         <hoverOverTranslation>Pause the Game</hoverOverTranslation>
+         <uiElements>
+            <string>UI Canvas/Menu Canvas/Menu Button/Pause/</string>
+         </uiElements>
+         <onlyHoverOver>true</onlyHoverOver>
+      </translationData>
+      <translationData id="ItemsToBuy">
+         <translation>Buy these Items</translation>
+         <hoverOverTranslation>Which Items the Ship is suppose to buy at the Offworld Market.</hoverOverTranslation>
+         <uiElements>
+            <string>UI Canvas/Center/OffWorldMarket/OFFWORLD-Panel/TOBUY/</string>
+         </uiElements>
+      </translationData>
+      <translationData id="Patrol">
+         <translation>Patrol</translation>
+         <hoverOverTranslation>Create a patrol route for the selected Unit(s).</hoverOverTranslation>
+         <uiElements>
+            <string>UI Canvas/Info Canvas/Unit Panel/Buttons/Patrol/</string>
+         </uiElements>
+      </translationData>
+      <translationData id="SleepStructure">
+         <hoverOverTranslation>Disable the Structure.</hoverOverTranslation>
+         <uiElements>
+            <string>UI Canvas/Info Canvas/Produktion Panel/Sleep/</string>
+         </uiElements>
+         <onlyHoverOver>true</onlyHoverOver>
+      </translationData>
+      <translationData id="LoadToShip">
+         <translation>Load Items</translation>
+         <hoverOverTranslation>Which Items the Ship will pickup from the City.</hoverOverTranslation>
+         <uiElements>
+            <string>UI Canvas/Center/TradeRoutePanel/TradePanel/Right/TOSHIP/</string>
+         </uiElements>
+      </translationData>
+      <translationData id="DemandMoney">
+         <translation>Demand Money</translation>
+         <hoverOverTranslation>Try to extort money from this Player.</hoverOverTranslation>
+         <uiElements>
+            <string>UI Canvas/Center/Diplomacy/Decisions/Options/DemandMoney/Text/</string>
+         </uiElements>
+      </translationData>
+      <translationData id="ItemsToTrade">
+         <translation>Buy these Items</translation>
+         <hoverOverTranslation>Which Items you can buy here.</hoverOverTranslation>
+         <uiElements>
+            <string>UI Canvas/Right Canvas/OtherPlayerCity/ItemsTradeItem/</string>
+         </uiElements>
+      </translationData>
+      <translationData id="DenouncePlayer">
+         <translation>Denounce Player</translation>
+         <hoverOverTranslation>Condemn this Player. He won&apos;t like it though.</hoverOverTranslation>
+         <uiElements>
+            <string>UI Canvas/Center/Diplomacy/Decisions/Options/DenouncePlayer/Text/</string>
+         </uiElements>
+      </translationData>
+      <translationData id="PauseMenu">
+         <hoverOverTranslation>Open the Pausemenu</hoverOverTranslation>
+         <uiElements>
+            <string>UI Canvas/Menu Canvas/Menu Button/Options/</string>
+         </uiElements>
+         <onlyHoverOver>true</onlyHoverOver>
+      </translationData>
+      <translationData id="UnloadFromShip">
+         <translation>Unload from Ship</translation>
+         <hoverOverTranslation>Which Items the Ship will drop off here.</hoverOverTranslation>
+         <uiElements>
+            <string>UI Canvas/Center/TradeRoutePanel/TradePanel/Right/FROMSHIP/</string>
+         </uiElements>
+      </translationData>
+      <translationData id="ProduceProgress">
+         <hoverOverTranslation>Produce Progress</hoverOverTranslation>
+         <uiElements>
+            <string>UI Canvas/Info Canvas/Produktion Panel/ProduceProgress/</string>
+         </uiElements>
+         <onlyHoverOver>true</onlyHoverOver>
+      </translationData>
+      <translationData id="Slowest">
+         <hoverOverTranslation>Slowest Gamespeed</hoverOverTranslation>
+         <uiElements>
+            <string>UI Canvas/Menu Canvas/Menu Button/Slowest/</string>
+         </uiElements>
+         <onlyHoverOver>true</onlyHoverOver>
+      </translationData>
+      <translationData id="SendMoney">
+         <translation>Send Money</translation>
+         <hoverOverTranslation>Send this amount to the Player.</hoverOverTranslation>
+         <uiElements>
+            <string>UI Canvas/Center/Diplomacy/Decisions/Options/SendMoney/Text/</string>
+         </uiElements>
+      </translationData>
+      <translationData id="GraphicsOptions/VeryLow">
+         <translation>Very Low</translation>
+      </translationData>
+      <translationData id="GraphicsOptions/Low">
+         <translation>Low</translation>
+      </translationData>
+      <translationData id="GraphicsOptions/Medium">
+         <translation>Medium</translation>
+      </translationData>
+      <translationData id="GraphicsOptions/High">
+         <translation>High</translation>
+      </translationData>
+      <translationData id="GraphicsOptions/Ultra">
+         <translation>Ultra</translation>
+      </translationData>
+      <translationData id="FullScreenMode/ExclusiveFullScreen">
+         <translation>Exclusive Full Screen</translation>
+      </translationData>
+      <translationData id="FullScreenMode/FullScreenWindow">
+         <translation>Full Screen Window</translation>
+      </translationData>
+      <translationData id="FullScreenMode/MaximizedWindow">
+         <translation>Maximized Window</translation>
+      </translationData>
+      <translationData id="FullScreenMode/Windowed">
+         <translation>Windowed</translation>
+      </translationData>
+      <translationData id="StaticLanguageVariables/On">
+         <translation>On</translation>
+      </translationData>
+      <translationData id="StaticLanguageVariables/Off">
+         <translation>Off</translation>
+      </translationData>
+      <translationData id="StaticLanguageVariables/And">
+         <translation>And</translation>
+      </translationData>
+      <translationData id="StaticLanguageVariables/Or">
+         <translation>Or</translation>
+      </translationData>
+	  <translationData id="StaticLanguageVariables/Empty">
+         <translation>Empty</translation>
+      </translationData>
+   </localizationData>
+</UILanguageLocalizations>

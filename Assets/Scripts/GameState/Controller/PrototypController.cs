@@ -13,7 +13,16 @@ using static Combat;
 
 public class PrototypController : MonoBehaviour {
     public const string GameVersion = "0.1.5"; //TODO: think about this position 
-
+    /**
+     * If adding a new XMLFileType please do these Steps:
+     *  1. add a Read*new*FromXML Function
+     *      1.1 create new (if needed) dictionaries
+     *      1.2 call it also with the ModLoader to enable Mods
+     *  2. modify the change ReloadLanguageVariables to include it
+     *      2.1 if the xml file is three deep like structures it must be added to the if
+     *  3. Create Debug output for it
+     */
+    public enum XMLFilesTypes { other, events, fertilities, items, combat, units, structures, needs, startingloadouts, mapgeneration }
     public int NumberOfPopulationLevels => populationLevelDatas.Count;
 
     public static PrototypController Instance;
@@ -160,11 +169,8 @@ public class PrototypController : MonoBehaviour {
         }
         Instance = this;
         ModLoader.LoadMods();
-        ModLoader.AvaibleMods();
+        //ModLoader.AvaibleMods();
         LoadFromXML();
-    }
-    void Test(float[,] fs) {
-        fs[1, 1] = 2;
     }
     public StructurePrototypeData GetStructurePrototypDataForID(string ID) {
         return structurePrototypeDatas[ID];
@@ -235,37 +241,37 @@ public class PrototypController : MonoBehaviour {
         System.Threading.Thread.CurrentThread.CurrentCulture = System.Globalization.CultureInfo.CreateSpecificCulture("en-GB");
         //other
         populationLevelDatas = new Dictionary<int, PopulationLevelPrototypData>();
-        ReadOtherFromXML(LoadXML("other"));
-        ModLoader.LoadXMLs("other", ReadOtherFromXML);
+        ReadOtherFromXML(LoadXML(XMLFilesTypes.other));
+        ModLoader.LoadXMLs(XMLFilesTypes.other, ReadOtherFromXML);
 
         //GAMEEVENTS
         effectPrototypeDatas = new Dictionary<string, EffectPrototypeData>();
         gameEventPrototypeDatas = new Dictionary<string, GameEventPrototypData>();
-        ReadEventsFromXML(LoadXML("events"));
-        ModLoader.LoadXMLs("events", ReadEventsFromXML);
+        ReadEventsFromXML(LoadXML(XMLFilesTypes.events));
+        ModLoader.LoadXMLs(XMLFilesTypes.events, ReadEventsFromXML);
 
         //fertilities
         allFertilities = new Dictionary<Climate, List<Fertility>>();
         idToFertilities = new Dictionary<string, Fertility>();
         AllFertilitiesDatasPerClimate = new Dictionary<Climate, List<FertilityPrototypeData>>();
         fertilityPrototypeDatas = new Dictionary<string, FertilityPrototypeData>();
-        ReadFertilitiesFromXML(LoadXML("fertilities"));
-        ModLoader.LoadXMLs("fertilities", ReadFertilitiesFromXML);
+        ReadFertilitiesFromXML(LoadXML(XMLFilesTypes.fertilities));
+        ModLoader.LoadXMLs(XMLFilesTypes.fertilities, ReadFertilitiesFromXML);
 
         // prototypes of items
         allItems = new Dictionary<string, Item>();
         buildItemsList = new List<Item>();
         MineableItems = new List<Item>();
         itemPrototypeDatas = new Dictionary<string, ItemPrototypeData>();
-        ReadItemsFromXML(LoadXML("items"));
-        ModLoader.LoadXMLs("items", ReadItemsFromXML);
+        ReadItemsFromXML(LoadXML(XMLFilesTypes.items));
+        ModLoader.LoadXMLs(XMLFilesTypes.items, ReadItemsFromXML);
         _buildItems = buildItemsList.ToArray();
         buildItemsList = null;
 
         armorTypeDatas = new Dictionary<string, ArmorType>();
         damageTypeDatas = new Dictionary<string, DamageType>();
-        ReadCombatFromXML(LoadXML("combat"));
-        ModLoader.LoadXMLs("combat", ReadCombatFromXML);
+        ReadCombatFromXML(LoadXML(XMLFilesTypes.combat));
+        ModLoader.LoadXMLs(XMLFilesTypes.combat, ReadCombatFromXML);
         Dictionary<ArmorType, float> worldMultiplier = new Dictionary<ArmorType, float>();
         foreach (ArmorType at in ArmorTypeDatas.Values)
             worldMultiplier.Add(at, 1);
@@ -278,16 +284,16 @@ public class PrototypController : MonoBehaviour {
 
         unitPrototypes = new Dictionary<string, Unit>();
         unitPrototypeDatas = new Dictionary<string, UnitPrototypeData>();
-        ReadUnitsFromXML(LoadXML("units"));
-        ModLoader.LoadXMLs("units", ReadUnitsFromXML);
+        ReadUnitsFromXML(LoadXML(XMLFilesTypes.units));
+        ModLoader.LoadXMLs(XMLFilesTypes.units, ReadUnitsFromXML);
 
         // setup all prototypes of structures here 
         // load them from the 
         structureTypeToMaxStructureLevel = new Dictionary<Type, int>();
         structurePrototypes = new Dictionary<string, Structure>();
         structurePrototypeDatas = new Dictionary<string, StructurePrototypeData>();
-        ReadStructuresFromXML(LoadXML("structures"));
-        ModLoader.LoadXMLs("structures", ReadStructuresFromXML);
+        ReadStructuresFromXML(LoadXML(XMLFilesTypes.structures));
+        ModLoader.LoadXMLs(XMLFilesTypes.structures, ReadStructuresFromXML);
 
         //needs
         allNeeds = new List<Need>();
@@ -295,18 +301,18 @@ public class PrototypController : MonoBehaviour {
         needPrototypeDatas = new Dictionary<string, NeedPrototypeData>();
         needGroupDatas = new Dictionary<string, NeedGroupPrototypData>();
         idToNeedGroup = new Dictionary<string, NeedGroup>();
-        ReadNeedsFromXML(LoadXML("needs"));
-        ModLoader.LoadXMLs("needs", ReadNeedsFromXML);
+        ReadNeedsFromXML(LoadXML(XMLFilesTypes.needs));
+        ModLoader.LoadXMLs(XMLFilesTypes.needs, ReadNeedsFromXML);
 
         _startingLoadouts = new List<StartingLoadout>();
-        ReadStartingLoadoutsFromXMLs(LoadXML("startingloadouts"));
-        ModLoader.LoadXMLs("startingloadouts", ReadStartingLoadoutsFromXMLs);
+        ReadStartingLoadoutsFromXMLs(LoadXML(XMLFilesTypes.startingloadouts));
+        ModLoader.LoadXMLs(XMLFilesTypes.startingloadouts, ReadStartingLoadoutsFromXMLs);
 
         IslandSizeToGenerationInfo = new Dictionary<Size, IslandSizeGenerationInfo>();
         ClimateToResourceGeneration = new Dictionary<Climate, List<ResourceGenerationInfo>>();
         ResourceGenerations = new List<ResourceGenerationInfo>();
-        ReadMapGenerationInfos(LoadXML("mapgeneration"));
-        ModLoader.LoadXMLs("startingloadouts", ReadMapGenerationInfos);
+        ReadMapGenerationInfos(LoadXML(XMLFilesTypes.mapgeneration));
+        ModLoader.LoadXMLs(XMLFilesTypes.mapgeneration, ReadMapGenerationInfos);
         islandFeaturePrototypeDatas = new Dictionary<string, IslandFeaturePrototypeData>();
         //TODO: MAKE WAY TO LOAD DIS STUFF
         foreach(IslandFeaturePrototypeData d in IslandFeaturePrototypeData.TempSetUp()) {
@@ -1534,7 +1540,102 @@ public class PrototypController : MonoBehaviour {
         }
         return idToFertilities[id];
     }
-    private string LoadXML(string name) {
+    XMLFilesTypes current;
+    public void ReloadLanguage() {
+        foreach(XMLFilesTypes xml in Enum.GetValues(typeof(XMLFilesTypes))) {
+            current = xml;
+            ReloadLanguageVariables(LoadXML(xml));
+            ModLoader.LoadXMLs(xml, ReloadLanguageVariables);
+        }
+    }
+
+    public void ReloadLanguageVariables(string xml) {
+        FieldInfo[] fields = typeof(LanguageVariables).GetFields();
+        XmlDocument xmlDoc = new XmlDocument();
+        xmlDoc.LoadXml(xml);
+        XmlNodeList nodeList = xmlDoc.ChildNodes;
+        //have todo it for all three deep xml files
+        if (current == XMLFilesTypes.structures) {
+            nodeList = xmlDoc.FirstChild.ChildNodes;
+        }
+        foreach (XmlNode parent in nodeList) {
+            foreach (XmlNode node in parent.ChildNodes) {
+                object data = null;
+                if (node.Attributes.Count == 0)
+                    continue;
+                string id = node.Attributes?[0]?.InnerXml;
+                //if(id == null) {
+                //    id = node.Attributes.GetNamedItem("LEVEL")?.InnerXml;
+                //}
+                if (id == null)
+                    continue;
+                switch (current) {
+                    case XMLFilesTypes.other:
+                        if (node.LocalName == "PopulationLevel")
+                            data = populationLevelDatas[int.Parse(id)];
+                        else
+                            Debug.LogWarning("Read Language again one missing this type" + current);
+                        break;
+                    case XMLFilesTypes.events:
+                        if (node.LocalName == "GameEvent")
+                            data = gameEventPrototypeDatas[id];
+                        if (node.LocalName == "Effect")
+                            data = effectPrototypeDatas[id];
+                        break;
+                    case XMLFilesTypes.fertilities:
+                        data = fertilityPrototypeDatas[id];
+                        break;
+                    case XMLFilesTypes.items:
+                        data = itemPrototypeDatas[id];
+                        break;
+                    case XMLFilesTypes.combat:
+                        if (node.LocalName == "damageType")
+                            data = damageTypeDatas[id];
+                        if (node.LocalName == "armorType")
+                            data = armorTypeDatas[id];
+                        break;
+                    case XMLFilesTypes.units:
+                        data = unitPrototypeDatas[id];
+                        break;
+                    case XMLFilesTypes.structures:
+                        data = structurePrototypeDatas[id];
+                        break;
+                    case XMLFilesTypes.needs:
+                        if (node.LocalName == "need")
+                            data = NeedPrototypeDatas[id];
+                        if (node.LocalName == "needGroup")
+                            data = needGroupDatas[id];
+                        break;
+                    case XMLFilesTypes.startingloadouts:
+                        break;
+                    case XMLFilesTypes.mapgeneration:
+                        break;
+                    default:
+                        Debug.LogWarning("Read Language again missing this type" + current);
+                        return;
+                }
+                if (data == null)
+                    continue;
+                foreach (FieldInfo fi in fields) {
+                    XmlNode currentNode = node.SelectSingleNode(fi.Name);
+                    if (currentNode == null) {
+                        //TODO activate this warning when all data is correctly created
+                        //				Debug.LogWarning (fi.Name + " selected language not avaible!");
+                        continue;
+                    }
+                    XmlNode textNode = currentNode.SelectSingleNode("entry[@lang='" + UILanguageController.selectedLanguage.ToString() + "']");
+                    if (textNode != null) {
+                        string text = ReplacePlaceHolders(data, textNode.InnerXml);
+                        fi.SetValue(data, Convert.ChangeType(text, fi.FieldType));
+                    }
+                    continue;
+                }
+            }
+        }
+    }
+
+
+    private string LoadXML(XMLFilesTypes name) {
         string path = System.IO.Path.Combine(ConstantPathHolder.StreamingAssets, "XMLs", "GameState", name + ".xml");
         return System.IO.File.ReadAllText(path);
     }
@@ -1590,43 +1691,7 @@ public class Produce {
             Debug.LogError(ProducerStructure.ID + " has not a valid Supply Chain.");
             return null;
         }
-        //Dictionary<string, List<SupplyChain>> itemSupplyChains = new Dictionary<string, List<SupplyChain>>();
-        //if (ProducerStructure.ID == "toolmakersworkshop")
-        //    Debug.Log("p");
-        //foreach (string s in itemProduceRatios.Keys) {
-        //    itemSupplyChains[s] = new List<SupplyChain>();
-        //    foreach (ProduceRatio ratio in itemProduceRatios[s]) {
-        //        itemSupplyChains[s].AddRange(ratio.CalculateSupplyChain(supplyChain.Clone(), 0));
-        //    }
-        //}
-        //if(itemSupplyChains.Count != needed.Length) {
-        //    Debug.LogError(ProducerStructure.ID + "->" + item.ID + "-SupplyChain does exist for every Item needed. -- Please Fix");
-        //    return null;
-        //}
-        //List<SupplyChain> toCombineWith = new List<SupplyChain>(itemSupplyChains[needed[0].ID]);
-        //bool skipCombine = false;
-        //if(ProducerStructure is ProductionPrototypeData) {
-        //    ProductionPrototypeData ppd = ProducerStructure as ProductionPrototypeData;
-        //    skipCombine = ppd.inputTyp == InputTyp.OR;
-        //}
-        //if(skipCombine == false) {
-        //    for (int j = 1; j < needed.Length; j++) {
-        //        int count = toCombineWith.Count - 1;
-        //        for (int k = count; k >= 0; k--) {
-        //            for (int l = 0; l < itemSupplyChains[needed[j].ID].Count; l++) {
-        //                toCombineWith.Add(toCombineWith[k].Clone().Combine(itemSupplyChains[needed[j].ID][l]));
-        //            }
-        //        }
-        //    }        
-        //    SupplyChains = itemSupplyChains[needed[0].ID];
-        //} else {
-        //    SupplyChains = new List<SupplyChain>();
-        //    for (int j = 0; j < needed.Length; j++) {
-        //        SupplyChains.AddRange(itemSupplyChains[needed[j].ID]);
-        //    }
-        //}
-        SupplyChains = GetNewSupplyChains(supplyChain, -1); 
-       
+        SupplyChains = GetNewSupplyChains(supplyChain, -1); //-1 because tier gets increased before each split each time.
         foreach (SupplyChain chain in SupplyChains) {
             if (item == null) {
                 Debug.LogError(item + " is null?!");

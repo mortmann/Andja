@@ -463,7 +463,6 @@ public class SoundController : MonoBehaviour {
             else {
                 toPlay.clip = DownloadHandlerAudioClip.GetContent(www);
             }
-
             www.Dispose();
         }
         if (toPlay.clip.loadState != AudioDataLoadState.Loaded)

@@ -10,82 +10,58 @@ using UnityStandardAssets.ImageEffects;
 using Smaa;
 
 public enum GraphicsSetting { Preset, AnisotropicFiltering, AntiAliasing, Vsync, Fullscreen, Resolution, TextureQuality, Brightness }
-
+public enum GraphicsOptions { VeryLow, Low, Medium, High, Ultra }
 public class GraphicsSettings : MonoBehaviour {
-
-    [HideInInspector]
-    public UnityEvent lowPresetEvent;
-    [HideInInspector]
-    public UnityEvent mediumPresetEvent;
-    [HideInInspector]
-    public UnityEvent highPresetEvent;
-    [HideInInspector]
-    public UnityEvent ultraPresetEvent;
 
     // A reference to the slider for setting graphics preset so we can update it.
     public Slider presetSlider;
     // The camera in use.
-    protected Camera cam;
+    protected Camera MainCamera => Camera.main;
     bool hasLoaded = false;
-    // All the settings register their listeners in Awake().
+
+    Dictionary<GraphicsSetting, object> graphicsOptions;
+    Dictionary<GraphicsSetting, object> graphicsOptionsToSave;
+    public Action<int> GraphicsPreset;
     void Awake() {
-        //IF we succesful loaded saved data no need to set it to a preset
-        graphicsOptions = new Dictionary<GraphicsSetting, string>();
-        graphicsOptionsToSave = new Dictionary<GraphicsSetting, string>();
-        hasLoaded = (ReadGraphicsOption());
-        lowPresetEvent = new UnityEvent();
-        mediumPresetEvent = new UnityEvent();
-        highPresetEvent = new UnityEvent();
-        ultraPresetEvent = new UnityEvent();
-        presetSlider.onValueChanged.AddListener(SetGraphicsPreset);
+        graphicsOptionsToSave = new Dictionary<GraphicsSetting, object>();
+        graphicsOptions = new Dictionary<GraphicsSetting, object>();
+
         OptionsToggle.ChangedState += OnOptionChanged;
+        if (presetSlider.gameObject.activeSelf && presetSlider != null) {
+            presetSlider.onValueChanged.AddListener(SetGraphicsPreset);
+            SetGraphicsPreset(3);
+        }
+
+        hasLoaded = (ReadGraphicsOption());
+        if (hasLoaded)
+            SaveGraphicsOption();
     }
 
-    // So we can invoke safely invoke them in Start().
     void Start() {
         
     }
 
     public void SetGraphicsPreset(float value) {
-        switch ((int)value) {
-            // Low.
-            case 0:
-                lowPresetEvent.Invoke();
-                break;
-            // Medium.
-            case 1:
-                mediumPresetEvent.Invoke();
-                break;
-            // High.
-            case 2:
-                highPresetEvent.Invoke();
-                break;
-            // Ultra.
-            case 3:
-                ultraPresetEvent.Invoke();
-                break;
-            // Custom. Do nothing.
-            default:
-                break;
-        }
-        presetSlider.value = value;
+        int IntValue = Mathf.FloorToInt(Mathf.Clamp(value, 0, 4));
+        GraphicsPreset?.Invoke(IntValue);
+        presetSlider.value = IntValue;
     }
-
-    Dictionary<GraphicsSetting, string> graphicsOptions;
-    Dictionary<GraphicsSetting, string> graphicsOptionsToSave;
 
     public void SetToCustom() {
         presetSlider.value = 4;
     }
     string fileName = "graphics.ini";
-    public void SaveGraphicsOption() {
 
+    public static int PresetValues = 4;
+
+    public void SaveGraphicsOption() {
         SetOptions(graphicsOptionsToSave);
         foreach (GraphicsSetting s in graphicsOptionsToSave.Keys) {
             graphicsOptions[s] = graphicsOptionsToSave[s];
         }
         graphicsOptionsToSave.Clear();
-        graphicsOptions[GraphicsSetting.Preset] = presetSlider.value.ToString();
+        if(presetSlider!=null&&presetSlider.gameObject.activeSelf)
+            graphicsOptions[GraphicsSetting.Preset] = Mathf.RoundToInt(presetSlider.value);
 
         string path = Application.dataPath.Replace("/Assets", "");
         if (Directory.Exists(path) == false) {
@@ -99,47 +75,52 @@ public class GraphicsSettings : MonoBehaviour {
             return;
         }
         string filePath = System.IO.Path.Combine(path, fileName);
-        File.WriteAllText(filePath, JsonConvert.SerializeObject(graphicsOptions));
+        File.WriteAllText(filePath, JsonConvert.SerializeObject(graphicsOptions, Formatting.Indented));
     }
     public bool ReadGraphicsOption() {
         string filePath = System.IO.Path.Combine(Application.dataPath.Replace("/Assets", ""), fileName);
         if (File.Exists(filePath) == false) {
             return false;
         }
-        graphicsOptions = JsonConvert.DeserializeObject<Dictionary<GraphicsSetting, string>>(File.ReadAllText(filePath));
-        SetOptions(graphicsOptions);
-        return true;
+        Dictionary<GraphicsSetting, object> Loaded = JsonConvert.DeserializeObject<Dictionary<GraphicsSetting, object>>(File.ReadAllText(filePath));
+        if (Loaded != null)
+            SetOptions(Loaded);
+        return Loaded != null;
     }
 
-    private void SetOptions(Dictionary<GraphicsSetting, string> options) {
+    private void SetOptions(Dictionary<GraphicsSetting, object> options) {
         foreach (GraphicsSetting optionName in typeof(GraphicsSetting).GetEnumValues()) {
             if (options.ContainsKey(optionName) == false)
                 continue;
-            string val = options[optionName];
+            object val = options[optionName];
             switch (optionName) {
                 case GraphicsSetting.Preset:
-                    SetGraphicsPreset(int.Parse(val));
+                    SetGraphicsPreset(Convert.ToInt32(val));
                     break;
                 case GraphicsSetting.AnisotropicFiltering:
-                    SetAnisotropicFiltering(bool.Parse(val));
+                    SetAnisotropicFiltering(Convert.ToBoolean(val));
                     break;
                 case GraphicsSetting.AntiAliasing:
-                    SetAntiAliasing(int.Parse(val));
+                    SetAntiAliasing(Convert.ToInt32(val));
                     break;
                 case GraphicsSetting.Brightness:
-                    SetBrightness(float.Parse(val));
+                    SetBrightness(Convert.ToInt32(val));
                     break;
                 case GraphicsSetting.Fullscreen:
-                    SetFullscreen(int.Parse(val));
+                    SetFullscreen(Convert.ToInt32(val));
                     break;
                 case GraphicsSetting.Resolution:
-                    SetResolution(JsonUtility.FromJson<CustomResolution>(val));
+                    if(val is CustomResolution) {
+                        SetResolution((CustomResolution)val);
+                    } else {
+                        SetResolution(JsonUtility.FromJson<CustomResolution>(Convert.ToString(val)));
+                    }
                     break;
                 case GraphicsSetting.TextureQuality:
-                    SetTextureQuality(int.Parse(val));
+                    SetTextureQuality(Convert.ToInt32(val));
                     break;
                 case GraphicsSetting.Vsync:
-                    SetVsync(int.Parse(val));
+                    SetVsync(Convert.ToInt32(val));
                     break;
                 default:
                     Debug.LogWarning("No case for " + optionName);
@@ -148,13 +129,69 @@ public class GraphicsSettings : MonoBehaviour {
         }
     }
 
+
     public void SetSavedGraphicsOption(GraphicsSetting name, object val) {
-        graphicsOptions[name] = val.ToString();
+        if(presetSlider != null && presetSlider.gameObject.activeSelf) {
+            CheckPreset();
+        }
+        graphicsOptionsToSave[name] = val;
     }
+
+    private void CheckPreset() {
+        int currentPreset;
+        for (int i = PresetValues-1; i >= 0; i++) {
+            currentPreset = i;
+            foreach (GraphicsSetting optionName in typeof(GraphicsSetting).GetEnumValues()) {
+                if (graphicsOptions.ContainsKey(optionName) == false)
+                    continue;
+                object val = graphicsOptionsToSave.ContainsKey(optionName)? graphicsOptionsToSave[optionName] : graphicsOptions[optionName];
+                switch (optionName) {
+                    case GraphicsSetting.Preset:
+                        break;
+                    case GraphicsSetting.AnisotropicFiltering:
+                        if (GS_AnisotropicFiltering.PresetValues[i].Equals(val) == false) {
+                            currentPreset = -1;
+                            break;
+                        }
+                        break;
+                    case GraphicsSetting.AntiAliasing:
+                        if (GS_AntiAliasing.PresetValues[i].Equals(val) == false) {
+                            currentPreset = -1;
+                            break;
+                        }
+                        break;
+                    case GraphicsSetting.Brightness:
+                        break;
+                    case GraphicsSetting.Fullscreen:
+                        break;
+                    case GraphicsSetting.Resolution:
+                        break;
+                    case GraphicsSetting.TextureQuality:
+                        if (GS_TextureQuality.PresetValues[i].Equals(val) == false) {
+                            currentPreset = -1;
+                            break;
+                        }
+                        break;
+                    case GraphicsSetting.Vsync:
+                        break;
+                    default:
+                        Debug.LogWarning("No case for " + optionName);
+                        break;
+                }
+            }
+            if(currentPreset == i) {
+                presetSlider.value = i;
+                return;
+            } 
+        }
+        //if we are here no preset match was found
+        SetToCustom();
+    }
+
     public bool HasSavedGraphicsOption(GraphicsSetting name) {
         return graphicsOptions.ContainsKey(name);
     }
-    public string GetSavedGraphicsOption(GraphicsSetting name) {
+    public object GetSavedGraphicsOption(GraphicsSetting name) {
         if (HasSavedGraphicsOption(name) == false)
             return null;
         return graphicsOptions[name];
@@ -170,27 +207,30 @@ public class GraphicsSettings : MonoBehaviour {
     }
 
     public void SetAntiAliasing(int value) {
+        value = Mathf.Clamp(value, 0, GS_AntiAliasing.PresetValues.Length-1);
         if (value == 2) {
-            cam.GetComponent<Antialiasing>().enabled = false;
-            cam.GetComponent<SMAA>().enabled = true;
+            MainCamera.GetComponent<Antialiasing>().enabled = false;
+            MainCamera.GetComponent<SMAA>().enabled = true;
         }
         else if (value == 1) {
-            cam.GetComponent<Antialiasing>().enabled = true;
-            cam.GetComponent<SMAA>().enabled = false;
+            MainCamera.GetComponent<Antialiasing>().enabled = true;
+            MainCamera.GetComponent<SMAA>().enabled = false;
         }
         else {
-            cam.GetComponent<Antialiasing>().enabled = false;
-            cam.GetComponent<SMAA>().enabled = false;
+            MainCamera.GetComponent<Antialiasing>().enabled = false;
+            MainCamera.GetComponent<SMAA>().enabled = false;
         }
         SetSavedGraphicsOption(GraphicsSetting.AntiAliasing, value);
     }
     public void SetVsync(int value) {
+        value = Mathf.Clamp(value, 0, 1);
         QualitySettings.vSyncCount = value;
         SetSavedGraphicsOption(GraphicsSetting.Vsync, value);
     }
 
     public void SetFullscreen(int value) {
-        Screen.SetResolution(Screen.currentResolution.width, Screen.currentResolution.height,
+        value = Mathf.Clamp(value, 0, 3);
+        Screen.SetResolution(Screen.width, Screen.height,
                                 (FullScreenMode)value, Screen.currentResolution.refreshRate);
         SetSavedGraphicsOption(GraphicsSetting.Fullscreen, value);
     }
@@ -201,23 +241,20 @@ public class GraphicsSettings : MonoBehaviour {
     }
 
     public void SetTextureQuality(int value) {
+        value = Mathf.Clamp(value, 0, 3);
         // In the quality settings 0 is full quality textures, while 3 is the lowest.
         QualitySettings.masterTextureLimit = 3 - value;
         SetSavedGraphicsOption(GraphicsSetting.TextureQuality, value);
     }
-    public void SetBrightness(float value) {
+    public void SetBrightness(int value) {
+        value = Mathf.Clamp(value, 20, 300);
         // In the quality settings 0 is full quality textures, while 3 is the lowest.
-        cam.GetComponent<Brightness>().brightness = value;
+        if(MainCamera != null)
+            MainCamera.GetComponent<Brightness>().brightness = value / 100f;
         SetSavedGraphicsOption(GraphicsSetting.Brightness, value);
     }
 
-    public void OnOpen() {
-        if (hasLoaded) {
-            return;
-        }
-        //no file found set to preset
-        SetGraphicsPreset(3);
-    }
+    [JsonObject]
     public class CustomResolution {
         public int width;
         public int height;
@@ -231,7 +268,7 @@ public class GraphicsSettings : MonoBehaviour {
             refreshRate = res.refreshRate;
         }
         public override string ToString() {
-            return string.Format(width + " x " + height + " @ " + refreshRate);
+            return string.Format(width + " x " + height + " @ " + refreshRate + "Hz");
         }
     }
 
@@ -247,6 +284,20 @@ public class GraphicsSettings : MonoBehaviour {
             SaveGraphicsOption();
         }
     }
+
+    internal int GetSavedGraphicsOptionInt(GraphicsSetting setting) {
+        return Convert.ToInt32(GetSavedGraphicsOption(setting));
+    }
+    internal float GetSavedGraphicsOptionFloat(GraphicsSetting setting) {
+        return Convert.ToSingle(GetSavedGraphicsOption(setting));
+    }
+    internal bool GetSavedGraphicsOptionBool(GraphicsSetting setting) {
+        return Convert.ToBoolean(GetSavedGraphicsOption(setting));
+    }
+    internal string GetSavedGraphicsOptionString(GraphicsSetting setting) {
+        return Convert.ToString(GetSavedGraphicsOption(setting));
+    }
+
 }
 
 

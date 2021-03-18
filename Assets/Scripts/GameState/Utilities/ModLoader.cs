@@ -232,12 +232,12 @@ public static class ModLoader {
         return loadedSprites.ToArray();
     }
 
-    public static void LoadXMLs(string type, Action<string> readFromXML) {
+    public static void LoadXMLs(PrototypController.XMLFilesTypes type, Action<string> readFromXML) {
         foreach (Mod mod in LoadedMods) {
             try {
-                if (mod.xmlTypeToXMLString.ContainsKey(type) == false)
+                if (mod.xmlTypeToXMLString.ContainsKey(type.ToString()) == false)
                     continue;
-                readFromXML(mod.xmlTypeToXMLString[type]);
+                readFromXML(mod.xmlTypeToXMLString[type.ToString()]);
             } catch(Exception e) {
                 Debug.Log("Loading XML-Mod failed: Reason XML faulty for mod " + mod.name + " " + type + ". " + e.StackTrace);
                 UnityEngine.SceneManagement.SceneManager.LoadScene("MainMenu");

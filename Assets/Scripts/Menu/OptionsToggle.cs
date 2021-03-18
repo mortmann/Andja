@@ -25,6 +25,5 @@ public class OptionsToggle : MonoBehaviour {
             childrens[i].SetActive(false);
         }
         ChangedState?.Invoke(false);
-        Debug.Log("OnDisable");
     }
 }

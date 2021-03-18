@@ -188,7 +188,7 @@ public class UIController : MonoBehaviour {
     }
 
     public void TogglePauseMenu() {
-        pauseMenu.Toggle();
+        pauseMenu?.Toggle();
         WorldController.Instance.IsPaused = PauseMenu.IsOpen;
     }
     public void OpenProduceUI(OutputStructure str) {

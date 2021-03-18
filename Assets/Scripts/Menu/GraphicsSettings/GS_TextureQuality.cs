@@ -1,32 +1,22 @@
 ﻿using UnityEngine;
 
 public class GS_TextureQuality : GS_SliderBase {
+    public static int[] PresetValues = { 0, 1, 2, 3 };
 
     public override void OnStart() {
+        tls.valueEnumType = typeof(GraphicsOptions);
+        //tls.preValueString = "GraphicsSettings";
         setting = GraphicsSetting.TextureQuality;
-        if (graphicsSettings.HasSavedGraphicsOption(setting))
-            SetTextureQuality(int.Parse(graphicsSettings.GetSavedGraphicsOption(setting)));
+        slider.value = graphicsSettings.GetSavedGraphicsOptionInt(setting);
     }
-    protected override void GraphicsPresetLow() {
-        SetTextureQuality(0);
-    }
-
-    protected override void GraphicsPresetMedium() {
-        SetTextureQuality(1);
-    }
-
-    protected override void GraphicsPresetHigh() {
-        SetTextureQuality(2);
-    }
-
-    protected override void GraphicsPresetUltra() {
-        SetTextureQuality(3);
-    }
+    
 
     protected override void OnSliderValueChange() {
         SetTextureQuality(Value);
     }
-
+    protected override void OnGraphicsPresetChange(int value) {
+        SetTextureQuality(PresetValues[value]);
+    }
     void SetTextureQuality(int value) {
         graphicsSettings.SetTextureQuality(value);
         // Set the actual slider value. For the OnSliderValueChange() callback
@@ -34,5 +24,6 @@ public class GS_TextureQuality : GS_SliderBase {
         // need to do it when the value is set from an outside source like the
         // graphics presets.
         slider.value = value;
+        tls.ShowValue(value);
     }
 }

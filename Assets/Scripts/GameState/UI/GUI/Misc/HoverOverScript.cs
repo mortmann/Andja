@@ -71,10 +71,10 @@ public class HoverOverScript : MonoBehaviour {
         else {
             hovertime += Time.deltaTime;
         }
-        //if (EventSystem.current.IsPointerOverGameObject() == isDebug &&  .Contains(Input.mousePosition) == false) {
-        //    Unshow();
-        //    hovertime = HoverDuration;
-        //}
+        if (EventSystem.current.IsPointerOverGameObject() == false && isDebug == false) {
+            Unshow();
+            hovertime = HoverDuration;
+        }
         hovertime = Mathf.Clamp(hovertime, 0, HoverDuration);
         if (hovertime > 0 && instantShow == false) {
             return;

@@ -19,5 +19,6 @@ public class GS_Language : MonoBehaviour {
     }
     protected void OnSelect(int id) {
         GameplaySettings.Instance.SetSavedGameplayOption(setting, Dropdown.options[id].text);
+        UILanguageController.Instance.ChangeLanguage(Dropdown.options[id].text);
     }
 }

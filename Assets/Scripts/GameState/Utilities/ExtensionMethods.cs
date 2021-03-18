@@ -64,4 +64,8 @@ public static class ExtensionMethods {
     public static int GetIntValue(this XmlNode xmlElement) {
         return int.Parse(xmlElement.InnerXml);
     }
+
+    public static bool IsBitSet(this byte b, int pos) {
+        return (b & (1 << pos)) != 0;
+    }
 }

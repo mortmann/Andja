@@ -143,7 +143,7 @@ public class AIPlayer {
                 score.CompetitionScore *= island.Cities.Count;
             }
             islandScores.Add(score);
-            debugCalcValues += ("Calculated Island Score " + score.EndScore+ " " + score.Island.StartTile.Vector2);
+            debugCalcValues += ("| " + score.Island.StartTile.Vector2+ " " + score.EndScore);
         }
         Debug.Log(debugCalcValues);
     }

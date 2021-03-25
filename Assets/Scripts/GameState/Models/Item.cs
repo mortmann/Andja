@@ -2,11 +2,12 @@ using System;
 using Newtonsoft.Json;
 using UnityEngine.UI;
 
-public enum ItemType { Missing, Build, Intermediate, Luxury, Military }
+public enum ItemType { Missing, Build,/* Resource ,*/ Intermediate, Luxury, Military }
 
 public class ItemPrototypeData : LanguageVariables {
     public ItemType type;
-
+    [Ignore] public int UnlockLevel;
+    [Ignore] public int UnlockPopulationCount;
 }
 
 [JsonObject(MemberSerialization.OptIn)]

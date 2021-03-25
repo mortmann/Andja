@@ -100,7 +100,7 @@ public class MilitaryStructure : TargetStructure, IWarfare {
         if (City.HasEnoughOfItems(u.BuildingItems) == false) {
             return false;
         }
-        City.RemoveRessources(u.BuildingItems);
+        City.RemoveResources(u.BuildingItems);
         PlayerController.Instance.ReduceMoney(u.BuildCost, PlayerNumber);
         toBuildUnits.Enqueue(u);
         return true;

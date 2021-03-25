@@ -5,20 +5,20 @@ using Newtonsoft.Json;
 
 public class MinePrototypeData : OutputPrototypData {
 }
-public enum RessourceMode { None, PerProduce, PerMine }
+public enum ResourceMode { None, PerProduce, PerMine }
 [JsonObject(MemberSerialization.OptIn)]
 public class MineStructure : OutputStructure {
     #region Serialize
     #endregion
     #region RuntimeOrOther
 
-    public string Ressource { get {
+    public string Resource { get {
             if (OutputData.output[0] == null) return null;
             return OutputData.output[0].ID; } }
 
     public override float EfficiencyPercent {
         get {
-            if (BuildTile.Island.HasRessource(Ressource)) {
+            if (BuildTile.Island.HasResource(Resource)) {
                 return 100;
             }
             return 0;
@@ -35,7 +35,7 @@ public class MineStructure : OutputStructure {
         }
     }
     #endregion
-    public static RessourceMode CurrentRessourceMode;
+    public static ResourceMode CurrentResourceMode;
     public MineStructure(string pid, MinePrototypeData MineData) {
         this.ID = pid;
         _mineData = MineData;
@@ -50,7 +50,7 @@ public class MineStructure : OutputStructure {
     }
 
     public override bool SpecialCheckForBuild(List<Tile> tiles) {
-        if (BuildTile.Island.HasRessource(Ressource) == false) {
+        if (BuildTile.Island.HasResource(Resource) == false) {
             return false;
         }
         return true;
@@ -60,15 +60,15 @@ public class MineStructure : OutputStructure {
         if (Output[0].count >= MaxOutputStorage) {
             return;
         }
-        if (CurrentRessourceMode == RessourceMode.PerProduce && BuildTile.Island.HasRessource(Ressource) == false) {
+        if (CurrentResourceMode == ResourceMode.PerProduce && BuildTile.Island.HasResource(Resource) == false) {
             return;
         }
         produceTimer += deltaTime;
         if (produceTimer >= ProduceTime) {
             produceTimer = 0;
             Output[0].count += OutputData.output[0].count;
-            if(CurrentRessourceMode==RessourceMode.PerProduce)
-                City.Island.RemoveRessources(Ressource, OutputData.output[0].count);
+            if(CurrentResourceMode==ResourceMode.PerProduce)
+                City.Island.RemoveResources(Resource, OutputData.output[0].count);
             cbOutputChange?.Invoke(this);
         }
     }
@@ -77,13 +77,13 @@ public class MineStructure : OutputStructure {
         return new MineStructure(this);
     }
     public override void OnBuild() {
-        if (CurrentRessourceMode == RessourceMode.PerMine) {
-            City.Island.RemoveRessources(Ressource, 1);
+        if (CurrentResourceMode == ResourceMode.PerMine) {
+            City.Island.RemoveResources(Resource, 1);
         }
     }
     protected override void OnDestroy() {
-        if (CurrentRessourceMode == RessourceMode.PerMine) {
-            City.Island.AddRessources(Ressource, 1);
+        if (CurrentResourceMode == ResourceMode.PerMine) {
+            City.Island.AddResources(Resource, 1);
         }
     }
 }

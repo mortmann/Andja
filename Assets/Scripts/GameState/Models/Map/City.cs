@@ -319,8 +319,18 @@ public class City : IGEventable {
         }
         PopulationLevels[level].RemovePeople(count);
     }
-
-    public void RemoveRessources(Item[] remove) {
+    public int GetPopulationCount(int level) {
+        return PopulationLevels[level].populationCount;
+    }
+    public int GetPopulationLevel() {
+        foreach(PopulationLevel level in PopulationLevels) {
+            if(level.populationCount == 0) {
+                return level.previousLevel?.Level ?? 0;
+            }
+        }
+        return 0;
+    }
+    public void RemoveResources(Item[] remove) {
         if (remove == null) {
             return;
         }
@@ -329,7 +339,7 @@ public class City : IGEventable {
         }
     }
 
-    public void RemoveRessource(Item item, int amount) {
+    public void RemoveResource(Item item, int amount) {
         if (amount < 0) {
             return;
         }
@@ -452,7 +462,7 @@ public class City : IGEventable {
     public void RemoveRoute(Route route) {
         Routes.Remove(route);
     }
-    public void RemoveStructure(Structure structure, bool returnRessources = false) {
+    public void RemoveStructure(Structure structure, bool returnResources = false) {
         if (structure == null) {
             Debug.Log("null");
             return;
@@ -465,9 +475,9 @@ public class City : IGEventable {
             if (structure is WarehouseStructure) {
                 warehouse = null;
             }
-            //if were geting some of the ressources back
+            //if were geting some of the resources back
             //when we destroy it -> should be a setting 
-            if (returnRessources) {
+            if (returnResources) {
                 Item[] res = structure.BuildingItems;
                 for (int i = 0; i < res.Length; i++) {
                     res[i].count /= 3; // FIXME do not have this hardcoded! Change it to be chooseable!

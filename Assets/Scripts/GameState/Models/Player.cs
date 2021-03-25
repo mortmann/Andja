@@ -57,7 +57,10 @@ public class Player : IGEventable {
     Action<Need> cbStructureNeedUnlocked;
     Action<IEnumerable<Structure>> cbStructuresUnlocked;
     Action<IEnumerable<Unit>> cbUnitsUnlocked;
-
+    Action<Structure> cbNewStructure;
+    Action<Structure> cbLostStructure;
+    Action<City> cbCityCreated;
+    Action<City> cbCityDestroy;
 
     #endregion
     #region Serialized
@@ -137,6 +140,7 @@ public class Player : IGEventable {
     }
     [JsonPropertyAttribute]
     public List<TradeRoute> TradeRoutes { get; protected set; }
+    public int CurrentPopulationLevel { get; internal set; }
 
     [JsonPropertyAttribute]
     public int Number;
@@ -218,11 +222,20 @@ public class Player : IGEventable {
     }
 
     public void UpdateMaxPopulationCount(int level, int count) {
+        if(MaxPopulationCounts[level] == 0 && count > 0) {
+            MaxPopulationLevel = level;
+        }
         if(MaxPopulationCounts[level] < count) {
             MaxPopulationCounts[level] = count;
         }
     }
-
+    public int GetCurrentPopulation(int level) {
+        int value = 0;
+        foreach (City item in Cities) {
+            value += item.GetPopulationCount(level);
+        }
+        return value;
+    }
     private void UnlockCheck(int level, int count) {
         Unlocks unlock = PrototypController.Instance.GetUnlocksFor(level,count);
         foreach(Need n in unlock.needs) {
@@ -307,12 +320,14 @@ public class Player : IGEventable {
         if (city.PlayerNumber != Number)
             return;
         Cities.Add(city);
-        city.RegisterStructureAdded(OnStructureCreated);
+        city.RegisterStructureAdded(OnStructureAdded);
         city.RegisterCityDestroy(OnCityDestroy);
+        cbCityCreated?.Invoke(city);
     }
     public void OnCityDestroy(City city) {
-        city.UnregisterStructureAdded(OnStructureCreated);
+        city.UnregisterStructureAdded(OnStructureAdded);
         Cities.Remove(city);
+        cbCityDestroy?.Invoke(city);
         CheckIfLost();
     }
 
@@ -325,15 +340,16 @@ public class Player : IGEventable {
             cbHasLost?.Invoke(this);
     }
 
-    public void OnStructureCreated(Structure structure) {
-        structure.RegisterOnDestroyCallback(OnStructureDestroy);
+    public void OnStructureAdded(Structure structure) {
+        structure.RegisterOnDestroyCallback(OnStructureLost);
         AllStructures.Add(structure);
+        cbNewStructure?.Invoke(structure);
     }
-    public void OnStructureDestroy(Structure structure, IWarfare destroyer) {
+    public void OnStructureLost(Structure structure, IWarfare destroyer) {
         //dosmth
-        structure.UnregisterOnDestroyCallback(OnStructureDestroy);
+        structure.UnregisterOnDestroyCallback(OnStructureLost);
         AllStructures.Remove(structure);
-
+        cbLostStructure?.Invoke(structure);
     }
     public void OnUnitCreated(Unit unit) {
         if (unit.playerNumber != Number)
@@ -363,6 +379,31 @@ public class Player : IGEventable {
 
     public void RegisterHasLost(Action<Player> callbackfunc) {
         cbHasLost += callbackfunc;
+    }
+
+    public void UnregisterNewStructure(Action<Structure> callbackfunc) {
+        cbNewStructure -= callbackfunc;
+    }
+    public void RegisterNewStructure(Action<Structure> callbackfunc) {
+        cbNewStructure += callbackfunc;
+    }
+    public void UnregisterLostStructure(Action<Structure> callbackfunc) {
+        cbLostStructure -= callbackfunc;
+    }
+    public void RegisterLostStructure(Action<Structure> callbackfunc) {
+        cbLostStructure += callbackfunc;
+    }
+    public void UnregisterCityDestroy(Action<City> callbackfunc) {
+        cbCityDestroy -= callbackfunc;
+    }
+    public void RegisterCityDestroy(Action<City> callbackfunc) {
+        cbCityDestroy += callbackfunc;
+    }
+    public void UnregisterCityCreated(Action<City> callbackfunc) {
+        cbCityCreated -= callbackfunc;
+    }
+    public void RegisterCityCreated(Action<City> callbackfunc) {
+        cbCityCreated += callbackfunc;
     }
     /// <summary>
     /// Registers the population count change.

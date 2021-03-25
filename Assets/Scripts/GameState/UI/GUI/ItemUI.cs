@@ -1,15 +1,17 @@
 ﻿using UnityEngine;
+using System;
 using System.Collections;
 using UnityEngine.UI;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
 
-public class ItemUI : MonoBehaviour {
-    public Image image;//TODO load it fromanywhere?
+public class ItemUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler {
+    public Image image;
     public Text text;
     public Slider slider;
     public Image selectedMarker;
     public bool changeColor = false;
+    Action OnClick;
     public bool IsSelected => selectedMarker.enabled;
     Item item;
     public void SetItem(Item i, int maxValue, bool changeColor = false) {
@@ -29,21 +31,6 @@ public class ItemUI : MonoBehaviour {
             image.sprite = UIController.GetItemImageForID(i.ID);
         }
         item = i;
-        EventTrigger trigger = GetComponent<EventTrigger>();
-        EventTrigger.Entry enter = new EventTrigger.Entry {
-            eventID = EventTriggerType.PointerEnter
-        };
-        enter.callback.AddListener((data) => {
-            OnMouseEnter();
-        });
-        trigger.triggers.Add(enter);
-        EventTrigger.Entry exit = new EventTrigger.Entry {
-            eventID = EventTriggerType.PointerExit
-        };
-        exit.callback.AddListener((data) => {
-            OnMouseExit();
-        });
-        trigger.triggers.Add(exit);
     }
     public void ChangeItemCount(Item i) {
         ChangeItemCount(i.count);
@@ -98,12 +85,13 @@ public class ItemUI : MonoBehaviour {
         EventTrigger trigger = GetComponent<EventTrigger>();
         trigger.triggers.Clear();
     }
-    public void OnMouseEnter() {
+
+    public void OnPointerEnter(PointerEventData eventData) {
         GameObject.FindObjectOfType<HoverOverScript>().Show(
-            item!=null? item.Name : UILanguageController.Instance.GetStaticVariables(StaticLanguageVariables.Empty)[0]);
-    }
-    public void OnMouseExit() {
-        GameObject.FindObjectOfType<HoverOverScript>().Unshow();
+            item != null ? item.Name : UILanguageController.Instance.GetStaticVariables(StaticLanguageVariables.Empty)[0]);
     }
 
+    public void OnPointerExit(PointerEventData eventData) {
+        GameObject.FindObjectOfType<HoverOverScript>().Unshow();
+    }
 }

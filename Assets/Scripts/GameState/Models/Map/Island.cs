@@ -75,20 +75,20 @@ public class Island : IGEventable {
         Setup();
     }
 
-    internal void RemoveRessources(string ressourceID, int count) {
-        if (Resources.ContainsKey(ressourceID) == false)
+    internal void RemoveResources(string resourceID, int count) {
+        if (Resources.ContainsKey(resourceID) == false)
             return;
-        Resources[ressourceID] -= count;
+        Resources[resourceID] -= count;
     }
-    internal void AddRessources(string ressourceID, int count) {
-        if (Resources.ContainsKey(ressourceID) == false)
+    internal void AddResources(string resourceID, int count) {
+        if (Resources.ContainsKey(resourceID) == false)
             return;
-        Resources[ressourceID] += count;
+        Resources[resourceID] += count;
     }
-    internal bool HasRessource(string ressourceID) {
-        if (Resources.ContainsKey(ressourceID) == false)
+    internal bool HasResource(string resourceID) {
+        if (Resources.ContainsKey(resourceID) == false)
             return false;
-        return Resources[ressourceID] > 0;
+        return Resources[resourceID] > 0;
     }
 
     public Island(Tile[] tiles, Climate climate = Climate.Middle) {

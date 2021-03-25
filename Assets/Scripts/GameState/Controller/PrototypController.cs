@@ -26,7 +26,6 @@ public class PrototypController : MonoBehaviour {
     public int NumberOfPopulationLevels => populationLevelDatas.Count;
 
     public static PrototypController Instance;
-    public static PrototypController PCInstance => Instance;
 
     public IReadOnlyDictionary<string, Structure> StructurePrototypes => structurePrototypes;
     public IReadOnlyDictionary<string, Unit> UnitPrototypes => unitPrototypes;
@@ -44,7 +43,12 @@ public class PrototypController : MonoBehaviour {
     public IReadOnlyDictionary<string, Item> AllItems => allItems;
     public IReadOnlyDictionary<string, IslandFeaturePrototypeData> IslandFeaturePrototypeDatas => islandFeaturePrototypeDatas;
 
-
+    /// <summary>
+    /// Array: For each Level of Populations exists a dictionary 
+    /// <br>int: people of that population requiered for those Unlocks</br>
+    /// <br>Unlocks: contains all needs, structures and units that will be unlocked for the key amount of people</br>
+    /// </summary>
+    public IReadOnlyDictionary<int, Unlocks>[] LevelCountToUnlocks => levelCountToUnlocks;
     public WarehouseStructure FirstLevelWarehouse { get; private set; }
 
     public IReadOnlyDictionary<Climate, List<Fertility>> AllFertilities => allFertilities;
@@ -83,6 +87,13 @@ public class PrototypController : MonoBehaviour {
     public Dictionary<Size, IslandSizeGenerationInfo> IslandSizeToGenerationInfo { get; private set; }
     public Dictionary<Climate, List<ResourceGenerationInfo>> ClimateToResourceGeneration { get; private set; }
     public List<ResourceGenerationInfo> ResourceGenerations { get; private set; }
+    ConcurrentDictionary<int, Unlocks>[] levelCountToUnlocks;
+    public List<int>[] AllUnlockPeoplePerLevel;
+    ConcurrentDictionary<string, float[]> buildItemsNeeded;
+    /// <summary>
+    /// "BuildItems in terms of when something requires it to be created."
+    /// </summary>
+    public Dictionary<string, int[]> recommandedBuildSupplyChains; 
 
     List<StartingLoadout> _startingLoadouts;
 
@@ -90,6 +101,8 @@ public class PrototypController : MonoBehaviour {
     public static Item[] _buildItems;
 
     List<Need> allNeeds;
+    List<NeedPrototypeData>[] needsPerLevel;
+    public List<Fertility> orderUnlockFertilities;
     //current valid player prototyp data
     internal static PlayerPrototypeData CurrentPlayerPrototypData = new PlayerPrototypeData();
 
@@ -226,7 +239,7 @@ public class PrototypController : MonoBehaviour {
     }
 
     internal int GetNeedCountLevel(int level) {
-        return needsPerLevel[level];
+        return needsPerLevel[level].Count;
     }
 
     public void LoadFromXML() {
@@ -314,7 +327,7 @@ public class PrototypController : MonoBehaviour {
         ReadMapGenerationInfos(LoadXML(XMLFilesTypes.mapgeneration));
         ModLoader.LoadXMLs(XMLFilesTypes.mapgeneration, ReadMapGenerationInfos);
         islandFeaturePrototypeDatas = new Dictionary<string, IslandFeaturePrototypeData>();
-        //TODO: MAKE WAY TO LOAD DIS STUFF
+        //TODO remove hardcoded stuff
         foreach(IslandFeaturePrototypeData d in IslandFeaturePrototypeData.TempSetUp()) {
             islandFeaturePrototypeDatas.Add(d.ID, d);
         }
@@ -345,14 +358,15 @@ public class PrototypController : MonoBehaviour {
         readInThings += ("Read in populationLevel: " + populationLevelDatas.Count) + "\n";
         readInThings += ("Read in effects: " + effectPrototypeDatas.Count) + "\n";
         readInThings += ("Read in gameevents: " + gameEventPrototypeDatas.Count) + "\n";
-        readInThings += ("###Read in took " + stopwatch.Elapsed.TotalSeconds + "s###");
+        readInThings += ("###Read in took " + stopwatch.Elapsed.TotalSeconds + "s ###");
         Debug.Log(readInThings);
         //Set it to default so it doesnt interfer with user interface informations
         Thread.CurrentThread.CurrentCulture = System.Globalization.CultureInfo.InstalledUICulture;
         CalculateOptimalProportions();
-        CalculateNeedUnlocks();
+        CalculateNeedStuff();
         CalculatePopulationNeedGroups();
         CalculateUnlocks();
+        Debug.Log ("###Calculating Prototype-Stuff took " + stopwatch.Elapsed.TotalSeconds + "s ###");
     }
 
     internal DamageType GetWorldDamageType() {
@@ -406,34 +420,101 @@ public class PrototypController : MonoBehaviour {
         }
     }
 
-    ConcurrentDictionary<int, Unlocks>[] levelCountToUnlocks;
-    int[] needsPerLevel;
     private void CalculateUnlocks() {
-        levelCountToUnlocks = new ConcurrentDictionary<int, Unlocks>[populationLevelDatas.Count];
-        needsPerLevel = new int[populationLevelDatas.Count];
-        for (int i = 0; i < populationLevelDatas.Count; i++)
+        levelCountToUnlocks = new ConcurrentDictionary<int, Unlocks>[NumberOfPopulationLevels];
+        buildItemsNeeded = new ConcurrentDictionary<string, float[]>();
+        AllUnlockPeoplePerLevel = new List<int>[NumberOfPopulationLevels]; 
+        for (int i = 0; i < NumberOfPopulationLevels; i++) {
             levelCountToUnlocks[i] = new ConcurrentDictionary<int, Unlocks>();
-        Parallel.ForEach(StructurePrototypes.Values, structure => {
+        }
+        var one = Parallel.ForEach(StructurePrototypes.Values, structure => {
             if (levelCountToUnlocks[structure.PopulationLevel].ContainsKey(structure.PopulationCount) == false)
                 levelCountToUnlocks[structure.PopulationLevel].TryAdd(structure.PopulationCount, new Unlocks());
-            levelCountToUnlocks[structure.PopulationLevel].TryGetValue(structure.PopulationCount, out Unlocks value);
+            levelCountToUnlocks[structure.PopulationLevel].TryGetValue(structure.PopulationCount, out Unlocks value);  
             value.structures.Add(structure);
+            if(structure is OutputStructure) {
+                if (((OutputStructure)structure).Output != null) {
+                    foreach (Item item in ((OutputStructure)structure).Output) {
+                        lock (item) {
+                            if (item.Data.UnlockLevel <= structure.PopulationLevel) {
+                                item.Data.UnlockLevel = structure.PopulationLevel;
+                                item.Data.UnlockPopulationCount = Mathf.Max(item.Data.UnlockPopulationCount, structure.PopulationCount);
+                            }
+                        }
+                    }
+                }
+                if (structure is GrowableStructure) {
+                    if (((GrowableStructure)structure).Fertility != null) {
+                        Fertility f = ((GrowableStructure)structure).Fertility;
+                        lock (f) {
+                            if (f.Data.UnlockLevel <= structure.PopulationLevel) {
+                                f.Data.UnlockLevel = structure.PopulationLevel;
+                                f.Data.UnlockPopulationCount = Mathf.Max(f.Data.UnlockPopulationCount, structure.PopulationCount);
+                            }
+                        }
+                    }
+                }
+            }
+            if(structure.BuildingItems != null) {
+                foreach (Item item in structure.BuildingItems) {
+                    float[] array = new float[NumberOfPopulationLevels];
+                    array[structure.PopulationLevel] = item.count;
+                    buildItemsNeeded.AddOrUpdate(item.ID, array, (id, oc) => { oc[structure.PopulationLevel] += item.count; return oc; });
+                }
+            }
         });
-        Parallel.ForEach(UnitPrototypes.Values, unit => {
+        var two = Parallel.ForEach(UnitPrototypes.Values, unit => {
             if (levelCountToUnlocks[unit.PopulationLevel].ContainsKey(unit.PopulationCount) == false)
                 levelCountToUnlocks[unit.PopulationLevel].TryAdd(unit.PopulationCount, new Unlocks());
             levelCountToUnlocks[unit.PopulationLevel].TryGetValue(unit.PopulationCount, out Unlocks value);
             value.units.Add(unit);
+            if (unit.BuildingItems != null) {
+                foreach (Item item in unit.BuildingItems) {
+                    float[] array = new float[NumberOfPopulationLevels];
+                    array[unit.PopulationLevel] = item.count;
+                    buildItemsNeeded.AddOrUpdate(item.ID, array, (id, oc) => { oc[unit.PopulationLevel] += item.count; return oc; });
+                }
+            }
         });
-        Parallel.ForEach(allNeeds, need => {
+        var three = Parallel.ForEach(allNeeds, need => {
             if (levelCountToUnlocks[need.StartLevel].ContainsKey(need.StartPopulationCount) == false)
                 levelCountToUnlocks[need.StartLevel].TryAdd(need.StartPopulationCount,new Unlocks());
             levelCountToUnlocks[need.StartLevel].TryGetValue(need.StartPopulationCount, out Unlocks value);
             value.needs.Add(need);
-            Interlocked.Increment(ref needsPerLevel[need.StartLevel]);
+            //Interlocked.Increment(ref needsPerLevel[need.StartLevel]);
         });
+        while ((one.IsCompleted && two.IsCompleted && three.IsCompleted) == false) {
+
+        }
+        for (int i = 0; i < NumberOfPopulationLevels; i++) {
+            AllUnlockPeoplePerLevel[i] = new List<int>();
+            foreach(int key in levelCountToUnlocks[i].Keys) {
+                AllUnlockPeoplePerLevel[i].Add(key);
+            }
+            AllUnlockPeoplePerLevel[i].Sort();
+        }
+        foreach(FertilityPrototypeData fertilityPrototype in fertilityPrototypeDatas.Values) {
+            if(fertilityPrototype.ItemsDependentOnThis.Count == 0) {
+                Debug.LogWarning("Fertility " + fertilityPrototype.ID + " is not required by anything! -- Wanted?");
+            }
+        }
+        //TODO: make this make more sense :)
+        recommandedBuildSupplyChains = new Dictionary<string, int[]>();
+        foreach (string item in buildItemsNeeded.Keys) {
+            if (itemIDToProduce.ContainsKey(item) == false)
+                continue;
+            recommandedBuildSupplyChains[item] = new int[NumberOfPopulationLevels];
+            for (int i = 0; i < NumberOfPopulationLevels; i++) {
+                recommandedBuildSupplyChains[item][i] = Mathf.CeilToInt(buildItemsNeeded[item][i] 
+                    / (itemIDToProduce[item][0].producePerMinute * 60));
+            }
+        }
+        orderUnlockFertilities = new List<Fertility>(idToFertilities.Values);
+        orderUnlockFertilities.RemoveAll(x => x.Data.ItemsDependentOnThis.Count == 0);
+        orderUnlockFertilities.OrderBy(x => x.Data.UnlockLevel).ThenBy(x => x.Data.UnlockPopulationCount);
     }
-    private void CalculateNeedUnlocks() {
+    private void CalculateNeedStuff() {
+        needsPerLevel = new List<NeedPrototypeData>[NumberOfPopulationLevels];
         foreach (NeedPrototypeData need in needPrototypeDatas.Values){ 
             if (need.structures != null) {
                 foreach (Structure str in need.structures) {
@@ -445,6 +526,7 @@ public class PrototypController : MonoBehaviour {
                 }
             }
             if (need.item != null) {
+                need.produceForPeople = new Dictionary<Produce, int[]>();
                 foreach (Produce produce in itemIDToProduce[need.item.ID]) {
                     StructurePrototypeData str = produce.ProducerStructure;
                     if (need.startLevel <= str.populationLevel && need.startPopulationCount < str.populationCount) {
@@ -452,8 +534,15 @@ public class PrototypController : MonoBehaviour {
                         need.startLevel = str.populationLevel;
                         Debug.LogWarning("Need " + need.Name + " is misconfigured to start earlier than supposed. Fixed to unlock time.");
                     }
+                    need.produceForPeople[produce] = new int[NumberOfPopulationLevels];
+                    for (int i = 0; i < NumberOfPopulationLevels; i++) {
+                        need.produceForPeople[produce][i] = Mathf.FloorToInt(produce.producePerMinute / need.UsageAmounts[i]);
+                    }
                 }
             }
+            if (needsPerLevel[need.startLevel] == null)
+                needsPerLevel[need.startLevel] = new List<NeedPrototypeData>();
+            needsPerLevel[need.startLevel].Add(need);
         }
     }
     private void ReadStartingLoadoutsFromXMLs(string xmlText) {
@@ -482,8 +571,11 @@ public class PrototypController : MonoBehaviour {
                 int numGrowablesPerTon = fpd.neededHarvestToProduce;
                 float growtime = fpd.growable.ProduceTime;
                 float produceTime = fpd.produceTime;
-                float neededWorkerRatio = (float)fpd.maxNumberOfWorker / (float)fpd.neededHarvestToProduce; 
-                if (fpd.growable == null || produceTime * fpd.efficiency <= 0 || growtime <= 0) {
+                float neededWorkerRatio = (float)fpd.maxNumberOfWorker / (float)fpd.neededHarvestToProduce;
+                if (fpd.growable == null) {
+                    ppm = 60f / (produceTime * fpd.efficiency);
+                } else
+                if (produceTime * fpd.efficiency <= 0 || growtime <= 0) {
                     ppm = 0;
                 }
                 else if (fpd.maxNumberOfWorker * produceTime * fpd.efficiency >= growtime) {
@@ -496,6 +588,7 @@ public class PrototypController : MonoBehaviour {
                 if (ppm == 0)
                     Debug.LogError("Farm " + fpd.Name + " does not produce anything per minute. FIX IT!");
                 produceDebug += fpd.Name + ": " + ppm + "\n";
+                fpd.ProducePerMinute = ppm;
                 Produce p = new Produce {
                     item = outItem,
                     producePerMinute = ppm,
@@ -507,12 +600,16 @@ public class PrototypController : MonoBehaviour {
                 else {
                     itemIDToProduce.Add(outItem.ID, new List<Produce> { p });
                 }
+                if(fpd.growable?.Fertility != null) {
+                    fertilityPrototypeDatas[fpd.growable.Fertility.ID].ItemsDependentOnThis.Add(outItem.ID);
+                }
             }
         }
         produceDebug += "\n##############MINES##############\n";
         foreach (MinePrototypeData mpd in mines) {
             foreach (Item outItem in mpd.output) {
                 float ppm = mpd.produceTime == 0 ? float.MaxValue : outItem.count * (60f / mpd.produceTime);
+                mpd.ProducePerMinute = ppm;
                 Produce p = new Produce {
                     item = outItem,
                     producePerMinute = ppm,
@@ -533,6 +630,7 @@ public class PrototypController : MonoBehaviour {
                 continue;
             foreach (Item outItem in ppd.output) {
                 float ppm = ppd.produceTime == 0 ? float.MaxValue : outItem.count * (60f / ppd.produceTime);
+                ppd.ProducePerMinute = ppm;
                 Produce p = new Produce {
                     item = outItem,
                     producePerMinute = ppm,
@@ -1172,6 +1270,8 @@ public class PrototypController : MonoBehaviour {
             }
         }
         foreach (FieldInfo fi in fields) {
+            if (Attribute.IsDefined(fi, typeof(IgnoreAttribute)))
+                continue;
             XmlNode currentNode = node.SelectSingleNode(fi.Name);
             if (langs.Contains(fi.Name)) {
                 if (currentNode == null) {
@@ -1667,7 +1767,7 @@ public class PrototypController : MonoBehaviour {
 
 }
 
-internal class Unlocks {
+public class Unlocks {
     public ConcurrentBag<Structure> structures = new ConcurrentBag<Structure>();
     public ConcurrentBag<Unit> units = new ConcurrentBag<Unit>();
     public ConcurrentBag<Need> needs = new ConcurrentBag<Need>();
@@ -1700,6 +1800,11 @@ public class Produce {
                 Debug.LogError("SupplyChain for " + item.ID + " with " + string.Join(", ", chain.ProduceRatio));
             }
             chain.CalculateCost();
+            if(chain.cost.requiredFertilites != null) {
+                foreach (Fertility f in chain.cost.requiredFertilites) {
+                    PrototypController.Instance.FertilityPrototypeDatas[f.ID].ItemsDependentOnThis.Add(item.ID);
+                }
+            }
         }
         return SupplyChains;
     }
@@ -1852,6 +1957,7 @@ public class SupplyChainCost {
     private Item[] totalItemCost;
     public int PopulationLevel = 0;
     public Dictionary<string, float> ItemCostTemp = new Dictionary<string, float>();
+    public List<Fertility> requiredFertilites;
     public SupplyChainCost() {
     }
     public SupplyChainCost(StructurePrototypeData producerStructure) {
@@ -1863,6 +1969,14 @@ public class SupplyChainCost {
         TotalMaintenance += structure.maintenanceCost * ratio;
         AddBuildItems(structure.buildingItems, ratio);
         PopulationLevel = Mathf.Max(structure.populationLevel, PopulationLevel);
+        if(structure is FarmPrototypeData) {
+            Fertility f = ((FarmPrototypeData)structure).growable?.Fertility;
+            if (f != null) {
+                if (requiredFertilites == null)
+                    requiredFertilites = new List<Fertility>();
+                requiredFertilites.Add(f);
+            }
+        }
     }
 
     public Item[] TotalItemCost {
@@ -1891,11 +2005,12 @@ public class SupplyChainCost {
 
     internal SupplyChainCost Clone() {
         return new SupplyChainCost {
-            ItemCostTemp = new Dictionary<string, float>( ItemCostTemp ),
+            ItemCostTemp = new Dictionary<string, float>(ItemCostTemp),
             TotalBuildCost = TotalBuildCost,
             totalItemCost = totalItemCost,
             PopulationLevel = PopulationLevel,
             TotalMaintenance = TotalMaintenance,
+            requiredFertilites = new List<Fertility>(requiredFertilites),
         };
     }
 

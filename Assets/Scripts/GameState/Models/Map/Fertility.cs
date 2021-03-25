@@ -7,6 +7,10 @@ public class FertilityPrototypeData : LanguageVariables, IWeighted {
     public string ID;
     public Climate[] climates;
     public float percentageOfIslands;
+    [Ignore] public HashSet<string> ItemsDependentOnThis = new HashSet<string>();
+    [Ignore] public int UnlockLevel;
+    [Ignore] public int UnlockPopulationCount;
+
     public float GetStartWeight() {
         return percentageOfIslands;
     }
@@ -34,7 +38,6 @@ public class Fertility : IComparable<Fertility>, IEqualityComparer<Fertility> {
             return _prototypData;
         }
     }
-
     public string Name {
         get { return Data.Name; }
     }
@@ -73,5 +76,15 @@ public class Fertility : IComparable<Fertility>, IEqualityComparer<Fertility> {
     }
     public override int GetHashCode() {
         return base.GetHashCode();
+    }
+}
+
+public class FertilityCost {
+    public List<Fertility> fertilities;
+    public FertilityCost(params Fertility[] required) {
+        fertilities = new List<Fertility>(required);
+    } 
+    public bool Fullfills(Fertility fert) {
+        return fertilities.Contains(fert);
     }
 }

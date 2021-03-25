@@ -253,7 +253,7 @@ public class BuildController : MonoBehaviour {
         }
         //before we need to check if we can build THERE
         //we need to know if there is if we COULD build 
-        //it anyway? that means enough ressources and enough Money
+        //it anyway? that means enough resources and enough Money
         Inventory inv = null;
 
         if (loading == false && buildInWilderness == false) {

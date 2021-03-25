@@ -81,8 +81,9 @@ public class RoadStructure : Structure {
             t.Structure?.AddRoadStructure(this);
         }
         UpdateOrientation();
+        RegisterOnOwnerChange(OnCityChange);
     }
-    protected override void OnCityChange(City old, City newOne) {
+    protected void OnCityChange(Structure str, City old, City newOne) {
         if(newOne.Routes.Contains(Route) == false) {
             newOne.AddRoute(Route);
         } else {

@@ -73,7 +73,7 @@ public class IslandInfoUI : MonoBehaviour {
             image.name = item.ID;
             image.sprite = IconSpriteController.GetIcon(item.ID);
             image.preserveAspect = true;
-            SimpleImage.GetComponent<ShowHoverOver>().Text = item.Name;
+            image.GetComponent<ShowHoverOver>().Text = item.Name;
             image.transform.SetParent(Fertilites, false);
         }
         foreach (string item in cc.nearestIsland.Resources.Keys) {

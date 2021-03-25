@@ -12,7 +12,7 @@ using System.Xml.Serialization;
 public class TranslationData {
     [XmlAttribute]
     public string id;
-    public string translation;
+    public string translation = "[**Missing**]";
     public string hoverOverTranslation;
     [XmlArray("Values")]
     public string[] values;
@@ -49,9 +49,7 @@ public class TranslationData {
         UIElements.Add(v);
     }
 }
-
-[RequireComponent(typeof(EventTrigger))]
-public class TextLanguageSetter : MonoBehaviour { 
+public class TextLanguageSetter : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler { 
     public string Identifier;
 
     // Use this for initialization
@@ -103,24 +101,6 @@ public class TextLanguageSetter : MonoBehaviour {
                 this.gameObject.AddComponent<EventTrigger>();
             }
         }
-        if (translationData.hoverOverTranslation == null) {
-            return;
-        }
-        EventTrigger trigger = GetComponent<EventTrigger>();
-        EventTrigger.Entry enter = new EventTrigger.Entry {
-            eventID = EventTriggerType.PointerEnter
-        };
-        enter.callback.AddListener((data) => {
-            OnMousePointerEnter();
-        });
-        trigger.triggers.Add(enter);
-        EventTrigger.Entry exit = new EventTrigger.Entry {
-            eventID = EventTriggerType.PointerExit
-        };
-        exit.callback.AddListener((data) => {
-            OnMousePointerExit();
-        });
-        trigger.triggers.Add(exit);
     }
     void OnChangeLanguage() { 
         translationData = UILanguageController.Instance.GetTranslationData(Identifier);
@@ -145,13 +125,6 @@ public class TextLanguageSetter : MonoBehaviour {
         if (UILanguageController.Instance == null)
             return;
         //UILanguageController.Instance.UnregisterLanguageChange(OnChangeLanguage);
-    }
-    public void OnMousePointerEnter() {
-        if(translationData.hoverOverTranslation != null)
-            GameObject.FindObjectOfType<HoverOverScript>().Show(translationData.hoverOverTranslation);
-    }
-    public void OnMousePointerExit() {
-        GameObject.FindObjectOfType<HoverOverScript>().Unshow();
     }
     public void ShowValue(int i) {
         if (languageValues == null && staticLanguageVariables == null && valueEnumType == null)
@@ -186,5 +159,14 @@ public class TextLanguageSetter : MonoBehaviour {
 
     public TranslationData GetData() {
         return new TranslationData(Identifier, OnlyHoverOver, Values);
+    }
+
+    public void OnPointerEnter(PointerEventData eventData) {
+        if (translationData.hoverOverTranslation != null)
+            GameObject.FindObjectOfType<HoverOverScript>().Show(translationData.hoverOverTranslation);
+    }
+
+    public void OnPointerExit(PointerEventData eventData) {
+        GameObject.FindObjectOfType<HoverOverScript>().Unshow();
     }
 }

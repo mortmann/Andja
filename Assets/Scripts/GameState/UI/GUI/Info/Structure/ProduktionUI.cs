@@ -71,7 +71,7 @@ public class ProduktionUI : MonoBehaviour {
                     else {
                         go.SetItem(pstr.ProductionData.intake[i], pstr.GetMaxIntakeForIntakeIndex(i));
                         int temp = i;
-                        go.AddClickListener((data) => { OnItemClick(pstr.ProductionData.intake[temp]); });
+                        go.AddClickListener((s) => { OnItemClick(pstr.ProductionData.intake[temp]); });
                         go.SetInactive(true);
                         itemToGO.Add(pstr.ProductionData.intake[i], go);
                     }
@@ -90,7 +90,7 @@ public class ProduktionUI : MonoBehaviour {
         for (int i = 0; i < pstr.ProductionData.intake.Length; i++) {
             if (pstr.ProductionData.intake[i].ID == currORItem.ID) {
                 SwitchItemKey(currORItem, pstr.ProductionData.intake[i]);
-                go.AddClickListener((data) => { OnItemClick(pstr.ProductionData.intake[i]); });
+                go.AddClickListener((s) => { OnItemClick(pstr.ProductionData.intake[i]); });
                 break;
             }
         }

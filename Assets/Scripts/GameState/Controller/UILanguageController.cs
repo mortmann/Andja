@@ -101,22 +101,22 @@ public class UILanguageController : MonoBehaviour {
         cbLanguageChange -= callbackfunc;
     }
     void OnDestroy() {
-//#if Unity_Editor
-        FileStream file = File.Create(Path.Combine(Application.dataPath.Replace("/Assets", ""), selectedLanguage + "-ui.loc"));
+#if Unity_Editor
+        FileStream file = File.Create(Path.Combine(Application.dataPath.Replace("/Assets", ""), "Empty" + "-ui.loc"));
         XmlSerializer xml = new XmlSerializer(typeof(UILanguageLocalizations));
         UILanguageLocalizations missing = new UILanguageLocalizations() { 
-            language = selectedLanguage,
+            language = "Empty",
             localizationData = requiredLocalizationData.ToArray()
         };
         xml.Serialize(file,missing);
-//#endif
+#endif
         Instance = null;
     }
     public void LoadLocalization(string file) {
         string filename = localizationFilePrefix + selectedLanguage + localizationFileType;
         XmlSerializer xml = new XmlSerializer(typeof(UILanguageLocalizations));
         UILanguageLocalizations uiLoc = xml.Deserialize(new StringReader(File.ReadAllText(file))) as UILanguageLocalizations;
-        idToTranslation.Clear();
+        //idToTranslation.Clear();
         foreach(TranslationData data in uiLoc.localizationData) {
             idToTranslation[data.id] = data;
         }

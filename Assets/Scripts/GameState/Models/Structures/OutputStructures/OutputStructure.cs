@@ -11,9 +11,9 @@ public class OutputPrototypData : StructurePrototypeData {
     public int maxOutputStorage;
     public float efficiency = 1f;
     public Item[] output;
-
     public string workerWorkSound;
     public string workSound;
+    [Ignore] public float ProducePerMinute;
 }
 
 

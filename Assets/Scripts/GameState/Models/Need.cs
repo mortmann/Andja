@@ -12,6 +12,7 @@ public class NeedPrototypeData : LanguageVariables {
     public int startLevel;
     public int startPopulationCount;
     public bool hasToReachPerRoad;
+    [Ignore] public Dictionary<Produce, int[]> produceForPeople; 
 }
 /// <summary>
 /// each need needs to be in a group with similar needs
@@ -139,7 +140,7 @@ public class Need {
         if(usedAmount>neededConsumAmount)
             notUsedOfTon = usedAmount - neededConsumAmount;
 
-        city.RemoveRessource(Item, Mathf.CeilToInt(usedAmount));
+        city.RemoveResource(Item, Mathf.CeilToInt(usedAmount));
 
         //minimum is 1 because if 0 -> ERROR due dividing through 0
         //calculate the percantage of availability

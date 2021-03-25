@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class RessourcesSetter : MonoBehaviour {
+public class ResourcesSetter : MonoBehaviour {
 
     public Transform Content;
     public GameObject ResourceSet;
@@ -20,7 +20,7 @@ public class RessourcesSetter : MonoBehaviour {
                     upperAmountField.text = "0";
                 int amount = 0;
                 int.TryParse(x, out amount);
-                EditorController.Instance.OnRessourceChange(item.ID, amount, false);
+                EditorController.Instance.OnResourceChange(item.ID, amount, false);
             });
             InputField lowerAmountField = go.transform.Find("LowerLimit").gameObject.GetComponent<InputField>();
             lowerAmountField.onEndEdit.AddListener(x => {
@@ -28,7 +28,7 @@ public class RessourcesSetter : MonoBehaviour {
                     lowerAmountField.text = "0";
                 int amount = 0;
                 int.TryParse(x, out amount);
-                EditorController.Instance.OnRessourceChange(item.ID, amount, true);
+                EditorController.Instance.OnResourceChange(item.ID, amount, true);
             });
         }
     }

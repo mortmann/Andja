@@ -55,8 +55,8 @@
          <hasHitbox>false</hasHitbox>
          <maxHealth>50.0</maxHealth>
          <structureRange>0</structureRange>
-         <populationLevel>0</populationLevel>
-         <populationCount>1</populationCount>
+         <populationLevel>1</populationLevel>
+         <populationCount>0</populationCount>
          <structureLevel>1</structureLevel>
          <tileWidth>1</tileWidth>
          <tileHeight>1</tileHeight>
@@ -94,7 +94,7 @@
          <maxHealth>50.0</maxHealth>
          <structureRange>0</structureRange>
          <populationLevel>0</populationLevel>
-         <populationCount>2</populationCount>
+         <populationCount>0</populationCount>
          <structureLevel>2</structureLevel>
          <tileWidth>1</tileWidth>
          <tileHeight>1</tileHeight>
@@ -135,8 +135,8 @@
          <hasHitbox>false</hasHitbox>
          <maxHealth>50.0</maxHealth>
          <structureRange>0</structureRange>
-         <populationLevel>0</populationLevel>
-         <populationCount>3</populationCount>
+         <populationLevel>1</populationLevel>
+         <populationCount>0</populationCount>
          <structureLevel>3</structureLevel>
          <tileWidth>1</tileWidth>
          <tileHeight>1</tileHeight>

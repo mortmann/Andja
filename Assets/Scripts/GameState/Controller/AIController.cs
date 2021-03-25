@@ -4,16 +4,23 @@ using UnityEngine;
 using System.Linq;
 using System;
 using UnityEngine.Tilemaps;
-using static PrototypController;
 public class AIController : MonoBehaviour {
     public static AIController Instance { get; protected set; }
+    public static PerPopulationLevelData[] PerPopulationLevelDatas { 
+        get {
+            if (_perPopulationLevelDatas == null)
+                Calculate();
+            return _perPopulationLevelDatas;
+        } 
+        protected set => _perPopulationLevelDatas = value; 
+    }
     public static Dictionary<Island, Dictionary<Tile, TileValue>> IslandsTileToValue {
         get {
             if (_islandsTileToValue == null)
                 CalculateIslandTileValues();
             return _islandsTileToValue;
         }
-        set => _islandsTileToValue = value; 
+        set => _islandsTileToValue = value;
     }
 
     public static Dictionary<Island, List<TileValue>> IslandToMapSpaceValuedTiles {
@@ -22,18 +29,22 @@ public class AIController : MonoBehaviour {
                 CalculateIslandTileValues();
             return _islandToMapSpaceValuedTiles;
         }
-        set => _islandToMapSpaceValuedTiles = value; }
+        set => _islandToMapSpaceValuedTiles = value;
+    }
     public static Dictionary<Island, List<TileValue>> IslandToCurrentSpaceValuedTiles {
         get {
             if (_islandToCurrentSpaceValuedTiles == null)
                 CalculateIslandTileValues();
             return _islandToCurrentSpaceValuedTiles;
         }
-        set => _islandToCurrentSpaceValuedTiles = value; }
+        set => _islandToCurrentSpaceValuedTiles = value;
+    }
 
     private static Dictionary<Island, List<TileValue>> _islandToMapSpaceValuedTiles;
     private static Dictionary<Island, List<TileValue>> _islandToCurrentSpaceValuedTiles;
     private static Dictionary<Island, Dictionary<Tile, TileValue>> _islandsTileToValue;
+    private static PerPopulationLevelData[] _perPopulationLevelDatas;
+
     private void Awake() {
         if (Instance != null) {
             Debug.LogError("There should never be two AIController.");
@@ -41,7 +52,7 @@ public class AIController : MonoBehaviour {
         Instance = this;
     }
     // Use this for initialization
-    void Start () {
+    void Start() {
         //foreach (Island island in World.Current.Islands) {
         //    foreach (City c in island.Cities) {
         //        foreach (Structure str in c.Structures)
@@ -86,17 +97,19 @@ public class AIController : MonoBehaviour {
         //}
 
     }
+
     private void OnDestroy() {
         Instance = null;
         _islandToMapSpaceValuedTiles = null;
         _islandToCurrentSpaceValuedTiles = null;
         _islandsTileToValue = null;
+        PerPopulationLevelDatas = null;
     }
 
     internal string GetTileValue(Tile tile) {
         if (tile.Type == TileType.Ocean)
             return "";
-        if(IslandsTileToValue[tile.Island].ContainsKey(tile)==false) {
+        if (IslandsTileToValue[tile.Island].ContainsKey(tile) == false) {
             return "ERROR";
         }
         return IslandsTileToValue[tile.Island][tile].ToString();
@@ -155,7 +168,7 @@ public class AIController : MonoBehaviour {
     }
 
     private static void ChangeTileValue(Tile t, Tile tValue, Direction direction) {
-        if(t.Type == TileType.Ocean) {
+        if (t.Type == TileType.Ocean) {
             return;
         }
         Dictionary<Tile, TileValue> tileValue = IslandsTileToValue[t.Island];
@@ -193,9 +206,9 @@ public class AIController : MonoBehaviour {
     }
 
     // Update is called once per frame
-    void Update () {
-		
-	}
+    void Update() {
+
+    }
     public static bool PlaceStructure(AIPlayer player, Structure structure, List<Tile> tiles, Unit buildUnit = null, bool onStart = false) {
         BuildController.Instance.BuildOnTile(structure, tiles, player.PlayerNummer, false, false, buildUnit, false, onStart);
         return true;
@@ -208,7 +221,7 @@ public class AIController : MonoBehaviour {
 
         World world = World.Current;
         foreach (Island island in World.Current.Islands) {
-            
+
             //values.RemoveAll(x => x.MaxValue == 0);
             //Dictionary<int, List<TileValue>> maxToValue = new Dictionary<int, List<TileValue>>();
             //int i = 1;
@@ -231,211 +244,49 @@ public class AIController : MonoBehaviour {
         }
     }
 
-    //private void Calculate() {
-    //    populationStructures = new PopulationStructures[PCInstance.NumberOfPopulationLevels];
-    //    for (int i = 0; i < PCInstance.NumberOfPopulationLevels; i++) {
-    //        populationStructures[i] = new PopulationStructures();
-    //        CalculatePLevelStuff(PCInstance.GetPopulationLevelPrototypDataForLevel(i));
-    //    }
-    //}
-    //PopulationStructures[] populationStructures;
-    //private void CalculatePLevelStuff(PopulationLevelPrototypData populationLevelPrototypData) {
-    //    int MaxUnlockCount = 0;
-    //    //TODO: make this while loading data in PrototypController
-    //    foreach (NeedGroup ng in populationLevelPrototypData.GetCopyGroupNeedList()) {
-    //        foreach (Need need in ng.Needs) {
-    //            if (need.StartPopulationCount > MaxUnlockCount) {
-    //                MaxUnlockCount = need.StartPopulationCount;
-    //            }
-    //        }
-    //    }
-    //    populationStructures[populationLevelPrototypData.LEVEL].needAtLeastHomes 
-    //        = Mathf.CeilToInt((float)MaxUnlockCount / (float)populationLevelPrototypData.HomeStructure.MaxLivingSpaces);
+    public static void Calculate() {
+        PerPopulationLevelDatas = new PerPopulationLevelData[PrototypController.Instance.NumberOfPopulationLevels];
+        IReadOnlyDictionary<int, PopulationLevelPrototypData> levelData = PrototypController.Instance.PopulationLevelDatas;
+        for (int i = 0; i < PrototypController.Instance.NumberOfPopulationLevels; i++) {
+            PerPopulationLevelData ppd = new PerPopulationLevelData();
+            PerPopulationLevelDatas[i] = ppd;
+            IReadOnlyDictionary<int, Unlocks> unlocks = PrototypController.Instance.LevelCountToUnlocks[i];
+            foreach (int count in unlocks.Keys) {
+                if (ppd.atleastRequiredPeople < count)
+                    ppd.atleastRequiredPeople = count;
+                foreach (Need n in unlocks[count].needs) {
+                    if (n.IsItemNeed()) {
+                        ppd.itemNeeds.Add(n);
+                    }
+                    else {
+                        ppd.structureNeeds.Add(n);
+                    }
+                    if (n.Data.produceForPeople == null)
+                        continue;
+                    foreach (Produce prod in n.Data.produceForPeople.Keys) {
+                        foreach (SupplyChain sc in prod.SupplyChains) {
+                            if (sc.cost.requiredFertilites != null)
+                                ppd.possibleFertilities.Union(sc.cost.requiredFertilites, new GenericCompare<Fertility>(x => x.ID));
+                            if (sc.cost.TotalItemCost != null)
+                                ppd.buildMaterialRequired.Union(sc.cost.TotalItemCost, new GenericCompare<Item>(x => x.ID));
+                        }
+                    }
+                }
+            }
+            ppd.atleastRequiredHomes = Mathf.CeilToInt((float)ppd.atleastRequiredPeople / (float)levelData[i].HomeStructure.people);
+        }
+        foreach (Item item in PrototypController.Instance.MineableItems) {
+            PerPopulationLevelDatas[item.Data.UnlockLevel].newResources.Add(item.ID);
+        }
+    }
 
-
-    //    foreach (NeedGroup ng in populationLevelPrototypData.GetCopyGroupNeedList()) {
-    //        foreach (Need need in ng.Needs) {
-    //            if (need.IsStructureNeed()) {
-    //                //TODO: calc the needed thingabobs for this :(
-    //                continue;
-    //            }
-    //            //Minimum Needed Amount
-    //            //float neededItemAmount = need.Uses[populationLevelPrototypData.LEVEL] * MaxUnlockCount;
-    //            ProduceChains chains = new ProduceChains {
-    //            };
-    //            List<Produce> produce = PCInstance.ItemIDToProduce[need.Item.ID];
-    //            foreach (Produce p in produce) {
-    //                if (p.ProducerStructure.populationLevel > populationLevelPrototypData.LEVEL)
-    //                    continue;
-    //                if (p.needed == null) {
-
-
-
-    //                    continue;
-    //                }
-                        
-    //                StructureProportions thisProp = p.Proportion;
-    //                float Usage = need.Uses[populationLevelPrototypData.LEVEL] * (60f / City.useTick);
-    //                float Produce = p.producePerMinute;
-    //                int count = Mathf.FloorToInt(Produce / Usage);
-    //                List<List<ProportionsRelation>> itemToProportionsRelations = new List<List<ProportionsRelation>>();
-    //                for (int i = 0; i < p.needed.Length; i++) {
-
-    //                    if (PCInstance.Proportions.ContainsKey(p.needed[i].ID)) {
-    //                        StructureProportions prop = ;
-    //                        itemToProportionsRelations.Add(new List<ProportionsRelation>());
-    //                        GetAllRelations(
-    //                            new ProportionsRelation { PeopleCount = count, proportions = thisProp }, prop, itemToProportionsRelations[i]);
-    //                    } else {
-    //                        itemToProportionsRelations.Add(new List<ProportionsRelation> {
-    //                            new ProportionsRelation (p, count, thisProp.itemToRatios[p.needed[i].ID].Ratio[p])
-    //                        });
-    //                    }
-    //                }
-    //                List<ProportionsRelation> first = itemToProportionsRelations[0];
-    //                itemToProportionsRelations.RemoveAt(0);
-    //                for (int i = 0; i < first.Count; i++) {
-    //                    chains.relations = Combine(first[i],0,itemToProportionsRelations);
-    //                }
-    //                //if (p.produce.needed.Length > 1) { 
-    //                //    List<ProportionsRelation> final = new List<ProportionsRelation>();
-    //                //    List<ProportionsRelation> list = itemToProportionsRelations[p.produce.needed[0].ID];
-    //                //    for (int l = 1; l < p.produce.needed.Length; l++) { // first list loop (1,2,3...) of first item
-    //                //        for (int i = 1; i < p.produce.needed.Length; i++) { //loops over the rest of list items
-    //                //            List<ProportionsRelation> list2 = itemToProportionsRelations[p.produce.needed[i].ID];
-    //                //            for (int y = 2; y < itemToProportionsRelations.Count; y++) { // loops again over the list but only takes the 
-    //                //                ProportionsRelation pr = list[i].CloneAndAdd(list2[i]).Add();
-    //                //            }
-    //                //        }
-    //                //    }
-    //                //}
-    //            }
-    //        }
-    //    }
-    //}
-
-    ////private List<ProportionsRelation> GetCombinedList(int index, ProportionsRelation first,  List<List<ProportionsRelation>> itemToProportionsRelations) {
-    ////    List<ProportionsRelation> list = new List<ProportionsRelation>();
-    ////    for (int i = 0; i < itemToProportionsRelations.Count; i++) {
-    ////        list.AddRange(Combine(first, i,))
-    ////    }
-    ////    return list;
-    ////}
-    //private List<ProportionsRelation> Combine(ProportionsRelation first, int indexL, List<List<ProportionsRelation>> itemToProportionsRelations) {
-    //    if (indexL == itemToProportionsRelations.Count)
-    //        return new List<ProportionsRelation> { first };
-    //    List<ProportionsRelation> list = new List<ProportionsRelation>();
-    //    for (int i = 0; i < itemToProportionsRelations.Count; i++) {
-    //        list.AddRange(Combine(first.CloneAndAdd(itemToProportionsRelations[indexL][i]), indexL+1, itemToProportionsRelations));
-    //    }
-    //    return list;
-    //}
-
-    //private void GetAllRelations(ProportionsRelation parentPR, StructureProportions current, List<ProportionsRelation> proportionsRelations) {
-    //    if (current.produce.needed != null) {
-    //        foreach (Item item in current.produce.needed) {
-    //            List<StructureProportions> proportions = PCInstance.Proportions[item.ID];
-    //            foreach (StructureProportions sp in proportions) {
-    //                ProportionsRelation clone = parentPR.CloneAndAdd(current);
-    //                GetAllRelations(clone, sp, proportionsRelations);
-    //            }
-    //        }
-    //    }
-    //    else {
-    //        parentPR.Add(current);
-    //        proportionsRelations.Add(parentPR);
-    //    }
-    //}
-    ////private ProportionsRelation BottomUp(StructureProportions current, List<ProportionsRelation> proportionsRelations) {
-    ////    ProportionsRelation clone = new ProportionsRelation();
-    ////    if (current.produce.needed != null) {
-    ////        foreach(Item item in current.produce.needed) {
-    ////            List<StructureProportions> proportions = PCInstance.Proportions[item.ID];
-    ////            foreach (StructureProportions sp in proportions) {
-    ////                clone = BottomUp(sp, proportionsRelations);
-    ////            }
-    ////        }
-    ////    }
-    ////    clone.TotalBuildCost += current.produce.ProducerStructure.buildcost;
-    ////    clone.TotalMaintenance += current.produce.ProducerStructure.maintenanceCost;
-    ////    clone.AddBuildItems(current.produce.ProducerStructure.buildingItems, 0);
-    ////    proportionsRelations.Add(clone);
-    ////    return clone;
-    ////}
-    //class PopulationStructures {
-    //    public int needAtLeastHomes;
-
-    //}
-    //class ProduceChains {
-    //    public Item produced;
-    //    public List<ProportionsRelation> relations = new List<ProportionsRelation>();
-
-    //}
-    //class ProportionsRelation {
-    //    public int PeopleCount;
-    //    public StructureProportions proportions;
-    //    public float TotalBuildCost;
-    //    public float TotalMaintenance;
-    //    public Item[] TotalItemCost;
-    //    public Dictionary<string, float> ItemCostTemp = new Dictionary<string, float>();
-    //    private Produce p;
-
-    //    public ProportionsRelation(Produce p, int peopleCount, float ratio) {
-    //        PeopleCount = peopleCount;
-    //        TotalBuildCost = p.ProducerStructure.buildcost;
-    //        TotalMaintenance = p.ProducerStructure.maintenanceCost;
-    //        foreach(Item item in p.ProducerStructure.buildingItems) {
-    //            ItemCostTemp[item.ID] = item.count * ratio;
-    //        }
-    //    }
-    //    public ProportionsRelation() {
-
-    //    }
-    //    void CalculateTotalItemCost() {
-    //        TotalItemCost = new Item[ItemCostTemp.Count];
-    //        int i = 0;
-    //        foreach(string id in ItemCostTemp.Keys) {
-    //            TotalItemCost[i] = new Item(id, Mathf.CeilToInt(ItemCostTemp[id]));
-    //            i++;
-    //        } 
-    //    }
-    //    public ProportionsRelation Clone() {
-    //        return new ProportionsRelation {
-    //            PeopleCount = PeopleCount,
-    //            proportions = proportions,
-    //            TotalBuildCost = TotalBuildCost,
-    //            TotalMaintenance = TotalMaintenance,
-    //            TotalItemCost = TotalItemCost,
-    //            ItemCostTemp = ItemCostTemp,
-    //        };
-    //    }
-
-    //    internal void AddBuildItems(Item[] buildingItems, float ratio) {
-    //        foreach(Item item in buildingItems) {
-    //            if (ItemCostTemp.ContainsKey(item.ID) == false)
-    //                ItemCostTemp[item.ID] = 0;
-    //            ItemCostTemp[item.ID] += item.count * ratio;
-    //        }
-    //    }
-
-    //    internal ProportionsRelation CloneAndAdd(StructureProportions sp) {
-    //        ProportionsRelation clone = Clone();
-    //        clone.Add(sp);
-    //        return clone;
-    //    }
-
-    //    internal void Add(StructureProportions current) {
-    //        TotalBuildCost += current.produce.ProducerStructure.buildcost;
-    //        TotalMaintenance += current.produce.ProducerStructure.maintenanceCost;
-    //        AddBuildItems(current.produce.ProducerStructure.buildingItems, 0);
-    //    }
-
-    //    internal ProportionsRelation CloneAndAdd(ProportionsRelation proportionsRelation) {
-    //        ProportionsRelation clone = Clone();
-    //        clone.TotalBuildCost += proportionsRelation.TotalBuildCost;
-    //        clone.TotalMaintenance += proportionsRelation.TotalMaintenance;
-    //        clone.AddBuildItems(proportionsRelation.TotalItemCost, 0);
-    //        return clone;
-    //    }
-    //}
+}
+public class PerPopulationLevelData {
+    public int atleastRequiredPeople;
+    public int atleastRequiredHomes;
+    public List<string> newResources = new List<string>();
+    public List<Need> itemNeeds = new List<Need>();
+    public List<Need> structureNeeds = new List<Need>();
+    public List<Fertility> possibleFertilities = new List<Fertility>();
+    public List<Item> buildMaterialRequired = new List<Item>();
 }

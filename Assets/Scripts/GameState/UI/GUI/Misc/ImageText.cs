@@ -7,7 +7,7 @@ public class ImageText : MonoBehaviour {
     public Text text;
     public ShowHoverOver showHoverOver;
     public void Set(Sprite sprite, string showText, string hoverOver) {
-        name = showText;
+        name = hoverOver;
         image.sprite = sprite;
         text.text = showText;
         showHoverOver.Text = hoverOver;

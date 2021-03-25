@@ -103,7 +103,7 @@ public class OffWorldPanelUI : MonoBehaviour {
         //TODO add listener stuff
         int i = intToGameObject.Count;
         intToGameObject.Add(i, g.GetComponent<ItemUI>());
-        g.GetComponent<ItemUI>().AddClickListener((data) => { OnItemClick(i); });
+        g.GetComponent<ItemUI>().AddClickListener((s) => { OnItemClick(i); });
 
     }
     public void OnItemClick(int i) {

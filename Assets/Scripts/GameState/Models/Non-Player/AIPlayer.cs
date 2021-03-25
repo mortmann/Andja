@@ -1,26 +1,121 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
+using System;
 
 public class AIPlayer {
     public int PlayerNummer => player.Number;
     public Player player;
     public List<Fertility> neededFertilities;
-    public List<string> neededRessources;
+    public List<string> neededResources;
     public List<Need> newNeeds;
     public List<Item> missingItems;
     public List<IslandScore> islandScores;
     public List<PlayerCombatValue> combatValues;
     PlayerCombatValue CombatValue;
-
+    public Dictionary<string, int> structureToCount;
+    /// <summary>
+    /// 0 = either no Production
+    /// Positive = has more Production than needed
+    /// Negative = has less Production than needed
+    /// </summary>
+    public Dictionary<string, float> itemToProducePerMinuteChange;
+    
     public AIPlayer(Player player) {
         this.player = player;
         neededFertilities = new List<Fertility>();
-        neededRessources = new List<string>();
+        neededResources = new List<string>();
         newNeeds = new List<Need>();
         missingItems = new List<Item>();
         CombatValue = new PlayerCombatValue(player, null);
+        structureToCount = new Dictionary<string, int>();
+        foreach(Structure s in player.AllStructures) {
+            OnPlaceStructure(s);
+        }
+        player.RegisterCityCreated(OnCityCreated);
+        player.RegisterCityDestroy(OnCityDestroy);
+        player.RegisterNewStructure(OnNewStructure);
+        player.RegisterLostStructure(OnLostStructure);
+        itemToProducePerMinuteChange = new Dictionary<string, float>();
+        foreach (string item in PrototypController.Instance.AllItems.Keys) {
+            itemToProducePerMinuteChange[item] = 0;
+        }
     }
+    public AIPlayer(Player player, bool dummy) {
+        this.player = player;
+        CalculateNeeded();
+    }
+
+    private void CalculateNeeded() {
+        var data = AIController.PerPopulationLevelDatas[player.CurrentPopulationLevel];
+        neededFertilities = new List<Fertility>(data.possibleFertilities);
+        neededResources = new List<string>(data.newResources);
+    }
+
+    private void OnNewStructure(Structure structure) {
+        if (structureToCount.ContainsKey(structure.ID))
+            structureToCount[structure.ID]++;
+        else
+            structureToCount[structure.ID] = 1;
+
+        if(structure is OutputStructure) {
+            OutputStructure os = structure as OutputStructure;
+            if(os.Output == null) {
+                return;
+            } 
+            foreach(Item p in os.Output) {
+                itemToProducePerMinuteChange[p.ID] += os.OutputData.ProducePerMinute;
+            }
+            if (structure is ProductionStructure) {
+                ProductionStructure ps = structure as ProductionStructure;
+                if (ps.InputTyp == InputTyp.OR) {
+                    Debug.LogWarning("AI CAN'T HANDLE OR INTAKE YET!");
+                    return;
+                }
+                foreach (Item p in ps.Intake) {
+                    itemToProducePerMinuteChange[p.ID] -= p.count* (60f / ps.ProduceTime);
+                }
+            }
+        }
+    }
+    private void OnLostStructure(Structure structure) {
+        structureToCount[structure.ID]--;
+        if (structure is OutputStructure) {
+            OutputStructure os = structure as OutputStructure;
+            foreach (Item p in os.Output) {
+                itemToProducePerMinuteChange[p.ID] -= os.OutputData.ProducePerMinute;
+            }
+            if (structure is ProductionStructure) {
+                ProductionStructure ps = structure as ProductionStructure;
+                if (ps.InputTyp == InputTyp.OR) {
+                    Debug.LogWarning("AI CAN'T HANDLE OR INTAKE YET!");
+                    return;
+                }
+                foreach (Item p in ps.Intake) {
+                    itemToProducePerMinuteChange[p.ID] += p.count * (60f / ps.ProduceTime);
+                }
+            }
+        }
+    }
+    private void OnCityDestroy(City city) {
+        //AI BE MAD
+    }
+
+    private void OnCityCreated(City city) {
+        //AI BE SMART
+    }
+
+    private void OnPlaceStructure(Structure s) {
+
+    }
+
+    private void OnOwnerChange(Structure str, City oldCity, City newCity) {
+
+    }
+
+    private void OnStructureDestroy(Structure structure, IWarfare destroyer) {
+    }
+
     public void DecideIsland(bool onStart = false) {
         //TODO:set here desires
         CalculateIslandScores();
@@ -52,8 +147,8 @@ public class AIPlayer {
         islandScores = new List<IslandScore>();
         int maxSize = 0;
         int averageSize = 0;
-        Dictionary<string, int> ressourceIDtoAverageAmount = new Dictionary<string, int>();
-        Dictionary<string, int> ressourceIDtoExisting = new Dictionary<string, int>();
+        Dictionary<string, int> resourceIDtoAverageAmount = new Dictionary<string, int>();
+        Dictionary<string, int> resourceIDtoExisting = new Dictionary<string, int>();
         Dictionary<Fertility, int> fertilitytoExisting = new Dictionary<Fertility, int>();
         string debugCalcValues = "IslandValues\n";
         foreach (Island island in islands) {
@@ -62,13 +157,13 @@ public class AIPlayer {
             averageSize += island.Tiles.FindAll(x => x.CheckTile()).Count;
             if (island.Resources != null || island.Resources.Count != 0) {
                 foreach (string resid in island.Resources.Keys) {
-                    if (ressourceIDtoAverageAmount.ContainsKey(resid)) {
-                        ressourceIDtoAverageAmount[resid] += island.Resources[resid];
-                        ressourceIDtoExisting[resid]++;
+                    if (resourceIDtoAverageAmount.ContainsKey(resid)) {
+                        resourceIDtoAverageAmount[resid] += island.Resources[resid];
+                        resourceIDtoExisting[resid]++;
                     }
                     else {
-                        ressourceIDtoAverageAmount[resid] = island.Resources[resid];
-                        ressourceIDtoExisting[resid]=1;
+                        resourceIDtoAverageAmount[resid] = island.Resources[resid];
+                        resourceIDtoExisting[resid]=1;
                     }
                 }
                 foreach (Fertility fer in island.Fertilities) {
@@ -81,9 +176,9 @@ public class AIPlayer {
                 }
             }
         }
-        foreach (string resid in ressourceIDtoAverageAmount.Keys.ToArray()) {
-            ressourceIDtoAverageAmount[resid] /= islands.Count;
-            ressourceIDtoExisting[resid] = 1 - (ressourceIDtoExisting[resid] / islands.Count);
+        foreach (string resid in resourceIDtoAverageAmount.Keys.ToArray()) {
+            resourceIDtoAverageAmount[resid] /= islands.Count;
+            resourceIDtoExisting[resid] = 1 - (resourceIDtoExisting[resid] / islands.Count);
         }
         averageSize /= islands.Count;
         foreach (Island island in islands) {
@@ -92,18 +187,18 @@ public class AIPlayer {
                 ShapeScore = 1,
                 SizeSimilarIslandScore = 1,
             };
-            //Calculate Ressource Score
+            //Calculate Resource Score
             if (island.Resources == null || island.Resources.Count == 0)
-                score.RessourceScore = 0; // There is none
+                score.ResourceScore = 0; // There is none
             else {
                 //for each give it a score for each existing on the island
                 foreach(string resid in island.Resources.Keys) { 
                     // if it is needed RIGHT NOW score it after how much it exist on this in the average over ALL islands
-                    if(neededRessources.Contains(resid)) {
-                        score.RessourceScore += island.Resources[resid] / ressourceIDtoAverageAmount[resid];
+                    if(neededResources.Contains(resid) && resourceIDtoAverageAmount[resid]>0) {
+                        score.ResourceScore += island.Resources[resid] / resourceIDtoAverageAmount[resid];
                     }
                     // its always nice to have -- add how rare it is in the world
-                    score.RessourceScore += ressourceIDtoExisting[resid];
+                    score.ResourceScore += resourceIDtoExisting[resid];
                 }
             }
 
@@ -169,5 +264,39 @@ public class AIPlayer {
             combatValues.Add(value);
         }
     }
+
     
+}
+
+abstract class AIPriority {
+    public float Priority { get; protected set; }
+    public abstract void CalculatePriority(AIPlayer player);
+
+}
+class ItemPriority : AIPriority {
+    public Item item;
+    public ItemPriority (Item item) {
+        this.item = item;
+    }
+    public override void CalculatePriority(AIPlayer player) {
+        if(player.player.MaxPopulationLevel < item.Data.UnlockLevel) {
+            //Coming up when level up. Not really important so it will max -1 
+            Priority = player.player.MaxPopulationLevel - item.Data.UnlockLevel;
+            return;
+        }  
+        if (player.player.MaxPopulationLevel == item.Data.UnlockLevel) {
+            //Coming up SOON but CANT build it so it will range between -1 and 0
+            if(player.player.MaxPopulationCounts[item.Data.UnlockLevel] < item.Data.UnlockPopulationCount) {
+                Priority = (player.player.MaxPopulationCounts[item.Data.UnlockLevel] - item.Data.UnlockPopulationCount)
+                                    / AIController.PerPopulationLevelDatas[item.Data.UnlockLevel].atleastRequiredPeople;
+                return;
+            }
+        }
+        if(item.Type == ItemType.Build) {
+            Priority = PrototypController.Instance.recommandedBuildSupplyChains[item.ID][player.player.CurrentPopulationLevel];
+            Priority -= player.itemToProducePerMinuteChange[item.ID];
+            return;
+        }
+        //int currentPopulation = player.player.GetCurrentPopulation(item.)
+    }
 }

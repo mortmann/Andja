@@ -38,7 +38,7 @@ public class CityInventoryUI : MonoBehaviour {
             itemToGO.Add(item.ID, iui);
             iui.SetItem(item, city.Inventory.MaxStackSize, true);
             Item i = item.Clone();
-            iui.AddClickListener((data) => {
+            iui.AddClickListener((s) => {
                 OnItemClick(i);
             });
             go_i.transform.SetParent(contentCanvas.transform, false);

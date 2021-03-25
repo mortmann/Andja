@@ -89,7 +89,7 @@ public class WorldController : MonoBehaviour {
             //TODO: place structures! -- for now only warehouse?
             if(loadout.Structures!=null && player.IsHuman && Array.Exists(loadout.Structures,x=>x is WarehouseStructure)) {
                 //here then place em
-                AIPlayer temp = new AIPlayer(player);
+                AIPlayer temp = new AIPlayer(player, true);
                 temp.DecideIsland(true);
                 if(player.Cities.Count==0) {
                     Debug.LogError("-- Could not fit any Warehouse on the selected island --");
@@ -252,7 +252,7 @@ public class WorldController : MonoBehaviour {
                 Debug.LogError("thisStruct.Tiles is null " + island.StartTile.X + " " + island.StartTile.Y);
 
             foreach(string id in thisStruct.Resources.Keys) {
-                if (island.HasRessource(id))
+                if (island.HasResource(id))
                     continue;
                 island.Resources[id] = thisStruct.Resources[id];
             }

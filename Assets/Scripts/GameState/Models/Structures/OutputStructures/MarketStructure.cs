@@ -6,6 +6,9 @@ using System.Linq;
 
 public class MarketPrototypData : OutputPrototypData {
     public float takeOverStartGoal = 100;
+    //TODO: load this all in
+    public float decreaseCaptureSpeed = 0.01f;
+    public float maximumCaptureSpeed = 0.05f;
 }
 
 [JsonObject(MemberSerialization.OptIn)]
@@ -22,7 +25,10 @@ public class MarketStructure : OutputStructure, ICapturable {
     public List<Structure> RegisteredSturctures;
     public List<Structure> OutputMarkedSturctures;
 
-    public float TakeOverStartGoal => CalculateRealValue(nameof(MarketData.takeOverStartGoal), MarketData.takeOverStartGoal); 
+    public float TakeOverStartGoal => CalculateRealValue(nameof(MarketData.takeOverStartGoal), MarketData.takeOverStartGoal);
+
+    public float DecreaseCaptureSpeed => CalculateRealValue(nameof(MarketData.decreaseCaptureSpeed), MarketData.decreaseCaptureSpeed);
+    public float MaximumCaptureSpeed => CalculateRealValue(nameof(MarketData.maximumCaptureSpeed), MarketData.maximumCaptureSpeed);
 
     protected MarketPrototypData _marketData;
     public MarketPrototypData MarketData {
@@ -59,7 +65,7 @@ public class MarketStructure : OutputStructure, ICapturable {
             capturedProgress += currentCaptureSpeed * deltaTime;
         }
         else if(capturedProgress>0) {
-            capturedProgress -= decreaseCaptureSpeed * deltaTime;
+            capturedProgress -= DecreaseCaptureSpeed * deltaTime;
             capturedProgress = Mathf.Clamp01(capturedProgress);
         }
     }
@@ -230,15 +236,13 @@ public class MarketStructure : OutputStructure, ICapturable {
 
     #region ICapturableImplementation
     float currentCaptureSpeed = 0f;
-    //TODO: load this all in
-    float decreaseCaptureSpeed = 0.01f;
-    float maximumCaptureSpeed = 0.05f;
+    
     public void Capture(IWarfare warfare, float progress) {
         if (Captured) {
             DoneCapturing(warfare);
             return;
         }
-        currentCaptureSpeed = Mathf.Clamp(currentCaptureSpeed + progress, 0, maximumCaptureSpeed);
+        currentCaptureSpeed = Mathf.Clamp(currentCaptureSpeed + progress, 0, MaximumCaptureSpeed);
     }
 
     private void DoneCapturing(IWarfare warfare) {

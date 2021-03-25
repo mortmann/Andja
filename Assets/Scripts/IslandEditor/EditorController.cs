@@ -15,7 +15,7 @@ public class EditorController : MonoBehaviour {
 
     public static EditorController Instance { get; protected set; }
     World world;
-    Dictionary<string, Range> Ressources;
+    Dictionary<string, Range> Resources;
 
 
     public static int Width = 100;
@@ -63,7 +63,7 @@ public class EditorController : MonoBehaviour {
         if (Instance != null) {
             Debug.LogError("There should never be two EditorController.");
         }
-        Ressources = new Dictionary<string, Range>();
+        Resources = new Dictionary<string, Range>();
         IsEditor = true;
         
         Instance = this;
@@ -359,13 +359,13 @@ public class EditorController : MonoBehaviour {
         cbStructureDestroyed -= strs;
     }
     
-    internal void OnRessourceChange(string ID, int amount, bool lower) {
-        if (Ressources.ContainsKey(ID) == false)
-            Ressources[ID] = new Range();
+    internal void OnResourceChange(string ID, int amount, bool lower) {
+        if (Resources.ContainsKey(ID) == false)
+            Resources[ID] = new Range();
         if(lower)
-            Ressources[ID].lower = amount;
+            Resources[ID].lower = amount;
         else
-            Ressources[ID].upper = amount;
+            Resources[ID].upper = amount;
     }
     internal Tile GetTileAtWorldCoord(Vector3 currFramePosition) {
         return World.Current.GetTileAt(currFramePosition.x + TileSpriteController.offset, currFramePosition.y + TileSpriteController.offset);
@@ -401,7 +401,7 @@ public class EditorController : MonoBehaviour {
         GameData.Height = Height;
         world = new World(load.tiles,true);
         if(load.Resources!=null)
-            Ressources = load.Resources;
+            Resources = load.Resources;
         foreach (Structure s in load.structures) {
             BuildController.Instance.EditorBuildOnTile(s, s.GetBuildingTiles(s.BuildTile), true);
         }
@@ -414,7 +414,7 @@ public class EditorController : MonoBehaviour {
     public SaveIsland GetSaveState() {
         HashSet<Tile> toSave = new HashSet<Tile>(world.Tiles);
         toSave.RemoveWhere(x => x.Type == TileType.Ocean);
-        return new SaveIsland(world.Islands[0].Cities[0].Structures, toSave.ToArray(), Width, Height, climate, Ressources);
+        return new SaveIsland(world.Islands[0].Cities[0].Structures, toSave.ToArray(), Width, Height, climate, Resources);
     }
 
     [JsonObject]
@@ -432,17 +432,17 @@ public class EditorController : MonoBehaviour {
         public SaveIsland() {
 
         }
-        public SaveIsland(List<Structure> structures, Tile[] tiles, int Width, int Height, Climate climate, Dictionary<string, Range> Ressources) {
+        public SaveIsland(List<Structure> structures, Tile[] tiles, int Width, int Height, Climate climate, Dictionary<string, Range> Resources) {
             this.Width = Width;
             this.Height = Height;
             this.climate = climate;
             this.structures = new List<Structure>(structures);
             this.tiles = tiles.Cast<LandTile>().ToArray();
             this.Resources = new Dictionary<string, Range>();
-            foreach(string id in Ressources.Keys) {
-                if (Ressources[id].upper <= 0)
+            foreach(string id in Resources.Keys) {
+                if (Resources[id].upper <= 0)
                     continue;
-                this.Resources[id] = Ressources[id];
+                this.Resources[id] = Resources[id];
             }
         }
     }

@@ -61,7 +61,7 @@ public class Loading : MonoBehaviour {
             }
             percentText.text = percantage + "%";
             //First wait for MapGeneration
-            if (MapGenerator.Instance!=null&&MapGenerator.Instance.IsDone == false) {
+            if (MapGenerator.Instance != null && MapGenerator.Instance.IsDone == false) {
                 return;
             }
             //Wait for Loading Save to be done when it is loading one

@@ -193,6 +193,8 @@ public abstract class Structure : IGEventable {
     protected Action<Structure, IWarfare> cbStructureDestroy;
     protected Action<Structure, bool> cbStructureExtraUI;
     protected Action<Structure, string, bool> cbStructureSound;
+    protected Action<Structure, City, City> cbOwnerChange;
+
     protected HashSet<Route> Routes = new HashSet<Route>();
     protected List<RoadStructure> Roads = new List<RoadStructure>();
 
@@ -215,7 +217,7 @@ public abstract class Structure : IGEventable {
         get { return _city; }
         set {
             if (_city != null && _city != value) {
-                OnCityChange(_city, value);
+                cbOwnerChange?.Invoke(this, _city, value);
                 _city.RemoveStructure(this);
             }
             _city = value;
@@ -281,7 +283,6 @@ public abstract class Structure : IGEventable {
     public abstract void OnBuild();
 
     protected virtual void OnDestroy() { }
-    protected virtual void OnCityChange(City old, City newOne) { }
     /// <summary>
     /// Extra Build UI for showing stuff when building
     /// structures. Or so.
@@ -339,6 +340,18 @@ public abstract class Structure : IGEventable {
     }
     public void UnregisterOnExtraUICallback(Action<Structure, bool> cb) {
         cbStructureExtraUI -= cb;
+    }
+    /// <summary>
+    /// 1st Structure (Changed)
+    /// 2st OldCity (Owner)
+    /// 3st NewCity (Owner)
+    /// </summary>
+    /// <param name="cb"></param>
+    public void RegisterOnOwnerChange(Action<Structure, City, City> cb) {
+        cbOwnerChange += cb;
+    }
+    public void UnregisterOnOwnerChange(Action<Structure, City, City> cb) {
+        cbOwnerChange -= cb;
     }
     #endregion
     #region placestructure

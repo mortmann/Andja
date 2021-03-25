@@ -75,7 +75,7 @@ public class HomeStructure : TargetStructure {
     public override void OnBuild() {
         needStructures = new List<NeedStructure>();
         if (City.IsWilderness() == false) {
-            OnCityChange(null, City);
+            OnCityChange(this, null, City);
         }
         foreach (Tile t in Tiles) {
             ((LandTile)t).RegisterOnNeedStructureChange(OnNeedStructureChange);
@@ -86,6 +86,7 @@ public class HomeStructure : TargetStructure {
                 OnNeedStructureChange(t, ns, true);
             }
         }
+        RegisterOnOwnerChange(OnCityChange);
     }
 
     internal float GetTaxPercantage() {
@@ -192,7 +193,7 @@ public class HomeStructure : TargetStructure {
         return need.IsSatisifiedThroughStructure(needStructures.Where((x)=> x.City == City).ToList());
     }
 
-    protected override void OnCityChange(City old, City newOne) {
+    protected void OnCityChange(Structure str, City old, City newOne) {
         if(old != null && old.IsWilderness() == false) {
             old.RemovePeople(StructureLevel, people);
         }
@@ -239,24 +240,20 @@ public class HomeStructure : TargetStructure {
         }
         CloseExtraUI();
         ID = PrototypController.Instance.GetStructureIDForTypeNeighbourStructureLevel(GetType(), StructureLevel, true);
-        _homeData = null;
-        City.RemoveRessources(UpgradeItems);
+        City.RemovePeople(StructureLevel, people);
+        City.RemoveResources(UpgradeItems);
         City.GetOwner().ReduceTreasure(UpgradeCost);
+        _homeData = null;
+        _prototypData = null;
+        City.AddPeople(StructureLevel, people);
         cbStructureChanged(this);
-        List<Need> needs = City.GetOwner().GetCopyStructureNeeds(StructureLevel);
-        foreach (Need n in needs) {
-            if (IsStructureNeedFullfilled(n)) {
-                n.SetStructureFullfilled(true);
-            }
-            else {
-                n.SetStructureFullfilled(false);
-            }
-        }
     }
     public void DowngradeHouse() {
-        //Remove Structure Needs of the old level
         ID = PrototypController.Instance.GetStructureIDForTypeNeighbourStructureLevel(GetType(), StructureLevel, false);
+        City.RemovePeople(StructureLevel, people);
         _homeData = null;
+        _prototypData = null;
+        City.AddPeople(StructureLevel, people);
         cbStructureChanged(this);
     }
 

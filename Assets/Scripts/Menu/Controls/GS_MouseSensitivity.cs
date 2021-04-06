@@ -20,7 +20,7 @@ public class GS_MouseSensitivity : MonoBehaviour {
     }
     void OnValueChange(float value, bool text) {
         if(text)
-            InputHandler.SetSensitivity(value);
+            KeyInputSettings.SetMouseSensitivity(value);
         else
             input.text = "" + value;
     }
@@ -28,7 +28,7 @@ public class GS_MouseSensitivity : MonoBehaviour {
         if (value == "") {
             return;
         }
-        OnValueChange((float)System.Math.Round(float.Parse(value)),true);
+        OnValueChange((float)System.Math.Round(float.Parse(value), 2),true);
     }
 
 }

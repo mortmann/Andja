@@ -37,11 +37,10 @@ public class MenuController : MonoBehaviour {
         if(IsMainMenu) {
             string lastsave = SaveController.GetLastSaveName();
             if (lastsave == null) {
-                ResumeButton.GetComponentInChildren<Text>().text = " ";
                 ResumeButton.interactable = false;
             }
             else {
-                ResumeButton.GetComponentInChildren<Text>().text += " " + lastsave;
+                ResumeButton.GetComponentInChildren<TextLanguageSetter>().SetNameSuffix(lastsave);
             }
         }
         
@@ -152,6 +151,7 @@ public class MenuController : MonoBehaviour {
         SceneManager.LoadScene("GameStateLoadingScreen");
     }
     public void ChangeToEditorLoadScreen() {
+        EditorController.IsEditor = true;
         SceneManager.LoadScene("EditorLoadingScreen");
     }
     public void ChangeToGameStateScreen() {

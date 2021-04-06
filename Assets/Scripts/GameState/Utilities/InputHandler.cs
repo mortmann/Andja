@@ -15,7 +15,7 @@ public class InputHandler {
     static string fileName = "input.ini";
     public static float MouseSensitivity { private set; get; }
     internal static void SetSensitivity(float value) {
-        //TODO: make it save and even matter
+        //TODO: make it even matter
     }
 
     //TODO add a between layer for mouse buttons -> so it can be switched

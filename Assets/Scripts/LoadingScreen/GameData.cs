@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine.UI;
 using System;
 
-public enum GameType { Endless, Campaign, Szenario, Island }
+public enum GameType { Endless, Campaign, Szenario, Island, Editor }
 public enum Difficulty { Easy, Medium, Hard, VeryHard }
 public enum Size { VerySmall, Small, Medium, Large, VeryLarge, Other }
 
@@ -13,8 +13,8 @@ public class GameData : MonoBehaviour {
     public static Size WorldSize = Size.Medium;
     public Difficulty difficulty; //should be calculated
     public GameType saveFileType;
-    public static int Height = 500;
-    public static int Width = 500;
+    public static int Height = 700;
+    public static int Width = 700;
     public int MapSeed = 10;
     public StartingLoadout Loadout;
     //if nothing is set take that what is set by the editor in unity
@@ -69,6 +69,12 @@ public class GameData : MonoBehaviour {
             {new MapGenerator.IslandGenInfo(new Range(60, 60), new Range(60, 60), Climate.Warm,true),new Range(1,1)
             },
             {new MapGenerator.IslandGenInfo(new Range(100, 100), new Range(100, 100), Climate.Warm,true),new Range(1,1)
+            },
+            {new MapGenerator.IslandGenInfo(new Range(150, 150), new Range(150, 150), Climate.Middle,true),new Range(1,1)
+            },
+            {new MapGenerator.IslandGenInfo(new Range(150, 150), new Range(150, 150), Climate.Middle,true),new Range(1,1)
+            },
+            {new MapGenerator.IslandGenInfo(new Range(150, 150), new Range(150, 150), Climate.Middle,true),new Range(1,1)
             },
             {new MapGenerator.IslandGenInfo(new Range(150, 150), new Range(150, 150), Climate.Middle,true),new Range(1,1)
             }

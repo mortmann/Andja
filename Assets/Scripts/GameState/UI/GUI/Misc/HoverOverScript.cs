@@ -83,12 +83,12 @@ public class HoverOverScript : MonoBehaviour {
         Vector3 offset = Vector3.zero;
         if (truePosition == false) {
             offset = -fitForm.sizeDelta / 2;
-            offset *= UIController.Instance.CanvasScale; //Fix for the scaling
+            offset *= CanvasScale.Vector; //Fix for the scaling
         }
         Vector3 position = Input.mousePosition;
         if (staticPosition)
             position = Position;
-        Vector2 sizeDeltaModified = fitForm.sizeDelta * UIController.Instance.CanvasScale;//Fix for the scaling
+        Vector2 sizeDeltaModified = fitForm.sizeDelta * CanvasScale.Vector;//Fix for the scaling
         if (sizeDeltaModified.x + position.x > Screen.width) {
             offset.x = Screen.width - (sizeDeltaModified.x + position.x);
         }

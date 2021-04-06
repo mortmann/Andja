@@ -67,7 +67,7 @@ public class UnitSpriteController : MonoBehaviour {
         sr.sortingLayerName = "Units";
         sr.sprite = unitSprites[unit.Data.spriteBaseName];
         sr.material = SpriteHighlightMaterial;
-        go.transform.SetParent(this.transform, true);
+        //go.transform.SetParent(this.transform, true);
         go.AddComponent<ITargetableHoldingScript>().Holding = unit;
         go.GetComponent<SpriteOutline>().PlayerNumber = unit.PlayerNumber;
         Rigidbody2D r2d = go.AddComponent<Rigidbody2D>();

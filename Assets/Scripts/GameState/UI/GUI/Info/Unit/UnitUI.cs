@@ -4,7 +4,7 @@ using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using System;
 
-public class UnitUI : MonoBehaviour {
+public class UnitUI : InfoUI {
     public Transform content;
     public GameObject itemPrefab;
     public Button settleButton;
@@ -35,8 +35,15 @@ public class UnitUI : MonoBehaviour {
         settleButton.onClick.AddListener(() => ToggleSettle());
     }
 
-    public void Show(Unit unit) {
-        this.unit = unit;
+    public override void OnShow(object showUnit) {
+        if (unit == showUnit) {
+            return;
+        }
+        unit = showUnit as Unit;
+        if (unit == null)
+            return;
+        UIController.Instance.HighlightUnits(unit);
+        unit.RegisterOnDestroyCallback(OnUnitDestroy);
         unitHealth.Show(unit);
         settleButton.gameObject.SetActive(unit.IsPlayerUnit());
         patrolButton.gameObject.SetActive(unit.IsPlayerUnit());
@@ -90,6 +97,10 @@ public class UnitUI : MonoBehaviour {
         }
     }
 
+    private void OnUnitDestroy(Unit unit, IWarfare destroyer) {
+        UIController.Instance.CloseInfoUI();
+    }
+
     private void OnPatrolRouteChange(PatrolCommand change) {
         if (unitPatrolGoalGOs != null)
             foreach (GameObject goal in unitPatrolGoalGOs)
@@ -129,16 +140,16 @@ public class UnitUI : MonoBehaviour {
     }
 
     private void TogglePatrol() {
-        if (MouseController.Instance.mouseUnitState != MouseUnitState.Patrol) {
+        if (MouseController.Instance.MouseUnitState != MouseUnitState.Patrol) {
             SelectButton(patrolButton);
-            MouseController.Instance.mouseUnitState = MouseUnitState.Patrol;
+            MouseController.Instance.SetMouseUnitState(MouseUnitState.Patrol);
         }
         else {
             DeselectButton();
         }
     }
     private void ToggleSettle() {
-        if (MouseController.Instance.mouseUnitState != MouseUnitState.Build) {
+        if (MouseController.Instance.MouseUnitState != MouseUnitState.Build) {
             SelectButton(settleButton);
             MouseController.Instance.BuildFromUnit();
         }
@@ -157,7 +168,7 @@ public class UnitUI : MonoBehaviour {
         }
         //for the case it is open when scene change or game closes
         if(MouseController.Instance!=null)
-            MouseController.Instance.mouseUnitState = MouseUnitState.Normal;
+            MouseController.Instance.SetMouseUnitState(MouseUnitState.Normal);
         currentlySelectedButton = null;
     }
     private void AddItemGameObject(int i) {
@@ -175,11 +186,6 @@ public class UnitUI : MonoBehaviour {
         if (item.ID!=null||item.ID.Length==0) {
             iui.SetItem(item, inv.MaxStackSize);
             iui.AddClickListener((s) => { OnItemClick(i); });
-            //			EventTrigger trigger = go.GetComponent<EventTrigger> ();
-            //			EventTrigger.Entry entry = new EventTrigger.Entry( );
-            //			entry.eventID = EventTriggerType.PointerClick;
-            //			entry.callback.AddListener(  );
-            //			trigger.triggers.Add( entry );
         }
         itemToGO.Add(i, iui);
 
@@ -201,7 +207,7 @@ public class UnitUI : MonoBehaviour {
     }
     public void Update() {
         if (unit.CurrentHealth <= 0) {
-            UIController.Instance.CloseUnitUI();
+            gameObject.SetActive(false);
         }
         if (unit.IsPlayerUnit()) {
             if (IsCurrentShipUI) {
@@ -248,10 +254,13 @@ public class UnitUI : MonoBehaviour {
         Ship ship = ((Ship)unit);
         ship.RemoveCannonsToInventory(InputHandler.ShiftKey);
     }
-    private void OnDisable() {
+    public override void OnClose() {
         if(unit!=null)
             unit.patrolCommand.UnregisterOnRouteChange(OnPatrolRouteChange);
+        unit.UnregisterOnDestroyCallback(OnUnitDestroy);
         DeselectButton();
+        MouseController.Instance.UnselectUnit(false);
+        UIController.Instance.DehighlightUnits(unit);
         if (unitGoalGOs == null)
             return;
         foreach (var unitGoalGO in unitGoalGOs) {
@@ -267,5 +276,6 @@ public class UnitUI : MonoBehaviour {
                     continue;
                 Destroy(goal.gameObject);
             }
+        unit = null;
     }
 }

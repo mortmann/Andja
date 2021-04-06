@@ -91,7 +91,7 @@ public class UILanguageController : MonoBehaviour {
         }
         selectedLanguage = language;
         LoadLocalization(LocalizationsToFile[selectedLanguage]);
-        PrototypController.Instance.ReloadLanguage();
+        PrototypController.Instance?.ReloadLanguage();
         cbLanguageChange?.Invoke();
     }
     public void RegisterLanguageChange(Action callbackfunc) {
@@ -101,15 +101,15 @@ public class UILanguageController : MonoBehaviour {
         cbLanguageChange -= callbackfunc;
     }
     void OnDestroy() {
-#if Unity_Editor
-        FileStream file = File.Create(Path.Combine(Application.dataPath.Replace("/Assets", ""), "Empty" + "-ui.loc"));
-        XmlSerializer xml = new XmlSerializer(typeof(UILanguageLocalizations));
-        UILanguageLocalizations missing = new UILanguageLocalizations() { 
-            language = "Empty",
-            localizationData = requiredLocalizationData.ToArray()
-        };
-        xml.Serialize(file,missing);
-#endif
+        if(Application.isEditor) {
+            FileStream file = File.Create(Path.Combine(Application.dataPath.Replace("/Assets", ""), "Empty" + "-ui.loc"));
+            XmlSerializer xml = new XmlSerializer(typeof(UILanguageLocalizations));
+            UILanguageLocalizations missing = new UILanguageLocalizations() {
+                language = "Empty",
+                localizationData = requiredLocalizationData.ToArray()
+            };
+            xml.Serialize(file, missing);
+        }
         Instance = null;
     }
     public void LoadLocalization(string file) {

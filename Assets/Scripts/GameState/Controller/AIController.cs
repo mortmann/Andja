@@ -221,19 +221,6 @@ public class AIController : MonoBehaviour {
 
         World world = World.Current;
         foreach (Island island in World.Current.Islands) {
-
-            //values.RemoveAll(x => x.MaxValue == 0);
-            //Dictionary<int, List<TileValue>> maxToValue = new Dictionary<int, List<TileValue>>();
-            //int i = 1;
-            //while (values.Count > 0) {
-            //    List<TileValue> selected = new List<TileValue>(from TileValue in values
-            //                                                   where TileValue.MinValue == i
-            //                                                   select new TileValue(TileValue));
-            //    maxToValue[i] = selected;
-            //    values.RemoveAll(x => x.MaxValue == i);
-            //    i++;
-            //}
-
             IslandToMapSpaceValuedTiles[island] = TileValue.CalculateStartingValues(island);
             IslandToCurrentSpaceValuedTiles[island] = new List<TileValue>(from TileValue in IslandToMapSpaceValuedTiles[island]
                                                                           select new TileValue(TileValue)); //copy them
@@ -266,7 +253,7 @@ public class AIController : MonoBehaviour {
                     foreach (Produce prod in n.Data.produceForPeople.Keys) {
                         foreach (SupplyChain sc in prod.SupplyChains) {
                             if (sc.cost.requiredFertilites != null)
-                                ppd.possibleFertilities.Union(sc.cost.requiredFertilites, new GenericCompare<Fertility>(x => x.ID));
+                                ppd.possibleFertilities.UnionWith(sc.cost.requiredFertilites);
                             if (sc.cost.TotalItemCost != null)
                                 ppd.buildMaterialRequired.Union(sc.cost.TotalItemCost, new GenericCompare<Item>(x => x.ID));
                         }
@@ -287,6 +274,6 @@ public class PerPopulationLevelData {
     public List<string> newResources = new List<string>();
     public List<Need> itemNeeds = new List<Need>();
     public List<Need> structureNeeds = new List<Need>();
-    public List<Fertility> possibleFertilities = new List<Fertility>();
+    public HashSet<Fertility> possibleFertilities = new HashSet<Fertility>();
     public List<Item> buildMaterialRequired = new List<Item>();
 }

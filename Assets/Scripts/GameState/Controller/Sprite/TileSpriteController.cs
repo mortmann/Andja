@@ -92,7 +92,7 @@ public class TileSpriteController : MonoBehaviour {
             darkLayer.transform.localScale = new Vector3(1.25f * World.Width, 1.25f * World.Height, 0);
             darkLayer.name = "DarkLayer";
             darkLayer.transform.SetParent(this.transform);
-            darkLayer.SetActive(true);
+            darkLayer.SetActive(false);
 
             islandToCityMask = new Dictionary<Island, SpriteMask>();
             islandToGameObject = new Dictionary<Island, GameObject>();
@@ -396,6 +396,8 @@ public class TileSpriteController : MonoBehaviour {
         Instance = null;
     }
     public void AddDecider(TileDecider addDeciderFunc, bool isCityDecider = false) {
+        if (isCityDecider && MouseController.Instance.SelectedStructure != null)
+            return;
         this.TileDeciderFunc += addDeciderFunc;
         if (TileDeciderFunc != null || TileDeciderFunc.GetInvocationList().Length > 0)
             darkLayer.SetActive(true);

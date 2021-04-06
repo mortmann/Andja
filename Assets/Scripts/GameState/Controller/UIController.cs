@@ -6,10 +6,6 @@ using System.Collections.Generic;
 using System;
 
 public class UIController : MonoBehaviour {
-    Vector2 referenceResolution;
-    public float CanvasScaleWidth => Screen.width / referenceResolution.x;
-    public float CanvasScaleHeight => Screen.height / referenceResolution.y;
-    public Vector2 CanvasScale => new Vector2(CanvasScaleWidth, CanvasScaleHeight);
     public GameObject mainCanvas;
     public GameObject shortCutCanvas;
 
@@ -38,30 +34,17 @@ public class UIController : MonoBehaviour {
 
     public GameObject debugInformation;
     private DebugInformation debug;
-    Structure openStructure;
-    Unit openUnit;
-    public static Dictionary<string, Sprite> ItemImages;
     public static UIController Instance;
     private static UIControllerSave uIControllerSave;
 
     void Start() {
-        referenceResolution = FindObjectOfType<CanvasScaler>().referenceResolution;
         Escape(true);
         endScoreScreen.SetActive(false);
         if (Instance != null) {
             Debug.LogError("There are two uicontroller");
         }
         Instance = this;
-        Sprite[] sprites = Resources.LoadAll<Sprite>("Textures/Items/");
-        //Debug.Log(sprites.Length + " Item Sprite");
-        ItemImages = new Dictionary<string, Sprite>();
-        foreach (Sprite item in sprites) {
-            ItemImages[item.name] = item;
-        }
-        foreach (Sprite item in ModLoader.LoadSprites(SpriteType.Item)) {
-            ItemImages[item.name] = item;
-        }
-        if(uIControllerSave!=null) {
+        if (uIControllerSave != null) {
             LoadUISaveData();
         }
     }
@@ -73,7 +56,7 @@ public class UIController : MonoBehaviour {
         }
     }
     public void OpenStructureUI(Structure str) {
-        if (openStructure == str || str == null) {
+        if (str == null) {
             return;
         }
         if (str.PlayerNumber != PlayerController.currentPlayerNumber) {
@@ -82,16 +65,10 @@ public class UIController : MonoBehaviour {
                 return;
             }
         }
-
         CloseInfoUI();
         CloseRightUI();
-        if (openStructure != null)
-            UnselectStructure();
-
         str.RegisterOnDestroyCallback(OnStructureDestroy);
-        openStructure = str;
         str.OpenExtraUI();
-
         if (str is ProductionStructure) {
             OpenProduktionUI((OutputStructure)str);
         }
@@ -168,9 +145,9 @@ public class UIController : MonoBehaviour {
         }
         OpenInfoUI();
         productionStructureInfo.SetActive(true);
-        productionStructureInfo.GetComponent<ProduktionUI>().Show(str);
+        productionStructureInfo.GetComponent<OutuputStructureUI>().Show(str);
     }
-    public void CloseProduktionUI() {
+    public void CloseOutputStructureUI() {
         productionStructureInfo.SetActive(false);
         CloseInfoUI();
     }
@@ -196,21 +173,11 @@ public class UIController : MonoBehaviour {
             return;
         }
         OpenInfoUI();
-        openStructure = str;
         productionStructureInfo.SetActive(true);
-        productionStructureInfo.GetComponent<ProduktionUI>().Show(str);
-        TileSpriteController.Instance.AddDecider(StrcutureTileDecider);
+        productionStructureInfo.GetComponent<OutuputStructureUI>().Show(str);
     }
-    TileMark StrcutureTileDecider(Tile t) {
-        if (openStructure != null && (openStructure.RangeTiles.Contains(t) || openStructure.Tiles.Contains(t))) {
-            return TileMark.None;
-        }
-        else {
-            return TileMark.Dark;
-        }
-    }
+    
     public void CloseProduceUI() {
-        TileSpriteController.Instance.RemoveDecider(StrcutureTileDecider);
         productionStructureInfo.SetActive(false);
         CloseInfoUI();
     }
@@ -230,21 +197,11 @@ public class UIController : MonoBehaviour {
                 }
             }
         }
-        u.RegisterOnDestroyCallback(OnUnitDestroy);
-
         productionStructureInfo.SetActive(false);
         CloseInfoUI();
         OpenInfoUI();
-        openUnit = u;
         unitCanvas.SetActive(true);
         unitCanvas.GetComponent<UnitUI>().Show(u);
-    }
-    public void OnUnitDestroy(Unit u, IWarfare warfare) {
-        CloseInfoUI();
-    }
-    public void CloseUnitUI() {
-        unitCanvas.SetActive(false);
-        CloseInfoUI();
     }
     public void OpenUnitGroupUI(Unit[] units) {
         if (units == null) {
@@ -256,46 +213,29 @@ public class UIController : MonoBehaviour {
         unitGroupUI.SetActive(true);
         unitGroupUI.GetComponent<UnitGroupUI>().Show(units);
     }
-    public void CloseUnitGroupUI() {
-        unitGroupUI.SetActive(false);
-        CloseInfoUI();
-    }
     public void OpenInfoUI() {
         uiInfoCanvas.SetActive(true);
     }
     public void CloseInfoUI() {
-        if (uiInfoCanvas.activeInHierarchy == false) {
+        if (uiInfoCanvas.activeSelf == false) {
             return;
         }
-        if (openStructure != null) {
-            TileSpriteController.Instance.RemoveDecider(StrcutureTileDecider);
-            openStructure.CloseExtraUI();
-            openStructure.UnregisterOnDestroyCallback(OnStructureDestroy);
-            UnselectStructure();
-        }
-        if (openUnit != null) {
-            openUnit.UnregisterOnDestroyCallback(OnUnitDestroy);
-            openUnit = null;
-        }
+        //MouseController.Instance.UnselectStuff();
         unitCanvas.SetActive(false);
         productionStructureInfo.SetActive(false);
         militaryStructureInfo.SetActive(false);
         unitGroupUI.SetActive(false);
         uiInfoCanvas.SetActive(false);
     }
-
     public void CloseChooseBuild() {
         chooseBuildCanvas.SetActive(false);
     }
     public void CloseRightUI() {
-        if (openStructure != null)
-            UnselectStructure();
         otherCityUI.SetActive(false);
         CityInventoryCanvas.SetActive(false);
         citizenCanvas.SetActive(false);
         rightCanvas.SetActive(false);
     }
-
     public void OpenHomeUI(HomeStructure hb) {
         CloseRightUI();
         rightCanvas.SetActive(true);
@@ -345,7 +285,7 @@ public class UIController : MonoBehaviour {
         tradeRouteCanvas.SetActive(false);
     }
     public void Escape(bool dontOpenPause = false) {
-        if (AnyMenuOpen() == false && dontOpenPause == false && MouseController.Instance.mouseState == MouseState.Idle) {
+        if (AnyMenuOpen() == false && dontOpenPause == false && MouseController.Instance.MouseState == MouseState.Idle) {
             TogglePauseMenu();
         }
         CloseCenter();
@@ -353,18 +293,14 @@ public class UIController : MonoBehaviour {
         CloseRightUI();
         CloseInfoUI();
         CloseChooseBuild();
-
-        if (openStructure != null)
-            UnselectStructure();
-
-        if (TileSpriteController.Instance != null)
-            TileSpriteController.Instance.RemoveDecider(StrcutureTileDecider);
     }
-    public void UnselectStructure() {
-        if (openStructure != null)
-            openStructure.CloseExtraUI();
-        openStructure = null;
+    public void HighlightUnits(params Unit[] units) {
+        UnitSpriteController.Instance.Highlight(units);
     }
+    public void DehighlightUnits(params Unit[] units) {
+        UnitSpriteController.Instance.Dehighlight(units);
+    }
+
     public bool IsPauseMenuOpen() {
         return PauseMenu.IsOpen;
     }
@@ -387,14 +323,6 @@ public class UIController : MonoBehaviour {
     public void CloseConsole() {
         consoleCanvas.SetActive(false);
     }
-    public static Sprite GetItemImageForID(string id) {
-        if (ItemImages.ContainsKey(id) == false) {
-            Debug.LogWarning("Item " + id + " is missing image!");
-            return null;
-        }
-        return ItemImages[id];
-    }
-
     public void ShowDebugForObject(object toDebug) {
         debug = Instantiate(debugInformation).GetComponent<DebugInformation>();
         debug.Show(toDebug);

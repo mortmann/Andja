@@ -1,15 +1,19 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
-public class UnitGroupUI : MonoBehaviour {
+using System.Linq;
+public class UnitGroupUI : InfoUI {
 
     public Transform unitsContent;
     public UnitHealthUI unitHealthPrefab;
 
     Dictionary<Unit, UnitHealthUI> unitToUI;
 
-    public void Show(Unit[] group) {
+    public override void OnShow(object show) {
+        if (show.GetType() != typeof(Unit[]))
+            return;
+        Unit[] group = (Unit[])show;
+        UIController.Instance.HighlightUnits(group);
         foreach (Transform t in unitsContent)
             Destroy(t.gameObject);
         unitToUI = new Dictionary<Unit, UnitHealthUI>();
@@ -33,14 +37,13 @@ public class UnitGroupUI : MonoBehaviour {
         uhu.transform.SetParent(unitsContent, false);
         unitToUI.Add(unit, uhu);
     }
-    // Update is called once per frame
-    void Update () {
-		
-	}
-    private void OnDisable() {
-        if(unitToUI != null)
-        foreach(Unit unit in unitToUI.Keys) {
-            unit.UnregisterOnDestroyCallback(RemoveUnit);
-        }
+    
+    public override void OnClose() {
+        if (unitToUI != null)
+            foreach (Unit unit in unitToUI.Keys) {
+                unit.UnregisterOnDestroyCallback(RemoveUnit);
+            }
+        UIController.Instance.DehighlightUnits(unitToUI.Keys.ToArray());
+        MouseController.Instance.UnselectUnitGroup();
     }
 }

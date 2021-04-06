@@ -355,7 +355,7 @@ public abstract class Structure : IGEventable {
     }
     #endregion
     #region placestructure
-    public bool CheckPlaceStructure(List<Tile> tiles) {
+    public bool CheckPlaceStructure(List<Tile> tiles, int playerNumber/*only for error sending*/) {
         if(tiles.Count==0 || tiles.Contains(null)) {
             Debug.LogError("PlaceStructure FAILED -- tiles is empty or contains null tile!");
             return false;
@@ -363,12 +363,12 @@ public abstract class Structure : IGEventable {
         //test if the place is buildable
         // if it has to be on land
         if (CanBuildOnSpot(tiles) == false) {
-            Debug.LogWarning("canBuildOnSpot FAILED -- Give UI feedback");
+            BuildController.Instance.BuildError("CanBuildOnSpotCheck", tiles, this, playerNumber);
             return false;
         }
         //special check for some structures 
         if (SpecialCheckForBuild(tiles) == false) {
-            Debug.LogWarning("specialcheck failed -- Give UI feedback");
+            BuildController.Instance.BuildError("SpecialCheck", tiles, this, playerNumber);
             return false;
         }
         return true;

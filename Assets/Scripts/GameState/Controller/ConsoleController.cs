@@ -19,13 +19,20 @@ public class ConsoleController : MonoBehaviour {
         Application.logMessageReceived += LogCallbackHandler;
 #if UNITY_EDITOR == false
         string path = Path.Combine(SaveController.GetSaveGamesPath(), "logs");
-        string filepath = Path.Combine(path,SaveController.SaveName + "_" + DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss") +".log");
+        string filepath = Path.Combine(path,DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss")  + "_" + SaveController.SaveName +".log");
         if (Directory.Exists(path) == false) {
             Directory.CreateDirectory(path);
         } 
         if (File.Exists(filepath) == false) {
             logWriter = File.CreateText(filepath);
         }
+        logWriter.Write("" +
+            "ID: " + SystemInfo.deviceUniqueIdentifier + "\n" +
+            "SystemOS: " + SystemInfo.operatingSystem + "\n" +
+            "CPU: " + SystemInfo.processorType + "\n" +
+            "GPU: " + SystemInfo.graphicsDeviceName + " " + SystemInfo.graphicsDeviceVersion + "\n" +
+            "RAM: " + SystemInfo.systemMemorySize + "\n" +
+            "DeviceModel: " + SystemInfo.deviceModel);
         int fCount = Directory.GetFiles(path, "*.log", SearchOption.TopDirectoryOnly).Length;
         if(fCount>5) {
             FileSystemInfo fileInfo = new DirectoryInfo(path)
@@ -64,7 +71,14 @@ public class ConsoleController : MonoBehaviour {
             writeToConsole?.Invoke(log);
         }
 #if UNITY_EDITOR == false
-        logWriter.Write(type + ": " + condition + Environment.NewLine + stackTrace);
+        if (string.IsNullOrEmpty(stackTrace)==false) {
+            stackTrace += Environment.NewLine;
+        }
+        logWriter.Write(Environment.NewLine 
+                        + type + "{ "+ Environment.NewLine 
+                        + condition + Environment.NewLine 
+                        + stackTrace 
+                        + "}");
 #endif
     }
 

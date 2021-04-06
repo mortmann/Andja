@@ -5,15 +5,17 @@ using UnityEngine.UI;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
 
-public class ItemUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler {
+public class ItemUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler {
+    public bool IsSelected => selectedMarker.enabled;
+
     public Image image;
     public Text text;
     public Slider slider;
     public Image selectedMarker;
     public bool changeColor = false;
-    Action OnClick;
-    public bool IsSelected => selectedMarker.enabled;
+    UnityAction<BaseEventData> OnClick;
     Item item;
+
     public void SetItem(Item i, int maxValue, bool changeColor = false) {
         this.changeColor = changeColor;
         RefreshItem(i);
@@ -28,7 +30,7 @@ public class ItemUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler {
         }
         else {
             ChangeItemCount(i);
-            image.sprite = UIController.GetItemImageForID(i.ID);
+            image.sprite = UISpriteController.GetItemImageForID(i.ID);
         }
         item = i;
     }
@@ -71,19 +73,12 @@ public class ItemUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler {
         image.color = c;
     }
     public void AddClickListener(UnityAction<BaseEventData> ueb, bool clearAll = false) {
-        EventTrigger trigger = GetComponent<EventTrigger>();
-        EventTrigger.Entry entry = new EventTrigger.Entry {
-            eventID = EventTriggerType.PointerClick
-        };
-        if (clearAll) {
+        if (clearAll)
             ClearAllTriggers();
-        }
-        entry.callback.AddListener(ueb);
-        trigger.triggers.Add(entry);
+        OnClick += ueb;
     }
     public void ClearAllTriggers() {
-        EventTrigger trigger = GetComponent<EventTrigger>();
-        trigger.triggers.Clear();
+        OnClick = null;
     }
 
     public void OnPointerEnter(PointerEventData eventData) {
@@ -93,5 +88,9 @@ public class ItemUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler {
 
     public void OnPointerExit(PointerEventData eventData) {
         GameObject.FindObjectOfType<HoverOverScript>().Unshow();
+    }
+
+    public void OnPointerClick(PointerEventData eventData) {
+        OnClick?.Invoke(eventData);
     }
 }

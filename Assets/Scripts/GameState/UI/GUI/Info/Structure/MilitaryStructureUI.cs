@@ -1,27 +1,32 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MilitaryStructureUI : MonoBehaviour {
+public class MilitaryStructureUI : InfoUI {
     public GenericStructureUI StructureUI;
     public GameObject unitSelectionPanel;
     public CurrentlyBuildingUnitUI currentlyBuildingUnit;
     public UnitBuildUI unitSelectPrefab;
-    private MilitaryStructure military;
+    private MilitaryStructure CurrentMilitary;
     Dictionary<Unit, UnitBuildUI> unitToBuildUI;
-    public void Show(Structure str) {
+    public override void OnShow(object str) {
+        if (CurrentMilitary == str) {
+            return;
+        }
         if (str is MilitaryStructure == false) {
             Debug.Log("Structure is not a Military!");
             return;
         }
+        CurrentMilitary = (MilitaryStructure)str;
+        CurrentMilitary.RegisterOnDestroyCallback(OnStructureDestroy);
         StructureUI.gameObject.SetActive(true);
-        StructureUI.Show(str);
-        military = (MilitaryStructure)str;
+        StructureUI.Show(CurrentMilitary);
         foreach (Transform child in unitSelectionPanel.transform) {
             Destroy(child.gameObject);
         }
         unitToBuildUI = new Dictionary<Unit, UnitBuildUI>();
-        foreach (Unit u in military.CanBeBuildUnits) {
+        foreach (Unit u in CurrentMilitary.CanBeBuildUnits) {
             if (u == null) {
                 Debug.LogError("Unit is null");
                 continue;
@@ -31,20 +36,30 @@ public class MilitaryStructureUI : MonoBehaviour {
             ubui.transform.SetParent(unitSelectionPanel.transform, false);
             ubui.Show(u);
             Unit temp = u;
-            ubui.SetIsBuildable(military.HasEnoughResources(u));
+            ubui.SetIsBuildable(CurrentMilitary.HasEnoughResources(u));
 
-            ubui.AddClickListener(() => { military.AddUnitToBuildQueue(temp); });
+            ubui.AddClickListener(() => { CurrentMilitary.AddUnitToBuildQueue(temp); });
             unitToBuildUI.Add(u, ubui);
         }
-        currentlyBuildingUnit.Show(military);
+        currentlyBuildingUnit.Show(CurrentMilitary);
     }
+
+    private void OnStructureDestroy(Structure str, IWarfare destroyer) {
+        UIController.Instance.CloseMilitaryStructureInfo();
+    }
+
     // Update is called once per frame
     void Update() {
-        foreach (Unit u in military.CanBeBuildUnits) {
-            unitToBuildUI[u].SetIsBuildable(military.HasEnoughResources(u));
+        if (CurrentMilitary.PlayerNumber != PlayerController.currentPlayerNumber)
+            UIController.Instance.CloseMilitaryStructureInfo();
+        foreach (Unit u in CurrentMilitary.CanBeBuildUnits) {
+            unitToBuildUI[u].SetIsBuildable(CurrentMilitary.HasEnoughResources(u));
         }
     }
-    private void OnDisable() {
+    public override void OnClose() {
+        CurrentMilitary.UnregisterOnDestroyCallback(OnStructureDestroy);
         StructureUI.gameObject.SetActive(false);
+        MouseController.Instance.UnselectStructure();
+        CurrentMilitary = null;
     }
 }

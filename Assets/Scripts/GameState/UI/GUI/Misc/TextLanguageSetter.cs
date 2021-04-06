@@ -20,7 +20,6 @@ public class TranslationData {
     public List<string> UIElements = new List<string>();
     public bool onlyHoverOver;
     public int valueCount = 0;
-
     public bool ShouldSerializeUIElements() {
         return UIElements.Count > 0;
     }
@@ -49,7 +48,7 @@ public class TranslationData {
         UIElements.Add(v);
     }
 }
-public class TextLanguageSetter : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler { 
+public class TextLanguageSetter : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerDownHandler { 
     public string Identifier;
 
     // Use this for initialization
@@ -58,7 +57,7 @@ public class TextLanguageSetter : MonoBehaviour, IPointerEnterHandler, IPointerE
 
     public Text nameText;
     public Text valueText;
-
+    string nameSuffix;
 
     public string[] languageValues; // Names To Values
     //Values from a enum
@@ -94,8 +93,8 @@ public class TextLanguageSetter : MonoBehaviour, IPointerEnterHandler, IPointerE
                 return;
             }
             
-            if (string.IsNullOrEmpty(translationData.translation) ==false)
-                nameText.text = translationData.translation;
+            if (string.IsNullOrEmpty(translationData.translation) == false)
+                nameText.text = translationData.translation + nameSuffix;
             UILanguageController.Instance.RegisterLanguageChange(OnChangeLanguage);
             if (GetComponent<EventTrigger>() == null) {
                 this.gameObject.AddComponent<EventTrigger>();
@@ -111,7 +110,7 @@ public class TextLanguageSetter : MonoBehaviour, IPointerEnterHandler, IPointerE
             return;
         }
         if (string.IsNullOrEmpty(translationData.translation) == false)
-            nameText.text = translationData.translation;
+            nameText.text = translationData.translation + nameSuffix;
     }
     internal void SetStaticLanguageVariables(params StaticLanguageVariables[] vals) {
         staticLanguageVariables = vals;
@@ -126,10 +125,34 @@ public class TextLanguageSetter : MonoBehaviour, IPointerEnterHandler, IPointerE
             return;
         //UILanguageController.Instance.UnregisterLanguageChange(OnChangeLanguage);
     }
-    public void ShowValue(int i) {
-        if (languageValues == null && staticLanguageVariables == null && valueEnumType == null)
+    public void ShowNumber(int i) {
+         valueText.text = i + "";
+    }
+    /// <summary>
+    /// i = the number
+    /// cutLowOff: i must be lower than
+    /// cutHighOff: i must be equal or bigger than (does not work with negativ numbers)
+    /// </summary>
+    /// <param name="i"></param>
+    /// <param name="cutLowOff"></param>
+    /// <param name="cutHighOff"></param>
+    public void ShowNumberWithCutoff(int i, int cutLowOff, int cutHighOff = -1) {
+        if(cutHighOff > 0 && i >= cutHighOff) {
+            ShowValue(1);
             return;
-        if(i<0) {
+        }
+        if(i >= cutLowOff) {
+            valueText.text = i + "";
+            return;
+        }
+        ShowValue(0);
+    }
+    public void ShowValue(int i) {
+        if (languageValues == null && staticLanguageVariables == null && valueEnumType == null) {
+            valueText.text = i + "";
+            return;
+        }
+        if (i<0) {
             Debug.LogError("Negative Label Value trying to be set. -" + Identifier);
             return;
         }
@@ -162,11 +185,23 @@ public class TextLanguageSetter : MonoBehaviour, IPointerEnterHandler, IPointerE
     }
 
     public void OnPointerEnter(PointerEventData eventData) {
-        if (translationData.hoverOverTranslation != null)
+        if (Input.GetMouseButtonDown(0)) {
+            GameObject.FindObjectOfType<HoverOverScript>().Unshow();
+            return;
+        }
+        if (translationData?.hoverOverTranslation != null)
             GameObject.FindObjectOfType<HoverOverScript>().Show(translationData.hoverOverTranslation);
     }
 
     public void OnPointerExit(PointerEventData eventData) {
         GameObject.FindObjectOfType<HoverOverScript>().Unshow();
+    }
+
+    public void OnPointerDown(PointerEventData eventData) {
+        GameObject.FindObjectOfType<HoverOverScript>().Unshow();
+    }
+
+    internal void SetNameSuffix(string suffix) {
+        nameSuffix = " " + suffix;
     }
 }

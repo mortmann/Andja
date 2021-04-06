@@ -10,7 +10,7 @@ public class WeightedRandomList<T> where T : IWeighted {
 
     private List<Entry> entries = new List<Entry>();
     private float accumulatedWeight;
-    private Random rand = new Random();
+    private System.Random rand = new System.Random();
     List<T> mustRandoms;
     public bool hasNoMustLeft => mustRandoms.Count==0;
     public WeightedRandomList(List<T> list) {

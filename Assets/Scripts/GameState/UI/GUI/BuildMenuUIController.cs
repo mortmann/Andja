@@ -38,7 +38,7 @@ public class BuildMenuUIController : MonoBehaviour {
             GameObject go = Instantiate(populationButtonPrefab);
             go.transform.SetParent(buttonPopulationsLevelContent.transform, false);
             ButtonSetter bs = go.GetComponent<ButtonSetter>();
-            bs.Set(pl.Name, () => { OnPopulationLevelButtonClick(pl.LEVEL); }, IconSpriteController.GetIcon(pl.iconSpriteName), pl.Name);
+            bs.Set(pl.Name, () => { OnPopulationLevelButtonClick(pl.LEVEL); }, UISpriteController.GetIcon(pl.iconSpriteName), pl.Name);
             popLevelToGO.Add(pl.LEVEL, bs);
             bs.Interactable(Player.MaxPopulationLevel > pl.LEVEL);
         }

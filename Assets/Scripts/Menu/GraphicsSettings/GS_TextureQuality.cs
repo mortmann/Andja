@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+﻿ using UnityEngine;
 
 public class GS_TextureQuality : GS_SliderBase {
     public static int[] PresetValues = { 0, 1, 2, 3 };

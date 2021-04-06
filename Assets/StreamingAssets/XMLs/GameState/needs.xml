@@ -136,7 +136,7 @@
       <item ID="hempclothes">
          <count>0</count>
       </item>
-      <startLevel>1</startLevel>
+      <startLevel>0</startLevel>
       <popCount>0</popCount>
       <group>clothing</group>
       <hasToReachPerRoad>false</hasToReachPerRoad>

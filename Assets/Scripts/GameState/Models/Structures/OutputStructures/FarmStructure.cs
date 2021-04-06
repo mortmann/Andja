@@ -113,7 +113,7 @@ public class FarmStructure : OutputStructure {
                     }
                     produceTimer = 0;
                     AddHarvastable();
-                    ((GrowableStructure)workingGrowables[0]).Harvest();
+                    workingGrowables[0].Harvest();
                 }
             } 
             else if(workingGrowables.Count > Workers.Count){
@@ -187,12 +187,12 @@ public class FarmStructure : OutputStructure {
         if(MaxNumberOfWorker > NeededHarvestForProduce) {
             float sum = 0;
             for(int x = 0; x < MaxNumberOfWorker;x++) {
-                sum = Workers[x].WorkTimer;
+                sum = ProduceTime - Workers[x].WorkTimer;
             }
             sum /= MaxNumberOfWorker;
-            return (ProduceTime - sum);
+            return (sum);
         }
-        return (ProduceTime - Workers.Sum(x => x.WorkTimer));
+        return (Workers.Sum(x => ProduceTime - x.WorkTimer));
     }
 
     protected override void OnDestroy() {

@@ -41,7 +41,7 @@ public class WorkerSpriteController : MonoBehaviour {
         Quaternion q = go.transform.rotation;
         q.eulerAngles = new Vector3(0, 0, worker.Rotation);
         go.transform.rotation = q;
-        go.transform.SetParent(this.transform, true);
+        //go.transform.SetParent(this.transform, true);
 
         SpriteRenderer sr = go.AddComponent<SpriteRenderer>();
         sr.sprite = workerSprites["worker"];

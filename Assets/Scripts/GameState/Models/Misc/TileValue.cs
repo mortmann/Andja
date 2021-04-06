@@ -89,6 +89,8 @@ public class TileValue {
         for (int y = 0; y < island.Height; y++) {
             for (int x = 0; x < island.Width; x++) {
                 Tile t = World.Current.GetTileAt(island.Minimum.x + x, island.Minimum.y + y);
+                if (t.Type == TileType.Ocean)
+                    continue;
                 float startX = 0;
                 float startY = 0;
                 if (t.CheckTile()) {
@@ -132,6 +134,8 @@ public class TileValue {
         for (int y = 0; y < island.Height; y++) {
             for (int x = 0; x < island.Width; x++) {
                 Tile t = World.Current.GetTileAt(island.Minimum.x + x, island.Minimum.y + y);
+                if (t.Type == TileType.Ocean)
+                    continue;
                 if (t.CheckTile()) {
                     values.Add(new TileValue(t,
                                     swValue[x, y],

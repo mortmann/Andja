@@ -184,15 +184,15 @@ public class Worker {
         else {
             // coming home from doing the work
             // drop off the items its carrying
-            if (Home is FarmStructure) {
-                if(workTimer>0) {
-                    workTimer -= deltaTime;
-                    return;
-                }
-                ((FarmStructure)Home).AddHarvastable();
-                isAtHome = true;
-            }
-            else
+            //if (Home is FarmStructure) {
+            //    if(workTimer>0) {
+            //        workTimer -= deltaTime;
+            //        return;
+            //    }
+            //    ((FarmStructure)Home).AddHarvastable();
+            //    isAtHome = true;
+            //}
+            //else
             if (toGetItems != null) {
                 DropOffItems(deltaTime);
             } else {
@@ -211,6 +211,9 @@ public class Worker {
         else
         if (Home is ProductionStructure) {
             ((ProductionStructure)Home).AddToIntake(inventory);
+        } else 
+        if (Home is FarmStructure) {
+            ((FarmStructure)Home).AddHarvastable();
         }
         else if (Home is OutputStructure) {
             //this home is a OutputStructures or smth that takes it to output

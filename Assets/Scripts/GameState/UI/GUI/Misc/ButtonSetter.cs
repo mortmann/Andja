@@ -5,11 +5,8 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-[RequireComponent(typeof(EventTrigger))]
-public class ButtonSetter : MonoBehaviour {
-	// Use this for initialization
-	void Start () {
-    }
+public class ButtonSetter : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler {
+    string hoverOver;
     /// <summary>
     /// func : () => { Function( parameter ); return null?; }
     /// </summary>
@@ -37,32 +34,9 @@ public class ButtonSetter : MonoBehaviour {
             GetComponentsInChildren<Image>()[1].preserveAspect = true;
             GetComponentInChildren<Text>().gameObject.SetActive(false);
         }
-        EventTrigger trigger = GetComponent<EventTrigger>();
-        if (hoverOver != null) {
-            EventTrigger.Entry enter = new EventTrigger.Entry {
-                eventID = EventTriggerType.PointerEnter
-            };
-            enter.callback.AddListener((data) => {
-                OnMouseEnter(hoverOver);
-            });
-            trigger.triggers.Add(enter);
+        this.hoverOver = hoverOver;
+    }
 
-            trigger.triggers.Add(enter);
-            EventTrigger.Entry exit = new EventTrigger.Entry {
-                eventID = EventTriggerType.PointerExit
-            };
-            exit.callback.AddListener((data) => {
-                OnMouseExit();
-            });
-            trigger.triggers.Add(exit);
-        }
-    }
-    public void OnMouseEnter(string hoverOver) {
-        GameObject.FindObjectOfType<HoverOverScript>().Show(hoverOver);
-    }
-    public void OnMouseExit() {
-        GameObject.FindObjectOfType<HoverOverScript>().Unshow();
-    }
     public void Interactable(bool interactable) {
         GetComponent<Button>().interactable = interactable;
         Image i = GetComponentsInChildren<Image>()[1];
@@ -70,5 +44,13 @@ public class ButtonSetter : MonoBehaviour {
         //if interactable go full otherwise half
         c.a = interactable ? 1 : 0.5f;
         i.color = c;
+    }
+
+    public void OnPointerEnter(PointerEventData eventData) {
+        GameObject.FindObjectOfType<HoverOverScript>().Show(hoverOver);
+    }
+
+    public void OnPointerExit(PointerEventData eventData) {
+        GameObject.FindObjectOfType<HoverOverScript>().Unshow();
     }
 }

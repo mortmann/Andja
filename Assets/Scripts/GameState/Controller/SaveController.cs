@@ -58,7 +58,8 @@ public class SaveController : MonoBehaviour {
         }
         else {
             IsLoadingSave = false;
-            GDH?.GenerateMap();//just generate new map
+            if(EditorController.IsEditor == false)
+                GDH?.GenerateMap();//just generate new map
         }
     }
 
@@ -220,6 +221,8 @@ public class SaveController : MonoBehaviour {
 
     public static string GetIslandSavePath(string name = null, bool userCustom = false) {
         string path = Path.Combine(ConstantPathHolder.StreamingAssets, "Islands");
+        if (Directory.Exists(path) == false)
+            Directory.CreateDirectory(path);
         if (name == null)
             return path;
         return Path.Combine(path, name);
@@ -324,7 +327,9 @@ public class SaveController : MonoBehaviour {
     public static SaveMetaData[] GetMetaFiles(bool editor) {
         string path = editor ? GetIslandSavePath() : GetSaveGamesPath();
         string metaEnding = editor ? islandMetaFileEnding : saveMetaFileEnding;
-
+        if(Directory.Exists(path) == false) {
+            Directory.CreateDirectory(path);
+        }
         List<SaveMetaData> saveMetaDatas = new List<SaveMetaData>();
         foreach (string file in Directory.GetFiles(path, "*" + metaEnding,SearchOption.AllDirectories)) {
             SaveMetaData metaData = null;

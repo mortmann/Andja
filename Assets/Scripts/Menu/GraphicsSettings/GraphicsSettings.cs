@@ -9,7 +9,7 @@ using System;
 using UnityStandardAssets.ImageEffects;
 using Smaa;
 
-public enum GraphicsSetting { Preset, AnisotropicFiltering, AntiAliasing, Vsync, Fullscreen, Resolution, TextureQuality, Brightness }
+public enum GraphicsSetting { Preset, AnisotropicFiltering, AntiAliasing, Vsync, Fullscreen, Resolution, TextureQuality, Brightness, Monitor, Framelimit }
 public enum GraphicsOptions { VeryLow, Low, Medium, High, Ultra }
 public class GraphicsSettings : MonoBehaviour {
 
@@ -18,7 +18,7 @@ public class GraphicsSettings : MonoBehaviour {
     // The camera in use.
     protected Camera MainCamera => Camera.main;
     bool hasLoaded = false;
-
+    public Text RestartRequired;
     Dictionary<GraphicsSetting, object> graphicsOptions;
     Dictionary<GraphicsSetting, object> graphicsOptionsToSave;
     public Action<int> GraphicsPreset;
@@ -32,13 +32,44 @@ public class GraphicsSettings : MonoBehaviour {
             SetGraphicsPreset(3);
         }
 
-        hasLoaded = (ReadGraphicsOption());
-        if (hasLoaded)
-            SaveGraphicsOption();
+        hasLoaded = ReadGraphicsOption();
+        SaveGraphicsOption();
+
     }
 
-    void Start() {
-        
+    private void SetPreset(GraphicsSetting gs) {
+        switch (gs) {
+            case GraphicsSetting.Preset:
+                break;
+            case GraphicsSetting.AnisotropicFiltering:
+                break;
+            case GraphicsSetting.AntiAliasing:
+                break;
+            case GraphicsSetting.Vsync:
+                SetVsync(0);
+                break;
+            case GraphicsSetting.Fullscreen:
+                SetFullscreen((int)FullScreenMode.ExclusiveFullScreen);
+                break;
+            case GraphicsSetting.Resolution:
+                SetResolution(new CustomResolution(Screen.currentResolution));
+                break;
+            case GraphicsSetting.TextureQuality:
+                SetTextureQuality(3);
+                break;
+            case GraphicsSetting.Brightness:
+                SetBrightness(100);
+                break;
+            case GraphicsSetting.Monitor:
+                SetMonitor(0);
+                break;
+            case GraphicsSetting.Framelimit:
+                SetFramelimit(Screen.currentResolution.refreshRate);
+                break;
+            default:
+                Debug.LogWarning("No case for " + gs);
+                break;
+        }
     }
 
     public void SetGraphicsPreset(float value) {
@@ -55,6 +86,8 @@ public class GraphicsSettings : MonoBehaviour {
     public static int PresetValues = 4;
 
     public void SaveGraphicsOption() {
+        if (graphicsOptionsToSave.Count == 0)
+            return;
         SetOptions(graphicsOptionsToSave);
         foreach (GraphicsSetting s in graphicsOptionsToSave.Keys) {
             graphicsOptions[s] = graphicsOptionsToSave[s];
@@ -84,15 +117,19 @@ public class GraphicsSettings : MonoBehaviour {
         }
         Dictionary<GraphicsSetting, object> Loaded = JsonConvert.DeserializeObject<Dictionary<GraphicsSetting, object>>(File.ReadAllText(filePath));
         if (Loaded != null)
-            SetOptions(Loaded);
+            SetOptions(Loaded, true);
         return Loaded != null;
     }
 
-    private void SetOptions(Dictionary<GraphicsSetting, object> options) {
+    private void SetOptions(Dictionary<GraphicsSetting, object> options, bool onLoad = false) {
         foreach (GraphicsSetting optionName in typeof(GraphicsSetting).GetEnumValues()) {
-            if (options.ContainsKey(optionName) == false)
-                continue;
-            object val = options[optionName];
+            object val = null;
+            if (options.ContainsKey(optionName))
+                val = options[optionName];
+            if (val == null && graphicsOptions.ContainsKey(optionName) == false) { 
+                SetPreset(optionName);
+                return;
+            }
             switch (optionName) {
                 case GraphicsSetting.Preset:
                     SetGraphicsPreset(Convert.ToInt32(val));
@@ -110,17 +147,22 @@ public class GraphicsSettings : MonoBehaviour {
                     SetFullscreen(Convert.ToInt32(val));
                     break;
                 case GraphicsSetting.Resolution:
-                    if(val is CustomResolution) {
-                        SetResolution((CustomResolution)val);
-                    } else {
-                        SetResolution(JsonUtility.FromJson<CustomResolution>(Convert.ToString(val)));
-                    }
+                    if(val is CustomResolution == false) {
+                        val = JsonUtility.FromJson<CustomResolution>(Convert.ToString(val));
+                    } 
+                    SetResolution((CustomResolution)val);
                     break;
                 case GraphicsSetting.TextureQuality:
                     SetTextureQuality(Convert.ToInt32(val));
                     break;
                 case GraphicsSetting.Vsync:
                     SetVsync(Convert.ToInt32(val));
+                    break;
+                case GraphicsSetting.Monitor:
+                    SetMonitor(Convert.ToInt32(val));
+                    break;
+                case GraphicsSetting.Framelimit:
+                    SetMonitor(Convert.ToInt32(val));
                     break;
                 default:
                     Debug.LogWarning("No case for " + optionName);
@@ -234,7 +276,24 @@ public class GraphicsSettings : MonoBehaviour {
                                 (FullScreenMode)value, Screen.currentResolution.refreshRate);
         SetSavedGraphicsOption(GraphicsSetting.Fullscreen, value);
     }
-
+    internal void SetFramelimit(int value) {
+        value = Mathf.Clamp(value, 0, 400);
+        if (value < GS_Framelimiter.MinimumValue)
+            value = -1;
+        Application.targetFrameRate = value;
+        SetSavedGraphicsOption(GraphicsSetting.Framelimit, value);
+    }
+    internal void SetMonitor(int value) {
+        if (value >= Display.displays.Length)
+            value = 0;
+        SetSavedGraphicsOption(GraphicsSetting.Monitor, value);
+        int selected = PlayerPrefs.GetInt("UnitySelectMonitor");
+        PlayerPrefs.SetInt("UnitySelectMonitor", value);
+        if (value == selected || selected < 0)
+            RestartRequired.gameObject.SetActive(false);
+        else
+            RestartRequired.gameObject.SetActive(true);
+    }
     public void SetResolution(CustomResolution res) {
         Screen.SetResolution(res.width, res.height, Screen.fullScreen, res.refreshRate);
         SetSavedGraphicsOption(GraphicsSetting.Resolution, res);

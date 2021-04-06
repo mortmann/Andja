@@ -129,17 +129,19 @@ public class BuildController : MonoBehaviour {
         if(EditorStructure!=null)
             toBuildStructure = EditorStructure;
         if (StructurePrototypes[id].BuildTyp == BuildType.Path) {
-            MouseController.Instance.mouseState = MouseState.BuildPath;
+            MouseController.Instance.SetMouseState(MouseState.BuildPath);
             MouseController.Instance.ToBuildStructure = toBuildStructure;
         }
         if (StructurePrototypes[id].BuildTyp == BuildType.Single) {
-            MouseController.Instance.mouseState = MouseState.BuildSingle;
+            MouseController.Instance.SetMouseState(MouseState.BuildSingle);
             MouseController.Instance.ToBuildStructure = toBuildStructure;
         }
         if (StructurePrototypes[id].BuildTyp == BuildType.Drag) {
-            MouseController.Instance.mouseState = MouseState.BuildDrag;
+            MouseController.Instance.SetMouseState(MouseState.BuildDrag);
             MouseController.Instance.ToBuildStructure = toBuildStructure;
         }
+        if(EditorController.IsEditor == false)
+            TileSpriteController.Instance.AddDecider(TileCityDecider, true);
         BuildState = BuildStateModes.Build;
     }
     public void CurrentPlayerBuildOnTile(List<Tile> tiles, bool forEachTileOnce, int playerNumber, bool wild = false, Unit buildInRange = null) {
@@ -199,12 +201,9 @@ public class BuildController : MonoBehaviour {
             Vector3 unitPos = buildInRangeUnit.PositionVector2;
             Tile t = tiles.Find(x => { return x.IsInRange(unitPos, buildInRangeUnit.BuildRange); });
             if (t == null) {
-                Debug.LogWarning("failed Range check -- Give UI feedback");
+                BuildError("RangeCheck", tiles, structure, playerNumber);
                 return false;
             }
-        }
-        if(tiles[0].X == 260 && tiles[0].X == 198) {
-            Debug.Log("WHY ARE YA STUPID");
         }
         //FIXME find a better solution for this?
         structure.ChangeRotation(rotate);
@@ -244,6 +243,7 @@ public class BuildController : MonoBehaviour {
                 bool inCity = structure.InCityCheck(tiles, playerNumber);
                 //Failed to be in city range -- return
                 if (inCity == false) {
+                    BuildError("CityCheck",tiles, structure, playerNumber);
                     return false;
                 }
                 structure.City = tiles[0].Island.Cities.Find(x => x?.PlayerNumber == playerNumber);
@@ -262,7 +262,7 @@ public class BuildController : MonoBehaviour {
             //find a city that matches the player 
             //and check for money
             if (PlayerHasEnoughMoney(structure, playerNumber) == false && noBuildCost == false && onStart == false) {
-                Debug.LogWarning("Building failed -> Player has not enough money -- Give UI feedback");
+                BuildError("MoneyCheck", tiles, structure, playerNumber);
                 return false;
             }
             if (structure.City == null && structure.GetType() != typeof(WarehouseStructure)) {
@@ -282,7 +282,7 @@ public class BuildController : MonoBehaviour {
                         return false;
                     }
                     if (inv.ContainsItemsWithRequiredAmount(structure.GetBuildingItems()) == false) {
-                        Debug.Log("UI FEEDBACK NEEDED -- NOT ENOUGH MATERIAL TO BUILD");
+                        BuildError("RessourcesCheck", tiles, structure, playerNumber);
                         return false;
                     }
                 }
@@ -291,7 +291,7 @@ public class BuildController : MonoBehaviour {
         //now we know that we COULD build that structure
         //but CAN WE?
         //check to see if the structure can be placed there
-        if (structure.CheckPlaceStructure(tiles) == false) {
+        if (structure.CheckPlaceStructure(tiles, playerNumber) == false) {
             if (loading && EditorController.IsEditor == false) {
                 Debug.LogError("PLACING FAILED WHILE LOADING! " + structure.buildID + " - " + structure.SmallName);
                 structure.Destroy();
@@ -330,6 +330,15 @@ public class BuildController : MonoBehaviour {
         return true;
     }
 
+    public void BuildError(string errorID, List<Tile> tiles, Structure structure, int playerNumber) {
+        if (PlayerController.currentPlayerNumber == playerNumber) {
+            Vector3 Position = tiles[0].Vector;
+            Position.x += structure.TileWidth / 2f;
+            Position.y += structure.TileHeight / 2f;
+            MouseController.Instance.ShowError(errorID, Position);
+        }
+    }
+
 
     /// <summary>
     /// USED ONLY FOR LOADING
@@ -366,18 +375,20 @@ public class BuildController : MonoBehaviour {
 
     public void ResetBuild() {
         BuildState = BuildStateModes.None;
-        if (MouseController.Instance.mouseState != MouseState.Idle) {
+        if (MouseController.Instance.MouseState != MouseState.Idle) {
             //Reset MouseController out of BuildMode that this set it to 
             //when a structure gets selected 
-            MouseController.Instance.mouseState = MouseState.Idle;
+            MouseController.Instance.SetMouseState(MouseState.Idle);
             MouseController.Instance.ResetBuild(null);
         }
+        TileSpriteController.Instance.RemoveDecider(TileCityDecider, true);
         this.toBuildStructure = null;
     }
     public void DestroyToolSelect() {
         ResetBuild();
         BuildState = BuildStateModes.Destroy;
-        MouseController.Instance.mouseState = MouseState.Destroy;
+        MouseController.Instance.SetMouseState(MouseState.Destroy);
+        TileSpriteController.Instance.AddDecider(TileCityDecider, true);
     }
     public void Escape() {
         ResetBuild();
@@ -416,5 +427,16 @@ public class BuildController : MonoBehaviour {
     }
     void OnDestroy() {
         Instance = null;
+    }
+    TileMark TileCityDecider(Tile t) {
+        if (t == null) {
+            return TileMark.None;
+        }
+        else if (t.City != null && t.City.IsCurrPlayerCity()) {
+            return TileMark.None;
+        }
+        else {
+            return TileMark.Dark;
+        }
     }
 }

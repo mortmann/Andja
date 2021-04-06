@@ -20,7 +20,6 @@ public static class ModLoader {
                                                                             ".aiff", ".mod", ".s3m", ".xm" };
 
     static readonly string customXMLExtension = "*.xml";
-    static readonly string customIconName = "*_icon";
     static readonly string customIconExtension = ".png";
 
     static List<Mod> LoadedMods = new List<Mod>();
@@ -39,21 +38,27 @@ public static class ModLoader {
                 mod.spriteTypeToSprite[type] = LoadSpritesForMod(type, modName);
             }
             mod.xmlTypeToXMLString = LoadXMLsForMod(modName);
-            mod.iconSprites = LoadIconsForMod(modName);
+
+            mod.spriteTypeToSprite[SpriteType.Icon]
+                = LoadSpecialSpritesForMod(modName, UISpriteController.iconNameAdd, mod.spriteTypeToSprite[SpriteType.Icon]);
+            mod.spriteTypeToSprite[SpriteType.UI] 
+                = LoadSpecialSpritesForMod(modName, UISpriteController.uiNameAdd, mod.spriteTypeToSprite[SpriteType.UI]);
+
             mod.soundDatas = LoadSoundsForMod(modName);
             LoadedMods.Add(mod);
         }
         Debug.Log("Found " + avaible.Count +" Mods. Active & Loaded Mods "+ LoadedMods.Count);
     }
 
-    private static List<Sprite> LoadIconsForMod(string mod) {
-        List<Sprite> loadedIcons = new List<Sprite>();
+    private static Sprite[] LoadSpecialSpritesForMod(string mod, string customSpriteNameAdd, Sprite[] oldSprites) {
+        List<Sprite> loadedIcons = new List<Sprite>(oldSprites);
         string fullPath = Path.Combine(ConstantPathHolder.StreamingAssets, inStreamingAssetsPath, mod);
-        string[] files = Directory.GetFiles(fullPath, customIconName + customIconExtension, SearchOption.AllDirectories);
+        string[] files = Directory.GetFiles(fullPath, "*"+ customSpriteNameAdd + customIconExtension, SearchOption.AllDirectories);
         foreach (string file in files) {
             try {
                 try {
                     string spriteName = Path.GetFileNameWithoutExtension(file);
+                    loadedIcons.RemoveAll(x => x.name == spriteName);
                     Texture2D texture = new Texture2D(0, 0) {
                         filterMode = FilterMode.Point,
                         mipMapBias = -0.25f
@@ -74,7 +79,7 @@ public static class ModLoader {
                 continue;
             }
         }
-        return loadedIcons;
+        return loadedIcons.ToArray();
     }
 
     public static Sprite[] LoadSpritesForMod(SpriteType type, string Mod) {
@@ -245,14 +250,6 @@ public static class ModLoader {
         }
     }
 
-    public static Sprite[] LoadIcons() {
-        List<Sprite> loadedIcons = new List<Sprite>();
-        foreach (Mod mod in LoadedMods) {
-            loadedIcons.AddRange(mod.iconSprites);
-        }
-        loadedIcons.AddRange(LoadSprites(SpriteType.Icon));
-        return loadedIcons.ToArray();
-    }
     public static SoundMetaData[] LoadSoundMetaDatas() {
         List<SoundMetaData> loadedIcons = new List<SoundMetaData>();
         foreach (Mod mod in LoadedMods) {
@@ -266,6 +263,9 @@ public static class ModLoader {
 
     public static List<Mod> AvaibleMods() {
         string fullPath = Path.Combine(ConstantPathHolder.StreamingAssets, inStreamingAssetsPath);
+        if(Directory.Exists(fullPath) == false) {
+            Directory.CreateDirectory(fullPath);
+        }
         List<Mod> modNames = new List<Mod>();
         foreach (string path in Directory.GetDirectories(fullPath)) {
             if(Directory.GetFileSystemEntries(path, "*",SearchOption.AllDirectories).Length==0) {
@@ -331,11 +331,10 @@ public struct Mod {
 
     public Dictionary<SpriteType, Sprite[]> spriteTypeToSprite;
     public Dictionary<string, string> xmlTypeToXMLString;
-    public List<Sprite> iconSprites;
     public List<SoundMetaData> soundDatas;
 }
 
-public enum SpriteType { Structure, Worker, Unit, Tile, Icon, Item, Event }
+public enum SpriteType { Structure, Worker, Unit, Tile, Icon, Item, Event, UI }
 public enum SpriteMode { Single, Multiple, DefinedMultiple }
 public class CustomSpriteMetaData {
     public SpriteType type;

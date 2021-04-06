@@ -4,20 +4,28 @@ using UnityEngine.EventSystems;
 using System;
 using System.Linq;
 using System.Collections;
+using TMPro;
 
 public enum MouseState { Idle, BuildDrag, BuildPath, BuildSingle, Unit, UnitGroup, Destroy, DragSelect };
 public enum MouseUnitState { None, Normal, Patrol, Build };
 public enum TileHighlightType { Green, Red }
+public enum CursorType { Pointer, Attack, Escort, Destroy, Build }
 public class MouseController : MonoBehaviour {
 
     public static MouseController Instance { get; protected set; }
     public GameObject structurePreviewRendererPrefab;
     public GameObject greenTileCursorPrefab;
     public GameObject redTileCursorPrefab;
+    public GameObject fadeOutTextPrefab;
+
     public ExtraStructureBuildUI[] extraStructureBuildUIPrefabsEditor;
     Dictionary<ExtraBuildUI, GameObject> ExtraStructureBuildUIPrefabs;
     GameObject highlightGO;
-
+    /// <summary>
+    /// If it is in either build or destroy mode
+    /// </summary>
+    bool IsInBuildDestoyMode => MouseState == (MouseState.BuildDrag | MouseState.BuildPath | MouseState.BuildSingle | MouseState.Destroy);
+    bool DisplayDragRectangle;
     // The world-position of the mouse last frame.
     Vector3 lastFramePosition;
     Vector3 CurrFramePositionOffset => currFramePosition + new Vector3(TileSpriteController.offset, TileSpriteController.offset, 0);
@@ -34,10 +42,10 @@ public class MouseController : MonoBehaviour {
     ///  is true if smth is overriding the current states and commands for units
     /// </summary>
     public static bool OverrideCurrentSetting => InputHandler.ShiftKey == false; // TODO: better name
-    
+
     public Vector2 MapClampedMousePosition {
         get {
-            return new Vector2(Mathf.Clamp(currFramePosition.x, 0, World.Current.Width), 
+            return new Vector2(Mathf.Clamp(currFramePosition.x, 0, World.Current.Width),
                                Mathf.Clamp(currFramePosition.y, 0, World.Current.Height));
         }
     }
@@ -45,7 +53,7 @@ public class MouseController : MonoBehaviour {
     Dictionary<Tile, TilePreview> tileToPreviewGO;
     Dictionary<Tile, StructurePreview> tileToStructurePreview;
     GameObject singleStructurePreview;
-    private Structure SelectedStructure;
+    public Structure SelectedStructure;
     protected Structure _toBuildstructure;
     public Structure ToBuildStructure {
         get {
@@ -58,8 +66,8 @@ public class MouseController : MonoBehaviour {
         }
     }
 
-    public MouseState mouseState = MouseState.Idle;
-    public MouseUnitState mouseUnitState = MouseUnitState.None;
+    public MouseState MouseState { get; protected set; } = MouseState.Idle;
+    public MouseUnitState MouseUnitState { get; protected set; } = MouseUnitState.None;
 
     private Path_AStar path;
 
@@ -74,10 +82,10 @@ public class MouseController : MonoBehaviour {
                 _selectedUnit.UnregisterOnDestroyCallback(OnUnitDestroy);
             _selectedUnit = value;
             if (_selectedUnit == null) {
-                mouseUnitState = MouseUnitState.None;
+                SetMouseUnitState(MouseUnitState.None);
             }
             else {
-                mouseUnitState = MouseUnitState.Normal;
+                SetMouseUnitState(MouseUnitState.Normal);
             }
         }
     }
@@ -125,8 +133,6 @@ public class MouseController : MonoBehaviour {
         return lastFramePosition;
     }
 
-
-    // Update is called once per frame
     void Update() {
         if (EditorController.IsEditor==false && PlayerController.GameOver)
             return;
@@ -142,10 +148,10 @@ public class MouseController : MonoBehaviour {
             UpdateEditorStuff();
         }
 
-        if (Input.GetMouseButtonDown(1) && mouseState != MouseState.Idle 
-            && mouseState != MouseState.Unit && mouseState != MouseState.UnitGroup) {
+        if (Input.GetMouseButtonDown(1) && MouseState != MouseState.Idle 
+            && MouseState != MouseState.Unit && MouseState != MouseState.UnitGroup) {
             ResetBuild(null);
-            mouseState = MouseState.Idle;
+            SetMouseState(MouseState.Idle);
         }
 
         // Save the mouse position from this frame
@@ -155,6 +161,35 @@ public class MouseController : MonoBehaviour {
         lastFramePosition.z = 0;
     }
 
+    internal void UnselectStructure() {
+        SelectedStructure = null;
+    }
+
+    internal void SetMouseState(MouseState state) {
+        switch (state) {
+            case MouseState.Idle:
+                ChangeCursorType(CursorType.Pointer);
+                break;
+            case MouseState.BuildDrag:
+            case MouseState.BuildPath:
+            case MouseState.BuildSingle:
+                ChangeCursorType(CursorType.Build);
+                break;
+            case MouseState.Unit:
+                break;
+            case MouseState.UnitGroup:
+                break;
+            case MouseState.Destroy:
+                ChangeCursorType(CursorType.Destroy);
+                break;
+            case MouseState.DragSelect:
+                break;
+        }
+        MouseState = state;
+    }
+    internal void SetMouseUnitState(MouseUnitState state) {
+        MouseUnitState = state;
+    }
     private void UpdateEditorStuff() {
         if(highlightGO != null) {
             Tile t = GetTileUnderneathMouse();
@@ -165,21 +200,25 @@ public class MouseController : MonoBehaviour {
     }
 
     private void UpdateDragBox() {
-        if (Input.GetMouseButtonDown(0)
-            && mouseState == MouseState.Idle) {
+        if (IsInBuildDestoyMode == false)
+            return;
+
+        if (Input.GetMouseButton(0) && DisplayDragRectangle == false) {
             if (EventSystem.current.IsPointerOverGameObject() == false && ShortcutUI.Instance.IsDragging == false) {
                 float sqrdist = (Input.mousePosition - lastFrameGUIPosition).sqrMagnitude;
                 if (sqrdist > 5) {
                     dragStartPosition = currFramePosition;
-                    mouseState = MouseState.DragSelect;
-                    UpdateDragSelect(); // update the rect so no ghosts
+                    //SetMouseState(MouseState.DragSelect);
+                    DisplayDragRectangle = true;
                 }
             }
         }
+        if(DisplayDragRectangle)
+            UpdateDragSelect();
     }
 
     public void UpdateMouseStates() {
-        switch (mouseState) {
+        switch (MouseState) {
             case MouseState.Idle:
                 if (Input.GetMouseButtonUp(0)&&EditorController.IsEditor==false) {
                     //mouse press decide what it hit 
@@ -197,7 +236,7 @@ public class MouseController : MonoBehaviour {
                 break;
             case MouseState.Unit:
                 if (SelectedUnit == null) {
-                    mouseState = MouseState.Idle;
+                    SetMouseState(MouseState.Idle);
                     return;
                 }
                 UpdateUnit();
@@ -212,6 +251,12 @@ public class MouseController : MonoBehaviour {
                 UpdateUnitGroup();
                 break;
         }
+    }
+
+    internal void UnselectStuff() {
+        UnselectUnit();
+        UnselectUnitGroup();
+        UnselectStructure();
     }
 
     private void UpdateDestroy() {
@@ -255,12 +300,12 @@ public class MouseController : MonoBehaviour {
             return;
         }
         if (Input.GetMouseButtonDown(0)) {
-            switch (mouseUnitState) {
+            switch (MouseUnitState) {
                 case MouseUnitState.None:
                     Debug.LogWarning("MouseController is in the wrong state!");
                     break;
                 case MouseUnitState.Normal:
-                    ClearUnitGroup();
+                    UnselectUnitGroup();
                     break;
                 case MouseUnitState.Patrol:
                     selectedUnitGroup.ForEach(x=>x.AddPatrolCommand(MapClampedMousePosition.x, MapClampedMousePosition.y));
@@ -270,10 +315,11 @@ public class MouseController : MonoBehaviour {
                     break;
             }
         }
+        CheckUnitCursor();
         if (Input.GetMouseButtonDown(1)) {
             Transform hit = MouseRayCast();
             if (hit == null) {
-                switch (mouseUnitState) {
+                switch (MouseUnitState) {
                     case MouseUnitState.None:
                         Debug.LogWarning("MouseController is in the wrong state!");
                         break;
@@ -281,7 +327,7 @@ public class MouseController : MonoBehaviour {
                         selectedUnitGroup.ForEach(x => x.GiveMovementCommand(MapClampedMousePosition.x, MapClampedMousePosition.y, OverrideCurrentSetting));
                         break;
                     case MouseUnitState.Patrol:
-                        mouseUnitState = MouseUnitState.Normal;
+                        SetMouseUnitState(MouseUnitState.Normal);
                         break;
                 }
             }
@@ -313,6 +359,19 @@ public class MouseController : MonoBehaviour {
         }
     }
 
+    internal void ShowError(string Message, Vector3 Position) {
+        TextMeshPro text = SimplePool.Spawn(fadeOutTextPrefab, Position, Quaternion.identity).GetComponent<TextMeshPro>();
+        text.fontSize = Mathf.Max(8.333f * (CameraController.Instance.zoomLevel / CameraController.MaxZoomLevel),2);
+        text.text = Message;
+        text.transform.SetParent(transform);
+        StartCoroutine(DespawnFade(text));
+    }
+    private IEnumerator DespawnFade(TextMeshPro text) {
+        //while(text.color.a>0) {
+            yield return new WaitForSeconds(1f);
+        //}
+        SimplePool.Despawn(text.gameObject);
+    }
     private void UpdateDragSelect() {
         // End Drag
         if (Input.GetMouseButton(0)==false) {
@@ -343,11 +402,11 @@ public class MouseController : MonoBehaviour {
             else if (selectedUnitGroup.Count == 1)
                 SelectUnit(selectedUnitGroup[0]);
             else {
-                mouseState = MouseState.Idle; // nothing selected
-                UnselectUnit();
-                ClearUnitGroup();
+                SetMouseState(MouseState.Idle);// nothing selected
+                UnselectStuff();
             }
             draw_rect = Rect.zero;
+            DisplayDragRectangle = false;
         }
 
         // If we're over a UI element, then bail out from this.
@@ -383,9 +442,8 @@ public class MouseController : MonoBehaviour {
     }
 
     public void OnGUI() {
-        if(mouseState == MouseState.DragSelect) {
+        if(DisplayDragRectangle)
             Util.DrawScreenRectBorder(draw_rect, 2, new Color(0.9f, 0.9f, 0.9f,0.9f));
-        }
     }
     private void DecideWhatUIToShow(Transform hit) {
         if (EventSystem.current.IsPointerOverGameObject()) {
@@ -408,10 +466,8 @@ public class MouseController : MonoBehaviour {
         }
         else {
             UIDebug(GetTileUnderneathMouse());
-            if (mouseState != (MouseState.Unit | MouseState.UnitGroup) ) {
-                UIController.Instance.CloseInfoUI();
-                SelectedUnit = null;
-                SelectedStructure = null;
+            if (MouseState != (MouseState.Unit | MouseState.UnitGroup) ) {
+                UnselectStuff();
             }
         }
     }
@@ -419,28 +475,21 @@ public class MouseController : MonoBehaviour {
     private void SelectUnit(Unit unit) {
         if (SelectedUnit == unit)
             return;
-        mouseState = MouseState.Unit;
-        mouseUnitState = MouseUnitState.Normal;
+        SetMouseState(MouseState.Unit);
+        SetMouseUnitState(MouseUnitState.Normal);
         SelectedUnit = unit;
         SelectedUnit.RegisterOnDestroyCallback(OnUnitDestroy);
         UIController.Instance.OpenUnitUI(SelectedUnit);
         UIDebug(SelectedUnit);
-        HighlightUnits(unit);
     }
     private void SelectUnitGroup(List<Unit> units) {
-        HighlightUnits(units.ToArray());
-        mouseState = MouseState.UnitGroup;
-        mouseUnitState = MouseUnitState.Normal;
+        SetMouseState(MouseState.UnitGroup);
+        SetMouseUnitState(MouseUnitState.Normal);
         selectedUnitGroup = units;
         selectedUnitGroup.ForEach(x=>x.RegisterOnDestroyCallback(OnUnitDestroy));
         UIController.Instance.OpenUnitGroupUI(selectedUnitGroup.ToArray());
     }
-    private void HighlightUnits(params Unit[] units) {
-        UnitSpriteController.Instance.Highlight(units);
-    }
-    private void DehighlightUnits(params Unit[] units) {
-        UnitSpriteController.Instance.Highlight(units);
-    }
+    
     private void UpdateSingle() {
         // If we're over a UI element, then bail out from this.
         if (EventSystem.current.IsPointerOverGameObject()) {
@@ -587,7 +636,7 @@ public class MouseController : MonoBehaviour {
         Dictionary<Tile, bool> tileToCanBuild = ToBuildStructure.CheckForCorrectSpot(tiles);
         foreach (Tile tile in tiles) {
             bool specialTileCheck = true;
-            if (mouseUnitState == MouseUnitState.Build) {
+            if (MouseUnitState == MouseUnitState.Build) {
                 if (Vector2.Distance(tile.Vector2, SelectedUnit.PositionVector2) > SelectedUnit.BuildRange) {
                     specialTileCheck = false;
                 }
@@ -625,8 +674,6 @@ public class MouseController : MonoBehaviour {
         
         SpriteRenderer sr = previewGO.GetComponent<SpriteRenderer>();
         sr.sprite = StructureSpriteController.Instance.GetStructureSprite(ToBuildStructure);
-        if(EditorController.IsEditor==false)
-            TileSpriteController.Instance.AddDecider(TileCityDecider, true);
         AddRangeHighlight(previewGO);
         return previewGO;
     }
@@ -707,8 +754,9 @@ public class MouseController : MonoBehaviour {
                 ((Ship)SelectedUnit).ShotAtPosition(currFramePosition);
             }
         }
+        CheckUnitCursor();
         if (Input.GetMouseButtonUp(0)) {
-            switch (mouseUnitState) {
+            switch (MouseUnitState) {
                 case MouseUnitState.None:
                     Debug.LogWarning("MouseController is in the wrong state!");
                     break;
@@ -734,12 +782,12 @@ public class MouseController : MonoBehaviour {
         }
         if (Input.GetMouseButtonDown(1)) {
             if (SelectedUnit.playerNumber != PlayerController.currentPlayerNumber) {
-                mouseState = MouseState.Idle;
+                SetMouseState(MouseState.Idle);
                 return;
             }
             Transform hit = MouseRayCast();
             if (hit == null) {
-                switch (mouseUnitState) {
+                switch (MouseUnitState) {
                     case MouseUnitState.None:
                         Debug.LogWarning("MouseController is in the wrong state!");
                         break;
@@ -747,7 +795,7 @@ public class MouseController : MonoBehaviour {
                         SelectedUnit.GiveMovementCommand(MapClampedMousePosition.x, MapClampedMousePosition.y, OverrideCurrentSetting);
                         break;
                     case MouseUnitState.Patrol:
-                        mouseUnitState = MouseUnitState.Normal;
+                        SetMouseUnitState(MouseUnitState.Normal);
                         break;
                     case MouseUnitState.Build:
                         ResetBuild(null);
@@ -781,15 +829,40 @@ public class MouseController : MonoBehaviour {
         }
     }
 
-    private void UnselectUnit() {
-        if (SelectedUnit != null)
-            SelectedUnit.UnregisterOnDestroyCallback(OnUnitDestroy);
-        DehighlightUnits(SelectedUnit);
+    private void CheckUnitCursor() {
+        if (MouseUnitState == MouseUnitState.Normal) {
+            Transform hit = MouseRayCast();
+            bool attackAble = false;
+            if (hit) {
+                ITargetableHoldingScript iths = hit.GetComponent<ITargetableHoldingScript>();
+                if (iths != null) {
+                    attackAble = PlayerController.Instance.ArePlayersAtWar(PlayerController.currentPlayerNumber, iths.PlayerNumber);
+                    if (SelectedUnit != iths.Holding 
+                        && PlayerController.currentPlayerNumber == iths.PlayerNumber 
+                        && SelectedUnit.IsUnit == iths.IsUnit) {
+                        ChangeCursorType(CursorType.Escort);
+                    }
+                }
+            }
+            Structure str = GetTileUnderneathMouse()?.Structure;
+            if (str != null && str is TargetStructure) {
+                attackAble = PlayerController.Instance.ArePlayersAtWar(PlayerController.currentPlayerNumber, str.PlayerNumber);
+            }
+            if (attackAble)
+                ChangeCursorType(CursorType.Attack);
+        }
+    }
+
+    public void UnselectUnit(bool closeUI = true) {
+        if(SelectedUnit == null)
+            return;
+        SelectedUnit.UnregisterOnDestroyCallback(OnUnitDestroy);
         SelectedUnit = null;
-        SelectedStructure = null;
-        UIController.Instance.CloseInfoUI();
-        mouseState = MouseState.Idle;
-        mouseUnitState = MouseUnitState.None;
+        UnselectStructure();
+        if(closeUI)
+            UIController.Instance.CloseInfoUI();
+        SetMouseState(MouseState.Idle);
+        SetMouseUnitState(MouseUnitState.None);
     }
 
     private List<Tile> GetTilesStructures(int start_x, int end_x, int start_y, int end_y) {
@@ -846,7 +919,7 @@ public class MouseController : MonoBehaviour {
         if(EditorController.IsEditor) {
             EditorController.Instance.BuildOn(t, single);
         } else {
-            if (mouseUnitState == MouseUnitState.Build) {
+            if (MouseUnitState == MouseUnitState.Build) {
                 BuildController.Instance.CurrentPlayerBuildOnTile(t, single, PlayerController.currentPlayerNumber, false, SelectedUnit);
             }
             else {
@@ -861,11 +934,11 @@ public class MouseController : MonoBehaviour {
         }
     }
     public void BuildFromUnit() {
-        mouseUnitState = MouseUnitState.Build;
+        SetMouseUnitState(MouseUnitState.Build);
         BuildController.Instance.SettleFromUnit(SelectedUnit);
     }
     public void SetToPatrolMode() {
-        mouseUnitState = MouseUnitState.Patrol;
+        SetMouseUnitState(MouseUnitState.Patrol);
     }
     public void ResetBuild(Structure structure, bool loading = false) {
         if (loading) {
@@ -876,7 +949,7 @@ public class MouseController : MonoBehaviour {
         ResetStructurePreviews();
         destroyTiles.Clear();
         ToBuildStructure = null;
-        if(mouseUnitState == MouseUnitState.Build) {
+        if(MouseUnitState == MouseUnitState.Build) {
             UnselectUnit();
         }
     }
@@ -900,25 +973,23 @@ public class MouseController : MonoBehaviour {
             singleStructurePreview = null;
         }
     }
-    internal void ClearUnitGroup() {
+    internal void UnselectUnitGroup() {
         if (selectedUnitGroup == null)
             return;
-        DehighlightUnits(selectedUnitGroup.ToArray());
         selectedUnitGroup.ForEach(x => x.UnregisterOnDestroyCallback(OnUnitDestroy));
         selectedUnitGroup.Clear();
-        UIController.Instance.CloseInfoUI();
-        mouseState = MouseState.Idle;
-        mouseUnitState = MouseUnitState.None;
+        SetMouseState(MouseState.Idle);
+        SetMouseUnitState(MouseUnitState.None);
         selectedUnitGroup.Clear();
     }
     internal void RemoveUnitFromGroup(Unit unit) {
         selectedUnitGroup.Remove(unit);
         if (selectedUnitGroup.Count == 0) {
-            UIController.Instance.CloseUnitGroupUI();
-            MouseController.Instance.ClearUnitGroup();
+            UIController.Instance.CloseInfoUI();
+            UnselectUnitGroup();
         }
         if (selectedUnitGroup.Count == 1) {
-            UIController.Instance.CloseUnitGroupUI();
+            UIController.Instance.CloseInfoUI();
             UIController.Instance.OpenUnitUI(selectedUnitGroup[0]);
             SelectUnit(selectedUnitGroup[0]);
             selectedUnitGroup.Clear();
@@ -927,7 +998,7 @@ public class MouseController : MonoBehaviour {
     }
     private void OnUnitDestroy(Unit unit, IWarfare warfare) {
         if (SelectedUnit == unit) {
-            mouseState = MouseState.Idle;
+            SetMouseState(MouseState.Idle);
             _selectedUnit = null;
         }
         else {
@@ -935,6 +1006,7 @@ public class MouseController : MonoBehaviour {
                 selectedUnitGroup.Remove(unit);
         }
     }
+    
     internal void StopUnit() {
         //if null or not player unit return without doing anything
         if (SelectedUnit == null || SelectedUnit.IsPlayerUnit() == false) {
@@ -958,24 +1030,18 @@ public class MouseController : MonoBehaviour {
     /// </summary>
     public void Escape() {
         dragStartPosition = currFramePosition;
-        UnselectUnit();
-        ClearUnitGroup();
+        UnselectStuff();
         ResetBuild(null);
-        mouseState = MouseState.Idle;
-        mouseUnitState = MouseUnitState.None;
+        SetMouseState(MouseState.Idle);
+        SetMouseUnitState(MouseUnitState.None);
+        ChangeCursorType(CursorType.Pointer);
     }
 
-    TileMark TileCityDecider(Tile t) {
-        if (t == null) {
-            return TileMark.None;
-        }
-        else if (t.City != null && t.City.IsCurrPlayerCity()) {
-            return TileMark.None;
-        }
-        else {
-            return TileMark.Dark;
-        }
+    public void ChangeCursorType(CursorType type) {
+        Sprite s = UISpriteController.GetUISprite("Cursor_" + type.ToString());
+        Cursor.SetCursor(s.texture,s.pivot, CursorMode.Auto);
     }
+
     [Serializable]
     public struct ExtraStructureBuildUI {
         public ExtraBuildUI Type;
@@ -1006,4 +1072,5 @@ public class MouseController : MonoBehaviour {
             this.number = number;
         }
     }
+
 }

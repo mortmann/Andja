@@ -243,6 +243,8 @@ public class Unit : IGEventable, IWarfare, ITargetable {
     public int PopulationLevel => Data.PopulationLevel;
     public int PopulationCount => Data.PopulationCount;
 
+    public bool IsUnit => IsShip == false;
+
     public override string GetID() { return ID; } // only needs to get changed WHEN there is diffrent ids
 
     [JsonConstructor]

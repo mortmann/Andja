@@ -75,7 +75,14 @@ public class Fertility : IComparable<Fertility>, IEqualityComparer<Fertility> {
         return f.ID == ID;
     }
     public override int GetHashCode() {
-        return base.GetHashCode();
+        return ID.GetHashCode();
+    }
+
+    internal bool IsUnlocked(Player player) {
+        return player.MaxPopulationLevel > Data.UnlockLevel && player.MaxPopulationCount > Data.UnlockPopulationCount;
+    }
+    public override string ToString() {
+        return ID;
     }
 }
 

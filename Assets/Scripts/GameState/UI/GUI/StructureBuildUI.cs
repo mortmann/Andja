@@ -5,19 +5,18 @@ using UnityEngine.EventSystems;
 
 public class StructureBuildUI : MonoBehaviour {
     public static StructureBuildUI Instance { get; protected set; }
-    public GameObject mouseOverPrefab;
     public Structure structure;
     // Use this for initialization
     public void Show(Structure str, bool hoverOver = true) {
         this.structure = str;
-        if (IconSpriteController.HasIcon(str.ID) == false) {
+        if (UISpriteController.HasIcon(str.ID) == false) {
             GetComponentInChildren<Text>().text = str.SpriteName;
             if(GetComponentsInChildren<Image>().Length>1)
                 GetComponentsInChildren<Image>()[1].gameObject.SetActive(false);
         }
         else {
             GetComponentInChildren<Text>()?.gameObject.SetActive(false);
-            GetComponentsInChildren<Image>()[1].overrideSprite = IconSpriteController.GetIcon(str.ID);
+            GetComponentsInChildren<Image>()[1].overrideSprite = UISpriteController.GetIcon(str.ID);
         }
 
         EventTrigger trigger = GetComponent<EventTrigger>();
@@ -85,5 +84,4 @@ public class StructureBuildUI : MonoBehaviour {
     public void OnDragEnd() {
         UIController.Instance.StopDragAndDropBuild();
     }
-
 }

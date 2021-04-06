@@ -78,6 +78,6 @@ public class GS_SliderBase : MonoBehaviour {
         //else {
         //    displayValue.text = Value.ToString();
         //}
-        tls.ShowValue(Value);
+        //tls.ShowValue(Value);
     }
 }

@@ -457,7 +457,7 @@ public class SoundController : MonoBehaviour {
             //hopefully atleast 
             ((DownloadHandlerAudioClip)www.downloadHandler).streamAudio = true;
             yield return www.SendWebRequest();
-            if (www.isNetworkError) {
+            if (www.result == UnityWebRequest.Result.ConnectionError) {
                 Debug.Log(www.error);
             }
             else {

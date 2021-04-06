@@ -11,7 +11,7 @@ public class ITargetableHoldingScript : MonoBehaviour {
     public float x;
     public float y;
     public float rot;
-    public int playerNumber;
+    public int PlayerNumber => Holding.PlayerNumber;
     public bool Debug_Mode => false; //TODO make this somewhere GLOBAL
     public void Start() {
         line = gameObject.GetComponentInChildren<LineRenderer>();
@@ -33,7 +33,6 @@ public class ITargetableHoldingScript : MonoBehaviour {
         }
         x = Holding.CurrentPosition.x;
         y = Holding.CurrentPosition.y;
-        playerNumber = Holding.PlayerNumber;
         if (Holding is Unit == false)
             return;
         if (unit.pathfinding == null) {

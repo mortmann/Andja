@@ -1,8 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
-
+using UnityEngine.UI;
 public class KeyInputSettings : MonoBehaviour {
-
     public Transform contentTransform;
     public GameObject keyPrefab;
     Dictionary<InputName, KeyInputSingle> buttonNameToGO;
@@ -23,7 +22,6 @@ public class KeyInputSettings : MonoBehaviour {
             //key.transform.SetParent(contentTransform);
             buttonNameToGO.Add(name, key);
         }
-
     }
     public void OnClickButton(InputName name, bool primary) {
         hasSelected = true;
@@ -32,11 +30,9 @@ public class KeyInputSettings : MonoBehaviour {
         Cursor.visible = false;
     }
     public static void SetMouseSensitivity( float value ) {
+        InputHandler.SetSensitivity(value);
     }
-    // Update is called once per frame
-    void Update() {
 
-    }
     public void OnGUI() {
         if (Input.GetKeyDown(KeyCode.Escape)) {
             hasSelected = false;

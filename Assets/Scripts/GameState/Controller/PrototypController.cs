@@ -59,7 +59,7 @@ public class PrototypController : MonoBehaviour {
 
     // SHOULD BE READ ONLY -- cant be done because Unity Error for multiple implementations
     public static Item[] BuildItems => _buildItems;
-    public List<StartingLoadout> StartingLoadouts => _startingLoadouts;
+    public IReadOnlyList<StartingLoadout> StartingLoadouts => _startingLoadouts;
 
     Dictionary<string, Structure> structurePrototypes;
     Dictionary<string, Unit> unitPrototypes;
@@ -77,11 +77,12 @@ public class PrototypController : MonoBehaviour {
     Dictionary<string, NeedGroupPrototypData> needGroupDatas;
     Dictionary<string, NeedGroup> idToNeedGroup;
     Dictionary<string, Item> allItems;
-    private List<Item> buildItemsList;
+    List<Item> buildItemsList;
     Dictionary<int, List<NeedGroup>> populationLevelToNeedGroup;
     Dictionary<Climate, List<Fertility>> allFertilities;
     public Dictionary<Climate, List<FertilityPrototypeData>> AllFertilitiesDatasPerClimate;
     public Dictionary<string, IslandFeaturePrototypeData> islandFeaturePrototypeDatas;
+    List<StartingLoadout> _startingLoadouts;
 
     Dictionary<string, Fertility> idToFertilities;
     public Dictionary<Size, IslandSizeGenerationInfo> IslandSizeToGenerationInfo { get; private set; }
@@ -94,8 +95,6 @@ public class PrototypController : MonoBehaviour {
     /// "BuildItems in terms of when something requires it to be created."
     /// </summary>
     public Dictionary<string, int[]> recommandedBuildSupplyChains; 
-
-    List<StartingLoadout> _startingLoadouts;
 
     public List<Item> MineableItems;
     public static Item[] _buildItems;
@@ -113,8 +112,6 @@ public class PrototypController : MonoBehaviour {
     //TODO: need a way to get this to load in! probably with the rest
     //      of the data thats still needs to be read in like time for money ticks
     public ArmorType StructureArmor => armorTypeDatas["woodenwall"];
-
-    
 
     public Dictionary<string, Item> GetCopieOfAllItems() {
         Dictionary<string, Item> items = new Dictionary<string, Item>();
@@ -293,7 +290,6 @@ public class PrototypController : MonoBehaviour {
             ID="world",
             damageMultiplier = worldMultiplier,
         });
-
 
         unitPrototypes = new Dictionary<string, Unit>();
         unitPrototypeDatas = new Dictionary<string, UnitPrototypeData>();
@@ -511,7 +507,7 @@ public class PrototypController : MonoBehaviour {
         }
         orderUnlockFertilities = new List<Fertility>(idToFertilities.Values);
         orderUnlockFertilities.RemoveAll(x => x.Data.ItemsDependentOnThis.Count == 0);
-        orderUnlockFertilities.OrderBy(x => x.Data.UnlockLevel).ThenBy(x => x.Data.UnlockPopulationCount);
+        orderUnlockFertilities = orderUnlockFertilities.OrderBy(x => x.Data.UnlockLevel).ThenBy(x => x.Data.UnlockPopulationCount).ToList();
     }
     private void CalculateNeedStuff() {
         needsPerLevel = new List<NeedPrototypeData>[NumberOfPopulationLevels];
@@ -709,6 +705,8 @@ public class PrototypController : MonoBehaviour {
                 supplyChainsCosts += " TMC "+sc.cost.TotalMaintenance;
                 supplyChainsCosts += " PL " + sc.cost.PopulationLevel;
                 supplyChainsCosts += " I " + string.Join(", ", (object[])sc.cost.TotalItemCost);
+                if(sc.cost.requiredFertilites != null)
+                    supplyChainsCosts += " F " + string.Join(", ", (object[])sc.cost.requiredFertilites.ToArray());
                 supplyChainsCosts += "]";
             }
         }
@@ -921,6 +919,7 @@ public class PrototypController : MonoBehaviour {
                 SetData<NeedGroupPrototypData>(node, ref ngpd);
                 needGroupDatas[ID] = ngpd;
                 idToNeedGroup[ID] = new NeedGroup(ID);
+                
             }
         }
         Dictionary<int, List<Need>> levelToNeedList = new Dictionary<int, List<Need>>();
@@ -931,7 +930,6 @@ public class PrototypController : MonoBehaviour {
                 NeedPrototypeData npd = new NeedPrototypeData();
                 string ID = node.GetAttribute("ID");
                 SetData<NeedPrototypeData>(node, ref npd);
-
                 needPrototypeDatas[ID] = npd;
                 if (npd.item == null && npd.structures == null)
                     continue;
@@ -954,6 +952,7 @@ public class PrototypController : MonoBehaviour {
                 if (levelToNeedList.ContainsKey(npd.startLevel) == false) {
                     levelToNeedList[npd.startLevel] = new List<Need>();
                 }
+                
                 levelToNeedList[npd.startLevel].Add(n.Clone());
             }
         }

@@ -69,11 +69,15 @@ public class AIPlayer {
             if (structure is ProductionStructure) {
                 ProductionStructure ps = structure as ProductionStructure;
                 if (ps.InputTyp == InputTyp.OR) {
-                    Debug.LogWarning("AI CAN'T HANDLE OR INTAKE YET!");
-                    return;
+                    foreach (Item p in ps.Intake) {
+                        Item i = Array.Find(ps.ProductionData.intake, x => x.ID == p.ID);
+                        itemToProducePerMinuteChange[p.ID] -= i.count * (60f / ps.ProduceTime);
+                    }
                 }
-                foreach (Item p in ps.Intake) {
-                    itemToProducePerMinuteChange[p.ID] -= p.count* (60f / ps.ProduceTime);
+                else {
+                    foreach (Item p in ps.ProductionData.intake) {
+                        itemToProducePerMinuteChange[p.ID] -= p.count * (60f / ps.ProduceTime);
+                    }
                 }
             }
         }
@@ -205,12 +209,18 @@ public class AIPlayer {
             score.SizeScore = (float)island.Tiles.FindAll(x => x.CheckTile()).Count;
             score.SizeScore /= averageSize;
 
+            List<Fertility> ordered =  PrototypController.Instance.orderUnlockFertilities;
+            int indexLastUnlocked = ordered.FindLastIndex(x => x.IsUnlocked(player));
+            if (indexLastUnlocked < 0)
+                indexLastUnlocked = 0;
             //Calculate Fertility Score
             foreach (Fertility fertility in island.Fertilities) {
                 // add how rare it is in the world -- multiple this??
                 if (neededFertilities.Contains(fertility)) {
                     score.FertilityScore += fertilitytoExisting[fertility];
                 }
+                if(fertility.IsUnlocked(player) == false)
+                    score.FertilityScore += 1 - (ordered.IndexOf(fertility) - indexLastUnlocked) / ordered.Count;
                 // its always nice to have -- add how rare it is in the world
                 score.FertilityScore += fertilitytoExisting[fertility];
             }
@@ -224,10 +234,19 @@ public class AIPlayer {
                 distance /= Islands.Count;
                 score.DistanceScore = distance;
             } else {
-                score.DistanceScore = 1 / (Vector2.Distance(island.Center, World.Current.Center) / ((World.Current.Width + World.Current.Height)/2));
+                score.DistanceScore = (Vector2.Distance(island.Center, World.Current.Center) / World.Current.Center.magnitude);
             }
+            Dictionary<Tile,TileValue> values = AIController.IslandsTileToValue[island];
+            int averageTileScore = 0;
+            foreach(Tile t in values.Keys) {
+                if(t.CheckTile()) {
+                    averageTileScore += values[t].MinValue;
+                }
+            }
+            averageTileScore /= island.Tiles.Count;
+            score.ShapeScore = averageTileScore;
             //Competition Score is the percentage of unclaimed Tiles multiplied through how many diffrent players
-            if(island.Cities.Count>0) {
+            if (island.Cities.Count>0) {
                 float avaibleTiles = island.Tiles.Count;
                 foreach (City c in island.Cities) {
                     if (c.IsWilderness())
@@ -238,7 +257,7 @@ public class AIPlayer {
                 score.CompetitionScore *= island.Cities.Count;
             }
             islandScores.Add(score);
-            debugCalcValues += ("| " + score.Island.StartTile.Vector2+ " " + score.EndScore);
+            debugCalcValues += (score.Island.StartTile.Vector2+ " " + score.EndScore + "=" + score+ "\n");
         }
         Debug.Log(debugCalcValues);
     }

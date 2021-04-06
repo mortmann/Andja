@@ -97,11 +97,11 @@ public class MenuAudioManager : MonoBehaviour {
     public void ReadVolumes() {
         string filePath = System.IO.Path.Combine(Application.dataPath.Replace("/Assets", ""), fileName);
         if (File.Exists(filePath) == false) {
-            SetVolumeFor(VolumeType.Master,100);
-            SetVolumeFor(VolumeType.Music,50);
-            SetVolumeFor(VolumeType.Ambient,80);
-            SetVolumeFor(VolumeType.UI,50);
-            SetVolumeFor(VolumeType.SoundEffects, 70);
+            SetVolumeFor(VolumeType.Master,90);
+            SetVolumeFor(VolumeType.Music,35);
+            SetVolumeFor(VolumeType.Ambient,60);
+            SetVolumeFor(VolumeType.UI,40);
+            SetVolumeFor(VolumeType.SoundEffects, 60);
             return;
         }
         volumes = JsonConvert.DeserializeObject<Dictionary<VolumeType, int>>(File.ReadAllText(filePath));

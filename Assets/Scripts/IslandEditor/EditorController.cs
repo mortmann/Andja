@@ -235,12 +235,12 @@ public class EditorController : MonoBehaviour {
     public void SetDestroyMode() {
         DestroyStructure = true;
         EditorUIController.Instance.DestroyToggle(DestroyStructure);
-        MouseController.Instance.mouseState = MouseState.Destroy;
+        MouseController.Instance.SetMouseState(MouseState.Destroy);
     }
     public void SetBuildMode() {
         DestroyStructure = false;
         EditorUIController.Instance.DestroyToggle(DestroyStructure);
-        MouseController.Instance.mouseState = MouseState.Idle;
+        MouseController.Instance.SetMouseState(MouseState.Idle);
     }
     public void CreateStructure() {
         if (Input.GetMouseButtonDown(0)) {
@@ -342,7 +342,7 @@ public class EditorController : MonoBehaviour {
         structure = PrototypController.Instance.StructurePrototypes[id];
         BuildController.Instance.StartStructureBuild(id,null,structure);
         if(brushBuild) {
-            MouseController.Instance.mouseState = MouseState.Idle;
+            MouseController.Instance.SetMouseState(MouseState.Idle);
             MouseController.Instance.ToBuildStructure = null;
         }
     }

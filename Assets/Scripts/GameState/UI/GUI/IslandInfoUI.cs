@@ -14,17 +14,15 @@ public class IslandInfoUI : MonoBehaviour {
     public ImageText ImageWithText;
     public Image SimpleImage;
     Dictionary<string, Text> itemToText = new Dictionary<string, Text>();
-    public int maxItemsPerRow = 5;
-    // Use this for initialization
+    public int maxItemsPerRow = 5;    
+    Island currentIsland = null;
+
     void Start() {
         cc = CameraController.Instance;
         cg = GetComponent<CanvasGroup>();
         CreateCityInfo();
     }
 
-
-    Island currentIsland = null;
-    // Update is called once per frame
     void Update() {
         if (cc.nearestIsland == null) {
             cg.alpha = 0;
@@ -55,7 +53,7 @@ public class IslandInfoUI : MonoBehaviour {
                 continue;
             }
             ImageText imageText = Instantiate(ImageWithText);
-            imageText.Set(UIController.GetItemImageForID(items[i].ID), 0 + "t", items[i].Name);
+            imageText.Set(UISpriteController.GetItemImageForID(items[i].ID), items[i].Data, 0 + "t");
             imageText.transform.SetParent(CityBuildItems, false);
             imageText.text.enabled = true;
             itemToText.Add(items[i].ID, imageText.text);
@@ -71,15 +69,15 @@ public class IslandInfoUI : MonoBehaviour {
         foreach (Fertility item in cc.nearestIsland.Fertilities) {
             Image image = Instantiate(SimpleImage) as Image;
             image.name = item.ID;
-            image.sprite = IconSpriteController.GetIcon(item.ID);
+            image.sprite = UISpriteController.GetIcon(item.ID);
             image.preserveAspect = true;
-            image.GetComponent<ShowHoverOver>().Text = item.Name;
+            image.GetComponent<ShowHoverOver>().SetVariable(item.Data, true);
             image.transform.SetParent(Fertilites, false);
         }
         foreach (string item in cc.nearestIsland.Resources.Keys) {
             ImageText imageText = Instantiate(ImageWithText);
-            imageText.Set(IconSpriteController.GetIcon(item), cc.nearestIsland.Resources[item] + "",
-                PrototypController.Instance.GetItemPrototypDataForID(item).Name);
+            imageText.Set(UISpriteController.GetIcon(item), PrototypController.Instance.GetItemPrototypDataForID(item)
+                ,cc.nearestIsland.Resources[item] + "");
             imageText.transform.SetParent(Resources, false);
         }
     }

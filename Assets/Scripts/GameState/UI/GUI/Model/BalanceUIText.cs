@@ -3,7 +3,7 @@ using Andja.Model;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Andja.UI {
+namespace Andja.UI.Model {
 
     public class BalanceUIText : MonoBehaviour {
         public Player player => PlayerController.CurrentPlayer;

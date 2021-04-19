@@ -228,7 +228,6 @@ namespace Andja.Model {
             if (hs == null) {
                 return;
             }
-            float percentage = 0;
             int count = 0;
             foreach (Tile item in hs) {
                 if (item == null) {
@@ -242,7 +241,7 @@ namespace Andja.Model {
                     count++;
                 }
             }
-            percentage = Mathf.RoundToInt(((float)count / (float)hs.Count) * 100);
+            float percentage = percentage = Mathf.RoundToInt(((float)count / (float)hs.Count) * 100);
 
             if (Growable.Fertility != null) {
                 if (t.Island == null) {

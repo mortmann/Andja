@@ -787,3 +787,780 @@ Received Import Request.
   path: Assets/Scripts/GameState/UI/GUI/Misc/SliderHoverOver.cs
   artifactKey: Guid(eee6588e3115d7f47bd2c0e078606bd2) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
 Start importing Assets/Scripts/GameState/UI/GUI/Misc/SliderHoverOver.cs using Guid(eee6588e3115d7f47bd2c0e078606bd2) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '849f88d3fc4a839f47a67844a6533732') in 0.005496 seconds 
+========================================================================
+Received Import Request.
+  Time since last request: 19855.680922 seconds.
+  path: Assets/Scripts/GameState/UI/GUI/RightCanvas
+  artifactKey: Guid(a1f5588485d391e47accfd69f7c2ce44) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Scripts/GameState/UI/GUI/RightCanvas using Guid(a1f5588485d391e47accfd69f7c2ce44) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '64e9c5f4eb0d1e4f7f236df139138548') in 0.009588 seconds 
+========================================================================
+Received Import Request.
+  Time since last request: 1.092008 seconds.
+  path: Assets/Scripts/GameState/UI/GUI/Trade/TradeRouteShipElement.cs
+  artifactKey: Guid(6c40b9145ef585340bcc36bfb3b7f427) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Scripts/GameState/UI/GUI/Trade/TradeRouteShipElement.cs using Guid(6c40b9145ef585340bcc36bfb3b7f427) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '40ba210286e6eb248099e2219ededdf0') in 0.004626 seconds 
+========================================================================
+Received Import Request.
+  Time since last request: 2.157531 seconds.
+  path: Assets/Scripts/GameState/UI/GUI/Trade/TradeRouteElement.cs
+  artifactKey: Guid(f8616f417c483ca4eb41a23c69ee4f49) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Scripts/GameState/UI/GUI/Trade/TradeRouteElement.cs using Guid(f8616f417c483ca4eb41a23c69ee4f49) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '6ceb45f15e929e6ab8d794e9cf125bc4') in 0.003172 seconds 
+========================================================================
+Received Import Request.
+  Time since last request: 3.518288 seconds.
+  path: Assets/Scripts/GameState/UI/GUI/Trade/TradePanel.cs
+  artifactKey: Guid(305aa00123164cc41a6988d060e12334) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Scripts/GameState/UI/GUI/Trade/TradePanel.cs using Guid(305aa00123164cc41a6988d060e12334) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'd5c8b06695bfaaf9450608c7e5339dcc') in 0.003646 seconds 
+========================================================================
+Received Import Request.
+  Time since last request: 3.598506 seconds.
+  path: Assets/Scripts/GameState/UI/GUI/Trade/TradeRoutePanel.cs
+  artifactKey: Guid(2c5542e355fa7a6459e48c6f11dc04ef) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Scripts/GameState/UI/GUI/Trade/TradeRoutePanel.cs using Guid(2c5542e355fa7a6459e48c6f11dc04ef) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '3c496ed8a799ae9f88fca2d0a1438c14') in 0.003214 seconds 
+========================================================================
+Received Prepare
+Registering precompiled user dll's ...
+Registered in 0.004433 seconds.
+Begin MonoManager ReloadAssembly
+Symbol file LoadedFromMemory is not a mono symbol file
+Native extension for WindowsStandalone target not found
+Refreshing native plugins compatible for Editor in 0.29 ms, found 0 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Mono: successfully reloaded assembly
+- Completed reload, in  0.841 seconds
+Platform modules already initialized, skipping
+Refreshing native plugins compatible for Editor in 0.32 ms, found 0 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Unloading 1362 Unused Serialized files (Serialized files now loaded: 0)
+System memory in use before: 70.5 MB.
+System memory in use after: 70.7 MB.
+
+Unloading 15 unused Assets to reduce memory usage. Loaded Objects now: 1893.
+Total: 2.000800 ms (FindLiveObjects: 0.151100 ms CreateObjectMapping: 0.035400 ms MarkObjects: 1.794200 ms  DeleteObjects: 0.019000 ms)
+
+========================================================================
+Received Prepare
+Registering precompiled user dll's ...
+Registered in 0.005561 seconds.
+Begin MonoManager ReloadAssembly
+Symbol file LoadedFromMemory is not a mono symbol file
+Native extension for WindowsStandalone target not found
+Refreshing native plugins compatible for Editor in 0.33 ms, found 0 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Mono: successfully reloaded assembly
+- Completed reload, in  1.009 seconds
+Platform modules already initialized, skipping
+Refreshing native plugins compatible for Editor in 0.44 ms, found 0 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Unloading 1361 Unused Serialized files (Serialized files now loaded: 0)
+System memory in use before: 70.5 MB.
+System memory in use after: 70.6 MB.
+
+Unloading 16 unused Assets to reduce memory usage. Loaded Objects now: 1895.
+Total: 2.156700 ms (FindLiveObjects: 0.189100 ms CreateObjectMapping: 0.044000 ms MarkObjects: 1.906200 ms  DeleteObjects: 0.016400 ms)
+
+========================================================================
+Received Import Request.
+  Time since last request: 1694.234346 seconds.
+  path: Assets/Scripts/GameState/UI/GUI/ShortcutUI.cs
+  artifactKey: Guid(7728d87a4b3336b429536be436b98510) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Scripts/GameState/UI/GUI/ShortcutUI.cs using Guid(7728d87a4b3336b429536be436b98510) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '7c16df418eb48f6ee026743c795e9cbb') in 0.005935 seconds 
+========================================================================
+Received Import Request.
+  Time since last request: 6.564039 seconds.
+  path: Assets/Scripts/GameState/Utilities/WeightedRandomList.cs
+  artifactKey: Guid(6e0dba35782f49c4f8fe8f26c825064f) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Scripts/GameState/Utilities/WeightedRandomList.cs using Guid(6e0dba35782f49c4f8fe8f26c825064f) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'd56cc8109a0bee3c7c746e7a32a8fcb5') in 0.002470 seconds 
+========================================================================
+Received Import Request.
+  Time since last request: 69.753870 seconds.
+  path: Assets/Scripts/GameState/Utilities/RotatingList.cs
+  artifactKey: Guid(bc6eea000d5005a4eb17621cab9572cc) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Scripts/GameState/Utilities/RotatingList.cs using Guid(bc6eea000d5005a4eb17621cab9572cc) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'f7049e01f741febeaad96ef9c18e3e95') in 0.003014 seconds 
+========================================================================
+Received Import Request.
+  Time since last request: 0.276963 seconds.
+  path: Assets/Scripts/GameState/Utilities/SeriaziableVector3.cs
+  artifactKey: Guid(494e3ce4d79b9ea409c3a2287ccc2ff9) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Scripts/GameState/Utilities/SeriaziableVector3.cs using Guid(494e3ce4d79b9ea409c3a2287ccc2ff9) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '76ace689942da895aa1d920a03f8373f') in 0.002456 seconds 
+========================================================================
+Received Import Request.
+  Time since last request: 0.316937 seconds.
+  path: Assets/Scripts/GameState/Utilities/SetSortingLayer.cs
+  artifactKey: Guid(d24d77bb02e26e54fb10b45176044d27) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Scripts/GameState/Utilities/SetSortingLayer.cs using Guid(d24d77bb02e26e54fb10b45176044d27) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '05e2e7bccafcbd441603df7b40115ac2') in 0.002281 seconds 
+========================================================================
+Received Import Request.
+  Time since last request: 0.459367 seconds.
+  path: Assets/Scripts/GameState/Utilities/TextReplace.cs
+  artifactKey: Guid(3f6837d086e42db4bb593b8d45d8dfc9) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Scripts/GameState/Utilities/TextReplace.cs using Guid(3f6837d086e42db4bb593b8d45d8dfc9) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '6e2829639485e60cb7d0d11cafe87013') in 0.002628 seconds 
+========================================================================
+Received Import Request.
+  Time since last request: 0.729997 seconds.
+  path: Assets/Scripts/GameState/Utilities/ThreadRandom.cs
+  artifactKey: Guid(c9240c0dea85b034088a25a1e9445e61) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Scripts/GameState/Utilities/ThreadRandom.cs using Guid(c9240c0dea85b034088a25a1e9445e61) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'a5eede2306127877d39571cd65f4f645') in 0.002999 seconds 
+========================================================================
+Received Import Request.
+  Time since last request: 0.433734 seconds.
+  path: Assets/Scripts/GameState/Utilities/ToLoadingChanger.cs
+  artifactKey: Guid(5f9b96e2df881d54fad69ebad75ecf2a) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Scripts/GameState/Utilities/ToLoadingChanger.cs using Guid(5f9b96e2df881d54fad69ebad75ecf2a) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'e015252d31797099371e2e9c2ee8a977') in 0.002334 seconds 
+========================================================================
+Received Import Request.
+  Time since last request: 57.427457 seconds.
+  path: Assets/Scripts/Other/Test.cs
+  artifactKey: Guid(bfe018fb6f88ab84ba81251e6d7134b3) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Scripts/Other/Test.cs using Guid(bfe018fb6f88ab84ba81251e6d7134b3) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '68ec99d29cd5c260fba283ddfd3bd3d1') in 0.002887 seconds 
+========================================================================
+Received Import Request.
+  Time since last request: 40.873063 seconds.
+  path: Assets/Scripts/GameState/UI/GUI/Misc/ChildBooleanSorter.cs
+  artifactKey: Guid(33b4e16afa8cafd48a85c3e4d2d84677) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Scripts/GameState/UI/GUI/Misc/ChildBooleanSorter.cs using Guid(33b4e16afa8cafd48a85c3e4d2d84677) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '3fb18b97a65ada1603959c72f240939a') in 0.002690 seconds 
+========================================================================
+Received Prepare
+Registering precompiled user dll's ...
+Registered in 0.003671 seconds.
+Begin MonoManager ReloadAssembly
+Symbol file LoadedFromMemory is not a mono symbol file
+Native extension for WindowsStandalone target not found
+Refreshing native plugins compatible for Editor in 0.30 ms, found 0 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Mono: successfully reloaded assembly
+- Completed reload, in  0.835 seconds
+Platform modules already initialized, skipping
+Refreshing native plugins compatible for Editor in 0.29 ms, found 0 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Unloading 1360 Unused Serialized files (Serialized files now loaded: 0)
+System memory in use before: 70.5 MB.
+System memory in use after: 70.6 MB.
+
+Unloading 16 unused Assets to reduce memory usage. Loaded Objects now: 1897.
+Total: 1.597400 ms (FindLiveObjects: 0.135000 ms CreateObjectMapping: 0.029900 ms MarkObjects: 1.418300 ms  DeleteObjects: 0.013500 ms)
+
+========================================================================
+Received Import Request.
+  Time since last request: 56.152685 seconds.
+  path: Assets/Scripts/GameState/UI/GUI/BuildMenuUIController.cs
+  artifactKey: Guid(9212a8008c333ce4eb05c74a5bb9b2d0) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Scripts/GameState/UI/GUI/BuildMenuUIController.cs using Guid(9212a8008c333ce4eb05c74a5bb9b2d0) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'e43475044bedc7dee00714be10667f0c') in 0.004854 seconds 
+========================================================================
+Received Import Request.
+  Time since last request: 0.306027 seconds.
+  path: Assets/Scripts/GameState/UI/GUI/BalanceUIText.cs
+  artifactKey: Guid(0b9f9d4c9e1436a4681c6df01d343356) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Scripts/GameState/UI/GUI/BalanceUIText.cs using Guid(0b9f9d4c9e1436a4681c6df01d343356) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '9fb9de4d02f08efee3938091666c037d') in 0.002282 seconds 
+========================================================================
+Received Import Request.
+  Time since last request: 1.017480 seconds.
+  path: Assets/Scripts/GameState/UI/GUI/Info
+  artifactKey: Guid(2a7cdeaeb0d061141a9d0a464779a922) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Scripts/GameState/UI/GUI/Info using Guid(2a7cdeaeb0d061141a9d0a464779a922) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '1a1956de3b3f7d1ff783263b3ace12db') in 0.002743 seconds 
+========================================================================
+Received Import Request.
+  Time since last request: 0.336326 seconds.
+  path: Assets/Scripts/GameState/UI/GUI/Debug
+  artifactKey: Guid(8ae2f2ef9c386a04f928bba1fa79b896) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Scripts/GameState/UI/GUI/Debug using Guid(8ae2f2ef9c386a04f928bba1fa79b896) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'ba8ad05de46702cd2cf8bdc28e11ce49') in 0.003159 seconds 
+========================================================================
+Received Import Request.
+  Time since last request: 21.802531 seconds.
+  path: Assets/Scripts/GameState/UI/GUI/mODEL
+  artifactKey: Guid(513c493c213c565449a6a61dec89d995) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Scripts/GameState/UI/GUI/mODEL using Guid(513c493c213c565449a6a61dec89d995) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '4de619478dcac536b59a82f4d2158d3f') in 0.003125 seconds 
+========================================================================
+Received Import Request.
+  Time since last request: 4.707364 seconds.
+  path: Assets/Scripts/GameState/UI/GUI/Model
+  artifactKey: Guid(513c493c213c565449a6a61dec89d995) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Scripts/GameState/UI/GUI/Model using Guid(513c493c213c565449a6a61dec89d995) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '7831dd17327668188ad0bb708a23b788') in 0.002934 seconds 
+========================================================================
+Received Import Request.
+  Time since last request: 12.902696 seconds.
+  path: Assets/Scripts/GameState/UI/GUI/CanvasScale.cs
+  artifactKey: Guid(3e169dbd903ced244bfb9c47bba3b33d) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Scripts/GameState/UI/GUI/CanvasScale.cs using Guid(3e169dbd903ced244bfb9c47bba3b33d) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '903776f1b20b20af2cb3038b94d7235f') in 0.002511 seconds 
+========================================================================
+Received Prepare
+Registering precompiled user dll's ...
+Registered in 0.003837 seconds.
+Begin MonoManager ReloadAssembly
+Symbol file LoadedFromMemory is not a mono symbol file
+Native extension for WindowsStandalone target not found
+Refreshing native plugins compatible for Editor in 0.31 ms, found 0 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Mono: successfully reloaded assembly
+- Completed reload, in  0.745 seconds
+Platform modules already initialized, skipping
+Refreshing native plugins compatible for Editor in 0.34 ms, found 0 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Unloading 1360 Unused Serialized files (Serialized files now loaded: 0)
+System memory in use before: 70.5 MB.
+System memory in use after: 70.6 MB.
+
+Unloading 15 unused Assets to reduce memory usage. Loaded Objects now: 1900.
+Total: 1.594700 ms (FindLiveObjects: 0.140500 ms CreateObjectMapping: 0.030000 ms MarkObjects: 1.411900 ms  DeleteObjects: 0.011600 ms)
+
+========================================================================
+Received Import Request.
+  Time since last request: 18.515346 seconds.
+  path: Assets/Scripts/GameState/UI/GUI/ConsoleUI.cs
+  artifactKey: Guid(0c1c1523b6dbb6f4c89fc3928ae3b599) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Scripts/GameState/UI/GUI/ConsoleUI.cs using Guid(0c1c1523b6dbb6f4c89fc3928ae3b599) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '57639121cef9206d34f16847f6c0d6b4') in 0.005424 seconds 
+========================================================================
+Received Prepare
+Registering precompiled user dll's ...
+Registered in 0.004297 seconds.
+Begin MonoManager ReloadAssembly
+Symbol file LoadedFromMemory is not a mono symbol file
+Native extension for WindowsStandalone target not found
+Refreshing native plugins compatible for Editor in 0.31 ms, found 0 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Mono: successfully reloaded assembly
+- Completed reload, in  0.800 seconds
+Platform modules already initialized, skipping
+Refreshing native plugins compatible for Editor in 0.32 ms, found 0 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Unloading 1360 Unused Serialized files (Serialized files now loaded: 0)
+System memory in use before: 70.5 MB.
+System memory in use after: 70.6 MB.
+
+Unloading 15 unused Assets to reduce memory usage. Loaded Objects now: 1903.
+Total: 1.669200 ms (FindLiveObjects: 0.131200 ms CreateObjectMapping: 0.030500 ms MarkObjects: 1.492100 ms  DeleteObjects: 0.014600 ms)
+
+========================================================================
+Received Import Request.
+  Time since last request: 3.527008 seconds.
+  path: Assets/Scripts/GameState/UI/GUI/Misc/CircleProgressBar.cs
+  artifactKey: Guid(6d283b1f3b05243499bbeefccfe3545f) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Scripts/GameState/UI/GUI/Misc/CircleProgressBar.cs using Guid(6d283b1f3b05243499bbeefccfe3545f) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '996e4d66a7c7e181acb713811d6bf9d8') in 0.004557 seconds 
+========================================================================
+Received Import Request.
+  Time since last request: 5.538809 seconds.
+  path: Assets/Scripts/GameState/UI/GUI/CornerButtonHandler.cs
+  artifactKey: Guid(3a4e41493cfd95e44bab60a27d8ce652) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Scripts/GameState/UI/GUI/CornerButtonHandler.cs using Guid(3a4e41493cfd95e44bab60a27d8ce652) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '958ab282838f602663093e4fea963d6f') in 0.002393 seconds 
+========================================================================
+Received Import Request.
+  Time since last request: 1.916975 seconds.
+  path: Assets/Scripts/GameState/UI/GUI/DiplomacyUI.cs
+  artifactKey: Guid(58052da11d6675c458ea517da769b4b6) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Scripts/GameState/UI/GUI/DiplomacyUI.cs using Guid(58052da11d6675c458ea517da769b4b6) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '73cd3441db3edd20dbdf0e28a864908e') in 0.004176 seconds 
+========================================================================
+Received Import Request.
+  Time since last request: 4.977805 seconds.
+  path: Assets/Scripts/GameState/UI/GUI/EventMessage.cs
+  artifactKey: Guid(187c5df9143249d4eb5d08b2f3b3a81d) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Scripts/GameState/UI/GUI/EventMessage.cs using Guid(187c5df9143249d4eb5d08b2f3b3a81d) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '436e8087cbfd02331d4563aff9a40f04') in 0.003917 seconds 
+========================================================================
+Received Import Request.
+  Time since last request: 0.346952 seconds.
+  path: Assets/Scripts/GameState/UI/GUI/EventUIManager.cs
+  artifactKey: Guid(53d4c4fb358afce4da70fd44e96aafa6) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Scripts/GameState/UI/GUI/EventUIManager.cs using Guid(53d4c4fb358afce4da70fd44e96aafa6) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'aa52a53b1e96a1dd026cb01cf0b5d7f0') in 0.003005 seconds 
+========================================================================
+Received Prepare
+Registering precompiled user dll's ...
+Registered in 0.005636 seconds.
+Begin MonoManager ReloadAssembly
+Symbol file LoadedFromMemory is not a mono symbol file
+Native extension for WindowsStandalone target not found
+Refreshing native plugins compatible for Editor in 0.39 ms, found 0 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Mono: successfully reloaded assembly
+- Completed reload, in  0.751 seconds
+Platform modules already initialized, skipping
+Refreshing native plugins compatible for Editor in 0.37 ms, found 0 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Unloading 1360 Unused Serialized files (Serialized files now loaded: 0)
+System memory in use before: 70.5 MB.
+System memory in use after: 70.7 MB.
+
+Unloading 15 unused Assets to reduce memory usage. Loaded Objects now: 1906.
+Total: 1.732900 ms (FindLiveObjects: 0.183600 ms CreateObjectMapping: 0.030700 ms MarkObjects: 1.503100 ms  DeleteObjects: 0.014600 ms)
+
+========================================================================
+Received Import Request.
+  Time since last request: 6.896337 seconds.
+  path: Assets/Scripts/GameState/UI/GUI/IslandInfoUI.cs
+  artifactKey: Guid(fd6f3eff490dd264ba209ebd737d2e29) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Scripts/GameState/UI/GUI/IslandInfoUI.cs using Guid(fd6f3eff490dd264ba209ebd737d2e29) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '210f6b86a7c1a91b4fd260b381774d48') in 0.004592 seconds 
+========================================================================
+Received Import Request.
+  Time since last request: 0.826288 seconds.
+  path: Assets/Scripts/GameState/UI/GUI/MiniMapUI.cs
+  artifactKey: Guid(bc1c6aa7ee7a830458f691011aff6488) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Scripts/GameState/UI/GUI/MiniMapUI.cs using Guid(bc1c6aa7ee7a830458f691011aff6488) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '8ee1b339684cdeb7b64b4b865befec76') in 0.002674 seconds 
+========================================================================
+Received Prepare
+Registering precompiled user dll's ...
+Registered in 0.005563 seconds.
+Begin MonoManager ReloadAssembly
+Symbol file LoadedFromMemory is not a mono symbol file
+Native extension for WindowsStandalone target not found
+Refreshing native plugins compatible for Editor in 0.37 ms, found 0 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Mono: successfully reloaded assembly
+- Completed reload, in  0.840 seconds
+Platform modules already initialized, skipping
+Refreshing native plugins compatible for Editor in 0.55 ms, found 0 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Unloading 1360 Unused Serialized files (Serialized files now loaded: 0)
+System memory in use before: 70.6 MB.
+System memory in use after: 70.7 MB.
+
+Unloading 15 unused Assets to reduce memory usage. Loaded Objects now: 1909.
+Total: 1.774500 ms (FindLiveObjects: 0.211700 ms CreateObjectMapping: 0.042300 ms MarkObjects: 1.505000 ms  DeleteObjects: 0.013800 ms)
+
+========================================================================
+Received Import Request.
+  Time since last request: 9.979600 seconds.
+  path: Assets/Scripts/GameState/UI/GUI/StructureBuildUI.cs
+  artifactKey: Guid(d16ea29b392a2c8479faf46045c58881) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Scripts/GameState/UI/GUI/StructureBuildUI.cs using Guid(d16ea29b392a2c8479faf46045c58881) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '492d2cbaab53d20b83eba54c6685c0af') in 0.005644 seconds 
+========================================================================
+Received Import Request.
+  Time since last request: 5.510523 seconds.
+  path: Assets/Scripts/GameState/UI/GUI/Model/PriceTagUI.cs
+  artifactKey: Guid(26df4a22df3768547b494c90144e33e7) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Scripts/GameState/UI/GUI/Model/PriceTagUI.cs using Guid(26df4a22df3768547b494c90144e33e7) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '458b8059fa2a8bc6cae481bb6c483bfe') in 0.002549 seconds 
+========================================================================
+Received Prepare
+Registering precompiled user dll's ...
+Registered in 0.005512 seconds.
+Begin MonoManager ReloadAssembly
+Symbol file LoadedFromMemory is not a mono symbol file
+Native extension for WindowsStandalone target not found
+Refreshing native plugins compatible for Editor in 0.29 ms, found 0 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Mono: successfully reloaded assembly
+- Completed reload, in  0.832 seconds
+Platform modules already initialized, skipping
+Refreshing native plugins compatible for Editor in 0.37 ms, found 0 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Unloading 1360 Unused Serialized files (Serialized files now loaded: 0)
+System memory in use before: 70.6 MB.
+System memory in use after: 70.7 MB.
+
+Unloading 15 unused Assets to reduce memory usage. Loaded Objects now: 1912.
+Total: 2.488100 ms (FindLiveObjects: 0.212200 ms CreateObjectMapping: 0.046500 ms MarkObjects: 2.210900 ms  DeleteObjects: 0.017400 ms)
+
+========================================================================
+Received Import Request.
+  Time since last request: 5.037932 seconds.
+  path: Assets/Scripts/GameState/UI/GUI/NameInputField.cs
+  artifactKey: Guid(303687e4117024341a8dbfd755769049) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Scripts/GameState/UI/GUI/NameInputField.cs using Guid(303687e4117024341a8dbfd755769049) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '7983a078c33a0ed2dbf7358518fd393b') in 0.005890 seconds 
+========================================================================
+Received Import Request.
+  Time since last request: 0.303856 seconds.
+  path: Assets/Scripts/GameState/UI/GUI/Foldable.cs
+  artifactKey: Guid(896a22ff04cacad4fb8e21f1e0c451d8) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Scripts/GameState/UI/GUI/Foldable.cs using Guid(896a22ff04cacad4fb8e21f1e0c451d8) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '4bf6ecf9f70b614de78d01da92cef9c4') in 0.002794 seconds 
+========================================================================
+Received Import Request.
+  Time since last request: 0.886131 seconds.
+  path: Assets/Scripts/GameState/UI/GUI/EndScoreScreen.cs
+  artifactKey: Guid(f211f96edeaba2b44a9a2870f949c0a3) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Scripts/GameState/UI/GUI/EndScoreScreen.cs using Guid(f211f96edeaba2b44a9a2870f949c0a3) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '2fcd4e077340f73197326409ffab090d') in 0.003453 seconds 
+========================================================================
+Received Prepare
+Registering precompiled user dll's ...
+Registered in 0.003816 seconds.
+Begin MonoManager ReloadAssembly
+Symbol file LoadedFromMemory is not a mono symbol file
+Native extension for WindowsStandalone target not found
+Refreshing native plugins compatible for Editor in 0.31 ms, found 0 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Mono: successfully reloaded assembly
+- Completed reload, in  0.899 seconds
+Platform modules already initialized, skipping
+Refreshing native plugins compatible for Editor in 0.36 ms, found 0 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Unloading 1360 Unused Serialized files (Serialized files now loaded: 0)
+System memory in use before: 70.6 MB.
+System memory in use after: 70.7 MB.
+
+Unloading 15 unused Assets to reduce memory usage. Loaded Objects now: 1915.
+Total: 1.737400 ms (FindLiveObjects: 0.175300 ms CreateObjectMapping: 0.031800 ms MarkObjects: 1.515400 ms  DeleteObjects: 0.013800 ms)
+
+========================================================================
+Received Import Request.
+  Time since last request: 17.679168 seconds.
+  path: Assets/Scripts/GameState/UI/GUI/BalanceUIText.cs
+  artifactKey: Guid(0b9f9d4c9e1436a4681c6df01d343356) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Scripts/GameState/UI/GUI/BalanceUIText.cs using Guid(0b9f9d4c9e1436a4681c6df01d343356) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '04af538bd9663e9cb0f96716d1c98906') in 0.004705 seconds 
+========================================================================
+Received Prepare
+Registering precompiled user dll's ...
+Registered in 0.005609 seconds.
+Begin MonoManager ReloadAssembly
+Symbol file LoadedFromMemory is not a mono symbol file
+Native extension for WindowsStandalone target not found
+Refreshing native plugins compatible for Editor in 0.29 ms, found 0 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Mono: successfully reloaded assembly
+- Completed reload, in  0.809 seconds
+Platform modules already initialized, skipping
+Refreshing native plugins compatible for Editor in 0.31 ms, found 0 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Unloading 1360 Unused Serialized files (Serialized files now loaded: 0)
+System memory in use before: 70.6 MB.
+System memory in use after: 70.7 MB.
+
+Unloading 15 unused Assets to reduce memory usage. Loaded Objects now: 1918.
+Total: 2.104400 ms (FindLiveObjects: 0.229300 ms CreateObjectMapping: 0.038900 ms MarkObjects: 1.819000 ms  DeleteObjects: 0.015700 ms)
+
+========================================================================
+Received Import Request.
+  Time since last request: 344.148727 seconds.
+  path: Assets/Resources/Audio/Menu/Slider.wav
+  artifactKey: Guid(2ad6b870796a8294b8762a0a70f52f95) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Resources/Audio/Menu/Slider.wav using Guid(2ad6b870796a8294b8762a0a70f52f95) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '9c85008aa0083d41ebc224c36081e5fe') in 0.086986 seconds 
+========================================================================
+Received Prepare
+Registering precompiled user dll's ...
+Registered in 0.004486 seconds.
+Begin MonoManager ReloadAssembly
+Symbol file LoadedFromMemory is not a mono symbol file
+Native extension for WindowsStandalone target not found
+Refreshing native plugins compatible for Editor in 0.31 ms, found 0 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Mono: successfully reloaded assembly
+- Completed reload, in  0.787 seconds
+Platform modules already initialized, skipping
+Refreshing native plugins compatible for Editor in 0.34 ms, found 0 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Unloading 1360 Unused Serialized files (Serialized files now loaded: 0)
+System memory in use before: 74.4 MB.
+System memory in use after: 74.5 MB.
+
+Unloading 15 unused Assets to reduce memory usage. Loaded Objects now: 1930.
+Total: 1.593200 ms (FindLiveObjects: 0.142400 ms CreateObjectMapping: 0.029900 ms MarkObjects: 1.409000 ms  DeleteObjects: 0.011100 ms)
+
+========================================================================
+Received Import Request.
+  Time since last request: 119.334299 seconds.
+  path: Assets/Scripts/GameState/UI/GUI/Misc/SliderHoverOver.cs
+  artifactKey: Guid(eee6588e3115d7f47bd2c0e078606bd2) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Scripts/GameState/UI/GUI/Misc/SliderHoverOver.cs using Guid(eee6588e3115d7f47bd2c0e078606bd2) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '5a17cb80cf930a659ca9495850ef7fa0') in 0.003889 seconds 
+========================================================================
+Received Import Request.
+  Time since last request: 37.580421 seconds.
+  path: Assets/Scripts/GameState/UI/GUI/Misc/SpriteOutline.cs
+  artifactKey: Guid(705903141fdcb8046b1c5d0265b76c60) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Scripts/GameState/UI/GUI/Misc/SpriteOutline.cs using Guid(705903141fdcb8046b1c5d0265b76c60) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'c1277451e0f617d3274fdbfe0c73462b') in 0.002435 seconds 
+========================================================================
+Received Import Request.
+  Time since last request: 72.185532 seconds.
+  path: Assets/Scripts/GameState/UI/GUI/Misc/TileDeciderFuncs.cs
+  artifactKey: Guid(24a3ce1fe6f196f4798c8dd9d5fccdca) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Scripts/GameState/UI/GUI/Misc/TileDeciderFuncs.cs using Guid(24a3ce1fe6f196f4798c8dd9d5fccdca) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '92a8d034113aa20707c1ad9c8163a282') in 0.003062 seconds 
+========================================================================
+Received Import Request.
+  Time since last request: 3.075920 seconds.
+  path: Assets/Scripts/GameState/UI/GUI/Misc/TextLanguageSetter.cs
+  artifactKey: Guid(1b5e01526a8f99145b7b92b7d43dbe24) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Scripts/GameState/UI/GUI/Misc/TextLanguageSetter.cs using Guid(1b5e01526a8f99145b7b92b7d43dbe24) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '94147b91d3bf25d5b7515d168b9ac565') in 0.003334 seconds 
+========================================================================
+Received Import Request.
+  Time since last request: 2.049271 seconds.
+  path: Assets/Scripts/GameState/UI/GUI/Misc/ShowHoverOver.cs
+  artifactKey: Guid(46d3d6dc177844142b4d398d74521665) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Scripts/GameState/UI/GUI/Misc/ShowHoverOver.cs using Guid(46d3d6dc177844142b4d398d74521665) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '37b132ab3fa6607af635ce2a76180959') in 0.002527 seconds 
+========================================================================
+Received Import Request.
+  Time since last request: 0.275502 seconds.
+  path: Assets/Scripts/GameState/UI/GUI/Misc/HoverOverScript.cs
+  artifactKey: Guid(9746cb08076518a44b34a5f3fd17e4d8) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Scripts/GameState/UI/GUI/Misc/HoverOverScript.cs using Guid(9746cb08076518a44b34a5f3fd17e4d8) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '5aa32a1143af0d26045fa44f8847bb48') in 0.002256 seconds 
+========================================================================
+Received Import Request.
+  Time since last request: 93.727906 seconds.
+  path: Assets/Scripts/GameState/UI/GUI/OnMap
+  artifactKey: Guid(7c98ae8c0e9c4ae41ba6732e2bb81838) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Scripts/GameState/UI/GUI/OnMap using Guid(7c98ae8c0e9c4ae41ba6732e2bb81838) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'd3bcc5f68e0f277b0f3c5ae9a31492e6') in 0.002804 seconds 
+========================================================================
+Received Prepare
+Registering precompiled user dll's ...
+Registered in 0.004525 seconds.
+Begin MonoManager ReloadAssembly
+Symbol file LoadedFromMemory is not a mono symbol file
+Native extension for WindowsStandalone target not found
+Refreshing native plugins compatible for Editor in 0.29 ms, found 0 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Mono: successfully reloaded assembly
+- Completed reload, in  0.764 seconds
+Platform modules already initialized, skipping
+Refreshing native plugins compatible for Editor in 0.30 ms, found 0 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Unloading 1360 Unused Serialized files (Serialized files now loaded: 0)
+System memory in use before: 74.4 MB.
+System memory in use after: 74.5 MB.
+
+Unloading 15 unused Assets to reduce memory usage. Loaded Objects now: 1933.
+Total: 1.800800 ms (FindLiveObjects: 0.144600 ms CreateObjectMapping: 0.031200 ms MarkObjects: 1.609500 ms  DeleteObjects: 0.014800 ms)
+
+========================================================================
+Received Import Request.
+  Time since last request: 26.980601 seconds.
+  path: Assets/Scripts/GameState/UI/GUI/Model/Map/MapCitySelect.cs
+  artifactKey: Guid(83034bc1e2425904188990594e1cb969) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Scripts/GameState/UI/GUI/Model/Map/MapCitySelect.cs using Guid(83034bc1e2425904188990594e1cb969) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'ffa6d87b29223df6977e54f620ea67ae') in 0.005195 seconds 
+========================================================================
+Received Import Request.
+  Time since last request: 0.267774 seconds.
+  path: Assets/Scripts/GameState/UI/GUI/Model/Map/MapImage.cs
+  artifactKey: Guid(9a321c61094a3f34d88ad8eb6bf71517) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Scripts/GameState/UI/GUI/Model/Map/MapImage.cs using Guid(9a321c61094a3f34d88ad8eb6bf71517) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'f5992dd4e2c5ae4f61a01aeb70cdaf48') in 0.002497 seconds 
+========================================================================
+Received Import Request.
+  Time since last request: 3.328417 seconds.
+  path: Assets/Scripts/GameState/UI/GUI/Model/Info/EffectUI.cs
+  artifactKey: Guid(a56112692ee07b04aae1884a4a9886c7) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Scripts/GameState/UI/GUI/Model/Info/EffectUI.cs using Guid(a56112692ee07b04aae1884a4a9886c7) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '01360f7aec893098bfb14a6c66db9d33') in 0.002525 seconds 
+========================================================================
+Received Import Request.
+  Time since last request: 3.017928 seconds.
+  path: Assets/Scripts/GameState/UI/GUI/Model/Map
+  artifactKey: Guid(9450c57f8053d444abb5397cbebf3a17) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Scripts/GameState/UI/GUI/Model/Map using Guid(9450c57f8053d444abb5397cbebf3a17) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '9aba03527306b317637b0c5d3784e82e') in 0.002408 seconds 
+========================================================================
+Received Import Request.
+  Time since last request: 16.135492 seconds.
+  path: Assets/Scripts/GameState/UI/GUI/Model/MapUI
+  artifactKey: Guid(9450c57f8053d444abb5397cbebf3a17) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Scripts/GameState/UI/GUI/Model/MapUI using Guid(9450c57f8053d444abb5397cbebf3a17) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'ed39bd63bf43ab765b0ff9a479f31023') in 0.002694 seconds 
+========================================================================
+Received Prepare
+Registering precompiled user dll's ...
+Registered in 0.005266 seconds.
+Begin MonoManager ReloadAssembly
+Symbol file LoadedFromMemory is not a mono symbol file
+Native extension for WindowsStandalone target not found
+Refreshing native plugins compatible for Editor in 0.29 ms, found 0 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Mono: successfully reloaded assembly
+- Completed reload, in  0.748 seconds
+Platform modules already initialized, skipping
+Refreshing native plugins compatible for Editor in 0.31 ms, found 0 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Unloading 1360 Unused Serialized files (Serialized files now loaded: 0)
+System memory in use before: 74.4 MB.
+System memory in use after: 74.5 MB.
+
+Unloading 15 unused Assets to reduce memory usage. Loaded Objects now: 1936.
+Total: 1.602700 ms (FindLiveObjects: 0.140900 ms CreateObjectMapping: 0.035100 ms MarkObjects: 1.415200 ms  DeleteObjects: 0.010500 ms)
+
+========================================================================
+Received Import Request.
+  Time since last request: 1293.063330 seconds.
+  path: Assets/Scripts/IslandEditor/UI
+  artifactKey: Guid(e54932bdf64989945b7934193834d0e6) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Scripts/IslandEditor/UI using Guid(e54932bdf64989945b7934193834d0e6) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'e47fd310a5d5b3c4dd09f17121740f9a') in 0.007479 seconds 
+========================================================================
+Received Import Request.
+  Time since last request: 14.010804 seconds.
+  path: Assets/Scripts/Menu/Controls/GS_MouseSensitivity.cs
+  artifactKey: Guid(c389e1bba9297a041b8982b1dc6d8c46) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Scripts/Menu/Controls/GS_MouseSensitivity.cs using Guid(c389e1bba9297a041b8982b1dc6d8c46) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '08a43b327f01ab62e477c6667fce5943') in 0.002460 seconds 
+========================================================================
+Received Import Request.
+  Time since last request: 1.851204 seconds.
+  path: Assets/Scripts/Menu/Controls/KeyInputSettings.cs
+  artifactKey: Guid(2253374350c68914daec1afbcaea5871) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Scripts/Menu/Controls/KeyInputSettings.cs using Guid(2253374350c68914daec1afbcaea5871) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '44b258b0934422bf1e9e1b626985d745') in 0.002573 seconds 
+========================================================================
+Received Import Request.
+  Time since last request: 0.309458 seconds.
+  path: Assets/Scripts/Menu/Controls/KeyInputSingle.cs
+  artifactKey: Guid(aa2b8d813810455419963d3bed8453c4) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Scripts/Menu/Controls/KeyInputSingle.cs using Guid(aa2b8d813810455419963d3bed8453c4) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '723220868b07bac836a0776368a4542b') in 0.002268 seconds 
+========================================================================
+Received Import Request.
+  Time since last request: 36.439706 seconds.
+  path: Assets/Scripts/GameState/Controller/PrototypController.cs
+  artifactKey: Guid(64c03656d17d6d2439e28d989d7ddd26) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Scripts/GameState/Controller/PrototypController.cs using Guid(64c03656d17d6d2439e28d989d7ddd26) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'f1a2c01aa9de3a80051a2602491a05a3') in 0.002805 seconds 
+========================================================================
+Received Import Request.
+  Time since last request: 3.458239 seconds.
+  path: Assets/Scripts/GameState/Controller/AIController.cs
+  artifactKey: Guid(d3c70867e719b3740b16509fc88871b0) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Scripts/GameState/Controller/AIController.cs using Guid(d3c70867e719b3740b16509fc88871b0) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '510413258452ce921f93eea76e87c096') in 0.002359 seconds 
+========================================================================
+Received Import Request.
+  Time since last request: 0.916036 seconds.
+  path: Assets/Scripts/GameState/Controller/Sprite
+  artifactKey: Guid(fd2e098972327504c9bcb00e165e4f47) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Scripts/GameState/Controller/Sprite using Guid(fd2e098972327504c9bcb00e165e4f47) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'c282cd5261eed9be7c85de8f59c9fe0e') in 0.003392 seconds 
+========================================================================
+Received Prepare
+Registering precompiled user dll's ...
+Registered in 0.004387 seconds.
+Begin MonoManager ReloadAssembly
+Symbol file LoadedFromMemory is not a mono symbol file
+Native extension for WindowsStandalone target not found
+Refreshing native plugins compatible for Editor in 0.33 ms, found 0 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Mono: successfully reloaded assembly
+- Completed reload, in  0.786 seconds
+Platform modules already initialized, skipping
+Refreshing native plugins compatible for Editor in 0.30 ms, found 0 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Unloading 1360 Unused Serialized files (Serialized files now loaded: 0)
+System memory in use before: 74.4 MB.
+System memory in use after: 74.5 MB.
+
+Unloading 15 unused Assets to reduce memory usage. Loaded Objects now: 1939.
+Total: 1.638700 ms (FindLiveObjects: 0.140900 ms CreateObjectMapping: 0.032100 ms MarkObjects: 1.453500 ms  DeleteObjects: 0.011200 ms)
+
+========================================================================
+Received Import Request.
+  Time since last request: 239.544991 seconds.
+  path: Assets/Scripts/GameState/Controller/AIController.cs
+  artifactKey: Guid(d3c70867e719b3740b16509fc88871b0) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Scripts/GameState/Controller/AIController.cs using Guid(d3c70867e719b3740b16509fc88871b0) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'b77ae5bc24e1e4552e0321973527267a') in 0.004212 seconds 
+========================================================================
+Received Prepare
+Registering precompiled user dll's ...
+Registered in 0.003652 seconds.
+Begin MonoManager ReloadAssembly
+Symbol file LoadedFromMemory is not a mono symbol file
+Native extension for WindowsStandalone target not found
+Refreshing native plugins compatible for Editor in 0.33 ms, found 0 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Mono: successfully reloaded assembly
+- Completed reload, in  0.976 seconds
+Platform modules already initialized, skipping
+Refreshing native plugins compatible for Editor in 0.46 ms, found 0 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Unloading 1364 Unused Serialized files (Serialized files now loaded: 0)
+System memory in use before: 74.5 MB.
+System memory in use after: 74.6 MB.
+
+Unloading 15 unused Assets to reduce memory usage. Loaded Objects now: 1946.
+Total: 2.683600 ms (FindLiveObjects: 0.260000 ms CreateObjectMapping: 0.046100 ms MarkObjects: 2.357600 ms  DeleteObjects: 0.018100 ms)
+
+========================================================================
+Received Import Request.
+  Time since last request: 261.309964 seconds.
+  path: Assets/Scripts/GameState/Controller/UIController.cs
+  artifactKey: Guid(37c766e2ec4d7624e836bb3c2a32ad6d) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Scripts/GameState/Controller/UIController.cs using Guid(37c766e2ec4d7624e836bb3c2a32ad6d) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '63188bb60dffb3af0216d62cad8e561d') in 0.005495 seconds 
+========================================================================
+Received Import Request.
+  Time since last request: 0.766592 seconds.
+  path: Assets/Scripts/GameState/Controller/SoundController.cs
+  artifactKey: Guid(cd4f446409343b54ab025838604fbbea) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Scripts/GameState/Controller/SoundController.cs using Guid(cd4f446409343b54ab025838604fbbea) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '432508089e726021eeebcf2463722a5d') in 0.002438 seconds 
+========================================================================
+Received Import Request.
+  Time since last request: 0.402609 seconds.
+  path: Assets/Scripts/GameState/Controller/SupplyChain.cs
+  artifactKey: Guid(4674365d7e235a5449acc30314283832) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Scripts/GameState/Controller/SupplyChain.cs using Guid(4674365d7e235a5449acc30314283832) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '7612f43fd0393377f9e40b9eeec5ea28') in 0.003065 seconds 
+========================================================================
+Received Import Request.
+  Time since last request: 0.390568 seconds.
+  path: Assets/Scripts/GameState/Controller/SupplyChainCost.cs
+  artifactKey: Guid(02a3d326730839e4c97ceedb9e65eb56) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Scripts/GameState/Controller/SupplyChainCost.cs using Guid(02a3d326730839e4c97ceedb9e65eb56) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'f5ffa9e81fa89c929416d17ace5c5ca0') in 0.003034 seconds 
+========================================================================
+Received Import Request.
+  Time since last request: 8.278462 seconds.
+  path: Assets/Scripts/GameState/Models/TradeRoute.cs
+  artifactKey: Guid(4564c0fb207fa0d4f9c611a0bac85f4e) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Scripts/GameState/Models/TradeRoute.cs using Guid(4564c0fb207fa0d4f9c611a0bac85f4e) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'e83c84f8ba0cc53a45601129aaad08e0') in 0.003285 seconds 
+========================================================================
+Received Prepare
+Registering precompiled user dll's ...
+Registered in 0.004214 seconds.
+Begin MonoManager ReloadAssembly
+Symbol file LoadedFromMemory is not a mono symbol file
+Native extension for WindowsStandalone target not found
+Refreshing native plugins compatible for Editor in 0.35 ms, found 0 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Mono: successfully reloaded assembly
+- Completed reload, in  0.795 seconds
+Platform modules already initialized, skipping
+Refreshing native plugins compatible for Editor in 0.31 ms, found 0 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Unloading 1364 Unused Serialized files (Serialized files now loaded: 0)
+System memory in use before: 74.5 MB.
+System memory in use after: 74.6 MB.
+
+Unloading 15 unused Assets to reduce memory usage. Loaded Objects now: 1949.
+Total: 2.559900 ms (FindLiveObjects: 0.181000 ms CreateObjectMapping: 0.035600 ms MarkObjects: 2.324200 ms  DeleteObjects: 0.017800 ms)
+
+========================================================================
+Received Import Request.
+  Time since last request: 17.645629 seconds.
+  path: Assets/Scripts/GameState/Models/SupplyChainCost.cs
+  artifactKey: Guid(02a3d326730839e4c97ceedb9e65eb56) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Scripts/GameState/Models/SupplyChainCost.cs using Guid(02a3d326730839e4c97ceedb9e65eb56) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '69fb715c7157b74ef00f892dcf592cf4') in 0.005328 seconds 
+========================================================================
+Received Import Request.
+  Time since last request: 8.454068 seconds.
+  path: Assets/Scripts/GameState/Models/SupplyChain.cs
+  artifactKey: Guid(4674365d7e235a5449acc30314283832) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Scripts/GameState/Models/SupplyChain.cs using Guid(4674365d7e235a5449acc30314283832) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '403df7be59681b5bd08b5809da734da7') in 0.004740 seconds 
+========================================================================
+Received Import Request.
+  Time since last request: 3.099225 seconds.
+  path: Assets/Scripts/GameState/Models/Statistics.cs
+  artifactKey: Guid(7e9155a67b2c70942a621a0f892c7684) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Scripts/GameState/Models/Statistics.cs using Guid(7e9155a67b2c70942a621a0f892c7684) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'e6bd96cc369b049163f6ea4c3034e149') in 0.002584 seconds 
+========================================================================
+Received Import Request.
+  Time since last request: 1.028331 seconds.
+  path: Assets/Scripts/GameState/Models/ProduceRatio.cs
+  artifactKey: Guid(5b231174a923f304da11ff7d8f03c11a) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Scripts/GameState/Models/ProduceRatio.cs using Guid(5b231174a923f304da11ff7d8f03c11a) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '8d00c218791dce7668a03e2746381677') in 0.003010 seconds 
+========================================================================
+Received Import Request.
+  Time since last request: 1.311163 seconds.
+  path: Assets/Scripts/GameState/Models/Produce.cs
+  artifactKey: Guid(3483387d7f3cc8941bdb7dea7e655e2f) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Scripts/GameState/Models/Produce.cs using Guid(3483387d7f3cc8941bdb7dea7e655e2f) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '2d537e509746a75e3e8ff922ba4781dd') in 0.002231 seconds 
+========================================================================
+Received Import Request.
+  Time since last request: 5.496659 seconds.
+  path: Assets/Scripts/GameState/Models/Produce.cs
+  artifactKey: Guid(3483387d7f3cc8941bdb7dea7e655e2f) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Scripts/GameState/Models/Produce.cs using Guid(3483387d7f3cc8941bdb7dea7e655e2f) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '630dcdcbddd2c3c9c838a9314ac08a70') in 0.002489 seconds 
+========================================================================
+Received Import Request.
+  Time since last request: 7.152491 seconds.
+  path: Assets/Scripts/GameState/Models/ProduceRatio.cs
+  artifactKey: Guid(5b231174a923f304da11ff7d8f03c11a) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Scripts/GameState/Models/ProduceRatio.cs using Guid(5b231174a923f304da11ff7d8f03c11a) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '786a27823266bdbc00f452a1b8546c32') in 0.003537 seconds 
+========================================================================
+Received Import Request.
+  Time since last request: 36.078270 seconds.
+  path: Assets/Scripts/GameState/Models/Data
+  artifactKey: Guid(f3621cbe7a0b5d542bd7fe027d0cafea) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Scripts/GameState/Models/Data using Guid(f3621cbe7a0b5d542bd7fe027d0cafea) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '14c039c8b091e46f63002d9b349300d3') in 0.002205 seconds 
+========================================================================
+Received Prepare
+Registering precompiled user dll's ...
+Registered in 0.004915 seconds.
+Begin MonoManager ReloadAssembly
+Symbol file LoadedFromMemory is not a mono symbol file
+Native extension for WindowsStandalone target not found
+Refreshing native plugins compatible for Editor in 0.31 ms, found 0 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Mono: successfully reloaded assembly
+- Completed reload, in  0.800 seconds
+Platform modules already initialized, skipping
+Refreshing native plugins compatible for Editor in 0.54 ms, found 0 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Unloading 1364 Unused Serialized files (Serialized files now loaded: 0)
+System memory in use before: 74.5 MB.
+System memory in use after: 74.6 MB.
+
+Unloading 15 unused Assets to reduce memory usage. Loaded Objects now: 1952.
+Total: 1.720200 ms (FindLiveObjects: 0.158800 ms CreateObjectMapping: 0.045000 ms MarkObjects: 1.503600 ms  DeleteObjects: 0.012100 ms)
+

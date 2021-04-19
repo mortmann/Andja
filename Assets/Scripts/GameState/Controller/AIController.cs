@@ -1,4 +1,5 @@
 ﻿using Andja.Model;
+using Andja.Model.Data;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -56,7 +57,6 @@ namespace Andja.Controller {
             Instance = this;
         }
 
-        // Use this for initialization
         private void Start() {
             //foreach (Island island in World.Current.Islands) {
             //    foreach (City c in island.Cities) {
@@ -209,10 +209,6 @@ namespace Andja.Controller {
                     ChangeTileValue(t.East(), t, Direction.E);
                     break;
             }
-        }
-
-        // Update is called once per frame
-        private void Update() {
         }
 
         public static bool PlaceStructure(AIPlayer player, Structure structure, List<Tile> tiles, Unit buildUnit = null, bool onStart = false) {

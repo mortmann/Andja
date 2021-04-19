@@ -1,9 +1,11 @@
-﻿[System.AttributeUsage(System.AttributeTargets.Field |
-                       System.AttributeTargets.Property)
-]
-public class IgnoreAttribute : System.Attribute {
+﻿namespace Andja {
 
-    public IgnoreAttribute() {
+    [System.AttributeUsage(System.AttributeTargets.Field |
+                           System.AttributeTargets.Property)
+    ]
+    public class IgnoreAttribute : System.Attribute {
 
+        public IgnoreAttribute() {
+        }
     }
 }

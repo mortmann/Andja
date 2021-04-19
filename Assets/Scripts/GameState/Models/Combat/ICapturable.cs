@@ -1,8 +1,9 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿namespace Andja.Model {
 
-public interface ICapturable : ITargetable {
-    void Capture(IWarfare warfare, float progress);
-    bool Captured { get; }
+    public interface ICapturable : ITargetable {
+
+        void Capture(IWarfare warfare, float progress);
+
+        bool Captured { get; }
+    }
 }

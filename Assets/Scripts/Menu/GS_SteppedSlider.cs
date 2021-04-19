@@ -1,62 +1,69 @@
 ﻿using UnityEngine;
-using System.Collections;
 using UnityEngine.UI;
 
-public class GS_SteppedSlider : MonoBehaviour {
+namespace Andja.UI.Menu {
 
-    Slider slider;
-    // The slider value as an int.
-    int Value {
-        get { return (int)slider.value; }
-    }
-    // The rect for the slider.
-    Rect sliderRect;
-    // The width of the handle.
-    float handleWidth;
-    // The number of steps for the slider.
-    int sliderSteps;
+    public class GS_SteppedSlider : MonoBehaviour {
+        private Slider slider;
 
-    void Start() {
-        slider = GetComponent<Slider>();
-        // Get the slider.
-        if (!slider.wholeNumbers) {
-            Debug.LogError("The stepped slider only works with whole number sliders.");
-            return;
+        // The slider value as an int.
+        private int Value {
+            get { return (int)slider.value; }
         }
-        // Attach the listener for the method we call when the slider value changes.
-        slider.onValueChanged.AddListener(delegate { OnSliderValueChangeSetPosition(); });
 
-        CalculateHandleSize();
-    }
+        // The rect for the slider.
+        private Rect sliderRect;
 
-    public void CalculateHandleSize() {
-        slider = GetComponent<Slider>();
-        // Get the width of the slider.
-        sliderRect = slider.GetComponent<RectTransform>().rect;
-        // Calculate the total number of steps for the slider.
-        sliderSteps = (int)slider.maxValue - (int)slider.minValue + 1;
+        // The width of the handle.
+        private float handleWidth;
 
-        float xScale = 1;// Screen.width / GetComponentInParent<UnityEngine.UI.CanvasScaler>().referenceResolution.x;
-        // Set the width of the handle.
-        handleWidth = (sliderRect.width * xScale) / sliderSteps;
-        slider.handleRect.sizeDelta = new Vector2(handleWidth, slider.handleRect.sizeDelta.y);
+        // The number of steps for the slider.
+        private int sliderSteps;
 
-        // Set the initial handle position based on the slider value.
-        SetHandlePosition(Value);
-    }
+        private void Start() {
+            slider = GetComponent<Slider>();
+            // Get the slider.
+            if (!slider.wholeNumbers) {
+                Debug.LogError("The stepped slider only works with whole number sliders.");
+                return;
+            }
+            // Attach the listener for the method we call when the slider value changes.
+            slider.onValueChanged.AddListener(delegate { OnSliderValueChangeSetPosition(); });
 
-    /**
-     * OnChangeValue callback for the slider.
-     */
-    void OnSliderValueChangeSetPosition() {
-        SetHandlePosition(Value);
-    }
+            CalculateHandleSize();
+        }
 
-    /**
-     * Set the handle to the correct position based on the slider value.
-     */
-    void SetHandlePosition(int value) {
-        float xPosition = sliderRect.x + (handleWidth / 2) + handleWidth * (value - slider.minValue);
-        slider.handleRect.localPosition = new Vector3(xPosition, slider.handleRect.localPosition.y, slider.handleRect.localPosition.z);
+        public void CalculateHandleSize() {
+            slider = GetComponent<Slider>();
+            // Get the width of the slider.
+            sliderRect = slider.GetComponent<RectTransform>().rect;
+            // Calculate the total number of steps for the slider.
+            sliderSteps = (int)slider.maxValue - (int)slider.minValue + 1;
+
+            float xScale = 1;// Screen.width / GetComponentInParent<UnityEngine.UI.CanvasScaler>().referenceResolution.x;
+                             // Set the width of the handle.
+            handleWidth = (sliderRect.width * xScale) / sliderSteps;
+            slider.handleRect.sizeDelta = new Vector2(handleWidth, slider.handleRect.sizeDelta.y);
+
+            // Set the initial handle position based on the slider value.
+            SetHandlePosition(Value);
+        }
+
+        /**
+         * OnChangeValue callback for the slider.
+         */
+
+        private void OnSliderValueChangeSetPosition() {
+            SetHandlePosition(Value);
+        }
+
+        /**
+         * Set the handle to the correct position based on the slider value.
+         */
+
+        private void SetHandlePosition(int value) {
+            float xPosition = sliderRect.x + (handleWidth / 2) + handleWidth * (value - slider.minValue);
+            slider.handleRect.localPosition = new Vector3(xPosition, slider.handleRect.localPosition.y, slider.handleRect.localPosition.z);
+        }
     }
 }

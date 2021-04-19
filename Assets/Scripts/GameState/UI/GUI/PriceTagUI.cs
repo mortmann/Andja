@@ -1,34 +1,41 @@
-﻿using UnityEngine;
-using System.Collections;
-using UnityEngine.UI;
+﻿using Andja.Model;
+using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
-public class PriceTagUI : MonoBehaviour {
+using UnityEngine.UI;
 
-    public Text sellText;
-    public Text buyText;
-    public ItemUI itemUI;
-    OffworldMarket.Price Price;
-    public void Show(Item item, OffworldMarket.Price price) {
-        item.count = 1;
-        itemUI.SetItem(item, 1);
-        this.Price = price;
-        UpdatePrice();
-    }
-    public void UpdatePrice() {
-        sellText.text = "+" + Price.Sell;
-        buyText.text = "-" + Price.Buy;
-    }
-    public void AddListener(UnityAction<BaseEventData> ueb) {
-        EventTrigger trigger = GetComponentInChildren<EventTrigger>();
-        EventTrigger.Entry entry = new EventTrigger.Entry {
-            eventID = EventTriggerType.PointerClick
-        };
+namespace Andja.UI.Model {
 
-        entry.callback.AddListener(ueb);
-        trigger.triggers.Add(entry);
-    }
-    public void Update() {
-        UpdatePrice();
+    public class PriceTagUI : MonoBehaviour {
+        public Text sellText;
+        public Text buyText;
+        public ItemUI itemUI;
+        private OffworldMarket.Price Price;
+
+        public void Show(Item item, OffworldMarket.Price price) {
+            item.count = 1;
+            itemUI.SetItem(item, 1);
+            this.Price = price;
+            UpdatePrice();
+        }
+
+        public void UpdatePrice() {
+            sellText.text = "+" + Price.Sell;
+            buyText.text = "-" + Price.Buy;
+        }
+
+        public void AddListener(UnityAction<BaseEventData> ueb) {
+            EventTrigger trigger = GetComponentInChildren<EventTrigger>();
+            EventTrigger.Entry entry = new EventTrigger.Entry {
+                eventID = EventTriggerType.PointerClick
+            };
+
+            entry.callback.AddListener(ueb);
+            trigger.triggers.Add(entry);
+        }
+
+        public void Update() {
+            UpdatePrice();
+        }
     }
 }

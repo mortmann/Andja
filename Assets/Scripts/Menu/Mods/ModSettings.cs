@@ -1,26 +1,28 @@
-﻿using System.Collections;
+﻿using Andja.Utility;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ModSettings : MonoBehaviour {
+namespace Andja.UI.Menu {
 
-    public Transform content;
-    public GS_ModListItem listItemPrefab;
+    public class ModSettings : MonoBehaviour {
+        public Transform content;
+        public GS_ModListItem listItemPrefab;
 
-    // Use this for initialization
-    void Start () {
-        ModLoader.LoadSavedActiveMods();
-        List<Mod> avaibleMods = ModLoader.AvaibleMods();
-        foreach (Transform t in content)
-            Destroy(t.gameObject);
-        foreach(Mod mod in avaibleMods) {
-            GS_ModListItem item = Instantiate(listItemPrefab);
-            item.SetMod(mod);
-            item.transform.SetParent(content);
+        // Use this for initialization
+        private void Start() {
+            ModLoader.LoadSavedActiveMods();
+            List<Mod> avaibleMods = ModLoader.AvaibleMods();
+            foreach (Transform t in content)
+                Destroy(t.gameObject);
+            foreach (Mod mod in avaibleMods) {
+                GS_ModListItem item = Instantiate(listItemPrefab);
+                item.SetMod(mod);
+                item.transform.SetParent(content);
+            }
         }
-	}
 
-    private void OnDisable() {
-        ModLoader.SaveActiveMods();
+        private void OnDisable() {
+            ModLoader.SaveActiveMods();
+        }
     }
 }

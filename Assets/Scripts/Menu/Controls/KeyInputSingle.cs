@@ -1,50 +1,54 @@
-﻿using UnityEngine;
-using System.Collections;
-using UnityEngine.UI;
+﻿using Andja.Utility;
 using System;
-public class KeyInputSingle : MonoBehaviour {
+using UnityEngine;
+using UnityEngine.UI;
 
-    public Text keyName;
-    public Button primaryButton;
-    public Button secondaryButton;
-    Action<InputName, bool> OnClickButton;
-    InputHandler.KeyBind item;
-    InputName inputName;
-    Text primaryText;
-    Text secondaryText;
+namespace Andja.UI.Menu {
 
-    public void SetUp(InputName inputName, InputHandler.KeyBind item, Action<InputName, bool> OnClickButton) {
-        this.inputName = inputName;
-        keyName.text = inputName.ToString();
-        primaryText = primaryButton.GetComponentInChildren<Text>();
-        secondaryText = secondaryButton.GetComponentInChildren<Text>();
-        primaryText.text = item.GetPrimaryString();
-        secondaryText.text = item.GetSecondaryString();
-        this.item = item;
+    public class KeyInputSingle : MonoBehaviour {
+        public Text keyName;
+        public Button primaryButton;
+        public Button secondaryButton;
+        private Action<InputName, bool> OnClickButton;
+        private InputHandler.KeyBind item;
+        private InputName inputName;
+        private Text primaryText;
+        private Text secondaryText;
 
-        primaryButton.onClick.AddListener(delegate {
-            OnClick(true);
-        });
-        secondaryButton.onClick.AddListener(delegate {
-            OnClick(false);
-        });
-        this.OnClickButton = OnClickButton;
-    }
-    private void Update() {
-        primaryText.text = item.GetPrimaryString();
-        secondaryText.text = item.GetSecondaryString();
-    }
-    public void OnClick(bool primary) {
-        OnClickButton(inputName, primary);
-    }
+        public void SetUp(InputName inputName, InputHandler.KeyBind item, Action<InputName, bool> OnClickButton) {
+            this.inputName = inputName;
+            keyName.text = inputName.ToString();
+            primaryText = primaryButton.GetComponentInChildren<Text>();
+            secondaryText = secondaryButton.GetComponentInChildren<Text>();
+            primaryText.text = item.GetPrimaryString();
+            secondaryText.text = item.GetSecondaryString();
+            this.item = item;
 
-    public void ChangeButtonText(bool primary, string text) {
-        if (primary) {
-            primaryButton.GetComponentInChildren<Text>().text = text;
+            primaryButton.onClick.AddListener(delegate {
+                OnClick(true);
+            });
+            secondaryButton.onClick.AddListener(delegate {
+                OnClick(false);
+            });
+            this.OnClickButton = OnClickButton;
         }
-        else {
-            secondaryButton.GetComponentInChildren<Text>().text = text;
+
+        private void Update() {
+            primaryText.text = item.GetPrimaryString();
+            secondaryText.text = item.GetSecondaryString();
+        }
+
+        public void OnClick(bool primary) {
+            OnClickButton(inputName, primary);
+        }
+
+        public void ChangeButtonText(bool primary, string text) {
+            if (primary) {
+                primaryButton.GetComponentInChildren<Text>().text = text;
+            }
+            else {
+                secondaryButton.GetComponentInChildren<Text>().text = text;
+            }
         }
     }
-
 }

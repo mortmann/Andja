@@ -1,83 +1,88 @@
-﻿using System;
-using UnityEngine;
-using UnityEngine.Events;
-using UnityEngine.EventSystems;
+﻿using UnityEngine;
 using UnityEngine.UI;
 
-public class GS_SliderBase : MonoBehaviour {
+namespace Andja.UI.Menu {
 
-    protected GraphicsSetting setting;
-    // The camera in use.
-    protected Camera cam;
-    // The text we display to the user for the slider value.
-    protected Text displayValue;
-    // The slider.
-    protected Slider slider;
-    // The slider value as an int.
-    protected int Value {
-        get { return (int)slider.value; }
-    }
-    protected TextLanguageSetter tls;
+    public class GS_SliderBase : MonoBehaviour {
+        protected GraphicsSetting setting;
 
-    protected GraphicsSettings graphicsSettings;
+        // The camera in use.
+        protected Camera cam;
 
-    public string[] displayLabels;
+        // The text we display to the user for the slider value.
+        protected Text displayValue;
 
-    void OnEnable() {
-        // Get the camera.
-        cam = Camera.main;
-        // Get the slider.
-        slider = GetComponent<Slider>();
+        // The slider.
+        protected Slider slider;
 
-        // Register the graphics preset listeners.
-        graphicsSettings = FindObjectOfType<GraphicsSettings>();
-        graphicsSettings.GraphicsPreset += OnGraphicsPresetChange;
-        // Attach the listener for the method we call when the slider value changes.
-        slider.onValueChanged.AddListener(delegate { OnSliderValueChange(); });
-        slider.onValueChanged.AddListener(delegate { OnSliderValueChangeSetDisplayText(); });
-        tls = GetComponent<TextLanguageSetter>();
-    }
-
-    protected virtual void OnGraphicsPresetChange(int obj) {
-        
-    }
-
-    protected void Start() {
-
-        // Find the Text component for the display value.
-        displayValue = transform.Find("Value").GetComponent<Text>();
-        tls.valueText = displayValue;
-
-// Initialize it to the current slider value.
-        displayValue.text = slider.value.ToString();
-
-        if (displayLabels.Length > 0) {
-            displayValue.text = displayLabels[Value];
+        // The slider value as an int.
+        protected int Value {
+            get { return (int)slider.value; }
         }
-        OnStart();
-    }
-    public virtual void OnStart() {
 
-    }
-    /**
-     * Each setting class overrides this and changes whatever it wants changed
-     * when we modify the slider. For example turns on/off an image effect or
-     * adjusts the volume in the audio mixer.
-     */
-    protected virtual void OnSliderValueChange() {
-    }
+        protected TextLanguageSetter tls;
 
-    /**
-     * Set the text value to display in the menu for this settings slider. A 
-     * setting class can override this to display whatever it wants in the menu.
-     */
-    protected virtual void OnSliderValueChangeSetDisplayText() {
-        //if (displayLabels.Length > 0) {
-        //    displayValue.text = displayLabels[Value];
-        //}
-        //else {
-        //    displayValue.text = Value.ToString();
-        //}
-        //tls.ShowValue(Value);
+        protected GraphicsSettings graphicsSettings;
+
+        public string[] displayLabels;
+
+        private void OnEnable() {
+            // Get the camera.
+            cam = Camera.main;
+            // Get the slider.
+            slider = GetComponent<Slider>();
+
+            // Register the graphics preset listeners.
+            graphicsSettings = FindObjectOfType<GraphicsSettings>();
+            graphicsSettings.GraphicsPreset += OnGraphicsPresetChange;
+            // Attach the listener for the method we call when the slider value changes.
+            slider.onValueChanged.AddListener(delegate { OnSliderValueChange(); });
+            slider.onValueChanged.AddListener(delegate { OnSliderValueChangeSetDisplayText(); });
+            tls = GetComponent<TextLanguageSetter>();
+        }
+
+        protected virtual void OnGraphicsPresetChange(int obj) {
+        }
+
+        protected void Start() {
+            // Find the Text component for the display value.
+            displayValue = transform.Find("Value").GetComponent<Text>();
+            tls.valueText = displayValue;
+
+            // Initialize it to the current slider value.
+            displayValue.text = slider.value.ToString();
+
+            if (displayLabels.Length > 0) {
+                displayValue.text = displayLabels[Value];
+            }
+            OnStart();
+        }
+
+        public virtual void OnStart() {
+        }
+
+        /**
+         * Each setting class overrides this and changes whatever it wants changed
+         * when we modify the slider. For example turns on/off an image effect or
+         * adjusts the volume in the audio mixer.
+         */
+
+        protected virtual void OnSliderValueChange() {
+        }
+
+        /**
+         * Set the text value to display in the menu for this settings slider. A
+         * setting class can override this to display whatever it wants in the menu.
+         */
+
+        protected virtual void OnSliderValueChangeSetDisplayText() {
+            //if (displayLabels.Length > 0) {
+            //    displayValue.text = displayLabels[Value];
+            //}
+            //else {
+            //    displayValue.text = Value.ToString();
+            //}
+            //tls.ShowValue(Value);
+        }
     }
 }

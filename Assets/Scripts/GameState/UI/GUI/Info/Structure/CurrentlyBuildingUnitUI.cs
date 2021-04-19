@@ -1,26 +1,29 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using Andja.Model;
 using UnityEngine;
 
-public class CurrentlyBuildingUnitUI : MonoBehaviour {
-    public GameObject nextBuild;
-    public GameObject unitQueue;
+namespace Andja.UI.Model {
 
-    public CircleProgressBar progressBar;
-    public UnitBuildUI currently;
-    MilitaryStructure uiStructure;
-    // Use this for initialization
-    public void Show(MilitaryStructure mb) {
-        currently.Show(mb.CurrentlyBuildingUnit);
-        uiStructure = mb;
-        progressBar.SetProgress(uiStructure.ProgressPercentage);
-    }
+    public class CurrentlyBuildingUnitUI : MonoBehaviour {
+        public GameObject nextBuild;
+        public GameObject unitQueue;
 
-    // Update is called once per frame
-    void Update() {
-        if (uiStructure.CurrentlyBuildingUnit != null) {
-            currently.Show(uiStructure.CurrentlyBuildingUnit);
+        public CircleProgressBar progressBar;
+        public UnitBuildUI currently;
+        private MilitaryStructure uiStructure;
+
+        // Use this for initialization
+        public void Show(MilitaryStructure mb) {
+            currently.Show(mb.CurrentlyBuildingUnit);
+            uiStructure = mb;
+            progressBar.SetProgress(uiStructure.ProgressPercentage);
         }
-        progressBar.SetProgress(uiStructure.ProgressPercentage);
+
+        // Update is called once per frame
+        private void Update() {
+            if (uiStructure.CurrentlyBuildingUnit != null) {
+                currently.Show(uiStructure.CurrentlyBuildingUnit);
+            }
+            progressBar.SetProgress(uiStructure.ProgressPercentage);
+        }
     }
 }

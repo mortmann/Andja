@@ -1,15 +1,17 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using System;
-using UnityEngine;
-using static Combat;
+﻿using Andja.Model;
 
-public interface IWarfare {
-    int PlayerNumber { get; }
-    float CurrentDamage { get; }
-    float MaximumDamage { get; }
-    DamageType DamageType { get; }
-    bool GiveAttackCommand(ITargetable warfare, bool overrideCurrent = false);
-    void GoIdle();
-    float GetCurrentDamage(ArmorType armorType);
+namespace Andja {
+
+    public interface IWarfare {
+        int PlayerNumber { get; }
+        float CurrentDamage { get; }
+        float MaximumDamage { get; }
+        DamageType DamageType { get; }
+
+        bool GiveAttackCommand(ITargetable warfare, bool overrideCurrent = false);
+
+        void GoIdle();
+
+        float GetCurrentDamage(ArmorType armorType);
+    }
 }

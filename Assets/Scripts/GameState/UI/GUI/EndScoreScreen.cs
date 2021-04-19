@@ -1,22 +1,21 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-public class EndScoreScreen : MonoBehaviour {
-    public Button closeButton;
+namespace Andja.UI {
 
-    void Start() {
-        closeButton.onClick.AddListener(OnCloseButton);
-    }
+    public class EndScoreScreen : MonoBehaviour {
+        public Button closeButton;
 
-    private void OnCloseButton() {
-        SceneManager.LoadScene("MainMenu");
-    }
+        private void Start() {
+            closeButton.onClick.AddListener(OnCloseButton);
+        }
 
-    void Update() {
-        
+        private void OnCloseButton() {
+            SceneManager.LoadScene("MainMenu");
+        }
+
+        private void Update() {
+        }
     }
 }

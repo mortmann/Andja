@@ -1,16 +1,16 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
-public class ConstantPathHolder : MonoBehaviour {
-    public static string ApplicationDataPath;
+namespace Andja {
 
-    public static string StreamingAssets { get; internal set; }
+    public class ConstantPathHolder : MonoBehaviour {
+        public static string ApplicationDataPath;
 
-    // Use this for initialization
-    void Awake() {
-        ApplicationDataPath = Application.dataPath;
-        StreamingAssets = Application.streamingAssetsPath;
+        public static string StreamingAssets { get; internal set; }
+
+        // Use this for initialization
+        private void Awake() {
+            ApplicationDataPath = Application.dataPath;
+            StreamingAssets = Application.streamingAssetsPath;
+        }
     }
-
 }

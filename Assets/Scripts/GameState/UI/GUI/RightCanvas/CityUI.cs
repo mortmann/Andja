@@ -1,39 +1,40 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using Andja.Model;
 using UnityEngine;
-using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class CityUI : MonoBehaviour {
+namespace Andja.UI {
 
-    public NameInputField NameField;
-    public City city;
-    public ValueNameSetter Income;
-    public ValueNameSetter Expanses;
-    public ValueNameSetter Balance;
-    public ValueNameSetter PeopleCount;
-    public Toggle AutoUpgradeHomesToggle;
+    public class CityUI : MonoBehaviour {
+        public NameInputField NameField;
+        public City city;
+        public ValueNameSetter Income;
+        public ValueNameSetter Expanses;
+        public ValueNameSetter Balance;
+        public ValueNameSetter PeopleCount;
+        public Toggle AutoUpgradeHomesToggle;
 
-    void Start() {
-        if(city == null) {
-            return;
+        private void Start() {
+            if (city == null) {
+                return;
+            }
+            AutoUpgradeHomesToggle.isOn = city.AutoUpgradeHomes;
+            NameField.SetName(city.Name, OnNameEdit);
+            //Make the Name editable
         }
-        AutoUpgradeHomesToggle.isOn = city.AutoUpgradeHomes;
-        NameField.SetName(city.Name, OnNameEdit);
-        //Make the Name editable
-    }
 
+        private void OnNameEdit(string name) {
+            city.Name = name;
+        }
 
-    private void OnNameEdit(string name) {
-        city.Name = name;
-    }
-    public void OnEnableAutoUpgrade(bool change) {
-        city.AutoUpgradeHomes = change;
-    }
-    private void Update() {
-        Income.Show(city.income);
-        Expanses.Show(city.expanses);
-        Balance.Show(city.Balance);
-        PeopleCount.Show(city.PopulationCount);
+        public void OnEnableAutoUpgrade(bool change) {
+            city.AutoUpgradeHomes = change;
+        }
+
+        private void Update() {
+            Income.Show(city.income);
+            Expanses.Show(city.expanses);
+            Balance.Show(city.Balance);
+            PeopleCount.Show(city.PopulationCount);
+        }
     }
 }

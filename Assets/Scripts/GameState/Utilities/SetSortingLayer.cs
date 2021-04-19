@@ -1,13 +1,13 @@
 ﻿using UnityEngine;
-using System.Collections;
 
-public class SetSortingLayer : MonoBehaviour {
+namespace Andja.Utility {
 
-    public string sortingLayerName = "default";
+    public class SetSortingLayer : MonoBehaviour {
+        public string sortingLayerName = "default";
 
-    // Use this for initialization
-    void Start() {
-        GetComponent<Renderer>().sortingLayerName = sortingLayerName;
+        // Use this for initialization
+        private void Start() {
+            GetComponent<Renderer>().sortingLayerName = sortingLayerName;
+        }
     }
-
 }

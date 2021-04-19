@@ -1,17 +1,11 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using Andja.Utility;
 using UnityEngine;
 
-public class GameStartSetup : MonoBehaviour {
+namespace Andja.UI.Menu {
 
-    // Use this for initialization
-    void OnEnable() {
-        new InputHandler();
-
-    }
-
-    // Update is called once per frame
-    void Update() {
-
+    public class GameStartSetup : MonoBehaviour {
+        private void OnEnable() {
+            new InputHandler();
+        }
     }
 }

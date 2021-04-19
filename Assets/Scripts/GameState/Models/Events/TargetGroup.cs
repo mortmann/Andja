@@ -1,37 +1,39 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using System.Collections.Generic;
 
-public enum Target {
-    World, Player, Island, City,
-    AllUnit, Ship, LandUnit, 
-    AllStructure, DamagableStructure,
-    RoadStructure, NeedStructure, MilitaryStructure, HomeStructure, ServiceStructure,
-    GrowableStructure, OutputStructure, MarketStructure, WarehouseStructure, MineStructure,
-    FarmStructure, ProductionStructure
-}
-public class TargetGroup  {
+namespace Andja.Model {
 
-    public HashSet<Target> Targets;
-    public TargetGroup(params Target[] targets) {
-        Targets = new HashSet<Target>();
-        Targets.UnionWith(targets);
-    }
-    public TargetGroup(ICollection<Target> targets) {
-        Targets = new HashSet<Target>();
-        Targets.UnionWith(targets);
+    public enum Target {
+        World, Player, Island, City,
+        AllUnit, Ship, LandUnit,
+        AllStructure, DamagableStructure,
+        RoadStructure, NeedStructure, MilitaryStructure, HomeStructure, ServiceStructure,
+        GrowableStructure, OutputStructure, MarketStructure, WarehouseStructure, MineStructure,
+        FarmStructure, ProductionStructure
     }
 
-    internal void AddTargets(TargetGroup target) {
-        Targets.UnionWith(target.Targets);
-    }
+    public class TargetGroup {
+        public HashSet<Target> Targets;
 
-    public bool IsTargeted(IEnumerable<Target> beingTargeted) {
-        return Targets.Overlaps(beingTargeted);
-    }
-    public bool IsTargeted(TargetGroup other) {
-        return Targets.Overlaps(other.Targets);
-    }
+        public TargetGroup(params Target[] targets) {
+            Targets = new HashSet<Target>();
+            Targets.UnionWith(targets);
+        }
 
+        public TargetGroup(ICollection<Target> targets) {
+            Targets = new HashSet<Target>();
+            Targets.UnionWith(targets);
+        }
+
+        internal void AddTargets(TargetGroup target) {
+            Targets.UnionWith(target.Targets);
+        }
+
+        public bool IsTargeted(IEnumerable<Target> beingTargeted) {
+            return Targets.Overlaps(beingTargeted);
+        }
+
+        public bool IsTargeted(TargetGroup other) {
+            return Targets.Overlaps(other.Targets);
+        }
+    }
 }

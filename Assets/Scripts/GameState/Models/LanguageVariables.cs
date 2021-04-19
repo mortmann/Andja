@@ -1,12 +1,9 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿namespace Andja.Model {
 
-public abstract class LanguageVariables {
-
-    public string Name;
-    public string Description;
-    public string HoverOver;
-    public string Short;
-
+    public abstract class LanguageVariables {
+        public string Name;
+        public string Description;
+        public string HoverOver;
+        public string Short;
+    }
 }

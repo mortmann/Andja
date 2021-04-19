@@ -1,131 +1,143 @@
-﻿using UnityEngine;
-using System.Collections;
+﻿using Andja.Controller;
+using Andja.Editor;
 using Newtonsoft.Json;
-using System;
+using UnityEngine;
 
-public class GrowablePrototypeData : OutputPrototypData {
-    public Fertility fertility;
-    public int ageStages = 2;
-    public string harvestSound;
+namespace Andja.Model {
 
-}
+    public class GrowablePrototypeData : OutputPrototypData {
+        public Fertility fertility;
+        public int ageStages = 2;
+        public string harvestSound;
+    }
 
-[JsonObject(MemberSerialization.OptIn)]
-public class GrowableStructure : OutputStructure {
+    [JsonObject(MemberSerialization.OptIn)]
+    public class GrowableStructure : OutputStructure {
 
+        #region Serialize
 
-    #region Serialize
+        [JsonPropertyAttribute]
+        private float age = 0;
 
-    [JsonPropertyAttribute]
-    float age = 0;
-    [EditorSetField(minValue = 0, maxValueName = "AgeStages")]
-    [JsonPropertyAttribute] public int currentStage = 0;
-    [JsonPropertyAttribute] public bool hasProduced = false;
+        [EditorSetField(minValue = 0, maxValueName = "AgeStages")]
+        [JsonPropertyAttribute] public int currentStage = 0;
 
-    #endregion
-    #region RuntimeOrOther
+        [JsonPropertyAttribute] public bool hasProduced = false;
 
-    public Fertility Fertility { get { return GrowableData.fertility; } }
-    public int AgeStages { get { return GrowableData.ageStages; } }
+        #endregion Serialize
 
-    protected GrowablePrototypeData _growableData;
-    private float landGrowModifier;
+        #region RuntimeOrOther
 
-    public GrowablePrototypeData GrowableData {
-        get {
-            if (_growableData == null) {
-                _growableData = (GrowablePrototypeData)PrototypController.Instance.GetStructurePrototypDataForID(ID);
+        public Fertility Fertility { get { return GrowableData.fertility; } }
+        public int AgeStages { get { return GrowableData.ageStages; } }
+
+        protected GrowablePrototypeData _growableData;
+        private float landGrowModifier;
+
+        public GrowablePrototypeData GrowableData {
+            get {
+                if (_growableData == null) {
+                    _growableData = (GrowablePrototypeData)PrototypController.Instance.GetStructurePrototypDataForID(ID);
+                }
+                return _growableData;
             }
-            return _growableData;
         }
-    }
 
-    protected float TimePerStage => (ProduceTime / (float)AgeStages + 1);
-    protected const float GrowTickTime = 1f;
+        protected float TimePerStage => (ProduceTime / (float)AgeStages + 1);
+        protected const float GrowTickTime = 1f;
 
-    #endregion
+        #endregion RuntimeOrOther
 
-    public GrowableStructure(string id, GrowablePrototypeData _growableData) {
-        this.ID = id;
-        this._growableData = _growableData;
-    }
-    protected GrowableStructure(GrowableStructure g) {
-        BaseCopyData(g);
-    }
-    /// <summary>
-    /// DO NOT USE
-    /// </summary>
-    public GrowableStructure() { }
-
-    public override Structure Clone() {
-        return new GrowableStructure(this);
-    }
-
-    public override void OnBuild() {
-        if (Fertility != null && City.HasFertility(Fertility) == false) {
-            landGrowModifier = 0;
+        public GrowableStructure(string id, GrowablePrototypeData _growableData) {
+            this.ID = id;
+            this._growableData = _growableData;
         }
-        else {
-            //maybe have ground type be factor? stone etc
-            landGrowModifier = 1;
+
+        protected GrowableStructure(GrowableStructure g) {
+            BaseCopyData(g);
         }
-        if(age < currentStage * TimePerStage) {
-            age = currentStage * TimePerStage;
+
+        /// <summary>
+        /// DO NOT USE
+        /// </summary>
+        public GrowableStructure() { }
+
+        public override Structure Clone() {
+            return new GrowableStructure(this);
         }
-    }
-    public override void OnUpdate(float deltaTime) {
-        if (hasProduced || landGrowModifier <= 0) {
-            return;
+
+        public override void OnBuild() {
+            if (Fertility != null && City.HasFertility(Fertility) == false) {
+                landGrowModifier = 0;
+            }
+            else {
+                //maybe have ground type be factor? stone etc
+                landGrowModifier = 1;
+            }
+            if (age < currentStage * TimePerStage) {
+                age = currentStage * TimePerStage;
+            }
         }
-        age += Efficiency * landGrowModifier * (deltaTime);
-        if ((age) > currentStage * TimePerStage) {
-            currentStage = Mathf.Clamp(currentStage+1, 0, AgeStages);
-            if (currentStage >= AgeStages) {
-                Produce();
+
+        public override void OnUpdate(float deltaTime) {
+            if (hasProduced || landGrowModifier <= 0) {
                 return;
             }
-            //Debug.Log ("Stage " + currentStage + " @ Time " + age);
+            age += Efficiency * landGrowModifier * (deltaTime);
+            if ((age) > currentStage * TimePerStage) {
+                currentStage = Mathf.Clamp(currentStage + 1, 0, AgeStages);
+                if (currentStage >= AgeStages) {
+                    Produce();
+                    return;
+                }
+                //Debug.Log ("Stage " + currentStage + " @ Time " + age);
+                CallbackChangeIfnotNull();
+            }
+        }
+
+        public override bool SpecialCheckForBuild(System.Collections.Generic.List<Tile> tiles) {
+            //this should be only ever 1 but for whateverreason it is not it still checks and doesnt really matter anyway
+            foreach (Tile t in tiles) {
+                if (t.Structure == null) {
+                    continue;
+                }
+                if (t.Structure.ID == ID) {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        protected void Produce() {
+            hasProduced = true;
+            Output[0].count = 1;
             CallbackChangeIfnotNull();
         }
-    }
-    public override bool SpecialCheckForBuild(System.Collections.Generic.List<Tile> tiles) {
-        //this should be only ever 1 but for whateverreason it is not it still checks and doesnt really matter anyway
-        foreach (Tile t in tiles) {
-            if (t.Structure == null) {
-                continue;
-            }
-            if (t.Structure.ID == ID) {
-                return false;
-            }
-        }
-        return true;
-    }
 
-    protected void Produce() {
-        hasProduced = true;
-        Output[0].count = 1;
-        CallbackChangeIfnotNull();
-    }
-
-    public void Harvest() {
-        Output[0].count = 0;
-        currentStage = 0;
-        age = 0f;
-        CallbackChangeIfnotNull();
-        hasProduced = false;
-        cbStructureSound?.Invoke(this, GrowableData.harvestSound, true);
-    }
-    #region override
-    public override string GetSpriteName() {
-        return base.GetSpriteName() + "_" + currentStage;
-    }
-    public override string ToString() {
-        if (BuildTile == null) {
-            return SpriteName + "@error";
+        public void Harvest() {
+            Output[0].count = 0;
+            currentStage = 0;
+            age = 0f;
+            CallbackChangeIfnotNull();
+            hasProduced = false;
+            cbStructureSound?.Invoke(this, GrowableData.harvestSound, true);
         }
-        return SpriteName + "@ X=" + BuildTile.X + " Y=" + BuildTile.Y + "\n "
-            + "Age: " + age + " Current Stage " + currentStage + " \n"
-            + " HasProduced " + hasProduced;
+
+        #region override
+
+        public override string GetSpriteName() {
+            return base.GetSpriteName() + "_" + currentStage;
+        }
+
+        public override string ToString() {
+            if (BuildTile == null) {
+                return SpriteName + "@error";
+            }
+            return SpriteName + "@ X=" + BuildTile.X + " Y=" + BuildTile.Y + "\n "
+                + "Age: " + age + " Current Stage " + currentStage + " \n"
+                + " HasProduced " + hasProduced;
+        }
+
+        #endregion override
     }
-    #endregion
 }

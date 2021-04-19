@@ -1,22 +1,25 @@
 ﻿using UnityEngine;
 
-public class GS_Brightness : GS_SliderBase {
+namespace Andja.UI.Menu {
 
-    public override void OnStart() {
-        setting = GraphicsSetting.Brightness;
-        if (graphicsSettings.HasSavedGraphicsOption(setting))
-            slider.value = (graphicsSettings.GetSavedGraphicsOptionFloat(setting));
-        else
-            slider.value = 100;
-        OnSliderValueChange();
-        displayValue.text = Value.ToString() + "%";
-    }
+    public class GS_Brightness : GS_SliderBase {
 
-    protected override void OnSliderValueChange() {
-        graphicsSettings.SetBrightness(Mathf.RoundToInt(slider.value));
-    }
+        public override void OnStart() {
+            setting = GraphicsSetting.Brightness;
+            if (graphicsSettings.HasSavedGraphicsOption(setting))
+                slider.value = (graphicsSettings.GetSavedGraphicsOptionFloat(setting));
+            else
+                slider.value = 100;
+            OnSliderValueChange();
+            displayValue.text = Value.ToString() + "%";
+        }
 
-    protected override void OnSliderValueChangeSetDisplayText() {
-        displayValue.text = Value.ToString() + "%";
+        protected override void OnSliderValueChange() {
+            graphicsSettings.SetBrightness(Mathf.RoundToInt(slider.value));
+        }
+
+        protected override void OnSliderValueChangeSetDisplayText() {
+            displayValue.text = Value.ToString() + "%";
+        }
     }
 }

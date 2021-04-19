@@ -1,29 +1,34 @@
-﻿using UnityEngine;
-using UnityEngine.UI;
+﻿using Andja.Model;
 using System;
 using System.Linq;
-public class NewIsland : MonoBehaviour {
-    public InputField height;
-    public InputField width;
-    public Dropdown zone;
-    public Button create;
-    public Toggle randomGeneration;
+using UnityEngine;
+using UnityEngine.UI;
 
-    // Use this for initialization
-    void Start() {
-        create.onClick.AddListener(OnCreateClick);
-        height.text = EditorController.Height+"";
-        width.text = EditorController.Width+"";
-        zone.ClearOptions();
-        zone.AddOptions(Enum.GetNames(typeof(Climate)).ToList());
-        zone.value = (int)EditorController.climate;
-    }
+namespace Andja.Editor.UI {
 
-    public void OnCreateClick() {
-        int h = int.Parse(height.text);
-        int w = int.Parse(width.text);
-        Climate cli = (Climate)zone.value;
-        bool randomize = randomGeneration.isOn;
-        EditorController.Instance.NewIsland(w, h, cli, randomize);
+    public class NewIsland : MonoBehaviour {
+        public InputField height;
+        public InputField width;
+        public Dropdown zone;
+        public Button create;
+        public Toggle randomGeneration;
+
+        // Use this for initialization
+        private void Start() {
+            create.onClick.AddListener(OnCreateClick);
+            height.text = EditorController.Height + "";
+            width.text = EditorController.Width + "";
+            zone.ClearOptions();
+            zone.AddOptions(Enum.GetNames(typeof(Climate)).ToList());
+            zone.value = (int)EditorController.climate;
+        }
+
+        public void OnCreateClick() {
+            int h = int.Parse(height.text);
+            int w = int.Parse(width.text);
+            Climate cli = (Climate)zone.value;
+            bool randomize = randomGeneration.isOn;
+            EditorController.Instance.NewIsland(w, h, cli, randomize);
+        }
     }
 }

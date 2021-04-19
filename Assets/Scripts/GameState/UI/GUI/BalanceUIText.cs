@@ -1,27 +1,30 @@
-﻿using UnityEngine;
-using System.Collections;
+﻿using Andja.Controller;
+using Andja.Model;
+using UnityEngine;
 using UnityEngine.UI;
 
-public class BalanceUIText : MonoBehaviour {
-    public Player player => PlayerController.CurrentPlayer;
-    public Text balanceText;
-    public Text changeText;
+namespace Andja.UI {
 
-    // Update is called once per frame
-    void Update() {
-        if (player.TreasuryBalance < 0) {
-            balanceText.color = Color.red;
+    public class BalanceUIText : MonoBehaviour {
+        public Player player => PlayerController.CurrentPlayer;
+        public Text balanceText;
+        public Text changeText;
+
+        private void Update() {
+            if (player.TreasuryBalance < 0) {
+                balanceText.color = Color.red;
+            }
+            if (player.TreasuryBalance >= 0) {
+                balanceText.color = Color.black;
+            }
+            if (player.LastTreasuryChange < 0) {
+                changeText.color = Color.red;
+            }
+            if (player.LastTreasuryChange >= 0) {
+                changeText.color = Color.green;
+            }
+            balanceText.text = player.TreasuryBalance + " ";
+            changeText.text = (player.LastTreasuryChange > 0 ? "+" : "") + player.LastTreasuryChange + " ";
         }
-        if (player.TreasuryBalance >= 0) {
-            balanceText.color = Color.black;
-        }
-        if (player.LastTreasuryChange < 0) {
-            changeText.color = Color.red;
-        }
-        if (player.LastTreasuryChange >= 0) {
-            changeText.color = Color.green;
-        }
-        balanceText.text = player.TreasuryBalance + " ";
-        changeText.text = (player.LastTreasuryChange>0? "+" : "") + player.LastTreasuryChange + " ";
     }
 }

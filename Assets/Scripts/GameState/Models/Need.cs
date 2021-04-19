@@ -145,7 +145,6 @@ public class Need {
         //minimum is 1 because if 0 -> ERROR due dividing through 0
         //calculate the percantage of availability
         percantageAvailability[level] = Mathf.RoundToInt(100 * (usedAmount / neededConsumAmount)) / 100;
-        Debug.Log("NEED " + ID + " -> " + level + " -> " + percantageAvailability[level]);
     }
 
     internal bool IsSatisifiedThroughStructure(List<NeedStructure> strs) {

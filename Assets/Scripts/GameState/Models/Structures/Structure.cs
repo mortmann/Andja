@@ -57,7 +57,7 @@ public class StructurePrototypeData : LanguageVariables {
     public ExtraUI extraUITyp;
     public StructureTyp structureTyp = StructureTyp.Blocking;
     public bool canStartBurning;
-    public int maintenanceCost;
+    public int upkeepCost;
 
     public bool canBeBuild = true;
     public int buildCost;
@@ -146,9 +146,9 @@ public abstract class Structure : IGEventable {
 
     #region EffectVariables
     public float MaxHealth { get { return CalculateRealValue(nameof(Data.maxHealth), Data.maxHealth); } }
-    public int MaintenanceCost { get {
+    public int UpkeepCost { get {
             //Is not allowed to be negativ AND it is not allowed to be <0
-            return Mathf.Clamp(CalculateRealValue(nameof(Data.maintenanceCost), Data.maintenanceCost),0,int.MaxValue);
+            return Mathf.Clamp(CalculateRealValue(nameof(Data.upkeepCost), Data.upkeepCost),0,int.MaxValue);
     } }
     public int StructureRange { get { return CalculateRealValue(nameof(Data.structureRange), Data.structureRange); } }
 
@@ -264,10 +264,11 @@ public abstract class Structure : IGEventable {
             return 0;
         }
     }
-    public void OpenExtraUI() {
+    public virtual void OpenExtraUI() {
+        Debug.Log("OpenExtraUI");
         cbStructureExtraUI?.Invoke(this, true);
     }
-    public void CloseExtraUI() {
+    public virtual void CloseExtraUI() {
         cbStructureExtraUI?.Invoke(this, false);
     }
     #endregion
@@ -306,7 +307,9 @@ public abstract class Structure : IGEventable {
         ge.EffectTarget(this, false);
     }
 
+    public virtual void Load() {
 
+    }
 
     public virtual string GetSpriteName() {
         return SpriteName;
@@ -590,10 +593,10 @@ public abstract class Structure : IGEventable {
     }
     public void Destroy(IWarfare destroyer = null) {
         _health = 0;
-        OnDestroy();
         foreach (Tile t in Tiles) {
             t.Structure = null;
         }
+        OnDestroy();
         //TODO: add here for getting res back when destroyer = null? negative effect?
         City.RemoveStructure(this);
         cbStructureDestroy?.Invoke(this, destroyer);
@@ -711,11 +714,18 @@ public abstract class Structure : IGEventable {
 
     internal void AddRoadStructure(RoadStructure roadStructure) {
         Roads.Add(roadStructure);
-        if(Routes.Contains(roadStructure.Route) == false) {
+        roadStructure.RegisterOnRouteCallback(OnRouteChange);
+        if (Routes.Contains(roadStructure.Route) == false) {
             Routes.Add(roadStructure.Route);
         }
         roadStructure.RegisterOnDestroyCallback(OnRoadDestroy);
     }
+
+    private void OnRouteChange(Route o, Route n) {
+        Routes.Remove(o);
+        Routes.Add(n);
+    }
+
     void OnRoadDestroy(Structure structure, IWarfare warfare) {
         RoadStructure road = structure as RoadStructure;
         Roads.Remove(road);

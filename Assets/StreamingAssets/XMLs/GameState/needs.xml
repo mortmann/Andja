@@ -172,7 +172,7 @@
       <startLevel>0</startLevel>
       <popCount>0</popCount>
       <group>community</group>
-      <hasToReachPerRoad>false</hasToReachPerRoad>
+      <hasToReachPerRoad>true</hasToReachPerRoad>
    </Need>
    <Need ID="luxury">
       <UsageAmounts>

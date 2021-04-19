@@ -43,7 +43,7 @@ RenderSettings:
 --- !u!157 &3
 LightmapSettings:
   m_ObjectHideFlags: 0
-  serializedVersion: 11
+  serializedVersion: 12
   m_GIWorkflowMode: 1
   m_GISettings:
     serializedVersion: 2
@@ -96,8 +96,10 @@ LightmapSettings:
     m_PVRFilteringAtrousPositionSigmaAO: 1
     m_ExportTrainingData: 0
     m_TrainingDataDestination: TrainingData
+    m_LightProbeSampleCountMultiplier: 4
   m_LightingDataAsset: {fileID: 0}
-  m_UseShadowmask: 0
+  m_LightingSettings: {fileID: 4890085278179872738, guid: d9acd429893c2e3419173738e367b868,
+    type: 2}
 --- !u!196 &4
 NavMeshSettings:
   serializedVersion: 2
@@ -117,6 +119,8 @@ NavMeshSettings:
     manualTileSize: 0
     tileSize: 256
     accuratePlacement: 0
+    maxJobWorkers: 0
+    preserveTilesOutsideBounds: 0
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
@@ -336,6 +340,7 @@ MonoBehaviour:
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
   m_DynamicPixelsPerUnit: 1
+  m_PresetInfoIsWorld: 0
 --- !u!223 &392525070
 Canvas:
   m_ObjectHideFlags: 0
@@ -452,6 +457,8 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 0, g: 0, b: 0, a: 1}
   m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -716,6 +723,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   IsDone: 0
   loadingPercantage: 0
+  FogOfWarData: 
 --- !u!1 &820870336
 GameObject:
   m_ObjectHideFlags: 0
@@ -768,6 +776,8 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -826,6 +836,8 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -925,6 +937,10 @@ PrefabInstance:
       value: Constant
       objectReference: {fileID: 0}
     - target: {fileID: 430686, guid: dfbb72e7b75263b4da3c1b05eaa385c6, type: 3}
+      propertyPath: m_RootOrder
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 430686, guid: dfbb72e7b75263b4da3c1b05eaa385c6, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
       objectReference: {fileID: 0}
@@ -935,6 +951,10 @@ PrefabInstance:
     - target: {fileID: 430686, guid: dfbb72e7b75263b4da3c1b05eaa385c6, type: 3}
       propertyPath: m_LocalPosition.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 430686, guid: dfbb72e7b75263b4da3c1b05eaa385c6, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 430686, guid: dfbb72e7b75263b4da3c1b05eaa385c6, type: 3}
       propertyPath: m_LocalRotation.x
@@ -948,12 +968,12 @@ PrefabInstance:
       propertyPath: m_LocalRotation.z
       value: -0
       objectReference: {fileID: 0}
-    - target: {fileID: 430686, guid: dfbb72e7b75263b4da3c1b05eaa385c6, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
+    - target: {fileID: 11473390, guid: dfbb72e7b75263b4da3c1b05eaa385c6, type: 3}
+      propertyPath: MapSeed
+      value: 1850640813
       objectReference: {fileID: 0}
-    - target: {fileID: 430686, guid: dfbb72e7b75263b4da3c1b05eaa385c6, type: 3}
-      propertyPath: m_RootOrder
+    - target: {fileID: 11473390, guid: dfbb72e7b75263b4da3c1b05eaa385c6, type: 3}
+      propertyPath: RandomSeed
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 11473390, guid: dfbb72e7b75263b4da3c1b05eaa385c6, type: 3}
@@ -963,14 +983,6 @@ PrefabInstance:
     - target: {fileID: 11473390, guid: dfbb72e7b75263b4da3c1b05eaa385c6, type: 3}
       propertyPath: editorloadsavegame
       value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 11473390, guid: dfbb72e7b75263b4da3c1b05eaa385c6, type: 3}
-      propertyPath: RandomSeed
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 11473390, guid: dfbb72e7b75263b4da3c1b05eaa385c6, type: 3}
-      propertyPath: MapSeed
-      value: 1850640813
       objectReference: {fileID: 0}
     - target: {fileID: 8624619892147010575, guid: dfbb72e7b75263b4da3c1b05eaa385c6,
         type: 3}

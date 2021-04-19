@@ -36,10 +36,14 @@ public class TranslationData {
         this.hoverOverTranslation = hoverOver;
         this.values = values;
     }
-    public TranslationData(string id, bool OnlyHoverOver, int ValueCount) {
-        this.id = id;
+    public TranslationData(string id, bool OnlyHoverOver, int ValueCount) : this(id,OnlyHoverOver) {
         this.valueCount = ValueCount;
+    }
+    public TranslationData(string id, bool OnlyHoverOver) : this (id) {
         this.onlyHoverOver = OnlyHoverOver;
+    }
+    public TranslationData(string id) {
+        this.id = id;
     }
     public TranslationData() {
     }
@@ -48,10 +52,11 @@ public class TranslationData {
         UIElements.Add(v);
     }
 }
-public class TextLanguageSetter : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerDownHandler { 
-    public string Identifier;
+public class TextLanguageSetter : TranslationBase, IPointerEnterHandler, IPointerExitHandler, IPointerDownHandler {
 
-    // Use this for initialization
+    public string Identifier;
+    public TranslationData translationData;
+
     public bool OnlyHoverOver;
     public int Values;
 
@@ -64,25 +69,8 @@ public class TextLanguageSetter : MonoBehaviour, IPointerEnterHandler, IPointerE
     internal Type valueEnumType; //Enum are the Values
     //Selection of some common Words
     private StaticLanguageVariables[] staticLanguageVariables;
-    private TranslationData translationData;
 
-    public string GetRealName() {
-        string realname = "";
-        Transform current = transform;
-        while (current != null) {
-            realname = current.name + "/" + realname;
-            current = current.parent;
-        }
-        return realname;
-    }
-
-    void Start() {
-        //realname = GetRealName();
-        translationData = UILanguageController.Instance?.GetTranslationData(Identifier);
-        if (translationData == null) {
-            Debug.LogError("Missing Translations Data for " + Identifier);
-            return;
-        }
+    public override void OnStart() {
         if (OnlyHoverOver == false) {
             if (nameText == null)
                 nameText = GetComponent<Text>();
@@ -92,16 +80,12 @@ public class TextLanguageSetter : MonoBehaviour, IPointerEnterHandler, IPointerE
                 Debug.LogError("TextLanguageSetter has no text object! " + name);
                 return;
             }
-            
-            if (string.IsNullOrEmpty(translationData.translation) == false)
-                nameText.text = translationData.translation + nameSuffix;
-            UILanguageController.Instance.RegisterLanguageChange(OnChangeLanguage);
-            if (GetComponent<EventTrigger>() == null) {
-                this.gameObject.AddComponent<EventTrigger>();
-            }
+            //if (string.IsNullOrEmpty(translationData.translation) == false)
+            //    nameText.text = translationData.translation + nameSuffix;
         }
+        OnChangeLanguage();
     }
-    void OnChangeLanguage() { 
+    public override void OnChangeLanguage() { 
         translationData = UILanguageController.Instance.GetTranslationData(Identifier);
         if (OnlyHoverOver)
             return;
@@ -180,10 +164,6 @@ public class TextLanguageSetter : MonoBehaviour, IPointerEnterHandler, IPointerE
         valueText.text = translationData.values[i];
     }
 
-    public TranslationData GetData() {
-        return new TranslationData(Identifier, OnlyHoverOver, Values);
-    }
-
     public void OnPointerEnter(PointerEventData eventData) {
         if (Input.GetMouseButtonDown(0)) {
             GameObject.FindObjectOfType<HoverOverScript>().Unshow();
@@ -203,5 +183,9 @@ public class TextLanguageSetter : MonoBehaviour, IPointerEnterHandler, IPointerE
 
     internal void SetNameSuffix(string suffix) {
         nameSuffix = " " + suffix;
+    }
+
+    public override TranslationData[] GetTranslationDatas() {
+        return new TranslationData[] { new TranslationData(Identifier, OnlyHoverOver, Values) };
     }
 }

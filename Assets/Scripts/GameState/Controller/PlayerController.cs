@@ -26,6 +26,8 @@ public class PlayerController : MonoBehaviour {
 
     public static Player CurrentPlayer;
 
+    public Action<Player,Player> cbPlayerChange;
+
     EventUIManager euim;
     /// <summary>
     /// FIRST&SECOND Player OldType -> NewType
@@ -126,40 +128,31 @@ public class PlayerController : MonoBehaviour {
             //ALLOW SWITCH OF playernumber in editor
             if (Input.GetKey(KeyCode.LeftShift)) {
                 if (Input.GetKeyDown(KeyCode.Alpha0)) {
-                    currentPlayerNumber = 0;
-                    CurrentPlayer = Players.Find(x => x.Number == currentPlayerNumber);
+                    ChangeCurrentPlayer(0);
                 }
                 if (Input.GetKeyDown(KeyCode.Alpha1)) {
-                    currentPlayerNumber = 1;
-                    CurrentPlayer = Players.Find(x => x.Number == currentPlayerNumber);
+                    ChangeCurrentPlayer(1);
                 }
                 if (Input.GetKeyDown(KeyCode.Alpha2)) {
-                    currentPlayerNumber = 2;
-                    CurrentPlayer = Players.Find(x => x.Number == currentPlayerNumber);
+                    ChangeCurrentPlayer(2);
                 }
                 if (Input.GetKeyDown(KeyCode.Alpha3)) {
-                    currentPlayerNumber = 3;
-                    CurrentPlayer = Players.Find(x => x.Number == currentPlayerNumber);
+                    ChangeCurrentPlayer(3);
                 }
                 if (Input.GetKeyDown(KeyCode.Alpha4)) {
-                    currentPlayerNumber = 4;
-                    CurrentPlayer = Players.Find(x => x.Number == currentPlayerNumber);
+                    ChangeCurrentPlayer(4);
                 }
                 if (Input.GetKeyDown(KeyCode.Alpha5)) {
-                    currentPlayerNumber = 5;
-                    CurrentPlayer = Players.Find(x => x.Number == currentPlayerNumber);
+                    ChangeCurrentPlayer(5);
                 }
                 if (Input.GetKeyDown(KeyCode.Alpha6)) {
-                    currentPlayerNumber = 6;
-                    CurrentPlayer = Players.Find(x => x.Number == currentPlayerNumber);
+                    ChangeCurrentPlayer(6);
                 }
                 if (Input.GetKeyDown(KeyCode.Alpha7)) {
-                    currentPlayerNumber = 8;
-                    CurrentPlayer = Players.Find(x => x.Number == currentPlayerNumber);
+                    ChangeCurrentPlayer(7);
                 }
                 if (Input.GetKeyDown(KeyCode.Alpha9)) {
-                    currentPlayerNumber = 9;
-                    CurrentPlayer = Players.Find(x => x.Number == currentPlayerNumber);
+                    ChangeCurrentPlayer(8);
                 }
             }
         }
@@ -245,6 +238,17 @@ public class PlayerController : MonoBehaviour {
             InformAIaboutEvent(ge, true);
         }
     }
+
+    internal void AfterWorldLoad() {
+        foreach (Player p in Players) {
+            p.Cities.ForEach(c => {
+                c.CalculateExpanses();
+                c.CalculateIncome();
+            });
+            p.CalculateBalance();
+        }
+    }
+
     private void OnUnitCreated(Unit unit) {
         if (unit.IsNonPlayer)
             return;
@@ -365,6 +369,9 @@ public class PlayerController : MonoBehaviour {
         if (PlayerController.PlayerCount <= player || player < 0)
             return false;
         currentPlayerNumber = player;
+        Player newOne = Players.Find(x => x.Number == currentPlayerNumber);
+        cbPlayerChange?.Invoke(CurrentPlayer, newOne);
+        CurrentPlayer = newOne;
         return true;
     }
     public void RegisterPlayersDiplomacyStatusChange(Action<Player, Player, DiplomacyType, DiplomacyType> callbackfunc) {

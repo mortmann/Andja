@@ -18,7 +18,7 @@ public class UnitSpriteController : MonoBehaviour {
     private const string circleGOname = "buildrange_circle_gameobject";
     MouseController mouseController;
     public Material SpriteHighlightMaterial;
-
+    
     World World {
         get { return World.Current; }
     }
@@ -58,6 +58,7 @@ public class UnitSpriteController : MonoBehaviour {
     public void OnUnitCreated(Unit unit) {
         // This creates a new GameObject and adds it to our scene.
         GameObject go = new GameObject();
+        go.name = "U-" + unit.PlayerSetName;
         GameObject line_go = Instantiate(unitPathPrefab);
         line_go.transform.SetParent(go.transform);
         // Add our tile/GO pair to the dictionary.
@@ -87,6 +88,9 @@ public class UnitSpriteController : MonoBehaviour {
         // the object's into changes.
         unit.RegisterOnChangedCallback(OnUnitChanged);
         unit.RegisterOnDestroyCallback(OnUnitDestroy);
+        if(FogOfWarController.FogOfWarOn) {
+            FogOfWarController.Instance.AddUnitFogModule(go, unit);
+        }
         OnUnitChanged(unit);
 
         //SOUND PART -- IMPORTANT

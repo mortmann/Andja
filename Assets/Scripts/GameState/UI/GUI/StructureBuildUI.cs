@@ -6,9 +6,11 @@ using UnityEngine.EventSystems;
 public class StructureBuildUI : MonoBehaviour {
     public static StructureBuildUI Instance { get; protected set; }
     public Structure structure;
+    bool Locked;
     // Use this for initialization
-    public void Show(Structure str, bool hoverOver = true) {
+    public void Show(Structure str,bool hoverOver = true) {
         this.structure = str;
+        this.Locked = PlayerController.CurrentPlayer.HasStructureUnlocked(str.ID) == false;
         if (UISpriteController.HasIcon(str.ID) == false) {
             GetComponentInChildren<Text>().text = str.SpriteName;
             if(GetComponentsInChildren<Image>().Length>1)
@@ -26,7 +28,7 @@ public class StructureBuildUI : MonoBehaviour {
             };
             enter.callback.AddListener((data) => {
                 
-                OnMouseEnter();
+                OnPointerEnter();
             });
             trigger.triggers.Add(enter);
 
@@ -35,7 +37,7 @@ public class StructureBuildUI : MonoBehaviour {
                 eventID = EventTriggerType.PointerExit
             };
             exit.callback.AddListener((data) => {
-                OnMouseExit();
+                OnPointerExit();
             });
             trigger.triggers.Add(exit);
         }
@@ -69,10 +71,10 @@ public class StructureBuildUI : MonoBehaviour {
             trigger.triggers.Add(scroll);
         }
     }
-    public void OnMouseEnter() {
-        GameObject.FindObjectOfType<HoverOverScript>().Show(structure.Name);
+    public void OnPointerEnter() {
+        GameObject.FindObjectOfType<HoverOverScript>().Show(structure, Locked);
     }
-    public void OnMouseExit() {
+    public void OnPointerExit() {
         //TODO: reset hovertime better
         GameObject.FindObjectOfType<HoverOverScript>().Unshow();
 

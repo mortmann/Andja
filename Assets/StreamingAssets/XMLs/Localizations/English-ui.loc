@@ -202,6 +202,12 @@ I&apos;m not your father. I&apos;m a game.</hoverOverTranslation>
             <string>UI Canvas/Center/Diplomacy/Decisions/Title/</string>
          </uiElements>
       </translationData>
+      <translationData id="DiplomacyTitle">
+         <translation>[**Missing**]</translation>
+         <uiElements>
+            <string>UI Canvas/Center/Diplomacy/Title/</string>
+         </uiElements>
+      </translationData>
       <translationData id="DiscardUnsaved">
          <translation>Do you want to discard any 
 unsaved changes?</translation>
@@ -490,6 +496,24 @@ Be careful what you use, because it can break the game.</hoverOverTranslation>
          <uiElements>
             <string>Menu/SoundPanel/Content/VerticalLayoutGroup/Music/Label/</string>
             <string>UI Canvas/PauseMenu/DarkLayer/Menu/SoundPanel/Content/VerticalLayoutGroup/Music/Label/</string>
+         </uiElements>
+      </translationData>
+      <translationData id="NeedInRange">
+         <translation>In Range</translation>
+         <uiElements>
+            <string>%Need/</string>
+         </uiElements>
+      </translationData>
+      <translationData id="NeedLocked">
+         <translation>Locked</translation>
+         <uiElements>
+            <string>%Need/</string>
+         </uiElements>
+      </translationData>
+      <translationData id="NeedNotInRange">
+         <translation>Not in Range</translation>
+         <uiElements>
+            <string>%Need/</string>
          </uiElements>
       </translationData>
       <translationData id="NewGame">

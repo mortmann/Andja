@@ -207,8 +207,10 @@ public class StructureSpriteController : MonoBehaviour {
         }
         else {
             //Not showing it anymore so delete it
-            if (structureExtraUIMap.ContainsKey(structure))
+            if (structureExtraUIMap.ContainsKey(structure)) {
                 Destroy(structureExtraUIMap[structure]);
+                structureExtraUIMap.Remove(structure);
+            }
         }
     }
 
@@ -230,11 +232,13 @@ public class StructureSpriteController : MonoBehaviour {
             name = "RangeUI"
         };
         go.transform.position = structureGameObjectMap[structure].transform.position;
-        go.transform.localScale = new Vector3(((OutputStructure)structure).ContactRange, ((OutputStructure)structure).ContactRange, 0);
+        go.transform.localScale = new Vector3(
+            ((OutputStructure)structure).ContactRange * 2,
+            ((OutputStructure)structure).ContactRange * 2, 0);
         SpriteRenderer sr = go.AddComponent<SpriteRenderer>();
         sr.sprite = circleSprite;
         sr.sortingLayerName = "StructuresUI";
-        go.transform.SetParent(structureGameObjectMap[structure].transform);
+        go.transform.SetParent(structureGameObjectMap[structure].transform, true);
         return go;
     }
 

@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine.UI;
-using UnityEngine.EventSystems;
+using System.Linq;
 public class CityInventoryUI : MonoBehaviour {
     public GameObject cityname;
     public GameObject contentCanvas;
@@ -31,7 +31,9 @@ public class CityInventoryUI : MonoBehaviour {
             Destroy(child.gameObject);
         }
         itemToGO = new Dictionary<string, ItemUI>();
-        foreach (Item item in city.Inventory.Items.Values) {
+        List<Item> items = new List<Item>(city.Inventory.Items.Values);
+        items = items.OrderBy(x => x.Data.UnlockLevel).ThenBy(y=>y.Data.UnlockPopulationCount).ToList();
+        foreach (Item item in items) {
             GameObject go_i = GameObject.Instantiate(itemPrefab);
             go_i.name = item.Name + " Item";
             ItemUI iui = go_i.GetComponent<ItemUI>();

@@ -37,8 +37,9 @@ public class Route {
             if (t.Type == TileType.Ocean || t.Structure == null) {
                 continue;
             }
-            if (t.Structure.StructureTyp == StructureTyp.Pathfinding) {
+            if (t.Structure is RoadStructure rs) {
                 Tiles.Add(t);
+                rs.Route = this;
                 Tile[] ns = t.GetNeighbours();
                 foreach (Tile t2 in ns) {
                     if (alreadyChecked.Contains(t2)) {
@@ -62,6 +63,7 @@ public class Route {
             return;
         }
         Tiles.Remove(tile);
+        TileGraph.RemoveNodes(tile);
         //cheack if it can split up in to routes
         int neighboursOfRoute = 0;
         foreach (Tile t in tile.GetNeighbours(false)) {
@@ -77,11 +79,13 @@ public class Route {
         //yes it can, check if every roadtile has a connection to the routestarttile
         //if not create new route for those seperated roads
         List<Tile> oldTiles = new List<Tile>(Tiles);
-        RouteFloodFill(Tiles[0]);
+        Tiles.Clear();
+        RouteFloodFill(oldTiles[0]);
         //so we have all tiles we can reach from starttile
         //now we need to check if that is all
         //if not create on the others new routes!
         oldTiles = oldTiles.Except(Tiles).ToList();
+        TileGraph.RemoveNodes(oldTiles.ToArray());
         if (oldTiles.Count > 0) {
             //we have tiles that the flood fill didnt reach 
             //that means we have to create new routes and floodfill them from there
@@ -107,9 +111,11 @@ public class Route {
     public void AddRoute(Route route) {
         Tiles.AddRange(route.Tiles);
         foreach (Tile item in route.Tiles) {
-            ((RoadStructure)item.Structure).Route = this;
+            if(item.Structure != null)
+                ((RoadStructure)item.Structure).Route = this;
         }
-        foreach (City c in route.Tiles.GroupBy(t=> t.City)) {
+        var cities = route.Tiles.Select(t => t.City).Distinct();
+        foreach (City c in cities) {
             if(c.Routes.Contains(this)==false) {
                 c.AddRoute(this);
             }
@@ -123,7 +129,7 @@ public class Route {
     public override string ToString() {
         if (Tiles.Count == 0)
             return "EMPTY";
-        return Tiles[0].X +":"+ Tiles[0].Y+ "_Route "+ Tiles[0].City + Tiles[0].City.Routes.IndexOf(this);
+        return Tiles[0].X +":"+ Tiles[0].Y+ "_Route "+ Tiles[0].City +" - "+ Tiles[0].City.Routes.IndexOf(this);
     }
 
 }

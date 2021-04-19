@@ -5,7 +5,8 @@
 
 using UnityEngine;
 using System.Collections.Generic;
-
+using System.Linq;
+using System;
 
 public class Path_TileGraph {
 
@@ -25,7 +26,7 @@ public class Path_TileGraph {
                 data = t
             };
             nodes.Add(t, n);
-
+            
         }
         // Now loop through all nodes again
         // Create edges for neighbours
@@ -38,7 +39,6 @@ public class Path_TileGraph {
 
             // Get a list of neighbours for the tile
             Tile[] neighbours = t.GetNeighbours(false);  // NOTE: Some of the array spots could be null.
-
             // If neighbour is walkable, create an edge to the relevant node.
             for (int i = 0; i < neighbours.Length; i++) {
                 // neighbours[i] != null && neighbours[i].Type != TileType.Water && IsClippingCorner(t, neighbours[i]) == false
@@ -61,6 +61,20 @@ public class Path_TileGraph {
         }
 
     }
+
+    //internal void RemoveNode(Tile tile) {
+        //Path_Node<Tile> remove = nodes[tile];
+        //foreach (Tile t in tile.GetNeighbours()) {
+        //    if (nodes.ContainsKey(t)) {
+        //        var list = nodes[t].edges.ToList();
+        //        list.RemoveAll(x => x.node == remove);
+        //        nodes[t].edges = list.ToArray();
+        //    }
+        //}
+        //nodes.Remove(tile);
+        //Tiles.Remove(tile);
+    //}
+
     public void AddNodeToRouteTileGraph(Tile toAdd) {
         if (nodes.ContainsKey(toAdd)) {
             return;
@@ -77,6 +91,7 @@ public class Path_TileGraph {
                 return;
             }
         }
+        
         nodes.Add(toAdd, toAdd_node);
         foreach (Tile t in tiles) {
             if (nodes.ContainsKey(t)) {
@@ -98,8 +113,9 @@ public class Path_TileGraph {
                 neighbours_edges.Add(oldEdge);
                 n.edges = neighbours_edges.ToArray();
             }
-            toAdd_node.edges = toAdd_edges.ToArray();
-        }
+        }            
+        toAdd_node.edges = toAdd_edges.ToArray();
+
         if (toAdd_edges.Count == 0) {
             nodes.Remove(toAdd);
         } else {
@@ -107,12 +123,50 @@ public class Path_TileGraph {
         }
 
     }
+
+    internal void RemoveNodes(params Tile[] oldTiles) {
+        foreach(Tile tile in oldTiles) {
+            nodes.Remove(tile);
+            Tiles.Remove(tile);
+        }
+        foreach (Tile tile in oldTiles) {
+            foreach(Tile t in tile.GetNeighbours()) {
+                if (nodes.ContainsKey(t)) {
+                    var list = nodes[t].edges.ToList();
+                    list.RemoveAll(x => x.node.data == tile);
+                    nodes[t].edges = list.ToArray();
+                }
+            }
+        }
+    }
+
     public void AddNodes(Path_TileGraph ptg) {
         foreach (Tile item in ptg.nodes.Keys) {
             if (this.nodes.ContainsKey(item)) {
                 continue;
             }
+            Tiles.Add(item);
             this.nodes.Add(item, ptg.nodes[item]);
+            foreach (Tile neigh in item.GetNeighbours()) {
+                if(Tiles.Contains(neigh)) {
+                    //we need to create a connection between those two
+                    Path_Edge<Tile> item_neigh = new Path_Edge<Tile> {
+                        cost = item.MovementCost,
+                        node = nodes[item]
+                    };
+                    var list = nodes[neigh].edges.ToList();
+                    list.Add(item_neigh);
+                    nodes[neigh].edges = list.ToArray();
+
+                    Path_Edge<Tile> neigh_item = new Path_Edge<Tile> {
+                        cost = neigh.MovementCost,
+                        node = nodes[neigh]
+                    };
+                    list = nodes[item].edges.ToList();
+                    list.Add(neigh_item);
+                    nodes[item].edges = list.ToArray();
+                }
+            }
         }
     }
 

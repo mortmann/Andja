@@ -96,6 +96,8 @@ public class TileSpriteController : MonoBehaviour {
 
             islandToCityMask = new Dictionary<Island, SpriteMask>();
             islandToGameObject = new Dictionary<Island, GameObject>();
+            islandToCustomMask = new Dictionary<Island, SpriteMask>();
+
             foreach (Island i in World.Current.Islands) {
                 Vector2 key = i.Placement;
                 GameObject islandGO = Instantiate(islandPosToTilemap[key]);
@@ -117,6 +119,19 @@ public class TileSpriteController : MonoBehaviour {
                 sm.sprite = Sprite.Create(masktex, new Rect(0, 0, masktex.width, masktex.height), Vector2.zero, 1);
                 sm.alphaCutoff = 1;
                 islandToCityMask.Add(i, sm);
+
+
+                GameObject MaskGameobject = new GameObject("IslandCustomMask ");
+                MaskGameobject.transform.parent = islandToGameObject[i].transform;
+                MaskGameobject.transform.localPosition = -new Vector3(0, 0);
+                SpriteMask csm = MaskGameobject.AddComponent<SpriteMask>();
+                csm.isCustomRangeActive = true;
+                csm.sortingLayerName = "DarkLayer";
+                csm.frontSortingLayerID = 638755707; // UI Layer even tho its some strange number
+                Texture2D cmasktex = Instantiate<Texture2D>(islandToMaskTexture[i.Placement]);
+                csm.sprite = Sprite.Create(cmasktex, new Rect(0, 0, masktex.width, masktex.height), Vector2.zero, 1);
+                csm.alphaCutoff = 1;
+                islandToCustomMask.Add(i, csm);
             }
             World.RegisterTileChanged(OnTileChanged);
 
@@ -308,6 +323,8 @@ public class TileSpriteController : MonoBehaviour {
         int y = (int)(tile_data.Y - tile_data.Island.Placement.y);
         if (tile_data.City.PlayerNumber == PlayerController.currentPlayerNumber) {
             islandToCityMask[tile_data.Island].sprite.texture.SetPixel(x, y, new Color32(128, 128, 128, 255));
+        } else {
+            islandToCityMask[tile_data.Island].sprite.texture.SetPixel(x, y, new Color32(128, 128, 128, 0));
         }
         apply = true;
         if (TileDeciderFunc != null && islandToCustomMask != null) {
@@ -338,15 +355,6 @@ public class TileSpriteController : MonoBehaviour {
             if (nameToBaseTile.ContainsKey(tile_data.SpriteName) == false)
                 Debug.Log(tile_data.SpriteName);
             editorTilemap.SetTile(new Vector3Int(tile_data.X, tile_data.Y, 0), nameToBaseTile[temp]);
-        }
-    }
-
-    TileMark TileCityDecider(Tile t) {
-        if (t.City.IsCurrPlayerCity()) {
-            return TileMark.None;
-        }
-        else {
-            return TileMark.Dark;
         }
     }
 
@@ -398,6 +406,8 @@ public class TileSpriteController : MonoBehaviour {
     public void AddDecider(TileDecider addDeciderFunc, bool isCityDecider = false) {
         if (isCityDecider && MouseController.Instance.SelectedStructure != null)
             return;
+        if (TileDeciderFunc != null && TileDeciderFunc.GetInvocationList().Contains(addDeciderFunc))
+            return;
         this.TileDeciderFunc += addDeciderFunc;
         if (TileDeciderFunc != null || TileDeciderFunc.GetInvocationList().Length > 0)
             darkLayer.SetActive(true);
@@ -405,23 +415,9 @@ public class TileSpriteController : MonoBehaviour {
             islandToCityMask.ToList().ForEach(x => x.Value.gameObject.SetActive(true));
         }
         else {
-            islandToCustomMask = new Dictionary<Island, SpriteMask>();
             foreach (Island i in World.Current.Islands) {
-                GameObject cityMaskGameobject = new GameObject("IslandCustomMask " + addDeciderFunc.Method.Name);
-                cityMaskGameobject.transform.parent = islandToGameObject[i].transform;
-                cityMaskGameobject.transform.localPosition = -new Vector3(0, 0);
-                SpriteMask sm = cityMaskGameobject.AddComponent<SpriteMask>();
-                sm.isCustomRangeActive = true;
-                sm.sortingLayerName = "DarkLayer";
-                sm.frontSortingLayerID = 638755707; // UI Layer even tho its some strange number
-                Texture2D masktex = Instantiate<Texture2D>(islandToMaskTexture[i.Placement]);
-                sm.sprite = Sprite.Create(masktex, new Rect(0, 0, masktex.width, masktex.height), Vector2.zero, 1);
-                sm.alphaCutoff = 1;
-
-                islandToCustomMask.Add(i, sm);
                 //TODO: call this again or just ontilechanged when the corresponding decider needs updating 
                 i.Tiles.ForEach(x => OnTileChanged(x));
-
             }
         }
     }
@@ -440,13 +436,13 @@ public class TileSpriteController : MonoBehaviour {
             islandToCityMask.ToList().ForEach(x => x.Value.gameObject.SetActive(false));
         }
         else {
-            if (islandToCustomMask == null)
-                return;
-            foreach (SpriteMask sm in islandToCustomMask.Values) {
-                if (sm == null)
-                    continue;
-                Destroy(sm.gameObject);
-            }
+            //if (islandToCustomMask == null)
+            //    return;
+            //foreach (SpriteMask sm in islandToCustomMask.Values) {
+            //    if (sm == null)
+            //        continue;
+            //    Destroy(sm.gameObject);
+            //}
         }
     }
     public static List<string> GetSpriteNamesForType(TileType type, Climate climate, string spriteAddon = null) {

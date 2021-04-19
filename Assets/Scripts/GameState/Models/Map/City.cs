@@ -59,7 +59,6 @@ public class City : IGEventable {
         }
     }
 
-    //TODO: set this to the player that creates this
     public List<HomeStructure> homes;
     private HashSet<Tile> _Tiles;
     public List<Route> Routes;
@@ -171,6 +170,7 @@ public class City : IGEventable {
                 homes.Add((HomeStructure)item);
             }
             item.City = this;
+            item.Load();
         }
         if (IsWilderness() == false) {
             for (int i = PopulationLevels.Count - 1; i >= 0; i--) {
@@ -178,7 +178,7 @@ public class City : IGEventable {
                     PopulationLevels.Remove(PopulationLevels[i]);
                     continue;
                 }
-                PopulationLevels[i].Load();
+                PopulationLevels[i].Load(this);
             }
             PlayerController.GetPlayer(PlayerNumber).OnCityCreated(this);
         }
@@ -186,9 +186,7 @@ public class City : IGEventable {
     }
 
     internal void Update(float deltaTime) {
-        expanses = 0;
-        for (int i = Structures.Count-1; i >= 0; i--) {
-            expanses += Structures[i].MaintenanceCost;
+        for (int i = Structures.Count - 1; i >= 0; i--) {
             Structures[i].Update(deltaTime);
         }
         if (PlayerNumber == -1 || homes.Count == 0) {
@@ -196,11 +194,22 @@ public class City : IGEventable {
         }
         UpdateNeeds(deltaTime);
         //TODO: check for better spot?
+        CalculateExpanses();
+        CalculateIncome();
+    }
+    public void CalculateExpanses() {
+        expanses = 0;
+        for (int i = Structures.Count - 1; i >= 0; i--) {
+            expanses += Structures[i].UpkeepCost;
+        }
+    }
+    public void CalculateIncome() {
         income = 0;
         foreach (PopulationLevel pl in PopulationLevels) {
             income += pl.GetTaxIncome(this);
         }
     }
+
     /// <summary>
     /// USE only for the creation of non player city aka Wilderness
     /// </summary>

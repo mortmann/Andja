@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
+using System;
 
 public class BuildMenuUIController : MonoBehaviour {
 
@@ -27,6 +28,10 @@ public class BuildMenuUIController : MonoBehaviour {
             Debug.LogError("There should never be two BuildMenuUIController.");
         }
         Instance = this;
+        Setup();
+        PlayerController.Instance.cbPlayerChange += PlayerSetup;
+        PlayerSetup(null, Player);
+        BuildController.Instance.RegisterBuildStateChange(OnBuildModeChange);
     }
     private void Setup() {
         foreach (Transform child in buttonPopulationsLevelContent.transform) {
@@ -66,7 +71,6 @@ public class BuildMenuUIController : MonoBehaviour {
                 groupGameObjects[type].Set(type);
             }
             groupGameObjects[type].Add(b.gameObject);
-
             b.GetComponent<Button>().onClick.AddListener(() => { OnClick(b.name); });
             b.GetComponent<Image>().color = Color.white;
             b.GetComponent<StructureBuildUI>().Show(s);
@@ -83,18 +87,20 @@ public class BuildMenuUIController : MonoBehaviour {
             f.Check();
         Canvas.ForceUpdateCanvases();
     }
-    void OnEnable() {
-        //first time enabled after start
-        if (buttonsPerLevel == null)
-            Setup();
+
+    private void PlayerSetup(Player old, Player current) {
+        old?.UnregisterStructuresUnlock(OnStructuresUnlock);
         OnMaxPopLevelChange(Player.MaxPopulationLevel);
         Player.RegisterStructuresUnlock(OnStructuresUnlock);
-        BuildController.Instance.RegisterBuildStateChange(OnBuildModeChange);
+        foreach(string id in nameToGOMap.Keys) {
+            nameToGOMap[id].interactable = BuildController.Instance.allStructuresEnabled || Player.HasStructureUnlocked(id);
+        }
     }
+
     public void OnBuildModeChange(BuildStateModes mode) {
         if (mode != BuildStateModes.Build) {
             if (oldButton != null)
-                oldButton.GetComponent<Image>().color = Color.white;
+                oldButton.SetNormalColor(Color.white);
         }
     }
     public void OnMaxPopLevelChange(int setlevel) {
@@ -109,14 +115,15 @@ public class BuildMenuUIController : MonoBehaviour {
         }
     }
     public void OnStructuresUnlock(IEnumerable<Structure> structures) {
-        OnMaxPopLevelChange(structures.GetEnumerator().Current.PopulationLevel);
+        OnMaxPopLevelChange(Player.MaxPopulationLevel);
         foreach (Structure structure in structures) {
             nameToGOMap[structure.ID].interactable = true;
+            nameToGOMap[structure.ID].SetNormalColor(new Color32(0, 220, 0, 255));
         }
     }
     public void Update() {
         if (Input.GetMouseButtonDown(1) && oldButton != null) {
-            oldButton.GetComponent<Image>().color = Color.white;
+            oldButton.SetNormalColor(Color.white);
             oldButton = null;
         }
     }
@@ -126,10 +133,10 @@ public class BuildMenuUIController : MonoBehaviour {
             return;
         }
         if (oldButton != null) {
-            oldButton.GetComponent<Image>().color = Color.white;
+            oldButton.SetNormalColor(Color.white);
         }
         oldButton = nameToGOMap[name];
-        nameToGOMap[name].GetComponent<Image>().color = Color.red;
+        nameToGOMap[name].SetNormalColor(Color.red);
         BuildController.Instance.StartStructureBuild(name);
     }
 
@@ -153,8 +160,7 @@ public class BuildMenuUIController : MonoBehaviour {
             return;
 #endif
         if (oldButton != null)
-            oldButton.GetComponent<Image>().color = Color.white;
-        Player.UnregisterStructuresUnlock(OnStructuresUnlock);
+            oldButton.SetNormalColor(Color.white);
         BuildController.Instance.UnregisterBuildStateChange(OnBuildModeChange);
     }
 }

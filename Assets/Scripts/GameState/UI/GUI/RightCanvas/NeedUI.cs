@@ -4,7 +4,7 @@ using UnityEngine.UI;
 using UnityEngine;
 using System;
 
-public class NeedUI : MonoBehaviour {
+public class NeedUI : TranslationBase {
     public Slider slider;
     public Text nameText;
     public Text percentageText;
@@ -13,6 +13,10 @@ public class NeedUI : MonoBehaviour {
     protected Need need;
     protected HomeStructure home;
     private bool locked;
+    TranslationData notInRange;
+    TranslationData inRange;
+    TranslationData Locked;
+
     public void SetNeed(Need need) {
         if (need == null)
             Destroy(gameObject);
@@ -35,11 +39,10 @@ public class NeedUI : MonoBehaviour {
         }
         nameText.text = name;
         if (PlayerController.CurrentPlayer.HasNeedUnlocked(need) == false) {
-            percentageText.text = "LOCKED!";
             locked = true;
             PlayerController.CurrentPlayer.RegisterNeedUnlock(OnNeedUnlock);
-            return;
         }
+        OnChangeLanguage();
     }
     public void Show(HomeStructure homeStructure) {
         if (need == null) {
@@ -48,7 +51,8 @@ public class NeedUI : MonoBehaviour {
         }
         home = homeStructure;
         Need n = home.GetNeedGroups()?.Find(x => need.Group != null && x.ID == need.Group.ID)?.Needs.Find(x => x.ID == need.ID);
-        if(n == null) {
+        slider.value = 0;
+        if (n == null) {
             return;
         }
         need = n;
@@ -70,14 +74,34 @@ public class NeedUI : MonoBehaviour {
         }
         else {
             if (home.IsStructureNeedFullfilled(need)) {
-                percentageText.text = "In Range";
+                percentageText.text = inRange?.translation;
                 slider.value = 100;
             }
             else {
-                percentageText.text = "Not in Range";
+                percentageText.text = notInRange?.translation;
                 slider.value = 0;
             }
         }
     }
 
+    public override void OnStart() {
+        
+    }
+
+    public override void OnChangeLanguage() {
+        notInRange = UILanguageController.Instance.GetTranslationData("NeedNotInRange");
+        inRange = UILanguageController.Instance.GetTranslationData("NeedInRange");
+        Locked = UILanguageController.Instance.GetTranslationData("NeedLocked");
+        if(locked) {
+            percentageText.text = Locked?.translation;
+        }
+    }
+
+    public override TranslationData[] GetTranslationDatas() {
+        return new TranslationData[3] { 
+            new TranslationData("NeedInRange"), 
+            new TranslationData("NeedNotInRange"),
+            new TranslationData("NeedLocked") 
+        };
+    }
 }

@@ -20,14 +20,15 @@ public class GameData : MonoBehaviour {
     //if nothing is set take that what is set by the editor in unity
     //if there is nothing set it is null so new world
     //only load the set value if not using ingame loading method
-    public string Loadsavegame => Application.isEditor && (setloadsavegame == null || setloadsavegame.Length==0)? editorloadsavegame : setloadsavegame;
+    public string Loadsavegame => Application.isEditor && (setloadsavegame == null || setloadsavegame.Length==0)?
+                                            editorloadsavegame : setloadsavegame;
     public static int WorldNumber = -1;
     public static int PirateNumber = -2;
     public static int FlyingTraderNumber = -3;
-
+    
     public string editorloadsavegame;
     public static string setloadsavegame;
-
+    public static FogOfWarStyle FogOfWarStyle = FogOfWarStyle.Off;
     public bool RandomSeed;
     public static int bots; // this is far from being in anykind relevant so 
     public static int playerCount = 1;
@@ -86,12 +87,6 @@ public class GameData : MonoBehaviour {
             MapGenerator.Instance.DefineParameters(MapSeed, Width, Height, dict, new List<string>(usedIslands));
         }
         Loadout = PrototypController.Instance.StartingLoadouts[0];
-        //Loadout = new StartingLoadout {
-        //    Items = new Item[] { new Item("wood") { count = 100 }, new Item("tools") { count = 66 }, new Item("fish") { count = 25 } },
-        //    Structures = new Structure[] { PrototypController.Instance.GetStructure("warehouse1") },
-        //    Units = new Unit[] { PrototypController.Instance.GetUnitForID("ship") },
-        //    Money = 50005,
-        //};
     }
     public void SetMapSeed(int seed) {
         MapSeed = seed;

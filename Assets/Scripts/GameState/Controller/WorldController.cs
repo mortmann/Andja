@@ -266,6 +266,8 @@ public class WorldController : MonoBehaviour {
             loadedStructures.AddRange(island.Load());
         }
         BuildController.Instance.PlaceAllLoadedStructure(loadedStructures);
+        flyingTrader.Load();
+        PlayerController.Instance.AfterWorldLoad();
     }
 
     internal void SetWorldData(WorldSaveState worldsave) {

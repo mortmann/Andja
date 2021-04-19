@@ -53,7 +53,16 @@ public class MouseController : MonoBehaviour {
     Dictionary<Tile, TilePreview> tileToPreviewGO;
     Dictionary<Tile, StructurePreview> tileToStructurePreview;
     GameObject singleStructurePreview;
-    public Structure SelectedStructure;
+    private Structure _selectedStructure;    
+    public Structure SelectedStructure { 
+        get => _selectedStructure; 
+        set {
+            if(_selectedStructure != null)
+                _selectedStructure.CloseExtraUI();
+            _selectedStructure = value;
+        }
+    }
+
     protected Structure _toBuildstructure;
     public Structure ToBuildStructure {
         get {
@@ -102,6 +111,8 @@ public class MouseController : MonoBehaviour {
             return null;
         }
     }
+
+
     public void OnEnable() {
         if (Instance != null) {
             Debug.LogError("There should never be two mouse controllers.");
@@ -257,6 +268,7 @@ public class MouseController : MonoBehaviour {
         UnselectUnit();
         UnselectUnitGroup();
         UnselectStructure();
+        UIController.Instance.CloseMouseUnselect();
     }
 
     private void UpdateDestroy() {

@@ -19,7 +19,7 @@ using Newtonsoft.Json;
 public enum TileType { Ocean, Shore, Cliff, Water, Dirt, Grass, Stone, Desert, Steppe, Jungle, Mountain, Volcano };
 public enum TileMark { None, Highlight, Dark }
 
-[JsonObject(MemberSerialization.OptIn)]
+[JsonObject(MemberSerialization.OptIn, ItemTypeNameHandling = TypeNameHandling.None)]
 public class Tile : IComparable<Tile>, IEqualityComparer<Tile> {
 
     [JsonPropertyAttribute] protected ushort x;
@@ -42,6 +42,9 @@ public class Tile : IComparable<Tile>, IEqualityComparer<Tile> {
         get { return null; }
         set {
         }
+    }
+    public bool ShouldSerializeSpriteName() {
+        return EditorController.IsEditor;
     }
     public Vector3 Vector { get { return new Vector3(x, y, 0); } }
     public Vector2 Vector2 { get { return new Vector2(x, y); } }

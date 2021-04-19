@@ -205,6 +205,12 @@ zu dem nächst niedrigeren.</hoverOverTranslation>
             <string>UI Canvas/Center/Diplomacy/Decisions/Title/</string>
          </uiElements>
       </translationData>
+      <translationData id="DiplomacyTitle">
+         <translation>Diplomatie</translation>
+         <uiElements>
+            <string>UI Canvas/Center/Diplomacy/Title/</string>
+         </uiElements>
+      </translationData>
       <translationData id="DiscardUnsaved">
          <translation>Wollen Sie jeglichen ungespeicherten Fortschritt verwerfen.</translation>
          <uiElements>
@@ -492,6 +498,24 @@ Pass auf welche du nutzt, denn Sie können</hoverOverTranslation>
          <uiElements>
             <string>Menu/SoundPanel/Content/VerticalLayoutGroup/Music/Label/</string>
             <string>UI Canvas/PauseMenu/DarkLayer/Menu/SoundPanel/Content/VerticalLayoutGroup/Music/Label/</string>
+         </uiElements>
+      </translationData>
+      <translationData id="NeedInRange">
+         <translation>In Reichweite</translation>
+         <uiElements>
+            <string>%Need/</string>
+         </uiElements>
+      </translationData>
+      <translationData id="NeedLocked">
+         <translation>Gesperrt</translation>
+         <uiElements>
+            <string>%Need/</string>
+         </uiElements>
+      </translationData>
+      <translationData id="NeedNotInRange">
+         <translation>Nicht in Reichweite</translation>
+         <uiElements>
+            <string>%Need/</string>
          </uiElements>
       </translationData>
       <translationData id="NewGame">

@@ -110,14 +110,10 @@ public class Worker {
 
     public Worker() {
         SaveController.AddWorkerForLoad(this);
-        Setup();
     }
 
     private void Setup() {
-        if(Home is FarmStructure) {
-            if(WorkStructure != null)
-                walkTime = Vector3.Distance(Home.Center, WorkStructure.Center);
-        }
+
     }
 
     public void OnWorkStructureDestroy(Structure str, IWarfare destroyer) {
@@ -137,6 +133,7 @@ public class Worker {
         }
         if (hasRegistered == false) {
             WorkStructure.RegisterOnDestroyCallback(OnWorkStructureDestroy);
+            walkTime = Vector3.Distance(Home.Center, WorkStructure.Center);
             hasRegistered = true;
         }
         //worker can only work if
@@ -159,7 +156,6 @@ public class Worker {
         }
 
         //do the movement 
-        
         path.Update_DoMovement(deltaTime);
 
         cbWorkerChanged?.Invoke(this);
@@ -300,6 +296,22 @@ public class Worker {
         }
         WorkOutputStructure.outputClaimed = false;
         isDone = true;
+    }
+
+    internal void Load() {
+        if (path is RoutePathfinding rp) {
+            if (rp.StartStructure == null) {
+                if (WorkStructure.IsDestroyed) {
+                    Destroy();
+                }
+                if(goingToWork) {
+                    rp.GoalStructure = WorkStructure;
+                } else {
+                    rp.GoalStructure = Home;
+                }
+                rp.hasToEnterWorkStructure = hasToEnterWorkStructure;
+            }
+        }
     }
 
     public void Destroy() {

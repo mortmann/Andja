@@ -183,6 +183,14 @@ public class HomeStructure : TargetStructure {
         }
         UpgradeHouse();
     }
+    public override void OpenExtraUI() {
+        if(CanBeUpgraded)
+            base.OpenExtraUI();
+    }
+    public override void CloseExtraUI() {
+        if (CanBeUpgraded == false)
+            base.CloseExtraUI();
+    }
 
     public bool IsStructureNeedFullfilled(Need need) {
         if (need.HasToReachPerRoad) {

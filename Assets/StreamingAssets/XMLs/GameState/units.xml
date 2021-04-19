@@ -14,7 +14,7 @@
       <buildcost>1000</buildcost>
       <inventoryPlaces>0</inventoryPlaces>
       <inventorySize>0</inventorySize>
-      <maintenancecost>10</maintenancecost>
+      <upkeepCost>10</upkeepCost>
       <maximumHealth>100.0</maximumHealth>
       <aggroTimer>1.0</aggroTimer>
       <attackRange>1.0</attackRange>
@@ -57,7 +57,7 @@
       <buildcost>2500</buildcost>
       <inventoryPlaces>6</inventoryPlaces>
       <inventorySize>50</inventorySize>
-      <maintenancecost>25</maintenancecost>
+      <upkeepCost>25</upkeepCost>
       <maximumHealth>1250.0</maximumHealth>
       <aggroTimer>1.0</aggroTimer>
       <attackRange>10.0</attackRange>

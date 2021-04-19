@@ -77,6 +77,7 @@ public class MarketStructure : OutputStructure, ICapturable {
         // add all the tiles to the city it was build in
         //dostuff thats happen when build
         City.AddTiles(RangeTiles);
+        City.AddTiles(Tiles);
         foreach (Tile rangeTile in RangeTiles) {
             if (rangeTile.City != City) {
                 continue;
@@ -86,12 +87,13 @@ public class MarketStructure : OutputStructure, ICapturable {
         City.RegisterStructureAdded(OnStructureAdded);
     }
     public void OnOutputChangedStructure(Structure str) {
-        if (str is OutputStructure == false) {
+        OutputStructure outstr = str as OutputStructure;
+        if (outstr == null) {
             return;
         }
         bool hasOutput = false;
-        for (int i = 0; i < ((OutputStructure)str).Output.Length; i++) {
-            if (((OutputStructure)str).Output[i].count > 0) {
+        for (int i = 0; i < outstr.Output.Length; i++) {
+            if (outstr.Output[i].count > 0) {
                 hasOutput = true;
                 break;
             }
@@ -100,25 +102,24 @@ public class MarketStructure : OutputStructure, ICapturable {
             if (OutputMarkedSturctures.Contains(str)) {
                 OutputMarkedSturctures.Remove(str);
             }
-            if (jobsToDo.ContainsKey((OutputStructure)str)) {
-                jobsToDo.Remove((OutputStructure)str);
+            if (jobsToDo.ContainsKey(outstr)) {
+                jobsToDo.Remove(outstr);
             }
             return;
         }
 
-
-        if (jobsToDo.ContainsKey((OutputStructure)str)) {
-            jobsToDo.Remove((OutputStructure)str);
+        if (jobsToDo.ContainsKey(outstr)) {
+            jobsToDo.Remove(outstr);
         }
 
         HashSet<Route> Routes = GetRoutes();
         //get the roads around the structure
-        foreach (Route item in ((OutputStructure)str).GetRoutes()) {
+        foreach (Route item in outstr.GetRoutes()) {
             //if one of them is in my roads
             if (Routes.Contains(item)) {
                 //if we are here we can get there through atleast 1 road
-                if (((OutputStructure)str).outputClaimed == false) {
-                    jobsToDo.Add((OutputStructure)str, null);
+                if (outstr.outputClaimed == false) {
+                    jobsToDo.Add(outstr, null);
                 }
                 if (OutputMarkedSturctures.Contains(str)) {
                     OutputMarkedSturctures.Remove(str);
@@ -151,14 +152,14 @@ public class MarketStructure : OutputStructure, ICapturable {
         if (structure.City != City) {
             return;
         }
-
-        if (structure is OutputStructure) {
-            if (((OutputStructure)structure).ForMarketplace == false) {
+        if (structure is OutputStructure outstr) {
+            if (outstr.ForMarketplace == false) {
                 return;
             }
             foreach (Tile item in structure.Tiles) {
                 if (RangeTiles.Contains(item)) {
-                    ((OutputStructure)structure).RegisterOutputChanged(OnOutputChangedStructure);
+                    outstr.RegisterOutputChanged(OnOutputChangedStructure);
+                    OnOutputChangedStructure(outstr);
                     break;
                 }
             }
@@ -257,7 +258,6 @@ public class MarketStructure : OutputStructure, ICapturable {
             Destroy();
         }
     }
-
     public bool Captured => capturedProgress == 1;
     #endregion
 }

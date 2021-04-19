@@ -13,6 +13,7 @@ public class RoadStructure : Structure {
     public Route Route {
         get { return _route; }
         set {
+            cbRouteChanged?.Invoke(_route, value);
             _route = value;
         }
     }
@@ -21,6 +22,7 @@ public class RoadStructure : Structure {
 
 
     Action<RoadStructure> cbRoadChanged;
+    Action<Route, Route> cbRouteChanged;
 
     public RoadStructure(string ID, StructurePrototypeData spd) {
         this.ID = ID;
@@ -136,6 +138,8 @@ public class RoadStructure : Structure {
         return connectOrientation;
     }
     protected override void OnDestroy() {
+        cbRoadChanged = null;
+        cbRouteChanged = null;
         if (Route != null) {
             Route.RemoveRoadTile(BuildTile);
         }
@@ -147,9 +151,14 @@ public class RoadStructure : Structure {
     public void RegisterOnRoadCallback(Action<RoadStructure> cb) {
         cbRoadChanged += cb;
     }
-
     public void UnregisterOnRoadCallback(Action<RoadStructure> cb) {
         cbRoadChanged -= cb;
+    }
+    public void RegisterOnRouteCallback(Action<Route,Route> cb) {
+        cbRouteChanged += cb;
+    }
+    public void UnregisterOnRouteCallback(Action<Route, Route> cb) {
+        cbRouteChanged -= cb;
     }
     public override string ToString() {
         if (BuildTile == null)

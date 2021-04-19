@@ -9,11 +9,12 @@ public class IslandInfoUI : MonoBehaviour {
     public Transform CityBuildItems;
     public Transform Fertilites;
     public Transform Resources;
+    public Transform CityInfo;
     public Text CityName;
-    public Text PopulationName;
     public ImageText ImageWithText;
     public Image SimpleImage;
     Dictionary<string, Text> itemToText = new Dictionary<string, Text>();
+    Dictionary<int, GameObject> populationLevelToGO = new Dictionary<int, GameObject>();
     public int maxItemsPerRow = 5;    
     Island currentIsland = null;
 
@@ -35,16 +36,30 @@ public class IslandInfoUI : MonoBehaviour {
         City c = cc.nearestIsland.Cities.Find(x => x.PlayerNumber == PlayerController.currentPlayerNumber);
         if (c == null) {
             CityBuildItems.gameObject.SetActive(false);
+            CityInfo.gameObject.SetActive(false);
             return;
         }
         CityBuildItems.gameObject.SetActive(true);
+        CityInfo.gameObject.SetActive(true);
         Item[] items = c.Inventory.GetBuildMaterial();
         for (int i = 0; i < items.Length; i++) {
             itemToText[items[i].ID].text = items[i].countString;
         }
+        for (int i = 0; i < PrototypController.Instance.NumberOfPopulationLevels; i++) {
+            PopulationLevel pl = c.GetPopulationLevel(i);
+            if (pl.populationCount > 0) {
+                itemToText[pl.Level + ""].text = "" + pl.populationCount;
+                populationLevelToGO[pl.Level].SetActive(true);
+            }
+            else {
+                populationLevelToGO[pl.Level].SetActive(false);
+            }
+        }
     }
     private void CreateCityInfo() {
         foreach (Transform t in CityBuildItems)
+            Destroy(t.gameObject);
+        foreach (Transform t in CityInfo)
             Destroy(t.gameObject);
         Item[] items = PrototypController.BuildItems;
         int lastRowNumber = items.Length % maxItemsPerRow;
@@ -58,7 +73,14 @@ public class IslandInfoUI : MonoBehaviour {
             imageText.text.enabled = true;
             itemToText.Add(items[i].ID, imageText.text);
         }
-
+        foreach(PopulationLevelPrototypData pl in PrototypController.Instance.PopulationLevelDatas.Values) {
+            ImageText imageText = Instantiate(ImageWithText);
+            imageText.GetComponent<LayoutElement>().minWidth = 110;
+            imageText.Set(UISpriteController.GetIcon(pl.iconSpriteName), pl, 0+"");
+            itemToText.Add(pl.LEVEL+"", imageText.text);
+            populationLevelToGO.Add(pl.LEVEL, imageText.gameObject);
+            imageText.transform.SetParent(CityInfo, false);
+        }
     }
 
     private void CreateIslandInfo() {

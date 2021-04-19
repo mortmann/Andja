@@ -2,6 +2,7 @@
 using System.Reflection;
 using System.Xml;
 using UnityEngine;
+using UnityEngine.UI;
 
 public static class ExtensionMethods {
     public static T ToEnum<T>(this string value, bool ignoreCase = true) {
@@ -67,5 +68,11 @@ public static class ExtensionMethods {
 
     public static bool IsBitSet(this byte b, int pos) {
         return (b & (1 << pos)) != 0;
+    }
+
+    public static void SetNormalColor(this Button button, Color color) {
+        ColorBlock cb = button.colors;
+        cb.normalColor = color;
+        button.colors = cb;
     }
 }

@@ -130,34 +130,34 @@ public class Path_AStar {
             if(current.edges.Length>8) {
                 Debug.Log("wat");
             }
-            Parallel.ForEach(current.edges, edge_neighbor => {
+            foreach(Path_Edge<Tile> edge_neighbor in current.edges) {
                 if (diag == false) {
                     if ((edge_neighbor.node.data.Vector - current.data.Vector).sqrMagnitude > 1.1) {
-                        return;
+                        continue;
                     }
                 }
                 Path_Node<Tile> neighbor = edge_neighbor.node;
-                
                 if (ClosedSet.Contains(neighbor) == true)
-                    return; // ignore this already completed neighbor
+                    continue; // ignore this already completed neighbor
                 float movement_cost_to_neighbor = neighbor.data.MovementCost * Dist_between(current, neighbor);
-                if(playerCityRequired>int.MinValue) {
+                if (playerCityRequired > int.MinValue) {
                     if (neighbor.data.City.PlayerNumber != playerCityRequired) {
                         movement_cost_to_neighbor = float.PositiveInfinity;
                     }
                 }
                 if (canEndInUnwakable) {
                     if (closestWalkableNeighbours.Contains(neighbor.data) || endTiles.Contains(neighbor.data)) {
-                        movement_cost_to_neighbor = Dist_between(current, neighbor)+0.1f;
+                        movement_cost_to_neighbor = Dist_between(current, neighbor) + 0.1f;
                     }
                 }
                 float tentative_g_score = g_score[current] + movement_cost_to_neighbor;
 
                 if (OpenSet.Contains(neighbor) && tentative_g_score >= g_score[neighbor])
-                    return;
+                    continue;
                 try {
                     Came_From[neighbor] = current;
-                } catch(Exception e) {
+                }
+                catch (Exception e) {
                     //it has nullpointer here no clue why
                     //TODO: fix this
                     e.ToString();
@@ -172,7 +172,50 @@ public class Path_AStar {
                     OpenSet.UpdatePriority(neighbor, f_score[neighbor]);
                 }
 
-            }); // foreach neighbour
+            }
+                //Parallel.ForEach(current.edges, edge_neighbor => {
+                //    if (diag == false) {
+                //        if ((edge_neighbor.node.data.Vector - current.data.Vector).sqrMagnitude > 1.1) {
+                //            return;
+                //        }
+                //    }
+                //    Path_Node<Tile> neighbor = edge_neighbor.node;
+
+            //    if (ClosedSet.Contains(neighbor) == true)
+            //        return; // ignore this already completed neighbor
+            //    float movement_cost_to_neighbor = neighbor.data.MovementCost * Dist_between(current, neighbor);
+            //    if(playerCityRequired>int.MinValue) {
+            //        if (neighbor.data.City.PlayerNumber != playerCityRequired) {
+            //            movement_cost_to_neighbor = float.PositiveInfinity;
+            //        }
+            //    }
+            //    if (canEndInUnwakable) {
+            //        if (closestWalkableNeighbours.Contains(neighbor.data) || endTiles.Contains(neighbor.data)) {
+            //            movement_cost_to_neighbor = Dist_between(current, neighbor)+0.1f;
+            //        }
+            //    }
+            //    float tentative_g_score = g_score[current] + movement_cost_to_neighbor;
+
+            //    if (OpenSet.Contains(neighbor) && tentative_g_score >= g_score[neighbor])
+            //        return;
+            //    try {
+            //        Came_From[neighbor] = current;
+            //    } catch(Exception e) {
+            //        //it has nullpointer here no clue why
+            //        //TODO: fix this
+            //        e.ToString();
+            //    }
+            //    g_score[neighbor] = tentative_g_score;
+            //    f_score[neighbor] = g_score[neighbor] + Heuristic_cost_estimate(neighbor, goal);
+
+            //    if (OpenSet.Contains(neighbor) == false) {
+            //        OpenSet.Enqueue(neighbor, f_score[neighbor]);
+            //    }
+            //    else {
+            //        OpenSet.UpdatePriority(neighbor, f_score[neighbor]);
+            //    }
+
+            //}); // foreach neighbour
         } // while
 
         // If we reached here, it means that we've burned through the entire

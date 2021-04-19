@@ -93,7 +93,6 @@ public class Player : IGEventable {
                 return;
             }
             _maxPopulationLevel = value;
-            cbMaxPopulationMLCountChange?.Invoke(MaxPopulationLevel, _maxPopulationCounts[MaxPopulationLevel]);
         }
     }
 
@@ -179,15 +178,11 @@ public class Player : IGEventable {
             UnlockedItemNeeds[i] = new HashSet<String>();
         }
         MaxPopulationCounts = new int[PrototypController.Instance.NumberOfPopulationLevels];
-        for (int i = 0; i <= MaxPopulationLevel; i++) {
-            int count = MaxPopulationCounts[i];
-            UnlockCheck(i, count);
-        }
         RegisterMaxPopulationCountChange(UnlockCheck);
-        CalculateBalance();
+        UnlockCheck(0, 0);
     }
 
-    private void CalculateBalance() {
+    public void CalculateBalance() {
         LastTreasuryChange = TreasuryChange;
         TreasuryChange = 0;
         for (int i = 0; i < Cities.Count; i++) {
@@ -212,7 +207,15 @@ public class Player : IGEventable {
     }
 
     internal void Load() {
-        //Setup();
+        for (int i = 0; i <= MaxPopulationLevel; i++) {
+            int maxCount = MaxPopulationCounts[i];
+            foreach(int count in PrototypController.Instance.LevelCountToUnlocks[i].Keys) {
+                if (maxCount < count)
+                    break;
+                UnlockCheck(i, count);
+            }
+        }
+        CalculateBalance();
     }
 
     public void UpdateBalance(float partialPayAmount) {
@@ -222,11 +225,12 @@ public class Player : IGEventable {
     }
 
     public void UpdateMaxPopulationCount(int level, int count) {
-        if(MaxPopulationCounts[level] == 0 && count > 0) {
+        if(MaxPopulationCounts[level] == 0 && level > MaxPopulationLevel) {
             MaxPopulationLevel = level;
         }
         if(MaxPopulationCounts[level] < count) {
             MaxPopulationCounts[level] = count;
+            cbMaxPopulationMLCountChange?.Invoke(MaxPopulationLevel, MaxPopulationCounts[MaxPopulationLevel]);
         }
     }
     public int GetCurrentPopulation(int level) {
@@ -237,8 +241,10 @@ public class Player : IGEventable {
         return value;
     }
     private void UnlockCheck(int level, int count) {
-        Unlocks unlock = PrototypController.Instance.GetUnlocksFor(level,count);
-        foreach(Need n in unlock.needs) {
+        Unlocks unlock = PrototypController.Instance.GetUnlocksFor(level, count);
+        if (unlock == null)
+            return;
+        foreach (Need n in unlock.needs) {
             if (n.IsItemNeed()) {
                 cbNeedUnlocked?.Invoke(n);
             }
@@ -254,13 +260,17 @@ public class Player : IGEventable {
                 }
             }
         }
-        cbStructuresUnlocked?.Invoke(unlock.structures);
-        foreach (Structure s in unlock.structures) {
-            UnlockedStructures.Add(s.ID);
+        if (unlock.structures.Count > 0) {
+            cbStructuresUnlocked?.Invoke(unlock.structures);
+            foreach (Structure s in unlock.structures) {
+                UnlockedStructures.Add(s.ID);
+            }
         }
-        cbUnitsUnlocked?.Invoke(unlock.units);
-        foreach (Unit u in unlock.units) {
-            UnlockedStructures.Add(u.ID);
+        if (unlock.units.Count > 0) {
+            cbUnitsUnlocked?.Invoke(unlock.units);
+            foreach (Unit u in unlock.units) {
+                UnlockedStructures.Add(u.ID);
+            }
         }
     }
     public HashSet<String> GetUnlockedStructureNeeds(int level) {

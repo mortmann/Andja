@@ -40,19 +40,37 @@
       </uiElements>
       <onlyHoverOver>true</onlyHoverOver>
     </translationData>
+    <translationData id="NeedInRange">
+      <translation>[**Missing**]</translation>
+      <uiElements>
+        <string>%Need/</string>
+      </uiElements>
+    </translationData>
+    <translationData id="NeedNotInRange">
+      <translation>[**Missing**]</translation>
+      <uiElements>
+        <string>%Need/</string>
+      </uiElements>
+    </translationData>
+    <translationData id="NeedLocked">
+      <translation>[**Missing**]</translation>
+      <uiElements>
+        <string>%Need/</string>
+      </uiElements>
+    </translationData>
     <translationData id="Sell">
       <translation>[**Missing**]</translation>
       <uiElements>
         <string>%ItemTrade-Prefab/Layout/Prices/Sell/</string>
-        <string>UI Canvas/Right Canvas/CityInventory/TradePanel/Trade-Canvas/ItemTrade (3)/Layout/Prices/Sell/</string>
-        <string>UI Canvas/Right Canvas/CityInventory/TradePanel/Trade-Canvas/ItemTrade/Layout/Prices/Sell/</string>
-        <string>UI Canvas/Right Canvas/CityInventory/TradePanel/Trade-Canvas/ItemTrade (2)/Layout/Prices/Sell/</string>
         <string>UI Canvas/Right Canvas/CityInventory/TradePanel/Trade-Canvas/ItemTrade (1)/Layout/Prices/Sell/</string>
-        <string>UI Canvas/Right Canvas/CityInventory/TradePanel/Trade-Canvas/ItemTrade (4)/Layout/Prices/Sell/</string>
+        <string>UI Canvas/Right Canvas/CityInventory/TradePanel/Trade-Canvas/ItemTrade (2)/Layout/Prices/Sell/</string>
         <string>UI Canvas/Right Canvas/CityInventory/TradePanel/Trade-Canvas/ItemTrade (5)/Layout/Prices/Sell/</string>
-        <string>UI Canvas/Right Canvas/OtherPlayerCity/Trade-Canvas/ItemTrade/Layout/Prices/Sell/</string>
-        <string>UI Canvas/Right Canvas/CityInventory/TradePanel/Trade-Canvas/ItemTrade (7)/Layout/Prices/Sell/</string>
         <string>UI Canvas/Right Canvas/CityInventory/TradePanel/Trade-Canvas/ItemTrade (6)/Layout/Prices/Sell/</string>
+        <string>UI Canvas/Right Canvas/CityInventory/TradePanel/Trade-Canvas/ItemTrade/Layout/Prices/Sell/</string>
+        <string>UI Canvas/Right Canvas/OtherPlayerCity/Trade-Canvas/ItemTrade/Layout/Prices/Sell/</string>
+        <string>UI Canvas/Right Canvas/CityInventory/TradePanel/Trade-Canvas/ItemTrade (3)/Layout/Prices/Sell/</string>
+        <string>UI Canvas/Right Canvas/CityInventory/TradePanel/Trade-Canvas/ItemTrade (7)/Layout/Prices/Sell/</string>
+        <string>UI Canvas/Right Canvas/CityInventory/TradePanel/Trade-Canvas/ItemTrade (4)/Layout/Prices/Sell/</string>
       </uiElements>
       <onlyHoverOver>true</onlyHoverOver>
     </translationData>
@@ -61,14 +79,14 @@
       <uiElements>
         <string>%ItemTrade-Prefab/Layout/Prices/Buy/</string>
         <string>UI Canvas/Right Canvas/CityInventory/TradePanel/Trade-Canvas/ItemTrade (6)/Layout/Prices/Buy/</string>
-        <string>UI Canvas/Right Canvas/OtherPlayerCity/Trade-Canvas/ItemTrade/Layout/Prices/Buy/</string>
-        <string>UI Canvas/Right Canvas/CityInventory/TradePanel/Trade-Canvas/ItemTrade (4)/Layout/Prices/Buy/</string>
         <string>UI Canvas/Right Canvas/CityInventory/TradePanel/Trade-Canvas/ItemTrade (2)/Layout/Prices/Buy/</string>
+        <string>UI Canvas/Right Canvas/CityInventory/TradePanel/Trade-Canvas/ItemTrade (4)/Layout/Prices/Buy/</string>
         <string>UI Canvas/Right Canvas/CityInventory/TradePanel/Trade-Canvas/ItemTrade (1)/Layout/Prices/Buy/</string>
-        <string>UI Canvas/Right Canvas/CityInventory/TradePanel/Trade-Canvas/ItemTrade (7)/Layout/Prices/Buy/</string>
+        <string>UI Canvas/Right Canvas/CityInventory/TradePanel/Trade-Canvas/ItemTrade (3)/Layout/Prices/Buy/</string>
         <string>UI Canvas/Right Canvas/CityInventory/TradePanel/Trade-Canvas/ItemTrade (5)/Layout/Prices/Buy/</string>
         <string>UI Canvas/Right Canvas/CityInventory/TradePanel/Trade-Canvas/ItemTrade/Layout/Prices/Buy/</string>
-        <string>UI Canvas/Right Canvas/CityInventory/TradePanel/Trade-Canvas/ItemTrade (3)/Layout/Prices/Buy/</string>
+        <string>UI Canvas/Right Canvas/CityInventory/TradePanel/Trade-Canvas/ItemTrade (7)/Layout/Prices/Buy/</string>
+        <string>UI Canvas/Right Canvas/OtherPlayerCity/Trade-Canvas/ItemTrade/Layout/Prices/Buy/</string>
       </uiElements>
       <onlyHoverOver>true</onlyHoverOver>
     </translationData>
@@ -77,8 +95,8 @@
       <uiElements>
         <string>Menu/ModPanel/Title/</string>
         <string>Menu/MenuPanel/MenuButtons/Mods/</string>
-        <string>UI Canvas/PauseMenu/DarkLayer/Menu/ModPanel/Title/</string>
         <string>UI Canvas/PauseMenu/DarkLayer/Menu/MenuPanel/MenuButtons/Mods/</string>
+        <string>UI Canvas/PauseMenu/DarkLayer/Menu/ModPanel/Title/</string>
       </uiElements>
     </translationData>
     <translationData id="Gameplay">
@@ -105,11 +123,11 @@
         <string>Menu/OptionsPanel/Back/</string>
         <string>Menu/SavePanel/MenuButtons/Back/</string>
         <string>Menu/LoadPanel/MenuButtons/Back/</string>
-        <string>UI Canvas/PauseMenu/DarkLayer/Menu/OptionsPanel/Back/</string>
-        <string>UI Canvas/PauseMenu/DarkLayer/Menu/ModPanel/Back/</string>
-        <string>UI Canvas/PauseMenu/DarkLayer/Menu/SavePanel/MenuButtons/Back/</string>
         <string>UI Canvas/PauseMenu/DarkLayer/Menu/LoadPanel/MenuButtons/Back/</string>
+        <string>UI Canvas/PauseMenu/DarkLayer/Menu/ModPanel/Back/</string>
         <string>UI Canvas/PauseMenu/DarkLayer/Menu/Credits/Back/</string>
+        <string>UI Canvas/PauseMenu/DarkLayer/Menu/SavePanel/MenuButtons/Back/</string>
+        <string>UI Canvas/PauseMenu/DarkLayer/Menu/OptionsPanel/Back/</string>
       </uiElements>
     </translationData>
     <translationData id="NewGame">
@@ -132,8 +150,8 @@
       <translation>[**Missing**]</translation>
       <uiElements>
         <string>Menu/SoundPanel/Title/</string>
-        <string>UI Canvas/PauseMenu/DarkLayer/Menu/OptionsPanel/MenuButtons/Sound/</string>
         <string>UI Canvas/PauseMenu/DarkLayer/Menu/SoundPanel/Title/</string>
+        <string>UI Canvas/PauseMenu/DarkLayer/Menu/OptionsPanel/MenuButtons/Sound/</string>
       </uiElements>
     </translationData>
     <translationData id="Credits">
@@ -161,8 +179,8 @@
       <uiElements>
         <string>Menu/MenuPanel/MenuButtons/Save/</string>
         <string>Menu/SavePanel/MenuButtons/Save/</string>
-        <string>UI Canvas/PauseMenu/DarkLayer/Menu/SavePanel/MenuButtons/Save/</string>
         <string>UI Canvas/PauseMenu/DarkLayer/Menu/MenuPanel/MenuButtons/Save/</string>
+        <string>UI Canvas/PauseMenu/DarkLayer/Menu/SavePanel/MenuButtons/Save/</string>
       </uiElements>
     </translationData>
     <translationData id="QuitToMenu">
@@ -780,6 +798,15 @@
       <translation>[**Missing**]</translation>
     </translationData>
     <translationData id="StaticLanguageVariables/Empty">
+      <translation>[**Missing**]</translation>
+    </translationData>
+    <translationData id="StaticLanguageVariables/BuildCost">
+      <translation>[**Missing**]</translation>
+    </translationData>
+    <translationData id="StaticLanguageVariables/Upkeep">
+      <translation>[**Missing**]</translation>
+    </translationData>
+    <translationData id="StaticLanguageVariables/Locked">
       <translation>[**Missing**]</translation>
     </translationData>
   </localizationData>

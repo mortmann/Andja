@@ -31,6 +31,9 @@ public class LandTile : Tile {
     }
 
     [JsonPropertyAttribute] protected TileType _type = TileType.Ocean;
+    public bool ShouldSerialize_type() {
+        return EditorController.IsEditor;
+    }
     public override TileType Type {
         get { return _type; }
         set {
@@ -148,9 +151,6 @@ public class LandTile : Tile {
     }
     public override void AddNeedStructure(NeedStructure ns) {
         if (IsBuildType(Type) == false) {
-            return;
-        }
-        if (ns.City != City) {
             return;
         }
         if (ListOfInRangeNeedStructures == null) {

@@ -73,7 +73,7 @@ public class World : IGEventable {
                 }
                 _tilesgrid = new StaticGrid(Width, Height, boolgrid);
             }
-            return (StaticGrid)_tilesgrid.Clone();
+            return _tilesgrid;
         }
     }
 

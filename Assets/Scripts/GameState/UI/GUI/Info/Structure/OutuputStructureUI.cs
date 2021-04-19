@@ -26,7 +26,11 @@ public class OutuputStructureUI : InfoUI {
         currentStructure = ustr as OutputStructure;
         if (currentStructure == null)
             return;
-        TileSpriteController.Instance.AddDecider(StructureTileDecider);
+        TileDeciderFuncs.Structure = currentStructure;
+        TileSpriteController.Instance.RemoveDecider(TileDeciderFuncs.StructureTileDecider);
+        if (currentStructure.StructureRange > 0) {
+            TileSpriteController.Instance.AddDecider(TileDeciderFuncs.StructureTileDecider);
+        } 
         currentStructure.RegisterOnDestroyCallback(OnStructureDestroy);
         StructureUI.gameObject.SetActive(true);
         StructureUI.Show(currentStructure);
@@ -139,16 +143,9 @@ public class OutuputStructureUI : InfoUI {
         currentStructure.CloseExtraUI();
         currentStructure = null;
         StructureUI.gameObject.SetActive(false);
-        TileSpriteController.Instance?.RemoveDecider(StructureTileDecider);
+        TileDeciderFuncs.Structure = null;
+        TileSpriteController.Instance?.RemoveDecider(TileDeciderFuncs.StructureTileDecider);
         MouseController.Instance?.UnselectStructure();
     }
-    TileMark StructureTileDecider(Tile t) {
-        if (t.City!= null && t.City.IsCurrPlayerCity() && 
-            currentStructure != null && (currentStructure.RangeTiles.Contains(t) || currentStructure.Tiles.Contains(t))) {
-            return TileMark.None;
-        }
-        else {
-            return TileMark.Dark;
-        }
-    }
+    
 }

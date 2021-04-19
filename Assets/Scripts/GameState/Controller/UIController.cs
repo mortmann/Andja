@@ -16,6 +16,7 @@ public class UIController : MonoBehaviour {
     public GameObject consoleCanvas;
 
     public GameObject productionStructureInfo;
+    public GameObject structureInfo;
     public GameObject unitCanvas;
     public GameObject unitGroupUI;
     public GameObject militaryStructureInfo;
@@ -68,23 +69,34 @@ public class UIController : MonoBehaviour {
         CloseInfoUI();
         CloseRightUI();
         str.RegisterOnDestroyCallback(OnStructureDestroy);
+        
+        if (str is HomeStructure) {
+            OpenHomeUI((HomeStructure)str);
+            return;
+        }
         str.OpenExtraUI();
         if (str is ProductionStructure) {
             OpenProduktionUI((OutputStructure)str);
-        }
-        if (str is HomeStructure) {
-            OpenHomeUI((HomeStructure)str);
-        }
+        } else
         if (str is MineStructure || str is FarmStructure) {
             OpenProduceUI((OutputStructure)str);
-        }
+        } else
         if (str is MarketStructure || str is WarehouseStructure) {
             OpenCityInventory(str.City);
-        }
+        } else
         if (str is MilitaryStructure) {
             OpenMilitaryStructureInfo(str);
+        } else {
+            ShowStructureUI(str);
         }
     }
+
+    private void ShowStructureUI(Structure str) {
+        OpenInfoUI();
+        structureInfo.SetActive(true);
+        structureInfo.GetComponent<StructureUI>().Show(str);
+    }
+
     public void OnStructureDestroy(Structure str, IWarfare destroyer) {
         CloseInfoUI();
     }
@@ -304,6 +316,13 @@ public class UIController : MonoBehaviour {
     public bool IsPauseMenuOpen() {
         return PauseMenu.IsOpen;
     }
+
+    internal void CloseMouseUnselect() {
+        CloseInfoUI();
+        CloseRightUI();
+        CloseChooseBuild();
+    }
+
     public bool AnyMenuOpen() {
         return rightCanvas.activeSelf || uiInfoCanvas.activeSelf ||
             chooseBuildCanvas.activeSelf || tradeRouteCanvas.activeSelf ||

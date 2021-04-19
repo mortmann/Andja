@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 using System;
+using System.Linq;
 using Newtonsoft.Json;
 
 public class OutputPrototypData : StructurePrototypeData {
@@ -123,7 +124,8 @@ public abstract class OutputStructure : TargetStructure {
             return;
         }
         List<OutputStructure> givenJobs = new List<OutputStructure>();
-        foreach (OutputStructure jobStr in jobsToDo.Keys) {
+        List<OutputStructure> ordered = jobsToDo.Keys.OrderBy(x => x.Output.Sum(y => y.count)).ToList();
+        foreach (OutputStructure jobStr in ordered) {
             if (Workers.Count >= MaxNumberOfWorker) {
                 break;
             }
@@ -281,5 +283,12 @@ public abstract class OutputStructure : TargetStructure {
         }
 
     }
-
+    public override void Load() {
+        base.Load();
+        if(Workers != null) {
+            foreach (Worker worker in Workers) {
+                worker.Load();
+            }
+        }
+    }
 }

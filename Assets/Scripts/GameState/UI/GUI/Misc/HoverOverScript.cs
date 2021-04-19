@@ -1,9 +1,9 @@
 ﻿using UnityEngine;
-using System.Collections;
+using System.Collections.Generic;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using System;
-
+//TODO: multi level hover script
 public class HoverOverScript : MonoBehaviour {
     float lifetime = 1;
     public float hovertime = HoverDuration;
@@ -12,6 +12,11 @@ public class HoverOverScript : MonoBehaviour {
     public RectTransform rect;
     bool show;
     public Text Header;
+    public GameObject Items;
+    public GameObject Locked;
+    public GameObject MoneyThings;
+    public ImageText ImageTextPrefab;
+    Dictionary<string, ImageText> stringToImageText;
     public Text Description;
     public RectTransform fitForm;
     Vector2 Position = Vector2.negativeInfinity;
@@ -21,6 +26,23 @@ public class HoverOverScript : MonoBehaviour {
 
     private void Start() {
         rect = GetComponent<RectTransform>();
+        stringToImageText = new Dictionary<string, ImageText>();
+        ImageText cost = Instantiate(ImageTextPrefab);
+        cost.Set(UISpriteController.GetIcon(CommonIcon.Money), StaticLanguageVariables.BuildCost, 0 + "");
+        cost.transform.SetParent(MoneyThings.transform, false);
+        cost.SetBrightColorText();
+        stringToImageText.Add(StaticLanguageVariables.BuildCost.ToString(), cost);
+        ImageText upkeep = Instantiate(ImageTextPrefab);
+        upkeep.Set(UISpriteController.GetIcon(CommonIcon.Upkeep), StaticLanguageVariables.Upkeep, 0 + "");
+        upkeep.SetBrightColorText();
+        upkeep.transform.SetParent(MoneyThings.transform, false);
+        stringToImageText.Add(StaticLanguageVariables.Upkeep.ToString(), upkeep);
+
+        ImageText locked = Instantiate(ImageTextPrefab);
+        locked.Set(UISpriteController.GetIcon(CommonIcon.People), StaticLanguageVariables.Locked, 0 + "");
+        locked.SetColorText(Color.red);
+        locked.transform.SetParent(Locked.transform, false);
+        stringToImageText.Add(StaticLanguageVariables.Locked.ToString(), locked);
     }
     public void Show(string header) {
         Show(header, null);
@@ -43,6 +65,9 @@ public class HoverOverScript : MonoBehaviour {
         }
         transform.GetChild(0).gameObject.SetActive(isDebug);
         show = true;
+        Items.SetActive(false);
+        MoneyThings.SetActive(false);
+        Locked.SetActive(false);
     }
     public void Show(string header, Vector3 position, bool truePosition, bool instantShow, params string[] descriptions) {
         Show(header, descriptions);
@@ -104,6 +129,36 @@ public class HoverOverScript : MonoBehaviour {
         fitForm.transform.position = position + offset;
         lifetime -= Time.deltaTime;
     }
+
+    internal void Show(Structure structure, bool Locked) {
+        Show(structure.Name, structure.Description);
+        if(Locked) {
+            stringToImageText[StaticLanguageVariables.Locked.ToString()].SetText(structure.PopulationCount + "");
+            this.Locked.SetActive(true);
+        }
+        if (structure.BuildingItems != null) {
+            Items.SetActive(true);
+            foreach (Item item in structure.BuildingItems) {
+                if(stringToImageText.ContainsKey(item.ID)) {
+                    stringToImageText[item.ID].SetText(item.countString);
+                } else {
+                    ImageText imageText = Instantiate(ImageTextPrefab);
+                    imageText.Set(UISpriteController.GetItemImageForID(item.ID), item.Data, item.countString);
+                    imageText.transform.SetParent(Items.transform, false);
+                    imageText.SetBrightColorText();
+                    stringToImageText.Add(item.ID, imageText);
+                }
+            }
+        } else {
+            Items.SetActive(false);
+        }
+        stringToImageText[StaticLanguageVariables.Upkeep.ToString()].SetText(structure.UpkeepCost+"");
+        stringToImageText[StaticLanguageVariables.BuildCost.ToString()].SetText(structure.BuildCost + "");
+
+        MoneyThings.SetActive(true);
+    }
+
+
 
     internal void DebugTileInfo(Tile tile) {
         isDebug = true;

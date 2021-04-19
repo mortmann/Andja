@@ -48,7 +48,7 @@ public class OceanPathfinding : Pathfinding {
     }
     protected override void CalculatePath() {
         TurnType = Turning_Type.TurnRadius;
-
+        tileGrid = (StaticGrid)tileGrid.Clone();
         pathDestination = Path_Destination.Exact;
         System.Diagnostics.Stopwatch StopWatch = new System.Diagnostics.Stopwatch();
         StopWatch.Start();

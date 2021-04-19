@@ -43,6 +43,7 @@ public class NeedGroup {
     }
 
     public NeedGroup(NeedGroup needGroup) {
+        ID = needGroup.ID;
         _prototypData = needGroup.Data;
         Needs = new List<Need>();
         foreach (Need n in needGroup.Needs) {
@@ -119,7 +120,7 @@ public class NeedGroup {
                 currentValue += homeStructure.IsStructureNeedFullfilled(need)? 1 : 0;
             }
             else {
-                currentValue += need.GetCombinedFullfillment();
+                currentValue += need.GetFullfiment(homeStructure.PopulationLevel);
             }
         }
         return CalculateRealPercantage(currentValue, Needs.Count);

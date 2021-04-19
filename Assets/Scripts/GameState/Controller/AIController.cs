@@ -116,19 +116,19 @@ public class AIController : MonoBehaviour {
     }
 
     private static void OnStructureDestroyed(Structure structure, IWarfare iwarfare) {
-        for (int y = 0; y < structure.TileHeight; y++) {
-            for (int x = 0; x < structure.TileWidth; x++) {
-                Tile t = structure.Tiles[x + y * structure.TileHeight];
-                if (x == 0) {
+        for (int x = 0; x < structure.TileWidth; x++) {
+            for (int y = 0; y < structure.TileHeight; y++) {
+                Tile t = structure.Tiles[y + x * structure.TileHeight];
+                if (y == 0) {
                     ChangeTileValue(t, t.West(), Direction.E);
                 }
-                if (x < structure.TileWidth) {
+                if (y < structure.TileWidth) {
                     ChangeTileValue(t, t.South(), Direction.N);
                 }
-                if (x == structure.TileWidth - 1) {
+                if (y == structure.TileWidth - 1) {
                     ChangeTileValue(t, t.East(), Direction.W);
                 }
-                if (y == structure.TileHeight - 1) {
+                if (x == structure.TileHeight - 1) {
                     ChangeTileValue(t, t.North(), Direction.S);
                 }
             }
@@ -176,6 +176,8 @@ public class AIController : MonoBehaviour {
             if (t.Type != tValue.Type)
                 return;
         }
+        if (tileValue.ContainsKey(t))
+            return;
         switch (direction) {
             case Direction.N:
                 tileValue[t].swValue.y = tileValue[t.South()].swValue.y + 1;
@@ -204,7 +206,6 @@ public class AIController : MonoBehaviour {
         }
 
     }
-
     // Update is called once per frame
     void Update() {
 

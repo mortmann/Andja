@@ -5,6 +5,7 @@ using System.IO.Compression;
 using System.Collections.Generic;
 using Newtonsoft.Json;
 using System;
+using System.Text;
 using UnityEngine.SceneManagement;
 
 public class SaveController : MonoBehaviour {
@@ -36,8 +37,11 @@ public class SaveController : MonoBehaviour {
     CameraController CC => CameraController.Instance;
     PlayerController PC => PlayerController.Instance;
     UIController UI => UIController.Instance;
+    FogOfWarController FW => FogOfWarController.Instance;
 
     float lastSaved = -1;
+    public byte[] FogOfWarData = null;
+
     public bool UnsavedProgress => lastSaved != GameData.Instance.playTime;
 
     void Awake() {
@@ -111,7 +115,7 @@ public class SaveController : MonoBehaviour {
     }
 
     public void DeleteSaveGame(string name) {
-        string filePath = System.IO.Path.Combine(GetSaveGamesPath(), name);
+        string filePath = Path.Combine(GetSaveGamesPath(), name);
         string saveStatePath = filePath + saveFileEnding;
         string finalMetaStatePath = filePath + saveMetaFileEnding;
         string fileImagePath = filePath + saveFileScreenShotEnding;
@@ -136,8 +140,8 @@ public class SaveController : MonoBehaviour {
 
     public void SaveIslandState(string name = "autosave") {
         string folderPath = GetIslandSavePath(name);
-        string islandStatePath = System.IO.Path.Combine(folderPath, name + islandFileEnding);
-        string finalMetaStatePath = System.IO.Path.Combine(folderPath, name + islandMetaFileEnding);
+        string islandStatePath = Path.Combine(folderPath, name + islandFileEnding);
+        string finalMetaStatePath = Path.Combine(folderPath, name + islandMetaFileEnding);
         SaveName = name;
         SaveMetaData metaData = new SaveMetaData {
             safefileversion = islandSaveFileVersion,
@@ -170,18 +174,18 @@ public class SaveController : MonoBehaviour {
             Directory.CreateDirectory(folderPath);
         }
         if (Application.isEditor) {
-            System.IO.File.WriteAllText(islandStatePath, save);
+            File.WriteAllText(islandStatePath, save);
         }
         else {
-            System.IO.File.WriteAllBytes(islandStatePath, Zip(save));
+            File.WriteAllBytes(islandStatePath, Zip(save));
         }
-        System.IO.File.WriteAllText(finalMetaStatePath, metadata);
+        File.WriteAllText(finalMetaStatePath, metadata);
     }
 
 
     public EditorController.SaveIsland GetIslandSave(string name) {
-        string saveStatePath = System.IO.Path.Combine(GetIslandSavePath(name), name + islandFileEnding);
-        string finalMetaStatePath = System.IO.Path.Combine(GetIslandSavePath(name), name + islandMetaFileEnding);
+        string saveStatePath = Path.Combine(GetIslandSavePath(name), name + islandFileEnding);
+        string finalMetaStatePath = Path.Combine(GetIslandSavePath(name), name + islandMetaFileEnding);
 
         SaveMetaData metaData = JsonConvert.DeserializeObject<SaveMetaData>(File.ReadAllText(finalMetaStatePath), new JsonSerializerSettings {
             NullValueHandling = NullValueHandling.Ignore,
@@ -291,7 +295,7 @@ public class SaveController : MonoBehaviour {
 
     public static Dictionary<KeyValuePair<Climate, Size>, List<string>> GetIslands() {
         Dictionary<KeyValuePair<Climate, Size>, List<string>> islands = new Dictionary<KeyValuePair<Climate, Size>, List<string>>();
-        string[] filePaths = System.IO.Directory.GetFiles(GetIslandSavePath(), "*" + islandMetaFileEnding, SearchOption.AllDirectories);
+        string[] filePaths = Directory.GetFiles(GetIslandSavePath(), "*" + islandMetaFileEnding, SearchOption.AllDirectories);
         foreach (string file in filePaths) {
             SaveMetaData metaData = null;
             try {
@@ -380,7 +384,7 @@ public class SaveController : MonoBehaviour {
     }
     public static string GetSaveGamesPath() {
         //TODO FIXME change this to documentspath
-        return System.IO.Path.Combine(ConstantPathHolder.ApplicationDataPath.Replace("/Assets", ""), "saves");
+        return Path.Combine(ConstantPathHolder.ApplicationDataPath.Replace("/Assets", ""), "saves");
     }
     public void SaveGameState(string name = "autosave") {
         SaveName = name;
@@ -389,18 +393,20 @@ public class SaveController : MonoBehaviour {
         if (wasPaused == false) {
             WC.IsPaused = true;
         }
-        string filePath = System.IO.Path.Combine(GetSaveGamesPath(), name);
+        string filePath = Path.Combine(GetSaveGamesPath(), name);
         string saveStatePath = filePath + saveFileEnding;
         string finalMetaStatePath = filePath + saveMetaFileEnding; 
 
         SaveState savestate = new SaveState {
-            gamedata = GDH.GetSaveGameData().Serialize(),
-            pcs = PC.GetSavePlayerData().Serialize(),
-            world = WC.GetSaveWorldData().Serialize(),
-            ges = EC.GetSaveGameEventData().Serialize(),
-            camera = CC.GetSaveCamera().Serialize(),
-            ui = UI.GetUISaveData().Serialize()
+            gamedata = GDH.GetSaveGameData().Serialize(false),
+            pcs = PC.GetSavePlayerData().Serialize(false),
+            world = WC.GetSaveWorldData().Serialize(true),
+            ges = EC.GetSaveGameEventData().Serialize(true),
+            camera = CC.GetSaveCamera().Serialize(false),
+            ui = UI.GetUISaveData().Serialize(false),
+            fw = FogOfWarController.FogOfWarOn?Encoding.ASCII.GetString(FW .GetFogOfWarBytes()):null,
         };
+        
         string save = "";
         if (DebugModeSave) {
             foreach (System.Reflection.FieldInfo field in typeof(SaveState).GetFields()) {
@@ -440,14 +446,15 @@ public class SaveController : MonoBehaviour {
                 }
         );
 
-        System.IO.File.WriteAllBytes(filePath + saveFileScreenShotEnding, GetSaveGameThumbnail());
+        File.WriteAllBytes(filePath + saveFileScreenShotEnding, GetSaveGameThumbnail());
+
         if (Application.isEditor) {
-            System.IO.File.WriteAllText(saveStatePath, save);
+            File.WriteAllText(saveStatePath, save);
         }
         else {
-            System.IO.File.WriteAllBytes(saveStatePath, Zip(save));
+            File.WriteAllBytes(saveStatePath, Zip(save));
         }
-        System.IO.File.WriteAllText(finalMetaStatePath, metadata);
+        File.WriteAllText(finalMetaStatePath, metadata);
         lastSaved = GDH.playTime;
         if (wasPaused == false) {
             WC.IsPaused = false;
@@ -460,8 +467,8 @@ public class SaveController : MonoBehaviour {
         }
         SaveName = name;
         //first pause the world so nothing changes and we can save an 		
-        string finalSaveStatePath = System.IO.Path.Combine(GetSaveGamesPath(), name + saveFileEnding);
-        string finalMetaStatePath = System.IO.Path.Combine(GetSaveGamesPath(), name + saveMetaFileEnding);
+        string finalSaveStatePath = Path.Combine(GetSaveGamesPath(), name + saveFileEnding);
+        string finalMetaStatePath = Path.Combine(GetSaveGamesPath(), name + saveMetaFileEnding);
         SaveMetaData metaData = JsonConvert.DeserializeObject<SaveMetaData>(File.ReadAllText(finalMetaStatePath), new JsonSerializerSettings {
             NullValueHandling = NullValueHandling.Ignore,
             PreserveReferencesHandling = PreserveReferencesHandling.Objects,
@@ -509,7 +516,6 @@ public class SaveController : MonoBehaviour {
                 DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate
             });
         }
-
         PrototypController.Instance.LoadFromXML();
 
         GDH.LoadGameData(BaseSaveData.Deserialize<GameDataSave>((string)state.gamedata));
@@ -541,7 +547,12 @@ public class SaveController : MonoBehaviour {
         EventController.Instance.SetGameEventData(ges); 
         loadingPercantage += 0.1f;
         yield return null;
-        CameraController.Instance.SetSaveCameraData(cs); 
+        CameraController.Instance.SetSaveCameraData(cs);
+        if(string.IsNullOrEmpty(state.fw)) {
+            GameData.FogOfWarStyle = FogOfWarStyle.Off;
+        } else {
+            FogOfWarData = Encoding.ASCII.GetBytes(state.fw);
+        }
         loadingPercantage += 0.025f;
         yield return null;
         UIController.SetSaveUIData(uics);
@@ -606,6 +617,7 @@ public class SaveController : MonoBehaviour {
         public string ges;
         public string camera;
         public string ui;
+        public string fw;
     }
     [Serializable]
     public class SaveMetaData {
@@ -625,12 +637,13 @@ public class SaveController : MonoBehaviour {
 [Serializable]
 public abstract class BaseSaveData {
 
-    public string Serialize() {
+    public string Serialize(bool PreserverReferences) {
         Formatting formatting = SaveController.DebugModeSave ? Formatting.Indented : Formatting.None;
         string save = JsonConvert.SerializeObject(this, formatting,
                 new JsonSerializerSettings {
                     NullValueHandling = NullValueHandling.Ignore,
-                    PreserveReferencesHandling = PreserveReferencesHandling.Objects,
+                    PreserveReferencesHandling = PreserverReferences ?
+                                        PreserveReferencesHandling.Objects : PreserveReferencesHandling.None,
                     ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
                     TypeNameHandling = TypeNameHandling.Auto
                 }

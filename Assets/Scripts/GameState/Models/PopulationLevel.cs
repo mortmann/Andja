@@ -3,7 +3,6 @@ using UnityEngine;
 using Newtonsoft.Json;
 using System;
 
-[JsonObject]
 public class PopulationLevelPrototypData : LanguageVariables {
     public List<NeedGroup> needGroupList; //not used as "copy" of the USED in "ticks" just as a reference which Needs gets unlocked with this level!
     public int LEVEL; // cant be negative!
@@ -31,8 +30,8 @@ public class PopulationLevel {
     [JsonPropertyAttribute] public List<NeedGroup> NeedGroupList;
     [JsonPropertyAttribute] public PopulationLevel previousLevel;
     [JsonPropertyAttribute] public float taxPercantage = 1f;
-    [JsonPropertyAttribute] City city;
-    [JsonPropertyAttribute] public string IconSpriteName => Data.iconSpriteName;
+    City city;
+    public string IconSpriteName => Data.iconSpriteName;
 
     #endregion
 
@@ -115,7 +114,8 @@ public class PopulationLevel {
         return new PopulationLevel(this);
     }
 
-    internal void Load() {
+    internal void Load(City city) {
+        this.city = city;
         if (previousLevel == null || previousLevel.Exists() == false)
             previousLevel = city.GetPreviousPopulationLevel(Level);
         UpdateNeeds();
@@ -125,7 +125,7 @@ public class PopulationLevel {
         if (NeedGroupList == null)
             NeedGroupList = new List<NeedGroup>();
         for (int i = 0; i < NeedGroupList.Count; i++) {
-            if (Data.needGroupList.Find(x=> x.ID == NeedGroupList[i].ID) == null) {
+            if (NeedGroupList[i].ID == null || Data.needGroupList.Find(x=> x.ID == NeedGroupList[i].ID) == null) {
                 NeedGroupList.Remove(NeedGroupList[i]);
             }
         }
@@ -158,7 +158,7 @@ public class PopulationLevel {
             return;
         NeedGroup ng = NeedGroupList.Find(x => x.ID == need.Group.ID);
         if (ng == null) {
-            Debug.LogError("UnlockedNeed " + need + " doesnt have the right group inside this level" + Level);
+            Debug.LogError("UnlockedNeed " + need.ID + " doesnt have the right group inside this level " + Level);
             return;
         }
         if (ng.HasNeed(need))

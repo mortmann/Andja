@@ -29,7 +29,7 @@
          <canTakeDamage>false</canTakeDamage>
          <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
-         <maintenanceCost>0</maintenanceCost>
+         <upkeepCost>0</upkeepCost>
          <buildCost>15</buildCost>
          <buildTyp>Path</buildTyp>
          <structureTyp>Pathfinding</structureTyp>
@@ -66,7 +66,7 @@
          <canTakeDamage>false</canTakeDamage>
          <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
-         <maintenanceCost>0</maintenanceCost>
+         <upkeepCost>0</upkeepCost>
          <buildCost>50</buildCost>
          <buildTyp>Path</buildTyp>
          <structureTyp>Pathfinding</structureTyp>
@@ -93,7 +93,7 @@
          <hasHitbox>false</hasHitbox>
          <maxHealth>50.0</maxHealth>
          <structureRange>0</structureRange>
-         <populationLevel>0</populationLevel>
+         <populationLevel>2</populationLevel>
          <populationCount>0</populationCount>
          <structureLevel>2</structureLevel>
          <tileWidth>1</tileWidth>
@@ -104,7 +104,7 @@
          <canTakeDamage>false</canTakeDamage>
          <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
-         <maintenanceCost>0</maintenanceCost>
+         <upkeepCost>0</upkeepCost>
          <buildCost>100</buildCost>
          <buildTyp>Path</buildTyp>
          <structureTyp>Pathfinding</structureTyp>
@@ -146,7 +146,7 @@
          <canTakeDamage>false</canTakeDamage>
          <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
-         <maintenanceCost>0</maintenanceCost>
+         <upkeepCost>0</upkeepCost>
          <buildCost>0</buildCost>
          <buildTyp>Path</buildTyp>
          <structureTyp>Pathfinding</structureTyp>
@@ -185,7 +185,7 @@
          <canTakeDamage>true</canTakeDamage>
          <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
-         <maintenanceCost>25</maintenanceCost>
+         <upkeepCost>25</upkeepCost>
          <buildCost>250</buildCost>
          <buildTyp>Single</buildTyp>
          <structureTyp>Blocking</structureTyp>
@@ -231,7 +231,7 @@
          <maxHealth>250.0</maxHealth>
          <structureRange>3</structureRange>
          <populationLevel>0</populationLevel>
-         <populationCount>500</populationCount>
+         <populationCount>200</populationCount>
          <structureLevel>0</structureLevel>
          <tileWidth>3</tileWidth>
          <tileHeight>2</tileHeight>
@@ -241,7 +241,7 @@
          <canTakeDamage>true</canTakeDamage>
          <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
-         <maintenanceCost>100</maintenanceCost>
+         <upkeepCost>100</upkeepCost>
          <buildCost>1000</buildCost>
          <buildTyp>Single</buildTyp>
          <structureTyp>Blocking</structureTyp>
@@ -290,7 +290,7 @@
          <maxHealth>50.0</maxHealth>
          <structureRange>4</structureRange>
          <populationLevel>0</populationLevel>
-         <populationCount>500</populationCount>
+         <populationCount>200</populationCount>
          <structureLevel>0</structureLevel>
          <tileWidth>2</tileWidth>
          <tileHeight>2</tileHeight>
@@ -300,7 +300,7 @@
          <canTakeDamage>true</canTakeDamage>
          <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
-         <maintenanceCost>75</maintenanceCost>
+         <upkeepCost>75</upkeepCost>
          <buildCost>650</buildCost>
          <buildTyp>Single</buildTyp>
          <structureTyp>Blocking</structureTyp>
@@ -349,7 +349,7 @@
          <maxHealth>150.0</maxHealth>
          <structureRange>3</structureRange>
          <populationLevel>0</populationLevel>
-         <populationCount>500</populationCount>
+         <populationCount>200</populationCount>
          <structureLevel>0</structureLevel>
          <tileWidth>2</tileWidth>
          <tileHeight>2</tileHeight>
@@ -359,7 +359,7 @@
          <canTakeDamage>true</canTakeDamage>
          <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
-         <maintenanceCost>60</maintenanceCost>
+         <upkeepCost>60</upkeepCost>
          <buildCost>500</buildCost>
          <buildTyp>Single</buildTyp>
          <structureTyp>Blocking</structureTyp>
@@ -417,7 +417,7 @@
          <maxHealth>50.0</maxHealth>
          <structureRange>5</structureRange>
          <populationLevel>0</populationLevel>
-         <populationCount>500</populationCount>
+         <populationCount>320</populationCount>
          <structureLevel>0</structureLevel>
          <tileWidth>2</tileWidth>
          <tileHeight>2</tileHeight>
@@ -427,7 +427,7 @@
          <canTakeDamage>true</canTakeDamage>
          <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
-         <maintenanceCost>20</maintenanceCost>
+         <upkeepCost>20</upkeepCost>
          <buildCost>0</buildCost>
          <buildTyp>Single</buildTyp>
          <structureTyp>Blocking</structureTyp>
@@ -476,7 +476,7 @@
          <maxHealth>25.0</maxHealth>
          <structureRange>4</structureRange>
          <populationLevel>0</populationLevel>
-         <populationCount>1250</populationCount>
+         <populationCount>400</populationCount>
          <structureLevel>0</structureLevel>
          <tileWidth>1</tileWidth>
          <tileHeight>1</tileHeight>
@@ -486,7 +486,7 @@
          <canTakeDamage>true</canTakeDamage>
          <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
-         <maintenanceCost>80</maintenanceCost>
+         <upkeepCost>80</upkeepCost>
          <buildCost>1200</buildCost>
          <buildTyp>Single</buildTyp>
          <structureTyp>Blocking</structureTyp>
@@ -544,7 +544,7 @@
          <canTakeDamage>true</canTakeDamage>
          <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
-         <maintenanceCost>65</maintenanceCost>
+         <upkeepCost>65</upkeepCost>
          <buildCost>1250</buildCost>
          <buildTyp>Single</buildTyp>
          <structureTyp>Blocking</structureTyp>
@@ -605,7 +605,7 @@
          <canTakeDamage>true</canTakeDamage>
          <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
-         <maintenanceCost>25</maintenanceCost>
+         <upkeepCost>25</upkeepCost>
          <buildCost>250</buildCost>
          <buildTyp>Single</buildTyp>
          <structureTyp>Blocking</structureTyp>
@@ -640,7 +640,7 @@
             <entry lang="German">Ziegenfarm</entry>
          </Name>
          <Description>
-            <entry lang="English">Produces milk.	</entry>
+            <entry lang="English">Produces milk.</entry>
             <entry lang="German">Produziert Milch.</entry>
          </Description>
          <HoverOver>
@@ -663,7 +663,7 @@
          <canTakeDamage>true</canTakeDamage>
          <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
-         <maintenanceCost>75</maintenanceCost>
+         <upkeepCost>75</upkeepCost>
          <buildCost>450</buildCost>
          <buildTyp>Single</buildTyp>
          <structureTyp>Blocking</structureTyp>
@@ -724,7 +724,7 @@
          <canTakeDamage>true</canTakeDamage>
          <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
-         <maintenanceCost>100</maintenanceCost>
+         <upkeepCost>100</upkeepCost>
          <buildCost>600</buildCost>
          <buildTyp>Single</buildTyp>
          <structureTyp>Blocking</structureTyp>
@@ -785,7 +785,7 @@
          <canTakeDamage>true</canTakeDamage>
          <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
-         <maintenanceCost>110</maintenanceCost>
+         <upkeepCost>110</upkeepCost>
          <buildCost>720</buildCost>
          <buildTyp>Single</buildTyp>
          <structureTyp>Blocking</structureTyp>
@@ -842,7 +842,7 @@
          <canTakeDamage>true</canTakeDamage>
          <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
-         <maintenanceCost>25</maintenanceCost>
+         <upkeepCost>25</upkeepCost>
          <buildCost>1000</buildCost>
          <buildTyp>Single</buildTyp>
          <structureTyp>Blocking</structureTyp>
@@ -905,7 +905,7 @@
          <canTakeDamage>false</canTakeDamage>
          <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
-         <maintenanceCost>0</maintenanceCost>
+         <upkeepCost>0</upkeepCost>
          <buildCost>5</buildCost>
          <buildTyp>Drag</buildTyp>
          <structureTyp>Free</structureTyp>
@@ -949,7 +949,7 @@
          <canTakeDamage>false</canTakeDamage>
          <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
-         <maintenanceCost>0</maintenanceCost>
+         <upkeepCost>0</upkeepCost>
          <buildCost>0</buildCost>
          <buildTyp>Drag</buildTyp>
          <structureTyp>Free</structureTyp>
@@ -990,7 +990,7 @@
          <maxHealth>50.0</maxHealth>
          <structureRange>0</structureRange>
          <populationLevel>0</populationLevel>
-         <populationCount>500</populationCount>
+         <populationCount>320</populationCount>
          <structureLevel>0</structureLevel>
          <tileWidth>1</tileWidth>
          <tileHeight>1</tileHeight>
@@ -1000,7 +1000,7 @@
          <canTakeDamage>false</canTakeDamage>
          <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
-         <maintenanceCost>0</maintenanceCost>
+         <upkeepCost>0</upkeepCost>
          <buildCost>0</buildCost>
          <buildTyp>Drag</buildTyp>
          <structureTyp>Free</structureTyp>
@@ -1040,7 +1040,7 @@
          <maxHealth>50.0</maxHealth>
          <structureRange>0</structureRange>
          <populationLevel>0</populationLevel>
-         <populationCount>500</populationCount>
+         <populationCount>200</populationCount>
          <structureLevel>0</structureLevel>
          <tileWidth>1</tileWidth>
          <tileHeight>1</tileHeight>
@@ -1050,7 +1050,7 @@
          <canTakeDamage>false</canTakeDamage>
          <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
-         <maintenanceCost>0</maintenanceCost>
+         <upkeepCost>0</upkeepCost>
          <buildCost>25</buildCost>
          <buildTyp>Drag</buildTyp>
          <structureTyp>Free</structureTyp>
@@ -1089,7 +1089,7 @@
          <maxHealth>50.0</maxHealth>
          <structureRange>0</structureRange>
          <populationLevel>0</populationLevel>
-         <populationCount>500</populationCount>
+         <populationCount>200</populationCount>
          <structureLevel>0</structureLevel>
          <tileWidth>1</tileWidth>
          <tileHeight>1</tileHeight>
@@ -1099,7 +1099,7 @@
          <canTakeDamage>false</canTakeDamage>
          <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
-         <maintenanceCost>0</maintenanceCost>
+         <upkeepCost>0</upkeepCost>
          <buildCost>25</buildCost>
          <buildTyp>Drag</buildTyp>
          <structureTyp>Free</structureTyp>
@@ -1138,7 +1138,7 @@
          <maxHealth>50.0</maxHealth>
          <structureRange>0</structureRange>
          <populationLevel>0</populationLevel>
-         <populationCount>500</populationCount>
+         <populationCount>200</populationCount>
          <structureLevel>0</structureLevel>
          <tileWidth>1</tileWidth>
          <tileHeight>1</tileHeight>
@@ -1148,7 +1148,7 @@
          <canTakeDamage>false</canTakeDamage>
          <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
-         <maintenanceCost>0</maintenanceCost>
+         <upkeepCost>0</upkeepCost>
          <buildCost>25</buildCost>
          <buildTyp>Drag</buildTyp>
          <structureTyp>Free</structureTyp>
@@ -1198,7 +1198,7 @@
          <canTakeDamage>false</canTakeDamage>
          <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
-         <maintenanceCost>0</maintenanceCost>
+         <upkeepCost>0</upkeepCost>
          <buildCost>45</buildCost>
          <buildTyp>Drag</buildTyp>
          <structureTyp>Free</structureTyp>
@@ -1249,7 +1249,7 @@
          <canTakeDamage>false</canTakeDamage>
          <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
-         <maintenanceCost>0</maintenanceCost>
+         <upkeepCost>0</upkeepCost>
          <buildCost>0</buildCost>
          <buildTyp>Drag</buildTyp>
          <structureTyp>Free</structureTyp>
@@ -1295,7 +1295,7 @@
          <canTakeDamage>false</canTakeDamage>
          <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
-         <maintenanceCost>0</maintenanceCost>
+         <upkeepCost>0</upkeepCost>
          <buildCost>100</buildCost>
          <buildTyp>Drag</buildTyp>
          <structureTyp>Free</structureTyp>
@@ -1347,7 +1347,7 @@
          <canTakeDamage>true</canTakeDamage>
          <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
-         <maintenanceCost>10</maintenanceCost>
+         <upkeepCost>10</upkeepCost>
          <buildCost>200</buildCost>
          <buildTyp>Single</buildTyp>
          <structureTyp>Blocking</structureTyp>
@@ -1405,7 +1405,7 @@
          <canTakeDamage>false</canTakeDamage>
          <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
-         <maintenanceCost>90</maintenanceCost>
+         <upkeepCost>90</upkeepCost>
          <buildCost>1000</buildCost>
          <buildTyp>Single</buildTyp>
          <structureTyp>Blocking</structureTyp>
@@ -1461,7 +1461,7 @@
          <canTakeDamage>false</canTakeDamage>
          <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
-         <maintenanceCost>55</maintenanceCost>
+         <upkeepCost>55</upkeepCost>
          <buildCost>800</buildCost>
          <buildTyp>Single</buildTyp>
          <structureTyp>Blocking</structureTyp>
@@ -1517,7 +1517,7 @@
          <canTakeDamage>false</canTakeDamage>
          <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
-         <maintenanceCost>80</maintenanceCost>
+         <upkeepCost>80</upkeepCost>
          <buildCost>1100</buildCost>
          <buildTyp>Single</buildTyp>
          <structureTyp>Blocking</structureTyp>
@@ -1564,7 +1564,7 @@
          </HoverOver>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
-         <hasHitbox>false</hasHitbox>
+         <hasHitbox>true</hasHitbox>
          <maxHealth>1000.0</maxHealth>
          <structureRange>17</structureRange>
          <populationLevel>0</populationLevel>
@@ -1578,7 +1578,7 @@
          <canTakeDamage>false</canTakeDamage>
          <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
-         <maintenanceCost>15</maintenanceCost>
+         <upkeepCost>15</upkeepCost>
          <buildCost>200</buildCost>
          <buildTyp>Single</buildTyp>
          <structureTyp>Blocking</structureTyp>
@@ -1609,11 +1609,11 @@
          </HoverOver>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
-         <hasHitbox>false</hasHitbox>
+         <hasHitbox>true</hasHitbox>
          <maxHealth>150.0</maxHealth>
          <structureRange>9</structureRange>
          <populationLevel>0</populationLevel>
-         <populationCount>750</populationCount>
+         <populationCount>320</populationCount>
          <structureLevel>0</structureLevel>
          <tileWidth>2</tileWidth>
          <tileHeight>4</tileHeight>
@@ -1623,7 +1623,7 @@
          <canTakeDamage>false</canTakeDamage>
          <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
-         <maintenanceCost>120</maintenanceCost>
+         <upkeepCost>120</upkeepCost>
          <buildCost>1500</buildCost>
          <buildTyp>Single</buildTyp>
          <structureTyp>Blocking</structureTyp>
@@ -1654,11 +1654,11 @@
          </HoverOver>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
-         <hasHitbox>false</hasHitbox>
+         <hasHitbox>true</hasHitbox>
          <maxHealth>250.0</maxHealth>
          <structureRange>9</structureRange>
          <populationLevel>0</populationLevel>
-         <populationCount>1250</populationCount>
+         <populationCount>400</populationCount>
          <structureLevel>0</structureLevel>
          <tileWidth>2</tileWidth>
          <tileHeight>3</tileHeight>
@@ -1668,7 +1668,7 @@
          <canTakeDamage>false</canTakeDamage>
          <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
-         <maintenanceCost>225</maintenanceCost>
+         <upkeepCost>225</upkeepCost>
          <buildCost>2000</buildCost>
          <buildTyp>Single</buildTyp>
          <structureTyp>Blocking</structureTyp>
@@ -1713,7 +1713,7 @@
          <canTakeDamage>true</canTakeDamage>
          <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>true</canStartBurning>
-         <maintenanceCost>30</maintenanceCost>
+         <upkeepCost>30</upkeepCost>
          <buildCost>4000</buildCost>
          <buildTyp>Single</buildTyp>
          <structureTyp>Blocking</structureTyp>
@@ -1743,7 +1743,7 @@
          </Description>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
-         <hasHitbox>false</hasHitbox>
+         <hasHitbox>true</hasHitbox>
          <maxHealth>550.0</maxHealth>
          <structureRange>20</structureRange>
          <populationLevel>1</populationLevel>
@@ -1757,7 +1757,7 @@
          <canTakeDamage>true</canTakeDamage>
          <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>true</canStartBurning>
-         <maintenanceCost>40</maintenanceCost>
+         <upkeepCost>40</upkeepCost>
          <buildCost>5500</buildCost>
          <buildTyp>Single</buildTyp>
          <structureTyp>Blocking</structureTyp>
@@ -1791,7 +1791,7 @@
          </HoverOver>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
-         <hasHitbox>false</hasHitbox>
+         <hasHitbox>true</hasHitbox>
          <maxHealth>500.0</maxHealth>
          <structureRange>30</structureRange>
          <populationLevel>1</populationLevel>
@@ -1805,7 +1805,7 @@
          <canTakeDamage>true</canTakeDamage>
          <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>true</canStartBurning>
-         <maintenanceCost>45</maintenanceCost>
+         <upkeepCost>45</upkeepCost>
          <buildCost>5000</buildCost>
          <buildTyp>Single</buildTyp>
          <structureTyp>Blocking</structureTyp>
@@ -1836,7 +1836,7 @@
          </HoverOver>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
-         <hasHitbox>false</hasHitbox>
+         <hasHitbox>true</hasHitbox>
          <maxHealth>550.0</maxHealth>
          <structureRange>32</structureRange>
          <populationLevel>1</populationLevel>
@@ -1850,7 +1850,7 @@
          <canTakeDamage>true</canTakeDamage>
          <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>true</canStartBurning>
-         <maintenanceCost>100</maintenanceCost>
+         <upkeepCost>100</upkeepCost>
          <buildCost>6000</buildCost>
          <buildTyp>Single</buildTyp>
          <structureTyp>Blocking</structureTyp>
@@ -1895,7 +1895,7 @@
          <canTakeDamage>true</canTakeDamage>
          <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>true</canStartBurning>
-         <maintenanceCost>70</maintenanceCost>
+         <upkeepCost>70</upkeepCost>
          <buildCost>9000</buildCost>
          <buildTyp>Single</buildTyp>
          <structureTyp>Blocking</structureTyp>
@@ -1953,7 +1953,7 @@
          <canTakeDamage>true</canTakeDamage>
          <mustFrontBuildDir>N</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
-         <maintenanceCost>0</maintenanceCost>
+         <upkeepCost>0</upkeepCost>
          <buildCost>100</buildCost>
          <buildTyp>Single</buildTyp>
          <structureTyp>Blocking</structureTyp>
@@ -2000,7 +2000,7 @@
          <maxHealth>100.0</maxHealth>
          <structureRange>15</structureRange>
          <populationLevel>0</populationLevel>
-         <populationCount>500</populationCount>
+         <populationCount>320</populationCount>
          <structureLevel>0</structureLevel>
          <tileWidth>2</tileWidth>
          <tileHeight>2</tileHeight>
@@ -2010,7 +2010,7 @@
          <canTakeDamage>true</canTakeDamage>
          <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
-         <maintenanceCost>25</maintenanceCost>
+         <upkeepCost>25</upkeepCost>
          <buildCost>300</buildCost>
          <buildTyp>Single</buildTyp>
          <structureTyp>Blocking</structureTyp>
@@ -2062,7 +2062,7 @@
          <maxHealth>200.0</maxHealth>
          <structureRange>10</structureRange>
          <populationLevel>0</populationLevel>
-         <populationCount>500</populationCount>
+         <populationCount>200</populationCount>
          <structureLevel>0</structureLevel>
          <tileWidth>3</tileWidth>
          <tileHeight>3</tileHeight>
@@ -2072,7 +2072,7 @@
          <canTakeDamage>true</canTakeDamage>
          <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
-         <maintenanceCost>50</maintenanceCost>
+         <upkeepCost>50</upkeepCost>
          <buildCost>500</buildCost>
          <buildTyp>Single</buildTyp>
          <structureTyp>Blocking</structureTyp>
@@ -2130,7 +2130,7 @@
          <maxHealth>200.0</maxHealth>
          <structureRange>15</structureRange>
          <populationLevel>0</populationLevel>
-         <populationCount>500</populationCount>
+         <populationCount>320</populationCount>
          <structureLevel>0</structureLevel>
          <tileWidth>2</tileWidth>
          <tileHeight>3</tileHeight>
@@ -2140,7 +2140,7 @@
          <canTakeDamage>true</canTakeDamage>
          <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
-         <maintenanceCost>40</maintenanceCost>
+         <upkeepCost>40</upkeepCost>
          <buildCost>750</buildCost>
          <buildTyp>Single</buildTyp>
          <structureTyp>Blocking</structureTyp>
@@ -2202,7 +2202,7 @@
          <canTakeDamage>true</canTakeDamage>
          <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
-         <maintenanceCost>100</maintenanceCost>
+         <upkeepCost>100</upkeepCost>
          <buildCost>500</buildCost>
          <buildTyp>Single</buildTyp>
          <structureTyp>Blocking</structureTyp>
@@ -2267,7 +2267,7 @@
          <canTakeDamage>true</canTakeDamage>
          <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
-         <maintenanceCost>50</maintenanceCost>
+         <upkeepCost>50</upkeepCost>
          <buildCost>1500</buildCost>
          <buildTyp>Single</buildTyp>
          <structureTyp>Blocking</structureTyp>
@@ -2332,7 +2332,7 @@
          <canTakeDamage>true</canTakeDamage>
          <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
-         <maintenanceCost>100</maintenanceCost>
+         <upkeepCost>100</upkeepCost>
          <buildCost>1250</buildCost>
          <buildTyp>Single</buildTyp>
          <structureTyp>Blocking</structureTyp>
@@ -2400,7 +2400,7 @@
          <canTakeDamage>true</canTakeDamage>
          <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
-         <maintenanceCost>45</maintenanceCost>
+         <upkeepCost>45</upkeepCost>
          <buildCost>1400</buildCost>
          <buildTyp>Single</buildTyp>
          <structureTyp>Blocking</structureTyp>
@@ -2465,7 +2465,7 @@
          <canTakeDamage>true</canTakeDamage>
          <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
-         <maintenanceCost>150</maintenanceCost>
+         <upkeepCost>150</upkeepCost>
          <buildCost>1500</buildCost>
          <buildTyp>Single</buildTyp>
          <structureTyp>Blocking</structureTyp>
@@ -2530,7 +2530,7 @@
          <canTakeDamage>true</canTakeDamage>
          <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
-         <maintenanceCost>75</maintenanceCost>
+         <upkeepCost>75</upkeepCost>
          <buildCost>750</buildCost>
          <buildTyp>Single</buildTyp>
          <structureTyp>Blocking</structureTyp>
@@ -2595,7 +2595,7 @@
          <canTakeDamage>true</canTakeDamage>
          <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
-         <maintenanceCost>160</maintenanceCost>
+         <upkeepCost>160</upkeepCost>
          <buildCost>1700</buildCost>
          <buildTyp>Single</buildTyp>
          <structureTyp>Blocking</structureTyp>
@@ -2659,7 +2659,7 @@
          <canTakeDamage>true</canTakeDamage>
          <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
-         <maintenanceCost>30</maintenanceCost>
+         <upkeepCost>30</upkeepCost>
          <buildCost>2500</buildCost>
          <buildTyp>Single</buildTyp>
          <structureTyp>Blocking</structureTyp>
@@ -2729,7 +2729,7 @@
          <canTakeDamage>true</canTakeDamage>
          <mustFrontBuildDir>W</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
-         <maintenanceCost>10</maintenanceCost>
+         <upkeepCost>10</upkeepCost>
          <buildCost>300</buildCost>
          <buildTyp>Single</buildTyp>
          <structureTyp>Blocking</structureTyp>
@@ -2784,7 +2784,7 @@
          <canTakeDamage>true</canTakeDamage>
          <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
-         <maintenanceCost>0</maintenanceCost>
+         <upkeepCost>0</upkeepCost>
          <buildCost>0</buildCost>
          <buildTyp>Drag</buildTyp>
          <structureTyp>Blocking</structureTyp>
@@ -2829,7 +2829,7 @@
          <canTakeDamage>true</canTakeDamage>
          <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
-         <maintenanceCost>0</maintenanceCost>
+         <upkeepCost>0</upkeepCost>
          <buildCost>0</buildCost>
          <buildTyp>Drag</buildTyp>
          <structureTyp>Blocking</structureTyp>
@@ -2877,7 +2877,7 @@
          <canTakeDamage>true</canTakeDamage>
          <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
-         <maintenanceCost>0</maintenanceCost>
+         <upkeepCost>0</upkeepCost>
          <buildCost>0</buildCost>
          <buildTyp>Drag</buildTyp>
          <structureTyp>Blocking</structureTyp>
@@ -2928,7 +2928,7 @@
          <canTakeDamage>true</canTakeDamage>
          <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
-         <maintenanceCost>0</maintenanceCost>
+         <upkeepCost>0</upkeepCost>
          <buildCost>0</buildCost>
          <buildTyp>Drag</buildTyp>
          <structureTyp>Blocking</structureTyp>
@@ -2984,7 +2984,7 @@
          <canTakeDamage>true</canTakeDamage>
          <mustFrontBuildDir>E</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
-         <maintenanceCost>50</maintenanceCost>
+         <upkeepCost>50</upkeepCost>
          <buildCost>1500</buildCost>
          <buildTyp>Single</buildTyp>
          <structureTyp>Blocking</structureTyp>
@@ -3038,7 +3038,7 @@
          <canTakeDamage>true</canTakeDamage>
          <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
-         <maintenanceCost>250</maintenanceCost>
+         <upkeepCost>250</upkeepCost>
          <buildCost>5000</buildCost>
          <buildTyp>Single</buildTyp>
          <structureTyp>Blocking</structureTyp>
@@ -3091,7 +3091,7 @@
          <canTakeDamage>false</canTakeDamage>
          <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
-         <maintenanceCost>25</maintenanceCost>
+         <upkeepCost>25</upkeepCost>
          <buildCost>500</buildCost>
          <buildTyp>Single</buildTyp>
          <structureTyp>Blocking</structureTyp>
@@ -3139,7 +3139,7 @@
          <canTakeDamage>false</canTakeDamage>
          <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
-         <maintenanceCost>100</maintenanceCost>
+         <upkeepCost>100</upkeepCost>
          <buildCost>2500</buildCost>
          <buildTyp>Single</buildTyp>
          <structureTyp>Blocking</structureTyp>

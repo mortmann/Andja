@@ -1,7 +1,7 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
+public enum CommonIcon { Income, Money, Upkeep, People } 
 public class UISpriteController : MonoBehaviour {
     static Dictionary<string, Sprite> idToUI;
     static Dictionary<string, Sprite> idToIcon;
@@ -15,6 +15,10 @@ public class UISpriteController : MonoBehaviour {
     public static bool HasIcon(string id) {
         return idToIcon.ContainsKey(id+iconNameAdd);
     }
+    public static Sprite GetIcon(CommonIcon icon) {
+        return GetIcon(icon.ToString());
+    }
+    
     public static Sprite GetIcon(string id) {
         id += iconNameAdd;
         if (idToIcon.ContainsKey(id)) {

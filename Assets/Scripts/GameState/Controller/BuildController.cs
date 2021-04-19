@@ -118,7 +118,7 @@ public class BuildController : MonoBehaviour {
                 LoadedStructures.RemoveAt(i);
             }
         }
-        buildID = LoadedStructures[LoadedStructures.Count - 1].buildID++;
+        buildID = LoadedStructures[0].buildID++;
     }
     public void StartStructureBuild(string id, Unit buildInRangeUnit = null, Structure EditorStructure = null) {
         if (StructurePrototypes.ContainsKey(id) == false) {

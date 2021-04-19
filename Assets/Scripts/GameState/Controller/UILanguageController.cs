@@ -7,7 +7,7 @@ using System.Xml.Serialization;
 using System.Xml;
 using UnityEditor;
 using System.Linq;
-enum StaticLanguageVariables { On, Off, And, Or, Empty, }
+public enum StaticLanguageVariables { On, Off, And, Or, Empty, BuildCost, Upkeep, Locked,  }
 public class UILanguageController : MonoBehaviour {
     public static UILanguageController Instance { get; protected set; }
     Action cbLanguageChange;
@@ -28,17 +28,19 @@ public class UILanguageController : MonoBehaviour {
         Instance = this;
         idToTranslation = new Dictionary<string, TranslationData>();
         //#if Unity_Editor
-        TextLanguageSetter[] texts = Resources.FindObjectsOfTypeAll<TextLanguageSetter>();
+        TranslationBase[] texts = Resources.FindObjectsOfTypeAll<TranslationBase>();
         Dictionary<string, TranslationData> localizationDataDictionary = new Dictionary<string, TranslationData>();
-        foreach (TextLanguageSetter t in texts){
-            if (t.Identifier == null || t.Identifier.Trim().Length == 0) {
-                Debug.LogError("Text Identifier is Empty for " + t.GetRealName());
-                continue;
+        foreach (TranslationBase t in texts){
+            foreach(TranslationData td in t.GetTranslationDatas()) {
+                if (td.id == null || td.id.Trim().Length == 0) {
+                    Debug.LogError("Text Identifier is Empty for " + t.GetRealName());
+                    continue;
+                }
+                if (localizationDataDictionary.ContainsKey(td.id) == false) {
+                        localizationDataDictionary.Add(td.id, td);
+                }
+                localizationDataDictionary[td.id].AddUIElement(t.GetRealName());
             }
-            if(localizationDataDictionary.ContainsKey(t.Identifier) == false) {
-                localizationDataDictionary.Add(t.Identifier, t.GetData());
-            }
-            localizationDataDictionary[t.Identifier].AddUIElement(t.GetRealName());
         }
         foreach (GraphicsOptions go in Enum.GetValues(typeof(GraphicsOptions))) {
             string name = typeof(GraphicsOptions).Name + "/" + go.ToString();
@@ -83,7 +85,12 @@ public class UILanguageController : MonoBehaviour {
         }
         return idToTranslation[name];
     }
-
+    public TranslationData GetTranslationData(StaticLanguageVariables val) {
+        return GetTranslationData(val.ToString());
+    }
+    public void AddTranslationData(TranslationData data) {
+        requiredLocalizationData.Add(data);
+    }
     public void ChangeLanguage(string language) {
         if (LocalizationsToFile.ContainsKey(language) == false) {
             Debug.LogWarning("selected Language not available!");

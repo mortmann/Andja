@@ -55,7 +55,14 @@ public class FlyingTrader  {
             Ships[i].Update(deltaTime);
         }
     }
-
+    internal void Load() {
+        foreach(TradeShip s in Ships) {
+            s.Load();
+        }
+        foreach(Player p in PlayerController.Instance.GetPlayers()) {
+            TradeCities.AddRange(p.Cities);
+        }
+    }
     public void OnDestroy() {
         Instance = null;
     }
@@ -71,24 +78,26 @@ public class FlyingTrader  {
         });
     }
 
-    [JsonObject]
+    [JsonObject(MemberSerialization.OptIn)]
     public class TradeShip {
-        public Ship Ship;
-        City CurrentDestination;
-        List<City> visitedCities;
-        float tradeTimer;
-        bool isAtTrade;
+        [JsonPropertyAttribute] public Ship Ship;
+        [JsonPropertyAttribute] City CurrentDestination;
+        [JsonPropertyAttribute] List<City> visitedCities;
+        [JsonPropertyAttribute] float tradeTimer;
+        [JsonPropertyAttribute] bool isAtTrade;
         public TradeShip() {
 
         }
         public TradeShip(Ship ship) {
             visitedCities = new List<City>();
             this.Ship = ship;
-            ship.RegisterOnArrivedAtDestinationCallback(OnShipArriveDestination);
             tradeTimer = TradeTime;
             GoToNextCity();
+            Setup();
         }
-
+        void Setup() {
+            Ship.RegisterOnArrivedAtDestinationCallback(OnShipArriveDestination);
+        }
         private void OnShipArriveDestination(Unit unit, bool goal) {
             if (Ship.CurrentMainMode == UnitMainModes.OffWorldMarket) {
                 Ship.Destroy(null);
@@ -186,6 +195,15 @@ public class FlyingTrader  {
             Ship.SendToOffworldMarket(null);
             isAtTrade = false;
         }
-    }
 
+        internal void Load() {
+            if(CurrentDestination == null) {
+                SendHome();
+            } else {
+                CurrentDestination.warehouse.RegisterOnDestroyCallback(OnWarehouseDestroy);
+                Ship.GiveMovementCommand(CurrentDestination.warehouse.tradeTile);
+            }
+            Setup();
+        }
+    }
 }

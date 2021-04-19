@@ -9,7 +9,7 @@ public class UnitPrototypeData : LanguageVariables {
     public int PopulationCount = 0;
     public int inventoryPlaces;
     public int inventorySize;
-    public int maintenancecost;
+    public int upkeepCost;
     public int buildcost;
 
     public DamageType damageType;
@@ -165,6 +165,7 @@ public class Unit : IGEventable, IWarfare, ITargetable {
 
     private void Setup() {
         World.Current.RegisterOnEvent(OnEventCreate, OnEventEnded);
+        pathfinding.cbIsAtDestination += OnPathfindingAtDestination;
         inventory?.OnChanged(inventory);
         if (IsShip)
             ((OceanPathfinding)pathfinding).Ship = (Ship)this;
@@ -196,7 +197,7 @@ public class Unit : IGEventable, IWarfare, ITargetable {
     public int InventoryPlaces => CalculateRealValue(nameof(Data.inventoryPlaces), Data.inventoryPlaces); //UNTESTED HOW THIS WILL WORK
     public int InventorySize => CalculateRealValue(nameof(Data.inventorySize), Data.inventorySize); //UNTESTED HOW THIS WILL WORK
     public float AggroTime => CalculateRealValue(nameof(Data.aggroTime), Data.aggroTime); //UNTESTED HOW THIS WILL WORK
-    public int MaintenanceCost => CalculateRealValue(nameof(Data.maintenancecost), Data.maintenancecost); //UNTESTED HOW THIS WILL WORK
+    public int UpkeepCost => CalculateRealValue(nameof(Data.upkeepCost), Data.upkeepCost); //UNTESTED HOW THIS WILL WORK
 
     public float BuildRange => CalculateRealValue(nameof(Data.buildRange), Data.buildRange); 
     public virtual bool IsShip => false;
@@ -269,7 +270,6 @@ public class Unit : IGEventable, IWarfare, ITargetable {
         this.playerNumber = playerNumber;
         PlayerSetName = "Unit " + UnityEngine.Random.Range(0, 1000000000);
         pathfinding = new IslandPathfinding(this, t);
-        pathfinding.cbIsAtDestination += OnPathfindingAtDestination;
         queuedCommands = new Queue<Command>();
         Setup();
     }

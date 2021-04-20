@@ -1,7 +1,7 @@
 ﻿using Andja.Utility;
 using UnityEngine;
 
-namespace Andja.Model {
+namespace Andja.Model.Generator {
 
     public class MoistureGenerator {
 

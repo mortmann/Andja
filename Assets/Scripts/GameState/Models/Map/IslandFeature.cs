@@ -1,5 +1,7 @@
 ﻿using Andja.Controller;
+using Andja.Model.Generator;
 using Andja.Utility;
+using MoonSharp.Interpreter;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -8,26 +10,28 @@ using UnityEngine;
 
 namespace Andja.Model {
 
-    public enum FeatureType { River, Volcano, }
+    public enum FeatureType { River, Volcano, Custom, }
 
     public enum FitType { Exact, Bigger, Smaller }
 
     public class IslandFeaturePrototypeData : LanguageVariables {
         public string ID;
         public FeatureType type;
-        public Func<int, float> generateProbability;
+        public string luaScript;
         public GameEvent[] events;
         public FitType fitType;
         public TileType requiredTile;
         public Vector2Int requiredSpace;
         public Effect[] effects;
-
+        [Ignore] Script script;
+        [Ignore] public Func<int, float> generateProbabilityFunc;
+        
         public static IslandFeaturePrototypeData[] TempSetUp() {
             List<IslandFeaturePrototypeData> features = new List<IslandFeaturePrototypeData> {
             new IslandFeaturePrototypeData {
                 ID = "vulcano",
                 type = FeatureType.Volcano,
-                generateProbability = (i) => { return 0.011f / i - (i) / 2000f; },
+                generateProbabilityFunc = (i) => { return 0.011f / i - (i) / 2000f; },
                 effects = new Effect[1] { new Effect("volcanicearth") },
                 events = new GameEvent[1] { new GameEvent("volcanic_eruption") },
                 requiredTile = TileType.Mountain,
@@ -37,7 +41,7 @@ namespace Andja.Model {
             new IslandFeaturePrototypeData {
                 ID = "river",
                 type = FeatureType.River,
-                generateProbability = (i) => { return 0.025f / i; },
+                generateProbabilityFunc = (i) => { return 0.025f / i; },
                 requiredTile = TileType.Mountain,
                 requiredSpace = new Vector2Int(1,1),
                 fitType = FitType.Exact
@@ -45,6 +49,23 @@ namespace Andja.Model {
         };
             return features.ToArray();
         }
+        public float LoadedProbabilityFunc(int value) {
+            if(script == null) {
+                script = new Script();
+                script.Globals["TileType"] = UserData.CreateStatic<TileType>();
+                script.DoString(luaScript);
+            }
+            return (float)script.Call(script.Globals["probability"], value).Number;
+        }
+        public Tile[] LoadedGenerateFunc(Tile[] tiles) {
+            if (script == null) {
+                script = new Script();
+                script.Globals["TileType"] = UserData.CreateStatic<TileType>();
+                script.DoString(luaScript);
+            }
+            return script.Call(script.Globals["generate"], tiles).ToObject<Tile[]>();
+        }
+
     }
 
     [JsonObject(MemberSerialization.OptIn)]
@@ -68,7 +89,7 @@ namespace Andja.Model {
         }
 
         public FeatureType type => Data.type;
-        public Func<int, float> GenerateProbability => Data.generateProbability;
+        public Func<int, float> GenerateProbability => Data.generateProbabilityFunc ?? Data.LoadedProbabilityFunc;
         public GameEvent[] Events => Data.events;
         public FitType fitType => Data.fitType;
         public TileType RequiredTile => Data.requiredTile;
@@ -83,6 +104,11 @@ namespace Andja.Model {
 
                 case FeatureType.Volcano:
                     MakeVolcano(islandGenerator, islandGenerator.GetTileAt(x, y));
+                    break;
+
+                case FeatureType.Custom:
+                    foreach (Tile t in Data.LoadedGenerateFunc(islandGenerator.Tiles))
+                        islandGenerator.SetTileAt(t.X,t.Y, t);
                     break;
             }
         }

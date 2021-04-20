@@ -1,4 +1,5 @@
 using Andja.Model;
+using Andja.Model.Generator;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -83,7 +84,6 @@ namespace Andja.Controller {
             SpawningRect = spawnRect;
             isLoaded = false;
         }
-
         private void CreatePlayerStarts(Vector2[] spawnPoints) {
             StartingLoadout loadout = GameData.Instance.Loadout;
             if (loadout == null)

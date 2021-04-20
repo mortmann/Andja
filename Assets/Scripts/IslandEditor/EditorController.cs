@@ -1,5 +1,6 @@
 using Andja.Controller;
 using Andja.Model;
+using Andja.Model.Generator;
 using Andja.UI;
 using Andja.UI.Menu;
 using Andja.Utility;

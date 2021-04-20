@@ -1,5 +1,6 @@
 using Andja.Model;
 using Andja.Model.Data;
+using Andja.Model.Generator;
 using Andja.Utility;
 using System;
 using System.Collections;
@@ -48,6 +49,9 @@ namespace Andja.Controller {
         public IReadOnlyDictionary<string, GameEventPrototypData> GameEventPrototypeDatas => gameEventPrototypeDatas;
         public IReadOnlyDictionary<string, Item> AllItems => allItems;
         public IReadOnlyDictionary<string, IslandFeaturePrototypeData> IslandFeaturePrototypeDatas => islandFeaturePrototypeDatas;
+        public IReadOnlyDictionary<Climate, List<FertilityPrototypeData>> AllFertilitiesDatasPerClimate => allFertilitiesDatasPerClimate;
+        public IReadOnlyDictionary<Size, IslandSizeGenerationInfo> IslandSizeToGenerationInfo => islandSizeToGenerationInfo;
+        public IReadOnlyDictionary<Climate, List<ResourceGenerationInfo>> ClimateToResourceGeneration => climateToResourceGeneration;
 
         /// <summary>
         /// Array: For each Level of Populations exists a dictionary
@@ -88,33 +92,29 @@ namespace Andja.Controller {
         private List<Item> buildItemsList;
         private Dictionary<int, List<NeedGroup>> populationLevelToNeedGroup;
         private Dictionary<Climate, List<Fertility>> allFertilities;
-        public Dictionary<Climate, List<FertilityPrototypeData>> AllFertilitiesDatasPerClimate;
-        public Dictionary<string, IslandFeaturePrototypeData> islandFeaturePrototypeDatas;
+        private Dictionary<Climate, List<FertilityPrototypeData>> allFertilitiesDatasPerClimate;
+        private Dictionary<string, IslandFeaturePrototypeData> islandFeaturePrototypeDatas;
         private List<StartingLoadout> _startingLoadouts;
-
         private Dictionary<string, Fertility> idToFertilities;
-        public Dictionary<Size, IslandSizeGenerationInfo> IslandSizeToGenerationInfo { get; private set; }
-        public Dictionary<Climate, List<ResourceGenerationInfo>> ClimateToResourceGeneration { get; private set; }
-        public List<ResourceGenerationInfo> ResourceGenerations { get; private set; }
+        private Dictionary<Size, IslandSizeGenerationInfo> islandSizeToGenerationInfo;
+        private Dictionary<Climate, List<ResourceGenerationInfo>> climateToResourceGeneration;
         private ConcurrentDictionary<int, Unlocks>[] levelCountToUnlocks;
-        public List<int>[] AllUnlockPeoplePerLevel;
         private ConcurrentDictionary<string, float[]> buildItemsNeeded;
+
+        public List<ResourceGenerationInfo> ResourceGenerations { get; private set; }
+        public List<int>[] AllUnlockPeoplePerLevel;
 
         /// <summary>
         /// "BuildItems in terms of when something requires it to be created."
         /// </summary>
         public Dictionary<string, int[]> recommandedBuildSupplyChains;
-
         public List<Item> MineableItems;
         public static Item[] _buildItems;
-
         private List<Need> allNeeds;
         private List<NeedPrototypeData>[] needsPerLevel;
         public List<Fertility> orderUnlockFertilities;
-
         //current valid player prototyp data
         internal static PlayerPrototypeData CurrentPlayerPrototypData = new PlayerPrototypeData();
-
         /// <summary>
         /// Item ID to the list of PRODUCE (which contains structure that PRODUCES it and supplychain)
         /// </summary>
@@ -123,7 +123,7 @@ namespace Andja.Controller {
         //TODO: need a way to get this to load in! probably with the rest
         //      of the data thats still needs to be read in like time for money ticks
         public ArmorType StructureArmor => armorTypeDatas["woodenwall"];
-
+       
         public Dictionary<string, Item> GetCopieOfAllItems() {
             Dictionary<string, Item> items = new Dictionary<string, Item>();
             foreach (string item in allItems.Keys) {
@@ -289,7 +289,7 @@ namespace Andja.Controller {
             //fertilities
             allFertilities = new Dictionary<Climate, List<Fertility>>();
             idToFertilities = new Dictionary<string, Fertility>();
-            AllFertilitiesDatasPerClimate = new Dictionary<Climate, List<FertilityPrototypeData>>();
+            allFertilitiesDatasPerClimate = new Dictionary<Climate, List<FertilityPrototypeData>>();
             fertilityPrototypeDatas = new Dictionary<string, FertilityPrototypeData>();
             ReadFertilitiesFromXML(LoadXML(XMLFilesTypes.fertilities));
             ModLoader.LoadXMLs(XMLFilesTypes.fertilities, ReadFertilitiesFromXML);
@@ -343,13 +343,18 @@ namespace Andja.Controller {
             ReadStartingLoadoutsFromXMLs(LoadXML(XMLFilesTypes.startingloadouts));
             ModLoader.LoadXMLs(XMLFilesTypes.startingloadouts, ReadStartingLoadoutsFromXMLs);
 
-            IslandSizeToGenerationInfo = new Dictionary<Size, IslandSizeGenerationInfo>();
-            ClimateToResourceGeneration = new Dictionary<Climate, List<ResourceGenerationInfo>>();
+            islandSizeToGenerationInfo = new Dictionary<Size, IslandSizeGenerationInfo>();
+            climateToResourceGeneration = new Dictionary<Climate, List<ResourceGenerationInfo>>();
+            islandFeaturePrototypeDatas = new Dictionary<string, IslandFeaturePrototypeData>();
             ResourceGenerations = new List<ResourceGenerationInfo>();
             ReadMapGenerationInfos(LoadXML(XMLFilesTypes.mapgeneration));
             ModLoader.LoadXMLs(XMLFilesTypes.mapgeneration, ReadMapGenerationInfos);
-            islandFeaturePrototypeDatas = new Dictionary<string, IslandFeaturePrototypeData>();
-            //TODO remove hardcoded stuff
+            if (islandFeaturePrototypeDatas.Count > 0) {
+                MoonSharp.Interpreter.UserData.RegisterAssembly(); //Set up for exchange of Tile Data
+                MoonSharp.Interpreter.UserData.RegisterType<TileType>();
+                
+            }
+
             foreach (IslandFeaturePrototypeData d in IslandFeaturePrototypeData.TempSetUp()) {
                 islandFeaturePrototypeDatas.Add(d.ID, d);
             }
@@ -403,10 +408,10 @@ namespace Andja.Controller {
                 IslandSizeGenerationInfo islandSize = new IslandSizeGenerationInfo();
                 SetData<IslandSizeGenerationInfo>((XmlElement)node, ref islandSize);
                 Enum.TryParse(node.GetAttribute("size"), true, out Size size);
-                IslandSizeToGenerationInfo[size] = islandSize;
+                islandSizeToGenerationInfo[size] = islandSize;
             }
             foreach (Climate climate in Enum.GetValues(typeof(Climate))) {
-                ClimateToResourceGeneration[climate] = new List<ResourceGenerationInfo>();
+                climateToResourceGeneration[climate] = new List<ResourceGenerationInfo>();
             }
             foreach (XmlElement node in xmlDoc.SelectNodes("generationInfos/resources/resource")) {
                 ResourceGenerationInfo generationInfo = new ResourceGenerationInfo();
@@ -429,6 +434,12 @@ namespace Andja.Controller {
                 foreach (Climate c in generationInfo.climate) {
                     ClimateToResourceGeneration[c].Add(generationInfo);
                 }
+            }
+            foreach (XmlElement node in xmlDoc.SelectNodes("generationInfos/islandFeatures/islandFeature")) {
+                IslandFeaturePrototypeData feature = new IslandFeaturePrototypeData();
+                feature.ID = node.GetAttribute("ID");
+                SetData<IslandFeaturePrototypeData>(node, ref feature);
+                islandFeaturePrototypeDatas[feature.ID] = feature;
             }
         }
 
@@ -929,9 +940,9 @@ namespace Andja.Controller {
                         allFertilities[item] = new List<Fertility>();
                     allFertilities[item].Add(fer);
 
-                    if (AllFertilitiesDatasPerClimate.ContainsKey(item) == false)
-                        AllFertilitiesDatasPerClimate[item] = new List<FertilityPrototypeData>();
-                    AllFertilitiesDatasPerClimate[item].Add(fpd);
+                    if (allFertilitiesDatasPerClimate.ContainsKey(item) == false)
+                        allFertilitiesDatasPerClimate[item] = new List<FertilityPrototypeData>();
+                    allFertilitiesDatasPerClimate[item].Add(fpd);
                 }
             }
         }
@@ -1401,7 +1412,7 @@ namespace Andja.Controller {
                         var list = (IList)Activator.CreateInstance(constructedListType);
                         int i = 0;
                         foreach (XmlNode item in currentNode.ChildNodes) {
-                            if (item.Name != fi.FieldType.GetElementType().ToString()) {
+                            if (item.Name != fi.FieldType.GetElementType().Name) {
                                 continue;
                             }
                             list.Add(Enum.Parse(fi.FieldType.GetElementType(), item.InnerXml, true));

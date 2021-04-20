@@ -24,6 +24,7 @@ namespace Andja.Model {
     public enum TileMark { None, Highlight, Dark }
 
     [JsonObject(MemberSerialization.OptIn, ItemTypeNameHandling = TypeNameHandling.None)]
+    [MoonSharp.Interpreter.MoonSharpUserData]
     public class Tile : IComparable<Tile>, IEqualityComparer<Tile> {
         [JsonPropertyAttribute] protected ushort x;
         [JsonPropertyAttribute] protected ushort y;
@@ -367,7 +368,12 @@ namespace Andja.Model {
             // Return true if the fields not match:
             return a.X != b.X || a.Y != b.Y;
         }
-
+        public LandTile toLandTile() {
+            return new LandTile(x, y, this);
+        }
+        public LandTile toLandTile(TileType tileType) {
+            return new LandTile(x, y, this, tileType); // (TileType)Enum.Parse(typeof(TileType), (string)tileType)
+        }
         public static string GetSpriteAddonForTile(Tile t, Tile[] neighbours) {
             string connectOrientation = "";
             for (int i = 0; i < neighbours.Length; i++) {

@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-namespace Andja.Model {
+namespace Andja.Model.Generator {
 
     public class IslandGenerator {
         public float Progress;
@@ -133,7 +133,7 @@ namespace Andja.Model {
         private void RandomFeatures() {
             TileValue[,] PreTileValues = TileValue.CalculateStartingValues(Width, Height, Tiles);
             Dictionary<string, int> featureToCount = new Dictionary<string, int>();
-            IslandFeaturePrototypeData[] allFeatures = PrototypController.Instance.islandFeaturePrototypeDatas.Values.ToArray();
+            IslandFeaturePrototypeData[] allFeatures = PrototypController.Instance.IslandFeaturePrototypeDatas.Values.ToArray();
             foreach (IslandFeaturePrototypeData feature in allFeatures) {
                 featureToCount[feature.ID] = 1;
             }

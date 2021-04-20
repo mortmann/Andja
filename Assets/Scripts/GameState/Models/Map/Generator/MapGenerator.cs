@@ -9,7 +9,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using UnityEngine;
 
-namespace Andja.Model {
+namespace Andja.Model.Generator {
 
     public class MapGenerator : MonoBehaviour {
         private Rect ColdIslandSpace;

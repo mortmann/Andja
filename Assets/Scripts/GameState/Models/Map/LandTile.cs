@@ -7,6 +7,7 @@ using UnityEngine;
 namespace Andja.Model {
 
     [JsonObject(MemberSerialization.OptIn, ItemTypeNameHandling = TypeNameHandling.None)]
+    [MoonSharp.Interpreter.MoonSharpUserData]
     public class LandTile : Tile {
 
         //Want to have more than one structure in one tile!
@@ -134,15 +135,15 @@ namespace Andja.Model {
             this.y = (ushort)y;
         }
 
-        public LandTile(int x, int y, Tile t) {
-            this.x = (ushort)x;
-            this.y = (ushort)y;
+        public LandTile(int x, int y, Tile t) : this(x,y) {
             Elevation = t.Elevation;
             Moisture = t.Moisture;
             SpriteName = t.SpriteName;
             _type = t.Type;
         }
-
+        public LandTile(int x, int y, Tile t, TileType type) : this(x, y, t) {
+            _type = type;
+        }
         // The function we callback any time our tile's structure changes
         //some how the first == now is sometimes null even tho it IS NOT NULL
         //second one is the old ! that one is working

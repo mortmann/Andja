@@ -25,7 +25,6 @@ namespace Andja.Controller {
         public Vector3 upper = new Vector3(1, 1);
         public Vector3 lower = new Vector3();
         public Vector3 middle = new Vector3();
-        private Tile middleTile;
         public Island nearestIsland;
 
         /// <summary>
@@ -34,9 +33,10 @@ namespace Andja.Controller {
         public Vector3 SoundAmbientValues;
 
         public float zoomLevel;
-        public HashSet<Tile> tilesCurrentInCameraView;
 
+        public HashSet<Tile> tilesCurrentInCameraView;
         public HashSet<Structure> structureCurrentInCameraView;
+
         public Rect CameraViewRange;
         private Vector2 showBounds = new Vector2();
         public static CameraController Instance;
@@ -129,8 +129,6 @@ namespace Andja.Controller {
 
             middle = Camera.main.ScreenToWorldPoint(new Vector3(Camera.main.pixelWidth / 2, Camera.main.pixelHeight / 2));
 
-            middleTile = World.Current.GetTileAt(middle.x, middle.y);
-
             Vector3 newLower = cameraMove + lower;
             Vector3 newUpper = cameraMove + upper;
             if (newUpper.x > showBounds.x) {
@@ -138,12 +136,12 @@ namespace Andja.Controller {
                     cameraMove.x = Mathf.Clamp(cameraMove.x, 0, showBounds.x - upper.x);
                 }
             }
-            if (newLower.x < 0) {//Camera.main.orthographicSize/divide
+            if (newLower.x < 0) {
                 if (cameraMove.x < 0) {
                     cameraMove.x = Mathf.Clamp(cameraMove.x, 0, -lower.x);
                 }
             }
-            if (newUpper.y > showBounds.y) {//Camera.main.orthographicSize/divide
+            if (newUpper.y > showBounds.y) {
                 if (cameraMove.y > 0) {
                     cameraMove.y = Mathf.Clamp(cameraMove.y, 0, showBounds.y - upper.y);
                 }
@@ -213,10 +211,6 @@ namespace Andja.Controller {
 
             var plane = new Plane(a, c, d);
 
-            // Draw our three input points in world space.
-            // b and c are drawn as lollipops from the preceding point,
-            // so that you can see the clockwise winding direction.
-
             Gizmos.color = Color.green;
             Gizmos.DrawWireSphere(a, 0.1f);
 
@@ -237,26 +231,8 @@ namespace Andja.Controller {
             Gizmos.DrawWireSphere(lower, 0.1f);
             Gizmos.DrawWireSphere(upper, 0.1f);
 
-            // Draw this object's position,
-            // as a lollipop sticking out from our plane,
-            // blue-green if in front (in the positive half-space),
-            // and red if behind (negative half-space).
             Gizmos.color = plane.GetSide(transform.position) ? Color.cyan : Color.red;
             Gizmos.DrawLine(plane.ClosestPointOnPlane(transform.position), transform.position);
-            //// Draw plane normal.
-            //Gizmos.color = Color.yellow;
-            //var center = (a + b + c) / 3f;
-            //Gizmos.DrawLine(center, center + plane.normal);
-
-            //// Draw planar grid.
-            //Gizmos.color = Color.blue;
-            //var matrix = Gizmos.matrix;
-            //Gizmos.matrix = Matrix4x4.TRS(center, Quaternion.LookRotation(plane.normal), Vector3.one);
-            //for (int i = -10; i <= 10; i++) {
-            //    Gizmos.DrawLine(new Vector3(i, -10, 0), new Vector3(i, 10, 0));
-            //    Gizmos.DrawLine(new Vector3(-10, i, 0), new Vector3(10, i, 0));
-            //}
-            //Gizmos.matrix = matrix;
         }
 
         internal void SetSaveCameraData(CameraSave camera) {

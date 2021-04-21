@@ -1,6 +1,9 @@
 ﻿using System.Collections.Generic;
 
 namespace Andja.Model.Data {
+    /// <summary>
+    /// Produce need in Ratio by the owning Produce
+    /// </summary>
     public struct ProduceRatio {
         public Produce Producer;
         public float Ratio;

@@ -2,7 +2,7 @@ using Andja.Pathfinding;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Andja.Model {
+namespace Andja.Model.Components {
 
     public class ITargetableHoldingScript : MonoBehaviour {
         public ITargetable Holding;

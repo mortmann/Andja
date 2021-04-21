@@ -31,6 +31,7 @@ namespace Andja.UI {
         private void Start() {
             rect = GetComponent<RectTransform>();
             stringToImageText = new Dictionary<string, ImageText>();
+            
             ImageText cost = Instantiate(ImageTextPrefab);
             cost.Set(UISpriteController.GetIcon(CommonIcon.Money), StaticLanguageVariables.BuildCost, 0 + "");
             cost.transform.SetParent(MoneyThings.transform, false);

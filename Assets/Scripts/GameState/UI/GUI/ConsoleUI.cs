@@ -60,20 +60,17 @@ namespace Andja.UI {
             string text = inputField.text.ToLower();
             if (String.IsNullOrEmpty(text)) {
                 predictiveText.text = "";
-                return;
+                text = "";
             }
 
             List<string> predicted = null;
             string toPredicte = "";
             string[] parts = text.Split(null); // splits whitespaces
-            if (parts.Length == 0) {
-                predictiveText.text = "";
-                return;
-            }
+            
             string first = parts[0];
             if (parts.Length == 1) {
                 toPredicte = parts[0];
-                predicted = cc.FirstLevelCommands.FindAll(x => x.StartsWith(toPredicte));
+                predicted = GetFilterCommands(cc.FirstLevelCommands, toPredicte);
             }
             string second = null;
             if (parts.Length >= 2) {
@@ -83,7 +80,7 @@ namespace Andja.UI {
                     return;
                 }
                 toPredicte = parts[1];
-                predicted = GetSecondLevelCommands(first).FindAll(x => x.StartsWith(toPredicte));
+                predicted = GetFilterCommands(GetSecondLevelCommands(first), toPredicte);
                 second = parts[parts.Length - 2].ToLower();
             }
             if (parts.Length > 2) {
@@ -99,17 +96,16 @@ namespace Andja.UI {
                     predictiveText.text = "";
                     return;
                 }
-                predicted = GetThirdLevelCommands(second).FindAll(x => x.StartsWith(toPredicte));
-            }
-            if (String.IsNullOrEmpty(toPredicte)) {
-                predictiveText.text = "";
-                return;
+                predicted = GetFilterCommands(GetThirdLevelCommands(second), toPredicte);
             }
             if (predicted == null || predicted.Count == 0) {
                 predictiveText.text = "";
                 return;
             }
             string allPredicatedText = "";
+            if (string.IsNullOrEmpty(text)) {
+                allPredicatedText += "\n";
+            }
             for (int i = predicted.Count - 1; i >= 0; i--) {
                 string predicte = predicted[i];
                 predicte = predicte.Remove(0, toPredicte.Length);
@@ -157,6 +153,19 @@ namespace Andja.UI {
             inputField.text = "";
             inputField.Select();
             inputField.ActivateInputField();
+        }
+        /// <summary>
+        /// Get all commands starting with the filter or when empty all
+        /// </summary>
+        /// <param name="commands"></param>
+        /// <param name="filter"></param>
+        /// <returns></returns>
+        private List<string> GetFilterCommands(List<string> commands, string filter) {
+            if(string.IsNullOrEmpty(filter)) {
+                return commands;
+            } else {
+                return commands.FindAll(x => x.StartsWith(filter));
+            }
         }
 
         private List<string> GetSecondLevelCommands(string firstlevel) {

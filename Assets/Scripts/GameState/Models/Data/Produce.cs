@@ -4,6 +4,11 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace Andja.Model.Data {
+    /// <summary>
+    /// Item being produced by ProducerStructure with the Items "needed",
+    /// which being produced by itemProduceRatios. 
+    /// SupplyChains are calculated ways to produce this item.
+    /// </summary>
     public class Produce {
         public Item item;
         public float producePerMinute;

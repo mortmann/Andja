@@ -4,6 +4,10 @@ using System.Linq;
 using UnityEngine;
 
 namespace Andja.Model.Data {
+    /// <summary>
+    /// If it is valid it has a calculated Cost for this to be build.
+    /// How many times it needs the next Produces.
+    /// </summary>
     public class SupplyChain {
         public bool IsValid { private set; get; }
         private Produce Produce;

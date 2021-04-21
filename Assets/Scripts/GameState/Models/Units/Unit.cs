@@ -1,4 +1,5 @@
 using Andja.Controller;
+using Andja.Model.Components;
 using Andja.Pathfinding;
 using Newtonsoft.Json;
 using System;

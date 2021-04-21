@@ -11,7 +11,9 @@ using UnityEngine;
 namespace Andja.Controller {
 
     public enum StaticLanguageVariables { On, Off, And, Or, Empty, BuildCost, Upkeep, Locked, }
-
+    /// <summary>
+    /// Loads Translations (except prototypes sends it off to PrototypController) and changing language 
+    /// </summary>
     public class UILanguageController : MonoBehaviour {
         public static UILanguageController Instance { get; protected set; }
         private Action cbLanguageChange;

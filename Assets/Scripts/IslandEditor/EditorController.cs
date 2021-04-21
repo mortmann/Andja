@@ -17,7 +17,10 @@ namespace Andja.Editor {
     public enum BrushTypes { Square, Round }
 
     public enum ChangeMode { Tile, Structure }
-
+    /// <summary>
+    /// Handles Editor related things, World (Island), Resources, Size, Climate
+    /// Maybe too much Stuff here -- when reworked Fix this.
+    /// </summary>
     public class EditorController : MonoBehaviour {
         public static bool IsEditor = false;
 

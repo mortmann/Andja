@@ -15,7 +15,10 @@ using System.Xml;
 using UnityEngine;
 
 namespace Andja.Controller {
-
+    /// <summary>
+    /// Responsible for all data loading from xml for prototypes, loadouts etc.
+    /// Calculates different things like supplychains, buildItems, NeedGroups andso on.
+    /// </summary>
     public class PrototypController : MonoBehaviour {
         public const string GameVersion = "0.1.5"; //TODO: think about this position
         /**
@@ -27,7 +30,6 @@ namespace Andja.Controller {
          *      2.1 if the xml file is three deep like structures it must be added to the if
          *  3. Create Debug output for it
          */
-
         public enum XMLFilesTypes { other, events, fertilities, items, combat, units, structures, needs, startingloadouts, mapgeneration }
 
         public int NumberOfPopulationLevels => populationLevelDatas.Count;

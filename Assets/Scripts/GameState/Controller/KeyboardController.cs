@@ -18,6 +18,8 @@ namespace Andja.Controller {
         MouseController MouseController => MouseController.Instance;
         BuildController BuildController => BuildController.Instance;
 
+        private VideoPlayer videoPlayer;
+
         private enum CheatCode { GodMode }
 
         private Dictionary<KeyCode[], CheatCode> cheatCodes = new Dictionary<KeyCode[], CheatCode> {
@@ -28,7 +30,7 @@ namespace Andja.Controller {
         }
     };
 
-        private float cheatCodeMaxDelay = 1.5f;
+        private static readonly float cheatCodeMaxDelay = 1.5f;
         private float currentCheatCodeInputDelay = 0;
         private int currentCheatCodeIndex = 0;
 
@@ -36,7 +38,9 @@ namespace Andja.Controller {
             new InputHandler();
         }
 
-        // Update is called once per frame
+        /// <summary>
+        /// Checks for any Input Down and calls responding functions
+        /// </summary>
         private void Update() {
             if (EditorController.IsEditor)
                 return;
@@ -96,7 +100,10 @@ namespace Andja.Controller {
                 }
             }
         }
-
+        /// <summary>
+        /// Some fun cheat codes will be updated here.
+        /// They have to be pressed in time for them to count.
+        /// </summary>
         private void UpdateCheatCodes() {
             if (Input.anyKeyDown) {
                 currentCheatCodeInputDelay = 0;
@@ -131,42 +138,53 @@ namespace Andja.Controller {
                 }
             }
         }
-
+        /// <summary>
+        /// Troll the player who thought to activate godmode.
+        /// </summary>
         private void GodMode() {
             StartCoroutine(PlayVideo());
         }
 
-        private VideoPlayer videoPlayer;
-
+        /// <summary>
+        /// This will play when the game has Internet a never gonna give you up song.
+        /// </summary>
+        /// <returns></returns>
         private IEnumerator PlayVideo() {
             if (Application.internetReachability == NetworkReachability.NotReachable) {
                 Debug.Log("You need Internet to be able to activate GODMODE");
                 yield return null;
             }
             Debug.Log("ACTIVATING GODMODE");
-
+            WorldController.Instance.ChangeGameSpeed(GameSpeed.Paused);
+            GameObject go = new GameObject();
             if (videoPlayer != null)
                 yield return null;
-            videoPlayer = gameObject.AddComponent<VideoPlayer>();
-
+            videoPlayer = go.AddComponent<VideoPlayer>();
+            go.layer = LayerMask.NameToLayer("UI");
             videoPlayer.playOnAwake = false;
+            AudioSource a = go.AddComponent(SoundController.Instance.musicSource.audioSource);
+            a.clip = null;
+            a.playOnAwake = false;
             videoPlayer.audioOutputMode = VideoAudioOutputMode.AudioSource;
-            videoPlayer.source = VideoSource.VideoClip;
-            videoPlayer.source = VideoSource.Url;
-            videoPlayer.url = "https://ia801602.us.archive.org/11/items/Rick_Astley_Never_Gonna_Give_You_Up/Rick_Astley_Never_Gonna_Give_You_Up.mp4";
-            videoPlayer.audioOutputMode = VideoAudioOutputMode.Direct;
-            float musicVolume = MenuAudioManager.Instance.GetVolumeFor(VolumeType.Music) / 100; //returns int %
-            videoPlayer.SetDirectAudioVolume(0, SoundController.Instance.musicSource.volume * musicVolume);
+            videoPlayer.controlledAudioTrackCount = 1;
             videoPlayer.EnableAudioTrack(0, true);
+            videoPlayer.SetTargetAudioSource(0, a);
+            videoPlayer.source = VideoSource.Url;
+            videoPlayer.skipOnDrop = true;
+            videoPlayer.url = "https://ia801602.us.archive.org/11/items/Rick_Astley_Never_Gonna_Give_You_Up/Rick_Astley_Never_Gonna_Give_You_Up.mp4";
+
             videoPlayer.renderMode = VideoRenderMode.CameraNearPlane;
             videoPlayer.targetCamera = Camera.main;
-            videoPlayer.Prepare();
+            videoPlayer.waitForFirstFrame = true;
+
+            videoPlayer.Prepare();            
             while (!videoPlayer.isPrepared) {
                 yield return null;
             }
-            SoundController.Instance.ChangeMusicPlayback(true);
+            SoundController.Instance.PauseMusicPlayback(true);
+            UIController.Instance.ChangeAllUI(false);
             videoPlayer.Play();
-            videoPlayer.skipOnDrop = true;
+            a.Play();
             videoPlayer.loopPointReached += EndVideoReached;
         }
 
@@ -174,8 +192,9 @@ namespace Andja.Controller {
             if (videoPlayer == null)
                 return;
             Debug.Log("Deactivated GODMODE");
-            Destroy(videoPlayer);
-            SoundController.Instance.ChangeMusicPlayback(false);
+            UIController.Instance.ChangeAllUI(true);
+            Destroy(videoPlayer.gameObject);
+            SoundController.Instance.PauseMusicPlayback(false);
         }
     }
 }

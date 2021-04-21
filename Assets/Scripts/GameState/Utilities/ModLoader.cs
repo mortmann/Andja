@@ -7,7 +7,11 @@ using System.Linq;
 using UnityEngine;
 
 namespace Andja.Utility {
-
+    /// <summary>
+    /// Handles all Mod related things. Loading Sprites, Sound, XML.
+    /// It will be called by others to load when needed.
+    /// Handles which Mods are active or avaible.
+    /// </summary>
     public static class ModLoader {
         private static readonly string savedActiveModsFile = "mods.ini";
         public static List<string> ActiveMods = new List<string> { };

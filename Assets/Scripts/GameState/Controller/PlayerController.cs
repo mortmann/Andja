@@ -11,9 +11,8 @@ namespace Andja.Controller {
     public enum DiplomacyType { War, Neutral, TradeAggrement, Alliance }
 
     /// <summary>
-    /// Player controller.
-    /// this is mostly for the currentplayer
-    /// but it updates the money for all
+    /// This is mostly for the currentplayer,
+    /// but it updates the money and interactions for all
     /// </summary>
     public class PlayerController : MonoBehaviour {
         public static int currentPlayerNumber;
@@ -117,7 +116,9 @@ namespace Andja.Controller {
             return Players[playerNumber].HasEnoughMoney(buildCost);
         }
 
-        // Update is called once per frame
+        /// <summary>
+        /// Update the balance for all players.
+        /// </summary>
         private void Update() {
             if (WorldController.Instance.IsPaused)
                 return;
@@ -164,18 +165,31 @@ namespace Andja.Controller {
                 }
             }
         }
-
+        /// <summary>
+        /// Needs to check if Players are willing.
+        /// Call only playerOne being the sending one. So that only playerTwo has to accept.
+        /// </summary>
+        /// <param name="playerOne"></param>
+        /// <param name="playerTwo"></param>
         internal void IncreaseDiplomaticStanding(Player playerOne, Player playerTwo) {
             DiplomaticStatus ds = GetDiplomaticStatus(playerOne, playerTwo);
             if (ds.currentStatus == DiplomacyType.Alliance)
                 return;
-            ChangeDiplomaticStanding(playerOne.Number, playerTwo.Number, (DiplomacyType)((int)ds.currentStatus + 1));
+            if(playerTwo.AskDiplomaticIncrease(playerOne)) {
+                ChangeDiplomaticStanding(playerOne.Number, playerTwo.Number, (DiplomacyType)((int)ds.currentStatus + 1));
+            }
         }
 
         internal List<Player> GetPlayers() {
             return new List<Player>(Players);
         }
-
+        /// <summary>
+        /// Decreases the standing *always* maybe disable it in the future for missions orso.
+        /// But even still make one the one that sends it and two the one receiving
+        /// If the new is WAR -> change for all allies aswell. Defending call always first.
+        /// </summary>
+        /// <param name="playerOne"></param>
+        /// <param name="playerTwo"></param>
         internal void DecreaseDiplomaticStanding(Player playerOne, Player playerTwo) {
             DiplomaticStatus ds = GetDiplomaticStatus(playerOne, playerTwo);
             if (ds.currentStatus == DiplomacyType.War)
@@ -202,13 +216,18 @@ namespace Andja.Controller {
                 }
             }
         }
-
-        internal void SendMoneyFromTo(Player currentPlayer, Player selectedPlayer, int amount) {
+        /// <summary>
+        /// sendPlayer sends money. receivingPlayer cannot decline.
+        /// </summary>
+        /// <param name="sendPlayer"></param>
+        /// <param name="receivingPlayer"></param>
+        /// <param name="amount"></param>
+        internal void SendMoneyFromTo(Player sendPlayer, Player receivingPlayer, int amount) {
             if (CurrentPlayer.HasEnoughMoney(amount) == false)
                 return;
             //TODO: Notify Player that he received gift or demand
-            selectedPlayer.AddToTreasure(amount);
-            currentPlayer.ReduceTreasure(amount);
+            receivingPlayer.AddToTreasure(amount);
+            sendPlayer.ReduceTreasure(amount);
         }
 
         public void OnEventCreated(GameEvent ge) {
@@ -343,7 +362,12 @@ namespace Andja.Controller {
         private List<DiplomaticStatus> GetAlliesFor(int player) {
             return playerDiplomaticStandings.FindAll(x => x.currentStatus == DiplomacyType.Alliance && (x.playerOne == player || x.playerTwo == player)).ToList();
         }
-
+        /// <summary>
+        /// Immediate change no checks here.
+        /// </summary>
+        /// <param name="playerOne"></param>
+        /// <param name="playerTwo"></param>
+        /// <param name="changeTo"></param>
         public void ChangeDiplomaticStanding(int playerOne, int playerTwo, DiplomacyType changeTo) {
             if (playerOne == playerTwo) {
                 return;

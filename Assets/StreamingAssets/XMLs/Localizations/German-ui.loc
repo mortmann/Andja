@@ -797,8 +797,14 @@ diese in Reichweite ist.</hoverOverTranslation>
       <translationData id="StaticLanguageVariables/And">
          <translation>Und</translation>
       </translationData>
+      <translationData id="StaticLanguageVariables/BuildCost">
+         <translation>Baukosten</translation>
+      </translationData>
       <translationData id="StaticLanguageVariables/Empty">
          <translation>Leer</translation>
+      </translationData>
+      <translationData id="StaticLanguageVariables/Locked">
+         <translation>Gesperrt</translation>
       </translationData>
       <translationData id="StaticLanguageVariables/Off">
          <translation>Aus</translation>
@@ -808,6 +814,9 @@ diese in Reichweite ist.</hoverOverTranslation>
       </translationData>
       <translationData id="StaticLanguageVariables/Or">
          <translation>Oder</translation>
+      </translationData>
+      <translationData id="StaticLanguageVariables/Upkeep">
+         <translation>Unterhaltskosten</translation>
       </translationData>
       <translationData id="TextureQuality">
          <translation>Texture Qualität</translation>

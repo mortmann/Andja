@@ -16,7 +16,10 @@ namespace Andja.Model {
         public float BalanceFullTime = 60f;
         public float BalanceTicksTime = 4f;
     }
-
+    /// <summary>
+    /// Controls the Data responding to a Player, like Unlocks and what he owns.
+    /// AI's also have this but the calculations are handled by AIPlayer.cs 
+    /// </summary>
     [JsonObject(MemberSerialization.OptIn)]
     public class Player : IGEventable {
 
@@ -216,6 +219,11 @@ namespace Andja.Model {
             for (int i = 0; i < Cities.Count; i++) {
                 LastTreasuryChange += Cities[i].Balance;
             }
+        }
+
+        internal bool AskDiplomaticIncrease(Player playerOne) {
+            Debug.LogWarning("Not implemented yet. Accepting always.");
+            return true;
         }
 
         internal IEnumerable<Island> GetIslandList() {

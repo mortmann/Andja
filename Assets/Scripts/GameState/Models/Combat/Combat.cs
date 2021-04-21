@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace Andja {
+
     public class Combat {
         public List<DamageType> damageTypes;
         public List<ArmorType> armorTypes;

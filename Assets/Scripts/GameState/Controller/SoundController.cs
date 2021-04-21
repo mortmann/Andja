@@ -21,17 +21,22 @@ namespace Andja.Controller {
     // TODO:
     //		-Make sounds for tiles on screen possible eg. beach, river.
     //		-sounds for units
+    /// <summary>
+    /// Handles all Soundeffects except UI-Sounds.
+    /// Selects Music, Ambient and Wind. 
+    /// Callbacks from Structures and Units are handled here.
+    /// </summary>
     public class SoundController : MonoBehaviour {
         public static SoundController Instance;
-        public AudioSource musicSource;
-        public AudioSource oceanAmbientSource;
-        public AudioSource landAmbientSource;
-        public AudioSource windAmbientSource;
+        public AudioSourcePauseable musicSource;
+        public AudioSourcePauseable oceanAmbientSource;
+        public AudioSourcePauseable landAmbientSource;
+        public AudioSourcePauseable windAmbientSource;
 
         public AudioSource uiSource;
         public AudioSource soundEffectSource;
-        public AudioSource soundEffect2DGO;
-        private List<AudioSource> deleteOnPlayedAudios;
+        public AudioSourcePauseable soundEffect2DGO;
+        private List<AudioSourcePauseable> deleteOnPlayedAudios;
 
         private CameraController cameraController;
         private StructureSpriteController ssc;
@@ -47,7 +52,7 @@ namespace Andja.Controller {
         private Dictionary<string, SoundMetaData> nameToMetaData;
         private Dictionary<MusicType, List<string>> musictypeToName;
         private Dictionary<AmbientType, List<string>> ambientTypeToName;
-        private Dictionary<object, AudioSource> objectToAudioSource;
+        private Dictionary<object, AudioSourcePauseable> objectToAudioSource;
         public AmbientType currentAmbient;
         public MusicType currentMusicType = MusicType.Idle;
         private string lastPlayedMusicTrack;
@@ -67,8 +72,8 @@ namespace Andja.Controller {
             BuildController.Instance.RegisterCityCreated(OnCityCreate);
             PlayerController.Instance.RegisterPlayersDiplomacyStatusChange(OnDiplomacyChange);
             EventController.Instance.RegisterOnEvent(OnEventStart, OnEventEnd);
-            deleteOnPlayedAudios = new List<AudioSource>();
-            objectToAudioSource = new Dictionary<object, AudioSource>();
+            deleteOnPlayedAudios = new List<AudioSourcePauseable>();
+            objectToAudioSource = new Dictionary<object, AudioSourcePauseable>();
             nameToMetaData = new Dictionary<string, SoundMetaData>();
             ssc = FindObjectOfType<StructureSpriteController>();
             wsc = FindObjectOfType<WorkerSpriteController>();
@@ -95,13 +100,18 @@ namespace Andja.Controller {
         }
 
         private void OnGameSpeedChange(GameSpeed gameSpeed, float speed) {
-            foreach (AudioSource source in objectToAudioSource.Values) {
-                if (source != null)
-                    source.pitch = speed;
-            }
+            //foreach (AudioSourcePauseable source in objectToAudioSource.Values) {
+            //    if (source != null)
+            //        source.SetPitch(speed);
+            //}
             mixer.SetFloat("SoundEffectPitchBend", 1f / speed);
         }
-
+        public AudioSource GetCopyOfAudioSource(AudioSource audio) {
+            return audio.GetCopyOf(audio);
+        }
+        public AudioSource GetCopyOfMusicAudioSource() {
+            return musicSource.GetCopyOf(musicSource.audioSource);
+        }
         private void OnDiplomacyChange(Player one, Player two, DiplomacyType oldType, DiplomacyType newType) {
             if (one.IsCurrent() == false && two.IsCurrent() == false) {
                 return;
@@ -155,7 +165,7 @@ namespace Andja.Controller {
                 Debug.LogError("SoundEffect " + filename + " File missing.");
                 return;
             }
-            AudioSource ac = Instantiate(soundEffect2DGO);
+            AudioSourcePauseable ac = Instantiate(soundEffect2DGO);
             ac.gameObject.name = filename + goname;
             ac.transform.SetParent(soundEffect2DGO.transform);
             StartCoroutine(StartFile(nameToMetaData[filename], ac, true));
@@ -178,14 +188,14 @@ namespace Andja.Controller {
         }
 
         private void UpdateMusic() {
-            if (musicSource.isPlaying == false && Application.isFocused) {
+            if (musicSource.isPaused == false && musicSource.isPlaying == false && Application.isFocused) {
                 StartCoroutine(StartFile(nameToMetaData[GetMusicFileName()], musicSource));
             }
         }
 
         private void UpdateWindEffect() {
             windAmbientSource.volume = Mathf.Clamp(1 - CameraController.Instance.SoundAmbientValues.z - 0.7f, 0.03f, 0.15f);
-            if (windAmbientSource.isPlaying == false) {
+            if (windAmbientSource.isPaused == false && windAmbientSource.isPlaying == false) {
                 //TODO: make this nicer
                 int num = UnityEngine.Random.Range(0, ambientTypeToName[AmbientType.Wind].Count);
                 StartCoroutine(StartFile(nameToMetaData[ambientTypeToName[AmbientType.Wind][num]], windAmbientSource));
@@ -264,7 +274,7 @@ namespace Andja.Controller {
             }
         }
 
-        internal void ChangeMusicPlayback(bool pause) {
+        internal void PauseMusicPlayback(bool pause) {
             if (pause)
                 musicSource.Pause();
             else
@@ -299,10 +309,9 @@ namespace Andja.Controller {
             worker.RegisterOnSoundCallback(PlaySoundEffectWorker);
         }
 
-        private AudioSource ADDCopiedAudioSource(GameObject goal, AudioSource copied) {
-            AudioSource a = goal.AddComponent(copied);
-            objectToAudioSource[goal] = a;
-            return a;
+        private void AddCopiedAudioSource(GameObject goal, AudioSource copied) {
+            goal.AddComponent(copied);
+            objectToAudioSource[goal] = goal.AddComponent<AudioSourcePauseable>();
         }
 
         public void PlaySoundEffectStructure(Structure str, string fileName, bool play) {
@@ -314,9 +323,9 @@ namespace Andja.Controller {
                 return;
             }
             if (objectToAudioSource.ContainsKey(go) == false) {
-                objectToAudioSource[go] = ADDCopiedAudioSource(go, soundEffectSource);
+                AddCopiedAudioSource(go, soundEffectSource);
             }
-            AudioSource goal = objectToAudioSource[go];
+            AudioSourcePauseable goal = objectToAudioSource[go];
             if (play == false) {
                 goal.Stop();
                 return;
@@ -335,9 +344,9 @@ namespace Andja.Controller {
                 return;
             }
             if (objectToAudioSource.ContainsKey(go) == false) {
-                objectToAudioSource[go] = ADDCopiedAudioSource(go, soundEffectSource);
+                AddCopiedAudioSource(go, soundEffectSource);
             }
-            AudioSource goal = objectToAudioSource[go];
+            AudioSourcePauseable goal = objectToAudioSource[go];
             if (play == false) {
                 goal.Stop();
                 return;
@@ -356,12 +365,9 @@ namespace Andja.Controller {
                 return;
             }
             if (objectToAudioSource.ContainsKey(go) == false) {
-                objectToAudioSource[go] = ADDCopiedAudioSource(go, soundEffectSource);
+                AddCopiedAudioSource(go, soundEffectSource);
             }
-            AudioSource goal = objectToAudioSource[go];
-            if (goal == null) {
-                goal = ADDCopiedAudioSource(go, soundEffectSource);
-            }
+            AudioSourcePauseable goal = objectToAudioSource[go];
             if (goal.isPlaying)
                 return;
             PlayAudioClip(fileName, goal);
@@ -427,14 +433,14 @@ namespace Andja.Controller {
                 }
             }
 
-            if (oceanAmbientSource.isPlaying == false) {
+            if (oceanAmbientSource.isPaused == false && oceanAmbientSource.isPlaying == false) {
                 int count = ambientTypeToName[AmbientType.Ocean].Count;
                 string soundFileName = ambientTypeToName[AmbientType.Ocean][UnityEngine.Random.Range(0, count)];
                 StartCoroutine(StartFile(nameToMetaData[soundFileName], oceanAmbientSource));
             }
 
             //If its the same no need to change && still playin
-            if (ambient != currentAmbient || landAmbientSource.isPlaying == false) {
+            if (ambient != currentAmbient || landAmbientSource.isPlaying == false && landAmbientSource.isPaused == false) {
                 currentAmbient = ambient;
                 if (ambientTypeToName[currentAmbient].Count == 0)
                     return;
@@ -448,7 +454,7 @@ namespace Andja.Controller {
             //TODO make this like it should be :D, better make it sound nice
         }
 
-        public void PlayAudioClip(string name, AudioSource toPlay) {
+        public void PlayAudioClip(string name, AudioSourcePauseable toPlay) {
             if (name == null)
                 return;
             if (nameToMetaData.ContainsKey(name)) {
@@ -467,7 +473,7 @@ namespace Andja.Controller {
             //Maybe never used?
         }
 
-        private IEnumerator StartFile(SoundMetaData meta, AudioSource toPlay, bool deleteOnDone = false) {
+        private IEnumerator StartFile(SoundMetaData meta, AudioSourcePauseable toPlay, bool deleteOnDone = false) {
             string musicFile = nameToMetaData[meta.name].file;
             if (File.Exists(musicFile) == false)
                 yield return null;

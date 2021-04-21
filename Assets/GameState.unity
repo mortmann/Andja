@@ -1230,6 +1230,7 @@ GameObject:
   m_Component:
   - component: {fileID: 79496503}
   - component: {fileID: 79496504}
+  - component: {fileID: 79496505}
   m_Layer: 0
   m_Name: WindAmbient
   m_TagString: Untagged
@@ -1348,6 +1349,19 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 0
+--- !u!114 &79496505
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 79496502}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b5ccfd92fe8fb554f93abe20e62cae80, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  pausePlayBackOnGamePause: 1
 --- !u!1 &85643739
 GameObject:
   m_ObjectHideFlags: 0
@@ -14581,6 +14595,7 @@ GameObject:
   m_Component:
   - component: {fileID: 716179960}
   - component: {fileID: 716179961}
+  - component: {fileID: 716179962}
   m_Layer: 0
   m_Name: UI
   m_TagString: Untagged
@@ -14699,6 +14714,19 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 0
+--- !u!114 &716179962
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 716179959}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b5ccfd92fe8fb554f93abe20e62cae80, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  pausePlayBackOnGamePause: 1
 --- !u!224 &717359222 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 22447972, guid: 454ea8bfc9cd0f84698610e721a842b2,
@@ -15064,6 +15092,7 @@ GameObject:
   m_Component:
   - component: {fileID: 728988953}
   - component: {fileID: 728988954}
+  - component: {fileID: 728988955}
   m_Layer: 0
   m_Name: Ambient
   m_TagString: Untagged
@@ -15184,6 +15213,19 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 0
+--- !u!114 &728988955
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 728988952}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b5ccfd92fe8fb554f93abe20e62cae80, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  pausePlayBackOnGamePause: 1
 --- !u!1 &729020533
 GameObject:
   m_ObjectHideFlags: 0
@@ -21382,7 +21424,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6c2029fb835dd064692ef06ae04131bd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  buildID: 0
   noBuildCost: 0
   noUnitRestriction: 0
   allStructuresEnabled: 0
@@ -23547,6 +23588,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1111706884}
   - component: {fileID: 1111706885}
+  - component: {fileID: 1111706886}
   m_Layer: 0
   m_Name: SoundEffect2D
   m_TagString: Untagged
@@ -23665,6 +23707,19 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 0
+--- !u!114 &1111706886
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1111706883}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b5ccfd92fe8fb554f93abe20e62cae80, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  pausePlayBackOnGamePause: 1
 --- !u!1001 &1112150940
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -29808,6 +29863,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1397303020}
   - component: {fileID: 1397303021}
+  - component: {fileID: 1397303022}
   m_Layer: 0
   m_Name: Music
   m_TagString: Untagged
@@ -29926,6 +29982,19 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 0
+--- !u!114 &1397303022
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1397303019}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b5ccfd92fe8fb554f93abe20e62cae80, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  pausePlayBackOnGamePause: 0
 --- !u!1 &1397316123
 GameObject:
   m_ObjectHideFlags: 0
@@ -33137,6 +33206,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1528187281}
   - component: {fileID: 1528187282}
+  - component: {fileID: 1528187283}
   m_Layer: 0
   m_Name: SoundEffect
   m_TagString: Untagged
@@ -33291,6 +33361,19 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 0
+--- !u!114 &1528187283
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1528187280}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b5ccfd92fe8fb554f93abe20e62cae80, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  pausePlayBackOnGamePause: 1
 --- !u!1 &1533248178
 GameObject:
   m_ObjectHideFlags: 0
@@ -38837,6 +38920,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1785356416}
   - component: {fileID: 1785356417}
+  - component: {fileID: 1785356418}
   m_Layer: 0
   m_Name: OceanAmbient
   m_TagString: Untagged
@@ -38955,6 +39039,19 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 0
+--- !u!114 &1785356418
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1785356415}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b5ccfd92fe8fb554f93abe20e62cae80, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  pausePlayBackOnGamePause: 1
 --- !u!1 &1790442398
 GameObject:
   m_ObjectHideFlags: 0
@@ -39469,13 +39566,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cd4f446409343b54ab025838604fbbea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  musicSource: {fileID: 1397303021}
-  oceanAmbientSource: {fileID: 1785356417}
-  landAmbientSource: {fileID: 728988954}
-  windAmbientSource: {fileID: 79496504}
+  musicSource: {fileID: 1397303022}
+  oceanAmbientSource: {fileID: 1785356418}
+  landAmbientSource: {fileID: 728988955}
+  windAmbientSource: {fileID: 79496505}
   uiSource: {fileID: 716179961}
   soundEffectSource: {fileID: 1528187282}
-  soundEffect2DGO: {fileID: 1111706885}
+  soundEffect2DGO: {fileID: 1111706886}
   mixer: {fileID: 24100000, guid: 67c981402fe73a84f807ad231f412b64, type: 2}
   currentAmbient: 0
   currentMusicType: 0

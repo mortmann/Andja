@@ -1,4 +1,5 @@
 using Andja.Model;
+using Andja.Model.Components;
 using Andja.Utility;
 using DigitalRuby.AdvancedPolygonCollider;
 using System.Collections;

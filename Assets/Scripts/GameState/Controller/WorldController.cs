@@ -7,7 +7,11 @@ using UnityEngine;
 namespace Andja.Controller {
 
     public enum GameSpeed { Paused, StopMotion, Slowest, Slow, Normal, Fast, Fastest, LudicrousSpeed }
-
+    /// <summary>
+    /// Handles updating the units, structures, pirates, flyingTraders and offworldmarket.
+    /// Controls the deltaTime * GameSpeed aswell as Pausing
+    /// RandomState is set here.
+    /// </summary>
     public class WorldController : MonoBehaviour {
         public static WorldController Instance { get; protected set; }
 
@@ -165,7 +169,7 @@ namespace Andja.Controller {
 
         public void TogglePause() {
             if (IsPaused) {
-                ChangeGameSpeed(GameSpeed.Paused);
+                ChangeGameSpeed(GameSpeed.Normal);
             }
             else {
                 ChangeGameSpeed(GameSpeed.Paused);

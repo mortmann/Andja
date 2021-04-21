@@ -748,6 +748,56 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1555225718039730766, guid: 5864dc44dbea66546a4fcc81f58cec4d,
+        type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1555225718039730766, guid: 5864dc44dbea66546a4fcc81f58cec4d,
+        type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1555225718039730766, guid: 5864dc44dbea66546a4fcc81f58cec4d,
+        type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1555225718039730766, guid: 5864dc44dbea66546a4fcc81f58cec4d,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1555225718039730766, guid: 5864dc44dbea66546a4fcc81f58cec4d,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2224406873130206648, guid: 5864dc44dbea66546a4fcc81f58cec4d,
+        type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2224406873130206648, guid: 5864dc44dbea66546a4fcc81f58cec4d,
+        type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2224406873130206648, guid: 5864dc44dbea66546a4fcc81f58cec4d,
+        type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2224406873130206648, guid: 5864dc44dbea66546a4fcc81f58cec4d,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2224406873130206648, guid: 5864dc44dbea66546a4fcc81f58cec4d,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3679782644653323210, guid: 5864dc44dbea66546a4fcc81f58cec4d,
         type: 3}
       propertyPath: m_SizeDelta.x
@@ -756,6 +806,31 @@ PrefabInstance:
     - target: {fileID: 3679782644653323210, guid: 5864dc44dbea66546a4fcc81f58cec4d,
         type: 3}
       propertyPath: m_SizeDelta.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8536087366813420694, guid: 5864dc44dbea66546a4fcc81f58cec4d,
+        type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8536087366813420694, guid: 5864dc44dbea66546a4fcc81f58cec4d,
+        type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8536087366813420694, guid: 5864dc44dbea66546a4fcc81f58cec4d,
+        type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8536087366813420694, guid: 5864dc44dbea66546a4fcc81f58cec4d,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8536087366813420694, guid: 5864dc44dbea66546a4fcc81f58cec4d,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
@@ -776,8 +851,9 @@ GameObject:
   m_Component:
   - component: {fileID: 495108480}
   - component: {fileID: 495108479}
+  - component: {fileID: 495108481}
   m_Layer: 0
-  m_Name: UILanguageController
+  m_Name: Controller
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -809,6 +885,18 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &495108481
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 495108478}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e799f5eba6431e249b72cbb89a9bc664, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &866001045
 GameObject:
   m_ObjectHideFlags: 0

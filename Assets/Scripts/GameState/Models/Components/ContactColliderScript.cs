@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Andja.Model {
+namespace Andja.Model.Components {
 
     public class ContactColliderScript : MonoBehaviour {
         public OutputStructure contact;

@@ -16,6 +16,9 @@ namespace Andja.Model {
 
     public enum TrackedWarStatistics { Times, Declared, Attacked /*Captured*/ }
 
+    /// <summary>
+    /// Tracks alot of diffrent Stats so it can be used for achievements and other related things.
+    /// </summary>
     [JsonObject]
     public class Statistics {
         private UnitStatistic unitStatistic;

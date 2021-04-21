@@ -95,7 +95,11 @@ namespace Andja.Controller {
 
         public List<string> FirstLevelCommands = new List<string>
             { "speed", "player", "maxfps", "city", "unit", "ship", "island", "spawn", "event", "camera" };
-
+        /// <summary>
+        /// Splits the command into its parts on whitespaces and then tries to execute the different level commands
+        /// </summary>
+        /// <param name="command"></param>
+        /// <returns></returns>
         public bool HandleInput(string command) {
             if (command.Trim().Length <= 0) {
                 return false;

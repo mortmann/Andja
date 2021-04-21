@@ -1,7 +1,7 @@
 ﻿using Andja.Controller;
 using UnityEngine;
 
-namespace Andja.Model {
+namespace Andja.Model.Components {
 
     [RequireComponent(typeof(SpriteRenderer))]
     public class EffectAnimator : MonoBehaviour {

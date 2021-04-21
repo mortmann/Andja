@@ -13,7 +13,11 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 
 namespace Andja.Controller {
-
+    /// <summary>
+    /// Handles Saving and Loading for Game and Editor.
+    /// Creates Screenshot, Meta and Savefile.
+    /// Saves as JSON.
+    /// </summary>
     public class SaveController : MonoBehaviour {
         public static SaveController Instance;
 

@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Andja.Model {
+namespace Andja.Model.Components {
 
     public class ProjectileHoldingScript : MonoBehaviour {
         public Projectile Projectile;

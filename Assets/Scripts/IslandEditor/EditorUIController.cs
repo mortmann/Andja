@@ -3,7 +3,10 @@ using UnityEngine;
 using UnityEngine.UI;
 
 namespace Andja.Editor {
-
+    /// <summary>
+    /// Handles interaction with the UI when in Editor 
+    /// like opening and closing elements.
+    /// </summary>
     public class EditorUIController : MonoBehaviour {
         public Button BuildButton;
         public Button TypeButton;

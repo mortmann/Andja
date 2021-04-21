@@ -13,7 +13,6 @@ namespace Andja.Model {
     public enum FeatureType { River, Volcano, Custom, }
 
     public enum FitType { Exact, Bigger, Smaller }
-
     public class IslandFeaturePrototypeData : LanguageVariables {
         public string ID;
         public FeatureType type;
@@ -67,7 +66,10 @@ namespace Andja.Model {
         }
 
     }
-
+    /// <summary>
+    /// This represents the Features that are generated for Islands. 
+    /// This can be a river, vulcano or custom things.
+    /// </summary>
     [JsonObject(MemberSerialization.OptIn)]
     public class IslandFeature {
         protected IslandFeaturePrototypeData _prototypData;

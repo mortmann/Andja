@@ -8,7 +8,9 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 namespace Andja {
-
+    /// <summary>
+    /// Handles loading percentage and clears the console for less spam.
+    /// </summary>
     public class Loading : MonoBehaviour {
         private AsyncOperation aso;
         public Text percentText;

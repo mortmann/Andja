@@ -24,24 +24,22 @@ namespace Andja.Model {
             return newList;
         }
     }
-
+    /// <summary>
+    /// Contains how many people of this level in the city exist.
+    /// Claculates Need fullfilment (happiness excluding the structure needs for corresponding level 
+    /// and the Taxpercentage for income.
+    /// </summary>
     [JsonObject(MemberSerialization.OptIn)]
     public class PopulationLevel {
 
-        #region Serialize
-
-        public int populationCount = 0;
         [JsonPropertyAttribute] public bool criticalMissingNeed = false;
         [JsonPropertyAttribute] public int Level;
         [JsonPropertyAttribute] public List<NeedGroup> NeedGroupList;
         [JsonPropertyAttribute] public PopulationLevel previousLevel;
         [JsonPropertyAttribute] public float taxPercantage = 1f;
         private City city;
+        public int populationCount = 0;
         public string IconSpriteName => Data.iconSpriteName;
-
-        #endregion Serialize
-
-        #region Runtime
 
         protected PopulationLevelPrototypData _Data;
 
@@ -57,8 +55,6 @@ namespace Andja.Model {
         private Action<Need> cbNeedUnlockAdded;
         public int TaxPerPerson => Data.taxPerPerson;
         public float Happiness { get; internal set; }
-
-        #endregion Runtime
 
         public PopulationLevel() {
         }

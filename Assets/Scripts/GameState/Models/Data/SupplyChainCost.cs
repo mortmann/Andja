@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace Andja.Model.Data {
+    /// <summary>
+    /// How many things the SupplyChain cost or requires.
+    /// </summary>
     public class SupplyChainCost {
         public float TotalBuildCost = 0;
         public float TotalMaintenance = 0;

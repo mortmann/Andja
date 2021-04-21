@@ -13,7 +13,10 @@ namespace Andja {
     public enum Difficulty { Easy, Medium, Hard, VeryHard }
 
     public enum Size { VerySmall, Small, Medium, Large, VeryLarge, Other }
-
+    /// <summary>
+    /// Contains Settings for the active SaveGame
+    /// eg.: which events etc are enabled / Pirate / Loadout
+    /// </summary>
     public class GameData : MonoBehaviour {
         public static GameData Instance;
 

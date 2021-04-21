@@ -26,7 +26,9 @@ namespace Andja.UI.Menu {
         private Dictionary<GraphicsSetting, object> graphicsOptions;
         private Dictionary<GraphicsSetting, object> graphicsOptionsToSave;
         public Action<int> GraphicsPreset;
+        private string fileName = "graphics.ini";
 
+        public static int PresetValues = 4;
         private void Awake() {
             graphicsOptionsToSave = new Dictionary<GraphicsSetting, object>();
             graphicsOptions = new Dictionary<GraphicsSetting, object>();
@@ -96,10 +98,6 @@ namespace Andja.UI.Menu {
             presetSlider.value = 4;
         }
 
-        private string fileName = "graphics.ini";
-
-        public static int PresetValues = 4;
-
         public void SaveGraphicsOption() {
             if (graphicsOptionsToSave.Count == 0)
                 return;
@@ -144,7 +142,7 @@ namespace Andja.UI.Menu {
                     val = options[optionName];
                 if (val == null && graphicsOptions.ContainsKey(optionName) == false) {
                     SetPreset(optionName);
-                    return;
+                    continue;
                 }
                 switch (optionName) {
                     case GraphicsSetting.Preset:

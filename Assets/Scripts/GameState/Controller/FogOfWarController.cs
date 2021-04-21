@@ -114,9 +114,6 @@ namespace Andja.Controller {
             go.layer = LayerMask.NameToLayer("FogOfWar Main");
         }
 
-        private void Update() {
-        }
-
         private void OnDisable() {
             Instance = null;
         }

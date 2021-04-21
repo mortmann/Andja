@@ -1,5 +1,6 @@
 using Andja.Editor;
 using Andja.Model;
+using Andja.Model.Components;
 using Andja.Pathfinding;
 using Andja.UI;
 using Andja.Utility;
@@ -20,7 +21,10 @@ namespace Andja.Controller {
     public enum TileHighlightType { Green, Red }
 
     public enum CursorType { Pointer, Attack, Escort, Destroy, Build }
-
+    /// <summary>
+    /// Controls all Mouse Interactions with the Map and Units.
+    /// Shows Previews for Building and Destroy.
+    /// </summary>
     public class MouseController : MonoBehaviour {
         public static MouseController Instance { get; protected set; }
         public GameObject structurePreviewRendererPrefab;
@@ -39,16 +43,18 @@ namespace Andja.Controller {
 
         private bool DisplayDragRectangle;
 
-        // The world-position of the mouse last frame.
+        /// <summary>
+        /// The world-position of the mouse last frame.
+        /// </summary>
         private Vector3 lastFramePosition;
-
-        Vector3 CurrFramePositionOffset => currFramePosition + new Vector3(TileSpriteController.offset, TileSpriteController.offset, 0);
-
+        /// <summary>
+        /// The world-position of the mouse last frame with TileOffset.
+        /// </summary>
+        private Vector3 CurrFramePositionOffset => currFramePosition 
+                                                    + new Vector3(TileSpriteController.offset, TileSpriteController.offset, 0);
         private Vector3 lastFrameGUIPosition;
-
         private Vector3 currFramePosition;
         private Vector3 dragStartPosition;
-
         private Vector3 pathStartPosition;
 
         public static bool autorotate = true;
@@ -171,7 +177,7 @@ namespace Andja.Controller {
             }
             UpdateMouseStates();
             if (EditorController.IsEditor == false) {
-                UpdateDragBox();
+                UpdateDragBoxSelect();
             }
             else {
                 UpdateEditorStuff();
@@ -193,7 +199,10 @@ namespace Andja.Controller {
         internal void UnselectStructure() {
             SelectedStructure = null;
         }
-
+        /// <summary>
+        /// Set the MouseState and changes the current Cursor.
+        /// </summary>
+        /// <param name="state"></param>
         internal void SetMouseState(MouseState state) {
             switch (state) {
                 case MouseState.Idle:
@@ -225,7 +234,9 @@ namespace Andja.Controller {
         internal void SetMouseUnitState(MouseUnitState state) {
             MouseUnitState = state;
         }
-
+        /// <summary>
+        /// Moves Highlights with offset so that mouse is in the middle.
+        /// </summary>
         private void UpdateEditorStuff() {
             if (highlightGO != null) {
                 Tile t = GetTileUnderneathMouse();
@@ -234,8 +245,10 @@ namespace Andja.Controller {
                 highlightGO.transform.position = new Vector3(t.X, t.Y, 0) + EditorController.Instance.BrushOffset;
             }
         }
-
-        private void UpdateDragBox() {
+        /// <summary>
+        /// Responsible for detecting a drag not in Build/Destroy Mode 
+        /// </summary>
+        private void UpdateDragBoxSelect() {
             if (IsInBuildDestoyMode == false)
                 return;
 
@@ -422,7 +435,9 @@ namespace Andja.Controller {
             //}
             SimplePool.Despawn(text.gameObject);
         }
-
+        /// <summary>
+        /// Calculates the selectbox and the interaction on exit.
+        /// </summary>
         private void UpdateDragSelect() {
             // End Drag
             if (Input.GetMouseButton(0) == false) {
@@ -481,7 +496,13 @@ namespace Andja.Controller {
         internal void SetEditorBrushHighlightActive(bool brushBuild) {
             highlightGO.SetActive(brushBuild);
         }
-
+        /// <summary>
+        /// Which tiles will be highlighted. 
+        /// Size of the texture.
+        /// </summary>
+        /// <param name="size"></param>
+        /// <param name="toHighlightTiles"></param>
+        /// <param name="active"></param>
         internal void SetEditorHighlight(int size, List<Tile> toHighlightTiles, bool active) {
             if (toHighlightTiles == null)
                 return;
@@ -496,7 +517,11 @@ namespace Andja.Controller {
             if (DisplayDragRectangle)
                 Util.DrawScreenRectBorder(draw_rect, 2, new Color(0.9f, 0.9f, 0.9f, 0.9f));
         }
-
+        /// <summary>
+        /// OnClick on Map. If it hits unit or structure. UIControllers decides then which UI.
+        /// If nothing close UI(s).
+        /// </summary>
+        /// <param name="hit"></param>
         private void DecideWhatUIToShow(Transform hit) {
             if (EventSystem.current.IsPointerOverGameObject()) {
                 return;
@@ -542,7 +567,9 @@ namespace Andja.Controller {
             selectedUnitGroup.ForEach(x => x.RegisterOnDestroyCallback(OnUnitDestroy));
             UIController.Instance.OpenUnitGroupUI(selectedUnitGroup.ToArray());
         }
-
+        /// <summary>
+        /// Single Structure Build Mode updating. 
+        /// </summary>
         private void UpdateSingle() {
             // If we're over a UI element, then bail out from this.
             if (EventSystem.current.IsPointerOverGameObject()) {
@@ -557,7 +584,9 @@ namespace Andja.Controller {
                 Build(structureTiles);
             }
         }
-
+        /// <summary>
+        /// Change the location and rotation of a single preview.
+        /// </summary>
         private void UpdateSinglePreview() {
             if (singleStructurePreview == null)
                 singleStructurePreview = CreatePreviewStructure();
@@ -573,7 +602,9 @@ namespace Andja.Controller {
             }
             UpdateStructurePreview(tiles, 1);
         }
-
+        /// <summary>
+        /// Calculates for the selected structure where and how the structures fit in the dragged rectangle.
+        /// </summary>
         private void UpdateBuildDragging() {
             // If we're over a UI element, then bail out from this.
             if (EventSystem.current.IsPointerOverGameObject()) {
@@ -605,7 +636,9 @@ namespace Andja.Controller {
                 ResetStructurePreviews();
             }
         }
-
+        /// <summary>
+        /// Update the the pathfinding with the start and end position and then display foreach position a prefab.
+        /// </summary>
         private void UpdateBuildPath() {
             if (EventSystem.current.IsPointerOverGameObject()) {
                 return;
@@ -653,7 +686,10 @@ namespace Andja.Controller {
                 Build(new List<Tile>(path.path), true);
             }
         }
-
+        /// <summary>
+        /// Updates which previews are to be deleted and where to create new ones.
+        /// </summary>
+        /// <param name="tiles"></param>
         private void UpdateMultipleStructurePreviews(IEnumerable<Tile> tiles) {
             foreach (Tile tile in tileToStructurePreview.Keys.Except(tiles).ToArray()) {
                 SimplePool.Despawn(tileToStructurePreview[tile].gameObject);
@@ -681,15 +717,24 @@ namespace Andja.Controller {
                 UpdateStructurePreview(preview.tiles, preview.number);
             }
         }
-
+        /// <summary>
+        /// Updates the Preview Tiles based on if the player has enough ressources, monemy or if the enough citytiles
+        /// </summary>
+        /// <param name="tiles"></param>
+        /// <param name="number"></param>
         private void UpdateStructurePreview(List<Tile> tiles, int number) {
             bool ownCityTileCount = ToBuildStructure.InCityCheck(tiles, PlayerController.currentPlayerNumber);
             bool hasEnoughResources =
-                tiles[0].Island?.FindCityByPlayer(PlayerController.currentPlayerNumber)?.HasEnoughOfItems(ToBuildStructure.BuildingItems, number) == true
+                tiles[0].Island?.FindCityByPlayer(PlayerController.currentPlayerNumber)?
+                            .HasEnoughOfItems(ToBuildStructure.BuildingItems, number) == true
                 && PlayerController.CurrentPlayer.HasEnoughMoney(ToBuildStructure.BuildCost * number);
             UpdateStructurePreviewTiles(tiles, ownCityTileCount && hasEnoughResources);
         }
-
+        /// <summary>
+        /// Updates the Preview Tiles red/green bassed on override or if it can be build on that tile
+        /// </summary>
+        /// <param name="tiles"></param>
+        /// <param name="overrideTile"></param>
         private void UpdateStructurePreviewTiles(List<Tile> tiles, bool overrideTile) {
             Dictionary<Tile, bool> tileToCanBuild = ToBuildStructure.CheckForCorrectSpot(tiles);
             foreach (Tile tile in tiles) {
@@ -735,7 +780,11 @@ namespace Andja.Controller {
             AddRangeHighlight(previewGO);
             return previewGO;
         }
-
+        /// <summary>
+        /// Decides if new prefab tile needs to be spawned or despwaned.
+        /// </summary>
+        /// <param name="t"></param>
+        /// <param name="type"></param>
         private void ShowTilePrefabOnTile(Tile t, TileHighlightType type) {
             if (tileToPreviewGO.ContainsKey(t)) {
                 if (tileToPreviewGO[t].HighlightType == type) {
@@ -804,7 +853,9 @@ namespace Andja.Controller {
             }
             return highGO;
         }
-
+        /// <summary>
+        /// IF unit is selected update based on mouse interactions, e.g. move/attack/patrol.
+        /// </summary>
         private void UpdateUnit() {
             // If we're over a UI element, then bail out from this.
             if (EventSystem.current.IsPointerOverGameObject()) {
@@ -932,7 +983,14 @@ namespace Andja.Controller {
             SetMouseState(MouseState.Idle);
             SetMouseUnitState(MouseUnitState.None);
         }
-
+        /// <summary>
+        /// Calculates for the given rectangle which tiles are the buildtiles for selected structure.
+        /// </summary>
+        /// <param name="start_x"></param>
+        /// <param name="end_x"></param>
+        /// <param name="start_y"></param>
+        /// <param name="end_y"></param>
+        /// <returns></returns>
         private List<Tile> GetTilesStructures(int start_x, int end_x, int start_y, int end_y) {
             int width = 1;
             int height = 1;
@@ -941,17 +999,6 @@ namespace Andja.Controller {
                 width = ToBuildStructure.TileWidth;
                 height = ToBuildStructure.TileHeight;
             }
-            // We may be dragging in the "wrong" direction, so flip things if needed.
-            //if (end_x < start_x) {
-            //    int tmp = end_x;
-            //    end_x = start_x;
-            //    start_x = tmp;
-            //}
-            //if (end_y < start_y) {
-            //    int tmp = end_y;
-            //    end_y = start_y;
-            //    start_y = tmp;
-            //}
             if (end_x >= start_x && end_y >= start_y) {
                 for (int x = start_x; x <= end_x; x += width) {
                     for (int y = start_y; y <= end_y; y += height) {
@@ -985,7 +1032,12 @@ namespace Andja.Controller {
             }
             return tiles;
         }
-
+        /// <summary>
+        /// Send the build command to the buildcontroller based on what the player has selected.
+        /// </summary>
+        /// <param name="t"></param>
+        /// <param name="single"></param>
+        /// <param name="previewOrder"></param>
         private void Build(List<Tile> t, bool single = false, bool previewOrder = false) {
             if (EditorController.IsEditor) {
                 EditorController.Instance.BuildOn(t, single);

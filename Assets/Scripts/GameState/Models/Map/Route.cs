@@ -7,6 +7,10 @@ namespace Andja.Model {
 
     //DOESNT NEED TO BE SAVED
     //GETS CREATED WHEN NEEDED
+    /// <summary>
+    /// Represents a single network of all connected RoadStructures.
+    /// It handles all related things like merging, splitting and city changes.
+    /// </summary>
     public class Route {
         public Path_TileGraph TileGraph { get; protected set; }
         public List<Tile> Tiles;

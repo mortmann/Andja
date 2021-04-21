@@ -10,7 +10,9 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 namespace Andja.Controller {
-
+    /// <summary>
+    /// Opening and Closeing UIs being handled. ShortCutMenu saved here.
+    /// </summary>
     public class UIController : MonoBehaviour {
         public GameObject mainCanvas;
         public GameObject shortCutCanvas;
@@ -55,7 +57,12 @@ namespace Andja.Controller {
                 LoadUISaveData();
             }
         }
-
+        public void ToggleUI() {
+            mainCanvas.SetActive(!mainCanvas.activeSelf);
+        }
+        public void ChangeAllUI(bool value) {
+            mainCanvas.SetActive(value);
+        }
         internal void ToggleDiplomacyMenu() {
             if (diplomacyCanvas.activeSelf) {
                 CloseCenter();

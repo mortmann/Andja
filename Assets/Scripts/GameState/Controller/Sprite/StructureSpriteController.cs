@@ -1,5 +1,6 @@
 ﻿using Andja.Editor;
 using Andja.Model;
+using Andja.Model.Components;
 using Andja.Utility;
 using System;
 using System.Collections.Generic;

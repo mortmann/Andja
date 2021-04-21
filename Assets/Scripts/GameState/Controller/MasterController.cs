@@ -1,12 +1,13 @@
 using UnityEngine;
 
 namespace Andja.Controller {
-
+    /// <summary>
+    /// Responsible to copy the Controllers from the Loadingscreen to the gamescreen.
+    /// </summary>
     public class MasterController : MonoBehaviour {
         public bool isLoadingScreen;
         private static GameObject loadMaster;
 
-        // Use this for initialization
         private void OnEnable() {
             //Get the FIRST active master -> when loaded to gamestate
             //this will be the loadstate one

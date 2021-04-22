@@ -171,7 +171,9 @@ namespace Andja.Controller {
             videoPlayer.SetTargetAudioSource(0, a);
             videoPlayer.source = VideoSource.Url;
             videoPlayer.skipOnDrop = true;
-            videoPlayer.url = "https://ia801602.us.archive.org/11/items/Rick_Astley_Never_Gonna_Give_You_Up/Rick_Astley_Never_Gonna_Give_You_Up.mp4";
+            videoPlayer.url = "https://ia800803.us.archive.org/29/items/MacArthur_Foundation_100andChange_dQw4w9WgXcQ/Rick_Astley_-_Never_Gonna_Give_You_Up_dQw4w9WgXcQ.mp4";
+            //"https://rickrolled.fr/rickroll.mp4";
+                //"https://ia801602.us.archive.org/11/items/Rick_Astley_Never_Gonna_Give_You_Up/Rick_Astley_Never_Gonna_Give_You_Up.mp4";
 
             videoPlayer.renderMode = VideoRenderMode.CameraNearPlane;
             videoPlayer.targetCamera = Camera.main;

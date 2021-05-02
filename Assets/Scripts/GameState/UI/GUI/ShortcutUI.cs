@@ -40,7 +40,7 @@ namespace Andja.UI {
             Color c = dragADropGO.GetComponent<Image>().color;
             c.a = 0.3f;
             dragADropGO.GetComponent<Image>().color = c;
-            dragADropGO.GetComponent<RectTransform>().sizeDelta = new Vector3(45, 45, 0);
+            dragADropGO.GetComponent<RectTransform>().sizeDelta = go.GetComponent<RectTransform>().sizeDelta;
             ShortCutMenuEmpties(true);
             if (shortcutParentToButton.ContainsValue(go)) {
                 shortCutDraggedParent = go.transform.parent.gameObject;
@@ -129,11 +129,11 @@ namespace Andja.UI {
 
         private void CreateButton(Structure structure, GameObject parent) {
             Button go = Instantiate(BuildMenuUIController.Instance.buildButtonPrefab);
-            go.name = "ShortCut" + structure.ID;
+            go.name = "ShortCut " + structure.ID;
             go.GetComponent<StructureBuildUI>().Show(structure, true);
             go.transform.SetParent(parent.transform, false);
             go.transform.localPosition = Vector3.zero;
-            go.GetComponent<RectTransform>().sizeDelta = parent.GetComponent<RectTransform>().sizeDelta;
+            go.GetComponent<RectTransform>().sizeDelta = Vector2.zero;
             Color c = go.GetComponent<Image>().color;
             c.a = 0.8f;
             go.GetComponent<Image>().color = c;

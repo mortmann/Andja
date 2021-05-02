@@ -43,7 +43,9 @@ namespace Andja.Model {
                 t.unload = giving;
             }
         }
-
+        public void SetName(string name) {
+            Name = name;
+        }
         public Trade GetCurrentCityTrade(Ship ship) {
             return Trades[shipToNextStop[ship]];
         }
@@ -51,8 +53,7 @@ namespace Andja.Model {
         public void RemoveWarehouse(WarehouseStructure w) {
             Trade t = GetTradeFor(w.City);
             if (t == null) {
-                Debug.LogError("Tried to remove a city that wasnt in here!");
-                return; // not in error from somewhere
+                return; 
             }
             foreach (Ship ship in shipToNextStop.Keys) {
                 int currentDestination = shipToNextStop[ship];
@@ -65,8 +66,8 @@ namespace Andja.Model {
                     currentDestination--;
                     currentDestination = Mathf.Clamp(currentDestination, 0, NumberOfStops - 1);
                 }
+                shipToNextStop[ship] = currentDestination;
             }
-
             Trades.Remove(t);
         }
 
@@ -119,7 +120,7 @@ namespace Andja.Model {
         }
 
         public Trade GetTrade(int number) {
-            if (Trades.Count < number || number < 0)
+            if (Trades.Count <= number || number < 0)
                 return null;
             return Trades[number];
         }

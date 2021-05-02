@@ -10,7 +10,9 @@ using UnityEngine.UI;
 namespace Andja.UI {
 
     public class CityInventoryUI : MonoBehaviour {
-        public GameObject cityname;
+        public HiddenInputField cityname;
+        public HiddenInputField tradeAmount;
+
         public GameObject contentCanvas;
         public GameObject itemPrefab;
         public GameObject tradePanel;
@@ -27,10 +29,12 @@ namespace Andja.UI {
                 return;
             }
             city.RegisterCityDestroy(OnCityDestroy);
-            cityname.GetComponent<Text>().text = city.Name;
             this.city = city;
             this.onItemPressed = onItemPressed;
-
+            cityname.Set(city.Name, city.SetName);
+            tradeAmount.Set(city.PlayerTradeAmount, city.SetPlayerTradeAmount, true,
+                ()=>{ return 0; }, () => { return city.Inventory.MaxStackSize; }
+                );
             city.Inventory.RegisterOnChangedCallback(OnInventoryChange);
 
             foreach (Transform child in contentCanvas.transform) {
@@ -96,7 +100,10 @@ namespace Andja.UI {
                 itemToGO[i].ChangeMaxValue(city.Inventory.MaxStackSize);
             }
         }
-
+        public void ChangeCityPlayerTradeAmount(int change) {
+            city.SetPlayerTradeAmount(Mathf.Clamp(city.PlayerTradeAmount + change, 0, city.Inventory.MaxStackSize));
+            tradeAmount.Set(city.PlayerTradeAmount + "");
+        }
         private void OnDisable() {
             tradePanel.SetActive(false);
             if (city != null) {

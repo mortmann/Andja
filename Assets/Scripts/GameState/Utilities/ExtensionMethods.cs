@@ -34,7 +34,7 @@ namespace Andja.Utility {
             v.y = (sin * tx) + (cos * ty);
             return v;
         }
-
+        
         public static bool IsFlooredVector(this Vector2 v, Vector2 other) {
             return FloorToInt(v) == FloorToInt(other);
         }

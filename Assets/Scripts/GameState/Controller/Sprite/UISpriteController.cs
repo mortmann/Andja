@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Andja.Controller {
 
-    public enum CommonIcon { Income, Money, Upkeep, People }
+    public enum CommonIcon { Income, Money, Upkeep, People, CurrentDamage, MaximumDamage, Speed }
 
     public class UISpriteController : MonoBehaviour {
         private static Dictionary<string, Sprite> idToUI;
@@ -15,8 +15,13 @@ namespace Andja.Controller {
 
         private void Awake() {
             LoadSprites();
+            MouseController.ChangeCursorType(CursorType.Pointer);
         }
-
+        private void OnDisable() {
+            idToUI.Clear();
+            idToIcon.Clear();
+            idToItemIcons.Clear();
+        }
         public static bool HasIcon(string id) {
             return idToIcon.ContainsKey(id + iconNameAdd);
         }

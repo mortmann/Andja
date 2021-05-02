@@ -85,7 +85,7 @@ namespace Andja.UI {
 
                                      //Selection of some common Words
         private StaticLanguageVariables[] staticLanguageVariables;
-
+        private int currentValue = -1;
         public override void OnStart() {
             if (OnlyHoverOver == false) {
                 if (nameText == null)
@@ -104,6 +104,8 @@ namespace Andja.UI {
 
         public override void OnChangeLanguage() {
             translationData = UILanguageController.Instance.GetTranslationData(Identifier);
+            if(currentValue != -1)
+                ShowValue(currentValue);
             if (OnlyHoverOver)
                 return;
             if (translationData == null) {
@@ -169,7 +171,7 @@ namespace Andja.UI {
             }
             if (translationData == null)
                 translationData = UILanguageController.Instance.GetTranslationData(name);
-            if (translationData.values == null) {
+            if (translationData.values == null || translationData.values.Length == 0) {
                 if (valueEnumType != null) {
                     translationData.values = UILanguageController.Instance.GetLabels(valueEnumType);
                 }
@@ -185,6 +187,7 @@ namespace Andja.UI {
                 Debug.LogWarning("Missing Value for " + Identifier);
                 return;
             }
+            currentValue = i;
             valueText.text = translationData.values[i];
         }
 

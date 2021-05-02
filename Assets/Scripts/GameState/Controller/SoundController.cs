@@ -312,6 +312,7 @@ namespace Andja.Controller {
         private void AddCopiedAudioSource(GameObject goal, AudioSource copied) {
             goal.AddComponent(copied);
             objectToAudioSource[goal] = goal.AddComponent<AudioSourcePauseable>();
+            objectToAudioSource[goal].audioSource = goal.GetComponent<AudioSource>();
         }
 
         public void PlaySoundEffectStructure(Structure str, string fileName, bool play) {

@@ -101,14 +101,13 @@ namespace Andja.UI {
             if (show == false && hovertime == HoverDuration)
                 return;
             if (show) {
+                if (EventSystem.current.IsPointerOverGameObject() == false && isDebug == false) {
+                    Unshow();
+                }
                 hovertime -= Time.deltaTime;
             }
             else {
                 hovertime += Time.deltaTime;
-            }
-            if (EventSystem.current.IsPointerOverGameObject() == false && isDebug == false) {
-                Unshow();
-                hovertime = HoverDuration;
             }
             hovertime = Mathf.Clamp(hovertime, 0, HoverDuration);
             if (hovertime > 0 && instantShow == false) {
@@ -140,9 +139,12 @@ namespace Andja.UI {
             lifetime -= Time.deltaTime;
         }
 
-        internal void Show(Structure structure, bool Locked) {
+        internal void Show(Structure structure, bool unlocked) {
             Show(structure.Name, structure.Description);
-            if (Locked) {
+            if (unlocked) {
+                this.Locked.SetActive(false);
+            }
+            else {
                 stringToImageText[StaticLanguageVariables.Locked.ToString()].SetText(structure.PopulationCount + "");
                 this.Locked.SetActive(true);
             }
@@ -169,7 +171,38 @@ namespace Andja.UI {
 
             MoneyThings.SetActive(true);
         }
+        internal void Show(Unit unit, bool unlocked) {
+            Show(unit.Name, unit.Description);
+            if (unlocked) {
+                this.Locked.SetActive(false);
+            }
+            else {
+                stringToImageText[StaticLanguageVariables.Locked.ToString()].SetText(unit.PopulationCount + "");
+                this.Locked.SetActive(true);
+            }
+            if (unit.BuildingItems != null) {
+                Items.SetActive(true);
+                foreach (Item item in unit.BuildingItems) {
+                    if (stringToImageText.ContainsKey(item.ID)) {
+                        stringToImageText[item.ID].SetText(item.countString);
+                    }
+                    else {
+                        ImageText imageText = Instantiate(ImageTextPrefab);
+                        imageText.Set(UISpriteController.GetItemImageForID(item.ID), item.Data, item.countString);
+                        imageText.transform.SetParent(Items.transform, false);
+                        imageText.SetBrightColorText();
+                        stringToImageText.Add(item.ID, imageText);
+                    }
+                }
+            }
+            else {
+                Items.SetActive(false);
+            }
+            stringToImageText[StaticLanguageVariables.Upkeep.ToString()].SetText(unit.UpkeepCost + "");
+            stringToImageText[StaticLanguageVariables.BuildCost.ToString()].SetText(unit.BuildCost + "");
 
+            MoneyThings.SetActive(true);
+        }
         internal void DebugTileInfo(Tile tile) {
             isDebug = true;
             hovertime = 0;

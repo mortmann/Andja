@@ -1,4 +1,5 @@
-﻿using Andja.Model;
+﻿using Andja.Controller;
+using Andja.Model;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
@@ -22,11 +23,7 @@ namespace Andja.UI.Model {
         }
 
         public void OnPointerEnter(PointerEventData eventData) {
-            string descriptiontemp = "This Unit costs: ";
-            foreach (Item i in unit.BuildingItems) {
-                descriptiontemp += i.ToSmallString();
-            }
-            GameObject.FindObjectOfType<HoverOverScript>().Show(unit.Name, descriptiontemp);
+            GameObject.FindObjectOfType<HoverOverScript>().Show(unit, PlayerController.CurrentPlayer.HasUnitUnlocked(unit.ID));
         }
 
         public void OnPointerExit(PointerEventData eventData) {

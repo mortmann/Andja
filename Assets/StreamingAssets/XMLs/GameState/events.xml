@@ -1,8 +1,27 @@
 <events>
+   <Effect ID="inactive">
+      <Name>
+         <entry lang="English">inactive</entry>
+         <entry lang="Deutsch">inaktiv</entry>
+      </Name>
+      <unique>true</unique>
+      <nameOfVariable>upkeepCost</nameOfVariable>
+      <change>0.5</change>
+      <targets>
+         <Target>MilitaryStructure</Target>
+         <Target>OutputStructure</Target>
+      </targets>
+      <addType>Float</addType>
+      <modifierType>Multiplicative</modifierType>
+      <updateChange>None</updateChange>
+      <classification>Neutral</classification>
+      <uiSpriteName>Inactive_icon</uiSpriteName>
+      <onMapSpriteName>Inactive_icon</onMapSpriteName>
+   </Effect>
    <Effect ID="fire">
       <Name>
          <entry lang="English">Fire</entry>
-         <entry lang="German">Feuer</entry>
+         <entry lang="Deutsch">Feuer</entry>
       </Name>
       <unique>true</unique>
       <nameOfVariable>CurrentHealth</nameOfVariable>
@@ -20,7 +39,7 @@
    <Effect ID="volcanicearth">
       <Name>
          <entry lang="English">Volcanic Earth</entry>
-         <entry lang="German">Vulkanerde</entry>
+         <entry lang="Deutsch">Vulkanerde</entry>
       </Name>
       <unique>false</unique>
       <nameOfVariable>efficiency</nameOfVariable>
@@ -37,7 +56,7 @@
    <Effect ID="illness">
       <Name>
          <entry lang="English">Illness</entry>
-         <entry lang="German">Krankheit</entry>
+         <entry lang="Deutsch">Krankheit</entry>
       </Name>
       <unique>true</unique>
       <nameOfVariable>decreaseTime</nameOfVariable>
@@ -55,11 +74,11 @@
    <GameEvent ID="fireoutbreak">
       <Name>
          <entry lang="English">Fire outbreak</entry>
-         <entry lang="German">Feuerausbruch</entry>
+         <entry lang="Deutsch">Feuerausbruch</entry>
       </Name>
       <Description>
          <entry lang="English">A building caught fire.</entry>
-         <entry lang="German">Ein Gebäude hat Feuer gefangen.</entry>
+         <entry lang="Deutsch">Ein Gebäude hat Feuer gefangen.</entry>
       </Description>
       <probability>10.0</probability>
       <minDuration>50.0</minDuration>
@@ -73,11 +92,11 @@
    <GameEvent ID="volcanic_eruption">
       <Name>
          <entry lang="English">Volcanic Eruption</entry>
-         <entry lang="German">Vulkanausbruch</entry>
+         <entry lang="Deutsch">Vulkanausbruch</entry>
       </Name>
       <Description>
          <entry lang="English">A vulkan is breaking out.</entry>
-         <entry lang="German">Ein Vulkan bricht aus.</entry>
+         <entry lang="Deutsch">Ein Vulkan bricht aus.</entry>
       </Description>
       <probability>10.0</probability>
       <minDuration>50.0</minDuration>

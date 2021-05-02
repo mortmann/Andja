@@ -215,6 +215,8 @@ namespace Andja.Controller {
         }
 
         private void OnBuildStateChange(BuildStateModes bsm) {
+            if (MouseController.Instance.MouseUnitState != MouseUnitState.Build)
+                return;
             if (bsm != BuildStateModes.Build) {
                 RemoveBuildCircle();
                 return;

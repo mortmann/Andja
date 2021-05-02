@@ -284,10 +284,21 @@ namespace Andja.Controller {
 
             //GAMEEVENTS
             effectPrototypeDatas = new Dictionary<string, EffectPrototypeData>();
+            //effectPrototypeDatas.Add("inactive", new EffectPrototypeData {
+            //    addType = EffectTypes.Float,
+            //    modifierType = EffectModifier.Multiplicative,
+            //    change = -0.5f,
+            //    nameOfVariable = "upkeepCost",
+            //    canSpread = false,
+            //    Name = "Inactive",
+            //    Description = "Was disabled.",
+            //    targets = new TargetGroup(Target.AllStructure)
+            //});
             gameEventPrototypeDatas = new Dictionary<string, GameEventPrototypData>();
             ReadEventsFromXML(LoadXML(XMLFilesTypes.events));
             ModLoader.LoadXMLs(XMLFilesTypes.events, ReadEventsFromXML);
-
+            
+           
             //fertilities
             allFertilities = new Dictionary<Climate, List<Fertility>>();
             idToFertilities = new Dictionary<string, Fertility>();
@@ -1538,11 +1549,10 @@ namespace Andja.Controller {
                 string replaceWith;
                 if (replace.Contains('.')) {
                     string[] subgetsplits = replace.Split('.');
-                    var field = data.GetType().GetField("growable", BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance).GetValue(data);
                     replaceWith = GetFieldString(data, 0, subgetsplits);
                 }
                 else {
-                    replaceWith = GetFieldString(data, 0, replace);// data.GetType().GetField(replace, BindingFlags.IgnoreCase)?.ToString();
+                    replaceWith = GetFieldString(data, 0, replace);
                 }
                 replaceSplit[0] = replaceWith;
                 splits[i + 1] = string.Join(" ", replaceSplit);
@@ -1575,14 +1585,7 @@ namespace Andja.Controller {
         }
 
         private string GetLocalisedAnd() {
-            string lang = UILanguageController.selectedLanguage;
-            if (lang == "English") {
-                return "and";
-            }
-            if (lang == "German") {
-                return "und";
-            }
-            return "&";
+            return UILanguageController.Instance.GetStaticVariables(StaticLanguageVariables.And);
         }
 
         private Effect NodeToEffect(XmlNode item) {
@@ -1648,7 +1651,7 @@ namespace Andja.Controller {
                     Debug.LogError("Count is not an int");
                     return null;
                 }
-                clone.count = count;
+                clone.count = Mathf.Abs(count);
             }
             return clone;
         }
@@ -1802,29 +1805,6 @@ namespace Andja.Controller {
 
         private void OnDestroy() {
             Instance = null;
-        }
-
-        private Dictionary<string, Func<StructurePrototypeData, string>> StructurePlaceholderToResult = new Dictionary<string, Func<StructurePrototypeData, string>> {
-        { "$b", (x)=> x.buildCost.ToString() },
-        { "$m", (x)=> x.upkeepCost.ToString() },
-        { "$u", (x)=> x.upgradeCost.ToString() },
-        { "$pc", (x)=> x.populationCount.ToString() },
-        { "$pl", (x)=> x.populationLevel.ToString() },
-        { "$r", (x)=> x.structureRange.ToString() },
-        { "$b$", (x)=> { string s=""; x.buildingItems.ToList().ForEach(i=>s+= ", "+ i.count + " " + i.Name); return s; } },
-    };
-
-        private Dictionary<string, Func<ProductionPrototypeData, string>> ProductionPrototypePlaceholderToResult = new Dictionary<string, Func<ProductionPrototypeData, string>> {
-        { "$i$", (x)=> { string s=""; x.intake.ToList().ForEach(i=>s+= ", " + i.count + " " + i.Name); return s; } },
-        { "$o$", (x)=> { string s=""; x.output.ToList().ForEach(i=>s+= ", " + i.count + " " + i.Name); return s; } },
-        { "$pt", (x)=> x.produceTime.ToString() },
-    };
-
-        public string ConvertStructureStringPlaceholders(string toReplace, StructurePrototypeData data) {
-            foreach (string find in StructurePlaceholderToResult.Keys) {
-                toReplace.Replace(find, StructurePlaceholderToResult[find]?.Invoke(data));
-            }
-            return null;
         }
     }
 

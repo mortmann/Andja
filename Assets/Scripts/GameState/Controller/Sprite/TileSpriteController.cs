@@ -33,7 +33,6 @@ namespace Andja.Controller {
         public Sprite emptySprite;
 
         public GameObject karoOverlay;
-        public GameObject tilePrefab;
         private GameObject darkLayer;
         public GameObject waterLayer;
         public GameObject water;

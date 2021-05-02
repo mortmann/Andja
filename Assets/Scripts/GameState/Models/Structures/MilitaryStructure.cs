@@ -87,7 +87,7 @@ namespace Andja.Model {
         }
 
         public override void OnUpdate(float deltaTime) {
-            if (CurrentlyBuildingUnit == null) {
+            if (isActive == false || CurrentlyBuildingUnit == null) {
                 return;
             }
             buildTimer += deltaTime * BuildTimeModifier;
@@ -118,7 +118,15 @@ namespace Andja.Model {
                 return;
             World.Current.CreateUnit(unit, PlayerController.GetPlayer(PlayerNumber), toPlaceUnitTiles[0]);
         }
-
+        internal override void ToggleActive() {
+            base.ToggleActive();
+            if(isActive) {
+                RemoveEffect(new Effect("inactive"));
+            }
+            else {
+                AddEffect(new Effect("inactive"));
+            }
+        }
         #region IWarfareImplementation
 
         public IWarfare target;

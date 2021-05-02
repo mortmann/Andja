@@ -43,12 +43,11 @@ namespace Andja.Controller {
             GameObject go = new GameObject();
             go.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
             workerToGO.Add(worker, go);
-            go.name = " - Worker";
+            go.name = worker.Home + " - Worker";
             go.transform.position = new Vector3(worker.X, worker.Y, 0);
             Quaternion q = go.transform.rotation;
             q.eulerAngles = new Vector3(0, 0, worker.Rotation);
             go.transform.rotation = q;
-            //go.transform.SetParent(this.transform, true);
 
             SpriteRenderer sr = go.AddComponent<SpriteRenderer>();
             sr.sprite = workerSprites["worker"];

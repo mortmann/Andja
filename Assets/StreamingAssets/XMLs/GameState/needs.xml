@@ -8,7 +8,7 @@
       </UsageAmounts>
       <Name>
          <entry lang="English">Alcohol</entry>
-         <entry lang="German">Alkohol</entry>
+         <entry lang="Deutsch">Alkohol</entry>
       </Name>
       <item ID="liquor">
          <count>0</count>
@@ -27,7 +27,7 @@
       </UsageAmounts>
       <Name>
          <entry lang="English">Education</entry>
-         <entry lang="German">Bildung</entry>
+         <entry lang="Deutsch">Bildung</entry>
       </Name>
       <structures length="1">school</structures>
       <startLevel>1</startLevel>
@@ -44,7 +44,7 @@
       </UsageAmounts>
       <Name>
          <entry lang="English">Salt?</entry>
-         <entry lang="German">Salz?</entry>
+         <entry lang="Deutsch">Salz?</entry>
       </Name>
       <item ID="salt">
          <count>0</count>
@@ -63,7 +63,7 @@
       </UsageAmounts>
       <Name>
          <entry lang="English">Spice?</entry>
-         <entry lang="German">Gewürz?</entry>
+         <entry lang="Deutsch">Gewürz?</entry>
       </Name>
       <startLevel>1</startLevel>
       <popCount>0</popCount>
@@ -79,7 +79,7 @@
       </UsageAmounts>
       <Name>
          <entry lang="English">MONUMENT</entry>
-         <entry lang="German">MONUMENT</entry>
+         <entry lang="Deutsch">MONUMENT</entry>
       </Name>
       <startLevel>1</startLevel>
       <popCount>0</popCount>
@@ -95,7 +95,7 @@
       </UsageAmounts>
       <Name>
          <entry lang="English">Clean</entry>
-         <entry lang="German">Sauberkeit</entry>
+         <entry lang="Deutsch">Sauberkeit</entry>
       </Name>
       <structures length="1">bathhouse</structures>
       <startLevel>1</startLevel>
@@ -112,7 +112,7 @@
       </UsageAmounts>
       <Name>
          <entry lang="English">Food</entry>
-         <entry lang="German">Nahrung</entry>
+         <entry lang="Deutsch">Nahrung</entry>
       </Name>
       <item ID="fish">
          <count>0</count>
@@ -131,7 +131,7 @@
       </UsageAmounts>
       <Name>
          <entry lang="English">Clothes</entry>
-         <entry lang="German">Bekleidung</entry>
+         <entry lang="Deutsch">Bekleidung</entry>
       </Name>
       <item ID="hempclothes">
          <count>0</count>
@@ -150,7 +150,7 @@
       </UsageAmounts>
       <Name>
          <entry lang="English">Security</entry>
-         <entry lang="German">Sicherkeit</entry>
+         <entry lang="Deutsch">Sicherkeit</entry>
       </Name>
       <startLevel>1</startLevel>
       <popCount>0</popCount>
@@ -166,7 +166,7 @@
       </UsageAmounts>
       <Name>
          <entry lang="English">Companionship </entry>
-         <entry lang="German">Gemeinschaft</entry>
+         <entry lang="Deutsch">Gemeinschaft</entry>
       </Name>
       <structures length="1">marketplace</structures>
       <startLevel>0</startLevel>
@@ -183,7 +183,7 @@
       </UsageAmounts>
       <Name>
          <entry lang="English">Luxury</entry>
-         <entry lang="German">Luxus</entry>
+         <entry lang="Deutsch">Luxus</entry>
       </Name>
       <startLevel>1</startLevel>
       <popCount>0</popCount>
@@ -199,7 +199,7 @@
       </UsageAmounts>
       <Name>
          <entry lang="English">Belief</entry>
-         <entry lang="German">Glauben</entry>
+         <entry lang="Deutsch">Glauben</entry>
       </Name>
       <structures length="1">chapel</structures>
       <startLevel>1</startLevel>
@@ -216,7 +216,7 @@
       </UsageAmounts>
       <Name>
          <entry lang="English">Fun</entry>
-         <entry lang="German">Spaß</entry>
+         <entry lang="Deutsch">Spaß</entry>
       </Name>
       <structures length="1">arena</structures>
       <startLevel>1</startLevel>
@@ -227,63 +227,63 @@
    <NeedGroup ID="beverages">
       <Name>
          <entry lang="English">Beverages</entry>
-         <entry lang="German">Getränke</entry>
+         <entry lang="Deutsch">Getränke</entry>
       </Name>
       <importanceLevel>1.3</importanceLevel>
    </NeedGroup>
    <NeedGroup ID="security">
       <Name>
          <entry lang="English">Security</entry>
-         <entry lang="German">Sicherheit</entry>
+         <entry lang="Deutsch">Sicherheit</entry>
       </Name>
       <importanceLevel>1.2</importanceLevel>
    </NeedGroup>
    <NeedGroup ID="education">
       <Name>
          <entry lang="English">Education</entry>
-         <entry lang="German">Bildung</entry>
+         <entry lang="Deutsch">Bildung</entry>
       </Name>
       <importanceLevel>0.9</importanceLevel>
    </NeedGroup>
    <NeedGroup ID="entertainment">
       <Name>
          <entry lang="English">Entertainment</entry>
-         <entry lang="German">Unterhaltung</entry>
+         <entry lang="Deutsch">Unterhaltung</entry>
       </Name>
       <importanceLevel>1.0</importanceLevel>
    </NeedGroup>
    <NeedGroup ID="luxury">
       <Name>
          <entry lang="English">Luxury</entry>
-         <entry lang="German">Luxus</entry>
+         <entry lang="Deutsch">Luxus</entry>
       </Name>
       <importanceLevel>1.0</importanceLevel>
    </NeedGroup>
    <NeedGroup ID="clothing">
       <Name>
          <entry lang="English">Clothing</entry>
-         <entry lang="German">Bekleidung</entry>
+         <entry lang="Deutsch">Bekleidung</entry>
       </Name>
       <importanceLevel>1.2</importanceLevel>
    </NeedGroup>
    <NeedGroup ID="community">
       <Name>
          <entry lang="English">Community</entry>
-         <entry lang="German">Gemeinschaft</entry>
+         <entry lang="Deutsch">Gemeinschaft</entry>
       </Name>
       <importanceLevel>1.0</importanceLevel>
    </NeedGroup>
    <NeedGroup ID="belief">
       <Name>
          <entry lang="English">Belief</entry>
-         <entry lang="German">Relegion</entry>
+         <entry lang="Deutsch">Relegion</entry>
       </Name>
       <importanceLevel>1.5</importanceLevel>
    </NeedGroup>
    <NeedGroup ID="food">
       <Name>
          <entry lang="English">Food</entry>
-         <entry lang="German">Nahrung</entry>
+         <entry lang="Deutsch">Nahrung</entry>
       </Name>
       <importanceLevel>1.5</importanceLevel>
    </NeedGroup>

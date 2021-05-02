@@ -2,6 +2,7 @@
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using UnityEngine;
+using Andja.Utility;
 
 namespace Andja.Model {
 
@@ -83,11 +84,7 @@ namespace Andja.Model {
             //now we have the tile thats has the smallest x/y
             //to get the tile we now have to rotate a vector thats
             //1 up and 1 left from the temptile
-
-            //Vector3 rot = new Vector3 (-_tileWidth/2 - 1, _tileHeight / 2 - 1, 0);
-            //rot = Quaternion.AngleAxis (rotated, Vector3.forward) * rot;
-            Vector2 rot = new Vector2((float)TileWidth / 2f + 0.5f, 0);
-            rot = Rotate(rot, rotation);
+            Vector2 rot = new Vector2((float)TileWidth / 2f + 0.5f, 0).Rotate(rotation);
             tradeTile = World.Current.GetTileAt(Mathf.FloorToInt(Center.x - rot.x), Mathf.FloorToInt(Center.y + rot.y));
 
             this.City.warehouse = this;
@@ -111,16 +108,6 @@ namespace Andja.Model {
                 OnStructureAdded(rangeTile.Structure);
             }
             City.RegisterStructureAdded(OnStructureAdded);
-        }
-
-        public Vector2 Rotate(Vector2 v, float degrees) {
-            float sin = Mathf.Sin(degrees * Mathf.Deg2Rad);
-            float cos = Mathf.Cos(degrees * Mathf.Deg2Rad);
-            float tx = v.x;
-            float ty = v.y;
-            v.x = (cos * tx) - (sin * ty);
-            v.y = (sin * tx) + (cos * ty);
-            return v;
         }
 
         public Tile GetTradeTile() {

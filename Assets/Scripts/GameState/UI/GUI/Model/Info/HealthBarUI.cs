@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using Andja.Model;
+using System;
+using UnityEngine;
 using UnityEngine.UI;
 
 namespace Andja.UI.Model {

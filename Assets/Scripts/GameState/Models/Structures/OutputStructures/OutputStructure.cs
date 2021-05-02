@@ -114,7 +114,7 @@ namespace Andja.Model {
         public virtual float Progress => produceTimer;
         public virtual float TotalProgress => ProduceTime;
 
-        public void Update_Worker(float deltaTime) {
+        public void UpdateWorker(float deltaTime) {
             if (MaxNumberOfWorker <= 0) {
                 return;
             }
@@ -136,7 +136,7 @@ namespace Andja.Model {
                 return;
             }
             List<OutputStructure> givenJobs = new List<OutputStructure>();
-            List<OutputStructure> ordered = jobsToDo.Keys.OrderBy(x => x.Output.Sum(y => y.count)).ToList();
+            List<OutputStructure> ordered = jobsToDo.Keys.OrderByDescending(x => x.Output.Sum(y => y.count)).ToList();
             foreach (OutputStructure jobStr in ordered) {
                 if (Workers.Count >= MaxNumberOfWorker) {
                     break;
@@ -294,7 +294,15 @@ namespace Andja.Model {
                 }
             }
         }
-
+        internal override void ToggleActive() {
+            base.ToggleActive();
+            if (isActive) {
+                RemoveEffect(GetEffect("inactive"), true);
+            }
+            else {
+                AddEffect(new Effect("inactive"));
+            }
+        }
         protected override void OnDestroy() {
             if (Workers != null) {
                 foreach (Worker item in Workers) {

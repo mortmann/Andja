@@ -5,7 +5,7 @@ using UnityEngine.UI;
 namespace Andja.UI {
 
     public class CityUI : MonoBehaviour {
-        public NameInputField NameField;
+        public HiddenInputField NameField;
         public City city;
         public ValueNameSetter Income;
         public ValueNameSetter Expanses;
@@ -18,12 +18,8 @@ namespace Andja.UI {
                 return;
             }
             AutoUpgradeHomesToggle.isOn = city.AutoUpgradeHomes;
-            NameField.SetName(city.Name, OnNameEdit);
+            NameField.Set(city.Name, city.SetName);
             //Make the Name editable
-        }
-
-        private void OnNameEdit(string name) {
-            city.Name = name;
         }
 
         public void OnEnableAutoUpgrade(bool change) {

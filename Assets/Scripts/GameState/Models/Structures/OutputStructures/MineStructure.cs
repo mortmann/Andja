@@ -68,7 +68,7 @@ namespace Andja.Model {
         }
 
         public override void OnUpdate(float deltaTime) {
-            if (Output[0].count >= MaxOutputStorage) {
+            if (IsActiveAndWorking == false || Output[0].count >= MaxOutputStorage) {
                 return;
             }
             if (CurrentResourceMode == ResourceMode.PerProduce && BuildTile.Island.HasResource(Resource) == false) {

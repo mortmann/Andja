@@ -356,7 +356,13 @@ namespace Andja.Controller {
             if (playerOne == FlyingTrader.Number || playerTwo == FlyingTrader.Number) {
                 return false;//No war with trader ships yet... maybe in the future
             }
-            return GetDiplomaticStatus(playerOne, playerTwo).currentStatus == DiplomacyType.War;
+            if (playerOne == GameData.WorldNumber || playerTwo == GameData.WorldNumber) {
+                return false;//No war with world stuff
+            }
+            DiplomaticStatus ds = GetDiplomaticStatus(playerOne, playerTwo);
+            if (ds == null)
+                Debug.LogError("Missing DiplomaticStatus for " + playerOne + " " + playerTwo);
+            return ds.currentStatus == DiplomacyType.War;
         }
 
         private List<DiplomaticStatus> GetAlliesFor(int player) {

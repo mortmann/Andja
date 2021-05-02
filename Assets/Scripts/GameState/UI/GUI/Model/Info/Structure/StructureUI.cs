@@ -1,12 +1,13 @@
 using Andja.Controller;
 using Andja.Model;
+using UnityEngine;
 
 namespace Andja.UI.Model {
 
-    public class StructureUI : InfoUI {
+    public class StructureUI : MonoBehaviour {
         private Structure currentStructure;
 
-        public override void OnShow(object Info) {
+        public void Show(Structure Info) {
             if (currentStructure == Info) {
                 return;
             }
@@ -19,10 +20,13 @@ namespace Andja.UI.Model {
                 TileSpriteController.Instance.AddDecider(TileDeciderFuncs.StructureTileDecider);
             }
         }
-
-        public override void OnClose() {
+        private void Update() {
+            InfoUI.Instance.UpdateHealth(currentStructure.CurrentHealth, currentStructure.MaxHealth);
+            InfoUI.Instance.UpdateUpkeep(currentStructure.UpkeepCost);
+        }
+        void OnDisable() {
             TileDeciderFuncs.Structure = null;
-            TileSpriteController.Instance.RemoveDecider(TileDeciderFuncs.StructureTileDecider);
+            TileSpriteController.Instance?.RemoveDecider(TileDeciderFuncs.StructureTileDecider);
         }
     }
 }

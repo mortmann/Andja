@@ -84,23 +84,6 @@ namespace Andja.Model {
             }
         }
 
-        //	public override float Efficiency{
-        //		get {
-        //			float inputs=0;
-        //			for (int i = 0; i < MyIntake.Length; i++) {
-        //				if(ProductionData.intake[i].count==0){
-        //					Debug.LogWarning(ProductionData.intake[i].ToString() + " INTAKE REQUEST IS 0!!");
-        //					continue;
-        //				}
-        //				inputs += MyIntake[i].count/ProductionData.intake[i].count;
-        //			}
-        //			if(inputs==0){
-        //				return 0;
-        //			}
-        //			return Mathf.Clamp(Mathf.Round(inputs*1000)/10f,0,100);
-        //		}
-        //	}
-
         public ProductionStructure(string id, ProductionPrototypeData ProductionData) {
             this.ID = id;
             this._productionData = ProductionData;
@@ -125,14 +108,15 @@ namespace Andja.Model {
             if (Output == null) {
                 return;
             }
+            UpdateWorker(deltaTime);
+            if (IsActiveAndWorking == false) {
+                return;
+            }
             for (int i = 0; i < Output.Length; i++) {
                 if (Output[i].count == MaxOutputStorage) {
                     return;
                 }
             }
-
-            base.Update_Worker(deltaTime);
-
             if (HasRequiredInput() == false) {
                 return;
             }

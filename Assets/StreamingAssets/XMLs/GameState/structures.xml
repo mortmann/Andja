@@ -3,15 +3,15 @@
       <road ID="dirtroad">
          <Name>
             <entry lang="English">Dirtroad</entry>
-            <entry lang="German">Feldweg</entry>
+            <entry lang="Deutsch">Feldweg</entry>
          </Name>
          <Description>
             <entry lang="English">Simple road to connect Structures.</entry>
-            <entry lang="German">Einfacher Weg um Gebäude mit einander zuverbinden.</entry>
+            <entry lang="Deutsch">Einfacher Weg um Gebäude mit einander zuverbinden.</entry>
          </Description>
          <HoverOver>
             <entry lang="English">Dirtroad</entry>
-            <entry lang="German">Feldweg</entry>
+            <entry lang="Deutsch">Feldweg</entry>
          </HoverOver>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
@@ -40,15 +40,15 @@
       <road ID="stoneroad">
          <Name>
             <entry lang="English">Stoneroad</entry>
-            <entry lang="German">Steinstraße</entry>
+            <entry lang="Deutsch">Steinstraße</entry>
          </Name>
          <Description>
             <entry lang="English">People can move faster on it.</entry>
-            <entry lang="German">Leute bewegen sich schneller auf ihr.</entry>
+            <entry lang="Deutsch">Leute bewegen sich schneller auf ihr.</entry>
          </Description>
          <HoverOver>
             <entry lang="English">Stoneroad</entry>
-            <entry lang="German">Steinstraße</entry>
+            <entry lang="Deutsch">Steinstraße</entry>
          </HoverOver>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
@@ -78,15 +78,15 @@
       <road ID="brickroad">
          <Name>
             <entry lang="English">Brickroad</entry>
-            <entry lang="German">Ziegelstraße</entry>
+            <entry lang="Deutsch">Ziegelstraße</entry>
          </Name>
          <Description>
             <entry lang="English">Improve the movementspeed of people.</entry>
-            <entry lang="German">Erhöht die Laufgeschwindigkeit der Menschen.</entry>
+            <entry lang="Deutsch">Erhöht die Laufgeschwindigkeit der Menschen.</entry>
          </Description>
          <HoverOver>
             <entry lang="English">Brickroad</entry>
-            <entry lang="German">Ziegelstraße</entry>
+            <entry lang="Deutsch">Ziegelstraße</entry>
          </HoverOver>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
@@ -120,15 +120,15 @@
       <road ID="marbelroad">
          <Name>
             <entry lang="English">Marbelroad</entry>
-            <entry lang="German">Marmorstraße</entry>
+            <entry lang="Deutsch">Marmorstraße</entry>
          </Name>
          <Description>
             <entry lang="English">Nice to look at and even better to walk on.</entry>
-            <entry lang="German">Gut zum ansehen und noch besser um darauf zulaufen.</entry>
+            <entry lang="Deutsch">Gut zum ansehen und noch besser um darauf zulaufen.</entry>
          </Description>
          <HoverOver>
             <entry lang="English">Marbelroad</entry>
-            <entry lang="German">Marmorstraße</entry>
+            <entry lang="Deutsch">Marmorstraße</entry>
          </HoverOver>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
@@ -159,15 +159,15 @@
       <farm ID="lumberjack">
          <Name>
             <entry lang="English">Lumberjack Hut</entry>
-            <entry lang="German">Holzfällerhütte</entry>
+            <entry lang="Deutsch">Holzfällerhütte</entry>
          </Name>
          <Description>
             <entry lang="English">Produces wood over time. Requires $growable.name in its range to be able to produce.</entry>
-            <entry lang="German">Erzeugt Holz.</entry>
+            <entry lang="Deutsch">Erzeugt Holz.</entry>
          </Description>
          <HoverOver>
             <entry lang="English">Lumberjack</entry>
-            <entry lang="German">Holzfäller</entry>
+            <entry lang="Deutsch">Holzfäller</entry>
          </HoverOver>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
@@ -215,15 +215,15 @@
       <farm ID="sugarplantation">
          <Name>
             <entry lang="English">Sugar Plantation</entry>
-            <entry lang="German">Zuckerplantage</entry>
+            <entry lang="Deutsch">Zuckerplantage</entry>
          </Name>
          <Description>
             <entry lang="English">Produces sugar.</entry>
-            <entry lang="German">Produziert Zucker.</entry>
+            <entry lang="Deutsch">Produziert Zucker.</entry>
          </Description>
          <HoverOver>
             <entry lang="English">Sugar Plantation</entry>
-            <entry lang="German">Zuckerplantage</entry>
+            <entry lang="Deutsch">Zuckerplantage</entry>
          </HoverOver>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
@@ -274,15 +274,15 @@
       <farm ID="orchardfarm">
          <Name>
             <entry lang="English">Orchard Farm</entry>
-            <entry lang="German">Obstplantage</entry>
+            <entry lang="Deutsch">Obstplantage</entry>
          </Name>
          <Description>
             <entry lang="English">Produces fruits.</entry>
-            <entry lang="German">Produziert Früchte.</entry>
+            <entry lang="Deutsch">Produziert Früchte.</entry>
          </Description>
          <HoverOver>
             <entry lang="English">Orchard </entry>
-            <entry lang="German">Obstplantage</entry>
+            <entry lang="Deutsch">Obstplantage</entry>
          </HoverOver>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
@@ -333,15 +333,15 @@
       <farm ID="potatoefarm">
          <Name>
             <entry lang="English">Potatoefarm</entry>
-            <entry lang="German">Kartoffelfarm</entry>
+            <entry lang="Deutsch">Kartoffelfarm</entry>
          </Name>
          <Description>
             <entry lang="English">Grows Potatoe. Needs $buildingItems.name to be build.</entry>
-            <entry lang="German">Produziert Kartoffeln.</entry>
+            <entry lang="Deutsch">Produziert Kartoffeln.</entry>
          </Description>
          <HoverOver>
             <entry lang="English">Potatoefarm</entry>
-            <entry lang="German">Kartoffelfarm</entry>
+            <entry lang="Deutsch">Kartoffelfarm</entry>
          </HoverOver>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
@@ -391,15 +391,15 @@
       <farm ID="hempplantation">
          <Name>
             <entry lang="English">Hemp plantation</entry>
-            <entry lang="German">Hanfplantage</entry>
+            <entry lang="Deutsch">Hanfplantage</entry>
          </Name>
          <Description>
             <entry lang="English">Plantation that produces hemp.</entry>
-            <entry lang="German">Produziert Hanf.</entry>
+            <entry lang="Deutsch">Produziert Hanf.</entry>
          </Description>
          <HoverOver>
             <entry lang="English">Hemp plantation</entry>
-            <entry lang="German">Hanfplantage</entry>
+            <entry lang="Deutsch">Hanfplantage</entry>
          </HoverOver>
          <Short>
             <entry>
@@ -407,7 +407,7 @@
                <string>Hemp </string>
             </entry>
             <entry>
-               <lang>German</lang>
+               <lang>Deutsch</lang>
                <string>Hanf</string>
             </entry>
          </Short>
@@ -460,15 +460,15 @@
       <farm ID="huntershut">
          <Name>
             <entry lang="English">Hunters&apos; Hut</entry>
-            <entry lang="German">Jägerhütte</entry>
+            <entry lang="Deutsch">Jägerhütte</entry>
          </Name>
          <Description>
             <entry lang="English">Hunts wild life to produce meat.</entry>
-            <entry lang="German">Jagt Wild um Fleisch zu produzieren.</entry>
+            <entry lang="Deutsch">Jagt Wild um Fleisch zu produzieren.</entry>
          </Description>
          <HoverOver>
             <entry lang="English">Hunter</entry>
-            <entry lang="German">Jäger</entry>
+            <entry lang="Deutsch">Jäger</entry>
          </HoverOver>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
@@ -518,15 +518,15 @@
       <farm ID="wheatfarm">
          <Name>
             <entry lang="English">Wheatfarm</entry>
-            <entry lang="German">Getreidefarm</entry>
+            <entry lang="Deutsch">Getreidefarm</entry>
          </Name>
          <Description>
             <entry lang="English">Produces Wheat.</entry>
-            <entry lang="German">Produziert Getreide.</entry>
+            <entry lang="Deutsch">Produziert Getreide.</entry>
          </Description>
          <HoverOver>
             <entry lang="English">Wheatfarm</entry>
-            <entry lang="German">Getreidefarm</entry>
+            <entry lang="Deutsch">Getreidefarm</entry>
          </HoverOver>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
@@ -579,15 +579,15 @@
       <farm ID="charcoalburnershut">
          <Name>
             <entry lang="English">Charcoal Burner&apos;s Hut</entry>
-            <entry lang="German">Köhler</entry>
+            <entry lang="Deutsch">Köhler</entry>
          </Name>
          <Description>
             <entry lang="English">Needs trees to create coal.</entry>
-            <entry lang="German">Benötigt Bäume um daraus Kohle zu produzieren.</entry>
+            <entry lang="Deutsch">Benötigt Bäume um daraus Kohle zu produzieren.</entry>
          </Description>
          <HoverOver>
             <entry lang="English">Charcoal Burner&apos;s Hut</entry>
-            <entry lang="German">Köhler</entry>
+            <entry lang="Deutsch">Köhler</entry>
          </HoverOver>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
@@ -637,15 +637,15 @@
       <farm ID="goatfarm">
          <Name>
             <entry lang="English">Goat Farm</entry>
-            <entry lang="German">Ziegenfarm</entry>
+            <entry lang="Deutsch">Ziegenfarm</entry>
          </Name>
          <Description>
             <entry lang="English">Produces milk.</entry>
-            <entry lang="German">Produziert Milch.</entry>
+            <entry lang="Deutsch">Produziert Milch.</entry>
          </Description>
          <HoverOver>
             <entry lang="English">Goat Farm</entry>
-            <entry lang="German">Ziegenfarm</entry>
+            <entry lang="Deutsch">Ziegenfarm</entry>
          </HoverOver>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
@@ -698,15 +698,15 @@
       <farm ID="pigfarm">
          <Name>
             <entry lang="English">Pig Farm</entry>
-            <entry lang="German">Schweinefarm</entry>
+            <entry lang="Deutsch">Schweinefarm</entry>
          </Name>
          <Description>
             <entry lang="English">Needs free land to breed pigs.</entry>
-            <entry lang="German">Braucht freies Land um Schweine zu züchten.</entry>
+            <entry lang="Deutsch">Braucht freies Land um Schweine zu züchten.</entry>
          </Description>
          <HoverOver>
             <entry lang="English">Pig Farm</entry>
-            <entry lang="German">Schweinefarm</entry>
+            <entry lang="Deutsch">Schweinefarm</entry>
          </HoverOver>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
@@ -759,15 +759,15 @@
       <farm ID="hopsplantation">
          <Name>
             <entry lang="English">Hops Plantation</entry>
-            <entry lang="German">Hopfenplantage</entry>
+            <entry lang="Deutsch">Hopfenplantage</entry>
          </Name>
          <Description>
             <entry lang="English">Produces hops.</entry>
-            <entry lang="German">Produziert Hopfen.</entry>
+            <entry lang="Deutsch">Produziert Hopfen.</entry>
          </Description>
          <HoverOver>
             <entry lang="English">Hops Plantation</entry>
-            <entry lang="German">Hopfenplantage</entry>
+            <entry lang="Deutsch">Hopfenplantage</entry>
          </HoverOver>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
@@ -820,11 +820,11 @@
       <farm ID="spiceplantation">
          <Name>
             <entry lang="English">Spice Plantation</entry>
-            <entry lang="German">Gewürzplantage</entry>
+            <entry lang="Deutsch">Gewürzplantage</entry>
          </Name>
          <Description>
             <entry lang="English">Produces Spice.</entry>
-            <entry lang="German">Produziert Gewürze.</entry>
+            <entry lang="Deutsch">Produziert Gewürze.</entry>
          </Description>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
@@ -879,15 +879,15 @@
       <growable ID="farmland">
          <Name>
             <entry lang="English">Farmland</entry>
-            <entry lang="German">Ackerland</entry>
+            <entry lang="Deutsch">Ackerland</entry>
          </Name>
          <Description>
             <entry lang="English">Free spaces for animals.</entry>
-            <entry lang="German">Freies Land für Tiere.</entry>
+            <entry lang="Deutsch">Freies Land für Tiere.</entry>
          </Description>
          <HoverOver>
             <entry lang="English">Farmland</entry>
-            <entry lang="German">Ackerland</entry>
+            <entry lang="Deutsch">Ackerland</entry>
          </HoverOver>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
@@ -923,15 +923,15 @@
       <growable ID="tree">
          <Name>
             <entry lang="English">Tree</entry>
-            <entry lang="German">Baum</entry>
+            <entry lang="Deutsch">Baum</entry>
          </Name>
          <Description>
             <entry lang="English">Its a tree.</entry>
-            <entry lang="German">Es ist ein Baum.</entry>
+            <entry lang="Deutsch">Es ist ein Baum.</entry>
          </Description>
          <HoverOver>
             <entry lang="English">Tree</entry>
-            <entry lang="German">Baum</entry>
+            <entry lang="Deutsch">Baum</entry>
          </HoverOver>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
@@ -974,15 +974,15 @@
       <growable ID="hempfield">
          <Name>
             <entry lang="English">Hempfield</entry>
-            <entry lang="German">Hanffeld</entry>
+            <entry lang="Deutsch">Hanffeld</entry>
          </Name>
          <Description>
             <entry lang="English">Grows hemp.</entry>
-            <entry lang="German">Wächst Hanf an.</entry>
+            <entry lang="Deutsch">Wächst Hanf an.</entry>
          </Description>
          <HoverOver>
             <entry lang="English">Hemp</entry>
-            <entry lang="German">Hanf</entry>
+            <entry lang="Deutsch">Hanf</entry>
          </HoverOver>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
@@ -1024,15 +1024,15 @@
       <growable ID="potatoefield">
          <Name>
             <entry lang="English">Potatoefield</entry>
-            <entry lang="German">Kartoffelfeld</entry>
+            <entry lang="Deutsch">Kartoffelfeld</entry>
          </Name>
          <Description>
             <entry lang="English">Potatoes grow here.</entry>
-            <entry lang="German">Kartoffeln wachsen hier.</entry>
+            <entry lang="Deutsch">Kartoffeln wachsen hier.</entry>
          </Description>
          <HoverOver>
             <entry lang="English">Potatoefield</entry>
-            <entry lang="German">Kartoffelfeld</entry>
+            <entry lang="Deutsch">Kartoffelfeld</entry>
          </HoverOver>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
@@ -1073,15 +1073,15 @@
       <growable ID="orchard">
          <Name>
             <entry lang="English">Orchard</entry>
-            <entry lang="German">Obstgarten</entry>
+            <entry lang="Deutsch">Obstgarten</entry>
          </Name>
          <Description>
             <entry lang="English">Produces Fruit.</entry>
-            <entry lang="German">Produziert Früchte.</entry>
+            <entry lang="Deutsch">Produziert Früchte.</entry>
          </Description>
          <HoverOver>
             <entry lang="English">Orchard</entry>
-            <entry lang="German">Obstgarten</entry>
+            <entry lang="Deutsch">Obstgarten</entry>
          </HoverOver>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
@@ -1122,15 +1122,15 @@
       <growable ID="sugarcanefield">
          <Name>
             <entry lang="English">Sugarcanefield</entry>
-            <entry lang="German">Zuckerrohrfeld</entry>
+            <entry lang="Deutsch">Zuckerrohrfeld</entry>
          </Name>
          <Description>
             <entry lang="English">Grows sugar cane.</entry>
-            <entry lang="German">Hier wächst Zuckerrohr.</entry>
+            <entry lang="Deutsch">Hier wächst Zuckerrohr.</entry>
          </Description>
          <HoverOver>
             <entry lang="English">Sugarcanefield</entry>
-            <entry lang="German">Zuckerrohrfeld</entry>
+            <entry lang="Deutsch">Zuckerrohrfeld</entry>
          </HoverOver>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
@@ -1172,15 +1172,15 @@
       <growable ID="wheatfield">
          <Name>
             <entry lang="English">Wheatfield</entry>
-            <entry lang="German">Getreidefeld</entry>
+            <entry lang="Deutsch">Getreidefeld</entry>
          </Name>
          <Description>
             <entry lang="English">Grows wheat.</entry>
-            <entry lang="German">Getreide wächst hier.</entry>
+            <entry lang="Deutsch">Getreide wächst hier.</entry>
          </Description>
          <HoverOver>
             <entry lang="English">Wheatfield</entry>
-            <entry lang="German">Getreidefeld</entry>
+            <entry lang="Deutsch">Getreidefeld</entry>
          </HoverOver>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
@@ -1223,15 +1223,15 @@
       <growable ID="hopvines">
          <Name>
             <entry lang="English">Hop Vines</entry>
-            <entry lang="German">Hopfenreben</entry>
+            <entry lang="Deutsch">Hopfenreben</entry>
          </Name>
          <Description>
             <entry lang="English">Grows hops.</entry>
-            <entry lang="German">Produziert Hopfen.</entry>
+            <entry lang="Deutsch">Produziert Hopfen.</entry>
          </Description>
          <HoverOver>
             <entry lang="English">Hop Vines</entry>
-            <entry lang="German">Hopfenreben</entry>
+            <entry lang="Deutsch">Hopfenreben</entry>
          </HoverOver>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
@@ -1273,11 +1273,11 @@
       <growable ID="spicefield">
          <Name>
             <entry lang="English">Spicefield</entry>
-            <entry lang="German">Gewürzefeld</entry>
+            <entry lang="Deutsch">Gewürzefeld</entry>
          </Name>
          <Description>
             <entry lang="English">Grows Spices.</entry>
-            <entry lang="German">Gewürze werden hier angebaut.</entry>
+            <entry lang="Deutsch">Gewürze werden hier angebaut.</entry>
          </Description>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
@@ -1321,15 +1321,15 @@
       <market ID="smallmarketbuilding">
          <Name>
             <entry lang="English">Market Building I</entry>
-            <entry lang="German">Markthaus I</entry>
+            <entry lang="Deutsch">Markthaus I</entry>
          </Name>
          <Description>
             <entry lang="English">Is required to expand your city and it will collect produced goods in its area, if they are connect with roads.</entry>
-            <entry lang="German">Es ist benötigt um deine Stadt zu erweitern und um produzierte Produkte abzuholen, die in seiner reichweite sind und mit dem es Sraßen verbunden ist.</entry>
+            <entry lang="Deutsch">Es ist benötigt um deine Stadt zu erweitern und um produzierte Produkte abzuholen, die in seiner reichweite sind und mit dem es Sraßen verbunden ist.</entry>
          </Description>
          <HoverOver>
             <entry lang="English">Market Building</entry>
-            <entry lang="German">Markthaus </entry>
+            <entry lang="Deutsch">Markthaus </entry>
          </HoverOver>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
@@ -1375,15 +1375,15 @@
       <mine ID="stonequarry">
          <Name>
             <entry lang="English">Stone Quarry</entry>
-            <entry lang="German">Steinbruch</entry>
+            <entry lang="Deutsch">Steinbruch</entry>
          </Name>
          <Description>
             <entry lang="English">Produces stone for buildings..</entry>
-            <entry lang="German">Produziert Stein zum Bauen.</entry>
+            <entry lang="Deutsch">Produziert Stein zum Bauen.</entry>
          </Description>
          <HoverOver>
             <entry lang="English">Stone Quarry</entry>
-            <entry lang="German">Steinbruch</entry>
+            <entry lang="Deutsch">Steinbruch</entry>
          </HoverOver>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
@@ -1435,15 +1435,15 @@
       <mine ID="ironmine">
          <Name>
             <entry lang="English">Iron Mine</entry>
-            <entry lang="German">Eisenbergwerk</entry>
+            <entry lang="Deutsch">Eisenbergwerk</entry>
          </Name>
          <Description>
             <entry lang="English">Produces iron ore.</entry>
-            <entry lang="German">Produziert Eisenerz.</entry>
+            <entry lang="Deutsch">Produziert Eisenerz.</entry>
          </Description>
          <HoverOver>
             <entry lang="English">Iron Mine</entry>
-            <entry lang="German">Eisenbergwerk</entry>
+            <entry lang="Deutsch">Eisenbergwerk</entry>
          </HoverOver>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
@@ -1491,15 +1491,15 @@
       <mine ID="saltmine">
          <Name>
             <entry lang="English">Saltmine</entry>
-            <entry lang="German">Salzbergwerk</entry>
+            <entry lang="Deutsch">Salzbergwerk</entry>
          </Name>
          <Description>
             <entry lang="English">Mines Grain Salt.</entry>
-            <entry lang="German">Produziert grobes Salz.</entry>
+            <entry lang="Deutsch">Produziert grobes Salz.</entry>
          </Description>
          <HoverOver>
             <entry lang="English">Saltmine</entry>
-            <entry lang="German">Salzbergwerk</entry>
+            <entry lang="Deutsch">Salzbergwerk</entry>
          </HoverOver>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
@@ -1552,15 +1552,15 @@
       <needstructure ID="marketplace">
          <Name>
             <entry lang="English">Marketplace</entry>
-            <entry lang="German">Gemeinschaftsplatz</entry>
+            <entry lang="Deutsch">Gemeinschaftsplatz</entry>
          </Name>
          <Description>
             <entry lang="English">Place where people can meet, talk and trade goods.</entry>
-            <entry lang="German">Ort zum Treffen, Reden und Handeln.</entry>
+            <entry lang="Deutsch">Ort zum Treffen, Reden und Handeln.</entry>
          </Description>
          <HoverOver>
             <entry lang="English">Marketplace</entry>
-            <entry lang="German">Gemeinschaftsplatz</entry>
+            <entry lang="Deutsch">Gemeinschaftsplatz</entry>
          </HoverOver>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
@@ -1575,7 +1575,7 @@
          <canRotate>true</canRotate>
          <canBeBuildOver>false</canBeBuildOver>
          <canBeUpgraded>false</canBeUpgraded>
-         <canTakeDamage>false</canTakeDamage>
+         <canTakeDamage>true</canTakeDamage>
          <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
          <upkeepCost>15</upkeepCost>
@@ -1597,15 +1597,15 @@
       <needstructure ID="chapel">
          <Name>
             <entry lang="English">Chapel</entry>
-            <entry lang="German">Kapelle</entry>
+            <entry lang="Deutsch">Kapelle</entry>
          </Name>
          <Description>
             <entry lang="English">A holy place.</entry>
-            <entry lang="German">Ein heiliger Platz.</entry>
+            <entry lang="Deutsch">Ein heiliger Platz.</entry>
          </Description>
          <HoverOver>
             <entry lang="English">Chapel</entry>
-            <entry lang="German">Kapelle</entry>
+            <entry lang="Deutsch">Kapelle</entry>
          </HoverOver>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
@@ -1642,15 +1642,15 @@
       <needstructure ID="inn">
          <Name>
             <entry lang="English">Inn</entry>
-            <entry lang="German">Gasthaus</entry>
+            <entry lang="Deutsch">Gasthaus</entry>
          </Name>
          <Description>
             <entry lang="English">Place where people meet to drink together and play some games.</entry>
-            <entry lang="German">Platz wo Leuten treffen um zusammen trinken und Spiele zu spielen.</entry>
+            <entry lang="Deutsch">Platz wo Leuten treffen um zusammen trinken und Spiele zu spielen.</entry>
          </Description>
          <HoverOver>
             <entry lang="English">Inn</entry>
-            <entry lang="German">Gasthaus</entry>
+            <entry lang="Deutsch">Gasthaus</entry>
          </HoverOver>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
@@ -1687,15 +1687,15 @@
       <needstructure ID="cityguardpost">
          <Name>
             <entry lang="English">City ​​Guard Post</entry>
-            <entry lang="German">Stadtwache</entry>
+            <entry lang="Deutsch">Stadtwache</entry>
          </Name>
          <Description>
             <entry lang="English">Provides a central for the city guard which makes the surrounding area safer.</entry>
-            <entry lang="German">Bietet der Stadtwache eine Stelle von der sie aus die Umgebung sicherer macht.</entry>
+            <entry lang="Deutsch">Bietet der Stadtwache eine Stelle von der sie aus die Umgebung sicherer macht.</entry>
          </Description>
          <HoverOver>
             <entry lang="English">City Guard</entry>
-            <entry lang="German">Stadtwache</entry>
+            <entry lang="Deutsch">Stadtwache</entry>
          </HoverOver>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
@@ -1735,11 +1735,11 @@
       <needstructure ID="washhouse">
          <Name>
             <entry lang="English">Wash House</entry>
-            <entry lang="German">Waschhaus</entry>
+            <entry lang="Deutsch">Waschhaus</entry>
          </Name>
          <Description>
             <entry lang="English">Provides a public space to wash their clothes.</entry>
-            <entry lang="German">Bietet einen öfflichen Platz um die Wäsche zu waschen.</entry>
+            <entry lang="Deutsch">Bietet einen öfflichen Platz um die Wäsche zu waschen.</entry>
          </Description>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
@@ -1779,15 +1779,15 @@
       <needstructure ID="bathhouse">
          <Name>
             <entry lang="English">Bath House</entry>
-            <entry lang="German">Badehaus</entry>
+            <entry lang="Deutsch">Badehaus</entry>
          </Name>
          <Description>
             <entry lang="English">Provides public swimming spaces.</entry>
-            <entry lang="German">Bietet öffentliche Schwimmmöglichkeiten.</entry>
+            <entry lang="Deutsch">Bietet öffentliche Schwimmmöglichkeiten.</entry>
          </Description>
          <HoverOver>
             <entry lang="English">Bath House</entry>
-            <entry lang="German">Badehaus</entry>
+            <entry lang="Deutsch">Badehaus</entry>
          </HoverOver>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
@@ -1824,15 +1824,15 @@
       <needstructure ID="school">
          <Name>
             <entry lang="English">School</entry>
-            <entry lang="German">Schule</entry>
+            <entry lang="Deutsch">Schule</entry>
          </Name>
          <Description>
             <entry lang="English">Provides education for children.</entry>
-            <entry lang="German">Bietet Bildung für Kinder.</entry>
+            <entry lang="Deutsch">Bietet Bildung für Kinder.</entry>
          </Description>
          <HoverOver>
             <entry lang="English">School</entry>
-            <entry lang="German">Schule</entry>
+            <entry lang="Deutsch">Schule</entry>
          </HoverOver>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
@@ -1869,15 +1869,15 @@
       <needstructure ID="arena">
          <Name>
             <entry lang="English">Arena</entry>
-            <entry lang="German">Arena</entry>
+            <entry lang="Deutsch">Arena</entry>
          </Name>
          <Description>
             <entry lang="English">Place where fights and other amusements can be found.</entry>
-            <entry lang="German">Platz wo Kämpfe und andere Bespaßungen stattfinden können.</entry>
+            <entry lang="Deutsch">Platz wo Kämpfe und andere Bespaßungen stattfinden können.</entry>
          </Description>
          <HoverOver>
             <entry lang="English">Arena</entry>
-            <entry lang="German">Arena</entry>
+            <entry lang="Deutsch">Arena</entry>
          </HoverOver>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
@@ -1922,15 +1922,15 @@
       <production ID="fishermanshut">
          <Name>
             <entry lang="English">Fisherman&apos;s hut</entry>
-            <entry lang="German">Fischerhütte</entry>
+            <entry lang="Deutsch">Fischerhütte</entry>
          </Name>
          <Description>
             <entry lang="English">Catches Fish to eat.</entry>
-            <entry lang="German">Fischt Fisch zum essen.</entry>
+            <entry lang="Deutsch">Fischt Fisch zum essen.</entry>
          </Description>
          <HoverOver>
             <entry lang="English">Fisherman</entry>
-            <entry lang="German">Fischer</entry>
+            <entry lang="Deutsch">Fischer</entry>
          </HoverOver>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
@@ -1984,15 +1984,15 @@
       <production ID="hempweaver">
          <Name>
             <entry lang="English">Hemp Weaver&apos;s Hut</entry>
-            <entry lang="German">Hanfweberei</entry>
+            <entry lang="Deutsch">Hanfweberei</entry>
          </Name>
          <Description>
             <entry lang="English">Uses raw hemp to produce weaved hemp fabric.</entry>
-            <entry lang="German">Benutzt rohen Hanf um gewebten Stoff herzustellen.</entry>
+            <entry lang="Deutsch">Benutzt rohen Hanf um gewebten Stoff herzustellen.</entry>
          </Description>
          <HoverOver>
             <entry lang="English">Hemp Weaver</entry>
-            <entry lang="German">Hanfweberei</entry>
+            <entry lang="Deutsch">Hanfweberei</entry>
          </HoverOver>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
@@ -2046,15 +2046,15 @@
       <production ID="distellery">
          <Name>
             <entry lang="English">Distellery</entry>
-            <entry lang="German">Brennerei</entry>
+            <entry lang="Deutsch">Brennerei</entry>
          </Name>
          <Description>
             <entry lang="English">Produces Liquor out of either Sugar, Potatoes or Fruit.</entry>
-            <entry lang="German">Produziert Schnaps out of either Kartoffeln, Zucker oder Früchten.</entry>
+            <entry lang="Deutsch">Produziert Schnaps out of either Kartoffeln, Zucker oder Früchten.</entry>
          </Description>
          <HoverOver>
             <entry lang="English">Distellery</entry>
-            <entry lang="German">Brennerei</entry>
+            <entry lang="Deutsch">Brennerei</entry>
          </HoverOver>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
@@ -2114,15 +2114,15 @@
       <production ID="hemptailor">
          <Name>
             <entry lang="English">Hemp Tailor´s Hut</entry>
-            <entry lang="German">Hanfschneider</entry>
+            <entry lang="Deutsch">Hanfschneider</entry>
          </Name>
          <Description>
             <entry lang="English">Produces hempclothes out of hemp fabric.</entry>
-            <entry lang="German">Produziert Hanfkleidung aus Hanfgewebe.</entry>
+            <entry lang="Deutsch">Produziert Hanfkleidung aus Hanfgewebe.</entry>
          </Description>
          <HoverOver>
             <entry lang="English">Hemp Tailor</entry>
-            <entry lang="German">Hanfschneider</entry>
+            <entry lang="Deutsch">Hanfschneider</entry>
          </HoverOver>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
@@ -2176,15 +2176,15 @@
       <production ID="bakery">
          <Name>
             <entry lang="English">Bakery</entry>
-            <entry lang="German">Bäckerei</entry>
+            <entry lang="Deutsch">Bäckerei</entry>
          </Name>
          <Description>
             <entry lang="English">Consums flour to make bread.</entry>
-            <entry lang="German">Produziert aus Mehl Brot.</entry>
+            <entry lang="Deutsch">Produziert aus Mehl Brot.</entry>
          </Description>
          <HoverOver>
             <entry lang="English">Bakery</entry>
-            <entry lang="German">Bäckerei</entry>
+            <entry lang="Deutsch">Bäckerei</entry>
          </HoverOver>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
@@ -2241,15 +2241,15 @@
       <production ID="flourmill">
          <Name>
             <entry lang="English">Flour Mill</entry>
-            <entry lang="German">Getreidemühle</entry>
+            <entry lang="Deutsch">Getreidemühle</entry>
          </Name>
          <Description>
             <entry lang="English">Consums wheat to produce flour.</entry>
-            <entry lang="German">Verbraucht Getreide um Mehl zu erstellen.</entry>
+            <entry lang="Deutsch">Verbraucht Getreide um Mehl zu erstellen.</entry>
          </Description>
          <HoverOver>
             <entry lang="English">Flour Mill</entry>
-            <entry lang="German">Getreidemühle</entry>
+            <entry lang="Deutsch">Getreidemühle</entry>
          </HoverOver>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
@@ -2306,15 +2306,15 @@
       <production ID="ironsmelter">
          <Name>
             <entry lang="English">Iron Smelter</entry>
-            <entry lang="German">Eisenerzschmelze</entry>
+            <entry lang="Deutsch">Eisenerzschmelze</entry>
          </Name>
          <Description>
             <entry lang="English">Uses coal and iron ore to produce iron ingots.</entry>
-            <entry lang="German">Benötigt Kohle und Eisenerz um Eisenrohling zuerstellen.</entry>
+            <entry lang="Deutsch">Benötigt Kohle und Eisenerz um Eisenrohling zuerstellen.</entry>
          </Description>
          <HoverOver>
             <entry lang="English">Iron Smelter</entry>
-            <entry lang="German">Eisenerzschmelze</entry>
+            <entry lang="Deutsch">Eisenerzschmelze</entry>
          </HoverOver>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
@@ -2374,15 +2374,15 @@
       <production ID="saltmill">
          <Name>
             <entry lang="English">Salt Mill</entry>
-            <entry lang="German">Salzmühle</entry>
+            <entry lang="Deutsch">Salzmühle</entry>
          </Name>
          <Description>
             <entry lang="English">Millt grain salt to produce salt.</entry>
-            <entry lang="German">Mahlt grobes Salz zu Salz.</entry>
+            <entry lang="Deutsch">Mahlt grobes Salz zu Salz.</entry>
          </Description>
          <HoverOver>
             <entry lang="English">Salt Mill</entry>
-            <entry lang="German">Salzmühle</entry>
+            <entry lang="Deutsch">Salzmühle</entry>
          </HoverOver>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
@@ -2439,15 +2439,15 @@
       <production ID="cheesedairy">
          <Name>
             <entry lang="English">Cheese Dairy</entry>
-            <entry lang="German">Käserei</entry>
+            <entry lang="Deutsch">Käserei</entry>
          </Name>
          <Description>
             <entry lang="English">Uses Milk to produce Cheese.</entry>
-            <entry lang="German">Braucht Milch um Käse zu erstellen.</entry>
+            <entry lang="Deutsch">Braucht Milch um Käse zu erstellen.</entry>
          </Description>
          <HoverOver>
             <entry lang="English">Cheese Dairy</entry>
-            <entry lang="German">Käserei</entry>
+            <entry lang="Deutsch">Käserei</entry>
          </HoverOver>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
@@ -2504,15 +2504,15 @@
       <production ID="toolmakersworkshop">
          <Name>
             <entry lang="English">Toolmaker&apos;s Workshop</entry>
-            <entry lang="German">Werkzeugemacher</entry>
+            <entry lang="Deutsch">Werkzeugemacher</entry>
          </Name>
          <Description>
             <entry lang="English">Uses iron ingots to produce tools.</entry>
-            <entry lang="German">Produzirt aus Eisenerzrohlingen Werkzeuge.</entry>
+            <entry lang="Deutsch">Produzirt aus Eisenerzrohlingen Werkzeuge.</entry>
          </Description>
          <HoverOver>
             <entry lang="English">Toolmaker&apos;s Workshop</entry>
-            <entry lang="German">Werkzeugemacher</entry>
+            <entry lang="Deutsch">Werkzeugemacher</entry>
          </HoverOver>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
@@ -2569,15 +2569,15 @@
       <production ID="pigbutcher">
          <Name>
             <entry lang="English">Pig Butcher</entry>
-            <entry lang="German">Schweinemetzger</entry>
+            <entry lang="Deutsch">Schweinemetzger</entry>
          </Name>
          <Description>
             <entry lang="English">Butchers pigs to produce pig-meat and leather.</entry>
-            <entry lang="German">Schlachtet Schweine um Schweinefleish und Leder zu produzieren.</entry>
+            <entry lang="Deutsch">Schlachtet Schweine um Schweinefleish und Leder zu produzieren.</entry>
          </Description>
          <HoverOver>
             <entry lang="English">Pig Butcher</entry>
-            <entry lang="German">Schweinemetzger</entry>
+            <entry lang="Deutsch">Schweinemetzger</entry>
          </HoverOver>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
@@ -2637,11 +2637,11 @@
       <production ID="ropery">
          <Name>
             <entry lang="English">Ropery</entry>
-            <entry lang="German">Seilerei</entry>
+            <entry lang="Deutsch">Seilerei</entry>
          </Name>
          <Description>
             <entry lang="English">Creates Ropes.</entry>
-            <entry lang="German">Stellt Seile her.</entry>
+            <entry lang="Deutsch">Stellt Seile her.</entry>
          </Description>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
@@ -2697,15 +2697,15 @@
       <warehouse ID="warehouse1">
          <Name>
             <entry lang="English">Warehouse I</entry>
-            <entry lang="German">Kontor I</entry>
+            <entry lang="Deutsch">Kontor I</entry>
          </Name>
          <Description>
             <entry lang="English">First structure of any City and it is used to trade with Ships.</entry>
-            <entry lang="German">Das erste Gebäude einer Stadt und wird dazu genutzt mit Schiffen zu handeln.</entry>
+            <entry lang="Deutsch">Das erste Gebäude einer Stadt und wird dazu genutzt mit Schiffen zu handeln.</entry>
          </Description>
          <HoverOver>
             <entry lang="English">Warehouse</entry>
-            <entry lang="German">Kontor</entry>
+            <entry lang="Deutsch">Kontor</entry>
          </HoverOver>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
@@ -2758,15 +2758,15 @@
       <home ID="peasanthouse">
          <Name>
             <entry lang="English">Peasant house</entry>
-            <entry lang="German">Bauernhaus</entry>
+            <entry lang="Deutsch">Bauernhaus</entry>
          </Name>
          <Description>
             <entry lang="English">Peasant lives here.</entry>
-            <entry lang="German">Bauern wohnen hier.</entry>
+            <entry lang="Deutsch">Bauern wohnen hier.</entry>
          </Description>
          <HoverOver>
             <entry lang="English">Peasant </entry>
-            <entry lang="German">Bauern</entry>
+            <entry lang="Deutsch">Bauern</entry>
          </HoverOver>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
@@ -2803,15 +2803,15 @@
       <home ID="citizenhouse">
          <Name>
             <entry lang="English">Citizen house</entry>
-            <entry lang="German">Bürgerhaus</entry>
+            <entry lang="Deutsch">Bürgerhaus</entry>
          </Name>
          <Description>
             <entry lang="English">Citizen lives here.</entry>
-            <entry lang="German">Bürger leben hier.</entry>
+            <entry lang="Deutsch">Bürger leben hier.</entry>
          </Description>
          <HoverOver>
             <entry lang="English">Citizen </entry>
-            <entry lang="German">Bürger </entry>
+            <entry lang="Deutsch">Bürger </entry>
          </HoverOver>
          <canBeBuild>false</canBeBuild>
          <isWalkable>false</isWalkable>
@@ -2851,15 +2851,15 @@
       <home ID="patricianhouse">
          <Name>
             <entry lang="English">Patrician house</entry>
-            <entry lang="German">Patrizierhaus</entry>
+            <entry lang="Deutsch">Patrizierhaus</entry>
          </Name>
          <Description>
             <entry lang="English">Patrician lives here.</entry>
-            <entry lang="German">Patrizier leben hier.</entry>
+            <entry lang="Deutsch">Patrizier leben hier.</entry>
          </Description>
          <HoverOver>
             <entry lang="English">Patrician </entry>
-            <entry lang="German">Patrizier </entry>
+            <entry lang="Deutsch">Patrizier </entry>
          </HoverOver>
          <canBeBuild>false</canBeBuild>
          <isWalkable>false</isWalkable>
@@ -2902,15 +2902,15 @@
       <home ID="noblemanhouse">
          <Name>
             <entry lang="English">Nobleman house</entry>
-            <entry lang="German">Adligenhaus</entry>
+            <entry lang="Deutsch">Adligenhaus</entry>
          </Name>
          <Description>
             <entry lang="English">Nobleman lives here.</entry>
-            <entry lang="German">Adlige leben hier.</entry>
+            <entry lang="Deutsch">Adlige leben hier.</entry>
          </Description>
          <HoverOver>
             <entry lang="English">Nobleman </entry>
-            <entry lang="German">Adlige </entry>
+            <entry lang="Deutsch">Adlige </entry>
          </HoverOver>
          <canBeBuild>false</canBeBuild>
          <isWalkable>false</isWalkable>
@@ -2958,15 +2958,15 @@
       <militarystructure ID="shipyard">
          <Name>
             <entry lang="English">Shipyard</entry>
-            <entry lang="German">Werft</entry>
+            <entry lang="Deutsch">Werft</entry>
          </Name>
          <Description>
             <entry lang="English">Builds ships.</entry>
-            <entry lang="German">Baut Schiffe.</entry>
+            <entry lang="Deutsch">Baut Schiffe.</entry>
          </Description>
          <HoverOver>
             <entry lang="English">Shipyard</entry>
-            <entry lang="German">Werft</entry>
+            <entry lang="Deutsch">Werft</entry>
          </HoverOver>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
@@ -3012,15 +3012,15 @@
       <militarystructure ID="fort">
          <Name>
             <entry lang="English">Fort</entry>
-            <entry lang="German">Kastell</entry>
+            <entry lang="Deutsch">Kastell</entry>
          </Name>
          <Description>
             <entry lang="English">Can train Units.</entry>
-            <entry lang="German">Kann Einheiten ausbilden.</entry>
+            <entry lang="Deutsch">Kann Einheiten ausbilden.</entry>
          </Description>
          <HoverOver>
             <entry lang="English">Fort</entry>
-            <entry lang="German">Kastell</entry>
+            <entry lang="Deutsch">Kastell</entry>
          </HoverOver>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
@@ -3065,15 +3065,15 @@
       <servicestructure ID="firewell">
          <Name>
             <entry lang="English">Well</entry>
-            <entry lang="German">Brunnen</entry>
+            <entry lang="Deutsch">Brunnen</entry>
          </Name>
          <Description>
             <entry lang="English">Worker can use it to slowly put out fires.</entry>
-            <entry lang="German">Arbeiter können damit langsam Feuer löschen.</entry>
+            <entry lang="Deutsch">Arbeiter können damit langsam Feuer löschen.</entry>
          </Description>
          <HoverOver>
             <entry lang="English">Well</entry>
-            <entry lang="German">Brunnen</entry>
+            <entry lang="Deutsch">Brunnen</entry>
          </HoverOver>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
@@ -3117,11 +3117,11 @@
       <servicestructure ID="firebrigade">
          <Name>
             <entry lang="English">Fire Brigade</entry>
-            <entry lang="German">Feuerwehr</entry>
+            <entry lang="Deutsch">Feuerwehr</entry>
          </Name>
          <Description>
             <entry lang="English">Worker can use it to faster than a well to put out fires.</entry>
-            <entry lang="German">Arbeiter können damit schneller als mit dem Brunnen Feuer löschen.</entry>
+            <entry lang="Deutsch">Arbeiter können damit schneller als mit dem Brunnen Feuer löschen.</entry>
          </Description>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>

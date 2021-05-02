@@ -1,6 +1,7 @@
 ﻿using Andja.Controller;
 using Newtonsoft.Json;
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -226,6 +227,10 @@ namespace Andja.Model {
             return count;
         }
 
+        internal bool HasAnything() {
+            return Items.Count((x)=>x.Value.count>0) > 0;
+        }
+
         /// <summary>
         /// moves item amount to the given inventory
         /// </summary>
@@ -235,14 +240,12 @@ namespace Andja.Model {
         public int MoveItem(Inventory moveToInv, Item it, int amountMove) {
             if (Items.ContainsKey(GetPlaceInItems(it))) {
                 Item i = Items[GetPlaceInItems(it)];
-                Debug.Log(i.ToString());
                 if (i.count <= 0) {
                     return 0;
                 }
                 it = it.CloneWithCount();
-                it.count = Mathf.Clamp(it.count, 0, amountMove);
+                it.count = Mathf.Clamp(i.count, 0, amountMove);
                 int amount = moveToInv.AddItem(it);
-                Debug.Log("Itemamount " + amount);
                 LowerItemAmount(i, amount);
                 return amount;
             }
@@ -349,11 +352,7 @@ namespace Andja.Model {
                 i.count -= amount;
             }
             if (i.count == 0) {
-                for (int d = 0; d < Items.Count; d++) {
-                    if (Items["" + d].count == 0) {
-                        Items.Remove("" + d);
-                    }
-                }
+                Items.Remove(Items.First(x => x.Value == i).Key);
             }
             cbInventoryChanged?.Invoke(this);
         }
@@ -478,7 +477,18 @@ namespace Andja.Model {
                 return false;
             return inInventory.count >= item.count;
         }
-
+        public bool HasEnoughOfItems(IEnumerable<Item> items, int times = 1) {
+            if (items == null)
+                return true;
+            if (times > 1) {
+                List<Item> clonedItems = new List<Item>();
+                foreach (Item i in items) {
+                    clonedItems.Add(new Item(i.ID, i.count * times));
+                }
+                return HasEnoughOfItems(clonedItems);
+            }
+            return HasEnoughOfItems(items);
+        }
         public void SubFromStackSize(int value) {
             if (value <= 0) {
                 Debug.LogError("Decrease Stacksize is " + value + "! ");

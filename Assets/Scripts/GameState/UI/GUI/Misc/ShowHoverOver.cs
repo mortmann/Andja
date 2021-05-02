@@ -13,15 +13,15 @@ namespace Andja.UI {
 
         public void OnPointerEnter(PointerEventData eventData) {
             if (showName) {
-                GameObject.FindObjectOfType<HoverOverScript>().Show(Variables?.Name ?? data.translation);
+                FindObjectOfType<HoverOverScript>().Show(Variables?.Name ?? data?.translation ?? "***Missing***");
             }
             else {
-                GameObject.FindObjectOfType<HoverOverScript>().Show(Variables?.HoverOver ?? data.hoverOverTranslation);
+                FindObjectOfType<HoverOverScript>().Show(Variables?.HoverOver ?? data?.hoverOverTranslation ?? "***Missing***");
             }
         }
 
         public void OnPointerExit(PointerEventData eventData) {
-            GameObject.FindObjectOfType<HoverOverScript>().Unshow();
+            FindObjectOfType<HoverOverScript>().Unshow();
         }
 
         internal void SetVariable(LanguageVariables data, bool showName) {

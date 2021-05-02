@@ -364,7 +364,7 @@ namespace Andja.Controller {
             if (structure is WarehouseStructure && structure.City == null) {
                 structure.City = CreateCity(tiles[0].Island, playerNumber);
             }
-            structure.PlaceStructure(tiles);
+            structure.PlaceStructure(tiles, loading);
 
             //pay for it -- if not otherwise disabled
             if (noBuildCost == false && onStart == false && buildInWilderness == false && loading == false) {

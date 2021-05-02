@@ -124,6 +124,49 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &6534261
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6534262}
+  - component: {fileID: 6534263}
+  m_Layer: 0
+  m_Name: UILanguageController
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6534262
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6534261}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 295.1287, y: 272.41406, z: -0.46726298}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 630077613}
+  m_RootOrder: 10
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &6534263
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6534261}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3057357743b7823409b6abd71a95c3eb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &48933875
 GameObject:
   m_ObjectHideFlags: 0
@@ -172,7 +215,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6c2029fb835dd064692ef06ae04131bd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  buildID: 0
   noBuildCost: 0
   noUnitRestriction: 0
   allStructuresEnabled: 0
@@ -574,6 +616,7 @@ Transform:
   - {fileID: 768506370}
   - {fileID: 65370477}
   - {fileID: 1761800538}
+  - {fileID: 6534262}
   m_Father: {fileID: 0}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -987,7 +1030,7 @@ PrefabInstance:
     - target: {fileID: 8624619892147010575, guid: dfbb72e7b75263b4da3c1b05eaa385c6,
         type: 3}
       propertyPath: editorloadsavegame
-      value: 
+      value: Test5
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 11473390, guid: dfbb72e7b75263b4da3c1b05eaa385c6, type: 3}
@@ -1191,7 +1234,7 @@ Behaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1875351404}
-  m_Enabled: 1
+  m_Enabled: 0
 --- !u!20 &1875351408
 Camera:
   m_ObjectHideFlags: 0

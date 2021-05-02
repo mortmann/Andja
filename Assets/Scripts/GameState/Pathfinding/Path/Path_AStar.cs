@@ -19,7 +19,7 @@ namespace Andja.Pathfinding {
         public bool canEndInUnwakable;
         public int playerCityRequired = int.MinValue;
         private Dictionary<Tile, Path_Node<Tile>> nodes;
-
+        public bool debug;
         // for the way back to the first tile
         public Path_AStar(Queue<Tile> backPath) {
             path = backPath;
@@ -61,7 +61,8 @@ namespace Andja.Pathfinding {
             Calculate(tileStart, tileEnd, false);
         }
 
-        public Path_AStar(Island island, Tile start, Tile end, List<Tile> startTiles, List<Tile> endTiles, bool canEndInUnwakable = false, Path_Heuristics Heuristic = Path_Heuristics.Euclidean) {
+        public Path_AStar(bool debug, Island island, Tile start, Tile end, List<Tile> startTiles, List<Tile> endTiles, bool canEndInUnwakable = false, Path_Heuristics Heuristic = Path_Heuristics.Euclidean) {
+            this.debug = debug;
             if (island == null || startTiles == null || endTiles == null || startTiles.Count == 0 || endTiles.Count == 0) {
                 return;
             }
@@ -131,9 +132,6 @@ namespace Andja.Pathfinding {
                 if (startTiles != null && startTiles.Contains(current.data)) {
                     Came_From.Clear();
                 }
-                if (current.edges.Length > 8) {
-                    Debug.Log("wat");
-                }
                 foreach (Path_Edge<Tile> edge_neighbor in current.edges) {
                     if (diag == false) {
                         if ((edge_neighbor.node.data.Vector - current.data.Vector).sqrMagnitude > 1.1) {
@@ -158,14 +156,8 @@ namespace Andja.Pathfinding {
 
                     if (OpenSet.Contains(neighbor) && tentative_g_score >= g_score[neighbor])
                         continue;
-                    try {
-                        Came_From[neighbor] = current;
-                    }
-                    catch (Exception e) {
-                        //it has nullpointer here no clue why
-                        //TODO: fix this
-                        e.ToString();
-                    }
+
+                    Came_From[neighbor] = current;
                     g_score[neighbor] = tentative_g_score;
                     f_score[neighbor] = g_score[neighbor] + Heuristic_cost_estimate(neighbor, goal);
 
@@ -220,7 +212,6 @@ namespace Andja.Pathfinding {
 
                 //}); // foreach neighbour
             } // while
-
             // If we reached here, it means that we've burned through the entire
             // OpenSet without ever reaching a point where current == goal.
             // This happens when there is no path from start to goal

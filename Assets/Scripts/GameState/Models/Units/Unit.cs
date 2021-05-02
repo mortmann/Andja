@@ -54,7 +54,7 @@ namespace Andja.Model {
 
         [JsonPropertyAttribute] public string ID;
         [JsonPropertyAttribute] public int playerNumber;
-        [JsonPropertyAttribute] protected string _UserSetName;
+        [JsonPropertyAttribute] protected string _playerSetName;
         [JsonPropertyAttribute] protected float _currHealth;
 
         [JsonPropertyAttribute] private float aggroCooldownTimer = 1f;
@@ -97,8 +97,12 @@ namespace Andja.Model {
 
         #region calculated
 
-        //TODO decide on this:
+        public string Description => Data.Description;
+        public string Name => Data.Name;
+        public string HoverOver => Data.HoverOver;
+        public string Short => Data.Short;
 
+        //TODO decide on this:
         public Command CurrentCommand => queuedCommands.Count == 0 ? null : queuedCommands.Peek();
 
         public ITargetable CurrentTarget {
@@ -111,10 +115,10 @@ namespace Andja.Model {
 
         public string PlayerSetName {
             get {
-                return _UserSetName;
+                return _playerSetName;
             }
             protected set {
-                _UserSetName = value;
+                _playerSetName = value;
             }
         }
 
@@ -239,7 +243,6 @@ namespace Andja.Model {
         public float Width => Data.width;
         public float Height => Data.height;
         public Item[] BuildingItems => Data.buildingItems;
-        public string Name => Data.Name;
 
         #endregion prototype
 
@@ -299,7 +302,7 @@ namespace Andja.Model {
             this._prototypData = unit.Data;
             this.CurrentHealth = MaxHealth;
             this.playerNumber = playerNumber;
-            PlayerSetName = "Unit " + UnityEngine.Random.Range(0, 1000000000);
+            PlayerSetName = Name + " " + UnityEngine.Random.Range(0, 1000000000);
             pathfinding = new IslandPathfinding(this, t);
             queuedCommands = new Queue<Command>();
             Setup();
@@ -310,6 +313,10 @@ namespace Andja.Model {
         }
 
         public virtual void Update(float deltaTime) {
+            if (CurrentHealth > MaxHealth) {
+                //Values got changed or maybe upgrade lost? we need to reduce it slowly
+                CurrentHealth = Mathf.Clamp(CurrentHealth - 10 * deltaTime, MaxHealth, CurrentHealth);
+            }
             if (CurrentCommand != null && CurrentCommand.IsFinished) {
                 queuedCommands.Dequeue();
                 if (CurrentCommand == null)
@@ -413,7 +420,7 @@ namespace Andja.Model {
                     UpdateCapture(deltaTime);
                     break;
             }
-            pathfinding.Update_DoRotate(deltaTime);
+            pathfinding.UpdateDoRotate(deltaTime);
         }
 
         private void SetDestinationIfPossible(Vector2 position) {
@@ -616,7 +623,6 @@ namespace Andja.Model {
         }
 
         public void ToTradeItemToNearbyWarehouse(Item clicked) {
-            Debug.Log(clicked.ToString());
             if (rangeUStructure != null && rangeUStructure is WarehouseStructure) {
                 if (rangeUStructure.PlayerNumber == playerNumber) {
                     rangeUStructure.City.TradeFromShip(this, clicked);
@@ -811,6 +817,10 @@ namespace Andja.Model {
             return true;
         }
 
+        public void SetName(string name) {
+            PlayerSetName = name;
+        }
+
         public virtual void Destroy(IWarfare warfare) {
             //Do stuff here when on destroyed
             cbUnitDestroyed?.Invoke(this, warfare);
@@ -874,7 +884,7 @@ namespace Andja.Model {
             ReduceHealth(warfare.GetCurrentDamage(ArmorType), warfare);
         }
 
-        internal bool IsPlayerUnit() {
+        internal bool IsPlayer() {
             return PlayerController.currentPlayerNumber == playerNumber;
         }
 

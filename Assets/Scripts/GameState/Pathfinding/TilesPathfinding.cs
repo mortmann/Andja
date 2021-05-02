@@ -1,4 +1,5 @@
 ﻿using Andja.Model;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -10,8 +11,11 @@ namespace Andja.Pathfinding {
         protected List<Tile> startTiles;
 
         protected List<Tile> endTiles;
-        private bool canEndInUnwakable;
+        public bool canEndInUnwakable;
 
+        public TilesPathfinding() {
+
+        }
         public TilesPathfinding(float Speed, float RotationSpeed, bool canEndInUnwakable) : base() {
             this.Speed = Speed;
             this.rotationSpeed = RotationSpeed;
@@ -31,12 +35,13 @@ namespace Andja.Pathfinding {
             }
             //get the tiles from the world to get a current reference and not an empty from the load
             DestTile = World.Current.GetTileAt(x, y);
-            startTile = World.Current.GetTileAt(startTile.X, startTile.Y);
-            //CalculatePath();
+            startTile = World.Current.GetTileAt(X, Y);
             StartCalculatingThread();
         }
+        bool debug;
 
-        public void SetDestination(List<Tile> startTiles, List<Tile> endTiles) {
+        public void SetDestination(List<Tile> startTiles, List<Tile> endTiles, bool debug = false) {
+            this.debug = debug;
             this.startTiles = startTiles;
             this.endTiles = endTiles;
             StartCalculatingThread();
@@ -44,6 +49,7 @@ namespace Andja.Pathfinding {
 
         protected override void CalculatePath() {
             pathDestination = Path_Destination.Tile;
+            TurnType = Turning_Type.TurnRadius;
             if (startTiles == null) {
                 startTiles = new List<Tile> {
                 startTile
@@ -54,16 +60,21 @@ namespace Andja.Pathfinding {
             }
             IsAtDestination = false;
             Queue<Tile> currentQueue = null;
-            foreach (Tile st in startTiles) {
-                foreach (Tile et in endTiles) {
-                    Path_AStar pa = new Path_AStar(startTiles[0].Island, st, et, startTiles, endTiles, canEndInUnwakable);
-                    if (pa.path == null || currentQueue != null && currentQueue.Count < pa.path.Count) {
-                        continue;
+            try {
+                foreach (Tile st in startTiles) {
+                    foreach (Tile et in endTiles) {
+                        Path_AStar pa = new Path_AStar(debug, startTiles[0].Island, st, et, startTiles, endTiles, canEndInUnwakable);
+                        if (pa.path == null || currentQueue != null && currentQueue.Count < pa.path.Count) {
+                            continue;
+                        }
+                        currentQueue = pa.path;
                     }
-                    currentQueue = pa.path;
                 }
+            } catch(System.Exception e) {
+                Debug.Log(e.Message);
             }
-
+            
+        
             worldPath = new Queue<Vector2>();
             while (currentQueue.Count > 0) {
                 Vector2 pos = currentQueue.Dequeue().Vector2 + new Vector2(0.5f, 0.5f);
@@ -74,18 +85,17 @@ namespace Andja.Pathfinding {
                     dest_Y = pos.y;
                 }
             }
-
             if (CurrTile == null) {
                 CurrTile = World.Current.GetTileAt(worldPath.Peek());
                 X = worldPath.Peek().x;
                 Y = worldPath.Peek().y;
                 worldPath.Dequeue();
             }
-
             CreateReversePath();
 
             //important
             IsDoneCalculating = true;
         }
+
     }
 }

@@ -13,20 +13,19 @@ namespace Andja.Model {
         /// </summary>
         protected Dictionary<string, float> VariablenameToFloat;
 
-        [JsonPropertyAttribute] protected List<Effect> Effects;
+        [JsonPropertyAttribute] protected List<Effect> _effects;
 
-        //TODO: when can use here only IReadOnlyList -> but it is bugged for now -- so dont change list outside here
-        public List<Effect> ReadOnlyEffects => Effects;
+        public IReadOnlyList<Effect> Effects => _effects;
 
         private List<Effect> _UpdateEffectList;
 
         protected List<Effect> UpdateEffectList {
             get {
-                if (Effects == null)
+                if (_effects == null)
                     return null;
                 //for loading -- makes it ez to get them again without doing in load functions
                 if (_UpdateEffectList == null) {
-                    _UpdateEffectList = new List<Effect>(Effects);
+                    _UpdateEffectList = new List<Effect>(_effects);
                     _UpdateEffectList.RemoveAll(x => x.IsUpdateChange == false);
                 }
                 return _UpdateEffectList;
@@ -130,8 +129,8 @@ namespace Andja.Model {
         }
 
         public void AddEffects(Effect[] effects) {
-            if (Effects == null)
-                Effects = new List<Effect>();
+            if (this._effects == null)
+                this._effects = new List<Effect>();
             foreach (Effect effect in effects)
                 AddEffect(effect);
         }
@@ -140,12 +139,12 @@ namespace Andja.Model {
             if (TargetGroups.IsTargeted(effect.Targets) == false) {
                 return;
             }
-            if (Effects == null)
-                Effects = new List<Effect>();
+            if (_effects == null)
+                _effects = new List<Effect>();
             if (effect.IsUnique && HasEffect(effect)) {
                 return;
             }
-            Effects.Add(effect);
+            _effects.Add(effect);
             cbEffectChange?.Invoke(this, effect, true);
             if (effect.IsSpecial) {
                 AddSpecialEffect(effect);
@@ -171,22 +170,24 @@ namespace Andja.Model {
         }
 
         internal Effect GetEffect(string ID) {
-            return Effects.Find(x => x.ID == ID);
+            return _effects.Find(x => x.ID == ID);
         }
 
         public bool HasEffect(Effect effect) {
-            return Effects.Find(x => x.ID == effect.ID) != null;
+            return _effects.Find(x => x.ID == effect.ID) != null;
         }
-
+        public bool HasAnyEffect(params Effect[] effects) {
+            return _effects.Exists(x => Array.Exists<Effect>(effects, y => x.ID == y.ID));
+        }
         public virtual void RemoveEffect(Effect effect, bool all = false) {
-            if (Effects.Find(e => e.ID == effect.ID) == null) {
+            if (_effects.Find(e => e.ID == effect.ID) == null) {
                 return;
             }
 
             if (all)
-                Effects.RemoveAll(e => e.ID == effect.ID);
+                _effects.RemoveAll(e => e.ID == effect.ID);
             else
-                Effects.Remove(effect);
+                _effects.Remove(effect);
             UpdateEffectList.RemoveAll(e => e.ID == effect.ID);
             cbEffectChange?.Invoke(this, effect, false);
 
@@ -203,7 +204,7 @@ namespace Andja.Model {
                 }
             }
             if (effect.IsNegativ)
-                HasNegativEffect = Effects.Find(x => x.IsNegativ) != null;
+                HasNegativEffect = _effects.Find(x => x.IsNegativ) != null;
         }
 
         /// <summary>
@@ -213,7 +214,7 @@ namespace Andja.Model {
         /// <param name="currentValue"></param>
         /// <returns></returns>
         protected float CalculateRealValue(string name, float currentValue, bool clampToZero = true) {
-            float value = (currentValue + GetAdditiveValue(name)) * (1 + GetMultiplicative(name));
+            float value = (GetAdditiveValue(name)) + currentValue * Mathf.Clamp(1 + GetMultiplicative(name),0,100);
             if (clampToZero)
                 return Mathf.Clamp(value, 0, value);
             return value;
@@ -240,7 +241,6 @@ namespace Andja.Model {
                 return 0f;
             return VariablenameToFloat[name + EffectModifier.Additive];
         }
-
         protected virtual void AddSpecialEffect(Effect effect) {
             Debug.LogError("Not implemented Add Special Effect " + effect.ID + " for this object: " + this.ToString());
         }

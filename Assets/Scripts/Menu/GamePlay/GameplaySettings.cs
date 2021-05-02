@@ -17,12 +17,10 @@ namespace Andja.UI.Menu {
         // Use this for initialization
         private void Start() {
             Instance = this;
-            gameplayOptions = new Dictionary<GameplaySetting, string>();
             gameplayOptionsToSave = new Dictionary<GameplaySetting, string>();
             Localizations = new List<string>(UILanguageController.Instance.LocalizationsToFile.Keys);
             ReadGameplayOption();
             SaveGameplayOption();
-
             OptionsToggle.ChangedState += OnOptionClosed;
         }
 
@@ -58,20 +56,25 @@ namespace Andja.UI.Menu {
 
         public bool ReadGameplayOption() {
             string filePath = System.IO.Path.Combine(Application.dataPath.Replace("/Assets", ""), fileName);
-            if (File.Exists(filePath) == false) {
-                return false;
+            if (File.Exists(filePath)) {
+                gameplayOptions = JsonConvert.DeserializeObject<Dictionary<GameplaySetting, string>>(File.ReadAllText(filePath));
             }
-            gameplayOptions = JsonConvert.DeserializeObject<Dictionary<GameplaySetting, string>>(File.ReadAllText(filePath));
-            SetOptions(gameplayOptions);
-            foreach (GameplaySetting s in Enum.GetValues(typeof(GameplaySetting))) {
-                if (HasSavedGameplayOption(s) == false) {
+            if (gameplayOptions != null) {
+                SetOptions(gameplayOptions);
+            } else {
+                foreach (GameplaySetting s in Enum.GetValues(typeof(GameplaySetting))) {
                     switch (s) {
                         case GameplaySetting.Autorotate:
                             SetSavedGameplayOption(s, true);
                             break;
 
                         case GameplaySetting.Language:
-                            SetSavedGameplayOption(s, UILanguageController.selectedLanguage);
+                            string language = System.Globalization.CultureInfo.InstalledUICulture.NativeName.Split(' ')[0];
+                            if(UILanguageController.Instance.LocalizationsToFile.ContainsKey(language)) {
+                                SetSavedGameplayOption(s, language);
+                            } else {
+                                SetSavedGameplayOption(s, "English");
+                            }
                             break;
 
                         default:
@@ -79,16 +82,23 @@ namespace Andja.UI.Menu {
                             break;
                     }
                 }
+                gameplayOptions = new Dictionary<GameplaySetting, string>();
+                foreach (GameplaySetting s in gameplayOptionsToSave.Keys) {
+                    gameplayOptions[s] = gameplayOptionsToSave[s];
+                }
+                SetOptions(gameplayOptionsToSave);
             }
             return true;
         }
 
         private void SetOptions(Dictionary<GameplaySetting, string> options) {
+            if (options == null)
+                return;
             foreach (GameplaySetting optionName in options.Keys) {
                 string val = options[optionName];
                 switch (optionName) {
                     case GameplaySetting.Autorotate:
-                        MouseController.autorotate = bool.Parse(val);
+                        MouseController.Autorotate = bool.Parse(val);
                         break;
 
                     case GameplaySetting.Language:

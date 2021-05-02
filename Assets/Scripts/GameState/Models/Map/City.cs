@@ -20,7 +20,7 @@ namespace Andja.Model {
         [JsonPropertyAttribute] private string _Name = "";
         [JsonPropertyAttribute] public Island Island;
         [JsonPropertyAttribute] private List<PopulationLevel> PopulationLevels;
-
+        [JsonPropertyAttribute] public int PlayerTradeAmount = 50;
         #endregion Serialize
 
         #region RuntimeOrOther
@@ -38,6 +38,13 @@ namespace Andja.Model {
             set {
                 _Name = value;
             }
+        }
+
+        internal void SetPlayerTradeAmount(int amount) {
+            PlayerTradeAmount = amount;
+        }
+        internal void SetName(string name) {
+            Name = name;
         }
 
         public HashSet<Tile> Tiles {
@@ -81,24 +88,24 @@ namespace Andja.Model {
         private Action<Structure> cbStructureAdded;
         private Action<Structure> cbStructureRemoved;
         private Action<City> cbCityDestroy;
-
         private Action<Structure> cbRegisterTradeOffer;
 
         #endregion RuntimeOrOther
-
-        public City(int playerNr, Island island) {
+        /// <summary>
+        /// DO NOT USE! ONLY serialization!
+        /// </summary>
+        public City() {
+            itemIDtoTradeItem = new Dictionary<string, TradeItem>();
+            Inventory = new CityInventory();
+            Structures = new List<Structure>();
+            PlayerTradeAmount = Inventory.MaxStackSize / 2;
+            Tiles = new HashSet<Tile>();
+        }
+        public City(int playerNr, Island island) : this() {
             this.PlayerNumber = playerNr;
             this.Island = island;
-
-            Tiles = new HashSet<Tile>();
-
-            itemIDtoTradeItem = new Dictionary<string, TradeItem>();
-            Structures = new List<Structure>();
-            Inventory = new CityInventory();
             _Name = "<City> " + UnityEngine.Random.Range(0, 1000);
-
             Setup();
-
             //		useTickTimer = useTick;
         }
 
@@ -134,13 +141,6 @@ namespace Andja.Model {
 
         internal PopulationLevel GetPopulationLevel(int structureLevel) {
             return PopulationLevels[structureLevel];
-        }
-
-        /// <summary>
-        /// DO NOT USE! ONLY serialization!
-        /// </summary>
-        public City() {
-            Tiles = new HashSet<Tile>();
         }
 
         private void Setup() {
@@ -381,16 +381,7 @@ namespace Andja.Model {
         }
 
         public bool HasEnoughOfItems(IEnumerable<Item> items, int times = 1) {
-            if (items == null)
-                return true;
-            if (times > 1) {
-                List<Item> clonedItems = new List<Item>();
-                foreach (Item i in items) {
-                    clonedItems.Add(new Item(i.ID, i.count * times));
-                }
-                return Inventory.HasEnoughOfItems(clonedItems);
-            }
-            return Inventory.HasEnoughOfItems(items);
+            return Inventory.HasEnoughOfItems(items, times);
         }
 
         public bool HasEnoughOfItem(Item item) {

@@ -247,7 +247,7 @@ namespace Andja.Model {
                 int maxCount = MaxPopulationCounts[i];
                 foreach (int count in PrototypController.Instance.LevelCountToUnlocks[i].Keys) {
                     if (maxCount < count)
-                        break;
+                        continue;
                     UnlockCheck(i, count);
                 }
             }
@@ -310,7 +310,9 @@ namespace Andja.Model {
                 }
             }
         }
-
+        internal bool HasUnitUnlocked(string ID) {
+            return UnlockedUnits.Contains(ID);
+        }
         public HashSet<String> GetUnlockedStructureNeeds(int level) {
             return UnlockedStructureNeeds[level];
         }

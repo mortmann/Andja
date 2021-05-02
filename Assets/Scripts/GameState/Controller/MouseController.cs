@@ -57,7 +57,7 @@ namespace Andja.Controller {
         private Vector3 dragStartPosition;
         private Vector3 pathStartPosition;
 
-        public static bool autorotate = true;
+        public static bool Autorotate = true;
 
         /// <summary>
         ///  is true if smth is overriding the current states and commands for units
@@ -107,6 +107,7 @@ namespace Andja.Controller {
         private Unit _selectedUnit;
         private List<Unit> selectedUnitGroup;
         private Rect draw_rect;
+        private bool mouseStateIdleLeftMouseDown;
 
         public Unit SelectedUnit {
             get { return _selectedUnit; }
@@ -269,7 +270,12 @@ namespace Andja.Controller {
         public void UpdateMouseStates() {
             switch (MouseState) {
                 case MouseState.Idle:
-                    if (Input.GetMouseButtonUp(0) && EditorController.IsEditor == false) {
+                    if(EventSystem.current.IsPointerOverGameObject() == false && Input.GetMouseButtonDown(0)) {
+                        //If some clicks down onto a ui and then goes off it and releases the mouse 
+                        //we do not want to open or close where the mouse ends up 
+                        mouseStateIdleLeftMouseDown = true;
+                    }
+                    if (mouseStateIdleLeftMouseDown && Input.GetMouseButtonUp(0) && EditorController.IsEditor == false) {
                         //mouse press decide what it hit
                         DecideWhatUIToShow(MouseRayCast());
                     }
@@ -565,7 +571,7 @@ namespace Andja.Controller {
             SetMouseUnitState(MouseUnitState.Normal);
             selectedUnitGroup = units;
             selectedUnitGroup.ForEach(x => x.RegisterOnDestroyCallback(OnUnitDestroy));
-            UIController.Instance.OpenUnitGroupUI(selectedUnitGroup.ToArray());
+            UIController.Instance.OpenUnitGroupUI(selectedUnitGroup);
         }
         /// <summary>
         /// Single Structure Build Mode updating. 
@@ -724,10 +730,13 @@ namespace Andja.Controller {
         /// <param name="number"></param>
         private void UpdateStructurePreview(List<Tile> tiles, int number) {
             bool ownCityTileCount = ToBuildStructure.InCityCheck(tiles, PlayerController.currentPlayerNumber);
-            bool hasEnoughResources =
-                tiles[0].Island?.FindCityByPlayer(PlayerController.currentPlayerNumber)?
-                            .HasEnoughOfItems(ToBuildStructure.BuildingItems, number) == true
-                && PlayerController.CurrentPlayer.HasEnoughMoney(ToBuildStructure.BuildCost * number);
+            bool hasEnoughResources = PlayerController.CurrentPlayer.HasEnoughMoney(ToBuildStructure.BuildCost * number);
+            if(MouseUnitState == MouseUnitState.Build) {
+                hasEnoughResources &= SelectedUnit.inventory.HasEnoughOfItems(ToBuildStructure.BuildingItems, number) == true;
+            } else {
+                hasEnoughResources &= tiles[0].Island?.FindCityByPlayer(PlayerController.currentPlayerNumber)?
+                            .HasEnoughOfItems(ToBuildStructure.BuildingItems, number) == true;
+            }
             UpdateStructurePreviewTiles(tiles, ownCityTileCount && hasEnoughResources);
         }
         /// <summary>
@@ -737,6 +746,15 @@ namespace Andja.Controller {
         /// <param name="overrideTile"></param>
         private void UpdateStructurePreviewTiles(List<Tile> tiles, bool overrideTile) {
             Dictionary<Tile, bool> tileToCanBuild = ToBuildStructure.CheckForCorrectSpot(tiles);
+            if (MouseState == MouseState.BuildSingle && Autorotate) {
+                int i = 0;
+                while(tileToCanBuild.ContainsValue(false) && i < 4) {
+                    ToBuildStructure.RotateStructure();
+                    //TODO: think about a not so ugly solution for autorotate
+                    tileToCanBuild = ToBuildStructure.CheckForCorrectSpot(ToBuildStructure.GetBuildingTiles(GetTileUnderneathMouse()));
+                    i++;
+                }
+            }
             foreach (Tile tile in tiles) {
                 bool specialTileCheck = true;
                 if (MouseUnitState == MouseUnitState.Build) {
@@ -1141,7 +1159,7 @@ namespace Andja.Controller {
 
         internal void StopUnit() {
             //if null or not player unit return without doing anything
-            if (SelectedUnit == null || SelectedUnit.IsPlayerUnit() == false) {
+            if (SelectedUnit == null || SelectedUnit.IsPlayer() == false) {
                 return;
             }
             SelectedUnit.GoIdle();
@@ -1173,7 +1191,7 @@ namespace Andja.Controller {
             ChangeCursorType(CursorType.Pointer);
         }
 
-        public void ChangeCursorType(CursorType type) {
+        public static void ChangeCursorType(CursorType type) {
             Sprite s = UISpriteController.GetUISprite("Cursor_" + type.ToString());
             Cursor.SetCursor(s.texture, s.pivot, CursorMode.Auto);
         }

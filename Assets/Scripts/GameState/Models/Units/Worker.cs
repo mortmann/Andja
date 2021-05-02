@@ -145,7 +145,7 @@ namespace Andja.Model {
                 Debug.LogError("worker has no Home -> for now set it manually");
                 return;
             }
-            if (Home.IsActiveAndWorking == false) {
+            if (Home.IsActiveAndWorking == false && goingToWork) {
                 GoHome();
             }
             if (hasRegistered == false) {
@@ -162,10 +162,6 @@ namespace Andja.Model {
             //If any of these are false the worker should return to home
             //except there is no way to home then remove
             if (path == null) {
-                //if (destTile != null) {
-                //	if(destTile.Structure is OutputStructure)
-                //		SetGoalStructure ((OutputStructure)destTile.Structure);
-                //}
                 //theres no goal so delete it after some time?
                 Debug.Log("worker has no goal");
                 GoHome();
@@ -197,22 +193,18 @@ namespace Andja.Model {
             else {
                 // coming home from doing the work
                 // drop off the items its carrying
-                //if (Home is FarmStructure) {
-                //    if(workTimer>0) {
-                //        workTimer -= deltaTime;
-                //        return;
-                //    }
-                //    ((FarmStructure)Home).AddHarvastable();
-                //    isAtHome = true;
-                //}
-                //else
-                if (toGetItems != null) {
+                if (toGetItems != null && inventory.HasAnything()) {
                     DropOffItems(deltaTime);
                 }
                 else {
                     isAtHome = true;
                 }
             }
+        }
+
+        internal bool IsWorking() {
+            //has it anything? && is not going to get anything it is not Working -> so opposite should be working 
+            return (inventory.HasAnything() == false && goingToWork == false) == false;
         }
 
         public void DropOffItems(float deltaTime) {
@@ -325,6 +317,9 @@ namespace Andja.Model {
         }
 
         internal void Load() {
+            Debug.Log("Home " + Home + " " + path.rotation);
+            path.SetRotationSpeed(720);
+
             if (path is RoutePathfinding rp) {
                 if (rp.StartStructure == null) {
                     if (WorkStructure.IsDestroyed) {
@@ -338,6 +333,10 @@ namespace Andja.Model {
                     }
                     rp.hasToEnterWorkStructure = hasToEnterWorkStructure;
                 }
+            }
+            else if (path is TilesPathfinding tp) {
+                tp.canEndInUnwakable = true;
+                tp.SetRotationSpeed(720);
             }
         }
 
@@ -363,7 +362,7 @@ namespace Andja.Model {
             }
             else {
                 if (path == null)
-                    path = new RoutePathfinding();
+                    path = new RoutePathfinding(720);
                 if (goHome == false) {
                     ((RoutePathfinding)path).SetDestination(Home, structure, hasToEnterWorkStructure);
                 }
@@ -397,5 +396,6 @@ namespace Andja.Model {
         public void UnregisterOnSoundCallback(Action<Worker, string, bool> cb) {
             cbSoundCallback -= cb;
         }
+
     }
 }

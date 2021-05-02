@@ -73,7 +73,8 @@ namespace Andja.Pathfinding {
         protected float rotationSpeed = 90;
         protected Thread calculatingPathThread;
         public bool IsDoneCalculating = true;
-
+        protected Pathing_Mode pathmode;
+        public Turning_Type TurnType = Turning_Type.OnPoint;
         protected float _speed = 1;
 
         protected virtual float Speed {
@@ -89,11 +90,6 @@ namespace Andja.Pathfinding {
                 }
             }
         }
-
-        protected Pathing_Mode pathmode;
-        public Turning_Type TurnType = Turning_Type.OnPoint;
-        public float turnSpeed = 10;
-
         public Tile DestTile {
             get {
                 return _destTile;
@@ -174,8 +170,9 @@ namespace Andja.Pathfinding {
             //for loading purpose or any other strange reason
             //we have a destination & are not there atm && we have no path then calculate it!
             if (DestTile != null && DestTile != CurrTile && IsAtDestination == false
-                && NextDestination != Destination && worldPath == null && IsDoneCalculating != false)
+                && NextDestination != Destination && worldPath == null && IsDoneCalculating != false) {
                 SetDestination(dest_X, dest_Y);
+            }
             if (IsDoneCalculating == false)
                 return;
 
@@ -183,7 +180,6 @@ namespace Andja.Pathfinding {
                 LastMove = Vector3.zero;
                 return;
             }
-
             //if were standing or if we can turn OnPoint(OnSpot) turn to face the rightway
             //so we can turn on point but not move
             //so rotate around with the turnspeed
@@ -195,13 +191,13 @@ namespace Andja.Pathfinding {
             else {
                 UpdateRotationOnMove(deltaTime);
             }
-            LastMove = Do_Movement(deltaTime);
+            LastMove = DoMovement(deltaTime);
         }
 
         private float rotateTime;
         private float rotateAngle;
 
-        public void Update_DoRotate(float deltaTime) {
+        public void UpdateDoRotate(float deltaTime) {
             //if ((rotateTo + 0.1f <= rotation && rotateTo + 0.1f >= rotation)==false) {
             //    rotateTimer += deltaTime * rotationSpeed;
             //    rotation = Mathf.LerpAngle(rotation, rotateTo, rotateTimer/rotateTime);
@@ -222,7 +218,7 @@ namespace Andja.Pathfinding {
             Vector2 moveDirection = PointA - PointB;
             float distanceToTurn = (Position2 - PointA).magnitude;
             float angle = Mathf.Atan2(moveDirection.y, moveDirection.x) * Mathf.Rad2Deg;
-            float timeForTurning = Mathf.Abs(angle - rotation) / turnSpeed;
+            float timeForTurning = Mathf.Abs(angle - rotation) / rotationSpeed;
             float timeToTurn = distanceToTurn / Speed;
             //if (timeToTurn < timeForTurning / 2) {
             //    rotation = Mathf.LerpAngle(rotation, angle, deltaTime * rotationSpeed);//Mathf.LerpAngle ( rotation , angle , t);
@@ -249,7 +245,7 @@ namespace Andja.Pathfinding {
 
         public abstract void SetDestination(float x, float y);
 
-        private Vector3 Do_Movement(float deltaTime) {
+        private Vector3 DoMovement(float deltaTime) {
             //no move command so return!
             if (Position2 == Destination) {
                 IsAtDestination = true;
@@ -315,5 +311,9 @@ namespace Andja.Pathfinding {
             Thread calcPath = new Thread(CalculatePath);
             calcPath.Start();
         }
+        internal void SetRotationSpeed(float speed) {
+            rotationSpeed = speed;
+        }
+
     }
 }

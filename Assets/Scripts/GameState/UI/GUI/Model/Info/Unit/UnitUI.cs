@@ -7,7 +7,8 @@ using UnityEngine.UI;
 
 namespace Andja.UI.Model {
 
-    public class UnitUI : InfoUI {
+    public class UnitUI : MonoBehaviour {
+        public ImageText[] UnitInfos;
         public Transform content;
         public GameObject itemPrefab;
         public Button settleButton;
@@ -16,12 +17,9 @@ namespace Andja.UI.Model {
         public GameObject buttonCanvas;
         public ItemUI cannonsItem;
         public GameObject unitCombatInfo;
-        public UnitHealthUI unitHealth;
-        public NameInputField unitName;
         public Inventory inv;
         private Dictionary<int, ItemUI> itemToGO;
         private Unit unit;
-
         bool IsCurrentShipUI => unit is Ship;
         public Button addCannon;
         public Button removeCannon;
@@ -38,7 +36,7 @@ namespace Andja.UI.Model {
             settleButton.onClick.AddListener(() => ToggleSettle());
         }
 
-        public override void OnShow(object showUnit) {
+        public void Show(Unit showUnit) {
             if (unit == showUnit) {
                 return;
             }
@@ -47,12 +45,11 @@ namespace Andja.UI.Model {
                 return;
             UIController.Instance.HighlightUnits(unit);
             unit.RegisterOnDestroyCallback(OnUnitDestroy);
-            unitHealth.Show(unit);
-            settleButton.gameObject.SetActive(unit.IsPlayerUnit());
-            patrolButton.gameObject.SetActive(unit.IsPlayerUnit());
-            cannonsItem.gameObject.SetActive(unit.IsPlayerUnit());
-            addCannon.gameObject.SetActive(unit.IsPlayerUnit());
-            removeCannon.gameObject.SetActive(unit.IsPlayerUnit());
+            settleButton.gameObject.SetActive(unit.IsPlayer());
+            patrolButton.gameObject.SetActive(unit.IsPlayer());
+            cannonsItem.gameObject.SetActive(unit.IsPlayer());
+            addCannon.gameObject.SetActive(unit.IsPlayer());
+            removeCannon.gameObject.SetActive(unit.IsPlayer());
             //clear inventory screen
             foreach (Transform item in content.transform) {
                 GameObject.Destroy(item.gameObject);
@@ -65,8 +62,30 @@ namespace Andja.UI.Model {
                     Destroy(goal);
             unitGoalGOs = new List<GameObject>();
             unitPatrolGoalGOs = new List<GameObject>();
-            if (unit.IsPlayerUnit() == false) {
+            for (int i = 0; i < 3; i++) {
+                UnitInfos[i].gameObject.SetActive(false);
+            }
+            UnitInfos[3].Set(UISpriteController.GetIcon(unit.ArmorType.ID), unit.ArmorType);
+            UnitInfos[4].Set(UISpriteController.GetIcon(unit.DamageType.ID), unit.DamageType);
+            if (unit.IsPlayer() == false) {
                 return;
+            }
+            UnitInfos[0].Set(UISpriteController.GetIcon(CommonIcon.CurrentDamage),
+                StaticLanguageVariables.CurrentDamage, () => { return unit.CurrentDamage + ""; });
+            UnitInfos[1].Set(UISpriteController.GetIcon(CommonIcon.MaximumDamage),
+                StaticLanguageVariables.MaximumDamage, () => { return unit.MaximumDamage + ""; });
+            UnitInfos[2].Set(UISpriteController.GetIcon(CommonIcon.Speed),
+                StaticLanguageVariables.Speed, () => { return unit.Speed + ""; });
+            if (unit.rangeUStructure != null) {
+                if (unit.rangeUStructure is WarehouseStructure) {
+                    if (unit.rangeUStructure.PlayerNumber == PlayerController.currentPlayerNumber) {
+                        unit.rangeUStructure.City.tradeUnit = unit;
+                        City c = unit.rangeUStructure.City;
+                        UIController.Instance.OpenCityInventory(c, item =>
+                            c.TradeWithShip(c.Inventory.GetItemInInventoryClone(item), c.PlayerTradeAmount)
+                        );
+                    }
+                }
             }
             OnPatrolRouteChange(unit.patrolCommand);
             unit.patrolCommand.RegisterOnRouteChange(OnPatrolRouteChange);
@@ -199,7 +218,6 @@ namespace Andja.UI.Model {
         }
 
         private void OnItemClick(int clicked) {
-            Debug.Log("clicked " + clicked);
             unit.ToTradeItemToNearbyWarehouse(inv.GetItemInSpace(clicked));
         }
 
@@ -216,9 +234,9 @@ namespace Andja.UI.Model {
 
         public void Update() {
             if (unit.CurrentHealth <= 0) {
-                gameObject.SetActive(false);
+                UIController.Instance.CloseInfoUI();
             }
-            if (unit.IsPlayerUnit()) {
+            if (unit.IsPlayer()) {
                 if (IsCurrentShipUI) {
                     Ship ship = ((Ship)unit);
                     if (ship.HasCannonsToAddInInventory() != addCannon.gameObject.activeSelf) {
@@ -246,7 +264,9 @@ namespace Andja.UI.Model {
                         unitGoalGOs.RemoveAt(unitGoalGOs.Count - 1);
                     }
                 }
-            }
+                InfoUI.Instance.UpdateUpkeep(unit.UpkeepCost);
+            } 
+            InfoUI.Instance.UpdateHealth(unit.CurrentHealth, unit.MaxHealth);
         }
 
         //TODO: make this possible with
@@ -266,13 +286,16 @@ namespace Andja.UI.Model {
             ship.RemoveCannonsToInventory(InputHandler.ShiftKey);
         }
 
-        public override void OnClose() {
-            if (unit != null)
+        public void OnDisable() {
+            if (unit != null) {
                 unit.patrolCommand.UnregisterOnRouteChange(OnPatrolRouteChange);
-            unit.UnregisterOnDestroyCallback(OnUnitDestroy);
+                unit.UnregisterOnDestroyCallback(OnUnitDestroy);
+                UIController.Instance?.DehighlightUnits(unit);
+                if (unit.rangeUStructure != null)
+                    unit.rangeUStructure.City.tradeUnit = null;
+                MouseController.Instance?.UnselectUnit(false);
+            }
             DeselectButton();
-            MouseController.Instance.UnselectUnit(false);
-            UIController.Instance.DehighlightUnits(unit);
             if (unitGoalGOs == null)
                 return;
             foreach (var unitGoalGO in unitGoalGOs) {

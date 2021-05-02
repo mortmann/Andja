@@ -77,9 +77,6 @@ namespace Andja.Model {
             if (Growable == null) {
                 return;
             }
-            if (MaxNumberOfWorker > 0) {
-                Workers = new List<Worker>();
-            }
             //farm has it needs plant if it can
             foreach (Tile rangeTile in RangeTiles) {
                 if (rangeTile.Structure != null) {
@@ -98,9 +95,6 @@ namespace Andja.Model {
         }
 
         public override void OnUpdate(float deltaTime) {
-            if (Output[0].count >= MaxOutputStorage) {
-                return;
-            }
             //update any worker
             for (int i = Workers.Count - 1; i >= 0; i--) {
                 Worker w = Workers[i];
@@ -108,6 +102,9 @@ namespace Andja.Model {
                 if (w.isAtHome) {
                     WorkerComeBack(w);
                 }
+            }
+            if (IsActiveAndWorking == false || Output[0].count >= MaxOutputStorage) {
+                return;
             }
             if (Growable != null) {
                 if (MaxNumberOfWorker == 0) {
@@ -194,18 +191,21 @@ namespace Andja.Model {
         }
 
         private float CalculateProgress() {
+            if (IsActiveAndWorking == false)
+                return 0;
             if (MaxNumberOfWorker == 0) {
                 return produceTimer;
             }
             if (MaxNumberOfWorker > NeededHarvestForProduce) {
                 float sum = 0;
                 for (int x = 0; x < MaxNumberOfWorker; x++) {
-                    sum = ProduceTime - Workers[x].WorkTimer;
+                    if(Workers[x].IsWorking())
+                        sum = ProduceTime - Workers[x].WorkTimer;
                 }
                 sum /= MaxNumberOfWorker;
                 return (sum);
             }
-            return (Workers.Sum(x => ProduceTime - x.WorkTimer));
+            return (Workers.FindAll(x => x.IsWorking())).Sum(x => ProduceTime - x.WorkTimer);
         }
 
         protected override void OnDestroy() {

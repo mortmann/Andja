@@ -21,20 +21,20 @@ namespace Andja.Model {
 
     public enum BuildRestriktions { Land, Shore, Mountain };
 
-    public class StructurePrototypeData : LanguageVariables {
+    public class StructurePrototypeData : BaseThing {
         public string ID;
-        public bool hasHitbox;// { get; protected set; }
         public float maxHealth;
-        public int structureRange = 0;
         public int populationLevel = 0;
         public int populationCount = 0;
         public int structureLevel = 0;
+        public int structureRange = 0;
         public int tileWidth;
         public int tileHeight;
         public bool canRotate = true;
         public bool canBeBuildOver = false;
         public bool canBeUpgraded = false;
         public bool canTakeDamage = false;
+        public bool hasHitbox;// { get; protected set; }
 
         /// <summary>
         /// Null means no restrikiton so all buildable tiles
@@ -70,16 +70,17 @@ namespace Andja.Model {
         public StructureTyp structureTyp = StructureTyp.Blocking;
         public bool canStartBurning;
         public int upkeepCost;
+        public int buildCost;
+        public string spriteBaseName;
 
         public bool canBeBuild = true;
-        public int buildCost;
         public BuildType buildTyp;
         public ExtraBuildUI extraBuildUITyp;
         public Item[] buildingItems;
-        public Item[] upgradeItems = null; // set inside prototypecontoller
-        public int upgradeCost = 0; // set inside prototypecontoller
+        // set inside prototypecontoller
+        public Item[] upgradeItems = null; 
+        public int upgradeCost = 0; 
 
-        public string spriteBaseName;
     }
 
     [JsonObject(MemberSerialization.OptIn)]
@@ -91,12 +92,9 @@ namespace Andja.Model {
 
         //prototype id
         [JsonPropertyAttribute] public string ID;
-
         //build id -- when it was build
         [JsonPropertyAttribute] public uint buildID;
-
         [JsonPropertyAttribute] protected float _health;
-
         [JsonPropertyAttribute]
         public Tile BuildTile {
             get {
@@ -267,15 +265,15 @@ namespace Andja.Model {
                 return _health;
             }
             set {
+                _health = value;
                 if (CanTakeDamage == false) {
                     return;
                 }
-                _health = value;
                 if (_health <= 0) {
                     Destroy();
                 }
-            }
-        }
+            } 
+        } 
 
         public bool NeedsRepair => CurrentHealth < MaxHealth;
 
@@ -326,6 +324,10 @@ namespace Andja.Model {
         }
 
         public void Update(float deltaTime) {
+            if(CurrentHealth > MaxHealth) {
+                //Values got changed or maybe upgrade lost? we need to reduce it slowly
+                CurrentHealth = Mathf.Clamp(CurrentHealth - 10 * deltaTime, MaxHealth, CurrentHealth);
+            }
             UpdateEffects(deltaTime);
             OnUpdate(deltaTime);
         }
@@ -449,10 +451,11 @@ namespace Andja.Model {
             return tiles.Count(x => x.City?.PlayerNumber == playerNumber) >= tiles.Count() * GameData.nonCityTilesPercantage;
         }
 
-        public void PlaceStructure(List<Tile> tiles) {
-            CurrentHealth = MaxHealth;
+        public void PlaceStructure(List<Tile> tiles, bool loading) {
             Tiles = new List<Tile>();
             Tiles.AddRange(tiles);
+            if (loading == false)
+                CurrentHealth = MaxHealth;
             //if we are here we can build this and
             //set the tiles to the this structure -> claim the tiles!
             NeighbourTiles = new HashSet<Tile>();
@@ -839,6 +842,15 @@ namespace Andja.Model {
                 if (Routes.Contains(r.Route) == false)
                     Routes.Add(r.Route);
             }
+        }
+
+        internal bool IsPlayer() {
+            return PlayerNumber == PlayerController.currentPlayerNumber;
+        }
+
+        internal virtual void ToggleActive() {
+            //not all structures can be paused -- if it can it is handled in subclass
+            isActive = !isActive;
         }
 
         #endregion override

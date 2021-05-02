@@ -4,7 +4,7 @@
       <populationCount>0</populationCount>
       <Name>
          <entry lang="English">Basic Unit</entry>
-         <entry lang="German">Standard Einheit</entry>
+         <entry lang="Deutsch">Standard Einheit</entry>
       </Name>
       <buildingItems length="1">
          <Item ID="swords">
@@ -34,11 +34,11 @@
       <populationCount>0</populationCount>
       <Name>
          <entry lang="English">Flagship</entry>
-         <entry lang="German">Flaggschiff</entry>
+         <entry lang="Deutsch">Flaggschiff</entry>
       </Name>
       <Description>
          <entry lang="English">McShipFace</entry>
-         <entry lang="German">Shippy Das Schiff</entry>
+         <entry lang="Deutsch">Shippy Das Schiff</entry>
       </Description>
       <buildingItems length="4">
          <Item ID="wood">
@@ -65,7 +65,7 @@
       <damageType>cannonball</damageType>
       <armorType>woodenwall</armorType>
       <attackRate>15.0</attackRate>
-      <buildRange>1.0</buildRange>
+      <buildRange>15.0</buildRange>
       <speed>3.5</speed>
       <turnSpeed>1.0</turnSpeed>
       <aggroTime>0.0</aggroTime>

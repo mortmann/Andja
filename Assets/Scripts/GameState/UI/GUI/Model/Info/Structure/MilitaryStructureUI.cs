@@ -5,15 +5,14 @@ using UnityEngine;
 
 namespace Andja.UI.Model {
 
-    public class MilitaryStructureUI : InfoUI {
-        public GenericStructureUI StructureUI;
+    public class MilitaryStructureUI : MonoBehaviour {
         public GameObject unitSelectionPanel;
         public CurrentlyBuildingUnitUI currentlyBuildingUnit;
         public UnitBuildUI unitSelectPrefab;
         private MilitaryStructure CurrentMilitary;
         private Dictionary<Unit, UnitBuildUI> unitToBuildUI;
 
-        public override void OnShow(object str) {
+        public void Show(object str) {
             if (CurrentMilitary == str) {
                 return;
             }
@@ -23,8 +22,6 @@ namespace Andja.UI.Model {
             }
             CurrentMilitary = (MilitaryStructure)str;
             CurrentMilitary.RegisterOnDestroyCallback(OnStructureDestroy);
-            StructureUI.gameObject.SetActive(true);
-            StructureUI.Show(CurrentMilitary);
             foreach (Transform child in unitSelectionPanel.transform) {
                 Destroy(child.gameObject);
             }
@@ -48,21 +45,22 @@ namespace Andja.UI.Model {
         }
 
         private void OnStructureDestroy(Structure str, IWarfare destroyer) {
-            UIController.Instance.CloseMilitaryStructureInfo();
+            UIController.Instance.CloseInfoUI();
         }
 
         // Update is called once per frame
         private void Update() {
             if (CurrentMilitary.PlayerNumber != PlayerController.currentPlayerNumber)
-                UIController.Instance.CloseMilitaryStructureInfo();
+                UIController.Instance.CloseInfoUI();
             foreach (Unit u in CurrentMilitary.CanBeBuildUnits) {
                 unitToBuildUI[u].SetIsBuildable(CurrentMilitary.HasEnoughResources(u));
             }
+            InfoUI.Instance.UpdateHealth(CurrentMilitary.CurrentHealth, CurrentMilitary.MaxHealth);
+            InfoUI.Instance.UpdateUpkeep(CurrentMilitary.UpkeepCost);
         }
 
-        public override void OnClose() {
+        public void OnDisable() {
             CurrentMilitary.UnregisterOnDestroyCallback(OnStructureDestroy);
-            StructureUI.gameObject.SetActive(false);
             MouseController.Instance.UnselectStructure();
             CurrentMilitary = null;
         }

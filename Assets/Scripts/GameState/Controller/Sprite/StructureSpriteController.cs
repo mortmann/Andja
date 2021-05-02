@@ -118,8 +118,8 @@ namespace Andja.Controller {
                 BoxCollider2D col = go.AddComponent<BoxCollider2D>();
                 col.size = new Vector2(sr.sprite.textureRect.size.x / sr.sprite.pixelsPerUnit, sr.sprite.textureRect.size.y / sr.sprite.pixelsPerUnit);
             }
-            if (structure.ReadOnlyEffects != null) {
-                foreach (Effect e in structure.ReadOnlyEffects) {
+            if (structure.Effects != null) {
+                foreach (Effect e in structure.Effects) {
                     OnStructureEffectChange(structure, e, true);
                 }
             }
@@ -167,11 +167,8 @@ namespace Andja.Controller {
                 effectGO.transform.SetParent(strgo.transform);
                 effectGO.transform.localPosition = new Vector3(0, 0, 0);
                 EffectAnimator ea = effectGO.AddComponent<EffectAnimator>();
-                string path = EffectFilePath + effect.OnMapSpriteName + "_" + structure.SpriteName;
-                Sprite[] sprites = Resources.LoadAll<Sprite>(path);
-                if (sprites.Length == 0)
-                    return;
-                ea.Show(sprites, 0.25f, "Structures", effect);
+                Debug.LogWarning("not implemented");
+                //ea.Show(, 0.25f, "Structures", effect);
             }
         }
 

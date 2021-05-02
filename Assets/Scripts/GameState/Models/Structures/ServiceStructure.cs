@@ -208,7 +208,7 @@ namespace Andja.Model {
 
         public bool RemoveEffectOverTime(Structure str, float deltaTime) {
             // does the structure have a effect that this handles? if not worker is done
-            if (str.ReadOnlyEffects.Find(x => Array.Exists<Effect>(EffectsOnTargets, y => x.ID == y.ID)) == null)
+            if (str.HasAnyEffect(EffectsOnTargets))
                 return true;
             //structure will check if its a valid effect
             foreach (Effect eff in EffectsOnTargets) {

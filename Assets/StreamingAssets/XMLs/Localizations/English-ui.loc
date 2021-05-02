@@ -796,11 +796,19 @@ you currently have no City.</hoverOverTranslation>
       <translationData id="StaticLanguageVariables/BuildCost">
          <translation>Build Cost</translation>
       </translationData>
+      <translationData id="StaticLanguageVariables/CurrentDamage">
+         <translation>Current Damage</translation>
+         <hoverOverTranslation>How much damage it does at this moment.</hoverOverTranslation>
+      </translationData>
       <translationData id="StaticLanguageVariables/Empty">
          <translation>Empty</translation>
       </translationData>
       <translationData id="StaticLanguageVariables/Locked">
          <translation>Locked</translation>
+      </translationData>
+      <translationData id="StaticLanguageVariables/MaximumDamage">
+         <translation>Maximum Damage</translation>
+         <hoverOverTranslation>The most damage this can do.</hoverOverTranslation>
       </translationData>
       <translationData id="StaticLanguageVariables/Off">
          <translation>Off</translation>
@@ -811,8 +819,13 @@ you currently have no City.</hoverOverTranslation>
       <translationData id="StaticLanguageVariables/Or">
          <translation>Or</translation>
       </translationData>
+      <translationData id="StaticLanguageVariables/Speed">
+         <translation>Movement Speed</translation>
+         <hoverOverTranslation>How fast this unit can move.</hoverOverTranslation>
+      </translationData>
       <translationData id="StaticLanguageVariables/Upkeep">
          <translation>Upkeep</translation>
+         <hoverOverTranslation>How much it costs to keep it around.</hoverOverTranslation>
       </translationData>
       <translationData id="TextureQuality">
          <translation>Texture Quality</translation>

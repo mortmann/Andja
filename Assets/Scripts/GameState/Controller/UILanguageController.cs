@@ -2,6 +2,7 @@
 using Andja.UI.Menu;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Xml;
@@ -10,7 +11,7 @@ using UnityEngine;
 
 namespace Andja.Controller {
 
-    public enum StaticLanguageVariables { On, Off, And, Or, Empty, BuildCost, Upkeep, Locked, }
+    public enum StaticLanguageVariables { On, Off, And, Or, Empty, BuildCost, Upkeep, Locked, CurrentDamage, MaximumDamage, Speed }
     /// <summary>
     /// Loads Translations (except prototypes sends it off to PrototypController) and changing language 
     /// </summary>
@@ -94,7 +95,7 @@ namespace Andja.Controller {
         }
 
         public TranslationData GetTranslationData(StaticLanguageVariables val) {
-            return GetTranslationData(val.ToString());
+            return GetTranslationData(typeof(StaticLanguageVariables).Name +"/"+ val.ToString());
         }
 
         public void AddTranslationData(TranslationData data) {
@@ -103,8 +104,8 @@ namespace Andja.Controller {
 
         public void ChangeLanguage(string language) {
             if (LocalizationsToFile.ContainsKey(language) == false) {
-                Debug.LogWarning("selected Language not available!");
-                return;
+                Debug.LogWarning("Selected Language not available!");
+                language = "English";
             }
             selectedLanguage = language;
             LoadLocalization(LocalizationsToFile[selectedLanguage]);
@@ -134,7 +135,6 @@ namespace Andja.Controller {
         }
 
         public void LoadLocalization(string file) {
-            string filename = localizationFilePrefix + selectedLanguage + localizationFileType;
             XmlSerializer xml = new XmlSerializer(typeof(UILanguageLocalizations));
             UILanguageLocalizations uiLoc = xml.Deserialize(new StringReader(File.ReadAllText(file))) as UILanguageLocalizations;
             //idToTranslation.Clear();
@@ -177,17 +177,20 @@ namespace Andja.Controller {
             }
             return labels.ToArray();
         }
+        internal string GetStaticVariables(StaticLanguageVariables paras) {
+            string name = typeof(StaticLanguageVariables).Name + "/" + paras.ToString();
+            if (idToTranslation.ContainsKey(name)) {
+                return (idToTranslation[name].translation);
+            }
+            else {
+                return ("Missing Translation " + paras);
+            }
+        }
 
         internal string[] GetStaticVariables(params StaticLanguageVariables[] paras) {
             List<string> labels = new List<string>();
             foreach (StaticLanguageVariables p in paras) {
-                string name = typeof(StaticLanguageVariables).Name + "/" + p.ToString();
-                if (idToTranslation.ContainsKey(name)) {
-                    labels.Add(idToTranslation[name].translation);
-                }
-                else {
-                    labels.Add("Missing Translation " + p.ToString());
-                }
+                labels.Add(GetStaticVariables(p));
             }
             return labels.ToArray();
         }

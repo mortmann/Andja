@@ -70,7 +70,7 @@ namespace Andja.Model {
         }
 
         public override void OnUpdate(float deltaTime) {
-            base.Update_Worker(deltaTime);
+            base.UpdateWorker(deltaTime);
             if (currentCaptureSpeed > 0) {
                 capturedProgress += currentCaptureSpeed * deltaTime;
             }

@@ -65,7 +65,7 @@ namespace Andja.UI.Model {
             amountSlider.onValueChanged.AddListener(OnAmountSliderMoved);
             World.Current.RegisterUnitCreated(OnShipCreate);
             foreach (Unit item in World.Current.Units) {
-                if (item.IsShip == false || item.IsPlayerUnit() == false) {
+                if (item.IsShip == false || item.IsPlayer() == false) {
                     continue;
                 }
                 OnShipCreate(item);
@@ -84,7 +84,7 @@ namespace Andja.UI.Model {
         }
 
         public void OnShipDestroy(Unit unit, IWarfare warfare) {
-            if (unit.IsPlayerUnit() == false || unit is Ship == false)
+            if (unit.IsPlayer() == false || unit is Ship == false)
                 return;
             Ship ship = (Ship)unit;
             Destroy(shipToGOElement[ship].gameObject);
@@ -157,6 +157,7 @@ namespace Andja.UI.Model {
             foreach (Ship ship in tradeRoute.shipToNextStop.Keys) {
                 AddShipToList(ship);
             }
+            SetCity(tr.GetTrade(0)?.city);
         }
 
         private void AddShipToList(Ship ship) {
@@ -287,18 +288,26 @@ namespace Andja.UI.Model {
         }
 
         public void SetCity(City c) {
-            text.text = c.Name;
-            ResetItemIcons();
-            city = c;
-            TradeRoute.Trade t = tradeRoute.GetTradeFor(city);
-            if (t == null) {
-                return;
+            if(c != null) {
+                text.text = c.Name;
+                ResetItemIcons();
+                city = c;
+                TradeRoute.Trade t = tradeRoute.GetTradeFor(city);
+                if (t == null) {
+                    return;
+                }
+                foreach (Item i in t.load) {
+                    AddItem(i, TradeTyp.Load);
+                }
+                foreach (Item i in t.unload) {
+                    AddItem(i, TradeTyp.Unload);
+                }
             }
-            foreach (Item i in t.load) {
-                AddItem(i, TradeTyp.Load);
-            }
-            foreach (Item i in t.load) {
-                AddItem(i, TradeTyp.Unload);
+            else {
+                text.text = "";
+                ResetItemIcons();
+                city = null;
+                UIController.Instance.CloseRightUI();
             }
         }
 

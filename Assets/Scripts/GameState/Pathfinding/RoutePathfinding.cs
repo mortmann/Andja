@@ -13,6 +13,9 @@ namespace Andja.Pathfinding {
 
         public RoutePathfinding() : base() {
         }
+        public RoutePathfinding(float rotationSpeed) : base() {
+            this.rotationSpeed = rotationSpeed;
+        }
 
         /// <summary>
         /// Preferrably those list ONLY contains tiles WITH roads build on it for

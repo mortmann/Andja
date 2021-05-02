@@ -95,7 +95,7 @@ namespace Andja.UI.Model {
 
         public void OnPointerEnter(PointerEventData eventData) {
             GameObject.FindObjectOfType<HoverOverScript>().Show(
-                item != null ? item.Name : UILanguageController.Instance.GetStaticVariables(StaticLanguageVariables.Empty)[0]);
+                item != null ? item.Name : UILanguageController.Instance.GetStaticVariables(StaticLanguageVariables.Empty));
         }
 
         public void OnPointerExit(PointerEventData eventData) {

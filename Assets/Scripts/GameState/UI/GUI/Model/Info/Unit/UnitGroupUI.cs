@@ -1,27 +1,38 @@
 using Andja.Controller;
 using Andja.Model;
 using System.Collections.Generic;
+using System;
 using System.Linq;
 using UnityEngine;
 
-namespace Andja.UI {
+namespace Andja.UI.Model {
 
-    public class UnitGroupUI : InfoUI {
+    public class UnitGroupUI : MonoBehaviour {
         public Transform unitsContent;
         public UnitHealthUI unitHealthPrefab;
 
-        private Dictionary<Unit, UnitHealthUI> unitToUI;
-
-        public override void OnShow(object show) {
-            if (show.GetType() != typeof(Unit[]))
-                return;
-            Unit[] group = (Unit[])show;
-            UIController.Instance.HighlightUnits(group);
+        private Dictionary<Unit, UnitHealthUI> unitToUI= new Dictionary<Unit, UnitHealthUI>();
+        private void Awake() {
             foreach (Transform t in unitsContent)
                 Destroy(t.gameObject);
-            unitToUI = new Dictionary<Unit, UnitHealthUI>();
-            foreach (Unit unit in group) {
-                AddUnit(unit);
+        }
+        public void Show(List<Unit> show) {
+            if (unitToUI.Keys.Except(show).Any() == false)
+                return;
+            foreach(Unit u in unitToUI.Keys) {
+                if(show.Contains(u)) {
+                    continue;
+                }
+                Destroy(unitToUI[u].gameObject);
+            }
+
+            UIController.Instance.HighlightUnits(show.ToArray());
+            
+            foreach (Unit unit in show) {
+                if (unit.IsPlayer() == false)
+                    continue;
+                if(unitToUI.ContainsKey(unit) == false) 
+                    AddUnit(unit);
             }
         }
 
@@ -44,11 +55,10 @@ namespace Andja.UI {
             unitToUI.Add(unit, uhu);
         }
 
-        public override void OnClose() {
-            if (unitToUI != null)
-                foreach (Unit unit in unitToUI.Keys) {
-                    unit.UnregisterOnDestroyCallback(RemoveUnit);
-                }
+        public void OnDisable() {
+            foreach (Unit unit in unitToUI.Keys) {
+                unit.UnregisterOnDestroyCallback(RemoveUnit);
+            }
             UIController.Instance.DehighlightUnits(unitToUI.Keys.ToArray());
             MouseController.Instance.UnselectUnitGroup();
         }

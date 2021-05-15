@@ -25,7 +25,7 @@ namespace Andja.Model.Components {
 
         public UnitDoModes currentUnitDO = UnitDoModes.Idle;
         public UnitMainModes currentUnitMain = UnitMainModes.Idle;
-        public Turning_Type turnType;
+        public TurningType turnType;
         private LineRenderer line;
 
         //FIXME TODO REMOVE DIS

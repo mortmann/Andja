@@ -53,6 +53,8 @@ namespace Andja.UI {
 
         public TranslationData(string id, bool OnlyHoverOver) : this(id) {
             this.onlyHoverOver = OnlyHoverOver;
+            if(onlyHoverOver)
+                hoverOverTranslation = "[**Missing**]";
         }
 
         public TranslationData(string id) {

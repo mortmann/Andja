@@ -52,7 +52,7 @@ namespace Andja.Model {
                 if (_tilesmap == null) {
                     _tilesmap = new bool[Width][];
                     for (int x = 0; x < Width; x++) {
-                        _tilesmap[Width] = new bool[Height];
+                        _tilesmap[x] = new bool[Height];
                         for (int y = 0; y < Height; y++) {
                             _tilesmap[x][y] = (World.Current.GetTileAt(x, y).Type == TileType.Ocean);
                         }
@@ -95,6 +95,7 @@ namespace Andja.Model {
         private Action<Tile> cbTileChanged;
         private Action<Crate> cbCrateSpawn;
         private Action<Crate> cbCrateDespawned;
+
         private Action<Unit, IWarfare> cbAnyUnitDestroyed;
 
         #endregion RuntimeOrOther
@@ -363,7 +364,15 @@ namespace Andja.Model {
         public Fertility GetFertility(string ID) {
             return idToFertilities[ID];
         }
-
+        internal Tile GetRandomOceanTile() {
+            int x = UnityEngine.Random.Range(0, Width);
+            int y = UnityEngine.Random.Range(0, Height);
+            while(Tilesmap[x][y] == false) {
+                x = UnityEngine.Random.Range(0, Width);
+                y = UnityEngine.Random.Range(0, Height);
+            }
+            return World.Current.GetTileAt(x, y);
+        }
         public void CreateWorkerGameObject(Worker worker) {
             cbWorkerCreated?.Invoke(worker);
         }
@@ -447,6 +456,28 @@ namespace Andja.Model {
 
             public DamageType DamageType => PrototypController.Instance.GetWorldDamageType();
 
+            public float MaximumHealth => throw new NotImplementedException();
+
+            public float CurrentHealth => throw new NotImplementedException();
+
+            public bool IsDestroyed => throw new NotImplementedException();
+
+            public Vector2 CurrentPosition => throw new NotImplementedException();
+
+            public Vector2 NextDestinationPosition => throw new NotImplementedException();
+
+            public Vector2 LastMovement => throw new NotImplementedException();
+
+            public ArmorType ArmorType => throw new NotImplementedException();
+
+            public float Speed => throw new NotImplementedException();
+
+            public float Width => throw new NotImplementedException();
+
+            public float Height => throw new NotImplementedException();
+
+            public float Rotation => throw new NotImplementedException();
+
             public float GetCurrentDamage(ArmorType armorType) {
                 return CurrentDamage;
             }
@@ -457,6 +488,14 @@ namespace Andja.Model {
 
             public void GoIdle() {
                 return;
+            }
+
+            public bool IsAttackableFrom(IWarfare warfare) {
+                throw new NotImplementedException();
+            }
+
+            public void TakeDamageFrom(IWarfare warfare) {
+                throw new NotImplementedException();
             }
         }
     }

@@ -31,9 +31,11 @@ namespace Andja.Utility {
 
         private void Start() {
             audioSource = GetComponent<AudioSource>();
-            WorldController.Instance.RegisterSpeedChange(OnGameSpeedChange);
+            WorldController.Instance?.RegisterSpeedChange(OnGameSpeedChange);
         }
-
+        private void OnDestroy() {
+            WorldController.Instance?.UnregisterSpeedChange(OnGameSpeedChange);
+        }
         private void OnGameSpeedChange(GameSpeed gameSpeed, float value) {
             if (gameSpeed == GameSpeed.Paused && pausePlayBackOnGamePause) {
                 Pause();

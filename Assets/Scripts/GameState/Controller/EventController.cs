@@ -94,8 +94,7 @@ namespace Andja.Controller {
             List<uint> ids = new List<uint>(idToActiveEvent.Keys);
             foreach (uint i in ids) {
                 if (idToActiveEvent[i].IsDone) {
-                    cbEventEnded(idToActiveEvent[i]);
-                    idToActiveEvent.Remove(i);
+                    StopGameEvent(i);
                 }
                 else {
                     idToActiveEvent[i].Update(WorldController.Instance.FixedDeltaTime);
@@ -124,9 +123,9 @@ namespace Andja.Controller {
             UnityEngine.Random.state = ges.Random;
         }
 
-        public void CreateGameEvent(GameEvent ge) {
+        public bool CreateGameEvent(GameEvent ge) {
             if (ge.IsValid() == false) {
-                return;
+                return false;
             }
             //fill the type
             idToActiveEvent.Add(lastID, ge);
@@ -134,6 +133,7 @@ namespace Andja.Controller {
             ge.StartEvent();
             cbEventCreated(ge);
             lastID++;
+            return true;
         }
 
         /// <summary>
@@ -145,14 +145,21 @@ namespace Andja.Controller {
             TriggerEventForPlayer(gameEvent, PlayerController.Instance.GetRandomPlayer());
         }
 
-        internal void TriggerEventForPlayer(GameEvent gameEvent, Player player) {
+        internal bool TriggerEventForPlayer(GameEvent gameEvent, Player player) {
             List<IGEventable> playerTargets = GetPlayerTargets(gameEvent.Targeted, player);
-            TriggerEventForEventable(gameEvent, playerTargets[UnityEngine.Random.Range(0, playerTargets.Count)]);
+            return TriggerEventForEventable(gameEvent, playerTargets[UnityEngine.Random.Range(0, playerTargets.Count)]);
         }
 
-        internal void TriggerEventForEventable(GameEvent gameEvent, IGEventable eventable) {
+        internal bool TriggerEventForEventable(GameEvent gameEvent, IGEventable eventable) {
             gameEvent.target = eventable;
-            CreateGameEvent(gameEvent);
+            return CreateGameEvent(gameEvent);
+        }
+
+        internal bool StopGameEvent(uint id) {
+            if (idToActiveEvent.ContainsKey(id) == false)
+                return false;
+            cbEventEnded(idToActiveEvent[id]);
+            return idToActiveEvent.Remove(id);
         }
 
         public List<IGEventable> GetPlayerTargets(TargetGroup targetGroup, Player player) {
@@ -277,6 +284,23 @@ namespace Andja.Controller {
             }
             Debug.LogError("No type found for this event!");
             return EventType.City;
+        }
+
+        internal void ListAllActiveEvents() {
+            string list = "Active Events:\n";
+            list += "EventID - ID(Type) - Target - CurrentDuration/Duration\n";
+            foreach (uint id in idToActiveEvent.Keys) {
+                string target;
+                if(idToActiveEvent[id].target == null) {
+                    target = (idToActiveEvent[id].position + " " + idToActiveEvent[id].range);
+                } else {
+                    target = idToActiveEvent[id].target.ToString();
+                }
+                list += id + " - " + idToActiveEvent[id].ID + " ("+idToActiveEvent[id].EventType+")" + " - " + target
+                    + " - " + idToActiveEvent[id].currentDuration + "/" + idToActiveEvent[id].Duration + "\n";
+            }
+            list += "END";
+            Debug.Log(list);
         }
 
         private T RandomItemFromList<T>(List<T> iges) {

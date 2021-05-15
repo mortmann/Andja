@@ -184,7 +184,7 @@ namespace Andja.Model {
             if (Workers.Count >= MaxNumberOfWorker) {
                 return;
             }
-            Worker ws = new Worker(this, workingGrowables[0], workTime, Output, WorkerWorkSound, false, true);
+            Worker ws = new Worker(this, workingGrowables[0], workTime, OutputData.workerID, Output,  false, true, true, workTime * 0.05f);
             workingGrowables.RemoveAt(0);
             World.Current.CreateWorkerGameObject(ws);
             Workers.Add(ws);
@@ -241,7 +241,7 @@ namespace Andja.Model {
                     count++;
                 }
             }
-            float percentage = percentage = Mathf.RoundToInt(((float)count / (float)hs.Count) * 100);
+            float percentage = Mathf.RoundToInt(((float)count / (float)hs.Count) * 100);
 
             if (Growable.Fertility != null) {
                 if (t.Island == null) {

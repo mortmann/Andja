@@ -2,8 +2,8 @@
 
 namespace Andja {
 
-    public interface IWarfare {
-        int PlayerNumber { get; }
+    public interface IWarfare : ITargetable {
+        //int PlayerNumber { get; }
         float CurrentDamage { get; }
         float MaximumDamage { get; }
         DamageType DamageType { get; }

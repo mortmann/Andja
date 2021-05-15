@@ -29,10 +29,10 @@ namespace Andja.Model {
             return TreasuryBalance + MaximumDebt > buildCost;
         }
 
-        public HashSet<String>[] UnlockedItemNeeds { get; protected set; }
-        public HashSet<String>[] UnlockedStructureNeeds { get; protected set; }
-        public HashSet<String> UnlockedStructures { get; protected set; }
-        public HashSet<String> UnlockedUnits { get; protected set; }
+        public HashSet<string>[] UnlockedItemNeeds { get; protected set; }
+        public HashSet<string>[] UnlockedStructureNeeds { get; protected set; }
+        public HashSet<string> UnlockedStructures { get; protected set; }
+        public HashSet<string> UnlockedUnits { get; protected set; }
 
         public HashSet<Structure> AllStructures;
         public HashSet<Unit> Units;
@@ -252,6 +252,10 @@ namespace Andja.Model {
                 }
             }
             CalculateBalance();
+        }
+
+        internal IReadOnlyList<int> GetUnitCityEnterable() {
+            return new List<int>();
         }
 
         public void UpdateBalance(float partialPayAmount) {

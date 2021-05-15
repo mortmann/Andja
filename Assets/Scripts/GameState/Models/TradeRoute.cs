@@ -1,39 +1,51 @@
 ﻿using Newtonsoft.Json;
 using System.Collections.Generic;
 using UnityEngine;
-
+using System.Linq;
 namespace Andja.Model {
 
     public enum TradeTyp { Load, Unload }
 
     [JsonObject(MemberSerialization.OptIn)]
     public class TradeRoute {
-        private int NumberOfStops { get { return Trades.Count; } }
-        [JsonPropertyAttribute] public List<Trade> Trades { get; protected set; }
+        private int NumberOfStops { get { return Goals.Count; } }
+        [JsonPropertyAttribute] protected List<Stop> Goals { get; set; }
         [JsonPropertyAttribute] public Dictionary<Ship, int> shipToNextStop;
         [JsonPropertyAttribute] public string Name = "Temporary";
-
+        /// <summary>
+        /// Double data just for a more convient access (and faster) to trades-- could be done with everytime select the type
+        /// but for now we will keep it like this
+        /// </summary>
+        List<Trade> _Trades; 
+        public List<Trade> Trades {
+            get {
+                if (_Trades == null)
+                    _Trades = Goals.OfType<Trade>().ToList();
+                return _Trades;
+            }
+        }
         public bool Valid {
             get {
-                return Trades.Count > 1;
+                return Goals.Count > 1;
             }
         }
 
-        public int TradeStopNumber => Trades.Count;
+        public int TradeStopNumber => Goals.Count;
 
         public TradeRoute() {
-            Trades = new List<Trade>();
+            Goals = new List<Stop>();
             shipToNextStop = new Dictionary<Ship, int>();
         }
 
         public TradeRoute(TradeRoute tr) {
-            this.Trades = tr.Trades;
+            this.Goals = tr.Goals;
             this.shipToNextStop = tr.shipToNextStop;
         }
 
         public void AddWarehouse(WarehouseStructure w) {
             Trade t = new Trade(w.City);
             Trades.Add(t);
+            Goals.Add(t);
         }
 
         public void SetCityTrade(City city, List<Item> getting, List<Item> giving) {
@@ -47,7 +59,11 @@ namespace Andja.Model {
             Name = name;
         }
         public Trade GetCurrentCityTrade(Ship ship) {
-            return Trades[shipToNextStop[ship]];
+            Stop s = Goals[shipToNextStop[ship]];
+            if (s is Trade t)
+                return t;
+            else
+                return null;
         }
 
         public void RemoveWarehouse(WarehouseStructure w) {
@@ -57,17 +73,18 @@ namespace Andja.Model {
             }
             foreach (Ship ship in shipToNextStop.Keys) {
                 int currentDestination = shipToNextStop[ship];
-                if (Trades.IndexOf(t) < currentDestination) {
+                if (Goals.IndexOf(t) < currentDestination) {
                     currentDestination--; // smaller then we must remove to be on the same still
                 }
                 else
-                if (Trades.IndexOf(t) == currentDestination) {
+                if (Goals.IndexOf(t) == currentDestination) {
                     //if its behind the otherone so decrease the destination pointer
                     currentDestination--;
                     currentDestination = Mathf.Clamp(currentDestination, 0, NumberOfStops - 1);
                 }
                 shipToNextStop[ship] = currentDestination;
             }
+            Goals.Remove(t);
             Trades.Remove(t);
         }
 
@@ -76,7 +93,7 @@ namespace Andja.Model {
         }
 
         public int GetNumberFor(WarehouseStructure w) {
-            for (int i = 0; i < Trades.Count; i++) {
+            for (int i = 0; i < Goals.Count; i++) {
                 if (Trades[i].city == w.City) {
                     return i + 1;
                 }
@@ -85,34 +102,34 @@ namespace Andja.Model {
         }
 
         public Tile GetCurrentDestination(Ship ship) {
-            if (Trades.Count == 0) {
+            if (Goals.Count == 0) {
                 return null;
             }
-            if (Trades[shipToNextStop[ship]].city.warehouse == null) {
+            if (Goals[shipToNextStop[ship]].Destination == null) {
                 return null;
             }
-            return Trades[shipToNextStop[ship]].city.warehouse.GetTradeTile();
+            return Goals[shipToNextStop[ship]].Destination;
         }
 
         public Tile GetNextDestination(Ship ship) {
             //if theres only one destination
             //that means there is no realtraderoute in place
             //so just return
-            if (Trades.Count <= 1) {
+            if (Goals.Count <= 1) {
                 return null;
             }
 
             for (int i = 0; i < NumberOfStops; i++) {
                 IncreaseDestination(ship);
-                if (Trades[shipToNextStop[ship]].city.warehouse != null) {
-                    return Trades[shipToNextStop[ship]].city.warehouse.GetTradeTile();
+                if (Goals[shipToNextStop[ship]].Destination != null) {
+                    return Goals[shipToNextStop[ship]].Destination;
                 }
             }
             return null;
         }
 
         public void IncreaseDestination(Ship ship) {
-            shipToNextStop[ship] = (shipToNextStop[ship] + 1) % Trades.Count;
+            shipToNextStop[ship] = (shipToNextStop[ship] + 1) % Goals.Count;
         }
 
         public bool Contains(City c) {
@@ -183,15 +200,18 @@ namespace Andja.Model {
                 s.StopTradeRoute();
             }
         }
+        [JsonObject(MemberSerialization.OptIn)]
+        public class Stop {
+            [JsonPropertyAttribute] public Tile TravelPoint;
+            public virtual Tile Destination => TravelPoint;
+        }
 
         [JsonObject(MemberSerialization.OptIn)]
-        //	[JsonConverter(typeof(TradeSerializer))]
-        [System.Serializable]
-        public class Trade {
+        public class Trade : Stop {
             [JsonPropertyAttribute] public City city;
             [JsonPropertyAttribute] public List<Item> load;
             [JsonPropertyAttribute] public List<Item> unload;
-
+            public override Tile Destination => city.warehouse?.GetTradeTile();
             public Trade(City c) {
                 city = c;
                 load = new List<Item>();

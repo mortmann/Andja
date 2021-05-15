@@ -9,12 +9,10 @@ namespace Andja.Pathfinding {
     public class RoutePathfinding : BasePathfinding {
         public Structure StartStructure;
         public Structure GoalStructure;
-        public bool hasToEnterWorkStructure;
-
         public RoutePathfinding() : base() {
         }
-        public RoutePathfinding(float rotationSpeed) : base() {
-            this.rotationSpeed = rotationSpeed;
+        public RoutePathfinding(IPathfindAgent worker) : base() {
+            this.agent = worker;
         }
 
         /// <summary>
@@ -23,13 +21,11 @@ namespace Andja.Pathfinding {
         /// </summary>
         /// <param name="startTiles">Start tiles.</param>
         /// <param name="endTiles">End tiles.</param>
-        public void SetDestination(Structure start, Structure goal, bool hasToWorkEnterStructure = true) {
+        public void SetDestination(Structure start, Structure goal) {
             StartStructure = start;
             GoalStructure = goal;
             //this.endStrTiles = endStrTiles;
             //this.startStrTiles = startStrTiles;
-            TurnType = Turning_Type.OnPoint;
-            this.hasToEnterWorkStructure = hasToWorkEnterStructure;
             StartCalculatingThread();
         }
 
@@ -47,15 +43,6 @@ namespace Andja.Pathfinding {
         }
 
         protected override void CalculatePath() {
-            pathDestination = Path_Destination.Tile;
-            //if (startTiles == null) {
-            //    startTiles = new List<Tile> {
-            //        startTile
-            //    };
-            //    endTiles = new List<Tile> {
-            //        DestTile
-            //    };
-            //}
             if (StartStructure != null) {
                 CalculateStructuresPath();
             }
@@ -82,7 +69,7 @@ namespace Andja.Pathfinding {
             }
             Route route = road.Route;
             List<Tile> endTiles = null;
-            endTiles = GoalStructure.RoadsAroundStructure().Select(x => x.BuildTile).ToList();
+            endTiles = GoalStructure.RoadsAroundStructure().Select(x => x.BuildTile).ToList<Tile>();
             endTiles = endTiles.Where(x => route.TileGraph.Tiles.Contains(x)).ToList();
 
             Path_AStar pa = new Path_AStar(route, route.TileGraph, t, endTiles[0], new List<Tile> { t }, endTiles);
@@ -104,12 +91,12 @@ namespace Andja.Pathfinding {
             foreach (Route route in toCheckRoutes) {
                 StartStructure.Tiles.ForEach(x => route.TileGraph.AddNodeToRouteTileGraph(x));
                 List<Tile> endTiles = null;
-                if (hasToEnterWorkStructure) {
+                if (CanEndInUnwakable) {
                     endTiles = GoalStructure.Tiles;
                     GoalStructure.Tiles.ForEach(x => route.TileGraph.AddNodeToRouteTileGraph(x));
                 }
                 else {
-                    endTiles = GoalStructure.RoadsAroundStructure().Select(x => x.BuildTile).ToList();
+                    endTiles = GoalStructure.RoadsAroundStructure().Select(x => x.BuildTile).ToList<Tile>();
                 }
                 endTiles = endTiles.Where(x => route.TileGraph.Tiles.Contains(x)).ToList();
                 List<Tile> startTiles = StartStructure.Tiles.Where(x => route.TileGraph.Tiles.Contains(x)).ToList();

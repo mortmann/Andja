@@ -11,7 +11,16 @@ using UnityEngine;
 
 namespace Andja.Controller {
 
-    public enum StaticLanguageVariables { On, Off, And, Or, Empty, BuildCost, Upkeep, Locked, CurrentDamage, MaximumDamage, Speed }
+    public enum StaticLanguageVariables { 
+        On, Off, 
+        And, Or, 
+        Empty, 
+        BuildCost, Upkeep, 
+        Locked, 
+        CurrentDamage, MaximumDamage, Speed,
+        Balance,
+        BalanceChange
+    }
     /// <summary>
     /// Loads Translations (except prototypes sends it off to PrototypController) and changing language 
     /// </summary>

@@ -43,8 +43,6 @@ using UnityEngine;
 
 namespace EpPathFinding.cs {
 
-
-
     public class JumpPointParam : ParamBase {
         //        [System.Obsolete("This constructor is deprecated, please use the Constructor with DiagonalMovement instead.")]
         //        public JumpPointParam(BaseGrid iGrid, GridPos iStartPos, GridPos iEndPos, bool iAllowEndNodeUnWalkable = true, bool iCrossCorner = true, bool iCrossAdjacentPoint = true, HeuristicMode iMode = HeuristicMode.EUCLIDEAN)

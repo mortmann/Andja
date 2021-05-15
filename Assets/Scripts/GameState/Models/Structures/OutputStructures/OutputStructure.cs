@@ -1,4 +1,5 @@
 ﻿using Andja.Controller;
+using Andja.Utility;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -15,8 +16,8 @@ namespace Andja.Model {
         public int maxOutputStorage;
         public float efficiency = 1f;
         public Item[] output;
-        public string workerWorkSound;
         public string workSound;
+        public string workerID;
         [Ignore] public float ProducePerMinute;
     }
 
@@ -25,9 +26,9 @@ namespace Andja.Model {
 
         #region Serialize
 
-        [JsonPropertyAttribute] public List<Worker> Workers;
-        [JsonPropertyAttribute] public float produceTimer;
-        protected Item[] _output; // FIXME DOESNT GET LOADED IN!??!? why? fixed?
+        [JsonPropertyAttribute] protected List<Worker> Workers;
+        [JsonPropertyAttribute] protected float produceTimer;
+        protected Item[] _output; 
 
         #endregion Serialize
 
@@ -55,7 +56,6 @@ namespace Andja.Model {
         public Dictionary<OutputStructure, Item[]> jobsToDo;
         public bool outputClaimed;
         protected Action<Structure> cbOutputChange;
-        private bool CanWork { get { return EfficiencyPercent > 0; } }
         public bool workersHasToFollowRoads = false;
         public float ContactRange { get { return OutputData.contactRange; } }
         public bool ForMarketplace { get { return OutputData.forMarketplace; } }
@@ -64,7 +64,6 @@ namespace Andja.Model {
         public int MaxNumberOfWorker { get { return CalculateRealValue(nameof(OutputData.maxNumberOfWorker), OutputData.maxNumberOfWorker); } }
         public float Efficiency { get { return CalculateRealValue(nameof(OutputData.efficiency), OutputData.efficiency); } }
         public int MaxOutputStorage { get { return CalculateRealValue(nameof(OutputData.maxOutputStorage), OutputData.maxOutputStorage); } }
-        public string WorkerWorkSound => OutputData.workerWorkSound;
 
         protected OutputPrototypData _outputData;
 
@@ -132,7 +131,7 @@ namespace Andja.Model {
         }
 
         public virtual void SendOutWorkerIfCan(float workTime = 1) {
-            if (jobsToDo.Count == 0) {
+            if (jobsToDo.Count == 0 || Workers.Count >= MaxNumberOfWorker) {
                 return;
             }
             List<OutputStructure> givenJobs = new List<OutputStructure>();
@@ -151,7 +150,7 @@ namespace Andja.Model {
                 if (workersHasToFollowRoads && CanReachStructure(jobStr) == false) {
                     continue;
                 }
-                Worker ws = new Worker(this, jobStr, workTime, items, WorkerWorkSound, workersHasToFollowRoads);
+                Worker ws = new Worker(this, jobStr, workTime, OutputData.workerID, items,  workersHasToFollowRoads);
                 givenJobs.Add(jobStr);
                 World.Current.CreateWorkerGameObject(ws);
                 Workers.Add(ws);
@@ -317,6 +316,9 @@ namespace Andja.Model {
                 foreach (Worker worker in Workers) {
                     worker.Load();
                 }
+            }
+            if (_output != null) {
+                _output = _output.ReplaceKeepCounts(OutputData.output);
             }
         }
     }

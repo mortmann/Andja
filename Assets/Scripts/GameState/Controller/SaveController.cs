@@ -82,10 +82,13 @@ namespace Andja.Controller {
             if (saveMetaDatas.Count == 0)
                 return null;
             saveMetaDatas.Sort((x, y) => x.saveTime.CompareTo(y.saveTime));
-            if (saveMetaDatas[0].safefileversion != SaveFileVersion) {
-                return null;
+            int value = saveMetaDatas.Count - 1;
+            while (saveMetaDatas[value].safefileversion != SaveFileVersion) {
+                value--;
+                if (value < 0)
+                    return null;
             }
-            return saveMetaDatas[0].saveName;
+            return saveMetaDatas[value].saveName;
         }
 
         internal void QuickSave() {
@@ -401,7 +404,7 @@ namespace Andja.Controller {
 
         public static string GetSaveGamesPath() {
             //TODO FIXME change this to documentspath
-            return Path.Combine(ConstantPathHolder.ApplicationDataPath.Replace("/Assets", ""), "saves");
+            return Path.Combine(ConstantPathHolder.ApplicationDataPath.Replace("/Assets", ""), "Saves");
         }
 
         public void SaveGameState(string name = "autosave") {
@@ -665,7 +668,8 @@ namespace Andja.Controller {
                         PreserveReferencesHandling = PreserverReferences ?
                                             PreserveReferencesHandling.Objects : PreserveReferencesHandling.None,
                         ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
-                        TypeNameHandling = TypeNameHandling.Auto
+                        TypeNameHandling = TypeNameHandling.Auto,
+                        DefaultValueHandling = DefaultValueHandling.Ignore
                     }
             );
             return save;
@@ -676,7 +680,7 @@ namespace Andja.Controller {
                 NullValueHandling = NullValueHandling.Ignore,
                 PreserveReferencesHandling = PreserveReferencesHandling.Objects,
                 ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
-                TypeNameHandling = TypeNameHandling.Auto
+                TypeNameHandling = TypeNameHandling.Auto,
             });
             return state;
         }

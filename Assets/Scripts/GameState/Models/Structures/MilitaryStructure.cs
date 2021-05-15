@@ -1,6 +1,7 @@
 ﻿using Andja.Controller;
 using Newtonsoft.Json;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace Andja.Model {
 
@@ -9,7 +10,12 @@ namespace Andja.Model {
         public float buildTimeModifier;
         public int buildQueueLength = 1;
         public DamageType damageType;
-        public int damage;
+        //kinda double with units but no clue yet how to reduce this duplication
+        public float damage;
+        public float attackRate;
+        public float attackRange;
+        public float projectileSpeed;
+
         public bool canBuildShips; //is set in prototypcontroller
     }
 
@@ -17,12 +23,15 @@ namespace Andja.Model {
     public class MilitaryStructure : TargetStructure, IWarfare {
         [JsonPropertyAttribute] private float buildTimer;
         [JsonPropertyAttribute] private Queue<Unit> toBuildUnits;
-
+        [JsonPropertyAttribute] ITargetable CurrentTarget;
+        [JsonPropertyAttribute] float attackCooldownTimer = 0;
         bool CanBuildShips => MilitaryStructureData.canBuildShips;
         private List<Tile> toPlaceUnitTiles;
         public float ProgressPercentage => CurrentlyBuildingUnit != null ? buildTimer / CurrentlyBuildingUnit.BuildTime : 0;
         public Unit[] CanBeBuildUnits => MilitaryStructureData.canBeBuildUnits;
-
+        public float AttackRate => MilitaryStructureData.attackRate;
+        public float AttackRange => MilitaryStructureData.attackRange;
+        float ProjectileSpeed => MilitaryStructureData.projectileSpeed;
         public float BuildTimeModifier => CalculateRealValue(nameof(MilitaryStructureData.buildTimeModifier), MilitaryStructureData.buildTimeModifier);
         public int BuildQueueLength => CalculateRealValue(nameof(MilitaryStructureData.buildQueueLength), MilitaryStructureData.buildQueueLength);
 
@@ -87,14 +96,35 @@ namespace Andja.Model {
         }
 
         public override void OnUpdate(float deltaTime) {
-            if (isActive == false || CurrentlyBuildingUnit == null) {
+            if (isActive == false) {
                 return;
             }
-            buildTimer += deltaTime * BuildTimeModifier;
-            if (buildTimer > CurrentlyBuildingUnit.BuildTime) {
-                //Spawn Unit here and reset the timer!
-                buildTimer = 0;
-                SpawnUnit(toBuildUnits.Dequeue());
+            if(CurrentlyBuildingUnit != null) {
+                buildTimer += deltaTime * BuildTimeModifier;
+                if (buildTimer > CurrentlyBuildingUnit.BuildTime) {
+                    //Spawn Unit here and reset the timer!
+                    buildTimer = 0;
+                    SpawnUnit(toBuildUnits.Dequeue());
+                }
+            }
+            if(CurrentTarget != null) {
+                if (CanAttack(CurrentTarget) == false) {
+                    CurrentTarget = null;
+                    return;
+                }
+                if (attackCooldownTimer>0) {
+                    attackCooldownTimer = Mathf.Clamp(attackCooldownTimer, 0, AttackRate);
+                    return;
+                }
+                if (Projectile.PredictiveAim(CurrentPosition, ProjectileSpeed, 
+                                                CurrentTarget.CurrentPosition, CurrentTarget.LastMovement, GameData.Gravity, 
+                                                out Vector3 pSpeed, out Vector3 pDestination)) {
+                    float distance = (new Vector3(CurrentPosition.x,CurrentPosition.y) - pDestination).magnitude;
+                    //TODO: think about this direct call to UnitSpriteController...
+                    UnitSpriteController.Instance.OnProjectileCreated(
+                        new Projectile(this, Center, CurrentTarget, pDestination, pSpeed, distance, true)
+                        );
+                }
             }
         }
 
@@ -128,15 +158,32 @@ namespace Andja.Model {
             }
         }
         #region IWarfareImplementation
-
-        public IWarfare target;
-
-        public bool GiveAttackCommand(ITargetable warfare, bool overrideCurrent = false) {
-            return false;
+        public bool GiveAttackCommand(ITargetable target, bool overrideCurrent = false) {
+            if (CanAttack(target) == false)
+                return false;
+            if (overrideCurrent == false && CurrentTarget != null)
+                return false;
+            CurrentTarget = target;
+            return true;
         }
-
+        public bool CanAttack(ITargetable target) {
+            if (CurrentDamage <= 0)
+                return false;
+            if (PlayerController.Instance.ArePlayersAtWar(CurrentTarget.PlayerNumber, PlayerNumber) == false) {
+                return false;
+            }
+            if (IsInRange() == false) {
+                return false;
+            }
+            return true;
+        }
+        public bool IsInRange() {
+            if (CurrentTarget == null)
+                return false;
+            return (CurrentTarget.CurrentPosition - CurrentPosition).magnitude <= AttackRange;
+        }
         public void GoIdle() {
-            target = null;
+            CurrentTarget = null;
         }
 
         public float GetCurrentDamage(ArmorType armorType) {

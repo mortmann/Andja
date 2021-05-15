@@ -22,10 +22,7 @@ namespace Andja.Model {
     public enum BuildRestriktions { Land, Shore, Mountain };
 
     public class StructurePrototypeData : BaseThing {
-        public string ID;
-        public float maxHealth;
-        public int populationLevel = 0;
-        public int populationCount = 0;
+
         public int structureLevel = 0;
         public int structureRange = 0;
         public int tileWidth;
@@ -55,7 +52,7 @@ namespace Andja.Model {
             }
         }
 
-        [JsonIgnoreAttribute]
+        [Ignore]
         public int _RangeTileCount = -1;
 
         public int RangeTileCount {
@@ -69,18 +66,13 @@ namespace Andja.Model {
         public ExtraUI extraUITyp;
         public StructureTyp structureTyp = StructureTyp.Blocking;
         public bool canStartBurning;
-        public int upkeepCost;
-        public int buildCost;
-        public string spriteBaseName;
-
         public bool canBeBuild = true;
         public BuildType buildTyp;
         public ExtraBuildUI extraBuildUITyp;
-        public Item[] buildingItems;
+
         // set inside prototypecontoller
         public Item[] upgradeItems = null; 
         public int upgradeCost = 0; 
-
     }
 
     [JsonObject(MemberSerialization.OptIn)]
@@ -96,11 +88,11 @@ namespace Andja.Model {
         [JsonPropertyAttribute] public uint buildID;
         [JsonPropertyAttribute] protected float _health;
         [JsonPropertyAttribute]
-        public Tile BuildTile {
+        public LandTile BuildTile {
             get {
                 if (Tiles == null || Tiles.Count == 0)
                     return null;
-                return Tiles[0];
+                return (LandTile)Tiles[0];
             }
             set {
                 if (Tiles == null)
@@ -151,14 +143,6 @@ namespace Andja.Model {
             get {
                 if (_Center != Vector2.zero)
                     return _Center;
-                //Tile[,] sortedTiles = new Tile[TileWidth, TileHeight];
-                //List<Tile> ts = new List<Tile>(Tiles);
-                //ts.Sort((x, y) => x.X.CompareTo(y.X) + x.Y.CompareTo(y.Y));
-                //foreach (Tile ti in ts) {
-                //    int x = ti.X - ts[0].X;
-                //    int y = ti.Y - ts[0].Y;
-                //    sortedTiles[x, y] = ti; // so we have the tile at the correct spot
-                //}
                 _Center = Tiles[0].Vector2 + new Vector2(TileWidth / 2, TileHeight / 2);
                 return _Center;
             }
@@ -189,8 +173,8 @@ namespace Andja.Model {
         public int PopulationLevel { get { return Data.populationLevel; } }
         public int PopulationCount { get { return Data.populationCount; } }
         public int StructureLevel { get { return Data.structureLevel; } }
-        public int _tileWidth { get { return Data.tileWidth; } }
-        public int _tileHeight { get { return Data.tileHeight; } }
+        public int prototypeTileWidth { get { return Data.tileWidth; } }
+        public int prototypeTileHeight { get { return Data.tileHeight; } }
         public TileType?[,] BuildTileTypes => Data.buildTileTypes;
 
         public bool CanRotate { get { return Data.canRotate; } }
@@ -208,16 +192,12 @@ namespace Andja.Model {
 
         public bool CanStartBurning { get { return Data.canStartBurning; } }
 
-        [TextReplace("buildcost")]
         public int BuildCost { get { return Data.buildCost; } }
 
-        [TextReplace("builditems")]
         public Item[] BuildingItems { get { return Data.buildingItems; } }
 
-        [TextReplace("upgradeitems")]
         public Item[] UpgradeItems { get { return Data.upgradeItems; } }
 
-        [TextReplace("upgradecost")]
         public int UpgradeCost { get { return Data.upgradeCost; } } // set inside prototypecontoller
 
         public string SpriteName { get { return Data.spriteBaseName/*TODO: make multiple saved sprites possible*/; } }
@@ -280,10 +260,10 @@ namespace Andja.Model {
         public int TileWidth {
             get {
                 if (rotation == 0 || rotation == 180) {
-                    return _tileWidth;
+                    return prototypeTileWidth;
                 }
                 if (rotation == 90 || rotation == 270) {
-                    return _tileHeight;
+                    return prototypeTileHeight;
                 }
                 // should never come to this if its an error
                 Debug.LogError("Structure was rotated out of angle bounds: " + rotation);
@@ -294,10 +274,10 @@ namespace Andja.Model {
         public int TileHeight {
             get {
                 if (rotation == 0 || rotation == 180) {
-                    return _tileHeight;
+                    return prototypeTileHeight;
                 }
                 if (rotation == 90 || rotation == 270) {
-                    return _tileWidth;
+                    return prototypeTileWidth;
                 }
                 // should never come to this if its an error
                 Debug.LogError("Structure was rotated out of angle bounds: " + rotation);
@@ -582,9 +562,9 @@ namespace Andja.Model {
                 }
             }
             else {
-                for (int w = 0; w < _tileWidth; w++) {
+                for (int w = 0; w < prototypeTileWidth; w++) {
                     tiles.Add(World.Current.GetTileAt(tile.X + w, tile.Y));
-                    for (int h = 1; h < _tileHeight; h++) {
+                    for (int h = 1; h < prototypeTileHeight; h++) {
                         tiles.Add(World.Current.GetTileAt(tile.X + w, tile.Y + h));
                     }
                 }
@@ -750,22 +730,22 @@ namespace Andja.Model {
                     if (rotation == 90) {
                         cX = -y;
                         cY = x;
-                        startX = _tileWidth - 1;
+                        startX = prototypeTileWidth - 1;
                         startY = 0;
                     }
                     else
                     if (rotation == 180) {
                         cX = -x;
                         cY = -y;
-                        startX = _tileWidth - 1;
-                        startY = _tileHeight - 1;
+                        startX = prototypeTileWidth - 1;
+                        startY = prototypeTileHeight - 1;
                     }
                     else
                     if (rotation == 270) {
                         cX = y;
                         cY = -x;
                         startX = 0;
-                        startY = _tileHeight - 1;
+                        startY = prototypeTileHeight - 1;
                     }
                     if ((startX + cX) >= BuildTileTypes.GetLength(0) || (startY + cY) >= BuildTileTypes.GetLength(1)) {
                         tileToCanBuild.Add(sortedTiles[x, y], sortedTiles[x, y].CheckTile());

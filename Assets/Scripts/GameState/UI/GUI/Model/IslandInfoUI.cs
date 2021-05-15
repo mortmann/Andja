@@ -1,5 +1,6 @@
 ﻿using Andja.Controller;
 using Andja.Model;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -16,15 +17,33 @@ namespace Andja.UI.Model {
         public Text CityName;
         public ImageText ImageWithText;
         public Image SimpleImage;
-        private Dictionary<string, Text> itemToText = new Dictionary<string, Text>();
+        private Dictionary<string, ImageText> itemToText = new Dictionary<string, ImageText>();
         private Dictionary<int, GameObject> populationLevelToGO = new Dictionary<int, GameObject>();
         public int maxItemsPerRow = 5;
         private Island currentIsland = null;
+        private City CurrentCity;
 
         private void Start() {
             cc = CameraController.Instance;
             cg = GetComponent<CanvasGroup>();
             CreateCityInfo();
+            BuildController.Instance.RegisterBuildStateChange(OnBuildStateChange);
+        }
+
+        private void OnBuildStateChange(BuildStateModes state) {
+            if (CurrentCity == null)
+                return;
+            switch (state) {
+                case BuildStateModes.None:
+                    foreach(Item item in PrototypController.BuildItems) {
+                        itemToText[item.ID].RemoveAddon();
+                    }
+                    break;
+                case BuildStateModes.Build:
+                    break;
+                case BuildStateModes.Destroy:
+                    break;
+            }
         }
 
         private void Update() {
@@ -36,22 +55,28 @@ namespace Andja.UI.Model {
             if (currentIsland != cc.nearestIsland)
                 CreateIslandInfo();
             currentIsland = cc.nearestIsland;
-            City c = cc.nearestIsland.Cities.Find(x => x.PlayerNumber == PlayerController.currentPlayerNumber);
-            if (c == null) {
+            CurrentCity = cc.nearestIsland.Cities.Find(x => x.PlayerNumber == PlayerController.currentPlayerNumber);
+            if (CurrentCity == null) {
                 CityBuildItems.gameObject.SetActive(false);
                 CityInfo.gameObject.SetActive(false);
                 return;
             }
             CityBuildItems.gameObject.SetActive(true);
             CityInfo.gameObject.SetActive(true);
-            Item[] items = c.Inventory.GetBuildMaterial();
+            Item[] items = CurrentCity.Inventory.GetBuildMaterial();
             for (int i = 0; i < items.Length; i++) {
-                itemToText[items[i].ID].text = items[i].countString;
+                itemToText[items[i].ID].SetText(items[i].countString);
+            }
+            if(MouseController.Instance.NeededItemsToBuild != null) {
+                foreach (Item item in MouseController.Instance.NeededItemsToBuild) {
+                    TextColor t = CurrentCity.HasEnoughOfItem(item)? TextColor.Positive : TextColor.Negative;
+                    itemToText[item.ID].ShowAddon(item.countString, t);
+                }
             }
             for (int i = 0; i < PrototypController.Instance.NumberOfPopulationLevels; i++) {
-                PopulationLevel pl = c.GetPopulationLevel(i);
+                PopulationLevel pl = CurrentCity.GetPopulationLevel(i);
                 if (pl.populationCount > 0) {
-                    itemToText[pl.Level + ""].text = "" + pl.populationCount;
+                    itemToText[pl.Level + ""].SetText("" + pl.populationCount);
                     populationLevelToGO[pl.Level].SetActive(true);
                 }
                 else {
@@ -75,13 +100,13 @@ namespace Andja.UI.Model {
                 imageText.Set(UISpriteController.GetItemImageForID(items[i].ID), items[i].Data, 0 + "t");
                 imageText.transform.SetParent(CityBuildItems, false);
                 imageText.text.enabled = true;
-                itemToText.Add(items[i].ID, imageText.text);
+                itemToText.Add(items[i].ID, imageText);
             }
             foreach (PopulationLevelPrototypData pl in PrototypController.Instance.PopulationLevelDatas.Values) {
                 ImageText imageText = Instantiate(ImageWithText);
                 imageText.GetComponent<LayoutElement>().minWidth = 110;
                 imageText.Set(UISpriteController.GetIcon(pl.iconSpriteName), pl, 0 + "");
-                itemToText.Add(pl.LEVEL + "", imageText.text);
+                itemToText.Add(pl.LEVEL + "", imageText);
                 populationLevelToGO.Add(pl.LEVEL, imageText.gameObject);
                 imageText.transform.SetParent(CityInfo, false);
             }

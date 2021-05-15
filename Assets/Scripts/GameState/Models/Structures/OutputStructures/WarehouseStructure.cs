@@ -71,8 +71,7 @@ namespace Andja.Model {
         }
 
         public override void OnBuild() {
-            workersHasToFollowRoads = true; // DUNNO where to set it without the need to copy it extra
-
+            base.OnBuild();
             Tile[,] sortedTiles = new Tile[TileWidth, TileHeight];
             List<Tile> ts = new List<Tile>(Tiles);
             ts.Sort((x, y) => x.X.CompareTo(y.X) + x.Y.CompareTo(y.Y));
@@ -89,25 +88,22 @@ namespace Andja.Model {
 
             this.City.warehouse = this;
 
-            if (RangeTiles == null || RangeTiles.Count == 0) {
-                RangeTiles = GetInRangeTiles(BuildTile);
-            }
             //dostuff thats happen when build
-            City.AddTiles(RangeTiles);
-            City.AddTiles(new HashSet<Tile>(Tiles));
-            RegisteredSturctures = new List<Structure>();
-            OutputMarkedSturctures = new List<Structure>();
-            jobsToDo = new Dictionary<OutputStructure, Item[]>();
+            //City.AddTiles(RangeTiles);
+            //City.AddTiles(new HashSet<Tile>(Tiles));
+            //RegisteredSturctures = new List<Structure>();
+            //OutputMarkedSturctures = new List<Structure>();
+            //jobsToDo = new Dictionary<OutputStructure, Item[]>();
 
-            // add all the tiles to the city it was build in
-            //dostuff thats happen when build
-            foreach (Tile rangeTile in RangeTiles) {
-                if (rangeTile.City != City) {
-                    continue;
-                }
-                OnStructureAdded(rangeTile.Structure);
-            }
-            City.RegisterStructureAdded(OnStructureAdded);
+            //// add all the tiles to the city it was build in
+            ////dostuff thats happen when build
+            //foreach (Tile rangeTile in RangeTiles) {
+            //    if (rangeTile.City != City) {
+            //        continue;
+            //    }
+            //    OnStructureAdded(rangeTile.Structure);
+            //}
+            //City.RegisterStructureAdded(OnStructureAdded);
         }
 
         public Tile GetTradeTile() {

@@ -19,6 +19,7 @@ namespace Andja.UI {
         private List<string> ItemIDs;
         private List<string> UnitIDs;
         private List<string> EventIDs;
+        private List<string> EffectIDs;
 
         // Use this for initialization
         private void Start() {
@@ -32,6 +33,7 @@ namespace Andja.UI {
             ItemIDs = new List<string>(PrototypController.Instance.AllItems.Keys);
             UnitIDs = new List<string>(PrototypController.Instance.UnitPrototypeDatas.Keys);
             EventIDs = new List<string>(PrototypController.Instance.GameEventPrototypeDatas.Keys);
+            EffectIDs = new List<string>(PrototypController.Instance.EffectPrototypeDatas.Keys);
         }
 
         private void OnEnable() {
@@ -125,11 +127,12 @@ namespace Andja.UI {
         }
 
         public void WriteToConsole(string text) {
-            GameObject go = Instantiate(TextPrefab);
+            GameObject go = SimplePool.Spawn(TextPrefab, Vector3.zero, Quaternion.identity);
             go.GetComponent<Text>().text = text;
             go.transform.SetParent(outputTransform, false);
             if (outputTransform.childCount > 30) {
-                Destroy(outputTransform.GetChild(0).gameObject);
+                SimplePool.Despawn(outputTransform.GetChild(0).gameObject);
+                //Destroy(outputTransform.GetChild(0).gameObject);
             }
         }
 
@@ -200,6 +203,12 @@ namespace Andja.UI {
                 case "camera":
                     return new List<string>();
 
+                case "effect":
+                    return cc.EffectsCommands;
+
+                case "graphy":
+                    return cc.GraphyCommands;
+
                 default:
                     Debug.Log("Predicte-List not found.");
                     return new List<string>();
@@ -221,6 +230,10 @@ namespace Andja.UI {
 
                 case "diplomatic":
                     return new List<string>(Enum.GetNames(typeof(DiplomacyType)));
+                //IMPORTANT if in future any other type of command gets add/remove this needs rework then
+                case "add":
+                case "remove":
+                    return EffectIDs;
 
                 default:
                     Debug.Log("Predicte-List not found.");

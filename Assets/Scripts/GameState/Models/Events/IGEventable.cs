@@ -135,14 +135,14 @@ namespace Andja.Model {
                 AddEffect(effect);
         }
 
-        public virtual void AddEffect(Effect effect) {
+        public virtual bool AddEffect(Effect effect) {
             if (TargetGroups.IsTargeted(effect.Targets) == false) {
-                return;
+                return false;
             }
             if (_effects == null)
                 _effects = new List<Effect>();
             if (effect.IsUnique && HasEffect(effect)) {
-                return;
+                return false;
             }
             _effects.Add(effect);
             cbEffectChange?.Invoke(this, effect, true);
@@ -167,6 +167,7 @@ namespace Andja.Model {
             }
             if (effect.IsNegativ)
                 HasNegativEffect = true;
+            return true;
         }
 
         internal Effect GetEffect(string ID) {
@@ -179,9 +180,9 @@ namespace Andja.Model {
         public bool HasAnyEffect(params Effect[] effects) {
             return _effects.Exists(x => Array.Exists<Effect>(effects, y => x.ID == y.ID));
         }
-        public virtual void RemoveEffect(Effect effect, bool all = false) {
+        public virtual bool RemoveEffect(Effect effect, bool all = false) {
             if (_effects.Find(e => e.ID == effect.ID) == null) {
-                return;
+                return false;
             }
 
             if (all)
@@ -205,6 +206,7 @@ namespace Andja.Model {
             }
             if (effect.IsNegativ)
                 HasNegativEffect = _effects.Find(x => x.IsNegativ) != null;
+            return true;
         }
 
         /// <summary>

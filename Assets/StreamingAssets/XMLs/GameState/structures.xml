@@ -203,7 +203,7 @@
          <produceTime>20.0</produceTime>
          <maxOutputStorage>5</maxOutputStorage>
          <efficiency>1.0</efficiency>
-         <workerWorkSound>chopping</workerWorkSound>
+         <workerID>lumberjack</workerID>
          <output length="1">
             <Item ID="wood">
                <count>1</count>
@@ -1362,6 +1362,7 @@
             </Item>
          </buildingItems>
          <spriteBaseName>smallmarketbuilding</spriteBaseName>
+		 <workerID>roadcarrier</workerID>
          <contactRange>0.0</contactRange>
          <forMarketplace>true</forMarketplace>
          <maxNumberOfWorker>1</maxNumberOfWorker>
@@ -2744,6 +2745,7 @@
             </Item>
          </buildingItems>
          <spriteBaseName>warehouse</spriteBaseName>
+		 <workerID>roadcarrier</workerID>
          <contactRange>6.3</contactRange>
          <forMarketplace>true</forMarketplace>
          <maxNumberOfWorker>1</maxNumberOfWorker>

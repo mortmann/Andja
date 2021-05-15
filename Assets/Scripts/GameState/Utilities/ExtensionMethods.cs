@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Andja.Model;
+using System;
 using System.Reflection;
 using System.Xml;
 using UnityEngine;
@@ -85,6 +86,36 @@ namespace Andja.Utility {
             ColorBlock cb = button.colors;
             cb.normalColor = color;
             button.colors = cb;
+        }
+        public static Item[] CloneArray(this Item[] items) {
+            Item[] newItems = new Item[items.Length];
+            for (int i = 0; i < items.Length; i++) {
+                newItems[i] = items[i].Clone();
+            }
+            return newItems;
+        }
+        public static Item[] CloneArrayWithCounts(this Item[] items, int multipleCount = 1) {
+            Item[] newItems = new Item[items.Length];
+            for (int i = 0; i < items.Length; i++) {
+                newItems[i] = items[i].CloneWithCount();
+                newItems[i].count *= multipleCount;
+            }
+            return newItems;
+        }
+        /// <summary>
+        /// Only other Items will be returned with the existing counts in this Array.
+        /// </summary>
+        /// <param name="items"></param>
+        /// <param name="other"></param>
+        /// <returns></returns>
+        public static Item[] ReplaceKeepCounts(this Item[] items, Item[] other) {
+            Item[] newItems = other.CloneArray();
+            foreach (Item o in items) {
+                Item i = Array.Find(newItems, n => n.ID == o.ID);
+                if (i != null)
+                    i.count = o.count;
+            }
+            return newItems;
         }
     }
 }

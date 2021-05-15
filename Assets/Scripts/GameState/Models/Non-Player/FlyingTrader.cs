@@ -12,14 +12,21 @@ namespace Andja.Model {
         public static float BuyDifference = 0.9f;
         public static int Number => GameData.FlyingTraderNumber;
         public static float WaitBetweenNewShipsTime = 30f;
-        public float WaitBetweenNewShipsTimer = WaitBetweenNewShipsTime;
+        public float WaitBetweenNewShipsTimer = 0;
         public static FlyingTrader Instance { get; protected set; }
 
-        [JsonPropertyAttribute] private float startCooldown = 5f;
+        [JsonPropertyAttribute] private float startCooldown;
         [JsonPropertyAttribute] private List<TradeShip> Ships;
         private List<City> TradeCities;
-
         public FlyingTrader() {
+            Setup();
+        }
+        public FlyingTrader(float startCooldown) {
+            this.startCooldown = startCooldown;
+            Setup();
+        }
+
+        private void Setup() {
             Instance = this;
             TradeCities = new List<City>();
             Ships = new List<TradeShip>();
@@ -31,7 +38,7 @@ namespace Andja.Model {
         }
 
         public void AddShip() {
-            Ship ship = PrototypController.Instance.GetPirateShipPrototyp();
+            Ship ship = PrototypController.Instance.GetFlyingTraderPrototype();
             Tile t = World.Current.GetTileAt(UnityEngine.Random.Range(0, World.Current.Height), 0);
             ship = (Ship)World.Current.CreateUnit(ship, null, t, Number);
             TradeShip ts = new TradeShip(ship);
@@ -43,7 +50,7 @@ namespace Andja.Model {
                 return;
             }
             if (startCooldown > 0) {
-                startCooldown -= deltaTime;
+                startCooldown = Mathf.Clamp(startCooldown - deltaTime, 0, startCooldown);
                 return;
             }
             if (Ships.Count < 1 && TradeCities.Count > 0) {
@@ -213,7 +220,7 @@ namespace Andja.Model {
                 }
                 else {
                     CurrentDestination.warehouse.RegisterOnDestroyCallback(OnWarehouseDestroy);
-                    Ship.GiveMovementCommand(CurrentDestination.warehouse.tradeTile);
+                    Ship.GiveMovementCommand(CurrentDestination.warehouse.tradeTile, true);
                 }
                 Setup();
             }

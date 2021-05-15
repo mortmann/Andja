@@ -17,6 +17,7 @@ namespace Andja.Model {
         public int maxNumberOfWorker = 1;
         public float workSpeed = 0.01f;
         public bool hasToEnterWorkStructure = true;
+        public string workerID;
     }
 
     [JsonObject(MemberSerialization.OptIn)]
@@ -269,7 +270,7 @@ namespace Andja.Model {
                 break;
             }
             jobsToDo.Remove(s);
-            Worker w = new Worker(this, s, WorkSpeed, true, HasToEnterWorkStructure);
+            Worker w = new Worker(this, s, WorkSpeed, ServiceData.workerID, true, HasToEnterWorkStructure);
             World.Current.CreateWorkerGameObject(w);
             workers.Add(w);
         }

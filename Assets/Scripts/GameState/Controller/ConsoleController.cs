@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Tayx.Graphy;
 using UnityEngine;
 
 namespace Andja.Controller {
@@ -10,39 +11,44 @@ namespace Andja.Controller {
     //TDOD: arrow keys for switching between old commands
     public class ConsoleController : MonoBehaviour {
         public static ConsoleController Instance;
-
+        public GraphyManager GraphyPrefab;
+        private GraphyManager GraphyInstance;
         public static List<string> logs = new List<string>();
         private Dictionary<GameObject, Vector3> GOtoPosition;
         private Action<string> writeToConsole;
         private StreamWriter logWriter;
-
-        // Use this for initialization
+        readonly string tempLogName = "temp.log";
+        static string logPath = "";
         private void OnEnable() {
             Instance = this;
             Application.logMessageReceived += LogCallbackHandler;
-#if UNITY_EDITOR == false
-        string path = Path.Combine(SaveController.GetSaveGamesPath(), "logs");
-        string filepath = Path.Combine(path,DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss")  + "_" + SaveController.SaveName +".log");
-        if (Directory.Exists(path) == false) {
-            Directory.CreateDirectory(path);
-        }
-        if (File.Exists(filepath) == false) {
-            logWriter = File.CreateText(filepath);
-        }
-        logWriter.Write("" +
-            "ID: " + SystemInfo.deviceUniqueIdentifier + "\n" +
-            "SystemOS: " + SystemInfo.operatingSystem + "\n" +
-            "CPU: " + SystemInfo.processorType + "\n" +
-            "GPU: " + SystemInfo.graphicsDeviceName + " " + SystemInfo.graphicsDeviceVersion + "\n" +
-            "RAM: " + SystemInfo.systemMemorySize + "\n" +
-            "DeviceModel: " + SystemInfo.deviceModel);
-        int fCount = Directory.GetFiles(path, "*.log", SearchOption.TopDirectoryOnly).Length;
-        if(fCount>5) {
-            FileSystemInfo fileInfo = new DirectoryInfo(path)
-                         .GetFileSystemInfos().OrderBy(fi => fi.CreationTime).First();
-            fileInfo.Delete();
-        }
-#endif
+            if (Application.isEditor == false) {
+                logPath = logPath = Path.Combine(SaveController.GetSaveGamesPath(), "logs");
+                string filepath = Path.Combine(logPath, tempLogName);
+                if (Directory.Exists(logPath) == false) {
+                    Directory.CreateDirectory(logPath);
+                }
+                if (File.Exists(filepath) == false) {
+                    logWriter = File.CreateText(filepath);
+                } else {
+                    File.Move(Path.Combine(logPath, tempLogName),
+                          Path.Combine(logPath, DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss") + "_unknown_crash.log")
+                    );
+                }
+                logWriter.Write("" +
+                    "ID: " + SystemInfo.deviceUniqueIdentifier + "\n" +
+                    "SystemOS: " + SystemInfo.operatingSystem + "\n" +
+                    "CPU: " + SystemInfo.processorType + "\n" +
+                    "GPU: " + SystemInfo.graphicsDeviceName + " " + SystemInfo.graphicsDeviceVersion + "\n" +
+                    "RAM: " + SystemInfo.systemMemorySize + "\n" +
+                    "DeviceModel: " + SystemInfo.deviceModel);
+                int fCount = Directory.GetFiles(logPath, "*.log", SearchOption.TopDirectoryOnly).Length;
+                if (fCount > 5) {
+                    FileSystemInfo fileInfo = new DirectoryInfo(logPath)
+                                 .GetFileSystemInfos().OrderBy(fi => fi.CreationTime).First();
+                    fileInfo.Delete();
+                }
+            }
         }
 
         public void LogCallbackHandler(string condition, string stackTrace, LogType type) {
@@ -70,31 +76,35 @@ namespace Andja.Controller {
                     color = "ff00ffff";
                     break;
             }
-            string log = "<color=#" + color + ">" + typestring + " <i>" + condition + "</i> "/* +Environment.NewLine +"<size=9>" + stackTrace + "</size>"*/ + "</color> ";
+            string log = 
+                "<color=#" + color + ">"
+                    + typestring + " <i>" + condition + "</i> " + 
+                    (Application.isEditor && type == LogType.Error? "" : Environment.NewLine +"<size=9>" + stackTrace + "</size>")
+                + "</color> ";
             if (writeToConsole == null) {
                 logs.Add(log);
             }
             else {
                 writeToConsole?.Invoke(log);
             }
-#if UNITY_EDITOR == false
-        if (string.IsNullOrEmpty(stackTrace)==false) {
-            stackTrace += Environment.NewLine;
-        }
-        logWriter.Write(Environment.NewLine
-                        + type + "{ "+ Environment.NewLine
-                        + condition + Environment.NewLine
-                        + stackTrace
-                        + "}");
-#endif
+            if (Application.isEditor == false) {
+                if (string.IsNullOrEmpty(stackTrace) == false) {
+                    stackTrace += Environment.NewLine;
+                }
+                logWriter.Write(Environment.NewLine
+                                + type + "{ " + Environment.NewLine
+                                + condition + Environment.NewLine
+                                + stackTrace
+                                + "}");
+            }
         }
 
         internal void RegisterOnLogAdded(Action<string> writeToConsole) {
             this.writeToConsole += writeToConsole;
         }
-
+        [HideInInspector]
         public List<string> FirstLevelCommands = new List<string>
-            { "speed", "player", "maxfps", "city", "unit", "ship", "island", "spawn", "event", "camera" };
+            { "speed", "player", "maxfps", "city", "graphy", "profiler", "unit", "ship", "island", "spawn", "event", "camera" };
         /// <summary>
         /// Splits the command into its parts on whitespaces and then tries to execute the different level commands
         /// </summary>
@@ -167,6 +177,10 @@ namespace Andja.Controller {
                     CameraController.devCameraZoom = turn;
                     break;
 
+                case "graphy":
+                    happend = HandleGraphyCommands(parameters.Skip(1).ToArray());
+                    break;
+
                 case "itsrainingbuildings":
                     //easteregg!
                     GOtoPosition = new Dictionary<GameObject, Vector3>();
@@ -206,7 +220,46 @@ namespace Andja.Controller {
             }
             return happend;
         }
+        [HideInInspector]
+        public List<string> GraphyCommands = new List<string>
+            { "full", "medium", "light", "fps", "switchmode" };
+        private bool HandleGraphyCommands(string[] parameters) {
+            if(parameters.Length == 0) {
+                if(GraphyInstance != null) {
+                    Destroy(GraphyInstance);
+                }
+                return true;
+            }
+            if (GraphyInstance == null) {
+                GraphyInstance = Instantiate(GraphyPrefab);
+                return true;
+            }
+            switch (parameters[0]) {
+                case "full":
+                    GraphyInstance.SetPreset(GraphyManager.ModulePreset.FPS_FULL_RAM_FULL_AUDIO_FULL_ADVANCED_FULL);
+                    return true;
 
+                case "medium":
+                    GraphyInstance.SetPreset(GraphyManager.ModulePreset.FPS_FULL_RAM_FULL_AUDIO_FULL);
+                    return true;
+
+                case "light":
+                    GraphyInstance.SetPreset(GraphyManager.ModulePreset.FPS_FULL);
+                    return true;
+
+                case "fps":
+                    GraphyInstance.SetPreset(GraphyManager.ModulePreset.FPS_BASIC);
+                    return true;
+
+                case "switchmode":
+                    GraphyInstance.ToggleModes();
+                    return true;
+
+                default:
+                    return false;
+            }
+        }
+        [HideInInspector]
         public List<string> ShipCommands = new List<string>
             { "cannon" };
 
@@ -236,36 +289,45 @@ namespace Andja.Controller {
             ship.CannonItem.count = amount;
             return true;
         }
-
+        [HideInInspector]
         public List<string> EventsCommands = new List<string>
-            { "trigger" };
+            { "trigger", "stop" };
 
         private bool HandleEventCommands(string[] parameters) {
             if (parameters.Length < 1) {
                 return false;
             }
-            string id = parameters[1];
-            if (PrototypController.Instance.GameEventExists(id) == false) {
-                return false;
-            }
             switch (parameters[0]) {
                 case "trigger":
+                    if (parameters.Length < 2) {
+                        return false;
+                    }
+                    string id = parameters[1];
+                    if (PrototypController.Instance.GameEventExists(id) == false) {
+                        return false;
+                    }
                     int player = -1;
                     if (parameters.Length == 3 && string.IsNullOrEmpty(parameters[2]) == false) {
                         int.TryParse(parameters[2], out player);
                     }
                     if (player < 0)
-                        EventController.Instance.TriggerEventForEventable(new GameEvent(id), MouseController.Instance.CurrentlySelectedIGEventable);
+                        return EventController.Instance.TriggerEventForEventable(new GameEvent(id), MouseController.Instance.CurrentlySelectedIGEventable);
                     else
-                        EventController.Instance.TriggerEventForPlayer(new GameEvent(id), PlayerController.GetPlayer(player));
-                    break;
-
+                        return EventController.Instance.TriggerEventForPlayer(new GameEvent(id), PlayerController.GetPlayer(player));
+                case "stop":
+                    if (parameters.Length == 2 && string.IsNullOrEmpty(parameters[1]) == false && 
+                            uint.TryParse(parameters[1], out uint gid)) {
+                        return EventController.Instance.StopGameEvent(gid);
+                    }
+                    return false;
+                case "list":
+                    EventController.Instance.ListAllActiveEvents();
+                    return true;
                 default:
                     return false;
             }
-            return true;
         }
-
+        [HideInInspector]
         public List<string> SpawnCommands = new List<string>
             { "unit", "crate" };
 
@@ -290,9 +352,6 @@ namespace Andja.Controller {
                     if (parameters.Length > pos) {
                         if (int.TryParse(parameters[pos], out player) == false) {
                             return false;
-                        }
-                        else {
-                            pos++;
                         }
                     }
                     Unit u = PrototypController.Instance.GetUnitForID(id);
@@ -331,8 +390,9 @@ namespace Andja.Controller {
             return false;
         }
 
+        [HideInInspector]
         public List<string> CityCommands = new List<string>
-            { "item","fillitup","builditems", "name", "player" };
+            { "item","fillitup","builditems", "name", "player", "effect" };
 
         private bool HandleCityCommands(string[] parameters) {
             if (parameters.Length < 1) {
@@ -372,8 +432,10 @@ namespace Andja.Controller {
                     break;
 
                 case "event":
-                    Debug.Log("Console Command not implemented!");
-                    break;
+                    return EventController.Instance.TriggerEventForEventable(new GameEvent(parameters[pos + 1]), c);
+
+                case "effect":
+                    return HandleEffects(parameters.Skip(1).ToArray(), c);
 
                 default:
                     break;
@@ -381,8 +443,9 @@ namespace Andja.Controller {
             return false;
         }
 
+        [HideInInspector]
         public List<string> PlayerCommands = new List<string>
-            { "change","money","diplomatic" };
+            { "change","money","diplomatic","effect" };
 
         private bool HandlePlayerCommands(string[] parameters) {
             switch (parameters[0]) {
@@ -394,6 +457,15 @@ namespace Andja.Controller {
 
                 case "diplomatic":
                     return ChangeWar(parameters.Skip(1).ToArray());
+
+                case "effect":
+                    if (parameters.Length < 3)
+                        return false;
+                    // anything can thats not a number can be the current player
+                    if (int.TryParse(parameters[1], out int player) == false) {
+                        return false;
+                    }
+                    return HandleEffects(parameters.Skip(2).ToArray(), PlayerController.GetPlayer(player));
 
                 default:
                     break;
@@ -465,8 +537,9 @@ namespace Andja.Controller {
             return PlayerController.Instance.ChangeCurrentPlayer(player);
         }
 
+        [HideInInspector]
         public List<string> UnitCommands = new List<string>
-            { "item","build","kill", "name", "player", "event" };
+            { "item","build","kill", "name", "player", "event", "effect" };
 
         private bool HandleUnitCommands(string[] parameters) {
             if (parameters.Length < 1) {
@@ -504,32 +577,51 @@ namespace Andja.Controller {
                     return true;
 
                 case "name":
-                    Debug.Log("Console Command not implemented!");
-                    break;
+                    u.SetName(parameters[pos + 1]);
+                    return true;
 
                 case "player":
-                    Debug.Log("Console Command not implemented!");
-                    break;
+                    if(int.TryParse(parameters[pos + 1], out int num)) {
+                        u.playerNumber = num;
+                    }
+                    return true;
 
                 case "event":
-                    Debug.Log("Console Command not implemented!");
-                    break;
+                    return EventController.Instance.TriggerEventForEventable(new GameEvent(parameters[pos + 1]), u);
+
+                case "effect":
+                    return HandleEffects(parameters.Skip(1).ToArray(), u);
 
                 default:
                     break;
             }
             return false;
         }
+        [HideInInspector]
+        public List<string> EffectsCommands = new List<string>  { "add","remove" };
+
+        private bool HandleEffects(string[] parameters, IGEventable eventable) {
+            if (PrototypController.Instance.EffectPrototypeDatas.ContainsKey(parameters[1]) == false)
+                return false;
+            switch(parameters[0]) {
+                case "add":
+                    return eventable.AddEffect(new Effect(parameters[1]));
+                case "remove":
+                    bool all = parameters.Length > 2 ? bool.TryParse(parameters[2], out _) : false;
+                    return eventable.RemoveEffect(new Effect(parameters[1]), all);
+                default:
+                    return false;
+            }
+        }
 
         public bool ChangeItemInInventory(string[] parameters, Inventory inv) {
             string id = null;
-            int amount = 0; // amount can be plus for add or negative for remove
             if (parameters.Length != 2) {
                 return false;
             }
             id = parameters[0];
 
-            if (int.TryParse(parameters[1], out amount) == false) {
+            if (int.TryParse(parameters[1], out int amount) == false) {
                 return false;
             }
             if (PrototypController.Instance.AllItems.ContainsKey(id) == false) {
@@ -558,10 +650,14 @@ namespace Andja.Controller {
         }
 
         private void OnDestroy() {
-#if UNITY_EDITOR == false
-        logWriter.Flush();
-        logWriter.Close();
-#endif
+            Destroy(GraphyInstance);
+            if (Application.isEditor == false) {
+                logWriter.Flush();
+                logWriter.Close();
+                File.Move(Path.Combine(logPath, tempLogName), 
+                          Path.Combine(logPath, DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss") + "_" + SaveController.SaveName + ".log")
+                );
+            }
         }
     }
 }

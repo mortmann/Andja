@@ -65,7 +65,7 @@ namespace Andja.Controller {
         public void OnUnitCreated(Unit unit) {
             // This creates a new GameObject and adds it to our scene.
             GameObject go = new GameObject();
-            go.name = "U-" + unit.PlayerSetName;
+            go.name = unit.playerNumber +":" + (unit.IsShip?"S":"U") + unit.PlayerSetName ?? unit.Name;
             GameObject line_go = Instantiate(unitPathPrefab);
             line_go.transform.SetParent(go.transform);
             // Add our tile/GO pair to the dictionary.
@@ -81,9 +81,9 @@ namespace Andja.Controller {
             Rigidbody2D r2d = go.AddComponent<Rigidbody2D>();
             r2d.gravityScale = 0;
             AdvancedPolygonCollider apc = go.AddComponent<AdvancedPolygonCollider>();
-            apc.AlphaTolerance = 20;
-            apc.Scale = 1.15f;
-            apc.DistanceThreshold = 2;
+            apc.AlphaTolerance = 128;
+            apc.Scale = 1f;
+            apc.DistanceThreshold = 4;
             StartCoroutine(UpdateHitbox(apc));
             //BoxCollider2D col = unit_go.AddComponent<BoxCollider2D>();
             //col.size = new Vector2(sr.sprite.textureRect.size.x / sr.sprite.pixelsPerUnit,
@@ -115,7 +115,7 @@ namespace Andja.Controller {
             yield return null;
         }
 
-        private void OnProjectileCreated(Projectile projectile) {
+        public void OnProjectileCreated(Projectile projectile) {
             GameObject pro_go = new GameObject {
                 name = "Projectile"
             };
@@ -166,7 +166,7 @@ namespace Andja.Controller {
 
         private void OnUnitDestroy(Unit c, IWarfare warfare) {
             if (unitGameObjectMap.ContainsKey(c) == false) {
-                Debug.LogError("OnCharacterChanged -- trying to change visuals for character not in our map.");
+                Debug.LogError("OnUnitDestroy -- trying to change visuals for character not in our map.");
                 return;
             }
             GameObject char_go = unitGameObjectMap[c];
@@ -260,7 +260,12 @@ namespace Andja.Controller {
         }
 
         internal void Dehighlight(Unit[] units) {
+            if (Application.isPlaying == false)
+                return;
             foreach (Unit unit in units) {
+                if(unitGameObjectMap.ContainsKey(unit) == false) {
+                    continue;
+                }
                 unitGameObjectMap[unit].GetComponent<SpriteOutline>().enabled = false;
             }
         }

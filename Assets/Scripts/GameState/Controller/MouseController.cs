@@ -98,6 +98,8 @@ namespace Andja.Controller {
                 _toBuildstructure = value;
             }
         }
+        public Item[] NeededItemsToBuild;
+        public int NeededBuildCost;
 
         public MouseState MouseState { get; protected set; } = MouseState.Idle;
         public MouseUnitState MouseUnitState { get; protected set; } = MouseUnitState.None;
@@ -584,6 +586,8 @@ namespace Andja.Controller {
             if (ToBuildStructure == null) {
                 return;
             }
+            NeededItemsToBuild = ToBuildStructure.BuildingItems?.CloneArrayWithCounts();
+            NeededBuildCost = ToBuildStructure.BuildCost;
             UpdateSinglePreview();
             if (Input.GetMouseButtonDown(0)) {
                 List<Tile> structureTiles = ToBuildStructure.GetBuildingTiles(GetTileUnderneathMouse());
@@ -673,7 +677,7 @@ namespace Andja.Controller {
                 if (pathStartTile.Island != null && pathEndTile.Island != null &&
                         (path == null || path.endTiles == null || path.endTiles.Contains(pathEndTile) == false)) {
                     path = new Path_AStar(pathStartTile.Island, pathStartTile, pathEndTile, false,
-                                            Path_Heuristics.Manhattan, true, PlayerController.currentPlayerNumber);
+                                            PathHeuristics.Manhattan, true, PlayerController.currentPlayerNumber);
                 }
                 if (path.path == null) {
                     return;
@@ -715,6 +719,8 @@ namespace Andja.Controller {
                     tileToStructurePreview[tile] = preview;
                 }
             }
+            NeededItemsToBuild = ToBuildStructure.BuildingItems?.CloneArrayWithCounts(tiles.Count());
+            NeededBuildCost = ToBuildStructure.BuildCost * tiles.Count();
             foreach (StructurePreview preview in tileToStructurePreview.Values) {
                 if (ToBuildStructure is RoadStructure) {
                     string sprite = ToBuildStructure.SpriteName + RoadStructure.UpdateOrientation(preview.tile, tiles);
@@ -967,7 +973,9 @@ namespace Andja.Controller {
         }
 
         private void CheckUnitCursor() {
-            if (MouseUnitState == MouseUnitState.Normal) {
+            if (SelectedUnit.IsPlayer() == false)
+                return;
+            if (MouseUnitState != MouseUnitState.Build) {
                 Transform hit = MouseRayCast();
                 bool attackAble = false;
                 if (hit) {
@@ -978,6 +986,7 @@ namespace Andja.Controller {
                             && PlayerController.currentPlayerNumber == iths.PlayerNumber
                             && SelectedUnit.IsUnit == iths.IsUnit) {
                             ChangeCursorType(CursorType.Escort);
+                            return;
                         }
                     }
                 }
@@ -987,6 +996,8 @@ namespace Andja.Controller {
                 }
                 if (attackAble)
                     ChangeCursorType(CursorType.Attack);
+                else
+                    ChangeCursorType(CursorType.Pointer);
             }
         }
 
@@ -1093,6 +1104,8 @@ namespace Andja.Controller {
             if (BuildController.Instance.BuildState != BuildStateModes.None)
                 BuildController.Instance.ResetBuild();
             ResetStructurePreviews();
+            NeededBuildCost = 0;
+            NeededItemsToBuild = null;
             destroyTiles.Clear();
             ToBuildStructure = null;
             if (MouseUnitState == MouseUnitState.Build) {

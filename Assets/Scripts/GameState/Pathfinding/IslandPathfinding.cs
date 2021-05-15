@@ -6,13 +6,11 @@ namespace Andja.Pathfinding {
 
     public class IslandPathfinding : BasePathfinding {
         private Tile start;
-
         public IslandPathfinding() : base() {
         }
 
         public IslandPathfinding(Unit u, Tile start) {
-            this._speed = u.Speed;
-            this.rotationSpeed = u.RotationSpeed;
+            this.agent = u;
             CurrTile = start;
             X = start.X;
             Y = start.Y;
@@ -20,6 +18,7 @@ namespace Andja.Pathfinding {
             dest_X = start.X;
             dest_Y = start.Y;
         }
+
 
         public override void SetDestination(Tile end) {
             SetDestination(end.Vector);
@@ -36,7 +35,6 @@ namespace Andja.Pathfinding {
             this.DestTile = World.Current.GetTileAt(x, y);
             dest_X = x;
             dest_Y = y;
-            pathDestination = Path_Destination.Exact;
             StartCalculatingThread();
         }
 

@@ -44,7 +44,29 @@ namespace Andja.Model {
         public AttackCommand() {
         }
     }
+    [JsonObject(MemberSerialization.OptIn)]
+    public class AggroCommand : Command {
+        public override bool IsFinished => target.IsDestroyed || isDone;
+        public override UnitMainModes MainMode => UnitMainModes.Aggroing;
+        public override Vector2 Position => target.CurrentPosition;
 
+        [JsonPropertyAttribute] public ITargetable target;
+        [JsonPropertyAttribute] public Vector2 StartPosition;
+        [JsonPropertyAttribute] bool isDone;
+
+        public AggroCommand(ITargetable target, Vector2 startPosition) {
+            this.target = target;
+            this.StartPosition = startPosition;
+        }
+
+        public AggroCommand() {
+        }
+
+        internal void SetFinished() {
+            isDone = true;
+        }
+
+    }
     [JsonObject(MemberSerialization.OptIn)]
     public class CaptureCommand : Command {
         public override bool IsFinished => target.Captured;

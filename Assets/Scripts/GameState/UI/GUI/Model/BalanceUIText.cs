@@ -7,24 +7,32 @@ namespace Andja.UI.Model {
 
     public class BalanceUIText : MonoBehaviour {
         public Player player => PlayerController.CurrentPlayer;
-        public Text balanceText;
-        public Text changeText;
-
+        public ImageText balanceText;
+        public ImageText changeText;
+        private void Start() {
+            balanceText.Set(UISpriteController.GetIcon(CommonIcon.Money), StaticLanguageVariables.Balance, "");
+            changeText.Set(UISpriteController.GetIcon(CommonIcon.Upkeep), StaticLanguageVariables.BalanceChange, "");
+        }
         private void Update() {
             if (player.TreasuryBalance < 0) {
-                balanceText.color = Color.red;
+                balanceText.SetColorText(Color.red);
             }
             if (player.TreasuryBalance >= 0) {
-                balanceText.color = Color.black;
+                balanceText.SetColorText(Color.black);
             }
             if (player.LastTreasuryChange < 0) {
-                changeText.color = Color.red;
+                changeText.SetColorText(Color.red);
             }
             if (player.LastTreasuryChange >= 0) {
-                changeText.color = Color.green;
+                changeText.SetColorText(Color.green);
             }
-            balanceText.text = player.TreasuryBalance + " ";
-            changeText.text = (player.LastTreasuryChange > 0 ? "+" : "") + player.LastTreasuryChange + " ";
+            balanceText.SetText(player.TreasuryBalance + " ");
+            changeText.SetText((player.LastTreasuryChange > 0 ? "+" : "") + player.LastTreasuryChange + " ");
+            if(MouseController.Instance.NeededBuildCost > 0) {
+                balanceText.ShowAddon(MouseController.Instance.NeededBuildCost + "", TextColor.Negative);
+            } else {
+                balanceText.RemoveAddon();
+            }
         }
     }
 }

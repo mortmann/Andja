@@ -10,27 +10,18 @@ namespace Andja.Pathfinding {
 
         private StaticGrid tileGrid;
 
-        public Ship Ship;
-
-        protected override float Speed {
-            get {
-                return Ship.Speed;
-            }
-            set { // cant set it
-            }
-        }
-
         public OceanPathfinding() : base() {
-            TurnType = Turning_Type.TurnRadius;
+            if (_x < 0)
+                _x = 0;
+            if (_y < 0)
+                _y = 0;
         }
 
         public OceanPathfinding(Tile t, Ship s) {
-            Ship = s;
-            rotationSpeed = s.RotationSpeed;
+            agent = s;
             CurrTile = t;
             X = t.X;
             Y = t.Y;
-            TurnType = Turning_Type.TurnRadius;
         }
 
         public override void SetDestination(Tile end) {
@@ -38,23 +29,22 @@ namespace Andja.Pathfinding {
         }
 
         public override void SetDestination(float x, float y) {
-            pathDestination = Path_Destination.Exact;
             dest_X = x;
             dest_Y = y;
             this.start = World.Current.GetTileAt(X, Y);
             this.DestTile = World.Current.GetTileAt(x, y);
-            tileGrid = World.Current.TilesGrid;
+            tileGrid = (StaticGrid)World.Current.TilesGrid.Clone();
             StartCalculatingThread();
         }
 
         protected override void CalculatePath() {
-            TurnType = Turning_Type.TurnRadius;
-            tileGrid = (StaticGrid)tileGrid.Clone();
-            pathDestination = Path_Destination.Exact;
+            tileGrid.Reset();
             System.Diagnostics.Stopwatch StopWatch = new System.Diagnostics.Stopwatch();
             StopWatch.Start();
+            //TODO change this algo
             JumpPointParam jpParam = new JumpPointParam(tileGrid, new GridPos(start.X, start.Y), new GridPos(DestTile.X, DestTile.Y), true, DiagonalMovement.OnlyWhenNoObstacles);
             List<GridPos> pos = JumpPointFinder.FindPath(jpParam);
+
             worldPath = new Queue<Vector2>();
             //we probably need to remove the first tile cause it may interfere with smooth pathing
             for (int i = 0; i < pos.Count; i++) {
@@ -79,7 +69,6 @@ namespace Andja.Pathfinding {
                 NextDestination = worldPath.Dequeue();
             }
             StopWatch.Stop();
-            //Debug.Log("CalculatePath Steps:" + worldPath.Count + " - "+ StopWatch.ElapsedMilliseconds + "ms (" + StopWatch.Elapsed.TotalSeconds + "s)! ");
             //important
             IsDoneCalculating = true;
         }

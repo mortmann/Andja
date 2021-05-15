@@ -73443,6 +73443,7 @@
                 "Workers": [
                   {
                     "$id": "8561",
+					"ID":"roadcarrier",
                     "Home": {
                       "$ref": "8560"
                     },
@@ -75430,6 +75431,7 @@
                 "Workers": [
                   {
                     "$id": "8783",
+					"ID": "lumberjack",
                     "Home": {
                       "$ref": "8782"
                     },
@@ -75501,6 +75503,7 @@
                 "Workers": [
                   {
                     "$id": "8790",
+					"ID": "lumberjack",
                     "Home": {
                       "$ref": "8789"
                     },
@@ -80011,6 +80014,7 @@
                 "Workers": [
                   {
                     "$id": "9321",
+					"ID": "lumberjack",
                     "Home": {
                       "$ref": "9320"
                     },
@@ -115831,6 +115835,8 @@
         "aggroCooldownTimer": 0.0,
         "queuedCommands": []
       },
+	   {"$ref":"13393"}
+	  ,
       {
         "$id": "13382",
         "$type": "Andja.Model.Ship, Assembly-CSharp",

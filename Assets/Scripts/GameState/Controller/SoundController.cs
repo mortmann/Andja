@@ -14,7 +14,7 @@ namespace Andja.Controller {
 
     public enum AmbientType { Ocean, North, Middle, South, Wind }
 
-    public enum MusicType { Idle, War, Combat, Lose, Win, Disaster, Doom }
+    public enum MusicType { Idle, War, Combat, Lose, Win, Disaster, Doom, MainMenu, Loading, Editor }
 
     public enum SoundType { Music, SoundEffect, Ambient }
 
@@ -36,7 +36,7 @@ namespace Andja.Controller {
         public AudioSource uiSource;
         public AudioSource soundEffectSource;
         public AudioSourcePauseable soundEffect2DGO;
-        private List<AudioSourcePauseable> deleteOnPlayedAudios;
+        private static List<AudioSourcePauseable> deleteOnPlayedAudios;
 
         private CameraController cameraController;
         private StructureSpriteController ssc;
@@ -201,12 +201,8 @@ namespace Andja.Controller {
                 StartCoroutine(StartFile(nameToMetaData[ambientTypeToName[AmbientType.Wind][num]], windAmbientSource));
             }
         }
-
-        public void LoadFiles() {
-            string musicPath = Path.Combine(ConstantPathHolder.StreamingAssets, Path.Combine(MusicLocation));
-            string soundEffectPath = Path.Combine(ConstantPathHolder.StreamingAssets, Path.Combine(SoundEffectLocation));
-            string ambientPath = Path.Combine(ConstantPathHolder.StreamingAssets, Path.Combine(AmbientLocation));
-
+        public static List<SoundMetaData> LoadMusicFiles(string musicPath) {
+            List<SoundMetaData> files = new List<SoundMetaData>();
             string[] musicfiles = Directory.GetFiles(musicPath, "*.*", SearchOption.AllDirectories)
                 .Where(s => s.ToLower().EndsWith(".ogg") || s.ToLower().EndsWith(".wav")).ToArray();
             foreach (string path in musicfiles) {
@@ -221,8 +217,17 @@ namespace Andja.Controller {
                     fileExtension = extension.Contains("wav") ? AudioType.WAV : AudioType.OGGVORBIS,
                     file = path
                 };
-                nameToMetaData[name] = meta;
-                musictypeToName[meta.musicType].Add(name);
+                files.Add(meta);
+            }
+            return files;
+        }
+        public void LoadFiles() {
+            string musicPath = Path.Combine(ConstantPathHolder.StreamingAssets, Path.Combine(MusicLocation));
+            string soundEffectPath = Path.Combine(ConstantPathHolder.StreamingAssets, Path.Combine(SoundEffectLocation));
+            string ambientPath = Path.Combine(ConstantPathHolder.StreamingAssets, Path.Combine(AmbientLocation));
+            foreach (SoundMetaData smd in LoadMusicFiles(musicPath)){
+                nameToMetaData[smd.name] = smd;
+                musictypeToName[smd.musicType].Add(smd.name);
             }
             string[] soundeffectfiles = Directory.GetFiles(soundEffectPath, "*.*", SearchOption.AllDirectories)
                 .Where(s => s.ToLower().EndsWith(".ogg") || s.ToLower().EndsWith(".wav")).ToArray();
@@ -474,8 +479,8 @@ namespace Andja.Controller {
             //Maybe never used?
         }
 
-        private IEnumerator StartFile(SoundMetaData meta, AudioSourcePauseable toPlay, bool deleteOnDone = false) {
-            string musicFile = nameToMetaData[meta.name].file;
+        public static IEnumerator StartFile(SoundMetaData meta, AudioSourcePauseable toPlay, bool deleteOnDone = false) {
+            string musicFile = meta.file;
             if (File.Exists(musicFile) == false)
                 yield return null;
             //System.Diagnostics.Stopwatch loadingStopWatch = new System.Diagnostics.Stopwatch();

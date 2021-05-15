@@ -11,7 +11,7 @@ namespace Andja {
     }
     public class DamageType : LanguageVariables {
             public string ID;
-            public String spriteBaseName;
+            public string spriteBaseName;
             public Dictionary<ArmorType, float> damageMultiplier;
 
             public float GetDamageMultiplier(ArmorType armorType) {
@@ -25,6 +25,6 @@ namespace Andja {
     }
     public class ArmorType : LanguageVariables {
         public string ID;
-        public String spriteBaseName;
+        public string spriteBaseName;
     }
 }

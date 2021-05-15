@@ -7,10 +7,10 @@ using UnityEngine;
 
 namespace Andja.Pathfinding {
 
-    public enum Path_Heuristics { Euclidean, Manhattan, Diagonal }
+    public enum PathHeuristics { Euclidean, Manhattan, Diagonal }
 
     public class Path_AStar {
-        public Path_Heuristics Heuristic;
+        public PathHeuristics Heuristic;
         public Queue<Tile> path;
         public const float DIAGONAL_MOVE_COST = 1.41421356237f;
         public const float NORMAL_MOVE_COST = 1;
@@ -26,7 +26,7 @@ namespace Andja.Pathfinding {
         }
 
         public Path_AStar(Island island, Tile tileStart, Tile tileEnd, bool diag = true,
-            Path_Heuristics Heuristic = Path_Heuristics.Euclidean, bool canEndInUnwakable = false, int playerCityRequired = int.MinValue) {
+            PathHeuristics Heuristic = PathHeuristics.Euclidean, bool canEndInUnwakable = false, int playerCityRequired = int.MinValue) {
             if (island == null || tileStart == null || tileEnd == null) {
                 return;
             }
@@ -40,7 +40,7 @@ namespace Andja.Pathfinding {
             Calculate(tileStart, tileEnd, diag);
         }
 
-        public Path_AStar(Route route, Path_TileGraph graph, Tile tileStart, Tile tileEnd, List<Tile> startTiles, List<Tile> endTiles, Path_Heuristics Heuristic = Path_Heuristics.Manhattan) {
+        public Path_AStar(Route route, Path_TileGraph graph, Tile tileStart, Tile tileEnd, List<Tile> startTiles, List<Tile> endTiles, PathHeuristics Heuristic = PathHeuristics.Manhattan) {
             if (route == null || tileStart == null || tileEnd == null) {
                 return;
             }
@@ -61,7 +61,7 @@ namespace Andja.Pathfinding {
             Calculate(tileStart, tileEnd, false);
         }
 
-        public Path_AStar(bool debug, Island island, Tile start, Tile end, List<Tile> startTiles, List<Tile> endTiles, bool canEndInUnwakable = false, Path_Heuristics Heuristic = Path_Heuristics.Euclidean) {
+        public Path_AStar(bool debug, Island island, Tile start, Tile end, List<Tile> startTiles, List<Tile> endTiles, bool canEndInUnwakable = false, PathHeuristics Heuristic = PathHeuristics.Euclidean) {
             this.debug = debug;
             if (island == null || startTiles == null || endTiles == null || startTiles.Count == 0 || endTiles.Count == 0) {
                 return;
@@ -168,49 +168,7 @@ namespace Andja.Pathfinding {
                         OpenSet.UpdatePriority(neighbor, f_score[neighbor]);
                     }
                 }
-                //Parallel.ForEach(current.edges, edge_neighbor => {
-                //    if (diag == false) {
-                //        if ((edge_neighbor.node.data.Vector - current.data.Vector).sqrMagnitude > 1.1) {
-                //            return;
-                //        }
-                //    }
-                //    Path_Node<Tile> neighbor = edge_neighbor.node;
-
-                //    if (ClosedSet.Contains(neighbor) == true)
-                //        return; // ignore this already completed neighbor
-                //    float movement_cost_to_neighbor = neighbor.data.MovementCost * Dist_between(current, neighbor);
-                //    if(playerCityRequired>int.MinValue) {
-                //        if (neighbor.data.City.PlayerNumber != playerCityRequired) {
-                //            movement_cost_to_neighbor = float.PositiveInfinity;
-                //        }
-                //    }
-                //    if (canEndInUnwakable) {
-                //        if (closestWalkableNeighbours.Contains(neighbor.data) || endTiles.Contains(neighbor.data)) {
-                //            movement_cost_to_neighbor = Dist_between(current, neighbor)+0.1f;
-                //        }
-                //    }
-                //    float tentative_g_score = g_score[current] + movement_cost_to_neighbor;
-
-                //    if (OpenSet.Contains(neighbor) && tentative_g_score >= g_score[neighbor])
-                //        return;
-                //    try {
-                //        Came_From[neighbor] = current;
-                //    } catch(Exception e) {
-                //        //it has nullpointer here no clue why
-                //        //TODO: fix this
-                //        e.ToString();
-                //    }
-                //    g_score[neighbor] = tentative_g_score;
-                //    f_score[neighbor] = g_score[neighbor] + Heuristic_cost_estimate(neighbor, goal);
-
-                //    if (OpenSet.Contains(neighbor) == false) {
-                //        OpenSet.Enqueue(neighbor, f_score[neighbor]);
-                //    }
-                //    else {
-                //        OpenSet.UpdatePriority(neighbor, f_score[neighbor]);
-                //    }
-
-                //}); // foreach neighbour
+                
             } // while
             // If we reached here, it means that we've burned through the entire
             // OpenSet without ever reaching a point where current == goal.
@@ -237,16 +195,16 @@ namespace Andja.Pathfinding {
 
         private float Heuristic_cost_estimate(Path_Node<Tile> a, Path_Node<Tile> b) {
             switch (Heuristic) {
-                case Path_Heuristics.Euclidean:
+                case PathHeuristics.Euclidean:
                     return Mathf.Sqrt(
                                 Mathf.Pow(a.data.X - b.data.X, 2) +
                                 Mathf.Pow(a.data.Y - b.data.Y, 2)
                             );
 
-                case Path_Heuristics.Manhattan:
+                case PathHeuristics.Manhattan:
                     return NORMAL_MOVE_COST * (Mathf.Abs(a.data.X - b.data.X) + Mathf.Abs(a.data.Y - b.data.Y));
 
-                case Path_Heuristics.Diagonal:
+                case PathHeuristics.Diagonal:
                     float dx = Mathf.Abs(a.data.X - b.data.X);
                     float dy = Mathf.Abs(a.data.Y - b.data.Y);
                     return NORMAL_MOVE_COST * (dx + dy) + (DIAGONAL_MOVE_COST - 2 * NORMAL_MOVE_COST) * Mathf.Min(dx, dy);

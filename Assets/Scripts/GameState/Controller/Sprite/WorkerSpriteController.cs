@@ -43,14 +43,14 @@ namespace Andja.Controller {
             GameObject go = new GameObject();
             go.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
             workerToGO.Add(worker, go);
-            go.name = worker.Home + " - Worker";
+            go.name = worker.Home + " - " + worker.ID;
             go.transform.position = new Vector3(worker.X, worker.Y, 0);
             Quaternion q = go.transform.rotation;
             q.eulerAngles = new Vector3(0, 0, worker.Rotation);
             go.transform.rotation = q;
 
             SpriteRenderer sr = go.AddComponent<SpriteRenderer>();
-            sr.sprite = workerSprites["worker"];
+            sr.sprite = workerSprites[worker.toWorkSprites];
             sr.sortingLayerName = "Persons";
             //SOUND PART -- IMPORTANT
             SoundController.Instance.OnWorkerCreated(worker, go);
@@ -65,6 +65,9 @@ namespace Andja.Controller {
                 return;
             }
             GameObject char_go = workerToGO[w];
+            if (w.IsFull) {
+                char_go.GetComponent<SpriteRenderer>().sprite = workerSprites[w.fromWorkSprites];
+            }
             char_go.transform.position = new Vector3(w.X, w.Y, 0);
             Quaternion q = char_go.transform.rotation;
             q.eulerAngles = new Vector3(0, 0, w.Rotation);

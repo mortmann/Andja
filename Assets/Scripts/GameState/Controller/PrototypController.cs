@@ -21,15 +21,16 @@ namespace Andja.Controller {
     /// </summary>
     public class PrototypController : MonoBehaviour {
         public const string GameVersion = "0.1.5"; //TODO: think about this position
+
         /**
-         * If adding a new XMLFileType please do these Steps:
-         *  1. add a Read*new*FromXML Function
-         *      1.1 create new (if needed) dictionaries
-         *      1.2 call it also with the ModLoader to enable Mods
-         *  2. modify the change ReloadLanguageVariables to include it
-         *      2.1 if the xml file is three deep like structures it must be added to the if
-         *  3. Create Debug output for it
-         */
+* If adding a new XMLFileType please do these Steps:
+*  1. add a Read*new*FromXML Function
+*      1.1 create new (if needed) dictionaries
+*      1.2 call it also with the ModLoader to enable Mods
+*  2. modify the change ReloadLanguageVariables to include it
+*      2.1 if the xml file is three deep like structures it must be added to the if
+*  3. Create Debug output for it
+*/
         public enum XMLFilesTypes { other, events, fertilities, items, combat, units, structures, needs, startingloadouts, mapgeneration }
 
         public int NumberOfPopulationLevels => populationLevelDatas.Count;
@@ -83,6 +84,7 @@ namespace Andja.Controller {
         private Dictionary<string, NeedPrototypeData> needPrototypeDatas;
         private Dictionary<string, FertilityPrototypeData> fertilityPrototypeDatas;
         private Dictionary<string, UnitPrototypeData> unitPrototypeDatas;
+        private Dictionary<string, WorkerPrototypeData> workerPrototypeDatas;
         private Dictionary<string, DamageType> damageTypeDatas;
         private Dictionary<string, EffectPrototypeData> effectPrototypeDatas;
         private Dictionary<string, GameEventPrototypData> gameEventPrototypeDatas;
@@ -91,6 +93,7 @@ namespace Andja.Controller {
         private Dictionary<string, NeedGroupPrototypData> needGroupDatas;
         private Dictionary<string, NeedGroup> idToNeedGroup;
         private Dictionary<string, Item> allItems;
+
         private List<Item> buildItemsList;
         private Dictionary<int, List<NeedGroup>> populationLevelToNeedGroup;
         private Dictionary<Climate, List<Fertility>> allFertilities;
@@ -156,8 +159,10 @@ namespace Andja.Controller {
         }
 
         internal Ship GetPirateShipPrototyp() {
-            //TODO: have pirateship prototyp
-            return (Ship)UnitPrototypes["ship"];
+            return (Ship)UnitPrototypes["pirateship"];
+        }
+        internal Ship GetFlyingTraderPrototype() {
+            return (Ship)UnitPrototypes["flyingtradeship"];
         }
 
         internal IslandFeaturePrototypeData GetIslandFeaturePrototypeDataForID(string id) {
@@ -205,6 +210,9 @@ namespace Andja.Controller {
 
         public StructurePrototypeData GetStructurePrototypDataForID(string ID) {
             return structurePrototypeDatas[ID];
+        }
+        internal WorkerPrototypeData GetWorkerPrototypDataForID(string id) {
+            return workerPrototypeDatas[id];
         }
 
         internal bool GameEventExists(string id) {
@@ -284,16 +292,6 @@ namespace Andja.Controller {
 
             //GAMEEVENTS
             effectPrototypeDatas = new Dictionary<string, EffectPrototypeData>();
-            //effectPrototypeDatas.Add("inactive", new EffectPrototypeData {
-            //    addType = EffectTypes.Float,
-            //    modifierType = EffectModifier.Multiplicative,
-            //    change = -0.5f,
-            //    nameOfVariable = "upkeepCost",
-            //    canSpread = false,
-            //    Name = "Inactive",
-            //    Description = "Was disabled.",
-            //    targets = new TargetGroup(Target.AllStructure)
-            //});
             gameEventPrototypeDatas = new Dictionary<string, GameEventPrototypData>();
             ReadEventsFromXML(LoadXML(XMLFilesTypes.events));
             ModLoader.LoadXMLs(XMLFilesTypes.events, ReadEventsFromXML);
@@ -332,6 +330,7 @@ namespace Andja.Controller {
 
             unitPrototypes = new Dictionary<string, Unit>();
             unitPrototypeDatas = new Dictionary<string, UnitPrototypeData>();
+            workerPrototypeDatas = new Dictionary<string, WorkerPrototypeData>();
             ReadUnitsFromXML(LoadXML(XMLFilesTypes.units));
             ModLoader.LoadXMLs(XMLFilesTypes.units, ReadUnitsFromXML);
 
@@ -860,6 +859,7 @@ namespace Andja.Controller {
                 foreach (XmlElement node in listArmorType) {
                     ArmorType at = new ArmorType();
                     string id = node.GetAttribute("ID");
+                    at.ID = id;
                     SetData<ArmorType>(node, ref at);
                     armorTypeDatas[id] = at;
                 }
@@ -869,7 +869,7 @@ namespace Andja.Controller {
                 foreach (XmlElement node in listDamageType) {
                     DamageType at = new DamageType();
                     string id = node.GetAttribute("ID");
-
+                    at.ID = id;
                     SetData<DamageType>(node, ref at);
                     XmlNode dict = node.SelectSingleNode("damageMultiplier");
                     at.damageMultiplier = new Dictionary<ArmorType, float>();
@@ -928,10 +928,17 @@ namespace Andja.Controller {
                     ShipPrototypeData spd = new ShipPrototypeData();
                     string id = node.GetAttribute("ID");
                     SetData<ShipPrototypeData>(node, ref spd);
-                    spd.width = 1;
-                    spd.height = 1;
                     unitPrototypeDatas[id] = spd;
                     unitPrototypes[id] = new Ship(id, spd);
+                }
+            }
+            XmlNodeList listWorker = xmlDoc.SelectNodes("units/worker");
+            if (listShip != null) {
+                foreach (XmlElement node in listWorker) {
+                    WorkerPrototypeData wpd = new WorkerPrototypeData();
+                    string id = node.GetAttribute("ID");
+                    SetData<WorkerPrototypeData>(node, ref wpd);
+                    workerPrototypeDatas[id] = wpd;
                 }
             }
         }
@@ -1694,7 +1701,6 @@ namespace Andja.Controller {
         }
 
         private XMLFilesTypes current;
-
         public void ReloadLanguage() {
             foreach (XMLFilesTypes xml in Enum.GetValues(typeof(XMLFilesTypes))) {
                 current = xml;
@@ -1754,6 +1760,8 @@ namespace Andja.Controller {
                             break;
 
                         case XMLFilesTypes.units:
+                            if (node.LocalName == "worker")
+                                continue;
                             data = unitPrototypeDatas[id];
                             break;
 

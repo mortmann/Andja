@@ -1,20 +1,21 @@
 <units>
    <unit ID="basicunit">
+      <Name>
+         <entry lang="Deutsch">Standard Einheit</entry>
+         <entry lang="English">Basic Unit</entry>
+      </Name>
       <populationLevel>0</populationLevel>
       <populationCount>0</populationCount>
-      <Name>
-         <entry lang="English">Basic Unit</entry>
-         <entry lang="Deutsch">Standard Einheit</entry>
-      </Name>
       <buildingItems length="1">
          <Item ID="swords">
             <count>5</count>
          </Item>
       </buildingItems>
-      <buildcost>1000</buildcost>
+      <buildCost>1000</buildCost>
+      <upkeepCost>10</upkeepCost>
+      <spriteBaseName>basicunit</spriteBaseName>
       <inventoryPlaces>0</inventoryPlaces>
       <inventorySize>0</inventorySize>
-      <upkeepCost>10</upkeepCost>
       <maximumHealth>100.0</maximumHealth>
       <aggroTimer>1.0</aggroTimer>
       <attackRange>1.0</attackRange>
@@ -27,19 +28,19 @@
       <turnSpeed>180.0</turnSpeed>
       <aggroTime>0.0</aggroTime>
       <projectileSpeed>0.0</projectileSpeed>
-      <spriteBaseName>basicunit</spriteBaseName>
+      <canBeBuild>true</canBeBuild>
    </unit>
    <ship ID="ship">
-      <populationLevel>0</populationLevel>
-      <populationCount>0</populationCount>
       <Name>
-         <entry lang="English">Flagship</entry>
          <entry lang="Deutsch">Flaggschiff</entry>
+         <entry lang="English">Flagship</entry>
       </Name>
       <Description>
-         <entry lang="English">McShipFace</entry>
          <entry lang="Deutsch">Shippy Das Schiff</entry>
+         <entry lang="English">McShipFace</entry>
       </Description>
+      <populationLevel>0</populationLevel>
+      <populationCount>0</populationCount>
       <buildingItems length="4">
          <Item ID="wood">
             <count>20</count>
@@ -54,10 +55,11 @@
             <count>6</count>
          </Item>
       </buildingItems>
-      <buildcost>2500</buildcost>
+      <buildCost>2500</buildCost>
+      <upkeepCost>25</upkeepCost>
+      <spriteBaseName>ship</spriteBaseName>
       <inventoryPlaces>6</inventoryPlaces>
       <inventorySize>50</inventorySize>
-      <upkeepCost>25</upkeepCost>
       <maximumHealth>1250.0</maximumHealth>
       <aggroTimer>1.0</aggroTimer>
       <attackRange>10.0</attackRange>
@@ -70,11 +72,104 @@
       <turnSpeed>1.0</turnSpeed>
       <aggroTime>0.0</aggroTime>
       <projectileSpeed>15.0</projectileSpeed>
+      <canBeBuild>true</canBeBuild>
+      <maximumAmountOfCannons>20</maximumAmountOfCannons>
+      <damagePerCannon>7.5</damagePerCannon>
+      <cannonType ID="cannons">
+         <count>0</count>
+      </cannonType>
+   </ship>
+   <ship ID="pirateship">
+      <Name>
+         <entry lang="Deutsch">Piratenschiff</entry>
+         <entry lang="English">Pirateship</entry>
+      </Name>
+      <Description>
+         <entry lang="Deutsch">Das piratische Piraten Schwimmarrrr</entry>
+         <entry lang="English">PiratyArrPirateVessely</entry>
+      </Description>
+      <populationLevel>0</populationLevel>
+      <populationCount>0</populationCount>
+      <buildingItems length="0"/>
+      <buildCost>2500</buildCost>
+      <upkeepCost>25</upkeepCost>
+      <spriteBaseName>pirateship</spriteBaseName>
+      <inventoryPlaces>6</inventoryPlaces>
+      <inventorySize>50</inventorySize>
+      <maximumHealth>1250.0</maximumHealth>
+      <aggroTimer>1.0</aggroTimer>
+      <attackRange>10.0</attackRange>
+      <damage>10.0</damage>
+      <damageType>cannonball</damageType>
+      <armorType>woodenwall</armorType>
+      <attackRate>15.0</attackRate>
+      <buildRange>15.0</buildRange>
+      <speed>3.5</speed>
+      <turnSpeed>1.0</turnSpeed>
+      <aggroTime>0.0</aggroTime>
+      <projectileSpeed>15.0</projectileSpeed>
+      <canBeBuild>false</canBeBuild>
+      <maximumAmountOfCannons>15</maximumAmountOfCannons>
+      <damagePerCannon>5</damagePerCannon>
+      <cannonType ID="cannons">
+         <count>15</count>
+      </cannonType>
+   </ship>
+   <ship ID="flyingtradeship">
+      <Name>
+         <entry lang="Deutsch">Fliegender Händler</entry>
+         <entry lang="English">Flying TradeShip</entry>
+      </Name>
+      <Description>
+         <entry lang="Deutsch">Flieg schnell. Liefer schneller.</entry>
+         <entry lang="English">Fly fast. Deliver quicker.</entry>
+      </Description>
+      <populationLevel>0</populationLevel>
+      <populationCount>0</populationCount>
+      <buildingItems length="0"/>
+      <buildCost>2500</buildCost>
+      <upkeepCost>25</upkeepCost>
       <spriteBaseName>ship</spriteBaseName>
+      <inventoryPlaces>6</inventoryPlaces>
+      <inventorySize>50</inventorySize>
+      <maximumHealth>1250.0</maximumHealth>
+      <aggroTimer>1.0</aggroTimer>
+      <attackRange>10.0</attackRange>
+      <damage>10.0</damage>
+      <damageType>cannonball</damageType>
+      <armorType>woodenwall</armorType>
+      <attackRate>15.0</attackRate>
+      <buildRange>15.0</buildRange>
+      <speed>3.5</speed>
+      <turnSpeed>1.0</turnSpeed>
+      <aggroTime>0.0</aggroTime>
+      <projectileSpeed>15.0</projectileSpeed>
+      <canBeBuild>false</canBeBuild>
       <maximumAmountOfCannons>15</maximumAmountOfCannons>
       <damagePerCannon>1</damagePerCannon>
       <cannonType ID="cannons">
          <count>0</count>
       </cannonType>
    </ship>
+   <worker ID="roadcarrier">
+      <workerID>roadcarrier</workerID>
+      <toWorkSprites>roadcarrier</toWorkSprites>
+      <fromWorkSprites>roadcarrier_full</fromWorkSprites>
+      <pixelsPerSprite>64</pixelsPerSprite>
+      <speed>1.0</speed>
+   </worker>
+   <worker ID="placeholder">
+      <workerID>placeholder</workerID>
+      <toWorkSprites>placeholder</toWorkSprites>
+      <fromWorkSprites>placeholder_full</fromWorkSprites>
+      <pixelsPerSprite>64</pixelsPerSprite>
+      <speed>1.0</speed>
+   </worker>
+   <worker ID="lumberjack">
+      <workSound>chopping</workSound>
+      <toWorkSprites>lumberjack</toWorkSprites>
+      <fromWorkSprites>lumberjack_full</fromWorkSprites>
+      <pixelsPerSprite>64</pixelsPerSprite>
+      <speed>1.0</speed>
+   </worker>
 </units>

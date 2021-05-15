@@ -1,5 +1,7 @@
 ﻿using Andja.Controller;
+using Andja.Utility;
 using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -179,7 +181,7 @@ namespace Andja.Model {
                 if (getItems.Count <= 0) {
                     return;
                 }
-                Workers.Add(new Worker(this, nearestMarketStructure, workTime, getItems.ToArray(), WorkerWorkSound, false));
+                Workers.Add(new Worker(this, nearestMarketStructure, workTime, OutputData.workerID, getItems.ToArray(), false));
                 World.Current.CreateWorkerGameObject(Workers[0]);
             }
             else {
@@ -346,7 +348,6 @@ namespace Andja.Model {
                 RegisteredStructures.Add((OutputStructure)str, items);
             }
         }
-
         public void FindNearestMarketStructure(Tile tile) {
             if (tile.Structure is MarketStructure) {
                 if (nearestMarketStructure == null) {
@@ -361,5 +362,21 @@ namespace Andja.Model {
                 }
             }
         }
+
+        public override void Load() {
+            base.Load();
+            if (_intake != null) {
+                if(InputTyp == InputTyp.AND) {
+                    _intake = _intake.ReplaceKeepCounts(ProductionData.intake);
+                } else {
+                    if(Array.Exists(ProductionData.intake, x=>x.ID == _intake[0].ID) == false) {
+                        Debug.LogWarning("Prototype Intake Data changed for " + ID + " 'OR' does not contain last produced. " +
+                            "Updated to first in array.");
+                        _intake[0] = ProductionData.intake[0].Clone();
+                    }
+                }
+            }
+        }
+
     }
 }

@@ -1,5 +1,7 @@
 ﻿using Andja.Controller;
+using Andja.Model.Components;
 using Newtonsoft.Json;
+using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -8,23 +10,51 @@ namespace Andja.Model {
     [JsonObject(MemberSerialization.OptIn)]
     public class Pirate {
         public static readonly int Number = GameData.PirateNumber; // so it isnt the same like the number of wilderness
-
-        [JsonPropertyAttribute] private float startCooldown = 5f;
+        public static readonly float AggroRange = GameData.PirateAggroRange;
+        [JsonPropertyAttribute] private float startCooldown;
         [JsonPropertyAttribute] private List<Ship> Ships;
-
-        // Use this for initialization
+        private float checkShipsCooldown = 0f;
         public Pirate() {
             Ships = new List<Ship>();
+            this.startCooldown = GameData.PirateCooldown;
         }
 
-        // Update is called once per frame
         public void Update(float deltaTime) {
             if (startCooldown > 0) {
-                startCooldown -= deltaTime;
+                startCooldown = Mathf.Clamp(startCooldown - deltaTime, 0, startCooldown);
                 return;
             }
-            if (Ships.Count < 2) {
+            if (Ships.Count < GameData.PirateShipCount) {
                 AddShip();
+            }
+            if(checkShipsCooldown <= 0) {
+                checkShipsCooldown = 5f;
+                CheckShips();
+            } else {
+                checkShipsCooldown -= deltaTime;
+            }
+        }
+
+        private void CheckShips() {
+            foreach (Ship s in Ships) {
+                if (s.CurrentMainMode == UnitMainModes.Attack)
+                    continue;
+
+                List<Ship> targets = new List<Ship>();
+                Collider2D[] colls = Physics2D.OverlapCircleAll(s.CurrentPosition, AggroRange);
+                foreach (Collider2D c in colls) {
+                    ITargetableHoldingScript iths = c.gameObject.GetComponent<ITargetableHoldingScript>();
+                    if (iths != null && iths.Holding is Ship ship) {
+                        if(ship.PlayerNumber != Number)
+                            targets.Add(ship);
+                    }
+                }
+                if (targets.Count > 0) {
+                    var grouped = targets.GroupBy(x => x.playerNumber);
+                    if (grouped.Min().Key < 2) {
+                        s.GiveAttackCommand(grouped.Min().First(), true);
+                    }
+                }
             }
         }
 
@@ -35,6 +65,7 @@ namespace Andja.Model {
             ship.RegisterOnDestroyCallback(OnShipDestroy);
             ship.RegisterOnArrivedAtDestinationCallback(OnShipArriveDestination);
             Ships.Add(ship);
+            OnShipArriveDestination(ship, true);
         }
 
         private void OnShipArriveDestination(Unit unit, bool goal) {
@@ -44,11 +75,7 @@ namespace Andja.Model {
                 return;
             }
             if (goal) {
-                int x = UnityEngine.Random.Range(0, World.Current.Width);
-                int y = UnityEngine.Random.Range(0, World.Current.Height);
-                Tile t = World.Current.GetTileAt(x, y);
-                if (t.Type == TileType.Ocean)
-                    ship.GiveMovementCommand(t);
+                ship.GiveMovementCommand(World.Current.GetRandomOceanTile());
             }
         }
 
@@ -56,6 +83,16 @@ namespace Andja.Model {
             u.UnregisterOnArrivedAtDestinationCallback(OnShipArriveDestination);
             u.UnregisterOnDestroyCallback(OnShipDestroy);
             Ships.Remove((Ship)u);
+        }
+
+        internal void Load() {
+            foreach(Ship ship in Ships) {
+                ship.RegisterOnDestroyCallback(OnShipDestroy);
+                ship.RegisterOnArrivedAtDestinationCallback(OnShipArriveDestination);
+                if(ship.pathfinding.IsAtDestination)
+                    OnShipArriveDestination(ship, true);
+                ship.Load();
+            }
         }
     }
 }

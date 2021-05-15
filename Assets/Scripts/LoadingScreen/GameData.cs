@@ -7,7 +7,6 @@ using UnityEngine;
 using Andja.Model.Generator;
 
 namespace Andja {
-
     public enum GameType { Endless, Campaign, Szenario, Island, Editor }
 
     public enum Difficulty { Easy, Medium, Hard, VeryHard }
@@ -35,10 +34,23 @@ namespace Andja {
         //only load the set value if not using ingame loading method
         public string Loadsavegame => Application.isEditor && (setloadsavegame == null || setloadsavegame.Length == 0) ?
                                                 editorloadsavegame : setloadsavegame;
+        /// <summary>
+        /// This is currently only used for predictive aim for projectiles.
+        /// It is 0 for the moment because it currently should have no influence on the projectiles,
+        ///  because 2d top down doesnt make much sense to calculate 3d aim.
+        /// </summary>
+        public static float Gravity = 0;
+
+        //Pirate Data -- get set by difficulty
+        public static float PirateCooldown = 5f;
+        public static int PirateShipCount = 2;
 
         public static int WorldNumber = -1;
         public static int PirateNumber = -2;
         public static int FlyingTraderNumber = -3;
+
+        public static float PirateAggroRange = 22.5f;
+        public static float UnitAggroRange = 10f;
 
         public string editorloadsavegame;
         public static string setloadsavegame;

@@ -10,6 +10,7 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 namespace Andja.Controller {
+    public enum TextColor { Positive, Neutral, Negative }
     /// <summary>
     /// Opening and Closeing UIs being handled. ShortCutMenu saved here.
     /// </summary>
@@ -325,7 +326,18 @@ namespace Andja.Controller {
         internal static void SetSaveUIData(UIControllerSave uics) {
             uIControllerSave = uics;
         }
-        
+        public static string GetTextColor(TextColor color) {
+            switch (color) {
+                case TextColor.Positive:
+                    return "#27ae60";
+                case TextColor.Neutral:
+                    return "#323232";
+                case TextColor.Negative:
+                    return "#e74c3c";
+                default:
+                    return "#000000";
+            }
+        }
     }
 
     [Serializable]

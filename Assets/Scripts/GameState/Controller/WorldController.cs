@@ -157,7 +157,8 @@ namespace Andja.Controller {
             }
             World.Update(DeltaTime);
             offworldMarket.Update(DeltaTime);
-            flyingTrader.Update(DeltaTime);
+            flyingTrader?.Update(DeltaTime);
+            pirate?.Update(DeltaTime);
         }
 
         private void FixedUpdate() {
@@ -238,7 +239,6 @@ namespace Andja.Controller {
         public void UnregisterSpeedChange(Action<GameSpeed, float> callbackfunc) {
             cbGameSpeedChange -= callbackfunc;
         }
-
         private void OnDestroy() {
             Instance = null;
             flyingTrader?.OnDestroy();
@@ -260,6 +260,8 @@ namespace Andja.Controller {
                 offworld = offworldMarket,
                 flyingTrader = flyingTrader,
                 pirate = pirate,
+                // does not work with newtonsoft - atleast not with out of the box
+                RandomSeed = JsonUtility.ToJson(UnityEngine.Random.state)
             };
             return wss;
         }
@@ -287,14 +289,14 @@ namespace Andja.Controller {
                 island.SetTiles(thisStruct.Tiles);
                 island.Placement = thisStruct.GetPosition();
             }
-            offworldMarket = new OffworldMarket();
             //Now turn the loaded World into a playable World
             List<Structure> loadedStructures = new List<Structure>();
             foreach (Island island in World.Islands) {
                 loadedStructures.AddRange(island.Load());
             }
             BuildController.Instance.PlaceAllLoadedStructure(loadedStructures);
-            flyingTrader.Load();
+            flyingTrader?.Load();
+            pirate?.Load();
             PlayerController.Instance.AfterWorldLoad();
         }
 
@@ -303,6 +305,7 @@ namespace Andja.Controller {
             offworldMarket = worldsave.offworld;
             flyingTrader = worldsave.flyingTrader;
             pirate = worldsave.pirate;
+            UnityEngine.Random.state = JsonUtility.FromJson<UnityEngine.Random.State>(worldsave.RandomSeed);
             LoadWorldData();
         }
     }
@@ -312,5 +315,6 @@ namespace Andja.Controller {
         public World world;
         public FlyingTrader flyingTrader;
         public Pirate pirate;
+        public string RandomSeed;
     }
 }

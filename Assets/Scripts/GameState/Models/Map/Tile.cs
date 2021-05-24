@@ -78,21 +78,21 @@ namespace Andja.Model {
                     if (Structure != null) {
                         return float.PositiveInfinity;
                     }
-                    return 1;
+                    return 2;
                 }
                 if (Type == TileType.Mountain) {
-                    return Mathf.Infinity;
+                    return float.PositiveInfinity;
                 }
                 if (Structure == null) {
-                    return 1;
+                    return 2;
                 }
                 if (Structure.StructureTyp != StructureTyp.Pathfinding && Structure.CanBeBuildOver == false) {
                     return float.PositiveInfinity;
                 }
                 if (Structure.StructureTyp == StructureTyp.Pathfinding) {
-                    return 0.25f;
+                    return ((RoadStructure)Structure).MovementCost;
                 }
-                return 1;
+                return 2;
             }
         }
 

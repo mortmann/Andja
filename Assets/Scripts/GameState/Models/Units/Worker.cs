@@ -113,7 +113,7 @@ namespace Andja.Model {
 
         public TurningType TurnType => hasToFollowRoads? TurningType.OnPoint : TurningType.TurnRadius;
         public PathDestination PathDestination => PathDestination.Tile;
-        public PathingMode PathingMode => path.CurrTile!=null? PathingMode.IslandSingleStartpoint : PathingMode.IslandMultipleStartpoints;
+        public PathingMode PathingMode => PathingMode.IslandMultiplePoints;
         public bool CanEndInUnwakable => hasToEnterWorkStructure || goingToWork == false;
 
         public PathHeuristics Heuristic => hasToFollowRoads ? PathHeuristics.Manhattan : PathHeuristics.Euclidean;
@@ -121,6 +121,8 @@ namespace Andja.Model {
         public bool CanMoveDiagonal => hasToFollowRoads == false;
 
         public IReadOnlyList<int> CanEnterCities => null; // For now worker always can enter all tiles regardless who owns it
+
+        public bool IsAlive => isAtHome == false;
 
         public Worker(Structure Home, OutputStructure structure, float workTime, string workerID, Item[] toGetItems = null,
                         bool hasToFollowRoads = true,
@@ -367,6 +369,7 @@ namespace Andja.Model {
         }
 
         public void Destroy() {
+            isAtHome = true; //for pathfinding purpose -> if it is at home stop the pathfinding
             if (goingToWork)
                 WorkOutputStructure?.ResetOutputClaimed();
             cbWorkerDestroy?.Invoke(this);

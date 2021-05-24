@@ -6,6 +6,7 @@ using UnityEngine;
 
 namespace Andja.Pathfinding {
     public enum PathGridType { Island, Ocean,/*not yet supported*/ Route}
+    public enum Walkable { Never, AlmostNever, Normal }
     public class PathGrid {
         readonly PathGridType pathGridType;
         public Node[,] Values;
@@ -13,12 +14,12 @@ namespace Andja.Pathfinding {
         public int Height;
         public int startX;
         public int startY;
-
+        public Action Changed;
         public bool IsDirty;
         internal Node GetNodeFromWorldCoord(Vector2 pos) {
             return GetNode(pos - new Vector2(startX, startY));
         }
-        Node GetNode(Vector2 pos) {
+        internal Node GetNode(Vector2 pos) {
             if (IsInBounds(pos) == false)
                 return null;
             return Values[Mathf.FloorToInt(pos.x), Mathf.FloorToInt(pos.y)];
@@ -72,26 +73,36 @@ namespace Andja.Pathfinding {
             return new PathGrid(this);
         }
 
-        protected void SetNode(Tile t) {
+        protected Node SetNode(Tile t) {
             if (pathGridType != PathGridType.Ocean && t.Type == TileType.Ocean)
-                return;
+                return null;
             Node n = new Node(Mathf.FloorToInt(t.X - startX), Mathf.FloorToInt(t.Y - startY), 
                                 t.MovementCost, t.City.PlayerNumber);
             Values[n.x,n.y] = n;
             IsDirty = true;
+            Changed?.Invoke();
+            IsDirty = false;
+            return n;
         }
-        public void ChangeNode(Tile t, bool overrideWalkable = true) {
+        public void ChangeNode(Tile t, Walkable type = Walkable.Normal) {
             Node n = GetNode(t);
             if (n == null) {
-                SetNode(t);
+                n = SetNode(t);
             }
-            if(overrideWalkable) {
-                n.MovementCost = t.MovementCost;
-                n.PlayerNumber = t.City.PlayerNumber;
-            } else {
-                Values[t.X, t.Y] = null;
+            switch (type) {
+                case Walkable.Never:
+                    Values[t.X, t.Y] = null;
+                    break;
+                case Walkable.AlmostNever:
+                    n.MovementCost = float.MaxValue;
+                    n.PlayerNumber = t.City.PlayerNumber;
+                    break;
+                case Walkable.Normal:
+                    n.MovementCost = t.MovementCost;
+                    n.PlayerNumber = t.City.PlayerNumber;
+                    break;
             }
-        } 
+        }
 
         /// <summary>
         /// Checks whether the neighbouring Node is within the grid bounds or not
@@ -109,15 +120,15 @@ namespace Andja.Pathfinding {
         /// </summary>
         public List<Node> Neighbours(Node n, bool diagonal) {
             List<Node> neighbours = new List<Node>();
-            neighbours.Add(GetNode(new Vector2(n.x + 1, n.y)));
-            neighbours.Add(GetNode(new Vector2(n.x - 1, n.y)));
             neighbours.Add(GetNode(new Vector2(n.x, n.y + 1)));
+            neighbours.Add(GetNode(new Vector2(n.x + 1, n.y)));
             neighbours.Add(GetNode(new Vector2(n.x, n.y - 1)));
+            neighbours.Add(GetNode(new Vector2(n.x - 1, n.y)));
             if(diagonal) {
                 neighbours.Add(GetNode(new Vector2(n.x + 1, n.y + 1)));
                 neighbours.Add(GetNode(new Vector2(n.x + 1, n.y - 1)));
-                neighbours.Add(GetNode(new Vector2(n.x - 1, n.y + 1)));
                 neighbours.Add(GetNode(new Vector2(n.x - 1, n.y - 1)));
+                neighbours.Add(GetNode(new Vector2(n.x - 1, n.y + 1)));
             }
             return neighbours;
         }

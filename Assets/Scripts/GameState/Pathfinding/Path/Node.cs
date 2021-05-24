@@ -1,6 +1,9 @@
 using System.Collections.Generic;
+using UnityEngine;
+
 namespace Andja.Pathfinding {
     public class Node {
+        public Vector2 Pos => new Vector2(x, y);
         public int x;
         public int y;
         public float MovementCost;
@@ -15,6 +18,8 @@ namespace Andja.Pathfinding {
                 return canEnterCities.Contains(PlayerNumber) && MovementCost > 0;
             }
             return MovementCost > 0;
+        }
+        public Node(Model.Tile t) : this(t.X,t.Y, t.MovementCost, t.City.PlayerNumber) {
         }
         public Node(int x, int y, float movementCost, int PlayerNumber) {
             this.x = x;

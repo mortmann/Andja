@@ -96,6 +96,7 @@ namespace Andja.Controller {
             middle = Camera.main.ScreenToWorldPoint(new Vector3(Camera.main.pixelWidth / 2, Camera.main.pixelHeight / 2));
             showBounds.x = World.Current.Width;
             showBounds.y = World.Current.Height;
+
         }
 
         private void Update() {

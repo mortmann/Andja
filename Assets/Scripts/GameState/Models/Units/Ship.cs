@@ -45,6 +45,8 @@ namespace Andja.Model {
         protected float DamageSpeedDebuff => ShipData.damageSpeedDebuffMultiplier * (1 - CurrentHealth / MaximumHealth);
 
         protected int CannonPerSide => Mathf.CeilToInt(CannonItem.count / 2);
+        public override PathingMode PathingMode => PathingMode.World;
+        public override TurningType TurnType => TurningType.TurnRadius;
 
         public ShipPrototypeData ShipData {
             get {
@@ -54,8 +56,6 @@ namespace Andja.Model {
                 return _shipPrototypData;
             }
         }
-        public new TurningType TurnType => TurningType.TurnRadius;
-        public new PathingMode PathingMode => PathingMode.World;
 
         public Ship() {
         }
@@ -89,8 +89,10 @@ namespace Andja.Model {
 
                 float arc = 5f;
                 bool canShoot = shootAngle <= pathfinding.rotation + arc && shootAngle >= pathfinding.rotation - arc;
-                if (canShoot == false) {
+                    pathfinding.Rotate(nextShoot.rotateToAngle);
                     pathfinding.UpdateDoRotate(deltaTime);
+                if (canShoot == false) {
+                    return;
                 }
                 if (attackCooldownTimer > 0) {
                     attackCooldownTimer -= deltaTime;
@@ -170,26 +172,26 @@ namespace Andja.Model {
         }
 
         protected Shoot CalculateShootAngle(Vector3 destination) {
-            Vector3 position = CurrentPosition;
             Vector2 forward = Quaternion.Euler(0, 0, pathfinding.rotation) * new Vector2(1, 0);
-            Vector2 direction = destination - position;
+            Vector2 direction = destination - PositionVector;
             direction.Normalize();
-            float sideAngle = Vector2.SignedAngle(direction, forward);
-            Vector2 side;
-            if (sideAngle < 0) {
-                side = Quaternion.Euler(0, 0, pathfinding.rotation) * new Vector2(0, 1);
-            }
-            else {
-                side = Quaternion.Euler(0, 0, pathfinding.rotation) * new Vector2(0, -1);
-            }
-            float angle = Vector2.SignedAngle(direction, side);
-            //float sideAngle = Vector2.SignedAngle(direction, forward);
-            //float shootAngle = Vector2.SignedAngle(direction, side);
-            //Debug.Log(ID + " " + shootAngle + " " + sideAngle);
+            float sideAngle = Mathf.Sign(Vector2.SignedAngle(direction, forward));
+            float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+            
+            //Vector2 side;
+            //if (sideAngle < 0) {
+            //    side = Quaternion.Euler(0, 0, pathfinding.rotation) * new Vector2(0, 1);
+            //}
+            //else {
+            //    side = Quaternion.Euler(0, 0, pathfinding.rotation) * new Vector2(0, -1);
+            //}
+            //float angle = Vector2.SignedAngle(direction, side);
+            ////float sideAngle = Vector2.SignedAngle(direction, forward);
+            ////float shootAngle = Vector2.SignedAngle(direction, side);
             return new Shoot {
-                sideAngle = sideAngle + angle,
-                rotateToAngle = pathfinding.rotation + angle,
-                rotateByAngle = angle
+                sideAngle = angle,
+                rotateToAngle = angle + (sideAngle) * 90,
+                rotateByAngle = angle - pathfinding.rotation
             };
         }
 

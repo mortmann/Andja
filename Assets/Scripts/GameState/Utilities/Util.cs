@@ -417,5 +417,76 @@ namespace Andja.Utility {
             }
             return ellipseVectors;
         }
+        /// <summary>
+        /// Checks the line between the two points if there is only ocean it will return true
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="x2"></param>
+        /// <param name="y2"></param>
+        /// <returns></returns>
+        public static bool CheckLine(bool[][] worldTilemap, Vector2 first, Vector2 second) {
+            return CheckLine(worldTilemap, Mathf.RoundToInt(first.x), Mathf.RoundToInt(first.y), 
+                                  Mathf.RoundToInt(second.x), Mathf.RoundToInt(second.y));
+        }
+        /// <summary>
+        /// Checks the line between the two points if there is only ocean it will return true
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="x2"></param>
+        /// <param name="y2"></param>
+        /// <returns></returns>
+        public static bool CheckLine(bool[][] worldTilemap, int x, int y, int x2, int y2) {
+            int w = x2 - x;
+            int h = y2 - y;
+            int dx1 = 0, dy1 = 0, dx2 = 0, dy2 = 0;
+            if (w < 0) dx1 = -1; else if (w > 0) dx1 = 1;
+            if (h < 0) dy1 = -1; else if (h > 0) dy1 = 1;
+            if (w < 0) dx2 = -1; else if (w > 0) dx2 = 1;
+            int longest = Mathf.Abs(w);
+            int shortest = Mathf.Abs(h);
+            if (!(longest > shortest)) {
+                longest = Mathf.Abs(h);
+                shortest = Mathf.Abs(w);
+                if (h < 0) dy2 = -1; else if (h > 0) dy2 = 1;
+                dx2 = 0;
+            }
+            int numerator = longest >> 1;
+            for (int i = 0; i <= longest; i++) {
+                if (worldTilemap[x][y] == false)
+                    return false;
+                numerator += shortest;
+                if (!(numerator < longest)) {
+                    numerator -= longest;
+                    x += dx1;
+                    y += dy1;
+                }
+                else {
+                    x += dx2;
+                    y += dy2;
+                }
+            }
+            return true;
+        }
+        public static Vector2[] FindClosestPoints(IEnumerable<Vector2> seq1, IEnumerable<Vector2> seq2) {
+            double closest = double.MaxValue;
+            Vector2[] result = null;
+            foreach (Vector2 p1 in seq1) {
+                foreach (Vector2 p2 in seq2) {
+                    float dx = p1.x - p2.x;
+                    float dy = p1.y - p2.y;
+                    float distance = dx * dx + dy * dy;
+                    if (distance >= closest)
+                        continue;
+                    result = new Vector2[] { p1, p2 };
+                    closest = distance;
+                }
+            }
+            return result;
+        }
+        public static Vector2[] FindClosestPoints(IEnumerable<Vector2> seq1, params Vector2[] seq2) {
+            return FindClosestPoints(seq1, (IEnumerable<Vector2>)seq2);
+        }
     }
 }

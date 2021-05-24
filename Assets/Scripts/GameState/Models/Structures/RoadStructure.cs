@@ -1,8 +1,12 @@
-﻿using Newtonsoft.Json;
+﻿using Andja.Controller;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 
 namespace Andja.Model {
+    public class RoadStructurePrototypeData : StructurePrototypeData {
+        public float movementCost = 0.75f;
+    }
 
     [JsonObject(MemberSerialization.OptIn)]
     public class RoadStructure : Structure {
@@ -18,6 +22,16 @@ namespace Andja.Model {
                 _route = value;
             }
         }
+        private RoadStructurePrototypeData _roadStructureData;
+        public RoadStructurePrototypeData RoadStructureData {
+            get {
+                if (_roadStructureData == null) {
+                    _roadStructureData = (RoadStructurePrototypeData)PrototypController.Instance.GetStructurePrototypDataForID(ID);
+                }
+                return _roadStructureData;
+            }
+        }
+        public float MovementCost => RoadStructureData.movementCost;
 
         #endregion RuntimeOrOther
 

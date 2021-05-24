@@ -286,7 +286,6 @@ namespace Andja.Model {
         }
 
         public virtual void OpenExtraUI() {
-            Debug.Log("OpenExtraUI");
             cbStructureExtraUI?.Invoke(this, true);
         }
 

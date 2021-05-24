@@ -13,6 +13,8 @@ namespace Andja.Model {
     /// </summary>
     public class Route {
         public Path_TileGraph TileGraph { get; protected set; }
+        public PathGrid Grid { get; protected set; }
+
         public List<Tile> Tiles;
 
         public Route(Tile startTile, bool floodfill = false) {
@@ -23,6 +25,7 @@ namespace Andja.Model {
                 RouteFloodFill(startTile);
             }
             TileGraph = new Path_TileGraph(this);
+            Grid = new PathGrid(this);
         }
 
         protected void RouteFloodFill(Tile tile) {
@@ -63,6 +66,7 @@ namespace Andja.Model {
         public void AddRoadTile(Tile tile) {
             Tiles.Add(tile);
             TileGraph.AddNodeToRouteTileGraph(tile);
+            Grid.ChangeNode(tile, Walkable.Normal);
         }
 
         public void RemoveRoadTile(Tile tile) {
@@ -72,6 +76,7 @@ namespace Andja.Model {
                 return;
             }
             Tiles.Remove(tile);
+            Grid.ChangeNode(tile, Walkable.Never);
             TileGraph.RemoveNodes(tile);
             //cheack if it can split up in to routes
             int neighboursOfRoute = 0;
@@ -95,6 +100,9 @@ namespace Andja.Model {
             //if not create on the others new routes!
             oldTiles = oldTiles.Except(Tiles).ToList();
             TileGraph.RemoveNodes(oldTiles.ToArray());
+            foreach(Tile t in oldTiles) {
+                Grid.ChangeNode(t, Walkable.Never);
+            }
             if (oldTiles.Count > 0) {
                 //we have tiles that the flood fill didnt reach
                 //that means we have to create new routes and floodfill them from there
@@ -131,6 +139,9 @@ namespace Andja.Model {
                 c.RemoveRoute(route);
             }
             TileGraph.AddNodes(route.TileGraph);
+            foreach(Tile t in route.Tiles) {
+                Grid.ChangeNode(t, Walkable.Normal);
+            }
             route.Tiles.Clear();
         }
 

@@ -1099,7 +1099,7 @@ namespace Andja.Controller {
             foreach (XmlElement node in xmlDoc.SelectNodes("road")) {
                 string ID = node.GetAttribute("ID");
 
-                StructurePrototypeData spd = new StructurePrototypeData {
+                RoadStructurePrototypeData rpd = new RoadStructurePrototypeData {
                     //THESE are fix and are not changed for any road
                     tileWidth = 1,
                     tileHeight = 1,
@@ -1114,11 +1114,11 @@ namespace Andja.Controller {
                     structureLevel = 0
                 };
 
-                spd.ID = ID;
-                SetData<StructurePrototypeData>(node, ref spd);
+                rpd.ID = ID;
+                SetData<RoadStructurePrototypeData>(node, ref rpd);
 
-                structurePrototypeDatas[ID] = spd;
-                structurePrototypes[ID] = new RoadStructure(ID, spd);
+                structurePrototypeDatas[ID] = rpd;
+                structurePrototypes[ID] = new RoadStructure(ID, rpd);
             }
         }
 

@@ -253,9 +253,11 @@ namespace Andja.Model {
             }
             CalculateBalance();
         }
-
+        //TODO: make this not so cpu heavy
         internal IReadOnlyList<int> GetUnitCityEnterable() {
-            return new List<int>();
+            List<int> enter = new List<int> { Number, GameData.WorldNumber };
+            enter.AddRange(PlayerController.Instance.GetPlayersWithRelationTypeFor(Number, DiplomacyType.Alliance, DiplomacyType.War));
+            return enter;
         }
 
         public void UpdateBalance(float partialPayAmount) {

@@ -207,7 +207,9 @@ namespace Andja.UI {
             isDebug = true;
             hovertime = 0;
             //show tile info and when structure not null that as well
-            Show(tile.ToBaseString(), tile.Structure?.ToString(), AIController.Instance?.GetTileValue(tile));
+            Show(tile.ToBaseString(), tile.Structure?.ToString(), 
+                "MovementCost " + (tile.Island?.Grid.GetNode(tile).MovementCost ?? 1), 
+                AIController.Instance?.GetTileValue(tile));
         }
     }
 }

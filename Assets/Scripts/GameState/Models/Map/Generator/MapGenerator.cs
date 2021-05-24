@@ -11,7 +11,7 @@ using UnityEngine;
 
 namespace Andja.Model.Generator {
 
-    public class MapGenerator : MonoBehaviour {
+    public partial class MapGenerator : MonoBehaviour {
         private Rect ColdIslandSpace;
         private Rect MiddleIslandSpace;
         private Rect WarmIslandSpace;
@@ -33,7 +33,7 @@ namespace Andja.Model.Generator {
 
         private int completedIslands = 0;
         public Dictionary<Tile, Structure> tileToStructure;
-        private List<DirectionalRect> recantgleEmptySpaces;
+        public List<DirectionalRect> recantgleEmptySpaces;
         private Dictionary<Rect, IslandData> placeToIsland;
         private Dictionary<DirectionalRect, Color> rectToColor;
 
@@ -366,7 +366,7 @@ namespace Andja.Model.Generator {
                     MakeOnLoadDestroy();
                 }
                 else if (SaveController.IsLoadingSave == true && WorldController.Instance != null) {
-                    World.Current.LoadData(GetTiles(), Width, Height);
+                    World.Current.LoadTiles(GetTiles(), Width, Height);
                 }
 
                 IsFinished = true;
@@ -458,45 +458,7 @@ namespace Andja.Model.Generator {
                 }
             }
             Debug.Log("RANDOM RESOURCES DONE " + s.Elapsed.TotalSeconds);
-            //foreach (IslandData islandData in toPlaceIslands) {
-            //    climateNeededFertilities[islandData.climate] += islandData.FertilityCount;
-            //    climateNeededResources[islandData.climate] += islandData.ResourcesCount;
-            //}
-            //foreach (Climate climate in Enum.GetValues(typeof(Climate))) {
-            //    for (int i = toBeAllocatedFertilities[climate].Count; i < climateNeededFertilities[climate]; i++) {
-            //        toBeAllocatedFertilities[climate].Add(fertilityRandomListPerClimate[climate].GetRandom(mapThreadRandom,climateNeededFertilities[climate]));
-            //    }
-            //    for (int i = toBeAllocatedResources[climate].Count; i < climateNeededFertilities[climate]; i++) {
-            //        toBeAllocatedResources[climate].Add(resourcesRandomListPerClimate[climate].GetRandom(mapThreadRandom, climateNeededResources[climate]));
-            //    }
-            //}
-            //foreach (IslandData islandData in toPlaceIslands) {
-            //    while(islandData.NeedsFertility&&toBeAllocatedFertilities[islandData.climate].Count>0) {
-            //        List<FertilityPrototypeData> avaible = toBeAllocatedFertilities[islandData.climate].Except(islandData.fertilities).ToList();
-            //        if (avaible.Count == 0)
-            //            break;
-            //        islandData.fertilities.Add(avaible[mapThreadRandom.Range(0, avaible.Count)]);
-            //    }
-            //    while (islandData.NeedsResources && toBeAllocatedResources[islandData.climate].Count > 0) {
-            //        List<ResourceGenerationInfo> avaible = toBeAllocatedResources[islandData.climate].Except(islandData.resources).ToList();
-            //        if (avaible.Count == 0)
-            //            break;
-            //        islandData.AddResources(avaible[mapThreadRandom.Range(0, avaible.Count)], mapThreadRandom);
-            //    }
-            //}
-            //List<IslandData> sorted = toPlaceIslands.ToList();
-            //while (toBeAllocatedFertilities.Count>0 && sorted.Count>0) {
-            //    sorted.OrderBy(x => x.Tiles.Length);
-            //    for (int i = sorted.Count-1; i >= 0; i--) {
-            //        IslandData islandData = sorted[i];
-            //        List<FertilityPrototypeData> avaible = toBeAllocatedFertilities[islandData.climate].Except(islandData.fertilities).ToList();
-            //        if (avaible.Count == 0) {
-            //            sorted.RemoveAt(i);
-            //            continue;
-            //        }
-            //        islandData.fertilities.Add(avaible[mapThreadRandom.Range(0, avaible.Count)]);
-            //    }
-            //}
+            
         }
 
         private Dictionary<string, int> GetResourcesFromRange(Dictionary<string, Range> resourcesRanges) {
@@ -567,12 +529,7 @@ namespace Andja.Model.Generator {
                         int y = placeIslandThreadRandom.Range(MinY, MaxY - island.Height);
 
                         Rect toTest = new Rect(x, y, island.Width + MinTilesAroundIsland, island.Height + MinTilesAroundIsland);
-                        //foreach (Rect inWorld in rectangleIslands) {
-                        //    if (toTest.Overlaps(inWorld)) {
-                        //        failed = true;
-                        //        break;
-                        //    }
-                        //}
+                        
                         if (failed) {
                             continue;
                         }
@@ -607,26 +564,22 @@ namespace Andja.Model.Generator {
                             xMax = toTest.xMin,
                             yMax = worldMax.y
                         };
-                        DirectionalRect[] temp = GetNewRects(rectangleIslands, Top, toTest, Direction.N);
-                        foreach (DirectionalRect r in temp) {
-                            rectToColor[r] = color;
-                        }
-                        recantgleEmptySpaces.AddRange(temp);
+                        DirectionalRect temp = GetNewRects(rectangleIslands, Top, toTest, Direction.N);
+                        rectToColor[temp] = color;
+                        recantgleEmptySpaces.Add(temp);
 
                         temp = GetNewRects(rectangleIslands, Right, toTest, Direction.E);
-                        foreach (DirectionalRect r in temp)
-                            rectToColor[r] = color;
-                        recantgleEmptySpaces.AddRange(temp);
+                        rectToColor[temp] = color;
+                        recantgleEmptySpaces.Add(temp);
 
                         temp = GetNewRects(rectangleIslands, Bottom, toTest, Direction.S);
-                        foreach (DirectionalRect r in temp)
-                            rectToColor[r] = color;
-                        recantgleEmptySpaces.AddRange(temp);
+                        rectToColor[temp] = color;
+                        recantgleEmptySpaces.Add(temp);
+
                         temp = GetNewRects(rectangleIslands, Left, toTest, Direction.W);
-                        foreach (DirectionalRect r in temp) {
-                            rectToColor[r] = color;
-                        }
-                        recantgleEmptySpaces.AddRange(temp);
+                        rectToColor[temp] = color;
+                        recantgleEmptySpaces.Add(temp);
+
                         i++;
                         rectangleIslands.Add(toTest);
                         placeToIsland.Add(toTest, island);
@@ -670,14 +623,14 @@ namespace Andja.Model.Generator {
             yield return null;
         }
 
-        private DirectionalRect[] GetNewRects(List<Rect> islands, Rect newRect, Rect Island, Direction direction) {
+        public static DirectionalRect GetNewRects(List<Rect> islands, Rect newRect, Rect Island, Direction direction) {
             DirectionalRect firstRect = new DirectionalRect {
                 direction = direction,
                 Island = Island,
                 rect = newRect
             };
             if (islands.Count == 0)
-                return new DirectionalRect[] { firstRect };
+                return firstRect;
             List<Rect> Overlaping = new List<Rect>();
             foreach (Rect isl in islands) {
                 if (newRect.Overlaps(isl)) {
@@ -689,7 +642,7 @@ namespace Andja.Model.Generator {
                 firstRect.UpdateRect(over);
             }
 
-            return new DirectionalRect[] { firstRect };
+            return firstRect;
         }
 
         private void OnDrawGizmos() {
@@ -729,10 +682,6 @@ namespace Andja.Model.Generator {
             return tl;
         }
 
-        /// <summary>
-        /// WARNING Destroys this GameObject!
-        /// </summary>
-        /// <returns></returns>
         public World GetWorld(bool isIslandEditor) {
             if (ReadyToFillWorld == false) {
                 Debug.LogWarning("World wasnt ready when called!");
@@ -744,6 +693,7 @@ namespace Andja.Model.Generator {
                     world.CreateIsland(island);
                 }
             }
+            Pathfinding.WorldGraph.Calculate();
             return world;
         }
 
@@ -931,59 +881,6 @@ namespace Andja.Model.Generator {
                 if (fertilityPrototypeData == null)
                     return;
                 fertilities.Add(fertilityPrototypeData);
-            }
-        }
-
-        private class DirectionalRect {
-            public Direction direction;
-            public Rect rect;
-            public Rect Island;
-            public Vector2 Center => rect.center;
-
-            public void UpdateRect(Rect over) {
-                if (direction == Direction.None) {
-                    rect = Rect.zero; //its the first one so just set to zero
-                    return;
-                }
-                bool yFirst = direction == Direction.N || direction == Direction.S;
-                bool xFirst = direction == Direction.E || direction == Direction.W;
-
-                if (yFirst) {
-                    if (Island.xMin < over.xMax && Island.xMax > over.xMin) {
-                        if (direction == Direction.N && rect.yMax > rect.yMin)
-                            rect.yMax = over.yMin;
-                        if (direction == Direction.S && rect.yMin < rect.yMax)
-                            rect.yMin = over.yMax;
-                    }
-                    else {
-                        if (Island.xMin >= over.xMax && rect.xMin < over.xMax) {
-                            rect.xMin = over.xMax;
-                        }
-                        if (Island.xMax <= over.xMin && rect.xMax > over.xMin) {
-                            rect.xMax = over.xMin;
-                        }
-                    }
-                }
-                if (xFirst) {
-                    if (Island.yMin < over.yMax && Island.yMax > over.yMin) {
-                        if (direction == Direction.E && rect.xMax > over.xMin)
-                            rect.xMax = over.xMin;
-                        if (direction == Direction.W && rect.xMin < over.xMax)
-                            rect.xMin = over.xMax;
-                    }
-                    else {
-                        if (Island.yMin >= over.yMax && rect.yMin < over.xMax) {
-                            rect.yMin = over.yMax;
-                        }
-                        if (Island.yMax <= over.yMin && rect.yMax > over.yMin) {
-                            rect.yMax = over.yMin;
-                        }
-                    }
-                }
-            }
-
-            internal bool Overlaps(Rect toTest) {
-                return rect.Overlaps(toTest);
             }
         }
     }

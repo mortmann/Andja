@@ -10,7 +10,7 @@ using UnityEngine;
 
 namespace Andja.Pathfinding {
 
-    public enum PathingMode { World, IslandMultipleStartpoints, IslandSingleStartpoint, Route };
+    public enum PathingMode { World, IslandMultiplePoints, IslandSinglePoint, Route };
 
     public enum PathDestination { Tile, Exact };
 
@@ -38,8 +38,11 @@ namespace Andja.Pathfinding {
         #endregion Serialize
 
         #region RuntimeOrPrototyp
-        private float rotateTime;
-        private float rotateAngle;
+
+        protected PathJob Job;
+        protected float rotateTime;
+        protected float rotateAngle;
+
         public bool IsAtDestination {
             get { return _IsAtDest; }
             set {
@@ -62,13 +65,11 @@ namespace Andja.Pathfinding {
 
         public Queue<Vector2> worldPath;
         public Queue<Vector2> backPath;
-
-        public bool _isDoneCalculating;
+        public bool IsSearching {
+            get { return Job != null && Job.Status != JobStatus.Done; }
+        }
         public bool IsDoneCalculating {
-            get { return _isDoneCalculating; }
-            set {
-                _isDoneCalculating = value;
-            }
+            get { return Job != null && Job.Status == JobStatus.Done; }
         }
         protected IPathfindAgent agent;
         protected float Speed => agent.Speed;
@@ -145,12 +146,19 @@ namespace Andja.Pathfinding {
         public virtual void Update_DoMovement(float deltaTime) {
             //for loading purpose or any other strange reason
             //we have a destination & are not there atm && we have no path then calculate it!
-            if (DestTile != null && DestTile != CurrTile && IsAtDestination == false
-                && NextDestination != Destination && worldPath == null && IsDoneCalculating != false) {
+            //if (DestTile != null && DestTile != CurrTile && IsAtDestination == false
+            //    && NextDestination != Destination && worldPath == null && IsDoneCalculating != false) {
+            //    SetDestination(dest_X, dest_Y);
+            //}
+            if(IsAtDestination == false && IsSearching == false && IsDoneCalculating == false) {
                 SetDestination(dest_X, dest_Y);
             }
             if (IsDoneCalculating == false)
                 return;
+            if(worldPath == null) {
+                Job.OnFinished?.Invoke();
+                worldPath = Job.Path;
+            }
 
             if (IsAtDestination) {
                 LastMove = Vector3.zero;
@@ -190,7 +198,6 @@ namespace Andja.Pathfinding {
                 rotation = rotateAngle;
             }
             rotation = Mathf.MoveTowardsAngle(rotation, rotateAngle, deltaTime * RotationSpeed);
-
         }
 
         private void UpdateRotationOnMove(float deltaTime) {
@@ -208,7 +215,21 @@ namespace Andja.Pathfinding {
             //Debug.Log(angle);
             rotation = Mathf.MoveTowardsAngle(rotation, angle, deltaTime * RotationSpeed);
         }
-
+        public bool UpdateRotationOnPoint(float delta) {
+            if (rotationDirection.magnitude == 0 || Position2 == NextDestination) {
+                return true;
+            }
+            Vector2 PointA = new Vector2(rotationDirection.x, rotationDirection.y);
+            Vector2 PointB = new Vector2(X, Y);
+            Vector2 moveDirection = PointA - PointB;
+            float angle = Mathf.Atan2(moveDirection.y, moveDirection.x) * Mathf.Rad2Deg;
+            if (Mathf.Approximately(rotation, angle)) {
+                rotation = angle;
+                return true;
+            }
+            rotation = Mathf.MoveTowardsAngle(rotation, angle, delta * RotationSpeed);
+            return false;
+        }
         /// <summary>
         /// Rotates to the given - seperate call needed
         /// NOT IN THIS FUNCTION - ONLY SETS HOW TO ROTATE
@@ -262,64 +283,21 @@ namespace Andja.Pathfinding {
             backPath = new Queue<Vector2>(worldPath.Reverse());
         }
 
-        public bool UpdateRotationOnPoint(float delta) {
-            if (rotationDirection.magnitude == 0 || Position2 == NextDestination) {
-                return true;
-            }
-            Vector2 PointA = new Vector2(rotationDirection.x, rotationDirection.y);
-            Vector2 PointB = new Vector2(X, Y);
-            Vector2 moveDirection = PointA - PointB;
-            float angle = Mathf.Atan2(moveDirection.y, moveDirection.x) * Mathf.Rad2Deg;
-            if (Mathf.Approximately(rotation, angle)) {
-                rotation = angle;
-                return true;
-            }
-            rotation = Mathf.MoveTowardsAngle(rotation, angle, delta * RotationSpeed);
-            return false;
-        }
-
         protected virtual void CalculatePath() {
         }
-        /// <summary>
-        /// Currently no thread cause it needs a complete rewrite to make it smooooth
-        /// </summary>
-        protected void StartCalculatingThread() {
+        protected void AddPathJob() {
             //Debug.Log(agent + " StartCalculatingThread - Currently running " + (AllThreads.Count));
-            IsDoneCalculating = false;
             IsAtDestination = false;
             start_X = X;
             start_Y = Y;
-            //if (calculatePathThread != null) {
-            //    if (calculatePathThread.IsAlive)
-            //        calculatePathThread.Abort();
-            //    AllThreads.Remove(calculatePathThread);
-            //}
-            System.Diagnostics.Stopwatch stopwatch = new System.Diagnostics.Stopwatch();
-            stopwatch.Start();
-            //CalculatePath();
-            if(agent is Worker) {
-                CalculatePath();
-            }
-            else {
-                Thread calculatePathThread = new Thread(CalculatePath);
-                calculatePathThread.Start();
-            }
-            Debug.Log(stopwatch.Elapsed.TotalSeconds + " " + this.GetType().FullName + " " + CanEndInUnwakable);
-            //Task.Run(CalculatePath, CancellationToken.None);
-            //CalculatePath();
-            //ThreadPool.QueueUserWorkItem(new WaitCallback(CalculatePathObject));
-            //AllThreads.Add(calculatePathThread);
+            worldPath = null;
+            CalculatePath();
         }
 
         public void Load(IPathfindAgent agent) {
-            Debug.Log(agent);
             this.agent = agent;
             _IsAtDest = Mathf.Approximately(_x, dest_X) && Mathf.Approximately(_y, dest_Y);
-            IsDoneCalculating = true;
             rotateAngle = rotation;
-            //if(this is RoutePathfinding == false && IsAtDestination == false) {
-            //    SetDestination(dest_X, dest_Y);
-            //}
         }
 
     }

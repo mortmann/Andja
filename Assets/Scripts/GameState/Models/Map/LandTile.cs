@@ -31,6 +31,7 @@ namespace Andja.Model {
                     _structures.Destroy();
                 }
                 _structures = value;
+                Island.ChangeGridTile(this);
                 cbTileOldNewStructureChanged?.Invoke(value, oldStructure);
                 cbTileStructureChanged?.Invoke(this, value);
             }
@@ -92,10 +93,13 @@ namespace Andja.Model {
                         //in that order the right to own it
                         City c = cities.Dequeue();
                         c.AddTile(this);
+                        _City = c;
+                        Island.ChangeGridTile(this);
                         return;
                     }
                     Island.Wilderness.AddTile(this);
                     _City = Island.Wilderness;
+                    Island.ChangeGridTile(this);
                     return;
                 }
                 //warns about double wilderniss
@@ -103,6 +107,7 @@ namespace Andja.Model {
                 //necessary but it helps for development
                 if (_City != null && _City.PlayerNumber == -1 && value.PlayerNumber == -1) {
                     _City = value;
+                    Island.ChangeGridTile(this);
                     return;
                 }
                 //remembers the order of the cities that have a claim
@@ -121,6 +126,7 @@ namespace Andja.Model {
                     _City.RemoveTile(this);
                 }
                 _City = value;
+                Island.ChangeGridTile(this);
             }
         }
 

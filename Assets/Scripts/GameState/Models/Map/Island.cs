@@ -25,16 +25,17 @@ namespace Andja.Model {
 
         public List<Fertility> Fertilities;
         public Path_TileGraph TileGraphIslandTiles { get; protected set; }
+        public PathGrid Grid { get; protected set; }
 
         public int Width {
             get {
-                return Mathf.CeilToInt(Maximum.x - Minimum.x);
+                return Mathf.CeilToInt(Maximum.x - Minimum.x) + 1;
             }
         }
 
         public int Height {
             get {
-                return Mathf.CeilToInt(Maximum.y - Minimum.y);
+                return Mathf.CeilToInt(Maximum.y - Minimum.y) + 1;
             }
         }
 
@@ -48,6 +49,10 @@ namespace Andja.Model {
             set {
                 _wilderness = value;
             }
+        }
+
+        internal void ChangeGridTile(LandTile landTile) {
+            Grid?.ChangeNode(landTile);
         }
 
         public List<IslandFeature> Features { get; internal set; }
@@ -164,6 +169,7 @@ namespace Andja.Model {
             if (Wilderness != null)
                 Wilderness.AddTiles(Tiles);
             TileGraphIslandTiles = new Path_TileGraph(this);
+            Grid = new PathGrid(this);
         }
 
         /// <summary>

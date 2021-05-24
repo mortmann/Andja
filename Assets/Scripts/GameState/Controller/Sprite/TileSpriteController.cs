@@ -157,7 +157,7 @@ namespace Andja.Controller {
                 LoadSprites();
                 CreateBaseTiles();
             }
-
+            Pathfinding.WorldSquares.CalculateRects();
             //BuildController.Instance.RegisterBuildStateChange (OnBuildStateChance);
         }
 
@@ -536,5 +536,35 @@ namespace Andja.Controller {
                 return connectionToSprite[spriteAddon];
             }
         }
+
+        private void OnDrawGizmos() {
+            if (Application.isPlaying) {
+                foreach (Pathfinding.WorldNode n in Pathfinding.WorldGraph.Nodes) {
+                    Gizmos.color = Color.red;
+                    Gizmos.DrawSphere(new Vector3(n.x, n.y), 0.5f);
+                    Gizmos.color = Color.white;
+                    foreach (Pathfinding.WorldEdge e in n.Edges) {
+                        Gizmos.DrawLine(new Vector2(n.x, n.y), new Vector2(e.Node.x, e.Node.y));
+                    }
+                }
+                //foreach (Rect r in Pathfinding.WorldSquares.rects) {
+                //    Gizmos.color = Color.white;
+                //    Gizmos.DrawLine(r.position, new Vector2(r.xMax, r.yMin)); // bottom edge
+                //    Gizmos.DrawLine(r.position, new Vector2(r.xMin, r.yMax)); //right edge
+                //    Gizmos.DrawLine(new Vector2(r.xMax, r.yMin), r.max); //  Left edge
+                //    Gizmos.DrawLine(new Vector2(r.xMin, r.yMax), r.max); //top edge
+                //}
+                //foreach (Rect r in Pathfinding.WorldSquares.islandRects) {
+                //    Gizmos.color = Color.red;
+                //    Gizmos.DrawLine(r.position, new Vector2(r.xMax, r.yMin)); // bottom edge
+                //    Gizmos.DrawLine(r.position, new Vector2(r.xMin, r.yMax)); //right edge
+                //    Gizmos.DrawLine(new Vector2(r.xMax, r.yMin), r.max); //  Left edge
+                //    Gizmos.DrawLine(new Vector2(r.xMin, r.yMax), r.max); //top edge
+                //}
+            }
+                
+
+        }
+
     }
 }

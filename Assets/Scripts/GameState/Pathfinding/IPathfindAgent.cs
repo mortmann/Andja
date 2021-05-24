@@ -2,7 +2,9 @@ using System.Collections.Generic;
 
 namespace Andja.Pathfinding {
     public interface IPathfindAgent {
-
+        public bool IsAlive {
+            get;
+        }
         public float Speed {
             get;
         }

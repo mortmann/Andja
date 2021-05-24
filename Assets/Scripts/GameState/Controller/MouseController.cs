@@ -25,7 +25,7 @@ namespace Andja.Controller {
     /// Controls all Mouse Interactions with the Map and Units.
     /// Shows Previews for Building and Destroy.
     /// </summary>
-    public class MouseController : MonoBehaviour {
+    public class MouseController : MonoBehaviour, IPathfindAgent {
         public static MouseController Instance { get; protected set; }
         public GameObject structurePreviewRendererPrefab;
         public GameObject greenTileCursorPrefab;
@@ -104,12 +104,13 @@ namespace Andja.Controller {
         public MouseState MouseState { get; protected set; } = MouseState.Idle;
         public MouseUnitState MouseUnitState { get; protected set; } = MouseUnitState.None;
 
-        private Path_AStar path;
+        private Queue<Tile> path;
 
         private Unit _selectedUnit;
         private List<Unit> selectedUnitGroup;
         private Rect draw_rect;
         private bool mouseStateIdleLeftMouseDown;
+        private PathJob buildPathJob;
 
         public Unit SelectedUnit {
             get { return _selectedUnit; }
@@ -137,6 +138,25 @@ namespace Andja.Controller {
                 return null;
             }
         }
+
+        public bool IsAlive => true;
+
+        public float Speed => 0;
+
+        public float RotationSpeed => 0;
+
+        public TurningType TurnType => TurningType.OnPoint;
+
+        public PathDestination PathDestination => PathDestination.Exact;
+        public PathingMode PathingMode => PathingMode.IslandSinglePoint;
+
+        public PathHeuristics Heuristic => PathHeuristics.Manhattan;
+
+        public bool CanEndInUnwakable => true;
+
+        public bool CanMoveDiagonal => false;
+
+        public IReadOnlyList<int> CanEnterCities => new List<int> { PlayerController.currentPlayerNumber };
 
         public void OnEnable() {
             if (Instance != null) {
@@ -675,25 +695,33 @@ namespace Andja.Controller {
                     return;
                 }
                 if (pathStartTile.Island != null && pathEndTile.Island != null &&
-                        (path == null || path.endTiles == null || path.endTiles.Contains(pathEndTile) == false)) {
-                    path = new Path_AStar(pathStartTile.Island, pathStartTile, pathEndTile, false,
-                                            PathHeuristics.Manhattan, true, PlayerController.currentPlayerNumber);
+                        (buildPathJob == null || buildPathJob.End != pathEndTile.Vector2)) {
+                    //path = new Path_AStar(pathStartTile.Island, pathStartTile, pathEndTile, false,
+                    //                        PathHeuristics.Manhattan, true, PlayerController.currentPlayerNumber).path;
+                    if (buildPathJob != null)
+                        PathfindingThreadHandler.RemoveJob(buildPathJob);
+                    buildPathJob = new PathJob(this, pathStartTile.Island.Grid, pathStartTile.Vector2, pathEndTile.Vector2);
+                    PathfindingThreadHandler.EnqueueJob(buildPathJob, null);
+
+                    //Queue<Vector2> q = Pathfinder.Find(this, pathStartTile.Island.Grid, pathStartTile.Vector2, pathEndTile.Vector2);
+                    //if (Enumerable.SequenceEqual(path, s) == false)
+                    //    Debug.Log(s);
                 }
-                if (path.path == null) {
+                if (buildPathJob == null || buildPathJob.Status != JobStatus.Done) {
                     return;
                 }
-                UpdateMultipleStructurePreviews(path.path);
+                UpdateMultipleStructurePreviews(World.Current.GetTilesQueue(buildPathJob.Path));
             }
             else {
                 UpdateSinglePreview();
             }
             // End path
             if (Input.GetMouseButtonUp(0)) {
-                if (path == null || path.path == null) {
+                if (buildPathJob == null || buildPathJob.Status != JobStatus.Done) {
                     return;
                 }
                 ResetStructurePreviews();
-                Build(new List<Tile>(path.path), true);
+                Build(World.Current.GetTilesQueue(buildPathJob.Path).ToList(), true);
             }
         }
         /// <summary>

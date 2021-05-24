@@ -125,7 +125,7 @@ namespace Andja.Model {
             }
         }
 
-        internal void LoadData(Tile[] tiles, int width, int height) {
+        internal void LoadTiles(Tile[] tiles, int width, int height) {
             Tiles = tiles;
             for (int x = 0; x < width; x++) {
                 for (int y = 0; y < height; y++) {
@@ -133,8 +133,8 @@ namespace Andja.Model {
                         SetTileAt(x, y, new Tile(x, y));
                 }
             }
-            //Width = width;
-            //Height = height;
+        }
+        public void Load() {
             foreach (Unit u in Units) {
                 u.Load();
                 u.RegisterOnDestroyCallback(OnUnitDestroy);
@@ -145,7 +145,6 @@ namespace Andja.Model {
                 cbCrateSpawn?.Invoke(c);
             }
         }
-
         /// <summary>
         /// Initializes a new instance of the <see cref="World"/> class. Used in the Editor!
         /// </summary>
@@ -164,18 +163,18 @@ namespace Andja.Model {
                 Projectiles = new List<Projectile>();
         }
 
-        public World(List<Tile> tileList, int Width, int Height) {
-            //this.Width = Width;
-            //this.Height = Height;
-            Tiles = new Tile[Width * Height];
-            foreach (Tile item in tileList) {
-                SetTileAt(item.X, item.Y, item);
-            }
-            LoadWaterTiles();
-            Current = this;
-            allFertilities = PrototypController.Instance.AllFertilities;
-            idToFertilities = PrototypController.Instance.IdToFertilities;
-        }
+        //public World(List<Tile> tileList, int Width, int Height) {
+        //    //this.Width = Width;
+        //    //this.Height = Height;
+        //    Tiles = new Tile[Width * Height];
+        //    foreach (Tile item in tileList) {
+        //        SetTileAt(item.X, item.Y, item);
+        //    }
+        //    LoadWaterTiles();
+        //    Current = this;
+        //    allFertilities = PrototypController.Instance.AllFertilities;
+        //    idToFertilities = PrototypController.Instance.IdToFertilities;
+        //}
 
         public void SetupWorld() {
             Current = this;
@@ -497,6 +496,14 @@ namespace Andja.Model {
             public void TakeDamageFrom(IWarfare warfare) {
                 throw new NotImplementedException();
             }
+        }
+
+        internal Queue<Tile> GetTilesQueue(Queue<Vector2> q) {
+            Queue<Tile> tiles = new Queue<Tile>();
+            foreach(Vector2 v in q) {
+                tiles.Enqueue(GetTileAt(v));
+            }
+            return tiles;
         }
     }
 }

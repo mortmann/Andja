@@ -232,14 +232,16 @@ namespace Andja.Model {
 
         public bool IsUnit => IsShip == false;
 
-        public TurningType TurnType => TurningType.OnPoint;
-        public PathDestination PathDestination => PathDestination.Exact;
-        public PathingMode PathingMode => PathingMode.IslandSingleStartpoint;
-        public bool CanEndInUnwakable => false;
-        public PathHeuristics Heuristic => PathHeuristics.Euclidean;
-        public bool CanMoveDiagonal => true;
+        public virtual TurningType TurnType => TurningType.OnPoint;
+        public virtual PathDestination PathDestination => PathDestination.Exact;
+        public virtual PathingMode PathingMode => PathingMode.IslandSinglePoint;
+        public virtual bool CanEndInUnwakable => false;
+        public virtual PathHeuristics Heuristic => PathHeuristics.Euclidean;
+        public virtual bool CanMoveDiagonal => true;
 
         public IReadOnlyList<int> CanEnterCities => PlayerController.GetPlayer(PlayerNumber).GetUnitCityEnterable();
+
+        public bool IsAlive => IsDead == false;
 
         public override string GetID() {
             return ID;
@@ -435,7 +437,6 @@ namespace Andja.Model {
 
                 case UnitDoModes.Fight:
                     UpdateCombat(deltaTime);
-                    pathfinding.UpdateDoRotate(deltaTime);
                     break;
 
                 case UnitDoModes.Capture:
@@ -632,6 +633,7 @@ namespace Andja.Model {
                     attackCooldownTimer -= deltaTime;
                     return;
                 }
+                pathfinding.UpdateDoRotate(deltaTime);
                 attackCooldownTimer = AttackRate;
                 CurrentTarget.TakeDamageFrom(this);
             }

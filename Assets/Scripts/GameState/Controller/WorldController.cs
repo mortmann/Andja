@@ -66,6 +66,7 @@ namespace Andja.Controller {
             else {
                 Instance = this;
             }
+            new Pathfinding.PathfindingThreadHandler();
         }
 
         public void Start() {
@@ -243,6 +244,7 @@ namespace Andja.Controller {
             Instance = null;
             flyingTrader?.OnDestroy();
             World?.Destroy();
+            Pathfinding.PathfindingThreadHandler.Stop();
         }
 
         ///
@@ -289,6 +291,8 @@ namespace Andja.Controller {
                 island.SetTiles(thisStruct.Tiles);
                 island.Placement = thisStruct.GetPosition();
             }
+            Pathfinding.WorldGraph.Calculate();
+            World.Load();
             //Now turn the loaded World into a playable World
             List<Structure> loadedStructures = new List<Structure>();
             foreach (Island island in World.Islands) {

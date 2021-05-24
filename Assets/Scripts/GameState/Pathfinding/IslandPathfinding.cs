@@ -1,11 +1,11 @@
 ﻿using Andja.Model;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace Andja.Pathfinding {
 
     public class IslandPathfinding : BasePathfinding {
-        private Tile start;
         public IslandPathfinding() : base() {
         }
 
@@ -31,24 +31,20 @@ namespace Andja.Pathfinding {
         public override void SetDestination(float x, float y) {
             if (x == dest_X || dest_Y == y)
                 return;
-            this.start = this.CurrTile;
             this.DestTile = World.Current.GetTileAt(x, y);
             dest_X = x;
             dest_Y = y;
-            StartCalculatingThread();
+            AddPathJob();
         }
 
         protected override void CalculatePath() {
-            IsDoneCalculating = false;
-            if (start == null)
-                start = World.Current.GetTileAt(X, Y);
-            Path_AStar pa = new Path_AStar(start.Island, start, DestTile);
+            if (Job != null && (Job.Status == JobStatus.InQueue || Job.Status == JobStatus.Calculating))
+                PathfindingThreadHandler.RemoveJob(Job);
+            Job = PathfindingThreadHandler.EnqueueJob(agent, Position2, new Vector2(dest_X, dest_Y), OnPathJobFinished);
+        }
 
-            worldPath = new Queue<Vector2>();
-            while (pa.path.Count > 0) {
-                worldPath.Enqueue(pa.path.Dequeue().Vector2);
-            }
-            worldPath.Enqueue(Destination);
+        private void OnPathJobFinished() {
+            worldPath = Job.Path;
             CreateReversePath();
             backPath.Enqueue(Position2);
             if (worldPath.Count > 0) {
@@ -57,8 +53,6 @@ namespace Andja.Pathfinding {
             if (worldPath.Count > 0) {
                 NextDestination = worldPath.Dequeue();
             }
-            //important
-            IsDoneCalculating = true;
         }
     }
 }

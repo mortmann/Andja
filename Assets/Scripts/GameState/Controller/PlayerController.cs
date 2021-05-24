@@ -91,7 +91,7 @@ namespace Andja.Controller {
                 Debug.Log("HUMAN YOU HAVE LOST THE GAME -- WE WILL DOMINATE ");
                 UIController.Instance.ShowEndScoreScreen(); //TODO: show endscore
             }
-            playerDiplomaticStandings.RemoveAll(x => x.playerOne == player.Number || x.playerTwo == player.Number);
+            playerDiplomaticStandings.RemoveAll(x => x.PlayerOne == player.Number || x.PlayerTwo == player.Number);
             List<Unit> units = new List<Unit>(player.Units);
             for (int i = units.Count - 1; i >= 0; i--) {
                 units[i].Destroy(null);
@@ -104,7 +104,7 @@ namespace Andja.Controller {
 
         internal bool IsAtWar(Player player) {
             return playerDiplomaticStandings.Exists(
-                x => (x.playerOne == player.Number || x.playerTwo == player.Number) && x.currentStatus == DiplomacyType.War
+                x => (x.PlayerOne == player.Number || x.PlayerTwo == player.Number) && x.currentStatus == DiplomacyType.War
             );
         }
 
@@ -173,7 +173,7 @@ namespace Andja.Controller {
         /// <param name="playerTwo"></param>
         internal void IncreaseDiplomaticStanding(Player playerOne, Player playerTwo) {
             DiplomaticStatus ds = GetDiplomaticStatus(playerOne, playerTwo);
-            if (ds.currentStatus == DiplomacyType.Alliance)
+            if (ds.currentStatus == DiplomacyType.Alliance) 
                 return;
             if(playerTwo.AskDiplomaticIncrease(playerOne)) {
                 ChangeDiplomaticStanding(playerOne.Number, playerTwo.Number, (DiplomacyType)((int)ds.currentStatus + 1));
@@ -198,20 +198,20 @@ namespace Andja.Controller {
             if (ds.currentStatus == DiplomacyType.War) {
                 List<DiplomaticStatus> allies = GetAlliesFor(playerOne.Number);
                 foreach (DiplomaticStatus ads in allies) {
-                    if (ads.playerOne == playerOne.Number) {
-                        ChangeDiplomaticStanding(ads.playerTwo, playerTwo.Number, DiplomacyType.War);
+                    if (ads.PlayerOne == playerOne.Number) {
+                        ChangeDiplomaticStanding(ads.PlayerTwo, playerTwo.Number, DiplomacyType.War);
                     }
-                    if (ads.playerTwo == playerOne.Number) {
-                        ChangeDiplomaticStanding(ads.playerOne, playerTwo.Number, DiplomacyType.War);
+                    if (ads.PlayerTwo == playerOne.Number) {
+                        ChangeDiplomaticStanding(ads.PlayerOne, playerTwo.Number, DiplomacyType.War);
                     }
                 }
                 allies = GetAlliesFor(playerTwo.Number);
                 foreach (DiplomaticStatus ads in allies) {
-                    if (ads.playerOne == playerTwo.Number) {
-                        ChangeDiplomaticStanding(playerOne.Number, ads.playerTwo, DiplomacyType.War);
+                    if (ads.PlayerOne == playerTwo.Number) {
+                        ChangeDiplomaticStanding(playerOne.Number, ads.PlayerTwo, DiplomacyType.War);
                     }
-                    if (ads.playerTwo == playerTwo.Number) {
-                        ChangeDiplomaticStanding(playerOne.Number, ads.playerOne, DiplomacyType.War);
+                    if (ads.PlayerTwo == playerTwo.Number) {
+                        ChangeDiplomaticStanding(playerOne.Number, ads.PlayerOne, DiplomacyType.War);
                     }
                 }
             }
@@ -366,8 +366,17 @@ namespace Andja.Controller {
         }
 
         private List<DiplomaticStatus> GetAlliesFor(int player) {
-            return playerDiplomaticStandings.FindAll(x => x.currentStatus == DiplomacyType.Alliance && (x.playerOne == player || x.playerTwo == player)).ToList();
+            return playerDiplomaticStandings.FindAll(x => x.currentStatus == DiplomacyType.Alliance && (x.PlayerOne == player || x.PlayerTwo == player)).ToList();
         }
+
+        public List<int> GetPlayersWithRelationTypeFor(int player, params DiplomacyType[] type) {
+            //First find all where this player is in && has the status
+            //then select only the int that isnt the player
+            return playerDiplomaticStandings
+                .FindAll(x =>(x.PlayerOne == player || x.PlayerTwo == player) && type.Contains(x.currentStatus))
+                .Select(x => player == x.PlayerOne ? x.PlayerTwo : x.PlayerOne).ToList();
+        }
+
         /// <summary>
         /// Immediate change no checks here.
         /// </summary>
@@ -449,8 +458,14 @@ namespace Andja.Controller {
 
     [Serializable]
     public class DiplomaticStatus {
-        public int playerOne;
-        public int playerTwo;
+        /// <summary>
+        /// One is always smaller than two
+        /// </summary>
+        public int PlayerOne { get; protected set; }
+        /// <summary>
+        /// Two is always bigger than one
+        /// </summary>
+        public int PlayerTwo { get; protected set; }
         public DiplomacyType currentStatus;
 
         public DiplomaticStatus() {
@@ -458,12 +473,12 @@ namespace Andja.Controller {
 
         public DiplomaticStatus(int one, int two) {
             if (one > two) {
-                playerOne = two;
-                playerTwo = one;
+                PlayerOne = two;
+                PlayerTwo = one;
             }
             else {
-                playerOne = one;
-                playerTwo = two;
+                PlayerOne = one;
+                PlayerTwo = two;
             }
             currentStatus = DiplomacyType.Neutral;
         }
@@ -480,8 +495,8 @@ namespace Andja.Controller {
 
         public override int GetHashCode() {
             var hashCode = 971533886;
-            hashCode = hashCode * -1521134295 + playerOne.GetHashCode();
-            hashCode = hashCode * -1521134295 + playerTwo.GetHashCode();
+            hashCode = hashCode * -1521134295 + PlayerOne.GetHashCode();
+            hashCode = hashCode * -1521134295 + PlayerTwo.GetHashCode();
             return hashCode;
         }
 
@@ -497,8 +512,8 @@ namespace Andja.Controller {
             }
 
             // Return true if the fields match:
-            return a.playerOne == b.playerOne && a.playerTwo == b.playerTwo
-                || a.playerTwo == b.playerOne && a.playerOne == b.playerTwo;
+            return a.PlayerOne == b.PlayerOne && a.PlayerTwo == b.PlayerTwo
+                || a.PlayerTwo == b.PlayerOne && a.PlayerOne == b.PlayerTwo;
         }
 
         public static bool operator !=(DiplomaticStatus a, DiplomaticStatus b) {
@@ -513,7 +528,7 @@ namespace Andja.Controller {
             }
 
             // Return true if the fields not match:
-            return a.playerOne != b.playerOne || a.playerTwo != b.playerTwo;
+            return a.PlayerOne != b.PlayerOne || a.PlayerTwo != b.PlayerTwo;
         }
     }
 }

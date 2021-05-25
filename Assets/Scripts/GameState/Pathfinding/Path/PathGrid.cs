@@ -8,7 +8,8 @@ namespace Andja.Pathfinding {
     public enum PathGridType { Island, Ocean,/*not yet supported*/ Route}
     public enum Walkable { Never, AlmostNever, Normal }
     public class PathGrid {
-        readonly PathGridType pathGridType;
+        public string ID;
+        public readonly PathGridType pathGridType;
         public Node[,] Values;
         public int Width;
         public int Height;
@@ -20,8 +21,9 @@ namespace Andja.Pathfinding {
             return GetNode(pos - new Vector2(startX, startY));
         }
         internal Node GetNode(Vector2 pos) {
-            if (IsInBounds(pos) == false)
+            if (IsInBounds(pos) == false) {
                 return null;
+            }
             return Values[Mathf.FloorToInt(pos.x), Mathf.FloorToInt(pos.y)];
         }
         internal Node GetNode(Tile t) {
@@ -29,6 +31,7 @@ namespace Andja.Pathfinding {
         }
         //Could cache routes here with start/end -- could be really useful for route pathfinding
         public PathGrid(Island island) {
+            ID = Guid.NewGuid().ToString();
             pathGridType = PathGridType.Island;
             SetIslandValues(island);
             for (int x = 0; x < Width; x++) {
@@ -38,6 +41,7 @@ namespace Andja.Pathfinding {
             }
         }
         public PathGrid(Route route) {
+            ID = Guid.NewGuid().ToString();
             pathGridType = PathGridType.Route;
             SetIslandValues(route.Tiles[0].Island);
             for (int x = 0; x < Width; x++) {
@@ -60,13 +64,22 @@ namespace Andja.Pathfinding {
             Values = new Node[Width, Height];
         }
         public PathGrid(PathGrid pathGrid) {
+            ID = pathGrid.ID;
+            pathGrid.Changed += SourceChanged;
             this.Width = pathGrid.Width;
             this.Height = pathGrid.Height;
+            startX = pathGrid.startX;
+            startY = pathGrid.startY;
+            Values = new Node[Width, Height];
             for (int x = 0; x < Width; x++) {
                 for (int y = 0; y < Height; y++) {
-                    Values[x, y] = pathGrid.Values[x,y].Clone();
+                    Values[x, y] = pathGrid.Values[x,y]?.Clone();
                 }
             }
+        }
+
+        private void SourceChanged() {
+            IsDirty = true;
         }
 
         public PathGrid Clone() {
@@ -103,7 +116,13 @@ namespace Andja.Pathfinding {
                     break;
             }
         }
-
+        public void Reset() {
+            for (int x = 0; x < Width; x++) {
+                for (int y = 0; y < Height; y++) {
+                    Values[x, y]?.Reset();
+                }
+            }
+        }
         /// <summary>
         /// Checks whether the neighbouring Node is within the grid bounds or not
         /// </summary>

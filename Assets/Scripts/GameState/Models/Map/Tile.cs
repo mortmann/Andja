@@ -96,10 +96,7 @@ namespace Andja.Model {
             }
         }
 
-        // Tells us if two tiles are adjacent.
         public bool IsNeighbour(Tile tile, bool diagOkay = false) {
-            // Check to see if we have a difference of exactly ONE between the two
-            // tile coordinates.  Is so, then we are vertical or horizontal neighbours.
             return
                 Mathf.Abs(this.X - tile.X) + Mathf.Abs(this.Y - tile.Y) == 1 ||  // Check hori/vert adjacency
                 (diagOkay && (Mathf.Abs(this.X - tile.X) == 1 && Mathf.Abs(this.Y - tile.Y) == 1)); // Check diag adjacency

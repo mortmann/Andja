@@ -19,6 +19,10 @@ namespace Andja.Pathfinding {
             dest_Y = start.Y;
         }
 
+        public override void HandleNoPathFound() {
+            dest_X = Position2.x;
+            dest_Y = Position2.y;
+        }
 
         public override void SetDestination(Tile end) {
             SetDestination(end.Vector);
@@ -53,6 +57,7 @@ namespace Andja.Pathfinding {
             if (worldPath.Count > 0) {
                 NextDestination = worldPath.Dequeue();
             }
+            Job.OnPathInvalidated += PathInvalidated;
         }
     }
 }

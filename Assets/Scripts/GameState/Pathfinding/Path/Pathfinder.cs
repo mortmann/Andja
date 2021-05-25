@@ -11,7 +11,6 @@ namespace Andja.Pathfinding {
     public static class Pathfinder {
         public const float DIAGONAL_EXTRA_COST = 1.41421356237f;
         public const float NORMAL_COST = 1;
-        static bool[][] WorldTileMap;
         private static StaticGrid worldGrid;
         private static bool[][] worldTilemap;
 
@@ -20,7 +19,7 @@ namespace Andja.Pathfinding {
                                             List<Vector2> startsPos = null, List<Vector2> endsPos = null) {
             Node start = null;
             Node end = null;
-            if(startsPos != null && endsPos != null) {
+            if (startsPos != null && endsPos != null) {
                 Vector2[] points = Utility.Util.FindClosestPoints(startsPos, endsPos);
                 start = grid.GetNodeFromWorldCoord(points[0]);
                 end = grid.GetNodeFromWorldCoord(points[1]);
@@ -33,6 +32,9 @@ namespace Andja.Pathfinding {
                 } else {
                     end = grid.GetNodeFromWorldCoord(endsPos.OrderBy(x => Vector2.Distance(x, startPos.Value)).First());
                 }
+            }
+            if (start == null || end == null) {
+                Debug.LogError(start.Pos + " or " + end.Pos + " not in grid " + grid.pathGridType);
             }
             HashSet<Node> endNodes = null;
             if(endsPos != null) {
@@ -48,21 +50,11 @@ namespace Andja.Pathfinding {
                     startNodes.Add(grid.GetNodeFromWorldCoord(e));
                 }
             }
-            Dictionary<Node, float> g_score = new Dictionary<Node, float>();
-            Dictionary<Node, float> f_score = new Dictionary<Node, float>();
-            Dictionary<Node, Node> cameFrom = new Dictionary<Node, Node>();
-
-            HashSet<Node> ClosedSet = new HashSet<Node>();
             SimplePriorityQueue<Node> OpenSet = new SimplePriorityQueue<Node>();
 
-            foreach (Node n in grid.Values) {
-                if (n == null)
-                    continue;
-                g_score.Add(n, Mathf.Infinity);
-                f_score.Add(n, Mathf.Infinity);
-            }
-            g_score[start] = 0;
-            f_score[start] = DistanceNodes(false, start.Pos, end.Pos);
+            start.g_Score = 0;
+            start.f_Score = DistanceNodes(false, start.Pos, end.Pos);
+
             OpenSet.Enqueue(start, 0);
             if (agent.CanEndInUnwakable == false && end.IsPassable(agent.CanEnterCities?.ToList()) == false) {
                 //cant end were it is supposed to go -- find a alternative that can be walked on
@@ -71,16 +63,16 @@ namespace Andja.Pathfinding {
             while (OpenSet.Count > 0) {
                 Node current = OpenSet.Dequeue();
                 if (current == end || endNodes != null && endNodes.Contains(current)) {
-                    return ReconstructPath(grid, cameFrom, current); //we are at any destination node make the path
+                    return ReconstructPath(grid, current); //we are at any destination node make the path
                 }
-                ClosedSet.Add(current);
+                current.isClosed = true;
                 if (startNodes != null && startNodes.Contains(current)) {
-                    cameFrom.Clear();
+                    current.parent = null;
                 }
                 List<Node> neis = grid.Neighbours(current, agent.CanMoveDiagonal);
                 for (int i = 0; i < neis.Count; i++) {
                     Node neighbour = neis[i];
-                    if (neighbour == null || ClosedSet.Contains(neighbour) == true) {
+                    if (neighbour == null || neighbour.isClosed) {
                         continue;
                     }
                     float costToNeighbour = neighbour.MovementCost * DistanceNodes(agent.CanMoveDiagonal, current.Pos, neighbour.Pos);
@@ -94,18 +86,18 @@ namespace Andja.Pathfinding {
                             costToNeighbour = DistanceNodes(agent.CanMoveDiagonal, current.Pos, neighbour.Pos);
                         }
                     }
-                    float tentative_g_score = g_score[current] + costToNeighbour;
-
-                    if (OpenSet.Contains(neighbour) && tentative_g_score >= g_score[neighbour])
+                    float tentative_g_score = current.g_Score + costToNeighbour;
+                    if (OpenSet.Contains(neighbour) && tentative_g_score >= neighbour.g_Score)
                         continue;
-                    cameFrom[neighbour] = current;
-                    g_score[neighbour] = tentative_g_score;
-                    f_score[neighbour] = tentative_g_score + HeuristicCostEstimate(agent, neighbour.Pos, end.Pos);
+                    neighbour.parent = current;
+                    neighbour.g_Score = tentative_g_score;
+                    neighbour.f_Score = tentative_g_score + HeuristicCostEstimate(agent, neighbour.Pos, end.Pos);
+
                     if (OpenSet.Contains(neighbour) == false) {
-                        OpenSet.Enqueue(neighbour, f_score[neighbour]);
+                        OpenSet.Enqueue(neighbour, neighbour.f_Score);
                     }
                     else {
-                        OpenSet.UpdatePriority(neighbour, f_score[neighbour]);
+                        OpenSet.UpdatePriority(neighbour, neighbour.f_Score);
                     }
                 }
 
@@ -242,11 +234,11 @@ namespace Andja.Pathfinding {
             return vectors;
         }
 
-        private static Queue<Vector2> ReconstructPath(PathGrid grid, Dictionary<Node, Node> cameFrom, Node current) {
+        private static Queue<Vector2> ReconstructPath(PathGrid grid,  Node current) {
             Stack<Node> totalPath = new Stack<Node>();
             totalPath.Push(current);
-            while (cameFrom.ContainsKey(current)) {
-                current = cameFrom[current];
+            while (current.parent != null) {
+                current = current.parent;
                 totalPath.Push(current);
             }
             Queue<Vector2> vectors = new Queue<Vector2>();

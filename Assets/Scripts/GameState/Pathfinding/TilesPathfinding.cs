@@ -58,7 +58,6 @@ namespace Andja.Pathfinding {
                                                                 startTiles.Select(x => x.Vector2).ToList(),
                                                                 endTiles.Select(x => x.Vector2).ToList()
                                                                 , OnPathJobFinished);
-
         }
 
         private void OnPathJobFinished() {
@@ -68,11 +67,20 @@ namespace Andja.Pathfinding {
                 X = worldPath.Peek().x;
                 Y = worldPath.Peek().y;
             }
-            worldPath.Dequeue();
             CreateReversePath();
+            worldPath.Dequeue();
             dest_X = backPath.Peek().x;
             dest_Y = backPath.Peek().y;
             DestTile = World.Current.GetTileAt(backPath.Peek());
+            Job.OnPathInvalidated += PathInvalidated;
+        }
+
+        public override void HandleNoPathFound() {
+            if(agent is Worker w) {
+                w.GoHome(true);
+            } else {
+                Debug.LogWarning("TilesPathfinding HandleNoPathFound for agent " + agent.GetType() + " is not implemented");
+            }
         }
     }
 }

@@ -264,7 +264,11 @@ namespace Andja.Model {
             isAtHome = true;
         }
 
-        public void GoHome() {
+        public void GoHome(bool noPath = false) {
+            if(goingToWork && noPath) {
+                Destroy();
+                return;
+            }
             isDone = false;
             goingToWork = false;
             WorkStructure?.UnregisterOnDestroyCallback(OnWorkStructureDestroy);
@@ -373,6 +377,7 @@ namespace Andja.Model {
             if (goingToWork)
                 WorkOutputStructure?.ResetOutputClaimed();
             cbWorkerDestroy?.Invoke(this);
+            path.CancelJob();
         }
 
         public void SetGoalStructure(Structure structure, bool goHome = false) {

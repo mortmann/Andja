@@ -66,11 +66,15 @@ namespace Andja.Pathfinding {
         public Queue<Vector2> worldPath;
         public Queue<Vector2> backPath;
         public bool IsSearching {
-            get { return Job != null && Job.Status != JobStatus.Done; }
+            get { return Job != null && (Job.Status == JobStatus.Calculating || Job.Status == JobStatus.InQueue); }
         }
         public bool IsDoneCalculating {
             get { return Job != null && Job.Status == JobStatus.Done; }
         }
+        public bool NoPathFound {
+            get { return Job != null && (Job.Status == JobStatus.NoPath); }
+        }
+
         protected IPathfindAgent agent;
         protected float Speed => agent.Speed;
         protected bool CanEndInUnwakable => agent.CanEndInUnwakable;
@@ -153,6 +157,9 @@ namespace Andja.Pathfinding {
             if(IsAtDestination == false && IsSearching == false && IsDoneCalculating == false) {
                 SetDestination(dest_X, dest_Y);
             }
+            if(NoPathFound) {
+                HandleNoPathFound();
+            }
             if (IsDoneCalculating == false)
                 return;
             if(worldPath == null) {
@@ -179,6 +186,8 @@ namespace Andja.Pathfinding {
             }
             LastMove = DoMovement(deltaTime);
         }
+
+        public abstract void HandleNoPathFound();
 
         public void UpdateDoRotate(float deltaTime) {
             //if ((rotateTo + 0.1f <= rotation && rotateTo + 0.1f >= rotation)==false) {
@@ -278,6 +287,9 @@ namespace Andja.Pathfinding {
             startTile = World.Current.GetTileAt(X, Y);
             worldPath = backPath;
         }
+        protected virtual void PathInvalidated() {
+            AddPathJob();
+        }
 
         public void CreateReversePath() {
             backPath = new Queue<Vector2>(worldPath.Reverse());
@@ -300,5 +312,8 @@ namespace Andja.Pathfinding {
             rotateAngle = rotation;
         }
 
+        internal void CancelJob() {
+            PathfindingThreadHandler.RemoveJob(Job);
+        }
     }
 }

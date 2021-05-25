@@ -4,6 +4,8 @@ using System;
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
+using UnityEngine.EventSystems;
+using System.Collections;
 
 namespace Andja.UI.Model {
 
@@ -17,6 +19,8 @@ namespace Andja.UI.Model {
         public HealthBarUI healthBarUI;
         public Button Sleep;
         public ImageText upkeepIText;
+        public ImageClick Image;
+        public Button Follow;
 
         public MilitaryStructureUI militaryGO;
         public OutputStructureUI outputStructureUI;
@@ -26,12 +30,16 @@ namespace Andja.UI.Model {
 
         public EffectsUI Effects;
 
+        Func<Vector2> GetPosition;
+        private bool followActive;
+
         private void Awake() {
             Instance = this;
         }
 
         public void Show(Structure structure) {
             ActivateUI(true);
+            Follow.gameObject.SetActive(false);
             inputName.Set(structure.Name);
             if (structure.IsPlayer()) {
                 structure.OpenExtraUI();
@@ -61,8 +69,13 @@ namespace Andja.UI.Model {
                 structureUI.gameObject.SetActive(true);
                 structureUI.Show(structure);
             }
-
+            GetPosition = () => structure.MiddleVector;
+            Image.Click += GoToPosition;
         }
+        private void GoToPosition(PointerEventData obj) {
+            CameraController.Instance.MoveCameraToPosition(GetPosition.Invoke());
+        }
+
         public void Show(Unit unit) {
             ActivateUI(true);
             inputName.Set(unit.PlayerSetName ?? unit.Name, unit.SetName, unit.IsPlayer());
@@ -77,7 +90,28 @@ namespace Andja.UI.Model {
             }
             unitUI.gameObject.SetActive(true);
             unitUI.Show(unit);
+            GetPosition = () => unit.PositionVector2;
+            Sleep.gameObject.SetActive(false);
+            Follow.gameObject.SetActive(true);
+            Follow.onClick.AddListener(()=> {
+                if (followActive) {
+                    followActive = false;
+                } else {
+                    StartCoroutine(FollowUnit());
+                }
+            });
+            Image.Click += GoToPosition;
         }
+
+        private IEnumerator FollowUnit() {
+            followActive = true;
+            while(followActive) {
+                GoToPosition(null);
+                yield return new WaitForEndOfFrame();
+            }
+            yield return null;
+        }
+
         public void Show(List<Unit> unit) {
             ActivateUI(false);
             unitGroupUI.gameObject.SetActive(true);
@@ -95,6 +129,7 @@ namespace Andja.UI.Model {
                 SingleUI.SetActive(false);
                 GroupUI.SetActive(true);
                 Sleep.gameObject.SetActive(false);
+                Follow.gameObject.SetActive(false);
                 foreach (Transform t in GroupUI.transform)
                     t.gameObject.SetActive(false);
             }
@@ -107,6 +142,8 @@ namespace Andja.UI.Model {
         }
 
         private void OnDisable() {
+            Image.Click -= GoToPosition;
+            followActive = false;
         }
     }
 }

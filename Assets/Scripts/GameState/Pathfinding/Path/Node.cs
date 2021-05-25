@@ -8,6 +8,15 @@ namespace Andja.Pathfinding {
         public int y;
         public float MovementCost;
         public int PlayerNumber;
+
+        public float f_Score; 
+        public float g_Score;
+
+        public bool isOpened;
+        public bool isClosed;
+        public Node parent;
+
+
         /// <summary>
         /// List needs to be a seperate copy of the main threads.
         /// </summary>
@@ -37,6 +46,14 @@ namespace Andja.Pathfinding {
 
         internal Node Clone() {
             return new Node(this);
+        }
+
+        public void Reset() {
+            this.f_Score = 0;
+            this.g_Score = 0;
+            this.isOpened = false;
+            this.isClosed = false;
+            this.parent = null;
         }
     }
 }

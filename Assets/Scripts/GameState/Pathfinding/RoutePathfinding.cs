@@ -11,6 +11,7 @@ namespace Andja.Pathfinding {
     public class RoutePathfinding : BasePathfinding {
         public Structure StartStructure;
         public Structure GoalStructure;
+
         public RoutePathfinding() : base() {
         }
         public RoutePathfinding(IPathfindAgent worker) : base() {
@@ -95,6 +96,7 @@ namespace Andja.Pathfinding {
                 }
             }
             Job.QueueModifier += ModifyQueue;
+            Job.OnPathInvalidated += PathInvalidated;
             PathfindingThreadHandler.EnqueueJob(Job, OnPathJobFinished);
         }
 
@@ -103,7 +105,6 @@ namespace Andja.Pathfinding {
             Vector2 dir = new Vector2();
             Vector2 curr;
             bool addFirst = CurrTile != null; //if it is already moving add extra step to move over first
-            queue.Reverse();
             while (queue.Count > 0) {
                 curr = queue.Dequeue();
                 if (queue.Count > 0) {
@@ -123,11 +124,11 @@ namespace Andja.Pathfinding {
                 }
                 if (queue.Count == 0) {
                     if (dir.x > 0 || dir.y > 0)
-                        offset += dir * (1 - Worker.WorldSize);
+                        offset += dir * (Worker.WorldSize);
                 }
                 newQueue.Enqueue(curr + offset);
             }
-            return new Queue<Vector2>(newQueue.Reverse());
+            return newQueue;
         }
 
         private void OnPathJobFinished() {
@@ -136,37 +137,46 @@ namespace Andja.Pathfinding {
 
         private void FinishQueue(Queue<Vector2> currentQueue) {
             worldPath = currentQueue;
-            CreateReversePath();
-            dest_X = backPath.Peek().x;
-            dest_Y = backPath.Peek().y;
-            DestTile = World.Current.GetTileAt(backPath.Peek());
-            if(agent.CanEndInUnwakable) {
-                Vector2 dest = Util.FindClosestPoints(GoalStructure.Tiles.Select(x => x.Vector2), DestTile.Vector2)[0];
-                GetOffset(worldPath.Peek() - dest, out Vector2 offset);
-                worldPath.Enqueue(dest + offset);
-            }
             if (CurrTile == null) {
-                Vector2 start = Util.FindClosestPoints(GoalStructure.Tiles.Select(x => x.Vector2), worldPath.Peek())[0];
+                Vector2 start = Util.FindClosestPoints(StartStructure.Tiles.Select(x => x.Vector2), worldPath.Peek())[0];
                 GetOffset(worldPath.Peek() - start, out Vector2 offset);
                 X = start.x + offset.x;
                 Y = start.y + offset.y;
             }
+            if (agent.CanEndInUnwakable) {
+                Vector2 dest = Util.FindClosestPoints(GoalStructure.Tiles.Select(x => x.Vector2), worldPath.Last())[0];
+                GetOffset(worldPath.Last() - dest, out Vector2 offset);
+                worldPath.Enqueue(dest + offset);
+            }
+            Vector2 last = worldPath.Last();
+            DestTile = World.Current.GetTileAt(last);
+            dest_X = last.x;
+            dest_Y = last.y;
             startTile = CurrTile;
         }
 
         private static void GetOffset(Vector2 dir, out Vector2 offset) {
             offset = new Vector2();
             if (dir.x > 0) {
-                offset.y = Worker.WorldSize;
+                offset.y = -Worker.WorldSize;
             }
             if (dir.x < 0) {
-                offset.y = 1 - Worker.WorldSize;
+                offset.y = Worker.WorldSize;
             }
             if (dir.y > 0) {
-                offset.x = 1 - Worker.WorldSize;
+                offset.x = Worker.WorldSize;
             }
             if (dir.y < 0) {
-                offset.x = Worker.WorldSize;
+                offset.x = -Worker.WorldSize;
+            }
+        }
+
+        public override void HandleNoPathFound() {
+            if (agent is Worker w) {
+                w.GoHome(true);
+            }
+            else {
+                Debug.LogWarning("RoutePathfinding HandleNoPathFound for agent " + agent.GetType() + " is not implemented");
             }
         }
     }

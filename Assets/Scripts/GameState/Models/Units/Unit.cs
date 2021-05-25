@@ -848,6 +848,7 @@ namespace Andja.Model {
             //Do stuff here when on destroyed
             cbUnitDestroyed?.Invoke(this, warfare);
             _currHealth = 0;
+            pathfinding.CancelJob();
         }
         public void CallChangedCallback() {
             cbUnitChanged?.Invoke(this);

@@ -225,8 +225,6 @@ namespace Andja.Model {
         public virtual bool IsActiveAndWorking => isActive;
         public bool IsDestroyed => CurrentHealth <= 0;
 
-        public Vector2 MiddleVector { get { return new Vector2(BuildTile.X + (float)TileWidth / 2f, BuildTile.Y + (float)TileHeight / 2f); } }
-
         public string SmallName { get { return SpriteName.ToLower(); } }
 
         public City City {
@@ -284,6 +282,8 @@ namespace Andja.Model {
                 return 0;
             }
         }
+
+        public virtual string SortingLayer => "Structures";
 
         public virtual void OpenExtraUI() {
             cbStructureExtraUI?.Invoke(this, true);
@@ -621,8 +621,8 @@ namespace Andja.Model {
         #region Functions
 
         internal List<Structure> GetNeighbourStructuresInRange(int spreadTileRange) {
-            Vector2 lower = Center - new Vector2(TileWidth + spreadTileRange, TileHeight + spreadTileRange);
-            Vector2 upper = Center + new Vector2(TileWidth + spreadTileRange, TileHeight + spreadTileRange);
+            Vector2 lower = Center - new Vector2(TileWidth / 2f + spreadTileRange, TileHeight / 2f + spreadTileRange);
+            Vector2 upper = Center + new Vector2(TileWidth / 2f + spreadTileRange, TileHeight / 2f + spreadTileRange);
             List<Structure> structures = new List<Structure>();
             for (float x = lower.x; x <= upper.x; x++) {
                 for (float y = lower.y; y <= upper.y; y++) {

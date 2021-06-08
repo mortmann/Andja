@@ -5,10 +5,10 @@ namespace Andja.Model {
     public enum Target {
         World, Player, Island, City,
         AllUnit, Ship, LandUnit,
-        AllStructure, DamagableStructure,
+        AllStructure, DamagableStructure, BurnableStructure,
         RoadStructure, NeedStructure, MilitaryStructure, HomeStructure, ServiceStructure,
         GrowableStructure, OutputStructure, MarketStructure, WarehouseStructure, MineStructure,
-        FarmStructure, ProductionStructure
+        FarmStructure, ProductionStructure,
     }
 
     public class TargetGroup {

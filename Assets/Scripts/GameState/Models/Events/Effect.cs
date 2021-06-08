@@ -33,7 +33,7 @@ namespace Andja.Model {
 
     [JsonObject(MemberSerialization.OptIn)]
     public class Effect {
-        [JsonPropertyAttribute] public string ID;
+
         public InfluenceTyp InfluenceTyp { protected set; get; }
         public InfluenceRange InfluenceRange { protected set; get; }
         public EffectTypes AddType => EffectPrototypData.addType;
@@ -72,8 +72,10 @@ namespace Andja.Model {
         }
 
         public bool Serialize = true;
-        [JsonPropertyAttribute] public float WorkAmount = 0; // THIS is used for servicestructure workers -- for example when removing this effect
 
+        [JsonPropertyAttribute] public string ID;
+        [JsonPropertyAttribute] public float WorkAmount = 0; // THIS is used for servicestructure workers -- for example when removing this effect
+        [JsonPropertyAttribute] public float SpreadTick = GameData.EffectTickTime; 
         public Effect() {
         }
 
@@ -98,7 +100,14 @@ namespace Andja.Model {
             //we need some kind increased probability over time that it spread
             //if it happens it will need to check for a valid target
             //if valid is found it needs to add itself as new effect to that target
-
+            SpreadTick -= deltaTime;
+            if (SpreadTick > 0) {
+                return;
+            }
+            SpreadTick = GameData.EffectTickTime;
+            if (Random.Range(0f, 1f) > SpreadProbability - SpreadProbability * WorkAmount) {
+                return;
+            }
             IGEventable newTarget = GetValidTarget(target);
             if (newTarget == null)
                 return;

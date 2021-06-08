@@ -27,7 +27,7 @@
       <nameOfVariable>CurrentHealth</nameOfVariable>
       <change>-1.0</change>
       <targets>
-         <Target>AllStructure</Target>
+         <Target>BurnableStructure</Target>
       </targets>
       <addType>Float</addType>
       <modifierType>Update</modifierType>
@@ -35,6 +35,9 @@
       <classification>Negativ</classification>
       <uiSpriteName>fire</uiSpriteName>
       <onMapSpriteName>fire</onMapSpriteName>
+      <canSpread>true</canSpread>
+      <spreadProbability>0.01</spreadProbability>
+      <spreadTileRange>2</spreadTileRange>
    </Effect>
    <Effect ID="volcanicearth">
       <Name>
@@ -83,7 +86,8 @@
       <probability>10.0</probability>
       <minDuration>50.0</minDuration>
       <maxDuration>100.0</maxDuration>
-      <minRange>0.0</minRange>
+     <event>Disaster</event>
+     <minRange>0.0</minRange>
       <maxRange>0.0</maxRange>
       <effects length="1">
          <Effect>fire</Effect>

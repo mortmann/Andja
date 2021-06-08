@@ -9,6 +9,7 @@ namespace Andja.Model {
         public Fertility fertility;
         public int ageStages = 2;
         public string harvestSound;
+        public bool isFloor;
     }
 
     [JsonObject(MemberSerialization.OptIn)]
@@ -33,6 +34,7 @@ namespace Andja.Model {
 
         protected GrowablePrototypeData _growableData;
         private float landGrowModifier;
+        public override string SortingLayer => GrowableData.isFloor? "Road" : "Structures";
 
         public GrowablePrototypeData GrowableData {
             get {

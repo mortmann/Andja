@@ -1,38 +1,80 @@
 using Andja.Controller;
+using Andja.Model;
+using Andja.UI.Model;
+using System;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 namespace Andja.UI {
 
-    public class EventMessage : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler {
-        private string eventName;
-        public Vector2 position;
-
-        public void Setup(string name, Vector2 position) {
-            this.position = position;
-            this.eventName = name;
-            if (name.Length > 30) {
-                name = name.Substring(0, 30) + "...";
-            }
-            GetComponentInChildren<Text>().text = name;
+    public class EventMessage : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler, IScrollHandler {
+        ScrollRect ParentScroll;
+        GameEvent gameEvent;
+        BasicInformation Information;
+        private Text nameText;
+        public Image IconImage; 
+        private void Start() {
+            ParentScroll = GetComponentInParent<ScrollRect>();
+        }
+        public void Setup(GameEvent gameEvent) {
+            this.gameEvent = gameEvent;
+            nameText = GetComponentInChildren<Text>();
+            IconImage.sprite = UISpriteController.GetIcon(gameEvent.ID);
+            LanguageChanged();
+            UILanguageController.Instance.RegisterLanguageChange(LanguageChanged);
             //TODO change Image here also
             //Probably load the sprites in EventUIManager and get it from there
         }
-
+        public void Setup(BasicInformation information) {
+            Information = information;
+            nameText = GetComponentInChildren<Text>();
+            LanguageChanged();
+            UILanguageController.Instance.RegisterLanguageChange(LanguageChanged);
+            IconImage.sprite = UISpriteController.GetIcon(Information.SpriteName);
+        }
+        private void LanguageChanged() {
+            if(gameEvent != null) {
+                nameText.text = LimitText(gameEvent.Name);
+            } else {
+                Information.OnLanguageChange();
+                nameText.text = LimitText(Information.GetTitle());
+            }
+        }
+        private string LimitText(string text) {
+            if (text.Length > 30) {
+                text = text.Substring(0, 30) + "...";
+            }
+            return text;
+        }
         public void OnPointerEnter(PointerEventData eventData) {
-            GameObject.FindObjectOfType<HoverOverScript>().Show(eventName);
+            if(gameEvent != null) {
+                FindObjectOfType<HoverOverScript>().Show(gameEvent.Name, gameEvent.Description);
+            } else {
+                FindObjectOfType<HoverOverScript>().Show(Information.GetTitle(), Information.GetDescription());
+            }
         }
 
         public void OnPointerExit(PointerEventData eventData) {
-            GameObject.FindObjectOfType<HoverOverScript>().Unshow();
+            FindObjectOfType<HoverOverScript>().Unshow();
         }
 
         public void OnPointerClick(PointerEventData eventData) {
-            if (position.x < 0 || position.y < 0) {
-                return;
+            if(eventData.button == PointerEventData.InputButton.Left) {
+                if (gameEvent != null) {
+                    CameraController.Instance.MoveCameraToPosition(gameEvent.GetPosition());
+                }
+                else {
+                    CameraController.Instance.MoveCameraToPosition(Information.GetPosition());
+                }
             }
-            CameraController.Instance.MoveCameraToPosition(position);
+            else {
+                EventUIManager.Instance.RemoveEvent(this);
+            }
+        }
+
+        public void OnScroll(PointerEventData eventData) {
+            ParentScroll.verticalScrollbar.value += 4 * ParentScroll.scrollSensitivity * Time.deltaTime * eventData.scrollDelta.y;
         }
     }
 }

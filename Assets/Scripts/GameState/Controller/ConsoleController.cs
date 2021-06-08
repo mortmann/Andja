@@ -17,24 +17,24 @@ namespace Andja.Controller {
         private Dictionary<GameObject, Vector3> GOtoPosition;
         private Action<string> writeToConsole;
         private StreamWriter logWriter;
+
         readonly string tempLogName = "temp.log";
         static string logPath = "";
         private void OnEnable() {
             Instance = this;
             Application.logMessageReceived += LogCallbackHandler;
-            if (Application.isEditor == false) {
-                logPath = logPath = Path.Combine(SaveController.GetSaveGamesPath(), "logs");
+            if (Application.isEditor == false || true) {
+                logPath = Path.Combine(SaveController.GetSaveGamesPath(), "logs");
                 string filepath = Path.Combine(logPath, tempLogName);
                 if (Directory.Exists(logPath) == false) {
                     Directory.CreateDirectory(logPath);
                 }
-                if (File.Exists(filepath) == false) {
-                    logWriter = File.CreateText(filepath);
-                } else {
+                if (File.Exists(filepath)) {
                     File.Move(Path.Combine(logPath, tempLogName),
                           Path.Combine(logPath, DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss") + "_unknown_crash.log")
                     );
                 }
+                logWriter = File.CreateText(filepath);
                 logWriter.Write("" +
                     "ID: " + SystemInfo.deviceUniqueIdentifier + "\n" +
                     "SystemOS: " + SystemInfo.operatingSystem + "\n" +
@@ -49,6 +49,15 @@ namespace Andja.Controller {
                     fileInfo.Delete();
                 }
             }
+        }
+
+        internal string GetLogs() {
+            string filepath = Path.Combine(logPath, tempLogName);
+            logWriter.Flush();
+            logWriter.Dispose();
+            string upload = File.ReadAllText(filepath);
+            logWriter = new StreamWriter(filepath);
+            return upload;
         }
 
         public void LogCallbackHandler(string condition, string stackTrace, LogType type) {
@@ -103,8 +112,12 @@ namespace Andja.Controller {
             this.writeToConsole += writeToConsole;
         }
         [HideInInspector]
-        public List<string> FirstLevelCommands = new List<string>
-            { "speed", "player", "maxfps", "city", "graphy", "profiler", "unit", "ship", "island", "spawn", "event", "camera" };
+        public IReadOnlyList<string> FirstLevelCommands = new List<string>{   
+            "speed", "player", "maxfps", "city", 
+            "graphy", "profiler", "unit", "ship", 
+            "island", "spawn", "event", 
+            "debugdata", "camera"
+        };
         /// <summary>
         /// Splits the command into its parts on whitespaces and then tries to execute the different level commands
         /// </summary>
@@ -181,6 +194,11 @@ namespace Andja.Controller {
                     happend = HandleGraphyCommands(parameters.Skip(1).ToArray());
                     break;
 
+                case "debugdata":
+                    UIController.Instance?.ToggleDebugData();
+                    happend = true;
+                    break;
+
                 case "itsrainingbuildings":
                     //easteregg!
                     GOtoPosition = new Dictionary<GameObject, Vector3>();
@@ -221,7 +239,7 @@ namespace Andja.Controller {
             return happend;
         }
         [HideInInspector]
-        public List<string> GraphyCommands = new List<string>
+        public IReadOnlyList<string> GraphyCommands = new List<string>
             { "full", "medium", "light", "fps", "switchmode" };
         private bool HandleGraphyCommands(string[] parameters) {
             if(parameters.Length == 0) {
@@ -260,7 +278,7 @@ namespace Andja.Controller {
             }
         }
         [HideInInspector]
-        public List<string> ShipCommands = new List<string>
+        public IReadOnlyList<string> ShipCommands = new List<string>
             { "cannon" };
 
         private bool HandleShipCommands(string[] parameters) {
@@ -302,7 +320,7 @@ namespace Andja.Controller {
                     if (parameters.Length < 2) {
                         return false;
                     }
-                    string id = parameters[1];
+                    string id = parameters[1].Trim();
                     if (PrototypController.Instance.GameEventExists(id) == false) {
                         return false;
                     }
@@ -310,8 +328,10 @@ namespace Andja.Controller {
                     if (parameters.Length == 3 && string.IsNullOrEmpty(parameters[2]) == false) {
                         int.TryParse(parameters[2], out player);
                     }
-                    if (player < 0)
+                    if(parameters.Length > 3 && parameters[3].StartsWith("s"))
                         return EventController.Instance.TriggerEventForEventable(new GameEvent(id), MouseController.Instance.CurrentlySelectedIGEventable);
+                    if (player < 0)
+                        return EventController.Instance.TriggerEvent(id);
                     else
                         return EventController.Instance.TriggerEventForPlayer(new GameEvent(id), PlayerController.GetPlayer(player));
                 case "stop":
@@ -328,7 +348,7 @@ namespace Andja.Controller {
             }
         }
         [HideInInspector]
-        public List<string> SpawnCommands = new List<string>
+        public IReadOnlyList<string> SpawnCommands = new List<string>
             { "unit", "crate" };
 
         private bool HandleSpawnCommands(string[] parameters) {
@@ -391,7 +411,7 @@ namespace Andja.Controller {
         }
 
         [HideInInspector]
-        public List<string> CityCommands = new List<string>
+        public IReadOnlyList<string> CityCommands = new List<string>
             { "item","fillitup","builditems", "name", "player", "effect" };
 
         private bool HandleCityCommands(string[] parameters) {
@@ -444,7 +464,7 @@ namespace Andja.Controller {
         }
 
         [HideInInspector]
-        public List<string> PlayerCommands = new List<string>
+        public IReadOnlyList<string> PlayerCommands = new List<string>
             { "change","money","diplomatic","effect" };
 
         private bool HandlePlayerCommands(string[] parameters) {
@@ -538,7 +558,7 @@ namespace Andja.Controller {
         }
 
         [HideInInspector]
-        public List<string> UnitCommands = new List<string>
+        public IReadOnlyList<string> UnitCommands = new List<string>
             { "item","build","kill", "name", "player", "event", "effect" };
 
         private bool HandleUnitCommands(string[] parameters) {
@@ -598,7 +618,7 @@ namespace Andja.Controller {
             return false;
         }
         [HideInInspector]
-        public List<string> EffectsCommands = new List<string>  { "add","remove" };
+        public IReadOnlyList<string> EffectsCommands = new List<string>  { "add","remove" };
 
         private bool HandleEffects(string[] parameters, IGEventable eventable) {
             if (PrototypController.Instance.EffectPrototypeDatas.ContainsKey(parameters[1]) == false)

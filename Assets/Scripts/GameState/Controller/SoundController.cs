@@ -128,7 +128,7 @@ namespace Andja.Controller {
                             ChangeMusicType(MusicType.Idle);
                         }
                     }
-                    if (oldType == DiplomacyType.TradeAggrement) {
+                    if (oldType == DiplomacyType.TradeAgreement) {
                         PlaySingle2DSoundEffect("papertear");
                     }
                     else {
@@ -136,7 +136,7 @@ namespace Andja.Controller {
                     }
                     break;
 
-                case DiplomacyType.TradeAggrement:
+                case DiplomacyType.TradeAgreement:
                     if (oldType == DiplomacyType.Alliance) {
                         PlaySingle2DSoundEffect("papertear");
                     }

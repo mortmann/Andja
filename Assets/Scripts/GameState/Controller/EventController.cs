@@ -1,5 +1,6 @@
 ﻿using Andja.Model;
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -120,7 +121,6 @@ namespace Andja.Controller {
 
         internal void SetGameEventData(GameEventSave ges) {
             idToActiveEvent = ges.idToActiveEvent;
-            UnityEngine.Random.state = ges.Random;
         }
 
         public bool CreateGameEvent(GameEvent ge) {
@@ -140,13 +140,15 @@ namespace Andja.Controller {
         /// Random Player or ALL will be chosen depending on TargetTypes
         /// </summary>
         /// <param name="id"></param>
-        internal void TriggerEvent(string id) {
+        internal bool TriggerEvent(string id) {
             GameEvent gameEvent = new GameEvent(id);
-            TriggerEventForPlayer(gameEvent, PlayerController.Instance.GetRandomPlayer());
+            return TriggerEventForPlayer(gameEvent, PlayerController.Instance.GetRandomPlayer());
         }
 
         internal bool TriggerEventForPlayer(GameEvent gameEvent, Player player) {
             List<IGEventable> playerTargets = GetPlayerTargets(gameEvent.Targeted, player);
+            if (playerTargets.Count == 0)
+                return false;
             return TriggerEventForEventable(gameEvent, playerTargets[UnityEngine.Random.Range(0, playerTargets.Count)]);
         }
 
@@ -188,6 +190,53 @@ namespace Andja.Controller {
 
                     case Target.AllStructure:
                         targets.AddRange(player.AllStructures);
+                        break;
+                    case Target.DamagableStructure:
+                        targets.AddRange(player.AllStructures.Where(x => x.CanTakeDamage));
+                        break;
+                    case Target.BurnableStructure:
+                        targets.AddRange(player.AllStructures.Where(x => x.CanStartBurning));
+                        break;
+                    case Target.RoadStructure:
+                        targets.AddRange(player.AllStructures.OfType<RoadStructure>());
+                        break;
+                    case Target.NeedStructure:
+                        targets.AddRange(player.AllStructures.OfType<NeedStructure>());
+                        break;
+                    case Target.MilitaryStructure:
+                        targets.AddRange(player.AllStructures.OfType<MilitaryStructure>());
+                        break;
+                    case Target.HomeStructure:
+                        targets.AddRange(player.AllStructures.OfType<HomeStructure>());
+                        break;
+                    case Target.ServiceStructure:
+                        targets.AddRange(player.AllStructures.OfType<ServiceStructure>());
+                        break;
+                    case Target.GrowableStructure:
+                        targets.AddRange(player.AllStructures.OfType<GrowableStructure>());
+                        break;
+                    case Target.OutputStructure:
+                        targets.AddRange(player.AllStructures.OfType<OutputStructure>());
+                        break;
+                    case Target.MarketStructure:
+                        targets.AddRange(player.AllStructures.OfType<MarketStructure>());
+                        break;
+                    case Target.WarehouseStructure:
+                        targets.AddRange(player.AllStructures.OfType<WarehouseStructure>());
+                        break;
+                    case Target.MineStructure:
+                        targets.AddRange(player.AllStructures.OfType<MineStructure>());
+                        break;
+                    case Target.FarmStructure:
+                        targets.AddRange(player.AllStructures.OfType<FarmStructure>());
+                        break;
+                    case Target.ProductionStructure:
+                        targets.AddRange(player.AllStructures.OfType<ProductionStructure>());
+                        break;
+                    //non player targets
+                    case Target.World:
+                        break;
+                    case Target.Player:
                         break;
                 }
             }
@@ -296,7 +345,7 @@ namespace Andja.Controller {
                 } else {
                     target = idToActiveEvent[id].target.ToString();
                 }
-                list += id + " - " + idToActiveEvent[id].ID + " ("+idToActiveEvent[id].EventType+")" + " - " + target
+                list += id + " - " + idToActiveEvent[id].ID + " ("+idToActiveEvent[id].Type+")" + " - " + target
                     + " - " + idToActiveEvent[id].currentDuration + "/" + idToActiveEvent[id].Duration + "\n";
             }
             list += "END";
@@ -358,6 +407,55 @@ namespace Andja.Controller {
             cbEventEnded += ending;
         }
 
+        public static Type TargetToType(Target target) {
+            switch (target) {
+                case Target.World:
+                    return typeof(World);
+                case Target.Player:
+                    return typeof(Player);
+                case Target.Island:
+                    return typeof(Island);
+                case Target.City:
+                    return typeof(City);
+                case Target.AllUnit:
+                    return typeof(Unit);
+                case Target.Ship:
+                    return typeof(Ship);
+                case Target.LandUnit://default type is unit -- so dunno what todo in this case
+                    return typeof(Unit);
+                case Target.AllStructure:
+                    return typeof(Structure);
+                case Target.DamagableStructure://is selected over bool -- so dunno what todo in this case
+                    return typeof(Structure);
+                case Target.RoadStructure:
+                    return typeof(RoadStructure);
+                case Target.NeedStructure:
+                    return typeof(NeedStructure);
+                case Target.MilitaryStructure:
+                    return typeof(MilitaryStructure);
+                case Target.HomeStructure:
+                    return typeof(HomeStructure);
+                case Target.ServiceStructure:
+                    return typeof(ServiceStructure);
+                case Target.GrowableStructure:
+                    return typeof(GrowableStructure);
+                case Target.OutputStructure:
+                    return typeof(OutputStructure);
+                case Target.MarketStructure:
+                    return typeof(MarketStructure);
+                case Target.WarehouseStructure:
+                    return typeof(WarehouseStructure);
+                case Target.MineStructure:
+                    return typeof(MineStructure);
+                case Target.FarmStructure:
+                    return typeof(FarmStructure);
+                case Target.ProductionStructure:
+                    return typeof(ProductionStructure);
+                default:
+                    return null;
+            }
+        }
+
         private void OnDestroy() {
             Instance = null;
         }
@@ -370,7 +468,6 @@ namespace Andja.Controller {
 
     public class GameEventSave : BaseSaveData {
         public Dictionary<uint, GameEvent> idToActiveEvent;
-        public UnityEngine.Random.State Random;
 
         public GameEventSave(Dictionary<uint, GameEvent> idToActiveEvent) {
             this.idToActiveEvent = idToActiveEvent;

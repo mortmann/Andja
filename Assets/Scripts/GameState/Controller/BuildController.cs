@@ -198,31 +198,31 @@ namespace Andja.Controller {
             BuildState = BuildStateModes.Build;
         }
 
-        public void CurrentPlayerBuildOnTile(List<Tile> tiles, bool forEachTileOnce, int playerNumber, bool wild = false, Unit buildInRange = null) {
+        public bool CurrentPlayerBuildOnTile(List<Tile> tiles, bool forEachTileOnce, int playerNumber, bool wild = false, Unit buildInRange = null) {
             if (toBuildStructure == null) {
-                return;
+                return false;
             }
-            BuildOnTile(toBuildStructure, tiles, playerNumber, forEachTileOnce, wild, buildInRange);
+            return BuildOnTile(toBuildStructure, tiles, playerNumber, forEachTileOnce, wild, buildInRange);
         }
 
-        public void BuildOnEachTile(Structure structure, List<Tile> tiles, int playerNumber) {
-            BuildOnTile(structure, tiles, playerNumber, true);
+        public bool BuildOnEachTile(Structure structure, List<Tile> tiles, int playerNumber) {
+            return BuildOnTile(structure, tiles, playerNumber, true);
         }
 
-        public void BuildOnTile(Structure structure, List<Tile> tiles, int playerNumber, bool forEachTileOnce,
+        public bool BuildOnTile(Structure structure, List<Tile> tiles, int playerNumber, bool forEachTileOnce,
                                     bool wild = false, Unit buildInRange = null, bool loading = false, bool onStart = false) {
             if (tiles == null || tiles.Count == 0 || WorldController.Instance?.IsPaused == true && loading == false && onStart == false) {
-                return;
+                return false;
             }
             if (forEachTileOnce == false) {
-                RealBuild(tiles, structure, playerNumber, loading, wild, buildInRange, onStart);
+                return RealBuild(tiles, structure, playerNumber, loading, wild, buildInRange, onStart);
             }
             else {
+                bool allBuild = true;
                 foreach (Tile tile in tiles) {
-                    List<Tile> t = new List<Tile>();
-                    t.AddRange(structure.GetBuildingTiles(tile));
-                    RealBuild(t, structure, playerNumber, loading, wild, buildInRange);
+                    allBuild = RealBuild(structure.GetBuildingTiles(tile), structure, playerNumber, loading, wild, buildInRange);
                 }
+                return allBuild;
             }
         }
 

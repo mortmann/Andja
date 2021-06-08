@@ -152,24 +152,44 @@
       </cannonType>
    </ship>
    <worker ID="roadcarrier">
-      <workerID>roadcarrier</workerID>
       <toWorkSprites>roadcarrier</toWorkSprites>
       <fromWorkSprites>roadcarrier_full</fromWorkSprites>
+      <hasToFollowRoads>true</hasToFollowRoads>
+      <hasToEnterWork>true</hasToEnterWork>
       <pixelsPerSprite>64</pixelsPerSprite>
       <speed>1.0</speed>
    </worker>
-   <worker ID="placeholder">
-      <workerID>placeholder</workerID>
-      <toWorkSprites>placeholder</toWorkSprites>
-      <fromWorkSprites>placeholder_full</fromWorkSprites>
-      <pixelsPerSprite>64</pixelsPerSprite>
-      <speed>1.0</speed>
-   </worker>
+  <worker ID="placeholder">
+    <toWorkSprites>placeholder</toWorkSprites>
+    <fromWorkSprites>placeholder_full</fromWorkSprites>
+    <pixelsPerSprite>64</pixelsPerSprite>
+    <hasToFollowRoads>false</hasToFollowRoads>
+    <hasToEnterWork>false</hasToEnterWork>
+    <speed>1.0</speed>
+  </worker>
+  <worker ID="placeholder_road">
+    <toWorkSprites>placeholder</toWorkSprites>
+    <fromWorkSprites>placeholder_full</fromWorkSprites>
+    <pixelsPerSprite>64</pixelsPerSprite>
+    <hasToFollowRoads>true</hasToFollowRoads>
+    <hasToEnterWork>true</hasToEnterWork>
+    <speed>1.0</speed>
+  </worker>
+  <worker ID="firefighter">
+    <toWorkSprites>placeholder</toWorkSprites>
+    <fromWorkSprites>placeholder_full</fromWorkSprites>
+    <pixelsPerSprite>64</pixelsPerSprite>
+    <hasToFollowRoads>true</hasToFollowRoads>
+    <hasToEnterWork>false</hasToEnterWork>
+    <speed>1.0</speed>
+  </worker>
    <worker ID="lumberjack">
       <workSound>chopping</workSound>
       <toWorkSprites>lumberjack</toWorkSprites>
       <fromWorkSprites>lumberjack_full</fromWorkSprites>
       <pixelsPerSprite>64</pixelsPerSprite>
-      <speed>1.0</speed>
+     <hasToFollowRoads>false</hasToFollowRoads>
+     <hasToEnterWork>false</hasToEnterWork>
+     <speed>1.0</speed>
    </worker>
 </units>

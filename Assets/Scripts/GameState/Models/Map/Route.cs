@@ -12,7 +12,6 @@ namespace Andja.Model {
     /// It handles all related things like merging, splitting and city changes.
     /// </summary>
     public class Route {
-        public Path_TileGraph TileGraph { get; protected set; }
         public PathGrid Grid { get; protected set; }
 
         public List<Tile> Tiles;
@@ -24,7 +23,6 @@ namespace Andja.Model {
             if (floodfill) {
                 RouteFloodFill(startTile);
             }
-            TileGraph = new Path_TileGraph(this);
             Grid = new PathGrid(this);
         }
 
@@ -65,7 +63,6 @@ namespace Andja.Model {
 
         public void AddRoadTile(Tile tile) {
             Tiles.Add(tile);
-            TileGraph.AddNodeToRouteTileGraph(tile);
             Grid.ChangeNode(tile, Walkable.Normal);
         }
 
@@ -73,11 +70,11 @@ namespace Andja.Model {
             if (Tiles.Count == 0) {
                 //this route does not have any more roadtiles so kill it
                 Tiles[0].City.RemoveRoute(this);
+                Grid.Obsolete = true;
                 return;
             }
             Tiles.Remove(tile);
             Grid.ChangeNode(tile, Walkable.Never);
-            TileGraph.RemoveNodes(tile);
             //cheack if it can split up in to routes
             int neighboursOfRoute = 0;
             foreach (Tile t in tile.GetNeighbours(false)) {
@@ -99,7 +96,6 @@ namespace Andja.Model {
             //now we need to check if that is all
             //if not create on the others new routes!
             oldTiles = oldTiles.Except(Tiles).ToList();
-            TileGraph.RemoveNodes(oldTiles.ToArray());
             foreach(Tile t in oldTiles) {
                 Grid.ChangeNode(t, Walkable.Never);
             }
@@ -138,7 +134,6 @@ namespace Andja.Model {
                 }
                 c.RemoveRoute(route);
             }
-            TileGraph.AddNodes(route.TileGraph);
             foreach(Tile t in route.Tiles) {
                 Grid.ChangeNode(t, Walkable.Normal);
             }

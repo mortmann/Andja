@@ -19,6 +19,9 @@ namespace Andja.Model {
 
         public void TakeDamageFrom(IWarfare warfare) {
             ReduceHealth(warfare.GetCurrentDamage(ArmorType));
+            if (IsDestroyed == false && PlayerController.currentPlayerNumber == City.PlayerNumber) {
+                UI.Model.EventUIManager.Instance.Show(this, warfare);
+            }
         }
 
         public float MaximumHealth => Data.maxHealth;

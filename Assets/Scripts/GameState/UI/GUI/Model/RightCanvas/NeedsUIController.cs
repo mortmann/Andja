@@ -65,7 +65,7 @@ namespace Andja.UI.Model {
                 return;
             }
             this.home = home;
-
+            home.RegisterOnDestroyCallback(OnHomeDestroy);
             bool isPlayerHome = home.PlayerNumber == PlayerController.currentPlayerNumber;
             contentCanvas.SetActive(isPlayerHome);
             buttonPopulationsLevelContent.SetActive(isPlayerHome);
@@ -85,6 +85,10 @@ namespace Andja.UI.Model {
             for (int i = 0; i < PrototypController.Instance.NumberOfPopulationLevels; i++) {
                 popLevelToGO[i].Interactable(home.StructureLevel >= i);
             }
+        }
+
+        private void OnHomeDestroy(Structure arg1, IWarfare arg2) {
+            UIController.Instance.CloseHomeUI();
         }
 
         public void ChangeNeedLevel(int level) {

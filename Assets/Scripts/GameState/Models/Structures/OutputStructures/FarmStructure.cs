@@ -95,14 +95,7 @@ namespace Andja.Model {
         }
 
         public override void OnUpdate(float deltaTime) {
-            //update any worker
-            for (int i = Workers.Count - 1; i >= 0; i--) {
-                Worker w = Workers[i];
-                w.Update(deltaTime * Efficiency);
-                if (w.isAtHome) {
-                    WorkerComeBack(w);
-                }
-            }
+            UpdateWorker(deltaTime);
             if (IsActiveAndWorking == false || Output[0].count >= MaxOutputStorage) {
                 return;
             }
@@ -112,7 +105,7 @@ namespace Andja.Model {
                         return;
                     produceTimer += deltaTime * Efficiency;
                     //Display Warning?
-                    Debug.LogWarning("FARM " + Name + " can not send worker -- ProduceTime to fast.");
+                    //Debug.LogWarning("FARM " + Name + " can not send worker -- ProduceTime to fast.");
                     if (produceTimer >= ProduceTime) {
                         if (workingGrowables.Count == 0) {
                             return;
@@ -120,10 +113,8 @@ namespace Andja.Model {
                         produceTimer = 0;
                         AddHarvastable();
                         workingGrowables[0].Harvest();
+                        workingGrowables.RemoveAt(0);
                     }
-                }
-                else if (workingGrowables.Count > Workers.Count) {
-                    SendOutWorkerIfCan(ProduceTime);
                 }
             }
             if (currentlyHarvested >= NeededHarvestForProduce) {
@@ -138,24 +129,22 @@ namespace Andja.Model {
         }
 
         public void OnGrowableChanged(Structure str) {
-            if (str is GrowableStructure == false) {
-                str.UnregisterOnChangedCallback(OnGrowableChanged);
-                return;
-            }
-            GrowableStructure grow = (GrowableStructure)str;
-            if (grow.ID != Growable.ID) {
-                grow.UnregisterOnChangedCallback(OnGrowableChanged);
-                return;
-            }
-            if (((GrowableStructure)grow).hasProduced == false) {
-                if (workingGrowables.Contains((GrowableStructure)grow)) {
-                    workingGrowables.Remove(grow);
+            if (str is GrowableStructure grow) {
+                if (grow.ID != Growable.ID) {
+                    grow.UnregisterOnChangedCallback(OnGrowableChanged);
+                    return;
                 }
-                return;
+                if (grow.hasProduced == false) {
+                    if (workingGrowables.Contains(grow)) {
+                        workingGrowables.Remove(grow);
+                    }
+                    return;
+                }
+                workingGrowables.Add(grow);
             }
-            workingGrowables.Add(grow);
-            // send worker todo this job
-            // not important right now
+            else {
+                str.UnregisterOnChangedCallback(OnGrowableChanged);
+            }
         }
 
         public void OnTileStructureChange(Structure now, Structure old) {
@@ -184,7 +173,9 @@ namespace Andja.Model {
             if (Workers.Count >= MaxNumberOfWorker) {
                 return;
             }
-            Worker ws = new Worker(this, workingGrowables[0], workTime, OutputData.workerID, Output,  false, true, true, workTime * 0.05f);
+            Worker ws = new Worker(this, workingGrowables[0], ProduceTime, 
+                                    OutputData.workerID ?? "placeholder", Output, 
+                                    true, ProduceTime * 0.05f);
             workingGrowables.RemoveAt(0);
             World.Current.CreateWorkerGameObject(ws);
             Workers.Add(ws);

@@ -81,7 +81,6 @@ namespace Andja.Model {
         }
 
         public override void OnBuild() {
-            workersHasToFollowRoads = true; // DUNNO HOW where to set it without the need to copy it extra
             RegisteredSturctures = new List<Structure>();
             OutputMarkedSturctures = new List<Structure>();
             jobsToDo = new Dictionary<OutputStructure, Item[]>();

@@ -50,7 +50,7 @@ namespace Andja.Controller {
             go.transform.rotation = q;
 
             SpriteRenderer sr = go.AddComponent<SpriteRenderer>();
-            sr.sprite = workerSprites[worker.toWorkSprites];
+            sr.sprite = workerSprites[worker.ToWorkSprites];
             sr.sortingLayerName = "Persons";
             //SOUND PART -- IMPORTANT
             SoundController.Instance.OnWorkerCreated(worker, go);
@@ -66,7 +66,7 @@ namespace Andja.Controller {
             }
             GameObject char_go = workerToGO[w];
             if (w.IsFull) {
-                char_go.GetComponent<SpriteRenderer>().sprite = workerSprites[w.fromWorkSprites];
+                char_go.GetComponent<SpriteRenderer>().sprite = workerSprites[w.FromWorkSprites];
             }
             char_go.transform.position = new Vector3(w.X, w.Y, 0);
             Quaternion q = char_go.transform.rotation;

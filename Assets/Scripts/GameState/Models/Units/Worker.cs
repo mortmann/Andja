@@ -14,6 +14,8 @@ namespace Andja.Model {
         public int pixelsPerSprite = 64;
         public float speed = 1;
         public float rotationSpeed = 720;
+        public bool hasToFollowRoads = false;
+        public bool hasToEnterWork = false;
     }
     [JsonObject(MemberSerialization.OptIn)]
     public class Worker : IPathfindAgent {
@@ -30,8 +32,6 @@ namespace Andja.Model {
         [JsonPropertyAttribute] public bool isAtHome;
         [JsonPropertyAttribute] private Structure _workStructure;
         [JsonPropertyAttribute] private bool isDone;
-        [JsonPropertyAttribute] private bool hasToFollowRoads;
-        [JsonPropertyAttribute] private bool hasToEnterWorkStructure;
         [JsonPropertyAttribute] private bool walkTimeIsWorkTime;
         [JsonPropertyAttribute] private float workAtHomeTime;
 
@@ -69,16 +69,19 @@ namespace Andja.Model {
             }
         }
         public string WorkSound => Data.workSound;
-        public string toWorkSprites => Data.toWorkSprites;
-        public string fromWorkSprites => Data.fromWorkSprites;
+        public string ToWorkSprites => Data.toWorkSprites;
+        public string FromWorkSprites => Data.fromWorkSprites;
         public float Speed => Data.speed;
         public int PixelsPerSprite => Data.pixelsPerSprite;
+        private bool HasToFollowRoads => Data.hasToFollowRoads;
+        private bool HasToEnterWorkStructure => Data.hasToEnterWork;
 
-        public bool IsFull => inventory.HasAnything() || Home is ServiceStructure && goingToWork == false;
+
+        public bool IsFull => inventory?.HasAnything() == true || goingToWork == false && Home is ServiceStructure;
         private Func<Structure, float, bool> WorkOnStructure {
             get {
-                if (Home is ServiceStructure)
-                    return ((ServiceStructure)Home).WorkOnTarget;
+                if (Home is ServiceStructure h)
+                    return h.WorkOnTarget;
                 return null;
             }
         }
@@ -111,31 +114,28 @@ namespace Andja.Model {
 
         public float RotationSpeed => Data.rotationSpeed;
 
-        public TurningType TurnType => hasToFollowRoads? TurningType.OnPoint : TurningType.TurnRadius;
+        public TurningType TurnType => HasToFollowRoads? TurningType.OnPoint : TurningType.TurnRadius;
         public PathDestination PathDestination => PathDestination.Tile;
         public PathingMode PathingMode => PathingMode.IslandMultiplePoints;
-        public bool CanEndInUnwakable => hasToEnterWorkStructure || goingToWork == false;
+        public bool CanEndInUnwakable => HasToEnterWorkStructure || goingToWork == false;
 
-        public PathHeuristics Heuristic => hasToFollowRoads ? PathHeuristics.Manhattan : PathHeuristics.Euclidean;
+        public PathHeuristics Heuristic => HasToFollowRoads ? PathHeuristics.Manhattan : PathHeuristics.Euclidean;
 
-        public bool CanMoveDiagonal => hasToFollowRoads == false;
+        public bool CanMoveDiagonal => HasToFollowRoads == false;
 
         public IReadOnlyList<int> CanEnterCities => null; // For now worker always can enter all tiles regardless who owns it
 
         public bool IsAlive => isAtHome == false;
 
         public Worker(Structure Home, OutputStructure structure, float workTime, string workerID, Item[] toGetItems = null,
-                        bool hasToFollowRoads = true,
-                        bool walkTimeIsWorkTime = false, bool hasToEnterWorkStructure = true, float workAtHomeTime = 0f) {
+                        bool walkTimeIsWorkTime = false, float workAtHomeTime = 0f) {
             this.Home = Home;
             WorkOutputStructure = structure;
-            this.hasToFollowRoads = hasToFollowRoads;
             this.walkTimeIsWorkTime = walkTimeIsWorkTime;
             this.workAtHomeTime = workAtHomeTime;
             if (structure is MarketStructure == false) {
                 structure.outputClaimed = true;
             }
-            this.hasToEnterWorkStructure = hasToEnterWorkStructure;
             isAtHome = false;
             goingToWork = true;
             inventory = new Inventory(4);
@@ -146,12 +146,10 @@ namespace Andja.Model {
             Setup();
         }
 
-        public Worker(ServiceStructure Home, Structure structure, float workTime, string workerID, bool hasToFollowRoads = true, bool hasToEnterWorkStructure = true) {
+        public Worker(ServiceStructure Home, Structure structure, float workTime, string workerID) {
             this.Home = Home;
             this.ID = workerID ?? "placeholder";
             WorkStructure = structure;
-            this.hasToFollowRoads = hasToFollowRoads;
-            this.hasToEnterWorkStructure = hasToEnterWorkStructure;
             isAtHome = false;
             goingToWork = true;
             workTimer = workTime;
@@ -384,7 +382,7 @@ namespace Andja.Model {
             if (structure == null) {
                 return;
             }
-            if (hasToFollowRoads == false) {
+            if (HasToFollowRoads == false) {
                 if (path == null)
                     path = new TilesPathfinding(this);
                 if (goHome == false) {
@@ -401,7 +399,10 @@ namespace Andja.Model {
                     ((RoutePathfinding)path).SetDestination(Home, structure);
                 }
                 else {
-                    ((RoutePathfinding)path).SetDestination(WorkStructure, Home);
+                    if(HasToEnterWorkStructure)
+                        ((RoutePathfinding)path).SetDestination(WorkStructure, Home);
+                    else
+                        ((RoutePathfinding)path).SetDestination(null, Home);
                 }
             }
             WorkStructure = structure;

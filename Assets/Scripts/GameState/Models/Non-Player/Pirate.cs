@@ -50,9 +50,10 @@ namespace Andja.Model {
                     }
                 }
                 if (targets.Count > 0) {
-                    var grouped = targets.GroupBy(x => x.playerNumber);
-                    if (grouped.Min().Key < 2) {
-                        s.GiveAttackCommand(grouped.Min().First(), true);
+                    var grouped = targets.GroupBy(x => x.playerNumber,(y,z)=>new { count = y, Ships = z });
+                    var ships = grouped.OrderBy(x => x.count).First();
+                    if (ships.count < 2) {
+                        s.GiveAttackCommand(ships.Ships.First(), true);
                     }
                 }
             }
@@ -60,7 +61,7 @@ namespace Andja.Model {
 
         public void AddShip() {
             Ship ship = PrototypController.Instance.GetPirateShipPrototyp();
-            Tile t = World.Current.GetTileAt(UnityEngine.Random.Range(0, World.Current.Height), 0);
+            Tile t = World.Current.GetTileAt(Random.Range(0, World.Current.Height), 0);
             ship = (Ship)World.Current.CreateUnit(ship, null, t, Number);
             ship.RegisterOnDestroyCallback(OnShipDestroy);
             ship.RegisterOnArrivedAtDestinationCallback(OnShipArriveDestination);

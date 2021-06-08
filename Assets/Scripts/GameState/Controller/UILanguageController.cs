@@ -1,8 +1,8 @@
-﻿using Andja.UI;
+﻿using Andja.Model;
+using Andja.UI;
 using Andja.UI.Menu;
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Xml;
@@ -19,7 +19,9 @@ namespace Andja.Controller {
         Locked, 
         CurrentDamage, MaximumDamage, Speed,
         Balance,
-        BalanceChange
+        BalanceChange,
+        Pirate, FlyingTrader,
+        World
     }
     /// <summary>
     /// Loads Translations (except prototypes sends it off to PrototypController) and changing language 
@@ -70,8 +72,20 @@ namespace Andja.Controller {
                     localizationDataDictionary.Add(name, new TranslationData(name, false, 0));
                 }
             }
+            foreach (InformationType go in Enum.GetValues(typeof(InformationType))) {
+                string name = typeof(InformationType).Name + "/" + go.ToString();
+                if (idToTranslation.ContainsKey(name) == false) {
+                    localizationDataDictionary.Add(name, new TranslationData(name, false, 0));
+                }
+            }
             foreach (StaticLanguageVariables go in Enum.GetValues(typeof(StaticLanguageVariables))) {
                 string name = typeof(StaticLanguageVariables).Name + "/" + go.ToString();
+                if (idToTranslation.ContainsKey(name) == false) {
+                    localizationDataDictionary.Add(name, new TranslationData(name, false, 0));
+                }
+            }
+            foreach (DiplomacyType go in Enum.GetValues(typeof(DiplomacyType))) {
+                string name = typeof(DiplomacyType).Name + "/" + go.ToString();
                 if (idToTranslation.ContainsKey(name) == false) {
                     localizationDataDictionary.Add(name, new TranslationData(name, false, 0));
                 }
@@ -106,7 +120,12 @@ namespace Andja.Controller {
         public TranslationData GetTranslationData(StaticLanguageVariables val) {
             return GetTranslationData(typeof(StaticLanguageVariables).Name +"/"+ val.ToString());
         }
-
+        public TranslationData GetTranslationData(InformationType val) {
+            return GetTranslationData(typeof(InformationType).Name + "/" + val.ToString());
+        }
+        public TranslationData GetTranslationData(DiplomacyType val) {
+            return GetTranslationData(typeof(DiplomacyType).Name + "/" + val.ToString());
+        }
         public void AddTranslationData(TranslationData data) {
             requiredLocalizationData.Add(data);
         }

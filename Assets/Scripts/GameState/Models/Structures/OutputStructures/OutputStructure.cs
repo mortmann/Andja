@@ -52,11 +52,17 @@ namespace Andja.Model {
                 _output = value;
             }
         }
-
+        public WorkerPrototypeData _workerPrototypeData;
+        public WorkerPrototypeData WorkerPrototypeData {
+            get {
+                if(_workerPrototypeData == null)
+                    _workerPrototypeData = PrototypController.Instance.GetWorkerPrototypDataForID(OutputData.workerID);
+                return _workerPrototypeData;
+            }
+        }
         public Dictionary<OutputStructure, Item[]> jobsToDo;
         public bool outputClaimed;
         protected Action<Structure> cbOutputChange;
-        public bool workersHasToFollowRoads = false;
         public float ContactRange { get { return OutputData.contactRange; } }
         public bool ForMarketplace { get { return OutputData.forMarketplace; } }
 
@@ -118,7 +124,7 @@ namespace Andja.Model {
                 return;
             }
             if (Workers == null) {
-                Workers = new List<Worker>();
+                Workers = new List<Worker>(MaxNumberOfWorker);
             }
             for (int i = Workers.Count - 1; i >= 0; i--) {
                 Worker w = Workers[i];
@@ -147,10 +153,10 @@ namespace Andja.Model {
                 if (items == null || items.Length <= 0) {
                     continue;
                 }
-                if (workersHasToFollowRoads && CanReachStructure(jobStr) == false) {
+                if (WorkerPrototypeData.hasToFollowRoads && CanReachStructure(jobStr) == false) {
                     continue;
                 }
-                Worker ws = new Worker(this, jobStr, workTime, OutputData.workerID, items,  workersHasToFollowRoads);
+                Worker ws = new Worker(this, jobStr, workTime, OutputData.workerID, items);
                 givenJobs.Add(jobStr);
                 World.Current.CreateWorkerGameObject(ws);
                 Workers.Add(ws);

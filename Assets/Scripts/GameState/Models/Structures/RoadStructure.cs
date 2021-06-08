@@ -14,7 +14,7 @@ namespace Andja.Model {
         #region RuntimeOrOther
 
         private Route _route;
-
+        public override string SortingLayer => "Road";
         public Route Route {
             get { return _route; }
             set {

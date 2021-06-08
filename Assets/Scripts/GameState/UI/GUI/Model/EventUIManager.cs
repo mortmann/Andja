@@ -1,48 +1,78 @@
 ﻿using Andja.Controller;
+using Andja.Model;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace Andja.UI.Model {
-    //TODO: hook it up
+
     public class EventUIManager : MonoBehaviour {
+        public static EventUIManager Instance;
         public float onScreenTimer = 30f;
-        private Dictionary<uint, GameObject> idToEventGO;
-
+        List<EventMessage> messages;
         //Mayber move this to EventManager
-        private Dictionary<uint, float> idToCountTimer;
 
-        public GameObject EventMessagePrefab;
+        public EventMessage EventMessagePrefab;
         public Transform contentTransform;
+        Dictionary<object, DateTime> shownToTime = new Dictionary<object, DateTime>();
 
         private void Start() {
-            idToEventGO = new Dictionary<uint, GameObject>();
-            idToCountTimer = new Dictionary<uint, float>();
+            Instance = this;
+            messages = new List<EventMessage>();
             foreach (Transform item in contentTransform) {
                 GameObject.Destroy(item.gameObject);
             }
             //AddEVENT(1, "TestEvent With a really long Name What is Happening now!?", new Vector2(50, 50));
         }
 
-        public void AddEVENT(uint id, string name, Vector2 position) {
-            GameObject ego = Instantiate(EventMessagePrefab);
+        public void AddEvent(GameEvent gameEvent) {
+            EventMessage ego = Instantiate(EventMessagePrefab);
             ego.transform.SetParent(contentTransform, false);
-            ego.GetComponent<EventMessage>().Setup(name, position);
-            idToEventGO.Add(id, ego);
-            idToCountTimer.Add(id, onScreenTimer);
+            ego.GetComponent<EventMessage>().Setup(gameEvent);
+            messages.Add(ego);
         }
 
-        // Update is called once per frame
-        private void Update() {
-            if (WorldController.Instance.IsPaused) {
+        private void OnDestroy() {
+            Instance = null;
+        }
+
+        internal void RemoveEvent(EventMessage eventMessage) {
+            messages.Remove(eventMessage);
+            Destroy(eventMessage.gameObject);
+        }
+
+        internal void Show(Unit unit, IWarfare warfare) {
+            var value = new KeyValuePair<Unit, IWarfare>(unit, warfare);
+            if (CheckShown(value))
                 return;
-            }
-            List<uint> ids = new List<uint>(idToCountTimer.Keys);
-            foreach (uint i in ids) {
-                idToCountTimer[i] = idToCountTimer[i] - Time.deltaTime;
-                if (idToCountTimer[i] <= 0) {
-                    idToCountTimer.Remove(i);
+            Show(BasicInformation.CreateUnitDamage(unit, warfare));
+        }
+        internal void Show(Structure str, IWarfare warfare) {
+            var value = new KeyValuePair<Structure, IWarfare>(str, warfare);
+            if (CheckShown(value))
+                return;
+            Show(BasicInformation.CreateStructureDamage(str, warfare));
+        }
+
+        private bool CheckShown(object value) {
+            if(shownToTime.ContainsKey(value)) {
+                if (DateTime.Now.Subtract(shownToTime[value]).TotalSeconds <= onScreenTimer) {
+                    return true;
                 }
             }
+            shownToTime.Add(value, DateTime.Now);
+            return false;
+        }
+
+        /// <summary>
+        /// This does not contain a check for duplicate Information -- Only use this directly if everytime the player should be informed
+        /// </summary>
+        /// <param name="basicInformation"></param>
+        internal void Show(BasicInformation basicInformation) {
+            EventMessage ego = Instantiate(EventMessagePrefab);
+            ego.transform.SetParent(contentTransform, false);
+            ego.GetComponent<EventMessage>().Setup(basicInformation);
+            messages.Add(ego);
         }
     }
 }

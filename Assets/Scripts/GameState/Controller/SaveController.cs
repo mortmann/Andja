@@ -407,7 +407,7 @@ namespace Andja.Controller {
             return Path.Combine(ConstantPathHolder.ApplicationDataPath.Replace("/Assets", ""), "Saves");
         }
 
-        public void SaveGameState(string name = "autosave") {
+        public string[] SaveGameState(string name = "autosave", bool returnSaveInstead = false) {
             SaveName = name;
             //first pause the world so nothing changes and we can save an
             bool wasPaused = WC.IsPaused;
@@ -429,7 +429,7 @@ namespace Andja.Controller {
             };
 
             string save = "";
-            if (DebugModeSave) {
+            if (DebugModeSave || returnSaveInstead) {
                 foreach (System.Reflection.FieldInfo field in typeof(SaveState).GetFields()) {
                     string bsd = field.GetValue(savestate) as String;
                     save += bsd;
@@ -467,8 +467,13 @@ namespace Andja.Controller {
                     }
             );
 
+            if(returnSaveInstead) {
+                if (wasPaused == false) {
+                    WC.IsPaused = false;
+                }
+                return new string[] { metadata, save };
+            }
             File.WriteAllBytes(filePath + saveFileScreenShotEnding, GetSaveGameThumbnail());
-
             if (Application.isEditor) {
                 File.WriteAllText(saveStatePath, save);
             }
@@ -480,6 +485,7 @@ namespace Andja.Controller {
             if (wasPaused == false) {
                 WC.IsPaused = false;
             }
+            return null;
         }
 
         public IEnumerator LoadGameState(string name = "autosave") {

@@ -1,5 +1,6 @@
 ﻿using Andja.Controller;
 using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using EventType = Andja.Controller.EventType;
@@ -8,7 +9,7 @@ namespace Andja.Model {
 
     public class GameEventPrototypData : LanguageVariables {
         public string ID;
-
+        public EventType type;
         public float probability = 10;
         public float minDuration = 50;
         public float maxDuration = 100;
@@ -35,7 +36,7 @@ namespace Andja.Model {
 
         public Dictionary<Target, List<string>> SpecialRange => PrototypData.specialRange;
 
-        public EventType EventType { protected set; get; }
+        public EventType Type => PrototypData.type;
 
         public Effect[] Effects => PrototypData.effects;
         public float Probability => PrototypData.probability;
@@ -43,14 +44,16 @@ namespace Andja.Model {
         public float MaxDuration => PrototypData.maxDuration;
         public bool IsDone { get { return currentDuration <= 0; } }
         public bool IsOneTime { get { return MaxDuration <= 0; } }
-        public string Name { get { return EventType.ToString() + " - " + "EMPTY FOR NOW"; } }
+        public string Name => PrototypData.Name;
+        public string Description => PrototypData.Description;
+
         private TargetGroup _Targeted = new TargetGroup();
 
         public TargetGroup Targeted {
             get {
-                if (_Targeted == null && Effects != null) {
+                if (Effects != null) {
                     foreach (Effect e in Effects) {
-                        Targeted.AddTargets(e.Targets);
+                        _Targeted.AddTargets(e.Targets);
                     }
                 }
                 return _Targeted;
@@ -65,6 +68,14 @@ namespace Andja.Model {
         [JsonPropertyAttribute] public float range;
 
         [JsonPropertyAttribute] public Vector2 position;
+
+        internal Vector2 GetPosition() {
+            if (target is Structure s)
+                return s.Center;
+            if (target is Unit u)
+                return u.PositionVector2;
+            return position;
+        }
 
         // this one says what it is...
         // so if complete island/city/player or only a single structuretype is the goal
@@ -99,6 +110,9 @@ namespace Andja.Model {
             if (ID == "volcanic_eruption") {
                 position = ((Island)target).Features.Find(x => x.type == FeatureType.Volcano).position;
                 CreateVolcanicEruption();
+            }
+            if(target != null) {
+
             }
         }
 

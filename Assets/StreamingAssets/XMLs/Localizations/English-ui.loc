@@ -100,6 +100,24 @@ I&apos;m not your father. I&apos;m a game.</hoverOverTranslation>
       <translationData id="DiplomacyTitle">
          <translation>Diplomacy</translation>
       </translationData>
+      <translationData id="DiplomacyType/Alliance">
+         <translation>Alliance</translation>
+         <hoverOverTranslation>Both agree to defend each other when being attacked.</hoverOverTranslation>
+      </translationData>
+      <translationData id="DiplomacyType/Neutral">
+         <translation>Neutral</translation>
+         <hoverOverTranslation>What turns people neutral? 
+They dont care about each other. For now.</hoverOverTranslation>
+      </translationData>
+      <translationData id="DiplomacyType/TradeAgreement">
+         <translation>Trade Agreement</translation>
+         <hoverOverTranslation>Both agree that each other can buy and sell to eachother.</hoverOverTranslation>
+      </translationData>
+      <translationData id="DiplomacyType/War">
+         <translation>War</translation>
+         <hoverOverTranslation>Attack their Units and defend your Cities.
+Be careful of Alliance Members they will join.</hoverOverTranslation>
+      </translationData>
       <translationData id="DiscardUnsaved">
          <translation>Do you want to discard any 
 unsaved changes?</translation>
@@ -186,6 +204,18 @@ Save them so you can play them or share them.</hoverOverTranslation>
       <translationData id="Information">
          <hoverOverTranslation>Further Informations</hoverOverTranslation>
          <onlyHoverOver>true</onlyHoverOver>
+      </translationData>
+      <translationData id="InformationType/UnitUnderAttack">
+         <translation>Your Unit $0 is under attack.</translation>
+         <hoverOverTranslation>Unit $0 is under attack by $1</hoverOverTranslation>
+      </translationData>
+      <translationData id="InformationType/StructureUnderAttack">
+         <translation>Your Structure $0 is under attack.</translation>
+         <hoverOverTranslation>Structure $0 is under attack by $1</hoverOverTranslation>
+      </translationData>
+      <translationData id="InformationType/DiplomacyChange">
+         <translation>$0</translation>
+         <hoverOverTranslation>$0 and $1 now at $2</hoverOverTranslation>
       </translationData>
       <translationData id="IslandClimate">
          <translation>Island Climate</translation>

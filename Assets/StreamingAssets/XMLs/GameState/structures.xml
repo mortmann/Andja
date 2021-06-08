@@ -345,9 +345,9 @@
          </HoverOver>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
-         <hasHitbox>true</hasHitbox>
          <maxHealth>150.0</maxHealth>
-         <structureRange>3</structureRange>
+        <hasHitbox>true</hasHitbox>
+        <structureRange>3</structureRange>
          <populationLevel>0</populationLevel>
          <populationCount>200</populationCount>
          <structureLevel>0</structureLevel>
@@ -1036,7 +1036,8 @@
          </HoverOver>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
-         <hasHitbox>false</hasHitbox>
+        <isFloor>true</isFloor>
+        <hasHitbox>false</hasHitbox>
          <maxHealth>50.0</maxHealth>
          <structureRange>0</structureRange>
          <populationLevel>0</populationLevel>
@@ -2785,7 +2786,7 @@
          <canBeUpgraded>false</canBeUpgraded>
          <canTakeDamage>true</canTakeDamage>
          <mustFrontBuildDir>None</mustFrontBuildDir>
-         <canStartBurning>false</canStartBurning>
+         <canStartBurning>true</canStartBurning>
          <upkeepCost>0</upkeepCost>
          <buildCost>0</buildCost>
          <buildTyp>Drag</buildTyp>
@@ -3081,6 +3082,7 @@
          <isWalkable>false</isWalkable>
          <hasHitbox>false</hasHitbox>
          <maxHealth>40.0</maxHealth>
+        <workerID>firefighter</workerID>
          <structureRange>8</structureRange>
          <populationLevel>0</populationLevel>
          <populationCount>0</populationCount>
@@ -3114,7 +3116,7 @@
             <Effect>fire</Effect>
          </effectsOnTargets>
          <maxNumberOfWorker>1</maxNumberOfWorker>
-         <workSpeed>0.01</workSpeed>
+         <workSpeed>0.03334</workSpeed>
       </servicestructure>
       <servicestructure ID="firebrigade">
          <Name>

@@ -18,7 +18,7 @@ namespace Andja.Controller {
         public Sprite circleSprite;
         public Sprite upgradeSprite;
         public Sprite unitCircleSprite;
-
+        public Dictionary<string, EffectSprite> effectToSprite;
         private Dictionary<Route, TextMesh> RouteToTextMesh;
         public bool RoadDebug = false;
 
@@ -36,6 +36,7 @@ namespace Andja.Controller {
             structureExtraUIMap = new Dictionary<Structure, GameObject>();
 
             LoadSprites();
+            LoadEffectSprites(); 
 
             if (BuildController.Instance.LoadedStructures != null) {
                 foreach (Structure str in BuildController.Instance.LoadedStructures) {
@@ -90,11 +91,11 @@ namespace Andja.Controller {
             go.transform.SetParent(this.transform, true);
             go.name = structure.SmallName + "_" + structure.Tiles[0].ToString();
             SpriteRenderer sr = go.AddComponent<SpriteRenderer>();
-            sr.sortingLayerName = "Structures";
+            sr.sortingLayerName = structure.SortingLayer;
             structureGameObjectMap.Add(structure, go);
             if (structure is RoadStructure) {
                 ((RoadStructure)structure).RegisterOnRoadCallback(OnRoadChange);
-                sr.sortingLayerName = "Road";
+                //sr.sortingLayerName = "Road";
                 if (RoadDebug) {
                     AddRoadDebug(go, ((RoadStructure)structure));
                 }
@@ -167,8 +168,8 @@ namespace Andja.Controller {
                 effectGO.transform.SetParent(strgo.transform);
                 effectGO.transform.localPosition = new Vector3(0, 0, 0);
                 EffectAnimator ea = effectGO.AddComponent<EffectAnimator>();
-                Debug.LogWarning("not implemented");
-                //ea.Show(, 0.25f, "Structures", effect);
+                if(effectToSprite.ContainsKey(effect.ID))
+                    ea.Show(effectToSprite[effect.ID].Get(target.GetID()), "Structures", effect);
             }
         }
 
@@ -310,7 +311,30 @@ namespace Andja.Controller {
                 }
             }
         }
-
+        private void LoadEffectSprites() {
+            effectToSprite = new Dictionary<string, EffectSprite>();
+            Sprite[] sprites = Resources.LoadAll<Sprite>(EffectFilePath);
+            foreach (Sprite s in sprites) {
+                string[] name = s.name.Split('_');
+                if(effectToSprite.ContainsKey(name[0])==false) {
+                    effectToSprite[name[0]] = new EffectSprite();
+                }
+                string first = null;
+                string second = null;
+                if(name.Length >= 3) {
+                    second = name[2];
+                    first = name[1];
+                }
+                int.TryParse(second ?? first, out int num);
+                effectToSprite[name[0]].Add(s, first, num);
+            }
+            Sprite[] custom = ModLoader.LoadSprites(SpriteType.Structure);
+            if (custom == null)
+                return;
+            foreach (Sprite s in custom) {
+                structureSprites[s.name] = s;
+            }
+        }
         private void LoadSprites() {
             structureSprites = new Dictionary<string, Sprite>();
             Sprite[] sprites = Resources.LoadAll<Sprite>("Textures/Structures/");
@@ -349,5 +373,36 @@ namespace Andja.Controller {
         private void OnDestroy() {
             Instance = null;
         }
+        public class EffectSprite {
+            public Dictionary<string, List<Sprite>> structureToSprites = new Dictionary<string, List<Sprite>>();
+            public List<Sprite> Default = new List<Sprite>();
+
+            internal void Add(Sprite sprite, string name, int num) {
+                if(string.IsNullOrEmpty(name)) {
+                    if (num < Default.Count - 1) {
+                        Default.Insert(num, sprite);
+                    }
+                    else {
+                        Default.Add(sprite);
+                    }
+                    return;
+                } 
+                if (structureToSprites.ContainsKey(name) == false)
+                    structureToSprites[name] = new List<Sprite>(); 
+                List<Sprite> s = structureToSprites[name];
+                if (num < s.Count - 1) {
+                    s.Insert(num, sprite);
+                }
+                else {
+                    s.Add(sprite);
+                }
+            }
+
+            internal Sprite[] Get(string name) {
+                if (structureToSprites.ContainsKey(name) == false)
+                    return Default?.ToArray();
+                return structureToSprites[name].ToArray();
+            }
+        } 
     }
 }

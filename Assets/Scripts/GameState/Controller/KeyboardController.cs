@@ -11,7 +11,6 @@ using UnityEngine.Video;
 namespace Andja.Controller {
 
     public class KeyboardController : MonoBehaviour {
-
         // Use this for initialization
         UIController UIC => UIController.Instance;
 
@@ -19,7 +18,6 @@ namespace Andja.Controller {
         BuildController BuildController => BuildController.Instance;
 
         private VideoPlayer videoPlayer;
-
         private enum CheatCode { GodMode }
 
         private Dictionary<KeyCode[], CheatCode> cheatCodes = new Dictionary<KeyCode[], CheatCode> {
@@ -42,7 +40,16 @@ namespace Andja.Controller {
         /// Checks for any Input Down and calls responding functions
         /// </summary>
         private void Update() {
-            if (EditorController.IsEditor)
+            if (InputHandler.GetButtonDown(InputName.Screenshot)) {
+                if(SaveController.Instance != null) {
+                    ScreenCapture.CaptureScreenshot(
+                        "screenshot_" + SaveController.SaveName + "_" 
+                        + System.DateTime.Now.ToString("dd_MM_yyyy-hh_mm_ss_ff") + ".png");
+                }
+                ScreenCapture.CaptureScreenshot("screenshot_" + System.DateTime.Now.ToString("dd_MM_yyyy-hh_mm_ss_ff") + ".png");
+            }
+            UpdateCheatCodes();
+            if (WorldController.Instance == null)
                 return;
             if (PlayerController.GameOver)
                 return;
@@ -59,7 +66,6 @@ namespace Andja.Controller {
             if (UIController.IsTextFieldFocused()) {
                 return;
             }
-            UpdateCheatCodes();
             if (UIC.IsPauseMenuOpen()) {
                 return;
             }
@@ -85,9 +91,6 @@ namespace Andja.Controller {
                 if (BuildController.toBuildStructure != null) {
                     BuildController.toBuildStructure.RotateStructure();
                 }
-            }
-            if (InputHandler.GetButtonDown(InputName.Screenshot)) {
-                ScreenCapture.CaptureScreenshot("screenshot_" + System.DateTime.Now.ToString("dd_MM_yyyy-hh_mm_ss_ff") + ".png");
             }
             if (Application.isEditor) {
                 if (Input.GetKey(KeyCode.LeftShift)) {

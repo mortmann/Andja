@@ -24,7 +24,6 @@ namespace Andja.Model {
         #region RuntimeOrOther
 
         public List<Fertility> Fertilities;
-        public Path_TileGraph TileGraphIslandTiles { get; protected set; }
         public PathGrid Grid { get; protected set; }
 
         public int Width {
@@ -168,7 +167,6 @@ namespace Andja.Model {
             Center = Minimum + ((Maximum - Minimum) / 2);
             if (Wilderness != null)
                 Wilderness.AddTiles(Tiles);
-            TileGraphIslandTiles = new Path_TileGraph(this);
             Grid = new PathGrid(this);
         }
 
@@ -218,7 +216,6 @@ namespace Andja.Model {
                     }
                 }
             }
-            TileGraphIslandTiles = new Path_TileGraph(this);
         }
 
         public void Update(float deltaTime) {

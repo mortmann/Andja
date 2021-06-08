@@ -85,6 +85,12 @@ namespace Andja.Model {
         [JsonPropertyAttribute]
         private bool _IsHuman;
 
+        internal Vector2 GetMainCityPosition() {
+            if (Cities.Count == 0)
+                return World.Current.Center;
+            return Cities.First()?.warehouse != null ? Cities.First().warehouse.Center : Cities.First().Island.Center;
+        }
+
         [JsonPropertyAttribute]
         private int _treasuryBalance;
 
@@ -250,6 +256,9 @@ namespace Andja.Model {
                         continue;
                     UnlockCheck(i, count);
                 }
+            }
+            foreach (Unit item in World.Current.Units.TakeWhile(x => x.PlayerNumber == Number)) {
+                OnUnitCreated(item);
             }
             CalculateBalance();
         }
@@ -423,9 +432,16 @@ namespace Andja.Model {
             if (unit.playerNumber != Number)
                 return;
             unit.RegisterOnDestroyCallback(OnUnitDestroy);
+            unit.RegisterOnTakesDamageCallback(OnUnitTakesDamage);
             Units.Add(unit);
             if (unit.IsShip)
                 Ships.Add((Ship)unit);
+        }
+
+        private void OnUnitTakesDamage(Unit unit, IWarfare from) {
+            if(PlayerController.currentPlayerNumber == Number) {
+                UI.Model.EventUIManager.Instance.Show(unit, from);
+            }
         }
 
         public void OnUnitDestroy(Unit unit, IWarfare warfare) {

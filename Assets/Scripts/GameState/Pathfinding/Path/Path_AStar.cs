@@ -8,7 +8,7 @@ using UnityEngine;
 namespace Andja.Pathfinding {
 
     public enum PathHeuristics { Euclidean, Manhattan, Diagonal }
-
+    [Obsolete("Not used any more", true)]
     public class Path_AStar {
         public PathHeuristics Heuristic;
         public Queue<Tile> path;
@@ -34,7 +34,7 @@ namespace Andja.Pathfinding {
             this.canEndInUnwakable = canEndInUnwakable;
             this.Heuristic = Heuristic;
             // A dictionary of all valid, walkable nodes.
-            nodes = island.TileGraphIslandTiles.nodes;
+            //nodes = island.TileGraphIslandTiles.nodes;
             endTiles = new HashSet<Tile>();
             endTiles.Add(tileEnd);
             Calculate(tileStart, tileEnd, diag);
@@ -76,7 +76,7 @@ namespace Andja.Pathfinding {
             this.startTiles = new HashSet<Tile>(startTiles);
             this.endTiles = new HashSet<Tile>(endTiles);
             // A dictionary of all valid, walkable nodes.
-            nodes = island.TileGraphIslandTiles.nodes;
+            //nodes = island.TileGraphIslandTiles.nodes;
             Calculate(start, end);
         }
 

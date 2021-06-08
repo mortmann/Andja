@@ -77,6 +77,7 @@ namespace Andja.UI {
                 };
                 line.transform.SetParent(playerContent, false);
                 line.transform.localPosition = Vector2.zero;// center.transform.position;
+                line.AddComponent<CanvasRenderer>();
                 UILineRenderer uILineRenderer = line.AddComponent<UILineRenderer>();
                 uILineRenderer.LineThickness = 20f;
                 uILineRenderer.color = GetColorForDiplomaticStatus(PlayerController.Instance.GetDiplomaticStatusType(showPlayer, other));
@@ -148,7 +149,7 @@ namespace Andja.UI {
                 case DiplomacyType.Neutral:
                     return new Color(0.7f, 0.7f, 0.7f, 1);
 
-                case DiplomacyType.TradeAggrement:
+                case DiplomacyType.TradeAgreement:
                     return Color.blue;
 
                 case DiplomacyType.Alliance:

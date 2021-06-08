@@ -7,7 +7,13 @@ using UnityEngine;
 
 namespace Andja.Utility {
 
-    public enum InputName { BuildMenu, TradeMenu, Offworld, TogglePause, Rotate, Console, Cancel, Screenshot, Stop, DiplomacyMenu }
+    public enum InputName { 
+        BuildMenu, TradeMenu, Offworld, DiplomacyMenu,
+        TogglePause, Stop, Cancel, 
+        Rotate, 
+        Screenshot, 
+        Console, BugReport 
+    }
 
     public class InputHandler {
         public static bool ShiftKey => Input.GetKey(KeyCode.RightShift) || Input.GetKey(KeyCode.LeftShift);
@@ -35,9 +41,9 @@ namespace Andja.Utility {
 
         private static void SetupKeyBinds() {
             foreach (InputName name in Enum.GetValues(typeof(InputName))) {
-                KeyCode keyCode = KeyCode.RightWindows;
                 if (nameToKeyBinds.ContainsKey(name)) //skip already declared
                     continue;
+                KeyCode keyCode;
                 //add here the base input layout
                 switch (name) {
                     case InputName.BuildMenu:
@@ -79,6 +85,14 @@ namespace Andja.Utility {
                     case InputName.DiplomacyMenu:
                         keyCode = KeyCode.N;
                         break;
+
+                    case InputName.BugReport:
+                        keyCode = KeyCode.F2;
+                        break;
+
+                    default:
+                        Debug.LogError("InputName " + name + " does not have a default value!");
+                        continue;
                 }
                 ChangePrimaryNameToKey(name, keyCode);
             }

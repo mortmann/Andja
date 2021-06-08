@@ -268,7 +268,7 @@ namespace Andja.Controller {
             return wss;
         }
 
-        public void LoadWorldData() {
+        public void LoadWorldData(UnityEngine.Random.State state) {
             // Create a world from our save file data.
             //World.LoadData(MapGenerator.Instance.GetTiles(), GameDataHolder.Width, GameDataHolder.Height);
             MapGenerator.Instance.Destroy();
@@ -302,6 +302,7 @@ namespace Andja.Controller {
             flyingTrader?.Load();
             pirate?.Load();
             PlayerController.Instance.AfterWorldLoad();
+            UnityEngine.Random.state = state;
         }
 
         internal void SetWorldData(WorldSaveState worldsave) {
@@ -309,8 +310,7 @@ namespace Andja.Controller {
             offworldMarket = worldsave.offworld;
             flyingTrader = worldsave.flyingTrader;
             pirate = worldsave.pirate;
-            UnityEngine.Random.state = JsonUtility.FromJson<UnityEngine.Random.State>(worldsave.RandomSeed);
-            LoadWorldData();
+            LoadWorldData(JsonUtility.FromJson<UnityEngine.Random.State>(worldsave.RandomSeed));
         }
     }
 

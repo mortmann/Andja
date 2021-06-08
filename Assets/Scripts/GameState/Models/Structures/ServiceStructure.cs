@@ -125,6 +125,11 @@ namespace Andja.Model {
                 }
                 else {
                     todoOnNewTarget(t.Structure);
+                    if(onTargetEffectChange != null && t.Structure.Effects != null) {
+                        foreach(Effect e in t.Structure.Effects) {
+                            onTargetEffectChange(t.Structure, e, true);
+                        }
+                    }
                 }
             }
             City.RegisterStructureAdded(OnAddedStructure);
@@ -134,8 +139,7 @@ namespace Andja.Model {
             if (started) {
                 return;
             }
-            Structure structure = eventable as Structure;
-            if (structure == null)
+            if (eventable is Structure == false)
                 return;
             if (Array.Exists(EffectsOnTargets, element => element.ID == eff.ID) == false) {
                 return;
@@ -209,7 +213,7 @@ namespace Andja.Model {
 
         public bool RemoveEffectOverTime(Structure str, float deltaTime) {
             // does the structure have a effect that this handles? if not worker is done
-            if (str.HasAnyEffect(EffectsOnTargets))
+            if (str.HasAnyEffect(EffectsOnTargets) == false)
                 return true;
             //structure will check if its a valid effect
             foreach (Effect eff in EffectsOnTargets) {
@@ -270,7 +274,7 @@ namespace Andja.Model {
                 break;
             }
             jobsToDo.Remove(s);
-            Worker w = new Worker(this, s, WorkSpeed, ServiceData.workerID, true, HasToEnterWorkStructure);
+            Worker w = new Worker(this, s, WorkSpeed, ServiceData.workerID ?? "placeholder_road");
             World.Current.CreateWorkerGameObject(w);
             workers.Add(w);
         }

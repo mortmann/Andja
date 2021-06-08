@@ -18,7 +18,6 @@ namespace Andja {
     /// </summary>
     public class GameData : MonoBehaviour {
         public static GameData Instance;
-
         //TODO: make a way to set this either from world width/height or user
         public static Size WorldSize = Size.Medium;
 
@@ -51,6 +50,7 @@ namespace Andja {
 
         public static float PirateAggroRange = 22.5f;
         public static float UnitAggroRange = 10f;
+        public static float EffectTickTime = 1f;
 
         public string editorloadsavegame;
         public static string setloadsavegame;

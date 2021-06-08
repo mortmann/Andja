@@ -354,8 +354,8 @@ namespace Andja.Model {
                     nearestMarketStructure = (MarketStructure)tile.Structure;
                 }
                 else {
-                    float firstDistance = nearestMarketStructure.MiddleVector.magnitude - MiddleVector.magnitude;
-                    float secondDistance = tile.Structure.MiddleVector.magnitude - MiddleVector.magnitude;
+                    float firstDistance = nearestMarketStructure.Center.magnitude - Center.magnitude;
+                    float secondDistance = tile.Structure.Center.magnitude - Center.magnitude;
                     if (Mathf.Abs(secondDistance) < Mathf.Abs(firstDistance)) {
                         nearestMarketStructure = (MarketStructure)tile.Structure;
                     }

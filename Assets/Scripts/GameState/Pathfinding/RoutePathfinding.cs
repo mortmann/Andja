@@ -69,9 +69,15 @@ namespace Andja.Pathfinding {
                 }
             }
             Route route = road.Route;
-            List<Vector2> goals = GoalStructure.RoadsAroundStructure().TakeWhile(x=>x.Route == route).Select(y=>y.Center).ToList();
-            Job = PathfindingThreadHandler.EnqueueJob(agent, route.Grid, road.MiddleVector, goals[0],
-                                                        new List<Vector2> { road.MiddleVector }, goals, 
+            List<Vector2> goals = null;
+            if (agent.CanEndInUnwakable) {
+                goals = GoalStructure.Tiles.Select(x => x.Vector2).ToList();
+            }
+            else {
+                goals = GoalStructure.RoadsAroundStructure().TakeWhile(x => x.Route == route).Select(y => y.Center).ToList();
+            }
+            Job = PathfindingThreadHandler.EnqueueJob(agent, route.Grid, road.Center, goals[0],
+                                                        new List<Vector2> { road.Center }, goals, 
                                                         OnPathJobFinished);
         }
 
@@ -85,14 +91,14 @@ namespace Andja.Pathfinding {
             Job = new PathJob(agent, toCheckRoutes.Count);
             for (int i = 0; i < toCheckRoutes.Count; i++) {
                 Route route = toCheckRoutes[i];
-                List<Vector2> starts = StartStructure.RoadsAroundStructure()
-                                .TakeWhile(x => x.Route == route).Select(y => y.Center).ToList();
-                List<Vector2> goals = GoalStructure.RoadsAroundStructure()
-                                                .TakeWhile(x => x.Route == route).Select(y => y.Center).ToList();
-                if(goals.Count > 0 && starts.Count > 0) {
-                    Job.Grid[i] = route.Grid;
-                    Job.StartTiles[i] = starts;
-                    Job.EndTiles[i] = goals;
+                Job.Grid[i] = route.Grid;
+                Job.StartTiles[i] = StartStructure.Tiles.Select(y => y.Vector2).ToList();
+                if (agent.CanEndInUnwakable) {
+                    Job.EndTiles[i] = GoalStructure.Tiles.Select(y => y.Vector2).ToList();
+                }
+                else {
+                    Job.EndTiles[i] = GoalStructure.RoadsAroundStructure()
+                                            .TakeWhile(x => x.Route == route).Select(y => y.Center).ToList();
                 }
             }
             Job.QueueModifier += ModifyQueue;
@@ -104,6 +110,7 @@ namespace Andja.Pathfinding {
             Queue<Vector2> newQueue = new Queue<Vector2>();
             Vector2 dir = new Vector2();
             Vector2 curr;
+            Vector2 last = queue.Peek();
             bool addFirst = CurrTile != null; //if it is already moving add extra step to move over first
             while (queue.Count > 0) {
                 curr = queue.Dequeue();
@@ -112,6 +119,12 @@ namespace Andja.Pathfinding {
                     dir = next - curr;
                 }
                 GetOffset(dir, out Vector2 offset);
+                GetOffset(curr - last, out Vector2 offset2);
+                if(offset.x == 0)
+                    offset.x = offset2.x;
+                if (offset.y == 0)
+                    offset.y = offset2.y;
+
                 //TODO: FIX THIS! -- it works but it is ugly
                 if (addFirst) {
                     Vector2 pos = new Vector2(X, Y);
@@ -126,6 +139,7 @@ namespace Andja.Pathfinding {
                     if (dir.x > 0 || dir.y > 0)
                         offset += dir * (Worker.WorldSize);
                 }
+                last = curr;
                 newQueue.Enqueue(curr + offset);
             }
             return newQueue;
@@ -138,16 +152,20 @@ namespace Andja.Pathfinding {
         private void FinishQueue(Queue<Vector2> currentQueue) {
             worldPath = currentQueue;
             if (CurrTile == null) {
-                Vector2 start = Util.FindClosestPoints(StartStructure.Tiles.Select(x => x.Vector2), worldPath.Peek())[0];
-                GetOffset(worldPath.Peek() - start, out Vector2 offset);
-                X = start.x + offset.x;
-                Y = start.y + offset.y;
+                X = worldPath.Peek().x;
+                Y = worldPath.Peek().y;
             }
-            if (agent.CanEndInUnwakable) {
-                Vector2 dest = Util.FindClosestPoints(GoalStructure.Tiles.Select(x => x.Vector2), worldPath.Last())[0];
-                GetOffset(worldPath.Last() - dest, out Vector2 offset);
-                worldPath.Enqueue(dest + offset);
-            }
+            //if (CurrTile == null) {
+            //    Vector2 start = Util.FindClosestPoints(StartStructure.Tiles.Select(x => x.Vector2), worldPath.Peek())[0];
+            //    GetOffset(worldPath.Peek() - start, out Vector2 offset);
+            //    X = start.x + offset.x;
+            //    Y = start.y + offset.y;
+            //}
+            //if (agent.CanEndInUnwakable) {
+            //    Vector2 dest = Util.FindClosestPoints(GoalStructure.Tiles.Select(x => x.Vector2), worldPath.Last())[0];
+            //    GetOffset(worldPath.Last() - dest, out Vector2 offset);
+            //    worldPath.Enqueue(dest + offset);
+            //}
             Vector2 last = worldPath.Last();
             DestTile = World.Current.GetTileAt(last);
             dest_X = last.x;

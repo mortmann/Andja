@@ -103,6 +103,23 @@ zu dem nächst niedrigeren.</hoverOverTranslation>
       <translationData id="DiplomacyTitle">
          <translation>Diplomatie</translation>
       </translationData>
+      <translationData id="DiplomacyType/Alliance">
+         <translation>Allianz</translation>
+         <hoverOverTranslation>Beide Seiten versprechen dem anderen zur Seite zustehen.</hoverOverTranslation>
+      </translationData>
+      <translationData id="DiplomacyType/Neutral">
+         <translation>Neutral</translation>
+         <hoverOverTranslation>Keinerlei Stand zu dieser Person.</hoverOverTranslation>
+      </translationData>
+      <translationData id="DiplomacyType/TradeAgreement">
+         <translation>Handelsabkommen</translation>
+         <hoverOverTranslation>Beide können miteinander handeln.</hoverOverTranslation>
+      </translationData>
+      <translationData id="DiplomacyType/War">
+         <translation>Krieg</translation>
+         <hoverOverTranslation>Greife Gegner an und verteidige deine Städe.
+Vorsicht vor Allianzen deines Gegners.</hoverOverTranslation>
+      </translationData>
       <translationData id="DiscardUnsaved">
          <translation>Wollen Sie jeglichen ungespeicherten Fortschritt verwerfen.</translation>
       </translationData>
@@ -188,6 +205,18 @@ Speichere und spiel diese oder teile Sie mit anderen.</hoverOverTranslation>
       <translationData id="Information">
          <hoverOverTranslation>Weitere Informationen</hoverOverTranslation>
          <onlyHoverOver>true</onlyHoverOver>
+      </translationData>
+      <translationData id="InformationType/DiplomacyChange">
+         <translation>$0</translation>
+         <hoverOverTranslation>$0 und $1 sind jetzt auf dem Stand $2 zu einander.</hoverOverTranslation>
+      </translationData>
+      <translationData id="InformationType/StructureUnderAttack">
+         <translation>$0 wird angegriffen</translation>
+         <hoverOverTranslation>Dein Gebäude $0 wird von $1 angegriffen.</hoverOverTranslation>
+      </translationData>
+      <translationData id="InformationType/UnitUnderAttack">
+         <translation>$0 wird angegriffen</translation>
+         <hoverOverTranslation>Deine Einheit $0 ist unter Beschuss von $1.</hoverOverTranslation>
       </translationData>
       <translationData id="IslandClimate">
          <translation>Inselklima</translation>

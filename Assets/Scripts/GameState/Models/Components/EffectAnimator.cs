@@ -13,12 +13,12 @@ namespace Andja.Model.Components {
         private int index = 0;
 
         // Use this for initialization
-        public void Show(Sprite[] sprites, float speed, string layer, Effect effect) {
+        public void Show(Sprite[] sprites, string layer, Effect effect) {
             spriteRenderer = GetComponent<SpriteRenderer>();
             spriteRenderer.sortingLayerName = layer;
             spriteRenderer.sortingOrder = 1;
             this.sprites = sprites;
-            this.speed = speed;
+            this.speed = 1f / sprites.Length;
             timer = speed;
             spriteRenderer.sprite = sprites[0];
             this.effect = effect;

@@ -94,7 +94,7 @@ namespace Andja.Model {
         protected Action<Unit> cbUnitChanged;
         protected Action<Unit, IWarfare> cbUnitDestroyed;
         protected Action<Unit, bool> cbUnitArrivedDestination;
-
+        protected Action<Unit, IWarfare> cbTakesDamageFrom;
         protected Action<Projectile> cbCreateProjectile;
         protected Action<Unit, string, bool> cbSoundCallback;
 
@@ -239,7 +239,7 @@ namespace Andja.Model {
         public virtual PathHeuristics Heuristic => PathHeuristics.Euclidean;
         public virtual bool CanMoveDiagonal => true;
 
-        public IReadOnlyList<int> CanEnterCities => PlayerController.GetPlayer(PlayerNumber).GetUnitCityEnterable();
+        public IReadOnlyList<int> CanEnterCities => PlayerController.GetPlayer(PlayerNumber)?.GetUnitCityEnterable();
 
         public bool IsAlive => IsDead == false;
 
@@ -281,9 +281,10 @@ namespace Andja.Model {
             if (CurrentHealth <= 0) {
                 Destroy(warfare);
             }
-            if(CurrentMainMode == UnitMainModes.Idle) {
+            if(warfare != null && CurrentMainMode == UnitMainModes.Idle) {
                 GiveAggroCommand(warfare);
-            } 
+            }
+            cbTakesDamageFrom?.Invoke(this, warfare);
         }
 
         public void RepairHealth(float heal) {
@@ -874,6 +875,13 @@ namespace Andja.Model {
 
         public void UnregisterOnDestroyCallback(Action<Unit, IWarfare> cb) {
             cbUnitDestroyed -= cb;
+        }
+        public void RegisterOnTakesDamageCallback(Action<Unit, IWarfare> cb) {
+            cbTakesDamageFrom += cb;
+        }
+
+        public void UnregisterOnTakesDamageCallback(Action<Unit, IWarfare> cb) {
+            cbTakesDamageFrom -= cb;
         }
 
         public void RegisterOnArrivedAtDestinationCallback(Action<Unit, bool> cb) {

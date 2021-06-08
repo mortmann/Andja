@@ -22,12 +22,12 @@ namespace Andja.UI {
             });
             triggers.triggers.Add(click);
             if (GetComponentInParent<ScrollRect>() != null) {
+                ScrollRect sr = GetComponentInParent<ScrollRect>();
                 EventTrigger.Entry scroll = new EventTrigger.Entry {
                     eventID = EventTriggerType.Scroll
                 };
                 scroll.callback.AddListener((data) => {
-                    ScrollRect sr = GetComponentInParent<ScrollRect>();
-                    sr.verticalScrollbar.value += sr.scrollSensitivity * Time.deltaTime * ((PointerEventData)data).scrollDelta.y;
+                    sr.verticalScrollbar.value += 4 * sr.scrollSensitivity * Time.deltaTime * ((PointerEventData)data).scrollDelta.y;
                 });
                 triggers.triggers.Add(scroll);
             }

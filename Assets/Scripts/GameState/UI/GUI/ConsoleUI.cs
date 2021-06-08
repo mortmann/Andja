@@ -1,5 +1,6 @@
 using Andja.Controller;
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -72,7 +73,7 @@ namespace Andja.UI {
             string first = parts[0];
             if (parts.Length == 1) {
                 toPredicte = parts[0];
-                predicted = GetFilterCommands(cc.FirstLevelCommands, toPredicte);
+                predicted = GetFilterCommands(cc.FirstLevelCommands.ToList(), toPredicte);
             }
             string second = null;
             if (parts.Length >= 2) {
@@ -82,7 +83,7 @@ namespace Andja.UI {
                     return;
                 }
                 toPredicte = parts[1];
-                predicted = GetFilterCommands(GetSecondLevelCommands(first), toPredicte);
+                predicted = GetFilterCommands(GetSecondLevelCommands(first).ToList(), toPredicte);
                 second = parts[parts.Length - 2].ToLower();
             }
             if (parts.Length > 2) {
@@ -171,7 +172,7 @@ namespace Andja.UI {
             }
         }
 
-        private List<string> GetSecondLevelCommands(string firstlevel) {
+        private IReadOnlyList<string> GetSecondLevelCommands(string firstlevel) {
             switch (firstlevel) {
                 case "speed":
                     return new List<string>();

@@ -76,14 +76,17 @@ namespace Andja.Model {
                 targets.Add(Target.Island);
             if (this is City)
                 targets.Add(Target.City);
-            if (this is Structure) {
+            if (this is Structure str) {
                 targets.Add(Target.AllStructure);
-                Structure str = this as Structure;
                 if (str.CanTakeDamage)
                     targets.Add(Target.DamagableStructure);
+                if (str.CanStartBurning)
+                    targets.Add(Target.BurnableStructure);
             }
-            if (this is RoadStructure)
+            if (this is HomeStructure)
                 targets.Add(Target.HomeStructure);
+            if (this is RoadStructure)
+                targets.Add(Target.RoadStructure);
             if (this is NeedStructure)
                 targets.Add(Target.NeedStructure);
             if (this is MilitaryStructure)
@@ -197,11 +200,8 @@ namespace Andja.Model {
             }
             else {
                 //we change a float or integer variable
-                if (VariablenameToFloat.ContainsKey(effect.NameOfVariable + effect.ModifierType)) {
+                if (VariablenameToFloat != null && VariablenameToFloat.ContainsKey(effect.NameOfVariable + effect.ModifierType)) {
                     VariablenameToFloat[effect.NameOfVariable + effect.ModifierType] -= effect.Change;
-                }
-                else {
-                    Debug.LogWarning("Tried to remove an Effect that didnt have a value yet.");
                 }
             }
             if (effect.IsNegativ)

@@ -89,8 +89,8 @@ namespace Andja.Model {
 
                 float arc = 5f;
                 bool canShoot = shootAngle <= pathfinding.rotation + arc && shootAngle >= pathfinding.rotation - arc;
-                    pathfinding.Rotate(nextShoot.rotateToAngle);
-                    pathfinding.UpdateDoRotate(deltaTime);
+                pathfinding.Rotate(nextShoot.rotateToAngle);
+                pathfinding.UpdateDoRotate(deltaTime);
                 if (canShoot == false) {
                     return;
                 }

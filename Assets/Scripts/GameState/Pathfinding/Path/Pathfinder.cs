@@ -2,8 +2,6 @@ using Priority_Queue;
 using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
-using System;
-using Andja.Utility;
 using EpPathFinding.cs;
 using Andja.Model;
 
@@ -14,28 +12,47 @@ namespace Andja.Pathfinding {
         private static StaticGrid worldGrid;
         private static bool[][] worldTilemap;
 
-        public static Queue<Vector2> Find(IPathfindAgent agent, PathGrid grid, 
+        public static Queue<Vector2> Find(PathJob job, PathGrid grid, 
                                             Vector2? startPos, Vector2? endPos, 
                                             List<Vector2> startsPos = null, List<Vector2> endsPos = null) {
+            IPathfindAgent agent = job.agent;
             Node start = null;
             Node end = null;
+            if (agent.CanEndInUnwakable) {
+                if(endsPos != null) {
+                    foreach (Vector2 s in endsPos) {
+                        grid.SetTemporaryWalkableNode(s);
+                    }
+                } else {
+                    if (endPos != null) {
+                        grid.SetTemporaryWalkableNode(endPos.Value);
+                    }
+                }
+            }
             if (startsPos != null && endsPos != null) {
+                foreach (Vector2 s in startsPos) {
+                    grid.SetTemporaryWalkableNode(s);
+                }
                 Vector2[] points = Utility.Util.FindClosestPoints(startsPos, endsPos);
                 start = grid.GetNodeFromWorldCoord(points[0]);
                 end = grid.GetNodeFromWorldCoord(points[1]);
             } else {
                 if (startPos != null) {
+                    grid.SetTemporaryWalkableNode(startPos.Value);
                     start = grid.GetNodeFromWorldCoord(startPos.Value);
                 }
                 if (endPos != null) {
                     end = grid.GetNodeFromWorldCoord(endPos.Value);
-                } else {
+                }
+                else {
                     end = grid.GetNodeFromWorldCoord(endsPos.OrderBy(x => Vector2.Distance(x, startPos.Value)).First());
                 }
             }
             if (start == null || end == null) {
-                Debug.LogError(start.Pos + " or " + end.Pos + " not in grid " + grid.pathGridType);
+                Debug.LogError(startPos + " or " + endPos + " not in grid " + grid.pathGridType);
             }
+            
+
             HashSet<Node> endNodes = null;
             if(endsPos != null) {
                 endNodes = new HashSet<Node>();
@@ -65,6 +82,8 @@ namespace Andja.Pathfinding {
                 if (current == end || endNodes != null && endNodes.Contains(current)) {
                     return ReconstructPath(grid, current); //we are at any destination node make the path
                 }
+                if (job.IsCanceled)
+                    return null;
                 current.isClosed = true;
                 if (startNodes != null && startNodes.Contains(current)) {
                     current.parent = null;

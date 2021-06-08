@@ -4,12 +4,13 @@
 //=======================================================================
 
 using Andja.Model;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
 namespace Andja.Pathfinding {
-
+    [Obsolete("Not used any more", true)]
     public class Path_TileGraph {
         // This class constructs a simple path-finding compatible graph
         // of our world.  Each tile is a node. Each WALKABLE neighbour

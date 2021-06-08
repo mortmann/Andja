@@ -38,6 +38,7 @@ namespace Andja.Controller {
         public GameObject offWorldMapCanvas;
         public GameObject otherCityUI;
         public GameObject diplomacyCanvas;
+        public GameObject DebugData;
 
         public GameObject centerParent;
         public GameObject endScoreScreen;
@@ -77,7 +78,7 @@ namespace Andja.Controller {
             if (str == null) {
                 return;
             }
-            if (str is WarehouseStructure || str is WarehouseStructure) {
+            if (str is WarehouseStructure || str is MarketStructure) {
                 CloseInfoUI();
                 if (str.PlayerNumber != PlayerController.currentPlayerNumber) {
                     OpenOtherCity(str.City);
@@ -304,10 +305,16 @@ namespace Andja.Controller {
         }
 
         public static bool IsTextFieldFocused() {
-            if (EventSystem.current.currentSelectedGameObject == null || EventSystem.current.currentSelectedGameObject.GetComponent<InputField>() == null) {
+            if (EventSystem.current.currentSelectedGameObject == null) {
                 return false;
             }
-            return (EventSystem.current.currentSelectedGameObject.GetComponent<InputField>()).isFocused;
+            if ((EventSystem.current.currentSelectedGameObject.GetComponent<TMPro.TMP_InputField>()) != null &&
+                (EventSystem.current.currentSelectedGameObject.GetComponent<TMPro.TMP_InputField>()).isFocused)
+                return true;
+            if ((EventSystem.current.currentSelectedGameObject.GetComponent<InputField>()) != null &&
+                (EventSystem.current.currentSelectedGameObject.GetComponent<InputField>()).isFocused)
+                return true;
+            return false;
         }
 
         public UIControllerSave GetUISaveData() {
@@ -318,7 +325,9 @@ namespace Andja.Controller {
             FindObjectOfType<ShortcutUI>().LoadShortCuts(uIControllerSave.shortcuts);
             uIControllerSave = null;
         }
-
+        public void ToggleDebugData() {
+            DebugData.SetActive(!DebugData.activeSelf);
+        }
         private void OnDestroy() {
             Instance = null;
         }

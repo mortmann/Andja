@@ -8,7 +8,7 @@ using UnityEngine.SceneManagement;
 
 namespace Andja.Controller {
 
-    public enum DiplomacyType { War, Neutral, TradeAggrement, Alliance }
+    public enum DiplomacyType { War, Neutral, TradeAgreement, Alliance }
 
     /// <summary>
     /// This is mostly for the currentplayer,
@@ -62,6 +62,22 @@ namespace Andja.Controller {
             if (firstPlayer == secondPlayer) // ONLY BE ALLIED TO ONESELF :)
                 return DiplomacyType.Alliance;
             return GetDiplomaticStatus(firstPlayer.Number, secondPlayer.Number).currentStatus;
+        }
+
+        internal static string GetPlayerName(int playerNumber) {
+            if (playerNumber < 0 || Players.Count <= playerNumber) {
+                if(playerNumber == GameData.PirateNumber) {
+                    return UILanguageController.Instance.GetStaticVariables(StaticLanguageVariables.Pirate);
+                }
+                if (playerNumber == GameData.FlyingTraderNumber) {
+                    return UILanguageController.Instance.GetStaticVariables(StaticLanguageVariables.FlyingTrader);
+                }
+                if (playerNumber == GameData.WorldNumber) {
+                    return UILanguageController.Instance.GetStaticVariables(StaticLanguageVariables.World);
+                }
+                return null;
+            }
+            return GetPlayer(playerNumber).Name;
         }
 
         public void NewGameSetup() {
@@ -232,7 +248,7 @@ namespace Andja.Controller {
 
         public void OnEventCreated(GameEvent ge) {
             if (ge.target == null) {
-                euim.AddEVENT(ge.eventID, ge.Name, ge.position);
+                euim.AddEvent(ge);
                 InformAIaboutEvent(ge, true);
                 return;
             }
@@ -241,7 +257,7 @@ namespace Andja.Controller {
             if (ge.target is Island) {
                 foreach (City item in ((Island)ge.target).Cities) {
                     if (item.PlayerNumber == currentPlayerNumber) {
-                        euim.AddEVENT(ge.eventID, ge.Name, ge.position);
+                        euim.AddEvent(ge);
                     }
                     else {
                         InformAIaboutEvent(ge, true);
@@ -253,12 +269,12 @@ namespace Andja.Controller {
             //then inform all... it could be global effect on type of structure
             //should be pretty rare
             if (ge.target.GetPlayerNumber() < 0 && ge.target is Structure) {
-                euim.AddEVENT(ge.eventID, ge.Name, ge.position);
+                euim.AddEvent(ge);
                 InformAIaboutEvent(ge, true);
             }
             //just check if the target is owned by the player
             if (ge.target.GetPlayerNumber() == currentPlayerNumber) {
-                euim.AddEVENT(ge.eventID, ge.Name, ge.position);
+                euim.AddEvent(ge);
             }
             else {
                 InformAIaboutEvent(ge, true);
@@ -393,6 +409,7 @@ namespace Andja.Controller {
             }
             cbDiplomaticChangePlayer?.Invoke(GetPlayer(playerOne), GetPlayer(playerTwo), ds.currentStatus, changeTo);
             ds.currentStatus = changeTo;
+            EventUIManager.Instance.Show(BasicInformation.DiplomacyChanged(ds));
         }
 
         public DiplomaticStatus GetDiplomaticStatus(Player playerOne, Player playerTwo) {
@@ -405,7 +422,7 @@ namespace Andja.Controller {
 
         public static Player GetPlayer(int i) {
             if (i < 0 || Players.Count <= i) {
-                Debug.LogError("PlayerNumber " + i + " does not exist!");
+                //Debug.LogError("PlayerNumber " + i + " does not exist!");
                 return null;
             }
             return Players[i];
@@ -461,11 +478,11 @@ namespace Andja.Controller {
         /// <summary>
         /// One is always smaller than two
         /// </summary>
-        public int PlayerOne { get; protected set; }
+        public int PlayerOne;
         /// <summary>
         /// Two is always bigger than one
         /// </summary>
-        public int PlayerTwo { get; protected set; }
+        public int PlayerTwo;
         public DiplomacyType currentStatus;
 
         public DiplomaticStatus() {

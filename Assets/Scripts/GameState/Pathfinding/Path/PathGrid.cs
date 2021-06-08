@@ -9,6 +9,7 @@ namespace Andja.Pathfinding {
     public enum Walkable { Never, AlmostNever, Normal }
     public class PathGrid {
         public string ID;
+        public bool Obsolete;
         public readonly PathGridType pathGridType;
         public Node[,] Values;
         public int Width;
@@ -17,6 +18,8 @@ namespace Andja.Pathfinding {
         public int startY;
         public Action Changed;
         public bool IsDirty;
+        List<Node> temporaryNodes = new List<Node>();
+
         internal Node GetNodeFromWorldCoord(Vector2 pos) {
             return GetNode(pos - new Vector2(startX, startY));
         }
@@ -40,6 +43,18 @@ namespace Andja.Pathfinding {
                 }
             }
         }
+
+        internal void SetTemporaryWalkableNode(Vector2 pos) {
+            Node n = GetNodeFromWorldCoord(pos);
+            if(n == null) {
+                n = new Node(Mathf.FloorToInt(pos.x - startX), Mathf.FloorToInt(pos.y - startY), 1, -1);
+                Values[n.x, n.y] = n;
+                temporaryNodes.Add(n);
+            } else {
+                n.OverrideWalkable();
+            }
+        }
+
         public PathGrid(Route route) {
             ID = Guid.NewGuid().ToString();
             pathGridType = PathGridType.Route;
@@ -117,6 +132,9 @@ namespace Andja.Pathfinding {
             }
         }
         public void Reset() {
+            foreach(Node n in temporaryNodes) {
+                Values[n.x, n.y] = null;
+            }
             for (int x = 0; x < Width; x++) {
                 for (int y = 0; y < Height; y++) {
                     Values[x, y]?.Reset();

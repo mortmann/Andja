@@ -69,7 +69,7 @@ namespace Andja.UI.Model {
                 structureUI.gameObject.SetActive(true);
                 structureUI.Show(structure);
             }
-            GetPosition = () => structure.MiddleVector;
+            GetPosition = () => structure.Center;
             Image.Click += GoToPosition;
         }
         private void GoToPosition(PointerEventData obj) {

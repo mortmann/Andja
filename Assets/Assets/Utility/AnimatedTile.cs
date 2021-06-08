@@ -14,6 +14,8 @@ namespace UnityEngine.Tilemaps
     [CreateAssetMenu(fileName = "New Animated Tile", menuName = "Tiles/Animated Tile")]
     public class AnimatedTile : TileBase
     {
+
+        static System.Random Random = new System.Random();
         public Sprite[] m_AnimatedSprites;
         public float m_MinSpeed = 1f;
         public float m_MaxSpeed = 1f;
@@ -36,7 +38,7 @@ namespace UnityEngine.Tilemaps
             if (m_AnimatedSprites.Length > 0)
             {
                 tileAnimationData.animatedSprites = m_AnimatedSprites;
-                tileAnimationData.animationSpeed = Random.Range(m_MinSpeed, m_MaxSpeed);
+                tileAnimationData.animationSpeed = (float)Random.NextDouble() * (m_MaxSpeed - m_MinSpeed) + m_MinSpeed;
                 tileAnimationData.animationStartTime = m_AnimationStartTime;
                 return true;
             }

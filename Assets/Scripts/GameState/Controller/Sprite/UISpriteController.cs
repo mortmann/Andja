@@ -1,4 +1,5 @@
 ﻿using Andja.Utility;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -37,6 +38,10 @@ namespace Andja.Controller {
             }
             Debug.LogWarning("Missing Icon " + id);
             return null;
+        }
+
+        internal static Sprite GetIcon(object spriteName) {
+            throw new NotImplementedException();
         }
 
         public static bool HasUISprite(string id) {

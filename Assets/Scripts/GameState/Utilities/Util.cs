@@ -147,17 +147,13 @@ namespace Andja.Utility {
         /// <param name="centerWidth"></param>
         /// <param name="centerHeight"></param>
         /// <returns></returns>
-        public static HashSet<Tile> CalculateMidPointCircle(float radius, int centerWidth, int centerHeight, float offset_x = 0, float offset_y = 0) {
+        public static HashSet<Tile> CalculateMidPointCircle(float radius, float centerWidth, float centerHeight, float offset_x = 0, float offset_y = 0) {
             HashSet<Tile> tiles = new HashSet<Tile>();
             float center_x = radius;
             float center_y = radius;
             float P = (5 - radius * 4) / 4;
             float circle_x = 0;
             float circle_y = radius;
-            if (offset_x > 0)
-                offset_x -= radius;
-            if (offset_y > 0)
-                offset_y -= radius;
             do {
                 //Fill the circle
                 for (float actual_x = center_x - circle_x; actual_x <= center_x + circle_x; actual_x++) {
@@ -243,9 +239,9 @@ namespace Andja.Utility {
             int circle_x = 0;
             int circle_y = radius;
             Vector2 offset = new Vector2(offset_x, offset_y);
-            if (offset.sqrMagnitude > 0) {
-                offset -= new Vector2(radius, radius);
-            }
+            //if (offset.sqrMagnitude > 0) {
+            //    offset -= new Vector2(radius, radius);
+            //}
             do {
                 //Fill the circle
                 for (int actual_x = center_x - circle_x; actual_x <= center_x + circle_x; actual_x++) {
@@ -280,12 +276,12 @@ namespace Andja.Utility {
             return circleVectors;
         }
 
-        private static bool CircleCheck(int radius, int center, int actual) {
-            return (center > 0 && actual >= radius && actual < radius + center) == false;
-        }
+        //private static bool CircleCheck(int radius, int center, int actual) {
+        //    return (center > 0 && actual >= radius - center / 2f && actual < radius + center / 2f) == false;
+        //}
 
         private static bool CircleCheck(float radius, float center, float actual) {
-            return (center > 0 && actual >= radius && actual < radius + center) == false;
+            return (center > 0 && actual >= radius - center / 2 && actual < radius + center / 2) == false;
         }
 
         public static List<Tile> CalculateMidPointEllipse(float radius_x, float radius_y, float center_x, float center_y) {

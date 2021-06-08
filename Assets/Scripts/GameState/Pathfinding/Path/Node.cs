@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -16,14 +17,16 @@ namespace Andja.Pathfinding {
         public bool isClosed;
         public Node parent;
 
-
+        public bool overrideWalkable;
         /// <summary>
         /// List needs to be a seperate copy of the main threads.
         /// </summary>
         /// <param name="canEnterCities"></param>
         /// <returns></returns>
         public bool IsPassable(List<int> canEnterCities = null) {
-            if(canEnterCities != null) {
+            if (overrideWalkable)
+                return overrideWalkable;
+            if (canEnterCities != null) {
                 return canEnterCities.Contains(PlayerNumber) && MovementCost > 0;
             }
             return MovementCost > 0;
@@ -44,6 +47,10 @@ namespace Andja.Pathfinding {
             PlayerNumber = node.PlayerNumber;
         }
 
+        internal void OverrideWalkable() {
+            overrideWalkable = true;
+        }
+
         internal Node Clone() {
             return new Node(this);
         }
@@ -54,6 +61,7 @@ namespace Andja.Pathfinding {
             this.isOpened = false;
             this.isClosed = false;
             this.parent = null;
+            overrideWalkable = false;
         }
     }
 }

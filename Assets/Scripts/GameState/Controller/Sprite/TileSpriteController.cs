@@ -128,6 +128,8 @@ namespace Andja.Controller {
                     sm.sprite = Sprite.Create(masktex, new Rect(0, 0, masktex.width, masktex.height), Vector2.zero, 1);
                     sm.alphaCutoff = 1;
                     islandToCityMask.Add(i, sm);
+                    TilemapRenderer trr = islandGO.GetComponent<TilemapRenderer>();
+                    trr.material = tileMapMaterial;
 
                     GameObject MaskGameobject = new GameObject("IslandCustomMask ");
                     MaskGameobject.transform.parent = islandToGameObject[i].transform;
@@ -157,7 +159,6 @@ namespace Andja.Controller {
                 LoadSprites();
                 CreateBaseTiles();
             }
-            Pathfinding.WorldSquares.CalculateRects();
             //BuildController.Instance.RegisterBuildStateChange (OnBuildStateChance);
         }
 
@@ -283,7 +284,6 @@ namespace Andja.Controller {
                 DontDestroyOnLoad(tilemap.gameObject);
 
                 Texture2D masktexture = null;
-
                 masktexture = new Texture2D(islandWidth, islandHeight, TextureFormat.Alpha8, false, true);
                 masktexture.SetPixels32(new Color32[(islandWidth) * (islandHeight)]);
                 masktexture.filterMode = FilterMode.Point;
@@ -536,34 +536,24 @@ namespace Andja.Controller {
                 return connectionToSprite[spriteAddon];
             }
         }
-
         private void OnDrawGizmos() {
             if (Application.isPlaying) {
-                foreach (Pathfinding.WorldNode n in Pathfinding.WorldGraph.Nodes) {
-                    Gizmos.color = Color.red;
-                    Gizmos.DrawSphere(new Vector3(n.x, n.y), 0.5f);
-                    Gizmos.color = Color.white;
-                    foreach (Pathfinding.WorldEdge e in n.Edges) {
-                        Gizmos.DrawLine(new Vector2(n.x, n.y), new Vector2(e.Node.x, e.Node.y));
+                //for (int x = 0; x < World.Current.Width; x++) {
+                //    for (int y = 0; y < World.Current.Height; y++) {
+                //        Pathfinding.WorldNode n = World.Current.WorldGraph.Tiles[x, y];
+                foreach(Pathfinding.WorldNode n in World.Current.WorldGraph.Nodes) { 
+                        if (n == null)
+                            continue;
+                        foreach (Pathfinding.WorldEdge e in n.Edges) {
+                            Gizmos.color = Color.white;
+                            Gizmos.DrawLine(new Vector2(n.x + 0.5f, n.y + 0.5f), new Vector2(e.Node.x + 0.5f, e.Node.y + 0.5f));
+                        }
+                        //Gizmos.color = Color.red;
+                        //Gizmos.DrawSphere(new Vector3(n.x + 0.5f, n.y + 0.5f), 0.5f);
                     }
-                }
-                //foreach (Rect r in Pathfinding.WorldSquares.rects) {
-                //    Gizmos.color = Color.white;
-                //    Gizmos.DrawLine(r.position, new Vector2(r.xMax, r.yMin)); // bottom edge
-                //    Gizmos.DrawLine(r.position, new Vector2(r.xMin, r.yMax)); //right edge
-                //    Gizmos.DrawLine(new Vector2(r.xMax, r.yMin), r.max); //  Left edge
-                //    Gizmos.DrawLine(new Vector2(r.xMin, r.yMax), r.max); //top edge
-                //}
-                //foreach (Rect r in Pathfinding.WorldSquares.islandRects) {
-                //    Gizmos.color = Color.red;
-                //    Gizmos.DrawLine(r.position, new Vector2(r.xMax, r.yMin)); // bottom edge
-                //    Gizmos.DrawLine(r.position, new Vector2(r.xMin, r.yMax)); //right edge
-                //    Gizmos.DrawLine(new Vector2(r.xMax, r.yMin), r.max); //  Left edge
-                //    Gizmos.DrawLine(new Vector2(r.xMin, r.yMax), r.max); //top edge
-                //}
-            }
-                
 
+                }
+            //}
         }
 
     }

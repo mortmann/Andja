@@ -23,7 +23,6 @@ namespace Andja.Model {
             Item inInv = GetItem(toAdd.ID);
             //if its already full no need to put it in there
             if (inInv.count == MaxStackSize) {
-                Debug.Log("inventory-item is full " + inInv.count);
                 return 0;
             }
             return MoveAmountFromItemToInv(toAdd, inInv);

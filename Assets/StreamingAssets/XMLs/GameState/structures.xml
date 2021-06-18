@@ -2,16 +2,16 @@
    <roads>
       <road ID="dirtroad">
          <Name>
-            <entry lang="English">Dirtroad</entry>
             <entry lang="Deutsch">Feldweg</entry>
+            <entry lang="English">Dirtroad</entry>
          </Name>
          <Description>
-            <entry lang="English">Simple road to connect Structures.</entry>
             <entry lang="Deutsch">Einfacher Weg um Gebäude mit einander zuverbinden.</entry>
+            <entry lang="English">Simple road to connect Structures.</entry>
          </Description>
          <HoverOver>
-            <entry lang="English">Dirtroad</entry>
             <entry lang="Deutsch">Feldweg</entry>
+            <entry lang="English">Dirtroad</entry>
          </HoverOver>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
@@ -27,7 +27,6 @@
          <canBeBuildOver>false</canBeBuildOver>
          <canBeUpgraded>true</canBeUpgraded>
          <canTakeDamage>false</canTakeDamage>
-         <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
          <upkeepCost>0</upkeepCost>
          <buildCost>15</buildCost>
@@ -36,19 +35,20 @@
          <extraUITyp>None</extraUITyp>
          <extraBuildUITyp>None</extraBuildUITyp>
          <spriteBaseName>dirtroad</spriteBaseName>
+         <movementCost>0.75</movementCost>
       </road>
       <road ID="stoneroad">
          <Name>
-            <entry lang="English">Stoneroad</entry>
             <entry lang="Deutsch">Steinstraße</entry>
+            <entry lang="English">Stoneroad</entry>
          </Name>
          <Description>
-            <entry lang="English">People can move faster on it.</entry>
             <entry lang="Deutsch">Leute bewegen sich schneller auf ihr.</entry>
+            <entry lang="English">People can move faster on it.</entry>
          </Description>
          <HoverOver>
-            <entry lang="English">Stoneroad</entry>
             <entry lang="Deutsch">Steinstraße</entry>
+            <entry lang="English">Stoneroad</entry>
          </HoverOver>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
@@ -64,7 +64,6 @@
          <canBeBuildOver>false</canBeBuildOver>
          <canBeUpgraded>true</canBeUpgraded>
          <canTakeDamage>false</canTakeDamage>
-         <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
          <upkeepCost>0</upkeepCost>
          <buildCost>50</buildCost>
@@ -74,61 +73,20 @@
          <extraBuildUITyp>None</extraBuildUITyp>
          <buildingItems length="0"/>
          <spriteBaseName>stoneroad</spriteBaseName>
-      </road>
-      <road ID="brickroad">
-         <Name>
-            <entry lang="English">Brickroad</entry>
-            <entry lang="Deutsch">Ziegelstraße</entry>
-         </Name>
-         <Description>
-            <entry lang="English">Improve the movementspeed of people.</entry>
-            <entry lang="Deutsch">Erhöht die Laufgeschwindigkeit der Menschen.</entry>
-         </Description>
-         <HoverOver>
-            <entry lang="English">Brickroad</entry>
-            <entry lang="Deutsch">Ziegelstraße</entry>
-         </HoverOver>
-         <canBeBuild>true</canBeBuild>
-         <isWalkable>false</isWalkable>
-         <hasHitbox>false</hasHitbox>
-         <maxHealth>50.0</maxHealth>
-         <structureRange>0</structureRange>
-         <populationLevel>2</populationLevel>
-         <populationCount>0</populationCount>
-         <structureLevel>2</structureLevel>
-         <tileWidth>1</tileWidth>
-         <tileHeight>1</tileHeight>
-         <canRotate>true</canRotate>
-         <canBeBuildOver>false</canBeBuildOver>
-         <canBeUpgraded>true</canBeUpgraded>
-         <canTakeDamage>false</canTakeDamage>
-         <mustFrontBuildDir>None</mustFrontBuildDir>
-         <canStartBurning>false</canStartBurning>
-         <upkeepCost>0</upkeepCost>
-         <buildCost>100</buildCost>
-         <buildTyp>Path</buildTyp>
-         <structureTyp>Pathfinding</structureTyp>
-         <extraUITyp>None</extraUITyp>
-         <extraBuildUITyp>None</extraBuildUITyp>
-         <buildingItems length="1">
-            <Item ID="brick">
-               <count>2</count>
-            </Item>
-         </buildingItems>
-         <spriteBaseName>brickroad</spriteBaseName>
+         <movementCost>0.75</movementCost>
       </road>
       <road ID="marbelroad">
          <Name>
-            <entry lang="English">Marbelroad</entry>
             <entry lang="Deutsch">Marmorstraße</entry>
+            <entry lang="English">Marbelroad</entry>
          </Name>
          <Description>
-            <entry lang="English">Nice to look at and even better to walk on.</entry>
             <entry lang="Deutsch">Gut zum ansehen und noch besser um darauf zulaufen.</entry>
+            <entry lang="English">Nice to look at and even better to walk on.</entry>
          </Description>
          <HoverOver>
-            <entry lang="English">Marbelroad</entry>
             <entry lang="Deutsch">Marmorstraße</entry>
+            <entry lang="English">Marbelroad</entry>
          </HoverOver>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
@@ -144,7 +102,6 @@
          <canBeBuildOver>false</canBeBuildOver>
          <canBeUpgraded>true</canBeUpgraded>
          <canTakeDamage>false</canTakeDamage>
-         <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
          <upkeepCost>0</upkeepCost>
          <buildCost>0</buildCost>
@@ -153,21 +110,64 @@
          <extraUITyp>None</extraUITyp>
          <extraBuildUITyp>None</extraBuildUITyp>
          <spriteBaseName>marbelroad</spriteBaseName>
+         <movementCost>0.75</movementCost>
+      </road>
+      <road ID="brickroad">
+         <Name>
+            <entry lang="Deutsch">Ziegelstraße</entry>
+            <entry lang="English">Brickroad</entry>
+         </Name>
+         <Description>
+            <entry lang="Deutsch">Erhöht die Laufgeschwindigkeit der Menschen.</entry>
+            <entry lang="English">Improve the movementspeed of people.</entry>
+         </Description>
+         <HoverOver>
+            <entry lang="Deutsch">Ziegelstraße</entry>
+            <entry lang="English">Brickroad</entry>
+         </HoverOver>
+         <canBeBuild>true</canBeBuild>
+         <isWalkable>false</isWalkable>
+         <hasHitbox>false</hasHitbox>
+         <maxHealth>50.0</maxHealth>
+         <structureRange>0</structureRange>
+         <populationLevel>2</populationLevel>
+         <populationCount>0</populationCount>
+         <structureLevel>2</structureLevel>
+         <tileWidth>1</tileWidth>
+         <tileHeight>1</tileHeight>
+         <canRotate>true</canRotate>
+         <canBeBuildOver>false</canBeBuildOver>
+         <canBeUpgraded>true</canBeUpgraded>
+         <canTakeDamage>false</canTakeDamage>
+         <canStartBurning>false</canStartBurning>
+         <upkeepCost>0</upkeepCost>
+         <buildCost>100</buildCost>
+         <buildTyp>Path</buildTyp>
+         <structureTyp>Pathfinding</structureTyp>
+         <extraUITyp>None</extraUITyp>
+         <extraBuildUITyp>None</extraBuildUITyp>
+         <buildingItems length="1">
+            <Item ID="brick">
+               <count>2</count>
+            </Item>
+         </buildingItems>
+         <spriteBaseName>brickroad</spriteBaseName>
+         <movementCost>0.75</movementCost>
       </road>
    </roads>
    <farms>
       <farm ID="lumberjack">
          <Name>
-            <entry lang="English">Lumberjack Hut</entry>
             <entry lang="Deutsch">Holzfällerhütte</entry>
+            <entry lang="English">Lumberjack Hut</entry>
          </Name>
          <Description>
-            <entry lang="English">Produces wood over time. Requires $growable.name in its range to be able to produce.</entry>
             <entry lang="Deutsch">Erzeugt Holz.</entry>
+            <entry lang="English">Produces wood over time. Requires $growable.name in its range to be able to produce.</entry>
          </Description>
          <HoverOver>
-            <entry lang="English">Lumberjack</entry>
             <entry lang="Deutsch">Holzfäller</entry>
+            <entry lang="English">Lumberjack</entry>
          </HoverOver>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
@@ -183,7 +183,6 @@
          <canBeBuildOver>false</canBeBuildOver>
          <canBeUpgraded>false</canBeUpgraded>
          <canTakeDamage>true</canTakeDamage>
-         <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
          <upkeepCost>25</upkeepCost>
          <buildCost>250</buildCost>
@@ -214,16 +213,16 @@
       </farm>
       <farm ID="sugarplantation">
          <Name>
-            <entry lang="English">Sugar Plantation</entry>
             <entry lang="Deutsch">Zuckerplantage</entry>
+            <entry lang="English">Sugar Plantation</entry>
          </Name>
          <Description>
-            <entry lang="English">Produces sugar.</entry>
             <entry lang="Deutsch">Produziert Zucker.</entry>
+            <entry lang="English">Produces sugar.</entry>
          </Description>
          <HoverOver>
-            <entry lang="English">Sugar Plantation</entry>
             <entry lang="Deutsch">Zuckerplantage</entry>
+            <entry lang="English">Sugar Plantation</entry>
          </HoverOver>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
@@ -239,7 +238,6 @@
          <canBeBuildOver>false</canBeBuildOver>
          <canBeUpgraded>false</canBeUpgraded>
          <canTakeDamage>true</canTakeDamage>
-         <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
          <upkeepCost>100</upkeepCost>
          <buildCost>1000</buildCost>
@@ -262,7 +260,6 @@
          <produceTime>40.0</produceTime>
          <maxOutputStorage>5</maxOutputStorage>
          <efficiency>1.0</efficiency>
-         <workerWorkSound>machetecutting</workerWorkSound>
          <output length="1">
             <Item ID="sugar">
                <count>1</count>
@@ -273,16 +270,16 @@
       </farm>
       <farm ID="orchardfarm">
          <Name>
-            <entry lang="English">Orchard Farm</entry>
             <entry lang="Deutsch">Obstplantage</entry>
+            <entry lang="English">Orchard Farm</entry>
          </Name>
          <Description>
-            <entry lang="English">Produces fruits.</entry>
             <entry lang="Deutsch">Produziert Früchte.</entry>
+            <entry lang="English">Produces fruits.</entry>
          </Description>
          <HoverOver>
-            <entry lang="English">Orchard </entry>
             <entry lang="Deutsch">Obstplantage</entry>
+            <entry lang="English">Orchard </entry>
          </HoverOver>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
@@ -298,7 +295,6 @@
          <canBeBuildOver>false</canBeBuildOver>
          <canBeUpgraded>false</canBeUpgraded>
          <canTakeDamage>true</canTakeDamage>
-         <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
          <upkeepCost>75</upkeepCost>
          <buildCost>650</buildCost>
@@ -321,7 +317,6 @@
          <produceTime>46.0</produceTime>
          <maxOutputStorage>5</maxOutputStorage>
          <efficiency>1.0</efficiency>
-         <workerWorkSound>leafrustle</workerWorkSound>
          <output length="1">
             <Item ID="fruits">
                <count>1</count>
@@ -332,22 +327,22 @@
       </farm>
       <farm ID="potatoefarm">
          <Name>
-            <entry lang="English">Potatoefarm</entry>
             <entry lang="Deutsch">Kartoffelfarm</entry>
+            <entry lang="English">Potatoefarm</entry>
          </Name>
          <Description>
-            <entry lang="English">Grows Potatoe. Needs $buildingItems.name to be build.</entry>
             <entry lang="Deutsch">Produziert Kartoffeln.</entry>
+            <entry lang="English">Grows Potatoe. Needs $buildingItems.name to be build.</entry>
          </Description>
          <HoverOver>
-            <entry lang="English">Potatoefarm</entry>
             <entry lang="Deutsch">Kartoffelfarm</entry>
+            <entry lang="English">Potatoefarm</entry>
          </HoverOver>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
+         <hasHitbox>true</hasHitbox>
          <maxHealth>150.0</maxHealth>
-        <hasHitbox>true</hasHitbox>
-        <structureRange>3</structureRange>
+         <structureRange>3</structureRange>
          <populationLevel>0</populationLevel>
          <populationCount>200</populationCount>
          <structureLevel>0</structureLevel>
@@ -357,7 +352,6 @@
          <canBeBuildOver>false</canBeBuildOver>
          <canBeUpgraded>false</canBeUpgraded>
          <canTakeDamage>true</canTakeDamage>
-         <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
          <upkeepCost>60</upkeepCost>
          <buildCost>500</buildCost>
@@ -390,25 +384,25 @@
       </farm>
       <farm ID="hempplantation">
          <Name>
-            <entry lang="English">Hemp plantation</entry>
             <entry lang="Deutsch">Hanfplantage</entry>
+            <entry lang="English">Hemp plantation</entry>
          </Name>
          <Description>
-            <entry lang="English">Plantation that produces hemp.</entry>
             <entry lang="Deutsch">Produziert Hanf.</entry>
+            <entry lang="English">Plantation that produces hemp.</entry>
          </Description>
          <HoverOver>
-            <entry lang="English">Hemp plantation</entry>
             <entry lang="Deutsch">Hanfplantage</entry>
+            <entry lang="English">Hemp plantation</entry>
          </HoverOver>
          <Short>
             <entry>
-               <lang>English</lang>
-               <string>Hemp </string>
-            </entry>
-            <entry>
                <lang>Deutsch</lang>
                <string>Hanf</string>
+            </entry>
+            <entry>
+               <lang>English</lang>
+               <string>Hemp </string>
             </entry>
          </Short>
          <canBeBuild>true</canBeBuild>
@@ -425,7 +419,6 @@
          <canBeBuildOver>false</canBeBuildOver>
          <canBeUpgraded>false</canBeUpgraded>
          <canTakeDamage>true</canTakeDamage>
-         <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
          <upkeepCost>20</upkeepCost>
          <buildCost>0</buildCost>
@@ -448,7 +441,6 @@
          <produceTime>20.0</produceTime>
          <maxOutputStorage>5</maxOutputStorage>
          <efficiency>1.0</efficiency>
-         <workerWorkSound>scythecutting</workerWorkSound>
          <output length="1">
             <Item ID="hemp">
                <count>1</count>
@@ -459,16 +451,16 @@
       </farm>
       <farm ID="huntershut">
          <Name>
-            <entry lang="English">Hunters&apos; Hut</entry>
             <entry lang="Deutsch">Jägerhütte</entry>
+            <entry lang="English">Hunters&apos; Hut</entry>
          </Name>
          <Description>
-            <entry lang="English">Hunts wild life to produce meat.</entry>
             <entry lang="Deutsch">Jagt Wild um Fleisch zu produzieren.</entry>
+            <entry lang="English">Hunts wild life to produce meat.</entry>
          </Description>
          <HoverOver>
-            <entry lang="English">Hunter</entry>
             <entry lang="Deutsch">Jäger</entry>
+            <entry lang="English">Hunter</entry>
          </HoverOver>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
@@ -484,7 +476,6 @@
          <canBeBuildOver>false</canBeBuildOver>
          <canBeUpgraded>false</canBeUpgraded>
          <canTakeDamage>true</canTakeDamage>
-         <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
          <upkeepCost>80</upkeepCost>
          <buildCost>1200</buildCost>
@@ -517,16 +508,16 @@
       </farm>
       <farm ID="wheatfarm">
          <Name>
-            <entry lang="English">Wheatfarm</entry>
             <entry lang="Deutsch">Getreidefarm</entry>
+            <entry lang="English">Wheatfarm</entry>
          </Name>
          <Description>
-            <entry lang="English">Produces Wheat.</entry>
             <entry lang="Deutsch">Produziert Getreide.</entry>
+            <entry lang="English">Produces Wheat.</entry>
          </Description>
          <HoverOver>
-            <entry lang="English">Wheatfarm</entry>
             <entry lang="Deutsch">Getreidefarm</entry>
+            <entry lang="English">Wheatfarm</entry>
          </HoverOver>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
@@ -542,7 +533,6 @@
          <canBeBuildOver>false</canBeBuildOver>
          <canBeUpgraded>false</canBeUpgraded>
          <canTakeDamage>true</canTakeDamage>
-         <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
          <upkeepCost>65</upkeepCost>
          <buildCost>1250</buildCost>
@@ -578,16 +568,16 @@
       </farm>
       <farm ID="charcoalburnershut">
          <Name>
-            <entry lang="English">Charcoal Burner&apos;s Hut</entry>
             <entry lang="Deutsch">Köhler</entry>
+            <entry lang="English">Charcoal Burner&apos;s Hut</entry>
          </Name>
          <Description>
-            <entry lang="English">Needs trees to create coal.</entry>
             <entry lang="Deutsch">Benötigt Bäume um daraus Kohle zu produzieren.</entry>
+            <entry lang="English">Needs trees to create coal.</entry>
          </Description>
          <HoverOver>
-            <entry lang="English">Charcoal Burner&apos;s Hut</entry>
             <entry lang="Deutsch">Köhler</entry>
+            <entry lang="English">Charcoal Burner&apos;s Hut</entry>
          </HoverOver>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
@@ -603,7 +593,6 @@
          <canBeBuildOver>false</canBeBuildOver>
          <canBeUpgraded>false</canBeUpgraded>
          <canTakeDamage>true</canTakeDamage>
-         <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
          <upkeepCost>25</upkeepCost>
          <buildCost>250</buildCost>
@@ -636,16 +625,16 @@
       </farm>
       <farm ID="goatfarm">
          <Name>
-            <entry lang="English">Goat Farm</entry>
             <entry lang="Deutsch">Ziegenfarm</entry>
+            <entry lang="English">Goat Farm</entry>
          </Name>
          <Description>
-            <entry lang="English">Produces milk.</entry>
             <entry lang="Deutsch">Produziert Milch.</entry>
+            <entry lang="English">Produces milk.</entry>
          </Description>
          <HoverOver>
-            <entry lang="English">Goat Farm</entry>
             <entry lang="Deutsch">Ziegenfarm</entry>
+            <entry lang="English">Goat Farm</entry>
          </HoverOver>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
@@ -661,7 +650,6 @@
          <canBeBuildOver>false</canBeBuildOver>
          <canBeUpgraded>false</canBeUpgraded>
          <canTakeDamage>true</canTakeDamage>
-         <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
          <upkeepCost>75</upkeepCost>
          <buildCost>450</buildCost>
@@ -697,16 +685,16 @@
       </farm>
       <farm ID="pigfarm">
          <Name>
-            <entry lang="English">Pig Farm</entry>
             <entry lang="Deutsch">Schweinefarm</entry>
+            <entry lang="English">Pig Farm</entry>
          </Name>
          <Description>
-            <entry lang="English">Needs free land to breed pigs.</entry>
             <entry lang="Deutsch">Braucht freies Land um Schweine zu züchten.</entry>
+            <entry lang="English">Needs free land to breed pigs.</entry>
          </Description>
          <HoverOver>
-            <entry lang="English">Pig Farm</entry>
             <entry lang="Deutsch">Schweinefarm</entry>
+            <entry lang="English">Pig Farm</entry>
          </HoverOver>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
@@ -722,7 +710,6 @@
          <canBeBuildOver>false</canBeBuildOver>
          <canBeUpgraded>false</canBeUpgraded>
          <canTakeDamage>true</canTakeDamage>
-         <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
          <upkeepCost>100</upkeepCost>
          <buildCost>600</buildCost>
@@ -758,16 +745,16 @@
       </farm>
       <farm ID="hopsplantation">
          <Name>
-            <entry lang="English">Hops Plantation</entry>
             <entry lang="Deutsch">Hopfenplantage</entry>
+            <entry lang="English">Hops Plantation</entry>
          </Name>
          <Description>
-            <entry lang="English">Produces hops.</entry>
             <entry lang="Deutsch">Produziert Hopfen.</entry>
+            <entry lang="English">Produces hops.</entry>
          </Description>
          <HoverOver>
-            <entry lang="English">Hops Plantation</entry>
             <entry lang="Deutsch">Hopfenplantage</entry>
+            <entry lang="English">Hops Plantation</entry>
          </HoverOver>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
@@ -783,7 +770,6 @@
          <canBeBuildOver>false</canBeBuildOver>
          <canBeUpgraded>false</canBeUpgraded>
          <canTakeDamage>true</canTakeDamage>
-         <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
          <upkeepCost>110</upkeepCost>
          <buildCost>720</buildCost>
@@ -819,12 +805,12 @@
       </farm>
       <farm ID="spiceplantation">
          <Name>
-            <entry lang="English">Spice Plantation</entry>
             <entry lang="Deutsch">Gewürzplantage</entry>
+            <entry lang="English">Spice Plantation</entry>
          </Name>
          <Description>
-            <entry lang="English">Produces Spice.</entry>
             <entry lang="Deutsch">Produziert Gewürze.</entry>
+            <entry lang="English">Produces Spice.</entry>
          </Description>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
@@ -840,7 +826,6 @@
          <canBeBuildOver>false</canBeBuildOver>
          <canBeUpgraded>false</canBeUpgraded>
          <canTakeDamage>true</canTakeDamage>
-         <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
          <upkeepCost>25</upkeepCost>
          <buildCost>1000</buildCost>
@@ -878,16 +863,16 @@
    <growables>
       <growable ID="farmland">
          <Name>
-            <entry lang="English">Farmland</entry>
             <entry lang="Deutsch">Ackerland</entry>
+            <entry lang="English">Farmland</entry>
          </Name>
          <Description>
-            <entry lang="English">Free spaces for animals.</entry>
             <entry lang="Deutsch">Freies Land für Tiere.</entry>
+            <entry lang="English">Free spaces for animals.</entry>
          </Description>
          <HoverOver>
-            <entry lang="English">Farmland</entry>
             <entry lang="Deutsch">Ackerland</entry>
+            <entry lang="English">Farmland</entry>
          </HoverOver>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
@@ -903,7 +888,6 @@
          <canBeBuildOver>true</canBeBuildOver>
          <canBeUpgraded>false</canBeUpgraded>
          <canTakeDamage>false</canTakeDamage>
-         <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
          <upkeepCost>0</upkeepCost>
          <buildCost>5</buildCost>
@@ -918,20 +902,21 @@
          <produceTime>1.0</produceTime>
          <maxOutputStorage>1</maxOutputStorage>
          <efficiency>1.0</efficiency>
+         <isFloor>false</isFloor>
          <ageStages>0</ageStages>
       </growable>
       <growable ID="tree">
          <Name>
-            <entry lang="English">Tree</entry>
             <entry lang="Deutsch">Baum</entry>
+            <entry lang="English">Tree</entry>
          </Name>
          <Description>
-            <entry lang="English">Its a tree.</entry>
             <entry lang="Deutsch">Es ist ein Baum.</entry>
+            <entry lang="English">Its a tree.</entry>
          </Description>
          <HoverOver>
-            <entry lang="English">Tree</entry>
             <entry lang="Deutsch">Baum</entry>
+            <entry lang="English">Tree</entry>
          </HoverOver>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
@@ -947,7 +932,6 @@
          <canBeBuildOver>true</canBeBuildOver>
          <canBeUpgraded>false</canBeUpgraded>
          <canTakeDamage>false</canTakeDamage>
-         <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
          <upkeepCost>0</upkeepCost>
          <buildCost>0</buildCost>
@@ -969,75 +953,25 @@
             </Item>
          </output>
          <harvestSound>treefalling</harvestSound>
+         <isFloor>false</isFloor>
          <ageStages>3</ageStages>
       </growable>
-      <growable ID="hempfield">
+      <growable ID="potatoefield">
          <Name>
-            <entry lang="English">Hempfield</entry>
-            <entry lang="Deutsch">Hanffeld</entry>
+            <entry lang="Deutsch">Kartoffelfeld</entry>
+            <entry lang="English">Potatoefield</entry>
          </Name>
          <Description>
-            <entry lang="English">Grows hemp.</entry>
-            <entry lang="Deutsch">Wächst Hanf an.</entry>
+            <entry lang="Deutsch">Kartoffeln wachsen hier.</entry>
+            <entry lang="English">Potatoes grow here.</entry>
          </Description>
          <HoverOver>
-            <entry lang="English">Hemp</entry>
-            <entry lang="Deutsch">Hanf</entry>
+            <entry lang="Deutsch">Kartoffelfeld</entry>
+            <entry lang="English">Potatoefield</entry>
          </HoverOver>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
          <hasHitbox>false</hasHitbox>
-         <maxHealth>50.0</maxHealth>
-         <structureRange>0</structureRange>
-         <populationLevel>0</populationLevel>
-         <populationCount>320</populationCount>
-         <structureLevel>0</structureLevel>
-         <tileWidth>1</tileWidth>
-         <tileHeight>1</tileHeight>
-         <canRotate>true</canRotate>
-         <canBeBuildOver>true</canBeBuildOver>
-         <canBeUpgraded>false</canBeUpgraded>
-         <canTakeDamage>false</canTakeDamage>
-         <mustFrontBuildDir>None</mustFrontBuildDir>
-         <canStartBurning>false</canStartBurning>
-         <upkeepCost>0</upkeepCost>
-         <buildCost>0</buildCost>
-         <buildTyp>Drag</buildTyp>
-         <structureTyp>Free</structureTyp>
-         <extraUITyp>None</extraUITyp>
-         <extraBuildUITyp>None</extraBuildUITyp>
-         <spriteBaseName>hempfield</spriteBaseName>
-         <contactRange>0.0</contactRange>
-         <forMarketplace>false</forMarketplace>
-         <maxNumberOfWorker>0</maxNumberOfWorker>
-         <produceTime>180.0</produceTime>
-         <maxOutputStorage>1</maxOutputStorage>
-         <efficiency>1.0</efficiency>
-         <output length="1">
-            <Item ID="hemp">
-               <count>0</count>
-            </Item>
-         </output>
-         <fertility>hemp</fertility>
-         <ageStages>2</ageStages>
-      </growable>
-      <growable ID="potatoefield">
-         <Name>
-            <entry lang="English">Potatoefield</entry>
-            <entry lang="Deutsch">Kartoffelfeld</entry>
-         </Name>
-         <Description>
-            <entry lang="English">Potatoes grow here.</entry>
-            <entry lang="Deutsch">Kartoffeln wachsen hier.</entry>
-         </Description>
-         <HoverOver>
-            <entry lang="English">Potatoefield</entry>
-            <entry lang="Deutsch">Kartoffelfeld</entry>
-         </HoverOver>
-         <canBeBuild>true</canBeBuild>
-         <isWalkable>false</isWalkable>
-        <isFloor>true</isFloor>
-        <hasHitbox>false</hasHitbox>
          <maxHealth>50.0</maxHealth>
          <structureRange>0</structureRange>
          <populationLevel>0</populationLevel>
@@ -1049,7 +983,6 @@
          <canBeBuildOver>true</canBeBuildOver>
          <canBeUpgraded>false</canBeUpgraded>
          <canTakeDamage>false</canTakeDamage>
-         <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
          <upkeepCost>0</upkeepCost>
          <buildCost>25</buildCost>
@@ -1069,20 +1002,21 @@
                <count>1</count>
             </Item>
          </output>
+         <isFloor>true</isFloor>
          <ageStages>2</ageStages>
       </growable>
       <growable ID="orchard">
          <Name>
-            <entry lang="English">Orchard</entry>
             <entry lang="Deutsch">Obstgarten</entry>
+            <entry lang="English">Orchard</entry>
          </Name>
          <Description>
-            <entry lang="English">Produces Fruit.</entry>
             <entry lang="Deutsch">Produziert Früchte.</entry>
+            <entry lang="English">Produces Fruit.</entry>
          </Description>
          <HoverOver>
-            <entry lang="English">Orchard</entry>
             <entry lang="Deutsch">Obstgarten</entry>
+            <entry lang="English">Orchard</entry>
          </HoverOver>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
@@ -1098,7 +1032,6 @@
          <canBeBuildOver>true</canBeBuildOver>
          <canBeUpgraded>false</canBeUpgraded>
          <canTakeDamage>false</canTakeDamage>
-         <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
          <upkeepCost>0</upkeepCost>
          <buildCost>25</buildCost>
@@ -1118,20 +1051,21 @@
                <count>1</count>
             </Item>
          </output>
+         <isFloor>false</isFloor>
          <ageStages>2</ageStages>
       </growable>
       <growable ID="sugarcanefield">
          <Name>
-            <entry lang="English">Sugarcanefield</entry>
             <entry lang="Deutsch">Zuckerrohrfeld</entry>
+            <entry lang="English">Sugarcanefield</entry>
          </Name>
          <Description>
-            <entry lang="English">Grows sugar cane.</entry>
             <entry lang="Deutsch">Hier wächst Zuckerrohr.</entry>
+            <entry lang="English">Grows sugar cane.</entry>
          </Description>
          <HoverOver>
-            <entry lang="English">Sugarcanefield</entry>
             <entry lang="Deutsch">Zuckerrohrfeld</entry>
+            <entry lang="English">Sugarcanefield</entry>
          </HoverOver>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
@@ -1147,7 +1081,6 @@
          <canBeBuildOver>true</canBeBuildOver>
          <canBeUpgraded>false</canBeUpgraded>
          <canTakeDamage>false</canTakeDamage>
-         <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
          <upkeepCost>0</upkeepCost>
          <buildCost>25</buildCost>
@@ -1168,20 +1101,71 @@
             </Item>
          </output>
          <fertility>sugarcane</fertility>
+         <isFloor>false</isFloor>
+         <ageStages>2</ageStages>
+      </growable>
+      <growable ID="hempfield">
+         <Name>
+            <entry lang="Deutsch">Hanffeld</entry>
+            <entry lang="English">Hempfield</entry>
+         </Name>
+         <Description>
+            <entry lang="Deutsch">Wächst Hanf an.</entry>
+            <entry lang="English">Grows hemp.</entry>
+         </Description>
+         <HoverOver>
+            <entry lang="Deutsch">Hanf</entry>
+            <entry lang="English">Hemp</entry>
+         </HoverOver>
+         <canBeBuild>true</canBeBuild>
+         <isWalkable>false</isWalkable>
+         <hasHitbox>false</hasHitbox>
+         <maxHealth>50.0</maxHealth>
+         <structureRange>0</structureRange>
+         <populationLevel>0</populationLevel>
+         <populationCount>320</populationCount>
+         <structureLevel>0</structureLevel>
+         <tileWidth>1</tileWidth>
+         <tileHeight>1</tileHeight>
+         <canRotate>true</canRotate>
+         <canBeBuildOver>true</canBeBuildOver>
+         <canBeUpgraded>false</canBeUpgraded>
+         <canTakeDamage>false</canTakeDamage>
+         <canStartBurning>false</canStartBurning>
+         <upkeepCost>0</upkeepCost>
+         <buildCost>0</buildCost>
+         <buildTyp>Drag</buildTyp>
+         <structureTyp>Free</structureTyp>
+         <extraUITyp>None</extraUITyp>
+         <extraBuildUITyp>None</extraBuildUITyp>
+         <spriteBaseName>hempfield</spriteBaseName>
+         <contactRange>0.0</contactRange>
+         <forMarketplace>false</forMarketplace>
+         <maxNumberOfWorker>0</maxNumberOfWorker>
+         <produceTime>180.0</produceTime>
+         <maxOutputStorage>1</maxOutputStorage>
+         <efficiency>1.0</efficiency>
+         <output length="1">
+            <Item ID="hemp">
+               <count>0</count>
+            </Item>
+         </output>
+         <fertility>hemp</fertility>
+         <isFloor>false</isFloor>
          <ageStages>2</ageStages>
       </growable>
       <growable ID="wheatfield">
          <Name>
-            <entry lang="English">Wheatfield</entry>
             <entry lang="Deutsch">Getreidefeld</entry>
+            <entry lang="English">Wheatfield</entry>
          </Name>
          <Description>
-            <entry lang="English">Grows wheat.</entry>
             <entry lang="Deutsch">Getreide wächst hier.</entry>
+            <entry lang="English">Grows wheat.</entry>
          </Description>
          <HoverOver>
-            <entry lang="English">Wheatfield</entry>
             <entry lang="Deutsch">Getreidefeld</entry>
+            <entry lang="English">Wheatfield</entry>
          </HoverOver>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
@@ -1197,7 +1181,6 @@
          <canBeBuildOver>true</canBeBuildOver>
          <canBeUpgraded>false</canBeUpgraded>
          <canTakeDamage>false</canTakeDamage>
-         <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
          <upkeepCost>0</upkeepCost>
          <buildCost>45</buildCost>
@@ -1219,20 +1202,21 @@
             </Item>
          </output>
          <fertility>wheat</fertility>
+         <isFloor>false</isFloor>
          <ageStages>5</ageStages>
       </growable>
       <growable ID="hopvines">
          <Name>
-            <entry lang="English">Hop Vines</entry>
             <entry lang="Deutsch">Hopfenreben</entry>
+            <entry lang="English">Hop Vines</entry>
          </Name>
          <Description>
-            <entry lang="English">Grows hops.</entry>
             <entry lang="Deutsch">Produziert Hopfen.</entry>
+            <entry lang="English">Grows hops.</entry>
          </Description>
          <HoverOver>
-            <entry lang="English">Hop Vines</entry>
             <entry lang="Deutsch">Hopfenreben</entry>
+            <entry lang="English">Hop Vines</entry>
          </HoverOver>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
@@ -1248,7 +1232,6 @@
          <canBeBuildOver>true</canBeBuildOver>
          <canBeUpgraded>false</canBeUpgraded>
          <canTakeDamage>false</canTakeDamage>
-         <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
          <upkeepCost>0</upkeepCost>
          <buildCost>0</buildCost>
@@ -1269,16 +1252,17 @@
             </Item>
          </output>
          <fertility>hop</fertility>
+         <isFloor>false</isFloor>
          <ageStages>2</ageStages>
       </growable>
       <growable ID="spicefield">
          <Name>
-            <entry lang="English">Spicefield</entry>
             <entry lang="Deutsch">Gewürzefeld</entry>
+            <entry lang="English">Spicefield</entry>
          </Name>
          <Description>
-            <entry lang="English">Grows Spices.</entry>
             <entry lang="Deutsch">Gewürze werden hier angebaut.</entry>
+            <entry lang="English">Grows Spices.</entry>
          </Description>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
@@ -1294,7 +1278,6 @@
          <canBeBuildOver>true</canBeBuildOver>
          <canBeUpgraded>false</canBeUpgraded>
          <canTakeDamage>false</canTakeDamage>
-         <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
          <upkeepCost>0</upkeepCost>
          <buildCost>100</buildCost>
@@ -1315,22 +1298,23 @@
             </Item>
          </output>
          <fertility>spices</fertility>
+         <isFloor>false</isFloor>
          <ageStages>2</ageStages>
       </growable>
    </growables>
    <markets>
       <market ID="smallmarketbuilding">
          <Name>
-            <entry lang="English">Market Building I</entry>
             <entry lang="Deutsch">Markthaus I</entry>
+            <entry lang="English">Market Building I</entry>
          </Name>
          <Description>
-            <entry lang="English">Is required to expand your city and it will collect produced goods in its area, if they are connect with roads.</entry>
             <entry lang="Deutsch">Es ist benötigt um deine Stadt zu erweitern und um produzierte Produkte abzuholen, die in seiner reichweite sind und mit dem es Sraßen verbunden ist.</entry>
+            <entry lang="English">Is required to expand your city and it will collect produced goods in its area, if they are connect with roads.</entry>
          </Description>
          <HoverOver>
-            <entry lang="English">Market Building</entry>
             <entry lang="Deutsch">Markthaus </entry>
+            <entry lang="English">Market Building</entry>
          </HoverOver>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
@@ -1346,7 +1330,6 @@
          <canBeBuildOver>false</canBeBuildOver>
          <canBeUpgraded>true</canBeUpgraded>
          <canTakeDamage>true</canTakeDamage>
-         <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
          <upkeepCost>10</upkeepCost>
          <buildCost>200</buildCost>
@@ -1363,29 +1346,29 @@
             </Item>
          </buildingItems>
          <spriteBaseName>smallmarketbuilding</spriteBaseName>
-		 <workerID>roadcarrier</workerID>
          <contactRange>0.0</contactRange>
          <forMarketplace>true</forMarketplace>
          <maxNumberOfWorker>1</maxNumberOfWorker>
          <produceTime>0.0</produceTime>
          <maxOutputStorage>0</maxOutputStorage>
          <efficiency>1.0</efficiency>
+         <workerID>roadcarrier</workerID>
          <takeOverStartGoal>100.0</takeOverStartGoal>
       </market>
    </markets>
    <mines>
       <mine ID="stonequarry">
          <Name>
-            <entry lang="English">Stone Quarry</entry>
             <entry lang="Deutsch">Steinbruch</entry>
+            <entry lang="English">Stone Quarry</entry>
          </Name>
          <Description>
-            <entry lang="English">Produces stone for buildings..</entry>
             <entry lang="Deutsch">Produziert Stein zum Bauen.</entry>
+            <entry lang="English">Produces stone for buildings..</entry>
          </Description>
          <HoverOver>
-            <entry lang="English">Stone Quarry</entry>
             <entry lang="Deutsch">Steinbruch</entry>
+            <entry lang="English">Stone Quarry</entry>
          </HoverOver>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
@@ -1405,7 +1388,6 @@
          <canBeBuildOver>false</canBeBuildOver>
          <canBeUpgraded>false</canBeUpgraded>
          <canTakeDamage>false</canTakeDamage>
-         <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
          <upkeepCost>90</upkeepCost>
          <buildCost>1000</buildCost>
@@ -1436,16 +1418,16 @@
       </mine>
       <mine ID="ironmine">
          <Name>
-            <entry lang="English">Iron Mine</entry>
             <entry lang="Deutsch">Eisenbergwerk</entry>
+            <entry lang="English">Iron Mine</entry>
          </Name>
          <Description>
-            <entry lang="English">Produces iron ore.</entry>
             <entry lang="Deutsch">Produziert Eisenerz.</entry>
+            <entry lang="English">Produces iron ore.</entry>
          </Description>
          <HoverOver>
-            <entry lang="English">Iron Mine</entry>
             <entry lang="Deutsch">Eisenbergwerk</entry>
+            <entry lang="English">Iron Mine</entry>
          </HoverOver>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
@@ -1461,7 +1443,6 @@
          <canBeBuildOver>false</canBeBuildOver>
          <canBeUpgraded>false</canBeUpgraded>
          <canTakeDamage>false</canTakeDamage>
-         <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
          <upkeepCost>55</upkeepCost>
          <buildCost>800</buildCost>
@@ -1492,16 +1473,16 @@
       </mine>
       <mine ID="saltmine">
          <Name>
-            <entry lang="English">Saltmine</entry>
             <entry lang="Deutsch">Salzbergwerk</entry>
+            <entry lang="English">Saltmine</entry>
          </Name>
          <Description>
-            <entry lang="English">Mines Grain Salt.</entry>
             <entry lang="Deutsch">Produziert grobes Salz.</entry>
+            <entry lang="English">Mines Grain Salt.</entry>
          </Description>
          <HoverOver>
-            <entry lang="English">Saltmine</entry>
             <entry lang="Deutsch">Salzbergwerk</entry>
+            <entry lang="English">Saltmine</entry>
          </HoverOver>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
@@ -1517,7 +1498,6 @@
          <canBeBuildOver>false</canBeBuildOver>
          <canBeUpgraded>false</canBeUpgraded>
          <canTakeDamage>false</canTakeDamage>
-         <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
          <upkeepCost>80</upkeepCost>
          <buildCost>1100</buildCost>
@@ -1553,16 +1533,16 @@
    <needstructures>
       <needstructure ID="marketplace">
          <Name>
-            <entry lang="English">Marketplace</entry>
             <entry lang="Deutsch">Gemeinschaftsplatz</entry>
+            <entry lang="English">Marketplace</entry>
          </Name>
          <Description>
-            <entry lang="English">Place where people can meet, talk and trade goods.</entry>
             <entry lang="Deutsch">Ort zum Treffen, Reden und Handeln.</entry>
+            <entry lang="English">Place where people can meet, talk and trade goods.</entry>
          </Description>
          <HoverOver>
-            <entry lang="English">Marketplace</entry>
             <entry lang="Deutsch">Gemeinschaftsplatz</entry>
+            <entry lang="English">Marketplace</entry>
          </HoverOver>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
@@ -1578,7 +1558,6 @@
          <canBeBuildOver>false</canBeBuildOver>
          <canBeUpgraded>false</canBeUpgraded>
          <canTakeDamage>true</canTakeDamage>
-         <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
          <upkeepCost>15</upkeepCost>
          <buildCost>200</buildCost>
@@ -1598,16 +1577,16 @@
       </needstructure>
       <needstructure ID="chapel">
          <Name>
-            <entry lang="English">Chapel</entry>
             <entry lang="Deutsch">Kapelle</entry>
+            <entry lang="English">Chapel</entry>
          </Name>
          <Description>
-            <entry lang="English">A holy place.</entry>
             <entry lang="Deutsch">Ein heiliger Platz.</entry>
+            <entry lang="English">A holy place.</entry>
          </Description>
          <HoverOver>
-            <entry lang="English">Chapel</entry>
             <entry lang="Deutsch">Kapelle</entry>
+            <entry lang="English">Chapel</entry>
          </HoverOver>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
@@ -1623,7 +1602,6 @@
          <canBeBuildOver>false</canBeBuildOver>
          <canBeUpgraded>false</canBeUpgraded>
          <canTakeDamage>false</canTakeDamage>
-         <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
          <upkeepCost>120</upkeepCost>
          <buildCost>1500</buildCost>
@@ -1643,16 +1621,16 @@
       </needstructure>
       <needstructure ID="inn">
          <Name>
-            <entry lang="English">Inn</entry>
             <entry lang="Deutsch">Gasthaus</entry>
+            <entry lang="English">Inn</entry>
          </Name>
          <Description>
-            <entry lang="English">Place where people meet to drink together and play some games.</entry>
             <entry lang="Deutsch">Platz wo Leuten treffen um zusammen trinken und Spiele zu spielen.</entry>
+            <entry lang="English">Place where people meet to drink together and play some games.</entry>
          </Description>
          <HoverOver>
-            <entry lang="English">Inn</entry>
             <entry lang="Deutsch">Gasthaus</entry>
+            <entry lang="English">Inn</entry>
          </HoverOver>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
@@ -1668,7 +1646,6 @@
          <canBeBuildOver>false</canBeBuildOver>
          <canBeUpgraded>false</canBeUpgraded>
          <canTakeDamage>false</canTakeDamage>
-         <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
          <upkeepCost>225</upkeepCost>
          <buildCost>2000</buildCost>
@@ -1688,16 +1665,16 @@
       </needstructure>
       <needstructure ID="cityguardpost">
          <Name>
-            <entry lang="English">City ​​Guard Post</entry>
             <entry lang="Deutsch">Stadtwache</entry>
+            <entry lang="English">City ​​Guard Post</entry>
          </Name>
          <Description>
-            <entry lang="English">Provides a central for the city guard which makes the surrounding area safer.</entry>
             <entry lang="Deutsch">Bietet der Stadtwache eine Stelle von der sie aus die Umgebung sicherer macht.</entry>
+            <entry lang="English">Provides a central for the city guard which makes the surrounding area safer.</entry>
          </Description>
          <HoverOver>
-            <entry lang="English">City Guard</entry>
             <entry lang="Deutsch">Stadtwache</entry>
+            <entry lang="English">City Guard</entry>
          </HoverOver>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
@@ -1713,7 +1690,6 @@
          <canBeBuildOver>false</canBeBuildOver>
          <canBeUpgraded>false</canBeUpgraded>
          <canTakeDamage>true</canTakeDamage>
-         <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>true</canStartBurning>
          <upkeepCost>30</upkeepCost>
          <buildCost>4000</buildCost>
@@ -1736,12 +1712,12 @@
       </needstructure>
       <needstructure ID="washhouse">
          <Name>
-            <entry lang="English">Wash House</entry>
             <entry lang="Deutsch">Waschhaus</entry>
+            <entry lang="English">Wash House</entry>
          </Name>
          <Description>
-            <entry lang="English">Provides a public space to wash their clothes.</entry>
             <entry lang="Deutsch">Bietet einen öfflichen Platz um die Wäsche zu waschen.</entry>
+            <entry lang="English">Provides a public space to wash their clothes.</entry>
          </Description>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
@@ -1757,7 +1733,6 @@
          <canBeBuildOver>false</canBeBuildOver>
          <canBeUpgraded>false</canBeUpgraded>
          <canTakeDamage>true</canTakeDamage>
-         <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>true</canStartBurning>
          <upkeepCost>40</upkeepCost>
          <buildCost>5500</buildCost>
@@ -1780,16 +1755,16 @@
       </needstructure>
       <needstructure ID="bathhouse">
          <Name>
-            <entry lang="English">Bath House</entry>
             <entry lang="Deutsch">Badehaus</entry>
+            <entry lang="English">Bath House</entry>
          </Name>
          <Description>
-            <entry lang="English">Provides public swimming spaces.</entry>
             <entry lang="Deutsch">Bietet öffentliche Schwimmmöglichkeiten.</entry>
+            <entry lang="English">Provides public swimming spaces.</entry>
          </Description>
          <HoverOver>
-            <entry lang="English">Bath House</entry>
             <entry lang="Deutsch">Badehaus</entry>
+            <entry lang="English">Bath House</entry>
          </HoverOver>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
@@ -1805,7 +1780,6 @@
          <canBeBuildOver>false</canBeBuildOver>
          <canBeUpgraded>false</canBeUpgraded>
          <canTakeDamage>true</canTakeDamage>
-         <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>true</canStartBurning>
          <upkeepCost>45</upkeepCost>
          <buildCost>5000</buildCost>
@@ -1825,16 +1799,16 @@
       </needstructure>
       <needstructure ID="school">
          <Name>
-            <entry lang="English">School</entry>
             <entry lang="Deutsch">Schule</entry>
+            <entry lang="English">School</entry>
          </Name>
          <Description>
-            <entry lang="English">Provides education for children.</entry>
             <entry lang="Deutsch">Bietet Bildung für Kinder.</entry>
+            <entry lang="English">Provides education for children.</entry>
          </Description>
          <HoverOver>
-            <entry lang="English">School</entry>
             <entry lang="Deutsch">Schule</entry>
+            <entry lang="English">School</entry>
          </HoverOver>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
@@ -1850,7 +1824,6 @@
          <canBeBuildOver>false</canBeBuildOver>
          <canBeUpgraded>false</canBeUpgraded>
          <canTakeDamage>true</canTakeDamage>
-         <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>true</canStartBurning>
          <upkeepCost>100</upkeepCost>
          <buildCost>6000</buildCost>
@@ -1870,16 +1843,16 @@
       </needstructure>
       <needstructure ID="arena">
          <Name>
-            <entry lang="English">Arena</entry>
             <entry lang="Deutsch">Arena</entry>
+            <entry lang="English">Arena</entry>
          </Name>
          <Description>
-            <entry lang="English">Place where fights and other amusements can be found.</entry>
             <entry lang="Deutsch">Platz wo Kämpfe und andere Bespaßungen stattfinden können.</entry>
+            <entry lang="English">Place where fights and other amusements can be found.</entry>
          </Description>
          <HoverOver>
-            <entry lang="English">Arena</entry>
             <entry lang="Deutsch">Arena</entry>
+            <entry lang="English">Arena</entry>
          </HoverOver>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
@@ -1895,7 +1868,6 @@
          <canBeBuildOver>false</canBeBuildOver>
          <canBeUpgraded>false</canBeUpgraded>
          <canTakeDamage>true</canTakeDamage>
-         <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>true</canStartBurning>
          <upkeepCost>70</upkeepCost>
          <buildCost>9000</buildCost>
@@ -1923,16 +1895,16 @@
    <productions>
       <production ID="fishermanshut">
          <Name>
-            <entry lang="English">Fisherman&apos;s hut</entry>
             <entry lang="Deutsch">Fischerhütte</entry>
+            <entry lang="English">Fisherman&apos;s hut</entry>
          </Name>
          <Description>
-            <entry lang="English">Catches Fish to eat.</entry>
             <entry lang="Deutsch">Fischt Fisch zum essen.</entry>
+            <entry lang="English">Catches Fish to eat.</entry>
          </Description>
          <HoverOver>
-            <entry lang="English">Fisherman</entry>
             <entry lang="Deutsch">Fischer</entry>
+            <entry lang="English">Fisherman</entry>
          </HoverOver>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
@@ -1953,7 +1925,6 @@
          <canBeBuildOver>false</canBeBuildOver>
          <canBeUpgraded>false</canBeUpgraded>
          <canTakeDamage>true</canTakeDamage>
-         <mustFrontBuildDir>N</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
          <upkeepCost>0</upkeepCost>
          <buildCost>100</buildCost>
@@ -1983,80 +1954,18 @@
          </output>
          <inputTyp>AND</inputTyp>
       </production>
-      <production ID="hempweaver">
-         <Name>
-            <entry lang="English">Hemp Weaver&apos;s Hut</entry>
-            <entry lang="Deutsch">Hanfweberei</entry>
-         </Name>
-         <Description>
-            <entry lang="English">Uses raw hemp to produce weaved hemp fabric.</entry>
-            <entry lang="Deutsch">Benutzt rohen Hanf um gewebten Stoff herzustellen.</entry>
-         </Description>
-         <HoverOver>
-            <entry lang="English">Hemp Weaver</entry>
-            <entry lang="Deutsch">Hanfweberei</entry>
-         </HoverOver>
-         <canBeBuild>true</canBeBuild>
-         <isWalkable>false</isWalkable>
-         <hasHitbox>true</hasHitbox>
-         <maxHealth>100.0</maxHealth>
-         <structureRange>15</structureRange>
-         <populationLevel>0</populationLevel>
-         <populationCount>320</populationCount>
-         <structureLevel>0</structureLevel>
-         <tileWidth>2</tileWidth>
-         <tileHeight>2</tileHeight>
-         <canRotate>true</canRotate>
-         <canBeBuildOver>false</canBeBuildOver>
-         <canBeUpgraded>false</canBeUpgraded>
-         <canTakeDamage>true</canTakeDamage>
-         <mustFrontBuildDir>None</mustFrontBuildDir>
-         <canStartBurning>false</canStartBurning>
-         <upkeepCost>25</upkeepCost>
-         <buildCost>300</buildCost>
-         <buildTyp>Single</buildTyp>
-         <structureTyp>Blocking</structureTyp>
-         <extraUITyp>None</extraUITyp>
-         <extraBuildUITyp>None</extraBuildUITyp>
-         <buildingItems length="2">
-            <Item ID="wood">
-               <count>15</count>
-            </Item>
-            <Item ID="tools">
-               <count>5</count>
-            </Item>
-         </buildingItems>
-         <spriteBaseName>hempweaver</spriteBaseName>
-         <contactRange>0.0</contactRange>
-         <forMarketplace>true</forMarketplace>
-         <maxNumberOfWorker>1</maxNumberOfWorker>
-         <produceTime>10.0</produceTime>
-         <maxOutputStorage>5</maxOutputStorage>
-         <efficiency>1.0</efficiency>
-         <output length="1">
-            <Item ID="hempfabric">
-               <count>1</count>
-            </Item>
-         </output>
-         <intake length="1">
-            <Item ID="hemp">
-               <count>2</count>
-            </Item>
-         </intake>
-         <inputTyp>AND</inputTyp>
-      </production>
       <production ID="distellery">
          <Name>
-            <entry lang="English">Distellery</entry>
             <entry lang="Deutsch">Brennerei</entry>
+            <entry lang="English">Distellery</entry>
          </Name>
          <Description>
-            <entry lang="English">Produces Liquor out of either Sugar, Potatoes or Fruit.</entry>
             <entry lang="Deutsch">Produziert Schnaps out of either Kartoffeln, Zucker oder Früchten.</entry>
+            <entry lang="English">Produces Liquor out of either Sugar, Potatoes or Fruit.</entry>
          </Description>
          <HoverOver>
-            <entry lang="English">Distellery</entry>
             <entry lang="Deutsch">Brennerei</entry>
+            <entry lang="English">Distellery</entry>
          </HoverOver>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
@@ -2072,7 +1981,6 @@
          <canBeBuildOver>false</canBeBuildOver>
          <canBeUpgraded>false</canBeUpgraded>
          <canTakeDamage>true</canTakeDamage>
-         <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
          <upkeepCost>50</upkeepCost>
          <buildCost>500</buildCost>
@@ -2113,18 +2021,79 @@
          </intake>
          <inputTyp>OR</inputTyp>
       </production>
-      <production ID="hemptailor">
+      <production ID="hempweaver">
          <Name>
-            <entry lang="English">Hemp Tailor´s Hut</entry>
-            <entry lang="Deutsch">Hanfschneider</entry>
+            <entry lang="Deutsch">Hanfweberei</entry>
+            <entry lang="English">Hemp Weaver&apos;s Hut</entry>
          </Name>
          <Description>
-            <entry lang="English">Produces hempclothes out of hemp fabric.</entry>
-            <entry lang="Deutsch">Produziert Hanfkleidung aus Hanfgewebe.</entry>
+            <entry lang="Deutsch">Benutzt rohen Hanf um gewebten Stoff herzustellen.</entry>
+            <entry lang="English">Uses raw hemp to produce weaved hemp fabric.</entry>
          </Description>
          <HoverOver>
-            <entry lang="English">Hemp Tailor</entry>
+            <entry lang="Deutsch">Hanfweberei</entry>
+            <entry lang="English">Hemp Weaver</entry>
+         </HoverOver>
+         <canBeBuild>true</canBeBuild>
+         <isWalkable>false</isWalkable>
+         <hasHitbox>true</hasHitbox>
+         <maxHealth>100.0</maxHealth>
+         <structureRange>15</structureRange>
+         <populationLevel>0</populationLevel>
+         <populationCount>320</populationCount>
+         <structureLevel>0</structureLevel>
+         <tileWidth>2</tileWidth>
+         <tileHeight>2</tileHeight>
+         <canRotate>true</canRotate>
+         <canBeBuildOver>false</canBeBuildOver>
+         <canBeUpgraded>false</canBeUpgraded>
+         <canTakeDamage>true</canTakeDamage>
+         <canStartBurning>false</canStartBurning>
+         <upkeepCost>25</upkeepCost>
+         <buildCost>300</buildCost>
+         <buildTyp>Single</buildTyp>
+         <structureTyp>Blocking</structureTyp>
+         <extraUITyp>None</extraUITyp>
+         <extraBuildUITyp>None</extraBuildUITyp>
+         <buildingItems length="2">
+            <Item ID="wood">
+               <count>15</count>
+            </Item>
+            <Item ID="tools">
+               <count>5</count>
+            </Item>
+         </buildingItems>
+         <spriteBaseName>hempweaver</spriteBaseName>
+         <contactRange>0.0</contactRange>
+         <forMarketplace>true</forMarketplace>
+         <maxNumberOfWorker>1</maxNumberOfWorker>
+         <produceTime>10.0</produceTime>
+         <maxOutputStorage>5</maxOutputStorage>
+         <efficiency>1.0</efficiency>
+         <output length="1">
+            <Item ID="hempfabric">
+               <count>1</count>
+            </Item>
+         </output>
+         <intake length="1">
+            <Item ID="hemp">
+               <count>2</count>
+            </Item>
+         </intake>
+         <inputTyp>AND</inputTyp>
+      </production>
+      <production ID="hemptailor">
+         <Name>
             <entry lang="Deutsch">Hanfschneider</entry>
+            <entry lang="English">Hemp Tailor´s Hut</entry>
+         </Name>
+         <Description>
+            <entry lang="Deutsch">Produziert Hanfkleidung aus Hanfgewebe.</entry>
+            <entry lang="English">Produces hempclothes out of hemp fabric.</entry>
+         </Description>
+         <HoverOver>
+            <entry lang="Deutsch">Hanfschneider</entry>
+            <entry lang="English">Hemp Tailor</entry>
          </HoverOver>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
@@ -2140,7 +2109,6 @@
          <canBeBuildOver>false</canBeBuildOver>
          <canBeUpgraded>false</canBeUpgraded>
          <canTakeDamage>true</canTakeDamage>
-         <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
          <upkeepCost>40</upkeepCost>
          <buildCost>750</buildCost>
@@ -2177,16 +2145,16 @@
       </production>
       <production ID="bakery">
          <Name>
-            <entry lang="English">Bakery</entry>
             <entry lang="Deutsch">Bäckerei</entry>
+            <entry lang="English">Bakery</entry>
          </Name>
          <Description>
-            <entry lang="English">Consums flour to make bread.</entry>
             <entry lang="Deutsch">Produziert aus Mehl Brot.</entry>
+            <entry lang="English">Consums flour to make bread.</entry>
          </Description>
          <HoverOver>
-            <entry lang="English">Bakery</entry>
             <entry lang="Deutsch">Bäckerei</entry>
+            <entry lang="English">Bakery</entry>
          </HoverOver>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
@@ -2202,7 +2170,6 @@
          <canBeBuildOver>false</canBeBuildOver>
          <canBeUpgraded>false</canBeUpgraded>
          <canTakeDamage>true</canTakeDamage>
-         <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
          <upkeepCost>100</upkeepCost>
          <buildCost>500</buildCost>
@@ -2242,16 +2209,16 @@
       </production>
       <production ID="flourmill">
          <Name>
-            <entry lang="English">Flour Mill</entry>
             <entry lang="Deutsch">Getreidemühle</entry>
+            <entry lang="English">Flour Mill</entry>
          </Name>
          <Description>
-            <entry lang="English">Consums wheat to produce flour.</entry>
             <entry lang="Deutsch">Verbraucht Getreide um Mehl zu erstellen.</entry>
+            <entry lang="English">Consums wheat to produce flour.</entry>
          </Description>
          <HoverOver>
-            <entry lang="English">Flour Mill</entry>
             <entry lang="Deutsch">Getreidemühle</entry>
+            <entry lang="English">Flour Mill</entry>
          </HoverOver>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
@@ -2267,7 +2234,6 @@
          <canBeBuildOver>false</canBeBuildOver>
          <canBeUpgraded>false</canBeUpgraded>
          <canTakeDamage>true</canTakeDamage>
-         <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
          <upkeepCost>50</upkeepCost>
          <buildCost>1500</buildCost>
@@ -2307,16 +2273,16 @@
       </production>
       <production ID="ironsmelter">
          <Name>
-            <entry lang="English">Iron Smelter</entry>
             <entry lang="Deutsch">Eisenerzschmelze</entry>
+            <entry lang="English">Iron Smelter</entry>
          </Name>
          <Description>
-            <entry lang="English">Uses coal and iron ore to produce iron ingots.</entry>
             <entry lang="Deutsch">Benötigt Kohle und Eisenerz um Eisenrohling zuerstellen.</entry>
+            <entry lang="English">Uses coal and iron ore to produce iron ingots.</entry>
          </Description>
          <HoverOver>
-            <entry lang="English">Iron Smelter</entry>
             <entry lang="Deutsch">Eisenerzschmelze</entry>
+            <entry lang="English">Iron Smelter</entry>
          </HoverOver>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
@@ -2332,7 +2298,6 @@
          <canBeBuildOver>false</canBeBuildOver>
          <canBeUpgraded>false</canBeUpgraded>
          <canTakeDamage>true</canTakeDamage>
-         <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
          <upkeepCost>100</upkeepCost>
          <buildCost>1250</buildCost>
@@ -2375,16 +2340,16 @@
       </production>
       <production ID="saltmill">
          <Name>
-            <entry lang="English">Salt Mill</entry>
             <entry lang="Deutsch">Salzmühle</entry>
+            <entry lang="English">Salt Mill</entry>
          </Name>
          <Description>
-            <entry lang="English">Millt grain salt to produce salt.</entry>
             <entry lang="Deutsch">Mahlt grobes Salz zu Salz.</entry>
+            <entry lang="English">Millt grain salt to produce salt.</entry>
          </Description>
          <HoverOver>
-            <entry lang="English">Salt Mill</entry>
             <entry lang="Deutsch">Salzmühle</entry>
+            <entry lang="English">Salt Mill</entry>
          </HoverOver>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
@@ -2400,7 +2365,6 @@
          <canBeBuildOver>false</canBeBuildOver>
          <canBeUpgraded>false</canBeUpgraded>
          <canTakeDamage>true</canTakeDamage>
-         <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
          <upkeepCost>45</upkeepCost>
          <buildCost>1400</buildCost>
@@ -2440,16 +2404,16 @@
       </production>
       <production ID="cheesedairy">
          <Name>
-            <entry lang="English">Cheese Dairy</entry>
             <entry lang="Deutsch">Käserei</entry>
+            <entry lang="English">Cheese Dairy</entry>
          </Name>
          <Description>
-            <entry lang="English">Uses Milk to produce Cheese.</entry>
             <entry lang="Deutsch">Braucht Milch um Käse zu erstellen.</entry>
+            <entry lang="English">Uses Milk to produce Cheese.</entry>
          </Description>
          <HoverOver>
-            <entry lang="English">Cheese Dairy</entry>
             <entry lang="Deutsch">Käserei</entry>
+            <entry lang="English">Cheese Dairy</entry>
          </HoverOver>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
@@ -2465,7 +2429,6 @@
          <canBeBuildOver>false</canBeBuildOver>
          <canBeUpgraded>false</canBeUpgraded>
          <canTakeDamage>true</canTakeDamage>
-         <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
          <upkeepCost>150</upkeepCost>
          <buildCost>1500</buildCost>
@@ -2505,16 +2468,16 @@
       </production>
       <production ID="toolmakersworkshop">
          <Name>
-            <entry lang="English">Toolmaker&apos;s Workshop</entry>
             <entry lang="Deutsch">Werkzeugemacher</entry>
+            <entry lang="English">Toolmaker&apos;s Workshop</entry>
          </Name>
          <Description>
-            <entry lang="English">Uses iron ingots to produce tools.</entry>
             <entry lang="Deutsch">Produzirt aus Eisenerzrohlingen Werkzeuge.</entry>
+            <entry lang="English">Uses iron ingots to produce tools.</entry>
          </Description>
          <HoverOver>
-            <entry lang="English">Toolmaker&apos;s Workshop</entry>
             <entry lang="Deutsch">Werkzeugemacher</entry>
+            <entry lang="English">Toolmaker&apos;s Workshop</entry>
          </HoverOver>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
@@ -2530,7 +2493,6 @@
          <canBeBuildOver>false</canBeBuildOver>
          <canBeUpgraded>false</canBeUpgraded>
          <canTakeDamage>true</canTakeDamage>
-         <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
          <upkeepCost>75</upkeepCost>
          <buildCost>750</buildCost>
@@ -2570,16 +2532,16 @@
       </production>
       <production ID="pigbutcher">
          <Name>
-            <entry lang="English">Pig Butcher</entry>
             <entry lang="Deutsch">Schweinemetzger</entry>
+            <entry lang="English">Pig Butcher</entry>
          </Name>
          <Description>
-            <entry lang="English">Butchers pigs to produce pig-meat and leather.</entry>
             <entry lang="Deutsch">Schlachtet Schweine um Schweinefleish und Leder zu produzieren.</entry>
+            <entry lang="English">Butchers pigs to produce pig-meat and leather.</entry>
          </Description>
          <HoverOver>
-            <entry lang="English">Pig Butcher</entry>
             <entry lang="Deutsch">Schweinemetzger</entry>
+            <entry lang="English">Pig Butcher</entry>
          </HoverOver>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
@@ -2595,7 +2557,6 @@
          <canBeBuildOver>false</canBeBuildOver>
          <canBeUpgraded>false</canBeUpgraded>
          <canTakeDamage>true</canTakeDamage>
-         <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
          <upkeepCost>160</upkeepCost>
          <buildCost>1700</buildCost>
@@ -2638,12 +2599,12 @@
       </production>
       <production ID="ropery">
          <Name>
-            <entry lang="English">Ropery</entry>
             <entry lang="Deutsch">Seilerei</entry>
+            <entry lang="English">Ropery</entry>
          </Name>
          <Description>
-            <entry lang="English">Creates Ropes.</entry>
             <entry lang="Deutsch">Stellt Seile her.</entry>
+            <entry lang="English">Creates Ropes.</entry>
          </Description>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
@@ -2659,7 +2620,6 @@
          <canBeBuildOver>false</canBeBuildOver>
          <canBeUpgraded>false</canBeUpgraded>
          <canTakeDamage>true</canTakeDamage>
-         <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
          <upkeepCost>30</upkeepCost>
          <buildCost>2500</buildCost>
@@ -2698,16 +2658,16 @@
    <warehouses>
       <warehouse ID="warehouse1">
          <Name>
-            <entry lang="English">Warehouse I</entry>
             <entry lang="Deutsch">Kontor I</entry>
+            <entry lang="English">Warehouse I</entry>
          </Name>
          <Description>
-            <entry lang="English">First structure of any City and it is used to trade with Ships.</entry>
             <entry lang="Deutsch">Das erste Gebäude einer Stadt und wird dazu genutzt mit Schiffen zu handeln.</entry>
+            <entry lang="English">First structure of any City and it is used to trade with Ships.</entry>
          </Description>
          <HoverOver>
-            <entry lang="English">Warehouse</entry>
             <entry lang="Deutsch">Kontor</entry>
+            <entry lang="English">Warehouse</entry>
          </HoverOver>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
@@ -2729,7 +2689,6 @@
          <canBeBuildOver>false</canBeBuildOver>
          <canBeUpgraded>true</canBeUpgraded>
          <canTakeDamage>true</canTakeDamage>
-         <mustFrontBuildDir>W</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
          <upkeepCost>10</upkeepCost>
          <buildCost>300</buildCost>
@@ -2746,13 +2705,13 @@
             </Item>
          </buildingItems>
          <spriteBaseName>warehouse</spriteBaseName>
-		 <workerID>roadcarrier</workerID>
          <contactRange>6.3</contactRange>
          <forMarketplace>true</forMarketplace>
          <maxNumberOfWorker>1</maxNumberOfWorker>
          <produceTime>0.0</produceTime>
          <maxOutputStorage>0</maxOutputStorage>
          <efficiency>1.0</efficiency>
+         <workerID>roadcarrier</workerID>
          <takeOverStartGoal>100.0</takeOverStartGoal>
          <tradeItemCount>0</tradeItemCount>
       </warehouse>
@@ -2760,16 +2719,16 @@
    <homes>
       <home ID="peasanthouse">
          <Name>
-            <entry lang="English">Peasant house</entry>
             <entry lang="Deutsch">Bauernhaus</entry>
+            <entry lang="English">Peasant house</entry>
          </Name>
          <Description>
-            <entry lang="English">Peasant lives here.</entry>
             <entry lang="Deutsch">Bauern wohnen hier.</entry>
+            <entry lang="English">Peasant lives here.</entry>
          </Description>
          <HoverOver>
-            <entry lang="English">Peasant </entry>
             <entry lang="Deutsch">Bauern</entry>
+            <entry lang="English">Peasant </entry>
          </HoverOver>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
@@ -2785,7 +2744,6 @@
          <canBeBuildOver>false</canBeBuildOver>
          <canBeUpgraded>false</canBeUpgraded>
          <canTakeDamage>true</canTakeDamage>
-         <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>true</canStartBurning>
          <upkeepCost>0</upkeepCost>
          <buildCost>0</buildCost>
@@ -2805,16 +2763,16 @@
       </home>
       <home ID="citizenhouse">
          <Name>
-            <entry lang="English">Citizen house</entry>
             <entry lang="Deutsch">Bürgerhaus</entry>
+            <entry lang="English">Citizen house</entry>
          </Name>
          <Description>
-            <entry lang="English">Citizen lives here.</entry>
             <entry lang="Deutsch">Bürger leben hier.</entry>
+            <entry lang="English">Citizen lives here.</entry>
          </Description>
          <HoverOver>
-            <entry lang="English">Citizen </entry>
             <entry lang="Deutsch">Bürger </entry>
+            <entry lang="English">Citizen </entry>
          </HoverOver>
          <canBeBuild>false</canBeBuild>
          <isWalkable>false</isWalkable>
@@ -2830,7 +2788,6 @@
          <canBeBuildOver>false</canBeBuildOver>
          <canBeUpgraded>false</canBeUpgraded>
          <canTakeDamage>true</canTakeDamage>
-         <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
          <upkeepCost>0</upkeepCost>
          <buildCost>0</buildCost>
@@ -2853,16 +2810,16 @@
       </home>
       <home ID="patricianhouse">
          <Name>
-            <entry lang="English">Patrician house</entry>
             <entry lang="Deutsch">Patrizierhaus</entry>
+            <entry lang="English">Patrician house</entry>
          </Name>
          <Description>
-            <entry lang="English">Patrician lives here.</entry>
             <entry lang="Deutsch">Patrizier leben hier.</entry>
+            <entry lang="English">Patrician lives here.</entry>
          </Description>
          <HoverOver>
-            <entry lang="English">Patrician </entry>
             <entry lang="Deutsch">Patrizier </entry>
+            <entry lang="English">Patrician </entry>
          </HoverOver>
          <canBeBuild>false</canBeBuild>
          <isWalkable>false</isWalkable>
@@ -2878,7 +2835,6 @@
          <canBeBuildOver>false</canBeBuildOver>
          <canBeUpgraded>false</canBeUpgraded>
          <canTakeDamage>true</canTakeDamage>
-         <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
          <upkeepCost>0</upkeepCost>
          <buildCost>0</buildCost>
@@ -2904,16 +2860,16 @@
       </home>
       <home ID="noblemanhouse">
          <Name>
-            <entry lang="English">Nobleman house</entry>
             <entry lang="Deutsch">Adligenhaus</entry>
+            <entry lang="English">Nobleman house</entry>
          </Name>
          <Description>
-            <entry lang="English">Nobleman lives here.</entry>
             <entry lang="Deutsch">Adlige leben hier.</entry>
+            <entry lang="English">Nobleman lives here.</entry>
          </Description>
          <HoverOver>
-            <entry lang="English">Nobleman </entry>
             <entry lang="Deutsch">Adlige </entry>
+            <entry lang="English">Nobleman </entry>
          </HoverOver>
          <canBeBuild>false</canBeBuild>
          <isWalkable>false</isWalkable>
@@ -2929,7 +2885,6 @@
          <canBeBuildOver>false</canBeBuildOver>
          <canBeUpgraded>false</canBeUpgraded>
          <canTakeDamage>true</canTakeDamage>
-         <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
          <upkeepCost>0</upkeepCost>
          <buildCost>0</buildCost>
@@ -2960,32 +2915,36 @@
    <militarystructures>
       <militarystructure ID="shipyard">
          <Name>
-            <entry lang="English">Shipyard</entry>
             <entry lang="Deutsch">Werft</entry>
+            <entry lang="English">Shipyard</entry>
          </Name>
          <Description>
-            <entry lang="English">Builds ships.</entry>
             <entry lang="Deutsch">Baut Schiffe.</entry>
+            <entry lang="English">Builds ships.</entry>
          </Description>
          <HoverOver>
-            <entry lang="English">Shipyard</entry>
             <entry lang="Deutsch">Werft</entry>
+            <entry lang="English">Shipyard</entry>
          </HoverOver>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
-         <hasHitbox>false</hasHitbox>
+         <hasHitbox>true</hasHitbox>
          <maxHealth>5000.0</maxHealth>
          <structureRange>0</structureRange>
-         <populationLevel>1</populationLevel>
+         <populationLevel>0</populationLevel>
          <populationCount>0</populationCount>
          <structureLevel>0</structureLevel>
          <tileWidth>3</tileWidth>
          <tileHeight>4</tileHeight>
+         <buildTileTypes length="3">
+            <tileType length="4"></tileType>
+            <tileType length="4"></tileType>
+            <tileType length="4">Shore, Shore, Shore, Shore</tileType>
+         </buildTileTypes>
          <canRotate>true</canRotate>
          <canBeBuildOver>false</canBeBuildOver>
          <canBeUpgraded>false</canBeUpgraded>
          <canTakeDamage>true</canTakeDamage>
-         <mustFrontBuildDir>E</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
          <upkeepCost>50</upkeepCost>
          <buildCost>1500</buildCost>
@@ -3010,27 +2969,30 @@
          </canBeBuildUnits>
          <buildTimeModifier>1.0</buildTimeModifier>
          <buildQueueLength>1</buildQueueLength>
-         <damage>0</damage>
+         <damage>0.0</damage>
+         <attackRate>0.0</attackRate>
+         <attackRange>0.0</attackRange>
+         <projectileSpeed>0.0</projectileSpeed>
       </militarystructure>
       <militarystructure ID="fort">
          <Name>
-            <entry lang="English">Fort</entry>
             <entry lang="Deutsch">Kastell</entry>
+            <entry lang="English">Fort</entry>
          </Name>
          <Description>
-            <entry lang="English">Can train Units.</entry>
             <entry lang="Deutsch">Kann Einheiten ausbilden.</entry>
+            <entry lang="English">Can train Units.</entry>
          </Description>
          <HoverOver>
-            <entry lang="English">Fort</entry>
             <entry lang="Deutsch">Kastell</entry>
+            <entry lang="English">Fort</entry>
          </HoverOver>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
          <hasHitbox>true</hasHitbox>
          <maxHealth>2500.0</maxHealth>
          <structureRange>0</structureRange>
-         <populationLevel>1</populationLevel>
+         <populationLevel>0</populationLevel>
          <populationCount>0</populationCount>
          <structureLevel>0</structureLevel>
          <tileWidth>3</tileWidth>
@@ -3039,7 +3001,6 @@
          <canBeBuildOver>false</canBeBuildOver>
          <canBeUpgraded>false</canBeUpgraded>
          <canTakeDamage>true</canTakeDamage>
-         <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
          <upkeepCost>250</upkeepCost>
          <buildCost>5000</buildCost>
@@ -3061,28 +3022,30 @@
          </canBeBuildUnits>
          <buildTimeModifier>1.0</buildTimeModifier>
          <buildQueueLength>1</buildQueueLength>
-         <damage>0</damage>
+         <damage>0.0</damage>
+         <attackRate>0.0</attackRate>
+         <attackRange>0.0</attackRange>
+         <projectileSpeed>0.0</projectileSpeed>
       </militarystructure>
    </militarystructures>
    <servicestructures>
       <servicestructure ID="firewell">
          <Name>
-            <entry lang="English">Well</entry>
             <entry lang="Deutsch">Brunnen</entry>
+            <entry lang="English">Well</entry>
          </Name>
          <Description>
-            <entry lang="English">Worker can use it to slowly put out fires.</entry>
             <entry lang="Deutsch">Arbeiter können damit langsam Feuer löschen.</entry>
+            <entry lang="English">Worker can use it to slowly put out fires.</entry>
          </Description>
          <HoverOver>
-            <entry lang="English">Well</entry>
             <entry lang="Deutsch">Brunnen</entry>
+            <entry lang="English">Well</entry>
          </HoverOver>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
          <hasHitbox>false</hasHitbox>
          <maxHealth>40.0</maxHealth>
-        <workerID>firefighter</workerID>
          <structureRange>8</structureRange>
          <populationLevel>0</populationLevel>
          <populationCount>0</populationCount>
@@ -3093,7 +3056,6 @@
          <canBeBuildOver>false</canBeBuildOver>
          <canBeUpgraded>false</canBeUpgraded>
          <canTakeDamage>false</canTakeDamage>
-         <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
          <upkeepCost>25</upkeepCost>
          <buildCost>500</buildCost>
@@ -3117,15 +3079,16 @@
          </effectsOnTargets>
          <maxNumberOfWorker>1</maxNumberOfWorker>
          <workSpeed>0.03334</workSpeed>
+         <workerID>firefighter</workerID>
       </servicestructure>
       <servicestructure ID="firebrigade">
          <Name>
-            <entry lang="English">Fire Brigade</entry>
             <entry lang="Deutsch">Feuerwehr</entry>
+            <entry lang="English">Fire Brigade</entry>
          </Name>
          <Description>
-            <entry lang="English">Worker can use it to faster than a well to put out fires.</entry>
             <entry lang="Deutsch">Arbeiter können damit schneller als mit dem Brunnen Feuer löschen.</entry>
+            <entry lang="English">Worker can use it to faster than a well to put out fires.</entry>
          </Description>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
@@ -3141,7 +3104,6 @@
          <canBeBuildOver>false</canBeBuildOver>
          <canBeUpgraded>false</canBeUpgraded>
          <canTakeDamage>false</canTakeDamage>
-         <mustFrontBuildDir>None</mustFrontBuildDir>
          <canStartBurning>false</canStartBurning>
          <upkeepCost>100</upkeepCost>
          <buildCost>2500</buildCost>

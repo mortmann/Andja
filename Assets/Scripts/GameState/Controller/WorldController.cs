@@ -291,7 +291,6 @@ namespace Andja.Controller {
                 island.SetTiles(thisStruct.Tiles);
                 island.Placement = thisStruct.GetPosition();
             }
-            Pathfinding.WorldGraph.Calculate();
             World.Load();
             //Now turn the loaded World into a playable World
             List<Structure> loadedStructures = new List<Structure>();

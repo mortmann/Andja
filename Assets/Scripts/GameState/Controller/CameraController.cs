@@ -3,6 +3,7 @@ using Andja.Model;
 using Andja.UI.Menu;
 using Andja.Utility;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -41,6 +42,7 @@ namespace Andja.Controller {
         private Vector2 showBounds = new Vector2();
         public static CameraController Instance;
         private CameraSave cameraSave;
+        private bool followUnitActive;
 
         private void Awake() {
             if (Instance != null) {
@@ -99,6 +101,24 @@ namespace Andja.Controller {
 
         }
 
+        internal void ToggleFollowUnit(Unit unit) {
+            if (followUnitActive) {
+                followUnitActive = false;
+            }
+            else {
+                followUnitActive = true;
+                StartCoroutine(FollowUnit(unit));
+            }
+        }
+
+        private IEnumerator FollowUnit(Unit unit) {
+            while(followUnitActive) {
+                MoveCameraToPosition(unit.PositionVector2, true);
+                yield return new WaitForEndOfFrame(); 
+            }
+            yield break;
+        }
+
         private void Update() {
             //DO not move atall when Menu is Open
             if (PauseMenu.IsOpen || Loading.IsLoading) {
@@ -132,6 +152,9 @@ namespace Andja.Controller {
 
             Vector3 newLower = cameraMove + lower;
             Vector3 newUpper = cameraMove + upper;
+            if(cameraMove.sqrMagnitude > 0) {
+                followUnitActive = false;
+            }
             if (newUpper.x > showBounds.x) {
                 if (cameraMove.x > 0) {
                     cameraMove.x = Mathf.Clamp(cameraMove.x, 0, showBounds.x - upper.x);
@@ -153,11 +176,13 @@ namespace Andja.Controller {
                 }
             }
             Camera.main.transform.Translate(cameraMove);
+            ClampCamera();
+
             lastFramePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             lastFramePosition.z = 0;
 
             Rect oldViewRange = new Rect(CameraViewRange);
-            int mod = 2 + (int)zoomLevel / 2;//TODO: optimize this
+            int mod = 2 + (int)zoomLevel / 2;
             int lX = (int)lower.x - mod;
             int uX = (int)upper.x + mod;
             int lY = (int)lower.y - mod;
@@ -183,7 +208,6 @@ namespace Andja.Controller {
                     if (isInNew == false && isInOld == false) {
                         continue;
                     }
-
                     if (isInNew) {
                         islandInview = true;
                         nearestIsland = tile_data.Island;
@@ -292,10 +316,24 @@ namespace Andja.Controller {
             Instance = null;
         }
 
-        public void MoveCameraToPosition(Vector2 pos) {
+        public void MoveCameraToPosition(Vector2 pos, bool follow = false) {
+            followUnitActive = follow;
             Camera.main.transform.position = new Vector3(pos.x, pos.y, Camera.main.transform.position.z);
+            ClampCamera();
             currFramePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             lastFramePosition = currFramePosition;
+        }
+
+        void ClampCamera() {
+            float camHorzExtent = Camera.main.aspect * Camera.main.orthographicSize;
+            float leftBound = 0 + camHorzExtent;
+            float rightBound = World.Current.Width - camHorzExtent;
+            float bottomBound = 0 + Camera.main.orthographicSize;
+            float topBound = World.Current.Height - Camera.main.orthographicSize;
+
+            float camX = Mathf.Clamp(Camera.main.transform.position.x, leftBound, rightBound);
+            float camY = Mathf.Clamp(Camera.main.transform.position.y, bottomBound, topBound);
+            Camera.main.transform.position = new Vector3(camX, camY, Camera.main.transform.position.z);
         }
 
         public CameraSave GetSaveCamera() {

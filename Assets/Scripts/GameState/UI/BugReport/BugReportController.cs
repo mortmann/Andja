@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
-using Andja.Trello;
 using Andja.Controller;
 using Andja.Utility;
 using System;
@@ -82,6 +81,9 @@ namespace Andja {
             ErrorText.text = error;
             Buffering.gameObject.SetActive(false);
             SendReport.interactable = true;
+        }
+        private void OnDisable() {
+            WorldController.Instance?.Unpause();
         }
     }
 }

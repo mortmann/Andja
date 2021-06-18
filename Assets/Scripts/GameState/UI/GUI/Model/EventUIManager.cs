@@ -58,9 +58,9 @@ namespace Andja.UI.Model {
             if(shownToTime.ContainsKey(value)) {
                 if (DateTime.Now.Subtract(shownToTime[value]).TotalSeconds <= onScreenTimer) {
                     return true;
-                }
+                } 
             }
-            shownToTime.Add(value, DateTime.Now);
+            shownToTime[value] = DateTime.Now;
             return false;
         }
 

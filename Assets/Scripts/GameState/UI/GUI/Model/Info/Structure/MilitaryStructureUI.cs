@@ -60,8 +60,8 @@ namespace Andja.UI.Model {
         }
 
         public void OnDisable() {
-            CurrentMilitary.UnregisterOnDestroyCallback(OnStructureDestroy);
-            MouseController.Instance.UnselectStructure();
+            CurrentMilitary?.UnregisterOnDestroyCallback(OnStructureDestroy);
+            MouseController.Instance?.UnselectStructure();
             CurrentMilitary = null;
         }
     }

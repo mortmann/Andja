@@ -177,17 +177,7 @@ namespace Andja.Model {
             direction.Normalize();
             float sideAngle = Mathf.Sign(Vector2.SignedAngle(direction, forward));
             float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-            
-            //Vector2 side;
-            //if (sideAngle < 0) {
-            //    side = Quaternion.Euler(0, 0, pathfinding.rotation) * new Vector2(0, 1);
-            //}
-            //else {
-            //    side = Quaternion.Euler(0, 0, pathfinding.rotation) * new Vector2(0, -1);
-            //}
-            //float angle = Vector2.SignedAngle(direction, side);
-            ////float sideAngle = Vector2.SignedAngle(direction, forward);
-            ////float shootAngle = Vector2.SignedAngle(direction, side);
+
             return new Shoot {
                 sideAngle = angle,
                 rotateToAngle = angle + (sideAngle) * 90,

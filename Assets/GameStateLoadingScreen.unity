@@ -262,57 +262,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   GraphyPrefab: {fileID: 11496292, guid: 0abab5bb77339e4428787a870eb31bd3, type: 3}
-  FirstLevelCommands:
-  - speed
-  - player
-  - maxfps
-  - city
-  - graphy
-  - profiler
-  - unit
-  - ship
-  - island
-  - spawn
-  - event
-  - debugdata
-  - camera
-  GraphyCommands:
-  - full
-  - medium
-  - light
-  - fps
-  - switchmode
-  ShipCommands:
-  - cannon
   EventsCommands:
   - trigger
   - stop
-  SpawnCommands:
-  - unit
-  - crate
-  CityCommands:
-  - item
-  - fillitup
-  - builditems
-  - name
-  - player
-  - effect
-  PlayerCommands:
-  - change
-  - money
-  - diplomatic
-  - effect
-  UnitCommands:
-  - item
-  - build
-  - kill
-  - name
-  - player
-  - event
-  - effect
-  EffectsCommands:
-  - add
-  - remove
 --- !u!4 &172245057 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 430686, guid: dfbb72e7b75263b4da3c1b05eaa385c6,
@@ -1131,7 +1083,7 @@ PrefabInstance:
     - target: {fileID: 8624619892147010575, guid: dfbb72e7b75263b4da3c1b05eaa385c6,
         type: 3}
       propertyPath: editorloadsavegame
-      value: Test 10
+      value: fogowar
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 11473390, guid: dfbb72e7b75263b4da3c1b05eaa385c6, type: 3}

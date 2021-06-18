@@ -13,7 +13,6 @@ namespace Andja.Pathfinding {
         public float f_Score; 
         public float g_Score;
 
-        public bool isOpened;
         public bool isClosed;
         public Node parent;
 
@@ -58,7 +57,6 @@ namespace Andja.Pathfinding {
         public void Reset() {
             this.f_Score = 0;
             this.g_Score = 0;
-            this.isOpened = false;
             this.isClosed = false;
             this.parent = null;
             overrideWalkable = false;

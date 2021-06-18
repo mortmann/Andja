@@ -27,8 +27,8 @@ namespace Andja.Pathfinding {
                 threads[i].Start();
             }
         }
-        public static PathJob EnqueueJob(IPathfindAgent agent, Vector2 Start, Vector2 End, Action OnFinished) {
-            PathJob job = new PathJob(agent, Start, End);
+        public static PathJob EnqueueJob(IPathfindAgent agent, PathGrid grid, Vector2 Start, Vector2 End, Action OnFinished) {
+            PathJob job = new PathJob(agent, grid, Start, End);
             job.OnFinished += OnFinished;
             queuedJobs.Enqueue(job);
             return job;
@@ -56,9 +56,10 @@ namespace Andja.Pathfinding {
             StopWatch.Start();
             Dictionary<string, PathGrid> idToGrid = new Dictionary<string, PathGrid>();
             //Debug.Log("Start Thread "+ threadNumber);
+            WorldGraph worldGraph = null;
             int check = 1000;
             while (FindPaths) {
-                if(queuedJobs.IsEmpty) {
+                if (queuedJobs.IsEmpty) {
                     Thread.Sleep(50);
                     continue;
                 }
@@ -81,13 +82,22 @@ namespace Andja.Pathfinding {
                 try {
                     switch (job.agent.PathingMode) {
                         case PathingMode.World:
-                            job.Path = Pathfinder.FindOceanPath(job.agent, job.Start, job.End);
+                            if (worldGraph == null) {
+                                lock (Model.World.Current.WorldGraph) lock (Model.World.Current.Tilesmap)
+                                    worldGraph = Model.World.Current.WorldGraph.Clone();
+                            } else {
+                                worldGraph.Reset();
+                            }
+                            job.Path = Pathfinder.FindOceanPath(job.agent, worldGraph, job.Start, job.End);
                             break;
                         case PathingMode.IslandMultiplePoints:
                             job.Path = DoMultipleStartPositions(job, idToGrid);
                             break;
                         case PathingMode.IslandSinglePoint:
                             job.Path = Pathfinder.Find(job, GetGrid(idToGrid, job.Grid[0]), job.Start, job.End);
+                            if(job.agent.PathDestination == PathDestination.Exact) {
+                                job.Path.Enqueue(job.End);
+                            }
                             job.PathUsedGrid = job.Grid[0];
                             break;
                         case PathingMode.Route:
@@ -227,12 +237,6 @@ namespace Andja.Pathfinding {
             OnFinished += Finished;
         }
 
-        public PathJob(IPathfindAgent agent, Vector2 start, Vector2 end) {
-            Status = JobStatus.InQueue;
-            this.agent = agent;
-            Start = start;
-            End = end;
-        }
         public PathJob(IPathfindAgent agent, PathGrid grid, Vector2 start, Vector2 end,
                         List<Vector2> StartTiles, List<Vector2> EndTiles) {
             Status = JobStatus.InQueue;

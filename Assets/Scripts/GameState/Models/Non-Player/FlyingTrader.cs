@@ -215,6 +215,7 @@ namespace Andja.Model {
             }
 
             internal void Load() {
+                Ship.Load();
                 if (CurrentDestination == null) {
                     SendHome();
                 }

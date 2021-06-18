@@ -1,4 +1,5 @@
 ﻿using Andja.Editor;
+using Andja.FogOfWar;
 using Andja.Model;
 using Andja.Model.Components;
 using Andja.Utility;
@@ -114,17 +115,24 @@ namespace Andja.Controller {
                 c.contact = ((OutputStructure)structure);
                 goContact.name = "ContactCollider";
             }
-
-            if (structure.HasHitbox) {
-                BoxCollider2D col = go.AddComponent<BoxCollider2D>();
-                col.size = new Vector2(sr.sprite.textureRect.size.x / sr.sprite.pixelsPerUnit, sr.sprite.textureRect.size.y / sr.sprite.pixelsPerUnit);
-            }
             if (structure.Effects != null) {
                 foreach (Effect e in structure.Effects) {
                     OnStructureEffectChange(structure, e, true);
                 }
             }
+            if(GameData.FogOfWarStyle == FogOfWarStyle.Always) /*&&structure.PlayerNumber != PlayerController.currentPlayerNumber*/ {
 
+                go.AddComponent<FogOfWarStructure>().Link(structure);
+                BoxCollider2D col = go.AddComponent<BoxCollider2D>();
+                col.size = new Vector2(sr.sprite.textureRect.size.x / sr.sprite.pixelsPerUnit, sr.sprite.textureRect.size.y / sr.sprite.pixelsPerUnit);
+                col.isTrigger = structure.HasHitbox;
+                //TODO: if the player sees it remove the maskinteraction && check then on update if it is supposed to update sprite
+            } else {
+                if (structure.HasHitbox) {
+                    BoxCollider2D col = go.AddComponent<BoxCollider2D>();
+                    col.size = new Vector2(sr.sprite.textureRect.size.x / sr.sprite.pixelsPerUnit, sr.sprite.textureRect.size.y / sr.sprite.pixelsPerUnit);
+                }
+            }
             //SOUND PART -- IMPORTANT
             SoundController.Instance?.OnStructureGOCreated(structure, go);
         }
@@ -168,22 +176,25 @@ namespace Andja.Controller {
                 effectGO.transform.SetParent(strgo.transform);
                 effectGO.transform.localPosition = new Vector3(0, 0, 0);
                 EffectAnimator ea = effectGO.AddComponent<EffectAnimator>();
-                if(effectToSprite.ContainsKey(effect.ID))
-                    ea.Show(effectToSprite[effect.ID].Get(target.GetID()), "Structures", effect);
+                if (effectToSprite.ContainsKey(effect.ID))
+                    ea.Show(effectToSprite[effect.ID].Get(target.GetID()), "Structures", effect, strgo.GetComponent<SpriteRenderer>());
             }
         }
 
-        private void OnStructureChanged(Structure structure) {
+        public void OnStructureChanged(Structure structure) {
             if (structure == null) {
                 Debug.LogError("Structure change and its empty?");
                 return;
             }
             if (structureGameObjectMap.ContainsKey(structure) == false) {
-                //			Debug.LogError ("StructureSprite not in the Map to a gameobject! "+ structure.SmallName+"@"+ structure.myBuildingTiles[0].toString ());
                 return;
             }
+            FogOfWarStructure fwg = structureGameObjectMap[structure].GetComponent<FogOfWarStructure>();
+            if (fwg.isCurrentlyVisible) {
+                return;
+            }
+            SpriteRenderer sr = structureGameObjectMap[structure].GetComponent<SpriteRenderer>();
             if (structure is GrowableStructure) {
-                SpriteRenderer sr = structureGameObjectMap[structure].GetComponent<SpriteRenderer>();
                 if (structureSprites.ContainsKey(structure.SmallName + "_" + ((GrowableStructure)structure).currentStage))
                     sr.sprite = structureSprites[structure.SmallName + "_" + ((GrowableStructure)structure).currentStage];
             }
@@ -267,7 +278,7 @@ namespace Andja.Controller {
             }
         }
 
-        private Sprite GetSprite(string name) {
+        public Sprite GetSprite(string name) {
             if (structureSprites.ContainsKey(name)) {
                 return structureSprites[name];
             }

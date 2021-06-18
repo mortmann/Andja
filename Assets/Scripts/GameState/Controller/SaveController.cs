@@ -425,7 +425,7 @@ namespace Andja.Controller {
                 ges = EC.GetSaveGameEventData().Serialize(true),
                 camera = CC.GetSaveCamera().Serialize(false),
                 ui = UI.GetUISaveData().Serialize(false),
-                fw = FogOfWarController.FogOfWarOn ? Encoding.ASCII.GetString(FW.GetFogOfWarBytes()) : null,
+                fw = FogOfWarController.FogOfWarOn ? Convert.ToBase64String(Zip(Convert.ToBase64String(FW.GetFogOfWarBytes()))) : null,
             };
 
             string save = "";
@@ -579,7 +579,7 @@ namespace Andja.Controller {
                 GameData.FogOfWarStyle = FogOfWarStyle.Off;
             }
             else {
-                FogOfWarData = Encoding.ASCII.GetBytes(state.fw);
+                FogOfWarData = Convert.FromBase64String(Unzip(Convert.FromBase64String(state.fw)));
             }
             loadingPercantage += 0.025f;
             yield return null;

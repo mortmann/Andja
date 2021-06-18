@@ -54,7 +54,7 @@ namespace Andja {
 
         public string editorloadsavegame;
         public static string setloadsavegame;
-        public static FogOfWarStyle FogOfWarStyle = FogOfWarStyle.Off;
+        public static FogOfWarStyle FogOfWarStyle = FogOfWarStyle.Always;
         public bool RandomSeed;
         public static int bots; // this is far from being in anykind relevant so
         public static int playerCount = 1;

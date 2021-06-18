@@ -321,7 +321,7 @@ namespace Andja.Model {
             if (unlock.units.Count > 0) {
                 cbUnitsUnlocked?.Invoke(unlock.units);
                 foreach (Unit u in unlock.units) {
-                    UnlockedStructures.Add(u.ID);
+                    UnlockedUnits.Add(u.ID);
                 }
             }
         }

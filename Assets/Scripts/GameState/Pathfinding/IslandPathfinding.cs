@@ -44,7 +44,8 @@ namespace Andja.Pathfinding {
         protected override void CalculatePath() {
             if (Job != null && (Job.Status == JobStatus.InQueue || Job.Status == JobStatus.Calculating))
                 PathfindingThreadHandler.RemoveJob(Job);
-            Job = PathfindingThreadHandler.EnqueueJob(agent, Position2, new Vector2(dest_X, dest_Y), OnPathJobFinished);
+            PathGrid grid = CurrTile.Island.Grid;
+            Job = PathfindingThreadHandler.EnqueueJob(agent, grid, Position2, new Vector2(dest_X, dest_Y), OnPathJobFinished);
         }
 
         private void OnPathJobFinished() {

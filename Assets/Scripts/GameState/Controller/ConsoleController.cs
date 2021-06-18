@@ -23,7 +23,7 @@ namespace Andja.Controller {
         private void OnEnable() {
             Instance = this;
             Application.logMessageReceived += LogCallbackHandler;
-            if (Application.isEditor == false || true) {
+            if (Application.isEditor == false) {
                 logPath = Path.Combine(SaveController.GetSaveGamesPath(), "logs");
                 string filepath = Path.Combine(logPath, tempLogName);
                 if (Directory.Exists(logPath) == false) {
@@ -116,7 +116,7 @@ namespace Andja.Controller {
             "speed", "player", "maxfps", "city", 
             "graphy", "profiler", "unit", "ship", 
             "island", "spawn", "event", 
-            "debugdata", "camera"
+            "debugdata", "camera", "fogofwar"
         };
         /// <summary>
         /// Splits the command into its parts on whitespaces and then tries to execute the different level commands
@@ -197,6 +197,11 @@ namespace Andja.Controller {
                 case "debugdata":
                     UIController.Instance?.ToggleDebugData();
                     happend = true;
+                    break;
+
+                case "fogofwar":
+                    var fogOfWar = GameObject.Find("FOW Canvas").transform.GetChild(0).gameObject;
+                    fogOfWar.SetActive(!fogOfWar.activeSelf);
                     break;
 
                 case "itsrainingbuildings":

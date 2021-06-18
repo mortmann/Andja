@@ -72,4 +72,5 @@ public class NewsFeedItem : MonoBehaviour, IPointerClickHandler {
             Application.OpenURL(linkInfo.GetLinkID());
         }
     }
+
 }

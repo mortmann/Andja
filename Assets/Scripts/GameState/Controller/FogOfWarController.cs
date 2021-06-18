@@ -1,9 +1,14 @@
 using Andja.Model;
+using System;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
 namespace Andja.Controller {
-
+    /// <summary>
+    /// Off and Unknown are working (should atleast)
+    /// Always has lighter shadow but does not conceal anything
+    /// </summary>
     public enum FogOfWarStyle { Off, Unknown, Always }
 
     public class FogOfWarController : MonoBehaviour {
@@ -103,15 +108,26 @@ namespace Andja.Controller {
             go.transform.localPosition = island.Center;
             Texture2D tex = new Texture2D(island.Width + 10, island.Height + 10);
 
-            for (int x = (-island.Width / 2) - 5; x < (island.Width / 2) + 5; x++) {
-                for (int y = (-island.Height / 2) - 5; y < (island.Height / 2) + 5; y++) {
-                    tex.SetPixel(x, y, new Color(1, 0, 0));
+            for (int x = 0; x < island.Width + 10; x++) {
+                for (int y = 0; y < island.Height + 10; y++) {
+                    tex.SetPixel(x, y, new Color(1, 1, 1));
                 }
             }
             tex.Apply();
-            SpriteRenderer sr = go.AddComponent<SpriteRenderer>();
-            sr.sprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(0.5f, 0.5f), 1);
-            go.layer = LayerMask.NameToLayer("FogOfWar Main");
+            //SpriteRenderer sr = go.AddComponent<SpriteRenderer>();
+            //sr.sprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(0.5f, 0.5f), 1);
+            //go.layer = LayerMask.NameToLayer("FogOfWar Main");
+            Sprite sprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(0.5f, 0.5f), 1);
+
+            GameObject fog = Instantiate(UnitFogModulePrefab);
+            fog.transform.SetParent(go.transform);
+            fog.transform.localPosition = Vector3.zero;
+            fog.GetComponentInChildren<SpriteMask>().sprite = sprite;
+            foreach(var v in fog.GetComponentsInChildren<SpriteRenderer>()){
+                v.sprite = sprite;
+            }
+            //go.AddComponent<Mask>();
+            //DeleteGO(go);
         }
 
         private void OnDisable() {
@@ -119,17 +135,40 @@ namespace Andja.Controller {
         }
 
         internal byte[] GetFogOfWarBytes() {
-            return ((Texture2D)FogImage.texture).GetRawTextureData();
+            Texture mainTexture = FogImage.texture;
+            Texture2D texture2D = new Texture2D(mainTexture.width, mainTexture.height, TextureFormat.RGBA32, false);
+            RenderTexture renderTexture = new RenderTexture(mainTexture.width, mainTexture.height, 32);
+            Graphics.Blit(mainTexture, renderTexture);
+            RenderTexture.active = renderTexture;
+            texture2D.ReadPixels(new Rect(0, 0, renderTexture.width, renderTexture.height), 0, 0);
+            texture2D.Apply();
+            return texture2D.EncodeToPNG();
         }
 
         internal void SetFogOfWarBytes(byte[] data) {
             try {
-                ((Texture2D)FogImage.texture).LoadRawTextureData(data);
+                Texture2D t2d = new Texture2D(World.Current.Width, World.Current.Height);
+                t2d.LoadImage(data);
+                t2d.Apply();
+                Sprite s = Sprite.Create(t2d, new Rect(0, 0, t2d.width, t2d.height),new Vector2(0.5f,0.5f),
+                    t2d.width / (float)World.Current.Width);
+                GameObject go = new GameObject();
+                SpriteRenderer sr = go.AddComponent<SpriteRenderer>();
+                sr.sprite = s;
+                go.layer = LayerMask.NameToLayer("FogOfWar Main");
+                go.transform.position = new Vector2(World.Current.Width, World.Current.Height) / 2f;
+                StartCoroutine(DeleteGO(go));
             }
-            catch {
+            catch(System.Exception e) {
+                Debug.Log(e.Message);
                 GameData.FogOfWarStyle = FogOfWarStyle.Off;
                 gameObject.SetActive(false);
             }
+        }
+
+        private IEnumerator DeleteGO(GameObject go) {
+            yield return new WaitForEndOfFrame();
+            Destroy(go);
         }
     }
 }

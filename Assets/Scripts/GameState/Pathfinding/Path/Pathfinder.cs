@@ -2,14 +2,12 @@ using Priority_Queue;
 using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
-using EpPathFinding.cs;
 using Andja.Model;
 
 namespace Andja.Pathfinding {
     public static class Pathfinder {
         public const float DIAGONAL_EXTRA_COST = 1.41421356237f;
         public const float NORMAL_COST = 1;
-        private static StaticGrid worldGrid;
         private static bool[][] worldTilemap;
 
         public static Queue<Vector2> Find(PathJob job, PathGrid grid, 
@@ -51,7 +49,6 @@ namespace Andja.Pathfinding {
             if (start == null || end == null) {
                 Debug.LogError(startPos + " or " + endPos + " not in grid " + grid.pathGridType);
             }
-            
 
             HashSet<Node> endNodes = null;
             if(endsPos != null) {
@@ -123,9 +120,8 @@ namespace Andja.Pathfinding {
             }
             return null;
         }
-        public static Queue<Vector2> FindOceanPath(IPathfindAgent agent, Vector2 startPos, Vector2 endPos) {
+        public static Queue<Vector2> FindOceanPath(IPathfindAgent agent, WorldGraph graph, Vector2 startPos, Vector2 endPos) {
             if (World.Current != null) {
-                worldGrid = World.Current.TilesGrid;
                 worldTilemap = World.Current.Tilesmap;
             }
             System.Diagnostics.Stopwatch stopwatch = new System.Diagnostics.Stopwatch();
@@ -135,44 +131,20 @@ namespace Andja.Pathfinding {
                 tempQueue.Enqueue(endPos);
                 return tempQueue;
             }
-            //Debug.Log("Starting took " + stopwatch.ElapsedMilliseconds + "(" + stopwatch.Elapsed.TotalSeconds + "s)");
-            Queue<Vector2> worldPoints = FindWorldPath(agent, startPos, endPos);
-            //Debug.Log("FindWorldPath took " + stopwatch.ElapsedMilliseconds + "(" + stopwatch.Elapsed.TotalSeconds + "s)");
-            if (Utility.Util.CheckLine(worldTilemap, startPos, worldPoints.Peek()) == false) {
-                JumpPointParam jpParam = new JumpPointParam(worldGrid, 
-                    new GridPos(Mathf.FloorToInt(startPos.x), Mathf.FloorToInt(startPos.y)), 
-                    new GridPos(Mathf.FloorToInt(worldPoints.Peek().x), Mathf.FloorToInt(worldPoints.Peek().y)), 
-                    true, DiagonalMovement.OnlyWhenNoObstacles);
-                List<GridPos> pos = JumpPointFinder.FindPath(jpParam);
-                foreach(GridPos gp in pos) {
-                    tempQueue.Enqueue(new Vector2(gp.x, gp.y));
-                }
-            }
-            //Debug.Log("Start Pathfinder took " + stopwatch.ElapsedMilliseconds + "(" + stopwatch.Elapsed.TotalSeconds + "s)");
+            Queue<Vector2> worldPoints = FindWorldPath(agent, graph, startPos, endPos);
+            if(worldPoints == null)
+                return tempQueue;
             foreach (Vector2 v in worldPoints) {
                 tempQueue.Enqueue(v);
             }
-            Vector2 lastWorld = worldPoints.Last();
-            if (worldTilemap[Mathf.FloorToInt(lastWorld.x)][Mathf.FloorToInt(lastWorld.y)] == false
-                || Utility.Util.CheckLine(worldTilemap, endPos, lastWorld) == false) {
-                JumpPointParam jpParam = new JumpPointParam(worldGrid,
-                    new GridPos(Mathf.FloorToInt(lastWorld.x), Mathf.FloorToInt(lastWorld.y)),
-                    new GridPos(Mathf.FloorToInt(endPos.x), Mathf.FloorToInt(endPos.y)),
-                    true, DiagonalMovement.OnlyWhenNoObstacles);
-                List<GridPos> pos = JumpPointFinder.FindPath(jpParam);
-                foreach (GridPos gp in pos) {
-                    tempQueue.Enqueue(new Vector2(gp.x, gp.y));
-                }
-            } 
             tempQueue.Enqueue(endPos);
-
             Queue<Vector2> finalQueue = new Queue<Vector2>();
             finalQueue.Enqueue(tempQueue.Dequeue());
             while (tempQueue.Count>0) {
                 Vector2 current = tempQueue.Dequeue();
                 Vector2 next = tempQueue.Count == 0 ? endPos : tempQueue.Peek();
                 if (Utility.Util.CheckLine(worldTilemap, finalQueue.Last(), next) == false) {
-                    finalQueue.Enqueue(current);
+                    finalQueue.Enqueue(current + new Vector2(0.5f, 0.5f));
                 }
             }
             finalQueue.Enqueue(endPos);
@@ -180,52 +152,42 @@ namespace Andja.Pathfinding {
             //Debug.Log("Total Ocean Pathfinder took " + stopwatch.ElapsedMilliseconds + "(" + stopwatch.Elapsed.TotalSeconds + "s)");
             return finalQueue;
         }
-        private static Queue<Vector2> FindWorldPath(IPathfindAgent agent, Vector2 startPos, Vector2 endPos) {
-            WorldNode start = WorldGraph.GetNodeFromWorldCoord(startPos);
-            WorldNode end = WorldGraph.GetNodeFromWorldCoord(endPos);
-            Dictionary<WorldNode, float> g_score = new Dictionary<WorldNode, float>();
-            Dictionary<WorldNode, float> f_score = new Dictionary<WorldNode, float>();
-            Dictionary<WorldNode, WorldNode> cameFrom = new Dictionary<WorldNode, WorldNode>();
-            HashSet<WorldNode> ClosedSet = new HashSet<WorldNode>();
+        private static Queue<Vector2> FindWorldPath(IPathfindAgent agent, WorldGraph graph, Vector2 startPos, Vector2 endPos) {
+            WorldNode start = graph.GetNodeFromWorldCoord(startPos);
+            WorldNode end = graph.GetNodeFromWorldCoord(endPos);
             SimplePriorityQueue<WorldNode> OpenSet = new SimplePriorityQueue<WorldNode>();
 
-            foreach (WorldNode n in WorldGraph.Nodes) {
-                if (n == null)
-                    continue;
-                g_score.Add(n, Mathf.Infinity);
-                f_score.Add(n, Mathf.Infinity);
-            }
-            g_score[start] = 0;
-            f_score[start] = DistanceNodes(false, start.Pos, end.Pos);
+            start.g_Score = 0;
+            start.f_Score = DistanceNodes(false, start.Pos, end.Pos);
             OpenSet.Enqueue(start, 0);
             while (OpenSet.Count > 0) {
                 WorldNode current = OpenSet.Dequeue();
                 if (current == end) {
-                    return ReconstructWorldPath(cameFrom, current); //we are at any destination node make the path
+                    return ReconstructWorldPath(graph, current); //we are at any destination node make the path
                 }
-                ClosedSet.Add(current);
-                WorldEdge[] neis = current.Edges;
-                for (int i = 0; i < neis.Length; i++) {
+                current.isClosed = true;
+                List<WorldEdge> neis = current.Edges;
+                for (int i = 0; i < neis.Count; i++) {
                     WorldEdge edge = neis[i];
                     WorldNode neighbour = edge.Node;
-                    if (neighbour == null || ClosedSet.Contains(neighbour) == true) {
+                    if (neighbour == null || neighbour.isClosed == true) {
                         continue;
                     }
                     float movementCostToNeighbour = edge.MovementCost * DistanceNodes(agent.CanMoveDiagonal, current.Pos, neighbour.Pos);
 
-                    float tentative_g_score = g_score[current] + movementCostToNeighbour;
+                    float tentative_g_score = current.g_Score + movementCostToNeighbour;
 
-                    if (OpenSet.Contains(neighbour) && tentative_g_score >= g_score[neighbour])
+                    if (OpenSet.Contains(neighbour) && tentative_g_score >= neighbour.g_Score)
                         continue;
 
-                    cameFrom[neighbour] = current;
-                    g_score[neighbour] = tentative_g_score;
-                    f_score[neighbour] = g_score[neighbour] + HeuristicCostEstimate(agent, neighbour.Pos, end.Pos);
+                    neighbour.parent = current;
+                    neighbour.g_Score = tentative_g_score;
+                    neighbour.f_Score = neighbour.g_Score + HeuristicCostEstimate(agent, neighbour.Pos, end.Pos);
                     if (OpenSet.Contains(neighbour) == false) {
-                        OpenSet.Enqueue(neighbour, f_score[neighbour]);
+                        OpenSet.Enqueue(neighbour, neighbour.f_Score);
                     }
                     else {
-                        OpenSet.UpdatePriority(neighbour, f_score[neighbour]);
+                        OpenSet.UpdatePriority(neighbour, neighbour.f_Score);
                     }
                 }
 
@@ -238,11 +200,11 @@ namespace Andja.Pathfinding {
         /// <param name="cameFrom"></param>
         /// <param name="current"></param>
         /// <returns></returns>
-        private static Queue<Vector2> ReconstructWorldPath(Dictionary<WorldNode, WorldNode> cameFrom, WorldNode current) {
+        private static Queue<Vector2> ReconstructWorldPath(WorldGraph cameFrom, WorldNode current) {
             Stack<WorldNode> totalPath = new Stack<WorldNode>();
             totalPath.Push(current);
-            while (cameFrom.ContainsKey(current)) {
-                current = cameFrom[current];
+            while (current.parent != null) {
+                current = current.parent;
                 totalPath.Push(current);
             }
             Queue<Vector2> vectors = new Queue<Vector2>();

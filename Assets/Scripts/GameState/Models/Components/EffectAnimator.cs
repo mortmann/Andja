@@ -11,12 +11,13 @@ namespace Andja.Model.Components {
         private float speed;
         private float timer = 0;
         private int index = 0;
-
-        // Use this for initialization
-        public void Show(Sprite[] sprites, string layer, Effect effect) {
+        SpriteRenderer structureRenderer;
+        public void Show(Sprite[] sprites, string layer, Effect effect, SpriteRenderer structureRenderer) {
+            this.structureRenderer = structureRenderer;
             spriteRenderer = GetComponent<SpriteRenderer>();
             spriteRenderer.sortingLayerName = layer;
             spriteRenderer.sortingOrder = 1;
+            spriteRenderer.maskInteraction = structureRenderer.maskInteraction;
             this.sprites = sprites;
             this.speed = 1f / sprites.Length;
             timer = speed;
@@ -24,7 +25,6 @@ namespace Andja.Model.Components {
             this.effect = effect;
         }
 
-        // Update is called once per frame
         private void Update() {
             if (sprites == null || sprites.Length == 0) {
                 Debug.LogError("EffectAnimator has no sprites -- destroying");
@@ -33,6 +33,7 @@ namespace Andja.Model.Components {
             }
             if (WorldController.Instance.IsPaused)
                 return;
+            spriteRenderer.maskInteraction = structureRenderer.maskInteraction;
             timer += WorldController.Instance.DeltaTime;
             if (timer >= speed) {
                 index = (index + 1) % sprites.Length;

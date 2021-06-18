@@ -1,6 +1,6 @@
 using Andja.Controller;
 using Andja.Model.Generator;
-using EpPathFinding.cs;
+using Andja.Pathfinding;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -54,13 +54,15 @@ namespace Andja.Model {
                     for (int x = 0; x < Width; x++) {
                         _tilesmap[x] = new bool[Height];
                         for (int y = 0; y < Height; y++) {
-                            _tilesmap[x][y] = (World.Current.GetTileAt(x, y).Type == TileType.Ocean);
+                            _tilesmap[x][y] = (GetTileAt(x, y).Type == TileType.Ocean);
                         }
                     }
                 }
                 return _tilesmap;
             }
         }
+
+        public WorldGraph WorldGraph;
 
         public void RegisterOnCreateProjectileCallback(Action<Projectile> cb) {
             cbCreateProjectile += cb;
@@ -69,25 +71,6 @@ namespace Andja.Model {
         public void UnregisterOnCreateProjectileCallback(Action<Projectile> cb) {
             cbCreateProjectile -= cb;
         }
-
-        protected StaticGrid _tilesgrid;
-
-        public StaticGrid TilesGrid {
-            get {
-                if (_tilesgrid == null) {
-                    bool[][] boolgrid = new bool[Width][];
-                    for (int x = 0; x < Width; x++) {
-                        boolgrid[x] = new bool[Height];
-                        for (int y = 0; y < Height; y++) {
-                            boolgrid[x][y] = (World.Current.GetTileAt(x, y).Type == TileType.Ocean);
-                        }
-                    }
-                    _tilesgrid = new StaticGrid(Width, Height, boolgrid);
-                }
-                return _tilesgrid;
-            }
-        }
-
         public Vector2 Center => new Vector2(Width / 2, Height / 2);
 
         private Action<Unit> cbUnitCreated;
@@ -135,6 +118,7 @@ namespace Andja.Model {
             }
         }
         public void Load() {
+            WorldGraph = new WorldGraph();
             foreach (Unit u in Units) {
                 u.Load();
                 u.RegisterOnDestroyCallback(OnUnitDestroy);
@@ -504,6 +488,13 @@ namespace Andja.Model {
                 tiles.Enqueue(GetTileAt(v));
             }
             return tiles;
+        }
+
+        internal void CreateIslands(List<MapGenerator.IslandData> doneIslands) {
+            foreach (var item in doneIslands) {
+                CreateIsland(item);
+            }
+            WorldGraph = new WorldGraph();
         }
     }
 }

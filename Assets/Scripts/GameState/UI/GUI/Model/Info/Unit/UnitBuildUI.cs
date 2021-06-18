@@ -23,7 +23,8 @@ namespace Andja.UI.Model {
         }
 
         public void OnPointerEnter(PointerEventData eventData) {
-            GameObject.FindObjectOfType<HoverOverScript>().Show(unit, PlayerController.CurrentPlayer.HasUnitUnlocked(unit.ID));
+            if(unit != null)
+                FindObjectOfType<HoverOverScript>().Show(unit, PlayerController.CurrentPlayer.HasUnitUnlocked(unit.ID));
         }
 
         public void OnPointerExit(PointerEventData eventData) {

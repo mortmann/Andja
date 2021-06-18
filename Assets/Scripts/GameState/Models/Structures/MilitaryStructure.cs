@@ -79,7 +79,13 @@ namespace Andja.Model {
                 if (t.Structure != null && t.Structure.IsWalkable == false) {
                     return;
                 }
-                if (CanBuildShips && t.Type != TileType.Ocean) {
+                if (CanBuildShips && t.Type == TileType.Ocean) {
+                    Vector2 v = Center - t.Vector2;
+                    Tile nT = World.Current.GetTileAt(t.Vector2 - v.normalized * 2);
+                    if(nT.Type == TileType.Ocean)
+                        toPlaceUnitTiles.Add(nT);
+                    else
+                        toPlaceUnitTiles.Add(t);
                     continue;
                 }
                 toPlaceUnitTiles.Add(t);
@@ -146,7 +152,13 @@ namespace Andja.Model {
         private void SpawnUnit(Unit unit) {
             if (toPlaceUnitTiles.Count == 0)
                 return;
-            World.Current.CreateUnit(unit, PlayerController.GetPlayer(PlayerNumber), toPlaceUnitTiles[0]);
+            if(unit.IsUnit) {
+                World.Current.CreateUnit(unit, PlayerController.GetPlayer(PlayerNumber), toPlaceUnitTiles[0]);
+            }
+            else {
+                World.Current.CreateUnit(unit, PlayerController.GetPlayer(PlayerNumber), 
+                                                        toPlaceUnitTiles.Find(x=>x.Type == TileType.Ocean));
+            }
         }
         internal override void ToggleActive() {
             base.ToggleActive();

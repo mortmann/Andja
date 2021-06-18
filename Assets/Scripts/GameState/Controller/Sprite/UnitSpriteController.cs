@@ -91,13 +91,15 @@ namespace Andja.Controller {
 
             //u.width = sr.sprite.textureRect.size.x / sr.sprite.pixelsPerUnit;
             //u.height = sr.sprite.textureRect.size.y / sr.sprite.pixelsPerUnit;
-            // Register our callback so that our GameObject gets updated whenever
-            // the object's into changes.
             unit.RegisterOnChangedCallback(OnUnitChanged);
             unit.RegisterOnDestroyCallback(OnUnitDestroy);
             if (FogOfWarController.FogOfWarOn) {
                 FogOfWarController.Instance.AddUnitFogModule(go, unit);
+                if (GameData.FogOfWarStyle == FogOfWarStyle.Always)
+                    sr.maskInteraction = SpriteMaskInteraction.VisibleInsideMask; // boom this should make one part of fog always work
             }
+            // Register our callback so that our GameObject gets updated whenever
+            // the object's into changes.
             OnUnitChanged(unit);
 
             //SOUND PART -- IMPORTANT

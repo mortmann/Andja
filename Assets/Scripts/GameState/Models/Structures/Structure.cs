@@ -38,8 +38,6 @@ namespace Andja.Model {
         /// </summary>
         public TileType?[,] buildTileTypes;
 
-        public Direction mustFrontBuildDir = Direction.None;
-
         //doenst get loaded in anyway
         private List<Tile> _PrototypeRangeTiles;
 
@@ -104,7 +102,6 @@ namespace Andja.Model {
         [JsonPropertyAttribute] public int rotation = 0;
         [JsonPropertyAttribute] public bool buildInWilderniss = false;
         [JsonPropertyAttribute] protected bool isActive = true;
-
         #endregion Serialize
 
         #region RuntimeOrOther
@@ -182,7 +179,6 @@ namespace Andja.Model {
         public bool CanBeUpgraded { get { return Data.canBeUpgraded; } }
         public bool CanTakeDamage { get { return Data.canTakeDamage; } }
 
-        public Direction MustFrontBuildDir { get { return Data.mustFrontBuildDir; } }
         public BuildType BuildTyp { get { return Data.buildTyp; } }
         public StructureTyp StructureTyp { get { return Data.structureTyp; } }
         public ExtraUI ExtraUITyp { get { return Data.extraUITyp; } }
@@ -712,8 +708,7 @@ namespace Andja.Model {
 
             //TO simplify this we are gonna sort the array so it is in order
             //from the coordinationsystem that means 0,0->width,height
-            int max = Mathf.Max(TileWidth, TileHeight);
-            Tile[,] sortedTiles = new Tile[max, max];
+            Tile[,] sortedTiles = new Tile[TileWidth, TileHeight];
             tiles = tiles.OrderBy(x => x.X).ThenBy(x => x.Y).ToList();
             foreach (Tile t in tiles) {
                 int x = t.X - tiles[0].X;

@@ -30,7 +30,6 @@ namespace Andja.Model {
             //imitates a guess how much the player makes
             //also guess the money in the bank?
             if (isMe != null) {
-                UnityEngine.Debug.Log("Call PlayerCombatValue");
                 MoneyValue = UnityEngine.Random.Range(player.TreasuryChange - player.TreasuryChange / 4, player.TreasuryChange + player.TreasuryChange / 4);
                 //compare the value to the calculating player
                 UnitValue = Divide(UnitValue, isMe.UnitValue);

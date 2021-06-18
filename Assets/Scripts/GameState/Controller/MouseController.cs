@@ -763,7 +763,6 @@ namespace Andja.Controller {
         /// <param name="tiles"></param>
         /// <param name="number"></param>
         private void UpdateStructurePreview(List<Tile> tiles, int number) {
-            bool ownCityTileCount = ToBuildStructure.InCityCheck(tiles, PlayerController.currentPlayerNumber);
             bool hasEnoughResources = PlayerController.CurrentPlayer.HasEnoughMoney(ToBuildStructure.BuildCost * number);
             if(MouseUnitState == MouseUnitState.Build) {
                 hasEnoughResources &= SelectedUnit.inventory.HasEnoughOfItems(ToBuildStructure.BuildingItems, number) == true;
@@ -771,24 +770,27 @@ namespace Andja.Controller {
                 hasEnoughResources &= tiles[0].Island?.FindCityByPlayer(PlayerController.currentPlayerNumber)?
                             .HasEnoughOfItems(ToBuildStructure.BuildingItems, number) == true;
             }
-            UpdateStructurePreviewTiles(tiles, ownCityTileCount && hasEnoughResources);
+            UpdateStructurePreviewTiles(tiles, hasEnoughResources);
         }
         /// <summary>
         /// Updates the Preview Tiles red/green bassed on override or if it can be build on that tile
+        /// if <paramref name="dontOverrideTile"/> is false it will make it red - if true it does not influenz it
         /// </summary>
         /// <param name="tiles"></param>
-        /// <param name="overrideTile"></param>
-        private void UpdateStructurePreviewTiles(List<Tile> tiles, bool overrideTile) {
+        /// <param name="dontOverrideTile"></param>
+        private void UpdateStructurePreviewTiles(List<Tile> tiles, bool dontOverrideTile) {
             Dictionary<Tile, bool> tileToCanBuild = ToBuildStructure.CheckForCorrectSpot(tiles);
             if (MouseState == MouseState.BuildSingle && Autorotate) {
                 int i = 0;
                 while(tileToCanBuild.ContainsValue(false) && i < 4) {
                     ToBuildStructure.RotateStructure();
+                    tiles = ToBuildStructure.GetBuildingTiles(GetTileUnderneathMouse());
                     //TODO: think about a not so ugly solution for autorotate
-                    tileToCanBuild = ToBuildStructure.CheckForCorrectSpot(ToBuildStructure.GetBuildingTiles(GetTileUnderneathMouse()));
+                    tileToCanBuild = ToBuildStructure.CheckForCorrectSpot(tiles);
                     i++;
                 }
             }
+            dontOverrideTile &= ToBuildStructure.InCityCheck(tiles, PlayerController.currentPlayerNumber);
             foreach (Tile tile in tiles) {
                 bool specialTileCheck = true;
                 if (MouseUnitState == MouseUnitState.Build) {
@@ -796,7 +798,7 @@ namespace Andja.Controller {
                         specialTileCheck = false;
                     }
                 }
-                bool canBuild = overrideTile && specialTileCheck && tileToCanBuild[tile]
+                bool canBuild = dontOverrideTile && specialTileCheck && tileToCanBuild[tile]
                             && Structure.IsTileCityViable(tile, PlayerController.currentPlayerNumber);
                 ShowTilePrefabOnTile(tile, canBuild ? TileHighlightType.Green : TileHighlightType.Red);
             }

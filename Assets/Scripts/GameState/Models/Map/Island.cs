@@ -110,7 +110,7 @@ namespace Andja.Model {
             Resources = new Dictionary<string, int>();
             Cities = new List<City>();
             this.Climate = climate;
-            SetTiles(tiles);
+            SetTiles(tiles);           
             Setup();
         }
 
@@ -125,10 +125,12 @@ namespace Andja.Model {
             //have a function like is notplayer city
             //it does not need NEEDs
             if (Cities.Count > 0) {
-                return; // this means it got loaded in so there is already a wilderness
+
+            } else {
+                Cities.Add(new City(Tiles, this));
+                Wilderness = Cities[0];
             }
-            Cities.Add(new City(Tiles, this));
-            Wilderness = Cities[0];
+            Grid = new PathGrid(this);
         }
 
         public IEnumerable<Structure> Load() {
@@ -167,7 +169,6 @@ namespace Andja.Model {
             Center = Minimum + ((Maximum - Minimum) / 2);
             if (Wilderness != null)
                 Wilderness.AddTiles(Tiles);
-            Grid = new PathGrid(this);
         }
 
         /// <summary>

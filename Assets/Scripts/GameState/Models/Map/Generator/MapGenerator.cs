@@ -689,11 +689,8 @@ namespace Andja.Model.Generator {
             }
             world = new World(tiles, isIslandEditor);
             if (doneIslands != null) {
-                foreach (IslandData island in doneIslands) {
-                    world.CreateIsland(island);
-                }
+                world.CreateIslands(doneIslands);
             }
-            Pathfinding.WorldGraph.Calculate();
             return world;
         }
 

@@ -25,7 +25,8 @@ namespace Andja.Utility {
                 return audioSource.clip;
             }
             set {
-                audioSource.clip = value;
+                if(gameObject != null)
+                    audioSource.clip = value;
             }
         }
 

@@ -31,7 +31,6 @@ namespace Andja.UI.Model {
         public EffectsUI Effects;
 
         Func<Vector2> GetPosition;
-        private bool followActive;
 
         private void Awake() {
             Instance = this;
@@ -75,7 +74,6 @@ namespace Andja.UI.Model {
         private void GoToPosition(PointerEventData obj) {
             CameraController.Instance.MoveCameraToPosition(GetPosition.Invoke());
         }
-
         public void Show(Unit unit) {
             ActivateUI(true);
             inputName.Set(unit.PlayerSetName ?? unit.Name, unit.SetName, unit.IsPlayer());
@@ -94,22 +92,9 @@ namespace Andja.UI.Model {
             Sleep.gameObject.SetActive(false);
             Follow.gameObject.SetActive(true);
             Follow.onClick.AddListener(()=> {
-                if (followActive) {
-                    followActive = false;
-                } else {
-                    StartCoroutine(FollowUnit());
-                }
+                CameraController.Instance.ToggleFollowUnit(unit);
             });
             Image.Click += GoToPosition;
-        }
-
-        private IEnumerator FollowUnit() {
-            followActive = true;
-            while(followActive) {
-                GoToPosition(null);
-                yield return new WaitForEndOfFrame();
-            }
-            yield return null;
         }
 
         public void Show(List<Unit> unit) {
@@ -143,7 +128,6 @@ namespace Andja.UI.Model {
 
         private void OnDisable() {
             Image.Click -= GoToPosition;
-            followActive = false;
         }
     }
 }

@@ -38,8 +38,9 @@ namespace Andja.Controller {
 
         /// <summary>
         /// Unique ID that gets assigned to a placed structure.
+        /// Should start with one -- so 0 is unset
         /// </summary>
-        private uint buildID = 0;
+        private uint buildID = 1;
         private string settleStructureID = null;
         /// <summary>
         /// Currently selected by the player to preview.
@@ -53,6 +54,7 @@ namespace Andja.Controller {
         public IReadOnlyDictionary<string, Structure> StructurePrototypes => PrototypController.Instance.StructurePrototypes;
 
         public List<Structure> LoadedStructures { get; private set; }
+        public Dictionary<uint, Structure> buildIdToStructure { get; private set; }
 
         /// <summary>
         /// Is called when any structure is build. 
@@ -93,15 +95,14 @@ namespace Andja.Controller {
                 Debug.LogWarning("Cheats are activated.");
             }
             BuildState = BuildStateModes.None;
-            buildID = 0;
+            buildIdToStructure = new Dictionary<uint, Structure>();
         }
 
         internal void PlaceWorldGeneratedStructure(Dictionary<Tile, Structure> tileToStructure) {
             foreach (Tile t in tileToStructure.Keys) {
-                RealBuild(new List<Tile>() { t }, tileToStructure[t], -1, false, true, null, true);
+                RealBuild(new List<Tile>() { t }, tileToStructure[t], GameData.WorldNumber, false, true, null, true, true);
             }
             LoadedStructures = new List<Structure>(tileToStructure.Values);
-            buildID = LoadedStructures.Max(x => x.buildID) + 1;
         }
 
         public void SettleFromUnit(Unit buildUnit = null) {
@@ -151,7 +152,7 @@ namespace Andja.Controller {
         /// <param name="loadedStructures"></param>
         public void PlaceAllLoadedStructure(List<Structure> loadedStructures) {
             this.LoadedStructures = loadedStructures;
-            //order by descending because we need to go from back to front -- for removing from the lost
+            //order by descending because we need to go from back to front -- for removing from the last
             LoadedStructures = LoadedStructures.OrderByDescending(x => x.buildID).ToList();
             for (int i = LoadedStructures.Count - 1; i >= 0; i--) {
                 if (LoadBuildOnTile(LoadedStructures[i], LoadedStructures[i].BuildTile)) {
@@ -227,20 +228,20 @@ namespace Andja.Controller {
         }
 
         public void EditorBuildOnTile(Structure str, Tile tile) {
-            RealBuild(str.GetBuildingTiles(tile), str, -1, true, true);
+            RealBuild(str.GetBuildingTiles(tile), str, GameData.WorldNumber, true, true);
         }
 
         internal void EditorBuildOnTile(Structure toPlace, List<Tile> t, bool single) {
             if (single) {
-                BuildOnTile(toPlace, t, -1, single, true, null, true);
+                BuildOnTile(toPlace, t, GameData.WorldNumber, single, true, null, true);
             }
             else {
-                RealBuild(t, toPlace, -1, true, true);
+                RealBuild(t, toPlace, GameData.WorldNumber, true, true);
             }
         }
 
         protected bool RealBuild(List<Tile> tiles, Structure structure, int playerNumber, bool loading = false,
-            bool buildInWilderness = false, Unit buildInRangeUnit = null, bool onStart = false) {
+            bool buildInWilderness = false, Unit buildInRangeUnit = null, bool onStart = false, bool noClone = false) {
             if (tiles == null || tiles.Count == 0) {
                 Debug.LogError("tiles is null or empty");
                 return false;
@@ -253,7 +254,7 @@ namespace Andja.Controller {
             }
             tiles = tiles.OrderBy(x => x.Y).ThenBy(x => x.X).ToList();
             int rotate = structure.rotation;
-            if (loading == false) {
+            if (loading == false && noClone == false) {
                 structure = structure.Clone();
             }
             if (buildInRangeUnit != null && noUnitRestriction == false) {
@@ -373,17 +374,19 @@ namespace Andja.Controller {
                 PlayerController.GetPlayer(playerNumber).ReduceTreasure(structure.BuildCost);
             }
             structure.City.AddStructure(structure);
-            //call all callbacks on structure created
-            //FIXME remove this or smth -- why?
-            if (loading == false) {
-                // this is for loading so everything will be placed in order
-                structure.buildID = buildID;
-                buildID++;
-            }
             if (onStart) {
                 if (LoadedStructures == null) //should never happen but just in case
                     LoadedStructures = new List<Structure>();
                 LoadedStructures.Add(structure);
+            }
+            if(loading) {
+                buildIdToStructure[structure.buildID] = structure;
+            }
+            else {
+                // this is for loading so everything will be placed in order
+                structure.buildID = buildID;
+                buildID++;
+                buildIdToStructure[buildID] = structure;
             }
             cbStructureCreated?.Invoke(structure, loading);
             structure.RegisterOnDestroyCallback(OnStructureDestroy);

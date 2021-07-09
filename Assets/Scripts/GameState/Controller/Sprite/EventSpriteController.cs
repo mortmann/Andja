@@ -41,6 +41,11 @@ namespace Andja.Controller {
         internal void CreateEventTileSprites(string sprite_name, GameEvent gameEvent) {
             GameObject go = new GameObject();
             SpriteRenderer sr = go.AddComponent<SpriteRenderer>();
+            if (FogOfWarController.FogOfWarOn) {
+                if (FogOfWarController.IsFogOfWarAlways) {
+                    sr.maskInteraction = SpriteMaskInteraction.VisibleInsideMask;
+                }
+            }
             sr.sprite = nameToSprite[sprite_name];
             go.transform.position = gameEvent.position;
             eventToGO.Add(gameEvent, go);
@@ -53,6 +58,11 @@ namespace Andja.Controller {
                 particle_go.transform.localPosition = Vector3.zero;
                 particle_go.GetComponent<Renderer>().sortingLayerName = "UnderSky";
                 particle_go.GetComponent<Renderer>().sortingOrder = 100000;
+                if (FogOfWarController.FogOfWarOn) {
+                    if (FogOfWarController.IsFogOfWarAlways) {
+                        particle_go.GetComponent<ParticleSystemRenderer>().maskInteraction = SpriteMaskInteraction.VisibleInsideMask;
+                    }
+                }
             }
         }
 

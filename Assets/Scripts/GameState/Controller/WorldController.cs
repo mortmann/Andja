@@ -1,6 +1,7 @@
 using Andja.Model;
 using Andja.Model.Generator;
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -23,7 +24,7 @@ namespace Andja.Controller {
         public Pirate pirate;
         public Action<Unit> cbWorldCreatedUnit;
         public Action<Unit, IWarfare> cbWorldUnitDestroyed;
-        public float timeMultiplier = 1;
+        public float TimeMultiplier { get; private set; } = 1;
         private bool _isPaused = false;
 
         public bool IsPaused {
@@ -35,20 +36,20 @@ namespace Andja.Controller {
             }
         }
 
-        public float DeltaTime { get { return Time.deltaTime * timeMultiplier; } }
-        public float FixedDeltaTime { get { return Time.fixedDeltaTime * timeMultiplier; } }
+        public float DeltaTime { get { return Time.deltaTime * TimeMultiplier; } }
+        public float FixedDeltaTime { get { return Time.fixedDeltaTime * TimeMultiplier; } }
 
         public bool isLoaded = true;
 
         public GameSpeed CurrentSpeed {
             get {
-                if (timeMultiplier == 0 || IsPaused) return GameSpeed.Paused;
-                if (timeMultiplier < 0.5f) return GameSpeed.StopMotion;
-                if (timeMultiplier < 0.75f) return GameSpeed.Slowest;
-                if (timeMultiplier < 1f) return GameSpeed.Slow;
-                if (timeMultiplier == 1f) return GameSpeed.Normal;
-                if (timeMultiplier <= 1.5f) return GameSpeed.Fast;
-                if (timeMultiplier <= 2f) return GameSpeed.Fastest;
+                if (TimeMultiplier == 0 || IsPaused) return GameSpeed.Paused;
+                if (TimeMultiplier < 0.5f) return GameSpeed.StopMotion;
+                if (TimeMultiplier < 0.75f) return GameSpeed.Slowest;
+                if (TimeMultiplier < 1f) return GameSpeed.Slow;
+                if (TimeMultiplier == 1f) return GameSpeed.Normal;
+                if (TimeMultiplier <= 1.5f) return GameSpeed.Fast;
+                if (TimeMultiplier <= 2f) return GameSpeed.Fastest;
                 return GameSpeed.LudicrousSpeed;
             }
         }
@@ -107,7 +108,12 @@ namespace Andja.Controller {
                     }
                     else {
                         shipSpawn = player.Cities[0].warehouse.tradeTile.Vector2;
-                        player.Cities[0].Inventory.AddItems(startItems);
+                        foreach (Item item in startItems) {
+                            if(loadout.Units != null && Array.Exists(loadout.Units,x=>x is Ship s && s.CannonItem.ID == item.ID)) {
+                                continue;
+                            }
+                            player.Cities[0].Inventory.AddItem(item);
+                        }
                     }
                 }
                 if (loadout.Units != null) {
@@ -123,6 +129,12 @@ namespace Andja.Controller {
                         Unit unit = World.CreateUnit(prefab, player, start);
                         foreach (Item item in startItems) {
                             unit.TryToAddItem(item);
+                            if (unit is Ship s) {
+                                if (item.ID == s.CannonItem.ID) {
+                                    s.AddCannonsFromInventory(true);
+                                    continue;
+                                }
+                            }
                         }
                     }
                 }
@@ -213,7 +225,7 @@ namespace Andja.Controller {
             else {
                 IsPaused = false;
             }
-            timeMultiplier = Mathf.Clamp(speed, 0, 100);
+            TimeMultiplier = Mathf.Clamp(speed, 0, 100);
             cbGameSpeedChange?.Invoke(CurrentSpeed, speed);
         }
 

@@ -32,6 +32,7 @@ namespace Andja.UI {
             this.city = city;
             this.onItemPressed = onItemPressed;
             cityname.Set(city.Name, city.SetName);
+
             tradeAmount.Set(city.PlayerTradeAmount, city.SetPlayerTradeAmount, true,
                 ()=>{ return 0; }, () => { return city.Inventory.MaxStackSize; }
                 );

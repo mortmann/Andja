@@ -1,6 +1,7 @@
 using Andja.Pathfinding;
 using System.Collections.Generic;
 using UnityEngine;
+using Andja.FogOfWar;
 
 namespace Andja.Model.Components {
 
@@ -13,6 +14,18 @@ namespace Andja.Model.Components {
         public float rot;
         public int PlayerNumber => Holding.PlayerNumber;
         public bool Debug_Mode => false; //TODO make this somewhere GLOBAL
+        Unit unit => (Unit)Holding;
+
+        public UnitDoModes currentUnitDO = UnitDoModes.Idle;
+        public UnitMainModes currentUnitMain = UnitMainModes.Idle;
+        public TurningType turnType;
+        private LineRenderer line;
+        bool isCurrentlyVisible;
+        public bool IsCurrentlyVisible {
+            get {
+                return isCurrentlyVisible || unit.IsPlayer();
+            }
+        }
 
         public void Start() {
             line = gameObject.GetComponentInChildren<LineRenderer>();
@@ -21,12 +34,6 @@ namespace Andja.Model.Components {
             transform.position = unit.PositionVector;
         }
 
-        Unit unit => (Unit)Holding;
-
-        public UnitDoModes currentUnitDO = UnitDoModes.Idle;
-        public UnitMainModes currentUnitMain = UnitMainModes.Idle;
-        public TurningType turnType;
-        private LineRenderer line;
 
         //FIXME TODO REMOVE DIS
         public void Update() {
@@ -85,5 +92,17 @@ namespace Andja.Model.Components {
             //transform.rotation = new Quaternion(0, 0, unit.Rotation, 0);
             rigid.MovePosition(unit.PositionVector);
         }
+        private void OnTriggerEnter2D(Collider2D collision) {
+            if (collision.gameObject.GetComponent<FogOfWarTrigger>() != null) {
+                isCurrentlyVisible = true;
+            }
+        }
+        private void OnTriggerExit2D(Collider2D collision) {
+            if (collision.gameObject.GetComponent<FogOfWarTrigger>() != null) {
+                isCurrentlyVisible = false;
+            }
+        }
+
+
     }
 }

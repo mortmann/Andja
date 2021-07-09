@@ -11,6 +11,7 @@ using UnityEngine;
 namespace Andja.Pathfinding {
 
     public enum PathingMode { World, IslandMultiplePoints, IslandSinglePoint, Route };
+    public enum PathDiagonal { None, OnlyNoObstacle, Always }
 
     public enum PathDestination { Tile, Exact };
 
@@ -96,7 +97,7 @@ namespace Andja.Pathfinding {
                 return _x;
             }
             protected set {
-                if (_x > 0 && Mathf.Abs(value - _x) > 0.2f * Speed * WorldController.Instance.timeMultiplier)
+                if (_x > 0 && Mathf.Abs(value - _x) > 0.2f * Speed * WorldController.Instance.TimeMultiplier)
                     Debug.LogWarning("UNIT JUMPED -- FIX ME -- " + Mathf.Abs(value - _x));
                 _x = value;
             }
@@ -107,7 +108,7 @@ namespace Andja.Pathfinding {
                 return _y;
             }
             protected set {
-                if (_y > 0 && Mathf.Abs(value - _y) > 0.2f * Speed * WorldController.Instance.timeMultiplier)
+                if (_y > 0 && Mathf.Abs(value - _y) > 0.2f * Speed * WorldController.Instance.TimeMultiplier)
                     Debug.LogWarning("UNIT JUMPED -- FIX ME -- " + Mathf.Abs(value - _y));
                 _y = value;
             }

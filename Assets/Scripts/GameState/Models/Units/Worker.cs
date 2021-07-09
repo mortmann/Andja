@@ -121,7 +121,7 @@ namespace Andja.Model {
 
         public PathHeuristics Heuristic => HasToFollowRoads ? PathHeuristics.Manhattan : PathHeuristics.Euclidean;
 
-        public bool CanMoveDiagonal => HasToFollowRoads == false;
+        public PathDiagonal DiagonalType => HasToFollowRoads? PathDiagonal.None : PathDiagonal.Always;
 
         public IReadOnlyList<int> CanEnterCities => null; // For now worker always can enter all tiles regardless who owns it
 

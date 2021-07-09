@@ -50,7 +50,6 @@ namespace Andja.Controller {
         FogOfWarController FW => FogOfWarController.Instance;
 
         private float lastSaved = -1;
-        public byte[] FogOfWarData = null;
 
         public bool UnsavedProgress => lastSaved != GameData.Instance.playTime;
 
@@ -62,12 +61,14 @@ namespace Andja.Controller {
             lastSaved = -1;
         }
 
-        // Use this for initialization
         private void Start() {
             if (GDH != null && GDH.Loadsavegame != null && GDH.Loadsavegame.Length > 0) {
                 Debug.Log("LOADING SAVEGAME " + GDH.Loadsavegame);
                 IsLoadingSave = true;
-                StartCoroutine(LoadGameState(GDH.Loadsavegame));
+                this.StartThrowingCoroutine(LoadGameState(GDH.Loadsavegame),(ex)=> {
+                    MainMenuInfo.AddInfo(MainMenuInfo.InfoTypes.SaveFileError,""+ex.StackTrace);
+                    SceneManager.LoadScene("MainMenu");
+                });
                 GameData.setloadsavegame = null;
             }
             else {
@@ -425,7 +426,7 @@ namespace Andja.Controller {
                 ges = EC.GetSaveGameEventData().Serialize(true),
                 camera = CC.GetSaveCamera().Serialize(false),
                 ui = UI.GetUISaveData().Serialize(false),
-                fw = FogOfWarController.FogOfWarOn ? Convert.ToBase64String(Zip(Convert.ToBase64String(FW.GetFogOfWarBytes()))) : null,
+                fw = FogOfWarController.FogOfWarOn ? FW.GetFogOfWarSave().Serialize(false) : null,
             };
 
             string save = "";
@@ -461,7 +462,7 @@ namespace Andja.Controller {
             string metadata = JsonConvert.SerializeObject(metaData, Formatting.Indented,
                     new JsonSerializerSettings {
                         NullValueHandling = NullValueHandling.Ignore,
-                        PreserveReferencesHandling = PreserveReferencesHandling.Objects,
+                        PreserveReferencesHandling = PreserveReferencesHandling.None,
                         ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
                         TypeNameHandling = TypeNameHandling.Auto
                     }
@@ -544,47 +545,49 @@ namespace Andja.Controller {
                 });
             }
             PrototypController.Instance.LoadFromXML();
-
             GDH.LoadGameData(BaseSaveData.Deserialize<GameDataSave>((string)state.gamedata));
             lastSaved = GDH.playTime;
-
-            loadingPercantage += 0.3f;
+            loadingPercantage += 0.05f; // 5
             PlayerControllerSave pcs = BaseSaveData.Deserialize<PlayerControllerSave>(state.pcs);
-            loadingPercantage += 0.05f;
+            loadingPercantage += 0.05f; // 10
             yield return null;
             WorldSaveState wss = BaseSaveData.Deserialize<WorldSaveState>(state.world);
-            loadingPercantage += 0.15f;
+            loadingPercantage += 0.35f; // 45
             yield return null;
-            GameEventSave ges = BaseSaveData.Deserialize<GameEventSave>(state.ges);
-            loadingPercantage += 0.1f;
-            yield return null;
-            CameraSave cs = BaseSaveData.Deserialize<CameraSave>(state.camera);
-            loadingPercantage += 0.025f;
-            UIControllerSave uics = BaseSaveData.Deserialize<UIControllerSave>(state.ui);
-            loadingPercantage += 0.025f;
-            yield return null;
-            while (MapGenerator.Instance.IsDone == false)
-                yield return null;
-            PlayerController.Instance.SetPlayerData(pcs);
-            loadingPercantage += 0.05f;
-            yield return null;
-            WorldController.Instance.SetWorldData(wss);
-            loadingPercantage += 0.15f;
-            yield return null;
-            EventController.Instance.SetGameEventData(ges);
-            loadingPercantage += 0.1f;
-            yield return null;
-            CameraController.Instance.SetSaveCameraData(cs);
+            FogOfWarSave fws = null;
             if (string.IsNullOrEmpty(state.fw)) {
                 GameData.FogOfWarStyle = FogOfWarStyle.Off;
             }
             else {
-                FogOfWarData = Convert.FromBase64String(Unzip(Convert.FromBase64String(state.fw)));
+                fws = BaseSaveData.Deserialize<FogOfWarSave>(state.fw);
             }
-            loadingPercantage += 0.025f;
+            loadingPercantage += 0.1f; // 55
+            yield return null;
+            GameEventSave ges = BaseSaveData.Deserialize<GameEventSave>(state.ges);
+            loadingPercantage += 0.1f; // 65
+            yield return null;
+            CameraSave cs = BaseSaveData.Deserialize<CameraSave>(state.camera);
+            loadingPercantage += 0.025f; // 67.5
+            UIControllerSave uics = BaseSaveData.Deserialize<UIControllerSave>(state.ui);
+            loadingPercantage += 0.025f; // 70
+            yield return null;
+            while (MapGenerator.Instance.IsDone == false)
+                yield return null;
+            PlayerController.Instance.SetPlayerData(pcs);
+            loadingPercantage += 0.05f; // 75
+            yield return null;
+            WorldController.Instance.SetWorldData(wss);
+            loadingPercantage += 0.15f; // 90
+            yield return null;
+            EventController.Instance.SetGameEventData(ges);
+            loadingPercantage += 0.05f; // 95
+            yield return null;
+            CameraController.Instance.SetSaveCameraData(cs);
+            FogOfWarController.SetSaveFogData(fws);
+            loadingPercantage += 0.025f; // 97.5
             yield return null;
             UIController.SetSaveUIData(uics);
-            loadingPercantage += 0.025f;
+            loadingPercantage += 0.025f; // 100
             yield return null;
             Debug.Log("LOAD ENDED");
             IsDone = true;

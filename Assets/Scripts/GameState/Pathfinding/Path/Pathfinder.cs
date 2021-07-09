@@ -85,38 +85,60 @@ namespace Andja.Pathfinding {
                 if (startNodes != null && startNodes.Contains(current)) {
                     current.parent = null;
                 }
-                List<Node> neis = grid.Neighbours(current, agent.CanMoveDiagonal);
-                for (int i = 0; i < neis.Count; i++) {
-                    Node neighbour = neis[i];
-                    if (neighbour == null || neighbour.isClosed) {
-                        continue;
-                    }
-                    float costToNeighbour = neighbour.MovementCost * DistanceNodes(agent.CanMoveDiagonal, current.Pos, neighbour.Pos);
-                    if (agent.CanEnterCities != null) {
-                        if (agent.CanEnterCities.Contains(neighbour.PlayerNumber) == false) {
-                            costToNeighbour = float.MaxValue;
+                for (int x = -1; x < 2; x++) {
+                    for (int y = -1; y < 2; y++) {
+                        if(x == 1 && y == 1) {
+                            continue; // current tile
                         }
-                    }
-                    if (agent.CanEndInUnwakable) {
-                        if (endNodes != null && endNodes.Contains(neighbour)) {
-                            costToNeighbour = DistanceNodes(agent.CanMoveDiagonal, current.Pos, neighbour.Pos);
+                        if (job.agent.DiagonalType == PathDiagonal.None) {
+                            if (Mathf.Abs(x) + Mathf.Abs(y) == 2) {
+                                continue; //skip diagonal here
+                            }
+                        } else
+                        if(job.agent.DiagonalType == PathDiagonal.OnlyNoObstacle) {
+                            if (Mathf.Abs(x) + Mathf.Abs(y) == 2) {
+                                //check for corner unwalkable
+                                if (grid.GetNode(current.Pos + new Vector2(x, 0))?.IsPassable() == false) {
+                                    continue;
+                                }
+                                if (grid.GetNode(current.Pos + new Vector2(0, y))?.IsPassable() == false) {
+                                    continue;
+                                }
+                            }
                         }
-                    }
-                    float tentative_g_score = current.g_Score + costToNeighbour;
-                    if (OpenSet.Contains(neighbour) && tentative_g_score >= neighbour.g_Score)
-                        continue;
-                    neighbour.parent = current;
-                    neighbour.g_Score = tentative_g_score;
-                    neighbour.f_Score = tentative_g_score + HeuristicCostEstimate(agent, neighbour.Pos, end.Pos);
+                        Node neighbour = grid.GetNode(current.Pos + new Vector2(x,y));
+                        
+                        if (neighbour == null || neighbour.isClosed) {
+                            continue;
+                        }
+                        float costToNeighbour = neighbour.MovementCost * 
+                            DistanceNodes(agent.DiagonalType != PathDiagonal.None, current.Pos, neighbour.Pos);
+                        if (agent.CanEnterCities != null) {
+                            if (agent.CanEnterCities.Contains(neighbour.PlayerNumber) == false) {
+                                costToNeighbour = float.MaxValue;
+                            }
+                        }
+                        if (agent.CanEndInUnwakable) {
+                            if (endNodes != null && endNodes.Contains(neighbour)) {
+                                costToNeighbour = DistanceNodes(agent.DiagonalType != PathDiagonal.None, current.Pos, neighbour.Pos);
+                            }
+                        }
+                        float tentative_g_score = current.g_Score + costToNeighbour;
+                        if (OpenSet.Contains(neighbour) && tentative_g_score >= neighbour.g_Score)
+                            continue;
+                        neighbour.parent = current;
+                        neighbour.g_Score = tentative_g_score;
+                        neighbour.f_Score = tentative_g_score + HeuristicCostEstimate(agent, neighbour.Pos, end.Pos);
 
-                    if (OpenSet.Contains(neighbour) == false) {
-                        OpenSet.Enqueue(neighbour, neighbour.f_Score);
-                    }
-                    else {
-                        OpenSet.UpdatePriority(neighbour, neighbour.f_Score);
+                        if (OpenSet.Contains(neighbour) == false) {
+                            OpenSet.Enqueue(neighbour, neighbour.f_Score);
+                        }
+                        else {
+                            OpenSet.UpdatePriority(neighbour, neighbour.f_Score);
+                        }
+
                     }
                 }
-
             }
             return null;
         }
@@ -132,20 +154,30 @@ namespace Andja.Pathfinding {
                 return tempQueue;
             }
             Queue<Vector2> worldPoints = FindWorldPath(agent, graph, startPos, endPos);
-            if(worldPoints == null)
+            if (worldPoints == null)
                 return tempQueue;
-            foreach (Vector2 v in worldPoints) {
-                tempQueue.Enqueue(v);
-            }
-            tempQueue.Enqueue(endPos);
-            Queue<Vector2> finalQueue = new Queue<Vector2>();
-            finalQueue.Enqueue(tempQueue.Dequeue());
-            while (tempQueue.Count>0) {
-                Vector2 current = tempQueue.Dequeue();
-                Vector2 next = tempQueue.Count == 0 ? endPos : tempQueue.Peek();
-                if (Utility.Util.CheckLine(worldTilemap, finalQueue.Last(), next) == false) {
-                    finalQueue.Enqueue(current + new Vector2(0.5f, 0.5f));
+            tempQueue.Enqueue(startPos);
+            Vector2 current = worldPoints.Dequeue();
+            do { //for the all points in worldPoints AND the final destination
+                Vector2 next = worldPoints.Count > 0 ? worldPoints.Peek() : endPos;
+                if (Utility.Util.CheckLine(worldTilemap, tempQueue.Last(), next) == false) {
+                    //add the last point the current path node could reach
+                    //now it will repeat check to which point this can go 
+                    tempQueue.Enqueue(current);
                 }
+                else {
+                    //last point in current path can reach the point 
+                    //so we can go directly to this one - when it cant reach one 
+                    current = next;
+                    if(worldPoints.Count > 0)
+                        worldPoints.Dequeue();
+                }
+            } while (worldPoints.Count > 0);
+            Queue<Vector2> finalQueue = new Queue<Vector2>();
+            tempQueue.Dequeue();
+            //finalQueue.Enqueue(startPos);
+            foreach (Vector2 v in tempQueue) {
+                finalQueue.Enqueue(v + new Vector2(0.5f, 0.5f));
             }
             finalQueue.Enqueue(endPos);
             stopwatch.Stop();
@@ -163,7 +195,7 @@ namespace Andja.Pathfinding {
             while (OpenSet.Count > 0) {
                 WorldNode current = OpenSet.Dequeue();
                 if (current == end) {
-                    return ReconstructWorldPath(graph, current); //we are at any destination node make the path
+                    return ReconstructWorldPath(current); //we are at any destination node make the path
                 }
                 current.isClosed = true;
                 List<WorldEdge> neis = current.Edges;
@@ -173,7 +205,8 @@ namespace Andja.Pathfinding {
                     if (neighbour == null || neighbour.isClosed == true) {
                         continue;
                     }
-                    float movementCostToNeighbour = edge.MovementCost * DistanceNodes(agent.CanMoveDiagonal, current.Pos, neighbour.Pos);
+                    float movementCostToNeighbour = edge.MovementCost 
+                        * DistanceNodes(agent.DiagonalType != PathDiagonal.None, current.Pos, neighbour.Pos);
 
                     float tentative_g_score = current.g_Score + movementCostToNeighbour;
 
@@ -200,7 +233,7 @@ namespace Andja.Pathfinding {
         /// <param name="cameFrom"></param>
         /// <param name="current"></param>
         /// <returns></returns>
-        private static Queue<Vector2> ReconstructWorldPath(WorldGraph cameFrom, WorldNode current) {
+        private static Queue<Vector2> ReconstructWorldPath(WorldNode current) {
             Stack<WorldNode> totalPath = new Stack<WorldNode>();
             totalPath.Push(current);
             while (current.parent != null) {
@@ -232,7 +265,7 @@ namespace Andja.Pathfinding {
 
         private static HashSet<Node> FindClosestWalkableNeighbours(IPathfindAgent agent, Node start, PathGrid grid) {
             HashSet<Node> tiles = new HashSet<Node>();
-            foreach (Node x in grid.Neighbours(start, agent.CanMoveDiagonal)) {
+            foreach (Node x in grid.Neighbours(start, agent.DiagonalType != PathDiagonal.None)) {
                 tiles.Add(x);
                 if (tiles.Count == 0)
                     tiles.UnionWith(FindClosestWalkableNeighbours(agent, x, grid));

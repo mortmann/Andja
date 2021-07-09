@@ -42,10 +42,6 @@ namespace Andja.UI {
             inputField.ActivateInputField();
         }
 
-        private void OnDisable() {
-        }
-
-        // Update is called once per frame
         private void Update() {
             if (Input.GetKeyDown(KeyCode.UpArrow)) {
                 currentCommandIndex = Mathf.Clamp(currentCommandIndex - 1, 0, currentCommandIndex);
@@ -133,7 +129,6 @@ namespace Andja.UI {
             go.transform.SetParent(outputTransform, false);
             if (outputTransform.childCount > 30) {
                 SimplePool.Despawn(outputTransform.GetChild(0).gameObject);
-                //Destroy(outputTransform.GetChild(0).gameObject);
             }
         }
 

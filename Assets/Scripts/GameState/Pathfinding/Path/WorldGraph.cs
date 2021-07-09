@@ -65,8 +65,9 @@ namespace Andja.Pathfinding {
                     if (Nodes.Contains(Tiles[x, y])) {
                         continue;
                     }
-                    if (Tiles[x, y].Edges.Count == 8) {
-                        //unnecessary node
+                    //has all neighbours and those have all neighbours
+                    if (Tiles[x, y].Edges.Count == 8 && Tiles[x, y].Edges.Exists(x=>x.Node.Edges.Count<8) == false) {
+                        //then it is an unnecessary node and it should be removed
                         WorldNode n = Tiles[x, y];
                         //update neighbour nodes
                         n.UpdateNeigbhours();
@@ -79,18 +80,18 @@ namespace Andja.Pathfinding {
                     }
                 }
             }
-            WorldGraph worldGraph = Clone();
-            WorldNode next = worldGraph.Nodes.First();
-            TestDelete(worldGraph, next);
+            //WorldGraph worldGraph = Clone();
+            //WorldNode next = worldGraph.Nodes.First();
+            //TestDelete(worldGraph, next);
         }
 
-        void TestDelete(WorldGraph worldGraph, WorldNode next) {
-            worldGraph.Nodes.Remove(next);
-            foreach (WorldEdge edge in next.Edges) {
-                if(worldGraph.Nodes.Contains(edge.Node))
-                    TestDelete(worldGraph, edge.Node);
-            }
-        }
+        //void TestDelete(WorldGraph worldGraph, WorldNode next) {
+        //    worldGraph.Nodes.Remove(next);
+        //    foreach (WorldEdge edge in next.Edges) {
+        //        if(worldGraph.Nodes.Contains(edge.Node))
+        //            TestDelete(worldGraph, edge.Node);
+        //    }
+        //}
 
         internal WorldNode GetNodeFromWorldCoord(Vector2 startPos) {
             if (Tiles[Mathf.FloorToInt(startPos.x), Mathf.FloorToInt(startPos.y)] != null)
@@ -189,6 +190,14 @@ namespace Andja.Pathfinding {
                         continue;
                     if (tiles[this.x + x, this.y + y] == null)
                         continue;
+                    if(Mathf.Abs(x) + Mathf.Abs(y) == 2) {
+                        if (tiles[this.x + x, this.y] == null) {
+                            continue;
+                        }
+                        if (tiles[this.x, this.y + y] == null) {
+                            continue;
+                        }
+                    }
                     neighbours[x+1, y+1] = new WorldEdge(
                                                     Vector2.Distance(new Vector2(this.x + x, this.y + y), new Vector2(this.x, this.y)),
                                                     tiles[this.x + x, this.y + y]

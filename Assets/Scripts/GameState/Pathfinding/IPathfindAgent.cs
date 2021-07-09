@@ -26,13 +26,14 @@ namespace Andja.Pathfinding {
         public bool CanEndInUnwakable {
             get;
         }
-        public bool CanMoveDiagonal {
+        public PathDiagonal DiagonalType {
             get;
         }
 
         public IReadOnlyList<int> CanEnterCities {
             get;
         }
+
     }
 }
 

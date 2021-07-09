@@ -1,4 +1,5 @@
 using Andja.Editor;
+using Andja.FogOfWar;
 using Andja.Model;
 using Andja.UI.Menu;
 using Andja.Utility;
@@ -37,6 +38,7 @@ namespace Andja.Controller {
 
         public HashSet<Tile> tilesCurrentInCameraView;
         public HashSet<Structure> structureCurrentInCameraView;
+        public HashSet<FogOfWarStructure> fogOfWarStructureCurrentInCameraView;
 
         public Rect CameraViewRange;
         private Vector2 showBounds = new Vector2();
@@ -59,6 +61,7 @@ namespace Andja.Controller {
         private void Start() {
             tilesCurrentInCameraView = new HashSet<Tile>();
             structureCurrentInCameraView = new HashSet<Structure>();
+            fogOfWarStructureCurrentInCameraView = new HashSet<FogOfWarStructure>();
             if (EditorController.IsEditor) {
                 showBounds.x = EditorController.Width;
                 showBounds.y = EditorController.Height;
@@ -216,6 +219,9 @@ namespace Andja.Controller {
                         }
                         if (tile_data.Structure != null) {
                             structureCurrentInCameraView.Add(tile_data.Structure);
+                        }
+                        if(((LandTile)tile_data).fogOfWarStructure  != null) {
+                            fogOfWarStructureCurrentInCameraView.Add(((LandTile)tile_data).fogOfWarStructure);
                         }
                     }
                 }

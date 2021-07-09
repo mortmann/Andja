@@ -819,7 +819,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   IsDone: 0
   loadingPercantage: 0
-  FogOfWarData: 
 --- !u!1 &820870336
 GameObject:
   m_ObjectHideFlags: 0
@@ -1083,7 +1082,7 @@ PrefabInstance:
     - target: {fileID: 8624619892147010575, guid: dfbb72e7b75263b4da3c1b05eaa385c6,
         type: 3}
       propertyPath: editorloadsavegame
-      value: fogowar
+      value: 
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 11473390, guid: dfbb72e7b75263b4da3c1b05eaa385c6, type: 3}
@@ -1394,5 +1393,4 @@ MonoBehaviour:
     y: 0
     width: 0
     height: 0
-  timeMultiplier: 1
   isLoaded: 1

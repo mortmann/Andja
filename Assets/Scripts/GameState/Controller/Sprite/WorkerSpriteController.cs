@@ -52,6 +52,11 @@ namespace Andja.Controller {
             SpriteRenderer sr = go.AddComponent<SpriteRenderer>();
             sr.sprite = workerSprites[worker.ToWorkSprites];
             sr.sortingLayerName = "Persons";
+            if (FogOfWarController.FogOfWarOn) {
+                if (FogOfWarController.IsFogOfWarAlways) {
+                    sr.maskInteraction = SpriteMaskInteraction.VisibleInsideMask;
+                }
+            }
             //SOUND PART -- IMPORTANT
             SoundController.Instance.OnWorkerCreated(worker, go);
         }

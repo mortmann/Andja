@@ -256,7 +256,8 @@ namespace Andja.Utility {
                     readFromXML(mod.xmlTypeToXMLString[type.ToString()]);
                 }
                 catch (Exception e) {
-                    Debug.Log("Loading XML-Mod failed: Reason XML faulty for mod " + mod.name + " " + type + ". " + e.StackTrace);
+                    MainMenuInfo.AddInfo(MainMenuInfo.InfoTypes.ModError,
+                            "XML faulty for mod " + mod.name + " " + type + ". " + e.StackTrace);
                     UnityEngine.SceneManagement.SceneManager.LoadScene("MainMenu");
                 }
             }

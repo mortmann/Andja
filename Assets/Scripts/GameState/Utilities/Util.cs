@@ -426,6 +426,7 @@ namespace Andja.Utility {
                                   Mathf.RoundToInt(second.x), Mathf.RoundToInt(second.y));
         }
         /// <summary>
+        /// Based on Bresenham Line Drawing Algorithm
         /// Checks the line between the two points if there is only ocean it will return true
         /// </summary>
         /// <param name="x"></param>
@@ -434,6 +435,15 @@ namespace Andja.Utility {
         /// <param name="y2"></param>
         /// <returns></returns>
         public static bool CheckLine(bool[][] worldTilemap, int x, int y, int x2, int y2) {
+            if(x < 0 || y < 0 || x2 < 0 || y2 < 0) {
+                Debug.LogError("Check Line was lower out of bounds.");
+                return false;
+            }
+            if (x >= worldTilemap.Length || y >= worldTilemap[0].Length || 
+                x2 >= worldTilemap.Length || y2 >= worldTilemap[0].Length) {
+                Debug.LogError("Check Line was upper out of bounds.");
+                return false;
+            }
             int w = x2 - x;
             int h = y2 - y;
             int dx1 = 0, dy1 = 0, dx2 = 0, dy2 = 0;
@@ -455,10 +465,34 @@ namespace Andja.Utility {
                 numerator += shortest;
                 if (!(numerator < longest)) {
                     numerator -= longest;
+                    if (Mathf.Abs(dx1) + Mathf.Abs(dy1) == 2) {
+                        if (x + dx1 >= 0 && x + dx1 < worldTilemap.Length) {
+                            if (worldTilemap[x + dx1][y] == false) {
+                                return false;
+                            }
+                        }
+                        if (y + dy1 >= 0 && y + dy1 < worldTilemap[0].Length) {
+                            if (worldTilemap[x][y + dy1] == false) {
+                                return false;
+                            }
+                        }
+                    }
                     x += dx1;
                     y += dy1;
                 }
                 else {
+                    if (Mathf.Abs(dx2) + Mathf.Abs(dy2) == 2) {
+                        if(x + dx2 >= 0 && x + dx2 < worldTilemap.Length) {
+                            if (worldTilemap[x + dx2][y] == false) {
+                                return false;
+                            }
+                        }
+                        if (y + dy2 >= 0 && y + dy2 < worldTilemap[0].Length) {
+                            if (worldTilemap[x][y + dy2] == false) {
+                                return false;
+                            }
+                        }
+                    }
                     x += dx2;
                     y += dy2;
                 }
@@ -484,5 +518,6 @@ namespace Andja.Utility {
         public static Vector2[] FindClosestPoints(IEnumerable<Vector2> seq1, params Vector2[] seq2) {
             return FindClosestPoints(seq1, (IEnumerable<Vector2>)seq2);
         }
+
     }
 }

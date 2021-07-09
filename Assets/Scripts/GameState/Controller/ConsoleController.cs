@@ -184,8 +184,7 @@ namespace Andja.Controller {
                     break;
 
                 case "camera":
-                    int num = 0;
-                    happend = int.TryParse(parameters[1], out num);
+                    happend = int.TryParse(parameters[1], out int num);
                     bool turn = num == 1;
                     CameraController.devCameraZoom = turn;
                     break;
@@ -202,6 +201,10 @@ namespace Andja.Controller {
                 case "fogofwar":
                     var fogOfWar = GameObject.Find("FOW Canvas").transform.GetChild(0).gameObject;
                     fogOfWar.SetActive(!fogOfWar.activeSelf);
+                    break;
+
+                case "isgod":
+                    MouseController.Instance.IsGod = !MouseController.Instance.IsGod;
                     break;
 
                 case "itsrainingbuildings":

@@ -94,9 +94,15 @@ namespace Andja.Controller {
             unit.RegisterOnChangedCallback(OnUnitChanged);
             unit.RegisterOnDestroyCallback(OnUnitDestroy);
             if (FogOfWarController.FogOfWarOn) {
-                FogOfWarController.Instance.AddUnitFogModule(go, unit);
-                if (GameData.FogOfWarStyle == FogOfWarStyle.Always)
-                    sr.maskInteraction = SpriteMaskInteraction.VisibleInsideMask; // boom this should make one part of fog always work
+                if (FogOfWarController.IsFogOfWarAlways) {
+                    if(unit.PlayerNumber == PlayerController.currentPlayerNumber) {
+                        FogOfWarController.Instance.AddUnitFogModule(go, unit);
+                    }
+                    else {
+                        // boom this should make one part of fog always work
+                        sr.maskInteraction = SpriteMaskInteraction.VisibleInsideMask; 
+                    }
+                }
             }
             // Register our callback so that our GameObject gets updated whenever
             // the object's into changes.
@@ -122,6 +128,11 @@ namespace Andja.Controller {
                 name = "Projectile"
             };
             SpriteRenderer sr = pro_go.AddComponent<SpriteRenderer>();
+            if (FogOfWarController.FogOfWarOn) {
+                if (FogOfWarController.IsFogOfWarAlways) {
+                    sr.maskInteraction = SpriteMaskInteraction.VisibleInsideMask;
+                }
+            }
             sr.sortingLayerName = "Units";
             sr.sprite = unitSprites["cannonball_1"];
             projectile.RegisterOnDestroyCallback(OnProjectileDestroy);
@@ -181,6 +192,11 @@ namespace Andja.Controller {
             //TODO: create a prefab?
             GameObject go = new GameObject();
             SpriteRenderer sr = go.AddComponent<SpriteRenderer>();
+            if (FogOfWarController.FogOfWarOn) {
+                if (FogOfWarController.IsFogOfWarAlways) {
+                    sr.maskInteraction = SpriteMaskInteraction.VisibleInsideMask;
+                }
+            }
             sr.sprite = unitSprites["Crate"];
             go.AddComponent<CrateHoldingScript>().thisCrate = c;
             go.transform.SetParent(this.transform);

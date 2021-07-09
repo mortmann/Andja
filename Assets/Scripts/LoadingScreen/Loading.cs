@@ -23,7 +23,7 @@ namespace Andja {
             get {
                 if (aso == null)
                     return 0;
-                return Mathf.Clamp(0.01f + (1.1f * aso.progress), 0, 1);
+                return Mathf.Clamp(aso.progress / 0.9f, 0, 1);
             }
         }
 
@@ -46,7 +46,8 @@ namespace Andja {
                 else {
                     if (string.IsNullOrEmpty(GameData.Instance.Loadsavegame) == false
                         && SaveController.Instance.DoesGameSaveExist(GameData.Instance.Loadsavegame) == false) {
-                        UnityEngine.Debug.LogError(GameData.Instance.Loadsavegame + " Save does not exist!");
+                        MainMenuInfo.AddInfo(MainMenuInfo.InfoTypes.SaveFileError, 
+                            GameData.Instance.Loadsavegame + " Save does not exist!");
                         SceneManager.LoadScene("MainMenu");
                         Destroy(FindObjectOfType<MasterController>().gameObject);
                         Destroy(FindObjectOfType<MapGenerator>().gameObject);
@@ -60,7 +61,7 @@ namespace Andja {
             if (loadEditor == false) {
                 if (SaveController.IsLoadingSave) {
                     float mapGenValue = MapGenerator.Instance != null ? MapGenerator.Instance.GeneratedProgressPercantage : 1;
-                    percantage = (int)(100 * (SceneLoadingProgress * 0.3f
+                    percantage = (int)(99 * (SceneLoadingProgress * 0.3f
                         + mapGenValue * 0.2f
                         + SaveController.Instance.loadingPercantage * 0.2f
                         + TileSpriteController.CreationPercantage * 0.3));

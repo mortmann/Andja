@@ -33,6 +33,10 @@ namespace Andja.Model {
             missingItems = new List<Item>();
             CombatValue = new PlayerCombatValue(player, null);
             structureToCount = new Dictionary<string, int>();
+            itemToProducePerMinuteChange = new Dictionary<string, float>();
+            foreach (string item in PrototypController.Instance.AllItems.Keys) {
+                itemToProducePerMinuteChange[item] = 0;
+            }
             foreach (Structure s in player.AllStructures) {
                 OnPlaceStructure(s);
             }
@@ -40,10 +44,7 @@ namespace Andja.Model {
             player.RegisterCityDestroy(OnCityDestroy);
             player.RegisterNewStructure(OnNewStructure);
             player.RegisterLostStructure(OnLostStructure);
-            itemToProducePerMinuteChange = new Dictionary<string, float>();
-            foreach (string item in PrototypController.Instance.AllItems.Keys) {
-                itemToProducePerMinuteChange[item] = 0;
-            }
+            
         }
 
         public AIPlayer(Player player, bool dummy) {
@@ -90,13 +91,12 @@ namespace Andja.Model {
 
         private void OnLostStructure(Structure structure) {
             structureToCount[structure.ID]--;
-            if (structure is OutputStructure) {
-                OutputStructure os = structure as OutputStructure;
-                foreach (Item p in os.Output) {
-                    itemToProducePerMinuteChange[p.ID] -= os.OutputData.ProducePerMinute;
-                }
-                if (structure is ProductionStructure) {
-                    ProductionStructure ps = structure as ProductionStructure;
+            if (structure is OutputStructure os) {
+                if(os.Output != null)
+                    foreach (Item p in os.Output) {
+                        itemToProducePerMinuteChange[p.ID] -= os.OutputData.ProducePerMinute;
+                    }
+                if (os is ProductionStructure ps) {
                     if (ps.InputTyp == InputTyp.OR) {
                         Debug.LogWarning("AI CAN'T HANDLE OR INTAKE YET!");
                         return;
@@ -117,6 +117,7 @@ namespace Andja.Model {
         }
 
         private void OnPlaceStructure(Structure s) {
+            OnNewStructure(s);
         }
 
         private void OnOwnerChange(Structure str, City oldCity, City newCity) {

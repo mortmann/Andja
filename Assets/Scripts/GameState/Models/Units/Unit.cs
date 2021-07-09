@@ -237,7 +237,7 @@ namespace Andja.Model {
         public virtual PathingMode PathingMode => PathingMode.IslandSinglePoint;
         public virtual bool CanEndInUnwakable => false;
         public virtual PathHeuristics Heuristic => PathHeuristics.Euclidean;
-        public virtual bool CanMoveDiagonal => true;
+        public virtual PathDiagonal DiagonalType => PathDiagonal.OnlyNoObstacle;
 
         public IReadOnlyList<int> CanEnterCities => PlayerController.GetPlayer(PlayerNumber)?.GetUnitCityEnterable();
 
@@ -653,11 +653,11 @@ namespace Andja.Model {
         public void ToTradeItemToNearbyWarehouse(Item clicked) {
             if (rangeUStructure != null && rangeUStructure is WarehouseStructure) {
                 if (rangeUStructure.PlayerNumber == playerNumber) {
-                    rangeUStructure.City.TradeFromShip(this, clicked);
+                    rangeUStructure.City.TradeFromShip(this, clicked, rangeUStructure.City.PlayerTradeAmount);
                 }
                 else {
                     Player p = PlayerController.GetPlayer(playerNumber);
-                    rangeUStructure.City.BuyingTradeItem(clicked.ID, p, (Ship)this, clicked.count);
+                    rangeUStructure.City.BuyingTradeItem(clicked.ID, p, (Ship)this, rangeUStructure.City.PlayerTradeAmount);
                 }
             }
         }

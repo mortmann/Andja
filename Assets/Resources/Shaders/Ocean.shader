@@ -112,9 +112,9 @@ Shader "Custom/Ocean"
             float2 value = (IN.worldPos.xy) / _CellSize;
             float3 noise = sampleLayeredNoise(value + _TimeScale.xy * (sin(_Time)/4.0));
             // Albedo comes from a texture tinted by color
-            o.Normal =  UnpackNormal(tex2D(_BumpMap, IN.uv_BumpMap + offsetUV * 0.1))  
-                        + UnpackNormal(tex2D(_SecondaryMap, IN.uv_BumpMap + offsetUV * 0.1)) 
-                        + (sin(_Time)*0.5+0.5) * noise * 0.1;
+            o.Normal = UnpackNormal(tex2D(_BumpMap, IN.uv_BumpMap + offsetUV * 0.1));
+                        //+ UnpackNormal(tex2D(_SecondaryMap, IN.uv_BumpMap + offsetUV * 0.1)) 
+                        //+ (sin(_Time)*0.5+0.5) * noise * 0.1;
             // Metallic and smoothness come from slider variables
             o.Metallic = _Metallic;
             o.Smoothness = _Glossiness;

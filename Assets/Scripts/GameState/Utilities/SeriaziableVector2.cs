@@ -6,8 +6,8 @@ namespace Andja.Utility {
 
     [JsonObject(MemberSerialization.OptIn)]
     public class SeriaziableVector2 {
-        [JsonPropertyAttribute] private float X;
-        [JsonPropertyAttribute] private float Y;
+        [JsonPropertyAttribute] public float X;
+        [JsonPropertyAttribute] public float Y;
 
         [JsonIgnore]
         public Vector2 Vec {

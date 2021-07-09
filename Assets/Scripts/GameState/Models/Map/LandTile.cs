@@ -1,4 +1,5 @@
 ﻿using Andja.Editor;
+using Andja.FogOfWar;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -156,6 +157,8 @@ namespace Andja.Model {
         private Action<Structure, Structure> cbTileOldNewStructureChanged;
 
         private Action<Tile, Structure> cbTileStructureChanged;
+        //Does not get saved here - because this is handled by the fogOfWarController separat
+        internal FogOfWarStructure fogOfWarStructure;
 
         /// <summary>
         /// Register a function to be called back when our tile type changes.

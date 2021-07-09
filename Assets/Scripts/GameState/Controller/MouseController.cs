@@ -154,9 +154,11 @@ namespace Andja.Controller {
 
         public bool CanEndInUnwakable => true;
 
-        public bool CanMoveDiagonal => false;
+        public PathDiagonal DiagonalType => PathDiagonal.None;
 
         public IReadOnlyList<int> CanEnterCities => new List<int> { PlayerController.currentPlayerNumber };
+
+        public bool IsGod { get; set; }
 
         public void OnEnable() {
             if (Instance != null) {
@@ -372,7 +374,7 @@ namespace Andja.Controller {
             if (Input.GetMouseButtonUp(0)) {
                 List<Tile> ts = new List<Tile>(GetTilesStructures(start_x, end_x, start_y, end_y));
                 if (ts != null) {
-                    bool isGod = EditorController.IsEditor; //TODO: add cheat to set this
+                    bool isGod = EditorController.IsEditor || IsGod; //TODO: add cheat to set this
                     BuildController.Instance.DestroyStructureOnTiles(ts, PlayerController.CurrentPlayer, isGod);
                 }
                 ResetBuild(null, false);
@@ -557,10 +559,18 @@ namespace Andja.Controller {
             if (hit != null) {
                 ITargetableHoldingScript targetableHoldingScript = hit.GetComponent<ITargetableHoldingScript>();
                 if (targetableHoldingScript != null && targetableHoldingScript.IsUnit) {
+                    if (GameData.FogOfWarStyle == FogOfWarStyle.Always && targetableHoldingScript.IsCurrentlyVisible == false) {
+                        return;
+                    }
                     SelectUnit((Unit)targetableHoldingScript.Holding);
                 }
                 else
                 if (SelectedUnit == null) {
+                    if (GameData.FogOfWarStyle == FogOfWarStyle.Always) {
+                        if(FogOfWar.FogOfWarStructure.IsStructureVisible(hit.gameObject) == false) {
+                            return;
+                        }
+                    }
                     Tile t = GetTileUnderneathMouse();
                     if (t.Structure != null) {
                         UIDebug(t.Structure);

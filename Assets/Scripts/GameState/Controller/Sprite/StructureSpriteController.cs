@@ -24,20 +24,19 @@ namespace Andja.Controller {
         public bool RoadDebug = false;
 
         private void Awake() {
-            BuildController.Instance.RegisterStructureCreated(OnBuildStrucutureCreated);
-        }
-
-        private void Start() {
             if (Instance != null) {
                 Debug.LogError("There should never be two StructureSpriteController.");
             }
             Instance = this;
+            LoadSprites();
+            LoadEffectSprites();
+            BuildController.Instance.RegisterStructureCreated(OnBuildStrucutureCreated);
+        }
 
+        private void Start() {
             structureGameObjectMap = new Dictionary<Structure, GameObject>();
             structureExtraUIMap = new Dictionary<Structure, GameObject>();
 
-            LoadSprites();
-            LoadEffectSprites(); 
 
             if (BuildController.Instance.LoadedStructures != null) {
                 foreach (Structure str in BuildController.Instance.LoadedStructures) {
@@ -51,13 +50,19 @@ namespace Andja.Controller {
         }
 
         private void Update() {
+            //no destroying gameobjects...
+            if (FogOfWarController.IsFogOfWarAlways)
+                return;
             List<Structure> ts = new List<Structure>(structureGameObjectMap.Keys);
             HashSet<Structure> inView = new HashSet<Structure>(CameraController.Instance.structureCurrentInCameraView);
             foreach (Structure str in ts) {
                 if (inView.Contains(str) == false) {
                     if (str.HasHitbox)
-                        continue; // TODO: check performance impact -- if we need to remove those aswell
-                    GameObject.Destroy(structureGameObjectMap[str]);
+                        // TODO: check performance impact 
+                        //-- if we need to remove those aswell 
+                        //-- cant do it if fogAlways it needs them for visible detection
+                        continue; 
+                    Destroy(structureGameObjectMap[str]);
                     structureGameObjectMap.Remove(str);
                 }
                 else {
@@ -73,7 +78,7 @@ namespace Andja.Controller {
         }
 
         public void OnBuildStrucutureCreated(Structure structure, bool onLoad) {
-            if (structure.HasHitbox == false)
+            if (FogOfWarController.IsFogOfWarAlways == false && structure.HasHitbox == false)
                 return;
             CreateStructureGameObject(structure);
         }
@@ -120,12 +125,8 @@ namespace Andja.Controller {
                     OnStructureEffectChange(structure, e, true);
                 }
             }
-            if(GameData.FogOfWarStyle == FogOfWarStyle.Always) /*&&structure.PlayerNumber != PlayerController.currentPlayerNumber*/ {
-
-                go.AddComponent<FogOfWarStructure>().Link(structure);
-                BoxCollider2D col = go.AddComponent<BoxCollider2D>();
-                col.size = new Vector2(sr.sprite.textureRect.size.x / sr.sprite.pixelsPerUnit, sr.sprite.textureRect.size.y / sr.sprite.pixelsPerUnit);
-                col.isTrigger = structure.HasHitbox;
+            if(GameData.FogOfWarStyle == FogOfWarStyle.Always) {
+                FogOfWarController.Instance.AddStructureFogModule(go, structure);
                 //TODO: if the player sees it remove the maskinteraction && check then on update if it is supposed to update sprite
             } else {
                 if (structure.HasHitbox) {
@@ -166,7 +167,7 @@ namespace Andja.Controller {
                 EffectAnimator[] effectsanimators = strgo.GetComponentsInChildren<EffectAnimator>();
                 if (effectsanimators == null || effectsanimators.Length == 0)
                     return;
-                EffectAnimator removeEffect = Array.Find<EffectAnimator>(effectsanimators, x => x.effect.ID == effect.ID);
+                EffectAnimator removeEffect = Array.Find(effectsanimators, x => x.effect.ID == effect.ID);
                 if (removeEffect == null)
                     return;
                 Destroy(removeEffect.gameObject);
@@ -189,8 +190,7 @@ namespace Andja.Controller {
             if (structureGameObjectMap.ContainsKey(structure) == false) {
                 return;
             }
-            FogOfWarStructure fwg = structureGameObjectMap[structure].GetComponent<FogOfWarStructure>();
-            if (fwg.isCurrentlyVisible) {
+            if(FogOfWarStructure.IsStructureVisible(structureGameObjectMap[structure]) == false) {
                 return;
             }
             SpriteRenderer sr = structureGameObjectMap[structure].GetComponent<SpriteRenderer>();
@@ -217,7 +217,7 @@ namespace Andja.Controller {
                         break;
 
                     case ExtraUI.Efficiency:
-                        extraUI = GameObject.Instantiate(Resources.Load<GameObject>("Prefabs/GamePrefab/SpriteSlider"));
+                        extraUI = Instantiate(Resources.Load<GameObject>("Prefabs/GamePrefab/SpriteSlider"));
                         break;
 
                     case ExtraUI.Upgrade:
@@ -298,13 +298,15 @@ namespace Andja.Controller {
                 return;
             }
             GameObject go = structureGameObjectMap[structure];
-            Destroy(go);
             structure.UnregisterOnChangedCallback(OnStructureChanged);
             structure.UnregisterOnDestroyCallback(OnStructureDestroyed);
-            structure.UnregisterOnExtraUICallback(OnStructureExtraUI);
+            structure.UnregisterOnExtraUICallback(OnStructureExtraUI); 
             structureGameObjectMap.Remove(structure);
             //SOUND PART -- IMPORTANT
             SoundController.Instance.OnStructureGODestroyed(structure, go);
+            if (FogOfWarStructure.IsStructureVisible(go) == false)
+                return;
+            Destroy(go);
         }
 
         public void OnRoadChange(RoadStructure road) {

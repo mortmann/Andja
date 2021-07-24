@@ -41,7 +41,7 @@ namespace Andja.Model {
         private Action<IGEventable, Effect, bool> onTargetEffectChange;
 
         protected ServiceStructurePrototypeData _servicveData;
-
+        //TODO: make it possible service structure to need certain items every time unit to function(otherwise inactive)
         public ServiceStructurePrototypeData ServiceData {
             get {
                 if (_servicveData == null) {

@@ -1,6 +1,7 @@
 ﻿using Andja.Controller;
 using Andja.UI;
 using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -10,6 +11,11 @@ namespace Andja.Model {
     public class FarmPrototypeData : OutputPrototypData {
         public GrowableStructure growable;
         public int neededHarvestToProduce;
+        //this is either/or/none with growable -- if it doesnt have any specific growable 
+        //this can specify which fertility is required to be active
+        public Fertility fertility;
+        //how many tile have to be empty when no growable is present
+        public float fullfillmentPercantage = 0.9f; 
     }
 
     [JsonObject(MemberSerialization.OptIn)]
@@ -30,7 +36,7 @@ namespace Andja.Model {
         public int OnRegisterCallbacks;
         private List<GrowableStructure> workingGrowables;
         public override float Progress => CalculateProgress();
-
+        public float FullfillmentPercantage => FarmData.fullfillmentPercantage;
         public override float TotalProgress => ProduceTime * NeededHarvestForProduce;
 
         protected FarmPrototypeData _farmData;
@@ -74,25 +80,23 @@ namespace Andja.Model {
 
         public override void OnBuild() {
             workingGrowables = new List<GrowableStructure>();
-            if (Growable == null) {
-                return;
-            }
             //farm has it needs plant if it can
-            foreach (Tile rangeTile in RangeTiles) {
-                if (rangeTile.Structure != null) {
-                    if (rangeTile.Structure.ID == Growable.ID) {
+            if (Growable != null) {
+                foreach (Tile rangeTile in RangeTiles) {
+                    if (rangeTile.Structure != null && rangeTile.Structure.ID == Growable.ID) {
                         rangeTile.Structure.RegisterOnChangedCallback(OnGrowableChanged);
                         OnRegisterCallbacks++;
                         if (((GrowableStructure)rangeTile.Structure).hasProduced == true) {
                             workingGrowables.Add((GrowableStructure)rangeTile.Structure);
                         }
                     }
-                }
+                } 
             }
             foreach (Tile rangeTile in RangeTiles) {
                 rangeTile.RegisterTileOldNewStructureChangedCallback(OnTileStructureChange);
             }
         }
+
 
         public override void OnUpdate(float deltaTime) {
             UpdateWorker(deltaTime);
@@ -115,6 +119,12 @@ namespace Andja.Model {
                         workingGrowables[0].Harvest();
                         workingGrowables.RemoveAt(0);
                     }
+                }
+            } else {
+                produceTimer += deltaTime * Efficiency * Mathf.Clamp01(OnRegisterCallbacks/(RangeTiles.Count * FullfillmentPercantage));
+                if (produceTimer >= ProduceTime) {
+                    produceTimer = 0;
+                    AddHarvastable();
                 }
             }
             if (currentlyHarvested >= NeededHarvestForProduce) {
@@ -146,8 +156,20 @@ namespace Andja.Model {
                 str.UnregisterOnChangedCallback(OnGrowableChanged);
             }
         }
-
+        /// <summary>
+        /// When growable is null -- empty space is counted as workables
+        /// </summary>
+        /// <param name="obj"></param>
         public void OnTileStructureChange(Structure now, Structure old) {
+            if(Growable == null) {
+                if (now == null) {
+                    OnRegisterCallbacks++;
+                }
+                if (old == null) {
+                    OnRegisterCallbacks--;
+                }
+                return;
+            }
             if (old != null && old.ID == Growable.ID) {
                 OnRegisterCallbacks--;
             }

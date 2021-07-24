@@ -1,14 +1,6 @@
 <?xml version="1.0"?>
 <UILanguageLocalizations xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" language="Empty">
   <localizationData>
-    <translationData id="HealthUI">
-      <translation>[**Missing**]</translation>
-      <hoverOverTranslation>[**Missing**]</hoverOverTranslation>
-      <uiElements>
-        <string>UnitHealth/Health/</string>
-      </uiElements>
-      <onlyHoverOver>true</onlyHoverOver>
-    </translationData>
     <translationData id="GraphicsOptions/VeryLow">
       <translation>[**Missing**]</translation>
     </translationData>

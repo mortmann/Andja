@@ -76,10 +76,10 @@ TextureImporter:
     second: clay
   - first:
       213: 21300048
-    second: sand
+    second: potash
   - first:
       213: 21300050
-    second: quartz
+    second: quartzsand
   - first:
       213: 21300052
     second: fish
@@ -154,7 +154,7 @@ TextureImporter:
     second: ropes
   - first:
       213: 21300100
-    second: cooperore
+    second: copperore
   - first:
       213: 21300102
     second: copperingots
@@ -618,7 +618,7 @@ TextureImporter:
       213: 21300408
     second: horses
   externalObjects: {}
-  serializedVersion: 10
+  serializedVersion: 11
   mipmaps:
     mipMapMode: 0
     enableMipMap: 0
@@ -638,6 +638,7 @@ TextureImporter:
   isReadable: 0
   streamingMipmaps: 0
   streamingMipmapsPriority: 0
+  vTOnly: 0
   grayScaleToAlpha: 0
   generateCubemap: 6
   cubemapConvolution: 0
@@ -669,9 +670,13 @@ TextureImporter:
   textureType: 8
   textureShape: 1
   singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
   maxTextureSizeSet: 0
   compressionQualitySet: 0
   textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 1
   platformSettings:
   - serializedVersion: 3
     buildTarget: DefaultTexturePlatform
@@ -1205,7 +1210,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: sand
+      name: potash
       rect:
         serializedVersion: 2
         x: 256
@@ -1226,7 +1231,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: quartz
+      name: quartzsand
       rect:
         serializedVersion: 2
         x: 288
@@ -1751,7 +1756,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: cooperore
+      name: copperore
       rect:
         serializedVersion: 2
         x: 64

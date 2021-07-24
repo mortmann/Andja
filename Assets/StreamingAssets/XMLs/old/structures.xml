@@ -6290,10 +6290,10 @@
          </output>
          <intake length="2">
             <Item ID="winegrapes">
-               <count>1</count>
+               <count>0</count>
             </Item>
             <Item ID="casks">
-               <count>1</count>
+               <count>0</count>
             </Item>
          </intake>
          <inputTyp>AND</inputTyp>
@@ -6494,7 +6494,7 @@
          </output>
          <intake length="1">
             <Item ID="roughdiamonds">
-               <count>1</count>
+               <count>0</count>
             </Item>
          </intake>
          <inputTyp>AND</inputTyp>

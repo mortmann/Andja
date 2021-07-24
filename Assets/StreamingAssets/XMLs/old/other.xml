@@ -2,13 +2,13 @@
    <PopulationLevel LEVEL="0">
       <Name>
          <entry lang="Deutsch">Bauer</entry>
-         <entry lang="English">Peasant</entry>
+         <entry lang="English">Peasent</entry>
       </Name>
       <Description>
          <entry lang="Deutsch">Arme Bauern.</entry>
          <entry lang="English">Poor farmers and agricultural workers.</entry>
       </Description>
-      <iconSpriteName>peasant</iconSpriteName>
+      <iconSpriteName>peasent</iconSpriteName>
       <taxPerPerson>1</taxPerPerson>
    </PopulationLevel>
    <PopulationLevel LEVEL="1">

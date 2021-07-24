@@ -60,7 +60,7 @@ namespace Andja.Model.Data {
                 if (i < tier)
                     continue;
                 if (tiers.Count <= i) {
-                    tiers[i] = new List<ProduceRatio>();
+                    tiers.Add(new List<ProduceRatio>());
                 }
                 tiers[i].AddRange(supplyChain.tiers[i]);
             }

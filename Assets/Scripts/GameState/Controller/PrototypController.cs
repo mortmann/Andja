@@ -561,27 +561,45 @@ namespace Andja.Controller {
             needsPerLevel = new List<NeedPrototypeData>[NumberOfPopulationLevels];
             foreach (NeedPrototypeData need in needPrototypeDatas.Values) {
                 if (need.structures != null) {
+                    int startPopulationCount = int.MaxValue;
+                    int populationLevel = int.MaxValue;
                     foreach (Structure str in need.structures) {
-                        if (need.startLevel <= str.PopulationLevel && need.startPopulationCount < str.PopulationCount) {
-                            need.startPopulationCount = str.PopulationCount;
-                            need.startLevel = str.PopulationLevel;
-                            Debug.LogWarning("Need " + need.Name + " is misconfigured to start earlier than supposed. Fixed to unlock time.");
-                        }
+                        startPopulationCount = Mathf.Min(startPopulationCount, str.PopulationCount);
+                        populationLevel = Mathf.Min(populationLevel, str.PopulationLevel);
+                    }
+                    if (need.startLevel < populationLevel 
+                        || need.startLevel == populationLevel && need.startPopulationCount < startPopulationCount) {
+                        Debug.LogWarning("Need " + need.Name + " is misconfigured to start earlier than supposed. Fixed to unlock time." +
+                            "\nCount " + need.startPopulationCount + "->" + startPopulationCount
+                            + "\nLevel " + need.startLevel + "->" + populationLevel);
+                        need.startPopulationCount = startPopulationCount;
+                        need.startLevel = populationLevel;
                     }
                 }
                 if (need.item != null) {
                     need.produceForPeople = new Dictionary<Produce, int[]>();
+                    if(itemIDToProduce.ContainsKey(need.item.ID) == false) {
+                        Debug.LogError("itemIDToProduce does not have any production for this need item " + need.item.ID);
+                        continue;
+                    }
+                    int startPopulationCount = int.MaxValue;
+                    int populationLevel = int.MaxValue;
                     foreach (Produce produce in itemIDToProduce[need.item.ID]) {
                         StructurePrototypeData str = produce.ProducerStructure;
-                        if (need.startLevel <= str.populationLevel && need.startPopulationCount < str.populationCount) {
-                            need.startPopulationCount = str.populationCount;
-                            need.startLevel = str.populationLevel;
-                            Debug.LogWarning("Need " + need.Name + " is misconfigured to start earlier than supposed. Fixed to unlock time.");
-                        }
+                        startPopulationCount = Mathf.Min(startPopulationCount, str.populationCount);
+                        populationLevel = Mathf.Min(populationLevel, str.populationLevel);
                         need.produceForPeople[produce] = new int[NumberOfPopulationLevels];
                         for (int i = 0; i < NumberOfPopulationLevels; i++) {
                             need.produceForPeople[produce][i] = Mathf.FloorToInt(produce.producePerMinute / need.UsageAmounts[i]);
                         }
+                    }
+                    if (need.startLevel < populationLevel 
+                        || need.startLevel == populationLevel && need.startPopulationCount < startPopulationCount) {
+                        Debug.LogWarning("Need " + need.Name + " is misconfigured to start earlier than supposed. Fixed to unlock time." +
+                            "\nCount " + need.startPopulationCount + "->" + startPopulationCount
+                            + "\nLevel " + need.startLevel + "->" + populationLevel);
+                        need.startPopulationCount = startPopulationCount;
+                        need.startLevel = populationLevel;
                     }
                 }
                 if (needsPerLevel[need.startLevel] == null)
@@ -1414,7 +1432,7 @@ namespace Andja.Controller {
                         continue;
                     }
                     if (fi.FieldType == (typeof(float[]))) {
-                        List<float> items = new List<float>();
+                        List<float> items = new List<float>(currentNode.ChildNodes.Count);
                         foreach (XmlNode item in currentNode.ChildNodes) {
                             int id = int.Parse(item.Attributes[0].InnerXml);
                             items.Insert(id, float.Parse(item.InnerXml));
@@ -1454,7 +1472,8 @@ namespace Andja.Controller {
                         var constructedfirstListType = listType.MakeGenericType(fi.FieldType.GetElementType().MakeArrayType());
                         var firstlist = (IList)Activator.CreateInstance(constructedfirstListType);
                         foreach (XmlNode item in currentNode.ChildNodes) {
-                            if (int.TryParse(item.Attributes.GetNamedItem("length").Value, out secondLength) == false) {
+                            XmlNode len2 = item.Attributes.GetNamedItem("length");
+                            if (len2 == null || int.TryParse(len2.Value, out secondLength) == false) {
                                 continue;
                             }
                             var constructedSecondListType = listType.MakeGenericType(fi.FieldType.GetElementType());

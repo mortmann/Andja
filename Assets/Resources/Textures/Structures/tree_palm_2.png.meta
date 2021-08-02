@@ -1,21 +1,21 @@
 fileFormatVersion: 2
-guid: aab2d4944974315499c9041a74355477
+guid: c88e2268541dd8a47b72947f3edf30a0
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -8667466294985060184
-    second: tree_0
+      213: -1310468671976049504
+    second: tree_palm_2_0
   - first:
-      213: 5281997702118322174
-    second: tree_1
+      213: -5663199186809409520
+    second: tree_palm_2_1
   - first:
-      213: -3105659087322419395
-    second: tree_2
+      213: -3251482404975326600
+    second: tree_palm_2_2
   - first:
-      213: -25497680464327838
-    second: tree_3
+      213: 8150135332957282153
+    second: tree_palm_2_3
   externalObjects: {}
-  serializedVersion: 10
+  serializedVersion: 11
   mipmaps:
     mipMapMode: 0
     enableMipMap: 0
@@ -35,6 +35,7 @@ TextureImporter:
   isReadable: 0
   streamingMipmaps: 0
   streamingMipmapsPriority: 0
+  vTOnly: 0
   grayScaleToAlpha: 0
   generateCubemap: 6
   cubemapConvolution: 0
@@ -43,7 +44,7 @@ TextureImporter:
   maxTextureSize: 2048
   textureSettings:
     serializedVersion: 2
-    filterMode: 0
+    filterMode: -1
     aniso: -1
     mipBias: -100
     wrapU: 1
@@ -66,9 +67,13 @@ TextureImporter:
   textureType: 8
   textureShape: 1
   singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
   maxTextureSizeSet: 0
   compressionQualitySet: 0
   textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
   platformSettings:
   - serializedVersion: 3
     buildTarget: DefaultTexturePlatform
@@ -94,23 +99,11 @@ TextureImporter:
     overridden: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
-  - serializedVersion: 3
-    buildTarget: Windows Store Apps
-    maxTextureSize: 2048
-    resizeAlgorithm: 0
-    textureFormat: -1
-    textureCompression: 1
-    compressionQuality: 50
-    crunchedCompression: 0
-    allowsAlphaSplitting: 0
-    overridden: 0
-    androidETC2FallbackOverride: 0
-    forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: tree_0
+      name: tree_palm_2_0
       rect:
         serializedVersion: 2
         x: 0
@@ -124,14 +117,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 0f01090c7ccba614ca9c3ed52db80423
-      internalID: -8667466294985060184
+      spriteID: 0a4f69d9fa740dde0800000000000000
+      internalID: -1310468671976049504
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: tree_1
+      name: tree_palm_2_1
       rect:
         serializedVersion: 2
         x: 32
@@ -145,14 +138,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 2be42356986eee34490326d854fbf6a6
-      internalID: 5281997702118322174
+      spriteID: 010b1f138564861b0800000000000000
+      internalID: -5663199186809409520
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: tree_2
+      name: tree_palm_2_2
       rect:
         serializedVersion: 2
         x: 64
@@ -166,14 +159,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: f2c43a6bfb435f9418ef74686313e55f
-      internalID: -3105659087322419395
+      spriteID: 87a4302daf960e2d0800000000000000
+      internalID: -3251482404975326600
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: tree_3
+      name: tree_palm_2_3
       rect:
         serializedVersion: 2
         x: 96
@@ -187,8 +180,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 967fef4599a86bb42a2979e60f815780
-      internalID: -25497680464327838
+      spriteID: 96f574077e81b1170800000000000000
+      internalID: 8150135332957282153
       vertices: []
       indices: 
       edges: []

@@ -11,11 +11,11 @@ namespace Andja.Controller {
 
     public class StructureSpriteController : MonoBehaviour {
         public static StructureSpriteController Instance { get; protected set; }
-
         public Dictionary<Structure, GameObject> structureGameObjectMap;
         public Dictionary<Structure, GameObject> structureExtraUIMap;
         public readonly static string EffectFilePath = "Textures/Effects/Structures/";
-        public Dictionary<string, Sprite> structureSprites = new Dictionary<string, Sprite>();
+        public static Dictionary<string, Sprite> structureSprites = new Dictionary<string, Sprite>();
+        public static Dictionary<string, StructureSprite> structureToVariants = new Dictionary<string, StructureSprite>();
         public Sprite circleSprite;
         public Sprite upgradeSprite;
         public Sprite unitCircleSprite;
@@ -28,7 +28,6 @@ namespace Andja.Controller {
                 Debug.LogError("There should never be two StructureSpriteController.");
             }
             Instance = this;
-            LoadSprites();
             LoadEffectSprites();
             BuildController.Instance.RegisterStructureCreated(OnBuildStrucutureCreated);
         }
@@ -36,8 +35,6 @@ namespace Andja.Controller {
         private void Start() {
             structureGameObjectMap = new Dictionary<Structure, GameObject>();
             structureExtraUIMap = new Dictionary<Structure, GameObject>();
-
-
             if (BuildController.Instance.LoadedStructures != null) {
                 foreach (Structure str in BuildController.Instance.LoadedStructures) {
                     OnBuildStrucutureCreated(str, true);
@@ -277,7 +274,11 @@ namespace Andja.Controller {
                 go.transform.localRotation = Quaternion.identity;
             }
         }
-
+        public static string GetRandomVariant(string id, string climate) {
+            if(structureToVariants.ContainsKey(id))
+                return structureToVariants[id].GetRandomVariant(climate);
+            return "";
+        }
         public Sprite GetSprite(string name) {
             if (structureSprites.ContainsKey(name)) {
                 return structureSprites[name];
@@ -347,8 +348,22 @@ namespace Andja.Controller {
             foreach (Sprite s in custom) {
                 structureSprites[s.name] = s;
             }
+            foreach(string name in structureSprites.Keys) {
+                string[] splits = name.Split('_');
+                string id = splits[0];
+                if (splits.Length < 3)
+                    continue;
+                if(structureToVariants.ContainsKey(id) == false)
+                    structureToVariants[id] = new StructureSprite();
+                if (structureToVariants[id].climateToVariants == null)
+                    structureToVariants[id].climateToVariants = new Dictionary<string, List<string>>();
+                if(structureToVariants[id].climateToVariants.ContainsKey(splits[1]) == false) {
+                    structureToVariants[id].climateToVariants[splits[1]] = new List<string>();
+                }
+                structureToVariants[id].climateToVariants[splits[1]].Add(splits[2]);
+            }
         }
-        private void LoadSprites() {
+        public static void LoadSprites() {
             structureSprites = new Dictionary<string, Sprite>();
             Sprite[] sprites = Resources.LoadAll<Sprite>("Textures/Structures/");
             foreach (Sprite s in sprites) {
@@ -385,6 +400,14 @@ namespace Andja.Controller {
 
         private void OnDestroy() {
             Instance = null;
+        }
+        public class StructureSprite {
+            public Sprite Default;
+            public Dictionary<string, List<string>> climateToVariants = new Dictionary<string, List<string>>();
+
+            internal string GetRandomVariant(string climate) {
+                return climateToVariants[climate][UnityEngine.Random.Range(0, climateToVariants[climate].Count)]; 
+            }
         }
         public class EffectSprite {
             public Dictionary<string, List<Sprite>> structureToSprites = new Dictionary<string, List<Sprite>>();

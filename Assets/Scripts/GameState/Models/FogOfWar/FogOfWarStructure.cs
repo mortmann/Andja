@@ -23,7 +23,7 @@ namespace Andja.FogOfWar {
 
     public class FogOfWarStructure : MonoBehaviour {
         public Structure structure;
-        bool isCurrentlyVisible;
+        private bool isCurrentlyVisible;
         public bool IsCurrentlyVisible {
             get {
                 return isCurrentlyVisible || structure.IsPlayer();
@@ -115,7 +115,7 @@ namespace Andja.FogOfWar {
             if (FogOfWarController.IsFogOfWarAlways) {
                 FogOfWarStructure fwg = go.GetComponent<FogOfWarStructure>();
                 if (fwg != null) {
-                    return fwg.isCurrentlyVisible;
+                    return fwg.IsCurrentlyVisible;
                 }
             }
             return true;

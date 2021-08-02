@@ -55,6 +55,13 @@ namespace Andja.Controller {
 
         public List<Structure> LoadedStructures { get; private set; }
         public Dictionary<uint, Structure> buildIdToStructure { get; private set; }
+        public bool AllStructuresEnabled { 
+            get => allStructuresEnabled;
+            set {
+                allStructuresEnabled = value;
+                UI.BuildMenuUIController.Instance?.OnAllStructureEnabledCheatToggle();
+            }
+        }
 
         /// <summary>
         /// Is called when any structure is build. 

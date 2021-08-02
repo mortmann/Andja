@@ -26,6 +26,13 @@ namespace Andja.Model {
     [JsonObject(MemberSerialization.OptIn, ItemTypeNameHandling = TypeNameHandling.None)]
     [MoonSharp.Interpreter.MoonSharpUserData]
     public class Tile : IComparable<Tile>, IEqualityComparer<Tile> {
+        public static TileType[] BuildLand => new TileType[]{
+            TileType.Dirt, TileType.Grass, TileType.Stone, TileType.Desert, TileType.Steppe, TileType.Jungle
+        };
+        public static TileType[] NoBuildLand => new TileType[]{
+            TileType.Ocean, TileType.Shore, TileType.Cliff, TileType.Water, TileType.Mountain, TileType.Volcano
+        };
+
         [JsonPropertyAttribute] protected ushort x;
         [JsonPropertyAttribute] protected ushort y;
 
@@ -203,23 +210,10 @@ namespace Andja.Model {
         }
 
         public static bool IsBuildType(TileType t) {
-            switch (t) {
-                case TileType.Ocean:
-                case TileType.Shore:
-                case TileType.Cliff:
-                case TileType.Water:
-                case TileType.Mountain:
-                case TileType.Volcano:
-                    return false;
-
-                case TileType.Dirt:
-                case TileType.Grass:
-                case TileType.Stone:
-                case TileType.Desert:
-                case TileType.Steppe:
-                case TileType.Jungle:
-                    return true;
-            }
+            if (Array.Exists(BuildLand, x => t == x))
+                return true;
+            if (Array.Exists(NoBuildLand, x => t == x))
+                return false;
             Debug.LogError("TileType " + t + " is not defined in IsBuildType. FIX IT!");
             return false;
         }

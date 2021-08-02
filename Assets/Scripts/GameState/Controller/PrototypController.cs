@@ -55,7 +55,8 @@ namespace Andja.Controller {
         public IReadOnlyDictionary<Climate, List<FertilityPrototypeData>> AllFertilitiesDatasPerClimate => allFertilitiesDatasPerClimate;
         public IReadOnlyDictionary<Size, IslandSizeGenerationInfo> IslandSizeToGenerationInfo => islandSizeToGenerationInfo;
         public IReadOnlyDictionary<Climate, List<ResourceGenerationInfo>> ClimateToResourceGeneration => climateToResourceGeneration;
-
+        public IReadOnlyDictionary<Climate, List<SpawnStructureGenerationInfo>> SpawnStructureGeneration => spawnStructureGeneration;
+        public IReadOnlyList<string> AllNaturalSpawningStructureIDs => allNaturalSpawningStructureIDs;
         /// <summary>
         /// Array: For each Level of Populations exists a dictionary
         /// <br>int: people of that population requiered for those Unlocks</br>
@@ -93,6 +94,7 @@ namespace Andja.Controller {
         private Dictionary<string, NeedGroupPrototypData> needGroupDatas;
         private Dictionary<string, NeedGroup> idToNeedGroup;
         private Dictionary<string, Item> allItems;
+        private Dictionary<Climate, List<SpawnStructureGenerationInfo>> spawnStructureGeneration;
 
         private List<Item> buildItemsList;
         private Dictionary<int, List<NeedGroup>> populationLevelToNeedGroup;
@@ -105,7 +107,7 @@ namespace Andja.Controller {
         private Dictionary<Climate, List<ResourceGenerationInfo>> climateToResourceGeneration;
         private ConcurrentDictionary<int, Unlocks>[] levelCountToUnlocks;
         private ConcurrentDictionary<string, float[]> buildItemsNeeded;
-
+        private List<string> allNaturalSpawningStructureIDs;
         public List<ResourceGenerationInfo> ResourceGenerations { get; private set; }
         public List<int>[] AllUnlockPeoplePerLevel;
 
@@ -206,6 +208,7 @@ namespace Andja.Controller {
             ModLoader.LoadMods();
             //ModLoader.AvaibleMods();
             LoadFromXML();
+            StructureSpriteController.LoadSprites();
         }
 
         public StructurePrototypeData GetStructurePrototypDataForID(string ID) {
@@ -358,13 +361,17 @@ namespace Andja.Controller {
             islandSizeToGenerationInfo = new Dictionary<Size, IslandSizeGenerationInfo>();
             climateToResourceGeneration = new Dictionary<Climate, List<ResourceGenerationInfo>>();
             islandFeaturePrototypeDatas = new Dictionary<string, IslandFeaturePrototypeData>();
+            spawnStructureGeneration = new Dictionary<Climate, List<SpawnStructureGenerationInfo>>();
+            allNaturalSpawningStructureIDs = new List<string>();
+            foreach (Climate climate in Enum.GetValues(typeof(Climate))) {
+                spawnStructureGeneration[climate] = new List<SpawnStructureGenerationInfo>();
+            }
             ResourceGenerations = new List<ResourceGenerationInfo>();
             ReadMapGenerationInfos(LoadXML(XMLFilesTypes.mapgeneration));
             ModLoader.LoadXMLs(XMLFilesTypes.mapgeneration, ReadMapGenerationInfos);
             if (islandFeaturePrototypeDatas.Count > 0) {
                 MoonSharp.Interpreter.UserData.RegisterAssembly(); //Set up for exchange of Tile Data
                 MoonSharp.Interpreter.UserData.RegisterType<TileType>();
-                
             }
 
             foreach (IslandFeaturePrototypeData d in IslandFeaturePrototypeData.TempSetUp()) {
@@ -452,6 +459,23 @@ namespace Andja.Controller {
                 feature.ID = node.GetAttribute("ID");
                 SetData<IslandFeaturePrototypeData>(node, ref feature);
                 islandFeaturePrototypeDatas[feature.ID] = feature;
+            }
+            foreach (XmlElement node in xmlDoc.SelectNodes("generationInfos/structures/structure")) {
+                SpawnStructureGenerationInfo sps = new SpawnStructureGenerationInfo();
+                sps.ID = node.GetAttribute("ID");
+                SetData<SpawnStructureGenerationInfo>(node, ref sps);
+                if(sps.climate != null) {
+                    foreach(Climate c in sps.climate) {
+                        spawnStructureGeneration[c].Add(sps);
+                    }
+                } else {
+                    foreach (Climate c in Enum.GetValues(typeof(Climate))) {
+                        spawnStructureGeneration[c].Add(sps);
+                    }
+                }
+                if(sps.structureType == StructureType.Natural) {
+                    allNaturalSpawningStructureIDs.Add(sps.ID);
+                }
             }
         }
 
@@ -632,7 +656,7 @@ namespace Andja.Controller {
                     float ppm = 0;
                     int tileCount = fpd.RangeTileCount;
                     int numGrowablesPerTon = fpd.neededHarvestToProduce;
-                    float growtime = fpd.growable.ProduceTime;
+                    float growtime = fpd.growable != null? fpd.growable.ProduceTime : 1;
                     float produceTime = fpd.produceTime;
                     float neededWorkerRatio = (float)fpd.maxNumberOfWorker / (float)fpd.neededHarvestToProduce;
                     if (fpd.growable == null) {
@@ -1174,6 +1198,11 @@ namespace Andja.Controller {
                 fpd.ID = ID;
 
                 SetData<FarmPrototypeData>(node, ref fpd);
+                if(fpd.growable.ID == "farmland") {
+                    //for now hardcoded. maybe gonna change this
+                    //but this is just the "empty" setting for growable
+                    fpd.growable = null;
+                }
                 if (fpd.output != null && fpd.output.Length > 0 && fpd.output[0].count == 0) {
                     fpd.output[0].count = 1;
                 }
@@ -1448,13 +1477,18 @@ namespace Andja.Controller {
                         var listType = typeof(List<>);
                         var constructedListType = listType.MakeGenericType(fi.FieldType.GetElementType());
                         var list = (IList)Activator.CreateInstance(constructedListType);
-                        int i = 0;
                         foreach (XmlNode item in currentNode.ChildNodes) {
                             if (item.Name != fi.FieldType.GetElementType().Name) {
                                 continue;
                             }
+                            if (fi.DeclaringType == typeof(TileType)) {
+                                if(item.Name == "BuildLand") { // shortcut to make it easy to include all buildable land
+                                    foreach(TileType tt in Tile.BuildLand)
+                                        list.Add(tt);
+                                    continue;
+                                }
+                            }
                             list.Add(Enum.Parse(fi.FieldType.GetElementType(), item.InnerXml, true));
-                            i++;
                         }
                         Array enumArray = Array.CreateInstance(fi.FieldType.GetElementType(), list.Count);
                         list.CopyTo(enumArray, 0);
@@ -1547,12 +1581,21 @@ namespace Andja.Controller {
                     if (fi.FieldType == typeof(TargetGroup)) {
                         List<Target> targets = new List<Target>();
                         foreach (XmlNode child in currentNode.ChildNodes) {
-                            Target target = Target.World;
-                            if (Enum.TryParse<Target>(child.InnerXml, true, out target) == false)
+                            if (Enum.TryParse(child.InnerXml, true, out Target target) == false)
                                 continue;
                             targets.Add(target);
                         }
                         fi.SetValue(data, new TargetGroup(targets));
+                        continue;
+                    }
+                    if(fi.FieldType == typeof(Dictionary<Climate, string[]>)) {
+                        Dictionary<Climate, string[]> climToString = new Dictionary<Climate, string[]>();
+                        foreach (XmlNode child in currentNode.ChildNodes) {
+                            if (Enum.TryParse(child.Attributes[0].InnerXml, true, out Climate climate) == false)
+                                continue;
+                            climToString[climate] = child.InnerXml.Split(';');
+                        }
+                        fi.SetValue(data, climToString);
                         continue;
                     }
                     try {

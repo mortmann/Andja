@@ -205,6 +205,9 @@ namespace Andja.UI {
                 case "graphy":
                     return cc.GraphyCommands;
 
+                case "toggle":
+                    return cc.CheatCommands;
+
                 default:
                     Debug.Log("Predicte-List not found.");
                     return new List<string>();

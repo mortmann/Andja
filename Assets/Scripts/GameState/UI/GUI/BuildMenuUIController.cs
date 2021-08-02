@@ -35,7 +35,9 @@ namespace Andja.UI {
             PlayerSetup(null, Player);
             BuildController.Instance.RegisterBuildStateChange(OnBuildModeChange);
         }
-
+        public void OnAllStructureEnabledCheatToggle() {
+            PlayerSetup(Player, Player);
+        }
         private void Setup() {
             foreach (Transform child in buttonPopulationsLevelContent.transform) {
                 Destroy(child.gameObject);
@@ -82,7 +84,7 @@ namespace Andja.UI {
                 if (s.PopulationLevel != selectedPopulationLevel) {
                     b.gameObject.SetActive(false);
                 }
-                b.interactable = BuildController.Instance.allStructuresEnabled || Player.HasStructureUnlocked(s.ID);
+                b.interactable = BuildController.Instance.AllStructuresEnabled || Player.HasStructureUnlocked(s.ID);
             }
 
             //check em if they are active
@@ -96,7 +98,7 @@ namespace Andja.UI {
             OnMaxPopLevelChange(Player.MaxPopulationLevel);
             Player.RegisterStructuresUnlock(OnStructuresUnlock);
             foreach (string id in nameToGOMap.Keys) {
-                nameToGOMap[id].interactable = BuildController.Instance.allStructuresEnabled || Player.HasStructureUnlocked(id);
+                nameToGOMap[id].interactable = BuildController.Instance.AllStructuresEnabled || Player.HasStructureUnlocked(id);
             }
         }
 
@@ -110,12 +112,7 @@ namespace Andja.UI {
         public void OnMaxPopLevelChange(int setlevel) {
             foreach (int level in popLevelToGO.Keys) {
                 ButtonSetter g = popLevelToGO[level];
-                if (level > setlevel && BuildController.Instance.allStructuresEnabled == false) {
-                    g.Interactable(false);
-                }
-                else {
-                    g.Interactable(true);
-                }
+                g.Interactable(level <= setlevel || BuildController.Instance.AllStructuresEnabled);
             }
         }
 
@@ -160,7 +157,7 @@ namespace Andja.UI {
         private void ChangeButton(Button item, bool change) {
             item.gameObject.SetActive(change);
             item.GetComponentInParent<Foldable>().Check();
-            item.interactable = BuildController.Instance.allStructuresEnabled || Player.HasStructureUnlocked(item.name);
+            item.interactable = BuildController.Instance.AllStructuresEnabled || Player.HasStructureUnlocked(item.name);
         }
 
         public void OnDisable() {

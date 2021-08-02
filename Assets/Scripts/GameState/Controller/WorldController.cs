@@ -163,13 +163,12 @@ namespace Andja.Controller {
             World.OnEventEnded(ge);
         }
 
-        // Update is called once per frame
         private void Update() {
             if (World == null || IsPaused) {
                 return;
             }
             World.Update(DeltaTime);
-            offworldMarket.Update(DeltaTime);
+            offworldMarket?.Update(DeltaTime);
             flyingTrader?.Update(DeltaTime);
             pirate?.Update(DeltaTime);
         }

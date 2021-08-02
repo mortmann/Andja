@@ -881,13 +881,37 @@ namespace Andja.Model.Generator {
             }
         }
     }
+    public enum GenerationType { Random, Noise, GroupedNoise };
+    public enum StructureType { Natural, Special, Building };
 
     public class IslandSizeGenerationInfo {
         public Range resourceRange;
         public Range fertilityRange;
         public List<ResourceGenerationInfo> resourceGenerationsInfo = new List<ResourceGenerationInfo>();
     }
-
+    public class SpawnStructureGenerationInfo {
+        public string ID;
+        public Climate[] climate;
+        public TileType[] requiredTile;
+        public List<ResourceGenerationInfo> resourceGenerationsInfo = new List<ResourceGenerationInfo>();
+        public float perTileChance = 0.01f;
+        public float cubic2Fractal = 1.0045f;
+        public float valueFractal = .53f;
+        public GenerationType genType = GenerationType.Random;
+        public StructureType structureType = StructureType.Natural;
+        public bool islandUnique = false;
+        public bool worldUnique = false;
+        [Ignore] bool isInWorldPlaced;
+        public bool IsWorldClaimed => isInWorldPlaced;
+        public bool ClaimWorldUnique() {
+            lock(this) {
+                if (isInWorldPlaced)
+                    return false;
+                isInWorldPlaced = true;
+                return true;
+            }
+        }
+    }
     public class ResourceGenerationInfo : IWeighted {
         public string ID;
         public Climate[] climate;

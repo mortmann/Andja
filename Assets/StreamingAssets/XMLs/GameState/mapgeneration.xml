@@ -59,23 +59,12 @@
             <lower>1</lower>
             <upper>1</upper>
          </resourceRange>
-      </islandSize>         
+      </islandSize>
    </islandSizes>
    <resources>
       <resource ID="ironore">
+         <percentageOfIslands>0.2</percentageOfIslands>
          <distributionMap>
-            <entry islandSize="VeryLarge">
-               <range>
-                  <lower>3</lower>
-                  <upper>4</upper>
-               </range>
-            </entry>
-            <entry islandSize="Large">
-               <range>
-                  <lower>2</lower>
-                  <upper>3</upper>
-               </range>
-            </entry>
             <entry islandSize="Small">
                <range>
                   <lower>1</lower>
@@ -88,7 +77,42 @@
                   <upper>1</upper>
                </range>
             </entry>
+            <entry islandSize="Medium">
+               <range>
+                  <lower>1</lower>
+                  <upper>3</upper>
+               </range>
+            </entry>
+            <entry islandSize="VeryLarge">
+               <range>
+                  <lower>3</lower>
+                  <upper>4</upper>
+               </range>
+            </entry>
+            <entry islandSize="Large">
+               <range>
+                  <lower>2</lower>
+                  <upper>3</upper>
+               </range>
+            </entry>
             <entry islandSize="VerySmall">
+               <range>
+                  <lower>1</lower>
+                  <upper>1</upper>
+               </range>
+            </entry>
+         </distributionMap>
+      </resource>
+      <resource ID="stone">
+         <percentageOfIslands>0.2</percentageOfIslands>
+         <distributionMap>
+            <entry islandSize="Small">
+               <range>
+                  <lower>1</lower>
+                  <upper>3</upper>
+               </range>
+            </entry>
+            <entry islandSize="Other">
                <range>
                   <lower>1</lower>
                   <upper>1</upper>
@@ -96,14 +120,10 @@
             </entry>
             <entry islandSize="Medium">
                <range>
-                  <lower>1</lower>
-                  <upper>3</upper>
+                  <lower>2</lower>
+                  <upper>4</upper>
                </range>
             </entry>
-         </distributionMap>
-      </resource>
-      <resource ID="stone">
-         <distributionMap>
             <entry islandSize="VeryLarge">
                <range>
                   <lower>4</lower>
@@ -116,10 +136,25 @@
                   <upper>6</upper>
                </range>
             </entry>
+            <entry islandSize="VerySmall">
+               <range>
+                  <lower>1</lower>
+                  <upper>2</upper>
+               </range>
+            </entry>
+         </distributionMap>
+      </resource>
+      <resource ID="grainsalt">
+         <percentageOfIslands>0.2</percentageOfIslands>
+         <climate>
+            <Climate>Middle</Climate>
+            <Climate>Cold</Climate>
+         </climate>
+         <distributionMap>
             <entry islandSize="Small">
                <range>
                   <lower>1</lower>
-                  <upper>3</upper>
+                  <upper>1</upper>
                </range>
             </entry>
             <entry islandSize="Other">
@@ -128,26 +163,12 @@
                   <upper>1</upper>
                </range>
             </entry>
-            <entry islandSize="VerySmall">
+            <entry islandSize="Medium">
                <range>
                   <lower>1</lower>
                   <upper>2</upper>
                </range>
             </entry>
-            <entry islandSize="Medium">
-               <range>
-                  <lower>2</lower>
-                  <upper>4</upper>
-               </range>
-            </entry>
-         </distributionMap>
-      </resource>
-      <resource ID="grainsalt">
-         <climate>
-            <Climate>Middle</Climate>
-            <Climate>Cold</Climate>
-         </climate>
-         <distributionMap>
             <entry islandSize="VeryLarge">
                <range>
                   <lower>2</lower>
@@ -160,31 +181,25 @@
                   <upper>3</upper>
                </range>
             </entry>
-            <entry islandSize="Small">
-               <range>
-                  <lower>1</lower>
-                  <upper>1</upper>
-               </range>
-            </entry>
-            <entry islandSize="Other">
-               <range>
-                  <lower>1</lower>
-                  <upper>1</upper>
-               </range>
-            </entry>
             <entry islandSize="VerySmall">
                <range>
                   <lower>1</lower>
                   <upper>1</upper>
                </range>
             </entry>
-            <entry islandSize="Medium">
-               <range>
-                  <lower>1</lower>
-                  <upper>2</upper>
-               </range>
-            </entry>
          </distributionMap>
       </resource>
    </resources>
+   <structures>
+      <structure ID="tree">
+         <requiredTile>
+            <Type>BuildLand</Type>
+         </requiredTile>
+         <perTileChance>0.01</perTileChance>
+         <genType>GroupedNoise</genType>
+         <structureType>Natural</structureType>
+         <islandUnique>false</islandUnique>
+         <worldUnique>false</worldUnique>
+      </structure>
+   </structures>
 </generationInfos>

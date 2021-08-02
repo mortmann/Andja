@@ -1639,6 +1639,11 @@
          <extraBuildUITyp>None</extraBuildUITyp>
          <buildingItems length="0"/>
          <spriteBaseName>tree</spriteBaseName>
+         <climateSpriteModifier>
+            <entry climate="Cold">conifer</entry>
+            <entry climate="Middle">oak;conifer</entry>
+            <entry climate="Warm">palm</entry>
+         </climateSpriteModifier>
          <contactRange>0.0</contactRange>
          <forMarketplace>false</forMarketplace>
          <maxNumberOfWorker>0</maxNumberOfWorker>
@@ -2726,9 +2731,9 @@
          <tileWidth>3</tileWidth>
          <tileHeight>3</tileHeight>
          <buildTileTypes length="3">
-            <tileType length="3">Mountain</tileType>
-            <tileType length="3">Mountain</tileType>
-            <tileType length="3">Mountain</tileType>
+            <tileType length="1">Mountain</tileType>
+            <tileType length="1">Mountain</tileType>
+            <tileType length="1">Mountain</tileType>
          </buildTileTypes>
          <canRotate>true</canRotate>
          <canBeBuildOver>false</canBeBuildOver>

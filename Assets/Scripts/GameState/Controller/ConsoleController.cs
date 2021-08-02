@@ -116,7 +116,7 @@ namespace Andja.Controller {
             "speed", "player", "maxfps", "city", 
             "graphy", "profiler", "unit", "ship", 
             "island", "spawn", "event", 
-            "debugdata", "camera", "fogofwar"
+            "debugdata", "camera", "toggle"
         };
         /// <summary>
         /// Splits the command into its parts on whitespaces and then tries to execute the different level commands
@@ -143,8 +143,7 @@ namespace Andja.Controller {
             bool happend = false;
             switch (parameters[0]) {
                 case "speed":
-                    float speed = 1;
-                    happend = float.TryParse(parameters[1], out speed);
+                    happend = float.TryParse(parameters[1], out float speed);
                     if (happend)
                         WorldController.Instance.SetSpeed(speed);
                     break;
@@ -193,18 +192,8 @@ namespace Andja.Controller {
                     happend = HandleGraphyCommands(parameters.Skip(1).ToArray());
                     break;
 
-                case "debugdata":
-                    UIController.Instance?.ToggleDebugData();
-                    happend = true;
-                    break;
-
-                case "fogofwar":
-                    var fogOfWar = GameObject.Find("FOW Canvas").transform.GetChild(0).gameObject;
-                    fogOfWar.SetActive(!fogOfWar.activeSelf);
-                    break;
-
-                case "isgod":
-                    MouseController.Instance.IsGod = !MouseController.Instance.IsGod;
+                case "toggle":
+                    happend = HandleToggleCommands(parameters.Skip(1).ToArray());
                     break;
 
                 case "itsrainingbuildings":
@@ -246,6 +235,46 @@ namespace Andja.Controller {
             }
             return happend;
         }
+
+        [HideInInspector]
+        public IReadOnlyList<string> CheatCommands = new List<string>
+            { "isgod", "allstructuresenabled", "nocost", "debugdata", "fogofwar", "nounitbuildrestriction" };
+        private bool HandleToggleCommands(string[] parameters) {
+            if (parameters.Length == 0) {
+                return false;
+            }
+            switch (parameters[0]) {
+
+                case "isgod":
+                    MouseController.Instance.IsGod = !MouseController.Instance.IsGod;
+                    return true;
+
+                case "allstructuresenabled":
+                    BuildController.Instance.AllStructuresEnabled = !BuildController.Instance.AllStructuresEnabled;
+                    return true;
+
+                case "nocost":
+                    BuildController.Instance.noBuildCost = !BuildController.Instance.noBuildCost;
+                    return true;
+
+                case "nounitbuildrestriction":
+                    BuildController.Instance.noUnitRestriction = !BuildController.Instance.noUnitRestriction;
+                    return true;
+
+                case "fogofwar":
+                    var fogOfWar = GameObject.Find("FOW Canvas").transform.GetChild(0).gameObject;
+                    fogOfWar.SetActive(!fogOfWar.activeSelf);
+                    return true;
+
+                case "debugdata":
+                    UIController.Instance?.ToggleDebugData();
+                    return true;
+
+                default:
+                    return false;
+            }
+        }
+
         [HideInInspector]
         public IReadOnlyList<string> GraphyCommands = new List<string>
             { "full", "medium", "light", "fps", "switchmode" };

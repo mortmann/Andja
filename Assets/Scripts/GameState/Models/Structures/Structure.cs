@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace Andja.Model {
 
@@ -32,7 +33,6 @@ namespace Andja.Model {
         public bool canBeUpgraded = false;
         public bool canTakeDamage = false;
         public bool hasHitbox;// { get; protected set; }
-
         /// <summary>
         /// Null means no restrikiton so all buildable tiles
         /// </summary>
@@ -70,7 +70,9 @@ namespace Andja.Model {
 
         // set inside prototypecontoller
         public Item[] upgradeItems = null; 
-        public int upgradeCost = 0; 
+        public int upgradeCost = 0;
+        public Dictionary<Climate, string[]> climateSpriteModifier;
+
     }
 
     [JsonObject(MemberSerialization.OptIn)]
@@ -98,10 +100,10 @@ namespace Andja.Model {
                 Tiles.Add(value);
             }
         }
-
         [JsonPropertyAttribute] public int rotation = 0;
         [JsonPropertyAttribute] public bool buildInWilderniss = false;
         [JsonPropertyAttribute] protected bool isActive = true;
+        [JsonPropertyAttribute] protected string spriteVariant;
         #endregion Serialize
 
         #region RuntimeOrOther
@@ -197,7 +199,7 @@ namespace Andja.Model {
         public int UpgradeCost { get { return Data.upgradeCost; } } // set inside prototypecontoller
 
         public string SpriteName { get { return Data.spriteBaseName/*TODO: make multiple saved sprites possible*/; } }
-
+        public Dictionary<Climate, string[]> ClimateSpriteModifier => Data.climateSpriteModifier;
         protected Action<Structure> cbStructureChanged;
         protected Action<Structure, IWarfare> cbStructureDestroy;
         protected Action<Structure, bool> cbStructureExtraUI;
@@ -342,7 +344,7 @@ namespace Andja.Model {
         }
 
         public virtual string GetSpriteName() {
-            return SpriteName;
+            return SpriteName + "_" + spriteVariant;
         }
 
         #endregion Virtual/Abstract
@@ -429,8 +431,16 @@ namespace Andja.Model {
         public void PlaceStructure(List<Tile> tiles, bool loading) {
             Tiles = new List<Tile>();
             Tiles.AddRange(tiles);
-            if (loading == false)
+            if (loading == false) {
                 CurrentHealth = MaxHealth;
+                if(Data.climateSpriteModifier != null && Data.climateSpriteModifier.Count > 0) {
+                    Climate c = BuildTile.Island.Climate;
+                    if (ClimateSpriteModifier.ContainsKey(c)) {
+                        spriteVariant = ClimateSpriteModifier[c][Random.Range(0, ClimateSpriteModifier[c].Length)];
+                        spriteVariant += "_" + StructureSpriteController.GetRandomVariant(ID, spriteVariant);
+                    }
+                }
+            }
             //if we are here we can build this and
             //set the tiles to the this structure -> claim the tiles!
             NeighbourTiles = new HashSet<Tile>();

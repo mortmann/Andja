@@ -81,23 +81,28 @@ namespace Andja.Model {
         public override void OnBuild() {
             workingGrowables = new List<GrowableStructure>();
             //farm has it needs plant if it can
-            if (Growable != null) {
-                foreach (Tile rangeTile in RangeTiles) {
-                    if (rangeTile.Structure != null && rangeTile.Structure.ID == Growable.ID) {
-                        rangeTile.Structure.RegisterOnChangedCallback(OnGrowableChanged);
-                        OnRegisterCallbacks++;
-                        if (((GrowableStructure)rangeTile.Structure).hasProduced == true) {
-                            workingGrowables.Add((GrowableStructure)rangeTile.Structure);
-                        }
-                    }
-                } 
+            
+            foreach (Tile rangeTile in RangeTiles) {
+                //if (Growable != null) {
+                //    if (rangeTile.Structure != null && rangeTile.Structure.ID == Growable.ID) {
+                //        rangeTile.Structure.RegisterOnChangedCallback(OnGrowableChanged);
+                //        OnRegisterCallbacks++;
+                //        if (((GrowableStructure)rangeTile.Structure).hasProduced == true) {
+                //            workingGrowables.Add((GrowableStructure)rangeTile.Structure);
+                //        }
+                //    }
+                //} else {
+                //    //TODO: ignore generated structures like trees for example
+                //    if (rangeTile.Structure == null) {
+                //        OnRegisterCallbacks++;
+                //    }
+                //}
+                OnTileStructureChange(rangeTile.Structure, null);
             }
             foreach (Tile rangeTile in RangeTiles) {
                 rangeTile.RegisterTileOldNewStructureChangedCallback(OnTileStructureChange);
             }
         }
-
-
         public override void OnUpdate(float deltaTime) {
             UpdateWorker(deltaTime);
             if (IsActiveAndWorking == false || Output[0].count >= MaxOutputStorage) {
@@ -121,7 +126,8 @@ namespace Andja.Model {
                     }
                 }
             } else {
-                produceTimer += deltaTime * Efficiency * Mathf.Clamp01(OnRegisterCallbacks/(RangeTiles.Count * FullfillmentPercantage));
+                produceTimer += deltaTime * Efficiency 
+                    * Mathf.Clamp01((float)OnRegisterCallbacks/(RangeTiles.Count * FullfillmentPercantage));
                 if (produceTimer >= ProduceTime) {
                     produceTimer = 0;
                     AddHarvastable();
@@ -162,10 +168,10 @@ namespace Andja.Model {
         /// <param name="obj"></param>
         public void OnTileStructureChange(Structure now, Structure old) {
             if(Growable == null) {
-                if (now == null) {
+                if (now == null || PrototypController.Instance.AllNaturalSpawningStructureIDs.Contains(now.ID)) {
                     OnRegisterCallbacks++;
                 }
-                if (old == null) {
+                if (old == null && PrototypController.Instance.AllNaturalSpawningStructureIDs.Contains(now.ID) == false) {
                     OnRegisterCallbacks--;
                 }
                 return;
@@ -206,7 +212,7 @@ namespace Andja.Model {
         private float CalculateProgress() {
             if (IsActiveAndWorking == false)
                 return 0;
-            if (MaxNumberOfWorker == 0) {
+            if (MaxNumberOfWorker == 0 || Growable == null) {
                 return produceTimer;
             }
             if (MaxNumberOfWorker > NeededHarvestForProduce) {

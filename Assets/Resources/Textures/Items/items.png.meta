@@ -286,7 +286,7 @@ TextureImporter:
     second: leathershoes
   - first:
       213: 21300188
-    second: items_94
+    second: ambergris
   - first:
       213: 21300190
     second: items_95
@@ -2680,7 +2680,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: items_94
+      name: ambergris
       rect:
         serializedVersion: 2
         x: 448

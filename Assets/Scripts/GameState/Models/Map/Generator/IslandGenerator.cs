@@ -1,6 +1,7 @@
 ﻿using Andja.Controller;
 using Andja.Editor;
 using Andja.Utility;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -196,19 +197,62 @@ namespace Andja.Model.Generator {
             valueNoise.SetFrequency(0.75f);
             valueNoise.SetNoiseType(FastNoise.NoiseType.ValueFractal);
             valueNoise.SetSeed(random.Integer());
-
+            List<SpawnStructureGenerationInfo> spstrs = new List<SpawnStructureGenerationInfo>(PrototypController.Instance.SpawnStructureGeneration[climate]);
             for (int x = 0; x < Width; x++) {
                 for (int y = 0; y < Height; y++) {
                     Tile curr = GetTileAt(x, y);
-                    if (Tile.IsBuildType(curr.Type)) {
-                        if (Mathf.Abs(cubicNoise.GetCubic(x, y)) + Mathf.Abs(cubicNoise.GetCubicFractal(x, y)) > 1.0045f || Mathf.Abs(valueNoise.GetValueFractal(x, y)) > .53f) {
-                            GrowableStructure gs = PrototypController.Instance.GetStructureCopy("tree") as GrowableStructure;
-                            gs.currentStage = random.Range(0, gs.AgeStages);
-                            tileToStructure.Add(curr, gs);
+                    foreach (SpawnStructureGenerationInfo sps in spstrs) {
+                        if (sps.IsWorldClaimed) //is not thread 100% safe - will be checked again if it is being placed
+                            continue;
+                        if (sps.requiredTile != null && sps.requiredTile.Length > 0
+                            && Array.Exists(sps.requiredTile, t => t == curr.Type) == false) {
+                            continue;
+                        }
+                        if (sps.genType == GenerationType.Random) {
+                            if(random.Range(0,1f) < sps.perTileChance) {
+                                SpawnStructure(curr, sps, spstrs);
+                            }
+                            continue;
+                        }
+                        if (sps.genType == GenerationType.Noise) {
+                            if (Mathf.Abs(valueNoise.GetValueFractal(x, y)) > sps.valueFractal) {
+                                SpawnStructure(curr, sps, spstrs);
+
+                            }
+                            continue;
+                        }
+                        if (sps.genType == GenerationType.GroupedNoise) {
+                            if (Mathf.Abs(cubicNoise.GetCubic(x, y)) + Mathf.Abs(cubicNoise.GetCubicFractal(x, y)) > sps.cubic2Fractal
+                            || Mathf.Abs(valueNoise.GetValueFractal(x, y)) > sps.valueFractal) {
+                                SpawnStructure(curr, sps, spstrs);
+                            }
                         }
                     }
                 }
             }
+        }
+
+        private void SpawnStructure(Tile curr, SpawnStructureGenerationInfo sps, List<SpawnStructureGenerationInfo> spstrs) {
+            Structure s = PrototypController.Instance.GetStructureCopy(sps.ID);
+            if(s.TileWidth > 1 || s.TileHeight > 1) {
+                if (s.CheckForCorrectSpot(s.GetBuildingTiles(curr)).Values.Contains(false)) {
+                    return;
+                }
+            }
+            if(sps.worldUnique) {
+                //try to claim this -- locks it and blocks it for others
+                if(sps.ClaimWorldUnique() == false) {
+                    return;
+                }
+            }
+            if(sps.islandUnique) {
+                spstrs.Remove(sps); // we can just remove it here
+            }
+            if (s is GrowableStructure gs) {
+                gs.currentStage = random.Range(0, gs.AgeStages);
+            }
+            s.AddTimes90ToRotate(random.Range(0, 4));
+            tileToStructure.Add(curr, s);
         }
 
         private void IslandOceanFloodFill(float[,] heights, out HashSet<Tile> ocean) {

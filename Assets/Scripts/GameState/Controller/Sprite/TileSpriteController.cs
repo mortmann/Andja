@@ -34,8 +34,8 @@ namespace Andja.Controller {
 
         public GameObject karoOverlay;
         private GameObject darkLayer;
-        public GameObject waterLayer;
-        public GameObject water;
+        public GameObject oceanPrefab;
+        public GameObject oceanInstance;
 
         public Sprite darkLayerSprite;
 
@@ -82,15 +82,15 @@ namespace Andja.Controller {
                 Debug.LogError("There should never be two tile controllers.");
             }
             Instance = this;
-            water = Instantiate(waterLayer);
+            oceanInstance = Instantiate(oceanPrefab);
             //DarkLayer probably gonna be changed
             if (EditorController.IsEditor == false) {
-                water.transform.position = new Vector3((World.Width / 2) - offset, (World.Height / 2) - offset, 0.1f);
+                oceanInstance.transform.position = new Vector3((World.Width / 2) - offset, (World.Height / 2) - offset, 0.1f);
                 Vector3 size = new Vector3(6 + World.Width / 10, 0.1f, 6 + World.Height / 10);
                 Vector2 tile = new Vector2(6 + World.Width, 6 + World.Height);
-                water.transform.localScale = size;
+                oceanInstance.transform.localScale = size;
                 //water.GetComponent<Renderer>().material = waterMaterial;
-                Renderer wr = water.GetComponent<Renderer>();
+                Renderer wr = oceanInstance.GetComponent<Renderer>();
                 wr.material.mainTextureScale = tile;
                 darkLayer = new GameObject();
                 darkLayer.transform.position = new Vector3((World.Width / 2) - offset, (World.Height / 2) - offset, 0);
@@ -181,10 +181,10 @@ namespace Andja.Controller {
             //trr.material = tileMapRendererBlending;
             trr.sortingLayerName = "Tile";
             editorTilemap.size = new Vector3Int(EditorController.Width, EditorController.Height, 0);
-            water.transform.position = new Vector3((World.Width / 2) - offset, (World.Height / 2) - offset, 0.1f);
-            water.transform.localScale = new Vector3(World.Width / 10, 0.1f, World.Height / 10);
-            water.GetComponent<Renderer>().material = waterMaterial;
-            water.GetComponent<Renderer>().material.mainTextureScale = new Vector2(World.Width, World.Height);
+            oceanInstance.transform.position = new Vector3((World.Width / 2) - offset, (World.Height / 2) - offset, 0.1f);
+            oceanInstance.transform.localScale = new Vector3(World.Width / 10, 0.1f, World.Height / 10);
+            oceanInstance.GetComponent<Renderer>().material = waterMaterial;
+            oceanInstance.GetComponent<Renderer>().material.mainTextureScale = new Vector2(World.Width, World.Height);
             Texture2D tex = new Texture2D(World.Width, World.Height);
             Color[] colors = tex.GetPixels();
             for (int y = 0; y < World.Height; y++) {
@@ -470,7 +470,15 @@ namespace Andja.Controller {
                 return null;
             return climateTileSprites[climate].typeTree[type].GetClosest(spriteAddon);
         }
-
+        public static List<string> GetAllSpriteNamesForType(TileType type, Climate climate) {
+            if (climateTileSprites == null)
+                LoadSprites();
+            if (type == TileType.Ocean)
+                return null;
+            if (climateTileSprites[climate].typeTree.ContainsKey(type) == false)
+                return null;
+            return climateTileSprites[climate].typeTree[type].GetAll();
+        }
         private class ClimateSprites {
             public Climate climate;
             public Dictionary<TileType, TileTypeSprites> tileTypeSprites = new Dictionary<TileType, TileTypeSprites>();
@@ -536,24 +544,22 @@ namespace Andja.Controller {
                 return connectionToSprite[spriteAddon];
             }
         }
+
+        public static System.Collections.Concurrent.ConcurrentBag<Vector2> positions = new System.Collections.Concurrent.ConcurrentBag<Vector2>();
         private void OnDrawGizmos() {
             if (Application.isPlaying) {
-                //for (int x = 0; x < World.Current.Width; x++) {
-                //    for (int y = 0; y < World.Current.Height; y++) {
-                //        Pathfinding.WorldNode n = World.Current.WorldGraph.Tiles[x, y];
-                foreach(Pathfinding.WorldNode n in World.Current.WorldGraph.Nodes) { 
-                        if (n == null)
-                            continue;
-                        foreach (Pathfinding.WorldEdge e in n.Edges) {
-                            Gizmos.color = Color.white;
-                            Gizmos.DrawLine(new Vector2(n.x + 0.5f, n.y + 0.5f), new Vector2(e.Node.x + 0.5f, e.Node.y + 0.5f));
-                        }
-                        //Gizmos.color = Color.red;
-                        //Gizmos.DrawSphere(new Vector3(n.x + 0.5f, n.y + 0.5f), 0.5f);
-                    }
-
+                //foreach (Pathfinding.WorldNode n in World.Current.WorldGraph.Nodes) {
+                //    if (n == null)
+                //        continue;
+                //    foreach (Pathfinding.WorldEdge e in n.Edges) {
+                //        Gizmos.color = Color.white;
+                //        Gizmos.DrawLine(new Vector2(n.x + 0.5f, n.y + 0.5f), new Vector2(e.Node.x + 0.5f, e.Node.y + 0.5f));
+                //    }
+                foreach (var t in positions) {
+                    Gizmos.color = Color.red;
+                    Gizmos.DrawSphere(new Vector3(t.x + 0.5f, t.y + 0.5f), 0.5f);
                 }
-            //}
+            }
         }
 
     }

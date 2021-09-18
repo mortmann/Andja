@@ -95,18 +95,20 @@ namespace Andja.Model {
         /// DO NOT USE! ONLY serialization!
         /// </summary>
         public City() {
-            itemIDtoTradeItem = new Dictionary<string, TradeItem>();
-            Inventory = new CityInventory();
             Structures = new List<Structure>();
-            PlayerTradeAmount = Inventory.MaxStackSize / 2;
             Tiles = new HashSet<Tile>();
+            Routes = new List<Route>();
         }
         public City(int playerNr, Island island) : this() {
             this.PlayerNumber = playerNr;
             this.Island = island;
             _Name = "<City> " + UnityEngine.Random.Range(0, 1000);
+            itemIDtoTradeItem = new Dictionary<string, TradeItem>();
+            Structures = new List<Structure>();
+            Tiles = new HashSet<Tile>();
+            Routes = new List<Route>();
+            Inventory = new CityInventory();
             Setup();
-            //		useTickTimer = useTick;
         }
 
         internal void SetTaxForPopulationLevel(int structureLevel, float percantage) {
@@ -144,12 +146,12 @@ namespace Andja.Model {
         }
 
         private void Setup() {
-            homes = new List<HomeStructure>();
-            Routes = new List<Route>();
-            if (PopulationLevels == null)
-                PopulationLevels = new List<PopulationLevel>();
             if (PlayerNumber < 0)
                 return;
+            Routes = new List<Route>();
+            homes = new List<HomeStructure>();
+            if (PopulationLevels == null)
+                PopulationLevels = new List<PopulationLevel>();
             foreach (PopulationLevel pl in PrototypController.Instance.GetPopulationLevels(this)) {
                 if (PopulationLevels.Exists(x => x.Level == pl.Level))
                     continue;
@@ -232,14 +234,12 @@ namespace Andja.Model {
             List<Tile> temp = new List<Tile>(tiles);
             island.Wilderness = this;
             Tiles = new HashSet<Tile>(tiles);
+            this.PlayerNumber = GameData.WorldNumber;
+            this.Island = island;
+            Structures = new List<Structure>();
             for (int i = 0; i < tiles.Count; i++) {
                 temp[i].City = null;
             }
-            Inventory = new Inventory(0);
-            this.PlayerNumber = GameData.WorldNumber;
-            this.Island = island;
-            island.Wilderness = this;
-            Structures = new List<Structure>();
         }
 
         public void AddStructure(Structure str) {
@@ -250,7 +250,7 @@ namespace Andja.Model {
                 return;
             }
             if (str is HomeStructure) {
-                homes.Add((HomeStructure)str);
+                homes?.Add((HomeStructure)str);
             }
             if (str is WarehouseStructure) {
                 if (warehouse != null && warehouse.buildID != str.buildID) {
@@ -498,7 +498,7 @@ namespace Andja.Model {
             Routes.Remove(route);
         }
 
-        public void RemoveStructure(Structure structure, bool returnResources = false) {
+        public void RemoveStructure(Structure structure) {
             if (structure == null) {
                 Debug.Log("null");
                 return;
@@ -510,15 +510,6 @@ namespace Andja.Model {
                 else
                 if (structure is WarehouseStructure) {
                     warehouse = null;
-                }
-                //if were geting some of the resources back
-                //when we destroy it -> should be a setting
-                if (returnResources) {
-                    Item[] res = structure.BuildingItems;
-                    for (int i = 0; i < res.Length; i++) {
-                        res[i].count /= 3; // FIXME do not have this hardcoded! Change it to be chooseable!
-                    }
-                    Inventory.AddItems(res);
                 }
                 Structures.Remove(structure);
                 cbStructureRemoved?.Invoke(structure);

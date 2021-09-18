@@ -12,10 +12,8 @@ namespace Andja.UI {
         }
 
         private void OnCloseButton() {
-            SceneManager.LoadScene("MainMenu");
+            Utility.SceneUtil.ChangeToMainMenuScreen(true);
         }
 
-        private void Update() {
-        }
     }
 }

@@ -41,7 +41,8 @@ namespace Andja.Controller {
                     "CPU: " + SystemInfo.processorType + "\n" +
                     "GPU: " + SystemInfo.graphicsDeviceName + " " + SystemInfo.graphicsDeviceVersion + "\n" +
                     "RAM: " + SystemInfo.systemMemorySize + "\n" +
-                    "DeviceModel: " + SystemInfo.deviceModel);
+                    "DeviceModel: " + SystemInfo.deviceModel + "\n" +
+                    "Graphics API: " + SystemInfo.graphicsDeviceType);
                 int fCount = Directory.GetFiles(logPath, "*.log", SearchOption.TopDirectoryOnly).Length;
                 if (fCount > 5) {
                     FileSystemInfo fileInfo = new DirectoryInfo(logPath)
@@ -52,11 +53,16 @@ namespace Andja.Controller {
         }
 
         internal string GetLogs() {
-            string filepath = Path.Combine(logPath, tempLogName);
-            logWriter.Flush();
-            logWriter.Dispose();
-            string upload = File.ReadAllText(filepath);
-            logWriter = new StreamWriter(filepath);
+            string upload;
+            if (Application.isEditor == false) {
+                string filepath = Path.Combine(logPath, tempLogName);
+                logWriter.Flush();
+                logWriter.Dispose();
+                upload = File.ReadAllText(filepath);
+                logWriter = new StreamWriter(filepath);
+            } else {
+                upload = string.Join(Environment.NewLine, logs); 
+            }
             return upload;
         }
 
@@ -153,8 +159,7 @@ namespace Andja.Controller {
                     break;
 
                 case "maxfps":
-                    int fps = -1;
-                    happend = int.TryParse(parameters[1], out fps);
+                    happend = int.TryParse(parameters[1], out int fps);
                     if (happend)
                         Application.targetFrameRate = fps;
                     break;

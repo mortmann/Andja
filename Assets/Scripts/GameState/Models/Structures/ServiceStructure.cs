@@ -52,7 +52,6 @@ namespace Andja.Model {
         }
 
         public ServiceStructure() {
-            jobsToDo = new List<Structure>();
         }
 
         protected ServiceStructure(ServiceStructure s) : base() {
@@ -72,6 +71,7 @@ namespace Andja.Model {
                 EffectCity();
                 return;
             }
+            jobsToDo = new List<Structure>();
             switch (Function) {
                 case ServiceFunction.None:
                     break;

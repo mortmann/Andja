@@ -1,4 +1,5 @@
 ﻿using Andja.Model;
+using System;
 using System.Collections.Generic;
 
 namespace Andja.Utility {
@@ -68,6 +69,20 @@ namespace Andja.Utility {
                     return null;
                 return n.GetClosest(ids);
             }
+
+            internal List<string> GetAll() {
+                List<string> all = new List<string>();
+                if(Values != null) 
+                    all.AddRange(Values);
+                foreach (Node item in childs.Values) {
+                    all.AddRange(item.GetAll()); ;
+                }
+                return all;
+            }
+        }
+
+        internal List<string> GetAll() {
+            return root.GetAll();
         }
     }
 }

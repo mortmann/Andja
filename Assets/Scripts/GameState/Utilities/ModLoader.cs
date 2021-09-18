@@ -258,6 +258,7 @@ namespace Andja.Utility {
                 catch (Exception e) {
                     MainMenuInfo.AddInfo(MainMenuInfo.InfoTypes.ModError,
                             "XML faulty for mod " + mod.name + " " + type + ". " + e.StackTrace);
+                    Debug.LogException(e);
                     UnityEngine.SceneManagement.SceneManager.LoadScene("MainMenu");
                 }
             }
@@ -353,7 +354,7 @@ namespace Andja.Utility {
         public List<SoundMetaData> soundDatas;
     }
 
-    public enum SpriteType { Structure, Worker, Unit, Tile, Icon, Item, Event, UI }
+    public enum SpriteType { Structure, StructureEffect, Worker, Unit, Tile, Icon, Item, Event, UI }
 
     public enum SpriteMode { Single, Multiple, DefinedMultiple }
 

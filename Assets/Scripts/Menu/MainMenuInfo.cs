@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -17,11 +18,16 @@ public class MainMenuInfo : MonoBehaviour {
         OKButton.onClick.AddListener(() => { Dialog.SetActive(false); });
         StartCoroutine(ShowAfterEachother());
     }
-
+    private void Update() {
+        if(Dialog.activeSelf == false && ShowInfos.Count > 0) {
+            StartCoroutine(ShowAfterEachother());
+        }
+    }
     private IEnumerator ShowAfterEachother() {
-        foreach (var item in ShowInfos.Keys) {
+        foreach (var item in ShowInfos.Keys.ToArray()) {
             Dialog.SetActive(true);
             ShowInfo(item, ShowInfos[item]);
+            ShowInfos.Remove(item);
             yield return new WaitWhile(()=>Dialog.activeSelf);
         }
         yield break;

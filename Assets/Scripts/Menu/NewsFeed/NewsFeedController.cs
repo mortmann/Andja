@@ -11,9 +11,10 @@ public class NewsFeedController : MonoBehaviour {
     const string file = "news";
     public Transform NewsFeedContent;
     public NewsFeedItem NewsItemPrefab;
-    static Dictionary<string, NewsFeedItem> pasteToNewsItem = new Dictionary<string, NewsFeedItem>();
-    static Dictionary<string, NewsItem> urlToNewsItems = new Dictionary<string, NewsItem>();
+    Dictionary<string, NewsFeedItem> pasteToNewsItem = new Dictionary<string, NewsFeedItem>();
+    Dictionary<string, NewsItem> urlToNewsItems = new Dictionary<string, NewsItem>();
     string path;
+
     void Start() {
         path = Path.Combine(Application.temporaryCachePath, file);
         foreach (Transform t in NewsFeedContent)
@@ -59,7 +60,7 @@ public class NewsFeedController : MonoBehaviour {
             www = UnityWebRequest.Get("https://pastebin.com/raw/"+url);
             yield return www.SendWebRequest();
             if(pasteToNewsItem.ContainsKey(url)) {
-                urlToNewsItems[url].Check(www.downloadHandler.text, i);
+                urlToNewsItems[url].Check(www.downloadHandler.text, i, pasteToNewsItem);
             } else {
                 urlToNewsItems[url] = new NewsItem() {
                     order = i,
@@ -78,7 +79,7 @@ public class NewsFeedController : MonoBehaviour {
         NewsItem.Show(ni.text);
         NewsItem.transform.SetParent(NewsFeedContent, false);
         NewsItem.transform.SetSiblingIndex(ni.order);
-        pasteToNewsItem.Add(ni.url, NewsItem);
+        pasteToNewsItem[ni.url] = NewsItem;
     }
 
     private void OnDisable() {
@@ -94,7 +95,7 @@ public class NewsFeedController : MonoBehaviour {
         public string url;
         public string text;
 
-        internal void Check(string newText, int i) {
+        internal void Check(string newText, int i, Dictionary<string, NewsFeedItem> pasteToNewsItem) {
             if(order != i) {
                 order = i;
                 pasteToNewsItem[url].transform.SetSiblingIndex(order);

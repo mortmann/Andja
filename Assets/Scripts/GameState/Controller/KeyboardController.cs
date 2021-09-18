@@ -124,11 +124,11 @@ namespace Andja.Controller {
                         }
                     }
                 }
-                //Reset because no correct CheatCode entered
                 if (correctKey) {
                     currentCheatCodeIndex++;
                 }
-                else {
+                else {                
+                    //Reset because no correct CheatCode entered
                     currentCheatCodeIndex = 0;
                 }
             }

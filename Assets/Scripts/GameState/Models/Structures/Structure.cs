@@ -344,7 +344,7 @@ namespace Andja.Model {
         }
 
         public virtual string GetSpriteName() {
-            return SpriteName + "_" + spriteVariant;
+            return spriteVariant == null ? SpriteName : SpriteName + "_" + spriteVariant;
         }
 
         #endregion Virtual/Abstract
@@ -413,12 +413,12 @@ namespace Andja.Model {
             //test if the place is buildable
             // if it has to be on land
             if (CanBuildOnSpot(tiles) == false) {
-                BuildController.Instance.BuildError("CanBuildOnSpotCheck", tiles, this, playerNumber);
+                BuildController.Instance.BuildError(MapErrorMessage.NoSpace, tiles, this, playerNumber);
                 return false;
             }
             //special check for some structures
             if (SpecialCheckForBuild(tiles) == false) {
-                BuildController.Instance.BuildError("SpecialCheck", tiles, this, playerNumber);
+                BuildController.Instance.BuildError(MapErrorMessage.CanNotBuildHere, tiles, this, playerNumber);
                 return false;
             }
             return true;
@@ -670,16 +670,39 @@ namespace Andja.Model {
             if (change > 0)
                 RepairHealth(change);
         }
-
-        public void Destroy(IWarfare destroyer = null) {
+        public bool Demolish(bool isGod = false) {
+            if (HasNegativEffect && isGod == false)
+                return false; // we cannot just destroy structures that have a negative effect e.g. burning or illness or similar
+            if (GameData.ReturnResources) {
+                //If return resources is on. 
+                //then added those to the city
+                Item[] res = BuildingItems;
+                for (int i = 0; i < res.Length; i++) {
+                    res[i].count = Mathf.RoundToInt(res[i].count * GameData.ReturnResourcesPercentage); 
+                }
+                City.Inventory.AddItems(res);
+            }
+            return Destroy();
+        }
+        /// <summary>
+        /// Destroys this structure immedietly and without any further checks. 
+        /// For playerside destruction please call demolish.
+        /// </summary>
+        /// <param name="destroyer"></param>
+        /// <param name="onLoad"></param>
+        /// <returns></returns>
+        public bool Destroy(IWarfare destroyer = null, bool onLoad = false) {
             _health = 0;
-            foreach (Tile t in Tiles) {
-                t.Structure = null;
+            if(onLoad == false) {
+                foreach (Tile t in Tiles) {
+                    t.Structure = null;
+                }
             }
             OnDestroy();
             //TODO: add here for getting res back when destroyer = null? negative effect?
             City.RemoveStructure(this);
             cbStructureDestroy?.Invoke(this, destroyer);
+            return true;
         }
 
         public bool CanReachStructure(Structure s) {
@@ -795,7 +818,6 @@ namespace Andja.Model {
 
         #endregion rotation
 
-        #region override
 
         public override string ToString() {
             if (BuildTile == null) {
@@ -837,6 +859,5 @@ namespace Andja.Model {
             isActive = !isActive;
         }
 
-        #endregion override
     }
 }

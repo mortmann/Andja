@@ -11,7 +11,7 @@ namespace Andja.Pathfinding {
         public int PlayerNumber;
 
         public float f_Score; 
-        public float g_Score;
+        public float g_Score = float.MaxValue;
 
         public bool isClosed;
         public Node parent;
@@ -26,9 +26,9 @@ namespace Andja.Pathfinding {
             if (overrideWalkable)
                 return overrideWalkable;
             if (canEnterCities != null) {
-                return canEnterCities.Contains(PlayerNumber) && MovementCost > 0;
+                return canEnterCities.Contains(PlayerNumber) && MovementCost > 0 && MovementCost < float.PositiveInfinity;
             }
-            return MovementCost > 0;
+            return MovementCost > 0 && MovementCost < float.PositiveInfinity;
         }
         public Node(Model.Tile t) : this(t.X,t.Y, t.MovementCost, t.City.PlayerNumber) {
         }
@@ -56,7 +56,7 @@ namespace Andja.Pathfinding {
 
         public void Reset() {
             this.f_Score = 0;
-            this.g_Score = 0;
+            this.g_Score = float.MaxValue;
             this.isClosed = false;
             this.parent = null;
             overrideWalkable = false;

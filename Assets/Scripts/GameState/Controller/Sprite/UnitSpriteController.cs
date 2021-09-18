@@ -65,6 +65,7 @@ namespace Andja.Controller {
         public void OnUnitCreated(Unit unit) {
             // This creates a new GameObject and adds it to our scene.
             GameObject go = new GameObject();
+            go.layer = LayerMask.NameToLayer("Unit");
             go.name = unit.playerNumber +":" + (unit.IsShip?"S":"U") + unit.PlayerSetName ?? unit.Name;
             GameObject line_go = Instantiate(unitPathPrefab);
             line_go.transform.SetParent(go.transform);
@@ -94,11 +95,11 @@ namespace Andja.Controller {
             unit.RegisterOnChangedCallback(OnUnitChanged);
             unit.RegisterOnDestroyCallback(OnUnitDestroy);
             if (FogOfWarController.FogOfWarOn) {
+                if (unit.PlayerNumber == PlayerController.currentPlayerNumber) {
+                    FogOfWarController.Instance.AddUnitFogModule(go, unit);
+                }
                 if (FogOfWarController.IsFogOfWarAlways) {
-                    if(unit.PlayerNumber == PlayerController.currentPlayerNumber) {
-                        FogOfWarController.Instance.AddUnitFogModule(go, unit);
-                    }
-                    else {
+                    if (unit.PlayerNumber != PlayerController.currentPlayerNumber) {
                         // boom this should make one part of fog always work
                         sr.maskInteraction = SpriteMaskInteraction.VisibleInsideMask; 
                     }
@@ -179,7 +180,7 @@ namespace Andja.Controller {
 
         private void OnUnitDestroy(Unit c, IWarfare warfare) {
             if (unitGameObjectMap.ContainsKey(c) == false) {
-                Debug.LogError("OnUnitDestroy -- trying to change visuals for character not in our map.");
+                //Debug.LogError("OnUnitDestroy -- trying to change visuals for character not in our map.");
                 return;
             }
             GameObject char_go = unitGameObjectMap[c];

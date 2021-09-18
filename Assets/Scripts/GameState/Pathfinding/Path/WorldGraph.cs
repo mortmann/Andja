@@ -172,7 +172,7 @@ namespace Andja.Pathfinding {
             foreach (WorldNode n in nodes) {
                 if (Util.CheckLine(World.Current.Tilesmap, x, y, n.x, n.y)) {
                     edges.Add(
-                        new WorldEdge(Vector2.Distance(new Vector2(x, y), new Vector2(n.x, n.y)) * 0.9f, n)
+                        new WorldEdge(Vector2.Distance(new Vector2(x, y), new Vector2(n.x, n.y)), n)
                     );
                 }
             }

@@ -2,14 +2,18 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
+using System;
+
 namespace Andja.Model {
 
     public enum TradeTyp { Load, Unload }
 
     [JsonObject(MemberSerialization.OptIn)]
     public class TradeRoute {
+        public const float TRADE_TIME = 1.5f; //TODO: make it a setable value
+
         private int NumberOfStops { get { return Goals.Count; } }
-        [JsonPropertyAttribute] protected List<Stop> Goals { get; set; }
+        [JsonPropertyAttribute] public List<Stop> Goals { get; set; }
         [JsonPropertyAttribute] public Dictionary<Ship, int> shipToNextStop;
         [JsonPropertyAttribute] public string Name = "Temporary";
         /// <summary>
@@ -24,13 +28,13 @@ namespace Andja.Model {
                 return _Trades;
             }
         }
+
         public bool Valid {
             get {
-                return Goals.Count > 1;
+                return _Trades.Count > 1;
             }
         }
-
-        public int TradeStopNumber => Goals.Count;
+        public int TradeCount => _Trades.Count;
 
         public TradeRoute() {
             Goals = new List<Stop>();
@@ -42,8 +46,8 @@ namespace Andja.Model {
             this.shipToNextStop = tr.shipToNextStop;
         }
 
-        public void AddWarehouse(WarehouseStructure w) {
-            Trade t = new Trade(w.City);
+        public void AddCity(City c) {
+            Trade t = new Trade(c);
             Trades.Add(t);
             Goals.Add(t);
         }
@@ -55,10 +59,15 @@ namespace Andja.Model {
                 t.unload = giving;
             }
         }
+
+        internal void RemoveStop(Stop stop) {
+            Goals.Remove(stop);
+        }
+
         public void SetName(string name) {
             Name = name;
         }
-        public Trade GetCurrentCityTrade(Ship ship) {
+        public Trade GetCurrentGoal(Ship ship) {
             Stop s = Goals[shipToNextStop[ship]];
             if (s is Trade t)
                 return t;
@@ -66,12 +75,12 @@ namespace Andja.Model {
                 return null;
         }
 
-        public void RemoveWarehouse(WarehouseStructure w) {
-            Trade t = GetTradeFor(w.City);
+        public void RemoveCity(City city) {
+            Trade t = GetTradeFor(city);
             if (t == null) {
                 return; 
             }
-            foreach (Ship ship in shipToNextStop.Keys) {
+            foreach (Ship ship in shipToNextStop.Keys.ToArray()) {
                 int currentDestination = shipToNextStop[ship];
                 if (Goals.IndexOf(t) < currentDestination) {
                     currentDestination--; // smaller then we must remove to be on the same still
@@ -89,19 +98,19 @@ namespace Andja.Model {
         }
 
         public int GetLastNumber() {
-            return NumberOfStops;
+            return Trades.Count;
         }
 
-        public int GetNumberFor(WarehouseStructure w) {
+        public int GetNumberFor(City city) {
             for (int i = 0; i < Goals.Count; i++) {
-                if (Trades[i].city == w.City) {
+                if (Trades[i].city == city) {
                     return i + 1;
                 }
             }
             return -1;
         }
 
-        public Tile GetCurrentDestination(Ship ship) {
+        public Vector2? GetCurrentDestination(Ship ship) {
             if (Goals.Count == 0) {
                 return null;
             }
@@ -111,14 +120,11 @@ namespace Andja.Model {
             return Goals[shipToNextStop[ship]].Destination;
         }
 
-        public Tile GetNextDestination(Ship ship) {
-            //if theres only one destination
-            //that means there is no realtraderoute in place
-            //so just return
-            if (Goals.Count <= 1) {
+        public Vector2? GetNextDestination(Ship ship) {
+            if (Valid == false) {
                 return null;
             }
-
+            //Go through the Route until it finds a valid target.
             for (int i = 0; i < NumberOfStops; i++) {
                 IncreaseDestination(ship);
                 if (Goals[shipToNextStop[ship]].Destination != null) {
@@ -147,7 +153,7 @@ namespace Andja.Model {
         }
 
         public void DoCurrentTrade(Ship ship) {
-            Trade t = GetCurrentCityTrade(ship);
+            Trade t = GetCurrentGoal(ship);
             City c = t.city;
             Inventory inv = ship.inventory;
             //FIRST unload THEN load !
@@ -202,8 +208,18 @@ namespace Andja.Model {
         }
         [JsonObject(MemberSerialization.OptIn)]
         public class Stop {
-            [JsonPropertyAttribute] public Tile TravelPoint;
-            public virtual Tile Destination => TravelPoint;
+            [JsonPropertyAttribute] private Vector2 Position;
+
+            public Stop() {
+            }
+
+            public Stop(Vector2 position) {
+                Position = position;
+            }
+            public void SetPosition(Vector2 position) {
+                this.Position = position;
+            }
+            public virtual Vector2 Destination => Position;
         }
 
         [JsonObject(MemberSerialization.OptIn)]
@@ -211,7 +227,7 @@ namespace Andja.Model {
             [JsonPropertyAttribute] public City city;
             [JsonPropertyAttribute] public List<Item> load;
             [JsonPropertyAttribute] public List<Item> unload;
-            public override Tile Destination => city.warehouse?.GetTradeTile();
+            public override Vector2 Destination => (city.warehouse?.GetTradeTile().Vector2).Value;
             public Trade(City c) {
                 city = c;
                 load = new List<Item>();
@@ -264,6 +280,12 @@ namespace Andja.Model {
             }
         }
 
+        internal Stop AddStop(Stop addAfter, Vector2 stopPos) {
+            Stop stop = new Stop(stopPos);
+            Goals.Insert(Goals.IndexOf(addAfter)+1, stop);
+            return stop;
+        }
+
         internal void AddShip(Ship ship) {
             shipToNextStop.Add(ship, 0);
             ship.SetTradeRoute(this);
@@ -272,6 +294,14 @@ namespace Andja.Model {
         internal void RemoveShip(Ship ship) {
             shipToNextStop.Remove(ship);
             ship.StopTradeRoute();
+        }
+
+        internal float AtDestination(Ship ship) {
+            if(GetCurrentGoal(ship) is Trade t) {
+                return TRADE_TIME;
+            } else {
+                return 0;
+            }
         }
     }
 }

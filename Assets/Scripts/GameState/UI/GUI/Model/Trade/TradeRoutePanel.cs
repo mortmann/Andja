@@ -1,21 +1,27 @@
 ﻿using Andja.Controller;
 using Andja.Model;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using UnityEngine.UI.Extensions;
 
 namespace Andja.UI.Model {
 
     public class TradeRoutePanel : MonoBehaviour {
+        public static TradeRoutePanel Instance;
         public const int TradeAmountMaximum = 100;
         public Text text;
+
         public City city;
         public GameObject fromShip;
         public GameObject toShip;
         public GameObject itemPrefab;
         public GameObject shipTradeRoutePrefab;
         public GameObject tradeRouteElementPrefab;
+        public MapLineManager tradeRouteLine;
 
         public Transform loadItemParent;
         public Transform unloadItemParent;
@@ -23,7 +29,6 @@ namespace Andja.UI.Model {
         public Transform allTradeRoutesList;
 
         private Item _currentlySelectedItem;
-
         private Item CurrentlySelectedItem {
             get { return _currentlySelectedItem; }
             set {
@@ -40,16 +45,13 @@ namespace Andja.UI.Model {
         private Dictionary<Ship, ShipElement> shipToGOElement;
         public int tradeRouteCityState = 0;
         public TradeRoute tradeRoute;
-        private MapImage mi;
         public Slider amountSlider;
 
-        private void Start() {
-            if (itemToGameObject == null)//if thats null its not started yet
-                Initialize();
-        }
-
-        public void Initialize() {
+        public void Initialize(MapImage mapImage) {
+            Instance = this;
             foreach (Transform child in allTradeRoutesList.transform) {
+                if (child.name == "NewTradeRoute")
+                    continue;
                 Destroy(child.gameObject);
             }
             foreach (Transform child in currentShipList.transform) {
@@ -58,8 +60,6 @@ namespace Andja.UI.Model {
             tradeRouteToGameObject = new Dictionary<TradeRoute, GameObject>();
             shipToGOElement = new Dictionary<Ship, ShipElement>();
             itemToGameObject = new Dictionary<Item, ItemUI>();
-            //intToItem = new Dictionary<int, Item> ();
-            mi = GameObject.FindObjectOfType<MapImage>();
             amountSlider.maxValue = TradeAmountMaximum;
             amountSlider.value = 50;
             amountSlider.onValueChanged.AddListener(OnAmountSliderMoved);
@@ -73,8 +73,10 @@ namespace Andja.UI.Model {
             foreach (TradeRoute tr in PlayerController.CurrentPlayer.TradeRoutes) {
                 AddTradeRouteToList(tr);
             }
-            if (tradeRoute == null)
+            if (PlayerController.CurrentPlayer.TradeRoutes.Count == 0)
                 CreateNewTradeRoute();
+            else
+                ShowTradeRoute(PlayerController.CurrentPlayer.TradeRoutes[0]);
         }
 
         public void RemoveTradeRoute(TradeRoute tradeRoute) {
@@ -145,19 +147,25 @@ namespace Andja.UI.Model {
 
         public void ShowTradeRoute(TradeRoute tr) {
             tradeRoute = tr;
-            foreach (WarehouseStructure w in mi.warehouseToGO.Keys) {
-                GameObject go = mi.warehouseToGO[w];
-                if (tradeRoute.Contains(w.City) == false) {
-                    go.GetComponent<MapCitySelect>().Unselect();
-                }
-                else {
-                    go.GetComponent<MapCitySelect>().SelectAs(tradeRoute.GetNumberFor(w));
-                }
-            }
+            foreach (Transform t in tradeRouteLine.transform)
+                Destroy(t.gameObject);
+            tradeRouteLine.SetTradeRoute(tr);
+            UpdateCitySelects();
             foreach (Ship ship in tradeRoute.shipToNextStop.Keys) {
                 AddShipToList(ship);
             }
             SetCity(tr.GetTrade(0)?.city);
+        }
+
+        private void UpdateCitySelects() {
+            foreach (MapCitySelect ms in FindObjectsOfType<MapCitySelect>()) {
+                if (tradeRoute.Contains(ms.City) == false) {
+                    ms.Unselect();
+                }
+                else {
+                    ms.SelectAs(tradeRoute.GetNumberFor(ms.City));
+                }
+            }
         }
 
         private void AddShipToList(Ship ship) {
@@ -249,21 +257,23 @@ namespace Andja.UI.Model {
             itemToGameObject.Remove(item);
         }
 
-        public void OnWarehouseToggleClicked(WarehouseStructure warehouse, Toggle t) {
+        public int OnCityToggle(City city, bool selected) {
             if (tradeRoute == null) {
                 Debug.LogError("NO TRADEROUTE");
-                return;
+                return -1;
             }
-            if (t.isOn) {
-                SetCity(warehouse.City);
+            if (selected) {
+                SetCity(city);
                 //not that good
-                tradeRoute.AddWarehouse(warehouse);
-                t.GetComponentInChildren<Text>().text = "" + tradeRoute.GetLastNumber();
-                text.text = warehouse.City.Name;
+                tradeRoute.AddCity(city);
+                tradeRouteLine.AddCity(city);
+                return tradeRoute.GetLastNumber();
             }
             else {
-                t.GetComponentInChildren<Text>().text = "";
-                tradeRoute.RemoveWarehouse(warehouse);
+                tradeRoute.RemoveCity(city);
+                tradeRouteLine.RemoveCity(city);
+                UpdateCitySelects();
+                return -1;
             }
         }
 
@@ -275,18 +285,14 @@ namespace Andja.UI.Model {
         }
 
         public void NextCity(bool right) {
-            if (tradeRoute.TradeStopNumber == 0)
+            if (tradeRoute.TradeCount == 0)
                 return;
             ResetItemIcons();
             tradeRouteCityState += right ? 1 : -1;
-            tradeRouteCityState %= tradeRoute.TradeStopNumber;
-            if (tradeRouteCityState < 0)
-                tradeRouteCityState = tradeRoute.TradeStopNumber - 1;
+            tradeRouteCityState = (tradeRouteCityState + tradeRoute.TradeCount) % tradeRoute.TradeCount;
             TradeRoute.Trade t = tradeRoute.GetTrade(tradeRouteCityState);
-
             SetCity(t.city);
         }
-
         public void SetCity(City c) {
             if(c != null) {
                 text.text = c.Name;
@@ -311,7 +317,9 @@ namespace Andja.UI.Model {
             }
         }
 
-        private void OnDisable() {
+
+        private void OnDestroy() {
+            Instance = null;
         }
     }
 }

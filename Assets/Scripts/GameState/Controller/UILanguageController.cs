@@ -90,11 +90,23 @@ namespace Andja.Controller {
                     localizationDataDictionary.Add(name, new TranslationData(name, false, 0));
                 }
             }
+            foreach (FogOfWarStyle go in Enum.GetValues(typeof(FogOfWarStyle))) {
+                string name = typeof(FogOfWarStyle).Name + "/" + go.ToString();
+                if (idToTranslation.ContainsKey(name) == false) {
+                    localizationDataDictionary.Add(name, new TranslationData(name, false, 0));
+                }
+            }
+            foreach (MapErrorMessage go in Enum.GetValues(typeof(MapErrorMessage))) {
+                string name = typeof(MapErrorMessage).Name + "/" + go.ToString();
+                if (idToTranslation.ContainsKey(name) == false) {
+                    localizationDataDictionary.Add(name, new TranslationData(name, false, 0));
+                }
+            }
             requiredLocalizationData = new List<TranslationData>(localizationDataDictionary.Values);
             requiredLocalizationData.OrderBy(x => x.id);
             //#endif //Unity_Editor
             LocalizationsToFile = new Dictionary<string, string>();
-            string fullpath = Path.Combine(ConstantPathHolder.StreamingAssets, "XMLs", UILanguageController.localizationXMLDirectory);
+            string fullpath = Path.Combine(ConstantPathHolder.StreamingAssets, GameData.DataLocation, UILanguageController.localizationXMLDirectory);
             string[] allLocalizationsFiles = Directory.GetFiles(fullpath, UILanguageController.localizationFilePrefix
                                                                         + "*" + UILanguageController.localizationFileType);
             //Check the files if they are readable
@@ -109,9 +121,19 @@ namespace Andja.Controller {
             LoadLocalization(LocalizationsToFile[selectedLanguage]);
         }
 
+        internal List<string> LoadHints() {
+            XmlSerializer xml = new XmlSerializer(typeof(Hints));
+            string file = Path.Combine(ConstantPathHolder.StreamingAssets, GameData.DataLocation, UILanguageController.localizationXMLDirectory, "hints-"  + selectedLanguage);
+            if(File.Exists(file) == false) {
+                return new List<string> {"No Hint list was found for selected Language.", "Do not be afraid. This does not interrupts the rest of the gameplay.", "Except of course their is more missing than that.", "Also never pet a burning dog."};
+            }
+            Hints hints = xml.Deserialize(new StringReader(File.ReadAllText(file))) as Hints;
+            return new List<string>(hints.hints);
+        }
+
         public TranslationData GetTranslationData(string name) {
             if (idToTranslation.ContainsKey(name) == false) {
-                Debug.LogWarning("Translation missing for " + name);
+                //Debug.LogWarning("Translation missing for " + name);
                 return null;
             }
             return idToTranslation[name];
@@ -176,7 +198,9 @@ namespace Andja.Controller {
             [XmlAttribute] public string language;
             [XmlArray("localizationData")] [XmlArrayItem("translationData")] public TranslationData[] localizationData;
         }
-
+        public class Hints {
+            [XmlArray("hints")] [XmlArrayItem("hint")] public string[] hints;
+        }
         internal string[] GetLabels(Type EnumType) {
             if (EnumType.IsEnum == false)
                 return null;
@@ -221,6 +245,26 @@ namespace Andja.Controller {
                 labels.Add(GetStaticVariables(p));
             }
             return labels.ToArray();
+        }
+        /// <summary>
+        /// Message should be either an enum or string.
+        /// If it is a class it should have toString with a correct translation name associated.
+        /// </summary>
+        /// <param name="message"></param>
+        /// <returns></returns>
+        internal string GetTranslation(object message) {
+            string name;
+            if (message is Enum) {
+                name = message.GetType().Name + "/" + message.ToString();
+            } else {
+                name = message.ToString();
+            }
+            if (idToTranslation.ContainsKey(name)) {
+                return (idToTranslation[name].translation);
+            }
+            else {
+                return ("Missing Translation " + message);
+            }
         }
     }
 }

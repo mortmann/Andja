@@ -21,6 +21,12 @@ namespace Andja.Controller {
     public enum TileHighlightType { Green, Red }
 
     public enum CursorType { Pointer, Attack, Escort, Destroy, Build }
+
+    public enum MapErrorMessage { NoSpace, NotEnoughResources, NotEnoughMoney, NotInCity, Missing,
+        NotInRange,
+        CanNotBuildHere,
+        CanNotDestroy
+    }
     /// <summary>
     /// Controls all Mouse Interactions with the Map and Units.
     /// Shows Previews for Building and Destroy.
@@ -140,20 +146,13 @@ namespace Andja.Controller {
         }
 
         public bool IsAlive => true;
-
         public float Speed => 0;
-
         public float RotationSpeed => 0;
-
         public TurningType TurnType => TurningType.OnPoint;
-
-        public PathDestination PathDestination => PathDestination.Exact;
+        public PathDestination PathDestination => PathDestination.Tile;
         public PathingMode PathingMode => PathingMode.IslandSinglePoint;
-
         public PathHeuristics Heuristic => PathHeuristics.Manhattan;
-
-        public bool CanEndInUnwakable => true;
-
+        public bool CanEndInUnwakable => false;
         public PathDiagonal DiagonalType => PathDiagonal.None;
 
         public IReadOnlyList<int> CanEnterCities => new List<int> { PlayerController.currentPlayerNumber };
@@ -191,10 +190,13 @@ namespace Andja.Controller {
         public Vector3 GetLastMousePosition() {
             return lastFramePosition;
         }
-
+        System.Diagnostics.Stopwatch StopWatch;
         private void Update() {
             if (EditorController.IsEditor == false && PlayerController.GameOver)
                 return;
+            StopWatch = new System.Diagnostics.Stopwatch();
+            StopWatch.Start();
+
             currFramePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             currFramePosition.z = 0;
             if (currFramePosition.y < 0 || currFramePosition.x < 0) {
@@ -450,12 +452,14 @@ namespace Andja.Controller {
                 }
             }
         }
-
-        internal void ShowError(string Message, Vector3 Position) {
+        internal void ShowError(MapErrorMessage Message) {
+            ShowError(Message, currFramePosition);
+        }
+        internal void ShowError(MapErrorMessage Message, Vector3 Position) {
             TextMeshPro text = SimplePool.Spawn(fadeOutTextPrefab, Position, Quaternion.identity).GetComponent<TextMeshPro>();
             text.fontSize = Mathf.Max(8.333f * (CameraController.Instance.zoomLevel / CameraController.MaxZoomLevel), 2);
-            text.text = Message;
-            text.transform.SetParent(transform);
+            text.text = UILanguageController.Instance.GetTranslation(Message);
+            //text.transform.SetParent(transform);
             StartCoroutine(DespawnFade(text));
         }
 
@@ -616,8 +620,6 @@ namespace Andja.Controller {
             if (ToBuildStructure == null) {
                 return;
             }
-            NeededItemsToBuild = ToBuildStructure.BuildingItems?.CloneArrayWithCounts();
-            NeededBuildCost = ToBuildStructure.BuildCost;
             UpdateSinglePreview();
             if (Input.GetMouseButtonDown(0)) {
                 List<Tile> structureTiles = ToBuildStructure.GetBuildingTiles(GetTileUnderneathMouse());
@@ -641,6 +643,9 @@ namespace Andja.Controller {
                 tileToPreviewGO.Remove(tile);
             }
             UpdateStructurePreview(tiles, 1);
+
+            NeededItemsToBuild = ToBuildStructure.BuildingItems?.CloneArrayWithCounts();
+            NeededBuildCost = ToBuildStructure.BuildCost;
         }
         /// <summary>
         /// Calculates for the selected structure where and how the structures fit in the dragged rectangle.
@@ -706,21 +711,11 @@ namespace Andja.Controller {
                 }
                 if (pathStartTile.Island != null && pathEndTile.Island != null &&
                         (buildPathJob == null || buildPathJob.End != pathEndTile.Vector2)) {
-                    //path = new Path_AStar(pathStartTile.Island, pathStartTile, pathEndTile, false,
-                    //                        PathHeuristics.Manhattan, true, PlayerController.currentPlayerNumber).path;
-                    if (buildPathJob != null)
-                        PathfindingThreadHandler.RemoveJob(buildPathJob);
                     buildPathJob = new PathJob(this, pathStartTile.Island.Grid, pathStartTile.Vector2, pathEndTile.Vector2);
-                    PathfindingThreadHandler.EnqueueJob(buildPathJob, null);
-
-                    //Queue<Vector2> q = Pathfinder.Find(this, pathStartTile.Island.Grid, pathStartTile.Vector2, pathEndTile.Vector2);
-                    //if (Enumerable.SequenceEqual(path, s) == false)
-                    //    Debug.Log(s);
+                    PathfindingThreadHandler.EnqueueJob(buildPathJob, null, true);
+                    if(buildPathJob.Path != null)
+                        UpdateMultipleStructurePreviews(World.Current.GetTilesQueue(buildPathJob.Path));
                 }
-                if (buildPathJob == null || buildPathJob.Status != JobStatus.Done) {
-                    return;
-                }
-                UpdateMultipleStructurePreviews(World.Current.GetTilesQueue(buildPathJob.Path));
             }
             else {
                 UpdateSinglePreview();
@@ -773,6 +768,10 @@ namespace Andja.Controller {
         /// <param name="tiles"></param>
         /// <param name="number"></param>
         private void UpdateStructurePreview(List<Tile> tiles, int number) {
+            if (EditorController.IsEditor) {
+                UpdateStructurePreviewTiles(tiles, true);
+                return;
+            }
             bool hasEnoughResources = PlayerController.CurrentPlayer.HasEnoughMoney(ToBuildStructure.BuildCost * number);
             if(MouseUnitState == MouseUnitState.Build) {
                 hasEnoughResources &= SelectedUnit.inventory.HasEnoughOfItems(ToBuildStructure.BuildingItems, number) == true;
@@ -800,7 +799,7 @@ namespace Andja.Controller {
                     i++;
                 }
             }
-            dontOverrideTile &= ToBuildStructure.InCityCheck(tiles, PlayerController.currentPlayerNumber);
+            dontOverrideTile &= EditorController.IsEditor || ToBuildStructure.InCityCheck(tiles, PlayerController.currentPlayerNumber);
             foreach (Tile tile in tiles) {
                 bool specialTileCheck = true;
                 if (MouseUnitState == MouseUnitState.Build) {
@@ -808,8 +807,8 @@ namespace Andja.Controller {
                         specialTileCheck = false;
                     }
                 }
-                bool canBuild = dontOverrideTile && specialTileCheck && tileToCanBuild[tile]
-                            && Structure.IsTileCityViable(tile, PlayerController.currentPlayerNumber);
+                bool canBuild = dontOverrideTile && specialTileCheck && tileToCanBuild[tile];
+                canBuild &= EditorController.IsEditor || Structure.IsTileCityViable(tile, PlayerController.currentPlayerNumber);
                 ShowTilePrefabOnTile(tile, canBuild ? TileHighlightType.Green : TileHighlightType.Red);
             }
         }
@@ -829,7 +828,7 @@ namespace Andja.Controller {
                 position += tile.Vector;
             }
             GameObject previewGO = SimplePool.Spawn(structurePreviewRendererPrefab, position, Quaternion.Euler(0, 0, 360 - ToBuildStructure.rotation));
-            previewGO.transform.SetParent(this.transform, true);
+            //previewGO.transform.SetParent(this.transform, true);
             if (ToBuildStructure.ExtraBuildUITyp != ExtraBuildUI.None) {
                 if (ExtraStructureBuildUIPrefabs.ContainsKey(ToBuildStructure.ExtraBuildUITyp) == false)
                     Debug.LogError(ToBuildStructure.ExtraBuildUITyp + " ExtraBuildPreview has no Prefab assigned!");
@@ -871,7 +870,7 @@ namespace Andja.Controller {
             }
             go = SimplePool.Spawn(go, new Vector3(t.X + 0.5f, t.Y + 0.5f, 0), Quaternion.identity);
             // Display the building hint on top of this tile position
-            go.transform.SetParent(this.transform, true);
+            //go.transform.SetParent(this.transform, true);
             tileToPreviewGO.Add(t, new TilePreview(t, type, go));
         }
 

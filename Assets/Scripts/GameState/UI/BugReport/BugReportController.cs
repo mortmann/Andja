@@ -44,8 +44,21 @@ namespace Andja {
             string saveFile = null;
             string metaData = null;
             if (IncludeSavefile.isOn) {
-                metaData = SaveController.Instance?.SaveGameState(SaveController.SaveName, true)[0];
-                saveFile = SaveController.Instance?.SaveGameState(SaveController.SaveName, true)[1];
+                if(Loading.IsLoading == false) {
+                    string[] save = SaveController.Instance?.SaveGameState(SaveController.SaveName, true);
+                    if(save != null) {
+                        metaData = save[0];
+                        saveFile = save[1];
+                    }
+                } else {
+                    if(Editor.EditorController.IsEditor && Editor.EditorController.Generate) {
+                        metaData = "Editor Seed: " + Model.Generator.MapGenerator.Instance.MapSeed;
+                    }
+                    else {
+                        metaData = SaveController.Instance?.GetCurrentMetaDataFile();
+                        saveFile = SaveController.Instance?.GetCurrentSaveFile();
+                    }
+                }
             }
             if (IncludeLogfile.isOn) {
                 logs = ConsoleController.Instance?.GetLogs();

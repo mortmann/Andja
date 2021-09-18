@@ -8,7 +8,7 @@ namespace Andja {
         public Color otherColor = Color.gray;
         public Color ownColor = Color.green;
         public Color enemyColor = Color.red;
-        public int outlineSize = 1;
+        public int outlineSize = 2;
         public int PlayerNumber = -1;
 
         private SpriteRenderer spriteRenderer;
@@ -34,17 +34,17 @@ namespace Andja {
             spriteRenderer.GetPropertyBlock(mpb);
             mpb.SetFloat("_Outline", outline ? 1f : 0);
             if (PlayerNumber == PlayerController.currentPlayerNumber) {
-                mpb.SetColor("_OutlineColor", ownColor);
+                mpb.SetColor("_Color", ownColor);
             }
             else {
                 if (PlayerController.Instance.ArePlayersAtWar(PlayerNumber, PlayerController.currentPlayerNumber)) {
-                    mpb.SetColor("_OutlineColor", enemyColor);
+                    mpb.SetColor("_Color", enemyColor);
                 }
                 else {
-                    mpb.SetColor("_OutlineColor", otherColor);
+                    mpb.SetColor("_Color", otherColor);
                 }
             }
-            mpb.SetFloat("_OutlineSize", outlineSize);
+            mpb.SetFloat("_OutlineOffSet", outlineSize);
             spriteRenderer.SetPropertyBlock(mpb);
         }
     }

@@ -78,7 +78,7 @@ namespace Andja.Editor.UI {
                 return;
             }
             foreach (TileType tt in Enum.GetValues(typeof(TileType))) {
-                typeTotileSpriteNames.Add(tt.ToString(), TileSpriteController.GetSpriteNamesForType(tt, EditorController.climate));
+                typeTotileSpriteNames.Add(tt.ToString(), TileSpriteController.GetAllSpriteNamesForType(tt, EditorController.climate));
             }
         }
     }

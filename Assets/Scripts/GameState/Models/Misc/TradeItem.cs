@@ -76,8 +76,6 @@ namespace Andja.Model {
             // most selling is 5
             //		  HAS     - REMAINING = you can buy here
             i.count = count - i.count;
-            Debug.Log(count + "-" + i.count);
-
             return i;
         }
     }

@@ -1,10 +1,9 @@
 {
-  "$id": "1",
   "saveName": "autosave",
-  "safefileversion": "0.1.10",
-  "saveTime": "2021-06-21T01:41:58.9671338+02:00",
+  "safefileversion": "0.1.11",
+  "saveTime": "2021-09-08T01:32:29.3528221+02:00",
   "difficulty": 0,
   "saveFileType": 0,
-  "playTime": 898.5526,
+  "playTime": 1760.36462,
   "isInDebugMode": true
 }

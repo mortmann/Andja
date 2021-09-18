@@ -13,15 +13,20 @@ namespace Andja.Utility {
                 return;
             }
             else if (SceneManager.GetActiveScene().name == "GameState")
-                GameState();
+                AutoGameState();
         }
 
-        public void GameState() {
-            SceneManager.LoadScene("GameStateLoadingScreen");
+        public void NewGameStart() {
+            GameData.Instance.editorloadsavegame = null;
+            SceneUtil.ChangeToGameStateLoadScreen(false);
+        }
+
+        public void AutoGameState() {
+            SceneUtil.ChangeToGameStateLoadScreen(true);
         }
 
         public void Editor() {
-            SceneManager.LoadScene("EditorLoadingScreen");
+            SceneUtil.ChangeToEditorLoadScreen(true);
         }
     }
 }

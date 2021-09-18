@@ -21,7 +21,7 @@ namespace Andja.Utility {
         private static Dictionary<InputName, KeyBind> nameToKeyBinds;
         private static string fileName = "input.ini";
         public static float MouseSensitivity { private set; get; }
-
+        public static bool IsSetup;
         internal static void SetSensitivity(float value) {
             //TODO: make it even matter
         }
@@ -30,8 +30,11 @@ namespace Andja.Utility {
 
         // Use this for initialization
         public InputHandler() {
+            if (IsSetup)
+                return;
             nameToKeyBinds = new Dictionary<InputName, KeyBind>();
             LoadInputSchema(Application.dataPath.Replace("/Assets", ""));
+            IsSetup = true;
             //		SetupKeyBinds ();
         }
 

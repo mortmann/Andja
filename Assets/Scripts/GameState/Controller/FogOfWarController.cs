@@ -51,7 +51,7 @@ namespace Andja.Controller {
                 case FogOfWarStyle.Always:
                     FogImage.material.SetFloat("_RedWeight", 1.5f);
                     FogImage.material.SetFloat("_BlueWeight", 0.5f);
-                    Texture2D visibleTiles = new Texture2D(World.Current.Width, World.Current.Height);
+                    Texture2D visibleTiles = new Texture2D(GameData.Width, GameData.Height);
                     visibleTiles.filterMode = FilterMode.Point;
                     fogStructures = new Dictionary<uint, FogOfWarStructureData>();
                     GameObject go = new GameObject();
@@ -63,13 +63,13 @@ namespace Andja.Controller {
                     visibleTilesRenderer.sprite = Sprite.Create(visibleTiles, new Rect(0, 0, visibleTiles.width, visibleTiles.height), new Vector2(0.5f, 0.5f), 1);
                     break;
             }
-            transform.position = new Vector2(World.Current.Width, World.Current.Height) / 2;
+            transform.position = new Vector2(GameData.Width, GameData.Height) / 2;
             if (FogOfWarSaveData != null) {
                 LoadSave();
-            }
-            MainCamera.orthographicSize = (Mathf.Max(World.Current.Width, World.Current.Height)) / 2;
-            SecondaryCamera.orthographicSize = (Mathf.Max(World.Current.Width, World.Current.Height)) / 2;
-            FogImage.GetComponent<RectTransform>().sizeDelta = new Vector2(World.Current.Width, World.Current.Height);
+            } 
+            MainCamera.orthographicSize = (Mathf.Max(GameData.Width, GameData.Height)) / 2;
+            SecondaryCamera.orthographicSize = (Mathf.Max(GameData.Width, GameData.Height)) / 2;
+            FogImage.GetComponent<RectTransform>().sizeDelta = new Vector2(GameData.Width, GameData.Height);
             foreach (Island isl in PlayerController.CurrentPlayer.GetIslandList()) {
                 AddIslandFogModule(isl);
             }
@@ -125,9 +125,7 @@ namespace Andja.Controller {
             } else {
                 fws.Link(structure);
             }
-            AddBoxCollider(gameObject, 
-                
-                structure.HasHitbox == false);
+            AddBoxCollider(gameObject, structure.HasHitbox == false);
             fogStructures[structure.buildID] = fws.Data;
         }
 
@@ -166,26 +164,35 @@ namespace Andja.Controller {
         }
 
         public FogOfWarSave GetFogOfWarSave() {
+            if(fogStructures != null) {
+                return new FogOfWarSave() {
+                    image = Convert.ToBase64String(SaveController.Zip(Convert.ToBase64String(GetFogOfWarImageBytes()))),
+                    fogOfWarStructures = new List<FogOfWarStructureData>(fogStructures.Values),
+                };
+            }
             return new FogOfWarSave() {
                 image = Convert.ToBase64String(SaveController.Zip(Convert.ToBase64String(GetFogOfWarImageBytes()))),
-                fogOfWarStructures = new List<FogOfWarStructureData>(fogStructures.Values),
             };
         }
 
         public void LoadSave() {
-            foreach (var item in FogOfWarSaveData.fogOfWarStructures) {
-                if (BuildController.Instance.buildIdToStructure.ContainsKey(item.buildID)) {
-                    continue;
-                }
-                GameObject go = new GameObject();
-                go.transform.SetParent(this.transform, true);
-                go.name = "FogOfWarStructure_";
-                FogOfWarStructure fws = go.AddComponent<FogOfWarStructure>();
-                fws.Set(item);
-                if(fws.structure != null) {
-                    AddBoxCollider(go, fws.structure.HasHitbox == false);
-                } else {
-                    AddBoxCollider(go, true);
+            if(FogOfWarSaveData.fogOfWarStructures != null) {
+                foreach (var item in FogOfWarSaveData.fogOfWarStructures) {
+                    if (BuildController.Instance.buildIdToStructure.ContainsKey(item.buildID)) {
+                        continue;
+                    }
+                    GameObject go = new GameObject();
+                    go.layer = LayerMask.NameToLayer("FogOfWar"); //TODO: test this 
+                    go.transform.SetParent(this.transform, true);
+                    go.name = "FogOfWarStructure_";
+                    FogOfWarStructure fws = go.AddComponent<FogOfWarStructure>();
+                    fws.Set(item);
+                    if (fws.structure != null) {
+                        AddBoxCollider(go, fws.structure.HasHitbox == false);
+                    }
+                    else {
+                        AddBoxCollider(go, true);
+                    }
                 }
             }
             SetFogOfWarImageBytes(Convert.FromBase64String(SaveController.Unzip(Convert.FromBase64String(FogOfWarSaveData.image))));
@@ -229,8 +236,16 @@ namespace Andja.Controller {
         }
 
         internal static void SetSaveFogData(FogOfWarSave fws) {
+            if (fws == null)
+                return;
             FogOfWarSaveData = fws;
+            if (fws.fogOfWarStructures != null) {
+                GameData.FogOfWarStyle = FogOfWarStyle.Always;
+            } else {
+                GameData.FogOfWarStyle = FogOfWarStyle.Unknown;
+            }
         }
+
     }
     [Newtonsoft.Json.JsonObject]
     public class FogOfWarSave : BaseSaveData {

@@ -22,7 +22,7 @@ namespace Andja.UI.Model {
             priceSlider.onValueChanged.AddListener(OnPriceSliderChange);
 
             foreach (Transform t in TradeCanvas.transform) {
-                GameObject.Destroy(t.gameObject);
+                Destroy(t.gameObject);
             }
 
             List<string> items = new List<string>(c.itemIDtoTradeItem.Keys);
@@ -30,11 +30,11 @@ namespace Andja.UI.Model {
                 TradeItemUI tradeItemUI = GameObject.Instantiate(TradeItemPrefab);
                 tradeItemUI.transform.SetParent(TradeCanvas.transform, false);
                 if (c.itemIDtoTradeItem.Count <= i) {
-                    tradeItemUI.Show(null, c.Inventory.MaxStackSize, OnSellBuyClick);
+                    tradeItemUI.Show(null, null, c.Inventory.MaxStackSize, OnSellBuyClick);
                 }
                 else {
                     Item item = c.Inventory.GetItemClone(items[i]);
-                    tradeItemUI.Show(item, c.Inventory.MaxStackSize, OnSellBuyClick);
+                    tradeItemUI.Show(item, c.itemIDtoTradeItem[items[i]], c.Inventory.MaxStackSize, OnSellBuyClick);
                     tradeItemUI.ChangeItemCount(c.itemIDtoTradeItem[items[i]].count);
                 }
                 tradeItemUI.AddListener((data) => { OnTradeItemClick(tradeItemUI); });
@@ -54,7 +54,6 @@ namespace Andja.UI.Model {
             tradeItemUICurrentlySelected.SetItem(item, city.Inventory.MaxStackSize);
             TradeItem ti = new TradeItem(item.ID, ((int)amountSlider.value),
                             ((int)priceSlider.value), tradeItemUICurrentlySelected.Trade);
-            Debug.Log(tradeItemUICurrentlySelected.Trade);
             city.AddTradeItem(ti);
             amountSlider.value = city.Inventory.MaxStackSize / 2;
             item.count = Mathf.RoundToInt(amountSlider.value);

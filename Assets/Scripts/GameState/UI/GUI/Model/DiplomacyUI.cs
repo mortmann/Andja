@@ -17,7 +17,7 @@ namespace Andja.UI {
         public Dictionary<Player, GameObject> playerToGO;
 
         private Dictionary<Player, UILineRenderer> playerToLine;
-
+        public GameObject prefabPlayerLine;
         public Button increaseDiplomaticStatusButton;
         public Button decreaseDiplomaticStatusButton;
         public Button sendMoneyButton;
@@ -72,13 +72,13 @@ namespace Andja.UI {
                 click.callback.AddListener((eventData) => { ShowFor(temp); });
                 trigger.triggers.Add(click);
 
-                GameObject line = new GameObject {
-                    name = "LineRenderer-" + showPlayer.Name + "-" + other.Name
-                };
+                GameObject line = Instantiate(prefabPlayerLine); //needed because iniated uilinerenderer bugged points == null
+                //new GameObject {
+                //    name = "LineRenderer-" + showPlayer.Name + "-" + other.Name
+                //};
                 line.transform.SetParent(playerContent, false);
                 line.transform.localPosition = Vector2.zero;// center.transform.position;
-                line.AddComponent<CanvasRenderer>();
-                UILineRenderer uILineRenderer = line.AddComponent<UILineRenderer>();
+                UILineRenderer uILineRenderer = line.GetComponent<UILineRenderer>();
                 uILineRenderer.LineThickness = 20f;
                 uILineRenderer.color = GetColorForDiplomaticStatus(PlayerController.Instance.GetDiplomaticStatusType(showPlayer, other));
                 line.transform.SetAsFirstSibling();

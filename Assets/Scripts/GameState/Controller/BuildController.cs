@@ -106,10 +106,13 @@ namespace Andja.Controller {
         }
 
         internal void PlaceWorldGeneratedStructure(Dictionary<Tile, Structure> tileToStructure) {
-            foreach (Tile t in tileToStructure.Keys) {
-                RealBuild(new List<Tile>() { t }, tileToStructure[t], GameData.WorldNumber, false, true, null, true, true);
+            foreach (Tile t in tileToStructure.Keys.ToArray()) {
+                if(RealBuild(new List<Tile>() { t }, 
+                    tileToStructure[t], GameData.WorldNumber, false, true, null, true, true) == false) {
+                    tileToStructure.Remove(t);
+                }
             }
-            LoadedStructures = new List<Structure>(tileToStructure.Values);
+            LoadedStructures = new List<Structure>(buildIdToStructure.Values);
         }
 
         public void SettleFromUnit(Unit buildUnit = null) {
@@ -146,7 +149,9 @@ namespace Andja.Controller {
                 return;
             }
             if (isGod || tile.Structure.PlayerNumber == destroyPlayer.Number) {
-                tile.Structure.Destroy();
+                if(tile.Structure.Demolish(isGod) == false) {
+                    MouseController.Instance.ShowError(MapErrorMessage.CanNotDestroy);
+                }
             }
         }
 
@@ -162,14 +167,14 @@ namespace Andja.Controller {
             //order by descending because we need to go from back to front -- for removing from the last
             LoadedStructures = LoadedStructures.OrderByDescending(x => x.buildID).ToList();
             for (int i = LoadedStructures.Count - 1; i >= 0; i--) {
-                if (LoadBuildOnTile(LoadedStructures[i], LoadedStructures[i].BuildTile)) {
+                if (LoadBuildOnTile(LoadedStructures[i], World.Current.GetTileAt(LoadedStructures[i].BuildTile.Vector2))) {
                     LoadedStructures[i].City.TriggerAddCallBack(LoadedStructures[i]);
                 }
                 else {
                     LoadedStructures.RemoveAt(i);
                 }
             }
-            buildID = LoadedStructures[0].buildID++;
+            //buildID = LoadedStructures[0].buildID + 1;
         }
         /// <summary>
         /// Change to Build State Mode for current player.
@@ -238,13 +243,8 @@ namespace Andja.Controller {
             RealBuild(str.GetBuildingTiles(tile), str, GameData.WorldNumber, true, true);
         }
 
-        internal void EditorBuildOnTile(Structure toPlace, List<Tile> t, bool single) {
-            if (single) {
-                BuildOnTile(toPlace, t, GameData.WorldNumber, single, true, null, true);
-            }
-            else {
-                RealBuild(t, toPlace, GameData.WorldNumber, true, true);
-            }
+        internal void EditorBuildOnTile(Structure toPlace, List<Tile> t) {
+            RealBuild(t, toPlace, GameData.WorldNumber, false, true, null, false, true);
         }
 
         protected bool RealBuild(List<Tile> tiles, Structure structure, int playerNumber, bool loading = false,
@@ -268,7 +268,7 @@ namespace Andja.Controller {
                 Vector3 unitPos = buildInRangeUnit.PositionVector2;
                 Tile t = tiles.Find(x => { return x.IsInRange(unitPos, buildInRangeUnit.BuildRange); });
                 if (t == null) {
-                    BuildError("RangeCheck", tiles, structure, playerNumber);
+                    BuildError(MapErrorMessage.NotInRange, tiles, structure, playerNumber);
                     return false;
                 }
             }
@@ -311,7 +311,7 @@ namespace Andja.Controller {
                     bool inCity = structure.InCityCheck(tiles, playerNumber);
                     //Failed to be in city range -- return
                     if (inCity == false) {
-                        BuildError("CityCheck", tiles, structure, playerNumber);
+                        BuildError(MapErrorMessage.NotInCity, tiles, structure, playerNumber);
                         return false;
                     }
                     structure.City = tiles[0].Island.Cities.Find(x => x?.PlayerNumber == playerNumber);
@@ -330,7 +330,7 @@ namespace Andja.Controller {
                 //find a city that matches the player
                 //and check for money
                 if (PlayerHasEnoughMoney(structure, playerNumber) == false && noBuildCost == false && onStart == false) {
-                    BuildError("MoneyCheck", tiles, structure, playerNumber);
+                    BuildError(MapErrorMessage.NotEnoughMoney, tiles, structure, playerNumber);
                     return false;
                 }
                 if (structure.City == null && structure.GetType() != typeof(WarehouseStructure)) {
@@ -350,7 +350,7 @@ namespace Andja.Controller {
                             return false;
                         }
                         if (inv.ContainsItemsWithRequiredAmount(structure.GetBuildingItems()) == false) {
-                            BuildError("RessourcesCheck", tiles, structure, playerNumber);
+                            BuildError(MapErrorMessage.NotEnoughResources, tiles, structure, playerNumber);
                             return false;
                         }
                     }
@@ -361,16 +361,18 @@ namespace Andja.Controller {
             //check to see if the structure can be placed there
             if (structure.CheckPlaceStructure(tiles, playerNumber) == false) {
                 if (loading && EditorController.IsEditor == false) {
-                    Debug.LogError("PLACING FAILED WHILE LOADING! " + structure.buildID + " - " + structure.SmallName);
-                    structure.Destroy();
+                    Debug.LogWarning("PLACING FAILED WHILE LOADING! " + structure.buildID + " - " + structure.SmallName);
+                    structure.Destroy(null, true);
                 }
                 return false;
             }
             //WE ARE HERE -- MEANS ALL CHECKS ARE DONE
             //IT WILL BE BUILD!
             //ALLOWS CREATION OF CITY when warehouse
-            if (structure is WarehouseStructure && structure.City == null) {
-                structure.City = CreateCity(tiles[0].Island, playerNumber);
+            if (structure is WarehouseStructure) {
+                if(structure.City == null && tiles[0].Island.FindCityByPlayer(playerNumber) == null) {
+                    structure.City = CreateCity(tiles[0].Island, playerNumber);
+                }
             }
             structure.PlaceStructure(tiles, loading);
 
@@ -387,20 +389,27 @@ namespace Andja.Controller {
                 LoadedStructures.Add(structure);
             }
             if(loading) {
-                buildIdToStructure[structure.buildID] = structure;
+                if(buildIdToStructure.ContainsKey(structure.buildID)) {
+                    Debug.Log("Build ID duplicate found: " + buildIdToStructure[structure.buildID] + " " + structure);
+                    structure.Destroy();
+                    return false;
+                }
+                //buildIdToStructure[structure.buildID] = structure;
             }
-            else {
-                // this is for loading so everything will be placed in order
-                structure.buildID = buildID;
-                buildID++;
-                buildIdToStructure[buildID] = structure;
-            }
+            //else {
+            // this is for loading so everything will be placed in order
+            // this should also work on loading. it should tightly pack everything next to each other.
+            structure.buildID = buildID;
+            buildIdToStructure[buildID] = structure;           
+            buildID++;
+
+            //}
             cbStructureCreated?.Invoke(structure, loading);
             structure.RegisterOnDestroyCallback(OnStructureDestroy);
             return true;
         }
 
-        public void BuildError(string errorID, List<Tile> tiles, Structure structure, int playerNumber) {
+        public void BuildError(MapErrorMessage errorID, List<Tile> tiles, Structure structure, int playerNumber) {
             if (PlayerController.currentPlayerNumber == playerNumber) {
                 Vector3 Position = tiles[0].Vector;
                 Position.x += structure.TileWidth / 2f;
@@ -423,6 +432,7 @@ namespace Andja.Controller {
 
         public void OnStructureDestroy(Structure str, IWarfare destroyer) {
             cbAnyStructureDestroyed?.Invoke(str, destroyer);
+            buildIdToStructure.Remove(str.buildID);
         }
 
         public bool PlayerHasEnoughMoney(Structure s, int playerNumber) {

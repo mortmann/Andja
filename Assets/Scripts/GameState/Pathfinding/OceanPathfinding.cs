@@ -20,6 +20,7 @@ namespace Andja.Pathfinding {
             CurrTile = t;
             X = t.X;
             Y = t.Y;
+            IsAtDestination = true;
         }
 
         public override void HandleNoPathFound() {

@@ -18,63 +18,69 @@ namespace Andja {
     /// </summary>
     public class GameData : MonoBehaviour {
         public static GameData Instance;
-        //TODO: make a way to set this either from world width/height or user
-        public static Size WorldSize = Size.Medium;
 
-        public Difficulty difficulty; //should be calculated
-        public GameType saveFileType;
-        public static int Height = 700;
-        public static int Width = 700;
-        public int MapSeed = 10;
-        public StartingLoadout Loadout;
-
-        //if nothing is set take that what is set by the editor in unity
-        //if there is nothing set it is null so new world
-        //only load the set value if not using ingame loading method
-        public string Loadsavegame => Application.isEditor && (setloadsavegame == null || setloadsavegame.Length == 0) ?
-                                                editorloadsavegame : setloadsavegame;
+        //NEVER CHANGES between games
+        public static int WorldNumber = -1;
+        public static int PirateNumber = -2;
+        public static int FlyingTraderNumber = -3;
+        public static string DataLocation => "Data";
         /// <summary>
         /// This is currently only used for predictive aim for projectiles.
         /// It is 0 for the moment because it currently should have no influence on the projectiles,
         ///  because 2d top down doesnt make much sense to calculate 3d aim.
         /// </summary>
         public static float Gravity = 0;
+        public static float DemandChangeTime = 30f;
+
+        //if nothing is set take that what is set by the editor in unity
+        //if there is nothing set it is null so new world
+        //only load the set value if not using ingame loading method
+        public string LoadSaveGame => Application.isEditor && (setloadsavegame == null || setloadsavegame.Length == 0) ?
+                                                editorloadsavegame : setloadsavegame;
+        public string editorloadsavegame;
+        public static string setloadsavegame;
+
+        public GameType saveFileType;
+
+        public Difficulty difficulty; //should be calculated
+        //TODO: make a way to set this either from world width/height or user
+        public static Size WorldSize = Size.Medium;
+        public static int Height = 700;
+        public static int Width = 700;
+        public int MapSeed = 10;
+        public static List<MapGenerator.IslandGenInfo> islandGenInfos;
+        public string[] usedIslands; // this has to be changed to some generation from the random code or smth
+        public bool RandomSeed;
+
+        public StartingLoadout Loadout;
+        public static float ReturnResourcesPercentage = 0.3f;
+        public static bool ReturnResources = false;
+        public static float PirateAggroRange = 22.5f;
+        public static float UnitAggroRange = 10f;
+        public static float EffectTickTime = 1f;
+        public static float nonCityTilesPercantage = 0.5f;
+
 
         //Pirate Data -- get set by difficulty
         public static float PirateCooldown = 5f;
         public static int PirateShipCount = 2;
 
-        public static int WorldNumber = -1;
-        public static int PirateNumber = -2;
-        public static int FlyingTraderNumber = -3;
-
-        public static float PirateAggroRange = 22.5f;
-        public static float UnitAggroRange = 10f;
-        public static float EffectTickTime = 1f;
-
-        public string editorloadsavegame;
-        public static string setloadsavegame;
         public static FogOfWarStyle FogOfWarStyle = FogOfWarStyle.Off;
-        public bool RandomSeed;
         public static int bots; // this is far from being in anykind relevant so
         public static int playerCount = 1;
-        public static float nonCityTilesPercantage = 0.5f;
         public static bool flyingTraders = true;
         public static bool pirates = true;
-        public static bool[] disasters;
-        public static List<MapGenerator.IslandGenInfo> islandGenInfos;
-        public string[] usedIslands; // this has to be changed to some generation from the random code or smth
 
         public float playTime;
 
         public void Awake() {
-            if (Instance != null) {
+            if (Instance != null && Instance != this) {
                 Destroy(this.gameObject);
                 return;
             }
             Instance = this;
             if (transform.parent == null)
-                DontDestroyOnLoad(this);
+                DontDestroyOnLoad(this.gameObject);
         }
 
         private void Update() {
@@ -131,6 +137,11 @@ namespace Andja {
             Height = data.Height;
             usedIslands = data.usedIslands;
             SetMapSeed(data.MapSeed);
+        }
+
+        private void OnDestroy() {
+            if(Instance == this)
+                Instance = null;
         }
     }
 

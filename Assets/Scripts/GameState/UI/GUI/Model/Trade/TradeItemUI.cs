@@ -18,7 +18,7 @@ namespace Andja.UI.Model {
         public EventTrigger trigger;
         public Image Highlight;
 
-        public void Show(Item item, int maxStacksize, Action<Item, bool> cbButton) {
+        public void Show(Item item, TradeItem tradeItem, int maxStacksize, Action<Item, bool> cbButton) {
             itemUI = GetComponentInChildren<ItemUI>();
             itemUI.SetItem(item, maxStacksize);
             onButtonClick += cbButton;
@@ -27,7 +27,7 @@ namespace Andja.UI.Model {
             }
             this.Item = item.CloneWithCount();
             ChangeItemCount(maxStacksize / 2);
-            UpdateSellBuy(true);
+            UpdateSellBuy(tradeItem.IsSelling);
         }
 
         public void UpdatePriceText(int price) {

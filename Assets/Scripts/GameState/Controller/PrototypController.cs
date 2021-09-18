@@ -816,7 +816,7 @@ namespace Andja.Controller {
         internal string GetFirstLevelStructureIDForStructureType(Type type) {
             //TODO: optimize this
             return new List<Structure>(structurePrototypes.Values).FindAll(x => type == x.GetType())
-                        .OrderByDescending(item => item.StructureLevel).Last().ID;
+                        .OrderByDescending(item => item.StructureLevel).First().ID;
         }
 
         /// <summary>
@@ -856,8 +856,7 @@ namespace Andja.Controller {
         ///
         ///////////////////////////////////////
         private void ReadEventsFromXML(string file) {
-            XmlDocument xmlDoc = new XmlDocument(); // xmlDoc is the new xml document.
-                                                    // ((TextAsset)Resources.Load("XMLs/GameState/events", typeof(TextAsset)));
+            XmlDocument xmlDoc = new XmlDocument(); 
             xmlDoc.LoadXml(file); // load the file.
             XmlNodeList listEffect = xmlDoc.SelectNodes("events/Effect");
             if (listEffect != null) {
@@ -873,6 +872,7 @@ namespace Andja.Controller {
                 foreach (XmlElement node in listGameEvent) {
                     GameEventPrototypData gepd = new GameEventPrototypData();
                     string id = node.GetAttribute("ID");
+                    gepd.ID = id;
                     SetData<GameEventPrototypData>(node, ref gepd);
                     gameEventPrototypeDatas[id] = gepd;
                 }
@@ -880,10 +880,9 @@ namespace Andja.Controller {
         }
 
         private void ReadOtherFromXML(string file) {
-            XmlDocument xmlDoc = new XmlDocument(); // xmlDoc is the new xml document.
-                                                    //((TextAsset)Resources.Load("XMLs/GameState/other", typeof(TextAsset)));
+            XmlDocument xmlDoc = new XmlDocument(); 
             xmlDoc.LoadXml(file); // load the file.
-            foreach (XmlElement node in xmlDoc.SelectNodes("Other/PopulationLevel")) {
+            foreach (XmlElement node in xmlDoc.SelectNodes("Other/PopulationLevels/PopulationLevel")) {
                 PopulationLevelPrototypData plpd = new PopulationLevelPrototypData();
                 int level = int.Parse(node.GetAttribute("LEVEL"));
                 plpd.LEVEL = level;
@@ -893,8 +892,7 @@ namespace Andja.Controller {
         }
 
         private void ReadCombatFromXML(string file) {
-            XmlDocument xmlDoc = new XmlDocument(); // xmlDoc is the new xml document.
-                                                    // ((TextAsset)Resources.Load("XMLs/GameState/combat", typeof(TextAsset)));
+            XmlDocument xmlDoc = new XmlDocument(); 
             xmlDoc.LoadXml(file); // load the file.
             XmlNodeList listArmorType = xmlDoc.SelectNodes("combatTypes/armorType");
             if (listArmorType != null) {
@@ -932,8 +930,7 @@ namespace Andja.Controller {
         }
 
         private void ReadItemsFromXML(string file) {
-            XmlDocument xmlDoc = new XmlDocument(); // xmlDoc is the new xml document.
-                                                    // ((TextAsset)Resources.Load("XMLs/GameState/items", typeof(TextAsset)));
+            XmlDocument xmlDoc = new XmlDocument(); 
             xmlDoc.LoadXml(file); // load the file.
             foreach (XmlElement node in xmlDoc.SelectNodes("items/Item")) {
                 ItemPrototypeData ipd = new ItemPrototypeData();
@@ -951,8 +948,7 @@ namespace Andja.Controller {
         }
 
         private void ReadUnitsFromXML(string file) {
-            XmlDocument xmlDoc = new XmlDocument(); // xmlDoc is the new xml document.
-                                                    // ((TextAsset)Resources.Load("XMLs/GameState/units", typeof(TextAsset)));
+            XmlDocument xmlDoc = new XmlDocument(); 
             xmlDoc.LoadXml(file); // load the file.
             XmlNodeList listUnit = xmlDoc.SelectNodes("units/unit");
             if (listUnit != null) {
@@ -986,8 +982,7 @@ namespace Andja.Controller {
         }
 
         private void ReadFertilitiesFromXML(string file) {
-            XmlDocument xmlDoc = new XmlDocument(); // xmlDoc is the new xml document.
-                                                    // ((TextAsset)Resources.Load("XMLs/GameState/fertilities", typeof(TextAsset)));
+            XmlDocument xmlDoc = new XmlDocument(); 
             xmlDoc.LoadXml(file); // load the file.
             foreach (XmlElement node in xmlDoc.SelectNodes("fertilities/Fertility")) {
                 string ID = node.GetAttribute("ID");
@@ -1010,8 +1005,7 @@ namespace Andja.Controller {
         }
 
         private void ReadNeedsFromXML(string file) {
-            XmlDocument xmlDoc = new XmlDocument(); // xmlDoc is the new xml document.
-                                                    // ((TextAsset)Resources.Load("XMLs/GameState/needs", typeof(TextAsset)));
+            XmlDocument xmlDoc = new XmlDocument(); 
             xmlDoc.LoadXml(file); // load the file.
             XmlNodeList listNeedGroup = xmlDoc.SelectNodes("needs/NeedGroup");
             if (listNeedGroup != null) {
@@ -1058,16 +1052,6 @@ namespace Andja.Controller {
                     levelToNeedList[npd.startLevel].Add(n.Clone());
                 }
             }
-            //for(int i = 0; i < NumberOfPopulationLevels; i++) {
-            //    string level = "";
-            //    if (levelToNeedList.ContainsKey(i) == false)
-            //        return;
-            //    foreach (Need need in levelToNeedList[i]) {
-            //        level += need.Name + "\n";
-            //    }
-            //    Debug.Log(level);
-            //}
-
             foreach (int level in levelToNeedList.Keys) {
                 List<NeedGroup> ngs = new List<NeedGroup>();
                 populationLevelToNeedGroup.Add(level, ngs);
@@ -1082,7 +1066,6 @@ namespace Andja.Controller {
 
         private void ReadStructuresFromXML(string file) {
             XmlDocument xmlDoc = new XmlDocument();
-            // ((TextAsset)Resources.Load("XMLs/GameState/structures", typeof(TextAsset)));
             xmlDoc.LoadXml(file); // load the file.
             ReadRoads(xmlDoc.SelectSingleNode("structures/roads"));
             ReadGrowables(xmlDoc.SelectSingleNode("structures/growables"));
@@ -1869,7 +1852,7 @@ namespace Andja.Controller {
         }
 
         private string LoadXML(XMLFilesTypes name) {
-            string path = System.IO.Path.Combine(ConstantPathHolder.StreamingAssets, "XMLs", "GameState", name + ".xml");
+            string path = System.IO.Path.Combine(ConstantPathHolder.StreamingAssets, GameData.DataLocation, "GameState", name + ".xml");
             return System.IO.File.ReadAllText(path);
         }
 

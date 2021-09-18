@@ -24,7 +24,7 @@ namespace Andja.Editor {
             bool first = true;
             foreach (string item in PrototypController.Instance.StructurePrototypes.Keys) {
                 GameObject g = GameObject.Instantiate(listItem);
-                g.transform.SetParent(BuildingSelectContent.transform);
+                g.transform.SetParent(BuildingSelectContent.transform, false);
                 g.GetComponentInChildren<Text>().text = PrototypController.Instance.StructurePrototypes[item].SpriteName;
                 string temp = item;
                 EventTrigger eventTrigger = g.GetComponent<EventTrigger>();

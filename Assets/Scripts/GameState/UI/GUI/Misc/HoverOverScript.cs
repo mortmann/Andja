@@ -30,6 +30,8 @@ namespace Andja.UI {
 
         private void Start() {
             rect = GetComponent<RectTransform>();
+            if (Loading.IsLoading)
+                return;
             stringToImageText = new Dictionary<string, ImageText>();
             
             ImageText cost = Instantiate(ImageTextPrefab);
@@ -55,7 +57,6 @@ namespace Andja.UI {
         }
 
         public void Show(string header, params string[] descriptions) {
-            transform.GetChild(0).gameObject.SetActive(true);
             Header.text = header;
             if (descriptions != null) {
                 Description.gameObject.SetActive(true);
@@ -70,11 +71,12 @@ namespace Andja.UI {
             else {
                 Description.gameObject.SetActive(false);
             }
-            transform.GetChild(0).gameObject.SetActive(isDebug);
             show = true;
             Items.SetActive(false);
             MoneyThings.SetActive(false);
             Locked.SetActive(false);
+            staticPosition = false;
+            truePosition = true;
         }
 
         public void Show(string header, Vector3 position, bool truePosition, bool instantShow, params string[] descriptions) {
@@ -84,12 +86,12 @@ namespace Andja.UI {
             this.truePosition = truePosition;
             this.instantShow = instantShow;
             if (instantShow)
-                transform.GetChild(0).gameObject.SetActive(true);
+                fitForm.gameObject.SetActive(true);
             fitForm.ForceUpdateRectTransforms();
         }
 
         public void Unshow() {
-            transform.GetChild(0).gameObject.SetActive(false);
+            fitForm.gameObject.SetActive(false);
             show = false;
             isDebug = false;
             staticPosition = false;
@@ -103,6 +105,7 @@ namespace Andja.UI {
             if (show) {
                 if (EventSystem.current.IsPointerOverGameObject() == false && isDebug == false) {
                     Unshow();
+                    return;
                 }
                 hovertime -= Time.deltaTime;
             }
@@ -113,7 +116,6 @@ namespace Andja.UI {
             if (hovertime > 0 && instantShow == false) {
                 return;
             }
-            transform.GetChild(0).gameObject.SetActive(true);
             Vector3 offset = Vector3.zero;
             if (truePosition == false) {
                 offset = -fitForm.sizeDelta / 2;
@@ -124,10 +126,10 @@ namespace Andja.UI {
                 position = Position;
             Vector2 sizeDeltaModified = fitForm.sizeDelta * CanvasScale.Vector;//Fix for the scaling
             if (sizeDeltaModified.x + position.x > Screen.width) {
-                offset.x = Screen.width - (sizeDeltaModified.x + position.x);
+                position.x = Screen.width - (sizeDeltaModified.x);
             }
             if (sizeDeltaModified.y + position.y > Screen.height) {
-                offset.y = Screen.height - (sizeDeltaModified.y + position.y);
+                position.y = Screen.height - (sizeDeltaModified.y);
             }
             if (position.x < 0) {
                 position.x = 0;
@@ -137,6 +139,7 @@ namespace Andja.UI {
             }
             fitForm.transform.position = position + offset;
             lifetime -= Time.deltaTime;
+            fitForm.gameObject.SetActive(true);
         }
 
         internal void Show(Structure structure, bool unlocked) {

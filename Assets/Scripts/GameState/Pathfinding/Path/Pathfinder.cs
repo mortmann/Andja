@@ -75,7 +75,12 @@ namespace Andja.Pathfinding {
                 endNodes = FindClosestWalkableNeighbours(agent, end, grid);
             }
             while (OpenSet.Count > 0) {
+                if (job.IsCanceled || PathfindingThreadHandler.FindPaths == false)
+                    return null;
                 Node current = OpenSet.Dequeue();
+                //if (agent is Controller.MouseController) {
+                //    Controller.TileSpriteController.positions.Add(current.Pos);
+                //}
                 if (current == end || endNodes != null && endNodes.Contains(current)) {
                     return ReconstructPath(grid, current); //we are at any destination node make the path
                 }
@@ -124,7 +129,7 @@ namespace Andja.Pathfinding {
                             }
                         }
                         float tentative_g_score = current.g_Score + costToNeighbour;
-                        if (OpenSet.Contains(neighbour) && tentative_g_score >= neighbour.g_Score)
+                        if (tentative_g_score >= neighbour.g_Score)
                             continue;
                         neighbour.parent = current;
                         neighbour.g_Score = tentative_g_score;
@@ -142,7 +147,7 @@ namespace Andja.Pathfinding {
             }
             return null;
         }
-        public static Queue<Vector2> FindOceanPath(IPathfindAgent agent, WorldGraph graph, Vector2 startPos, Vector2 endPos) {
+        public static Queue<Vector2> FindOceanPath(PathJob job, IPathfindAgent agent, WorldGraph graph, Vector2 startPos, Vector2 endPos) {
             if (World.Current != null) {
                 worldTilemap = World.Current.Tilesmap;
             }
@@ -153,13 +158,18 @@ namespace Andja.Pathfinding {
                 tempQueue.Enqueue(endPos);
                 return tempQueue;
             }
-            Queue<Vector2> worldPoints = FindWorldPath(agent, graph, startPos, endPos);
+            Queue<Vector2> worldPoints = FindWorldPath(job, agent, graph, startPos, endPos);
+            //if (agent is Ship s && s.IsPlayer()) {
+            //    worldPoints.AsParallel().ForAll(a => Controller.TileSpriteController.positions.Add(a));
+            //}
             if (worldPoints == null)
                 return tempQueue;
             tempQueue.Enqueue(startPos);
             Vector2 current = worldPoints.Dequeue();
             do { //for the all points in worldPoints AND the final destination
-                Vector2 next = worldPoints.Count > 0 ? worldPoints.Peek() : endPos;
+                Vector2 next = worldPoints.Count > 0 ? worldPoints.Dequeue() : endPos;
+                if (job.IsCanceled || PathfindingThreadHandler.FindPaths == false)
+                    return null;
                 if (Utility.Util.CheckLine(worldTilemap, tempQueue.Last(), next) == false) {
                     //add the last point the current path node could reach
                     //now it will repeat check to which point this can go 
@@ -169,8 +179,6 @@ namespace Andja.Pathfinding {
                     //last point in current path can reach the point 
                     //so we can go directly to this one - when it cant reach one 
                     current = next;
-                    if(worldPoints.Count > 0)
-                        worldPoints.Dequeue();
                 }
             } while (worldPoints.Count > 0);
             Queue<Vector2> finalQueue = new Queue<Vector2>();
@@ -184,15 +192,17 @@ namespace Andja.Pathfinding {
             //Debug.Log("Total Ocean Pathfinder took " + stopwatch.ElapsedMilliseconds + "(" + stopwatch.Elapsed.TotalSeconds + "s)");
             return finalQueue;
         }
-        private static Queue<Vector2> FindWorldPath(IPathfindAgent agent, WorldGraph graph, Vector2 startPos, Vector2 endPos) {
+        private static Queue<Vector2> FindWorldPath(PathJob job, IPathfindAgent agent, WorldGraph graph, 
+                                                        Vector2 startPos, Vector2 endPos) {
             WorldNode start = graph.GetNodeFromWorldCoord(startPos);
             WorldNode end = graph.GetNodeFromWorldCoord(endPos);
             SimplePriorityQueue<WorldNode> OpenSet = new SimplePriorityQueue<WorldNode>();
-
             start.g_Score = 0;
             start.f_Score = DistanceNodes(false, start.Pos, end.Pos);
             OpenSet.Enqueue(start, 0);
             while (OpenSet.Count > 0) {
+                if (job.IsCanceled || PathfindingThreadHandler.FindPaths == false)
+                    return null;
                 WorldNode current = OpenSet.Dequeue();
                 if (current == end) {
                     return ReconstructWorldPath(current); //we are at any destination node make the path
@@ -205,12 +215,15 @@ namespace Andja.Pathfinding {
                     if (neighbour == null || neighbour.isClosed == true) {
                         continue;
                     }
-                    float movementCostToNeighbour = edge.MovementCost 
+                    
+                    float movementCostToNeighbour = 1 
                         * DistanceNodes(agent.DiagonalType != PathDiagonal.None, current.Pos, neighbour.Pos);
-
+                    //if (agent is Ship s && s.IsPlayer()) {
+                    //    Controller.TileSpriteController.positions.Add(neighbour.Pos);
+                    //}
                     float tentative_g_score = current.g_Score + movementCostToNeighbour;
 
-                    if (OpenSet.Contains(neighbour) && tentative_g_score >= neighbour.g_Score)
+                    if (tentative_g_score >= neighbour.g_Score)
                         continue;
 
                     neighbour.parent = current;
@@ -263,12 +276,21 @@ namespace Andja.Pathfinding {
             return vectors;
         }
 
-        private static HashSet<Node> FindClosestWalkableNeighbours(IPathfindAgent agent, Node start, PathGrid grid) {
-            HashSet<Node> tiles = new HashSet<Node>();
-            foreach (Node x in grid.Neighbours(start, agent.DiagonalType != PathDiagonal.None)) {
-                tiles.Add(x);
-                if (tiles.Count == 0)
-                    tiles.UnionWith(FindClosestWalkableNeighbours(agent, x, grid));
+        private static HashSet<Node> FindClosestWalkableNeighbours(IPathfindAgent agent, Node start, PathGrid grid, 
+                HashSet<Node> tiles = null) {
+            if (tiles == null)
+                tiles = new HashSet<Node>();
+            while (tiles.Count == 0) {
+                List<Node> nodes = grid.Neighbours(start, agent.DiagonalType != PathDiagonal.None);
+                nodes.RemoveAll(x=>x==null);
+                foreach (Node x in nodes) {
+                    if (x.IsPassable(agent.CanEnterCities.ToList()))
+                        tiles.Add(x);
+                }
+                if(tiles.Count == 0) {
+                    foreach (Node x in nodes)
+                        tiles.UnionWith(FindClosestWalkableNeighbours(agent, x, grid, tiles));
+                }
             }
             return tiles;
         }

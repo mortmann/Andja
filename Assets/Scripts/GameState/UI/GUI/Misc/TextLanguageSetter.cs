@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Xml;
 using System.Xml.Serialization;
+using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -77,6 +78,8 @@ namespace Andja.UI {
         public int Values;
 
         public Text nameText;
+        public TMP_Text tmp_nameText;
+
         public Text valueText;
         private string nameSuffix;
 
@@ -94,7 +97,9 @@ namespace Andja.UI {
                     nameText = GetComponent<Text>();
                 if (nameText == null)
                     nameText = GetComponentInChildren<Text>(true);
-                if (nameText == null) {
+                if (nameText == null)
+                    tmp_nameText = GetComponentInChildren<TMP_Text>(true);
+                if (nameText == null && tmp_nameText == null) {
                     Debug.LogError("TextLanguageSetter has no text object! " + name);
                     return;
                 }
@@ -111,11 +116,16 @@ namespace Andja.UI {
             if (OnlyHoverOver)
                 return;
             if (translationData == null) {
-                Debug.LogError("Missing Translations Data for " + Identifier);
+                Debug.LogWarning("Missing Translations Data for " + Identifier);
                 return;
             }
-            if (string.IsNullOrEmpty(translationData.translation) == false)
-                nameText.text = translationData.translation + nameSuffix;
+            if (string.IsNullOrEmpty(translationData.translation) == false) {
+                if(nameText != null) {
+                    nameText.text = translationData.translation + nameSuffix;
+                } else {
+                    tmp_nameText.text = translationData.translation + nameSuffix;
+                }
+            }
         }
 
         internal void SetStaticLanguageVariables(params StaticLanguageVariables[] vals) {
@@ -194,10 +204,6 @@ namespace Andja.UI {
         }
 
         public void OnPointerEnter(PointerEventData eventData) {
-            if (Input.GetMouseButtonDown(0)) {
-                GameObject.FindObjectOfType<HoverOverScript>().Unshow();
-                return;
-            }
             if (translationData?.hoverOverTranslation != null)
                 GameObject.FindObjectOfType<HoverOverScript>().Show(translationData.hoverOverTranslation);
         }

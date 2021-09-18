@@ -11,10 +11,13 @@ namespace Andja {
     /// <summary>
     /// Handles loading percentage and clears the console for less spam.
     /// </summary>
+    public enum LoadingType { None, Editor, Game }
     public class Loading : MonoBehaviour {
         private AsyncOperation aso;
         public Text percentText;
-        public bool loadEditor;
+        public Slider percentBar;
+        public int percantage = 0;
+        public LoadingType Type;
         internal static bool IsLoading = false;
         private Stopwatch loadingStopWatch;
         private bool AsyncLoadDebug = false;
@@ -31,7 +34,7 @@ namespace Andja {
         private void Awake() {
             if (Application.isEditor)
                 ClearConsole();
-            EditorController.IsEditor = loadEditor;
+            EditorController.IsEditor = Type == LoadingType.Editor;
             IsLoading = true;
             loadingStopWatch = new Stopwatch();
             loadingStopWatch.Start();
@@ -39,16 +42,16 @@ namespace Andja {
 
         private void Update() {
             if (aso == null && Application.isEditor == false) {
-                if (loadEditor) {
+                if (EditorController.IsEditor) {
                     aso = SceneManager.LoadSceneAsync("IslandEditor");
                     aso.allowSceneActivation = false;
                 }
                 else {
-                    if (string.IsNullOrEmpty(GameData.Instance.Loadsavegame) == false
-                        && SaveController.Instance.DoesGameSaveExist(GameData.Instance.Loadsavegame) == false) {
+                    if (string.IsNullOrEmpty(GameData.Instance.LoadSaveGame) == false
+                        && SaveController.Instance.DoesGameSaveExist(GameData.Instance.LoadSaveGame) == false) {
                         MainMenuInfo.AddInfo(MainMenuInfo.InfoTypes.SaveFileError, 
-                            GameData.Instance.Loadsavegame + " Save does not exist!");
-                        SceneManager.LoadScene("MainMenu");
+                            GameData.Instance.LoadSaveGame + " Save does not exist!");
+                        Utility.SceneUtil.ChangeToMainMenuScreen(true);
                         Destroy(FindObjectOfType<MasterController>().gameObject);
                         Destroy(FindObjectOfType<MapGenerator>().gameObject);
                         return;
@@ -57,8 +60,7 @@ namespace Andja {
                     aso.allowSceneActivation = false;
                 }
             }
-            int percantage = 0;
-            if (loadEditor == false) {
+            if (EditorController.IsEditor == false) {
                 if (SaveController.IsLoadingSave) {
                     float mapGenValue = MapGenerator.Instance != null ? MapGenerator.Instance.GeneratedProgressPercantage : 1;
                     percantage = (int)(99 * (SceneLoadingProgress * 0.3f
@@ -69,7 +71,7 @@ namespace Andja {
                 else {
                     percantage = (int)(100 * (SceneLoadingProgress * 0.7f + MapGenerator.Instance.GeneratedProgressPercantage * 0.3f));
                 }
-                percentText.text = percantage + "%";
+                SetPercantage(percantage);
                 //First wait for MapGeneration
                 if (MapGenerator.Instance != null && MapGenerator.Instance.IsDone == false) {
                     return;
@@ -92,10 +94,10 @@ namespace Andja {
                 percantage = (int)(SceneLoadingProgress * 100);
                 if (MapGenerator.Instance != null) {
                     percantage = (int)(MapGenerator.Instance.GeneratedProgressPercantage * 100 * 0.7f + percantage * 0.3f);
-                    percentText.text = percantage + "%";
+                    SetPercantage(percantage);
                 }
                 else
-                    percentText.text = percantage + "%";
+                    SetPercantage(percantage);
                 if (EditorController.Generate && MapGenerator.Instance.IsDone == false) {
                     return;
                 }
@@ -103,6 +105,11 @@ namespace Andja {
                     aso = SceneManager.LoadSceneAsync("IslandEditor");
                 aso.allowSceneActivation = true;
             }
+        }
+
+        private void SetPercantage(int percantage) {
+            percentText.text = percantage + "%";
+            percentBar.value = percantage / 100f;
         }
 
         private static void ClearConsole() {
@@ -115,8 +122,10 @@ namespace Andja {
 
         public void OnDestroy() {
             loadingStopWatch?.Stop();
-            UnityEngine.Debug.Log("Loading took " + loadingStopWatch.ElapsedMilliseconds + "ms (" + loadingStopWatch.Elapsed.TotalSeconds + "s)! ");
+            UnityEngine.Debug.Log("Loading took " + loadingStopWatch.ElapsedMilliseconds + "ms " +
+                "(" + loadingStopWatch.Elapsed.TotalSeconds + "s)! ");
             IsLoading = false;
+            Type = LoadingType.None;
         }
     }
 }

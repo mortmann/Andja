@@ -7,6 +7,7 @@ namespace Andja.UI {
         void Start() {
             GetComponent<Canvas>().worldCamera = Camera.main;
             transform.GetChild(0).gameObject.SetActive(false);
+            new InputHandler();
         }
         void Update() {
             if (InputHandler.GetButtonDown(InputName.BugReport)) {

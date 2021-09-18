@@ -212,7 +212,6 @@ namespace Andja.Controller {
                 return;
             }
             tradeRouteCanvas.SetActive(true);
-            tradeRouteCanvas.GetComponent<MapImage>().Show();
         }
 
         public void ToggleOffWorldMenu() {

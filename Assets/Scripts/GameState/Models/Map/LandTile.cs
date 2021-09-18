@@ -20,6 +20,9 @@ namespace Andja.Model {
                 return _structures;
             }
             set {
+                //if(Type == TileType.Ocean) {
+                //    return;
+                //}
                 if (_structures != null && _structures == value) {
                     return;
                 }
@@ -45,7 +48,7 @@ namespace Andja.Model {
         }
 
         public override TileType Type {
-            get { return _type; }
+            get { return _type;  }
             set {
                 _type = value;
             }
@@ -148,7 +151,7 @@ namespace Andja.Model {
             SpriteName = t.SpriteName;
             _type = t.Type;
         }
-        public LandTile(int x, int y, Tile t, TileType type) : this(x, y, t) {
+        public LandTile(Tile t, TileType type) : this(t.X, t.Y, t) {
             _type = type;
         }
         // The function we callback any time our tile's structure changes

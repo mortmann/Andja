@@ -460,8 +460,14 @@ namespace Andja.Utility {
             }
             int numerator = longest >> 1;
             for (int i = 0; i <= longest; i++) {
-                if (worldTilemap[x][y] == false)
+                if (worldTilemap[x][y] == false || Pathfinding.PathfindingThreadHandler.FindPaths == false)
                     return false;
+                if(x > worldTilemap.Length || x < 0) {
+                    return false;
+                }
+                if (y > worldTilemap[0].Length || y < 0) {
+                    return false;
+                }
                 numerator += shortest;
                 if (!(numerator < longest)) {
                     numerator -= longest;
@@ -518,6 +524,11 @@ namespace Andja.Utility {
         public static Vector2[] FindClosestPoints(IEnumerable<Vector2> seq1, params Vector2[] seq2) {
             return FindClosestPoints(seq1, (IEnumerable<Vector2>)seq2);
         }
+
+        public static float FindClosestDistancePointCircle(Vector2 point, Vector2 circleCenter, float circleRadius) {
+            return (Mathf.Sqrt((Mathf.Pow((point.x - circleCenter.x), 2)) + (Mathf.Pow((point.y - circleCenter.y), 2))) - circleRadius);
+        }
+
 
     }
 }

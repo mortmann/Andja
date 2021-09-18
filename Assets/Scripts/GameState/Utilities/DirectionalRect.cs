@@ -18,33 +18,33 @@ namespace Andja.Utility {
             bool xFirst = direction == Direction.E || direction == Direction.W;
 
             if (yFirst) {
-                if (Island.xMin < over.xMax && Island.xMax > over.xMin) {
-                    if (direction == Direction.N && rect.yMax > rect.yMin)
+                if (Island.xMin <= over.xMax && Island.xMax >= over.xMin) {
+                    if (direction == Direction.N && rect.yMax >= over.yMin)
                         rect.yMax = over.yMin;
-                    if (direction == Direction.S && rect.yMin < rect.yMax)
+                    if (direction == Direction.S && rect.yMin <= over.yMax)
                         rect.yMin = over.yMax;
                 }
                 else {
-                    if (Island.xMin >= over.xMax && rect.xMin < over.xMax) {
+                    if (Island.xMin >= over.xMax && rect.xMin <= over.xMax) {
                         rect.xMin = over.xMax;
                     }
-                    if (Island.xMax <= over.xMin && rect.xMax > over.xMin) {
+                    if (Island.xMax <= over.xMin && rect.xMax >= over.xMin) {
                         rect.xMax = over.xMin;
                     }
                 }
             }
             if (xFirst) {
-                if (Island.yMin < over.yMax && Island.yMax > over.yMin) {
-                    if (direction == Direction.E && rect.xMax > over.xMin)
+                if (Island.yMin <= over.yMax && Island.yMax >= over.yMin) {
+                    if (direction == Direction.E && rect.xMax >= over.xMin)
                         rect.xMax = over.xMin;
-                    if (direction == Direction.W && rect.xMin < over.xMax)
+                    if (direction == Direction.W && rect.xMin <= over.xMax)
                         rect.xMin = over.xMax;
                 }
                 else {
-                    if (Island.yMin >= over.yMax && rect.yMin < over.xMax) {
+                    if (Island.yMin >= over.yMax && rect.yMin <= over.yMax) {
                         rect.yMin = over.yMax;
                     }
-                    if (Island.yMax <= over.yMin && rect.yMax > over.yMin) {
+                    if (Island.yMax <= over.yMin && rect.yMax >= over.yMin) {
                         rect.yMax = over.yMin;
                     }
                 }

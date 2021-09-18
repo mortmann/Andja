@@ -1,0 +1,119 @@
+<events>
+   <Effect ID="inactive">
+      <Name>
+         <entry lang="Deutsch">inaktiv</entry>
+         <entry lang="English">inactive</entry>
+      </Name>
+      <unique>true</unique>
+      <nameOfVariable>upkeepCost</nameOfVariable>
+      <change>0.5</change>
+      <targets>
+         <Target>MilitaryStructure</Target>
+         <Target>OutputStructure</Target>
+      </targets>
+      <addType>Float</addType>
+      <modifierType>Multiplicative</modifierType>
+      <updateChange>None</updateChange>
+      <classification>Neutral</classification>
+      <uiSpriteName>Inactive_icon</uiSpriteName>
+      <onMapSpriteName>Inactive_icon</onMapSpriteName>
+      <canSpread>false</canSpread>
+      <spreadProbability>0.0</spreadProbability>
+      <spreadTileRange>1</spreadTileRange>
+   </Effect>
+   <Effect ID="fire">
+      <Name>
+         <entry lang="Deutsch">Feuer</entry>
+         <entry lang="English">Fire</entry>
+      </Name>
+      <unique>true</unique>
+      <nameOfVariable>CurrentHealth</nameOfVariable>
+      <change>-1.0</change>
+      <targets>
+         <Target>BurnableStructure</Target>
+      </targets>
+      <addType>Float</addType>
+      <modifierType>Update</modifierType>
+      <updateChange>Health</updateChange>
+      <classification>Negativ</classification>
+      <uiSpriteName>fire</uiSpriteName>
+      <onMapSpriteName>fire</onMapSpriteName>
+      <canSpread>true</canSpread>
+      <spreadProbability>0.05</spreadProbability>
+      <spreadTileRange>1</spreadTileRange>
+   </Effect>
+   <Effect ID="volcanicearth">
+      <Name>
+         <entry lang="Deutsch">Vulkanerde</entry>
+         <entry lang="English">Volcanic Earth</entry>
+      </Name>
+      <unique>false</unique>
+      <nameOfVariable>efficiency</nameOfVariable>
+      <change>0.03</change>
+      <targets>
+         <Target>GrowableStructure</Target>
+      </targets>
+      <addType>Float</addType>
+      <modifierType>Additive</modifierType>
+      <updateChange>None</updateChange>
+      <classification>Positiv</classification>
+      <uiSpriteName>volcanicearth</uiSpriteName>
+      <canSpread>false</canSpread>
+      <spreadProbability>0.0</spreadProbability>
+      <spreadTileRange>1</spreadTileRange>
+   </Effect>
+   <Effect ID="illness">
+      <Name>
+         <entry lang="Deutsch">Krankheit</entry>
+         <entry lang="English">Illness</entry>
+      </Name>
+      <unique>true</unique>
+      <nameOfVariable>decreaseTime</nameOfVariable>
+      <change>2.0</change>
+      <targets>
+         <Target>HomeStructure</Target>
+      </targets>
+      <addType>Float</addType>
+      <modifierType>Multiplicative</modifierType>
+      <updateChange>None</updateChange>
+      <classification>Negativ</classification>
+      <uiSpriteName>illness</uiSpriteName>
+      <onMapSpriteName>illness</onMapSpriteName>
+      <canSpread>false</canSpread>
+      <spreadProbability>0.0</spreadProbability>
+      <spreadTileRange>1</spreadTileRange>
+   </Effect>
+   <GameEvent ID="fireoutbreak">
+      <Name>
+         <entry lang="Deutsch">Feuerausbruch</entry>
+         <entry lang="English">Fire outbreak</entry>
+      </Name>
+      <Description>
+         <entry lang="Deutsch">Ein Gebäude hat Feuer gefangen.</entry>
+         <entry lang="English">A building caught fire.</entry>
+      </Description>
+      <probability>10.0</probability>
+      <minDuration>50.0</minDuration>
+      <maxDuration>100.0</maxDuration>
+      <minRange>0.0</minRange>
+      <maxRange>0.0</maxRange>
+      <effects length="1">
+         <Effect>fire</Effect>
+      </effects>
+   </GameEvent>
+   <GameEvent ID="volcanic_eruption">
+      <Name>
+         <entry lang="Deutsch">Vulkanausbruch</entry>
+         <entry lang="English">Volcanic Eruption</entry>
+      </Name>
+      <Description>
+         <entry lang="Deutsch">Ein Vulkan bricht aus.</entry>
+         <entry lang="English">A vulkan is breaking out.</entry>
+      </Description>
+      <probability>10.0</probability>
+      <minDuration>50.0</minDuration>
+      <maxDuration>100.0</maxDuration>
+      <minRange>50.0</minRange>
+      <maxRange>100.0</maxRange>
+   </GameEvent>
+</events>

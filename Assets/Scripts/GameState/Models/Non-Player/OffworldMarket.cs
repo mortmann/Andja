@@ -13,8 +13,6 @@ namespace Andja.Model {
     public class OffworldMarket {
         [JsonPropertyAttribute] public Dictionary<string, Price> itemIDtoPrice;
         [JsonPropertyAttribute] private float demandChangeTimer = 5f;
-        private float DemandChangeTime = 30f;
-
         public OffworldMarket() {
             //Read the prices for selling/buying from a seperate file in savegame
             //are these prices randomly generated? if so were do we get the lower
@@ -30,15 +28,20 @@ namespace Andja.Model {
                 itemIDtoPrice.Add(id, new Price(50, 50)); //eg Random.Range (10,20)
                                                           //itemIDtoPrice[id].DemandChange += Random.Range(-10, 10);
             }
-            //float amount=0;
-            //Price tempP = new Price(50, 50);
-            //for (int i = 0; i <= 10; i++) {
-            //    tempP.DemandChange += i;
-            //    Debug.Log(tempP.Buy);
-            //    amount += tempP.Buy;
-
-            //}
-            //Debug.Log("Buyw " + amount);
+            demandChangeTimer = GameData.DemandChangeTime;
+            
+            if(Application.isEditor) {
+                Price tempP = new Price(50, 50);
+                for (int i = 0; i <= 50; i++) {
+                    tempP.DemandChange++;
+                    Debug.Log("Parable " + i + ": " + tempP.CubicBuy + " " + tempP.CubicSell);
+                }
+                Price tempa = new Price(50, 50);
+                for (int i = 0; i <= 50; i++) {
+                    tempa.DemandChange--;
+                }
+            }
+            
         }
 
         public void SellItemToOffWorldMarket(Item item, Player player) {
@@ -86,7 +89,7 @@ namespace Andja.Model {
             foreach (Price p in itemIDtoPrice.Values) {
                 p.ChangeDemand();
             }
-            demandChangeTimer = DemandChangeTime;
+            demandChangeTimer = GameData.DemandChangeTime;
         }
 
         [JsonObject(MemberSerialization.OptIn)]
@@ -95,27 +98,43 @@ namespace Andja.Model {
             //TODO: rework this for better pricing stuff
             public static float BuyMultiplier = 1.05f;
 
-            public float ParableBuy => Mathf.Clamp(Mathf.RoundToInt((demandA * BuyMultiplier) * (Demand * Demand)), 10, int.MaxValue);
-            public float ParableSell => Mathf.Clamp(Mathf.RoundToInt(demandA * (Demand * Demand)), 1, int.MaxValue);
-            public int Buy => Mathf.RoundToInt(LinearBuy);/// 2  + parableBuy / 2
-            public int Sell => Mathf.RoundToInt(LinearSell); // / 2 + parableSell / 2
+            public int CubicBuy {
+                get {
+                    float x = Demand;
+                    return Mathf.RoundToInt(-Mathf.Pow(x * 0.05f, 3) - 0.25f * x + StartPrice * 1.1f);
+                }
+            }
+            public int CubicSell {
+                get {
+                    float x = Demand;
+                    return Mathf.RoundToInt(-Mathf.Pow(x * 0.05f, 3) - 0.25f * x + StartPrice);
+                }
+            }
+
+            public int Buy => Mathf.RoundToInt(CubicBuy); // 2  + parableBuy / 2
+            public int Sell => Mathf.RoundToInt(CubicSell); // 2 + parableSell / 2
             public float LinearBuy => Mathf.Clamp(BuyMultiplier * Demand * (demandB / normalDemand), 10, int.MaxValue);
             public float LinearSell => Mathf.Clamp(Demand * (demandB / normalDemand), 1, int.MaxValue);
+            public float Demand => normalDemand + DemandChange;
 
             [JsonPropertyAttribute] public int DemandChange; // what was bought and sold
-            public float Demand => normalDemand + DemandChange * 0.1f;
-            public int normalDemand;
 
-            //float demandM;
-            private float demandA;
-
-            private readonly float demandB;
+            public int StartPrice = 50;
+            //this is gonna be read in 
+            public int normalDemand = 0;
+            private float demandA = 0.02f;
+            private readonly float demandB = 50;
 
             public Price(float startPrice, int startDemand) {
                 demandA = (startPrice / (startDemand * startDemand));
                 demandB = startPrice;
                 //demandM = startPrice / startDemand;
-                normalDemand = startDemand;
+                //normalDemand = startDemand;
+            }
+            public Price() {
+                demandA = 0.02f;
+                demandB = 50;
+                normalDemand = 50;
             }
 
             public void ChangeDemand() {

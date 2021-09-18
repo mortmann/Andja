@@ -137,7 +137,9 @@ namespace Andja.Model.Generator {
             started = true;
             MapSeed = seed;
             mapThreadRandom = new ThreadRandom(seed);
-            Debug.Log("GENERATING MAP with Seed: " + seed);
+            Debug.Log("GENERATING MAP with Seed: " + seed + "" 
+                + Environment.NewLine 
+                + (hasToUseIslands == null || hasToUseIslands.Count==0? "" : "Islands: " + string.Join(",", hasToUseIslands)));
             //THIS MUST BE THE FIRST RANDOM NUMBER!
             //TO make sure that there is no change of the placement
             islandPlaceSeed = mapThreadRandom.Range(0, int.MaxValue);
@@ -470,8 +472,8 @@ namespace Andja.Model.Generator {
         }
 
         private void MakeOnLoadDestroy() {
-            GameObject go = new GameObject("DestroyLoad");
-            transform.SetParent(go.transform);
+            //GameObject go = new GameObject("DestroyLoad");
+            //transform.SetParent(go.transform);
         }
 
         private IEnumerator PlaceIslandOnMap(List<IslandData> islandStructs) {
@@ -502,7 +504,6 @@ namespace Andja.Model.Generator {
                 foreach (IslandData island in toPlaceIslands) {
                     Color color = colors[i % 6];
                     int islandTries = 0;
-                    bool failed = false;
                     Rect hasToBeIn = climateRectangles[island.climate];
                     List<DirectionalRect> possible = recantgleEmptySpaces.FindAll(r => r.Overlaps(hasToBeIn));
                     possible = possible.OrderByDescending(r => (r.rect.width + r.rect.height) / 2).ToList();
@@ -529,9 +530,9 @@ namespace Andja.Model.Generator {
                         int y = placeIslandThreadRandom.Range(MinY, MaxY - island.Height);
 
                         Rect toTest = new Rect(x, y, island.Width + MinTilesAroundIsland, island.Height + MinTilesAroundIsland);
-                        
-                        if (failed) {
-                            continue;
+                        foreach (Rect item in placeToIsland.Keys) {
+                            if (toTest.Overlaps(item)) //failsafe should NEVER happen!?
+                                continue;
                         }
                         //remove all spaces that got invalid through placing it here
                         foreach (DirectionalRect dr in recantgleEmptySpaces) {
@@ -587,12 +588,14 @@ namespace Andja.Model.Generator {
                         //Debug.Log("Placing island on x " + x + "y " + y + " !");
                         break;
                     }
+                    //yield return new WaitUntil(()=>Input.GetKeyDown(KeyCode.Space));
+                    yield return new WaitForEndOfFrame();
                 }
                 retriesWorld--;
             } while (worldFailed && retriesWorld > 0);
 
             placeProgress += 0.8f;
-            if (worldFailed) {
+            if (worldFailed || retriesWorld == 0) {
                 Debug.LogError("World did not generate correctly! -- Couldnt fit all of the island! ");
             }
             doneIslands = new List<IslandData>();
@@ -699,8 +702,8 @@ namespace Andja.Model.Generator {
         }
 
         public void Destroy() {
-            if (gameObject != null)
-                Destroy(gameObject);
+            //if (gameObject != null)
+                //Destroy(gameObject);
         }
 
         public void OnDestroy() {

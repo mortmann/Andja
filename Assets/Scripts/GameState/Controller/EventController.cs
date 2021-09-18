@@ -6,14 +6,11 @@ using UnityEngine;
 
 namespace Andja.Controller {
     //TODO:
-    //-We need a UI displaying most(if not all) Events -> left side on the screen?
     //-We need a random generator that decides what happens
     // -> for that we need to decide how frequently what happens
     // -> on the Constant Data Object are the diffrent kinds of catastrophes that can happen in this >round<
     // -> depends on player-city advances in structures can have effect on what can happen -> should it check it or city itself
     //-decide how to implement the diffrent kinds of effects on the structures/units
-    // -> how to stop production
-    // -> how to increase/lower productivity
     // -> how to make units faster/slower depending where they are?
     //-is this also for quests? Will there be even some? If so there must be a ton to keep them from repetitive
 
@@ -46,9 +43,10 @@ namespace Andja.Controller {
 
     public class EventController : MonoBehaviour {
         public static EventController Instance { get; protected set; }
+        public static float RandomTickTime = 1f;
 
         private uint lastID = 0;
-        private Dictionary<EventType, GameEvent[]> typeToEvents;
+        private Dictionary<EventType, List<GameEvent>> typeToEvents;
         private Dictionary<uint, GameEvent> idToActiveEvent;
 
         //Every EventType has a chance to happen
@@ -59,30 +57,39 @@ namespace Andja.Controller {
 
         private float timeSinceLastEvent = 0;
         private World world;
-
+        float nextRandomTick = RandomTickTime;
         // Use this for initialization
         private void Awake() {
             if (Instance != null) {
                 Debug.LogError("There should never be two event controllers.");
             }
             Instance = this;
-            float x = 0;
-            float y = 0;
-            float s = 10;
-            for (int i = 0; i < s; i++) {
-                x += (UnityEngine.Random.Range(0, 2) * 500 + GetWeightedYFromRandomX(500, 750, UnityEngine.Random.Range(0, 500)));
-                y += (UnityEngine.Random.Range(0, 2) * 500 + GetWeightedYFromRandomX(500, 750, UnityEngine.Random.Range(0, 500)));
-            }
-            x /= s;
-            y /= s;
+
+            //for (int i = 0; i < s; i++) {
+            //    x += (UnityEngine.Random.Range(0, 2) * 500 + GetWeightedYFromRandomX(500, 750, UnityEngine.Random.Range(0, 500)));
+            //    y += (UnityEngine.Random.Range(0, 2) * 500 + GetWeightedYFromRandomX(500, 750, UnityEngine.Random.Range(0, 500)));
+            //}
+
         }
 
         private void Start() {
-            //		var a = CreateReusableAction<GameEvent,bool,Structure> ("OutputStructure_Efficiency");
             world = World.Current;
             idToActiveEvent = new Dictionary<uint, GameEvent>();
             chanceToEvent = new Dictionary<EventType, float>();
-            typeToEvents = new Dictionary<EventType, GameEvent[]>();
+            typeToEvents = new Dictionary<EventType, List<GameEvent>>();
+            foreach(EventType et in Enum.GetValues(typeof(EventType))) {
+                typeToEvents[et] = new List<GameEvent>();
+            }
+            foreach(var gpd in PrototypController.Instance.GameEventPrototypeDatas.Values) {
+                typeToEvents[gpd.type].Add(new GameEvent(gpd.ID));
+            }
+            foreach(var tte in typeToEvents) {
+                chanceToEvent[tte.Key] = tte.Value.Sum(x => x.Probability);
+            }
+            float allChance = chanceToEvent.Values.Sum();
+            foreach (var tte in typeToEvents) {
+                chanceToEvent[tte.Key] /= allChance;
+            }
         }
 
         // Handle here Events that will effect whole islands or
@@ -101,32 +108,44 @@ namespace Andja.Controller {
                     idToActiveEvent[i].Update(WorldController.Instance.FixedDeltaTime);
                 }
             }
+            if(nextRandomTick > 0) {
+                nextRandomTick = Mathf.Clamp01(nextRandomTick - Time.fixedDeltaTime);
+                return;
+            }
+            nextRandomTick = RandomTickTime;
             //Now will there be an event or not?
             if (RandomIf() == false) {
                 return;
             }
-            //CreateRandomEvent();
-            timeSinceLastEvent = 0;
+            //Debug.Log("event " + GameData.Instance.playTime);
+            if(CreateRandomEvent()) {
+                timeSinceLastEvent = 0;
+            }
         }
 
-        public void CreateRandomEvent() {
+        public bool CreateRandomEvent() {
             //TODO Randomize which event it is better
-            CreateRandomTypeEvent(RandomType());
+            return CreateRandomTypeEvent(RandomType());
         }
 
-        public void CreateRandomTypeEvent(EventType type) {
+        public bool CreateRandomTypeEvent(EventType type) {
             //now find random the target of the GameEvent
-            CreateGameEvent(RandomEvent(type));
+            return CreateGameEvent(RandomEvent(type));
         }
 
         internal void SetGameEventData(GameEventSave ges) {
             idToActiveEvent = ges.idToActiveEvent;
+            nextRandomTick = ges.nextRandomTick;
         }
 
         public bool CreateGameEvent(GameEvent ge) {
-            if (ge.IsValid() == false) {
+            if (ge == null || ge.IsValid() == false) {
                 return false;
             }
+            if (ge.Targeted != null && ge.target == null) {
+                return false;
+            }
+            Debug.Log("Created event " + ge.eventID);
             //fill the type
             idToActiveEvent.Add(lastID, ge);
             ge.eventID = lastID;
@@ -300,11 +319,17 @@ namespace Andja.Controller {
 
         private bool RandomIf() {
             timeSinceLastEvent += WorldController.Instance.DeltaTime;
-            return UnityEngine.Random.Range(0.2f, 1.5f) * (Mathf.Exp((1 / 180) * timeSinceLastEvent) - 1) > 1;
+            return UnityEngine.Random.Range(-1, 2) *
+                (UnityEngine.Random.Range(-1f, 0.901f + Mathf.Max(0f, Mathf.Exp(0.01f * timeSinceLastEvent / 15f) - 1f))
+                + Mathf.Max(0, (Mathf.Exp((1f / 180f) * (timeSinceLastEvent / 15f)) - 2f))) > 1;
         }
 
         private GameEvent RandomEvent(EventType type) {
-            GameEvent[] ges = typeToEvents[type];
+            if (typeToEvents.ContainsKey(type) == false)
+                return null;
+            if (typeToEvents[type].Count == 0)
+                return null;
+            List<GameEvent> ges = typeToEvents[type];
             //TODO move this to the load -> dic<type,sum>
             float sumOfProbability = 0;
             foreach (GameEvent item in ges) {
@@ -318,7 +343,7 @@ namespace Andja.Controller {
                     return item.Clone();
                 }
             }
-            Debug.LogError("No event found for this!");
+            Debug.LogWarning("No event found for this!");
             return null;
         }
 
@@ -461,16 +486,17 @@ namespace Andja.Controller {
         }
 
         public GameEventSave GetSaveGameEventData() {
-            GameEventSave ges = new GameEventSave(idToActiveEvent);
+            GameEventSave ges = new GameEventSave(idToActiveEvent, nextRandomTick);
             return ges;
         }
     }
 
     public class GameEventSave : BaseSaveData {
         public Dictionary<uint, GameEvent> idToActiveEvent;
-
-        public GameEventSave(Dictionary<uint, GameEvent> idToActiveEvent) {
+        public float nextRandomTick;
+        public GameEventSave(Dictionary<uint, GameEvent> idToActiveEvent, float randomTick) {
             this.idToActiveEvent = idToActiveEvent;
+            nextRandomTick = randomTick;
         }
 
         public GameEventSave() {

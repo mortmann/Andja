@@ -298,11 +298,10 @@ namespace Andja.Controller {
         }
 
         private void OnLevelLoad(Scene scene, LoadSceneMode arg1) {
+            SceneManager.sceneLoaded -= OnLevelLoad;
             if (scene.name != "GameState") {
-                Debug.LogWarning("OnLevelLoad wrong scene!");
                 return;
             }
-            SceneManager.sceneLoaded -= OnLevelLoad;
             euim = GameObject.FindObjectOfType<EventUIManager>();
         }
 
@@ -437,7 +436,7 @@ namespace Andja.Controller {
         }
 
         internal bool ChangeCurrentPlayer(int player) {
-            if (PlayerController.PlayerCount <= player || player < 0)
+            if (PlayerCount <= player || player < 0)
                 return false;
             currentPlayerNumber = player;
             Player newOne = Players.Find(x => x.Number == currentPlayerNumber);

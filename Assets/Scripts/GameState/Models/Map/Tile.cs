@@ -179,24 +179,8 @@ namespace Andja.Model {
         /// <returns><c>true</c>, if tile is buildable, <c>false</c> otherwise.</returns>
         /// <param name="t"> if its ok to be build on special tiletypes, forced means if it has to be true for either mountain/shore</param>
         public virtual bool CheckTile() {
-            if (Type == TileType.Ocean) {
+            if (Array.Exists(NoBuildLand, x => Type == x))
                 return false;
-            }
-            if (Type == TileType.Water) {
-                return false;
-            }
-            if (Type == TileType.Cliff) {
-                return false;
-            }
-            if (Type == TileType.Mountain) {
-                return false;
-            }
-            if (Type == TileType.Stone) {
-                return false;
-            }
-            if (Type == TileType.Shore) {
-                return false;
-            }
             if (Structure != null) {
                 if (Structure.CanBeBuildOver == false) {
                     return false;
@@ -363,7 +347,7 @@ namespace Andja.Model {
             return new LandTile(x, y, this);
         }
         public LandTile toLandTile(TileType tileType) {
-            return new LandTile(x, y, this, tileType); // (TileType)Enum.Parse(typeof(TileType), (string)tileType)
+            return new LandTile(this, tileType); // (TileType)Enum.Parse(typeof(TileType), (string)tileType)
         }
         public static string GetSpriteAddonForTile(Tile t, Tile[] neighbours) {
             string connectOrientation = "";

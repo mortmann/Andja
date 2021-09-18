@@ -160,20 +160,19 @@ namespace Andja.UI.Menu {
         }
 
         public void ChangeToGameStateLoadScreen() {
-            SceneManager.LoadScene("GameStateLoadingScreen");
+            SceneUtil.ChangeToGameStateLoadScreen();
         }
 
         public void ChangeToEditorLoadScreen() {
-            EditorController.IsEditor = true;
-            SceneManager.LoadScene("EditorLoadingScreen");
+            SceneUtil.ChangeToEditorLoadScreen();
         }
 
         public void ChangeToGameStateScreen() {
-            SceneManager.LoadScene("GameState");
+            SceneUtil.ChangeToGameStateScreen();
         }
 
         public void ChangeToMainMenuScreen() {
-            SceneManager.LoadScene("MainMenu");
+            SceneUtil.ChangeToMainMenuScreen();
         }
     }
 }

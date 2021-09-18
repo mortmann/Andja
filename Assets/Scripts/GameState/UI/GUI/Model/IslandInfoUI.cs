@@ -35,7 +35,7 @@ namespace Andja.UI.Model {
                 return;
             switch (state) {
                 case BuildStateModes.None:
-                    foreach(Item item in PrototypController.BuildItems) {
+                    foreach (Item item in PrototypController.BuildItems) {
                         itemToText[item.ID].RemoveAddon();
                     }
                     break;
@@ -45,7 +45,11 @@ namespace Andja.UI.Model {
                     break;
             }
         }
-
+        public void ResetAddons() {
+            foreach (Item item in PrototypController.BuildItems) {
+                itemToText[item.ID].RemoveAddon();
+            }
+        }
         private void Update() {
             if (cc.nearestIsland == null) {
                 cg.alpha = 0;

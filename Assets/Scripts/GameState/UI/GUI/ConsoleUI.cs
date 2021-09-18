@@ -8,6 +8,7 @@ using UnityEngine.UI;
 namespace Andja.UI {
 
     public class ConsoleUI : MonoBehaviour {
+        private const int showLast = 30;
         public GameObject TextPrefab;
         public Transform outputTransform;
         public InputField inputField;
@@ -25,7 +26,7 @@ namespace Andja.UI {
         // Use this for initialization
         private void Start() {
             Commands = new List<string>();
-            foreach (string s in ConsoleController.logs)
+            foreach (string s in ConsoleController.logs.Skip(ConsoleController.logs.Count - showLast))
                 WriteToConsole(s);
             ConsoleController.Instance.RegisterOnLogAdded(WriteToConsole);
             LayoutElement le = TextPrefab.GetComponent<LayoutElement>();
@@ -124,12 +125,14 @@ namespace Andja.UI {
         }
 
         public void WriteToConsole(string text) {
-            GameObject go = SimplePool.Spawn(TextPrefab, Vector3.zero, Quaternion.identity);
-            go.GetComponent<Text>().text = text;
-            go.transform.SetParent(outputTransform, false);
-            if (outputTransform.childCount > 30) {
+            if (outputTransform.childCount > showLast) {
                 SimplePool.Despawn(outputTransform.GetChild(0).gameObject);
             }
+            GameObject go = SimplePool.Spawn(TextPrefab, Vector3.zero, Quaternion.identity);
+            go.GetComponent<Text>().text = text;
+            go.name = text;
+            go.transform.SetParent(outputTransform, false);
+            go.transform.SetAsLastSibling();
         }
 
         public void ReadFromConsole() {

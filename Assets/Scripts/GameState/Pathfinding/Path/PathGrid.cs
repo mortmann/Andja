@@ -1,5 +1,6 @@
 using Andja.Model;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -8,6 +9,7 @@ namespace Andja.Pathfinding {
     public enum PathGridType { Island, Ocean,/*not yet supported*/ Route}
     public enum Walkable { Never, AlmostNever, Normal }
     public class PathGrid {
+        ConcurrentBag<Tile> changedTiles = new ConcurrentBag<Tile>(); 
         public string ID;
         public bool Obsolete;
         public readonly PathGridType pathGridType;
@@ -16,7 +18,7 @@ namespace Andja.Pathfinding {
         public int Height;
         public int startX;
         public int startY;
-        public Action Changed;
+        public Action<Tile> Changed;
         public bool IsDirty;
         List<Node> temporaryNodes = new List<Node>();
 
@@ -93,7 +95,8 @@ namespace Andja.Pathfinding {
             }
         }
 
-        private void SourceChanged() {
+        private void SourceChanged(Tile t) {
+            changedTiles.Add(t);
             IsDirty = true;
         }
 
@@ -104,11 +107,15 @@ namespace Andja.Pathfinding {
         protected Node SetNode(Tile t) {
             if (pathGridType != PathGridType.Ocean && t.Type == TileType.Ocean)
                 return null;
+            if (t.City == null) {
+                Debug.LogError("Tile is not an island: " + t.ToString());
+                return null;
+            }
             Node n = new Node(Mathf.FloorToInt(t.X - startX), Mathf.FloorToInt(t.Y - startY), 
                                 t.MovementCost, t.City.PlayerNumber);
             Values[n.x,n.y] = n;
             IsDirty = true;
-            Changed?.Invoke();
+            Changed?.Invoke(t);
             IsDirty = false;
             return n;
         }
@@ -130,8 +137,21 @@ namespace Andja.Pathfinding {
                     n.PlayerNumber = t.City.PlayerNumber;
                     break;
             }
+            IsDirty = true;
+            Changed?.Invoke(t);
+            IsDirty = false;
         }
+        /// <summary>
+        /// RESET does not only reset the pathgrids variables.
+        /// but ALSO updates tiles that changed in the original graph.
+        /// </summary>
         public void Reset() {
+            if(IsDirty) {
+                foreach(Tile t in changedTiles) {
+                    ChangeNode(t);
+                    changedTiles.TryTake(out _);
+                }
+            }
             foreach(Node n in temporaryNodes) {
                 Values[n.x, n.y] = null;
             }
@@ -156,6 +176,8 @@ namespace Andja.Pathfinding {
         /// Returns a List of neighbouring Nodes
         /// </summary>
         public List<Node> Neighbours(Node n, bool diagonal) {
+            if (n == null)
+                return new List<Node>();
             List<Node> neighbours = new List<Node>();
             neighbours.Add(GetNode(new Vector2(n.x, n.y + 1)));
             neighbours.Add(GetNode(new Vector2(n.x + 1, n.y)));

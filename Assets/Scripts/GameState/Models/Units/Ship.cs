@@ -195,18 +195,23 @@ namespace Andja.Model {
                 return;
             }
             if (pathfinding.IsAtDestination) {
-                //do trading here
-                //take some time todo that
-                if (tradeTime > 0) {
-                    tradeTime -= deltaTime;
-                    return;
+                if(CurrentDoingMode == UnitDoModes.Idle) {
+                    SetDestinationIfPossible(tradeRoute.GetNextDestination(this));
                 }
-                tradeRoute.DoCurrentTrade(this);
-                tradeTime = 1.5f;
-                SetDestinationIfPossible(tradeRoute.GetNextDestination(this));
             }
         }
-
+        /// <summary>
+        /// This updates the "UnitDoingMode" trade.
+        /// </summary>
+        /// <param name="deltaTime"></param>
+        protected override void UpdateDoingTrade(float deltaTime) {
+            if(tradeTime > 0) {
+                tradeTime -= deltaTime;
+                return;
+            }
+            tradeRoute.DoCurrentTrade(this);
+            CurrentDoingMode = UnitDoModes.Idle;
+        }
         public void SetTradeRoute(TradeRoute tr) {
             tradeRoute = tr;
             StartTradeRoute();
@@ -216,11 +221,24 @@ namespace Andja.Model {
             if (tradeRoute == null)
                 return;
             CurrentMainMode = UnitMainModes.TradeRoute;
-            SetDestinationIfPossible(tradeRoute.GetNextDestination(this));
+            pathfinding.cbIsAtDestination += OnArriveDestination;
+            SetDestinationIfPossible(tradeRoute.GetCurrentDestination(this));
         }
-
+        private void SetDestinationIfPossible(Vector2? pos) {
+            if (pos == null || pos.HasValue == false)
+                return;
+            SetDestinationIfPossible(pos.Value.x, pos.Value.y);
+        }
         private void SetDestinationIfPossible(Tile tile) {
             SetDestinationIfPossible(tile.X, tile.Y);
+        }
+        protected override void UpdateTradeRouteAtDestination() {
+            pathfinding.cbIsAtDestination += OnArriveDestination;
+            tradeTime = tradeRoute.AtDestination(this);
+            if(tradeTime > 0)
+                CurrentDoingMode = UnitDoModes.Trade;
+            else
+                SetDestinationIfPossible(tradeRoute.GetNextDestination(this));
         }
 
         internal bool HasCannonsToAddInInventory() {

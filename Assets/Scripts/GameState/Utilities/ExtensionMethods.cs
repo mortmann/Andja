@@ -153,6 +153,7 @@ namespace Andja.Utility {
                 }
                 catch (Exception ex) {
                     exception(ex);
+                    Debug.LogException(ex);
                     yield break;
                 }
                 yield return current;

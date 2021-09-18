@@ -101,7 +101,7 @@ namespace Andja.UI.Menu {
         public void SaveGraphicsOption() {
             if (graphicsOptionsToSave.Count == 0)
                 return;
-            SetOptions(graphicsOptionsToSave);
+            //SetOptions(graphicsOptionsToSave);
             foreach (GraphicsSetting s in graphicsOptionsToSave.Keys) {
                 graphicsOptions[s] = graphicsOptionsToSave[s];
             }
@@ -144,6 +144,8 @@ namespace Andja.UI.Menu {
                     SetPreset(optionName);
                     continue;
                 }
+                if (val == null)
+                    continue;
                 switch (optionName) {
                     case GraphicsSetting.Preset:
                         SetGraphicsPreset(Convert.ToInt32(val));
@@ -169,6 +171,8 @@ namespace Andja.UI.Menu {
                         if (val is CustomResolution == false) {
                             val = JsonUtility.FromJson<CustomResolution>(Convert.ToString(val));
                         }
+                        if (val == null)
+                            val = new CustomResolution(Screen.currentResolution);
                         SetResolution((CustomResolution)val);
                         break;
 
@@ -306,8 +310,12 @@ namespace Andja.UI.Menu {
 
         public void SetFullscreen(int value) {
             value = Mathf.Clamp(value, 0, 3);
-            Screen.SetResolution(Screen.width, Screen.height,
-                                    (FullScreenMode)value, Screen.currentResolution.refreshRate);
+            if(Screen.fullScreenMode != (FullScreenMode)value) {
+                if (GS_Fullscreen.DisableExklusivFullscreen && value == 0)
+                    value = 1;
+                Screen.SetResolution(Screen.width, Screen.height,
+                    (FullScreenMode)value, Screen.currentResolution.refreshRate);
+            }
             SetSavedGraphicsOption(GraphicsSetting.Fullscreen, value);
         }
 
@@ -332,7 +340,11 @@ namespace Andja.UI.Menu {
         }
 
         public void SetResolution(CustomResolution res) {
-            Screen.SetResolution(res.width, res.height, Screen.fullScreen, res.refreshRate);
+            if (res == null)
+                return;
+            if(CustomResolution.IsCurrentResolution(res) == false) {
+                Screen.SetResolution(res.width, res.height, Screen.fullScreen, res.refreshRate);
+            }
             SetSavedGraphicsOption(GraphicsSetting.Resolution, res);
         }
 
@@ -364,6 +376,14 @@ namespace Andja.UI.Menu {
                 width = res.width;
                 height = res.height;
                 refreshRate = res.refreshRate;
+            }
+
+            internal static bool IsCurrentResolution(CustomResolution res) {
+                if (Screen.currentResolution.width != res.width || Screen.currentResolution.height != res.height)
+                    return false;
+                if (Screen.currentResolution.refreshRate != res.refreshRate)
+                    return false;
+                return true;
             }
 
             public override string ToString() {

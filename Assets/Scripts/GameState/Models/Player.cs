@@ -257,7 +257,7 @@ namespace Andja.Model {
                     UnlockCheck(i, count);
                 }
             }
-            foreach (Unit item in World.Current.Units.TakeWhile(x => x.PlayerNumber == Number)) {
+            foreach (Unit item in World.Current.Units.Where(x => x.PlayerNumber == Number)) {
                 OnUnitCreated(item);
             }
             CalculateBalance();

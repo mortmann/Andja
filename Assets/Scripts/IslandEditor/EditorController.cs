@@ -110,7 +110,7 @@ namespace Andja.Editor {
                 world = new World(MapGenerator.Instance.GetTiles(), true);
                 foreach (Tile t in MapGenerator.Instance.tileToStructure.Keys) {
                     Structure str = MapGenerator.Instance.tileToStructure[t];
-                    BuildController.Instance.EditorBuildOnTile(str, str.GetBuildingTiles(t), false);
+                    BuildController.Instance.EditorBuildOnTile(str, str.GetBuildingTiles(t));
                 }
                 BuildController.Instance.SetLoadedStructures(MapGenerator.Instance.tileToStructure.Values);
                 MapGenerator.Instance.Destroy();
@@ -133,12 +133,12 @@ namespace Andja.Editor {
             Height = h;
             climate = clim;
             Generate = random;
-            SceneManager.LoadScene("EditorLoadingScreen");
+            SceneUtil.ChangeToEditorLoadScreen(true);
         }
 
         public void RandomizeIsland() {
             Generate = true;
-            SceneManager.LoadScene("EditorLoadingScreen");
+            SceneUtil.ChangeToEditorLoadScreen(true);
         }
 
         private void Update() {
@@ -225,7 +225,7 @@ namespace Andja.Editor {
                 return;
             }
             if (t.Type == TileType.Ocean) {
-                LandTile landTile = new LandTile(t.X, t.Y);
+                LandTile landTile = new LandTile(t, selectedTileType);
                 landTile.Island = World.Current.Islands[0];
                 landTile.City = World.Current.Islands[0].Wilderness;
                 World.Current.Islands[0].Tiles.Add(t);
@@ -247,7 +247,6 @@ namespace Andja.Editor {
                 World.Current.Islands[0].Tiles.Remove(t);
                 t.SpriteName = null;
             }
-            t.Type = selectedTileType;
             foreach (Tile neigh in t.GetNeighbours()) {
                 if (neigh == null || neigh.Type != TileType.Shore) {
                     continue;
@@ -337,23 +336,29 @@ namespace Andja.Editor {
         internal void BuildOn(List<Tile> tiles, bool foreachTileNewStructure, bool isBrushBuilt = false) {
             if (brushBuild != isBrushBuilt)
                 return;
-            if (isBrushBuilt == false) {
-                float f = UnityEngine.Random.Range(0, 100);
-                if (f > randomChange) {
-                    return;
-                }
-            }
             if (foreachTileNewStructure == false) {
+                if (isBrushBuilt == false) {
+                    float f = UnityEngine.Random.Range(0, 100);
+                    if (f > randomChange) {
+                        return;
+                    }
+                }
                 Structure toPlace = structure.Clone();
                 SetStructureVariablesList.ForEach(x => x?.Invoke(toPlace));
-                BuildController.Instance.EditorBuildOnTile(toPlace, tiles, foreachTileNewStructure);
+                BuildController.Instance.EditorBuildOnTile(toPlace, tiles);
             }
             else {
                 tiles.RemoveAll(x => x.Type == TileType.Ocean);
                 foreach (Tile t in tiles) {
+                    if (isBrushBuilt == false) {
+                        float f = UnityEngine.Random.Range(0, 100);
+                        if (f > randomChange) {
+                            continue;
+                        }
+                    }
                     Structure toPlace = structure.Clone();
                     SetStructureVariablesList.ForEach(x => x?.Invoke(toPlace));
-                    BuildController.Instance.EditorBuildOnTile(toPlace, structure.GetBuildingTiles(t), true);
+                    BuildController.Instance.EditorBuildOnTile(toPlace, structure.GetBuildingTiles(t));
                 }
             }
         }
@@ -451,7 +456,7 @@ namespace Andja.Editor {
             if (load.Resources != null)
                 Resources = load.Resources;
             foreach (Structure s in load.structures) {
-                BuildController.Instance.EditorBuildOnTile(s, s.GetBuildingTiles(s.BuildTile), true);
+                BuildController.Instance.EditorBuildOnTile(s, s.GetBuildingTiles(s.BuildTile));
             }
         }
 

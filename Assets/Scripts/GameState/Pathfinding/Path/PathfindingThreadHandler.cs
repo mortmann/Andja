@@ -13,11 +13,14 @@ namespace Andja.Pathfinding {
     public class PathfindingThreadHandler {
         public static readonly int NumberOfThreads = SystemInfo.processorCount / 2;
         public static ConcurrentQueue<PathJob> queuedJobs = new ConcurrentQueue<PathJob>();
+        public static ConcurrentQueue<PathJob> uiJobs = new ConcurrentQueue<PathJob>();
         public static float averageSearchTime;
         public static int TotalSearches;
+        static Dictionary<string, PathGrid> mainThreadIdToGrid = new Dictionary<string, PathGrid>();
+        static WorldGraph mainThreadWorldGraph = null;
 
         static Thread[] threads;
-        static bool FindPaths = true;
+        public static bool FindPaths = true;
         public PathfindingThreadHandler() {
             threads = new Thread[NumberOfThreads];
             FindPaths = true;
@@ -33,10 +36,14 @@ namespace Andja.Pathfinding {
             queuedJobs.Enqueue(job);
             return job;
         }
-
-        internal static void EnqueueJob(PathJob job, Action OnFinished) {
+        internal static void EnqueueJob(PathJob job, Action OnFinished, bool mainThread = false) {
             job.OnFinished += OnFinished;
-            queuedJobs.Enqueue(job);
+            if (mainThread) {
+                DoJob(job, mainThreadWorldGraph, mainThreadIdToGrid);
+            }
+            else {
+                queuedJobs.Enqueue(job);
+            }
         }
 
         internal static void RemoveJob(PathJob job) {
@@ -78,52 +85,8 @@ namespace Andja.Pathfinding {
                 double started = StopWatch.Elapsed.TotalSeconds;
                 //Debug.Log("PathfinderThread"+threadNumber + " started job " 
                 //        + StopWatch.ElapsedMilliseconds + "(" + StopWatch.Elapsed.TotalSeconds + "s)");
-                job.SetStatus(JobStatus.Calculating);
-                try {
-                    switch (job.agent.PathingMode) {
-                        case PathingMode.World:
-                            if (worldGraph == null) {
-                                lock (Model.World.Current.WorldGraph) lock (Model.World.Current.Tilesmap)
-                                    worldGraph = Model.World.Current.WorldGraph.Clone();
-                            } else {
-                                worldGraph.Reset();
-                            }
-                            job.Path = Pathfinder.FindOceanPath(job.agent, worldGraph, job.Start, job.End);
-                            break;
-                        case PathingMode.IslandMultiplePoints:
-                            job.Path = DoMultipleStartPositions(job, idToGrid);
-                            break;
-                        case PathingMode.IslandSinglePoint:
-                            job.Path = Pathfinder.Find(job, GetGrid(idToGrid, job.Grid[0]), job.Start, job.End);
-                            if(job.agent.PathDestination == PathDestination.Exact) {
-                                job.Path.Enqueue(job.End);
-                            }
-                            job.PathUsedGrid = job.Grid[0];
-                            break;
-                        case PathingMode.Route:
-                            job.Path = DoRouteFind(job, idToGrid);
-                            break;
-                    }
-                } catch (Exception e) {
-                    job.SetStatus(JobStatus.Error);
-                    Debug.LogException(e);
+                if (DoJob(job, worldGraph, idToGrid) == false)
                     continue;
-                }
-                if (job.IsCanceled)
-                    continue;
-                if(job.PathUsedGrid != null && idToGrid[job.PathUsedGrid.ID].IsDirty && job.CheckPath() == false) {
-                    //Which means Grid changed while this was searching...
-                    //Need to redo it 
-                    queuedJobs.Enqueue(job); //for now we will queue it again and redo it then not immediatly
-                    continue;
-                }
-                if (job.Path == null) {
-                    job.SetStatus(JobStatus.NoPath);
-                    continue;
-                }
-                if (job.QueueModifier != null)
-                    job.Path = job.QueueModifier.Invoke(job.Path);
-                job.SetStatus(JobStatus.Done);
                 lock (this) {
                     TotalSearches++;
                     averageSearchTime += (float)(StopWatch.Elapsed.TotalSeconds - started) / TotalSearches;
@@ -132,17 +95,73 @@ namespace Andja.Pathfinding {
                 //         + job.agent.PathingMode + "-job-" + job.Path.Count + " @"
                 //         + StopWatch.ElapsedMilliseconds + " took " + (StopWatch.Elapsed.TotalSeconds - started) + "s)");
             }
+            Debug.Log("Shuting down Pathfinding Thread: " + (threadNumber + 1) + "/" + NumberOfThreads);
             StopWatch.Stop();
         }
+
+        private static bool DoJob(PathJob job, WorldGraph worldGraph, Dictionary<string, PathGrid> idToGrid) {
+            job.SetStatus(JobStatus.Calculating);
+            try {
+                switch (job.agent.PathingMode) {
+                    case PathingMode.World:
+                        if (worldGraph == null) {
+                            lock (Model.World.Current.WorldGraph) lock (Model.World.Current.Tilesmap)
+                                    worldGraph = Model.World.Current.WorldGraph.Clone();
+                        }
+                        else {
+                            worldGraph.Reset();
+                        }
+                        job.Path = Pathfinder.FindOceanPath(job, job.agent, worldGraph, job.Start, job.End);
+                        break;
+                    case PathingMode.IslandMultiplePoints:
+                        job.Path = DoMultipleStartPositions(job, idToGrid);
+                        break;
+                    case PathingMode.IslandSinglePoint:
+                        job.Path = Pathfinder.Find(job, GetGrid(idToGrid, job.Grid[0]), job.Start, job.End);
+                        if (job.agent.PathDestination == PathDestination.Exact) {
+                            job.Path?.Enqueue(job.End);
+                        }
+                        job.PathUsedGrid = job.Grid[0];
+                        break;
+                    case PathingMode.Route:
+                        job.Path = DoRouteFind(job, idToGrid);
+                        break;
+                }
+            }
+            catch (Exception e) {
+                job.SetStatus(JobStatus.Error);
+                Debug.LogException(e);
+            }
+            if (job.Status == JobStatus.Error)
+                return false;
+            if (job.IsCanceled)
+                return true;
+            if (job.PathUsedGrid != null && idToGrid[job.PathUsedGrid.ID].IsDirty && job.CheckPath() == false) {
+                //Which means Grid changed while this was searching...
+                //Need to redo it 
+                queuedJobs.Enqueue(job); //for now we will queue it again and redo it then not immediatly
+                return true;
+            }
+            if (job.Path == null) {
+                job.SetStatus(JobStatus.NoPath);
+                return true;
+            }
+            if (job.QueueModifier != null)
+                job.Path = job.QueueModifier.Invoke(job.Path);
+            job.SetStatus(JobStatus.Done);
+            return true;
+        }
+
         static PathGrid GetGrid(Dictionary<string, PathGrid> idToGrid, PathGrid grid) {
-            if(idToGrid.ContainsKey(grid.ID) == false || idToGrid[grid.ID].IsDirty) {
+            if (idToGrid.ContainsKey(grid.ID) == false) {
                 idToGrid[grid.ID] = grid.Clone();
-            } else {
+            }
+            else {
                 idToGrid[grid.ID].Reset();
             }
             return idToGrid[grid.ID];
         }
-        private Queue<Vector2> DoRouteFind(PathJob job, Dictionary<string, PathGrid> idToGrid) {
+        private static Queue<Vector2> DoRouteFind(PathJob job, Dictionary<string, PathGrid> idToGrid) {
             Queue<Vector2> Current = null;
             for (int i = 0; i < job.Grid.Length; i++) {
                 if (job.IsCanceled)
@@ -154,18 +173,30 @@ namespace Andja.Pathfinding {
                                             job.StartTiles[i],
                                             job.EndTiles[i]
                                             );
-                if(Current != null || temp != null && temp.Count < Current.Count) {
+                if (Current != null || temp != null && temp.Count < Current.Count) {
                     job.PathUsedGrid = job.Grid[i];
                     Current = temp;
                 }
             }
             return Current;
         }
-
-        Queue<Vector2> DoMultipleStartPositions(PathJob job, Dictionary<string, PathGrid> idToGrid, int gridIndex = 0) {
+        static Queue<Vector2> DoMultipleStartPositions(PathJob job, Dictionary<string, PathGrid> idToGrid) {
+            Queue<Vector2> currentQueue = null;
+            for (int i = 0; i < job.Grid.Length; i++) {
+                Queue<Vector2> temp = DoGridMultipleStartPositions(job, idToGrid, i);
+                if (currentQueue == null || temp != null && temp.Count < currentQueue.Count) {
+                    currentQueue = temp;
+                    job.PathUsedGrid = job.Grid[i];
+                    if (currentQueue == null || currentQueue.Count == 0) {
+                        continue;
+                    }
+                }
+            }
+            return currentQueue;
+        }
+        static Queue<Vector2> DoGridMultipleStartPositions(PathJob job, Dictionary<string, PathGrid> idToGrid, int gridIndex) {
             List<Vector2> StartTiles = job.StartTiles[gridIndex];
             List<Vector2> EndTiles = job.EndTiles[gridIndex];
-
             float minDist = float.MaxValue;
             for (int i = 0; i < StartTiles.Count; i++) {
                 for (int j = 0; j < EndTiles.Count; j++) {
@@ -188,8 +219,7 @@ namespace Andja.Pathfinding {
                                             );
                 if (currentQueue == null || temp != null && temp.Count < currentQueue.Count) {
                     currentQueue = temp;
-                    job.PathUsedGrid = job.Grid[gridIndex];
-                    if (currentQueue.Count == 0) {
+                    if (currentQueue == null || currentQueue.Count == 0) {
                         continue;
                     }
                     if (currentQueue.Count == Mathf.CeilToInt(minDist)) {
@@ -202,12 +232,6 @@ namespace Andja.Pathfinding {
 
         internal static void Stop() {
             FindPaths = false;
-            //for (int i = 0; i < NumberOfThreads; i++) {
-            //    if (threads[i].IsAlive == false)
-            //        continue;
-            //    if (threads[i].Join(2000) == false)
-            //        threads[i].Abort();
-            //}
         }
     }
 
@@ -266,7 +290,7 @@ namespace Andja.Pathfinding {
                 Status = status;
             }
         }
-        public void OnGridChange() {
+        public void OnGridChange(Model.Tile t) {
             if (CheckPath() == false) {
                 OnPathInvalidated?.Invoke();
             }

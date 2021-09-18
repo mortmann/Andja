@@ -22,7 +22,7 @@ namespace Andja.Controller {
         public Dictionary<string, EffectSprite> effectToSprite;
         private Dictionary<Route, TextMesh> RouteToTextMesh;
         public bool RoadDebug = false;
-
+        public Material ShadowMaterial;
         private void Awake() {
             if (Instance != null) {
                 Debug.LogError("There should never be two StructureSpriteController.");
@@ -36,7 +36,7 @@ namespace Andja.Controller {
             structureGameObjectMap = new Dictionary<Structure, GameObject>();
             structureExtraUIMap = new Dictionary<Structure, GameObject>();
             if (BuildController.Instance.LoadedStructures != null) {
-                foreach (Structure str in BuildController.Instance.LoadedStructures) {
+                foreach (Structure str in BuildController.Instance.buildIdToStructure.Values) {
                     OnBuildStrucutureCreated(str, true);
                 }
             }
@@ -82,6 +82,7 @@ namespace Andja.Controller {
 
         public void CreateStructureGameObject(Structure structure) {
             GameObject go = new GameObject();
+            go.layer = LayerMask.NameToLayer("Structure");
             structure.RegisterOnChangedCallback(OnStructureChanged);
             structure.RegisterOnDestroyCallback(OnStructureDestroyed);
             structure.RegisterOnExtraUICallback(OnStructureExtraUI);
@@ -89,11 +90,12 @@ namespace Andja.Controller {
             float x = ((float)structure.TileWidth) / 2f - TileSpriteController.offset;
             float y = ((float)structure.TileHeight) / 2f - TileSpriteController.offset;
             Tile t = structure.BuildTile;
-            go.transform.position = new Vector3(t.X + x, t.Y + y);
+            go.transform.position = new Vector3(t.X + x, t.Y + y,-1);
             go.transform.transform.eulerAngles = new Vector3(0, 0, 360 - structure.rotation);
             go.transform.SetParent(this.transform, true);
             go.name = structure.SmallName + "_" + structure.Tiles[0].ToString();
             SpriteRenderer sr = go.AddComponent<SpriteRenderer>();
+            sr.material = ShadowMaterial;
             sr.sortingLayerName = structure.SortingLayer;
             structureGameObjectMap.Add(structure, go);
             if (structure is RoadStructure) {
@@ -124,7 +126,6 @@ namespace Andja.Controller {
             }
             if(GameData.FogOfWarStyle == FogOfWarStyle.Always) {
                 FogOfWarController.Instance.AddStructureFogModule(go, structure);
-                //TODO: if the player sees it remove the maskinteraction && check then on update if it is supposed to update sprite
             } else {
                 if (structure.HasHitbox) {
                     BoxCollider2D col = go.AddComponent<BoxCollider2D>();
@@ -187,17 +188,11 @@ namespace Andja.Controller {
             if (structureGameObjectMap.ContainsKey(structure) == false) {
                 return;
             }
-            if(FogOfWarStructure.IsStructureVisible(structureGameObjectMap[structure]) == false) {
+            if(FogOfWarController.IsFogOfWarAlways &&
+                FogOfWarStructure.IsStructureVisible(structureGameObjectMap[structure]) == false) {
                 return;
             }
-            SpriteRenderer sr = structureGameObjectMap[structure].GetComponent<SpriteRenderer>();
-            if (structure is GrowableStructure) {
-                if (structureSprites.ContainsKey(structure.SmallName + "_" + ((GrowableStructure)structure).currentStage))
-                    sr.sprite = structureSprites[structure.SmallName + "_" + ((GrowableStructure)structure).currentStage];
-            }
-            else if (structure is HomeStructure) {
-                SetSpriteRendererStructureSprite(structureGameObjectMap[structure], structure);
-            }
+            SetSpriteRendererStructureSprite(structureGameObjectMap[structure], structure);
         }
 
         public void OnStructureExtraUI(Structure structure, bool show) {
@@ -328,7 +323,11 @@ namespace Andja.Controller {
         private void LoadEffectSprites() {
             effectToSprite = new Dictionary<string, EffectSprite>();
             Sprite[] sprites = Resources.LoadAll<Sprite>(EffectFilePath);
-            foreach (Sprite s in sprites) {
+            Sprite[] custom = ModLoader.LoadSprites(SpriteType.Structure);
+            List<Sprite> all = new List<Sprite>(sprites);
+            if (custom != null)
+                all.AddRange(custom);
+            foreach (Sprite s in all) {
                 string[] name = s.name.Split('_');
                 if(effectToSprite.ContainsKey(name[0])==false) {
                     effectToSprite[name[0]] = new EffectSprite();
@@ -342,26 +341,6 @@ namespace Andja.Controller {
                 int.TryParse(second ?? first, out int num);
                 effectToSprite[name[0]].Add(s, first, num);
             }
-            Sprite[] custom = ModLoader.LoadSprites(SpriteType.Structure);
-            if (custom == null)
-                return;
-            foreach (Sprite s in custom) {
-                structureSprites[s.name] = s;
-            }
-            foreach(string name in structureSprites.Keys) {
-                string[] splits = name.Split('_');
-                string id = splits[0];
-                if (splits.Length < 3)
-                    continue;
-                if(structureToVariants.ContainsKey(id) == false)
-                    structureToVariants[id] = new StructureSprite();
-                if (structureToVariants[id].climateToVariants == null)
-                    structureToVariants[id].climateToVariants = new Dictionary<string, List<string>>();
-                if(structureToVariants[id].climateToVariants.ContainsKey(splits[1]) == false) {
-                    structureToVariants[id].climateToVariants[splits[1]] = new List<string>();
-                }
-                structureToVariants[id].climateToVariants[splits[1]].Add(splits[2]);
-            }
         }
         public static void LoadSprites() {
             structureSprites = new Dictionary<string, Sprite>();
@@ -374,6 +353,20 @@ namespace Andja.Controller {
                 return;
             foreach (Sprite s in custom) {
                 structureSprites[s.name] = s;
+            }
+            foreach (string name in structureSprites.Keys) {
+                string[] splits = name.Split('_');
+                string id = splits[0];
+                if (splits.Length < 3)
+                    continue;
+                if (structureToVariants.ContainsKey(id) == false)
+                    structureToVariants[id] = new StructureSprite();
+                if (structureToVariants[id].climateToVariants == null)
+                    structureToVariants[id].climateToVariants = new Dictionary<string, List<string>>();
+                if (structureToVariants[id].climateToVariants.ContainsKey(splits[1]) == false) {
+                    structureToVariants[id].climateToVariants[splits[1]] = new List<string>();
+                }
+                structureToVariants[id].climateToVariants[splits[1]].Add(splits[2]);
             }
         }
 

@@ -444,7 +444,17 @@ namespace Andja.Model {
                     UpdateCapture(deltaTime);
                     pathfinding.UpdateDoRotate(deltaTime);
                     break;
+
+                case UnitDoModes.Trade:
+                    UpdateDoingTrade(deltaTime);
+                    break;
             }
+        }
+        protected virtual void UpdateTradeRouteAtDestination() {
+            UpdateDoingTrade(0);
+        }
+        protected virtual void UpdateDoingTrade(float deltaTime) {
+            Debug.LogWarning("Unit can't trade at the moment. Please implement this feature now.");
         }
 
         private void SetDestinationIfPossible(Vector2 position) {
@@ -726,7 +736,7 @@ namespace Andja.Model {
             return true;
         }
 
-        private void OnArriveDestination(bool atDest) {
+        protected void OnArriveDestination(bool atDest) {
             if (atDest == false) {
                 return;
             }
@@ -761,7 +771,7 @@ namespace Andja.Model {
                     break;
 
                 case UnitMainModes.TradeRoute:
-                    CurrentDoingMode = UnitDoModes.Trade;
+                    UpdateTradeRouteAtDestination();
                     break;
 
                 case UnitMainModes.OffWorldMarket:

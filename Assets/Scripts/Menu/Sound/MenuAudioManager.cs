@@ -78,9 +78,9 @@ namespace Andja.UI.Menu {
             // Note: We use 0-100 for our volume sliders in the menu, hence the
             // divide by 100 in the equation. If you use 0-1 instead you would remove that.
             if (value > 0) {
+                value /= 2;
                 decibel = Mathf.Log(value / 100f) * 17f;
             }
-
             return decibel;
         }
 
@@ -104,16 +104,16 @@ namespace Andja.UI.Menu {
             string filePath = System.IO.Path.Combine(Application.dataPath.Replace("/Assets", ""), fileName);
             if (File.Exists(filePath) == false) {
                 SetVolumeFor(VolumeType.Master, 90);
-                SetVolumeFor(VolumeType.Music, 35);
-                SetVolumeFor(VolumeType.Ambient, 60);
+                SetVolumeFor(VolumeType.Music, 25);
+                SetVolumeFor(VolumeType.Ambient, 50);
                 SetVolumeFor(VolumeType.UI, 40);
-                SetVolumeFor(VolumeType.SoundEffects, 60);
+                SetVolumeFor(VolumeType.SoundEffects, 50);
                 return;
             }
             volumes = JsonConvert.DeserializeObject<Dictionary<VolumeType, int>>(File.ReadAllText(filePath));
             foreach (VolumeType vt in Enum.GetValues(typeof(VolumeType))) {
                 if (volumes.ContainsKey(vt) == false) {
-                    SetVolumeFor(vt, 75);
+                    SetVolumeFor(vt, 25);
                 }
                 else {
                     SetVolumeFor(vt, volumes[vt]);

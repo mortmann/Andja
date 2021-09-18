@@ -61,6 +61,10 @@ namespace Andja.Model {
                 }
             }
             for (int i = Ships.Count - 1; i >= 0; i--) {
+                if(Ships[i].Ship.IsDestroyed) {
+                    Ships.RemoveAt(i);
+                    continue;
+                }
                 Ships[i].Update(deltaTime);
             }
         }
@@ -114,6 +118,8 @@ namespace Andja.Model {
             }
 
             private void OnShipArriveDestination(Unit unit, bool goal) {
+                if (goal == false)
+                    return;
                 if (Ship.CurrentMainMode == UnitMainModes.OffWorldMarket) {
                     Ship.Destroy(null);
                     isAtTrade = false;
@@ -151,9 +157,9 @@ namespace Andja.Model {
                                 if (inInvCount > ti.count)
                                     continue;
                                 int omSellPrice = market.GetSellPrice(item_id);
-                                float percentage = (ti.price * BuyDifference) / omSellPrice;
-                                if (percentage > 1) {
-                                    int toSell = Mathf.Clamp(Mathf.FloorToInt((ti.count - inInvCount) * (percentage - 1)), 0, Ship.InventorySize);
+                                float percentage = (ti.price) / (omSellPrice * BuyDifference);
+                                if (percentage >= 1) {
+                                    int toSell = Mathf.Clamp(Mathf.FloorToInt((ti.count - inInvCount) * (percentage - BuyDifference)), 0, Ship.InventorySize);
                                     Ship.inventory.AddItem(new Item(item_id, toSell)); // ... cheater ...
                                     CurrentDestination.BuyingTradeItem(item_id, null, Ship, toSell);
                                 }
@@ -164,7 +170,7 @@ namespace Andja.Model {
                                     continue;
                                 int omBuyPrice = market.GetBuyPrice(item_id);
                                 percentage = (ti.price * BuyDifference) / omBuyPrice;
-                                if (percentage < 1) {
+                                if (percentage <= 1) {
                                     int toBuy = Mathf.Clamp(Mathf.FloorToInt((inInvCount - ti.count) * (1 - percentage)), 0, Ship.InventorySize);
                                     CurrentDestination.SellingTradeItem(item_id, null, Ship, toBuy);
                                 }

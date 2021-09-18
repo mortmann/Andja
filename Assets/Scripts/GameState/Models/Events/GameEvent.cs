@@ -17,6 +17,11 @@ namespace Andja.Model {
         public float maxRange = 100;
         public Effect[] effects;
         public Dictionary<Target, List<string>> specialRange;
+
+        public ShadowType cloudCoverage;
+        public Speed cloudSpeed;
+        public Speed oceanSpeed;
+
     }
 
     [JsonObject(MemberSerialization.OptIn)]
@@ -46,6 +51,9 @@ namespace Andja.Model {
         public bool IsOneTime { get { return MaxDuration <= 0; } }
         public string Name => PrototypData.Name;
         public string Description => PrototypData.Description;
+        public ShadowType CloudCoverage => PrototypData.cloudCoverage;
+        public Speed CloudSpeed => PrototypData.cloudSpeed;
+        public Speed OceanSpeed => PrototypData.oceanSpeed;
 
         private TargetGroup _Targeted = new TargetGroup();
 
@@ -165,11 +173,11 @@ namespace Andja.Model {
         internal bool IsValid() {
             if (target is Island) {
                 if (((Island)target).Features != null) {
-                    //if(SpecialRange[Target.Island].Exists(t=>((Island)target).Features.Exists(x=>x.ID == t))) {
-                    //    return true;
-                    //}
+                    if (SpecialRange[Target.Island].Exists(t => ((Island)target).Features.Exists(x => x.ID == t))) {
+                        return true;
+                    }
                 }
-                //return false
+                return false;
             }
             return true;
         }

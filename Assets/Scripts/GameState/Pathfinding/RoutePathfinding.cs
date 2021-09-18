@@ -74,11 +74,13 @@ namespace Andja.Pathfinding {
                 goals = GoalStructure.Tiles.Select(x => x.Vector2).ToList();
             }
             else {
-                goals = GoalStructure.RoadsAroundStructure().TakeWhile(x => x.Route == route).Select(y => y.Center).ToList();
+                goals = GoalStructure.RoadsAroundStructure().Where(x => x.Route == route).Select(y => y.Center).ToList();
             }
-            Job = PathfindingThreadHandler.EnqueueJob(agent, route.Grid, road.Center, goals[0],
+            Job = PathfindingThreadHandler.EnqueueJob(agent, route.Grid, new Vector2(X,Y), goals[0],
                                                         new List<Vector2> { road.Center }, goals, 
                                                         OnPathJobFinished);
+            Job.QueueModifier += ModifyQueue;
+            Job.OnPathInvalidated += PathInvalidated;
         }
 
         private void CalculateStructuresPath() {
@@ -98,7 +100,7 @@ namespace Andja.Pathfinding {
                 }
                 else {
                     Job.EndTiles[i] = GoalStructure.RoadsAroundStructure()
-                                            .TakeWhile(x => x.Route == route).Select(y => y.Center).ToList();
+                            .Where(x => x.Route == route).Select(y => y.Center).ToList();
                 }
             }
             Job.QueueModifier += ModifyQueue;
@@ -111,7 +113,8 @@ namespace Andja.Pathfinding {
             Vector2 dir = new Vector2();
             Vector2 curr;
             Vector2 last = queue.Peek();
-            bool addFirst = CurrTile != null; //if it is already moving add extra step to move over first
+            //Leaving this in -- possible still needed in edge cases(?) but it should work without now
+            //bool addFirst = CurrTile != null; //if it is already moving add extra step to move over first
             while (queue.Count > 0) {
                 curr = queue.Dequeue();
                 if (queue.Count > 0) {
@@ -125,16 +128,15 @@ namespace Andja.Pathfinding {
                 if (offset.y == 0)
                     offset.y = offset2.y;
 
-                //TODO: FIX THIS! -- it works but it is ugly
-                if (addFirst) {
-                    Vector2 pos = new Vector2(X, Y);
-                    if (offset.x > 0)
-                        pos.x = Mathf.FloorToInt(X) + offset.x;
-                    if (offset.y > 0)
-                        pos.y = Mathf.FloorToInt(Y) + offset.y;
-                    newQueue.Enqueue(new Vector2(pos.x, pos.y));
-                    addFirst = false;
-                }
+                //if (addFirst) {
+                    //Vector2 pos = new Vector2(X, Y);
+                    //if (offset.x > 0)
+                    //    pos.x = Mathf.FloorToInt(X) + offset.x;
+                    //if (offset.y > 0)
+                    //    pos.y = Mathf.FloorToInt(Y) + offset.y;
+                    //newQueue.Enqueue(new Vector2(pos.x, pos.y));
+                //    addFirst = false;
+                //}
                 if (queue.Count == 0) {
                     if (dir.x > 0 || dir.y > 0)
                         offset += dir * (Worker.WorldSize);
@@ -155,18 +157,22 @@ namespace Andja.Pathfinding {
                 X = worldPath.Peek().x;
                 Y = worldPath.Peek().y;
             }
-            //if (CurrTile == null) {
-            //    Vector2 start = Util.FindClosestPoints(StartStructure.Tiles.Select(x => x.Vector2), worldPath.Peek())[0];
-            //    GetOffset(worldPath.Peek() - start, out Vector2 offset);
-            //    X = start.x + offset.x;
-            //    Y = start.y + offset.y;
-            //}
-            //if (agent.CanEndInUnwakable) {
-            //    Vector2 dest = Util.FindClosestPoints(GoalStructure.Tiles.Select(x => x.Vector2), worldPath.Last())[0];
-            //    GetOffset(worldPath.Last() - dest, out Vector2 offset);
-            //    worldPath.Enqueue(dest + offset);
-            //}
-            Vector2 last = worldPath.Last();
+            if (StartStructure == null && worldPath.Count > 1) {
+                float distanceOne = Vector2.Distance(worldPath.Peek(), worldPath.ElementAt(1));
+                float distanceTwo = Vector2.Distance(new Vector2(X, Y), worldPath.ElementAt(1));
+                if(distanceTwo <= distanceOne) {
+                    worldPath.Dequeue();
+                }
+                //while (World.Current.GetTileAt(worldPath.Peek()) == CurrTile) {
+                //    worldPath.Dequeue();
+                //}
+            }
+            Vector2 last;
+            if (worldPath.Count > 1) {
+                last = worldPath.Last();
+            } else {
+                last = new Vector2(X,Y);
+            }
             DestTile = World.Current.GetTileAt(last);
             dest_X = last.x;
             dest_Y = last.y;

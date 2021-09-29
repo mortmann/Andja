@@ -126,7 +126,7 @@ namespace Andja.UI.Model {
                 image.name = item.ID;
                 image.sprite = UISpriteController.GetIcon(item.ID);
                 image.preserveAspect = true;
-                image.GetComponent<ShowHoverOver>().SetVariable(item.Data, true);
+                image.GetComponent<ShowToolTip>().SetVariable(item.Data, true);
                 image.transform.SetParent(Fertilites, false);
             }
             foreach (string item in cc.nearestIsland.Resources.Keys) {

@@ -46,6 +46,7 @@ namespace Andja.Model {
 
         private int _treasuryChange;
         public bool IsHuman => _IsHuman;
+        public string Name => _name ?? "Number " + Number; //FOR NOW
 
         /// <summary>
         /// How the Balance CHANGES foreach Tick that happens
@@ -54,9 +55,6 @@ namespace Andja.Model {
             get { return CalculateRealValue(nameof(TreasuryChange), _treasuryChange); }
             protected set { _treasuryChange = value; }
         } //should be calculated after reload anyway
-
-        [JsonPropertyAttribute]
-        private int _lastTreasuryChange;
 
         public int LastTreasuryChange {
             get { return _lastTreasuryChange; }
@@ -76,20 +74,14 @@ namespace Andja.Model {
         #endregion Not Serialized
 
         #region Serialized
+        [JsonPropertyAttribute]
+        private int _lastTreasuryChange;
 
         [JsonPropertyAttribute]
         private string _name;
 
-        public string Name => _name ?? "Number " + Number; //FOR NOW
-
         [JsonPropertyAttribute]
         private bool _IsHuman;
-
-        internal Vector2 GetMainCityPosition() {
-            if (Cities.Count == 0)
-                return World.Current.Center;
-            return Cities.First()?.warehouse != null ? Cities.First().warehouse.Center : Cities.First().Island.Center;
-        }
 
         [JsonPropertyAttribute]
         private int _treasuryBalance;
@@ -97,19 +89,23 @@ namespace Andja.Model {
         [JsonPropertyAttribute]
         public Statistics Statistics { get; protected set; }
 
-        /// <summary>
-        /// How much Money you have to spend
-        /// </summary>
-        public int TreasuryBalance {
-            get { return _treasuryBalance; }
-            protected set { _treasuryBalance = value; }
-        }
-
         // because only the new level popcount is interesting
         // needs to be saved because you can lose pop due
         // war or death and only the highest ever matters here
         [JsonPropertyAttribute]
         private int _maxPopulationLevel;
+
+        [JsonPropertyAttribute]
+        private int[] _maxPopulationCounts;
+
+        [JsonPropertyAttribute]
+        public List<TradeRoute> TradeRoutes { get; protected set; }
+
+        [JsonPropertyAttribute]
+        public int Number;
+
+        [JsonPropertyAttribute]
+        protected bool _hasLost;
 
         public int MaxPopulationLevel {
             get { return _maxPopulationLevel; }
@@ -122,44 +118,13 @@ namespace Andja.Model {
             }
         }
 
-        internal List<Need> GetCopyStructureNeeds(int level) {
-            List<Need> list = new List<Need>();
-            foreach (String n in UnlockedStructureNeeds[level]) {
-                list.Add(new Need(n));
-            }
-            return list;
+        /// <summary>
+        /// How much Money you have to spend
+        /// </summary>
+        public int TreasuryBalance {
+            get { return _treasuryBalance; }
+            protected set { _treasuryBalance = value; }
         }
-
-        internal void RegisterStructureNeedUnlock(Action<Need> onStructureNeedUnlock) {
-            cbStructureNeedUnlocked += onStructureNeedUnlock;
-        }
-
-        internal bool HasStructureUnlocked(string iD) {
-            return UnlockedStructures.Contains(iD);
-        }
-
-        internal bool IsCurrent() {
-            return PlayerController.currentPlayerNumber == Number;
-        }
-
-        internal void RegisterStructuresUnlock(Action<IEnumerable<Structure>> onStructuresUnlock) {
-            cbStructuresUnlocked += onStructuresUnlock;
-        }
-
-        internal void UnregisterStructuresUnlock(Action<IEnumerable<Structure>> onStructuresUnlock) {
-            cbStructuresUnlocked -= onStructuresUnlock;
-        }
-
-        internal void RegisterUnitsUnlock(Action<IEnumerable<Unit>> onUnitsUnlock) {
-            cbUnitsUnlocked += onUnitsUnlock;
-        }
-
-        internal void UnregisterStructureNeedUnlock(Action<Need> onStructureNeedUnlock) {
-            cbStructureNeedUnlocked -= onStructureNeedUnlock;
-        }
-
-        [JsonPropertyAttribute]
-        private int[] _maxPopulationCounts;
 
         public int[] MaxPopulationCounts {
             get { return _maxPopulationCounts; }
@@ -170,16 +135,8 @@ namespace Andja.Model {
             get { return MaxPopulationCounts[MaxPopulationLevel]; }
         }
 
-        [JsonPropertyAttribute]
-        public List<TradeRoute> TradeRoutes { get; protected set; }
 
         public int CurrentPopulationLevel { get; internal set; }
-
-        [JsonPropertyAttribute]
-        public int Number;
-
-        [JsonPropertyAttribute]
-        protected bool _hasLost;
 
         #endregion Serialized
 
@@ -275,7 +232,7 @@ namespace Andja.Model {
         }
 
         public void UpdateMaxPopulationCount(int level, int count) {
-            if (MaxPopulationCounts[level] == 0 && level > MaxPopulationLevel) {
+            if (level > MaxPopulationLevel) {
                 MaxPopulationLevel = level;
             }
             if (MaxPopulationCounts[level] < count) {
@@ -452,7 +409,46 @@ namespace Andja.Model {
                 Ships.Remove((Ship)unit);
             CheckIfLost();
         }
+        internal Vector2 GetMainCityPosition() {
+            if (Cities.Count == 0)
+                return World.Current.Center;
+            return Cities.First()?.warehouse != null ? Cities.First().warehouse.Center : Cities.First().Island.Center;
+        }
+        internal List<Need> GetCopyStructureNeeds(int level) {
+            List<Need> list = new List<Need>();
+            foreach (String n in UnlockedStructureNeeds[level]) {
+                list.Add(new Need(n));
+            }
+            return list;
+        }
 
+        internal void RegisterStructureNeedUnlock(Action<Need> onStructureNeedUnlock) {
+            cbStructureNeedUnlocked += onStructureNeedUnlock;
+        }
+
+        internal bool HasStructureUnlocked(string iD) {
+            return UnlockedStructures.Contains(iD);
+        }
+
+        internal bool IsCurrent() {
+            return PlayerController.currentPlayerNumber == Number;
+        }
+
+        internal void RegisterStructuresUnlock(Action<IEnumerable<Structure>> onStructuresUnlock) {
+            cbStructuresUnlocked += onStructuresUnlock;
+        }
+
+        internal void UnregisterStructuresUnlock(Action<IEnumerable<Structure>> onStructuresUnlock) {
+            cbStructuresUnlocked -= onStructuresUnlock;
+        }
+
+        internal void RegisterUnitsUnlock(Action<IEnumerable<Unit>> onUnitsUnlock) {
+            cbUnitsUnlocked += onUnitsUnlock;
+        }
+
+        internal void UnregisterStructureNeedUnlock(Action<Need> onStructureNeedUnlock) {
+            cbStructureNeedUnlocked -= onStructureNeedUnlock;
+        }
         public void UnregisterNeedUnlock(Action<Need> callbackfunc) {
             cbNeedUnlocked -= callbackfunc;
         }

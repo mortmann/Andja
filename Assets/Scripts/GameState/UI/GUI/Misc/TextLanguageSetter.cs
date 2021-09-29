@@ -18,44 +18,47 @@ namespace Andja.UI {
         public string id;
 
         public string translation = "[**Missing**]";
-        public string hoverOverTranslation;
-
-        [XmlArray("Values")]
+        public string toolTipTranslation;
+        public bool valueIsMainTranslation;
+        [XmlArray]
         public string[] values;
 
         [XmlArray("uiElements", IsNullable = true)]
         public List<string> UIElements = new List<string>();
 
-        public bool onlyHoverOver;
+        public bool onlyToolTip;
         public int valueCount = 0;
 
         public bool ShouldSerializeUIElements() {
             return UIElements.Count > 0;
         }
 
-        public bool ShouldSerializeonlyHoverOver() {
-            return onlyHoverOver;
+        public bool ShouldSerializeonlyToolTip() {
+            return onlyToolTip;
         }
 
         public bool ShouldSerializevalueCount() {
             return valueCount > 0;
         }
 
-        public TranslationData(string id, string name, string hoverOver, string[] values) {
+        public TranslationData(string id, string name, string toolTip,  string[] values) {
             this.id = id;
             this.translation = name;
-            this.hoverOverTranslation = hoverOver;
+            this.toolTipTranslation = toolTip;
             this.values = values;
         }
 
-        public TranslationData(string id, bool OnlyHoverOver, int ValueCount) : this(id, OnlyHoverOver) {
+        public TranslationData(string id, bool onlyToolTip, bool valueIsMainTranslation, int ValueCount) 
+                                    : this(id, onlyToolTip, ValueCount) {
+            this.valueIsMainTranslation = valueIsMainTranslation;
+        }
+        public TranslationData(string id, bool onlyToolTip, int ValueCount) : this(id, onlyToolTip) {
             this.valueCount = ValueCount;
         }
-
-        public TranslationData(string id, bool OnlyHoverOver) : this(id) {
-            this.onlyHoverOver = OnlyHoverOver;
-            if(onlyHoverOver)
-                hoverOverTranslation = "[**Missing**]";
+        public TranslationData(string id, bool onlyToolTip) : this(id) {
+            this.onlyToolTip = onlyToolTip;
+            if(this.onlyToolTip)
+                toolTipTranslation = "[**Missing**]";
         }
 
         public TranslationData(string id) {
@@ -73,11 +76,11 @@ namespace Andja.UI {
     public class TextLanguageSetter : TranslationBase, IPointerEnterHandler, IPointerExitHandler, IPointerDownHandler {
         public string Identifier;
         public TranslationData translationData;
-
-        public bool OnlyHoverOver;
+        public bool ValueIsMainTranslation;
+        public bool OnlyHoverOver; //should be now OnlyToolTip but renaming removes inspector data 
         public int Values;
-
-        public Text nameText;
+        //Is the main translated text
+        public Text nameText; //TODO: when moving to tmp only rename to a better name
         public TMP_Text tmp_nameText;
 
         public Text valueText;
@@ -103,15 +106,13 @@ namespace Andja.UI {
                     Debug.LogError("TextLanguageSetter has no text object! " + name);
                     return;
                 }
-                //if (string.IsNullOrEmpty(translationData.translation) == false)
-                //    nameText.text = translationData.translation + nameSuffix;
             }
             OnChangeLanguage();
         }
 
         public override void OnChangeLanguage() {
             translationData = UILanguageController.Instance.GetTranslationData(Identifier);
-            if(currentValue != -1)
+            if (currentValue != -1)
                 ShowValue(currentValue);
             if (OnlyHoverOver)
                 return;
@@ -119,10 +120,15 @@ namespace Andja.UI {
                 Debug.LogWarning("Missing Translations Data for " + Identifier);
                 return;
             }
+            ShowTranslation();
+        }
+
+        private void ShowTranslation() {
             if (string.IsNullOrEmpty(translationData.translation) == false) {
-                if(nameText != null) {
+                if (nameText != null) {
                     nameText.text = translationData.translation + nameSuffix;
-                } else {
+                }
+                else {
                     tmp_nameText.text = translationData.translation + nameSuffix;
                 }
             }
@@ -177,12 +183,14 @@ namespace Andja.UI {
                 Debug.LogError("Negative Label Value trying to be set. -" + Identifier);
                 return;
             }
-            if (valueText == null) {
+            if (ValueIsMainTranslation == false && valueText == null) {
                 Debug.LogError("Label Text is null for " + Identifier);
                 return;
             }
             if (translationData == null)
                 translationData = UILanguageController.Instance.GetTranslationData(name);
+            if (translationData == null)
+                return;
             if (translationData.values == null || translationData.values.Length == 0) {
                 if (valueEnumType != null) {
                     translationData.values = UILanguageController.Instance.GetLabels(valueEnumType);
@@ -200,20 +208,25 @@ namespace Andja.UI {
                 return;
             }
             currentValue = i;
-            valueText.text = translationData.values[i];
+            if(ValueIsMainTranslation) {
+                translationData.translation = translationData.values[i];
+                ShowTranslation();
+            }
+            else {
+                valueText.text = translationData.values[i];
+            }
         }
-
         public void OnPointerEnter(PointerEventData eventData) {
-            if (translationData?.hoverOverTranslation != null)
-                GameObject.FindObjectOfType<HoverOverScript>().Show(translationData.hoverOverTranslation);
+            if (translationData?.toolTipTranslation != null)
+                GameObject.FindObjectOfType<ToolTip>().Show(translationData.toolTipTranslation);
         }
 
         public void OnPointerExit(PointerEventData eventData) {
-            GameObject.FindObjectOfType<HoverOverScript>().Unshow();
+            GameObject.FindObjectOfType<ToolTip>().Unshow();
         }
 
         public void OnPointerDown(PointerEventData eventData) {
-            GameObject.FindObjectOfType<HoverOverScript>().Unshow();
+            GameObject.FindObjectOfType<ToolTip>().Unshow();
         }
 
         internal void SetNameSuffix(string suffix) {
@@ -221,7 +234,16 @@ namespace Andja.UI {
         }
 
         public override TranslationData[] GetTranslationDatas() {
-            return new TranslationData[] { new TranslationData(Identifier, OnlyHoverOver, Values) };
+            return new TranslationData[] { new TranslationData(Identifier, OnlyHoverOver, ValueIsMainTranslation, Values) };
+        }
+
+        internal void SetColor(Color c) {
+            if(nameText != null) {
+                nameText.color = c;
+            }
+            if (tmp_nameText != null) {
+                tmp_nameText.color = c;
+            }
         }
     }
 }

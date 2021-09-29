@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 using System;
+using Andja.Utility;
 
 namespace Andja.Model {
 
@@ -14,8 +15,11 @@ namespace Andja.Model {
 
         private int NumberOfStops { get { return Goals.Count; } }
         [JsonPropertyAttribute] public List<Stop> Goals { get; set; }
-        [JsonPropertyAttribute] public Dictionary<Ship, int> shipToNextStop;
         [JsonPropertyAttribute] public string Name = "Temporary";
+        /// <summary>
+        /// On Load it will get them from the ship load funtion.
+        /// </summary>
+        public List<Ship> Ships = new List<Ship>();
         /// <summary>
         /// Double data just for a more convient access (and faster) to trades-- could be done with everytime select the type
         /// but for now we will keep it like this
@@ -23,6 +27,8 @@ namespace Andja.Model {
         List<Trade> _Trades; 
         public List<Trade> Trades {
             get {
+                if (Goals.Count == 0)
+                    _Trades = new List<Trade>();
                 if (_Trades == null)
                     _Trades = Goals.OfType<Trade>().ToList();
                 return _Trades;
@@ -38,12 +44,10 @@ namespace Andja.Model {
 
         public TradeRoute() {
             Goals = new List<Stop>();
-            shipToNextStop = new Dictionary<Ship, int>();
         }
 
         public TradeRoute(TradeRoute tr) {
             this.Goals = tr.Goals;
-            this.shipToNextStop = tr.shipToNextStop;
         }
 
         public void AddCity(City c) {
@@ -68,7 +72,7 @@ namespace Andja.Model {
             Name = name;
         }
         public Trade GetCurrentGoal(Ship ship) {
-            Stop s = Goals[shipToNextStop[ship]];
+            Stop s = Goals[ship.nextTradeRouteStop];
             if (s is Trade t)
                 return t;
             else
@@ -80,8 +84,8 @@ namespace Andja.Model {
             if (t == null) {
                 return; 
             }
-            foreach (Ship ship in shipToNextStop.Keys.ToArray()) {
-                int currentDestination = shipToNextStop[ship];
+            foreach (Ship ship in Ships) {
+                int currentDestination = ship.nextTradeRouteStop;
                 if (Goals.IndexOf(t) < currentDestination) {
                     currentDestination--; // smaller then we must remove to be on the same still
                 }
@@ -91,7 +95,7 @@ namespace Andja.Model {
                     currentDestination--;
                     currentDestination = Mathf.Clamp(currentDestination, 0, NumberOfStops - 1);
                 }
-                shipToNextStop[ship] = currentDestination;
+                ship.nextTradeRouteStop = currentDestination;
             }
             Goals.Remove(t);
             Trades.Remove(t);
@@ -114,10 +118,10 @@ namespace Andja.Model {
             if (Goals.Count == 0) {
                 return null;
             }
-            if (Goals[shipToNextStop[ship]].Destination == null) {
+            if (Goals[ship.nextTradeRouteStop].Destination == null) {
                 return null;
             }
-            return Goals[shipToNextStop[ship]].Destination;
+            return Goals[ship.nextTradeRouteStop].Destination;
         }
 
         public Vector2? GetNextDestination(Ship ship) {
@@ -127,15 +131,15 @@ namespace Andja.Model {
             //Go through the Route until it finds a valid target.
             for (int i = 0; i < NumberOfStops; i++) {
                 IncreaseDestination(ship);
-                if (Goals[shipToNextStop[ship]].Destination != null) {
-                    return Goals[shipToNextStop[ship]].Destination;
+                if (Goals[ship.nextTradeRouteStop].Destination != null) {
+                    return Goals[ship.nextTradeRouteStop].Destination;
                 }
             }
             return null;
         }
 
         public void IncreaseDestination(Ship ship) {
-            shipToNextStop[ship] = (shipToNextStop[ship] + 1) % Goals.Count;
+            ship.nextTradeRouteStop = (ship.nextTradeRouteStop + 1) % Goals.Count;
         }
 
         public bool Contains(City c) {
@@ -168,7 +172,7 @@ namespace Andja.Model {
                 if (needed <= 0) {
                     continue;
                 }
-                c.TradeWithShip(item, needed, ship);
+                c.TradeWithShip(item, () => needed, ship);
             }
         }
 
@@ -202,13 +206,14 @@ namespace Andja.Model {
         }
 
         public void Destroy() {
-            foreach (Ship s in shipToNextStop.Keys) {
-                s.StopTradeRoute();
+            foreach (Ship item in Ships) {
+                item.SetTradeRoute(null);
             }
         }
+
         [JsonObject(MemberSerialization.OptIn)]
         public class Stop {
-            [JsonPropertyAttribute] private Vector2 Position;
+            [JsonPropertyAttribute] private SeriaziableVector2 Position;
 
             public Stop() {
             }
@@ -287,13 +292,16 @@ namespace Andja.Model {
         }
 
         internal void AddShip(Ship ship) {
-            shipToNextStop.Add(ship, 0);
             ship.SetTradeRoute(this);
+            Ships.Add(ship);
         }
 
         internal void RemoveShip(Ship ship) {
-            shipToNextStop.Remove(ship);
+            //stop it from following the last order
             ship.StopTradeRoute();
+            //removes it from this
+            ship.SetTradeRoute(null);
+            Ships.Remove(ship);
         }
 
         internal float AtDestination(Ship ship) {
@@ -302,6 +310,10 @@ namespace Andja.Model {
             } else {
                 return 0;
             }
+        }
+
+        internal void LoadShip(Ship ship) {
+            Ships.Add(ship);
         }
     }
 }

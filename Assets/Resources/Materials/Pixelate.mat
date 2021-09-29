@@ -60,7 +60,7 @@ Material:
     - PixelSnap: 0
     - _Brightness: 1
     - _BumpScale: 1
-    - _CellSize: 0.0001
+    - _CellSize: 0.02
     - _CellX: 0.28
     - _CellY: -4.49
     - _Contrast: 1

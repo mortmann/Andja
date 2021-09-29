@@ -6,6 +6,7 @@ namespace Andja.UI.Model {
 
     public class StructureUI : MonoBehaviour {
         private Structure currentStructure;
+        public TextLanguageSetter isActiveText;
 
         public void Show(Structure Info) {
             if (currentStructure == Info) {
@@ -23,6 +24,13 @@ namespace Andja.UI.Model {
         private void Update() {
             InfoUI.Instance.UpdateHealth(currentStructure.CurrentHealth, currentStructure.MaxHealth);
             InfoUI.Instance.UpdateUpkeep(currentStructure.UpkeepCost);
+            isActiveText.gameObject.SetActive(currentStructure.IsActive);
+            if (currentStructure.IsActiveAndWorking) {
+                isActiveText.SetColor(Color.green);
+            } else {
+                isActiveText.SetColor(Color.red);
+            }
+            isActiveText.ShowValue(currentStructure.IsActiveAndWorking ? 0 : 1);
         }
         void OnDisable() {
             TileDeciderFuncs.Structure = null;

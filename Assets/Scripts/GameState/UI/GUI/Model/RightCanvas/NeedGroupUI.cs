@@ -42,7 +42,12 @@ namespace Andja.UI.Model {
 
         public void Show(HomeStructure home) {
             foreach (Need need in NeedGroup.Needs) {
-                needToUI[need.ID].Show(home);
+                if(home.PopulationLevel < need.StartLevel) {
+                    needToUI[need.ID].gameObject.SetActive(false);
+                } else {
+                    needToUI[need.ID].gameObject.SetActive(true);
+                    needToUI[need.ID].Show(home);
+                }
             }
         }
 

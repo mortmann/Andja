@@ -48,8 +48,8 @@ namespace Andja.Controller {
                 if (TimeMultiplier < 0.75f) return GameSpeed.Slowest;
                 if (TimeMultiplier < 1f) return GameSpeed.Slow;
                 if (TimeMultiplier == 1f) return GameSpeed.Normal;
-                if (TimeMultiplier <= 1.5f) return GameSpeed.Fast;
-                if (TimeMultiplier <= 2f) return GameSpeed.Fastest;
+                if (TimeMultiplier <= 2f) return GameSpeed.Fast;
+                if (TimeMultiplier <= 4f) return GameSpeed.Fastest;
                 return GameSpeed.LudicrousSpeed;
             }
         }
@@ -208,11 +208,11 @@ namespace Andja.Controller {
                     break;
 
                 case GameSpeed.Fast:
-                    SetSpeed(1.5f);
+                    SetSpeed(2f);
                     break;
 
                 case GameSpeed.Fastest:
-                    SetSpeed(2f);
+                    SetSpeed(4f);
                     break;
             }
         }

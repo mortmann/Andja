@@ -48,16 +48,16 @@ namespace Andja.Model {
         public float IncreaseTime { get { return CalculateRealValue(nameof(HomeData.increaseTime), HomeData.increaseTime); } }
         public float DecreaseTime { get { return CalculateRealValue(nameof(HomeData.decreaseTime), HomeData.decreaseTime); } }
 
-        public bool CanUpgrade => MaxLivingSpaces == people // is full
+        public override bool CanBeUpgraded => MaxLivingSpaces == people // is full
                                 && currentMood == CitizienMoods.Happy // still wants more people
                                 && IsMaxLevel() // if there is smth to be upgraded to
-                                && CanBeUpgraded // set through xml prototype file
+                                && base.CanBeUpgraded // set through xml prototype file
                                 && City.HasEnoughOfItems(UpgradeItems) // city has enough items to build
                                 && City.GetOwner().HasEnoughMoney(UpgradeCost)
-                                && City.GetOwner().HasUnlockedAllNeeds(StructureLevel); // player has enough money
+                                && City.GetOwner().HasUnlockedAllNeeds(PopulationLevel); // player has enough money
 
         internal List<NeedGroup> GetNeedGroups() {
-            return City.GetPopulationNeedGroups(StructureLevel);
+            return City.GetPopulationNeedGroups(PopulationLevel);
         }
 
         #endregion RuntimeOrOther
@@ -100,7 +100,7 @@ namespace Andja.Model {
         }
 
         internal float GetTaxPercantage() {
-            return City.GetPopulationLevel(StructureLevel).taxPercantage;
+            return City.GetPopulationLevel(PopulationLevel).taxPercantage;
         }
 
         private void OnNeedStructureChange(Tile tile, NeedStructure type, bool add) {
@@ -153,6 +153,12 @@ namespace Andja.Model {
         }
 
         private void TryToIncreasePeople() {
+            if (currentMood == CitizienMoods.Happy && people == MaxLivingSpaces) {
+                if (CanBeUpgraded) {
+                    OpenExtraUI();
+                    TryToUpgrade();
+                }
+            }
             if (people >= MaxLivingSpaces) {
                 return;
             }
@@ -160,13 +166,7 @@ namespace Andja.Model {
                 isAbandoned = false;
             }
             people++;
-            City.AddPeople(StructureLevel, 1);
-            if (currentMood == CitizienMoods.Happy && people == MaxLivingSpaces) {
-                if (CanBeUpgraded) {
-                    OpenExtraUI();
-                    TryToUpgrade();
-                }
-            }
+            City.AddPeople(PopulationLevel, 1);
         }
 
         private void TryToDecreasePeople() {
@@ -175,7 +175,7 @@ namespace Andja.Model {
                 return;
             }
             people--;
-            City.RemovePeople(StructureLevel, 1);
+            City.RemovePeople(PopulationLevel, 1);
             if (people < PreviouseMaxLivingSpaces)
                 DowngradeHouse();
         }
@@ -196,13 +196,12 @@ namespace Andja.Model {
         }
 
         public override void OpenExtraUI() {
-            if (CanBeUpgraded)
+            if (base.CanBeUpgraded)
                 base.OpenExtraUI();
         }
 
         public override void CloseExtraUI() {
-            if (CanBeUpgraded == false)
-                base.CloseExtraUI();
+            base.CloseExtraUI();
         }
 
         public bool IsStructureNeedFullfilled(Need need) {
@@ -216,10 +215,10 @@ namespace Andja.Model {
 
         protected void OnCityChange(Structure str, City old, City newOne) {
             if (old != null && old.IsWilderness() == false) {
-                old.RemovePeople(StructureLevel, people);
+                old.RemovePeople(PopulationLevel, people);
             }
             if (newOne.IsWilderness() == false) {
-                newOne.AddPeople(StructureLevel, people);
+                newOne.AddPeople(PopulationLevel, people);
             }
         }
 
@@ -255,35 +254,35 @@ namespace Andja.Model {
         }
 
         protected override void OnDestroy() {
-            City.RemovePeople(StructureLevel, people);
+            City.RemovePeople(PopulationLevel, people);
         }
 
         public void UpgradeHouse() {
-            if (CanUpgrade == false && IsMaxLevel()) {
+            if (base.CanBeUpgraded == false && IsMaxLevel()) {
                 return;
             }
             CloseExtraUI();
-            ID = PrototypController.Instance.GetStructureIDForTypeNeighbourStructureLevel(GetType(), StructureLevel, true);
-            City.RemovePeople(StructureLevel, people);
+            ID = PrototypController.Instance.GetStructureIDForTypeNeighbourStructureLevel(GetType(), PopulationLevel, true);
+            City.RemovePeople(PopulationLevel, people);
             City.RemoveResources(UpgradeItems);
             City.GetOwner().ReduceTreasure(UpgradeCost);
             _homeData = null;
             _prototypData = null;
-            City.AddPeople(StructureLevel, people);
+            City.AddPeople(PopulationLevel, people);
             cbStructureChanged(this);
         }
 
         public void DowngradeHouse() {
-            ID = PrototypController.Instance.GetStructureIDForTypeNeighbourStructureLevel(GetType(), StructureLevel, false);
-            City.RemovePeople(StructureLevel, people);
+            ID = PrototypController.Instance.GetStructureIDForTypeNeighbourStructureLevel(GetType(), PopulationLevel, false);
+            City.RemovePeople(PopulationLevel, people);
             _homeData = null;
             _prototypData = null;
-            City.AddPeople(StructureLevel, people);
+            City.AddPeople(PopulationLevel, people);
             cbStructureChanged(this);
         }
 
         public bool IsMaxLevel() {
-            return PrototypController.Instance.GetMaxStructureLevelForStructureType(GetType()) == StructureLevel;
+            return PrototypController.Instance.GetMaxStructureLevelForStructureType(GetType()) == PopulationLevel;
         }
 
         protected override void AddSpecialEffect(Effect effect) {

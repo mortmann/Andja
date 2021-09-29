@@ -341,11 +341,12 @@ namespace Andja.Controller {
             }
         }
 
-        internal void UnselectStuff() {
+        internal void UnselectStuff(bool escape = false) {
             UnselectUnit();
             UnselectUnitGroup();
             UnselectStructure();
-            UIController.Instance.CloseMouseUnselect();
+            if(escape == false)
+                UIController.Instance.CloseMouseUnselect();
         }
 
         private void UpdateDestroy() {
@@ -560,35 +561,36 @@ namespace Andja.Controller {
             if (EventSystem.current.IsPointerOverGameObject()) {
                 return;
             }
-            if (hit != null) {
-                ITargetableHoldingScript targetableHoldingScript = hit.GetComponent<ITargetableHoldingScript>();
+            ITargetableHoldingScript targetableHoldingScript = hit?.GetComponent<ITargetableHoldingScript>();
+            if (targetableHoldingScript != null) {
                 if (targetableHoldingScript != null && targetableHoldingScript.IsUnit) {
                     if (GameData.FogOfWarStyle == FogOfWarStyle.Always && targetableHoldingScript.IsCurrentlyVisible == false) {
                         return;
                     }
                     SelectUnit((Unit)targetableHoldingScript.Holding);
                 }
-                else
-                if (SelectedUnit == null) {
-                    if (GameData.FogOfWarStyle == FogOfWarStyle.Always) {
-                        if(FogOfWar.FogOfWarStructure.IsStructureVisible(hit.gameObject) == false) {
-                            return;
-                        }
+            }  else
+            if (SelectedUnit == null) {
+                if (GameData.FogOfWarStyle == FogOfWarStyle.Always) {
+                    if (FogOfWar.FogOfWarStructure.IsStructureVisible(hit.gameObject) == false) {
+                        return;
                     }
-                    Tile t = GetTileUnderneathMouse();
-                    if (t.Structure != null) {
-                        UIDebug(t.Structure);
-                        UIController.Instance.OpenStructureUI(t.Structure);
-                        SelectedStructure = t.Structure;
+                }
+                Tile t = GetTileUnderneathMouse();
+                if (t.Structure != null && 
+                    (t.Structure.HasHitbox || t.Structure is RoadStructure == false && t.Structure is GrowableStructure == false)) {
+                    UIDebug(t.Structure);
+                    UIController.Instance.OpenStructureUI(t.Structure);
+                    SelectedStructure = t.Structure;
+                } 
+                else {
+                 UIDebug(GetTileUnderneathMouse());
+                    if (MouseState != (MouseState.Unit | MouseState.UnitGroup)) {
+                        UnselectStuff();
                     }
                 }
             }
-            else {
-                UIDebug(GetTileUnderneathMouse());
-                if (MouseState != (MouseState.Unit | MouseState.UnitGroup)) {
-                    UnselectStuff();
-                }
-            }
+            
         }
 
         private void SelectUnit(Unit unit) {
@@ -803,12 +805,11 @@ namespace Andja.Controller {
             foreach (Tile tile in tiles) {
                 bool specialTileCheck = true;
                 if (MouseUnitState == MouseUnitState.Build) {
-                    if (Vector2.Distance(tile.Vector2, SelectedUnit.PositionVector2) > SelectedUnit.BuildRange) {
-                        specialTileCheck = false;
-                    }
+                    specialTileCheck = SelectedUnit.IsTileInBuildRange(tile);
                 }
                 bool canBuild = dontOverrideTile && specialTileCheck && tileToCanBuild[tile];
                 canBuild &= EditorController.IsEditor || Structure.IsTileCityViable(tile, PlayerController.currentPlayerNumber);
+                canBuild &= tile.Island != null && tile.Island.HasNegativEffect == false;
                 ShowTilePrefabOnTile(tile, canBuild ? TileHighlightType.Green : TileHighlightType.Red);
             }
         }
@@ -879,7 +880,7 @@ namespace Andja.Controller {
                 return;
             int range = ToBuildStructure.StructureRange * 2; // cause its the radius
             int width = range + ToBuildStructure.TileWidth;
-            int height = range + ToBuildStructure.TileWidth;
+            int height = range + ToBuildStructure.TileHeight;
             GetHighlightGameObject(width, height, ToBuildStructure.PrototypeTiles).transform.SetParent(parent.transform);
         }
 
@@ -893,27 +894,10 @@ namespace Andja.Controller {
                     continue;
                 tex.SetPixel(t.X, t.Y, new Color32(255, 255, 255, 20));
             }
-            Color32[] temp = tex.GetPixels32();
             tex.filterMode = FilterMode.Point;
             sr.sortingLayerName = "Structures";
             tex.Apply();
             sr.sprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(0.5f, 0.5f), 1);
-            // offset based on even or uneven so it is centered properly
-            // its working now?!? -- but leaving it in if its makes problems in the future
-            // nope? 0 not working again
-            if (ToBuildStructure != null && ToBuildStructure.TileWidth != ToBuildStructure.TileHeight) {
-                float xoffset = 0;
-                float yoffset = 0;
-                if (ToBuildStructure.TileWidth % 3 == ToBuildStructure.TileHeight % 3) {
-                    xoffset = ToBuildStructure.TileWidth % 3 == 0 ? 0f : 0.5f;
-                    yoffset = ToBuildStructure.TileHeight % 3 == 0 ? 0f : 0.5f;
-                }
-                else {
-                    xoffset = ToBuildStructure.TileWidth % 2 == 0 ? 0f : -0.5f;
-                    yoffset = ToBuildStructure.TileHeight % 2 == 0 ? 0f : -0.5f;
-                }
-                highGO.transform.localPosition = new Vector3(xoffset, yoffset);
-            }
             return highGO;
         }
         /// <summary>
@@ -1236,7 +1220,7 @@ namespace Andja.Controller {
         /// </summary>
         public void Escape() {
             dragStartPosition = currFramePosition;
-            UnselectStuff();
+            UnselectStuff(true);
             ResetBuild(null);
             SetMouseState(MouseState.Idle);
             SetMouseUnitState(MouseUnitState.None);

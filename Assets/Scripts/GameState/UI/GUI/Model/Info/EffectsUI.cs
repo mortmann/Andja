@@ -7,7 +7,7 @@ using UnityEngine.UI;
 namespace Andja.UI.Model {
 
     public class EffectsUI : MonoBehaviour {
-        public ShowHoverOver SimpleImage;
+        public ShowToolTip SimpleImage;
         Dictionary<Effect, GameObject> effectToGO;
         IGEventable eventable;
         public void Show(IGEventable eventable) {
@@ -25,7 +25,7 @@ namespace Andja.UI.Model {
         }
 
         private void AddEffect(Effect effect) {
-            ShowHoverOver image = Instantiate(SimpleImage);
+            ShowToolTip image = Instantiate(SimpleImage);
             image.GetComponent<Image>().sprite = UISpriteController.GetIcon(effect.ID);
             image.SetVariable(effect.EffectPrototypData, true);
             image.transform.SetParent(transform, false);

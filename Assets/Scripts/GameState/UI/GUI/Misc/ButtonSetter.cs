@@ -51,11 +51,11 @@ namespace Andja.UI {
         }
 
         public void OnPointerEnter(PointerEventData eventData) {
-            GameObject.FindObjectOfType<HoverOverScript>().Show(hoverOver);
+            GameObject.FindObjectOfType<ToolTip>().Show(hoverOver);
         }
 
         public void OnPointerExit(PointerEventData eventData) {
-            GameObject.FindObjectOfType<HoverOverScript>().Unshow();
+            GameObject.FindObjectOfType<ToolTip>().Unshow();
         }
     }
 }

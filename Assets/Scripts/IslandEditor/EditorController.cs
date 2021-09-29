@@ -156,10 +156,10 @@ namespace Andja.Editor {
                 }
             }
             if (Input.GetKey(KeyCode.LeftControl)) {
-                FindObjectOfType<HoverOverScript>().Show(MouseController.Instance.GetTileUnderneathMouse().Vector.ToString());
+                FindObjectOfType<ToolTip>().Show(MouseController.Instance.GetTileUnderneathMouse().Vector.ToString());
             }
             else {
-                FindObjectOfType<HoverOverScript>().Unshow();
+                FindObjectOfType<ToolTip>().Unshow();
             }
             if (Input.GetMouseButtonUp(0)) {
                 dragging = false;

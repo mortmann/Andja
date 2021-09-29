@@ -66,8 +66,7 @@ namespace Andja.Model {
         }
 
         public void RemoveUnitFromTrade(Unit u) {
-            if (inRangeUnits.Contains(u))
-                inRangeUnits.Remove(u);
+            inRangeUnits.Remove(u);
         }
 
         public override void OnBuild() {
@@ -87,23 +86,6 @@ namespace Andja.Model {
             tradeTile = World.Current.GetTileAt(Mathf.FloorToInt(Center.x - rot.x), Mathf.FloorToInt(Center.y + rot.y));
 
             this.City.warehouse = this;
-
-            //dostuff thats happen when build
-            //City.AddTiles(RangeTiles);
-            //City.AddTiles(new HashSet<Tile>(Tiles));
-            //RegisteredSturctures = new List<Structure>();
-            //OutputMarkedSturctures = new List<Structure>();
-            //jobsToDo = new Dictionary<OutputStructure, Item[]>();
-
-            //// add all the tiles to the city it was build in
-            ////dostuff thats happen when build
-            //foreach (Tile rangeTile in RangeTiles) {
-            //    if (rangeTile.City != City) {
-            //        continue;
-            //    }
-            //    OnStructureAdded(rangeTile.Structure);
-            //}
-            //City.RegisterStructureAdded(OnStructureAdded);
         }
 
         public Tile GetTradeTile() {

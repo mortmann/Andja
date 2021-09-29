@@ -39,11 +39,11 @@ namespace Andja.UI {
         public void OnPointerEnter(PointerEventData eventData) {
             if (hoverOver == false)
                 return;
-            FindObjectOfType<HoverOverScript>().Show(structure, PlayerController.CurrentPlayer.HasStructureUnlocked(structure.ID));
+            FindObjectOfType<ToolTip>().Show(structure, PlayerController.CurrentPlayer.HasStructureUnlocked(structure.ID));
         }
 
         public void OnPointerExit(PointerEventData eventData) {
-            FindObjectOfType<HoverOverScript>().Unshow();
+            FindObjectOfType<ToolTip>().Unshow();
         }
 
         public void OnScroll(PointerEventData eventData) {

@@ -302,7 +302,7 @@ namespace Andja.Model {
             if (change > 0)
                 RepairHealth(change);
         }
-        internal void Load() {
+        internal virtual void Load() {
             Setup();
             pathfinding.Load(this);
             if (pathfinding.IsAtDestination == false) {
@@ -940,6 +940,10 @@ namespace Andja.Model {
             if (ge.IsTarget(this)) {
                 ge.EffectTarget(this, true);
             }
+        }
+
+        internal bool IsTileInBuildRange(Tile tile) {
+            return Vector2.Distance(tile.Vector2, PositionVector2) <= BuildRange; 
         }
 
         public override void OnEventEnded(GameEvent ge) {

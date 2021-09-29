@@ -47,7 +47,7 @@ namespace Andja.Pathfinding {
         }
 
         internal static void RemoveJob(PathJob job) {
-            job.SetStatus(JobStatus.Canceled);
+            job?.SetStatus(JobStatus.Canceled);
         }
 
         public static PathJob EnqueueJob(IPathfindAgent agent, PathGrid grid, Vector2 Start, Vector2 End,
@@ -173,7 +173,7 @@ namespace Andja.Pathfinding {
                                             job.StartTiles[i],
                                             job.EndTiles[i]
                                             );
-                if (Current != null || temp != null && temp.Count < Current.Count) {
+                if (Current == null || temp != null && temp.Count < Current.Count) {
                     job.PathUsedGrid = job.Grid[i];
                     Current = temp;
                 }

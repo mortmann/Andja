@@ -51,7 +51,9 @@ namespace Andja.Model {
         protected override int RemainingSpaceForItem(Item item) {
             return MaxStackSize - GetAmountForItem(item);
         }
-
+        protected override Item[] GetItemsInInventory(Item item) {
+            return new Item[] { GetItem(item.ID) };
+        }
         public override void SetItemCountNull(Item item) {
             GetFirstItemInInventory(item).count = 0;
             cbInventoryChanged?.Invoke(this);
@@ -69,6 +71,10 @@ namespace Andja.Model {
             Item invItem = Items[GetPlaceInItems(i)];
             invItem.count = Mathf.Max(invItem.count - amount, 0);
             cbInventoryChanged?.Invoke(this);
+        }
+
+        internal override void RemoveItemInSpace(int space) {
+            Debug.LogWarning("This function does not work with city inventories.");
         }
     }
 }

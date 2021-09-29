@@ -10,7 +10,7 @@ namespace Andja.UI {
         public Image image;
         public Text text;
         string addon;
-        public ShowHoverOver showHoverOver;
+        public ShowToolTip showHoverOver;
         public Func<string> updateText;
         LayoutElement element;
         RectTransform imageRect;

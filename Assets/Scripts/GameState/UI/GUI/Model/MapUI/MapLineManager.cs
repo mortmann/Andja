@@ -54,8 +54,10 @@ namespace Andja.UI.Model {
                     Line line = new Line(vecs[i], vecs[(i + 1) % vecs.Length], points[i % points.Count]);
                     lines.Add(line);
                 }
+                lineRenderer.Points = lines.Select(x => x.a).Append(lines.Last().b).ToArray();
+            } else {
+                lineRenderer.Points = vecs;
             }
-            lineRenderer.Points = lines.Select(x=>x.a).Append(lines.Last().b).ToArray();
             UpdateSpots();
         }
         public void OnPointerDown(PointerEventData eventData) {

@@ -83,20 +83,6 @@ namespace Andja.Model {
             //farm has it needs plant if it can
             
             foreach (Tile rangeTile in RangeTiles) {
-                //if (Growable != null) {
-                //    if (rangeTile.Structure != null && rangeTile.Structure.ID == Growable.ID) {
-                //        rangeTile.Structure.RegisterOnChangedCallback(OnGrowableChanged);
-                //        OnRegisterCallbacks++;
-                //        if (((GrowableStructure)rangeTile.Structure).hasProduced == true) {
-                //            workingGrowables.Add((GrowableStructure)rangeTile.Structure);
-                //        }
-                //    }
-                //} else {
-                //    //TODO: ignore generated structures like trees for example
-                //    if (rangeTile.Structure == null) {
-                //        OnRegisterCallbacks++;
-                //    }
-                //}
                 OnTileStructureChange(rangeTile.Structure, null);
             }
             foreach (Tile rangeTile in RangeTiles) {
@@ -213,18 +199,19 @@ namespace Andja.Model {
             if (IsActiveAndWorking == false)
                 return 0;
             if (MaxNumberOfWorker == 0 || Growable == null) {
-                return produceTimer;
+                return produceTimer + currentlyHarvested * ProduceTime;
             }
             if (MaxNumberOfWorker > NeededHarvestForProduce) {
-                float sum = 0;
+                float sum = currentlyHarvested * ProduceTime;
                 for (int x = 0; x < MaxNumberOfWorker; x++) {
                     if(Workers[x].IsWorking())
-                        sum = ProduceTime - Workers[x].WorkTimer;
+                        sum += ProduceTime - Workers[x].WorkTimer;
                 }
                 sum /= MaxNumberOfWorker;
                 return (sum);
             }
-            return (Workers.FindAll(x => x.IsWorking())).Sum(x => ProduceTime - x.WorkTimer);
+            return (Workers.FindAll(x => x.IsWorking())).Sum(x => ProduceTime - x.WorkTimer) 
+                        + currentlyHarvested * ProduceTime;
         }
 
         protected override void OnDestroy() {

@@ -56,7 +56,7 @@ namespace Andja.Model {
         public WorkerPrototypeData WorkerPrototypeData {
             get {
                 if(_workerPrototypeData == null)
-                    _workerPrototypeData = PrototypController.Instance.GetWorkerPrototypDataForID(OutputData.workerID);
+                    _workerPrototypeData = PrototypController.Instance.GetWorkerPrototypDataForID(OutputData.workerID ?? "placeholder");
                 return _workerPrototypeData;
             }
         }
@@ -238,7 +238,7 @@ namespace Andja.Model {
         }
 
         public virtual Item[] GetOutputWithItemCountAsMax(Item[] getItems) {
-            Item[] temp = new Item[Output.Length];
+            Item[] temp = new Item[getItems.Length];
             for (int g = 0; g < getItems.Length; g++) {
                 for (int i = 0; i < Output.Length; i++) {
                     if (Output[i].ID != getItems[g].ID) {
@@ -247,8 +247,8 @@ namespace Andja.Model {
                     if (Output[i].count == 0) {
                         Debug.LogWarning("output[i].count ==  0");
                     }
-                    temp[i] = Output[i].CloneWithCount();
-                    temp[i].count = Mathf.Clamp(temp[i].count, 0, getItems[i].count);
+                    temp[g] = Output[i].CloneWithCount();
+                    temp[g].count = Mathf.Clamp(temp[i].count, 0, getItems[g].count);
                     Output[i].count -= temp[i].count;
                     CallOutputChangedCB();
                 }
@@ -320,7 +320,7 @@ namespace Andja.Model {
             base.Load();
             if (Workers != null) {
                 foreach (Worker worker in Workers) {
-                    worker.Load();
+                    worker.Load(this);
                 }
             }
             if (_output != null) {

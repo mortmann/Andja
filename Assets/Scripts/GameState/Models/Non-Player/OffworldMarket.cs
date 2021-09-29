@@ -30,18 +30,17 @@ namespace Andja.Model {
             }
             demandChangeTimer = GameData.DemandChangeTime;
             
-            if(Application.isEditor) {
-                Price tempP = new Price(50, 50);
-                for (int i = 0; i <= 50; i++) {
-                    tempP.DemandChange++;
-                    Debug.Log("Parable " + i + ": " + tempP.CubicBuy + " " + tempP.CubicSell);
-                }
-                Price tempa = new Price(50, 50);
-                for (int i = 0; i <= 50; i++) {
-                    tempa.DemandChange--;
-                }
-            }
-            
+            //if(Application.isEditor) {
+            //    Price tempP = new Price(50, 50);
+            //    for (int i = 0; i <= 50; i++) {
+            //        tempP.DemandChange++;
+            //        Debug.Log("Parable " + i + ": " + tempP.CubicBuy + " " + tempP.CubicSell);
+            //    }
+            //    Price tempa = new Price(50, 50);
+            //    for (int i = 0; i <= 50; i++) {
+            //        tempa.DemandChange--;
+            //    }
+            //}
         }
 
         public void SellItemToOffWorldMarket(Item item, Player player) {

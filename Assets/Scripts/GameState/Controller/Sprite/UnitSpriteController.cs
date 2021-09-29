@@ -46,6 +46,9 @@ namespace Andja.Controller {
             World.RegisterCrateDespawned(OnCrateDespawned);
 
             foreach (var item in World.Units) {
+                if(item.IsDead) {
+                    continue;
+                }
                 OnUnitCreated(item);
             }
             foreach (Crate c in World.Crates) {
@@ -120,6 +123,9 @@ namespace Andja.Controller {
         /// <returns></returns>
         private IEnumerator UpdateHitbox(AdvancedPolygonCollider apc) {
             yield return new WaitForSeconds(0.0001f);
+            if (apc == null)
+                yield return null;
+            //somehow it sometimes get's here when its null so i added null check for spriterenderer
             apc.RecalculatePolygon();
             yield return null;
         }
@@ -202,6 +208,7 @@ namespace Andja.Controller {
             go.AddComponent<CrateHoldingScript>().thisCrate = c;
             go.transform.SetParent(this.transform);
             go.name = "Crate";
+            go.layer = LayerMask.NameToLayer("Unit");
             sr.sortingLayerName = "Units";
             BoxCollider2D col = go.AddComponent<BoxCollider2D>();
             go.AddComponent<Rigidbody2D>().gravityScale = 0; //TODO: think about if this is good so!

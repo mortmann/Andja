@@ -96,6 +96,7 @@ namespace Andja.UI {
         private void PlayerSetup(Player old, Player current) {
             old?.UnregisterStructuresUnlock(OnStructuresUnlock);
             OnMaxPopLevelChange(Player.MaxPopulationLevel);
+            Player.RegisterMaxPopulationCountChange(OnMaxPopLevelChange);
             Player.RegisterStructuresUnlock(OnStructuresUnlock);
             foreach (string id in nameToGOMap.Keys) {
                 nameToGOMap[id].interactable = BuildController.Instance.AllStructuresEnabled || Player.HasStructureUnlocked(id);
@@ -109,7 +110,7 @@ namespace Andja.UI {
             }
         }
 
-        public void OnMaxPopLevelChange(int setlevel) {
+        public void OnMaxPopLevelChange(int setlevel, int count = 0) {
             foreach (int level in popLevelToGO.Keys) {
                 ButtonSetter g = popLevelToGO[level];
                 g.Interactable(level <= setlevel || BuildController.Instance.AllStructuresEnabled);

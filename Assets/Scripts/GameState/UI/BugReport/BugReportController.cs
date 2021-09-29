@@ -1,11 +1,11 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using Andja.Controller;
 using Andja.Utility;
 using System;
+using System.IO;
+using Andja.UI.Menu;
 
 namespace Andja {
 
@@ -22,6 +22,8 @@ namespace Andja {
         public TMP_Dropdown Priority;
         public TMP_Text ErrorText;
         public Button SendReport;
+        const string Prev_Log = "Player-prev.log";
+        const string Curr_Log = "Player.log";
 
         void Start()  {
             GetComponentInParent<Canvas>().worldCamera = Camera.main;
@@ -45,23 +47,50 @@ namespace Andja {
             string metaData = null;
             if (IncludeSavefile.isOn) {
                 if(Loading.IsLoading == false) {
-                    string[] save = SaveController.Instance?.SaveGameState(SaveController.SaveName, true);
-                    if(save != null) {
-                        metaData = save[0];
-                        saveFile = save[1];
+                    if (MainMenu.IsMainMenu) {
+                        if(MainMenu.Instance.LastIsEditorSave) {
+                            metaData = SaveController.GetIslandMetaFile(MainMenu.Instance.LastPlayedSavefile);
+                            saveFile = SaveController.GetIslandSaveFile(MainMenu.Instance.LastPlayedSavefile);
+                        }
+                        else {
+                            metaData = SaveController.GetMetaDataFile(MainMenu.Instance.LastPlayedSavefile);
+                            saveFile = SaveController.GetSaveFile(MainMenu.Instance.LastPlayedSavefile);
+                        }
+                    }
+                    else
+                    if (Editor.EditorController.IsEditor == false) {
+                        string[] save = SaveController.Instance.SaveGameState(SaveController.SaveName, true);
+                        if (save != null) {
+                            metaData = save[0];
+                            saveFile = save[1];
+                        }
                     }
                 } else {
                     if(Editor.EditorController.IsEditor && Editor.EditorController.Generate) {
                         metaData = "Editor Seed: " + Model.Generator.MapGenerator.Instance.MapSeed;
                     }
                     else {
-                        metaData = SaveController.Instance?.GetCurrentMetaDataFile();
-                        saveFile = SaveController.Instance?.GetCurrentSaveFile();
+                        metaData = SaveController.GetMetaDataFile();
+                        saveFile = SaveController.GetSaveFile();
                     }
                 }
             }
             if (IncludeLogfile.isOn) {
                 logs = ConsoleController.Instance?.GetLogs();
+                if (logs == null) {
+                    if (MainMenu.JustOpenedGame) {
+                        if (File.Exists(GetUnityLogFilePath(Prev_Log))) {
+                            logs = Environment.NewLine + "Current Log:" + Environment.NewLine;
+                            logs += File.ReadAllText(GetUnityLogFilePath(Prev_Log));
+                        }
+                        logs += Environment.NewLine + "Current Log:" + Environment.NewLine;
+                    }
+                    if (File.Exists(GetUnityLogFilePath(Curr_Log))) {
+                        FileStream fs = File.Open(GetUnityLogFilePath(Curr_Log), 
+                                                    FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+                        logs += new StreamReader(fs, System.Text.Encoding.Default).ReadToEnd();
+                    }
+                }
             }
             StartCoroutine(
                 YouTrackHandler.SendReport(
@@ -97,6 +126,20 @@ namespace Andja {
         }
         private void OnDisable() {
             WorldController.Instance?.Unpause();
+        }
+
+        private string GetUnityLogFilePath(string file) {
+#if UNITY_STANDALONE_LINUX
+             return Path.Combine("~/.config/unity3d", Application.companyName, Application.productName, 
+                        file);
+#endif
+#if UNITY_STANDALONE_WIN
+            return Path.Combine(Environment.GetEnvironmentVariable("AppData"), "..", "LocalLow",
+                        Application.companyName, Application.productName, file);
+#endif
+#if UNITY_STANDALONE_OSX
+             return Path.Combine("~/Library/Logs/Unity/", file);
+#endif
         }
     }
 }

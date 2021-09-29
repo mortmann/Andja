@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -221,7 +222,21 @@ namespace Andja.Model {
                 return Mathf.Clamp(value, 0, value);
             return value;
         }
-
+        /// <summary>
+        /// USE this for any variable thats supposed to be able to be modified clamp ben
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="currentValues"></param>
+        /// <param name="min"></param>
+        /// <param name="maxValue"></param>
+        /// <returns></returns>
+        protected float[] CalculateRealValue(string name, float[] currentValues, bool clampToZero = true) {
+            float[] realValues = new float[currentValues.Length];
+            for (int i = 0; i < currentValues.Length; i++) {
+                realValues[i] = CalculateRealValue(name, currentValues[i], true);
+            }
+            return realValues;
+        }
         /// <summary>
         /// USE this for any variable thats supposed to be able to be modified
         /// </summary>

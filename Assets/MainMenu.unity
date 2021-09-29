@@ -199,7 +199,7 @@ Light:
       e32: 0
       e33: 1
     m_UseCullingMatrixOverride: 0
-  m_Cookie: {fileID: 849745073}
+  m_Cookie: {fileID: 332157212}
   m_DrawHalo: 0
   m_Flare: {fileID: 0}
   m_RenderMode: 0
@@ -930,7 +930,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 152736, guid: 5864dc44dbea66546a4fcc81f58cec4d, type: 3}
       propertyPath: m_Name
-      value: HoverOver
+      value: ToolTip
       objectReference: {fileID: 0}
     - target: {fileID: 22436292, guid: 5864dc44dbea66546a4fcc81f58cec4d, type: 3}
       propertyPath: m_Pivot.x
@@ -1238,11 +1238,13 @@ MonoBehaviour:
   translationData:
     id: 
     translation: '[**Missing**]'
-    hoverOverTranslation: 
+    toolTipTranslation: 
+    valueIsMainTranslation: 0
     values: []
     UIElements: []
-    onlyHoverOver: 0
+    onlyToolTip: 0
     valueCount: 0
+  ValueIsMainTranslation: 0
   OnlyHoverOver: 0
   Values: 0
   nameText: {fileID: 0}
@@ -1291,6 +1293,42 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 216040112}
   m_CullTransparentMesh: 0
+--- !u!84 &332157212
+RenderTexture:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: 
+  m_ImageContentsHash:
+    serializedVersion: 2
+    Hash: 00000000000000000000000000000000
+  m_ForcedFallbackFormat: 4
+  m_DownscaleFallback: 0
+  m_IsAlphaChannelOptional: 0
+  serializedVersion: 3
+  m_Width: 1024
+  m_Height: 1024
+  m_AntiAliasing: 1
+  m_MipCount: -1
+  m_DepthFormat: 0
+  m_ColorFormat: 8
+  m_MipMap: 0
+  m_GenerateMips: 1
+  m_SRGB: 0
+  m_UseDynamicScale: 0
+  m_BindMS: 0
+  m_EnableCompatibleFormat: 1
+  m_TextureSettings:
+    serializedVersion: 2
+    m_FilterMode: 1
+    m_Aniso: 1
+    m_MipBias: 0
+    m_WrapU: 0
+    m_WrapV: 0
+    m_WrapW: 0
+  m_Dimension: 2
+  m_VolumeDepth: 1
 --- !u!1 &344020343
 GameObject:
   m_ObjectHideFlags: 0
@@ -1569,11 +1607,13 @@ MonoBehaviour:
   translationData:
     id: 
     translation: '[**Missing**]'
-    hoverOverTranslation: 
+    toolTipTranslation: 
+    valueIsMainTranslation: 0
     values: []
     UIElements: []
-    onlyHoverOver: 0
+    onlyToolTip: 0
     valueCount: 0
+  ValueIsMainTranslation: 0
   OnlyHoverOver: 0
   Values: 0
   nameText: {fileID: 0}
@@ -1622,42 +1662,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 775285057}
   m_CullTransparentMesh: 0
---- !u!84 &849745073
-RenderTexture:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_Name: 
-  m_ImageContentsHash:
-    serializedVersion: 2
-    Hash: 00000000000000000000000000000000
-  m_ForcedFallbackFormat: 4
-  m_DownscaleFallback: 0
-  m_IsAlphaChannelOptional: 0
-  serializedVersion: 3
-  m_Width: 1024
-  m_Height: 1024
-  m_AntiAliasing: 1
-  m_MipCount: -1
-  m_DepthFormat: 0
-  m_ColorFormat: 8
-  m_MipMap: 0
-  m_GenerateMips: 1
-  m_SRGB: 0
-  m_UseDynamicScale: 0
-  m_BindMS: 0
-  m_EnableCompatibleFormat: 1
-  m_TextureSettings:
-    serializedVersion: 2
-    m_FilterMode: 1
-    m_Aniso: 1
-    m_MipBias: 0
-    m_WrapU: 0
-    m_WrapV: 0
-    m_WrapW: 0
-  m_Dimension: 2
-  m_VolumeDepth: 1
 --- !u!1 &866001045
 GameObject:
   m_ObjectHideFlags: 0
@@ -2104,11 +2108,13 @@ MonoBehaviour:
   translationData:
     id: 
     translation: '[**Missing**]'
-    hoverOverTranslation: 
+    toolTipTranslation: 
+    valueIsMainTranslation: 0
     values: []
     UIElements: []
-    onlyHoverOver: 0
+    onlyToolTip: 0
     valueCount: 0
+  ValueIsMainTranslation: 0
   OnlyHoverOver: 0
   Values: 0
   nameText: {fileID: 0}
@@ -2232,11 +2238,13 @@ MonoBehaviour:
   translationData:
     id: 
     translation: '[**Missing**]'
-    hoverOverTranslation: 
+    toolTipTranslation: 
+    valueIsMainTranslation: 0
     values: []
     UIElements: []
-    onlyHoverOver: 0
+    onlyToolTip: 0
     valueCount: 0
+  ValueIsMainTranslation: 0
   OnlyHoverOver: 0
   Values: 0
   nameText: {fileID: 0}
@@ -2555,11 +2563,13 @@ MonoBehaviour:
   translationData:
     id: 
     translation: '[**Missing**]'
-    hoverOverTranslation: 
+    toolTipTranslation: 
+    valueIsMainTranslation: 0
     values: []
     UIElements: []
-    onlyHoverOver: 0
+    onlyToolTip: 0
     valueCount: 0
+  ValueIsMainTranslation: 0
   OnlyHoverOver: 0
   Values: 0
   nameText: {fileID: 0}
@@ -2686,11 +2696,13 @@ MonoBehaviour:
   translationData:
     id: 
     translation: '[**Missing**]'
-    hoverOverTranslation: 
+    toolTipTranslation: 
+    valueIsMainTranslation: 0
     values: []
     UIElements: []
-    onlyHoverOver: 0
+    onlyToolTip: 0
     valueCount: 0
+  ValueIsMainTranslation: 0
   OnlyHoverOver: 0
   Values: 0
   nameText: {fileID: 445147550}
@@ -2847,11 +2859,13 @@ MonoBehaviour:
   translationData:
     id: 
     translation: '[**Missing**]'
-    hoverOverTranslation: 
+    toolTipTranslation: 
+    valueIsMainTranslation: 0
     values: []
     UIElements: []
-    onlyHoverOver: 0
+    onlyToolTip: 0
     valueCount: 0
+  ValueIsMainTranslation: 0
   OnlyHoverOver: 0
   Values: 0
   nameText: {fileID: 0}
@@ -3261,21 +3275,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 946827020184863669, guid: 41156b9b0777c15429d7336fc263e200,
-        type: 3}
-      propertyPath: m_Enabled
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 946827020266806075, guid: 41156b9b0777c15429d7336fc263e200,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 946827020605128019, guid: 41156b9b0777c15429d7336fc263e200,
-        type: 3}
-      propertyPath: m_Text
-      value: 500
-      objectReference: {fileID: 0}
     - target: {fileID: 946827021076858690, guid: 41156b9b0777c15429d7336fc263e200,
         type: 3}
       propertyPath: m_Pivot.x
@@ -3381,20 +3380,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 946827021076858691, guid: 41156b9b0777c15429d7336fc263e200,
-        type: 3}
-      propertyPath: m_AdditionalShaderChannelsFlag
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 946827021076858718, guid: 41156b9b0777c15429d7336fc263e200,
         type: 3}
       propertyPath: m_Name
       value: BugReportCanvas
-      objectReference: {fileID: 0}
-    - target: {fileID: 946827021076858718, guid: 41156b9b0777c15429d7336fc263e200,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 41156b9b0777c15429d7336fc263e200, type: 3}
@@ -3474,6 +3463,7 @@ GameObject:
   - component: {fileID: 1904475733}
   - component: {fileID: 1904475723}
   - component: {fileID: 1904475724}
+  - component: {fileID: 1904475725}
   m_Layer: 5
   m_Name: Menu
   m_TagString: Untagged
@@ -3503,6 +3493,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: de20ddf64ac618e4db24afa19efb12fc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1904475725
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1904475722}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ea9218b51f1b086498f091405beb18f5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!225 &1904475728

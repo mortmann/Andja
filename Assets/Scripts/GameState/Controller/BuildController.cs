@@ -174,7 +174,6 @@ namespace Andja.Controller {
                     LoadedStructures.RemoveAt(i);
                 }
             }
-            //buildID = LoadedStructures[0].buildID + 1;
         }
         /// <summary>
         /// Change to Build State Mode for current player.
@@ -325,8 +324,10 @@ namespace Andja.Controller {
             Inventory inv = null;
 
             if (loading == false && buildInWilderness == false) {
-                //TODO: Check for Event restricting building from players
-                //return;
+                if(tiles[0].Island.HasNegativEffect) {
+                    BuildError(MapErrorMessage.CanNotBuildHere, tiles, structure, playerNumber);
+                    return false;
+                }
                 //find a city that matches the player
                 //and check for money
                 if (PlayerHasEnoughMoney(structure, playerNumber) == false && noBuildCost == false && onStart == false) {
@@ -394,16 +395,12 @@ namespace Andja.Controller {
                     structure.Destroy();
                     return false;
                 }
-                //buildIdToStructure[structure.buildID] = structure;
             }
-            //else {
-            // this is for loading so everything will be placed in order
             // this should also work on loading. it should tightly pack everything next to each other.
             structure.buildID = buildID;
             buildIdToStructure[buildID] = structure;           
             buildID++;
 
-            //}
             cbStructureCreated?.Invoke(structure, loading);
             structure.RegisterOnDestroyCallback(OnStructureDestroy);
             return true;

@@ -616,11 +616,13 @@ MonoBehaviour:
   translationData:
     id: 
     translation: '[**Missing**]'
-    hoverOverTranslation: 
+    toolTipTranslation: 
+    valueIsMainTranslation: 0
     values: []
     UIElements: []
-    onlyHoverOver: 0
+    onlyToolTip: 0
     valueCount: 0
+  ValueIsMainTranslation: 0
   OnlyHoverOver: 0
   Values: 0
   nameText: {fileID: 0}
@@ -636,7 +638,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 152736, guid: 5864dc44dbea66546a4fcc81f58cec4d, type: 3}
       propertyPath: m_Name
-      value: HoverOver
+      value: ToolTip
       objectReference: {fileID: 0}
     - target: {fileID: 22436292, guid: 5864dc44dbea66546a4fcc81f58cec4d, type: 3}
       propertyPath: m_Pivot.x

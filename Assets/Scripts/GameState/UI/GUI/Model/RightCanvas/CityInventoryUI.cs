@@ -72,20 +72,6 @@ namespace Andja.UI {
 
         private void OnItemClick(Item item) {
             onItemPressed?.Invoke(item);
-            //if (trade) {
-            //	//trade to ship
-            //	city.TradeWithShip (city.inventory.GetItemInInventoryClone (item));
-            //	return;
-            //}
-            //if(GameObject.FindObjectOfType<TradeRoutePanel> ()!=null){
-            //	//select item for trademenu
-            //	TradeRoutePanel tp = GameObject.FindObjectOfType<TradeRoutePanel> ();
-            //	tp.GetClickedItemCity(item);
-            //	return;
-            //}
-            //if(tradePanel.activeSelf){
-            //
-            //}
         }
 
         public void OnTradeMenuClick() {

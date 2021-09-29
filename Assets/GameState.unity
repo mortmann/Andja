@@ -524,11 +524,13 @@ MonoBehaviour:
   translationData:
     id: 
     translation: '[**Missing**]'
-    hoverOverTranslation: 
+    toolTipTranslation: 
+    valueIsMainTranslation: 0
     values: []
     UIElements: []
-    onlyHoverOver: 0
+    onlyToolTip: 0
     valueCount: 0
+  ValueIsMainTranslation: 0
   OnlyHoverOver: 0
   Values: 0
   nameText: {fileID: 0}
@@ -805,11 +807,13 @@ MonoBehaviour:
   translationData:
     id: 
     translation: '[**Missing**]'
-    hoverOverTranslation: 
+    toolTipTranslation: 
+    valueIsMainTranslation: 0
     values: []
     UIElements: []
-    onlyHoverOver: 0
+    onlyToolTip: 0
     valueCount: 0
+  ValueIsMainTranslation: 0
   OnlyHoverOver: 0
   Values: 0
   nameText: {fileID: 0}
@@ -2965,12 +2969,12 @@ PrefabInstance:
     - target: {fileID: 9003715569127961611, guid: d0d15b54f1675e74ebfc497aa87d55b1,
         type: 3}
       propertyPath: m_SizeDelta.x
-      value: 42
+      value: 44
       objectReference: {fileID: 0}
     - target: {fileID: 9003715569127961611, guid: d0d15b54f1675e74ebfc497aa87d55b1,
         type: 3}
       propertyPath: m_SizeDelta.y
-      value: 22.5
+      value: 22
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d0d15b54f1675e74ebfc497aa87d55b1, type: 3}
@@ -4072,10 +4076,10 @@ RectTransform:
   m_Father: {fileID: 827205173}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 20, y: -17}
-  m_SizeDelta: {x: 30, y: 30}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &177761872
 MonoBehaviour:
@@ -4432,12 +4436,12 @@ PrefabInstance:
     - target: {fileID: 9003715569127961611, guid: d0d15b54f1675e74ebfc497aa87d55b1,
         type: 3}
       propertyPath: m_SizeDelta.x
-      value: 42
+      value: 44
       objectReference: {fileID: 0}
     - target: {fileID: 9003715569127961611, guid: d0d15b54f1675e74ebfc497aa87d55b1,
         type: 3}
       propertyPath: m_SizeDelta.y
-      value: 22.5
+      value: 22
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d0d15b54f1675e74ebfc497aa87d55b1, type: 3}
@@ -4689,11 +4693,13 @@ MonoBehaviour:
   translationData:
     id: 
     translation: '[**Missing**]'
-    hoverOverTranslation: 
+    toolTipTranslation: 
+    valueIsMainTranslation: 0
     values: []
     UIElements: []
-    onlyHoverOver: 0
+    onlyToolTip: 0
     valueCount: 0
+  ValueIsMainTranslation: 0
   OnlyHoverOver: 0
   Values: 0
   nameText: {fileID: 0}
@@ -4893,11 +4899,13 @@ MonoBehaviour:
   translationData:
     id: 
     translation: '[**Missing**]'
-    hoverOverTranslation: 
+    toolTipTranslation: 
+    valueIsMainTranslation: 0
     values: []
     UIElements: []
-    onlyHoverOver: 0
+    onlyToolTip: 0
     valueCount: 0
+  ValueIsMainTranslation: 0
   OnlyHoverOver: 0
   Values: 0
   nameText: {fileID: 0}
@@ -5058,7 +5066,7 @@ Light:
       e32: 0
       e33: 1
     m_UseCullingMatrixOverride: 0
-  m_Cookie: {fileID: 2021945939}
+  m_Cookie: {fileID: 830567170}
   m_DrawHalo: 0
   m_Flare: {fileID: 0}
   m_RenderMode: 0
@@ -5218,11 +5226,13 @@ MonoBehaviour:
   translationData:
     id: 
     translation: '[**Missing**]'
-    hoverOverTranslation: 
+    toolTipTranslation: 
+    valueIsMainTranslation: 0
     values: []
     UIElements: []
-    onlyHoverOver: 0
+    onlyToolTip: 0
     valueCount: 0
+  ValueIsMainTranslation: 0
   OnlyHoverOver: 1
   Values: 0
   nameText: {fileID: 0}
@@ -6016,12 +6026,12 @@ PrefabInstance:
     - target: {fileID: 9003715569127961611, guid: d0d15b54f1675e74ebfc497aa87d55b1,
         type: 3}
       propertyPath: m_SizeDelta.x
-      value: 42
+      value: 44
       objectReference: {fileID: 0}
     - target: {fileID: 9003715569127961611, guid: d0d15b54f1675e74ebfc497aa87d55b1,
         type: 3}
       propertyPath: m_SizeDelta.y
-      value: 22.5
+      value: 22
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d0d15b54f1675e74ebfc497aa87d55b1, type: 3}
@@ -6318,11 +6328,13 @@ MonoBehaviour:
   translationData:
     id: 
     translation: '[**Missing**]'
-    hoverOverTranslation: 
+    toolTipTranslation: 
+    valueIsMainTranslation: 0
     values: []
     UIElements: []
-    onlyHoverOver: 0
+    onlyToolTip: 0
     valueCount: 0
+  ValueIsMainTranslation: 0
   OnlyHoverOver: 0
   Values: 0
   nameText: {fileID: 0}
@@ -6501,11 +6513,13 @@ MonoBehaviour:
   translationData:
     id: 
     translation: '[**Missing**]'
-    hoverOverTranslation: 
+    toolTipTranslation: 
+    valueIsMainTranslation: 0
     values: []
     UIElements: []
-    onlyHoverOver: 0
+    onlyToolTip: 0
     valueCount: 0
+  ValueIsMainTranslation: 0
   OnlyHoverOver: 0
   Values: 0
   nameText: {fileID: 0}
@@ -6791,11 +6805,13 @@ MonoBehaviour:
   translationData:
     id: 
     translation: '[**Missing**]'
-    hoverOverTranslation: 
+    toolTipTranslation: 
+    valueIsMainTranslation: 0
     values: []
     UIElements: []
-    onlyHoverOver: 0
+    onlyToolTip: 0
     valueCount: 0
+  ValueIsMainTranslation: 0
   OnlyHoverOver: 0
   Values: 0
   nameText: {fileID: 0}
@@ -6940,11 +6956,13 @@ MonoBehaviour:
   translationData:
     id: 
     translation: '[**Missing**]'
-    hoverOverTranslation: 
+    toolTipTranslation: 
+    valueIsMainTranslation: 0
     values: []
     UIElements: []
-    onlyHoverOver: 0
+    onlyToolTip: 0
     valueCount: 0
+  ValueIsMainTranslation: 0
   OnlyHoverOver: 1
   Values: 0
   nameText: {fileID: 0}
@@ -7318,11 +7336,13 @@ MonoBehaviour:
   translationData:
     id: 
     translation: '[**Missing**]'
-    hoverOverTranslation: 
+    toolTipTranslation: 
+    valueIsMainTranslation: 0
     values: []
     UIElements: []
-    onlyHoverOver: 0
+    onlyToolTip: 0
     valueCount: 0
+  ValueIsMainTranslation: 0
   OnlyHoverOver: 1
   Values: 0
   nameText: {fileID: 0}
@@ -7799,10 +7819,10 @@ RectTransform:
   m_Father: {fileID: 291582391}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 86.425, y: -13.26}
-  m_SizeDelta: {x: 172.85, y: 26.52}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 26.52}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &319225650
 MonoBehaviour:
@@ -10239,11 +10259,13 @@ MonoBehaviour:
   translationData:
     id: 
     translation: '[**Missing**]'
-    hoverOverTranslation: 
+    toolTipTranslation: 
+    valueIsMainTranslation: 0
     values: []
     UIElements: []
-    onlyHoverOver: 0
+    onlyToolTip: 0
     valueCount: 0
+  ValueIsMainTranslation: 0
   OnlyHoverOver: 0
   Values: 0
   nameText: {fileID: 536051947}
@@ -11691,7 +11713,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -57.050003, y: -16.856}
+  m_AnchoredPosition: {x: -59.050003, y: -26.09828}
   m_SizeDelta: {x: 202.1, y: 160.2}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &521727736
@@ -12907,6 +12929,66 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
+--- !u!1 &579315170
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 579315171}
+  - component: {fileID: 579315172}
+  m_Layer: 5
+  m_Name: Needed
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &579315171
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 579315170}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1524687685}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0.0013428, y: -19.334}
+  m_SizeDelta: {x: 520.66, y: 168.3329}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &579315172
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 579315170}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8a8695521f0d02e499659fee002a26c2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Padding:
+    m_Left: 0
+    m_Right: 0
+    m_Top: 5
+    m_Bottom: 5
+  m_ChildAlignment: 1
+  m_StartCorner: 0
+  m_StartAxis: 0
+  m_CellSize: {x: 60, y: 60}
+  m_Spacing: {x: 2, y: 2}
+  m_Constraint: 0
+  m_ConstraintCount: 2
 --- !u!1001 &581071468
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -13165,11 +13247,13 @@ MonoBehaviour:
   translationData:
     id: 
     translation: '[**Missing**]'
-    hoverOverTranslation: 
+    toolTipTranslation: 
+    valueIsMainTranslation: 0
     values: []
     UIElements: []
-    onlyHoverOver: 0
+    onlyToolTip: 0
     valueCount: 0
+  ValueIsMainTranslation: 0
   OnlyHoverOver: 1
   Values: 0
   nameText: {fileID: 0}
@@ -14427,11 +14511,13 @@ MonoBehaviour:
   translationData:
     id: 
     translation: '[**Missing**]'
-    hoverOverTranslation: 
+    toolTipTranslation: 
+    valueIsMainTranslation: 0
     values: []
     UIElements: []
-    onlyHoverOver: 0
+    onlyToolTip: 0
     valueCount: 0
+  ValueIsMainTranslation: 0
   OnlyHoverOver: 1
   Values: 0
   nameText: {fileID: 0}
@@ -15904,11 +15990,13 @@ MonoBehaviour:
   translationData:
     id: 
     translation: '[**Missing**]'
-    hoverOverTranslation: 
+    toolTipTranslation: 
+    valueIsMainTranslation: 0
     values: []
     UIElements: []
-    onlyHoverOver: 0
+    onlyToolTip: 0
     valueCount: 0
+  ValueIsMainTranslation: 0
   OnlyHoverOver: 1
   Values: 0
   nameText: {fileID: 0}
@@ -16318,11 +16406,13 @@ MonoBehaviour:
   translationData:
     id: 
     translation: '[**Missing**]'
-    hoverOverTranslation: 
+    toolTipTranslation: 
+    valueIsMainTranslation: 0
     values: []
     UIElements: []
-    onlyHoverOver: 0
+    onlyToolTip: 0
     valueCount: 0
+  ValueIsMainTranslation: 0
   OnlyHoverOver: 0
   Values: 0
   nameText: {fileID: 0}
@@ -16516,11 +16606,13 @@ MonoBehaviour:
   translationData:
     id: 
     translation: '[**Missing**]'
-    hoverOverTranslation: 
+    toolTipTranslation: 
+    valueIsMainTranslation: 0
     values: []
     UIElements: []
-    onlyHoverOver: 0
+    onlyToolTip: 0
     valueCount: 0
+  ValueIsMainTranslation: 0
   OnlyHoverOver: 1
   Values: 0
   nameText: {fileID: 0}
@@ -16649,11 +16741,13 @@ MonoBehaviour:
   translationData:
     id: 
     translation: '[**Missing**]'
-    hoverOverTranslation: 
+    toolTipTranslation: 
+    valueIsMainTranslation: 0
     values: []
     UIElements: []
-    onlyHoverOver: 0
+    onlyToolTip: 0
     valueCount: 0
+  ValueIsMainTranslation: 0
   OnlyHoverOver: 0
   Values: 0
   nameText: {fileID: 734265541}
@@ -17155,11 +17249,13 @@ MonoBehaviour:
   translationData:
     id: 
     translation: '[**Missing**]'
-    hoverOverTranslation: 
+    toolTipTranslation: 
+    valueIsMainTranslation: 0
     values: []
     UIElements: []
-    onlyHoverOver: 0
+    onlyToolTip: 0
     valueCount: 0
+  ValueIsMainTranslation: 0
   OnlyHoverOver: 1
   Values: 0
   nameText: {fileID: 0}
@@ -18270,11 +18366,13 @@ MonoBehaviour:
   translationData:
     id: 
     translation: '[**Missing**]'
-    hoverOverTranslation: 
+    toolTipTranslation: 
+    valueIsMainTranslation: 0
     values: []
     UIElements: []
-    onlyHoverOver: 0
+    onlyToolTip: 0
     valueCount: 0
+  ValueIsMainTranslation: 0
   OnlyHoverOver: 1
   Values: 0
   nameText: {fileID: 0}
@@ -18311,7 +18409,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &782353740
 RectTransform:
   m_ObjectHideFlags: 0
@@ -18328,7 +18426,7 @@ RectTransform:
   - {fileID: 1750398438}
   - {fileID: 748325672}
   m_Father: {fileID: 1406261016}
-  m_RootOrder: 1
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -19069,6 +19167,42 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   SimpleImage: {fileID: 2464411711128875650, guid: 89979deec0a90ca41986dd76c3340b6e,
     type: 3}
+--- !u!84 &830567170
+RenderTexture:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: 
+  m_ImageContentsHash:
+    serializedVersion: 2
+    Hash: 00000000000000000000000000000000
+  m_ForcedFallbackFormat: 4
+  m_DownscaleFallback: 0
+  m_IsAlphaChannelOptional: 0
+  serializedVersion: 3
+  m_Width: 1024
+  m_Height: 1024
+  m_AntiAliasing: 1
+  m_MipCount: -1
+  m_DepthFormat: 0
+  m_ColorFormat: 8
+  m_MipMap: 0
+  m_GenerateMips: 1
+  m_SRGB: 0
+  m_UseDynamicScale: 0
+  m_BindMS: 0
+  m_EnableCompatibleFormat: 1
+  m_TextureSettings:
+    serializedVersion: 2
+    m_FilterMode: 1
+    m_Aniso: 1
+    m_MipBias: 0
+    m_WrapU: 0
+    m_WrapV: 0
+    m_WrapW: 0
+  m_Dimension: 2
+  m_VolumeDepth: 1
 --- !u!1 &830804438
 GameObject:
   m_ObjectHideFlags: 0
@@ -19722,11 +19856,13 @@ MonoBehaviour:
   translationData:
     id: 
     translation: '[**Missing**]'
-    hoverOverTranslation: 
+    toolTipTranslation: 
+    valueIsMainTranslation: 0
     values: []
     UIElements: []
-    onlyHoverOver: 0
+    onlyToolTip: 0
     valueCount: 0
+  ValueIsMainTranslation: 0
   OnlyHoverOver: 1
   Values: 0
   nameText: {fileID: 0}
@@ -19950,11 +20086,13 @@ MonoBehaviour:
   translationData:
     id: 
     translation: '[**Missing**]'
-    hoverOverTranslation: 
+    toolTipTranslation: 
+    valueIsMainTranslation: 0
     values: []
     UIElements: []
-    onlyHoverOver: 0
+    onlyToolTip: 0
     valueCount: 0
+  ValueIsMainTranslation: 0
   OnlyHoverOver: 0
   Values: 0
   nameText: {fileID: 0}
@@ -23719,12 +23857,12 @@ PrefabInstance:
     - target: {fileID: 9003715569127961611, guid: d0d15b54f1675e74ebfc497aa87d55b1,
         type: 3}
       propertyPath: m_SizeDelta.x
-      value: 42
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 9003715569127961611, guid: d0d15b54f1675e74ebfc497aa87d55b1,
         type: 3}
       propertyPath: m_SizeDelta.y
-      value: 22.5
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 9003715569127961611, guid: d0d15b54f1675e74ebfc497aa87d55b1,
         type: 3}
@@ -24899,11 +25037,13 @@ MonoBehaviour:
   translationData:
     id: 
     translation: '[**Missing**]'
-    hoverOverTranslation: 
+    toolTipTranslation: 
+    valueIsMainTranslation: 0
     values: []
     UIElements: []
-    onlyHoverOver: 0
+    onlyToolTip: 0
     valueCount: 0
+  ValueIsMainTranslation: 0
   OnlyHoverOver: 0
   Values: 0
   nameText: {fileID: 0}
@@ -24966,11 +25106,13 @@ MonoBehaviour:
   translationData:
     id: 
     translation: '[**Missing**]'
-    hoverOverTranslation: 
+    toolTipTranslation: 
+    valueIsMainTranslation: 0
     values: []
     UIElements: []
-    onlyHoverOver: 0
+    onlyToolTip: 0
     valueCount: 0
+  ValueIsMainTranslation: 0
   OnlyHoverOver: 0
   Values: 0
   nameText: {fileID: 0}
@@ -25656,11 +25798,13 @@ MonoBehaviour:
   translationData:
     id: 
     translation: '[**Missing**]'
-    hoverOverTranslation: 
+    toolTipTranslation: 
+    valueIsMainTranslation: 0
     values: []
     UIElements: []
-    onlyHoverOver: 0
+    onlyToolTip: 0
     valueCount: 0
+  ValueIsMainTranslation: 0
   OnlyHoverOver: 1
   Values: 0
   nameText: {fileID: 0}
@@ -25956,7 +26100,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1120049209
 RectTransform:
   m_ObjectHideFlags: 0
@@ -26032,6 +26176,7 @@ MonoBehaviour:
   Follow: {fileID: 210866766}
   militaryGO: {fileID: 1845187000}
   outputStructureUI: {fileID: 1753813436}
+  serviceStructureUI: {fileID: 1524687686}
   structureUI: {fileID: 1881244464}
   unitUI: {fileID: 782353743}
   unitGroupUI: {fileID: 1281817906}
@@ -26525,10 +26670,10 @@ RectTransform:
   m_Father: {fileID: 291582391}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 86.425, y: -34.205}
-  m_SizeDelta: {x: 172.85, y: 15.37}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 15.37}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1157121246
 MonoBehaviour:
@@ -27368,11 +27513,13 @@ MonoBehaviour:
   translationData:
     id: 
     translation: '[**Missing**]'
-    hoverOverTranslation: 
+    toolTipTranslation: 
+    valueIsMainTranslation: 0
     values: []
     UIElements: []
-    onlyHoverOver: 0
+    onlyToolTip: 0
     valueCount: 0
+  ValueIsMainTranslation: 0
   OnlyHoverOver: 0
   Values: 0
   nameText: {fileID: 0}
@@ -28565,11 +28712,13 @@ MonoBehaviour:
   translationData:
     id: 
     translation: '[**Missing**]'
-    hoverOverTranslation: 
+    toolTipTranslation: 
+    valueIsMainTranslation: 0
     values: []
     UIElements: []
-    onlyHoverOver: 0
+    onlyToolTip: 0
     valueCount: 0
+  ValueIsMainTranslation: 0
   OnlyHoverOver: 0
   Values: 0
   nameText: {fileID: 0}
@@ -28750,11 +28899,13 @@ MonoBehaviour:
   translationData:
     id: 
     translation: '[**Missing**]'
-    hoverOverTranslation: 
+    toolTipTranslation: 
+    valueIsMainTranslation: 0
     values: []
     UIElements: []
-    onlyHoverOver: 0
+    onlyToolTip: 0
     valueCount: 0
+  ValueIsMainTranslation: 0
   OnlyHoverOver: 1
   Values: 0
   nameText: {fileID: 0}
@@ -29807,11 +29958,13 @@ MonoBehaviour:
   translationData:
     id: 
     translation: '[**Missing**]'
-    hoverOverTranslation: 
+    toolTipTranslation: 
+    valueIsMainTranslation: 0
     values: []
     UIElements: []
-    onlyHoverOver: 0
+    onlyToolTip: 0
     valueCount: 0
+  ValueIsMainTranslation: 0
   OnlyHoverOver: 0
   Values: 0
   nameText: {fileID: 0}
@@ -30677,11 +30830,13 @@ MonoBehaviour:
   translationData:
     id: 
     translation: '[**Missing**]'
-    hoverOverTranslation: 
+    toolTipTranslation: 
+    valueIsMainTranslation: 0
     values: []
     UIElements: []
-    onlyHoverOver: 0
+    onlyToolTip: 0
     valueCount: 0
+  ValueIsMainTranslation: 0
   OnlyHoverOver: 1
   Values: 0
   nameText: {fileID: 0}
@@ -30965,11 +31120,13 @@ MonoBehaviour:
   translationData:
     id: 
     translation: '[**Missing**]'
-    hoverOverTranslation: 
+    toolTipTranslation: 
+    valueIsMainTranslation: 0
     values: []
     UIElements: []
-    onlyHoverOver: 0
+    onlyToolTip: 0
     valueCount: 0
+  ValueIsMainTranslation: 0
   OnlyHoverOver: 0
   Values: 0
   nameText: {fileID: 0}
@@ -31099,11 +31256,13 @@ MonoBehaviour:
   translationData:
     id: 
     translation: '[**Missing**]'
-    hoverOverTranslation: 
+    toolTipTranslation: 
+    valueIsMainTranslation: 0
     values: []
     UIElements: []
-    onlyHoverOver: 0
+    onlyToolTip: 0
     valueCount: 0
+  ValueIsMainTranslation: 0
   OnlyHoverOver: 0
   Values: 0
   nameText: {fileID: 0}
@@ -31361,11 +31520,13 @@ MonoBehaviour:
   translationData:
     id: 
     translation: '[**Missing**]'
-    hoverOverTranslation: 
+    toolTipTranslation: 
+    valueIsMainTranslation: 0
     values: []
     UIElements: []
-    onlyHoverOver: 0
+    onlyToolTip: 0
     valueCount: 0
+  ValueIsMainTranslation: 0
   OnlyHoverOver: 0
   Values: 0
   nameText: {fileID: 0}
@@ -31947,11 +32108,13 @@ MonoBehaviour:
   translationData:
     id: 
     translation: '[**Missing**]'
-    hoverOverTranslation: 
+    toolTipTranslation: 
+    valueIsMainTranslation: 0
     values: []
     UIElements: []
-    onlyHoverOver: 0
+    onlyToolTip: 0
     valueCount: 0
+  ValueIsMainTranslation: 0
   OnlyHoverOver: 0
   Values: 0
   nameText: {fileID: 0}
@@ -32180,6 +32343,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1881244461}
+  - {fileID: 1524687685}
   - {fileID: 782353740}
   - {fileID: 1753813433}
   - {fileID: 1845186999}
@@ -32343,11 +32507,13 @@ MonoBehaviour:
   translationData:
     id: 
     translation: '[**Missing**]'
-    hoverOverTranslation: 
+    toolTipTranslation: 
+    valueIsMainTranslation: 0
     values: []
     UIElements: []
-    onlyHoverOver: 0
+    onlyToolTip: 0
     valueCount: 0
+  ValueIsMainTranslation: 0
   OnlyHoverOver: 1
   Values: 0
   nameText: {fileID: 0}
@@ -33596,11 +33762,13 @@ MonoBehaviour:
   translationData:
     id: 
     translation: '[**Missing**]'
-    hoverOverTranslation: 
+    toolTipTranslation: 
+    valueIsMainTranslation: 0
     values: []
     UIElements: []
-    onlyHoverOver: 0
+    onlyToolTip: 0
     valueCount: 0
+  ValueIsMainTranslation: 0
   OnlyHoverOver: 1
   Values: 0
   nameText: {fileID: 0}
@@ -34433,11 +34601,13 @@ MonoBehaviour:
   translationData:
     id: 
     translation: '[**Missing**]'
-    hoverOverTranslation: 
+    toolTipTranslation: 
+    valueIsMainTranslation: 0
     values: []
     UIElements: []
-    onlyHoverOver: 0
+    onlyToolTip: 0
     valueCount: 0
+  ValueIsMainTranslation: 0
   OnlyHoverOver: 0
   Values: 0
   nameText: {fileID: 0}
@@ -34728,11 +34898,13 @@ MonoBehaviour:
   translationData:
     id: 
     translation: '[**Missing**]'
-    hoverOverTranslation: 
+    toolTipTranslation: 
+    valueIsMainTranslation: 0
     values: []
     UIElements: []
-    onlyHoverOver: 0
+    onlyToolTip: 0
     valueCount: 0
+  ValueIsMainTranslation: 0
   OnlyHoverOver: 0
   Values: 0
   nameText: {fileID: 0}
@@ -35183,6 +35355,57 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9fb4f8258af24934686d1791b1d30edd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &1524687684
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1524687685}
+  - component: {fileID: 1524687686}
+  m_Layer: 5
+  m_Name: ServiceStructure
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!224 &1524687685
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1524687684}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children:
+  - {fileID: 579315171}
+  m_Father: {fileID: 1406261016}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 83.542336, y: -21.5}
+  m_SizeDelta: {x: 520.6642, y: 207}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1524687686
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1524687684}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 699363f9b8d4ee84abbbecd450c8acd9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  usageItemParent: {fileID: 579315171}
+  itemPrefab: {fileID: 178454, guid: 454ea8bfc9cd0f84698610e721a842b2, type: 3}
 --- !u!1 &1526407042
 GameObject:
   m_ObjectHideFlags: 0
@@ -35333,11 +35556,13 @@ MonoBehaviour:
   translationData:
     id: 
     translation: '[**Missing**]'
-    hoverOverTranslation: 
+    toolTipTranslation: 
+    valueIsMainTranslation: 0
     values: []
     UIElements: []
-    onlyHoverOver: 0
+    onlyToolTip: 0
     valueCount: 0
+  ValueIsMainTranslation: 0
   OnlyHoverOver: 1
   Values: 0
   nameText: {fileID: 0}
@@ -35926,11 +36151,13 @@ MonoBehaviour:
   translationData:
     id: 
     translation: '[**Missing**]'
-    hoverOverTranslation: 
+    toolTipTranslation: 
+    valueIsMainTranslation: 0
     values: []
     UIElements: []
-    onlyHoverOver: 0
+    onlyToolTip: 0
     valueCount: 0
+  ValueIsMainTranslation: 0
   OnlyHoverOver: 1
   Values: 0
   nameText: {fileID: 0}
@@ -37248,11 +37475,13 @@ MonoBehaviour:
   translationData:
     id: 
     translation: '[**Missing**]'
-    hoverOverTranslation: 
+    toolTipTranslation: 
+    valueIsMainTranslation: 0
     values: []
     UIElements: []
-    onlyHoverOver: 0
+    onlyToolTip: 0
     valueCount: 0
+  ValueIsMainTranslation: 0
   OnlyHoverOver: 0
   Values: 0
   nameText: {fileID: 0}
@@ -39487,11 +39716,13 @@ MonoBehaviour:
   translationData:
     id: 
     translation: '[**Missing**]'
-    hoverOverTranslation: 
+    toolTipTranslation: 
+    valueIsMainTranslation: 0
     values: []
     UIElements: []
-    onlyHoverOver: 0
+    onlyToolTip: 0
     valueCount: 0
+  ValueIsMainTranslation: 0
   OnlyHoverOver: 0
   Values: 0
   nameText: {fileID: 0}
@@ -40219,11 +40450,13 @@ MonoBehaviour:
   translationData:
     id: 
     translation: '[**Missing**]'
-    hoverOverTranslation: 
+    toolTipTranslation: 
+    valueIsMainTranslation: 0
     values: []
     UIElements: []
-    onlyHoverOver: 0
+    onlyToolTip: 0
     valueCount: 0
+  ValueIsMainTranslation: 0
   OnlyHoverOver: 0
   Values: 0
   nameText: {fileID: 0}
@@ -40443,6 +40676,115 @@ CanvasGroup:
   m_Interactable: 1
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0
+--- !u!1 &1743941118
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1743941119}
+  - component: {fileID: 1743941122}
+  - component: {fileID: 1743941121}
+  - component: {fileID: 1743941120}
+  m_Layer: 5
+  m_Name: IsActive
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1743941119
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1743941118}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1881244461}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 83.541016, y: 62.666}
+  m_SizeDelta: {x: 520.67, y: 38.668}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1743941120
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1743941118}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1b5e01526a8f99145b7b92b7d43dbe24, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Identifier: IsActive
+  translationData:
+    id: 
+    translation: '[**Missing**]'
+    toolTipTranslation: 
+    valueIsMainTranslation: 1
+    values: []
+    UIElements: []
+    onlyToolTip: 0
+    valueCount: 0
+  ValueIsMainTranslation: 1
+  OnlyHoverOver: 0
+  Values: 2
+  nameText: {fileID: 0}
+  tmp_nameText: {fileID: 0}
+  valueText: {fileID: 0}
+  languageValues: []
+--- !u!114 &1743941121
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1743941118}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_FontData:
+    m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
+    m_FontSize: 14
+    m_FontStyle: 0
+    m_BestFit: 0
+    m_MinSize: 10
+    m_MaxSize: 40
+    m_Alignment: 4
+    m_AlignByGeometry: 0
+    m_RichText: 1
+    m_HorizontalOverflow: 0
+    m_VerticalOverflow: 0
+    m_LineSpacing: 1
+  m_Text: IS WORKING
+--- !u!222 &1743941122
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1743941118}
+  m_CullTransparentMesh: 1
 --- !u!224 &1745576346 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 22482564, guid: 454ea8bfc9cd0f84698610e721a842b2,
@@ -40693,7 +41035,7 @@ RectTransform:
   - {fileID: 1870809474}
   - {fileID: 241641454}
   m_Father: {fileID: 1406261016}
-  m_RootOrder: 2
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -41590,11 +41932,13 @@ MonoBehaviour:
   translationData:
     id: 
     translation: '[**Missing**]'
-    hoverOverTranslation: 
+    toolTipTranslation: 
+    valueIsMainTranslation: 0
     values: []
     UIElements: []
-    onlyHoverOver: 0
+    onlyToolTip: 0
     valueCount: 0
+  ValueIsMainTranslation: 0
   OnlyHoverOver: 0
   Values: 0
   nameText: {fileID: 0}
@@ -41740,11 +42084,13 @@ MonoBehaviour:
   translationData:
     id: 
     translation: '[**Missing**]'
-    hoverOverTranslation: 
+    toolTipTranslation: 
+    valueIsMainTranslation: 0
     values: []
     UIElements: []
-    onlyHoverOver: 0
+    onlyToolTip: 0
     valueCount: 0
+  ValueIsMainTranslation: 0
   OnlyHoverOver: 1
   Values: 0
   nameText: {fileID: 0}
@@ -41797,7 +42143,7 @@ RectTransform:
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0.198, y: 1}
+  m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -42035,11 +42381,13 @@ MonoBehaviour:
   translationData:
     id: 
     translation: '[**Missing**]'
-    hoverOverTranslation: 
+    toolTipTranslation: 
+    valueIsMainTranslation: 0
     values: []
     UIElements: []
-    onlyHoverOver: 0
+    onlyToolTip: 0
     valueCount: 0
+  ValueIsMainTranslation: 0
   OnlyHoverOver: 0
   Values: 0
   nameText: {fileID: 0}
@@ -42580,12 +42928,12 @@ PrefabInstance:
     - target: {fileID: 9003715569127961611, guid: d0d15b54f1675e74ebfc497aa87d55b1,
         type: 3}
       propertyPath: m_SizeDelta.x
-      value: 42
+      value: 44
       objectReference: {fileID: 0}
     - target: {fileID: 9003715569127961611, guid: d0d15b54f1675e74ebfc497aa87d55b1,
         type: 3}
       propertyPath: m_SizeDelta.y
-      value: 22.5
+      value: 22
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d0d15b54f1675e74ebfc497aa87d55b1, type: 3}
@@ -42779,7 +43127,7 @@ RectTransform:
   - {fileID: 521727735}
   - {fileID: 2096338104}
   m_Father: {fileID: 1406261016}
-  m_RootOrder: 3
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -43408,11 +43756,13 @@ MonoBehaviour:
   translationData:
     id: 
     translation: '[**Missing**]'
-    hoverOverTranslation: 
+    toolTipTranslation: 
+    valueIsMainTranslation: 0
     values: []
     UIElements: []
-    onlyHoverOver: 0
+    onlyToolTip: 0
     valueCount: 0
+  ValueIsMainTranslation: 0
   OnlyHoverOver: 1
   Values: 0
   nameText: {fileID: 0}
@@ -43478,7 +43828,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1881244461}
   - component: {fileID: 1881244463}
-  - component: {fileID: 1881244462}
   - component: {fileID: 1881244464}
   m_Layer: 5
   m_Name: Structure Info
@@ -43486,7 +43835,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1881244461
 RectTransform:
   m_ObjectHideFlags: 0
@@ -43497,7 +43846,8 @@ RectTransform:
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
+  m_Children:
+  - {fileID: 1743941119}
   m_Father: {fileID: 1406261016}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -43506,36 +43856,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &1881244462
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1881244460}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 0.392}
-  m_RaycastTarget: 0
-  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
-  m_Maskable: 1
-  m_OnCullStateChanged:
-    m_PersistentCalls:
-      m_Calls: []
-  m_Sprite: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
-  m_Type: 1
-  m_PreserveAspect: 0
-  m_FillCenter: 1
-  m_FillMethod: 4
-  m_FillAmount: 1
-  m_FillClockwise: 1
-  m_FillOrigin: 0
-  m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 1
 --- !u!222 &1881244463
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -43556,6 +43876,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ae01b9c612918e64aa4d11bf83865c98, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isActiveText: {fileID: 1743941120}
 --- !u!1001 &1884187921
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -44506,12 +44827,12 @@ PrefabInstance:
     - target: {fileID: 9003715569127961611, guid: d0d15b54f1675e74ebfc497aa87d55b1,
         type: 3}
       propertyPath: m_SizeDelta.x
-      value: 42
+      value: 44
       objectReference: {fileID: 0}
     - target: {fileID: 9003715569127961611, guid: d0d15b54f1675e74ebfc497aa87d55b1,
         type: 3}
       propertyPath: m_SizeDelta.y
-      value: 22.5
+      value: 22
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d0d15b54f1675e74ebfc497aa87d55b1, type: 3}
@@ -45041,11 +45362,13 @@ MonoBehaviour:
   translationData:
     id: 
     translation: '[**Missing**]'
-    hoverOverTranslation: 
+    toolTipTranslation: 
+    valueIsMainTranslation: 0
     values: []
     UIElements: []
-    onlyHoverOver: 0
+    onlyToolTip: 0
     valueCount: 0
+  ValueIsMainTranslation: 0
   OnlyHoverOver: 1
   Values: 0
   nameText: {fileID: 0}
@@ -45282,11 +45605,13 @@ MonoBehaviour:
   translationData:
     id: 
     translation: '[**Missing**]'
-    hoverOverTranslation: 
+    toolTipTranslation: 
+    valueIsMainTranslation: 0
     values: []
     UIElements: []
-    onlyHoverOver: 0
+    onlyToolTip: 0
     valueCount: 0
+  ValueIsMainTranslation: 0
   OnlyHoverOver: 0
   Values: 0
   nameText: {fileID: 0}
@@ -46152,13 +46477,8 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 152736, guid: 5864dc44dbea66546a4fcc81f58cec4d, type: 3}
       propertyPath: m_Name
-      value: HoverOver
+      value: ToolTip
       objectReference: {fileID: 0}
-    - target: {fileID: 11470544, guid: 5864dc44dbea66546a4fcc81f58cec4d, type: 3}
-      propertyPath: ImageTextPrefab
-      value: 
-      objectReference: {fileID: 5418340220489191361, guid: d0d15b54f1675e74ebfc497aa87d55b1,
-        type: 3}
     - target: {fileID: 22436292, guid: 5864dc44dbea66546a4fcc81f58cec4d, type: 3}
       propertyPath: m_Pivot.x
       value: 0
@@ -46243,253 +46563,8 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 22451072, guid: 5864dc44dbea66546a4fcc81f58cec4d, type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 22451072, guid: 5864dc44dbea66546a4fcc81f58cec4d, type: 3}
-      propertyPath: m_AnchorMin.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 22451072, guid: 5864dc44dbea66546a4fcc81f58cec4d, type: 3}
-      propertyPath: m_SizeDelta.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 22451072, guid: 5864dc44dbea66546a4fcc81f58cec4d, type: 3}
-      propertyPath: m_SizeDelta.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 22451072, guid: 5864dc44dbea66546a4fcc81f58cec4d, type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 22451072, guid: 5864dc44dbea66546a4fcc81f58cec4d, type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 224727002127532896, guid: 5864dc44dbea66546a4fcc81f58cec4d,
-        type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 224727002127532896, guid: 5864dc44dbea66546a4fcc81f58cec4d,
-        type: 3}
-      propertyPath: m_AnchorMin.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 224727002127532896, guid: 5864dc44dbea66546a4fcc81f58cec4d,
-        type: 3}
-      propertyPath: m_SizeDelta.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 224727002127532896, guid: 5864dc44dbea66546a4fcc81f58cec4d,
-        type: 3}
-      propertyPath: m_SizeDelta.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 224727002127532896, guid: 5864dc44dbea66546a4fcc81f58cec4d,
-        type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 224727002127532896, guid: 5864dc44dbea66546a4fcc81f58cec4d,
-        type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1555225718039730766, guid: 5864dc44dbea66546a4fcc81f58cec4d,
-        type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1555225718039730766, guid: 5864dc44dbea66546a4fcc81f58cec4d,
-        type: 3}
-      propertyPath: m_AnchorMin.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1555225718039730766, guid: 5864dc44dbea66546a4fcc81f58cec4d,
-        type: 3}
-      propertyPath: m_SizeDelta.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1555225718039730766, guid: 5864dc44dbea66546a4fcc81f58cec4d,
-        type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1555225718039730766, guid: 5864dc44dbea66546a4fcc81f58cec4d,
-        type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2224406873130206648, guid: 5864dc44dbea66546a4fcc81f58cec4d,
-        type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2224406873130206648, guid: 5864dc44dbea66546a4fcc81f58cec4d,
-        type: 3}
-      propertyPath: m_AnchorMin.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2224406873130206648, guid: 5864dc44dbea66546a4fcc81f58cec4d,
-        type: 3}
-      propertyPath: m_SizeDelta.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2224406873130206648, guid: 5864dc44dbea66546a4fcc81f58cec4d,
-        type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2224406873130206648, guid: 5864dc44dbea66546a4fcc81f58cec4d,
-        type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3679782644653323210, guid: 5864dc44dbea66546a4fcc81f58cec4d,
-        type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3679782644653323210, guid: 5864dc44dbea66546a4fcc81f58cec4d,
-        type: 3}
-      propertyPath: m_AnchorMin.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3679782644653323210, guid: 5864dc44dbea66546a4fcc81f58cec4d,
-        type: 3}
-      propertyPath: m_SizeDelta.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3679782644653323210, guid: 5864dc44dbea66546a4fcc81f58cec4d,
-        type: 3}
-      propertyPath: m_SizeDelta.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4848027332002857339, guid: 5864dc44dbea66546a4fcc81f58cec4d,
-        type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4848027332002857339, guid: 5864dc44dbea66546a4fcc81f58cec4d,
-        type: 3}
-      propertyPath: m_AnchorMin.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4848027332002857339, guid: 5864dc44dbea66546a4fcc81f58cec4d,
-        type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4848027332002857339, guid: 5864dc44dbea66546a4fcc81f58cec4d,
-        type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5403407867905993456, guid: 5864dc44dbea66546a4fcc81f58cec4d,
-        type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5403407867905993456, guid: 5864dc44dbea66546a4fcc81f58cec4d,
-        type: 3}
-      propertyPath: m_AnchorMin.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5403407867905993456, guid: 5864dc44dbea66546a4fcc81f58cec4d,
-        type: 3}
-      propertyPath: m_SizeDelta.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5403407867905993456, guid: 5864dc44dbea66546a4fcc81f58cec4d,
-        type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5403407867905993456, guid: 5864dc44dbea66546a4fcc81f58cec4d,
-        type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7407355530851462698, guid: 5864dc44dbea66546a4fcc81f58cec4d,
-        type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7407355530851462698, guid: 5864dc44dbea66546a4fcc81f58cec4d,
-        type: 3}
-      propertyPath: m_AnchorMin.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7407355530851462698, guid: 5864dc44dbea66546a4fcc81f58cec4d,
-        type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8536087366813420694, guid: 5864dc44dbea66546a4fcc81f58cec4d,
-        type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8536087366813420694, guid: 5864dc44dbea66546a4fcc81f58cec4d,
-        type: 3}
-      propertyPath: m_AnchorMin.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8536087366813420694, guid: 5864dc44dbea66546a4fcc81f58cec4d,
-        type: 3}
-      propertyPath: m_SizeDelta.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8536087366813420694, guid: 5864dc44dbea66546a4fcc81f58cec4d,
-        type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8536087366813420694, guid: 5864dc44dbea66546a4fcc81f58cec4d,
-        type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: 0
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5864dc44dbea66546a4fcc81f58cec4d, type: 3}
---- !u!84 &2021945939
-RenderTexture:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_Name: 
-  m_ImageContentsHash:
-    serializedVersion: 2
-    Hash: 00000000000000000000000000000000
-  m_ForcedFallbackFormat: 4
-  m_DownscaleFallback: 0
-  m_IsAlphaChannelOptional: 0
-  serializedVersion: 3
-  m_Width: 1024
-  m_Height: 1024
-  m_AntiAliasing: 1
-  m_MipCount: -1
-  m_DepthFormat: 0
-  m_ColorFormat: 8
-  m_MipMap: 0
-  m_GenerateMips: 1
-  m_SRGB: 0
-  m_UseDynamicScale: 0
-  m_BindMS: 0
-  m_EnableCompatibleFormat: 1
-  m_TextureSettings:
-    serializedVersion: 2
-    m_FilterMode: 1
-    m_Aniso: 1
-    m_MipBias: 0
-    m_WrapU: 0
-    m_WrapV: 0
-    m_WrapW: 0
-  m_Dimension: 2
-  m_VolumeDepth: 1
 --- !u!1 &2024717307
 GameObject:
   m_ObjectHideFlags: 0
@@ -48000,7 +48075,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 194, y: -16.757719}
+  m_AnchoredPosition: {x: 192, y: -26}
   m_SizeDelta: {x: 300, y: 160}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2096338105
@@ -49616,11 +49691,13 @@ MonoBehaviour:
   translationData:
     id: 
     translation: '[**Missing**]'
-    hoverOverTranslation: 
+    toolTipTranslation: 
+    valueIsMainTranslation: 0
     values: []
     UIElements: []
-    onlyHoverOver: 0
+    onlyToolTip: 0
     valueCount: 0
+  ValueIsMainTranslation: 0
   OnlyHoverOver: 1
   Values: 0
   nameText: {fileID: 0}

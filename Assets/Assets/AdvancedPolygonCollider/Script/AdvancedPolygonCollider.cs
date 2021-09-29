@@ -388,7 +388,7 @@ namespace DigitalRuby.AdvancedPolygonCollider
 
         public void RecalculatePolygon()
         {
-            if (spriteRenderer.sprite != null)
+            if (spriteRenderer != null && spriteRenderer.sprite != null)
             {
                 PolygonParameters p = new PolygonParameters();
                 p.AlphaTolerance = AlphaTolerance;

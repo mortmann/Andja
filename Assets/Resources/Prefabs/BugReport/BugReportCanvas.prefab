@@ -57,7 +57,7 @@ Canvas:
   m_OverrideSorting: 0
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
-  m_AdditionalShaderChannelsFlag: 25
+  m_AdditionalShaderChannelsFlag: 0
   m_SortingLayerID: 638755707
   m_SortingOrder: 1444
   m_TargetDisplay: 0
@@ -120,15 +120,30 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 946827021076858690}
     m_Modifications:
+    - target: {fileID: 8236200041858173465, guid: 0a39dc1ea650c44449544dd967c3a0d9,
+        type: 3}
+      propertyPath: m_CharacterLimit
+      value: 80
+      objectReference: {fileID: 0}
+    - target: {fileID: 8236200041872115775, guid: 0a39dc1ea650c44449544dd967c3a0d9,
+        type: 3}
+      propertyPath: m_VerticalAlignment
+      value: 512
+      objectReference: {fileID: 0}
+    - target: {fileID: 8236200041872115775, guid: 0a39dc1ea650c44449544dd967c3a0d9,
+        type: 3}
+      propertyPath: m_HorizontalAlignment
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 8236200043011159415, guid: 0a39dc1ea650c44449544dd967c3a0d9,
         type: 3}
       propertyPath: m_text
-      value: "500\u200B"
+      value: "\u200B"
       objectReference: {fileID: 0}
     - target: {fileID: 8236200043192524431, guid: 0a39dc1ea650c44449544dd967c3a0d9,
         type: 3}
       propertyPath: m_Enabled
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8236200043282875904, guid: 0a39dc1ea650c44449544dd967c3a0d9,
         type: 3}
@@ -240,10 +255,20 @@ PrefabInstance:
       propertyPath: m_Name
       value: BugReport
       objectReference: {fileID: 0}
+    - target: {fileID: 8236200043282875905, guid: 0a39dc1ea650c44449544dd967c3a0d9,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8236200043883307113, guid: 0a39dc1ea650c44449544dd967c3a0d9,
         type: 3}
       propertyPath: m_Text
-      value: 500
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 8236200043883307113, guid: 0a39dc1ea650c44449544dd967c3a0d9,
+        type: 3}
+      propertyPath: m_CharacterLimit
+      value: 2000
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 0a39dc1ea650c44449544dd967c3a0d9, type: 3}

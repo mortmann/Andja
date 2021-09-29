@@ -175,6 +175,10 @@ namespace Andja.Model {
             this.Island = island;
             Setup();
             foreach (Structure item in Structures) {
+                if(item == null) {
+                    Debug.LogError("Missing structure?");
+                    continue;
+                }
                 if (item is WarehouseStructure) {
                     warehouse = (WarehouseStructure)item;
                 }
@@ -418,7 +422,7 @@ namespace Andja.Model {
             }
             Item i = ti.SellItemAmount(Inventory.GetItemClone(itemID));
             Player CityPlayer = PlayerController.GetPlayer(PlayerNumber);
-            int am = TradeWithShip(i, Mathf.Clamp(amount, 0, i.count), ship);
+            int am = TradeWithShip(i, ()=>Mathf.Clamp(amount, 0, i.count), ship);
             CityPlayer.AddToTreasure(am * ti.price);
             unitPlayer?.ReduceTreasure(am * ti.price);
         }
@@ -447,23 +451,21 @@ namespace Andja.Model {
             player?.AddToTreasure(am * ti.price);
         }
 
-        public int TradeWithShip(Item toTrade, int amount = 50, Unit ship = null) {
-            if (warehouse == null || warehouse.inRangeUnits.Count == 0 || toTrade == null) {
-                Debug.Log("myWarehouse==null || myWarehouse.inRangeUnits.Count==0  || toTrade ==null");
+        public void TradeWithAnyShip (Item item) {
+            Ship ship = tradeUnit as Ship;
+            if (ship == null) {
+                ship = warehouse.inRangeUnits.Find(x => x.playerNumber == PlayerNumber) as Ship;
+            }
+            if (ship == null)
+                return;
+            TradeWithShip(item, () => PlayerTradeAmount, ship);
+        }
+
+        public int TradeWithShip(Item toTrade, Func<int> amount, Unit ship) {
+            if (warehouse == null || warehouse.inRangeUnits.Count == 0 || toTrade == null || ship == null) {
                 return 0;
             }
-            if (tradeUnit == null && ship == null) {
-                ship = warehouse.inRangeUnits.Find(x => x.playerNumber == PlayerNumber);
-                if (ship == null)
-                    return 0;
-                return Inventory.MoveItem(ship.inventory, toTrade, amount);
-            }
-            else if (ship == null) {
-                return Inventory.MoveItem(tradeUnit.inventory, toTrade, amount);
-            }
-            else {
-                return Inventory.MoveItem(ship.inventory, toTrade, amount);
-            }
+            return Inventory.MoveItem(ship.inventory, toTrade, amount());
         }
 
         public int TradeFromShip(Unit u, Item getTrade, int amount = 50) {

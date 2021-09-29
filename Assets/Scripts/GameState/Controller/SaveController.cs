@@ -47,17 +47,26 @@ namespace Andja.Controller {
         UIController UI => UIController.Instance;
         FogOfWarController FW => FogOfWarController.Instance;
 
-        internal string GetCurrentMetaDataFile() {
+        
+
+        /// <summary>
+        /// Returns currently metadata being loaded or last tried to be loaded. 
+        /// </summary>
+        /// <returns></returns>
+        public static string GetMetaDataFile(string file = null) {
             string path = EditorController.IsEditor ? GetIslandSavePath() : GetSaveGamesPath();
-            string finalMetaStatePath = Path.Combine(path, GDH.LoadSaveGame + saveMetaFileEnding);
+            string finalMetaStatePath = Path.Combine(path, (file ?? GameData.Instance.LoadSaveGame) + saveMetaFileEnding);
             if (File.Exists(finalMetaStatePath) == false)
                 return null;
             return File.ReadAllText(finalMetaStatePath);
         }
-
-        internal string GetCurrentSaveFile() {
+        /// <summary>
+        /// Returns currently savegame being loaded or last tried to be loaded. 
+        /// </summary>
+        /// <returns></returns>
+        public static string GetSaveFile(string file = null) {
             string path = EditorController.IsEditor ? GetIslandSavePath() : GetSaveGamesPath();
-            string finalSaveStatePath = Path.Combine(path, GDH.LoadSaveGame + saveFileEnding);
+            string finalSaveStatePath = Path.Combine(path, (file ?? GameData.Instance.LoadSaveGame) + saveFileEnding);
             if (File.Exists(finalSaveStatePath) == false)
                 return null;
             return File.ReadAllText(finalSaveStatePath);
@@ -80,10 +89,11 @@ namespace Andja.Controller {
                 Debug.Log("LOADING SAVEGAME " + GDH.LoadSaveGame);
                 IsLoadingSave = true;
                 this.StartThrowingCoroutine(LoadGameState(GDH.LoadSaveGame),(ex)=> {
-                    MainMenuInfo.AddInfo(MainMenuInfo.InfoTypes.SaveFileError, ex.Message+": " +ex.StackTrace);
+                    Andja.UI.Menu.MainMenuInfo.AddInfo(
+                    Andja.UI.Menu.MainMenuInfo.InfoTypes.SaveFileError, ex.Message+": " +ex.StackTrace);
                     SceneUtil.ChangeToMainMenuScreen(true);
                 });
-                GameData.setloadsavegame = null;
+                GameData.loadSaveGameName = null;
             }
             else {
                 IsLoadingSave = false;
@@ -118,7 +128,7 @@ namespace Andja.Controller {
         public void LoadWorld(bool quickload = false) {
             Debug.Log("LoadWorld button was clicked.");
             if (quickload) {
-                GameData.setloadsavegame = quickSaveName;
+                GameData.loadSaveGameName = quickSaveName;
             }
             // set to loadscreen to reset all data (and purge old references)
             SceneUtil.ChangeToGameStateLoadScreen(true, true);
@@ -170,6 +180,7 @@ namespace Andja.Controller {
         }
 
         public void SaveIslandState(string name = "autosave") {
+            Andja.UI.Menu.MainMenu.SetLastPlayed(name, true);
             string folderPath = GetIslandSavePath(name);
             string islandStatePath = Path.Combine(folderPath, name + islandFileEnding);
             string finalMetaStatePath = Path.Combine(folderPath, name + islandMetaFileEnding);
@@ -215,9 +226,8 @@ namespace Andja.Controller {
 
         public EditorController.SaveIsland GetIslandSave(string name) {
             string saveStatePath = Path.Combine(GetIslandSavePath(name), name + islandFileEnding);
-            string finalMetaStatePath = Path.Combine(GetIslandSavePath(name), name + islandMetaFileEnding);
 
-            SaveMetaData metaData = JsonConvert.DeserializeObject<SaveMetaData>(File.ReadAllText(finalMetaStatePath), new JsonSerializerSettings {
+            SaveMetaData metaData = JsonConvert.DeserializeObject<SaveMetaData>(GetIslandMetaFile(name), new JsonSerializerSettings {
                 NullValueHandling = NullValueHandling.Ignore,
                 PreserveReferencesHandling = PreserveReferencesHandling.Objects,
                 ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
@@ -229,26 +239,44 @@ namespace Andja.Controller {
             }
             EditorController.SaveIsland state = null;
             try {
-                state = JsonConvert.DeserializeObject<EditorController.SaveIsland>(Unzip(File.ReadAllBytes(saveStatePath)), new JsonSerializerSettings {
-                    NullValueHandling = NullValueHandling.Ignore,
-                    ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
-                    TypeNameHandling = TypeNameHandling.Auto
-                });
+                state = JsonConvert.DeserializeObject<EditorController.SaveIsland>(
+                    Unzip(File.ReadAllBytes(saveStatePath)), 
+                    new JsonSerializerSettings {
+                        NullValueHandling = NullValueHandling.Ignore,
+                        ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+                        TypeNameHandling = TypeNameHandling.Auto
+                    }
+                );
             }
             catch {
-                state = JsonConvert.DeserializeObject<EditorController.SaveIsland>(File.ReadAllText(saveStatePath), new JsonSerializerSettings {
-                    NullValueHandling = NullValueHandling.Ignore,
-                    PreserveReferencesHandling = PreserveReferencesHandling.Objects,
-                    ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
-                    TypeNameHandling = TypeNameHandling.Auto,
-                    DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate
+                state = JsonConvert.DeserializeObject<EditorController.SaveIsland>(GetIslandSaveFile(saveStatePath),
+                    new JsonSerializerSettings {
+                        NullValueHandling = NullValueHandling.Ignore,
+                        PreserveReferencesHandling = PreserveReferencesHandling.Objects,
+                        ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+                        TypeNameHandling = TypeNameHandling.Auto,
+                        DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate
                 });
             }
             state.Name = name;
             return state;
         }
-
+        internal static string GetIslandSaveFile(string name) {
+            string saveStatePath = Path.Combine(GetIslandSavePath(name), name + islandFileEnding);
+            if(File.Exists(saveStatePath)) {
+                return File.ReadAllText(saveStatePath);
+            }
+            return null;
+        }
+        internal static string GetIslandMetaFile(string name) {
+            string finalMetaStatePath = Path.Combine(GetIslandSavePath(name), name + islandMetaFileEnding);
+            if (File.Exists(finalMetaStatePath)) {
+                return File.ReadAllText(finalMetaStatePath);
+            }
+            return null;
+        }
         public void LoadIsland(string name) {
+            Andja.UI.Menu.MainMenu.SetLastPlayed(name, true);
             EditorController.Instance.LoadIsland(GetIslandSave(name));
         }
 
@@ -424,6 +452,7 @@ namespace Andja.Controller {
 
         public string[] SaveGameState(string name = "autosave", bool returnSaveInstead = false) {
             SaveName = name;
+            Andja.UI.Menu.MainMenu.SetLastPlayed(name);
             //first pause the world so nothing changes and we can save an
             bool wasPaused = WC.IsPaused;
             if (wasPaused == false) {
@@ -506,9 +535,10 @@ namespace Andja.Controller {
         }
 
         public IEnumerator LoadGameState(string name = "autosave") {
-            if (DoesEditorSaveExist(name) == false) {
+            if (DoesGameSaveExist(name) == false) {
                 yield return null;
             }
+            Andja.UI.Menu.MainMenu.SetLastPlayed(name);
             SaveName = name;
             //first pause the world so nothing changes and we can save an
             string finalSaveStatePath = Path.Combine(GetSaveGamesPath(), name + saveFileEnding);
@@ -682,8 +712,8 @@ namespace Andja.Controller {
     }
     [Serializable]
     public class LinkedSaves : BaseSaveData {
-        public WorldSaveState world;
         public PlayerControllerSave player;
+        public WorldSaveState world;
         public GameEventSave events;
 
         public LinkedSaves() {

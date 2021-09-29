@@ -2,6 +2,7 @@
 using Andja.Model;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -77,13 +78,16 @@ namespace Andja.UI.Model {
                 Setup();
             foreach (NeedGroupUI ngui in needGroupToUI.Values) {
                 ngui.Show(home);
+                ngui.gameObject.SetActive(
+                    ngui.transform.Cast<Transform>().Any(child => child.gameObject.activeInHierarchy)
+                    );
             }
             float F = (float)Math.Round(home.GetTaxPercantage() * 100f, 2);
             taxSlider.value = F;
             structureUI.Show(home);
             ChangeNeedLevel(0);
             for (int i = 0; i < PrototypController.Instance.NumberOfPopulationLevels; i++) {
-                popLevelToGO[i].Interactable(home.StructureLevel >= i);
+                popLevelToGO[i].Interactable(home.PopulationLevel >= i);
             }
         }
 
@@ -103,7 +107,7 @@ namespace Andja.UI.Model {
             home.UpgradeHouse();
             for (int i = 0; i < buttonPopulationsLevelContent.transform.childCount; i++) {
                 GameObject g = buttonPopulationsLevelContent.transform.GetChild(i).gameObject;
-                if (i > home.StructureLevel) {
+                if (i > home.PopulationLevel) {
                     g.GetComponent<Button>().interactable = false;
                 }
                 else {
@@ -112,13 +116,12 @@ namespace Andja.UI.Model {
             }
         }
 
-        // Update is called once per frame
         private void Update() {
             if (home == null || home.PlayerNumber != PlayerController.currentPlayerNumber) {
                 return;
             }
             peopleCount.text = home.people + "/" + home.MaxLivingSpaces;
-            if (home.CanUpgrade) {
+            if (home.CanBeUpgraded) {
                 upgradeButton.SetActive(true);
             }
             else {
@@ -136,6 +139,9 @@ namespace Andja.UI.Model {
                 case HomeStructure.CitizienMoods.Happy:
                     citizenCanvas.color = Color.green;
                     break;
+            }
+            for (int i = 0; i < PrototypController.Instance.NumberOfPopulationLevels; i++) {
+                popLevelToGO[i].Interactable(home.PopulationLevel >= i);
             }
         }
 

@@ -19,6 +19,8 @@ namespace Andja.UI.Menu {
             unsavedProgressText.gameObject.SetActive(type == YesNoDialogTypes.UnsavedProgress);
             deleteSaveText.gameObject.SetActive(type == YesNoDialogTypes.DeleteSave);
             overwriteSaveText.gameObject.SetActive(type == YesNoDialogTypes.OverwriteSave);
+            yesButton.onClick.RemoveAllListeners();
+            noButton.onClick.RemoveAllListeners();
             yesButton.onClick.AddListener(() => yesFunction?.Invoke());
             yesButton.onClick.AddListener(() => dialog.SetActive(false));
             noButton.onClick.AddListener(() => noFunction?.Invoke());

@@ -34,7 +34,7 @@ namespace Andja.Model {
             return text;
         }
         public string GetDescription() {
-            string text = translation.hoverOverTranslation;
+            string text = translation.toolTipTranslation;
             for (int i = 0; i < DescriptionValues.Length; i++) {
                 text = text.Replace("$" + i, DescriptionValues[i]);
             }

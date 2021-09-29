@@ -131,24 +131,27 @@ namespace Andja.Model {
             CalculateIslandScores();
             islandScores = islandScores.OrderByDescending(x => x.EndScore).ToList();
             WarehouseStructure warehouse = PrototypController.Instance.FirstLevelWarehouse;
-            //TODO: optimize
-            List<TileValue> values = new List<TileValue>(AIController.IslandToMapSpaceValuedTiles[islandScores[0].Island]);
-            values.RemoveAll(x => x.Type != TileType.Shore);
-            List<TileValue> selected = new List<TileValue>(from TileValue in values
-                                                           where TileValue.MaxValue >= warehouse.Height
-                                                           select new TileValue(TileValue));
-            foreach (TileValue t in selected) {
-                for (int i = 0; i < 4; i++) {
-                    //bool left = warehouse.Rotation == 90 || warehouse.Rotation == 180;
-                    List<Tile> buildtiles = warehouse.GetBuildingTiles(t.tile, false, false);
-                    if (buildtiles.Exists(x => x.Type == TileType.Ocean))
-                        continue;
-                    if (warehouse.CanBuildOnSpot(buildtiles)) {
-                        AIController.PlaceStructure(this, warehouse, buildtiles, null, onStart);
-                        return;
+            int index = 0;
+            while(warehouse.BuildTile == null) {
+                List<TileValue> values = new List<TileValue>(AIController.IslandToMapSpaceValuedTiles[islandScores[index].Island]);
+                values.RemoveAll(x => x.Type != TileType.Shore);
+                List<TileValue> selected = new List<TileValue>(from TileValue in values
+                                                               where TileValue.MaxValue >= warehouse.Height
+                                                               select new TileValue(TileValue));
+                foreach (TileValue t in selected) {
+                    for (int i = 0; i < 4; i++) {
+                        //bool left = warehouse.Rotation == 90 || warehouse.Rotation == 180;
+                        List<Tile> buildtiles = warehouse.GetBuildingTiles(t.tile, false, false);
+                        if (buildtiles.Exists(x => x.Type == TileType.Ocean))
+                            continue;
+                        if (warehouse.CanBuildOnSpot(buildtiles)) {
+                            AIController.PlaceStructure(this, warehouse, buildtiles, null, onStart);
+                            return;
+                        }
+                        warehouse.RotateStructure();
                     }
-                    warehouse.RotateStructure();
                 }
+                index++;
             }
         }
 
@@ -274,20 +277,6 @@ namespace Andja.Model {
             List<Player> players = PlayerController.Instance.GetPlayers();
             foreach (Player p in players) {
                 PlayerCombatValue value = new PlayerCombatValue(p, CombatValue);
-                //foreach(Unit u in p.GetLandUnits()) {
-                //    value.UnitValue += u.Damage/2 + u.MaxHealth/2;
-                //}
-                //foreach (Ship s in p.GetShipUnits()) {
-                //    value.ShipValue += s.Damage / 2 + s.MaxHealth / 2;
-                //}
-                //List<MilitaryStructure> militaryStructures = new List<MilitaryStructure>(p.AllStructures.OfType<MilitaryStructure>());
-                //foreach(MilitaryStructure structure in militaryStructures) {
-                //    value.MilitaryStructureValue++;
-                //}
-                ////imitates a guess how much the player makes
-                ////also guess the money in the bank?
-                //value.MoneyValue = Random.Range(p.TreasuryChange - p.TreasuryChange / 4, p.TreasuryChange + p.TreasuryChange / 4);
-                //Debug.Log("Calculated PlayerCombat Score " + value.EndScore);
                 combatValues.Add(value);
             }
         }

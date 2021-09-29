@@ -235,6 +235,9 @@ namespace Andja.Model {
             }
             return Tiles[x * Height + y];
         }
+        private Tile GetTileClampedAt(Vector2 v) {
+            return GetTileAt(Mathf.Clamp(v.x, 0, Width - 1), Mathf.Clamp(v.y, 0, Height - 1));
+        }
 
         public bool IsInTileAt(Tile t, float x, float y) {
             if (x >= Width || y >= Height) {
@@ -292,15 +295,15 @@ namespace Andja.Model {
             }
             if (u.inventory != null) {
                 foreach (Item i in u.inventory.GetAllItemsAndRemoveThem()) {
-                    SpawnItemOnMap(i, u.PositionVector);
+                    CreateItemOnMap(i, u.PositionVector);
                 }
             }
             cbAnyUnitDestroyed?.Invoke(u, warfare);
         }
 
-        public void SpawnItemOnMap(Item i, Vector2 toSpawnPosition) {
+        public void CreateItemOnMap(Item i, Vector2 toSpawnPosition) {
             Vector2 randomFactor = new Vector2(UnityEngine.Random.Range(-0.5f, 0.5f), UnityEngine.Random.Range(-0.5f, 0.5f));
-            if (GetTileAt((toSpawnPosition + randomFactor)).Type != TileType.Ocean) {
+            if (GetTileClampedAt((toSpawnPosition + randomFactor)).Type != TileType.Ocean) {
                 toSpawnPosition += randomFactor;
             }
             Crate c = new Crate(toSpawnPosition, i);

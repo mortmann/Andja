@@ -1260,7 +1260,7 @@
                <count>1</count>
             </Item>
          </output>
-         <growable>floorfield</growable>
+         <growable>flowerfield</growable>
          <neededHarvestToProduce>2</neededHarvestToProduce>
       </farm>
       <farm ID="flowerplantation">
@@ -1317,7 +1317,7 @@
                <count>1</count>
             </Item>
          </output>
-         <growable>floorfield</growable>
+         <growable>flowerfield</growable>
          <neededHarvestToProduce>4</neededHarvestToProduce>
       </farm>
       <farm ID="furhuntershut">
@@ -1600,7 +1600,7 @@
          <produceTime>1.0</produceTime>
          <maxOutputStorage>1</maxOutputStorage>
          <efficiency>1.0</efficiency>
-         <isFloor>false</isFloor>
+         <isFloor>true</isFloor>
          <ageStages>0</ageStages>
       </growable>
       <growable ID="tree">
@@ -1755,7 +1755,7 @@
             </Item>
          </output>
          <fertility>sugarcane</fertility>
-         <isFloor>false</isFloor>
+         <isFloor>true</isFloor>
          <ageStages>2</ageStages>
       </growable>
       <growable ID="potatoefield">
@@ -1854,7 +1854,7 @@
             </Item>
          </output>
          <fertility>hemp</fertility>
-         <isFloor>false</isFloor>
+         <isFloor>true</isFloor>
          <ageStages>2</ageStages>
       </growable>
       <growable ID="wheatfield">
@@ -1905,7 +1905,7 @@
             </Item>
          </output>
          <fertility>wheat</fertility>
-         <isFloor>false</isFloor>
+         <isFloor>true</isFloor>
          <ageStages>5</ageStages>
       </growable>
       <growable ID="tobaccofield">
@@ -1951,7 +1951,7 @@
             </Item>
          </output>
          <fertility>tobacco</fertility>
-         <isFloor>false</isFloor>
+         <isFloor>true</isFloor>
          <ageStages>2</ageStages>
       </growable>
       <growable ID="hopvines">
@@ -2001,7 +2001,7 @@
             </Item>
          </output>
          <fertility>hop</fertility>
-         <isFloor>false</isFloor>
+         <isFloor>true</isFloor>
          <ageStages>2</ageStages>
       </growable>
       <growable ID="spicefield">
@@ -2047,7 +2047,7 @@
             </Item>
          </output>
          <fertility>spices</fertility>
-         <isFloor>false</isFloor>
+         <isFloor>true</isFloor>
          <ageStages>2</ageStages>
       </growable>
       <growable ID="coffeefield">
@@ -2144,7 +2144,7 @@
          <isFloor>false</isFloor>
          <ageStages>2</ageStages>
       </growable>
-      <growable ID="floorfield">
+      <growable ID="flowerfield">
          <Name>
             <entry lang="Deutsch">Blumenfeld</entry>
             <entry lang="English">Flower Field</entry>
@@ -2174,7 +2174,7 @@
          <structureTyp>Free</structureTyp>
          <extraUITyp>None</extraUITyp>
          <extraBuildUITyp>None</extraBuildUITyp>
-         <spriteBaseName>floorfield</spriteBaseName>
+         <spriteBaseName>flowerfield</spriteBaseName>
          <contactRange>0.0</contactRange>
          <forMarketplace>false</forMarketplace>
          <maxNumberOfWorker>0</maxNumberOfWorker>
@@ -2227,7 +2227,7 @@
             </Item>
          </output>
          <fertility>silk</fertility>
-         <isFloor>false</isFloor>
+         <isFloor>true</isFloor>
          <ageStages>2</ageStages>
       </growable>
       <growable ID="grapevine">
@@ -2273,7 +2273,7 @@
             </Item>
          </output>
          <fertility>wine</fertility>
-         <isFloor>false</isFloor>
+         <isFloor>true</isFloor>
          <ageStages>2</ageStages>
       </growable>
       <growable ID="cocoafield">
@@ -3179,7 +3179,7 @@
          <isWalkable>false</isWalkable>
          <hasHitbox>true</hasHitbox>
          <maxHealth>150.0</maxHealth>
-         <structureRange>9</structureRange>
+         <structureRange>15</structureRange>
          <populationLevel>0</populationLevel>
          <populationCount>320</populationCount>
          <structureLevel>0</structureLevel>
@@ -6985,7 +6985,7 @@
          <tileHeight>2</tileHeight>
          <canRotate>true</canRotate>
          <canBeBuildOver>false</canBeBuildOver>
-         <canBeUpgraded>false</canBeUpgraded>
+         <canBeUpgraded>true</canBeUpgraded>
          <canTakeDamage>true</canTakeDamage>
          <canStartBurning>true</canStartBurning>
          <upkeepCost>0</upkeepCost>
@@ -7029,7 +7029,7 @@
          <tileHeight>2</tileHeight>
          <canRotate>true</canRotate>
          <canBeBuildOver>false</canBeBuildOver>
-         <canBeUpgraded>false</canBeUpgraded>
+         <canBeUpgraded>true</canBeUpgraded>
          <canTakeDamage>true</canTakeDamage>
          <canStartBurning>false</canStartBurning>
          <upkeepCost>0</upkeepCost>
@@ -7047,7 +7047,7 @@
             </Item>
          </buildingItems>
          <spriteBaseName>citizenhouse</spriteBaseName>
-         <maxLivingSpaces>0</maxLivingSpaces>
+         <maxLivingSpaces>16</maxLivingSpaces>
          <increaseTime>2.0</increaseTime>
          <decreaseTime>4.0</decreaseTime>
       </home>
@@ -7076,7 +7076,7 @@
          <tileHeight>2</tileHeight>
          <canRotate>true</canRotate>
          <canBeBuildOver>false</canBeBuildOver>
-         <canBeUpgraded>false</canBeUpgraded>
+         <canBeUpgraded>true</canBeUpgraded>
          <canTakeDamage>true</canTakeDamage>
          <canStartBurning>false</canStartBurning>
          <upkeepCost>0</upkeepCost>
@@ -7097,7 +7097,7 @@
             </Item>
          </buildingItems>
          <spriteBaseName>patricianhouse</spriteBaseName>
-         <maxLivingSpaces>0</maxLivingSpaces>
+         <maxLivingSpaces>28</maxLivingSpaces>
          <increaseTime>3.0</increaseTime>
          <decreaseTime>6.0</decreaseTime>
       </home>
@@ -7126,7 +7126,7 @@
          <tileHeight>2</tileHeight>
          <canRotate>true</canRotate>
          <canBeBuildOver>false</canBeBuildOver>
-         <canBeUpgraded>false</canBeUpgraded>
+         <canBeUpgraded>true</canBeUpgraded>
          <canTakeDamage>true</canTakeDamage>
          <canStartBurning>false</canStartBurning>
          <upkeepCost>0</upkeepCost>
@@ -7150,7 +7150,7 @@
             </Item>
          </buildingItems>
          <spriteBaseName>noblemanhouse</spriteBaseName>
-         <maxLivingSpaces>0</maxLivingSpaces>
+         <maxLivingSpaces>42</maxLivingSpaces>
          <increaseTime>4.0</increaseTime>
          <decreaseTime>8.0</decreaseTime>
       </home>
@@ -7372,7 +7372,7 @@
             <Effect>fire</Effect>
          </effectsOnTargets>
          <maxNumberOfWorker>1</maxNumberOfWorker>
-         <workSpeed>0.01</workSpeed>
+         <workSpeed>0.06</workSpeed>
       </servicestructure>
       <servicestructure ID="hospital">
          <Name>

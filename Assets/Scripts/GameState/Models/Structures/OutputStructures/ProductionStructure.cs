@@ -325,7 +325,7 @@ namespace Andja.Model {
         }
 
         public void OnStructureBuild(Structure str) {
-            if (str is OutputStructure == false) {
+            if (str is OutputStructure == false || str is GrowableStructure) {
                 return;
             }
             bool inRange = false;

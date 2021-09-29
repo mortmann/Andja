@@ -19,7 +19,6 @@ public class NewsFeedController : MonoBehaviour {
         path = Path.Combine(Application.temporaryCachePath, file);
         foreach (Transform t in NewsFeedContent)
             Destroy(t.gameObject);
-        //File.Delete(path);
         LoadNews();
         StartCoroutine(GetNews());
     }

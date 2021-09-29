@@ -30,6 +30,7 @@ namespace Andja.UI.Menu {
             IsOpen = false;
             transform.GetChild(0).gameObject.SetActive(false);
             ChangedState?.Invoke(false);
+            FindObjectOfType<YesNoDialog>()?.gameObject.SetActive(false);
         }
 
         private void OnDestroy() {

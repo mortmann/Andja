@@ -105,8 +105,12 @@ namespace Andja.Model {
         }
 
         internal void AddPeople(int count) {
-            city.GetOwner().UpdateMaxPopulationCount(Level, populationCount);
+            //IF there is better way to stop people after upgrading -- change this 
+            bool forceUpdateNeeds = populationCount == 0;
             populationCount += count;
+            if (forceUpdateNeeds)
+                FullfillNeedsAndCalcHappiness(city);
+            city.GetOwner().UpdateMaxPopulationCount(Level, populationCount);
         }
 
         internal void RemovePeople(int count) {
@@ -180,5 +184,6 @@ namespace Andja.Model {
             cbNeedUnlockAdded?.Invoke(clone);
             ng.AddNeed(clone);
         }
+
     }
 }

@@ -51,7 +51,9 @@ namespace Andja.UI.Model {
                     itemToGO.Add(currentStructure.Output[i], go);
                 }
             }
-
+            foreach (Transform transform in inputContent) {
+                Destroy(transform.gameObject);
+            }
             if (ustr is ProductionStructure pstr) {
                 if (pstr.Intake == null) {
                     return;
@@ -66,9 +68,9 @@ namespace Andja.UI.Model {
                 }
                 else if (pstr.InputTyp == InputTyp.OR) {
                     for (int i = 0; i < pstr.ProductionData.intake.Length; i++) {
-                        ItemUI go = GameObject.Instantiate(itemPrefab).GetComponent<ItemUI>();
+                        ItemUI go = Instantiate(itemPrefab).GetComponent<ItemUI>();
                         if (i > 0) {
-                            GameObject or = GameObject.Instantiate(itemORSeperatorPrefab);
+                            GameObject or = Instantiate(itemORSeperatorPrefab);
                             or.transform.SetParent(inputContent, false);
                         }
                         if (i == pstr.OrItemIndex) {
@@ -133,8 +135,6 @@ namespace Andja.UI.Model {
             }
             progress.value = currentStructure.Progress;
             efficiency.text = currentStructure.EfficiencyPercent + "%";
-            InfoUI.Instance.UpdateHealth(currentStructure.CurrentHealth, currentStructure.MaxHealth);
-            InfoUI.Instance.UpdateUpkeep(currentStructure.UpkeepCost);
         }
 
         public void OnDisable() {

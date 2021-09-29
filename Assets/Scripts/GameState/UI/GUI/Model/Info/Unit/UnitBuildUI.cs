@@ -24,11 +24,11 @@ namespace Andja.UI.Model {
 
         public void OnPointerEnter(PointerEventData eventData) {
             if(unit != null)
-                FindObjectOfType<HoverOverScript>().Show(unit, PlayerController.CurrentPlayer.HasUnitUnlocked(unit.ID));
+                FindObjectOfType<ToolTip>().Show(unit, PlayerController.CurrentPlayer.HasUnitUnlocked(unit.ID));
         }
 
         public void OnPointerExit(PointerEventData eventData) {
-            GameObject.FindObjectOfType<HoverOverScript>().Unshow();
+            GameObject.FindObjectOfType<ToolTip>().Unshow();
         }
 
         public void AddClickListener(UnityAction ueb, bool clearAll = false) {

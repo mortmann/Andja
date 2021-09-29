@@ -23,7 +23,6 @@ namespace Andja.Model {
 
         #region Serialize
         [JsonPropertyAttribute] public string ID;
-        [JsonPropertyAttribute] public Structure Home;
         [JsonPropertyAttribute] private BasePathfinding path;
         [JsonPropertyAttribute] private float workTimer;
         [JsonPropertyAttribute] private Item[] toGetItems;
@@ -38,7 +37,7 @@ namespace Andja.Model {
         #endregion Serialize
 
         #region runtimeVariables
-
+        public Structure Home;
         public float WorkTimer => workTimer;
         public WorkerPrototypeData Data {
             get {
@@ -116,10 +115,10 @@ namespace Andja.Model {
 
         public TurningType TurnType => HasToFollowRoads? TurningType.OnPoint : TurningType.TurnRadius;
         public PathDestination PathDestination => PathDestination.Tile;
-        public PathingMode PathingMode => PathingMode.IslandMultiplePoints;
+        public PathingMode PathingMode => HasToFollowRoads? PathingMode.Route : PathingMode.IslandMultiplePoints;
         public bool CanEndInUnwakable => HasToEnterWorkStructure || goingToWork == false;
 
-        public PathHeuristics Heuristic => HasToFollowRoads ? PathHeuristics.Manhattan : PathHeuristics.Euclidean;
+        public PathHeuristics Heuristic => HasToFollowRoads? PathHeuristics.Manhattan : PathHeuristics.Euclidean;
 
         public PathDiagonal DiagonalType => HasToFollowRoads? PathDiagonal.None : PathDiagonal.Always;
 
@@ -181,6 +180,9 @@ namespace Andja.Model {
                 GoHome();
             }
             if (hasRegistered == false) {
+                if(WorkStructure == null) {
+                    return;
+                }
                 WorkStructure.RegisterOnDestroyCallback(OnWorkStructureDestroy);
                 walkTime = Vector3.Distance(Home.Center, WorkStructure.Center);
                 hasRegistered = true;
@@ -344,7 +346,7 @@ namespace Andja.Model {
             if (WorkOutputStructure is MarketStructure) {
                 foreach (Item item in WorkOutputStructure.GetOutputWithItemCountAsMax(toGetItems)) {
                     if (item == null) {
-                        Debug.LogError("item is null for to get item! Worker is from " + WorkOutputStructure);
+                        Debug.LogError("item is null for to get item! Worker is from " + Home + " trying to get from " + WorkOutputStructure);
                     }
                     inventory.AddItem(item);
                 }
@@ -353,13 +355,17 @@ namespace Andja.Model {
             isDone = true;
         }
 
-        internal void Load() {
+        internal void Load(Structure parent) {
+            Home = parent;
+            if (goingToWork == false) {
+                WorkStructure = Home;
+            }
+            if (WorkStructure == null || WorkStructure.IsDestroyed) {
+                Destroy();
+            }
             path.Load(this);
             if (path is RoutePathfinding rp) {
                 if (rp.StartStructure == null) {
-                    if (WorkStructure.IsDestroyed) {
-                        Destroy();
-                    }
                     if (goingToWork) {
                         rp.GoalStructure = WorkStructure;
                     }

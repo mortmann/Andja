@@ -55,6 +55,9 @@ namespace Andja.Model {
         /// <param name="item"></param>
         /// <returns></returns>
         public virtual int AddItem(Item toAdd) {
+            if(toAdd == null) {
+                return 0;
+            }
             if (String.IsNullOrEmpty(toAdd.ID)) {
                 Debug.LogError("ITEM ID is not set!");
                 return 0;
@@ -154,11 +157,11 @@ namespace Andja.Model {
         }
 
         /// <summary>
-        /// IF NumberOfSpaces == -1 then this will return null because there are no multiple items of this
+        /// IF NumberOfSpaces == -1 then this will return the only item there is because there are no multiple items of this
         /// </summary>
         /// <param name="item"></param>
         /// <returns></returns>
-        protected Item[] GetItemsInInventory(Item item) {
+        protected virtual Item[] GetItemsInInventory(Item item) {
             if (NumberOfSpaces == -1)
                 return null;
             List<Item> inInv = new List<Item>();
@@ -291,6 +294,14 @@ namespace Andja.Model {
                 }
             }
             return remaining;
+        }
+        /// <summary>
+        /// Only works with non city inventories.
+        /// </summary>
+        /// <param name="space"></param>
+        internal virtual void RemoveItemInSpace(int space) {
+            Items.Remove("" + space);
+            cbInventoryChanged?.Invoke(this);
         }
 
         /// <summary>

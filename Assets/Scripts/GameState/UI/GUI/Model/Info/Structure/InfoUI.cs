@@ -24,6 +24,7 @@ namespace Andja.UI.Model {
 
         public MilitaryStructureUI militaryGO;
         public OutputStructureUI outputStructureUI;
+        public ServiceStructureUI serviceStructureUI;
         public StructureUI structureUI;
         public UnitUI unitUI;
         public UnitGroupUI unitGroupUI;
@@ -38,6 +39,7 @@ namespace Andja.UI.Model {
 
         public void Show(Structure structure) {
             ActivateUI(true);
+            Sleep.onClick.RemoveAllListeners();
             Follow.gameObject.SetActive(false);
             inputName.Set(structure.Name);
             if (structure.IsPlayer()) {
@@ -53,11 +55,16 @@ namespace Andja.UI.Model {
                     Sleep.onClick.AddListener(structure.ToggleActive);
                     outputStructureUI.Show(structure);
                 }
-                else {
+                else if (structure is ServiceStructure) {
+                    serviceStructureUI.gameObject.SetActive(true);
+                    Sleep.onClick.AddListener(structure.ToggleActive);
+                    serviceStructureUI.Show(structure);
+                }
+                //else {
                     Sleep.gameObject.SetActive(false);
                     structureUI.gameObject.SetActive(true);
                     structureUI.Show(structure);
-                }
+                //}
                 Effects.gameObject.SetActive(true);
                 Effects.Show(structure);
             }
@@ -91,6 +98,7 @@ namespace Andja.UI.Model {
             GetPosition = () => unit.PositionVector2;
             Sleep.gameObject.SetActive(false);
             Follow.gameObject.SetActive(true);
+            Follow.onClick.RemoveAllListeners();
             Follow.onClick.AddListener(()=> {
                 CameraController.Instance.ToggleFollowUnit(unit);
             });

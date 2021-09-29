@@ -42,7 +42,6 @@ namespace Andja.Controller {
 
         public GameObject centerParent;
         public GameObject endScoreScreen;
-
         public GameObject debugInformation;
         private DebugInformation debug;
         public static UIController Instance;
@@ -84,7 +83,7 @@ namespace Andja.Controller {
                     OpenOtherCity(str.City);
                 }
                 else {
-                    OpenCityInventory(str.City);
+                    OpenCityInventory(str.City, str.City.TradeWithAnyShip);
                 }
                 return;
             }
@@ -279,7 +278,8 @@ namespace Andja.Controller {
         public bool AnyMenuOpen() {
             return rightCanvas.activeSelf || uiInfoCanvas.activeSelf ||
                 chooseBuildCanvas.activeSelf || tradeRouteCanvas.activeSelf ||
-                consoleCanvas.activeSelf || centerParent.activeSelf;
+                consoleCanvas.activeSelf || centerParent.activeSelf ||
+                consoleCanvas.activeSelf;
         }
 
         public void SetDragAndDropBuild(GameObject go, Vector2 offset) {

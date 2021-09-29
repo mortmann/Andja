@@ -674,8 +674,8 @@ namespace Andja.Controller {
                     }
                     ppm /= (float)outItem.count;
                     if (ppm == 0)
-                        Debug.LogError("Farm " + fpd.Name + " does not produce anything per minute. FIX IT!");
-                    produceDebug += fpd.Name + ": " + ppm + "\n";
+                        Debug.LogError("Farm " + fpd.ID + " does not produce anything per minute. FIX IT!");
+                    produceDebug += fpd.ID + ": " + ppm + "\n";
                     fpd.ProducePerMinute = ppm;
                     Produce p = new Produce {
                         item = outItem,
@@ -703,7 +703,7 @@ namespace Andja.Controller {
                         producePerMinute = ppm,
                         ProducerStructure = mpd
                     };
-                    produceDebug += mpd.Name + ": " + ppm + "\n";
+                    produceDebug += mpd.ID + ": " + ppm + "\n";
                     if (itemIDToProduce.ContainsKey(outItem.ID)) {
                         itemIDToProduce[outItem.ID].Add(p);
                     }
@@ -725,7 +725,7 @@ namespace Andja.Controller {
                         ProducerStructure = ppd,
                         needed = ppd.intake
                     };
-                    produceDebug += ppd.Name + ": " + ppm + "\n";
+                    produceDebug += ppd.ID + ": " + ppm + "\n";
                     productionsProduces.Add(p);
                     if (itemIDToProduce.ContainsKey(outItem.ID)) {
                         itemIDToProduce[outItem.ID].Add(p);
@@ -769,7 +769,7 @@ namespace Andja.Controller {
                 foreach (string item in currentProduce.itemProduceRatios.Keys) {
                     proportionDebug += "\n ->" + item;
                     foreach (ProduceRatio pr in currentProduce.itemProduceRatios[item]) {
-                        proportionDebug += "\n  # " + pr.Producer.ProducerStructure.Name + "= " + pr.Ratio;
+                        proportionDebug += "\n  # " + pr.Producer.ProducerStructure.ID + "= " + pr.Ratio;
                     }
                 }
             }
@@ -917,11 +917,9 @@ namespace Andja.Controller {
                         string armorID = child.GetAttribute("ArmorTyp");
                         if (string.IsNullOrEmpty(armorID))
                             continue;
-                        float multiplier = 1;
-                        if (float.TryParse(child.InnerText, out multiplier) == false) {
+                        if (float.TryParse(child.InnerText, out float multiplier) == false) {
                             Debug.LogError("ID is not an float for ArmorType ");
                         }
-
                         at.damageMultiplier[armorTypeDatas[armorID]] = multiplier;
                     }
                     damageTypeDatas[id] = at;
@@ -1091,9 +1089,37 @@ namespace Andja.Controller {
                 //THESE are fix and are not changed for any
                 //!not anymore
                 SetData<ServiceStructurePrototypeData>(node, ref sspd);
+                if(sspd.effectsOnTargets != null)
                 foreach (Effect effect in sspd.effectsOnTargets) {
                     effect.Serialize = false;
                 }
+                //Important is that we set the usageItem count to more than the usage amount
+                //(for the case it is more than one ton
+                if(node.SelectSingleNode("Usages") != null) {
+                    var Nodes = node.SelectSingleNode("Usages").SelectNodes("entry");
+                    List<float> usages = new List<float>();
+                    List<Item> items = new List<Item>();
+                    for (int i = 0; i < Nodes.Count; i++) {
+                        XmlNode child = Nodes.Item(i);
+                        var attribute = child.Attributes["Item"];
+                        if (attribute == null || attribute.Value == null)
+                            continue;
+                        if (allItems.ContainsKey(attribute.Value) == false)
+                            continue;
+                        if (float.TryParse(child.InnerText, out float usage) == false)
+                            continue;
+                        if (usage <= 0)
+                            continue;
+                        usages.Add(usage);
+                        Item item = new Item(attribute.Value) {
+                            count = Mathf.Clamp(Mathf.CeilToInt(usage), 1, 100)
+                        };
+                        items.Add(item);
+                    }
+                    sspd.usagePerTick = usages.ToArray();
+                    sspd.usageItems = items.ToArray();
+                }
+
                 structurePrototypeDatas[ID] = sspd;
                 structurePrototypes[ID] = new ServiceStructure(ID);
             }

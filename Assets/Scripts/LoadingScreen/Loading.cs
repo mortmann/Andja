@@ -49,7 +49,7 @@ namespace Andja {
                 else {
                     if (string.IsNullOrEmpty(GameData.Instance.LoadSaveGame) == false
                         && SaveController.Instance.DoesGameSaveExist(GameData.Instance.LoadSaveGame) == false) {
-                        MainMenuInfo.AddInfo(MainMenuInfo.InfoTypes.SaveFileError, 
+                        UI.Menu.MainMenuInfo.AddInfo(UI.Menu.MainMenuInfo.InfoTypes.SaveFileError, 
                             GameData.Instance.LoadSaveGame + " Save does not exist!");
                         Utility.SceneUtil.ChangeToMainMenuScreen(true);
                         Destroy(FindObjectOfType<MasterController>().gameObject);

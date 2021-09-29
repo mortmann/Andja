@@ -3,6 +3,7 @@ using Andja.Model;
 using Andja.Utility;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 namespace Andja.UI.Model {
@@ -40,7 +41,7 @@ namespace Andja.UI.Model {
             if (unit == showUnit) {
                 return;
             }
-            unit = showUnit as Unit;
+            unit = showUnit;
             if (unit == null)
                 return;
             UIController.Instance.HighlightUnits(unit);
@@ -76,17 +77,7 @@ namespace Andja.UI.Model {
                 StaticLanguageVariables.MaximumDamage, () => { return unit.MaximumDamage + ""; });
             UnitInfos[2].Set(UISpriteController.GetIcon(CommonIcon.Speed),
                 StaticLanguageVariables.Speed, () => { return unit.Speed + ""; });
-            if (unit.rangeUStructure != null) {
-                if (unit.rangeUStructure is WarehouseStructure) {
-                    if (unit.rangeUStructure.PlayerNumber == PlayerController.currentPlayerNumber) {
-                        unit.rangeUStructure.City.tradeUnit = unit;
-                        City c = unit.rangeUStructure.City;
-                        UIController.Instance.OpenCityInventory(c, item =>
-                            c.TradeWithShip(c.Inventory.GetItemInInventoryClone(item), c.PlayerTradeAmount)
-                        );
-                    }
-                }
-            }
+            
             OnPatrolRouteChange(unit.patrolCommand);
             unit.patrolCommand.RegisterOnRouteChange(OnPatrolRouteChange);
 
@@ -99,6 +90,20 @@ namespace Andja.UI.Model {
                 cannonsItem.gameObject.transform.parent.gameObject.SetActive(true);
                 cannonsItem.SetItem(ship.CannonItem, ship.MaximumAmountOfCannons);
                 settleButton.gameObject.SetActive(true);
+                if (unit.rangeUStructure != null) {
+                    if (unit.rangeUStructure is WarehouseStructure) {
+                        if (unit.rangeUStructure.PlayerNumber == PlayerController.currentPlayerNumber) {
+                            unit.rangeUStructure.City.tradeUnit = unit;
+                            City city = unit.rangeUStructure.City;
+                            UIController.Instance.OpenCityInventory(
+                                city, 
+                                item => city.TradeWithShip(city.Inventory.GetItemInInventoryClone(item), 
+                                                        () => city.PlayerTradeAmount, 
+                                                        ship)
+                            );
+                        }
+                    }
+                }
             }
             else {
                 cannonsItem.gameObject.transform.parent.gameObject.SetActive(false);
@@ -212,13 +217,23 @@ namespace Andja.UI.Model {
             go.name = "item " + i;
             if (item.ID != null || item.ID.Length == 0) {
                 iui.SetItem(item, inv.MaxStackSize);
-                iui.AddClickListener((s) => { OnItemClick(i); });
+                iui.AddClickListener((s) => { OnItemClick(i, s); });
             }
             itemToGO.Add(i, iui);
         }
 
-        private void OnItemClick(int clicked) {
-            unit.ToTradeItemToNearbyWarehouse(inv.GetItemInSpace(clicked));
+        private void OnItemClick(int clicked, PointerEventData data) {
+            switch (data.button) {
+                case PointerEventData.InputButton.Left:
+                    unit.ToTradeItemToNearbyWarehouse(inv.GetItemInSpace(clicked));
+                    break;
+                case PointerEventData.InputButton.Right:
+                    World.Current.CreateItemOnMap(inv.GetItemInSpace(clicked), unit.CurrentPosition);
+                    inv.RemoveItemInSpace(clicked);
+                    break;
+                case PointerEventData.InputButton.Middle:
+                    break;
+            }
         }
 
         public void OnInvChange(Inventory changedInv) {

@@ -147,7 +147,7 @@ namespace Andja {
         }
 
         private void EditorLoad() {
-            GameData.setloadsavegame = selected;
+            GameData.loadSaveGameName = selected;
             SaveController.Instance.LoadIsland(nameToFile[selected].saveName);
         }
     }

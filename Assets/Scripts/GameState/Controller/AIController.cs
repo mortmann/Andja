@@ -56,50 +56,19 @@ namespace Andja.Controller {
             }
             Instance = this;
         }
-
+        AIPlayer test;
         private void Start() {
-            //foreach (Island island in World.Current.Islands) {
-            //    foreach (City c in island.Cities) {
-            //        foreach (Structure str in c.Structures)
-            //            OnStructureCreated(str, true);
-            //    }
-            //}
             BuildController.Instance.RegisterStructureCreated(OnStructureCreated);
             BuildController.Instance.RegisterStructureDestroyed(OnStructureDestroyed);
-
-            AIPlayer test = new AIPlayer(PlayerController.GetPlayer(1));
+            test = new AIPlayer(PlayerController.GetPlayer(1));
             test.CalculatePlayersCombatValue();
-            //Calculate();
-
-            //TextToTexture = new TextToTexture(font, 32, 32, false);
-            //foreach (TileValue tv in values) {
-            //    string n = tv.ToString();
-            //    if (stringToBase.ContainsKey(n) == false) {
-            //        UnityEngine.Tilemaps.Tile tileBase = ScriptableObject.CreateInstance<UnityEngine.Tilemaps.Tile>();
-            //        tileBase.sprite = Sprite.Create(TextToTexture.CreateTextToTexture(n, 1, 1, 256, 1, 0.2f), new Rect(0, 0, 256, 256), Vector2.zero);
-            //        tileBase.colliderType = UnityEngine.Tilemaps.Tile.ColliderType.None;
-            //        stringToBase[n] = tileBase;
-            //    }
-            //}
-            //islandToMap = new Dictionary<Island, Tilemap>();
-            //foreach(Island i in world.IslandList) {
-            //    GameObject island_tilemap = new GameObject();
-            //    island_tilemap.transform.position = i.Placement;
-            //    Tilemap tilemap = island_tilemap.AddComponent<Tilemap>();
-            //    Grid g = island_tilemap.AddComponent<Grid>();
-            //    g.cellSize = new Vector3(1, 1, 0);
-            //    g.cellSwizzle = GridLayout.CellSwizzle.XYZ;
-            //    g.cellLayout = GridLayout.CellLayout.Rectangle;
-            //    TilemapRenderer trr = island_tilemap.AddComponent<TilemapRenderer>();
-            //    trr.sortingLayerName = "Tile";
-            //    tilemap.size = new Vector3Int(i.Width, i.Height, 0);
-            //    islandToMap.Add(i, tilemap);
-            //    foreach (Tile t in islandsTileToValue[i].Keys) {
-            //        TileValue tv = islandsTileToValue[i][t];
-            //        tilemap.SetTile(new Vector3Int((int)(t.X - i.Placement.x), (int)(t.Y - i.Placement.y), 0), stringToBase[tv.ToString()]);
-            //    }
-
-            //}
+            test.CalculateIslandScores();
+        }
+        private void OnDrawGizmos() {
+            if(test != null)
+                foreach (var item in test.islandScores) {
+                    UnityEditor.Handles.Label(item.Island.Center, "Score: " + item.EndScore);
+                }
         }
 
         private void OnDestroy() {

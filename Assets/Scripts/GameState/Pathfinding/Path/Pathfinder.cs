@@ -284,7 +284,7 @@ namespace Andja.Pathfinding {
                 List<Node> nodes = grid.Neighbours(start, agent.DiagonalType != PathDiagonal.None);
                 nodes.RemoveAll(x=>x==null);
                 foreach (Node x in nodes) {
-                    if (x.IsPassable(agent.CanEnterCities.ToList()))
+                    if (x.IsPassable(agent.CanEnterCities?.ToList()))
                         tiles.Add(x);
                 }
                 if(tiles.Count == 0) {

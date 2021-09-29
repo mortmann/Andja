@@ -8,6 +8,7 @@ using System.Linq;
 using System.Xml;
 using System.Xml.Serialization;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace Andja.Controller {
 
@@ -37,13 +38,36 @@ namespace Andja.Controller {
 
         public static readonly string localizationFilePrefix = "";
         public static readonly string localizationFileType = "-ui.loc";
-        public static readonly string localizationXMLDirectory = "Localizations";
-
+        public static readonly string LocalizationXMLDirectory = "Localizations";
         private void Awake() {
             if (Instance != null) {
                 Debug.LogError("There should never be two UILanguageController.");
             }
             Instance = this;
+            SceneManager.sceneLoaded += OnLevelLoaded;
+        }
+
+        private void OnLevelLoaded(Scene s, LoadSceneMode lsm) {
+            Dictionary<string, TranslationData> localizationDataDictionary = new Dictionary<string, TranslationData>();
+            TranslationBase[] texts = Resources.FindObjectsOfTypeAll<TranslationBase>();
+            foreach (TranslationBase t in texts) {
+                foreach (TranslationData td in t.GetTranslationDatas()) {
+                    if (td.id == null || td.id.Trim().Length == 0) {
+                        Debug.LogError("Text Identifier is Empty for " + t.GetRealName());
+                        continue;
+                    }
+                    if (localizationDataDictionary.ContainsKey(td.id) == false) {
+                        localizationDataDictionary.Add(td.id, td);
+                    }
+                    localizationDataDictionary[td.id].AddUIElement(t.GetRealName());
+                }
+            }
+            if (requiredLocalizationData == null)
+                requiredLocalizationData = new List<TranslationData>(localizationDataDictionary.Values);
+            else
+                requiredLocalizationData.AddRange(localizationDataDictionary.Values);
+        }
+        private void OnEnable() {
             idToTranslation = new Dictionary<string, TranslationData>();
             //#if Unity_Editor
             TranslationBase[] texts = Resources.FindObjectsOfTypeAll<TranslationBase>();
@@ -102,17 +126,20 @@ namespace Andja.Controller {
                     localizationDataDictionary.Add(name, new TranslationData(name, false, 0));
                 }
             }
-            requiredLocalizationData = new List<TranslationData>(localizationDataDictionary.Values);
+            if (requiredLocalizationData == null)
+                requiredLocalizationData = new List<TranslationData>(localizationDataDictionary.Values);
+            else
+                requiredLocalizationData.AddRange(localizationDataDictionary.Values);
             requiredLocalizationData.OrderBy(x => x.id);
             //#endif //Unity_Editor
             LocalizationsToFile = new Dictionary<string, string>();
-            string fullpath = Path.Combine(ConstantPathHolder.StreamingAssets, GameData.DataLocation, UILanguageController.localizationXMLDirectory);
-            string[] allLocalizationsFiles = Directory.GetFiles(fullpath, UILanguageController.localizationFilePrefix
-                                                                        + "*" + UILanguageController.localizationFileType);
+            string fullpath = Path.Combine(ConstantPathHolder.StreamingAssets, GameData.DataLocation, LocalizationXMLDirectory);
+            string[] allLocalizationsFiles = Directory.GetFiles(fullpath, localizationFilePrefix
+                                                                        + "*" + localizationFileType);
             //Check the files if they are readable
             foreach (string file in allLocalizationsFiles) {
                 XmlDocument xmlDoc = new XmlDocument();
-                xmlDoc.LoadXml(System.IO.File.ReadAllText(file));
+                xmlDoc.LoadXml(File.ReadAllText(file));
                 LocalizationsToFile.Add(xmlDoc.DocumentElement.Attributes[0].InnerXml, file);
             }
             if (LocalizationsToFile.ContainsKey(selectedLanguage) == false) {
@@ -123,11 +150,15 @@ namespace Andja.Controller {
 
         internal List<string> LoadHints() {
             XmlSerializer xml = new XmlSerializer(typeof(Hints));
-            string file = Path.Combine(ConstantPathHolder.StreamingAssets, GameData.DataLocation, UILanguageController.localizationXMLDirectory, "hints-"  + selectedLanguage);
+            string file = Path.Combine(ConstantPathHolder.StreamingAssets, GameData.DataLocation, 
+                LocalizationXMLDirectory, "hints-"  + selectedLanguage + ".loc");
             if(File.Exists(file) == false) {
                 return new List<string> {"No Hint list was found for selected Language.", "Do not be afraid. This does not interrupts the rest of the gameplay.", "Except of course their is more missing than that.", "Also never pet a burning dog."};
             }
             Hints hints = xml.Deserialize(new StringReader(File.ReadAllText(file))) as Hints;
+            if (hints == null || hints.hints == null) {
+                return new List<string>();
+            }
             return new List<string>(hints.hints);
         }
 
@@ -198,8 +229,9 @@ namespace Andja.Controller {
             [XmlAttribute] public string language;
             [XmlArray("localizationData")] [XmlArrayItem("translationData")] public TranslationData[] localizationData;
         }
+        [XmlRoot]
         public class Hints {
-            [XmlArray("hints")] [XmlArrayItem("hint")] public string[] hints;
+            [XmlArray(ElementName = "hint" )] public string[] hints;
         }
         internal string[] GetLabels(Type EnumType) {
             if (EnumType.IsEnum == false)

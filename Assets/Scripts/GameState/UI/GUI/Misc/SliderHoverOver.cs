@@ -22,11 +22,11 @@ namespace Andja.UI {
             position.x = rect.rect.center.x + rect.position.x;
             position.y = rect.rect.center.y + rect.position.y;
             string s = suffix + " " + Math.Round(slider.value, decimals) + "/" + slider.maxValue + " " + prefix;
-            FindObjectOfType<HoverOverScript>().Show(s, position, false, true, null);
+            FindObjectOfType<ToolTip>().Show(s, position, false, true, null);
         }
 
         public void OnPointerExit(PointerEventData eventData) {
-            FindObjectOfType<HoverOverScript>().Unshow();
+            FindObjectOfType<ToolTip>().Unshow();
         }
     }
 }

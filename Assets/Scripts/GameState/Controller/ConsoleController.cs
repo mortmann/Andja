@@ -57,11 +57,12 @@ namespace Andja.Controller {
             if (Application.isEditor == false) {
                 string filepath = Path.Combine(logPath, tempLogName);
                 logWriter.Flush();
-                logWriter.Dispose();
-                upload = File.ReadAllText(filepath);
-                logWriter = new StreamWriter(filepath);
-            } else {
-                upload = string.Join(Environment.NewLine, logs); 
+                FileStream fs = File.Open(filepath,
+                            FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+                upload = new StreamReader(fs, System.Text.Encoding.Default).ReadToEnd();
+            }
+            else {
+                upload = string.Join(Environment.NewLine, logs);
             }
             return upload;
         }
@@ -91,10 +92,10 @@ namespace Andja.Controller {
                     color = "ff00ffff";
                     break;
             }
-            string log = 
+            string log =
                 "<color=#" + color + ">"
-                    + typestring + " <i>" + condition + "</i> " + 
-                    (Application.isEditor && type == LogType.Error? "" : Environment.NewLine +"<size=9>" + stackTrace + "</size>")
+                    + typestring + " <i>" + condition + "</i> " +
+                    (Application.isEditor && type == LogType.Error ? "" : Environment.NewLine + "<size=9>" + stackTrace + "</size>")
                 + "</color> ";
             if (writeToConsole == null) {
                 logs.Add(log);
@@ -107,9 +108,9 @@ namespace Andja.Controller {
                     stackTrace += Environment.NewLine;
                 }
                 logWriter.Write(Environment.NewLine
-                                + type + "{ " + Environment.NewLine
+                                + type + "{" + Environment.NewLine
                                 + condition + Environment.NewLine
-                                + stackTrace
+                                + stackTrace.TrimEnd(Environment.NewLine.ToCharArray())
                                 + "}");
             }
         }
@@ -118,10 +119,10 @@ namespace Andja.Controller {
             this.writeToConsole += writeToConsole;
         }
         [HideInInspector]
-        public IReadOnlyList<string> FirstLevelCommands = new List<string>{   
-            "speed", "player", "maxfps", "city", 
-            "graphy", "profiler", "unit", "ship", 
-            "island", "spawn", "event", 
+        public IReadOnlyList<string> FirstLevelCommands = new List<string>{
+            "speed", "player", "maxfps", "city",
+            "graphy", "profiler", "unit", "ship",
+            "island", "spawn", "event", "structure",
             "debugdata", "camera", "toggle"
         };
         /// <summary>
@@ -170,6 +171,10 @@ namespace Andja.Controller {
 
                 case "unit":
                     happend = HandleUnitCommands(parameters.Skip(1).ToArray());
+                    break;
+
+                case "structure":
+                    happend = HandleStructureCommands(parameters.Skip(1).ToArray());
                     break;
 
                 case "ship":
@@ -284,8 +289,8 @@ namespace Andja.Controller {
         public IReadOnlyList<string> GraphyCommands = new List<string>
             { "full", "medium", "light", "fps", "switchmode" };
         private bool HandleGraphyCommands(string[] parameters) {
-            if(parameters.Length == 0) {
-                if(GraphyInstance != null) {
+            if (parameters.Length == 0) {
+                if (GraphyInstance != null) {
                     Destroy(GraphyInstance);
                 }
                 return true;
@@ -370,14 +375,14 @@ namespace Andja.Controller {
                     if (parameters.Length == 3 && string.IsNullOrEmpty(parameters[2]) == false) {
                         int.TryParse(parameters[2], out player);
                     }
-                    if(parameters.Length > 3 && parameters[3].StartsWith("s"))
+                    if (parameters.Length > 3 && parameters[3].StartsWith("s"))
                         return EventController.Instance.TriggerEventForEventable(new GameEvent(id), MouseController.Instance.CurrentlySelectedIGEventable);
                     if (player < 0)
                         return EventController.Instance.TriggerEvent(id);
                     else
                         return EventController.Instance.TriggerEventForPlayer(new GameEvent(id), PlayerController.GetPlayer(player));
                 case "stop":
-                    if (parameters.Length == 2 && string.IsNullOrEmpty(parameters[1]) == false && 
+                    if (parameters.Length == 2 && string.IsNullOrEmpty(parameters[1]) == false &&
                             uint.TryParse(parameters[1], out uint gid)) {
                         return EventController.Instance.StopGameEvent(gid);
                     }
@@ -446,7 +451,7 @@ namespace Andja.Controller {
                             i.count = 1;
                         }
                     }
-                    World.Current.SpawnItemOnMap(i, MouseController.Instance.GetMousePosition());
+                    World.Current.CreateItemOnMap(i, MouseController.Instance.GetMousePosition());
                     return true;
             }
             return false;
@@ -598,6 +603,31 @@ namespace Andja.Controller {
             }
             return PlayerController.Instance.ChangeCurrentPlayer(player);
         }
+        [HideInInspector]
+        public IReadOnlyList<string> StructureCommands = new List<string>
+                    { "destroy", "effect", "event" };
+
+        private bool HandleStructureCommands(string[] parameters) {
+            if (parameters.Length < 1) {
+                return false;
+            }
+            switch (parameters[0]) {
+                case "destroy":
+                    MouseController.Instance.SelectedStructure.Destroy();
+                    return true;
+                case "effect":
+                    return HandleEffects(parameters.Skip(1).ToArray(), MouseController.Instance.SelectedStructure);
+                case "event":
+                    if (parameters.Length < 2)
+                        return false;
+                    return EventController.Instance.TriggerEventForEventable(
+                        new GameEvent(parameters[1]),
+                        MouseController.Instance.SelectedStructure);
+            }
+
+
+            return false;
+        }
 
         [HideInInspector]
         public IReadOnlyList<string> UnitCommands = new List<string>
@@ -712,8 +742,10 @@ namespace Andja.Controller {
         }
 
         private void OnDestroy() {
+            Instance = null;
             Destroy(GraphyInstance);
             if (Application.isEditor == false) {
+                logWriter.WriteLine("Closed safely.");
                 logWriter.Flush();
                 logWriter.Close();
                 File.Move(Path.Combine(logPath, tempLogName), 

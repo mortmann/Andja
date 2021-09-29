@@ -2,6 +2,7 @@
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace Andja.Model {
 
@@ -14,17 +15,27 @@ namespace Andja.Model {
         public ServiceFunction function;
         public Structure[] specificRange = null;
         public Effect[] effectsOnTargets;
+        //IF the order of this changes it will not have massive effect
+        //but it will change how much of each is in it atm look at remainingItems
+        public Item[] usageItems; 
+        public float[] usagePerTick;
         public int maxNumberOfWorker = 1;
         public float workSpeed = 0.01f;
         public bool hasToEnterWorkStructure = true;
+        public float usageTickTime = 60f;
         public string workerID;
     }
 
     [JsonObject(MemberSerialization.OptIn)]
     public class ServiceStructure : Structure {
         [JsonPropertyAttribute] private List<Worker> workers;
+        [JsonPropertyAttribute] public float usageTickTimer { get; protected set; }
+        [JsonPropertyAttribute] public bool CanWork { get; protected set; }
+        [JsonPropertyAttribute] public float[] remainingUsageItems { get; protected set; }
+        public float[] UsagePerTick => CalculateRealValue(nameof(ServiceData.usagePerTick), ServiceData.usagePerTick);
+        public Item[] UsageItems => ServiceData.usageItems;
+        public float UsageTickTime => ServiceData.usageTickTime;
         private List<Structure> jobsToDo;
-
         private ServiceFunction Function => ServiceData.function;
         private ServiceTarget Targets => ServiceData.targets;
         private Effect[] EffectsOnTargets => ServiceData.effectsOnTargets;
@@ -32,12 +43,13 @@ namespace Andja.Model {
         private int MaxNumberOfWorker => ServiceData.maxNumberOfWorker;
         public float WorkSpeed => ServiceData.workSpeed;
         public bool HasToEnterWorkStructure => ServiceData.hasToEnterWorkStructure;
+        public override bool IsActiveAndWorking => base.IsActiveAndWorking && CanWork;
         public Func<Structure, float, bool> WorkOnTarget { get; protected set; }
         private Action<Structure> todoOnNewTarget;
         private Action<Structure> onTargetChanged;
         private Action<Structure, IWarfare> onTargetDestroy;
         private Action<Structure> onSelfDestroy;
-
+         
         private Action<IGEventable, Effect, bool> onTargetEffectChange;
 
         protected ServiceStructurePrototypeData _servicveData;
@@ -50,6 +62,7 @@ namespace Andja.Model {
                 return _servicveData;
             }
         }
+
 
         public ServiceStructure() {
         }
@@ -110,6 +123,9 @@ namespace Andja.Model {
                     todoOnNewTarget += RegisterOnStructureEffectChanged;
                     onTargetEffectChange += PreventEffect;
                     break;
+            }
+            if(remainingUsageItems == null && UsageItems != null) {
+                remainingUsageItems = new float[UsageItems.Length];
             }
             todoOnNewTarget += RegisterOnStructureDestroy;
             foreach (Tile t in RangeTiles) {
@@ -242,8 +258,33 @@ namespace Andja.Model {
         }
 
         public override void OnUpdate(float deltaTime) {
-            if (WorkOnTarget == null)
-                return;
+            if(UsageItems != null) {
+                if(usageTickTimer > 0) {
+                    usageTickTimer = Mathf.Clamp(usageTickTimer - deltaTime, 0, UsageTickTime);
+                } else {
+                    for (int i = 0; i < remainingUsageItems.Length; i++) {
+                        if(remainingUsageItems[i] < UsagePerTick[i]) {
+                            if (City.HasEnoughOfItem(UsageItems[i])) {
+                                //has not enough and can get more
+                                City.Inventory.RemoveItemAmount(UsageItems[i]);
+                                remainingUsageItems[i] += UsageItems[i].count;
+                                CanWork = true;
+                            }
+                            else {
+                                //does not have enough & can't get it
+                                CanWork = false;
+                                break;
+                            }
+                        } else {
+                            //has enough in internal stock for operation
+                            remainingUsageItems[i] -= UsageItems[i].count;
+                            CanWork = true;
+                            usageTickTimer = UsageTickTime;
+                        }
+                    }
+                    
+                }
+            }
             SendOutWorkerIfCan();
             if (workers == null)
                 return;
@@ -261,6 +302,10 @@ namespace Andja.Model {
                 return;
             if (workers == null)
                 workers = new List<Worker>();
+            if(UsageItems != null) {
+                if (CanWork == false)
+                    return;
+            }
             if (workers.Count >= MaxNumberOfWorker) {
                 return;
             }
@@ -335,6 +380,24 @@ namespace Andja.Model {
                 }
             }
             City.UnregisterStructureAdded(OnAddedStructure);
+        }
+        public override void Load() {
+            base.Load();
+            if (UsageItems != null && (remainingUsageItems == null || remainingUsageItems.Length != UsageItems.Length)) {
+                float[] temp = remainingUsageItems;
+                remainingUsageItems = new float[UsageItems.Length];
+                if (temp != null) {
+                    for (int i = 0; i < UsageItems.Length; i++) {
+                        remainingUsageItems[i] = temp[i];
+                    }
+                }
+            }
+            if(workers != null) {
+                for (int i = 0; i < workers.Count; i++) {
+                    workers[i].Load(this);
+                }
+            }
+            
         }
     }
 }

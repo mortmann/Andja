@@ -49,14 +49,14 @@ namespace Andja.UI {
         }
         public void OnPointerEnter(PointerEventData eventData) {
             if(gameEvent != null) {
-                FindObjectOfType<HoverOverScript>().Show(gameEvent.Name, gameEvent.Description);
+                FindObjectOfType<ToolTip>().Show(gameEvent.Name, gameEvent.Description);
             } else {
-                FindObjectOfType<HoverOverScript>().Show(Information.GetTitle(), Information.GetDescription());
+                FindObjectOfType<ToolTip>().Show(Information.GetTitle(), Information.GetDescription());
             }
         }
 
         public void OnPointerExit(PointerEventData eventData) {
-            FindObjectOfType<HoverOverScript>().Unshow();
+            FindObjectOfType<ToolTip>().Unshow();
         }
 
         public void OnPointerClick(PointerEventData eventData) {

@@ -48,6 +48,7 @@ namespace Andja.UI {
                 currentCommandIndex = Mathf.Clamp(currentCommandIndex - 1, 0, currentCommandIndex);
                 if (Commands.Count > 0)
                     inputField.text = Commands[currentCommandIndex];
+                inputField.MoveTextEnd(false);
             }
             if (Input.GetKeyDown(KeyCode.DownArrow)) {
                 currentCommandIndex = Mathf.Clamp(currentCommandIndex + 1, 0, Commands.Count);
@@ -55,6 +56,7 @@ namespace Andja.UI {
                     inputField.text = "";
                 else
                     inputField.text = Commands[currentCommandIndex];
+                inputField.MoveTextEnd(false);
             }
 
             string text = inputField.text.ToLower();
@@ -72,32 +74,23 @@ namespace Andja.UI {
                 toPredicte = parts[0];
                 predicted = GetFilterCommands(cc.FirstLevelCommands.ToList(), toPredicte);
             }
-            string second = null;
-            if (parts.Length >= 2) {
+            for (int i = 1; i < parts.Length; i++) {
                 if (cc.FirstLevelCommands.Contains(first) == false) {
                     //doesnt exist so do nothing more
                     predictiveText.text = "";
                     return;
                 }
-                toPredicte = parts[1];
-                predicted = GetFilterCommands(GetSecondLevelCommands(first).ToList(), toPredicte);
-                second = parts[parts.Length - 2].ToLower();
-            }
-            if (parts.Length > 2) {
-                //TODO: changer it to like the second level
-                // if the command doesnt exist in the second level return
-                if (GetSecondLevelCommands(first).Contains(second) == false) {
-                    //doesnt exist so do nothing more
-                    predictiveText.text = "";
-                    return;
+                if (i < parts.Length - 1) {
+                    if(GetCommands(parts[i - 1], i - 1 == 0).ToList().Contains(parts[i].ToLower())) {
+                        continue;
+                    } else {
+                        return;
+                    }
                 }
-                toPredicte = parts[parts.Length - 1]?.ToLower();
-                if (String.IsNullOrEmpty(toPredicte)) {
-                    predictiveText.text = "";
-                    return;
-                }
-                predicted = GetFilterCommands(GetThirdLevelCommands(second), toPredicte);
+                toPredicte = parts[parts.Length-1];
+                predicted = GetFilterCommands(GetCommands(parts[i-1], i-1 == 0).ToList(), toPredicte);
             }
+
             if (predicted == null || predicted.Count == 0) {
                 predictiveText.text = "";
                 return;
@@ -170,8 +163,8 @@ namespace Andja.UI {
             }
         }
 
-        private IReadOnlyList<string> GetSecondLevelCommands(string firstlevel) {
-            switch (firstlevel) {
+        IReadOnlyList<string> GetCommands(string lastCommand, bool isFirstLevel) {
+            switch (lastCommand) {
                 case "speed":
                     return new List<string>();
 
@@ -185,7 +178,10 @@ namespace Andja.UI {
                     return cc.CityCommands;
 
                 case "unit":
-                    return cc.UnitCommands;
+                    if(isFirstLevel)
+                        return cc.UnitCommands;
+                    else
+                        return UnitIDs;
 
                 case "ship":
                     return cc.ShipCommands;
@@ -197,7 +193,10 @@ namespace Andja.UI {
                     return cc.SpawnCommands;
 
                 case "event":
-                    return cc.EventsCommands;
+                    if (isFirstLevel)
+                        return cc.EventsCommands;
+                    else
+                        return EventIDs;
 
                 case "camera":
                     return new List<string>();
@@ -211,23 +210,13 @@ namespace Andja.UI {
                 case "toggle":
                     return cc.CheatCommands;
 
-                default:
-                    Debug.Log("Predicte-List not found.");
-                    return new List<string>();
-            }
-        }
-
-        private List<string> GetThirdLevelCommands(string secondlevel) {
-            switch (secondlevel) {
+                case "structure":
+                    return cc.StructureCommands;
                 case "item":
                 case "crate":
                     return ItemIDs;
 
-                case "unit":
-                    return UnitIDs;
-
                 case "trigger":
-                case "event":
                     return EventIDs;
 
                 case "diplomatic":
@@ -236,11 +225,10 @@ namespace Andja.UI {
                 case "add":
                 case "remove":
                     return EffectIDs;
-
                 default:
-                    Debug.Log("Predicte-List not found.");
                     return new List<string>();
             }
         }
+
     }
 }

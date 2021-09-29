@@ -35,10 +35,10 @@ namespace Andja {
         //if nothing is set take that what is set by the editor in unity
         //if there is nothing set it is null so new world
         //only load the set value if not using ingame loading method
-        public string LoadSaveGame => Application.isEditor && (setloadsavegame == null || setloadsavegame.Length == 0) ?
-                                                editorloadsavegame : setloadsavegame;
-        public string editorloadsavegame;
-        public static string setloadsavegame;
+        public string LoadSaveGame => Application.isEditor && (loadSaveGameName == null || loadSaveGameName.Length == 0) ?
+                                                editorloadsavegame : loadSaveGameName;
+        public string editorloadsavegame; // set through editor to make testing in editor faster & easier
+        public static string loadSaveGameName; // set the to load save game through code
 
         public GameType saveFileType;
 

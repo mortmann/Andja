@@ -27,7 +27,7 @@ namespace Andja.Model {
         [JsonPropertyAttribute] private Item[] toBuy;
         [JsonPropertyAttribute] private float offWorldTime;
         [JsonPropertyAttribute] private Item _cannonItem;
-
+        [JsonPropertyAttribute] public int nextTradeRouteStop;
         public Item CannonItem {
             get { if (_cannonItem == null) { _cannonItem = ShipData.cannonType.CloneWithCount(); } return _cannonItem; }
         }
@@ -206,15 +206,21 @@ namespace Andja.Model {
         /// <param name="deltaTime"></param>
         protected override void UpdateDoingTrade(float deltaTime) {
             if(tradeTime > 0) {
-                tradeTime -= deltaTime;
+                tradeTime = Mathf.Clamp(tradeTime - deltaTime, 0, TradeRoute.TRADE_TIME);
                 return;
             }
             tradeRoute.DoCurrentTrade(this);
             CurrentDoingMode = UnitDoModes.Idle;
         }
         public void SetTradeRoute(TradeRoute tr) {
+            if(tradeRoute != tr) {
+                tradeRoute?.RemoveShip(this);
+                nextTradeRouteStop = 0;
+            }
             tradeRoute = tr;
-            StartTradeRoute();
+            if(tradeRoute != null) {
+                StartTradeRoute();
+            }
         }
 
         public void StartTradeRoute() {
@@ -277,7 +283,6 @@ namespace Andja.Model {
         /// Instead call it from the TradeRoute -> RemoveShip()!
         /// </summary>
         internal void StopTradeRoute() {
-            tradeRoute = null;
             CurrentMainMode = UnitMainModes.Idle;
         }
 
@@ -364,7 +369,11 @@ namespace Andja.Model {
             return DamageType.GetDamageMultiplier(armorType) * DamagePerCannon;
         }
 
-      
+        internal override void Load() {
+            base.Load();
+            tradeRoute?.LoadShip(this);
+        }
+
         protected struct Shoot {
             public float rotateByAngle;
             public float rotateToAngle;

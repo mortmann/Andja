@@ -3602,7 +3602,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 152736, guid: 5864dc44dbea66546a4fcc81f58cec4d, type: 3}
       propertyPath: m_Name
-      value: HoverOver
+      value: ToolTip
       objectReference: {fileID: 0}
     - target: {fileID: 22436292, guid: 5864dc44dbea66546a4fcc81f58cec4d, type: 3}
       propertyPath: m_Pivot.x
@@ -6986,8 +6986,8 @@ MonoBehaviour:
   emptySprite: {fileID: 0}
   karoOverlay: {fileID: 1163574123938242, guid: f30a6ba0ca9d6fc45824b792d8dd3df2,
     type: 3}
-  waterLayer: {fileID: 1081219001320338, guid: 1e81487ed53c33d4c9015707a47b0061, type: 3}
-  water: {fileID: 167726, guid: 4fceb91cd8f861c4b95ceb552bfa1bbb, type: 3}
+  oceanPrefab: {fileID: 0}
+  oceanInstance: {fileID: 0}
   darkLayerSprite: {fileID: 0}
   waterMaterial: {fileID: 2100000, guid: ac077958db547504bb55970a5133bede, type: 2}
   darkMaterial: {fileID: 0}

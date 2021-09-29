@@ -127,8 +127,12 @@ namespace Andja.Controller {
             if(GameData.FogOfWarStyle == FogOfWarStyle.Always) {
                 FogOfWarController.Instance.AddStructureFogModule(go, structure);
             } else {
-                if (structure.HasHitbox) {
+                if (structure.HasHitbox || 
+                     structure is GrowableStructure == false && structure is RoadStructure == false) {
                     BoxCollider2D col = go.AddComponent<BoxCollider2D>();
+                    col.isTrigger = structure.HasHitbox == false &&
+                                    structure is GrowableStructure == false &&
+                                    structure is RoadStructure == false;
                     col.size = new Vector2(sr.sprite.textureRect.size.x / sr.sprite.pixelsPerUnit, sr.sprite.textureRect.size.y / sr.sprite.pixelsPerUnit);
                 }
             }
@@ -265,7 +269,7 @@ namespace Andja.Controller {
             else {
                 Debug.LogWarning("Missing Structure Sprite " + str.GetSpriteName());
                 sr.sprite = structureSprites["nosprite"];
-                go.transform.localScale = new Vector3(str.TileWidth, str.TileHeight);
+                go.transform.localScale = new Vector3(str.TileWidth, str.TileHeight, 1);
                 go.transform.localRotation = Quaternion.identity;
             }
         }

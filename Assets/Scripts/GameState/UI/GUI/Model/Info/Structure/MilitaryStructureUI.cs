@@ -55,8 +55,6 @@ namespace Andja.UI.Model {
             foreach (Unit u in CurrentMilitary.CanBeBuildUnits) {
                 unitToBuildUI[u].SetIsBuildable(CurrentMilitary.HasEnoughResources(u));
             }
-            InfoUI.Instance.UpdateHealth(CurrentMilitary.CurrentHealth, CurrentMilitary.MaxHealth);
-            InfoUI.Instance.UpdateUpkeep(CurrentMilitary.UpkeepCost);
         }
 
         public void OnDisable() {

@@ -7,6 +7,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 using UnityEngine;
 
 namespace Andja.Model.Generator {
@@ -429,7 +430,7 @@ namespace Andja.Model.Generator {
                     }
                 }
                 if (data.NeedsResources) {
-                    for (int i = 0; i < data.FertilityCount; i++) {
+                    for (int i = 0; i < data.ResourcesCount; i++) {
                         List<ResourceGenerationInfo> exclude = new List<ResourceGenerationInfo>(data.resources);
                         exclude.AddRange(data.excludedResources);
                         data.AddResources(resourcesRandomListPerClimate[data.climate].GetRandom(mapThreadRandom, data.resources, toPlaceIslands.Count), mapThreadRandom);
@@ -449,8 +450,10 @@ namespace Andja.Model.Generator {
                 }
                 if (resourcesRandomListPerClimate[climate].hasNoMustLeft == false) {
                     List<IslandData> sorted = toPlaceIslands.Where(x => x.climate == climate).OrderBy(x => x.Tiles.Length).ToList();
+                    int maxRes = sorted.Max(x => x.ResourcesCount);
                     int i = 0;
-                    while (resourcesRandomListPerClimate[climate].hasNoMustLeft == false && i < sorted.Count * 2) {
+                    while (resourcesRandomListPerClimate[climate].hasNoMustLeft == false 
+                                && i < sorted.Count * (maxRes * 2)) {
                         List<ResourceGenerationInfo> exclude = new List<ResourceGenerationInfo>(sorted[i % sorted.Count].resources);
                         exclude.AddRange(sorted[i % sorted.Count].excludedResources);
                         sorted[i % sorted.Count].AddResources(resourcesRandomListPerClimate[climate]
@@ -472,8 +475,8 @@ namespace Andja.Model.Generator {
         }
 
         private void MakeOnLoadDestroy() {
-            //GameObject go = new GameObject("DestroyLoad");
-            //transform.SetParent(go.transform);
+            GameObject go = new GameObject("DestroyLoad");
+            transform.SetParent(go.transform);
         }
 
         private IEnumerator PlaceIslandOnMap(List<IslandData> islandStructs) {
@@ -702,8 +705,8 @@ namespace Andja.Model.Generator {
         }
 
         public void Destroy() {
-            //if (gameObject != null)
-                //Destroy(gameObject);
+            if (gameObject != null)
+                Destroy(gameObject);
         }
 
         public void OnDestroy() {
@@ -817,9 +820,6 @@ namespace Andja.Model.Generator {
                 this.fertilities = copy.fertilities;
                 Resources = copy.Resources;
                 features = copy.features;
-
-                //x = copy.x;
-                //y = copy.y;
             }
 
             public IslandData(IslandData copy, Tile[] islandTiles) : this(copy) {
@@ -865,8 +865,12 @@ namespace Andja.Model.Generator {
             internal void AddResources(ResourceGenerationInfo resourceGenerationInfo, ThreadRandom random) {
                 if (resourceGenerationInfo == null)
                     return;
+                int count = resourceGenerationInfo.resourceRange[Size].GetRandomCount(random);
+                if(count <= 0) {
+                    return;
+                }
                 resources.Add(resourceGenerationInfo);
-                Resources[resourceGenerationInfo.ID] = resourceGenerationInfo.resourceRange[Size].GetRandomCount(random);
+                Resources[resourceGenerationInfo.ID] = count;
             }
 
             internal List<Fertility> GetFertilities() {
@@ -918,6 +922,7 @@ namespace Andja.Model.Generator {
     public class ResourceGenerationInfo : IWeighted {
         public string ID;
         public Climate[] climate;
+        [XmlArray(ElementName = "Type")]
         public TileType[] requiredTile;
         public Dictionary<Size, Range> resourceRange;
         public float percentageOfIslands;

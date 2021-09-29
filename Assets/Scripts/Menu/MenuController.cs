@@ -155,7 +155,7 @@ namespace Andja.UI.Menu {
         }
 
         internal void LoadSaveGame(string selected) {
-            GameData.setloadsavegame = selected;
+            GameData.loadSaveGameName = selected;
             ChangeToGameStateLoadScreen();
         }
 

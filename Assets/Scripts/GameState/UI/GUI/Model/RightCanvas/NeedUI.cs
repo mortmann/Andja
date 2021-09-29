@@ -52,7 +52,8 @@ namespace Andja.UI.Model {
                 return;
             }
             home = homeStructure;
-            Need n = home.GetNeedGroups()?.Find(x => need.Group != null && x.ID == need.Group.ID)?.Needs.Find(x => x.ID == need.ID);
+            Need n = home.GetNeedGroups()?.Find(x => need.Group != null && x.ID == need.Group.ID)?
+                                          .Needs.Find(x => x.ID == need.ID);
             slider.value = 0;
             if (n == null) {
                 return;

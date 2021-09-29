@@ -151,7 +151,7 @@ namespace Andja.UI.Model {
                 Destroy(t.gameObject);
             tradeRouteLine.SetTradeRoute(tr);
             UpdateCitySelects();
-            foreach (Ship ship in tradeRoute.shipToNextStop.Keys) {
+            foreach (Ship ship in tradeRoute.Ships) {
                 AddShipToList(ship);
             }
             SetCity(tr.GetTrade(0)?.city);

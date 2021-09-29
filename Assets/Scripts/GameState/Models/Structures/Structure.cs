@@ -168,7 +168,7 @@ namespace Andja.Model {
 
         public string Name { get { return Data.Name; } }
         public string Description { get { return Data.Description; } }
-        public string HoverOver { get { return Data.HoverOver; } }
+        public string ToolTip { get { return Data.HoverOver; } }
         public int PopulationLevel { get { return Data.populationLevel; } }
         public int PopulationCount { get { return Data.populationCount; } }
         public int StructureLevel { get { return Data.structureLevel; } }
@@ -178,7 +178,7 @@ namespace Andja.Model {
 
         public bool CanRotate { get { return Data.canRotate; } }
         public bool CanBeBuildOver { get { return Data.canBeBuildOver; } }
-        public bool CanBeUpgraded { get { return Data.canBeUpgraded; } }
+        public virtual bool CanBeUpgraded { get { return Data.canBeUpgraded; } }
         public bool CanTakeDamage { get { return Data.canTakeDamage; } }
 
         public BuildType BuildTyp { get { return Data.buildTyp; } }
@@ -219,7 +219,7 @@ namespace Andja.Model {
         #endregion variables
 
         #region Properties
-
+        public virtual bool IsActive => isActive;
         public virtual bool IsActiveAndWorking => isActive;
         public bool IsDestroyed => CurrentHealth <= 0;
 

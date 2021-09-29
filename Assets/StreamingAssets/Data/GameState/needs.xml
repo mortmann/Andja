@@ -319,8 +319,8 @@
       <item ID="liquor">
          <count>0</count>
       </item>
-      <startLevel>1</startLevel>
-      <startPopulationCount>0</startPopulationCount>
+      <startLevel>0</startLevel>
+      <startPopulationCount>200</startPopulationCount>
       <group>beverages</group>
       <hasToReachPerRoad>false</hasToReachPerRoad>
    </Need>

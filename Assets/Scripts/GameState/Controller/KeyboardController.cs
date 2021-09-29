@@ -21,12 +21,15 @@ namespace Andja.Controller {
         private enum CheatCode { GodMode }
 
         private Dictionary<KeyCode[], CheatCode> cheatCodes = new Dictionary<KeyCode[], CheatCode> {
-        { new KeyCode[] {
-            KeyCode.UpArrow, KeyCode.UpArrow, KeyCode.DownArrow, KeyCode.DownArrow,
-            KeyCode.LeftArrow, KeyCode.RightArrow, KeyCode.LeftArrow,
-            KeyCode.RightArrow, KeyCode.B, KeyCode.A  }, CheatCode.GodMode
-        }
-    };
+            { new KeyCode[] 
+                {
+                    KeyCode.UpArrow, KeyCode.UpArrow, KeyCode.DownArrow, KeyCode.DownArrow,
+                    KeyCode.LeftArrow, KeyCode.RightArrow, KeyCode.LeftArrow,
+                    KeyCode.RightArrow, KeyCode.B, KeyCode.A  
+                }, 
+                CheatCode.GodMode
+            },
+        };
 
         private static readonly float cheatCodeMaxDelay = 1.5f;
         private float currentCheatCodeInputDelay = 0;
@@ -54,9 +57,9 @@ namespace Andja.Controller {
             if (PlayerController.GameOver)
                 return;
             if (Input.GetKeyDown(KeyCode.Escape)) {
+                UIC.Escape(BuildController.BuildState != BuildStateModes.None);
                 MouseController.Escape();
                 BuildController.Escape();
-                UIC.Escape(BuildController.BuildState != BuildStateModes.None);
                 ShortcutUI.Instance.StopDragAndDropBuild();
                 EndVideoReached(null);
             }
@@ -95,11 +98,11 @@ namespace Andja.Controller {
             if (Application.isEditor) {
                 if (Input.GetKey(KeyCode.LeftShift)) {
                     if (EventSystem.current.IsPointerOverGameObject() == false) {
-                        FindObjectOfType<HoverOverScript>().DebugTileInfo(MouseController.GetTileUnderneathMouse());
+                        FindObjectOfType<ToolTip>().DebugTileInfo(MouseController.GetTileUnderneathMouse());
                     }
                 }
                 if (Input.GetKeyUp(KeyCode.LeftShift)) {
-                    FindObjectOfType<HoverOverScript>().Unshow();
+                    FindObjectOfType<ToolTip>().Unshow();
                 }
             }
         }

@@ -15,7 +15,7 @@ namespace Andja.UI.Model {
         public Slider slider;
         public Image selectedMarker;
         public bool changeColor = false;
-        private UnityAction<BaseEventData> OnClick;
+        private UnityAction<PointerEventData> OnClick;
         private Item item;
 
         public void SetItem(Item i, int maxValue, bool changeColor = false) {
@@ -82,8 +82,15 @@ namespace Andja.UI.Model {
             }
             image.color = c;
         }
-
-        public void AddClickListener(UnityAction<BaseEventData> ueb, bool clearAll = false) {
+        public void SetMissing(bool missing) {
+            if (missing) {
+                image.color = new Color(1f,0,0,0.5f);
+            }
+            else {
+                image.color = Color.white;
+            }
+        }
+        public void AddClickListener(UnityAction<PointerEventData> ueb, bool clearAll = false) {
             if (clearAll)
                 ClearAllTriggers();
             OnClick += ueb;
@@ -94,12 +101,12 @@ namespace Andja.UI.Model {
         }
 
         public void OnPointerEnter(PointerEventData eventData) {
-            GameObject.FindObjectOfType<HoverOverScript>().Show(
+            GameObject.FindObjectOfType<ToolTip>().Show(
                 item != null ? item.Name : UILanguageController.Instance.GetStaticVariables(StaticLanguageVariables.Empty));
         }
 
         public void OnPointerExit(PointerEventData eventData) {
-            GameObject.FindObjectOfType<HoverOverScript>().Unshow();
+            GameObject.FindObjectOfType<ToolTip>().Unshow();
         }
 
         public void OnPointerClick(PointerEventData eventData) {

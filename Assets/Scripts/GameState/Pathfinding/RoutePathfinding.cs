@@ -39,7 +39,7 @@ namespace Andja.Pathfinding {
         public override void SetDestination(float x, float y) {
             //get the tiles from the world to get a current reference and not an empty from the load
             DestTile = World.Current.GetTileAt(x, y);
-            startTile = World.Current.GetTileAt(startTile.X, startTile.Y);
+            startTile = World.Current.GetTileAt(X, Y);
             AddPathJob();
         }
 
@@ -64,9 +64,15 @@ namespace Andja.Pathfinding {
                     if (tile.Structure is RoadStructure rs) {
                         if (GoalStructure.GetRoutes().Contains(rs.Route)) {
                             road = rs;
+                            break;
                         }
                     }
                 }
+            }
+            if(road == null) {
+                if (agent is Worker w)
+                    w.Destroy();
+                return;
             }
             Route route = road.Route;
             List<Vector2> goals = null;

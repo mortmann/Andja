@@ -1,6 +1,7 @@
 ﻿using Andja.Utility;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Andja.UI.Menu {
 
@@ -38,7 +39,6 @@ namespace Andja.UI.Menu {
         public static void SetMouseSensitivity(float value) {
             InputHandler.SetSensitivity(value);
         }
-
         public void OnGUI() {
             if (Input.GetKeyDown(KeyCode.Escape)) {
                 hasSelected = false;

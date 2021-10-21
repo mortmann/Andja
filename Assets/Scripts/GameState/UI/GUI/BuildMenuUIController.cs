@@ -120,29 +120,32 @@ namespace Andja.UI {
         public void OnStructuresUnlock(IEnumerable<Structure> structures) {
             OnMaxPopLevelChange(Player.MaxPopulationLevel);
             foreach (Structure structure in structures) {
+                if(structure.CanBeBuild == false) {
+                    continue;
+                }
                 nameToGOMap[structure.ID].interactable = true;
                 nameToGOMap[structure.ID].SetNormalColor(new Color32(0, 220, 0, 255));
             }
         }
 
         public void Update() {
-            if (Input.GetMouseButtonDown(1) && oldButton != null) {
+            if (InputHandler.GetMouseButtonDown(InputMouse.Secondary) && oldButton != null) {
                 oldButton.SetNormalColor(Color.white);
                 oldButton = null;
             }
         }
 
-        public void OnClick(string name) {
-            if (nameToGOMap.ContainsKey(name) == false) {
+        public void OnClick(string id) {
+            if (nameToGOMap.ContainsKey(id) == false) {
                 Debug.LogError("nameToButtonMap doesnt contain the pressed button");
                 return;
             }
             if (oldButton != null) {
                 oldButton.SetNormalColor(Color.white);
             }
-            oldButton = nameToGOMap[name];
-            nameToGOMap[name].SetNormalColor(Color.red);
-            BuildController.Instance.StartStructureBuild(name);
+            oldButton = nameToGOMap[id];
+            nameToGOMap[id].SetNormalColor(Color.red);
+            BuildController.Instance.StartStructureBuild(id);
         }
 
         public void OnPopulationLevelButtonClick(int i) {

@@ -187,7 +187,10 @@ namespace Andja.Model {
         public void UnregisterOnRouteCallback(Action<Route, Route> cb) {
             cbRouteChanged -= cb;
         }
-
+        protected override void OnUpgrade() {
+            base.OnUpgrade();
+            _roadStructureData = null;
+        }
         public override string ToString() {
             if (BuildTile == null)
                 return base.ToString();

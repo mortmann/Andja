@@ -75,6 +75,7 @@ namespace Andja.Model {
         }
 
         public List<HomeStructure> homes;
+        public List<MarketStructure> marketStructures;
         private HashSet<Tile> _Tiles;
         public List<Route> Routes;
         public Unit tradeUnit;
@@ -150,6 +151,7 @@ namespace Andja.Model {
                 return;
             Routes = new List<Route>();
             homes = new List<HomeStructure>();
+            marketStructures = new List<MarketStructure>();
             if (PopulationLevels == null)
                 PopulationLevels = new List<PopulationLevel>();
             foreach (PopulationLevel pl in PrototypController.Instance.GetPopulationLevels(this)) {
@@ -178,6 +180,9 @@ namespace Andja.Model {
                 if(item == null) {
                     Debug.LogError("Missing structure?");
                     continue;
+                }
+                if (item is MarketStructure m) {
+                    marketStructures.Add(m);
                 }
                 if (item is WarehouseStructure) {
                     warehouse = (WarehouseStructure)item;
@@ -255,6 +260,9 @@ namespace Andja.Model {
             }
             if (str is HomeStructure) {
                 homes?.Add((HomeStructure)str);
+            }
+            if (str is MarketStructure m) {
+                marketStructures?.Add(m);
             }
             if (str is WarehouseStructure) {
                 if (warehouse != null && warehouse.buildID != str.buildID) {
@@ -513,6 +521,9 @@ namespace Andja.Model {
                 if (structure is WarehouseStructure) {
                     warehouse = null;
                 }
+                if (structure is MarketStructure m) {
+                    marketStructures.Remove(m);
+                }
                 Structures.Remove(structure);
                 cbStructureRemoved?.Invoke(structure);
             }
@@ -531,7 +542,7 @@ namespace Andja.Model {
         }
 
         internal List<NeedGroup> GetPopulationNeedGroups(int level) {
-            return PopulationLevels[level].NeedGroupList;
+            return PopulationLevels[level].AllNeedGroupList;
         }
 
         public void RemoveTiles(IEnumerable<Tile> tiles) {

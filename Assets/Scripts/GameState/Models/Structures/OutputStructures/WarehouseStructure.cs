@@ -106,7 +106,10 @@ namespace Andja.Model {
         public override Structure Clone() {
             return new WarehouseStructure(this);
         }
-
+        protected override void OnUpgrade() {
+            base.OnUpgrade();
+            _warehouseData = null;
+        }
         public override bool InCityCheck(IEnumerable<Tile> tiles, int playerNumber) {
             return true;
         }

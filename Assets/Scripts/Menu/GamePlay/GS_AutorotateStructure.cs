@@ -1,15 +1,13 @@
 ﻿namespace Andja.UI.Menu {
 
     public class GS_AutorotateStructure : ToggleBase {
-
         protected override void OnStart() {
-            setting = GameplaySetting.Autorotate;
-            if (GameplaySettings.Instance.HasSavedGameplayOption(setting))
-                toggle.isOn = bool.Parse(GameplaySettings.Instance.GetSavedGameplayOption(setting));
+            if (GameplaySettings.Instance.HasSavedGameplayOption(GameplaySetting.Autorotate))
+                toggle.isOn = bool.Parse(GameplaySettings.Instance.GetSavedGameplayOption(GameplaySetting.Autorotate));
         }
 
         protected override void OnClick() {
-            GameplaySettings.Instance.SetSavedGameplayOption(setting, IsOn);
+            GameplaySettings.Instance.SetSavedGameplayOption(GameplaySetting.Autorotate, IsOn);
         }
     }
 }

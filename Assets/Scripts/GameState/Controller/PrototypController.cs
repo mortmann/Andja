@@ -656,9 +656,10 @@ namespace Andja.Controller {
                     float ppm = 0;
                     int tileCount = fpd.RangeTileCount;
                     int numGrowablesPerTon = fpd.neededHarvestToProduce;
-                    float growtime = fpd.growable != null? fpd.growable.ProduceTime : 1;
+                    float growtime = fpd.growable != null ? fpd.growable.ProduceTime : 1;
                     float produceTime = fpd.produceTime;
                     float neededWorkerRatio = (float)fpd.maxNumberOfWorker / (float)fpd.neededHarvestToProduce;
+                    float workPerWorker = (float)fpd.neededHarvestToProduce / (float)fpd.maxNumberOfWorker;
                     if (fpd.growable == null) {
                         ppm = 60f / (produceTime * fpd.efficiency);
                     }
@@ -670,7 +671,11 @@ namespace Andja.Controller {
                         ppm = neededWorkerRatio * (60f / produceTime);
                     }
                     else {
-                        ppm = Mathf.Min(60f / (produceTime * fpd.efficiency), (((float)tileCount / (float)numGrowablesPerTon) * (60f / growtime)));
+                        ppm = Mathf.Min(
+                                60f / (workPerWorker * (produceTime * fpd.efficiency)),
+                                //not sure if this is correct
+                                ((float)tileCount / ((float)numGrowablesPerTon * fpd.maxNumberOfWorker)) * (60f / growtime)
+                             );
                     }
                     ppm /= (float)outItem.count;
                     if (ppm == 0)
@@ -741,12 +746,12 @@ namespace Andja.Controller {
                     continue;
                 foreach (Item need in currentProduce.needed) {
                     if (itemIDToProduce.ContainsKey(need.ID) == false) {
-                        Debug.LogWarning("NEEDED ITEM CANNOT BE PRODUCED! -- Wanted beahivour? Item-ID:" + need.ID);
+                        Debug.LogWarning("NEEDED ITEM CANNOT BE PRODUCED! -- Wanted beahviour? Item-ID:" + need.ID);
                         continue;
                     }
                     foreach (Produce itemProducer in itemIDToProduce[need.ID]) {
-                        float f1 = (1f / (float)need.count * (60f / currentProduce.ProducerStructure.produceTime));
-                        float f2 = (1f / (float)itemProducer.item.count * itemProducer.producePerMinute);
+                        float f1 = (((float)need.count * (60f / currentProduce.ProducerStructure.produceTime)));
+                        float f2 = (((float)itemProducer.item.count * itemProducer.producePerMinute));
                         if (f2 == 0)
                             continue;
                         float ratio = f1 / f2;
@@ -809,36 +814,14 @@ namespace Andja.Controller {
             if (structureTypeToMaxStructureLevel.ContainsKey(type) == false)
                 structureTypeToMaxStructureLevel[type] =
                     new List<Structure>(structurePrototypes.Values).FindAll(x => type == x.GetType())
-                        .OrderByDescending(item => item.StructureLevel).First().StructureLevel;
+                        .OrderByDescending(item => item.PopulationLevel).First().PopulationLevel;
             return structureTypeToMaxStructureLevel[type];
         }
 
         internal string GetFirstLevelStructureIDForStructureType(Type type) {
             //TODO: optimize this
             return new List<Structure>(structurePrototypes.Values).FindAll(x => type == x.GetType())
-                        .OrderByDescending(item => item.StructureLevel).First().ID;
-        }
-
-        /// <summary>
-        /// Is not optimized! Please do NOT call this too frequent!
-        /// ascending true => +1 | false => -1 for structureLevel
-        /// </summary>
-        /// <param name="type"></param>
-        /// <param name="structureLevel"></param>
-        /// <returns></returns>
-        internal string GetStructureIDForTypeNeighbourStructureLevel(Type type, int structureLevel, bool ascending) {
-            List<Structure> typeListOrdered = new List<Structure>(structurePrototypes.Values);
-            typeListOrdered = typeListOrdered.FindAll(x => type == x.GetType());
-            if (typeListOrdered.Count <= 1) {
-                return null;
-            }
-            if (ascending) {
-                typeListOrdered.OrderByDescending(item => item.StructureLevel);
-            }
-            else {
-                typeListOrdered.OrderBy(item => item.StructureLevel);
-            }
-            return typeListOrdered[typeListOrdered.FindIndex(x => x.StructureLevel == structureLevel) + 1].ID;
+                        .OrderByDescending(item => item.PopulationLevel).First().ID;
         }
 
         internal UnitPrototypeData GetUnitPrototypDataForID(string id) {
@@ -1156,13 +1139,11 @@ namespace Andja.Controller {
                     tileHeight = 1,
                     buildTyp = BuildType.Path,
                     structureTyp = StructureTyp.Pathfinding,
-                    canBeUpgraded = true,
                     //!not anymore
                     upkeepCost = 0,
                     buildCost = 25,
                     Name = "Testroad",
                     structureRange = 0,
-                    structureLevel = 0
                 };
 
                 rpd.ID = ID;
@@ -1303,6 +1284,7 @@ namespace Andja.Controller {
         private void ReadHomeStructures(XmlNode xmlDoc) {
             if (xmlDoc == null)
                 return;
+            List<HomePrototypeData> hpds = new List<HomePrototypeData>();
             foreach (XmlElement node in xmlDoc.SelectNodes("home")) {
                 string ID = node.GetAttribute("ID");
                 HomePrototypeData hpd = new HomePrototypeData {
@@ -1316,7 +1298,7 @@ namespace Andja.Controller {
                     canTakeDamage = true,
                     upkeepCost = 0
                 };
-
+                hpds.Add(hpd);
                 hpd.ID = ID;
                 SetData<HomePrototypeData>(node, ref hpd);
 
@@ -1325,14 +1307,23 @@ namespace Andja.Controller {
                 structurePrototypes[ID] = hs;
                 populationLevelDatas[structurePrototypes[ID].PopulationLevel].HomeStructure = hs;
 
-                string prevID = GetStructureIDForTypeNeighbourStructureLevel(typeof(HomeStructure), hpd.structureLevel, false);
-                if (String.IsNullOrEmpty(prevID) == false) {
-                    HomePrototypeData prev = (HomePrototypeData)structurePrototypeDatas[prevID];
-                    ((HomePrototypeData)hpd).previouseMaxLivingSpaces = prev == null ? 0 : prev.maxLivingSpaces;
-                    prev.upgradeItems = hpd.buildingItems;
-                    prev.upgradeCost = hpd.buildCost;
+                
+            }
+            HomePrototypeData[] sorted = hpds.OrderBy(x => x.populationLevel).ToArray();
+            for (int i = 0; i < sorted.Length; i++) {
+                if(i > 0) {
+                    sorted[i].prevLevel = GetStructure(sorted[i - 1].ID) as HomeStructure;
+                } else {
+                    sorted[i].prevLevel = null;
+                }
+                if (i < sorted.Length - 1) {
+                    sorted[i].nextLevel = GetStructure(sorted[i + 1].ID) as HomeStructure; 
+                }
+                else {
+                    sorted[i].nextLevel = null;
                 }
             }
+
         }
 
         private void ReadWarehouse(XmlNode xmlDoc) {
@@ -1359,7 +1350,8 @@ namespace Andja.Controller {
                 structurePrototypeDatas[ID] = wpd;
                 structurePrototypes[ID] = new WarehouseStructure(ID, wpd);
 
-                if (FirstLevelWarehouse == null || wpd.structureLevel < FirstLevelWarehouse.StructureLevel) {
+                if (FirstLevelWarehouse == null || 
+                    wpd.populationLevel < FirstLevelWarehouse.PopulationLevel && wpd.populationCount < FirstLevelWarehouse.PopulationCount) {
                     FirstLevelWarehouse = (WarehouseStructure)structurePrototypes[ID];
                 }
             }
@@ -1421,15 +1413,21 @@ namespace Andja.Controller {
                         fi.SetValue(data, NodeToStructure(currentNode));
                         continue;
                     }
-                    if (fi.FieldType.IsArray && fi.FieldType.GetElementType().IsSubclassOf(typeof(Structure)) || fi.FieldType == (typeof(Structure[]))) {
+                    if (fi.FieldType.IsArray && fi.FieldType.GetElementType().IsSubclassOf(typeof(Structure)) 
+                        || fi.FieldType == (typeof(Structure[]))) {
                         Array items = (Array)Activator.CreateInstance(fi.FieldType, currentNode.ChildNodes.Count);
                         for (int i = 0; i < currentNode.ChildNodes.Count; i++) {
                             items.SetValue(NodeToStructure(currentNode.ChildNodes[i]), i);
                         }
-                        //int i = 0;
-                        //foreach (XmlNode item in currentNode.ChildNodes) {
-                        //    items.SetValue(NodeToStructure(item), i++);
-                        //}
+                        fi.SetValue(data, items);
+                        continue;
+                    }
+                    if (fi.FieldType.IsArray && fi.FieldType.GetElementType().IsSubclassOf(typeof(string))
+                        || fi.FieldType == (typeof(string[]))) {
+                        Array items = (Array)Activator.CreateInstance(fi.FieldType, currentNode.ChildNodes.Count);
+                        for (int i = 0; i < currentNode.ChildNodes.Count; i++) {
+                            items.SetValue(currentNode.ChildNodes[i].InnerText, i);
+                        }
                         fi.SetValue(data, items);
                         continue;
                     }

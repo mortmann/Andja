@@ -142,7 +142,7 @@ namespace Andja.Editor {
         }
 
         private void Update() {
-            if (Input.GetMouseButtonDown(0) || dragging) {
+            if (InputHandler.GetMouseButtonDown(InputMouse.Primary) || dragging) {
                 if (EventSystem.current.IsPointerOverGameObject()) {
                     return;
                 }
@@ -161,7 +161,7 @@ namespace Andja.Editor {
             else {
                 FindObjectOfType<ToolTip>().Unshow();
             }
-            if (Input.GetMouseButtonUp(0)) {
+            if (InputHandler.GetMouseButtonUp(InputMouse.Primary)) {
                 dragging = false;
             }
             if (InputHandler.GetButtonDown(InputName.Rotate)) {
@@ -210,7 +210,7 @@ namespace Andja.Editor {
                 action(et);
             }
             else
-            if (Input.GetMouseButtonDown(0) || Input.GetKey(KeyCode.LeftShift)) {
+            if (InputHandler.GetMouseButtonDown(InputMouse.Primary) || Input.GetKey(KeyCode.LeftShift)) {
                 float f = UnityEngine.Random.Range(0, 100);
                 if (f <= randomChange) {
                     action(et);
@@ -270,7 +270,7 @@ namespace Andja.Editor {
         }
 
         public void CreateStructure() {
-            if (Input.GetMouseButtonDown(0)) {
+            if (InputHandler.GetMouseButtonDown(InputMouse.Primary)) {
                 Tile et = GetTileAtWorldCoord(Camera.main.ScreenToWorldPoint(Input.mousePosition));
                 if (DestroyStructure) {
                     switch (brushType) {

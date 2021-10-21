@@ -58,7 +58,7 @@ namespace Andja.UI.Model {
         }
 
         private void TaxSliderChange(float value) {
-            home.City.SetTaxForPopulationLevel(home.StructureLevel, value / 100f);
+            home.City.SetTaxForPopulationLevel(home.PopulationLevel, value / 100f);
         }
 
         public void Show(HomeStructure home) {

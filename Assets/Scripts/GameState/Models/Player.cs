@@ -100,6 +100,8 @@ namespace Andja.Model {
 
         [JsonPropertyAttribute]
         public List<TradeRoute> TradeRoutes { get; protected set; }
+        [JsonPropertyAttribute]
+        public List<Unit>[] unitGroups { get; protected set; }
 
         [JsonPropertyAttribute]
         public int Number;
@@ -110,7 +112,7 @@ namespace Andja.Model {
         public int MaxPopulationLevel {
             get { return _maxPopulationLevel; }
             set {
-                if (MaxPopulationLevel < value) {
+                if (_maxPopulationLevel > value) {
                     Debug.Log("value < maxPopulationLevel");
                     return;
                 }
@@ -236,8 +238,12 @@ namespace Andja.Model {
                 MaxPopulationLevel = level;
             }
             if (MaxPopulationCounts[level] < count) {
+                int old = MaxPopulationCounts[level];
                 MaxPopulationCounts[level] = count;
-                cbMaxPopulationMLCountChange?.Invoke(MaxPopulationLevel, MaxPopulationCounts[MaxPopulationLevel]);
+                for (int i = old; i <= MaxPopulationCounts[level]; i++) {
+                    //trigger for each person -- makes it so we do not jump over any goals
+                    cbMaxPopulationMLCountChange?.Invoke(MaxPopulationLevel, i);
+                }
             }
         }
 

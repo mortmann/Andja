@@ -32,7 +32,9 @@ namespace Andja.Model {
                 t.AddNeedStructure(this);
             }
         }
-
+        protected override void OnUpgrade() {
+            base.OnUpgrade();
+        }
         public override void OnUpdate(float deltaTime) {
         }
     }

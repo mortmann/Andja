@@ -78,7 +78,14 @@ namespace Andja.Model {
             set {
             }
         }
-
+        public float BaseMovementCost {
+            get {
+                if (Type == TileType.Mountain) {
+                    return float.PositiveInfinity;
+                }
+                return 2f;
+            }
+        }
         public float MovementCost {
             get {
                 if (Type == TileType.Ocean) {
@@ -87,19 +94,15 @@ namespace Andja.Model {
                     }
                     return 2;
                 }
-                if (Type == TileType.Mountain) {
-                    return float.PositiveInfinity;
+                if (Structure != null) {
+                    if (Structure.StructureTyp != StructureTyp.Pathfinding && Structure.CanBeBuildOver == false) {
+                        return float.PositiveInfinity;
+                    }
+                    if (Structure.StructureTyp == StructureTyp.Pathfinding) {
+                        return ((RoadStructure)Structure).MovementCost;
+                    }
                 }
-                if (Structure == null) {
-                    return 2;
-                }
-                if (Structure.StructureTyp != StructureTyp.Pathfinding && Structure.CanBeBuildOver == false) {
-                    return float.PositiveInfinity;
-                }
-                if (Structure.StructureTyp == StructureTyp.Pathfinding) {
-                    return ((RoadStructure)Structure).MovementCost;
-                }
-                return 2;
+                return BaseMovementCost;
             }
         }
 
@@ -177,11 +180,14 @@ namespace Andja.Model {
         /// Checks if Structure can be placed on the tile.
         /// </summary>
         /// <returns><c>true</c>, if tile is buildable, <c>false</c> otherwise.</returns>
-        /// <param name="t"> if its ok to be build on special tiletypes, forced means if it has to be true for either mountain/shore</param>
-        public virtual bool CheckTile() {
+        /// <param name="upgradeTo"> Checks if Structure can be build over by this param. </param>
+        public bool CheckTile(Structure upgradeTo = null) {
             if (Array.Exists(NoBuildLand, x => Type == x))
                 return false;
             if (Structure != null) {
+                if(upgradeTo != null && Structure.CanBeUpgraded && Array.Exists(Structure.CanBeUpgradedTo, x=>x == upgradeTo.ID)) {
+                    return true;
+                }
                 if (Structure.CanBeBuildOver == false) {
                     return false;
                 }

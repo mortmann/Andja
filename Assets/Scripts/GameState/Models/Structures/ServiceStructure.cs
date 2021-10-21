@@ -52,14 +52,14 @@ namespace Andja.Model {
          
         private Action<IGEventable, Effect, bool> onTargetEffectChange;
 
-        protected ServiceStructurePrototypeData _servicveData;
+        protected ServiceStructurePrototypeData _serviceData;
         //TODO: make it possible service structure to need certain items every time unit to function(otherwise inactive)
         public ServiceStructurePrototypeData ServiceData {
             get {
-                if (_servicveData == null) {
-                    _servicveData = (ServiceStructurePrototypeData)PrototypController.Instance.GetStructurePrototypDataForID(ID);
+                if (_serviceData == null) {
+                    _serviceData = (ServiceStructurePrototypeData)PrototypController.Instance.GetStructurePrototypDataForID(ID);
                 }
-                return _servicveData;
+                return _serviceData;
             }
         }
 
@@ -398,6 +398,10 @@ namespace Andja.Model {
                 }
             }
             
+        }
+        protected override void OnUpgrade() {
+            base.OnUpgrade();
+            _serviceData = null;
         }
     }
 }

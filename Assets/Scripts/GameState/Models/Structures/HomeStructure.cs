@@ -8,9 +8,12 @@ namespace Andja.Model {
 
     public class HomePrototypeData : StructurePrototypeData {
         public int maxLivingSpaces;
-        public int previouseMaxLivingSpaces = 0; // lower bound -> decreasing level
         public float increaseTime;
         public float decreaseTime;
+        [Ignore]
+        public HomeStructure nextLevel;
+        [Ignore]
+        public HomeStructure prevLevel;
     }
 
     [JsonObject(MemberSerialization.OptIn)]
@@ -42,18 +45,19 @@ namespace Andja.Model {
 
         public CitizienMoods currentMood { get; protected set; }
         private List<NeedStructure> needStructures;
-        public int PreviouseMaxLivingSpaces { get { return HomeData.previouseMaxLivingSpaces; } }
-        public int MaxLivingSpaces { get { return HomeData.maxLivingSpaces; } }
+        public int MaxLivingSpaces => HomeData.maxLivingSpaces;
+        public HomeStructure NextLevel => HomeData.nextLevel;
+        public HomeStructure PrevLevel => HomeData.prevLevel;
 
-        public float IncreaseTime { get { return CalculateRealValue(nameof(HomeData.increaseTime), HomeData.increaseTime); } }
-        public float DecreaseTime { get { return CalculateRealValue(nameof(HomeData.decreaseTime), HomeData.decreaseTime); } }
+        public float IncreaseTime => CalculateRealValue(nameof(HomeData.increaseTime), HomeData.increaseTime);
+        public float DecreaseTime => CalculateRealValue(nameof(HomeData.decreaseTime), HomeData.decreaseTime);
 
         public override bool CanBeUpgraded => MaxLivingSpaces == people // is full
                                 && currentMood == CitizienMoods.Happy // still wants more people
-                                && IsMaxLevel() // if there is smth to be upgraded to
+                                && IsMaxLevel() == false // if there is smth to be upgraded to
                                 && base.CanBeUpgraded // set through xml prototype file
-                                && City.HasEnoughOfItems(UpgradeItems) // city has enough items to build
-                                && City.GetOwner().HasEnoughMoney(UpgradeCost)
+                                && City.HasEnoughOfItems(NextLevel.BuildingItems) // city has enough items to build
+                                && City.GetOwner().HasEnoughMoney(NextLevel.BuildCost)
                                 && City.GetOwner().HasUnlockedAllNeeds(PopulationLevel); // player has enough money
 
         internal List<NeedGroup> GetNeedGroups() {
@@ -119,6 +123,7 @@ namespace Andja.Model {
                 currentMood = CitizienMoods.Mad;
                 return;
             }
+
             float summedFullfillment = 0f;
             float summedImportance = 0;
             foreach (NeedGroup ng in GetNeedGroups()) {
@@ -176,7 +181,7 @@ namespace Andja.Model {
             }
             people--;
             City.RemovePeople(PopulationLevel, 1);
-            if (people < PreviouseMaxLivingSpaces)
+            if (PrevLevel != null && people < PrevLevel.MaxLivingSpaces)
                 DowngradeHouse();
         }
 
@@ -186,10 +191,10 @@ namespace Andja.Model {
             }
             //TODO: check for performance impact
             // if bad change to boolean in city that gets non frequent set
-            if (City.HasEnoughOfItems(UpgradeItems) == false) {
+            if (City.HasEnoughOfItems(NextLevel.BuildingItems) == false) {
                 return;
             }
-            if (City.GetOwner().HasEnoughMoney(UpgradeCost) == false) {
+            if (City.GetOwner().HasEnoughMoney(NextLevel.BuildCost) == false) {
                 return;
             }
             UpgradeHouse();
@@ -262,18 +267,25 @@ namespace Andja.Model {
                 return;
             }
             CloseExtraUI();
-            ID = PrototypController.Instance.GetStructureIDForTypeNeighbourStructureLevel(GetType(), PopulationLevel, true);
+            ID = NextLevel.ID;
+            if(City.GetPopulationCount(PopulationLevel) == 0) {
+                //not a nice solution for the problem of the level not being calculated value!
+                //TODO: find a nicer way todo it
+                City.GetPopulationLevel(PopulationLevel).FullfillNeedsAndCalcHappiness(City);
+            }
             City.RemovePeople(PopulationLevel, people);
-            City.RemoveResources(UpgradeItems);
-            City.GetOwner().ReduceTreasure(UpgradeCost);
-            _homeData = null;
-            _prototypData = null;
+            City.RemoveResources(NextLevel.BuildingItems);
+            City.GetOwner().ReduceTreasure(NextLevel.BuildCost);
+            OnUpgrade();
             City.AddPeople(PopulationLevel, people);
             cbStructureChanged(this);
         }
-
+        protected override void OnUpgrade() {
+            base.OnUpgrade();
+            _homeData = null;
+        }
         public void DowngradeHouse() {
-            ID = PrototypController.Instance.GetStructureIDForTypeNeighbourStructureLevel(GetType(), PopulationLevel, false);
+            ID = PrevLevel.ID;
             City.RemovePeople(PopulationLevel, people);
             _homeData = null;
             _prototypData = null;

@@ -1,22 +1,20 @@
-﻿using UnityEngine;
+﻿using Andja.Controller;
+using UnityEngine;
 using UnityEngine.UI;
 
 namespace Andja.UI.Menu {
 
     public class ToggleBase : MonoBehaviour {
         protected Toggle toggle;
-        public GameplaySetting setting;
-        public string[] displayLabels;
-        protected Text displayValue;
-
+        TextLanguageSetter translation;
         protected bool IsOn => toggle.isOn;
         protected int DiplayValue => toggle.isOn ? 0 : 1;
 
         // Use this for initialization
         private void OnEnable() {
+            translation = GetComponent<TextLanguageSetter>();
+            translation.SetStaticLanguageVariables(StaticLanguageVariables.Off, StaticLanguageVariables.On);
             toggle = GetComponent<Toggle>();
-            displayValue = transform.Find("Value").GetComponent<Text>();
-            displayValue.text = displayLabels[DiplayValue];
         }
 
         private void Start() {
@@ -28,7 +26,7 @@ namespace Andja.UI.Menu {
         }
 
         protected void OnToggleClick(bool change) {
-            displayValue.text = displayLabels[DiplayValue];
+            translation.ShowValue(change ? 1 : 0);
             OnClick();
         }
 

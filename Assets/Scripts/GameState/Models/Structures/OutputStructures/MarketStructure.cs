@@ -2,6 +2,7 @@
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Linq;
+using System;
 using UnityEngine;
 
 namespace Andja.Model {
@@ -205,7 +206,11 @@ namespace Andja.Model {
             List<Item> all = new List<Item>();
             for (int i = items.Length - 1; i >= 0; i--) {
                 int space = City.Inventory.GetSpaceFor(items[i]);
-                if (space == 0) {
+                //WE need to know what every other marketstructure is getting atm 
+                //so we do not get to much of this so look at every worker -> check if they have that item as getting -> else 0
+                space -= City.marketStructures.Sum(y => y.Workers.Sum(z => Array.Find(z.toGetItems, j => items[i].ID == j.ID)?.count ?? 0));
+                if (space <= 0) {
+                
                 }
                 else {
                     Item item = items[i].Clone();
@@ -244,7 +249,10 @@ namespace Andja.Model {
             }
             return temp;
         }
-
+        protected override void OnUpgrade() {
+            base.OnUpgrade();
+            _marketData = null;
+        }
         #region ICapturableImplementation
 
         private float currentCaptureSpeed = 0f;

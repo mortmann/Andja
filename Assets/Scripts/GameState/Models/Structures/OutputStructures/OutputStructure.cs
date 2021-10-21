@@ -63,13 +63,13 @@ namespace Andja.Model {
         public Dictionary<OutputStructure, Item[]> jobsToDo;
         public bool outputClaimed;
         protected Action<Structure> cbOutputChange;
-        public float ContactRange { get { return OutputData.contactRange; } }
-        public bool ForMarketplace { get { return OutputData.forMarketplace; } }
+        public float ContactRange => OutputData.contactRange; 
+        public bool ForMarketplace => OutputData.forMarketplace; 
 
-        public float ProduceTime { get { return CalculateRealValue(nameof(OutputData.produceTime), OutputData.produceTime); } }
-        public int MaxNumberOfWorker { get { return CalculateRealValue(nameof(OutputData.maxNumberOfWorker), OutputData.maxNumberOfWorker); } }
-        public float Efficiency { get { return CalculateRealValue(nameof(OutputData.efficiency), OutputData.efficiency); } }
-        public int MaxOutputStorage { get { return CalculateRealValue(nameof(OutputData.maxOutputStorage), OutputData.maxOutputStorage); } }
+        public float ProduceTime => CalculateRealValue(nameof(OutputData.produceTime), OutputData.produceTime); 
+        public int MaxNumberOfWorker => CalculateRealValue(nameof(OutputData.maxNumberOfWorker), OutputData.maxNumberOfWorker); 
+        public float Efficiency => CalculateRealValue(nameof(OutputData.efficiency), OutputData.efficiency); 
+        public int MaxOutputStorage => CalculateRealValue(nameof(OutputData.maxOutputStorage), OutputData.maxOutputStorage); 
 
         protected OutputPrototypData _outputData;
 
@@ -315,7 +315,10 @@ namespace Andja.Model {
                 }
             }
         }
-
+        protected override void OnUpgrade() {
+            base.OnUpgrade();
+            _outputData = null;
+        }
         public override void Load() {
             base.Load();
             if (Workers != null) {

@@ -231,7 +231,7 @@ namespace Andja.Model {
         }
 
         internal bool HasAnything() {
-            return Items.Count((x)=>x.Value.count>0) > 0;
+            return Items.Any((x)=>x.Value.count>0);
         }
 
         /// <summary>

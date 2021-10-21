@@ -275,11 +275,13 @@ MonoBehaviour:
   translationData:
     id: 
     translation: '[**Missing**]'
-    hoverOverTranslation: 
+    toolTipTranslation: 
+    valueIsMainTranslation: 0
     values: []
     UIElements: []
-    onlyHoverOver: 0
+    onlyToolTip: 0
     valueCount: 0
+  ValueIsMainTranslation: 0
   OnlyHoverOver: 0
   Values: 0
   nameText: {fileID: 0}
@@ -701,11 +703,13 @@ MonoBehaviour:
   translationData:
     id: 
     translation: '[**Missing**]'
-    hoverOverTranslation: 
+    toolTipTranslation: 
+    valueIsMainTranslation: 0
     values: []
     UIElements: []
-    onlyHoverOver: 0
+    onlyToolTip: 0
     valueCount: 0
+  ValueIsMainTranslation: 0
   OnlyHoverOver: 0
   Values: 0
   nameText: {fileID: 0}
@@ -977,11 +981,13 @@ MonoBehaviour:
   translationData:
     id: 
     translation: '[**Missing**]'
-    hoverOverTranslation: 
+    toolTipTranslation: 
+    valueIsMainTranslation: 0
     values: []
     UIElements: []
-    onlyHoverOver: 0
+    onlyToolTip: 0
     valueCount: 0
+  ValueIsMainTranslation: 0
   OnlyHoverOver: 0
   Values: 0
   nameText: {fileID: 0}
@@ -1385,11 +1391,13 @@ MonoBehaviour:
   translationData:
     id: 
     translation: '[**Missing**]'
-    hoverOverTranslation: 
+    toolTipTranslation: 
+    valueIsMainTranslation: 0
     values: []
     UIElements: []
-    onlyHoverOver: 0
+    onlyToolTip: 0
     valueCount: 0
+  ValueIsMainTranslation: 0
   OnlyHoverOver: 0
   Values: 0
   nameText: {fileID: 0}
@@ -2248,14 +2256,17 @@ RectTransform:
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
+  m_Children:
+  - {fileID: 92265872987262521}
+  - {fileID: 2320903340530063091}
+  - {fileID: 8264679646021323515}
   m_Father: {fileID: 9091394649044464262}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 212.5, y: -45}
-  m_SizeDelta: {x: 425, y: 30}
+  m_SizeDelta: {x: 388, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &114499229443958846
 MonoBehaviour:
@@ -2523,7 +2534,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 212.5, y: -15}
-  m_SizeDelta: {x: 425, y: 30}
+  m_SizeDelta: {x: 388, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &114550086830665076
 MonoBehaviour:
@@ -3117,11 +3128,13 @@ MonoBehaviour:
   translationData:
     id: 
     translation: '[**Missing**]'
-    hoverOverTranslation: 
+    toolTipTranslation: 
+    valueIsMainTranslation: 0
     values: []
     UIElements: []
-    onlyHoverOver: 0
+    onlyToolTip: 0
     valueCount: 0
+  ValueIsMainTranslation: 0
   OnlyHoverOver: 0
   Values: 0
   nameText: {fileID: 0}
@@ -3671,11 +3684,13 @@ MonoBehaviour:
   translationData:
     id: 
     translation: '[**Missing**]'
-    hoverOverTranslation: 
+    toolTipTranslation: 
+    valueIsMainTranslation: 0
     values: []
     UIElements: []
-    onlyHoverOver: 0
+    onlyToolTip: 0
     valueCount: 0
+  ValueIsMainTranslation: 0
   OnlyHoverOver: 0
   Values: 0
   nameText: {fileID: 0}
@@ -4067,11 +4082,13 @@ MonoBehaviour:
   translationData:
     id: 
     translation: '[**Missing**]'
-    hoverOverTranslation: 
+    toolTipTranslation: 
+    valueIsMainTranslation: 0
     values: []
     UIElements: []
-    onlyHoverOver: 0
+    onlyToolTip: 0
     valueCount: 0
+  ValueIsMainTranslation: 0
   OnlyHoverOver: 0
   Values: 0
   nameText: {fileID: 0}
@@ -4094,11 +4111,13 @@ MonoBehaviour:
   translationData:
     id: 
     translation: '[**Missing**]'
-    hoverOverTranslation: 
+    toolTipTranslation: 
+    valueIsMainTranslation: 0
     values: []
     UIElements: []
-    onlyHoverOver: 0
+    onlyToolTip: 0
     valueCount: 0
+  ValueIsMainTranslation: 0
   OnlyHoverOver: 0
   Values: 0
   nameText: {fileID: 0}
@@ -4410,11 +4429,13 @@ MonoBehaviour:
   translationData:
     id: 
     translation: '[**Missing**]'
-    hoverOverTranslation: 
+    toolTipTranslation: 
+    valueIsMainTranslation: 0
     values: []
     UIElements: []
-    onlyHoverOver: 0
+    onlyToolTip: 0
     valueCount: 0
+  ValueIsMainTranslation: 0
   OnlyHoverOver: 0
   Values: 0
   nameText: {fileID: 0}
@@ -4644,11 +4665,13 @@ MonoBehaviour:
   translationData:
     id: 
     translation: '[**Missing**]'
-    hoverOverTranslation: 
+    toolTipTranslation: 
+    valueIsMainTranslation: 0
     values: []
     UIElements: []
-    onlyHoverOver: 0
+    onlyToolTip: 0
     valueCount: 0
+  ValueIsMainTranslation: 0
   OnlyHoverOver: 0
   Values: 0
   nameText: {fileID: 114111801696302984}
@@ -4907,11 +4930,13 @@ MonoBehaviour:
   translationData:
     id: 
     translation: '[**Missing**]'
-    hoverOverTranslation: 
+    toolTipTranslation: 
+    valueIsMainTranslation: 0
     values: []
     UIElements: []
-    onlyHoverOver: 0
+    onlyToolTip: 0
     valueCount: 0
+  ValueIsMainTranslation: 0
   OnlyHoverOver: 0
   Values: 0
   nameText: {fileID: 0}
@@ -4953,8 +4978,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 20, y: -30}
-  m_SizeDelta: {x: -40, y: 100}
+  m_AnchoredPosition: {x: 2.2727966, y: -30}
+  m_SizeDelta: {x: -75.454, y: 70}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!222 &222850377244267672
 CanvasRenderer:
@@ -5014,11 +5039,13 @@ MonoBehaviour:
   translationData:
     id: 
     translation: '[**Missing**]'
-    hoverOverTranslation: 
+    toolTipTranslation: 
+    valueIsMainTranslation: 0
     values: []
     UIElements: []
-    onlyHoverOver: 0
+    onlyToolTip: 0
     valueCount: 0
+  ValueIsMainTranslation: 0
   OnlyHoverOver: 0
   Values: 0
   nameText: {fileID: 0}
@@ -5289,11 +5316,13 @@ MonoBehaviour:
   translationData:
     id: 
     translation: '[**Missing**]'
-    hoverOverTranslation: 
+    toolTipTranslation: 
+    valueIsMainTranslation: 0
     values: []
     UIElements: []
-    onlyHoverOver: 0
+    onlyToolTip: 0
     valueCount: 0
+  ValueIsMainTranslation: 0
   OnlyHoverOver: 0
   Values: 0
   nameText: {fileID: 0}
@@ -5475,11 +5504,13 @@ MonoBehaviour:
   translationData:
     id: 
     translation: '[**Missing**]'
-    hoverOverTranslation: 
+    toolTipTranslation: 
+    valueIsMainTranslation: 0
     values: []
     UIElements: []
-    onlyHoverOver: 0
+    onlyToolTip: 0
     valueCount: 0
+  ValueIsMainTranslation: 0
   OnlyHoverOver: 0
   Values: 0
   nameText: {fileID: 0}
@@ -6217,11 +6248,13 @@ MonoBehaviour:
   translationData:
     id: 
     translation: '[**Missing**]'
-    hoverOverTranslation: 
+    toolTipTranslation: 
+    valueIsMainTranslation: 0
     values: []
     UIElements: []
-    onlyHoverOver: 0
+    onlyToolTip: 0
     valueCount: 0
+  ValueIsMainTranslation: 0
   OnlyHoverOver: 0
   Values: 0
   nameText: {fileID: 0}
@@ -6493,11 +6526,13 @@ MonoBehaviour:
   translationData:
     id: 
     translation: '[**Missing**]'
-    hoverOverTranslation: 
+    toolTipTranslation: 
+    valueIsMainTranslation: 0
     values: []
     UIElements: []
-    onlyHoverOver: 0
+    onlyToolTip: 0
     valueCount: 0
+  ValueIsMainTranslation: 0
   OnlyHoverOver: 0
   Values: 0
   nameText: {fileID: 0}
@@ -6790,11 +6825,13 @@ MonoBehaviour:
   translationData:
     id: 
     translation: '[**Missing**]'
-    hoverOverTranslation: 
+    toolTipTranslation: 
+    valueIsMainTranslation: 0
     values: []
     UIElements: []
-    onlyHoverOver: 0
+    onlyToolTip: 0
     valueCount: 0
+  ValueIsMainTranslation: 0
   OnlyHoverOver: 0
   Values: 0
   nameText: {fileID: 0}
@@ -7180,11 +7217,13 @@ MonoBehaviour:
   translationData:
     id: 
     translation: '[**Missing**]'
-    hoverOverTranslation: 
+    toolTipTranslation: 
+    valueIsMainTranslation: 0
     values: []
     UIElements: []
-    onlyHoverOver: 0
+    onlyToolTip: 0
     valueCount: 0
+  ValueIsMainTranslation: 0
   OnlyHoverOver: 0
   Values: 0
   nameText: {fileID: 0}
@@ -7695,10 +7734,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e520221e9576c254082cec1e863d5e58, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  setting: 0
-  displayLabels:
-  - On
-  - Off
 --- !u!114 &114383722832421398
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7763,16 +7798,18 @@ MonoBehaviour:
   translationData:
     id: 
     translation: '[**Missing**]'
-    hoverOverTranslation: 
+    toolTipTranslation: 
+    valueIsMainTranslation: 0
     values: []
     UIElements: []
-    onlyHoverOver: 0
+    onlyToolTip: 0
     valueCount: 0
+  ValueIsMainTranslation: 0
   OnlyHoverOver: 0
   Values: 0
   nameText: {fileID: 114489013469926678}
   tmp_nameText: {fileID: 0}
-  valueText: {fileID: 0}
+  valueText: {fileID: 114353537938738762}
   languageValues: []
 --- !u!1 &1307747313168302
 GameObject:
@@ -8947,8 +8984,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 200.5, y: -15}
-  m_SizeDelta: {x: 137, y: 30}
+  m_AnchoredPosition: {x: 182, y: -15}
+  m_SizeDelta: {x: 124.666664, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &222764261125053630
 CanvasRenderer:
@@ -9010,11 +9047,13 @@ MonoBehaviour:
   translationData:
     id: 
     translation: '[**Missing**]'
-    hoverOverTranslation: 
+    toolTipTranslation: 
+    valueIsMainTranslation: 0
     values: []
     UIElements: []
-    onlyHoverOver: 0
+    onlyToolTip: 0
     valueCount: 0
+  ValueIsMainTranslation: 0
   OnlyHoverOver: 0
   Values: 0
   nameText: {fileID: 0}
@@ -9361,11 +9400,13 @@ MonoBehaviour:
   translationData:
     id: 
     translation: '[**Missing**]'
-    hoverOverTranslation: 
+    toolTipTranslation: 
+    valueIsMainTranslation: 0
     values: []
     UIElements: []
-    onlyHoverOver: 0
+    onlyToolTip: 0
     valueCount: 0
+  ValueIsMainTranslation: 0
   OnlyHoverOver: 0
   Values: 0
   nameText: {fileID: 0}
@@ -9772,11 +9813,13 @@ MonoBehaviour:
   translationData:
     id: 
     translation: '[**Missing**]'
-    hoverOverTranslation: 
+    toolTipTranslation: 
+    valueIsMainTranslation: 0
     values: []
     UIElements: []
-    onlyHoverOver: 0
+    onlyToolTip: 0
     valueCount: 0
+  ValueIsMainTranslation: 0
   OnlyHoverOver: 0
   Values: 0
   nameText: {fileID: 114516561076021254}
@@ -10485,11 +10528,13 @@ MonoBehaviour:
   translationData:
     id: 
     translation: '[**Missing**]'
-    hoverOverTranslation: 
+    toolTipTranslation: 
+    valueIsMainTranslation: 0
     values: []
     UIElements: []
-    onlyHoverOver: 0
+    onlyToolTip: 0
     valueCount: 0
+  ValueIsMainTranslation: 0
   OnlyHoverOver: 0
   Values: 0
   nameText: {fileID: 0}
@@ -11854,11 +11899,13 @@ MonoBehaviour:
   translationData:
     id: 
     translation: '[**Missing**]'
-    hoverOverTranslation: 
+    toolTipTranslation: 
+    valueIsMainTranslation: 0
     values: []
     UIElements: []
-    onlyHoverOver: 0
+    onlyToolTip: 0
     valueCount: 0
+  ValueIsMainTranslation: 0
   OnlyHoverOver: 0
   Values: 0
   nameText: {fileID: 0}
@@ -12287,11 +12334,13 @@ MonoBehaviour:
   translationData:
     id: 
     translation: '[**Missing**]'
-    hoverOverTranslation: 
+    toolTipTranslation: 
+    valueIsMainTranslation: 0
     values: []
     UIElements: []
-    onlyHoverOver: 0
+    onlyToolTip: 0
     valueCount: 0
+  ValueIsMainTranslation: 0
   OnlyHoverOver: 0
   Values: 0
   nameText: {fileID: 114170936434809766}
@@ -12578,11 +12627,13 @@ MonoBehaviour:
   translationData:
     id: 
     translation: '[**Missing**]'
-    hoverOverTranslation: 
+    toolTipTranslation: 
+    valueIsMainTranslation: 0
     values: []
     UIElements: []
-    onlyHoverOver: 0
+    onlyToolTip: 0
     valueCount: 0
+  ValueIsMainTranslation: 0
   OnlyHoverOver: 0
   Values: 0
   nameText: {fileID: 0}
@@ -12999,11 +13050,13 @@ MonoBehaviour:
   translationData:
     id: 
     translation: '[**Missing**]'
-    hoverOverTranslation: 
+    toolTipTranslation: 
+    valueIsMainTranslation: 0
     values: []
     UIElements: []
-    onlyHoverOver: 0
+    onlyToolTip: 0
     valueCount: 0
+  ValueIsMainTranslation: 0
   OnlyHoverOver: 0
   Values: 0
   nameText: {fileID: 114575236772214158}
@@ -13143,11 +13196,13 @@ MonoBehaviour:
   translationData:
     id: 
     translation: '[**Missing**]'
-    hoverOverTranslation: 
+    toolTipTranslation: 
+    valueIsMainTranslation: 0
     values: []
     UIElements: []
-    onlyHoverOver: 0
+    onlyToolTip: 0
     valueCount: 0
+  ValueIsMainTranslation: 0
   OnlyHoverOver: 0
   Values: 0
   nameText: {fileID: 0}
@@ -13170,11 +13225,13 @@ MonoBehaviour:
   translationData:
     id: 
     translation: '[**Missing**]'
-    hoverOverTranslation: 
+    toolTipTranslation: 
+    valueIsMainTranslation: 0
     values: []
     UIElements: []
-    onlyHoverOver: 0
+    onlyToolTip: 0
     valueCount: 0
+  ValueIsMainTranslation: 0
   OnlyHoverOver: 0
   Values: 0
   nameText: {fileID: 0}
@@ -13547,11 +13604,13 @@ MonoBehaviour:
   translationData:
     id: 
     translation: '[**Missing**]'
-    hoverOverTranslation: 
+    toolTipTranslation: 
+    valueIsMainTranslation: 0
     values: []
     UIElements: []
-    onlyHoverOver: 0
+    onlyToolTip: 0
     valueCount: 0
+  ValueIsMainTranslation: 0
   OnlyHoverOver: 0
   Values: 0
   nameText: {fileID: 0}
@@ -14198,11 +14257,13 @@ MonoBehaviour:
   translationData:
     id: 
     translation: '[**Missing**]'
-    hoverOverTranslation: 
+    toolTipTranslation: 
+    valueIsMainTranslation: 0
     values: []
     UIElements: []
-    onlyHoverOver: 0
+    onlyToolTip: 0
     valueCount: 0
+  ValueIsMainTranslation: 0
   OnlyHoverOver: 0
   Values: 0
   nameText: {fileID: 0}
@@ -14468,8 +14529,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 66, y: -15}
-  m_SizeDelta: {x: 132, y: 30}
+  m_AnchoredPosition: {x: 59.833332, y: -15}
+  m_SizeDelta: {x: 119.666664, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &222259291601974930
 CanvasRenderer:
@@ -14529,11 +14590,13 @@ MonoBehaviour:
   translationData:
     id: 
     translation: '[**Missing**]'
-    hoverOverTranslation: 
+    toolTipTranslation: 
+    valueIsMainTranslation: 0
     values: []
     UIElements: []
-    onlyHoverOver: 0
+    onlyToolTip: 0
     valueCount: 0
+  ValueIsMainTranslation: 0
   OnlyHoverOver: 0
   Values: 0
   nameText: {fileID: 0}
@@ -14636,11 +14699,13 @@ MonoBehaviour:
   translationData:
     id: 
     translation: '[**Missing**]'
-    hoverOverTranslation: 
+    toolTipTranslation: 
+    valueIsMainTranslation: 0
     values: []
     UIElements: []
-    onlyHoverOver: 0
+    onlyToolTip: 0
     valueCount: 0
+  ValueIsMainTranslation: 0
   OnlyHoverOver: 0
   Values: 0
   nameText: {fileID: 0}
@@ -15012,11 +15077,13 @@ MonoBehaviour:
   translationData:
     id: 
     translation: '[**Missing**]'
-    hoverOverTranslation: 
+    toolTipTranslation: 
+    valueIsMainTranslation: 0
     values: []
     UIElements: []
-    onlyHoverOver: 0
+    onlyToolTip: 0
     valueCount: 0
+  ValueIsMainTranslation: 0
   OnlyHoverOver: 0
   Values: 0
   nameText: {fileID: 114857512735632486}
@@ -15302,12 +15369,12 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 224842268174979358}
-  m_RootOrder: 1
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 212.5, y: -45}
-  m_SizeDelta: {x: 425, y: 30}
+  m_AnchoredPosition: {x: 194.273, y: -75}
+  m_SizeDelta: {x: 388.546, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &114750538888979522
 MonoBehaviour:
@@ -15425,11 +15492,13 @@ MonoBehaviour:
   translationData:
     id: 
     translation: '[**Missing**]'
-    hoverOverTranslation: 
+    toolTipTranslation: 
+    valueIsMainTranslation: 0
     values: []
     UIElements: []
-    onlyHoverOver: 0
+    onlyToolTip: 0
     valueCount: 0
+  ValueIsMainTranslation: 0
   OnlyHoverOver: 0
   Values: 0
   nameText: {fileID: 0}
@@ -15733,11 +15802,13 @@ MonoBehaviour:
   translationData:
     id: 
     translation: '[**Missing**]'
-    hoverOverTranslation: 
+    toolTipTranslation: 
+    valueIsMainTranslation: 0
     values: []
     UIElements: []
-    onlyHoverOver: 0
+    onlyToolTip: 0
     valueCount: 0
+  ValueIsMainTranslation: 0
   OnlyHoverOver: 0
   Values: 0
   nameText: {fileID: 0}
@@ -16533,8 +16604,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 347, y: -15}
-  m_SizeDelta: {x: 156, y: 30}
+  m_AnchoredPosition: {x: 316.16666, y: -15}
+  m_SizeDelta: {x: 143.66666, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &222892194981352822
 CanvasRenderer:
@@ -16594,11 +16665,13 @@ MonoBehaviour:
   translationData:
     id: 
     translation: '[**Missing**]'
-    hoverOverTranslation: 
+    toolTipTranslation: 
+    valueIsMainTranslation: 0
     values: []
     UIElements: []
-    onlyHoverOver: 0
+    onlyToolTip: 0
     valueCount: 0
+  ValueIsMainTranslation: 0
   OnlyHoverOver: 0
   Values: 0
   nameText: {fileID: 0}
@@ -16791,11 +16864,13 @@ MonoBehaviour:
   translationData:
     id: 
     translation: '[**Missing**]'
-    hoverOverTranslation: 
+    toolTipTranslation: 
+    valueIsMainTranslation: 0
     values: []
     UIElements: []
-    onlyHoverOver: 0
+    onlyToolTip: 0
     valueCount: 0
+  ValueIsMainTranslation: 0
   OnlyHoverOver: 0
   Values: 0
   nameText: {fileID: 0}
@@ -17138,11 +17213,13 @@ MonoBehaviour:
   translationData:
     id: 
     translation: '[**Missing**]'
-    hoverOverTranslation: 
+    toolTipTranslation: 
+    valueIsMainTranslation: 0
     values: []
     UIElements: []
-    onlyHoverOver: 0
+    onlyToolTip: 0
     valueCount: 0
+  ValueIsMainTranslation: 0
   OnlyHoverOver: 0
   Values: 0
   nameText: {fileID: 0}
@@ -17245,11 +17322,13 @@ MonoBehaviour:
   translationData:
     id: 
     translation: '[**Missing**]'
-    hoverOverTranslation: 
+    toolTipTranslation: 
+    valueIsMainTranslation: 0
     values: []
     UIElements: []
-    onlyHoverOver: 0
+    onlyToolTip: 0
     valueCount: 0
+  ValueIsMainTranslation: 0
   OnlyHoverOver: 0
   Values: 0
   nameText: {fileID: 0}
@@ -17685,11 +17764,13 @@ MonoBehaviour:
   translationData:
     id: 
     translation: '[**Missing**]'
-    hoverOverTranslation: 
+    toolTipTranslation: 
+    valueIsMainTranslation: 0
     values: []
     UIElements: []
-    onlyHoverOver: 0
+    onlyToolTip: 0
     valueCount: 0
+  ValueIsMainTranslation: 0
   OnlyHoverOver: 0
   Values: 0
   nameText: {fileID: 0}
@@ -18250,11 +18331,13 @@ MonoBehaviour:
   translationData:
     id: 
     translation: '[**Missing**]'
-    hoverOverTranslation: 
+    toolTipTranslation: 
+    valueIsMainTranslation: 0
     values: []
     UIElements: []
-    onlyHoverOver: 0
+    onlyToolTip: 0
     valueCount: 0
+  ValueIsMainTranslation: 0
   OnlyHoverOver: 0
   Values: 0
   nameText: {fileID: 0}
@@ -18695,11 +18778,13 @@ MonoBehaviour:
   translationData:
     id: 
     translation: '[**Missing**]'
-    hoverOverTranslation: 
+    toolTipTranslation: 
+    valueIsMainTranslation: 0
     values: []
     UIElements: []
-    onlyHoverOver: 0
+    onlyToolTip: 0
     valueCount: 0
+  ValueIsMainTranslation: 0
   OnlyHoverOver: 0
   Values: 0
   nameText: {fileID: 0}
@@ -19466,11 +19551,13 @@ MonoBehaviour:
   translationData:
     id: 
     translation: '[**Missing**]'
-    hoverOverTranslation: 
+    toolTipTranslation: 
+    valueIsMainTranslation: 0
     values: []
     UIElements: []
-    onlyHoverOver: 0
+    onlyToolTip: 0
     valueCount: 0
+  ValueIsMainTranslation: 0
   OnlyHoverOver: 0
   Values: 0
   nameText: {fileID: 0}
@@ -20131,11 +20218,13 @@ MonoBehaviour:
   translationData:
     id: 
     translation: '[**Missing**]'
-    hoverOverTranslation: 
+    toolTipTranslation: 
+    valueIsMainTranslation: 0
     values: []
     UIElements: []
-    onlyHoverOver: 0
+    onlyToolTip: 0
     valueCount: 0
+  ValueIsMainTranslation: 0
   OnlyHoverOver: 0
   Values: 0
   nameText: {fileID: 0}
@@ -20259,11 +20348,13 @@ MonoBehaviour:
   translationData:
     id: 
     translation: '[**Missing**]'
-    hoverOverTranslation: 
+    toolTipTranslation: 
+    valueIsMainTranslation: 0
     values: []
     UIElements: []
-    onlyHoverOver: 0
+    onlyToolTip: 0
     valueCount: 0
+  ValueIsMainTranslation: 0
   OnlyHoverOver: 0
   Values: 0
   nameText: {fileID: 0}
@@ -21420,11 +21511,13 @@ MonoBehaviour:
   translationData:
     id: 
     translation: '[**Missing**]'
-    hoverOverTranslation: 
+    toolTipTranslation: 
+    valueIsMainTranslation: 0
     values: []
     UIElements: []
-    onlyHoverOver: 0
+    onlyToolTip: 0
     valueCount: 0
+  ValueIsMainTranslation: 0
   OnlyHoverOver: 0
   Values: 0
   nameText: {fileID: 0}
@@ -22366,11 +22459,13 @@ MonoBehaviour:
   translationData:
     id: 
     translation: '[**Missing**]'
-    hoverOverTranslation: 
+    toolTipTranslation: 
+    valueIsMainTranslation: 0
     values: []
     UIElements: []
-    onlyHoverOver: 0
+    onlyToolTip: 0
     valueCount: 0
+  ValueIsMainTranslation: 0
   OnlyHoverOver: 0
   Values: 0
   nameText: {fileID: 114315016534148168}
@@ -22600,11 +22695,13 @@ MonoBehaviour:
   translationData:
     id: 
     translation: '[**Missing**]'
-    hoverOverTranslation: 
+    toolTipTranslation: 
+    valueIsMainTranslation: 0
     values: []
     UIElements: []
-    onlyHoverOver: 0
+    onlyToolTip: 0
     valueCount: 0
+  ValueIsMainTranslation: 0
   OnlyHoverOver: 0
   Values: 0
   nameText: {fileID: 114859840734931102}
@@ -22641,6 +22738,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 224415020217385744}
+  - {fileID: 997327146861673543}
   - {fileID: 224466917267116304}
   - {fileID: 9091394649044464262}
   m_Father: {fileID: 224513163329064120}
@@ -22649,7 +22747,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: -40, y: 90}
+  m_SizeDelta: {x: -40, y: 120}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &114808765051209778
 MonoBehaviour:
@@ -22992,11 +23090,13 @@ MonoBehaviour:
   translationData:
     id: 
     translation: '[**Missing**]'
-    hoverOverTranslation: 
+    toolTipTranslation: 
+    valueIsMainTranslation: 0
     values: []
     UIElements: []
-    onlyHoverOver: 0
+    onlyToolTip: 0
     valueCount: 0
+  ValueIsMainTranslation: 0
   OnlyHoverOver: 0
   Values: 0
   nameText: {fileID: 0}
@@ -24065,10 +24165,10 @@ RectTransform:
   m_Father: {fileID: 224651545926343114}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: -40, y: -200}
+  m_SizeDelta: {x: 428.546, y: 880}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1891671665685718
 GameObject:
@@ -24317,8 +24417,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 212.5, y: -15}
-  m_SizeDelta: {x: 425, y: 30}
+  m_AnchoredPosition: {x: 194.273, y: -15}
+  m_SizeDelta: {x: 388.546, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &114647065972222214
 MonoBehaviour:
@@ -24781,11 +24881,13 @@ MonoBehaviour:
   translationData:
     id: 
     translation: '[**Missing**]'
-    hoverOverTranslation: 
+    toolTipTranslation: 
+    valueIsMainTranslation: 0
     values: []
     UIElements: []
-    onlyHoverOver: 0
+    onlyToolTip: 0
     valueCount: 0
+  ValueIsMainTranslation: 0
   OnlyHoverOver: 0
   Values: 0
   nameText: {fileID: 0}
@@ -24923,11 +25025,13 @@ MonoBehaviour:
   translationData:
     id: 
     translation: '[**Missing**]'
-    hoverOverTranslation: 
+    toolTipTranslation: 
+    valueIsMainTranslation: 0
     values: []
     UIElements: []
-    onlyHoverOver: 0
+    onlyToolTip: 0
     valueCount: 0
+  ValueIsMainTranslation: 0
   OnlyHoverOver: 0
   Values: 0
   nameText: {fileID: 0}
@@ -25293,11 +25397,13 @@ MonoBehaviour:
   translationData:
     id: 
     translation: '[**Missing**]'
-    hoverOverTranslation: 
+    toolTipTranslation: 
+    valueIsMainTranslation: 0
     values: []
     UIElements: []
-    onlyHoverOver: 0
+    onlyToolTip: 0
     valueCount: 0
+  ValueIsMainTranslation: 0
   OnlyHoverOver: 0
   Values: 0
   nameText: {fileID: 0}
@@ -25691,11 +25797,13 @@ MonoBehaviour:
   translationData:
     id: 
     translation: '[**Missing**]'
-    hoverOverTranslation: 
+    toolTipTranslation: 
+    valueIsMainTranslation: 0
     values: []
     UIElements: []
-    onlyHoverOver: 0
+    onlyToolTip: 0
     valueCount: 0
+  ValueIsMainTranslation: 0
   OnlyHoverOver: 0
   Values: 0
   nameText: {fileID: 0}
@@ -26034,11 +26142,13 @@ MonoBehaviour:
   translationData:
     id: 
     translation: '[**Missing**]'
-    hoverOverTranslation: 
+    toolTipTranslation: 
+    valueIsMainTranslation: 0
     values: []
     UIElements: []
-    onlyHoverOver: 0
+    onlyToolTip: 0
     valueCount: 0
+  ValueIsMainTranslation: 0
   OnlyHoverOver: 0
   Values: 0
   nameText: {fileID: 114588098070937486}
@@ -26318,11 +26428,13 @@ MonoBehaviour:
   translationData:
     id: 
     translation: '[**Missing**]'
-    hoverOverTranslation: 
+    toolTipTranslation: 
+    valueIsMainTranslation: 0
     values: []
     UIElements: []
-    onlyHoverOver: 0
+    onlyToolTip: 0
     valueCount: 0
+  ValueIsMainTranslation: 0
   OnlyHoverOver: 0
   Values: 0
   nameText: {fileID: 0}
@@ -26764,11 +26876,13 @@ MonoBehaviour:
   translationData:
     id: 
     translation: '[**Missing**]'
-    hoverOverTranslation: 
+    toolTipTranslation: 
+    valueIsMainTranslation: 0
     values: []
     UIElements: []
-    onlyHoverOver: 0
+    onlyToolTip: 0
     valueCount: 0
+  ValueIsMainTranslation: 0
   OnlyHoverOver: 0
   Values: 0
   nameText: {fileID: 0}
@@ -26871,11 +26985,13 @@ MonoBehaviour:
   translationData:
     id: 
     translation: '[**Missing**]'
-    hoverOverTranslation: 
+    toolTipTranslation: 
+    valueIsMainTranslation: 0
     values: []
     UIElements: []
-    onlyHoverOver: 0
+    onlyToolTip: 0
     valueCount: 0
+  ValueIsMainTranslation: 0
   OnlyHoverOver: 0
   Values: 0
   nameText: {fileID: 0}
@@ -27065,11 +27181,13 @@ MonoBehaviour:
   translationData:
     id: 
     translation: '[**Missing**]'
-    hoverOverTranslation: 
+    toolTipTranslation: 
+    valueIsMainTranslation: 0
     values: []
     UIElements: []
-    onlyHoverOver: 0
+    onlyToolTip: 0
     valueCount: 0
+  ValueIsMainTranslation: 0
   OnlyHoverOver: 0
   Values: 0
   nameText: {fileID: 7478561544840149153}
@@ -27155,6 +27273,81 @@ MonoBehaviour:
     m_VerticalOverflow: 0
     m_LineSpacing: 1
   m_Text: Quit to Main Menu
+--- !u!1 &1076519529419467445
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 492550240256227829}
+  - component: {fileID: 8286026052065732835}
+  - component: {fileID: 2368938884812616293}
+  m_Layer: 31
+  m_Name: Background
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &492550240256227829
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1076519529419467445}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 997327146861673543}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 10}
+  m_Pivot: {x: 0.5, y: 0}
+--- !u!222 &8286026052065732835
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1076519529419467445}
+  m_CullTransparentMesh: 0
+--- !u!114 &2368938884812616293
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1076519529419467445}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 0.39215687}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 0}
+  m_Type: 1
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
 --- !u!1 &1083699019986249374
 GameObject:
   m_ObjectHideFlags: 0
@@ -27570,11 +27763,13 @@ MonoBehaviour:
   translationData:
     id: 
     translation: '[**Missing**]'
-    hoverOverTranslation: 
+    toolTipTranslation: 
+    valueIsMainTranslation: 0
     values: []
     UIElements: []
-    onlyHoverOver: 0
+    onlyToolTip: 0
     valueCount: 0
+  ValueIsMainTranslation: 0
   OnlyHoverOver: 0
   Values: 0
   nameText: {fileID: 1312293015483497579}
@@ -27804,11 +27999,13 @@ MonoBehaviour:
   translationData:
     id: 
     translation: '[**Missing**]'
-    hoverOverTranslation: 
+    toolTipTranslation: 
+    valueIsMainTranslation: 0
     values: []
     UIElements: []
-    onlyHoverOver: 0
+    onlyToolTip: 0
     valueCount: 0
+  ValueIsMainTranslation: 0
   OnlyHoverOver: 0
   Values: 0
   nameText: {fileID: 3436003602452023473}
@@ -28233,11 +28430,13 @@ MonoBehaviour:
   translationData:
     id: 
     translation: '[**Missing**]'
-    hoverOverTranslation: 
+    toolTipTranslation: 
+    valueIsMainTranslation: 0
     values: []
     UIElements: []
-    onlyHoverOver: 0
+    onlyToolTip: 0
     valueCount: 0
+  ValueIsMainTranslation: 0
   OnlyHoverOver: 0
   Values: 0
   nameText: {fileID: 0}
@@ -28360,11 +28559,13 @@ MonoBehaviour:
   translationData:
     id: 
     translation: '[**Missing**]'
-    hoverOverTranslation: 
+    toolTipTranslation: 
+    valueIsMainTranslation: 0
     values: []
     UIElements: []
-    onlyHoverOver: 0
+    onlyToolTip: 0
     valueCount: 0
+  ValueIsMainTranslation: 0
   OnlyHoverOver: 0
   Values: 0
   nameText: {fileID: 0}
@@ -28901,12 +29102,12 @@ RectTransform:
   - {fileID: 224412644447136074}
   - {fileID: 224482254306332232}
   m_Father: {fileID: 224842268174979358}
-  m_RootOrder: 2
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 212.5, y: -75}
-  m_SizeDelta: {x: 425, y: 30}
+  m_AnchoredPosition: {x: 194.273, y: -105}
+  m_SizeDelta: {x: 388.546, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &6946837378345063983
 MonoBehaviour:
@@ -28948,11 +29149,11 @@ MonoBehaviour:
   m_ChildAlignment: 0
   m_Spacing: 0
   m_ChildForceExpandWidth: 1
-  m_ChildForceExpandHeight: 1
+  m_ChildForceExpandHeight: 0
   m_ChildControlWidth: 0
   m_ChildControlHeight: 0
   m_ChildScaleWidth: 0
-  m_ChildScaleHeight: 0
+  m_ChildScaleHeight: 1
   m_ReverseArrangement: 0
 --- !u!1 &2803495933399481741
 GameObject:
@@ -29108,11 +29309,13 @@ MonoBehaviour:
   translationData:
     id: 
     translation: '[**Missing**]'
-    hoverOverTranslation: 
+    toolTipTranslation: 
+    valueIsMainTranslation: 0
     values: []
     UIElements: []
-    onlyHoverOver: 0
+    onlyToolTip: 0
     valueCount: 0
+  ValueIsMainTranslation: 0
   OnlyHoverOver: 0
   Values: 0
   nameText: {fileID: 0}
@@ -29363,6 +29566,85 @@ MonoBehaviour:
     m_VerticalOverflow: 0
     m_LineSpacing: 1
   m_Text: Option A
+--- !u!1 &4083106543410033339
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 279219560408635705}
+  - component: {fileID: 1216827086263841668}
+  - component: {fileID: 5265283968024323413}
+  m_Layer: 31
+  m_Name: Value
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &279219560408635705
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4083106543410033339}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 997327146861673543}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 0}
+  m_AnchoredPosition: {x: 0.000030517578, y: 10}
+  m_SizeDelta: {x: 0, y: 20}
+  m_Pivot: {x: 0.5, y: 0}
+--- !u!222 &1216827086263841668
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4083106543410033339}
+  m_CullTransparentMesh: 0
+--- !u!114 &5265283968024323413
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4083106543410033339}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_FontData:
+    m_Font: {fileID: 12800000, guid: 87c316b602156405d92e616621658222, type: 3}
+    m_FontSize: 14
+    m_FontStyle: 0
+    m_BestFit: 0
+    m_MinSize: 10
+    m_MaxSize: 40
+    m_Alignment: 2
+    m_AlignByGeometry: 0
+    m_RichText: 1
+    m_HorizontalOverflow: 0
+    m_VerticalOverflow: 0
+    m_LineSpacing: 1
+  m_Text: 0
 --- !u!1 &4139363401964618795
 GameObject:
   m_ObjectHideFlags: 0
@@ -29624,11 +29906,13 @@ MonoBehaviour:
   translationData:
     id: 
     translation: '[**Missing**]'
-    hoverOverTranslation: 
+    toolTipTranslation: 
+    valueIsMainTranslation: 0
     values: []
     UIElements: []
-    onlyHoverOver: 0
+    onlyToolTip: 0
     valueCount: 0
+  ValueIsMainTranslation: 0
   OnlyHoverOver: 0
   Values: 0
   nameText: {fileID: 0}
@@ -30132,11 +30416,13 @@ MonoBehaviour:
   translationData:
     id: 
     translation: '[**Missing**]'
-    hoverOverTranslation: 
+    toolTipTranslation: 
+    valueIsMainTranslation: 0
     values: []
     UIElements: []
-    onlyHoverOver: 0
+    onlyToolTip: 0
     valueCount: 0
+  ValueIsMainTranslation: 0
   OnlyHoverOver: 0
   Values: 0
   nameText: {fileID: 0}
@@ -30395,6 +30681,85 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!1 &5673404604711311337
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8316290514497940667}
+  - component: {fileID: 6694696463306809309}
+  - component: {fileID: 2780755155298792969}
+  m_Layer: 31
+  m_Name: Label
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &8316290514497940667
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5673404604711311337}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 997327146861673543}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 0}
+  m_AnchoredPosition: {x: 0, y: 10}
+  m_SizeDelta: {x: 0, y: 20}
+  m_Pivot: {x: 0.5, y: 0}
+--- !u!222 &6694696463306809309
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5673404604711311337}
+  m_CullTransparentMesh: 0
+--- !u!114 &2780755155298792969
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5673404604711311337}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 0.58823526, g: 0.58823526, b: 0.58823526, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_FontData:
+    m_Font: {fileID: 12800000, guid: 04a842e316b6f44bf8da702de26a8ed6, type: 3}
+    m_FontSize: 14
+    m_FontStyle: 0
+    m_BestFit: 0
+    m_MinSize: 10
+    m_MaxSize: 40
+    m_Alignment: 0
+    m_AlignByGeometry: 0
+    m_RichText: 1
+    m_HorizontalOverflow: 0
+    m_VerticalOverflow: 0
+    m_LineSpacing: 1
+  m_Text: Inverted Mouse Buttons
 --- !u!1 &6009399691227106487
 GameObject:
   m_ObjectHideFlags: 0
@@ -30492,11 +30857,13 @@ MonoBehaviour:
   translationData:
     id: 
     translation: '[**Missing**]'
-    hoverOverTranslation: 
+    toolTipTranslation: 
+    valueIsMainTranslation: 0
     values: []
     UIElements: []
-    onlyHoverOver: 0
+    onlyToolTip: 0
     valueCount: 0
+  ValueIsMainTranslation: 0
   OnlyHoverOver: 0
   Values: 0
   nameText: {fileID: 0}
@@ -30677,11 +31044,13 @@ MonoBehaviour:
   translationData:
     id: 
     translation: '[**Missing**]'
-    hoverOverTranslation: 
+    toolTipTranslation: 
+    valueIsMainTranslation: 0
     values: []
     UIElements: []
-    onlyHoverOver: 0
+    onlyToolTip: 0
     valueCount: 0
+  ValueIsMainTranslation: 0
   OnlyHoverOver: 0
   Values: 0
   nameText: {fileID: 0}
@@ -31161,6 +31530,212 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   SaveFileVersion: 1
   IslandFileVersion: 1
+--- !u!1 &7791511201343660492
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 997327146861673543}
+  - component: {fileID: 7881122450565320186}
+  - component: {fileID: 6165435781959213276}
+  - component: {fileID: 1304188855191131646}
+  - component: {fileID: 5533798637021013583}
+  - component: {fileID: 7516490776583289873}
+  - component: {fileID: 476851181854716122}
+  - component: {fileID: 4563652371169279149}
+  m_Layer: 31
+  m_Name: Inverted Mouse Buttons
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &997327146861673543
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7791511201343660492}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children:
+  - {fileID: 492550240256227829}
+  - {fileID: 8316290514497940667}
+  - {fileID: 279219560408635705}
+  m_Father: {fileID: 224842268174979358}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 0, y: -30}
+  m_SizeDelta: {x: 388.546, y: 30}
+  m_Pivot: {x: 0, y: 1}
+--- !u!114 &7881122450565320186
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7791511201343660492}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 306cc8c2b49d7114eaa3623786fc2126, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_IgnoreLayout: 0
+  m_MinWidth: -1
+  m_MinHeight: 30
+  m_PreferredWidth: -1
+  m_PreferredHeight: -1
+  m_FlexibleWidth: -1
+  m_FlexibleHeight: -1
+  m_LayoutPriority: 1
+--- !u!222 &6165435781959213276
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7791511201343660492}
+  m_CullTransparentMesh: 0
+--- !u!114 &1304188855191131646
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7791511201343660492}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 0, g: 0, b: 0, a: 0}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 0}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!114 &5533798637021013583
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7791511201343660492}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1cfd42a39b20e1142ae9e6434fe48a85, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  normalColor: {r: 0, g: 0, b: 0, a: 0}
+  fadeSpeed: 0.75
+--- !u!114 &7516490776583289873
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7791511201343660492}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9085046f02f69544eb97fd06b6048fe2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Navigation:
+    m_Mode: 3
+    m_WrapAround: 0
+    m_SelectOnUp: {fileID: 0}
+    m_SelectOnDown: {fileID: 0}
+    m_SelectOnLeft: {fileID: 0}
+    m_SelectOnRight: {fileID: 0}
+  m_Transition: 1
+  m_Colors:
+    m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
+    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
+    m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
+    m_ColorMultiplier: 1
+    m_FadeDuration: 0.1
+  m_SpriteState:
+    m_HighlightedSprite: {fileID: 0}
+    m_PressedSprite: {fileID: 0}
+    m_SelectedSprite: {fileID: 0}
+    m_DisabledSprite: {fileID: 0}
+  m_AnimationTriggers:
+    m_NormalTrigger: Normal
+    m_HighlightedTrigger: Highlighted
+    m_PressedTrigger: Pressed
+    m_SelectedTrigger: Highlighted
+    m_DisabledTrigger: Disabled
+  m_Interactable: 1
+  m_TargetGraphic: {fileID: 1304188855191131646}
+  toggleTransition: 1
+  graphic: {fileID: 2368938884812616293}
+  m_Group: {fileID: 0}
+  onValueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_IsOn: 0
+--- !u!114 &476851181854716122
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7791511201343660492}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1b5e01526a8f99145b7b92b7d43dbe24, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Identifier: InvertedMouseButtons
+  translationData:
+    id: 
+    translation: '[**Missing**]'
+    toolTipTranslation: 
+    valueIsMainTranslation: 0
+    values: []
+    UIElements: []
+    onlyToolTip: 0
+    valueCount: 0
+  ValueIsMainTranslation: 0
+  OnlyHoverOver: 0
+  Values: 0
+  nameText: {fileID: 2780755155298792969}
+  tmp_nameText: {fileID: 0}
+  valueText: {fileID: 5265283968024323413}
+  languageValues: []
+--- !u!114 &4563652371169279149
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7791511201343660492}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1f34e9b2d2970ad4eaf94c6b5e2c32aa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &8055602378394030133
 GameObject:
   m_ObjectHideFlags: 0
@@ -31555,11 +32130,13 @@ MonoBehaviour:
   translationData:
     id: 
     translation: '[**Missing**]'
-    hoverOverTranslation: 
+    toolTipTranslation: 
+    valueIsMainTranslation: 0
     values: []
     UIElements: []
-    onlyHoverOver: 0
+    onlyToolTip: 0
     valueCount: 0
+  ValueIsMainTranslation: 0
   OnlyHoverOver: 0
   Values: 0
   nameText: {fileID: 2507786727914630744}
@@ -31677,11 +32254,13 @@ MonoBehaviour:
   translationData:
     id: 
     translation: '[**Missing**]'
-    hoverOverTranslation: 
+    toolTipTranslation: 
+    valueIsMainTranslation: 0
     values: []
     UIElements: []
-    onlyHoverOver: 0
+    onlyToolTip: 0
     valueCount: 0
+  ValueIsMainTranslation: 0
   OnlyHoverOver: 0
   Values: 0
   nameText: {fileID: 0}
@@ -31708,3 +32287,736 @@ MonoBehaviour:
   m_FlexibleWidth: -1
   m_FlexibleHeight: -1
   m_LayoutPriority: 1
+--- !u!1001 &92265873000810491
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 224482254306332232}
+    m_Modifications:
+    - target: {fileID: 116462, guid: 074603463d0903949aae76ab5692d136, type: 3}
+      propertyPath: m_Name
+      value: KeyPrefab
+      objectReference: {fileID: 0}
+    - target: {fileID: 11447832, guid: 074603463d0903949aae76ab5692d136, type: 3}
+      propertyPath: m_FontData.m_BestFit
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11447832, guid: 074603463d0903949aae76ab5692d136, type: 3}
+      propertyPath: m_FontData.m_MaxSize
+      value: 14
+      objectReference: {fileID: 0}
+    - target: {fileID: 22409842, guid: 074603463d0903949aae76ab5692d136, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 22409842, guid: 074603463d0903949aae76ab5692d136, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 22409842, guid: 074603463d0903949aae76ab5692d136, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 22409842, guid: 074603463d0903949aae76ab5692d136, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 22409842, guid: 074603463d0903949aae76ab5692d136, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 185
+      objectReference: {fileID: 0}
+    - target: {fileID: 22409842, guid: 074603463d0903949aae76ab5692d136, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -15
+      objectReference: {fileID: 0}
+    - target: {fileID: 22464962, guid: 074603463d0903949aae76ab5692d136, type: 3}
+      propertyPath: m_Pivot.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 22464962, guid: 074603463d0903949aae76ab5692d136, type: 3}
+      propertyPath: m_Pivot.y
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 22464962, guid: 074603463d0903949aae76ab5692d136, type: 3}
+      propertyPath: m_RootOrder
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 22464962, guid: 074603463d0903949aae76ab5692d136, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 22464962, guid: 074603463d0903949aae76ab5692d136, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 22464962, guid: 074603463d0903949aae76ab5692d136, type: 3}
+      propertyPath: m_AnchorMin.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 22464962, guid: 074603463d0903949aae76ab5692d136, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 22464962, guid: 074603463d0903949aae76ab5692d136, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 388
+      objectReference: {fileID: 0}
+    - target: {fileID: 22464962, guid: 074603463d0903949aae76ab5692d136, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 22464962, guid: 074603463d0903949aae76ab5692d136, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 22464962, guid: 074603463d0903949aae76ab5692d136, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 22464962, guid: 074603463d0903949aae76ab5692d136, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 22464962, guid: 074603463d0903949aae76ab5692d136, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 22464962, guid: 074603463d0903949aae76ab5692d136, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 22464962, guid: 074603463d0903949aae76ab5692d136, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 22464962, guid: 074603463d0903949aae76ab5692d136, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 22464962, guid: 074603463d0903949aae76ab5692d136, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 194
+      objectReference: {fileID: 0}
+    - target: {fileID: 22464962, guid: 074603463d0903949aae76ab5692d136, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -15
+      objectReference: {fileID: 0}
+    - target: {fileID: 22464962, guid: 074603463d0903949aae76ab5692d136, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 22464962, guid: 074603463d0903949aae76ab5692d136, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 22464962, guid: 074603463d0903949aae76ab5692d136, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 22465216, guid: 074603463d0903949aae76ab5692d136, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 22465216, guid: 074603463d0903949aae76ab5692d136, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 22465216, guid: 074603463d0903949aae76ab5692d136, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 22465216, guid: 074603463d0903949aae76ab5692d136, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 22465216, guid: 074603463d0903949aae76ab5692d136, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 315
+      objectReference: {fileID: 0}
+    - target: {fileID: 22465216, guid: 074603463d0903949aae76ab5692d136, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -15
+      objectReference: {fileID: 0}
+    - target: {fileID: 22472570, guid: 074603463d0903949aae76ab5692d136, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 22472570, guid: 074603463d0903949aae76ab5692d136, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 22472570, guid: 074603463d0903949aae76ab5692d136, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 125
+      objectReference: {fileID: 0}
+    - target: {fileID: 22472570, guid: 074603463d0903949aae76ab5692d136, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 22472570, guid: 074603463d0903949aae76ab5692d136, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 62.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 22472570, guid: 074603463d0903949aae76ab5692d136, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -15
+      objectReference: {fileID: 0}
+    - target: {fileID: 1487271875612314352, guid: 074603463d0903949aae76ab5692d136,
+        type: 3}
+      propertyPath: m_MinWidth
+      value: 125
+      objectReference: {fileID: 0}
+    - target: {fileID: 4670985079444432954, guid: 074603463d0903949aae76ab5692d136,
+        type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4670985079444432954, guid: 074603463d0903949aae76ab5692d136,
+        type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4670985079444432954, guid: 074603463d0903949aae76ab5692d136,
+        type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 4670985079444432954, guid: 074603463d0903949aae76ab5692d136,
+        type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 4670985079444432954, guid: 074603463d0903949aae76ab5692d136,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 130
+      objectReference: {fileID: 0}
+    - target: {fileID: 4670985079444432954, guid: 074603463d0903949aae76ab5692d136,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -15
+      objectReference: {fileID: 0}
+    - target: {fileID: 6864492657761501100, guid: 074603463d0903949aae76ab5692d136,
+        type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6864492657761501100, guid: 074603463d0903949aae76ab5692d136,
+        type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6864492657761501100, guid: 074603463d0903949aae76ab5692d136,
+        type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 6864492657761501100, guid: 074603463d0903949aae76ab5692d136,
+        type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 6864492657761501100, guid: 074603463d0903949aae76ab5692d136,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 250
+      objectReference: {fileID: 0}
+    - target: {fileID: 6864492657761501100, guid: 074603463d0903949aae76ab5692d136,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -15
+      objectReference: {fileID: 0}
+    - target: {fileID: 6883857700162905131, guid: 074603463d0903949aae76ab5692d136,
+        type: 3}
+      propertyPath: m_ChildScaleWidth
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6883857700162905131, guid: 074603463d0903949aae76ab5692d136,
+        type: 3}
+      propertyPath: m_ChildScaleHeight
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6883857700162905131, guid: 074603463d0903949aae76ab5692d136,
+        type: 3}
+      propertyPath: m_ReverseArrangement
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 074603463d0903949aae76ab5692d136, type: 3}
+--- !u!224 &92265872987262521 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 22464962, guid: 074603463d0903949aae76ab5692d136,
+    type: 3}
+  m_PrefabInstance: {fileID: 92265873000810491}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1001 &2320903340543254321
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 224482254306332232}
+    m_Modifications:
+    - target: {fileID: 116462, guid: 074603463d0903949aae76ab5692d136, type: 3}
+      propertyPath: m_Name
+      value: KeyPrefab (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 22409842, guid: 074603463d0903949aae76ab5692d136, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 22409842, guid: 074603463d0903949aae76ab5692d136, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 22409842, guid: 074603463d0903949aae76ab5692d136, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 22409842, guid: 074603463d0903949aae76ab5692d136, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 22409842, guid: 074603463d0903949aae76ab5692d136, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 185
+      objectReference: {fileID: 0}
+    - target: {fileID: 22409842, guid: 074603463d0903949aae76ab5692d136, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -15
+      objectReference: {fileID: 0}
+    - target: {fileID: 22464962, guid: 074603463d0903949aae76ab5692d136, type: 3}
+      propertyPath: m_Pivot.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 22464962, guid: 074603463d0903949aae76ab5692d136, type: 3}
+      propertyPath: m_Pivot.y
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 22464962, guid: 074603463d0903949aae76ab5692d136, type: 3}
+      propertyPath: m_RootOrder
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 22464962, guid: 074603463d0903949aae76ab5692d136, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 22464962, guid: 074603463d0903949aae76ab5692d136, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 22464962, guid: 074603463d0903949aae76ab5692d136, type: 3}
+      propertyPath: m_AnchorMin.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 22464962, guid: 074603463d0903949aae76ab5692d136, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 22464962, guid: 074603463d0903949aae76ab5692d136, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 388
+      objectReference: {fileID: 0}
+    - target: {fileID: 22464962, guid: 074603463d0903949aae76ab5692d136, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 22464962, guid: 074603463d0903949aae76ab5692d136, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 22464962, guid: 074603463d0903949aae76ab5692d136, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 22464962, guid: 074603463d0903949aae76ab5692d136, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 22464962, guid: 074603463d0903949aae76ab5692d136, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 22464962, guid: 074603463d0903949aae76ab5692d136, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 22464962, guid: 074603463d0903949aae76ab5692d136, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 22464962, guid: 074603463d0903949aae76ab5692d136, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 22464962, guid: 074603463d0903949aae76ab5692d136, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 194
+      objectReference: {fileID: 0}
+    - target: {fileID: 22464962, guid: 074603463d0903949aae76ab5692d136, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -45
+      objectReference: {fileID: 0}
+    - target: {fileID: 22464962, guid: 074603463d0903949aae76ab5692d136, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 22464962, guid: 074603463d0903949aae76ab5692d136, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 22464962, guid: 074603463d0903949aae76ab5692d136, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 22465216, guid: 074603463d0903949aae76ab5692d136, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 22465216, guid: 074603463d0903949aae76ab5692d136, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 22465216, guid: 074603463d0903949aae76ab5692d136, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 22465216, guid: 074603463d0903949aae76ab5692d136, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 22465216, guid: 074603463d0903949aae76ab5692d136, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 315
+      objectReference: {fileID: 0}
+    - target: {fileID: 22465216, guid: 074603463d0903949aae76ab5692d136, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -15
+      objectReference: {fileID: 0}
+    - target: {fileID: 22472570, guid: 074603463d0903949aae76ab5692d136, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 22472570, guid: 074603463d0903949aae76ab5692d136, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 22472570, guid: 074603463d0903949aae76ab5692d136, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 125
+      objectReference: {fileID: 0}
+    - target: {fileID: 22472570, guid: 074603463d0903949aae76ab5692d136, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 22472570, guid: 074603463d0903949aae76ab5692d136, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 62.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 22472570, guid: 074603463d0903949aae76ab5692d136, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -15
+      objectReference: {fileID: 0}
+    - target: {fileID: 4670985079444432954, guid: 074603463d0903949aae76ab5692d136,
+        type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4670985079444432954, guid: 074603463d0903949aae76ab5692d136,
+        type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4670985079444432954, guid: 074603463d0903949aae76ab5692d136,
+        type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 4670985079444432954, guid: 074603463d0903949aae76ab5692d136,
+        type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 4670985079444432954, guid: 074603463d0903949aae76ab5692d136,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 130
+      objectReference: {fileID: 0}
+    - target: {fileID: 4670985079444432954, guid: 074603463d0903949aae76ab5692d136,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -15
+      objectReference: {fileID: 0}
+    - target: {fileID: 6864492657761501100, guid: 074603463d0903949aae76ab5692d136,
+        type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6864492657761501100, guid: 074603463d0903949aae76ab5692d136,
+        type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6864492657761501100, guid: 074603463d0903949aae76ab5692d136,
+        type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 6864492657761501100, guid: 074603463d0903949aae76ab5692d136,
+        type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 6864492657761501100, guid: 074603463d0903949aae76ab5692d136,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 250
+      objectReference: {fileID: 0}
+    - target: {fileID: 6864492657761501100, guid: 074603463d0903949aae76ab5692d136,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -15
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 074603463d0903949aae76ab5692d136, type: 3}
+--- !u!224 &2320903340530063091 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 22464962, guid: 074603463d0903949aae76ab5692d136,
+    type: 3}
+  m_PrefabInstance: {fileID: 2320903340543254321}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1001 &8264679646010164025
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 224482254306332232}
+    m_Modifications:
+    - target: {fileID: 116462, guid: 074603463d0903949aae76ab5692d136, type: 3}
+      propertyPath: m_Name
+      value: KeyPrefab (2)
+      objectReference: {fileID: 0}
+    - target: {fileID: 22409842, guid: 074603463d0903949aae76ab5692d136, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 22409842, guid: 074603463d0903949aae76ab5692d136, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 22409842, guid: 074603463d0903949aae76ab5692d136, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 22409842, guid: 074603463d0903949aae76ab5692d136, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 22409842, guid: 074603463d0903949aae76ab5692d136, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 185
+      objectReference: {fileID: 0}
+    - target: {fileID: 22409842, guid: 074603463d0903949aae76ab5692d136, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -15
+      objectReference: {fileID: 0}
+    - target: {fileID: 22464962, guid: 074603463d0903949aae76ab5692d136, type: 3}
+      propertyPath: m_Pivot.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 22464962, guid: 074603463d0903949aae76ab5692d136, type: 3}
+      propertyPath: m_Pivot.y
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 22464962, guid: 074603463d0903949aae76ab5692d136, type: 3}
+      propertyPath: m_RootOrder
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 22464962, guid: 074603463d0903949aae76ab5692d136, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 22464962, guid: 074603463d0903949aae76ab5692d136, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 22464962, guid: 074603463d0903949aae76ab5692d136, type: 3}
+      propertyPath: m_AnchorMin.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 22464962, guid: 074603463d0903949aae76ab5692d136, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 22464962, guid: 074603463d0903949aae76ab5692d136, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 388
+      objectReference: {fileID: 0}
+    - target: {fileID: 22464962, guid: 074603463d0903949aae76ab5692d136, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 22464962, guid: 074603463d0903949aae76ab5692d136, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 22464962, guid: 074603463d0903949aae76ab5692d136, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 22464962, guid: 074603463d0903949aae76ab5692d136, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 22464962, guid: 074603463d0903949aae76ab5692d136, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 22464962, guid: 074603463d0903949aae76ab5692d136, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 22464962, guid: 074603463d0903949aae76ab5692d136, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 22464962, guid: 074603463d0903949aae76ab5692d136, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 22464962, guid: 074603463d0903949aae76ab5692d136, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 194
+      objectReference: {fileID: 0}
+    - target: {fileID: 22464962, guid: 074603463d0903949aae76ab5692d136, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -75
+      objectReference: {fileID: 0}
+    - target: {fileID: 22464962, guid: 074603463d0903949aae76ab5692d136, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 22464962, guid: 074603463d0903949aae76ab5692d136, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 22464962, guid: 074603463d0903949aae76ab5692d136, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 22465216, guid: 074603463d0903949aae76ab5692d136, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 22465216, guid: 074603463d0903949aae76ab5692d136, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 22465216, guid: 074603463d0903949aae76ab5692d136, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 22465216, guid: 074603463d0903949aae76ab5692d136, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 22465216, guid: 074603463d0903949aae76ab5692d136, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 315
+      objectReference: {fileID: 0}
+    - target: {fileID: 22465216, guid: 074603463d0903949aae76ab5692d136, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -15
+      objectReference: {fileID: 0}
+    - target: {fileID: 22472570, guid: 074603463d0903949aae76ab5692d136, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 22472570, guid: 074603463d0903949aae76ab5692d136, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 22472570, guid: 074603463d0903949aae76ab5692d136, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 125
+      objectReference: {fileID: 0}
+    - target: {fileID: 22472570, guid: 074603463d0903949aae76ab5692d136, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 22472570, guid: 074603463d0903949aae76ab5692d136, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 62.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 22472570, guid: 074603463d0903949aae76ab5692d136, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -15
+      objectReference: {fileID: 0}
+    - target: {fileID: 4670985079444432954, guid: 074603463d0903949aae76ab5692d136,
+        type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4670985079444432954, guid: 074603463d0903949aae76ab5692d136,
+        type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4670985079444432954, guid: 074603463d0903949aae76ab5692d136,
+        type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 4670985079444432954, guid: 074603463d0903949aae76ab5692d136,
+        type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 4670985079444432954, guid: 074603463d0903949aae76ab5692d136,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 130
+      objectReference: {fileID: 0}
+    - target: {fileID: 4670985079444432954, guid: 074603463d0903949aae76ab5692d136,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -15
+      objectReference: {fileID: 0}
+    - target: {fileID: 6864492657761501100, guid: 074603463d0903949aae76ab5692d136,
+        type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6864492657761501100, guid: 074603463d0903949aae76ab5692d136,
+        type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6864492657761501100, guid: 074603463d0903949aae76ab5692d136,
+        type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 6864492657761501100, guid: 074603463d0903949aae76ab5692d136,
+        type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 6864492657761501100, guid: 074603463d0903949aae76ab5692d136,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 250
+      objectReference: {fileID: 0}
+    - target: {fileID: 6864492657761501100, guid: 074603463d0903949aae76ab5692d136,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -15
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 074603463d0903949aae76ab5692d136, type: 3}
+--- !u!224 &8264679646021323515 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 22464962, guid: 074603463d0903949aae76ab5692d136,
+    type: 3}
+  m_PrefabInstance: {fileID: 8264679646010164025}
+  m_PrefabAsset: {fileID: 0}

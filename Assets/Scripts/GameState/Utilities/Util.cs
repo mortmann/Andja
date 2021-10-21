@@ -371,32 +371,6 @@ namespace Andja.Utility {
 
         public static HashSet<Vector2> CalculateMidPointEllipseFillVector2(float radius_x, float radius_y, float centerWidth, float centerHeight, float offset_x, float offset_y) {
             HashSet<Vector2> ellipseVectors = new HashSet<Vector2>();
-            //INEFFICIENT ALGORITHMUS
-            //TODO: make it with midpoint algo
-            //float hh = height * height;
-            //float ww = width * width;
-            //float hhww = hh * ww;
-            //float x0 = width;
-            //float dx = 0;
-
-            //// do the horizontal diameter
-            //for (float x = -width; x <= width; x++)
-            //    ellipseVectors.Add(new Vector2(center_x + x, center_y));
-
-            //// now do both halves at the same time, away from the diameter
-            //for (float y = 1; y <= height; y++) {
-            //    float x1 = x0 - (dx - 1);  // try slopes of dx - 1 or more
-            //    for (; x1 > 0; x1--)
-            //        if (x1 * x1 * hh + y * y * ww <= hhww)
-            //            break;
-            //    dx = x0 - x1;  // current approximation of the slope
-            //    x0 = x1;
-
-            //    for (float x = -x0; x <= x0; x++) {
-            //        ellipseVectors.Add(new Vector2(center_x + x, center_y - y));
-            //        ellipseVectors.Add(new Vector2(center_x + x, center_y + y));
-            //    }
-            //}
             float r_x = centerWidth % 2 == 0 ? 0.5f : 0;
             float r_y = centerHeight % 2 == 0 ? 0.5f : 0;
 

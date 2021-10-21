@@ -25,7 +25,7 @@ namespace Andja.Model {
         [JsonPropertyAttribute] public string ID;
         [JsonPropertyAttribute] private BasePathfinding path;
         [JsonPropertyAttribute] private float workTimer;
-        [JsonPropertyAttribute] private Item[] toGetItems;
+        [JsonPropertyAttribute] public Item[] toGetItems { get => toGetItems1; protected set { if (value == null) Debug.Log("!?"); toGetItems1 = value; } }
         [JsonPropertyAttribute] private Inventory inventory;
         [JsonPropertyAttribute] private bool goingToWork;
         [JsonPropertyAttribute] public bool isAtHome;
@@ -91,6 +91,7 @@ namespace Andja.Model {
         private bool hasRegistered;
         private float walkTime;
         private WorkerPrototypeData _prototypData;
+        private Item[] toGetItems1;
         #endregion runtimeVariables
 
         public float X {
@@ -113,14 +114,14 @@ namespace Andja.Model {
 
         public float RotationSpeed => Data.rotationSpeed;
 
-        public TurningType TurnType => HasToFollowRoads? TurningType.OnPoint : TurningType.TurnRadius;
+        public TurningType TurnType => HasToFollowRoads ? TurningType.OnPoint : TurningType.TurnRadius;
         public PathDestination PathDestination => PathDestination.Tile;
-        public PathingMode PathingMode => HasToFollowRoads? PathingMode.Route : PathingMode.IslandMultiplePoints;
+        public PathingMode PathingMode => HasToFollowRoads ? PathingMode.Route : PathingMode.IslandMultiplePoints;
         public bool CanEndInUnwakable => HasToEnterWorkStructure || goingToWork == false;
 
-        public PathHeuristics Heuristic => HasToFollowRoads? PathHeuristics.Manhattan : PathHeuristics.Euclidean;
+        public PathHeuristics Heuristic => HasToFollowRoads ? PathHeuristics.Manhattan : PathHeuristics.Euclidean;
 
-        public PathDiagonal DiagonalType => HasToFollowRoads? PathDiagonal.None : PathDiagonal.Always;
+        public PathDiagonal DiagonalType => HasToFollowRoads ? PathDiagonal.None : PathDiagonal.Always;
 
         public IReadOnlyList<int> CanEnterCities => null; // For now worker always can enter all tiles regardless who owns it
 
@@ -141,6 +142,8 @@ namespace Andja.Model {
             workTimer = workTime;
             this.ID = workerID ?? "placeholder";
             this.toGetItems = toGetItems;
+            if (toGetItems == null)
+                Debug.Log("Wat");
             SetGoalStructure(structure);
             Setup();
         }
@@ -180,7 +183,7 @@ namespace Andja.Model {
                 GoHome();
             }
             if (hasRegistered == false) {
-                if(WorkStructure == null) {
+                if (WorkStructure == null) {
                     return;
                 }
                 WorkStructure.RegisterOnDestroyCallback(OnWorkStructureDestroy);
@@ -265,7 +268,7 @@ namespace Andja.Model {
         }
 
         public void GoHome(bool noPath = false) {
-            if(goingToWork && noPath) {
+            if (goingToWork && noPath) {
                 Destroy();
                 return;
             }
@@ -313,7 +316,7 @@ namespace Andja.Model {
                 PlaySound(WorkSound, true);
                 return;
             }
-            PlaySound(WorkSound, false);            
+            PlaySound(WorkSound, false);
             inventory.AddItems(((GrowableStructure)WorkStructure).GetOutput());
             ((GrowableStructure)WorkStructure).Harvest();
             isDone = true;
@@ -405,7 +408,7 @@ namespace Andja.Model {
                     ((RoutePathfinding)path).SetDestination(Home, structure);
                 }
                 else {
-                    if(HasToEnterWorkStructure)
+                    if (HasToEnterWorkStructure)
                         ((RoutePathfinding)path).SetDestination(WorkStructure, Home);
                     else
                         ((RoutePathfinding)path).SetDestination(null, Home);

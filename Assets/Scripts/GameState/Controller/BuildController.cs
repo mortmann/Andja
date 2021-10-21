@@ -318,11 +318,11 @@ namespace Andja.Controller {
                 else
                     structure.City = tiles[0].City;
             }
+
             //before we need to check if we can build THERE
             //we need to know if there is if we COULD build
             //it anyway? that means enough resources and enough Money
             Inventory inv = null;
-
             if (loading == false && buildInWilderness == false) {
                 if(tiles[0].Island.HasNegativEffect) {
                     BuildError(MapErrorMessage.CanNotBuildHere, tiles, structure, playerNumber);
@@ -356,6 +356,13 @@ namespace Andja.Controller {
                         }
                     }
                 }
+            }
+            if (tiles.All(x => x.Structure != null
+                         && x.Structure.CanBeUpgradedTo != null
+                         && Array.Exists(x.Structure.CanBeUpgradedTo, x => x == structure.ID))) {
+                //We can upgrade the building instead
+                tiles[0].Structure.UpgradeTo(structure.ID);
+                return true;
             }
             //now we know that we COULD build that structure
             //but CAN WE?

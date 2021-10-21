@@ -7,7 +7,18 @@ namespace Andja.Pathfinding {
         public Vector2 Pos => new Vector2(x, y);
         public int x;
         public int y;
-        public float MovementCost;
+        float movementCost;
+        float baseMovementCost;
+        public float MovementCost {
+            get {
+                if (overrideWalkable)
+                    return baseMovementCost;
+                return movementCost;
+            }
+            set {
+                movementCost = value;
+            }
+        }
         public int PlayerNumber;
 
         public float f_Score; 
@@ -26,23 +37,24 @@ namespace Andja.Pathfinding {
             if (overrideWalkable)
                 return overrideWalkable;
             if (canEnterCities != null) {
-                return canEnterCities.Contains(PlayerNumber) && MovementCost > 0 && MovementCost < float.PositiveInfinity;
+                return canEnterCities.Contains(PlayerNumber) && movementCost > 0 && movementCost < float.PositiveInfinity;
             }
-            return MovementCost > 0 && MovementCost < float.PositiveInfinity;
+            return movementCost > 0 && movementCost < float.PositiveInfinity;
         }
-        public Node(Model.Tile t) : this(t.X,t.Y, t.MovementCost, t.City.PlayerNumber) {
+        public Node(Model.Tile t) : this(t.X,t.Y, t.MovementCost, t.BaseMovementCost, t.City.PlayerNumber) {
         }
-        public Node(int x, int y, float movementCost, int PlayerNumber) {
+        public Node(int x, int y, float movementCost, float baseCost, int PlayerNumber) {
             this.x = x;
             this.y = y;
-            MovementCost = movementCost;
+            this.movementCost = movementCost;
+            this.baseMovementCost = baseCost;
             this.PlayerNumber = PlayerNumber;
         }
 
         public Node(Node node) {
             this.x = node.x;
             this.y = node.y;
-            MovementCost = node.MovementCost;
+            movementCost = node.movementCost;
             PlayerNumber = node.PlayerNumber;
         }
 

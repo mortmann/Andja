@@ -49,7 +49,7 @@ namespace Andja.Pathfinding {
         internal void SetTemporaryWalkableNode(Vector2 pos) {
             Node n = GetNodeFromWorldCoord(pos);
             if(n == null) {
-                n = new Node(Mathf.FloorToInt(pos.x - startX), Mathf.FloorToInt(pos.y - startY), 1, -1);
+                n = new Node(Mathf.FloorToInt(pos.x - startX), Mathf.FloorToInt(pos.y - startY), 0, 0, -1);
                 Values[n.x, n.y] = n;
                 temporaryNodes.Add(n);
             } else {
@@ -73,6 +73,7 @@ namespace Andja.Pathfinding {
                 }
             }
         }
+
         private void SetIslandValues(Island island) {
             Width = island.Width;
             Height = island.Height;
@@ -112,7 +113,7 @@ namespace Andja.Pathfinding {
                 return null;
             }
             Node n = new Node(Mathf.FloorToInt(t.X - startX), Mathf.FloorToInt(t.Y - startY), 
-                                t.MovementCost, t.City.PlayerNumber);
+                                t.MovementCost, t.BaseMovementCost, t.City.PlayerNumber);
             Values[n.x,n.y] = n;
             IsDirty = true;
             Changed?.Invoke(t);

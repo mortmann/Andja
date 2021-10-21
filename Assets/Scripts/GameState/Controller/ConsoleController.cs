@@ -605,7 +605,7 @@ namespace Andja.Controller {
         }
         [HideInInspector]
         public IReadOnlyList<string> StructureCommands = new List<string>
-                    { "destroy", "effect", "event" };
+                    { "destroy", "effect", "event", "fillinput", "filloutput" };
 
         private bool HandleStructureCommands(string[] parameters) {
             if (parameters.Length < 1) {
@@ -615,6 +615,23 @@ namespace Andja.Controller {
                 case "destroy":
                     MouseController.Instance.SelectedStructure.Destroy();
                     return true;
+                case "fillinput":
+                    if(MouseController.Instance.SelectedStructure is ProductionStructure ps) {
+                        for (int i = 0; i < ps.Intake.Length; i++) {
+                            ps.Intake[i].count = ps.GetMaxIntakeForIntakeIndex(i);
+                        }
+                        return true;
+                    }
+                    return false;
+                case "filloutput":
+                    if (MouseController.Instance.SelectedStructure is OutputStructure os) {
+                        for (int i = 0; i < os.Output.Length; i++) {
+                            os.Output[i].count = os.MaxOutputStorage;
+                            os.CallOutputChangedCB();
+                        }
+                        return true;
+                    }
+                    return false;
                 case "effect":
                     return HandleEffects(parameters.Skip(1).ToArray(), MouseController.Instance.SelectedStructure);
                 case "event":

@@ -15,6 +15,7 @@ namespace Andja.UI {
 
         private List<GameObject> shortcutsGO;
         private Dictionary<GameObject, GameObject> shortcutParentToButton;
+        public Dictionary<int, string> positionToIds { get; private set; }
 
         // Use this for initialization
         private void Awake() { //has to be before uicontroller so it can be loaded
@@ -108,12 +109,12 @@ namespace Andja.UI {
         }
 
         public Dictionary<int, string> GetShortCutSave() {
-            Dictionary<int, string> posToIds = new Dictionary<int, string>();
+            positionToIds = new Dictionary<int, string>();
             foreach (GameObject g in shortcutsGO) {
                 if (shortcutParentToButton.ContainsKey(g))
-                    posToIds.Add(shortcutsGO.IndexOf(g), shortcutParentToButton[g].GetComponentInChildren<StructureBuildUI>().structure.ID);
+                    positionToIds.Add(shortcutsGO.IndexOf(g), shortcutParentToButton[g].GetComponentInChildren<StructureBuildUI>().structure.ID);
             }
-            return posToIds;
+            return positionToIds;
         }
 
         public void LoadShortCuts(Dictionary<int, string> shortcuts) {

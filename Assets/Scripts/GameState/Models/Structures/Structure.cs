@@ -24,23 +24,20 @@ namespace Andja.Model {
 
     public class StructurePrototypeData : BaseThing {
 
-        public int structureLevel = 0;
         public int structureRange = 0;
         public int tileWidth;
         public int tileHeight;
         public bool canRotate = true;
         public bool canBeBuildOver = false;
-        public bool canBeUpgraded = false;
         public bool canTakeDamage = false;
         public bool hasHitbox;// { get; protected set; }
         /// <summary>
         /// Null means no restrikiton so all buildable tiles
         /// </summary>
         public TileType?[,] buildTileTypes;
-
+        public string[] canBeUpgradedTo;
         //doenst get loaded in anyway
         private List<Tile> _PrototypeRangeTiles;
-
         public List<Tile> PrototypeRangeTiles {
             get {
                 if (_PrototypeRangeTiles == null) {
@@ -68,11 +65,7 @@ namespace Andja.Model {
         public BuildType buildTyp;
         public ExtraBuildUI extraBuildUITyp;
 
-        // set inside prototypecontoller
-        public Item[] upgradeItems = null; 
-        public int upgradeCost = 0;
         public Dictionary<Climate, string[]> climateSpriteModifier;
-
     }
 
     [JsonObject(MemberSerialization.OptIn)]
@@ -113,7 +106,7 @@ namespace Andja.Model {
         protected City _city;
         public HashSet<Tile> RangeTiles;
         public string connectOrientation;
-        public bool HasExtraUI { get { return ExtraUITyp != ExtraUI.None; } }
+        public bool HasExtraUI => ExtraUITyp != ExtraUI.None; 
 
         //player id
         public int PlayerNumber {
@@ -147,13 +140,13 @@ namespace Andja.Model {
             }
         }
 
-        public bool CanBeBuild { get { return Data.canBeBuild; } }
-        public bool IsWalkable { get { return this.StructureTyp != StructureTyp.Blocking; } }
-        public bool HasHitbox { get { return Data.hasHitbox; } }
+        public bool CanBeBuild => Data.canBeBuild; 
+        public bool IsWalkable => this.StructureTyp != StructureTyp.Blocking; 
+        public bool HasHitbox => Data.hasHitbox; 
 
         #region EffectVariables
 
-        public float MaxHealth { get { return CalculateRealValue(nameof(Data.maxHealth), Data.maxHealth); } }
+        public float MaxHealth => CalculateRealValue(nameof(Data.maxHealth), Data.maxHealth); 
 
         public int UpkeepCost {
             get {
@@ -162,43 +155,40 @@ namespace Andja.Model {
             }
         }
 
-        public int StructureRange { get { return CalculateRealValue(nameof(Data.structureRange), Data.structureRange); } }
+        public int StructureRange => CalculateRealValue(nameof(Data.structureRange), Data.structureRange); 
 
         #endregion EffectVariables
 
-        public string Name { get { return Data.Name; } }
-        public string Description { get { return Data.Description; } }
-        public string ToolTip { get { return Data.HoverOver; } }
-        public int PopulationLevel { get { return Data.populationLevel; } }
-        public int PopulationCount { get { return Data.populationCount; } }
-        public int StructureLevel { get { return Data.structureLevel; } }
-        public int prototypeTileWidth { get { return Data.tileWidth; } }
-        public int prototypeTileHeight { get { return Data.tileHeight; } }
+        public string Name => Data.Name; 
+        public string Description => Data.Description; 
+        public string ToolTip => Data.HoverOver; 
+        public int PopulationLevel => Data.populationLevel; 
+        public int PopulationCount => Data.populationCount; 
+        public int prototypeTileWidth => Data.tileWidth; 
+        public int prototypeTileHeight => Data.tileHeight; 
         public TileType?[,] BuildTileTypes => Data.buildTileTypes;
 
-        public bool CanRotate { get { return Data.canRotate; } }
-        public bool CanBeBuildOver { get { return Data.canBeBuildOver; } }
-        public virtual bool CanBeUpgraded { get { return Data.canBeUpgraded; } }
-        public bool CanTakeDamage { get { return Data.canTakeDamage; } }
+        public bool CanRotate => Data.canRotate; 
+        public bool CanBeBuildOver => Data.canBeBuildOver;
 
-        public BuildType BuildTyp { get { return Data.buildTyp; } }
-        public StructureTyp StructureTyp { get { return Data.structureTyp; } }
-        public ExtraUI ExtraUITyp { get { return Data.extraUITyp; } }
-        public ExtraBuildUI ExtraBuildUITyp { get { return Data.extraBuildUITyp; } }
+        public string[] CanBeUpgradedTo => Data.canBeUpgradedTo;
+        public virtual bool CanBeUpgraded => CanBeUpgradedTo != null && CanBeUpgradedTo.Length > 0; 
+        public bool CanTakeDamage => Data.canTakeDamage; 
 
-        public List<Tile> PrototypeTiles { get { return Data.PrototypeRangeTiles; } }
+        public BuildType BuildTyp => Data.buildTyp; 
+        public StructureTyp StructureTyp => Data.structureTyp; 
+        public ExtraUI ExtraUITyp => Data.extraUITyp; 
+        public ExtraBuildUI ExtraBuildUITyp => Data.extraBuildUITyp; 
 
-        public bool CanStartBurning { get { return Data.canStartBurning; } }
+        public List<Tile> PrototypeTiles => Data.PrototypeRangeTiles; 
 
-        public int BuildCost { get { return Data.buildCost; } }
+        public bool CanStartBurning => Data.canStartBurning; 
 
-        public Item[] BuildingItems { get { return Data.buildingItems; } }
+        public int BuildCost => Data.buildCost; 
 
-        public Item[] UpgradeItems { get { return Data.upgradeItems; } }
+        public Item[] BuildingItems => Data.buildingItems; 
 
-        public int UpgradeCost { get { return Data.upgradeCost; } } // set inside prototypecontoller
-
-        public string SpriteName { get { return Data.spriteBaseName/*TODO: make multiple saved sprites possible*/; } }
+        public string SpriteName => Data.spriteBaseName/*TODO: make multiple saved sprites possible*/; 
         public Dictionary<Climate, string[]> ClimateSpriteModifier => Data.climateSpriteModifier;
         protected Action<Structure> cbStructureChanged;
         protected Action<Structure, IWarfare> cbStructureDestroy;
@@ -223,7 +213,7 @@ namespace Andja.Model {
         public virtual bool IsActiveAndWorking => isActive;
         public bool IsDestroyed => CurrentHealth <= 0;
 
-        public string SmallName { get { return SpriteName.ToLower(); } }
+        public string SmallName => SpriteName.ToLower(); 
 
         public City City {
             get { return _city; }
@@ -518,6 +508,16 @@ namespace Andja.Model {
             }
         }
 
+        internal void UpgradeTo(string ID) {
+            this.ID = ID;
+            OnUpgrade();
+            cbStructureChanged?.Invoke(this);
+        }
+
+        protected virtual void OnUpgrade() {
+            _prototypData = null;
+        }
+
         protected override void AddSpecialEffect(Effect effect) {
             Debug.Log("NO Special Effect handeld! " + effect);
         }
@@ -594,7 +594,7 @@ namespace Andja.Model {
             RangeTiles = new HashSet<Tile>();
             float width = firstTile.X - StructureRange;
             float height = firstTile.Y - StructureRange;
-            foreach (Tile t in PrototypeTiles) {
+            foreach (Tile t in Util.CalculateRangeTiles(StructureRange, TileWidth, TileHeight)) {
                 RangeTiles.Add(w.GetTileAt(t.X + width, t.Y + height));
             }
             return RangeTiles;
@@ -734,7 +734,7 @@ namespace Andja.Model {
             //to make it faster
             if (BuildTileTypes == null) {
                 foreach (Tile item in tiles) {
-                    tileToCanBuild.Add(item, item.CheckTile());
+                    tileToCanBuild.Add(item, item.CheckTile(this));
                 }
                 return tileToCanBuild;
             }
@@ -775,12 +775,12 @@ namespace Andja.Model {
                         startY = prototypeTileHeight - 1;
                     }
                     if ((startX + cX) >= BuildTileTypes.GetLength(0) || (startY + cY) >= BuildTileTypes.GetLength(1)) {
-                        tileToCanBuild.Add(sortedTiles[x, y], sortedTiles[x, y].CheckTile());
+                        tileToCanBuild.Add(sortedTiles[x, y], sortedTiles[x, y].CheckTile(this));
                     }
                     else {
                         TileType? requiredTile = BuildTileTypes[startX + cX, startY + cY];
                         if (requiredTile == null) {
-                            tileToCanBuild.Add(sortedTiles[x, y], sortedTiles[x, y].CheckTile());
+                            tileToCanBuild.Add(sortedTiles[x, y], sortedTiles[x, y].CheckTile(this));
                         }
                         else {
                             tileToCanBuild.Add(sortedTiles[x, y], requiredTile == sortedTiles[x, y].Type);

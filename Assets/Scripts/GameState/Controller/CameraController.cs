@@ -272,7 +272,7 @@ namespace Andja.Controller {
 
         private Vector3 UpdateMouseCameraMovement() {
             // Handle screen panning
-            if (Input.GetMouseButton(1) || Input.GetMouseButton(2)) {   // Right or Middle Mouse Button
+            if (InputHandler.GetMouseButton(InputMouse.Secondary) || InputHandler.GetMouseButton(InputMouse.Middle)) { 
                 return lastFramePosition - currFramePosition;
             }
             return Vector3.zero;

@@ -201,7 +201,10 @@ namespace Andja.Model {
         public float GetCurrentDamage(ArmorType armorType) {
             return DamageType.GetDamageMultiplier(armorType) * CurrentDamage;
         }
-
+        protected override void OnUpgrade() {
+            base.OnUpgrade();
+            _militaryStructureData = null;
+        }
         public float CurrentDamage => isActive ? 0 : MilitaryStructureData.damage;
         public float MaximumDamage => MilitaryStructureData.damage;
         public DamageType DamageType => MilitaryStructureData.damageType;

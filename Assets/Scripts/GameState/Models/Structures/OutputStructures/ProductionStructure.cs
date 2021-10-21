@@ -2,6 +2,7 @@
 using Andja.Utility;
 using Newtonsoft.Json;
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -215,10 +216,7 @@ namespace Andja.Model {
                 return false;
             }
             for (int i = 0; i < Intake.Length; i++) {
-                if ((Intake[i].count + toAdd.GetAmountForItem(Intake[i])) > GetMaxIntakeForIntakeIndex(i)) {
-                    return false;
-                }
-                Intake[i].count += toAdd.GetAmountForItem(Intake[i]);
+                Intake[i].count = Mathf.Clamp(Intake[i].count+toAdd.GetAmountForItem(Intake[i]), 0, GetMaxIntakeForIntakeIndex(i));
                 toAdd.SetItemCountNull(Intake[i]);
                 CallbackChangeIfnotNull();
             }
@@ -234,6 +232,10 @@ namespace Andja.Model {
                     if (items[i].ID == id) {
                         Item item = items[i].Clone();
                         item.count = GetMaxIntakeForIntakeIndex(i) - Intake[i].count;
+                        if(Workers.Count > 0) {
+                            item.count -= Workers.Where(z=>z.toGetItems != null)
+                                            .Sum(x => Array.Find(x.toGetItems, y => items[i].ID == y.ID)?.count ?? 0);
+                        }
                         if (item.count > 0)
                             all.Add(item);
                     }
@@ -241,7 +243,10 @@ namespace Andja.Model {
             }
             return all.ToArray();
         }
-
+        protected override void OnUpgrade() {
+            base.OnUpgrade();
+            _productionData = null;
+        }
         public override void OnBuild() {
             jobsToDo = new Dictionary<OutputStructure, Item[]>();
             RegisteredStructures = new Dictionary<OutputStructure, Item[]>();
@@ -253,20 +258,21 @@ namespace Andja.Model {
                     if (rangeTile.Structure == null) {
                         continue;
                     }
-                    if (rangeTile.Structure is OutputStructure) {
-                        if (rangeTile.Structure is MarketStructure) {
-                            FindNearestMarketStructure(rangeTile);
-                            continue;
-                        }
-                        if (RegisteredStructures.ContainsKey((OutputStructure)rangeTile.Structure) == false) {
-                            Item[] items = HasNeedItem(((OutputStructure)rangeTile.Structure).Output);
-                            if (items.Length == 0) {
-                                continue;
-                            }
-                            ((OutputStructure)rangeTile.Structure).RegisterOutputChanged(OnOutputChangedStructure);
-                            RegisteredStructures.Add((OutputStructure)rangeTile.Structure, items);
-                        }
-                    }
+                    OnStructureBuild(rangeTile.Structure);
+                    //if (rangeTile.Structure is OutputStructure) {
+                    //    if (rangeTile.Structure is MarketStructure) {
+                    //        FindNearestMarketStructure(rangeTile);
+                    //        continue;
+                    //    }
+                    //    if (RegisteredStructures.ContainsKey((OutputStructure)rangeTile.Structure) == false) {
+                    //        Item[] items = HasNeedItem(((OutputStructure)rangeTile.Structure).Output);
+                    //        if (items.Length == 0) {
+                    //            continue;
+                    //        }
+                    //        ((OutputStructure)rangeTile.Structure).RegisterOutputChanged(OnOutputChangedStructure);
+                    //        RegisteredStructures.Add((OutputStructure)rangeTile.Structure, items);
+                    //    }
+                    //}
                 }
                 City.RegisterStructureAdded(OnStructureBuild);
             }
@@ -325,7 +331,7 @@ namespace Andja.Model {
         }
 
         public void OnStructureBuild(Structure str) {
-            if (str is OutputStructure == false || str is GrowableStructure) {
+            if (str is OutputStructure os == false || str is GrowableStructure) {
                 return;
             }
             bool inRange = false;
@@ -336,6 +342,9 @@ namespace Andja.Model {
                 }
             }
             if (inRange == false) {
+                return;
+            }
+            if (RegisteredStructures.ContainsKey(((OutputStructure)str))) {
                 return;
             }
             if (str is MarketStructure) {

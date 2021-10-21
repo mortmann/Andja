@@ -42,7 +42,7 @@ namespace Andja.UI.Model {
 
         public void Show(HomeStructure home) {
             foreach (Need need in NeedGroup.Needs) {
-                if(home.PopulationLevel < need.StartLevel) {
+                if(home.PopulationLevel != need.StartLevel) {
                     needToUI[need.ID].gameObject.SetActive(false);
                 } else {
                     needToUI[need.ID].gameObject.SetActive(true);
@@ -53,7 +53,7 @@ namespace Andja.UI.Model {
 
         public void UpdateLevel(int level) {
             for (int i = 0; i < PrototypController.Instance.NumberOfPopulationLevels; i++) {
-                Needs[level].ForEach(x => {
+                Needs[i].ForEach(x => {
                     needToUI[x.ID].gameObject.SetActive(x.StartLevel == level);
                 });
             }

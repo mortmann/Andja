@@ -34,7 +34,7 @@ namespace Andja.Model {
 
         [JsonPropertyAttribute] public bool criticalMissingNeed = false;
         [JsonPropertyAttribute] public int Level;
-        [JsonPropertyAttribute] public List<NeedGroup> NeedGroupList;
+        [JsonPropertyAttribute] List<NeedGroup> NeedGroupList;
         [JsonPropertyAttribute] public PopulationLevel previousLevel;
         [JsonPropertyAttribute] public float taxPercantage = 1f;
         private City city;
@@ -42,11 +42,12 @@ namespace Andja.Model {
         public string IconSpriteName => Data.iconSpriteName;
 
         protected PopulationLevelPrototypData _Data;
+        public List<NeedGroup> AllNeedGroupList;
 
         public PopulationLevelPrototypData Data {
             get {
                 if (_Data == null) {
-                    _Data = (PopulationLevelPrototypData)PrototypController.Instance.GetPopulationLevelPrototypDataForLevel(Level);
+                    _Data = PrototypController.Instance.GetPopulationLevelPrototypDataForLevel(Level);
                 }
                 return _Data;
             }
@@ -62,6 +63,8 @@ namespace Andja.Model {
         public PopulationLevel(int level, City city, PopulationLevel previous) {
             this.Level = level;
             NeedGroupList = Data.GetCopyGroupNeedList();
+            AllNeedGroupList = new List<NeedGroup>(NeedGroupList);
+            AllNeedGroupList.AddRange(GetAllPreviousNeedGroups());
             this.previousLevel = previous;
             this.city = city;
             city.GetOwner().RegisterNeedUnlock(OnUnlockedNeed);
@@ -75,7 +78,7 @@ namespace Andja.Model {
             float fullfilled = 0;
             bool missingNeed = false;
             float summedImportance = 0;
-            foreach (NeedGroup group in NeedGroupList) {
+            foreach (NeedGroup group in AllNeedGroupList) {
                 group.CalculateFullfillment(city, this);
                 fullfilled += group.LastFullfillmentPercentage;
                 summedImportance += group.ImportanceLevel;
@@ -106,10 +109,7 @@ namespace Andja.Model {
 
         internal void AddPeople(int count) {
             //IF there is better way to stop people after upgrading -- change this 
-            bool forceUpdateNeeds = populationCount == 0;
             populationCount += count;
-            if (forceUpdateNeeds)
-                FullfillNeedsAndCalcHappiness(city);
             city.GetOwner().UpdateMaxPopulationCount(Level, populationCount);
         }
 
@@ -135,6 +135,8 @@ namespace Andja.Model {
             this.city = city;
             if (previousLevel == null || previousLevel.Exists() == false)
                 previousLevel = city.GetPreviousPopulationLevel(Level);
+            AllNeedGroupList = new List<NeedGroup>(NeedGroupList);
+            AllNeedGroupList.AddRange(GetAllPreviousNeedGroups());
             UpdateNeeds();
         }
 

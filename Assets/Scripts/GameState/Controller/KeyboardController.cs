@@ -95,6 +95,35 @@ namespace Andja.Controller {
                     BuildController.toBuildStructure.RotateStructure();
                 }
             }
+            if (InputHandler.GetButtonDown(InputName.CopyStructure)) {
+                MouseController.Instance.SetCopyMode(true);
+            }
+            if (InputHandler.GetButtonUp(InputName.CopyStructure)) {
+                MouseController.Instance.SetCopyMode(false);
+            }
+            int num = InputHandler.HotkeyDown();
+            if(num != -1) {
+                if(Input.GetKey(KeyCode.LeftControl)) {
+                    if (MouseController.Instance.selectedUnitGroup != null) {
+                        PlayerController.CurrentPlayer.unitGroups[num] = MouseController.Instance.selectedUnitGroup;
+                    }
+                    else if (MouseController.Instance.SelectedUnit != null) {
+                        PlayerController.CurrentPlayer.unitGroups[num] = new List<Model.Unit> {
+                            MouseController.Instance.SelectedUnit
+                        };
+                    }
+                    else {
+                        PlayerController.CurrentPlayer.unitGroups[num] = null;
+                    }
+                } 
+                else if(Input.GetKey(KeyCode.LeftShift)) {
+                    if(PlayerController.CurrentPlayer.unitGroups[num] != null) {
+                        MouseController.Instance.SelectUnitGroup(PlayerController.CurrentPlayer.unitGroups[num]);
+                    }
+                } else {
+                    BuildController.Instance.StartStructureBuild(ShortcutUI.Instance.positionToIds[num]);
+                } 
+            }
             if (Application.isEditor) {
                 if (Input.GetKey(KeyCode.LeftShift)) {
                     if (EventSystem.current.IsPointerOverGameObject() == false) {

@@ -126,7 +126,10 @@ namespace Andja.Model {
         }
 
         #region override
-
+        protected override void OnUpgrade() {
+            base.OnUpgrade();
+            _growableData = null;
+        }
         public override string GetSpriteName() {
             return base.GetSpriteName() + "_" + currentStage;
         }

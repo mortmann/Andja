@@ -226,7 +226,10 @@ namespace Andja.Model {
         public override object GetExtraBuildUIData() {
             return EfficiencyPercent;
         }
-
+        protected override void OnUpgrade() {
+            base.OnUpgrade();
+            _farmData = null;
+        }
         public override void UpdateExtraBuildUI(GameObject parent, Tile t) {
             //FIXME
             //TODO

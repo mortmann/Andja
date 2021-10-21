@@ -10,11 +10,13 @@ namespace Andja.Utility {
     public enum InputName { 
         BuildMenu, TradeMenu, Offworld, DiplomacyMenu,
         TogglePause, Stop, Cancel, 
-        Rotate, 
+        Rotate, CopyStructure,
         Screenshot, 
         Console, BugReport 
     }
-
+    public enum InputMouse {
+        Primary, Middle, Secondary
+    }
     public class InputHandler {
         public static bool ShiftKey => Input.GetKey(KeyCode.RightShift) || Input.GetKey(KeyCode.LeftShift);
 
@@ -22,13 +24,18 @@ namespace Andja.Utility {
         private static string fileName = "input.ini";
         public static float MouseSensitivity { private set; get; }
         public static bool IsSetup;
+        public static bool InvertedMouseButtons;
+        static int PrimaryMouse => InvertedMouseButtons ? 1 : 0;
+        static int SecondaryMouse => InvertedMouseButtons ? 0 : 1;
+
         internal static void SetSensitivity(float value) {
             //TODO: make it even matter
         }
+        static KeyCode[] alphaNumbers = new KeyCode[] { KeyCode.Alpha0, KeyCode.Alpha1, KeyCode.Alpha2, KeyCode.Alpha3,
+            KeyCode.Alpha4, KeyCode.Alpha5, KeyCode.Alpha6, KeyCode.Alpha7, KeyCode.Alpha8, KeyCode.Alpha9};
+        static KeyCode[] keyNumbers = new KeyCode[] { KeyCode.Keypad0, KeyCode.Keypad1, KeyCode.Keypad2, KeyCode.Keypad3,
+            KeyCode.Keypad4, KeyCode.Keypad5, KeyCode.Keypad6, KeyCode.Keypad7, KeyCode.Keypad8, KeyCode.Keypad9 };
 
-        //TODO add a between layer for mouse buttons -> so it can be switched
-
-        // Use this for initialization
         public InputHandler() {
             if (IsSetup)
                 return;
@@ -93,12 +100,25 @@ namespace Andja.Utility {
                         keyCode = KeyCode.F2;
                         break;
 
+                    case InputName.CopyStructure:
+                        keyCode = KeyCode.LeftControl;
+                        break;
+
                     default:
                         Debug.LogError("InputName " + name + " does not have a default value!");
                         continue;
                 }
                 ChangePrimaryNameToKey(name, keyCode);
             }
+        }
+
+        public static int HotkeyDown() {
+            for (int i = 0; i < 10; i++) {
+                if(Input.GetKeyDown(alphaNumbers[i]) || Input.GetKeyDown(keyNumbers[i])) {
+                    return i;
+                }
+            }
+            return -1;
         }
 
         public static void ChangePrimaryNameToKey(InputName name, KeyCode key) {
@@ -141,7 +161,13 @@ namespace Andja.Utility {
             }
             return nameToKeyBinds[name].GetButtonDown();
         }
-
+        public static bool GetButtonUp(InputName name) {
+            if (nameToKeyBinds.ContainsKey(name) == false) {
+                Debug.LogWarning("No KeyBind for Name " + name);
+                return false;
+            }
+            return nameToKeyBinds[name].GetButtonUp();
+        }
         public static bool GetButton(InputName name) {
             if (nameToKeyBinds.ContainsKey(name) == false) {
                 Debug.LogWarning("No KeyBind for Name " + name);
@@ -150,6 +176,42 @@ namespace Andja.Utility {
             return nameToKeyBinds[name].GetButton();
         }
 
+        public static bool GetMouseButton(InputMouse name) {
+            switch (name) {
+                case InputMouse.Primary:
+                    return Input.GetMouseButton(PrimaryMouse);
+                case InputMouse.Middle:
+                    return Input.GetMouseButton(2);
+                case InputMouse.Secondary:
+                    return Input.GetMouseButton(SecondaryMouse);
+                default:
+                    return false;
+            }
+        }
+        public static bool GetMouseButtonDown(InputMouse name) {
+            switch (name) {
+                case InputMouse.Primary:
+                    return Input.GetMouseButtonDown(PrimaryMouse);
+                case InputMouse.Middle:
+                    return Input.GetMouseButtonDown(2);
+                case InputMouse.Secondary:
+                    return Input.GetMouseButtonDown(SecondaryMouse);
+                default:
+                    return false;
+            }
+        }
+        public static bool GetMouseButtonUp(InputMouse name) {
+            switch (name) {
+                case InputMouse.Primary:
+                    return Input.GetMouseButtonUp(PrimaryMouse);
+                case InputMouse.Middle:
+                    return Input.GetMouseButtonUp(2);
+                case InputMouse.Secondary:
+                    return Input.GetMouseButtonUp(SecondaryMouse);
+                default:
+                    return false;
+            }
+        }
         public static void SaveInputSchema() {
             string path = Application.dataPath.Replace("/Assets", "");
             if (Directory.Exists(path) == false) {
@@ -162,7 +224,8 @@ namespace Andja.Utility {
             string filePath = System.IO.Path.Combine(path, fileName);
             InputSave save = new InputSave {
                 nameToKeyBinds = nameToKeyBinds,
-                MouseSensitivity = MouseSensitivity
+                MouseSensitivity = MouseSensitivity,
+                InvertedMouseButtons = InvertedMouseButtons
             };
             File.WriteAllText(filePath, JsonConvert.SerializeObject(save,
                 new JsonSerializerSettings() {
@@ -179,6 +242,7 @@ namespace Andja.Utility {
                     InputSave save = JsonConvert.DeserializeObject<InputSave>(lines);
                     nameToKeyBinds = save.nameToKeyBinds;
                     MouseSensitivity = save.MouseSensitivity;
+                    InvertedMouseButtons = save.InvertedMouseButtons;
                 }
             }
             finally {
@@ -246,7 +310,10 @@ namespace Andja.Utility {
                 return Input.GetKeyDown(Primary) && Primary != notSetCode
                     || Input.GetKeyDown(Secondary) && Secondary != notSetCode;
             }
-
+            public bool GetButtonUp() {
+                return Input.GetKeyUp(Primary) && Primary != notSetCode
+                    || Input.GetKeyUp(Secondary) && Secondary != notSetCode;
+            }
             public bool GetButton() {
                 return Input.GetKey(Primary) && Primary != notSetCode
                     || Input.GetKey(Secondary) && Secondary != notSetCode;
@@ -267,6 +334,7 @@ namespace Andja.Utility {
         private class InputSave {
             public Dictionary<InputName, KeyBind> nameToKeyBinds;
             public float MouseSensitivity;
+            public bool InvertedMouseButtons;
         }
     }
 }

@@ -93,7 +93,10 @@ namespace Andja.Model {
                 City.Island.RemoveResources(Resource, 1);
             }
         }
-
+        protected override void OnUpgrade() {
+            base.OnUpgrade();
+            _mineData = null;
+        }
         protected override void OnDestroy() {
             if (CurrentResourceMode == ResourceMode.PerMine) {
                 City.Island.AddResources(Resource, 1);

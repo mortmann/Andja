@@ -83,13 +83,13 @@ namespace Andja.Pathfinding {
                 if (queuedJobs.TryDequeue(out PathJob job) == false) continue;
                 if (job.agent.IsAlive == false || job.Status == JobStatus.Canceled) continue;
                 double started = StopWatch.Elapsed.TotalSeconds;
-                //Debug.Log("PathfinderThread"+threadNumber + " started job " 
+                //Debug.Log("PathfinderThread" + threadNumber + " started job "
                 //        + StopWatch.ElapsedMilliseconds + "(" + StopWatch.Elapsed.TotalSeconds + "s)");
                 if (DoJob(job, worldGraph, idToGrid) == false)
                     continue;
                 lock (this) {
                     TotalSearches++;
-                    averageSearchTime += (float)(StopWatch.Elapsed.TotalSeconds - started) / TotalSearches;
+                    averageSearchTime += (float)((StopWatch.Elapsed.TotalSeconds - started) - averageSearchTime) / TotalSearches;
                 }
                 //Debug.Log("PathfinderThread" + threadNumber + "finished "
                 //         + job.agent.PathingMode + "-job-" + job.Path.Count + " @"
@@ -222,9 +222,9 @@ namespace Andja.Pathfinding {
                     if (currentQueue == null || currentQueue.Count == 0) {
                         continue;
                     }
-                    if (currentQueue.Count == Mathf.CeilToInt(minDist)) {
-                        break;
-                    }
+                    //if (currentQueue.Count == Mathf.CeilToInt(minDist)) {
+                    //    break;
+                    //}
                 }
             }
             return currentQueue;

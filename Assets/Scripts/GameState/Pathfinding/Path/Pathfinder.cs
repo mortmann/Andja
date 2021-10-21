@@ -58,7 +58,7 @@ namespace Andja.Pathfinding {
                 }
             }
             HashSet<Node> startNodes = null;
-            if (startNodes != null) {
+            if (startsPos != null) {
                 startNodes = new HashSet<Node>();
                 foreach (Vector2 e in startsPos) {
                     startNodes.Add(grid.GetNodeFromWorldCoord(e));
@@ -72,7 +72,15 @@ namespace Andja.Pathfinding {
             OpenSet.Enqueue(start, 0);
             if (agent.CanEndInUnwakable == false && end.IsPassable(agent.CanEnterCities?.ToList()) == false) {
                 //cant end were it is supposed to go -- find a alternative that can be walked on
-                endNodes = FindClosestWalkableNeighbours(agent, end, grid);
+                if(endNodes != null) {
+                    HashSet<Node> temp = new HashSet<Node>();
+                    foreach (var item in endNodes) {
+                        temp.UnionWith(FindClosestWalkableNeighbours(agent, item, grid));
+                    }
+                    endNodes = temp;
+                } else {
+                    endNodes = FindClosestWalkableNeighbours(agent, end, grid);
+                }
             }
             while (OpenSet.Count > 0) {
                 if (job.IsCanceled || PathfindingThreadHandler.FindPaths == false)
@@ -112,7 +120,10 @@ namespace Andja.Pathfinding {
                             }
                         }
                         Node neighbour = grid.GetNode(current.Pos + new Vector2(x,y));
-                        
+                        if (endNodes != null && endNodes.Contains(neighbour)) {
+                            neighbour.parent = current;
+                            return ReconstructPath(grid, neighbour); //we are at any destination node make the path
+                        }
                         if (neighbour == null || neighbour.isClosed) {
                             continue;
                         }
@@ -261,7 +272,7 @@ namespace Andja.Pathfinding {
             return vectors;
         }
 
-        private static Queue<Vector2> ReconstructPath(PathGrid grid,  Node current) {
+        private static Queue<Vector2> ReconstructPath(PathGrid grid, Node current) {
             Stack<Node> totalPath = new Stack<Node>();
             totalPath.Push(current);
             while (current.parent != null) {

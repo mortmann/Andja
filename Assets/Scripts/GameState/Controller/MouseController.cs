@@ -14,13 +14,13 @@ using UnityEngine.EventSystems;
 
 namespace Andja.Controller {
 
-    public enum MouseState { Idle, BuildDrag, BuildPath, BuildSingle, Unit, UnitGroup, Destroy, DragSelect };
+    public enum MouseState { Idle, BuildDrag, BuildPath, BuildSingle, Unit, UnitGroup, Destroy, DragSelect, Copy };
 
     public enum MouseUnitState { None, Normal, Patrol, Build };
 
     public enum TileHighlightType { Green, Red }
 
-    public enum CursorType { Pointer, Attack, Escort, Destroy, Build }
+    public enum CursorType { Pointer, Attack, Escort, Destroy, Build, Copy }
 
     public enum MapErrorMessage { NoSpace, NotEnoughResources, NotEnoughMoney, NotInCity, Missing,
         NotInRange,
@@ -104,6 +104,7 @@ namespace Andja.Controller {
                 _toBuildstructure = value;
             }
         }
+
         public Item[] NeededItemsToBuild;
         public int NeededBuildCost;
 
@@ -113,7 +114,7 @@ namespace Andja.Controller {
         private Queue<Tile> path;
 
         private Unit _selectedUnit;
-        private List<Unit> selectedUnitGroup;
+        public List<Unit> selectedUnitGroup;
         private Rect draw_rect;
         private bool mouseStateIdleLeftMouseDown;
         private PathJob buildPathJob;
@@ -210,7 +211,7 @@ namespace Andja.Controller {
                 UpdateEditorStuff();
             }
 
-            if (Input.GetMouseButtonDown(1) && MouseState != MouseState.Idle
+            if (InputHandler.GetMouseButtonDown(InputMouse.Secondary) && MouseState != MouseState.Idle
                 && MouseState != MouseState.Unit && MouseState != MouseState.UnitGroup) {
                 ResetBuild(null);
                 SetMouseState(MouseState.Idle);
@@ -248,6 +249,10 @@ namespace Andja.Controller {
                 case MouseState.UnitGroup:
                     break;
 
+                case MouseState.Copy:
+                    ChangeCursorType(CursorType.Copy);
+                    break;
+
                 case MouseState.Destroy:
                     ChangeCursorType(CursorType.Destroy);
                     break;
@@ -279,7 +284,7 @@ namespace Andja.Controller {
             if (IsInBuildDestoyMode == false)
                 return;
 
-            if (Input.GetMouseButton(0) && DisplayDragRectangle == false) {
+            if (InputHandler.GetMouseButton(InputMouse.Primary) && DisplayDragRectangle == false) {
                 if (EventSystem.current.IsPointerOverGameObject() == false && ShortcutUI.Instance.IsDragging == false) {
                     float sqrdist = (Input.mousePosition - lastFrameGUIPosition).sqrMagnitude;
                     if (sqrdist > 5) {
@@ -296,12 +301,13 @@ namespace Andja.Controller {
         public void UpdateMouseStates() {
             switch (MouseState) {
                 case MouseState.Idle:
-                    if(EventSystem.current.IsPointerOverGameObject() == false && Input.GetMouseButtonDown(0)) {
+                    if(EventSystem.current.IsPointerOverGameObject() == false && InputHandler.GetMouseButtonDown(InputMouse.Primary)) {
                         //If some clicks down onto a ui and then goes off it and releases the mouse 
                         //we do not want to open or close where the mouse ends up 
                         mouseStateIdleLeftMouseDown = true;
                     }
-                    if (mouseStateIdleLeftMouseDown && Input.GetMouseButtonUp(0) && EditorController.IsEditor == false) {
+                    if (mouseStateIdleLeftMouseDown && InputHandler.GetMouseButtonUp(InputMouse.Primary) 
+                            && EditorController.IsEditor == false) {
                         //mouse press decide what it hit
                         DecideWhatUIToShow(MouseRayCast());
                     }
@@ -338,6 +344,20 @@ namespace Andja.Controller {
                 case MouseState.UnitGroup:
                     UpdateUnitGroup();
                     break;
+                case MouseState.Copy:
+                    UpdateCopyState();
+                    break;
+            }
+        }
+
+        private void UpdateCopyState() {
+            if(InputHandler.GetMouseButtonUp(InputMouse.Primary)) {
+                Tile t = GetTileUnderneathMouse();
+                if (t.Structure == null)
+                    return;
+                if (t.Structure.CanBeBuild == false)
+                    return;
+                BuildController.Instance.StartStructureBuild(t.Structure.ID);
             }
         }
 
@@ -353,14 +373,14 @@ namespace Andja.Controller {
             if (EventSystem.current.IsPointerOverGameObject()) {
                 return;
             }
-            if (Input.GetMouseButtonDown(0)) {
+            if (InputHandler.GetMouseButtonDown(InputMouse.Primary)) {
                 dragStartPosition = CurrFramePositionOffset;
             }
             int start_x = Mathf.FloorToInt(dragStartPosition.x);
             int end_x = Mathf.FloorToInt(CurrFramePositionOffset.x);
             int start_y = Mathf.FloorToInt(dragStartPosition.y);
             int end_y = Mathf.FloorToInt(CurrFramePositionOffset.y);
-            if (Input.GetMouseButton(0)) {
+            if (InputHandler.GetMouseButton(InputMouse.Primary)) {
                 List<Tile> tiles = GetTilesStructures(start_x, end_x, start_y, end_y);
                 foreach (Tile t in destroyTiles.Except(tiles).ToArray()) {
                     SimplePool.Despawn(tileToPreviewGO[t].gameObject);
@@ -374,7 +394,7 @@ namespace Andja.Controller {
                     destroyTiles.Add(t);
                 }
             }
-            if (Input.GetMouseButtonUp(0)) {
+            if (InputHandler.GetMouseButtonUp(InputMouse.Primary)) {
                 List<Tile> ts = new List<Tile>(GetTilesStructures(start_x, end_x, start_y, end_y));
                 if (ts != null) {
                     bool isGod = EditorController.IsEditor || IsGod; //TODO: add cheat to set this
@@ -389,7 +409,7 @@ namespace Andja.Controller {
             if (EventSystem.current.IsPointerOverGameObject()) {
                 return;
             }
-            if (Input.GetMouseButtonDown(0)) {
+            if (InputHandler.GetMouseButtonDown(InputMouse.Primary)) {
                 switch (MouseUnitState) {
                     case MouseUnitState.None:
                         Debug.LogWarning("MouseController is in the wrong state!");
@@ -409,7 +429,7 @@ namespace Andja.Controller {
                 }
             }
             CheckUnitCursor();
-            if (Input.GetMouseButtonDown(1)) {
+            if (InputHandler.GetMouseButtonDown(InputMouse.Primary)) {
                 Transform hit = MouseRayCast();
                 if (hit == null) {
                     switch (MouseUnitState) {
@@ -475,7 +495,7 @@ namespace Andja.Controller {
         /// </summary>
         private void UpdateDragSelect() {
             // End Drag
-            if (Input.GetMouseButton(0) == false) {
+            if (InputHandler.GetMouseButton(InputMouse.Primary) == false) {
                 Vector3 v1 = dragStartPosition;
                 Vector3 v2 = lastFramePosition;
                 v1.z = 0;
@@ -593,7 +613,7 @@ namespace Andja.Controller {
             
         }
 
-        private void SelectUnit(Unit unit) {
+        public void SelectUnit(Unit unit) {
             if (SelectedUnit == unit)
                 return;
             SetMouseState(MouseState.Unit);
@@ -604,7 +624,11 @@ namespace Andja.Controller {
             UIDebug(SelectedUnit);
         }
 
-        private void SelectUnitGroup(List<Unit> units) {
+        public void SelectUnitGroup(List<Unit> units) {
+            if(units.Count == 1) {
+                SelectUnit(units[0]);
+                return;
+            }
             SetMouseState(MouseState.UnitGroup);
             SetMouseUnitState(MouseUnitState.Normal);
             selectedUnitGroup = units;
@@ -623,7 +647,7 @@ namespace Andja.Controller {
                 return;
             }
             UpdateSinglePreview();
-            if (Input.GetMouseButtonDown(0)) {
+            if (InputHandler.GetMouseButtonDown(InputMouse.Primary)) {
                 List<Tile> structureTiles = ToBuildStructure.GetBuildingTiles(GetTileUnderneathMouse());
                 Build(structureTiles);
             }
@@ -658,7 +682,7 @@ namespace Andja.Controller {
                 return;
             }
             // Start Drag
-            if (Input.GetMouseButtonDown(0)) {
+            if (InputHandler.GetMouseButtonDown(InputMouse.Primary)) {
                 dragStartPosition = CurrFramePositionOffset;
                 if (singleStructurePreview != null) {
                     SimplePool.Despawn(singleStructurePreview);
@@ -670,7 +694,7 @@ namespace Andja.Controller {
             int start_y = Mathf.FloorToInt(dragStartPosition.y);
             int end_y = Mathf.FloorToInt(CurrFramePositionOffset.y);
             List<Tile> ts = GetTilesStructures(start_x, end_x, start_y, end_y);
-            if (Input.GetMouseButton(0)) {
+            if (InputHandler.GetMouseButton(InputMouse.Primary)) {
                 // Display a preview of the drag area
                 UpdateMultipleStructurePreviews(ts);
             }
@@ -678,7 +702,7 @@ namespace Andja.Controller {
                 UpdateSinglePreview();
             }
             // End Drag
-            if (Input.GetMouseButtonUp(0)) {
+            if (InputHandler.GetMouseButtonUp(InputMouse.Primary)) {
                 Build(ts, true, true);
                 ResetStructurePreviews();
             }
@@ -691,13 +715,13 @@ namespace Andja.Controller {
                 return;
             }
             // Start Path
-            if (Input.GetMouseButtonDown(0)) {
+            if (InputHandler.GetMouseButtonDown(InputMouse.Primary)) {
                 pathStartPosition = CurrFramePositionOffset;
                 if (singleStructurePreview != null) {
                     ResetStructurePreviews();
                 }
             }
-            if (Input.GetMouseButton(0)) {
+            if (InputHandler.GetMouseButton(InputMouse.Primary)) {
                 int start_x = Mathf.FloorToInt(pathStartPosition.x);
                 int start_y = Mathf.FloorToInt(pathStartPosition.y);
                 Tile pathStartTile = World.Current.GetTileAt(start_x, start_y);
@@ -723,7 +747,7 @@ namespace Andja.Controller {
                 UpdateSinglePreview();
             }
             // End path
-            if (Input.GetMouseButtonUp(0)) {
+            if (InputHandler.GetMouseButtonUp(InputMouse.Primary)) {
                 if (buildPathJob == null || buildPathJob.Status != JobStatus.Done) {
                     return;
                 }
@@ -915,7 +939,7 @@ namespace Andja.Controller {
                 }
             }
             CheckUnitCursor();
-            if (Input.GetMouseButtonUp(0)) {
+            if (InputHandler.GetMouseButtonUp(InputMouse.Primary)) {
                 switch (MouseUnitState) {
                     case MouseUnitState.None:
                         Debug.LogWarning("MouseController is in the wrong state!");
@@ -943,7 +967,7 @@ namespace Andja.Controller {
                         break;
                 }
             }
-            if (Input.GetMouseButtonDown(1)) {
+            if (InputHandler.GetMouseButtonDown(InputMouse.Secondary)) {
                 if (SelectedUnit.playerNumber != PlayerController.currentPlayerNumber) {
                     SetMouseState(MouseState.Idle);
                     return;
@@ -1225,6 +1249,16 @@ namespace Andja.Controller {
             SetMouseState(MouseState.Idle);
             SetMouseUnitState(MouseUnitState.None);
             ChangeCursorType(CursorType.Pointer);
+        }
+        internal void SetCopyMode(bool on) {
+            if(on) {
+                Escape();
+                SetMouseState(MouseState.Copy);
+            }
+            else {
+                if(MouseState == MouseState.Copy)
+                    SetMouseState(MouseState.Idle);
+            }
         }
 
         public static void ChangeCursorType(CursorType type) {

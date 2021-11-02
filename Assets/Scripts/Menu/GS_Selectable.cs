@@ -16,7 +16,6 @@ namespace Andja.UI.Menu {
         private bool fadeDown = true;
 
         private Button button;
-        private Slider slider;
 
         private Image image;
         private Vector3 lastPointerPositon;
@@ -25,19 +24,8 @@ namespace Andja.UI.Menu {
             image = GetComponent<Image>();
 
             button = GetComponent<Button>();
-            slider = GetComponent<Slider>();
 
-            if (slider != null) {
-                slider.onValueChanged.AddListener(delegate { OnSliderValueChange(); });
-            }
         }
-
-        /**
-         * All the fluff we're doing in the events below should allow the mouse
-         * and the keyobard to interact properly together when switching between
-         * mouse and keyboard for navigating our menus. If anyone knows of an easier
-         * way please let me know. :p
-         */
 
         private void Update() {
             // If we're currently hovering over the button and we moved our mouse
@@ -123,12 +111,5 @@ namespace Andja.UI.Menu {
             MenuAudioManager.Instance.PlayClickSound();
         }
 
-        /**
-         * Play the 'tick' sound when we move a slider.
-         */
-
-        public void OnSliderValueChange() {
-            //        MenuAudioManager.instance.PlaySliderSound();
-        }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Andja.Controller;
 using Andja.Model;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -7,6 +8,7 @@ using UnityEngine.UI;
 namespace Andja.UI {
 
     public class ShortcutUI : MonoBehaviour {
+        static readonly int ShortcutCount = 8;
         public static ShortcutUI Instance { get; protected set; }
         public bool IsDragging;
         private Vector3 mouseOffset;
@@ -15,20 +17,23 @@ namespace Andja.UI {
 
         private List<GameObject> shortcutsGO;
         private Dictionary<GameObject, GameObject> shortcutParentToButton;
-        public Dictionary<int, string> positionToIds { get; private set; }
+        public Button buildButtonPrefab;
 
-        // Use this for initialization
+        public string[] ShortcutIds;
+
         private void Awake() { //has to be before uicontroller so it can be loaded
             if (Instance != null) {
                 Debug.LogError("There should never be two StructureBuildUI.");
             }
             Instance = this;
             shortcutParentToButton = new Dictionary<GameObject, GameObject>();
+            ShortcutIds = new string[ShortcutCount];
+            for (int i = 0; i < ShortcutCount; i++) {
+                ShortcutIds[i] = "";
+            }
             shortcutsGO = new List<GameObject>();
-            int i = 1;
             foreach (Transform item in transform) {
                 shortcutsGO.Add(item.gameObject);
-                i++;
             }
         }
 
@@ -82,6 +87,8 @@ namespace Andja.UI {
                     shortcutParentToButton.Remove(parent);
                 }
                 CreateButton(dragADropGO.GetComponentInChildren<StructureBuildUI>().structure, parent);
+                GameObject sc = shortcutParentToButton[parent];
+                ShortcutIds[shortcutsGO.IndexOf(sc)] = sc.GetComponentInChildren<StructureBuildUI>().structure.ID;
             }
             // stopping drag everytime so delete dragged & unshow spots
             StopDragAndDropBuild();
@@ -108,17 +115,15 @@ namespace Andja.UI {
             }
         }
 
-        public Dictionary<int, string> GetShortCutSave() {
-            positionToIds = new Dictionary<int, string>();
-            foreach (GameObject g in shortcutsGO) {
-                if (shortcutParentToButton.ContainsKey(g))
-                    positionToIds.Add(shortcutsGO.IndexOf(g), shortcutParentToButton[g].GetComponentInChildren<StructureBuildUI>().structure.ID);
-            }
-            return positionToIds;
+        public string[] GetShortCutSave() {
+            return ShortcutIds;
         }
 
-        public void LoadShortCuts(Dictionary<int, string> shortcuts) {
-            foreach (int pos in shortcuts.Keys) {
+        public void LoadShortCuts(string[] shortcuts) {
+            if (shortcuts == null)
+                return;
+            ShortcutIds = shortcuts;
+            for (int pos = 0; pos < shortcuts.Length; pos++) {
                 Structure structure = PrototypController.Instance.GetStructure(shortcuts[pos]);
                 if (structure == null)
                     continue;
@@ -126,10 +131,11 @@ namespace Andja.UI {
                     break;
                 CreateButton(structure, shortcutsGO[pos]);
             }
+            Array.Resize(ref ShortcutIds, ShortcutCount);
         }
 
         private void CreateButton(Structure structure, GameObject parent) {
-            Button go = Instantiate(BuildMenuUIController.Instance.buildButtonPrefab);
+            Button go = Instantiate(buildButtonPrefab);
             go.name = "ShortCut " + structure.ID;
             go.GetComponent<StructureBuildUI>().Show(structure, true);
             go.transform.SetParent(parent.transform, false);
@@ -139,7 +145,10 @@ namespace Andja.UI {
             c.a = 0.8f;
             go.GetComponent<Image>().color = c;
             parent.transform.GetChild(0).gameObject.SetActive(false);
-            shortcutParentToButton.Add(parent, go.gameObject);
+            shortcutParentToButton[parent] = go.gameObject;
+        }
+        private void OnDestroy() {
+            Instance = null;
         }
     }
 }

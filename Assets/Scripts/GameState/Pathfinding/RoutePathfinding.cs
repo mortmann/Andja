@@ -100,9 +100,17 @@ namespace Andja.Pathfinding {
             for (int i = 0; i < toCheckRoutes.Count; i++) {
                 Route route = toCheckRoutes[i];
                 Job.Grid[i] = route.Grid;
-                Job.StartTiles[i] = StartStructure.Tiles.Select(y => y.Vector2).ToList();
+                Job.StartTiles[i] = StartStructure.Tiles
+                    //Find all tiles of structure where a neighbour is road of this route
+                    .Where(t => Array.Exists(t.GetNeighbours(agent.DiagonalType != PathDiagonal.None), 
+                                                            n => n.Structure is RoadStructure r && r.Route == route))
+                    .Select(y => y.Vector2).ToList(); // convert it to vectors
                 if (agent.CanEndInUnwakable) {
-                    Job.EndTiles[i] = GoalStructure.Tiles.Select(y => y.Vector2).ToList();
+                    Job.EndTiles[i] = GoalStructure.Tiles
+                        //Find all tiles of structure where a neighbour is road of this route
+                        .Where(t => Array.Exists(t.GetNeighbours(agent.DiagonalType != PathDiagonal.None),
+                                                            n => n.Structure is RoadStructure r && r.Route == route))
+                        .Select(y => y.Vector2).ToList();
                 }
                 else {
                     Job.EndTiles[i] = GoalStructure.RoadsAroundStructure()

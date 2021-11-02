@@ -65,10 +65,12 @@ namespace Andja.Controller {
             test.CalculateIslandScores();
         }
         private void OnDrawGizmos() {
+#if UNITY_EDITOR
             if(test != null)
                 foreach (var item in test.islandScores) {
                     UnityEditor.Handles.Label(item.Island.Center, "Score: " + item.EndScore);
                 }
+#endif
         }
 
         private void OnDestroy() {

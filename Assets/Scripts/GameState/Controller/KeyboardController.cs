@@ -20,20 +20,19 @@ namespace Andja.Controller {
         private VideoPlayer videoPlayer;
         private enum CheatCode { GodMode }
 
-        private Dictionary<KeyCode[], CheatCode> cheatCodes = new Dictionary<KeyCode[], CheatCode> {
-            { new KeyCode[] 
+        readonly Cheat[] codes = new Cheat[] {
+            new Cheat (
+                new KeyCode[]
                 {
                     KeyCode.UpArrow, KeyCode.UpArrow, KeyCode.DownArrow, KeyCode.DownArrow,
                     KeyCode.LeftArrow, KeyCode.RightArrow, KeyCode.LeftArrow,
-                    KeyCode.RightArrow, KeyCode.B, KeyCode.A  
-                }, 
-                CheatCode.GodMode
-            },
+                    KeyCode.RightArrow, KeyCode.B, KeyCode.A
+                },
+                CheatCode.GodMode),
         };
 
         private static readonly float cheatCodeMaxDelay = 1.5f;
         private float currentCheatCodeInputDelay = 0;
-        private int currentCheatCodeIndex = 0;
 
         private void Start() {
             new InputHandler();
@@ -87,6 +86,12 @@ namespace Andja.Controller {
             if (InputHandler.GetButtonDown(InputName.Stop)) {
                 MouseController.StopUnit();
             }
+            if (InputHandler.GetButtonDown(InputName.UpgradeTool)) {
+                MouseController.SetMouseState(MouseState.Upgrade);
+            }
+            if (InputHandler.GetButtonUp(InputName.UpgradeTool)) {
+                MouseController.SetMouseState(MouseState.Idle);
+            }
             if (InputHandler.GetButtonDown(InputName.DiplomacyMenu)) {
                 UIC.ToggleDiplomacyMenu();
             }
@@ -101,9 +106,9 @@ namespace Andja.Controller {
             if (InputHandler.GetButtonUp(InputName.CopyStructure)) {
                 MouseController.Instance.SetCopyMode(false);
             }
-            int num = InputHandler.HotkeyDown();
-            if(num != -1) {
-                if(Input.GetKey(KeyCode.LeftControl)) {
+            int num = InputHandler.HotkeyDown() - 1;
+            if(num >= 0) {
+                if(InputHandler.GetButton(InputName.UnitGrouping)) {
                     if (MouseController.Instance.selectedUnitGroup != null) {
                         PlayerController.CurrentPlayer.unitGroups[num] = MouseController.Instance.selectedUnitGroup;
                     }
@@ -116,12 +121,14 @@ namespace Andja.Controller {
                         PlayerController.CurrentPlayer.unitGroups[num] = null;
                     }
                 } 
-                else if(Input.GetKey(KeyCode.LeftShift)) {
+                else if(InputHandler.GetButton(InputName.UnitGrouping)) {
                     if(PlayerController.CurrentPlayer.unitGroups[num] != null) {
                         MouseController.Instance.SelectUnitGroup(PlayerController.CurrentPlayer.unitGroups[num]);
                     }
                 } else {
-                    BuildController.Instance.StartStructureBuild(ShortcutUI.Instance.positionToIds[num]);
+                    string id = ShortcutUI.Instance.ShortcutIds[num];
+                    if(string.IsNullOrWhiteSpace(id) == false)
+                        BuildController.Instance.StartStructureBuild(id);
                 } 
             }
             if (Application.isEditor) {
@@ -141,32 +148,24 @@ namespace Andja.Controller {
         /// </summary>
         private void UpdateCheatCodes() {
             if (Input.anyKeyDown) {
-                currentCheatCodeInputDelay = 0;
-                bool correctKey = false;
-                foreach (KeyCode[] code in cheatCodes.Keys) {
-                    if (code.Length > currentCheatCodeIndex
-                        && Input.GetKeyDown(code[currentCheatCodeIndex])) {
-                        correctKey = true;
-                        if (currentCheatCodeIndex == code.Length - 1) {
-                            switch (cheatCodes[code]) {
-                                case CheatCode.GodMode:
-                                    GodMode();
-                                    break;
-                            }
+                foreach (Cheat item in codes) {
+                    if(item.Check())
+                        currentCheatCodeInputDelay = 0;
+                    if (item.IsActivated()) {
+                        item.Reset();
+                        switch (item.Code) {
+                            case CheatCode.GodMode:
+                                GodMode();
+                                break;
                         }
                     }
-                }
-                if (correctKey) {
-                    currentCheatCodeIndex++;
-                }
-                else {                
-                    //Reset because no correct CheatCode entered
-                    currentCheatCodeIndex = 0;
                 }
             }
             else {
                 if (currentCheatCodeInputDelay > cheatCodeMaxDelay) {
-                    currentCheatCodeIndex = 0;
+                    foreach (Cheat item in codes) {
+                        item.Reset();
+                    }
                 }
                 else {
                     currentCheatCodeInputDelay += Time.deltaTime;
@@ -191,9 +190,9 @@ namespace Andja.Controller {
             }
             Debug.Log("ACTIVATING GODMODE");
             WorldController.Instance.ChangeGameSpeed(GameSpeed.Paused);
-            GameObject go = new GameObject();
             if (videoPlayer != null)
                 yield return null;
+            GameObject go = new GameObject();
             videoPlayer = go.AddComponent<VideoPlayer>();
             go.layer = LayerMask.NameToLayer("UI");
             videoPlayer.playOnAwake = false;
@@ -215,7 +214,7 @@ namespace Andja.Controller {
             videoPlayer.waitForFirstFrame = true;
 
             videoPlayer.Prepare();            
-            while (!videoPlayer.isPrepared) {
+            while (videoPlayer.isPrepared == false) {
                 yield return null;
             }
             SoundController.Instance.PauseMusicPlayback(true);
@@ -232,6 +231,34 @@ namespace Andja.Controller {
             UIController.Instance.ChangeAllUI(true);
             Destroy(videoPlayer.gameObject);
             SoundController.Instance.PauseMusicPlayback(false);
+        }
+        class Cheat {
+            public KeyCode[] KeyCodes;
+            public CheatCode Code;
+            bool possible = true;
+            byte keystroke;
+
+            public Cheat(KeyCode[] keyCodes, CheatCode code) {
+                KeyCodes = keyCodes;
+                Code = code;
+            }
+            public bool IsActivated() {
+                return KeyCodes.Length == keystroke;
+            }
+            public bool Check() {
+                if (possible == false)
+                    return false;
+                if(Input.GetKeyDown(KeyCodes[keystroke]) == false) {
+                    possible = false;
+                    return false;
+                }
+                keystroke++;
+                return true;
+            }
+            public void Reset() {
+                possible = true;
+                keystroke = 0;
+            }
         }
     }
 }

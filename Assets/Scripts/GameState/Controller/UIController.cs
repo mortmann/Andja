@@ -350,9 +350,9 @@ namespace Andja.Controller {
 
     [Serializable]
     public class UIControllerSave : BaseSaveData {
-        public Dictionary<int, string> shortcuts;
+        public string[] shortcuts;
 
-        public UIControllerSave(Dictionary<int, string> shortcuts) {
+        public UIControllerSave(string[] shortcuts) {
             this.shortcuts = shortcuts;
         }
 

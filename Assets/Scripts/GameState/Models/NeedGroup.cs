@@ -1,5 +1,6 @@
 ﻿using Andja.Controller;
 using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -13,6 +14,7 @@ namespace Andja.Model {
 
     [JsonObject(MemberSerialization.OptIn)]
     public class NeedGroup {
+        private readonly float FullfillmentLimit = 0;
 
         #region Prototype
 
@@ -37,10 +39,7 @@ namespace Andja.Model {
         [JsonPropertyAttribute] public float LastFullfillmentPercentage;
 
         #region Runtime
-
-        public bool HasMissingNeed { get; internal set; }
         public List<Need> CombinedNeeds;
-
         #endregion Runtime
 
         public NeedGroup() {
@@ -70,16 +69,6 @@ namespace Andja.Model {
         public void AddNeeds(IEnumerable<Need> need) {
             Needs.AddRange(need);
         }
-
-        //public float GetFullfilledPercantage() {
-        //    float currentValue = 0;
-        //    foreach (Need n in Needs) {
-        //        currentValue += n.GetCombinedFullfillment();
-        //    }
-        //    currentValue /= Needs.Count;
-        //    currentValue *= ImportanceLevel;
-        //    return currentValue;
-        //}
 
         internal void CalculateFullfillment(City city, PopulationLevel populationLevel) {
             float currentValue = 0;
@@ -121,21 +110,26 @@ namespace Andja.Model {
             if (number == 0)
                 return 1;
             percentage /= number;
-            percentage = percentage * Mathf.Clamp(ImportanceLevel, 0.4f, 1.6f);
+            percentage *= Mathf.Clamp(ImportanceLevel, 0.4f, 1.6f);
             return percentage;
         }
 
-        internal float GetFullfillmentForHome(HomeStructure homeStructure) {
+        internal Tuple<float, bool> GetFullfillmentForHome(HomeStructure homeStructure) {
             float currentValue = 0;
+            bool missing = false;
             foreach (Need need in Needs) {
                 if (need.IsStructureNeed()) {
-                    currentValue += homeStructure.IsStructureNeedFullfilled(need) ? 1 : 0;
+                    bool structureFullfilled = homeStructure.IsStructureNeedFullfilled(need);
+                    missing &= structureFullfilled;
+                    currentValue += structureFullfilled ? 1 : 0;
                 }
                 else {
-                    currentValue += need.GetFullfiment(homeStructure.PopulationLevel);
+                    float fullfilled = need.GetFullfiment(homeStructure.PopulationLevel);
+                    missing |= fullfilled < FullfillmentLimit;
+                    currentValue += fullfilled;
                 }
             }
-            return CalculateRealPercantage(currentValue, Needs.Count);
+            return new Tuple<float, bool>(CalculateRealPercantage(currentValue, Needs.Count), missing);
         }
 
         internal bool HasNeed(Need need) {

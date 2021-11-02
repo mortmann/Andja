@@ -357,13 +357,15 @@ namespace Andja.Controller {
                     }
                 }
             }
+            bool isUpgrade = false;
             if (tiles.All(x => x.Structure != null
                          && x.Structure.CanBeUpgradedTo != null
                          && Array.Exists(x.Structure.CanBeUpgradedTo, x => x == structure.ID))) {
+                
                 //We can upgrade the building instead
                 tiles[0].Structure.UpgradeTo(structure.ID);
-                return true;
-            }
+                isUpgrade = true;
+            } else
             //now we know that we COULD build that structure
             //but CAN WE?
             //check to see if the structure can be placed there
@@ -373,7 +375,7 @@ namespace Andja.Controller {
                     structure.Destroy(null, true);
                 }
                 return false;
-            }
+            } else
             //WE ARE HERE -- MEANS ALL CHECKS ARE DONE
             //IT WILL BE BUILD!
             //ALLOWS CREATION OF CITY when warehouse
@@ -382,7 +384,6 @@ namespace Andja.Controller {
                     structure.City = CreateCity(tiles[0].Island, playerNumber);
                 }
             }
-            structure.PlaceStructure(tiles, loading);
 
             //pay for it -- if not otherwise disabled
             if (noBuildCost == false && onStart == false && buildInWilderness == false && loading == false) {
@@ -390,12 +391,21 @@ namespace Andja.Controller {
                     inv.RemoveItemsAmount(structure.GetBuildingItems());
                 PlayerController.GetPlayer(playerNumber).ReduceTreasure(structure.BuildCost);
             }
+
+            if(isUpgrade) {
+                //if it is just an upgrade return here it is done
+                return true;
+            }
+
+            structure.PlaceStructure(tiles, loading);
             structure.City.AddStructure(structure);
+
             if (onStart) {
                 if (LoadedStructures == null) //should never happen but just in case
                     LoadedStructures = new List<Structure>();
                 LoadedStructures.Add(structure);
             }
+
             if(loading) {
                 if(buildIdToStructure.ContainsKey(structure.buildID)) {
                     Debug.Log("Build ID duplicate found: " + buildIdToStructure[structure.buildID] + " " + structure);
@@ -403,6 +413,7 @@ namespace Andja.Controller {
                     return false;
                 }
             }
+
             // this should also work on loading. it should tightly pack everything next to each other.
             structure.buildID = buildID;
             buildIdToStructure[buildID] = structure;           

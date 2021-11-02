@@ -10,8 +10,8 @@ namespace Andja.Utility {
     public enum InputName { 
         BuildMenu, TradeMenu, Offworld, DiplomacyMenu,
         TogglePause, Stop, Cancel, 
-        Rotate, CopyStructure,
-        Screenshot, 
+        Rotate, CopyStructure, UpgradeTool,
+        Screenshot, UnitGrouping,
         Console, BugReport 
     }
     public enum InputMouse {
@@ -102,6 +102,14 @@ namespace Andja.Utility {
 
                     case InputName.CopyStructure:
                         keyCode = KeyCode.LeftControl;
+                        break;
+
+                    case InputName.UpgradeTool:
+                        keyCode = KeyCode.LeftAlt;
+                        break;
+
+                    case InputName.UnitGrouping:
+                        keyCode = KeyCode.LeftShift;
                         break;
 
                     default:

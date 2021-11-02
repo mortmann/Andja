@@ -339,9 +339,6 @@ namespace Andja.Model {
             }
         }
 
-        public bool GetNeedCriticalForLevel(int structureLevel) {
-            return PopulationLevels[structureLevel].criticalMissingNeed;
-        }
 
         public void AddPeople(int level, int count) {
             if (IsWilderness())

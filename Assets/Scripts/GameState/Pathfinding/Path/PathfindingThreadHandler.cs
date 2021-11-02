@@ -95,7 +95,7 @@ namespace Andja.Pathfinding {
                 //         + job.agent.PathingMode + "-job-" + job.Path.Count + " @"
                 //         + StopWatch.ElapsedMilliseconds + " took " + (StopWatch.Elapsed.TotalSeconds - started) + "s)");
             }
-            Debug.Log("Shuting down Pathfinding Thread: " + (threadNumber + 1) + "/" + NumberOfThreads);
+            Debug.Log("Shutting down Pathfinding Thread: " + (threadNumber + 1) + "/" + NumberOfThreads);
             StopWatch.Stop();
         }
 

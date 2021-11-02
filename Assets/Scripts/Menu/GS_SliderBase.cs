@@ -36,8 +36,8 @@ namespace Andja.UI.Menu {
             graphicsSettings = FindObjectOfType<GraphicsSettings>();
             graphicsSettings.GraphicsPreset += OnGraphicsPresetChange;
             // Attach the listener for the method we call when the slider value changes.
-            slider.onValueChanged.AddListener(delegate { OnSliderValueChange(); });
-            slider.onValueChanged.AddListener(delegate { OnSliderValueChangeSetDisplayText(); });
+            slider.onValueChanged.AddListener((f) => OnSliderValueChange());
+            slider.onValueChanged.AddListener((f) => OnSliderValueChangeSetDisplayText());
             tls = GetComponent<TextLanguageSetter>();
         }
 

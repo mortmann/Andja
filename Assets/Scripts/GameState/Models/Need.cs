@@ -161,10 +161,9 @@ namespace Andja.Model {
                 notUsedOfTon = usedAmount - neededConsumAmount;
 
             city.RemoveResource(Item, Mathf.CeilToInt(usedAmount));
-
             //minimum is 1 because if 0 -> ERROR due dividing through 0
             //calculate the percantage of availability
-            percantageAvailability[level] = Mathf.RoundToInt(100 * (usedAmount / neededConsumAmount)) / 100;
+            percantageAvailability[level] = (usedAmount / neededConsumAmount);
         }
 
         internal bool IsSatisifiedThroughStructure(List<NeedStructure> strs) {

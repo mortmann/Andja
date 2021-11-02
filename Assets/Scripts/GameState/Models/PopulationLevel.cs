@@ -32,7 +32,6 @@ namespace Andja.Model {
     [JsonObject(MemberSerialization.OptIn)]
     public class PopulationLevel {
 
-        [JsonPropertyAttribute] public bool criticalMissingNeed = false;
         [JsonPropertyAttribute] public int Level;
         [JsonPropertyAttribute] List<NeedGroup> NeedGroupList;
         [JsonPropertyAttribute] public PopulationLevel previousLevel;
@@ -76,16 +75,12 @@ namespace Andja.Model {
 
         internal void FullfillNeedsAndCalcHappiness(City city) {
             float fullfilled = 0;
-            bool missingNeed = false;
             float summedImportance = 0;
             foreach (NeedGroup group in AllNeedGroupList) {
                 group.CalculateFullfillment(city, this);
                 fullfilled += group.LastFullfillmentPercentage;
                 summedImportance += group.ImportanceLevel;
-                if (group.HasMissingNeed)
-                    missingNeed = true;
             }
-            criticalMissingNeed = missingNeed;
             fullfilled /= summedImportance;
             //Debug.Log("City " + city.Name + " - " + Level + " Fullfilled: " + fullfilled);
             //TODO: make it trend towards the happiness? so it doesnt swing like crazy

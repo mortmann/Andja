@@ -6,7 +6,7 @@ namespace Andja.LoadScreen {
     public class UIBounce : MonoBehaviour {
         Vector3 move;
         void Start() {
-            move = Quaternion.AngleAxis(Random.value, Vector3.up) * new Vector2(Random.value * 100f, Random.value * 100f);
+            move = Quaternion.AngleAxis(Random.value, Vector3.up) * new Vector2(Random.value, Random.value) * new Vector2(1000,1000);
         }
 
         void Update() {

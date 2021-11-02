@@ -72,7 +72,7 @@ namespace Andja.UI.Model {
             if (locked || need == null)
                 return;
             if (need.IsItemNeed()) {
-                float percantage = need.GetFullfiment(home.PopulationLevel) * 100;
+                float percantage = Mathf.RoundToInt(need.GetFullfiment(home.PopulationLevel) * 100);
                 percentageText.text = percantage + "%";
                 slider.value = percantage;
             }

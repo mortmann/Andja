@@ -1,5 +1,6 @@
 ﻿using Andja.Controller;
 using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -126,11 +127,14 @@ namespace Andja.Model {
 
             float summedFullfillment = 0f;
             float summedImportance = 0;
+            bool needNotFullfilled = false;
             foreach (NeedGroup ng in GetNeedGroups()) {
                 if (ng.IsUnlocked() == false)
                     continue;
-                summedFullfillment += ng.GetFullfillmentForHome(this);
+                Tuple<float, bool> fullfill = ng.GetFullfillmentForHome(this);
+                summedFullfillment += fullfill.Item1;
                 summedImportance += ng.ImportanceLevel;
+                needNotFullfilled |= fullfill.Item2;
             }
             float percentage = summedFullfillment / summedImportance;
 
@@ -140,7 +144,7 @@ namespace Andja.Model {
             float tax = Mathf.Clamp(City.GetPopulationLevel(PopulationLevel).taxPercantage, 0.5f, 1.5f);
             percentage += 2f - Mathf.Clamp(tax * tax, 0.5f, 2);
             percentage /= 2;
-            if (percentage > 0.9f) {
+            if (percentage > 0.9f && needNotFullfilled == false) {
                 currentMood = CitizienMoods.Happy;
             }
             else

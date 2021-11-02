@@ -10,7 +10,6 @@ namespace Andja.UI.Menu {
         protected GraphicsSettings graphicsSettings;
         protected GraphicsSetting setting;
 
-        // Use this for initialization
         private void Start() {
             setting = GraphicsSetting.Resolution;
             graphicsSettings = FindObjectOfType<GraphicsSettings>();
@@ -27,6 +26,7 @@ namespace Andja.UI.Menu {
             dp = GetComponent<Dropdown>();
             if (dp == null)
                 return;
+            dp.onValueChanged.AddListener((f) => OnChange());
             List<string> resses = new List<string>();
             resolutions = new Dictionary<string, Resolution>();
             foreach (Resolution res in Screen.resolutions) {

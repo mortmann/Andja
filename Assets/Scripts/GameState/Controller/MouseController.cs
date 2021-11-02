@@ -14,13 +14,13 @@ using UnityEngine.EventSystems;
 
 namespace Andja.Controller {
 
-    public enum MouseState { Idle, BuildDrag, BuildPath, BuildSingle, Unit, UnitGroup, Destroy, DragSelect, Copy };
+    public enum MouseState { Idle, BuildDrag, BuildPath, BuildSingle, Unit, UnitGroup, Destroy, DragSelect, Copy, Upgrade };
 
     public enum MouseUnitState { None, Normal, Patrol, Build };
 
     public enum TileHighlightType { Green, Red }
 
-    public enum CursorType { Pointer, Attack, Escort, Destroy, Build, Copy }
+    public enum CursorType { Pointer, Attack, Escort, Destroy, Build, Copy, Upgrade }
 
     public enum MapErrorMessage { NoSpace, NotEnoughResources, NotEnoughMoney, NotInCity, Missing,
         NotInRange,
@@ -259,6 +259,10 @@ namespace Andja.Controller {
 
                 case MouseState.DragSelect:
                     break;
+
+                case MouseState.Upgrade:
+                    ChangeCursorType(CursorType.Upgrade);
+                    break;
             }
             MouseState = state;
         }
@@ -344,8 +348,13 @@ namespace Andja.Controller {
                 case MouseState.UnitGroup:
                     UpdateUnitGroup();
                     break;
+
                 case MouseState.Copy:
                     UpdateCopyState();
+                    break;
+
+                case MouseState.Upgrade:
+                    UpdateUpgradeState();
                     break;
             }
         }
@@ -360,7 +369,27 @@ namespace Andja.Controller {
                 BuildController.Instance.StartStructureBuild(t.Structure.ID);
             }
         }
-
+        private void UpdateUpgradeState() {
+            Tile t = GetTileUnderneathMouse();
+            NeededItemsToBuild = null;
+            NeededBuildCost = 0;
+            if (t.Structure == null)
+                return;
+            if (t.Structure.CanBeUpgraded == false)
+                return;
+            Structure upgradeTo = null;
+            foreach (string item in t.Structure.CanBeUpgradedTo) {
+                if (t.Structure is HomeStructure == false && PlayerController.CurrentPlayer.HasStructureUnlocked(item) == false)
+                    continue;
+                upgradeTo = PrototypController.Instance.GetStructure(item);
+                NeededItemsToBuild = upgradeTo.BuildingItems?.CloneArrayWithCounts();
+                NeededBuildCost = upgradeTo.BuildCost;
+                break;
+            }
+            if (InputHandler.GetMouseButtonUp(InputMouse.Primary) && upgradeTo != null) {
+                BuildController.Instance.BuildOnTile(upgradeTo, t.Structure.Tiles, PlayerController.currentPlayerNumber, false);
+            }
+        }
         internal void UnselectStuff(bool escape = false) {
             UnselectUnit();
             UnselectUnitGroup();

@@ -142,8 +142,6 @@ namespace Andja.Model {
             workTimer = workTime;
             this.ID = workerID ?? "placeholder";
             this.toGetItems = toGetItems;
-            if (toGetItems == null)
-                Debug.Log("Wat");
             SetGoalStructure(structure);
             Setup();
         }
@@ -216,7 +214,8 @@ namespace Andja.Model {
                     if (workTimer <= 0) {
                         DropOffItems(0);
                         //we have an issue -- done before it is home
-                        Debug.LogWarning("Worker done before it is at Home. Fix this with either smaller Range," +
+                        if(World.Current.GetTileAt(X,Y).Structure != Home)
+                            Debug.LogWarning("Worker done before it is at Home. Fix this with either smaller Range," +
                             " longer Worktime or remove Worker. " + Home.ToString() + ". Destination " + path.Destination);
                     }
                 }

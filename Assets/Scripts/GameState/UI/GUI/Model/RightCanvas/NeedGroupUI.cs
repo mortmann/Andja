@@ -46,8 +46,8 @@ namespace Andja.UI.Model {
                     needToUI[need.ID].gameObject.SetActive(false);
                 } else {
                     needToUI[need.ID].gameObject.SetActive(true);
-                    needToUI[need.ID].Show(home);
                 }
+                needToUI[need.ID].Show(home);
             }
         }
 

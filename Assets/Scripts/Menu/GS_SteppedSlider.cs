@@ -28,7 +28,8 @@ namespace Andja.UI.Menu {
                 return;
             }
             // Attach the listener for the method we call when the slider value changes.
-            slider.onValueChanged.AddListener(delegate { OnSliderValueChangeSetPosition(); });
+            slider.onValueChanged.AddListener((f) => OnSliderValueChangeSetPosition());
+            slider.onValueChanged.AddListener((f) => MenuAudioManager.Instance.PlaySliderSound());
 
             CalculateHandleSize();
         }

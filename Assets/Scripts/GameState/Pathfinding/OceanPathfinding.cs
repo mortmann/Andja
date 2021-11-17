@@ -1,5 +1,5 @@
 using Andja.Model;
-using System;
+using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -46,13 +46,19 @@ namespace Andja.Pathfinding {
                 return;
             if (Job != null && (Job.Status == JobStatus.InQueue || Job.Status == JobStatus.Calculating))
                 PathfindingThreadHandler.RemoveJob(Job);
-            Job = PathfindingThreadHandler.EnqueueJob(agent, null, Position2, new Vector2(dest_X, dest_Y), OnPathJobFinished);
+            Job = PathfindingThreadHandler.EnqueueJob(agent, null, Position2, new Vector2(dest_X, dest_Y), OnPathJobFinished, null);
         }
 
         private void OnPathJobFinished() {
             worldPath = Job.Path;
             CreateReversePath();
             backPath.Enqueue(Position2);
+            if(World.Current.Tilesmap[Mathf.FloorToInt(dest_X)][Mathf.FloorToInt(dest_Y)] == false){
+                Vector2 v = worldPath.Last();
+                dest_X = v.x;
+                dest_Y = v.y;
+                DestTile = World.Current.GetTileAt(dest_X, dest_Y);
+            }
             if (worldPath.Count > 0) {
                 NextDestination = worldPath.Dequeue();
             }

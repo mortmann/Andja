@@ -82,7 +82,8 @@ namespace Andja.Utility {
         public static bool IsBitSet(this byte b, int pos) {
             return (b & (1 << pos)) != 0;
         }
-
+        //Changing Color is bugged in Unity 2019.1.0f https://issuetracker.unity3d.com/issues/image-color-cannot-be-changed-via-script-when-image-type-is-set-to-simple
+        //TODO: update to the 2021 Version when avaible as full release -> later versions have issues with dll's that are in this project
         public static void SetNormalColor(this Button button, Color color) {
             ColorBlock cb = button.colors;
             cb.normalColor = color;

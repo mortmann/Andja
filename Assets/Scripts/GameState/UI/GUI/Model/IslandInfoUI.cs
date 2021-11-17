@@ -8,6 +8,7 @@ using UnityEngine.UI;
 namespace Andja.UI.Model {
 
     public class IslandInfoUI : MonoBehaviour {
+        public static IslandInfoUI Instance;
         private CameraController cc;
         private CanvasGroup cg;
         public Transform CityBuildItems;
@@ -24,6 +25,7 @@ namespace Andja.UI.Model {
         private City CurrentCity;
 
         private void Start() {
+            Instance = this;
             cc = CameraController.Instance;
             cg = GetComponent<CanvasGroup>();
             CreateCityInfo();
@@ -76,7 +78,7 @@ namespace Andja.UI.Model {
                     TextColor t = CurrentCity.HasEnoughOfItem(item)? TextColor.Positive : TextColor.Negative;
                     itemToText[item.ID].ShowAddon(item.countString, t);
                 }
-            }
+            } 
             for (int i = 0; i < PrototypController.Instance.NumberOfPopulationLevels; i++) {
                 PopulationLevel pl = CurrentCity.GetPopulationLevel(i);
                 if (pl.populationCount > 0) {
@@ -135,6 +137,9 @@ namespace Andja.UI.Model {
                     , cc.nearestIsland.Resources[item] + "");
                 imageText.transform.SetParent(Resources, false);
             }
+        }
+        private void OnDestroy() {
+            Instance = null;
         }
     }
 }

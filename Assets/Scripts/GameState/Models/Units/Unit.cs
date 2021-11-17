@@ -723,14 +723,14 @@ namespace Andja.Model {
                 return false;
             }
             else {
-                return GiveMovementCommand(t.X, t.Y);
+                return GiveMovementCommand(t.X, t.Y, overrideCurrent);
             }
         }
 
         public bool GiveMovementCommand(float x, float y, bool overrideCurrent = false) {
             if (x == X && y == Y)
                 return true;
-            if (CanReach(x, y) == false)
+            if (IsUnit && CanReach(x, y) == false)
                 return false;
             AddCommand(new MoveCommand(new Vector2(x, y)), overrideCurrent);
             return true;

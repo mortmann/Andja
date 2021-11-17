@@ -194,11 +194,12 @@ namespace Andja.Pathfinding {
             } while (worldPoints.Count > 0);
             Queue<Vector2> finalQueue = new Queue<Vector2>();
             tempQueue.Dequeue();
-            //finalQueue.Enqueue(startPos);
-            foreach (Vector2 v in tempQueue) {
-                finalQueue.Enqueue(v + new Vector2(0.5f, 0.5f));
+            while (tempQueue.Count > 0) {
+                finalQueue.Enqueue(tempQueue.Dequeue() + new Vector2(0.5f, 0.5f));
             }
-            finalQueue.Enqueue(endPos);
+            if (worldTilemap[Mathf.FloorToInt(endPos.x)][Mathf.FloorToInt(endPos.y)]) {
+                finalQueue.Enqueue(endPos);
+            } 
             stopwatch.Stop();
             //Debug.Log("Total Ocean Pathfinder took " + stopwatch.ElapsedMilliseconds + "(" + stopwatch.Elapsed.TotalSeconds + "s)");
             return finalQueue;

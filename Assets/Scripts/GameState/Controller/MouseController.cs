@@ -227,6 +227,25 @@ namespace Andja.Controller {
         internal void UnselectStructure() {
             SelectedStructure = null;
         }
+
+        internal void SetStructureToBuild(Structure toBuildStructure) {
+            ToBuildStructure = toBuildStructure;
+            switch (toBuildStructure.BuildTyp) {
+                case BuildType.Drag:
+                    SetMouseState(MouseState.BuildDrag);
+                    break;
+                case BuildType.Path:
+                    SetMouseState(MouseState.BuildPath);
+                    break;
+                case BuildType.Single:
+                    SetMouseState(MouseState.BuildSingle);
+                    break;
+            }
+            //this has to be here to prevent the previous state to change the values
+            NeededItemsToBuild = ToBuildStructure.BuildingItems?.CloneArrayWithCounts();
+            NeededBuildCost = ToBuildStructure.BuildCost;
+        }
+
         /// <summary>
         /// Set the MouseState and changes the current Cursor.
         /// </summary>
@@ -264,6 +283,39 @@ namespace Andja.Controller {
                     ChangeCursorType(CursorType.Upgrade);
                     break;
             }
+            switch (MouseState) {
+                case MouseState.Idle:
+                    break;
+
+                case MouseState.BuildDrag:
+                case MouseState.BuildPath:
+                case MouseState.BuildSingle:
+                    NeededItemsToBuild = null;
+                    NeededBuildCost = 0;
+                    UI.Model.IslandInfoUI.Instance.ResetAddons();
+                    break;
+
+                case MouseState.Unit:
+                    break;
+
+                case MouseState.UnitGroup:
+                    break;
+
+                case MouseState.Copy:
+                    break;
+
+                case MouseState.Destroy:
+                    break;
+
+                case MouseState.DragSelect:
+                    break;
+
+                case MouseState.Upgrade:
+                    NeededItemsToBuild = null;
+                    NeededBuildCost = 0;
+                    UI.Model.IslandInfoUI.Instance.ResetAddons();
+                    break;
+            }
             MouseState = state;
         }
 
@@ -280,26 +332,6 @@ namespace Andja.Controller {
                     return;
                 highlightGO.transform.position = new Vector3(t.X, t.Y, 0) + EditorController.Instance.BrushOffset;
             }
-        }
-        /// <summary>
-        /// Responsible for detecting a drag not in Build/Destroy Mode 
-        /// </summary>
-        private void UpdateDragBoxSelect() {
-            if (IsInBuildDestoyMode == false)
-                return;
-
-            if (InputHandler.GetMouseButton(InputMouse.Primary) && DisplayDragRectangle == false) {
-                if (EventSystem.current.IsPointerOverGameObject() == false && ShortcutUI.Instance.IsDragging == false) {
-                    float sqrdist = (Input.mousePosition - lastFrameGUIPosition).sqrMagnitude;
-                    if (sqrdist > 5) {
-                        dragStartPosition = currFramePosition;
-                        //SetMouseState(MouseState.DragSelect);
-                        DisplayDragRectangle = true;
-                    }
-                }
-            }
-            if (DisplayDragRectangle)
-                UpdateDragSelect();
         }
 
         public void UpdateMouseStates() {
@@ -358,6 +390,25 @@ namespace Andja.Controller {
                     break;
             }
         }
+        /// <summary>
+        /// Responsible for detecting a drag not in Build/Destroy Mode 
+        /// </summary>
+        private void UpdateDragBoxSelect() {
+            if (IsInBuildDestoyMode == false)
+                return;
+            if (InputHandler.GetMouseButton(InputMouse.Primary) && DisplayDragRectangle == false) {
+                if (EventSystem.current.IsPointerOverGameObject() == false && ShortcutUI.Instance.IsDragging == false) {
+                    float sqrdist = (Input.mousePosition - lastFrameGUIPosition).sqrMagnitude;
+                    if (sqrdist > 5) {
+                        dragStartPosition = currFramePosition;
+                        //SetMouseState(MouseState.DragSelect);
+                        DisplayDragRectangle = true;
+                    }
+                }
+            }
+            if (DisplayDragRectangle)
+                UpdateDragSelect();
+        }
 
         private void UpdateCopyState() {
             if(InputHandler.GetMouseButtonUp(InputMouse.Primary)) {
@@ -369,6 +420,7 @@ namespace Andja.Controller {
                 BuildController.Instance.StartStructureBuild(t.Structure.ID);
             }
         }
+
         private void UpdateUpgradeState() {
             Tile t = GetTileUnderneathMouse();
             NeededItemsToBuild = null;
@@ -698,7 +750,6 @@ namespace Andja.Controller {
                 tileToPreviewGO.Remove(tile);
             }
             UpdateStructurePreview(tiles, 1);
-
             NeededItemsToBuild = ToBuildStructure.BuildingItems?.CloneArrayWithCounts();
             NeededBuildCost = ToBuildStructure.BuildCost;
         }

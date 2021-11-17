@@ -30,9 +30,11 @@ namespace Andja.Pathfinding {
                 threads[i].Start();
             }
         }
-        public static PathJob EnqueueJob(IPathfindAgent agent, PathGrid grid, Vector2 Start, Vector2 End, Action OnFinished) {
+        public static PathJob EnqueueJob(IPathfindAgent agent, PathGrid grid, Vector2 Start, Vector2 End,
+            Action OnFinished, Func<Queue<Vector2>, Queue<Vector2>> QueueModifier = null) {
             PathJob job = new PathJob(agent, grid, Start, End);
             job.OnFinished += OnFinished;
+            job.QueueModifier += QueueModifier;
             queuedJobs.Enqueue(job);
             return job;
         }
@@ -240,7 +242,6 @@ namespace Andja.Pathfinding {
         public bool IsCanceled => Status == JobStatus.Canceled;
 
         public Action OnPathInvalidated { get; internal set; }
-
         public IPathfindAgent agent;
         public PathGrid[] Grid;
         public Vector2 Start;

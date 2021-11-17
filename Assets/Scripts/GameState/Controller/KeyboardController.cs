@@ -90,7 +90,8 @@ namespace Andja.Controller {
                 MouseController.SetMouseState(MouseState.Upgrade);
             }
             if (InputHandler.GetButtonUp(InputName.UpgradeTool)) {
-                MouseController.SetMouseState(MouseState.Idle);
+                if(MouseController.MouseState == MouseState.Upgrade)
+                    MouseController.SetMouseState(MouseState.Idle);
             }
             if (InputHandler.GetButtonDown(InputName.DiplomacyMenu)) {
                 UIC.ToggleDiplomacyMenu();

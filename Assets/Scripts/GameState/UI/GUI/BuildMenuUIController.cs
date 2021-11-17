@@ -144,7 +144,7 @@ namespace Andja.UI {
                 oldButton.SetNormalColor(Color.white);
             }
             oldButton = nameToGOMap[id];
-            nameToGOMap[id].SetNormalColor(Color.red);
+            nameToGOMap[id].SetNormalColor(Color.red); 
             BuildController.Instance.StartStructureBuild(id);
         }
 

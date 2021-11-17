@@ -193,18 +193,8 @@ namespace Andja.Controller {
             toBuildStructure = StructurePrototypes[structureId].Clone();
             if (EditorStructure != null)
                 toBuildStructure = EditorStructure;
-            if (StructurePrototypes[structureId].BuildTyp == BuildType.Path) {
-                MouseController.Instance.SetMouseState(MouseState.BuildPath);
-                MouseController.Instance.ToBuildStructure = toBuildStructure;
-            }
-            if (StructurePrototypes[structureId].BuildTyp == BuildType.Single) {
-                MouseController.Instance.SetMouseState(MouseState.BuildSingle);
-                MouseController.Instance.ToBuildStructure = toBuildStructure;
-            }
-            if (StructurePrototypes[structureId].BuildTyp == BuildType.Drag) {
-                MouseController.Instance.SetMouseState(MouseState.BuildDrag);
-                MouseController.Instance.ToBuildStructure = toBuildStructure;
-            }
+            MouseController.Instance.SetStructureToBuild(toBuildStructure);
+
             if (EditorController.IsEditor == false)
                 TileSpriteController.Instance.AddDecider(TileCityDecider, true);
             BuildState = BuildStateModes.Build;

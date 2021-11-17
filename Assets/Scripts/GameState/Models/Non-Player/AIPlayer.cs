@@ -1,4 +1,5 @@
 ﻿using Andja.Controller;
+using Priority_Queue;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,6 +8,7 @@ using UnityEngine;
 namespace Andja.Model {
 
     public class AIPlayer {
+        public bool isActive;
         public int PlayerNummer => player.Number;
         public Player player;
         public List<Fertility> neededFertilities;
@@ -24,6 +26,7 @@ namespace Andja.Model {
         /// Negative = has less Production than needed
         /// </summary>
         public Dictionary<string, float> itemToProducePerMinuteChange;
+        SimplePriorityQueue<ItemPriority> buildItemPriority = new SimplePriorityQueue<ItemPriority>();
 
         public AIPlayer(Player player) {
             this.player = player;
@@ -50,6 +53,12 @@ namespace Andja.Model {
         public AIPlayer(Player player, bool dummy) {
             this.player = player;
             CalculateNeeded();
+            if (dummy)
+                return;
+            foreach(Item item in PrototypController.BuildItems) {
+                ItemPriority ip = new ItemPriority(item);
+                buildItemPriority.Enqueue(ip, ip.Priority);
+            }
         }
 
         private void CalculateNeeded() {
@@ -86,6 +95,51 @@ namespace Andja.Model {
                         }
                     }
                 }
+            }
+        }
+        bool temp = false;
+        internal void Loop() {
+            while(AIController.ShutdownAI == false && isActive) {
+                if(AIController.ActiveAI == false || WorldController.Instance.IsPaused) {
+                    continue;
+                }
+                GameStartFunction();
+                BuildBuildings();
+            }
+        }
+
+        private void BuildBuildings() {
+            if (player.Cities.Count == 0) {
+                return;
+            }
+
+        }
+
+        private void GameStartFunction() {
+            if (player.Cities.Count == 0) {
+                Ship ship = player.Ships
+                                .First(s => s.inventory.HasEnoughOfItems(PrototypController.Instance.FirstLevelWarehouse.BuildingItems));
+                if (ship == null) {
+                    Debug.LogError("AI does not have enough resources to start a city! -- Stopping AI Player " + player.Name);
+                    isActive = false;
+                    return;
+                }
+                if (temp)
+                    return;
+                temp = true;
+                var t = DecideIsland(false, true);
+                AIController.Instance.AddOperation(new MoveUnitOperation(this, ship, t.Item1, true));
+
+                void ShipWarehouse(Unit u, bool atdest) {
+                    if (atdest == false)
+                        return;
+                    var warehouse = PrototypController.Instance.FirstLevelWarehouse.Clone();
+                    warehouse.ChangeRotation(t.Item2);
+                    AIController.Instance.AddOperation(new BuildStructureOperation(this, t.Item1, warehouse, ship));
+                    ship.UnregisterOnArrivedAtDestinationCallback(ShipWarehouse);
+                }
+
+                ship.RegisterOnArrivedAtDestinationCallback(ShipWarehouse);
             }
         }
 
@@ -126,33 +180,55 @@ namespace Andja.Model {
         private void OnStructureDestroy(Structure structure, IWarfare destroyer) {
         }
 
-        public void DecideIsland(bool onStart = false) {
+        public Tuple<Tile, int> DecideIsland(bool buildWarehouseDirectly = false, bool startIslands = false) {
             //TODO:set here desires
             CalculateIslandScores();
             islandScores = islandScores.OrderByDescending(x => x.EndScore).ToList();
-            WarehouseStructure warehouse = PrototypController.Instance.FirstLevelWarehouse;
+            if(startIslands) {
+                islandScores.RemoveAll(x => x.Island.Fertilities.Any(y => neededFertilities.Contains(y) == false));
+                if (islandScores.Count == 0) {
+                    return null;
+                }
+                if(islandScores.Count < PlayerController.PlayerCount) {
+                    startIslands = false;
+                }
+            }
+            WarehouseStructure warehouse = PrototypController.Instance.FirstLevelWarehouse.Clone() as WarehouseStructure;
             int index = 0;
             while(warehouse.BuildTile == null) {
                 List<TileValue> values = new List<TileValue>(AIController.IslandToMapSpaceValuedTiles[islandScores[index].Island]);
                 values.RemoveAll(x => x.Type != TileType.Shore);
                 List<TileValue> selected = new List<TileValue>(from TileValue in values
-                                                               where TileValue.MaxValue >= warehouse.Height
+                                                               where TileValue.MaxValue >= warehouse.Height 
+                                                                     && TileValue.tile.City.IsWilderness()
                                                                select new TileValue(TileValue));
-                foreach (TileValue t in selected) {
-                    for (int i = 0; i < 4; i++) {
-                        //bool left = warehouse.Rotation == 90 || warehouse.Rotation == 180;
-                        List<Tile> buildtiles = warehouse.GetBuildingTiles(t.tile, false, false);
-                        if (buildtiles.Exists(x => x.Type == TileType.Ocean))
-                            continue;
-                        if (warehouse.CanBuildOnSpot(buildtiles)) {
-                            AIController.PlaceStructure(this, warehouse, buildtiles, null, onStart);
-                            return;
+                lock (islandScores[index].Island) {
+                    if(startIslands && islandScores[index].Island.startClaimed) {
+
+                    } else {
+                        foreach (TileValue t in selected) {
+                            for (int i = 0; i < 4; i++) {
+                                List<Tile> buildtiles = warehouse.GetBuildingTiles(t.tile, false, false);
+                                if (buildtiles.Exists(x => x.Type == TileType.Ocean || x.City.IsWilderness() == false))
+                                    continue;
+                                if (warehouse.CanBuildOnSpot(buildtiles)) {
+                                    if (buildWarehouseDirectly) {
+                                        AIController.BuildStructure(this, warehouse, buildtiles, null, buildWarehouseDirectly);
+                                    }
+                                    else {
+                                        islandScores[index].Island.startClaimed = startIslands;
+                                    }
+                                    return new Tuple<Tile, int>(t.tile, warehouse.rotation);
+                                }
+                                warehouse.RotateStructure();
+                            }
                         }
-                        warehouse.RotateStructure();
                     }
                 }
                 index++;
             }
+            Debug.LogError("AI Player " + player.Name + " did not find any possible build location for warehouse. Please report seed/save.");
+            return null;
         }
 
         public void CalculateIslandScores() {
@@ -256,15 +332,15 @@ namespace Andja.Model {
                 averageTileScore /= island.Tiles.Count;
                 score.ShapeScore = averageTileScore;
                 //Competition Score is the percentage of unclaimed Tiles multiplied through how many diffrent players
-                if (island.Cities.Count > 0) {
+                if (island.Cities.Count > 1) {
                     float avaibleTiles = island.Tiles.Count;
                     foreach (City c in island.Cities) {
                         if (c.IsWilderness())
                             continue;
                         avaibleTiles -= c.Tiles.Count;
                     }
-                    score.CompetitionScore = avaibleTiles / island.Tiles.Count;
-                    score.CompetitionScore *= island.Cities.Count;
+                    score.CompetitionScore = 1 - (avaibleTiles / island.Tiles.Count);
+                    score.CompetitionScore *= island.Cities.Count - 1;
                 }
                 islandScores.Add(score);
                 debugCalcValues += (score.Island.StartTile.Vector2 + " " + score.EndScore + "=" + score + "\n");

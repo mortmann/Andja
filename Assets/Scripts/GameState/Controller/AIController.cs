@@ -1,14 +1,27 @@
 ﻿using Andja.Model;
 using Andja.Model.Data;
+using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using UnityEngine;
 
 namespace Andja.Controller {
 
     public class AIController : MonoBehaviour {
         public static AIController Instance { get; protected set; }
+        /// <summary>
+        /// Active means currently calculating things.
+        /// </summary>
+        public static bool ActiveAI = true;
+        /// <summary>
+        /// Shutdown means it ai player will stop the threads
+        /// </summary>
+        public static bool ShutdownAI = false;
 
+        ConcurrentQueue<Operation> allOperations = new ConcurrentQueue<Operation>();
+        public static int AIOperationsPerFrame = 1; 
         public static PerPopulationLevelData[] PerPopulationLevelDatas {
             get {
                 if (_perPopulationLevelDatas == null)
@@ -49,6 +62,9 @@ namespace Andja.Controller {
         private static Dictionary<Island, List<TileValue>> _islandToCurrentSpaceValuedTiles;
         private static Dictionary<Island, Dictionary<Tile, TileValue>> _islandsTileToValue;
         private static PerPopulationLevelData[] _perPopulationLevelDatas;
+        AIPlayer test;
+        List<AIPlayer> aiPlayers;
+        static Thread[] threads;
 
         private void Awake() {
             if (Instance != null) {
@@ -56,14 +72,44 @@ namespace Andja.Controller {
             }
             Instance = this;
         }
-        AIPlayer test;
+
         private void Start() {
+            AIOperationsPerFrame = PlayerController.PlayerCount - 1;
             BuildController.Instance.RegisterStructureCreated(OnStructureCreated);
             BuildController.Instance.RegisterStructureDestroyed(OnStructureDestroyed);
             test = new AIPlayer(PlayerController.GetPlayer(1));
             test.CalculatePlayersCombatValue();
             test.CalculateIslandScores();
+            aiPlayers = new List<AIPlayer>();
+            foreach (Player player in PlayerController.Players) {
+                if (player.IsHuman)
+                    continue;
+                aiPlayers.Add(new AIPlayer(player));
+            }
+            ShutdownAI = false;
+            ActiveAI = true;
+            threads = new Thread[aiPlayers.Count];
+            for (int i = 0; i < aiPlayers.Count; i++) {
+                AIPlayer ai = aiPlayers[i];
+                threads[i] = new Thread(() => { ai.Loop(); Debug.Log("Shutdown AI " + ai.player.Name); });
+                threads[i].Start();
+            }
         }
+
+        private void Update() {
+            for (int i = 0; i < AIOperationsPerFrame; i++) {
+                if(allOperations.TryDequeue(out Operation op) == false) {
+                    continue;
+                }
+                if(op.Do() == false) {
+                    //we need to inform the ai.
+                    //if it succeds there should be other triggers working 
+                    //to inform the ai that it happend. like city creation, structure added etc.
+                    //maybe still do it so it can remove it from its queue?! -- not sure
+                }
+            }
+        }
+
         private void OnDrawGizmos() {
 #if UNITY_EDITOR
             if(test != null)
@@ -79,6 +125,8 @@ namespace Andja.Controller {
             _islandToCurrentSpaceValuedTiles = null;
             _islandsTileToValue = null;
             PerPopulationLevelDatas = null;
+            ActiveAI = false;
+            ShutdownAI = true;
         }
 
         internal string GetTileValue(Tile tile) {
@@ -88,6 +136,10 @@ namespace Andja.Controller {
                 return "ERROR";
             }
             return IslandsTileToValue[tile.Island][tile].ToString();
+        }
+
+        internal void AddOperation(Operation Operation) {
+            allOperations.Enqueue(Operation);
         }
 
         private static void OnStructureDestroyed(Structure structure, IWarfare iwarfare) {
@@ -182,11 +234,13 @@ namespace Andja.Controller {
             }
         }
 
-        public static bool PlaceStructure(AIPlayer player, Structure structure, List<Tile> tiles, Unit buildUnit = null, bool onStart = false) {
-            BuildController.Instance.BuildOnTile(structure, tiles, player.PlayerNummer, false, false, buildUnit, false, onStart);
-            return true;
+        public static bool BuildStructure(AIPlayer player, Structure structure, List<Tile> tiles, Unit buildUnit = null, bool onStart = false) {
+            return BuildController.Instance.BuildOnTile(structure, tiles, player.PlayerNummer, false, false, buildUnit, false, onStart);
         }
-
+        public static bool BuildStructure(AIPlayer player, Structure structure, Tile tile, Unit buildUnit = null, bool onStart = false) {
+            return BuildController.Instance.BuildOnTile(structure, structure.GetBuildingTiles(tile),
+                                                player.PlayerNummer, false, false, buildUnit, false, onStart);
+        }
         public static void CalculateIslandTileValues() {
             _islandToMapSpaceValuedTiles = new Dictionary<Island, List<TileValue>>();
             _islandToCurrentSpaceValuedTiles = new Dictionary<Island, List<TileValue>>();

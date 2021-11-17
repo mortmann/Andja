@@ -203,7 +203,6 @@ namespace Andja.Pathfinding {
             //    rotation += deltaRotate;
             //    rotation %= 360;
             //}
-
             if (Mathf.Approximately(rotation, rotateAngle)) {
                 rotation = rotateAngle;
             }

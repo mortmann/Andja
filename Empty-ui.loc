@@ -1,6 +1,15 @@
 <?xml version="1.0"?>
 <UILanguageLocalizations xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" language="Empty">
   <localizationData>
+    <translationData id="HealthUI">
+      <translation>[**Missing**]</translation>
+      <toolTipTranslation>[**Missing**]</toolTipTranslation>
+      <valueIsMainTranslation>false</valueIsMainTranslation>
+      <uiElements>
+        <string>UnitHealth/Health/</string>
+      </uiElements>
+      <onlyToolTip>true</onlyToolTip>
+    </translationData>
     <translationData id="LoadingGameTitle">
       <translation>[**Missing**]</translation>
       <valueIsMainTranslation>false</valueIsMainTranslation>
@@ -14,15 +23,6 @@
       <uiElements>
         <string>Canvas/Hint/HintTitle/</string>
       </uiElements>
-    </translationData>
-    <translationData id="HealthUI">
-      <translation>[**Missing**]</translation>
-      <toolTipTranslation>[**Missing**]</toolTipTranslation>
-      <valueIsMainTranslation>false</valueIsMainTranslation>
-      <uiElements>
-        <string>UnitHealth/Health/</string>
-      </uiElements>
-      <onlyToolTip>true</onlyToolTip>
     </translationData>
     <translationData id="GraphicsOptions/VeryLow">
       <translation>[**Missing**]</translation>
@@ -196,6 +196,15 @@
       <translation>[**Missing**]</translation>
       <valueIsMainTranslation>false</valueIsMainTranslation>
     </translationData>
+    <translationData id="HealthUI">
+      <translation>[**Missing**]</translation>
+      <toolTipTranslation>[**Missing**]</toolTipTranslation>
+      <valueIsMainTranslation>false</valueIsMainTranslation>
+      <uiElements>
+        <string>UnitHealth/Health/</string>
+      </uiElements>
+      <onlyToolTip>true</onlyToolTip>
+    </translationData>
     <translationData id="LoadingGameTitle">
       <translation>[**Missing**]</translation>
       <valueIsMainTranslation>false</valueIsMainTranslation>
@@ -209,15 +218,6 @@
       <uiElements>
         <string>Canvas/Hint/HintTitle/</string>
       </uiElements>
-    </translationData>
-    <translationData id="HealthUI">
-      <translation>[**Missing**]</translation>
-      <toolTipTranslation>[**Missing**]</toolTipTranslation>
-      <valueIsMainTranslation>false</valueIsMainTranslation>
-      <uiElements>
-        <string>UnitHealth/Health/</string>
-      </uiElements>
-      <onlyToolTip>true</onlyToolTip>
     </translationData>
     <translationData id="Buy">
       <translation>[**Missing**]</translation>
@@ -338,9 +338,9 @@
         <string>UI Canvas/PauseMenu/DarkLayer/Menu/Credits/Title/</string>
         <string>UI Canvas/PauseMenu/DarkLayer/Menu/Credits/Title/</string>
         <string>UI Canvas/PauseMenu/DarkLayer/Menu/MenuPanel/MenuButtons/Credits/</string>
+        <string>Menu/Credits/Title/</string>
+        <string>Menu/Credits/Title/</string>
         <string>Menu/MenuPanel/MenuButtons/Credits/</string>
-        <string>Menu/Credits/Title/</string>
-        <string>Menu/Credits/Title/</string>
       </uiElements>
     </translationData>
     <translationData id="Mods">
@@ -349,8 +349,8 @@
       <uiElements>
         <string>UI Canvas/PauseMenu/DarkLayer/Menu/ModPanel/Title/</string>
         <string>UI Canvas/PauseMenu/DarkLayer/Menu/MenuPanel/MenuButtons/Mods/</string>
-        <string>Menu/MenuPanel/MenuButtons/Mods/</string>
         <string>Menu/ModPanel/Title/</string>
+        <string>Menu/MenuPanel/MenuButtons/Mods/</string>
       </uiElements>
     </translationData>
     <translationData id="Language">

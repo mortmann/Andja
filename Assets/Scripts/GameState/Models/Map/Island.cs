@@ -23,6 +23,9 @@ namespace Andja.Model {
 
         #region RuntimeOrOther
 
+        //TODO: find better space for ai variable?
+        public bool startClaimed;
+
         public List<Fertility> Fertilities;
         public PathGrid Grid { get; protected set; }
 
@@ -241,6 +244,11 @@ namespace Andja.Model {
         }
 
         public void RemoveCity(City c) {
+            if(c.IsWilderness()) {
+                //We could remove it still and recreate it, if it is needed but for now just prevent the deletion 
+                Debug.LogWarning("Wanted to remove Wilderniss. It is still needed even if empty: For the case that their will be once again.");
+                return;
+            }
             Cities.Remove(c);
         }
 

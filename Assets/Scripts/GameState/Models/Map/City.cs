@@ -90,6 +90,8 @@ namespace Andja.Model {
         private Action<Structure> cbStructureRemoved;
         private Action<City> cbCityDestroy;
         private Action<Structure> cbRegisterTradeOffer;
+        private Action<City, Tile> cbTileAdded;
+        private Action<City, Tile> cbTileRemoved;
 
         #endregion RuntimeOrOther
         /// <summary>
@@ -108,7 +110,7 @@ namespace Andja.Model {
             Structures = new List<Structure>();
             Tiles = new HashSet<Tile>();
             Routes = new List<Route>();
-            Inventory = new CityInventory();
+            Inventory = new CityInventory(42);
             Setup();
         }
 
@@ -118,12 +120,16 @@ namespace Andja.Model {
             PopulationLevels[structureLevel].SetTaxPercantage(percantage);
         }
 
-        internal void AddTradeItem(TradeItem ti) {
+        internal bool AddTradeItem(TradeItem ti) {
             if (itemIDtoTradeItem.ContainsKey(ti.ItemId)) {
                 Debug.LogError("Tried to add Trade Item that exists");
-                return;
+                return false;
+            }
+            if(warehouse.TradeItemCount <= itemIDtoTradeItem.Count) {
+                return false;
             }
             itemIDtoTradeItem.Add(ti.ItemId, ti);
+            return true;
         }
 
         internal void DeleteTradeItem(TradeItem ti) {
@@ -176,6 +182,7 @@ namespace Andja.Model {
         public IEnumerable<Structure> Load(Island island) {
             this.Island = island;
             Setup();
+            Inventory.Load();
             foreach (Structure item in Structures) {
                 if(item == null) {
                     Debug.LogError("Missing structure?");
@@ -301,22 +308,28 @@ namespace Andja.Model {
             if (Tiles.Count == 0) {
                 Destroy();
             }
+            cbTileRemoved?.Invoke(this, t);
         }
 
         public void AddTiles(IEnumerable<Tile> t) {
             AddTiles(new HashSet<Tile>(t));
         }
 
-        public void AddTiles(HashSet<Tile> t) {
+        public void AddTiles(HashSet<Tile> tiles) {
             // does not really needs it because tiles witout island reject cities
             //but it is a secondary security that this does not happen
-            if (t == null) {
+            if (tiles == null) {
                 return;
             }
-            t.RemoveWhere(x => x == null || x.Type == TileType.Ocean);
-            List<Tile> tiles = new List<Tile>(t);
-            for (int i = 0; i < tiles.Count; i++) {
-                AddTile(tiles[i]);
+            tiles.RemoveWhere(x => x == null || x.Type == TileType.Ocean);
+            foreach (Tile t in tiles) {
+                t.City = this;
+                if(AIController._cityToCurrentSpaceValueTiles != null 
+                    && AIController._cityToCurrentSpaceValueTiles[this].ContainsKey(t) == false)
+                    AIController._cityToCurrentSpaceValueTiles[this].TryAdd(t, new TileValue(t, Vector2.one, Vector2.one));
+            }
+            foreach (Tile t in tiles) {
+                AddTile(t);
             }
             Island.allReadyHighlighted = false;
         }
@@ -337,6 +350,7 @@ namespace Andja.Model {
             if (IsCurrPlayerCity()) {
                 World.Current.OnTileChanged(t);
             }
+            cbTileAdded?.Invoke(this, t);
         }
 
 
@@ -480,10 +494,12 @@ namespace Andja.Model {
             return u.inventory.MoveItem(Inventory, getTrade, amount);
         }
 
-        public void RemoveTradeItem(Item item) {
-            itemIDtoTradeItem.Remove(item.ID);
+        public bool RemoveTradeItem(Item item) {
+            return RemoveTradeItem(item.ID);
         }
-
+        public bool RemoveTradeItem(string itemID) {
+            return itemIDtoTradeItem.Remove(itemID);
+        }
         public void ChangeTradeItemAmount(Item item) {
             itemIDtoTradeItem[item.ID].count = item.count;
         }
@@ -591,7 +607,20 @@ namespace Andja.Model {
         public void UnregisterStructureRemove(Action<Structure> callbackfunc) {
             cbStructureRemoved -= callbackfunc;
         }
+        public void RegisterTileRemove(Action<City, Tile> callbackfunc) {
+            cbTileRemoved += callbackfunc;
+        }
 
+        public void UntegisterTileRemove(Action<City, Tile> callbackfunc) {
+            cbTileRemoved -= callbackfunc;
+        }
+        public void RegisterTileAdded(Action<City, Tile> callbackfunc) {
+            cbTileAdded += callbackfunc;
+        }
+
+        public void UnregisterTileAdded(Action<City, Tile> callbackfunc) {
+            cbTileAdded -= callbackfunc;
+        }
         #region igeventable
 
         public override void OnEventCreate(GameEvent ge) {
@@ -645,6 +674,16 @@ namespace Andja.Model {
 
         public override string ToString() {
             return Name;
+        }
+
+        internal float GetPopulationItemUsage(Item item) {
+            if (PopulationCount == 0)
+                return 0;
+            float sum = 0;
+            foreach (var level in PopulationLevels) {
+                sum += item.Data.TotalUsagePerLevel[level.Level] * level.populationCount;
+            }
+            return sum;
         }
     }
 }

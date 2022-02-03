@@ -2530,7 +2530,7 @@
          <hasHitbox>true</hasHitbox>
          <maxHealth>25.0</maxHealth>
          <structureRange>0</structureRange>
-         <populationLevel>0</populationLevel>
+         <populationLevel>1</populationLevel>
          <populationCount>0</populationCount>
          <structureLevel>0</structureLevel>
          <tileWidth>2</tileWidth>
@@ -6671,7 +6671,7 @@
             </Item>
          </buildingItems>
          <spriteBaseName>warehouse</spriteBaseName>
-         <contactRange>6.3</contactRange>
+         <contactRange>12</contactRange>
          <forMarketplace>true</forMarketplace>
          <maxNumberOfWorker>1</maxNumberOfWorker>
          <produceTime>0.0</produceTime>
@@ -6731,7 +6731,7 @@
             </Item>
          </buildingItems>
          <spriteBaseName>warehouse2</spriteBaseName>
-         <contactRange>6.3</contactRange>
+         <contactRange>12</contactRange>
          <forMarketplace>true</forMarketplace>
          <maxNumberOfWorker>2</maxNumberOfWorker>
          <produceTime>0.0</produceTime>
@@ -6794,7 +6794,7 @@
             </Item>
          </buildingItems>
          <spriteBaseName>warehouse3</spriteBaseName>
-         <contactRange>6.3</contactRange>
+         <contactRange>12</contactRange>
          <forMarketplace>true</forMarketplace>
          <maxNumberOfWorker>3</maxNumberOfWorker>
          <produceTime>0.0</produceTime>
@@ -6857,7 +6857,7 @@
             </Item>
          </buildingItems>
          <spriteBaseName>warehouse4</spriteBaseName>
-         <contactRange>6.3</contactRange>
+         <contactRange>12</contactRange>
          <forMarketplace>true</forMarketplace>
          <maxNumberOfWorker>4</maxNumberOfWorker>
          <produceTime>0.0</produceTime>

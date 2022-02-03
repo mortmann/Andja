@@ -304,6 +304,7 @@ namespace Andja.Model {
         }
         internal virtual void Load() {
             Setup();
+            inventory.Load();
             pathfinding.Load(this);
             if (pathfinding.IsAtDestination == false) {
                 pathfinding.SetDestination(pathfinding.dest_X, pathfinding.dest_Y);
@@ -381,7 +382,7 @@ namespace Andja.Model {
                 case UnitMainModes.Attack:
                     if (CanAttack && IsInRange() == false) {
                         if (CurrentDoingMode != UnitDoModes.Move) {
-                            //pathfinding.cbIsAtDestination += OnArriveDestination;
+                            pathfinding.cbIsAtDestination += OnArriveDestination;
                             Vector2 dest = CurrentTarget.CurrentPosition;
                             SetDestinationIfPossible(dest.x, dest.y);
                         }
@@ -660,16 +661,21 @@ namespace Andja.Model {
             rangeUStructure = ware;
         }
 
-        public void ToTradeItemToNearbyWarehouse(Item clicked) {
+        public void TradeItemToNearbyWarehouse(Item clicked) {
+            TradeItemToNearbyWarehouse(clicked, rangeUStructure.City.PlayerTradeAmount);
+        }
+        public bool TradeItemToNearbyWarehouse(Item clicked, int amount) {
             if (rangeUStructure != null && rangeUStructure is WarehouseStructure) {
                 if (rangeUStructure.PlayerNumber == playerNumber) {
-                    rangeUStructure.City.TradeFromShip(this, clicked, rangeUStructure.City.PlayerTradeAmount);
+                    rangeUStructure.City.TradeFromShip(this, clicked, amount);
                 }
                 else {
                     Player p = PlayerController.GetPlayer(playerNumber);
-                    rangeUStructure.City.BuyingTradeItem(clicked.ID, p, (Ship)this, rangeUStructure.City.PlayerTradeAmount);
+                    rangeUStructure.City.BuyingTradeItem(clicked.ID, p, (Ship)this, amount);
                 }
+                return true;
             }
+            return false;
         }
 
         public void AddPatrolCommand(float targetX, float targetY) {
@@ -950,6 +956,10 @@ namespace Andja.Model {
             if (ge.IsTarget(this)) {
                 ge.EffectTarget(this, false);
             }
+        }
+
+        public void PathInvalidated() {
+
         }
     }
 }

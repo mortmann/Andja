@@ -93,7 +93,10 @@ namespace Andja.Pathfinding {
             List<Route> toCheckRoutes = new List<Route>(StartStructure.GetRoutes());
             toCheckRoutes.RemoveAll(x => GoalStructure.GetRoutes().Contains(x) == false);
             if (toCheckRoutes.Count == 0) {
-                Debug.LogError("Trying to find Route between non connected Structures!");
+                //Can happen if this is a return route - which means road got destroyed in the mean time
+                Job = new PathJob(agent, 0);
+                Job.SetStatus(JobStatus.NoPath);
+                //Debug.LogError("Trying to find Route between non connected Structures!");
                 return;
             }
             Job = new PathJob(agent, toCheckRoutes.Count);
@@ -121,14 +124,19 @@ namespace Andja.Pathfinding {
             Job.OnPathInvalidated += PathInvalidated;
             PathfindingThreadHandler.EnqueueJob(Job, OnPathJobFinished);
         }
-
+        protected override void PathInvalidated() {
+            List<Route> toCheckRoutes = new List<Route>(StartStructure.GetRoutes());
+            toCheckRoutes.RemoveAll(x => GoalStructure.GetRoutes().Contains(x) == false);
+            if (toCheckRoutes.Count == 0)
+                return;
+            base.PathInvalidated();
+        }
         private Queue<Vector2> ModifyQueue(Queue<Vector2> queue) {
             Queue<Vector2> newQueue = new Queue<Vector2>();
             Vector2 dir = new Vector2();
             Vector2 curr;
             Vector2 last = queue.Peek();
-            //Leaving this in -- possible still needed in edge cases(?) but it should work without now
-            //bool addFirst = CurrTile != null; //if it is already moving add extra step to move over first
+
             while (queue.Count > 0) {
                 curr = queue.Dequeue();
                 if (queue.Count > 0) {
@@ -142,15 +150,6 @@ namespace Andja.Pathfinding {
                 if (offset.y == 0)
                     offset.y = offset2.y;
 
-                //if (addFirst) {
-                    //Vector2 pos = new Vector2(X, Y);
-                    //if (offset.x > 0)
-                    //    pos.x = Mathf.FloorToInt(X) + offset.x;
-                    //if (offset.y > 0)
-                    //    pos.y = Mathf.FloorToInt(Y) + offset.y;
-                    //newQueue.Enqueue(new Vector2(pos.x, pos.y));
-                //    addFirst = false;
-                //}
                 if (queue.Count == 0) {
                     if (dir.x > 0 || dir.y > 0)
                         offset += dir * (Worker.WorldSize);
@@ -177,9 +176,6 @@ namespace Andja.Pathfinding {
                 if(distanceTwo <= distanceOne) {
                     worldPath.Dequeue();
                 }
-                //while (World.Current.GetTileAt(worldPath.Peek()) == CurrTile) {
-                //    worldPath.Dequeue();
-                //}
             }
             Vector2 last;
             if (worldPath.Count > 1) {

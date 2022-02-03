@@ -40,6 +40,7 @@ namespace Andja.Pathfinding {
 
         #region RuntimeOrPrototyp
 
+        public JobStatus? Status => Job?.Status;
         protected PathJob Job;
         protected float rotateTime;
         protected float rotateAngle;
@@ -289,6 +290,7 @@ namespace Andja.Pathfinding {
         }
         protected virtual void PathInvalidated() {
             AddPathJob();
+            agent.PathInvalidated();
         }
 
         public void CreateReversePath() {

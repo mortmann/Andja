@@ -53,8 +53,13 @@ namespace Andja.Model {
             }
         }
 
-        internal void ChangeGridTile(LandTile landTile) {
-            Grid?.ChangeNode(landTile);
+        internal void ChangeGridTile(LandTile landTile, bool cityChange = false) {
+            if(cityChange) {
+                Grid?.ChangeCityNode(landTile);
+            }
+            else {
+                Grid?.ChangeNode(landTile);
+            }
         }
 
         public List<IslandFeature> Features { get; internal set; }

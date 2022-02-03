@@ -1,4 +1,5 @@
 ﻿using Andja.Pathfinding;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -15,11 +16,11 @@ namespace Andja.Model {
         public PathGrid Grid { get; protected set; }
 
         public List<Tile> Tiles;
-
+        public HashSet<MarketStructure> MarketStructures;
         public Route(Tile startTile, bool floodfill = false) {
             Tiles = new List<Tile> {
-            startTile
-        };
+                startTile
+            };
             if (floodfill) {
                 RouteFloodFill(startTile);
             }
@@ -67,9 +68,10 @@ namespace Andja.Model {
         }
 
         public void RemoveRoadTile(Tile tile) {
-            if (Tiles.Count == 0) {
+            if (Tiles.Count == 1) {
                 //this route does not have any more roadtiles so kill it
                 Tiles[0].City.RemoveRoute(this);
+                MarketStructures.Clear();
                 Grid.Obsolete = true;
                 return;
             }
@@ -113,6 +115,16 @@ namespace Andja.Model {
                     item.City.AddRoute(new Route(item, true));
                 }
             }
+        }
+
+        public void AddMarketStructure(MarketStructure ms) {
+            if (MarketStructures == null)
+                MarketStructures = new HashSet<MarketStructure>();
+            MarketStructures.Add(ms);
+        }
+
+        public void RemoveMarketStructure(MarketStructure ms) {
+            MarketStructures.Remove(ms);
         }
 
         internal void CheckForCity(City old) {

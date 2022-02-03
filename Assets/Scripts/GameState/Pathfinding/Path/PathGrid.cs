@@ -21,6 +21,7 @@ namespace Andja.Pathfinding {
         public Action<Tile> Changed;
         public bool IsDirty;
         List<Node> temporaryNodes = new List<Node>();
+        int[] playerOwnedNodes; //How many tiles are owned players
 
         internal Node GetNodeFromWorldCoord(Vector2 pos) {
             return GetNode(pos - new Vector2(startX, startY));
@@ -36,6 +37,7 @@ namespace Andja.Pathfinding {
         }
         //Could cache routes here with start/end -- could be really useful for route pathfinding
         public PathGrid(Island island) {
+            playerOwnedNodes = new int[Controller.PlayerController.PlayerCount];
             ID = Guid.NewGuid().ToString();
             pathGridType = PathGridType.Island;
             SetIslandValues(island);
@@ -46,18 +48,8 @@ namespace Andja.Pathfinding {
             }
         }
 
-        internal void SetTemporaryWalkableNode(Vector2 pos) {
-            Node n = GetNodeFromWorldCoord(pos);
-            if(n == null) {
-                n = new Node(Mathf.FloorToInt(pos.x - startX), Mathf.FloorToInt(pos.y - startY), 0, 0, -1);
-                Values[n.x, n.y] = n;
-                temporaryNodes.Add(n);
-            } else {
-                n.OverrideWalkable();
-            }
-        }
-
         public PathGrid(Route route) {
+            playerOwnedNodes = new int[Controller.PlayerController.PlayerCount];
             ID = Guid.NewGuid().ToString();
             pathGridType = PathGridType.Route;
             SetIslandValues(route.Tiles[0].Island);
@@ -74,14 +66,8 @@ namespace Andja.Pathfinding {
             }
         }
 
-        private void SetIslandValues(Island island) {
-            Width = island.Width;
-            Height = island.Height;
-            startX = (int)island.Minimum.x;
-            startY = (int)island.Minimum.y;
-            Values = new Node[Width, Height];
-        }
         public PathGrid(PathGrid pathGrid) {
+            playerOwnedNodes = pathGrid.playerOwnedNodes;
             ID = pathGrid.ID;
             pathGrid.Changed += SourceChanged;
             this.Width = pathGrid.Width;
@@ -95,7 +81,25 @@ namespace Andja.Pathfinding {
                 }
             }
         }
+        internal void SetTemporaryWalkableNode(Vector2 pos) {
+            Node n = GetNodeFromWorldCoord(pos);
+            if (n == null) {
+                n = new Node(Mathf.FloorToInt(pos.x - startX), Mathf.FloorToInt(pos.y - startY), 0, 0, -1);
+                Values[n.x, n.y] = n;
+                temporaryNodes.Add(n);
+            }
+            else {
+                n.OverrideWalkable();
+            }
+        }
 
+        private void SetIslandValues(Island island) {
+            Width = island.Width;
+            Height = island.Height;
+            startX = (int)island.Minimum.x;
+            startY = (int)island.Minimum.y;
+            Values = new Node[Width, Height];
+        }
         private void SourceChanged(Tile t) {
             changedTiles.Add(t);
             IsDirty = true;
@@ -114,11 +118,31 @@ namespace Andja.Pathfinding {
             }
             Node n = new Node(Mathf.FloorToInt(t.X - startX), Mathf.FloorToInt(t.Y - startY), 
                                 t.MovementCost, t.BaseMovementCost, t.City.PlayerNumber);
+            if(t.City.PlayerNumber != GameData.WorldNumber) {
+                playerOwnedNodes[t.City.PlayerNumber]++;
+            }
             Values[n.x,n.y] = n;
             IsDirty = true;
             Changed?.Invoke(t);
             IsDirty = false;
             return n;
+        }
+        public void ChangeCityNode(Tile t) {
+            Node n = GetNode(t);
+            if(n == null) {
+                Debug.LogError("Tile should always have a node here.");
+                return;
+            }
+            if (t.City.PlayerNumber != GameData.WorldNumber) {
+                playerOwnedNodes[t.City.PlayerNumber]++;
+            }
+            if (n.PlayerNumber != GameData.WorldNumber) {
+                playerOwnedNodes[n.PlayerNumber]--;
+            }
+            n.PlayerNumber = t.City.PlayerNumber;
+            IsDirty = true;
+            Changed?.Invoke(t);
+            IsDirty = false;
         }
         public void ChangeNode(Tile t, Walkable type = Walkable.Normal) {
             Node n = GetNode(t);
@@ -127,7 +151,7 @@ namespace Andja.Pathfinding {
             }
             switch (type) {
                 case Walkable.Never:
-                    Values[t.X, t.Y] = null;
+                    Values[t.X - startX, t.Y - startY] = null;
                     break;
                 case Walkable.AlmostNever:
                     n.MovementCost = float.MaxValue;
@@ -142,6 +166,11 @@ namespace Andja.Pathfinding {
             Changed?.Invoke(t);
             IsDirty = false;
         }
+
+        public bool PlayerHasOwned(int player) {
+            return playerOwnedNodes[player] > 0;
+        }
+
         /// <summary>
         /// RESET does not only reset the pathgrids variables.
         /// but ALSO updates tiles that changed in the original graph.
@@ -192,5 +221,6 @@ namespace Andja.Pathfinding {
             }
             return neighbours;
         }
+
     }
 }

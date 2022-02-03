@@ -11,9 +11,7 @@ namespace Andja.Model {
         public int LEVEL; // cant be negative!
         public string iconSpriteName;
         public int taxPerPerson = 1;
-
-        public HomeStructure HomeStructure { get; internal set; }
-
+        [Ignore] public HomeStructure HomeStructure { get; internal set; }
         internal List<NeedGroup> GetCopyGroupNeedList() {
             List<NeedGroup> newList = new List<NeedGroup>();
             if (needGroupList == null)

@@ -87,8 +87,7 @@ namespace Andja.Model {
             jobsToDo = new Dictionary<OutputStructure, Item[]>();
             // add all the tiles to the city it was build in
             //dostuff thats happen when build
-            City.AddTiles(RangeTiles);
-            City.AddTiles(Tiles);
+            City.AddTiles(RangeTiles.Concat(Tiles));
             foreach (Tile rangeTile in RangeTiles) {
                 if (rangeTile.City != City) {
                     continue;
@@ -145,6 +144,20 @@ namespace Andja.Model {
                 return;
             }
             OutputMarkedSturctures.Add(str);
+        }
+
+        public override void AddRoadStructure(RoadStructure roadStructure) {
+            base.AddRoadStructure(roadStructure);
+            roadStructure.Route.AddMarketStructure(this);
+        }
+        protected override void OnRouteChange(Route o, Route n) {
+            base.OnRouteChange(o, n);
+            o.RemoveMarketStructure(this);
+            n.AddMarketStructure(this);
+        }
+        protected override void RemoveRoute(Route route) {
+            base.RemoveRoute(route);
+            route.RemoveMarketStructure(this);
         }
 
         protected override void OnDestroy() {

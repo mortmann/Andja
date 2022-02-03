@@ -34,6 +34,7 @@ namespace Andja.Pathfinding {
             get;
         }
 
+        void PathInvalidated();
     }
 }
 

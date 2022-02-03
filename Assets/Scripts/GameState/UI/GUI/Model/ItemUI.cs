@@ -16,7 +16,7 @@ namespace Andja.UI.Model {
         public Image selectedMarker;
         public bool changeColor = false;
         private UnityAction<PointerEventData> OnClick;
-        private Item item;
+        public Item item;
 
         public void SetItem(Item i, int maxValue, bool changeColor = false) {
             this.changeColor = changeColor;
@@ -30,6 +30,7 @@ namespace Andja.UI.Model {
 
         public void RefreshItem(Item i) {
             if (i == null) {
+                image.sprite = null;
                 ChangeItemCount(0);
             }
             else {

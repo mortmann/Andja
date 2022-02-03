@@ -111,7 +111,8 @@ namespace Andja.Controller {
             if (structure is OutputStructure && ((OutputStructure)structure).ContactRange > 0) {
                 GameObject goContact = new GameObject();
                 CircleCollider2D cc2d = goContact.AddComponent<CircleCollider2D>();
-                cc2d.radius = ((OutputStructure)structure).ContactRange;
+                cc2d.radius = ((OutputStructure)structure).ContactRange
+                                    + (((OutputStructure)structure).Width+ ((OutputStructure)structure).Height) / 2;
                 cc2d.isTrigger = true;
                 goContact.transform.SetParent(go.transform);
                 goContact.transform.localPosition = Vector3.zero;

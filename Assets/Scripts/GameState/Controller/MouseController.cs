@@ -31,7 +31,7 @@ namespace Andja.Controller {
     /// Controls all Mouse Interactions with the Map and Units.
     /// Shows Previews for Building and Destroy.
     /// </summary>
-    public class MouseController : MonoBehaviour, IPathfindAgent {
+    public class MouseController : MonoBehaviour {
         public static MouseController Instance { get; protected set; }
         public GameObject structurePreviewRendererPrefab;
         public GameObject greenTileCursorPrefab;
@@ -82,7 +82,7 @@ namespace Andja.Controller {
         private Dictionary<Tile, StructurePreview> tileToStructurePreview;
         private GameObject singleStructurePreview;
         private Structure _selectedStructure;
-
+        private BuildPathAgent BuildPathAgent;
         public Structure SelectedStructure {
             get => _selectedStructure;
             set {
@@ -110,8 +110,6 @@ namespace Andja.Controller {
 
         public MouseState MouseState { get; protected set; } = MouseState.Idle;
         public MouseUnitState MouseUnitState { get; protected set; } = MouseUnitState.None;
-
-        private Queue<Tile> path;
 
         private Unit _selectedUnit;
         public List<Unit> selectedUnitGroup;
@@ -146,18 +144,6 @@ namespace Andja.Controller {
             }
         }
 
-        public bool IsAlive => true;
-        public float Speed => 0;
-        public float RotationSpeed => 0;
-        public TurningType TurnType => TurningType.OnPoint;
-        public PathDestination PathDestination => PathDestination.Tile;
-        public PathingMode PathingMode => PathingMode.IslandSinglePoint;
-        public PathHeuristics Heuristic => PathHeuristics.Manhattan;
-        public bool CanEndInUnwakable => false;
-        public PathDiagonal DiagonalType => PathDiagonal.None;
-
-        public IReadOnlyList<int> CanEnterCities => new List<int> { PlayerController.currentPlayerNumber };
-
         public bool IsGod { get; set; }
 
         public void OnEnable() {
@@ -176,6 +162,8 @@ namespace Andja.Controller {
             foreach (ExtraStructureBuildUI esbu in extraStructureBuildUIPrefabsEditor) {
                 ExtraStructureBuildUIPrefabs[esbu.Type] = esbu.Prefab;
             }
+            BuildPathAgent = new BuildPathAgent(PlayerController.currentPlayerNumber);
+            PlayerController.Instance.cbPlayerChange += (a,b)=>{ BuildPathAgent = new BuildPathAgent(PlayerController.currentPlayerNumber); };
         }
 
         /// <summary>
@@ -817,7 +805,7 @@ namespace Andja.Controller {
                 }
                 if (pathStartTile.Island != null && pathEndTile.Island != null &&
                         (buildPathJob == null || buildPathJob.End != pathEndTile.Vector2)) {
-                    buildPathJob = new PathJob(this, pathStartTile.Island.Grid, pathStartTile.Vector2, pathEndTile.Vector2);
+                    buildPathJob = new PathJob(BuildPathAgent, pathStartTile.Island.Grid, pathStartTile.Vector2, pathEndTile.Vector2);
                     PathfindingThreadHandler.EnqueueJob(buildPathJob, null, true);
                     if(buildPathJob.Path != null)
                         UpdateMultipleStructurePreviews(World.Current.GetTilesQueue(buildPathJob.Path));
@@ -828,10 +816,10 @@ namespace Andja.Controller {
             }
             // End path
             if (InputHandler.GetMouseButtonUp(InputMouse.Primary)) {
+                ResetStructurePreviews();
                 if (buildPathJob == null || buildPathJob.Status != JobStatus.Done) {
                     return;
                 }
-                ResetStructurePreviews();
                 Build(World.Current.GetTilesQueue(buildPathJob.Path).ToList(), true);
             }
         }

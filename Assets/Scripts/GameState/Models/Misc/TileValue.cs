@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections.Concurrent;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Andja.Model {
@@ -29,7 +30,7 @@ namespace Andja.Model {
 
         public override bool Equals(object obj) {
             TileValue p = obj as TileValue;
-            if ((object)p == null) {
+            if (p == null) {
                 return false;
             }
             // Return true if the fields match:
@@ -65,7 +66,7 @@ namespace Andja.Model {
             }
 
             // If one is null, but not both, return true.
-            if (((object)a == null) || ((object)b == null)) {
+            if ((a is null) || (b is null)) {
                 return true;
             }
 
@@ -77,7 +78,7 @@ namespace Andja.Model {
             return "N" + neValue.y + "\nW" + swValue.x + "  E" + neValue.x + "\nS" + swValue.y;
         }
 
-        public static List<TileValue> CalculateStartingValues(Island island) {
+        public static ConcurrentDictionary<Tile, TileValue> CalculateStartingValues(Island island, City city = null, bool structureLimit = false) {
             Vector2[,] swValue = new Vector2[island.Width, island.Height];
             Vector2[,] neValue = new Vector2[island.Width, island.Height];
             Dictionary<TileType, Vector2[,]> typeToSWValue = new Dictionary<TileType, Vector2[,]>();
@@ -91,9 +92,16 @@ namespace Andja.Model {
                     Tile t = World.Current.GetTileAt(island.Minimum.x + x, island.Minimum.y + y);
                     if (t.Type == TileType.Ocean)
                         continue;
+                    if (city != null && t.City != city)
+                        continue;
+                    if(structureLimit) {
+                        if(t.Structure != null && t.Structure.ShouldAICountTileAsFree() == false) {
+                            continue;
+                        }
+                    }
                     float startX = 0;
                     float startY = 0;
-                    if (t.CheckTile()) {
+                    if (t.IsGenericBuildType()) {
                         if (x > 0)
                             startX = swValue[x - 1, y].x;
                         if (y > 0)
@@ -112,9 +120,18 @@ namespace Andja.Model {
             for (int y = island.Height - 1; y > 0; y--) {
                 for (int x = island.Width - 1; x > 0; x--) {
                     Tile t = World.Current.GetTileAt(island.Minimum.x + x, island.Minimum.y + y);
+                    if (t.Type == TileType.Ocean)
+                        continue;
+                    if (city != null && t.City != city)
+                        continue;
+                    if (structureLimit) {
+                        if (t.Structure != null && t.Structure.ShouldAICountTileAsFree() == false) {
+                            continue;
+                        }
+                    }
                     float startX = 0;
                     float startY = 0;
-                    if (t.CheckTile()) {
+                    if (t.IsGenericBuildType()) {
                         if (x < island.Width - 1)
                             startX = neValue[x + 1, y].x;
                         if (y < island.Height - 1)
@@ -130,20 +147,22 @@ namespace Andja.Model {
                     typeToNEValue[t.Type][x, y].y = startY + 1;
                 }
             }
-            List<TileValue> values = new List<TileValue>();
+            ConcurrentDictionary<Tile, TileValue> values = new ConcurrentDictionary<Tile, TileValue>();
             for (int y = 0; y < island.Height; y++) {
                 for (int x = 0; x < island.Width; x++) {
                     Tile t = World.Current.GetTileAt(island.Minimum.x + x, island.Minimum.y + y);
                     if (t.Type == TileType.Ocean)
                         continue;
-                    if (t.CheckTile()) {
-                        values.Add(new TileValue(t,
+                    if (city != null && t.City != city)
+                        continue;
+                    if (t.IsGenericBuildType()) {
+                        values.TryAdd(t, new TileValue(t,
                                         swValue[x, y],
                                         neValue[x, y]
                               ));
                     }
                     else {
-                        values.Add(new TileValue(t,
+                        values.TryAdd(t, new TileValue(t,
                                                 typeToSWValue[t.Type][x, y],
                                                 typeToNEValue[t.Type][x, y]
                                         ));

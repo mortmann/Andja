@@ -12,52 +12,49 @@ namespace Andja.UI.Model {
         public Trade Trade;
         public Button sellButton;
         public Button buyButton;
-        public Action<Item, bool> onButtonClick;
-        public Item Item { get; protected set; }
+        public Action<string, bool> onButtonClick;
         public Text priceText;
         public EventTrigger trigger;
         public Image Highlight;
+        public TradeItem tradeItem;
+        public Item Item => itemUI.item;
 
-        public void Show(Item item, TradeItem tradeItem, int maxStacksize, Action<Item, bool> cbButton) {
+        public void Show(TradeItem tradeItem, int maxStacksize, Action<string, bool> cbButton) {
             itemUI = GetComponentInChildren<ItemUI>();
-            itemUI.SetItem(item, maxStacksize);
             onButtonClick += cbButton;
-            if (item == null) {
-                return;
-            }
-            this.Item = item.CloneWithCount();
-            ChangeItemCount(maxStacksize / 2);
-            UpdateSellBuy(tradeItem.IsSelling);
+            if (tradeItem != null) {
+                itemUI.SetItem(new Item(tradeItem.ItemId), maxStacksize);
+                this.tradeItem = tradeItem;
+                ChangeItemCount(maxStacksize / 2);
+                UpdateSellBuy(tradeItem.IsSelling);
+            } 
         }
 
         public void UpdatePriceText(int price) {
             priceText.text = "" + price;
         }
 
-        public void Show(Item item, int maxStacksize, Trade trade) {
+        public void Show(int maxStacksize, TradeItem tradeItem) {
             itemUI = GetComponentInChildren<ItemUI>();
-            itemUI.SetItem(item, maxStacksize);
+            itemUI.SetItem(new Item(tradeItem.ItemId), maxStacksize);
             sellButton.interactable = false;
-            this.Item = item;
-            UpdateSellBuy(trade == Trade.Sell);
+            this.tradeItem = tradeItem;
+            UpdateSellBuy(tradeItem.trade == Trade.Sell);
         }
+
 
         public void ChangeItemCount(int amount) {
             itemUI.ChangeItemCount(amount);
-            Item.count = amount;
-        }
-
-        public void SetItem(Item i, int maxValue, bool changeColor = false) {
-            Item = i;
-            itemUI.SetItem(i, maxValue, changeColor);
-            UpdateSellBuy(true);
         }
 
         public void RefreshItem(Item i) {
-            Item = i;
+            tradeItem = null;
             itemUI.RefreshItem(i);
         }
-
+        private void Update() {
+            if(tradeItem != null)
+                UpdatePriceText(tradeItem.price);
+        }
         public void UpdateSellBuy(bool sell) {
             if (sell) {
                 sellButton.interactable = false;
@@ -69,7 +66,23 @@ namespace Andja.UI.Model {
                 buyButton.interactable = false;
                 Trade = Trade.Buy;
             }
-            onButtonClick?.Invoke(Item, sell);
+            if(tradeItem != null) {
+                UpdatePriceText(tradeItem.price);
+                onButtonClick?.Invoke(tradeItem.ItemId, sell);
+            }
+        }
+
+        internal void UpdateAmount(int itemAmount) {
+            int amount = 0;
+            if (Trade == Trade.Sell) { 
+                amount = Mathf.Clamp(itemAmount - tradeItem.count, 0, int.MaxValue);
+                itemUI.ChangeItemCount(amount);
+            }
+            if (Trade == Trade.Buy) {
+                amount = Mathf.Clamp(tradeItem.count - itemAmount, 0, int.MaxValue);
+                itemUI.ChangeItemCount(amount);
+            }
+            trigger.enabled = amount > 0;
         }
 
         public void AddListener(UnityAction<BaseEventData> ueb) {

@@ -51,15 +51,10 @@ namespace Andja.Model {
         public float Elevation;
         public float Moisture;
 
-        [JsonPropertyAttribute]
         public virtual string SpriteName {
             get { return null; }
             set {
             }
-        }
-
-        public bool ShouldSerializeSpriteName() {
-            return EditorController.IsEditor;
         }
 
         public Vector3 Vector { get { return new Vector3(x, y, 0); } }
@@ -81,6 +76,9 @@ namespace Andja.Model {
         public float BaseMovementCost {
             get {
                 if (Type == TileType.Mountain) {
+                    return float.PositiveInfinity;
+                }
+                if (Type == TileType.Shore) {
                     return float.PositiveInfinity;
                 }
                 return 2f;

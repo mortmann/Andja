@@ -172,6 +172,7 @@ namespace Andja.Model {
                 OnRegisterCallbacks++;
                 now.RegisterOnChangedCallback(OnGrowableChanged);
                 GrowableStructure g = now as GrowableStructure;
+                g.SetBeingWorked(true);
                 if (g.hasProduced) {
                     //we need to check if its done
                     //if so we need to get it queued for work!
@@ -220,6 +221,12 @@ namespace Andja.Model {
             }
             foreach (Worker item in Workers) {
                 item.Destroy();
+            }
+            foreach (Tile tile in RangeTiles) {
+                if(tile.Structure is GrowableStructure g && g.ID == Growable.ID) {
+                    g.SetBeingWorked(false);
+
+                }
             }
         }
 

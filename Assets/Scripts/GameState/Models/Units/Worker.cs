@@ -196,13 +196,12 @@ namespace Andja.Model {
             // -home is not full (?) maybe second worker?
             //If any of these are false the worker should return to home
             //except there is no way to home then remove
-            if (path == null) {
-                //theres no goal so delete it after some time?
-                Debug.Log("worker has no goal");
-                GoHome();
+
+            if (path.Status == JobStatus.NoPath) {
+                Destroy();
                 return;
             }
-
+            
             //do the movement
             path.Update_DoMovement(deltaTime);
 
@@ -440,5 +439,8 @@ namespace Andja.Model {
             cbSoundCallback -= cb;
         }
 
+        public void PathInvalidated() {
+            
+        }
     }
 }

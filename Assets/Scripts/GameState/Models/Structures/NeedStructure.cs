@@ -1,13 +1,27 @@
-﻿using Newtonsoft.Json;
+﻿using Andja.Controller;
+using Newtonsoft.Json;
+using System.Collections.Generic;
 
 namespace Andja.Model {
 
+    public class NeedStructurePrototypeData : TargetStructurePrototypeData {
+        [Ignore] public List<Need> SatisfiesNeeds = new List<Need>();
+    }
+
     [JsonObject(MemberSerialization.OptIn)]
     public class NeedStructure : TargetStructure {
-
-        public NeedStructure(string pid, StructurePrototypeData spd) {
+        private NeedStructurePrototypeData _needStructureData;
+        public NeedStructurePrototypeData NeedStructureData {
+            get {
+                if (_needStructureData == null) {
+                    _needStructureData = (NeedStructurePrototypeData)PrototypController.Instance.GetStructurePrototypDataForID(ID);
+                }
+                return _needStructureData;
+            }
+        }
+        public NeedStructure(string pid, NeedStructurePrototypeData nspd) {
             this.ID = pid;
-            this._prototypData = spd;
+            this._needStructureData = nspd;
         }
 
         public NeedStructure(string pid) {

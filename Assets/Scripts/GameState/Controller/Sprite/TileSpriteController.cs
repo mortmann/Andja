@@ -44,7 +44,7 @@ namespace Andja.Controller {
         private Material clearMaterial;
         public Material highlightMaterial;
         public Material tileMapMaterial;
-
+        private static Dictionary<City, CityMaskTexture> cityToMaskTexture;
         private static Dictionary<Vector2, Texture2D> islandToMaskTexture;
         private static Dictionary<Vector2, GameObject> islandPosToTilemap;
 
@@ -106,6 +106,7 @@ namespace Andja.Controller {
                 islandToCityMask = new Dictionary<Island, SpriteMask>();
                 islandToGameObject = new Dictionary<Island, GameObject>();
                 islandToCustomMask = new Dictionary<Island, SpriteMask>();
+                cityToMaskTexture = new Dictionary<City, CityMaskTexture>();
 
                 foreach (Island i in World.Current.Islands) {
                     Vector2 key = i.Placement;
@@ -131,6 +132,10 @@ namespace Andja.Controller {
                     TilemapRenderer trr = islandGO.GetComponent<TilemapRenderer>();
                     trr.material = tileMapMaterial;
 
+                    foreach (City city in i.Cities) {
+                        OnCityCreated(city);
+                    }
+
                     GameObject MaskGameobject = new GameObject("IslandCustomMask ");
                     MaskGameobject.transform.parent = islandToGameObject[i].transform;
                     MaskGameobject.transform.localPosition = -new Vector3(0, 0);
@@ -146,12 +151,10 @@ namespace Andja.Controller {
                 World.RegisterTileChanged(OnTileChanged);
 
                 foreach (Island i in World.Current.Islands) {
-                    City c = i.FindCityByPlayer(PlayerController.currentPlayerNumber);
-                    if (c == null) {
-                        continue;
-                    }
-                    foreach (Tile t in c.Tiles) {
-                        OnTileChanged(t);
+                    foreach (var c in i.Cities) {
+                        foreach (Tile t in c.Tiles) {
+                            OnTileChanged(t);
+                        }
                     }
                 }
             }
@@ -159,7 +162,34 @@ namespace Andja.Controller {
                 LoadSprites();
                 CreateBaseTiles();
             }
+            BuildController.Instance.RegisterCityCreated(OnCityCreated);
             //BuildController.Instance.RegisterBuildStateChange (OnBuildStateChance);
+            PlayerController.Instance.cbPlayerChange += OnPlayerChange;
+            OnPlayerChange(null, PlayerController.CurrentPlayer);
+        }
+
+        private void OnCityCreated(City city) {
+            CityMaskTexture cityMask = new CityMaskTexture {
+                city = city,
+                texture = Instantiate<Texture2D>(islandToMaskTexture[city.Island.Placement])
+            };
+            cityToMaskTexture.Add(city, cityMask);
+        }
+
+        private void OnPlayerChange(Player o, Player n) {
+            foreach (Island island in World.Islands) {
+                City city = island.FindCityByPlayer(n.Number);
+                if (city != null) {
+                    Texture2D tex = cityToMaskTexture[city].texture;
+                    tex.Apply();
+                    islandToCityMask[island].sprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), Vector2.zero, 1);
+                    //foreach (var item in city.Tiles) {
+                    //    OnTileChanged(item);
+                    //}
+                } else {
+                    islandToCityMask[island].sprite = null;
+                }
+            }
         }
 
         internal static string GetSpriteForSpecial(TileType type, int x, int y) {
@@ -220,14 +250,13 @@ namespace Andja.Controller {
         }
 
         public void Update() {
+            foreach (var item in cityToMaskTexture.Values) {
+                item.CheckApply();
+            }
             if (apply) {
-                foreach (SpriteMask sm in islandToCityMask.Values) {
-                    sm.sprite.texture.Apply();
-                    apply = false;
-                }
                 if (islandToCustomMask != null) {
                     foreach (SpriteMask sm in islandToCustomMask.Values) {
-                        sm.sprite.texture.Apply();
+                        sm.sprite?.texture.Apply();
                         apply = false;
                     }
                 }
@@ -328,14 +357,13 @@ namespace Andja.Controller {
             }
             int x = (int)(tile_data.X - tile_data.Island.Placement.x);
             int y = (int)(tile_data.Y - tile_data.Island.Placement.y);
-            if (tile_data.City.PlayerNumber == PlayerController.currentPlayerNumber) {
-                islandToCityMask[tile_data.Island].sprite.texture.SetPixel(x, y, new Color32(128, 128, 128, 255));
+            cityToMaskTexture[tile_data.City].SetPixel(x, y, new Color32(128, 128, 128, 255));
+            foreach (var item in tile_data.Island.Cities) {
+                if(item != tile_data.City)
+                    cityToMaskTexture[item].SetPixel(x, y, new Color32(128, 128, 128, 0));
             }
-            else {
-                islandToCityMask[tile_data.Island].sprite.texture.SetPixel(x, y, new Color32(128, 128, 128, 0));
-            }
-            apply = true;
             if (TileDeciderFunc != null && islandToCustomMask != null) {
+                apply = true;
                 TileMark tm = TileDeciderFunc(tile_data);
                 switch (tm) {
                     case TileMark.None:
@@ -544,8 +572,25 @@ namespace Andja.Controller {
                 return connectionToSprite[spriteAddon];
             }
         }
+        class CityMaskTexture {
+            public City city;
+            public Texture2D texture;
+            public bool apply;
+            public void CheckApply() {
+                if (apply) {
+                    texture.Apply();
+                    apply = false;
+                }
+            }
+
+            internal void SetPixel(int x, int y, Color32 color32) {
+                texture.SetPixel(x, y, color32);
+                apply = true;
+            }
+        }
 
         public static System.Collections.Concurrent.ConcurrentBag<Vector2> positions = new System.Collections.Concurrent.ConcurrentBag<Vector2>();
+        public static System.Collections.Concurrent.ConcurrentDictionary<Vector2, float> positionsCost = new System.Collections.Concurrent.ConcurrentDictionary<Vector2, float>();
         private void OnDrawGizmos() {
             if (Application.isPlaying) {
                 //foreach (Pathfinding.WorldNode n in World.Current.WorldGraph.Nodes) {
@@ -558,6 +603,9 @@ namespace Andja.Controller {
                 foreach (var t in positions) {
                     Gizmos.color = Color.red;
                     Gizmos.DrawSphere(new Vector3(t.x + 0.5f, t.y + 0.5f), 0.5f);
+                }
+                foreach (var t in positionsCost) {
+                    UnityEditor.Handles.Label(new Vector3(t.Key.x + 0.5f, t.Key.y + 0.5f), t.Value +"");
                 }
             }
         }

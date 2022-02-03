@@ -166,6 +166,11 @@ namespace Andja.Model {
             if (Route != null) {
                 Route.RemoveRoadTile(BuildTile);
             }
+            foreach (Tile item in BuildTile.GetNeighbours()) {
+                if(item.Structure is RoadStructure rs) {
+                    rs.UpdateOrientation();
+                }
+            }
         }
 
         public override string GetSpriteName() {

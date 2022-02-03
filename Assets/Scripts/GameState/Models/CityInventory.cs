@@ -8,11 +8,19 @@ namespace Andja.Model {
 
     [JsonObject(MemberSerialization.OptIn)]
     public class CityInventory : Inventory {
-
-        public CityInventory() {
+        /// <summary>
+        /// Workaround because if we load with this constructor we get empty item counts
+        /// because somehow it overrides it after deserializing 
+        /// </summary>
+        /// <param name="fakeNumber"></param>
+        public CityInventory(int fakeNumber) {
             NumberOfSpaces = -1;
-            Items = PrototypController.Instance.GetCopieOfAllItems();
+            if (Items == null)
+                Items = PrototypController.Instance.GetCopieOfAllItems();
             MaxStackSize = 50;
+        }
+        public CityInventory() {
+
         }
 
         public override int AddItem(Item toAdd) {
@@ -35,7 +43,9 @@ namespace Andja.Model {
         public override int GetTotalAmountFor(Item item) {
             return GetAmountForItem(item);
         }
-
+        public override int GetTotalAmountFor(string itemID) {
+            return GetAmountForItem(itemID);
+        }
         protected override Item GetItem(string id) {
             return Items[id];
         }
@@ -75,6 +85,18 @@ namespace Andja.Model {
 
         internal override void RemoveItemInSpace(int space) {
             Debug.LogWarning("This function does not work with city inventories.");
+        }
+        public override void Load() {
+            base.Load();
+            CheckForMissingItems();
+        }
+        internal void CheckForMissingItems() {
+            var copyItems = PrototypController.Instance.GetCopieOfAllItems();
+            foreach (var item in copyItems) {
+                if(Items.ContainsKey(item.Key) == false) {
+                    Items.Add(item.Key, item.Value);
+                }
+            }
         }
     }
 }

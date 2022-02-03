@@ -225,7 +225,7 @@ namespace Andja.UI.Model {
         private void OnItemClick(int clicked, PointerEventData data) {
             switch (data.button) {
                 case PointerEventData.InputButton.Left:
-                    unit.ToTradeItemToNearbyWarehouse(inv.GetItemInSpace(clicked));
+                    unit.TradeItemToNearbyWarehouse(inv.GetItemInSpace(clicked));
                     break;
                 case PointerEventData.InputButton.Right:
                     World.Current.CreateItemOnMap(inv.GetItemInSpace(clicked), unit.CurrentPosition);

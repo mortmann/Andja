@@ -1,4 +1,5 @@
 ﻿using Andja.Model;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -80,8 +81,32 @@ namespace Andja.Model.Data {
                         "\n Wanted behaviour? ");
                 }
             }
-
+            IsValid = true;
             return true;
+        }
+
+        internal bool IsUnlocked(Player player) {
+            foreach (var tier in tiers) {
+                foreach (var item in tier) {
+                    if (player.HasStructureUnlocked(item.Producer.ProducerStructure.ID) == false) {
+                        return false;
+                    }
+                }
+            }
+            return true; // tiers.All(tier => tier.All(item => player.HasStructureUnlocked(item.Producer.ProducerStructure.ID)))
+        }
+
+        public Dictionary<string, int> StructureToBuildForOneRatio() {
+            Dictionary<string, int> toBuild = new Dictionary<string, int>();
+            toBuild.Add(Produce.ProducerStructure.ID, 1);
+            foreach (var tier in tiers) {
+                foreach (var item in tier) {
+                    if (toBuild.ContainsKey(item.Producer.ProducerStructure.ID) == false)
+                        toBuild[item.Producer.ProducerStructure.ID] = 0;
+                    toBuild[item.Producer.ProducerStructure.ID] += Mathf.CeilToInt(item.Ratio);
+                }
+            }
+            return toBuild;
         }
     }
 }

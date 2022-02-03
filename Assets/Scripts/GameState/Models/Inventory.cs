@@ -11,7 +11,16 @@ namespace Andja.Model {
     public class Inventory {
         [JsonPropertyAttribute] public int MaxStackSize { get; protected set; }
 
-        [JsonPropertyAttribute]
+        [JsonPropertyAttribute(PropertyName = "Items")]
+        public Dictionary<string, Item> SerializableItems {
+            get {
+                return Items?.Where(x => x.Value.count > 0).ToDictionary(entry => entry.Key,
+                                                                        entry => entry.Value);
+            }
+            set {
+                Items = value;
+            }
+        }
         public Dictionary<string, Item> Items {
             get;
             protected set;
@@ -173,13 +182,15 @@ namespace Andja.Model {
         }
 
         protected Item GetFirstItemInInventory(Item item) {
-            string pos = GetPlaceInItems(item);
+            return GetFirstItemInInventory(item.ID);
+        }
+        protected Item GetFirstItemInInventory(string itemID) {
+            string pos = GetPlaceInItems(new Item(itemID));
             if (String.IsNullOrEmpty(pos)) {
                 return null;
             }
             return Items[pos];
         }
-
         /// <summary>
         /// Gets CLONED item WITH count but DOESNT REMOVE it FROM inventory.
         /// </summary>
@@ -206,30 +217,38 @@ namespace Andja.Model {
         }
 
         /// <summary>
-        /// Warning find the first Item and returns the amount!
-        /// WARNING!!!!!
+        /// Warning(!) find the first Item and returns the amount!
         /// </summary>
         /// <returns>The amount for item.</returns>
         /// <param name="item">Item.</param>
         public int GetAmountForItem(Item item) {
-            Item it = GetFirstItemInInventory(item);
+            return GetAmountForItem(item.ID);
+        }
+        /// <summary>
+        /// Warning(!) find the first Item and returns the amount!
+        /// </summary>
+        /// <returns>The amount for item.</returns>
+        /// <param name="item">Item.</param>
+        public int GetAmountForItem(string itemID) {
+            Item it = GetFirstItemInInventory(itemID);
             if (it == null) {
                 return 0;
             }
-            return GetFirstItemInInventory(item).count;
+            return GetFirstItemInInventory(itemID).count;
         }
-
         public virtual int GetTotalAmountFor(Item item) {
+            return GetTotalAmountFor(item.ID);
+        }
+        public virtual int GetTotalAmountFor(string itemID) {
             //now check for everyspace if its the item
             int count = 0;
             foreach (Item inInv in Items.Values) {
-                if (inInv.ID == item.ID) {
+                if (inInv.ID == itemID) {
                     count += inInv.count;
                 }
             }
             return count;
         }
-
         internal bool HasAnything() {
             return Items.Any((x)=>x.Value.count>0);
         }
@@ -514,6 +533,13 @@ namespace Andja.Model {
             amountInInventory = 0;
             foreach (Item i in Items.Values) {
                 amountInInventory += i.count;
+            }
+        }
+        public virtual void Load() {
+            foreach (var item in Items.ToArray()) {
+                if(item.Value.Exists() == false) {
+                    Items.Remove(item.Key);
+                } 
             }
         }
 

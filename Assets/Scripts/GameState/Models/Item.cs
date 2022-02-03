@@ -1,5 +1,6 @@
 using Andja.Controller;
 using Newtonsoft.Json;
+using System.Collections.Generic;
 
 namespace Andja.Model {
 
@@ -9,6 +10,8 @@ namespace Andja.Model {
         public ItemType type;
         [Ignore] public int UnlockLevel;
         [Ignore] public int UnlockPopulationCount;
+        [Ignore] public List<Need> SatisfiesNeeds;
+        [Ignore] public float[] TotalUsagePerLevel; // is only for luxury goods & ai
     }
 
     [JsonObject(MemberSerialization.OptIn)]

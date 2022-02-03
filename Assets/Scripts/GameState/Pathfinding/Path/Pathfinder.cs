@@ -13,6 +13,10 @@ namespace Andja.Pathfinding {
         public static Queue<Vector2> Find(PathJob job, PathGrid grid, 
                                             Vector2? startPos, Vector2? endPos, 
                                             List<Vector2> startsPos = null, List<Vector2> endsPos = null) {
+            if(grid == null) {
+                job.SetStatus(JobStatus.NoPath);
+                return null;
+            }
             IPathfindAgent agent = job.agent;
             Node start = null;
             Node end = null;
@@ -68,7 +72,6 @@ namespace Andja.Pathfinding {
 
             start.g_Score = 0;
             start.f_Score = DistanceNodes(false, start.Pos, end.Pos);
-
             OpenSet.Enqueue(start, 0);
             if (agent.CanEndInUnwakable == false && end.IsPassable(agent.CanEnterCities?.ToList()) == false) {
                 //cant end were it is supposed to go -- find a alternative that can be walked on
@@ -86,8 +89,8 @@ namespace Andja.Pathfinding {
                 if (job.IsCanceled || PathfindingThreadHandler.FindPaths == false)
                     return null;
                 Node current = OpenSet.Dequeue();
-                //if (agent is Controller.MouseController) {
-                //    Controller.TileSpriteController.positions.Add(current.Pos);
+                //if (agent is BuildPathAgent) {
+                //    Controller.TileSpriteController.positions.Add(current.Pos + new Vector2(grid.startX,grid.startY));
                 //}
                 if (current == end || endNodes != null && endNodes.Contains(current)) {
                     return ReconstructPath(grid, current); //we are at any destination node make the path
@@ -144,12 +147,33 @@ namespace Andja.Pathfinding {
                             continue;
                         neighbour.parent = current;
                         neighbour.g_Score = tentative_g_score;
-                        neighbour.f_Score = tentative_g_score + HeuristicCostEstimate(agent, neighbour.Pos, end.Pos);
+                        float penalty = 0;
+                        //Prefer long straight lines instead of moving diagonal 
+                        //biased in form of a penalty added as tie breaker 
+                        if (agent.Heuristic == PathHeuristics.Manhattan) {
+                            Vector2 d1 = current.Pos - end.Pos;
+                            Vector2 d2 = start.Pos - end.Pos;
+                            float cross = Mathf.Abs(d1.x * d2.y - d2.x * d1.y);
+                            penalty = 1 - cross * 0.0000001f;
+                        }
+                        if (agent.Heuristic == PathHeuristics.Manhattan) {
+                            Vector2 d1 = (current.parent ?? start).Pos;
+                            Vector2 d2 = neighbour.Pos;
+                            float dist = Mathf.Abs((d1.x - d2.x) * (d1.y - d2.y));
+                            penalty += dist * 0.00001f;
+                        }
+                        neighbour.f_Score = tentative_g_score + penalty + HeuristicCostEstimate(agent, neighbour.Pos, end.Pos);
 
                         if (OpenSet.Contains(neighbour) == false) {
+                            if (agent is BuildPathAgent) {
+                                Controller.TileSpriteController.positionsCost[neighbour.Pos + new Vector2(grid.startX, grid.startY)] = neighbour.f_Score;
+                            }
                             OpenSet.Enqueue(neighbour, neighbour.f_Score);
                         }
                         else {
+                            if (agent is BuildPathAgent) {
+                                Controller.TileSpriteController.positionsCost[neighbour.Pos + new Vector2(grid.startX, grid.startY)] = neighbour.f_Score;
+                            }
                             OpenSet.UpdatePriority(neighbour, neighbour.f_Score);
                         }
 
@@ -158,6 +182,7 @@ namespace Andja.Pathfinding {
             }
             return null;
         }
+
         public static Queue<Vector2> FindOceanPath(PathJob job, IPathfindAgent agent, WorldGraph graph, Vector2 startPos, Vector2 endPos) {
             if (World.Current != null) {
                 worldTilemap = World.Current.Tilesmap;
@@ -281,28 +306,36 @@ namespace Andja.Pathfinding {
                 totalPath.Push(current);
             }
             Queue<Vector2> vectors = new Queue<Vector2>();
-            while(totalPath.Count>0) {
+            while(totalPath.Count > 0) {
                 Node n = totalPath.Pop();
                 vectors.Enqueue(new Vector2(grid.startX + n.x + 0.5f, grid.startY + n.y + 0.5f));
             }
             return vectors;
         }
 
-        private static HashSet<Node> FindClosestWalkableNeighbours(IPathfindAgent agent, Node start, PathGrid grid, 
-                HashSet<Node> tiles = null) {
-            if (tiles == null)
-                tiles = new HashSet<Node>();
-            while (tiles.Count == 0) {
-                List<Node> nodes = grid.Neighbours(start, agent.DiagonalType != PathDiagonal.None);
-                nodes.RemoveAll(x=>x==null);
-                foreach (Node x in nodes) {
-                    if (x.IsPassable(agent.CanEnterCities?.ToList()))
-                        tiles.Add(x);
+        private static HashSet<Node> FindClosestWalkableNeighbours(IPathfindAgent agent, Node start, PathGrid grid) {
+            HashSet<Node> tiles = new HashSet<Node>();
+            if (agent.CanEnterCities != null && agent.CanEnterCities.Any(x=>grid.PlayerHasOwned(x)) == false) {
+                return tiles;
+            }
+            HashSet<Node> alreadyChecked = new HashSet<Node>();
+            Queue<Node> nodesToCheck = new Queue<Node>();
+            nodesToCheck.Enqueue(start);
+            while (nodesToCheck.Count > 0) {
+                Node node = nodesToCheck.Dequeue();
+                alreadyChecked.Add(node);
+                if (node.IsPassable(agent.CanEnterCities?.ToList()) == false) {
+                    //Only enqueue new nodes if we dont already have atleast one
+                    //if we have one just check until all queued are done
+                    if(tiles.Count == 0) {
+                        foreach (Node item in grid.Neighbours(node, false)) {
+                            if (item != null && alreadyChecked.Contains(item) == false)
+                                nodesToCheck.Enqueue(item);
+                        }
+                    }
+                    continue;
                 }
-                if(tiles.Count == 0) {
-                    foreach (Node x in nodes)
-                        tiles.UnionWith(FindClosestWalkableNeighbours(agent, x, grid, tiles));
-                }
+                tiles.Add(node);
             }
             return tiles;
         }

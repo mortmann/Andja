@@ -1,4 +1,4 @@
-﻿using Andja.Model;
+﻿using Andja.Controller;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -6,7 +6,7 @@ namespace Andja.Model.Data {
     /// <summary>
     /// How many things the SupplyChain cost or requires.
     /// </summary>
-    public class SupplyChainCost {
+    public class SupplyChainCost : IComparer<SupplyChainCost> {
         public float TotalBuildCost = 0;
         public float TotalMaintenance = 0;
         private Item[] totalItemCost;
@@ -71,6 +71,23 @@ namespace Andja.Model.Data {
                 TotalMaintenance = TotalMaintenance,
                 requiredFertilites = new List<Fertility>(requiredFertilites),
             };
+        }
+
+        public int Compare(SupplyChainCost x, SupplyChainCost y) {
+            float diffBuildCost = x.TotalBuildCost - y.TotalBuildCost;
+            float diffMaintenance = x.TotalMaintenance - y.TotalMaintenance;
+            float xItemValue = 0;
+            float yItemValue = 0;
+            for (int i = 0; i < x.totalItemCost.Length; i++) {
+                xItemValue = x.totalItemCost[i].count * //TODO: calculate the *worth* of an item based on the cost/rarity of it
+                    (x.totalItemCost[i].Data.UnlockLevel / PrototypController.Instance.NumberOfPopulationLevels);
+            }
+            for (int i = 0; i < y.totalItemCost.Length; i++) {
+                yItemValue = y.totalItemCost[i].count * //TODO: calculate the *worth* of an item based on the cost/rarity of it
+                    (y.totalItemCost[i].Data.UnlockLevel / PrototypController.Instance.NumberOfPopulationLevels);
+            }
+            float diffItem = xItemValue - yItemValue;
+            return Mathf.RoundToInt(diffBuildCost + 3 * diffMaintenance + 2 * diffItem);
         }
     }
 }

@@ -13,14 +13,14 @@ namespace Andja.UI.Model {
 
         private TradeItemUI tradeItemUICurrentlySelected;
         private City city;
-
+        private void Start() {
+            amountSlider.onValueChanged.AddListener(OnAmountSliderChange);
+            priceSlider.onValueChanged.AddListener(OnPriceSliderChange);
+        }
         // Use this for initialization
         public void Show(City c) {
             city = c;
             amountSlider.maxValue = city.Inventory.MaxStackSize;
-            amountSlider.onValueChanged.AddListener(OnAmountSliderChange);
-            priceSlider.onValueChanged.AddListener(OnPriceSliderChange);
-
             foreach (Transform t in TradeCanvas.transform) {
                 Destroy(t.gameObject);
             }
@@ -30,11 +30,11 @@ namespace Andja.UI.Model {
                 TradeItemUI tradeItemUI = GameObject.Instantiate(TradeItemPrefab);
                 tradeItemUI.transform.SetParent(TradeCanvas.transform, false);
                 if (c.itemIDtoTradeItem.Count <= i) {
-                    tradeItemUI.Show(null, null, c.Inventory.MaxStackSize, OnSellBuyClick);
+                    tradeItemUI.Show(null, c.Inventory.MaxStackSize, OnSellBuyClick);
                 }
                 else {
                     Item item = c.Inventory.GetItemClone(items[i]);
-                    tradeItemUI.Show(item, c.itemIDtoTradeItem[items[i]], c.Inventory.MaxStackSize, OnSellBuyClick);
+                    tradeItemUI.Show(c.itemIDtoTradeItem[items[i]], c.Inventory.MaxStackSize, OnSellBuyClick);
                     tradeItemUI.ChangeItemCount(c.itemIDtoTradeItem[items[i]].count);
                 }
                 tradeItemUI.AddListener((data) => { OnTradeItemClick(tradeItemUI); });
@@ -48,26 +48,26 @@ namespace Andja.UI.Model {
                 Debug.Log("already in it");
                 return;
             }
-            if (tradeItemUICurrentlySelected.Item != null) {
+            if (tradeItemUICurrentlySelected.tradeItem != null) {
                 RemoveCurrentTradeItem();
             }
-            tradeItemUICurrentlySelected.SetItem(item, city.Inventory.MaxStackSize);
             TradeItem ti = new TradeItem(item.ID, ((int)amountSlider.value),
                             ((int)priceSlider.value), tradeItemUICurrentlySelected.Trade);
             city.AddTradeItem(ti);
+            tradeItemUICurrentlySelected.Show(city.Inventory.MaxStackSize, ti);
             amountSlider.value = city.Inventory.MaxStackSize / 2;
             item.count = Mathf.RoundToInt(amountSlider.value);
             OnPriceSliderChange(50);
         }
 
-        public void OnSellBuyClick(Item item, bool sell) {
-            if (item == null) {
+        public void OnSellBuyClick(string itemID, bool sell) {
+            if (itemID == null) {
                 return;
             }
-            if (city.itemIDtoTradeItem.ContainsKey(item.ID) == false) {
+            if (city.itemIDtoTradeItem.ContainsKey(itemID) == false) {
                 return;
             }
-            city.itemIDtoTradeItem[item.ID].IsSelling = sell;
+            city.itemIDtoTradeItem[itemID].IsSelling = sell;
         }
 
         public void OnTradeItemClick(TradeItemUI ui) {
@@ -79,6 +79,8 @@ namespace Andja.UI.Model {
         public void OnAmountSliderChange(float f) {
             if (tradeItemUICurrentlySelected == null)
                 return;
+            if (tradeItemUICurrentlySelected.tradeItem == null)
+                return;
             tradeItemUICurrentlySelected.ChangeItemCount(Mathf.RoundToInt(f));
             city.ChangeTradeItemAmount(tradeItemUICurrentlySelected.Item);
         }
@@ -86,15 +88,18 @@ namespace Andja.UI.Model {
         public void OnPriceSliderChange(float f) {
             if (tradeItemUICurrentlySelected == null)
                 return;
-            if (city.itemIDtoTradeItem.ContainsKey(tradeItemUICurrentlySelected.Item.ID) == false) {
+            if (tradeItemUICurrentlySelected.tradeItem == null)
+                return;
+            if (city.itemIDtoTradeItem.ContainsKey(tradeItemUICurrentlySelected.tradeItem.ItemId) == false) {
                 Debug.Log("OnPriceChange - item not found in tradeitems");
                 return;
             }
             //GAME SIDE
-            city.ChangeTradeItemPrice(tradeItemUICurrentlySelected.Item.ID, Mathf.RoundToInt(f));
+            city.ChangeTradeItemPrice(tradeItemUICurrentlySelected.tradeItem.ItemId, Mathf.RoundToInt(f));
             //UI SIDE
-            priceSlider.GetComponentInChildren<Text>().text = "Price: " + f;
-            tradeItemUICurrentlySelected.UpdatePriceText(Mathf.RoundToInt(f));
+            //TODO: when ui-rework this needs to be a seperate text
+            TranslationData td = Controller.UILanguageController.Instance.GetTranslationData(Controller.StaticLanguageVariables.Price);
+            priceSlider.GetComponentInChildren<Text>().text = td?.translation + f;
         }
 
         public void OnDeleteClick() {
@@ -102,6 +107,8 @@ namespace Andja.UI.Model {
         }
 
         private void RemoveCurrentTradeItem() {
+            if (tradeItemUICurrentlySelected.tradeItem == null)
+                return;
             city.RemoveTradeItem(tradeItemUICurrentlySelected.Item);
             tradeItemUICurrentlySelected.RefreshItem(null);
         }

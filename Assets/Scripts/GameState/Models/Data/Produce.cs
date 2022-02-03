@@ -2,6 +2,7 @@
 using Andja.Model;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 namespace Andja.Model.Data {
     /// <summary>
@@ -21,6 +22,7 @@ namespace Andja.Model.Data {
             SupplyChain supplyChain = new SupplyChain(this);
             if (needed == null) {
                 supplyChain.CalculateCost();
+                supplyChain.CheckValid(item);
                 SupplyChains = new List<SupplyChain> { supplyChain };
                 return SupplyChains;
             }
@@ -45,7 +47,28 @@ namespace Andja.Model.Data {
             }
             return SupplyChains;
         }
-
+        /// <summary>
+        /// Returns fertilities that a required by all supply chains
+        /// </summary>
+        /// <param name="level">Population Level that is getting all required fertilities.</param>
+        /// <returns></returns>
+        public HashSet<Fertility> GetNeededFertilities(int level) {
+            HashSet<Fertility> requiredFertilities = null;
+            var chains = SupplyChains.Where(x => x.cost.PopulationLevel <= level);
+            if(chains.Count() == 0) {
+                return new HashSet<Fertility>();
+            }
+            foreach (SupplyChain sc in chains) {
+                if (sc.cost.requiredFertilites == null)
+                    return new HashSet<Fertility>();
+                if(requiredFertilities == null)
+                    requiredFertilities = new HashSet<Fertility>(sc.cost.requiredFertilites);
+                else
+                    requiredFertilities.IntersectWith(sc.cost.requiredFertilites);
+            }
+            //TODO: Problem fixing. What if two different Chains require completly different fertilities (same with resources)
+            return requiredFertilities;
+        }
         public override bool Equals(object obj) {
             return obj is Produce c && this == c;
         }

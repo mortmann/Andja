@@ -46,6 +46,52 @@ namespace Andja.Model {
                 return _PrototypeRangeTiles;
             }
         }
+        [Ignore]
+        Dictionary<TileType, int> buildTileTypesToMinLength;
+        public Dictionary<TileType, int> BuildTileTypesToMinLength {
+            get {
+                if (buildTileTypes == null)
+                    return null;
+                if (buildTileTypesToMinLength != null)
+                    return buildTileTypesToMinLength;
+                var temp = new Dictionary<TileType, int>();
+                for (int x = 0; x < buildTileTypes.GetLength(0); x++) {
+                    for (int y = 0; y < buildTileTypes.GetLength(1); y++) {
+                        if (temp.ContainsKey(buildTileTypes[x, y].Value) == false) {
+                            temp[buildTileTypes[x, y].Value] = 1;
+                        }
+                        if(x > 0) {
+                            if (buildTileTypes[x - 1, y] == buildTileTypes[x, y]) {
+                                temp[buildTileTypes[x, y].Value]++;
+                            }
+                        }
+                    }
+                }
+                buildTileTypesToMinLength = new Dictionary<TileType, int>();
+                for (int x = 0; x < buildTileTypes.GetLength(0); x++) {
+                    for (int y = 0; y < buildTileTypes.GetLength(1); y++) {
+                        if (buildTileTypesToMinLength.ContainsKey(buildTileTypes[x, y].Value) == false) {
+                            buildTileTypesToMinLength[buildTileTypes[x, y].Value] = 1;
+                        }
+                        if(y > 0) {
+                            if (buildTileTypes[x, y - 1] == buildTileTypes[x, y]) {
+                                buildTileTypesToMinLength[buildTileTypes[x, y].Value]++;
+                            }
+                        }
+                    }
+                }
+                foreach (var item in temp) {
+                    if(buildTileTypesToMinLength.ContainsKey(item.Key) == false) {
+                        buildTileTypesToMinLength[item.Key] = item.Value;
+                    } else {
+                        if (item.Value > buildTileTypesToMinLength[item.Key]) {
+                            buildTileTypesToMinLength[item.Key] = item.Value;
+                        }
+                    }
+                }
+                return buildTileTypesToMinLength;
+            }
+        }
 
         [Ignore]
         public int _RangeTileCount = -1;
@@ -272,6 +318,8 @@ namespace Andja.Model {
         }
 
         public virtual string SortingLayer => "Structures";
+
+        public Vector2 Size => new Vector2(TileWidth, TileHeight);
 
         public virtual void OpenExtraUI() {
             cbStructureExtraUI?.Invoke(this, true);
@@ -693,15 +741,15 @@ namespace Andja.Model {
         /// <returns></returns>
         public bool Destroy(IWarfare destroyer = null, bool onLoad = false) {
             _health = 0;
-            if(onLoad == false) {
+            City.RemoveStructure(this);
+            cbStructureDestroy?.Invoke(this, destroyer);
+            if (onLoad == false) {
                 foreach (Tile t in Tiles) {
                     t.Structure = null;
                 }
             }
             OnDestroy();
             //TODO: add here for getting res back when destroyer = null? negative effect?
-            City.RemoveStructure(this);
-            cbStructureDestroy?.Invoke(this, destroyer);
             return true;
         }
 
@@ -826,7 +874,7 @@ namespace Andja.Model {
             return Name + "@ X=" + BuildTile.X + " Y=" + BuildTile.Y;
         }
 
-        internal void AddRoadStructure(RoadStructure roadStructure) {
+        public virtual void AddRoadStructure(RoadStructure roadStructure) {
             Roads.Add(roadStructure);
             roadStructure.RegisterOnRouteCallback(OnRouteChange);
             if (Routes.Contains(roadStructure.Route) == false) {
@@ -835,7 +883,7 @@ namespace Andja.Model {
             roadStructure.RegisterOnDestroyCallback(OnRoadDestroy);
         }
 
-        private void OnRouteChange(Route o, Route n) {
+        protected virtual void OnRouteChange(Route o, Route n) {
             Routes.Remove(o);
             Routes.Add(n);
         }
@@ -843,17 +891,28 @@ namespace Andja.Model {
         private void OnRoadDestroy(Structure structure, IWarfare warfare) {
             RoadStructure road = structure as RoadStructure;
             Roads.Remove(road);
-            Routes.Remove(road.Route);
-            foreach (RoadStructure r in Roads) {
-                if (Routes.Contains(r.Route) == false)
-                    Routes.Add(r.Route);
+            if(Roads.Select(r => r.Route).Contains(road.Route) == false) {
+                RemoveRoute(road.Route);
             }
+        }
+
+        protected virtual void RemoveRoute(Route route) {
+            Routes.Remove(route);
         }
 
         internal bool IsPlayer() {
             return PlayerNumber == PlayerController.currentPlayerNumber;
         }
-
+        /// <summary>
+        /// Should return if the tileValue should be 0 for this structure tile
+        /// </summary>
+        /// <returns></returns>
+        internal bool ShouldAICountTileAsFree() {
+            if (this is GrowableStructure g) {
+                return g.IsBeingWorked;
+            }
+            return CanBeBuildOver;
+        }
         internal virtual void ToggleActive() {
             //not all structures can be paused -- if it can it is handled in subclass
             isActive = !isActive;

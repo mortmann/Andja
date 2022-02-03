@@ -16,7 +16,7 @@ namespace Andja.Controller {
         On, Off, 
         And, Or, 
         Empty, 
-        BuildCost, Upkeep, 
+        BuildCost, Upkeep, Price,
         Locked, 
         CurrentDamage, MaximumDamage, Speed,
         Balance,

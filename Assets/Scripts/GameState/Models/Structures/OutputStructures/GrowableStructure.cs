@@ -1,6 +1,7 @@
 ﻿using Andja.Controller;
 using Andja.Editor;
 using Newtonsoft.Json;
+using System;
 using UnityEngine;
 
 namespace Andja.Model {
@@ -47,7 +48,11 @@ namespace Andja.Model {
 
         protected float TimePerStage => (ProduceTime / (float)AgeStages + 1);
         protected const float GrowTickTime = 1f;
-
+        /// <summary>
+        /// Is true when it is in range of a farm that requires it to function
+        /// </summary>
+        public bool IsBeingWorked => beingWorkedBy > 0;
+        private byte beingWorkedBy = 0;
         #endregion RuntimeOrOther
 
         public GrowableStructure(string id, GrowablePrototypeData _growableData) {
@@ -141,6 +146,22 @@ namespace Andja.Model {
             return SpriteName + "@ X=" + BuildTile.X + " Y=" + BuildTile.Y + "\n "
                 + "Age: " + age + " Current Stage " + currentStage + " \n"
                 + " HasProduced " + hasProduced;
+        }
+        /// <summary>
+        /// Will count by how many structures it is worked by.
+        /// Ideally only 1 or 2. Never more than 255.
+        /// </summary>
+        /// <param name="worked"></param>
+        internal void SetBeingWorked(bool worked) {
+            if(beingWorkedBy == byte.MaxValue) {
+                Debug.LogError("Too many farms are working the same growable! This should never happen ...");
+                return;
+            }
+            if(worked) {
+                beingWorkedBy++;
+            } else {
+                beingWorkedBy--;
+            }
         }
 
         #endregion override

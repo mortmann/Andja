@@ -162,16 +162,16 @@ namespace Andja.Model {
         private void Setup() {
             Cities = new List<City>();
             Ships = new HashSet<Ship>();
-            UnlockedStructureNeeds = new HashSet<String>[PrototypController.Instance.NumberOfPopulationLevels];
-            UnlockedItemNeeds = new HashSet<String>[PrototypController.Instance.NumberOfPopulationLevels];
-            UnlockedStructures = new HashSet<String>();
-            UnlockedUnits = new HashSet<String>();
+            UnlockedStructureNeeds = new HashSet<string>[PrototypController.Instance.NumberOfPopulationLevels];
+            UnlockedItemNeeds = new HashSet<string>[PrototypController.Instance.NumberOfPopulationLevels];
+            UnlockedStructures = new HashSet<string>();
+            UnlockedUnits = new HashSet<string>();
             TradeRoutes = new List<TradeRoute>();
             AllStructures = new HashSet<Structure>();
             Units = new HashSet<Unit>();
             for (int i = 0; i < PrototypController.Instance.NumberOfPopulationLevels; i++) {
-                UnlockedStructureNeeds[i] = new HashSet<String>();
-                UnlockedItemNeeds[i] = new HashSet<String>();
+                UnlockedStructureNeeds[i] = new HashSet<string>();
+                UnlockedItemNeeds[i] = new HashSet<string>();
             }
             MaxPopulationCounts = new int[PrototypController.Instance.NumberOfPopulationLevels];
             RegisterMaxPopulationCountChange(UnlockCheck);
@@ -291,12 +291,12 @@ namespace Andja.Model {
         internal bool HasUnitUnlocked(string ID) {
             return UnlockedUnits.Contains(ID);
         }
-        public HashSet<String> GetUnlockedStructureNeeds(int level) {
+        public HashSet<string> GetUnlockedStructureNeeds(int level) {
             return UnlockedStructureNeeds[level];
         }
 
-        public HashSet<String> GetALLUnlockedStructureNeedsTill(int level) {
-            HashSet<String> needs = new HashSet<String>();
+        public HashSet<string> GetALLUnlockedStructureNeedsTill(int level) {
+            HashSet<string> needs = new HashSet<string>();
             for (int i = 0; i <= level; i++) {
                 needs.UnionWith(UnlockedStructureNeeds[i]);
             }
@@ -422,7 +422,7 @@ namespace Andja.Model {
         }
         internal List<Need> GetCopyStructureNeeds(int level) {
             List<Need> list = new List<Need>();
-            foreach (String n in UnlockedStructureNeeds[level]) {
+            foreach (string n in UnlockedStructureNeeds[level]) {
                 list.Add(new Need(n));
             }
             return list;

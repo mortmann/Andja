@@ -15,6 +15,7 @@ namespace Andja.Controller {
     public enum StaticLanguageVariables { 
         On, Off, 
         And, Or, 
+        Yes, No,
         Empty, 
         BuildCost, Upkeep, Price,
         Locked, 

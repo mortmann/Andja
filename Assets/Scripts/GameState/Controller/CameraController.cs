@@ -44,7 +44,7 @@ namespace Andja.Controller {
         private Vector2 showBounds = new Vector2();
         public static CameraController Instance;
         private CameraSave cameraSave;
-        private bool followUnitActive;
+        private Unit CameraFollowUnit;
 
         private void Awake() {
             if (Instance != null) {
@@ -105,27 +105,21 @@ namespace Andja.Controller {
         }
 
         internal void ToggleFollowUnit(Unit unit) {
-            if (followUnitActive) {
-                followUnitActive = false;
+            if (CameraFollowUnit != null) {
+                CameraFollowUnit = null;
             }
             else {
-                followUnitActive = true;
-                StartCoroutine(FollowUnit(unit));
+                CameraFollowUnit = unit;
             }
-        }
-
-        private IEnumerator FollowUnit(Unit unit) {
-            while(followUnitActive) {
-                MoveCameraToPosition(unit.PositionVector2, true);
-                yield return new WaitForEndOfFrame(); 
-            }
-            yield break;
         }
 
         private void Update() {
             //DO not move atall when Menu is Open
             if (PauseMenu.IsOpen || Loading.IsLoading) {
                 return;
+            }
+            if (CameraFollowUnit != null) {
+                MoveCameraToPosition(CameraFollowUnit.PositionVector2);
             }
 
             Vector3 cameraMove = new Vector3(0, 0);
@@ -156,7 +150,7 @@ namespace Andja.Controller {
             Vector3 newLower = cameraMove + lower;
             Vector3 newUpper = cameraMove + upper;
             if(cameraMove.sqrMagnitude > 0) {
-                followUnitActive = false;
+                CameraFollowUnit = null;
             }
             if (newUpper.x > showBounds.x) {
                 if (cameraMove.x > 0) {
@@ -322,8 +316,7 @@ namespace Andja.Controller {
             Instance = null;
         }
 
-        public void MoveCameraToPosition(Vector2 pos, bool follow = false) {
-            followUnitActive = follow;
+        public void MoveCameraToPosition(Vector2 pos) {
             Camera.main.transform.position = new Vector3(pos.x, pos.y, Camera.main.transform.position.z);
             ClampCamera();
             currFramePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);

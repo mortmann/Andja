@@ -1,4 +1,6 @@
-﻿namespace Andja.Model {
+﻿using Andja.Model;
+
+namespace Andja.AI {
 
     public struct IslandScore {
         public Island Island;

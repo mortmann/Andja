@@ -12,6 +12,12 @@ namespace Andja.Model {
         [Ignore] public int UnlockPopulationCount;
         [Ignore] public List<Need> SatisfiesNeeds;
         [Ignore] public float[] TotalUsagePerLevel; // is only for luxury goods & ai
+        [Ignore] public float AIValue {
+            //TODO: calculate the *worth* of an item based on the cost/rarity of it
+            get {
+                return (UnlockLevel / PrototypController.Instance.NumberOfPopulationLevels);
+            } 
+        }
     }
 
     [JsonObject(MemberSerialization.OptIn)]

@@ -162,6 +162,7 @@ namespace Andja.Model {
         }
 
         private void Setup() {
+            WorkStructure.RegisterOnDestroyCallback(OnWorkStructureDestroy);
         }
 
         public void OnWorkStructureDestroy(Structure str, IWarfare destroyer) {
@@ -396,6 +397,10 @@ namespace Andja.Model {
                     ((TilesPathfinding)path).SetDestination(new List<Tile>(Home.Tiles), new List<Tile>(structure.Tiles));
                 }
                 else {
+                    if(path.CurrTile == null) {
+                        Destroy();
+                        return;
+                    }
                     ((TilesPathfinding)path).SetDestination(new List<Tile>() { path.CurrTile }, new List<Tile>(Home.Tiles));
                 }
             }

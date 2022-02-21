@@ -16,6 +16,8 @@ namespace Andja.Model {
         public Vector2 swValue;
         public Vector2 neValue;
 
+        public float Value => ((swValue.x + neValue.x) / 2) * ((swValue.y + neValue.y) / 2);
+
         public TileValue(Tile tile, Vector2 seValue, Vector2 nwValue) {
             this.tile = tile;
             this.swValue = seValue;

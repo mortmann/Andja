@@ -193,14 +193,6 @@ namespace Andja.Model {
             if (City.AutoUpgradeHomes == false) {
                 return;
             }
-            //TODO: check for performance impact
-            // if bad change to boolean in city that gets non frequent set
-            if (City.HasEnoughOfItems(NextLevel.BuildingItems) == false) {
-                return;
-            }
-            if (City.GetOwner().HasEnoughMoney(NextLevel.BuildCost) == false) {
-                return;
-            }
             UpgradeHouse();
         }
 
@@ -266,9 +258,15 @@ namespace Andja.Model {
             City.RemovePeople(PopulationLevel, people);
         }
 
-        public void UpgradeHouse() {
+        public bool UpgradeHouse() {
             if (base.CanBeUpgraded == false && IsMaxLevel()) {
-                return;
+                return false;
+            }
+            if (City.HasEnoughOfItems(NextLevel.BuildingItems) == false) {
+                return false;
+            }
+            if (City.GetOwner().HasEnoughMoney(NextLevel.BuildCost) == false) {
+                return false;
             }
             CloseExtraUI();
             ID = NextLevel.ID;
@@ -283,6 +281,7 @@ namespace Andja.Model {
             OnUpgrade();
             City.AddPeople(PopulationLevel, people);
             cbStructureChanged(this);
+            return true;
         }
         protected override void OnUpgrade() {
             base.OnUpgrade();

@@ -1,11 +1,19 @@
 ﻿using Andja.Controller;
 using Newtonsoft.Json;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace Andja.Model {
 
     public class NeedStructurePrototypeData : TargetStructurePrototypeData {
         [Ignore] public List<Need> SatisfiesNeeds = new List<Need>();
+        [Ignore] public int MaxHomesInRange {
+            get {
+                HomeStructure home = PrototypController.Instance.BuildableHomeStructure;
+                return Mathf.CeilToInt((float)PrototypeRangeTiles.Count / 
+                    (home.TileWidth * home.TileHeight));
+            }
+        }
     }
 
     [JsonObject(MemberSerialization.OptIn)]

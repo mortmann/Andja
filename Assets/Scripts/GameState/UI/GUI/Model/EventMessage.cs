@@ -13,7 +13,8 @@ namespace Andja.UI {
         GameEvent gameEvent;
         BasicInformation Information;
         private Text nameText;
-        public Image IconImage; 
+        public Image IconImage;
+        ChoiceInformation ChoiceInformation;
         private void Start() {
             ParentScroll = GetComponentInParent<ScrollRect>();
         }
@@ -23,8 +24,6 @@ namespace Andja.UI {
             IconImage.sprite = UISpriteController.GetIcon(gameEvent.ID);
             LanguageChanged();
             UILanguageController.Instance.RegisterLanguageChange(LanguageChanged);
-            //TODO change Image here also
-            //Probably load the sprites in EventUIManager and get it from there
         }
         public void Setup(BasicInformation information) {
             Information = information;
@@ -32,6 +31,10 @@ namespace Andja.UI {
             LanguageChanged();
             UILanguageController.Instance.RegisterLanguageChange(LanguageChanged);
             IconImage.sprite = UISpriteController.GetIcon(Information.SpriteName);
+        }
+        public void Setup(ChoiceInformation information) {
+            Setup((BasicInformation)information);
+            ChoiceInformation = information;
         }
         private void LanguageChanged() {
             if(gameEvent != null) {
@@ -61,6 +64,9 @@ namespace Andja.UI {
 
         public void OnPointerClick(PointerEventData eventData) {
             if(eventData.button == PointerEventData.InputButton.Left) {
+                if(ChoiceInformation != null) {
+                    UIController.Instance.ShowChoiceDialog(ChoiceInformation);
+                }
                 if (gameEvent != null) {
                     CameraController.Instance.MoveCameraToPosition(gameEvent.GetPosition());
                 }

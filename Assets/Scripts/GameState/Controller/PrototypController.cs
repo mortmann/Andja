@@ -130,9 +130,9 @@ namespace Andja.Controller {
         //TODO: need a way to get this to load in! probably with the rest
         //      of the data thats still needs to be read in like time for money ticks
         public ArmorType StructureArmor => armorTypeDatas["woodenwall"];
-
+        //TODO: make ai aware of ALL buildable homes -- that would require a lot of multichecks - for now simplified - since only 1 for now anyway
         public HomeStructure BuildableHomeStructure => PopulationLevelDatas[0].HomeStructure;
-
+        public MarketStructure FirstLevelMarket;
         public Dictionary<string, Item> GetCopieOfAllItems() {
             Dictionary<string, Item> items = new Dictionary<string, Item>();
             foreach (string item in allItems.Keys) {
@@ -417,6 +417,7 @@ namespace Andja.Controller {
             CalculateNeedStuff();
             CalculatePopulationNeedGroups();
             CalculateUnlocks();
+            FirstLevelMarket = structurePrototypes[GetFirstLevelStructureIDForStructureType(typeof(MarketStructure))] as MarketStructure;
             Debug.Log("###Calculating Prototype-Stuff took " + stopwatch.Elapsed.TotalSeconds + "s ###");
         }
 
@@ -856,7 +857,7 @@ namespace Andja.Controller {
         internal string GetFirstLevelStructureIDForStructureType(Type type) {
             //TODO: optimize this
             return new List<Structure>(structurePrototypes.Values).FindAll(x => type == x.GetType())
-                        .OrderByDescending(item => item.PopulationLevel).First().ID;
+                        .OrderBy(item => item.PopulationLevel).First().ID;
         }
 
         internal UnitPrototypeData GetUnitPrototypDataForID(string id) {
@@ -1244,24 +1245,9 @@ namespace Andja.Controller {
                 return;
             foreach (XmlElement node in xmlDoc.SelectNodes("market")) {
                 string ID = node.GetAttribute("ID");
-                MarketPrototypData mpd = new MarketPrototypData {
-                    //THESE are fix and are not changed for any MarketStructure
-                    hasHitbox = true,
-                    tileWidth = 4,
-                    tileHeight = 4,
-                    buildTyp = BuildType.Single,
-                    structureTyp = StructureTyp.Blocking,
-                    structureRange = 18,
-                    canTakeDamage = true,
-
-                    Name = "market",
-                    buildCost = 500,
-                    upkeepCost = 10
-                };
-
+                MarketPrototypData mpd = new MarketPrototypData();
                 mpd.ID = ID;
                 SetData<MarketPrototypData>(node, ref mpd);
-
                 structurePrototypeDatas[ID] = mpd;
                 structurePrototypes[ID] = new MarketStructure(ID, mpd);
             }

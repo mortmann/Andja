@@ -2,6 +2,7 @@ using Andja.Controller;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 namespace Andja.Model {
     public enum OperationStatus { Pending, Success, Failure}
@@ -14,45 +15,77 @@ namespace Andja.Model {
         }
         public abstract bool Do();
     }
-    public class MoveUnitOperation : Operation {
-        Unit Unit;
-        Tile Destination;
-        bool OverrideCurrentCommand;
-        public MoveUnitOperation(AIPlayer player, Unit unit, Tile destination, bool overrideCurrentCommand = false) : base(player) {
-            Unit = unit;
-            Destination = destination;
-            OverrideCurrentCommand = overrideCurrentCommand;
+    public abstract class UnitOperation : Operation {
+        protected Unit[] Units;
+        protected bool OverrideCurrentCommand;
+
+        public UnitOperation(AIPlayer player, Unit unit) : this(player, new Unit[] { unit }) { }
+        public UnitOperation(AIPlayer player, Unit[] units) : base(player) {
+            Units = units;
         }
-        public override bool Do() {
-            return Unit.GiveMovementCommand(Destination, OverrideCurrentCommand);
+        public UnitOperation(AIPlayer player, Unit unit, bool overrideCurrentCommand = false) : this(player, new Unit[] { unit }) { }
+        public UnitOperation(AIPlayer player, Unit[] units, bool overrideCurrentCommand = false) : base(player) {
+            Units = units;
         }
     }
-    public class UnitAttackOperation : Operation {
-        Unit[] UnitGroup;
-        ITargetable Target;
-        bool OverrideCurrentCommand;
-        public UnitAttackOperation(AIPlayer player, Unit[] unitGroup, ITargetable target, Tile destination, 
-            bool overrideCurrentCommand = false) : base(player) {
-            Target = target;
-            UnitGroup = unitGroup;
-            OverrideCurrentCommand = overrideCurrentCommand;
+
+    public class MoveUnitOperation : UnitOperation {
+        Vector2 Destination;
+        public MoveUnitOperation(AIPlayer player, Unit unit, Tile destination, bool overrideCurrentCommand = false) : base(player, unit, overrideCurrentCommand) {
+            Destination = destination.Vector2;
+        }
+        public MoveUnitOperation(AIPlayer player, Unit[] units, Tile destination, bool overrideCurrentCommand = false) : base(player, units, overrideCurrentCommand) {
+            Destination = destination.Vector2;
+        }
+        public MoveUnitOperation(AIPlayer player, Unit unit, Vector2 destination, bool overrideCurrentCommand = false) : base(player, unit, overrideCurrentCommand) {
+            Destination = destination;
+        }
+        public MoveUnitOperation(AIPlayer player, Unit[] units, Vector2 destination, bool overrideCurrentCommand = false) : base(player, units, overrideCurrentCommand) {
+            Destination = destination;
         }
         public override bool Do() {
-            if(Array.TrueForAll(UnitGroup, u => u.CanReach(Target.CurrentPosition.x, Target.CurrentPosition.y))) {
-                Array.ForEach(UnitGroup, (u) => u.GiveAttackCommand(Target, OverrideCurrentCommand));
+            if (Array.TrueForAll(Units, u => u.CanReach(Destination))) {
+                Array.ForEach(Units, (u) => u.GiveMovementCommand(Destination, OverrideCurrentCommand));
+                return true;
+            }
+            return false;
+        }
+    }
+    public class UnitAttackOperation : UnitOperation {
+        ITargetable Target;
+        public UnitAttackOperation(AIPlayer player, Unit[] unitGroup, ITargetable target, Tile destination, 
+            bool overrideCurrentCommand = false) : base(player, unitGroup, overrideCurrentCommand) {
+            Target = target;
+        }
+        public override bool Do() {
+            if(Array.TrueForAll(Units, u => u.CanReach(Target.CurrentPosition.x, Target.CurrentPosition.y))) {
+                Array.ForEach(Units, (u) => u.GiveAttackCommand(Target, OverrideCurrentCommand));
                 return true;
             }
             return false;
         }
     }
 
-    public class UnitCityMoveItemOperation : Operation {
-        Unit Unit;
+    public class ShipTradeRoute : Operation {
+        public Ship Ship;
+        public TradeRoute TradeRoute;
+
+        public ShipTradeRoute(AIPlayer player, Ship ship, TradeRoute route) : base(player) {
+            Ship = ship;
+            TradeRoute = route;
+        }
+
+        public override bool Do() {
+            Ship.SetTradeRoute(TradeRoute);
+            return Ship.IsAlive;
+        }
+    }
+
+    public class UnitCityMoveItemOperation : UnitOperation {
         City City;
         Item[] Items;
         bool ToShip;
-        public UnitCityMoveItemOperation(AIPlayer player, Unit unit, City city, Item[] items, bool toShip) : base(player) {
-            Unit = unit;
+        public UnitCityMoveItemOperation(AIPlayer player, Unit unit, City city, Item[] items, bool toShip) : base(player, unit) {
             City = city;
             Items = items;
             ToShip = toShip;
@@ -61,11 +94,11 @@ namespace Andja.Model {
             bool did = false;
             if(ToShip) {
                 foreach(Item item in Items) {
-                    did = City.TradeWithShip(item, () => { return item.count; }, Unit) > 0;
+                    did = City.TradeWithShip(item, () => { return item.count; }, Units[0]) > 0;
                 }
             } else {
                 foreach (Item item in Items) {
-                    did = Unit.TradeItemToNearbyWarehouse(item, item.count);
+                    did = Units[0].TradeItemToNearbyWarehouse(item, item.count);
                 }
             }
             return did;
@@ -96,6 +129,7 @@ namespace Andja.Model {
             return temp;
         }
     }
+
     public class BuildSingleStructureOperation : Operation {
         public Unit BuildUnit;
         public List<Vector2> BuildTiles;
@@ -115,13 +149,12 @@ namespace Andja.Model {
     }
 
     public class TradeItemOperation : Operation {
-
-        public City city;
+        public City City;
         public bool Add;
         public List<TradeItem> TradeItems;
 
         public TradeItemOperation(AIPlayer player, City city, List<TradeItem> TradeItems, bool add) : base(player) {
-            this.city = city;
+            this.City = city;
             this.TradeItems = TradeItems;
             this.Add = add;
         }
@@ -130,16 +163,72 @@ namespace Andja.Model {
             bool did = true;
             if(Add) {
                 foreach (TradeItem item in TradeItems) {
-                    did &= city.AddTradeItem(item);
+                    did &= City.AddTradeItem(item);
                 }
             } else {
                 foreach (TradeItem item in TradeItems) {
-                    did &= city.RemoveTradeItem(item.ItemId);
+                    did &= City.RemoveTradeItem(item.ItemId);
                 }
             }
             return did;
         }
     }
 
+    public class UpgradeHome : Operation {
+        public HomeStructure Home; 
+        public UpgradeHome (AIPlayer player, HomeStructure home) : base(player) {
+            Home = home;
+        }
+
+        public override bool Do() {
+            if (Home.IsDestroyed)
+                return false;
+            return Home.UpgradeHouse();
+        }
+    }
+    public abstract class DiplomacyOperation : Operation {
+        public Player Target;
+        public DiplomacyOperation(AIPlayer player, Player target) : base(player) {
+            Target = target;
+        }
+    }
+
+    public class DemandMoneyOperation : DiplomacyOperation {
+        public int Money;
+        public DemandMoneyOperation(AIPlayer player, Player target, int money) : base(player, target) {
+            Money = money;
+        }
+        public override bool Do() {
+            PlayerController.Instance.TryToDemandMoney(Player.player, Target, Money);
+            return true;
+        }
+    }
+    public class TryIncreaseDiplomaticStandingOperation : DiplomacyOperation {
+        public TryIncreaseDiplomaticStandingOperation(AIPlayer player, Player target) : base(player, target) {
+
+        }
+        public override bool Do() {
+            PlayerController.Instance.IncreaseDiplomaticStanding(Player.player, Target);
+            return true;
+        }
+    }
+    public class DecreaseDiplomaticStandingOperation : DiplomacyOperation {
+        public DecreaseDiplomaticStandingOperation(AIPlayer player, Player target) : base(player, target) {
+
+        }
+        public override bool Do() {
+            PlayerController.Instance.DecreaseDiplomaticStanding(Player.player, Target);
+            return true;
+        }
+    }
+    public class PraisePlayerOperation : DiplomacyOperation {
+        public PraisePlayerOperation(AIPlayer player, Player target) : base(player, target) {
+
+        }
+        public override bool Do() {
+            PlayerController.Instance.PraisePlayer(Player.player, Target);
+            return true;
+        }
+    }
 }
 

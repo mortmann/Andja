@@ -160,26 +160,20 @@ namespace Andja.UI {
             }
         }
 
-        private void Update() {
-        }
-
         private void OnEnable() {
             ShowFor(selectedPlayer ?? PlayerController.CurrentPlayer);
         }
 
-        //TODO: IMPLEMENT
         private void PraisePlayer() {
-            throw new NotImplementedException();
+            PlayerController.Instance.PraisePlayer(PlayerController.CurrentPlayer, selectedPlayer);
         }
 
-        //TODO: IMPLEMENT
         private void DenouncePlayer() {
-            throw new NotImplementedException();
+            PlayerController.Instance.DenouncePlayer(PlayerController.CurrentPlayer, selectedPlayer);
         }
 
-        //TODO: IMPLEMENT
         private void TryToDemandMoney() {
-            throw new NotImplementedException();
+            PlayerController.Instance.TryToDemandMoney(PlayerController.CurrentPlayer, selectedPlayer, 1000);
         }
 
         private void SendMoneyToPlayer() {
@@ -190,7 +184,6 @@ namespace Andja.UI {
             PlayerController.Instance.DecreaseDiplomaticStanding(PlayerController.CurrentPlayer, selectedPlayer);
         }
 
-        //TODO: IMPLEMENT
         private void TryToIncreaseDiplomaticStatus() {
             PlayerController.Instance.IncreaseDiplomaticStanding(PlayerController.CurrentPlayer, selectedPlayer);
         }

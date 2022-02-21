@@ -79,12 +79,10 @@ namespace Andja.Model.Data {
             float xItemValue = 0;
             float yItemValue = 0;
             for (int i = 0; i < x.totalItemCost.Length; i++) {
-                xItemValue = x.totalItemCost[i].count * //TODO: calculate the *worth* of an item based on the cost/rarity of it
-                    (x.totalItemCost[i].Data.UnlockLevel / PrototypController.Instance.NumberOfPopulationLevels);
+                xItemValue += x.totalItemCost[i].count * x.totalItemCost[i].Data.AIValue;
             }
             for (int i = 0; i < y.totalItemCost.Length; i++) {
-                yItemValue = y.totalItemCost[i].count * //TODO: calculate the *worth* of an item based on the cost/rarity of it
-                    (y.totalItemCost[i].Data.UnlockLevel / PrototypController.Instance.NumberOfPopulationLevels);
+                yItemValue += y.totalItemCost[i].count * y.totalItemCost[i].Data.AIValue;
             }
             float diffItem = xItemValue - yItemValue;
             return Mathf.RoundToInt(diffBuildCost + 3 * diffMaintenance + 2 * diffItem);

@@ -46,6 +46,7 @@ namespace Andja.Controller {
         private DebugInformation debug;
         public static UIController Instance;
         private static UIControllerSave uIControllerSave;
+        public ChoiceDialog ChoiceDialog;
 
         private void Start() {
             Escape(true);
@@ -72,7 +73,11 @@ namespace Andja.Controller {
                 OpenDiplomacyUI();
             }
         }
-
+        internal void ShowChoiceDialog(ChoiceInformation choiceInformation) {
+            CloseCenter();
+            OpenCenter();
+            ChoiceDialog.Show(choiceInformation);
+        }
         public void OpenStructureUI(Structure str) {
             if (str == null) {
                 return;

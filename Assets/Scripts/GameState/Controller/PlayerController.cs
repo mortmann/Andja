@@ -181,6 +181,37 @@ namespace Andja.Controller {
                 }
             }
         }
+
+        internal void PraisePlayer(Player from, Player to) {
+            if(to.Number == PlayerController.currentPlayerNumber) {
+                EventUIManager.Instance.Show(BasicInformation.CreatePraiseReceived(from));
+            } 
+            if(to.IsHuman == false) {
+                to.AI.ReceivePraise(from);
+            }
+        }
+
+        internal void DenouncePlayer(Player from, Player to) {
+            if (to.Number == PlayerController.currentPlayerNumber) {
+                EventUIManager.Instance.Show(BasicInformation.CreateDenounceReceived(from));
+            }
+            if (to.IsHuman == false) {
+                to.AI.ReceiveDenounce(from);
+            }
+        }
+
+        internal void TryToDemandMoney(Player demands, Player target, int amount) {
+            if (target.Number == PlayerController.currentPlayerNumber) {
+                EventUIManager.Instance.Show(ChoiceInformation.CreateMoneyDemand(demands, amount, () => {
+                    demands.AddToTreasure(amount);
+                    target.ReduceTreasure(amount);
+                }, null));
+            }
+            if (target.IsHuman == false) {
+                target.AI.ReceiveDemandMoney(demands, amount);
+            }
+        }
+
         /// <summary>
         /// Needs to check if Players are willing.
         /// Call only playerOne being the sending one. So that only playerTwo has to accept.
@@ -191,8 +222,17 @@ namespace Andja.Controller {
             DiplomaticStatus ds = GetDiplomaticStatus(playerOne, playerTwo);
             if (ds.currentStatus == DiplomacyType.Alliance) 
                 return;
-            if(playerTwo.AskDiplomaticIncrease(playerOne)) {
-                ChangeDiplomaticStanding(playerOne.Number, playerTwo.Number, (DiplomacyType)((int)ds.currentStatus + 1));
+            if (playerTwo.Number == PlayerController.currentPlayerNumber) {
+                EventUIManager.Instance.Show(ChoiceInformation.CreateAskDiplomaticIncrease(playerOne,
+                    (GetDiplomaticStatusType(playerOne, playerTwo) + 1),
+                () => {
+                    ChangeDiplomaticStanding(playerOne.Number, playerTwo.Number, (DiplomacyType)((int)ds.currentStatus + 1));
+                }, null));
+            }
+            else {
+                if(playerTwo.AI.AskDiplomaticIncrease(playerOne)) {
+                    ChangeDiplomaticStanding(playerOne.Number, playerTwo.Number, (DiplomacyType)((int)ds.currentStatus + 1));
+                }
             }
         }
 
@@ -241,9 +281,14 @@ namespace Andja.Controller {
         internal void SendMoneyFromTo(Player sendPlayer, Player receivingPlayer, int amount) {
             if (CurrentPlayer.HasEnoughMoney(amount) == false)
                 return;
-            //TODO: Notify Player that he received gift or demand
             receivingPlayer.AddToTreasure(amount);
             sendPlayer.ReduceTreasure(amount);
+            if (receivingPlayer.Number == PlayerController.currentPlayerNumber) {
+                EventUIManager.Instance.Show(BasicInformation.CreateMoneyReceived(sendPlayer, amount));
+            }
+            if (receivingPlayer.IsHuman == false) {
+                receivingPlayer.AI.ReceivedMoney(sendPlayer, amount);
+            }
         }
 
         public void OnEventCreated(GameEvent ge) {

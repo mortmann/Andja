@@ -816,7 +816,7 @@ namespace Andja.Model {
                 pathfinding.cbIsAtDestination += OnArriveDestination;
             }
         }
-        private bool CanReach(Vector2 vec) {
+        public bool CanReach(Vector2 vec) {
             return CanReach(vec.x, vec.y);
         }
 

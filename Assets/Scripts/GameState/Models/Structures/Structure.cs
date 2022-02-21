@@ -866,6 +866,14 @@ namespace Andja.Model {
 
         #endregion rotation
 
+        public float AICalculatedCost() {
+            float itemValue = 0;
+            for (int i = 0; i < BuildingItems.Length; i++) {
+                itemValue = BuildingItems[i].count * BuildingItems[i].Data.AIValue;
+            }
+            return Mathf.RoundToInt(BuildCost + 3 * UpkeepCost + 2 * itemValue);
+        }
+
 
         public override string ToString() {
             if (BuildTile == null) {

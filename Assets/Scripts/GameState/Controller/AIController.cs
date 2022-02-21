@@ -83,7 +83,9 @@ namespace Andja.Controller {
             foreach (Player player in PlayerController.Players) {
                 if (player.IsHuman)
                     continue;
-                aiPlayers.Add(new AIPlayer(player));
+                AIPlayer ai = new AIPlayer(player);
+                player.AI = ai;
+                aiPlayers.Add(ai);
             }
             ShutdownAI = false;
             ActiveAI = true;
@@ -112,10 +114,6 @@ namespace Andja.Controller {
 
         private void OnCityTileRemoved(City c, Tile t) {
             _cityToCurrentSpaceValueTiles[c].TryRemove(t, out _);
-            //ChangeTileValue(t, t.West(), Direction.W, null);
-            //ChangeTileValue(t, t.South(), Direction.S, null);
-            //ChangeTileValue(t, t.North(), Direction.N, null);
-            //ChangeTileValue(t, t.East(), Direction.E, null);
         }
 
         private void OnCityTileAdded(City c, Tile t) {
@@ -306,11 +304,11 @@ namespace Andja.Controller {
         }
 
         public static bool BuildStructure(AIPlayer player, Structure structure, List<Tile> tiles, Unit buildUnit = null, bool onStart = false) {
-            return BuildController.Instance.BuildOnTile(structure, tiles, player.PlayerNummer, false, false, buildUnit, false, onStart);
+            return BuildController.Instance.BuildOnTile(structure, tiles, player.PlayerNumber, false, false, buildUnit, false, onStart);
         }
         public static bool BuildStructure(AIPlayer player, Structure structure, Tile tile, Unit buildUnit = null, bool onStart = false) {
             return BuildController.Instance.BuildOnTile(structure, structure.GetBuildingTiles(tile),
-                                                player.PlayerNummer, false, false, buildUnit, false, onStart);
+                                                player.PlayerNumber, false, false, buildUnit, false, onStart);
         }
         public static void CalculateIslandTileValues() {
             _islandToMapSpaceValuedTiles = new Dictionary<Island, Dictionary<Tile, TileValue>>();

@@ -47,7 +47,7 @@ namespace Andja.Model {
         private int _treasuryChange;
         public bool IsHuman => _IsHuman;
         public string Name => _name ?? "Number " + Number; //FOR NOW
-
+        public AIPlayer AI;
         /// <summary>
         /// How the Balance CHANGES foreach Tick that happens
         /// </summary>
@@ -100,6 +100,7 @@ namespace Andja.Model {
 
         [JsonPropertyAttribute]
         public List<TradeRoute> TradeRoutes { get; protected set; }
+
         [JsonPropertyAttribute]
         public List<Unit>[] unitGroups { get; protected set; }
 
@@ -184,11 +185,6 @@ namespace Andja.Model {
             for (int i = 0; i < Cities.Count; i++) {
                 LastTreasuryChange += Cities[i].Balance;
             }
-        }
-
-        internal bool AskDiplomaticIncrease(Player playerOne) {
-            Debug.LogWarning("Not implemented yet. Accepting always.");
-            return true;
         }
 
         internal IEnumerable<Island> GetIslandList() {

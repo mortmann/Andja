@@ -11,7 +11,6 @@ namespace Andja.UI.Model {
         public float onScreenTimer = 30f;
         List<EventMessage> messages;
         //Mayber move this to EventManager
-
         public EventMessage EventMessagePrefab;
         public Transform contentTransform;
         Dictionary<object, DateTime> shownToTime = new Dictionary<object, DateTime>();
@@ -72,6 +71,18 @@ namespace Andja.UI.Model {
             EventMessage ego = Instantiate(EventMessagePrefab);
             ego.transform.SetParent(contentTransform, false);
             ego.GetComponent<EventMessage>().Setup(basicInformation);
+            messages.Add(ego);
+        }
+
+        /// <summary>
+        /// This does not contain a check for duplicate Information -- Only use this directly if everytime the player should be informed
+        /// </summary>
+        /// <param name="basicInformation"></param>
+        internal void Show(ChoiceInformation basicInformation) {
+            EventMessage ego = Instantiate(EventMessagePrefab);
+            ego.transform.SetParent(contentTransform, false);
+            ego.GetComponent<EventMessage>().Setup(basicInformation);
+            basicInformation.OnClose = () => { RemoveEvent(ego); };
             messages.Add(ego);
         }
     }

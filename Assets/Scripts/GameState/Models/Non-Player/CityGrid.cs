@@ -20,7 +20,8 @@ namespace Andja.AI {
                     for (int i = 0; i < height; i++) {
                         tiles[i] = new Tile[width];
                         for (int j = 0; j < width; j++) {
-                            tiles[i][j] = World.Current.GetTileAt(island.Minimum.x + j, island.Minimum.y + i);
+                            tiles[i][j] = World.Current.GetTileAt(x * width + island.Minimum.x + j, 
+                                                                  y * height + island.Minimum.y + i);
                         }
                         //int wX = (x+i) * width;
                         //Array.Copy(World.Current.Tiles,

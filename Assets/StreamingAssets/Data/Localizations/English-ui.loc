@@ -28,15 +28,12 @@ if they can.</toolTipTranslation>
       </translationData>
       <translationData id="BuildProgress">
          <toolTipTranslation>Buildprogress</toolTipTranslation>
-         <onlyHoverOver>true</onlyHoverOver>
       </translationData>
       <translationData id="Buy">
          <toolTipTranslation>Buy Item</toolTipTranslation>
-         <onlyHoverOver>true</onlyHoverOver>
       </translationData>
       <translationData id="ChangeName">
          <toolTipTranslation>Change the name by clicking here.</toolTipTranslation>
-         <onlyHoverOver>true</onlyHoverOver>
       </translationData>
       <translationData id="CityInformationToggle">
          <translation>Details</translation>
@@ -44,7 +41,6 @@ if they can.</toolTipTranslation>
       </translationData>
       <translationData id="Close">
          <toolTipTranslation>Close the window.</toolTipTranslation>
-         <onlyHoverOver>true</onlyHoverOver>
       </translationData>
       <translationData id="Controls">
          <translation>Controls</translation>
@@ -91,7 +87,6 @@ I&apos;m not your father. I&apos;m a game.</toolTipTranslation>
       </translationData>
       <translationData id="DestroyTool">
          <toolTipTranslation>Destroy tool.</toolTipTranslation>
-         <onlyHoverOver>true</onlyHoverOver>
       </translationData>
       <translationData id="DiplomacyOptions">
          <translation>Diplomacy Options</translation>
@@ -137,11 +132,9 @@ Save them so you can play them or share them.</toolTipTranslation>
       </translationData>
       <translationData id="Fast">
          <toolTipTranslation>Fast Gamespeed</toolTipTranslation>
-         <onlyHoverOver>true</onlyHoverOver>
       </translationData>
       <translationData id="Fastest">
          <toolTipTranslation>Fastest Gamespeed</toolTipTranslation>
-         <onlyHoverOver>true</onlyHoverOver>
       </translationData>
       <translationData id="FogOfWar">
          <translation>Fog Of War</translation>
@@ -163,7 +156,6 @@ Save them so you can play them or share them.</toolTipTranslation>
          <translation>[**Missing**]</translation>
          <toolTipTranslation>Toggle Follow Unit</toolTipTranslation>
          <valueIsMainTranslation>false</valueIsMainTranslation>
-         <onlyHoverOver>true</onlyHoverOver>
       </translationData>
       <translationData id="Framelimiter">
          <translation>Framelimit</translation>
@@ -210,7 +202,6 @@ Save them so you can play them or share them.</toolTipTranslation>
       </translationData>
       <translationData id="HealthUI">
          <toolTipTranslation>Health Points</toolTipTranslation>
-         <onlyHoverOver>true</onlyHoverOver>
       </translationData>
       <translationData id="Height">
          <translation>Height</translation>
@@ -236,11 +227,31 @@ Save them so you can play them or share them.</toolTipTranslation>
       </translationData>
       <translationData id="Information">
          <toolTipTranslation>Further Informations</toolTipTranslation>
-         <onlyHoverOver>true</onlyHoverOver>
+      </translationData>
+      <translationData id="InformationType/DemandMoney">
+         <translation>$0 demands $1</translation>
+         <toolTipTranslation>$0 demands that you pay him $1 
+or he will be not please with you.</toolTipTranslation>
+         <valueIsMainTranslation>false</valueIsMainTranslation>
+      </translationData>
+      <translationData id="InformationType/Denounce">
+         <translation>$0 denouced you</translation>
+         <toolTipTranslation>$0 called you bad words. Be mad.</toolTipTranslation>
+         <valueIsMainTranslation>false</valueIsMainTranslation>
       </translationData>
       <translationData id="InformationType/DiplomacyChange">
          <translation>$0</translation>
          <toolTipTranslation>$0 and $1 now at $2</toolTipTranslation>
+      </translationData>
+      <translationData id="InformationType/Praise">
+         <translation>$0 praises you</translation>
+         <toolTipTranslation>$0 called you nice words. Be happy.</toolTipTranslation>
+         <valueIsMainTranslation>false</valueIsMainTranslation>
+      </translationData>
+      <translationData id="InformationType/ReceivedGift">
+         <translation>$0 gifted you $1 </translation>
+         <toolTipTranslation>$0 gave you $1 so you would be nicer to him.</toolTipTranslation>
+         <valueIsMainTranslation>false</valueIsMainTranslation>
       </translationData>
       <translationData id="InformationType/StructureUnderAttack">
          <translation>Your Structure $0 is under attack.</translation>
@@ -250,12 +261,22 @@ Save them so you can play them or share them.</toolTipTranslation>
          <translation>Your Unit $0 is under attack.</translation>
          <toolTipTranslation>Unit $0 is under attack by $1</toolTipTranslation>
       </translationData>
+      <translationData id="InvertedMouseButtons">
+         <translation>Invert Mouse Button</translation>
+         <toolTipTranslation>Inverts the mouse button for ingame activities.
+Caution: Does not work with UI! </toolTipTranslation>
+         <valueIsMainTranslation>false</valueIsMainTranslation>
+      </translationData>
+      <translationData id="InvertedMouseButtons">
+         <translation>[**Missing**]</translation>
+         <valueIsMainTranslation>false</valueIsMainTranslation>
+      </translationData>
       <translationData id="IsActive">
          <translation>[**Missing**]</translation>
-         <values length="2"> 
-			 <string>Is active and working.</string>
-			 <string>Is active, but cannot work.</string>
-		 </values>
+         <values length="2">
+            <string>Is active and working.</string>
+            <string>Is active, but cannot work.</string>
+         </values>
          <valueIsMainTranslation>true</valueIsMainTranslation>
          <valueCount>2</valueCount>
       </translationData>
@@ -386,7 +407,6 @@ Be careful what you use, because it can break the game.</toolTipTranslation>
       </translationData>
       <translationData id="NormalSpeed">
          <toolTipTranslation>Normal Gamespeed</toolTipTranslation>
-         <onlyHoverOver>true</onlyHoverOver>
       </translationData>
       <translationData id="Options">
          <translation>Options</translation>
@@ -401,11 +421,9 @@ Be careful what you use, because it can break the game.</toolTipTranslation>
       </translationData>
       <translationData id="Pause">
          <toolTipTranslation>Pause the Game</toolTipTranslation>
-         <onlyHoverOver>true</onlyHoverOver>
       </translationData>
       <translationData id="PauseMenu">
          <toolTipTranslation>Open the Pausemenu</toolTipTranslation>
-         <onlyHoverOver>true</onlyHoverOver>
       </translationData>
       <translationData id="People">
          <translation>People</translation>
@@ -429,15 +447,12 @@ Be careful what you use, because it can break the game.</toolTipTranslation>
       </translationData>
       <translationData id="ProduceProgress">
          <toolTipTranslation>Produce Progress</toolTipTranslation>
-         <onlyHoverOver>true</onlyHoverOver>
       </translationData>
       <translationData id="QuickLoad">
          <toolTipTranslation>Load the last save.</toolTipTranslation>
-         <onlyHoverOver>true</onlyHoverOver>
       </translationData>
       <translationData id="QuickSave">
          <toolTipTranslation>Quicksave your game.</toolTipTranslation>
-         <onlyHoverOver>true</onlyHoverOver>
       </translationData>
       <translationData id="QuitToMenu">
          <translation>Quit to Menu</translation>
@@ -480,7 +495,6 @@ Important: All should have the same configuration (mods).</toolTipTranslation>
       </translationData>
       <translationData id="Sell">
          <toolTipTranslation>Sell Item</toolTipTranslation>
-         <onlyHoverOver>true</onlyHoverOver>
       </translationData>
       <translationData id="SendMoney">
          <translation>Send Money</translation>
@@ -501,15 +515,12 @@ you currently have no City.</toolTipTranslation>
       </translationData>
       <translationData id="SleepStructure">
          <toolTipTranslation>Disable the Structure.</toolTipTranslation>
-         <onlyHoverOver>true</onlyHoverOver>
       </translationData>
       <translationData id="Slow">
          <toolTipTranslation>Slow Gamespeed</toolTipTranslation>
-         <onlyHoverOver>true</onlyHoverOver>
       </translationData>
       <translationData id="Slowest">
          <toolTipTranslation>Slowest Gamespeed</toolTipTranslation>
-         <onlyHoverOver>true</onlyHoverOver>
       </translationData>
       <translationData id="Sound">
          <translation>Sound</translation>
@@ -555,6 +566,11 @@ you currently have no City.</toolTipTranslation>
          <translation>Maximum Damage</translation>
          <toolTipTranslation>The most damage this can do.</toolTipTranslation>
       </translationData>
+      <translationData id="StaticLanguageVariables/No">
+         <translation>No.</translation>
+         <toolTipTranslation>Decline </toolTipTranslation>
+         <valueIsMainTranslation>false</valueIsMainTranslation>
+      </translationData>
       <translationData id="StaticLanguageVariables/Off">
          <translation>Off</translation>
       </translationData>
@@ -568,6 +584,11 @@ you currently have no City.</toolTipTranslation>
          <translation>Pirate</translation>
          <toolTipTranslation>Hates everyone that isn&apos;t a pirate and will not stop until they have everything you have.</toolTipTranslation>
       </translationData>
+      <translationData id="StaticLanguageVariables/Price">
+         <translation>Price</translation>
+         <toolTipTranslation>How much this costs.</toolTipTranslation>
+         <valueIsMainTranslation>false</valueIsMainTranslation>
+      </translationData>
       <translationData id="StaticLanguageVariables/Speed">
          <translation>Movement Speed</translation>
          <toolTipTranslation>How fast this unit can move.</toolTipTranslation>
@@ -578,6 +599,11 @@ you currently have no City.</toolTipTranslation>
       </translationData>
       <translationData id="StaticLanguageVariables/World">
          <translation>World</translation>
+      </translationData>
+      <translationData id="StaticLanguageVariables/Yes">
+         <translation>Yes</translation>
+         <toolTipTranslation>Accept</toolTipTranslation>
+         <valueIsMainTranslation>false</valueIsMainTranslation>
       </translationData>
       <translationData id="TextureQuality">
          <translation>Texture Quality</translation>

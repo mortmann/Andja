@@ -28,15 +28,12 @@ unter der Maus zu passen.</toolTipTranslation>
       </translationData>
       <translationData id="BuildProgress">
          <toolTipTranslation>Baufortschritt</toolTipTranslation>
-         <onlyHoverOver>true</onlyHoverOver>
       </translationData>
       <translationData id="Buy">
          <toolTipTranslation>Kauf Gut</toolTipTranslation>
-         <onlyHoverOver>true</onlyHoverOver>
       </translationData>
       <translationData id="ChangeName">
          <toolTipTranslation>Klicke hier um den Namen zu verändern.</toolTipTranslation>
-         <onlyHoverOver>true</onlyHoverOver>
       </translationData>
       <translationData id="CityInformationToggle">
          <translation>Daten</translation>
@@ -44,7 +41,6 @@ unter der Maus zu passen.</toolTipTranslation>
       </translationData>
       <translationData id="Close">
          <toolTipTranslation>Schließe das Fenster</toolTipTranslation>
-         <onlyHoverOver>true</onlyHoverOver>
       </translationData>
       <translationData id="Controls">
          <translation>Steuerung</translation>
@@ -94,7 +90,6 @@ zu dem nächst niedrigeren.</toolTipTranslation>
       </translationData>
       <translationData id="DestroyTool">
          <toolTipTranslation>Zerstörungswerkzeug</toolTipTranslation>
-         <onlyHoverOver>true</onlyHoverOver>
       </translationData>
       <translationData id="DiplomacyOptions">
          <translation>Diplomatische Optionen</translation>
@@ -138,11 +133,9 @@ Speichere und spiel diese oder teile Sie mit anderen.</toolTipTranslation>
       </translationData>
       <translationData id="Fast">
          <toolTipTranslation>Schnell Spielgeschwindigkeit</toolTipTranslation>
-         <onlyHoverOver>true</onlyHoverOver>
       </translationData>
       <translationData id="Fastest">
          <toolTipTranslation>Schnellste Spielgeschwindigkeit</toolTipTranslation>
-         <onlyHoverOver>true</onlyHoverOver>
       </translationData>
       <translationData id="FogOfWar">
          <translation>Nebel des Krieges</translation>
@@ -205,7 +198,6 @@ Speichere und spiel diese oder teile Sie mit anderen.</toolTipTranslation>
       </translationData>
       <translationData id="HealthUI">
          <toolTipTranslation>Lebenspunkte</toolTipTranslation>
-         <onlyHoverOver>true</onlyHoverOver>
       </translationData>
       <translationData id="Height">
          <translation>Höhe</translation>
@@ -231,11 +223,30 @@ Speichere und spiel diese oder teile Sie mit anderen.</toolTipTranslation>
       </translationData>
       <translationData id="Information">
          <toolTipTranslation>Weitere Informationen</toolTipTranslation>
-         <onlyHoverOver>true</onlyHoverOver>
+      </translationData>
+      <translationData id="InformationType/DemandMoney">
+         <translation>$0 verlangt das du $1 zahlst</translation>
+         <toolTipTranslation>$0 will $1 sonst ist er nicht glücklich mit dir.</toolTipTranslation>
+         <valueIsMainTranslation>false</valueIsMainTranslation>
+      </translationData>
+      <translationData id="InformationType/Denounce">
+         <translation>$0 denunziert dich</translation>
+         <toolTipTranslation>$0 hat nicht nette Wörter über dicht gesagt.</toolTipTranslation>
+         <valueIsMainTranslation>false</valueIsMainTranslation>
       </translationData>
       <translationData id="InformationType/DiplomacyChange">
          <translation>$0</translation>
          <toolTipTranslation>$0 und $1 sind jetzt auf dem Stand $2 zu einander.</toolTipTranslation>
+      </translationData>
+      <translationData id="InformationType/Praise">
+         <translation>$0 lobt deinen Namen</translation>
+         <toolTipTranslation>$0 hat nette Wörter über dich gesagt.</toolTipTranslation>
+         <valueIsMainTranslation>false</valueIsMainTranslation>
+      </translationData>
+      <translationData id="InformationType/ReceivedGift">
+         <translation>$0 hat dir $1 gesendet</translation>
+         <toolTipTranslation>$0 hat dir ein Geschenk in Höhe $1 gemacht</toolTipTranslation>
+         <valueIsMainTranslation>false</valueIsMainTranslation>
       </translationData>
       <translationData id="InformationType/StructureUnderAttack">
          <translation>$0 wird angegriffen</translation>
@@ -244,6 +255,16 @@ Speichere und spiel diese oder teile Sie mit anderen.</toolTipTranslation>
       <translationData id="InformationType/UnitUnderAttack">
          <translation>$0 wird angegriffen</translation>
          <toolTipTranslation>Deine Einheit $0 ist unter Beschuss von $1.</toolTipTranslation>
+      </translationData>
+      <translationData id="InvertedMouseButtons">
+         <translation>Invertiert Mausbutton</translation>
+         <toolTipTranslation>Vertauscht linke und rechte Mausbuttons.
+Vorsicht: Funktioniert nicht mit der UI.</toolTipTranslation>
+         <valueIsMainTranslation>false</valueIsMainTranslation>
+      </translationData>
+      <translationData id="InvertedMouseButtons">
+         <translation>[**Missing**]</translation>
+         <valueIsMainTranslation>false</valueIsMainTranslation>
       </translationData>
       <translationData id="IslandClimate">
          <translation>Inselklima</translation>
@@ -289,6 +310,38 @@ Speichere und spiel diese oder teile Sie mit anderen.</toolTipTranslation>
       </translationData>
       <translationData id="Low">
          <translation>Niedrig</translation>
+      </translationData>
+      <translationData id="MapErrorMessage/CanNotBuildHere">
+         <translation>Kann nicht hier gebaut werden</translation>
+         <valueIsMainTranslation>false</valueIsMainTranslation>
+      </translationData>
+      <translationData id="MapErrorMessage/CanNotDestroy">
+         <translation>Kann nicht zerstört werden</translation>
+         <valueIsMainTranslation>false</valueIsMainTranslation>
+      </translationData>
+      <translationData id="MapErrorMessage/Missing">
+         <translation>Fehlende Sachen</translation>
+         <valueIsMainTranslation>false</valueIsMainTranslation>
+      </translationData>
+      <translationData id="MapErrorMessage/NoSpace">
+         <translation>Nicht genug Platz vorhanden</translation>
+         <valueIsMainTranslation>false</valueIsMainTranslation>
+      </translationData>
+      <translationData id="MapErrorMessage/NotEnoughMoney">
+         <translation>Nicht genug Geld</translation>
+         <valueIsMainTranslation>false</valueIsMainTranslation>
+      </translationData>
+      <translationData id="MapErrorMessage/NotEnoughResources">
+         <translation>Nicht genug Ressourcen </translation>
+         <valueIsMainTranslation>false</valueIsMainTranslation>
+      </translationData>
+      <translationData id="MapErrorMessage/NotInCity">
+         <translation>Nicht innerhalb der Stadt</translation>
+         <valueIsMainTranslation>false</valueIsMainTranslation>
+      </translationData>
+      <translationData id="MapErrorMessage/NotInRange">
+         <translation>Nicht in Reichweite</translation>
+         <valueIsMainTranslation>false</valueIsMainTranslation>
       </translationData>
       <translationData id="MasterSoundVolume">
          <translation>Gesamtlautstärke</translation>
@@ -340,7 +393,6 @@ Pass auf welche du nutzt, denn Sie können</toolTipTranslation>
       </translationData>
       <translationData id="NormalSpeed">
          <toolTipTranslation>Normal Spielgeschwindigkeit</toolTipTranslation>
-         <onlyHoverOver>true</onlyHoverOver>
       </translationData>
       <translationData id="Options">
          <translation>Einstellungen</translation>
@@ -355,11 +407,9 @@ Pass auf welche du nutzt, denn Sie können</toolTipTranslation>
       </translationData>
       <translationData id="Pause">
          <toolTipTranslation>Pausiere das Spiel</toolTipTranslation>
-         <onlyHoverOver>true</onlyHoverOver>
       </translationData>
       <translationData id="PauseMenu">
          <toolTipTranslation>Öffene das Pausenmenü</toolTipTranslation>
-         <onlyHoverOver>true</onlyHoverOver>
       </translationData>
       <translationData id="People">
          <translation>Einwohner</translation>
@@ -383,15 +433,12 @@ Pass auf welche du nutzt, denn Sie können</toolTipTranslation>
       </translationData>
       <translationData id="ProduceProgress">
          <toolTipTranslation>Herstellungsfortschritt</toolTipTranslation>
-         <onlyHoverOver>true</onlyHoverOver>
       </translationData>
       <translationData id="QuickLoad">
          <toolTipTranslation>Lade den letzten gespeicherten Spielstand.</toolTipTranslation>
-         <onlyHoverOver>true</onlyHoverOver>
       </translationData>
       <translationData id="QuickSave">
          <toolTipTranslation>Schnellspeicherung </toolTipTranslation>
-         <onlyHoverOver>true</onlyHoverOver>
       </translationData>
       <translationData id="QuitToMenu">
          <translation>Schließen zum Menü</translation>
@@ -435,7 +482,6 @@ Wichtig: alle müssen die selbe Konfiguration (mods) haben.</toolTipTranslation>
       </translationData>
       <translationData id="Sell">
          <toolTipTranslation>Verkaufe Gut</toolTipTranslation>
-         <onlyHoverOver>true</onlyHoverOver>
       </translationData>
       <translationData id="SendMoney">
          <translation>Schenke Geld</translation>
@@ -458,15 +504,12 @@ diese in Reichweite ist.</toolTipTranslation>
       </translationData>
       <translationData id="SleepStructure">
          <toolTipTranslation>Deaktiviere dieses Gebäude.</toolTipTranslation>
-         <onlyHoverOver>true</onlyHoverOver>
       </translationData>
       <translationData id="Slow">
          <toolTipTranslation>Langsam Spielgeschwindigkeit</toolTipTranslation>
-         <onlyHoverOver>true</onlyHoverOver>
       </translationData>
       <translationData id="Slowest">
          <toolTipTranslation>Langsamste Spielgeschwindigkeit</toolTipTranslation>
-         <onlyHoverOver>true</onlyHoverOver>
       </translationData>
       <translationData id="Sound">
          <translation>Ton</translation>
@@ -511,6 +554,11 @@ diese in Reichweite ist.</toolTipTranslation>
          <translation>Maximaler Schaden</translation>
          <toolTipTranslation>Wie viel Schaden dies maximal machen kann.</toolTipTranslation>
       </translationData>
+      <translationData id="StaticLanguageVariables/No">
+         <translation>Nein</translation>
+         <toolTipTranslation>Ablehnen</toolTipTranslation>
+         <valueIsMainTranslation>false</valueIsMainTranslation>
+      </translationData>
       <translationData id="StaticLanguageVariables/Off">
          <translation>Aus</translation>
       </translationData>
@@ -523,6 +571,11 @@ diese in Reichweite ist.</toolTipTranslation>
       <translationData id="StaticLanguageVariables/Pirate">
          <translation>Pirate</translation>
       </translationData>
+      <translationData id="StaticLanguageVariables/Price">
+         <translation>Kosten</translation>
+         <toolTipTranslation>Wieviel dies kostet.</toolTipTranslation>
+         <valueIsMainTranslation>false</valueIsMainTranslation>
+      </translationData>
       <translationData id="StaticLanguageVariables/Speed">
          <translation>Geschwindigkeit</translation>
          <toolTipTranslation>Wie schnell diese Einheit sich fortbewegen kann.</toolTipTranslation>
@@ -532,6 +585,11 @@ diese in Reichweite ist.</toolTipTranslation>
       </translationData>
       <translationData id="StaticLanguageVariables/World">
          <translation>Welt</translation>
+      </translationData>
+      <translationData id="StaticLanguageVariables/Yes">
+         <translation>Ja</translation>
+         <toolTipTranslation>Akzeptiere</toolTipTranslation>
+         <valueIsMainTranslation>false</valueIsMainTranslation>
       </translationData>
       <translationData id="TextureQuality">
          <translation>Texture Qualität</translation>

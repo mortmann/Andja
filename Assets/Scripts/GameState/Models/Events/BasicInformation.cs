@@ -11,13 +11,13 @@ namespace Andja.Model {
     public class BasicInformation {
         public InformationType Type;
         public Func<Vector2> GetPosition;
-        public string[] DescriptionValues;
-        public string[] TitleValues;
+        public object[] DescriptionValues;
+        public object[] TitleValues;
         TranslationData translation;
         public string SpriteName { get; internal set; }
 
         public BasicInformation(InformationType type, Func<Vector2> getPosition, 
-                                    string[] titleValues, string[] descriptionValues,
+                                    object[] titleValues, object[] descriptionValues,
                                     string spriteName) {
             Type = type;
             GetPosition = getPosition;
@@ -30,7 +30,10 @@ namespace Andja.Model {
                 return "MISSING Title";
             string text = translation.translation;
             for (int i = 0; i < TitleValues.Length; i++) {
-                text = text.Replace("$" + i, TitleValues[i]);
+                if(TitleValues[i] is string)
+                    text = text.Replace("$" + i, TitleValues[i].ToString());
+                else
+                    text = text.Replace("$" + i, UILanguageController.Instance.GetTranslation(TitleValues[i]));
             }
             return text;
         }
@@ -39,7 +42,10 @@ namespace Andja.Model {
                 return "MISSING Description";
             string text = translation.toolTipTranslation;
             for (int i = 0; i < DescriptionValues.Length; i++) {
-                text = text.Replace("$" + i, DescriptionValues[i]);
+                if (TitleValues[i] is string)
+                    text = text.Replace("$" + i, TitleValues[i].ToString());
+                else
+                    text = text.Replace("$" + i, UILanguageController.Instance.GetTranslation(TitleValues[i]));
             }
             return text;
         }
@@ -86,9 +92,8 @@ namespace Andja.Model {
                 one = two;
                 two = PlayerController.GetPlayer(status.PlayerOne);
             }
-            TranslationData td = UILanguageController.Instance.GetTranslationData(status.currentStatus);
-            string[] first = new string[] { td.translation };
-            string[] second = new string[] { one.Name, two.Name, td.translation };
+            object[] first = new object[] { status.currentStatus };
+            object[] second = new object[] { one.Name, two.Name, status.currentStatus };
             return new BasicInformation(InformationType.DiplomacyChange,
                 () => two.GetMainCityPosition(),
                 first,
@@ -98,7 +103,7 @@ namespace Andja.Model {
         }
 
         internal static BasicInformation CreatePraiseReceived(Player from) {
-            string[] first = new string[] { };
+            string[] first = new string[] { from.Name };
             string[] second = new string[] { from.Name };
             return new BasicInformation(InformationType.Praise,
                 () => from.GetMainCityPosition(),
@@ -109,7 +114,7 @@ namespace Andja.Model {
         }
 
         internal static BasicInformation CreateDenounceReceived(Player from) {
-            string[] first = new string[] { };
+            string[] first = new string[] { from.Name };
             string[] second = new string[] { from.Name };
             return new BasicInformation(InformationType.Denounce,
                 () => from.GetMainCityPosition(),
@@ -119,8 +124,8 @@ namespace Andja.Model {
                 );
         }
         internal static BasicInformation CreateMoneyReceived(Player from, int amount) {
-            string[] first = new string[] { amount.ToString() };
-            string[] second = new string[] { from.Name };
+            string[] first = new string[] { from.Name, amount.ToString() };
+            string[] second = new string[] { from.Name, amount.ToString() };
             return new BasicInformation(InformationType.Denounce,
                 () => from.GetMainCityPosition(),
                 first,
@@ -134,7 +139,7 @@ namespace Andja.Model {
         public Choice[] Choices;
         public Action OnClose;
         public ChoiceInformation(InformationType type, Func<Vector2> getPosition,
-                                    string[] titleValues, string[] descriptionValues,
+                                    object[] titleValues, object[] descriptionValues,
                                     string spriteName, Choice[] choices) 
                                 : base(type, getPosition,titleValues, descriptionValues,spriteName) {
             Choices = choices;
@@ -143,8 +148,8 @@ namespace Andja.Model {
             return new ChoiceInformation (
                 InformationType.DemandMoney, 
                 () => from.GetMainCityPosition(),
-                new string[] { amount.ToString() },
-                new string[] { from.Name },
+                new string[] { from.Name, amount.ToString() },
+                new string[] { from.Name, amount.ToString() },
                 InformationType.DemandMoney.ToString(),
                 new Choice[] {
                     new Choice(StaticLanguageVariables.Yes, yes),
@@ -156,7 +161,7 @@ namespace Andja.Model {
             return new ChoiceInformation(
                 InformationType.DiplomacyChange,
                 () => from.GetMainCityPosition(),
-                new string[] { },
+                new object[] { from.Name, status },
                 new string[] { from.Name },
                 status.ToString(),
                 new Choice[] {

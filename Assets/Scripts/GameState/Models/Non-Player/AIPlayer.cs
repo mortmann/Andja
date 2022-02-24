@@ -24,7 +24,9 @@ namespace Andja.Model {
         public List<PlayerCombatValue> combatValues;
         private PlayerCombatValue CombatValue;
         public ConcurrentDictionary<string, int> structureToCount;
-        
+        public List<PlayerDiplomaticAI> PlayerAttitude;
+
+
         /// <summary>
         /// 0 = either no Production
         /// Positive = has more Production than needed
@@ -122,7 +124,7 @@ namespace Andja.Model {
                 }
             }
         }
-        bool t2 = true;
+        bool t2 = false;
         internal void Loop() {
             while(AIController.ShutdownAI == false && isActive) {
                 if(AIController.ActiveAI == false || WorldController.Instance.IsPaused) {
@@ -151,6 +153,16 @@ namespace Andja.Model {
                                 ));
                     t2 = true;
                 }
+            }
+        }
+        /// <summary>
+        /// WARNING! THIS runs on the MAIN thread.
+        /// Do not make heavy calculations here.
+        /// </summary>
+        /// <param name="deltaTime"></param>
+        internal void Update(float deltaTime) {
+            foreach (var item in PlayerAttitude) {
+                item.Update(deltaTime);
             }
         }
 

@@ -143,6 +143,9 @@ namespace Andja.Controller {
                     op.Status = OperationStatus.Success;
                 }
             }
+            foreach (AIPlayer item in aiPlayers) {
+                item.Update(WorldController.Instance.DeltaTime);
+            }
         }
 
         private void OnDrawGizmos() {

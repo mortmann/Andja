@@ -554,8 +554,7 @@ namespace Andja.Controller {
                     pos++;
                 }
             }
-            int playerTwo = 0;
-            if (int.TryParse(parameters[pos], out playerTwo) == false) {
+            if (int.TryParse(parameters[pos], out int playerTwo) == false) {
                 return false;
             }
             if (playerOne < 0 || playerOne >= PlayerController.PlayerCount)
@@ -564,9 +563,9 @@ namespace Andja.Controller {
                 return false;
 
             if (PlayerController.Instance.ArePlayersAtWar(playerOne, playerTwo) == false)
-                PlayerController.Instance.ChangeDiplomaticStanding(playerOne, playerTwo, DiplomacyType.War);
+                PlayerController.Instance.ChangeDiplomaticStanding(playerOne, playerTwo, DiplomacyType.War, true);
             else
-                PlayerController.Instance.ChangeDiplomaticStanding(playerOne, playerTwo, DiplomacyType.Neutral);
+                PlayerController.Instance.ChangeDiplomaticStanding(playerOne, playerTwo, DiplomacyType.Neutral, true);
             return true;
         }
 

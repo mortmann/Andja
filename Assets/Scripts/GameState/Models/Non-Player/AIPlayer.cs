@@ -3,6 +3,7 @@ using Andja.Controller;
 using Andja.Model.Data;
 using Andja.Pathfinding;
 using Andja.Utility;
+using Newtonsoft.Json;
 using Priority_Queue;
 using System;
 using System.Collections.Concurrent;
@@ -12,10 +13,12 @@ using UnityEngine;
 
 namespace Andja.Model {
 
+    [JsonObject(MemberSerialization.OptIn)]
     public class AIPlayer {
+
         public bool isActive;
-        public int PlayerNumber => player.Number;
-        public Player player;
+        public int PlayerNumber => Player.Number;
+        public Player Player;
         public List<Fertility> neededFertilities;
         public List<string> neededResources;
         public List<Need> newNeeds;
@@ -24,7 +27,7 @@ namespace Andja.Model {
         public List<PlayerCombatValue> combatValues;
         private PlayerCombatValue CombatValue;
         public ConcurrentDictionary<string, int> structureToCount;
-        public List<PlayerDiplomaticAI> PlayerAttitude;
+        [JsonPropertyAttribute] public Dictionary<int, PlayerDiplomaticAI> PlayerAttitude;
 
 
         /// <summary>
@@ -42,7 +45,7 @@ namespace Andja.Model {
         Unlocks nextUnlocks;
         Dictionary<City, CityGrid> cityToGrid = new Dictionary<City, CityGrid>();
         public AIPlayer(Player player) {
-            this.player = player;
+            this.Player = player;
             neededFertilities = new List<Fertility>();
             neededResources = new List<string>();
             newNeeds = new List<Need>();
@@ -79,15 +82,20 @@ namespace Andja.Model {
         }
 
         public AIPlayer(Player player, bool dummy) {
-            this.player = player;
+            this.Player = player;
             CalculateNeeded();
             if (dummy)
                 return;
             isActive = player.IsHuman == false;
+            foreach (Player item in PlayerController.Instance.GetPlayers()) {
+                if (item == player)
+                    continue;
+                PlayerAttitude.Add(item.Number, new PlayerDiplomaticAI(item));
+            }
         }
 
         private void CalculateNeeded() {
-            var data = AIController.PerPopulationLevelDatas[player.CurrentPopulationLevel];
+            var data = AIController.PerPopulationLevelDatas[Player.CurrentPopulationLevel];
             neededFertilities = new List<Fertility>(data.requiredFertilities);
             neededResources = new List<string>(data.newResources);
         }
@@ -162,33 +170,35 @@ namespace Andja.Model {
         /// <param name="deltaTime"></param>
         internal void Update(float deltaTime) {
             foreach (var item in PlayerAttitude) {
-                item.Update(deltaTime);
+                item.Value.Update(deltaTime);
             }
         }
 
         private void UnlocksFunction() {
             if (nextUnlocks == null)
                 return;
-            if(nextUnlocks.populationLevel > player.MaxPopulationCount) 
+            if(nextUnlocks.populationLevel > Player.MaxPopulationCount) 
                 return;
-            if(nextUnlocks.peopleCount > player.MaxPopulationCount)
+            if(nextUnlocks.peopleCount > Player.MaxPopulationCount)
                 return;
-            nextUnlocks = PrototypController.Instance.GetNextUnlocks(player.MaxPopulationCount, player.MaxPopulationCount);
+            nextUnlocks = PrototypController.Instance.GetNextUnlocks(Player.MaxPopulationCount, Player.MaxPopulationCount);
         }
+
+
         bool t;
         private void BuildBuildings() {
-            if (player.Cities.Count == 0) {
+            if (Player.Cities.Count == 0) {
                 return;
             }
             if(t==false) {
-                BuildMarketStructure(player.Cities[0]);
+                BuildMarketStructure(Player.Cities[0]);
                 t = true;
             }
             if(toBuildStructures.Count > 0) {
                 PlaceStructure ps = toBuildStructures.Dequeue();
                 //TODO:this could technically not be in the city so we would need to get it other way
                 Structure s = PrototypController.Instance.GetStructure(ps.ID);
-                if(ps.City.HasEnoughOfItems(s.BuildingItems) == false || player.HasEnoughMoney(s.BuildCost) == false) {
+                if(ps.City.HasEnoughOfItems(s.BuildingItems) == false || Player.HasEnoughMoney(s.BuildCost) == false) {
                     toBuildStructures.Enqueue(ps);
                     return;
                 }
@@ -213,7 +223,7 @@ namespace Andja.Model {
                 BuildItemStructure(itemPriority.First.item);
                 return;
             }
-            foreach (string need in player.UnlockedStructureNeeds[player.CurrentPopulationLevel]) {
+            foreach (string need in Player.UnlockedStructureNeeds[Player.CurrentPopulationLevel]) {
                 string structureID = DecideNeedStructure(need);
                 if(structureToCount.ContainsKey(structureID)) {
                     //we have on already so we need to check if it is enough...
@@ -235,11 +245,32 @@ namespace Andja.Model {
         }
 
         internal void ReceiveDemandMoney(Player demands, int money) {
-            throw new NotImplementedException();
+            if(combatValues.Find(x=>x.Player == demands).EndScore>CombatValue.EndScore * 1.15f) {
+                PlayerController.Instance.SendMoneyFromTo(Player, demands, money);
+                PlayerAttitude[demands.Number].GotDemandMoney(true);
+            }
+            else {
+                PlayerAttitude[demands.Number].GotDemandMoney(false);
+            }
         }
 
         internal void ReceiveDenounce(Player from) {
-            throw new NotImplementedException();
+            PlayerAttitude[from.Number].GotDenounce();
+        }
+        internal void ReceivedMoney(Player sendPlayer, int amount) {
+            PlayerAttitude[sendPlayer.Number].GotMoney(amount, sendPlayer.TreasuryBalance, sendPlayer.TreasuryChange);
+        }
+        internal void ReceivePraise(Player from) {
+            PlayerAttitude[from.Number].GotPraise();
+        }
+
+        internal bool AskDiplomaticIncrease(Player other, DiplomaticStatus ds) {
+            if(ds.currentStatus == DiplomacyType.War) {
+                if(combatValues.Find(x=>x.Player == other).EndScore < CombatValue.EndScore) {
+                    return false;
+                }
+            }
+            return PlayerAttitude[other.Number].AskDiplomaticIncrease(ds);
         }
 
         private string DecideNeedStructure(string need) {
@@ -250,7 +281,7 @@ namespace Andja.Model {
             }
             if (structures.Length == 1)
                 return structures[0].ID;
-            return structures.Where(x => player.HasStructureUnlocked(x.ID))
+            return structures.Where(x => Player.HasStructureUnlocked(x.ID))
                    .OrderBy(x => x.AICalculatedCost() / x.NeedStructureData.MaxHomesInRange)
                    .First().ID;
         }
@@ -259,7 +290,7 @@ namespace Andja.Model {
             //TODO: rewrite this all 
             //TODO: choose the better one somehow...
             //TODO: road placement for this
-            City city = player.Cities.MaxBy(x => x.PopulationCount);
+            City city = Player.Cities.MaxBy(x => x.PopulationCount);
             var cityValues = AIController._cityToCurrentSpaceValueTiles[city];
             var tempStructures = city.Structures.ToList();
             var poplevel = PrototypController.Instance.GetPopulationLevelPrototypDataForLevel(0);
@@ -271,7 +302,7 @@ namespace Andja.Model {
                 .Where(x=> PrototypController.Instance.BuildableHomeStructure.CanBuildOnSpot(
                         PrototypController.Instance.BuildableHomeStructure.GetBuildingTiles(x)
                     ));
-            tiles = tiles.Where(x => x.City.PlayerNumber == player.Number);
+            tiles = tiles.Where(x => x.City.PlayerNumber == Player.Number);
             var temp = tiles.GroupBy(i => i);
             var t = temp.OrderByDescending(grp => grp.Count()).Select(x=>x.Key);
             var tempt = t.First();
@@ -279,7 +310,7 @@ namespace Andja.Model {
                 var distanceOrdered = tiles.OrderBy(x => Vector2.Distance(x.Vector2, ns[0].Center));
                 foreach(Tile nt in distanceOrdered) {
                     if (PrototypController.Instance.BuildableHomeStructure.GetBuildingTiles(nt)
-                        .Exists(x => x.City.PlayerNumber != player.Number) == false) {
+                        .Exists(x => x.City.PlayerNumber != Player.Number) == false) {
                         tempt = nt;
                         break;
                     }
@@ -292,10 +323,6 @@ namespace Andja.Model {
                 City = city,
             });
             
-        }
-
-        internal void ReceivedMoney(Player sendPlayer, int amount) {
-            throw new NotImplementedException();
         }
 
         private void BuildMarketStructure(City city, Tile[] newCityTiles = null) {
@@ -332,7 +359,7 @@ namespace Andja.Model {
         }
 
         private void BuildNeedStructure(string structureID) {
-            City city = player.Cities.MaxBy(x => x.PopulationCount);
+            City city = Player.Cities.MaxBy(x => x.PopulationCount);
             CityGrid grid = cityToGrid[city];
             Block block = grid.ValidBlocks.MaxBy(x => x.Value);
             var structure = PrototypController.Instance.GetStructureCopy(structureID);
@@ -349,8 +376,8 @@ namespace Andja.Model {
         }
 
         private void BuildItemStructure(Item item) {
-            var produces = PrototypController.Instance.ItemIDToProduce[item.ID].Where(x => player.HasStructureUnlocked(x.ProducerStructure.ID));
-            var sorted = produces.SelectMany(x => x.SupplyChains.Where(y => y.IsValid && y.IsUnlocked(player)));
+            var produces = PrototypController.Instance.ItemIDToProduce[item.ID].Where(x => Player.HasStructureUnlocked(x.ProducerStructure.ID));
+            var sorted = produces.SelectMany(x => x.SupplyChains.Where(y => y.IsValid && y.IsUnlocked(Player)));
             if (sorted.Count() == 0) {
                 Debug.LogWarning("AI cannot find a valid SupplyChain for " + item.ID + "! Wanted behaviour?");
                 return;
@@ -360,7 +387,7 @@ namespace Andja.Model {
             if (currentlySelected.cost.requiredFertilites != null && currentlySelected.cost.requiredFertilites.Count > 0) {
                 IEnumerable<Fertility> missing = null;
                 foreach (SupplyChain p in sorted) {
-                    var missingFertilities = p.cost.requiredFertilites.Except(player.GetIslandList().SelectMany(x => x.Fertilities).ToList());
+                    var missingFertilities = p.cost.requiredFertilites.Except(Player.GetIslandList().SelectMany(x => x.Fertilities).ToList());
                     if(missingFertilities.Count() == 0) {
                         currentlySelected = p;
                         break;
@@ -407,7 +434,7 @@ namespace Andja.Model {
                     if (os.ForMarketplace == false) {
                         //TODO: only build roads IF it is needed when the os is not in range of intake 
                     }
-                    City c = bs.BuildTile.Island.FindCityByPlayer(player.Number);
+                    City c = bs.BuildTile.Island.FindCityByPlayer(Player.Number);
                     var marketStructures = c.Structures.Where(x => x is MarketStructure && x.RangeTiles.Intersect(os.Tiles).Any());
                     var routes = marketStructures.SelectMany(x => x.GetRoutes()).Distinct();
                     List<Tile> tiles = marketStructures.SelectMany(y=>y.Tiles.Where(x=>x.IsGenericBuildType())).ToList();
@@ -449,6 +476,14 @@ namespace Andja.Model {
             }
         }
 
+        internal void DecreaseDiplomaticStanding(Player player, DiplomaticStatus status) {
+            PlayerAttitude[player.Number].DecreasedDiplomaticStanding(status);
+        }
+
+        internal void ForcedIncreasedDiplomaticStanding(Player player, DiplomacyType changeTo) {
+            PlayerAttitude[player.Number].ForceDiplomaticIncrease(changeTo);
+        }
+
         internal void OperationFailure(Operation op) {
             Debug.LogWarning("Operation Failure: " + op.GetType());
             if (op is BuildStructureOperation bso)
@@ -458,7 +493,7 @@ namespace Andja.Model {
 
         private PlaceStructure? FindStructurePlace(string key) {
             Structure s = PrototypController.Instance.GetStructureCopy(key);
-            IEnumerable<Island> isls = player.GetIslandList();
+            IEnumerable<Island> isls = Player.GetIslandList();
             if (s is FarmStructure fs && fs.Growable.Fertility != null) {
                 isls = isls.Where(x => x.Fertilities.Contains(fs.Growable.Fertility));
             } else 
@@ -467,7 +502,7 @@ namespace Andja.Model {
             }
             isls.OrderBy(x => islandScores.Find(y => y.Island == x).SizeScore);
             foreach (var island in isls) {
-                City city = island.FindCityByPlayer(player.Number);
+                City city = island.FindCityByPlayer(Player.Number);
                 var cityValues = AIController._cityToCurrentSpaceValueTiles[city];
                 List<TileValue> tiles;
                 lock (cityValues) {
@@ -491,7 +526,7 @@ namespace Andja.Model {
                     foreach(var t in tiles.OrderBy(x => x.MaxValue)) {
                         for (int i = 0; i < 4; i++) {
                             List<Tile> buildtiles = s.GetBuildingTiles(t.tile, false, false);
-                            if (buildtiles.Exists(x => x.City?.PlayerNumber != player.Number))
+                            if (buildtiles.Exists(x => x.City?.PlayerNumber != Player.Number))
                                 continue;
                             if (s.CanBuildOnSpot(buildtiles)) {
                                 return new PlaceStructure {
@@ -533,11 +568,11 @@ namespace Andja.Model {
         }
         bool startFunction = false;
         private void GameStartFunction() {
-            if (player.Cities.Count == 0) {
-                Ship ship = player.Ships
+            if (Player.Cities.Count == 0) {
+                Ship ship = Player.Ships
                                 .First(s => s.inventory.HasEnoughOfItems(PrototypController.Instance.FirstLevelWarehouse.BuildingItems));
                 if (ship == null) {
-                    Debug.LogError("AI does not have enough resources to start a city! -- Stopping AI Player " + player.Name);
+                    Debug.LogError("AI does not have enough resources to start a city! -- Stopping AI Player " + Player.Name);
                     isActive = false;
                     return;
                 }
@@ -602,14 +637,7 @@ namespace Andja.Model {
 
         private void OnStructureDestroy(Structure structure, IWarfare destroyer) {
         }
-        internal void ReceivePraise(Player from) {
-            throw new NotImplementedException();
-        }
 
-        internal bool AskDiplomaticIncrease(Player other) {
-            Debug.LogWarning("Not implemented yet. Accepting always.");
-            return true;
-        }
         public Tuple<Tile, int> DecideIsland(bool buildWarehouseDirectly = false, bool startIslands = false) {
             //TODO:set here desires
             CalculateIslandScores();
@@ -658,7 +686,7 @@ namespace Andja.Model {
                 }
                 index++;
             }
-            Debug.LogError("AI Player " + player.Name + " did not find any possible build location for warehouse. Please report seed/save.");
+            Debug.LogError("AI Player " + Player.Name + " did not find any possible build location for warehouse. Please report seed/save.");
             return null;
         }
 
@@ -726,7 +754,7 @@ namespace Andja.Model {
                 score.SizeScore /= averageSize;
 
                 List<Fertility> ordered = PrototypController.Instance.orderUnlockFertilities;
-                int indexLastUnlocked = ordered.FindLastIndex(x => x.IsUnlocked(player));
+                int indexLastUnlocked = ordered.FindLastIndex(x => x.IsUnlocked(Player));
                 if (indexLastUnlocked < 0)
                     indexLastUnlocked = 0;
                 //Calculate Fertility Score
@@ -735,12 +763,12 @@ namespace Andja.Model {
                     if (neededFertilities.Contains(fertility)) {
                         score.FertilityScore += fertilitytoExisting[fertility];
                     }
-                    if (fertility.IsUnlocked(player) == false)
+                    if (fertility.IsUnlocked(Player) == false)
                         score.FertilityScore += 1 - (ordered.IndexOf(fertility) - indexLastUnlocked) / ordered.Count;
                     // its always nice to have -- add how rare it is in the world
                     score.FertilityScore += fertilitytoExisting[fertility];
                 }
-                List<Island> Islands = new List<Island>(player.GetIslandList());
+                List<Island> Islands = new List<Island>(Player.GetIslandList());
                 //Distance Score is either how far it is from other islands OR how far from center
                 if (Islands.Count > 0) {
                     float distance = 0;
@@ -787,6 +815,18 @@ namespace Andja.Model {
                 combatValues.Add(value);
             }
         }
+        internal void Load() {
+            if(PlayerAttitude == null) {
+                foreach (Player item in PlayerController.Instance.GetPlayers()) {
+                    if (item == Player)
+                        continue;
+                    PlayerAttitude.Add(item.Number, new PlayerDiplomaticAI(item));
+                }
+            }
+            foreach (var item in PlayerAttitude) {
+                item.Value.Player = PlayerController.GetPlayer(item.Key);
+            }
+        }
     }
     public struct PlaceStructure {
         public Tile buildTile;
@@ -814,15 +854,15 @@ namespace Andja.Model {
         }
 
         public override void CalculatePriority(AIPlayer player) {
-            if (player.player.MaxPopulationLevel < item.Data.UnlockLevel) {
+            if (player.Player.MaxPopulationLevel < item.Data.UnlockLevel) {
                 //Coming up when level up. Not really important so it will max -1
-                priority = player.player.MaxPopulationLevel - item.Data.UnlockLevel;
+                priority = player.Player.MaxPopulationLevel - item.Data.UnlockLevel;
                 return;
             }
-            if (player.player.MaxPopulationLevel == item.Data.UnlockLevel) {
+            if (player.Player.MaxPopulationLevel == item.Data.UnlockLevel) {
                 //Coming up SOON but CANT build it so it will range between -1 and 0
-                if (player.player.MaxPopulationCounts[item.Data.UnlockLevel] < item.Data.UnlockPopulationCount) {
-                    priority = (player.player.MaxPopulationCounts[item.Data.UnlockLevel] - item.Data.UnlockPopulationCount)
+                if (player.Player.MaxPopulationCounts[item.Data.UnlockLevel] < item.Data.UnlockPopulationCount) {
+                    priority = (player.Player.MaxPopulationCounts[item.Data.UnlockLevel] - item.Data.UnlockPopulationCount)
                                         / AIController.PerPopulationLevelDatas[item.Data.UnlockLevel].atleastRequiredPeople;
                     return;
                 }
@@ -832,16 +872,17 @@ namespace Andja.Model {
                     priority = int.MinValue;
                     return;
                 }
-                priority = PrototypController.Instance.recommandedBuildSupplyChains[item.ID][player.player.CurrentPopulationLevel];
+                priority = PrototypController.Instance.recommandedBuildSupplyChains[item.ID][player.Player.CurrentPopulationLevel];
                 priority -= player.itemToProducePerMinuteChange[item.ID];
                 return;
             }
             if (item.Type == ItemType.Luxury) {
-                priority = player.player.Cities.Sum(x => x.GetPopulationItemUsage(item));
+                priority = player.Player.Cities.Sum(x => x.GetPopulationItemUsage(item));
                 priority -= player.itemToProducePerMinuteChange[item.ID];
                 return;
             }
             //int currentPopulation = player.player.GetCurrentPopulation(item.)
         }
+
     }
 }

@@ -47,6 +47,7 @@ namespace Andja.Model {
         private int _treasuryChange;
         public bool IsHuman => _IsHuman;
         public string Name => _name ?? "Number " + Number; //FOR NOW
+        [JsonPropertyAttribute] 
         public AIPlayer AI;
         /// <summary>
         /// How the Balance CHANGES foreach Tick that happens
@@ -216,6 +217,7 @@ namespace Andja.Model {
                 OnUnitCreated(item);
             }
             CalculateBalance();
+            AI?.Load();
         }
         //TODO: make this not so cpu heavy
         internal IReadOnlyList<int> GetUnitCityEnterable() {

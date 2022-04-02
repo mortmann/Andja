@@ -199,7 +199,7 @@ namespace Andja.Model {
             Money = money;
         }
         public override bool Do() {
-            PlayerController.Instance.TryToDemandMoney(Player.player, Target, Money);
+            PlayerController.Instance.TryToDemandMoney(Player.Player, Target, Money);
             return true;
         }
     }
@@ -208,7 +208,7 @@ namespace Andja.Model {
 
         }
         public override bool Do() {
-            PlayerController.Instance.IncreaseDiplomaticStanding(Player.player, Target);
+            PlayerController.Instance.IncreaseDiplomaticStanding(Player.Player, Target);
             return true;
         }
     }
@@ -217,7 +217,7 @@ namespace Andja.Model {
 
         }
         public override bool Do() {
-            PlayerController.Instance.DecreaseDiplomaticStanding(Player.player, Target);
+            PlayerController.Instance.DecreaseDiplomaticStanding(Player.Player, Target);
             return true;
         }
     }
@@ -226,7 +226,7 @@ namespace Andja.Model {
 
         }
         public override bool Do() {
-            PlayerController.Instance.PraisePlayer(Player.player, Target);
+            PlayerController.Instance.PraisePlayer(Player.Player, Target);
             return true;
         }
     }

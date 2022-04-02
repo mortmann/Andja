@@ -1,23 +1,31 @@
 using Andja.Controller;
 using Andja.Model;
-using System.Collections;
-using System.Collections.Generic;
+using Newtonsoft.Json;
+using System;
 using UnityEngine;
 
 namespace Andja.AI {
 
+    [JsonObject(MemberSerialization.OptIn)]
     public class PlayerDiplomaticAI {
+        private const float TRADEAGREEMEANT_STANDING_REQUIRED = 1.5f;
+        private const float ALLIANCE_STANDING_REQUIRED = 2f;
         public readonly float TIME_PRAISE_COOLDOWN = 60 * 15;
         public readonly float GIVEN_MONEY_DECAY = 1f;
         public Player Player;
         //Temporary
-        private float _standing;
+        [JsonPropertyAttribute] private float _standing;
         public float Standing => _standing;
 
-        private float totalMoneyGiven;
-        private float givenMoneyRecently;
-        private float timeSinceLastPraise;
+        [JsonPropertyAttribute] private float totalMoneyGiven;
+        [JsonPropertyAttribute] private float givenMoneyRecently;
+        [JsonPropertyAttribute] private float timeSinceLastPraise;
 
+        public PlayerDiplomaticAI(Player player) {
+            Player = player;
+        }
+        public PlayerDiplomaticAI() {
+        }
         public void GotPraise() {
             timeSinceLastPraise = 0;
             //TODO: maybe sliding style
@@ -34,35 +42,18 @@ namespace Andja.AI {
                 );
         }
 
-        public bool AcceptStatus(DiplomaticStatus status) {
-            switch (status.currentStatus) {
-                case DiplomacyType.War:
-                    //_standing = -1000000;
-                    break;
-                case DiplomacyType.Neutral:
-                    //TODO: check combat value comparison here
-                    break;
-                case DiplomacyType.TradeAgreement:
-                    return _standing > 1;
-                case DiplomacyType.Alliance:
-                    return _standing > 2;
-            }
-            return false;
-        }
-
         public void DecreasedDiplomaticStanding(DiplomaticStatus status) {
             switch (status.currentStatus) {
                 case DiplomacyType.War:
-                    _standing = -1000000;
+                    _standing = -10;
                     break;
                 case DiplomacyType.Neutral:
-                    _standing = 0;
+                    _standing -= 1;
                     break;
                 case DiplomacyType.TradeAgreement:
-                    _standing += 1;
+                    _standing -= 2;
                     break;
                 case DiplomacyType.Alliance:
-                    _standing += 10;
                     break;
             }
         }
@@ -72,7 +63,52 @@ namespace Andja.AI {
             givenMoneyRecently -= deltaTime * GIVEN_MONEY_DECAY;
         }
 
+        internal void GotDenounce() {
+            _standing -= 1f;
+        }
 
+        internal void GotDemandMoney(bool paid) {
+            if(paid)
+                _standing -= 1.3f;
+            else
+                _standing -= 0.3f;
+        }
+
+        internal bool AskDiplomaticIncrease(DiplomaticStatus status) {
+            switch (status.currentStatus) {
+                case DiplomacyType.War:
+                    //Depends on different factors...
+                    //like who started, who is stronger, what the goals may be
+                    //for now gets handled in aiplayer directly
+                    break;
+                case DiplomacyType.Neutral:
+                    return _standing > TRADEAGREEMEANT_STANDING_REQUIRED;
+                case DiplomacyType.TradeAgreement:
+                    return _standing > ALLIANCE_STANDING_REQUIRED;
+                case DiplomacyType.Alliance:
+                    //There is nothing after alliance.
+                    return _standing > 100f;
+            }
+            return false;
+        }
+
+        internal void ForceDiplomaticIncrease(DiplomacyType changeTo) {
+            switch (changeTo) {
+                case DiplomacyType.War:
+                    _standing = -10;
+                    break;
+                case DiplomacyType.Neutral:
+                    _standing = 0;
+                    break;
+                case DiplomacyType.TradeAgreement:
+                    _standing = TRADEAGREEMEANT_STANDING_REQUIRED;
+                    break;
+                case DiplomacyType.Alliance:
+                    //There is nothing after alliance.
+                    _standing = ALLIANCE_STANDING_REQUIRED;
+                    break;
+            }
+        }
     }
 
 }

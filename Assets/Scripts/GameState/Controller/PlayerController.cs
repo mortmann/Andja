@@ -203,8 +203,7 @@ namespace Andja.Controller {
         internal void TryToDemandMoney(Player demands, Player target, int amount) {
             if (target.Number == PlayerController.currentPlayerNumber) {
                 EventUIManager.Instance.Show(ChoiceInformation.CreateMoneyDemand(demands, amount, () => {
-                    demands.AddToTreasure(amount);
-                    target.ReduceTreasure(amount);
+                    SendMoneyFromTo(target, demands, amount);
                 }, null));
             }
             if (target.IsHuman == false) {
@@ -230,7 +229,7 @@ namespace Andja.Controller {
                 }, null));
             }
             else {
-                if(playerTwo.AI.AskDiplomaticIncrease(playerOne)) {
+                if(playerTwo.AI.AskDiplomaticIncrease(playerOne, ds)) {
                     ChangeDiplomaticStanding(playerOne.Number, playerTwo.Number, (DiplomacyType)((int)ds.currentStatus + 1));
                 }
             }
@@ -271,6 +270,7 @@ namespace Andja.Controller {
                     }
                 }
             }
+
         }
         /// <summary>
         /// sendPlayer sends money. receivingPlayer cannot decline.
@@ -440,18 +440,30 @@ namespace Andja.Controller {
         /// <summary>
         /// Immediate change no checks here.
         /// </summary>
-        /// <param name="playerOne"></param>
-        /// <param name="playerTwo"></param>
+        /// <param name="playerNROne"></param>
+        /// <param name="playerNRTwo"></param>
         /// <param name="changeTo"></param>
-        public void ChangeDiplomaticStanding(int playerOne, int playerTwo, DiplomacyType changeTo) {
-            if (playerOne == playerTwo) {
+        public void ChangeDiplomaticStanding(int playerNROne, int playerNRTwo, DiplomacyType changeTo, bool force = false) {
+            if (playerNROne == playerNRTwo) {
                 return;
             }
-            DiplomaticStatus ds = GetDiplomaticStatus(playerOne, playerTwo);
+            DiplomaticStatus ds = GetDiplomaticStatus(playerNROne, playerNRTwo);
             if (ds.currentStatus == changeTo) {
                 return;
             }
-            cbDiplomaticChangePlayer?.Invoke(GetPlayer(playerOne), GetPlayer(playerTwo), ds.currentStatus, changeTo);
+            Player playerOne = GetPlayer(playerNROne);
+            Player playerTwo = GetPlayer(playerNRTwo);
+            if (ds.currentStatus > changeTo) {
+                //Should this before forced by the game -- ai needs to know
+                if(force) {
+                    playerOne.AI?.ForcedIncreasedDiplomaticStanding(playerTwo, changeTo);
+                    playerTwo.AI?.ForcedIncreasedDiplomaticStanding(playerOne, changeTo);
+                }
+            } else {
+                playerOne.AI?.DecreaseDiplomaticStanding(playerTwo, ds);
+                playerTwo.AI?.DecreaseDiplomaticStanding(playerOne, ds);
+            }
+            cbDiplomaticChangePlayer?.Invoke(GetPlayer(playerNROne), GetPlayer(playerNRTwo), ds.currentStatus, changeTo);
             ds.currentStatus = changeTo;
             EventUIManager.Instance.Show(BasicInformation.DiplomacyChanged(ds));
         }

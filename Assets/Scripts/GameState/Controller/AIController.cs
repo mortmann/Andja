@@ -97,7 +97,7 @@ namespace Andja.Controller {
             threads = new Thread[aiPlayers.Count];
             for (int i = 0; i < aiPlayers.Count; i++) {
                 AIPlayer ai = aiPlayers[i];
-                threads[i] = new Thread(() => { ai.Loop(); Debug.Log("Shutdown AI " + ai.player.Name); });
+                threads[i] = new Thread(() => { ai.Loop(); Debug.Log("Shutdown AI " + ai.Player.Name); });
                 threads[i].Start();
             }
         }

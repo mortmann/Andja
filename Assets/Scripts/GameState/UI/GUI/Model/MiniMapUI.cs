@@ -10,16 +10,9 @@ namespace Andja.UI.Model {
         private Vector2 scale;
         private bool isOverMap;
         private Vector2 thisPosition;
-
         private void Start() {
             rectTransform = GetComponent<RectTransform>();
-            float canvasScaleWidth = Screen.width / GetComponentInParent<UnityEngine.UI.CanvasScaler>().referenceResolution.x;
-            float canvasScaleHeight = Screen.height / GetComponentInParent<UnityEngine.UI.CanvasScaler>().referenceResolution.y;
-            thisPosition = rectTransform.anchoredPosition * new Vector2(canvasScaleWidth, canvasScaleHeight);
-            scale = new Vector2 (
-                ((float)World.Current.Width) / (canvasScaleWidth * rectTransform.sizeDelta.x * rectTransform.localScale.x),
-                ((float)World.Current.Height) / (canvasScaleHeight * rectTransform.sizeDelta.y * rectTransform.localScale.y)
-            );
+            CanvasScale.RegisterOnResolutionChange(OnResolutionChange);
         }
 
         private void Move(Vector2 pressPosition) {
@@ -42,6 +35,12 @@ namespace Andja.UI.Model {
             isOverMap = false;
         }
 
-
+        public void OnResolutionChange() {
+            thisPosition = rectTransform.anchoredPosition * new Vector2(CanvasScale.Width, CanvasScale.Height);
+            scale = new Vector2(
+                    ((float)World.Current.Width) / (CanvasScale.Width * rectTransform.sizeDelta.x * rectTransform.localScale.x),
+                    ((float)World.Current.Height) / (CanvasScale.Height * rectTransform.sizeDelta.y * rectTransform.localScale.y)
+                );
+        }
     }
 }

@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityEngine.UI;
 
 namespace Andja.UI.Menu {
@@ -8,10 +9,12 @@ namespace Andja.UI.Menu {
         public bool TextIsNumber;
         private InputField inputField;
         private Toggle toggle;
+        Dropdown dropdown;
 
         private void Start() {
             inputField = GetComponentInChildren<InputField>();
             toggle = GetComponentInChildren<Toggle>();
+            dropdown = GetComponentInChildren<Dropdown>();
             if (Setting == NewGameSetting.Seed) {
                 inputField.text = UnityEngine.Random.Range(0, int.MaxValue) + "";
             }
@@ -22,6 +25,18 @@ namespace Andja.UI.Menu {
             if (toggle != null) {
                 toggle.onValueChanged.AddListener(ToggleChange);
                 ToggleChange(toggle.isOn); // mainly for testing -- will set it to what the default text is
+            }
+            if (dropdown != null) {
+                dropdown.onValueChanged.AddListener(DropdownChange);
+                DropdownChange(dropdown.value);
+            }
+        }
+
+        private void DropdownChange(int value) {
+            switch (Setting) {
+                case NewGameSetting.FogOfWar:
+                    NewGameSettings.SetFogOfWar((Controller.FogOfWarStyle)value);
+                    break;
             }
         }
 

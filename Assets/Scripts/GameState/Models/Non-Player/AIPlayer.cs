@@ -79,6 +79,12 @@ namespace Andja.Model {
             isActive = player.IsHuman == false;
             BuildPathAgent = new BuildPathAgent(player.Number);
             nextUnlocks = PrototypController.Instance.GetNextUnlocks(player.MaxPopulationLevel, player.MaxPopulationCounts[player.MaxPopulationLevel]);
+            PlayerAttitude = new Dictionary<int, PlayerDiplomaticAI>();
+            foreach (Player item in PlayerController.Instance.GetPlayers()) {
+                if (item == player)
+                    continue;
+                PlayerAttitude.Add(item.Number, new PlayerDiplomaticAI(item));
+            }
         }
 
         public AIPlayer(Player player, bool dummy) {
@@ -87,6 +93,7 @@ namespace Andja.Model {
             if (dummy)
                 return;
             isActive = player.IsHuman == false;
+            PlayerAttitude = new Dictionary<int, PlayerDiplomaticAI>();
             foreach (Player item in PlayerController.Instance.GetPlayers()) {
                 if (item == player)
                     continue;
@@ -633,9 +640,11 @@ namespace Andja.Model {
         }
 
         private void OnOwnerChange(Structure str, City oldCity, City newCity) {
+
         }
 
         private void OnStructureDestroy(Structure structure, IWarfare destroyer) {
+
         }
 
         public Tuple<Tile, int> DecideIsland(bool buildWarehouseDirectly = false, bool startIslands = false) {

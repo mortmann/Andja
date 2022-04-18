@@ -47,8 +47,7 @@ namespace Andja.Model {
         private int _treasuryChange;
         public bool IsHuman => _IsHuman;
         public string Name => _name ?? "Number " + Number; //FOR NOW
-        [JsonPropertyAttribute] 
-        public AIPlayer AI;
+        
         /// <summary>
         /// How the Balance CHANGES foreach Tick that happens
         /// </summary>
@@ -110,7 +109,8 @@ namespace Andja.Model {
 
         [JsonPropertyAttribute]
         protected bool _hasLost;
-
+        [JsonPropertyAttribute]
+        public AIPlayer AI;
         public int MaxPopulationLevel {
             get { return _maxPopulationLevel; }
             set {

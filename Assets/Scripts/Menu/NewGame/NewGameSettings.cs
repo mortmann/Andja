@@ -1,8 +1,9 @@
-﻿using UnityEngine;
+﻿using Andja.Controller;
+using UnityEngine;
 
 namespace Andja.UI.Menu {
 
-    public enum NewGameSetting { Seed, Width, Height, Pirate, Fire }
+    public enum NewGameSetting { Seed, Width, Height, Pirate, Fire, FogOfWar }
 
     public class NewGameSettings {
 
@@ -21,5 +22,9 @@ namespace Andja.UI.Menu {
         public static void SetPirate(bool value) {
             GameData.pirates = value;
         }
+        public static void SetFogOfWar(FogOfWarStyle mode) {
+            GameData.FogOfWarStyle = mode;
+        }
+
     }
 }

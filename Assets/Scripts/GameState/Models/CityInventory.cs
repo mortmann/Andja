@@ -40,12 +40,14 @@ namespace Andja.Model {
             return item.ID;
         }
 
-        public override int GetTotalAmountFor(Item item) {
-            return GetAmountForItem(item);
+        public override int GetAmountFor(Item item) {
+            return GetAmountFor(item.ID);
         }
-        public override int GetTotalAmountFor(string itemID) {
-            return GetAmountForItem(itemID);
+
+        public override int GetAmountFor(string itemID) {
+            return Items[itemID].count;
         }
+
         protected override Item GetItem(string id) {
             return Items[id];
         }
@@ -59,7 +61,7 @@ namespace Andja.Model {
         }
 
         protected override int RemainingSpaceForItem(Item item) {
-            return MaxStackSize - GetAmountForItem(item);
+            return MaxStackSize - GetAmountFor(item);
         }
         protected override Item[] GetItemsInInventory(Item item) {
             return new Item[] { GetItem(item.ID) };

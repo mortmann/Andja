@@ -216,7 +216,8 @@ namespace Andja.Model {
                 return false;
             }
             for (int i = 0; i < Intake.Length; i++) {
-                Intake[i].count = Mathf.Clamp(Intake[i].count+toAdd.GetAmountForItem(Intake[i]), 0, GetMaxIntakeForIntakeIndex(i));
+                Intake[i].count = Mathf.Clamp(Intake[i].count + toAdd.GetAmountFor(Intake[i]), 
+                                                0, GetMaxIntakeForIntakeIndex(i));
                 toAdd.SetItemCountNull(Intake[i]);
                 CallbackChangeIfnotNull();
             }

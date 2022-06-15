@@ -215,5 +215,10 @@ namespace Andja.Utility {
                 return max;
             }
         }
+
+        public static int ClampZero(this int i) {
+            return Mathf.Clamp(i, 0, int.MaxValue);
+        }
+
     }
 }

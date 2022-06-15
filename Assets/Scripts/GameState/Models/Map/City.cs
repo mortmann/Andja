@@ -509,7 +509,7 @@ namespace Andja.Model {
         }
 
         public int GetAmountForThis(Item item) {
-            return Inventory.GetAmountForItem(item);
+            return Inventory.GetAmountFor(item);
         }
 
         public void AddRoute(Route route) {

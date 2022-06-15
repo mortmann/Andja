@@ -168,7 +168,7 @@ namespace Andja.Model {
             }
             //only get some if its needed
             foreach (Item item in t.load) {
-                int needed = item.count - inv.GetTotalAmountFor(item);
+                int needed = item.count - inv.GetAmountFor(item);
                 if (needed <= 0) {
                     continue;
                 }

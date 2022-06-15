@@ -37,7 +37,7 @@ namespace Andja.UI.Model {
 
         public void OnInventoryChange(Inventory inventory) {
             foreach (var item in tradeItemToUI) {
-                item.Value.UpdateAmount(inventory.GetTotalAmountFor(item.Key.ItemId));
+                item.Value.UpdateAmount(inventory.GetAmountFor(item.Key.ItemId));
             }
         }
         public void OnClickItemToTrade(string itemID, int amount = 50) {

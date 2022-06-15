@@ -4,6 +4,7 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
+using Andja.Utility;
 
 namespace Andja.Model {
 
@@ -84,7 +85,7 @@ namespace Andja.Model {
                     }
                 }
             }
-            if (toAdd.count > 0) {
+            while (toAdd.count > 0 && IsFullWithItems() == false) {
                 Item temp = toAdd.Clone();
                 amount += MoveAmountFromItemToInv(toAdd, temp);
                 for (int i = 0; i < NumberOfSpaces; i++) {
@@ -216,39 +217,14 @@ namespace Andja.Model {
             return false;
         }
 
-        /// <summary>
-        /// Warning(!) find the first Item and returns the amount!
-        /// </summary>
-        /// <returns>The amount for item.</returns>
-        /// <param name="item">Item.</param>
-        public int GetAmountForItem(Item item) {
-            return GetAmountForItem(item.ID);
+        public virtual int GetAmountFor(Item item) {
+            return GetAmountFor(item.ID);
         }
-        /// <summary>
-        /// Warning(!) find the first Item and returns the amount!
-        /// </summary>
-        /// <returns>The amount for item.</returns>
-        /// <param name="item">Item.</param>
-        public int GetAmountForItem(string itemID) {
-            Item it = GetFirstItemInInventory(itemID);
-            if (it == null) {
-                return 0;
-            }
-            return GetFirstItemInInventory(itemID).count;
+
+        public virtual int GetAmountFor(string itemID) {
+            return Items.Where(x=>x.Value.ID == itemID).Sum(x=>x.Value.count);
         }
-        public virtual int GetTotalAmountFor(Item item) {
-            return GetTotalAmountFor(item.ID);
-        }
-        public virtual int GetTotalAmountFor(string itemID) {
-            //now check for everyspace if its the item
-            int count = 0;
-            foreach (Item inInv in Items.Values) {
-                if (inInv.ID == itemID) {
-                    count += inInv.count;
-                }
-            }
-            return count;
-        }
+
         internal bool HasAnything() {
             return Items.Any((x)=>x.Value.count>0);
         }
@@ -280,7 +256,7 @@ namespace Andja.Model {
         /// always has a spot to unload the item
         /// </summary>
         /// <returns></returns>
-        internal bool IsFullWithItems() {
+        public bool IsFullWithItems() {
             if (this is CityInventory)
                 return false;
             return NumberOfSpaces <= Items.Count;
@@ -312,6 +288,7 @@ namespace Andja.Model {
                     remaining += MaxStackSize - i.count;
                 }
             }
+            remaining += (MaxStackSize * (NumberOfSpaces - Items.Count)).ClampZero();
             return remaining;
         }
         /// <summary>
@@ -455,7 +432,7 @@ namespace Andja.Model {
         }
 
         public int GetSpaceFor(Item i) {
-            int amount = GetAmountForItem(i);
+            int amount = GetAmountFor(i);
             return MaxStackSize - amount;
         }
 
@@ -479,7 +456,7 @@ namespace Andja.Model {
                 return true;
             }
             foreach (Item i in items) {
-                if (i.count > GetTotalAmountFor(i)) {
+                if (i.count > GetAmountFor(i)) {
                     return false;
                 }
             }

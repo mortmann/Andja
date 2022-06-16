@@ -28,7 +28,7 @@ namespace Andja.Model {
                 Debug.LogError("ITEM ID is empty or null");
                 return 0;
             }
-            Item inInv = GetItem(toAdd.ID);
+            Item inInv = GetAllOfItem(toAdd);
             //if its already full no need to put it in there
             if (inInv.count == MaxStackSize) {
                 return 0;
@@ -48,29 +48,15 @@ namespace Andja.Model {
             return Items[itemID].count;
         }
 
-        protected override Item GetItem(string id) {
-            return Items[id];
-        }
-
-        public override Item GetItemClone(string id) {
-            return Items[id].CloneWithCount();
-        }
-
-        public override bool ContainsItemWithID(string id) {
-            return true;
-        }
-
-        protected override int RemainingSpaceForItem(Item item) {
+        public override int GetRemainingSpaceForItem(Item item) {
             return MaxStackSize - GetAmountFor(item);
         }
         protected override Item[] GetItemsInInventory(Item item) {
-            return new Item[] { GetItem(item.ID) };
+            return new Item[] { GetAllOfItem(item) };
         }
-        public override void SetItemCountNull(Item item) {
-            GetFirstItemInInventory(item).count = 0;
-            cbInventoryChanged?.Invoke(this);
+        public override bool IsSpacesFilled() {
+            return false;
         }
-
         public override Item[] GetAllItemsAndRemoveThem() {
             //get all items in a list
             List<Item> temp = new List<Item>(Items.Values);
@@ -85,7 +71,7 @@ namespace Andja.Model {
             cbInventoryChanged?.Invoke(this);
         }
 
-        internal override void RemoveItemInSpace(int space) {
+        public override void RemoveItemInSpace(int space) {
             Debug.LogWarning("This function does not work with city inventories.");
         }
         public override void Load() {

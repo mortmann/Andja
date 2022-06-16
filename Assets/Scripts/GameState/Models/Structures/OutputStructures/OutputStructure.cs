@@ -204,7 +204,7 @@ namespace Andja.Model {
                 //maybe switch to manually foreach because it may be faster
                 //because worker that use this function usually only carry
                 //what the home eg this needs
-                if (inv.ContainsItemWithID(Output[i].ID)) {
+                if (inv.HasAnythingOf(Output[i])) {
                     Item item = inv.GetAllOfItem(Output[i]);
                     Output[i].count = Mathf.Clamp(Output[i].count + item.count, 0, MaxOutputStorage);
                 }

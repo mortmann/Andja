@@ -248,7 +248,7 @@ namespace Andja.Model {
         }
 
         internal bool HasCannonsToAddInInventory() {
-            return inventory.ContainsItemWithID(CannonItem.ID);
+            return inventory.HasAnythingOf(CannonItem);
         }
 
         protected override void UpdateWorldMarket(float deltaTime) {
@@ -313,7 +313,7 @@ namespace Andja.Model {
             if (CannonItem.count <= 0) {
                 return false;
             }
-            if (inventory.HasSpaceForItem(CannonItem) == false) {
+            if (inventory.HasRemainingSpaceForItem(CannonItem) == false) {
                 return false;
             }
             return true;

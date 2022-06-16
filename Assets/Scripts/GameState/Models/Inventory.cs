@@ -85,7 +85,7 @@ namespace Andja.Model {
                     }
                 }
             }
-            while (toAdd.count > 0 && IsFullWithItems() == false) {
+            while (toAdd.count > 0 && IsSpacesFilled() == false) {
                 Item temp = toAdd.Clone();
                 amount += MoveAmountFromItemToInv(toAdd, temp);
                 for (int i = 0; i < NumberOfSpaces; i++) {
@@ -104,7 +104,7 @@ namespace Andja.Model {
         /// -- if needed change amountInInventory to be caluclated each time smth is added/removed (increased/decreased)
         /// </summary>
         /// <returns></returns>
-        internal float GetFilledPercantage() {
+        public float GetFilledPercantage() {
             return amountInInventory / (float)(NumberOfSpaces * MaxStackSize);
         }
 
@@ -132,7 +132,7 @@ namespace Andja.Model {
         /// <param name="i"></param>
         /// <returns></returns>
         public Item GetItemInSpace(int i) {
-            if (Items.ContainsKey("" + i) == false) {
+            if (HasItemInSpace(i) == false) {
                 return null;
             }
             return Items["" + i];
@@ -140,6 +140,10 @@ namespace Andja.Model {
 
         public Item GetAllOfItem(Item item) {
             return GetItemWithMaxAmount(item, int.MaxValue);
+        }
+
+        public Item GetAllOfItem(string itemID) {
+            return GetAllOfItem(new Item(itemID));
         }
 
         public Item GetItemWithMaxItemCount(Item item) {
@@ -162,7 +166,6 @@ namespace Andja.Model {
                 maxAmount -= getFromThisItem;
                 output.count += getFromThisItem;
             }
-
             return output;
         }
 
@@ -174,12 +177,7 @@ namespace Andja.Model {
         protected virtual Item[] GetItemsInInventory(Item item) {
             if (NumberOfSpaces == -1)
                 return null;
-            List<Item> inInv = new List<Item>();
-            foreach (Item i in Items.Values) {
-                if (i.ID == item.ID)
-                    inInv.Add(i);
-            }
-            return inInv.ToArray();
+            return Items.Where(x => x.Value.ID == item.ID).Select(x=>x.Value).ToArray();
         }
 
         protected Item GetFirstItemInInventory(Item item) {
@@ -187,31 +185,14 @@ namespace Andja.Model {
         }
         protected Item GetFirstItemInInventory(string itemID) {
             string pos = GetPlaceInItems(new Item(itemID));
-            if (String.IsNullOrEmpty(pos)) {
+            if (string.IsNullOrEmpty(pos)) {
                 return null;
             }
             return Items[pos];
         }
-        /// <summary>
-        /// Gets CLONED item WITH count but DOESNT REMOVE it FROM inventory.
-        /// </summary>
-        /// <returns>The item in inventory clone.</returns>
-        /// <param name="item">Item.</param>
-        public Item GetItemInInventoryClone(Item item) {
-            return Items[GetPlaceInItems(item)].CloneWithCount();
-        }
-
-        public virtual void SetItemCountNull(Item item) {
-            Item i = GetFirstItemInInventory(item);
-            if (i == null) {
-                return;
-            }
-            i.count = 0;
-            cbInventoryChanged?.Invoke(this);
-        }
 
         public bool HasAnythingOf(Item item) {
-            if (GetFirstItemInInventory(item).count > 0) {
+            if (GetFirstItemInInventory(item)?.count > 0) {
                 return true;
             }
             return false;
@@ -225,7 +206,7 @@ namespace Andja.Model {
             return Items.Where(x=>x.Value.ID == itemID).Sum(x=>x.Value.count);
         }
 
-        internal bool HasAnything() {
+        public bool HasAnything() {
             return Items.Any((x)=>x.Value.count>0);
         }
 
@@ -235,19 +216,11 @@ namespace Andja.Model {
         /// <returns><c>true</c>, if item was moved, <c>false</c> otherwise.</returns>
         /// <param name="inv">Inv.</param>
         /// <param name="it">It.</param>
-        public int MoveItem(Inventory moveToInv, Item it, int amountMove) {
-            if (Items.ContainsKey(GetPlaceInItems(it))) {
-                Item i = Items[GetPlaceInItems(it)];
-                if (i.count <= 0) {
-                    return 0;
-                }
-                it = it.CloneWithCount();
-                it.count = Mathf.Clamp(i.count, 0, amountMove);
-                int amount = moveToInv.AddItem(it);
-                LowerItemAmount(i, amount);
-                return amount;
-            }
-            return 0;
+        public int MoveItem(Inventory moveToInv, Item it, int amountToMove) {
+            amountToMove = amountToMove.ClampZero(GetAmountFor(it));
+            int movedAmount = moveToInv.AddItem(new Item(it.ID, amountToMove));
+            LowerItemAmount(it, movedAmount);
+            return movedAmount;
         }
 
         /// <summary>
@@ -256,46 +229,41 @@ namespace Andja.Model {
         /// always has a spot to unload the item
         /// </summary>
         /// <returns></returns>
-        public bool IsFullWithItems() {
-            if (this is CityInventory)
-                return false;
+        public virtual bool IsSpacesFilled() {
+            
             return NumberOfSpaces <= Items.Count;
         }
 
-        /// <summary>
-        /// should only be called for Inventories associated with units
-        /// cause city technically are always full / empty that means it
-        /// always has a spot to unload the item
-        /// </summary>
-        /// <returns></returns>
-        internal bool HasSpaceForItem(Item item, bool hasToFitAll = false) {
-            //if its full and does not contain item type return false
-            if (IsFullWithItems() && ContainsItemWithID(item.ID) == false) {
-                return false;
-            }
-            if (hasToFitAll && IsFullWithItems()) {
-                if (RemainingSpaceForItem(item) < item.count) {
-                    return false;
-                }
-            }
-            return true;
+        public virtual int GetRemainingSpaceForItem(Item item) {
+            return (MaxStackSize+ MaxStackSize * FreeSpacesLeft()) - GetAmountFor(item);
         }
-
-        protected virtual int RemainingSpaceForItem(Item item) {
-            int remaining = 0;
-            foreach (Item i in Items.Values) {
-                if (i.ID == item.ID) {
-                    remaining += MaxStackSize - i.count;
-                }
-            }
-            remaining += (MaxStackSize * (NumberOfSpaces - Items.Count)).ClampZero();
-            return remaining;
+        public virtual bool HasRemainingSpaceForItem(Item item) {
+            return GetRemainingSpaceForItem(item) > 0;
         }
         /// <summary>
         /// Only works with non city inventories.
         /// </summary>
         /// <param name="space"></param>
-        internal virtual void RemoveItemInSpace(int space) {
+        public virtual int AddItemInSpace(int space, Item item) {
+            int amount = 0;
+            Item inSpace = GetItemInSpace(space);
+            if(inSpace == null) {
+                amount = item.count.ClampZero(MaxStackSize);
+                item.count = amount;
+                Items.Add("" + space, item);
+                cbInventoryChanged?.Invoke(this);
+            } 
+            else if(inSpace.ID == item.ID) {
+                amount = (amount-inSpace.count).ClampZero(MaxStackSize);
+                inSpace.count += amount;
+            } 
+            return amount;
+        }
+        /// <summary>
+        /// Only works with non city inventories.
+        /// </summary>
+        /// <param name="space"></param>
+        public virtual void RemoveItemInSpace(int space) {
             Items.Remove("" + space);
             cbInventoryChanged?.Invoke(this);
         }
@@ -305,36 +273,31 @@ namespace Andja.Model {
         /// destroys item amount forever! FOREVER!
         /// </summary>
         /// <returns><c>true</c>, if item amount was removed, <c>false</c> otherwise.</returns>
-        /// <param name="it">It.</param>
-        public bool RemoveItemAmount(Item it) {
-            if (it == null) {
+        /// <param name="remove">It.</param>
+        public bool RemoveItemAmount(Item remove) {
+            if (remove == null) {
                 return true;
             }
-            Item i = GetFirstItemInInventory(it);
-            if (i == null) {
+            if (GetAmountFor(remove) < remove.count) {
                 return false;
             }
-            if (i.count < it.count) {
-                return false;
-            }
-            LowerItemAmount(i, it.count);
+            LowerItemAmount(remove, remove.count);
             return true;
         }
 
         /// <summary>
-        /// CHECK FIRST IF AVAIBLE THEN REMOVE!
-        /// Removes the items amounts. It will return false
-        /// if there couldnt be removed a single item in the list
-        /// but still removes the rest. So be careful!
+        /// Only removes when all items are present and enough.
         /// </summary>
         /// <returns><c>true</c>, if items amount was removed, <c>false</c> otherwise.</returns>
-        /// <param name="coll">Coll.</param>
-        public bool RemoveItemsAmount(IEnumerable<Item> coll) {
-            bool successful = false;
-            foreach (Item i in coll) {
-                successful = RemoveItemAmount(i);
+        /// <param name="toRemove">Items with count for remove amount</param>
+        public bool RemoveItemsAmount(IEnumerable<Item> toRemove) {
+            if(HasEnoughOfItems(toRemove) == false) {
+                return false;
             }
-            return successful;
+            foreach (Item i in toRemove) {
+                LowerItemAmount(i, i.count);
+            }
+            return true;
         }
 
         /// <summary>
@@ -350,25 +313,24 @@ namespace Andja.Model {
             return temp.ToArray();
         }
 
-        protected virtual void LowerItemAmount(Item i, int amount) {
-            if (Items.ContainsKey(GetPlaceInItems(i))) {
-                Items[GetPlaceInItems(i)].count -= amount;
-            }
-            else {
-                Debug.Log("not in");
-                i.count -= amount;
-            }
-            if (i.count == 0) {
-                Items.Remove(Items.First(x => x.Value == i).Key);
+        protected virtual void LowerItemAmount(Item lower, int amount) {
+            foreach (var idItemPair in Items.Where(i => i.Value.ID == lower.ID).ToArray()) {
+                Item inInv = idItemPair.Value;
+                int loweredAmount = amount.ClampZero(inInv.count);
+                inInv.count -= loweredAmount;
+                amount -= loweredAmount;
+                if(amount == 0) {
+                    break;
+                }
+                if (idItemPair.Value.count == 0) {
+                    Items.Remove(idItemPair.Key);
+                }
             }
             cbInventoryChanged?.Invoke(this);
         }
 
         protected int MoveAmountFromItemToInv(Item toBeMoved, Item toReceive) {
-            //whats the amount to be moved
-            int amount = toBeMoved.count;
-            //clamp it to the maximum it can be
-            amount = Mathf.Clamp(amount, 0, MaxStackSize - toReceive.count);
+            int amount = toBeMoved.count.ClampZero(MaxStackSize - toReceive.count);
             IncreaseItemAmount(toReceive, amount);
             toBeMoved.count -= amount;
             return amount;
@@ -381,126 +343,50 @@ namespace Andja.Model {
             item.count += amount;
             cbInventoryChanged?.Invoke(this);
         }
-
-        public void AddIventory(Inventory inv) {
-            foreach (Item item in inv.Items.Values) {
+        
+        public void AddInventory(Inventory inv) {
+            foreach (Item item in inv.GetAllItemsAndRemoveThem()) {
                 AddItem(item);
             }
         }
 
         public virtual Item[] GetBuildMaterial() {
             List<Item> itemlist = new List<Item>();
-            foreach (Item i in PrototypController.BuildItems) {
-                if (ContainsItemWithID(i.ID)) {
-                    itemlist.Add(GetItem(i.ID));
+            foreach (Item i in PrototypController.Instance.BuildItems) {
+                if (HasAnythingOf(i)) {
+                    itemlist.Add(GetAllOfItem(i));
                 }
             }
             return itemlist.ToArray();
         }
-
-        protected virtual Item GetItem(string id) {
-            Item i = null;
-            foreach (Item item in Items.Values) {
-                if (item.ID == id) {
-                    if (i == null) {
-                        i = item;
-                    }
-                    else {
-                        i.count += item.count;
-                    }
-                }
-            }
-            return i;
-        }
-
-        public virtual Item GetItemClone(string id) {
-            Item i = null;
-            foreach (Item item in Items.Values) {
-                if (item.ID == id) {
-                    if (i == null) {
-                        i = item;
-                    }
-                    else {
-                        i.count += item.count;
-                    }
-                }
-            }
-            if (i == null) {
-                return null;
-            }
-            return i.CloneWithCount();
-        }
-
-        public int GetSpaceFor(Item i) {
-            int amount = GetAmountFor(i);
-            return MaxStackSize - amount;
-        }
-
+        
         public void AddItems(IEnumerable<Item> items) {
             foreach (Item item in items) {
                 AddItem(item);
             }
         }
 
-        public virtual bool ContainsItemWithID(string id) {
-            foreach (Item item in Items.Values) {
-                if (item.ID == id) {
-                    return true;
-                }
+        public int FreeSpacesLeft() {
+            if(HasLimitedSpace == false) {
+                return 0;
+            } else {
+                return NumberOfSpaces - Items.Count;
             }
-            return false;
         }
 
-        public bool ContainsItemsWithRequiredAmount(Item[] items) {
-            if (items == null) {
-                return true;
-            }
-            foreach (Item i in items) {
-                if (i.count > GetAmountFor(i)) {
-                    return false;
-                }
-            }
-            return true;
+        public bool HasEnoughOfItems(IEnumerable<Item> item) {
+            return item.All(x=>HasEnoughOfItem(x));
         }
 
-        public void AddToStackSize(int value) {
-            if (value <= 0) {
-                Debug.LogError("Increase Stacksize is " + value + "! ");
-            }
-            this.MaxStackSize += value;
+        public bool HasEnoughOfItem(Item item) {
+            return GetAmountFor(item) >= item.count;
         }
 
-        internal bool HasEnoughOfItems(IEnumerable<Item> item) {
-            foreach (Item i in item) {
-                if (HasEnoughOfItem(i) == false)
-                    return false;
-            }
-            return true;
-        }
-
-        internal bool HasEnoughOfItem(Item item) {
-            Item inInventory = GetFirstItemInInventory(item);
-            if (inInventory == null)
-                return false;
-            return inInventory.count >= item.count;
-        }
         public bool HasEnoughOfItems(IEnumerable<Item> items, int times = 1) {
-            if (items == null)
+            if (items == null || times <= 0)
                 return true;
-            if (times > 1) {
-                List<Item> clonedItems = new List<Item>();
-                foreach (Item i in items) {
-                    clonedItems.Add(new Item(i.ID, i.count * times));
-                }
-                return HasEnoughOfItems(clonedItems);
-            }
+            items.ToList().ForEach(x => { x.count *= times; });
             return HasEnoughOfItems(items);
-        }
-        public void SubFromStackSize(int value) {
-            if (value <= 0) {
-                Debug.LogError("Decrease Stacksize is " + value + "! ");
-            }
-            this.MaxStackSize -= value;
         }
 
         //TODO: make this not relay on load function?
@@ -512,6 +398,7 @@ namespace Andja.Model {
                 amountInInventory += i.count;
             }
         }
+
         public virtual void Load() {
             foreach (var item in Items.ToArray()) {
                 if(item.Value.Exists() == false) {

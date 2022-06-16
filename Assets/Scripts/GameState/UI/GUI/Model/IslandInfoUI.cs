@@ -37,7 +37,7 @@ namespace Andja.UI.Model {
                 return;
             switch (state) {
                 case BuildStateModes.None:
-                    foreach (Item item in PrototypController.BuildItems) {
+                    foreach (Item item in PrototypController.Instance.BuildItems) {
                         itemToText[item.ID].RemoveAddon();
                     }
                     break;
@@ -48,7 +48,7 @@ namespace Andja.UI.Model {
             }
         }
         public void ResetAddons() {
-            foreach (Item item in PrototypController.BuildItems) {
+            foreach (Item item in PrototypController.Instance.BuildItems) {
                 itemToText[item.ID].RemoveAddon();
             }
         }
@@ -96,7 +96,7 @@ namespace Andja.UI.Model {
                 Destroy(t.gameObject);
             foreach (Transform t in CityInfo)
                 Destroy(t.gameObject);
-            Item[] items = PrototypController.BuildItems;
+            Item[] items = PrototypController.Instance.BuildItems;
             int lastRowNumber = items.Length % maxItemsPerRow;
             for (int i = 0; i < items.Length; i++) {
                 if (items[i] == null) {

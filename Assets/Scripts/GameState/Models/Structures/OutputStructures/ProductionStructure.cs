@@ -163,8 +163,8 @@ namespace Andja.Model {
             }
             Dictionary<Item, int> needItems = new Dictionary<Item, int>();
             for (int i = 0; i < Intake.Length; i++) {
-                if (GetMaxIntakeForIntakeIndex(i) > Intake[i].count) {
-                    needItems.Add(Intake[i].Clone(), GetMaxIntakeForIntakeIndex(i) - Intake[i].count);
+                if (GetMaxIntakeForIndex(i) > Intake[i].count) {
+                    needItems.Add(Intake[i].Clone(), GetMaxIntakeForIndex(i) - Intake[i].count);
                 }
             }
             if (needItems.Count == 0) {
@@ -175,7 +175,7 @@ namespace Andja.Model {
                 for (int i = Intake.Length - 1; i >= 0; i--) {
                     if (City.HasAnythingOfItem(Intake[i])) {
                         Item item = Intake[i].Clone();
-                        item.count = GetMaxIntakeForIntakeIndex(i) - Intake[i].count;
+                        item.count = GetMaxIntakeForIndex(i) - Intake[i].count;
                         getItems.Add(item);
                     }
                 }
@@ -216,12 +216,9 @@ namespace Andja.Model {
                 return false;
             }
             for (int i = 0; i < Intake.Length; i++) {
-                Intake[i].count = Mathf.Clamp(Intake[i].count + toAdd.GetAmountFor(Intake[i]), 
-                                                0, GetMaxIntakeForIntakeIndex(i));
-                toAdd.SetItemCountNull(Intake[i]);
+                Intake[i].count = toAdd.GetItemWithMaxAmount(Intake[i], GetRemainingIntakeSpaceForIndex(i)).count;
                 CallbackChangeIfnotNull();
             }
-
             return true;
         }
 
@@ -232,7 +229,7 @@ namespace Andja.Model {
                 for (int s = 0; s < items.Length; s++) {
                     if (items[i].ID == id) {
                         Item item = items[i].Clone();
-                        item.count = GetMaxIntakeForIntakeIndex(i) - Intake[i].count;
+                        item.count = GetMaxIntakeForIndex(i) - Intake[i].count;
                         if(Workers.Count > 0) {
                             item.count -= Workers.Where(z=>z.toGetItems != null)
                                             .Sum(x => Array.Find(x.toGetItems, y => items[i].ID == y.ID)?.count ?? 0);
@@ -251,29 +248,14 @@ namespace Andja.Model {
         public override void OnBuild() {
             jobsToDo = new Dictionary<OutputStructure, Item[]>();
             RegisteredStructures = new Dictionary<OutputStructure, Item[]>();
-            //		for (int i = 0; i < intake.Length; i++) {
-            //			intake [i].count = maxIntake [i];
-            //		}
+
             if (RangeTiles != null) {
                 foreach (Tile rangeTile in RangeTiles) {
                     if (rangeTile.Structure == null) {
                         continue;
                     }
                     OnStructureBuild(rangeTile.Structure);
-                    //if (rangeTile.Structure is OutputStructure) {
-                    //    if (rangeTile.Structure is MarketStructure) {
-                    //        FindNearestMarketStructure(rangeTile);
-                    //        continue;
-                    //    }
-                    //    if (RegisteredStructures.ContainsKey((OutputStructure)rangeTile.Structure) == false) {
-                    //        Item[] items = HasNeedItem(((OutputStructure)rangeTile.Structure).Output);
-                    //        if (items.Length == 0) {
-                    //            continue;
-                    //        }
-                    //        ((OutputStructure)rangeTile.Structure).RegisterOutputChanged(OnOutputChangedStructure);
-                    //        RegisteredStructures.Add((OutputStructure)rangeTile.Structure, items);
-                    //    }
-                    //}
+
                 }
                 City.RegisterStructureAdded(OnStructureBuild);
             }
@@ -305,17 +287,16 @@ namespace Andja.Model {
             }
         }
 
+        public int GetRemainingIntakeSpaceForIndex(int itemIndex) {
+            return GetMaxIntakeForIndex(itemIndex) - Intake[itemIndex].count; //TODO THINK ABOUT THIS
+        }
         /// <summary>
         /// Give an index for the needed Item, so only use in for loops
         /// OR
         /// for OR Inake use with orItemIndex
         /// </summary>
         /// <param name="i">The index.</param>
-        public int GetMaxIntakeForIntakeIndex(int itemIndex) {
-            if (itemIndex < 0 || itemIndex > ProductionData.intake.Length) {
-                Debug.LogError("GetMaxIntakeMultiplier received an invalid number " + itemIndex);
-                return -1;
-            }
+        public int GetMaxIntakeForIndex(int itemIndex) {
             return ProductionData.intake[itemIndex].count * 5; //TODO THINK ABOUT THIS
         }
 

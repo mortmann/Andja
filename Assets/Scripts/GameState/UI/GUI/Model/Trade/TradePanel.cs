@@ -33,7 +33,7 @@ namespace Andja.UI.Model {
                     tradeItemUI.Show(null, c.Inventory.MaxStackSize, OnSellBuyClick);
                 }
                 else {
-                    Item item = c.Inventory.GetItemClone(items[i]);
+                    Item item = c.Inventory.GetAllOfItem(items[i]);
                     tradeItemUI.Show(c.itemIDtoTradeItem[items[i]], c.Inventory.MaxStackSize, OnSellBuyClick);
                     tradeItemUI.ChangeItemCount(c.itemIDtoTradeItem[items[i]].count);
                 }

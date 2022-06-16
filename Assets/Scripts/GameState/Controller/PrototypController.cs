@@ -71,8 +71,7 @@ namespace Andja.Controller {
         public IReadOnlyDictionary<int, List<NeedGroup>> PopulationLevelToNeedGroup => populationLevelToNeedGroup;
         public IReadOnlyDictionary<string, List<Produce>> ItemIDToProduce => itemIDToProduce;
 
-        // SHOULD BE READ ONLY -- cant be done because Unity Error for multiple implementations
-        public static Item[] BuildItems => _buildItems;
+        public virtual Item[] BuildItems => _buildItems.CloneArray();
 
         public IReadOnlyList<StartingLoadout> StartingLoadouts => _startingLoadouts;
 
@@ -115,7 +114,7 @@ namespace Andja.Controller {
         /// </summary>
         public Dictionary<string, int[]> recommandedBuildSupplyChains;
         public List<Item> MineableItems;
-        public static Item[] _buildItems;
+        private static Item[] _buildItems;
         private List<Need> allNeeds;
         private List<NeedPrototypeData>[] needsPerLevel;
         public List<Fertility> orderUnlockFertilities;

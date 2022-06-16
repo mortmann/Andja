@@ -340,7 +340,7 @@ namespace Andja.Controller {
                             Debug.LogError("Build something with smth that has no inventory");
                             return false;
                         }
-                        if (inv.ContainsItemsWithRequiredAmount(structure.GetBuildingItems()) == false) {
+                        if (inv.HasEnoughOfItems(structure.GetBuildingItems()) == false) {
                             BuildError(MapErrorMessage.NotEnoughResources, tiles, structure, playerNumber);
                             return false;
                         }

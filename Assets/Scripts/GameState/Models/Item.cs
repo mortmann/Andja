@@ -79,10 +79,14 @@ namespace Andja.Model {
         }
 
         internal string ToSmallString() {
+            if (Data == null)
+                return ID;
             return string.Format(Name + ":" + count + "t");
         }
 
         public override string ToString() {
+            if (Data == null)
+                return ID;
             return string.Format("[Item] " + ID + ":" + Name + ":" + count);
         }
 

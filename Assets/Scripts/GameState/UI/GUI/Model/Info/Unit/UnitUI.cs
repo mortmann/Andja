@@ -97,7 +97,7 @@ namespace Andja.UI.Model {
                             City city = unit.rangeUStructure.City;
                             UIController.Instance.OpenCityInventory(
                                 city, 
-                                item => city.TradeWithShip(city.Inventory.GetItemInInventoryClone(item), 
+                                item => city.TradeWithShip(city.Inventory.GetAllOfItem(item), 
                                                         () => city.PlayerTradeAmount, 
                                                         ship)
                             );

@@ -219,6 +219,8 @@ namespace Andja.Utility {
         public static int ClampZero(this int i) {
             return Mathf.Clamp(i, 0, int.MaxValue);
         }
-
+        public static int ClampZero(this int i, int max) {
+            return Mathf.Clamp(i, 0, max);
+        }
     }
 }

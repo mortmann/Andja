@@ -439,7 +439,7 @@ namespace Andja.Model {
                 Debug.Log("this item is not to buy");
                 return;
             }
-            Item i = ti.SellItemAmount(Inventory.GetItemClone(itemID));
+            Item i = ti.SellItemAmount(Inventory.GetAllOfItem(itemID));
             Player CityPlayer = PlayerController.GetPlayer(PlayerNumber);
             int am = TradeWithShip(i, ()=>Mathf.Clamp(amount, 0, i.count), ship);
             CityPlayer.AddToTreasure(am * ti.price);
@@ -463,7 +463,7 @@ namespace Andja.Model {
                 Debug.Log("this item is not to sell here");
                 return;
             }
-            Item i = ti.BuyItemAmount(Inventory.GetItemClone(itemID));
+            Item i = ti.BuyItemAmount(Inventory.GetAllOfItem(itemID));
             Player Player = PlayerController.GetPlayer(PlayerNumber);
             int am = TradeFromShip(ship, i, Mathf.Clamp(amount, 0, i.count));
             Player.ReduceTreasure(am * ti.price);

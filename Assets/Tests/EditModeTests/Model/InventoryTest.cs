@@ -4,17 +4,22 @@ using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.TestTools;
 using Andja.Model;
+using Andja.Controller;
+using Andja.Utility;
+using System.Linq;
+using Moq;
 
 public class InventoryTest {
-    const int INVENTORY_STACK_SIZE = 50;
+    const int INVENTORY_MAX_STACK_SIZE = 50;
     const int INVENTORY_NUMBER_SPACES = 6;
-    const int INVENTORY_MAX_ITEM_AMOUNT = INVENTORY_NUMBER_SPACES * INVENTORY_STACK_SIZE;
+    const int INVENTORY_MAX_ITEM_AMOUNT = INVENTORY_NUMBER_SPACES * INVENTORY_MAX_STACK_SIZE;
     Inventory inventory;
 
+    bool hasCalledChangedCallback;
 
     [SetUp]
     public void SetupUp() {
-        inventory = new Inventory(INVENTORY_NUMBER_SPACES, INVENTORY_STACK_SIZE);
+        inventory = new Inventory(INVENTORY_NUMBER_SPACES, INVENTORY_MAX_STACK_SIZE);
     }
 
     [Test]
@@ -26,6 +31,15 @@ public class InventoryTest {
     private void IsInventoryEqual(string id, int amount) {
         Assert.AreEqual(amount, inventory.GetAmountFor(id));
 
+    }
+
+    [Test]
+    public void GetAllItemsAndRemoveThem(){
+        var items = new[] { ItemProvider.Wood_5, ItemProvider.Brick_25, ItemProvider.Fish_25, ItemProvider.Wood_50, ItemProvider.Wood_50 };
+        var additems = new[] { ItemProvider.Wood_5, ItemProvider.Brick_25, ItemProvider.Fish_25, ItemProvider.Wood_50, ItemProvider.Wood_50 };
+        inventory.AddItems(additems);
+        var removedItems = inventory.GetAllItemsAndRemoveThem().ToList();
+        Assert.IsTrue(items.All(x=>removedItems.Exists(y=> x.ID == y.ID && x.count == y.count)));
     }
 
     [Theory]
@@ -64,6 +78,7 @@ public class InventoryTest {
         IsInventoryEqual(ItemProvider.Wood.ID, 55);
         Assert.AreEqual(2, inventory.Items.Count);
     }
+
     [Test]
     public void AddItems_Multiple() {
         Item[] items = { ItemProvider.Wood_10, ItemProvider.Tool_12 };
@@ -72,21 +87,21 @@ public class InventoryTest {
         IsInventoryEqual(ItemProvider.Tool_12.ID, ItemProvider.Tool_12.count);
     }
 
-    [Test]
-    public void RemoveItem_Single() {
-        Item[] items = { ItemProvider.Wood_10, ItemProvider.Tool_12 };
+    [Theory]
+    [TestCase(0, 0,0,0)]
+    [TestCase(50, 25,49,14)]
+    [TestCase(50, 42, 42, 15)]
+    [TestCase(150, 101, 5,5)]
+    public void RemoveItems(int firstInInventory, int firstRemoveAmount, int secondInInventory, int secondRemoveAmount) {
+        Item[] items = { ItemProvider.Wood_N(firstInInventory), 
+                         ItemProvider.Stone_N(secondInInventory),
+                         ItemProvider.Tool_12 };
         inventory.AddItems(items);
-        inventory.RemoveItemAmount(ItemProvider.Wood_5);
-        IsInventoryEqual(ItemProvider.Wood.ID, ItemProvider.Wood_10.count - ItemProvider.Wood_5.count);
-        IsInventoryEqual(ItemProvider.Tool_12.ID, ItemProvider.Tool_12.count);
-    }
-
-    [Test]
-    public void RemoveItem_Multiple() {
-        Item[] items = { ItemProvider.Wood_10, ItemProvider.Tool_12 };
-        inventory.AddItems(items);
-        inventory.RemoveItemsAmount(new []{ ItemProvider.Wood_5,ItemProvider.Wood_5, ItemProvider.Tool_5 });
-        IsInventoryEqual(ItemProvider.Wood.ID, 0);
+        inventory.RemoveItemsAmount(new []{ ItemProvider.Wood_N(firstRemoveAmount),
+                                            ItemProvider.Stone_N(secondRemoveAmount), 
+                                            ItemProvider.Tool_5 });
+        IsInventoryEqual(ItemProvider.Wood.ID, firstInInventory-firstRemoveAmount);
+        IsInventoryEqual(ItemProvider.Stone.ID, secondInInventory-secondRemoveAmount);
         IsInventoryEqual(ItemProvider.Tool_12.ID, ItemProvider.Tool_12.count - ItemProvider.Tool_5.count);
     }
 
@@ -95,19 +110,155 @@ public class InventoryTest {
         inventory.AddItem(ItemProvider.Wood_50);
         Assert.AreEqual(25, inventory.GetItemWithMaxAmount(ItemProvider.Wood, 25).count);
     }
+
     [Test]
     public void GetItemWithMaxAmount_More() {
         inventory.AddItem(ItemProvider.Wood_50);
         Assert.AreEqual(50, inventory.GetItemWithMaxAmount(ItemProvider.Wood, 100).count);
     }
+
     [Test]
     public void IsFullWithItems() {
         inventory.AddItems(new[] { ItemProvider.Wood_5, ItemProvider.Brick_25, ItemProvider.Fish_25, ItemProvider.Wood_50, ItemProvider.Wood_50 });
         Assert.AreEqual(5, inventory.Items.Count);
-        Assert.IsFalse(inventory.IsFullWithItems());
+        Assert.IsFalse(inventory.IsSpacesFilled());
         inventory.AddItem(ItemProvider.Tool_5);
-        Assert.IsTrue(inventory.IsFullWithItems());
+        Assert.IsTrue(inventory.IsSpacesFilled());
         Assert.AreEqual(6, inventory.Items.Count);
-
     }
+    
+    [Test]
+    public void HasAnythingOf_Empty() {
+        Assert.IsFalse(inventory.HasAnythingOf(ItemProvider.Wood));
+    }
+
+    [Test]
+    public void HasAnythingOf() {
+        inventory.AddItem(ItemProvider.Wood_1);
+        Assert.IsTrue(inventory.HasAnythingOf(ItemProvider.Wood));
+    }
+
+    [Test]
+    public void GetAllOfItem() {
+        Item item = ItemProvider.Wood;
+        item.count = INVENTORY_MAX_ITEM_AMOUNT;
+        inventory.AddItem(item);
+        Assert.AreEqual(INVENTORY_MAX_ITEM_AMOUNT, inventory.GetAllOfItem(ItemProvider.Wood).count);
+        Assert.IsFalse(inventory.HasAnythingOf(item));
+    } 
+
+    [Theory]
+    [TestCase(0, 0)]
+    [TestCase(50, 25)]
+    [TestCase(150, 42)]
+    [TestCase(150, 101)]
+    public void MoveItem(int firstInventory, int moveAmount) {
+
+        Inventory otherInventory = new Inventory(INVENTORY_MAX_ITEM_AMOUNT, INVENTORY_NUMBER_SPACES);
+        Item item = ItemProvider.Wood;
+        item.count = firstInventory;
+        inventory.AddItem(item);
+        inventory.MoveItem(otherInventory, ItemProvider.Wood, moveAmount);
+        Assert.AreEqual(firstInventory - moveAmount, inventory.GetAmountFor(item));
+        Assert.AreEqual(moveAmount, otherInventory.GetAmountFor(item));
+    } 
+
+    [Theory]
+    [TestCase(0, 0)]
+    [TestCase(50, 25)]
+    [TestCase(150, 42)]
+    [TestCase(150, 160)]
+    [TestCase(150, -10)]
+    public void RemoveItemAmount(int inInventory, int removeAmount) {
+        inventory.AddItem(ItemProvider.Wood_N(inInventory));
+        Item remove = ItemProvider.Wood_N(removeAmount);
+        bool canBeRemoved = inInventory >= removeAmount;
+        Assert.AreEqual(canBeRemoved, inventory.RemoveItemAmount(remove));
+        Assert.AreEqual(canBeRemoved? (inInventory - removeAmount.ClampZero()).ClampZero() : inInventory, inventory.GetAmountFor(remove));
+    }
+
+    [Theory]
+    [TestCase(0, 0)]
+    [TestCase(42, 42)]
+    [TestCase(50, 55)]
+    public void HasEnoughOfItem(int inInventory, int amount) {
+        inventory.AddItem(ItemProvider.Wood_N(inInventory));
+        Assert.AreEqual(inInventory >= amount, inventory.HasEnoughOfItem(ItemProvider.Wood_N(amount)));
+    }
+    [Test]
+    public void HasEnoughOfItems_Multiplied_True() {
+        inventory.AddItems(new []{ItemProvider.Wood_N(100), ItemProvider.Stone_N(100)});
+        Assert.IsTrue(inventory.HasEnoughOfItems(new []{ItemProvider.Wood_N(5), ItemProvider.Stone_N(5)}, 10));
+    }
+    [Test]
+    public void HasEnoughOfItems_Multiplied_False() {
+        inventory.AddItems(new []{ItemProvider.Wood_N(100), ItemProvider.Stone_N(100)});
+        Assert.IsFalse(inventory.HasEnoughOfItems(new []{ItemProvider.Wood_N(5), ItemProvider.Stone_N(5)}, 100));
+    }
+    [Test]
+    public void HasAnything_Yes() {
+        inventory.AddItems(new []{ItemProvider.Wood_N(100), ItemProvider.Stone_N(100)});
+        Assert.IsTrue(inventory.HasAnything());
+    }
+    [Test]
+    public void HasAnything_No() {
+        Assert.IsFalse(inventory.HasAnything());
+    }
+    [Theory]
+    [TestCase(0)]
+    [TestCase(42)]
+    [TestCase(55)]
+    public void GetItemInSpace(int inInventory) {
+        inventory.Items[""+3] = ItemProvider.Stone_N(inInventory);
+        Assert.AreEqual(inInventory, inventory.GetItemInSpace(3).count);
+    }
+
+    [Theory]
+    [TestCase(0)]
+    [TestCase(42)]
+    [TestCase(55)]
+    public void AddItemInSpace(int inInventory) {
+        inventory.AddItemInSpace(3,ItemProvider.Stone_N(inInventory));
+        Assert.AreEqual(inInventory.ClampZero(INVENTORY_MAX_STACK_SIZE),inventory.Items[3+""].count);
+    }
+
+    [Test]
+    public void RemoveItemInSpace() {
+        inventory.Items[3+""] = ItemProvider.Stone_25;
+        inventory.RemoveItemInSpace(3);
+        Assert.IsFalse(inventory.Items.ContainsKey(3+""));
+    }
+    
+    [Test]
+    public void GetBuildMaterial(){
+        Mock<PrototypController> mock = new Mock<PrototypController>();
+        var buildItems = new[] { ItemProvider.Brick, ItemProvider.Tool, ItemProvider.Wood };
+        mock.SetupGet(m=>m.BuildItems).Returns(buildItems);
+        System.Reflection.FieldInfo instance = typeof(PrototypController).GetField("Instance", System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.Public);
+        instance.SetValue(mock.Object, mock.Object);
+        var items = new[] { ItemProvider.Wood_10, ItemProvider.Fish_25, ItemProvider.Tool_12 };
+        inventory.AddItems(items.CloneArrayWithCounts());
+        Assert.IsTrue(inventory.GetBuildMaterial().All(x=>buildItems.ToList().Exists(y=> x.ID == y.ID)));
+    }
+
+    [Test]
+    public void RemainingSpaceForItem() {
+        inventory.AddItem(ItemProvider.Wood_50);
+        Assert.AreEqual(INVENTORY_MAX_ITEM_AMOUNT - ItemProvider.Wood_50.count, inventory.GetRemainingSpaceForItem(ItemProvider.Wood));
+    }
+
+    [Test]
+    public void GetFilledPercantage() {
+        inventory.AddItem(ItemProvider.Wood_N(INVENTORY_MAX_ITEM_AMOUNT / 2));
+        Assert.AreEqual(0.5f, inventory.GetFilledPercantage());
+    }
+    [Test]
+    public void AddInventory() {
+
+        Inventory otherInventory = new Inventory(INVENTORY_MAX_ITEM_AMOUNT, INVENTORY_NUMBER_SPACES);
+        var items = new[] { ItemProvider.Wood_50, ItemProvider.Brick_25};
+        otherInventory.AddItems(items.CloneArrayWithCounts());
+        inventory.AddInventory(otherInventory);
+        Assert.IsTrue(inventory.Items.Values.All(x=>items.ToList().Exists(y=> x.ID == y.ID && x.count == y.count)));
+    } 
 }

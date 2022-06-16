@@ -59,12 +59,12 @@ namespace Andja.Model {
             foreach (Structure s in player.AllStructures) {
                 OnPlaceStructure(s);
             }
-            foreach (Item item in PrototypController.BuildItems) {
+            foreach (Item item in PrototypController.Instance.BuildItems) {
                 ItemPriority ip = new ItemPriority(item);
                 ip.CalculatePriority(this);
                 buildItemPriority.Enqueue(ip, ip.Priority);
             }
-            foreach (Item item in PrototypController.Instance.AllItems.Values.Except(PrototypController.BuildItems)) {
+            foreach (Item item in PrototypController.Instance.AllItems.Values.Except(PrototypController.Instance.BuildItems)) {
                 ItemPriority ip = new ItemPriority(item);
                 ip.CalculatePriority(this);
                 itemPriority.Enqueue(ip, ip.Priority);

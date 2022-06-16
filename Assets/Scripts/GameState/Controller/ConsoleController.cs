@@ -617,7 +617,7 @@ namespace Andja.Controller {
                 case "fillinput":
                     if(MouseController.Instance.SelectedStructure is ProductionStructure ps) {
                         for (int i = 0; i < ps.Intake.Length; i++) {
-                            ps.Intake[i].count = ps.GetMaxIntakeForIntakeIndex(i);
+                            ps.Intake[i].count = ps.GetMaxIntakeForIndex(i);
                         }
                         return true;
                     }

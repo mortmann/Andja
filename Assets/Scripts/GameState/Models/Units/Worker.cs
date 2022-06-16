@@ -249,7 +249,7 @@ namespace Andja.Model {
                 return;
             }
             if (Home is MarketStructure) {
-                ((MarketStructure)Home).City.Inventory.AddIventory(inventory);
+                ((MarketStructure)Home).City.Inventory.AddInventory(inventory);
             }
             else
             if (Home is ProductionStructure) {

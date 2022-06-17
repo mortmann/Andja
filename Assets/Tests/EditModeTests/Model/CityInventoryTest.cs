@@ -164,20 +164,22 @@ public class CityInventoryTest {
     [TestCase(0, 0)]
     [TestCase(50, 25)]
     [TestCase(50, 75)]
+    [TestCase(50, -10)]
     public void MoveItem_ToCity(int firstInventory, int moveAmount) {
 
         CityInventory otherInventory = new CityInventory(42);
         Item item = ItemProvider.Wood_N(firstInventory);
         inventory.AddItem(item);
         inventory.MoveItem(otherInventory, ItemProvider.Wood, moveAmount);
-        Assert.AreEqual((firstInventory - moveAmount).ClampZero(), inventory.GetAmountFor(item));
-        Assert.AreEqual(Mathf.Min(firstInventory, moveAmount), otherInventory.GetAmountFor(item));
+        Assert.AreEqual((firstInventory - moveAmount.ClampZero()).ClampZero(), inventory.GetAmountFor(item));
+        Assert.AreEqual(Mathf.Min(firstInventory, moveAmount.ClampZero()), otherInventory.GetAmountFor(item));
     }
     [Theory]
     [TestCase(0, 0)]
     [TestCase(50, 25)]
     [TestCase(50, 42)]
     [TestCase(50, 101)]
+    [TestCase(50, -10)]
     public void MoveItem_ToUnit(int firstInventory, int moveAmount) {
 
         UnitInventory otherInventory = new UnitInventory(6, 50);
@@ -185,8 +187,8 @@ public class CityInventoryTest {
         item.count = firstInventory;
         inventory.AddItem(item);
         inventory.MoveItem(otherInventory, ItemProvider.Wood, moveAmount);
-        Assert.AreEqual((firstInventory - moveAmount).ClampZero(), inventory.GetAmountFor(item));
-        Assert.AreEqual(Mathf.Min(moveAmount, firstInventory), otherInventory.GetAmountFor(item));
+        Assert.AreEqual((firstInventory - moveAmount.ClampZero()).ClampZero(), inventory.GetAmountFor(item));
+        Assert.AreEqual(Mathf.Min(moveAmount.ClampZero(), firstInventory), otherInventory.GetAmountFor(item));
     }
     [Theory]
     [TestCase(0, 0)]

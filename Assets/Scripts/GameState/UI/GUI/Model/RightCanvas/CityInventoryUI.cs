@@ -78,7 +78,7 @@ namespace Andja.UI {
             if (!tradePanel.activeSelf)
                 tradePanel.GetComponent<TradePanel>().Show(city);
             tradePanel.SetActive(!tradePanel.activeSelf);
-            onItemPressed += (item) => tradePanel.GetComponent<TradePanel>().OnItemSelected(city.Inventory.GetAllAndRemoveItem(item));
+            onItemPressed += (item) => tradePanel.GetComponent<TradePanel>().OnItemSelected(city.Inventory.GetItemClone(item));
         }
 
         public void OnInventoryChange(Inventory changedInv) {

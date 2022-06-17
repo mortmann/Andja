@@ -87,8 +87,11 @@ namespace Andja.Model {
             Items.Remove(item.ID);
         }
 
+        internal Item GetItemClone(Item item) {
+            return Items[item.ID].CloneWithCount();
+        }
+
         public override Item GetAllAndRemoveItem(Item item) {
-            //TODO: fix for inv ui
             Item clone = Items[item.ID].CloneWithCount();
             Items[item.ID].count = 0;
             return clone;

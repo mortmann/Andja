@@ -135,7 +135,7 @@ namespace Andja.Model {
             if (remove == null) {
                 return true;
             }
-            if (GetAmountFor(remove) < remove.count || remove.count < 0) {
+            if (GetAmountFor(remove) < remove.count || remove.count <= 0) {
                 return false;
             }
             LowerItemAmount(remove, remove.count);

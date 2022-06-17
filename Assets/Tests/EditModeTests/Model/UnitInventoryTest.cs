@@ -150,16 +150,44 @@ public class UnitInventoryTest {
     [TestCase(150, 42)]
     [TestCase(150, 101)]
     [TestCase(150, 160)]
-    public void MoveItem(int firstInventory, int moveAmount) {
+    public void MoveItem_Unit(int firstInventory, int moveAmount) {
 
         UnitInventory otherInventory = new UnitInventory(INVENTORY_NUMBER_SPACES, INVENTORY_MAX_ITEM_AMOUNT);
         Item item = ItemProvider.Wood;
         item.count = firstInventory;
         inventory.AddItem(item);
         inventory.MoveItem(otherInventory, ItemProvider.Wood, moveAmount);
-        Assert.AreEqual((firstInventory - moveAmount).ClampZero(), inventory.GetAmountFor(item));
-        Assert.AreEqual(Mathf.Max(firstInventory, moveAmount), otherInventory.GetAmountFor(item));
-    } 
+        Assert.AreEqual((firstInventory - moveAmount.ClampZero()).ClampZero(), inventory.GetAmountFor(item));
+        Assert.AreEqual(Mathf.Min(firstInventory, moveAmount.ClampZero()), otherInventory.GetAmountFor(item));
+    }
+    [Theory]
+    [TestCase(0, 0)]
+    [TestCase(50, 25)]
+    [TestCase(50, 75)]
+    [TestCase(50, -10)]
+    public void MoveItem_ToCity(int firstInventory, int moveAmount) {
+        var prototypeControllerMock = new Mock<PrototypController>();
+        var buildItems = new Dictionary<string, Item>() {
+            { ItemProvider.Brick.ID, ItemProvider.Brick.Clone() },
+            { ItemProvider.Tool.ID, ItemProvider.Tool.Clone()   },
+            { ItemProvider.Wood.ID, ItemProvider.Wood.Clone()   },
+            { ItemProvider.Fish.ID, ItemProvider.Fish.Clone()   },
+            { ItemProvider.Stone.ID, ItemProvider.Stone.Clone()   },
+        };
+        //This has to be an () => or else it returns the same dictionary everytime... (Optimization?)
+        prototypeControllerMock.Setup(m => m.GetCopieOfAllItems()).Returns(() => {
+            return buildItems.ToDictionary(x => x.Key, y => y.Value.Clone());
+        });
+        System.Reflection.FieldInfo instance = typeof(PrototypController).GetField("Instance", System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.Public);
+        instance.SetValue(prototypeControllerMock.Object, prototypeControllerMock.Object);
+
+        CityInventory otherInventory = new CityInventory(42);
+        Item item = ItemProvider.Wood_N(firstInventory);
+        inventory.AddItem(item);
+        inventory.MoveItem(otherInventory, ItemProvider.Wood, moveAmount);
+        Assert.AreEqual((firstInventory - moveAmount.ClampZero()).ClampZero(), inventory.GetAmountFor(item));
+        Assert.AreEqual(Mathf.Min(firstInventory, moveAmount.ClampZero()), otherInventory.GetAmountFor(item));
+    }
 
     [Theory]
     [TestCase(0, 0)]
@@ -170,7 +198,7 @@ public class UnitInventoryTest {
     public void RemoveItemAmount(int inInventory, int removeAmount) {
         inventory.AddItem(ItemProvider.Wood_N(inInventory));
         Item remove = ItemProvider.Wood_N(removeAmount);
-        bool canBeRemoved = inInventory >= removeAmount;
+        bool canBeRemoved = inInventory >= removeAmount && removeAmount > 0;
         Assert.AreEqual(canBeRemoved, inventory.RemoveItemAmount(remove));
         Assert.AreEqual(canBeRemoved? (inInventory - removeAmount.ClampZero()).ClampZero() : inInventory, inventory.GetAmountFor(remove));
     }

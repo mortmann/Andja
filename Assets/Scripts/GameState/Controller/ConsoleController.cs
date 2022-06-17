@@ -745,7 +745,7 @@ namespace Andja.Controller {
             return true;
         }
 
-        private bool AddAllItems(Inventory inv, bool onlyBuildItems = false) {
+        private bool AddAllItems(CityInventory inv, bool onlyBuildItems = false) {
             foreach (Item i in inv.Items.Values) {
                 if (onlyBuildItems) {
                     if (i.Type != ItemType.Build) {

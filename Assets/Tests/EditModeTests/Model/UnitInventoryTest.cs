@@ -9,28 +9,25 @@ using Andja.Utility;
 using System.Linq;
 using Moq;
 
-public class InventoryTest {
+public class UnitInventoryTest {
     const int INVENTORY_MAX_STACK_SIZE = 50;
-    const int INVENTORY_NUMBER_SPACES = 6;
+    const byte INVENTORY_NUMBER_SPACES = 6;
     const int INVENTORY_MAX_ITEM_AMOUNT = INVENTORY_NUMBER_SPACES * INVENTORY_MAX_STACK_SIZE;
-    Inventory inventory;
-
-    bool hasCalledChangedCallback;
+    UnitInventory inventory;
 
     [SetUp]
     public void SetupUp() {
-        inventory = new Inventory(INVENTORY_NUMBER_SPACES, INVENTORY_MAX_STACK_SIZE);
+        inventory = new UnitInventory(INVENTORY_NUMBER_SPACES, INVENTORY_MAX_STACK_SIZE);
     }
 
     [Test]
     public void GetAmountForItem() {
-        inventory.Items[0+""] = ItemProvider.Wood_10;
+        inventory.Items[0] = ItemProvider.Wood_10;
         IsInventoryEqual(ItemProvider.Wood.ID, ItemProvider.Wood_10.count);
     }
 
     private void IsInventoryEqual(string id, int amount) {
         Assert.AreEqual(amount, inventory.GetAmountFor(id));
-
     }
 
     [Test]
@@ -53,7 +50,7 @@ public class InventoryTest {
         item.count = amount;
         inventory.AddItem(item);
         IsInventoryEqual(item.ID,inventoryAmount);
-        Assert.AreEqual(itemCount, inventory.Items.Count);
+        Assert.AreEqual(itemCount, inventory.baseItems.Count());
     }
 
     [Test]
@@ -76,7 +73,7 @@ public class InventoryTest {
         inventory.AddItem(ItemProvider.Wood_5);
         inventory.AddItem(ItemProvider.Wood_50);
         IsInventoryEqual(ItemProvider.Wood.ID, 55);
-        Assert.AreEqual(2, inventory.Items.Count);
+        Assert.AreEqual(2, inventory.baseItems.Count());
     }
 
     [Test]
@@ -120,11 +117,11 @@ public class InventoryTest {
     [Test]
     public void IsFullWithItems() {
         inventory.AddItems(new[] { ItemProvider.Wood_5, ItemProvider.Brick_25, ItemProvider.Fish_25, ItemProvider.Wood_50, ItemProvider.Wood_50 });
-        Assert.AreEqual(5, inventory.Items.Count);
-        Assert.IsFalse(inventory.IsSpacesFilled());
+        Assert.AreEqual(5, inventory.baseItems.Count());
+        Assert.IsFalse(inventory.AreSlotsFilledWithItems());
         inventory.AddItem(ItemProvider.Tool_5);
-        Assert.IsTrue(inventory.IsSpacesFilled());
-        Assert.AreEqual(6, inventory.Items.Count);
+        Assert.IsTrue(inventory.AreSlotsFilledWithItems());
+        Assert.AreEqual(6, inventory.baseItems.Count());
     }
     
     [Test]
@@ -139,11 +136,11 @@ public class InventoryTest {
     }
 
     [Test]
-    public void GetAllOfItem() {
+    public void GetAllAndRemoveItem() {
         Item item = ItemProvider.Wood;
         item.count = INVENTORY_MAX_ITEM_AMOUNT;
         inventory.AddItem(item);
-        Assert.AreEqual(INVENTORY_MAX_ITEM_AMOUNT, inventory.GetAllOfItem(ItemProvider.Wood).count);
+        Assert.AreEqual(INVENTORY_MAX_ITEM_AMOUNT, inventory.GetAllAndRemoveItem(ItemProvider.Wood).count);
         Assert.IsFalse(inventory.HasAnythingOf(item));
     } 
 
@@ -152,15 +149,16 @@ public class InventoryTest {
     [TestCase(50, 25)]
     [TestCase(150, 42)]
     [TestCase(150, 101)]
+    [TestCase(150, 160)]
     public void MoveItem(int firstInventory, int moveAmount) {
 
-        Inventory otherInventory = new Inventory(INVENTORY_MAX_ITEM_AMOUNT, INVENTORY_NUMBER_SPACES);
+        UnitInventory otherInventory = new UnitInventory(INVENTORY_NUMBER_SPACES, INVENTORY_MAX_ITEM_AMOUNT);
         Item item = ItemProvider.Wood;
         item.count = firstInventory;
         inventory.AddItem(item);
         inventory.MoveItem(otherInventory, ItemProvider.Wood, moveAmount);
-        Assert.AreEqual(firstInventory - moveAmount, inventory.GetAmountFor(item));
-        Assert.AreEqual(moveAmount, otherInventory.GetAmountFor(item));
+        Assert.AreEqual((firstInventory - moveAmount).ClampZero(), inventory.GetAmountFor(item));
+        Assert.AreEqual(Mathf.Max(firstInventory, moveAmount), otherInventory.GetAmountFor(item));
     } 
 
     [Theory]
@@ -209,7 +207,7 @@ public class InventoryTest {
     [TestCase(42)]
     [TestCase(55)]
     public void GetItemInSpace(int inInventory) {
-        inventory.Items[""+3] = ItemProvider.Stone_N(inInventory);
+        inventory.Items[3] = ItemProvider.Stone_N(inInventory);
         Assert.AreEqual(inInventory, inventory.GetItemInSpace(3).count);
     }
 
@@ -219,14 +217,20 @@ public class InventoryTest {
     [TestCase(55)]
     public void AddItemInSpace(int inInventory) {
         inventory.AddItemInSpace(3,ItemProvider.Stone_N(inInventory));
-        Assert.AreEqual(inInventory.ClampZero(INVENTORY_MAX_STACK_SIZE),inventory.Items[3+""].count);
+        Assert.AreEqual(inInventory.ClampZero(INVENTORY_MAX_STACK_SIZE), inventory.Items[3].count);
     }
-
+    [Test]
+    public void AddItemInSpace_AlreadyHas() {
+        inventory.AddItemInSpace(3, ItemProvider.Stone_N(50));
+        inventory.AddItemInSpace(3, ItemProvider.Wood_N(45));
+        Assert.AreEqual(ItemProvider.Stone.ID, inventory.Items[3].ID);
+        Assert.AreNotEqual(ItemProvider.Wood.ID, inventory.Items[3].ID);
+    }
     [Test]
     public void RemoveItemInSpace() {
-        inventory.Items[3+""] = ItemProvider.Stone_25;
+        inventory.Items[3] = ItemProvider.Stone_25;
         inventory.RemoveItemInSpace(3);
-        Assert.IsFalse(inventory.Items.ContainsKey(3+""));
+        Assert.IsTrue(inventory.Items[3] == null);
     }
     
     [Test]
@@ -255,10 +259,10 @@ public class InventoryTest {
     [Test]
     public void AddInventory() {
 
-        Inventory otherInventory = new Inventory(INVENTORY_MAX_ITEM_AMOUNT, INVENTORY_NUMBER_SPACES);
+        UnitInventory otherInventory = new UnitInventory(INVENTORY_NUMBER_SPACES, INVENTORY_MAX_ITEM_AMOUNT);
         var items = new[] { ItemProvider.Wood_50, ItemProvider.Brick_25};
         otherInventory.AddItems(items.CloneArrayWithCounts());
         inventory.AddInventory(otherInventory);
-        Assert.IsTrue(inventory.Items.Values.All(x=>items.ToList().Exists(y=> x.ID == y.ID && x.count == y.count)));
+        Assert.IsTrue(inventory.baseItems.All(x=>items.ToList().Exists(y=> x.ID == y.ID && x.count == y.count)));
     } 
 }

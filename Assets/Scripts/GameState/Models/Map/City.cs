@@ -13,7 +13,7 @@ namespace Andja.Model {
 
         [JsonPropertyAttribute] public bool AutoUpgradeHomes;
         [JsonPropertyAttribute] public int PlayerNumber = 0;
-        [JsonPropertyAttribute] public Inventory Inventory;
+        [JsonPropertyAttribute] public CityInventory Inventory;
         [JsonPropertyAttribute] public List<Structure> Structures;
         [JsonPropertyAttribute] public float useTickTimer;
         [JsonPropertyAttribute] public Dictionary<string, TradeItem> itemIDtoTradeItem;

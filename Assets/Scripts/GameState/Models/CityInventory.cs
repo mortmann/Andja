@@ -3,18 +3,35 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 namespace Andja.Model {
 
     [JsonObject(MemberSerialization.OptIn)]
     public class CityInventory : Inventory {
+        [JsonPropertyAttribute(PropertyName = "Items")]
+        public Dictionary<string, Item> SerializableItems {
+            get {
+                return Items?.Where(x => x.Value.count > 0).ToDictionary(entry => entry.Key,
+                                                                        entry => entry.Value);
+            }
+            set {
+                Items = value;
+            }
+        }
+        public Dictionary<string, Item> Items {
+            get;
+            protected set;
+        }
+        public override IEnumerable<Item> baseItems  => Items.Values; 
+        
+
         /// <summary>
         /// Workaround because if we load with this constructor we get empty item counts
         /// because somehow it overrides it after deserializing 
         /// </summary>
         /// <param name="fakeNumber"></param>
         public CityInventory(int fakeNumber) {
-            NumberOfSpaces = -1;
             if (Items == null)
                 Items = PrototypController.Instance.GetCopieOfAllItems();
             MaxStackSize = 50;
@@ -24,20 +41,8 @@ namespace Andja.Model {
         }
 
         public override int AddItem(Item toAdd) {
-            if (String.IsNullOrEmpty(toAdd.ID)) {
-                Debug.LogError("ITEM ID is empty or null");
-                return 0;
-            }
-            Item inInv = GetAllOfItem(toAdd);
-            //if its already full no need to put it in there
-            if (inInv.count == MaxStackSize) {
-                return 0;
-            }
+            Item inInv = Items[toAdd.ID];
             return MoveAmountFromItemToInv(toAdd, inInv);
-        }
-
-        protected override string GetPlaceInItems(Item item) {
-            return item.ID;
         }
 
         public override int GetAmountFor(Item item) {
@@ -51,28 +56,19 @@ namespace Andja.Model {
         public override int GetRemainingSpaceForItem(Item item) {
             return MaxStackSize - GetAmountFor(item);
         }
-        protected override Item[] GetItemsInInventory(Item item) {
-            return new Item[] { GetAllOfItem(item) };
-        }
-        public override bool IsSpacesFilled() {
-            return false;
-        }
+    
         public override Item[] GetAllItemsAndRemoveThem() {
             //get all items in a list
-            List<Item> temp = new List<Item>(Items.Values);
-            Items = BuildController.Instance.GetCopieOfAllItems();
+            List<Item> temp = new List<Item>(Items.Values.Where(x=>x.count > 0));
+            Items = PrototypController.Instance.GetCopieOfAllItems();
             cbInventoryChanged?.Invoke(this);
             return temp.ToArray();
         }
 
         protected override void LowerItemAmount(Item i, int amount) {
-            Item invItem = Items[GetPlaceInItems(i)];
+            Item invItem = Items[i.ID];
             invItem.count = Mathf.Max(invItem.count - amount, 0);
             cbInventoryChanged?.Invoke(this);
-        }
-
-        public override void RemoveItemInSpace(int space) {
-            Debug.LogWarning("This function does not work with city inventories.");
         }
         public override void Load() {
             base.Load();
@@ -81,10 +77,22 @@ namespace Andja.Model {
         internal void CheckForMissingItems() {
             var copyItems = PrototypController.Instance.GetCopieOfAllItems();
             foreach (var item in copyItems) {
-                if(Items.ContainsKey(item.Key) == false) {
+                if (Items.ContainsKey(item.Key) == false) {
                     Items.Add(item.Key, item.Value);
                 }
             }
         }
+
+        protected override void RemoveNotExistingItem(Item item) {
+            Items.Remove(item.ID);
+        }
+
+        public override Item GetAllAndRemoveItem(Item item) {
+            //TODO: fix for inv ui
+            Item clone = Items[item.ID].CloneWithCount();
+            Items[item.ID].count = 0;
+            return clone;
+        }
+
     }
 }

@@ -430,7 +430,7 @@ namespace Andja.Model {
                     if (os is MarketStructure) {
                         if(os is WarehouseStructure ws && bs.BuildUnit != null) {
                             currentOperationPending.Add(AIController.Instance.AddOperation(
-                                new UnitCityMoveItemOperation(this, bs.BuildUnit, ws.City, bs.BuildUnit.inventory.Items.Values.ToArray(), false)
+                                new UnitCityMoveItemOperation(this, bs.BuildUnit, ws.City, bs.BuildUnit.inventory.Items.ToArray(), false)
                                 ));
                             currentOperationPending.Add(AIController.Instance.AddOperation(
                                 new TradeItemOperation(this, ws.City, new List<TradeItem> { new TradeItem("tools", 25, 50, Trade.Buy)}, true)

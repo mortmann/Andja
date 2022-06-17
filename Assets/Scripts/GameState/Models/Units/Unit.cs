@@ -58,7 +58,7 @@ namespace Andja.Model {
         [JsonPropertyAttribute] public float tradeTime = 1.5f;
         [JsonPropertyAttribute] public float attackCooldownTimer = 1;
         [JsonPropertyAttribute] public BasePathfinding pathfinding;
-        [JsonPropertyAttribute] public Inventory inventory;
+        [JsonPropertyAttribute] public UnitInventory inventory;
         [JsonPropertyAttribute] protected UnitDoModes _CurrentDoingMode = UnitDoModes.Idle;
         [JsonPropertyAttribute] protected UnitMainModes _CurrentMainMode = UnitMainModes.Idle;
 

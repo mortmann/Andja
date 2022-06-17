@@ -18,7 +18,7 @@ namespace Andja.UI.Model {
         public GameObject buttonCanvas;
         public ItemUI cannonsItem;
         public GameObject unitCombatInfo;
-        public Inventory inv;
+        public UnitInventory inv;
         private Dictionary<int, ItemUI> itemToGO;
         private Unit unit;
         bool IsCurrentShipUI => unit is Ship;
@@ -81,7 +81,7 @@ namespace Andja.UI.Model {
             OnPatrolRouteChange(unit.patrolCommand);
             unit.patrolCommand.RegisterOnRouteChange(OnPatrolRouteChange);
 
-            inv = unit.inventory;
+            inv = (UnitInventory) unit.inventory;
             buttonCanvas.SetActive(true);
 
             //only ships can settle
@@ -97,7 +97,7 @@ namespace Andja.UI.Model {
                             City city = unit.rangeUStructure.City;
                             UIController.Instance.OpenCityInventory(
                                 city, 
-                                item => city.TradeWithShip(city.Inventory.GetAllOfItem(item), 
+                                item => city.TradeWithShip(city.Inventory.GetAllAndRemoveItem(item), 
                                                         () => city.PlayerTradeAmount, 
                                                         ship)
                             );
@@ -244,7 +244,7 @@ namespace Andja.UI.Model {
             for (int i = 0; i < inv.NumberOfSpaces; i++) {
                 AddItemGameObject(i);
             }
-            inv = changedInv;
+            inv = (UnitInventory)changedInv;
         }
 
         public void Update() {

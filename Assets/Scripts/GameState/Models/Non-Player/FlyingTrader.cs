@@ -178,7 +178,7 @@ namespace Andja.Model {
                         }
                     }
                 }
-                if (Ship.inventory.IsSpacesFilled()) {
+                if (Ship.inventory.AreSlotsFilledWithItems()) {
                     //TODO: maybe check other cities for in inventory items?
                     SendHome();
                 }

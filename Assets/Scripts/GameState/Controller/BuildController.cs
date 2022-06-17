@@ -84,10 +84,6 @@ namespace Andja.Controller {
         /// </summary>
         private Action<BuildStateModes> cbBuildStateChange;
 
-        public Dictionary<string, Item> GetCopieOfAllItems() {
-            return PrototypController.Instance.GetCopieOfAllItems();
-        }
-
         public void Awake() {
             if (Instance != null) {
                 Debug.LogError("There should never be two BuildController.");

@@ -15,7 +15,7 @@ namespace Andja.UI.Model {
         // Use this for initialization
         private void Start() {
             OffworldMarket ofm = WorldController.Instance.offworldMarket;
-            items = BuildController.Instance.GetCopieOfAllItems();
+            items = PrototypController.Instance.GetCopieOfAllItems();
             idToGO = new Dictionary<string, GameObject>();
             foreach (Transform t in content.transform) {
                 Destroy(t.gameObject);

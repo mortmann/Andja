@@ -42,7 +42,7 @@ namespace Andja.UI {
                 Destroy(child.gameObject);
             }
             itemToGO = new Dictionary<string, ItemUI>();
-            List<Item> items = new List<Item>(city.Inventory.Items.Values);
+            List<Item> items = new List<Item>(city.Inventory.baseItems);
             items = items.OrderBy(x => x.Data.UnlockLevel).ThenBy(y => y.Data.UnlockPopulationCount).ToList();
             foreach (Item item in items) {
                 GameObject go_i = GameObject.Instantiate(itemPrefab);
@@ -78,20 +78,21 @@ namespace Andja.UI {
             if (!tradePanel.activeSelf)
                 tradePanel.GetComponent<TradePanel>().Show(city);
             tradePanel.SetActive(!tradePanel.activeSelf);
-            onItemPressed += (item) => tradePanel.GetComponent<TradePanel>().OnItemSelected(city.Inventory.GetAllOfItem(item));
+            onItemPressed += (item) => tradePanel.GetComponent<TradePanel>().OnItemSelected(city.Inventory.GetAllAndRemoveItem(item));
         }
 
         public void OnInventoryChange(Inventory changedInv) {
-            foreach (string i in changedInv.Items.Keys) {
-                itemToGO[i].ChangeItemCount(city.Inventory.Items[i].count);
-                itemToGO[i].ChangeMaxValue(city.Inventory.MaxStackSize);
+            CityInventory cityInventory = (CityInventory)changedInv;
+            foreach (string i in cityInventory.Items.Keys) {
+                itemToGO[i].ChangeItemCount(cityInventory.Items[i].count);
+                itemToGO[i].ChangeMaxValue(cityInventory.MaxStackSize);
             }
         }
         public void ChangeCityPlayerTradeAmount(int change) {
             city.SetPlayerTradeAmount(Mathf.Clamp(city.PlayerTradeAmount + change, 0, city.Inventory.MaxStackSize));
             tradeAmount.Set(city.PlayerTradeAmount + "");
         }
-        private void OnDisable() {
+        public void OnDisable() {
             tradePanel.SetActive(false);
             if (city != null) {
                 city.UnregisterCityDestroy(OnCityDestroy);

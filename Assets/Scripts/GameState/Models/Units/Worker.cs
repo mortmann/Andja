@@ -26,7 +26,7 @@ namespace Andja.Model {
         [JsonPropertyAttribute] private BasePathfinding path;
         [JsonPropertyAttribute] private float workTimer;
         [JsonPropertyAttribute] public Item[] toGetItems { get => toGetItems1; protected set { if (value == null) Debug.Log("!?"); toGetItems1 = value; } }
-        [JsonPropertyAttribute] private Inventory inventory;
+        [JsonPropertyAttribute] private UnitInventory inventory;
         [JsonPropertyAttribute] private bool goingToWork;
         [JsonPropertyAttribute] public bool isAtHome;
         [JsonPropertyAttribute] private Structure _workStructure;
@@ -138,7 +138,7 @@ namespace Andja.Model {
             }
             isAtHome = false;
             goingToWork = true;
-            inventory = new Inventory(4);
+            inventory = new UnitInventory(4);
             workTimer = workTime;
             this.ID = workerID ?? "placeholder";
             this.toGetItems = toGetItems;

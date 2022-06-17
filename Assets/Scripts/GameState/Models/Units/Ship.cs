@@ -1,5 +1,6 @@
 using Andja.Controller;
 using Andja.Pathfinding;
+using Andja.Utility;
 using Newtonsoft.Json;
 using UnityEngine;
 
@@ -66,7 +67,8 @@ namespace Andja.Model {
             this._prototypData = unit.Data;
             this.CurrentHealth = MaxHealth;
             this.playerNumber = playerNumber;
-            inventory = new Inventory(InventoryPlaces, InventorySize);
+            //TODO: replace everywhere with byte and test it
+            inventory = new UnitInventory((byte)InventoryPlaces.ClampZero(255), InventorySize);
             PlayerSetName = "Ship " + UnityEngine.Random.Range(0, 1000000000);
             pathfinding = new OceanPathfinding(t, this);
             pathfinding.cbIsAtDestination += OnPathfindingAtDestination;

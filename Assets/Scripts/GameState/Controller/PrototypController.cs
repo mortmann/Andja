@@ -132,7 +132,7 @@ namespace Andja.Controller {
         //TODO: make ai aware of ALL buildable homes -- that would require a lot of multichecks - for now simplified - since only 1 for now anyway
         public HomeStructure BuildableHomeStructure => PopulationLevelDatas[0].HomeStructure;
         public MarketStructure FirstLevelMarket;
-        public Dictionary<string, Item> GetCopieOfAllItems() {
+        public virtual Dictionary<string, Item> GetCopieOfAllItems() {
             Dictionary<string, Item> items = new Dictionary<string, Item>();
             foreach (string item in allItems.Keys) {
                 string id = item;

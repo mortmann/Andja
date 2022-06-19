@@ -222,7 +222,7 @@ namespace Andja.Model {
             return true;
         }
 
-        public override Item[] GetRequieredItems(OutputStructure str, Item[] items) {
+        public override Item[] GetRequiredItems(OutputStructure str, Item[] items) {
             List<Item> all = new List<Item>();
             for (int i = Intake.Length - 1; i >= 0; i--) {
                 string id = Intake[i].ID;

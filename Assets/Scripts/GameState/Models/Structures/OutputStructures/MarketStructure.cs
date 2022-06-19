@@ -212,7 +212,7 @@ namespace Andja.Model {
             }
         }
 
-        public override Item[] GetRequieredItems(OutputStructure str, Item[] items) {
+        public override Item[] GetRequiredItems(OutputStructure str, Item[] items) {
             if (items == null) {
                 items = str.Output;
             }

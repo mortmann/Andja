@@ -100,22 +100,6 @@ namespace Andja.Model {
             }
         }
 
-        protected Tile _jobTile;
-
-        public Tile JobTile {
-            get {
-                if (_jobTile == null) {
-                    return Tiles[0];
-                }
-                else {
-                    return _jobTile;
-                }
-            }
-            set {
-                _jobTile = value;
-            }
-        }
-
         public virtual float Progress => produceTimer;
         public virtual float TotalProgress => ProduceTime;
 
@@ -149,7 +133,7 @@ namespace Andja.Model {
                 if (jobStr.outputClaimed) {
                     continue;
                 }
-                Item[] items = GetRequieredItems(jobStr, jobsToDo[jobStr]);
+                Item[] items = GetRequiredItems(jobStr, jobsToDo[jobStr]);
                 if (items == null || items.Length <= 0) {
                     continue;
                 }
@@ -171,7 +155,7 @@ namespace Andja.Model {
             }
         }
 
-        public virtual Item[] GetRequieredItems(OutputStructure str, Item[] items) {
+        public virtual Item[] GetRequiredItems(OutputStructure str, Item[] items) {
             if (items == null) {
                 items = str.Output;
             }

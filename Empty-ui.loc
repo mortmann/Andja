@@ -1,489 +1,44 @@
 <?xml version="1.0"?>
 <UILanguageLocalizations xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" language="Empty">
   <localizationData>
-    <translationData id="No">
+    <translationData id="NeedInRange">
       <translation>[**Missing**]</translation>
       <valueIsMainTranslation>false</valueIsMainTranslation>
       <uiElements>
-        <string>Menu/MainMenu/%Menu/YesNoDialog/Dialog/Content/VerticalLayoutGroup/Buttons/No/</string>
-        <string>Menu/YesNoDialog/Dialog/Content/VerticalLayoutGroup/Buttons/No/</string>
+        <string>Need/</string>
       </uiElements>
     </translationData>
-    <translationData id="Yes">
+    <translationData id="NeedNotInRange">
       <translation>[**Missing**]</translation>
       <valueIsMainTranslation>false</valueIsMainTranslation>
       <uiElements>
-        <string>Menu/MainMenu/%Menu/YesNoDialog/Dialog/Content/VerticalLayoutGroup/Buttons/Yes/</string>
-        <string>Menu/YesNoDialog/Dialog/Content/VerticalLayoutGroup/Buttons/Yes/</string>
+        <string>Need/</string>
       </uiElements>
     </translationData>
-    <translationData id="OverwriteSave">
+    <translationData id="NeedLocked">
       <translation>[**Missing**]</translation>
       <valueIsMainTranslation>false</valueIsMainTranslation>
       <uiElements>
-        <string>Menu/MainMenu/%Menu/YesNoDialog/Dialog/Content/VerticalLayoutGroup/OverwriteSave/</string>
-        <string>Menu/YesNoDialog/Dialog/Content/VerticalLayoutGroup/OverwriteSave/</string>
+        <string>Need/</string>
       </uiElements>
     </translationData>
-    <translationData id="DeleteSaves">
+    <translationData id="Sell">
       <translation>[**Missing**]</translation>
+      <toolTipTranslation>[**Missing**]</toolTipTranslation>
       <valueIsMainTranslation>false</valueIsMainTranslation>
       <uiElements>
-        <string>Menu/MainMenu/%Menu/YesNoDialog/Dialog/Content/VerticalLayoutGroup/DeleteSave/</string>
-        <string>Menu/YesNoDialog/Dialog/Content/VerticalLayoutGroup/DeleteSave/</string>
+        <string>ItemTrade-Prefab/Layout/Prices/Sell/</string>
       </uiElements>
+      <onlyToolTip>true</onlyToolTip>
     </translationData>
-    <translationData id="DiscardUnsaved">
+    <translationData id="Buy">
       <translation>[**Missing**]</translation>
+      <toolTipTranslation>[**Missing**]</toolTipTranslation>
       <valueIsMainTranslation>false</valueIsMainTranslation>
       <uiElements>
-        <string>Menu/MainMenu/%Menu/YesNoDialog/Dialog/Content/VerticalLayoutGroup/UnsavedProgress/</string>
-        <string>Menu/YesNoDialog/Dialog/Content/VerticalLayoutGroup/UnsavedProgress/</string>
+        <string>ItemTrade-Prefab/Layout/Prices/Buy/</string>
       </uiElements>
-    </translationData>
-    <translationData id="Warning">
-      <translation>[**Missing**]</translation>
-      <valueIsMainTranslation>false</valueIsMainTranslation>
-      <uiElements>
-        <string>Menu/MainMenu/%Menu/YesNoDialog/Dialog/Title/</string>
-        <string>Menu/YesNoDialog/Dialog/Title/</string>
-      </uiElements>
-    </translationData>
-    <translationData id="Back">
-      <translation>[**Missing**]</translation>
-      <valueIsMainTranslation>false</valueIsMainTranslation>
-      <uiElements>
-        <string>Menu/MainMenu/%Menu/Credits/Back/</string>
-        <string>Menu/MainMenu/%Menu/ModPanel/Back/</string>
-        <string>Menu/MainMenu/%Menu/OptionsPanel/Back/</string>
-        <string>Menu/MainMenu/%Menu/SavePanel/MenuButtons/Back/</string>
-        <string>Menu/MainMenu/%Menu/LoadPanel/MenuButtons/Back/</string>
-        <string>Menu/ModPanel/Back/</string>
-        <string>Menu/Credits/Back/</string>
-        <string>Menu/OptionsPanel/Back/</string>
-        <string>Menu/SavePanel/MenuButtons/Back/</string>
-        <string>Menu/LoadPanel/MenuButtons/Back/</string>
-      </uiElements>
-    </translationData>
-    <translationData id="Credits">
-      <translation>[**Missing**]</translation>
-      <valueIsMainTranslation>false</valueIsMainTranslation>
-      <uiElements>
-        <string>Menu/MainMenu/%Menu/Credits/Title/</string>
-        <string>Menu/MainMenu/%Menu/Credits/Title/</string>
-        <string>Menu/MainMenu/%Menu/MenuPanel/MenuButtons/Credits/</string>
-        <string>Menu/Credits/Title/</string>
-        <string>Menu/Credits/Title/</string>
-        <string>Menu/MenuPanel/MenuButtons/Credits/</string>
-      </uiElements>
-    </translationData>
-    <translationData id="Mods">
-      <translation>[**Missing**]</translation>
-      <valueIsMainTranslation>false</valueIsMainTranslation>
-      <uiElements>
-        <string>Menu/MainMenu/%Menu/ModPanel/Title/</string>
-        <string>Menu/MainMenu/%Menu/MenuPanel/MenuButtons/Mods/</string>
-        <string>Menu/ModPanel/Title/</string>
-        <string>Menu/MenuPanel/MenuButtons/Mods/</string>
-      </uiElements>
-    </translationData>
-    <translationData id="Language">
-      <translation>[**Missing**]</translation>
-      <valueIsMainTranslation>false</valueIsMainTranslation>
-      <uiElements>
-        <string>Menu/MainMenu/%Menu/GameplayPanel/Content/ScrollRect/VerticalLayoutGroup/Language/</string>
-        <string>Menu/GameplayPanel/Content/ScrollRect/VerticalLayoutGroup/Language/</string>
-      </uiElements>
-    </translationData>
-    <translationData id="AutorotateBuildings">
-      <translation>[**Missing**]</translation>
-      <valueIsMainTranslation>false</valueIsMainTranslation>
-      <uiElements>
-        <string>Menu/MainMenu/%Menu/GameplayPanel/Content/ScrollRect/VerticalLayoutGroup/Autorotate Buildings/</string>
-        <string>Menu/GameplayPanel/Content/ScrollRect/VerticalLayoutGroup/Autorotate Buildings/</string>
-      </uiElements>
-    </translationData>
-    <translationData id="Gameplay">
-      <translation>[**Missing**]</translation>
-      <valueIsMainTranslation>false</valueIsMainTranslation>
-      <uiElements>
-        <string>Menu/MainMenu/%Menu/GameplayPanel/Title/</string>
-        <string>Menu/MainMenu/%Menu/OptionsPanel/MenuButtons/Gameplay/</string>
-        <string>Menu/GameplayPanel/Title/</string>
-        <string>Menu/OptionsPanel/MenuButtons/Gameplay/</string>
-      </uiElements>
-    </translationData>
-    <translationData id="SecondaryKey">
-      <translation>[**Missing**]</translation>
-      <valueIsMainTranslation>false</valueIsMainTranslation>
-      <uiElements>
-        <string>Menu/MainMenu/%Menu/ControlPanel/Content/VerticalLayoutGroup/GameObject/KEYTitles/SecondaryKeyText/</string>
-        <string>Menu/ControlPanel/Content/VerticalLayoutGroup/GameObject/KEYTitles/SecondaryKeyText/</string>
-      </uiElements>
-    </translationData>
-    <translationData id="PrimaryKey">
-      <translation>[**Missing**]</translation>
-      <valueIsMainTranslation>false</valueIsMainTranslation>
-      <uiElements>
-        <string>Menu/MainMenu/%Menu/ControlPanel/Content/VerticalLayoutGroup/GameObject/KEYTitles/PrimaryKeyText/</string>
-        <string>Menu/ControlPanel/Content/VerticalLayoutGroup/GameObject/KEYTitles/PrimaryKeyText/</string>
-      </uiElements>
-    </translationData>
-    <translationData id="Hotkey">
-      <translation>[**Missing**]</translation>
-      <valueIsMainTranslation>false</valueIsMainTranslation>
-      <uiElements>
-        <string>Menu/MainMenu/%Menu/ControlPanel/Content/VerticalLayoutGroup/GameObject/KEYTitles/HotkeyText/</string>
-        <string>Menu/ControlPanel/Content/VerticalLayoutGroup/GameObject/KEYTitles/HotkeyText/</string>
-      </uiElements>
-    </translationData>
-    <translationData id="InvertedMouseButtons">
-      <translation>[**Missing**]</translation>
-      <valueIsMainTranslation>false</valueIsMainTranslation>
-      <uiElements>
-        <string>Menu/MainMenu/%Menu/ControlPanel/Content/VerticalLayoutGroup/Inverted Mouse Buttons/</string>
-        <string>Menu/ControlPanel/Content/VerticalLayoutGroup/Inverted Mouse Buttons/</string>
-      </uiElements>
-    </translationData>
-    <translationData id="MouseSensitivity">
-      <translation>[**Missing**]</translation>
-      <valueIsMainTranslation>false</valueIsMainTranslation>
-      <uiElements>
-        <string>Menu/MainMenu/%Menu/ControlPanel/Content/VerticalLayoutGroup/Mouse Sensitivity/Label/</string>
-        <string>Menu/ControlPanel/Content/VerticalLayoutGroup/Mouse Sensitivity/Label/</string>
-      </uiElements>
-    </translationData>
-    <translationData id="Controls">
-      <translation>[**Missing**]</translation>
-      <valueIsMainTranslation>false</valueIsMainTranslation>
-      <uiElements>
-        <string>Menu/MainMenu/%Menu/ControlPanel/Title/</string>
-        <string>Menu/MainMenu/%Menu/OptionsPanel/MenuButtons/Controls/</string>
-        <string>Menu/ControlPanel/Title/</string>
-        <string>Menu/OptionsPanel/MenuButtons/Controls/</string>
-      </uiElements>
-    </translationData>
-    <translationData id="UISoundVolume">
-      <translation>[**Missing**]</translation>
-      <valueIsMainTranslation>false</valueIsMainTranslation>
-      <uiElements>
-        <string>Menu/MainMenu/%Menu/SoundPanel/Content/VerticalLayoutGroup/UI/</string>
-        <string>Menu/SoundPanel/Content/VerticalLayoutGroup/UI/</string>
-      </uiElements>
-    </translationData>
-    <translationData id="MusicVolume">
-      <translation>[**Missing**]</translation>
-      <valueIsMainTranslation>false</valueIsMainTranslation>
-      <uiElements>
-        <string>Menu/MainMenu/%Menu/SoundPanel/Content/VerticalLayoutGroup/Music/</string>
-        <string>Menu/SoundPanel/Content/VerticalLayoutGroup/Music/</string>
-      </uiElements>
-    </translationData>
-    <translationData id="AmbientSoundVolume">
-      <translation>[**Missing**]</translation>
-      <valueIsMainTranslation>false</valueIsMainTranslation>
-      <uiElements>
-        <string>Menu/MainMenu/%Menu/SoundPanel/Content/VerticalLayoutGroup/Ambient/</string>
-        <string>Menu/SoundPanel/Content/VerticalLayoutGroup/Ambient/</string>
-      </uiElements>
-    </translationData>
-    <translationData id="SoundEffectsVolume">
-      <translation>[**Missing**]</translation>
-      <valueIsMainTranslation>false</valueIsMainTranslation>
-      <uiElements>
-        <string>Menu/MainMenu/%Menu/SoundPanel/Content/VerticalLayoutGroup/SoundEffects/</string>
-        <string>Menu/SoundPanel/Content/VerticalLayoutGroup/SoundEffects/</string>
-      </uiElements>
-    </translationData>
-    <translationData id="MasterSoundVolume">
-      <translation>[**Missing**]</translation>
-      <valueIsMainTranslation>false</valueIsMainTranslation>
-      <uiElements>
-        <string>Menu/MainMenu/%Menu/SoundPanel/Content/VerticalLayoutGroup/Master/</string>
-        <string>Menu/MainMenu/%Menu/SoundPanel/Content/VerticalLayoutGroup/Master/</string>
-        <string>Menu/SoundPanel/Content/VerticalLayoutGroup/Master/</string>
-        <string>Menu/SoundPanel/Content/VerticalLayoutGroup/Master/</string>
-      </uiElements>
-    </translationData>
-    <translationData id="Sound">
-      <translation>[**Missing**]</translation>
-      <valueIsMainTranslation>false</valueIsMainTranslation>
-      <uiElements>
-        <string>Menu/MainMenu/%Menu/SoundPanel/Title/</string>
-        <string>Menu/MainMenu/%Menu/OptionsPanel/MenuButtons/Sound/</string>
-        <string>Menu/SoundPanel/Title/</string>
-        <string>Menu/OptionsPanel/MenuButtons/Sound/</string>
-      </uiElements>
-    </translationData>
-    <translationData id="RestartRequired">
-      <translation>[**Missing**]</translation>
-      <valueIsMainTranslation>false</valueIsMainTranslation>
-      <uiElements>
-        <string>Menu/MainMenu/%Menu/GraphicsPanel/Content/RestartRequired/</string>
-        <string>Menu/GraphicsPanel/Content/RestartRequired/</string>
-      </uiElements>
-    </translationData>
-    <translationData id="Resolutions">
-      <translation>[**Missing**]</translation>
-      <valueIsMainTranslation>false</valueIsMainTranslation>
-      <uiElements>
-        <string>Menu/MainMenu/%Menu/GraphicsPanel/Content/ScrollRect/VerticalLayoutGroup/Resolutions/</string>
-        <string>Menu/GraphicsPanel/Content/ScrollRect/VerticalLayoutGroup/Resolutions/</string>
-      </uiElements>
-    </translationData>
-    <translationData id="Monitor">
-      <translation>[**Missing**]</translation>
-      <valueIsMainTranslation>false</valueIsMainTranslation>
-      <uiElements>
-        <string>Menu/MainMenu/%Menu/GraphicsPanel/Content/ScrollRect/VerticalLayoutGroup/Monitor/</string>
-        <string>Menu/GraphicsPanel/Content/ScrollRect/VerticalLayoutGroup/Monitor/</string>
-      </uiElements>
-    </translationData>
-    <translationData id="Fullscreen">
-      <translation>[**Missing**]</translation>
-      <valueIsMainTranslation>false</valueIsMainTranslation>
-      <uiElements>
-        <string>Menu/MainMenu/%Menu/GraphicsPanel/Content/ScrollRect/VerticalLayoutGroup/Fullscreen/</string>
-        <string>Menu/GraphicsPanel/Content/ScrollRect/VerticalLayoutGroup/Fullscreen/</string>
-      </uiElements>
-    </translationData>
-    <translationData id="Framelimiter">
-      <translation>[**Missing**]</translation>
-      <valueIsMainTranslation>false</valueIsMainTranslation>
-      <uiElements>
-        <string>Menu/MainMenu/%Menu/GraphicsPanel/Content/ScrollRect/VerticalLayoutGroup/Framelimiter/</string>
-        <string>Menu/GraphicsPanel/Content/ScrollRect/VerticalLayoutGroup/Framelimiter/</string>
-      </uiElements>
-    </translationData>
-    <translationData id="Vsync">
-      <translation>[**Missing**]</translation>
-      <valueIsMainTranslation>false</valueIsMainTranslation>
-      <uiElements>
-        <string>Menu/MainMenu/%Menu/GraphicsPanel/Content/ScrollRect/VerticalLayoutGroup/Vsync/</string>
-        <string>Menu/GraphicsPanel/Content/ScrollRect/VerticalLayoutGroup/Vsync/</string>
-      </uiElements>
-    </translationData>
-    <translationData id="TextureQuality">
-      <translation>[**Missing**]</translation>
-      <valueIsMainTranslation>false</valueIsMainTranslation>
-      <uiElements>
-        <string>Menu/MainMenu/%Menu/GraphicsPanel/Content/ScrollRect/VerticalLayoutGroup/TextureQuality/</string>
-        <string>Menu/GraphicsPanel/Content/ScrollRect/VerticalLayoutGroup/TextureQuality/</string>
-      </uiElements>
-    </translationData>
-    <translationData id="Brightness">
-      <translation>[**Missing**]</translation>
-      <valueIsMainTranslation>false</valueIsMainTranslation>
-      <uiElements>
-        <string>Menu/MainMenu/%Menu/GraphicsPanel/Content/ScrollRect/VerticalLayoutGroup/Brightness/</string>
-        <string>Menu/GraphicsPanel/Content/ScrollRect/VerticalLayoutGroup/Brightness/</string>
-      </uiElements>
-    </translationData>
-    <translationData id="Custom">
-      <translation>[**Missing**]</translation>
-      <valueIsMainTranslation>false</valueIsMainTranslation>
-      <uiElements>
-        <string>Menu/MainMenu/%Menu/GraphicsPanel/Content/GraphicsPreset/GameObject/Label (4)/</string>
-        <string>Menu/GraphicsPanel/Content/GraphicsPreset/GameObject/Label (4)/</string>
-      </uiElements>
-    </translationData>
-    <translationData id="Ultra">
-      <translation>[**Missing**]</translation>
-      <valueIsMainTranslation>false</valueIsMainTranslation>
-      <uiElements>
-        <string>Menu/MainMenu/%Menu/GraphicsPanel/Content/GraphicsPreset/GameObject/Label (3)/</string>
-        <string>Menu/GraphicsPanel/Content/GraphicsPreset/GameObject/Label (3)/</string>
-      </uiElements>
-    </translationData>
-    <translationData id="High">
-      <translation>[**Missing**]</translation>
-      <valueIsMainTranslation>false</valueIsMainTranslation>
-      <uiElements>
-        <string>Menu/MainMenu/%Menu/GraphicsPanel/Content/GraphicsPreset/GameObject/Label (2)/</string>
-        <string>Menu/GraphicsPanel/Content/GraphicsPreset/GameObject/Label (2)/</string>
-      </uiElements>
-    </translationData>
-    <translationData id="Medium">
-      <translation>[**Missing**]</translation>
-      <valueIsMainTranslation>false</valueIsMainTranslation>
-      <uiElements>
-        <string>Menu/MainMenu/%Menu/GraphicsPanel/Content/GraphicsPreset/GameObject/Label (1)/</string>
-        <string>Menu/GraphicsPanel/Content/GraphicsPreset/GameObject/Label (1)/</string>
-      </uiElements>
-    </translationData>
-    <translationData id="Low">
-      <translation>[**Missing**]</translation>
-      <valueIsMainTranslation>false</valueIsMainTranslation>
-      <uiElements>
-        <string>Menu/MainMenu/%Menu/GraphicsPanel/Content/GraphicsPreset/GameObject/Label/</string>
-        <string>Menu/GraphicsPanel/Content/GraphicsPreset/GameObject/Label/</string>
-      </uiElements>
-    </translationData>
-    <translationData id="Presets">
-      <translation>[**Missing**]</translation>
-      <valueIsMainTranslation>false</valueIsMainTranslation>
-      <uiElements>
-        <string>Menu/MainMenu/%Menu/GraphicsPanel/Content/Text/</string>
-        <string>Menu/GraphicsPanel/Content/Text/</string>
-      </uiElements>
-    </translationData>
-    <translationData id="Graphics">
-      <translation>[**Missing**]</translation>
-      <valueIsMainTranslation>false</valueIsMainTranslation>
-      <uiElements>
-        <string>Menu/MainMenu/%Menu/GraphicsPanel/Title/</string>
-        <string>Menu/MainMenu/%Menu/OptionsPanel/MenuButtons/Graphics/</string>
-        <string>Menu/GraphicsPanel/Title/</string>
-        <string>Menu/OptionsPanel/MenuButtons/Graphics/</string>
-      </uiElements>
-    </translationData>
-    <translationData id="Save">
-      <translation>[**Missing**]</translation>
-      <valueIsMainTranslation>false</valueIsMainTranslation>
-      <uiElements>
-        <string>Menu/MainMenu/%Menu/SavePanel/MenuButtons/Save/</string>
-        <string>Menu/MainMenu/%Menu/MenuPanel/MenuButtons/Save/</string>
-        <string>Menu/MenuPanel/MenuButtons/Save/</string>
-        <string>Menu/SavePanel/MenuButtons/Save/</string>
-      </uiElements>
-    </translationData>
-    <translationData id="Saveing">
-      <translation>[**Missing**]</translation>
-      <valueIsMainTranslation>false</valueIsMainTranslation>
-      <uiElements>
-        <string>Menu/MainMenu/%Menu/SavePanel/Title/TitleText/</string>
-        <string>Menu/SavePanel/Title/TitleText/</string>
-      </uiElements>
-    </translationData>
-    <translationData id="Load">
-      <translation>[**Missing**]</translation>
-      <valueIsMainTranslation>false</valueIsMainTranslation>
-      <uiElements>
-        <string>Menu/MainMenu/%Menu/LoadPanel/MenuButtons/Load/</string>
-        <string>Menu/MainMenu/%Menu/MenuPanel/MenuButtons/Load/</string>
-        <string>Menu/LoadPanel/MenuButtons/Load/</string>
-        <string>Menu/MenuPanel/MenuButtons/Load/</string>
-      </uiElements>
-    </translationData>
-    <translationData id="IslandSize">
-      <translation>[**Missing**]</translation>
-      <valueIsMainTranslation>false</valueIsMainTranslation>
-      <uiElements>
-        <string>Menu/MainMenu/%Menu/LoadPanel/MenuButtons/SaveDetails/Descriptons/Size/</string>
-        <string>Menu/LoadPanel/MenuButtons/SaveDetails/Descriptons/Size/</string>
-      </uiElements>
-    </translationData>
-    <translationData id="IslandClimate">
-      <translation>[**Missing**]</translation>
-      <valueIsMainTranslation>false</valueIsMainTranslation>
-      <uiElements>
-        <string>Menu/MainMenu/%Menu/LoadPanel/MenuButtons/SaveDetails/Descriptons/Climate/</string>
-        <string>Menu/LoadPanel/MenuButtons/SaveDetails/Descriptons/Climate/</string>
-      </uiElements>
-    </translationData>
-    <translationData id="CreationDate">
-      <translation>[**Missing**]</translation>
-      <valueIsMainTranslation>false</valueIsMainTranslation>
-      <uiElements>
-        <string>Menu/MainMenu/%Menu/LoadPanel/MenuButtons/SaveDetails/Descriptons/CreationDate/</string>
-        <string>Menu/LoadPanel/MenuButtons/SaveDetails/Descriptons/CreationDate/</string>
-      </uiElements>
-    </translationData>
-    <translationData id="Loading">
-      <translation>[**Missing**]</translation>
-      <valueIsMainTranslation>false</valueIsMainTranslation>
-      <uiElements>
-        <string>Menu/MainMenu/%Menu/LoadPanel/Title/TitleText/</string>
-        <string>Menu/LoadPanel/Title/TitleText/</string>
-      </uiElements>
-    </translationData>
-    <translationData id="FogOfWar">
-      <translation>[**Missing**]</translation>
-      <valueIsMainTranslation>false</valueIsMainTranslation>
-      <uiElements>
-        <string>Menu/MainMenu/%Menu/NewGame/Settings/FogOfWar/</string>
-        <string>Menu/NewGame/Settings/FogOfWar/</string>
-      </uiElements>
-    </translationData>
-    <translationData id="Pirate">
-      <translation>[**Missing**]</translation>
-      <valueIsMainTranslation>false</valueIsMainTranslation>
-      <uiElements>
-        <string>Menu/MainMenu/%Menu/NewGame/Settings/Pirate/</string>
-        <string>Menu/NewGame/Settings/Pirate/</string>
-      </uiElements>
-    </translationData>
-    <translationData id="Height">
-      <translation>[**Missing**]</translation>
-      <valueIsMainTranslation>false</valueIsMainTranslation>
-      <uiElements>
-        <string>Menu/MainMenu/%Menu/NewGame/Settings/Size/Height/</string>
-        <string>Menu/NewGame/Settings/Size/Height/</string>
-      </uiElements>
-    </translationData>
-    <translationData id="Width">
-      <translation>[**Missing**]</translation>
-      <valueIsMainTranslation>false</valueIsMainTranslation>
-      <uiElements>
-        <string>Menu/MainMenu/%Menu/NewGame/Settings/Size/Width/</string>
-        <string>Menu/NewGame/Settings/Size/Width/</string>
-      </uiElements>
-    </translationData>
-    <translationData id="Seed">
-      <translation>[**Missing**]</translation>
-      <valueIsMainTranslation>false</valueIsMainTranslation>
-      <uiElements>
-        <string>Menu/MainMenu/%Menu/NewGame/Settings/Seed/</string>
-        <string>Menu/NewGame/Settings/Seed/</string>
-      </uiElements>
-    </translationData>
-    <translationData id="QuitToOS">
-      <translation>[**Missing**]</translation>
-      <valueIsMainTranslation>false</valueIsMainTranslation>
-      <uiElements>
-        <string>Menu/MainMenu/%Menu/MenuPanel/MenuButtons (1)/Quit/</string>
-        <string>Menu/MenuPanel/MenuButtons (1)/Quit/</string>
-      </uiElements>
-    </translationData>
-    <translationData id="QuitToMenu">
-      <translation>[**Missing**]</translation>
-      <valueIsMainTranslation>false</valueIsMainTranslation>
-      <uiElements>
-        <string>Menu/MainMenu/%Menu/MenuPanel/MenuButtons (1)/QuitMenu/</string>
-        <string>Menu/MenuPanel/MenuButtons (1)/QuitMenu/</string>
-      </uiElements>
-    </translationData>
-    <translationData id="Options">
-      <translation>[**Missing**]</translation>
-      <valueIsMainTranslation>false</valueIsMainTranslation>
-      <uiElements>
-        <string>Menu/MainMenu/%Menu/MenuPanel/MenuButtons/Options/</string>
-        <string>Menu/MenuPanel/MenuButtons/Options/</string>
-      </uiElements>
-    </translationData>
-    <translationData id="Editor">
-      <translation>[**Missing**]</translation>
-      <valueIsMainTranslation>false</valueIsMainTranslation>
-      <uiElements>
-        <string>Menu/MainMenu/%Menu/MenuPanel/MenuButtons/Editor/</string>
-        <string>Menu/MenuPanel/MenuButtons/Editor/</string>
-      </uiElements>
-    </translationData>
-    <translationData id="NewGame">
-      <translation>[**Missing**]</translation>
-      <valueIsMainTranslation>false</valueIsMainTranslation>
-      <uiElements>
-        <string>Menu/MainMenu/%Menu/MenuPanel/MenuButtons/New Game/</string>
-        <string>Menu/MenuPanel/MenuButtons/New Game/</string>
-      </uiElements>
-    </translationData>
-    <translationData id="ResumeGame">
-      <translation>[**Missing**]</translation>
-      <valueIsMainTranslation>false</valueIsMainTranslation>
-      <uiElements>
-        <string>Menu/MainMenu/%Menu/MenuPanel/MenuButtons/Resume/</string>
-        <string>Menu/MenuPanel/MenuButtons/Resume/</string>
-      </uiElements>
+      <onlyToolTip>true</onlyToolTip>
     </translationData>
     <translationData id="HealthUI">
       <translation>[**Missing**]</translation>
@@ -494,47 +49,431 @@
       </uiElements>
       <onlyToolTip>true</onlyToolTip>
     </translationData>
-    <translationData id="MissingMods">
+    <translationData id="Mods">
       <translation>[**Missing**]</translation>
       <valueIsMainTranslation>false</valueIsMainTranslation>
       <uiElements>
-        <string>Menu/OKDialog/Dialog/Content/VerticalLayoutGroup/MissingMods/</string>
+        <string>Menu/ModPanel/Title/</string>
+        <string>Menu/MenuPanel/MenuButtons/Mods/</string>
       </uiElements>
     </translationData>
-    <translationData id="NewVersion">
+    <translationData id="Gameplay">
       <translation>[**Missing**]</translation>
       <valueIsMainTranslation>false</valueIsMainTranslation>
       <uiElements>
-        <string>Menu/OKDialog/Dialog/Content/VerticalLayoutGroup/NewVersion/</string>
-        <string>Menu/OKDialog/Dialog/Titles/NewVersionTitle/</string>
+        <string>Menu/GameplayPanel/Title/</string>
+        <string>Menu/OptionsPanel/MenuButtons/Gameplay/</string>
       </uiElements>
     </translationData>
-    <translationData id="SaveFileError">
+    <translationData id="Editor">
       <translation>[**Missing**]</translation>
       <valueIsMainTranslation>false</valueIsMainTranslation>
       <uiElements>
-        <string>Menu/OKDialog/Dialog/Content/VerticalLayoutGroup/SaveFileError/</string>
+        <string>Menu/MenuPanel/MenuButtons/Editor/</string>
       </uiElements>
     </translationData>
-    <translationData id="ErrorMods">
+    <translationData id="Back">
       <translation>[**Missing**]</translation>
       <valueIsMainTranslation>false</valueIsMainTranslation>
       <uiElements>
-        <string>Menu/OKDialog/Dialog/Content/VerticalLayoutGroup/ModError/</string>
+        <string>Menu/ModPanel/Back/</string>
+        <string>Menu/Credits/Back/</string>
+        <string>Menu/OptionsPanel/Back/</string>
+        <string>Menu/SavePanel/MenuButtons/Back/</string>
+        <string>Menu/LoadPanel/MenuButtons/Back/</string>
       </uiElements>
     </translationData>
-    <translationData id="Ok">
+    <translationData id="NewGame">
       <translation>[**Missing**]</translation>
       <valueIsMainTranslation>false</valueIsMainTranslation>
       <uiElements>
-        <string>Menu/OKDialog/Dialog/Content/VerticalLayoutGroup/Ok/</string>
+        <string>Menu/MenuPanel/MenuButtons/New Game/</string>
       </uiElements>
     </translationData>
-    <translationData id="Error">
+    <translationData id="Controls">
       <translation>[**Missing**]</translation>
       <valueIsMainTranslation>false</valueIsMainTranslation>
       <uiElements>
-        <string>Menu/OKDialog/Dialog/Titles/ErrorTitle/</string>
+        <string>Menu/ControlPanel/Title/</string>
+        <string>Menu/OptionsPanel/MenuButtons/Controls/</string>
+      </uiElements>
+    </translationData>
+    <translationData id="Sound">
+      <translation>[**Missing**]</translation>
+      <valueIsMainTranslation>false</valueIsMainTranslation>
+      <uiElements>
+        <string>Menu/SoundPanel/Title/</string>
+        <string>Menu/OptionsPanel/MenuButtons/Sound/</string>
+      </uiElements>
+    </translationData>
+    <translationData id="Credits">
+      <translation>[**Missing**]</translation>
+      <valueIsMainTranslation>false</valueIsMainTranslation>
+      <uiElements>
+        <string>Menu/Credits/Title/</string>
+        <string>Menu/Credits/Title/</string>
+        <string>Menu/MenuPanel/MenuButtons/Credits/</string>
+      </uiElements>
+    </translationData>
+    <translationData id="Graphics">
+      <translation>[**Missing**]</translation>
+      <valueIsMainTranslation>false</valueIsMainTranslation>
+      <uiElements>
+        <string>Menu/GraphicsPanel/Title/</string>
+        <string>Menu/OptionsPanel/MenuButtons/Graphics/</string>
+      </uiElements>
+    </translationData>
+    <translationData id="Save">
+      <translation>[**Missing**]</translation>
+      <valueIsMainTranslation>false</valueIsMainTranslation>
+      <uiElements>
+        <string>Menu/MenuPanel/MenuButtons/Save/</string>
+        <string>Menu/SavePanel/MenuButtons/Save/</string>
+      </uiElements>
+    </translationData>
+    <translationData id="QuitToMenu">
+      <translation>[**Missing**]</translation>
+      <valueIsMainTranslation>false</valueIsMainTranslation>
+      <uiElements>
+        <string>Menu/MenuPanel/MenuButtons (1)/QuitMenu/</string>
+      </uiElements>
+    </translationData>
+    <translationData id="Saveing">
+      <translation>[**Missing**]</translation>
+      <valueIsMainTranslation>false</valueIsMainTranslation>
+      <uiElements>
+        <string>Menu/SavePanel/Title/TitleText/</string>
+      </uiElements>
+    </translationData>
+    <translationData id="Options">
+      <translation>[**Missing**]</translation>
+      <valueIsMainTranslation>false</valueIsMainTranslation>
+      <uiElements>
+        <string>Menu/MenuPanel/MenuButtons/Options/</string>
+      </uiElements>
+    </translationData>
+    <translationData id="Presets">
+      <translation>[**Missing**]</translation>
+      <valueIsMainTranslation>false</valueIsMainTranslation>
+      <uiElements>
+        <string>Menu/GraphicsPanel/Content/Text/</string>
+      </uiElements>
+    </translationData>
+    <translationData id="QuitToOS">
+      <translation>[**Missing**]</translation>
+      <valueIsMainTranslation>false</valueIsMainTranslation>
+      <uiElements>
+        <string>Menu/MenuPanel/MenuButtons (1)/Quit/</string>
+      </uiElements>
+    </translationData>
+    <translationData id="Load">
+      <translation>[**Missing**]</translation>
+      <valueIsMainTranslation>false</valueIsMainTranslation>
+      <uiElements>
+        <string>Menu/LoadPanel/MenuButtons/Load/</string>
+        <string>Menu/MenuPanel/MenuButtons/Load/</string>
+      </uiElements>
+    </translationData>
+    <translationData id="Seed">
+      <translation>[**Missing**]</translation>
+      <valueIsMainTranslation>false</valueIsMainTranslation>
+      <uiElements>
+        <string>Menu/NewGame/Settings/Seed/</string>
+      </uiElements>
+    </translationData>
+    <translationData id="Loading">
+      <translation>[**Missing**]</translation>
+      <valueIsMainTranslation>false</valueIsMainTranslation>
+      <uiElements>
+        <string>Menu/LoadPanel/Title/TitleText/</string>
+      </uiElements>
+    </translationData>
+    <translationData id="Pirate">
+      <translation>[**Missing**]</translation>
+      <valueIsMainTranslation>false</valueIsMainTranslation>
+      <uiElements>
+        <string>Menu/NewGame/Settings/Pirate/</string>
+      </uiElements>
+    </translationData>
+    <translationData id="Warning">
+      <translation>[**Missing**]</translation>
+      <valueIsMainTranslation>false</valueIsMainTranslation>
+      <uiElements>
+        <string>Menu/YesNoDialog/Dialog/Title/</string>
+      </uiElements>
+    </translationData>
+    <translationData id="RestartRequired">
+      <translation>[**Missing**]</translation>
+      <valueIsMainTranslation>false</valueIsMainTranslation>
+      <uiElements>
+        <string>Menu/GraphicsPanel/Content/RestartRequired/</string>
+      </uiElements>
+    </translationData>
+    <translationData id="ResumeGame">
+      <translation>[**Missing**]</translation>
+      <valueIsMainTranslation>false</valueIsMainTranslation>
+      <uiElements>
+        <string>Menu/MenuPanel/MenuButtons/Resume/</string>
+      </uiElements>
+    </translationData>
+    <translationData id="FogOfWar">
+      <translation>[**Missing**]</translation>
+      <valueIsMainTranslation>false</valueIsMainTranslation>
+      <uiElements>
+        <string>Menu/NewGame/Settings/FogOfWar/</string>
+      </uiElements>
+    </translationData>
+    <translationData id="MasterSoundVolume">
+      <translation>[**Missing**]</translation>
+      <valueIsMainTranslation>false</valueIsMainTranslation>
+      <uiElements>
+        <string>Menu/SoundPanel/Content/VerticalLayoutGroup/Master/</string>
+        <string>Menu/SoundPanel/Content/VerticalLayoutGroup/Master/</string>
+      </uiElements>
+    </translationData>
+    <translationData id="AutorotateBuildings">
+      <translation>[**Missing**]</translation>
+      <valueIsMainTranslation>false</valueIsMainTranslation>
+      <uiElements>
+        <string>Menu/GameplayPanel/Content/ScrollRect/VerticalLayoutGroup/Autorotate Buildings/</string>
+      </uiElements>
+    </translationData>
+    <translationData id="MusicVolume">
+      <translation>[**Missing**]</translation>
+      <valueIsMainTranslation>false</valueIsMainTranslation>
+      <uiElements>
+        <string>Menu/SoundPanel/Content/VerticalLayoutGroup/Music/</string>
+      </uiElements>
+    </translationData>
+    <translationData id="AmbientSoundVolume">
+      <translation>[**Missing**]</translation>
+      <valueIsMainTranslation>false</valueIsMainTranslation>
+      <uiElements>
+        <string>Menu/SoundPanel/Content/VerticalLayoutGroup/Ambient/</string>
+      </uiElements>
+    </translationData>
+    <translationData id="SoundEffectsVolume">
+      <translation>[**Missing**]</translation>
+      <valueIsMainTranslation>false</valueIsMainTranslation>
+      <uiElements>
+        <string>Menu/SoundPanel/Content/VerticalLayoutGroup/SoundEffects/</string>
+      </uiElements>
+    </translationData>
+    <translationData id="Height">
+      <translation>[**Missing**]</translation>
+      <valueIsMainTranslation>false</valueIsMainTranslation>
+      <uiElements>
+        <string>Menu/NewGame/Settings/Size/Height/</string>
+      </uiElements>
+    </translationData>
+    <translationData id="Width">
+      <translation>[**Missing**]</translation>
+      <valueIsMainTranslation>false</valueIsMainTranslation>
+      <uiElements>
+        <string>Menu/NewGame/Settings/Size/Width/</string>
+      </uiElements>
+    </translationData>
+    <translationData id="UISoundVolume">
+      <translation>[**Missing**]</translation>
+      <valueIsMainTranslation>false</valueIsMainTranslation>
+      <uiElements>
+        <string>Menu/SoundPanel/Content/VerticalLayoutGroup/UI/</string>
+      </uiElements>
+    </translationData>
+    <translationData id="No">
+      <translation>[**Missing**]</translation>
+      <valueIsMainTranslation>false</valueIsMainTranslation>
+      <uiElements>
+        <string>Menu/YesNoDialog/Dialog/Content/VerticalLayoutGroup/Buttons/No/</string>
+      </uiElements>
+    </translationData>
+    <translationData id="DiscardUnsaved">
+      <translation>[**Missing**]</translation>
+      <valueIsMainTranslation>false</valueIsMainTranslation>
+      <uiElements>
+        <string>Menu/YesNoDialog/Dialog/Content/VerticalLayoutGroup/UnsavedProgress/</string>
+      </uiElements>
+    </translationData>
+    <translationData id="DeleteSaves">
+      <translation>[**Missing**]</translation>
+      <valueIsMainTranslation>false</valueIsMainTranslation>
+      <uiElements>
+        <string>Menu/YesNoDialog/Dialog/Content/VerticalLayoutGroup/DeleteSave/</string>
+      </uiElements>
+    </translationData>
+    <translationData id="Yes">
+      <translation>[**Missing**]</translation>
+      <valueIsMainTranslation>false</valueIsMainTranslation>
+      <uiElements>
+        <string>Menu/YesNoDialog/Dialog/Content/VerticalLayoutGroup/Buttons/Yes/</string>
+      </uiElements>
+    </translationData>
+    <translationData id="InvertedMouseButtons">
+      <translation>[**Missing**]</translation>
+      <valueIsMainTranslation>false</valueIsMainTranslation>
+      <uiElements>
+        <string>Menu/ControlPanel/Content/VerticalLayoutGroup/Inverted Mouse Buttons/</string>
+      </uiElements>
+    </translationData>
+    <translationData id="OverwriteSave">
+      <translation>[**Missing**]</translation>
+      <valueIsMainTranslation>false</valueIsMainTranslation>
+      <uiElements>
+        <string>Menu/YesNoDialog/Dialog/Content/VerticalLayoutGroup/OverwriteSave/</string>
+      </uiElements>
+    </translationData>
+    <translationData id="Ultra">
+      <translation>[**Missing**]</translation>
+      <valueIsMainTranslation>false</valueIsMainTranslation>
+      <uiElements>
+        <string>Menu/GraphicsPanel/Content/GraphicsPreset/GameObject/Label (3)/</string>
+      </uiElements>
+    </translationData>
+    <translationData id="Vsync">
+      <translation>[**Missing**]</translation>
+      <valueIsMainTranslation>false</valueIsMainTranslation>
+      <uiElements>
+        <string>Menu/GraphicsPanel/Content/ScrollRect/VerticalLayoutGroup/Vsync/</string>
+      </uiElements>
+    </translationData>
+    <translationData id="IslandSize">
+      <translation>[**Missing**]</translation>
+      <valueIsMainTranslation>false</valueIsMainTranslation>
+      <uiElements>
+        <string>Menu/LoadPanel/MenuButtons/SaveDetails/Descriptons/Size/</string>
+      </uiElements>
+    </translationData>
+    <translationData id="Custom">
+      <translation>[**Missing**]</translation>
+      <valueIsMainTranslation>false</valueIsMainTranslation>
+      <uiElements>
+        <string>Menu/GraphicsPanel/Content/GraphicsPreset/GameObject/Label (4)/</string>
+      </uiElements>
+    </translationData>
+    <translationData id="Language">
+      <translation>[**Missing**]</translation>
+      <valueIsMainTranslation>false</valueIsMainTranslation>
+      <uiElements>
+        <string>Menu/GameplayPanel/Content/ScrollRect/VerticalLayoutGroup/Language/</string>
+      </uiElements>
+    </translationData>
+    <translationData id="Low">
+      <translation>[**Missing**]</translation>
+      <valueIsMainTranslation>false</valueIsMainTranslation>
+      <uiElements>
+        <string>Menu/GraphicsPanel/Content/GraphicsPreset/GameObject/Label/</string>
+      </uiElements>
+    </translationData>
+    <translationData id="CreationDate">
+      <translation>[**Missing**]</translation>
+      <valueIsMainTranslation>false</valueIsMainTranslation>
+      <uiElements>
+        <string>Menu/LoadPanel/MenuButtons/SaveDetails/Descriptons/CreationDate/</string>
+      </uiElements>
+    </translationData>
+    <translationData id="IslandClimate">
+      <translation>[**Missing**]</translation>
+      <valueIsMainTranslation>false</valueIsMainTranslation>
+      <uiElements>
+        <string>Menu/LoadPanel/MenuButtons/SaveDetails/Descriptons/Climate/</string>
+      </uiElements>
+    </translationData>
+    <translationData id="MouseSensitivity">
+      <translation>[**Missing**]</translation>
+      <valueIsMainTranslation>false</valueIsMainTranslation>
+      <uiElements>
+        <string>Menu/ControlPanel/Content/VerticalLayoutGroup/Mouse Sensitivity/Label/</string>
+      </uiElements>
+    </translationData>
+    <translationData id="Brightness">
+      <translation>[**Missing**]</translation>
+      <valueIsMainTranslation>false</valueIsMainTranslation>
+      <uiElements>
+        <string>Menu/GraphicsPanel/Content/ScrollRect/VerticalLayoutGroup/Brightness/</string>
+      </uiElements>
+    </translationData>
+    <translationData id="Medium">
+      <translation>[**Missing**]</translation>
+      <valueIsMainTranslation>false</valueIsMainTranslation>
+      <uiElements>
+        <string>Menu/GraphicsPanel/Content/GraphicsPreset/GameObject/Label (1)/</string>
+      </uiElements>
+    </translationData>
+    <translationData id="TextureQuality">
+      <translation>[**Missing**]</translation>
+      <valueIsMainTranslation>false</valueIsMainTranslation>
+      <uiElements>
+        <string>Menu/GraphicsPanel/Content/ScrollRect/VerticalLayoutGroup/TextureQuality/</string>
+      </uiElements>
+    </translationData>
+    <translationData id="Fullscreen">
+      <translation>[**Missing**]</translation>
+      <valueIsMainTranslation>false</valueIsMainTranslation>
+      <uiElements>
+        <string>Menu/GraphicsPanel/Content/ScrollRect/VerticalLayoutGroup/Fullscreen/</string>
+      </uiElements>
+    </translationData>
+    <translationData id="High">
+      <translation>[**Missing**]</translation>
+      <valueIsMainTranslation>false</valueIsMainTranslation>
+      <uiElements>
+        <string>Menu/GraphicsPanel/Content/GraphicsPreset/GameObject/Label (2)/</string>
+      </uiElements>
+    </translationData>
+    <translationData id="Resolutions">
+      <translation>[**Missing**]</translation>
+      <valueIsMainTranslation>false</valueIsMainTranslation>
+      <uiElements>
+        <string>Menu/GraphicsPanel/Content/ScrollRect/VerticalLayoutGroup/Resolutions/</string>
+      </uiElements>
+    </translationData>
+    <translationData id="Framelimiter">
+      <translation>[**Missing**]</translation>
+      <valueIsMainTranslation>false</valueIsMainTranslation>
+      <uiElements>
+        <string>Menu/GraphicsPanel/Content/ScrollRect/VerticalLayoutGroup/Framelimiter/</string>
+      </uiElements>
+    </translationData>
+    <translationData id="Monitor">
+      <translation>[**Missing**]</translation>
+      <valueIsMainTranslation>false</valueIsMainTranslation>
+      <uiElements>
+        <string>Menu/GraphicsPanel/Content/ScrollRect/VerticalLayoutGroup/Monitor/</string>
+      </uiElements>
+    </translationData>
+    <translationData id="PrimaryKey">
+      <translation>[**Missing**]</translation>
+      <valueIsMainTranslation>false</valueIsMainTranslation>
+      <uiElements>
+        <string>Menu/ControlPanel/Content/VerticalLayoutGroup/GameObject/KEYTitles/PrimaryKeyText/</string>
+      </uiElements>
+    </translationData>
+    <translationData id="Hotkey">
+      <translation>[**Missing**]</translation>
+      <valueIsMainTranslation>false</valueIsMainTranslation>
+      <uiElements>
+        <string>Menu/ControlPanel/Content/VerticalLayoutGroup/GameObject/KEYTitles/HotkeyText/</string>
+      </uiElements>
+    </translationData>
+    <translationData id="SecondaryKey">
+      <translation>[**Missing**]</translation>
+      <valueIsMainTranslation>false</valueIsMainTranslation>
+      <uiElements>
+        <string>Menu/ControlPanel/Content/VerticalLayoutGroup/GameObject/KEYTitles/SecondaryKeyText/</string>
+      </uiElements>
+    </translationData>
+    <translationData id="LoadingGameTitle">
+      <translation>[**Missing**]</translation>
+      <valueIsMainTranslation>false</valueIsMainTranslation>
+      <uiElements>
+        <string>Canvas/Title/</string>
+      </uiElements>
+    </translationData>
+    <translationData id="Hint">
+      <translation>[**Missing**]</translation>
+      <valueIsMainTranslation>false</valueIsMainTranslation>
+      <uiElements>
+        <string>Canvas/Hint/HintTitle/</string>
       </uiElements>
     </translationData>
     <translationData id="GraphicsOptions/VeryLow">
@@ -737,489 +676,44 @@
       <translation>[**Missing**]</translation>
       <valueIsMainTranslation>false</valueIsMainTranslation>
     </translationData>
-    <translationData id="No">
+    <translationData id="NeedInRange">
       <translation>[**Missing**]</translation>
       <valueIsMainTranslation>false</valueIsMainTranslation>
       <uiElements>
-        <string>Menu/MainMenu/%Menu/YesNoDialog/Dialog/Content/VerticalLayoutGroup/Buttons/No/</string>
-        <string>Menu/YesNoDialog/Dialog/Content/VerticalLayoutGroup/Buttons/No/</string>
+        <string>Need/</string>
       </uiElements>
     </translationData>
-    <translationData id="Yes">
+    <translationData id="NeedNotInRange">
       <translation>[**Missing**]</translation>
       <valueIsMainTranslation>false</valueIsMainTranslation>
       <uiElements>
-        <string>Menu/MainMenu/%Menu/YesNoDialog/Dialog/Content/VerticalLayoutGroup/Buttons/Yes/</string>
-        <string>Menu/YesNoDialog/Dialog/Content/VerticalLayoutGroup/Buttons/Yes/</string>
+        <string>Need/</string>
       </uiElements>
     </translationData>
-    <translationData id="OverwriteSave">
+    <translationData id="NeedLocked">
       <translation>[**Missing**]</translation>
       <valueIsMainTranslation>false</valueIsMainTranslation>
       <uiElements>
-        <string>Menu/MainMenu/%Menu/YesNoDialog/Dialog/Content/VerticalLayoutGroup/OverwriteSave/</string>
-        <string>Menu/YesNoDialog/Dialog/Content/VerticalLayoutGroup/OverwriteSave/</string>
+        <string>Need/</string>
       </uiElements>
     </translationData>
-    <translationData id="DeleteSaves">
+    <translationData id="Sell">
       <translation>[**Missing**]</translation>
+      <toolTipTranslation>[**Missing**]</toolTipTranslation>
       <valueIsMainTranslation>false</valueIsMainTranslation>
       <uiElements>
-        <string>Menu/MainMenu/%Menu/YesNoDialog/Dialog/Content/VerticalLayoutGroup/DeleteSave/</string>
-        <string>Menu/YesNoDialog/Dialog/Content/VerticalLayoutGroup/DeleteSave/</string>
+        <string>ItemTrade-Prefab/Layout/Prices/Sell/</string>
       </uiElements>
+      <onlyToolTip>true</onlyToolTip>
     </translationData>
-    <translationData id="DiscardUnsaved">
+    <translationData id="Buy">
       <translation>[**Missing**]</translation>
+      <toolTipTranslation>[**Missing**]</toolTipTranslation>
       <valueIsMainTranslation>false</valueIsMainTranslation>
       <uiElements>
-        <string>Menu/MainMenu/%Menu/YesNoDialog/Dialog/Content/VerticalLayoutGroup/UnsavedProgress/</string>
-        <string>Menu/YesNoDialog/Dialog/Content/VerticalLayoutGroup/UnsavedProgress/</string>
+        <string>ItemTrade-Prefab/Layout/Prices/Buy/</string>
       </uiElements>
-    </translationData>
-    <translationData id="Warning">
-      <translation>[**Missing**]</translation>
-      <valueIsMainTranslation>false</valueIsMainTranslation>
-      <uiElements>
-        <string>Menu/MainMenu/%Menu/YesNoDialog/Dialog/Title/</string>
-        <string>Menu/YesNoDialog/Dialog/Title/</string>
-      </uiElements>
-    </translationData>
-    <translationData id="Back">
-      <translation>[**Missing**]</translation>
-      <valueIsMainTranslation>false</valueIsMainTranslation>
-      <uiElements>
-        <string>Menu/MainMenu/%Menu/Credits/Back/</string>
-        <string>Menu/MainMenu/%Menu/ModPanel/Back/</string>
-        <string>Menu/MainMenu/%Menu/OptionsPanel/Back/</string>
-        <string>Menu/MainMenu/%Menu/SavePanel/MenuButtons/Back/</string>
-        <string>Menu/MainMenu/%Menu/LoadPanel/MenuButtons/Back/</string>
-        <string>Menu/ModPanel/Back/</string>
-        <string>Menu/Credits/Back/</string>
-        <string>Menu/OptionsPanel/Back/</string>
-        <string>Menu/SavePanel/MenuButtons/Back/</string>
-        <string>Menu/LoadPanel/MenuButtons/Back/</string>
-      </uiElements>
-    </translationData>
-    <translationData id="Credits">
-      <translation>[**Missing**]</translation>
-      <valueIsMainTranslation>false</valueIsMainTranslation>
-      <uiElements>
-        <string>Menu/MainMenu/%Menu/Credits/Title/</string>
-        <string>Menu/MainMenu/%Menu/Credits/Title/</string>
-        <string>Menu/MainMenu/%Menu/MenuPanel/MenuButtons/Credits/</string>
-        <string>Menu/Credits/Title/</string>
-        <string>Menu/Credits/Title/</string>
-        <string>Menu/MenuPanel/MenuButtons/Credits/</string>
-      </uiElements>
-    </translationData>
-    <translationData id="Mods">
-      <translation>[**Missing**]</translation>
-      <valueIsMainTranslation>false</valueIsMainTranslation>
-      <uiElements>
-        <string>Menu/MainMenu/%Menu/ModPanel/Title/</string>
-        <string>Menu/MainMenu/%Menu/MenuPanel/MenuButtons/Mods/</string>
-        <string>Menu/ModPanel/Title/</string>
-        <string>Menu/MenuPanel/MenuButtons/Mods/</string>
-      </uiElements>
-    </translationData>
-    <translationData id="Language">
-      <translation>[**Missing**]</translation>
-      <valueIsMainTranslation>false</valueIsMainTranslation>
-      <uiElements>
-        <string>Menu/MainMenu/%Menu/GameplayPanel/Content/ScrollRect/VerticalLayoutGroup/Language/</string>
-        <string>Menu/GameplayPanel/Content/ScrollRect/VerticalLayoutGroup/Language/</string>
-      </uiElements>
-    </translationData>
-    <translationData id="AutorotateBuildings">
-      <translation>[**Missing**]</translation>
-      <valueIsMainTranslation>false</valueIsMainTranslation>
-      <uiElements>
-        <string>Menu/MainMenu/%Menu/GameplayPanel/Content/ScrollRect/VerticalLayoutGroup/Autorotate Buildings/</string>
-        <string>Menu/GameplayPanel/Content/ScrollRect/VerticalLayoutGroup/Autorotate Buildings/</string>
-      </uiElements>
-    </translationData>
-    <translationData id="Gameplay">
-      <translation>[**Missing**]</translation>
-      <valueIsMainTranslation>false</valueIsMainTranslation>
-      <uiElements>
-        <string>Menu/MainMenu/%Menu/GameplayPanel/Title/</string>
-        <string>Menu/MainMenu/%Menu/OptionsPanel/MenuButtons/Gameplay/</string>
-        <string>Menu/GameplayPanel/Title/</string>
-        <string>Menu/OptionsPanel/MenuButtons/Gameplay/</string>
-      </uiElements>
-    </translationData>
-    <translationData id="SecondaryKey">
-      <translation>[**Missing**]</translation>
-      <valueIsMainTranslation>false</valueIsMainTranslation>
-      <uiElements>
-        <string>Menu/MainMenu/%Menu/ControlPanel/Content/VerticalLayoutGroup/GameObject/KEYTitles/SecondaryKeyText/</string>
-        <string>Menu/ControlPanel/Content/VerticalLayoutGroup/GameObject/KEYTitles/SecondaryKeyText/</string>
-      </uiElements>
-    </translationData>
-    <translationData id="PrimaryKey">
-      <translation>[**Missing**]</translation>
-      <valueIsMainTranslation>false</valueIsMainTranslation>
-      <uiElements>
-        <string>Menu/MainMenu/%Menu/ControlPanel/Content/VerticalLayoutGroup/GameObject/KEYTitles/PrimaryKeyText/</string>
-        <string>Menu/ControlPanel/Content/VerticalLayoutGroup/GameObject/KEYTitles/PrimaryKeyText/</string>
-      </uiElements>
-    </translationData>
-    <translationData id="Hotkey">
-      <translation>[**Missing**]</translation>
-      <valueIsMainTranslation>false</valueIsMainTranslation>
-      <uiElements>
-        <string>Menu/MainMenu/%Menu/ControlPanel/Content/VerticalLayoutGroup/GameObject/KEYTitles/HotkeyText/</string>
-        <string>Menu/ControlPanel/Content/VerticalLayoutGroup/GameObject/KEYTitles/HotkeyText/</string>
-      </uiElements>
-    </translationData>
-    <translationData id="InvertedMouseButtons">
-      <translation>[**Missing**]</translation>
-      <valueIsMainTranslation>false</valueIsMainTranslation>
-      <uiElements>
-        <string>Menu/MainMenu/%Menu/ControlPanel/Content/VerticalLayoutGroup/Inverted Mouse Buttons/</string>
-        <string>Menu/ControlPanel/Content/VerticalLayoutGroup/Inverted Mouse Buttons/</string>
-      </uiElements>
-    </translationData>
-    <translationData id="MouseSensitivity">
-      <translation>[**Missing**]</translation>
-      <valueIsMainTranslation>false</valueIsMainTranslation>
-      <uiElements>
-        <string>Menu/MainMenu/%Menu/ControlPanel/Content/VerticalLayoutGroup/Mouse Sensitivity/Label/</string>
-        <string>Menu/ControlPanel/Content/VerticalLayoutGroup/Mouse Sensitivity/Label/</string>
-      </uiElements>
-    </translationData>
-    <translationData id="Controls">
-      <translation>[**Missing**]</translation>
-      <valueIsMainTranslation>false</valueIsMainTranslation>
-      <uiElements>
-        <string>Menu/MainMenu/%Menu/ControlPanel/Title/</string>
-        <string>Menu/MainMenu/%Menu/OptionsPanel/MenuButtons/Controls/</string>
-        <string>Menu/ControlPanel/Title/</string>
-        <string>Menu/OptionsPanel/MenuButtons/Controls/</string>
-      </uiElements>
-    </translationData>
-    <translationData id="UISoundVolume">
-      <translation>[**Missing**]</translation>
-      <valueIsMainTranslation>false</valueIsMainTranslation>
-      <uiElements>
-        <string>Menu/MainMenu/%Menu/SoundPanel/Content/VerticalLayoutGroup/UI/</string>
-        <string>Menu/SoundPanel/Content/VerticalLayoutGroup/UI/</string>
-      </uiElements>
-    </translationData>
-    <translationData id="MusicVolume">
-      <translation>[**Missing**]</translation>
-      <valueIsMainTranslation>false</valueIsMainTranslation>
-      <uiElements>
-        <string>Menu/MainMenu/%Menu/SoundPanel/Content/VerticalLayoutGroup/Music/</string>
-        <string>Menu/SoundPanel/Content/VerticalLayoutGroup/Music/</string>
-      </uiElements>
-    </translationData>
-    <translationData id="AmbientSoundVolume">
-      <translation>[**Missing**]</translation>
-      <valueIsMainTranslation>false</valueIsMainTranslation>
-      <uiElements>
-        <string>Menu/MainMenu/%Menu/SoundPanel/Content/VerticalLayoutGroup/Ambient/</string>
-        <string>Menu/SoundPanel/Content/VerticalLayoutGroup/Ambient/</string>
-      </uiElements>
-    </translationData>
-    <translationData id="SoundEffectsVolume">
-      <translation>[**Missing**]</translation>
-      <valueIsMainTranslation>false</valueIsMainTranslation>
-      <uiElements>
-        <string>Menu/MainMenu/%Menu/SoundPanel/Content/VerticalLayoutGroup/SoundEffects/</string>
-        <string>Menu/SoundPanel/Content/VerticalLayoutGroup/SoundEffects/</string>
-      </uiElements>
-    </translationData>
-    <translationData id="MasterSoundVolume">
-      <translation>[**Missing**]</translation>
-      <valueIsMainTranslation>false</valueIsMainTranslation>
-      <uiElements>
-        <string>Menu/MainMenu/%Menu/SoundPanel/Content/VerticalLayoutGroup/Master/</string>
-        <string>Menu/MainMenu/%Menu/SoundPanel/Content/VerticalLayoutGroup/Master/</string>
-        <string>Menu/SoundPanel/Content/VerticalLayoutGroup/Master/</string>
-        <string>Menu/SoundPanel/Content/VerticalLayoutGroup/Master/</string>
-      </uiElements>
-    </translationData>
-    <translationData id="Sound">
-      <translation>[**Missing**]</translation>
-      <valueIsMainTranslation>false</valueIsMainTranslation>
-      <uiElements>
-        <string>Menu/MainMenu/%Menu/SoundPanel/Title/</string>
-        <string>Menu/MainMenu/%Menu/OptionsPanel/MenuButtons/Sound/</string>
-        <string>Menu/SoundPanel/Title/</string>
-        <string>Menu/OptionsPanel/MenuButtons/Sound/</string>
-      </uiElements>
-    </translationData>
-    <translationData id="RestartRequired">
-      <translation>[**Missing**]</translation>
-      <valueIsMainTranslation>false</valueIsMainTranslation>
-      <uiElements>
-        <string>Menu/MainMenu/%Menu/GraphicsPanel/Content/RestartRequired/</string>
-        <string>Menu/GraphicsPanel/Content/RestartRequired/</string>
-      </uiElements>
-    </translationData>
-    <translationData id="Resolutions">
-      <translation>[**Missing**]</translation>
-      <valueIsMainTranslation>false</valueIsMainTranslation>
-      <uiElements>
-        <string>Menu/MainMenu/%Menu/GraphicsPanel/Content/ScrollRect/VerticalLayoutGroup/Resolutions/</string>
-        <string>Menu/GraphicsPanel/Content/ScrollRect/VerticalLayoutGroup/Resolutions/</string>
-      </uiElements>
-    </translationData>
-    <translationData id="Monitor">
-      <translation>[**Missing**]</translation>
-      <valueIsMainTranslation>false</valueIsMainTranslation>
-      <uiElements>
-        <string>Menu/MainMenu/%Menu/GraphicsPanel/Content/ScrollRect/VerticalLayoutGroup/Monitor/</string>
-        <string>Menu/GraphicsPanel/Content/ScrollRect/VerticalLayoutGroup/Monitor/</string>
-      </uiElements>
-    </translationData>
-    <translationData id="Fullscreen">
-      <translation>[**Missing**]</translation>
-      <valueIsMainTranslation>false</valueIsMainTranslation>
-      <uiElements>
-        <string>Menu/MainMenu/%Menu/GraphicsPanel/Content/ScrollRect/VerticalLayoutGroup/Fullscreen/</string>
-        <string>Menu/GraphicsPanel/Content/ScrollRect/VerticalLayoutGroup/Fullscreen/</string>
-      </uiElements>
-    </translationData>
-    <translationData id="Framelimiter">
-      <translation>[**Missing**]</translation>
-      <valueIsMainTranslation>false</valueIsMainTranslation>
-      <uiElements>
-        <string>Menu/MainMenu/%Menu/GraphicsPanel/Content/ScrollRect/VerticalLayoutGroup/Framelimiter/</string>
-        <string>Menu/GraphicsPanel/Content/ScrollRect/VerticalLayoutGroup/Framelimiter/</string>
-      </uiElements>
-    </translationData>
-    <translationData id="Vsync">
-      <translation>[**Missing**]</translation>
-      <valueIsMainTranslation>false</valueIsMainTranslation>
-      <uiElements>
-        <string>Menu/MainMenu/%Menu/GraphicsPanel/Content/ScrollRect/VerticalLayoutGroup/Vsync/</string>
-        <string>Menu/GraphicsPanel/Content/ScrollRect/VerticalLayoutGroup/Vsync/</string>
-      </uiElements>
-    </translationData>
-    <translationData id="TextureQuality">
-      <translation>[**Missing**]</translation>
-      <valueIsMainTranslation>false</valueIsMainTranslation>
-      <uiElements>
-        <string>Menu/MainMenu/%Menu/GraphicsPanel/Content/ScrollRect/VerticalLayoutGroup/TextureQuality/</string>
-        <string>Menu/GraphicsPanel/Content/ScrollRect/VerticalLayoutGroup/TextureQuality/</string>
-      </uiElements>
-    </translationData>
-    <translationData id="Brightness">
-      <translation>[**Missing**]</translation>
-      <valueIsMainTranslation>false</valueIsMainTranslation>
-      <uiElements>
-        <string>Menu/MainMenu/%Menu/GraphicsPanel/Content/ScrollRect/VerticalLayoutGroup/Brightness/</string>
-        <string>Menu/GraphicsPanel/Content/ScrollRect/VerticalLayoutGroup/Brightness/</string>
-      </uiElements>
-    </translationData>
-    <translationData id="Custom">
-      <translation>[**Missing**]</translation>
-      <valueIsMainTranslation>false</valueIsMainTranslation>
-      <uiElements>
-        <string>Menu/MainMenu/%Menu/GraphicsPanel/Content/GraphicsPreset/GameObject/Label (4)/</string>
-        <string>Menu/GraphicsPanel/Content/GraphicsPreset/GameObject/Label (4)/</string>
-      </uiElements>
-    </translationData>
-    <translationData id="Ultra">
-      <translation>[**Missing**]</translation>
-      <valueIsMainTranslation>false</valueIsMainTranslation>
-      <uiElements>
-        <string>Menu/MainMenu/%Menu/GraphicsPanel/Content/GraphicsPreset/GameObject/Label (3)/</string>
-        <string>Menu/GraphicsPanel/Content/GraphicsPreset/GameObject/Label (3)/</string>
-      </uiElements>
-    </translationData>
-    <translationData id="High">
-      <translation>[**Missing**]</translation>
-      <valueIsMainTranslation>false</valueIsMainTranslation>
-      <uiElements>
-        <string>Menu/MainMenu/%Menu/GraphicsPanel/Content/GraphicsPreset/GameObject/Label (2)/</string>
-        <string>Menu/GraphicsPanel/Content/GraphicsPreset/GameObject/Label (2)/</string>
-      </uiElements>
-    </translationData>
-    <translationData id="Medium">
-      <translation>[**Missing**]</translation>
-      <valueIsMainTranslation>false</valueIsMainTranslation>
-      <uiElements>
-        <string>Menu/MainMenu/%Menu/GraphicsPanel/Content/GraphicsPreset/GameObject/Label (1)/</string>
-        <string>Menu/GraphicsPanel/Content/GraphicsPreset/GameObject/Label (1)/</string>
-      </uiElements>
-    </translationData>
-    <translationData id="Low">
-      <translation>[**Missing**]</translation>
-      <valueIsMainTranslation>false</valueIsMainTranslation>
-      <uiElements>
-        <string>Menu/MainMenu/%Menu/GraphicsPanel/Content/GraphicsPreset/GameObject/Label/</string>
-        <string>Menu/GraphicsPanel/Content/GraphicsPreset/GameObject/Label/</string>
-      </uiElements>
-    </translationData>
-    <translationData id="Presets">
-      <translation>[**Missing**]</translation>
-      <valueIsMainTranslation>false</valueIsMainTranslation>
-      <uiElements>
-        <string>Menu/MainMenu/%Menu/GraphicsPanel/Content/Text/</string>
-        <string>Menu/GraphicsPanel/Content/Text/</string>
-      </uiElements>
-    </translationData>
-    <translationData id="Graphics">
-      <translation>[**Missing**]</translation>
-      <valueIsMainTranslation>false</valueIsMainTranslation>
-      <uiElements>
-        <string>Menu/MainMenu/%Menu/GraphicsPanel/Title/</string>
-        <string>Menu/MainMenu/%Menu/OptionsPanel/MenuButtons/Graphics/</string>
-        <string>Menu/GraphicsPanel/Title/</string>
-        <string>Menu/OptionsPanel/MenuButtons/Graphics/</string>
-      </uiElements>
-    </translationData>
-    <translationData id="Save">
-      <translation>[**Missing**]</translation>
-      <valueIsMainTranslation>false</valueIsMainTranslation>
-      <uiElements>
-        <string>Menu/MainMenu/%Menu/SavePanel/MenuButtons/Save/</string>
-        <string>Menu/MainMenu/%Menu/MenuPanel/MenuButtons/Save/</string>
-        <string>Menu/MenuPanel/MenuButtons/Save/</string>
-        <string>Menu/SavePanel/MenuButtons/Save/</string>
-      </uiElements>
-    </translationData>
-    <translationData id="Saveing">
-      <translation>[**Missing**]</translation>
-      <valueIsMainTranslation>false</valueIsMainTranslation>
-      <uiElements>
-        <string>Menu/MainMenu/%Menu/SavePanel/Title/TitleText/</string>
-        <string>Menu/SavePanel/Title/TitleText/</string>
-      </uiElements>
-    </translationData>
-    <translationData id="Load">
-      <translation>[**Missing**]</translation>
-      <valueIsMainTranslation>false</valueIsMainTranslation>
-      <uiElements>
-        <string>Menu/MainMenu/%Menu/LoadPanel/MenuButtons/Load/</string>
-        <string>Menu/MainMenu/%Menu/MenuPanel/MenuButtons/Load/</string>
-        <string>Menu/LoadPanel/MenuButtons/Load/</string>
-        <string>Menu/MenuPanel/MenuButtons/Load/</string>
-      </uiElements>
-    </translationData>
-    <translationData id="IslandSize">
-      <translation>[**Missing**]</translation>
-      <valueIsMainTranslation>false</valueIsMainTranslation>
-      <uiElements>
-        <string>Menu/MainMenu/%Menu/LoadPanel/MenuButtons/SaveDetails/Descriptons/Size/</string>
-        <string>Menu/LoadPanel/MenuButtons/SaveDetails/Descriptons/Size/</string>
-      </uiElements>
-    </translationData>
-    <translationData id="IslandClimate">
-      <translation>[**Missing**]</translation>
-      <valueIsMainTranslation>false</valueIsMainTranslation>
-      <uiElements>
-        <string>Menu/MainMenu/%Menu/LoadPanel/MenuButtons/SaveDetails/Descriptons/Climate/</string>
-        <string>Menu/LoadPanel/MenuButtons/SaveDetails/Descriptons/Climate/</string>
-      </uiElements>
-    </translationData>
-    <translationData id="CreationDate">
-      <translation>[**Missing**]</translation>
-      <valueIsMainTranslation>false</valueIsMainTranslation>
-      <uiElements>
-        <string>Menu/MainMenu/%Menu/LoadPanel/MenuButtons/SaveDetails/Descriptons/CreationDate/</string>
-        <string>Menu/LoadPanel/MenuButtons/SaveDetails/Descriptons/CreationDate/</string>
-      </uiElements>
-    </translationData>
-    <translationData id="Loading">
-      <translation>[**Missing**]</translation>
-      <valueIsMainTranslation>false</valueIsMainTranslation>
-      <uiElements>
-        <string>Menu/MainMenu/%Menu/LoadPanel/Title/TitleText/</string>
-        <string>Menu/LoadPanel/Title/TitleText/</string>
-      </uiElements>
-    </translationData>
-    <translationData id="FogOfWar">
-      <translation>[**Missing**]</translation>
-      <valueIsMainTranslation>false</valueIsMainTranslation>
-      <uiElements>
-        <string>Menu/MainMenu/%Menu/NewGame/Settings/FogOfWar/</string>
-        <string>Menu/NewGame/Settings/FogOfWar/</string>
-      </uiElements>
-    </translationData>
-    <translationData id="Pirate">
-      <translation>[**Missing**]</translation>
-      <valueIsMainTranslation>false</valueIsMainTranslation>
-      <uiElements>
-        <string>Menu/MainMenu/%Menu/NewGame/Settings/Pirate/</string>
-        <string>Menu/NewGame/Settings/Pirate/</string>
-      </uiElements>
-    </translationData>
-    <translationData id="Height">
-      <translation>[**Missing**]</translation>
-      <valueIsMainTranslation>false</valueIsMainTranslation>
-      <uiElements>
-        <string>Menu/MainMenu/%Menu/NewGame/Settings/Size/Height/</string>
-        <string>Menu/NewGame/Settings/Size/Height/</string>
-      </uiElements>
-    </translationData>
-    <translationData id="Width">
-      <translation>[**Missing**]</translation>
-      <valueIsMainTranslation>false</valueIsMainTranslation>
-      <uiElements>
-        <string>Menu/MainMenu/%Menu/NewGame/Settings/Size/Width/</string>
-        <string>Menu/NewGame/Settings/Size/Width/</string>
-      </uiElements>
-    </translationData>
-    <translationData id="Seed">
-      <translation>[**Missing**]</translation>
-      <valueIsMainTranslation>false</valueIsMainTranslation>
-      <uiElements>
-        <string>Menu/MainMenu/%Menu/NewGame/Settings/Seed/</string>
-        <string>Menu/NewGame/Settings/Seed/</string>
-      </uiElements>
-    </translationData>
-    <translationData id="QuitToOS">
-      <translation>[**Missing**]</translation>
-      <valueIsMainTranslation>false</valueIsMainTranslation>
-      <uiElements>
-        <string>Menu/MainMenu/%Menu/MenuPanel/MenuButtons (1)/Quit/</string>
-        <string>Menu/MenuPanel/MenuButtons (1)/Quit/</string>
-      </uiElements>
-    </translationData>
-    <translationData id="QuitToMenu">
-      <translation>[**Missing**]</translation>
-      <valueIsMainTranslation>false</valueIsMainTranslation>
-      <uiElements>
-        <string>Menu/MainMenu/%Menu/MenuPanel/MenuButtons (1)/QuitMenu/</string>
-        <string>Menu/MenuPanel/MenuButtons (1)/QuitMenu/</string>
-      </uiElements>
-    </translationData>
-    <translationData id="Options">
-      <translation>[**Missing**]</translation>
-      <valueIsMainTranslation>false</valueIsMainTranslation>
-      <uiElements>
-        <string>Menu/MainMenu/%Menu/MenuPanel/MenuButtons/Options/</string>
-        <string>Menu/MenuPanel/MenuButtons/Options/</string>
-      </uiElements>
-    </translationData>
-    <translationData id="Editor">
-      <translation>[**Missing**]</translation>
-      <valueIsMainTranslation>false</valueIsMainTranslation>
-      <uiElements>
-        <string>Menu/MainMenu/%Menu/MenuPanel/MenuButtons/Editor/</string>
-        <string>Menu/MenuPanel/MenuButtons/Editor/</string>
-      </uiElements>
-    </translationData>
-    <translationData id="NewGame">
-      <translation>[**Missing**]</translation>
-      <valueIsMainTranslation>false</valueIsMainTranslation>
-      <uiElements>
-        <string>Menu/MainMenu/%Menu/MenuPanel/MenuButtons/New Game/</string>
-        <string>Menu/MenuPanel/MenuButtons/New Game/</string>
-      </uiElements>
-    </translationData>
-    <translationData id="ResumeGame">
-      <translation>[**Missing**]</translation>
-      <valueIsMainTranslation>false</valueIsMainTranslation>
-      <uiElements>
-        <string>Menu/MainMenu/%Menu/MenuPanel/MenuButtons/Resume/</string>
-        <string>Menu/MenuPanel/MenuButtons/Resume/</string>
-      </uiElements>
+      <onlyToolTip>true</onlyToolTip>
     </translationData>
     <translationData id="HealthUI">
       <translation>[**Missing**]</translation>
@@ -1230,47 +724,431 @@
       </uiElements>
       <onlyToolTip>true</onlyToolTip>
     </translationData>
-    <translationData id="MissingMods">
+    <translationData id="Mods">
       <translation>[**Missing**]</translation>
       <valueIsMainTranslation>false</valueIsMainTranslation>
       <uiElements>
-        <string>Menu/OKDialog/Dialog/Content/VerticalLayoutGroup/MissingMods/</string>
+        <string>Menu/ModPanel/Title/</string>
+        <string>Menu/MenuPanel/MenuButtons/Mods/</string>
       </uiElements>
     </translationData>
-    <translationData id="NewVersion">
+    <translationData id="Gameplay">
       <translation>[**Missing**]</translation>
       <valueIsMainTranslation>false</valueIsMainTranslation>
       <uiElements>
-        <string>Menu/OKDialog/Dialog/Content/VerticalLayoutGroup/NewVersion/</string>
-        <string>Menu/OKDialog/Dialog/Titles/NewVersionTitle/</string>
+        <string>Menu/GameplayPanel/Title/</string>
+        <string>Menu/OptionsPanel/MenuButtons/Gameplay/</string>
       </uiElements>
     </translationData>
-    <translationData id="SaveFileError">
+    <translationData id="Editor">
       <translation>[**Missing**]</translation>
       <valueIsMainTranslation>false</valueIsMainTranslation>
       <uiElements>
-        <string>Menu/OKDialog/Dialog/Content/VerticalLayoutGroup/SaveFileError/</string>
+        <string>Menu/MenuPanel/MenuButtons/Editor/</string>
       </uiElements>
     </translationData>
-    <translationData id="ErrorMods">
+    <translationData id="Back">
       <translation>[**Missing**]</translation>
       <valueIsMainTranslation>false</valueIsMainTranslation>
       <uiElements>
-        <string>Menu/OKDialog/Dialog/Content/VerticalLayoutGroup/ModError/</string>
+        <string>Menu/ModPanel/Back/</string>
+        <string>Menu/Credits/Back/</string>
+        <string>Menu/OptionsPanel/Back/</string>
+        <string>Menu/SavePanel/MenuButtons/Back/</string>
+        <string>Menu/LoadPanel/MenuButtons/Back/</string>
       </uiElements>
     </translationData>
-    <translationData id="Ok">
+    <translationData id="NewGame">
       <translation>[**Missing**]</translation>
       <valueIsMainTranslation>false</valueIsMainTranslation>
       <uiElements>
-        <string>Menu/OKDialog/Dialog/Content/VerticalLayoutGroup/Ok/</string>
+        <string>Menu/MenuPanel/MenuButtons/New Game/</string>
       </uiElements>
     </translationData>
-    <translationData id="Error">
+    <translationData id="Controls">
       <translation>[**Missing**]</translation>
       <valueIsMainTranslation>false</valueIsMainTranslation>
       <uiElements>
-        <string>Menu/OKDialog/Dialog/Titles/ErrorTitle/</string>
+        <string>Menu/ControlPanel/Title/</string>
+        <string>Menu/OptionsPanel/MenuButtons/Controls/</string>
+      </uiElements>
+    </translationData>
+    <translationData id="Sound">
+      <translation>[**Missing**]</translation>
+      <valueIsMainTranslation>false</valueIsMainTranslation>
+      <uiElements>
+        <string>Menu/SoundPanel/Title/</string>
+        <string>Menu/OptionsPanel/MenuButtons/Sound/</string>
+      </uiElements>
+    </translationData>
+    <translationData id="Credits">
+      <translation>[**Missing**]</translation>
+      <valueIsMainTranslation>false</valueIsMainTranslation>
+      <uiElements>
+        <string>Menu/Credits/Title/</string>
+        <string>Menu/Credits/Title/</string>
+        <string>Menu/MenuPanel/MenuButtons/Credits/</string>
+      </uiElements>
+    </translationData>
+    <translationData id="Graphics">
+      <translation>[**Missing**]</translation>
+      <valueIsMainTranslation>false</valueIsMainTranslation>
+      <uiElements>
+        <string>Menu/GraphicsPanel/Title/</string>
+        <string>Menu/OptionsPanel/MenuButtons/Graphics/</string>
+      </uiElements>
+    </translationData>
+    <translationData id="Save">
+      <translation>[**Missing**]</translation>
+      <valueIsMainTranslation>false</valueIsMainTranslation>
+      <uiElements>
+        <string>Menu/MenuPanel/MenuButtons/Save/</string>
+        <string>Menu/SavePanel/MenuButtons/Save/</string>
+      </uiElements>
+    </translationData>
+    <translationData id="QuitToMenu">
+      <translation>[**Missing**]</translation>
+      <valueIsMainTranslation>false</valueIsMainTranslation>
+      <uiElements>
+        <string>Menu/MenuPanel/MenuButtons (1)/QuitMenu/</string>
+      </uiElements>
+    </translationData>
+    <translationData id="Saveing">
+      <translation>[**Missing**]</translation>
+      <valueIsMainTranslation>false</valueIsMainTranslation>
+      <uiElements>
+        <string>Menu/SavePanel/Title/TitleText/</string>
+      </uiElements>
+    </translationData>
+    <translationData id="Options">
+      <translation>[**Missing**]</translation>
+      <valueIsMainTranslation>false</valueIsMainTranslation>
+      <uiElements>
+        <string>Menu/MenuPanel/MenuButtons/Options/</string>
+      </uiElements>
+    </translationData>
+    <translationData id="Presets">
+      <translation>[**Missing**]</translation>
+      <valueIsMainTranslation>false</valueIsMainTranslation>
+      <uiElements>
+        <string>Menu/GraphicsPanel/Content/Text/</string>
+      </uiElements>
+    </translationData>
+    <translationData id="QuitToOS">
+      <translation>[**Missing**]</translation>
+      <valueIsMainTranslation>false</valueIsMainTranslation>
+      <uiElements>
+        <string>Menu/MenuPanel/MenuButtons (1)/Quit/</string>
+      </uiElements>
+    </translationData>
+    <translationData id="Load">
+      <translation>[**Missing**]</translation>
+      <valueIsMainTranslation>false</valueIsMainTranslation>
+      <uiElements>
+        <string>Menu/LoadPanel/MenuButtons/Load/</string>
+        <string>Menu/MenuPanel/MenuButtons/Load/</string>
+      </uiElements>
+    </translationData>
+    <translationData id="Seed">
+      <translation>[**Missing**]</translation>
+      <valueIsMainTranslation>false</valueIsMainTranslation>
+      <uiElements>
+        <string>Menu/NewGame/Settings/Seed/</string>
+      </uiElements>
+    </translationData>
+    <translationData id="Loading">
+      <translation>[**Missing**]</translation>
+      <valueIsMainTranslation>false</valueIsMainTranslation>
+      <uiElements>
+        <string>Menu/LoadPanel/Title/TitleText/</string>
+      </uiElements>
+    </translationData>
+    <translationData id="Pirate">
+      <translation>[**Missing**]</translation>
+      <valueIsMainTranslation>false</valueIsMainTranslation>
+      <uiElements>
+        <string>Menu/NewGame/Settings/Pirate/</string>
+      </uiElements>
+    </translationData>
+    <translationData id="Warning">
+      <translation>[**Missing**]</translation>
+      <valueIsMainTranslation>false</valueIsMainTranslation>
+      <uiElements>
+        <string>Menu/YesNoDialog/Dialog/Title/</string>
+      </uiElements>
+    </translationData>
+    <translationData id="RestartRequired">
+      <translation>[**Missing**]</translation>
+      <valueIsMainTranslation>false</valueIsMainTranslation>
+      <uiElements>
+        <string>Menu/GraphicsPanel/Content/RestartRequired/</string>
+      </uiElements>
+    </translationData>
+    <translationData id="ResumeGame">
+      <translation>[**Missing**]</translation>
+      <valueIsMainTranslation>false</valueIsMainTranslation>
+      <uiElements>
+        <string>Menu/MenuPanel/MenuButtons/Resume/</string>
+      </uiElements>
+    </translationData>
+    <translationData id="FogOfWar">
+      <translation>[**Missing**]</translation>
+      <valueIsMainTranslation>false</valueIsMainTranslation>
+      <uiElements>
+        <string>Menu/NewGame/Settings/FogOfWar/</string>
+      </uiElements>
+    </translationData>
+    <translationData id="MasterSoundVolume">
+      <translation>[**Missing**]</translation>
+      <valueIsMainTranslation>false</valueIsMainTranslation>
+      <uiElements>
+        <string>Menu/SoundPanel/Content/VerticalLayoutGroup/Master/</string>
+        <string>Menu/SoundPanel/Content/VerticalLayoutGroup/Master/</string>
+      </uiElements>
+    </translationData>
+    <translationData id="AutorotateBuildings">
+      <translation>[**Missing**]</translation>
+      <valueIsMainTranslation>false</valueIsMainTranslation>
+      <uiElements>
+        <string>Menu/GameplayPanel/Content/ScrollRect/VerticalLayoutGroup/Autorotate Buildings/</string>
+      </uiElements>
+    </translationData>
+    <translationData id="MusicVolume">
+      <translation>[**Missing**]</translation>
+      <valueIsMainTranslation>false</valueIsMainTranslation>
+      <uiElements>
+        <string>Menu/SoundPanel/Content/VerticalLayoutGroup/Music/</string>
+      </uiElements>
+    </translationData>
+    <translationData id="AmbientSoundVolume">
+      <translation>[**Missing**]</translation>
+      <valueIsMainTranslation>false</valueIsMainTranslation>
+      <uiElements>
+        <string>Menu/SoundPanel/Content/VerticalLayoutGroup/Ambient/</string>
+      </uiElements>
+    </translationData>
+    <translationData id="SoundEffectsVolume">
+      <translation>[**Missing**]</translation>
+      <valueIsMainTranslation>false</valueIsMainTranslation>
+      <uiElements>
+        <string>Menu/SoundPanel/Content/VerticalLayoutGroup/SoundEffects/</string>
+      </uiElements>
+    </translationData>
+    <translationData id="Height">
+      <translation>[**Missing**]</translation>
+      <valueIsMainTranslation>false</valueIsMainTranslation>
+      <uiElements>
+        <string>Menu/NewGame/Settings/Size/Height/</string>
+      </uiElements>
+    </translationData>
+    <translationData id="Width">
+      <translation>[**Missing**]</translation>
+      <valueIsMainTranslation>false</valueIsMainTranslation>
+      <uiElements>
+        <string>Menu/NewGame/Settings/Size/Width/</string>
+      </uiElements>
+    </translationData>
+    <translationData id="UISoundVolume">
+      <translation>[**Missing**]</translation>
+      <valueIsMainTranslation>false</valueIsMainTranslation>
+      <uiElements>
+        <string>Menu/SoundPanel/Content/VerticalLayoutGroup/UI/</string>
+      </uiElements>
+    </translationData>
+    <translationData id="No">
+      <translation>[**Missing**]</translation>
+      <valueIsMainTranslation>false</valueIsMainTranslation>
+      <uiElements>
+        <string>Menu/YesNoDialog/Dialog/Content/VerticalLayoutGroup/Buttons/No/</string>
+      </uiElements>
+    </translationData>
+    <translationData id="DiscardUnsaved">
+      <translation>[**Missing**]</translation>
+      <valueIsMainTranslation>false</valueIsMainTranslation>
+      <uiElements>
+        <string>Menu/YesNoDialog/Dialog/Content/VerticalLayoutGroup/UnsavedProgress/</string>
+      </uiElements>
+    </translationData>
+    <translationData id="DeleteSaves">
+      <translation>[**Missing**]</translation>
+      <valueIsMainTranslation>false</valueIsMainTranslation>
+      <uiElements>
+        <string>Menu/YesNoDialog/Dialog/Content/VerticalLayoutGroup/DeleteSave/</string>
+      </uiElements>
+    </translationData>
+    <translationData id="Yes">
+      <translation>[**Missing**]</translation>
+      <valueIsMainTranslation>false</valueIsMainTranslation>
+      <uiElements>
+        <string>Menu/YesNoDialog/Dialog/Content/VerticalLayoutGroup/Buttons/Yes/</string>
+      </uiElements>
+    </translationData>
+    <translationData id="InvertedMouseButtons">
+      <translation>[**Missing**]</translation>
+      <valueIsMainTranslation>false</valueIsMainTranslation>
+      <uiElements>
+        <string>Menu/ControlPanel/Content/VerticalLayoutGroup/Inverted Mouse Buttons/</string>
+      </uiElements>
+    </translationData>
+    <translationData id="OverwriteSave">
+      <translation>[**Missing**]</translation>
+      <valueIsMainTranslation>false</valueIsMainTranslation>
+      <uiElements>
+        <string>Menu/YesNoDialog/Dialog/Content/VerticalLayoutGroup/OverwriteSave/</string>
+      </uiElements>
+    </translationData>
+    <translationData id="Ultra">
+      <translation>[**Missing**]</translation>
+      <valueIsMainTranslation>false</valueIsMainTranslation>
+      <uiElements>
+        <string>Menu/GraphicsPanel/Content/GraphicsPreset/GameObject/Label (3)/</string>
+      </uiElements>
+    </translationData>
+    <translationData id="Vsync">
+      <translation>[**Missing**]</translation>
+      <valueIsMainTranslation>false</valueIsMainTranslation>
+      <uiElements>
+        <string>Menu/GraphicsPanel/Content/ScrollRect/VerticalLayoutGroup/Vsync/</string>
+      </uiElements>
+    </translationData>
+    <translationData id="IslandSize">
+      <translation>[**Missing**]</translation>
+      <valueIsMainTranslation>false</valueIsMainTranslation>
+      <uiElements>
+        <string>Menu/LoadPanel/MenuButtons/SaveDetails/Descriptons/Size/</string>
+      </uiElements>
+    </translationData>
+    <translationData id="Custom">
+      <translation>[**Missing**]</translation>
+      <valueIsMainTranslation>false</valueIsMainTranslation>
+      <uiElements>
+        <string>Menu/GraphicsPanel/Content/GraphicsPreset/GameObject/Label (4)/</string>
+      </uiElements>
+    </translationData>
+    <translationData id="Language">
+      <translation>[**Missing**]</translation>
+      <valueIsMainTranslation>false</valueIsMainTranslation>
+      <uiElements>
+        <string>Menu/GameplayPanel/Content/ScrollRect/VerticalLayoutGroup/Language/</string>
+      </uiElements>
+    </translationData>
+    <translationData id="Low">
+      <translation>[**Missing**]</translation>
+      <valueIsMainTranslation>false</valueIsMainTranslation>
+      <uiElements>
+        <string>Menu/GraphicsPanel/Content/GraphicsPreset/GameObject/Label/</string>
+      </uiElements>
+    </translationData>
+    <translationData id="CreationDate">
+      <translation>[**Missing**]</translation>
+      <valueIsMainTranslation>false</valueIsMainTranslation>
+      <uiElements>
+        <string>Menu/LoadPanel/MenuButtons/SaveDetails/Descriptons/CreationDate/</string>
+      </uiElements>
+    </translationData>
+    <translationData id="IslandClimate">
+      <translation>[**Missing**]</translation>
+      <valueIsMainTranslation>false</valueIsMainTranslation>
+      <uiElements>
+        <string>Menu/LoadPanel/MenuButtons/SaveDetails/Descriptons/Climate/</string>
+      </uiElements>
+    </translationData>
+    <translationData id="MouseSensitivity">
+      <translation>[**Missing**]</translation>
+      <valueIsMainTranslation>false</valueIsMainTranslation>
+      <uiElements>
+        <string>Menu/ControlPanel/Content/VerticalLayoutGroup/Mouse Sensitivity/Label/</string>
+      </uiElements>
+    </translationData>
+    <translationData id="Brightness">
+      <translation>[**Missing**]</translation>
+      <valueIsMainTranslation>false</valueIsMainTranslation>
+      <uiElements>
+        <string>Menu/GraphicsPanel/Content/ScrollRect/VerticalLayoutGroup/Brightness/</string>
+      </uiElements>
+    </translationData>
+    <translationData id="Medium">
+      <translation>[**Missing**]</translation>
+      <valueIsMainTranslation>false</valueIsMainTranslation>
+      <uiElements>
+        <string>Menu/GraphicsPanel/Content/GraphicsPreset/GameObject/Label (1)/</string>
+      </uiElements>
+    </translationData>
+    <translationData id="TextureQuality">
+      <translation>[**Missing**]</translation>
+      <valueIsMainTranslation>false</valueIsMainTranslation>
+      <uiElements>
+        <string>Menu/GraphicsPanel/Content/ScrollRect/VerticalLayoutGroup/TextureQuality/</string>
+      </uiElements>
+    </translationData>
+    <translationData id="Fullscreen">
+      <translation>[**Missing**]</translation>
+      <valueIsMainTranslation>false</valueIsMainTranslation>
+      <uiElements>
+        <string>Menu/GraphicsPanel/Content/ScrollRect/VerticalLayoutGroup/Fullscreen/</string>
+      </uiElements>
+    </translationData>
+    <translationData id="High">
+      <translation>[**Missing**]</translation>
+      <valueIsMainTranslation>false</valueIsMainTranslation>
+      <uiElements>
+        <string>Menu/GraphicsPanel/Content/GraphicsPreset/GameObject/Label (2)/</string>
+      </uiElements>
+    </translationData>
+    <translationData id="Resolutions">
+      <translation>[**Missing**]</translation>
+      <valueIsMainTranslation>false</valueIsMainTranslation>
+      <uiElements>
+        <string>Menu/GraphicsPanel/Content/ScrollRect/VerticalLayoutGroup/Resolutions/</string>
+      </uiElements>
+    </translationData>
+    <translationData id="Framelimiter">
+      <translation>[**Missing**]</translation>
+      <valueIsMainTranslation>false</valueIsMainTranslation>
+      <uiElements>
+        <string>Menu/GraphicsPanel/Content/ScrollRect/VerticalLayoutGroup/Framelimiter/</string>
+      </uiElements>
+    </translationData>
+    <translationData id="Monitor">
+      <translation>[**Missing**]</translation>
+      <valueIsMainTranslation>false</valueIsMainTranslation>
+      <uiElements>
+        <string>Menu/GraphicsPanel/Content/ScrollRect/VerticalLayoutGroup/Monitor/</string>
+      </uiElements>
+    </translationData>
+    <translationData id="PrimaryKey">
+      <translation>[**Missing**]</translation>
+      <valueIsMainTranslation>false</valueIsMainTranslation>
+      <uiElements>
+        <string>Menu/ControlPanel/Content/VerticalLayoutGroup/GameObject/KEYTitles/PrimaryKeyText/</string>
+      </uiElements>
+    </translationData>
+    <translationData id="Hotkey">
+      <translation>[**Missing**]</translation>
+      <valueIsMainTranslation>false</valueIsMainTranslation>
+      <uiElements>
+        <string>Menu/ControlPanel/Content/VerticalLayoutGroup/GameObject/KEYTitles/HotkeyText/</string>
+      </uiElements>
+    </translationData>
+    <translationData id="SecondaryKey">
+      <translation>[**Missing**]</translation>
+      <valueIsMainTranslation>false</valueIsMainTranslation>
+      <uiElements>
+        <string>Menu/ControlPanel/Content/VerticalLayoutGroup/GameObject/KEYTitles/SecondaryKeyText/</string>
+      </uiElements>
+    </translationData>
+    <translationData id="LoadingGameTitle">
+      <translation>[**Missing**]</translation>
+      <valueIsMainTranslation>false</valueIsMainTranslation>
+      <uiElements>
+        <string>Canvas/Title/</string>
+      </uiElements>
+    </translationData>
+    <translationData id="Hint">
+      <translation>[**Missing**]</translation>
+      <valueIsMainTranslation>false</valueIsMainTranslation>
+      <uiElements>
+        <string>Canvas/Hint/HintTitle/</string>
       </uiElements>
     </translationData>
   </localizationData>

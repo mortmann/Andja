@@ -318,7 +318,6 @@ namespace Andja.Controller {
             _islandToMapSpaceValuedTiles = new Dictionary<Island, Dictionary<Tile, TileValue>>();
             _islandsTileToValue = new Dictionary<Island, Dictionary<Tile, TileValue>>();
 
-            World world = World.Current;
             foreach (Island island in World.Current.Islands) {
                  _islandToMapSpaceValuedTiles[island] = TileValue.CalculateStartingValues(island).ToDictionary(entry => entry.Key,
                                                        entry => entry.Value);

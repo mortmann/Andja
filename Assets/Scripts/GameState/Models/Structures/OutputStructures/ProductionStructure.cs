@@ -123,9 +123,9 @@ namespace Andja.Model {
             if (HasRequiredInput() == false) {
                 return;
             }
-            produceTimer += deltaTime;
-            if (produceTimer >= ProduceTime) {
-                produceTimer = 0;
+            ProduceTimer += deltaTime;
+            if (ProduceTimer >= ProduceTime) {
+                ProduceTimer = 0;
                 if (Intake != null) {
                     for (int i = 0; i < Intake.Length; i++) {
                         Intake[i].count--;
@@ -157,7 +157,7 @@ namespace Andja.Model {
             return true;
         }
 
-        public override void SendOutWorkerIfCan(float workTime = 1) {
+        protected override void SendOutWorkerIfCan(float workTime = 1) {
             if (Workers.Count >= MaxNumberOfWorker || jobsToDo.Count == 0 && nearestMarketStructure == null) {
                 return;
             }

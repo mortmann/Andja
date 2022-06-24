@@ -232,7 +232,6 @@ namespace Andja.Pathfinding {
         }
 
         public Path_TileGraph(Vector2 lowerBounds, Vector2 upperBounds) {
-            World w = World.Current;
 
             // Loop through all tiles of the world
             // For each tile, create a node
@@ -242,7 +241,7 @@ namespace Andja.Pathfinding {
 
             for (int x = (int)lowerBounds.x - 2; x < upperBounds.x + 2; x++) {
                 for (int y = (int)lowerBounds.y - 2; y < upperBounds.y + 2; y++) {
-                    Tile t = w.GetTileAt(x, y);
+                    Tile t = World.Current.GetTileAt(x, y);
 
                     if (t.Type == TileType.Ocean) {
                         Path_Node<Tile> n = new Path_Node<Tile> {

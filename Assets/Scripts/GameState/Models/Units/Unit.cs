@@ -313,7 +313,7 @@ namespace Andja.Model {
         }
 
         private void Setup() {
-            World.Current.RegisterOnEvent(OnEventCreate, OnEventEnded);
+            ((World)World.Current).RegisterOnEvent(OnEventCreate, OnEventEnded);
             pathfinding.cbIsAtDestination += OnPathfindingAtDestination;
             inventory?.OnChanged(inventory);
         }

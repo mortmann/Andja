@@ -27,13 +27,8 @@ namespace Andja.Model {
         #region Serialize
 
         [JsonPropertyAttribute] protected List<Worker> Workers;
-        [JsonPropertyAttribute] protected float produceTimer;
-        protected Item[] _output; 
-
-        #endregion Serialize
-
-        #region RuntimeOrOther
-
+        [JsonPropertyAttribute] public float ProduceTimer { get; protected set; }
+        protected Item[] _output;
         [JsonPropertyAttribute]
         public virtual Item[] Output {
             get {
@@ -52,6 +47,12 @@ namespace Andja.Model {
                 _output = value;
             }
         }
+        #endregion Serialize
+
+        #region RuntimeOrOther
+        public IReadOnlyList<Worker> ReadWorkers => Workers;
+
+        
         public WorkerPrototypeData _workerPrototypeData;
         public WorkerPrototypeData WorkerPrototypeData {
             get {
@@ -100,16 +101,14 @@ namespace Andja.Model {
             }
         }
 
-        public virtual float Progress => produceTimer;
+        public virtual float Progress => ProduceTimer;
         public virtual float TotalProgress => ProduceTime;
 
         public void UpdateWorker(float deltaTime) {
             if (MaxNumberOfWorker <= 0) {
                 return;
             }
-            if (Workers == null) {
-                Workers = new List<Worker>(MaxNumberOfWorker);
-            }
+            TrySendWorker();
             for (int i = Workers.Count - 1; i >= 0; i--) {
                 Worker w = Workers[i];
                 w.Update(deltaTime);
@@ -117,10 +116,14 @@ namespace Andja.Model {
                     WorkerComeBack(w);
                 }
             }
+        }
+        public void TrySendWorker() {
+            if (Workers == null) {
+                Workers = new List<Worker>(MaxNumberOfWorker);
+            }
             SendOutWorkerIfCan();
         }
-
-        public virtual void SendOutWorkerIfCan(float workTime = 1) {
+        protected virtual void SendOutWorkerIfCan(float workTime = 1) {
             if (jobsToDo.Count == 0 || Workers.Count >= MaxNumberOfWorker) {
                 return;
             }

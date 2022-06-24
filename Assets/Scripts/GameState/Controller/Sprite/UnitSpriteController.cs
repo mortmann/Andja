@@ -23,10 +23,6 @@ namespace Andja.Controller {
         private MouseController mouseController;
         public Material SpriteHighlightMaterial;
 
-        private World World {
-            get { return World.Current; }
-        }
-
         private void Awake() {
             Instance = this;
         }
@@ -41,24 +37,24 @@ namespace Andja.Controller {
             crateGameObjectMap = new Dictionary<Crate, GameObject>();
             projectileGameObjectMap = new Dictionary<Projectile, GameObject>();
             LoadSprites();
-            World.RegisterUnitCreated(OnUnitCreated);
-            World.RegisterCrateSpawned(OnCrateSpawned);
-            World.RegisterCrateDespawned(OnCrateDespawned);
+            World.Current.RegisterUnitCreated(OnUnitCreated);
+            World.Current.RegisterCrateSpawned(OnCrateSpawned);
+            World.Current.RegisterCrateDespawned(OnCrateDespawned);
 
-            foreach (var item in World.Units) {
+            foreach (var item in World.Current.Units) {
                 if(item.IsDead) {
                     continue;
                 }
                 OnUnitCreated(item);
             }
-            foreach (Crate c in World.Crates) {
+            foreach (Crate c in World.Current.Crates) {
                 OnCrateSpawned(c);
             }
-            foreach (Projectile pro in World.Projectiles) {
+            foreach (Projectile pro in World.Current.Projectiles) {
                 OnProjectileCreated(pro);
             }
             mouseController = MouseController.Instance;
-            World.RegisterOnCreateProjectileCallback(OnProjectileCreated);
+            World.Current.RegisterOnCreateProjectileCallback(OnProjectileCreated);
             BuildController.Instance.RegisterBuildStateChange(OnBuildStateChange);
         }
 
@@ -236,8 +232,8 @@ namespace Andja.Controller {
             }
         }
 
-        private void OnDestroy() {
-            World.UnregisterUnitCreated(OnUnitCreated);
+        public void OnDestroy() {
+            World.Current.UnregisterUnitCreated(OnUnitCreated);
         }
 
         private void OnBuildStateChange(BuildStateModes bsm) {

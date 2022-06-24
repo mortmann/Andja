@@ -7,7 +7,7 @@ using UnityEngine;
 namespace Andja.Model {
 
     [JsonObject(MemberSerialization.OptIn)]
-    public class City : IGEventable {
+    public class City : IGEventable, ICity {
 
         #region Serialize
 
@@ -125,7 +125,7 @@ namespace Andja.Model {
                 Debug.LogError("Tried to add Trade Item that exists");
                 return false;
             }
-            if(warehouse.TradeItemCount <= itemIDtoTradeItem.Count) {
+            if (warehouse.TradeItemCount <= itemIDtoTradeItem.Count) {
                 return false;
             }
             itemIDtoTradeItem.Add(ti.ItemId, ti);
@@ -184,7 +184,7 @@ namespace Andja.Model {
             Setup();
             Inventory.Load();
             foreach (Structure item in Structures) {
-                if(item == null) {
+                if (item == null) {
                     Debug.LogError("Missing structure?");
                     continue;
                 }
@@ -324,7 +324,7 @@ namespace Andja.Model {
             tiles.RemoveWhere(x => x == null || x.Type == TileType.Ocean);
             foreach (Tile t in tiles) {
                 t.City = this;
-                if(AIController._cityToCurrentSpaceValueTiles != null 
+                if (AIController._cityToCurrentSpaceValueTiles != null
                     && AIController._cityToCurrentSpaceValueTiles[this].ContainsKey(t) == false)
                     AIController._cityToCurrentSpaceValueTiles[this].TryAdd(t, new TileValue(t, Vector2.one, Vector2.one));
             }
@@ -441,7 +441,7 @@ namespace Andja.Model {
             }
             Item i = ti.SellItemAmount(Inventory.GetAllOfItem(itemID));
             Player CityPlayer = PlayerController.GetPlayer(PlayerNumber);
-            int am = TradeWithShip(i, ()=>Mathf.Clamp(amount, 0, i.count), ship);
+            int am = TradeWithShip(i, () => Mathf.Clamp(amount, 0, i.count), ship);
             CityPlayer.AddToTreasure(am * ti.price);
             unitPlayer?.ReduceTreasure(am * ti.price);
         }
@@ -470,7 +470,7 @@ namespace Andja.Model {
             player?.AddToTreasure(am * ti.price);
         }
 
-        public void TradeWithAnyShip (Item item) {
+        public void TradeWithAnyShip(Item item) {
             Ship ship = tradeUnit as Ship;
             if (ship == null) {
                 ship = warehouse.inRangeUnits.Find(x => x.playerNumber == PlayerNumber) as Ship;

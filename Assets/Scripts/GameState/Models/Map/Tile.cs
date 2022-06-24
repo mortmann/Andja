@@ -25,7 +25,7 @@ namespace Andja.Model {
 
     [JsonObject(MemberSerialization.OptIn, ItemTypeNameHandling = TypeNameHandling.None)]
     [MoonSharp.Interpreter.MoonSharpUserData]
-    public class Tile : IComparable<Tile>, IEqualityComparer<Tile> {
+    public class Tile : IComparable<Tile>, IEqualityComparer<Tile>, ITile {
         public static TileType[] BuildLand => new TileType[]{
             TileType.Dirt, TileType.Grass, TileType.Stone, TileType.Desert, TileType.Steppe, TileType.Jungle
         };
@@ -110,7 +110,7 @@ namespace Andja.Model {
                 (diagOkay && (Mathf.Abs(this.X - tile.X) == 1 && Mathf.Abs(this.Y - tile.Y) == 1)); // Check diag adjacency
         }
 
-        internal string ToBaseString() {
+        public string ToBaseString() {
             return string.Format("[{0}:{1}]Type:{2}", X, Y, Type);
         }
 
@@ -183,7 +183,7 @@ namespace Andja.Model {
             if (Array.Exists(NoBuildLand, x => Type == x))
                 return false;
             if (Structure != null) {
-                if(upgradeTo != null && Structure.CanBeUpgraded && Array.Exists(Structure.CanBeUpgradedTo, x=>x == upgradeTo.ID)) {
+                if (upgradeTo != null && Structure.CanBeUpgraded && Array.Exists(Structure.CanBeUpgradedTo, x => x == upgradeTo.ID)) {
                     return true;
                 }
                 if (Structure.CanBeBuildOver == false) {

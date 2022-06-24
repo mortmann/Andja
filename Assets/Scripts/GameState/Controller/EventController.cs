@@ -56,24 +56,16 @@ namespace Andja.Controller {
         private Action<GameEvent> cbEventEnded;
 
         private float timeSinceLastEvent = 0;
-        private World world;
         float nextRandomTick = RandomTickTime;
         // Use this for initialization
-        private void Awake() {
+        public void Awake() {
             if (Instance != null) {
                 Debug.LogError("There should never be two event controllers.");
             }
             Instance = this;
-
-            //for (int i = 0; i < s; i++) {
-            //    x += (UnityEngine.Random.Range(0, 2) * 500 + GetWeightedYFromRandomX(500, 750, UnityEngine.Random.Range(0, 500)));
-            //    y += (UnityEngine.Random.Range(0, 2) * 500 + GetWeightedYFromRandomX(500, 750, UnityEngine.Random.Range(0, 500)));
-            //}
-
         }
 
-        private void Start() {
-            world = World.Current;
+        public void Start() {
             idToActiveEvent = new Dictionary<uint, GameEvent>();
             chanceToEvent = new Dictionary<EventType, float>();
             typeToEvents = new Dictionary<EventType, List<GameEvent>>();
@@ -269,14 +261,14 @@ namespace Andja.Controller {
             switch (type) {
                 case EventType.City:
                     List<City> cities = new List<City>();
-                    foreach (Island item in world.Islands) {
+                    foreach (Island item in World.Current.Islands) {
                         cities.AddRange(item.Cities);
                     }
-                    ige = RandomItemFromList<City>(cities);
+                    ige = RandomItemFromList(cities);
                     break;
 
                 case EventType.Disaster:
-                    ige = RandomItemFromList<Island>(world.Islands);
+                    ige = RandomItemFromList(World.Current.Islands);
                     break;
 
                 case EventType.Weather:
@@ -296,13 +288,13 @@ namespace Andja.Controller {
                     if (r < 0.4f) { //idk
                         return null; // there is no specific target
                     }
-                    Island i = RandomItemFromList<Island>(world.Islands);
-                    City c = RandomItemFromList<City>(i.Cities);
+                    Island i = RandomItemFromList(World.Current.Islands);
+                    City c = RandomItemFromList(i.Cities);
                     if (c.PlayerNumber == -1) { // random decided there will be no event?
                                                 // are there events for wilderniss structures?
                     }
                     else {
-                        ige = RandomItemFromList<Structure>(c.Structures);
+                        ige = RandomItemFromList(c.Structures);
                     }
                     break;
 

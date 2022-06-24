@@ -18,10 +18,9 @@ namespace Andja.Pathfinding {
             this.Tiles = Tiles;
         }
         public void Calculate() {
-            World world = World.Current;
             Nodes = new HashSet<WorldNode>();
-            Tiles = new WorldNode[world.Width, world.Height];
-            foreach (Island i in world.Islands) {
+            Tiles = new WorldNode[World.Current.Width, World.Current.Height];
+            foreach (Island i in World.Current.Islands) {
                 WorldNode[] newNodes = new WorldNode[4];
                 newNodes[0] = new WorldNode(i.Minimum.x - 1, i.Minimum.y - 1); //Bottom left
                 newNodes[1] = new WorldNode(i.Maximum.x + 1, i.Minimum.y - 1); //Bottom right
@@ -33,7 +32,7 @@ namespace Andja.Pathfinding {
                 Tiles[n.x, n.y] = n;
                 n.CalculateEdges(Nodes);
             }
-            foreach (Island i in world.Islands) {
+            foreach (Island i in World.Current.Islands) {
                 for (int x = (int)i.Minimum.x - 1; x <= i.Maximum.x + 1; x++) {
                     for (int y = (int)i.Minimum.y - 1; y <= i.Maximum.y + 1; y++) {
                         if (x == i.Minimum.x - 1 && (y == i.Minimum.y - 1 || y == i.Maximum.y + 1)) {
@@ -49,16 +48,16 @@ namespace Andja.Pathfinding {
                     }
                 }
             }
-            for (int x = 0; x < world.Width; x++) {
-                for (int y = 0; y < world.Height; y++) {
+            for (int x = 0; x < World.Current.Width; x++) {
+                for (int y = 0; y < World.Current.Height; y++) {
                     if (Tiles[x, y] == null) {
                         continue;
                     }
                     Tiles[x, y].DoNeighbourEdges(Tiles);
                 }
             }
-            for (int x = 0; x < world.Width; x++) {
-                for (int y = 0; y < world.Height; y++) {
+            for (int x = 0; x < World.Current.Width; x++) {
+                for (int y = 0; y < World.Current.Height; y++) {
                     if (Tiles[x, y] == null) {
                         continue;
                     }
@@ -80,18 +79,7 @@ namespace Andja.Pathfinding {
                     }
                 }
             }
-            //WorldGraph worldGraph = Clone();
-            //WorldNode next = worldGraph.Nodes.First();
-            //TestDelete(worldGraph, next);
         }
-
-        //void TestDelete(WorldGraph worldGraph, WorldNode next) {
-        //    worldGraph.Nodes.Remove(next);
-        //    foreach (WorldEdge edge in next.Edges) {
-        //        if(worldGraph.Nodes.Contains(edge.Node))
-        //            TestDelete(worldGraph, edge.Node);
-        //    }
-        //}
 
         internal WorldNode GetNodeFromWorldCoord(Vector2 startPos) {
             if (Tiles[Mathf.FloorToInt(startPos.x), Mathf.FloorToInt(startPos.y)] != null)

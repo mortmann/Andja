@@ -53,9 +53,7 @@ namespace Andja.Model {
                 _workStructure = value;
             }
             get {
-                if (_workStructure is OutputStructure)
-                    return (OutputStructure)_workStructure;
-                return null;
+                return _workStructure is OutputStructure os? os : null;
             }
         }
 

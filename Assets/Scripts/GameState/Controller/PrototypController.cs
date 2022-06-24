@@ -19,7 +19,7 @@ namespace Andja.Controller {
     /// Responsible for all data loading from xml for prototypes, loadouts etc.
     /// Calculates different things like supplychains, buildItems, NeedGroups andso on.
     /// </summary>
-    public class PrototypController : MonoBehaviour {
+    public class PrototypController : MonoBehaviour, IPrototypController {
         public const string GameVersion = "0.1.5"; //TODO: think about this position
 
         /**
@@ -35,7 +35,7 @@ namespace Andja.Controller {
 
         public int NumberOfPopulationLevels => populationLevelDatas.Count;
 
-        public static PrototypController Instance;
+        public static IPrototypController Instance;
         public IReadOnlyDictionary<string, Structure> StructurePrototypes => structurePrototypes;
         public IReadOnlyDictionary<string, Unit> UnitPrototypes => unitPrototypes;
         public IReadOnlyDictionary<Type, int> StructureTypeToMaxStructureLevel => structureTypeToMaxStructureLevel;
@@ -112,14 +112,14 @@ namespace Andja.Controller {
         /// <summary>
         /// "BuildItems in terms of when something requires it to be created."
         /// </summary>
-        public Dictionary<string, int[]> recommandedBuildSupplyChains;
-        public List<Item> MineableItems;
+        public Dictionary<string, int[]> recommandedBuildSupplyChains { get; private set; }
+        public List<Item> MineableItems { get; private set; }
         private static Item[] _buildItems;
         private List<Need> allNeeds;
         private List<NeedPrototypeData>[] needsPerLevel;
-        public List<Fertility> orderUnlockFertilities;
+        public List<Fertility> orderUnlockFertilities { get; private set; }
         //current valid player prototyp data
-        internal static PlayerPrototypeData CurrentPlayerPrototypData = new PlayerPrototypeData();
+        public static PlayerPrototypeData CurrentPlayerPrototypData = new PlayerPrototypeData();
         public static bool HomeRoadsNotNeeded;
         /// <summary>
         /// Item ID to the list of PRODUCE (which contains structure that PRODUCES it and supplychain)
@@ -131,7 +131,7 @@ namespace Andja.Controller {
         public ArmorType StructureArmor => armorTypeDatas["woodenwall"];
         //TODO: make ai aware of ALL buildable homes -- that would require a lot of multichecks - for now simplified - since only 1 for now anyway
         public HomeStructure BuildableHomeStructure => PopulationLevelDatas[0].HomeStructure;
-        public MarketStructure FirstLevelMarket;
+        public MarketStructure FirstLevelMarket { get; private set; }
         public virtual Dictionary<string, Item> GetCopieOfAllItems() {
             Dictionary<string, Item> items = new Dictionary<string, Item>();
             foreach (string item in allItems.Keys) {
@@ -149,36 +149,36 @@ namespace Andja.Controller {
             return needs;
         }
 
-        internal Structure GetStructureCopy(string id) {
+        public Structure GetStructureCopy(string id) {
             if (StructurePrototypes.ContainsKey(id) == false)
                 return null;
             return StructurePrototypes[id].Clone();
         }
 
-        internal Structure GetStructure(string id) {
+        public Structure GetStructure(string id) {
             if (StructurePrototypes.ContainsKey(id) == false)
                 return null;
             return StructurePrototypes[id];
         }
 
-        internal Ship GetPirateShipPrototyp() {
+        public Ship GetPirateShipPrototyp() {
             return (Ship)UnitPrototypes["pirateship"];
         }
-        internal Ship GetFlyingTraderPrototype() {
+        public Ship GetFlyingTraderPrototype() {
             return (Ship)UnitPrototypes["flyingtradeship"];
         }
 
-        internal IslandFeaturePrototypeData GetIslandFeaturePrototypeDataForID(string id) {
+        public IslandFeaturePrototypeData GetIslandFeaturePrototypeDataForID(string id) {
             if (islandFeaturePrototypeDatas.ContainsKey(id) == false)
                 return null;
             return islandFeaturePrototypeDatas[id];
         }
 
-        internal Structure GetRoadForLevel(int level) {
+        public Structure GetRoadForLevel(int level) {
             return StructurePrototypes.Values.Where(x => x is RoadStructure && x.PopulationLevel == level).First();
         }
 
-        internal bool ExistsNeed(Need need) {
+        public bool ExistsNeed(Need need) {
             return allNeeds.Contains(need);
         }
 
@@ -219,11 +219,11 @@ namespace Andja.Controller {
         public StructurePrototypeData GetStructurePrototypDataForID(string ID) {
             return structurePrototypeDatas[ID];
         }
-        internal WorkerPrototypeData GetWorkerPrototypDataForID(string id) {
+        public WorkerPrototypeData GetWorkerPrototypDataForID(string id) {
             return workerPrototypeDatas[id];
         }
 
-        internal bool GameEventExists(string id) {
+        public bool GameEventExists(string id) {
             return GameEventPrototypeDatas.ContainsKey(id);
         }
 
@@ -235,7 +235,7 @@ namespace Andja.Controller {
             return itemPrototypeDatas[ID];
         }
 
-        internal Unlocks GetUnlocksFor(int level, int count) {
+        public Unlocks GetUnlocksFor(int level, int count) {
             if (levelCountToUnlocks.Length <= level)
                 return null;
             if (levelCountToUnlocks[level].ContainsKey(count) == false)
@@ -243,7 +243,7 @@ namespace Andja.Controller {
             return levelCountToUnlocks[level][count];
         }
 
-        internal PopulationLevelPrototypData GetPopulationLevelPrototypDataForLevel(int level) {
+        public PopulationLevelPrototypData GetPopulationLevelPrototypDataForLevel(int level) {
             return populationLevelDatas[level];
         }
 
@@ -255,19 +255,19 @@ namespace Andja.Controller {
             return needPrototypeDatas[ID];
         }
 
-        internal NeedGroupPrototypData GetNeedGroupPrototypDataForID(string ID) {
+        public NeedGroupPrototypData GetNeedGroupPrototypDataForID(string ID) {
             return needGroupDatas[ID];
         }
 
-        internal GameEventPrototypData GetGameEventPrototypDataForID(string ID) {
+        public GameEventPrototypData GetGameEventPrototypDataForID(string ID) {
             return gameEventPrototypeDatas[ID];
         }
 
-        internal List<NeedGroup> GetNeedPrototypDataForLevel(int level) {
+        public List<NeedGroup> GetNeedPrototypDataForLevel(int level) {
             return populationLevelToNeedGroup[level];
         }
 
-        internal EffectPrototypeData GetEffectPrototypDataForID(string id) {
+        public EffectPrototypeData GetEffectPrototypDataForID(string id) {
             return effectPrototypeDatas[id];
         }
 
@@ -279,7 +279,7 @@ namespace Andja.Controller {
             return allFertilities[c];
         }
 
-        internal int GetNeedCountLevel(int level) {
+        public int GetNeedCountLevel(int level) {
             return needsPerLevel[level].Count;
         }
 
@@ -303,8 +303,8 @@ namespace Andja.Controller {
             gameEventPrototypeDatas = new Dictionary<string, GameEventPrototypData>();
             ReadEventsFromXML(LoadXML(XMLFilesTypes.events));
             ModLoader.LoadXMLs(XMLFilesTypes.events, ReadEventsFromXML);
-            
-           
+
+
             //fertilities
             allFertilities = new Dictionary<Climate, List<Fertility>>();
             idToFertilities = new Dictionary<string, Fertility>();
@@ -420,7 +420,7 @@ namespace Andja.Controller {
             Debug.Log("###Calculating Prototype-Stuff took " + stopwatch.Elapsed.TotalSeconds + "s ###");
         }
 
-        internal DamageType GetWorldDamageType() {
+        public DamageType GetWorldDamageType() {
             return damageTypeDatas["world"];
         }
 
@@ -470,16 +470,17 @@ namespace Andja.Controller {
                 SpawnStructureGenerationInfo sps = new SpawnStructureGenerationInfo();
                 sps.ID = node.GetAttribute("ID");
                 SetData<SpawnStructureGenerationInfo>(node, ref sps);
-                if(sps.climate != null) {
-                    foreach(Climate c in sps.climate) {
+                if (sps.climate != null) {
+                    foreach (Climate c in sps.climate) {
                         spawnStructureGeneration[c].Add(sps);
                     }
-                } else {
+                }
+                else {
                     foreach (Climate c in Enum.GetValues(typeof(Climate))) {
                         spawnStructureGeneration[c].Add(sps);
                     }
                 }
-                if(sps.structureType == StructureType.Natural) {
+                if (sps.structureType == StructureType.Natural) {
                     allNaturalSpawningStructureIDs.Add(sps.ID);
                 }
             }
@@ -588,9 +589,9 @@ namespace Andja.Controller {
             orderUnlockFertilities.RemoveAll(x => x.Data.ItemsDependentOnThis.Count == 0);
             orderUnlockFertilities = orderUnlockFertilities.OrderBy(x => x.Data.UnlockLevel).ThenBy(x => x.Data.UnlockPopulationCount).ToList();
         }
-        internal Unlocks GetNextUnlocks(int populationLevel, int populationCount) {
+        public Unlocks GetNextUnlocks(int populationLevel, int populationCount) {
             foreach (var item in levelCountToUnlocks[populationLevel]) {
-                if(item.Key > populationCount) {
+                if (item.Key > populationCount) {
                     return item.Value;
                 }
             }
@@ -609,7 +610,7 @@ namespace Andja.Controller {
                         populationLevel = Mathf.Min(populationLevel, str.PopulationLevel);
                         str.NeedStructureData.SatisfiesNeeds.Add(new Need(pair.Key));
                     }
-                    if (need.startLevel < populationLevel 
+                    if (need.startLevel < populationLevel
                         || need.startLevel == populationLevel && need.startPopulationCount < startPopulationCount) {
                         Debug.LogWarning("Need " + need.Name + " is misconfigured to start earlier than supposed. Fixed to unlock time." +
                             "\nCount " + need.startPopulationCount + "->" + startPopulationCount
@@ -622,12 +623,12 @@ namespace Andja.Controller {
                     if (need.item.Data.SatisfiesNeeds == null)
                         need.item.Data.SatisfiesNeeds = new List<Need>();
                     need.item.Data.SatisfiesNeeds.Add(new Need(pair.Key));
-                    if(need.item.Type != ItemType.Luxury) {
+                    if (need.item.Type != ItemType.Luxury) {
                         Debug.LogWarning("Item " + need.item.ID + " is not marked as luxury good. Fix it, but change it in file.");
                         need.item.Data.type = ItemType.Luxury;
                     }
                     need.produceForPeople = new Dictionary<Produce, int[]>();
-                    if(itemIDToProduce.ContainsKey(need.item.ID) == false) {
+                    if (itemIDToProduce.ContainsKey(need.item.ID) == false) {
                         Debug.LogError("itemIDToProduce does not have any production for this need item " + need.item.ID);
                         continue;
                     }
@@ -642,7 +643,7 @@ namespace Andja.Controller {
                             need.produceForPeople[produce][i] = Mathf.FloorToInt(produce.producePerMinute / need.UsageAmounts[i]);
                         }
                     }
-                    if (need.startLevel < populationLevel 
+                    if (need.startLevel < populationLevel
                         || need.startLevel == populationLevel && need.startPopulationCount < startPopulationCount) {
                         Debug.LogWarning("Need " + need.Name + " is misconfigured to start earlier than supposed. Fixed to unlock time." +
                             "\nCount " + need.startPopulationCount + "->" + startPopulationCount
@@ -655,10 +656,10 @@ namespace Andja.Controller {
                     needsPerLevel[need.startLevel] = new List<NeedPrototypeData>();
                 needsPerLevel[need.startLevel].Add(need);
             }
-            foreach (Item item in AllItems.Values.Where(x=>x.Type == ItemType.Luxury)) {
+            foreach (Item item in AllItems.Values.Where(x => x.Type == ItemType.Luxury)) {
                 item.Data.TotalUsagePerLevel = new float[NumberOfPopulationLevels];
                 for (int i = 0; i < NumberOfPopulationLevels; i++) {
-                    if(item.Data.SatisfiesNeeds != null)
+                    if (item.Data.SatisfiesNeeds != null)
                         item.Data.TotalUsagePerLevel[i] = item.Data.SatisfiesNeeds.Sum(x => x.Uses[i]);
                 }
             }
@@ -845,7 +846,7 @@ namespace Andja.Controller {
             Debug.Log(supplyChainsCosts);
         }
 
-        internal int GetMaxStructureLevelForStructureType(Type type) {
+        public int GetMaxStructureLevelForStructureType(Type type) {
             if (structureTypeToMaxStructureLevel.ContainsKey(type) == false)
                 structureTypeToMaxStructureLevel[type] =
                     new List<Structure>(structurePrototypes.Values).FindAll(x => type == x.GetType())
@@ -853,17 +854,17 @@ namespace Andja.Controller {
             return structureTypeToMaxStructureLevel[type];
         }
 
-        internal string GetFirstLevelStructureIDForStructureType(Type type) {
+        public string GetFirstLevelStructureIDForStructureType(Type type) {
             //TODO: optimize this
             return new List<Structure>(structurePrototypes.Values).FindAll(x => type == x.GetType())
                         .OrderBy(item => item.PopulationLevel).First().ID;
         }
 
-        internal UnitPrototypeData GetUnitPrototypDataForID(string id) {
+        public UnitPrototypeData GetUnitPrototypDataForID(string id) {
             return unitPrototypeDatas[id];
         }
 
-        internal Unit GetUnitForID(string id) {
+        public Unit GetUnitForID(string id) {
             if (unitPrototypes.ContainsKey(id) == false)
                 return null;
             return unitPrototypes[id];
@@ -874,7 +875,7 @@ namespace Andja.Controller {
         ///
         ///////////////////////////////////////
         private void ReadEventsFromXML(string file) {
-            XmlDocument xmlDoc = new XmlDocument(); 
+            XmlDocument xmlDoc = new XmlDocument();
             xmlDoc.LoadXml(file); // load the file.
             XmlNodeList listEffect = xmlDoc.SelectNodes("events/Effect");
             if (listEffect != null) {
@@ -898,7 +899,7 @@ namespace Andja.Controller {
         }
 
         private void ReadOtherFromXML(string file) {
-            XmlDocument xmlDoc = new XmlDocument(); 
+            XmlDocument xmlDoc = new XmlDocument();
             xmlDoc.LoadXml(file); // load the file.
             foreach (XmlElement node in xmlDoc.SelectNodes("Other/PopulationLevels/PopulationLevel")) {
                 PopulationLevelPrototypData plpd = new PopulationLevelPrototypData();
@@ -910,7 +911,7 @@ namespace Andja.Controller {
         }
 
         private void ReadCombatFromXML(string file) {
-            XmlDocument xmlDoc = new XmlDocument(); 
+            XmlDocument xmlDoc = new XmlDocument();
             xmlDoc.LoadXml(file); // load the file.
             XmlNodeList listArmorType = xmlDoc.SelectNodes("combatTypes/armorType");
             if (listArmorType != null) {
@@ -946,7 +947,7 @@ namespace Andja.Controller {
         }
 
         private void ReadItemsFromXML(string file) {
-            XmlDocument xmlDoc = new XmlDocument(); 
+            XmlDocument xmlDoc = new XmlDocument();
             xmlDoc.LoadXml(file); // load the file.
             foreach (XmlElement node in xmlDoc.SelectNodes("items/Item")) {
                 ItemPrototypeData ipd = new ItemPrototypeData();
@@ -964,7 +965,7 @@ namespace Andja.Controller {
         }
 
         private void ReadUnitsFromXML(string file) {
-            XmlDocument xmlDoc = new XmlDocument(); 
+            XmlDocument xmlDoc = new XmlDocument();
             xmlDoc.LoadXml(file); // load the file.
             XmlNodeList listUnit = xmlDoc.SelectNodes("units/unit");
             if (listUnit != null) {
@@ -998,7 +999,7 @@ namespace Andja.Controller {
         }
 
         private void ReadFertilitiesFromXML(string file) {
-            XmlDocument xmlDoc = new XmlDocument(); 
+            XmlDocument xmlDoc = new XmlDocument();
             xmlDoc.LoadXml(file); // load the file.
             foreach (XmlElement node in xmlDoc.SelectNodes("fertilities/Fertility")) {
                 string ID = node.GetAttribute("ID");
@@ -1021,7 +1022,7 @@ namespace Andja.Controller {
         }
 
         private void ReadNeedsFromXML(string file) {
-            XmlDocument xmlDoc = new XmlDocument(); 
+            XmlDocument xmlDoc = new XmlDocument();
             xmlDoc.LoadXml(file); // load the file.
             XmlNodeList listNeedGroup = xmlDoc.SelectNodes("needs/NeedGroup");
             if (listNeedGroup != null) {
@@ -1108,13 +1109,13 @@ namespace Andja.Controller {
                 //THESE are fix and are not changed for any
                 //!not anymore
                 SetData<ServiceStructurePrototypeData>(node, ref sspd);
-                if(sspd.effectsOnTargets != null)
-                foreach (Effect effect in sspd.effectsOnTargets) {
-                    effect.Serialize = false;
-                }
+                if (sspd.effectsOnTargets != null)
+                    foreach (Effect effect in sspd.effectsOnTargets) {
+                        effect.Serialize = false;
+                    }
                 //Important is that we set the usageItem count to more than the usage amount
                 //(for the case it is more than one ton
-                if(node.SelectSingleNode("Usages") != null) {
+                if (node.SelectSingleNode("Usages") != null) {
                     var Nodes = node.SelectSingleNode("Usages").SelectNodes("entry");
                     List<float> usages = new List<float>();
                     List<Item> items = new List<Item>();
@@ -1224,7 +1225,7 @@ namespace Andja.Controller {
                 fpd.ID = ID;
 
                 SetData<FarmPrototypeData>(node, ref fpd);
-                if(fpd.growable.ID == "farmland") {
+                if (fpd.growable.ID == "farmland") {
                     //for now hardcoded. maybe gonna change this
                     //but this is just the "empty" setting for growable
                     fpd.growable = null;
@@ -1317,17 +1318,18 @@ namespace Andja.Controller {
                 structurePrototypes[ID] = hs;
                 populationLevelDatas[structurePrototypes[ID].PopulationLevel].HomeStructure = hs;
 
-                
+
             }
             HomePrototypeData[] sorted = hpds.OrderBy(x => x.populationLevel).ToArray();
             for (int i = 0; i < sorted.Length; i++) {
-                if(i > 0) {
+                if (i > 0) {
                     sorted[i].prevLevel = GetStructure(sorted[i - 1].ID) as HomeStructure;
-                } else {
+                }
+                else {
                     sorted[i].prevLevel = null;
                 }
                 if (i < sorted.Length - 1) {
-                    sorted[i].nextLevel = GetStructure(sorted[i + 1].ID) as HomeStructure; 
+                    sorted[i].nextLevel = GetStructure(sorted[i + 1].ID) as HomeStructure;
                 }
                 else {
                     sorted[i].nextLevel = null;
@@ -1360,7 +1362,7 @@ namespace Andja.Controller {
                 structurePrototypeDatas[ID] = wpd;
                 structurePrototypes[ID] = new WarehouseStructure(ID, wpd);
 
-                if (FirstLevelWarehouse == null || 
+                if (FirstLevelWarehouse == null ||
                     wpd.populationLevel < FirstLevelWarehouse.PopulationLevel && wpd.populationCount < FirstLevelWarehouse.PopulationCount) {
                     FirstLevelWarehouse = (WarehouseStructure)structurePrototypes[ID];
                 }
@@ -1423,7 +1425,7 @@ namespace Andja.Controller {
                         fi.SetValue(data, NodeToStructure(currentNode));
                         continue;
                     }
-                    if (fi.FieldType.IsArray && fi.FieldType.GetElementType().IsSubclassOf(typeof(Structure)) 
+                    if (fi.FieldType.IsArray && fi.FieldType.GetElementType().IsSubclassOf(typeof(Structure))
                         || fi.FieldType == (typeof(Structure[]))) {
                         Array items = (Array)Activator.CreateInstance(fi.FieldType, currentNode.ChildNodes.Count);
                         for (int i = 0; i < currentNode.ChildNodes.Count; i++) {
@@ -1499,8 +1501,8 @@ namespace Andja.Controller {
                                 continue;
                             }
                             if (fi.DeclaringType == typeof(TileType)) {
-                                if(item.Name == "BuildLand") { // shortcut to make it easy to include all buildable land
-                                    foreach(TileType tt in Tile.BuildLand)
+                                if (item.Name == "BuildLand") { // shortcut to make it easy to include all buildable land
+                                    foreach (TileType tt in Tile.BuildLand)
                                         list.Add(tt);
                                     continue;
                                 }
@@ -1605,7 +1607,7 @@ namespace Andja.Controller {
                         fi.SetValue(data, new TargetGroup(targets));
                         continue;
                     }
-                    if(fi.FieldType == typeof(Dictionary<Climate, string[]>)) {
+                    if (fi.FieldType == typeof(Dictionary<Climate, string[]>)) {
                         Dictionary<Climate, string[]> climToString = new Dictionary<Climate, string[]>();
                         foreach (XmlNode child in currentNode.ChildNodes) {
                             if (Enum.TryParse(child.Attributes[0].InnerXml, true, out Climate climate) == false)

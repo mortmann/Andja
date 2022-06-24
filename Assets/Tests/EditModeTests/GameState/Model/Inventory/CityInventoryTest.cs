@@ -12,11 +12,11 @@ using Moq;
 public class CityInventoryTest {
     CityInventory inventory;
     Item[] buildItems = new[] { ItemProvider.Brick, ItemProvider.Tool, ItemProvider.Wood };
-    private Mock<PrototypController> prototypeControllerMock;
+    private Mock<IPrototypController> prototypeControllerMock;
     const int MaxStackSize = 50;
     [SetUp]
     public void SetupUp() {
-        prototypeControllerMock = new Mock<PrototypController>();
+        prototypeControllerMock = new Mock<IPrototypController>();
 
         var buildItems = new Dictionary<string, Item>() { 
             { ItemProvider.Brick.ID, ItemProvider.Brick.Clone() }, 
@@ -29,9 +29,7 @@ public class CityInventoryTest {
         prototypeControllerMock.Setup(m => m.GetCopieOfAllItems()).Returns(()=> {
             return buildItems.ToDictionary(x => x.Key, y => y.Value.Clone());
             });
-
-        System.Reflection.FieldInfo instance = typeof(PrototypController).GetField("Instance", System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.Public);
-        instance.SetValue(prototypeControllerMock.Object, prototypeControllerMock.Object);
+        PrototypController.Instance = prototypeControllerMock.Object;
 
         inventory = new CityInventory(1);
     }

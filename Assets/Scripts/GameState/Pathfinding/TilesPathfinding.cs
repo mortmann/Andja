@@ -56,8 +56,8 @@ namespace Andja.Pathfinding {
             Job = PathfindingThreadHandler.EnqueueJob(agent, startTiles[0].Island.Grid,
                                                                 startTiles[0].Vector2, endTiles[0].Vector2,
                                                                 startTiles.Select(x => x.Vector2).ToList(),
-                                                                endTiles.Select(x => x.Vector2).ToList()
-                                                                , OnPathJobFinished);
+                                                                endTiles.Select(x => x.Vector2).ToList(),
+                                                                OnPathJobFinished);
         }
 
         private void OnPathJobFinished() {

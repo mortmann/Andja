@@ -10,14 +10,14 @@ namespace Andja.Model {
     public enum Climate { Cold, Middle, Warm };
 
     [JsonObject(MemberSerialization.OptIn)]
-    public class Island : IGEventable {
+    public class Island : IGEventable, IIsland {
 
         #region Serialize
 
-        [JsonPropertyAttribute] public List<City> Cities;
-        [JsonPropertyAttribute] public Climate Climate;
-        [JsonPropertyAttribute] public Dictionary<string, int> Resources;
-        [JsonPropertyAttribute] public Tile StartTile;
+        [JsonPropertyAttribute] public List<City> Cities { get; set; }
+        [JsonPropertyAttribute] public Climate Climate { get; set; }
+        [JsonPropertyAttribute] public Dictionary<string, int> Resources { get; set; }
+        [JsonPropertyAttribute] public Tile StartTile { get; set; }
 
         #endregion Serialize
 
@@ -53,8 +53,8 @@ namespace Andja.Model {
             }
         }
 
-        internal void ChangeGridTile(LandTile landTile, bool cityChange = false) {
-            if(cityChange) {
+        public void ChangeGridTile(LandTile landTile, bool cityChange = false) {
+            if (cityChange) {
                 Grid?.ChangeCityNode(landTile);
             }
             else {
@@ -62,7 +62,7 @@ namespace Andja.Model {
             }
         }
 
-        public List<IslandFeature> Features { get; internal set; }
+        public List<IslandFeature> Features { get; set; }
 
         public List<Tile> Tiles;
         public Vector2 Placement;
@@ -96,19 +96,19 @@ namespace Andja.Model {
             Setup();
         }
 
-        internal void RemoveResources(string resourceID, int count) {
+        public void RemoveResources(string resourceID, int count) {
             if (Resources.ContainsKey(resourceID) == false)
                 return;
             Resources[resourceID] -= count;
         }
 
-        internal void AddResources(string resourceID, int count) {
+        public void AddResources(string resourceID, int count) {
             if (Resources.ContainsKey(resourceID) == false)
                 return;
             Resources[resourceID] += count;
         }
 
-        internal bool HasResource(string resourceID) {
+        public bool HasResource(string resourceID) {
             if (Resources.ContainsKey(resourceID) == false)
                 return false;
             return Resources[resourceID] > 0;
@@ -118,7 +118,7 @@ namespace Andja.Model {
             Resources = new Dictionary<string, int>();
             Cities = new List<City>();
             this.Climate = climate;
-            SetTiles(tiles);           
+            SetTiles(tiles);
             Setup();
         }
 
@@ -127,14 +127,15 @@ namespace Andja.Model {
 
         private void Setup() {
             allReadyHighlighted = false;
-            World.Current.RegisterOnEvent(OnEventCreate, OnEventEnded);
+            ((World)World.Current).RegisterOnEvent(OnEventCreate, OnEventEnded);
             //city that contains all the structures like trees that doesnt belong to any player
             //so it has the playernumber -1 -> needs to be checked for when buildings are placed
             //have a function like is notplayer city
             //it does not need NEEDs
             if (Cities.Count > 0) {
 
-            } else {
+            }
+            else {
                 Cities.Add(new City(Tiles, this));
                 Wilderness = Cities[0];
             }
@@ -154,7 +155,7 @@ namespace Andja.Model {
             return structs;
         }
 
-        internal void SetTiles(Tile[] tiles) {
+        public void SetTiles(Tile[] tiles) {
             this.Tiles = new List<Tile>(tiles);
             StartTile = tiles[0];
             Minimum = new Vector2(tiles[0].X, tiles[0].Y);
@@ -249,7 +250,7 @@ namespace Andja.Model {
         }
 
         public void RemoveCity(City c) {
-            if(c.IsWilderness()) {
+            if (c.IsWilderness()) {
                 //We could remove it still and recreate it, if it is needed but for now just prevent the deletion 
                 Debug.LogWarning("Wanted to remove Wilderniss. It is still needed even if empty: For the case that their will be once again.");
                 return;

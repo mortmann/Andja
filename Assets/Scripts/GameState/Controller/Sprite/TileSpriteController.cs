@@ -69,10 +69,6 @@ namespace Andja.Controller {
 
         public enum TileSpriteClimate { cold, middle, warm, all }
 
-        // The pathfinding graph used to navigate our world map.
-        private World World {
-            get { return World.Current; }
-        }
 
         public static float offset = 0;
 
@@ -85,20 +81,20 @@ namespace Andja.Controller {
             oceanInstance = Instantiate(oceanPrefab);
             //DarkLayer probably gonna be changed
             if (EditorController.IsEditor == false) {
-                oceanInstance.transform.position = new Vector3((World.Width / 2) - offset, (World.Height / 2) - offset, 0.1f);
-                Vector3 size = new Vector3(6 + World.Width / 10, 0.1f, 6 + World.Height / 10);
-                Vector2 tile = new Vector2(6 + World.Width, 6 + World.Height);
+                oceanInstance.transform.position = new Vector3((World.Current.Width / 2) - offset, (World.Current.Height / 2) - offset, 0.1f);
+                Vector3 size = new Vector3(6 + World.Current.Width / 10, 0.1f, 6 + World.Current.Height / 10);
+                Vector2 tile = new Vector2(6 + World.Current.Width, 6 + World.Current.Height);
                 oceanInstance.transform.localScale = size;
                 //water.GetComponent<Renderer>().material = waterMaterial;
                 Renderer wr = oceanInstance.GetComponent<Renderer>();
                 wr.material.mainTextureScale = tile;
                 darkLayer = new GameObject();
-                darkLayer.transform.position = new Vector3((World.Width / 2) - offset, (World.Height / 2) - offset, 0);
+                darkLayer.transform.position = new Vector3((World.Current.Width / 2) - offset, (World.Current.Height / 2) - offset, 0);
                 SpriteRenderer darksr = darkLayer.AddComponent<SpriteRenderer>();
                 darksr.sprite = darkLayerSprite;
                 darksr.sortingLayerName = "DarkLayer";
                 darksr.maskInteraction = SpriteMaskInteraction.VisibleOutsideMask;
-                darkLayer.transform.localScale = new Vector3(1.25f * World.Width, 1.25f * World.Height, 0);
+                darkLayer.transform.localScale = new Vector3(1.25f * World.Current.Width, 1.25f * World.Current.Height, 0);
                 darkLayer.name = "DarkLayer";
                 darkLayer.transform.SetParent(this.transform);
                 darkLayer.SetActive(false);
@@ -148,7 +144,7 @@ namespace Andja.Controller {
                     csm.alphaCutoff = 1;
                     islandToCustomMask.Add(i, csm);
                 }
-                World.RegisterTileChanged(OnTileChanged);
+                World.Current.RegisterTileChanged(OnTileChanged);
 
                 foreach (Island i in World.Current.Islands) {
                     foreach (var c in i.Cities) {
@@ -177,7 +173,7 @@ namespace Andja.Controller {
         }
 
         private void OnPlayerChange(Player o, Player n) {
-            foreach (Island island in World.Islands) {
+            foreach (Island island in World.Current.Islands) {
                 City city = island.FindCityByPlayer(n.Number);
                 if (city != null) {
                     Texture2D tex = cityToMaskTexture[city].texture;
@@ -211,26 +207,26 @@ namespace Andja.Controller {
             //trr.material = tileMapRendererBlending;
             trr.sortingLayerName = "Tile";
             editorTilemap.size = new Vector3Int(EditorController.Width, EditorController.Height, 0);
-            oceanInstance.transform.position = new Vector3((World.Width / 2) - offset, (World.Height / 2) - offset, 0.1f);
-            oceanInstance.transform.localScale = new Vector3(World.Width / 10, 0.1f, World.Height / 10);
+            oceanInstance.transform.position = new Vector3((World.Current.Width / 2) - offset, (World.Current.Height / 2) - offset, 0.1f);
+            oceanInstance.transform.localScale = new Vector3(World.Current.Width / 10, 0.1f, World.Current.Height / 10);
             oceanInstance.GetComponent<Renderer>().material = waterMaterial;
-            oceanInstance.GetComponent<Renderer>().material.mainTextureScale = new Vector2(World.Width, World.Height);
-            Texture2D tex = new Texture2D(World.Width, World.Height);
+            oceanInstance.GetComponent<Renderer>().material.mainTextureScale = new Vector2(World.Current.Width, World.Current.Height);
+            Texture2D tex = new Texture2D(World.Current.Width, World.Current.Height);
             Color[] colors = tex.GetPixels();
-            for (int y = 0; y < World.Height; y++) {
-                for (int x = 0; x < World.Width; x++) {
-                    //float b = ((((float)x + (float)y) / ((float)World.Width + (float)World.Height)));
-                    Tile t = World.GetTileAt(x, y);
+            for (int y = 0; y < World.Current.Height; y++) {
+                for (int x = 0; x < World.Current.Width; x++) {
+                    //float b = ((((float)x + (float)y) / ((float)World.Current.Width + (float)World.Current.Height)));
+                    Tile t = World.Current.GetTileAt(x, y);
                     if (t == null) {
                         continue;
                     }
-                    colors[x + y * World.Width] = new Color(1, 1, 1, t.Moisture);
+                    colors[x + y * World.Current.Width] = new Color(1, 1, 1, t.Moisture);
                 }
             }
             foreach (Tile t in World.Current.Tiles) {
                 ChangeEditorTile(t);
                 //if (t != null)
-                //    colors[t.X + t.Y * World.Width] = new Color(1, 1, 1, 0);
+                //    colors[t.X + t.Y * World.Current.Width] = new Color(1, 1, 1, 0);
             }
             tex.SetPixels(colors);
             tex.Apply();
@@ -244,9 +240,9 @@ namespace Andja.Controller {
             trr.material = tileMapMaterial;
             trr.material.SetTexture("_Saturations", tex);
             trr.material.SetVector("_startPosition", new Vector2(0, 0));
-            trr.material.SetVector("_Size", new Vector2(World.Width, World.Height));
+            trr.material.SetVector("_Size", new Vector2(World.Current.Width, World.Current.Height));
 
-            World.RegisterTileChanged(ChangeEditorTile);
+            World.Current.RegisterTileChanged(ChangeEditorTile);
         }
 
         public void Update() {
@@ -439,7 +435,7 @@ namespace Andja.Controller {
         }
 
         private void OnDestroy() {
-            World.UnregisterTileChanged(OnTileChanged);
+            World.Current.UnregisterTileChanged(OnTileChanged);
             createdIslands = 0;
             Instance = null;
         }
@@ -593,10 +589,10 @@ namespace Andja.Controller {
         public static System.Collections.Concurrent.ConcurrentDictionary<Vector2, float> positionsCost = new System.Collections.Concurrent.ConcurrentDictionary<Vector2, float>();
         private void OnDrawGizmos() {
             if (Application.isPlaying) {
-                //foreach (Pathfinding.WorldNode n in World.Current.WorldGraph.Nodes) {
+                //foreach (Pathfinding.World.CurrentNode n in World.Current.Current.World.CurrentGraph.Nodes) {
                 //    if (n == null)
                 //        continue;
-                //    foreach (Pathfinding.WorldEdge e in n.Edges) {
+                //    foreach (Pathfinding.World.CurrentEdge e in n.Edges) {
                 //        Gizmos.color = Color.white;
                 //        Gizmos.DrawLine(new Vector2(n.x + 0.5f, n.y + 0.5f), new Vector2(e.Node.x + 0.5f, e.Node.y + 0.5f));
                 //    }

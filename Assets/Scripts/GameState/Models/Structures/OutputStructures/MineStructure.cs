@@ -74,9 +74,9 @@ namespace Andja.Model {
             if (CurrentResourceMode == ResourceMode.PerProduce && BuildTile.Island.HasResource(Resource) == false) {
                 return;
             }
-            produceTimer += deltaTime;
-            if (produceTimer >= ProduceTime) {
-                produceTimer = 0;
+            ProduceTimer += deltaTime;
+            if (ProduceTimer >= ProduceTime) {
+                ProduceTimer = 0;
                 Output[0].count += OutputData.output[0].count;
                 if (CurrentResourceMode == ResourceMode.PerProduce)
                     City.Island.RemoveResources(Resource, OutputData.output[0].count);

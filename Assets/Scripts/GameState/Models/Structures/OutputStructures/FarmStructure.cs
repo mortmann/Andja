@@ -32,8 +32,8 @@ namespace Andja.Model {
         public GrowableStructure Growable { get { return FarmData.growable; } }
 
         public int NeededHarvestForProduce { get { return CalculateRealValue(nameof(FarmData.neededHarvestToProduce), FarmData.neededHarvestToProduce); } }
-
-        public int OnRegisterCallbacks;
+        //TODO: this has to be checked against other working this? (especially for no growables)
+        public int WorkingTilesCount;
         private List<GrowableStructure> workingGrowables;
         public override float Progress => CalculateProgress();
         public float FullfillmentPercantage => FarmData.fullfillmentPercantage;
@@ -54,7 +54,7 @@ namespace Andja.Model {
 
         public override float EfficiencyPercent {
             get {
-                return Mathf.Round(((float)OnRegisterCallbacks / (float)RangeTiles.Count) * 1000) / 10f;
+                return Mathf.Round(((float)WorkingTilesCount / (float)RangeTiles.Count) * 1000) / 10f;
             }
         }
 
@@ -80,10 +80,13 @@ namespace Andja.Model {
 
         public override void OnBuild() {
             workingGrowables = new List<GrowableStructure>();
-            //farm has it needs plant if it can
-            
             foreach (Tile rangeTile in RangeTiles) {
-                OnTileStructureChange(rangeTile.Structure, null);
+                //TODO: make this nicer
+                if(Growable == null && rangeTile.Structure != null 
+                    && PrototypController.Instance.AllNaturalSpawningStructureIDs.Contains(rangeTile.Structure.ID) == false) {
+                    continue;
+                }
+                 OnTileStructureChange(rangeTile.Structure, null);
             }
             foreach (Tile rangeTile in RangeTiles) {
                 rangeTile.RegisterTileOldNewStructureChangedCallback(OnTileStructureChange);
@@ -98,24 +101,24 @@ namespace Andja.Model {
                 if (MaxNumberOfWorker == 0) {
                     if (workingGrowables.Count == 0)
                         return;
-                    produceTimer += deltaTime * Efficiency;
+                    ProduceTimer += deltaTime * Efficiency;
                     //Display Warning?
                     //Debug.LogWarning("FARM " + Name + " can not send worker -- ProduceTime to fast.");
-                    if (produceTimer >= ProduceTime) {
+                    if (ProduceTimer >= ProduceTime) {
                         if (workingGrowables.Count == 0) {
                             return;
                         }
-                        produceTimer = 0;
+                        ProduceTimer = 0;
                         AddHarvastable();
                         workingGrowables[0].Harvest();
                         workingGrowables.RemoveAt(0);
                     }
                 }
             } else {
-                produceTimer += deltaTime * Efficiency 
-                    * Mathf.Clamp01((float)OnRegisterCallbacks/(RangeTiles.Count * FullfillmentPercantage));
-                if (produceTimer >= ProduceTime) {
-                    produceTimer = 0;
+                ProduceTimer += deltaTime * Efficiency 
+                    * Mathf.Clamp01((float)WorkingTilesCount/(RangeTiles.Count * FullfillmentPercantage));
+                if (ProduceTimer >= ProduceTime) {
+                    ProduceTimer = 0;
                     AddHarvastable();
                 }
             }
@@ -155,21 +158,21 @@ namespace Andja.Model {
         public void OnTileStructureChange(Structure now, Structure old) {
             if(Growable == null) {
                 if (now == null || PrototypController.Instance.AllNaturalSpawningStructureIDs.Contains(now.ID)) {
-                    OnRegisterCallbacks++;
-                }
+                    WorkingTilesCount++;
+                } else
                 if (old == null && PrototypController.Instance.AllNaturalSpawningStructureIDs.Contains(now.ID) == false) {
-                    OnRegisterCallbacks--;
+                    WorkingTilesCount--;
                 }
                 return;
             }
             if (old != null && old.ID == Growable.ID) {
-                OnRegisterCallbacks--;
+                WorkingTilesCount--;
             }
             if (now == null) {
                 return;
             }
             if (now.ID == Growable.ID) {
-                OnRegisterCallbacks++;
+                WorkingTilesCount++;
                 now.RegisterOnChangedCallback(OnGrowableChanged);
                 GrowableStructure g = now as GrowableStructure;
                 g.SetBeingWorked(true);
@@ -180,8 +183,8 @@ namespace Andja.Model {
                 }
             }
         }
-
-        public override void SendOutWorkerIfCan(float workTime = 1) {
+        
+        protected override void SendOutWorkerIfCan(float workTime = 1) {
             if (workingGrowables.Count == 0) {
                 return;
             }
@@ -200,7 +203,7 @@ namespace Andja.Model {
             if (IsActiveAndWorking == false)
                 return 0;
             if (MaxNumberOfWorker == 0 || Growable == null) {
-                return produceTimer + currentlyHarvested * ProduceTime;
+                return ProduceTimer + currentlyHarvested * ProduceTime;
             }
             if (MaxNumberOfWorker > NeededHarvestForProduce) {
                 float sum = currentlyHarvested * ProduceTime;

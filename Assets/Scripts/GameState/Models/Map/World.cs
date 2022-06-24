@@ -9,28 +9,30 @@ using UnityEngine;
 namespace Andja.Model {
 
     [JsonObject(MemberSerialization.OptIn)]
-    public class World : IGEventable {
-        private static World _Current { get; set; }
+    public class World : IGEventable, IWorld {
+        public static IWorld _Current { get; set; }
 
-        public static World Current {
+        public static IWorld Current {
             get { return _Current; }
             set {
+#if !UNITY_INCLUDE_TESTS
                 if (value != null && _Current != null)
                     Debug.LogWarning("WARNING WORLD OVERWRITTEN!");
+#endif
                 _Current = value;
             }
         }
 
-        #region Serialize
+#region Serialize
 
         [JsonPropertyAttribute] public List<Island> Islands { get; protected set; }
         [JsonPropertyAttribute] public List<Unit> Units { get; protected set; }
         [JsonPropertyAttribute] public List<Crate> Crates { get; protected set; }
         [JsonPropertyAttribute] public List<Projectile> Projectiles { get; protected set; }
 
-        #endregion Serialize
+#endregion Serialize
 
-        #region RuntimeOrOther
+#region RuntimeOrOther
 
         public int Width => GameData.Width;
         public int Height => GameData.Height;
@@ -62,7 +64,7 @@ namespace Andja.Model {
             }
         }
 
-        public WorldGraph WorldGraph;
+        public WorldGraph WorldGraph { get; protected set; }
 
         public void RegisterOnCreateProjectileCallback(Action<Projectile> cb) {
             cbCreateProjectile += cb;
@@ -81,7 +83,7 @@ namespace Andja.Model {
 
         private Action<Unit, IWarfare> cbAnyUnitDestroyed;
 
-        #endregion RuntimeOrOther
+#endregion RuntimeOrOther
 
         /// <summary>
         /// Initializes a new instance of the <see cref="World"/> class.
@@ -108,7 +110,7 @@ namespace Andja.Model {
             }
         }
 
-        internal void LoadTiles(Tile[] tiles, int width, int height) {
+        public void LoadTiles(Tile[] tiles, int width, int height) {
             Tiles = tiles;
             for (int x = 0; x < width; x++) {
                 for (int y = 0; y < height; y++) {
@@ -171,7 +173,7 @@ namespace Andja.Model {
             Projectiles = new List<Projectile>();
         }
 
-        internal void Update(float deltaTime) {
+        public void Update(float deltaTime) {
             foreach (Island i in Islands) {
                 i.Update(deltaTime);
             }
@@ -180,19 +182,19 @@ namespace Andja.Model {
             }
         }
 
-        internal IEnumerable<IGEventable> GetShipUnits() {
+        public IEnumerable<IGEventable> GetShipUnits() {
             List<IGEventable> list = new List<IGEventable>(Units);
             list.RemoveAll(x => ((Unit)x).IsShip);
             return list;
         }
 
-        internal IEnumerable<IGEventable> GetLandUnits() {
+        public IEnumerable<IGEventable> GetLandUnits() {
             List<IGEventable> list = new List<IGEventable>(Units);
             list.RemoveAll(x => ((Unit)x).IsShip == false);
             return list;
         }
 
-        internal void FixedUpdate(float deltaTime) {
+        public void FixedUpdate(float deltaTime) {
             for (int i = Units.Count - 1; i >= 0; i--) {
                 Units[i].Update(deltaTime);
                 if (Units[i].IsDead == true) {
@@ -317,27 +319,27 @@ namespace Andja.Model {
             cbCrateDespawned?.Invoke(c);
         }
 
-        internal void RegisterCrateSpawned(Action<Crate> onSpawned) {
+        public void RegisterCrateSpawned(Action<Crate> onSpawned) {
             cbCrateSpawn += onSpawned;
         }
 
-        internal void UnregisterCrateSpawned(Action<Crate> onSpawned) {
+        public void UnregisterCrateSpawned(Action<Crate> onSpawned) {
             cbCrateSpawn -= onSpawned;
         }
 
-        internal void RegisterCrateDespawned(Action<Crate> onDespawned) {
+        public void RegisterCrateDespawned(Action<Crate> onDespawned) {
             cbCrateDespawned += onDespawned;
         }
 
-        internal void UnregisterCrateDespawned(Action<Crate> onDespawned) {
+        public void UnregisterCrateDespawned(Action<Crate> onDespawned) {
             cbCrateDespawned -= onDespawned;
         }
 
-        internal void RegisterAnyUnitDestroyed(Action<Unit, IWarfare> onAnyUnitDestroyed) {
+        public void RegisterAnyUnitDestroyed(Action<Unit, IWarfare> onAnyUnitDestroyed) {
             cbAnyUnitDestroyed += onAnyUnitDestroyed;
         }
 
-        internal void UnregisterUnitDestroyed(Action<Unit, IWarfare> onAnyUnitDestroyed) {
+        public void UnregisterUnitDestroyed(Action<Unit, IWarfare> onAnyUnitDestroyed) {
             cbAnyUnitDestroyed -= onAnyUnitDestroyed;
         }
 
@@ -350,10 +352,10 @@ namespace Andja.Model {
         public Fertility GetFertility(string ID) {
             return idToFertilities[ID];
         }
-        internal Tile GetRandomOceanTile() {
+        public Tile GetRandomOceanTile() {
             int x = UnityEngine.Random.Range(0, Width);
             int y = UnityEngine.Random.Range(0, Height);
-            while(Tilesmap[x][y] == false) {
+            while (Tilesmap[x][y] == false) {
                 x = UnityEngine.Random.Range(0, Width);
                 y = UnityEngine.Random.Range(0, Height);
             }
@@ -363,7 +365,7 @@ namespace Andja.Model {
             cbWorkerCreated?.Invoke(worker);
         }
 
-        #region callbacks
+#region callbacks
 
         public void RegisterTileChanged(Action<Tile> callbackfunc) {
             cbTileChanged += callbackfunc;
@@ -394,9 +396,9 @@ namespace Andja.Model {
             cbTileChanged?.Invoke(t);
         }
 
-        #endregion callbacks
+#endregion callbacks
 
-        #region igeventable
+#region igeventable
 
         public override void OnEventCreate(GameEvent ge) {
             if (ge.HasWorldEffect()) {
@@ -414,7 +416,7 @@ namespace Andja.Model {
             return -2;
         }
 
-        #endregion igeventable
+#endregion igeventable
 
         public void LoadWaterTiles() {
             for (int x = 0; x < Width; x++) {
@@ -485,15 +487,15 @@ namespace Andja.Model {
             }
         }
 
-        internal Queue<Tile> GetTilesQueue(Queue<Vector2> q) {
+        public Queue<Tile> GetTilesQueue(Queue<Vector2> q) {
             Queue<Tile> tiles = new Queue<Tile>();
-            foreach(Vector2 v in q) {
+            foreach (Vector2 v in q) {
                 tiles.Enqueue(GetTileAt(v));
             }
             return tiles;
         }
 
-        internal void CreateIslands(List<MapGenerator.IslandData> doneIslands) {
+        public void CreateIslands(List<MapGenerator.IslandData> doneIslands) {
             foreach (var item in doneIslands) {
                 CreateIsland(item);
             }

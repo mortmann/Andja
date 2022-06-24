@@ -638,12 +638,11 @@ namespace Andja.Model {
                 Debug.LogError("Range Tiles Tile is null -> cant calculated of that");
                 return null;
             }
-            World w = World.Current;
             RangeTiles = new HashSet<Tile>();
             float width = firstTile.X - StructureRange;
             float height = firstTile.Y - StructureRange;
             foreach (Tile t in Util.CalculateRangeTiles(StructureRange, TileWidth, TileHeight)) {
-                RangeTiles.Add(w.GetTileAt(t.X + width, t.Y + height));
+                RangeTiles.Add(World.Current.GetTileAt(t.X + width, t.Y + height));
             }
             return RangeTiles;
         }

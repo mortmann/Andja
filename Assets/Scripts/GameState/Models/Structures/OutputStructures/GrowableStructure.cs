@@ -14,7 +14,7 @@ namespace Andja.Model {
     }
 
     [JsonObject(MemberSerialization.OptIn)]
-    public class GrowableStructure : OutputStructure {
+    public class GrowableStructure : OutputStructure, IGrowableStructure {
 
         #region Serialize
 
@@ -34,8 +34,8 @@ namespace Andja.Model {
         public int AgeStages { get { return GrowableData.ageStages; } }
 
         protected GrowablePrototypeData _growableData;
-        private float landGrowModifier;
-        public override string SortingLayer => GrowableData.isFloor? "Road" : "Structures";
+        public float LandGrowModifier { get; protected set; }
+        public override string SortingLayer => GrowableData.isFloor ? "Road" : "Structures";
 
         public GrowablePrototypeData GrowableData {
             get {
@@ -75,11 +75,11 @@ namespace Andja.Model {
 
         public override void OnBuild() {
             if (Fertility != null && City.HasFertility(Fertility) == false) {
-                landGrowModifier = 0;
+                LandGrowModifier = 0;
             }
             else {
                 //maybe have ground type be factor? stone etc
-                landGrowModifier = 1;
+                LandGrowModifier = 1;
             }
             if (age < currentStage * TimePerStage) {
                 age = currentStage * TimePerStage;
@@ -87,10 +87,10 @@ namespace Andja.Model {
         }
 
         public override void OnUpdate(float deltaTime) {
-            if (hasProduced || landGrowModifier <= 0) {
+            if (hasProduced || LandGrowModifier <= 0) {
                 return;
             }
-            age += Efficiency * landGrowModifier * (deltaTime);
+            age += Efficiency * LandGrowModifier * (deltaTime);
             if ((age) > currentStage * TimePerStage) {
                 currentStage = Mathf.Clamp(currentStage + 1, 0, AgeStages);
                 if (currentStage >= AgeStages) {
@@ -153,13 +153,14 @@ namespace Andja.Model {
         /// </summary>
         /// <param name="worked"></param>
         internal void SetBeingWorked(bool worked) {
-            if(beingWorkedBy == byte.MaxValue) {
+            if (beingWorkedBy == byte.MaxValue) {
                 Debug.LogError("Too many farms are working the same growable! This should never happen ...");
                 return;
             }
-            if(worked) {
+            if (worked) {
                 beingWorkedBy++;
-            } else {
+            }
+            else {
                 beingWorkedBy--;
             }
         }

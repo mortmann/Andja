@@ -231,8 +231,8 @@ namespace Andja.Model {
                         Item item = items[i].Clone();
                         item.count = GetMaxIntakeForIndex(i) - Intake[i].count;
                         if(Workers.Count > 0) {
-                            item.count -= Workers.Where(z=>z.toGetItems != null)
-                                            .Sum(x => Array.Find(x.toGetItems, y => items[i].ID == y.ID)?.count ?? 0);
+                            item.count -= Workers.Where(z=>z.ToGetItems != null)
+                                            .Sum(x => Array.Find(x.ToGetItems, y => items[i].ID == y.ID)?.count ?? 0);
                         }
                         if (item.count > 0)
                             all.Add(item);

@@ -18,17 +18,13 @@ public class FarmStructureTest {
     private GrowablePrototypeData growablePrototypeData;
 
     private FarmStructure farm;
-    private Mock<IGrowableStructure> growable;
     private Mock<IPrototypController> prototypeControllerMock;
-    private Mock<ICity> CityMock;
     private Mock<IWorld> WorldMock;
     private Island Island;
     [SetUp]
     public void SetUp() {
         prototypeControllerMock = new Mock<IPrototypController>();
         PrototypController.Instance = prototypeControllerMock.Object;
-        growable = new Mock<IGrowableStructure>();
-        CityMock = new Mock<ICity>();
         WorldMock = new Mock<IWorld>();
         World.Current = WorldMock.Object;
         Island = new Island();
@@ -60,8 +56,8 @@ public class FarmStructureTest {
         prototypeControllerMock.Setup(m => m.GetStructurePrototypDataForID(RoadID)).Returns(new RoadStructurePrototypeData());
         prototypeControllerMock.Setup(m => m.GetWorkerPrototypDataForID(It.IsAny<string>())).Returns(new WorkerPrototypeData());
         prototypeControllerMock.Setup(m => m.AllNaturalSpawningStructureIDs).Returns(new List<string> { NaturalSpawnID });
-
     }
+
     private void CreateTwoByTwo() {
         farmPrototypeData.tileWidth = 2;
         farmPrototypeData.tileHeight = 2;
@@ -184,8 +180,63 @@ public class FarmStructureTest {
         };
         farm.TrySendWorker();
         Assert.AreEqual(1, farm.ReadWorkers.Count);
-        Assert.AreEqual(ItemProvider.Wood.ID, farm.ReadWorkers[0].toGetItems[0].ID);
+        Assert.AreEqual(ItemProvider.Wood.ID, farm.ReadWorkers[0].ToGetItems[0].ID);
         Assert.AreEqual(tile.Structure, farm.ReadWorkers[0].WorkStructure);
-
+    }
+    [Test]
+    public void ProduceNoGrowable() {
+        CreateTwoByTwo();
+        farm.OnBuild();
+        Assert.AreEqual(0, farm.Output[0].count);
+        for (int i = 0; i < 2; i++) {
+            Assert.AreEqual(i, farm.currentlyHarvested);
+            farm.DoWorkNoGrowable(3);
+        }
+        farm.CheckForOutputProduced();
+        Assert.AreEqual(1, farm.Output[0].count);
+    }
+    [Test]
+    public void ProduceNoGrowable_NoFreeTiles() {
+        CreateTwoByTwo();
+        farm.OnBuild();
+        new List<Tile>(farm.RangeTiles).ForEach(x => x.Structure = new GrowableStructure(GrowableID, growablePrototypeData));
+        Assert.AreEqual(0, farm.Output[0].count);
+        for (int i = 0; i < 2; i++) {
+            Assert.AreEqual(0, farm.currentlyHarvested);
+            farm.DoWorkNoGrowable(3);
+        }
+        farm.CheckForOutputProduced();
+        Assert.AreEqual(0, farm.Output[0].count);
+    }
+    [Test]
+    public void ProduceNoGrowable_PartialFreeTiles_SlowerProduce() {
+        CreateTwoByTwo();
+        farm.OnBuild();
+        new List<Tile>(farm.RangeTiles.Skip(farm.RangeTiles.Count/2)).ForEach(x => x.Structure = new GrowableStructure(GrowableID, growablePrototypeData));
+        Assert.AreEqual(0, farm.Output[0].count);
+        for (int i = 0; i < 2; i++) {
+            farm.DoWorkNoGrowable(3);
+        }
+        Assert.AreEqual(1, farm.currentlyHarvested);
+        for (int i = 0; i < 2; i++) {
+            farm.DoWorkNoGrowable(3);
+        }
+        Assert.AreEqual(2, farm.currentlyHarvested);
+        farm.CheckForOutputProduced();
+        Assert.AreEqual(1, farm.Output[0].count);
+    }
+    [Test]
+    public void ProduceGrowableWithWorker() {
+        CreateTwoByTwo();
+        farmPrototypeData.growable = new GrowableStructure(GrowableID, growablePrototypeData);
+        new List<Tile>(farm.RangeTiles).ForEach(x => x.Structure = new GrowableStructure(GrowableID, growablePrototypeData));
+        farm.OnBuild();
+        Assert.AreEqual(0, farm.Output[0].count);
+        for (int i = 0; i < 2; i++) {
+            farm.AddHarvastable();
+            Assert.AreEqual(i+1, farm.currentlyHarvested);
+        }
+        farm.CheckForOutputProduced();
+        Assert.AreEqual(1, farm.Output[0].count);
     }
 }

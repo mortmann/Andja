@@ -23,7 +23,7 @@ namespace Andja.Model {
 
         #region Serialize
 
-        [SerializeField] private int currentlyHarvested = 0;
+        [SerializeField] public int currentlyHarvested { get; protected set; } = 0;
 
         #endregion Serialize
 
@@ -98,34 +98,47 @@ namespace Andja.Model {
                 return;
             }
             if (Growable != null) {
-                if (MaxNumberOfWorker == 0) {
-                    if (workingGrowables.Count == 0)
-                        return;
-                    ProduceTimer += deltaTime * Efficiency;
-                    //Display Warning?
-                    //Debug.LogWarning("FARM " + Name + " can not send worker -- ProduceTime to fast.");
-                    if (ProduceTimer >= ProduceTime) {
-                        if (workingGrowables.Count == 0) {
-                            return;
-                        }
-                        ProduceTimer = 0;
-                        AddHarvastable();
-                        workingGrowables[0].Harvest();
-                        workingGrowables.RemoveAt(0);
-                    }
-                }
-            } else {
-                ProduceTimer += deltaTime * Efficiency 
-                    * Mathf.Clamp01((float)WorkingTilesCount/(RangeTiles.Count * FullfillmentPercantage));
-                if (ProduceTimer >= ProduceTime) {
-                    ProduceTimer = 0;
-                    AddHarvastable();
-                }
+                DoWorkWithGrowableNoWorker(deltaTime);
             }
+            else {
+                DoWorkNoGrowable(deltaTime);
+            }
+            CheckForOutputProduced();
+        }
+
+        public void CheckForOutputProduced() {
             if (currentlyHarvested >= NeededHarvestForProduce) {
                 Output[0].count++;
                 cbOutputChange?.Invoke(this);
                 currentlyHarvested -= NeededHarvestForProduce;
+            }
+        }
+
+        public void DoWorkNoGrowable(float deltaTime) {
+            ProduceTimer += deltaTime * Efficiency
+                                * Mathf.Clamp01((float)WorkingTilesCount / (RangeTiles.Count * FullfillmentPercantage));
+            if (ProduceTimer >= ProduceTime) {
+                ProduceTimer = 0;
+                AddHarvastable();
+            }
+        }
+
+        public void DoWorkWithGrowableNoWorker(float deltaTime) {
+            if (MaxNumberOfWorker == 0) {
+                if (workingGrowables.Count == 0)
+                    return;
+                ProduceTimer += deltaTime * Efficiency;
+                //Display Warning?
+                //Debug.LogWarning("FARM " + Name + " can not send worker -- ProduceTime to fast.");
+                if (ProduceTimer >= ProduceTime) {
+                    if (workingGrowables.Count == 0) {
+                        return;
+                    }
+                    ProduceTimer = 0;
+                    AddHarvastable();
+                    workingGrowables[0].Harvest();
+                    workingGrowables.RemoveAt(0);
+                }
             }
         }
 

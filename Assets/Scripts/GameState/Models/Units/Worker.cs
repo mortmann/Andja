@@ -25,15 +25,14 @@ namespace Andja.Model {
         [JsonPropertyAttribute] public string ID;
         [JsonPropertyAttribute] private BasePathfinding path;
         [JsonPropertyAttribute] private float workTimer;
-        [JsonPropertyAttribute] public Item[] toGetItems { get => toGetItems1; protected set { if (value == null) Debug.Log("!?"); toGetItems1 = value; } }
-        [JsonPropertyAttribute] private UnitInventory inventory;
+        [JsonPropertyAttribute] public Item[] ToGetItems { get => toGetItems1; protected set { if (value == null) Debug.Log("!?"); toGetItems1 = value; } }
+        [JsonPropertyAttribute] public UnitInventory Inventory { get; protected set; }
         [JsonPropertyAttribute] private bool goingToWork;
         [JsonPropertyAttribute] public bool isAtHome;
         [JsonPropertyAttribute] private Structure _workStructure;
         [JsonPropertyAttribute] private bool isDone;
-        [JsonPropertyAttribute] private bool walkTimeIsWorkTime;
-        [JsonPropertyAttribute] private float workAtHomeTime;
-
+        [JsonPropertyAttribute] private readonly bool walkTimeIsWorkTime;
+        [JsonPropertyAttribute] private readonly float workAtHomeTime;
         #endregion Serialize
 
         #region runtimeVariables
@@ -74,7 +73,7 @@ namespace Andja.Model {
         private bool HasToEnterWorkStructure => Data.hasToEnterWork;
 
 
-        public bool IsFull => inventory?.HasAnything() == true || goingToWork == false && Home is ServiceStructure;
+        public bool IsFull => Inventory?.HasAnything() == true || goingToWork == false && Home is ServiceStructure;
         private Func<Structure, float, bool> WorkOnStructure {
             get {
                 if (Home is ServiceStructure h)
@@ -136,10 +135,10 @@ namespace Andja.Model {
             }
             isAtHome = false;
             goingToWork = true;
-            inventory = new UnitInventory(4);
+            Inventory = new UnitInventory(4);
             workTimer = workTime;
             this.ID = workerID ?? "placeholder";
-            this.toGetItems = toGetItems;
+            this.ToGetItems = toGetItems;
             SetGoalStructure(structure);
             Setup();
         }
@@ -227,7 +226,7 @@ namespace Andja.Model {
             else {
                 // coming home from doing the work
                 // drop off the items its carrying
-                if (toGetItems != null && inventory.HasAnything()) {
+                if (ToGetItems != null && Inventory.HasAnything()) {
                     DropOffItems(deltaTime);
                 }
                 else {
@@ -238,7 +237,7 @@ namespace Andja.Model {
 
         internal bool IsWorking() {
             //has it anything? && is not going to get anything it is not Working -> so opposite should be working 
-            return (inventory.HasAnything() == false && goingToWork == false) == false;
+            return (Inventory.HasAnything() == false && goingToWork == false) == false;
         }
 
         public void DropOffItems(float deltaTime) {
@@ -247,11 +246,11 @@ namespace Andja.Model {
                 return;
             }
             if (Home is MarketStructure) {
-                ((MarketStructure)Home).City.Inventory.AddInventory(inventory);
+                ((MarketStructure)Home).City.Inventory.AddInventory(Inventory);
             }
             else
             if (Home is ProductionStructure) {
-                ((ProductionStructure)Home).AddToIntake(inventory);
+                ((ProductionStructure)Home).AddToIntake(Inventory);
             }
             else
             if (Home is FarmStructure) {
@@ -259,7 +258,7 @@ namespace Andja.Model {
             }
             else if (Home is OutputStructure) {
                 //this home is a OutputStructures or smth that takes it to output
-                ((OutputStructure)Home).AddToOutput(inventory);
+                ((OutputStructure)Home).AddToOutput(Inventory);
             }
             isAtHome = true;
         }
@@ -314,7 +313,7 @@ namespace Andja.Model {
                 return;
             }
             PlaySound(WorkSound, false);
-            inventory.AddItems(((GrowableStructure)WorkStructure).GetOutput());
+            Inventory.AddItems(((GrowableStructure)WorkStructure).GetOutput());
             ((GrowableStructure)WorkStructure).Harvest();
             isDone = true;
         }
@@ -333,22 +332,22 @@ namespace Andja.Model {
                 return;
             }
             PlaySound(WorkSound, false);
-            if (toGetItems == null) {
+            if (ToGetItems == null) {
                 foreach (Item item in WorkOutputStructure.GetOutput()) {
-                    inventory.AddItem(item);
+                    Inventory.AddItem(item);
                 }
             }
-            if (toGetItems != null) {
-                foreach (Item item in WorkOutputStructure.GetOutputWithItemCountAsMax(toGetItems)) {
-                    inventory.AddItem(item);
+            if (ToGetItems != null) {
+                foreach (Item item in WorkOutputStructure.GetOutputWithItemCountAsMax(ToGetItems)) {
+                    Inventory.AddItem(item);
                 }
             }
             if (WorkOutputStructure is MarketStructure) {
-                foreach (Item item in WorkOutputStructure.GetOutputWithItemCountAsMax(toGetItems)) {
+                foreach (Item item in WorkOutputStructure.GetOutputWithItemCountAsMax(ToGetItems)) {
                     if (item == null) {
                         Debug.LogError("item is null for to get item! Worker is from " + Home + " trying to get from " + WorkOutputStructure);
                     }
-                    inventory.AddItem(item);
+                    Inventory.AddItem(item);
                 }
             }
             WorkOutputStructure.outputClaimed = false;

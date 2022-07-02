@@ -219,19 +219,17 @@ namespace Andja.Model {
                 return ProduceTimer + currentlyHarvested * ProduceTime;
             }
             if (MaxNumberOfWorker > NeededHarvestForProduce) {
-                float sum = currentlyHarvested * ProduceTime;
-                for (int x = 0; x < MaxNumberOfWorker; x++) {
-                    if(Workers[x].IsWorking())
-                        sum += ProduceTime - Workers[x].WorkTimer;
-                }
-                sum /= MaxNumberOfWorker;
-                return (sum);
+                return currentlyHarvested * ProduceTime
+                     + Workers.Where(x => x.IsWorking())
+                              .OrderBy(x => x.WorkTimer)
+                              .Take(NeededHarvestForProduce)
+                              .Sum(x => ProduceTime - x.WorkTimer);
             }
             return (Workers.FindAll(x => x.IsWorking())).Sum(x => ProduceTime - x.WorkTimer) 
                         + currentlyHarvested * ProduceTime;
         }
 
-        protected override void OnDestroy() {
+        public override void OnDestroy() {
             if (Workers == null) {
                 return;
             }

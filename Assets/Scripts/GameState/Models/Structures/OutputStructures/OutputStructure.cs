@@ -23,10 +23,11 @@ namespace Andja.Model {
 
     [JsonObject(MemberSerialization.OptIn)]
     public abstract class OutputStructure : TargetStructure {
+        public const string INACTIVE_EFFECT_ID = "inactive";
 
         #region Serialize
 
-        [JsonPropertyAttribute] protected List<Worker> Workers;
+        [JsonPropertyAttribute] public List<Worker> Workers;
         [JsonPropertyAttribute] public float ProduceTimer { get; protected set; }
         protected Item[] _output;
         [JsonPropertyAttribute]
@@ -50,9 +51,6 @@ namespace Andja.Model {
         #endregion Serialize
 
         #region RuntimeOrOther
-        public IReadOnlyList<Worker> ReadWorkers => Workers;
-
-        
         public WorkerPrototypeData _workerPrototypeData;
         public WorkerPrototypeData WorkerPrototypeData {
             get {
@@ -61,7 +59,7 @@ namespace Andja.Model {
                 return _workerPrototypeData;
             }
         }
-        public Dictionary<OutputStructure, Item[]> jobsToDo;
+        public Dictionary<OutputStructure, Item[]> WorkerJobsToDo;
         public bool outputClaimed;
         protected Action<Structure> cbOutputChange;
         public float ContactRange => OutputData.contactRange; 
@@ -86,7 +84,7 @@ namespace Andja.Model {
         #endregion RuntimeOrOther
 
         public OutputStructure() {
-            jobsToDo = new Dictionary<OutputStructure, Item[]>();
+            WorkerJobsToDo = new Dictionary<OutputStructure, Item[]>();
         }
 
         protected void OutputCopyData(OutputStructure o) {
@@ -117,18 +115,20 @@ namespace Andja.Model {
                 }
             }
         }
+
         public void TrySendWorker() {
             if (Workers == null) {
                 Workers = new List<Worker>(MaxNumberOfWorker);
             }
             SendOutWorkerIfCan();
         }
+
         protected virtual void SendOutWorkerIfCan(float workTime = 1) {
-            if (jobsToDo.Count == 0 || Workers.Count >= MaxNumberOfWorker) {
+            if (WorkerJobsToDo.Count == 0 || Workers.Count >= MaxNumberOfWorker) {
                 return;
             }
             List<OutputStructure> givenJobs = new List<OutputStructure>();
-            List<OutputStructure> ordered = jobsToDo.Keys.OrderByDescending(x => x.Output.Sum(y => y.count)).ToList();
+            List<OutputStructure> ordered = WorkerJobsToDo.Keys.OrderByDescending(x => x.Output.Sum(y => y.count)).ToList();
             foreach (OutputStructure jobStr in ordered) {
                 if (Workers.Count >= MaxNumberOfWorker) {
                     break;
@@ -136,7 +136,7 @@ namespace Andja.Model {
                 if (jobStr.outputClaimed) {
                     continue;
                 }
-                Item[] items = GetRequiredItems(jobStr, jobsToDo[jobStr]);
+                Item[] items = GetRequiredItems(jobStr, WorkerJobsToDo[jobStr]);
                 if (items == null || items.Length <= 0) {
                     continue;
                 }
@@ -153,7 +153,7 @@ namespace Andja.Model {
                     if (giveJob is ProductionStructure) {
                         continue;
                     }
-                    jobsToDo.Remove(giveJob);
+                    WorkerJobsToDo.Remove(giveJob);
                 }
             }
         }
@@ -163,18 +163,16 @@ namespace Andja.Model {
                 items = str.Output;
             }
             List<Item> all = new List<Item>();
-            for (int i = Output.Length - 1; i >= 0; i--) {
-                string id = Output[i].ID;
-                for (int s = 0; s < items.Length; s++) {
-                    if (items[i].ID == id) {
-                        Item item = items[i].Clone();
-                        item.count = MaxOutputStorage - Output[i].count;
-                        if (item.count > 0)
-                            all.Add(item);
-                    }
+            for (int i = 0; i < Output.Length; i++) {
+                Item item = Array.Find(items, x => x.ID == Output[i].ID)?.Clone();
+                if (item != null) {
+                    item.count = MaxOutputStorage - Output[i].count;
+                    item.count -= Workers.Where(z => z.ToGetItems != null)
+                                    .Sum(x => Array.Find(x.ToGetItems, y => items[i].ID == y.ID)?.count ?? 0);
+                    all.Add(item);
                 }
             }
-            return all.ToArray();
+            return all.Where(x => x.count > 0).ToArray();
         }
 
         public void WorkerComeBack(Worker w) {
@@ -225,44 +223,17 @@ namespace Andja.Model {
         }
 
         public virtual Item[] GetOutputWithItemCountAsMax(Item[] getItems) {
-            Item[] temp = new Item[getItems.Length];
-            for (int g = 0; g < getItems.Length; g++) {
-                for (int i = 0; i < Output.Length; i++) {
-                    if (Output[i].ID != getItems[g].ID) {
-                        continue;
-                    }
-                    if (Output[i].count == 0) {
-                        Debug.LogWarning("output[i].count ==  0");
-                    }
-                    temp[g] = Output[i].CloneWithCount();
-                    temp[g].count = Mathf.Clamp(temp[i].count, 0, getItems[g].count);
-                    Output[i].count -= temp[i].count;
-                    CallOutputChangedCB();
-                }
-            }
-            return temp;
+            return GetOutput(getItems, getItems.Select(x=>x.count).ToArray());
         }
 
         public Item GetOneOutput(Item item) {
             if (Output == null) {
                 return null;
             }
-            for (int i = 0; i < Output.Length; i++) {
-                if (item.ID != Output[i].ID) {
-                    continue;
-                }
-                if (Output[i].count > 0) {
-                    Item temp = Output[i].CloneWithCount();
-                    Output[i].count = 0;
-                    CallbackChangeIfnotNull();
-                    return temp;
-                }
-            }
-            return null;
-        }
-
-        public override Item[] GetBuildingItems() {
-            return BuildingItems;
+            Item inItem = Array.Find(Output, x => x.ID == item.ID);
+            Item outItem = inItem.CloneWithCount();
+            inItem.count = 0;
+            return outItem;
         }
 
         public void CallOutputChangedCB() {
@@ -286,16 +257,16 @@ namespace Andja.Model {
                 }
             }
         }
-        internal override void ToggleActive() {
+        public override void ToggleActive() {
             base.ToggleActive();
             if (isActive) {
-                RemoveEffect(GetEffect("inactive"), true);
+                RemoveEffect(GetEffect(INACTIVE_EFFECT_ID), true);
             }
             else {
-                AddEffect(new Effect("inactive"));
+                AddEffect(new Effect(INACTIVE_EFFECT_ID));
             }
         }
-        protected override void OnDestroy() {
+        public override void OnDestroy() {
             if (Workers != null) {
                 foreach (Worker item in Workers) {
                     item.Destroy();

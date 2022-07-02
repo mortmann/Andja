@@ -254,7 +254,7 @@ namespace Andja.Model {
             }
         }
 
-        protected override void OnDestroy() {
+        public override void OnDestroy() {
             City.RemovePeople(PopulationLevel, people);
         }
 

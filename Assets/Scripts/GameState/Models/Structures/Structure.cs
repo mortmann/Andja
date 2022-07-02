@@ -349,7 +349,7 @@ namespace Andja.Model {
 
         public abstract void OnBuild();
 
-        protected virtual void OnDestroy() {
+        public virtual void OnDestroy() {
         }
 
         /// <summary>
@@ -556,7 +556,7 @@ namespace Andja.Model {
             }
         }
 
-        internal void UpgradeTo(string ID) {
+        public void UpgradeTo(string ID) {
             this.ID = ID;
             OnUpgrade();
             cbStructureChanged?.Invoke(this);
@@ -673,7 +673,7 @@ namespace Andja.Model {
 
         #region Functions
 
-        internal List<Structure> GetNeighbourStructuresInRange(int spreadTileRange) {
+        public List<Structure> GetNeighbourStructuresInRange(int spreadTileRange) {
             Vector2 lower = Center - new Vector2(TileWidth / 2f + spreadTileRange, TileHeight / 2f + spreadTileRange);
             Vector2 upper = Center + new Vector2(TileWidth / 2f + spreadTileRange, TileHeight / 2f + spreadTileRange);
             List<Structure> structures = new List<Structure>();
@@ -711,7 +711,7 @@ namespace Andja.Model {
             CurrentHealth = Mathf.Clamp(CurrentHealth, 0, MaxHealth);
         }
 
-        internal void ChangeHealth(float change) {
+        public void ChangeHealth(float change) {
             if (change < 0)
                 ReduceHealth(-change); //damage should not be negativ
             if (change > 0)
@@ -903,24 +903,24 @@ namespace Andja.Model {
             }
         }
 
-        protected virtual void RemoveRoute(Route route) {
+        public virtual void RemoveRoute(Route route) {
             Routes.Remove(route);
         }
 
-        internal bool IsPlayer() {
+        public bool IsPlayer() {
             return PlayerNumber == PlayerController.currentPlayerNumber;
         }
         /// <summary>
         /// Should return if the tileValue should be 0 for this structure tile
         /// </summary>
         /// <returns></returns>
-        internal bool ShouldAICountTileAsFree() {
+        public bool ShouldAICountTileAsFree() {
             if (this is GrowableStructure g) {
                 return g.IsBeingWorked;
             }
             return CanBeBuildOver;
         }
-        internal virtual void ToggleActive() {
+        public virtual void ToggleActive() {
             //not all structures can be paused -- if it can it is handled in subclass
             isActive = !isActive;
         }

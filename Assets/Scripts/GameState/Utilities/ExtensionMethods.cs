@@ -2,6 +2,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.Xml;
 using UnityEngine;
@@ -221,6 +222,10 @@ namespace Andja.Utility {
         }
         public static int ClampZero(this int i, int max) {
             return Mathf.Clamp(i, 0, max);
+        }
+
+        public static bool None<TSource>(this IEnumerable<TSource> source, Func<TSource, bool> predicate) {
+            return !source.Any(predicate);
         }
     }
 }

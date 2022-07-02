@@ -1,6 +1,7 @@
 ﻿using Andja.Controller;
 using Newtonsoft.Json;
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -297,7 +298,7 @@ namespace Andja.Model {
         }
 
         //current wrapper to make sure its valid
-        public void RemoveTile(Tile t) {
+        public virtual void RemoveTile(Tile t) {
             //if it doesnt contain it there is an error
             if (Tiles.Contains(t) == false) {
                 Debug.LogError("This city does not know that it had this tile! " + t.ToString() + " -> " + Tiles.Count);
@@ -521,7 +522,7 @@ namespace Andja.Model {
             Routes.Remove(route);
         }
 
-        public void RemoveStructure(Structure structure) {
+        public virtual void RemoveStructure(Structure structure) {
             if (structure == null) {
                 Debug.Log("null");
                 return;
@@ -560,25 +561,25 @@ namespace Andja.Model {
 
         public void RemoveTiles(IEnumerable<Tile> tiles) {
             foreach (Tile item in tiles) {
-                item.City = null;
-                if (item.City != this) {
-                    Tiles.Remove(item);
-                    if (IsCurrPlayerCity()) {
-                        World.Current.OnTileChanged(item);
-                    }
-                }
+                RemoveTile(item);
             }
-            if (Tiles.Count == 0) {
-                Destroy();
-            }
+            //foreach (Tile item in tiles) {
+            //    item.City = null;
+            //    if (item.City != this) {
+            //        Tiles.Remove(item);
+            //        if (IsCurrPlayerCity()) {
+            //            World.Current.OnTileChanged(item);
+            //        }
+            //    }
+            //}
+            //if (Tiles.Count == 0) {
+            //    Destroy();
+            //}
         }
 
         public void Destroy() {
             if (PlayerNumber == -1) {
                 return; // this is the wilderness it cant be removed! or destroyed
-            }
-            if (Tiles.Count > 0) {
-                RemoveTiles(Tiles);
             }
             Island.RemoveCity(this);
             cbCityDestroy?.Invoke(this);

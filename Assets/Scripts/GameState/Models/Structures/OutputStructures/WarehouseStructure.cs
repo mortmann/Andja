@@ -50,15 +50,9 @@ namespace Andja.Model {
         }
 
         public override bool SpecialCheckForBuild(List<Tile> tiles) {
-            foreach (Tile item in tiles) {
-                if (item.City == null || item.City.IsWilderness()) {
-                    continue;
-                }
-                if (item.City.warehouse != null) {
-                    return false;
-                }
-            }
-            return true;
+            return tiles.None(t => t.City != null 
+                               && t.City.IsWilderness() == false 
+                               && t.City.warehouse != null);
         }
 
         public void AddUnitToTrade(Unit u) {
@@ -90,17 +84,6 @@ namespace Andja.Model {
 
         public Tile GetTradeTile() {
             return tradeTile; //maybe this changes or not s
-        }
-
-        protected override void OnDestroy() {
-            List<Tile> h = new List<Tile>(Tiles);
-            if (RangeTiles != null)
-                h.AddRange(RangeTiles);
-            City.RemoveTiles(h);
-            //you lose any res that the worker is carrying
-            foreach (Worker item in Workers) {
-                item.Destroy();
-            }
         }
 
         public override Structure Clone() {

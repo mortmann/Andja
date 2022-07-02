@@ -25,7 +25,6 @@ public class CityInventoryTest {
             { ItemProvider.Fish.ID, ItemProvider.Fish.Clone()   },
             { ItemProvider.Stone.ID, ItemProvider.Stone.Clone()   },
         };
-        //This has to be an () => or else it returns the same dictionary everytime... (Optimization?)
         prototypeControllerMock.Setup(m => m.GetCopieOfAllItems()).Returns(()=> {
             return buildItems.ToDictionary(x => x.Key, y => y.Value.Clone());
             });

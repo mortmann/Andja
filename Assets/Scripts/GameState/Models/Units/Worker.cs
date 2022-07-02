@@ -24,7 +24,7 @@ namespace Andja.Model {
         #region Serialize
         [JsonPropertyAttribute] public string ID;
         [JsonPropertyAttribute] private BasePathfinding path;
-        [JsonPropertyAttribute] private float workTimer;
+        [JsonPropertyAttribute] protected float workTimer;
         [JsonPropertyAttribute] public Item[] ToGetItems { get => toGetItems1; protected set { if (value == null) Debug.Log("!?"); toGetItems1 = value; } }
         [JsonPropertyAttribute] public UnitInventory Inventory { get; protected set; }
         [JsonPropertyAttribute] private bool goingToWork;
@@ -380,7 +380,7 @@ namespace Andja.Model {
             if (goingToWork)
                 WorkOutputStructure?.ResetOutputClaimed();
             cbWorkerDestroy?.Invoke(this);
-            path.CancelJob();
+            path?.CancelJob();
         }
 
         public void SetGoalStructure(Structure structure, bool goHome = false) {

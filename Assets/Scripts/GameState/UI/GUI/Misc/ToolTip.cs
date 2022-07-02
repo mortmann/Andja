@@ -155,11 +155,11 @@ namespace Andja.UI {
                 Items.SetActive(true);
                 foreach (Item item in structure.BuildingItems) {
                     if (stringToImageText.ContainsKey(item.ID)) {
-                        stringToImageText[item.ID].SetText(item.countString);
+                        stringToImageText[item.ID].SetText(item.CountString);
                     }
                     else {
                         ImageText imageText = Instantiate(ImageTextPrefab);
-                        imageText.Set(UISpriteController.GetItemImageForID(item.ID), item.Data, item.countString);
+                        imageText.Set(UISpriteController.GetItemImageForID(item.ID), item.Data, item.CountString);
                         imageText.transform.SetParent(Items.transform, false);
                         imageText.SetBrightColorText();
                         stringToImageText.Add(item.ID, imageText);
@@ -187,11 +187,11 @@ namespace Andja.UI {
                 Items.SetActive(true);
                 foreach (Item item in unit.BuildingItems) {
                     if (stringToImageText.ContainsKey(item.ID)) {
-                        stringToImageText[item.ID].SetText(item.countString);
+                        stringToImageText[item.ID].SetText(item.CountString);
                     }
                     else {
                         ImageText imageText = Instantiate(ImageTextPrefab);
-                        imageText.Set(UISpriteController.GetItemImageForID(item.ID), item.Data, item.countString);
+                        imageText.Set(UISpriteController.GetItemImageForID(item.ID), item.Data, item.CountString);
                         imageText.transform.SetParent(Items.transform, false);
                         imageText.SetBrightColorText();
                         stringToImageText.Add(item.ID, imageText);

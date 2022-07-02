@@ -177,9 +177,11 @@ namespace Andja.Model {
         internal Effect GetEffect(string ID) {
             return _effects.Find(x => x.ID == ID);
         }
-
+        public bool HasEffect(string effectID) {
+            return _effects.Exists(x => x.ID == effectID);
+        }
         public bool HasEffect(Effect effect) {
-            return _effects.Find(x => x.ID == effect.ID) != null;
+            return HasEffect(effect.ID);
         }
         public bool HasAnyEffect(params Effect[] effects) {
             return _effects.Exists(x => Array.Exists<Effect>(effects, y => x.ID == y.ID));

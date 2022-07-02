@@ -355,7 +355,7 @@ namespace Andja.Model {
             }
         }
 
-        protected override void OnDestroy() {
+        public override void OnDestroy() {
             if (Targets == ServiceTarget.City) {
                 RemoveEffectCity();
                 return;

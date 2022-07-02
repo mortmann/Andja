@@ -43,7 +43,7 @@ namespace Andja.Model {
 
         #endregion RuntimeOrOther
 
-        public static ResourceMode CurrentResourceMode;
+        public static ResourceMode CurrentResourceMode = ResourceMode.PerMine;
 
         public MineStructure(string pid, MinePrototypeData MineData) {
             this.ID = pid;
@@ -97,7 +97,7 @@ namespace Andja.Model {
             base.OnUpgrade();
             _mineData = null;
         }
-        protected override void OnDestroy() {
+        public override void OnDestroy() {
             if (CurrentResourceMode == ResourceMode.PerMine) {
                 City.Island.AddResources(Resource, 1);
             }

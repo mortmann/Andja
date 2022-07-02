@@ -52,9 +52,11 @@ namespace Andja.Model {
         public abstract Item[] GetAllItemsAndRemoveThem();
 
         public abstract Item GetAllAndRemoveItem(Item item);
+
         public bool HasAnythingOf(Item item) {
-            return GetAllAndRemoveItem(item).count > 0;
+            return GetAmountFor(item) > 0;
         }
+
         public Item GetAllOfItem(string itemID) {
             return GetAllAndRemoveItem(new Item(itemID));
         }

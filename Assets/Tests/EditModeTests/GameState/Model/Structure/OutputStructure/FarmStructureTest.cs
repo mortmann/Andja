@@ -16,41 +16,23 @@ public class FarmStructureTest {
     private const string NaturalSpawnID = "tree";
     private FarmPrototypeData farmPrototypeData;
     private GrowablePrototypeData growablePrototypeData;
-
     private FarmStructure farm;
-    private Mock<IPrototypController> prototypeControllerMock;
-    private Mock<IWorld> WorldMock;
-    private Island Island;
     [SetUp]
     public void SetUp() {
-        prototypeControllerMock = new Mock<IPrototypController>();
-        PrototypController.Instance = prototypeControllerMock.Object;
-        WorldMock = new Mock<IWorld>();
-        World.Current = WorldMock.Object;
-        Island = new Island();
-        WorldMock.Setup(w => w.GetTileAt(It.IsAny<float>(), It.IsAny<float>())).Returns((float x, float y) => {
-            LandTile t = new LandTile((int)x,(int)y);
-            t.Type = TileType.Dirt;
-            t.Island = Island;
-            return t;
-        });
-        WorldMock.Setup(w => w.GetTileAt(It.IsAny<int>(), It.IsAny<int>())).Returns((int x, int y) => {
-            LandTile t = new LandTile(x, y);
-            t.Type = TileType.Dirt;
-            t.Island = Island;
-            return t;
-        });
         farmPrototypeData = new FarmPrototypeData {
             produceTime = 3,
             neededHarvestToProduce = 2,
             structureRange = 5,
-            output = new[] { ItemProvider.Wood }
+            output = new[] { ItemProvider.Wood },
+            maxOutputStorage = 5
         };
         farm = new FarmStructure(ID, farmPrototypeData);
         growablePrototypeData = new GrowablePrototypeData {
             ID = GrowableID,
             output = new[] {ItemProvider.Wood} 
         };
+        MockUtil mockutil = new MockUtil();
+        var prototypeControllerMock = mockutil.PrototypControllerMock;
         prototypeControllerMock.Setup(m => m.GetStructurePrototypDataForID(ID)).Returns(farmPrototypeData);
         prototypeControllerMock.Setup(m => m.GetStructurePrototypDataForID(GrowableID)).Returns(growablePrototypeData);
         prototypeControllerMock.Setup(m => m.GetStructurePrototypDataForID(RoadID)).Returns(new RoadStructurePrototypeData());
@@ -62,7 +44,7 @@ public class FarmStructureTest {
         farmPrototypeData.tileWidth = 2;
         farmPrototypeData.tileHeight = 2;
         farm.RangeTiles = new HashSet<Tile>();
-        farm.Tiles = farm.GetBuildingTiles(World.Current.GetTileAt(farm.StructureRange + 1, farm.StructureRange + 1));
+        farm.Tiles = farm.GetBuildingTiles(World.Current.GetTileAt(farm.StructureRange, farm.StructureRange));
         farm.RangeTiles.UnionWith(farmPrototypeData.PrototypeRangeTiles);
     }
 
@@ -166,7 +148,7 @@ public class FarmStructureTest {
         CreateTwoByTwo();
         farm.OnBuild();
         farm.TrySendWorker();
-        Assert.AreEqual(0, farm.ReadWorkers.Count);
+        Assert.AreEqual(0, farm.Workers.Count);
     }
     [Test]
     public void SendWorkerOutIfCan_Target() {
@@ -179,9 +161,9 @@ public class FarmStructureTest {
             Tiles = new List<Tile> { tile },
         };
         farm.TrySendWorker();
-        Assert.AreEqual(1, farm.ReadWorkers.Count);
-        Assert.AreEqual(ItemProvider.Wood.ID, farm.ReadWorkers[0].ToGetItems[0].ID);
-        Assert.AreEqual(tile.Structure, farm.ReadWorkers[0].WorkStructure);
+        Assert.AreEqual(1, farm.Workers.Count);
+        Assert.AreEqual(ItemProvider.Wood.ID, farm.Workers[0].ToGetItems[0].ID);
+        Assert.AreEqual(tile.Structure, farm.Workers[0].WorkStructure);
     }
     [Test]
     public void ProduceNoGrowable() {
@@ -194,6 +176,17 @@ public class FarmStructureTest {
         }
         farm.CheckForOutputProduced();
         Assert.AreEqual(1, farm.Output[0].count);
+    }
+    [Test]
+    public void OnUpdate_CapAtMax() {
+        CreateTwoByTwo();
+        farm.OnBuild();
+        Assert.AreEqual(0, farm.Output[0].count);
+        for (int i = 0; i < 20; i++) {
+            farm.OnUpdate(3);
+        }
+        farm.CheckForOutputProduced();
+        Assert.AreEqual(5, farm.Output[0].count);
     }
     [Test]
     public void ProduceNoGrowable_NoFreeTiles() {
@@ -238,5 +231,56 @@ public class FarmStructureTest {
         }
         farm.CheckForOutputProduced();
         Assert.AreEqual(1, farm.Output[0].count);
+    }
+
+    [Test]
+    public void CalculateProgress_NoGrowableOrNoWorker() {
+        CreateTwoByTwo();
+        farm.OnBuild();
+        Assert.AreEqual(farm.ProduceTime * farm.NeededHarvestForProduce, farm.TotalProgress);
+        Assert.AreEqual(0, farm.Progress);
+        for (int i = 0; i < 2; i++) {
+            farm.DoWorkNoGrowable(3);
+            Assert.AreEqual(farm.currentlyHarvested * farm.ProduceTime, farm.Progress);
+        }
+        Assert.AreEqual(farm.TotalProgress, farm.Progress);
+    }
+    [Test]
+    public void CalculateProgress_LessWorkerThanNeededHarvestForProduce() {
+        CreateTwoByTwo();
+        farm.OnBuild();
+        Assert.AreEqual(farm.ProduceTime * farm.NeededHarvestForProduce, farm.TotalProgress);
+        Assert.AreEqual(0, farm.Progress);
+        farmPrototypeData.growable = new GrowableStructure(GrowableID, growablePrototypeData);
+        farmPrototypeData.maxNumberOfWorker = 2;
+        farm.Workers = new List<Worker>();
+        farm.Workers.Add(new Worker(farm, GetGrowable(farm.RangeTiles.First()), 1.5f, null));
+        farm.Workers.Add(new Worker(farm, GetGrowable(farm.RangeTiles.First()), 0.5f, null));
+        Assert.AreEqual(1.5f + 2.5f, farm.Progress);
+        farm.AddHarvastable();
+        Assert.AreEqual(1.5f + 2.5f + farm.ProduceTime, farm.Progress);
+
+    }
+    [Test]
+    public void CalculateProgress_MoreWorkerThanNeededHarvestForProduce() {
+        CreateTwoByTwo();
+        farm.OnBuild();
+        Assert.AreEqual(farm.ProduceTime * farm.NeededHarvestForProduce, farm.TotalProgress);
+        Assert.AreEqual(0, farm.Progress);
+        farmPrototypeData.growable = new GrowableStructure(GrowableID, growablePrototypeData);
+        farmPrototypeData.maxNumberOfWorker = 3;
+        farm.Workers = new List<Worker>();
+        farm.Workers.Add(new Worker(farm, GetGrowable(farm.RangeTiles.First()), 1.5f, null));
+        farm.Workers.Add(new Worker(farm, GetGrowable(farm.RangeTiles.First()), 0.5f, null));
+        farm.Workers.Add(new Worker(farm, GetGrowable(farm.RangeTiles.First()), 0.5f, null));
+        Assert.AreEqual(2.5f + 2.5f, farm.Progress);
+        farm.AddHarvastable();
+        Assert.AreEqual(2.5f + 2.5f + farm.ProduceTime, farm.Progress);
+
+    }
+    private GrowableStructure GetGrowable(Tile t) {
+        return new GrowableStructure(GrowableID, growablePrototypeData) {
+            Tiles = new List<Tile> { t },
+        };
     }
 }

@@ -17,6 +17,7 @@ namespace Andja.Model {
 
     [JsonObject(MemberSerialization.OptIn)]
     public class ProductionStructure : OutputStructure {
+        public const int INTAKE_MULTIPLIER = 5;
 
         #region Serialize
 
@@ -56,17 +57,9 @@ namespace Andja.Model {
         public int OrItemIndex {
             get {
                 if (_orItemIndex == int.MinValue) {
-                    for (int i = 0; i < ProductionData.intake.Length; i++) {
-                        Item item = ProductionData.intake[i];
-                        if (item.ID == Intake[0].ID) {
-                            _orItemIndex = i;
-                        }
-                    }
+                    _orItemIndex = Array.FindIndex(ProductionData.intake, x => x.ID == Intake[0].ID);
                 }
                 return _orItemIndex;
-            }
-            set {
-                _orItemIndex = value;
             }
         }
 
@@ -158,7 +151,7 @@ namespace Andja.Model {
         }
 
         protected override void SendOutWorkerIfCan(float workTime = 1) {
-            if (Workers.Count >= MaxNumberOfWorker || jobsToDo.Count == 0 && nearestMarketStructure == null) {
+            if (Workers.Count >= MaxNumberOfWorker || WorkerJobsToDo.Count == 0 && nearestMarketStructure == null) {
                 return;
             }
             Dictionary<Item, int> needItems = new Dictionary<Item, int>();
@@ -170,7 +163,7 @@ namespace Andja.Model {
             if (needItems.Count == 0) {
                 return;
             }
-            if (jobsToDo.Count == 0 && nearestMarketStructure != null) {
+            if (WorkerJobsToDo.Count == 0 && nearestMarketStructure != null) {
                 List<Item> getItems = new List<Item>();
                 for (int i = Intake.Length - 1; i >= 0; i--) {
                     if (City.HasAnythingOfItem(Intake[i])) {
@@ -191,23 +184,17 @@ namespace Andja.Model {
         }
 
         public void OnOutputChangedStructure(Structure str) {
-            if (str is OutputStructure == false) {
+            //it is == false but unity thinks this is the only correct way :)
+            if (!(str is OutputStructure os)) {
                 return;
             }
-            if (jobsToDo.ContainsKey((OutputStructure)str)) {
-                jobsToDo.Remove((OutputStructure)str);
+            if (WorkerJobsToDo.ContainsKey(os)) {
+                WorkerJobsToDo.Remove(os);
             }
-            OutputStructure ustr = ((OutputStructure)str);
-            List<Item> getItems = new List<Item>();
-            List<Item> items = new List<Item>(ustr.Output);
-            foreach (Item item in RegisteredStructures[(OutputStructure)str]) {
-                Item i = items.Find(x => x.ID == item.ID);
-                if (i.count > 0) {
-                    getItems.Add(i);
-                }
-            }
-            if (((OutputStructure)str).outputClaimed == false) {
-                jobsToDo.Add(ustr, getItems.ToArray());
+            if (os.outputClaimed == false) {
+                var items = os.Output.Where(x => Array.Exists(Intake, y => x.ID == y.ID)).ToArray();
+                if(items != null && items.Length > 0)
+                    WorkerJobsToDo.Add(os, items);
             }
         }
 
@@ -224,29 +211,24 @@ namespace Andja.Model {
 
         public override Item[] GetRequiredItems(OutputStructure str, Item[] items) {
             List<Item> all = new List<Item>();
-            for (int i = Intake.Length - 1; i >= 0; i--) {
-                string id = Intake[i].ID;
-                for (int s = 0; s < items.Length; s++) {
-                    if (items[i].ID == id) {
-                        Item item = items[i].Clone();
-                        item.count = GetMaxIntakeForIndex(i) - Intake[i].count;
-                        if(Workers.Count > 0) {
-                            item.count -= Workers.Where(z=>z.ToGetItems != null)
-                                            .Sum(x => Array.Find(x.ToGetItems, y => items[i].ID == y.ID)?.count ?? 0);
-                        }
-                        if (item.count > 0)
-                            all.Add(item);
-                    }
+            for (int i = 0; i < Intake.Length; i++) {
+                Item item = Array.Find(items, x => x.ID == Intake[i].ID)?.Clone();
+                if(item != null) {
+                    item.count = GetMaxIntakeForIndex(i) - Intake[i].count;
+                    item.count -= Workers.Where(z => z.ToGetItems != null)
+                                    .Sum(x => Array.Find(x.ToGetItems, y => items[i].ID == y.ID)?.count ?? 0);
+                    all.Add(item);
                 }
             }
-            return all.ToArray();
+            return all.Where(x=>x.count > 0).ToArray();
         }
+
         protected override void OnUpgrade() {
             base.OnUpgrade();
             _productionData = null;
         }
         public override void OnBuild() {
-            jobsToDo = new Dictionary<OutputStructure, Item[]>();
+            WorkerJobsToDo = new Dictionary<OutputStructure, Item[]>();
             RegisteredStructures = new Dictionary<OutputStructure, Item[]>();
 
             if (RangeTiles != null) {
@@ -258,16 +240,6 @@ namespace Andja.Model {
 
                 }
                 City.RegisterStructureAdded(OnStructureBuild);
-            }
-            //FIXME this is a temporary fix to a stupid bug, which cause
-            //i cant find because it works otherwise
-            // bug is that myHome doesnt get set by json for this kind of structures
-            // but it works for warehouse for example
-            // to save save space we could always set it here but that would mean for every kind extra or in place structure???
-            if (Workers != null) {
-                foreach (Worker w in Workers) {
-                    w.Home = this;
-                }
             }
         }
 
@@ -297,23 +269,11 @@ namespace Andja.Model {
         /// </summary>
         /// <param name="i">The index.</param>
         public int GetMaxIntakeForIndex(int itemIndex) {
-            return ProductionData.intake[itemIndex].count * 5; //TODO THINK ABOUT THIS
-        }
-
-        public Item[] HasNeedItem(Item[] output) {
-            List<Item> items = new List<Item>();
-            for (int i = 0; i < output.Length; i++) {
-                for (int s = 0; s < Intake.Length; s++) {
-                    if (output[i].ID == Intake[s].ID) {
-                        items.Add(output[i]);
-                    }
-                }
-            }
-            return items.ToArray();
+            return ProductionData.intake[itemIndex].count * INTAKE_MULTIPLIER; //TODO THINK ABOUT THIS
         }
 
         public void OnStructureBuild(Structure str) {
-            if (str is OutputStructure os == false || str is GrowableStructure) {
+            if (!(str is OutputStructure os) || str is GrowableStructure) {
                 return;
             }
             bool inRange = false;
@@ -326,19 +286,20 @@ namespace Andja.Model {
             if (inRange == false) {
                 return;
             }
-            if (RegisteredStructures.ContainsKey(((OutputStructure)str))) {
+            if (RegisteredStructures.ContainsKey(os)) {
                 return;
             }
             if (str is MarketStructure) {
                 FindNearestMarketStructure(str.BuildTile);
                 return;
             }
-            Item[] items = HasNeedItem(((OutputStructure)str).Output);
+            Item[] items = GetRequiredItems(os, Intake);
             if (items.Length > 0) {
-                ((OutputStructure)str).RegisterOutputChanged(OnOutputChangedStructure);
-                RegisteredStructures.Add((OutputStructure)str, items);
+                os.RegisterOutputChanged(OnOutputChangedStructure);
+                RegisteredStructures.Add(os, items);
             }
         }
+
         public void FindNearestMarketStructure(Tile tile) {
             if (tile.Structure is MarketStructure) {
                 if (nearestMarketStructure == null) {

@@ -160,7 +160,7 @@ namespace Andja.Model {
             return connectOrientation;
         }
 
-        protected override void OnDestroy() {
+        public override void OnDestroy() {
             cbRoadChanged = null;
             cbRouteChanged = null;
             if (Route != null) {

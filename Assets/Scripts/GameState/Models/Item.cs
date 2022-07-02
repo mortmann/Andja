@@ -22,11 +22,12 @@ namespace Andja.Model {
 
     [JsonObject(MemberSerialization.OptIn)]
     public class Item {
+        protected ItemPrototypeData _prototypData;
+
         [JsonPropertyAttribute] public string ID;
         [JsonPropertyAttribute] public int count;
 
-        protected ItemPrototypeData _prototypData;
-        internal string countString => count + "t";
+        internal string CountString => count + "t";
 
         public ItemPrototypeData Data {
             get {
@@ -90,8 +91,12 @@ namespace Andja.Model {
             return string.Format("[Item] " + ID + ":" + Name + ":" + count);
         }
 
-        internal bool Exists() {
+        public bool Exists() {
             return Data.type != ItemType.Missing;
+        }
+
+        public static bool AreSame(Item one, Item two) {
+            return one.ID == two.ID && one.count == two.count;
         }
     }
 }

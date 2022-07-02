@@ -17,6 +17,11 @@ namespace Andja.Model {
 
         public List<Tile> Tiles;
         public HashSet<MarketStructure> MarketStructures;
+        public Route() {
+#if !UNITY_INCLUDE_TESTS
+            Debug.LogError("Wrong Constructor! Only for testing");
+#endif
+        }
         public Route(Tile startTile, bool floodfill = false) {
             Tiles = new List<Tile> {
                 startTile

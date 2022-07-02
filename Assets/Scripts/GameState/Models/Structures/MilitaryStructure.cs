@@ -160,7 +160,7 @@ namespace Andja.Model {
                                                         toPlaceUnitTiles.Find(x=>x.Type == TileType.Ocean));
             }
         }
-        internal override void ToggleActive() {
+        public override void ToggleActive() {
             base.ToggleActive();
             if(isActive) {
                 RemoveEffect(new Effect("inactive"));
@@ -169,6 +169,7 @@ namespace Andja.Model {
                 AddEffect(new Effect("inactive"));
             }
         }
+
         #region IWarfareImplementation
         public bool GiveAttackCommand(ITargetable target, bool overrideCurrent = false) {
             if (CanAttack(target) == false)

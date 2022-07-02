@@ -29,7 +29,7 @@ namespace Andja.Model {
         #region RuntimeOrOther
 
         public List<Structure> RegisteredSturctures;
-        public List<Structure> OutputMarkedSturctures;
+        public List<Structure> OutputMarkedStructures;
 
         public float TakeOverStartGoal => CalculateRealValue(nameof(MarketData.takeOverStartGoal), MarketData.takeOverStartGoal);
 
@@ -59,7 +59,7 @@ namespace Andja.Model {
         /// </summary>
         public MarketStructure() {
             RegisteredSturctures = new List<Structure>();
-            OutputMarkedSturctures = new List<Structure>();
+            OutputMarkedStructures = new List<Structure>();
         }
 
         protected MarketStructure(MarketStructure str) {
@@ -72,8 +72,14 @@ namespace Andja.Model {
 
         public override void OnUpdate(float deltaTime) {
             base.UpdateWorker(deltaTime);
+            UpdateCaptureProgress(deltaTime);
+        }
+
+        public void UpdateCaptureProgress(float deltaTime) {
             if (currentCaptureSpeed > 0) {
                 capturedProgress += currentCaptureSpeed * deltaTime;
+                //reset the speed so that units can again add their speed
+                currentCaptureSpeed = 0;
             }
             else if (capturedProgress > 0) {
                 capturedProgress -= DecreaseCaptureSpeed * deltaTime;
@@ -83,8 +89,8 @@ namespace Andja.Model {
 
         public override void OnBuild() {
             RegisteredSturctures = new List<Structure>();
-            OutputMarkedSturctures = new List<Structure>();
-            jobsToDo = new Dictionary<OutputStructure, Item[]>();
+            OutputMarkedStructures = new List<Structure>();
+            WorkerJobsToDo = new Dictionary<OutputStructure, Item[]>();
             // add all the tiles to the city it was build in
             //dostuff thats happen when build
             City.AddTiles(RangeTiles.Concat(Tiles));
@@ -98,8 +104,7 @@ namespace Andja.Model {
         }
 
         public void OnOutputChangedStructure(Structure str) {
-            OutputStructure outstr = str as OutputStructure;
-            if (outstr == null) {
+            if (!(str is OutputStructure outstr)) {
                 return;
             }
             bool hasOutput = false;
@@ -110,17 +115,17 @@ namespace Andja.Model {
                 }
             }
             if (hasOutput == false) {
-                if (OutputMarkedSturctures.Contains(str)) {
-                    OutputMarkedSturctures.Remove(str);
+                if (OutputMarkedStructures.Contains(str)) {
+                    OutputMarkedStructures.Remove(str);
                 }
-                if (jobsToDo.ContainsKey(outstr)) {
-                    jobsToDo.Remove(outstr);
+                if (WorkerJobsToDo.ContainsKey(outstr)) {
+                    WorkerJobsToDo.Remove(outstr);
                 }
                 return;
             }
 
-            if (jobsToDo.ContainsKey(outstr)) {
-                jobsToDo.Remove(outstr);
+            if (WorkerJobsToDo.ContainsKey(outstr)) {
+                WorkerJobsToDo.Remove(outstr);
             }
 
             HashSet<Route> Routes = GetRoutes();
@@ -130,48 +135,59 @@ namespace Andja.Model {
                 if (Routes.Contains(item)) {
                     //if we are here we can get there through atleast 1 road
                     if (outstr.outputClaimed == false) {
-                        jobsToDo.Add(outstr, null);
+                        WorkerJobsToDo.Add(outstr, null);
                     }
-                    if (OutputMarkedSturctures.Contains(str)) {
-                        OutputMarkedSturctures.Remove(str);
+                    if (OutputMarkedStructures.Contains(str)) {
+                        OutputMarkedStructures.Remove(str);
                     }
                     return;
                 }
             }
             //if were here there is noconnection between here and a the structure
             //so remember it for the case it gets connected to it.
-            if (OutputMarkedSturctures.Contains(str)) {
+            if (OutputMarkedStructures.Contains(str)) {
                 return;
             }
-            OutputMarkedSturctures.Add(str);
+            OutputMarkedStructures.Add(str);
         }
 
         public override void AddRoadStructure(RoadStructure roadStructure) {
             base.AddRoadStructure(roadStructure);
             roadStructure.Route.AddMarketStructure(this);
+            for (int i = 0; i < OutputMarkedStructures.Count; i++) {
+                foreach (Route item in ((OutputStructure)OutputMarkedStructures[i]).GetRoutes()) {
+                    if (Routes.Contains(item)) {
+                        OnOutputChangedStructure(OutputMarkedStructures[i]);
+                        break;//breaks only the innerloop eg the routes loop
+                    }
+                }
+            }
         }
+
         protected override void OnRouteChange(Route o, Route n) {
             base.OnRouteChange(o, n);
             o.RemoveMarketStructure(this);
             n.AddMarketStructure(this);
         }
-        protected override void RemoveRoute(Route route) {
+        public override void RemoveRoute(Route route) {
             base.RemoveRoute(route);
             route.RemoveMarketStructure(this);
         }
 
-        protected override void OnDestroy() {
+        public override void OnDestroy() {
             base.OnDestroy();
-            List<Tile> h = new List<Tile>(Tiles);
-            h.AddRange(RangeTiles);
-            City.RemoveTiles(h);
+            City.RemoveTiles(Tiles);
+            City.RemoveTiles(RangeTiles);
         }
 
         public void OnStructureAdded(Structure structure) {
             if (structure == null) {
                 return;
             }
-            if (this == structure) {
+            if (structure is MarketStructure) {
+                return;
+            }
+            if (structure is GrowableStructure) {
                 return;
             }
             if (structure.City != City) {
@@ -181,33 +197,9 @@ namespace Andja.Model {
                 if (outstr.ForMarketplace == false) {
                     return;
                 }
-                foreach (Tile item in structure.Tiles) {
-                    if (RangeTiles.Contains(item)) {
-                        outstr.RegisterOutputChanged(OnOutputChangedStructure);
-                        OnOutputChangedStructure(outstr);
-                        break;
-                    }
-                }
-            }
-            //IF THIS is a pathfinding structure check for new road
-            //if true added that to the myroads
-
-            if (structure.StructureTyp == StructureTyp.Pathfinding) {
-                HashSet<Route> Routes = GetRoutes();
-                if (Routes == null || Routes.Count == 0)
-                    return;
-                if (NeighbourTiles.Contains(structure.Tiles[0])) {
-                    if (Routes.Contains(((RoadStructure)structure).Route) == false) {
-                        Routes.Add(((RoadStructure)structure).Route);
-                    }
-                }
-                for (int i = 0; i < OutputMarkedSturctures.Count; i++) {
-                    foreach (Route item in ((OutputStructure)OutputMarkedSturctures[i]).GetRoutes()) {
-                        if (Routes.Contains(item)) {
-                            OnOutputChangedStructure(OutputMarkedSturctures[i]);
-                            break;//breaks only the innerloop eg the routes loop
-                        }
-                    }
+                if (RangeTiles.Overlaps(structure.Tiles)) {
+                    outstr.RegisterOutputChanged(OnOutputChangedStructure);
+                    OnOutputChangedStructure(outstr);
                 }
             }
         }
@@ -222,27 +214,13 @@ namespace Andja.Model {
                 //WE need to know what every other marketstructure is getting atm 
                 //so we do not get to much of this so look at every worker -> check if they have that item as getting -> else 0
                 space -= City.marketStructures.Sum(y => y.Workers.Sum(z => Array.Find(z.ToGetItems, j => items[i].ID == j.ID)?.count ?? 0));
-                if (space <= 0) {
-                
-                }
-                else {
+                if (space > 0) {
                     Item item = items[i].Clone();
                     item.count = space;//Mathf.Clamp (items [i].count, 0, space);
                     all.Add(item);
                 }
             }
             return all.ToArray();
-        }
-
-        public override Item[] GetOutputWithItemCountAsMax(Item[] getItems) {
-            Item[] temp = new Item[getItems.Length];
-            for (int i = 0; i < getItems.Length; i++) {
-                //if(City.inventory.GetAmountForItem (getItems[i]) == 0){
-                //	continue;
-                //}
-                temp[i] = City.Inventory.GetItemWithMaxAmount(getItems[i], getItems[i].count);
-            }
-            return temp;
         }
 
         public override bool InCityCheck(IEnumerable<Tile> tiles, int playerNumber) {
@@ -252,12 +230,6 @@ namespace Andja.Model {
         public override Item[] GetOutput(Item[] getItems, int[] maxAmounts) {
             Item[] temp = new Item[getItems.Length];
             for (int i = 0; i < getItems.Length; i++) {
-                //if(City.inventory.GetAmountForItem (getItems[i]) == 0){
-                //	continue;
-                //}
-                if (getItems[i] == null || maxAmounts == null) {
-                    Debug.Log("s");
-                }
                 temp[i] = City.Inventory.GetItemWithMaxAmount(getItems[i], maxAmounts[i]);
             }
             return temp;
@@ -282,6 +254,7 @@ namespace Andja.Model {
             //either capture it or destroy based on if is a city of that player on that island
             City c = BuildTile.Island.Cities.Find(x => x.PlayerNumber == warfare.PlayerNumber);
             if (c != null) {
+                capturedProgress = 0;
                 OnDestroy();
                 City = c;
                 OnBuild();

@@ -71,12 +71,12 @@ namespace Andja.UI.Model {
             CityInfo.gameObject.SetActive(true);
             Item[] items = CurrentCity.Inventory.GetBuildMaterial();
             for (int i = 0; i < items.Length; i++) {
-                itemToText[items[i].ID].SetText(items[i].countString);
+                itemToText[items[i].ID].SetText(items[i].CountString);
             }
             if(MouseController.Instance.NeededItemsToBuild != null) {
                 foreach (Item item in MouseController.Instance.NeededItemsToBuild) {
                     TextColor t = CurrentCity.HasEnoughOfItem(item)? TextColor.Positive : TextColor.Negative;
-                    itemToText[item.ID].ShowAddon(item.countString, t);
+                    itemToText[item.ID].ShowAddon(item.CountString, t);
                 }
             } 
             for (int i = 0; i < PrototypController.Instance.NumberOfPopulationLevels; i++) {

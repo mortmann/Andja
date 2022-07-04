@@ -37,7 +37,7 @@ namespace Andja.Pathfinding {
         }
         //Could cache routes here with start/end -- could be really useful for route pathfinding
         public PathGrid(Island island) {
-            playerOwnedNodes = new int[Controller.PlayerController.PlayerCount];
+            playerOwnedNodes = new int[Controller.PlayerController.Instance.PlayerCount];
             ID = Guid.NewGuid().ToString();
             pathGridType = PathGridType.Island;
             SetIslandValues(island);
@@ -49,7 +49,7 @@ namespace Andja.Pathfinding {
         }
 
         public PathGrid(Route route) {
-            playerOwnedNodes = new int[Controller.PlayerController.PlayerCount];
+            playerOwnedNodes = new int[Controller.PlayerController.Instance.PlayerCount];
             ID = Guid.NewGuid().ToString();
             pathGridType = PathGridType.Route;
             SetIslandValues(route.Tiles[0].Island);

@@ -276,7 +276,7 @@ namespace Andja.Model {
                 City.GetPopulationLevel(PopulationLevel).FullfillNeedsAndCalcHappiness(City);
             }
             City.RemovePeople(PopulationLevel, people);
-            City.RemoveResources(NextLevel.BuildingItems);
+            City.RemoveItems(NextLevel.BuildingItems);
             City.GetOwner().ReduceTreasure(NextLevel.BuildCost);
             OnUpgrade();
             City.AddPeople(PopulationLevel, people);

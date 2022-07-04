@@ -43,7 +43,7 @@ namespace Andja.Controller {
         WorldController WC => WorldController.Instance;
         EventController EC => EventController.Instance;
         CameraController CC => CameraController.Instance;
-        PlayerController PC => PlayerController.Instance;
+        IPlayerController PC => PlayerController.Instance;
         UIController UI => UIController.Instance;
         FogOfWarController FW => FogOfWarController.Instance;
 

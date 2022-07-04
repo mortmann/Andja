@@ -380,7 +380,7 @@ namespace Andja.Controller {
                     if (player < 0)
                         return EventController.Instance.TriggerEvent(id);
                     else
-                        return EventController.Instance.TriggerEventForPlayer(new GameEvent(id), PlayerController.GetPlayer(player));
+                        return EventController.Instance.TriggerEventForPlayer(new GameEvent(id), PlayerController.Instance.GetPlayer(player));
                 case "stop":
                     if (parameters.Length == 2 && string.IsNullOrEmpty(parameters[1]) == false &&
                             uint.TryParse(parameters[1], out uint gid)) {
@@ -431,9 +431,9 @@ namespace Andja.Controller {
                     if (u.IsShip == false && t.Type == TileType.Ocean) {
                         return false;
                     }
-                    if (PlayerController.GetPlayer(player) == null)
+                    if (PlayerController.Instance.GetPlayer(player) == null)
                         return false;
-                    World.Current.CreateUnit(u, PlayerController.GetPlayer(player), t);
+                    World.Current.CreateUnit(u, PlayerController.Instance.GetPlayer(player), t);
                     return true;
 
                 case "crate":
@@ -532,7 +532,7 @@ namespace Andja.Controller {
                     if (int.TryParse(parameters[1], out int player) == false) {
                         return false;
                     }
-                    return HandleEffects(parameters.Skip(2).ToArray(), PlayerController.GetPlayer(player));
+                    return HandleEffects(parameters.Skip(2).ToArray(), PlayerController.Instance.GetPlayer(player));
 
                 default:
                     break;
@@ -557,9 +557,9 @@ namespace Andja.Controller {
             if (int.TryParse(parameters[pos], out int playerTwo) == false) {
                 return false;
             }
-            if (playerOne < 0 || playerOne >= PlayerController.PlayerCount)
+            if (playerOne < 0 || playerOne >= PlayerController.Instance.PlayerCount)
                 return false;
-            if (playerTwo < 0 || playerTwo >= PlayerController.PlayerCount)
+            if (playerTwo < 0 || playerTwo >= PlayerController.Instance.PlayerCount)
                 return false;
 
             if (PlayerController.Instance.ArePlayersAtWar(playerOne, playerTwo) == false)

@@ -267,7 +267,7 @@ namespace Andja.Model {
             offWorldTime = 3;
             OffworldMarket om = WorldController.Instance.offworldMarket;
             //FIRST SELL everything in inventory to make space for all the things
-            Player Player = PlayerController.GetPlayer(playerNumber);
+            Player Player = PlayerController.Instance.GetPlayer(playerNumber);
             Item[] i = inventory.GetAllItemsAndRemoveThem();
             foreach (Item item in i) {
                 om.SellItemToOffWorldMarket(item, Player);

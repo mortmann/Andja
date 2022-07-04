@@ -33,21 +33,6 @@ namespace Andja.Model {
             structureStatistic = new StructureStatistic(playerNumber);
             diplomaticStatistic = new DiplomaticStatistic(playerNumber);
             warStatistic = new WarStatistics(playerNumber);
-
-            //foreach (TrackedStatisticGroups group in Enum.GetValues(typeof(TrackedStatisticGroups))) {
-            //    switch (group) {
-            //        case TrackedStatisticGroups.Unit:
-            //            break;
-            //        case TrackedStatisticGroups.City:
-            //            break;
-            //        case TrackedStatisticGroups.Structure:
-            //            break;
-            //        case TrackedStatisticGroups.Diplomatic:
-            //            break;
-            //        case TrackedStatisticGroups.War:
-            //            break;
-            //    }
-            //}
         }
 
         public void SetUnitStatistic(TrackedUnitStatistics stat) {

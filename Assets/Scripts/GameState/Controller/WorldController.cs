@@ -94,9 +94,9 @@ namespace Andja.Controller {
             StartingLoadout loadout = GameData.Instance.Loadout;
             if (loadout == null)
                 return;
-            for (int i = 0; i < PlayerController.Players.Count; i++) {
+            for (int i = 0; i < PlayerController.Instance.Players.Count; i++) {
                 Item[] startItems = loadout.GetItemsCopy();
-                Player player = PlayerController.Players[i];
+                Player player = PlayerController.Instance.Players[i];
                 Vector2 shipSpawn = new Vector2(-1, -1);
                 //TODO: place structures! -- for now only warehouse?
                 if (loadout.Structures != null && player.IsHuman && Array.Exists(loadout.Structures, x => x is WarehouseStructure)) {

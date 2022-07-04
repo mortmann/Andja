@@ -83,8 +83,8 @@ namespace Andja.Model {
             }
             else if (capturedProgress > 0) {
                 capturedProgress -= DecreaseCaptureSpeed * deltaTime;
-                capturedProgress = Mathf.Clamp01(capturedProgress);
             }
+            capturedProgress = Mathf.Clamp01(capturedProgress);
         }
 
         public override void OnBuild() {
@@ -264,7 +264,7 @@ namespace Andja.Model {
             }
         }
 
-        public bool Captured => capturedProgress == 1;
+        public bool Captured => Mathf.Approximately(capturedProgress, 1);
 
         #endregion ICapturableImplementation
     }

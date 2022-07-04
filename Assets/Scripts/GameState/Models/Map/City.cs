@@ -41,10 +41,10 @@ namespace Andja.Model {
             }
         }
 
-        internal void SetPlayerTradeAmount(int amount) {
+        public void SetPlayerTradeAmount(int amount) {
             PlayerTradeAmount = amount;
         }
-        internal void SetName(string name) {
+        public void SetName(string name) {
             Name = name;
         }
 
@@ -115,13 +115,13 @@ namespace Andja.Model {
             Setup();
         }
 
-        internal void SetTaxForPopulationLevel(int structureLevel, float percantage) {
+        public void SetTaxForPopulationLevel(int structureLevel, float percantage) {
             if (IsWilderness())
                 return;
             PopulationLevels[structureLevel].SetTaxPercantage(percantage);
         }
 
-        internal bool AddTradeItem(TradeItem ti) {
+        public bool AddTradeItem(TradeItem ti) {
             if (itemIDtoTradeItem.ContainsKey(ti.ItemId)) {
                 Debug.LogError("Tried to add Trade Item that exists");
                 return false;
@@ -133,7 +133,7 @@ namespace Andja.Model {
             return true;
         }
 
-        internal void DeleteTradeItem(TradeItem ti) {
+        public void DeleteTradeItem(TradeItem ti) {
             if (itemIDtoTradeItem.ContainsKey(ti.ItemId) == false) {
                 Debug.LogError("Tried to remove Trade Item that doesnt exist");
                 return;
@@ -141,7 +141,7 @@ namespace Andja.Model {
             itemIDtoTradeItem.Remove(ti.ItemId);
         }
 
-        internal bool HasAnythingOfItems(Item[] buildingItems) {
+        public bool HasAnythingOfItems(Item[] buildingItems) {
             foreach (Item i in buildingItems) {
                 if (HasAnythingOfItem(i) == false)
                     return false;
@@ -149,7 +149,7 @@ namespace Andja.Model {
             return true;
         }
 
-        internal PopulationLevel GetPopulationLevel(int structureLevel) {
+        public PopulationLevel GetPopulationLevel(int structureLevel) {
             return PopulationLevels[structureLevel];
         }
 
@@ -171,7 +171,7 @@ namespace Andja.Model {
             Island.RegisterOnEvent(OnEventCreate, OnEventEnded);
         }
 
-        internal PopulationLevel GetPreviousPopulationLevel(int level) {
+        public PopulationLevel GetPreviousPopulationLevel(int level) {
             for (int i = level - 1; i >= 0; i--) {
                 PopulationLevel p = PopulationLevels.Find(x => x.Level == level);
                 if (p != null)
@@ -210,12 +210,12 @@ namespace Andja.Model {
                     }
                     PopulationLevels[i].Load(this);
                 }
-                PlayerController.GetPlayer(PlayerNumber).OnCityCreated(this);
+                PlayerController.Instance.GetPlayer(PlayerNumber).OnCityCreated(this);
             }
             return Structures;
         }
 
-        internal void Update(float deltaTime) {
+        public void Update(float deltaTime) {
             for (int i = Structures.Count - 1; i >= 0; i--) {
                 Structures[i].Update(deltaTime);
             }
@@ -386,7 +386,7 @@ namespace Andja.Model {
             return 0;
         }
 
-        public void RemoveResources(Item[] remove) {
+        public virtual void RemoveItems(Item[] remove) {
             if (remove == null) {
                 return;
             }
@@ -395,7 +395,7 @@ namespace Andja.Model {
             }
         }
 
-        public void RemoveResource(Item item, int amount) {
+        public void RemoveItem(Item item, int amount) {
             if (amount < 0) {
                 return;
             }
@@ -404,7 +404,7 @@ namespace Andja.Model {
             Inventory.RemoveItemAmount(i);
         }
 
-        public bool HasEnoughOfItems(IEnumerable<Item> items, int times = 1) {
+        public virtual bool HasEnoughOfItems(IEnumerable<Item> items, int times = 1) {
             return Inventory.HasEnoughOfItems(items, times);
         }
 
@@ -441,7 +441,7 @@ namespace Andja.Model {
                 return;
             }
             Item i = ti.SellItemAmount(Inventory.GetAllOfItem(itemID));
-            Player CityPlayer = PlayerController.GetPlayer(PlayerNumber);
+            Player CityPlayer = PlayerController.Instance.GetPlayer(PlayerNumber);
             int am = TradeWithShip(i, () => Mathf.Clamp(amount, 0, i.count), ship);
             CityPlayer.AddToTreasure(am * ti.price);
             unitPlayer?.ReduceTreasure(am * ti.price);
@@ -465,7 +465,7 @@ namespace Andja.Model {
                 return;
             }
             Item i = ti.BuyItemAmount(Inventory.GetAllOfItem(itemID));
-            Player Player = PlayerController.GetPlayer(PlayerNumber);
+            Player Player = PlayerController.Instance.GetPlayer(PlayerNumber);
             int am = TradeFromShip(ship, i, Mathf.Clamp(amount, 0, i.count));
             Player.ReduceTreasure(am * ti.price);
             player?.AddToTreasure(am * ti.price);
@@ -555,7 +555,7 @@ namespace Andja.Model {
             return PopulationLevels[level].Happiness;
         }
 
-        internal List<NeedGroup> GetPopulationNeedGroups(int level) {
+        public List<NeedGroup> GetPopulationNeedGroups(int level) {
             return PopulationLevels[level].AllNeedGroupList;
         }
 
@@ -670,14 +670,14 @@ namespace Andja.Model {
         }
 
         public Player GetOwner() {
-            return PlayerController.GetPlayer(PlayerNumber);
+            return PlayerController.Instance.GetPlayer(PlayerNumber);
         }
 
         public override string ToString() {
             return Name;
         }
 
-        internal float GetPopulationItemUsage(Item item) {
+        public float GetPopulationItemUsage(Item item) {
             if (PopulationCount == 0)
                 return 0;
             float sum = 0;

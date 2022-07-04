@@ -31,8 +31,8 @@ namespace Andja.Model {
         void RegisterTileAdded(Action<City, Tile> callbackfunc);
         void RegisterTileRemove(Action<City, Tile> callbackfunc);
         void RemovePeople(int level, int count);
-        void RemoveResource(Item item, int amount);
-        void RemoveResources(Item[] remove);
+        void RemoveItem(Item item, int amount);
+        void RemoveItems(Item[] remove);
         void RemoveRoute(Route route);
         void RemoveStructure(Structure structure);
         void RemoveTile(Tile t);

@@ -1150,10 +1150,10 @@ namespace Andja.Controller {
                 return;
             foreach (XmlElement node in xmlDoc.SelectNodes("militarystructure")) {
                 string ID = node.GetAttribute("ID");
-                MilitaryStructurePrototypeData mpd = new MilitaryStructurePrototypeData {
+                MilitaryPrototypeData mpd = new MilitaryPrototypeData {
                     ID = ID
                 };
-                SetData<MilitaryStructurePrototypeData>(node, ref mpd);
+                SetData<MilitaryPrototypeData>(node, ref mpd);
                 foreach (Unit u in mpd.canBeBuildUnits) {
                     if (u.IsShip) {
                         mpd.canBuildShips = true;

@@ -53,7 +53,7 @@ namespace Andja.Controller {
             UpdateCheatCodes();
             if (WorldController.Instance == null)
                 return;
-            if (PlayerController.GameOver)
+            if (PlayerController.Instance.GameOver)
                 return;
             if (Input.GetKeyDown(KeyCode.Escape)) {
                 UIC.Escape(BuildController.BuildState != BuildStateModes.None);

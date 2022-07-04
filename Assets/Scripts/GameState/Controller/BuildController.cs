@@ -238,7 +238,7 @@ namespace Andja.Controller {
                 Debug.LogError("tiles is null or empty");
                 return false;
             }
-            if (buildInWilderness == false && playerNumber != -1 && PlayerController.GetPlayer(playerNumber)?.HasLost == true) {
+            if (buildInWilderness == false && playerNumber != -1 && PlayerController.Instance.GetPlayer(playerNumber)?.HasLost == true) {
                 return false;
             }
             if (tiles.Exists(x => x == null || x.Type == TileType.Ocean)) {
@@ -375,7 +375,7 @@ namespace Andja.Controller {
             if (noBuildCost == false && onStart == false && buildInWilderness == false && loading == false) {
                 if (structure.GetBuildingItems() != null)
                     inv.RemoveItemsAmount(structure.GetBuildingItems());
-                PlayerController.GetPlayer(playerNumber).ReduceTreasure(structure.BuildCost);
+                PlayerController.Instance.GetPlayer(playerNumber).ReduceTreasure(structure.BuildCost);
             }
 
             if(isUpgrade) {
@@ -437,7 +437,7 @@ namespace Andja.Controller {
         }
 
         public bool PlayerHasEnoughMoney(Structure s, int playerNumber) {
-            if (PlayerController.GetPlayer(playerNumber).TreasuryBalance >= s.BuildCost) {
+            if (PlayerController.Instance.GetPlayer(playerNumber).TreasuryBalance >= s.BuildCost) {
                 return true;
             }
             return false;

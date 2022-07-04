@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Andja.Model {
 
-    public class MilitaryStructurePrototypeData : StructurePrototypeData {
+    public class MilitaryPrototypeData : StructurePrototypeData {
         public Unit[] canBeBuildUnits;
         public float buildTimeModifier;
         public int buildQueueLength = 1;
@@ -22,11 +22,11 @@ namespace Andja.Model {
     [JsonObject(MemberSerialization.OptIn)]
     public class MilitaryStructure : TargetStructure, IWarfare {
         [JsonPropertyAttribute] private float buildTimer;
-        [JsonPropertyAttribute] private Queue<Unit> toBuildUnits;
+        [JsonPropertyAttribute] protected Queue<Unit> toBuildUnits;
         [JsonPropertyAttribute] ITargetable CurrentTarget;
         [JsonPropertyAttribute] float attackCooldownTimer = 0;
         bool CanBuildShips => MilitaryStructureData.canBuildShips;
-        private List<Tile> toPlaceUnitTiles;
+        protected List<Tile> toPlaceUnitTiles;
         public float ProgressPercentage => CurrentlyBuildingUnit != null ? buildTimer / CurrentlyBuildingUnit.BuildTime : 0;
         public Unit[] CanBeBuildUnits => MilitaryStructureData.canBeBuildUnits;
         public float AttackRate => MilitaryStructureData.attackRate;
@@ -37,12 +37,12 @@ namespace Andja.Model {
 
         public Unit CurrentlyBuildingUnit => toBuildUnits.Count > 0 ? toBuildUnits.Peek() : null;
 
-        protected MilitaryStructurePrototypeData _militaryStructureData;
+        protected MilitaryPrototypeData _militaryStructureData;
 
-        public MilitaryStructurePrototypeData MilitaryStructureData {
+        public MilitaryPrototypeData MilitaryStructureData {
             get {
                 if (_militaryStructureData == null) {
-                    _militaryStructureData = (MilitaryStructurePrototypeData)PrototypController.Instance.GetStructurePrototypDataForID(ID);
+                    _militaryStructureData = (MilitaryPrototypeData)PrototypController.Instance.GetStructurePrototypDataForID(ID);
                 }
                 return _militaryStructureData;
             }
@@ -55,14 +55,7 @@ namespace Andja.Model {
             BaseCopyData(mb);
         }
 
-        internal bool HasEnoughResources(Unit u) {
-            if (PlayerController.Instance.HasEnoughMoney(PlayerNumber, u.BuildCost) == false) {
-                return false;
-            }
-            return City.HasEnoughOfItems(u.BuildingItems);
-        }
-
-        public MilitaryStructure(string iD, MilitaryStructurePrototypeData mpd) {
+        public MilitaryStructure(string iD, MilitaryPrototypeData mpd) {
             ID = iD;
             this._militaryStructureData = mpd;
         }
@@ -92,6 +85,13 @@ namespace Andja.Model {
             }
         }
 
+        public bool HasEnoughResources(Unit u) {
+            if (PlayerController.Instance.HasEnoughMoney(PlayerNumber, u.BuildCost) == false) {
+                return false;
+            }
+            return City.HasEnoughOfItems(u.BuildingItems);
+        }
+
         public void OnNeighbourTileStructureChange(Tile tile, Structure str) {
             if (str != null && str.IsWalkable == false) {
                 if (toPlaceUnitTiles.Contains(tile)) {
@@ -105,27 +105,24 @@ namespace Andja.Model {
             if (isActive == false) {
                 return;
             }
-            if(CurrentlyBuildingUnit != null) {
-                buildTimer += deltaTime * BuildTimeModifier;
-                if (buildTimer > CurrentlyBuildingUnit.BuildTime) {
-                    //Spawn Unit here and reset the timer!
-                    buildTimer = 0;
-                    SpawnUnit(toBuildUnits.Dequeue());
-                }
-            }
-            if(CurrentTarget != null) {
+            UpdateBuildUnit(deltaTime);
+            UpdateAttackTarget(deltaTime);
+        }
+
+        public void UpdateAttackTarget(float deltaTime) {
+            if (CurrentTarget != null) {
                 if (CanAttack(CurrentTarget) == false) {
                     CurrentTarget = null;
                     return;
                 }
-                if (attackCooldownTimer>0) {
-                    attackCooldownTimer = Mathf.Clamp(attackCooldownTimer, 0, AttackRate);
+                if (attackCooldownTimer > 0) {
+                    attackCooldownTimer = Mathf.Clamp(attackCooldownTimer - deltaTime, 0, AttackRate);
                     return;
                 }
-                if (Projectile.PredictiveAim(CurrentPosition, ProjectileSpeed, 
-                                                CurrentTarget.CurrentPosition, CurrentTarget.LastMovement, GameData.Gravity, 
+                if (Projectile.PredictiveAim(CurrentPosition, ProjectileSpeed,
+                                                CurrentTarget.CurrentPosition, CurrentTarget.LastMovement, GameData.Gravity,
                                                 out Vector3 pSpeed, out Vector3 pDestination)) {
-                    float distance = (new Vector3(CurrentPosition.x,CurrentPosition.y) - pDestination).magnitude;
+                    float distance = (new Vector3(CurrentPosition.x, CurrentPosition.y) - pDestination).magnitude;
                     //TODO: think about this direct call to UnitSpriteController...
                     UnitSpriteController.Instance.OnProjectileCreated(
                         new Projectile(this, Center, CurrentTarget, pDestination, pSpeed, distance, true)
@@ -134,16 +131,25 @@ namespace Andja.Model {
             }
         }
 
+        public void UpdateBuildUnit(float deltaTime) {
+            if (CurrentlyBuildingUnit != null) {
+                buildTimer += deltaTime * BuildTimeModifier;
+                if (buildTimer > CurrentlyBuildingUnit.BuildTime) {
+                    //Spawn Unit here and reset the timer!
+                    buildTimer = 0;
+                    SpawnUnit(toBuildUnits.Dequeue());
+                }
+            }
+        }
+
         public bool AddUnitToBuildQueue(Unit u) {
-            //cant build more -> if we make a buildqueue!
             if (toBuildUnits.Count >= BuildQueueLength) {
                 return false;
             }
-            //we need to know if we have all the resources!
-            if (City.HasEnoughOfItems(u.BuildingItems) == false) {
+            if (HasEnoughResources(u) == false) {
                 return false;
             }
-            City.RemoveResources(u.BuildingItems);
+            City.RemoveItems(u.BuildingItems);
             PlayerController.Instance.ReduceMoney(u.BuildCost, PlayerNumber);
             toBuildUnits.Enqueue(u);
             return true;
@@ -153,10 +159,10 @@ namespace Andja.Model {
             if (toPlaceUnitTiles.Count == 0)
                 return;
             if(unit.IsUnit) {
-                World.Current.CreateUnit(unit, PlayerController.GetPlayer(PlayerNumber), toPlaceUnitTiles[0]);
+                World.Current.CreateUnit(unit, PlayerController.Instance.GetPlayer(PlayerNumber), toPlaceUnitTiles[0]);
             }
             else {
-                World.Current.CreateUnit(unit, PlayerController.GetPlayer(PlayerNumber), 
+                World.Current.CreateUnit(unit, PlayerController.Instance.GetPlayer(PlayerNumber), 
                                                         toPlaceUnitTiles.Find(x=>x.Type == TileType.Ocean));
             }
         }

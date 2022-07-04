@@ -65,7 +65,7 @@ namespace Andja.Model {
             return new BasicInformation(InformationType.UnitUnderAttack,
                 () => unit.CurrentPosition,
                 new string[] { unit.PlayerSetName },
-                new string[] { unit.PlayerSetName, PlayerController.GetPlayerName(warfare.PlayerNumber) },
+                new string[] { unit.PlayerSetName, PlayerController.Instance.GetPlayerName(warfare.PlayerNumber) },
                 "Attacked"
                 );
         }
@@ -81,16 +81,16 @@ namespace Andja.Model {
             return new BasicInformation(InformationType.StructureUnderAttack,
                 () => Structure.Center,
                 new string[] { Structure.Name },
-                new string[] { Structure.Name, PlayerController.GetPlayer(warfare.PlayerNumber).Name },
+                new string[] { Structure.Name, PlayerController.Instance.GetPlayer(warfare.PlayerNumber).Name },
                 "Attacked"
                 );
         }
         public static BasicInformation DiplomacyChanged(DiplomaticStatus status) {
-            Player one = PlayerController.GetPlayer(status.PlayerOne);
-            Player two = PlayerController.GetPlayer(status.PlayerTwo);
+            Player one = PlayerController.Instance.GetPlayer(status.PlayerOne);
+            Player two = PlayerController.Instance.GetPlayer(status.PlayerTwo);
             if (PlayerController.currentPlayerNumber == status.PlayerTwo) {
                 one = two;
-                two = PlayerController.GetPlayer(status.PlayerOne);
+                two = PlayerController.Instance.GetPlayer(status.PlayerOne);
             }
             object[] first = new object[] { status.currentStatus };
             object[] second = new object[] { one.Name, two.Name, status.currentStatus };

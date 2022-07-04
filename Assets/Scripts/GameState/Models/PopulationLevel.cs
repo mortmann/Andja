@@ -143,7 +143,7 @@ namespace Andja.Model {
             }
             if (Data.needGroupList == null)
                 return;
-            Player player = PlayerController.GetPlayer(city.PlayerNumber);
+            Player player = PlayerController.Instance.GetPlayer(city.PlayerNumber);
             player.RegisterNeedUnlock(OnUnlockedNeed);
             foreach (NeedGroup ng in Data.needGroupList) {
                 NeedGroup inList = NeedGroupList.Find(x => x.ID == ng.ID);

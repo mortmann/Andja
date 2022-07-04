@@ -239,7 +239,7 @@ namespace Andja.Model {
         public virtual PathHeuristics Heuristic => PathHeuristics.Euclidean;
         public virtual PathDiagonal DiagonalType => PathDiagonal.OnlyNoObstacle;
 
-        public IReadOnlyList<int> CanEnterCities => PlayerController.GetPlayer(PlayerNumber)?.GetUnitCityEnterable();
+        public IReadOnlyList<int> CanEnterCities => PlayerController.Instance.GetPlayer(PlayerNumber)?.GetUnitCityEnterable();
 
         public bool IsAlive => IsDead == false;
 
@@ -670,7 +670,7 @@ namespace Andja.Model {
                     rangeUStructure.City.TradeFromShip(this, clicked, amount);
                 }
                 else {
-                    Player p = PlayerController.GetPlayer(playerNumber);
+                    Player p = PlayerController.Instance.GetPlayer(playerNumber);
                     rangeUStructure.City.BuyingTradeItem(clicked.ID, p, (Ship)this, amount);
                 }
                 return true;

@@ -69,18 +69,18 @@ namespace Andja.Controller {
         }
 
         private void Start() {
-            AIOperationsPerFrame = PlayerController.PlayerCount - 1;
+            AIOperationsPerFrame = PlayerController.Instance.PlayerCount - 1;
             _cityToCurrentSpaceValueTiles = new ConcurrentDictionary<City, ConcurrentDictionary<Tile, TileValue>>();
             BuildController.Instance.RegisterStructureCreated(OnStructureCreated);
             BuildController.Instance.RegisterStructureDestroyed(OnStructureDestroyed);
             BuildController.Instance.RegisterCityCreated(OnCityCreated);
             BuildController.Instance.RegisterAnyCityDestroyed(OnCityDestroy);
 
-            test = new AIPlayer(PlayerController.GetPlayer(1));
+            test = new AIPlayer(PlayerController.Instance.GetPlayer(1));
             test.CalculatePlayersCombatValue();
             test.CalculateIslandScores();
             aiPlayers = new List<AIPlayer>();
-            foreach (Player player in PlayerController.Players) {
+            foreach (Player player in PlayerController.Instance.Players) {
                 if (player.IsHuman)
                     continue;
                 AIPlayer ai = new AIPlayer(player);

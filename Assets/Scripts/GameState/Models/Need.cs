@@ -160,7 +160,7 @@ namespace Andja.Model {
             if (usedAmount > neededConsumAmount)
                 notUsedOfTon = usedAmount - neededConsumAmount;
 
-            city.RemoveResource(Item, Mathf.CeilToInt(usedAmount));
+            city.RemoveItem(Item, Mathf.CeilToInt(usedAmount));
             //minimum is 1 because if 0 -> ERROR due dividing through 0
             //calculate the percantage of availability
             percantageAvailability[level] = (usedAmount / neededConsumAmount);

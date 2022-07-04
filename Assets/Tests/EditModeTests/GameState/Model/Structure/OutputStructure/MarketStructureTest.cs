@@ -52,7 +52,7 @@ public class MarketStructureTest {
         Market.City = mockutil.WorldCity;
         PrototypeData.tileWidth = 4;
         PrototypeData.tileHeight = 4;
-
+        Market.OutputMarkedStructures = new List<Structure>();
         Market.Tiles = Market.GetBuildingTiles(World.Current.GetTileAt(Market.StructureRange, Market.StructureRange));
         Market.RangeTiles = new HashSet<Tile>();
         Market.RangeTiles.UnionWith(PrototypeData.PrototypeRangeTiles);
@@ -97,7 +97,7 @@ public class MarketStructureTest {
         Mock<IWarfare> warfare = new Mock<IWarfare>();
         warfare.Setup(w => w.PlayerNumber).Returns(1);
 
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 20; i++) {
             Market.Capture(warfare.Object, 0.1f);
             Market.UpdateCaptureProgress(1f);
             Assert.AreEqual(Market.MaximumCaptureSpeed * 1f * (i+1), Market.capturedProgress, 0.0001);

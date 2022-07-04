@@ -181,7 +181,7 @@ namespace Andja.Controller {
         }
         System.Diagnostics.Stopwatch StopWatch;
         private void Update() {
-            if (EditorController.IsEditor == false && PlayerController.GameOver)
+            if (EditorController.IsEditor == false && PlayerController.Instance.GameOver)
                 return;
             StopWatch = new System.Diagnostics.Stopwatch();
             StopWatch.Start();

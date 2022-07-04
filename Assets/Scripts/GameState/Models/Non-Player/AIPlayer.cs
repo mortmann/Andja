@@ -657,7 +657,7 @@ namespace Andja.Model {
                     Debug.Log("No island found that would be a possible start for ai (anyone).");
                     return null;
                 }
-                if(islandScores.Count < PlayerController.PlayerCount) {
+                if(islandScores.Count < PlayerController.Instance.PlayerCount) {
                     startIslands = false;
                 }
             }
@@ -833,7 +833,7 @@ namespace Andja.Model {
                 }
             }
             foreach (var item in PlayerAttitude) {
-                item.Value.Player = PlayerController.GetPlayer(item.Key);
+                item.Value.Player = PlayerController.Instance.GetPlayer(item.Key);
             }
         }
     }

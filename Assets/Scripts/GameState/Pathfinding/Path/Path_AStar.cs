@@ -25,7 +25,7 @@ namespace Andja.Pathfinding {
             path = backPath;
         }
 
-        public Path_AStar(Island island, Tile tileStart, Tile tileEnd, bool diag = true,
+        public Path_AStar(IIsland island, Tile tileStart, Tile tileEnd, bool diag = true,
             PathHeuristics Heuristic = PathHeuristics.Euclidean, bool canEndInUnwakable = false, int playerCityRequired = int.MinValue) {
             if (island == null || tileStart == null || tileEnd == null) {
                 return;
@@ -61,7 +61,7 @@ namespace Andja.Pathfinding {
             Calculate(tileStart, tileEnd, false);
         }
 
-        public Path_AStar(bool debug, Island island, Tile start, Tile end, List<Tile> startTiles, List<Tile> endTiles, bool canEndInUnwakable = false, PathHeuristics Heuristic = PathHeuristics.Euclidean) {
+        public Path_AStar(bool debug, IIsland island, Tile start, Tile end, List<Tile> startTiles, List<Tile> endTiles, bool canEndInUnwakable = false, PathHeuristics Heuristic = PathHeuristics.Euclidean) {
             this.debug = debug;
             if (island == null || startTiles == null || endTiles == null || startTiles.Count == 0 || endTiles.Count == 0) {
                 return;

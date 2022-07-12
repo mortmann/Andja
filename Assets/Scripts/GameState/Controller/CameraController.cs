@@ -17,16 +17,16 @@ namespace Andja.Controller {
         public static bool devCameraZoom = false;
         public static int minZoomLevel = 3;
 
-        float Height => 2f * Camera.main.orthographicSize;
-        float Width => Height * Camera.main.aspect;
+        public static float Height => 2f * Camera.main.orthographicSize;
+        public static float Width => Height * Camera.main.aspect;
 
-        private SpriteRenderer MiniMapCameraShadow;
+        private SpriteRenderer _miniMapCameraShadow;
         public Camera MiniMapCamera;
-        private Vector3 lastFramePosition;
-        private Vector3 currFramePosition;
+        private Vector3 _lastFramePosition;
+        private Vector3 _currFramePosition;
         public Vector3 upper = new Vector3(1, 1);
-        public Vector3 lower = new Vector3();
-        public Vector3 middle = new Vector3();
+        public Vector3 lower;
+        public Vector3 middle;
         public Island nearestIsland;
 
         /// <summary>
@@ -41,12 +41,12 @@ namespace Andja.Controller {
         public HashSet<FogOfWarStructure> fogOfWarStructureCurrentInCameraView;
 
         public Rect CameraViewRange;
-        private Vector2 showBounds = new Vector2();
+        private Vector2 _showBounds;
         public static CameraController Instance;
-        private CameraSave cameraSave;
-        private Unit CameraFollowUnit;
+        private CameraSave _cameraSave;
+        private Unit _cameraFollowUnit;
 
-        private void Awake() {
+        public void Awake() {
             if (Instance != null) {
                 Debug.LogError("There should never be two CameraController.");
             }
@@ -58,25 +58,25 @@ namespace Andja.Controller {
 #endif
         }
 
-        private void Start() {
+        public void Start() {
             tilesCurrentInCameraView = new HashSet<Tile>();
             structureCurrentInCameraView = new HashSet<Structure>();
             fogOfWarStructureCurrentInCameraView = new HashSet<FogOfWarStructure>();
             if (EditorController.IsEditor) {
-                showBounds.x = EditorController.Width;
-                showBounds.y = EditorController.Height;
+                _showBounds.x = EditorController.Width;
+                _showBounds.y = EditorController.Height;
             }
         }
 
         public void GameScreenSetup() {
-            MiniMapCameraShadow = Camera.main.gameObject.GetComponentInChildren<SpriteRenderer>();
+            _miniMapCameraShadow = Camera.main.gameObject.GetComponentInChildren<SpriteRenderer>();
             MiniMapCamera = GameObject.FindGameObjectWithTag("MiniMapCamera").GetComponent<Camera>();
-            MiniMapCamera.orthographicSize = World.Current.Width / 2;
+            MiniMapCamera.orthographicSize = World.Current.Width / 2f;
             MiniMapCamera.rect = new Rect(0, 0, World.Current.Width, World.Current.Height);
-            MiniMapCamera.transform.position = new Vector3(World.Current.Width / 2, World.Current.Height / 2, Camera.main.transform.position.z);
-            if (cameraSave == null) {
-                if (WorldController.Instance.SpawningRect == null) {
-                    Camera.main.transform.position = new Vector3(World.Current.Width / 2, World.Current.Height / 2, Camera.main.transform.position.z);
+            MiniMapCamera.transform.position = new Vector3(World.Current.Width / 2f, World.Current.Height / 2f, Camera.main.transform.position.z);
+            if (_cameraSave == null) {
+                if (WorldController.Instance.SpawningRect.Equals(default)) {
+                    Camera.main.transform.position = new Vector3(World.Current.Width / 2f, World.Current.Height / 2f, Camera.main.transform.position.z);
                 }
                 else {
                     Structure str = PlayerController.CurrentPlayer.AllStructures?.FirstOrDefault(x => x is WarehouseStructure);
@@ -92,43 +92,43 @@ namespace Andja.Controller {
                 }
             }
             else {
-                Camera.main.transform.position = cameraSave.pos.Vec;
-                Camera.main.orthographicSize = cameraSave.orthographicSize;
+                Camera.main.transform.position = _cameraSave.pos.Vec;
+                Camera.main.orthographicSize = _cameraSave.orthographicSize;
             }
-            middle = Camera.main.ScreenToWorldPoint(new Vector3(Camera.main.pixelWidth / 2, Camera.main.pixelHeight / 2));
+            middle = Camera.main.ScreenToWorldPoint(new Vector3(Camera.main.pixelWidth / 2f, Camera.main.pixelHeight / 2f));
             lower = Camera.main.ScreenToWorldPoint(Vector3.zero);
             upper = Camera.main.ScreenToWorldPoint(new Vector3(Camera.main.pixelWidth, Camera.main.pixelHeight));
-            middle = Camera.main.ScreenToWorldPoint(new Vector3(Camera.main.pixelWidth / 2, Camera.main.pixelHeight / 2));
-            showBounds.x = World.Current.Width;
-            showBounds.y = World.Current.Height;
+            middle = Camera.main.ScreenToWorldPoint(new Vector3(Camera.main.pixelWidth / 2f, Camera.main.pixelHeight / 2f));
+            _showBounds.x = World.Current.Width;
+            _showBounds.y = World.Current.Height;
 
         }
 
         internal void ToggleFollowUnit(Unit unit) {
-            if (CameraFollowUnit != null) {
-                CameraFollowUnit = null;
+            if (unit == null || _cameraFollowUnit != null && _cameraFollowUnit == unit) {
+                _cameraFollowUnit = null;
             }
             else {
-                CameraFollowUnit = unit;
+                _cameraFollowUnit = unit;
             }
         }
 
-        private void Update() {
+        public void Update() {
             //DO not move atall when Menu is Open
             if (PauseMenu.IsOpen || Loading.IsLoading) {
                 return;
             }
-            if (CameraFollowUnit != null) {
-                MoveCameraToPosition(CameraFollowUnit.PositionVector2);
+            if (_cameraFollowUnit != null) {
+                MoveCameraToPosition(_cameraFollowUnit.PositionVector2);
             }
 
             Vector3 cameraMove = new Vector3(0, 0);
-            currFramePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            currFramePosition.z = 0;
+            _currFramePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            _currFramePosition.z = 0;
             UpdateZoom();
             zoomLevel = Mathf.Clamp(Camera.main.orthographicSize - 2, minZoomLevel, MaxZoomLevel);
             if (EditorController.IsEditor == false) {
-                MiniMapCameraShadow.transform.localScale = new Vector3(Width, Height);
+                _miniMapCameraShadow.transform.localScale = new Vector3(Width, Height);
             }
             cameraMove += UpdateKeyboardCameraMovement();
             cameraMove += UpdateMouseCameraMovement();
@@ -150,11 +150,11 @@ namespace Andja.Controller {
             Vector3 newLower = cameraMove + lower;
             Vector3 newUpper = cameraMove + upper;
             if(cameraMove.sqrMagnitude > 0) {
-                CameraFollowUnit = null;
+                _cameraFollowUnit = null;
             }
-            if (newUpper.x > showBounds.x) {
+            if (newUpper.x > _showBounds.x) {
                 if (cameraMove.x > 0) {
-                    cameraMove.x = Mathf.Clamp(cameraMove.x, 0, showBounds.x - upper.x);
+                    cameraMove.x = Mathf.Clamp(cameraMove.x, 0, _showBounds.x - upper.x);
                 }
             }
             if (newLower.x < 0) {
@@ -162,9 +162,9 @@ namespace Andja.Controller {
                     cameraMove.x = Mathf.Clamp(cameraMove.x, 0, -lower.x);
                 }
             }
-            if (newUpper.y > showBounds.y) {
+            if (newUpper.y > _showBounds.y) {
                 if (cameraMove.y > 0) {
-                    cameraMove.y = Mathf.Clamp(cameraMove.y, 0, showBounds.y - upper.y);
+                    cameraMove.y = Mathf.Clamp(cameraMove.y, 0, _showBounds.y - upper.y);
                 }
             }
             if (newLower.y < 0) {
@@ -175,8 +175,8 @@ namespace Andja.Controller {
             Camera.main.transform.Translate(cameraMove);
             ClampCamera();
 
-            lastFramePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            lastFramePosition.z = 0;
+            _lastFramePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            _lastFramePosition.z = 0;
 
             Rect oldViewRange = new Rect(CameraViewRange);
             int mod = 2 + (int)zoomLevel / 2;
@@ -202,21 +202,20 @@ namespace Andja.Controller {
                     SoundAmbientValues.y++;
                     bool isInNew = CameraViewRange.Contains(tile_data.Vector);
                     bool isInOld = oldViewRange.Contains(tile_data.Vector);
-                    if (isInNew == false && isInOld == false) {
-                        continue;
+                    if (isInNew == false && isInOld == false) continue;
+                    if (isInNew == false) continue;
+                    islandInview = true;
+                    nearestIsland = tile_data.Island;
+                    if (EditorController.IsEditor) {
+                        tilesCurrentInCameraView.Add(tile_data);
                     }
-                    if (isInNew) {
-                        islandInview = true;
-                        nearestIsland = tile_data.Island;
-                        if (EditorController.IsEditor) {
-                            tilesCurrentInCameraView.Add(tile_data);
-                        }
-                        if (tile_data.Structure != null) {
-                            structureCurrentInCameraView.Add(tile_data.Structure);
-                        }
-                        if(((LandTile)tile_data).fogOfWarStructure  != null) {
-                            fogOfWarStructureCurrentInCameraView.Add(((LandTile)tile_data).fogOfWarStructure);
-                        }
+
+                    if (tile_data.Structure != null) {
+                        structureCurrentInCameraView.Add(tile_data.Structure);
+                    }
+
+                    if (((LandTile)tile_data).fogOfWarStructure != null) {
+                        fogOfWarStructureCurrentInCameraView.Add(((LandTile)tile_data).fogOfWarStructure);
                     }
                 }
             }
@@ -228,7 +227,7 @@ namespace Andja.Controller {
             SoundAmbientValues.z = Mathf.Clamp((MaxZoomLevel - zoomLevel) / MaxZoomLevel, 0, 1f);
         }
 
-        private void OnDrawGizmos() {
+        public void OnDrawGizmos() {
             Vector3 a = Camera.main.ScreenToWorldPoint(Vector3.zero);
             Vector3 b = Camera.main.ScreenToWorldPoint(new Vector3(0, Camera.main.pixelHeight));
             Vector3 c = Camera.main.ScreenToWorldPoint(new Vector3(Camera.main.pixelWidth, 0));
@@ -261,13 +260,13 @@ namespace Andja.Controller {
         }
 
         internal void SetSaveCameraData(CameraSave camera) {
-            this.cameraSave = camera;
+            this._cameraSave = camera;
         }
 
         private Vector3 UpdateMouseCameraMovement() {
             // Handle screen panning
             if (InputHandler.GetMouseButton(InputMouse.Secondary) || InputHandler.GetMouseButton(InputMouse.Middle)) { 
-                return lastFramePosition - currFramePosition;
+                return _lastFramePosition - _currFramePosition;
             }
             return Vector3.zero;
         }
@@ -294,33 +293,33 @@ namespace Andja.Controller {
             if (Mathf.Abs(Input.GetAxis("Horizontal")) == 0 && Mathf.Abs(Input.GetAxis("Vertical")) == 0) {
                 return Vector3.zero;
             }
-            float Horizontal = 0;
+            float horizontal = 0;
             if (Input.GetAxis("Horizontal") < 0) {
-                Horizontal = -1;
+                horizontal = -1;
             }
             if (Input.GetAxis("Horizontal") > 0) {
-                Horizontal = 1;
+                horizontal = 1;
             }
-            float Vertical = 0;
+            float vertical = 0;
             if (Input.GetAxis("Vertical") < 0) {
-                Vertical = -1;
+                vertical = -1;
             }
             if (Input.GetAxis("Vertical") > 0) {
-                Vertical = 1;
+                vertical = 1;
             }
             float zoomMultiplier = Mathf.Clamp(Camera.main.orthographicSize - 2, 1, 4f) * 10;
-            return new Vector3(zoomMultiplier * Horizontal * Time.deltaTime, zoomMultiplier * Vertical * Time.deltaTime, 0);
+            return new Vector3(zoomMultiplier * horizontal * Time.deltaTime, zoomMultiplier * vertical * Time.deltaTime, 0);
         }
 
-        private void OnDestroy() {
+        public void OnDestroy() {
             Instance = null;
         }
 
         public void MoveCameraToPosition(Vector2 pos) {
             Camera.main.transform.position = new Vector3(pos.x, pos.y, Camera.main.transform.position.z);
             ClampCamera();
-            currFramePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            lastFramePosition = currFramePosition;
+            _currFramePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            _lastFramePosition = _currFramePosition;
         }
 
         void ClampCamera() {

@@ -12,6 +12,7 @@ namespace Andja.Model {
         Tile StartTile { get; set; }
         int Width { get; }
         City Wilderness { get; set; }
+        List<Fertility> Fertilities { get; set; }
 
         void AddResources(string resourceID, int count);
         void ChangeGridTile(LandTile landTile, bool cityChange = false);

@@ -573,38 +573,33 @@ namespace Andja.Model {
             Debug.LogWarning("AI did not FindStructurePlace " + key + "!");
             return null;
         }
-        bool startFunction = false;
+
+        private bool _startFunction = false;
         private void GameStartFunction() {
-            if (Player.Cities.Count == 0) {
-                Ship ship = Player.Ships
-                                .First(s => s.inventory.HasEnoughOfItems(PrototypController.Instance.FirstLevelWarehouse.BuildingItems));
-                if (ship == null) {
-                    Debug.LogError("AI does not have enough resources to start a city! -- Stopping AI Player " + Player.Name);
-                    isActive = false;
-                    return;
-                }
-                if (startFunction)
-                    return;
-                startFunction = true;
-                CalculateNeeded();
-                var t = DecideIsland(false, true);
+            if (Player.Cities.Count != 0 || Player.Ships.Count == 0) return;
+            Ship ship = Player.Ships
+                .First(s => s.inventory.HasEnoughOfItems(PrototypController.Instance.FirstLevelWarehouse.BuildingItems));
+            if (_startFunction)
+                return;
+            _startFunction = true;
+            CalculateNeeded();
+            var tileAndRotation = DecideIsland(false, true);
                 
-                currentOperationPending.Add(AIController.Instance.AddOperation(
-                    new MoveUnitOperation(this, ship, t.Item1.GetNeighbours().First(x=>x.Type == TileType.Ocean), true)));
+            currentOperationPending.Add(AIController.Instance.AddOperation(
+                new MoveUnitOperation(this, ship, tileAndRotation.Item1.GetNeighbours().First(x=>x.Type == TileType.Ocean), true)));
 
-                void ShipWarehouse(Unit u, bool atdest) {
-                    if (atdest == false)
-                        return;
-                    var warehouse = PrototypController.Instance.FirstLevelWarehouse.Clone();
-                    warehouse.ChangeRotation(t.Item2);
-                    currentOperationPending.Add(
-                        AIController.Instance.AddOperation(new BuildStructureOperation(this, t.Item1, warehouse, ship))
-                        );
-                    ship.UnregisterOnArrivedAtDestinationCallback(ShipWarehouse);
-                }
-
-                ship.RegisterOnArrivedAtDestinationCallback(ShipWarehouse);
+            void ShipWarehouse(Unit u, bool atdest) {
+                if (atdest == false)
+                    return;
+                var warehouse = PrototypController.Instance.FirstLevelWarehouse.Clone();
+                warehouse.ChangeRotation(tileAndRotation.Item2);
+                currentOperationPending.Add(
+                    AIController.Instance.AddOperation(new BuildStructureOperation(this, tileAndRotation.Item1, warehouse, ship))
+                );
+                ship.UnregisterOnArrivedAtDestinationCallback(ShipWarehouse);
             }
+
+            ship.RegisterOnArrivedAtDestinationCallback(ShipWarehouse);
         }
 
         private void OnLostStructure(Structure structure) {
@@ -712,24 +707,23 @@ namespace Andja.Model {
                 if (island.Tiles.Count > maxSize)
                     maxSize = island.Tiles.Count;
                 averageSize += island.Tiles.FindAll(x => x.CheckTile()).Count;
-                if (island.Resources != null || island.Resources.Count != 0) {
-                    foreach (string resid in island.Resources.Keys) {
-                        if (resourceIDtoAverageAmount.ContainsKey(resid)) {
-                            resourceIDtoAverageAmount[resid] += island.Resources[resid];
-                            resourceIDtoExisting[resid]++;
-                        }
-                        else {
-                            resourceIDtoAverageAmount[resid] = island.Resources[resid];
-                            resourceIDtoExisting[resid] = 1;
-                        }
+                if (island.Resources == null && island.Resources.Count == 0) continue;
+                foreach (string resid in island.Resources.Keys) {
+                    if (resourceIDtoAverageAmount.ContainsKey(resid)) {
+                        resourceIDtoAverageAmount[resid] += island.Resources[resid];
+                        resourceIDtoExisting[resid]++;
                     }
-                    foreach (Fertility fer in island.Fertilities) {
-                        if (fertilitytoExisting.ContainsKey(fer)) {
-                            fertilitytoExisting[fer]++;
-                        }
-                        else {
-                            fertilitytoExisting[fer] = 1;
-                        }
+                    else {
+                        resourceIDtoAverageAmount[resid] = island.Resources[resid];
+                        resourceIDtoExisting[resid] = 1;
+                    }
+                }
+                foreach (Fertility fer in island.Fertilities) {
+                    if (fertilitytoExisting.ContainsKey(fer)) {
+                        fertilitytoExisting[fer]++;
+                    }
+                    else {
+                        fertilitytoExisting[fer] = 1;
                     }
                 }
             }
@@ -762,7 +756,7 @@ namespace Andja.Model {
                 score.SizeScore = (float)island.Tiles.FindAll(x => x.CheckTile()).Count;
                 score.SizeScore /= averageSize;
 
-                List<Fertility> ordered = PrototypController.Instance.orderUnlockFertilities;
+                List<Fertility> ordered = PrototypController.Instance.OrderUnlockFertilities;
                 int indexLastUnlocked = ordered.FindLastIndex(x => x.IsUnlocked(Player));
                 if (indexLastUnlocked < 0)
                     indexLastUnlocked = 0;
@@ -817,21 +811,12 @@ namespace Andja.Model {
         }
 
         public void CalculatePlayersCombatValue() {
-            combatValues = new List<PlayerCombatValue>();
             List<Player> players = PlayerController.Instance.GetPlayers();
-            foreach (Player p in players) {
-                PlayerCombatValue value = new PlayerCombatValue(p, CombatValue);
-                combatValues.Add(value);
-            }
+            combatValues = players.Select(p => new PlayerCombatValue(p, CombatValue)).ToList();
         }
         internal void Load() {
-            if(PlayerAttitude == null) {
-                foreach (Player item in PlayerController.Instance.GetPlayers()) {
-                    if (item == Player)
-                        continue;
-                    PlayerAttitude.Add(item.Number, new PlayerDiplomaticAI(item));
-                }
-            }
+            PlayerAttitude ??= PlayerController.Instance.GetPlayers()
+                .Where(p => p != Player).ToDictionary(player => player.Number, player => new PlayerDiplomaticAI(player));
             foreach (var item in PlayerAttitude) {
                 item.Value.Player = PlayerController.Instance.GetPlayer(item.Key);
             }
@@ -872,23 +857,30 @@ namespace Andja.Model {
                 //Coming up SOON but CANT build it so it will range between -1 and 0
                 if (player.Player.MaxPopulationCounts[item.Data.UnlockLevel] < item.Data.UnlockPopulationCount) {
                     priority = (player.Player.MaxPopulationCounts[item.Data.UnlockLevel] - item.Data.UnlockPopulationCount)
-                                        / AIController.PerPopulationLevelDatas[item.Data.UnlockLevel].atleastRequiredPeople;
+                                        / (float)AIController.PerPopulationLevelDatas[item.Data.UnlockLevel].atleastRequiredPeople;
                     return;
                 }
             }
-            if (item.Type == ItemType.Build) {
-                if (PrototypController.Instance.recommandedBuildSupplyChains.ContainsKey(item.ID) == false) {
+            switch (item.Type) {
+                case ItemType.Build when PrototypController.Instance.RecommandedBuildSupplyChains.ContainsKey(item.ID) == false:
                     priority = int.MinValue;
                     return;
-                }
-                priority = PrototypController.Instance.recommandedBuildSupplyChains[item.ID][player.Player.CurrentPopulationLevel];
-                priority -= player.itemToProducePerMinuteChange[item.ID];
-                return;
-            }
-            if (item.Type == ItemType.Luxury) {
-                priority = player.Player.Cities.Sum(x => x.GetPopulationItemUsage(item));
-                priority -= player.itemToProducePerMinuteChange[item.ID];
-                return;
+                case ItemType.Build:
+                    priority = PrototypController.Instance.RecommandedBuildSupplyChains[item.ID][player.Player.CurrentPopulationLevel];
+                    priority -= player.itemToProducePerMinuteChange[item.ID];
+                    return;
+                case ItemType.Luxury:
+                    priority = player.Player.Cities.Sum(x => x.GetPopulationItemUsage(item));
+                    priority -= player.itemToProducePerMinuteChange[item.ID];
+                    return;
+                case ItemType.Missing:
+                    break;
+                case ItemType.Intermediate:
+                    break;
+                case ItemType.Military:
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
             //int currentPopulation = player.player.GetCurrentPopulation(item.)
         }

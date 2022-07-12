@@ -53,7 +53,7 @@ namespace Andja.Pathfinding {
             worldPath = Job.Path;
             CreateReversePath();
             backPath.Enqueue(Position2);
-            if(World.Current.Tilesmap[Mathf.FloorToInt(dest_X)][Mathf.FloorToInt(dest_Y)] == false){
+            if(World.Current.TilesMap[Mathf.FloorToInt(dest_X)][Mathf.FloorToInt(dest_Y)] == false){
                 Vector2 v = worldPath.Last();
                 dest_X = v.x;
                 dest_Y = v.y;

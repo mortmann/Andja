@@ -12,51 +12,50 @@ namespace Andja.Controller {
     public class ConsoleController : MonoBehaviour {
         public static ConsoleController Instance;
         public GraphyManager GraphyPrefab;
-        private GraphyManager GraphyInstance;
+        private GraphyManager _graphyInstance;
         public static List<string> logs = new List<string>();
-        private Dictionary<GameObject, Vector3> GOtoPosition;
-        private Action<string> writeToConsole;
-        private StreamWriter logWriter;
+        private Dictionary<GameObject, Vector3> _gameObjectGOtoPosition;
+        private Action<string> _writeToConsole;
+        private StreamWriter _logWriter;
 
-        readonly string tempLogName = "temp.log";
-        static string logPath = "";
-        private void OnEnable() {
+        private const string TempLogName = "temp.log";
+        private static string _logPath = "";
+
+        public void OnEnable() {
             Instance = this;
             Application.logMessageReceived += LogCallbackHandler;
-            if (Application.isEditor == false) {
-                logPath = Path.Combine(SaveController.GetSaveGamesPath(), "logs");
-                string filepath = Path.Combine(logPath, tempLogName);
-                if (Directory.Exists(logPath) == false) {
-                    Directory.CreateDirectory(logPath);
-                }
-                if (File.Exists(filepath)) {
-                    File.Move(Path.Combine(logPath, tempLogName),
-                          Path.Combine(logPath, DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss") + "_unknown_crash.log")
-                    );
-                }
-                logWriter = File.CreateText(filepath);
-                logWriter.Write("" +
-                    "ID: " + SystemInfo.deviceUniqueIdentifier + "\n" +
-                    "SystemOS: " + SystemInfo.operatingSystem + "\n" +
-                    "CPU: " + SystemInfo.processorType + "\n" +
-                    "GPU: " + SystemInfo.graphicsDeviceName + " " + SystemInfo.graphicsDeviceVersion + "\n" +
-                    "RAM: " + SystemInfo.systemMemorySize + "\n" +
-                    "DeviceModel: " + SystemInfo.deviceModel + "\n" +
-                    "Graphics API: " + SystemInfo.graphicsDeviceType);
-                int fCount = Directory.GetFiles(logPath, "*.log", SearchOption.TopDirectoryOnly).Length;
-                if (fCount > 5) {
-                    FileSystemInfo fileInfo = new DirectoryInfo(logPath)
-                                 .GetFileSystemInfos().OrderBy(fi => fi.CreationTime).First();
-                    fileInfo.Delete();
-                }
+            if (Application.isEditor) return;
+            _logPath = Path.Combine(SaveController.GetSaveGamesPath(), "logs");
+            string filepath = Path.Combine(_logPath, TempLogName);
+            if (Directory.Exists(_logPath) == false) {
+                Directory.CreateDirectory(_logPath);
             }
+            if (File.Exists(filepath)) {
+                File.Move(Path.Combine(_logPath, TempLogName),
+                    Path.Combine(_logPath, DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss") + "_unknown_crash.log")
+                );
+            }
+            _logWriter = File.CreateText(filepath);
+            _logWriter.Write("" +
+                             "ID: " + SystemInfo.deviceUniqueIdentifier + "\n" +
+                             "SystemOS: " + SystemInfo.operatingSystem + "\n" +
+                             "CPU: " + SystemInfo.processorType + "\n" +
+                             "GPU: " + SystemInfo.graphicsDeviceName + " " + SystemInfo.graphicsDeviceVersion + "\n" +
+                             "RAM: " + SystemInfo.systemMemorySize + "\n" +
+                             "DeviceModel: " + SystemInfo.deviceModel + "\n" +
+                             "Graphics API: " + SystemInfo.graphicsDeviceType);
+            int fCount = Directory.GetFiles(_logPath, "*.log", SearchOption.TopDirectoryOnly).Length;
+            if (fCount <= 5) return;
+            FileSystemInfo fileInfo = new DirectoryInfo(_logPath)
+                .GetFileSystemInfos().OrderBy(fi => fi.CreationTime).First();
+            fileInfo.Delete();
         }
 
         internal string GetLogs() {
             string upload;
             if (Application.isEditor == false) {
-                string filepath = Path.Combine(logPath, tempLogName);
-                logWriter.Flush();
+                string filepath = Path.Combine(_logPath, TempLogName);
+                _logWriter.Flush();
                 FileStream fs = File.Open(filepath,
                             FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
                 upload = new StreamReader(fs, System.Text.Encoding.Default).ReadToEnd();
@@ -91,32 +90,34 @@ namespace Andja.Controller {
                 case LogType.Exception:
                     color = "ff00ffff";
                     break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(type), type, null);
             }
             string log =
                 "<color=#" + color + ">"
                     + typestring + " <i>" + condition + "</i> " +
                     (Application.isEditor && type == LogType.Error ? "" : Environment.NewLine + "<size=9>" + stackTrace + "</size>")
                 + "</color> ";
-            if (writeToConsole == null) {
+            if (_writeToConsole == null) {
                 logs.Add(log);
             }
             else {
-                writeToConsole?.Invoke(log);
+                _writeToConsole?.Invoke(log);
             }
-            if (Application.isEditor == false) {
-                if (string.IsNullOrEmpty(stackTrace) == false) {
-                    stackTrace += Environment.NewLine;
-                }
-                logWriter.Write(Environment.NewLine
-                                + type + "{" + Environment.NewLine
-                                + condition + Environment.NewLine
-                                + stackTrace.TrimEnd(Environment.NewLine.ToCharArray())
-                                + "}");
+
+            if (Application.isEditor) return;
+            if (string.IsNullOrEmpty(stackTrace) == false) {
+                stackTrace += Environment.NewLine;
             }
+            _logWriter.Write(Environment.NewLine
+                             + type + "{" + Environment.NewLine
+                             + condition + Environment.NewLine
+                             + stackTrace.TrimEnd(Environment.NewLine.ToCharArray())
+                             + "}");
         }
 
         internal void RegisterOnLogAdded(Action<string> writeToConsole) {
-            this.writeToConsole += writeToConsole;
+            this._writeToConsole += writeToConsole;
         }
         [HideInInspector]
         public IReadOnlyList<string> FirstLevelCommands = new List<string>{
@@ -208,13 +209,13 @@ namespace Andja.Controller {
 
                 case "itsrainingbuildings":
                     //easteregg!
-                    GOtoPosition = new Dictionary<GameObject, Vector3>();
+                    _gameObjectGOtoPosition = new Dictionary<GameObject, Vector3>();
                     BoxCollider2D[] all = FindObjectsOfType<BoxCollider2D>();
                     foreach (BoxCollider2D b2d in all) {
                         if (b2d.gameObject.GetComponent<Rigidbody2D>() != null) {
                             continue;
                         }
-                        GOtoPosition.Add(b2d.gameObject, b2d.gameObject.transform.position);
+                        _gameObjectGOtoPosition.Add(b2d.gameObject, b2d.gameObject.transform.position);
                         Rigidbody2D rb2 = b2d.gameObject.AddComponent<Rigidbody2D>();
                         rb2.gravityScale = UnityEngine.Random.Range(0.6f, 2.7f);
                         rb2.inertia = UnityEngine.Random.Range(0.5f, 1.5f);
@@ -223,13 +224,13 @@ namespace Andja.Controller {
                     break;
 
                 case "itsdrainingbuildings":
-                    if (GOtoPosition == null)
+                    if (_gameObjectGOtoPosition == null)
                         break;
-                    foreach (GameObject go in GOtoPosition.Keys) {
+                    foreach (GameObject go in _gameObjectGOtoPosition.Keys) {
                         if (go == null) {
                             continue;
                         }
-                        go.transform.position = GOtoPosition[go];
+                        go.transform.position = _gameObjectGOtoPosition[go];
                         Destroy(go.GetComponent<Rigidbody2D>());
                     }
                     happend = true;
@@ -238,9 +239,6 @@ namespace Andja.Controller {
                 case "1":
                     City c = CameraController.Instance.nearestIsland.FindCityByPlayer(PlayerController.currentPlayerNumber);
                     happend = AddAllItems(c.Inventory);
-                    break;
-
-                default:
                     break;
             }
             return happend;
@@ -290,34 +288,34 @@ namespace Andja.Controller {
             { "full", "medium", "light", "fps", "switchmode" };
         private bool HandleGraphyCommands(string[] parameters) {
             if (parameters.Length == 0) {
-                if (GraphyInstance != null) {
-                    Destroy(GraphyInstance);
+                if (_graphyInstance != null) {
+                    Destroy(_graphyInstance);
                 }
                 return true;
             }
-            if (GraphyInstance == null) {
-                GraphyInstance = Instantiate(GraphyPrefab);
+            if (_graphyInstance == null) {
+                _graphyInstance = Instantiate(GraphyPrefab);
                 return true;
             }
             switch (parameters[0]) {
                 case "full":
-                    GraphyInstance.SetPreset(GraphyManager.ModulePreset.FPS_FULL_RAM_FULL_AUDIO_FULL_ADVANCED_FULL);
+                    _graphyInstance.SetPreset(GraphyManager.ModulePreset.FPS_FULL_RAM_FULL_AUDIO_FULL_ADVANCED_FULL);
                     return true;
 
                 case "medium":
-                    GraphyInstance.SetPreset(GraphyManager.ModulePreset.FPS_FULL_RAM_FULL_AUDIO_FULL);
+                    _graphyInstance.SetPreset(GraphyManager.ModulePreset.FPS_FULL_RAM_FULL_AUDIO_FULL);
                     return true;
 
                 case "light":
-                    GraphyInstance.SetPreset(GraphyManager.ModulePreset.FPS_FULL);
+                    _graphyInstance.SetPreset(GraphyManager.ModulePreset.FPS_FULL);
                     return true;
 
                 case "fps":
-                    GraphyInstance.SetPreset(GraphyManager.ModulePreset.FPS_BASIC);
+                    _graphyInstance.SetPreset(GraphyManager.ModulePreset.FPS_BASIC);
                     return true;
 
                 case "switchmode":
-                    GraphyInstance.ToggleModes();
+                    _graphyInstance.ToggleModes();
                     return true;
 
                 default:
@@ -529,10 +527,8 @@ namespace Andja.Controller {
                     if (parameters.Length < 3)
                         return false;
                     // anything can thats not a number can be the current player
-                    if (int.TryParse(parameters[1], out int player) == false) {
-                        return false;
-                    }
-                    return HandleEffects(parameters.Skip(2).ToArray(), PlayerController.Instance.GetPlayer(player));
+                    return int.TryParse(parameters[1], out int player) 
+                           && HandleEffects(parameters.Skip(2).ToArray(), PlayerController.Instance.GetPlayer(player));
 
                 default:
                     break;
@@ -550,9 +546,7 @@ namespace Andja.Controller {
                 if (int.TryParse(parameters[pos], out playerOne) == false) {
                     return false;
                 }
-                else {
-                    pos++;
-                }
+                pos++;
             }
             if (int.TryParse(parameters[pos], out int playerTwo) == false) {
                 return false;
@@ -583,8 +577,7 @@ namespace Andja.Controller {
                     pos++;
                 }
             }
-            int money = 0;
-            if (int.TryParse(parameters[pos], out money) == false) {
+            if (int.TryParse(parameters[pos], out int money) == false) {
                 return false;
             }
             PlayerController.Instance.AddMoney(money, player);
@@ -594,10 +587,9 @@ namespace Andja.Controller {
         private bool ChangePlayer(string[] parameters) {
             if (parameters.Length == 0)
                 return false;
-            int player = -1000;
             int pos = 0;
             // anything can thats not a number can be the current player
-            if (int.TryParse(parameters[pos], out player) == false) {
+            if (int.TryParse(parameters[pos], out var player) == false) {
                 return false;
             }
             return PlayerController.Instance.ChangeCurrentPlayer(player);
@@ -615,22 +607,18 @@ namespace Andja.Controller {
                     MouseController.Instance.SelectedStructure.Destroy();
                     return true;
                 case "fillinput":
-                    if(MouseController.Instance.SelectedStructure is ProductionStructure ps) {
-                        for (int i = 0; i < ps.Intake.Length; i++) {
-                            ps.Intake[i].count = ps.GetMaxIntakeForIndex(i);
-                        }
-                        return true;
+                    if (!(MouseController.Instance.SelectedStructure is ProductionStructure ps)) return false;
+                    for (int i = 0; i < ps.Intake.Length; i++) {
+                        ps.Intake[i].count = ps.GetMaxIntakeForIndex(i);
                     }
-                    return false;
+                    return true;
                 case "filloutput":
-                    if (MouseController.Instance.SelectedStructure is OutputStructure os) {
-                        for (int i = 0; i < os.Output.Length; i++) {
-                            os.Output[i].count = os.MaxOutputStorage;
-                            os.CallOutputChangedCB();
-                        }
-                        return true;
+                    if (!(MouseController.Instance.SelectedStructure is OutputStructure os)) return false;
+                    foreach (Item output in os.Output) {
+                        output.count = os.MaxOutputStorage;
+                        os.CallOutputChangedCB();
                     }
-                    return false;
+                    return true;
                 case "effect":
                     return HandleEffects(parameters.Skip(1).ToArray(), MouseController.Instance.SelectedStructure);
                 case "event":
@@ -653,10 +641,9 @@ namespace Andja.Controller {
             if (parameters.Length < 1) {
                 return false;
             }
-            int player = -1000;
             int pos = 0;
             // anything can thats not a number can be the current player
-            if (int.TryParse(parameters[pos], out player) == false) {
+            if (int.TryParse(parameters[pos], out var player) == false) {
                 player = PlayerController.currentPlayerNumber;
             }
             else {
@@ -715,7 +702,7 @@ namespace Andja.Controller {
                 case "add":
                     return eventable.AddEffect(new Effect(parameters[1]));
                 case "remove":
-                    bool all = parameters.Length > 2 ? bool.TryParse(parameters[2], out _) : false;
+                    bool all = parameters.Length > 2 && bool.TryParse(parameters[2], out _);
                     return eventable.RemoveEffect(new Effect(parameters[1]), all);
                 default:
                     return false;
@@ -723,11 +710,10 @@ namespace Andja.Controller {
         }
 
         public bool ChangeItemInInventory(string[] parameters, Inventory inv) {
-            string id = null;
             if (parameters.Length != 2) {
                 return false;
             }
-            id = parameters[0];
+            string id = parameters[0];
 
             if (int.TryParse(parameters[1], out int amount) == false) {
                 return false;
@@ -757,17 +743,16 @@ namespace Andja.Controller {
             return true;
         }
 
-        private void OnDestroy() {
+        public void OnDestroy() {
             Instance = null;
-            Destroy(GraphyInstance);
-            if (Application.isEditor == false) {
-                logWriter.WriteLine("Closed safely.");
-                logWriter.Flush();
-                logWriter.Close();
-                File.Move(Path.Combine(logPath, tempLogName), 
-                          Path.Combine(logPath, DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss") + "_" + SaveController.SaveName + ".log")
-                );
-            }
+            Destroy(_graphyInstance);
+            if (Application.isEditor) return;
+            _logWriter.WriteLine("Closed safely.");
+            _logWriter.Flush();
+            _logWriter.Close();
+            File.Move(Path.Combine(_logPath, TempLogName), 
+                Path.Combine(_logPath, DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss") + "_" + SaveController.SaveName + ".log")
+            );
         }
     }
 }

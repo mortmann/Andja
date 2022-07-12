@@ -11,7 +11,7 @@ namespace Andja.LoadScreen {
         void Start() {
             loading = FindObjectOfType<Loading>();
             i = GetComponent<Image>();
-            var list = new List<Sprite>(StructureSpriteController.structureSprites.Values);
+            var list = new List<Sprite>(StructureSpriteController.StructureSprites.Values);
             i.sprite = list[Random.Range(0, list.Count)];
         }
 

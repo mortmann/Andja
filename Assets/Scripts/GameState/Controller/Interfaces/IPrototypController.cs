@@ -15,9 +15,9 @@ namespace Andja.Controller {
         HomeStructure BuildableHomeStructure { get; }
         Item[] BuildItems { get; }
         List<Item> MineableItems { get; }
-        public List<Fertility> orderUnlockFertilities { get; }
+        public List<Fertility> OrderUnlockFertilities { get; }
         public MarketStructure FirstLevelMarket { get; }
-        public Dictionary<string, int[]> recommandedBuildSupplyChains { get; }
+        public Dictionary<string, int[]> RecommandedBuildSupplyChains { get; }
         IReadOnlyDictionary<Climate, List<ResourceGenerationInfo>> ClimateToResourceGeneration { get; }
         IReadOnlyDictionary<string, DamageType> DamageTypeDatas { get; }
         IReadOnlyDictionary<string, EffectPrototypeData> EffectPrototypeDatas { get; }

@@ -2,38 +2,36 @@
 using Andja.Utility;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace Andja.Controller {
 
     public class EventSpriteController : MonoBehaviour {
         public static EventSpriteController Instance { get; protected set; }
-        private static Dictionary<string, Sprite> nameToSprite;
-        private Dictionary<GameEvent, GameObject> eventToGO;
+        private static Dictionary<string, Sprite> _nameToSprite;
+        private Dictionary<GameEvent, GameObject> _eventToGo;
         public List<ExtraEventParticles> EventParticles;
 
-        private void Start() {
+        public void Start() {
             if (Instance != null) {
                 Debug.LogError("There should never be two eventsprite controllers.");
             }
             Instance = this;
-            eventToGO = new Dictionary<GameEvent, GameObject>();
+            _eventToGo = new Dictionary<GameEvent, GameObject>();
             LoadSprites();
         }
 
-        private void Update() {
-        }
-
         public static void LoadSprites() {
-            nameToSprite = new Dictionary<string, Sprite>();
+            _nameToSprite = new Dictionary<string, Sprite>();
             Sprite[] sprites = Resources.LoadAll<Sprite>("Textures/EventSprites/");
             foreach (Sprite s in sprites) {
-                nameToSprite.Add(s.name, s);
+                _nameToSprite.Add(s.name, s);
             }
             Sprite[] custom = ModLoader.LoadSprites(SpriteType.Event);
             if (custom != null) {
                 foreach (Sprite s in custom) {
-                    nameToSprite[s.name] = s;
+                    _nameToSprite[s.name] = s;
                 }
             }
         }
@@ -46,37 +44,34 @@ namespace Andja.Controller {
                     sr.maskInteraction = SpriteMaskInteraction.VisibleInsideMask;
                 }
             }
-            sr.sprite = nameToSprite[sprite_name];
+            sr.sprite = _nameToSprite[sprite_name];
             go.transform.position = gameEvent.position;
-            eventToGO.Add(gameEvent, go);
+            _eventToGo.Add(gameEvent, go);
             sr.sortingLayerName = "TileModifier";
             sr.sortingOrder = 100000;
-            List<ExtraEventParticles> ps = EventParticles.FindAll(x => x.gameEventID == gameEvent.ID);
-            foreach (ExtraEventParticles p in ps) {
-                GameObject particle_go = Instantiate(p.Prefab);
-                particle_go.transform.SetParent(go.transform);
-                particle_go.transform.localPosition = Vector3.zero;
-                particle_go.GetComponent<Renderer>().sortingLayerName = "UnderSky";
-                particle_go.GetComponent<Renderer>().sortingOrder = 100000;
-                if (FogOfWarController.FogOfWarOn) {
-                    if (FogOfWarController.IsFogOfWarAlways) {
-                        particle_go.GetComponent<ParticleSystemRenderer>().maskInteraction = SpriteMaskInteraction.VisibleInsideMask;
-                    }
-                }
+            List<ExtraEventParticles> ps = EventParticles.FindAll(x => x.GameEventID == gameEvent.ID);
+            foreach (var particleGo in ps.Select(p => Instantiate(p.Prefab))) {
+                particleGo.transform.SetParent(go.transform);
+                particleGo.transform.localPosition = Vector3.zero;
+                particleGo.GetComponent<Renderer>().sortingLayerName = "UnderSky";
+                particleGo.GetComponent<Renderer>().sortingOrder = 100000;
+                if (FogOfWarController.FogOfWarOn == false || FogOfWarController.IsFogOfWarAlways == false) continue;
+                particleGo.GetComponent<ParticleSystemRenderer>().maskInteraction = SpriteMaskInteraction.VisibleInsideMask;
             }
         }
 
         internal void UpdateEventTileSprites(GameEvent gameEvent, float percantage) {
+            throw new NotImplementedException();
         }
 
         internal void DestroyEventTileSprites(GameEvent gameEvent) {
-            Destroy(eventToGO[gameEvent]);
-            eventToGO.Remove(gameEvent);
+            Destroy(_eventToGo[gameEvent]);
+            _eventToGo.Remove(gameEvent);
         }
 
         [Serializable]
         public struct ExtraEventParticles {
-            public string gameEventID;
+            public string GameEventID;
             public GameObject Prefab;
         }
     }

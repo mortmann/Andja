@@ -65,8 +65,8 @@ namespace Andja {
                     float mapGenValue = MapGenerator.Instance != null ? MapGenerator.Instance.GeneratedProgressPercantage : 1;
                     percantage = (int)(99 * (SceneLoadingProgress * 0.3f
                         + mapGenValue * 0.2f
-                        + SaveController.Instance.loadingPercantage * 0.2f
-                        + TileSpriteController.CreationPercantage * 0.3));
+                        + SaveController.Instance.loadingPercentage * 0.2f
+                        + TileSpriteController.CreationPercentage * 0.3));
                 }
                 else {
                     percantage = (int)(100 * (SceneLoadingProgress * 0.7f + MapGenerator.Instance.GeneratedProgressPercantage * 0.3f));

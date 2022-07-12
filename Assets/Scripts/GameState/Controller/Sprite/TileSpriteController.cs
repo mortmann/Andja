@@ -20,20 +20,18 @@ namespace Andja.Controller {
     /// Tile Sprites have the following Name for now:
     /// Starting with climate_ or all_
     /// Followed by the type_
-    /// Then by all sorrounding types condensed into 4 eg. wwww_ (all water)
+    /// Then by all surrounding types condensed into 4 eg. wwww_ (all water)
     /// At the end if there is any variation then it goes here.
     /// TODO: Rethink the nameing scheme 
     /// </summary>
     public class TileSpriteController : MonoBehaviour {
+        private const string NoSpriteName = "nosprite";
         public static TileSpriteController Instance { get; protected set; }
         public Material tileMapRendererBlending;
-        private static Dictionary<string, Sprite> nameToSprite;
-        private static Dictionary<Climate, ClimateSprites> climateTileSprites;
-        public Sprite noSprite;
-        public Sprite emptySprite;
+        private static Dictionary<string, Sprite> _nameToSprite;
+        private static Dictionary<Climate, ClimateSprites> _climateTileSprites;
 
         public GameObject karoOverlay;
-        private GameObject darkLayer;
         public GameObject oceanPrefab;
         public GameObject oceanInstance;
 
@@ -41,34 +39,32 @@ namespace Andja.Controller {
 
         public Material waterMaterial;
         public Material darkMaterial;
-        private Material clearMaterial;
         public Material highlightMaterial;
         public Material tileMapMaterial;
-        private static Dictionary<City, CityMaskTexture> cityToMaskTexture;
-        private static Dictionary<Vector2, Texture2D> islandToMaskTexture;
-        private static Dictionary<Vector2, GameObject> islandPosToTilemap;
 
-        private static int createdIslands = 0;
-        private static int numberOfIslands = 0;
-        public static float CreationPercantage => numberOfIslands == 0 ? 0 : createdIslands / numberOfIslands;
-        public static bool CreationDone => createdIslands == numberOfIslands;
+        private GameObject _darkLayer;
+        private Material _clearMaterial;
+        private static Dictionary<City, CityMaskTexture> _cityToMaskTexture;
+        private static Dictionary<Vector2, Texture2D> _islandToMaskTexture;
+        private static Dictionary<Vector2, GameObject> _islandPosToTilemap;
+        private static System.Diagnostics.Stopwatch _islandSpriteStopWatch;
+        private static Dictionary<IIsland, SpriteMask> _islandToCityMask;
+        private static Dictionary<IIsland, GameObject> _islandToGameObject;
+        private static Dictionary<Island, SpriteMask> _islandToCustomMask;
+        private static int _createdIslands = 0;
+        private static int _numberOfIslands = 0;
+        private bool _apply;
+        private Tilemap _editorTileMap;
+        private static Dictionary<string, TileBase> _nameToBaseTile;
+        private GameObject _editorIslandTileMap;
+
+        public static float CreationPercentage => _numberOfIslands == 0 ? 0 : _createdIslands / _numberOfIslands;
+        public static bool CreationDone => _createdIslands == _numberOfIslands;
         public static bool CreationStarted = false;
-        private static System.Diagnostics.Stopwatch islandSpriteStopWatch;
-        private static Dictionary<Island, SpriteMask> islandToCityMask;
-        private static Dictionary<Island, SpriteMask> islandToCustomMask;
-        private static Dictionary<Island, GameObject> islandToGameObject;
-
-        private bool apply;
-        private Tilemap editorTilemap;
-        private static Dictionary<string, TileBase> nameToBaseTile;
-        private GameObject editor_island_tilemap;
 
         public delegate TileMark TileDecider(Tile tile);
 
         public event TileDecider TileDeciderFunc;
-
-        public enum TileSpriteClimate { cold, middle, warm, all }
-
 
         public static float offset = 0;
 
@@ -88,27 +84,27 @@ namespace Andja.Controller {
                 //water.GetComponent<Renderer>().material = waterMaterial;
                 Renderer wr = oceanInstance.GetComponent<Renderer>();
                 wr.material.mainTextureScale = tile;
-                darkLayer = new GameObject();
-                darkLayer.transform.position = new Vector3((World.Current.Width / 2) - offset, (World.Current.Height / 2) - offset, 0);
-                SpriteRenderer darksr = darkLayer.AddComponent<SpriteRenderer>();
+                _darkLayer = new GameObject();
+                _darkLayer.transform.position = new Vector3((World.Current.Width / 2) - offset, (World.Current.Height / 2) - offset, 0);
+                SpriteRenderer darksr = _darkLayer.AddComponent<SpriteRenderer>();
                 darksr.sprite = darkLayerSprite;
                 darksr.sortingLayerName = "DarkLayer";
                 darksr.maskInteraction = SpriteMaskInteraction.VisibleOutsideMask;
-                darkLayer.transform.localScale = new Vector3(1.25f * World.Current.Width, 1.25f * World.Current.Height, 0);
-                darkLayer.name = "DarkLayer";
-                darkLayer.transform.SetParent(this.transform);
-                darkLayer.SetActive(false);
+                _darkLayer.transform.localScale = new Vector3(1.25f * World.Current.Width, 1.25f * World.Current.Height, 0);
+                _darkLayer.name = "DarkLayer";
+                _darkLayer.transform.SetParent(this.transform);
+                _darkLayer.SetActive(false);
 
-                islandToCityMask = new Dictionary<Island, SpriteMask>();
-                islandToGameObject = new Dictionary<Island, GameObject>();
-                islandToCustomMask = new Dictionary<Island, SpriteMask>();
-                cityToMaskTexture = new Dictionary<City, CityMaskTexture>();
+                _islandToCityMask = new Dictionary<IIsland, SpriteMask>();
+                _islandToGameObject = new Dictionary<IIsland, GameObject>();
+                _islandToCustomMask = new Dictionary<Island, SpriteMask>();
+                _cityToMaskTexture = new Dictionary<City, CityMaskTexture>();
 
                 foreach (Island i in World.Current.Islands) {
                     Vector2 key = i.Placement;
-                    GameObject islandGO = Instantiate(islandPosToTilemap[key]);
-                    Destroy(islandPosToTilemap[key]);
-                    islandToGameObject[i] = islandGO;
+                    GameObject islandGO = Instantiate(_islandPosToTilemap[key]);
+                    Destroy(_islandPosToTilemap[key]);
+                    _islandToGameObject[i] = islandGO;
                     islandGO.transform.position = key - new Vector2(offset, offset);
                     islandGO.layer = LayerMask.NameToLayer("Islands");
                     islandGO.name = "Island " + i.StartTile.Vector2;
@@ -121,10 +117,10 @@ namespace Andja.Controller {
                     sm.isCustomRangeActive = true;
                     sm.sortingLayerName = "DarkLayer";
                     sm.frontSortingLayerID = 638755707; // UI Layer even tho its some strange number
-                    Texture2D masktex = Instantiate<Texture2D>(islandToMaskTexture[i.Placement]);
+                    Texture2D masktex = Instantiate<Texture2D>(_islandToMaskTexture[i.Placement]);
                     sm.sprite = Sprite.Create(masktex, new Rect(0, 0, masktex.width, masktex.height), Vector2.zero, 1);
                     sm.alphaCutoff = 1;
-                    islandToCityMask.Add(i, sm);
+                    _islandToCityMask.Add(i, sm);
                     TilemapRenderer trr = islandGO.GetComponent<TilemapRenderer>();
                     trr.material = tileMapMaterial;
 
@@ -133,16 +129,16 @@ namespace Andja.Controller {
                     }
 
                     GameObject MaskGameobject = new GameObject("IslandCustomMask ");
-                    MaskGameobject.transform.parent = islandToGameObject[i].transform;
+                    MaskGameobject.transform.parent = _islandToGameObject[i].transform;
                     MaskGameobject.transform.localPosition = -new Vector3(0, 0);
                     SpriteMask csm = MaskGameobject.AddComponent<SpriteMask>();
                     csm.isCustomRangeActive = true;
                     csm.sortingLayerName = "DarkLayer";
                     csm.frontSortingLayerID = 638755707; // UI Layer even tho its some strange number
-                    Texture2D cmasktex = Instantiate<Texture2D>(islandToMaskTexture[i.Placement]);
+                    Texture2D cmasktex = Instantiate<Texture2D>(_islandToMaskTexture[i.Placement]);
                     csm.sprite = Sprite.Create(cmasktex, new Rect(0, 0, masktex.width, masktex.height), Vector2.zero, 1);
                     csm.alphaCutoff = 1;
-                    islandToCustomMask.Add(i, csm);
+                    _islandToCustomMask.Add(i, csm);
                 }
                 World.Current.RegisterTileChanged(OnTileChanged);
 
@@ -167,23 +163,23 @@ namespace Andja.Controller {
         private void OnCityCreated(City city) {
             CityMaskTexture cityMask = new CityMaskTexture {
                 city = city,
-                texture = Instantiate<Texture2D>(islandToMaskTexture[city.Island.Placement])
+                texture = Instantiate<Texture2D>(_islandToMaskTexture[city.Island.Placement])
             };
-            cityToMaskTexture.Add(city, cityMask);
+            _cityToMaskTexture.Add(city, cityMask);
         }
 
-        private void OnPlayerChange(Player o, Player n) {
+        private static void OnPlayerChange(Player o, Player n) {
             foreach (Island island in World.Current.Islands) {
                 City city = island.FindCityByPlayer(n.Number);
                 if (city != null) {
-                    Texture2D tex = cityToMaskTexture[city].texture;
+                    Texture2D tex = _cityToMaskTexture[city].texture;
                     tex.Apply();
-                    islandToCityMask[island].sprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), Vector2.zero, 1);
+                    _islandToCityMask[island].sprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), Vector2.zero, 1);
                     //foreach (var item in city.Tiles) {
                     //    OnTileChanged(item);
                     //}
                 } else {
-                    islandToCityMask[island].sprite = null;
+                    _islandToCityMask[island].sprite = null;
                 }
             }
         }
@@ -195,18 +191,18 @@ namespace Andja.Controller {
         public void EditorFix() {
             //if (editor_island_tilemap != null)
             //    Destroy(editor_island_tilemap);
-            editor_island_tilemap = new GameObject();
-            editor_island_tilemap.name = "EditorIsland TileMap";
-            editor_island_tilemap.transform.position = new Vector3(-offset, -offset, 0);
-            editorTilemap = editor_island_tilemap.AddComponent<Tilemap>();
-            Grid g = editor_island_tilemap.AddComponent<Grid>();
+            _editorIslandTileMap = new GameObject();
+            _editorIslandTileMap.name = "EditorIsland TileMap";
+            _editorIslandTileMap.transform.position = new Vector3(-offset, -offset, 0);
+            _editorTileMap = _editorIslandTileMap.AddComponent<Tilemap>();
+            Grid g = _editorIslandTileMap.AddComponent<Grid>();
             g.cellSize = new Vector3(1, 1, 0);
             g.cellSwizzle = GridLayout.CellSwizzle.XYZ;
             g.cellLayout = GridLayout.CellLayout.Rectangle;
-            TilemapRenderer trr = editor_island_tilemap.AddComponent<TilemapRenderer>();
+            TilemapRenderer trr = _editorIslandTileMap.AddComponent<TilemapRenderer>();
             //trr.material = tileMapRendererBlending;
             trr.sortingLayerName = "Tile";
-            editorTilemap.size = new Vector3Int(EditorController.Width, EditorController.Height, 0);
+            _editorTileMap.size = new Vector3Int(EditorController.Width, EditorController.Height, 0);
             oceanInstance.transform.position = new Vector3((World.Current.Width / 2) - offset, (World.Current.Height / 2) - offset, 0.1f);
             oceanInstance.transform.localScale = new Vector3(World.Current.Width / 10, 0.1f, World.Current.Height / 10);
             oceanInstance.GetComponent<Renderer>().material = waterMaterial;
@@ -246,22 +242,21 @@ namespace Andja.Controller {
         }
 
         public void Update() {
-            foreach (var item in cityToMaskTexture.Values) {
+            foreach (var item in _cityToMaskTexture.Values) {
                 item.CheckApply();
             }
-            if (apply) {
-                if (islandToCustomMask != null) {
-                    foreach (SpriteMask sm in islandToCustomMask.Values) {
-                        sm.sprite?.texture.Apply();
-                        apply = false;
-                    }
-                }
+
+            if (!_apply) return;
+            if (_islandToCustomMask == null) return;
+            foreach (SpriteMask sm in _islandToCustomMask.Values) {
+                sm.sprite?.texture.Apply();
+                _apply = false;
             }
         }
 
         private static void CreateBaseTiles() {
-            nameToBaseTile = new Dictionary<string, TileBase>();
-            foreach (string name in nameToSprite.Keys) {
+            _nameToBaseTile = new Dictionary<string, TileBase>();
+            foreach (string name in _nameToSprite.Keys) {
                 if (name.Contains("animated")) {
                     //AnimatedTile tileBase = ScriptableObject.CreateInstance<AnimatedTile>();
                     //tileBase.m_AnimatedSprites = tests.ToArray();
@@ -271,9 +266,9 @@ namespace Andja.Controller {
                 }
                 else {
                     UnityEngine.Tilemaps.Tile tileBase = ScriptableObject.CreateInstance<UnityEngine.Tilemaps.Tile>();
-                    tileBase.sprite = nameToSprite[name];
+                    tileBase.sprite = _nameToSprite[name];
                     tileBase.colliderType = UnityEngine.Tilemaps.Tile.ColliderType.None;
-                    nameToBaseTile[name] = tileBase;
+                    _nameToBaseTile[name] = tileBase;
                 }
             }
         }
@@ -282,12 +277,12 @@ namespace Andja.Controller {
             if (EditorController.IsEditor)
                 return;
             CreationStarted = true;
-            numberOfIslands = islands.Count;
+            _numberOfIslands = islands.Count;
             LoadSprites();
-            islandSpriteStopWatch = new System.Diagnostics.Stopwatch();
-            islandSpriteStopWatch.Start();
-            islandPosToTilemap = new Dictionary<Vector2, GameObject>();
-            islandToMaskTexture = new Dictionary<Vector2, Texture2D>();
+            _islandSpriteStopWatch = new System.Diagnostics.Stopwatch();
+            _islandSpriteStopWatch.Start();
+            _islandPosToTilemap = new Dictionary<Vector2, GameObject>();
+            _islandToMaskTexture = new Dictionary<Vector2, Texture2D>();
             CreateBaseTiles();
 
             foreach (MapGenerator.IslandData i in islands) {
@@ -318,61 +313,59 @@ namespace Andja.Controller {
                     //TILEMAP
                     int x = (int)(tile_data.X - xTileOffset);
                     int y = (int)(tile_data.Y - yTileOffset);
-                    if (tile_data.SpriteName == null || nameToBaseTile.ContainsKey(tile_data.SpriteName) == false) {
+                    if (tile_data.SpriteName == null || _nameToBaseTile.ContainsKey(tile_data.SpriteName) == false) {
                         Debug.Log("Missing " + tile_data.Type + " tilesprite " + tile_data.SpriteName);
                     }
-                    string temp = nameToBaseTile.ContainsKey(tile_data.SpriteName) ? tile_data.SpriteName : "nosprite";
-                    tilemap.SetTile(new Vector3Int(x, y, 0), nameToBaseTile[temp]);
+                    string temp = _nameToBaseTile.ContainsKey(tile_data.SpriteName) ? tile_data.SpriteName : NoSpriteName;
+                    tilemap.SetTile(new Vector3Int(x, y, 0), _nameToBaseTile[temp]);
 
                     //MASK TEXTURE
                     masktexture.SetPixel(x, y, new Color32(128, 128, 128, 128));
                 }
                 tilemap.RefreshAllTiles();
-                islandPosToTilemap[i.GetPosition()] = island_tilemap;
+                _islandPosToTilemap[i.GetPosition()] = island_tilemap;
                 DontDestroyOnLoad(island_tilemap);
 
                 masktexture.Apply();
-                islandToMaskTexture.Add(i.GetPosition(), masktexture);
-                createdIslands++;
+                _islandToMaskTexture.Add(i.GetPosition(), masktexture);
+                _createdIslands++;
             }
 
-            islandSpriteStopWatch.Stop();
-            Debug.Log("Island Visuals " + islandSpriteStopWatch.ElapsedMilliseconds + "ms (" + islandSpriteStopWatch.Elapsed.TotalSeconds + "s)! ");
+            _islandSpriteStopWatch.Stop();
+            Debug.Log("Island Visuals " + _islandSpriteStopWatch.ElapsedMilliseconds + "ms (" + _islandSpriteStopWatch.Elapsed.TotalSeconds + "s)! ");
         }
 
         private Sprite GetSpriteForName(string spriteName) {
-            if (nameToSprite.ContainsKey(spriteName)) {
-                return nameToSprite[spriteName];
-            }
-            return nameToSprite["nosprite"];
+            return _nameToSprite.ContainsKey(spriteName) ? _nameToSprite[spriteName] : _nameToSprite[NoSpriteName];
         }
 
         private void OnTileChanged(Tile tile_data) {
-            if (darkLayer == null) {
+            if (_darkLayer == null) {
                 return;
             }
             int x = (int)(tile_data.X - tile_data.Island.Placement.x);
             int y = (int)(tile_data.Y - tile_data.Island.Placement.y);
-            cityToMaskTexture[tile_data.City].SetPixel(x, y, new Color32(128, 128, 128, 255));
-            foreach (var item in tile_data.Island.Cities) {
-                if(item != tile_data.City)
-                    cityToMaskTexture[item].SetPixel(x, y, new Color32(128, 128, 128, 0));
+            _cityToMaskTexture[tile_data.City].SetPixel(x, y, new Color32(128, 128, 128, 255));
+            foreach (var item in tile_data.Island.Cities.Where(item => item != tile_data.City)) {
+                _cityToMaskTexture[item].SetPixel(x, y, new Color32(128, 128, 128, 0));
             }
-            if (TileDeciderFunc != null && islandToCustomMask != null) {
-                apply = true;
-                TileMark tm = TileDeciderFunc(tile_data);
-                switch (tm) {
-                    case TileMark.None:
-                        islandToCustomMask[tile_data.Island].sprite.texture.SetPixel(x, y, new Color32(128, 128, 128, 255));
-                        break;
 
-                    case TileMark.Highlight:
-                        break;
+            if (TileDeciderFunc == null || _islandToCustomMask == null) return;
+            _apply = true;
+            TileMark tm = TileDeciderFunc(tile_data);
+            switch (tm) {
+                case TileMark.None:
+                    _islandToCustomMask[tile_data.Island].sprite.texture.SetPixel(x, y, new Color32(128, 128, 128, 255));
+                    break;
 
-                    case TileMark.Dark:
-                        islandToCustomMask[tile_data.Island].sprite.texture.SetPixel(x, y, new Color32(128, 128, 128, 0));
-                        break;
-                }
+                case TileMark.Highlight:
+                    break;
+
+                case TileMark.Dark:
+                    _islandToCustomMask[tile_data.Island].sprite.texture.SetPixel(x, y, new Color32(128, 128, 128, 0));
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
         }
 
@@ -382,33 +375,33 @@ namespace Andja.Controller {
             }
             if (tile_data == null)
                 return;
-            if (String.IsNullOrEmpty(tile_data.SpriteName)) {
-                editorTilemap.SetTile(new Vector3Int(tile_data.X, tile_data.Y, 0), null);
+            if (string.IsNullOrEmpty(tile_data.SpriteName)) {
+                _editorTileMap.SetTile(new Vector3Int(tile_data.X, tile_data.Y, 0), null);
             }
             else {
-                string temp = nameToBaseTile.ContainsKey(tile_data.SpriteName) ? tile_data.SpriteName : "nosprite";
-                if (nameToBaseTile.ContainsKey(tile_data.SpriteName) == false)
+                string temp = _nameToBaseTile.ContainsKey(tile_data.SpriteName) ? tile_data.SpriteName : NoSpriteName;
+                if (_nameToBaseTile.ContainsKey(tile_data.SpriteName) == false)
                     Debug.Log(tile_data.SpriteName);
-                editorTilemap.SetTile(new Vector3Int(tile_data.X, tile_data.Y, 0), nameToBaseTile[temp]);
+                _editorTileMap.SetTile(new Vector3Int(tile_data.X, tile_data.Y, 0), _nameToBaseTile[temp]);
             }
         }
 
         public static void LoadSprites() {
-            nameToSprite = new Dictionary<string, Sprite>();
+            _nameToSprite = new Dictionary<string, Sprite>();
             Sprite[] sprites = Resources.LoadAll<Sprite>("Textures/TileSprites/");
             foreach (Sprite s in sprites) {
-                nameToSprite.Add(s.name, s);
+                _nameToSprite.Add(s.name, s);
             }
             Sprite[] custom = ModLoader.LoadSprites(SpriteType.Tile);
             if (custom != null) {
                 foreach (Sprite s in custom) {
-                    nameToSprite[s.name] = s;
+                    _nameToSprite[s.name] = s;
                 }
             }
-            climateTileSprites = new Dictionary<Climate, ClimateSprites>();
+            _climateTileSprites = new Dictionary<Climate, ClimateSprites>();
             foreach (Climate c in Enum.GetValues(typeof(Climate)))
-                climateTileSprites[c] = new ClimateSprites(c);
-            foreach (string s in TileSpriteController.nameToSprite.Keys) {
+                _climateTileSprites[c] = new ClimateSprites(c);
+            foreach (string s in TileSpriteController._nameToSprite.Keys) {
                 string[] parts = s.Split('_');
                 if (parts.Length < 4) {
                     //Debug.LogError("Tile Sprite in correct formatted - climate_type_connections_variation");
@@ -419,24 +412,24 @@ namespace Andja.Controller {
                 string variation = parts[3].ToLower();
                 if (parts[0].ToLower() == "all") {
                     foreach (Climate c in Enum.GetValues(typeof(Climate)))
-                        climateTileSprites[c].AddSprite(type, connections, s);
+                        _climateTileSprites[c].AddSprite(type, connections, s);
                 }
                 else {
                     try {
                         Climate climate = (Climate)Enum.Parse(typeof(Climate), parts[0], true);
-                        climateTileSprites[climate].AddSprite(type, connections, s);
+                        _climateTileSprites[climate].AddSprite(type, connections, s);
                     }
                     catch {
-                        //NO correct climate so skip -- TODO: uncomment -- for now to much spam
+                        //NO correct Climate so skip -- TODO: uncomment -- for now to much spam
                         //Debug.LogError("Tile Sprite in correct formatted Climate - either all or on of the enums (cold,middle,warm)");
                     }
                 }
             }
         }
 
-        private void OnDestroy() {
+        public void OnDestroy() {
             World.Current.UnregisterTileChanged(OnTileChanged);
-            createdIslands = 0;
+            _createdIslands = 0;
             Instance = null;
         }
 
@@ -446,10 +439,10 @@ namespace Andja.Controller {
             if (TileDeciderFunc != null && TileDeciderFunc.GetInvocationList().Contains(addDeciderFunc))
                 return;
             this.TileDeciderFunc += addDeciderFunc;
-            if (TileDeciderFunc != null || TileDeciderFunc.GetInvocationList().Length > 0)
-                darkLayer.SetActive(true);
+            if (TileDeciderFunc != null && TileDeciderFunc.GetInvocationList().Length > 0)
+                _darkLayer.SetActive(true);
             if (isCityDecider) {
-                islandToCityMask.ToList().ForEach(x => x.Value.gameObject.SetActive(true));
+                _islandToCityMask.ToList().ForEach(x => x.Value.gameObject.SetActive(true));
             }
             else {
                 foreach (Island i in World.Current.Islands) {
@@ -461,7 +454,7 @@ namespace Andja.Controller {
 
         public void ResetDecider() {
             TileDeciderFunc = null;
-            darkLayer.SetActive(false);
+            _darkLayer.SetActive(false);
         }
 
         public void RemoveDecider(TileDecider removeFunc, bool isCityDecider = false) {
@@ -472,7 +465,7 @@ namespace Andja.Controller {
                 ResetDecider();
 
             if (isCityDecider) {
-                islandToCityMask.ToList().ForEach(x => x.Value.gameObject.SetActive(false));
+                _islandToCityMask.ToList().ForEach(x => x.Value.gameObject.SetActive(false));
             }
             else {
                 //if (islandToCustomMask == null)
@@ -486,30 +479,28 @@ namespace Andja.Controller {
         }
 
         public static List<string> GetSpriteNamesForType(TileType type, Climate climate, string spriteAddon = null) {
-            if (climateTileSprites == null)
+            if (_climateTileSprites == null)
                 LoadSprites();
             if (type == TileType.Ocean)
                 return null;
-            if (climateTileSprites[climate].typeTree.ContainsKey(type) == false)
-                return null;
-            return climateTileSprites[climate].typeTree[type].GetClosest(spriteAddon);
+            return _climateTileSprites[climate].typeTree.ContainsKey(type) == false ? null : _climateTileSprites[climate].typeTree[type].GetClosest(spriteAddon);
         }
         public static List<string> GetAllSpriteNamesForType(TileType type, Climate climate) {
-            if (climateTileSprites == null)
+            if (_climateTileSprites == null)
                 LoadSprites();
             if (type == TileType.Ocean)
                 return null;
-            if (climateTileSprites[climate].typeTree.ContainsKey(type) == false)
+            if (_climateTileSprites[climate].typeTree.ContainsKey(type) == false)
                 return null;
-            return climateTileSprites[climate].typeTree[type].GetAll();
+            return _climateTileSprites[climate].typeTree[type].GetAll();
         }
         private class ClimateSprites {
-            public Climate climate;
-            public Dictionary<TileType, TileTypeSprites> tileTypeSprites = new Dictionary<TileType, TileTypeSprites>();
-            public Dictionary<TileType, ClosestTree> typeTree = new Dictionary<TileType, ClosestTree>();
+            public Climate Climate;
+            public readonly Dictionary<TileType, TileTypeSprites> tileTypeSprites = new Dictionary<TileType, TileTypeSprites>();
+            public readonly Dictionary<TileType, ClosestTree> typeTree = new Dictionary<TileType, ClosestTree>();
 
             public ClimateSprites(Climate climate) {
-                this.climate = climate;
+                this.Climate = climate;
             }
 
             public void AddSprite(TileType type, string connections, string name) {
@@ -522,15 +513,13 @@ namespace Andja.Controller {
             }
 
             internal List<string> GetSprites(TileType type, string spriteAddon) {
-                if (tileTypeSprites.ContainsKey(type) == false)
-                    return new List<string>();
-                return tileTypeSprites[type].GetSprites(spriteAddon);
+                return tileTypeSprites.ContainsKey(type) == false ? new List<string>() : tileTypeSprites[type].GetSprites(spriteAddon);
             }
         }
 
         private class TileTypeSprites {
-            public TileType type;
-            public Dictionary<string, List<string>> connectionToSprite = new Dictionary<string, List<string>>();
+            public readonly TileType type;
+            public readonly Dictionary<string, List<string>> connectionToSprite = new Dictionary<string, List<string>>();
 
             public TileTypeSprites(TileType type) {
                 this.type = type;
@@ -548,61 +537,56 @@ namespace Andja.Controller {
                     return null;
                 if (type == TileType.Dirt)
                     Debug.Log("");
-                if (connectionToSprite.ContainsKey(spriteAddon) == false) {
-                    string newAddon = "";
-                    char f = type.ToString().ToLower()[0];
-                    foreach (char c in spriteAddon) {
-                        if (c == 'o') {
-                            newAddon += 'o';
-                            continue;
-                        }
-                        newAddon += c == f ? f : 'a';
+                if (connectionToSprite.ContainsKey(spriteAddon)) 
+                    return connectionToSprite[spriteAddon];
+                string newAddon = "";
+                char f = type.ToString().ToLower()[0];
+                foreach (char c in spriteAddon) {
+                    if (c == 'o') {
+                        newAddon += 'o';
+                        continue;
                     }
-                    if (connectionToSprite.ContainsKey(newAddon))
-                        return connectionToSprite[newAddon];
-                    newAddon = new string(new char[] { f, f, f, f });
-                    if (connectionToSprite.ContainsKey(newAddon) == false)
-                        return new List<string>() { "nosprite" };
-                    return connectionToSprite[newAddon];
+                    newAddon += c == f ? f : 'a';
                 }
-                return connectionToSprite[spriteAddon];
+                if (connectionToSprite.ContainsKey(newAddon))
+                    return connectionToSprite[newAddon];
+                newAddon = new string(new char[] { f, f, f, f });
+                return connectionToSprite.ContainsKey(newAddon) == false ? new List<string>() { NoSpriteName } : connectionToSprite[newAddon];
             }
         }
         class CityMaskTexture {
             public City city;
             public Texture2D texture;
-            public bool apply;
+            private bool _apply;
             public void CheckApply() {
-                if (apply) {
-                    texture.Apply();
-                    apply = false;
-                }
+                if (_apply == false) return;
+                texture.Apply();
+                _apply = false;
             }
 
             internal void SetPixel(int x, int y, Color32 color32) {
                 texture.SetPixel(x, y, color32);
-                apply = true;
+                _apply = true;
             }
         }
 
         public static System.Collections.Concurrent.ConcurrentBag<Vector2> positions = new System.Collections.Concurrent.ConcurrentBag<Vector2>();
         public static System.Collections.Concurrent.ConcurrentDictionary<Vector2, float> positionsCost = new System.Collections.Concurrent.ConcurrentDictionary<Vector2, float>();
-        private void OnDrawGizmos() {
-            if (Application.isPlaying) {
-                //foreach (Pathfinding.World.CurrentNode n in World.Current.Current.World.CurrentGraph.Nodes) {
-                //    if (n == null)
-                //        continue;
-                //    foreach (Pathfinding.World.CurrentEdge e in n.Edges) {
-                //        Gizmos.color = Color.white;
-                //        Gizmos.DrawLine(new Vector2(n.x + 0.5f, n.y + 0.5f), new Vector2(e.Node.x + 0.5f, e.Node.y + 0.5f));
-                //    }
-                foreach (var t in positions) {
-                    Gizmos.color = Color.red;
-                    Gizmos.DrawSphere(new Vector3(t.x + 0.5f, t.y + 0.5f), 0.5f);
-                }
-                foreach (var t in positionsCost) {
-                    UnityEditor.Handles.Label(new Vector3(t.Key.x + 0.5f, t.Key.y + 0.5f), t.Value +"");
-                }
+        public void OnDrawGizmos() {
+            if (Application.isPlaying == false) return;
+            //foreach (Pathfinding.World.CurrentNode n in World.Current.Current.World.CurrentGraph.Nodes) {
+            //    if (n == null)
+            //        continue;
+            //    foreach (Pathfinding.World.CurrentEdge e in n.Edges) {
+            //        Gizmos.color = Color.white;
+            //        Gizmos.DrawLine(new Vector2(n.x + 0.5f, n.y + 0.5f), new Vector2(e.Node.x + 0.5f, e.Node.y + 0.5f));
+            //    }
+            foreach (var t in positions) {
+                Gizmos.color = Color.red;
+                Gizmos.DrawSphere(new Vector3(t.x + 0.5f, t.y + 0.5f), 0.5f);
+            }
+            foreach (var t in positionsCost) {
+                UnityEditor.Handles.Label(new Vector3(t.Key.x + 0.5f, t.Key.y + 0.5f), t.Value +"");
             }
         }
 

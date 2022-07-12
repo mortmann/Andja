@@ -15,7 +15,7 @@ public class OutputStructureTest {
     TestOutputStructure OutputTestStructure;
     OutputPrototypData PrototypeData;
     private MockUtil mockutil;
-    Island Island;
+    IIsland Island;
 
     [SetUp]
     public void SetUp() {

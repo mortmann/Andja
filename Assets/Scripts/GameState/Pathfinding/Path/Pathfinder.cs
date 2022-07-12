@@ -185,7 +185,7 @@ namespace Andja.Pathfinding {
 
         public static Queue<Vector2> FindOceanPath(PathJob job, IPathfindAgent agent, WorldGraph graph, Vector2 startPos, Vector2 endPos) {
             if (World.Current != null) {
-                worldTilemap = World.Current.Tilesmap;
+                worldTilemap = World.Current.TilesMap;
             }
             System.Diagnostics.Stopwatch stopwatch = new System.Diagnostics.Stopwatch();
             stopwatch.Start();

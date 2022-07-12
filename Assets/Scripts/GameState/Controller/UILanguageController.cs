@@ -30,15 +30,15 @@ namespace Andja.Controller {
     /// </summary>
     public class UILanguageController : MonoBehaviour {
         public static UILanguageController Instance { get; protected set; }
-        private Action cbLanguageChange;
+        private Action _cbLanguageChange;
 
         public static string selectedLanguage = "English";
-        private Dictionary<string, TranslationData> idToTranslation;
-        private List<TranslationData> requiredLocalizationData;
+        private Dictionary<string, TranslationData> _idToTranslation;
+        private List<TranslationData> _requiredLocalizationData;
         public Dictionary<string, string> LocalizationsToFile;
 
-        public static readonly string localizationFilePrefix = "";
-        public static readonly string localizationFileType = "-ui.loc";
+        public static readonly string LocalizationFilePrefix = "";
+        public static readonly string LocalizationFileType = "-ui.loc";
         public static readonly string LocalizationXMLDirectory = "Localizations";
         private void Awake() {
             if (Instance != null) {
@@ -63,13 +63,13 @@ namespace Andja.Controller {
                     localizationDataDictionary[td.id].AddUIElement(t.GetRealName());
                 }
             }
-            if (requiredLocalizationData == null)
-                requiredLocalizationData = new List<TranslationData>(localizationDataDictionary.Values);
+            if (_requiredLocalizationData == null)
+                _requiredLocalizationData = new List<TranslationData>(localizationDataDictionary.Values);
             else
-                requiredLocalizationData.AddRange(localizationDataDictionary.Values);
+                _requiredLocalizationData.AddRange(localizationDataDictionary.Values);
         }
-        private void OnEnable() {
-            idToTranslation = new Dictionary<string, TranslationData>();
+        public void OnEnable() {
+            _idToTranslation = new Dictionary<string, TranslationData>();
             //#if Unity_Editor
             TranslationBase[] texts = Resources.FindObjectsOfTypeAll<TranslationBase>();
             Dictionary<string, TranslationData> localizationDataDictionary = new Dictionary<string, TranslationData>();
@@ -86,57 +86,57 @@ namespace Andja.Controller {
                 }
             }
             foreach (GraphicsOptions go in Enum.GetValues(typeof(GraphicsOptions))) {
-                string name = typeof(GraphicsOptions).Name + "/" + go.ToString();
-                if (idToTranslation.ContainsKey(name) == false) {
+                string name = nameof(GraphicsOptions) + "/" + go.ToString();
+                if (_idToTranslation.ContainsKey(name) == false) {
                     localizationDataDictionary.Add(name, new TranslationData(name, false, 0));
                 }
             }
             foreach (FullScreenMode go in Enum.GetValues(typeof(FullScreenMode))) {
-                string name = typeof(FullScreenMode).Name + "/" + go.ToString();
-                if (idToTranslation.ContainsKey(name) == false) {
+                string name = nameof(FullScreenMode) + "/" + go.ToString();
+                if (_idToTranslation.ContainsKey(name) == false) {
                     localizationDataDictionary.Add(name, new TranslationData(name, false, 0));
                 }
             }
             foreach (InformationType go in Enum.GetValues(typeof(InformationType))) {
-                string name = typeof(InformationType).Name + "/" + go.ToString();
-                if (idToTranslation.ContainsKey(name) == false) {
+                string name = nameof(InformationType) + "/" + go.ToString();
+                if (_idToTranslation.ContainsKey(name) == false) {
                     localizationDataDictionary.Add(name, new TranslationData(name, false, 0));
                 }
             }
             foreach (StaticLanguageVariables go in Enum.GetValues(typeof(StaticLanguageVariables))) {
-                string name = typeof(StaticLanguageVariables).Name + "/" + go.ToString();
-                if (idToTranslation.ContainsKey(name) == false) {
+                string name = nameof(StaticLanguageVariables) + "/" + go.ToString();
+                if (_idToTranslation.ContainsKey(name) == false) {
                     localizationDataDictionary.Add(name, new TranslationData(name, false, 0));
                 }
             }
             foreach (DiplomacyType go in Enum.GetValues(typeof(DiplomacyType))) {
-                string name = typeof(DiplomacyType).Name + "/" + go.ToString();
-                if (idToTranslation.ContainsKey(name) == false) {
+                string name = nameof(DiplomacyType) + "/" + go.ToString();
+                if (_idToTranslation.ContainsKey(name) == false) {
                     localizationDataDictionary.Add(name, new TranslationData(name, false, 0));
                 }
             }
             foreach (FogOfWarStyle go in Enum.GetValues(typeof(FogOfWarStyle))) {
-                string name = typeof(FogOfWarStyle).Name + "/" + go.ToString();
-                if (idToTranslation.ContainsKey(name) == false) {
+                string name = nameof(FogOfWarStyle) + "/" + go.ToString();
+                if (_idToTranslation.ContainsKey(name) == false) {
                     localizationDataDictionary.Add(name, new TranslationData(name, false, 0));
                 }
             }
             foreach (MapErrorMessage go in Enum.GetValues(typeof(MapErrorMessage))) {
-                string name = typeof(MapErrorMessage).Name + "/" + go.ToString();
-                if (idToTranslation.ContainsKey(name) == false) {
+                string name = nameof(MapErrorMessage) + "/" + go.ToString();
+                if (_idToTranslation.ContainsKey(name) == false) {
                     localizationDataDictionary.Add(name, new TranslationData(name, false, 0));
                 }
             }
-            if (requiredLocalizationData == null)
-                requiredLocalizationData = new List<TranslationData>(localizationDataDictionary.Values);
+            if (_requiredLocalizationData == null)
+                _requiredLocalizationData = new List<TranslationData>(localizationDataDictionary.Values);
             else
-                requiredLocalizationData.AddRange(localizationDataDictionary.Values);
-            requiredLocalizationData.OrderBy(x => x.id);
+                _requiredLocalizationData.AddRange(localizationDataDictionary.Values);
+            _requiredLocalizationData = _requiredLocalizationData.OrderBy(x => x.id).ToList();
             //#endif //Unity_Editor
             LocalizationsToFile = new Dictionary<string, string>();
             string fullpath = Path.Combine(ConstantPathHolder.StreamingAssets, GameData.DataLocation, LocalizationXMLDirectory);
-            string[] allLocalizationsFiles = Directory.GetFiles(fullpath, localizationFilePrefix
-                                                                        + "*" + localizationFileType);
+            string[] allLocalizationsFiles = Directory.GetFiles(fullpath, LocalizationFilePrefix
+                                                                        + "*" + LocalizationFileType);
             //Check the files if they are readable
             foreach (string file in allLocalizationsFiles) {
                 XmlDocument xmlDoc = new XmlDocument();
@@ -157,31 +157,24 @@ namespace Andja.Controller {
                 return new List<string> {"No Hint list was found for selected Language.", "Do not be afraid. This does not interrupts the rest of the gameplay.", "Except of course their is more missing than that.", "Also never pet a burning dog."};
             }
             Hints hints = xml.Deserialize(new StringReader(File.ReadAllText(file))) as Hints;
-            if (hints == null || hints.hints == null) {
-                return new List<string>();
-            }
-            return new List<string>(hints.hints);
+            return hints?.hints == null ? new List<string>() : new List<string>(hints.hints);
         }
 
         public TranslationData GetTranslationData(string name) {
-            if (idToTranslation.ContainsKey(name) == false) {
-                //Debug.LogWarning("Translation missing for " + name);
-                return null;
-            }
-            return idToTranslation[name];
+            return _idToTranslation.ContainsKey(name) == false ? null : _idToTranslation[name];
         }
 
         public TranslationData GetTranslationData(StaticLanguageVariables val) {
-            return GetTranslationData(typeof(StaticLanguageVariables).Name +"/"+ val.ToString());
+            return GetTranslationData(nameof(StaticLanguageVariables) +"/"+ val.ToString());
         }
         public TranslationData GetTranslationData(InformationType val) {
-            return GetTranslationData(typeof(InformationType).Name + "/" + val.ToString());
+            return GetTranslationData(nameof(InformationType) + "/" + val.ToString());
         }
         public TranslationData GetTranslationData(DiplomacyType val) {
-            return GetTranslationData(typeof(DiplomacyType).Name + "/" + val.ToString());
+            return GetTranslationData(nameof(DiplomacyType) + "/" + val.ToString());
         }
         public void AddTranslationData(TranslationData data) {
-            requiredLocalizationData.Add(data);
+            _requiredLocalizationData.Add(data);
         }
 
         public void ChangeLanguage(string language) {
@@ -192,24 +185,24 @@ namespace Andja.Controller {
             selectedLanguage = language;
             LoadLocalization(LocalizationsToFile[selectedLanguage]);
             PrototypController.Instance?.ReloadLanguage();
-            cbLanguageChange?.Invoke();
+            _cbLanguageChange?.Invoke();
         }
 
         public void RegisterLanguageChange(Action callbackfunc) {
-            cbLanguageChange += callbackfunc;
+            _cbLanguageChange += callbackfunc;
         }
 
         public void UnregisterLanguageChange(Action callbackfunc) {
-            cbLanguageChange -= callbackfunc;
+            _cbLanguageChange -= callbackfunc;
         }
 
-        private void OnDestroy() {
+        public void OnDestroy() {
             if (Application.isEditor) {
                 FileStream file = File.Create(Path.Combine(Application.dataPath.Replace("/Assets", ""), "Empty" + "-ui.loc"));
                 XmlSerializer xml = new XmlSerializer(typeof(UILanguageLocalizations));
                 UILanguageLocalizations missing = new UILanguageLocalizations() {
                     language = "Empty",
-                    localizationData = requiredLocalizationData.ToArray()
+                    localizationData = _requiredLocalizationData.ToArray()
                 };
                 xml.Serialize(file, missing);
             }
@@ -221,7 +214,7 @@ namespace Andja.Controller {
             UILanguageLocalizations uiLoc = xml.Deserialize(new StringReader(File.ReadAllText(file))) as UILanguageLocalizations;
             //idToTranslation.Clear();
             foreach (TranslationData data in uiLoc.localizationData) {
-                idToTranslation[data.id] = data;
+                _idToTranslation[data.id] = data;
             }
         }
 
@@ -240,8 +233,8 @@ namespace Andja.Controller {
             List<string> labels = new List<string>();
             foreach (Enum go in Enum.GetValues(EnumType)) {
                 string name = EnumType.Name + "/" + go.ToString();
-                if (idToTranslation.ContainsKey(name)) {
-                    labels.Add(idToTranslation[name].translation);
+                if (_idToTranslation.ContainsKey(name)) {
+                    labels.Add(_idToTranslation[name].translation);
                 }
                 else {
                     labels.Add("Missing Translation " + go.ToString());
@@ -253,8 +246,8 @@ namespace Andja.Controller {
         internal string[] GetStrings(string[] languageValues) {
             List<string> labels = new List<string>();
             foreach (string go in languageValues) {
-                if (idToTranslation.ContainsKey(go)) {
-                    labels.Add(idToTranslation[go].translation);
+                if (_idToTranslation.ContainsKey(go)) {
+                    labels.Add(_idToTranslation[go].translation);
                 }
                 else {
                     labels.Add("Missing Translation " + go.ToString());
@@ -263,9 +256,9 @@ namespace Andja.Controller {
             return labels.ToArray();
         }
         internal string GetStaticVariables(StaticLanguageVariables paras) {
-            string name = typeof(StaticLanguageVariables).Name + "/" + paras.ToString();
-            if (idToTranslation.ContainsKey(name)) {
-                return (idToTranslation[name].translation);
+            string name = nameof(StaticLanguageVariables) + "/" + paras.ToString();
+            if (_idToTranslation.ContainsKey(name)) {
+                return (_idToTranslation[name].translation);
             }
             else {
                 return ("Missing Translation " + paras);
@@ -273,11 +266,7 @@ namespace Andja.Controller {
         }
 
         internal string[] GetStaticVariables(params StaticLanguageVariables[] paras) {
-            List<string> labels = new List<string>();
-            foreach (StaticLanguageVariables p in paras) {
-                labels.Add(GetStaticVariables(p));
-            }
-            return labels.ToArray();
+            return paras.Select(GetStaticVariables).ToArray();
         }
         /// <summary>
         /// Message should be either an enum or string.
@@ -292,8 +281,8 @@ namespace Andja.Controller {
             } else {
                 name = message.ToString();
             }
-            if (idToTranslation.ContainsKey(name)) {
-                return (idToTranslation[name].translation);
+            if (_idToTranslation.ContainsKey(name)) {
+                return (_idToTranslation[name].translation);
             }
             else {
                 return ("Missing Translation " + message);

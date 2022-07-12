@@ -19,35 +19,26 @@ namespace Andja.Controller {
     public class SaveController : MonoBehaviour {
         public static SaveController Instance;
 
-        private string quickSaveName = "quicksave";//TODO CHANGE THIS TO smth not hardcoded
+        private string _quickSaveName = "quicksave";//TODO CHANGE THIS TO smth not hardcoded
         public static bool IsLoadingSave = false;
         public bool IsDone = false;
 
-        public float loadingPercantage = 0;
-        private const string saveMetaFileEnding = ".meta";
-        private const string saveFileEnding = ".sav";
-        public const string islandMetaFileEnding = ".islmeta"; // TODO: thing of a better extension
-        public const string islandFileEnding = ".isl";
-        public const string islandImageEnding = ".png";
-        public const string saveFileScreenShotEnding = ".jpg";
+        public float loadingPercentage = 0;
+        private const string SaveMetaFileEnding = ".meta";
+        private const string SaveFileEnding = ".sav";
+        public const string IslandMetaFileEnding = ".islmeta"; // TODO: thing of a better extension
+        public const string IslandFileEnding = ".isl";
+        public const string IslandImageEnding = ".png";
+        public const string SaveFileScreenShotEnding = ".jpg";
 
-        private static List<Worker> loadWorker;
+        private static List<Worker> _loadWorker;
         public static bool DebugModeSave = true;
         public static string SaveName = "unsaved";
 
         public const string SaveFileVersion = "0.1.13";
         public const string IslandSaveFileVersion = "i_0.0.3";
-        private float timeToAutoSave = AutoSaveInterval;
+        private float _timeToAutoSave = AutoSaveInterval;
         private const float AutoSaveInterval = 15 * 60; // every 15 min -- TODO: add game option to change this
-        GameData GDH => GameData.Instance;
-        WorldController WC => WorldController.Instance;
-        EventController EC => EventController.Instance;
-        CameraController CC => CameraController.Instance;
-        IPlayerController PC => PlayerController.Instance;
-        UIController UI => UIController.Instance;
-        FogOfWarController FW => FogOfWarController.Instance;
-
-        
 
         /// <summary>
         /// Returns currently metadata being loaded or last tried to be loaded. 
@@ -55,10 +46,8 @@ namespace Andja.Controller {
         /// <returns></returns>
         public static string GetMetaDataFile(string file = null) {
             string path = EditorController.IsEditor ? GetIslandSavePath() : GetSaveGamesPath();
-            string finalMetaStatePath = Path.Combine(path, (file ?? GameData.Instance.LoadSaveGame) + saveMetaFileEnding);
-            if (File.Exists(finalMetaStatePath) == false)
-                return null;
-            return File.ReadAllText(finalMetaStatePath);
+            string finalMetaStatePath = Path.Combine(path, (file ?? GameData.Instance.LoadSaveGame) + SaveMetaFileEnding);
+            return File.Exists(finalMetaStatePath) == false ? null : File.ReadAllText(finalMetaStatePath);
         }
         /// <summary>
         /// Returns currently savegame being loaded or last tried to be loaded. 
@@ -66,29 +55,27 @@ namespace Andja.Controller {
         /// <returns></returns>
         public static string GetSaveFile(string file = null) {
             string path = EditorController.IsEditor ? GetIslandSavePath() : GetSaveGamesPath();
-            string finalSaveStatePath = Path.Combine(path, (file ?? GameData.Instance.LoadSaveGame) + saveFileEnding);
-            if (File.Exists(finalSaveStatePath) == false)
-                return null;
-            return File.ReadAllText(finalSaveStatePath);
+            string finalSaveStatePath = Path.Combine(path, (file ?? GameData.Instance.LoadSaveGame) + SaveFileEnding);
+            return File.Exists(finalSaveStatePath) == false ? null : File.ReadAllText(finalSaveStatePath);
         }
 
-        private float lastSaved = -1;
+        private float _lastSaved = -1;
 
-        public bool UnsavedProgress => lastSaved != GameData.Instance.playTime;
+        public bool UnsavedProgress => Math.Abs(_lastSaved - GameData.Instance.playTime) > 0.1;
 
-        private void Awake() {
+        public void Awake() {
             if (Instance != null) {
                 Debug.LogError("There should never be two SaveController.");
             }
             Instance = this;
-            lastSaved = -1;
+            _lastSaved = -1;
         }
 
-        private void Start() {
-            if (GDH != null && GDH.LoadSaveGame != null && GDH.LoadSaveGame.Length > 0) {
-                Debug.Log("LOADING SAVEGAME " + GDH.LoadSaveGame);
+        public void Start() {
+            if (GameData.Instance != null && GameData.Instance.LoadSaveGame != null && GameData.Instance.LoadSaveGame.Length > 0) {
+                Debug.Log("LOADING SAVEGAME " + GameData.Instance.LoadSaveGame);
                 IsLoadingSave = true;
-                this.StartThrowingCoroutine(LoadGameState(GDH.LoadSaveGame),(ex)=> {
+                this.StartThrowingCoroutine(LoadGameState(GameData.Instance.LoadSaveGame),(ex)=> {
                     Andja.UI.Menu.MainMenuInfo.AddInfo(
                     Andja.UI.Menu.MainMenuInfo.InfoTypes.SaveFileError, ex.Message+": " +ex.StackTrace);
                     SceneUtil.ChangeToMainMenuScreen(true);
@@ -98,11 +85,11 @@ namespace Andja.Controller {
             else {
                 IsLoadingSave = false;
                 if (EditorController.IsEditor == false)
-                    GDH?.GenerateMap();//just generate new map
+                    GameData.Instance?.GenerateMap();//just generate new map
             }
         }
 
-        internal static string GetLastSaveName() {
+        public static string GetLastSaveName() {
             List<SaveMetaData> saveMetaDatas = new List<SaveMetaData>(GetMetaFiles(false));
             if (saveMetaDatas.Count == 0)
                 return null;
@@ -116,11 +103,11 @@ namespace Andja.Controller {
             return saveMetaDatas[value].saveName;
         }
 
-        internal void QuickSave() {
-            SaveGameState(quickSaveName);
+        public void QuickSave() {
+            SaveGameState(_quickSaveName);
         }
 
-        internal void QuickLoad() {
+        public void QuickLoad() {
             //TODO: NEEDS CHECK
             LoadWorld(true);
         }
@@ -128,37 +115,37 @@ namespace Andja.Controller {
         public void LoadWorld(bool quickload = false) {
             Debug.Log("LoadWorld button was clicked.");
             if (quickload) {
-                GameData.loadSaveGameName = quickSaveName;
+                GameData.loadSaveGameName = _quickSaveName;
             }
             // set to loadscreen to reset all data (and purge old references)
             SceneUtil.ChangeToGameStateLoadScreen(true, true);
         }
 
         public void Update() {
-            if (timeToAutoSave > 0) {
-                timeToAutoSave -= Time.deltaTime;
+            if (_timeToAutoSave > 0) {
+                _timeToAutoSave -= Time.deltaTime;
                 return;
             }
-            timeToAutoSave = AutoSaveInterval;
+            _timeToAutoSave = AutoSaveInterval;
             if (EditorController.IsEditor == false)
                 SaveGameState();
             else
                 SaveIslandState();
         }
 
-        internal bool DoesGameSaveExist(string name) {
-            return File.Exists(Path.Combine(GetSaveGamesPath(), name + saveFileEnding));
+        public bool DoesGameSaveExist(string savename) {
+            return File.Exists(Path.Combine(GetSaveGamesPath(), savename + SaveFileEnding));
         }
 
-        internal static bool DoesEditorSaveExist(string name) {
-            return File.Exists(Path.Combine(GetIslandSavePath(), name + islandFileEnding));
+        public static bool DoesEditorSaveExist(string name) {
+            return File.Exists(Path.Combine(GetIslandSavePath(), name + IslandFileEnding));
         }
 
-        public void DeleteSaveGame(string name) {
-            string filePath = Path.Combine(GetSaveGamesPath(), name);
-            string saveStatePath = filePath + saveFileEnding;
-            string finalMetaStatePath = filePath + saveMetaFileEnding;
-            string fileImagePath = filePath + saveFileScreenShotEnding;
+        public void DeleteSaveGame(string savename) {
+            string filePath = Path.Combine(GetSaveGamesPath(), savename);
+            string saveStatePath = filePath + SaveFileEnding;
+            string finalMetaStatePath = filePath + SaveMetaFileEnding;
+            string fileImagePath = filePath + SaveFileScreenShotEnding;
             try {
                 File.Delete(saveStatePath);
             }
@@ -179,15 +166,15 @@ namespace Andja.Controller {
             }
         }
 
-        public void SaveIslandState(string name = "autosave") {
-            Andja.UI.Menu.MainMenu.SetLastPlayed(name, true);
-            string folderPath = GetIslandSavePath(name);
-            string islandStatePath = Path.Combine(folderPath, name + islandFileEnding);
-            string finalMetaStatePath = Path.Combine(folderPath, name + islandMetaFileEnding);
-            SaveName = name;
+        public void SaveIslandState(string savename = "autosave") {
+            Andja.UI.Menu.MainMenu.SetLastPlayed(savename, true);
+            string folderPath = GetIslandSavePath(savename);
+            string islandStatePath = Path.Combine(folderPath, savename + IslandFileEnding);
+            string finalMetaStatePath = Path.Combine(folderPath, savename + IslandMetaFileEnding);
+            SaveName = savename;
             SaveMetaData metaData = new SaveMetaData {
                 safefileversion = IslandSaveFileVersion,
-                saveName = name,
+                saveName = savename,
                 saveTime = DateTime.Now,
                 climate = EditorController.climate,
                 size = EditorController.Instance.IslandSize
@@ -225,7 +212,7 @@ namespace Andja.Controller {
         }
 
         public EditorController.SaveIsland GetIslandSave(string name) {
-            string saveStatePath = Path.Combine(GetIslandSavePath(name), name + islandFileEnding);
+            string saveStatePath = Path.Combine(GetIslandSavePath(name), name + IslandFileEnding);
 
             SaveMetaData metaData = JsonConvert.DeserializeObject<SaveMetaData>(GetIslandMetaFile(name), new JsonSerializerSettings {
                 NullValueHandling = NullValueHandling.Ignore,
@@ -261,19 +248,13 @@ namespace Andja.Controller {
             state.Name = name;
             return state;
         }
-        internal static string GetIslandSaveFile(string name) {
-            string saveStatePath = Path.Combine(GetIslandSavePath(name), name + islandFileEnding);
-            if(File.Exists(saveStatePath)) {
-                return File.ReadAllText(saveStatePath);
-            }
-            return null;
+        public static string GetIslandSaveFile(string name) {
+            string saveStatePath = Path.Combine(GetIslandSavePath(name), name + IslandFileEnding);
+            return File.Exists(saveStatePath) ? File.ReadAllText(saveStatePath) : null;
         }
-        internal static string GetIslandMetaFile(string name) {
-            string finalMetaStatePath = Path.Combine(GetIslandSavePath(name), name + islandMetaFileEnding);
-            if (File.Exists(finalMetaStatePath)) {
-                return File.ReadAllText(finalMetaStatePath);
-            }
-            return null;
+        public static string GetIslandMetaFile(string name) {
+            string finalMetaStatePath = Path.Combine(GetIslandSavePath(name), name + IslandMetaFileEnding);
+            return File.Exists(finalMetaStatePath) ? File.ReadAllText(finalMetaStatePath) : null;
         }
         public void LoadIsland(string name) {
             Andja.UI.Menu.MainMenu.SetLastPlayed(name, true);
@@ -284,63 +265,55 @@ namespace Andja.Controller {
             string path = Path.Combine(ConstantPathHolder.StreamingAssets, "Islands");
             if (Directory.Exists(path) == false)
                 Directory.CreateDirectory(path);
-            if (name == null)
-                return path;
-            return Path.Combine(path, name);
+            return name == null ? path : Path.Combine(path, name);
         }
 
         public static byte[] Zip(string str) {
             var bytes = System.Text.Encoding.UTF8.GetBytes(str);
-            using (var msi = new MemoryStream(bytes))
-            using (var mso = new MemoryStream()) {
-                using (var gs = new GZipStream(mso, CompressionMode.Compress)) {
-                    CopyTo(msi, gs);
-                }
-
-                return mso.ToArray();
+            using var msi = new MemoryStream(bytes);
+            using var mso = new MemoryStream();
+            using (var gs = new GZipStream(mso, CompressionMode.Compress)) {
+                CopyTo(msi, gs);
             }
+            return mso.ToArray();
         }
 
-        internal static Sprite GetSaveFileScreenShot(string saveName) {
-            string filePath = Path.Combine(GetSaveGamesPath(), saveName + saveFileScreenShotEnding);
-            byte[] fileData;
+        public static Sprite GetSaveFileScreenShot(string saveName) {
+            string filePath = Path.Combine(GetSaveGamesPath(), saveName + SaveFileScreenShotEnding);
             if (File.Exists(filePath) == false) {
                 Debug.Log("Missing Thumbnail for savegame " + filePath);
                 return null;
             }
-            fileData = File.ReadAllBytes(filePath);
+            var fileData = File.ReadAllBytes(filePath);
             Texture2D tex = new Texture2D(2, 2);
             tex.LoadImage(fileData); //..this will auto-resize the texture dimensions.
             return Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), Vector2.zero);
         }
 
-        internal static bool IslandImageExists(string name) {
-            return File.Exists(Path.Combine(GetIslandSavePath(name), name + islandImageEnding));
+        public static bool IslandImageExists(string name) {
+            return File.Exists(Path.Combine(GetIslandSavePath(name), name + IslandImageEnding));
         }
 
         public static Texture2D LoadIslandImage(string name, string nameAddOn = "") {
             if (IslandImageExists(name) == false) {
                 return null;
             }
-            Texture2D tex = null;
-            byte[] fileData;
-            string filePath = Path.Combine(GetIslandSavePath(name), name + nameAddOn + islandImageEnding);
+            string filePath = Path.Combine(GetIslandSavePath(name), name + nameAddOn + IslandImageEnding);
             if (File.Exists(filePath) == false)
                 return null;
-            fileData = File.ReadAllBytes(filePath);
-            tex = new Texture2D(2, 2);
+            var fileData = File.ReadAllBytes(filePath);
+            var tex = new Texture2D(2, 2);
             tex.LoadImage(fileData); //..this will auto-resize the texture dimensions.
             return tex;
         }
 
         public static string Unzip(byte[] bytes) {
-            using (var msi = new MemoryStream(bytes))
-            using (var mso = new MemoryStream()) {
-                using (var gs = new GZipStream(msi, CompressionMode.Decompress)) {
-                    CopyTo(gs, mso);
-                }
-                return System.Text.Encoding.UTF8.GetString(mso.ToArray());
+            using var msi = new MemoryStream(bytes);
+            using var mso = new MemoryStream();
+            using (var gs = new GZipStream(msi, CompressionMode.Decompress)) {
+                CopyTo(gs, mso);
             }
+            return System.Text.Encoding.UTF8.GetString(mso.ToArray());
         }
 
         public static void CopyTo(Stream src, Stream dest) {
@@ -355,7 +328,7 @@ namespace Andja.Controller {
 
         public static Dictionary<KeyValuePair<Climate, Size>, List<string>> GetIslands() {
             Dictionary<KeyValuePair<Climate, Size>, List<string>> islands = new Dictionary<KeyValuePair<Climate, Size>, List<string>>();
-            string[] filePaths = Directory.GetFiles(GetIslandSavePath(), "*" + islandMetaFileEnding, SearchOption.AllDirectories);
+            string[] filePaths = Directory.GetFiles(GetIslandSavePath(), "*" + IslandMetaFileEnding, SearchOption.AllDirectories);
             foreach (string file in filePaths) {
                 SaveMetaData metaData;
                 try {
@@ -383,14 +356,14 @@ namespace Andja.Controller {
             return islands;
         }
 
-        internal static void SaveIslandImage(string name, byte[] imagePNG, string addon = "") {
-            string path = Path.Combine(GetIslandSavePath(name), name + addon + islandImageEnding);
-            File.WriteAllBytes(path, imagePNG);
+        public static void SaveIslandImage(string name, byte[] imagePng, string addOn = "") {
+            string path = Path.Combine(GetIslandSavePath(name), name + addOn + IslandImageEnding);
+            File.WriteAllBytes(path, imagePng);
         }
 
         public static SaveMetaData[] GetMetaFiles(bool editor) {
             string path = editor ? GetIslandSavePath() : GetSaveGamesPath();
-            string metaEnding = editor ? islandMetaFileEnding : saveMetaFileEnding;
+            string metaEnding = editor ? IslandMetaFileEnding : SaveMetaFileEnding;
             if (Directory.Exists(path) == false) {
                 Directory.CreateDirectory(path);
             }
@@ -426,22 +399,20 @@ namespace Andja.Controller {
             return saveMetaDatas.ToArray();
         }
 
-        private void OnDestroy() {
+        public void OnDestroy() {
             Instance = null;
         }
 
         public static void AddWorkerForLoad(Worker w) {
-            if (loadWorker == null) {
-                loadWorker = new List<Worker>();
-            }
-            loadWorker.Add(w);
+            _loadWorker ??= new List<Worker>();
+            _loadWorker.Add(w);
         }
 
         public static List<Worker> GetLoadWorker() {
-            if (loadWorker == null)
+            if (_loadWorker == null)
                 return null;
-            List<Worker> tempLoadWorker = new List<Worker>(loadWorker);
-            loadWorker = null;
+            List<Worker> tempLoadWorker = new List<Worker>(_loadWorker);
+            _loadWorker = null;
             return tempLoadWorker;
         }
 
@@ -450,28 +421,28 @@ namespace Andja.Controller {
             return Path.Combine(ConstantPathHolder.ApplicationDataPath.Replace("/Assets", ""), "Saves");
         }
 
-        public string[] SaveGameState(string name = "autosave", bool returnSaveInstead = false) {
-            SaveName = name;
-            Andja.UI.Menu.MainMenu.SetLastPlayed(name);
+        public string[] SaveGameState(string savename = "autosave", bool returnSaveInstead = false) {
+            SaveName = savename;
+            Andja.UI.Menu.MainMenu.SetLastPlayed(savename);
             //first pause the world so nothing changes and we can save an
-            bool wasPaused = WC.IsPaused;
+            bool wasPaused = WorldController.Instance.IsPaused;
             if (wasPaused == false) {
-                WC.IsPaused = true;
+                WorldController.Instance.IsPaused = true;
             }
-            string filePath = Path.Combine(GetSaveGamesPath(), name);
-            string saveStatePath = filePath + saveFileEnding;
-            string finalMetaStatePath = filePath + saveMetaFileEnding;
+            string filePath = Path.Combine(GetSaveGamesPath(), savename);
+            string saveStatePath = filePath + SaveFileEnding;
+            string finalMetaStatePath = filePath + SaveMetaFileEnding;
 
             SaveState savestate = new SaveState {
-                gamedata = GDH.GetSaveGameData().Serialize(false),
+                gamedata = GameData.Instance.GetSaveGameData().Serialize(false),
                 linkedsave = new LinkedSaves(
-                    PC.GetSavePlayerData(),
-                    WC.GetSaveWorldData(),
-                    EC.GetSaveGameEventData()
+                    PlayerController.Instance.GetSavePlayerData(),
+                    WorldController.Instance.GetSaveWorldData(),
+                    EventController.Instance.GetSaveGameEventData()
                     ).Serialize(true),
-                camera = CC.GetSaveCamera().Serialize(false),
-                ui = UI.GetUISaveData().Serialize(false),
-                fw = FogOfWarController.FogOfWarOn ? FW.GetFogOfWarSave().Serialize(false) : null,
+                camera = CameraController.Instance.GetSaveCamera().Serialize(false),
+                ui = UIController.Instance.GetUISaveData().Serialize(false),
+                fw = FogOfWarController.FogOfWarOn ? FogOfWarController.Instance.GetFogOfWarSave().Serialize(false) : null,
             };
 
             string save = "";
@@ -495,11 +466,11 @@ namespace Andja.Controller {
 
             SaveMetaData metaData = new SaveMetaData {
                 safefileversion = SaveFileVersion,
-                saveName = name,
+                saveName = savename,
                 saveTime = DateTime.Now,
-                saveFileType = GDH.saveFileType,
-                playTime = GDH.playTime,
-                difficulty = GDH.difficulty,
+                saveFileType = GameData.Instance.saveFileType,
+                playTime = GameData.Instance.playTime,
+                difficulty = GameData.Instance.difficulty,
                 isInDebugMode = DebugModeSave,
                 usedMods = ModLoader.GetActiveMods()
             };
@@ -515,11 +486,11 @@ namespace Andja.Controller {
 
             if(returnSaveInstead) {
                 if (wasPaused == false) {
-                    WC.IsPaused = false;
+                    WorldController.Instance.IsPaused = false;
                 }
                 return new string[] { metadata, save };
             }
-            File.WriteAllBytes(filePath + saveFileScreenShotEnding, GetSaveGameThumbnail());
+            File.WriteAllBytes(filePath + SaveFileScreenShotEnding, GetSaveGameThumbnail());
             if (Application.isEditor) {
                 File.WriteAllText(saveStatePath, save);
             }
@@ -527,22 +498,22 @@ namespace Andja.Controller {
                 File.WriteAllBytes(saveStatePath, Zip(save));
             }
             File.WriteAllText(finalMetaStatePath, metadata);
-            lastSaved = GDH.playTime;
+            _lastSaved = GameData.Instance.playTime;
             if (wasPaused == false) {
-                WC.IsPaused = false;
+                WorldController.Instance.IsPaused = false;
             }
             return null;
         }
 
-        public IEnumerator LoadGameState(string name = "autosave") {
-            if (DoesGameSaveExist(name) == false) {
+        public IEnumerator LoadGameState(string savename = "autosave") {
+            if (DoesGameSaveExist(savename) == false) {
                 yield return null;
             }
-            Andja.UI.Menu.MainMenu.SetLastPlayed(name);
-            SaveName = name;
+            Andja.UI.Menu.MainMenu.SetLastPlayed(savename);
+            SaveName = savename;
             //first pause the world so nothing changes and we can save an
-            string finalSaveStatePath = Path.Combine(GetSaveGamesPath(), name + saveFileEnding);
-            string finalMetaStatePath = Path.Combine(GetSaveGamesPath(), name + saveMetaFileEnding);
+            string finalSaveStatePath = Path.Combine(GetSaveGamesPath(), savename + SaveFileEnding);
+            string finalMetaStatePath = Path.Combine(GetSaveGamesPath(), savename + SaveMetaFileEnding);
             SaveMetaData metaData = JsonConvert.DeserializeObject<SaveMetaData>(File.ReadAllText(finalMetaStatePath), new JsonSerializerSettings {
                 NullValueHandling = NullValueHandling.Ignore,
                 PreserveReferencesHandling = PreserveReferencesHandling.Objects,
@@ -553,19 +524,18 @@ namespace Andja.Controller {
                 Debug.LogError("Mismatch of SaveFile Versions " + metaData.safefileversion + " & " + SaveFileVersion);
                 yield break;
             }
-            List<Mod> mods = ModLoader.AvaibleMods();
-            if (mods != null && metaData.usedMods != null) {
-                foreach (string mod in metaData.usedMods) {
-                    if (mods.Exists((x) => x.name == mod) == false) {
-                        Debug.LogError("Missing Mod " + mod);
-                        yield break;
-                    }
+            List<Mod> availableMods = ModLoader.AvaibleMods();
+            if (availableMods != null && metaData.usedMods != null) {
+                string missingMod = metaData.usedMods.Find((x) => availableMods.Exists(y => x == y.name));
+                if (missingMod != null) {
+                    Debug.LogError("Missing Mod " + missingMod);
+                    yield break;
                 }
             }
 
             DebugModeSave = metaData.isInDebugMode;
-            SaveState state = null;
-            string save = "";
+            SaveState state;
+            string save;
             try {
                 save = Unzip(File.ReadAllBytes(finalSaveStatePath));
             }
@@ -591,15 +561,15 @@ namespace Andja.Controller {
                 });
             }
             PrototypController.Instance.LoadFromXML();
-            GDH.LoadGameData(BaseSaveData.Deserialize<GameDataSave>(state.gamedata));
-            lastSaved = GDH.playTime;
-            loadingPercantage += 0.05f; // 5
+            GameData.Instance.LoadGameData(BaseSaveData.Deserialize<GameDataSave>(state.gamedata));
+            _lastSaved = GameData.Instance.playTime;
+            loadingPercentage += 0.05f; // 5
             LinkedSaves linkedSaveData = BaseSaveData.Deserialize<LinkedSaves>(state.linkedsave);
             PlayerControllerSave pcs = linkedSaveData.player;
-            loadingPercantage += 0.15f; // 15
+            loadingPercentage += 0.15f; // 15
             yield return null;
             WorldSaveState wss = linkedSaveData.world;
-            loadingPercantage += 0.30f; // 50
+            loadingPercentage += 0.30f; // 50
             yield return null;
             FogOfWarSave fws = null;
             if (string.IsNullOrEmpty(state.fw)) {
@@ -608,33 +578,33 @@ namespace Andja.Controller {
             else {
                 fws = BaseSaveData.Deserialize<FogOfWarSave>(state.fw);
             }
-            loadingPercantage += 0.05f; // 50
+            loadingPercentage += 0.05f; // 50
             yield return null;
             GameEventSave ges = linkedSaveData.events;
-            loadingPercantage += 0.1f; // 65
+            loadingPercentage += 0.1f; // 65
             yield return null;
             CameraSave cs = BaseSaveData.Deserialize<CameraSave>(state.camera);
-            loadingPercantage += 0.025f; // 67.5
+            loadingPercentage += 0.025f; // 67.5
             UIControllerSave uics = BaseSaveData.Deserialize<UIControllerSave>(state.ui);
-            loadingPercantage += 0.025f; // 70
+            loadingPercentage += 0.025f; // 70
             yield return null;
             while (MapGenerator.Instance.IsDone == false)
                 yield return null;
             PlayerController.Instance.SetPlayerData(pcs);
-            loadingPercantage += 0.05f; // 75
+            loadingPercentage += 0.05f; // 75
             yield return null;
             WorldController.Instance.SetWorldData(wss);
-            loadingPercantage += 0.15f; // 90
+            loadingPercentage += 0.15f; // 90
             yield return null;
             EventController.Instance.SetGameEventData(ges);
-            loadingPercantage += 0.05f; // 95
+            loadingPercentage += 0.05f; // 95
             yield return null;
             CameraController.Instance.SetSaveCameraData(cs);
             FogOfWarController.SetSaveFogData(fws);
-            loadingPercantage += 0.025f; // 97.5
+            loadingPercentage += 0.025f; // 97.5
             yield return null;
             UIController.SetSaveUIData(uics);
-            loadingPercantage += 0.025f; // 100
+            loadingPercentage += 0.025f; // 100
             yield return null;
             Debug.Log("LOAD ENDED");
             IsDone = true;
@@ -643,25 +613,25 @@ namespace Andja.Controller {
 
         public byte[] GetSaveGameThumbnail() {
             Camera currentCamera = Camera.main;
-            float ratio = Screen.currentResolution.width / Screen.currentResolution.height;
-            int widht = 190;
+            float ratio = Screen.currentResolution.width / (float)Screen.currentResolution.height;
+            int width = 190;
             int height = 90;
             if (ratio <= 1.34) {
-                widht = 200;
+                width = 200;
                 height = 150;
             }
             else
             if (ratio <= 1.61) {
-                widht = 190;
+                width = 190;
                 height = 100;
             }
             else
             if (ratio >= 1.77) {
-                widht = 190;
+                width = 190;
                 height = 90;
             }
 
-            RenderTexture rt = new RenderTexture(widht, height, 24, RenderTextureFormat.ARGB32) {
+            RenderTexture rt = new RenderTexture(width, height, 24, RenderTextureFormat.ARGB32) {
                 antiAliasing = 4
             };
 
@@ -670,13 +640,13 @@ namespace Andja.Controller {
             currentCamera.Render();//
 
             //Create the blank texture container
-            Texture2D thumb = new Texture2D(widht, height, TextureFormat.RGB24, false);
+            Texture2D thumb = new Texture2D(width, height, TextureFormat.RGB24, false);
 
             //Assign rt as the main render texture, so everything is drawn at the higher resolution
             RenderTexture.active = rt;
 
             //Read the current render into the texture container, thumb
-            thumb.ReadPixels(new Rect(0, 0, widht, height), 0, 0, false);
+            thumb.ReadPixels(new Rect(0, 0, width, height), 0, 0, false);
 
             byte[] bytes = thumb.EncodeToJPG(90);
 
@@ -727,12 +697,12 @@ namespace Andja.Controller {
     [Serializable]
     public abstract class BaseSaveData {
 
-        public string Serialize(bool PreserverReferences) {
+        public string Serialize(bool preserverReferences) {
             Formatting formatting = SaveController.DebugModeSave ? Formatting.Indented : Formatting.None;
             string save = JsonConvert.SerializeObject(this, formatting,
                     new JsonSerializerSettings {
                         NullValueHandling = NullValueHandling.Ignore,
-                        PreserveReferencesHandling = PreserverReferences ?
+                        PreserveReferencesHandling = preserverReferences ?
                                             PreserveReferencesHandling.Objects : PreserveReferencesHandling.None,
                         ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
                         TypeNameHandling = TypeNameHandling.Auto,

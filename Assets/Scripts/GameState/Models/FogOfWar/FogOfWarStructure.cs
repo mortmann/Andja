@@ -43,7 +43,7 @@ namespace Andja.FogOfWar {
             sr.sprite = StructureSpriteController.Instance.GetSprite(Data.lastShownSprite);
         }
         public void LoadStructure() {
-            this.structure = BuildController.Instance.buildIdToStructure[Data.buildID];
+            this.structure = BuildController.Instance.BuildIdToStructure[Data.buildID];
             ShowLastShown();
         }
         public void LoadStructureDestroyed() {
@@ -106,8 +106,8 @@ namespace Andja.FogOfWar {
             if(data.buildID == 0) {
                 LoadStructureDestroyed();
             } else
-            if(BuildController.Instance.buildIdToStructure.ContainsKey(data.buildID)) {
-                Link(BuildController.Instance.buildIdToStructure[data.buildID]);
+            if(BuildController.Instance.BuildIdToStructure.ContainsKey(data.buildID)) {
+                Link(BuildController.Instance.BuildIdToStructure[data.buildID]);
             }
         }
 

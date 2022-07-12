@@ -19,20 +19,20 @@ namespace Andja.Controller {
     /// </summary>
     public class BuildController : MonoBehaviour {
         public static BuildController Instance { get; protected set; }
-        protected BuildStateModes _buildState;
+        private BuildStateModes _buildState;
 
         /// <summary>
         /// Is the CurrentUser doing anything with BuildController.
         /// Triggers BuildStateChange when a diffrent value is assigned.
         /// </summary>
         public BuildStateModes BuildState {
-            get { return _buildState; }
+            get => _buildState;
             set {
                 if (_buildState == value) {
                     return;
                 }
                 _buildState = value;
-                cbBuildStateChange?.Invoke(_buildState);
+                _cbBuildStateChange?.Invoke(_buildState);
             }
         }
 
@@ -40,8 +40,8 @@ namespace Andja.Controller {
         /// Unique ID that gets assigned to a placed structure.
         /// Should start with one -- so 0 is unset
         /// </summary>
-        private uint buildID = 1;
-        private string settleStructureID = null;
+        private uint _buildId = 1;
+        private string _settleStructureId = null;
         /// <summary>
         /// Currently selected by the player to preview.
         /// </summary>
@@ -54,7 +54,7 @@ namespace Andja.Controller {
         public IReadOnlyDictionary<string, Structure> StructurePrototypes => PrototypController.Instance.StructurePrototypes;
 
         public List<Structure> LoadedStructures { get; private set; }
-        public Dictionary<uint, Structure> buildIdToStructure { get; private set; }
+        public Dictionary<uint, Structure> BuildIdToStructure { get; private set; }
         public bool AllStructuresEnabled { 
             get => allStructuresEnabled;
             set {
@@ -66,23 +66,23 @@ namespace Andja.Controller {
         /// <summary>
         /// Is called when any structure is build. 
         /// </summary>
-        private Action<Structure, bool> cbStructureCreated;
+        private Action<Structure, bool> _cbStructureCreated;
         /// <summary>
         /// Is called when any structure is destroyed. 
         /// </summary>
-        private Action<Structure, IWarfare> cbAnyStructureDestroyed;
+        private Action<Structure, IWarfare> _cbAnyStructureDestroyed;
         /// <summary>
         /// Is called when any new city is created.
         /// </summary>
-        private Action<City> cbCityCreated;
+        private Action<City> _cbCityCreated;
         /// <summary>
         /// Is called when any new city is destroyed.
         /// </summary>
-        private Action<City> cbAnyCityDestroyed;
+        private Action<City> _cbAnyCityDestroyed;
         /// <summary>
         /// Is called when any build state is changed.
         /// </summary>
-        private Action<BuildStateModes> cbBuildStateChange;
+        private Action<BuildStateModes> _cbBuildStateChange;
 
         public void Awake() {
             if (Instance != null) {
@@ -98,7 +98,7 @@ namespace Andja.Controller {
                 Debug.LogWarning("Cheats are activated.");
             }
             BuildState = BuildStateModes.None;
-            buildIdToStructure = new Dictionary<uint, Structure>();
+            BuildIdToStructure = new Dictionary<uint, Structure>();
         }
 
         internal void PlaceWorldGeneratedStructure(Dictionary<Tile, Structure> tileToStructure) {
@@ -108,13 +108,12 @@ namespace Andja.Controller {
                     tileToStructure.Remove(t);
                 }
             }
-            LoadedStructures = new List<Structure>(buildIdToStructure.Values);
+            LoadedStructures = new List<Structure>(BuildIdToStructure.Values);
         }
 
         public void SettleFromUnit(Unit buildUnit = null) {
-            if (settleStructureID == null)
-                settleStructureID = PrototypController.Instance.GetFirstLevelStructureIDForStructureType(typeof(WarehouseStructure));
-            StartStructureBuild(settleStructureID, buildUnit);
+            _settleStructureId ??= PrototypController.Instance.GetFirstLevelStructureIDForStructureType(typeof(WarehouseStructure));
+            StartStructureBuild(_settleStructureId);
         }
         /// <summary>
         /// Destroys ALL tiles to the given Tiles if allowed. 
@@ -144,10 +143,11 @@ namespace Andja.Controller {
             if (tile.Structure == null) {
                 return;
             }
-            if (isGod || tile.Structure.PlayerNumber == destroyPlayer.Number) {
-                if(tile.Structure.Demolish(isGod) == false) {
-                    MouseController.Instance.ShowError(MapErrorMessage.CanNotDestroy);
-                }
+
+            if (isGod == false && tile.Structure.PlayerNumber != destroyPlayer.Number) return;
+
+            if(tile.Structure.Demolish(isGod) == false) {
+                MouseController.Instance.ShowError(MapErrorMessage.CanNotDestroy);
             }
         }
 
@@ -171,6 +171,7 @@ namespace Andja.Controller {
                 }
             }
         }
+
         /// <summary>
         /// Change to Build State Mode for current player.
         /// structureId what is being placed. -> MouseController Mode change based on typ.
@@ -179,9 +180,8 @@ namespace Andja.Controller {
         /// EditorStructure is for EditorController ONLY -> needed to copy selected settings.
         /// </summary>
         /// <param name="structureId"></param>
-        /// <param name="buildInRangeUnit"></param>
         /// <param name="EditorStructure"></param>
-        public void StartStructureBuild(string structureId, Unit buildInRangeUnit = null, Structure EditorStructure = null) {
+        public void StartStructureBuild(string structureId, Structure EditorStructure = null) {
             if (StructurePrototypes.ContainsKey(structureId) == false) {
                 Debug.LogError("BUTTON has ID that is not a structure prototypes ->o_O<- ");
                 return;
@@ -197,10 +197,7 @@ namespace Andja.Controller {
         }
 
         public bool CurrentPlayerBuildOnTile(List<Tile> tiles, bool forEachTileOnce, int playerNumber, bool wild = false, Unit buildInRange = null) {
-            if (toBuildStructure == null) {
-                return false;
-            }
-            return BuildOnTile(toBuildStructure, tiles, playerNumber, forEachTileOnce, wild, buildInRange);
+            return toBuildStructure != null && BuildOnTile(toBuildStructure, tiles, playerNumber, forEachTileOnce, wild, buildInRange);
         }
 
         public bool BuildOnEachTile(Structure structure, List<Tile> tiles, int playerNumber) {
@@ -251,7 +248,7 @@ namespace Andja.Controller {
             }
             if (buildInRangeUnit != null && noUnitRestriction == false) {
                 Vector3 unitPos = buildInRangeUnit.PositionVector2;
-                Tile t = tiles.Find(x => { return x.IsInRange(unitPos, buildInRangeUnit.BuildRange); });
+                Tile t = tiles.Find(x => x.IsInRange(unitPos, buildInRangeUnit.BuildRange));
                 if (t == null) {
                     BuildError(MapErrorMessage.NotInRange, tiles, structure, playerNumber);
                     return false;
@@ -356,10 +353,9 @@ namespace Andja.Controller {
             //but CAN WE?
             //check to see if the structure can be placed there
             if (structure.CheckPlaceStructure(tiles, playerNumber) == false) {
-                if (loading && EditorController.IsEditor == false) {
-                    Debug.LogWarning("PLACING FAILED WHILE LOADING! " + structure.buildID + " - " + structure.SmallName);
-                    structure.Destroy(null, true);
-                }
+                if (loading == false || EditorController.IsEditor) return false;
+                Debug.LogWarning("PLACING FAILED WHILE LOADING! " + structure.buildID + " - " + structure.SmallName);
+                structure.Destroy(null, true);
                 return false;
             } else
             //WE ARE HERE -- MEANS ALL CHECKS ARE DONE
@@ -387,36 +383,34 @@ namespace Andja.Controller {
             structure.City.AddStructure(structure);
 
             if (onStart) {
-                if (LoadedStructures == null) //should never happen but just in case
-                    LoadedStructures = new List<Structure>();
+                LoadedStructures ??= new List<Structure>();
                 LoadedStructures.Add(structure);
             }
 
             if(loading) {
-                if(buildIdToStructure.ContainsKey(structure.buildID)) {
-                    Debug.Log("Build ID duplicate found: " + buildIdToStructure[structure.buildID] + " " + structure);
+                if(BuildIdToStructure.ContainsKey(structure.buildID)) {
+                    Debug.Log("Build ID duplicate found: " + BuildIdToStructure[structure.buildID] + " " + structure);
                     structure.Destroy();
                     return false;
                 }
             }
 
             // this should also work on loading. it should tightly pack everything next to each other.
-            structure.buildID = buildID;
-            buildIdToStructure[buildID] = structure;           
-            buildID++;
+            structure.buildID = _buildId;
+            BuildIdToStructure[_buildId] = structure;           
+            _buildId++;
 
-            cbStructureCreated?.Invoke(structure, loading);
+            _cbStructureCreated?.Invoke(structure, loading);
             structure.RegisterOnDestroyCallback(OnStructureDestroy);
             return true;
         }
 
         public void BuildError(MapErrorMessage errorID, List<Tile> tiles, Structure structure, int playerNumber) {
-            if (PlayerController.currentPlayerNumber == playerNumber) {
-                Vector3 Position = tiles[0].Vector;
-                Position.x += structure.TileWidth / 2f;
-                Position.y += structure.TileHeight / 2f;
-                MouseController.Instance.ShowError(errorID, Position);
-            }
+            if (PlayerController.currentPlayerNumber != playerNumber) return;
+            Vector3 position = tiles[0].Vector;
+            position.x += structure.TileWidth / 2f;
+            position.y += structure.TileHeight / 2f;
+            MouseController.Instance.ShowError(errorID, position);
         }
 
         /// <summary>
@@ -424,34 +418,30 @@ namespace Andja.Controller {
         /// DONT USE THIS FOR ANYTHING ELSE!!
         /// </summary>
         private bool LoadBuildOnTile(Structure s, Tile t) {
-            if (s == null || t == null) {
-                Debug.LogError("Something went wrong by loading Structure! " + t + " " + s);
-                return false;
-            }
-            return RealBuild(s.GetBuildingTiles(t), s, -1, true, s.buildInWilderniss);
-        }
-
-        public void OnStructureDestroy(Structure str, IWarfare destroyer) {
-            cbAnyStructureDestroyed?.Invoke(str, destroyer);
-            buildIdToStructure.Remove(str.buildID);
-        }
-
-        public bool PlayerHasEnoughMoney(Structure s, int playerNumber) {
-            if (PlayerController.Instance.GetPlayer(playerNumber).TreasuryBalance >= s.BuildCost) {
-                return true;
-            }
+            if (s != null && t != null) 
+                return RealBuild(s.GetBuildingTiles(t), s, -1, true, s.buildInWilderniss);
+            Debug.LogError("Something went wrong by loading Structure! " + t + " " + s);
             return false;
         }
 
-        public City CreateCity(Island i, int playernumber) {
+        public void OnStructureDestroy(Structure str, IWarfare destroyer) {
+            _cbAnyStructureDestroyed?.Invoke(str, destroyer);
+            BuildIdToStructure.Remove(str.buildID);
+        }
+
+        public bool PlayerHasEnoughMoney(Structure s, int playerNumber) {
+            return PlayerController.Instance.GetPlayer(playerNumber).TreasuryBalance >= s.BuildCost;
+        }
+
+        public City CreateCity(IIsland i, int playernumber) {
             if (i == null) {
                 Debug.LogError("CreateCity called not on a island!");
                 return null;
             }
             City c = i.CreateCity(playernumber);
-            c.RegisterCityDestroy(cbAnyCityDestroyed);
+            c.RegisterCityDestroy(_cbAnyCityDestroyed);
             // needed for mapimage
-            cbCityCreated?.Invoke(c);
+            _cbCityCreated?.Invoke(c);
             return c;
         }
         /// <summary>
@@ -464,7 +454,7 @@ namespace Andja.Controller {
                 //Reset MouseController out of BuildMode that this set it to
                 //when a structure gets selected
                 MouseController.Instance.SetMouseState(MouseState.Idle);
-                MouseController.Instance.ResetBuild(null);
+                MouseController.Instance.ResetBuild();
             }
             TileSpriteController.Instance.RemoveDecider(TileCityDecider, true);
             this.toBuildStructure = null;
@@ -489,58 +479,58 @@ namespace Andja.Controller {
         /// </summary>
         /// <param name="callbackfunc"></param>
         public void RegisterStructureCreated(Action<Structure, bool> callbackfunc) {
-            cbStructureCreated += callbackfunc;
+            _cbStructureCreated += callbackfunc;
         }
 
         public void UnregisterStructureCreated(Action<Structure, bool> callbackfunc) {
-            cbStructureCreated -= callbackfunc;
+            _cbStructureCreated -= callbackfunc;
         }
         /// <summary>
         /// Callback called on every structure destroyed
         /// </summary>
         /// <param name="callbackfunc"></param>
         public void RegisterStructureDestroyed(Action<Structure, IWarfare> callbackfunc) {
-            cbAnyStructureDestroyed += callbackfunc;
+            _cbAnyStructureDestroyed += callbackfunc;
         }
 
         public void UnregisterStructureDestroyed(Action<Structure, IWarfare> callbackfunc) {
-            cbAnyStructureDestroyed -= callbackfunc;
+            _cbAnyStructureDestroyed -= callbackfunc;
         }
         /// <summary>
         /// Callback called on every City created
         /// </summary>
         /// <param name="callbackfunc"></param>
         public void RegisterCityCreated(Action<City> callbackfunc) {
-            cbCityCreated += callbackfunc;
+            _cbCityCreated += callbackfunc;
         }
 
         public void UnregisterCityCreated(Action<City> callbackfunc) {
-            cbCityCreated -= callbackfunc;
+            _cbCityCreated -= callbackfunc;
         }
         /// <summary>
         /// Callback called on every City destroyed
         /// </summary>
         /// <param name="callbackfunc"></param>
         public void RegisterAnyCityDestroyed(Action<City> callbackfunc) {
-            cbAnyCityDestroyed += callbackfunc;
+            _cbAnyCityDestroyed += callbackfunc;
         }
 
         public void UnregisterAnyCityDestroyed(Action<City> callbackfunc) {
-            cbAnyCityDestroyed -= callbackfunc;
+            _cbAnyCityDestroyed -= callbackfunc;
         }
         /// <summary>
         /// Callback called on new BuildStateModes change
         /// </summary>
         /// <param name="callbackfunc"></param>
         public void RegisterBuildStateChange(Action<BuildStateModes> callbackfunc) {
-            cbBuildStateChange += callbackfunc;
+            _cbBuildStateChange += callbackfunc;
         }
 
         public void UnregisterBuildStateChange(Action<BuildStateModes> callbackfunc) {
-            cbBuildStateChange -= callbackfunc;
+            _cbBuildStateChange -= callbackfunc;
         }
 
-        private void OnDestroy() {
+        public void OnDestroy() {
             Instance = null;
         }
 

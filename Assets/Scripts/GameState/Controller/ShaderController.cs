@@ -13,29 +13,29 @@ namespace Andja.Controller {
     public enum Speed { Slow, Medium, Fast, LudicrousSpeed, MopsGeschwindigkeit /*wir haben einen marderschaden*/ }
 
     public class ShaderController : MonoBehaviour {
+        private Material _oceanMaterial;
+        private CloudShadows _cloudShadows;
+        private readonly Dictionary<GameEvent, Weather> _eventToWeather = new Dictionary<GameEvent, Weather>();
 
-        Material OceanMaterial;
-        CloudShadows CloudShadows;
-        Dictionary<GameEvent, Weather> eventToWeather = new Dictionary<GameEvent, Weather>();
-        static readonly Weather normalWeather = new Weather {
+        private static readonly Weather NormalWeather = new Weather {
             cloudCoverage = ShadowType.Few,
             cloudSpeed = Speed.Medium,
             oceanSpeed = Speed.Slow
         };
 
-        void Start() {
-            CloudShadows = FindObjectOfType<CloudShadows>();
+        public void Start() {
+            _cloudShadows = FindObjectOfType<CloudShadows>();
             EventController.Instance.RegisterOnEvent(OnEventStarted, OnEventEnded);
-            OceanMaterial = TileSpriteController.Instance.oceanInstance.GetComponent<Renderer>().material;
+            _oceanMaterial = TileSpriteController.Instance.oceanInstance.GetComponent<Renderer>().material;
         }
 
         private void OnEventEnded(GameEvent gameevent) {
-            if (eventToWeather.ContainsKey(gameevent))
-                eventToWeather.Remove(gameevent); //TODO: make the weather clear up slowly
+            if (_eventToWeather.ContainsKey(gameevent))
+                _eventToWeather.Remove(gameevent); //TODO: make the weather clear up slowly
         }
 
         private void OnEventStarted(GameEvent gameevent) {
-            eventToWeather.Add(gameevent, new Weather {
+            _eventToWeather.Add(gameevent, new Weather {
                 cloudCoverage = gameevent.CloudCoverage,
                 cloudSpeed = gameevent.CloudSpeed,
                 oceanSpeed = gameevent.OceanSpeed
@@ -80,36 +80,36 @@ namespace Andja.Controller {
         }
 
 
-        void LateUpdate() {
-            Weather[] clostest = new Weather[2];
-            clostest[0] = normalWeather;
-            clostest[1] = normalWeather;
+        public void LateUpdate() {
+            Weather[] closest = new Weather[2];
+            closest[0] = NormalWeather;
+            closest[1] = NormalWeather;
             float tOne = 0;
             float tTwo = 0;
-            foreach (var ge in eventToWeather) {
+            foreach (var ge in _eventToWeather) {
                 float distance = Util.FindClosestDistancePointCircle(CameraController.Instance.middle, ge.Key.position, ge.Key.range);
                 float tValue = 1 - EasingFunction.EaseInOutQuad(0, 1, Mathf.Clamp01(distance / (ge.Key.range * 1.1f)));
                 if (tValue == 0)
                     continue;
                 if(tValue>tOne) {
                     tOne = tValue;
-                    clostest[0] = ge.Value;
+                    closest[0] = ge.Value;
                 } else 
                 if(tValue > tTwo) {
                     tTwo = tValue;
-                    clostest[1] = ge.Value;
+                    closest[1] = ge.Value;
                 }
             }
-            float tempCloudSpeed = Mathf.Lerp(GetCloudSpeedFor(clostest[1].cloudSpeed), 
-                                                GetCloudSpeedFor(clostest[0].cloudSpeed), tOne);
-            float tempCloudCoverage = Mathf.Lerp(GetCloudCoverageFor(clostest[1].cloudCoverage),
-                                                    GetCloudCoverageFor(clostest[0].cloudCoverage), tOne);
-            float tempOceanSpeed = Mathf.Lerp(GetOceanSpeedFor(clostest[1].oceanSpeed), 
-                                                GetOceanSpeedFor(clostest[0].oceanSpeed), tOne);
-            CloudShadows.SpeedMultiplier = tempCloudSpeed;
-            CloudShadows.CoverageModifier = tempCloudCoverage;
+            float tempCloudSpeed = Mathf.Lerp(GetCloudSpeedFor(closest[1].cloudSpeed), 
+                                                GetCloudSpeedFor(closest[0].cloudSpeed), tOne);
+            float tempCloudCoverage = Mathf.Lerp(GetCloudCoverageFor(closest[1].cloudCoverage),
+                                                    GetCloudCoverageFor(closest[0].cloudCoverage), tOne);
+            float tempOceanSpeed = Mathf.Lerp(GetOceanSpeedFor(closest[1].oceanSpeed), 
+                                                GetOceanSpeedFor(closest[0].oceanSpeed), tOne);
+            _cloudShadows.SpeedMultiplier = tempCloudSpeed;
+            _cloudShadows.CoverageModifier = tempCloudCoverage;
             
-            OceanMaterial.SetVector("_TimeScale",
+            _oceanMaterial.SetVector("_TimeScale",
                         new Vector4(tempOceanSpeed * WorldController.Instance.TimeMultiplier, (tempOceanSpeed / 10f) * WorldController.Instance.TimeMultiplier));
         }
     }

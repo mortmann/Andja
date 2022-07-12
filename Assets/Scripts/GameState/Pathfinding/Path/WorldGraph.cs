@@ -13,9 +13,9 @@ namespace Andja.Pathfinding {
         public WorldGraph() {
             Calculate();
         }
-        public WorldGraph(HashSet<WorldNode> Nodes, WorldNode[,] Tiles) {
-            this.Nodes = Nodes;
-            this.Tiles = Tiles;
+        public WorldGraph(HashSet<WorldNode> nodes, WorldNode[,] tiles) {
+            this.Nodes = nodes;
+            this.Tiles = tiles;
         }
         public void Calculate() {
             Nodes = new HashSet<WorldNode>();
@@ -65,7 +65,7 @@ namespace Andja.Pathfinding {
                         continue;
                     }
                     //has all neighbours and those have all neighbours
-                    if (Tiles[x, y].Edges.Count == 8 && Tiles[x, y].Edges.Exists(x=>x.Node.Edges.Count<8) == false) {
+                    if (Tiles[x, y].Edges.Count == 8 && Tiles[x, y].Edges.Exists(z=>z.Node.Edges.Count<8) == false) {
                         //then it is an unnecessary node and it should be removed
                         WorldNode n = Tiles[x, y];
                         //update neighbour nodes
@@ -115,8 +115,8 @@ namespace Andja.Pathfinding {
         internal void Reset() {
             foreach(WorldNode wn in Nodes)
                 wn.Reset();
-            }
         }
+    }
     public class WorldEdge {
         public float MovementCost;
         public WorldNode Node;
@@ -134,21 +134,21 @@ namespace Andja.Pathfinding {
         public int x;
         public int y;
         public List<WorldEdge> Edges;
-        WorldEdge[,] neighbours;
+        WorldEdge[,] _neighbours;
 
         public float f_Score;
         public float g_Score  = float.MaxValue;
         public bool isClosed;
         public WorldNode parent;
 
-        public WorldEdge Left => neighbours[0, 1];
-        public WorldEdge Right => neighbours[2, 1];
-        public WorldEdge Top => neighbours[1, 2];
-        public WorldEdge Bottom => neighbours[1, 0];
-        public WorldEdge BottomLeft => neighbours[0, 0];
-        public WorldEdge TopLeft => neighbours[0, 2];
-        public WorldEdge BottomRight => neighbours[2, 0];
-        public WorldEdge TopRight => neighbours[2, 2];
+        public WorldEdge Left => _neighbours[0, 1];
+        public WorldEdge Right => _neighbours[2, 1];
+        public WorldEdge Top => _neighbours[1, 2];
+        public WorldEdge Bottom => _neighbours[1, 0];
+        public WorldEdge BottomLeft => _neighbours[0, 0];
+        public WorldEdge TopLeft => _neighbours[0, 2];
+        public WorldEdge BottomRight => _neighbours[2, 0];
+        public WorldEdge TopRight => _neighbours[2, 2];
 
 
         public WorldNode(float x, float y) {
@@ -158,7 +158,7 @@ namespace Andja.Pathfinding {
         internal void CalculateEdges(IEnumerable<WorldNode> nodes) {
             List<WorldEdge> edges = new List<WorldEdge>();
             foreach (WorldNode n in nodes) {
-                if (Util.CheckLine(World.Current.Tilesmap, x, y, n.x, n.y)) {
+                if (Util.CheckLine(World.Current.TilesMap, x, y, n.x, n.y)) {
                     edges.Add(
                         new WorldEdge(Vector2.Distance(new Vector2(x, y), new Vector2(n.x, n.y)), n)
                     );
@@ -168,10 +168,8 @@ namespace Andja.Pathfinding {
         }
 
         internal void DoNeighbourEdges(WorldNode[,] tiles) {
-            if(Edges == null) {
-                Edges = new List<WorldEdge>();
-            }
-            neighbours = new WorldEdge[3, 3];
+            Edges ??= new List<WorldEdge>();
+            _neighbours = new WorldEdge[3, 3];
             for (int x = -1; x <= 1; x++) {
                 for (int y = -1; y <= 1; y++) {
                     if (x == 0 && y == 0)
@@ -186,12 +184,12 @@ namespace Andja.Pathfinding {
                             continue;
                         }
                     }
-                    neighbours[x+1, y+1] = new WorldEdge(
+                    _neighbours[x+1, y+1] = new WorldEdge(
                                                     Vector2.Distance(new Vector2(this.x + x, this.y + y), new Vector2(this.x, this.y)),
                                                     tiles[this.x + x, this.y + y]
                                                     );
                     Edges.Add(
-                        neighbours[x + 1, y + 1]
+                        _neighbours[x + 1, y + 1]
                     );
                 }
             }
@@ -231,9 +229,7 @@ namespace Andja.Pathfinding {
         }
 
         internal void UpdateEdge(WorldNode[,] newTiles) {
-            foreach(WorldEdge we in Edges) {
-                we.Node = newTiles[we.Node.x, we.Node.y];
-            }
+            Edges.ForEach(we => we.Node = newTiles[we.Node.x, we.Node.y]);
         }
     }
 }

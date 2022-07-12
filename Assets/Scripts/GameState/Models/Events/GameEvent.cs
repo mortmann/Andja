@@ -116,7 +116,7 @@ namespace Andja.Model {
             currentDuration = Duration;
             //DO smth on start event?!
             if (ID == "volcanic_eruption") {
-                position = ((Island)target).Features.Find(x => x.type == FeatureType.Volcano).position;
+                position = ((IIsland)target).Features.Find(x => x.type == FeatureType.Volcano).position;
                 CreateVolcanicEruption();
             }
             if(target != null) {
@@ -172,8 +172,8 @@ namespace Andja.Model {
 
         internal bool IsValid() {
             if (target is Island) {
-                if (((Island)target).Features != null) {
-                    if (SpecialRange[Target.Island].Exists(t => ((Island)target).Features.Exists(x => x.ID == t))) {
+                if (((IIsland)target).Features != null) {
+                    if (SpecialRange[Target.Island].Exists(t => ((IIsland)target).Features.Exists(x => x.ID == t))) {
                         return true;
                     }
                 }

@@ -48,7 +48,7 @@ namespace Andja.Controller {
         private static UIControllerSave uIControllerSave;
         public ChoiceDialog ChoiceDialog;
 
-        private void Start() {
+        public void Start() {
             Escape(true);
             endScoreScreen.SetActive(false);
             if (Instance != null) {
@@ -79,29 +79,32 @@ namespace Andja.Controller {
             ChoiceDialog.Show(choiceInformation);
         }
         public void OpenStructureUI(Structure str) {
-            if (str == null) {
-                return;
-            }
-            if (str is WarehouseStructure || str is MarketStructure) {
-                CloseInfoUI();
-                if (str.PlayerNumber != PlayerController.currentPlayerNumber) {
-                    OpenOtherCity(str.City);
+            switch (str) {
+                case null:
+                    return;
+                case WarehouseStructure _:
+                case MarketStructure _: {
+                    CloseInfoUI();
+                    if (str.PlayerNumber != PlayerController.currentPlayerNumber) {
+                        OpenOtherCity(str.City);
+                    }
+                    else {
+                        OpenCityInventory(str.City, str.City.TradeWithAnyShip);
+                    }
+                    return;
                 }
-                else {
-                    OpenCityInventory(str.City, str.City.TradeWithAnyShip);
-                }
-                return;
-            }
-            if (str is HomeStructure) {
-                if (str.PlayerNumber == PlayerController.currentPlayerNumber) {
+                case HomeStructure home: {
+                    if (home.PlayerNumber != PlayerController.currentPlayerNumber) return;
                     CloseRightUI();
                     CloseInfoUI();
-                    OpenHomeUI((HomeStructure)str);
+                    OpenHomeUI(home);
+                    return;
                 }
-                return;
+                default:
+                    uiInfoCanvas.SetActive(true);
+                    uiInfoCanvas.GetComponent<InfoUI>().Show(str);
+                    break;
             }
-            uiInfoCanvas.SetActive(true);
-            uiInfoCanvas.GetComponent<InfoUI>().Show(str);
         }
         internal void OpenUnitUI(Unit unit) {
             if (unit == null) {
@@ -315,10 +318,8 @@ namespace Andja.Controller {
             if ((EventSystem.current.currentSelectedGameObject.GetComponent<TMPro.TMP_InputField>()) != null &&
                 (EventSystem.current.currentSelectedGameObject.GetComponent<TMPro.TMP_InputField>()).isFocused)
                 return true;
-            if ((EventSystem.current.currentSelectedGameObject.GetComponent<InputField>()) != null &&
-                (EventSystem.current.currentSelectedGameObject.GetComponent<InputField>()).isFocused)
-                return true;
-            return false;
+            return (EventSystem.current.currentSelectedGameObject.GetComponent<InputField>()) != null &&
+                   (EventSystem.current.currentSelectedGameObject.GetComponent<InputField>()).isFocused;
         }
 
         public UIControllerSave GetUISaveData() {
@@ -332,7 +333,7 @@ namespace Andja.Controller {
         public void ToggleDebugData() {
             DebugData.SetActive(!DebugData.activeSelf);
         }
-        private void OnDestroy() {
+        public void OnDestroy() {
             Instance = null;
         }
 
@@ -340,16 +341,12 @@ namespace Andja.Controller {
             uIControllerSave = uics;
         }
         public static string GetTextColor(TextColor color) {
-            switch (color) {
-                case TextColor.Positive:
-                    return "#27ae60";
-                case TextColor.Neutral:
-                    return "#323232";
-                case TextColor.Negative:
-                    return "#e74c3c";
-                default:
-                    return "#000000";
-            }
+            return color switch {
+                TextColor.Positive => "#27ae60",
+                TextColor.Neutral => "#323232",
+                TextColor.Negative => "#e74c3c",
+                _ => "#000000"
+            };
         }
     }
 

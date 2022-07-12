@@ -26,7 +26,7 @@ namespace Andja.Model {
         //TODO: find better space for ai variable?
         public bool startClaimed;
 
-        public List<Fertility> Fertilities;
+        public List<Fertility> Fertilities { get; set; }
         public PathGrid Grid { get; protected set; }
 
         public int Width {

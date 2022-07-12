@@ -14,7 +14,10 @@
     "overrideReferences": true,
     "precompiledReferences": [
         "nunit.framework.dll",
-        "Moq.dll"
+        "Moq.dll",
+        "AssertNet.Moq.dll",
+        "AssertNet.dll",
+        "AssertNet.Core.dll"
     ],
     "autoReferenced": false,
     "defineConstraints": [

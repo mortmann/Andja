@@ -13,7 +13,7 @@ public class MineStructureTest {
     MineStructure Mine;
     MinePrototypeData MinePrototypeData;
     private MockUtil mockutil;
-    Island Island;
+    IIsland Island;
 
     [SetUp]
     public void SetUp() {

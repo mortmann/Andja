@@ -13,7 +13,7 @@ namespace Andja.Model {
         List<Projectile> Projectiles { get; }
         Tile[] Tiles { get; }
         WorldGraph WorldGraph { get; }
-        bool[][] Tilesmap { get; }
+        bool[][] TilesMap { get; }
         List<Unit> Units { get; }
         int Width { get; }
 

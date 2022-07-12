@@ -383,7 +383,7 @@ namespace Andja.Editor {
 
         public void SetStructure(string id) {
             structure = PrototypController.Instance.StructurePrototypes[id];
-            BuildController.Instance.StartStructureBuild(id, null, structure);
+            BuildController.Instance.StartStructureBuild(id, structure);
             if (brushBuild) {
                 MouseController.Instance.SetMouseState(MouseState.Idle);
                 MouseController.Instance.ToBuildStructure = null;

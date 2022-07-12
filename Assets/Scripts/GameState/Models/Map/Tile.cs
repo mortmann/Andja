@@ -232,12 +232,10 @@ namespace Andja.Model {
             }
         }
 
-        public virtual Island Island { get { return null; } set { } }
+        public virtual Island Island { get => null; set { } }
 
         public virtual City City {
-            get {
-                return null;
-            }
+            get => null;
             set {
             }
         }

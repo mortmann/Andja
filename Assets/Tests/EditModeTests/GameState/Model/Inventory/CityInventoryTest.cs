@@ -8,6 +8,7 @@ using Andja.Controller;
 using Andja.Utility;
 using System.Linq;
 using Moq;
+using static AssertNet.Assertions;
 
 public class CityInventoryTest {
     CityInventory inventory;
@@ -43,7 +44,7 @@ public class CityInventoryTest {
     }
 
     private void IsInventoryEqual(string id, int amount) {
-        Assert.AreEqual(amount, inventory.GetAmountFor(id));
+        AssertThat(inventory.GetAmountFor(id)).IsEqualTo(amount);
     }
 
     [Test]

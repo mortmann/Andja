@@ -28,12 +28,8 @@ namespace Andja.Controller {
         private bool _isPaused = false;
 
         public bool IsPaused {
-            get {
-                return _isPaused || Loading.IsLoading;
-            }
-            set {
-                _isPaused = value;
-            }
+            get => _isPaused || Loading.IsLoading;
+            set => _isPaused = value;
         }
 
         public float DeltaTime { get { return Time.deltaTime * TimeMultiplier; } }
@@ -47,7 +43,7 @@ namespace Andja.Controller {
                 if (TimeMultiplier < 0.5f) return GameSpeed.StopMotion;
                 if (TimeMultiplier < 0.75f) return GameSpeed.Slowest;
                 if (TimeMultiplier < 1f) return GameSpeed.Slow;
-                if (TimeMultiplier == 1f) return GameSpeed.Normal;
+                if (Math.Abs(TimeMultiplier - 1f) < 0.01) return GameSpeed.Normal;
                 if (TimeMultiplier <= 2f) return GameSpeed.Fast;
                 if (TimeMultiplier <= 4f) return GameSpeed.Fastest;
                 return GameSpeed.LudicrousSpeed;
@@ -116,25 +112,25 @@ namespace Andja.Controller {
                         }
                     }
                 }
-                if (loadout.Units != null) {
-                    foreach (Unit prefab in loadout.Units) {
-                        if (prefab.IsShip == false) {
-                            Debug.LogWarning("Unit is not a ship -- currently not supported to spawn!");
-                            continue;
-                        }
-                        if (shipSpawn.x == -1) {
-                            shipSpawn = spawnPoints[i % spawnPoints.Length];
-                        }
-                        Tile start = World.GetTileAt(shipSpawn);
-                        Unit unit = World.CreateUnit(prefab, player, start);
-                        foreach (Item item in startItems) {
-                            unit.TryToAddItem(item);
-                            if (unit is Ship s) {
-                                if (item.ID == s.CannonItem.ID) {
-                                    s.AddCannonsFromInventory(true);
-                                    continue;
-                                }
-                            }
+
+                if (loadout.Units == null) continue;
+                foreach (Unit prefab in loadout.Units) {
+                    if (prefab.IsShip == false) {
+                        Debug.LogWarning("Unit is not a ship -- currently not supported to spawn!");
+                        continue;
+                    }
+
+                    if (shipSpawn.x == -1) {
+                        shipSpawn = spawnPoints[i % spawnPoints.Length];
+                    }
+
+                    Tile start = World.GetTileAt(shipSpawn);
+                    Unit unit = World.CreateUnit(prefab, player, start);
+                    foreach (Item item in startItems) {
+                        unit.TryToAddItem(item);
+                        if (unit is Ship s) {
+                            if (item.ID != s.CannonItem.ID) continue;
+                            s.AddCannonsFromInventory(true);
                         }
                     }
                 }
@@ -163,7 +159,7 @@ namespace Andja.Controller {
             World.OnEventEnded(ge);
         }
 
-        private void Update() {
+        public void Update() {
             if (World == null || IsPaused) {
                 return;
             }
@@ -181,12 +177,7 @@ namespace Andja.Controller {
         }
 
         public void TogglePause() {
-            if (IsPaused) {
-                ChangeGameSpeed(GameSpeed.Normal);
-            }
-            else {
-                ChangeGameSpeed(GameSpeed.Paused);
-            }
+            ChangeGameSpeed(IsPaused ? GameSpeed.Normal : GameSpeed.Paused);
         }
 
         public void ChangeGameSpeed(GameSpeed multi) {
@@ -214,16 +205,19 @@ namespace Andja.Controller {
                 case GameSpeed.Fastest:
                     SetSpeed(4f);
                     break;
+                case GameSpeed.StopMotion:
+                    SetSpeed(0.1f);
+                    break;
+                case GameSpeed.LudicrousSpeed:
+                    SetSpeed(10f);
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(multi), multi, null);
             }
         }
 
         internal void SetSpeed(float speed) {
-            if (speed == 0) {
-                IsPaused = true;
-            }
-            else {
-                IsPaused = false;
-            }
+            IsPaused = speed == 0;
             TimeMultiplier = Mathf.Clamp(speed, 0, 100);
             cbGameSpeedChange?.Invoke(CurrentSpeed, speed);
         }
@@ -251,7 +245,7 @@ namespace Andja.Controller {
         public void UnregisterSpeedChange(Action<GameSpeed, float> callbackfunc) {
             cbGameSpeedChange -= callbackfunc;
         }
-        private void OnDestroy() {
+        public void OnDestroy() {
             Instance = null;
             flyingTrader?.OnDestroy();
             World?.Destroy();
@@ -294,9 +288,7 @@ namespace Andja.Controller {
                 if (thisStruct.Tiles == null)
                     Debug.LogError("thisStruct.Tiles is null " + island.StartTile.X + " " + island.StartTile.Y);
 
-                foreach (string id in thisStruct.Resources.Keys) {
-                    if (island.HasResource(id))
-                        continue;
+                foreach (var id in thisStruct.Resources.Keys.Where(id => island.HasResource(id) == false)) {
                     island.Resources[id] = thisStruct.Resources[id];
                 }
                 island.SetTiles(thisStruct.Tiles);

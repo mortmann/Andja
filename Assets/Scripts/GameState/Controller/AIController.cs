@@ -15,13 +15,13 @@ namespace Andja.Controller {
         /// Active means currently calculating things.
         /// </summary>
         public static bool ActiveAI = true;
+        public static int AIOperationsPerFrame = 1;
         /// <summary>
         /// Shutdown means it ai player will stop the threads
         /// </summary>
         public static bool ShutdownAI = false;
 
-        ConcurrentQueue<Operation> allOperations = new ConcurrentQueue<Operation>();
-        public static int AIOperationsPerFrame = 1; 
+        private readonly ConcurrentQueue<Operation> _allOperations = new ConcurrentQueue<Operation>();
         public static PerPopulationLevelData[] PerPopulationLevelDatas {
             get {
                 if (_perPopulationLevelDatas == null)
@@ -33,7 +33,7 @@ namespace Andja.Controller {
         /// <summary>
         /// This is the original values without any structures
         /// </summary>
-        public static Dictionary<Island, Dictionary<Tile, TileValue>> IslandToMapSpaceValuedTiles {
+        public static Dictionary<IIsland, Dictionary<Tile, TileValue>> IslandToMapSpaceValuedTiles {
             get {
                 if (_islandToMapSpaceValuedTiles == null)
                     CalculateIslandTileValues();
@@ -45,7 +45,7 @@ namespace Andja.Controller {
         /// <summary>
         /// This is the current values with any structures
         /// </summary>
-        public static Dictionary<Island, Dictionary<Tile, TileValue>> IslandsTileToValue {
+        public static Dictionary<IIsland, Dictionary<Tile, TileValue>> IslandsTileToValue {
             get {
                 if (_islandsTileToValue == null)
                     CalculateIslandTileValues();
@@ -53,22 +53,22 @@ namespace Andja.Controller {
             }
             set => _islandsTileToValue = value;
         }
-        private static Dictionary<Island, Dictionary<Tile, TileValue>> _islandToMapSpaceValuedTiles;
+        private static Dictionary<IIsland, Dictionary<Tile, TileValue>> _islandToMapSpaceValuedTiles;
         public static ConcurrentDictionary<City, ConcurrentDictionary<Tile, TileValue>> _cityToCurrentSpaceValueTiles;
-        private static Dictionary<Island, Dictionary<Tile, TileValue>> _islandsTileToValue;
+        private static Dictionary<IIsland, Dictionary<Tile, TileValue>> _islandsTileToValue;
         private static PerPopulationLevelData[] _perPopulationLevelDatas;
-        AIPlayer test;
-        List<AIPlayer> aiPlayers;
-        static Thread[] threads;
+        private AIPlayer _test;
+        private List<AIPlayer> _aiPlayers;
+        private static Thread[] _threads;
 
-        private void Awake() {
+        public void Awake() {
             if (Instance != null) {
                 Debug.LogError("There should never be two AIController.");
             }
             Instance = this;
         }
 
-        private void Start() {
+        public void Start() {
             AIOperationsPerFrame = PlayerController.Instance.PlayerCount - 1;
             _cityToCurrentSpaceValueTiles = new ConcurrentDictionary<City, ConcurrentDictionary<Tile, TileValue>>();
             BuildController.Instance.RegisterStructureCreated(OnStructureCreated);
@@ -76,30 +76,28 @@ namespace Andja.Controller {
             BuildController.Instance.RegisterCityCreated(OnCityCreated);
             BuildController.Instance.RegisterAnyCityDestroyed(OnCityDestroy);
 
-            test = new AIPlayer(PlayerController.Instance.GetPlayer(1));
-            test.CalculatePlayersCombatValue();
-            test.CalculateIslandScores();
-            aiPlayers = new List<AIPlayer>();
+            _test = new AIPlayer(PlayerController.Instance.GetPlayer(1));
+            _test.CalculatePlayersCombatValue();
+            _test.CalculateIslandScores();
+            _aiPlayers = new List<AIPlayer>();
             foreach (Player player in PlayerController.Instance.Players) {
                 if (player.IsHuman)
                     continue;
                 AIPlayer ai = new AIPlayer(player);
                 player.AI = ai;
-                aiPlayers.Add(ai);
+                _aiPlayers.Add(ai);
             }
             ShutdownAI = false;
             ActiveAI = true;
-            foreach (var i in World.Current.Islands) {
-                foreach (var c in i.Cities) {
-                    OnCityCreated(c);
-                }
+            foreach (var city in World.Current.Islands.SelectMany(i => i.Cities)) {
+                OnCityCreated(city);
             }
-            threads = new Thread[aiPlayers.Count];
+            _threads = new Thread[_aiPlayers.Count];
             
-            for (int i = 0; i < aiPlayers.Count; i++) {
-                AIPlayer ai = aiPlayers[i];
-                threads[i] = new Thread(() => { ai.Loop(); Debug.Log("Shutdown AI " + ai.Player.Name); });
-                threads[i].Start();
+            for (int i = 0; i < _aiPlayers.Count; i++) {
+                AIPlayer ai = _aiPlayers[i];
+                _threads[i] = new Thread(() => { ai.Loop(); Debug.Log("Shutdown AI " + ai.Player.Name); });
+                _threads[i].Start();
             }
         }
 
@@ -120,45 +118,35 @@ namespace Andja.Controller {
         private void OnCityTileAdded(City c, Tile t) {
             if(_cityToCurrentSpaceValueTiles[c].ContainsKey(t) == false)
                 _cityToCurrentSpaceValueTiles[c].TryAdd(t, new TileValue(t, Vector2.one, Vector2.one));
-            if (t.GetNeighbours().Any(x=>x.City != c)) {
-                ChangeTileValue(t, t.West(), Direction.W, null);
-                ChangeTileValue(t, t.South(), Direction.S, null);
-                ChangeTileValue(t, t.North(), Direction.N, null);
-                ChangeTileValue(t, t.East(), Direction.E, null);
-            }
+            if (t.GetNeighbours().All(x => x.City == c)) return;
+            ChangeTileValue(t, t.West(), Direction.W, null);
+            ChangeTileValue(t, t.South(), Direction.S, null);
+            ChangeTileValue(t, t.North(), Direction.N, null);
+            ChangeTileValue(t, t.East(), Direction.E, null);
         }
 
-        private void Update() {
+        public void Update() {
             for (int i = 0; i < AIOperationsPerFrame; i++) {
-                if(allOperations.TryDequeue(out Operation op) == false) {
+                if(_allOperations.TryDequeue(out Operation op) == false) {
                     continue;
                 }
-                if(op.Do() == false) {
-                    //we need to inform the ai.
-                    //if it succeds there should be other triggers working 
-                    //to inform the ai that it happend. like city creation, structure added etc.
-                    //maybe still do it so it can remove it from its queue?! -- not sure
-                    op.Status = OperationStatus.Failure;
-                }
-                else {
-                    op.Status = OperationStatus.Success;
-                }
+                op.Status = op.Do() == false ? OperationStatus.Failure : OperationStatus.Success;
             }
-            foreach (AIPlayer item in aiPlayers) {
+            foreach (AIPlayer item in _aiPlayers) {
                 item.Update(WorldController.Instance.DeltaTime);
             }
         }
 
-        private void OnDrawGizmos() {
+        public void OnDrawGizmos() {
 #if UNITY_EDITOR
-            if(test != null)
-                foreach (var item in test.islandScores) {
-                    UnityEditor.Handles.Label(item.Island.Center, "Score: " + item.EndScore);
-                }
+            if (_test == null) return;
+            foreach (var item in _test.islandScores) {
+                UnityEditor.Handles.Label(item.Island.Center, "Score: " + item.EndScore);
+            }
 #endif
         }
 
-        private void OnDestroy() {
+        public void OnDestroy() {
             Instance = null;
             _islandToMapSpaceValuedTiles = null;
             _cityToCurrentSpaceValueTiles = null;
@@ -171,15 +159,14 @@ namespace Andja.Controller {
         internal string GetTileValue(Tile tile) {
             if (tile.Type == TileType.Ocean)
                 return "";
-            if (_cityToCurrentSpaceValueTiles[tile.City].ContainsKey(tile) == false) {
-                return "ERROR";
-            }
-            return _cityToCurrentSpaceValueTiles[tile.City][tile].ToString();
+            return _cityToCurrentSpaceValueTiles[tile.City].ContainsKey(tile) == false ?
+                "ERROR" :
+                _cityToCurrentSpaceValueTiles[tile.City][tile].ToString();
         }
 
-        internal Operation AddOperation(Operation Operation) {
-            allOperations.Enqueue(Operation);
-            return Operation;
+        internal Operation AddOperation(Operation operation) {
+            _allOperations.Enqueue(operation);
+            return operation;
         }
 
         private static void OnStructureDestroyed(Structure structure, IWarfare iwarfare) {
@@ -207,7 +194,7 @@ namespace Andja.Controller {
                 return;
             if (IslandsTileToValue == null)
                 CalculateIslandTileValues();
-            Island island = structure.BuildTile.Island;
+            IIsland island = structure.BuildTile.Island;
             if (island == null)
                 return;
             Dictionary<Tile, TileValue> tileValue = IslandsTileToValue[island];
@@ -236,7 +223,8 @@ namespace Andja.Controller {
             }
         }
 
-        private static void ChangeTileValue(Tile t, Tile tValue, Direction direction, Dictionary<Tile, TileValue> tileValue) {
+        private static void ChangeTileValue(Tile t, ITile tValue, Direction direction, IDictionary<Tile, TileValue> tileValue) {
+            if (tileValue == null) throw new ArgumentNullException(nameof(tileValue));
             if (t.Type == TileType.Ocean) {
                 return;
             }
@@ -246,12 +234,11 @@ namespace Andja.Controller {
             }
             if (tileValue?.ContainsKey(t) == false)
                 return;
-            if (tileValue == null && _cityToCurrentSpaceValueTiles[t.City].ContainsKey(t) == false)
+            if (_cityToCurrentSpaceValueTiles[t.City].ContainsKey(t) == false)
                 return;
             switch (direction) {
                 case Direction.N:
-                    if (tileValue != null)
-                        tileValue[t].swValue.y = tileValue[t.South()].swValue.y + 1;
+                    tileValue[t].swValue.y = tileValue[t.South()].swValue.y + 1;
                     if(t.City == t.South().City) {
                         _cityToCurrentSpaceValueTiles[t.City][t].swValue.y = _cityToCurrentSpaceValueTiles[t.City][t.South()].swValue.y + 1;
                     }
@@ -264,8 +251,7 @@ namespace Andja.Controller {
                     break;
 
                 case Direction.W:
-                    if (tileValue != null)
-                        tileValue[t].neValue.x = tileValue[t.East()].neValue.x + 1;
+                    tileValue[t].neValue.x = tileValue[t.East()].neValue.x + 1;
                     if (t.City == t.East().City) {
                         _cityToCurrentSpaceValueTiles[t.City][t].neValue.x = _cityToCurrentSpaceValueTiles[t.City][t.East()].neValue.x + 1;
                     }
@@ -278,8 +264,7 @@ namespace Andja.Controller {
                     break;
 
                 case Direction.S:
-                    if (tileValue != null)
-                        tileValue[t].neValue.y = tileValue[t.North()].neValue.y + 1;
+                    tileValue[t].neValue.y = tileValue[t.North()].neValue.y + 1;
                     if (t.City == t.North().City) {
                         _cityToCurrentSpaceValueTiles[t.City][t].neValue.y = _cityToCurrentSpaceValueTiles[t.City][t.North()].neValue.y + 1;
                     } 
@@ -292,8 +277,7 @@ namespace Andja.Controller {
                     break;
 
                 case Direction.E:
-                    if (tileValue != null)
-                        tileValue[t].swValue.x = tileValue[t.West()].swValue.x + 1;
+                    tileValue[t].swValue.x = tileValue[t.West()].swValue.x + 1;
                     if (t.City == t.West().City) {
                         _cityToCurrentSpaceValueTiles[t.City][t].swValue.x = _cityToCurrentSpaceValueTiles[t.City][t.West()].swValue.x + 1;
                     }
@@ -304,6 +288,12 @@ namespace Andja.Controller {
                         return;
                     ChangeTileValue(t.East(), t, Direction.E, tileValue);
                     break;
+
+                case Direction.None:
+                    throw new ArgumentOutOfRangeException(nameof(direction), direction, null);
+
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(direction), direction, null);
             }
         }
 
@@ -315,8 +305,8 @@ namespace Andja.Controller {
                                                 player.PlayerNumber, false, false, buildUnit, false, onStart);
         }
         public static void CalculateIslandTileValues() {
-            _islandToMapSpaceValuedTiles = new Dictionary<Island, Dictionary<Tile, TileValue>>();
-            _islandsTileToValue = new Dictionary<Island, Dictionary<Tile, TileValue>>();
+            _islandToMapSpaceValuedTiles = new Dictionary<IIsland, Dictionary<Tile, TileValue>>();
+            _islandsTileToValue = new Dictionary<IIsland, Dictionary<Tile, TileValue>>();
 
             foreach (Island island in World.Current.Islands) {
                  _islandToMapSpaceValuedTiles[island] = TileValue.CalculateStartingValues(island).ToDictionary(entry => entry.Key,

@@ -31,119 +31,119 @@ namespace Andja.Controller {
 *      2.1 if the xml file is three deep like structures it must be added to the if
 *  3. Create Debug output for it
 */
-        public enum XMLFilesTypes { other, events, fertilities, items, combat, units, structures, needs, startingloadouts, mapgeneration }
+        public enum XmlFilesTypes { Other, Events, Fertilities, Items, Combat, Units, Structures, Needs, Startingloadouts, Mapgeneration }
 
-        public int NumberOfPopulationLevels => populationLevelDatas.Count;
+        public int NumberOfPopulationLevels => _populationLevelDatas.Count;
 
         public static IPrototypController Instance;
-        public IReadOnlyDictionary<string, Structure> StructurePrototypes => structurePrototypes;
-        public IReadOnlyDictionary<string, Unit> UnitPrototypes => unitPrototypes;
-        public IReadOnlyDictionary<Type, int> StructureTypeToMaxStructureLevel => structureTypeToMaxStructureLevel;
-        public IReadOnlyDictionary<string, StructurePrototypeData> StructurePrototypeDatas => structurePrototypeDatas;
-        public IReadOnlyDictionary<string, NeedPrototypeData> NeedPrototypeDatas => needPrototypeDatas;
-        public IReadOnlyDictionary<string, NeedGroup> NeedGroups => idToNeedGroup;
-        public IReadOnlyDictionary<string, FertilityPrototypeData> FertilityPrototypeDatas => fertilityPrototypeDatas;
-        public IReadOnlyDictionary<string, UnitPrototypeData> UnitPrototypeDatas => unitPrototypeDatas;
-        public IReadOnlyDictionary<string, ItemPrototypeData> ItemPrototypeDatas => itemPrototypeDatas;
-        public IReadOnlyDictionary<string, DamageType> DamageTypeDatas => damageTypeDatas;
-        public IReadOnlyDictionary<string, EffectPrototypeData> EffectPrototypeDatas => effectPrototypeDatas;
-        public IReadOnlyDictionary<string, ArmorType> ArmorTypeDatas => armorTypeDatas;
-        public IReadOnlyDictionary<string, GameEventPrototypData> GameEventPrototypeDatas => gameEventPrototypeDatas;
-        public IReadOnlyDictionary<string, Item> AllItems => allItems;
-        public IReadOnlyDictionary<string, IslandFeaturePrototypeData> IslandFeaturePrototypeDatas => islandFeaturePrototypeDatas;
-        public IReadOnlyDictionary<Climate, List<FertilityPrototypeData>> AllFertilitiesDatasPerClimate => allFertilitiesDatasPerClimate;
-        public IReadOnlyDictionary<Size, IslandSizeGenerationInfo> IslandSizeToGenerationInfo => islandSizeToGenerationInfo;
-        public IReadOnlyDictionary<Climate, List<ResourceGenerationInfo>> ClimateToResourceGeneration => climateToResourceGeneration;
-        public IReadOnlyDictionary<Climate, List<SpawnStructureGenerationInfo>> SpawnStructureGeneration => spawnStructureGeneration;
-        public IReadOnlyList<string> AllNaturalSpawningStructureIDs => allNaturalSpawningStructureIDs;
+        public IReadOnlyDictionary<string, Structure> StructurePrototypes => _structurePrototypes;
+        public IReadOnlyDictionary<string, Unit> UnitPrototypes => _unitPrototypes;
+        public IReadOnlyDictionary<Type, int> StructureTypeToMaxStructureLevel => _structureTypeToMaxStructureLevel;
+        public IReadOnlyDictionary<string, StructurePrototypeData> StructurePrototypeDatas => _structurePrototypeDatas;
+        public IReadOnlyDictionary<string, NeedPrototypeData> NeedPrototypeDatas => _needPrototypeDatas;
+        public IReadOnlyDictionary<string, NeedGroup> NeedGroups => _idToNeedGroup;
+        public IReadOnlyDictionary<string, FertilityPrototypeData> FertilityPrototypeDatas => _fertilityPrototypeDatas;
+        public IReadOnlyDictionary<string, UnitPrototypeData> UnitPrototypeDatas => _unitPrototypeDatas;
+        public IReadOnlyDictionary<string, ItemPrototypeData> ItemPrototypeDatas => _itemPrototypeDatas;
+        public IReadOnlyDictionary<string, DamageType> DamageTypeDatas => _damageTypeDatas;
+        public IReadOnlyDictionary<string, EffectPrototypeData> EffectPrototypeDatas => _effectPrototypeDatas;
+        public IReadOnlyDictionary<string, ArmorType> ArmorTypeDatas => _armorTypeDatas;
+        public IReadOnlyDictionary<string, GameEventPrototypData> GameEventPrototypeDatas => _gameEventPrototypeDatas;
+        public IReadOnlyDictionary<string, Item> AllItems => _allItems;
+        public IReadOnlyDictionary<string, IslandFeaturePrototypeData> IslandFeaturePrototypeDatas => _islandFeaturePrototypeDatas;
+        public IReadOnlyDictionary<Climate, List<FertilityPrototypeData>> AllFertilitiesDatasPerClimate => _allFertilitiesDatasPerClimate;
+        public IReadOnlyDictionary<Size, IslandSizeGenerationInfo> IslandSizeToGenerationInfo => _islandSizeToGenerationInfo;
+        public IReadOnlyDictionary<Climate, List<ResourceGenerationInfo>> ClimateToResourceGeneration => _climateToResourceGeneration;
+        public IReadOnlyDictionary<Climate, List<SpawnStructureGenerationInfo>> SpawnStructureGeneration => _spawnStructureGeneration;
+        public IReadOnlyList<string> AllNaturalSpawningStructureIDs => _allNaturalSpawningStructureIDs;
         /// <summary>
         /// Array: For each Level of Populations exists a dictionary
         /// <br>int: people of that population requiered for those Unlocks</br>
         /// <br>Unlocks: contains all needs, structures and units that will be unlocked for the key amount of people</br>
         /// </summary>
-        public IReadOnlyDictionary<int, Unlocks>[] LevelCountToUnlocks => levelCountToUnlocks;
+        public IReadOnlyDictionary<int, Unlocks>[] LevelCountToUnlocks => _levelCountToUnlocks;
 
         public WarehouseStructure FirstLevelWarehouse { get; private set; }
 
-        public IReadOnlyDictionary<Climate, List<Fertility>> AllFertilities => allFertilities;
-        public IReadOnlyDictionary<string, Fertility> IdToFertilities => idToFertilities;
-        public IReadOnlyDictionary<int, PopulationLevelPrototypData> PopulationLevelDatas => populationLevelDatas;
-        public IReadOnlyDictionary<int, List<NeedGroup>> PopulationLevelToNeedGroup => populationLevelToNeedGroup;
-        public IReadOnlyDictionary<string, List<Produce>> ItemIDToProduce => itemIDToProduce;
+        public IReadOnlyDictionary<Climate, List<Fertility>> AllFertilities => _allFertilities;
+        public IReadOnlyDictionary<string, Fertility> IdToFertilities => _idToFertilities;
+        public IReadOnlyDictionary<int, PopulationLevelPrototypData> PopulationLevelDatas => _populationLevelDatas;
+        public IReadOnlyDictionary<int, List<NeedGroup>> PopulationLevelToNeedGroup => _populationLevelToNeedGroup;
+        public IReadOnlyDictionary<string, List<Produce>> ItemIDToProduce => _itemIdToProduce;
 
         public virtual Item[] BuildItems => _buildItems.CloneArray();
 
         public IReadOnlyList<StartingLoadout> StartingLoadouts => _startingLoadouts;
 
-        private Dictionary<string, Structure> structurePrototypes;
-        private Dictionary<string, Unit> unitPrototypes;
-        private Dictionary<Type, int> structureTypeToMaxStructureLevel;
-        private Dictionary<string, StructurePrototypeData> structurePrototypeDatas;
-        private Dictionary<string, ItemPrototypeData> itemPrototypeDatas;
-        private Dictionary<string, NeedPrototypeData> needPrototypeDatas;
-        private Dictionary<string, FertilityPrototypeData> fertilityPrototypeDatas;
-        private Dictionary<string, UnitPrototypeData> unitPrototypeDatas;
-        private Dictionary<string, WorkerPrototypeData> workerPrototypeDatas;
-        private Dictionary<string, DamageType> damageTypeDatas;
-        private Dictionary<string, EffectPrototypeData> effectPrototypeDatas;
-        private Dictionary<string, GameEventPrototypData> gameEventPrototypeDatas;
-        private Dictionary<string, ArmorType> armorTypeDatas;
-        private Dictionary<int, PopulationLevelPrototypData> populationLevelDatas;
-        private Dictionary<string, NeedGroupPrototypData> needGroupDatas;
-        private Dictionary<string, NeedGroup> idToNeedGroup;
-        private Dictionary<string, Item> allItems;
-        private Dictionary<Climate, List<SpawnStructureGenerationInfo>> spawnStructureGeneration;
+        private Dictionary<string, Structure> _structurePrototypes;
+        private Dictionary<string, Unit> _unitPrototypes;
+        private Dictionary<Type, int> _structureTypeToMaxStructureLevel;
+        private Dictionary<string, StructurePrototypeData> _structurePrototypeDatas;
+        private Dictionary<string, ItemPrototypeData> _itemPrototypeDatas;
+        private Dictionary<string, NeedPrototypeData> _needPrototypeDatas;
+        private Dictionary<string, FertilityPrototypeData> _fertilityPrototypeDatas;
+        private Dictionary<string, UnitPrototypeData> _unitPrototypeDatas;
+        private Dictionary<string, WorkerPrototypeData> _workerPrototypeDatas;
+        private Dictionary<string, DamageType> _damageTypeDatas;
+        private Dictionary<string, EffectPrototypeData> _effectPrototypeDatas;
+        private Dictionary<string, GameEventPrototypData> _gameEventPrototypeDatas;
+        private Dictionary<string, ArmorType> _armorTypeDatas;
+        private Dictionary<int, PopulationLevelPrototypData> _populationLevelDatas;
+        private Dictionary<string, NeedGroupPrototypData> _needGroupDatas;
+        private Dictionary<string, NeedGroup> _idToNeedGroup;
+        private Dictionary<string, Item> _allItems;
+        private Dictionary<Climate, List<SpawnStructureGenerationInfo>> _spawnStructureGeneration;
 
-        private List<Item> buildItemsList;
-        private Dictionary<int, List<NeedGroup>> populationLevelToNeedGroup;
-        private Dictionary<Climate, List<Fertility>> allFertilities;
-        private Dictionary<Climate, List<FertilityPrototypeData>> allFertilitiesDatasPerClimate;
-        private Dictionary<string, IslandFeaturePrototypeData> islandFeaturePrototypeDatas;
+        private List<Item> _buildItemsList;
+        private Dictionary<int, List<NeedGroup>> _populationLevelToNeedGroup;
+        private Dictionary<Climate, List<Fertility>> _allFertilities;
+        private Dictionary<Climate, List<FertilityPrototypeData>> _allFertilitiesDatasPerClimate;
+        private Dictionary<string, IslandFeaturePrototypeData> _islandFeaturePrototypeDatas;
         private List<StartingLoadout> _startingLoadouts;
-        private Dictionary<string, Fertility> idToFertilities;
-        private Dictionary<Size, IslandSizeGenerationInfo> islandSizeToGenerationInfo;
-        private Dictionary<Climate, List<ResourceGenerationInfo>> climateToResourceGeneration;
-        private ConcurrentDictionary<int, Unlocks>[] levelCountToUnlocks;
-        private ConcurrentDictionary<string, float[]> buildItemsNeeded;
-        private List<string> allNaturalSpawningStructureIDs;
+        private Dictionary<string, Fertility> _idToFertilities;
+        private Dictionary<Size, IslandSizeGenerationInfo> _islandSizeToGenerationInfo;
+        private Dictionary<Climate, List<ResourceGenerationInfo>> _climateToResourceGeneration;
+        private ConcurrentDictionary<int, Unlocks>[] _levelCountToUnlocks;
+        private ConcurrentDictionary<string, float[]> _buildItemsNeeded;
+        private List<string> _allNaturalSpawningStructureIDs;
         public List<ResourceGenerationInfo> ResourceGenerations { get; private set; }
         public List<int>[] AllUnlockPeoplePerLevel;
 
         /// <summary>
         /// "BuildItems in terms of when something requires it to be created."
         /// </summary>
-        public Dictionary<string, int[]> recommandedBuildSupplyChains { get; private set; }
+        public Dictionary<string, int[]> RecommandedBuildSupplyChains { get; private set; }
         public List<Item> MineableItems { get; private set; }
         private static Item[] _buildItems;
-        private List<Need> allNeeds;
-        private List<NeedPrototypeData>[] needsPerLevel;
-        public List<Fertility> orderUnlockFertilities { get; private set; }
+        private List<Need> _allNeeds;
+        private List<NeedPrototypeData>[] _needsPerLevel;
+        public List<Fertility> OrderUnlockFertilities { get; private set; }
         //current valid player prototyp data
         public static PlayerPrototypeData CurrentPlayerPrototypData = new PlayerPrototypeData();
         public static bool HomeRoadsNotNeeded;
         /// <summary>
         /// Item ID to the list of PRODUCE (which contains structure that PRODUCES it and supplychain)
         /// </summary>
-        private Dictionary<string, List<Produce>> itemIDToProduce;
+        private Dictionary<string, List<Produce>> _itemIdToProduce;
 
         //TODO: need a way to get this to load in! probably with the rest
         //      of the data thats still needs to be read in like time for money ticks
-        public ArmorType StructureArmor => armorTypeDatas["woodenwall"];
+        public ArmorType StructureArmor => _armorTypeDatas["woodenwall"];
         //TODO: make ai aware of ALL buildable homes -- that would require a lot of multichecks - for now simplified - since only 1 for now anyway
         public HomeStructure BuildableHomeStructure => PopulationLevelDatas[0].HomeStructure;
         public MarketStructure FirstLevelMarket { get; private set; }
         public virtual Dictionary<string, Item> GetCopieOfAllItems() {
             Dictionary<string, Item> items = new Dictionary<string, Item>();
-            foreach (string item in allItems.Keys) {
+            foreach (string item in _allItems.Keys) {
                 string id = item;
-                items.Add(id, allItems[id].Clone());
+                items.Add(id, _allItems[id].Clone());
             }
             return items;
         }
 
         public List<Need> GetCopieOfAllNeeds() {
             List<Need> needs = new List<Need>();
-            foreach (Need item in allNeeds) {
+            foreach (Need item in _allNeeds) {
                 needs.Add(item.Clone());
             }
             return needs;
@@ -169,9 +169,9 @@ namespace Andja.Controller {
         }
 
         public IslandFeaturePrototypeData GetIslandFeaturePrototypeDataForID(string id) {
-            if (islandFeaturePrototypeDatas.ContainsKey(id) == false)
+            if (_islandFeaturePrototypeDatas.ContainsKey(id) == false)
                 return null;
-            return islandFeaturePrototypeDatas[id];
+            return _islandFeaturePrototypeDatas[id];
         }
 
         public Structure GetRoadForLevel(int level) {
@@ -179,7 +179,7 @@ namespace Andja.Controller {
         }
 
         public bool ExistsNeed(Need need) {
-            return allNeeds.Contains(need);
+            return _allNeeds.Contains(need);
         }
 
         /// <summary>
@@ -192,7 +192,7 @@ namespace Andja.Controller {
         public List<PopulationLevel> GetPopulationLevels(City city) {
             List<PopulationLevel> populationLevels = new List<PopulationLevel>();
             PopulationLevel previous = null;
-            foreach (PopulationLevelPrototypData item in populationLevelDatas.Values) {
+            foreach (PopulationLevelPrototypData item in _populationLevelDatas.Values) {
                 PopulationLevel clone = new PopulationLevel(item.LEVEL, city, previous);
                 previous = clone;
                 populationLevels.Add(clone);
@@ -201,11 +201,10 @@ namespace Andja.Controller {
         }
 
         public ReadOnlyCollection<Need> GetAllNeeds() {
-            return new ReadOnlyCollection<Need>(allNeeds);
+            return new ReadOnlyCollection<Need>(_allNeeds);
         }
 
-        // Use this for initialization
-        private void Awake() {
+        public void Awake() {
             if (Instance != null) {
                 Debug.LogError("There should never be two world controllers.");
             }
@@ -217,10 +216,10 @@ namespace Andja.Controller {
         }
 
         public StructurePrototypeData GetStructurePrototypDataForID(string ID) {
-            return structurePrototypeDatas[ID];
+            return _structurePrototypeDatas[ID];
         }
         public WorkerPrototypeData GetWorkerPrototypDataForID(string id) {
-            return workerPrototypeDatas[id];
+            return _workerPrototypeDatas[id];
         }
 
         public bool GameEventExists(string id) {
@@ -228,63 +227,59 @@ namespace Andja.Controller {
         }
 
         public ItemPrototypeData GetItemPrototypDataForID(string ID) {
-            if (itemPrototypeDatas.ContainsKey(ID) == false) {
+            if (_itemPrototypeDatas.ContainsKey(ID) == false) {
                 Debug.Log(ID + "missing data!");
                 return new ItemPrototypeData() { type = ItemType.Missing };
             }
-            return itemPrototypeDatas[ID];
+            return _itemPrototypeDatas[ID];
         }
 
         public Unlocks GetUnlocksFor(int level, int count) {
-            if (levelCountToUnlocks.Length <= level)
+            if (_levelCountToUnlocks.Length <= level)
                 return null;
-            if (levelCountToUnlocks[level].ContainsKey(count) == false)
-                return null;
-            return levelCountToUnlocks[level][count];
+            return _levelCountToUnlocks[level].ContainsKey(count) == false ? null : _levelCountToUnlocks[level][count];
         }
 
         public PopulationLevelPrototypData GetPopulationLevelPrototypDataForLevel(int level) {
-            return populationLevelDatas[level];
+            return _populationLevelDatas[level];
         }
 
         public FertilityPrototypeData GetFertilityPrototypDataForID(string ID) {
-            return fertilityPrototypeDatas[ID];
+            return _fertilityPrototypeDatas[ID];
         }
 
         public NeedPrototypeData GetNeedPrototypDataForID(string ID) {
-            return needPrototypeDatas[ID];
+            return _needPrototypeDatas[ID];
         }
 
         public NeedGroupPrototypData GetNeedGroupPrototypDataForID(string ID) {
-            return needGroupDatas[ID];
+            return _needGroupDatas[ID];
         }
 
         public GameEventPrototypData GetGameEventPrototypDataForID(string ID) {
-            return gameEventPrototypeDatas[ID];
+            return _gameEventPrototypeDatas[ID];
         }
 
         public List<NeedGroup> GetNeedPrototypDataForLevel(int level) {
-            return populationLevelToNeedGroup[level];
+            return _populationLevelToNeedGroup[level];
         }
 
         public EffectPrototypeData GetEffectPrototypDataForID(string id) {
-            return effectPrototypeDatas[id];
+            return _effectPrototypeDatas[id];
         }
 
         public ICollection<Fertility> GetFertilitiesForClimate(Climate c) {
-            if (allFertilities.ContainsKey(c) == false) {
-                Debug.Log(c);
-                return null;
-            }
-            return allFertilities[c];
+            if (_allFertilities.ContainsKey(c)) return _allFertilities[c];
+            Debug.Log(c);
+            return null;
         }
 
         public int GetNeedCountLevel(int level) {
-            return needsPerLevel[level].Count;
+            return _needsPerLevel[level].Count;
         }
 
         public void LoadFromXML() {
-            if (allItems != null) {
+            if (_allItems != null) {
                 return;
             }
             System.Diagnostics.Stopwatch stopwatch = new System.Diagnostics.Stopwatch();
@@ -294,97 +289,95 @@ namespace Andja.Controller {
             //Good News everyone! Setting it to GB fixes that stupid thing! -Professor
             System.Threading.Thread.CurrentThread.CurrentCulture = System.Globalization.CultureInfo.CreateSpecificCulture("en-GB");
             //other
-            populationLevelDatas = new Dictionary<int, PopulationLevelPrototypData>();
-            ReadOtherFromXML(LoadXML(XMLFilesTypes.other));
-            ModLoader.LoadXMLs(XMLFilesTypes.other, ReadOtherFromXML);
+            _populationLevelDatas = new Dictionary<int, PopulationLevelPrototypData>();
+            ReadOtherFromXml(LoadXml(XmlFilesTypes.Other));
+            ModLoader.LoadXMLs(XmlFilesTypes.Other, ReadOtherFromXml);
 
             //GAMEEVENTS
-            effectPrototypeDatas = new Dictionary<string, EffectPrototypeData>();
-            gameEventPrototypeDatas = new Dictionary<string, GameEventPrototypData>();
-            ReadEventsFromXML(LoadXML(XMLFilesTypes.events));
-            ModLoader.LoadXMLs(XMLFilesTypes.events, ReadEventsFromXML);
+            _effectPrototypeDatas = new Dictionary<string, EffectPrototypeData>();
+            _gameEventPrototypeDatas = new Dictionary<string, GameEventPrototypData>();
+            ReadEventsFromXml(LoadXml(XmlFilesTypes.Events));
+            ModLoader.LoadXMLs(XmlFilesTypes.Events, ReadEventsFromXml);
 
 
             //fertilities
-            allFertilities = new Dictionary<Climate, List<Fertility>>();
-            idToFertilities = new Dictionary<string, Fertility>();
-            allFertilitiesDatasPerClimate = new Dictionary<Climate, List<FertilityPrototypeData>>();
-            fertilityPrototypeDatas = new Dictionary<string, FertilityPrototypeData>();
-            ReadFertilitiesFromXML(LoadXML(XMLFilesTypes.fertilities));
-            ModLoader.LoadXMLs(XMLFilesTypes.fertilities, ReadFertilitiesFromXML);
+            _allFertilities = new Dictionary<Climate, List<Fertility>>();
+            _idToFertilities = new Dictionary<string, Fertility>();
+            _allFertilitiesDatasPerClimate = new Dictionary<Climate, List<FertilityPrototypeData>>();
+            _fertilityPrototypeDatas = new Dictionary<string, FertilityPrototypeData>();
+            ReadFertilitiesFromXml(LoadXml(XmlFilesTypes.Fertilities));
+            ModLoader.LoadXMLs(XmlFilesTypes.Fertilities, ReadFertilitiesFromXml);
 
             // prototypes of items
-            allItems = new Dictionary<string, Item>();
-            buildItemsList = new List<Item>();
+            _allItems = new Dictionary<string, Item>();
+            _buildItemsList = new List<Item>();
             MineableItems = new List<Item>();
-            itemPrototypeDatas = new Dictionary<string, ItemPrototypeData>();
-            ReadItemsFromXML(LoadXML(XMLFilesTypes.items));
-            ModLoader.LoadXMLs(XMLFilesTypes.items, ReadItemsFromXML);
-            _buildItems = buildItemsList.ToArray();
-            buildItemsList = null;
+            _itemPrototypeDatas = new Dictionary<string, ItemPrototypeData>();
+            ReadItemsFromXml(LoadXml(XmlFilesTypes.Items));
+            ModLoader.LoadXMLs(XmlFilesTypes.Items, ReadItemsFromXml);
+            _buildItems = _buildItemsList.ToArray();
+            _buildItemsList = null;
 
-            armorTypeDatas = new Dictionary<string, ArmorType>();
-            damageTypeDatas = new Dictionary<string, DamageType>();
-            ReadCombatFromXML(LoadXML(XMLFilesTypes.combat));
-            ModLoader.LoadXMLs(XMLFilesTypes.combat, ReadCombatFromXML);
-            Dictionary<ArmorType, float> worldMultiplier = new Dictionary<ArmorType, float>();
-            foreach (ArmorType at in ArmorTypeDatas.Values)
-                worldMultiplier.Add(at, 1);
+            _armorTypeDatas = new Dictionary<string, ArmorType>();
+            _damageTypeDatas = new Dictionary<string, DamageType>();
+            ReadCombatFromXml(LoadXml(XmlFilesTypes.Combat));
+            ModLoader.LoadXMLs(XmlFilesTypes.Combat, ReadCombatFromXml);
+            Dictionary<ArmorType, float> worldMultiplier = ArmorTypeDatas.Values.ToDictionary<ArmorType, ArmorType, float>(at => at, at => 1);
             //Hardcoded WorldDamage -- We need it and cant change yo
-            damageTypeDatas.Add("world", new DamageType() {
+            _damageTypeDatas.Add("world", new DamageType() {
                 ID = "world",
                 damageMultiplier = worldMultiplier,
             });
 
-            unitPrototypes = new Dictionary<string, Unit>();
-            unitPrototypeDatas = new Dictionary<string, UnitPrototypeData>();
-            workerPrototypeDatas = new Dictionary<string, WorkerPrototypeData>();
-            ReadUnitsFromXML(LoadXML(XMLFilesTypes.units));
-            ModLoader.LoadXMLs(XMLFilesTypes.units, ReadUnitsFromXML);
+            _unitPrototypes = new Dictionary<string, Unit>();
+            _unitPrototypeDatas = new Dictionary<string, UnitPrototypeData>();
+            _workerPrototypeDatas = new Dictionary<string, WorkerPrototypeData>();
+            ReadUnitsFromXml(LoadXml(XmlFilesTypes.Units));
+            ModLoader.LoadXMLs(XmlFilesTypes.Units, ReadUnitsFromXml);
 
             // setup all prototypes of structures here
             // load them from the
-            structureTypeToMaxStructureLevel = new Dictionary<Type, int>();
-            structurePrototypes = new Dictionary<string, Structure>();
-            structurePrototypeDatas = new Dictionary<string, StructurePrototypeData>();
-            ReadStructuresFromXML(LoadXML(XMLFilesTypes.structures));
-            ModLoader.LoadXMLs(XMLFilesTypes.structures, ReadStructuresFromXML);
+            _structureTypeToMaxStructureLevel = new Dictionary<Type, int>();
+            _structurePrototypes = new Dictionary<string, Structure>();
+            _structurePrototypeDatas = new Dictionary<string, StructurePrototypeData>();
+            ReadStructuresFromXml(LoadXml(XmlFilesTypes.Structures));
+            ModLoader.LoadXMLs(XmlFilesTypes.Structures, ReadStructuresFromXml);
 
             //needs
-            allNeeds = new List<Need>();
-            populationLevelToNeedGroup = new Dictionary<int, List<NeedGroup>>();
-            needPrototypeDatas = new Dictionary<string, NeedPrototypeData>();
-            needGroupDatas = new Dictionary<string, NeedGroupPrototypData>();
-            idToNeedGroup = new Dictionary<string, NeedGroup>();
-            ReadNeedsFromXML(LoadXML(XMLFilesTypes.needs));
-            ModLoader.LoadXMLs(XMLFilesTypes.needs, ReadNeedsFromXML);
+            _allNeeds = new List<Need>();
+            _populationLevelToNeedGroup = new Dictionary<int, List<NeedGroup>>();
+            _needPrototypeDatas = new Dictionary<string, NeedPrototypeData>();
+            _needGroupDatas = new Dictionary<string, NeedGroupPrototypData>();
+            _idToNeedGroup = new Dictionary<string, NeedGroup>();
+            ReadNeedsFromXml(LoadXml(XmlFilesTypes.Needs));
+            ModLoader.LoadXMLs(XmlFilesTypes.Needs, ReadNeedsFromXml);
 
             _startingLoadouts = new List<StartingLoadout>();
-            ReadStartingLoadoutsFromXMLs(LoadXML(XMLFilesTypes.startingloadouts));
-            ModLoader.LoadXMLs(XMLFilesTypes.startingloadouts, ReadStartingLoadoutsFromXMLs);
+            ReadStartingLoadoutsFromXmLs(LoadXml(XmlFilesTypes.Startingloadouts));
+            ModLoader.LoadXMLs(XmlFilesTypes.Startingloadouts, ReadStartingLoadoutsFromXmLs);
 
-            islandSizeToGenerationInfo = new Dictionary<Size, IslandSizeGenerationInfo>();
-            climateToResourceGeneration = new Dictionary<Climate, List<ResourceGenerationInfo>>();
-            islandFeaturePrototypeDatas = new Dictionary<string, IslandFeaturePrototypeData>();
-            spawnStructureGeneration = new Dictionary<Climate, List<SpawnStructureGenerationInfo>>();
-            allNaturalSpawningStructureIDs = new List<string>();
+            _islandSizeToGenerationInfo = new Dictionary<Size, IslandSizeGenerationInfo>();
+            _climateToResourceGeneration = new Dictionary<Climate, List<ResourceGenerationInfo>>();
+            _islandFeaturePrototypeDatas = new Dictionary<string, IslandFeaturePrototypeData>();
+            _spawnStructureGeneration = new Dictionary<Climate, List<SpawnStructureGenerationInfo>>();
+            _allNaturalSpawningStructureIDs = new List<string>();
             foreach (Climate climate in Enum.GetValues(typeof(Climate))) {
-                spawnStructureGeneration[climate] = new List<SpawnStructureGenerationInfo>();
+                _spawnStructureGeneration[climate] = new List<SpawnStructureGenerationInfo>();
             }
             ResourceGenerations = new List<ResourceGenerationInfo>();
-            ReadMapGenerationInfos(LoadXML(XMLFilesTypes.mapgeneration));
-            ModLoader.LoadXMLs(XMLFilesTypes.mapgeneration, ReadMapGenerationInfos);
-            if (islandFeaturePrototypeDatas.Count > 0) {
+            ReadMapGenerationInfos(LoadXml(XmlFilesTypes.Mapgeneration));
+            ModLoader.LoadXMLs(XmlFilesTypes.Mapgeneration, ReadMapGenerationInfos);
+            if (_islandFeaturePrototypeDatas.Count > 0) {
                 MoonSharp.Interpreter.UserData.RegisterAssembly(); //Set up for exchange of Tile Data
                 MoonSharp.Interpreter.UserData.RegisterType<TileType>();
             }
 
             foreach (IslandFeaturePrototypeData d in IslandFeaturePrototypeData.TempSetUp()) {
-                islandFeaturePrototypeDatas.Add(d.ID, d);
+                _islandFeaturePrototypeDatas.Add(d.ID, d);
             }
 
             string str = "";
-            List<Structure> all = new List<Structure>(structurePrototypes.Values);
+            List<Structure> all = new List<Structure>(_structurePrototypes.Values);
             while (all.Count > 0) {
                 List<Structure> temp = all.FindAll(x => all[0].GetType() == x.GetType());
                 foreach (Structure s in temp) {
@@ -393,21 +386,19 @@ namespace Andja.Controller {
                 str += "    -> " + temp[0].GetType() + " = " + temp.Count + " \n";
             }
             string readInThings = "###Read In Stuff###\n";
-            readInThings += ("Read in structures: " + structurePrototypes.Count + "\n" + str);
-            readInThings += ("Read in fertilities: " + allFertilities.Count + " with all " + fertilityPrototypeDatas.Count) + "\n";
-            readInThings += ("Read in units: " + unitPrototypes.Count) + "\n";
-            readInThings += ("Read in items: " + allItems.Count) + "\n";
-            string needslevel = "";
-            foreach (PopulationLevelPrototypData pl in populationLevelDatas.Values) {
-                needslevel += "[" + pl.LEVEL + ": " + allNeeds.Count(x => x.StartLevel == pl.LEVEL) + "]";
-            }
-            readInThings += ("Read in needs: " + allNeeds.Count + " (" + needslevel + ")") + "\n";
-            readInThings += ("Read in needGroups: " + needGroupDatas.Count) + "\n";
-            readInThings += ("Read in damagetypes: " + damageTypeDatas.Count) + "\n";
-            readInThings += ("Read in armortypes: " + armorTypeDatas.Count) + "\n";
-            readInThings += ("Read in populationLevel: " + populationLevelDatas.Count) + "\n";
-            readInThings += ("Read in effects: " + effectPrototypeDatas.Count) + "\n";
-            readInThings += ("Read in gameevents: " + gameEventPrototypeDatas.Count) + "\n";
+            readInThings += ("Read in structures: " + _structurePrototypes.Count + "\n" + str);
+            readInThings += ("Read in fertilities: " + _allFertilities.Count + " with all " + _fertilityPrototypeDatas.Count) + "\n";
+            readInThings += ("Read in units: " + _unitPrototypes.Count) + "\n";
+            readInThings += ("Read in items: " + _allItems.Count) + "\n";
+            string needslevel = _populationLevelDatas.Values.Aggregate("", (current, pl)
+                                => current + ("[" + pl.LEVEL + ": " + _allNeeds.Count(x => x.StartLevel == pl.LEVEL) + "]"));
+            readInThings += ("Read in needs: " + _allNeeds.Count + " (" + needslevel + ")") + "\n";
+            readInThings += ("Read in needGroups: " + _needGroupDatas.Count) + "\n";
+            readInThings += ("Read in damagetypes: " + _damageTypeDatas.Count) + "\n";
+            readInThings += ("Read in armortypes: " + _armorTypeDatas.Count) + "\n";
+            readInThings += ("Read in populationLevel: " + _populationLevelDatas.Count) + "\n";
+            readInThings += ("Read in effects: " + _effectPrototypeDatas.Count) + "\n";
+            readInThings += ("Read in gameevents: " + _gameEventPrototypeDatas.Count) + "\n";
             readInThings += ("###Read in took " + stopwatch.Elapsed.TotalSeconds + "s ###");
             Debug.Log(readInThings);
             //Set it to default so it doesnt interfer with user interface informations
@@ -416,12 +407,12 @@ namespace Andja.Controller {
             CalculateNeedStuff();
             CalculatePopulationNeedGroups();
             CalculateUnlocks();
-            FirstLevelMarket = structurePrototypes[GetFirstLevelStructureIDForStructureType(typeof(MarketStructure))] as MarketStructure;
+            FirstLevelMarket = _structurePrototypes[GetFirstLevelStructureIDForStructureType(typeof(MarketStructure))] as MarketStructure;
             Debug.Log("###Calculating Prototype-Stuff took " + stopwatch.Elapsed.TotalSeconds + "s ###");
         }
 
         public DamageType GetWorldDamageType() {
-            return damageTypeDatas["world"];
+            return _damageTypeDatas["world"];
         }
 
         private void ReadMapGenerationInfos(string xmlText) {
@@ -433,10 +424,10 @@ namespace Andja.Controller {
                 IslandSizeGenerationInfo islandSize = new IslandSizeGenerationInfo();
                 SetData<IslandSizeGenerationInfo>((XmlElement)node, ref islandSize);
                 Enum.TryParse(node.GetAttribute("size"), true, out Size size);
-                islandSizeToGenerationInfo[size] = islandSize;
+                _islandSizeToGenerationInfo[size] = islandSize;
             }
             foreach (Climate climate in Enum.GetValues(typeof(Climate))) {
-                climateToResourceGeneration[climate] = new List<ResourceGenerationInfo>();
+                _climateToResourceGeneration[climate] = new List<ResourceGenerationInfo>();
             }
             foreach (XmlElement node in xmlDoc.SelectNodes("generationInfos/resources/resource")) {
                 ResourceGenerationInfo generationInfo = new ResourceGenerationInfo();
@@ -464,7 +455,7 @@ namespace Andja.Controller {
                 IslandFeaturePrototypeData feature = new IslandFeaturePrototypeData();
                 feature.ID = node.GetAttribute("ID");
                 SetData<IslandFeaturePrototypeData>(node, ref feature);
-                islandFeaturePrototypeDatas[feature.ID] = feature;
+                _islandFeaturePrototypeDatas[feature.ID] = feature;
             }
             foreach (XmlElement node in xmlDoc.SelectNodes("generationInfos/structures/structure")) {
                 SpawnStructureGenerationInfo sps = new SpawnStructureGenerationInfo();
@@ -472,41 +463,41 @@ namespace Andja.Controller {
                 SetData<SpawnStructureGenerationInfo>(node, ref sps);
                 if (sps.climate != null) {
                     foreach (Climate c in sps.climate) {
-                        spawnStructureGeneration[c].Add(sps);
+                        _spawnStructureGeneration[c].Add(sps);
                     }
                 }
                 else {
                     foreach (Climate c in Enum.GetValues(typeof(Climate))) {
-                        spawnStructureGeneration[c].Add(sps);
+                        _spawnStructureGeneration[c].Add(sps);
                     }
                 }
                 if (sps.structureType == StructureType.Natural) {
-                    allNaturalSpawningStructureIDs.Add(sps.ID);
+                    _allNaturalSpawningStructureIDs.Add(sps.ID);
                 }
             }
         }
 
         private void CalculatePopulationNeedGroups() {
-            foreach (int level in populationLevelDatas.Keys) {
-                if (populationLevelToNeedGroup.ContainsKey(level))
-                    populationLevelDatas[level].needGroupList = populationLevelToNeedGroup[level];
+            foreach (int level in _populationLevelDatas.Keys) {
+                if (_populationLevelToNeedGroup.ContainsKey(level))
+                    _populationLevelDatas[level].needGroupList = _populationLevelToNeedGroup[level];
                 else
-                    Debug.LogWarning("PopulationLevel " + populationLevelDatas[level].Name + " " + level + " is missing its own needs!");
+                    Debug.LogWarning("PopulationLevel " + _populationLevelDatas[level].Name + " " + level + " is missing its own needs!");
             }
         }
 
         private void CalculateUnlocks() {
-            levelCountToUnlocks = new ConcurrentDictionary<int, Unlocks>[NumberOfPopulationLevels];
-            buildItemsNeeded = new ConcurrentDictionary<string, float[]>();
+            _levelCountToUnlocks = new ConcurrentDictionary<int, Unlocks>[NumberOfPopulationLevels];
+            _buildItemsNeeded = new ConcurrentDictionary<string, float[]>();
             AllUnlockPeoplePerLevel = new List<int>[NumberOfPopulationLevels];
             for (int i = 0; i < NumberOfPopulationLevels; i++) {
-                levelCountToUnlocks[i] = new ConcurrentDictionary<int, Unlocks>();
+                _levelCountToUnlocks[i] = new ConcurrentDictionary<int, Unlocks>();
             }
             var one = Parallel.ForEach(StructurePrototypes.Values, structure => {
-                if (levelCountToUnlocks[structure.PopulationLevel].ContainsKey(structure.PopulationCount) == false) {
-                    levelCountToUnlocks[structure.PopulationLevel].TryAdd(structure.PopulationCount, new Unlocks(structure.PopulationCount, structure.PopulationLevel));
+                if (_levelCountToUnlocks[structure.PopulationLevel].ContainsKey(structure.PopulationCount) == false) {
+                    _levelCountToUnlocks[structure.PopulationLevel].TryAdd(structure.PopulationCount, new Unlocks(structure.PopulationCount, structure.PopulationLevel));
                 }
-                levelCountToUnlocks[structure.PopulationLevel].TryGetValue(structure.PopulationCount, out Unlocks value);
+                _levelCountToUnlocks[structure.PopulationLevel].TryGetValue(structure.PopulationCount, out Unlocks value);
                 value.structures.Add(structure);
                 if (structure is OutputStructure) {
                     if (((OutputStructure)structure).Output != null) {
@@ -535,72 +526,67 @@ namespace Andja.Controller {
                     foreach (Item item in structure.BuildingItems) {
                         float[] array = new float[NumberOfPopulationLevels];
                         array[structure.PopulationLevel] = item.count;
-                        buildItemsNeeded.AddOrUpdate(item.ID, array, (id, oc) => { oc[structure.PopulationLevel] += item.count; return oc; });
+                        _buildItemsNeeded.AddOrUpdate(item.ID, array, (id, oc) => { oc[structure.PopulationLevel] += item.count; return oc; });
                     }
                 }
             });
             var two = Parallel.ForEach(UnitPrototypes.Values, unit => {
-                if (levelCountToUnlocks[unit.PopulationLevel].ContainsKey(unit.PopulationCount) == false) {
-                    levelCountToUnlocks[unit.PopulationLevel].TryAdd(unit.PopulationCount, new Unlocks(unit.PopulationCount, unit.PopulationLevel));
+                if (_levelCountToUnlocks[unit.PopulationLevel].ContainsKey(unit.PopulationCount) == false) {
+                    _levelCountToUnlocks[unit.PopulationLevel].TryAdd(unit.PopulationCount, new Unlocks(unit.PopulationCount, unit.PopulationLevel));
                 }
-                levelCountToUnlocks[unit.PopulationLevel].TryGetValue(unit.PopulationCount, out Unlocks value);
+                _levelCountToUnlocks[unit.PopulationLevel].TryGetValue(unit.PopulationCount, out Unlocks value);
                 value.units.Add(unit);
                 if (unit.BuildingItems != null) {
                     foreach (Item item in unit.BuildingItems) {
                         float[] array = new float[NumberOfPopulationLevels];
                         array[unit.PopulationLevel] = item.count;
-                        buildItemsNeeded.AddOrUpdate(item.ID, array, (id, oc) => { oc[unit.PopulationLevel] += item.count; return oc; });
+                        _buildItemsNeeded.AddOrUpdate(item.ID, array, (id, oc) => { oc[unit.PopulationLevel] += item.count; return oc; });
                     }
                 }
             });
-            var three = Parallel.ForEach(allNeeds, need => {
-                if (levelCountToUnlocks[need.StartLevel].ContainsKey(need.StartPopulationCount) == false) {
-                    levelCountToUnlocks[need.StartLevel].TryAdd(need.StartPopulationCount, new Unlocks(need.StartPopulationCount, need.StartLevel));
+            var three = Parallel.ForEach(_allNeeds, need => {
+                if (_levelCountToUnlocks[need.StartLevel].ContainsKey(need.StartPopulationCount) == false) {
+                    _levelCountToUnlocks[need.StartLevel].TryAdd(need.StartPopulationCount, new Unlocks(need.StartPopulationCount, need.StartLevel));
                 }
-                levelCountToUnlocks[need.StartLevel].TryGetValue(need.StartPopulationCount, out Unlocks value);
+                _levelCountToUnlocks[need.StartLevel].TryGetValue(need.StartPopulationCount, out Unlocks value);
                 value.needs.Add(need);
             });
             while ((one.IsCompleted && two.IsCompleted && three.IsCompleted) == false) {
             }
             for (int i = 0; i < NumberOfPopulationLevels; i++) {
                 AllUnlockPeoplePerLevel[i] = new List<int>();
-                foreach (int key in levelCountToUnlocks[i].Keys) {
+                foreach (int key in _levelCountToUnlocks[i].Keys) {
                     AllUnlockPeoplePerLevel[i].Add(key);
                 }
                 AllUnlockPeoplePerLevel[i].Sort();
             }
-            foreach (FertilityPrototypeData fertilityPrototype in fertilityPrototypeDatas.Values) {
+            foreach (FertilityPrototypeData fertilityPrototype in _fertilityPrototypeDatas.Values) {
                 if (fertilityPrototype.ItemsDependentOnThis.Count == 0) {
                     Debug.LogWarning("Fertility " + fertilityPrototype.ID + " is not required by anything! -- Wanted?");
                 }
             }
             //TODO: make this make more sense :)
-            recommandedBuildSupplyChains = new Dictionary<string, int[]>();
-            foreach (string item in buildItemsNeeded.Keys) {
-                if (itemIDToProduce.ContainsKey(item) == false)
+            RecommandedBuildSupplyChains = new Dictionary<string, int[]>();
+            foreach (string item in _buildItemsNeeded.Keys) {
+                if (_itemIdToProduce.ContainsKey(item) == false)
                     continue;
-                recommandedBuildSupplyChains[item] = new int[NumberOfPopulationLevels];
+                RecommandedBuildSupplyChains[item] = new int[NumberOfPopulationLevels];
                 for (int i = 0; i < NumberOfPopulationLevels; i++) {
-                    recommandedBuildSupplyChains[item][i] = Mathf.CeilToInt(buildItemsNeeded[item][i]
-                        / (itemIDToProduce[item][0].producePerMinute * 60));
+                    RecommandedBuildSupplyChains[item][i] = Mathf.CeilToInt(_buildItemsNeeded[item][i]
+                        / (_itemIdToProduce[item][0].producePerMinute * 60));
                 }
             }
-            orderUnlockFertilities = new List<Fertility>(idToFertilities.Values);
-            orderUnlockFertilities.RemoveAll(x => x.Data.ItemsDependentOnThis.Count == 0);
-            orderUnlockFertilities = orderUnlockFertilities.OrderBy(x => x.Data.UnlockLevel).ThenBy(x => x.Data.UnlockPopulationCount).ToList();
+            OrderUnlockFertilities = new List<Fertility>(_idToFertilities.Values);
+            OrderUnlockFertilities.RemoveAll(x => x.Data.ItemsDependentOnThis.Count == 0);
+            OrderUnlockFertilities = OrderUnlockFertilities.OrderBy(x => x.Data.UnlockLevel).ThenBy(x => x.Data.UnlockPopulationCount).ToList();
         }
         public Unlocks GetNextUnlocks(int populationLevel, int populationCount) {
-            foreach (var item in levelCountToUnlocks[populationLevel]) {
-                if (item.Key > populationCount) {
-                    return item.Value;
-                }
-            }
-            return null;
+            return (from item in _levelCountToUnlocks[populationLevel] where item.Key > populationCount select item.Value).FirstOrDefault();
         }
 
         private void CalculateNeedStuff() {
-            needsPerLevel = new List<NeedPrototypeData>[NumberOfPopulationLevels];
-            foreach (var pair in needPrototypeDatas) {
+            _needsPerLevel = new List<NeedPrototypeData>[NumberOfPopulationLevels];
+            foreach (var pair in _needPrototypeDatas) {
                 NeedPrototypeData need = pair.Value;
                 if (need.structures != null) {
                     int startPopulationCount = int.MaxValue;
@@ -620,21 +606,20 @@ namespace Andja.Controller {
                     }
                 }
                 if (need.item != null) {
-                    if (need.item.Data.SatisfiesNeeds == null)
-                        need.item.Data.SatisfiesNeeds = new List<Need>();
+                    need.item.Data.SatisfiesNeeds ??= new List<Need>();
                     need.item.Data.SatisfiesNeeds.Add(new Need(pair.Key));
                     if (need.item.Type != ItemType.Luxury) {
                         Debug.LogWarning("Item " + need.item.ID + " is not marked as luxury good. Fix it, but change it in file.");
                         need.item.Data.type = ItemType.Luxury;
                     }
                     need.produceForPeople = new Dictionary<Produce, int[]>();
-                    if (itemIDToProduce.ContainsKey(need.item.ID) == false) {
+                    if (_itemIdToProduce.ContainsKey(need.item.ID) == false) {
                         Debug.LogError("itemIDToProduce does not have any production for this need item " + need.item.ID);
                         continue;
                     }
                     int startPopulationCount = int.MaxValue;
                     int populationLevel = int.MaxValue;
-                    foreach (Produce produce in itemIDToProduce[need.item.ID]) {
+                    foreach (Produce produce in _itemIdToProduce[need.item.ID]) {
                         StructurePrototypeData str = produce.ProducerStructure;
                         startPopulationCount = Mathf.Min(startPopulationCount, str.populationCount);
                         populationLevel = Mathf.Min(populationLevel, str.populationLevel);
@@ -652,9 +637,8 @@ namespace Andja.Controller {
                         need.startLevel = populationLevel;
                     }
                 }
-                if (needsPerLevel[need.startLevel] == null)
-                    needsPerLevel[need.startLevel] = new List<NeedPrototypeData>();
-                needsPerLevel[need.startLevel].Add(need);
+                _needsPerLevel[need.startLevel] ??= new List<NeedPrototypeData>();
+                _needsPerLevel[need.startLevel].Add(need);
             }
             foreach (Item item in AllItems.Values.Where(x => x.Type == ItemType.Luxury)) {
                 item.Data.TotalUsagePerLevel = new float[NumberOfPopulationLevels];
@@ -666,7 +650,7 @@ namespace Andja.Controller {
 
         }
 
-        private void ReadStartingLoadoutsFromXMLs(string xmlText) {
+        private void ReadStartingLoadoutsFromXmLs(string xmlText) {
             XmlDocument xmlDoc = new XmlDocument(); // xmlDoc is the new xml document.
             xmlDoc.LoadXml(xmlText); // load the file.
             foreach (XmlElement node in xmlDoc.SelectNodes("startingloadouts/startingloadout")) {
@@ -677,12 +661,12 @@ namespace Andja.Controller {
         }
 
         private void CalculateOptimalProportions() {
-            List<StructurePrototypeData> structures = new List<StructurePrototypeData>(structurePrototypeDatas.Values);
+            List<StructurePrototypeData> structures = new List<StructurePrototypeData>(_structurePrototypeDatas.Values);
             List<FarmPrototypeData> farms = new List<FarmPrototypeData>(structures.OfType<FarmPrototypeData>());
             List<MinePrototypeData> mines = new List<MinePrototypeData>(structures.OfType<MinePrototypeData>());
             List<ProductionPrototypeData> productions = new List<ProductionPrototypeData>(structures.OfType<ProductionPrototypeData>());
             List<Produce> productionsProduces = new List<Produce>();
-            itemIDToProduce = new Dictionary<string, List<Produce>>();
+            _itemIdToProduce = new Dictionary<string, List<Produce>>();
             string produceDebug = "Produce Per Minute\n";
             produceDebug += "##############FARMS##############\n";
             foreach (FarmPrototypeData fpd in farms) {
@@ -722,14 +706,14 @@ namespace Andja.Controller {
                         ProducerStructure = fpd
                     };
                     p.CalculateSupplyChains();
-                    if (itemIDToProduce.ContainsKey(outItem.ID)) {
-                        itemIDToProduce[outItem.ID].Add(p);
+                    if (_itemIdToProduce.ContainsKey(outItem.ID)) {
+                        _itemIdToProduce[outItem.ID].Add(p);
                     }
                     else {
-                        itemIDToProduce.Add(outItem.ID, new List<Produce> { p });
+                        _itemIdToProduce.Add(outItem.ID, new List<Produce> { p });
                     }
                     if (fpd.growable?.Fertility != null) {
-                        fertilityPrototypeDatas[fpd.growable.Fertility.ID].ItemsDependentOnThis.Add(outItem.ID);
+                        _fertilityPrototypeDatas[fpd.growable.Fertility.ID].ItemsDependentOnThis.Add(outItem.ID);
                     }
                 }
             }
@@ -745,11 +729,11 @@ namespace Andja.Controller {
                     };
                     p.CalculateSupplyChains();
                     produceDebug += mpd.ID + ": " + ppm + "\n";
-                    if (itemIDToProduce.ContainsKey(outItem.ID)) {
-                        itemIDToProduce[outItem.ID].Add(p);
+                    if (_itemIdToProduce.ContainsKey(outItem.ID)) {
+                        _itemIdToProduce[outItem.ID].Add(p);
                     }
                     else {
-                        itemIDToProduce.Add(outItem.ID, new List<Produce> { p });
+                        _itemIdToProduce.Add(outItem.ID, new List<Produce> { p });
                     }
                 }
             }
@@ -768,11 +752,11 @@ namespace Andja.Controller {
                     };
                     produceDebug += ppd.ID + ": " + ppm + "\n";
                     productionsProduces.Add(p);
-                    if (itemIDToProduce.ContainsKey(outItem.ID)) {
-                        itemIDToProduce[outItem.ID].Add(p);
+                    if (_itemIdToProduce.ContainsKey(outItem.ID)) {
+                        _itemIdToProduce[outItem.ID].Add(p);
                     }
                     else {
-                        itemIDToProduce.Add(outItem.ID, new List<Produce> { p });
+                        _itemIdToProduce.Add(outItem.ID, new List<Produce> { p });
                     }
                 }
             }
@@ -781,11 +765,11 @@ namespace Andja.Controller {
                 if (currentProduce.needed == null)
                     continue;
                 foreach (Item need in currentProduce.needed) {
-                    if (itemIDToProduce.ContainsKey(need.ID) == false) {
+                    if (_itemIdToProduce.ContainsKey(need.ID) == false) {
                         Debug.LogWarning("NEEDED ITEM CANNOT BE PRODUCED! -- Wanted beahviour? Item-ID:" + need.ID);
                         continue;
                     }
-                    foreach (Produce itemProducer in itemIDToProduce[need.ID]) {
+                    foreach (Produce itemProducer in _itemIdToProduce[need.ID]) {
                         float f1 = (((float)need.count * (60f / currentProduce.ProducerStructure.produceTime)));
                         float f2 = (((float)itemProducer.item.count * itemProducer.producePerMinute));
                         if (f2 == 0)
@@ -809,9 +793,8 @@ namespace Andja.Controller {
                 proportionDebug += "\n" + currentProduce.ProducerStructure.ID + ":";
                 foreach (string item in currentProduce.itemProduceRatios.Keys) {
                     proportionDebug += "\n ->" + item;
-                    foreach (ProduceRatio pr in currentProduce.itemProduceRatios[item]) {
-                        proportionDebug += "\n  # " + pr.Producer.ProducerStructure.ID + "= " + pr.Ratio;
-                    }
+                    proportionDebug = currentProduce.itemProduceRatios[item].Aggregate(proportionDebug, (current, pr)
+                                        => current + ("\n  # " + pr.Producer.ProducerStructure.ID + "= " + pr.Ratio));
                 }
             }
             Debug.Log(proportionDebug);
@@ -837,9 +820,9 @@ namespace Andja.Controller {
                     supplyChainsCosts += "TBC " + sc.cost.TotalBuildCost;
                     supplyChainsCosts += " TMC " + sc.cost.TotalMaintenance;
                     supplyChainsCosts += " PL " + sc.cost.PopulationLevel;
-                    supplyChainsCosts += " I " + string.Join(", ", (object[])sc.cost.TotalItemCost);
+                    supplyChainsCosts += " I " + string.Join(", ", sc.cost.TotalItemCost.Select(x=>x.ToString()));
                     if (sc.cost.requiredFertilites != null)
-                        supplyChainsCosts += " F " + string.Join(", ", (object[])sc.cost.requiredFertilites.ToArray());
+                        supplyChainsCosts += " F " + string.Join(", ", sc.cost.requiredFertilites.Select(x => x.ToString()));
                     supplyChainsCosts += "]";
                 }
             }
@@ -847,34 +830,32 @@ namespace Andja.Controller {
         }
 
         public int GetMaxStructureLevelForStructureType(Type type) {
-            if (structureTypeToMaxStructureLevel.ContainsKey(type) == false)
-                structureTypeToMaxStructureLevel[type] =
-                    new List<Structure>(structurePrototypes.Values).FindAll(x => type == x.GetType())
+            if (_structureTypeToMaxStructureLevel.ContainsKey(type) == false)
+                _structureTypeToMaxStructureLevel[type] =
+                    new List<Structure>(_structurePrototypes.Values).FindAll(x => type == x.GetType())
                         .OrderByDescending(item => item.PopulationLevel).First().PopulationLevel;
-            return structureTypeToMaxStructureLevel[type];
+            return _structureTypeToMaxStructureLevel[type];
         }
 
         public string GetFirstLevelStructureIDForStructureType(Type type) {
             //TODO: optimize this
-            return new List<Structure>(structurePrototypes.Values).FindAll(x => type == x.GetType())
+            return new List<Structure>(_structurePrototypes.Values).FindAll(x => type == x.GetType())
                         .OrderBy(item => item.PopulationLevel).First().ID;
         }
 
         public UnitPrototypeData GetUnitPrototypDataForID(string id) {
-            return unitPrototypeDatas[id];
+            return _unitPrototypeDatas[id];
         }
 
         public Unit GetUnitForID(string id) {
-            if (unitPrototypes.ContainsKey(id) == false)
-                return null;
-            return unitPrototypes[id];
+            return _unitPrototypes.ContainsKey(id) == false ? null : _unitPrototypes[id];
         }
 
         ///////////////////////////////////////
         /// XML LOADING FROM FILE
         ///
         ///////////////////////////////////////
-        private void ReadEventsFromXML(string file) {
+        private void ReadEventsFromXml(string file) {
             XmlDocument xmlDoc = new XmlDocument();
             xmlDoc.LoadXml(file); // load the file.
             XmlNodeList listEffect = xmlDoc.SelectNodes("events/Effect");
@@ -883,22 +864,21 @@ namespace Andja.Controller {
                     EffectPrototypeData epd = new EffectPrototypeData();
                     string id = node.GetAttribute("ID");
                     SetData<EffectPrototypeData>(node, ref epd);
-                    effectPrototypeDatas[id] = epd;
+                    _effectPrototypeDatas[id] = epd;
                 }
             }
             XmlNodeList listGameEvent = xmlDoc.SelectNodes("events/GameEvent");
-            if (listGameEvent != null) {
-                foreach (XmlElement node in listGameEvent) {
-                    GameEventPrototypData gepd = new GameEventPrototypData();
-                    string id = node.GetAttribute("ID");
-                    gepd.ID = id;
-                    SetData<GameEventPrototypData>(node, ref gepd);
-                    gameEventPrototypeDatas[id] = gepd;
-                }
+            if (listGameEvent == null) return;
+            foreach (XmlElement node in listGameEvent) {
+                GameEventPrototypData gepd = new GameEventPrototypData();
+                string id = node.GetAttribute("ID");
+                gepd.ID = id;
+                SetData<GameEventPrototypData>(node, ref gepd);
+                _gameEventPrototypeDatas[id] = gepd;
             }
         }
 
-        private void ReadOtherFromXML(string file) {
+        private void ReadOtherFromXml(string file) {
             XmlDocument xmlDoc = new XmlDocument();
             xmlDoc.LoadXml(file); // load the file.
             foreach (XmlElement node in xmlDoc.SelectNodes("Other/PopulationLevels/PopulationLevel")) {
@@ -906,11 +886,11 @@ namespace Andja.Controller {
                 int level = int.Parse(node.GetAttribute("LEVEL"));
                 plpd.LEVEL = level;
                 SetData<PopulationLevelPrototypData>(node, ref plpd);
-                populationLevelDatas[level] = plpd;
+                _populationLevelDatas[level] = plpd;
             }
         }
 
-        private void ReadCombatFromXML(string file) {
+        private void ReadCombatFromXml(string file) {
             XmlDocument xmlDoc = new XmlDocument();
             xmlDoc.LoadXml(file); // load the file.
             XmlNodeList listArmorType = xmlDoc.SelectNodes("combatTypes/armorType");
@@ -920,7 +900,7 @@ namespace Andja.Controller {
                     string id = node.GetAttribute("ID");
                     at.ID = id;
                     SetData<ArmorType>(node, ref at);
-                    armorTypeDatas[id] = at;
+                    _armorTypeDatas[id] = at;
                 }
             }
             XmlNodeList listDamageType = xmlDoc.SelectNodes("combatTypes/damageType");
@@ -939,14 +919,14 @@ namespace Andja.Controller {
                         if (float.TryParse(child.InnerText, out float multiplier) == false) {
                             Debug.LogError("ID is not an float for ArmorType ");
                         }
-                        at.damageMultiplier[armorTypeDatas[armorID]] = multiplier;
+                        at.damageMultiplier[_armorTypeDatas[armorID]] = multiplier;
                     }
-                    damageTypeDatas[id] = at;
+                    _damageTypeDatas[id] = at;
                 }
             }
         }
 
-        private void ReadItemsFromXML(string file) {
+        private void ReadItemsFromXml(string file) {
             XmlDocument xmlDoc = new XmlDocument();
             xmlDoc.LoadXml(file); // load the file.
             foreach (XmlElement node in xmlDoc.SelectNodes("items/Item")) {
@@ -954,17 +934,17 @@ namespace Andja.Controller {
                 string id = node.GetAttribute("ID");
                 SetData<ItemPrototypeData>(node, ref ipd);
 
-                itemPrototypeDatas[id] = ipd;
+                _itemPrototypeDatas[id] = ipd;
                 Item item = new Item(id, ipd);
 
                 if (item.Type == ItemType.Build) {
-                    buildItemsList.Add(item);
+                    _buildItemsList.Add(item);
                 }
-                allItems[id] = item;
+                _allItems[id] = item;
             }
         }
 
-        private void ReadUnitsFromXML(string file) {
+        private void ReadUnitsFromXml(string file) {
             XmlDocument xmlDoc = new XmlDocument();
             xmlDoc.LoadXml(file); // load the file.
             XmlNodeList listUnit = xmlDoc.SelectNodes("units/unit");
@@ -973,8 +953,8 @@ namespace Andja.Controller {
                     UnitPrototypeData upd = new UnitPrototypeData();
                     string id = node.GetAttribute("ID");
                     SetData<UnitPrototypeData>(node, ref upd);
-                    unitPrototypeDatas[id] = upd;
-                    unitPrototypes[id] = new Unit(id, upd);
+                    _unitPrototypeDatas[id] = upd;
+                    _unitPrototypes[id] = new Unit(id, upd);
                 }
             }
             XmlNodeList listShip = xmlDoc.SelectNodes("units/ship");
@@ -983,8 +963,8 @@ namespace Andja.Controller {
                     ShipPrototypeData spd = new ShipPrototypeData();
                     string id = node.GetAttribute("ID");
                     SetData<ShipPrototypeData>(node, ref spd);
-                    unitPrototypeDatas[id] = spd;
-                    unitPrototypes[id] = new Ship(id, spd);
+                    _unitPrototypeDatas[id] = spd;
+                    _unitPrototypes[id] = new Ship(id, spd);
                 }
             }
             XmlNodeList listWorker = xmlDoc.SelectNodes("units/worker");
@@ -993,35 +973,36 @@ namespace Andja.Controller {
                     WorkerPrototypeData wpd = new WorkerPrototypeData();
                     string id = node.GetAttribute("ID");
                     SetData<WorkerPrototypeData>(node, ref wpd);
-                    workerPrototypeDatas[id] = wpd;
+                    _workerPrototypeDatas[id] = wpd;
                 }
             }
         }
 
-        private void ReadFertilitiesFromXML(string file) {
+        private void ReadFertilitiesFromXml(string file) {
             XmlDocument xmlDoc = new XmlDocument();
             xmlDoc.LoadXml(file); // load the file.
             foreach (XmlElement node in xmlDoc.SelectNodes("fertilities/Fertility")) {
                 string ID = node.GetAttribute("ID");
-                FertilityPrototypeData fpd = new FertilityPrototypeData();
-                fpd.ID = ID;
+                FertilityPrototypeData fpd = new FertilityPrototypeData {
+                    ID = ID
+                };
                 SetData<FertilityPrototypeData>(node, ref fpd);
                 Fertility fer = new Fertility(ID, fpd);
-                idToFertilities.Add(fer.ID, fer);
-                fertilityPrototypeDatas[ID] = fpd;
+                _idToFertilities.Add(fer.ID, fer);
+                _fertilityPrototypeDatas[ID] = fpd;
                 foreach (Climate item in fer.Climates) {
-                    if (allFertilities.ContainsKey(item) == false)
-                        allFertilities[item] = new List<Fertility>();
-                    allFertilities[item].Add(fer);
+                    if (_allFertilities.ContainsKey(item) == false)
+                        _allFertilities[item] = new List<Fertility>();
+                    _allFertilities[item].Add(fer);
 
-                    if (allFertilitiesDatasPerClimate.ContainsKey(item) == false)
-                        allFertilitiesDatasPerClimate[item] = new List<FertilityPrototypeData>();
-                    allFertilitiesDatasPerClimate[item].Add(fpd);
+                    if (_allFertilitiesDatasPerClimate.ContainsKey(item) == false)
+                        _allFertilitiesDatasPerClimate[item] = new List<FertilityPrototypeData>();
+                    _allFertilitiesDatasPerClimate[item].Add(fpd);
                 }
             }
         }
 
-        private void ReadNeedsFromXML(string file) {
+        private void ReadNeedsFromXml(string file) {
             XmlDocument xmlDoc = new XmlDocument();
             xmlDoc.LoadXml(file); // load the file.
             XmlNodeList listNeedGroup = xmlDoc.SelectNodes("needs/NeedGroup");
@@ -1031,8 +1012,8 @@ namespace Andja.Controller {
                     string ID = node.GetAttribute("ID");
                     ngpd.ID = ID;
                     SetData<NeedGroupPrototypData>(node, ref ngpd);
-                    needGroupDatas[ID] = ngpd;
-                    idToNeedGroup[ID] = new NeedGroup(ID);
+                    _needGroupDatas[ID] = ngpd;
+                    _idToNeedGroup[ID] = new NeedGroup(ID);
                 }
             }
             Dictionary<int, List<Need>> levelToNeedList = new Dictionary<int, List<Need>>();
@@ -1043,7 +1024,7 @@ namespace Andja.Controller {
                     NeedPrototypeData npd = new NeedPrototypeData();
                     string ID = node.GetAttribute("ID");
                     SetData<NeedPrototypeData>(node, ref npd);
-                    needPrototypeDatas[ID] = npd;
+                    _needPrototypeDatas[ID] = npd;
                     if (npd.item == null && npd.structures == null)
                         continue;
                     if (npd.structures != null) {
@@ -1051,17 +1032,16 @@ namespace Andja.Controller {
                             if (npd.startLevel > str.PopulationLevel) {
                                 npd.startLevel = str.PopulationLevel;
                             }
-                            if (npd.startLevel == str.PopulationLevel) {
-                                if (npd.startPopulationCount > str.PopulationCount) {
-                                    npd.startPopulationCount = str.PopulationCount;
-                                }
+                            if (npd.startLevel != str.PopulationLevel) continue;
+                            if (npd.startPopulationCount > str.PopulationCount) {
+                                npd.startPopulationCount = str.PopulationCount;
                             }
                         }
                     }
                     Need n = new Need(ID, npd);
-                    if (idToNeedGroup.ContainsKey(n.Group.ID))
-                        idToNeedGroup[n.Group.ID].AddNeed(n.Clone());
-                    allNeeds.Add(n);
+                    if (_idToNeedGroup.ContainsKey(n.Group.ID))
+                        _idToNeedGroup[n.Group.ID].AddNeed(n.Clone());
+                    _allNeeds.Add(n);
                     if (levelToNeedList.ContainsKey(npd.startLevel) == false) {
                         levelToNeedList[npd.startLevel] = new List<Need>();
                     }
@@ -1069,10 +1049,10 @@ namespace Andja.Controller {
                     levelToNeedList[npd.startLevel].Add(n.Clone());
                 }
             }
-            HomeRoadsNotNeeded = allNeeds.All(x => x.HasToReachPerRoad == false);
+            HomeRoadsNotNeeded = _allNeeds.All(x => x.HasToReachPerRoad == false);
             foreach (int level in levelToNeedList.Keys) {
                 List<NeedGroup> ngs = new List<NeedGroup>();
-                populationLevelToNeedGroup.Add(level, ngs);
+                _populationLevelToNeedGroup.Add(level, ngs);
                 foreach (Need need in levelToNeedList[level]) {
                     if (ngs.Exists(x => x.ID == need.Group.ID) == false) {
                         ngs.Add(new NeedGroup(need.Group.ID));
@@ -1082,7 +1062,7 @@ namespace Andja.Controller {
             }
         }
 
-        private void ReadStructuresFromXML(string file) {
+        private void ReadStructuresFromXml(string file) {
             XmlDocument xmlDoc = new XmlDocument();
             xmlDoc.LoadXml(file); // load the file.
             ReadRoads(xmlDoc.SelectSingleNode("structures/roads"));
@@ -1102,10 +1082,10 @@ namespace Andja.Controller {
             if (xmlDoc == null)
                 return;
             foreach (XmlElement node in xmlDoc.SelectNodes("servicestructure")) {
-                string ID = node.GetAttribute("ID");
+                string id = node.GetAttribute("ID");
 
                 ServiceStructurePrototypeData sspd = new ServiceStructurePrototypeData();
-                sspd.ID = ID;
+                sspd.ID = id;
                 //THESE are fix and are not changed for any
                 //!not anymore
                 SetData<ServiceStructurePrototypeData>(node, ref sspd);
@@ -1116,15 +1096,15 @@ namespace Andja.Controller {
                 //Important is that we set the usageItem count to more than the usage amount
                 //(for the case it is more than one ton
                 if (node.SelectSingleNode("Usages") != null) {
-                    var Nodes = node.SelectSingleNode("Usages").SelectNodes("entry");
+                    var nodes = node.SelectSingleNode("Usages").SelectNodes("entry");
                     List<float> usages = new List<float>();
                     List<Item> items = new List<Item>();
-                    for (int i = 0; i < Nodes.Count; i++) {
-                        XmlNode child = Nodes.Item(i);
+                    for (int i = 0; i < nodes.Count; i++) {
+                        XmlNode child = nodes.Item(i);
                         var attribute = child.Attributes["Item"];
                         if (attribute == null || attribute.Value == null)
                             continue;
-                        if (allItems.ContainsKey(attribute.Value) == false)
+                        if (_allItems.ContainsKey(attribute.Value) == false)
                             continue;
                         if (float.TryParse(child.InnerText, out float usage) == false)
                             continue;
@@ -1140,8 +1120,8 @@ namespace Andja.Controller {
                     sspd.usageItems = items.ToArray();
                 }
 
-                structurePrototypeDatas[ID] = sspd;
-                structurePrototypes[ID] = new ServiceStructure(ID);
+                _structurePrototypeDatas[id] = sspd;
+                _structurePrototypes[id] = new ServiceStructure(id);
             }
         }
 
@@ -1159,8 +1139,8 @@ namespace Andja.Controller {
                         mpd.canBuildShips = true;
                     }
                 }
-                structurePrototypeDatas[ID] = mpd;
-                structurePrototypes[ID] = new MilitaryStructure(ID, mpd);
+                _structurePrototypeDatas[ID] = mpd;
+                _structurePrototypes[ID] = new MilitaryStructure(ID, mpd);
             }
         }
 
@@ -1186,8 +1166,8 @@ namespace Andja.Controller {
                 rpd.ID = ID;
                 SetData<RoadStructurePrototypeData>(node, ref rpd);
 
-                structurePrototypeDatas[ID] = rpd;
-                structurePrototypes[ID] = new RoadStructure(ID, rpd);
+                _structurePrototypeDatas[ID] = rpd;
+                _structurePrototypes[ID] = new RoadStructure(ID, rpd);
             }
         }
 
@@ -1210,8 +1190,8 @@ namespace Andja.Controller {
                 };
                 gpd.ID = ID;
                 SetData<GrowablePrototypeData>(node, ref gpd);
-                structurePrototypeDatas[ID] = gpd;
-                structurePrototypes[ID] = new GrowableStructure(ID, gpd);
+                _structurePrototypeDatas[ID] = gpd;
+                _structurePrototypes[ID] = new GrowableStructure(ID, gpd);
             }
         }
 
@@ -1235,8 +1215,8 @@ namespace Andja.Controller {
                 }
                 else {
                 }
-                structurePrototypeDatas[ID] = fpd;
-                structurePrototypes[ID] = new FarmStructure(ID, fpd);
+                _structurePrototypeDatas[ID] = fpd;
+                _structurePrototypes[ID] = new FarmStructure(ID, fpd);
             }
         }
 
@@ -1248,8 +1228,8 @@ namespace Andja.Controller {
                 MarketPrototypData mpd = new MarketPrototypData();
                 mpd.ID = ID;
                 SetData<MarketPrototypData>(node, ref mpd);
-                structurePrototypeDatas[ID] = mpd;
-                structurePrototypes[ID] = new MarketStructure(ID, mpd);
+                _structurePrototypeDatas[ID] = mpd;
+                _structurePrototypes[ID] = new MarketStructure(ID, mpd);
             }
         }
 
@@ -1274,8 +1254,8 @@ namespace Andja.Controller {
                 ppd.ID = ID;
                 SetData<ProductionPrototypeData>(node, ref ppd);
                 //DO After loading from file
-                structurePrototypeDatas[ID] = ppd;
-                structurePrototypes[ID] = new ProductionStructure(ID, ppd);
+                _structurePrototypeDatas[ID] = ppd;
+                _structurePrototypes[ID] = new ProductionStructure(ID, ppd);
             }
         }
 
@@ -1287,8 +1267,8 @@ namespace Andja.Controller {
                 NeedStructurePrototypeData nspd = new NeedStructurePrototypeData();
                 nspd.ID = ID;
                 SetData<NeedStructurePrototypeData>(node, ref nspd);
-                structurePrototypeDatas[ID] = nspd;
-                structurePrototypes[ID] = new NeedStructure(ID, nspd);
+                _structurePrototypeDatas[ID] = nspd;
+                _structurePrototypes[ID] = new NeedStructure(ID, nspd);
             }
         }
 
@@ -1313,10 +1293,10 @@ namespace Andja.Controller {
                 hpd.ID = ID;
                 SetData<HomePrototypeData>(node, ref hpd);
 
-                structurePrototypeDatas[ID] = hpd;
+                _structurePrototypeDatas[ID] = hpd;
                 HomeStructure hs = new HomeStructure(ID, hpd);
-                structurePrototypes[ID] = hs;
-                populationLevelDatas[structurePrototypes[ID].PopulationLevel].HomeStructure = hs;
+                _structurePrototypes[ID] = hs;
+                _populationLevelDatas[_structurePrototypes[ID].PopulationLevel].HomeStructure = hs;
 
 
             }
@@ -1343,28 +1323,16 @@ namespace Andja.Controller {
                 return;
             foreach (XmlElement node in xmlDoc.SelectNodes("warehouse")) {
                 string ID = node.GetAttribute("ID");
-                WarehousePrototypData wpd = new WarehousePrototypData {
-                    contactRange = 6.3f,
-                    buildTyp = BuildType.Single,
-                    hasHitbox = true,
-                    canTakeDamage = true,
-                    structureRange = 18,
-                    tradeItemCount = 3,
-                    tileWidth = 3,
-                    tileHeight = 3,
-                    Name = "warehouse",
-                    buildCost = 500,
-                    upkeepCost = 10,
-                };
+                WarehousePrototypData wpd = new WarehousePrototypData();
 
                 wpd.ID = ID;
                 SetData<WarehousePrototypData>(node, ref wpd);
-                structurePrototypeDatas[ID] = wpd;
-                structurePrototypes[ID] = new WarehouseStructure(ID, wpd);
+                _structurePrototypeDatas[ID] = wpd;
+                _structurePrototypes[ID] = new WarehouseStructure(ID, wpd);
 
                 if (FirstLevelWarehouse == null ||
                     wpd.populationLevel < FirstLevelWarehouse.PopulationLevel && wpd.populationCount < FirstLevelWarehouse.PopulationCount) {
-                    FirstLevelWarehouse = (WarehouseStructure)structurePrototypes[ID];
+                    FirstLevelWarehouse = (WarehouseStructure)_structurePrototypes[ID];
                 }
             }
         }
@@ -1378,14 +1346,14 @@ namespace Andja.Controller {
                 mpd.ID = ID;
                 SetData<MinePrototypeData>(node, ref mpd);
                 MineableItems.AddRange(mpd.output);
-                structurePrototypeDatas[ID] = mpd;
-                structurePrototypes[ID] = new MineStructure(ID, mpd);
+                _structurePrototypeDatas[ID] = mpd;
+                _structurePrototypes[ID] = new MineStructure(ID, mpd);
             }
         }
 
         private void SetData<T>(XmlElement node, ref T data) {
             FieldInfo[] fields = typeof(T).GetFields();
-            HashSet<String> langs = new HashSet<String>();
+            HashSet<string> langs = new HashSet<string>();
             if (typeof(LanguageVariables).IsAssignableFrom(typeof(T))) {
                 foreach (FieldInfo f in typeof(LanguageVariables).GetFields()) {
                     langs.Add(f.Name);
@@ -1408,221 +1376,207 @@ namespace Andja.Controller {
                     }
                     continue;
                 }
-                if (currentNode != null) {
-                    if (fi.FieldType == typeof(Item)) {
-                        fi.SetValue(data, NodeToItem(currentNode));
-                        continue;
-                    }
-                    if (fi.FieldType == typeof(Item[])) {
-                        List<Item> items = new List<Item>();
-                        foreach (XmlNode item in currentNode.ChildNodes) {
-                            items.Add(NodeToItem(item));
-                        }
-                        fi.SetValue(data, items.ToArray());
-                        continue;
-                    }
-                    if (fi.FieldType.IsSubclassOf(typeof(Structure))) {
-                        fi.SetValue(data, NodeToStructure(currentNode));
-                        continue;
-                    }
-                    if (fi.FieldType.IsArray && fi.FieldType.GetElementType().IsSubclassOf(typeof(Structure))
-                        || fi.FieldType == (typeof(Structure[]))) {
-                        Array items = (Array)Activator.CreateInstance(fi.FieldType, currentNode.ChildNodes.Count);
-                        for (int i = 0; i < currentNode.ChildNodes.Count; i++) {
-                            items.SetValue(NodeToStructure(currentNode.ChildNodes[i]), i);
-                        }
-                        fi.SetValue(data, items);
-                        continue;
-                    }
-                    if (fi.FieldType.IsArray && fi.FieldType.GetElementType().IsSubclassOf(typeof(string))
-                        || fi.FieldType == (typeof(string[]))) {
-                        Array items = (Array)Activator.CreateInstance(fi.FieldType, currentNode.ChildNodes.Count);
-                        for (int i = 0; i < currentNode.ChildNodes.Count; i++) {
-                            items.SetValue(currentNode.ChildNodes[i].InnerText, i);
-                        }
-                        fi.SetValue(data, items);
-                        continue;
-                    }
-                    if (fi.FieldType == typeof(NeedGroupPrototypData)) {
-                        fi.SetValue(data, NodeToNeedGroupPrototypData(currentNode));
-                        continue;
-                    }
-                    if (fi.FieldType == typeof(ArmorType)) {
-                        fi.SetValue(data, NodeToArmorType(currentNode));
-                        continue;
-                    }
-                    if (fi.FieldType == typeof(DamageType)) {
-                        fi.SetValue(data, NodeToDamageType(currentNode));
-                        continue;
-                    }
-                    if (fi.FieldType == typeof(Fertility)) {
-                        fi.SetValue(data, NodeToFertility(currentNode));
-                        continue;
-                    }
-                    if (fi.FieldType.IsSubclassOf(typeof(Unit))) {
-                        fi.SetValue(data, NodeToUnit(currentNode));
-                        continue;
-                    }
-                    if (fi.FieldType.IsSubclassOf(typeof(Unit[])) || fi.FieldType == (typeof(Unit[]))) {
-                        List<Unit> items = new List<Unit>();
-                        foreach (XmlNode item in currentNode.ChildNodes) {
-                            items.Add(NodeToUnit(item));
-                        }
-                        fi.SetValue(data, items.ToArray());
-                        continue;
-                    }
-                    if (fi.FieldType == (typeof(Effect[]))) {
-                        List<Effect> items = new List<Effect>();
-                        foreach (XmlNode item in currentNode.ChildNodes) {
-                            items.Add(NodeToEffect(item));
-                        }
-                        fi.SetValue(data, items.ToArray());
-                        continue;
-                    }
-                    if (fi.FieldType == (typeof(float[]))) {
-                        List<float> items = new List<float>(currentNode.ChildNodes.Count);
-                        foreach (XmlNode item in currentNode.ChildNodes) {
-                            int id = int.Parse(item.Attributes[0].InnerXml);
-                            items.Insert(id, float.Parse(item.InnerXml));
-                        }
-                        fi.SetValue(data, items.ToArray());
-                        continue;
-                    }
-                    if (fi.FieldType.IsEnum) {
-                        fi.SetValue(data, Enum.Parse(fi.FieldType, currentNode.InnerXml, true));
-                        continue;
-                    }
-                    if (fi.FieldType.IsArray && fi.FieldType.GetArrayRank() == 1 && fi.FieldType.GetElementType().IsEnum) {
-                        var listType = typeof(List<>);
-                        var constructedListType = listType.MakeGenericType(fi.FieldType.GetElementType());
-                        var list = (IList)Activator.CreateInstance(constructedListType);
-                        foreach (XmlNode item in currentNode.ChildNodes) {
-                            if (item.Name != fi.FieldType.GetElementType().Name) {
-                                continue;
-                            }
-                            if (fi.DeclaringType == typeof(TileType)) {
-                                if (item.Name == "BuildLand") { // shortcut to make it easy to include all buildable land
-                                    foreach (TileType tt in Tile.BuildLand)
-                                        list.Add(tt);
-                                    continue;
-                                }
-                            }
-                            list.Add(Enum.Parse(fi.FieldType.GetElementType(), item.InnerXml, true));
-                        }
-                        Array enumArray = Array.CreateInstance(fi.FieldType.GetElementType(), list.Count);
-                        list.CopyTo(enumArray, 0);
-                        fi.SetValue(data, Convert.ChangeType(enumArray, fi.FieldType));
-                        continue;
-                    }
-                    if (fi.FieldType.IsArray && fi.FieldType.GetArrayRank() == 2 && fi.FieldType.GetElementType() == typeof(TileType?)) {
-                        int firstLength = 0;
-                        int secondLength = 0;
 
-                        if (int.TryParse(currentNode.Attributes.GetNamedItem("length").Value, out firstLength) == false) {
+                if (currentNode == null) continue;
+                if (fi.FieldType == typeof(Item)) {
+                    fi.SetValue(data, NodeToItem(currentNode));
+                    continue;
+                }
+                if (fi.FieldType == typeof(Item[])) {
+                    fi.SetValue(data, (from XmlNode item in currentNode.ChildNodes select NodeToItem(item)).ToArray());
+                    continue;
+                }
+                if (fi.FieldType.IsSubclassOf(typeof(Structure))) {
+                    fi.SetValue(data, NodeToStructure(currentNode));
+                    continue;
+                }
+                if (fi.FieldType.IsArray && fi.FieldType.GetElementType().IsSubclassOf(typeof(Structure))
+                    || fi.FieldType == (typeof(Structure[]))) {
+                    Array items = (Array)Activator.CreateInstance(fi.FieldType, currentNode.ChildNodes.Count);
+                    for (int i = 0; i < currentNode.ChildNodes.Count; i++) {
+                        items.SetValue(NodeToStructure(currentNode.ChildNodes[i]), i);
+                    }
+                    fi.SetValue(data, items);
+                    continue;
+                }
+                if (fi.FieldType.IsArray && fi.FieldType.GetElementType().IsSubclassOf(typeof(string))
+                    || fi.FieldType == (typeof(string[]))) {
+                    Array items = (Array)Activator.CreateInstance(fi.FieldType, currentNode.ChildNodes.Count);
+                    for (int i = 0; i < currentNode.ChildNodes.Count; i++) {
+                        items.SetValue(currentNode.ChildNodes[i].InnerText, i);
+                    }
+                    fi.SetValue(data, items);
+                    continue;
+                }
+                if (fi.FieldType == typeof(NeedGroupPrototypData)) {
+                    fi.SetValue(data, NodeToNeedGroupPrototypData(currentNode));
+                    continue;
+                }
+                if (fi.FieldType == typeof(ArmorType)) {
+                    fi.SetValue(data, NodeToArmorType(currentNode));
+                    continue;
+                }
+                if (fi.FieldType == typeof(DamageType)) {
+                    fi.SetValue(data, NodeToDamageType(currentNode));
+                    continue;
+                }
+                if (fi.FieldType == typeof(Fertility)) {
+                    fi.SetValue(data, NodeToFertility(currentNode));
+                    continue;
+                }
+                if (fi.FieldType.IsSubclassOf(typeof(Unit))) {
+                    fi.SetValue(data, NodeToUnit(currentNode));
+                    continue;
+                }
+                if (fi.FieldType.IsSubclassOf(typeof(Unit[])) || fi.FieldType == (typeof(Unit[]))) {
+                    List<Unit> items = new List<Unit>();
+                    foreach (XmlNode item in currentNode.ChildNodes) {
+                        items.Add(NodeToUnit(item));
+                    }
+                    fi.SetValue(data, items.ToArray());
+                    continue;
+                }
+                if (fi.FieldType == (typeof(Effect[]))) {
+                    fi.SetValue(data, (from XmlNode item in currentNode.ChildNodes select NodeToEffect(item)).ToArray());
+                    continue;
+                }
+                if (fi.FieldType == (typeof(float[]))) {
+                    List<float> items = new List<float>(currentNode.ChildNodes.Count);
+                    foreach (XmlNode item in currentNode.ChildNodes) {
+                        int id = int.Parse(item.Attributes[0].InnerXml);
+                        items.Insert(id, float.Parse(item.InnerXml));
+                    }
+                    fi.SetValue(data, items.ToArray());
+                    continue;
+                }
+                if (fi.FieldType.IsEnum) {
+                    fi.SetValue(data, Enum.Parse(fi.FieldType, currentNode.InnerXml, true));
+                    continue;
+                }
+                if (fi.FieldType.IsArray && fi.FieldType.GetArrayRank() == 1 && fi.FieldType.GetElementType().IsEnum) {
+                    var listType = typeof(List<>);
+                    var constructedListType = listType.MakeGenericType(fi.FieldType.GetElementType());
+                    var list = (IList)Activator.CreateInstance(constructedListType);
+                    foreach (XmlNode item in currentNode.ChildNodes) {
+                        if (item.Name != fi.FieldType.GetElementType().Name) {
                             continue;
                         }
-                        var listType = typeof(List<>);
-                        var constructedfirstListType = listType.MakeGenericType(fi.FieldType.GetElementType().MakeArrayType());
-                        var firstlist = (IList)Activator.CreateInstance(constructedfirstListType);
-                        foreach (XmlNode item in currentNode.ChildNodes) {
-                            XmlNode len2 = item.Attributes.GetNamedItem("length");
-                            if (len2 == null || int.TryParse(len2.Value, out secondLength) == false) {
+                        if (fi.DeclaringType == typeof(TileType)) {
+                            if (item.Name == "BuildLand") { // shortcut to make it easy to include all buildable land
+                                foreach (TileType tt in Tile.BuildLand)
+                                    list.Add(tt);
                                 continue;
                             }
-                            var constructedSecondListType = listType.MakeGenericType(fi.FieldType.GetElementType());
-                            var secondlist = (IList)Activator.CreateInstance(constructedSecondListType);
-                            string[] singleValues = item.InnerXml.Split(',');
-                            if (singleValues.Length < secondLength) {
-                                continue;
-                            }
-                            foreach (string single in singleValues) {
-                                //own try parse because in needs non nullable
-                                try {
-                                    secondlist.Add(Enum.Parse(typeof(TileType), single.Trim(), true));
-                                }
-                                catch {
-                                    secondlist.Add(null);
-                                }
-                            }
-                            Array enumArray = Array.CreateInstance(fi.FieldType.GetElementType(), secondLength);
-                            secondlist.CopyTo(enumArray, 0);
-                            firstlist.Add(enumArray);
                         }
-                        Array twoDimEnumArray = Array.CreateInstance(fi.FieldType.GetElementType(), firstLength, secondLength);
-                        for (int i = 0; i < firstlist.Count; i++) {
-                            for (int j = 0; j < ((TileType?[])firstlist[i]).Length; j++) {
-                                twoDimEnumArray.SetValue(((TileType?[])firstlist[i])[j], i, j);
-                            }
+                        list.Add(Enum.Parse(fi.FieldType.GetElementType(), item.InnerXml, true));
+                    }
+                    Array enumArray = Array.CreateInstance(fi.FieldType.GetElementType(), list.Count);
+                    list.CopyTo(enumArray, 0);
+                    fi.SetValue(data, Convert.ChangeType(enumArray, fi.FieldType));
+                    continue;
+                }
+                if (fi.FieldType.IsArray && fi.FieldType.GetArrayRank() == 2 && fi.FieldType.GetElementType() == typeof(TileType?)) {
+                    if (int.TryParse(currentNode.Attributes.GetNamedItem("length").Value, out var firstLength) == false) {
+                        continue;
+                    }
+                    int secondLength = 0;
+                    var listType = typeof(List<>);
+                    var constructedfirstListType = listType.MakeGenericType(fi.FieldType.GetElementType().MakeArrayType());
+                    var firstlist = (IList)Activator.CreateInstance(constructedfirstListType);
+                    foreach (XmlNode item in currentNode.ChildNodes) {
+                        XmlNode len2 = item.Attributes.GetNamedItem("length");
+                        if (len2 == null || int.TryParse(len2.Value, out secondLength) == false) {
+                            continue;
                         }
-                        fi.SetValue(data, Convert.ChangeType(twoDimEnumArray, fi.FieldType));
-                        continue;
-                    }
-                    if (fi.FieldType == typeof(Dictionary<ArmorType, float>)) {
-                        // this will get set in load xml directly and not here!
-                        continue;
-                    }
-                    if (fi.FieldType == typeof(Range)) {
-                        fi.SetValue(data, new Range(currentNode["lower"].GetIntValue(), currentNode["upper"].GetIntValue()));
-                        continue;
-                    }
-                    if (fi.FieldType == typeof(Dictionary<Target, List<int>>)) {
-                        Dictionary<Target, List<int>> range = new Dictionary<Target, List<int>>();
-                        foreach (XmlNode child in currentNode.ChildNodes) {
-                            Target target = Target.World;
-                            if (child.Attributes[0] == null)
-                                continue;
-                            if (Enum.TryParse<Target>(child.Attributes[0].InnerXml, true, out target) == false)
-                                continue;
-                            String[] ids = child.InnerXml.Split(',');
-                            if (ids.Length == 0) {
-                                continue;
+                        var constructedSecondListType = listType.MakeGenericType(fi.FieldType.GetElementType());
+                        var secondlist = (IList)Activator.CreateInstance(constructedSecondListType);
+                        string[] singleValues = item.InnerXml.Split(',');
+                        if (singleValues.Length < secondLength) {
+                            continue;
+                        }
+                        foreach (string single in singleValues) {
+                            //own try parse because in needs non nullable
+                            try {
+                                secondlist.Add(Enum.Parse(typeof(TileType), single.Trim(), true));
                             }
-                            range.Add(target, new List<int>());
-                            foreach (String stringid in ids) {
-                                int id = -1;
-                                int.TryParse(stringid, out id);
-                                if (id == -1)
-                                    continue;
-                                range[target].Add(id);
+                            catch {
+                                secondlist.Add(null);
                             }
                         }
-                        //clean up empty target groups
-                        List<Target> targets = new List<Target>(range.Keys);
-                        foreach (Target t in targets) {
-                            if (range[t].Count == 0)
-                                targets.Remove(t);
-                        }
-                        //only if it has stuff we need to set it
-                        if (range.Count > 0)
-                            fi.SetValue(data, range);
-                        continue;
+                        Array enumArray = Array.CreateInstance(fi.FieldType.GetElementType(), secondLength);
+                        secondlist.CopyTo(enumArray, 0);
+                        firstlist.Add(enumArray);
                     }
-                    if (fi.FieldType == typeof(TargetGroup)) {
-                        List<Target> targets = new List<Target>();
-                        foreach (XmlNode child in currentNode.ChildNodes) {
-                            if (Enum.TryParse(child.InnerXml, true, out Target target) == false)
+                    Array twoDimEnumArray = Array.CreateInstance(fi.FieldType.GetElementType(), firstLength, secondLength);
+                    for (int i = 0; i < firstlist.Count; i++) {
+                        for (int j = 0; j < ((TileType?[])firstlist[i]).Length; j++) {
+                            twoDimEnumArray.SetValue(((TileType?[])firstlist[i])[j], i, j);
+                        }
+                    }
+                    fi.SetValue(data, Convert.ChangeType(twoDimEnumArray, fi.FieldType));
+                    continue;
+                }
+                if (fi.FieldType == typeof(Dictionary<ArmorType, float>)) {
+                    // this will get set in load xml directly and not here!
+                    continue;
+                }
+                if (fi.FieldType == typeof(Range)) {
+                    fi.SetValue(data, new Range(currentNode["lower"].GetIntValue(), currentNode["upper"].GetIntValue()));
+                    continue;
+                }
+                if (fi.FieldType == typeof(Dictionary<Target, List<int>>)) {
+                    Dictionary<Target, List<int>> range = new Dictionary<Target, List<int>>();
+                    foreach (XmlNode child in currentNode.ChildNodes) {
+                        Target target = Target.World;
+                        if (child.Attributes[0] == null)
+                            continue;
+                        if (Enum.TryParse<Target>(child.Attributes[0].InnerXml, true, out target) == false)
+                            continue;
+                        string[] ids = child.InnerXml.Split(',');
+                        if (ids.Length == 0) {
+                            continue;
+                        }
+                        range.Add(target, new List<int>());
+                        foreach (string stringid in ids) {
+                            int.TryParse(stringid, out int id);
+                            if (id == -1)
                                 continue;
-                            targets.Add(target);
+                            range[target].Add(id);
                         }
-                        fi.SetValue(data, new TargetGroup(targets));
-                        continue;
                     }
-                    if (fi.FieldType == typeof(Dictionary<Climate, string[]>)) {
-                        Dictionary<Climate, string[]> climToString = new Dictionary<Climate, string[]>();
-                        foreach (XmlNode child in currentNode.ChildNodes) {
-                            if (Enum.TryParse(child.Attributes[0].InnerXml, true, out Climate climate) == false)
-                                continue;
-                            climToString[climate] = child.InnerXml.Split(';');
-                        }
-                        fi.SetValue(data, climToString);
-                        continue;
+                    //clean up empty target groups
+                    List<Target> targets = new List<Target>(range.Keys);
+                    targets.RemoveAll(t => range[t].Count == 0);
+                    //only if it has stuff we need to set it
+                    if (range.Count > 0)
+                        fi.SetValue(data, range);
+                    continue;
+                }
+                if (fi.FieldType == typeof(TargetGroup)) {
+                    List<Target> targets = new List<Target>();
+                    foreach (XmlNode child in currentNode.ChildNodes) {
+                        if (Enum.TryParse(child.InnerXml, true, out Target target) == false)
+                            continue;
+                        targets.Add(target);
                     }
-                    try {
-                        fi.SetValue(data, Convert.ChangeType(currentNode.InnerXml, fi.FieldType, System.Globalization.CultureInfo.InvariantCulture));
+                    fi.SetValue(data, new TargetGroup(targets));
+                    continue;
+                }
+                if (fi.FieldType == typeof(Dictionary<Climate, string[]>)) {
+                    Dictionary<Climate, string[]> climToString = new Dictionary<Climate, string[]>();
+                    foreach (XmlNode child in currentNode.ChildNodes) {
+                        if (Enum.TryParse(child.Attributes[0].InnerXml, true, out Climate climate) == false)
+                            continue;
+                        climToString[climate] = child.InnerXml.Split(';');
                     }
-                    catch {
-                        Debug.Log(data.ToString() + " -> " + fi.Name + " is faulty!");
-                    }
+                    fi.SetValue(data, climToString);
+                    continue;
+                }
+                try {
+                    fi.SetValue(data, Convert.ChangeType(currentNode.InnerXml, fi.FieldType, System.Globalization.CultureInfo.InvariantCulture));
+                }
+                catch {
+                    Debug.Log(data + " -> " + fi.Name + " is faulty!");
                 }
             }
         }
@@ -1648,15 +1602,12 @@ namespace Andja.Controller {
             return string.Join("", splits);
         }
 
-        private readonly BindingFlags flags = BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance;
+        private readonly BindingFlags _flags = BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance;
 
         private string GetFieldString(object data, int index, params string[] fields) {
             Type dataType = data.GetType();
             if (typeof(IEnumerable).IsAssignableFrom(dataType)) {
-                List<string> strings = new List<string>();
-                foreach (object o in data as IEnumerable) {
-                    strings.Add(GetFieldString(o, index, fields));
-                }
+                List<string> strings = (from object o in (IEnumerable)data select GetFieldString(o, index, fields)).ToList();
                 if (strings.Count == 1)
                     return strings[0];
                 string last = strings[strings.Count - 1];
@@ -1664,12 +1615,12 @@ namespace Andja.Controller {
                 return string.Join(", ", strings) + " " + GetLocalisedAnd() + " " + last;
             }
             if (fields.Length - 1 == index) {
-                var field = dataType.GetField(fields[index], flags)?.GetValue(data);
+                var field = dataType.GetField(fields[index], _flags)?.GetValue(data);
                 if (field == null)
-                    field = dataType.GetProperty(fields[index], flags)?.GetValue(data);
+                    field = dataType.GetProperty(fields[index], _flags)?.GetValue(data);
                 return field.ToString();
             }
-            return GetFieldString(dataType.GetField(fields[index], flags)?.GetValue(data), ++index, fields);
+            return GetFieldString(dataType.GetField(fields[index], _flags)?.GetValue(data), ++index, fields);
         }
 
         private string GetLocalisedAnd() {
@@ -1678,114 +1629,104 @@ namespace Andja.Controller {
 
         private Effect NodeToEffect(XmlNode item) {
             string id = item.InnerXml;
-            if (String.IsNullOrEmpty(id)) {
+            if (string.IsNullOrEmpty(id)) {
                 return null;//not needed
             }
-            if (effectPrototypeDatas.ContainsKey(id) == false) {
-                Debug.LogError("ID was not created before the depending DamageType! " + id);
-                return null;
-            }
-            return new Effect(id);
+
+            if (_effectPrototypeDatas.ContainsKey(id)) return new Effect(id);
+            Debug.LogError("ID was not created before the depending DamageType! " + id);
+            return null;
         }
 
         private object NodeToDamageType(XmlNode n) {
             string id = n.InnerXml;
 
-            if (String.IsNullOrEmpty(id)) {
+            if (string.IsNullOrEmpty(id)) {
                 return null;//not needed
             }
-            if (damageTypeDatas.ContainsKey(id) == false) {
-                Debug.LogError("ID was not created before the depending DamageType! " + id);
-                return null;
-            }
-            return damageTypeDatas[id];
+
+            if (_damageTypeDatas.ContainsKey(id)) return _damageTypeDatas[id];
+            Debug.LogError("ID was not created before the depending DamageType! " + id);
+            return null;
         }
 
         private object NodeToNeedGroupPrototypData(XmlNode n) {
             string id = n.InnerXml;
 
-            if (String.IsNullOrEmpty(id)) {
+            if (string.IsNullOrEmpty(id)) {
                 return null;//not needed
             }
-            if (needGroupDatas.ContainsKey(id) == false) {
-                Debug.LogError("ID was not created before the depending NeedGroup! " + id);
-                return null;
-            }
-            return needGroupDatas[id];
+
+            if (_needGroupDatas.ContainsKey(id)) return _needGroupDatas[id];
+            Debug.LogError("ID was not created before the depending NeedGroup! " + id);
+            return null;
         }
 
         private object NodeToArmorType(XmlNode n) {
             string id = n.InnerXml;
 
-            if (String.IsNullOrEmpty(id)) {
+            if (string.IsNullOrEmpty(id)) {
                 return null;//not needed
             }
-            if (armorTypeDatas.ContainsKey(id) == false) {
-                Debug.LogError("ID was not created before the depending ArmorType! " + id);
-                return null;
-            }
-            return armorTypeDatas[id];
+
+            if (_armorTypeDatas.ContainsKey(id)) return _armorTypeDatas[id];
+            Debug.LogError("ID was not created before the depending ArmorType! " + id);
+            return null;
         }
 
         private Item NodeToItem(XmlNode n) {
             string id = n.Attributes["ID"].Value;
-            if (allItems.ContainsKey(id) == false) {
+            if (_allItems.ContainsKey(id) == false) {
                 Debug.LogError("ITEM ID was not created! " + id + " (" + n.ParentNode.Name + ")");
                 return null;
             }
-            Item clone = allItems[id].Clone();
-            if (n.SelectSingleNode("count") != null) {
-                if (int.TryParse(n.SelectSingleNode("count").InnerXml, out int count) == false) {
-                    Debug.LogError("Count is not an int");
-                    return null;
-                }
-                clone.count = Mathf.Abs(count);
+            Item clone = _allItems[id].Clone();
+            if (n.SelectSingleNode("count") == null) return clone;
+            if (int.TryParse(n.SelectSingleNode("count").InnerXml, out int count) == false) {
+                Debug.LogError("Count is not an int");
+                return null;
             }
+            clone.count = Mathf.Abs(count);
             return clone;
         }
 
         private Unit NodeToUnit(XmlNode n) {
             string id = n.InnerXml;
-            if (String.IsNullOrEmpty(id)) {
+            if (string.IsNullOrEmpty(id)) {
                 return null;//not needed
             }
-
-            if (unitPrototypes.ContainsKey(id) == false) {
-                Debug.LogError("ID was not created before the depending Unit! " + id);
-                return null;
-            }
-            return unitPrototypes[id];
+            if (_unitPrototypes.ContainsKey(id)) return _unitPrototypes[id];
+            Debug.LogError("ID was not created before the depending Unit! " + id);
+            return null;
         }
 
         private Structure NodeToStructure(XmlNode n) {
             string id = n.InnerText;
-            if (String.IsNullOrEmpty(id)) {
+            if (string.IsNullOrEmpty(id)) {
                 return null;//not needed
             }
-            if (structurePrototypes.ContainsKey(id) == false) {
-                Debug.LogError("ID was not created before the depending Structure! " + id);
-                return null;
-            }
-            return structurePrototypes[id];
+
+            if (_structurePrototypes.ContainsKey(id)) return _structurePrototypes[id];
+            Debug.LogError("ID was not created before the depending Structure! " + id);
+            return null;
         }
 
         private Fertility NodeToFertility(XmlNode n) {
             string id = n.InnerXml;
-            if (String.IsNullOrEmpty(id)) {
+            if (string.IsNullOrEmpty(id)) {
                 return null;//not needed
             }
-            if (idToFertilities.ContainsKey(id) == false) {
-                Debug.LogError("ID was not created before the depending Fertility! " + id);
-                return null;
-            }
-            return idToFertilities[id];
+
+            if (_idToFertilities.ContainsKey(id)) return _idToFertilities[id];
+            Debug.LogError("ID was not created before the depending Fertility! " + id);
+            return null;
         }
 
-        private XMLFilesTypes current;
+        private XmlFilesTypes _current;
         public void ReloadLanguage() {
-            foreach (XMLFilesTypes xml in Enum.GetValues(typeof(XMLFilesTypes))) {
-                current = xml;
-                ReloadLanguageVariables(LoadXML(xml));
+            foreach (XmlFilesTypes xml in Enum.GetValues(typeof(XmlFilesTypes))) {
+                _current = xml;
+                ReloadLanguageVariables(LoadXml(xml));
                 ModLoader.LoadXMLs(xml, ReloadLanguageVariables);
             }
         }
@@ -1796,7 +1737,7 @@ namespace Andja.Controller {
             xmlDoc.LoadXml(xml);
             XmlNodeList nodeList = xmlDoc.ChildNodes;
             //have todo it for all three deep xml files
-            if (current == XMLFilesTypes.structures) {
+            if (_current == XmlFilesTypes.Structures) {
                 nodeList = xmlDoc.FirstChild.ChildNodes;
             }
             foreach (XmlNode parent in nodeList) {
@@ -1810,89 +1751,83 @@ namespace Andja.Controller {
                     //}
                     if (id == null)
                         continue;
-                    switch (current) {
-                        case XMLFilesTypes.other:
+                    switch (_current) {
+                        case XmlFilesTypes.Other:
                             if (node.LocalName == "PopulationLevel")
-                                data = populationLevelDatas[int.Parse(id)];
+                                data = _populationLevelDatas[int.Parse(id)];
                             else
-                                Debug.LogWarning("Read Language again one missing this type" + current);
+                                Debug.LogWarning("Read Language again one missing this type" + _current);
                             break;
 
-                        case XMLFilesTypes.events:
+                        case XmlFilesTypes.Events:
                             if (node.LocalName == "GameEvent")
-                                data = gameEventPrototypeDatas[id];
+                                data = _gameEventPrototypeDatas[id];
                             if (node.LocalName == "Effect")
-                                data = effectPrototypeDatas[id];
+                                data = _effectPrototypeDatas[id];
                             break;
 
-                        case XMLFilesTypes.fertilities:
-                            data = fertilityPrototypeDatas[id];
+                        case XmlFilesTypes.Fertilities:
+                            data = _fertilityPrototypeDatas[id];
                             break;
 
-                        case XMLFilesTypes.items:
-                            data = itemPrototypeDatas[id];
+                        case XmlFilesTypes.Items:
+                            data = _itemPrototypeDatas[id];
                             break;
 
-                        case XMLFilesTypes.combat:
+                        case XmlFilesTypes.Combat:
                             if (node.LocalName == "damageType")
-                                data = damageTypeDatas[id];
+                                data = _damageTypeDatas[id];
                             if (node.LocalName == "armorType")
-                                data = armorTypeDatas[id];
+                                data = _armorTypeDatas[id];
                             break;
 
-                        case XMLFilesTypes.units:
+                        case XmlFilesTypes.Units:
                             if (node.LocalName == "worker")
                                 continue;
-                            data = unitPrototypeDatas[id];
+                            data = _unitPrototypeDatas[id];
                             break;
 
-                        case XMLFilesTypes.structures:
-                            data = structurePrototypeDatas[id];
+                        case XmlFilesTypes.Structures:
+                            data = _structurePrototypeDatas[id];
                             break;
 
-                        case XMLFilesTypes.needs:
+                        case XmlFilesTypes.Needs:
                             if (node.LocalName == "need")
                                 data = NeedPrototypeDatas[id];
                             if (node.LocalName == "needGroup")
-                                data = needGroupDatas[id];
+                                data = _needGroupDatas[id];
                             break;
 
-                        case XMLFilesTypes.startingloadouts:
+                        case XmlFilesTypes.Startingloadouts:
                             break;
 
-                        case XMLFilesTypes.mapgeneration:
+                        case XmlFilesTypes.Mapgeneration:
                             break;
 
                         default:
-                            Debug.LogWarning("Read Language again missing this type" + current);
+                            Debug.LogWarning("Read Language again missing this type" + _current);
                             return;
                     }
                     if (data == null)
                         continue;
                     foreach (FieldInfo fi in fields) {
                         XmlNode currentNode = node.SelectSingleNode(fi.Name);
-                        if (currentNode == null) {
-                            //TODO activate this warning when all data is correctly created
-                            //				Debug.LogWarning (fi.Name + " selected language not avaible!");
-                            continue;
-                        }
-                        XmlNode textNode = currentNode.SelectSingleNode("entry[@lang='" + UILanguageController.selectedLanguage.ToString() + "']");
+                        XmlNode textNode = currentNode?.SelectSingleNode("entry[@lang='" + UILanguageController.selectedLanguage + "']");
                         if (textNode != null) {
                             string text = ReplacePlaceHolders(data, textNode.InnerXml);
                             fi.SetValue(data, Convert.ChangeType(text, fi.FieldType));
                         }
-                        continue;
                     }
                 }
             }
         }
 
-        private string LoadXML(XMLFilesTypes name) {
+        private string LoadXml(XmlFilesTypes name) {
             string path = System.IO.Path.Combine(ConstantPathHolder.StreamingAssets, GameData.DataLocation, "GameState", name + ".xml");
             return System.IO.File.ReadAllText(path);
         }
 
-        private void OnDestroy() {
+        public void OnDestroy() {
             Instance = null;
         }
     }

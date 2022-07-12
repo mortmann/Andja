@@ -21,7 +21,7 @@ namespace Andja.UI.Model {
         private Dictionary<string, ImageText> itemToText = new Dictionary<string, ImageText>();
         private Dictionary<int, GameObject> populationLevelToGO = new Dictionary<int, GameObject>();
         public int maxItemsPerRow = 5;
-        private Island currentIsland = null;
+        private IIsland currentIsland = null;
         private City CurrentCity;
 
         private void Start() {

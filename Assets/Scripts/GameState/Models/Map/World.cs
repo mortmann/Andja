@@ -10,16 +10,16 @@ namespace Andja.Model {
 
     [JsonObject(MemberSerialization.OptIn)]
     public class World : IGEventable, IWorld {
-        public static IWorld _Current { get; set; }
+        private static IWorld _current { get; set; }
 
         public static IWorld Current {
-            get { return _Current; }
+            get { return _current; }
             set {
 #if !UNITY_INCLUDE_TESTS
-                if (value != null && _Current != null)
+                if (value != null && _current != null)
                     Debug.LogWarning("WARNING WORLD OVERWRITTEN!");
 #endif
-                _Current = value;
+                _current = value;
             }
         }
 
@@ -47,20 +47,20 @@ namespace Andja.Model {
         public IReadOnlyDictionary<string, Fertility> idToFertilities;
         protected Action<Projectile> cbCreateProjectile;
 
-        protected bool[][] _tilesmap;
+        private bool[][] _tilesMap;
 
-        public bool[][] Tilesmap {
+        public bool[][] TilesMap {
             get {
-                if (_tilesmap == null) {
-                    _tilesmap = new bool[Width][];
+                if (_tilesMap == null) {
+                    _tilesMap = new bool[Width][];
                     for (int x = 0; x < Width; x++) {
-                        _tilesmap[x] = new bool[Height];
+                        _tilesMap[x] = new bool[Height];
                         for (int y = 0; y < Height; y++) {
-                            _tilesmap[x][y] = (GetTileAt(x, y).Type == TileType.Ocean);
+                            _tilesMap[x][y] = (GetTileAt(x, y).Type == TileType.Ocean);
                         }
                     }
                 }
-                return _tilesmap;
+                return _tilesMap;
             }
         }
 
@@ -85,12 +85,11 @@ namespace Andja.Model {
 
 #endregion RuntimeOrOther
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="World"/> class.
-        /// Used in the GameState!
-        /// </summary>
-        /// <param name="tiles">Tiles.</param>
-        public World(Tile[] addTiles, bool isIslandEditor = true) {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="World"/> class.
+    /// Used in the GameState!
+    /// </summary>
+    public World(Tile[] addTiles, bool isIslandEditor = true) {
             this.Tiles = new Tile[Width * Height];
             foreach (Tile t in addTiles) {
                 if (t != null)
@@ -105,8 +104,7 @@ namespace Andja.Model {
             SetupWorld();
             //whole world IS 1 Island -- so add all tiles to single island
             if (isIslandEditor) {
-                Island isl = new Island(addTiles);
-                Islands.Add(isl);
+                Islands.Add(new Island(addTiles));
             }
         }
 
@@ -134,34 +132,12 @@ namespace Andja.Model {
         /// <summary>
         /// Initializes a new instance of the <see cref="World"/> class. Used in the Editor!
         /// </summary>
-        /// <param name="width">Width.</param>
-        /// <param name="height">Height.</param>
         [JsonConstructor]
-        public World(int width, int height) {
-            //this.Width = width;
-            //this.Height = height;
-
+        public World() {
             Current = this;
-
-            if (Crates == null)
-                Crates = new List<Crate>();
-            if (Projectiles == null)
-                Projectiles = new List<Projectile>();
+            Crates ??= new List<Crate>();
+            Projectiles ??= new List<Projectile>();
         }
-
-        //public World(List<Tile> tileList, int Width, int Height) {
-        //    //this.Width = Width;
-        //    //this.Height = Height;
-        //    Tiles = new Tile[Width * Height];
-        //    foreach (Tile item in tileList) {
-        //        SetTileAt(item.X, item.Y, item);
-        //    }
-        //    LoadWaterTiles();
-        //    Current = this;
-        //    allFertilities = PrototypController.Instance.AllFertilities;
-        //    idToFertilities = PrototypController.Instance.IdToFertilities;
-        //}
-
         public void SetupWorld() {
             Current = this;
             allFertilities = PrototypController.Instance.AllFertilities;
@@ -346,7 +322,7 @@ namespace Andja.Model {
         // we dont need this right now because str cant be build on Ocean tiles only
         // on shore tiles
         public void ChangeWorldGraph(Tile t, bool b) {
-            Tilesmap[t.X][t.Y] = b;
+            TilesMap[t.X][t.Y] = b;
         }
 
         public Fertility GetFertility(string ID) {
@@ -355,7 +331,7 @@ namespace Andja.Model {
         public Tile GetRandomOceanTile() {
             int x = UnityEngine.Random.Range(0, Width);
             int y = UnityEngine.Random.Range(0, Height);
-            while (Tilesmap[x][y] == false) {
+            while (TilesMap[x][y] == false) {
                 x = UnityEngine.Random.Range(0, Width);
                 y = UnityEngine.Random.Range(0, Height);
             }

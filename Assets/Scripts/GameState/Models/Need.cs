@@ -110,11 +110,11 @@ namespace Andja.Model {
             this.ID = id;
         }
 
-        public void CalculateFullfillment(City city, PopulationLevel level) {
+        public void CalculateFullfillment(ICity city, PopulationLevel level) {
             TryToConsumThisIn(city, level.populationCount, level.Level);
         }
 
-        public void TryToConsumThisIn(City city, int people, int level) {
+        public void TryToConsumThisIn(ICity city, int people, int level) {
             if (people == 0) {
                 return;
             }

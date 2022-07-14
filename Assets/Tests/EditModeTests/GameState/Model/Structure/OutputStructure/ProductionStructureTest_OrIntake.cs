@@ -38,7 +38,7 @@ public class ProductionStructureTest_OrIntake {
     }
     private void CreateTwoByThree() {
         Production = new ProductionStructure(ID, PrototypeData);
-        Production.City = mockutil.WorldCity;
+        Production.City = mockutil.City;
         Production.Tiles = Production.GetBuildingTiles(World.Current.GetTileAt(Production.StructureRange + 1, Production.StructureRange + 1));
         PrototypeData.structureRange = 10;
         Production.RangeTiles = new HashSet<Tile>();

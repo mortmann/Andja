@@ -30,13 +30,12 @@ public class MineStructureTest {
     }
     private void CreateTwoByThree() {
         MineStructure.CurrentResourceMode = ResourceMode.PerMine;
-        Mine.City = mockutil.WorldCity;
+        Mine.City = mockutil.City;
         MinePrototypeData.tileWidth = 2;
         MinePrototypeData.tileHeight = 3;
         Island.Resources = new Dictionary<string, int>();
         MinePrototypeData.output = new Item[] { ItemProvider.Stone_1 };
         Mine.Tiles = Mine.GetBuildingTiles(World.Current.GetTileAt(Mine.StructureRange + 1, Mine.StructureRange + 1));
-        Mine.City = mockutil.WorldCity;
     }
 
     [Test] 

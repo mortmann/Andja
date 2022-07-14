@@ -26,26 +26,22 @@ namespace Andja.Model {
         [JsonPropertyAttribute]
         public Item[] Intake {
             get {
-                if (_intake == null) {
-                    if (ProductionData.intake == null) {
-                        return null;
-                    }
-                    if (ProductionData.inputTyp == InputTyp.AND) {
-                        _intake = new Item[ProductionData.intake.Length];
-                        for (int i = 0; i < ProductionData.intake.Length; i++) {
-                            _intake[i] = ProductionData.intake[i].Clone();
-                        }
-                    }
-                    if (ProductionData.inputTyp == InputTyp.OR) {
-                        _intake = new Item[1];
-                        _intake[0] = ProductionData.intake[0].Clone();
+                if (_intake != null) return _intake;
+                if (ProductionData.intake == null) {
+                    return null;
+                }
+                if (ProductionData.inputTyp == InputTyp.AND) {
+                    _intake = new Item[ProductionData.intake.Length];
+                    for (int i = 0; i < ProductionData.intake.Length; i++) {
+                        _intake[i] = ProductionData.intake[i].Clone();
                     }
                 }
+                if (ProductionData.inputTyp != InputTyp.OR) return _intake;
+                _intake = new Item[1];
+                _intake[0] = ProductionData.intake[0].Clone();
                 return _intake;
             }
-            set {
-                _intake = value;
-            }
+            set => _intake = value;
         }
 
         #endregion Serialize
@@ -64,25 +60,19 @@ namespace Andja.Model {
         }
 
         public Dictionary<OutputStructure, Item[]> RegisteredStructures;
-        private MarketStructure nearestMarketStructure;
-        public InputTyp InputTyp { get { return ProductionData.inputTyp; } }
+        private MarketStructure _nearestMarketStructure;
+        public InputTyp InputTyp => ProductionData.inputTyp;
 
         #endregion RuntimeOrOther
 
-        protected ProductionPrototypeData _productionData;
+        private ProductionPrototypeData _productionData;
 
-        public ProductionPrototypeData ProductionData {
-            get {
-                if (_productionData == null) {
-                    _productionData = (ProductionPrototypeData)PrototypController.Instance.GetStructurePrototypDataForID(ID);
-                }
-                return _productionData;
-            }
-        }
+        public ProductionPrototypeData ProductionData =>
+            _productionData ??= (ProductionPrototypeData)PrototypController.Instance.GetStructurePrototypDataForID(ID);
 
-        public ProductionStructure(string id, ProductionPrototypeData ProductionData) {
+        public ProductionStructure(string id, ProductionPrototypeData productionData) {
             this.ID = id;
-            this._productionData = ProductionData;
+            this._productionData = productionData;
         }
 
         /// <summary>
@@ -108,26 +98,26 @@ namespace Andja.Model {
             if (IsActiveAndWorking == false) {
                 return;
             }
-            for (int i = 0; i < Output.Length; i++) {
-                if (Output[i].count == MaxOutputStorage) {
-                    return;
-                }
+
+            if (Output.Any(item => item.count == MaxOutputStorage)) {
+                return;
             }
             if (HasRequiredInput() == false) {
                 return;
             }
             ProduceTimer += deltaTime;
-            if (ProduceTimer >= ProduceTime) {
-                ProduceTimer = 0;
-                if (Intake != null) {
-                    for (int i = 0; i < Intake.Length; i++) {
-                        Intake[i].count--;
-                    }
+            if ((ProduceTimer >= ProduceTime) == false) {
+                return;
+            }
+            ProduceTimer = 0;
+            if (Intake != null) {
+                for (int i = 0; i < Intake.Length; i++) {
+                    Intake[i].count -= Mathf.Clamp(ProductionData.intake[i].count,1, int.MaxValue);
                 }
-                for (int i = 0; i < Output.Length; i++) {
-                    Output[i].count += OutputData.output[i].count;
-                    cbOutputChange?.Invoke(this);
-                }
+            }
+            for (int i = 0; i < Output.Length; i++) {
+                Output[i].count += OutputData.output[i].count;
+                cbOutputChange?.Invoke(this);
             }
         }
 
@@ -135,23 +125,15 @@ namespace Andja.Model {
             if (ProductionData.intake == null) {
                 return true;
             }
-            if (InputTyp == InputTyp.AND) {
-                for (int i = 0; i < Intake.Length; i++) {
-                    if (ProductionData.intake[i].count > Intake[i].count) {
-                        return false;
-                    }
-                }
-            }
-            else if (InputTyp == InputTyp.OR) {
-                if (ProductionData.intake[OrItemIndex].count > Intake[0].count) {
-                    return false;
-                }
-            }
-            return true;
+            return InputTyp switch {
+                InputTyp.AND => Intake.Where((t, i) => ProductionData.intake[i].count > t.count).Any() == false,
+                InputTyp.OR when ProductionData.intake[OrItemIndex].count > Intake[0].count => false,
+                _ => true
+            };
         }
 
         protected override void SendOutWorkerIfCan(float workTime = 1) {
-            if (Workers.Count >= MaxNumberOfWorker || WorkerJobsToDo.Count == 0 && nearestMarketStructure == null) {
+            if (Workers.Count >= MaxNumberOfWorker || WorkerJobsToDo.Count == 0 && _nearestMarketStructure == null) {
                 return;
             }
             Dictionary<Item, int> needItems = new Dictionary<Item, int>();
@@ -163,19 +145,18 @@ namespace Andja.Model {
             if (needItems.Count == 0) {
                 return;
             }
-            if (WorkerJobsToDo.Count == 0 && nearestMarketStructure != null) {
+            if (WorkerJobsToDo.Count == 0 && _nearestMarketStructure != null) {
                 List<Item> getItems = new List<Item>();
                 for (int i = Intake.Length - 1; i >= 0; i--) {
-                    if (City.HasAnythingOfItem(Intake[i])) {
-                        Item item = Intake[i].Clone();
-                        item.count = GetMaxIntakeForIndex(i) - Intake[i].count;
-                        getItems.Add(item);
-                    }
+                    if (City.HasAnythingOfItem(Intake[i]) == false) continue;
+                    Item item = Intake[i].Clone();
+                    item.count = GetMaxIntakeForIndex(i) - Intake[i].count;
+                    getItems.Add(item);
                 }
                 if (getItems.Count <= 0) {
                     return;
                 }
-                Workers.Add(new Worker(this, nearestMarketStructure, workTime, OutputData.workerID, getItems.ToArray(), false));
+                Workers.Add(new Worker(this, _nearestMarketStructure, workTime, OutputData.workerID, getItems.ToArray(), false));
                 World.Current.CreateWorkerGameObject(Workers[0]);
             }
             else {
@@ -191,11 +172,11 @@ namespace Andja.Model {
             if (WorkerJobsToDo.ContainsKey(os)) {
                 WorkerJobsToDo.Remove(os);
             }
-            if (os.outputClaimed == false) {
-                var items = os.Output.Where(x => Array.Exists(Intake, y => x.ID == y.ID)).ToArray();
-                if(items != null && items.Length > 0)
-                    WorkerJobsToDo.Add(os, items);
-            }
+
+            if (os.outputClaimed) return;
+            var items = os.Output.Where(x => Array.Exists(Intake, y => x.ID == y.ID)).ToArray();
+            if(items.Length > 0)
+                WorkerJobsToDo.Add(os, items);
         }
 
         public bool AddToIntake(Inventory toAdd) {
@@ -213,12 +194,11 @@ namespace Andja.Model {
             List<Item> all = new List<Item>();
             for (int i = 0; i < Intake.Length; i++) {
                 Item item = Array.Find(items, x => x.ID == Intake[i].ID)?.Clone();
-                if(item != null) {
-                    item.count = GetMaxIntakeForIndex(i) - Intake[i].count;
-                    item.count -= Workers.Where(z => z.ToGetItems != null)
-                                    .Sum(x => Array.Find(x.ToGetItems, y => items[i].ID == y.ID)?.count ?? 0);
-                    all.Add(item);
-                }
+                if (item == null) continue;
+                item.count = GetMaxIntakeForIndex(i) - Intake[i].count;
+                item.count -= Workers.Where(z => z.ToGetItems != null)
+                    .Sum(x => Array.Find(x.ToGetItems, y => items[i].ID == y.ID)?.count ?? 0);
+                all.Add(item);
             }
             return all.Where(x=>x.count > 0).ToArray();
         }
@@ -231,16 +211,15 @@ namespace Andja.Model {
             WorkerJobsToDo = new Dictionary<OutputStructure, Item[]>();
             RegisteredStructures = new Dictionary<OutputStructure, Item[]>();
 
-            if (RangeTiles != null) {
-                foreach (Tile rangeTile in RangeTiles) {
-                    if (rangeTile.Structure == null) {
-                        continue;
-                    }
-                    OnStructureBuild(rangeTile.Structure);
-
+            if (RangeTiles == null) return;
+            foreach (Tile rangeTile in RangeTiles) {
+                if (rangeTile.Structure == null) {
+                    continue;
                 }
-                City.RegisterStructureAdded(OnStructureBuild);
+                OnStructureBuild(rangeTile.Structure);
+
             }
+            City.RegisterStructureAdded(OnStructureBuild);
         }
 
         public void ChangeInput(Item change) {
@@ -273,60 +252,50 @@ namespace Andja.Model {
         }
 
         public void OnStructureBuild(Structure str) {
-            if (!(str is OutputStructure os) || str is GrowableStructure) {
+            OutputStructure outputStructure = str as OutputStructure;
+            if (outputStructure == null || outputStructure is GrowableStructure) {
                 return;
             }
-            bool inRange = false;
-            for (int i = 0; i < str.Tiles.Count; i++) {
-                if (RangeTiles.Contains(str.Tiles[i]) == true) {
-                    inRange = true;
-                    break;
-                }
-            }
-            if (inRange == false) {
+            if (RangeTiles.Overlaps(str.Tiles) == false) {
                 return;
             }
-            if (RegisteredStructures.ContainsKey(os)) {
+            if (RegisteredStructures.ContainsKey(outputStructure)) {
                 return;
             }
             if (str is MarketStructure) {
                 FindNearestMarketStructure(str.BuildTile);
                 return;
             }
-            Item[] items = GetRequiredItems(os, Intake);
-            if (items.Length > 0) {
-                os.RegisterOutputChanged(OnOutputChangedStructure);
-                RegisteredStructures.Add(os, items);
-            }
+            Item[] items = GetRequiredItems(outputStructure, Intake);
+            if (items.Length == 0) return;
+            outputStructure.RegisterOutputChanged(OnOutputChangedStructure);
+            RegisteredStructures.Add(outputStructure, items);
         }
 
         public void FindNearestMarketStructure(Tile tile) {
-            if (tile.Structure is MarketStructure) {
-                if (nearestMarketStructure == null) {
-                    nearestMarketStructure = (MarketStructure)tile.Structure;
-                }
-                else {
-                    float firstDistance = nearestMarketStructure.Center.magnitude - Center.magnitude;
-                    float secondDistance = tile.Structure.Center.magnitude - Center.magnitude;
-                    if (Mathf.Abs(secondDistance) < Mathf.Abs(firstDistance)) {
-                        nearestMarketStructure = (MarketStructure)tile.Structure;
-                    }
+            if (!(tile.Structure is MarketStructure market)) return;
+            if (_nearestMarketStructure == null) {
+                _nearestMarketStructure = market;
+            }
+            else {
+                float firstDistance = _nearestMarketStructure.Center.magnitude - Center.magnitude;
+                float secondDistance = market.Center.magnitude - Center.magnitude;
+                if (Mathf.Abs(secondDistance) < Mathf.Abs(firstDistance)) {
+                    _nearestMarketStructure = market;
                 }
             }
         }
 
         public override void Load() {
             base.Load();
-            if (_intake != null) {
-                if(InputTyp == InputTyp.AND) {
-                    _intake = _intake.ReplaceKeepCounts(ProductionData.intake);
-                } else {
-                    if(Array.Exists(ProductionData.intake, x=>x.ID == _intake[0].ID) == false) {
-                        Debug.LogWarning("Prototype Intake Data changed for " + ID + " 'OR' does not contain last produced. " +
-                            "Updated to first in array.");
-                        _intake[0] = ProductionData.intake[0].Clone();
-                    }
-                }
+            if (_intake == null) return;
+            if(InputTyp == InputTyp.AND) {
+                _intake = _intake.ReplaceKeepCounts(ProductionData.intake);
+            } else {
+                if (Array.Exists(ProductionData.intake, x => x.ID == _intake[0].ID) != false) return;
+                Debug.LogWarning("Prototype Intake Data changed for " + ID + " 'OR' does not contain last produced. " +
+                                 "Updated to first in array.");
+                _intake[0] = ProductionData.intake[0].Clone();
             }
         }
 

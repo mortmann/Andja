@@ -75,10 +75,10 @@ namespace Andja.Model {
             return EditorController.IsEditor;
         }
 
-        private Queue<City> _cities;
-        private City _city;
+        private Queue<ICity> _cities;
+        private ICity _city;
 
-        public override City City {
+        public override ICity City {
             get => _city;
             set {
                 if (Island == null) {
@@ -92,7 +92,7 @@ namespace Andja.Model {
                         //if this has more than one city claiming it
                         //its gonna go add them to a queue and giving it
                         //in that order the right to own it
-                        City c = _cities.Dequeue();
+                        ICity c = _cities.Dequeue();
                         c.AddTile(this);
                         _city = c;
                         Island.ChangeGridTile(this, true);
@@ -115,7 +115,7 @@ namespace Andja.Model {
                 //on that tile -- Maybe do a check if the city
                 //that currently owns has a another claim on it?
                 if (_city != null && _city.IsWilderness() == false) {
-                    _cities ??= new Queue<City>();
+                    _cities ??= new Queue<ICity>();
                     _cities.Enqueue(value);
                     return;
                 }

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Andja.Controller;
@@ -9,14 +10,13 @@ using UnityEngine;
 using UnityEngine.TestTools;
 using System.Linq;
 using Andja;
-
+using static AssertNet.Moq.Assertions;
 public class MarketStructureTest {
     string ID = "MarketStructure";
     MarketStructure Market;
     MarketPrototypData PrototypeData;
     private MockUtil mockutil;
-    City City;
-
+    private ICity City;
     [SetUp]
     public void SetUp() {
         Market = new MarketStructure(ID, PrototypeData);
@@ -25,11 +25,11 @@ public class MarketStructureTest {
             structureRange = 20
         };
         mockutil = new MockUtil();
+        City = mockutil.City;
         PrototypeData.output = new Item[] { ItemProvider.Stone_1 };
         var prototypeControllerMock = mockutil.PrototypControllerMock;
         prototypeControllerMock.Setup(m => m.GetStructurePrototypDataForID(ID)).Returns(PrototypeData);
         mockutil.CityMock.Setup(x => x.RemoveTiles(It.IsAny<IEnumerable<Tile>>()));
-        City = mockutil.WorldCity;
         var Items = new Dictionary<string, Item>() {
             { ItemProvider.Brick.ID, ItemProvider.Brick.Clone() },
             { ItemProvider.Tool.ID, ItemProvider.Tool.Clone()   },
@@ -44,15 +44,14 @@ public class MarketStructureTest {
             return new List<PopulationLevel>();
         });
         
-        City.Inventory = new CityInventory(1);
         CreateFourByFour();
     }
     
     private void CreateFourByFour() {
-        Market.City = mockutil.WorldCity;
+        Market.City = mockutil.City;
         PrototypeData.tileWidth = 4;
         PrototypeData.tileHeight = 4;
-        Market.OutputMarkedStructures = new List<Structure>();
+        Market.OutputMarkedStructures = new List<OutputStructure>();
         Market.Tiles = Market.GetBuildingTiles(World.Current.GetTileAt(Market.StructureRange, Market.StructureRange));
         Market.RangeTiles = new HashSet<Tile>();
         Market.RangeTiles.UnionWith(PrototypeData.PrototypeRangeTiles);
@@ -155,9 +154,11 @@ public class MarketStructureTest {
 
     [Test]
     public void OnBuild() {
-
         Market.OnBuild();
-        Assert.IsTrue(Market.RangeTiles.All(x => x.City == Market.City)); ;
+        HashSet<Tile> tiles = new HashSet<Tile>(Market.RangeTiles);
+        tiles.UnionWith(Market.Tiles);
+        AssertThat(mockutil.CityMock)
+            .HasInvoked(c => c.AddTiles(It.Is<IEnumerable<Tile>>(x => tiles.SetEquals(x)))).Once();
     }
 
     [Test]
@@ -204,7 +205,7 @@ public class MarketStructureTest {
     [Test]
     public void OnOutputChangedStructure_HasOutput_NoRoute() {
         OutputStructureTest.TestOutputStructure outputStructureTest = new OutputStructureTest.TestOutputStructure("URG", new OutputPrototypData());
-        Market.OutputMarkedStructures = new List<Structure>();
+        Market.OutputMarkedStructures = new List<OutputStructure>();
         outputStructureTest.Output = new Item[] { ItemProvider.Tool_5 };
         Market.OnOutputChangedStructure(outputStructureTest);
         Assert.True(Market.OutputMarkedStructures.Contains(outputStructureTest));
@@ -214,20 +215,20 @@ public class MarketStructureTest {
         OutputStructureTest.TestOutputStructure outputStructureTest = new OutputStructureTest.TestOutputStructure("URG", new OutputPrototypData());
         outputStructureTest.Output = new Item[] { ItemProvider.Wood };
 
-        Market.OutputMarkedStructures = new List<Structure>();
+        Market.OutputMarkedStructures = new List<OutputStructure>();
         Market.OnOutputChangedStructure(outputStructureTest);
         Assert.False(Market.OutputMarkedStructures.Contains(outputStructureTest));
     }
     [Test]
     public void OnOutputChangedStructure_HasOutput_Route() {
         OutputStructureTest.TestOutputStructure outputStructureTest = new OutputStructureTest.TestOutputStructure("URG", new OutputPrototypData());
-        Market.OutputMarkedStructures = new List<Structure>();
+        Market.OutputMarkedStructures = new List<OutputStructure>();
 
         RoadStructure road = new RoadStructure();
         road.Route = new Route();
         outputStructureTest.AddRoadStructure(road);
         Market.AddRoadStructure(road);
-        Market.OutputMarkedStructures = new List<Structure>();
+        Market.OutputMarkedStructures = new List<OutputStructure>();
         outputStructureTest.Output = new Item[] { ItemProvider.Tool_5 };
         Market.OnOutputChangedStructure(outputStructureTest);
         
@@ -237,14 +238,14 @@ public class MarketStructureTest {
     [Test]
     public void OnOutputChangedStructure_NoOutput_Route() {
         OutputStructureTest.TestOutputStructure outputStructureTest = new OutputStructureTest.TestOutputStructure("URG", new OutputPrototypData());
-        Market.OutputMarkedStructures = new List<Structure>();
+        Market.OutputMarkedStructures = new List<OutputStructure>();
         outputStructureTest.Output = new Item[] { ItemProvider.Wood };
 
         RoadStructure road = new RoadStructure();
         road.Route = new Route();
         outputStructureTest.AddRoadStructure(road);
         Market.AddRoadStructure(road);
-        Market.OutputMarkedStructures = new List<Structure>();
+        Market.OutputMarkedStructures = new List<OutputStructure>();
         Market.OnOutputChangedStructure(outputStructureTest);
 
         Assert.IsFalse(Market.WorkerJobsToDo.ContainsKey(outputStructureTest));
@@ -252,9 +253,9 @@ public class MarketStructureTest {
     [Test]
     public void OnStructureAdded_OutputStructure() {
         OutputStructureTest.TestOutputStructure outputStructureTest = new OutputStructureTest.TestOutputStructure("URG", new OutputPrototypData());
-        Market.OutputMarkedStructures = new List<Structure>();
+        Market.OutputMarkedStructures = new List<OutputStructure>();
 
-        outputStructureTest.Output = new Item[0];
+        outputStructureTest.Output = Array.Empty<Item>();
         outputStructureTest.City = City;
         outputStructureTest.Tiles = Market.RangeTiles.Take(4).ToList();
         Market.OnStructureAdded(outputStructureTest);

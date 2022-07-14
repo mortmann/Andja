@@ -14,7 +14,7 @@ namespace Andja.Model {
 
         #region Serialize
 
-        [JsonPropertyAttribute] public List<City> Cities { get; set; }
+        [JsonPropertyAttribute] public List<ICity> Cities { get; set; }
         [JsonPropertyAttribute] public Climate Climate { get; set; }
         [JsonPropertyAttribute] public Dictionary<string, int> Resources { get; set; }
         [JsonPropertyAttribute] public Tile StartTile { get; set; }
@@ -41,7 +41,7 @@ namespace Andja.Model {
             }
         }
 
-        public City Wilderness {
+        public ICity Wilderness {
             get {
                 if (_wilderness == null)
                     _wilderness = Cities.Find(x => x.PlayerNumber == GameData.WorldNumber);
@@ -69,7 +69,7 @@ namespace Andja.Model {
         public Vector2 Minimum;
         public Vector2 Maximum;
         public Vector2 Center;
-        private City _wilderness;
+        private ICity _wilderness;
         public bool allReadyHighlighted;
 
         #endregion RuntimeOrOther
@@ -84,7 +84,7 @@ namespace Andja.Model {
         public Island(Tile startTile, Climate climate = Climate.Middle) {
             StartTile = startTile; // if it gets loaded the StartTile will already be set
             Resources = new Dictionary<string, int>();
-            Cities = new List<City>();
+            Cities = new List<ICity>();
 
             this.Climate = climate;
 
@@ -116,7 +116,7 @@ namespace Andja.Model {
 
         public Island(Tile[] tiles, Climate climate = Climate.Middle) {
             Resources = new Dictionary<string, int>();
-            Cities = new List<City>();
+            Cities = new List<ICity>();
             this.Climate = climate;
             SetTiles(tiles);
             Setup();
@@ -234,22 +234,22 @@ namespace Andja.Model {
             }
         }
 
-        public City FindCityByPlayer(int playerNumber) {
+        public ICity FindCityByPlayer(int playerNumber) {
             return Cities.Find(x => x.PlayerNumber == playerNumber);
         }
 
-        public City CreateCity(int playerNumber) {
+        public ICity CreateCity(int playerNumber) {
             if (Cities.Exists(x => x.PlayerNumber == playerNumber)) {
                 Debug.LogError("TRIED TO CREATE A SECOND CITY -- IS NEVER ALLOWED TO HAPPEN!");
                 return Cities.Find(x => x.PlayerNumber == playerNumber);
             }
             allReadyHighlighted = false;
-            City c = new City(playerNumber, this);
+            ICity c = new City(playerNumber, this);
             Cities.Add(c);
             return c;
         }
 
-        public void RemoveCity(City c) {
+        public void RemoveCity(ICity c) {
             if (c.IsWilderness()) {
                 //We could remove it still and recreate it, if it is needed but for now just prevent the deletion 
                 Debug.LogWarning("Wanted to remove Wilderniss. It is still needed even if empty: For the case that their will be once again.");

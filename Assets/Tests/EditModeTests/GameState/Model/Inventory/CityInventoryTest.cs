@@ -213,12 +213,12 @@ public class CityInventoryTest {
     [Test]
     public void HasEnoughOfItems_Multiplied_True() {
         inventory.AddItems(new[] { ItemProvider.Wood_N(MaxStackSize), ItemProvider.Stone_N(MaxStackSize) });
-        Assert.IsTrue(inventory.HasEnoughOfItems(new[] { ItemProvider.Wood_N(MaxStackSize / 10), ItemProvider.Stone_N(MaxStackSize / 10) }, 10));
+        Assert.IsTrue(inventory.HasEnoughOfItems(new[] { ItemProvider.Wood_N(MaxStackSize / 10), ItemProvider.Stone_N(MaxStackSize / 10) }, times: 10));
     }
     [Test]
     public void HasEnoughOfItems_Multiplied_False() {
         inventory.AddItems(new[] { ItemProvider.Wood_N(MaxStackSize), ItemProvider.Stone_N(MaxStackSize) });
-        Assert.IsFalse(inventory.HasEnoughOfItems(new[] { ItemProvider.Wood_N(MaxStackSize), ItemProvider.Stone_N(MaxStackSize) }, 100));
+        Assert.IsFalse(inventory.HasEnoughOfItems(new[] { ItemProvider.Wood_N(MaxStackSize), ItemProvider.Stone_N(MaxStackSize) }, times: 100));
     }
     [Test]
     public void HasAnything_Yes() {
@@ -242,6 +242,6 @@ public class CityInventoryTest {
         var items = new[] { ItemProvider.Wood_50, ItemProvider.Brick_25 };
         otherInventory.AddItems(items.CloneArrayWithCounts());
         inventory.AddInventory(otherInventory);
-        Assert.IsTrue(items.All(x => inventory.baseItems.ToList().Exists(y => x.ID == y.ID && x.count == y.count)));
+        Assert.IsTrue(items.All(x => inventory.BaseItems.ToList().Exists(y => x.ID == y.ID && x.count == y.count)));
     }
 }

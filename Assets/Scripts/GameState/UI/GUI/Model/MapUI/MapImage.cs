@@ -13,14 +13,14 @@ namespace Andja.UI.Model {
         public Image image;
         public GameObject mapParts;
         //for tradingroute
-        public Dictionary<City, MapCitySelect> cityToMapSelect;
+        public Dictionary<ICity, MapCitySelect> cityToMapSelect;
 
         public Dictionary<Unit, GameObject> unitToGO;
         public GameObject tradingMenu;
         private TradeRoutePanel tradeRoutePanel;
 
         private void Start() {
-            cityToMapSelect = new Dictionary<City, MapCitySelect>();
+            cityToMapSelect = new Dictionary<ICity, MapCitySelect>();
             unitToGO = new Dictionary<Unit, GameObject>();
 
             tradeRoutePanel = tradingMenu.GetComponent<TradeRoutePanel>();
@@ -44,7 +44,7 @@ namespace Andja.UI.Model {
             tradeRoutePanel.Initialize(this);
         }
 
-        public void OnCityCreated(City c) {
+        public void OnCityCreated(ICity c) {
             if (c == null || c.PlayerNumber != PlayerController.currentPlayerNumber) {
                 return;
             }

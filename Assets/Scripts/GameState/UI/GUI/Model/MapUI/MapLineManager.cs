@@ -140,7 +140,7 @@ namespace Andja.UI.Model {
             RemoveLinePoint(lines.Find(x => x.startingStop == mapStop.stop));
         }
 
-        internal void AddCity(City city) {
+        internal void AddCity(ICity city) {
             TradeRoute.Stop stop = tradeRoute.GetTradeFor(city);
             Vector2 dest = ScalePositionToMap(stop.Destination);
             if(lines.Count == 1) {
@@ -153,13 +153,13 @@ namespace Andja.UI.Model {
             }
             //line from stop to start
             lines.Add(new Line(dest, lines.First().a, stop));
-            CreateStop(stop, ScalePositionToMap(city.warehouse.tradeTile.Vector2));
+            CreateStop(stop, ScalePositionToMap(city.Warehouse.TradeTile.Vector2));
             lineRenderer.Points = lines.Select(x => x.a).Append(lines.Last().b).ToArray();
             UpdateSpots();
         }
 
 
-        internal void RemoveCity(City city) {
+        internal void RemoveCity(ICity city) {
             var tradeStops = mapTradeStops.Keys.Where(x => x is TradeRoute.Trade t && t.city == city);
             foreach(var ts in tradeStops.ToArray()) {
                 Destroy(mapTradeStops[ts].gameObject);

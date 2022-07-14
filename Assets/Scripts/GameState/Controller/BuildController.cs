@@ -74,11 +74,11 @@ namespace Andja.Controller {
         /// <summary>
         /// Is called when any new city is created.
         /// </summary>
-        private Action<City> _cbCityCreated;
+        private Action<ICity> _cbCityCreated;
         /// <summary>
         /// Is called when any new city is destroyed.
         /// </summary>
-        private Action<City> _cbAnyCityDestroyed;
+        private Action<ICity> _cbAnyCityDestroyed;
         /// <summary>
         /// Is called when any build state is changed.
         /// </summary>
@@ -433,12 +433,12 @@ namespace Andja.Controller {
             return PlayerController.Instance.GetPlayer(playerNumber).TreasuryBalance >= s.BuildCost;
         }
 
-        public City CreateCity(IIsland i, int playernumber) {
+        public ICity CreateCity(IIsland i, int playernumber) {
             if (i == null) {
                 Debug.LogError("CreateCity called not on a island!");
                 return null;
             }
-            City c = i.CreateCity(playernumber);
+            ICity c = i.CreateCity(playernumber);
             c.RegisterCityDestroy(_cbAnyCityDestroyed);
             // needed for mapimage
             _cbCityCreated?.Invoke(c);
@@ -500,22 +500,22 @@ namespace Andja.Controller {
         /// Callback called on every City created
         /// </summary>
         /// <param name="callbackfunc"></param>
-        public void RegisterCityCreated(Action<City> callbackfunc) {
+        public void RegisterCityCreated(Action<ICity> callbackfunc) {
             _cbCityCreated += callbackfunc;
         }
 
-        public void UnregisterCityCreated(Action<City> callbackfunc) {
+        public void UnregisterCityCreated(Action<ICity> callbackfunc) {
             _cbCityCreated -= callbackfunc;
         }
         /// <summary>
         /// Callback called on every City destroyed
         /// </summary>
         /// <param name="callbackfunc"></param>
-        public void RegisterAnyCityDestroyed(Action<City> callbackfunc) {
+        public void RegisterAnyCityDestroyed(Action<ICity> callbackfunc) {
             _cbAnyCityDestroyed += callbackfunc;
         }
 
-        public void UnregisterAnyCityDestroyed(Action<City> callbackfunc) {
+        public void UnregisterAnyCityDestroyed(Action<ICity> callbackfunc) {
             _cbAnyCityDestroyed -= callbackfunc;
         }
         /// <summary>

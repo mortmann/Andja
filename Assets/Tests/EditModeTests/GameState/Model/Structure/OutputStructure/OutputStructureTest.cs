@@ -29,7 +29,7 @@ public class OutputStructureTest {
         PrototypeData.output = new Item[] { ItemProvider.Stone_1 };
         var prototypeControllerMock = mockutil.PrototypControllerMock;
         prototypeControllerMock.Setup(m => m.GetStructurePrototypDataForID(ID)).Returns(PrototypeData);
-        prototypeControllerMock.Setup(m => m.GetEffectPrototypDataForID(OutputStructure.INACTIVE_EFFECT_ID)).Returns(
+        prototypeControllerMock.Setup(m => m.GetEffectPrototypDataForID(OutputStructure.InactiveEffectID)).Returns(
             new EffectPrototypeData() {
                 targets = new TargetGroup(Target.OutputStructure),
             });
@@ -37,12 +37,12 @@ public class OutputStructureTest {
         CreateTwoByThree();
     }
     private void CreateTwoByThree() {
-        OutputTestStructure.City = mockutil.WorldCity;
+        OutputTestStructure.City = mockutil.City;
         PrototypeData.tileWidth = 2;
         PrototypeData.tileHeight = 3;
         
         OutputTestStructure.Tiles = OutputTestStructure.GetBuildingTiles(World.Current.GetTileAt(OutputTestStructure.StructureRange, OutputTestStructure.StructureRange));
-        OutputTestStructure.City = mockutil.WorldCity;
+        OutputTestStructure.City = mockutil.City;
     }
 
     [Test]
@@ -162,20 +162,19 @@ public class OutputStructureTest {
         Assert.IsTrue(OutputTestStructure.IsActive);
         OutputTestStructure.ToggleActive();
         Assert.IsFalse(OutputTestStructure.IsActive);
-        Assert.IsTrue(OutputTestStructure.Effects.ToList().Exists(x=>x.ID == OutputStructure.INACTIVE_EFFECT_ID));
+        Assert.IsTrue(OutputTestStructure.Effects.ToList().Exists(x=>x.ID == OutputStructure.InactiveEffectID));
     }
     [Test]
     public void ToggleActive_On() {
-        OutputTestStructure.AddEffect(new Effect(OutputStructure.INACTIVE_EFFECT_ID));
+        OutputTestStructure.AddEffect(new Effect(OutputStructure.InactiveEffectID));
         OutputTestStructure.ToggleActive();
         OutputTestStructure.ToggleActive();
         Assert.IsTrue(OutputTestStructure.IsActive);
-        Assert.IsFalse(OutputTestStructure.Effects.ToList().Exists(x => x.ID == OutputStructure.INACTIVE_EFFECT_ID));
+        Assert.IsFalse(OutputTestStructure.Effects.ToList().Exists(x => x.ID == OutputStructure.InactiveEffectID));
     }
     [Test]
     public void OnDestroy() {
-        OutputTestStructure.Workers = new List<Worker>();
-        OutputTestStructure.Workers.Add(new Worker());
+        OutputTestStructure.Workers = new List<Worker> { new Worker() };
         OutputTestStructure.OnDestroy();
         Assert.IsFalse(OutputTestStructure.Workers[0].IsAlive);
     }

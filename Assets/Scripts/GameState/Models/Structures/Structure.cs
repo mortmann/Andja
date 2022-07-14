@@ -149,7 +149,7 @@ namespace Andja.Model {
 
         public List<Tile> Tiles;
         public HashSet<Tile> NeighbourTiles;
-        protected City _city;
+        protected ICity city;
         public HashSet<Tile> RangeTiles;
         public string connectOrientation;
         public bool HasExtraUI => ExtraUITyp != ExtraUI.None; 
@@ -240,7 +240,7 @@ namespace Andja.Model {
         protected Action<Structure, IWarfare> cbStructureDestroy;
         protected Action<Structure, bool> cbStructureExtraUI;
         protected Action<Structure, string, bool> cbStructureSound;
-        protected Action<Structure, City, City> cbOwnerChange;
+        protected Action<Structure, ICity, ICity> cbOwnerChange;
 
         protected HashSet<Route> Routes = new HashSet<Route>();
         protected List<RoadStructure> Roads = new List<RoadStructure>();
@@ -261,14 +261,14 @@ namespace Andja.Model {
 
         public string SmallName => SpriteName.ToLower(); 
 
-        public City City {
-            get { return _city; }
+        public ICity City {
+            get => city;
             set {
-                if (_city != null && _city != value) {
-                    cbOwnerChange?.Invoke(this, _city, value);
-                    _city.RemoveStructure(this);
+                if (city != null && city != value) {
+                    cbOwnerChange?.Invoke(this, city, value);
+                    city.RemoveStructure(this);
                 }
-                _city = value;
+                city = value;
             }
         }
 
@@ -431,11 +431,11 @@ namespace Andja.Model {
         /// 3st NewCity (Owner)
         /// </summary>
         /// <param name="cb"></param>
-        public void RegisterOnOwnerChange(Action<Structure, City, City> cb) {
+        public void RegisterOnOwnerChange(Action<Structure, ICity, ICity> cb) {
             cbOwnerChange += cb;
         }
 
-        public void UnregisterOnOwnerChange(Action<Structure, City, City> cb) {
+        public void UnregisterOnOwnerChange(Action<Structure, ICity, ICity> cb) {
             cbOwnerChange -= cb;
         }
 

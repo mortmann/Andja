@@ -24,7 +24,7 @@ public class NeedStructureTest {
         MockUtil mockutil = new MockUtil();
         var prototypeControllerMock = mockutil.PrototypControllerMock;
         prototypeControllerMock.Setup(m => m.GetStructurePrototypDataForID(ID)).Returns(PrototypeData);
-        NeedStructure.City = mockutil.WorldCity;
+        NeedStructure.City = mockutil.City;
         CreateTwoByTwo();
     }
     private void CreateTwoByTwo() {

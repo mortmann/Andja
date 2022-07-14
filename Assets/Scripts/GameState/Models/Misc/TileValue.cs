@@ -80,7 +80,7 @@ namespace Andja.Model {
             return "N" + neValue.y + "\nW" + swValue.x + "  E" + neValue.x + "\nS" + swValue.y;
         }
 
-        public static ConcurrentDictionary<Tile, TileValue> CalculateStartingValues(Island island, City city = null, bool structureLimit = false) {
+        public static ConcurrentDictionary<Tile, TileValue> CalculateStartingValues(Island island, ICity city = null, bool structureLimit = false) {
             Vector2[,] swValue = new Vector2[island.Width, island.Height];
             Vector2[,] neValue = new Vector2[island.Width, island.Height];
             Dictionary<TileType, Vector2[,]> typeToSWValue = new Dictionary<TileType, Vector2[,]>();

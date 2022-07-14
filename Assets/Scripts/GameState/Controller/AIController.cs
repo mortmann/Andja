@@ -54,7 +54,7 @@ namespace Andja.Controller {
             set => _islandsTileToValue = value;
         }
         private static Dictionary<IIsland, Dictionary<Tile, TileValue>> _islandToMapSpaceValuedTiles;
-        public static ConcurrentDictionary<City, ConcurrentDictionary<Tile, TileValue>> _cityToCurrentSpaceValueTiles;
+        public static ConcurrentDictionary<ICity, ConcurrentDictionary<Tile, TileValue>> _cityToCurrentSpaceValueTiles;
         private static Dictionary<IIsland, Dictionary<Tile, TileValue>> _islandsTileToValue;
         private static PerPopulationLevelData[] _perPopulationLevelDatas;
         private AIPlayer _test;
@@ -70,7 +70,7 @@ namespace Andja.Controller {
 
         public void Start() {
             AIOperationsPerFrame = PlayerController.Instance.PlayerCount - 1;
-            _cityToCurrentSpaceValueTiles = new ConcurrentDictionary<City, ConcurrentDictionary<Tile, TileValue>>();
+            _cityToCurrentSpaceValueTiles = new ConcurrentDictionary<ICity, ConcurrentDictionary<Tile, TileValue>>();
             BuildController.Instance.RegisterStructureCreated(OnStructureCreated);
             BuildController.Instance.RegisterStructureDestroyed(OnStructureDestroyed);
             BuildController.Instance.RegisterCityCreated(OnCityCreated);
@@ -101,21 +101,21 @@ namespace Andja.Controller {
             }
         }
 
-        private void OnCityDestroy(City obj) {
+        private void OnCityDestroy(ICity obj) {
             _cityToCurrentSpaceValueTiles.TryRemove(obj, out _);
         }
 
-        private void OnCityCreated(City obj) {
+        private void OnCityCreated(ICity obj) {
             _cityToCurrentSpaceValueTiles.TryAdd(obj, TileValue.CalculateStartingValues(obj.Island, obj, true));
             obj.RegisterTileAdded(OnCityTileAdded);
             obj.RegisterTileRemove(OnCityTileRemoved);
         }
 
-        private void OnCityTileRemoved(City c, Tile t) {
+        private void OnCityTileRemoved(ICity c, Tile t) {
             _cityToCurrentSpaceValueTiles[c].TryRemove(t, out _);
         }
 
-        private void OnCityTileAdded(City c, Tile t) {
+        private void OnCityTileAdded(ICity c, Tile t) {
             if(_cityToCurrentSpaceValueTiles[c].ContainsKey(t) == false)
                 _cityToCurrentSpaceValueTiles[c].TryAdd(t, new TileValue(t, Vector2.one, Vector2.one));
             if (t.GetNeighbours().All(x => x.City == c)) return;
@@ -360,7 +360,7 @@ namespace Andja.Controller {
                         ppd.requiredFertilities.Concat(fertilities);
                     }
                 }
-                ppd.atleastRequiredHomes = Mathf.CeilToInt((float)ppd.atleastRequiredPeople / (float)levelData[i].HomeStructure.people);
+                ppd.atleastRequiredHomes = Mathf.CeilToInt((float)ppd.atleastRequiredPeople / (float)levelData[i].HomeStructure.People);
             }
             foreach (Item item in PrototypController.Instance.MineableItems) {
                 if(item.Data.UnlockLevel < 0)

@@ -194,7 +194,7 @@ namespace Andja.Controller {
                         break;
 
                     case Target.City:
-                        targets.AddRange(player.Cities);
+                        targets.AddRange(player.Cities.ConvertAll(x=>(City)x));
                         break;
 
                     case Target.AllStructure:
@@ -258,11 +258,11 @@ namespace Andja.Controller {
             //idk how todo do it tho...
             switch (type) {
                 case EventType.City:
-                    List<City> cities = new List<City>();
+                    List<ICity> cities = new List<ICity>();
                     foreach (Island item in World.Current.Islands) {
                         cities.AddRange(item.Cities);
                     }
-                    ige = RandomItemFromList(cities);
+                    ige = RandomItemFromList(cities.ConvertAll(x=>(City)x));
                     break;
 
                 case EventType.Disaster:
@@ -287,7 +287,7 @@ namespace Andja.Controller {
                         return null; // there is no specific target
                     }
                     IIsland i = RandomItemFromList(World.Current.Islands);
-                    City c = RandomItemFromList(i.Cities);
+                    ICity c = RandomItemFromList(i.Cities);
                     if (c.PlayerNumber == -1) { // random decided there will be no event?
                                                 // are there events for wilderniss structures?
                     }

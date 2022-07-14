@@ -151,7 +151,7 @@ namespace Andja.Controller {
             endScoreScreen.SetActive(true);
         }
 
-        public void OpenOtherCity(City city) {
+        public void OpenOtherCity(ICity city) {
             if (city == null) {
                 return;
             }
@@ -161,7 +161,7 @@ namespace Andja.Controller {
             otherCityUI.GetComponent<OtherCityUI>().Show(city);
         }
 
-        public void OpenCityInventory(City city, System.Action<Item> onItemPressed = null) {
+        public void OpenCityInventory(ICity city, System.Action<Item> onItemPressed = null) {
             if (city == null) {
                 return;
             }
@@ -171,7 +171,7 @@ namespace Andja.Controller {
             CityInventoryCanvas.GetComponent<CityInventoryUI>().ShowInventory(city, onItemPressed);
         }
 
-        public void HideCityUI(City city) {
+        public void HideCityUI(ICity city) {
             otherCityUI.SetActive(false);
             CityInventoryCanvas.SetActive(false);
         }

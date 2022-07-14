@@ -12,13 +12,13 @@ namespace Andja.UI.Model {
         public TradeItemUI TradeItemPrefab;
 
         private TradeItemUI tradeItemUICurrentlySelected;
-        private City city;
+        private ICity city;
         private void Start() {
             amountSlider.onValueChanged.AddListener(OnAmountSliderChange);
             priceSlider.onValueChanged.AddListener(OnPriceSliderChange);
         }
         // Use this for initialization
-        public void Show(City c) {
+        public void Show(ICity c) {
             city = c;
             amountSlider.maxValue = city.Inventory.MaxStackSize;
             foreach (Transform t in TradeCanvas.transform) {

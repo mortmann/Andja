@@ -29,29 +29,26 @@ namespace Andja.Model {
         #region RuntimeOrOther
 
         public List<Structure> RegisteredSturctures;
-        public List<Structure> OutputMarkedStructures;
+        public List<OutputStructure> OutputMarkedStructures;
 
         public float TakeOverStartGoal => CalculateRealValue(nameof(MarketData.takeOverStartGoal), MarketData.takeOverStartGoal);
 
         public float DecreaseCaptureSpeed => CalculateRealValue(nameof(MarketData.decreaseCaptureSpeed), MarketData.decreaseCaptureSpeed);
         public float MaximumCaptureSpeed => CalculateRealValue(nameof(MarketData.maximumCaptureSpeed), MarketData.maximumCaptureSpeed);
 
-        protected MarketPrototypData _marketData;
+        private MarketPrototypData _marketData;
 
         public MarketPrototypData MarketData {
             get {
-                if (_marketData == null) {
-                    _marketData = (MarketPrototypData)PrototypController.Instance.GetStructurePrototypDataForID(ID);
-                }
-                return _marketData;
+                return _marketData ??= (MarketPrototypData)PrototypController.Instance.GetStructurePrototypDataForID(ID);
             }
         }
 
         #endregion RuntimeOrOther
 
-        public MarketStructure(string id, MarketPrototypData MarketData) {
+        public MarketStructure(string id, MarketPrototypData marketData) {
             this.ID = id;
-            _marketData = MarketData;
+            _marketData = marketData;
         }
 
         /// <summary>
@@ -59,7 +56,7 @@ namespace Andja.Model {
         /// </summary>
         public MarketStructure() {
             RegisteredSturctures = new List<Structure>();
-            OutputMarkedStructures = new List<Structure>();
+            OutputMarkedStructures = new List<OutputStructure>();
         }
 
         protected MarketStructure(MarketStructure str) {
@@ -76,10 +73,10 @@ namespace Andja.Model {
         }
 
         public void UpdateCaptureProgress(float deltaTime) {
-            if (currentCaptureSpeed > 0) {
-                capturedProgress += currentCaptureSpeed * deltaTime;
+            if (_currentCaptureSpeed > 0) {
+                capturedProgress += _currentCaptureSpeed * deltaTime;
                 //reset the speed so that units can again add their speed
-                currentCaptureSpeed = 0;
+                _currentCaptureSpeed = 0;
             }
             else if (capturedProgress > 0) {
                 capturedProgress -= DecreaseCaptureSpeed * deltaTime;
@@ -89,78 +86,61 @@ namespace Andja.Model {
 
         public override void OnBuild() {
             RegisteredSturctures = new List<Structure>();
-            OutputMarkedStructures = new List<Structure>();
+            OutputMarkedStructures = new List<OutputStructure>();
             WorkerJobsToDo = new Dictionary<OutputStructure, Item[]>();
             // add all the tiles to the city it was build in
             //dostuff thats happen when build
             City.AddTiles(RangeTiles.Concat(Tiles));
-            foreach (Tile rangeTile in RangeTiles) {
-                if (rangeTile.City != City) {
-                    continue;
-                }
+            foreach (var rangeTile in RangeTiles.Where(rangeTile => rangeTile.City == City)) {
                 OnStructureAdded(rangeTile.Structure);
             }
             City.RegisterStructureAdded(OnStructureAdded);
         }
 
         public void OnOutputChangedStructure(Structure str) {
-            if (!(str is OutputStructure outstr)) {
+            if (!(str is OutputStructure outputStructure)) {
                 return;
             }
-            bool hasOutput = false;
-            for (int i = 0; i < outstr.Output.Length; i++) {
-                if (outstr.Output[i].count > 0) {
-                    hasOutput = true;
-                    break;
-                }
-            }
+            bool hasOutput = outputStructure.Output.Any(t => t.count > 0);
             if (hasOutput == false) {
-                if (OutputMarkedStructures.Contains(str)) {
-                    OutputMarkedStructures.Remove(str);
+                if (OutputMarkedStructures.Contains(outputStructure)) {
+                    OutputMarkedStructures.Remove(outputStructure);
                 }
-                if (WorkerJobsToDo.ContainsKey(outstr)) {
-                    WorkerJobsToDo.Remove(outstr);
+                if (WorkerJobsToDo.ContainsKey(outputStructure)) {
+                    WorkerJobsToDo.Remove(outputStructure);
                 }
                 return;
             }
 
-            if (WorkerJobsToDo.ContainsKey(outstr)) {
-                WorkerJobsToDo.Remove(outstr);
+            if (WorkerJobsToDo.ContainsKey(outputStructure)) {
+                WorkerJobsToDo.Remove(outputStructure);
             }
 
-            HashSet<Route> Routes = GetRoutes();
             //get the roads around the structure
-            foreach (Route item in outstr.GetRoutes()) {
-                //if one of them is in my roads
-                if (Routes.Contains(item)) {
-                    //if we are here we can get there through atleast 1 road
-                    if (outstr.outputClaimed == false) {
-                        WorkerJobsToDo.Add(outstr, null);
-                    }
-                    if (OutputMarkedStructures.Contains(str)) {
-                        OutputMarkedStructures.Remove(str);
-                    }
-                    return;
+            if (outputStructure.GetRoutes().Any(item => Routes.Contains(item))) {
+                if (outputStructure.outputClaimed == false) {
+                    WorkerJobsToDo.Add(outputStructure, null);
                 }
+                if (OutputMarkedStructures.Contains(outputStructure)) {
+                    OutputMarkedStructures.Remove(outputStructure);
+                }
+                return;
             }
             //if were here there is noconnection between here and a the structure
             //so remember it for the case it gets connected to it.
-            if (OutputMarkedStructures.Contains(str)) {
+            if (OutputMarkedStructures.Contains(outputStructure)) {
                 return;
             }
-            OutputMarkedStructures.Add(str);
+            OutputMarkedStructures.Add(outputStructure);
         }
 
         public override void AddRoadStructure(RoadStructure roadStructure) {
             base.AddRoadStructure(roadStructure);
             roadStructure.Route.AddMarketStructure(this);
-            for (int i = 0; i < OutputMarkedStructures.Count; i++) {
-                foreach (Route item in ((OutputStructure)OutputMarkedStructures[i]).GetRoutes()) {
-                    if (Routes.Contains(item)) {
-                        OnOutputChangedStructure(OutputMarkedStructures[i]);
-                        break;//breaks only the innerloop eg the routes loop
-                    }
-                }
+            foreach (var markedStructures in OutputMarkedStructures
+                         .Where(markedStructures => markedStructures.GetRoutes()
+                         .Any(item => Routes.Contains(item)))) {
+                OnOutputChangedStructure(markedStructures);
             }
         }
 
@@ -181,44 +161,34 @@ namespace Andja.Model {
         }
 
         public void OnStructureAdded(Structure structure) {
-            if (structure == null) {
-                return;
-            }
-            if (structure is MarketStructure) {
-                return;
-            }
-            if (structure is GrowableStructure) {
-                return;
+            OutputStructure outputStructure = structure as OutputStructure;
+            switch (outputStructure) {
+                case null:
+                case MarketStructure _:
+                case GrowableStructure _:
+                case { ForMarketplace: false }:
+                    return;
             }
             if (structure.City != City) {
                 return;
             }
-            if (structure is OutputStructure outstr) {
-                if (outstr.ForMarketplace == false) {
-                    return;
-                }
-                if (RangeTiles.Overlaps(structure.Tiles)) {
-                    outstr.RegisterOutputChanged(OnOutputChangedStructure);
-                    OnOutputChangedStructure(outstr);
-                }
-            }
+            if (RangeTiles.Overlaps(outputStructure.Tiles) == false) return;
+            outputStructure.RegisterOutputChanged(OnOutputChangedStructure);
+            OnOutputChangedStructure(outputStructure);
         }
 
         public override Item[] GetRequiredItems(OutputStructure str, Item[] items) {
-            if (items == null) {
-                items = str.Output;
-            }
+            items ??= str.Output;
             List<Item> all = new List<Item>();
             for (int i = items.Length - 1; i >= 0; i--) {
                 int space = City.Inventory.GetRemainingSpaceForItem(items[i]);
                 //WE need to know what every other marketstructure is getting atm 
                 //so we do not get to much of this so look at every worker -> check if they have that item as getting -> else 0
-                space -= City.marketStructures.Sum(y => y.Workers.Sum(z => Array.Find(z.ToGetItems, j => items[i].ID == j.ID)?.count ?? 0));
-                if (space > 0) {
-                    Item item = items[i].Clone();
-                    item.count = space;//Mathf.Clamp (items [i].count, 0, space);
-                    all.Add(item);
-                }
+                space -= City.MarketStructures.Sum(y => y.Workers.Sum(z => Array.Find(z.ToGetItems, j => items[i].ID == j.ID)?.count ?? 0));
+                if (space <= 0) continue;
+                Item item = items[i].Clone();
+                item.count = space;//Mathf.Clamp (items [i].count, 0, space);
+                all.Add(item);
             }
             return all.ToArray();
         }
@@ -240,19 +210,19 @@ namespace Andja.Model {
         }
         #region ICapturableImplementation
 
-        private float currentCaptureSpeed = 0f;
+        private float _currentCaptureSpeed = 0f;
 
         public void Capture(IWarfare warfare, float progress) {
             if (Captured) {
                 DoneCapturing(warfare);
                 return;
             }
-            currentCaptureSpeed = Mathf.Clamp(currentCaptureSpeed + progress, 0, MaximumCaptureSpeed);
+            _currentCaptureSpeed = Mathf.Clamp(_currentCaptureSpeed + progress, 0, MaximumCaptureSpeed);
         }
 
         private void DoneCapturing(IWarfare warfare) {
             //either capture it or destroy based on if is a city of that player on that island
-            City c = BuildTile.Island.Cities.Find(x => x.PlayerNumber == warfare.PlayerNumber);
+            ICity c = BuildTile.Island.Cities.Find(x => x.PlayerNumber == warfare.PlayerNumber);
             if (c != null) {
                 capturedProgress = 0;
                 OnDestroy();

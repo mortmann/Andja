@@ -237,7 +237,7 @@ namespace Andja.Controller {
                     break;
 
                 case "1":
-                    City c = CameraController.Instance.nearestIsland.FindCityByPlayer(PlayerController.currentPlayerNumber);
+                    ICity c = CameraController.Instance.nearestIsland.FindCityByPlayer(PlayerController.currentPlayerNumber);
                     happend = AddAllItems(c.Inventory);
                     break;
             }
@@ -475,7 +475,7 @@ namespace Andja.Controller {
             if (player < 0) { // do we want to be able to console access to wilderness
                 return false;
             }
-            City c = CameraController.Instance.nearestIsland?.FindCityByPlayer(player);
+            City c = CameraController.Instance.nearestIsland?.FindCityByPlayer(player) as City;
             if (c == null) {
                 return false;
             }
@@ -616,7 +616,7 @@ namespace Andja.Controller {
                     if (!(MouseController.Instance.SelectedStructure is OutputStructure os)) return false;
                     foreach (Item output in os.Output) {
                         output.count = os.MaxOutputStorage;
-                        os.CallOutputChangedCB();
+                        os.CallOutputChangedCb();
                     }
                     return true;
                 case "effect":

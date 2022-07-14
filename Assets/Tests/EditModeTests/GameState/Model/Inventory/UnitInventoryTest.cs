@@ -50,7 +50,7 @@ public class UnitInventoryTest {
         item.count = amount;
         inventory.AddItem(item);
         IsInventoryEqual(item.ID,inventoryAmount);
-        Assert.AreEqual(itemCount, inventory.baseItems.Count());
+        Assert.AreEqual(itemCount, inventory.BaseItems.Count());
     }
 
     [Test]
@@ -73,7 +73,7 @@ public class UnitInventoryTest {
         inventory.AddItem(ItemProvider.Wood_5);
         inventory.AddItem(ItemProvider.Wood_50);
         IsInventoryEqual(ItemProvider.Wood.ID, 55);
-        Assert.AreEqual(2, inventory.baseItems.Count());
+        Assert.AreEqual(2, inventory.BaseItems.Count());
     }
 
     [Test]
@@ -117,11 +117,11 @@ public class UnitInventoryTest {
     [Test]
     public void IsFullWithItems() {
         inventory.AddItems(new[] { ItemProvider.Wood_5, ItemProvider.Brick_25, ItemProvider.Fish_25, ItemProvider.Wood_50, ItemProvider.Wood_50 });
-        Assert.AreEqual(5, inventory.baseItems.Count());
+        Assert.AreEqual(5, inventory.BaseItems.Count());
         Assert.IsFalse(inventory.AreSlotsFilledWithItems());
         inventory.AddItem(ItemProvider.Tool_5);
         Assert.IsTrue(inventory.AreSlotsFilledWithItems());
-        Assert.AreEqual(6, inventory.baseItems.Count());
+        Assert.AreEqual(6, inventory.BaseItems.Count());
     }
     
     [Test]
@@ -214,12 +214,12 @@ public class UnitInventoryTest {
     [Test]
     public void HasEnoughOfItems_Multiplied_True() {
         inventory.AddItems(new []{ItemProvider.Wood_N(100), ItemProvider.Stone_N(100)});
-        Assert.IsTrue(inventory.HasEnoughOfItems(new []{ItemProvider.Wood_N(5), ItemProvider.Stone_N(5)}, 10));
+        Assert.IsTrue(inventory.HasEnoughOfItems(new []{ItemProvider.Wood_N(5), ItemProvider.Stone_N(5)}, times: 10));
     }
     [Test]
     public void HasEnoughOfItems_Multiplied_False() {
         inventory.AddItems(new []{ItemProvider.Wood_N(100), ItemProvider.Stone_N(100)});
-        Assert.IsFalse(inventory.HasEnoughOfItems(new []{ItemProvider.Wood_N(5), ItemProvider.Stone_N(5)}, 100));
+        Assert.IsFalse(inventory.HasEnoughOfItems(new []{ItemProvider.Wood_N(5), ItemProvider.Stone_N(5)}, times: 100));
     }
     [Test]
     public void HasAnything_Yes() {
@@ -262,12 +262,10 @@ public class UnitInventoryTest {
     }
     
     [Test]
-    public void GetBuildMaterial(){
-        Mock<PrototypController> mock = new Mock<PrototypController>();
+    public void GetBuildMaterial() {
+        MockUtil mockUtil = new MockUtil();
         var buildItems = new[] { ItemProvider.Brick, ItemProvider.Tool, ItemProvider.Wood };
-        mock.SetupGet(m=>m.BuildItems).Returns(buildItems);
-        System.Reflection.FieldInfo instance = typeof(PrototypController).GetField("Instance", System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.Public);
-        instance.SetValue(mock.Object, mock.Object);
+        mockUtil.PrototypControllerMock.SetupGet(m=>m.BuildItems).Returns(buildItems);
         var items = new[] { ItemProvider.Wood_10, ItemProvider.Fish_25, ItemProvider.Tool_12 };
         inventory.AddItems(items.CloneArrayWithCounts());
         Assert.IsTrue(inventory.GetBuildMaterial().All(x=>buildItems.ToList().Exists(y=> x.ID == y.ID)));
@@ -291,6 +289,6 @@ public class UnitInventoryTest {
         var items = new[] { ItemProvider.Wood_50, ItemProvider.Brick_25};
         otherInventory.AddItems(items.CloneArrayWithCounts());
         inventory.AddInventory(otherInventory);
-        Assert.IsTrue(inventory.baseItems.All(x=>items.ToList().Exists(y=> x.ID == y.ID && x.count == y.count)));
+        Assert.IsTrue(inventory.BaseItems.All(x=>items.ToList().Exists(y=> x.ID == y.ID && x.count == y.count)));
     } 
 }

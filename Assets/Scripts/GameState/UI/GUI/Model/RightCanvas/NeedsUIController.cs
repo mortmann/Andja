@@ -120,14 +120,14 @@ namespace Andja.UI.Model {
             if (home == null || home.PlayerNumber != PlayerController.currentPlayerNumber) {
                 return;
             }
-            peopleCount.text = home.people + "/" + home.MaxLivingSpaces;
+            peopleCount.text = home.People + "/" + home.MaxLivingSpaces;
             if (home.CanBeUpgraded) {
                 upgradeButton.SetActive(true);
             }
             else {
                 upgradeButton.SetActive(false);
             }
-            switch (home.currentMood) {
+            switch (home.CurrentMood) {
                 case HomeStructure.CitizienMoods.Mad:
                     citizenCanvas.color = Color.red;
                     break;

@@ -15,7 +15,6 @@ public class WarehouseStructureTest {
     WarehouseStructure Warehouse;
     WarehousePrototypData PrototypeData;
     private MockUtil mockutil;
-    City City;
 
     [SetUp]
     public void SetUp() {
@@ -29,22 +28,18 @@ public class WarehouseStructureTest {
         var prototypeControllerMock = mockutil.PrototypControllerMock;
         prototypeControllerMock.Setup(m => m.GetStructurePrototypDataForID(ID)).Returns(PrototypeData);
         mockutil.CityMock.Setup(x => x.RemoveTiles(It.IsAny<IEnumerable<Tile>>()));
-        City = mockutil.WorldCity;
-        var Items = new Dictionary<string, Item>() {
+        var items = new Dictionary<string, Item>() {
             { ItemProvider.Brick.ID, ItemProvider.Brick.Clone() },
             { ItemProvider.Tool.ID, ItemProvider.Tool.Clone()   },
             { ItemProvider.Wood.ID, ItemProvider.Wood.Clone()   },
             { ItemProvider.Fish.ID, ItemProvider.Fish.Clone()   },
             { ItemProvider.Stone.ID, ItemProvider.Stone.Clone()   },
         };
-        prototypeControllerMock.Setup(m => m.GetCopieOfAllItems()).Returns(() => {
-            return Items.ToDictionary(x => x.Key, y => y.Value.Clone());
-        });
-        prototypeControllerMock.Setup(m => m.GetPopulationLevels(It.IsAny<City>())).Returns(() => {
-            return new List<PopulationLevel>();
-        });
+        prototypeControllerMock.Setup(m => m.GetCopieOfAllItems()).Returns(
+            () => items.ToDictionary(x => x.Key, y => y.Value.Clone()));
+        prototypeControllerMock.Setup(m => m.GetPopulationLevels(It.IsAny<City>())).Returns(
+            () => new List<PopulationLevel>());
 
-        City.Inventory = new CityInventory(1);
         CreateFourByFour();
     }
 
@@ -63,8 +58,8 @@ public class WarehouseStructureTest {
     }
     [Test]
     public void SpecialCheckForBuild_False_WarehouseExists() {
-        Warehouse.Tiles.First().City = City;
-        City.warehouse = Warehouse;
+        Warehouse.Tiles.First().City = mockutil.City;
+        mockutil.CityMock.Setup(c => c.Warehouse).Returns(Warehouse);
         Assert.IsFalse(Warehouse.SpecialCheckForBuild(Warehouse.Tiles));
     }
 }

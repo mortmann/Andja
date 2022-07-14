@@ -29,7 +29,7 @@ namespace Andja.Controller {
         void InformAIaboutEvent(GameEvent ge, bool start);
         bool IsAtWar(Player player);
         void NewGameSetup();
-        void OnCityCreated(City city);
+        void OnCityCreated(ICity city);
         void OnEventCreated(GameEvent ge);
         void OnEventEnded(GameEvent ge);
         void OnStructureCreated(Structure structure, bool loading = false);

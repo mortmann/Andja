@@ -43,7 +43,7 @@ namespace Andja.Model {
         BuildPathAgent BuildPathAgent;
 
         Unlocks nextUnlocks;
-        Dictionary<City, CityGrid> cityToGrid = new Dictionary<City, CityGrid>();
+        Dictionary<ICity, CityGrid> cityToGrid = new Dictionary<ICity, CityGrid>();
         public AIPlayer(Player player) {
             this.Player = player;
             neededFertilities = new List<Fertility>();
@@ -297,7 +297,7 @@ namespace Andja.Model {
             //TODO: rewrite this all 
             //TODO: choose the better one somehow...
             //TODO: road placement for this
-            City city = Player.Cities.MaxBy(x => x.PopulationCount);
+            ICity city = Player.Cities.MaxBy(x => x.PopulationCount);
             var cityValues = AIController._cityToCurrentSpaceValueTiles[city];
             var tempStructures = city.Structures.ToList();
             var poplevel = PrototypController.Instance.GetPopulationLevelPrototypDataForLevel(0);
@@ -332,10 +332,10 @@ namespace Andja.Model {
             
         }
 
-        private void BuildMarketStructure(City city, Tile[] newCityTiles = null) {
+        private void BuildMarketStructure(ICity city, Tile[] newCityTiles = null) {
             if(newCityTiles == null) {
                 List<TileValue> islandValues = null;
-                List<MarketStructure> currentMarkets = city.marketStructures;
+                List<MarketStructure> currentMarkets = city.MarketStructures;
                 lock (AIController.IslandsTileToValue[city.Island]) {
                     islandValues = AIController._cityToCurrentSpaceValueTiles[city.Island.Wilderness].Values.ToList();
                 }
@@ -353,7 +353,7 @@ namespace Andja.Model {
             } else {
                 double aX = newCityTiles.Average(x => x.X);
                 double aY = newCityTiles.Average(x => x.Y);
-                List<MarketStructure> currentMarkets = city.marketStructures;
+                List<MarketStructure> currentMarkets = city.MarketStructures;
 
                 //PathJob job = new PathJob(BuildPathAgent, city.Island.Grid,
                 //            ,
@@ -366,7 +366,7 @@ namespace Andja.Model {
         }
 
         private void BuildNeedStructure(string structureID) {
-            City city = Player.Cities.MaxBy(x => x.PopulationCount);
+            ICity city = Player.Cities.MaxBy(x => x.PopulationCount);
             CityGrid grid = cityToGrid[city];
             Block block = grid.ValidBlocks.MaxBy(x => x.Value);
             var structure = PrototypController.Instance.GetStructureCopy(structureID);
@@ -441,7 +441,7 @@ namespace Andja.Model {
                     if (os.ForMarketplace == false) {
                         //TODO: only build roads IF it is needed when the os is not in range of intake 
                     }
-                    City c = bs.BuildTile.Island.FindCityByPlayer(Player.Number);
+                    ICity c = bs.BuildTile.Island.FindCityByPlayer(Player.Number);
                     var marketStructures = c.Structures.Where(x => x is MarketStructure && x.RangeTiles.Intersect(os.Tiles).Any());
                     var routes = marketStructures.SelectMany(x => x.GetRoutes()).Distinct();
                     List<Tile> tiles = marketStructures.SelectMany(y=>y.Tiles.Where(x=>x.IsGenericBuildType())).ToList();
@@ -509,7 +509,7 @@ namespace Andja.Model {
             }
             isls.OrderBy(x => islandScores.Find(y => y.Island == x).SizeScore);
             foreach (var island in isls) {
-                City city = island.FindCityByPlayer(Player.Number);
+                ICity city = island.FindCityByPlayer(Player.Number);
                 var cityValues = AIController._cityToCurrentSpaceValueTiles[city];
                 List<TileValue> tiles;
                 lock (cityValues) {
@@ -621,11 +621,11 @@ namespace Andja.Model {
             }
         }
 
-        private void OnCityDestroy(City city) {
+        private void OnCityDestroy(ICity city) {
             //AI BE MAD
         }
 
-        private void OnCityCreated(City city) {
+        private void OnCityCreated(ICity city) {
             //AI BE SMART
             cityToGrid[city] = new CityGrid(city.Island, city);
         }
@@ -634,7 +634,7 @@ namespace Andja.Model {
             OnNewStructure(s);
         }
 
-        private void OnOwnerChange(Structure str, City oldCity, City newCity) {
+        private void OnOwnerChange(Structure str, ICity oldCity, ICity newCity) {
 
         }
 
@@ -826,7 +826,7 @@ namespace Andja.Model {
         public Tile buildTile;
         public int rotation;
         public string ID;
-        public City City;
+        public ICity City;
     }
 
     internal abstract class AIPriority {

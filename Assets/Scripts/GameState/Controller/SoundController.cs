@@ -404,7 +404,7 @@ namespace Andja.Controller {
             PlaySingle2DSoundEffect("build", name);
         }
 
-        public void OnCityCreate(City c) {
+        public void OnCityCreate(ICity c) {
             if (c.PlayerNumber != PlayerController.currentPlayerNumber) {
                 return;
             }

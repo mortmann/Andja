@@ -44,7 +44,7 @@ namespace Andja.Controller {
 
         private GameObject _darkLayer;
         private Material _clearMaterial;
-        private static Dictionary<City, CityMaskTexture> _cityToMaskTexture;
+        private static Dictionary<ICity, CityMaskTexture> _cityToMaskTexture;
         private static Dictionary<Vector2, Texture2D> _islandToMaskTexture;
         private static Dictionary<Vector2, GameObject> _islandPosToTilemap;
         private static System.Diagnostics.Stopwatch _islandSpriteStopWatch;
@@ -98,7 +98,7 @@ namespace Andja.Controller {
                 _islandToCityMask = new Dictionary<IIsland, SpriteMask>();
                 _islandToGameObject = new Dictionary<IIsland, GameObject>();
                 _islandToCustomMask = new Dictionary<Island, SpriteMask>();
-                _cityToMaskTexture = new Dictionary<City, CityMaskTexture>();
+                _cityToMaskTexture = new Dictionary<ICity, CityMaskTexture>();
 
                 foreach (Island i in World.Current.Islands) {
                     Vector2 key = i.Placement;
@@ -160,7 +160,7 @@ namespace Andja.Controller {
             OnPlayerChange(null, PlayerController.CurrentPlayer);
         }
 
-        private void OnCityCreated(City city) {
+        private void OnCityCreated(ICity city) {
             CityMaskTexture cityMask = new CityMaskTexture {
                 city = city,
                 texture = Instantiate<Texture2D>(_islandToMaskTexture[city.Island.Placement])
@@ -170,7 +170,7 @@ namespace Andja.Controller {
 
         private static void OnPlayerChange(Player o, Player n) {
             foreach (Island island in World.Current.Islands) {
-                City city = island.FindCityByPlayer(n.Number);
+                ICity city = island.FindCityByPlayer(n.Number);
                 if (city != null) {
                     Texture2D tex = _cityToMaskTexture[city].texture;
                     tex.Apply();
@@ -555,7 +555,7 @@ namespace Andja.Controller {
             }
         }
         class CityMaskTexture {
-            public City city;
+            public ICity city;
             public Texture2D texture;
             private bool _apply;
             public void CheckApply() {

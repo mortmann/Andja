@@ -8,7 +8,7 @@ namespace Andja.AI {
     public class CityGrid {
         public Block[,] CityBlocks;
         public List<Block> ValidBlocks = new List<Block>();
-        public CityGrid(Island island, City city) {
+        public CityGrid(Island island, ICity city) {
             var home = PrototypController.Instance.BuildableHomeStructure;
             int width = home.TileWidth * 2 + 2;
             int height = home.TileHeight * 2 + 2;

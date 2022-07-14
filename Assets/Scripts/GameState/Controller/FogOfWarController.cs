@@ -103,7 +103,7 @@ namespace Andja.Controller {
             _visibleTilesApply = false;
         }
 
-        private void OnCityCreated(City obj) {
+        private void OnCityCreated(ICity obj) {
             AddIslandFogModule(obj.Island);
         }
 

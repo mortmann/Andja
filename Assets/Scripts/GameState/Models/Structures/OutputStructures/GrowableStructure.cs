@@ -2,6 +2,7 @@
 using Andja.Editor;
 using Newtonsoft.Json;
 using System;
+using System.Linq;
 using UnityEngine;
 
 namespace Andja.Model {
@@ -19,40 +20,34 @@ namespace Andja.Model {
         #region Serialize
 
         [JsonPropertyAttribute]
-        private float age = 0;
+        private float _age;
 
         [EditorSetField(minValue = 0, maxValueName = "AgeStages")]
-        [JsonPropertyAttribute] public int currentStage = 0;
+        [JsonPropertyAttribute] public int currentStage;
 
-        [JsonPropertyAttribute] public bool hasProduced = false;
+        [JsonPropertyAttribute] public bool hasProduced;
 
         #endregion Serialize
 
         #region RuntimeOrOther
 
-        public Fertility Fertility { get { return GrowableData.fertility; } }
-        public int AgeStages { get { return GrowableData.ageStages; } }
+        public Fertility Fertility => GrowableData.fertility;
+        public int AgeStages => GrowableData.ageStages;
 
-        protected GrowablePrototypeData _growableData;
+        private GrowablePrototypeData _growableData;
         public float LandGrowModifier { get; protected set; }
         public override string SortingLayer => GrowableData.isFloor ? "Road" : "Structures";
 
-        public GrowablePrototypeData GrowableData {
-            get {
-                if (_growableData == null) {
-                    _growableData = (GrowablePrototypeData)PrototypController.Instance.GetStructurePrototypDataForID(ID);
-                }
-                return _growableData;
-            }
-        }
+        public GrowablePrototypeData GrowableData =>
+                _growableData ??= (GrowablePrototypeData)PrototypController.Instance.GetStructurePrototypDataForID(ID);
 
         protected float TimePerStage => (ProduceTime / (float)AgeStages + 1);
         protected const float GrowTickTime = 1f;
         /// <summary>
         /// Is true when it is in range of a farm that requires it to function
         /// </summary>
-        public bool IsBeingWorked => beingWorkedBy > 0;
-        private byte beingWorkedBy = 0;
+        public bool IsBeingWorked => _beingWorkedBy > 0;
+        private byte _beingWorkedBy;
         #endregion RuntimeOrOther
 
         public GrowableStructure(string id, GrowablePrototypeData _growableData) {
@@ -81,8 +76,8 @@ namespace Andja.Model {
                 //maybe have ground type be factor? stone etc
                 LandGrowModifier = 1;
             }
-            if (age < currentStage * TimePerStage) {
-                age = currentStage * TimePerStage;
+            if (_age < currentStage * TimePerStage) {
+                _age = currentStage * TimePerStage;
             }
         }
 
@@ -90,29 +85,20 @@ namespace Andja.Model {
             if (hasProduced || LandGrowModifier <= 0) {
                 return;
             }
-            age += Efficiency * LandGrowModifier * (deltaTime);
-            if ((age) > currentStage * TimePerStage) {
-                currentStage = Mathf.Clamp(currentStage + 1, 0, AgeStages);
-                if (currentStage >= AgeStages) {
-                    Produce();
-                    return;
-                }
-                //Debug.Log ("Stage " + currentStage + " @ Time " + age);
-                CallbackChangeIfnotNull();
+            _age += Efficiency * LandGrowModifier * (deltaTime);
+            if ((_age > currentStage * TimePerStage) == false) return;
+            currentStage = Mathf.Clamp(currentStage + 1, 0, AgeStages);
+            if (currentStage >= AgeStages) {
+                Produce();
+                return;
             }
+            //Debug.Log ("Stage " + currentStage + " @ Time " + age);
+            CallbackChangeIfnotNull();
         }
 
         public override bool SpecialCheckForBuild(System.Collections.Generic.List<Tile> tiles) {
             //this should be only ever 1 but for whateverreason it is not it still checks and doesnt really matter anyway
-            foreach (Tile t in tiles) {
-                if (t.Structure == null) {
-                    continue;
-                }
-                if (t.Structure.ID == ID) {
-                    return false;
-                }
-            }
-            return true;
+            return tiles.Where(t => t.Structure != null).All(t => t.Structure.ID != ID);
         }
 
         protected void Produce() {
@@ -124,7 +110,7 @@ namespace Andja.Model {
         public void Harvest() {
             Output[0].count = 0;
             currentStage = 0;
-            age = 0f;
+            _age = 0f;
             CallbackChangeIfnotNull();
             hasProduced = false;
             cbStructureSound?.Invoke(this, GrowableData.harvestSound, true);
@@ -144,7 +130,7 @@ namespace Andja.Model {
                 return SpriteName + "@error";
             }
             return SpriteName + "@ X=" + BuildTile.X + " Y=" + BuildTile.Y + "\n "
-                + "Age: " + age + " Current Stage " + currentStage + " \n"
+                + "Age: " + _age + " Current Stage " + currentStage + " \n"
                 + " HasProduced " + hasProduced;
         }
         /// <summary>
@@ -153,15 +139,15 @@ namespace Andja.Model {
         /// </summary>
         /// <param name="worked"></param>
         internal void SetBeingWorked(bool worked) {
-            if (beingWorkedBy == byte.MaxValue) {
+            if (_beingWorkedBy == byte.MaxValue) {
                 Debug.LogError("Too many farms are working the same growable! This should never happen ...");
                 return;
             }
             if (worked) {
-                beingWorkedBy++;
+                _beingWorkedBy++;
             }
             else {
-                beingWorkedBy--;
+                _beingWorkedBy--;
             }
         }
 

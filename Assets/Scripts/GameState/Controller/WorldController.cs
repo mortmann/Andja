@@ -103,7 +103,7 @@ namespace Andja.Controller {
                         Debug.LogError("-- Could not fit any Warehouse on the selected island --");
                     }
                     else {
-                        shipSpawn = player.Cities[0].warehouse.tradeTile.Vector2;
+                        shipSpawn = player.Cities[0].Warehouse.TradeTile.Vector2;
                         foreach (Item item in startItems) {
                             if(loadout.Units != null && Array.Exists(loadout.Units,x=>x is Ship s && s.CannonItem.ID == item.ID)) {
                                 continue;

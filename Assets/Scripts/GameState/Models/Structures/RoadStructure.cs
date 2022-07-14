@@ -104,7 +104,7 @@ namespace Andja.Model {
             RegisterOnOwnerChange(OnCityChange);
         }
 
-        protected void OnCityChange(Structure str, City old, City newOne) {
+        protected void OnCityChange(Structure str, ICity old, ICity newOne) {
             if (newOne.Routes.Contains(Route) == false) {
                 newOne.AddRoute(Route);
             }

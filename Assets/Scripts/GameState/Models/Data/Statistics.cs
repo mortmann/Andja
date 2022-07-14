@@ -195,13 +195,13 @@ namespace Andja.Model {
                 BuildController.Instance.RegisterAnyCityDestroyed(OnCityDestroyed);
             }
 
-            private void OnCityDestroyed(City city) {
+            private void OnCityDestroyed(ICity city) {
                 if (IsTracker(city.PlayerNumber)) {
                     AddStat(TrackedCityStatistics.Lost);
                 }
             }
 
-            private void OnCityCreated(City city) {
+            private void OnCityCreated(ICity city) {
                 if (IsTracker(city.PlayerNumber)) {
                     AddStat(TrackedCityStatistics.Created);
                 }

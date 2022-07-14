@@ -5,7 +5,7 @@ using UnityEngine;
 namespace Andja.Model {
     public interface ITile {
         float BaseMovementCost { get; }
-        City City { get; set; }
+        ICity City { get; set; }
         Island Island { get; set; }
         float MovementCost { get; }
         string SpriteName { get; set; }

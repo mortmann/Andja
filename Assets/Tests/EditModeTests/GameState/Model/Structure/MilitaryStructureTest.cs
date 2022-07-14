@@ -16,7 +16,6 @@ public class MilitaryStructureTest {
     TestMilitary Military;
     MilitaryPrototypeData PrototypeData;
     private MockUtil mockutil;
-    City City;
     string UnitID = "UnitID";
     Unit Unit;
     UnitPrototypeData UnitPrototypeData;
@@ -42,13 +41,10 @@ public class MilitaryStructureTest {
         prototypeControllerMock.Setup(m => m.GetStructurePrototypDataForID(ID)).Returns(PrototypeData);
         prototypeControllerMock.Setup(m => m.GetUnitPrototypDataForID(UnitID)).Returns(UnitPrototypeData);
 
-        City = mockutil.WorldCity;
-        City.Inventory = new CityInventory(1);
-
         CreateFourByFour();
     }
     private void CreateFourByFour() {
-        Military.City = mockutil.WorldCity;
+        Military.City = mockutil.City;
         PrototypeData.tileWidth = 4;
         PrototypeData.tileHeight = 4;
         Military.Tiles = Military.GetBuildingTiles(World.Current.GetTileAt(Military.StructureRange, Military.StructureRange));
@@ -57,7 +53,7 @@ public class MilitaryStructureTest {
     }
     [Test]
     public void HasEnoughResources() {
-        mockutil.WorldCityMock.Setup(c => c.HasEnoughOfItems(It.IsAny<Item[]>(),It.IsAny<int>())).Returns(true);
+        mockutil.CityMock.Setup(c => c.HasEnoughOfItems(It.IsAny<Item[]>(),It.IsAny<int>())).Returns(true);
         Assert.IsTrue(Military.HasEnoughResources(Unit));
     }
 
@@ -79,8 +75,8 @@ public class MilitaryStructureTest {
 
     [Test]
     public void AddUnitToBuildQueue() {
-        mockutil.WorldCityMock.Setup(c => c.HasEnoughOfItems(It.IsAny<Item[]>(), It.IsAny<int>())).Returns(true);
-        mockutil.WorldCityMock.Setup(c => c.RemoveItems(It.IsAny<Item[]>()));
+        mockutil.CityMock.Setup(c => c.HasEnoughOfItems(It.IsAny<Item[]>(), It.IsAny<int>())).Returns(true);
+        mockutil.CityMock.Setup(c => c.RemoveItems(It.IsAny<Item[]>()));
         Military.ToBuildUnits = new Queue<Unit>();
         Military.AddUnitToBuildQueue(Unit);
         Assert.AreEqual(Military.CurrentlyBuildingUnit, Unit);
@@ -90,20 +86,12 @@ public class MilitaryStructureTest {
         public TestMilitary(string iD, MilitaryPrototypeData mpd) : base(iD, mpd) {
         }
         public Queue<Unit> ToBuildUnits {
-            get {
-                return toBuildUnits;
-            }
-            set {
-                toBuildUnits = value;
-            }
+            get => toBuildUnits;
+            set => toBuildUnits = value;
         }
         public List<Tile> ToPlaceUnitTiles {
-            get {
-                return toPlaceUnitTiles;
-            }
-            set {
-                toPlaceUnitTiles = value;
-            }
+            get => toPlaceUnitTiles;
+            set => toPlaceUnitTiles = value;
         }
 
     }

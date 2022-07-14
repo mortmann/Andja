@@ -18,13 +18,13 @@ namespace Andja.UI {
         public GameObject tradePanel;
 
         private Dictionary<string, ItemUI> itemToGO;
-        public City city;
+        public ICity city;
 
         private Action<Item> onItemPressed;
 
         public CityUI CityInfo;
 
-        public void ShowInventory(City city, Action<Item> onItemPressed = null) {
+        public void ShowInventory(ICity city, Action<Item> onItemPressed = null) {
             if (city == null && this.city == city) {
                 return;
             }
@@ -42,7 +42,7 @@ namespace Andja.UI {
                 Destroy(child.gameObject);
             }
             itemToGO = new Dictionary<string, ItemUI>();
-            List<Item> items = new List<Item>(city.Inventory.baseItems);
+            List<Item> items = new List<Item>(city.Inventory.BaseItems);
             items = items.OrderBy(x => x.Data.UnlockLevel).ThenBy(y => y.Data.UnlockPopulationCount).ToList();
             foreach (Item item in items) {
                 GameObject go_i = GameObject.Instantiate(itemPrefab);
@@ -63,7 +63,7 @@ namespace Andja.UI {
             CityInfo.gameObject.SetActive(!CityInfo.gameObject.activeSelf);
         }
 
-        public void OnCityDestroy(City c) {
+        public void OnCityDestroy(ICity c) {
             if (city != c) {
                 return;
             }

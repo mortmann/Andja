@@ -22,7 +22,7 @@ namespace Andja.UI.Model {
         private Dictionary<int, GameObject> populationLevelToGO = new Dictionary<int, GameObject>();
         public int maxItemsPerRow = 5;
         private IIsland currentIsland = null;
-        private City CurrentCity;
+        private ICity CurrentCity;
 
         private void Start() {
             Instance = this;

@@ -132,7 +132,7 @@ namespace Andja.Model {
             MarketStructures.Remove(ms);
         }
 
-        internal void CheckForCity(City old) {
+        internal void CheckForCity(ICity old) {
             if (Tiles.Exists(t => t.City == old) == false) {
                 old.RemoveRoute(this);
             }

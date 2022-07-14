@@ -15,7 +15,7 @@ namespace Andja.UI.Model {
         public const int TradeAmountMaximum = 100;
         public Text text;
 
-        public City city;
+        public ICity city;
         public GameObject fromShip;
         public GameObject toShip;
         public GameObject itemPrefab;
@@ -190,7 +190,7 @@ namespace Andja.UI.Model {
             UpdateShipListOrder();
         }
 
-        public void OnWarehouseClick(City c) {
+        public void OnWarehouseClick(ICity c) {
             if (tradeRoute.Contains(c) == false) {
                 return;
             }
@@ -257,7 +257,7 @@ namespace Andja.UI.Model {
             itemToGameObject.Remove(item);
         }
 
-        public int OnCityToggle(City city, bool selected) {
+        public int OnCityToggle(ICity city, bool selected) {
             if (tradeRoute == null) {
                 Debug.LogError("NO TRADEROUTE");
                 return -1;
@@ -293,7 +293,7 @@ namespace Andja.UI.Model {
             TradeRoute.Trade t = tradeRoute.GetTrade(tradeRouteCityState);
             SetCity(t.city);
         }
-        public void SetCity(City c) {
+        public void SetCity(ICity c) {
             if(c != null) {
                 text.text = c.Name;
                 ResetItemIcons();

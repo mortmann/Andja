@@ -93,8 +93,8 @@ namespace Andja.UI.Model {
                 if (unit.rangeUStructure != null) {
                     if (unit.rangeUStructure is WarehouseStructure) {
                         if (unit.rangeUStructure.PlayerNumber == PlayerController.currentPlayerNumber) {
-                            unit.rangeUStructure.City.tradeUnit = unit;
-                            City city = unit.rangeUStructure.City;
+                            unit.rangeUStructure.City.TradeUnit = unit;
+                            ICity city = unit.rangeUStructure.City;
                             UIController.Instance.OpenCityInventory(
                                 city, 
                                 item => city.TradeWithShip(city.Inventory.GetAllAndRemoveItem(item), 
@@ -307,7 +307,7 @@ namespace Andja.UI.Model {
                 unit.UnregisterOnDestroyCallback(OnUnitDestroy);
                 UIController.Instance?.DehighlightUnits(unit);
                 if (unit.rangeUStructure != null)
-                    unit.rangeUStructure.City.tradeUnit = null;
+                    unit.rangeUStructure.City.TradeUnit = null;
                 MouseController.Instance?.UnselectUnit(false);
             }
             DeselectButton();

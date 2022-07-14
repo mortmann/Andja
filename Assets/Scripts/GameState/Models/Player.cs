@@ -38,7 +38,7 @@ namespace Andja.Model {
         public HashSet<Unit> Units;
         public HashSet<Ship> Ships;
         public Action<Player> cbHasLost;
-        public List<City> Cities;
+        public List<ICity> Cities;
         public bool HasLost => _hasLost;
         PlayerPrototypeData PlayerPrototypeData => PrototypController.CurrentPlayerPrototypData;
 
@@ -68,8 +68,8 @@ namespace Andja.Model {
         private Action<IEnumerable<Unit>> cbUnitsUnlocked;
         private Action<Structure> cbNewStructure;
         private Action<Structure> cbLostStructure;
-        private Action<City> cbCityCreated;
-        private Action<City> cbCityDestroy;
+        private Action<ICity> cbCityCreated;
+        private Action<ICity> cbCityDestroy;
 
         #endregion Not Serialized
 
@@ -162,7 +162,7 @@ namespace Andja.Model {
         }
 
         private void Setup() {
-            Cities = new List<City>();
+            Cities = new List<ICity>();
             Ships = new HashSet<Ship>();
             UnlockedStructureNeeds = new HashSet<string>[PrototypController.Instance.NumberOfPopulationLevels];
             UnlockedItemNeeds = new HashSet<string>[PrototypController.Instance.NumberOfPopulationLevels];
@@ -351,7 +351,7 @@ namespace Andja.Model {
             TreasuryChange += amount;
         }
 
-        public void OnCityCreated(City city) {
+        public void OnCityCreated(ICity city) {
             if (city.PlayerNumber != Number)
                 return;
             Cities.Add(city);
@@ -360,7 +360,7 @@ namespace Andja.Model {
             cbCityCreated?.Invoke(city);
         }
 
-        public void OnCityDestroy(City city) {
+        public void OnCityDestroy(ICity city) {
             city.UnregisterStructureAdded(OnStructureAdded);
             Cities.Remove(city);
             cbCityDestroy?.Invoke(city);
@@ -416,7 +416,7 @@ namespace Andja.Model {
         internal Vector2 GetMainCityPosition() {
             if (Cities.Count == 0)
                 return World.Current.Center;
-            return Cities.First()?.warehouse != null ? Cities.First().warehouse.Center : Cities.First().Island.Center;
+            return Cities.First()?.Warehouse != null ? Cities.First().Warehouse.Center : Cities.First().Island.Center;
         }
         internal List<Need> GetCopyStructureNeeds(int level) {
             List<Need> list = new List<Need>();
@@ -485,19 +485,19 @@ namespace Andja.Model {
             cbLostStructure += callbackfunc;
         }
 
-        public void UnregisterCityDestroy(Action<City> callbackfunc) {
+        public void UnregisterCityDestroy(Action<ICity> callbackfunc) {
             cbCityDestroy -= callbackfunc;
         }
 
-        public void RegisterCityDestroy(Action<City> callbackfunc) {
+        public void RegisterCityDestroy(Action<ICity> callbackfunc) {
             cbCityDestroy += callbackfunc;
         }
 
-        public void UnregisterCityCreated(Action<City> callbackfunc) {
+        public void UnregisterCityCreated(Action<ICity> callbackfunc) {
             cbCityCreated -= callbackfunc;
         }
 
-        public void RegisterCityCreated(Action<City> callbackfunc) {
+        public void RegisterCityCreated(Action<ICity> callbackfunc) {
             cbCityCreated += callbackfunc;
         }
 

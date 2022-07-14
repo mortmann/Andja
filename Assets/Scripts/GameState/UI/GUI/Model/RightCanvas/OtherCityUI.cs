@@ -6,13 +6,13 @@ using UnityEngine;
 namespace Andja.UI.Model {
 
     public class OtherCityUI : MonoBehaviour {
-        public City city { protected set; get; }
+        public ICity city { protected set; get; }
         public GameObject ItemsCanvas;
         public GameObject TradeItemPrefab;
         public GameObject ItemCanvas;
         Dictionary<TradeItem, TradeItemUI> tradeItemToUI = new Dictionary<TradeItem, TradeItemUI>();
         // Use this for initialization
-        public void Show(City c) {
+        public void Show(ICity c) {
             city = c;
             city.RegisterCityDestroy(OnCityDestroy);
 
@@ -41,7 +41,7 @@ namespace Andja.UI.Model {
             }
         }
         public void OnClickItemToTrade(string itemID, int amount = 50) {
-            Unit u = city.warehouse.inRangeUnits.Find(x => x.playerNumber == PlayerController.currentPlayerNumber);
+            Unit u = city.Warehouse.InRangeUnits.Find(x => x.playerNumber == PlayerController.currentPlayerNumber);
             if (u == null || u.IsShip == false) {
                 Debug.Log("No Ship in Range");
                 return;
@@ -49,7 +49,7 @@ namespace Andja.UI.Model {
             city.SellingTradeItem(itemID, PlayerController.CurrentPlayer, ((Ship)u), amount);
         }
 
-        public void OnCityDestroy(City c) {
+        public void OnCityDestroy(ICity c) {
             if (city != c) {
                 return;
             }

@@ -70,7 +70,7 @@ namespace Andja.Model {
             Needs.AddRange(need);
         }
 
-        internal void CalculateFullfillment(City city, PopulationLevel populationLevel) {
+        internal void CalculateFullfillment(ICity city, PopulationLevel populationLevel) {
             float currentValue = 0;
             int number = 0;
             foreach (Need need in Needs) {

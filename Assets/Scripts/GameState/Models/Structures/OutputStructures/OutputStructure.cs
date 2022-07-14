@@ -23,40 +23,35 @@ namespace Andja.Model {
 
     [JsonObject(MemberSerialization.OptIn)]
     public abstract class OutputStructure : TargetStructure {
-        public const string INACTIVE_EFFECT_ID = "inactive";
+        public const string InactiveEffectID = "inactive";
 
         #region Serialize
 
         [JsonPropertyAttribute] public List<Worker> Workers;
         [JsonPropertyAttribute] public float ProduceTimer { get; protected set; }
-        protected Item[] _output;
+        private Item[] _output;
         [JsonPropertyAttribute]
         public virtual Item[] Output {
             get {
-                if (_output == null) {
-                    if (OutputData.output == null) {
-                        return null;
-                    }
-                    _output = new Item[OutputData.output.Length];
-                    for (int i = 0; i < OutputData.output.Length; i++) {
-                        _output[i] = OutputData.output[i].Clone();
-                    }
+                if (_output != null) return _output;
+                if (OutputData.output == null) {
+                    return null;
+                }
+                _output = new Item[OutputData.output.Length];
+                for (int i = 0; i < OutputData.output.Length; i++) {
+                    _output[i] = OutputData.output[i].Clone();
                 }
                 return _output;
             }
-            set {
-                _output = value;
-            }
+            set => _output = value;
         }
         #endregion Serialize
 
         #region RuntimeOrOther
-        public WorkerPrototypeData _workerPrototypeData;
+        private WorkerPrototypeData _workerPrototypeData;
         public WorkerPrototypeData WorkerPrototypeData {
             get {
-                if(_workerPrototypeData == null)
-                    _workerPrototypeData = PrototypController.Instance.GetWorkerPrototypDataForID(OutputData.workerID ?? "placeholder");
-                return _workerPrototypeData;
+                return _workerPrototypeData ??= _workerPrototypeData ?? PrototypController.Instance.GetWorkerPrototypDataForID(OutputData.workerID ?? "placeholder");
             }
         }
         public Dictionary<OutputStructure, Item[]> WorkerJobsToDo;
@@ -74,10 +69,7 @@ namespace Andja.Model {
 
         public OutputPrototypData OutputData {
             get {
-                if (_outputData == null) {
-                    _outputData = (OutputPrototypData)PrototypController.Instance.GetStructurePrototypDataForID(ID);
-                }
-                return _outputData;
+                return _outputData ??= (OutputPrototypData)PrototypController.Instance.GetStructurePrototypDataForID(ID);
             }
         }
 
@@ -93,11 +85,7 @@ namespace Andja.Model {
 
         public override bool IsActiveAndWorking => base.IsActiveAndWorking && Efficiency > 0;
 
-        public virtual float EfficiencyPercent {
-            get {
-                return 100 * Efficiency;
-            }
-        }
+        public virtual float EfficiencyPercent => 100 * Efficiency;
 
         public virtual float Progress => ProduceTimer;
         public virtual float TotalProgress => ProduceTime;
@@ -117,9 +105,7 @@ namespace Andja.Model {
         }
 
         public void TrySendWorker() {
-            if (Workers == null) {
-                Workers = new List<Worker>(MaxNumberOfWorker);
-            }
+            Workers ??= new List<Worker>(MaxNumberOfWorker);
             SendOutWorkerIfCan();
         }
 
@@ -149,28 +135,25 @@ namespace Andja.Model {
                 Workers.Add(ws);
             }
             foreach (OutputStructure giveJob in givenJobs) {
-                if (giveJob != null) {
-                    if (giveJob is ProductionStructure) {
-                        continue;
-                    }
-                    WorkerJobsToDo.Remove(giveJob);
+                //WHAT THE HELL DID I DO HERE!? why? 
+                //TODO: CHECK IF THIS WAS REQUIRED!!!!!
+                if (giveJob is ProductionStructure) { 
+                    continue;
                 }
+                WorkerJobsToDo.Remove(giveJob);
             }
         }
 
         public virtual Item[] GetRequiredItems(OutputStructure str, Item[] items) {
-            if (items == null) {
-                items = str.Output;
-            }
+            items ??= str.Output;
             List<Item> all = new List<Item>();
             for (int i = 0; i < Output.Length; i++) {
                 Item item = Array.Find(items, x => x.ID == Output[i].ID)?.Clone();
-                if (item != null) {
-                    item.count = MaxOutputStorage - Output[i].count;
-                    item.count -= Workers.Where(z => z.ToGetItems != null)
-                                    .Sum(x => Array.Find(x.ToGetItems, y => items[i].ID == y.ID)?.count ?? 0);
-                    all.Add(item);
-                }
+                if (item == null) continue;
+                item.count = MaxOutputStorage - Output[i].count;
+                item.count -= Workers.Where(z => z.ToGetItems != null)
+                                     .Sum(x => Array.Find(x.ToGetItems, y => items[i].ID == y.ID)?.count ?? 0);
+                all.Add(item);
             }
             return all.Where(x => x.count > 0).ToArray();
         }
@@ -185,14 +168,13 @@ namespace Andja.Model {
         }
 
         public void AddToOutput(Inventory inv) {
-            for (int i = 0; i < Output.Length; i++) {
+            foreach (var outputItem in Output) {
                 //maybe switch to manually foreach because it may be faster
                 //because worker that use this function usually only carry
                 //what the home eg this needs
-                if (inv.HasAnythingOf(Output[i])) {
-                    Item item = inv.GetAllAndRemoveItem(Output[i]);
-                    Output[i].count = Mathf.Clamp(Output[i].count + item.count, 0, MaxOutputStorage);
-                }
+                if (inv.HasAnythingOf(outputItem) == false) continue;
+                Item item = inv.GetAllAndRemoveItem(outputItem);
+                outputItem.count = Mathf.Clamp(outputItem.count + item.count, 0, MaxOutputStorage);
             }
         }
 
@@ -201,22 +183,22 @@ namespace Andja.Model {
             for (int i = 0; i < Output.Length; i++) {
                 temp[i] = Output[i].CloneWithCount();
                 Output[i].count = 0;
-                CallOutputChangedCB();
+                CallOutputChangedCb();
             }
             return temp;
         }
 
         public virtual Item[] GetOutput(Item[] getItems, int[] maxAmounts) {
             Item[] temp = new Item[Output.Length];
-            for (int g = 0; g < getItems.Length; g++) {
+            foreach (var get in getItems) {
                 for (int i = 0; i < Output.Length; i++) {
-                    if (Output[i].ID != getItems[g].ID) {
+                    if (Output[i].ID != get.ID) {
                         continue;
                     }
                     temp[i] = Output[i].CloneWithCount();
                     temp[i].count = Mathf.Clamp(temp[i].count, 0, maxAmounts[i]);
                     Output[i].count -= temp[i].count;
-                    CallOutputChangedCB();
+                    CallOutputChangedCb();
                 }
             }
             return temp;
@@ -236,7 +218,7 @@ namespace Andja.Model {
             return outItem;
         }
 
-        public void CallOutputChangedCB() {
+        public void CallOutputChangedCb() {
             cbOutputChange?.Invoke(this);
         }
 
@@ -250,27 +232,23 @@ namespace Andja.Model {
 
         public void ResetOutputClaimed() {
             this.outputClaimed = false;
-            foreach (Item item in Output) {
-                if (item.count > 0) {
-                    cbOutputChange?.Invoke(this);
-                    return;
-                }
+            if (Output.Any(item => item.count > 0)) {
+                cbOutputChange?.Invoke(this);
             }
         }
         public override void ToggleActive() {
             base.ToggleActive();
             if (isActive) {
-                RemoveEffect(GetEffect(INACTIVE_EFFECT_ID), true);
+                RemoveEffect(GetEffect(InactiveEffectID), true);
             }
             else {
-                AddEffect(new Effect(INACTIVE_EFFECT_ID));
+                AddEffect(new Effect(InactiveEffectID));
             }
         }
         public override void OnDestroy() {
-            if (Workers != null) {
-                foreach (Worker item in Workers) {
-                    item.Destroy();
-                }
+            if (Workers == null) return;
+            foreach (Worker item in Workers) {
+                item.Destroy();
             }
         }
         protected override void OnUpgrade() {
@@ -284,9 +262,7 @@ namespace Andja.Model {
                     worker.Load(this);
                 }
             }
-            if (_output != null) {
-                _output = _output.ReplaceKeepCounts(OutputData.output);
-            }
+            _output = _output?.ReplaceKeepCounts(OutputData.output);
         }
     }
 }

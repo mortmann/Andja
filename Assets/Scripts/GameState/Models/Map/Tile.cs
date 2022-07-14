@@ -234,7 +234,7 @@ namespace Andja.Model {
 
         public virtual Island Island { get => null; set { } }
 
-        public virtual City City {
+        public virtual ICity City {
             get => null;
             set {
             }

@@ -19,14 +19,15 @@ namespace Andja.Model {
             protected set;
         }
 
-        private float amountInInventory;
+        private float _amountInInventory;
 
-        public override IEnumerable<Item> baseItems => Items.Where(x=> x != null);
+        public override IEnumerable<Item> BaseItems => Items.Where(x=> x != null);
 
         /// <summary>
         /// leave blanc for unlimited spaces! To limited it give a int > 0
         /// </summary>
         /// <param name="numberOfSpaces"></param>
+        /// <param name="maxStackSize"></param>
         public UnitInventory(byte numberOfSpaces = 0, int maxStackSize = 50) {
             this.MaxStackSize = maxStackSize;
             Items = new Item[numberOfSpaces];
@@ -59,7 +60,7 @@ namespace Andja.Model {
                 return 0;
             }
             int amount = 0;
-            foreach (Item inInv in baseItems) {
+            foreach (Item inInv in BaseItems) {
                 if (inInv.ID == toAdd.ID) {
                     if (inInv.count == MaxStackSize) {
                         continue;
@@ -85,7 +86,7 @@ namespace Andja.Model {
         }
 
         public override Item[] GetAllItemsAndRemoveThem() {
-            List<Item> temp = new List<Item>(baseItems);
+            List<Item> temp = new List<Item>(BaseItems);
             for (int i = 0; i < Items.Length; i++) {
                 Items[i] = null;
             }
@@ -94,7 +95,7 @@ namespace Andja.Model {
         }
 
         public override int GetAmountFor(string itemID) {
-            return baseItems.Where(x => x.ID == itemID).Sum(x => x.count);
+            return BaseItems.Where(x => x.ID == itemID).Sum(x => x.count);
         }
 
         protected int GetFirstPlaceInItems(Item item) {
@@ -107,7 +108,7 @@ namespace Andja.Model {
         }
         
         public float GetFilledPercantage() {
-            return amountInInventory / (float)(NumberOfSpaces * MaxStackSize);
+            return _amountInInventory / (float)(NumberOfSpaces * MaxStackSize);
         }
 
         public override int GetRemainingSpaceForItem(Item item) {
@@ -122,13 +123,13 @@ namespace Andja.Model {
         }
         
         public override void OnChanged(Inventory me) {
-            amountInInventory = 0;
-            foreach (Item i in baseItems) {
-                amountInInventory += i.count;
+            _amountInInventory = 0;
+            foreach (Item i in BaseItems) {
+                _amountInInventory += i.count;
             }
         }
         public Item[] GetItemsInInventory(Item item) {
-            return baseItems.Where(x => x.ID == item.ID).ToArray();
+            return BaseItems.Where(x => x.ID == item.ID).ToArray();
         }
         
         protected override void LowerItemAmount(Item lower, int amount) {
@@ -154,15 +155,12 @@ namespace Andja.Model {
         }
         protected Item GetFirstItemInInventory(string itemID) {
             int pos = GetFirstPlaceInItems(new Item(itemID));
-            if (pos < 0) {
-                return null;
-            }
-            return Items[pos];
+            return pos < 0 ? null : Items[pos];
         }
 
         public bool AreSlotsFilledWithItems() {
 
-            return NumberOfSpaces <= baseItems.Count();
+            return NumberOfSpaces <= BaseItems.Count();
         }
 
         /// <summary>
@@ -194,7 +192,7 @@ namespace Andja.Model {
         }
 
         public int FreeSpacesLeft() {
-            return (NumberOfSpaces - Items.Where(x=>x != null).Count());
+            return NumberOfSpaces - Items.Count(x => x != null);
         }
 
         protected override void RemoveNotExistingItem(Item item) {

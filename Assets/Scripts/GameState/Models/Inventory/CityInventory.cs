@@ -11,19 +11,15 @@ namespace Andja.Model {
     public class CityInventory : Inventory {
         [JsonPropertyAttribute(PropertyName = "Items")]
         public Dictionary<string, Item> SerializableItems {
-            get {
-                return Items?.Where(x => x.Value.count > 0).ToDictionary(entry => entry.Key,
-                                                                        entry => entry.Value);
-            }
-            set {
-                Items = value;
-            }
+            get => Items?.Where(x => x.Value.count > 0)
+                .ToDictionary(entry => entry.Key, entry => entry.Value);
+            set => Items = value;
         }
         public Dictionary<string, Item> Items {
             get;
             protected set;
         }
-        public override IEnumerable<Item> baseItems  => Items.Values; 
+        public override IEnumerable<Item> BaseItems  => Items.Values; 
         
 
         /// <summary>
@@ -32,8 +28,7 @@ namespace Andja.Model {
         /// </summary>
         /// <param name="fakeNumber"></param>
         public CityInventory(int fakeNumber) {
-            if (Items == null)
-                Items = PrototypController.Instance.GetCopieOfAllItems();
+            Items ??= PrototypController.Instance.GetCopieOfAllItems();
             MaxStackSize = 50;
         }
         public CityInventory() {
@@ -76,10 +71,8 @@ namespace Andja.Model {
         }
         internal void CheckForMissingItems() {
             var copyItems = PrototypController.Instance.GetCopieOfAllItems();
-            foreach (var item in copyItems) {
-                if (Items.ContainsKey(item.Key) == false) {
-                    Items.Add(item.Key, item.Value);
-                }
+            foreach (var item in copyItems.Where(item => Items.ContainsKey(item.Key) == false)) {
+                Items.Add(item.Key, item.Value);
             }
         }
 

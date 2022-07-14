@@ -858,7 +858,7 @@ namespace Andja.Controller {
             }
             bool hasEnoughResources = PlayerController.CurrentPlayer.HasEnoughMoney(ToBuildStructure.BuildCost * number);
             if(MouseUnitState == MouseUnitState.Build) {
-                hasEnoughResources &= SelectedUnit.inventory.HasEnoughOfItems(ToBuildStructure.BuildingItems, number) == true;
+                hasEnoughResources &= SelectedUnit.inventory.HasEnoughOfItems(ToBuildStructure.BuildingItems, times: number) == true;
             } else {
                 hasEnoughResources &= tiles[0].Island?.FindCityByPlayer(PlayerController.currentPlayerNumber)?
                             .HasEnoughOfItems(ToBuildStructure.BuildingItems, number) == true;

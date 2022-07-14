@@ -12,16 +12,16 @@ namespace Andja.Model {
 
         #region Serialize
 
-        [JsonPropertyAttribute] public bool AutoUpgradeHomes;
-        [JsonPropertyAttribute] public int PlayerNumber = 0;
-        [JsonPropertyAttribute] public CityInventory Inventory;
-        [JsonPropertyAttribute] public List<Structure> Structures;
-        [JsonPropertyAttribute] public float useTickTimer;
-        [JsonPropertyAttribute] public Dictionary<string, TradeItem> itemIDtoTradeItem;
+        [JsonPropertyAttribute] public bool AutoUpgradeHomes { get; set; }
+        [JsonPropertyAttribute] public int PlayerNumber { get; protected set; }
+        [JsonPropertyAttribute] public CityInventory Inventory { get; protected set; }
+        [JsonPropertyAttribute] public List<Structure> Structures { get; protected set; }
+        [JsonPropertyAttribute] public Dictionary<string, TradeItem> itemIDtoTradeItem { get; protected set; }
         [JsonPropertyAttribute] private string _name = "";
-        [JsonPropertyAttribute] public Island Island;
+        [JsonPropertyAttribute] public Island Island { get; set; }
+        [JsonPropertyAttribute] public int PlayerTradeAmount { get; protected set; }
         [JsonPropertyAttribute] private List<PopulationLevel> _populationLevels;
-        [JsonPropertyAttribute] public int PlayerTradeAmount = 50;
+        [JsonPropertyAttribute] private float _useTickTimer;
         #endregion Serialize
 
         #region RuntimeOrOther
@@ -48,27 +48,26 @@ namespace Andja.Model {
 
         public HashSet<Tile> Tiles { get; set; }
 
-        public int TradeItemCount => warehouse?.TradeItemCount ?? 0;
+        public int TradeItemCount => Warehouse?.TradeItemCount ?? 0;
 
         public int PopulationCount => _populationLevels.Sum(p => p.populationCount);
 
-        public List<HomeStructure> homes;
-        public List<MarketStructure> marketStructures;
-        public List<Route> Routes;
-        public Unit tradeUnit;
+        private List<HomeStructure> _homes;
+        public List<MarketStructure> MarketStructures { get; set; }
+        public List<Route> Routes { get; set; }
+        public Unit TradeUnit { get; set; }
 
-        public int expanses = 0;
-        public int income = 0;
-        public int Balance => income - expanses;
+        public int Expanses { get; protected set; }
+        public int Income { get; protected set; }
+        public int Balance => Income - Expanses;
         public static float UseTick => 60f;
-        public WarehouseStructure warehouse;
+        public WarehouseStructure Warehouse { get; set; }
 
         private Action<Structure> _cbStructureAdded;
         private Action<Structure> _cbStructureRemoved;
-        private Action<City> _cbCityDestroy;
-        private Action<Structure> _cbRegisterTradeOffer;
-        private Action<City, Tile> _cbTileAdded;
-        private Action<City, Tile> _cbTileRemoved;
+        private Action<ICity> _cbCityDestroy;
+        private Action<ICity, Tile> _cbTileAdded;
+        private Action<ICity, Tile> _cbTileRemoved;
 
         #endregion RuntimeOrOther
         /// <summary>
@@ -102,7 +101,7 @@ namespace Andja.Model {
                 Debug.LogError("Tried to add Trade Item that exists");
                 return false;
             }
-            if (warehouse.TradeItemCount <= itemIDtoTradeItem.Count) {
+            if (Warehouse.TradeItemCount <= itemIDtoTradeItem.Count) {
                 return false;
             }
             itemIDtoTradeItem.Add(ti.ItemId, ti);
@@ -133,8 +132,8 @@ namespace Andja.Model {
             if (PlayerNumber < 0)
                 return;
             Routes = new List<Route>();
-            homes = new List<HomeStructure>();
-            marketStructures = new List<MarketStructure>();
+            _homes = new List<HomeStructure>();
+            MarketStructures = new List<MarketStructure>();
             if (_populationLevels == null)
                 _populationLevels = new List<PopulationLevel>();
             foreach (PopulationLevel pl in PrototypController.Instance.GetPopulationLevels(this)) {
@@ -166,14 +165,14 @@ namespace Andja.Model {
                     continue;
                 }
                 if (item is MarketStructure m) {
-                    marketStructures.Add(m);
+                    MarketStructures.Add(m);
                 }
                 if (item is WarehouseStructure) {
-                    warehouse = (WarehouseStructure)item;
+                    Warehouse = (WarehouseStructure)item;
                 }
                 else
                 if (item is HomeStructure) {
-                    homes.Add((HomeStructure)item);
+                    _homes.Add((HomeStructure)item);
                 }
                 item.City = this;
                 item.Load();
@@ -195,7 +194,7 @@ namespace Andja.Model {
             for (int i = Structures.Count - 1; i >= 0; i--) {
                 Structures[i].Update(deltaTime);
             }
-            if (PlayerNumber == -1 || homes.Count == 0) {
+            if (PlayerNumber == -1 || _homes.Count == 0) {
                 return;
             }
             UpdateNeeds(deltaTime);
@@ -205,16 +204,16 @@ namespace Andja.Model {
         }
 
         public void CalculateExpanses() {
-            expanses = 0;
+            Expanses = 0;
             for (int i = Structures.Count - 1; i >= 0; i--) {
-                expanses += Structures[i].UpkeepCost;
+                Expanses += Structures[i].UpkeepCost;
             }
         }
 
         public void CalculateIncome() {
-            income = 0;
+            Income = 0;
             foreach (PopulationLevel pl in _populationLevels) {
-                income += pl.GetTaxIncome(this);
+                Income += pl.GetTaxIncome(this);
             }
         }
 
@@ -243,26 +242,26 @@ namespace Andja.Model {
                 return;
             }
             if (str is HomeStructure) {
-                homes?.Add((HomeStructure)str);
+                _homes?.Add((HomeStructure)str);
             }
             if (str is MarketStructure m) {
-                marketStructures?.Add(m);
+                MarketStructures?.Add(m);
             }
             if (str is WarehouseStructure) {
-                if (warehouse != null && warehouse.buildID != str.buildID) {
+                if (Warehouse != null && Warehouse.buildID != str.buildID) {
                     Debug.LogError("There should be only one Warehouse per City! ");
                     return;
                 }
-                warehouse = (WarehouseStructure)str;
+                Warehouse = (WarehouseStructure)str;
             }
             Structures.Add(str);
             _cbStructureAdded?.Invoke(str);
         }
 
         private void UpdateNeeds(float deltaTime) {
-            useTickTimer -= deltaTime;
-            if (useTickTimer <= 0) {
-                useTickTimer = UseTick;
+            _useTickTimer -= deltaTime;
+            if (_useTickTimer <= 0) {
+                _useTickTimer = UseTick;
                 foreach (PopulationLevel pop in _populationLevels) {
                     pop.FullfillNeedsAndCalcHappiness(this);
                 }
@@ -381,7 +380,7 @@ namespace Andja.Model {
         }
 
         public virtual bool HasEnoughOfItems(IEnumerable<Item> items, int times = 1) {
-            return Inventory.HasEnoughOfItems(items, times);
+            return Inventory.HasEnoughOfItems(items, times: times);
         }
 
         public bool HasEnoughOfItem(Item item) {
@@ -448,9 +447,9 @@ namespace Andja.Model {
         }
 
         public void TradeWithAnyShip(Item item) {
-            Ship ship = tradeUnit as Ship;
+            Ship ship = TradeUnit as Ship;
             if (ship == null) {
-                ship = warehouse.inRangeUnits.Find(x => x.playerNumber == PlayerNumber) as Ship;
+                ship = Warehouse.InRangeUnits.Find(x => x.playerNumber == PlayerNumber) as Ship;
             }
             if (ship == null)
                 return;
@@ -458,7 +457,7 @@ namespace Andja.Model {
         }
 
         public int TradeWithShip(Item toTrade, Func<int> amount, Unit ship) {
-            if (warehouse == null || warehouse.inRangeUnits.Count == 0 || toTrade == null || ship == null) {
+            if (Warehouse == null || Warehouse.InRangeUnits.Count == 0 || toTrade == null || ship == null) {
                 return 0;
             }
             return Inventory.MoveItem(ship.inventory, toTrade, amount());
@@ -505,14 +504,14 @@ namespace Andja.Model {
             }
             if (Structures.Contains(structure)) {
                 if (structure is HomeStructure) {
-                    homes.Remove((HomeStructure)structure);
+                    _homes.Remove((HomeStructure)structure);
                 }
                 else
                 if (structure is WarehouseStructure) {
-                    warehouse = null;
+                    Warehouse = null;
                 }
                 if (structure is MarketStructure m) {
-                    marketStructures.Remove(m);
+                    MarketStructures.Remove(m);
                 }
                 Structures.Remove(structure);
                 _cbStructureRemoved?.Invoke(structure);
@@ -539,18 +538,6 @@ namespace Andja.Model {
             foreach (Tile item in tiles) {
                 RemoveTile(item);
             }
-            //foreach (Tile item in tiles) {
-            //    item.City = null;
-            //    if (item.City != this) {
-            //        Tiles.Remove(item);
-            //        if (IsCurrPlayerCity()) {
-            //            World.Current.OnTileChanged(item);
-            //        }
-            //    }
-            //}
-            //if (Tiles.Count == 0) {
-            //    Destroy();
-            //}
         }
 
         public void Destroy() {
@@ -561,11 +548,11 @@ namespace Andja.Model {
             _cbCityDestroy?.Invoke(this);
         }
 
-        public void RegisterCityDestroy(Action<City> callbackfunc) {
+        public void RegisterCityDestroy(Action<ICity> callbackfunc) {
             _cbCityDestroy += callbackfunc;
         }
 
-        public void UnregisterCityDestroy(Action<City> callbackfunc) {
+        public void UnregisterCityDestroy(Action<ICity> callbackfunc) {
             _cbCityDestroy -= callbackfunc;
         }
 
@@ -584,18 +571,18 @@ namespace Andja.Model {
         public void UnregisterStructureRemove(Action<Structure> callbackfunc) {
             _cbStructureRemoved -= callbackfunc;
         }
-        public void RegisterTileRemove(Action<City, Tile> callbackfunc) {
+        public void RegisterTileRemove(Action<ICity, Tile> callbackfunc) {
             _cbTileRemoved += callbackfunc;
         }
 
-        public void UntegisterTileRemove(Action<City, Tile> callbackfunc) {
+        public void UntegisterTileRemove(Action<ICity, Tile> callbackfunc) {
             _cbTileRemoved -= callbackfunc;
         }
-        public void RegisterTileAdded(Action<City, Tile> callbackfunc) {
+        public void RegisterTileAdded(Action<ICity, Tile> callbackfunc) {
             _cbTileAdded += callbackfunc;
         }
 
-        public void UnregisterTileAdded(Action<City, Tile> callbackfunc) {
+        public void UnregisterTileAdded(Action<ICity, Tile> callbackfunc) {
             _cbTileAdded -= callbackfunc;
         }
         #region igeventable

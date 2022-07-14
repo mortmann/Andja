@@ -16,24 +16,18 @@ namespace Andja.Model {
         #region RuntimeOrOther
 
         public int TradeItemCount => WarehouseData.tradeItemCount;
-        public Tile tradeTile;
-        public List<Unit> inRangeUnits;
-        protected WarehousePrototypData _warehouseData;
+        public Tile TradeTile { get; protected set; }
+        public List<Unit> InRangeUnits { get; protected set; }
 
-        public WarehousePrototypData WarehouseData {
-            get {
-                if (_warehouseData == null) {
-                    _warehouseData = (WarehousePrototypData)PrototypController.Instance.GetStructurePrototypDataForID(ID);
-                }
-                return _warehouseData;
-            }
-        }
+        private WarehousePrototypData _warehouseData;
+        public WarehousePrototypData WarehouseData =>
+            _warehouseData ??= (WarehousePrototypData)PrototypController.Instance.GetStructurePrototypDataForID(ID);
 
         #endregion RuntimeOrOther
 
         public WarehouseStructure(string id, WarehousePrototypData wpd) {
             this.ID = id;
-            inRangeUnits = new List<Unit>();
+            InRangeUnits = new List<Unit>();
             this._warehouseData = wpd;
         }
 
@@ -41,26 +35,26 @@ namespace Andja.Model {
         /// DO NOT USE
         /// </summary>
         public WarehouseStructure() {
-            inRangeUnits = new List<Unit>();
+            InRangeUnits = new List<Unit>();
         }
 
         protected WarehouseStructure(WarehouseStructure str) {
             this.ID = str.ID;
-            inRangeUnits = new List<Unit>();
+            InRangeUnits = new List<Unit>();
         }
 
         public override bool SpecialCheckForBuild(List<Tile> tiles) {
             return tiles.None(t => t.City != null 
                                && t.City.IsWilderness() == false 
-                               && t.City.warehouse != null);
+                               && t.City.Warehouse != null);
         }
 
         public void AddUnitToTrade(Unit u) {
-            inRangeUnits.Add(u);
+            InRangeUnits.Add(u);
         }
 
         public void RemoveUnitFromTrade(Unit u) {
-            inRangeUnits.Remove(u);
+            InRangeUnits.Remove(u);
         }
 
         public override void OnBuild() {
@@ -77,13 +71,9 @@ namespace Andja.Model {
             //to get the tile we now have to rotate a vector thats
             //1 up and 1 left from the temptile
             Vector2 rot = new Vector2((float)TileWidth / 2f + 0.5f, 0).Rotate(rotation);
-            tradeTile = World.Current.GetTileAt(Mathf.FloorToInt(Center.x - rot.x), Mathf.FloorToInt(Center.y + rot.y));
+            TradeTile = World.Current.GetTileAt(Mathf.FloorToInt(Center.x - rot.x), Mathf.FloorToInt(Center.y + rot.y));
 
-            this.City.warehouse = this;
-        }
-
-        public Tile GetTradeTile() {
-            return tradeTile; //maybe this changes or not s
+            this.City.Warehouse = this;
         }
 
         public override Structure Clone() {

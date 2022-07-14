@@ -23,7 +23,7 @@ namespace Andja.Model {
         }
     }
     /// <summary>
-    /// Contains how many people of this level in the city exist.
+    /// Contains how many People of this level in the city exist.
     /// Claculates Need fullfilment (happiness excluding the structure needs for corresponding level 
     /// and the Taxpercentage for income.
     /// </summary>
@@ -34,7 +34,7 @@ namespace Andja.Model {
         [JsonPropertyAttribute] List<NeedGroup> NeedGroupList;
         [JsonPropertyAttribute] public PopulationLevel previousLevel;
         [JsonPropertyAttribute] public float taxPercantage = 1f;
-        private City city;
+        private ICity city;
         public int populationCount = 0;
         public string IconSpriteName => Data.iconSpriteName;
 
@@ -57,7 +57,7 @@ namespace Andja.Model {
         public PopulationLevel() {
         }
 
-        public PopulationLevel(int level, City city, PopulationLevel previous) {
+        public PopulationLevel(int level, ICity city, PopulationLevel previous) {
             this.Level = level;
             NeedGroupList = Data.GetCopyGroupNeedList();
             AllNeedGroupList = new List<NeedGroup>(NeedGroupList);
@@ -71,7 +71,7 @@ namespace Andja.Model {
             this.Level = pl.Level;
         }
 
-        internal void FullfillNeedsAndCalcHappiness(City city) {
+        internal void FullfillNeedsAndCalcHappiness(ICity city) {
             float fullfilled = 0;
             float summedImportance = 0;
             foreach (NeedGroup group in AllNeedGroupList) {
@@ -88,7 +88,7 @@ namespace Andja.Model {
             taxPercantage = Mathf.Clamp(percantage, 0, 100); //not real restrictions but just a complete fuckup prevention
         }
 
-        public int GetTaxIncome(City city) {
+        public int GetTaxIncome(ICity city) {
             return Mathf.FloorToInt(taxPercantage * TaxPerPerson * populationCount);
         }
 
@@ -101,7 +101,7 @@ namespace Andja.Model {
         }
 
         internal void AddPeople(int count) {
-            //IF there is better way to stop people after upgrading -- change this 
+            //IF there is better way to stop People after upgrading -- change this 
             populationCount += count;
             city.GetOwner().UpdateMaxPopulationCount(Level, populationCount);
         }
@@ -124,7 +124,7 @@ namespace Andja.Model {
             return new PopulationLevel(this);
         }
 
-        internal void Load(City city) {
+        internal void Load(ICity city) {
             this.city = city;
             if (previousLevel == null || previousLevel.Exists() == false)
                 previousLevel = city.GetPreviousPopulationLevel(Level);

@@ -82,10 +82,10 @@ namespace Andja.Model {
     }
 
     public class UnitCityMoveItemOperation : UnitOperation {
-        City City;
+        ICity City;
         Item[] Items;
         bool ToShip;
-        public UnitCityMoveItemOperation(AIPlayer player, Unit unit, City city, Item[] items, bool toShip) : base(player, unit) {
+        public UnitCityMoveItemOperation(AIPlayer player, Unit unit, ICity city, Item[] items, bool toShip) : base(player, unit) {
             City = city;
             Items = items;
             ToShip = toShip;
@@ -149,11 +149,11 @@ namespace Andja.Model {
     }
 
     public class TradeItemOperation : Operation {
-        public City City;
+        public ICity City;
         public bool Add;
         public List<TradeItem> TradeItems;
 
-        public TradeItemOperation(AIPlayer player, City city, List<TradeItem> TradeItems, bool add) : base(player) {
+        public TradeItemOperation(AIPlayer player, ICity city, List<TradeItem> TradeItems, bool add) : base(player) {
             this.City = city;
             this.TradeItems = TradeItems;
             this.Add = add;

@@ -66,7 +66,7 @@ namespace Andja.Controller {
         Unlocks GetNextUnlocks(int populationLevel, int populationCount);
         Ship GetPirateShipPrototyp();
         PopulationLevelPrototypData GetPopulationLevelPrototypDataForLevel(int level);
-        List<PopulationLevel> GetPopulationLevels(City city);
+        List<PopulationLevel> GetPopulationLevels(ICity city);
         Structure GetRoadForLevel(int level);
         Structure GetStructure(string id);
         Structure GetStructureCopy(string id);

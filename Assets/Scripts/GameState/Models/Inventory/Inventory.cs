@@ -14,7 +14,7 @@ namespace Andja.Model {
         protected Action<Inventory, Item, bool> cbInventoryItemChange;
         [JsonPropertyAttribute] public int MaxStackSize { get; protected set; }
 
-        public abstract IEnumerable<Item> baseItems {
+        public abstract IEnumerable<Item> BaseItems {
             get;
         }
 
@@ -68,19 +68,15 @@ namespace Andja.Model {
         public abstract int GetAmountFor(string itemID);
 
         public Item[] GetBuildMaterial() {
-            List<Item> itemlist = new List<Item>();
-            foreach (Item i in PrototypController.Instance.BuildItems) {
-                if (HasAnythingOf(i)) {
-                    itemlist.Add(GetAllAndRemoveItem(i));
-                }
-            }
-            return itemlist.ToArray();
+            return (from item in PrototypController.Instance.BuildItems 
+                    where HasAnythingOf(item) 
+                    select GetAllAndRemoveItem(item)).ToArray();
         }
 
         public abstract int GetRemainingSpaceForItem(Item item);
 
         public bool HasAnything() {
-            return baseItems.Any((x) => x.count > 0);
+            return BaseItems.Any((x) => x.count > 0);
         }
 
         public bool HasEnoughOfItem(Item item) {
@@ -88,10 +84,11 @@ namespace Andja.Model {
         }
 
         public bool HasEnoughOfItems(IEnumerable<Item> item) {
-            return item.All(x => HasEnoughOfItem(x));
+            return item.All(HasEnoughOfItem);
         }
 
         public bool HasEnoughOfItems(IEnumerable<Item> items, int times = 1) {
+            if (times <= 0) throw new ArgumentOutOfRangeException(nameof(times));
             if (items == null || times <= 0)
                 return true;
             items.ToList().ForEach(x => { x.count *= times; });
@@ -103,7 +100,7 @@ namespace Andja.Model {
         }
 
         public virtual void Load() {
-            foreach (var item in baseItems.ToArray()) {
+            foreach (var item in BaseItems.ToArray()) {
                 if (item.Exists() == false) {
                     RemoveNotExistingItem(item);
                 }

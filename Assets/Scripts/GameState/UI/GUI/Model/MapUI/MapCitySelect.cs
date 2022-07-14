@@ -10,15 +10,15 @@ namespace Andja.UI.Model {
         public Text CityName;
         public Text Number;
         public Toggle toggle;
-        public City City;
+        public ICity City;
         private bool ignoreChange;
 
-        public void Setup(City city) {
+        public void Setup(ICity city) {
             toggle.onValueChanged.AddListener(ToggleCity);
             this.City = city;
             CityName.text = city.Name;
-            if (city.warehouse != null)
-                OnWarehouseBuild(city.warehouse);
+            if (city.Warehouse != null)
+                OnWarehouseBuild(city.Warehouse);
             else {
                 SetPosition(city.Tiles.First());
                 OnWarehouseDestroy(null, null);
@@ -26,7 +26,7 @@ namespace Andja.UI.Model {
             city.RegisterCityDestroy(OnCityDestroy);
         }
 
-        private void OnCityDestroy(City city) {
+        private void OnCityDestroy(ICity city) {
             Destroy(this.gameObject);
         }
 

@@ -375,7 +375,7 @@ namespace Andja.Controller {
             Players[playerNr].AddTreasureChange(amount);
         }
 
-        public void OnCityCreated(City city) {
+        public void OnCityCreated(ICity city) {
             Players[city.PlayerNumber].OnCityCreated(city);
         }
 

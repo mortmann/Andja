@@ -58,8 +58,8 @@ namespace Andja.Controller {
         public IReadOnlyList<string> AllNaturalSpawningStructureIDs => _allNaturalSpawningStructureIDs;
         /// <summary>
         /// Array: For each Level of Populations exists a dictionary
-        /// <br>int: people of that population requiered for those Unlocks</br>
-        /// <br>Unlocks: contains all needs, structures and units that will be unlocked for the key amount of people</br>
+        /// <br>int: People of that population requiered for those Unlocks</br>
+        /// <br>Unlocks: contains all needs, structures and units that will be unlocked for the key amount of People</br>
         /// </summary>
         public IReadOnlyDictionary<int, Unlocks>[] LevelCountToUnlocks => _levelCountToUnlocks;
 
@@ -189,7 +189,7 @@ namespace Andja.Controller {
         /// DONT call otherwise because it is pretty memory and cpu heavy!
         /// </summary>
         /// <returns></returns>
-        public List<PopulationLevel> GetPopulationLevels(City city) {
+        public List<PopulationLevel> GetPopulationLevels(ICity city) {
             List<PopulationLevel> populationLevels = new List<PopulationLevel>();
             PopulationLevel previous = null;
             foreach (PopulationLevelPrototypData item in _populationLevelDatas.Values) {
@@ -1836,7 +1836,7 @@ namespace Andja.Controller {
         public Unlocks(int peopleCount, int level) {
             this.peopleCount = peopleCount;
             this.populationLevel = level;
-            this.requiredFullHomes = peopleCount / PrototypController.Instance.PopulationLevelDatas[level].HomeStructure.people;
+            this.requiredFullHomes = peopleCount / PrototypController.Instance.PopulationLevelDatas[level].HomeStructure.People;
         }
         public int peopleCount;
         public int populationLevel;

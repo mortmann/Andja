@@ -5,31 +5,51 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace Andja.Model {
+    public interface IIGEventable {
+        IReadOnlyList<Effect> Effects { get; }
+        TargetGroup TargetGroups { get; }
+        bool HasNegativEffect { get; }
+        string GetID();
+        void RegisterOnEvent(Action<GameEvent> create, Action<GameEvent> ending);
+        int GetPlayerNumber();
+        void OnEventCreate(GameEvent ge);
+        void OnEventEnded(GameEvent ge);
+        void UpdateEffects(float deltaTime);
+        void AddEffects(Effect[] effects);
+        bool AddEffect(Effect effect);
+        Effect GetEffect(string ID);
+        bool HasEffect(string effectID);
+        bool HasEffect(Effect effect);
+        bool HasAnyEffect(params Effect[] effects);
+        bool RemoveEffect(Effect effect, bool all = false);
+        void RegisterOnEffectChangedCallback(Action<IGEventable, Effect, bool> cb);
+        void UnregisterOnEffectChangedCallback(Action<IGEventable, Effect, bool> cb);
+    }
 
     [JsonObject(MemberSerialization.OptIn)]
-    public abstract class IGEventable {
+    public abstract class IGEventable : IIGEventable {
 
         /// <summary>
         /// For integer and float modifier
         /// </summary>
-        protected Dictionary<string, float> VariablenameToFloat;
+        protected Dictionary<string, float> VariableNameToFloat;
 
         [JsonPropertyAttribute] protected List<Effect> _effects;
 
         public IReadOnlyList<Effect> Effects => _effects;
 
-        private List<Effect> _UpdateEffectList;
+        private List<Effect> _updateEffectList;
 
         protected List<Effect> UpdateEffectList {
             get {
                 if (_effects == null)
                     return null;
                 //for loading -- makes it ez to get them again without doing in load functions
-                if (_UpdateEffectList == null) {
-                    _UpdateEffectList = new List<Effect>(_effects);
-                    _UpdateEffectList.RemoveAll(x => x.IsUpdateChange == false);
+                if (_updateEffectList == null) {
+                    _updateEffectList = new List<Effect>(_effects);
+                    _updateEffectList.RemoveAll(x => x.IsUpdateChange == false);
                 }
-                return _UpdateEffectList;
+                return _updateEffectList;
             }
         }
 
@@ -42,13 +62,7 @@ namespace Andja.Model {
         protected Action<GameEvent> cbEventEnded;
         private TargetGroup _targetGroup;
 
-        public TargetGroup TargetGroups {
-            get {
-                if (_targetGroup == null)
-                    _targetGroup = CalculateTargetGroups();
-                return _targetGroup;
-            }
-        }
+        public TargetGroup TargetGroups => _targetGroup ??= CalculateTargetGroups();
 
         public virtual string GetID() {
             return null;
@@ -154,19 +168,19 @@ namespace Andja.Model {
                 AddSpecialEffect(effect);
             }
             else {
-                if (VariablenameToFloat == null)
-                    VariablenameToFloat = new Dictionary<string, float>();
+                if (VariableNameToFloat == null)
+                    VariableNameToFloat = new Dictionary<string, float>();
                 //we change a float or integer variable
                 if (effect.ModifierType != EffectModifier.Update || effect.ModifierType != EffectModifier.Special) {
-                    if (VariablenameToFloat.ContainsKey(effect.NameOfVariable + effect.ModifierType) == false) {
-                        VariablenameToFloat.Add(effect.NameOfVariable + effect.ModifierType, 0);
+                    if (VariableNameToFloat.ContainsKey(effect.NameOfVariable + effect.ModifierType) == false) {
+                        VariableNameToFloat.Add(effect.NameOfVariable + effect.ModifierType, 0);
                     }
-                    VariablenameToFloat[effect.NameOfVariable + effect.ModifierType] += effect.Change;
+                    VariableNameToFloat[effect.NameOfVariable + effect.ModifierType] += effect.Change;
                 }
             }
             if (effect.IsUpdateChange) {
-                if (_UpdateEffectList == null)
-                    _UpdateEffectList = new List<Effect>();
+                if (_updateEffectList == null)
+                    _updateEffectList = new List<Effect>();
                 UpdateEffectList.Add(effect);
             }
             if (effect.IsNegativ)
@@ -174,7 +188,7 @@ namespace Andja.Model {
             return true;
         }
 
-        internal Effect GetEffect(string ID) {
+        public Effect GetEffect(string ID) {
             return _effects.Find(x => x.ID == ID);
         }
         public bool HasEffect(string effectID) {
@@ -203,8 +217,8 @@ namespace Andja.Model {
             }
             else {
                 //we change a float or integer variable
-                if (VariablenameToFloat != null && VariablenameToFloat.ContainsKey(effect.NameOfVariable + effect.ModifierType)) {
-                    VariablenameToFloat[effect.NameOfVariable + effect.ModifierType] -= effect.Change;
+                if (VariableNameToFloat != null && VariableNameToFloat.ContainsKey(effect.NameOfVariable + effect.ModifierType)) {
+                    VariableNameToFloat[effect.NameOfVariable + effect.ModifierType] -= effect.Change;
                 }
             }
             if (effect.IsNegativ)
@@ -250,15 +264,15 @@ namespace Andja.Model {
         }
 
         private float GetMultiplicative(string name) {
-            if (VariablenameToFloat == null || VariablenameToFloat.ContainsKey(name + EffectModifier.Multiplicative) == false)
+            if (VariableNameToFloat == null || VariableNameToFloat.ContainsKey(name + EffectModifier.Multiplicative) == false)
                 return 0f;
-            return VariablenameToFloat[name + EffectModifier.Multiplicative];
+            return VariableNameToFloat[name + EffectModifier.Multiplicative];
         }
 
         private float GetAdditiveValue(string name) {
-            if (VariablenameToFloat == null || VariablenameToFloat.ContainsKey(name + EffectModifier.Additive) == false)
+            if (VariableNameToFloat == null || VariableNameToFloat.ContainsKey(name + EffectModifier.Additive) == false)
                 return 0f;
-            return VariablenameToFloat[name + EffectModifier.Additive];
+            return VariableNameToFloat[name + EffectModifier.Additive];
         }
         protected virtual void AddSpecialEffect(Effect effect) {
             Debug.LogError("Not implemented Add Special Effect " + effect.ID + " for this object: " + this.ToString());

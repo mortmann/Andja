@@ -25,17 +25,17 @@ namespace Andja.UI.Model {
                 Destroy(t.gameObject);
             }
 
-            List<string> items = new List<string>(c.itemIDtoTradeItem.Keys);
+            List<string> items = new List<string>(c.ItemIDtoTradeItem.Keys);
             for (int i = 0; i < city.TradeItemCount; i++) {
                 TradeItemUI tradeItemUI = GameObject.Instantiate(TradeItemPrefab);
                 tradeItemUI.transform.SetParent(TradeCanvas.transform, false);
-                if (c.itemIDtoTradeItem.Count <= i) {
+                if (c.ItemIDtoTradeItem.Count <= i) {
                     tradeItemUI.Show(null, c.Inventory.MaxStackSize, OnSellBuyClick);
                 }
                 else {
                     Item item = c.Inventory.GetAllOfItem(items[i]);
-                    tradeItemUI.Show(c.itemIDtoTradeItem[items[i]], c.Inventory.MaxStackSize, OnSellBuyClick);
-                    tradeItemUI.ChangeItemCount(c.itemIDtoTradeItem[items[i]].count);
+                    tradeItemUI.Show(c.ItemIDtoTradeItem[items[i]], c.Inventory.MaxStackSize, OnSellBuyClick);
+                    tradeItemUI.ChangeItemCount(c.ItemIDtoTradeItem[items[i]].count);
                 }
                 tradeItemUI.AddListener((data) => { OnTradeItemClick(tradeItemUI); });
             }
@@ -44,7 +44,7 @@ namespace Andja.UI.Model {
         public void OnItemSelected(Item item) {
             if (tradeItemUICurrentlySelected == null)
                 return;
-            if (city.itemIDtoTradeItem.ContainsKey(item.ID)) {
+            if (city.ItemIDtoTradeItem.ContainsKey(item.ID)) {
                 Debug.Log("already in it");
                 return;
             }
@@ -64,10 +64,10 @@ namespace Andja.UI.Model {
             if (itemID == null) {
                 return;
             }
-            if (city.itemIDtoTradeItem.ContainsKey(itemID) == false) {
+            if (city.ItemIDtoTradeItem.ContainsKey(itemID) == false) {
                 return;
             }
-            city.itemIDtoTradeItem[itemID].IsSelling = sell;
+            city.ItemIDtoTradeItem[itemID].IsSelling = sell;
         }
 
         public void OnTradeItemClick(TradeItemUI ui) {
@@ -90,7 +90,7 @@ namespace Andja.UI.Model {
                 return;
             if (tradeItemUICurrentlySelected.tradeItem == null)
                 return;
-            if (city.itemIDtoTradeItem.ContainsKey(tradeItemUICurrentlySelected.tradeItem.ItemId) == false) {
+            if (city.ItemIDtoTradeItem.ContainsKey(tradeItemUICurrentlySelected.tradeItem.ItemId) == false) {
                 Debug.Log("OnPriceChange - item not found in tradeitems");
                 return;
             }

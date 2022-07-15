@@ -259,25 +259,20 @@ namespace Andja.Model {
         }
 
         public bool UpgradeHouse() {
-            if (base.CanBeUpgraded == false && IsMaxLevel()) {
+            if (CanBeUpgraded == false) {
                 return false;
             }
             if (City.HasEnoughOfItems(NextLevel.BuildingItems) == false) {
                 return false;
             }
-            if (City.GetOwner().HasEnoughMoney(NextLevel.BuildCost) == false) {
+            if (City.GetOwnerHasEnoughMoney(NextLevel.BuildCost) == false) {
                 return false;
             }
             CloseExtraUI();
             ID = NextLevel.ID;
-            if(City.GetPopulationCount(PopulationLevel) == 0) {
-                //not a nice solution for the problem of the level not being calculated value!
-                //TODO: find a nicer way todo it
-                City.GetPopulationLevel(PopulationLevel).FullfillNeedsAndCalcHappiness(City);
-            }
             City.RemovePeople(PopulationLevel, People);
             City.RemoveItems(NextLevel.BuildingItems);
-            City.GetOwner().ReduceTreasure(NextLevel.BuildCost);
+            City.ReduceTreasureFromOwner(NextLevel.BuildCost);
             OnUpgrade();
             City.AddPeople(PopulationLevel, People);
             cbStructureChanged(this);

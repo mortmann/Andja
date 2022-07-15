@@ -148,9 +148,9 @@ namespace Andja.Model {
                 }
                 visitedCities.Add(CurrentDestination);
                 OffworldMarket market = WorldController.Instance.offworldMarket;
-                if (CurrentDestination.itemIDtoTradeItem != null) {
-                    foreach (string item_id in CurrentDestination.itemIDtoTradeItem.Keys) {
-                        TradeItem ti = CurrentDestination.itemIDtoTradeItem[item_id];
+                if (CurrentDestination.ItemIDtoTradeItem != null) {
+                    foreach (string item_id in CurrentDestination.ItemIDtoTradeItem.Keys) {
+                        TradeItem ti = CurrentDestination.ItemIDtoTradeItem[item_id];
                         int inInvCount = CurrentDestination.GetAmountForThis(new Item(item_id));
                         switch (ti.trade) {
                             case Trade.Buy:

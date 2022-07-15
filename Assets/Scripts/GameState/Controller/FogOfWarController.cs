@@ -90,7 +90,7 @@ namespace Andja.Controller {
             if (IsFogOfWarAlways == false)
                 return;
             Color color = new Color(0, 0, 0, 0);
-            if (tile.City?.IsCurrPlayerCity() == true) {
+            if (tile.City?.IsCurrentPlayerCity() == true) {
                 color = new Color(0, 0, 1, 1);
             }
             _visibleTilesRenderer.sprite.texture.SetPixel(tile.X, tile.Y, color);

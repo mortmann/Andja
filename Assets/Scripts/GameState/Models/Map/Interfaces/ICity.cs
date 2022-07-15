@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 
 namespace Andja.Model {
-    public interface ICity {
+    public interface ICity : IIGEventable {
         string Name { get; set; }
         HashSet<Tile> Tiles { get; set; }
         int TradeItemCount { get; }
@@ -14,19 +14,16 @@ namespace Andja.Model {
         int Income { get; }
         int Balance { get; }
         WarehouseStructure Warehouse { get; set; }
-        IReadOnlyList<Effect> Effects { get; }
-        TargetGroup TargetGroups { get; }
-        bool HasNegativEffect { get; }
         bool AutoUpgradeHomes { get; set; }
         int PlayerNumber { get; }
         CityInventory Inventory { get; }
         List<Structure> Structures { get; }
-        Dictionary<string, TradeItem> itemIDtoTradeItem { get; }
+        Dictionary<string, TradeItem> ItemIDtoTradeItem { get; }
         Island Island { get; }
         int PlayerTradeAmount { get; }
         void SetPlayerTradeAmount(int amount);
         void SetName(string name);
-        void SetTaxForPopulationLevel(int structureLevel, float percantage);
+        void SetTaxForPopulationLevel(int structureLevel, float percentage);
         bool AddTradeItem(TradeItem ti);
         void DeleteTradeItem(TradeItem ti);
         bool HasAnythingOfItems(Item[] buildingItems);
@@ -97,25 +94,12 @@ namespace Andja.Model {
         void RegisterTileRemove(Action<ICity, Tile> callbackfunc);
         void UntegisterTileRemove(Action<ICity, Tile> callbackfunc);
         void RegisterTileAdded(Action<ICity, Tile> callbackfunc);
-        void UnregisterTileAdded(Action<ICity, Tile> callbackfunc);
-        void OnEventCreate(GameEvent ge);
-        void OnEventEnded(GameEvent ge);
         bool HasFertility(Fertility fer);
-        int GetPlayerNumber();
-        bool IsCurrPlayerCity();
+        bool IsCurrentPlayerCity();
         Player GetOwner();
         string ToString();
         float GetPopulationItemUsage(Item item);
-        string GetID();
-        void RegisterOnEvent(Action<GameEvent> create, Action<GameEvent> ending);
-        void UpdateEffects(float deltaTime);
-        void AddEffects(Effect[] effects);
-        bool AddEffect(Effect effect);
-        bool HasEffect(string effectID);
-        bool HasEffect(Effect effect);
-        bool HasAnyEffect(params Effect[] effects);
-        bool RemoveEffect(Effect effect, bool all = false);
-        void RegisterOnEffectChangedCallback(Action<IGEventable, Effect, bool> cb);
-        void UnregisterOnEffectChangedCallback(Action<IGEventable, Effect, bool> cb);
+        bool GetOwnerHasEnoughMoney(int nextLevelBuildCost);
+        void ReduceTreasureFromOwner(int nextLevelBuildCost);
     }
 }

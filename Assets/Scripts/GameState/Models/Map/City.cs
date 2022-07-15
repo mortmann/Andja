@@ -16,7 +16,7 @@ namespace Andja.Model {
         [JsonPropertyAttribute] public int PlayerNumber { get; protected set; }
         [JsonPropertyAttribute] public CityInventory Inventory { get; protected set; }
         [JsonPropertyAttribute] public List<Structure> Structures { get; protected set; }
-        [JsonPropertyAttribute] public Dictionary<string, TradeItem> itemIDtoTradeItem { get; protected set; }
+        [JsonPropertyAttribute] public Dictionary<string, TradeItem> ItemIDtoTradeItem { get; protected set; }
         [JsonPropertyAttribute] private string _name = "";
         [JsonPropertyAttribute] public Island Island { get; set; }
         [JsonPropertyAttribute] public int PlayerTradeAmount { get; protected set; }
@@ -82,7 +82,7 @@ namespace Andja.Model {
             this.PlayerNumber = playerNr;
             this.Island = island;
             _name = "<City> " + UnityEngine.Random.Range(0, 1000);
-            itemIDtoTradeItem = new Dictionary<string, TradeItem>();
+            ItemIDtoTradeItem = new Dictionary<string, TradeItem>();
             Structures = new List<Structure>();
             Tiles = new HashSet<Tile>();
             Routes = new List<Route>();
@@ -90,30 +90,30 @@ namespace Andja.Model {
             Setup();
         }
 
-        public void SetTaxForPopulationLevel(int structureLevel, float percantage) {
+        public void SetTaxForPopulationLevel(int structureLevel, float percentage) {
             if (IsWilderness())
                 return;
-            _populationLevels[structureLevel].SetTaxPercantage(percantage);
+            _populationLevels[structureLevel].SetTaxPercantage(percentage);
         }
 
         public bool AddTradeItem(TradeItem ti) {
-            if (itemIDtoTradeItem.ContainsKey(ti.ItemId)) {
+            if (ItemIDtoTradeItem.ContainsKey(ti.ItemId)) {
                 Debug.LogError("Tried to add Trade Item that exists");
                 return false;
             }
-            if (Warehouse.TradeItemCount <= itemIDtoTradeItem.Count) {
+            if (Warehouse.TradeItemCount <= ItemIDtoTradeItem.Count) {
                 return false;
             }
-            itemIDtoTradeItem.Add(ti.ItemId, ti);
+            ItemIDtoTradeItem.Add(ti.ItemId, ti);
             return true;
         }
 
         public void DeleteTradeItem(TradeItem ti) {
-            if (itemIDtoTradeItem.ContainsKey(ti.ItemId) == false) {
+            if (ItemIDtoTradeItem.ContainsKey(ti.ItemId) == false) {
                 Debug.LogError("Tried to remove Trade Item that doesnt exist");
                 return;
             }
-            itemIDtoTradeItem.Remove(ti.ItemId);
+            ItemIDtoTradeItem.Remove(ti.ItemId);
         }
 
         public bool HasAnythingOfItems(Item[] buildingItems) {
@@ -323,7 +323,7 @@ namespace Andja.Model {
             }
             Island.allReadyHighlighted = false;
             Tiles.Add(t);
-            if (IsCurrPlayerCity()) {
+            if (IsCurrentPlayerCity()) {
                 World.Current.OnTileChanged(t);
             }
             _cbTileAdded?.Invoke(this, t);
@@ -336,6 +336,9 @@ namespace Andja.Model {
             if (count < 0) {
                 return;
             }
+
+            if (GetPopulationLevel(level).populationCount == 0)
+                TempHomeUpgradeFixFullfillNeedsAndCalcHappiness(level);
             _populationLevels[level].AddPeople(count);
         }
 
@@ -407,10 +410,10 @@ namespace Andja.Model {
         /// <param name="ship">Ship.</param>
         /// <param name="amount">Amount.</param>
         public void SellingTradeItem(string itemID, Player unitPlayer, Ship ship, int amount = 50) {
-            if (itemIDtoTradeItem.ContainsKey(itemID) == false) {
+            if (ItemIDtoTradeItem.ContainsKey(itemID) == false) {
                 return;
             }
-            TradeItem ti = itemIDtoTradeItem[itemID];
+            TradeItem ti = ItemIDtoTradeItem[itemID];
             if (ti.IsSelling == false) {
                 Debug.Log("this item is not to buy");
                 return;
@@ -431,10 +434,10 @@ namespace Andja.Model {
         /// <param name="ship">Ship.</param>
         /// <param name="amount">Amount.</param>
         public void BuyingTradeItem(string itemID, Player player, Ship ship, int amount = 50) {
-            if (itemIDtoTradeItem.ContainsKey(itemID) == false) {
+            if (ItemIDtoTradeItem.ContainsKey(itemID) == false) {
                 return;
             }
-            TradeItem ti = itemIDtoTradeItem[itemID];
+            TradeItem ti = ItemIDtoTradeItem[itemID];
             if (ti.IsBuying == false) {
                 Debug.Log("this item is not to sell here");
                 return;
@@ -474,14 +477,14 @@ namespace Andja.Model {
             return RemoveTradeItem(item.ID);
         }
         public bool RemoveTradeItem(string itemID) {
-            return itemIDtoTradeItem.Remove(itemID);
+            return ItemIDtoTradeItem.Remove(itemID);
         }
         public void ChangeTradeItemAmount(Item item) {
-            itemIDtoTradeItem[item.ID].count = item.count;
+            ItemIDtoTradeItem[item.ID].count = item.count;
         }
 
         public void ChangeTradeItemPrice(string id, int price) {
-            itemIDtoTradeItem[id].price = price;
+            ItemIDtoTradeItem[id].price = price;
         }
 
         public int GetAmountForThis(Item item) {
@@ -628,7 +631,7 @@ namespace Andja.Model {
 
         #endregion igeventable
 
-        public bool IsCurrPlayerCity() {
+        public bool IsCurrentPlayerCity() {
             return PlayerNumber == PlayerController.currentPlayerNumber;
         }
 
@@ -643,11 +646,19 @@ namespace Andja.Model {
         public float GetPopulationItemUsage(Item item) {
             if (PopulationCount == 0)
                 return 0;
-            float sum = 0;
-            foreach (var level in _populationLevels) {
-                sum += item.Data.TotalUsagePerLevel[level.Level] * level.populationCount;
-            }
-            return sum;
+            return _populationLevels.Sum(level => item.Data.TotalUsagePerLevel[level.Level] * level.populationCount);
+        }
+
+        public bool GetOwnerHasEnoughMoney(int buildCost) {
+            return GetOwner().HasEnoughMoney(buildCost);
+        }
+
+        public void ReduceTreasureFromOwner(int buildCost) {
+            GetOwner().ReduceTreasure(buildCost);
+        }
+
+        private void TempHomeUpgradeFixFullfillNeedsAndCalcHappiness(int level) {
+            GetPopulationLevel(level).FullfillNeedsAndCalcHappiness(this);
         }
     }
 }

@@ -21,8 +21,8 @@ namespace Andja.UI.Model {
             foreach (Transform item in ItemsCanvas.transform) {
                 Destroy(item.gameObject);
             }
-            foreach (string itemID in city.itemIDtoTradeItem.Keys) {
-                TradeItem ti = city.itemIDtoTradeItem[itemID];
+            foreach (string itemID in city.ItemIDtoTradeItem.Keys) {
+                TradeItem ti = city.ItemIDtoTradeItem[itemID];
                 GameObject g = Instantiate(TradeItemPrefab);
                 g.transform.SetParent(ItemCanvas.transform, false);
                 TradeItemUI tiui = g.GetComponent<TradeItemUI>();

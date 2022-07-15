@@ -538,7 +538,7 @@ namespace Andja.Controller {
             if (t == null) {
                 return TileMark.None;
             }
-            else if (t.City != null && t.City.IsCurrPlayerCity()) {
+            else if (t.City != null && t.City.IsCurrentPlayerCity()) {
                 return TileMark.None;
             }
             else {

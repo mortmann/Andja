@@ -7,39 +7,32 @@ using UnityEngine;
 namespace Andja.Model {
 
     [JsonObject]
-    public class NeedGroupPrototypData : LanguageVariables {
+    public class NeedGroupPrototypeData : LanguageVariables {
         public string ID;
         public float importanceLevel;
     }
 
     [JsonObject(MemberSerialization.OptIn)]
-    public class NeedGroup {
-        private readonly float FullfillmentLimit = 0;
+    public class NeedGroup : INeedGroup {
+        private readonly float _fulfillmentLimit = 0;
 
         #region Prototype
 
-        protected NeedGroupPrototypData _prototypData;
+        protected NeedGroupPrototypeData prototypeData;
 
-        public NeedGroupPrototypData Data {
-            get {
-                if (_prototypData == null) {
-                    _prototypData = PrototypController.Instance.GetNeedGroupPrototypDataForID(ID);
-                }
-                return _prototypData;
-            }
-        }
+        public NeedGroupPrototypeData Data => prototypeData ??= PrototypController.Instance.GetNeedGroupPrototypDataForID(ID);
 
         public float ImportanceLevel => Data.importanceLevel;
         public string Name => Data.Name;
 
         #endregion Prototype
 
-        [JsonPropertyAttribute] public string ID;
-        [JsonPropertyAttribute] public List<Need> Needs;
-        [JsonPropertyAttribute] public float LastFullfillmentPercentage;
+        [JsonPropertyAttribute] public string ID { get; protected set; }
+        [JsonPropertyAttribute] public List<Need> Needs { get; protected set; }
+        [JsonPropertyAttribute] public float LastFulfillmentPercentage { get; protected set; }
 
         #region Runtime
-        public List<Need> CombinedNeeds;
+        public List<Need> CombinedNeeds { get; protected set; }
         #endregion Runtime
 
         public NeedGroup() {
@@ -54,7 +47,7 @@ namespace Andja.Model {
 
         public NeedGroup(NeedGroup needGroup) {
             ID = needGroup.ID;
-            _prototypData = needGroup.Data;
+            prototypeData = needGroup.Data;
             Needs = new List<Need>();
             foreach (Need n in needGroup.Needs) {
                 Needs.Add(n.Clone());
@@ -70,7 +63,7 @@ namespace Andja.Model {
             Needs.AddRange(need);
         }
 
-        internal void CalculateFullfillment(ICity city, PopulationLevel populationLevel) {
+        public void CalculateFulfillment(ICity city, PopulationLevel populationLevel) {
             float currentValue = 0;
             int number = 0;
             foreach (Need need in Needs) {
@@ -78,23 +71,23 @@ namespace Andja.Model {
                     continue;
                 }
                 number++;
-                need.CalculateFullfillment(city, populationLevel);
-                currentValue += need.GetCombinedFullfillment();
+                need.CalculateFulfillment(city, populationLevel);
+                currentValue += need.GetCombinedFulfillment();
             }
-            currentValue = CalculateRealPercantage(currentValue, number);
-            LastFullfillmentPercentage = currentValue; // currently not needed! but maybe nice to have
+            currentValue = CalculateRealPercentage(currentValue, number);
+            LastFulfillmentPercentage = currentValue; // currently not needed! but maybe nice to have
         }
 
         public void CombineGroup(NeedGroup ng) {
             CombinedNeeds.AddRange(ng.Needs);
         }
 
-        internal void AddNeed(Need need) {
+        public void AddNeed(Need need) {
             Needs.Add(need);
             CombinedNeeds.Add(need);
         }
 
-        internal void UpdateNeeds(Player player) {
+        public void UpdateNeeds(Player player) {
             List<Need> currNeeds = new List<Need>(Needs);
             foreach (Need need in currNeeds) {
                 if (player.HasNeedUnlocked(need) == false) {
@@ -106,7 +99,7 @@ namespace Andja.Model {
             }
         }
 
-        private float CalculateRealPercantage(float percentage, int number) {
+        private float CalculateRealPercentage(float percentage, int number) {
             if (number == 0)
                 return 1;
             percentage /= number;
@@ -114,29 +107,29 @@ namespace Andja.Model {
             return percentage;
         }
 
-        internal Tuple<float, bool> GetFullfillmentForHome(HomeStructure homeStructure) {
+        public Tuple<float, bool> GetFulfillmentForHome(HomeStructure homeStructure) {
             float currentValue = 0;
             bool missing = false;
             foreach (Need need in Needs) {
                 if (need.IsStructureNeed()) {
-                    bool structureFullfilled = homeStructure.IsStructureNeedFullfilled(need);
-                    missing &= structureFullfilled;
-                    currentValue += structureFullfilled ? 1 : 0;
+                    bool structureFulfilled = homeStructure.IsStructureNeedFulfilled(need);
+                    missing &= structureFulfilled;
+                    currentValue += structureFulfilled ? 1 : 0;
                 }
                 else {
-                    float fullfilled = need.GetFullfiment(homeStructure.PopulationLevel);
-                    missing |= fullfilled < FullfillmentLimit;
-                    currentValue += fullfilled;
+                    float Fulfilled = need.GetFulfillment(homeStructure.PopulationLevel);
+                    missing |= Fulfilled < _fulfillmentLimit;
+                    currentValue += Fulfilled;
                 }
             }
-            return new Tuple<float, bool>(CalculateRealPercantage(currentValue, Needs.Count), missing);
+            return new Tuple<float, bool>(CalculateRealPercentage(currentValue, Needs.Count), missing);
         }
 
-        internal bool HasNeed(Need need) {
+        public bool HasNeed(Need need) {
             return Needs.Contains(need);
         }
 
-        internal bool IsUnlocked() {
+        public bool IsUnlocked() {
             return Needs.Count > 0;
         }
     }

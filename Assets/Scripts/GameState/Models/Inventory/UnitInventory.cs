@@ -107,7 +107,7 @@ namespace Andja.Model {
             return -1;
         }
         
-        public float GetFilledPercantage() {
+        public float GetFilledPercentage() {
             return _amountInInventory / (float)(NumberOfSpaces * MaxStackSize);
         }
 

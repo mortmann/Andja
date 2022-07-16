@@ -42,7 +42,7 @@ namespace Andja.Model {
         public override bool IsShip => true;
         public override float SpeedModifier => 1 - CannonSpeedDebuff - InventorySpeedDebuff - DamageSpeedDebuff;
         protected float CannonSpeedDebuff => MaximumAmountOfCannons == 0 ? 0 : ShipData.cannonSpeedDebuffMultiplier * (CannonItem.count / (float)MaximumAmountOfCannons);
-        protected float InventorySpeedDebuff => ShipData.inventorySpeedDebuffMultiplier * inventory.GetFilledPercantage();
+        protected float InventorySpeedDebuff => ShipData.inventorySpeedDebuffMultiplier * inventory.GetFilledPercentage();
         protected float DamageSpeedDebuff => ShipData.damageSpeedDebuffMultiplier * (1 - CurrentHealth / MaximumHealth);
 
         protected int CannonPerSide => Mathf.CeilToInt(CannonItem.count / 2);

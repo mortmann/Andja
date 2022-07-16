@@ -11,7 +11,7 @@ namespace Andja.Model {
 
     public enum EffectUpdateChanges { None, Health }
 
-    public enum EffectClassification { Negativ, Neutral, Positiv }
+    public enum EffectClassification { Negative, Neutral, Positive }
 
     public class EffectPrototypeData : LanguageVariables {
         public string nameOfVariable; // what does it change
@@ -36,40 +36,33 @@ namespace Andja.Model {
 
         public InfluenceTyp InfluenceTyp { protected set; get; }
         public InfluenceRange InfluenceRange { protected set; get; }
-        public EffectTypes AddType => EffectPrototypData.addType;
-        public EffectModifier ModifierType => EffectPrototypData.modifierType;
-        public bool IsUnique => EffectPrototypData.unique;
-        public EffectUpdateChanges UpdateChange => EffectPrototypData.updateChange;
-        public EffectClassification Classification => EffectPrototypData.classification;
-        public TargetGroup Targets => EffectPrototypData.targets;
-        public string NameOfVariable => EffectPrototypData.nameOfVariable;
-        public float Change => EffectPrototypData.change;
-        public string UiSpritreName => EffectPrototypData.uiSpriteName;
-        public string OnMapSpriteName => EffectPrototypData.onMapSpriteName;
-        public bool CanSpread => EffectPrototypData.canSpread;
-        public int SpreadTileRange => EffectPrototypData.spreadTileRange;
-        public float SpreadProbability => EffectPrototypData.spreadProbability;
-        public string Name => EffectPrototypData.Name;
-        public string Description => EffectPrototypData.Description;
-        public string HoverOver => EffectPrototypData.HoverOver;
+        public EffectTypes AddType => EffectPrototypeData.addType;
+        public EffectModifier ModifierType => EffectPrototypeData.modifierType;
+        public bool IsUnique => EffectPrototypeData.unique;
+        public EffectUpdateChanges UpdateChange => EffectPrototypeData.updateChange;
+        public EffectClassification Classification => EffectPrototypeData.classification;
+        public TargetGroup Targets => EffectPrototypeData.targets;
+        public string NameOfVariable => EffectPrototypeData.nameOfVariable;
+        public float Change => EffectPrototypeData.change;
+        public string UiSpriteName => EffectPrototypeData.uiSpriteName;
+        public string OnMapSpriteName => EffectPrototypeData.onMapSpriteName;
+        public bool CanSpread => EffectPrototypeData.canSpread;
+        public int SpreadTileRange => EffectPrototypeData.spreadTileRange;
+        public float SpreadProbability => EffectPrototypeData.spreadProbability;
+        public string Name => EffectPrototypeData.Name;
+        public string Description => EffectPrototypeData.Description;
+        public string HoverOver => EffectPrototypeData.HoverOver;
 
         //Some special function will be called for it
         //so it isnt very flexible and must be either precoded or we need to add support for lua
         public bool IsSpecial => AddType == EffectTypes.Special || ModifierType == EffectModifier.Special;
 
         public bool IsUpdateChange => ModifierType == EffectModifier.Update && UpdateChange != EffectUpdateChanges.None;
-        public bool IsNegativ => EffectClassification.Negativ == Classification;
+        public bool IsNegative => EffectClassification.Negative == Classification;
 
-        protected EffectPrototypeData _effectPrototypData;
+        protected EffectPrototypeData effectPrototypeData;
 
-        public EffectPrototypeData EffectPrototypData {
-            get {
-                if (_effectPrototypData == null) {
-                    _effectPrototypData = (EffectPrototypeData)PrototypController.Instance.GetEffectPrototypDataForID(ID);
-                }
-                return _effectPrototypData;
-            }
-        }
+        public EffectPrototypeData EffectPrototypeData => effectPrototypeData ??= (EffectPrototypeData)PrototypController.Instance.GetEffectPrototypDataForID(ID);
 
         public bool Serialize = true;
 
@@ -81,6 +74,9 @@ namespace Andja.Model {
 
         public Effect(string ID) {
             this.ID = ID;
+        }
+        public Effect(string ID, EffectPrototypeData data) : this(ID) {
+            effectPrototypeData = data;
         }
 
         public Effect(Effect e) {
@@ -115,8 +111,8 @@ namespace Andja.Model {
         }
 
         private IGEventable GetValidTarget(IGEventable target) {
-            if (target is Structure) {
-                List<Structure> strs = ((Structure)target).GetNeighbourStructuresInRange(SpreadTileRange);
+            if (target is Structure structure) {
+                List<Structure> strs = structure.GetNeighbourStructuresInRange(SpreadTileRange);
                 strs.RemoveAll(x => Targets.IsTargeted(x.TargetGroups) == false);
                 //now we have a list we can effect
                 //maybe smth more complex but for now just random
@@ -127,18 +123,18 @@ namespace Andja.Model {
         }
 
         private void CalculateUpdateChange(float deltaTime, IGEventable target) {
-            if (target is Structure) {
+            if (target is Structure structure) {
                 switch (UpdateChange) {
                     case EffectUpdateChanges.Health:
-                        ((Structure)target).ChangeHealth(Change * deltaTime);
+                        structure.ChangeHealth(Change * deltaTime);
                         break;
                 }
             }
             else
-            if (target is Unit) {
+            if (target is Unit unit) {
                 switch (UpdateChange) {
                     case EffectUpdateChanges.Health:
-                        ((Unit)target).ChangeHealth(Change * deltaTime);
+                        unit.ChangeHealth(Change * deltaTime);
                         break;
                 }
             }

@@ -89,7 +89,7 @@ namespace Andja.Controller {
         private Dictionary<string, GameEventPrototypData> _gameEventPrototypeDatas;
         private Dictionary<string, ArmorType> _armorTypeDatas;
         private Dictionary<int, PopulationLevelPrototypData> _populationLevelDatas;
-        private Dictionary<string, NeedGroupPrototypData> _needGroupDatas;
+        private Dictionary<string, NeedGroupPrototypeData> _needGroupDatas;
         private Dictionary<string, NeedGroup> _idToNeedGroup;
         private Dictionary<string, Item> _allItems;
         private Dictionary<Climate, List<SpawnStructureGenerationInfo>> _spawnStructureGeneration;
@@ -252,7 +252,7 @@ namespace Andja.Controller {
             return _needPrototypeDatas[ID];
         }
 
-        public NeedGroupPrototypData GetNeedGroupPrototypDataForID(string ID) {
+        public NeedGroupPrototypeData GetNeedGroupPrototypDataForID(string ID) {
             return _needGroupDatas[ID];
         }
 
@@ -347,7 +347,7 @@ namespace Andja.Controller {
             _allNeeds = new List<Need>();
             _populationLevelToNeedGroup = new Dictionary<int, List<NeedGroup>>();
             _needPrototypeDatas = new Dictionary<string, NeedPrototypeData>();
-            _needGroupDatas = new Dictionary<string, NeedGroupPrototypData>();
+            _needGroupDatas = new Dictionary<string, NeedGroupPrototypeData>();
             _idToNeedGroup = new Dictionary<string, NeedGroup>();
             ReadNeedsFromXml(LoadXml(XmlFilesTypes.Needs));
             ModLoader.LoadXMLs(XmlFilesTypes.Needs, ReadNeedsFromXml);
@@ -1008,10 +1008,10 @@ namespace Andja.Controller {
             XmlNodeList listNeedGroup = xmlDoc.SelectNodes("needs/NeedGroup");
             if (listNeedGroup != null) {
                 foreach (XmlElement node in listNeedGroup) {
-                    NeedGroupPrototypData ngpd = new NeedGroupPrototypData();
+                    NeedGroupPrototypeData ngpd = new NeedGroupPrototypeData();
                     string ID = node.GetAttribute("ID");
                     ngpd.ID = ID;
-                    SetData<NeedGroupPrototypData>(node, ref ngpd);
+                    SetData<NeedGroupPrototypeData>(node, ref ngpd);
                     _needGroupDatas[ID] = ngpd;
                     _idToNeedGroup[ID] = new NeedGroup(ID);
                 }
@@ -1121,7 +1121,7 @@ namespace Andja.Controller {
                 }
 
                 _structurePrototypeDatas[id] = sspd;
-                _structurePrototypes[id] = new ServiceStructure(id);
+                _structurePrototypes[id] = new ServiceStructure(id, sspd);
             }
         }
 
@@ -1408,7 +1408,7 @@ namespace Andja.Controller {
                     fi.SetValue(data, items);
                     continue;
                 }
-                if (fi.FieldType == typeof(NeedGroupPrototypData)) {
+                if (fi.FieldType == typeof(NeedGroupPrototypeData)) {
                     fi.SetValue(data, NodeToNeedGroupPrototypData(currentNode));
                     continue;
                 }

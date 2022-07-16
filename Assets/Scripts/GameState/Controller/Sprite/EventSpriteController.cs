@@ -60,7 +60,7 @@ namespace Andja.Controller {
             }
         }
 
-        internal void UpdateEventTileSprites(GameEvent gameEvent, float percantage) {
+        internal void UpdateEventTileSprites(GameEvent gameEvent, float Percentage) {
             throw new NotImplementedException();
         }
 

@@ -16,7 +16,7 @@ namespace Andja {
         private AsyncOperation aso;
         public Text percentText;
         public Slider percentBar;
-        public int percantage = 0;
+        public int Percentage = 0;
         public LoadingType Type;
         internal static bool IsLoading = false;
         private Stopwatch loadingStopWatch;
@@ -62,16 +62,16 @@ namespace Andja {
             }
             if (EditorController.IsEditor == false) {
                 if (SaveController.IsLoadingSave) {
-                    float mapGenValue = MapGenerator.Instance != null ? MapGenerator.Instance.GeneratedProgressPercantage : 1;
-                    percantage = (int)(99 * (SceneLoadingProgress * 0.3f
+                    float mapGenValue = MapGenerator.Instance != null ? MapGenerator.Instance.GeneratedProgressPercentage : 1;
+                    Percentage = (int)(99 * (SceneLoadingProgress * 0.3f
                         + mapGenValue * 0.2f
                         + SaveController.Instance.loadingPercentage * 0.2f
                         + TileSpriteController.CreationPercentage * 0.3));
                 }
                 else {
-                    percantage = (int)(100 * (SceneLoadingProgress * 0.7f + MapGenerator.Instance.GeneratedProgressPercantage * 0.3f));
+                    Percentage = (int)(100 * (SceneLoadingProgress * 0.7f + MapGenerator.Instance.GeneratedProgressPercentage * 0.3f));
                 }
-                SetPercantage(percantage);
+                SetPercentage(Percentage);
                 //First wait for MapGeneration
                 if (MapGenerator.Instance != null && MapGenerator.Instance.IsDone == false) {
                     return;
@@ -91,13 +91,13 @@ namespace Andja {
                 aso.allowSceneActivation = true;
             }
             else {
-                percantage = (int)(SceneLoadingProgress * 100);
+                Percentage = (int)(SceneLoadingProgress * 100);
                 if (MapGenerator.Instance != null) {
-                    percantage = (int)(MapGenerator.Instance.GeneratedProgressPercantage * 100 * 0.7f + percantage * 0.3f);
-                    SetPercantage(percantage);
+                    Percentage = (int)(MapGenerator.Instance.GeneratedProgressPercentage * 100 * 0.7f + Percentage * 0.3f);
+                    SetPercentage(Percentage);
                 }
                 else
-                    SetPercantage(percantage);
+                    SetPercentage(Percentage);
                 if (EditorController.Generate && MapGenerator.Instance.IsDone == false) {
                     return;
                 }
@@ -107,9 +107,9 @@ namespace Andja {
             }
         }
 
-        private void SetPercantage(int percantage) {
-            percentText.text = percantage + "%";
-            percentBar.value = percantage / 100f;
+        private void SetPercentage(int Percentage) {
+            percentText.text = Percentage + "%";
+            percentBar.value = Percentage / 100f;
         }
 
         private static void ClearConsole() {

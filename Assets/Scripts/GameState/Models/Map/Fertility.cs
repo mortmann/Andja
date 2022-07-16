@@ -20,14 +20,13 @@ namespace Andja.Model {
         }
 
         public float GetCurrentWeight(int maximumSelect) {
-            return Mathf.Clamp(percentageOfIslands - generated / maximumSelect, 0.01f, 1);
+            return Mathf.Clamp(percentageOfIslands - _generated / (float)maximumSelect, 0.01f, 1);
         }
 
-        private int generated;
-
+        [Ignore] private int _generated;
         public float Select(int maximumSelect) {
             float old = GetCurrentWeight(maximumSelect);
-            generated++;
+            _generated++;
             return old - GetCurrentWeight(maximumSelect);
         }
     }
@@ -36,31 +35,20 @@ namespace Andja.Model {
     public class Fertility : IComparable<Fertility>, IEqualityComparer<Fertility> {
         [JsonPropertyAttribute] public string ID;
 
-        protected FertilityPrototypeData _prototypData;
+        private FertilityPrototypeData _prototypeData;
 
-        public FertilityPrototypeData Data {
-            get {
-                if (_prototypData == null) {
-                    _prototypData = PrototypController.Instance.GetFertilityPrototypDataForID(ID);
-                }
-                return _prototypData;
-            }
-        }
+        public FertilityPrototypeData Data => _prototypeData ??= PrototypController.Instance.GetFertilityPrototypDataForID(ID);
 
-        public string Name {
-            get { return Data.Name; }
-        }
+        public string Name => Data.Name;
 
-        public Climate[] Climates {
-            get { return Data.climates; }
-        }
+        public Climate[] Climates => Data.climates;
 
         public Fertility() {
         }
 
         public Fertility(string ID, FertilityPrototypeData fpd) {
             this.ID = ID;
-            this._prototypData = fpd;
+            this._prototypeData = fpd;
         }
 
         #region IComparable implementation
@@ -84,8 +72,7 @@ namespace Andja.Model {
         #endregion IEqualityComparer implementation
 
         public override bool Equals(object obj) {
-            Fertility f = obj as Fertility;
-            if (f == null)
+            if (!(obj is Fertility f))
                 return false;
             return f.ID == ID;
         }
@@ -110,7 +97,7 @@ namespace Andja.Model {
             fertilities = new List<Fertility>(required);
         }
 
-        public bool Fullfills(Fertility fert) {
+        public bool Fulfills(Fertility fert) {
             return fertilities.Contains(fert);
         }
     }

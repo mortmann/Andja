@@ -278,9 +278,9 @@ public class UnitInventoryTest {
     }
 
     [Test]
-    public void GetFilledPercantage() {
+    public void GetFilledPercentage() {
         inventory.AddItem(ItemProvider.Wood_N(INVENTORY_MAX_ITEM_AMOUNT / 2));
-        Assert.AreEqual(0.5f, inventory.GetFilledPercantage());
+        Assert.AreEqual(0.5f, inventory.GetFilledPercentage());
     }
     [Test]
     public void AddInventory() {

@@ -15,7 +15,7 @@ namespace Andja.Model {
         //this can specify which fertility is required to be active
         public Fertility fertility;
         //how many tile have to be empty when no growable is present
-        public float fullfillmentPercantage = 0.9f; 
+        public float fulfillmentPercentage = 0.9f; 
     }
 
     [JsonObject(MemberSerialization.OptIn)]
@@ -36,7 +36,7 @@ namespace Andja.Model {
         public int WorkingTilesCount;
         private List<GrowableStructure> _workingGrowables;
         public override float Progress => CalculateProgress();
-        public float FullfillmentPercentage => FarmData.fullfillmentPercantage;
+        public float FulfillmentPercentage => FarmData.fulfillmentPercentage;
         public override float TotalProgress => ProduceTime * NeededHarvestForProduce;
 
         private FarmPrototypeData _farmData;
@@ -100,7 +100,7 @@ namespace Andja.Model {
 
         public void DoWorkNoGrowable(float deltaTime) {
             ProduceTimer += deltaTime * Efficiency
-                                * Mathf.Clamp01((float)WorkingTilesCount / (RangeTiles.Count * FullfillmentPercentage));
+                                * Mathf.Clamp01((float)WorkingTilesCount / (RangeTiles.Count * FulfillmentPercentage));
             if (!(ProduceTimer >= ProduceTime)) return;
             ProduceTimer = 0;
             AddHarvastable();

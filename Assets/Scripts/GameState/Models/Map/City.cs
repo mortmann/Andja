@@ -93,7 +93,7 @@ namespace Andja.Model {
         public void SetTaxForPopulationLevel(int structureLevel, float percentage) {
             if (IsWilderness())
                 return;
-            _populationLevels[structureLevel].SetTaxPercantage(percentage);
+            _populationLevels[structureLevel].SetTaxPercentage(percentage);
         }
 
         public bool AddTradeItem(TradeItem ti) {
@@ -116,12 +116,8 @@ namespace Andja.Model {
             ItemIDtoTradeItem.Remove(ti.ItemId);
         }
 
-        public bool HasAnythingOfItems(Item[] buildingItems) {
-            foreach (Item i in buildingItems) {
-                if (HasAnythingOfItem(i) == false)
-                    return false;
-            }
-            return true;
+        public bool HasAnythingOfItems(Item[] items) {
+            return items.All(HasAnythingOfItem);
         }
 
         public PopulationLevel GetPopulationLevel(int structureLevel) {
@@ -160,33 +156,33 @@ namespace Andja.Model {
             Setup();
             Inventory.Load();
             foreach (Structure item in Structures) {
-                if (item == null) {
-                    Debug.LogError("Missing structure?");
-                    continue;
-                }
-                if (item is MarketStructure m) {
-                    MarketStructures.Add(m);
-                }
-                if (item is WarehouseStructure) {
-                    Warehouse = (WarehouseStructure)item;
-                }
-                else
-                if (item is HomeStructure) {
-                    _homes.Add((HomeStructure)item);
+                switch (item)
+                {
+                    case null:
+                        Debug.LogError("Missing structure?");
+                        continue;
+                    case MarketStructure marketStructure:
+                        MarketStructures.Add(marketStructure);
+                        if (marketStructure is WarehouseStructure warehouse)
+                            Warehouse = warehouse;
+                        break;
+                    case HomeStructure home:
+                        _homes.Add(home);
+                        break;
                 }
                 item.City = this;
                 item.Load();
             }
-            if (IsWilderness() == false) {
-                for (int i = _populationLevels.Count - 1; i >= 0; i--) {
-                    if (_populationLevels[i].Exists() == false) {
-                        _populationLevels.Remove(_populationLevels[i]);
-                        continue;
-                    }
-                    _populationLevels[i].Load(this);
+
+            if (IsWilderness()) return Structures;
+            for (int i = _populationLevels.Count - 1; i >= 0; i--) {
+                if (_populationLevels[i].Exists() == false) {
+                    _populationLevels.Remove(_populationLevels[i]);
+                    continue;
                 }
-                PlayerController.Instance.GetPlayer(PlayerNumber).OnCityCreated(this);
+                _populationLevels[i].Load(this);
             }
+            PlayerController.Instance.GetPlayer(PlayerNumber).OnCityCreated(this);
             return Structures;
         }
 
@@ -213,7 +209,7 @@ namespace Andja.Model {
         public void CalculateIncome() {
             Income = 0;
             foreach (PopulationLevel pl in _populationLevels) {
-                Income += pl.GetTaxIncome(this);
+                Income += pl.GetTaxIncome();
             }
         }
 
@@ -241,18 +237,21 @@ namespace Andja.Model {
                 //			Debug.LogError ("Adding a structure that already belongs to this city.");
                 return;
             }
-            if (str is HomeStructure) {
-                _homes?.Add((HomeStructure)str);
-            }
-            if (str is MarketStructure m) {
-                MarketStructures?.Add(m);
-            }
-            if (str is WarehouseStructure) {
-                if (Warehouse != null && Warehouse.buildID != str.buildID) {
-                    Debug.LogError("There should be only one Warehouse per City! ");
-                    return;
-                }
-                Warehouse = (WarehouseStructure)str;
+            switch (str)
+            {
+                case HomeStructure home:
+                    _homes?.Add(home);
+                    break;
+                case MarketStructure m:
+                    MarketStructures?.Add(m);
+                    if (str is WarehouseStructure warehouse) {
+                        if (Warehouse != null && Warehouse.buildID != str.buildID) {
+                            Debug.LogError("There should be only one Warehouse per City! ");
+                            return;
+                        }
+                        Warehouse = warehouse;
+                    }
+                    break;
             }
             Structures.Add(str);
             _cbStructureAdded?.Invoke(str);
@@ -260,11 +259,10 @@ namespace Andja.Model {
 
         private void UpdateNeeds(float deltaTime) {
             _useTickTimer -= deltaTime;
-            if (_useTickTimer <= 0) {
-                _useTickTimer = UseTick;
-                foreach (PopulationLevel pop in _populationLevels) {
-                    pop.FullfillNeedsAndCalcHappiness(this);
-                }
+            if ((_useTickTimer <= 0) == false) return;
+            _useTickTimer = UseTick;
+            foreach (PopulationLevel pop in _populationLevels) {
+                pop.FulfillNeedsAndCalcHappiness();
             }
         }
 
@@ -300,9 +298,7 @@ namespace Andja.Model {
             tiles.RemoveWhere(x => x == null || x.Type == TileType.Ocean);
             foreach (Tile t in tiles) {
                 t.City = this;
-                if (AIController._cityToCurrentSpaceValueTiles != null
-                    && AIController._cityToCurrentSpaceValueTiles[this].ContainsKey(t) == false)
-                    AIController._cityToCurrentSpaceValueTiles[this].TryAdd(t, new TileValue(t, Vector2.one, Vector2.one));
+                AIController.UpdateCityCurrentSpaceValue(this, t);
             }
             foreach (Tile t in tiles) {
                 AddTile(t);
@@ -338,7 +334,7 @@ namespace Andja.Model {
             }
 
             if (GetPopulationLevel(level).populationCount == 0)
-                TempHomeUpgradeFixFullfillNeedsAndCalcHappiness(level);
+                TempHomeUpgradeFixFulfillNeedsAndCalcHappiness(level);
             _populationLevels[level].AddPeople(count);
         }
 
@@ -467,10 +463,7 @@ namespace Andja.Model {
         }
 
         public int TradeFromShip(Unit u, Item getTrade, int amount = 50) {
-            if (getTrade == null) {
-                return 0;
-            }
-            return u.inventory.MoveItem(Inventory, getTrade, amount);
+            return getTrade == null ? 0 : u.inventory.MoveItem(Inventory, getTrade, amount);
         }
 
         public bool RemoveTradeItem(Item item) {
@@ -533,7 +526,7 @@ namespace Andja.Model {
             return _populationLevels[level].Happiness;
         }
 
-        public List<NeedGroup> GetPopulationNeedGroups(int level) {
+        public List<INeedGroup> GetPopulationNeedGroups(int level) {
             return _populationLevels[level].AllNeedGroupList;
         }
 
@@ -649,7 +642,7 @@ namespace Andja.Model {
             return _populationLevels.Sum(level => item.Data.TotalUsagePerLevel[level.Level] * level.populationCount);
         }
 
-        public bool GetOwnerHasEnoughMoney(int buildCost) {
+        public bool HasOwnerEnoughMoney(int buildCost) {
             return GetOwner().HasEnoughMoney(buildCost);
         }
 
@@ -657,8 +650,16 @@ namespace Andja.Model {
             GetOwner().ReduceTreasure(buildCost);
         }
 
-        private void TempHomeUpgradeFixFullfillNeedsAndCalcHappiness(int level) {
-            GetPopulationLevel(level).FullfillNeedsAndCalcHappiness(this);
+        private void TempHomeUpgradeFixFulfillNeedsAndCalcHappiness(int level) {
+            GetPopulationLevel(level).FulfillNeedsAndCalcHappiness();
+        }
+
+        public bool HasOwnerUnlockedAllNeeds(int populationLevel) {
+            return GetOwner().HasUnlockedAllNeeds(populationLevel);
+        }
+
+        public float GetTaxPercentage(int populationLevel) {
+            return GetPopulationLevel(populationLevel).taxPercentage;
         }
     }
 }

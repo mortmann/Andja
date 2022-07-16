@@ -26,7 +26,7 @@ namespace Andja.Model {
         void SetTaxForPopulationLevel(int structureLevel, float percentage);
         bool AddTradeItem(TradeItem ti);
         void DeleteTradeItem(TradeItem ti);
-        bool HasAnythingOfItems(Item[] buildingItems);
+        bool HasAnythingOfItems(Item[] items);
         PopulationLevel GetPopulationLevel(int structureLevel);
         int GetPopulationLevel();
         PopulationLevel GetPreviousPopulationLevel(int level);
@@ -49,6 +49,7 @@ namespace Andja.Model {
         bool HasEnoughOfItem(Item item);
         bool HasAnythingOfItem(Item item);
         bool IsWilderness();
+        bool HasOwnerUnlockedAllNeeds(int populationLevel);
 
         /// <summary>
         /// Ship buys from city means
@@ -82,7 +83,7 @@ namespace Andja.Model {
         void RemoveRoute(Route route);
         void RemoveStructure(Structure structure);
         float GetHappinessForCitizenLevel(int level);
-        List<NeedGroup> GetPopulationNeedGroups(int level);
+        List<INeedGroup> GetPopulationNeedGroups(int level);
         void RemoveTiles(IEnumerable<Tile> tiles);
         void Destroy();
         void RegisterCityDestroy(Action<ICity> callbackfunc);
@@ -90,6 +91,7 @@ namespace Andja.Model {
         void RegisterStructureAdded(Action<Structure> callbackfunc);
         void UnregisterStructureAdded(Action<Structure> callbackfunc);
         void RegisterStructureRemove(Action<Structure> callbackfunc);
+        float GetTaxPercentage(int populationLevel);
         void UnregisterStructureRemove(Action<Structure> callbackfunc);
         void RegisterTileRemove(Action<ICity, Tile> callbackfunc);
         void UntegisterTileRemove(Action<ICity, Tile> callbackfunc);
@@ -99,7 +101,7 @@ namespace Andja.Model {
         Player GetOwner();
         string ToString();
         float GetPopulationItemUsage(Item item);
-        bool GetOwnerHasEnoughMoney(int nextLevelBuildCost);
+        bool HasOwnerEnoughMoney(int nextLevelBuildCost);
         void ReduceTreasureFromOwner(int nextLevelBuildCost);
     }
 }

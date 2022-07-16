@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using UnityEngine;
+using static Andja.Controller.AIController;
 
 namespace Andja.Controller {
 
@@ -370,6 +371,11 @@ namespace Andja.Controller {
                 else
                     Debug.LogError(item.ID + " Unlock Level is higher than levels " + item.Data.UnlockLevel);
             }
+        }
+
+        public static void UpdateCityCurrentSpaceValue(City city, Tile tile) {
+            if (_cityToCurrentSpaceValueTiles != null && _cityToCurrentSpaceValueTiles[city].ContainsKey(tile) == false)
+                _cityToCurrentSpaceValueTiles[city].TryAdd(tile, new TileValue(tile, Vector2.one, Vector2.one));
         }
     }
 

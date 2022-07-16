@@ -27,7 +27,7 @@ namespace Andja.UI.Model {
         private void AddEffect(Effect effect) {
             ShowToolTip image = Instantiate(SimpleImage);
             image.GetComponent<Image>().sprite = UISpriteController.GetIcon(effect.ID);
-            image.SetVariable(effect.EffectPrototypData, true);
+            image.SetVariable(effect.EffectPrototypeData, true);
             image.transform.SetParent(transform, false);
             effectToGO[effect] = image.gameObject;
         }

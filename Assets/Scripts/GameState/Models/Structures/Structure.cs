@@ -463,7 +463,7 @@ namespace Andja.Model {
         }
 
         public virtual bool InCityCheck(IEnumerable<Tile> tiles, int playerNumber) {
-            return tiles.Count(x => x.City?.PlayerNumber == playerNumber) >= tiles.Count() * GameData.nonCityTilesPercantage;
+            return tiles.Count(x => x.City?.PlayerNumber == playerNumber) >= tiles.Count() * GameData.nonCityTilesPercentage;
         }
 
         public void PlaceStructure(List<Tile> tiles, bool loading) {
@@ -648,24 +648,10 @@ namespace Andja.Model {
         }
 
         public List<RoadStructure> RoadsAroundStructure() {
-            //List<Tile> roads = new List<Tile>();
-            //foreach (Tile item in Tiles) {
-            //    foreach (Tile n in item.GetNeighbours()) {
-            //        if (n.Structure != null) {
-            //            if (n.Structure is RoadStructure) {
-            //                roads.Add(n);
-            //            }
-            //        }
-            //    }
-            //}
             return Roads;
         }
 
         public HashSet<Route> GetRoutes() {
-            //HashSet<Route> r = new HashSet<Route>();
-            //foreach(Tile t in RoadsAroundStructure()) {
-            //    r.Add(((RoadStructure)t.Structure).Route);
-            //}
             return Routes;
         }
 
@@ -718,7 +704,7 @@ namespace Andja.Model {
                 RepairHealth(change);
         }
         public bool Demolish(bool isGod = false) {
-            if (HasNegativEffect && isGod == false)
+            if (HasNegativeEffect && isGod == false)
                 return false; // we cannot just destroy structures that have a negative effect e.g. burning or illness or similar
             if (GameData.ReturnResources) {
                 //If return resources is on. 

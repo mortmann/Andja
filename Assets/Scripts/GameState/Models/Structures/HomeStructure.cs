@@ -21,13 +21,13 @@ namespace Andja.Model {
     [JsonObject(MemberSerialization.OptIn)]
     public class HomeStructure : TargetStructure {
 
-        public enum CitizienMoods { Mad, Neutral, Happy }
+        public enum CitizenMoods { Mad, Neutral, Happy }
 
         #region Serialize
 
         [JsonPropertyAttribute] public int People;
-        [JsonPropertyAttribute] private float _decTimer;
-        [JsonPropertyAttribute] private float _incTimer;
+        [JsonPropertyAttribute] protected float peopleDecreaseTimer;
+        [JsonPropertyAttribute] protected float peopleIncreaseTimer;
         [JsonPropertyAttribute] public bool IsAbandoned { get; protected set; }
 
         #endregion Serialize
@@ -36,17 +36,10 @@ namespace Andja.Model {
 
         protected HomePrototypeData _homeData;
 
-        public HomePrototypeData HomeData {
-            get {
-                if (_homeData == null) {
-                    _homeData = (HomePrototypeData)PrototypController.Instance.GetStructurePrototypDataForID(ID);
-                }
-                return _homeData;
-            }
-        }
+        public HomePrototypeData HomeData => _homeData ??= (HomePrototypeData)PrototypController.Instance.GetStructurePrototypDataForID(ID);
 
-        public CitizienMoods CurrentMood { get; protected set; }
-        private List<NeedStructure> _needStructures;
+        public CitizenMoods CurrentMood { get; protected set; }
+        protected List<NeedStructure> NeedStructures;
         public int MaxLivingSpaces => HomeData.maxLivingSpaces;
         public HomeStructure NextLevel => HomeData.nextLevel;
         public HomeStructure PrevLevel => HomeData.prevLevel;
@@ -55,14 +48,14 @@ namespace Andja.Model {
         public float DecreaseTime => CalculateRealValue(nameof(HomeData.decreaseTime), HomeData.decreaseTime);
 
         public override bool CanBeUpgraded => MaxLivingSpaces == People // is full
-                                && CurrentMood == CitizienMoods.Happy // still wants more People
+                                && CurrentMood == CitizenMoods.Happy // still wants more People
                                 && IsMaxLevel() == false // if there is smth to be upgraded to
                                 && base.CanBeUpgraded // set through xml prototype file
                                 && City.HasEnoughOfItems(NextLevel.BuildingItems) // city has enough items to build
-                                && City.GetOwner().HasEnoughMoney(NextLevel.BuildCost)
-                                && City.GetOwner().HasUnlockedAllNeeds(PopulationLevel); // player has enough money
+                                && City.HasOwnerEnoughMoney(NextLevel.BuildCost)
+                                && City.HasOwnerUnlockedAllNeeds(PopulationLevel); // player has enough money
 
-        internal List<NeedGroup> GetNeedGroups() {
+        internal List<INeedGroup> GetNeedGroups() {
             return City.GetPopulationNeedGroups(PopulationLevel);
         }
 
@@ -89,7 +82,7 @@ namespace Andja.Model {
         }
 
         public override void OnBuild() {
-            _needStructures = new List<NeedStructure>();
+            NeedStructures = new List<NeedStructure>();
             if (City.IsWilderness() == false) {
                 OnCityChange(this, null, City);
             }
@@ -105,65 +98,66 @@ namespace Andja.Model {
             RegisterOnOwnerChange(OnCityChange);
         }
 
-        internal float GetTaxPercantage() {
-            return City.GetPopulationLevel(PopulationLevel).taxPercantage;
+        internal float GetTaxPercentage() {
+            return City.GetTaxPercentage(PopulationLevel);
         }
 
         private void OnNeedStructureChange(Tile tile, NeedStructure type, bool add) {
             if (add) {
-                _needStructures.Add(type);
+                NeedStructures.Add(type);
             }
             else {
-                _needStructures.Remove(type);
+                NeedStructures.Remove(type);
             }
         }
 
         public override void OnUpdate(float deltaTime) {
-            if (City == null || City.IsWilderness()) {
+            if (City.IsWilderness()) {
                 //here the People are very unhappy and will leave veryfast
                 CloseExtraUI();
-                CurrentMood = CitizienMoods.Mad;
+                CurrentMood = CitizenMoods.Mad;
                 return;
             }
-
-            float summedFullfillment = 0f;
-            float summedImportance = 0;
-            bool needNotFullfilled = false;
-            foreach (NeedGroup ng in GetNeedGroups()) {
-                if (ng.IsUnlocked() == false)
-                    continue;
-                Tuple<float, bool> fullfill = ng.GetFullfillmentForHome(this);
-                summedFullfillment += fullfill.Item1;
-                summedImportance += ng.ImportanceLevel;
-                needNotFullfilled |= fullfill.Item2;
-            }
-            float percentage = summedFullfillment / summedImportance;
-
-            //Tax can offset some unhappines from missing stuff
-            //this needs to be balanced tho
-            //for now just 1:1 % from 1.5 to 0.5 happiness offset
-            float tax = Mathf.Clamp(City.GetPopulationLevel(PopulationLevel).taxPercantage, 0.5f, 1.5f);
-            percentage += 2f - Mathf.Clamp(tax * tax, 0.5f, 2);
-            percentage /= 2;
-            if (percentage > 0.9f && needNotFullfilled == false) {
-                CurrentMood = CitizienMoods.Happy;
-            }
-            else
-            if (percentage > 0.5) {
-                CloseExtraUI();
-                CurrentMood = CitizienMoods.Neutral;
-            }
-            else {
-                CloseExtraUI();
-                CurrentMood = CitizienMoods.Mad;
-            }
-            if (HasNegativEffect)
-                CurrentMood = CitizienMoods.Mad;
+            CalculateMood();
             UpdatePeopleChange(deltaTime);
         }
 
+        public void CalculateMood() {
+            float summedFulfillment = 0f;
+            float summedImportance = 0;
+            bool needNotFulfilled = false;
+            foreach (INeedGroup ng in GetNeedGroups()) {
+                if (ng.IsUnlocked() == false)
+                    continue;
+                Tuple<float, bool> fulfill = ng.GetFulfillmentForHome(this);
+                summedFulfillment += fulfill.Item1;
+                summedImportance += ng.ImportanceLevel;
+                needNotFulfilled |= fulfill.Item2;
+            }
+            float percentage = summedFulfillment / summedImportance;
+            //Tax can offset some unhappiness from missing stuff
+            //this needs to be balanced tho
+            //for now just 1:1 % from 1.5 to 0.5 happiness offset
+            float tax = Mathf.Clamp(GetTaxPercentage(), 0.5f, 1.5f);
+            percentage *= 2f - Mathf.Clamp(tax * tax, 0.5f, 2);
+
+            if (percentage <= 0.5 || HasNegativeEffect) {
+                CloseExtraUI();
+                CurrentMood = CitizenMoods.Mad;
+                return;
+            }
+            if (percentage > 0.9f && needNotFulfilled == false) {
+                CurrentMood = CitizenMoods.Happy;
+                return;
+            }
+            if (percentage > 0.5) {
+                CloseExtraUI();
+                CurrentMood = CitizenMoods.Neutral;
+            } 
+        }
+
         protected void TryToIncreasePeople() {
-            if (CurrentMood == CitizienMoods.Happy && People == MaxLivingSpaces) {
+            if (CurrentMood == CitizenMoods.Happy && People == MaxLivingSpaces) {
                 if (CanBeUpgraded) {
                     OpenExtraUI();
                     TryToUpgrade();
@@ -202,17 +196,17 @@ namespace Andja.Model {
                 base.OpenExtraUI();
         }
 
-        public bool IsStructureNeedFullfilled(Need need) {
+        public bool IsStructureNeedFulfilled(Need need) {
             if (!need.HasToReachPerRoad)
-                return need.IsSatisifiedThroughStructure(_needStructures.Where((x) => x.City == City).ToList());
+                return need.IsSatisfiedThroughStructure(NeedStructures.Where((x) => x.City == City).ToList());
             if (GetRoutes().Count == 0)
                 return false;
-            need.IsSatisifiedThroughStructure(_needStructures
+            need.IsSatisfiedThroughStructure(NeedStructures
                 .Where((x) => x.City == City && x.GetRoutes().Overlaps(GetRoutes())).ToList());
-            return need.IsSatisifiedThroughStructure(_needStructures.Where((x) => x.City == City).ToList());
+            return need.IsSatisfiedThroughStructure(NeedStructures.Where((x) => x.City == City).ToList());
         }
 
-        protected void OnCityChange(Structure str, ICity old, ICity newOne) {
+        public void OnCityChange(Structure str, ICity old, ICity newOne) {
             if (old != null && old.IsWilderness() == false) {
                 old.RemovePeople(PopulationLevel, People);
             }
@@ -223,34 +217,34 @@ namespace Andja.Model {
 
         protected void UpdatePeopleChange(float deltaTime) {
             switch (CurrentMood) {
-                case CitizienMoods.Mad:
+                case CitizenMoods.Mad:
                     if (IsAbandoned == true)
                         return;
-                    _incTimer = Mathf.Clamp(_incTimer - deltaTime, 0, IncreaseTime);
-                    _decTimer = Mathf.Clamp(_decTimer + deltaTime, 0, DecreaseTime);
+                    peopleIncreaseTimer = Mathf.Clamp(peopleIncreaseTimer - deltaTime, 0, IncreaseTime);
+                    peopleDecreaseTimer = Mathf.Clamp(peopleDecreaseTimer + deltaTime, 0, DecreaseTime);
                     break;
 
-                case CitizienMoods.Neutral:
+                case CitizenMoods.Neutral:
                     if (IsAbandoned == true)
                         return;
-                    _incTimer = Mathf.Clamp(_incTimer - deltaTime, 0, IncreaseTime);
-                    _decTimer = Mathf.Clamp(_decTimer - deltaTime, 0, DecreaseTime);
+                    peopleIncreaseTimer = Mathf.Clamp(peopleIncreaseTimer - deltaTime, 0, IncreaseTime);
+                    peopleDecreaseTimer = Mathf.Clamp(peopleDecreaseTimer - deltaTime, 0, DecreaseTime);
                     break;
 
-                case CitizienMoods.Happy:
-                    _incTimer = Mathf.Clamp(_incTimer + deltaTime, 0, IncreaseTime);
-                    _decTimer = Mathf.Clamp(_decTimer - deltaTime, 0, DecreaseTime);
+                case CitizenMoods.Happy:
+                    peopleIncreaseTimer = Mathf.Clamp(peopleIncreaseTimer + deltaTime, 0, IncreaseTime);
+                    peopleDecreaseTimer = Mathf.Clamp(peopleDecreaseTimer - deltaTime, 0, DecreaseTime);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
-            if (_incTimer >= IncreaseTime) {
+            if (peopleIncreaseTimer >= IncreaseTime) {
                 TryToIncreasePeople();
-                _incTimer = 0f;
+                peopleIncreaseTimer = 0f;
             }
-            if (_decTimer >= DecreaseTime) {
+            if (peopleDecreaseTimer >= DecreaseTime) {
                 TryToDecreasePeople();
-                _decTimer = 0f;
+                peopleDecreaseTimer = 0f;
             }
         }
 
@@ -265,7 +259,7 @@ namespace Andja.Model {
             if (City.HasEnoughOfItems(NextLevel.BuildingItems) == false) {
                 return false;
             }
-            if (City.GetOwnerHasEnoughMoney(NextLevel.BuildCost) == false) {
+            if (City.HasOwnerEnoughMoney(NextLevel.BuildCost) == false) {
                 return false;
             }
             CloseExtraUI();
@@ -275,7 +269,7 @@ namespace Andja.Model {
             City.ReduceTreasureFromOwner(NextLevel.BuildCost);
             OnUpgrade();
             City.AddPeople(PopulationLevel, People);
-            cbStructureChanged(this);
+            cbStructureChanged?.Invoke(this);
             return true;
         }
         protected override void OnUpgrade() {
@@ -288,7 +282,7 @@ namespace Andja.Model {
             _homeData = null;
             _prototypData = null;
             City.AddPeople(PopulationLevel, People);
-            cbStructureChanged(this);
+            cbStructureChanged?.Invoke(this);
         }
 
         public bool IsMaxLevel() {

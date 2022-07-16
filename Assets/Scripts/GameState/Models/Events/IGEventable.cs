@@ -8,7 +8,7 @@ namespace Andja.Model {
     public interface IIGEventable {
         IReadOnlyList<Effect> Effects { get; }
         TargetGroup TargetGroups { get; }
-        bool HasNegativEffect { get; }
+        bool HasNegativeEffect { get; }
         string GetID();
         void RegisterOnEvent(Action<GameEvent> create, Action<GameEvent> ending);
         int GetPlayerNumber();
@@ -68,7 +68,7 @@ namespace Andja.Model {
             return null;
         } // only needs to get changed WHEN there is diffrent ids
 
-        public bool HasNegativEffect { get; protected set; }
+        public bool HasNegativeEffect { get; protected set; }
 
         /// <summary>
         /// TODO: think about ways to make it better
@@ -183,8 +183,8 @@ namespace Andja.Model {
                     _updateEffectList = new List<Effect>();
                 UpdateEffectList.Add(effect);
             }
-            if (effect.IsNegativ)
-                HasNegativEffect = true;
+            if (effect.IsNegative)
+                HasNegativeEffect = true;
             return true;
         }
 
@@ -221,8 +221,8 @@ namespace Andja.Model {
                     VariableNameToFloat[effect.NameOfVariable + effect.ModifierType] -= effect.Change;
                 }
             }
-            if (effect.IsNegativ)
-                HasNegativEffect = _effects.Find(x => x.IsNegativ) != null;
+            if (effect.IsNegative)
+                HasNegativeEffect = _effects.Exists(x => x.IsNegative);
             return true;
         }
 

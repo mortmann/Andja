@@ -69,7 +69,7 @@ namespace Andja.Model {
 
         public void AddRoadTile(Tile tile) {
             Tiles.Add(tile);
-            Grid.ChangeNode(tile, Walkable.Normal);
+            Grid?.ChangeNode(tile, Walkable.Normal);
         }
 
         public void RemoveRoadTile(Tile tile) {

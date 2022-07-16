@@ -11,8 +11,8 @@ namespace Andja.Model {
         public int LEVEL; // cant be negative!
         public string iconSpriteName;
         public int taxPerPerson = 1;
-        [Ignore] public HomeStructure HomeStructure { get; internal set; }
-        internal List<NeedGroup> GetCopyGroupNeedList() {
+        [Ignore] public HomeStructure HomeStructure { get; set; }
+        public List<NeedGroup> GetCopyGroupNeedList() {
             List<NeedGroup> newList = new List<NeedGroup>();
             if (needGroupList == null)
                 return newList;
@@ -31,39 +31,32 @@ namespace Andja.Model {
     public class PopulationLevel {
 
         [JsonPropertyAttribute] public int Level;
-        [JsonPropertyAttribute] List<NeedGroup> NeedGroupList;
+        [JsonPropertyAttribute] private List<NeedGroup> _needGroupList;
         [JsonPropertyAttribute] public PopulationLevel previousLevel;
-        [JsonPropertyAttribute] public float taxPercantage = 1f;
-        private ICity city;
+        [JsonPropertyAttribute] public float taxPercentage = 1f;
+        private ICity _city;
         public int populationCount = 0;
         public string IconSpriteName => Data.iconSpriteName;
 
-        protected PopulationLevelPrototypData _Data;
-        public List<NeedGroup> AllNeedGroupList;
+        private PopulationLevelPrototypData _data;
+        public List<INeedGroup> AllNeedGroupList;
 
-        public PopulationLevelPrototypData Data {
-            get {
-                if (_Data == null) {
-                    _Data = PrototypController.Instance.GetPopulationLevelPrototypDataForLevel(Level);
-                }
-                return _Data;
-            }
-        }
+        public PopulationLevelPrototypData Data => _data ??= PrototypController.Instance.GetPopulationLevelPrototypDataForLevel(Level);
 
-        private Action<Need> cbNeedUnlockAdded;
+        private Action<Need> _cbNeedUnlockAdded;
         public int TaxPerPerson => Data.taxPerPerson;
-        public float Happiness { get; internal set; }
+        public float Happiness { get; protected set; }
 
         public PopulationLevel() {
         }
 
         public PopulationLevel(int level, ICity city, PopulationLevel previous) {
             this.Level = level;
-            NeedGroupList = Data.GetCopyGroupNeedList();
-            AllNeedGroupList = new List<NeedGroup>(NeedGroupList);
+            _needGroupList = Data.GetCopyGroupNeedList();
+            AllNeedGroupList = new List<INeedGroup>(_needGroupList);
             AllNeedGroupList.AddRange(GetAllPreviousNeedGroups());
             this.previousLevel = previous;
-            this.city = city;
+            this._city = city;
             city.GetOwner().RegisterNeedUnlock(OnUnlockedNeed);
         }
 
@@ -71,87 +64,81 @@ namespace Andja.Model {
             this.Level = pl.Level;
         }
 
-        internal void FullfillNeedsAndCalcHappiness(ICity city) {
-            float fullfilled = 0;
-            float summedImportance = 0;
-            foreach (NeedGroup group in AllNeedGroupList) {
-                group.CalculateFullfillment(city, this);
-                fullfilled += group.LastFullfillmentPercentage;
-                summedImportance += group.ImportanceLevel;
+        public void FulfillNeedsAndCalcHappiness() {
+            foreach (INeedGroup group in AllNeedGroupList) {
+                group.CalculateFulfillment(_city, this);
             }
-            fullfilled /= summedImportance;
-            //Debug.Log("City " + city.Name + " - " + Level + " Fullfilled: " + fullfilled);
+            //Debug.Log("City " + city.Name + " - " + Level + " Fulfilled: " + Fulfilled);
             //TODO: make it trend towards the happiness? so it doesnt swing like crazy
         }
 
-        internal void SetTaxPercantage(float percantage) {
-            taxPercantage = Mathf.Clamp(percantage, 0, 100); //not real restrictions but just a complete fuckup prevention
+        public void SetTaxPercentage(float percentage) {
+            taxPercentage = Mathf.Clamp(percentage, 0, 100); //not real restrictions but just a complete fuckup prevention
         }
 
-        public int GetTaxIncome(ICity city) {
-            return Mathf.FloorToInt(taxPercantage * TaxPerPerson * populationCount);
+        public int GetTaxIncome() {
+            return Mathf.FloorToInt(taxPercentage * TaxPerPerson * populationCount);
         }
 
-        internal void RegisterNeedUnlock(Action<Need> onNeedUnlock) {
-            cbNeedUnlockAdded += onNeedUnlock;
+        public void RegisterNeedUnlock(Action<Need> onNeedUnlock) {
+            _cbNeedUnlockAdded += onNeedUnlock;
         }
 
-        internal void UnregisterNeedUnlock(Action<Need> onNeedUnlock) {
-            cbNeedUnlockAdded -= onNeedUnlock;
+        public void UnregisterNeedUnlock(Action<Need> onNeedUnlock) {
+            _cbNeedUnlockAdded -= onNeedUnlock;
         }
 
-        internal void AddPeople(int count) {
+        public void AddPeople(int count) {
             //IF there is better way to stop People after upgrading -- change this 
             populationCount += count;
-            city.GetOwner().UpdateMaxPopulationCount(Level, populationCount);
+            _city.GetOwner().UpdateMaxPopulationCount(Level, populationCount);
         }
 
-        internal void RemovePeople(int count) {
+        public void RemovePeople(int count) {
             populationCount -= count;
         }
 
         public List<NeedGroup> GetAllPreviousNeedGroups() {
             List<NeedGroup> temp = new List<NeedGroup>();
-            if (NeedGroupList != null) {
-                temp.AddRange(NeedGroupList);
+            if (_needGroupList != null) {
+                temp.AddRange(_needGroupList);
             }
             if (previousLevel != null)
                 temp.AddRange(previousLevel.GetAllPreviousNeedGroups());
             return temp;
         }
 
-        internal PopulationLevel Clone() {
+        public PopulationLevel Clone() {
             return new PopulationLevel(this);
         }
 
-        internal void Load(ICity city) {
-            this.city = city;
+        public void Load(ICity city) {
+            this._city = city;
             if (previousLevel == null || previousLevel.Exists() == false)
                 previousLevel = city.GetPreviousPopulationLevel(Level);
-            AllNeedGroupList = new List<NeedGroup>(NeedGroupList);
+            AllNeedGroupList = new List<INeedGroup>(_needGroupList);
             AllNeedGroupList.AddRange(GetAllPreviousNeedGroups());
             UpdateNeeds();
         }
 
         private void UpdateNeeds() {
-            if (NeedGroupList == null)
-                NeedGroupList = new List<NeedGroup>();
-            for (int i = 0; i < NeedGroupList.Count; i++) {
-                if (NeedGroupList[i].ID == null || Data.needGroupList.Find(x => x.ID == NeedGroupList[i].ID) == null) {
-                    NeedGroupList.Remove(NeedGroupList[i]);
+            _needGroupList ??= new List<NeedGroup>();
+            for (int i = 0; i < _needGroupList.Count; i++) {
+                if (_needGroupList[i].ID == null || Data.needGroupList.Find(x => x.ID == _needGroupList[i].ID) == null) {
+                    _needGroupList.Remove(_needGroupList[i]);
                 }
             }
             if (Data.needGroupList == null)
                 return;
-            Player player = PlayerController.Instance.GetPlayer(city.PlayerNumber);
+            Player player = PlayerController.Instance.GetPlayer(_city.PlayerNumber);
             player.RegisterNeedUnlock(OnUnlockedNeed);
             foreach (NeedGroup ng in Data.needGroupList) {
-                NeedGroup inList = NeedGroupList.Find(x => x.ID == ng.ID);
+                NeedGroup inList = _needGroupList.Find(x => x.ID == ng.ID);
                 if (inList == null) {
                     inList = new NeedGroup(ng.ID);
-                    NeedGroupList.Add(inList);
+                    _needGroupList.Add(inList);
                 }
-                inList.UpdateNeeds(city.GetOwner());
+                inList.UpdateNeeds(_city.GetOwner());
             }
             foreach (string needID in player.UnlockedItemNeeds[Level]) {
                 OnUnlockedNeed(new Need(needID));
@@ -161,14 +148,14 @@ namespace Andja.Model {
             }
         }
 
-        internal bool Exists() {
+        public bool Exists() {
             return Data != null;
         }
 
         private void OnUnlockedNeed(Need need) {
             if (need.StartLevel != Level)
                 return;
-            NeedGroup ng = NeedGroupList.Find(x => x.ID == need.Group.ID);
+            NeedGroup ng = _needGroupList.Find(x => x.ID == need.Group.ID);
             if (ng == null) {
                 Debug.LogError("UnlockedNeed " + need.ID + " doesnt have the right group inside this level " + Level);
                 return;
@@ -176,7 +163,7 @@ namespace Andja.Model {
             if (ng.HasNeed(need))
                 return;
             Need clone = need.Clone();
-            cbNeedUnlockAdded?.Invoke(clone);
+            _cbNeedUnlockAdded?.Invoke(clone);
             ng.AddNeed(clone);
         }
 

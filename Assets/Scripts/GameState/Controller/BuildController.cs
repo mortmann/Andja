@@ -307,7 +307,7 @@ namespace Andja.Controller {
             //it anyway? that means enough resources and enough Money
             Inventory inv = null;
             if (loading == false && buildInWilderness == false) {
-                if(tiles[0].Island.HasNegativEffect) {
+                if(tiles[0].Island.HasNegativeEffect) {
                     BuildError(MapErrorMessage.CanNotBuildHere, tiles, structure, playerNumber);
                     return false;
                 }

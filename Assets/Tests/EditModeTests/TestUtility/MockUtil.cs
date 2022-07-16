@@ -6,6 +6,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class MockUtil {
+    public Mock<ITestCallback> Callbacks;
+
     public Mock<IIsland> IslandMock;
     public Mock<IWorld> WorldMock;
     public Mock<ICity> CityMock;
@@ -20,6 +22,7 @@ public class MockUtil {
     public Island WorldIsland;
     Dictionary<(int, int), Tile> tiles = new Dictionary<(int, int), Tile>();
     public MockUtil() {
+        Callbacks = new Mock<ITestCallback>();
         PrototypControllerMock = new Mock<IPrototypController>();
         PrototypControllerMock.Setup(p => p.GetCopieOfAllItems()).Returns(new Dictionary<string, Item>() {
             { ItemProvider.Brick.ID, ItemProvider.Brick.Clone() },

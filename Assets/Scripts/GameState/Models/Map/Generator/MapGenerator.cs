@@ -42,7 +42,7 @@ namespace Andja.Model.Generator {
         private ConcurrentBag<EditorController.SaveIsland> loadedIslandsList;
         private float placeProgress;
 
-        public float GeneratedProgressPercantage {
+        public float GeneratedProgressPercentage {
             get {
                 //if (started == false && EditorController.IsEditor ==false)
                 //    return 0;
@@ -176,10 +176,10 @@ namespace Andja.Model.Generator {
             }
             if (hasToUseIslands == null)
                 hasToUseIslands = newChoosenIslands;
-            float percantage = 0.225f;
+            float Percentage = 0.225f;
             float overlap = 0.025f;
-            float percantageOverlap = percantage - overlap;
-            float smallHeight = percantage * Height;
+            float PercentageOverlap = Percentage - overlap;
+            float smallHeight = Percentage * Height;
             WarmIslandSpace = new Rect {
                 x = 0,
                 y = 0,
@@ -188,9 +188,9 @@ namespace Andja.Model.Generator {
             };
             MiddleIslandSpace = new Rect {
                 x = 0,
-                y = percantageOverlap * Height,
+                y = PercentageOverlap * Height,
                 width = Width,
-                yMax = (1 - percantage) * Height
+                yMax = (1 - Percentage) * Height
             };
             ColdIslandSpace = new Rect {
                 x = 0,

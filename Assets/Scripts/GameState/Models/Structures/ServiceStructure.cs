@@ -2,6 +2,7 @@
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace Andja.Model {
@@ -45,23 +46,16 @@ namespace Andja.Model {
         public bool HasToEnterWorkStructure => ServiceData.hasToEnterWorkStructure;
         public override bool IsActiveAndWorking => base.IsActiveAndWorking && CanWork;
         public Func<Structure, float, bool> WorkOnTarget { get; protected set; }
-        private Action<Structure> todoOnNewTarget;
-        private Action<Structure> onTargetChanged;
-        private Action<Structure, IWarfare> onTargetDestroy;
-        private Action<Structure> onSelfDestroy;
+        private Action<Structure> _todoOnNewTarget;
+        private Action<Structure> _onTargetChanged;
+        private Action<Structure, IWarfare> _onTargetDestroy;
+        private Action<Structure> _onSelfDestroy;
          
-        private Action<IGEventable, Effect, bool> onTargetEffectChange;
+        private Action<IGEventable, Effect, bool> _onTargetEffectChange;
 
-        protected ServiceStructurePrototypeData _serviceData;
+        protected ServiceStructurePrototypeData serviceData;
         //TODO: make it possible service structure to need certain items every time unit to function(otherwise inactive)
-        public ServiceStructurePrototypeData ServiceData {
-            get {
-                if (_serviceData == null) {
-                    _serviceData = (ServiceStructurePrototypeData)PrototypController.Instance.GetStructurePrototypDataForID(ID);
-                }
-                return _serviceData;
-            }
-        }
+        public ServiceStructurePrototypeData ServiceData => serviceData ??= (ServiceStructurePrototypeData)PrototypController.Instance.GetStructurePrototypDataForID(ID);
 
 
         public ServiceStructure() {
@@ -71,8 +65,9 @@ namespace Andja.Model {
             BaseCopyData(s);
         }
 
-        public ServiceStructure(string iD) {
+        public ServiceStructure(string iD, ServiceStructurePrototypeData sspd) {
             ID = iD;
+            serviceData = sspd;
         }
 
         public override Structure Clone() {
@@ -91,60 +86,56 @@ namespace Andja.Model {
 
                 case ServiceFunction.Repair:
                     WorkOnTarget = RepairStructure;
-                    todoOnNewTarget = RegisterOnStructureChange;
-                    onTargetChanged = CheckHealth;
-                    onTargetDestroy += UnregisterOnStructureChange;
-                    onTargetDestroy += RemoveFromJobs;
+                    _todoOnNewTarget = RegisterOnStructureChange;
+                    _onTargetChanged = CheckHealth;
+                    _onTargetDestroy += UnregisterOnStructureChange;
+                    _onTargetDestroy += RemoveFromJobs;
                     break;
 
                 case ServiceFunction.AddEffect:
                     //only needed when a structure can have a effect once else always add it
                     if (Array.Exists(EffectsOnTargets, element => element.IsUnique)) {
-                        todoOnNewTarget += RegisterOnStructureEffectChanged;
-                        onTargetDestroy += UnregisterOnStructureEffectChanged;
-                        onTargetEffectChange += CheckForMissingEffect;
+                        _todoOnNewTarget += RegisterOnStructureEffectChanged;
+                        _onTargetDestroy += UnregisterOnStructureEffectChanged;
+                        _onTargetEffectChange += CheckForMissingEffect;
                     }
-                    todoOnNewTarget += ImproveStructure;
-                    onSelfDestroy += RemoveEffect;
+                    _todoOnNewTarget += ImproveStructure;
+                    _onSelfDestroy += RemoveEffect;
                     break;
 
                 case ServiceFunction.RemoveEffect:
                     //what to do on new structure
                     WorkOnTarget = RemoveEffectOverTime;
-                    todoOnNewTarget = RegisterOnStructureEffectChanged;
+                    _todoOnNewTarget = RegisterOnStructureEffectChanged;
                     //what to do on effect on a target changed
-                    onTargetEffectChange += CheckEffect;
+                    _onTargetEffectChange += CheckEffect;
                     //what to do on structure gets destroyed
-                    onTargetDestroy += UnregisterOnStructureEffectChanged;
-                    onTargetDestroy += RemoveFromJobs;
+                    _onTargetDestroy += UnregisterOnStructureEffectChanged;
+                    _onTargetDestroy += RemoveFromJobs;
                     break;
 
                 case ServiceFunction.PreventEffect:
-                    todoOnNewTarget += RegisterOnStructureEffectChanged;
-                    onTargetEffectChange += PreventEffect;
+                    _todoOnNewTarget += RegisterOnStructureEffectChanged;
+                    _onTargetEffectChange += PreventEffect;
                     break;
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
             if(remainingUsageItems == null && UsageItems != null) {
                 remainingUsageItems = new float[UsageItems.Length];
             }
-            todoOnNewTarget += RegisterOnStructureDestroy;
-            foreach (Tile t in RangeTiles) {
-                if (t.Structure == null)
-                    continue;
+            _todoOnNewTarget += RegisterOnStructureDestroy;
+            foreach (var t in RangeTiles.Where(t => t.Structure != null)) {
                 if (SpecificRange != null) {
-                    foreach (Structure str in SpecificRange) {
-                        if (str.ID == t.Structure.ID) {
-                            todoOnNewTarget(t.Structure);
-                            break;
-                        }
+                    if (SpecificRange.Any(str => str.ID == t.Structure.ID)) {
+                        _todoOnNewTarget(t.Structure);
                     }
                 }
                 else {
-                    todoOnNewTarget(t.Structure);
-                    if(onTargetEffectChange != null && t.Structure.Effects != null) {
-                        foreach(Effect e in t.Structure.Effects) {
-                            onTargetEffectChange(t.Structure, e, true);
-                        }
+                    _todoOnNewTarget(t.Structure);
+                    if (_onTargetEffectChange == null || t.Structure.Effects == null) continue;
+                    foreach(Effect e in t.Structure.Effects) {
+                        _onTargetEffectChange(t.Structure, e, true);
                     }
                 }
             }
@@ -171,7 +162,7 @@ namespace Andja.Model {
         }
 
         private void RegisterOnStructureDestroy(Structure str) {
-            str.RegisterOnDestroyCallback(onTargetDestroy);
+            str.RegisterOnDestroyCallback(_onTargetDestroy);
         }
 
         private void CheckEffect(IGEventable eventable, Effect eff, bool started) {
@@ -199,25 +190,18 @@ namespace Andja.Model {
         }
 
         private void EnqueueJob(Structure structure) {
-            if (jobsToDo == null)
-                jobsToDo = new List<Structure>();
+            jobsToDo ??= new List<Structure>();
             jobsToDo.Add(structure);
         }
 
         private void OnAddedStructure(Structure obj) {
-            foreach (Tile t in obj.Tiles) {
-                if (RangeTiles.Contains(t)) {
-                    todoOnNewTarget(obj);
-                    return;
-                }
-            }
+            if (obj.Tiles.Any(t => RangeTiles.Contains(t)) == false) return;
+            _todoOnNewTarget(obj);
         }
 
         public bool RepairStructure(Structure str, float deltaTime) {
             str.RepairHealth(WorkSpeed * deltaTime);
-            if (str.CurrentHealth >= str.MaxHealth)
-                return true;
-            return false;
+            return str.CurrentHealth >= str.MaxHealth;
         }
 
         public void ImproveStructure(Structure str) {
@@ -300,8 +284,7 @@ namespace Andja.Model {
         private void SendOutWorkerIfCan() {
             if (jobsToDo == null || jobsToDo.Count == 0)
                 return;
-            if (workers == null)
-                workers = new List<Worker>();
+            workers ??= new List<Worker>();
             if(UsageItems != null) {
                 if (CanWork == false)
                     return;
@@ -309,15 +292,9 @@ namespace Andja.Model {
             if (workers.Count >= MaxNumberOfWorker) {
                 return;
             }
-            Structure s = null;
-            foreach (Structure str in jobsToDo) {
-                if (Function == ServiceFunction.Repair && str.HasNegativEffect)
-                    continue;
-                if (CanReachStructure(str) == false)
-                    continue;
-                s = str;
-                break;
-            }
+            Structure s = jobsToDo.Where(str => Function != ServiceFunction.Repair 
+                                                || str.HasNegativeEffect == false)
+                                  .FirstOrDefault(CanReachStructure);
             jobsToDo.Remove(s);
             Worker w = new Worker(this, s, WorkSpeed, ServiceData.workerID ?? "placeholder_road");
             World.Current.CreateWorkerGameObject(w);
@@ -325,19 +302,19 @@ namespace Andja.Model {
         }
 
         public void RegisterOnStructureChange(Structure str) {
-            str.RegisterOnChangedCallback(onTargetChanged);
+            str.RegisterOnChangedCallback(_onTargetChanged);
         }
 
         public void UnregisterOnStructureChange(Structure str, IWarfare destroyer) {
-            str.UnregisterOnChangedCallback(onTargetChanged);
+            str.UnregisterOnChangedCallback(_onTargetChanged);
         }
 
         public void RegisterOnStructureEffectChanged(Structure str) {
-            str.RegisterOnEffectChangedCallback(onTargetEffectChange);
+            str.RegisterOnEffectChangedCallback(_onTargetEffectChange);
         }
 
         public void UnregisterOnStructureEffectChanged(Structure str, IWarfare destroyer) {
-            str.UnregisterOnEffectChangedCallback(onTargetEffectChange);
+            str.UnregisterOnEffectChangedCallback(_onTargetEffectChange);
         }
 
         public void EffectCity() {
@@ -366,9 +343,7 @@ namespace Andja.Model {
                 }
             }
             if (RangeTiles != null) {
-                foreach (Tile t in RangeTiles) {
-                    if (t.Structure == null)
-                        continue;
+                foreach (var t in RangeTiles.Where(t => t.Structure != null)) {
                     if (SpecificRange != null) {
                         if (Array.Exists<Structure>(SpecificRange, x => t.Structure.ID == x.ID) == false) {
                             continue;
@@ -376,7 +351,7 @@ namespace Andja.Model {
                     }
                     UnregisterOnStructureChange(t.Structure, null);
                     UnregisterOnStructureEffectChanged(t.Structure, null);
-                    onSelfDestroy?.Invoke(t.Structure);
+                    _onSelfDestroy?.Invoke(t.Structure);
                 }
             }
             City.UnregisterStructureAdded(OnAddedStructure);
@@ -392,16 +367,14 @@ namespace Andja.Model {
                     }
                 }
             }
-            if(workers != null) {
-                for (int i = 0; i < workers.Count; i++) {
-                    workers[i].Load(this);
-                }
+            if (workers == null) return;
+            foreach (var worker in workers) {
+                worker.Load(this);
             }
-            
         }
         protected override void OnUpgrade() {
             base.OnUpgrade();
-            _serviceData = null;
+            serviceData = null;
         }
     }
 }

@@ -891,7 +891,7 @@ namespace Andja.Controller {
                 }
                 bool canBuild = dontOverrideTile && specialTileCheck && tileToCanBuild[tile];
                 canBuild &= EditorController.IsEditor || Structure.IsTileCityViable(tile, PlayerController.currentPlayerNumber);
-                canBuild &= tile.Island != null && tile.Island.HasNegativEffect == false;
+                canBuild &= tile.Island != null && tile.Island.HasNegativeEffect == false;
                 ShowTilePrefabOnTile(tile, canBuild ? TileHighlightType.Green : TileHighlightType.Red);
             }
         }

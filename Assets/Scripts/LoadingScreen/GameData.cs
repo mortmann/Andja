@@ -58,7 +58,7 @@ namespace Andja {
         public static float PirateAggroRange = 22.5f;
         public static float UnitAggroRange = 10f;
         public static float EffectTickTime = 1f;
-        public static float nonCityTilesPercantage = 0.5f;
+        public static float nonCityTilesPercentage = 0.5f;
 
 
         //Pirate Data -- get set by difficulty

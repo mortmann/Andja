@@ -60,7 +60,7 @@ namespace Andja.Controller {
         ItemPrototypeData GetItemPrototypDataForID(string ID);
         int GetMaxStructureLevelForStructureType(Type type);
         int GetNeedCountLevel(int level);
-        NeedGroupPrototypData GetNeedGroupPrototypDataForID(string ID);
+        NeedGroupPrototypeData GetNeedGroupPrototypDataForID(string ID);
         NeedPrototypeData GetNeedPrototypDataForID(string ID);
         List<NeedGroup> GetNeedPrototypDataForLevel(int level);
         Unlocks GetNextUnlocks(int populationLevel, int populationCount);

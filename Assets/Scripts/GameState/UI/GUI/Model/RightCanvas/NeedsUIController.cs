@@ -82,7 +82,7 @@ namespace Andja.UI.Model {
                     ngui.transform.Cast<Transform>().Any(child => child.gameObject.activeInHierarchy)
                     );
             }
-            float F = (float)Math.Round(home.GetTaxPercantage() * 100f, 2);
+            float F = (float)Math.Round(home.GetTaxPercentage() * 100f, 2);
             taxSlider.value = F;
             structureUI.Show(home);
             ChangeNeedLevel(0);
@@ -128,15 +128,15 @@ namespace Andja.UI.Model {
                 upgradeButton.SetActive(false);
             }
             switch (home.CurrentMood) {
-                case HomeStructure.CitizienMoods.Mad:
+                case HomeStructure.CitizenMoods.Mad:
                     citizenCanvas.color = Color.red;
                     break;
 
-                case HomeStructure.CitizienMoods.Neutral:
+                case HomeStructure.CitizenMoods.Neutral:
                     citizenCanvas.color = Color.white;
                     break;
 
-                case HomeStructure.CitizienMoods.Happy:
+                case HomeStructure.CitizenMoods.Happy:
                     citizenCanvas.color = Color.green;
                     break;
             }

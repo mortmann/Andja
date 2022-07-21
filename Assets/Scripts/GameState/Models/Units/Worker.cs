@@ -362,17 +362,10 @@ namespace Andja.Model {
             if (WorkStructure == null || WorkStructure.IsDestroyed) {
                 Destroy();
             }
+            if (path == null) return;
             path.Load(this);
-            if (path is RoutePathfinding rp) {
-                if (rp.StartStructure == null) {
-                    if (goingToWork) {
-                        rp.GoalStructure = WorkStructure;
-                    }
-                    else {
-                        rp.GoalStructure = Home;
-                    }
-                }
-            }
+            if (!(path is RoutePathfinding { StartStructure: null } rp)) return;
+            rp.GoalStructure = goingToWork ? WorkStructure : Home;
         }
 
         public void Destroy() {

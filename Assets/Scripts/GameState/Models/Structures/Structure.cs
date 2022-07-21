@@ -164,25 +164,18 @@ namespace Andja.Model {
             }
         }
 
-        protected StructurePrototypeData _prototypData;
+        protected StructurePrototypeData prototypeData;
 
-        public StructurePrototypeData Data {
-            get {
-                if (_prototypData == null) {
-                    _prototypData = PrototypController.Instance.GetStructurePrototypDataForID(ID);
-                }
-                return _prototypData;
-            }
-        }
+        public StructurePrototypeData Data => prototypeData ??= PrototypController.Instance.GetStructurePrototypDataForID(ID);
 
-        private Vector2 _Center;
+        private Vector2 _center;
 
         public Vector2 Center {
             get {
-                if (_Center != Vector2.zero)
-                    return _Center;
-                _Center = Tiles[0].Vector2 + new Vector2(TileWidth / 2, TileHeight / 2);
-                return _Center;
+                if (_center != Vector2.zero)
+                    return _center;
+                _center = Tiles[0].Vector2 + new Vector2(TileWidth / 2, TileHeight / 2);
+                return _center;
             }
         }
 
@@ -247,7 +240,7 @@ namespace Andja.Model {
 
         protected void BaseCopyData(Structure str) {
             ID = str.ID;
-            _prototypData = str.Data;
+            prototypeData = str.Data;
         }
 
         #endregion RuntimeOrOther
@@ -563,7 +556,7 @@ namespace Andja.Model {
         }
 
         protected virtual void OnUpgrade() {
-            _prototypData = null;
+            prototypeData = null;
         }
 
         protected override void AddSpecialEffect(Effect effect) {

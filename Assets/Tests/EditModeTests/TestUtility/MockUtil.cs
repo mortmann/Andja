@@ -15,7 +15,7 @@ public class MockUtil {
 
     public ICity City => CityMock.Object;
     public ICity OtherCity => OtherCityMock.Object;
-
+    public Mock<IIGEventable> EventableMock;
     public Mock<IPrototypController> PrototypControllerMock;
     public Mock<IPlayerController> PlayerControllerMock;
 
@@ -56,6 +56,7 @@ public class MockUtil {
         OtherCityMock = new Mock<ICity>();
         OtherCityMock.Setup(c => c.PlayerNumber).Returns(1);
 
+        EventableMock = new Mock<IIGEventable>();
 
         WorldMock.Setup(w => w.GetTileAt(It.IsAny<float>(), It.IsAny<float>())).Returns((float x, float y) => CreateTile(x, y));
         WorldMock.Setup(w => w.GetTileAt(It.IsAny<int>(), It.IsAny<int>())).Returns((int x, int y) => CreateTile(x, y));

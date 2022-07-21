@@ -280,7 +280,7 @@ namespace Andja.Model {
             ID = PrevLevel.ID;
             City.RemovePeople(PopulationLevel, People);
             _homeData = null;
-            _prototypData = null;
+            prototypeData = null;
             City.AddPeople(PopulationLevel, People);
             cbStructureChanged?.Invoke(this);
         }

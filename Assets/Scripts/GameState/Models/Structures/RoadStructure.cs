@@ -36,7 +36,7 @@ namespace Andja.Model {
 
         public RoadStructure(string ID, StructurePrototypeData spd) {
             this.ID = ID;
-            this._prototypData = spd;
+            this.prototypeData = spd;
         }
 
         protected RoadStructure(RoadStructure str) {

@@ -109,6 +109,7 @@ public class RoadStructureTest {
             RoadStructure road = new RoadStructure(ID, PrototypeData);
             road.City = mockutil.City;
             road.Route = new Route();
+            road.Tiles = new List<Tile> { t };
             road.Route.Tiles = new List<Tile>();
             t.Structure = road;
         });

@@ -34,19 +34,19 @@ namespace Andja.Model {
         /// </summary>
         protected Dictionary<string, float> VariableNameToFloat;
 
-        [JsonPropertyAttribute] protected List<Effect> _effects;
+        [JsonPropertyAttribute] protected List<Effect> effects;
 
-        public IReadOnlyList<Effect> Effects => _effects;
+        public IReadOnlyList<Effect> Effects => effects;
 
         private List<Effect> _updateEffectList;
 
         protected List<Effect> UpdateEffectList {
             get {
-                if (_effects == null)
+                if (effects == null)
                     return null;
                 //for loading -- makes it ez to get them again without doing in load functions
                 if (_updateEffectList == null) {
-                    _updateEffectList = new List<Effect>(_effects);
+                    _updateEffectList = new List<Effect>(effects);
                     _updateEffectList.RemoveAll(x => x.IsUpdateChange == false);
                 }
                 return _updateEffectList;
@@ -147,8 +147,6 @@ namespace Andja.Model {
         }
 
         public void AddEffects(Effect[] effects) {
-            if (this._effects == null)
-                this._effects = new List<Effect>();
             foreach (Effect effect in effects)
                 AddEffect(effect);
         }
@@ -157,19 +155,17 @@ namespace Andja.Model {
             if (TargetGroups.IsTargeted(effect.Targets) == false) {
                 return false;
             }
-            if (_effects == null)
-                _effects = new List<Effect>();
+            effects ??= new List<Effect>();
             if (effect.IsUnique && HasEffect(effect)) {
                 return false;
             }
-            _effects.Add(effect);
+            effects.Add(effect);
             cbEffectChange?.Invoke(this, effect, true);
             if (effect.IsSpecial) {
                 AddSpecialEffect(effect);
             }
             else {
-                if (VariableNameToFloat == null)
-                    VariableNameToFloat = new Dictionary<string, float>();
+                VariableNameToFloat ??= new Dictionary<string, float>();
                 //we change a float or integer variable
                 if (effect.ModifierType != EffectModifier.Update || effect.ModifierType != EffectModifier.Special) {
                     if (VariableNameToFloat.ContainsKey(effect.NameOfVariable + effect.ModifierType) == false) {
@@ -179,8 +175,7 @@ namespace Andja.Model {
                 }
             }
             if (effect.IsUpdateChange) {
-                if (_updateEffectList == null)
-                    _updateEffectList = new List<Effect>();
+                _updateEffectList ??= new List<Effect>();
                 UpdateEffectList.Add(effect);
             }
             if (effect.IsNegative)
@@ -189,29 +184,32 @@ namespace Andja.Model {
         }
 
         public Effect GetEffect(string ID) {
-            return _effects.Find(x => x.ID == ID);
+            return effects.Find(x => x.ID == ID);
         }
         public bool HasEffect(string effectID) {
-            return _effects.Exists(x => x.ID == effectID);
+            return effects.Exists(x => x.ID == effectID);
         }
         public bool HasEffect(Effect effect) {
             return HasEffect(effect.ID);
         }
         public bool HasAnyEffect(params Effect[] effects) {
-            return _effects.Exists(x => Array.Exists<Effect>(effects, y => x.ID == y.ID));
+            return this.effects.Exists(x => Array.Exists<Effect>(effects, y => x.ID == y.ID));
         }
         public virtual bool RemoveEffect(Effect effect, bool all = false) {
-            if (_effects.Find(e => e.ID == effect.ID) == null) {
+            if (effects.Find(e => e.ID == effect.ID) == null) {
                 return false;
             }
-
-            if (all)
-                _effects.RemoveAll(e => e.ID == effect.ID);
-            else
-                _effects.Remove(effect);
-            UpdateEffectList.RemoveAll(e => e.ID == effect.ID);
+            if (all) {
+                effects.RemoveAll(e => e.ID == effect.ID);
+                UpdateEffectList.RemoveAll(e => e.ID == effect.ID);
+            }
+            else {
+                effects.RemoveAt(effects.FindIndex(e => e.ID == effect.ID));
+                int updateIndex = effects.FindIndex(e => e.ID == effect.ID);
+                if(updateIndex > 0)
+                    UpdateEffectList.RemoveAt(updateIndex);
+            }
             cbEffectChange?.Invoke(this, effect, false);
-
             if (effect.IsSpecial) {
                 RemoveSpecialEffect(effect);
             }
@@ -222,7 +220,7 @@ namespace Andja.Model {
                 }
             }
             if (effect.IsNegative)
-                HasNegativeEffect = _effects.Exists(x => x.IsNegative);
+                HasNegativeEffect = effects.Exists(x => x.IsNegative);
             return true;
         }
 

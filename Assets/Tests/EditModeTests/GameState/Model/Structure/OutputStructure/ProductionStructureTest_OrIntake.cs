@@ -28,7 +28,7 @@ public class ProductionStructureTest_OrIntake {
             output = new Item[] { ItemProvider.Stone_1 },
             inputTyp = InputTyp.OR
         };
-        Producer = new ProductionStructure(ProducerID, ProducerPrototypeData);
+        Producer = new ProductionStructure(ProducerID, null);
         ProducerPrototypeData = new ProductionPrototypeData() {
             output = new Item[] { ItemProvider.Wood_1 },
         };

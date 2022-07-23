@@ -18,7 +18,7 @@ public class WarehouseStructureTest {
 
     [SetUp]
     public void SetUp() {
-        Warehouse = new WarehouseStructure(ID, PrototypeData);
+        Warehouse = new WarehouseStructure(ID, null);
         PrototypeData = new WarehousePrototypData() {
             ID = ID,
             structureRange = 20
@@ -26,7 +26,7 @@ public class WarehouseStructureTest {
         mockutil = new MockUtil();
         PrototypeData.output = new Item[] { ItemProvider.Stone_1 };
         var prototypeControllerMock = mockutil.PrototypControllerMock;
-        prototypeControllerMock.Setup(m => m.GetStructurePrototypDataForID(ID)).Returns(PrototypeData);
+        prototypeControllerMock.Setup(m => m.GetStructurePrototypDataForID(ID)).Returns(() => PrototypeData);
         mockutil.CityMock.Setup(x => x.RemoveTiles(It.IsAny<IEnumerable<Tile>>()));
         var items = new Dictionary<string, Item>() {
             { ItemProvider.Brick.ID, ItemProvider.Brick.Clone() },

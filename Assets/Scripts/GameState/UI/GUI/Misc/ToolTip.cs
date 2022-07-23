@@ -1,6 +1,7 @@
 ﻿using Andja.Controller;
 using Andja.Model;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -28,7 +29,7 @@ namespace Andja.UI {
         private bool truePosition = true;
         private bool instantShow = false;
 
-        private void Start() {
+        public void Start() {
             rect = GetComponent<RectTransform>();
             if (Loading.IsLoading)
                 return;
@@ -60,12 +61,8 @@ namespace Andja.UI {
             Header.text = header;
             if (descriptions != null) {
                 Description.gameObject.SetActive(true);
-                string description = "";
-                foreach (string s in descriptions) {
-                    if (s == null)
-                        continue;
-                    description += "\n" + s;
-                }
+                string description = descriptions.Where(s => s != null)
+                    .Aggregate("", (current, s) => current + ("\n" + s));
                 Description.text = description.Trim();
             }
             else {
@@ -100,18 +97,20 @@ namespace Andja.UI {
         }
 
         private void Update() {
-            if (show == false && hovertime == HoverDuration)
-                return;
-            if (show) {
-                if (EventSystem.current.IsPointerOverGameObject() == false && isDebug == false) {
+            switch (show) {
+                case false when hovertime == HoverDuration:
+                    return;
+                case true when EventSystem.current.IsPointerOverGameObject() == false && isDebug == false:
                     Unshow();
                     return;
-                }
-                hovertime -= Time.deltaTime;
+                case true:
+                    hovertime -= Time.deltaTime;
+                    break;
+                default:
+                    hovertime += Time.deltaTime;
+                    break;
             }
-            else {
-                hovertime += Time.deltaTime;
-            }
+
             hovertime = Mathf.Clamp(hovertime, 0, HoverDuration);
             if (hovertime > 0 && instantShow == false) {
                 return;

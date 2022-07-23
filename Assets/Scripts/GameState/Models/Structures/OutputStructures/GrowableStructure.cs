@@ -93,7 +93,7 @@ namespace Andja.Model {
                 return;
             }
             //Debug.Log ("Stage " + currentStage + " @ Time " + age);
-            CallbackChangeIfnotNull();
+            CallbackChangeIfNotNull();
         }
 
         public override bool SpecialCheckForBuild(System.Collections.Generic.List<Tile> tiles) {
@@ -104,14 +104,14 @@ namespace Andja.Model {
         protected void Produce() {
             hasProduced = true;
             Output[0].count = 1;
-            CallbackChangeIfnotNull();
+            CallbackChangeIfNotNull();
         }
 
         public void Harvest() {
             Output[0].count = 0;
             currentStage = 0;
             _age = 0f;
-            CallbackChangeIfnotNull();
+            CallbackChangeIfNotNull();
             hasProduced = false;
             cbStructureSound?.Invoke(this, GrowableData.harvestSound, true);
         }

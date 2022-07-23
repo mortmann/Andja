@@ -20,7 +20,7 @@ namespace Andja.Pathfinding {
             IPathfindAgent agent = job.agent;
             Node start = null;
             Node end = null;
-            if (agent.CanEndInUnwakable) {
+            if (agent.CanEndInUnwalkable) {
                 if(endsPos != null) {
                     foreach (Vector2 s in endsPos) {
                         grid.SetTemporaryWalkableNode(s);
@@ -73,7 +73,7 @@ namespace Andja.Pathfinding {
             start.g_Score = 0;
             start.f_Score = DistanceNodes(false, start.Pos, end.Pos);
             OpenSet.Enqueue(start, 0);
-            if (agent.CanEndInUnwakable == false && end.IsPassable(agent.CanEnterCities?.ToList()) == false) {
+            if (agent.CanEndInUnwalkable == false && end.IsPassable(agent.CanEnterCities?.ToList()) == false) {
                 //cant end were it is supposed to go -- find a alternative that can be walked on
                 if(endNodes != null) {
                     HashSet<Node> temp = new HashSet<Node>();
@@ -137,7 +137,7 @@ namespace Andja.Pathfinding {
                                 costToNeighbour = float.MaxValue;
                             }
                         }
-                        if (agent.CanEndInUnwakable) {
+                        if (agent.CanEndInUnwalkable) {
                             if (endNodes != null && endNodes.Contains(neighbour)) {
                                 costToNeighbour = DistanceNodes(agent.DiagonalType != PathDiagonal.None, current.Pos, neighbour.Pos);
                             }

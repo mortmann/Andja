@@ -3,6 +3,7 @@ using Andja.Model;
 using Moq;
 using System.Collections;
 using System.Collections.Generic;
+using Andja;
 using UnityEngine;
 
 public class MockUtil {
@@ -12,6 +13,7 @@ public class MockUtil {
     public Mock<IWorld> WorldMock;
     public Mock<ICity> CityMock;
     public Mock<ICity> OtherCityMock;
+    public Mock<IWarfare> IWarfareMock;
 
     public ICity City => CityMock.Object;
     public ICity OtherCity => OtherCityMock.Object;
@@ -60,6 +62,8 @@ public class MockUtil {
 
         WorldMock.Setup(w => w.GetTileAt(It.IsAny<float>(), It.IsAny<float>())).Returns((float x, float y) => CreateTile(x, y));
         WorldMock.Setup(w => w.GetTileAt(It.IsAny<int>(), It.IsAny<int>())).Returns((int x, int y) => CreateTile(x, y));
+
+        IWarfareMock = new Mock<IWarfare>();
     }
 
     private Tile CreateTile(float fx, float fy) {

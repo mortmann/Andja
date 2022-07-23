@@ -257,7 +257,7 @@ namespace Andja.Controller {
             //FIXME find a better solution for this?
             structure.ChangeRotation(rotate);
             //if is build in wilderniss city
-            structure.buildInWilderniss = buildInWilderness;
+            structure.buildInWilderness = buildInWilderness;
             if (loading) {
                 if (structure.City != null)
                     playerNumber = structure.City.PlayerNumber;
@@ -419,7 +419,7 @@ namespace Andja.Controller {
         /// </summary>
         private bool LoadBuildOnTile(Structure s, Tile t) {
             if (s != null && t != null) 
-                return RealBuild(s.GetBuildingTiles(t), s, -1, true, s.buildInWilderniss);
+                return RealBuild(s.GetBuildingTiles(t), s, -1, true, s.buildInWilderness);
             Debug.LogError("Something went wrong by loading Structure! " + t + " " + s);
             return false;
         }

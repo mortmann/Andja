@@ -8,12 +8,12 @@ namespace Andja.Model {
 
     public abstract class TargetStructure : Structure, ITargetable {
 
-        #region ITargetableImplementation
-
         public Vector2 CurrentPosition => Center;
         public ArmorType ArmorType => PrototypController.Instance.StructureArmor;
 
         public bool IsAttackableFrom(IWarfare warfare) {
+            if (CanTakeDamage == false)
+                return false;
             return warfare.DamageType.GetDamageMultiplier(ArmorType) > 0;
         }
 
@@ -35,6 +35,5 @@ namespace Andja.Model {
         public float Height => TileHeight;
         public float Rotation => 0;
 
-        #endregion ITargetableImplementation
     }
 }

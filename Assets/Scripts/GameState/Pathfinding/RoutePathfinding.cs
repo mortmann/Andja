@@ -76,7 +76,7 @@ namespace Andja.Pathfinding {
             }
             Route route = road.Route;
             List<Vector2> goals = null;
-            if (agent.CanEndInUnwakable) {
+            if (agent.CanEndInUnwalkable) {
                 goals = GoalStructure.Tiles.Select(x => x.Vector2).ToList();
             }
             else {
@@ -108,7 +108,7 @@ namespace Andja.Pathfinding {
                     .Where(t => Array.Exists(t.GetNeighbours(agent.DiagonalType != PathDiagonal.None), 
                                                             n => n.Structure is RoadStructure r && r.Route == route))
                     .Select(y => y.Vector2).ToList(); // convert it to vectors
-                if (agent.CanEndInUnwakable) {
+                if (agent.CanEndInUnwalkable) {
                     Job.EndTiles[i] = GoalStructure.Tiles
                         //Find all tiles of structure where a neighbour is road of this route
                         .Where(t => Array.Exists(t.GetNeighbours(agent.DiagonalType != PathDiagonal.None),

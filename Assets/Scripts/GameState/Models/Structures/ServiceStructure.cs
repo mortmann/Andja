@@ -117,7 +117,7 @@ namespace Andja.Model {
                 case ServiceFunction.Repair:
                     WorkOnTarget = RepairStructure;
                     todoOnNewTarget = RegisterOnStructureChange;
-                    onTargetChanged = CheckHealth;
+                    onTargetChanged = CheckStructureHealth;
                     onTargetDestroy += UnregisterOnStructureChange;
                     onTargetDestroy += RemoveFromJobs;
                     break;
@@ -126,12 +126,11 @@ namespace Andja.Model {
                     //only needed when a structure can have a effect once else always add it
                     if (Array.Exists(EffectsOnTargets, element => element.IsUnique)) {
                         todoOnNewTarget += RegisterOnStructureEffectChanged;
-                        onTargetDestroy += UnregisterOnStructureEffectChanged;
                         onTargetEffectChange += CheckForMissingEffect;
                     }
-
-                    todoOnNewTarget += ImproveStructure;
-                    onSelfDestroy += RemoveEffect;
+                    onTargetDestroy += UnregisterOnStructureEffectChanged;
+                    todoOnNewTarget += ImproveTarget;
+                    onSelfDestroy += RemoveTargetEffect;
                     break;
 
                 case ServiceFunction.RemoveEffect:
@@ -139,7 +138,7 @@ namespace Andja.Model {
                     WorkOnTarget = RemoveEffectOverTime;
                     todoOnNewTarget = RegisterOnStructureEffectChanged;
                     //what to do on effect on a target changed
-                    onTargetEffectChange += CheckEffect;
+                    onTargetEffectChange += CheckStructureEffectEnqueueJob;
                     //what to do on structure gets destroyed
                     onTargetDestroy += UnregisterOnStructureEffectChanged;
                     onTargetDestroy += RemoveFromJobs;
@@ -176,7 +175,7 @@ namespace Andja.Model {
             str.RegisterOnDestroyCallback(onTargetDestroy);
         }
 
-        private void CheckEffect(IGEventable eventable, Effect eff, bool started) {
+        protected void CheckStructureEffectEnqueueJob(IIGEventable eventable, Effect eff, bool started) {
             if (!(eventable is Structure structure))
                 return;
             if (Array.Exists(EffectsOnTargets, element => element.ID == eff.ID) == false) {
@@ -190,7 +189,7 @@ namespace Andja.Model {
             EnqueueJob(structure);
         }
 
-        private void CheckHealth(Structure obj) {
+        protected void CheckStructureHealth(Structure obj) {
             if (obj.NeedsRepair == false) {
                 if (jobsToDo.Contains(obj))
                     jobsToDo.Remove(obj);
@@ -204,7 +203,7 @@ namespace Andja.Model {
             jobsToDo.Add(structure);
         }
 
-        private void OnAddedStructure(Structure obj) {
+        protected void OnAddedStructure(Structure obj) {
             if (obj.Tiles.Any(t => RangeTiles.Contains(t)) == false) return;
             todoOnNewTarget(obj);
         }
@@ -214,10 +213,9 @@ namespace Andja.Model {
             return str.CurrentHealth >= str.MaxHealth;
         }
 
-        private void ImproveStructure(Structure str) {
+        protected void ImproveTarget(IIGEventable target) {
             foreach (Effect eff in EffectsOnTargets) {
-                //structure will check if its a valid effect
-                str.AddEffect(eff);
+                target.AddEffect(eff);
             }
         }
 
@@ -235,10 +233,9 @@ namespace Andja.Model {
             return false;
         }
 
-        private void RemoveEffect(Structure str) {
-            //structure will check if its a valid effect
+        protected void RemoveTargetEffect(IIGEventable target) {
             foreach (Effect eff in EffectsOnTargets) {
-                str.RemoveEffect(eff);
+                target.RemoveEffect(eff);
             }
         }
 
@@ -324,14 +321,14 @@ namespace Andja.Model {
             str.UnregisterOnEffectChangedCallback(onTargetEffectChange);
         }
 
-        private void AddEffectCity() {
+        protected void AddEffectCity() {
             foreach (Effect eff in EffectsOnTargets) {
                 //will check if its a valid effect
                 City.AddEffect(eff);
             }
         }
 
-        private void RemoveEffectCity() {
+        protected void RemoveEffectCity() {
             //removed on destroy
             foreach (Effect eff in EffectsOnTargets) {
                 //will check if its a valid effect

@@ -1,10 +1,11 @@
+using System;
+using System.Collections.Generic;
 using Andja.Controller;
 using Andja.Model.Components;
 using Andja.Pathfinding;
 using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace Andja.Model {
 
@@ -235,7 +236,7 @@ namespace Andja.Model {
         public virtual TurningType TurnType => TurningType.OnPoint;
         public virtual PathDestination PathDestination => PathDestination.Exact;
         public virtual PathingMode PathingMode => PathingMode.IslandSinglePoint;
-        public virtual bool CanEndInUnwakable => false;
+        public virtual bool CanEndInUnwalkable => false;
         public virtual PathHeuristics Heuristic => PathHeuristics.Euclidean;
         public virtual PathDiagonal DiagonalType => PathDiagonal.OnlyNoObstacle;
 
@@ -256,18 +257,18 @@ namespace Andja.Model {
         }
 
         public Unit(string id, UnitPrototypeData upd) {
-            this.ID = id;
-            this._prototypData = upd;
+            ID = id;
+            _prototypData = upd;
             patrolCommand = new PatrolCommand();
         }
 
         public Unit(Unit unit, int playerNumber, Tile t) {
-            this.ID = unit.ID;
+            ID = unit.ID;
             patrolCommand = new PatrolCommand();
-            this._prototypData = unit.Data;
-            this.CurrentHealth = MaxHealth;
+            _prototypData = unit.Data;
+            CurrentHealth = MaxHealth;
             this.playerNumber = playerNumber;
-            PlayerSetName = Name + " " + UnityEngine.Random.Range(0, 1000000000);
+            PlayerSetName = Name + " " + Random.Range(0, 1000000000);
             pathfinding = new IslandPathfinding(this, t);
             queuedCommands = new Queue<Command>();
             Setup();
@@ -728,9 +729,8 @@ namespace Andja.Model {
                 //not really an error it can happen
                 return false;
             }
-            else {
-                return GiveMovementCommand(t.X, t.Y, overrideCurrent);
-            }
+
+            return GiveMovementCommand(t.X, t.Y, overrideCurrent);
         }
 
         public bool GiveMovementCommand(float x, float y, bool overrideCurrent = false) {

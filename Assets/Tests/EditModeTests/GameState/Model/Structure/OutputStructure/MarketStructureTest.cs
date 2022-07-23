@@ -19,7 +19,7 @@ public class MarketStructureTest {
     private ICity City;
     [SetUp]
     public void SetUp() {
-        Market = new MarketStructure(ID, PrototypeData);
+        Market = new MarketStructure(ID, null);
         PrototypeData = new MarketPrototypData() {
             ID = ID,
             structureRange = 20
@@ -28,7 +28,7 @@ public class MarketStructureTest {
         City = mockutil.City;
         PrototypeData.output = new Item[] { ItemProvider.Stone_1 };
         var prototypeControllerMock = mockutil.PrototypControllerMock;
-        prototypeControllerMock.Setup(m => m.GetStructurePrototypDataForID(ID)).Returns(PrototypeData);
+        prototypeControllerMock.Setup(m => m.GetStructurePrototypDataForID(ID)).Returns(() => PrototypeData);
         mockutil.CityMock.Setup(x => x.RemoveTiles(It.IsAny<IEnumerable<Tile>>()));
         var Items = new Dictionary<string, Item>() {
             { ItemProvider.Brick.ID, ItemProvider.Brick.Clone() },

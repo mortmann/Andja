@@ -185,7 +185,7 @@ namespace Andja.Model {
             }
             for (int i = 0; i < Intake.Length; i++) {
                 Intake[i].count = toAdd.GetItemWithMaxAmount(Intake[i], GetRemainingIntakeSpaceForIndex(i)).count;
-                CallbackChangeIfnotNull();
+                CallbackChangeIfNotNull();
             }
             return true;
         }

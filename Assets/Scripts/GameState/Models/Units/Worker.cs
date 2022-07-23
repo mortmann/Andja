@@ -1,8 +1,8 @@
-﻿using Andja.Controller;
+﻿using System;
+using System.Collections.Generic;
+using Andja.Controller;
 using Andja.Pathfinding;
 using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace Andja.Model {
@@ -23,46 +23,31 @@ namespace Andja.Model {
 
         #region Serialize
         [JsonPropertyAttribute] public string ID;
-        [JsonPropertyAttribute] private BasePathfinding path;
+        [JsonPropertyAttribute] private BasePathfinding _path;
         [JsonPropertyAttribute] protected float workTimer;
-        [JsonPropertyAttribute] public Item[] ToGetItems { get => toGetItems1; protected set { if (value == null) Debug.Log("!?"); toGetItems1 = value; } }
+        [JsonPropertyAttribute] public Item[] ToGetItems;
         [JsonPropertyAttribute] public UnitInventory Inventory { get; protected set; }
-        [JsonPropertyAttribute] private bool goingToWork;
+        [JsonPropertyAttribute] private bool _goingToWork;
         [JsonPropertyAttribute] public bool isAtHome;
         [JsonPropertyAttribute] private Structure _workStructure;
-        [JsonPropertyAttribute] private bool isDone;
-        [JsonPropertyAttribute] private readonly bool walkTimeIsWorkTime;
-        [JsonPropertyAttribute] private readonly float workAtHomeTime;
+        [JsonPropertyAttribute] private bool _isDone;
+        [JsonPropertyAttribute] private readonly bool _walkTimeIsWorkTime;
+        [JsonPropertyAttribute] private readonly float _workAtHomeTime;
         #endregion Serialize
 
         #region runtimeVariables
         public Structure Home;
         public float WorkTimer => workTimer;
-        public WorkerPrototypeData Data {
-            get {
-                if (_prototypData == null) {
-                    _prototypData = PrototypController.Instance.GetWorkerPrototypDataForID(ID);
-                }
-                return _prototypData;
-            }
-        }
+        public WorkerPrototypeData Data => prototypeData ??= PrototypController.Instance.GetWorkerPrototypDataForID(ID);
 
         public OutputStructure WorkOutputStructure {
-            set {
-                _workStructure = value;
-            }
-            get {
-                return _workStructure is OutputStructure os? os : null;
-            }
+            set => _workStructure = value;
+            get => _workStructure is OutputStructure os? os : null;
         }
 
         public Structure WorkStructure {
-            set {
-                _workStructure = value;
-            }
-            get {
-                return _workStructure;
-            }
+            set => _workStructure = value;
+            get => _workStructure;
         }
         public string WorkSound => Data.workSound;
         public string ToWorkSprites => Data.toWorkSprites;
@@ -73,7 +58,7 @@ namespace Andja.Model {
         private bool HasToEnterWorkStructure => Data.hasToEnterWork;
 
 
-        public bool IsFull => Inventory?.HasAnything() == true || goingToWork == false && Home is ServiceStructure;
+        public bool IsFull => Inventory?.HasAnything() == true || _goingToWork == false && Home is ServiceStructure;
         private Func<Structure, float, bool> WorkOnStructure {
             get {
                 if (Home is ServiceStructure h)
@@ -82,39 +67,26 @@ namespace Andja.Model {
             }
         }
 
-        private Action<Worker> cbWorkerChanged;
-        private Action<Worker> cbWorkerDestroy;
-        private Action<Worker, string, bool> cbSoundCallback;
-        private bool hasRegistered;
-        private float walkTime;
-        private WorkerPrototypeData _prototypData;
-        private Item[] toGetItems1;
+        protected Action<Worker> cbWorkerChanged;
+        protected Action<Worker> cbWorkerDestroy;
+        protected Action<Worker, string, bool> cbSoundCallback;
+        protected bool hasRegistered;
+        protected float walkTime;
+        protected WorkerPrototypeData prototypeData;
         #endregion runtimeVariables
 
-        public float X {
-            get {
-                return path.X;
-            }
-        }
+        public float X => _path.X;
 
-        public float Y {
-            get {
-                return path.Y;
-            }
-        }
+        public float Y => _path.Y;
 
-        public float Rotation {
-            get {
-                return path.rotation;
-            }
-        }
+        public float Rotation => _path.rotation;
 
         public float RotationSpeed => Data.rotationSpeed;
 
         public TurningType TurnType => HasToFollowRoads ? TurningType.OnPoint : TurningType.TurnRadius;
         public PathDestination PathDestination => PathDestination.Tile;
         public PathingMode PathingMode => HasToFollowRoads ? PathingMode.Route : PathingMode.IslandMultiplePoints;
-        public bool CanEndInUnwakable => HasToEnterWorkStructure || goingToWork == false;
+        public bool CanEndInUnwalkable => HasToEnterWorkStructure || _goingToWork == false;
 
         public PathHeuristics Heuristic => HasToFollowRoads ? PathHeuristics.Manhattan : PathHeuristics.Euclidean;
 
@@ -124,31 +96,31 @@ namespace Andja.Model {
 
         public bool IsAlive => isAtHome == false;
 
-        public Worker(Structure Home, OutputStructure structure, float workTime, string workerID, Item[] toGetItems = null,
+        public Worker(Structure home, OutputStructure structure, float workTime, string workerID, Item[] toGetItems = null,
                         bool walkTimeIsWorkTime = false, float workAtHomeTime = 0f) {
-            this.Home = Home;
+            Home = home;
             WorkOutputStructure = structure;
-            this.walkTimeIsWorkTime = walkTimeIsWorkTime;
-            this.workAtHomeTime = workAtHomeTime;
+            _walkTimeIsWorkTime = walkTimeIsWorkTime;
+            _workAtHomeTime = workAtHomeTime;
             if (structure is MarketStructure == false) {
                 structure.outputClaimed = true;
             }
             isAtHome = false;
-            goingToWork = true;
+            _goingToWork = true;
             Inventory = new UnitInventory(4);
             workTimer = workTime;
-            this.ID = workerID ?? "placeholder";
-            this.ToGetItems = toGetItems;
+            ID = workerID ?? "placeholder";
+            ToGetItems = toGetItems;
             SetGoalStructure(structure);
             Setup();
         }
 
-        public Worker(ServiceStructure Home, Structure structure, float workTime, string workerID) {
-            this.Home = Home;
-            this.ID = workerID ?? "placeholder";
+        public Worker(ServiceStructure home, Structure structure, float workTime, string workerID) {
+            Home = home;
+            ID = workerID ?? "placeholder";
             WorkStructure = structure;
             isAtHome = false;
-            goingToWork = true;
+            _goingToWork = true;
             workTimer = workTime;
             SetGoalStructure(structure);
             Setup();
@@ -175,7 +147,7 @@ namespace Andja.Model {
                 Debug.LogError("worker has no Home -> for now set it manually");
                 return;
             }
-            if (Home.IsActiveAndWorking == false && goingToWork) {
+            if (Home.IsActiveAndWorking == false && _goingToWork) {
                 GoHome();
             }
             if (hasRegistered == false) {
@@ -195,30 +167,28 @@ namespace Andja.Model {
             //If any of these are false the worker should return to home
             //except there is no way to home then remove
 
-            if (path.Status == JobStatus.NoPath) {
+            if (_path.Status == JobStatus.NoPath) {
                 Destroy();
                 return;
             }
             
             //do the movement
-            path.Update_DoMovement(deltaTime);
+            _path.Update_DoMovement(deltaTime);
 
             cbWorkerChanged?.Invoke(this);
 
-            if (path.IsAtDestination == false) {
-                if (walkTimeIsWorkTime) {
-                    workTimer -= deltaTime;
-                    if (workTimer <= 0) {
-                        DropOffItems(0);
-                        //we have an issue -- done before it is home
-                        if(World.Current.GetTileAt(X,Y).Structure != Home)
-                            Debug.LogWarning("Worker done before it is at Home. Fix this with either smaller Range," +
-                            " longer Worktime or remove Worker. " + Home.ToString() + ". Destination " + path.Destination);
-                    }
-                }
+            if (_path.IsAtDestination == false) {
+                if (_walkTimeIsWorkTime == false) return;
+                workTimer -= deltaTime;
+                if (workTimer <= 0 == false) return;
+                DropOffItems(0);
+                //we have an issue -- done before it is home
+                if(World.Current.GetTileAt(X,Y).Structure != Home)
+                    Debug.LogWarning("Worker done before it is at Home. Fix this with either smaller Range," +
+                                     " longer Worktime or remove Worker. " + Home + ". Destination " + _path.Destination);
                 return;
             }
-            if (goingToWork) {
+            if (_goingToWork) {
                 //if we are here this means we're
                 //AT the destination and can start working
                 DoWork(deltaTime);
@@ -237,7 +207,7 @@ namespace Andja.Model {
 
         internal bool IsWorking() {
             //has it anything? && is not going to get anything it is not Working -> so opposite should be working 
-            return (Inventory.HasAnything() == false && goingToWork == false) == false;
+            return (Inventory.HasAnything() == false && _goingToWork == false) == false;
         }
 
         public void DropOffItems(float deltaTime) {
@@ -245,31 +215,30 @@ namespace Andja.Model {
             if (workTimer > 0) {
                 return;
             }
-            if (Home is MarketStructure) {
-                ((MarketStructure)Home).City.Inventory.AddInventory(Inventory);
-            }
-            else
-            if (Home is ProductionStructure) {
-                ((ProductionStructure)Home).AddToIntake(Inventory);
-            }
-            else
-            if (Home is FarmStructure) {
-                ((FarmStructure)Home).AddHarvastable();
-            }
-            else if (Home is OutputStructure) {
-                //this home is a OutputStructures or smth that takes it to output
-                ((OutputStructure)Home).AddToOutput(Inventory);
+            switch (Home) {
+                case MarketStructure marketStructure:
+                    marketStructure.City.Inventory.AddInventory(Inventory);
+                    break;
+                case ProductionStructure productionStructure:
+                    productionStructure.AddToIntake(Inventory);
+                    break;
+                case FarmStructure farmStructure:
+                    farmStructure.AddHarvastable();
+                    break;
+                case OutputStructure outputStructure:
+                    outputStructure.AddToOutput(Inventory);
+                    break;
             }
             isAtHome = true;
         }
 
         public void GoHome(bool noPath = false) {
-            if (goingToWork && noPath) {
+            if (_goingToWork && noPath) {
                 Destroy();
                 return;
             }
-            isDone = false;
-            goingToWork = false;
+            _isDone = false;
+            _goingToWork = false;
             WorkStructure?.UnregisterOnDestroyCallback(OnWorkStructureDestroy);
             //WorkStructure = null;
             SetGoalStructure(Home, true); //todo: think about some optimisation for just "reverse path"
@@ -277,45 +246,45 @@ namespace Andja.Model {
         }
 
         public void DoWork(float deltaTime) {
-            if (WorkStructure == null && path.DestTile != null) {
-                WorkStructure = path.DestTile.Structure;
+            if (WorkStructure == null && _path.DestTile != null) {
+                WorkStructure = _path.DestTile.Structure;
             }
             //we are here at the job tile
-            //do its job -- get the items in tile
-            if (WorkOutputStructure is GrowableStructure) {
-                DoFarmWork(deltaTime);
-            }
-            else
-            if (WorkOutputStructure is OutputStructure) {
-                DoOutPutStructureWork(deltaTime);
-            }
-            else
             if (WorkOnStructure != null) {
                 DoWorkOnStructure(deltaTime);
             }
+            else
+            if (WorkOutputStructure != null) {
+                if (WorkOutputStructure is GrowableStructure) {
+                    DoFarmWork(deltaTime);
+                }
+                else {
+                    DoOutPutStructureWork(deltaTime);
+                }
+            }
             else {
-                Debug.LogError("Worker has nothing todo -- why does he exist? He is from " + Home.ToString() + "! Killing him now.");
+                Debug.LogError("Worker has nothing todo -- why does he exist? He is from " + Home + "! Killing him now.");
                 Destroy();
             }
-            if (isDone) {
+            if (_isDone) {
                 GoHome();
             }
         }
 
         private void DoWorkOnStructure(float deltaTime) {
-            isDone = WorkOnStructure(WorkStructure, deltaTime);
+            _isDone = WorkOnStructure(WorkStructure, deltaTime);
         }
 
         public void DoFarmWork(float deltaTime) {
             workTimer -= deltaTime;
-            if (workTimer > walkTime + workAtHomeTime) {
+            if (workTimer > walkTime + _workAtHomeTime) {
                 PlaySound(WorkSound, true);
                 return;
             }
             PlaySound(WorkSound, false);
             Inventory.AddItems(((GrowableStructure)WorkStructure).GetOutput());
             ((GrowableStructure)WorkStructure).Harvest();
-            isDone = true;
+            _isDone = true;
         }
 
         private void PlaySound(string soundWorkName, bool play) {
@@ -327,7 +296,7 @@ namespace Andja.Model {
 
         public void DoOutPutStructureWork(float deltaTime) {
             workTimer -= deltaTime;
-            if (workTimer > walkTime + workAtHomeTime) {
+            if (workTimer > walkTime + _workAtHomeTime) {
                 PlaySound(WorkSound, true);
                 return;
             }
@@ -351,29 +320,29 @@ namespace Andja.Model {
                 }
             }
             WorkOutputStructure.outputClaimed = false;
-            isDone = true;
+            _isDone = true;
         }
 
         internal void Load(Structure parent) {
             Home = parent;
-            if (goingToWork == false) {
+            if (_goingToWork == false) {
                 WorkStructure = Home;
             }
             if (WorkStructure == null || WorkStructure.IsDestroyed) {
                 Destroy();
             }
-            if (path == null) return;
-            path.Load(this);
-            if (!(path is RoutePathfinding { StartStructure: null } rp)) return;
-            rp.GoalStructure = goingToWork ? WorkStructure : Home;
+            if (_path == null) return;
+            _path.Load(this);
+            if (!(_path is RoutePathfinding { StartStructure: null } rp)) return;
+            rp.GoalStructure = _goingToWork ? WorkStructure : Home;
         }
 
         public void Destroy() {
             isAtHome = true; //for pathfinding purpose -> if it is at home stop the pathfinding
-            if (goingToWork)
+            if (_goingToWork)
                 WorkOutputStructure?.ResetOutputClaimed();
             cbWorkerDestroy?.Invoke(this);
-            path?.CancelJob();
+            _path?.CancelJob();
         }
 
         public void SetGoalStructure(Structure structure, bool goHome = false) {
@@ -381,30 +350,25 @@ namespace Andja.Model {
                 return;
             }
             if (HasToFollowRoads == false) {
-                if (path == null)
-                    path = new TilesPathfinding(this);
+                _path ??= new TilesPathfinding(this);
                 if (goHome == false) {
-                    ((TilesPathfinding)path).SetDestination(new List<Tile>(Home.Tiles), new List<Tile>(structure.Tiles));
+                    ((TilesPathfinding)_path).SetDestination(new List<Tile>(Home.Tiles), new List<Tile>(structure.Tiles));
                 }
                 else {
-                    if(path.CurrTile == null) {
+                    if(_path.CurrTile == null) {
                         Destroy();
                         return;
                     }
-                    ((TilesPathfinding)path).SetDestination(new List<Tile>() { path.CurrTile }, new List<Tile>(Home.Tiles));
+                    ((TilesPathfinding)_path).SetDestination(new List<Tile> { _path.CurrTile }, new List<Tile>(Home.Tiles));
                 }
             }
             else {
-                if (path == null)
-                    path = new RoutePathfinding(this);
+                _path ??= new RoutePathfinding(this);
                 if (goHome == false) {
-                    ((RoutePathfinding)path).SetDestination(Home, structure);
+                    ((RoutePathfinding)_path).SetDestination(Home, structure);
                 }
                 else {
-                    if (HasToEnterWorkStructure)
-                        ((RoutePathfinding)path).SetDestination(WorkStructure, Home);
-                    else
-                        ((RoutePathfinding)path).SetDestination(null, Home);
+                    ((RoutePathfinding)_path).SetDestination(HasToEnterWorkStructure ? WorkStructure : null, Home);
                 }
             }
             WorkStructure = structure;

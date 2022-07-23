@@ -16,7 +16,7 @@ public class HomeStructureTest {
     HomePrototypeData nextLevelHomePrototypeData;
     [SetUp]
     public void SetUp() {
-        Home = new TestHomeStructure(ID, PrototypeData) {
+        Home = new TestHomeStructure(ID, null) {
         };
         PrototypeData = new HomePrototypeData() {
             maxLivingSpaces = 2,
@@ -26,7 +26,7 @@ public class HomeStructureTest {
         };
         mockutil = new MockUtil();
         var prototypeControllerMock = mockutil.PrototypControllerMock;
-        prototypeControllerMock.Setup(m => m.GetStructurePrototypDataForID(ID)).Returns(PrototypeData);
+        prototypeControllerMock.Setup(m => m.GetStructurePrototypDataForID(ID)).Returns(() => PrototypeData);
         Home.City = mockutil.City;
 
         nextLevelHomePrototypeData = new HomePrototypeData() {

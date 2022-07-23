@@ -1,9 +1,10 @@
-﻿using Andja.Controller;
+﻿using System;
+using System.Collections.Generic;
+using Andja.Controller;
 using Andja.Utility;
 using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace Andja.Model {
 
@@ -43,8 +44,8 @@ namespace Andja.Model {
             this.origin = origin;
             this.target = target;
             this.HasHitbox = HasHitbox;
-            this.Impact = impact;
-            this.ImpactRange = impactRange;
+            Impact = impact;
+            ImpactRange = impactRange;
         }
 
         public void Update(float deltaTime) {
@@ -108,7 +109,7 @@ namespace Andja.Model {
         //In cases like that, we simply aim at the place where the target will be 1 to 5 seconds from now.
         //Feel free to randomize t at your discretion for your specific game situation if you want that guess to feel appropriately noisier
         private static float PredictiveAimWildGuessAtImpactTime() {
-            return UnityEngine.Random.Range(1, 5);
+            return Random.Range(1, 5);
         }
 
         //////////////////////////////////////////////////////////////////////////////
@@ -125,7 +126,7 @@ namespace Andja.Model {
             if (muzzlePosition == targetPosition) {
                 //Why dost thou hate thyself so?
                 //Do something smart here. I dunno... whatever.
-                projectileVelocity = projectileSpeed * (UnityEngine.Random.rotation * Vector3.forward);
+                projectileVelocity = projectileSpeed * (Random.rotation * Vector3.forward);
                 projectileDestination = muzzlePosition;
                 return true;
             }

@@ -79,7 +79,7 @@ namespace Andja.Pathfinding {
 
         protected IPathfindAgent agent;
         protected float Speed => agent.Speed;
-        protected bool CanEndInUnwakable => agent.CanEndInUnwakable;
+        protected bool CanEndInUnwakable => agent.CanEndInUnwalkable;
         protected float RotationSpeed => agent.RotationSpeed;
         public Tile DestTile {
             get {

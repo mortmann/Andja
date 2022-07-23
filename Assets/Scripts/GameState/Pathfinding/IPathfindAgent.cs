@@ -23,7 +23,7 @@ namespace Andja.Pathfinding {
         public PathHeuristics Heuristic {
             get;
         }
-        public bool CanEndInUnwakable {
+        public bool CanEndInUnwalkable {
             get;
         }
         public PathDiagonal DiagonalType {

@@ -15,13 +15,13 @@ public class RoadStructureTest {
     private MockUtil mockutil;
     [SetUp]
     public void SetUp() {
-        Road = new RoadStructure(ID, PrototypeData) {
+        Road = new RoadStructure(ID, null) {
         };
         PrototypeData = new RoadStructurePrototypeData() {
         };
         mockutil = new MockUtil();
         var prototypeControllerMock = mockutil.PrototypControllerMock;
-        prototypeControllerMock.Setup(m => m.GetStructurePrototypDataForID(ID)).Returns(PrototypeData);
+        prototypeControllerMock.Setup(m => m.GetStructurePrototypDataForID(ID)).Returns(() => PrototypeData);
         Road.City = mockutil.City;
         CreateOneByOne();
     }

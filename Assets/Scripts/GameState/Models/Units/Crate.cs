@@ -1,5 +1,5 @@
-using Newtonsoft.Json;
 using System;
+using Newtonsoft.Json;
 using UnityEngine;
 
 namespace Andja.Model {
@@ -12,10 +12,10 @@ namespace Andja.Model {
         [JsonPropertyAttribute] public Vector2 position;
         [JsonPropertyAttribute] public Item item;
         public Action<Crate> onDespawn;
-        public bool despawned = false;
+        public bool despawned;
 
         public Crate(Vector2 position, Item item) {
-            this.despawnTime = crateDespawnTime;
+            despawnTime = crateDespawnTime;
             this.position = position;
             this.item = item;
         }
@@ -41,7 +41,7 @@ namespace Andja.Model {
 
         internal bool IsInRange(Vector2 currentPosition) {
             Vector2 distance = position - currentPosition;
-            if (distance.magnitude > Crate.pickUpDistance)
+            if (distance.magnitude > pickUpDistance)
                 return false;
             return true;
         }

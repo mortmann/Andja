@@ -22,14 +22,14 @@ public class MilitaryStructureTest {
 
     [SetUp]
     public void SetUp() {
-        Military = new TestMilitary(ID, PrototypeData);
+        Military = new TestMilitary(ID, null);
         PrototypeData = new MilitaryPrototypeData() {
             ID = ID,
             structureRange = 4,
             buildTimeModifier = 1,
             buildQueueLength = 2,
         };
-        Unit = new Unit(UnitID, UnitPrototypeData);
+        Unit = new Unit(UnitID, null);
         UnitPrototypeData = new UnitPrototypeData() {
             ID = ID,
             buildingItems = new Item[] { ItemProvider.Wood_5, ItemProvider.Tool_5 },
@@ -38,8 +38,8 @@ public class MilitaryStructureTest {
 
         mockutil = new MockUtil();
         var prototypeControllerMock = mockutil.PrototypControllerMock;
-        prototypeControllerMock.Setup(m => m.GetStructurePrototypDataForID(ID)).Returns(PrototypeData);
-        prototypeControllerMock.Setup(m => m.GetUnitPrototypDataForID(UnitID)).Returns(UnitPrototypeData);
+        prototypeControllerMock.Setup(m => m.GetStructurePrototypDataForID(ID)).Returns(() => PrototypeData);
+        prototypeControllerMock.Setup(m => m.GetUnitPrototypDataForID(UnitID)).Returns(() => UnitPrototypeData);
 
         CreateFourByFour();
     }

@@ -29,9 +29,10 @@ namespace Andja.Model {
 
         #region RuntimeOrOther
 
-        public GrowableStructure Growable { get { return FarmData.growable; } }
+        public GrowableStructure Growable => FarmData.growable;
 
-        public int NeededHarvestForProduce { get { return CalculateRealValue(nameof(FarmData.neededHarvestToProduce), FarmData.neededHarvestToProduce); } }
+        public int NeededHarvestForProduce => CalculateRealValue(nameof(FarmData.neededHarvestToProduce), FarmData.neededHarvestToProduce);
+
         //TODO: this has to be checked against other working this? (especially for no growables)
         public int WorkingTilesCount;
         private List<GrowableStructure> _workingGrowables;

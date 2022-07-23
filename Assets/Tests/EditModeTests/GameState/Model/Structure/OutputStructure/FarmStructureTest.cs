@@ -26,17 +26,17 @@ public class FarmStructureTest {
             output = new[] { ItemProvider.Wood },
             maxOutputStorage = 5
         };
-        farm = new FarmStructure(ID, farmPrototypeData);
+        farm = new FarmStructure(ID, null);
         growablePrototypeData = new GrowablePrototypeData {
             ID = GrowableID,
             output = new[] {ItemProvider.Wood} 
         };
         MockUtil mockutil = new MockUtil();
         var prototypeControllerMock = mockutil.PrototypControllerMock;
-        prototypeControllerMock.Setup(m => m.GetStructurePrototypDataForID(ID)).Returns(farmPrototypeData);
-        prototypeControllerMock.Setup(m => m.GetStructurePrototypDataForID(GrowableID)).Returns(growablePrototypeData);
-        prototypeControllerMock.Setup(m => m.GetStructurePrototypDataForID(RoadID)).Returns(new RoadStructurePrototypeData());
-        prototypeControllerMock.Setup(m => m.GetWorkerPrototypDataForID(It.IsAny<string>())).Returns(new WorkerPrototypeData());
+        prototypeControllerMock.Setup(m => m.GetStructurePrototypDataForID(ID)).Returns(() => farmPrototypeData);
+        prototypeControllerMock.Setup(m => m.GetStructurePrototypDataForID(GrowableID)).Returns(() => growablePrototypeData);
+        prototypeControllerMock.Setup(m => m.GetStructurePrototypDataForID(RoadID)).Returns(() => new RoadStructurePrototypeData());
+        prototypeControllerMock.Setup(m => m.GetWorkerPrototypDataForID(It.IsAny<string>())).Returns(() => new WorkerPrototypeData());
         prototypeControllerMock.Setup(m => m.AllNaturalSpawningStructureIDs).Returns(new List<string> { NaturalSpawnID });
     }
 

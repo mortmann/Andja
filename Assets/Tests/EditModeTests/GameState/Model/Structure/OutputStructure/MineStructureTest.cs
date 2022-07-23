@@ -17,7 +17,7 @@ public class MineStructureTest {
 
     [SetUp]
     public void SetUp() {
-        Mine = new MineStructure(MineID, MinePrototypeData);
+        Mine = new MineStructure(MineID, null);
         MinePrototypeData = new MinePrototypeData() {
             ID = MineID,
             produceTime = 2f,
@@ -25,7 +25,7 @@ public class MineStructureTest {
         };
         mockutil = new MockUtil();
         var prototypeControllerMock = mockutil.PrototypControllerMock;
-        prototypeControllerMock.Setup(m => m.GetStructurePrototypDataForID(MineID)).Returns(MinePrototypeData);
+        prototypeControllerMock.Setup(m => m.GetStructurePrototypDataForID(MineID)).Returns(() => MinePrototypeData);
         Island = mockutil.WorldIsland;
     }
     private void CreateTwoByThree() {

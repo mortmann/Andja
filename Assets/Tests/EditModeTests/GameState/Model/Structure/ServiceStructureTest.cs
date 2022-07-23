@@ -5,8 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Andja.Controller;
-using UnityEngine;
-using static Andja.Model.HomeStructure;
 using static AssertNet.Assertions;
 using static AssertNet.Moq.Assertions;
 
@@ -19,21 +17,24 @@ public class ServiceStructureTest {
     private StructurePrototypeData TestEffectPrototypeData;
     private MockUtil mockutil;
     private Effect _effect;
+    private Mock<IPrototypController> prototypeControllerMock;
+    private Effect _secondEffect = new Effect("second", new EffectPrototypeData());
 
     [SetUp]
     public void SetUp() {
-        Service = new TestServiceStructure(ID, PrototypeData) {
+        Service = new TestServiceStructure(ID) {
         };
+        mockutil = new MockUtil();
+        prototypeControllerMock = mockutil.PrototypControllerMock;
+
+        prototypeControllerMock.Setup(m => m.GetStructurePrototypDataForID(ID)).Returns(() => PrototypeData);
         PrototypeData = new ServiceStructurePrototypeData() {
             structureRange = 10,
             effectsOnTargets = Array.Empty<Effect>()
         };
-        mockutil = new MockUtil();
-        var prototypeControllerMock = mockutil.PrototypControllerMock;
-        prototypeControllerMock.Setup(m => m.GetStructurePrototypDataForID(ID)).Returns(PrototypeData);
         TestEffectPrototypeData = new StructurePrototypeData();
-        prototypeControllerMock.Setup(m => m.GetStructurePrototypDataForID(TestEffectStructureID)).Returns(TestEffectPrototypeData);
-        prototypeControllerMock.Setup(m => m.GetStructurePrototypDataForID(NotTestEffectStructureID)).Returns(TestEffectPrototypeData);
+        prototypeControllerMock.Setup(m => m.GetStructurePrototypDataForID(TestEffectStructureID)).Returns(() => TestEffectPrototypeData);
+        prototypeControllerMock.Setup(m => m.GetStructurePrototypDataForID(NotTestEffectStructureID)).Returns(() => TestEffectPrototypeData);
 
         _effect = new Effect("effect", new EffectPrototypeData() {
             targets = new TargetGroup() {
@@ -116,7 +117,6 @@ public class ServiceStructureTest {
     public void Load() {
         Worker worker = new Worker();
         Service.Workers.Add(worker);
-
         PrototypeData.usageItems = new[] { ItemProvider.Wood_1, ItemProvider.Stone_1 };
         Service.TestSetRemainingUsageItems(new[] { ItemProvider.Wood_1 });
         Service.Load();
@@ -231,6 +231,97 @@ public class ServiceStructureTest {
         Service.TestPreventEffect(mockutil.EventableMock.Object, _effect, false);
         AssertThat(mockutil.EventableMock).HasInvoked(e => e.RemoveEffect(_effect, true)).Never();
     }
+
+    [Test]
+    public void CheckStructureEffectEnqueueJob() {
+        PrototypeData.effectsOnTargets = new[] { _effect };
+        TestEffectStructure structure = new TestEffectStructure(TestEffectStructureID, _effect);
+        Service.TestCheckStructureEffectEnqueueJob(structure, _effect, true);
+        AssertThat(Service.JobsToDo).ContainsExactly(structure);
+    }
+
+    [Test]
+    public void CheckStructureEffectEnqueueJob_Ending() {
+        PrototypeData.effectsOnTargets = new[] { _effect };
+        TestEffectStructure structure = new TestEffectStructure(TestEffectStructureID, _effect);
+        Service.TestCheckStructureEffectEnqueueJob(structure, _effect, false);
+        AssertThat(Service.JobsToDo).DoesNotContain(structure);
+    }
+    [Test]
+    public void CheckStructureEffectEnqueueJob_NotInEffectTargets() {
+        PrototypeData.effectsOnTargets = new[] { _effect };
+        TestEffectStructure structure = new TestEffectStructure(TestEffectStructureID, _effect);
+        Service.TestCheckStructureEffectEnqueueJob(structure, new Effect("notSame", new EffectPrototypeData()), false);
+        AssertThat(Service.JobsToDo).DoesNotContain(structure);
+    }
+
+    [Test]
+    public void CheckStructureHealth() {
+        TestEffectStructure structure = new TestEffectStructure(TestEffectStructureID, _effect);
+        TestEffectPrototypeData.maxHealth = 500;
+        structure.CurrentHealth = 1;
+        Service.TestCheckStructureHealth(structure);
+        AssertThat(Service.JobsToDo).ContainsExactly(structure);
+    }
+
+    [Test]
+    public void CheckStructureHealth_FullHealth() {
+        TestEffectStructure structure = new TestEffectStructure(TestEffectStructureID, _effect);
+        TestEffectPrototypeData.maxHealth = 500;
+        structure.CurrentHealth = 500;
+        Service.TestCheckStructureHealth(structure);
+        AssertThat(Service.JobsToDo).DoesNotContain(structure);
+    }
+
+    [Test]
+    public void OnAddedStructure() {
+        TestEffectStructure structure = new TestEffectStructure(TestEffectStructureID, _effect);
+        structure.Tiles = new List<Tile> { Service.RangeTiles.First() };
+        Service.TodoOnNewTarget += mockutil.Callbacks.Object.Structure;
+
+        Service.TestOnAddedStructure(structure);
+
+        AssertThat(mockutil.Callbacks).HasInvoked(cb => cb.Structure(structure)).Once();
+    }
+
+    [Test]
+    public void ImproveTarget() {
+        PrototypeData.effectsOnTargets = new[] { _effect, _secondEffect };
+        
+        Service.TestImproveTarget(mockutil.EventableMock.Object);
+
+        AssertThat(mockutil.EventableMock)
+            .HasInvoked(e => e.AddEffect(It.IsIn(new[] { _effect, _secondEffect }))).Exactly(2);
+    }
+    [Test]
+    public void RemoveTarget() {
+        PrototypeData.effectsOnTargets = new[] { _effect, _secondEffect };
+
+        Service.TestImproveTarget(mockutil.EventableMock.Object);
+
+        AssertThat(mockutil.EventableMock)
+            .HasInvoked(e => e.AddEffect(It.IsIn(new[] { _effect, _secondEffect }))).Exactly(2);
+    }
+
+    [Test]
+    public void AddEffectCity() {
+        PrototypeData.effectsOnTargets = new[] { _effect, _secondEffect };
+
+        Service.TestAddEffectCity();
+
+        AssertThat(mockutil.CityMock)
+            .HasInvoked(e => e.AddEffect(It.IsIn(new[] { _effect, _secondEffect }))).Exactly(2);
+    }
+    [Test]
+    public void RemoveEffectCity() {
+        PrototypeData.effectsOnTargets = new[] { _effect, _secondEffect };
+
+        Service.TestRemoveEffectCity();
+
+        AssertThat(mockutil.CityMock)
+            .HasInvoked(e => e.RemoveEffect(It.IsIn(new[] { _effect, _secondEffect }),It.IsAny<bool>()))
+            .Exactly(2);
+    }
     class TestEffectStructure : Structure {
         public TestEffectStructure(string ID, Effect effect) {
             this.ID = ID;
@@ -252,11 +343,12 @@ public class ServiceStructureTest {
     }
 
     class TestServiceStructure : ServiceStructure {
-        
+        public List<Structure> JobsToDo => jobsToDo;
+
         public List<Worker> Workers => workers;
         public Action<Structure> TodoOnNewTarget { get; set; }
         public Action<IGEventable, Effect, bool> OnEffectChange;
-        public TestServiceStructure(string iD, ServiceStructurePrototypeData prototypeData) : base(iD, prototypeData) {
+        public TestServiceStructure(string iD) : base(iD, null) {
             workers = new List<Worker>();
             //setting directly DOES NOT WORK?!?
         }
@@ -294,5 +386,36 @@ public class ServiceStructureTest {
         public void TestPreventEffect(IIGEventable eventableMockObject, Effect effect, bool added) {
             PreventEffect(eventableMockObject, effect, added);
         }
-    }
+
+        public void TestCheckStructureEffectEnqueueJob(IIGEventable eventable, Effect eff, bool started) {
+            jobsToDo ??= new List<Structure>();
+            CheckStructureEffectEnqueueJob(eventable, eff, started);
+        }
+
+        public void TestCheckStructureHealth(Structure structure) {
+            jobsToDo ??= new List<Structure>();
+            CheckStructureHealth(structure);
+        }
+
+        public void TestOnAddedStructure(Structure structure) {
+            todoOnNewTarget += structure => TodoOnNewTarget.Invoke(structure);
+            OnAddedStructure(structure);
+        }
+
+        public void TestImproveTarget(IIGEventable target) {
+            ImproveTarget(target);
+        }
+
+        public void TestRemoveTargetEffect(IIGEventable target) {
+            RemoveTargetEffect(target);
+        }
+
+        public void TestAddEffectCity() {
+            AddEffectCity();
+        }
+
+        public void TestRemoveEffectCity() {
+            RemoveEffectCity();
+        }
+    } 
 }

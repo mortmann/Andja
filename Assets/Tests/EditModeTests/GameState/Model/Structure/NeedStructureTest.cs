@@ -16,14 +16,14 @@ public class NeedStructureTest {
 
     [SetUp]
     public void SetUp() {
-        NeedStructure = new NeedStructure(ID, PrototypeData) {
+        NeedStructure = new NeedStructure(ID, null) {
         };
         PrototypeData = new NeedStructurePrototypeData() {
             structureRange = 5
         };
         MockUtil mockutil = new MockUtil();
         var prototypeControllerMock = mockutil.PrototypControllerMock;
-        prototypeControllerMock.Setup(m => m.GetStructurePrototypDataForID(ID)).Returns(PrototypeData);
+        prototypeControllerMock.Setup(m => m.GetStructurePrototypDataForID(ID)).Returns(() => PrototypeData);
         NeedStructure.City = mockutil.City;
         CreateTwoByTwo();
     }

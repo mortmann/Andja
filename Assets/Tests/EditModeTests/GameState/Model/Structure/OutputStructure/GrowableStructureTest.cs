@@ -25,9 +25,9 @@ public class GrowableStructureTest {
             produceTime = 1,
             output = new[] {ItemProvider.Wood_1},
         };
-        growable = new GrowableStructure(ID, growablePrototypeData);
+        growable = new GrowableStructure(ID, null);
         PrototypController.Instance = prototypeControllerMock.Object;
-        prototypeControllerMock.Setup(m => m.GetStructurePrototypDataForID(ID)).Returns(growablePrototypeData);
+        prototypeControllerMock.Setup(m => m.GetStructurePrototypDataForID(ID)).Returns(() => growablePrototypeData);
         CityMock = new Mock<ICity>();
     }
     [Test]

@@ -36,16 +36,12 @@ namespace Andja.Model {
         /// </summary>
         public TileType?[,] buildTileTypes;
         public string[] canBeUpgradedTo;
-        //doenst get loaded in anyway
-        private List<Tile> _PrototypeRangeTiles;
-        public List<Tile> PrototypeRangeTiles {
-            get {
-                if (_PrototypeRangeTiles == null) {
-                    _PrototypeRangeTiles = Util.CalculateRangeTiles(structureRange, tileWidth, tileHeight);
-                }
-                return _PrototypeRangeTiles;
-            }
-        }
+
+        [Ignore]
+        private List<Tile> _prototypeRangeTiles;
+        public List<Tile> PrototypeRangeTiles =>
+            _prototypeRangeTiles ??= Util.CalculateRangeTiles(structureRange, tileWidth, tileHeight);
+
         [Ignore]
         Dictionary<TileType, int> buildTileTypesToMinLength;
         public Dictionary<TileType, int> BuildTileTypesToMinLength {
@@ -57,26 +53,26 @@ namespace Andja.Model {
                 var temp = new Dictionary<TileType, int>();
                 for (int x = 0; x < buildTileTypes.GetLength(0); x++) {
                     for (int y = 0; y < buildTileTypes.GetLength(1); y++) {
+                        if(buildTileTypes[x, y] == null) continue;
                         if (temp.ContainsKey(buildTileTypes[x, y].Value) == false) {
                             temp[buildTileTypes[x, y].Value] = 1;
                         }
-                        if(x > 0) {
-                            if (buildTileTypes[x - 1, y] == buildTileTypes[x, y]) {
-                                temp[buildTileTypes[x, y].Value]++;
-                            }
+                        if (x <= 0) continue;
+                        if (buildTileTypes[x - 1, y] == buildTileTypes[x, y]) {
+                            temp[buildTileTypes[x, y].Value]++;
                         }
                     }
                 }
                 buildTileTypesToMinLength = new Dictionary<TileType, int>();
                 for (int x = 0; x < buildTileTypes.GetLength(0); x++) {
                     for (int y = 0; y < buildTileTypes.GetLength(1); y++) {
+                        if (buildTileTypes[x, y] == null) continue;
                         if (buildTileTypesToMinLength.ContainsKey(buildTileTypes[x, y].Value) == false) {
                             buildTileTypesToMinLength[buildTileTypes[x, y].Value] = 1;
                         }
-                        if(y > 0) {
-                            if (buildTileTypes[x, y - 1] == buildTileTypes[x, y]) {
-                                buildTileTypesToMinLength[buildTileTypes[x, y].Value]++;
-                            }
+                        if (y <= 0) continue;
+                        if (buildTileTypes[x, y - 1] == buildTileTypes[x, y]) {
+                            buildTileTypesToMinLength[buildTileTypes[x, y].Value]++;
                         }
                     }
                 }
@@ -94,13 +90,13 @@ namespace Andja.Model {
         }
 
         [Ignore]
-        public int _RangeTileCount = -1;
+        protected int rangeTileCount = -1;
 
         public int RangeTileCount {
             get {
-                if (_RangeTileCount < 0)
-                    _RangeTileCount = Util.CalculateRangeTilesVector2(structureRange, tileWidth, tileHeight).Count;
-                return _RangeTileCount;
+                if (rangeTileCount < 0)
+                    rangeTileCount = Util.CalculateRangeTilesVector2(structureRange, tileWidth, tileHeight).Count;
+                return rangeTileCount;
             }
         }
 
@@ -134,13 +130,12 @@ namespace Andja.Model {
                 return (LandTile)Tiles[0];
             }
             set {
-                if (Tiles == null)
-                    Tiles = new List<Tile>();
+                Tiles ??= new List<Tile>();
                 Tiles.Add(value);
             }
         }
         [JsonPropertyAttribute] public int rotation = 0;
-        [JsonPropertyAttribute] public bool buildInWilderniss = false;
+        [JsonPropertyAttribute] public bool buildInWilderness = false;
         [JsonPropertyAttribute] protected bool isActive = true;
         [JsonPropertyAttribute] protected string spriteVariant;
         #endregion Serialize
@@ -248,6 +243,7 @@ namespace Andja.Model {
         #endregion variables
 
         #region Properties
+        public Vector2 Size => new Vector2(TileWidth, TileHeight);
         public virtual bool IsActive => isActive;
         public virtual bool IsActiveAndWorking => isActive;
         public bool IsDestroyed => CurrentHealth <= 0;
@@ -266,9 +262,7 @@ namespace Andja.Model {
         }
 
         public float CurrentHealth {
-            get {
-                return _health;
-            }
+            get => _health;
             set {
                 _health = value;
                 if (CanTakeDamage == false) {
@@ -284,35 +278,51 @@ namespace Andja.Model {
 
         public int TileWidth {
             get {
-                if (rotation == 0 || rotation == 180) {
-                    return prototypeTileWidth;
+                switch (rotation) {
+                    case 0:
+                    case 180:
+                        return prototypeTileWidth;
+                    case 90:
+                    case 270:
+                        return prototypeTileHeight;
+                    default:
+                        // should never come to this if its an error
+                        Debug.LogError("Structure was rotated out of angle bounds: " + rotation);
+                        return 0;
                 }
-                if (rotation == 90 || rotation == 270) {
-                    return prototypeTileHeight;
-                }
-                // should never come to this if its an error
-                Debug.LogError("Structure was rotated out of angle bounds: " + rotation);
-                return 0;
             }
         }
 
         public int TileHeight {
             get {
-                if (rotation == 0 || rotation == 180) {
-                    return prototypeTileHeight;
+                switch (rotation) {
+                    case 0:
+                    case 180:
+                        return prototypeTileHeight;
+                    case 90:
+                    case 270:
+                        return prototypeTileWidth;
+                    default:
+                        // should never come to this if its an error
+                        Debug.LogError("Structure was rotated out of angle bounds: " + rotation);
+                        return 0;
                 }
-                if (rotation == 90 || rotation == 270) {
-                    return prototypeTileWidth;
-                }
-                // should never come to this if its an error
-                Debug.LogError("Structure was rotated out of angle bounds: " + rotation);
-                return 0;
             }
         }
+        public void Update(float deltaTime) {
+            if (CurrentHealth > MaxHealth) {
+                //Values got changed or maybe upgrade lost? we need to reduce it slowly
+                CurrentHealth = Mathf.Clamp(CurrentHealth - 10 * deltaTime, MaxHealth, CurrentHealth);
+            }
+            UpdateEffects(deltaTime);
+            OnUpdate(deltaTime);
+        }
+
+        #endregion Properties
+
+        #region Virtual/Abstract
 
         public virtual string SortingLayer => "Structures";
-
-        public Vector2 Size => new Vector2(TileWidth, TileHeight);
 
         public virtual void OpenExtraUI() {
             cbStructureExtraUI?.Invoke(this, true);
@@ -321,23 +331,9 @@ namespace Andja.Model {
         public virtual void CloseExtraUI() {
             cbStructureExtraUI?.Invoke(this, false);
         }
-
-        #endregion Properties
-
-        #region Virtual/Abstract
-
         public abstract Structure Clone();
 
         public virtual void OnUpdate(float deltaTime) {
-        }
-
-        public void Update(float deltaTime) {
-            if(CurrentHealth > MaxHealth) {
-                //Values got changed or maybe upgrade lost? we need to reduce it slowly
-                CurrentHealth = Mathf.Clamp(CurrentHealth - 10 * deltaTime, MaxHealth, CurrentHealth);
-            }
-            UpdateEffects(deltaTime);
-            OnUpdate(deltaTime);
         }
 
         public abstract void OnBuild();
@@ -349,7 +345,6 @@ namespace Andja.Model {
         /// Extra Build UI for showing stuff when building
         /// structures. Or so.
         /// </summary>
-        /// <param name="parent">Its the parent for the extra UI.</param>
         public virtual object GetExtraBuildUIData() {
             //does nothing normally
             //stuff here to show for when building this
@@ -382,7 +377,7 @@ namespace Andja.Model {
 
         #region callbacks
 
-        public void CallbackChangeIfnotNull() {
+        public void CallbackChangeIfNotNull() {
             cbStructureChanged?.Invoke(this);
         }
 
@@ -477,14 +472,13 @@ namespace Andja.Model {
             NeighbourTiles = new HashSet<Tile>();
             foreach (Tile mt in Tiles) {
                 mt.Structure = this;
-                if (EditorController.IsEditor == false) {
-                    foreach (Tile nbt in mt.GetNeighbours()) {
-                        if (Tiles.Contains(nbt) == false) {
-                            NeighbourTiles.Add(nbt);
-                        }
-                        if (nbt.Structure is RoadStructure) {
-                            AddRoadStructure((RoadStructure)nbt.Structure);
-                        }
+                if (EditorController.IsEditor) continue;
+                foreach (Tile nbt in mt.GetNeighbours()) {
+                    if (Tiles.Contains(nbt) == false) {
+                        NeighbourTiles.Add(nbt);
+                    }
+                    if (nbt.Structure is RoadStructure road) {
+                        AddRoadStructure(road);
                     }
                 }
             }
@@ -692,7 +686,7 @@ namespace Andja.Model {
 
         public void ChangeHealth(float change) {
             if (change < 0)
-                ReduceHealth(-change); //damage should not be negativ
+                ReduceHealth(-change); 
             if (change > 0)
                 RepairHealth(change);
         }
@@ -780,25 +774,25 @@ namespace Andja.Model {
                     int cY = y;
                     int startX = 0;
                     int startY = 0;
-                    if (rotation == 90) {
-                        cX = -y;
-                        cY = x;
-                        startX = prototypeTileWidth - 1;
-                        startY = 0;
-                    }
-                    else
-                    if (rotation == 180) {
-                        cX = -x;
-                        cY = -y;
-                        startX = prototypeTileWidth - 1;
-                        startY = prototypeTileHeight - 1;
-                    }
-                    else
-                    if (rotation == 270) {
-                        cX = y;
-                        cY = -x;
-                        startX = 0;
-                        startY = prototypeTileHeight - 1;
+                    switch (rotation) {
+                        case 90:
+                            cX = -y;
+                            cY = x;
+                            startX = prototypeTileWidth - 1;
+                            startY = 0;
+                            break;
+                        case 180:
+                            cX = -x;
+                            cY = -y;
+                            startX = prototypeTileWidth - 1;
+                            startY = prototypeTileHeight - 1;
+                            break;
+                        case 270:
+                            cX = y;
+                            cY = -x;
+                            startX = 0;
+                            startY = prototypeTileHeight - 1;
+                            break;
                     }
                     if ((startX + cX) >= BuildTileTypes.GetLength(0) || (startY + cY) >= BuildTileTypes.GetLength(1)) {
                         tileToCanBuild.Add(sortedTiles[x, y], sortedTiles[x, y].CheckTile(this));
@@ -846,8 +840,8 @@ namespace Andja.Model {
 
         public float AICalculatedCost() {
             float itemValue = 0;
-            for (int i = 0; i < BuildingItems.Length; i++) {
-                itemValue = BuildingItems[i].count * BuildingItems[i].Data.AIValue;
+            foreach (Item item in BuildingItems) {
+                itemValue = item.count * item.Data.AIValue;
             }
             return Mathf.RoundToInt(BuildCost + 3 * UpkeepCost + 2 * itemValue);
         }

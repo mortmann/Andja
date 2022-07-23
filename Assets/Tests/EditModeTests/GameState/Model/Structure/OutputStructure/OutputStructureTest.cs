@@ -19,7 +19,7 @@ public class OutputStructureTest {
 
     [SetUp]
     public void SetUp() {
-        OutputTestStructure = new TestOutputStructure(ID, PrototypeData);
+        OutputTestStructure = new TestOutputStructure(ID, null);
         PrototypeData = new OutputPrototypData() {
             ID = ID,
             produceTime = 2f,
@@ -28,8 +28,8 @@ public class OutputStructureTest {
         mockutil = new MockUtil();
         PrototypeData.output = new Item[] { ItemProvider.Stone_1 };
         var prototypeControllerMock = mockutil.PrototypControllerMock;
-        prototypeControllerMock.Setup(m => m.GetStructurePrototypDataForID(ID)).Returns(PrototypeData);
-        prototypeControllerMock.Setup(m => m.GetEffectPrototypDataForID(OutputStructure.InactiveEffectID)).Returns(
+        prototypeControllerMock.Setup(m => m.GetStructurePrototypDataForID(ID)).Returns(() => PrototypeData);
+        prototypeControllerMock.Setup(m => m.GetEffectPrototypDataForID(OutputStructure.InactiveEffectID)).Returns(() =>
             new EffectPrototypeData() {
                 targets = new TargetGroup(Target.OutputStructure),
             });

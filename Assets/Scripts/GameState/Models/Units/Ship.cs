@@ -62,14 +62,14 @@ namespace Andja.Model {
         }
 
         public Ship(Unit unit, int playerNumber, Tile t) {
-            this.ID = unit.ID;
+            ID = unit.ID;
             patrolCommand = new PatrolCommand();
-            this._prototypData = unit.Data;
-            this.CurrentHealth = MaxHealth;
+            _prototypData = unit.Data;
+            CurrentHealth = MaxHealth;
             this.playerNumber = playerNumber;
             //TODO: replace everywhere with byte and test it
             inventory = new UnitInventory((byte)InventoryPlaces.ClampZero(255), InventorySize);
-            PlayerSetName = "Ship " + UnityEngine.Random.Range(0, 1000000000);
+            PlayerSetName = "Ship " + Random.Range(0, 1000000000);
             pathfinding = new OceanPathfinding(t, this);
             pathfinding.cbIsAtDestination += OnPathfindingAtDestination;
         }
@@ -79,8 +79,8 @@ namespace Andja.Model {
         }
 
         public Ship(string id, ShipPrototypeData spd) {
-            this.ID = id;
-            this._shipPrototypData = spd;
+            ID = id;
+            _shipPrototypData = spd;
         }
 
         public override void DoAttack(float deltaTime) {
@@ -119,9 +119,9 @@ namespace Andja.Model {
                 if ((CurrentTarget.CurrentPosition - CurrentPosition).magnitude <= AttackRange) {
                     nextShoot = CalculateShootAngle(CurrentTarget.CurrentPosition);
                     return true;
-                } else {
-                    return false;
                 }
+
+                return false;
             }
             Vector3 targetPosition = CurrentTarget.CurrentPosition;
             Vector3 lastMove = CurrentTarget.LastMovement;

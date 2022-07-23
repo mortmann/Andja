@@ -166,7 +166,8 @@ public class UnitInventoryTest {
     [TestCase(50, 75)]
     [TestCase(50, -10)]
     public void MoveItem_ToCity(int firstInventory, int moveAmount) {
-        var prototypeControllerMock = new Mock<PrototypController>();
+        MockUtil mockUtil = new MockUtil();
+        var prototypeControllerMock = mockUtil.PrototypControllerMock;
         var buildItems = new Dictionary<string, Item>() {
             { ItemProvider.Brick.ID, ItemProvider.Brick.Clone() },
             { ItemProvider.Tool.ID, ItemProvider.Tool.Clone()   },
@@ -174,13 +175,7 @@ public class UnitInventoryTest {
             { ItemProvider.Fish.ID, ItemProvider.Fish.Clone()   },
             { ItemProvider.Stone.ID, ItemProvider.Stone.Clone()   },
         };
-        //This has to be an () => or else it returns the same dictionary everytime... (Optimization?)
-        prototypeControllerMock.Setup(m => m.GetCopieOfAllItems()).Returns(() => {
-            return buildItems.ToDictionary(x => x.Key, y => y.Value.Clone());
-        });
-        System.Reflection.FieldInfo instance = typeof(PrototypController).GetField("Instance", System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.Public);
-        instance.SetValue(prototypeControllerMock.Object, prototypeControllerMock.Object);
-
+        prototypeControllerMock.Setup(p => p.GetCopieOfAllItems()).Returns(buildItems);
         CityInventory otherInventory = new CityInventory(42);
         Item item = ItemProvider.Wood_N(firstInventory);
         inventory.AddItem(item);

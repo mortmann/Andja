@@ -28,13 +28,13 @@ public class ProductionStructureTest {
             intake = new Item[] {ItemProvider.Wood_1, ItemProvider.Fish_2},
             output = new Item[] {ItemProvider.Stone_1}
         };
-        Producer = new ProductionStructure(ProducerID, ProducerPrototypeData);
+        Producer = new ProductionStructure(ProducerID, null);
         ProducerPrototypeData = new ProductionPrototypeData() {
             output = new Item[] { ItemProvider.Wood_1 },
         };
         mockutil = new MockUtil();
         var prototypeControllerMock = mockutil.PrototypControllerMock;
-        prototypeControllerMock.Setup(m => m.GetStructurePrototypDataForID(ID)).Returns(PrototypeData);
+        prototypeControllerMock.Setup(m => m.GetStructurePrototypDataForID(ID)).Returns(() => PrototypeData);
         CreateTwoByThree();
     }
     private void CreateTwoByThree() {

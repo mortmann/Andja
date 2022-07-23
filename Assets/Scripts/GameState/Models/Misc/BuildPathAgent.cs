@@ -15,7 +15,7 @@ namespace Andja.Model {
         public PathDestination PathDestination => PathDestination.Tile;
         public PathingMode PathingMode => PathingMode.IslandSinglePoint;
         public PathHeuristics Heuristic => PathHeuristics.Manhattan;
-        public bool CanEndInUnwakable => false;
+        public bool CanEndInUnwalkable => false;
         public PathDiagonal DiagonalType => PathDiagonal.None;
         public IReadOnlyList<int> CanEnterCities => canEnterCities;
 

@@ -56,20 +56,18 @@ namespace Andja.Model {
         /// SELLING IT from perspectiv City
         /// </summary>
         /// <param name="itemID">Item I.</param>
-        /// <param name="unitPlayer">Player.</param>
         /// <param name="ship">Ship.</param>
         /// <param name="amount">Amount.</param>
-        void SellingTradeItem(string itemID, Player unitPlayer, Ship ship, int amount = 50);
+        void SellingTradeItem(string itemID, Ship ship, int amount = 50);
 
         /// <summary>
         /// Ship sells to city.
         /// City BUYs it.
         /// </summary>
         /// <param name="itemID">Item I.</param>
-        /// <param name="player">Player.</param>
         /// <param name="ship">Ship.</param>
         /// <param name="amount">Amount.</param>
-        void BuyingTradeItem(string itemID, Player player, Ship ship, int amount = 50);
+        void BuyingTradeItem(string itemID, Ship ship, int amount = 50);
 
         void TradeWithAnyShip(Item item);
         int TradeWithShip(Item toTrade, Func<int> amount, Unit ship);

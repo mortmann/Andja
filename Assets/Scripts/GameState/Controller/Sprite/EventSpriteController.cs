@@ -6,9 +6,14 @@ using System.Linq;
 using UnityEngine;
 
 namespace Andja.Controller {
+    public interface IEventSpriteController {
+        void CreateEventTileSprites(string sprite_name, GameEvent gameEvent);
+        void UpdateEventTileSprites(GameEvent gameEvent, float Percentage);
+        void DestroyEventTileSprites(GameEvent gameEvent);
+    }
 
-    public class EventSpriteController : MonoBehaviour {
-        public static EventSpriteController Instance { get; protected set; }
+    public class EventSpriteController : MonoBehaviour, IEventSpriteController {
+        public static IEventSpriteController Instance { get; set; }
         private static Dictionary<string, Sprite> _nameToSprite;
         private Dictionary<GameEvent, GameObject> _eventToGo;
         public List<ExtraEventParticles> EventParticles;
@@ -36,7 +41,7 @@ namespace Andja.Controller {
             }
         }
 
-        internal void CreateEventTileSprites(string sprite_name, GameEvent gameEvent) {
+        public void CreateEventTileSprites(string sprite_name, GameEvent gameEvent) {
             GameObject go = new GameObject();
             SpriteRenderer sr = go.AddComponent<SpriteRenderer>();
             if (FogOfWarController.FogOfWarOn) {
@@ -60,11 +65,11 @@ namespace Andja.Controller {
             }
         }
 
-        internal void UpdateEventTileSprites(GameEvent gameEvent, float Percentage) {
+        public void UpdateEventTileSprites(GameEvent gameEvent, float Percentage) {
             throw new NotImplementedException();
         }
 
-        internal void DestroyEventTileSprites(GameEvent gameEvent) {
+        public void DestroyEventTileSprites(GameEvent gameEvent) {
             Destroy(_eventToGo[gameEvent]);
             _eventToGo.Remove(gameEvent);
         }

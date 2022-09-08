@@ -1,3 +1,4 @@
+using Andja;
 using Andja.Model;
 
 public interface ITestCallback {
@@ -5,4 +6,5 @@ public interface ITestCallback {
     void Structure(Structure obj);
     void RouteChange(Route arg1, Route arg2);
     void EventableEffectChange(IGEventable arg1, Effect arg2, bool arg3);
+    void StructureDestroy(Structure arg1, IWarfare arg2);
 }

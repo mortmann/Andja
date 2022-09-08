@@ -138,7 +138,7 @@ namespace Andja.Model {
         /// Ideally only 1 or 2. Never more than 255.
         /// </summary>
         /// <param name="worked"></param>
-        internal void SetBeingWorked(bool worked) {
+        public void SetBeingWorked(bool worked) {
             if (_beingWorkedBy == byte.MaxValue) {
                 Debug.LogError("Too many farms are working the same growable! This should never happen ...");
                 return;

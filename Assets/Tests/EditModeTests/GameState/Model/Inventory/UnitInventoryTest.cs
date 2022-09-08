@@ -8,15 +8,19 @@ using Andja.Controller;
 using Andja.Utility;
 using System.Linq;
 using Moq;
+using static AssertNet.Assertions;
 
 public class UnitInventoryTest {
     const int INVENTORY_MAX_STACK_SIZE = 50;
     const byte INVENTORY_NUMBER_SPACES = 6;
     const int INVENTORY_MAX_ITEM_AMOUNT = INVENTORY_NUMBER_SPACES * INVENTORY_MAX_STACK_SIZE;
     UnitInventory inventory;
+    private MockUtil mockUtil;
 
     [SetUp]
     public void SetupUp() {
+        mockUtil = new MockUtil();
+
         inventory = new UnitInventory(INVENTORY_NUMBER_SPACES, INVENTORY_MAX_STACK_SIZE);
     }
 
@@ -285,5 +289,49 @@ public class UnitInventoryTest {
         otherInventory.AddItems(items.CloneArrayWithCounts());
         inventory.AddInventory(otherInventory);
         Assert.IsTrue(inventory.BaseItems.All(x=>items.ToList().Exists(y=> x.ID == y.ID && x.count == y.count)));
-    } 
+    }
+    [Test]
+    public void Load_ItemNotExisting() {
+        mockUtil.PrototypControllerMock
+            .Setup(p => p.GetItemPrototypDataForID("NOT REAL ANYMORE"))
+            .Returns(new ItemPrototypeData() { type = ItemType.Missing });
+        inventory.Items[0] = new Item("NOT REAL ANYMORE", new ItemPrototypeData(){ type = ItemType.Missing });
+        inventory.Items[2] = ItemProvider.Stone_1;
+        inventory.Items[INVENTORY_NUMBER_SPACES - 1] = new Item("NOT REAL ANYMORE", new ItemPrototypeData() { type = ItemType.Missing });
+
+        inventory.Load();
+
+        AssertThat(inventory.Items[0]).IsNull();
+        AssertThat(inventory.Items[2]).IsNotNull();
+        AssertThat(inventory.Items[INVENTORY_NUMBER_SPACES - 1]).IsNull();
+    }
+
+    [Test]
+    public void GetRemainingSpaceForItem() {
+        inventory.Items[0] = ItemProvider.Brick_25;
+
+        AssertThat(inventory.GetRemainingSpaceForItem(ItemProvider.Brick)).IsEqualTo(INVENTORY_MAX_ITEM_AMOUNT - 25);
+    }
+    [Test]
+    public void GetRemainingSpaceForItem_DifferentItems() {
+        inventory.Items[0] = ItemProvider.Brick_25;
+        inventory.Items[1] = ItemProvider.Stone_25;
+        inventory.Items[2] = ItemProvider.Wood_1;
+        inventory.Items[3] = ItemProvider.Fish_1;
+        inventory.Items[4] = ItemProvider.Wood_1;
+        inventory.Items[5] = ItemProvider.Wood_1;
+
+        AssertThat(inventory.GetRemainingSpaceForItem(ItemProvider.Brick)).IsEqualTo(25);
+    }
+    [Test]
+    public void GetRemainingSpaceForItem_MultipleSame() {
+        inventory.Items[0] = ItemProvider.Brick_25;
+        inventory.Items[1] = ItemProvider.Fish_1;
+        inventory.Items[2] = ItemProvider.Brick_25;
+        inventory.Items[3] = ItemProvider.Fish_1;
+        inventory.Items[4] = ItemProvider.Brick_25;
+        inventory.Items[5] = ItemProvider.Wood_1;
+
+        AssertThat(inventory.GetRemainingSpaceForItem(ItemProvider.Brick)).IsEqualTo(75);
+    }
 }

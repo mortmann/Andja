@@ -130,8 +130,7 @@ namespace Andja.Model {
             Routes = new List<Route>();
             _homes = new List<HomeStructure>();
             MarketStructures = new List<MarketStructure>();
-            if (_populationLevels == null)
-                _populationLevels = new List<PopulationLevel>();
+            _populationLevels ??= new List<PopulationLevel>();
             foreach (PopulationLevel pl in PrototypController.Instance.GetPopulationLevels(this)) {
                 if (_populationLevels.Exists(x => x.Level == pl.Level))
                     continue;
@@ -399,13 +398,12 @@ namespace Andja.Model {
 
         /// <summary>
         /// Ship buys from city means
-        /// SELLING IT from perspectiv City
+        /// SELLING IT from perspective of the City
         /// </summary>
         /// <param name="itemID">Item I.</param>
-        /// <param name="unitPlayer">Player.</param>
         /// <param name="ship">Ship.</param>
         /// <param name="amount">Amount.</param>
-        public void SellingTradeItem(string itemID, Player unitPlayer, Ship ship, int amount = 50) {
+        public void SellingTradeItem(string itemID, Ship ship, int amount = 50) {
             if (ItemIDtoTradeItem.ContainsKey(itemID) == false) {
                 return;
             }
@@ -414,11 +412,10 @@ namespace Andja.Model {
                 Debug.Log("this item is not to buy");
                 return;
             }
-            Item i = ti.SellItemAmount(Inventory.GetAllOfItem(itemID));
-            Player CityPlayer = PlayerController.Instance.GetPlayer(PlayerNumber);
+            Item i = ti.SellItemAmount(Inventory.GetItemWithMaxAmount(new Item(itemID), amount));
             int am = TradeWithShip(i, () => Mathf.Clamp(amount, 0, i.count), ship);
-            CityPlayer.AddToTreasure(am * ti.price);
-            unitPlayer?.ReduceTreasure(am * ti.price);
+            GetOwner().AddToTreasure(am * ti.price);
+            ship.GetOwner()?.ReduceTreasure(am * ti.price);
         }
 
         /// <summary>
@@ -426,10 +423,9 @@ namespace Andja.Model {
         /// City BUYs it.
         /// </summary>
         /// <param name="itemID">Item I.</param>
-        /// <param name="player">Player.</param>
         /// <param name="ship">Ship.</param>
         /// <param name="amount">Amount.</param>
-        public void BuyingTradeItem(string itemID, Player player, Ship ship, int amount = 50) {
+        public void BuyingTradeItem(string itemID, Ship ship, int amount = 50) {
             if (ItemIDtoTradeItem.ContainsKey(itemID) == false) {
                 return;
             }
@@ -438,17 +434,15 @@ namespace Andja.Model {
                 Debug.Log("this item is not to sell here");
                 return;
             }
-            Item i = ti.BuyItemAmount(Inventory.GetAllOfItem(itemID));
-            Player Player = PlayerController.Instance.GetPlayer(PlayerNumber);
+            Item i = ti.BuyItemAmount(Inventory.GetItemWithMaxAmount(new Item(itemID), amount));
             int am = TradeFromShip(ship, i, Mathf.Clamp(amount, 0, i.count));
-            Player.ReduceTreasure(am * ti.price);
-            player?.AddToTreasure(am * ti.price);
+            GetOwner().ReduceTreasure(am * ti.price);
+            ship.GetOwner()?.AddToTreasure(am * ti.price);
         }
 
         public void TradeWithAnyShip(Item item) {
-            Ship ship = TradeUnit as Ship;
-            if (ship == null) {
-                ship = Warehouse.InRangeUnits.Find(x => x.playerNumber == PlayerNumber) as Ship;
+            if (!(TradeUnit is Ship ship)) {
+                ship = Warehouse.InRangeUnits.Find(x => x.PlayerNumber == PlayerNumber) as Ship;
             }
             if (ship == null)
                 return;
@@ -459,11 +453,11 @@ namespace Andja.Model {
             if (Warehouse == null || Warehouse.InRangeUnits.Count == 0 || toTrade == null || ship == null) {
                 return 0;
             }
-            return Inventory.MoveItem(ship.inventory, toTrade, amount());
+            return Inventory.MoveItem(ship.Inventory, toTrade, amount());
         }
 
         public int TradeFromShip(Unit u, Item getTrade, int amount = 50) {
-            return getTrade == null ? 0 : u.inventory.MoveItem(Inventory, getTrade, amount);
+            return getTrade == null ? 0 : u.Inventory.MoveItem(Inventory, getTrade, amount);
         }
 
         public bool RemoveTradeItem(Item item) {
@@ -499,15 +493,16 @@ namespace Andja.Model {
                 return;
             }
             if (Structures.Contains(structure)) {
-                if (structure is HomeStructure) {
-                    _homes.Remove((HomeStructure)structure);
-                }
-                else
-                if (structure is WarehouseStructure) {
-                    Warehouse = null;
-                }
-                if (structure is MarketStructure m) {
-                    MarketStructures.Remove(m);
+                switch (structure) {
+                    case HomeStructure homeStructure:
+                        _homes.Remove(homeStructure);
+                        break;
+                    case WarehouseStructure _:
+                        Warehouse = null;
+                        break;
+                    case MarketStructure m:
+                        MarketStructures.Remove(m);
+                        break;
                 }
                 Structures.Remove(structure);
                 _cbStructureRemoved?.Invoke(structure);

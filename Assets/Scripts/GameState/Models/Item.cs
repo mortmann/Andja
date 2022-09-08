@@ -12,43 +12,25 @@ namespace Andja.Model {
         [Ignore] public int UnlockPopulationCount;
         [Ignore] public List<Need> SatisfiesNeeds;
         [Ignore] public float[] TotalUsagePerLevel; // is only for luxury goods & ai
-        [Ignore] public float AIValue {
+        [Ignore] public float AIValue =>
             //TODO: calculate the *worth* of an item based on the cost/rarity of it
-            get {
-                return (UnlockLevel / PrototypController.Instance.NumberOfPopulationLevels);
-            } 
-        }
+            UnlockLevel / (float)PrototypController.Instance.NumberOfPopulationLevels;
     }
 
     [JsonObject(MemberSerialization.OptIn)]
     public class Item {
-        protected ItemPrototypeData _prototypData;
+        protected ItemPrototypeData prototypeData;
 
         [JsonPropertyAttribute] public string ID;
         [JsonPropertyAttribute] public int count;
 
         internal string CountString => count + "t";
 
-        public ItemPrototypeData Data {
-            get {
-                if (_prototypData == null) {
-                    _prototypData = PrototypController.Instance.GetItemPrototypDataForID(ID);
-                }
-                return _prototypData;
-            }
-        }
+        public ItemPrototypeData Data => prototypeData ??= PrototypController.Instance.GetItemPrototypDataForID(ID);
 
-        public ItemType Type {
-            get {
-                return Data.type;
-            }
-        }
+        public ItemType Type => Data.type;
 
-        public string Name {
-            get {
-                return Data.Name;
-            }
-        }
+        public string Name => Data.Name;
 
         public Item(string id, int count = 0) {
             this.ID = id;
@@ -57,7 +39,7 @@ namespace Andja.Model {
 
         public Item(string id, ItemPrototypeData ipd) {
             this.ID = id;
-            this._prototypData = ipd;
+            this.prototypeData = ipd;
             this.count = 0;
         }
 
@@ -68,11 +50,11 @@ namespace Andja.Model {
         public Item() {
         }
 
-        virtual public Item Clone() {
+        public virtual Item Clone() {
             return new Item(this);
         }
 
-        virtual public Item CloneWithCount() {
+        public virtual Item CloneWithCount() {
             Item i = new Item(this) {
                 count = this.count
             };
@@ -80,15 +62,11 @@ namespace Andja.Model {
         }
 
         internal string ToSmallString() {
-            if (Data == null)
-                return ID;
-            return string.Format(Name + ":" + count + "t");
+            return Data == null ? ID : string.Format(Name + ":" + count + "t");
         }
 
         public override string ToString() {
-            if (Data == null)
-                return ID;
-            return string.Format("[Item] " + ID + ":" + Name + ":" + count);
+            return Data == null ? ID : string.Format("[Item] " + ID + ":" + Name + ":" + count);
         }
 
         public bool Exists() {
@@ -98,5 +76,6 @@ namespace Andja.Model {
         public static bool AreSame(Item one, Item two) {
             return one.ID == two.ID && one.count == two.count;
         }
+
     }
 }

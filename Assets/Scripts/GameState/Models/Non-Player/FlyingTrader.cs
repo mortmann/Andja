@@ -160,8 +160,8 @@ namespace Andja.Model {
                                 float percentage = (ti.price) / (omSellPrice * BuyDifference);
                                 if (percentage >= 1) {
                                     int toSell = Mathf.Clamp(Mathf.FloorToInt((ti.count - inInvCount) * (percentage - BuyDifference)), 0, Ship.InventorySize);
-                                    Ship.inventory.AddItem(new Item(item_id, toSell)); // ... cheater ...
-                                    CurrentDestination.BuyingTradeItem(item_id, null, Ship, toSell);
+                                    Ship.Inventory.AddItem(new Item(item_id, toSell)); // ... cheater ...
+                                    CurrentDestination.BuyingTradeItem(item_id, Ship, toSell);
                                 }
                                 break;
 
@@ -172,14 +172,14 @@ namespace Andja.Model {
                                 percentage = (ti.price * BuyDifference) / omBuyPrice;
                                 if (percentage <= 1) {
                                     int toBuy = Mathf.Clamp(Mathf.FloorToInt((inInvCount - ti.count) * (1 - percentage)), 0, Ship.InventorySize);
-                                    CurrentDestination.SellingTradeItem(item_id, null, Ship, toBuy);
+                                    CurrentDestination.SellingTradeItem(item_id, Ship, toBuy);
                                 }
                                 break;
                         }
                     }
                 }
-                if (Ship.inventory.AreSlotsFilledWithItems()) {
-                    //TODO: maybe check other cities for in inventory items?
+                if (Ship.Inventory.AreSlotsFilledWithItems()) {
+                    //TODO: maybe check other cities for in Inventory items?
                     SendHome();
                 }
                 else {

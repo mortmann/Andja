@@ -56,7 +56,7 @@ namespace Andja.UI.Model {
         }
 
         public void OnUnitCreated(Unit u) {
-            if (unitToGO.ContainsKey(u) || u == null || u.playerNumber != PlayerController.currentPlayerNumber) {
+            if (unitToGO.ContainsKey(u) || u.PlayerNumber != PlayerController.currentPlayerNumber) {
                 return;
             }
             if (u.IsShip == false)

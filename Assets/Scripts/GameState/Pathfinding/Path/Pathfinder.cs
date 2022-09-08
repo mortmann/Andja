@@ -195,7 +195,7 @@ namespace Andja.Pathfinding {
                 return tempQueue;
             }
             Queue<Vector2> worldPoints = FindWorldPath(job, agent, graph, startPos, endPos);
-            //if (agent is Ship s && s.IsPlayer()) {
+            //if (agent is Ship s && s.IsOwnedByCurrentPlayer()) {
             //    worldPoints.AsParallel().ForAll(a => Controller.TileSpriteController.positions.Add(a));
             //}
             if (worldPoints == null)
@@ -255,7 +255,7 @@ namespace Andja.Pathfinding {
                     
                     float movementCostToNeighbour = 1 
                         * DistanceNodes(agent.DiagonalType != PathDiagonal.None, current.Pos, neighbour.Pos);
-                    //if (agent is Ship s && s.IsPlayer()) {
+                    //if (agent is Ship s && s.IsOwnedByCurrentPlayer()) {
                     //    Controller.TileSpriteController.positions.Add(neighbour.Pos);
                     //}
                     float tentative_g_score = current.g_Score + movementCostToNeighbour;

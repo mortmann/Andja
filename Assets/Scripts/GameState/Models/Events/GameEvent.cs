@@ -30,41 +30,34 @@ namespace Andja.Model {
 
         protected GameEventPrototypData _PrototypData;
 
-        public GameEventPrototypData PrototypData {
-            get {
-                if (_PrototypData == null) {
-                    _PrototypData = (GameEventPrototypData)PrototypController.Instance.GetGameEventPrototypDataForID(ID);
-                }
-                return _PrototypData;
-            }
-        }
+        public GameEventPrototypData PrototypeData =>
+            _PrototypData ??= (GameEventPrototypData)PrototypController.Instance.GetGameEventPrototypDataForID(ID);
 
-        public Dictionary<Target, List<string>> SpecialRange => PrototypData.specialRange;
+        public Dictionary<Target, List<string>> SpecialRange => PrototypeData.specialRange;
 
-        public EventType Type => PrototypData.type;
+        public EventType Type => PrototypeData.type;
 
-        public Effect[] Effects => PrototypData.effects;
-        public float Probability => PrototypData.probability;
-        public float MinDuration => PrototypData.minDuration;
-        public float MaxDuration => PrototypData.maxDuration;
-        public bool IsDone { get { return currentDuration <= 0; } }
-        public bool IsOneTime { get { return MaxDuration <= 0; } }
-        public string Name => PrototypData.Name;
-        public string Description => PrototypData.Description;
-        public ShadowType CloudCoverage => PrototypData.cloudCoverage;
-        public Speed CloudSpeed => PrototypData.cloudSpeed;
-        public Speed OceanSpeed => PrototypData.oceanSpeed;
+        public Effect[] Effects => PrototypeData.effects;
+        public float Probability => PrototypeData.probability;
+        public float MinDuration => PrototypeData.minDuration;
+        public float MaxDuration => PrototypeData.maxDuration;
+        public bool IsDone => currentDuration <= 0;
+        public bool IsOneTime => MaxDuration <= 0;
+        public string Name => PrototypeData.Name;
+        public string Description => PrototypeData.Description;
+        public ShadowType CloudCoverage => PrototypeData.cloudCoverage;
+        public Speed CloudSpeed => PrototypeData.cloudSpeed;
+        public Speed OceanSpeed => PrototypeData.oceanSpeed;
 
-        private TargetGroup _Targeted = new TargetGroup();
+        private TargetGroup _targeted = new TargetGroup();
 
         public TargetGroup Targeted {
             get {
-                if (Effects != null) {
-                    foreach (Effect e in Effects) {
-                        _Targeted.AddTargets(e.Targets);
-                    }
+                if (Effects == null) return _targeted;
+                foreach (Effect e in Effects) {
+                    _targeted.AddTargets(e.Targets);
                 }
-                return _Targeted;
+                return _targeted;
             }
         }
 
@@ -77,12 +70,12 @@ namespace Andja.Model {
 
         [JsonPropertyAttribute] public Vector2 position;
 
-        internal Vector2 GetPosition() {
-            if (target is Structure s)
-                return s.Center;
-            if (target is Unit u)
-                return u.PositionVector2;
-            return position;
+        public Vector2 GetPosition() {
+            return target switch {
+                Structure s => s.Center,
+                Unit u => u.PositionVector2,
+                _ => position
+            };
         }
 
         // this one says what it is...
@@ -90,7 +83,7 @@ namespace Andja.Model {
         // can be null if its not set to which type
         [JsonPropertyAttribute] public IGEventable target;  //TODO make a check for it!
 
-        [JsonPropertyAttribute] internal uint eventID;
+        [JsonPropertyAttribute] public uint eventID;
         [JsonPropertyAttribute] private float triggerEffectCooldown = UnityEngine.Random.Range(0.1f, 1f);
 
         /// <summary>
@@ -170,7 +163,7 @@ namespace Andja.Model {
             return false;
         }
 
-        internal bool IsValid() {
+        public bool IsValid() {
             if (target is Island) {
                 if (((IIsland)target).Features != null) {
                     if (SpecialRange[Target.Island].Exists(t => ((IIsland)target).Features.Exists(x => x.ID == t))) {

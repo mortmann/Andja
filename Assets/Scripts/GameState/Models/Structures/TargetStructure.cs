@@ -33,7 +33,6 @@ namespace Andja.Model {
 
         public float Width => TileWidth;
         public float Height => TileHeight;
-        public float Rotation => 0;
 
     }
 }

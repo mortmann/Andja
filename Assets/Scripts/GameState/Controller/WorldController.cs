@@ -54,8 +54,7 @@ namespace Andja.Controller {
             UnityEngine.Random.InitState((int)System.DateTime.Now.Ticks);
         }
 
-        // Use this for initialization
-        private void OnEnable() {
+        public void OnEnable() {
             Debug.Log("Intializing World Controller");
             if (Instance != null) {
                 Debug.LogError("There should never be two world controllers.");
@@ -63,7 +62,7 @@ namespace Andja.Controller {
             else {
                 Instance = this;
             }
-            new Pathfinding.PathfindingThreadHandler();
+            new Pathfinding.PathfindingThreadHandler().Start();
         }
 
         public void Start() {

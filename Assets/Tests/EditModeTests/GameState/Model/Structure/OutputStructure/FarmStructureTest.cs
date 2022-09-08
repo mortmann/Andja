@@ -7,6 +7,8 @@ using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.TestTools;
 using System.Linq;
+using static AssertNet.Assertions;
+using static AssertNet.Moq.Assertions;
 
 public class FarmStructureTest {
 
@@ -16,7 +18,8 @@ public class FarmStructureTest {
     private const string NaturalSpawnID = "tree";
     private FarmPrototypeData farmPrototypeData;
     private GrowablePrototypeData growablePrototypeData;
-    private FarmStructure farm;
+    private TestFarmStructure farm;
+
     [SetUp]
     public void SetUp() {
         farmPrototypeData = new FarmPrototypeData {
@@ -26,7 +29,7 @@ public class FarmStructureTest {
             output = new[] { ItemProvider.Wood },
             maxOutputStorage = 5
         };
-        farm = new FarmStructure(ID, null);
+        farm = new TestFarmStructure(ID, null);
         growablePrototypeData = new GrowablePrototypeData {
             ID = GrowableID,
             output = new[] {ItemProvider.Wood} 
@@ -38,6 +41,8 @@ public class FarmStructureTest {
         prototypeControllerMock.Setup(m => m.GetStructurePrototypDataForID(RoadID)).Returns(() => new RoadStructurePrototypeData());
         prototypeControllerMock.Setup(m => m.GetWorkerPrototypDataForID(It.IsAny<string>())).Returns(() => new WorkerPrototypeData());
         prototypeControllerMock.Setup(m => m.AllNaturalSpawningStructureIDs).Returns(new List<string> { NaturalSpawnID });
+        prototypeControllerMock.Setup(m => m.GetStructurePrototypDataForID("not" + GrowableID)).Returns(() => growablePrototypeData);
+
     }
 
     private void CreateTwoByTwo() {
@@ -147,7 +152,7 @@ public class FarmStructureTest {
     public void SendWorkerOutIfCan_NoTarget() {
         CreateTwoByTwo();
         farm.OnBuild();
-        farm.TrySendWorker();
+        farm.TestTrySendOutWorker();
         Assert.AreEqual(0, farm.Workers.Count);
     }
     [Test]
@@ -160,7 +165,7 @@ public class FarmStructureTest {
             hasProduced = true,
             Tiles = new List<Tile> { tile },
         };
-        farm.TrySendWorker();
+        farm.TestTrySendOutWorker();
         Assert.AreEqual(1, farm.Workers.Count);
         Assert.AreEqual(ItemProvider.Wood.ID, farm.Workers[0].ToGetItems[0].ID);
         Assert.AreEqual(tile.Structure, farm.Workers[0].WorkStructure);
@@ -270,17 +275,96 @@ public class FarmStructureTest {
         farmPrototypeData.growable = new GrowableStructure(GrowableID, growablePrototypeData);
         farmPrototypeData.maxNumberOfWorker = 3;
         farm.Workers = new List<Worker>();
-        farm.Workers.Add(new Worker(farm, GetGrowable(farm.RangeTiles.First()), 1.5f, null));
-        farm.Workers.Add(new Worker(farm, GetGrowable(farm.RangeTiles.First()), 0.5f, null));
-        farm.Workers.Add(new Worker(farm, GetGrowable(farm.RangeTiles.First()), 0.5f, null));
+        farm.Workers.Add(new Worker(farm, GetGrowable(farm.RangeTiles.ToList()[0]), 1.5f, null));
+        farm.Workers.Add(new Worker(farm, GetGrowable(farm.RangeTiles.ToList()[1]), 0.5f, null));
+        farm.Workers.Add(new Worker(farm, GetGrowable(farm.RangeTiles.ToList()[2]), 0.5f, null));
         Assert.AreEqual(2.5f + 2.5f, farm.Progress);
         farm.AddHarvastable();
         Assert.AreEqual(2.5f + 2.5f + farm.ProduceTime, farm.Progress);
 
     }
+
+    [Test]
+    public void DoWorkWithGrowableNoWorker() {
+        CreateTwoByTwo();
+        farmPrototypeData.maxNumberOfWorker = 0;
+        GrowableStructure gs = GetGrowable(farm.RangeTiles.First());
+        farm.WorkingGrowables = new List<GrowableStructure> { gs };
+        gs.hasProduced = true;
+
+        for (int i = 0; i < 4; i++) {
+            farm.DoWorkWithGrowableNoWorker(1);
+        }
+
+        AssertThat(gs.hasProduced).IsFalse();
+        AssertThat(farm.Output[0].ID).IsEqualTo(ItemProvider.Wood.ID);
+        AssertThat(farm.Output[0].count).IsEqualTo(0);
+        AssertThat(farm.currentlyHarvested).IsEqualTo(1);
+    }
+    [Test]
+    public void DoWorkWithGrowableNoWorker_HarvestedTwice() {
+        CreateTwoByTwo();
+        farmPrototypeData.maxNumberOfWorker = 0;
+        farm.RangeTiles.ToList().ForEach( x=> GetGrowable(x));
+        farm.WorkingGrowables = farm.RangeTiles.ToList().Select(x=>x.Structure as GrowableStructure).ToList();
+        for (int i = 0; i < 7; i++) {
+            farm.DoWorkWithGrowableNoWorker(1);
+        }
+        AssertThat(farm.currentlyHarvested).IsEqualTo(2);
+    }
+    [Test]
+    public void CalculateEfficiencyPercent() {
+        CreateTwoByTwo();
+        farm.WorkingTilesCount = 38;
+        AssertThat(farm.EfficiencyPercent).IsEqualTo(50);
+    }
+    [Test]
+    public void OnDestroy() {
+        CreateTwoByTwo();
+        farm.Workers ??= new List<Worker>();
+        farm.Workers.Add(new Worker());
+        farm.Workers.Add(new Worker());
+        farmPrototypeData.growable = new GrowableStructure(GrowableID, growablePrototypeData);
+        foreach (var farmRangeTile in farm.RangeTiles) {
+            GrowableStructure gs = new GrowableStructure(GrowableID, growablePrototypeData);
+            gs.SetBeingWorked(true);
+            farmRangeTile.Structure = gs;
+        }
+        GrowableStructure notgs = new GrowableStructure("not" + GrowableID, growablePrototypeData);
+        notgs.SetBeingWorked(true);
+        farm.RangeTiles.First().Structure = notgs;
+
+        farm.OnDestroy();
+        AssertThat(farm.Workers).AllSatisfy(w => w.IsAlive == false);
+        AssertThat(farm.RangeTiles.Select(t => t.Structure as GrowableStructure))
+            .AllSatisfy(g => g.ID == GrowableID && false == g.IsBeingWorked 
+                                         || g.ID != GrowableID && g.IsBeingWorked);
+    }
+
+
+    class TestFarmStructure : FarmStructure {
+        public TestFarmStructure(string id, FarmPrototypeData fpd) : base(id, fpd) {
+        }
+        public List<Worker> Workers {
+            get => workers;
+            set => workers = value;
+        }
+
+        public List<GrowableStructure> WorkingGrowables {
+            get => workingGrowables;
+            set => workingGrowables = value;
+        }
+        public void TestTrySendOutWorker() {
+            Workers ??= new List<Worker>();
+            SendOutWorkerIfCan();
+        }
+    }
+
     private GrowableStructure GetGrowable(Tile t) {
-        return new GrowableStructure(GrowableID, growablePrototypeData) {
+        var gs = new GrowableStructure(GrowableID, growablePrototypeData) {
             Tiles = new List<Tile> { t },
         };
+        t.Structure = gs;
+        return gs;
     }
 }

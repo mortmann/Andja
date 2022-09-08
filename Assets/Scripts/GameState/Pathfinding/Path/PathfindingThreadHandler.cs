@@ -11,6 +11,7 @@ namespace Andja.Pathfinding {
     public enum JobStatus { InQueue, Calculating, Done, NoPath, Error, Canceled }
 
     public class PathfindingThreadHandler {
+        public static PathfindingThreadHandler Instance;
         public static readonly int NumberOfThreads = SystemInfo.processorCount / 2;
         public static ConcurrentQueue<PathJob> queuedJobs = new ConcurrentQueue<PathJob>();
         public static ConcurrentQueue<PathJob> uiJobs = new ConcurrentQueue<PathJob>();
@@ -20,6 +21,9 @@ namespace Andja.Pathfinding {
         private static readonly WorldGraph MainThreadWorldGraph = null;
         public static bool FindPaths = true;
         public PathfindingThreadHandler() {
+            Instance = this;
+        }
+        public void Start() {
             var threads = new Thread[NumberOfThreads];
             FindPaths = true;
             for (int i = 0; i < NumberOfThreads; i++) {
@@ -33,6 +37,9 @@ namespace Andja.Pathfinding {
             PathJob job = new PathJob(agent, grid, start, end);
             job.OnFinished += onFinished;
             job.QueueModifier += queueModifier;
+            return Instance.EnqueueJob(job);
+        }
+        public virtual PathJob EnqueueJob(PathJob job) {
             queuedJobs.Enqueue(job);
             return job;
         }
@@ -42,7 +49,7 @@ namespace Andja.Pathfinding {
                 DoJob(job, MainThreadWorldGraph, MainThreadIdToGrid);
             }
             else {
-                queuedJobs.Enqueue(job);
+                Instance.EnqueueJob(job);
             }
         }
 
@@ -53,9 +60,8 @@ namespace Andja.Pathfinding {
         public static PathJob EnqueueJob(IPathfindAgent agent, PathGrid grid, Vector2 start, Vector2 end,
                                       List<Vector2> startTiles, List<Vector2> endTiles, Action onFinished) {
             PathJob job = new PathJob(agent, grid, start, end, startTiles, endTiles);
-            queuedJobs.Enqueue(job);
             job.OnFinished += onFinished;
-            return job;
+            return Instance.EnqueueJob(job);
         }
 
         private void ThreadLoop(int threadNumber) {
@@ -230,6 +236,7 @@ namespace Andja.Pathfinding {
         }
 
         internal static void Stop() {
+            Instance = null;
             FindPaths = false;
         }
     }
@@ -277,9 +284,11 @@ namespace Andja.Pathfinding {
             Start = start;
             End = end;
         }
+
         private void Finished() {
             PathUsedGrid.Changed += OnGridChange;
         }
+
         public void SetStatus(JobStatus status) {
             if(status == JobStatus.Canceled) {
                 return;

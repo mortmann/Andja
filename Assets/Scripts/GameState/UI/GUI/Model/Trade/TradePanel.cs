@@ -17,7 +17,6 @@ namespace Andja.UI.Model {
             amountSlider.onValueChanged.AddListener(OnAmountSliderChange);
             priceSlider.onValueChanged.AddListener(OnPriceSliderChange);
         }
-        // Use this for initialization
         public void Show(ICity c) {
             city = c;
             amountSlider.maxValue = city.Inventory.MaxStackSize;
@@ -33,7 +32,6 @@ namespace Andja.UI.Model {
                     tradeItemUI.Show(null, c.Inventory.MaxStackSize, OnSellBuyClick);
                 }
                 else {
-                    Item item = c.Inventory.GetAllOfItem(items[i]);
                     tradeItemUI.Show(c.ItemIDtoTradeItem[items[i]], c.Inventory.MaxStackSize, OnSellBuyClick);
                     tradeItemUI.ChangeItemCount(c.ItemIDtoTradeItem[items[i]].count);
                 }

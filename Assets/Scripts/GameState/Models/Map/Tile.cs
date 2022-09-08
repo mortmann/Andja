@@ -225,9 +225,7 @@ namespace Andja.Model {
         //Want to have more than one structure in one tile!
         //more than one tree or tree and bench! But for now only one
         public virtual Structure Structure {
-            get {
-                return null;
-            }
+            get => null;
             set {
             }
         }

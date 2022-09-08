@@ -70,7 +70,7 @@ namespace Andja.Model {
             //now we have the tile thats has the smallest x/y
             //to get the tile we now have to rotate a vector thats
             //1 up and 1 left from the temptile
-            Vector2 rot = new Vector2((float)TileWidth / 2f + 0.5f, 0).Rotate(rotation);
+            Vector2 rot = new Vector2((float)TileWidth / 2f + 0.5f, 0).Rotate(((Structure)this).Rotation);
             TradeTile = World.Current.GetTileAt(Mathf.FloorToInt(Center.x - rot.x), Mathf.FloorToInt(Center.y + rot.y));
 
             this.City.Warehouse = this;

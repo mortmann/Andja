@@ -8,16 +8,19 @@ using UnityEngine;
 using UnityEngine.TestTools;
 using System.Linq;
 using Andja.Utility;
+using static AssertNet.Assertions;
+using static AssertNet.Moq.Assertions;
+using Andja.Pathfinding;
 
 public class ProductionStructureTest {
     string ID = "Production";
     private MockUtil mockutil;
-    ProductionStructure Production;
+    TestProductionStructure Production;
     ProductionPrototypeData PrototypeData;
 
     string ProducerID = "Production";
     ProductionStructure Producer;
-    ProductionPrototypeData ProducerPrototypeData;
+    private string WorkerID = "Worker";
 
     [SetUp]
     public void SetUp() {
@@ -25,22 +28,21 @@ public class ProductionStructureTest {
             ID = ID,
             produceTime = 2f,
             maxOutputStorage = 2,
+            structureRange = 10,
+            tileWidth = 2,
+            tileHeight = 2,
             intake = new Item[] {ItemProvider.Wood_1, ItemProvider.Fish_2},
             output = new Item[] {ItemProvider.Stone_1}
         };
         Producer = new ProductionStructure(ProducerID, null);
-        ProducerPrototypeData = new ProductionPrototypeData() {
-            output = new Item[] { ItemProvider.Wood_1 },
-        };
         mockutil = new MockUtil();
         var prototypeControllerMock = mockutil.PrototypControllerMock;
         prototypeControllerMock.Setup(m => m.GetStructurePrototypDataForID(ID)).Returns(() => PrototypeData);
         CreateTwoByThree();
     }
     private void CreateTwoByThree() {
-        Production = new ProductionStructure(ID, PrototypeData);
+        Production = new TestProductionStructure(ID, PrototypeData);
         Production.City = mockutil.City;
-        //Production.City = mockutil.City;
         Production.Tiles = Production.GetBuildingTiles(World.Current.GetTileAt(Production.StructureRange, Production.StructureRange));
         PrototypeData.structureRange = 10;
         Production.RangeTiles = new HashSet<Tile>();
@@ -166,5 +168,240 @@ public class ProductionStructureTest {
         Production.Load();
         Assert.AreEqual(ItemProvider.Brick.ID, Production.Intake[0].ID);
         Assert.AreEqual(1, Production.Intake.Length);
+    }
+
+    [Test]
+    public void SendOutWorkerIfCan_NearestMarket() {
+        Route route = new Route();
+        CreateTwoByThree();
+        PrototypeData.workerID = "worker";
+        Production.Intake = new[] { ItemProvider.Stone_1 };
+        mockutil.PrototypControllerMock.Setup(p => p.GetWorkerPrototypDataForID("worker")).Returns(new WorkerPrototypeData());
+        Production.NearestMarketStructure = new TestMarketStructure { 
+            City = mockutil.City,
+            Tiles = new List<Tile>{mockutil.GetInCityTile(15,15)}
+        };
+        mockutil.CityMock.Setup(c => c.HasAnythingOfItem(It.IsAny<Item>())).Returns(true);
+        mockutil.CityMock.SetupGet(c=>c.Inventory).Returns(() => {
+            var inv = new CityInventory();
+            inv.Items[ItemProvider.Stone.ID].count = 50;
+            return inv;
+        });
+
+        Production.TestTrySendOutWorker();
+
+        AssertThat(Production.Workers.Count).IsEqualTo(1);
+        AssertThat(Production.Workers[0].ToGetItems.Length).IsEqualTo(1);
+        AssertThat(Production.Workers[0].ToGetItems[0].ID).IsEqualTo(ItemProvider.Stone.ID);
+        AssertThat(Production.Workers[0].ToGetItems[0].count).IsEqualTo(4);
+    }
+
+    [Test]
+    public void OnStructureBuild() {
+        CreateTwoByThree();
+        TestProductionStructure test = new TestProductionStructure(ID, new ProductionPrototypeData()) {
+            Output = new[] { ItemProvider.Wood_1 },
+            Tiles = new List<Tile> { Production.RangeTiles.First() }
+        };
+        Production.Workers = new List<Worker>();
+        Production.RegisteredStructures = new Dictionary<OutputStructure, Item[]>();
+        Production.OnStructureBuild(test);
+        Production.OnStructureBuild(test);
+
+        AssertThat(Production.RegisteredStructures.Keys).ContainsExactly(test);
+    }
+    [Test]
+    public void OnStructureBuild_NotNeeded() {
+        CreateTwoByThree();
+        TestProductionStructure test = new TestProductionStructure(ID, new ProductionPrototypeData()) {
+            Output = new[] { ItemProvider.Brick },
+            Tiles = new List<Tile> { Production.RangeTiles.First() }
+        };
+        Production.RegisteredStructures = new Dictionary<OutputStructure, Item[]>();
+        Production.OnStructureBuild(test);
+        AssertThat(Production.RegisteredStructures.Keys).DoesNotContain(test);
+        AssertThat(Production.WorkerJobsToDo.Count).IsEqualTo(0);
+    }
+
+    [Test]
+    public void FindNearestMarketStructure() {
+        CreateTwoByThree();
+        mockutil.PrototypControllerMock
+            .Setup(p => p.GetWorkerPrototypDataForID(WorkerID))
+            .Returns(new WorkerPrototypeData());
+        PrototypeData.workerID = WorkerID;
+        Tile tile = mockutil.GetInCityTile(5, 5);
+        MarketStructure marketStructure = new MarketStructure() {
+            Tiles = new List<Tile> { tile }
+        };
+        tile.Structure = marketStructure;
+        Production.FindNearestMarketStructure(tile);
+
+        AssertThat(Production.NearestMarketStructure).IsEqualTo(marketStructure);
+    }
+    [Test]
+    public void FindNearestMarketStructure_CloserOne() {
+        CreateTwoByThree();
+        PrototypeData.workerID = WorkerID;
+        mockutil.PrototypControllerMock
+            .Setup(p => p.GetWorkerPrototypDataForID(WorkerID))
+            .Returns(new WorkerPrototypeData());
+        TestMarketStructure marketStructure = new TestMarketStructure() {
+            Tiles = new List<Tile> { mockutil.GetInCityTile(5, 5) }
+        };
+        Tile tile = mockutil.GetInCityTile(5, 6);
+        Production.NearestMarketStructure = marketStructure;
+        TestMarketStructure closerMarketStructure = new TestMarketStructure() {
+            Tiles = new List<Tile> { tile }
+        };
+        tile.Structure = closerMarketStructure;
+        Production.FindNearestMarketStructure(tile);
+
+        AssertThat(Production.NearestMarketStructure).IsEqualTo(closerMarketStructure);
+    }
+    [Test]
+    public void FindNearestMarketStructure_MustFollowRoad_NoConnection_IsOld() {
+        CreateTwoByThree();
+        PrototypeData.workerID = WorkerID;
+        mockutil.PrototypControllerMock
+            .Setup(p => p.GetWorkerPrototypDataForID(WorkerID))
+            .Returns(()=>new WorkerPrototypeData() { hasToFollowRoads = true });
+
+        TestMarketStructure marketStructure = new TestMarketStructure() {
+            Tiles = new List<Tile> { mockutil.GetInCityTile(5, 5) }
+        };
+        Tile tile = mockutil.GetInCityTile(5, 6);
+        Production.NearestMarketStructure = marketStructure;
+        TestMarketStructure closerMarketStructure = new TestMarketStructure() {
+            Tiles = new List<Tile> { tile }
+        };
+        tile.Structure = closerMarketStructure;
+        Production.FindNearestMarketStructure(tile);
+
+        AssertThat(Production.NearestMarketStructure).IsEqualTo(marketStructure);
+    }
+
+    [Test]
+    public void FindNearestMarketStructure_MustFollowRoad_ClosestPerRoadWins() {
+        CreateTwoByThree();
+        PrototypeData.workerID = WorkerID;
+        mockutil.PrototypControllerMock
+            .Setup(p => p.GetWorkerPrototypDataForID(WorkerID))
+            .Returns(() => new WorkerPrototypeData() { hasToFollowRoads = true });
+        mockutil.pathfindingMock.Setup(p => p.EnqueueJob(It.IsAny<PathJob>())).Returns((PathJob job) => {
+            job.End = new Vector2(6, 6);
+            job.PathUsedGrid = new PathGrid();
+            job.OnFinished?.Invoke();
+            return job;
+        });
+        Route route = new Route();
+        TestMarketStructure marketStructure = new TestMarketStructure() {
+            Tiles = new List<Tile> { mockutil.GetInCityTile(5, 5) },
+            TestRoutes = new HashSet<Route> { route }
+        };
+        Tile tile = mockutil.GetInCityTile(6, 6);
+        Production.TestRoutes = new HashSet<Route> { route };
+        Production.NearestMarketStructure = marketStructure;
+        TestMarketStructure closerMarketStructure = new TestMarketStructure() {
+            Tiles = new List<Tile> { tile },
+            TestRoutes = new HashSet<Route> { route }
+        };
+        tile.Structure = closerMarketStructure;
+        route.MarketStructures = new HashSet<MarketStructure>();
+        route.MarketStructures.Add(marketStructure);
+        route.MarketStructures.Add(closerMarketStructure);
+
+        Production.FindNearestMarketStructure(tile);
+        PathfindingThreadHandler.Instance = null;
+        AssertThat(Production.NearestMarketStructure).IsEqualTo(closerMarketStructure);
+    }
+    
+    [Test]
+    public void CheckMarketStructureForRoutes_OldNoRoute_IsNull() {
+        CreateTwoByThree();
+        PrototypeData.workerID = WorkerID;
+        mockutil.PrototypControllerMock
+            .Setup(p => p.GetWorkerPrototypDataForID(WorkerID))
+            .Returns(new WorkerPrototypeData());
+        TestMarketStructure marketStructure = new TestMarketStructure() {
+            Tiles = new List<Tile> { mockutil.GetInCityTile(5, 5) }
+        };
+        Tile tile = mockutil.GetInCityTile(5, 6);
+        Production.NearestMarketStructure = marketStructure;
+        Route route = new Route();
+        route.MarketStructures = new HashSet<MarketStructure>();
+
+        Production.TestRoutes = new HashSet<Route> { route };
+        Production.TestCheckMarketStructureForRoutes(marketStructure);
+
+        AssertThat(Production.NearestMarketStructure).IsNull();
+    }
+    [Test]
+    public void CheckMarketStructureForRoutes_OldHasStillRoute() {
+        CreateTwoByThree();
+        PrototypeData.workerID = WorkerID;
+        mockutil.PrototypControllerMock
+            .Setup(p => p.GetWorkerPrototypDataForID(WorkerID))
+            .Returns(new WorkerPrototypeData());
+        TestMarketStructure marketStructure = new TestMarketStructure() {
+            Tiles = new List<Tile> { mockutil.GetInCityTile(5, 5) }
+        };
+        Tile tile = mockutil.GetInCityTile(5, 6);
+        Production.TestRoutes = new HashSet<Route>();
+        Production.NearestMarketStructure = marketStructure;
+        Route route = new Route();
+        route.MarketStructures = new HashSet<MarketStructure>();
+        route.MarketStructures.Add(marketStructure);
+        Production.TestRoutes = new HashSet<Route> { route };
+        marketStructure.TestRoutes = new HashSet<Route> { route };
+
+        Production.TestCheckMarketStructureForRoutes(marketStructure);
+
+        AssertThat(Production.NearestMarketStructure).IsEqualTo(marketStructure);
+    }
+
+    class TestProductionStructure : ProductionStructure {
+        public TestProductionStructure(string id, ProductionPrototypeData productionPrototypeData) : base(id, productionPrototypeData) {
+        }
+        public MarketStructure NearestMarketStructure {
+            get => nearestMarketStructure;
+            set => nearestMarketStructure = value;
+        }
+        public HashSet<Route> TestRoutes {
+            get => Routes;
+            set => Routes = value;
+        }
+        public List<Worker> Workers {
+            get => workers;
+            set => workers = value;
+        }
+        public void TestTrySendOutWorker() {
+            Workers ??= new List<Worker>();
+            SendOutWorkerIfCan();
+        }
+
+        public void TestAddJobStructure(OutputStructureTest.TestOutputStructure testOutputStructure, Item[] items) {
+            WorkerJobsToDo ??= new Dictionary<OutputStructure, Item[]>();
+            WorkerJobsToDo[testOutputStructure] = items;
+        }
+
+        public void TestCheckMarketStructureForRoutes(MarketStructure structure) {
+            CheckMarketStructureForRoutes(structure);
+        }
+    }
+
+    class TestMarketStructure : MarketStructure {
+
+        public TestMarketStructure() {
+            prototypeData = new StructurePrototypeData() {
+                tileWidth = 1,
+                tileHeight = 1,
+            };
+        }
+
+        public HashSet<Route> TestRoutes {
+            get => Routes;
+            set => Routes = value;
+        }
     }
 }

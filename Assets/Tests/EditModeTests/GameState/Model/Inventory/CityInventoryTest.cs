@@ -13,23 +13,11 @@ using static AssertNet.Assertions;
 public class CityInventoryTest {
     CityInventory inventory;
     Item[] buildItems = new[] { ItemProvider.Brick, ItemProvider.Tool, ItemProvider.Wood };
-    private Mock<IPrototypController> prototypeControllerMock;
     const int MaxStackSize = 50;
+    private MockUtil mockUtil;
     [SetUp]
     public void SetupUp() {
-        prototypeControllerMock = new Mock<IPrototypController>();
-
-        var buildItems = new Dictionary<string, Item>() { 
-            { ItemProvider.Brick.ID, ItemProvider.Brick.Clone() }, 
-            { ItemProvider.Tool.ID, ItemProvider.Tool.Clone()   }, 
-            { ItemProvider.Wood.ID, ItemProvider.Wood.Clone()   },
-            { ItemProvider.Fish.ID, ItemProvider.Fish.Clone()   },
-            { ItemProvider.Stone.ID, ItemProvider.Stone.Clone()   },
-        };
-        prototypeControllerMock.Setup(m => m.GetCopieOfAllItems()).Returns(()=> {
-            return buildItems.ToDictionary(x => x.Key, y => y.Value.Clone());
-            });
-        PrototypController.Instance = prototypeControllerMock.Object;
+        mockUtil = new MockUtil();
 
         inventory = new CityInventory(1);
     }
@@ -169,8 +157,8 @@ public class CityInventoryTest {
         Item item = ItemProvider.Wood_N(firstInventory);
         inventory.AddItem(item);
         inventory.MoveItem(otherInventory, ItemProvider.Wood, moveAmount);
-        Assert.AreEqual((firstInventory - moveAmount.ClampZero()).ClampZero(), inventory.GetAmountFor(item));
-        Assert.AreEqual(Mathf.Min(firstInventory, moveAmount.ClampZero()), otherInventory.GetAmountFor(item));
+        AssertThat(inventory.GetAmountFor(item)).IsEqualTo((firstInventory - moveAmount.ClampZero()).ClampZero());
+        AssertThat(otherInventory.GetAmountFor(item)).IsEqualTo(Mathf.Min(firstInventory, moveAmount.ClampZero()));
     }
     [Theory]
     [TestCase(0, 0)]
@@ -243,5 +231,33 @@ public class CityInventoryTest {
         otherInventory.AddItems(items.CloneArrayWithCounts());
         inventory.AddInventory(otherInventory);
         Assert.IsTrue(items.All(x => inventory.BaseItems.ToList().Exists(y => x.ID == y.ID && x.count == y.count)));
+    }
+
+    [Test]
+    public void Load_ItemNotExisting() {
+        mockUtil.PrototypControllerMock
+            .Setup(p => p.GetItemPrototypDataForID("NOT REAL ANYMORE"))
+            .Returns(new ItemPrototypeData() { type = ItemType.Missing });
+        inventory.Items["NOT REAL ANYMORE"] = new Item("NOT REAL ANYMORE");
+        inventory.Load();
+
+        AssertThat(inventory.Items.Keys).DoesNotContain("NOT REAL ANYMORE");
+        AssertThat(inventory.Items.Keys).Contains(ItemProvider.Stone.ID);
+    }
+    [Test]
+    public void Load_NewItem() {
+        mockUtil.AllItems.Add("REAL", new Item("REAL", new ItemPrototypeData()));
+
+        inventory.Load();
+
+        AssertThat(inventory.Items.Keys).Contains("REAL");
+        AssertThat(inventory.Items.Keys).Contains(ItemProvider.Stone.ID);
+    }
+
+    [Test]
+    public void GetRemainingSpaceForItem() {
+        inventory.Items[ItemProvider.Wood.ID].count = 25;
+
+        AssertThat(inventory.GetRemainingSpaceForItem(ItemProvider.Wood)).IsEqualTo(25);
     }
 }

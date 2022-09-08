@@ -4,6 +4,7 @@ using Newtonsoft.Json;
 using System;
 using System.Linq;
 using System.Collections.Generic;
+using Andja.Pathfinding;
 using UnityEngine;
 
 namespace Andja.Model {
@@ -60,7 +61,7 @@ namespace Andja.Model {
         }
 
         public Dictionary<OutputStructure, Item[]> RegisteredStructures;
-        private MarketStructure _nearestMarketStructure;
+        protected MarketStructure nearestMarketStructure;
         public InputTyp InputTyp => ProductionData.inputTyp;
 
         #endregion RuntimeOrOther
@@ -133,7 +134,7 @@ namespace Andja.Model {
         }
 
         protected override void SendOutWorkerIfCan(float workTime = 1) {
-            if (Workers.Count >= MaxNumberOfWorker || WorkerJobsToDo.Count == 0 && _nearestMarketStructure == null) {
+            if (workers.Count >= MaxNumberOfWorker || WorkerJobsToDo.Count == 0 && nearestMarketStructure == null) {
                 return;
             }
             Dictionary<Item, int> needItems = new Dictionary<Item, int>();
@@ -145,7 +146,7 @@ namespace Andja.Model {
             if (needItems.Count == 0) {
                 return;
             }
-            if (WorkerJobsToDo.Count == 0 && _nearestMarketStructure != null) {
+            if (WorkerJobsToDo.Count == 0 && nearestMarketStructure != null) {
                 List<Item> getItems = new List<Item>();
                 for (int i = Intake.Length - 1; i >= 0; i--) {
                     if (City.HasAnythingOfItem(Intake[i]) == false) continue;
@@ -156,8 +157,8 @@ namespace Andja.Model {
                 if (getItems.Count <= 0) {
                     return;
                 }
-                Workers.Add(new Worker(this, _nearestMarketStructure, workTime, OutputData.workerID, getItems.ToArray(), false));
-                World.Current.CreateWorkerGameObject(Workers[0]);
+                workers.Add(new Worker(this, nearestMarketStructure, workTime, OutputData.workerID, getItems.ToArray(), false));
+                World.Current.CreateWorkerGameObject(workers[0]);
             }
             else {
                 base.SendOutWorkerIfCan();
@@ -196,7 +197,7 @@ namespace Andja.Model {
                 Item item = Array.Find(items, x => x.ID == Intake[i].ID)?.Clone();
                 if (item == null) continue;
                 item.count = GetMaxIntakeForIndex(i) - Intake[i].count;
-                item.count -= Workers.Where(z => z.ToGetItems != null)
+                item.count -= workers.Where(z => z.ToGetItems != null)
                     .Sum(x => Array.Find(x.ToGetItems, y => items[i].ID == y.ID)?.count ?? 0);
                 all.Add(item);
             }
@@ -241,12 +242,12 @@ namespace Andja.Model {
         public int GetRemainingIntakeSpaceForIndex(int itemIndex) {
             return GetMaxIntakeForIndex(itemIndex) - Intake[itemIndex].count; //TODO THINK ABOUT THIS
         }
+
         /// <summary>
         /// Give an index for the needed Item, so only use in for loops
         /// OR
-        /// for OR Inake use with orItemIndex
+        /// for OR Intake use with orItemIndex
         /// </summary>
-        /// <param name="i">The index.</param>
         public int GetMaxIntakeForIndex(int itemIndex) {
             return ProductionData.intake[itemIndex].count * INTAKE_MULTIPLIER; //TODO THINK ABOUT THIS
         }
@@ -266,7 +267,7 @@ namespace Andja.Model {
                 FindNearestMarketStructure(str.BuildTile);
                 return;
             }
-            Item[] items = GetRequiredItems(outputStructure, Intake);
+            Item[] items = GetRequiredItems(outputStructure, outputStructure.Output);
             if (items.Length == 0) return;
             outputStructure.RegisterOutputChanged(OnOutputChangedStructure);
             RegisteredStructures.Add(outputStructure, items);
@@ -274,16 +275,55 @@ namespace Andja.Model {
 
         public void FindNearestMarketStructure(Tile tile) {
             if (!(tile.Structure is MarketStructure market)) return;
-            if (_nearestMarketStructure == null) {
-                _nearestMarketStructure = market;
-            }
-            else {
-                float firstDistance = _nearestMarketStructure.Center.magnitude - Center.magnitude;
-                float secondDistance = market.Center.magnitude - Center.magnitude;
-                if (Mathf.Abs(secondDistance) < Mathf.Abs(firstDistance)) {
-                    _nearestMarketStructure = market;
+            if (WorkerPrototypeData.hasToFollowRoads) {
+                if (market.GetRoutes().Overlaps(Routes) == false) {
+                    return;
                 }
             }
+            if (nearestMarketStructure == null) {
+                nearestMarketStructure = market;
+            }
+            else {
+                if(WorkerPrototypeData.hasToFollowRoads) {
+                    CheckMarketStructureForRoutes(market);
+                } else {
+                    float firstDistance = nearestMarketStructure.Center.magnitude - Center.magnitude;
+                    float distanceToNewMarket = market.Center.magnitude - Center.magnitude;
+                    if (Mathf.Abs(distanceToNewMarket) < Mathf.Abs(firstDistance)) {
+                        nearestMarketStructure = market;
+                    }
+                }
+            }
+            if (WorkerPrototypeData.hasToFollowRoads) {
+                nearestMarketStructure.RegisterOnRoutesChangedCallback(CheckMarketStructureForRoutes);
+            }
+        }
+
+        protected void CheckMarketStructureForRoutes(Structure structure) {
+            structure.UnregisterOnRoutesChangedCallback(CheckMarketStructureForRoutes);
+            IEnumerable<MarketStructure> toCheck = Routes.SelectMany(r  => r.MarketStructures)
+                                                         .Where(m => RangeTiles.Overlaps(m.Tiles));
+            if (toCheck.Any() == false) {
+                nearestMarketStructure = null;                
+                return;
+            }
+            if (toCheck.Count() == 1) {
+                nearestMarketStructure = toCheck.First();
+                return;
+            }
+
+            PathJob job = new PathJob(new Worker(OutputData.workerID), toCheck.Count()) {
+                Grid = Routes.Where(r => r.MarketStructures.Overlaps(toCheck)).Select(r => r.Grid).ToArray()
+            };
+            job.EndTiles = new List<Vector2>[job.Grid.Length];
+            var tiles = toCheck.SelectMany(m => m.Tiles.Select(t=>t.Vector2)).ToList();
+            for (int i = 0; i < job.Grid.Length; i++) {
+                job.EndTiles[i] = tiles;
+            }
+            nearestMarketStructure = null;
+            PathfindingThreadHandler.EnqueueJob(job, ()=> {
+                nearestMarketStructure = World.Current.GetTileAt(job.End).Structure as MarketStructure;
+            });
         }
 
         public override void Load() {

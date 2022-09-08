@@ -9,13 +9,14 @@ using UnityEngine;
 using UnityEngine.TestTools;
 using System.Linq;
 using System;
+using static AssertNet.Assertions;
+using static AssertNet.Moq.Assertions;
 
 public class OutputStructureTest {
     string ID = "OUTPUTSTRUCTURE";
     TestOutputStructure OutputTestStructure;
     OutputPrototypData PrototypeData;
     private MockUtil mockutil;
-    IIsland Island;
 
     [SetUp]
     public void SetUp() {
@@ -33,7 +34,6 @@ public class OutputStructureTest {
             new EffectPrototypeData() {
                 targets = new TargetGroup(Target.OutputStructure),
             });
-        Island = mockutil.WorldIsland;
         CreateTwoByThree();
     }
     private void CreateTwoByThree() {
@@ -178,7 +178,156 @@ public class OutputStructureTest {
         OutputTestStructure.OnDestroy();
         Assert.IsFalse(OutputTestStructure.Workers[0].IsAlive);
     }
+
+    [Test]
+    public void Load() {
+        OutputTestStructure.Workers = new List<Worker> { new Worker() };
+        OutputTestStructure.Output = new Item[] { ItemProvider.Stone_1 };
+
+        OutputTestStructure.Load();
+
+        AssertThat(OutputTestStructure.Output.Length).IsEqualTo(1);
+        AssertThat(Item.AreSame(OutputTestStructure.Output[0], ItemProvider.Stone_1)).IsTrue();
+    }
+    [Test]
+    public void Load_OutputChanged_More() {
+        OutputTestStructure.Workers = new List<Worker> { new Worker() };
+        PrototypeData.output = new Item[] { ItemProvider.Stone_1, ItemProvider.Fish_1 };
+        OutputTestStructure.Output = new Item[] { ItemProvider.Stone_1 };
+
+        OutputTestStructure.Load();
+
+        AssertThat(OutputTestStructure.Output.Length).IsEqualTo(2);
+        AssertThat(OutputTestStructure.Output[0].ID).IsEqualTo(ItemProvider.Stone.ID);
+        AssertThat(OutputTestStructure.Output[1].ID).IsEqualTo(ItemProvider.Fish.ID);
+    }
+    [Test]
+    public void Load_OutputChanged_Less() {
+        OutputTestStructure.Workers = new List<Worker> { new Worker() };
+        PrototypeData.output = new Item[] { ItemProvider.Fish_1 };
+        OutputTestStructure.Output = new Item[] { ItemProvider.Stone_1, ItemProvider.Fish_1 };
+
+        OutputTestStructure.Load();
+
+        AssertThat(OutputTestStructure.Output.Length).IsEqualTo(1);
+        AssertThat(OutputTestStructure.Output[0].ID).IsEqualTo(ItemProvider.Fish.ID);
+    }
+    [Test]
+    public void SendOutWorkerIfCan() {
+        CreateTwoByThree();
+        OutputTestStructure.TestAddJobStructure(new TestOutputStructure(ID, new OutputPrototypData()) {
+                Output = new Item[] { ItemProvider.Stone_1 },
+                Tiles = new List<Tile>{mockutil.GetInCityTile(10,10)},
+        },new Item[] { ItemProvider.Stone_1 });
+        PrototypeData.workerID = "worker";
+        mockutil.PrototypControllerMock.Setup(p => p.GetWorkerPrototypDataForID("worker"))
+            .Returns(new WorkerPrototypeData());
+
+        OutputTestStructure.TestTrySendOutWorker();
+
+        AssertThat(OutputTestStructure.Workers.Count).IsEqualTo(1);
+        AssertThat(OutputTestStructure.Workers[0].ToGetItems.Length).IsEqualTo(1);
+        AssertThat(OutputTestStructure.Workers[0].ToGetItems[0].ID).IsEqualTo(ItemProvider.Stone.ID);
+        AssertThat(OutputTestStructure.Workers[0].ToGetItems[0].count).IsEqualTo(PrototypeData.maxOutputStorage);
+    }
+    [Test]
+    public void SendOutWorkerIfCan_ButAlreadyHasWorkerOut_ReduceGetItems() {
+        CreateTwoByThree();
+        OutputTestStructure.TestAddJobStructure(new TestOutputStructure(ID, new OutputPrototypData()) {
+            Output = new Item[] { ItemProvider.Stone_1 },
+            Tiles = new List<Tile> { mockutil.GetInCityTile(10, 10) },
+        }, new Item[] { ItemProvider.Stone_1 });
+        PrototypeData.workerID = "worker";
+        PrototypeData.maxOutputStorage = 5;
+        mockutil.PrototypControllerMock.Setup(p => p.GetWorkerPrototypDataForID("worker"))
+            .Returns(new WorkerPrototypeData());
+        OutputTestStructure.Workers = new List<Worker> { new Worker(){ToGetItems = new []{ ItemProvider.Stone_N(2) } } };
+        OutputTestStructure.Output = new[] { ItemProvider.Stone_1 };
+
+        OutputTestStructure.TestTrySendOutWorker();
+
+        AssertThat(OutputTestStructure.Workers.Count).IsEqualTo(1);
+        AssertThat(OutputTestStructure.Workers[0].ToGetItems.Length).IsEqualTo(1);
+        AssertThat(OutputTestStructure.Workers[0].ToGetItems[0].ID).IsEqualTo(ItemProvider.Stone.ID);
+        AssertThat(OutputTestStructure.Workers[0].ToGetItems[0].count).IsEqualTo(2);
+    }
+    [Test]
+    public void SendOutWorkerIfCan_LimitedNeeded() {
+        CreateTwoByThree();
+        OutputTestStructure.TestAddJobStructure(new TestOutputStructure(ID, new OutputPrototypData()) {
+            Output = new Item[] { ItemProvider.Stone_1 },
+            Tiles = new List<Tile> { mockutil.GetInCityTile(10, 10) }
+        }, new Item[] { ItemProvider.Stone_N(3) });
+        PrototypeData.workerID = "worker";
+        OutputTestStructure.Output = new[] { ItemProvider.Stone_1 };
+        mockutil.PrototypControllerMock.Setup(p => p.GetWorkerPrototypDataForID("worker"))
+            .Returns(new WorkerPrototypeData());
+
+        OutputTestStructure.TestTrySendOutWorker();
+
+        AssertThat(OutputTestStructure.Workers.Count).IsEqualTo(1);
+        AssertThat(OutputTestStructure.Workers[0].ToGetItems.Length).IsEqualTo(1);
+        AssertThat(OutputTestStructure.Workers[0].ToGetItems[0].ID).IsEqualTo(ItemProvider.Stone.ID);
+        AssertThat(OutputTestStructure.Workers[0].ToGetItems[0].count).IsEqualTo(1);
+    }
+    [Test]
+    public void SendOutWorkerIfCan_HasToFollowRoads_NoConnection() {
+        CreateTwoByThree();
+        OutputTestStructure.TestAddJobStructure(new TestOutputStructure(ID, new OutputPrototypData()) {
+            Output = new Item[] { ItemProvider.Stone_1 },
+            Tiles = new List<Tile> { mockutil.GetInCityTile(10, 10) }
+        }, new Item[] { ItemProvider.Stone_N(3) });
+        PrototypeData.workerID = "worker";
+        OutputTestStructure.Output = new[] { ItemProvider.Stone_1 };
+        mockutil.PrototypControllerMock.Setup(p => p.GetWorkerPrototypDataForID("worker"))
+            .Returns(new WorkerPrototypeData(){ hasToFollowRoads = true });
+
+        OutputTestStructure.TestTrySendOutWorker();
+
+        AssertThat(OutputTestStructure.Workers.Count).IsEqualTo(0);
+    }
+
+    [Test]
+    public void SendOutWorkerIfCan_HasToFollowRoads() {
+        Route route = new Route();
+
+        CreateTwoByThree();
+        OutputTestStructure.TestAddJobStructure(new TestOutputStructure(ID, new OutputPrototypData()) {
+            Output = new Item[] { ItemProvider.Stone_1 },
+            Tiles = new List<Tile> { mockutil.GetInCityTile(10, 10) },
+            TestRoutes = new HashSet<Route> { route }
+        }, new Item[] { ItemProvider.Stone_N(3) });
+        PrototypeData.workerID = "worker";
+        OutputTestStructure.Output = new[] { ItemProvider.Stone_1 };
+        OutputTestStructure.TestRoutes = new HashSet<Route> { route };
+        mockutil.PrototypControllerMock.Setup(p => p.GetWorkerPrototypDataForID("worker"))
+            .Returns(new WorkerPrototypeData() { hasToFollowRoads = true });
+
+        OutputTestStructure.TestTrySendOutWorker();
+
+        AssertThat(OutputTestStructure.Workers.Count).IsEqualTo(1);
+        AssertThat(OutputTestStructure.Workers[0].ToGetItems.Length).IsEqualTo(1);
+        AssertThat(OutputTestStructure.Workers[0].ToGetItems[0].ID).IsEqualTo(ItemProvider.Stone.ID);
+        AssertThat(OutputTestStructure.Workers[0].ToGetItems[0].count).IsEqualTo(1);
+    }
+
+    [Test]
+    public void SendOutWorkerIfCan_NoTargets() {
+
+        OutputTestStructure.TestTrySendOutWorker();
+
+        AssertThat(OutputTestStructure.Workers.Count).IsEqualTo(0);
+    }
+
     public class TestOutputStructure : OutputStructure {
+        public HashSet<Route> TestRoutes {
+            get => Routes;
+            set => Routes = value;
+        }
+        public List<Worker> Workers {
+            get => workers;
+            set => workers = value;
+        }
         public TestOutputStructure() { }
         public TestOutputStructure(string ID, OutputPrototypData data) {
             this.ID = ID;
@@ -192,8 +341,17 @@ public class OutputStructureTest {
         internal bool? IsOutputChangedCallbackRegistered() {
             return cbOutputChange != null;
         }
+
+        public void TestTrySendOutWorker() {
+            Workers ??= new List<Worker>();
+            SendOutWorkerIfCan();
+        }
+
+        public void TestAddJobStructure(TestOutputStructure testOutputStructure, Item[] items) {
+            WorkerJobsToDo ??= new Dictionary<OutputStructure, Item[]>();
+            WorkerJobsToDo[testOutputStructure] = items;
+        }
     }
 
-    
 }
 

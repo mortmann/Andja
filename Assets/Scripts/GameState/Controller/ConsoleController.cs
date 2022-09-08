@@ -262,11 +262,11 @@ namespace Andja.Controller {
                     return true;
 
                 case "nocost":
-                    BuildController.Instance.noBuildCost = !BuildController.Instance.noBuildCost;
+                    BuildController.Instance.ToggleBuildCost();
                     return true;
 
                 case "nounitbuildrestriction":
-                    BuildController.Instance.noUnitRestriction = !BuildController.Instance.noUnitRestriction;
+                    BuildController.Instance.ToggleUnitBuildRangeRestriction();
                     return true;
 
                 case "fogofwar":
@@ -660,11 +660,11 @@ namespace Andja.Controller {
             }
             switch (parameters[pos]) {
                 case "item":
-                    return ChangeItemInInventory(parameters.Skip(1).ToArray(), u.inventory);
+                    return ChangeItemInInventory(parameters.Skip(1).ToArray(), u.Inventory);
 
                 case "build":
-                    u.inventory.AddItem(new Item("wood", 50));
-                    u.inventory.AddItem(new Item("tools", 50));
+                    u.Inventory.AddItem(new Item("wood", 50));
+                    u.Inventory.AddItem(new Item("tools", 50));
                     return true;
 
                 case "kill":
@@ -677,7 +677,7 @@ namespace Andja.Controller {
 
                 case "player":
                     if(int.TryParse(parameters[pos + 1], out int num)) {
-                        u.playerNumber = num;
+                        u.ChangePlayer(num);
                     }
                     return true;
 

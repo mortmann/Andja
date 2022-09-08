@@ -23,7 +23,7 @@ namespace Andja.Model.Components {
         bool isCurrentlyVisible;
         public bool IsCurrentlyVisible {
             get {
-                return isCurrentlyVisible || unit.IsPlayer();
+                return isCurrentlyVisible || unit.IsOwnedByCurrentPlayer();
             }
         }
 
@@ -44,10 +44,10 @@ namespace Andja.Model.Components {
             y = Holding.CurrentPosition.y;
             if (Holding is Unit == false)
                 return;
-            if (unit.pathfinding == null) {
+            if (unit.Pathfinding == null) {
                 return;
             }
-            if (Debug_Mode && unit.pathfinding.worldPath != null) {
+            if (Debug_Mode && unit.Pathfinding.worldPath != null) {
                 List<Vector3> lineVecs = new List<Vector3>();
 
                 if (unit.CurrentDoingMode != UnitDoModes.Move) {
@@ -56,20 +56,20 @@ namespace Andja.Model.Components {
                 else {
                     line.gameObject.SetActive(true);
                 }
-                line.positionCount = unit.pathfinding.worldPath.Count + 2;
+                line.positionCount = unit.Pathfinding.worldPath.Count + 2;
                 line.useWorldSpace = true;
-                lineVecs.Add(unit.pathfinding.Position);
-                if (unit.pathfinding.NextDestination != null) {
-                    lineVecs.Add((Vector3)unit.pathfinding.NextDestination.Value);
+                lineVecs.Add(unit.Pathfinding.Position);
+                if (unit.Pathfinding.NextDestination != null) {
+                    lineVecs.Add((Vector3)unit.Pathfinding.NextDestination.Value);
                 }
-                foreach (Vector2 t in unit.pathfinding.worldPath) {
-                    if (lineVecs.Count == unit.pathfinding.worldPath.Count - 2)
+                foreach (Vector2 t in unit.Pathfinding.worldPath) {
+                    if (lineVecs.Count == unit.Pathfinding.worldPath.Count - 2)
                         break;
                     Vector3 temp = t;
                     lineVecs.Add(temp + Vector3.back);
                 }
-                if (unit.pathfinding.IsAtDestination == false) {
-                    lineVecs.Add(new Vector3(unit.pathfinding.dest_X, unit.pathfinding.dest_Y, -1));
+                if (unit.Pathfinding.IsAtDestination == false) {
+                    lineVecs.Add(new Vector3(unit.Pathfinding.dest_X, unit.Pathfinding.dest_Y, -1));
                 }
 
                 line.positionCount = lineVecs.Count;
@@ -78,16 +78,16 @@ namespace Andja.Model.Components {
                 }
             }
 
-            x = unit.pathfinding.CurrTile.X;
-            y = unit.pathfinding.CurrTile.Y;
-            rot = unit.pathfinding.rotation;
+            x = unit.Pathfinding.CurrTile.X;
+            y = unit.Pathfinding.CurrTile.Y;
+            rot = unit.Pathfinding.rotation;
             currentUnitDO = unit.CurrentDoingMode;
             currentUnitMain = unit.CurrentMainMode;
         }
 
         public void FixedUpdate() {
-            turnType = unit.pathfinding.TurnType;
-            //rigid.AddForce(unit.pathfinding.LastMove);
+            turnType = unit.Pathfinding.TurnType;
+            //rigid.AddForce(unit.Pathfinding.LastMove);
             rigid.MoveRotation(unit.Rotation);
             //transform.rotation = new Quaternion(0, 0, unit.Rotation, 0);
             rigid.MovePosition(unit.PositionVector);

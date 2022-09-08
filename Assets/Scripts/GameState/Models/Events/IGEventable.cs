@@ -3,6 +3,7 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
+// ReSharper disable All
 
 namespace Andja.Model {
     public interface IIGEventable {
@@ -45,10 +46,9 @@ namespace Andja.Model {
                 if (effects == null)
                     return null;
                 //for loading -- makes it ez to get them again without doing in load functions
-                if (_updateEffectList == null) {
-                    _updateEffectList = new List<Effect>(effects);
-                    _updateEffectList.RemoveAll(x => x.IsUpdateChange == false);
-                }
+                if (_updateEffectList != null) return _updateEffectList;
+                _updateEffectList = new List<Effect>(effects);
+                _updateEffectList.RemoveAll(x => x.IsUpdateChange == false);
                 return _updateEffectList;
             }
         }
@@ -247,7 +247,7 @@ namespace Andja.Model {
         protected float[] CalculateRealValue(string name, float[] currentValues, bool clampToZero = true) {
             float[] realValues = new float[currentValues.Length];
             for (int i = 0; i < currentValues.Length; i++) {
-                realValues[i] = CalculateRealValue(name, currentValues[i], true);
+                realValues[i] = CalculateRealValue(name, currentValues[i], clampToZero);
             }
             return realValues;
         }

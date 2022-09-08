@@ -35,7 +35,7 @@ namespace Andja.Pathfinding {
         internal Node GetNode(Tile t) {
             return GetNode(t.Vector2 - new Vector2(startX, startY));
         }
-        //Could cache routes here with start/end -- could be really useful for route pathfinding
+        //Could cache routes here with start/end -- could be really useful for route Pathfinding
         public PathGrid(Island island) {
             playerOwnedNodes = new int[Controller.PlayerController.Instance.PlayerCount];
             ID = Guid.NewGuid().ToString();
@@ -47,7 +47,11 @@ namespace Andja.Pathfinding {
                 }
             }
         }
-
+        public PathGrid() {
+#if !UNITY_INCLUDE_TESTS
+            Debug.LogError("Do no use this outside Tests.");
+#endif
+        }
         public PathGrid(Route route) {
             playerOwnedNodes = new int[Controller.PlayerController.Instance.PlayerCount];
             ID = Guid.NewGuid().ToString();

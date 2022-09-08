@@ -58,7 +58,7 @@ namespace Andja.Controller {
             // This creates a new GameObject and adds it to our scene.
             GameObject go = new GameObject();
             go.layer = LayerMask.NameToLayer("Unit");
-            go.name = unit.playerNumber +":" + (unit.IsShip?"S":"U") + unit.PlayerSetName ?? unit.Name;
+            go.name = unit.PlayerNumber + ":" + (unit.IsShip?"S":"U") + unit.PlayerSetName ?? unit.Name;
             GameObject lineGo = Instantiate(unitPathPrefab);
             lineGo.transform.SetParent(go.transform);
             // Add our tile/GO pair to the dictionary.
@@ -87,11 +87,11 @@ namespace Andja.Controller {
             unit.RegisterOnChangedCallback(OnUnitChanged);
             unit.RegisterOnDestroyCallback(OnUnitDestroy);
             if (FogOfWarController.FogOfWarOn) {
-                if (unit.PlayerNumber == PlayerController.currentPlayerNumber) {
+                if (unit.IsOwnedByCurrentPlayer()) {
                     FogOfWarController.Instance.AddUnitFogModule(go, unit);
                 }
                 if (FogOfWarController.IsFogOfWarAlways) {
-                    if (unit.PlayerNumber != PlayerController.currentPlayerNumber) {
+                    if (unit.IsOwnedByCurrentPlayer() == false) {
                         // boom this should make one part of fog always work
                         sr.maskInteraction = SpriteMaskInteraction.VisibleInsideMask; 
                     }

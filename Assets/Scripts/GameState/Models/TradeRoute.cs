@@ -153,7 +153,7 @@ namespace Andja.Model {
         public void DoCurrentTrade(Ship ship) {
             Trade trade = GetCurrentGoal(ship) as Trade;
             ICity c = trade.city;
-            Inventory inv = ship.inventory;
+            Inventory inv = ship.Inventory;
             //FIRST unload THEN load !
 
             //give as much as possible but max the choosen one

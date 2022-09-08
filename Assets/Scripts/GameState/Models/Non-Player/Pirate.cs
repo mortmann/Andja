@@ -44,17 +44,16 @@ namespace Andja.Model {
                 Collider2D[] colls = Physics2D.OverlapCircleAll(s.CurrentPosition, AggroRange);
                 foreach (Collider2D c in colls) {
                     ITargetableHoldingScript iths = c.gameObject.GetComponent<ITargetableHoldingScript>();
-                    if (iths != null && iths.Holding is Ship ship) {
-                        if(ship.PlayerNumber != Number)
-                            targets.Add(ship);
-                    }
+                    if (iths == null || !(iths.Holding is Ship ship)) continue;
+                    if(ship.PlayerNumber != Number)
+                        targets.Add(ship);
                 }
-                if (targets.Count > 0) {
-                    var grouped = targets.GroupBy(x => x.playerNumber,(y,z)=>new { count = y, Ships = z });
-                    var ships = grouped.OrderBy(x => x.count).First();
-                    if (ships.count < 2) {
-                        s.GiveAttackCommand(ships.Ships.First(), true);
-                    }
+
+                if (targets.Count <= 0) continue;
+                var grouped = targets.GroupBy(x => x.PlayerNumber, (y,z)=>new { count = y, Ships = z });
+                var ships = grouped.OrderBy(x => x.count).First();
+                if (ships.count < 2) {
+                    s.GiveAttackCommand(ships.Ships.First(), true);
                 }
             }
         }
@@ -90,7 +89,7 @@ namespace Andja.Model {
             foreach(Ship ship in Ships) {
                 ship.RegisterOnDestroyCallback(OnShipDestroy);
                 ship.RegisterOnArrivedAtDestinationCallback(OnShipArriveDestination);
-                if(ship.pathfinding.IsAtDestination)
+                if(ship.Pathfinding.IsAtDestination)
                     OnShipArriveDestination(ship, true);
                 ship.Load();
             }

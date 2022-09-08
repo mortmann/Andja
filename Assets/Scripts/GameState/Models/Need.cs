@@ -120,7 +120,7 @@ namespace Andja.Model {
             //so just remove from needed what we have
             neededConsumAmount -= notUsedOfTon;
             notUsedOfTon = 0;
-            //now we have a amount that still needs to be Fulfilled by the cities inventory
+            //now we have a amount that still needs to be Fulfilled by the cities Inventory
 
             float availableAmount = city.GetAmountForThis(Item);
             //either we need to get 1 ton or as much as we need

@@ -41,12 +41,12 @@ namespace Andja.UI.Model {
             }
         }
         public void OnClickItemToTrade(string itemID, int amount = 50) {
-            Unit u = city.Warehouse.InRangeUnits.Find(x => x.playerNumber == PlayerController.currentPlayerNumber);
+            Unit u = city.Warehouse.InRangeUnits.Find(x => x.PlayerNumber == PlayerController.currentPlayerNumber);
             if (u == null || u.IsShip == false) {
                 Debug.Log("No Ship in Range");
                 return;
             }
-            city.SellingTradeItem(itemID, PlayerController.CurrentPlayer, ((Ship)u), amount);
+            city.SellingTradeItem(itemID, ((Ship)u), amount);
         }
 
         public void OnCityDestroy(ICity c) {

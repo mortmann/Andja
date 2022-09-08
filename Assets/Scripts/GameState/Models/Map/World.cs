@@ -271,8 +271,8 @@ namespace Andja.Model {
                 if (ship.isOffWorld)
                     return;
             }
-            if (u.inventory != null) {
-                foreach (Item i in u.inventory.GetAllItemsAndRemoveThem()) {
+            if (u.Inventory != null) {
+                foreach (Item i in u.Inventory.GetAllItemsAndRemoveThem()) {
                     CreateItemOnMap(i, u.PositionVector);
                 }
             }

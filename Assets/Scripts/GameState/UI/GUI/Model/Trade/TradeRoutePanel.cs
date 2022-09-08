@@ -65,7 +65,7 @@ namespace Andja.UI.Model {
             amountSlider.onValueChanged.AddListener(OnAmountSliderMoved);
             World.Current.RegisterUnitCreated(OnShipCreate);
             foreach (Unit item in World.Current.Units) {
-                if (item.IsShip == false || item.IsPlayer() == false) {
+                if (item.IsShip == false || item.IsOwnedByCurrentPlayer() == false) {
                     continue;
                 }
                 OnShipCreate(item);
@@ -86,7 +86,7 @@ namespace Andja.UI.Model {
         }
 
         public void OnShipDestroy(Unit unit, IWarfare warfare) {
-            if (unit.IsPlayer() == false || unit is Ship == false)
+            if (unit.IsOwnedByCurrentPlayer() == false || unit is Ship == false)
                 return;
             Ship ship = (Ship)unit;
             Destroy(shipToGOElement[ship].gameObject);

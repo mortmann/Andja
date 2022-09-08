@@ -11,11 +11,11 @@ using System.Linq;
 public class ProductionStructureTest_OrIntake {
     string ID = "Production";
     private MockUtil mockutil;
-    ProductionStructure Production;
+    TestProductionStructure Production;
     ProductionPrototypeData PrototypeData;
 
     string ProducerID = "Production";
-    ProductionStructure Producer;
+    TestProductionStructure Producer;
     ProductionPrototypeData ProducerPrototypeData;
 
     [SetUp]
@@ -28,7 +28,7 @@ public class ProductionStructureTest_OrIntake {
             output = new Item[] { ItemProvider.Stone_1 },
             inputTyp = InputTyp.OR
         };
-        Producer = new ProductionStructure(ProducerID, null);
+        Producer = new TestProductionStructure(ProducerID, null);
         ProducerPrototypeData = new ProductionPrototypeData() {
             output = new Item[] { ItemProvider.Wood_1 },
         };
@@ -37,7 +37,7 @@ public class ProductionStructureTest_OrIntake {
         prototypeControllerMock.Setup(m => m.GetStructurePrototypDataForID(ID)).Returns(PrototypeData);
     }
     private void CreateTwoByThree() {
-        Production = new ProductionStructure(ID, PrototypeData);
+        Production = new TestProductionStructure(ID, PrototypeData);
         Production.City = mockutil.City;
         Production.Tiles = Production.GetBuildingTiles(World.Current.GetTileAt(Production.StructureRange + 1, Production.StructureRange + 1));
         PrototypeData.structureRange = 10;
@@ -166,5 +166,16 @@ public class ProductionStructureTest_OrIntake {
         PrototypeData.intake = new Item[] { ItemProvider.Brick, ItemProvider.Fish };
         Production.Load();
         Assert.AreEqual(ItemProvider.Brick.ID, Production.Intake[0].ID);
+    }
+
+    class TestProductionStructure : ProductionStructure {
+        public TestProductionStructure(string id, ProductionPrototypeData productionPrototypeData) : base(id, productionPrototypeData) {
+        }
+
+        public List<Worker> Workers {
+            get => workers;
+            set => workers = value;
+        }
+
     }
 }

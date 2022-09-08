@@ -11,7 +11,7 @@ namespace Andja.Model.Components {
             if (ihs == null || ihs.IsUnit == false)
                 return;
             Unit unit = (Unit)ihs.Holding;
-            if (unit.inventory != null) {
+            if (unit.Inventory != null) {
                 unit.IsInRangeOfWarehouse(contact);
                 ((WarehouseStructure)contact).AddUnitToTrade(unit);
             }
@@ -22,7 +22,7 @@ namespace Andja.Model.Components {
             if (ihs == null || ihs.IsUnit == false)
                 return;
             Unit unit = (Unit)ihs.Holding;
-            if (unit.inventory != null) {
+            if (unit.Inventory != null) {
                 unit.IsInRangeOfWarehouse(contact);
                 ((WarehouseStructure)contact).AddUnitToTrade(unit);
             }
@@ -33,7 +33,7 @@ namespace Andja.Model.Components {
             if (ihs == null || ihs.IsUnit == false)
                 return;
             Unit unit = (Unit)ihs.Holding;
-            if (unit.inventory != null) {
+            if (unit.Inventory != null) {
                 unit.IsInRangeOfWarehouse(null);
                 ((WarehouseStructure)contact).RemoveUnitFromTrade(unit);
             }
@@ -44,7 +44,7 @@ namespace Andja.Model.Components {
             if (ihs == null || ihs.IsUnit == false)
                 return;
             Unit unit = (Unit)ihs.Holding;
-            if (unit.inventory != null) {
+            if (unit.Inventory != null) {
                 unit.IsInRangeOfWarehouse(null);
                 ((WarehouseStructure)contact).RemoveUnitFromTrade(unit);
             }

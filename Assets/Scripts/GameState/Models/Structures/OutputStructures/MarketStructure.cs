@@ -184,17 +184,19 @@ namespace Andja.Model {
                 int space = City.Inventory.GetRemainingSpaceForItem(items[i]);
                 //WE need to know what every other marketstructure is getting atm 
                 //so we do not get to much of this so look at every worker -> check if they have that item as getting -> else 0
-                space -= City.MarketStructures.Sum(y => y.Workers.Sum(z => Array.Find(z.ToGetItems, j => items[i].ID == j.ID)?.count ?? 0));
+                space -= City.MarketStructures.Where(x=> x.workers != null && x.workers.Count > 0)
+                            .Sum(y => y.workers.Sum(z => Array.Find(z.ToGetItems, j => items[i].ID == j.ID)?.count ?? 0));
                 if (space <= 0) continue;
                 Item item = items[i].Clone();
-                item.count = space;//Mathf.Clamp (items [i].count, 0, space);
+                item.count = space;
                 all.Add(item);
             }
             return all.ToArray();
         }
 
         public override bool InCityCheck(IEnumerable<Tile> tiles, int playerNumber) {
-            return base.InCityCheck(tiles, playerNumber) || GetInRangeTiles(tiles.First()).Count(x => x.City?.PlayerNumber == playerNumber) >= Data.structureRange / 5;
+            return base.InCityCheck(tiles, playerNumber) 
+                   || GetInRangeTiles(tiles.First()).Count(x => x.City?.PlayerNumber == playerNumber) >= Data.structureRange / 5;
         }
 
         public override Item[] GetOutput(Item[] getItems, int[] maxAmounts) {

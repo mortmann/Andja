@@ -165,9 +165,7 @@ namespace Andja.Editor {
                 dragging = false;
             }
             if (InputHandler.GetButtonDown(InputName.Rotate)) {
-                if (BuildController.Instance.toBuildStructure != null) {
-                    BuildController.Instance.toBuildStructure.RotateStructure();
-                }
+                BuildController.Instance.RotateBuildStructure();
             }
         }
 

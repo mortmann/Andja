@@ -19,14 +19,9 @@ namespace Andja.Model {
     [JsonObject(MemberSerialization.OptIn)]
     public class NeedStructure : TargetStructure {
         private NeedStructurePrototypeData _needStructureData;
-        public NeedStructurePrototypeData NeedStructureData {
-            get {
-                if (_needStructureData == null) {
-                    _needStructureData = (NeedStructurePrototypeData)PrototypController.Instance.GetStructurePrototypDataForID(ID);
-                }
-                return _needStructureData;
-            }
-        }
+        public NeedStructurePrototypeData NeedStructureData =>
+            _needStructureData ??= (NeedStructurePrototypeData)PrototypController.Instance.GetStructurePrototypDataForID(ID);
+
         public NeedStructure(string pid, NeedStructurePrototypeData nspd) {
             this.ID = pid;
             this._needStructureData = nspd;

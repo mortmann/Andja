@@ -39,7 +39,7 @@ namespace Andja.UI.Model {
             unitNames = new Dictionary<Unit, string>();
             ships = new List<Ship>();
             foreach (Unit item in World.Current.Units) {
-                if (item.IsShip == false || item.playerNumber != PlayerController.currentPlayerNumber) {
+                if (item.IsShip == false || item.PlayerNumber != PlayerController.currentPlayerNumber) {
                     continue;
                 }
                 ships.Add((Ship)item);
@@ -78,7 +78,7 @@ namespace Andja.UI.Model {
         }
 
         public void OnDeleteClick() {
-            intToGameObject[PressedItem].SetItem(null, ship.inventory.MaxStackSize);
+            intToGameObject[PressedItem].SetItem(null, ship.Inventory.MaxStackSize);
             intToItem.Remove(PressedItem);
         }
 
@@ -102,7 +102,7 @@ namespace Andja.UI.Model {
         }
 
         public void Show(Ship unit) {
-            amountSlider.maxValue = unit.inventory.MaxStackSize;
+            amountSlider.maxValue = unit.Inventory.MaxStackSize;
             this.ship = unit;
             ResetItemIcons();
         }
@@ -110,8 +110,8 @@ namespace Andja.UI.Model {
         private void AddItemPrefabTo(Transform t) {
             GameObject g = GameObject.Instantiate(itemPrefab);
             g.transform.SetParent(t, false);
-            g.GetComponentInChildren<Slider>().maxValue = ship.inventory.MaxStackSize;
-            g.GetComponentInChildren<Text>().text = ship.inventory.MaxStackSize + "t";
+            g.GetComponentInChildren<Slider>().maxValue = ship.Inventory.MaxStackSize;
+            g.GetComponentInChildren<Text>().text = ship.Inventory.MaxStackSize + "t";
             //TODO add listener stuff
             int i = intToGameObject.Count;
             intToGameObject.Add(i, g.GetComponent<ItemUI>());
@@ -138,11 +138,11 @@ namespace Andja.UI.Model {
             if (ship == null) {
                 return;
             }
-            for (int i = 0; i < ship.inventory.NumberOfSpaces; i++) {
+            for (int i = 0; i < ship.Inventory.NumberOfSpaces; i++) {
                 AddItemPrefabTo(toBuy.transform);
-                Item item = ship.inventory.GetItemInSpace(i);
+                Item item = ship.Inventory.GetItemInSpace(i);
                 GameObject g = GameObject.Instantiate(itemPrefab);
-                g.GetComponent<ItemUI>().SetItem(item, ship.inventory.MaxStackSize);
+                g.GetComponent<ItemUI>().SetItem(item, ship.Inventory.MaxStackSize);
                 g.transform.SetParent(onShip.transform, false);
             }
         }

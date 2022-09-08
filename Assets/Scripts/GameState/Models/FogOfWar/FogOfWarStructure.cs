@@ -70,7 +70,7 @@ namespace Andja.FogOfWar {
                 return;
             }
             Data.id = str.ID;
-            Data.rotation = str.rotation;
+            Data.rotation = str.Rotation;
             structure = null;
             Data.buildID = 0;
             Data.buildTileVector = str.BuildTile.Vector2;

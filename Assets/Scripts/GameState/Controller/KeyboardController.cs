@@ -94,9 +94,7 @@ namespace Andja.Controller {
                 UIController.Instance.ToggleDiplomacyMenu();
             }
             if (InputHandler.GetButtonDown(InputName.Rotate)) {
-                if (BuildController.Instance.toBuildStructure != null) {
-                    BuildController.Instance.toBuildStructure.RotateStructure();
-                }
+                BuildController.Instance.RotateBuildStructure();
             }
             if (InputHandler.GetButtonDown(InputName.CopyStructure)) {
                 MouseController.Instance.SetCopyMode(true);

@@ -61,12 +61,9 @@ namespace Andja.Pathfinding {
             RoadStructure road = t.Structure as RoadStructure;
             if (road == null) {
                 foreach (Tile tile in t.GetNeighbours()) {
-                    if (tile.Structure is RoadStructure rs) {
-                        if (GoalStructure.GetRoutes().Contains(rs.Route)) {
-                            road = rs;
-                            break;
-                        }
-                    }
+                    if (!(tile.Structure is RoadStructure rs)) continue;
+                    if (GoalStructure.GetRoutes().Contains(rs.Route) == false) continue;
+                    road = rs;
                 }
             }
             if(road == null) {
@@ -75,7 +72,7 @@ namespace Andja.Pathfinding {
                 return;
             }
             Route route = road.Route;
-            List<Vector2> goals = null;
+            List<Vector2> goals;
             if (agent.CanEndInUnwalkable) {
                 goals = GoalStructure.Tiles.Select(x => x.Vector2).ToList();
             }

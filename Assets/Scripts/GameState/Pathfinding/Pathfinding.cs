@@ -31,7 +31,7 @@ namespace Andja.Pathfinding {
         [JsonPropertyAttribute] protected Tile _destTile;
 
         [JsonPropertyAttribute] public float rotation;
-        //Somehow this needs to be at the start to be -1 -- if not pathfinding will be screwed up for workers (atleast found)
+        //Somehow this needs to be at the start to be -1 -- if not Pathfinding will be screwed up for workers (atleast found)
         [JsonPropertyAttribute] protected float _y = -1;
         [JsonPropertyAttribute] protected float _x = -1;
         [JsonPropertyAttribute] public Tile startTile;
@@ -63,7 +63,7 @@ namespace Andja.Pathfinding {
         public Vector3 LastMove { get; protected set; }
 
         private Vector3 rotationDirection;
-        public Vector2? NextDestination { get; protected set; }  // The next tile in the pathfinding sequence
+        public Vector2? NextDestination { get; protected set; }  // The next tile in the Pathfinding sequence
 
         public Queue<Vector2> worldPath;
         public Queue<Vector2> backPath;

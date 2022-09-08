@@ -112,7 +112,7 @@ namespace Andja.Controller {
         /// </summary>
         /// <param name="gameObject"></param>
         public void AddUnitFogModule(GameObject gameObject, Unit unit) {
-            if (unit.IsPlayer() == false)
+            if (unit.IsOwnedByCurrentPlayer() == false)
                 return;
             GameObject module = Instantiate(UnitFogModulePrefab);
             module.transform.localScale = new Vector3(unit.AttackRange * 2, unit.AttackRange * 2);

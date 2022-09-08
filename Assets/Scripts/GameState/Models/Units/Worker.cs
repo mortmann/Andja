@@ -125,7 +125,13 @@ namespace Andja.Model {
             SetGoalStructure(structure);
             Setup();
         }
-
+        /// <summary>
+        /// This is for a workaround production structure nearest market searching
+        /// </summary>
+        /// <param name="workerID"></param>
+        public Worker(string workerID) {
+            ID = workerID ?? "placeholder";
+        }
         public Worker() {
             SaveController.AddWorkerForLoad(this);
         }
@@ -338,7 +344,7 @@ namespace Andja.Model {
         }
 
         public void Destroy() {
-            isAtHome = true; //for pathfinding purpose -> if it is at home stop the pathfinding
+            isAtHome = true; //for Pathfinding purpose -> if it is at home stop the Pathfinding
             if (_goingToWork)
                 WorkOutputStructure?.ResetOutputClaimed();
             cbWorkerDestroy?.Invoke(this);

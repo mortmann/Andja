@@ -23,11 +23,10 @@ namespace Andja.Model {
 
     [JsonObject(MemberSerialization.OptIn)]
     public abstract class OutputStructure : TargetStructure {
-        public const string InactiveEffectID = "inactive";
 
         #region Serialize
 
-        [JsonPropertyAttribute] public List<Worker> Workers;
+        [JsonPropertyAttribute] protected List<Worker> workers;
         [JsonPropertyAttribute] public float ProduceTimer { get; protected set; }
         private Item[] _output;
         [JsonPropertyAttribute]
@@ -49,11 +48,9 @@ namespace Andja.Model {
 
         #region RuntimeOrOther
         private WorkerPrototypeData _workerPrototypeData;
-        public WorkerPrototypeData WorkerPrototypeData {
-            get {
-                return _workerPrototypeData ??= _workerPrototypeData ?? PrototypController.Instance.GetWorkerPrototypDataForID(OutputData.workerID ?? "placeholder");
-            }
-        }
+        public WorkerPrototypeData WorkerPrototypeData =>
+            _workerPrototypeData ??= _workerPrototypeData ?? PrototypController.Instance.GetWorkerPrototypDataForID(OutputData.workerID ?? "placeholder");
+
         public Dictionary<OutputStructure, Item[]> WorkerJobsToDo;
         public bool outputClaimed;
         protected Action<Structure> cbOutputChange;
@@ -94,9 +91,11 @@ namespace Andja.Model {
             if (MaxNumberOfWorker <= 0) {
                 return;
             }
-            TrySendWorker();
-            for (int i = Workers.Count - 1; i >= 0; i--) {
-                Worker w = Workers[i];
+
+            workers ??= new List<Worker>(MaxNumberOfWorker);
+            SendOutWorkerIfCan();
+            for (int i = workers.Count - 1; i >= 0; i--) {
+                Worker w = workers[i];
                 w.Update(deltaTime);
                 if (w.isAtHome) {
                     WorkerComeBack(w);
@@ -104,19 +103,14 @@ namespace Andja.Model {
             }
         }
 
-        public void TrySendWorker() {
-            Workers ??= new List<Worker>(MaxNumberOfWorker);
-            SendOutWorkerIfCan();
-        }
-
         protected virtual void SendOutWorkerIfCan(float workTime = 1) {
-            if (WorkerJobsToDo.Count == 0 || Workers.Count >= MaxNumberOfWorker) {
+            if (WorkerJobsToDo.Count == 0 || workers.Count >= MaxNumberOfWorker) {
                 return;
             }
             List<OutputStructure> givenJobs = new List<OutputStructure>();
             List<OutputStructure> ordered = WorkerJobsToDo.Keys.OrderByDescending(x => x.Output.Sum(y => y.count)).ToList();
             foreach (OutputStructure jobStr in ordered) {
-                if (Workers.Count >= MaxNumberOfWorker) {
+                if (workers.Count >= MaxNumberOfWorker) {
                     break;
                 }
                 if (jobStr.outputClaimed) {
@@ -132,7 +126,7 @@ namespace Andja.Model {
                 Worker ws = new Worker(this, jobStr, workTime, OutputData.workerID, items);
                 givenJobs.Add(jobStr);
                 World.Current.CreateWorkerGameObject(ws);
-                Workers.Add(ws);
+                workers.Add(ws);
             }
             foreach (OutputStructure giveJob in givenJobs) {
                 //WHAT THE HELL DID I DO HERE!? why? 
@@ -151,7 +145,7 @@ namespace Andja.Model {
                 Item item = Array.Find(items, x => x.ID == Output[i].ID)?.Clone();
                 if (item == null) continue;
                 item.count = MaxOutputStorage - Output[i].count;
-                item.count -= Workers.Where(z => z.ToGetItems != null)
+                item.count -= workers.Where(z => z.ToGetItems != null)
                                      .Sum(x => Array.Find(x.ToGetItems, y => items[i].ID == y.ID)?.count ?? 0);
                 all.Add(item);
             }
@@ -159,12 +153,12 @@ namespace Andja.Model {
         }
 
         public void WorkerComeBack(Worker w) {
-            if (Workers.Contains(w) == false) {
+            if (workers.Contains(w) == false) {
                 Debug.LogError("WorkerComeBack - Worker comesback, but doesnt live here!");
                 return;
             }
             w.Destroy();
-            Workers.Remove(w);
+            workers.Remove(w);
         }
 
         public void AddToOutput(Inventory inv) {
@@ -246,8 +240,8 @@ namespace Andja.Model {
             }
         }
         public override void OnDestroy() {
-            if (Workers == null) return;
-            foreach (Worker item in Workers) {
+            if (workers == null) return;
+            foreach (Worker item in workers) {
                 item.Destroy();
             }
         }
@@ -257,8 +251,8 @@ namespace Andja.Model {
         }
         public override void Load() {
             base.Load();
-            if (Workers != null) {
-                foreach (Worker worker in Workers) {
+            if (workers != null) {
+                foreach (Worker worker in workers) {
                     worker.Load(this);
                 }
             }

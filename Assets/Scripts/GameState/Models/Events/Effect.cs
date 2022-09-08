@@ -112,7 +112,7 @@ namespace Andja.Model {
 
         private IGEventable GetValidTarget(IGEventable target) {
             if (target is Structure structure) {
-                List<Structure> strs = structure.GetNeighbourStructuresInRange(SpreadTileRange);
+                List<Structure> strs = structure.GetNeighbourStructuresInTileDistance(SpreadTileRange);
                 strs.RemoveAll(x => Targets.IsTargeted(x.TargetGroups) == false);
                 //now we have a list we can effect
                 //maybe smth more complex but for now just random

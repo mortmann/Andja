@@ -113,7 +113,7 @@ namespace Andja.Model {
         public BuildStructureOperation(AIPlayer player, PlaceStructure ps) : base(player) {
             BuildTile = ps.buildTile;
             Structure = PrototypController.Instance.GetStructure(ps.ID);
-            Structure.rotation = ps.rotation;
+            Structure.ChangeRotation(ps.rotation);
         }
 
         public BuildStructureOperation(AIPlayer player, Tile buildTile, Structure structure, Unit unit = null) : base(player) {

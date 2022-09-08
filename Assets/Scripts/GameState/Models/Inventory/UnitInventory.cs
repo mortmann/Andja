@@ -11,6 +11,11 @@ namespace Andja.Model {
     [JsonObject(MemberSerialization.OptIn)]
     public class UnitInventory : Inventory {
 
+        public override Item[] SerializableItems { 
+            get => Items; 
+            set => Items = value;
+        }
+
         public Item[] Items;
 
         [JsonPropertyAttribute]
@@ -61,15 +66,14 @@ namespace Andja.Model {
             }
             int amount = 0;
             foreach (Item inInv in BaseItems) {
-                if (inInv.ID == toAdd.ID) {
-                    if (inInv.count == MaxStackSize) {
-                        continue;
-                    }
-                    // move
-                    amount = MoveAmountFromItemToInv(toAdd, inInv);
-                    if (toAdd.count == 0) {
-                        break;
-                    }
+                if (inInv.ID != toAdd.ID) continue;
+                if (inInv.count == MaxStackSize) {
+                    continue;
+                }
+                // move
+                amount = MoveAmountFromItemToInv(toAdd, inInv);
+                if (toAdd.count == 0) {
+                    break;
                 }
             }
             while (toAdd.count > 0 && AreSlotsFilledWithItems() == false) {
@@ -112,7 +116,7 @@ namespace Andja.Model {
         }
 
         public override int GetRemainingSpaceForItem(Item item) {
-            return (MaxStackSize + MaxStackSize * FreeSpacesLeft()) - GetAmountFor(item);
+            return (MaxStackSize * Items.Where(i=>i!=null).Count(i=>i.ID == item.ID) + MaxStackSize * FreeSpacesLeft()) - GetAmountFor(item);
         }
         public Item GetItemInSpace(int i) {
             return Items[i];
@@ -133,7 +137,6 @@ namespace Andja.Model {
         }
         
         protected override void LowerItemAmount(Item lower, int amount) {
-            //Item[] array = Items.Where(i => i.ID == lower.ID).ToArray();
             for (int i = 0; i < Items.Length; i++) {
                 Item inInv = Items[i];
                 if (inInv == null || inInv.ID != lower.ID)
@@ -163,11 +166,7 @@ namespace Andja.Model {
             return NumberOfSpaces <= BaseItems.Count();
         }
 
-        /// <summary>
-        /// Only works with non city inventories.
-        /// </summary>
-        /// <param name="space"></param>
-        public virtual int AddItemInSpace(int space, Item item) {
+        public int AddItemInSpace(int space, Item item) {
             int amount = 0;
             Item inSpace = GetItemInSpace(space);
             if (inSpace == null) {
@@ -182,11 +181,8 @@ namespace Andja.Model {
             }
             return amount;
         }
-        /// <summary>
-        /// Only works with non city inventories.
-        /// </summary>
-        /// <param name="space"></param>
-        public virtual void RemoveItemInSpace(int space) {
+
+        public void RemoveItemInSpace(int space) {
             Items[space] = null;
             cbInventoryChanged?.Invoke(this);
         }
@@ -197,10 +193,15 @@ namespace Andja.Model {
 
         protected override void RemoveNotExistingItem(Item item) {
             for (int i = 0; i < Items.Length; i++) {
-                if (Items[i].ID == item.ID) {
+                if (Items[i] != null && Items[i].ID == item.ID) {
                     Items[i] = null;
                 }
             }
+        }
+
+        public override void Load() {
+            base.Load();
+            _amountInInventory = Items.Where(i=> i != null).Sum(x => x.count);
         }
     }
 }

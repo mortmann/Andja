@@ -430,7 +430,7 @@ namespace Andja.Model {
                     if (os is MarketStructure) {
                         if(os is WarehouseStructure ws && bs.BuildUnit != null) {
                             currentOperationPending.Add(AIController.Instance.AddOperation(
-                                new UnitCityMoveItemOperation(this, bs.BuildUnit, ws.City, bs.BuildUnit.inventory.Items.ToArray(), false)
+                                new UnitCityMoveItemOperation(this, bs.BuildUnit, ws.City, bs.BuildUnit.Inventory.Items.ToArray(), false)
                                 ));
                             currentOperationPending.Add(AIController.Instance.AddOperation(
                                 new TradeItemOperation(this, ws.City, new List<TradeItem> { new TradeItem("tools", 25, 50, Trade.Buy)}, true)
@@ -532,18 +532,18 @@ namespace Andja.Model {
                     }
                     foreach(var t in tiles.OrderBy(x => x.MaxValue)) {
                         for (int i = 0; i < 4; i++) {
-                            List<Tile> buildtiles = s.GetBuildingTiles(t.tile, false, false);
+                            List<Tile> buildtiles = s.GetBuildingTiles(t.tile);
                             if (buildtiles.Exists(x => x.City?.PlayerNumber != Player.Number))
                                 continue;
                             if (s.CanBuildOnSpot(buildtiles)) {
                                 return new PlaceStructure {
                                     ID = s.ID,
                                     buildTile = t.tile,
-                                    rotation = s.rotation,
+                                    rotation = s.Rotation,
                                     City = city
                                 };
                             }
-                            s.RotateStructure();
+                            s.Rotate();
                         }
                     }
                 } else {
@@ -578,7 +578,7 @@ namespace Andja.Model {
         private void GameStartFunction() {
             if (Player.Cities.Count != 0 || Player.Ships.Count == 0) return;
             Ship ship = Player.Ships
-                .First(s => s.inventory.HasEnoughOfItems(PrototypController.Instance.FirstLevelWarehouse.BuildingItems));
+                .First(s => s.Inventory.HasEnoughOfItems(PrototypController.Instance.FirstLevelWarehouse.BuildingItems));
             if (_startFunction)
                 return;
             _startFunction = true;
@@ -671,7 +671,7 @@ namespace Andja.Model {
                     } else {
                         foreach (TileValue t in selected) {
                             for (int i = 0; i < 4; i++) {
-                                List<Tile> buildtiles = warehouse.GetBuildingTiles(t.tile, false, false);
+                                List<Tile> buildtiles = warehouse.GetBuildingTiles(t.tile);
                                 if (buildtiles.Exists(x => x.Type == TileType.Ocean || x.City.IsWilderness() == false))
                                     continue;
                                 if (warehouse.CanBuildOnSpot(buildtiles)) {
@@ -681,9 +681,9 @@ namespace Andja.Model {
                                     else {
                                         islandScores[index].Island.startClaimed = startIslands;
                                     }
-                                    return new Tuple<Tile, int>(t.tile, warehouse.rotation);
+                                    return new Tuple<Tile, int>(t.tile, ((Structure)warehouse).Rotation);
                                 }
-                                warehouse.RotateStructure();
+                                warehouse.Rotate();
                             }
                         }
                     }

@@ -724,7 +724,7 @@ namespace Andja.Controller {
             float y = ToBuildStructure.TileHeight / 2f - TileSpriteController.offset;
             _singleStructurePreview.transform.position = new Vector3(GetTileUnderneathMouse().X + x,
                                                        GetTileUnderneathMouse().Y + y, 0);
-            _singleStructurePreview.transform.eulerAngles = new Vector3(0, 0, 360 - ToBuildStructure.rotation);
+            _singleStructurePreview.transform.eulerAngles = new Vector3(0, 0, 360 - ToBuildStructure.Rotation);
             List<Tile> tiles = ToBuildStructure.GetBuildingTiles(GetTileUnderneathMouse());
             foreach (Tile tile in _tileToPreviewGO.Keys.Except(tiles).ToArray()) {
                 SimplePool.Despawn(_tileToPreviewGO[tile].gameObject);
@@ -768,7 +768,7 @@ namespace Andja.Controller {
             ResetStructurePreviews();
         }
         /// <summary>
-        /// Update the the pathfinding with the start and end position and then display foreach position a prefab.
+        /// Update the the Pathfinding with the start and end position and then display foreach position a prefab.
         /// </summary>
         private void UpdateBuildPath() {
             if (EventSystem.current.IsPointerOverGameObject()) {
@@ -858,7 +858,7 @@ namespace Andja.Controller {
             }
             bool hasEnoughResources = PlayerController.CurrentPlayer.HasEnoughMoney(ToBuildStructure.BuildCost * number);
             if(MouseUnitState == MouseUnitState.Build) {
-                hasEnoughResources &= SelectedUnit.inventory.HasEnoughOfItems(ToBuildStructure.BuildingItems, times: number) == true;
+                hasEnoughResources &= SelectedUnit.Inventory.HasEnoughOfItems(ToBuildStructure.BuildingItems, times: number) == true;
             } else {
                 hasEnoughResources &= tiles[0].Island?.FindCityByPlayer(PlayerController.currentPlayerNumber)?
                             .HasEnoughOfItems(ToBuildStructure.BuildingItems, number) == true;
@@ -876,7 +876,7 @@ namespace Andja.Controller {
             if (MouseState == MouseState.BuildSingle && Autorotate) {
                 int i = 0;
                 while(tileToCanBuild.ContainsValue(false) && i < 4) {
-                    ToBuildStructure.RotateStructure();
+                    ToBuildStructure.Rotate();
                     tiles = ToBuildStructure.GetBuildingTiles(GetTileUnderneathMouse());
                     //TODO: think about a not so ugly solution for autorotate
                     tileToCanBuild = ToBuildStructure.CheckForCorrectSpot(tiles);
@@ -910,7 +910,7 @@ namespace Andja.Controller {
                 position.y = ((float)ToBuildStructure.TileHeight) / 2f - TileSpriteController.offset;
                 position += tile.Vector;
             }
-            GameObject previewGO = SimplePool.Spawn(structurePreviewRendererPrefab, position, Quaternion.Euler(0, 0, 360 - ToBuildStructure.rotation));
+            GameObject previewGO = SimplePool.Spawn(structurePreviewRendererPrefab, position, Quaternion.Euler(0, 0, 360 - ToBuildStructure.Rotation));
             //previewGO.transform.SetParent(this.transform, true);
             if (ToBuildStructure.ExtraBuildUITyp != ExtraBuildUI.None) {
                 if (_extraStructureBuildUIPrefabs.ContainsKey(ToBuildStructure.ExtraBuildUITyp) == false)
@@ -1025,7 +1025,7 @@ namespace Andja.Controller {
             }
 
             if (InputHandler.GetMouseButtonDown(InputMouse.Secondary) == false) return;
-            if (SelectedUnit.playerNumber != PlayerController.currentPlayerNumber) {
+            if (SelectedUnit.PlayerNumber != PlayerController.currentPlayerNumber) {
                 SetMouseState(MouseState.Idle);
                 return;
             }
@@ -1078,7 +1078,7 @@ namespace Andja.Controller {
         }
 
         private void CheckUnitCursor() {
-            if (SelectedUnit.IsPlayer() == false)
+            if (SelectedUnit.IsOwnedByCurrentPlayer() == false)
                 return;
             if (MouseUnitState == MouseUnitState.Build) return;
             Transform hit = MouseRayCast();
@@ -1273,7 +1273,7 @@ namespace Andja.Controller {
 
         public void StopUnit() {
             //if null or not player unit return without doing anything
-            if (SelectedUnit == null || SelectedUnit.IsPlayer() == false) {
+            if (SelectedUnit == null || SelectedUnit.IsOwnedByCurrentPlayer() == false) {
                 return;
             }
             SelectedUnit.GoIdle();

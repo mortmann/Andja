@@ -10,10 +10,12 @@ namespace Andja.Model {
     [JsonObject(MemberSerialization.OptIn)]
     public class CityInventory : Inventory {
         [JsonPropertyAttribute(PropertyName = "Items")]
-        public Dictionary<string, Item> SerializableItems {
+        public override Item[] SerializableItems {
             get => Items?.Where(x => x.Value.count > 0)
-                .ToDictionary(entry => entry.Key, entry => entry.Value);
-            set => Items = value;
+                .Select(x=>x.Value).ToArray();
+            set {
+                Items = value.ToDictionary(x => x.ID, y => y);
+            } 
         }
         public Dictionary<string, Item> Items {
             get;

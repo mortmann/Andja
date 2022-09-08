@@ -93,7 +93,7 @@ namespace Andja.Controller {
             float y = ((float)structure.TileHeight) / 2f - TileSpriteController.offset;
             Tile t = structure.BuildTile;
             go.transform.position = new Vector3(t.X + x, t.Y + y,-1);
-            go.transform.transform.eulerAngles = new Vector3(0, 0, 360 - structure.rotation);
+            go.transform.transform.eulerAngles = new Vector3(0, 0, 360 - structure.Rotation);
             go.transform.SetParent(this.transform, true);
             go.name = structure.SmallName + "_" + structure.Tiles[0].ToString();
             SpriteRenderer sr = go.AddComponent<SpriteRenderer>();
@@ -280,7 +280,7 @@ namespace Andja.Controller {
             }
         }
         public static string GetRandomVariant(string id, string climate) {
-            return StructureToVariants.ContainsKey(id) ? StructureToVariants[id].GetRandomVariant(climate) : "";
+            return StructureToVariants.ContainsKey(id) ? "_" + StructureToVariants[id].GetRandomVariant(climate) : "";
         }
         public Sprite GetSprite(string name) {
             return StructureSprites.ContainsKey(name) ? StructureSprites[name] : StructureSprites[NoSpriteName];

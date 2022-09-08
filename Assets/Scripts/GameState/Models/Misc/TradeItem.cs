@@ -19,9 +19,7 @@ namespace Andja.Model {
                 else
                     IsBuying = true;
             }
-            get {
-                return trade == Trade.Sell;
-            }
+            get => trade == Trade.Sell;
         }
 
         public bool IsBuying {
@@ -31,13 +29,11 @@ namespace Andja.Model {
                 else
                     IsSelling = true;
             }
-            get {
-                return trade == Trade.Buy;
-            }
+            get => trade == Trade.Buy;
         }
 
-        public TradeItem(string ItemId, int count, int price, Trade trade) {
-            this.ItemId = ItemId;
+        public TradeItem(string itemId, int count, int price, Trade trade) {
+            this.ItemId = itemId;
             this.count = count;
             this.price = price;
             this.trade = trade; // will set it correctly
@@ -54,11 +50,10 @@ namespace Andja.Model {
                 return null;
             }
             //SELLING ONLY works IF
-            //The item amount IN inventory is SMALLER(!)
+            //The item amount IN Inventory is SMALLER(!)
             //than the count in tradeitem
             Item i = inINV.CloneWithCount();
-            //		  WANTS    - HAS = CAN SELL HERE
-            i.count = i.count - count;
+            i.count -= count;
             return i;
         }
 
@@ -68,7 +63,7 @@ namespace Andja.Model {
                 return null;
             }
             //BUYING ONLY works IF
-            //The item amount IN inventory is BIGGER
+            //The item amount IN Inventory is BIGGER
             //than the count in tradeitem
             Item i = inINV.CloneWithCount();
             //ti.count = 25

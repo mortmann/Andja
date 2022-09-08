@@ -390,7 +390,7 @@ namespace Andja.Model {
         }
 
         public void OnUnitCreated(Unit unit) {
-            if (unit.playerNumber != Number)
+            if (unit.PlayerNumber != Number)
                 return;
             unit.RegisterOnDestroyCallback(OnUnitDestroy);
             unit.RegisterOnTakesDamageCallback(OnUnitTakesDamage);

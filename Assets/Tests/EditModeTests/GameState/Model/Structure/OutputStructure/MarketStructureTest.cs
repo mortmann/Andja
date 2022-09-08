@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using Andja.Controller;
@@ -8,9 +9,10 @@ using Moq;
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.TestTools;
-using System.Linq;
 using Andja;
+using static AssertNet.Assertions;
 using static AssertNet.Moq.Assertions;
+
 public class MarketStructureTest {
     string ID = "MarketStructure";
     MarketStructure Market;
@@ -40,9 +42,8 @@ public class MarketStructureTest {
         prototypeControllerMock.Setup(m => m.GetCopieOfAllItems()).Returns(() => {
             return Items.ToDictionary(x => x.Key, y => y.Value.Clone());
         });
-        prototypeControllerMock.Setup(m => m.GetPopulationLevels(It.IsAny<City>())).Returns(() => {
-            return new List<PopulationLevel>();
-        });
+        prototypeControllerMock.Setup(m => m.GetPopulationLevels(It.IsAny<City>()))
+            .Returns(() => new List<PopulationLevel>());
         
         CreateFourByFour();
     }
@@ -103,7 +104,28 @@ public class MarketStructureTest {
         }
         Assert.IsTrue(Market.Captured);
     }
+    [Test]
+    public void Capture_Stops_ReturnsToFull() {
+        Mock<IWarfare> warfare = new Mock<IWarfare>();
+        warfare.Setup(w => w.PlayerNumber).Returns(1);
+        PrototypeData.decreaseCaptureSpeed = 0.01f;
 
+        for (int i = 0; i < 20; i++) {
+            Market.Capture(warfare.Object, 0.01f);
+            Market.UpdateCaptureProgress(1f);
+        }
+        for (int i = 0; i < 10; i++) {
+            Market.Capture(warfare.Object, 0);
+            Market.UpdateCaptureProgress(1f);
+        }
+        AssertThat(Market.capturedProgress).IsGreaterThan(0);
+        for (int i = 0; i < 10; i++) {
+            Market.Capture(warfare.Object, 0);
+            Market.UpdateCaptureProgress(1f);
+        }
+        AssertThat(Market.capturedProgress).IsEqualTo(0,0.0001f);
+        AssertThat(Market.Captured).IsFalse();
+    }
     [Test]
     public void DoneCapturing_WithCity() {
         Mock<IWarfare> warfare = new Mock<IWarfare>();
@@ -169,6 +191,29 @@ public class MarketStructureTest {
         Assert.IsTrue(road.Route.MarketStructures.Contains(Market));
         Assert.IsTrue(Market.GetRoutes().Contains(road.Route));
         Assert.IsTrue(Market.RoadsAroundStructure().Contains(road));
+    }
+
+    [Test]
+    public void GetRequiredItems() {
+        var items = new[] { ItemProvider.Stone_1, ItemProvider.Fish_2 };
+        mockutil.CityMock.SetupGet(c => c.MarketStructures).Returns(new List<MarketStructure>());
+        AssertThat(Market.GetRequiredItems(new OutputStructureTest.TestOutputStructure(), items))
+            .AllSatisfy(newItem => items.ToList().Exists(x => x.ID == newItem.ID && newItem.count == 50));
+
+    }
+
+    [Test]
+    public void GetRequiredItems_FullStoneCity() {
+        var items = new[] { ItemProvider.Stone_1, ItemProvider.Fish_2 };
+        mockutil.CityMock.SetupGet(c => c.Inventory).Returns(() => {
+            var ci = new CityInventory(1);
+            ci.Items[ItemProvider.Stone.ID].count = 50;
+            ci.Items[ItemProvider.Fish.ID].count = 25;
+            return ci;
+        });
+        mockutil.CityMock.SetupGet(c => c.MarketStructures).Returns(new List<MarketStructure>());
+        var news = Market.GetRequiredItems(new OutputStructureTest.TestOutputStructure(), items);
+        AssertThat(news).AllSatisfy(newItem => ItemProvider.Fish.ID == newItem.ID && newItem.count == 25);
     }
 
     [Test]

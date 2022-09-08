@@ -25,7 +25,7 @@ namespace Andja.Pathfinding {
 
         public override void HandleNoPathFound() {
             //Ocean Paths are always viable and never gets blocked for now so it if it is 
-            //than it is 100% faulty pathfinding
+            //than it is 100% faulty Pathfinding
             Debug.LogError("Ocean Pathfinding did not find Path to destination " + DestTile + " (" + Destination + ")");
         }
 

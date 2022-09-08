@@ -61,3 +61,4 @@ debug.log
 .vscode/launch.json
 CodeCoverage/Report/*
 Logs/shadercompiler-UnityShaderCompiler.exe0.log
+*.log

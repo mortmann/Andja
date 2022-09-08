@@ -112,6 +112,7 @@ namespace Andja.Model {
 
     [JsonObject(MemberSerialization.OptIn)]
     public abstract class Structure : IGEventable {
+        public const string InactiveEffectID = "inactive";
 
         #region variables
 
@@ -134,7 +135,7 @@ namespace Andja.Model {
                 Tiles.Add(value);
             }
         }
-        [JsonPropertyAttribute] public int rotation = 0;
+        [JsonPropertyAttribute] protected int rotation = 0;
         [JsonPropertyAttribute] public bool buildInWilderness = false;
         [JsonPropertyAttribute] protected bool isActive = true;
         [JsonPropertyAttribute] protected string spriteVariant;
@@ -169,7 +170,7 @@ namespace Andja.Model {
             get {
                 if (_center != Vector2.zero)
                     return _center;
-                _center = Tiles[0].Vector2 + new Vector2(TileWidth / 2, TileHeight / 2);
+                _center = Tiles[0].Vector2 + new Vector2(TileWidth / 2f, TileHeight / 2f);
                 return _center;
             }
         }
@@ -229,6 +230,7 @@ namespace Andja.Model {
         protected Action<Structure, bool> cbStructureExtraUI;
         protected Action<Structure, string, bool> cbStructureSound;
         protected Action<Structure, ICity, ICity> cbOwnerChange;
+        protected Action<Structure> cbRoutesChanged;
 
         protected HashSet<Route> Routes = new HashSet<Route>();
         protected List<RoadStructure> Roads = new List<RoadStructure>();
@@ -278,7 +280,7 @@ namespace Andja.Model {
 
         public int TileWidth {
             get {
-                switch (rotation) {
+                switch (Rotation) {
                     case 0:
                     case 180:
                         return prototypeTileWidth;
@@ -287,7 +289,7 @@ namespace Andja.Model {
                         return prototypeTileHeight;
                     default:
                         // should never come to this if its an error
-                        Debug.LogError("Structure was rotated out of angle bounds: " + rotation);
+                        Debug.LogError("Structure was rotated out of angle bounds: " + Rotation);
                         return 0;
                 }
             }
@@ -295,7 +297,7 @@ namespace Andja.Model {
 
         public int TileHeight {
             get {
-                switch (rotation) {
+                switch (Rotation) {
                     case 0:
                     case 180:
                         return prototypeTileHeight;
@@ -304,7 +306,7 @@ namespace Andja.Model {
                         return prototypeTileWidth;
                     default:
                         // should never come to this if its an error
-                        Debug.LogError("Structure was rotated out of angle bounds: " + rotation);
+                        Debug.LogError("Structure was rotated out of angle bounds: " + Rotation);
                         return 0;
                 }
             }
@@ -323,6 +325,11 @@ namespace Andja.Model {
         #region Virtual/Abstract
 
         public virtual string SortingLayer => "Structures";
+
+        public int Rotation {
+            get => rotation;
+            protected set => rotation = value;
+        }
 
         public virtual void OpenExtraUI() {
             cbStructureExtraUI?.Invoke(this, true);
@@ -412,7 +419,13 @@ namespace Andja.Model {
         public void UnregisterOnExtraUICallback(Action<Structure, bool> cb) {
             cbStructureExtraUI -= cb;
         }
+        public void RegisterOnRoutesChangedCallback(Action<Structure> cb) {
+            cbRoutesChanged += cb;
+        }
 
+        public void UnregisterOnRoutesChangedCallback(Action<Structure> cb) {
+            cbRoutesChanged -= cb;
+        }
         /// <summary>
         /// 1st Structure (Changed)
         /// 2st OldCity (Owner)
@@ -433,7 +446,9 @@ namespace Andja.Model {
 
         public bool CheckPlaceStructure(List<Tile> tiles, int playerNumber/*only for error sending*/) {
             if (tiles.Count == 0 || tiles.Contains(null)) {
+#if !UNITY_INCLUDE_TESTS
                 Debug.LogError("PlaceStructure FAILED -- tiles is empty or contains null tile!");
+#endif
                 return false;
             }
             //test if the place is buildable
@@ -459,16 +474,19 @@ namespace Andja.Model {
             Tiles.AddRange(tiles);
             if (loading == false) {
                 CurrentHealth = MaxHealth;
-                if(Data.climateSpriteModifier != null && Data.climateSpriteModifier.Count > 0) {
-                    Climate c = BuildTile.Island.Climate;
-                    if (ClimateSpriteModifier.ContainsKey(c)) {
-                        spriteVariant = ClimateSpriteModifier[c][Random.Range(0, ClimateSpriteModifier[c].Length)];
-                        spriteVariant += "_" + StructureSpriteController.GetRandomVariant(ID, spriteVariant);
-                    }
-                }
+                DecideClimateSprite();
             }
             //if we are here we can build this and
             //set the tiles to the this structure -> claim the tiles!
+            CalculateNeighbourTiles();
+            //it searches all the tiles it has in its reach!
+            RangeTiles = GetInRangeTiles(Tiles[0]);
+            // do on place structure stuff here!
+            OnBuild();
+            City.RegisterOnEvent(OnEventCreate, OnEventEnded);
+        }
+
+        protected void CalculateNeighbourTiles() {
             NeighbourTiles = new HashSet<Tile>();
             foreach (Tile mt in Tiles) {
                 mt.Structure = this;
@@ -477,16 +495,20 @@ namespace Andja.Model {
                     if (Tiles.Contains(nbt) == false) {
                         NeighbourTiles.Add(nbt);
                     }
+
                     if (nbt.Structure is RoadStructure road) {
                         AddRoadStructure(road);
                     }
                 }
             }
-            //it searches all the tiles it has in its reach!
-            RangeTiles = GetInRangeTiles(Tiles[0]);
-            // do on place structure stuff here!
-            OnBuild();
-            City?.RegisterOnEvent(OnEventCreate, OnEventEnded);
+        }
+
+        protected void DecideClimateSprite() {
+            if (Data.climateSpriteModifier == null || Data.climateSpriteModifier.Count <= 0) return;
+            Climate c = BuildTile.Island.Climate;
+            if (ClimateSpriteModifier.ContainsKey(c) == false) return;
+            spriteVariant = ClimateSpriteModifier[c][Random.Range(0, ClimateSpriteModifier[c].Length)];
+            spriteVariant += StructureSpriteController.GetRandomVariant(ID, spriteVariant);
         }
 
         public static bool IsTileCityViable(Tile t, int player) {
@@ -584,16 +606,8 @@ namespace Andja.Model {
         /// <param name="ignoreRotation"></param>
         /// <param name="left"></param>
         /// <returns></returns>
-        public List<Tile> GetBuildingTiles(Tile tile, bool ignoreRotation = false, bool left = false) {
+        public List<Tile> GetBuildingTiles(Tile tile, bool ignoreRotation = false) {
             List<Tile> tiles = new List<Tile>();
-            if (left) {
-                for (int w = 0; w < TileWidth; w++) {
-                    for (int h = 0; h < TileHeight; h++) {
-                        tiles.Add(World.Current.GetTileAt(tile.X - w, tile.Y - h));
-                    }
-                }
-            }
-            else
             if (ignoreRotation == false) {
                 for (int w = 0; w < TileWidth; w++) {
                     for (int h = 0; h < TileHeight; h++) {
@@ -646,9 +660,9 @@ namespace Andja.Model {
 
         #region Functions
 
-        public List<Structure> GetNeighbourStructuresInRange(int spreadTileRange) {
-            Vector2 lower = Center - new Vector2(TileWidth / 2f + spreadTileRange, TileHeight / 2f + spreadTileRange);
-            Vector2 upper = Center + new Vector2(TileWidth / 2f + spreadTileRange, TileHeight / 2f + spreadTileRange);
+        public List<Structure> GetNeighbourStructuresInTileDistance(int spreadTileRange) {
+            Vector2 lower = Center - new Vector2(TileWidth / 2 + spreadTileRange, TileHeight / 2 + spreadTileRange);
+            Vector2 upper = Center + new Vector2(TileWidth / 2 + spreadTileRange, TileHeight / 2 + spreadTileRange);
             List<Structure> structures = new List<Structure>();
             for (float x = lower.x; x <= upper.x; x++) {
                 for (float y = lower.y; y <= upper.y; y++) {
@@ -669,16 +683,17 @@ namespace Andja.Model {
             if (CurrentHealth <= 0) // fix for killing it too many times -- triggering destroy multiple times
                 return;
             if (damage < 0) {
-                damage = -damage;
-                Debug.LogWarning("Damage should be never smaller than 0 - Fixed it!");
+                Debug.LogWarning("Damage should be never smaller than 0 - Fix it!");
+                return;
             }
             CurrentHealth = Mathf.Clamp(CurrentHealth - damage, 0, MaxHealth);
         }
 
         public void RepairHealth(float heal) {
+            if (IsDestroyed) return;
             if (heal < 0) {
-                heal = -heal;
-                Debug.LogWarning("Healing should be never smaller than 0 - Fixed it!");
+                Debug.LogWarning("Healing should be never smaller than 0 - Fix it!");
+                return;
             }
             CurrentHealth += heal;
             CurrentHealth = Mathf.Clamp(CurrentHealth, 0, MaxHealth);
@@ -738,13 +753,8 @@ namespace Andja.Model {
 
         #region correctspot
 
-        public virtual Item[] GetBuildingItems() {
-            return BuildingItems;
-        }
-
         public bool CanBuildOnSpot(List<Tile> tiles) {
-            List<bool> bools = new List<bool>(CheckForCorrectSpot(tiles).Values);
-            return bools.Contains(false) == false;
+            return new List<bool>(CheckForCorrectSpot(tiles).Values).Contains(false) == false;
         }
 
         public Dictionary<Tile, bool> CheckForCorrectSpot(List<Tile> tiles) {
@@ -774,7 +784,7 @@ namespace Andja.Model {
                     int cY = y;
                     int startX = 0;
                     int startY = 0;
-                    switch (rotation) {
+                    switch (Rotation) {
                         case 90:
                             cX = -y;
                             cY = x;
@@ -816,24 +826,25 @@ namespace Andja.Model {
         #region rotation
 
         public int ChangeRotation(int rotate = 0) {
-            this.rotation = rotate % 360;
-            return rotation;
+            this.Rotation = rotate % 360;
+            return Rotation;
         }
 
-        public void RotateStructure() {
+        public void Rotate() {
             if (CanRotate == false) {
                 return;
             }
-            rotation += 90;
-            rotation %= 360;
+            Rotation += 90;
+            Rotation %= 360;
         }
 
         public void AddTimes90ToRotate(int times) {
             if (CanRotate == false) {
                 return;
             }
-            rotation += 90 * times;
-            rotation %= 360;
+            for (int i = 0; i < times; i++) {
+                Rotate();
+            }
         }
 
         #endregion rotation
@@ -859,6 +870,7 @@ namespace Andja.Model {
             roadStructure.RegisterOnRouteCallback(OnRouteChange);
             if (Routes.Contains(roadStructure.Route) == false) {
                 Routes.Add(roadStructure.Route);
+                cbRoutesChanged?.Invoke(this);
             }
             roadStructure.RegisterOnDestroyCallback(OnRoadDestroy);
         }
@@ -866,9 +878,10 @@ namespace Andja.Model {
         protected virtual void OnRouteChange(Route o, Route n) {
             Routes.Remove(o);
             Routes.Add(n);
+            cbRoutesChanged?.Invoke(this);
         }
 
-        private void OnRoadDestroy(Structure structure, IWarfare warfare) {
+        protected void OnRoadDestroy(Structure structure, IWarfare warfare) {
             RoadStructure road = structure as RoadStructure;
             Roads.Remove(road);
             if(Roads.Select(r => r.Route).Contains(road.Route) == false) {
@@ -878,6 +891,7 @@ namespace Andja.Model {
 
         public virtual void RemoveRoute(Route route) {
             Routes.Remove(route);
+            cbRoutesChanged?.Invoke(this);
         }
 
         public bool IsPlayer() {

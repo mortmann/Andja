@@ -91,17 +91,17 @@ namespace Andja.Model {
             }
 
             private void OnUnitCreated(Unit unit) {
-                if (IsTracker(unit.playerNumber)) {
+                if (IsTracker(unit.PlayerNumber)) {
                     AddStat(TrackedUnitStatistics.Built);
                 }
             }
 
             private void OnUnitDestroy(Unit destroyed, IWarfare destroyer) {
-                if (IsTracker(destroyed.playerNumber)) {
+                if (IsTracker(destroyed.PlayerNumber)) {
                     AddStat(TrackedUnitStatistics.Lost);
                 }
                 if (destroyer != null && IsTracker(destroyer.PlayerNumber)) {
-                    if (destroyed.playerNumber == Pirate.Number) {
+                    if (destroyed.PlayerNumber == Pirate.Number) {
                         AddStat(TrackedUnitStatistics.PiratesDestroyed);
                     }
                     else {

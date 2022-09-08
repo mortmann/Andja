@@ -45,9 +45,25 @@ public class HomeStructureTest {
     private void CreateTwoByTwo() {
         PrototypeData.tileWidth = 2;
         PrototypeData.tileHeight = 2;
-        Home.Tiles = Home.GetBuildingTiles(World.Current.GetTileAt(Home.StructureRange, Home.StructureRange));
-
+        Home.Tiles = Home.GetBuildingTiles(mockutil.GetInCityTile(Home.StructureRange, Home.StructureRange));
         Home.RegisterOnExtraUICallback(mockutil.Callbacks.Object.StructureBoolean);
+    }
+
+    [Test]
+    public void OnBuild() {
+        CreateTwoByTwo();
+        var needStructure = new NeedStructure("test", new NeedStructurePrototypeData());
+        Home.Tiles.ForEach(t => {
+            t.City = mockutil.City;
+            needStructure.City = t.City;
+            t.AddNeedStructure(needStructure);
+        });
+        Home.City = mockutil.City;
+
+        Home.OnBuild();
+
+        AssertThat(Home.HasNeedStructure(needStructure)).IsTrue();
+        AssertThat(mockutil.CityMock).HasInvoked(c => c.AddPeople(0, 1));
     }
 
     [Test]
@@ -215,6 +231,29 @@ public class HomeStructureTest {
         }))).IsTrue();
     }
     [Test]
+    public void IsStructureNeedFulfilled_Road() {
+        TestNeedStructure needStructure = new TestNeedStructure("bla", new NeedStructurePrototypeData());
+        Route route = new Route();
+        needStructure.AddRoute(route);
+        needStructure.City = mockutil.City;
+        Home.AddNeedStructure(needStructure);
+        Home.AddRoute(route);
+        AssertThat(Home.IsStructureNeedFulfilled(new Need("bla2", new NeedPrototypeData() {
+            structures = new[] { needStructure },
+            hasToReachPerRoad = true
+        }))).IsTrue();
+    }
+    [Test]
+    public void IsStructureNeedFulfilled_Road_False() {
+        NeedStructure needStructure = new NeedStructure("bla", new NeedStructurePrototypeData());
+        needStructure.City = mockutil.City;
+        Home.AddNeedStructure(needStructure);
+        AssertThat(Home.IsStructureNeedFulfilled(new Need("bla2", new NeedPrototypeData() {
+            structures = new[] { needStructure },
+            hasToReachPerRoad = true
+        }))).IsFalse();
+    }
+    [Test]
     public void IsStructureNeedFulfilled_False_NoStructure() {
         NeedStructure needStructure = new NeedStructure("bla", new NeedStructurePrototypeData());
         needStructure.City = mockutil.City;
@@ -369,6 +408,9 @@ public class HomeStructureTest {
             NeedStructures ??= new List<NeedStructure>();
             NeedStructures.Add(need);
         }
+        public bool HasNeedStructure(NeedStructure need) {
+            return NeedStructures.Contains(need);
+        }
         public void TestTryToIncreasePeople() {
             TryToIncreasePeople();
         }
@@ -381,6 +423,18 @@ public class HomeStructureTest {
 
         internal void SetNegativeEffect() {
             HasNegativeEffect = true;
+        }
+        public void AddRoute(Route r) {
+            Routes.Add(r);
+        }
+    }
+
+    class TestNeedStructure : NeedStructure {
+        public TestNeedStructure(string pid, NeedStructurePrototypeData nspd) : base(pid, nspd) {
+        }
+
+        public void AddRoute(Route r) {
+            Routes.Add(r);
         }
     }
 }

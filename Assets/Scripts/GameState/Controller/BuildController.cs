@@ -17,8 +17,8 @@ namespace Andja.Controller {
     /// It gives each a unique id in which order it was build.
     /// So when a savegame is loading it can place them it the correct order again.
     /// </summary>
-    public class BuildController : MonoBehaviour {
-        public static BuildController Instance { get; protected set; }
+    public class BuildController : MonoBehaviour, IBuildController {
+        public static IBuildController Instance { get;  set; }
         private BuildStateModes _buildState;
 
         /// <summary>
@@ -48,7 +48,7 @@ namespace Andja.Controller {
         public Structure toBuildStructure;
         //Cheats for testing
         public bool noBuildCost = false;
-        public bool noUnitRestriction = false;
+        public bool noUnitBuildRangeRestriction = false;
         public bool allStructuresEnabled = false;
 
         public IReadOnlyDictionary<string, Structure> StructurePrototypes => PrototypController.Instance.StructurePrototypes;
@@ -91,17 +91,17 @@ namespace Andja.Controller {
             Instance = this;
             if (EditorController.IsEditor) {
                 noBuildCost = true;
-                noUnitRestriction = true;
+                noUnitBuildRangeRestriction = true;
             }
             else
-            if (noBuildCost && noUnitRestriction) {
+            if (noBuildCost && noUnitBuildRangeRestriction) {
                 Debug.LogWarning("Cheats are activated.");
             }
             BuildState = BuildStateModes.None;
             BuildIdToStructure = new Dictionary<uint, Structure>();
         }
 
-        internal void PlaceWorldGeneratedStructure(Dictionary<Tile, Structure> tileToStructure) {
+        public void PlaceWorldGeneratedStructure(Dictionary<Tile, Structure> tileToStructure) {
             foreach (Tile t in tileToStructure.Keys.ToArray()) {
                 if(RealBuild(new List<Tile>() { t }, 
                     tileToStructure[t], GameData.WorldNumber, false, true, null, true, true) == false) {
@@ -151,7 +151,7 @@ namespace Andja.Controller {
             }
         }
 
-        internal void SetLoadedStructures(IEnumerable<Structure> values) {
+        public void SetLoadedStructures(IEnumerable<Structure> values) {
             LoadedStructures = new List<Structure>(values);
         }
         /// <summary>
@@ -225,11 +225,11 @@ namespace Andja.Controller {
             RealBuild(str.GetBuildingTiles(tile), str, GameData.WorldNumber, true, true);
         }
 
-        internal void EditorBuildOnTile(Structure toPlace, List<Tile> t) {
+        public void EditorBuildOnTile(Structure toPlace, List<Tile> t) {
             RealBuild(t, toPlace, GameData.WorldNumber, false, true, null, false, true);
         }
 
-        protected bool RealBuild(List<Tile> tiles, Structure structure, int playerNumber, bool loading = false,
+        public bool RealBuild(List<Tile> tiles, Structure structure, int playerNumber, bool loading = false,
             bool buildInWilderness = false, Unit buildInRangeUnit = null, bool onStart = false, bool noClone = false) {
             if (tiles == null || tiles.Count == 0) {
                 Debug.LogError("tiles is null or empty");
@@ -242,11 +242,11 @@ namespace Andja.Controller {
                 return false;
             }
             tiles = tiles.OrderBy(x => x.Y).ThenBy(x => x.X).ToList();
-            int rotate = structure.rotation;
+            int rotate = structure.Rotation;
             if (loading == false && noClone == false) {
                 structure = structure.Clone();
             }
-            if (buildInRangeUnit != null && noUnitRestriction == false) {
+            if (buildInRangeUnit != null && noUnitBuildRangeRestriction == false) {
                 Vector3 unitPos = buildInRangeUnit.PositionVector2;
                 Tile t = tiles.Find(x => x.IsInRange(unitPos, buildInRangeUnit.BuildRange));
                 if (t == null) {
@@ -321,19 +321,19 @@ namespace Andja.Controller {
                     return false; // SO no city found and no warehouse to create on
                 }
                 if (noBuildCost == false && onStart == false) {
-                    if (structure.GetBuildingItems() != null) {
+                    if (structure.BuildingItems != null) {
                         if (buildInRangeUnit != null) {
-                            inv = buildInRangeUnit.inventory;
+                            inv = buildInRangeUnit.Inventory;
                         }
                         else {
                             if (structure.City != null)
                                 inv = structure.City.Inventory;
                         }
                         if (inv == null) {
-                            Debug.LogError("Build something with smth that has no inventory");
+                            Debug.LogError("Build something with smth that has no Inventory");
                             return false;
                         }
-                        if (inv.HasEnoughOfItems(structure.GetBuildingItems()) == false) {
+                        if (inv.HasEnoughOfItems(structure.BuildingItems) == false) {
                             BuildError(MapErrorMessage.NotEnoughResources, tiles, structure, playerNumber);
                             return false;
                         }
@@ -369,8 +369,8 @@ namespace Andja.Controller {
 
             //pay for it -- if not otherwise disabled
             if (noBuildCost == false && onStart == false && buildInWilderness == false && loading == false) {
-                if (structure.GetBuildingItems() != null)
-                    inv.RemoveItemsAmount(structure.GetBuildingItems());
+                if (structure.BuildingItems != null)
+                    inv.RemoveItemsAmount(structure.BuildingItems);
                 PlayerController.Instance.GetPlayer(playerNumber).ReduceTreasure(structure.BuildCost);
             }
 
@@ -417,7 +417,7 @@ namespace Andja.Controller {
         /// USED ONLY FOR LOADING
         /// DONT USE THIS FOR ANYTHING ELSE!!
         /// </summary>
-        private bool LoadBuildOnTile(Structure s, Tile t) {
+        public bool LoadBuildOnTile(Structure s, Tile t) {
             if (s != null && t != null) 
                 return RealBuild(s.GetBuildingTiles(t), s, -1, true, s.buildInWilderness);
             Debug.LogError("Something went wrong by loading Structure! " + t + " " + s);
@@ -534,7 +534,7 @@ namespace Andja.Controller {
             Instance = null;
         }
 
-        private TileMark TileCityDecider(Tile t) {
+        public TileMark TileCityDecider(Tile t) {
             if (t == null) {
                 return TileMark.None;
             }
@@ -544,6 +544,18 @@ namespace Andja.Controller {
             else {
                 return TileMark.Dark;
             }
+        }
+
+        public void RotateBuildStructure() {
+            toBuildStructure?.Rotate();
+        }
+
+        public void ToggleBuildCost() {
+            noBuildCost = !noBuildCost;
+        }
+
+        public void ToggleUnitBuildRangeRestriction() {
+            noUnitBuildRangeRestriction = !noUnitBuildRangeRestriction;
         }
     }
 }

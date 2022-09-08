@@ -9,7 +9,11 @@ using UnityEngine;
 namespace Andja.Model {
     [JsonObject(MemberSerialization.OptIn)]
     public abstract class Inventory {
-
+        [JsonPropertyAttribute(PropertyName = "Items")]
+        public abstract Item[] SerializableItems {
+            get;
+            set;
+        }
         protected Action<Inventory> cbInventoryChanged;
         protected Action<Inventory, Item, bool> cbInventoryItemChange;
         [JsonPropertyAttribute] public int MaxStackSize { get; protected set; }
@@ -55,10 +59,6 @@ namespace Andja.Model {
 
         public bool HasAnythingOf(Item item) {
             return GetAmountFor(item) > 0;
-        }
-
-        public Item GetAllOfItem(string itemID) {
-            return GetAllAndRemoveItem(new Item(itemID));
         }
 
         public virtual int GetAmountFor(Item item) {
@@ -112,7 +112,7 @@ namespace Andja.Model {
         protected abstract void RemoveNotExistingItem(Item item);
 
         /// <summary>
-        /// moves item amount to the given inventory
+        /// moves item amount to the given Inventory
         /// </summary>
         /// <returns><c>true</c>, if item was moved, <c>false</c> otherwise.</returns>
         /// <param name="inv">Inv.</param>
@@ -125,7 +125,7 @@ namespace Andja.Model {
         }
 
         /// <summary>
-        /// removes an item amount from this inventory but not moving it to any other inventory
+        /// removes an item amount from this Inventory but not moving it to any other Inventory
         /// destroys item amount forever! FOREVER!
         /// </summary>
         /// <returns><c>true</c>, if item amount was removed, <c>false</c> otherwise.</returns>

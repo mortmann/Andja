@@ -84,7 +84,7 @@ namespace Andja.Model {
         [JsonPropertyAttribute] public IGEventable target;  //TODO make a check for it!
 
         [JsonPropertyAttribute] public uint eventID;
-        [JsonPropertyAttribute] private float triggerEffectCooldown = UnityEngine.Random.Range(0.1f, 1f);
+        [JsonPropertyAttribute] public float triggerEffectCooldown = UnityEngine.Random.Range(0.1f, 1f);
 
         /// <summary>
         /// Needed for Serializing

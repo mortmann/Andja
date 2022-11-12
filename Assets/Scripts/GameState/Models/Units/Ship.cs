@@ -249,7 +249,7 @@ namespace Andja.Model {
                 SetDestinationIfPossible(tradeRoute.GetNextDestination(this));
         }
 
-        internal bool HasCannonsToAddInInventory() {
+        public bool HasCannonsToAddInInventory() {
             return Inventory.HasAnythingOf(CannonItem);
         }
 
@@ -284,11 +284,11 @@ namespace Andja.Model {
         /// Does not remove itself from TradeRoute
         /// Instead call it from the TradeRoute -> RemoveShip()!
         /// </summary>
-        internal void StopTradeRoute() {
+        public void StopTradeRoute() {
             CurrentMainMode = UnitMainModes.Idle;
         }
 
-        internal void RemoveCannonsToInventory(bool all) {
+        public void RemoveCannonsToInventory(bool all) {
             if (all)
                 CannonItem.count -= Inventory.AddItem(CannonItem);
             else {
@@ -298,7 +298,7 @@ namespace Andja.Model {
             }
         }
 
-        internal void AddCannonsFromInventory(bool all) {
+        public void AddCannonsFromInventory(bool all) {
             if (all) {
                 Item temp = CannonItem.Clone();
                 temp.count = MaximumAmountOfCannons - CannonItem.count;
@@ -311,7 +311,7 @@ namespace Andja.Model {
             }
         }
 
-        internal bool CanRemoveCannons() {
+        public bool CanRemoveCannons() {
             if (CannonItem.count <= 0) {
                 return false;
             }
@@ -371,7 +371,7 @@ namespace Andja.Model {
             return DamageType.GetDamageMultiplier(armorType) * DamagePerCannon;
         }
 
-        internal override void Load() {
+        public override void Load() {
             base.Load();
             tradeRoute?.LoadShip(this);
         }

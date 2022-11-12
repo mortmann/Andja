@@ -157,11 +157,11 @@ namespace Andja.Controller {
         }
 
         internal bool TriggerEventForPlayer(GameEvent gameEvent, Player player) {
-            List<IGEventable> playerTargets = GetPlayerTargets(gameEvent.Targeted, player);
+            List<IIGEventable> playerTargets = GetPlayerTargets(gameEvent.Targeted, player);
             return playerTargets.Count != 0 && TriggerEventForEventable(gameEvent, playerTargets[UnityEngine.Random.Range(0, playerTargets.Count)]);
         }
 
-        internal bool TriggerEventForEventable(GameEvent gameEvent, IGEventable eventable) {
+        internal bool TriggerEventForEventable(GameEvent gameEvent, IIGEventable eventable) {
             gameEvent.target = eventable;
             return CreateGameEvent(gameEvent);
         }
@@ -173,8 +173,8 @@ namespace Andja.Controller {
             return _idToActiveEvent.Remove(id);
         }
 
-        public List<IGEventable> GetPlayerTargets(TargetGroup targetGroup, Player player) {
-            List<IGEventable> targets = new List<IGEventable>();
+        public List<IIGEventable> GetPlayerTargets(TargetGroup targetGroup, Player player) {
+            List<IIGEventable> targets = new List<IIGEventable>();
             foreach (Target target in targetGroup.Targets) {
                 switch (target) {
                     case Target.AllUnit:

@@ -81,7 +81,7 @@ namespace Andja.Model {
         // this one says what it is...
         // so if complete island/city/player or only a single structuretype is the goal
         // can be null if its not set to which type
-        [JsonPropertyAttribute] public IGEventable target;  //TODO make a check for it!
+        [JsonPropertyAttribute] public IIGEventable target;  //TODO make a check for it!
 
         [JsonPropertyAttribute] public uint eventID;
         [JsonPropertyAttribute] public float triggerEffectCooldown = UnityEngine.Random.Range(0.1f, 1f);
@@ -113,7 +113,7 @@ namespace Andja.Model {
                 CreateVolcanicEruption();
             }
             if(target != null) {
-
+                
             }
         }
 
@@ -263,14 +263,7 @@ namespace Andja.Model {
                 }
             }
             triggerEffectCooldown = UnityEngine.Random.Range(0.1f, 1f);
-            //create projectiles flying from it
-            //  -at random times
-            //  -to random tiles (how far?)
-            //  -make them only "hit" the destination tiles
-            //World.Current.OnC
-            //create sounds
             //change music (only if it is a player island?)
-            //
         }
 
         private void StopVolcanicEruption() {

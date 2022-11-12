@@ -1,5 +1,4 @@
 ﻿using Newtonsoft.Json;
-using Smaa;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -289,15 +288,12 @@ namespace Andja.UI.Menu {
             value = Mathf.Clamp(value, 0, GS_AntiAliasing.PresetValues.Length - 1);
             if (value == 2) {
                 MainCamera.GetComponent<Antialiasing>().enabled = false;
-                MainCamera.GetComponent<SMAA>().enabled = true;
             }
             else if (value == 1) {
                 MainCamera.GetComponent<Antialiasing>().enabled = true;
-                MainCamera.GetComponent<SMAA>().enabled = false;
             }
             else {
                 MainCamera.GetComponent<Antialiasing>().enabled = false;
-                MainCamera.GetComponent<SMAA>().enabled = false;
             }
             SetSavedGraphicsOption(GraphicsSetting.AntiAliasing, value);
         }

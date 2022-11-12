@@ -106,10 +106,10 @@ namespace Andja.Controller {
             _cityToCurrentSpaceValueTiles.TryRemove(obj, out _);
         }
 
-        private void OnCityCreated(ICity obj) {
-            _cityToCurrentSpaceValueTiles.TryAdd(obj, TileValue.CalculateStartingValues(obj.Island, obj, true));
-            obj.RegisterTileAdded(OnCityTileAdded);
-            obj.RegisterTileRemove(OnCityTileRemoved);
+        private void OnCityCreated(ICity city) {
+            _cityToCurrentSpaceValueTiles.TryAdd(city, TileValue.CalculateStartingValues(city.Island, city, true));
+            city.RegisterTileAdded(OnCityTileAdded);
+            city.RegisterTileRemove(OnCityTileRemoved);
         }
 
         private void OnCityTileRemoved(ICity c, Tile t) {
@@ -120,10 +120,10 @@ namespace Andja.Controller {
             if(_cityToCurrentSpaceValueTiles[c].ContainsKey(t) == false)
                 _cityToCurrentSpaceValueTiles[c].TryAdd(t, new TileValue(t, Vector2.one, Vector2.one));
             if (t.GetNeighbours().All(x => x.City == c)) return;
-            ChangeTileValue(t, t.West(), Direction.W, null);
-            ChangeTileValue(t, t.South(), Direction.S, null);
-            ChangeTileValue(t, t.North(), Direction.N, null);
-            ChangeTileValue(t, t.East(), Direction.E, null);
+            ChangeTileValue(t, t.West(), Direction.W, _cityToCurrentSpaceValueTiles[c]);
+            ChangeTileValue(t, t.South(), Direction.S, _cityToCurrentSpaceValueTiles[c]);
+            ChangeTileValue(t, t.North(), Direction.N, _cityToCurrentSpaceValueTiles[c]);
+            ChangeTileValue(t, t.East(), Direction.E, _cityToCurrentSpaceValueTiles[c]);
         }
 
         public void Update() {
@@ -237,6 +237,8 @@ namespace Andja.Controller {
                 return;
             if (_cityToCurrentSpaceValueTiles[t.City].ContainsKey(t) == false)
                 return;
+            if (t.Structure != null && t.Structure.ShouldAICountTileAsFree() == false)
+                return;
             switch (direction) {
                 case Direction.N:
                     tileValue[t].swValue.y = tileValue[t.South()].swValue.y + 1;
@@ -246,8 +248,6 @@ namespace Andja.Controller {
                     else {
                         _cityToCurrentSpaceValueTiles[t.City][t].swValue.y = 1;
                     }
-                    if (t.North().Structure != null && t.North().Structure.ShouldAICountTileAsFree() == false)
-                        return;
                     ChangeTileValue(t.North(), t, Direction.N, tileValue);
                     break;
 
@@ -259,8 +259,6 @@ namespace Andja.Controller {
                     else {
                         _cityToCurrentSpaceValueTiles[t.City][t].neValue.x = 1;
                     }
-                    if (t.West().Structure != null && t.West().Structure.ShouldAICountTileAsFree() == false)
-                        return;
                     ChangeTileValue(t.West(), t, Direction.W, tileValue);
                     break;
 
@@ -272,8 +270,6 @@ namespace Andja.Controller {
                     else {
                         _cityToCurrentSpaceValueTiles[t.City][t].neValue.y = 1;
                     }
-                    if (t.South().Structure != null && t.South().Structure.ShouldAICountTileAsFree() == false)
-                        return;
                     ChangeTileValue(t.South(), t, Direction.S, tileValue);
                     break;
 
@@ -285,8 +281,6 @@ namespace Andja.Controller {
                     else {
                         _cityToCurrentSpaceValueTiles[t.City][t].swValue.x = 1;
                     }
-                    if (t.East().Structure != null && t.East().Structure.ShouldAICountTileAsFree() == false)
-                        return;
                     ChangeTileValue(t.East(), t, Direction.E, tileValue);
                     break;
 

@@ -17,11 +17,12 @@ namespace Andja.Model {
         [JsonPropertyAttribute] public CityInventory Inventory { get; protected set; }
         [JsonPropertyAttribute] public List<Structure> Structures { get; protected set; }
         [JsonPropertyAttribute] public Dictionary<string, TradeItem> ItemIDtoTradeItem { get; protected set; }
-        [JsonPropertyAttribute] private string _name = "";
-        [JsonPropertyAttribute] public Island Island { get; set; }
+        [JsonPropertyAttribute] public IIsland Island { get; set; }
         [JsonPropertyAttribute] public int PlayerTradeAmount { get; protected set; }
         [JsonPropertyAttribute] private List<PopulationLevel> _populationLevels;
         [JsonPropertyAttribute] private float _useTickTimer;
+        [JsonPropertyAttribute] private string _name = "";
+
         #endregion Serialize
 
         #region RuntimeOrOther
@@ -78,7 +79,7 @@ namespace Andja.Model {
             Tiles = new HashSet<Tile>();
             Routes = new List<Route>();
         }
-        public City(int playerNr, Island island) : this() {
+        public City(int playerNr, IIsland island) : this() {
             this.PlayerNumber = playerNr;
             this.Island = island;
             _name = "<City> " + UnityEngine.Random.Range(0, 1000);
@@ -277,7 +278,7 @@ namespace Andja.Model {
                 return;
             }
             Tiles.Remove(t);
-            Island.allReadyHighlighted = false;
+            Island.AllReadyHighlighted = false;
             if (Tiles.Count == 0) {
                 Destroy();
             }
@@ -302,7 +303,7 @@ namespace Andja.Model {
             foreach (Tile t in tiles) {
                 AddTile(t);
             }
-            Island.allReadyHighlighted = false;
+            Island.AllReadyHighlighted = false;
         }
 
         public void AddTile(Tile t) {
@@ -316,7 +317,7 @@ namespace Andja.Model {
                     AddStructure(t.Structure);
                 }
             }
-            Island.allReadyHighlighted = false;
+            Island.AllReadyHighlighted = false;
             Tiles.Add(t);
             if (IsCurrentPlayerCity()) {
                 World.Current.OnTileChanged(t);
@@ -514,7 +515,7 @@ namespace Andja.Model {
                 }
                 Debug.LogError(this.Name + " This structure " + structure.ToString() + " does not belong to this city ");
             }
-            Island.allReadyHighlighted = false;
+            Island.AllReadyHighlighted = false;
         }
 
         public float GetHappinessForCitizenLevel(int level) {

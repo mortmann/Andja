@@ -188,8 +188,8 @@ namespace Andja.Model {
             }
         }
 
-        internal IEnumerable<Island> GetIslandList() {
-            HashSet<Island> islands = new HashSet<Island>();
+        internal IEnumerable<IIsland> GetIslandList() {
+            HashSet<IIsland> islands = new HashSet<IIsland>();
             foreach (City c in Cities)
                 islands.Add(c.Island);
             return islands;

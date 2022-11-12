@@ -572,6 +572,7 @@ namespace Andja.Controller {
 
         public static System.Collections.Concurrent.ConcurrentBag<Vector2> positions = new System.Collections.Concurrent.ConcurrentBag<Vector2>();
         public static System.Collections.Concurrent.ConcurrentDictionary<Vector2, float> positionsCost = new System.Collections.Concurrent.ConcurrentDictionary<Vector2, float>();
+#if UNITY_EDITOR
         public void OnDrawGizmos() {
             if (Application.isPlaying == false) return;
             //foreach (Pathfinding.World.CurrentNode n in World.Current.Current.World.CurrentGraph.Nodes) {
@@ -589,6 +590,6 @@ namespace Andja.Controller {
                 UnityEditor.Handles.Label(new Vector3(t.Key.x + 0.5f, t.Key.y + 0.5f), t.Value +"");
             }
         }
-
+# endif
     }
 }

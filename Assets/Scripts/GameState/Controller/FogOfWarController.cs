@@ -137,7 +137,7 @@ namespace Andja.Controller {
             col.isTrigger = isTrigger;
         }
 
-        private void AddIslandFogModule(Island island) {
+        private void AddIslandFogModule(IIsland island) {
             GameObject go = new GameObject("IslandFogReveal");
             BoxCollider2D col = go.AddComponent<BoxCollider2D>();
             col.size = new Vector2(island.Width + 10, island.Height + 10);

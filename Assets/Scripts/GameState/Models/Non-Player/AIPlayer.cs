@@ -500,7 +500,7 @@ namespace Andja.Model {
 
         private PlaceStructure? FindStructurePlace(string key) {
             Structure s = PrototypController.Instance.GetStructureCopy(key);
-            IEnumerable<Island> isls = Player.GetIslandList();
+            IEnumerable<IIsland> isls = Player.GetIslandList();
             if (s is FarmStructure fs && fs.Growable.Fertility != null) {
                 isls = isls.Where(x => x.Fertilities.Contains(fs.Growable.Fertility));
             } else 
@@ -681,6 +681,8 @@ namespace Andja.Model {
                                     else {
                                         islandScores[index].Island.startClaimed = startIslands;
                                     }
+                                    if (Array.Exists(t.tile.GetNeighbours(),t => t.Type == TileType.Ocean) == false)
+                                        continue;
                                     return new Tuple<Tile, int>(t.tile, ((Structure)warehouse).Rotation);
                                 }
                                 warehouse.Rotate();
@@ -771,7 +773,7 @@ namespace Andja.Model {
                     // its always nice to have -- add how rare it is in the world
                     score.FertilityScore += fertilitytoExisting[fertility];
                 }
-                List<Island> Islands = new List<Island>(Player.GetIslandList());
+                List<IIsland> Islands = new List<IIsland>(Player.GetIslandList());
                 //Distance Score is either how far it is from other islands OR how far from center
                 if (Islands.Count > 0) {
                     float distance = 0;

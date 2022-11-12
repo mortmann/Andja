@@ -87,6 +87,12 @@ public class MockUtil {
         EventSpriteController.Instance = EventSpriteControllerMock.Object;
     }
 
+    public MockUtil WithOnePopulationLevels() {
+        PrototypControllerMock.Setup(p => p.GetPopulationLevels(It.IsAny<ICity>()))
+            .Returns<ICity>((c) => new List<PopulationLevel>() { new PopulationLevel(0, c, null) });
+        return this;
+    }
+
     public LandTile GetInCityTile(int x, int y) {
         LandTile tile = World.Current.GetTileAt(x,y) as LandTile;
         tile.City = City;

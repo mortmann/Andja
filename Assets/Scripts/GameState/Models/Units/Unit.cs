@@ -235,7 +235,7 @@ namespace Andja.Model {
             queuedCommands = new Queue<Command>();
             Setup();
         }
-        internal void ReduceHealth(float damage, IWarfare warfare) {
+        public void ReduceHealth(float damage, IWarfare warfare) {
             if (damage < 0) {
                 Debug.LogWarning("Damage should be never smaller than 0 - Fix it!");
                 return;
@@ -259,13 +259,13 @@ namespace Andja.Model {
             CurrentHealth = Mathf.Clamp(CurrentHealth, 0, MaxHealth);
         }
 
-        internal void ChangeHealth(float change, IWarfare warfare = null) {
+        public void ChangeHealth(float change, IWarfare warfare = null) {
             if (change < 0)
                 ReduceHealth(-change, warfare); //damage should not be negativ
             if (change > 0)
                 RepairHealth(change);
         }
-        internal virtual void Load() {
+        public virtual void Load() {
             Setup();
             Inventory.Load();
             Pathfinding.Load(this);
@@ -756,7 +756,7 @@ namespace Andja.Model {
         }
 
         
-        internal void GivePickUpCrateCommand(Crate crate, bool overrideCurrent) {
+        public void GivePickUpCrateCommand(Crate crate, bool overrideCurrent) {
             if (crate.IsInRange(CurrentPosition) && overrideCurrent) {
                 TryToAddCrate(crate);
             }
@@ -787,22 +787,19 @@ namespace Andja.Model {
                     return false;
 
                 case TileType.Dirt:
-                    break;
                 case TileType.Grass:
-                    break;
                 case TileType.Stone:
-                    break;
                 case TileType.Desert:
-                    break;
                 case TileType.Steppe:
-                    break;
                 case TileType.Jungle:
-                    break;
-                
+                    return Pathfinding.CurrTile.Island == tile.Island;
+
+                case TileType.Ocean when IsShip:
+                    return true;
+
                 default:
-                    throw new ArgumentOutOfRangeException();
+                    throw new ArgumentOutOfRangeException("Unit CanReach for: " + tile.Type);
             }
-            return Pathfinding.CurrTile.Island == tile.Island;
         }
 
         public int TryToAddItem(Item item) {
@@ -815,7 +812,7 @@ namespace Andja.Model {
             return Inventory.AddItem(t);
         }
 
-        internal bool TryToAddCrate(Crate thisCrate) {
+        public bool TryToAddCrate(Crate thisCrate) {
             if (Inventory == null)
                 return false;
             if (thisCrate.IsInRange(CurrentPosition) == false)
@@ -902,7 +899,7 @@ namespace Andja.Model {
             ReduceHealth(warfare.GetCurrentDamage(ArmorType), warfare);
         }
 
-        internal bool IsOwnedByCurrentPlayer() {
+        public bool IsOwnedByCurrentPlayer() {
             return PlayerController.currentPlayerNumber == playerNumber;
         }
 
@@ -916,7 +913,7 @@ namespace Andja.Model {
             }
         }
 
-        internal bool IsTileInBuildRange(Tile tile) {
+        public bool IsTileInBuildRange(Tile tile) {
             return Vector2.Distance(tile.Vector2, PositionVector2) <= BuildRange; 
         }
 

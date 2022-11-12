@@ -19,7 +19,7 @@ namespace Andja.Model {
         CityInventory Inventory { get; }
         List<Structure> Structures { get; }
         Dictionary<string, TradeItem> ItemIDtoTradeItem { get; }
-        Island Island { get; }
+        IIsland Island { get; }
         int PlayerTradeAmount { get; }
         void SetPlayerTradeAmount(int amount);
         void SetName(string name);

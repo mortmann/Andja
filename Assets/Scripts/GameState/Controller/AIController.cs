@@ -241,6 +241,8 @@ namespace Andja.Controller {
                 return;
             switch (direction) {
                 case Direction.N:
+                    if (tileValue?.ContainsKey(t.South()) == false)
+                        return;
                     tileValue[t].swValue.y = tileValue[t.South()].swValue.y + 1;
                     if(t.City == t.South().City) {
                         _cityToCurrentSpaceValueTiles[t.City][t].swValue.y = _cityToCurrentSpaceValueTiles[t.City][t.South()].swValue.y + 1;
@@ -252,6 +254,8 @@ namespace Andja.Controller {
                     break;
 
                 case Direction.W:
+                    if (tileValue?.ContainsKey(t.East()) == false)
+                        return;
                     tileValue[t].neValue.x = tileValue[t.East()].neValue.x + 1;
                     if (t.City == t.East().City) {
                         _cityToCurrentSpaceValueTiles[t.City][t].neValue.x = _cityToCurrentSpaceValueTiles[t.City][t.East()].neValue.x + 1;
@@ -263,6 +267,8 @@ namespace Andja.Controller {
                     break;
 
                 case Direction.S:
+                    if (tileValue?.ContainsKey(t.North()) == false)
+                        return;
                     tileValue[t].neValue.y = tileValue[t.North()].neValue.y + 1;
                     if (t.City == t.North().City) {
                         _cityToCurrentSpaceValueTiles[t.City][t].neValue.y = _cityToCurrentSpaceValueTiles[t.City][t.North()].neValue.y + 1;
@@ -274,6 +280,8 @@ namespace Andja.Controller {
                     break;
 
                 case Direction.E:
+                    if (tileValue?.ContainsKey(t.West()) == false)
+                        return;
                     tileValue[t].swValue.x = tileValue[t.West()].swValue.x + 1;
                     if (t.City == t.West().City) {
                         _cityToCurrentSpaceValueTiles[t.City][t].swValue.x = _cityToCurrentSpaceValueTiles[t.City][t.West()].swValue.x + 1;

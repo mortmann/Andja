@@ -201,6 +201,13 @@ public class UnitInventoryTest {
         Assert.AreEqual(canBeRemoved, inventory.RemoveItemAmount(remove));
         Assert.AreEqual(canBeRemoved? (inInventory - removeAmount.ClampZero()).ClampZero() : inInventory, inventory.GetAmountFor(remove));
     }
+    [Test]
+    public void RemoveItemAmount_CloneAmount() {
+        inventory.AddItem(ItemProvider.Wood_N(50));
+        Item remove = ItemProvider.Wood_N(12);
+        Assert.AreEqual(true, inventory.RemoveItemAmount(remove, 25));
+        Assert.AreEqual(25, inventory.GetAmountFor(remove));
+    }
 
     [Theory]
     [TestCase(0, 0)]
@@ -260,16 +267,6 @@ public class UnitInventoryTest {
         Assert.IsTrue(inventory.Items[3] == null);
     }
     
-    [Test]
-    public void GetBuildMaterial() {
-        MockUtil mockUtil = new MockUtil();
-        var buildItems = new[] { ItemProvider.Brick, ItemProvider.Tool, ItemProvider.Wood };
-        mockUtil.PrototypControllerMock.SetupGet(m=>m.BuildItems).Returns(buildItems);
-        var items = new[] { ItemProvider.Wood_10, ItemProvider.Fish_25, ItemProvider.Tool_12 };
-        inventory.AddItems(items.CloneArrayWithCounts());
-        Assert.IsTrue(inventory.GetBuildMaterial().All(x=>buildItems.ToList().Exists(y=> x.ID == y.ID)));
-    }
-
     [Test]
     public void RemainingSpaceForItem() {
         inventory.AddItem(ItemProvider.Wood_50);

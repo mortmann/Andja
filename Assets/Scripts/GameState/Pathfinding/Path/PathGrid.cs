@@ -125,6 +125,8 @@ namespace Andja.Pathfinding {
             if(t.City.PlayerNumber != GameData.WorldNumber) {
                 playerOwnedNodes[t.City.PlayerNumber]++;
             }
+            if (n.x < 0 || n.y < 0)
+                return n;
             Values[n.x,n.y] = n;
             IsDirty = true;
             Changed?.Invoke(t);

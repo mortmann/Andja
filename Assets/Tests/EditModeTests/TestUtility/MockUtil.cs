@@ -48,8 +48,8 @@ public class MockUtil {
         PrototypController.Instance = PrototypControllerMock.Object;
         PlayerControllerMock = new Mock<IPlayerController>();
         PlayerControllerMock.Setup(pc => pc.HasEnoughMoney(It.IsAny<int>(), It.IsAny<int>())).Returns(true);
-        PlayerControllerMock.Setup(pc => pc.HasEnoughMoney(It.IsAny<int>(), It.IsAny<int>())).Returns(true);
-        PlayerControllerMock.SetupGet(pc => pc.Players).Returns(new List<Player>() { new Player()});
+        PlayerControllerMock.SetupGet(pc => pc.Players).Returns(new List<Player>() { new Player() });
+        PlayerControllerMock.Setup(pc => pc.GetPlayer(It.IsAny<int>())).Returns((int num) => new Player(num, false, 50000));
 
         PlayerController.Instance = PlayerControllerMock.Object;
 
@@ -88,6 +88,8 @@ public class MockUtil {
     }
 
     public MockUtil WithOnePopulationLevels() {
+        PopulationLevelPrototypData plpd = new PopulationLevelPrototypData();
+        PrototypControllerMock.Setup(p => p.GetPopulationLevelPrototypDataForLevel(0)).Returns(plpd);
         PrototypControllerMock.Setup(p => p.GetPopulationLevels(It.IsAny<ICity>()))
             .Returns<ICity>((c) => new List<PopulationLevel>() { new PopulationLevel(0, c, null) });
         return this;

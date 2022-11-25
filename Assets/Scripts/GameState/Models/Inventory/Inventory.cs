@@ -67,12 +67,6 @@ namespace Andja.Model {
 
         public abstract int GetAmountFor(string itemID);
 
-        public Item[] GetBuildMaterial() {
-            return (from item in PrototypController.Instance.BuildItems 
-                    where HasAnythingOf(item) 
-                    select GetAllAndRemoveItem(item)).ToArray();
-        }
-
         public abstract int GetRemainingSpaceForItem(Item item);
 
         public bool HasAnything() {
@@ -140,14 +134,16 @@ namespace Andja.Model {
             LowerItemAmount(remove, remove.count);
             return true;
         }
-
+        public bool RemoveItemAmount(Item remove, int amount) {
+            return RemoveItemAmount(remove.Clone(amount));
+        }
         /// <summary>
         /// Only removes when all items are present and enough.
         /// </summary>
         /// <returns><c>true</c>, if items amount was removed, <c>false</c> otherwise.</returns>
         /// <param name="toRemove">Items with count for remove amount</param>
         public bool RemoveItemsAmount(IEnumerable<Item> toRemove) {
-            if (HasEnoughOfItems(toRemove) == false) {
+            if (toRemove == null || HasEnoughOfItems(toRemove) == false) {
                 return false;
             }
             foreach (Item i in toRemove) {

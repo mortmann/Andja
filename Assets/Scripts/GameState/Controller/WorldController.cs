@@ -97,7 +97,9 @@ namespace Andja.Controller {
                 if (loadout.Structures != null && player.IsHuman && Array.Exists(loadout.Structures, x => x is WarehouseStructure)) {
                     //here then place em
                     AIPlayer temp = new AIPlayer(player, true);
-                    temp.DecideIsland(true);
+                    var placeWarehouse = temp.DecideIsland(true);
+                    BuildController.Instance.BuildOnTile(placeWarehouse.Item2, placeWarehouse.Item2.GetBuildingTiles(placeWarehouse.Item1), 
+                                                         player.Number, false, false, null, false, true);
                     if (player.Cities.Count == 0) {
                         Debug.LogError("-- Could not fit any Warehouse on the selected island --");
                     }
@@ -118,11 +120,9 @@ namespace Andja.Controller {
                         Debug.LogWarning("Unit is not a ship -- currently not supported to spawn!");
                         continue;
                     }
-
                     if (shipSpawn.x == -1) {
                         shipSpawn = spawnPoints[i % spawnPoints.Length];
                     }
-
                     Tile start = World.GetTileAt(shipSpawn);
                     Unit unit = World.CreateUnit(prefab, player, start);
                     foreach (Item item in startItems) {

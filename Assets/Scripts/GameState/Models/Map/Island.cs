@@ -1,4 +1,5 @@
-﻿using Andja.Pathfinding;
+﻿using Andja.Controller;
+using Andja.Pathfinding;
 using Andja.Utility;
 using Newtonsoft.Json;
 using System;
@@ -63,7 +64,7 @@ namespace Andja.Model {
         }
 
         public List<IslandFeature> Features { get; set; }
-        public bool AllReadyHighlighted { get; set; }
+        public bool AlreadyHighlighted { get; set; }
 
         public List<Tile> Tiles;
         public Vector2 Placement { get; set; }
@@ -104,7 +105,7 @@ namespace Andja.Model {
         }
 
         private void Setup() {
-            AllReadyHighlighted = false;
+            AlreadyHighlighted = false;
             ((World)World.Current).RegisterOnEvent(OnEventCreate, OnEventEnded);
             //city that contains all the structures like trees that doesnt belong to any player
             //so it has the playernumber -1 -> needs to be checked for when buildings are placed
@@ -154,7 +155,7 @@ namespace Andja.Model {
                 }
             }
             this.Maximum = maximum;
-            this.Minimum = 
+            this.Minimum = minimum;
             Center = minimum + ((maximum - minimum) / 2);
             if (Wilderness != null)
                 Wilderness.AddTiles(Tiles);
@@ -175,7 +176,7 @@ namespace Andja.Model {
                 Debug.LogError("TRIED TO CREATE A SECOND CITY -- IS NEVER ALLOWED TO HAPPEN!");
                 return Cities.Find(x => x.PlayerNumber == playerNumber);
             }
-            AllReadyHighlighted = false;
+            AlreadyHighlighted = false;
             ICity c = new City(playerNumber, this);
             Cities.Add(c);
             return c;
@@ -208,6 +209,10 @@ namespace Andja.Model {
                 ac?.Invoke(ge);
                 return;
             }
+        }
+
+        internal ICity GetCurrentPlayerCity() {
+            return Cities.Find(c => c.PlayerNumber == PlayerController.currentPlayerNumber);
         }
 
         public override void OnEventEnded(GameEvent ge) {

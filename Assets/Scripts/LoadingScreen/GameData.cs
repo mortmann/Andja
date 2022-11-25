@@ -37,6 +37,11 @@ namespace Andja {
         //only load the set value if not using ingame loading method
         public string LoadSaveGame => Application.isEditor && (loadSaveGameName == null || loadSaveGameName.Length == 0) ?
                                                 editorloadsavegame : loadSaveGameName;
+
+        public static bool StartGameWithBuildWarehouseDirectly = false;
+
+        public static float PirateCheckRespawnShipCount = 60f;
+
         public string editorloadsavegame; // set through editor to make testing in editor faster & easier
         public static string loadSaveGameName; // set the to load save game through code
 
@@ -62,7 +67,7 @@ namespace Andja {
 
 
         //Pirate Data -- get set by difficulty
-        public static float PirateCooldown = 5f;
+        public static float PirateCooldown = 5f*60f;
         public static int PirateShipCount = 2;
 
         public static FogOfWarStyle FogOfWarStyle = FogOfWarStyle.Off;

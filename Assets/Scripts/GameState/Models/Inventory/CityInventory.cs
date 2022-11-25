@@ -62,6 +62,11 @@ namespace Andja.Model {
             return temp.ToArray();
         }
 
+        public Item[] GetBuildMaterial() {
+            return (from item in PrototypController.Instance.BuildItems
+                    select Items[item.ID]).ToArray();
+        }
+
         protected override void LowerItemAmount(Item i, int amount) {
             Item invItem = Items[i.ID];
             invItem.count = Mathf.Max(invItem.count - amount, 0);

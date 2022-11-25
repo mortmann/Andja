@@ -37,23 +37,24 @@ namespace Andja.Model {
             this.count = count;
         }
 
-        public Item(string id, ItemPrototypeData ipd) {
-            this.ID = id;
+        public Item(string id, ItemPrototypeData ipd) : this(id) {
             this.prototypeData = ipd;
             this.count = 0;
         }
 
-        public Item(Item other) {
-            this.ID = other.ID;
+        public Item(Item other) : this(other.ID) {
         }
-
+        public Item(Item other, int count = 0) : this(other.ID, count) {
+        }
         public Item() {
         }
 
         public virtual Item Clone() {
             return new Item(this);
         }
-
+        public virtual Item Clone(int amount) {
+            return new Item(this, amount);
+        }
         public virtual Item CloneWithCount() {
             Item i = new Item(this) {
                 count = this.count

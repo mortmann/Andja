@@ -15,7 +15,7 @@ namespace Andja.Model {
         public float maxDuration = 100;
         public float minRange = 50;
         public float maxRange = 100;
-        public Effect[] effects;
+        public IEffect[] effects;
         public Dictionary<Target, List<string>> specialRange;
 
         public ShadowType cloudCoverage;
@@ -37,7 +37,7 @@ namespace Andja.Model {
 
         public EventType Type => PrototypeData.type;
 
-        public Effect[] Effects => PrototypeData.effects;
+        public IEffect[] Effects => PrototypeData.effects;
         public float Probability => PrototypeData.probability;
         public float MinDuration => PrototypeData.minDuration;
         public float MaxDuration => PrototypeData.maxDuration;
@@ -54,7 +54,7 @@ namespace Andja.Model {
         public TargetGroup Targeted {
             get {
                 if (Effects == null) return _targeted;
-                foreach (Effect e in Effects) {
+                foreach (IEffect e in Effects) {
                     _targeted.AddTargets(e.Targets);
                 }
                 return _targeted;
@@ -146,7 +146,7 @@ namespace Andja.Model {
         private float WeightedRandomDuration(int numDice = 5) {
             float num = 0;
             for (var i = 0; i < numDice; i++) {
-                num += UnityEngine.Random.Range(0, 1.1f) * ((MaxDuration - MinDuration) / numDice);
+                num += UnityEngine.Random.Range(0, 1f) * ((MaxDuration - MinDuration) / numDice);
             }
             num += MinDuration;
             return num;
@@ -155,7 +155,7 @@ namespace Andja.Model {
         public bool HasWorldEffect() {
             if (Effects == null)
                 return false;
-            foreach (Effect item in Effects) {
+            foreach (IEffect item in Effects) {
                 if (item.InfluenceRange == InfluenceRange.World) {
                     return true;
                 }
@@ -181,7 +181,7 @@ namespace Andja.Model {
         /// </summary>
         /// <returns><c>true</c> if this instance is target the specified event otherwise, <c>false</c>.</returns>
         /// <param name="t">T.</param>
-        public bool IsTarget(IGEventable t) {
+        public bool IsTarget(IIGEventable t) {
             //when the event is limited to a specific area or player
             if (target != null) {
                 if (target is Player && t is Player) {
@@ -214,12 +214,18 @@ namespace Andja.Model {
         }
 
         public void EffectTarget(IGEventable t, bool start) {
-            Effect[] effectsForTarget = GetEffectsForTarget(t);
+            IEffect[] effectsForTarget = GetEffectsForTarget(t);
             if (effectsForTarget == null) {
                 return;
             }
-            foreach (Effect e in effectsForTarget) {
-                t.AddEffect(new Effect(e));
+            if(start) {
+                foreach (IEffect e in effectsForTarget) {
+                    t.AddEffect(new Effect(e));
+                }
+            } else {
+                foreach (IEffect e in effectsForTarget) {
+                    t.RemoveEffect(new Effect(e));
+                }
             }
         }
 

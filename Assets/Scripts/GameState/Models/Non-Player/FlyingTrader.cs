@@ -86,7 +86,7 @@ namespace Andja.Model {
             Vector2 shipPos = tradeShip.Ship.PositionVector2;
             if (TradeCities.Count == 0)
                 return null;
-            IEnumerable<ICity> remaining = TradeCities.Except(visited);
+            IEnumerable<ICity> remaining = TradeCities.Except(visited).Where(c => c.Warehouse != null);
             if (remaining.Count() == 0)
                 return null;
             return remaining.Aggregate((x, y) => {

@@ -583,18 +583,19 @@ namespace Andja.Model {
                 return;
             _startFunction = true;
             CalculateNeeded();
-            var tileAndRotation = DecideIsland(false, true);
-                
-            currentOperationPending.Add(AIController.Instance.AddOperation(
-                new MoveUnitOperation(this, ship, tileAndRotation.Item1.GetNeighbours().First(x=>x.Type == TileType.Ocean), true)));
-
+            var tileAndRotation = DecideIsland(true);
+            if (GameData.StartGameWithBuildWarehouseDirectly) {
+                AIController.BuildStructure(this, tileAndRotation.Item2, tileAndRotation.Item1, null, true);
+            }
+            else {
+                currentOperationPending.Add(AIController.Instance.AddOperation(
+                    new MoveUnitOperation(this, ship, tileAndRotation.Item1.GetNeighbours().First(x => x.Type == TileType.Ocean), true)));
+            }
             void ShipWarehouse(Unit u, bool atdest) {
                 if (atdest == false)
                     return;
-                var warehouse = PrototypController.Instance.FirstLevelWarehouse.Clone();
-                warehouse.ChangeRotation(tileAndRotation.Item2);
                 currentOperationPending.Add(
-                    AIController.Instance.AddOperation(new BuildStructureOperation(this, tileAndRotation.Item1, warehouse, ship))
+                    AIController.Instance.AddOperation(new BuildStructureOperation(this, tileAndRotation.Item1, tileAndRotation.Item2, ship))
                 );
                 ship.UnregisterOnArrivedAtDestinationCallback(ShipWarehouse);
             }
@@ -642,7 +643,7 @@ namespace Andja.Model {
 
         }
 
-        public Tuple<Tile, int> DecideIsland(bool buildWarehouseDirectly = false, bool startIslands = false) {
+        public Tuple<Tile, WarehouseStructure> DecideIsland(bool startIslands = false) {
             //TODO:set here desires
             CalculateIslandScores();
             islandScores = islandScores.OrderByDescending(x => x.EndScore).ToList();
@@ -675,15 +676,10 @@ namespace Andja.Model {
                                 if (buildtiles.Exists(x => x.Type == TileType.Ocean || x.City.IsWilderness() == false))
                                     continue;
                                 if (warehouse.CanBuildOnSpot(buildtiles)) {
-                                    if (buildWarehouseDirectly) {
-                                        AIController.BuildStructure(this, warehouse, buildtiles, null, buildWarehouseDirectly);
-                                    }
-                                    else {
-                                        islandScores[index].Island.startClaimed = startIslands;
-                                    }
                                     if (Array.Exists(t.tile.GetNeighbours(),t => t.Type == TileType.Ocean) == false)
                                         continue;
-                                    return new Tuple<Tile, int>(t.tile, ((Structure)warehouse).Rotation);
+                                    islandScores[index].Island.startClaimed = startIslands;
+                                    return new Tuple<Tile, WarehouseStructure>(t.tile, warehouse);
                                 }
                                 warehouse.Rotate();
                             }

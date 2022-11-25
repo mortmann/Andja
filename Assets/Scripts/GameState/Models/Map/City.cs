@@ -19,8 +19,8 @@ namespace Andja.Model {
         [JsonPropertyAttribute] public Dictionary<string, TradeItem> ItemIDtoTradeItem { get; protected set; }
         [JsonPropertyAttribute] public IIsland Island { get; set; }
         [JsonPropertyAttribute] public int PlayerTradeAmount { get; protected set; }
-        [JsonPropertyAttribute] private List<PopulationLevel> _populationLevels;
-        [JsonPropertyAttribute] private float _useTickTimer;
+        [JsonPropertyAttribute] public List<PopulationLevel> PopulationLevels { get; protected set; }
+        [JsonPropertyAttribute] public float UseTickTimer { get; protected set; }
         [JsonPropertyAttribute] private string _name = "";
 
         #endregion Serialize
@@ -51,9 +51,9 @@ namespace Andja.Model {
 
         public int TradeItemCount => Warehouse?.TradeItemCount ?? 0;
 
-        public int PopulationCount => _populationLevels.Sum(p => p.populationCount);
+        public int PopulationCount => PopulationLevels.Sum(p => p.populationCount);
 
-        private List<HomeStructure> _homes;
+        protected List<IHomeStructure> Homes;
         public List<MarketStructure> MarketStructures { get; set; }
         public List<Route> Routes { get; set; }
         public Unit TradeUnit { get; set; }
@@ -88,13 +88,14 @@ namespace Andja.Model {
             Tiles = new HashSet<Tile>();
             Routes = new List<Route>();
             Inventory = new CityInventory(42);
+            UseTickTimer = UseTick;
             Setup();
         }
 
         public void SetTaxForPopulationLevel(int structureLevel, float percentage) {
             if (IsWilderness())
                 return;
-            _populationLevels[structureLevel].SetTaxPercentage(percentage);
+            PopulationLevels[structureLevel].SetTaxPercentage(percentage);
         }
 
         public bool AddTradeItem(TradeItem ti) {
@@ -117,34 +118,30 @@ namespace Andja.Model {
             ItemIDtoTradeItem.Remove(ti.ItemId);
         }
 
-        public bool HasAnythingOfItems(Item[] items) {
-            return items.All(HasAnythingOfItem);
-        }
-
         public PopulationLevel GetPopulationLevel(int structureLevel) {
-            return _populationLevels[structureLevel];
+            return PopulationLevels[structureLevel];
         }
 
         private void Setup() {
             if (PlayerNumber < 0)
                 return;
             Routes = new List<Route>();
-            _homes = new List<HomeStructure>();
+            Homes = new List<IHomeStructure>();
             MarketStructures = new List<MarketStructure>();
-            _populationLevels ??= new List<PopulationLevel>();
+            PopulationLevels ??= new List<PopulationLevel>();
             foreach (PopulationLevel pl in PrototypController.Instance.GetPopulationLevels(this)) {
-                if (_populationLevels.Exists(x => x.Level == pl.Level))
+                if (PopulationLevels.Exists(x => x.Level == pl.Level))
                     continue;
                 if (pl.previousLevel != null)
-                    pl.previousLevel = _populationLevels[pl.previousLevel.Level]; // so when adding new levels to existing links get updated
-                _populationLevels.Add(pl);
+                    pl.previousLevel = PopulationLevels[pl.previousLevel.Level]; // so when adding new levels to existing links get updated
+                PopulationLevels.Add(pl);
             }
             Island.RegisterOnEvent(OnEventCreate, OnEventEnded);
         }
 
         public PopulationLevel GetPreviousPopulationLevel(int level) {
             for (int i = level - 1; i >= 0; i--) {
-                PopulationLevel p = _populationLevels.Find(x => x.Level == level);
+                PopulationLevel p = PopulationLevels.Find(x => x.Level == level);
                 if (p != null)
                     return p;
             }
@@ -167,7 +164,7 @@ namespace Andja.Model {
                             Warehouse = warehouse;
                         break;
                     case HomeStructure home:
-                        _homes.Add(home);
+                        Homes.Add(home);
                         break;
                 }
                 item.City = this;
@@ -175,12 +172,12 @@ namespace Andja.Model {
             }
 
             if (IsWilderness()) return Structures;
-            for (int i = _populationLevels.Count - 1; i >= 0; i--) {
-                if (_populationLevels[i].Exists() == false) {
-                    _populationLevels.Remove(_populationLevels[i]);
+            for (int i = PopulationLevels.Count - 1; i >= 0; i--) {
+                if (PopulationLevels[i].Exists() == false) {
+                    PopulationLevels.Remove(PopulationLevels[i]);
                     continue;
                 }
-                _populationLevels[i].Load(this);
+                PopulationLevels[i].Load(this);
             }
             PlayerController.Instance.GetPlayer(PlayerNumber).OnCityCreated(this);
             return Structures;
@@ -190,13 +187,15 @@ namespace Andja.Model {
             for (int i = Structures.Count - 1; i >= 0; i--) {
                 Structures[i].Update(deltaTime);
             }
-            if (PlayerNumber == -1 || _homes.Count == 0) {
+            if (PlayerNumber == -1) {
                 return;
             }
-            UpdateNeeds(deltaTime);
+            if (Homes.Count > 0) {
+                UpdateNeeds(deltaTime);
+                CalculateIncome();
+            }
             //TODO: check for better spot?
             CalculateExpanses();
-            CalculateIncome();
         }
 
         public void CalculateExpanses() {
@@ -208,7 +207,7 @@ namespace Andja.Model {
 
         public void CalculateIncome() {
             Income = 0;
-            foreach (PopulationLevel pl in _populationLevels) {
+            foreach (PopulationLevel pl in PopulationLevels) {
                 Income += pl.GetTaxIncome();
             }
         }
@@ -240,7 +239,7 @@ namespace Andja.Model {
             switch (str)
             {
                 case HomeStructure home:
-                    _homes?.Add(home);
+                    Homes?.Add(home);
                     break;
                 case MarketStructure m:
                     MarketStructures?.Add(m);
@@ -258,10 +257,10 @@ namespace Andja.Model {
         }
 
         private void UpdateNeeds(float deltaTime) {
-            _useTickTimer -= deltaTime;
-            if ((_useTickTimer <= 0) == false) return;
-            _useTickTimer = UseTick;
-            foreach (PopulationLevel pop in _populationLevels) {
+            UseTickTimer -= deltaTime;
+            if (UseTickTimer > 0) return;
+            UseTickTimer = UseTick;
+            foreach (PopulationLevel pop in PopulationLevels) {
                 pop.FulfillNeedsAndCalcHappiness();
             }
         }
@@ -278,7 +277,7 @@ namespace Andja.Model {
                 return;
             }
             Tiles.Remove(t);
-            Island.AllReadyHighlighted = false;
+            Island.AlreadyHighlighted = false;
             if (Tiles.Count == 0) {
                 Destroy();
             }
@@ -290,11 +289,6 @@ namespace Andja.Model {
         }
 
         public void AddTiles(HashSet<Tile> tiles) {
-            // does not really needs it because tiles witout island reject cities
-            //but it is a secondary security that this does not happen
-            if (tiles == null) {
-                return;
-            }
             tiles.RemoveWhere(x => x == null || x.Type == TileType.Ocean);
             foreach (Tile t in tiles) {
                 t.City = this;
@@ -303,7 +297,7 @@ namespace Andja.Model {
             foreach (Tile t in tiles) {
                 AddTile(t);
             }
-            Island.AllReadyHighlighted = false;
+            Island.AlreadyHighlighted = false;
         }
 
         public void AddTile(Tile t) {
@@ -317,7 +311,7 @@ namespace Andja.Model {
                     AddStructure(t.Structure);
                 }
             }
-            Island.AllReadyHighlighted = false;
+            Island.AlreadyHighlighted = false;
             Tiles.Add(t);
             if (IsCurrentPlayerCity()) {
                 World.Current.OnTileChanged(t);
@@ -325,34 +319,26 @@ namespace Andja.Model {
             _cbTileAdded?.Invoke(this, t);
         }
 
-
         public void AddPeople(int level, int count) {
             if (IsWilderness())
                 return;
-            if (count < 0) {
-                return;
-            }
-
             if (GetPopulationLevel(level).populationCount == 0)
                 TempHomeUpgradeFixFulfillNeedsAndCalcHappiness(level);
-            _populationLevels[level].AddPeople(count);
+            PopulationLevels[level].AddPeople(count);
         }
 
         public void RemovePeople(int level, int count) {
             if (IsWilderness())
                 return;
-            if (count < 0) {
-                return;
-            }
-            _populationLevels[level].RemovePeople(count);
+            PopulationLevels[level].RemovePeople(count);
         }
 
         public int GetPopulationCount(int level) {
-            return _populationLevels[level].populationCount;
+            return PopulationLevels[level].populationCount;
         }
 
         public int GetPopulationLevel() {
-            foreach (PopulationLevel level in _populationLevels) {
+            foreach (PopulationLevel level in PopulationLevels) {
                 if (level.populationCount == 0) {
                     return level.previousLevel?.Level ?? 0;
                 }
@@ -360,25 +346,15 @@ namespace Andja.Model {
             return 0;
         }
 
-        public virtual void RemoveItems(Item[] remove) {
-            if (remove == null) {
-                return;
-            }
-            foreach (Item item in remove) {
-                Inventory.RemoveItemAmount(item);
-            }
+        public void RemoveItems(Item[] remove) {
+            Inventory.RemoveItemsAmount(remove);
         }
 
         public void RemoveItem(Item item, int amount) {
-            if (amount < 0) {
-                return;
-            }
-            Item i = item.Clone();
-            i.count = amount;
-            Inventory.RemoveItemAmount(i);
+            Inventory.RemoveItemAmount(item, amount);
         }
 
-        public virtual bool HasEnoughOfItems(IEnumerable<Item> items, int times = 1) {
+        public bool HasEnoughOfItems(IEnumerable<Item> items, int times = 1) {
             return Inventory.HasEnoughOfItems(items, times: times);
         }
 
@@ -496,7 +472,7 @@ namespace Andja.Model {
             if (Structures.Contains(structure)) {
                 switch (structure) {
                     case HomeStructure homeStructure:
-                        _homes.Remove(homeStructure);
+                        Homes.Remove(homeStructure);
                         break;
                     case WarehouseStructure _:
                         Warehouse = null;
@@ -515,15 +491,15 @@ namespace Andja.Model {
                 }
                 Debug.LogError(this.Name + " This structure " + structure.ToString() + " does not belong to this city ");
             }
-            Island.AllReadyHighlighted = false;
+            Island.AlreadyHighlighted = false;
         }
 
         public float GetHappinessForCitizenLevel(int level) {
-            return _populationLevels[level].Happiness;
+            return PopulationLevels[level].Happiness;
         }
 
         public List<INeedGroup> GetPopulationNeedGroups(int level) {
-            return _populationLevels[level].AllNeedGroupList;
+            return PopulationLevels[level].AllNeedGroupList;
         }
 
         public void RemoveTiles(IEnumerable<Tile> tiles) {
@@ -535,6 +511,9 @@ namespace Andja.Model {
         public void Destroy() {
             if (PlayerNumber == -1) {
                 return; // this is the wilderness it cant be removed! or destroyed
+            }
+            if(Tiles.Count > 0) {
+                Debug.LogError("Remove Tiles first before destroying City");
             }
             Island.RemoveCity(this);
             _cbCityDestroy?.Invoke(this);
@@ -635,7 +614,7 @@ namespace Andja.Model {
         public float GetPopulationItemUsage(Item item) {
             if (PopulationCount == 0)
                 return 0;
-            return _populationLevels.Sum(level => item.Data.TotalUsagePerLevel[level.Level] * level.populationCount);
+            return PopulationLevels.Sum(level => item.Data.TotalUsagePerLevel[level.Level] * level.populationCount);
         }
 
         public bool HasOwnerEnoughMoney(int buildCost) {

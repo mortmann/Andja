@@ -24,7 +24,7 @@ namespace Andja.Model {
         void RemoveResources(string resourceID, int count);
         void SetTiles(Tile[] tiles);
         void Update(float deltaTime);
-        bool AllReadyHighlighted { get; set; }
+        bool AlreadyHighlighted { get; set; }
         Vector2 Minimum { get; set; }
         Vector2 Maximum { get; set; }
         Vector2 Center { get; set; }

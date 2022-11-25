@@ -89,12 +89,18 @@ namespace Andja.Model {
         }
 
         public void AddPeople(int count) {
+            if (count < 0) {
+                return;
+            }
             //IF there is better way to stop People after upgrading -- change this 
             populationCount += count;
             _city.GetOwner().UpdateMaxPopulationCount(Level, populationCount);
         }
 
         public void RemovePeople(int count) {
+            if (count < 0) {
+                return;
+            } 
             populationCount -= count;
         }
 

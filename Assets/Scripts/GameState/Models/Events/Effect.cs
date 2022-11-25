@@ -32,7 +32,7 @@ namespace Andja.Model {
     }
 
     [JsonObject(MemberSerialization.OptIn)]
-    public class Effect {
+    public class Effect : IEffect {
 
         public InfluenceTyp InfluenceTyp { protected set; get; }
         public InfluenceRange InfluenceRange { protected set; get; }
@@ -66,9 +66,9 @@ namespace Andja.Model {
 
         public bool Serialize = true;
 
-        [JsonPropertyAttribute] public string ID;
+        [JsonPropertyAttribute] public string ID { get; protected set; }
         [JsonPropertyAttribute] public float WorkAmount = 0; // THIS is used for servicestructure workers -- for example when removing this effect
-        [JsonPropertyAttribute] public float SpreadTick = GameData.EffectTickTime; 
+        [JsonPropertyAttribute] public float SpreadTick = GameData.EffectTickTime;
         public Effect() {
         }
 
@@ -79,7 +79,7 @@ namespace Andja.Model {
             effectPrototypeData = data;
         }
 
-        public Effect(Effect e) {
+        public Effect(IEffect e) {
             this.ID = e.ID;
         }
 

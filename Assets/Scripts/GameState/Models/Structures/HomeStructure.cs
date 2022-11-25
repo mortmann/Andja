@@ -19,13 +19,13 @@ namespace Andja.Model {
     }
 
     [JsonObject(MemberSerialization.OptIn)]
-    public class HomeStructure : TargetStructure {
+    public class HomeStructure : TargetStructure, IHomeStructure {
 
         public enum CitizenMoods { Mad, Neutral, Happy }
 
         #region Serialize
 
-        [JsonPropertyAttribute] public int People;
+        [JsonPropertyAttribute] public int People { get; protected set; }
         [JsonPropertyAttribute] protected float peopleDecreaseTimer;
         [JsonPropertyAttribute] protected float peopleIncreaseTimer;
         [JsonPropertyAttribute] public bool IsAbandoned { get; protected set; }
@@ -55,7 +55,7 @@ namespace Andja.Model {
                                 && City.HasOwnerEnoughMoney(NextLevel.BuildCost)
                                 && City.HasOwnerUnlockedAllNeeds(PopulationLevel); // player has enough money
 
-        internal List<INeedGroup> GetNeedGroups() {
+        public List<INeedGroup> GetNeedGroups() {
             return City.GetPopulationNeedGroups(PopulationLevel);
         }
 
@@ -98,7 +98,7 @@ namespace Andja.Model {
             RegisterOnOwnerChange(OnCityChange);
         }
 
-        internal float GetTaxPercentage() {
+        public float GetTaxPercentage() {
             return City.GetTaxPercentage(PopulationLevel);
         }
 
@@ -153,7 +153,7 @@ namespace Andja.Model {
             if (percentage > 0.5) {
                 CloseExtraUI();
                 CurrentMood = CitizenMoods.Neutral;
-            } 
+            }
         }
 
         protected void TryToIncreasePeople() {

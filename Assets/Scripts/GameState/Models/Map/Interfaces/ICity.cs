@@ -26,7 +26,6 @@ namespace Andja.Model {
         void SetTaxForPopulationLevel(int structureLevel, float percentage);
         bool AddTradeItem(TradeItem ti);
         void DeleteTradeItem(TradeItem ti);
-        bool HasAnythingOfItems(Item[] items);
         PopulationLevel GetPopulationLevel(int structureLevel);
         int GetPopulationLevel();
         PopulationLevel GetPreviousPopulationLevel(int level);

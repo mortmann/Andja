@@ -134,9 +134,19 @@ namespace Andja.Model {
             return -1;
         }
 
-        public abstract void OnEventCreate(GameEvent ge);
+        public virtual void OnEventCreate(GameEvent ge) {
+            if (ge.IsTarget(this)) {
+                ge.EffectTarget(this, true);
+            }
+            cbEventCreated?.Invoke(ge);
+        }
 
-        public abstract void OnEventEnded(GameEvent ge);
+        public virtual void OnEventEnded(GameEvent ge) {
+            if (ge.IsTarget(this)) {
+                ge.EffectTarget(this, false);
+            }
+            cbEventEnded?.Invoke(ge);
+        }
 
         public void UpdateEffects(float deltaTime) {
             if (UpdateEffectList == null || UpdateEffectList.Count == 0)

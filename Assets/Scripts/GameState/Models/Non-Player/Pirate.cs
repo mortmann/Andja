@@ -28,7 +28,7 @@ namespace Andja.Model {
                 AddShip();
             }
             if(checkShipsCooldown <= 0) {
-                checkShipsCooldown = 5f;
+                checkShipsCooldown = GameData.PirateCheckRespawnShipCount;
                 CheckShips();
             } else {
                 checkShipsCooldown -= deltaTime;

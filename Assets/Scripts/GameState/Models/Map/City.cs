@@ -355,7 +355,7 @@ namespace Andja.Model {
         }
 
         public bool HasEnoughOfItems(IEnumerable<Item> items, int times = 1) {
-            return Inventory.HasEnoughOfItems(items, times: times);
+            return Inventory.HasEnoughOfItems(items, times);
         }
 
         public bool HasEnoughOfItem(Item item) {

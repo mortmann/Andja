@@ -47,21 +47,17 @@ namespace Andja.Controller {
         /// </summary>
         bool IsInBuildDestoyMode => MouseState == (MouseState.BuildDrag | MouseState.BuildPath | MouseState.BuildSingle | MouseState.Destroy);
 
-        private bool _displayDragRectangle;
-
         /// <summary>
         /// The world-position of the mouse last frame.
         /// </summary>
-        private Vector3 _lastFramePosition;
+        public Vector3 LastFramePosition { get; protected set; }
         /// <summary>
         /// The world-position of the mouse last frame with TileOffset.
         /// </summary>
-        private Vector3 _currentFramePositionOffset => _currentFramePosition 
+        public Vector3 CurrentFramePositionOffset => CurrentFramePosition 
                                                     + new Vector3(TileSpriteController.offset, TileSpriteController.offset, 0);
-        private Vector3 _lastFrameGuiPosition;
-        private Vector3 _currentFramePosition;
-        private Vector3 _dragStartPosition;
-        private Vector3 _pathStartPosition;
+        public Vector3 LastFrameGuiPosition { get; protected set; }
+        public Vector3 CurrentFramePosition { get; protected set; }
 
         public static bool Autorotate = true;
 
@@ -71,15 +67,13 @@ namespace Andja.Controller {
         public static bool OverrideCurrentSetting => InputHandler.ShiftKey == false; // TODO: better name
 
         public Vector2 MapClampedMousePosition =>
-            new Vector2(Mathf.Clamp(_currentFramePosition.x, 0, World.Current.Width),
-                Mathf.Clamp(_currentFramePosition.y, 0, World.Current.Height));
+            new Vector2(Mathf.Clamp(CurrentFramePosition.x, 0, World.Current.Width),
+                Mathf.Clamp(CurrentFramePosition.y, 0, World.Current.Height));
 
-        private HashSet<Tile> _destroyTiles;
-        private Dictionary<Tile, TilePreview> _tileToPreviewGO;
-        private Dictionary<Tile, StructurePreview> _tileToStructurePreview;
-        private GameObject _singleStructurePreview;
         private Structure _selectedStructure;
-        private BuildPathAgent _buildPathAgent;
+
+        BaseMouseState ActiveState;
+        Dictionary<MouseState, BaseMouseState> typToMouseState;
         public Structure SelectedStructure {
             get => _selectedStructure;
             set {
@@ -94,7 +88,7 @@ namespace Andja.Controller {
             get => _toBuildstructure;
             set {
                 if (_toBuildstructure != null)
-                    ResetStructurePreviews();
+                    ActiveState.Reset();
                 _toBuildstructure = value;
             }
         }
@@ -107,9 +101,6 @@ namespace Andja.Controller {
 
         private Unit _selectedUnit;
         public List<Unit> selectedUnitGroup;
-        private Rect _drawRect;
-        private bool _mouseStateIdleLeftMouseDown;
-        private PathJob _buildPathJob;
 
         public Unit SelectedUnit {
             get => _selectedUnit;
@@ -141,47 +132,55 @@ namespace Andja.Controller {
 
         public void Start() {
             selectedUnitGroup = new List<Unit>();
-            _tileToPreviewGO = new Dictionary<Tile, TilePreview>();
-            _tileToStructurePreview = new Dictionary<Tile, StructurePreview>();
-            _destroyTiles = new HashSet<Tile>();
             _extraStructureBuildUIPrefabs = new Dictionary<ExtraBuildUI, GameObject>();
             foreach (ExtraStructureBuildUI esbu in extraStructureBuildUIPrefabsEditor) {
                 _extraStructureBuildUIPrefabs[esbu.Type] = esbu.Prefab;
             }
-            _buildPathAgent = new BuildPathAgent(PlayerController.currentPlayerNumber);
-            PlayerController.Instance.cbPlayerChange += (a,b)=>{ _buildPathAgent = new BuildPathAgent(PlayerController.currentPlayerNumber); };
+            SetupMouseStates();
+        }
+
+        private void SetupMouseStates() {
+            typToMouseState = new Dictionary<MouseState, BaseMouseState> {
+                [MouseState.Idle] = new IdleMouseState(),
+                [MouseState.Copy] = new CopyMouseState(),
+                [MouseState.BuildDrag] = new DragBuildMouseState(),
+                [MouseState.BuildSingle] = new SingleBuildMouseState(),
+                [MouseState.BuildPath] = new PathBuildMouseState(),
+                [MouseState.Unit] = new SingleUnitMouseState(),
+                [MouseState.UnitGroup] = new UnitGroupMouseState(),
+                [MouseState.Upgrade] = new UpgradeMouseState(),
+                [MouseState.DragSelect] = new BoxSelectMouseState(),
+                [MouseState.Destroy] = new DestroyBuildMouseState(),
+            };
+            ActiveState = typToMouseState[MouseState.Idle];
         }
 
         /// <summary>
         /// Gets the mouse position in world space.
         /// </summary>
         public Vector3 GetMousePosition() {
-            return _currentFramePositionOffset;
+            return CurrentFramePositionOffset;
         }
 
         /// <summary>
         /// Gets the mouse position in world space.
         /// </summary>
         public Vector3 GetLastMousePosition() {
-            return _lastFramePosition;
+            return LastFramePosition;
         }
-
-        private System.Diagnostics.Stopwatch _stopWatch;
 
         public void Update() {
             if (EditorController.IsEditor == false && PlayerController.Instance.GameOver)
                 return;
-            _stopWatch = new System.Diagnostics.Stopwatch();
-            _stopWatch.Start();
 
-            _currentFramePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            _currentFramePosition.z = 0;
-            if (_currentFramePosition.y < 0 || _currentFramePosition.x < 0) {
+            CurrentFramePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            CurrentFramePosition.Scale(new Vector3(1, 1, 0));
+            if (CurrentFramePosition.y < 0 || CurrentFramePosition.x < 0) {
                 return;
             }
             UpdateMouseStates();
             if (EditorController.IsEditor == false) {
-                UpdateDragBoxSelect();
+                CheckDragBoxSelect();
             }
             else {
                 UpdateEditorStuff();
@@ -195,9 +194,8 @@ namespace Andja.Controller {
 
             // Save the mouse position from this frame
             // We don't use currFramePosition because we may have moved the camera.
-            _lastFrameGuiPosition = Input.mousePosition;
-            _lastFramePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            _lastFramePosition.z = 0;
+            LastFrameGuiPosition = Input.mousePosition;
+            LastFramePosition = CurrentFramePosition;
         }
 
         public void UnselectStructure() {
@@ -227,75 +225,9 @@ namespace Andja.Controller {
         /// </summary>
         /// <param name="state"></param>
         public void SetMouseState(MouseState state) {
-            switch (state) {
-                case MouseState.Idle:
-                    ChangeCursorType(CursorType.Pointer);
-                    break;
-
-                case MouseState.BuildDrag:
-                case MouseState.BuildPath:
-                case MouseState.BuildSingle:
-                    ChangeCursorType(CursorType.Build);
-                    break;
-
-                case MouseState.Unit:
-                    break;
-
-                case MouseState.UnitGroup:
-                    break;
-
-                case MouseState.Copy:
-                    ChangeCursorType(CursorType.Copy);
-                    break;
-
-                case MouseState.Destroy:
-                    ChangeCursorType(CursorType.Destroy);
-                    break;
-
-                case MouseState.DragSelect:
-                    break;
-
-                case MouseState.Upgrade:
-                    ChangeCursorType(CursorType.Upgrade);
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(state), state, null);
-            }
-            switch (MouseState) {
-                case MouseState.Idle:
-                    break;
-
-                case MouseState.BuildDrag:
-                case MouseState.BuildPath:
-                case MouseState.BuildSingle:
-                    NeededItemsToBuild = null;
-                    NeededBuildCost = 0;
-                    UI.Model.IslandInfoUI.Instance.ResetAddons();
-                    break;
-
-                case MouseState.Unit:
-                    break;
-
-                case MouseState.UnitGroup:
-                    break;
-
-                case MouseState.Copy:
-                    break;
-
-                case MouseState.Destroy:
-                    break;
-
-                case MouseState.DragSelect:
-                    break;
-
-                case MouseState.Upgrade:
-                    NeededItemsToBuild = null;
-                    NeededBuildCost = 0;
-                    UI.Model.IslandInfoUI.Instance.ResetAddons();
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
+            ActiveState.Deactivate();
+            ActiveState = typToMouseState[state];
+            ActiveState.Activate();
             MouseState = state;
         }
 
@@ -314,112 +246,24 @@ namespace Andja.Controller {
         }
 
         public void UpdateMouseStates() {
-            switch (MouseState) {
-                case MouseState.Idle:
-                    if(EventSystem.current.IsPointerOverGameObject() == false && InputHandler.GetMouseButtonDown(InputMouse.Primary)) {
-                        //If some clicks down onto a ui and then goes off it and releases the mouse 
-                        //we do not want to open or close where the mouse ends up 
-                        _mouseStateIdleLeftMouseDown = true;
-                    }
-                    if (_mouseStateIdleLeftMouseDown && InputHandler.GetMouseButtonUp(InputMouse.Primary) 
-                            && EditorController.IsEditor == false) {
-                        //mouse press decide what it hit
-                        DecideWhatUIToShow(MouseRayCast());
-                    }
-                    break;
-
-                case MouseState.BuildDrag:
-                    UpdateBuildDragging();
-                    break;
-
-                case MouseState.BuildPath:
-                    UpdateBuildPath();
-                    break;
-
-                case MouseState.BuildSingle:
-                    UpdateSingle();
-                    break;
-
-                case MouseState.Unit:
-                    if (SelectedUnit == null) {
-                        SetMouseState(MouseState.Idle);
-                        return;
-                    }
-                    UpdateUnit();
-                    break;
-
-                case MouseState.DragSelect:
-                    UpdateDragSelect();
-                    break;
-
-                case MouseState.Destroy:
-                    UpdateDestroy();
-                    break;
-
-                case MouseState.UnitGroup:
-                    UpdateUnitGroup();
-                    break;
-
-                case MouseState.Copy:
-                    UpdateCopyState();
-                    break;
-
-                case MouseState.Upgrade:
-                    UpdateUpgradeState();
-                    break;
-            }
+            ActiveState.Update();
         }
         /// <summary>
         /// Responsible for detecting a drag not in Build/Destroy Mode 
         /// </summary>
-        private void UpdateDragBoxSelect() {
-            if (IsInBuildDestoyMode == false)
+        private void CheckDragBoxSelect() {
+            if (IsInBuildDestoyMode || MouseState == MouseState.DragSelect)
                 return;
-            if (InputHandler.GetMouseButton(InputMouse.Primary) && _displayDragRectangle == false) {
+            if (InputHandler.GetMouseButton(InputMouse.Primary)) {
                 if (EventSystem.current.IsPointerOverGameObject() == false && ShortcutUI.Instance.IsDragging == false) {
-                    float sqrdist = (Input.mousePosition - _lastFrameGuiPosition).sqrMagnitude;
+                    float sqrdist = (Input.mousePosition - LastFrameGuiPosition).sqrMagnitude;
                     if (sqrdist > 5) {
-                        _dragStartPosition = _currentFramePosition;
-                        //SetMouseState(MouseState.DragSelect);
-                        _displayDragRectangle = true;
+                        SetMouseState(MouseState.DragSelect);
                     }
                 }
             }
-            if (_displayDragRectangle)
-                UpdateDragSelect();
         }
 
-        private void UpdateCopyState() {
-            if (InputHandler.GetMouseButtonUp(InputMouse.Primary) == false) return;
-            Tile t = GetTileUnderneathMouse();
-            if (t.Structure == null)
-                return;
-            if (t.Structure.CanBeBuild == false)
-                return;
-            BuildController.Instance.StartStructureBuild(t.Structure.ID);
-        }
-
-        private void UpdateUpgradeState() {
-            Tile t = GetTileUnderneathMouse();
-            NeededItemsToBuild = null;
-            NeededBuildCost = 0;
-            if (t.Structure == null)
-                return;
-            if (t.Structure.CanBeUpgraded == false)
-                return;
-            Structure upgradeTo = null;
-            foreach (string item in t.Structure.CanBeUpgradedTo) {
-                if (t.Structure is HomeStructure == false && PlayerController.CurrentPlayer.HasStructureUnlocked(item) == false)
-                    continue;
-                upgradeTo = PrototypController.Instance.GetStructure(item);
-                NeededItemsToBuild = upgradeTo.BuildingItems?.CloneArrayWithCounts();
-                NeededBuildCost = upgradeTo.BuildCost;
-                break;
-            }
-            if (InputHandler.GetMouseButtonUp(InputMouse.Primary) && upgradeTo != null) {
-                BuildController.Instance.BuildOnTile(upgradeTo, t.Structure.Tiles, PlayerController.currentPlayerNumber, false);
-            }
-        }
         public void UnselectStuff(bool escape = false) {
             UnselectUnit();
             UnselectUnitGroup();
@@ -428,188 +272,20 @@ namespace Andja.Controller {
                 UIController.Instance.CloseMouseUnselect();
         }
 
-        private void UpdateDestroy() {
-            if (EventSystem.current.IsPointerOverGameObject()) {
-                return;
-            }
-            if (InputHandler.GetMouseButtonDown(InputMouse.Primary)) {
-                _dragStartPosition = _currentFramePositionOffset;
-            }
-            int startX = Mathf.FloorToInt(_dragStartPosition.x);
-            int endX = Mathf.FloorToInt(_currentFramePositionOffset.x);
-            int startY = Mathf.FloorToInt(_dragStartPosition.y);
-            int endY = Mathf.FloorToInt(_currentFramePositionOffset.y);
-            if (InputHandler.GetMouseButton(InputMouse.Primary)) {
-                List<Tile> tiles = GetTilesStructures(startX, endX, startY, endY);
-                foreach (Tile t in _destroyTiles.Except(tiles).ToArray()) {
-                    SimplePool.Despawn(_tileToPreviewGO[t].gameObject);
-                    _tileToPreviewGO.Remove(t);
-                    _destroyTiles.Remove(t);
-                }
-                foreach (Tile t in tiles) {
-                    if (_destroyTiles.Contains(t))
-                        continue;
-                    ShowTilePrefabOnTile(t, TileHighlightType.Red);
-                    _destroyTiles.Add(t);
-                }
-            }
-
-            if (InputHandler.GetMouseButtonUp(InputMouse.Primary) == false) return;
-            List<Tile> ts = new List<Tile>(GetTilesStructures(startX, endX, startY, endY));
-            if (ts.Count > 0) {
-                bool isGod = EditorController.IsEditor || IsGod; //TODO: add cheat to set this
-                BuildController.Instance.DestroyStructureOnTiles(ts, PlayerController.CurrentPlayer, isGod);
-            }
-            ResetBuild(false);
-        }
-
-        private void UpdateUnitGroup() {
-            // If we're over a UI element, then bail out from this.
-            if (EventSystem.current.IsPointerOverGameObject()) {
-                return;
-            }
-            if (InputHandler.GetMouseButtonDown(InputMouse.Primary)) {
-                switch (MouseUnitState) {
-                    case MouseUnitState.None:
-                        Debug.LogWarning("MouseController is in the wrong state!");
-                        break;
-
-                    case MouseUnitState.Normal:
-                        UnselectUnitGroup();
-                        break;
-
-                    case MouseUnitState.Patrol:
-                        selectedUnitGroup.ForEach(x => x.AddPatrolCommand(MapClampedMousePosition.x, MapClampedMousePosition.y));
-                        break;
-
-                    case MouseUnitState.Build:
-                        Debug.LogWarning("MouseController is in the wrong state!");
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException();
-                }
-            }
-            CheckUnitCursor();
-            if (InputHandler.GetMouseButtonDown(InputMouse.Primary) == false) return;
-            Transform hit = MouseRayCast();
-            if (hit == null) {
-                switch (MouseUnitState) {
-                    case MouseUnitState.None:
-                        Debug.LogWarning("MouseController is in the wrong state!");
-                        break;
-
-                    case MouseUnitState.Normal:
-                        selectedUnitGroup.ForEach(x => x.GiveMovementCommand(MapClampedMousePosition.x,
-                            MapClampedMousePosition.y, OverrideCurrentSetting));
-                        break;
-
-                    case MouseUnitState.Patrol:
-                        SetMouseUnitState(MouseUnitState.Normal);
-                        break;
-                    case MouseUnitState.Build:
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException();
-                }
-            }
-            else {
-                ITargetableHoldingScript targetableHoldingScript = hit.GetComponent<ITargetableHoldingScript>();
-                if (targetableHoldingScript != null) {
-                    selectedUnitGroup.ForEach(x =>
-                        x.GiveAttackCommand(hit.gameObject.GetComponent<ITargetableHoldingScript>().Holding,
-                            OverrideCurrentSetting));
-                }
-                else if (hit.GetComponent<CrateHoldingScript>() != null) {
-                    //TODO: maybe nearest? other logic? air distance??
-                    selectedUnitGroup[0].TryToAddCrate(hit.GetComponent<CrateHoldingScript>().thisCrate);
-                }
-                else if (targetableHoldingScript == null) {
-                    Tile t = GetTileUnderneathMouse();
-                    switch (t.Structure) {
-                        case null:
-                            return;
-                        case ICapturable ic:
-                            selectedUnitGroup.ForEach(x => x.GiveCaptureCommand(ic, OverrideCurrentSetting));
-                            break;
-                        case TargetStructure ts:
-                            selectedUnitGroup.ForEach(x => x.GiveAttackCommand(ts, OverrideCurrentSetting));
-                            break;
-                    }
-                }
-            }
-        }
         public void ShowError(MapErrorMessage message) {
-            ShowError(message, _currentFramePosition);
+            ShowError(message, CurrentFramePosition);
         }
+
         public void ShowError(MapErrorMessage message, Vector3 position) {
             TextMeshPro text = SimplePool.Spawn(fadeOutTextPrefab, position, Quaternion.identity).GetComponent<TextMeshPro>();
             text.fontSize = Mathf.Max(8.333f * (CameraController.Instance.zoomLevel / CameraController.MaxZoomLevel), 2);
             text.text = UILanguageController.Instance.GetTranslation(message);
-            //text.transform.SetParent(transform);
             StartCoroutine(DespawnFade(text));
         }
 
         private IEnumerator DespawnFade(TextMeshPro text) {
-            //while(text.color.a>0) {
             yield return new WaitForSeconds(1f);
-            //}
             SimplePool.Despawn(text.gameObject);
-        }
-        /// <summary>
-        /// Calculates the selectbox and the interaction on exit.
-        /// </summary>
-        private void UpdateDragSelect() {
-            // End Drag
-            if (InputHandler.GetMouseButton(InputMouse.Primary) == false) {
-                Vector3 v1 = _dragStartPosition;
-                Vector3 v2 = _lastFramePosition;
-                v1.z = 0;
-                v2.z = 0;
-                Vector3 min = Vector3.Min(v1, v2);
-                Vector3 max = Vector3.Max(v1, v2);
-                Vector3 dimensions = max - min;
-                Collider2D[] c2d = Physics2D.OverlapBoxAll(min + dimensions / 2, dimensions, 0);
-                if (OverrideCurrentSetting)
-                    selectedUnitGroup.Clear();
-                foreach (Collider2D c in c2d) {
-                    ITargetableHoldingScript target = c.GetComponent<ITargetableHoldingScript>();
-                    if (target == null)
-                        continue;
-                    if (target.IsUnit == false)
-                        continue;
-                    if (target.Holding.PlayerNumber != PlayerController.currentPlayerNumber) continue;
-                    Unit u = ((Unit)target.Holding);
-                    if (selectedUnitGroup.Contains(u) == false)
-                        selectedUnitGroup.Add(u);
-                }
-                if (selectedUnitGroup.Count > 1)
-                    SelectUnitGroup(selectedUnitGroup);
-                else if (selectedUnitGroup.Count == 1)
-                    SelectUnit(selectedUnitGroup[0]);
-                else {
-                    SetMouseState(MouseState.Idle);// nothing selected
-                    UnselectStuff();
-                }
-                _drawRect = Rect.zero;
-                _displayDragRectangle = false;
-            }
-
-            // If we're over a UI element, then bail out from this.
-            if (EventSystem.current.IsPointerOverGameObject()) {
-                return;
-            }
-            // Drag already started
-
-            Vector3 screenPosition1 = Camera.main.WorldToScreenPoint(_dragStartPosition);
-            Vector3 screenPosition2 = _lastFrameGuiPosition;
-            screenPosition1.y = Screen.height - screenPosition1.y;
-            screenPosition2.y = Screen.height - screenPosition2.y;
-
-            // Calculate corners
-            var topLeft = Vector3.Min(screenPosition1, screenPosition2);
-            var bottomRight = Vector3.Max(screenPosition1, screenPosition2);
-            // Create Rect
-            _drawRect = Rect.MinMaxRect(topLeft.x, topLeft.y, bottomRight.x, bottomRight.y);
         }
 
         public void SetEditorBrushHighlightActive(bool brushBuild) {
@@ -633,18 +309,18 @@ namespace Andja.Controller {
         }
 
         public void OnGUI() {
-            if (_displayDragRectangle)
-                Util.DrawScreenRectBorder(_drawRect, 2, new Color(0.9f, 0.9f, 0.9f, 0.9f));
+            ActiveState.OnGui();
         }
         /// <summary>
         /// OnClick on Map. If it hits unit or structure. UIControllers decides then which UI.
         /// If nothing close UI(s).
         /// </summary>
         /// <param name="hit"></param>
-        private void DecideWhatUIToShow(Transform hit) {
+        public void MakeRaycastToCheckWhatTodo() {
             if (EventSystem.current.IsPointerOverGameObject()) {
                 return;
             }
+            Transform hit = MouseRayCast();
             ITargetableHoldingScript targetableHoldingScript = hit?.GetComponent<ITargetableHoldingScript>();
             if (targetableHoldingScript != null) {
                 if (targetableHoldingScript.IsUnit == false) return;
@@ -667,7 +343,7 @@ namespace Andja.Controller {
                     SelectedStructure = t.Structure;
                 } 
                 else {
-                 UIDebug(GetTileUnderneathMouse());
+                    UIDebug(GetTileUnderneathMouse());
                     if (MouseState != (MouseState.Unit | MouseState.UnitGroup)) {
                         UnselectStuff();
                     }
@@ -679,12 +355,9 @@ namespace Andja.Controller {
         public void SelectUnit(Unit unit) {
             if (SelectedUnit == unit)
                 return;
+            SelectedUnit = unit;
             SetMouseState(MouseState.Unit);
             SetMouseUnitState(MouseUnitState.Normal);
-            SelectedUnit = unit;
-            SelectedUnit.RegisterOnDestroyCallback(OnUnitDestroy);
-            UIController.Instance.OpenUnitUI(SelectedUnit);
-            UIDebug(SelectedUnit);
         }
 
         public void SelectUnitGroup(List<Unit> units) {
@@ -692,211 +365,13 @@ namespace Andja.Controller {
                 SelectUnit(units[0]);
                 return;
             }
+            selectedUnitGroup = units;
+            SelectedUnit = null;
             SetMouseState(MouseState.UnitGroup);
             SetMouseUnitState(MouseUnitState.Normal);
-            selectedUnitGroup = units;
-            selectedUnitGroup.ForEach(x => x.RegisterOnDestroyCallback(OnUnitDestroy));
-            UIController.Instance.OpenUnitGroupUI(selectedUnitGroup);
-        }
-        /// <summary>
-        /// Single Structure Build Mode updating. 
-        /// </summary>
-        private void UpdateSingle() {
-            // If we're over a UI element, then bail out from this.
-            if (EventSystem.current.IsPointerOverGameObject()) {
-                return;
-            }
-            if (ToBuildStructure == null) {
-                return;
-            }
-            UpdateSinglePreview();
-            if (InputHandler.GetMouseButtonDown(InputMouse.Primary) == false) return;
-            List<Tile> structureTiles = ToBuildStructure.GetBuildingTiles(GetTileUnderneathMouse());
-            Build(structureTiles);
-        }
-        /// <summary>
-        /// Change the location and rotation of a single preview.
-        /// </summary>
-        private void UpdateSinglePreview() {
-            if (_singleStructurePreview == null)
-                _singleStructurePreview = CreatePreviewStructure();
-            float x = ToBuildStructure.TileWidth / 2f - TileSpriteController.offset;
-            float y = ToBuildStructure.TileHeight / 2f - TileSpriteController.offset;
-            _singleStructurePreview.transform.position = new Vector3(GetTileUnderneathMouse().X + x,
-                                                       GetTileUnderneathMouse().Y + y, 0);
-            _singleStructurePreview.transform.eulerAngles = new Vector3(0, 0, 360 - ToBuildStructure.Rotation);
-            List<Tile> tiles = ToBuildStructure.GetBuildingTiles(GetTileUnderneathMouse());
-            foreach (Tile tile in _tileToPreviewGO.Keys.Except(tiles).ToArray()) {
-                SimplePool.Despawn(_tileToPreviewGO[tile].gameObject);
-                _tileToPreviewGO.Remove(tile);
-            }
-            UpdateStructurePreview(tiles, 1);
-            NeededItemsToBuild = ToBuildStructure.BuildingItems?.CloneArrayWithCounts();
-            NeededBuildCost = ToBuildStructure.BuildCost;
-        }
-        /// <summary>
-        /// Calculates for the selected structure where and how the structures fit in the dragged rectangle.
-        /// </summary>
-        private void UpdateBuildDragging() {
-            // If we're over a UI element, then bail out from this.
-            if (EventSystem.current.IsPointerOverGameObject()) {
-                return;
-            }
-            // Start Drag
-            if (InputHandler.GetMouseButtonDown(InputMouse.Primary)) {
-                _dragStartPosition = _currentFramePositionOffset;
-                if (_singleStructurePreview != null) {
-                    SimplePool.Despawn(_singleStructurePreview);
-                    _singleStructurePreview = null;
-                }
-            }
-            int startX = Mathf.FloorToInt(_dragStartPosition.x);
-            int endX = Mathf.FloorToInt(_currentFramePositionOffset.x);
-            int startY = Mathf.FloorToInt(_dragStartPosition.y);
-            int endY = Mathf.FloorToInt(_currentFramePositionOffset.y);
-            List<Tile> ts = GetTilesStructures(startX, endX, startY, endY);
-            if (InputHandler.GetMouseButton(InputMouse.Primary)) {
-                // Display a preview of the drag area
-                UpdateMultipleStructurePreviews(ts);
-            }
-            else {
-                UpdateSinglePreview();
-            }
-            // End Drag
-            if (InputHandler.GetMouseButtonUp(InputMouse.Primary) == false) return;
-            Build(ts, true, true);
-            ResetStructurePreviews();
-        }
-        /// <summary>
-        /// Update the the Pathfinding with the start and end position and then display foreach position a prefab.
-        /// </summary>
-        private void UpdateBuildPath() {
-            if (EventSystem.current.IsPointerOverGameObject()) {
-                return;
-            }
-            // Start Path
-            if (InputHandler.GetMouseButtonDown(InputMouse.Primary)) {
-                _pathStartPosition = _currentFramePositionOffset;
-                if (_singleStructurePreview != null) {
-                    ResetStructurePreviews();
-                }
-            }
-            if (InputHandler.GetMouseButton(InputMouse.Primary)) {
-                int startX = Mathf.FloorToInt(_pathStartPosition.x);
-                int startY = Mathf.FloorToInt(_pathStartPosition.y);
-                Tile pathStartTile = World.Current.GetTileAt(startX, startY);
-
-                if (pathStartTile == null || pathStartTile.Island == null) {
-                    return;
-                }
-                int endX = Mathf.FloorToInt(_currentFramePositionOffset.x);
-                int endY = Mathf.FloorToInt(_currentFramePositionOffset.y);
-                Tile pathEndTile = World.Current.GetTileAt(endX, endY);
-                if (pathEndTile == null) {
-                    return;
-                }
-                if (pathStartTile.Island != null && pathEndTile.Island != null &&
-                        (_buildPathJob == null || _buildPathJob.End != pathEndTile.Vector2)) {
-                    _buildPathJob = new PathJob(_buildPathAgent, pathStartTile.Island.Grid, pathStartTile.Vector2, pathEndTile.Vector2);
-                    PathfindingThreadHandler.EnqueueJob(_buildPathJob, null, true);
-                    if(_buildPathJob.Path != null)
-                        UpdateMultipleStructurePreviews(World.Current.GetTilesQueue(_buildPathJob.Path));
-                }
-            }
-            else {
-                UpdateSinglePreview();
-            }
-            // End path
-            if (InputHandler.GetMouseButtonUp(InputMouse.Primary) == false) return;
-            ResetStructurePreviews();
-            if (_buildPathJob == null || _buildPathJob.Status != JobStatus.Done) {
-                return;
-            }
-            Build(World.Current.GetTilesQueue(_buildPathJob.Path).ToList(), true);
-        }
-        /// <summary>
-        /// Updates which previews are to be deleted and where to create new ones.
-        /// </summary>
-        /// <param name="tiles"></param>
-        private void UpdateMultipleStructurePreviews(IEnumerable<Tile> tiles) {
-            foreach (Tile tile in _tileToStructurePreview.Keys.Except(tiles).ToArray()) {
-                SimplePool.Despawn(_tileToStructurePreview[tile].gameObject);
-                foreach (Tile t in _tileToStructurePreview[tile].tiles) {
-                    SimplePool.Despawn(_tileToPreviewGO[t].gameObject);
-                    _tileToPreviewGO.Remove(t);
-                }
-                _tileToStructurePreview.Remove(tile);
-            }
-            foreach (Tile tile in tiles) {
-                if (_tileToStructurePreview.ContainsKey(tile)) continue;
-                StructurePreview preview = new StructurePreview(
-                    tile,
-                    CreatePreviewStructure(tile),
-                    ToBuildStructure.GetBuildingTiles(tile), _tileToStructurePreview.Count + 1
-                );
-                _tileToStructurePreview[tile] = preview;
-            }
-            NeededItemsToBuild = ToBuildStructure.BuildingItems?.CloneArrayWithCounts(tiles.Count());
-            NeededBuildCost = ToBuildStructure.BuildCost * tiles.Count();
-            foreach (StructurePreview preview in _tileToStructurePreview.Values) {
-                if (ToBuildStructure is RoadStructure) {
-                    string sprite = ToBuildStructure.SpriteName + RoadStructure.UpdateOrientation(preview.tile, tiles);
-                    preview.spriteRenderer.sprite = StructureSpriteController.Instance.GetStructureSprite(sprite);
-                }
-                UpdateStructurePreview(preview.tiles, preview.number);
-            }
-        }
-        /// <summary>
-        /// Updates the Preview Tiles based on if the player has enough ressources, monemy or if the enough citytiles
-        /// </summary>
-        /// <param name="tiles"></param>
-        /// <param name="number"></param>
-        private void UpdateStructurePreview(List<Tile> tiles, int number) {
-            if (EditorController.IsEditor) {
-                UpdateStructurePreviewTiles(tiles, true);
-                return;
-            }
-            bool hasEnoughResources = PlayerController.CurrentPlayer.HasEnoughMoney(ToBuildStructure.BuildCost * number);
-            if(MouseUnitState == MouseUnitState.Build) {
-                hasEnoughResources &= SelectedUnit.Inventory.HasEnoughOfItems(ToBuildStructure.BuildingItems, times: number) == true;
-            } else {
-                hasEnoughResources &= tiles[0].Island?.FindCityByPlayer(PlayerController.currentPlayerNumber)?
-                            .HasEnoughOfItems(ToBuildStructure.BuildingItems, number) == true;
-            }
-            UpdateStructurePreviewTiles(tiles, hasEnoughResources);
-        }
-        /// <summary>
-        /// Updates the Preview Tiles red/green bassed on override or if it can be build on that tile
-        /// if <paramref name="dontOverrideTile"/> is false it will make it red - if true it does not influenz it
-        /// </summary>
-        /// <param name="tiles"></param>
-        /// <param name="dontOverrideTile"></param>
-        private void UpdateStructurePreviewTiles(List<Tile> tiles, bool dontOverrideTile) {
-            Dictionary<Tile, bool> tileToCanBuild = ToBuildStructure.CheckForCorrectSpot(tiles);
-            if (MouseState == MouseState.BuildSingle && Autorotate) {
-                int i = 0;
-                while(tileToCanBuild.ContainsValue(false) && i < 4) {
-                    ToBuildStructure.Rotate();
-                    tiles = ToBuildStructure.GetBuildingTiles(GetTileUnderneathMouse());
-                    //TODO: think about a not so ugly solution for autorotate
-                    tileToCanBuild = ToBuildStructure.CheckForCorrectSpot(tiles);
-                    i++;
-                }
-            }
-            dontOverrideTile &= EditorController.IsEditor || ToBuildStructure.InCityCheck(tiles, PlayerController.currentPlayerNumber);
-            foreach (Tile tile in tiles) {
-                bool specialTileCheck = true;
-                if (MouseUnitState == MouseUnitState.Build) {
-                    specialTileCheck = SelectedUnit.IsTileInBuildRange(tile);
-                }
-                bool canBuild = dontOverrideTile && specialTileCheck && tileToCanBuild[tile];
-                canBuild &= EditorController.IsEditor || Structure.IsTileCityViable(tile, PlayerController.currentPlayerNumber);
-                canBuild &= tile.Island != null && tile.Island.HasNegativeEffect == false;
-                ShowTilePrefabOnTile(tile, canBuild ? TileHighlightType.Green : TileHighlightType.Red);
-            }
         }
 
-        private void UIDebug(object obj) {
+        public void UIDebug(object obj) {
             if (Input.GetKey(KeyCode.LeftControl) && Input.GetKey(KeyCode.LeftShift)
                         && SaveController.DebugModeSave) {
                 UIController.Instance.ShowDebugForObject(obj);
@@ -926,32 +401,6 @@ namespace Andja.Controller {
             AddRangeHighlight(previewGO);
             return previewGO;
         }
-        /// <summary>
-        /// Decides if new prefab tile needs to be spawned or despwaned.
-        /// </summary>
-        /// <param name="t"></param>
-        /// <param name="type"></param>
-        private void ShowTilePrefabOnTile(Tile t, TileHighlightType type) {
-            if (_tileToPreviewGO.ContainsKey(t)) {
-                if (_tileToPreviewGO[t].HighlightType == type) {
-                    return;
-                }
-                else {
-                    SimplePool.Despawn(_tileToPreviewGO[t].gameObject);
-                    _tileToPreviewGO.Remove(t);
-                }
-            }
-
-            GameObject go = type switch {
-                TileHighlightType.Green => greenTileCursorPrefab,
-                TileHighlightType.Red => redTileCursorPrefab,
-                _ => null
-            };
-            go = SimplePool.Spawn(go, new Vector3(t.X + 0.5f, t.Y + 0.5f, 0), Quaternion.identity);
-            // Display the building hint on top of this tile position
-            //go.transform.SetParent(this.transform, true);
-            _tileToPreviewGO.Add(t, new TilePreview(type, go));
-        }
 
         private void AddRangeHighlight(GameObject parent) {
             if (ToBuildStructure.StructureRange == 0)
@@ -978,197 +427,25 @@ namespace Andja.Controller {
             sr.sprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(0.5f, 0.5f), 1);
             return highGO;
         }
-        /// <summary>
-        /// IF unit is selected update based on mouse interactions, e.g. move/attack/patrol.
-        /// </summary>
-        private void UpdateUnit() {
-            // If we're over a UI element, then bail out from this.
-            if (EventSystem.current.IsPointerOverGameObject()) {
-                return;
-            }
-            //TEMPORARY FOR TESTING
-            if (Input.GetKeyDown(KeyCode.U)) {
-                if (SelectedUnit.IsShip) {
-                    ((Ship)SelectedUnit).ShotAtPosition(_currentFramePosition);
-                }
-            }
-            Transform hit = MouseRayCast();
-            CheckUnitCursor();
-            if (InputHandler.GetMouseButtonUp(InputMouse.Primary)) {
-                switch (MouseUnitState) {
-                    case MouseUnitState.None:
-                        Debug.LogWarning("MouseController is in the wrong state!");
-                        break;
-
-                    case MouseUnitState.Normal:
-                        //TODO: Better way?
-                        if (hit) {
-                            ITargetableHoldingScript iths = hit.GetComponent<ITargetableHoldingScript>();
-                            if (iths != null) {
-                                if (iths.Holding == SelectedUnit) {
-                                    return;
-                                }
-                            }
-                        }
-                        UnselectUnit();
-                        break;
-
-                    case MouseUnitState.Patrol:
-                        SelectedUnit.AddPatrolCommand(MapClampedMousePosition.x, MapClampedMousePosition.y);
-                        break;
-
-                    case MouseUnitState.Build:
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException();
-                }
-            }
-
-            if (InputHandler.GetMouseButtonDown(InputMouse.Secondary) == false) return;
-            if (SelectedUnit.PlayerNumber != PlayerController.currentPlayerNumber) {
-                SetMouseState(MouseState.Idle);
-                return;
-            }
-
-            if (hit == null) {
-                switch (MouseUnitState) {
-                    case MouseUnitState.None:
-                        Debug.LogWarning("MouseController is in the wrong state!");
-                        break;
-
-                    case MouseUnitState.Normal:
-                        SelectedUnit.GiveMovementCommand(MapClampedMousePosition.x, MapClampedMousePosition.y,
-                            OverrideCurrentSetting);
-                        break;
-
-                    case MouseUnitState.Patrol:
-                        SetMouseUnitState(MouseUnitState.Normal);
-                        break;
-
-                    case MouseUnitState.Build:
-                        ResetBuild();
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException();
-                }
-            }
-            else {
-                ITargetableHoldingScript targetableHoldingScript = hit.GetComponent<ITargetableHoldingScript>();
-                if (targetableHoldingScript != null) {
-                    SelectedUnit.GiveAttackCommand(targetableHoldingScript.Holding, OverrideCurrentSetting);
-                }
-                else if (hit.GetComponent<CrateHoldingScript>() != null) {
-                    SelectedUnit.GivePickUpCrateCommand(hit.GetComponent<CrateHoldingScript>().thisCrate,
-                        OverrideCurrentSetting);
-                }
-                else if (targetableHoldingScript == null) {
-                    Tile t = GetTileUnderneathMouse();
-                    switch (t.Structure) {
-                        case null:
-                            return;
-                        case ICapturable structure:
-                            SelectedUnit.GiveCaptureCommand(structure, OverrideCurrentSetting);
-                            break;
-                        case TargetStructure tStructure:
-                            SelectedUnit.GiveAttackCommand(tStructure, OverrideCurrentSetting);
-                            break;
-                    }
-                }
-            }
-        }
-
-        private void CheckUnitCursor() {
-            if (SelectedUnit.IsOwnedByCurrentPlayer() == false)
-                return;
-            if (MouseUnitState == MouseUnitState.Build) return;
-            Transform hit = MouseRayCast();
-            bool attackAble = false;
-            if (hit) {
-                ITargetableHoldingScript iths = hit.GetComponent<ITargetableHoldingScript>();
-                if (iths != null) {
-                    attackAble = PlayerController.Instance.ArePlayersAtWar(PlayerController.currentPlayerNumber, iths.PlayerNumber);
-                    if (SelectedUnit != iths.Holding
-                        && PlayerController.currentPlayerNumber == iths.PlayerNumber
-                        && SelectedUnit.IsUnit == iths.IsUnit) {
-                        ChangeCursorType(CursorType.Escort);
-                        return;
-                    }
-                }
-            }
-            Structure str = GetTileUnderneathMouse()?.Structure;
-            if (str is TargetStructure) {
-                attackAble = PlayerController.Instance.ArePlayersAtWar(PlayerController.currentPlayerNumber, str.PlayerNumber);
-            }
-            ChangeCursorType(attackAble ? CursorType.Attack : CursorType.Pointer);
-        }
 
         public void UnselectUnit(bool closeUI = true) {
             if (SelectedUnit == null)
                 return;
-            SelectedUnit.UnregisterOnDestroyCallback(OnUnitDestroy);
+            SetMouseState(MouseState.Idle);
+            SetMouseUnitState(MouseUnitState.None);
             SelectedUnit = null;
             UnselectStructure();
             if (closeUI)
                 UIController.Instance.CloseInfoUI();
-            SetMouseState(MouseState.Idle);
-            SetMouseUnitState(MouseUnitState.None);
         }
-        /// <summary>
-        /// Calculates for the given rectangle which tiles are the buildtiles for selected structure.
-        /// </summary>
-        /// <param name="startX"></param>
-        /// <param name="endX"></param>
-        /// <param name="startY"></param>
-        /// <param name="endY"></param>
-        /// <returns></returns>
-        private List<Tile> GetTilesStructures(int startX, int endX, int startY, int endY) {
-            int width = 1;
-            int height = 1;
-            List<Tile> tiles = new List<Tile>();
-            if (ToBuildStructure != null) {
-                width = ToBuildStructure.TileWidth;
-                height = ToBuildStructure.TileHeight;
-            }
-            if (endX >= startX && endY >= startY) {
-                for (int x = startX; x <= endX; x += width) {
-                    for (int y = startY; y <= endY; y += height) {
-                        tiles.Add(World.Current.GetTileAt(x, y));
-                    }
-                }
-            }
-            else
-            if (endX > startX && endY <= startY) {
-                for (int x = startX; x <= endX; x += width) {
-                    for (int y = startY; y >= endY; y -= height) {
-                        tiles.Add(World.Current.GetTileAt(x, y));
-                    }
-                }
-            }
-            else
-            if (endX <= startX && endY > startY) {
-                for (int x = startX; x >= endX; x -= width) {
-                    for (int y = startY; y <= endY; y += height) {
-                        tiles.Add(World.Current.GetTileAt(x, y));
-                    }
-                }
-            }
-            else
-            if (endX <= startX && endY <= startY) {
-                for (int x = startX; x >= endX; x -= width) {
-                    for (int y = startY; y >= endY; y -= height) {
-                        tiles.Add(World.Current.GetTileAt(x, y));
-                    }
-                }
-            }
-            return tiles;
-        }
+ 
         /// <summary>
         /// Send the build command to the buildcontroller based on what the player has selected.
         /// </summary>
         /// <param name="t"></param>
         /// <param name="single"></param>
-        /// <param name="previewOrder"></param>
-        private void Build(List<Tile> t, bool single = false, bool previewOrder = false) {
+        /// <param name="inOrder"></param>
+        public void Build(List<Tile> t, bool single = false) {
             if (EditorController.IsEditor) {
                 EditorController.Instance.BuildOn(t, single);
             }
@@ -1177,14 +454,7 @@ namespace Andja.Controller {
                     BuildController.Instance.CurrentPlayerBuildOnTile(t, single, PlayerController.currentPlayerNumber, false, SelectedUnit);
                 }
                 else {
-                    if (previewOrder) {
-                        foreach (StructurePreview sp in _tileToStructurePreview.Values.OrderBy(x => x.number)) {
-                            BuildController.Instance.CurrentPlayerBuildOnTile(sp.tiles, false, PlayerController.currentPlayerNumber, false);
-                        }
-                    }
-                    else {
-                        BuildController.Instance.CurrentPlayerBuildOnTile(t, single, PlayerController.currentPlayerNumber, false);
-                    }
+                    BuildController.Instance.CurrentPlayerBuildOnTile(t, single, PlayerController.currentPlayerNumber, false);
                 }
             }
         }
@@ -1204,35 +474,12 @@ namespace Andja.Controller {
             }
             if (BuildController.Instance.BuildState != BuildStateModes.None)
                 BuildController.Instance.ResetBuild();
-            ResetStructurePreviews();
             NeededBuildCost = 0;
             NeededItemsToBuild = null;
-            _destroyTiles.Clear();
             ToBuildStructure = null;
             if (MouseUnitState == MouseUnitState.Build) {
                 UnselectUnit();
             }
-        }
-
-        public void ResetStructurePreviews() {
-            foreach (Tile tile in _tileToStructurePreview.Keys) {
-                foreach (Transform t in _tileToStructurePreview[tile].gameObject.transform) {
-                    Destroy(t.gameObject);
-                }
-                SimplePool.Despawn(_tileToStructurePreview[tile].gameObject);
-            }
-            _tileToStructurePreview.Clear();
-            foreach (Tile t in _tileToPreviewGO.Keys) {
-                SimplePool.Despawn(_tileToPreviewGO[t].gameObject);
-            }
-            _tileToPreviewGO.Clear();
-            if (_singleStructurePreview == false) return;
-            SimplePool.Despawn(_singleStructurePreview);
-            foreach (Transform t in _singleStructurePreview.transform) {
-                Destroy(t.gameObject);
-            }
-
-            _singleStructurePreview = null;
         }
 
         public void UnselectUnitGroup() {
@@ -1284,11 +531,11 @@ namespace Andja.Controller {
         }
 
         public Tile GetTileUnderneathMouse() {
-            return World.Current.GetTileAt(_currentFramePositionOffset);
+            return World.Current.GetTileAt(CurrentFramePositionOffset);
         }
 
-        private Transform MouseRayCast() {
-            return Physics2D.Raycast(new Vector2(_currentFramePosition.x, _currentFramePosition.y), Vector2.zero, 200).transform;
+        public Transform MouseRayCast() {
+            return Physics2D.Raycast(new Vector2(CurrentFramePosition.x, CurrentFramePosition.y), Vector2.zero, 200).transform;
         }
 
         /// <summary>
@@ -1297,12 +544,10 @@ namespace Andja.Controller {
         ///  - set mousestate to drag
         /// </summary>
         public void Escape() {
-            _dragStartPosition = _currentFramePosition;
             UnselectStuff(true);
             ResetBuild();
             SetMouseState(MouseState.Idle);
             SetMouseUnitState(MouseUnitState.None);
-            ChangeCursorType(CursorType.Pointer);
         }
         public void SetCopyMode(bool on) {
             if(on) {
@@ -1320,36 +565,16 @@ namespace Andja.Controller {
             Cursor.SetCursor(s.texture, s.pivot, CursorMode.Auto);
         }
 
+        internal void ResetBuildCost() {
+            NeededItemsToBuild = null;
+            NeededBuildCost = 0;
+        }
+
         [Serializable]
         public struct ExtraStructureBuildUI {
             public ExtraBuildUI Type;
             public GameObject Prefab;
         }
 
-        private class TilePreview {
-            public readonly GameObject gameObject;
-            public readonly TileHighlightType HighlightType;
-
-            public TilePreview(TileHighlightType type, GameObject gameObject) {
-                HighlightType = type;
-                this.gameObject = gameObject;
-            }
-        }
-
-        private class StructurePreview {
-            public readonly GameObject gameObject;
-            public readonly List<Tile> tiles;
-            public readonly Tile tile;
-            public readonly int number;
-            public readonly SpriteRenderer spriteRenderer;
-
-            public StructurePreview(Tile tile, GameObject gameObject, List<Tile> tiles, int number) {
-                this.tile = tile;
-                this.gameObject = gameObject;
-                spriteRenderer = gameObject.GetComponent<SpriteRenderer>();
-                this.tiles = tiles;
-                this.number = number;
-            }
-        }
     }
 }

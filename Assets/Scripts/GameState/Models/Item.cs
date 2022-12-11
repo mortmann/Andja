@@ -55,9 +55,9 @@ namespace Andja.Model {
         public virtual Item Clone(int amount) {
             return new Item(this, amount);
         }
-        public virtual Item CloneWithCount() {
+        public virtual Item CloneWithCount(int times = 1) {
             Item i = new Item(this) {
-                count = this.count
+                count = this.count * times
             };
             return i;
         }

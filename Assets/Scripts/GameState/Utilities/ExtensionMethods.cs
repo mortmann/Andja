@@ -101,8 +101,7 @@ namespace Andja.Utility {
         public static Item[] CloneArrayWithCounts(this Item[] items, int multipleCount = 1) {
             Item[] newItems = new Item[items.Length];
             for (int i = 0; i < items.Length; i++) {
-                newItems[i] = items[i].CloneWithCount();
-                newItems[i].count *= multipleCount;
+                newItems[i] = items[i].CloneWithCount(multipleCount);
             }
             return newItems;
         }

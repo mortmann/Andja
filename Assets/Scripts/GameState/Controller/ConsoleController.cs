@@ -445,8 +445,11 @@ namespace Andja.Controller {
                         return false;
                     }
                     if (parameters.Length > pos) {
-                        if (int.TryParse(parameters[pos], out i.count) == false) {
+                        if (int.TryParse(parameters[pos], out int temp) == false) {
                             i.count = 1;
+                        }
+                        else {
+                            i.count = temp;
                         }
                     }
                     World.Current.CreateItemOnMap(i, MouseController.Instance.GetMousePosition());

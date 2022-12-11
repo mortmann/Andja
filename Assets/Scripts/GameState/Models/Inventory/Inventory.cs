@@ -85,7 +85,8 @@ namespace Andja.Model {
             if (times <= 0) throw new ArgumentOutOfRangeException(nameof(times));
             if (items == null || times <= 0)
                 return true;
-            items.ToList().ForEach(x => { x.count *= times; });
+            if (times > 0)
+                items = items.ToArray().CloneArrayWithCounts(times);
             return HasEnoughOfItems(items);
         }
 

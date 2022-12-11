@@ -90,6 +90,13 @@ public class ExtensionMethodTest {
                       .Exists(y => x.ID == y.ID && x.count == y.count)));
     }
     [Test]
+    public void CloneItemArrayWithCounts_WithMultiplier() {
+        var items = new[] { ItemProvider.Brick_25, ItemProvider.Fish_25 };
+        Assert.IsTrue(items.All(x => items.CloneArrayWithCounts(2).ToList()
+                      .Exists(y => x.ID == y.ID && x.count * 2 == y.count )));
+        Assert.IsTrue(items.All(x => x.count == 25));
+    }
+    [Test]
     public void ItemArrayReplaceKeepCounts() {
         var shouldBeitems = new[] { ItemProvider.Brick_25, ItemProvider.Fish_25, ItemProvider.Tool };
         var items = new[] { ItemProvider.Brick_25, ItemProvider.Fish_25 };

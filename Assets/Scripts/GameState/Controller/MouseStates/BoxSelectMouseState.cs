@@ -68,7 +68,6 @@ namespace Andja.Controller {
             var topLeft = Vector3.Min(screenPosition1, screenPosition2);
             var bottomRight = Vector3.Max(screenPosition1, screenPosition2);
             // Create Rect
-            Debug.Log(topLeft.ToString() + bottomRight.ToString());
             _drawRect = Rect.MinMaxRect(topLeft.x, topLeft.y, bottomRight.x, bottomRight.y);
             _displayDragRectangle = true;
         }

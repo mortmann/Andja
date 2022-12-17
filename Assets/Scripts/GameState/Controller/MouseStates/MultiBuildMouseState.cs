@@ -25,6 +25,8 @@ namespace Andja.Controller {
             foreach (Tile tile in _tileToStructurePreview.Keys.Except(tiles).ToArray()) {
                 SimplePool.Despawn(_tileToStructurePreview[tile].gameObject);
                 foreach (Tile t in _tileToStructurePreview[tile].tiles) {
+                    if (_tileToPreviewGO.ContainsKey(t) == false)
+                        Debug.Log(" ");
                     SimplePool.Despawn(_tileToPreviewGO[t].gameObject);
                     _tileToPreviewGO.Remove(t);
                 }
@@ -34,7 +36,7 @@ namespace Andja.Controller {
                 if (_tileToStructurePreview.ContainsKey(tile)) continue;
                 StructurePreview preview = new StructurePreview(
                     tile,
-                    MouseController.Instance.CreatePreviewStructure(tile),
+                    CreatePreviewStructure(tile),
                     ToBuildStructure.GetBuildingTiles(tile), _tileToStructurePreview.Count + 1
                 );
                 _tileToStructurePreview[tile] = preview;

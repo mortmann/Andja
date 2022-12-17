@@ -27,7 +27,7 @@ namespace Andja.Controller {
                 SimplePool.Despawn(_tileToPreviewGO[t].gameObject);
             }
             _tileToPreviewGO.Clear();
-            ResetStructurePreviews();
+            ResetSingleStructurePreview();
         }
 
         /// <summary>
@@ -35,7 +35,7 @@ namespace Andja.Controller {
         /// </summary>
         protected void UpdateSinglePreview() {
             if (_singleStructurePreview == null)
-                _singleStructurePreview = MouseController.Instance.CreatePreviewStructure();
+                _singleStructurePreview = CreatePreviewStructure();
             float x = ToBuildStructure.TileWidth / 2f - TileSpriteController.offset;
             float y = ToBuildStructure.TileHeight / 2f - TileSpriteController.offset;
             Tile underMouse = MouseController.Instance.GetTileUnderneathMouse();
@@ -101,7 +101,7 @@ namespace Andja.Controller {
                 ShowTilePrefabOnTile(tile, canBuild ? TileHighlightType.Green : TileHighlightType.Red);
             }
         }
-        protected void ResetStructurePreviews() {
+        protected void ResetSingleStructurePreview() {
             foreach (Tile t in _tileToPreviewGO.Keys) {
                 SimplePool.Despawn(_tileToPreviewGO[t].gameObject);
             }
@@ -138,6 +138,37 @@ namespace Andja.Controller {
             // Display the building hint on top of this tile position
             //go.transform.SetParent(this.transform, true);
             _tileToPreviewGO.Add(t, new TilePreview(type, go));
+        }
+        public GameObject CreatePreviewStructure(Tile tile = null) {
+            Vector3 position = Vector3.zero;
+            if (tile != null) {
+                position.x = ((float)ToBuildStructure.TileWidth) / 2f - TileSpriteController.offset;
+                position.y = ((float)ToBuildStructure.TileHeight) / 2f - TileSpriteController.offset;
+                position += tile.Vector;
+            }
+            GameObject previewGO = SimplePool.Spawn(MouseController.Instance.structurePreviewRendererPrefab, position, Quaternion.Euler(0, 0, 360 - ToBuildStructure.Rotation));
+            //previewGO.transform.SetParent(this.transform, true);
+            if (ToBuildStructure.ExtraBuildUITyp != ExtraBuildUI.None) {
+                if (MouseController.Instance.ExtraStructureBuildUIPrefabs.ContainsKey(ToBuildStructure.ExtraBuildUITyp) == false)
+                    Debug.LogError(ToBuildStructure.ExtraBuildUITyp + " ExtraBuildPreview has no Prefab assigned!");
+                else {
+                    GameObject extra = Object.Instantiate(MouseController.Instance.ExtraStructureBuildUIPrefabs[ToBuildStructure.ExtraBuildUITyp]);
+                    extra.transform.SetParent(previewGO.transform);
+                }
+            }
+
+            SpriteRenderer sr = previewGO.GetComponent<SpriteRenderer>();
+            sr.sprite = StructureSpriteController.Instance.GetStructureSprite(ToBuildStructure);
+            AddRangeHighlight(previewGO);
+            return previewGO;
+        }
+        private void AddRangeHighlight(GameObject parent) {
+            if (ToBuildStructure.StructureRange == 0)
+                return;
+            int range = ToBuildStructure.StructureRange * 2; // cause its the radius
+            int width = range + ToBuildStructure.TileWidth;
+            int height = range + ToBuildStructure.TileHeight;
+            MouseController.Instance.GetHighlightGameObject(width, height, ToBuildStructure.PrototypeTiles).transform.SetParent(parent.transform);
         }
         protected class TilePreview {
             public readonly GameObject gameObject;

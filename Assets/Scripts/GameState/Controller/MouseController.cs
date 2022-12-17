@@ -39,13 +39,16 @@ namespace Andja.Controller {
         public GameObject fadeOutTextPrefab;
 
         public ExtraStructureBuildUI[] extraStructureBuildUIPrefabsEditor;
-        private Dictionary<ExtraBuildUI, GameObject> _extraStructureBuildUIPrefabs;
+        public Dictionary<ExtraBuildUI, GameObject> ExtraStructureBuildUIPrefabs { get; protected set; }
         private GameObject _highlightGO;
 
         /// <summary>
         /// If it is in either build or destroy mode
         /// </summary>
-        bool IsInBuildDestoyMode => MouseState == (MouseState.BuildDrag | MouseState.BuildPath | MouseState.BuildSingle | MouseState.Destroy);
+        bool IsInBuildDestroyMode => MouseState == MouseState.BuildDrag || 
+                                     MouseState == MouseState.BuildPath ||
+                                     MouseState == MouseState.BuildSingle ||
+                                     MouseState == MouseState.Destroy;
 
         /// <summary>
         /// The world-position of the mouse last frame.
@@ -132,9 +135,9 @@ namespace Andja.Controller {
 
         public void Start() {
             selectedUnitGroup = new List<Unit>();
-            _extraStructureBuildUIPrefabs = new Dictionary<ExtraBuildUI, GameObject>();
+            ExtraStructureBuildUIPrefabs = new Dictionary<ExtraBuildUI, GameObject>();
             foreach (ExtraStructureBuildUI esbu in extraStructureBuildUIPrefabsEditor) {
-                _extraStructureBuildUIPrefabs[esbu.Type] = esbu.Prefab;
+                ExtraStructureBuildUIPrefabs[esbu.Type] = esbu.Prefab;
             }
             SetupMouseStates();
         }
@@ -184,12 +187,6 @@ namespace Andja.Controller {
             }
             else {
                 UpdateEditorStuff();
-            }
-
-            if (InputHandler.GetMouseButtonDown(InputMouse.Secondary) && MouseState != MouseState.Idle
-                && MouseState != MouseState.Unit && MouseState != MouseState.UnitGroup) {
-                ResetBuild();
-                SetMouseState(MouseState.Idle);
             }
 
             // Save the mouse position from this frame
@@ -252,7 +249,7 @@ namespace Andja.Controller {
         /// Responsible for detecting a drag not in Build/Destroy Mode 
         /// </summary>
         private void CheckDragBoxSelect() {
-            if (IsInBuildDestoyMode || MouseState == MouseState.DragSelect)
+            if (IsInBuildDestroyMode || MouseState == MouseState.DragSelect)
                 return;
             if (InputHandler.GetMouseButton(InputMouse.Primary)) {
                 if (EventSystem.current.IsPointerOverGameObject() == false && ShortcutUI.Instance.IsDragging == false) {
@@ -378,40 +375,7 @@ namespace Andja.Controller {
             }
         }
 
-        public GameObject CreatePreviewStructure(Tile tile = null) {
-            Vector3 position = Vector3.zero;
-            if (tile != null) {
-                position.x = ((float)ToBuildStructure.TileWidth) / 2f - TileSpriteController.offset;
-                position.y = ((float)ToBuildStructure.TileHeight) / 2f - TileSpriteController.offset;
-                position += tile.Vector;
-            }
-            GameObject previewGO = SimplePool.Spawn(structurePreviewRendererPrefab, position, Quaternion.Euler(0, 0, 360 - ToBuildStructure.Rotation));
-            //previewGO.transform.SetParent(this.transform, true);
-            if (ToBuildStructure.ExtraBuildUITyp != ExtraBuildUI.None) {
-                if (_extraStructureBuildUIPrefabs.ContainsKey(ToBuildStructure.ExtraBuildUITyp) == false)
-                    Debug.LogError(ToBuildStructure.ExtraBuildUITyp + " ExtraBuildPreview has no Prefab assigned!");
-                else {
-                    GameObject extra = Instantiate(_extraStructureBuildUIPrefabs[ToBuildStructure.ExtraBuildUITyp]);
-                    extra.transform.SetParent(previewGO.transform);
-                }
-            }
-
-            SpriteRenderer sr = previewGO.GetComponent<SpriteRenderer>();
-            sr.sprite = StructureSpriteController.Instance.GetStructureSprite(ToBuildStructure);
-            AddRangeHighlight(previewGO);
-            return previewGO;
-        }
-
-        private void AddRangeHighlight(GameObject parent) {
-            if (ToBuildStructure.StructureRange == 0)
-                return;
-            int range = ToBuildStructure.StructureRange * 2; // cause its the radius
-            int width = range + ToBuildStructure.TileWidth;
-            int height = range + ToBuildStructure.TileHeight;
-            GetHighlightGameObject(width, height, ToBuildStructure.PrototypeTiles).transform.SetParent(parent.transform);
-        }
-
-        private GameObject GetHighlightGameObject(int width, int height, IEnumerable<Tile> tiles) {
+        public GameObject GetHighlightGameObject(int width, int height, IEnumerable<Tile> tiles) {
             GameObject highGO = new GameObject();
             SpriteRenderer sr = highGO.AddComponent<SpriteRenderer>();
             Texture2D tex = new Texture2D(width, height, TextureFormat.RGBA32, true);

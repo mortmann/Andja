@@ -443,9 +443,7 @@ namespace Andja.Controller {
                     if (range.upper > 0) {
                         IslandSizeToGenerationInfo[size].resourceGenerationsInfo.Add(generationInfo);
                     }
-                    if (generationInfo.climate == null) {
-                        generationInfo.climate = (Climate[])Enum.GetValues(typeof(Climate));
-                    }
+                    generationInfo.climate ??= (Climate[])Enum.GetValues(typeof(Climate));
                 }
                 foreach (Climate c in generationInfo.climate) {
                     ClimateToResourceGeneration[c].Add(generationInfo);
@@ -1581,52 +1579,6 @@ namespace Andja.Controller {
             }
         }
 
-        private string ReplacePlaceHolders<T>(T data, string text) {
-            if (text.Contains("$") == false)
-                return text;
-            string[] splits = text.Split('$');
-            for (int i = 0; i < splits.Length - 1; i += 2) {
-                string[] replaceSplit = splits[i + 1].Split(' ');
-                string replace = replaceSplit[0];
-                string replaceWith;
-                if (replace.Contains('.')) {
-                    string[] subgetsplits = replace.Split('.');
-                    replaceWith = GetFieldString(data, 0, subgetsplits);
-                }
-                else {
-                    replaceWith = GetFieldString(data, 0, replace);
-                }
-                replaceSplit[0] = replaceWith;
-                splits[i + 1] = string.Join(" ", replaceSplit);
-            }
-            return string.Join("", splits);
-        }
-
-        private readonly BindingFlags _flags = BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance;
-
-        private string GetFieldString(object data, int index, params string[] fields) {
-            Type dataType = data.GetType();
-            if (typeof(IEnumerable).IsAssignableFrom(dataType)) {
-                List<string> strings = (from object o in (IEnumerable)data select GetFieldString(o, index, fields)).ToList();
-                if (strings.Count == 1)
-                    return strings[0];
-                string last = strings[strings.Count - 1];
-                strings.RemoveAt(strings.Count - 1);
-                return string.Join(", ", strings) + " " + GetLocalisedAnd() + " " + last;
-            }
-            if (fields.Length - 1 == index) {
-                var field = dataType.GetField(fields[index], _flags)?.GetValue(data);
-                if (field == null)
-                    field = dataType.GetProperty(fields[index], _flags)?.GetValue(data);
-                return field.ToString();
-            }
-            return GetFieldString(dataType.GetField(fields[index], _flags)?.GetValue(data), ++index, fields);
-        }
-
-        private string GetLocalisedAnd() {
-            return UILanguageController.Instance.GetStaticVariables(StaticLanguageVariables.And);
-        }
-
         private Effect NodeToEffect(XmlNode item) {
             string id = item.InnerXml;
             if (string.IsNullOrEmpty(id)) {
@@ -1730,7 +1682,51 @@ namespace Andja.Controller {
                 ModLoader.LoadXMLs(xml, ReloadLanguageVariables);
             }
         }
+        private string ReplacePlaceHolders<T>(T data, string text) {
+            if (text.Contains("$") == false)
+                return text;
+            string[] splits = text.Split('$');
+            for (int i = 0; i < splits.Length - 1; i += 2) {
+                string[] replaceSplit = splits[i + 1].Split(' ');
+                string replace = replaceSplit[0];
+                string replaceWith;
+                if (replace.Contains('.')) {
+                    string[] subgetsplits = replace.Split('.');
+                    replaceWith = GetFieldString(data, 0, subgetsplits);
+                }
+                else {
+                    replaceWith = GetFieldString(data, 0, replace);
+                }
+                replaceSplit[0] = replaceWith;
+                splits[i + 1] = string.Join(" ", replaceSplit);
+            }
+            return string.Join("", splits);
+        }
 
+        private readonly BindingFlags _flags = BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance;
+
+        private string GetFieldString(object data, int index, params string[] fields) {
+            Type dataType = data.GetType();
+            if (typeof(IEnumerable).IsAssignableFrom(dataType)) {
+                List<string> strings = (from object o in (IEnumerable)data select GetFieldString(o, index, fields)).ToList();
+                if (strings.Count == 1)
+                    return strings[0];
+                string last = strings[strings.Count - 1];
+                strings.RemoveAt(strings.Count - 1);
+                return string.Join(", ", strings) + " " + GetLocalisedAnd() + " " + last;
+            }
+            if (fields.Length - 1 == index) {
+                var field = dataType.GetField(fields[index], _flags)?.GetValue(data);
+                if (field == null)
+                    field = dataType.GetProperty(fields[index], _flags)?.GetValue(data);
+                return field.ToString();
+            }
+            return GetFieldString(dataType.GetField(fields[index], _flags)?.GetValue(data), ++index, fields);
+        }
+
+        private string GetLocalisedAnd() {
+            return UILanguageController.Instance.GetStaticVariables(StaticLanguageVariables.And);
+        }
         public void ReloadLanguageVariables(string xml) {
             FieldInfo[] fields = typeof(LanguageVariables).GetFields();
             XmlDocument xmlDoc = new XmlDocument();

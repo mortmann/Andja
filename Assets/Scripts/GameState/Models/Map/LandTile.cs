@@ -34,10 +34,10 @@ namespace Andja.Model {
                     return;
                 }
                 Structure oldStructure = _structures;
-                _structures = value;
-                if (oldStructure is { CanBeBuildOver: true } && value != null) {
+                if (_structures is { CanBeBuildOver: true } && value != null) {
                     oldStructure.Destroy();
                 }
+                _structures = value;
                 _cbTileOldNewStructureChanged?.Invoke(value, oldStructure);
                 _cbTileStructureChanged?.Invoke(this, value);
                 Island.ChangeGridTile(this);

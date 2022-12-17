@@ -5,6 +5,9 @@ namespace Andja.Controller {
     public class UpgradeMouseState : BaseMouseState {
         public override CursorType CursorType => CursorType.Upgrade;
         public override void Update() {
+            if (InputHandler.GetMouseButtonDown(InputMouse.Secondary)) {
+                MouseController.Instance.SetMouseState(MouseState.Idle);
+            }
             Tile t = MouseController.Instance.GetTileUnderneathMouse();
             MouseController.Instance.NeededItemsToBuild = null;
             MouseController.Instance.NeededBuildCost = 0;

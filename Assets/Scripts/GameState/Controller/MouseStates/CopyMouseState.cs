@@ -6,6 +6,9 @@ namespace Andja.Controller {
         public override CursorType CursorType => CursorType.Copy;
 
         public override void Update() {
+            if (InputHandler.GetMouseButtonDown(InputMouse.Secondary)) {
+                MouseController.Instance.SetMouseState(MouseState.Idle);
+            }
             if (InputHandler.GetMouseButtonUp(InputMouse.Primary) == false) return;
             Tile t = MouseController.Instance.GetTileUnderneathMouse();
             if (t.Structure == null)

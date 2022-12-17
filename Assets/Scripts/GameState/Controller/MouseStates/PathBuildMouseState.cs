@@ -14,12 +14,18 @@ namespace Andja.Controller {
             PlayerController.Instance.cbPlayerChange += (a, b) => { _buildPathAgent = new BuildPathAgent(PlayerController.currentPlayerNumber); };
         }
         public override void Update() {
+            if (InputHandler.GetMouseButtonDown(InputMouse.Secondary)) {
+                MouseController.Instance.ResetBuild();
+                MouseController.Instance.SetMouseState(MouseState.Idle);
+                return;
+            }
             if (EventSystem.current.IsPointerOverGameObject()) {
                 return;
             }
             // Start Path
             if (InputHandler.GetMouseButtonDown(InputMouse.Primary)) {
                 PathStartPosition = CurrentFramePositionOffset;
+                ResetSingleStructurePreview();
             }
             if (InputHandler.GetMouseButton(InputMouse.Primary)) {
                 int startX = Mathf.FloorToInt(PathStartPosition.x);
@@ -48,7 +54,7 @@ namespace Andja.Controller {
             }
             // End path
             if (InputHandler.GetMouseButtonUp(InputMouse.Primary) == false) return;
-            ResetStructurePreviews();
+            Reset();
             if (_buildPathJob == null || _buildPathJob.Status != JobStatus.Done) {
                 return;
             }

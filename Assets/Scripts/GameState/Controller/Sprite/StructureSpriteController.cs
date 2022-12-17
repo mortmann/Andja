@@ -77,7 +77,8 @@ namespace Andja.Controller {
         }
 
         public void OnBuildStrucutureCreated(Structure structure, bool onLoad) {
-            if (FogOfWarController.IsFogOfWarAlways == false && structure.HasHitbox == false)
+            if (FogOfWarController.IsFogOfWarAlways == false && structure.HasHitbox == false) 
+                //&& structure.Tiles.Any(t=> CameraController.Instance.CameraViewRange.Contains(t.Vector2)) == false
                 return;
             CreateStructureGameObject(structure);
         }

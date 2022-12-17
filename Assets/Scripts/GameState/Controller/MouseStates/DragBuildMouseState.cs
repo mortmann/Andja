@@ -9,13 +9,18 @@ using UnityEngine.EventSystems;
 namespace Andja.Controller {
     public class DragBuildMouseState : MultiBuildMouseState {
         public override void Update() {
-            // If we're over a UI element, then bail out from this.
+            if (InputHandler.GetMouseButtonDown(InputMouse.Secondary)) {
+                MouseController.Instance.ResetBuild();
+                MouseController.Instance.SetMouseState(MouseState.Idle);
+                return;
+            }            // If we're over a UI element, then bail out from this.
             if (EventSystem.current.IsPointerOverGameObject()) {
                 return;
             }
             // Start Drag
             if (InputHandler.GetMouseButtonDown(InputMouse.Primary)) {
                 DragStartPosition = CurrentFramePositionOffset;
+                ResetSingleStructurePreview();
                 if (_singleStructurePreview != null) {
                     SimplePool.Despawn(_singleStructurePreview);
                     _singleStructurePreview = null;

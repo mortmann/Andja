@@ -14,6 +14,11 @@ namespace Andja.Controller {
             DestroyTiles = new HashSet<Tile>();
         }
         public override void Update() {
+            if (InputHandler.GetMouseButtonDown(InputMouse.Secondary)) {
+                MouseController.Instance.ResetBuild();
+                MouseController.Instance.SetMouseState(MouseState.Idle);
+                return;
+            }
             if (EventSystem.current.IsPointerOverGameObject()) {
                 return;
             }
@@ -45,6 +50,7 @@ namespace Andja.Controller {
                 bool isGod = EditorController.IsEditor || MouseController.Instance.IsGod; //TODO: add cheat to set this
                 BuildController.Instance.DestroyStructureOnTiles(ts, PlayerController.CurrentPlayer, isGod);
             }
+            Reset();
             MouseController.Instance.ResetBuild(false);
         }
         public override void Deactivate() {

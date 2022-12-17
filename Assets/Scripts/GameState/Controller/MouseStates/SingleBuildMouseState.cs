@@ -8,6 +8,11 @@ using UnityEngine.EventSystems;
 namespace Andja.Controller {
     public class SingleBuildMouseState : BuildMouseState {
         public override void Update() {
+            if (InputHandler.GetMouseButtonDown(InputMouse.Secondary)) {
+                MouseController.Instance.ResetBuild();
+                MouseController.Instance.SetMouseState(MouseState.Idle);
+                return;
+            }
             // If we're over a UI element, then bail out from this.
             if (EventSystem.current.IsPointerOverGameObject()) {
                 return;

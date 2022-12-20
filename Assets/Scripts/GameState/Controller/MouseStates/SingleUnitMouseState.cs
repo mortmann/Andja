@@ -28,90 +28,104 @@ namespace Andja.Controller {
                     ((Ship)SelectedUnit).ShotAtPosition(MouseController.Instance.GetLastMousePosition());
                 }
             }
-            Transform hit = MouseController.Instance.MouseRayCast();
             CheckUnitCursor();
             if (InputHandler.GetMouseButtonUp(InputMouse.Primary)) {
-                switch (MouseUnitState) {
-                    case MouseUnitState.None:
-                        Debug.LogWarning("MouseController is in the wrong state!");
-                        break;
-
-                    case MouseUnitState.Normal:
-                        //TODO: Better way?
-                        if (hit) {
-                            ITargetableHoldingScript iths = hit.GetComponent<ITargetableHoldingScript>();
-                            if (iths != null) {
-                                if (iths.Holding == SelectedUnit) {
-                                    return;
-                                }
-                            }
-                        }
-                        MouseController.Instance.UnselectUnit();
-                        break;
-
-                    case MouseUnitState.Patrol:
-                        SelectedUnit.AddPatrolCommand(MapClampedMousePosition.x, MapClampedMousePosition.y);
-                        break;
-
-                    case MouseUnitState.Build:
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException();
-                }
+                OnPrimaryMouseButton(MouseController.Instance.MouseRayCast());
             }
+            if (InputHandler.GetMouseButtonDown(InputMouse.Secondary)) {
+                OnSecondaryMouseButton(MouseController.Instance.MouseRayCast());
+            }
+        }
 
-            if (InputHandler.GetMouseButtonDown(InputMouse.Secondary) == false) return;
+        private void OnSecondaryMouseButton(Transform hit) {
             if (SelectedUnit.PlayerNumber != PlayerController.currentPlayerNumber) {
                 MouseController.Instance.SetMouseState(MouseState.Idle);
                 return;
             }
+            if(hit == null) {
+                DoNoTargetSecondaryMouseButton();
+            } else {
+                DoTargetSecondaryMouseButton(hit);
+            }
+        }
 
-            if (hit == null) {
-                switch (MouseUnitState) {
-                    case MouseUnitState.None:
-                        Debug.LogWarning("MouseController is in the wrong state!");
-                        break;
-
-                    case MouseUnitState.Normal:
-                        SelectedUnit.GiveMovementCommand(MapClampedMousePosition.x, MapClampedMousePosition.y,
-                            OverrideCurrentSetting);
-                        break;
-
-                    case MouseUnitState.Patrol:
-                        MouseController.Instance.SetMouseUnitState(MouseUnitState.Normal);
-                        break;
-
-                    case MouseUnitState.Build:
-                        MouseController.Instance.ResetBuild();
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException();
-                }
+        private void DoTargetSecondaryMouseButton(Transform hit) {
+            ITargetableHoldingScript targetableHoldingScript = hit.GetComponent<ITargetableHoldingScript>();
+            if (targetableHoldingScript != null) {
+                SelectedUnit.GiveAttackCommand(targetableHoldingScript.Holding, OverrideCurrentSetting);
+            }
+            else if (hit.GetComponent<CrateHoldingScript>() != null) {
+                SelectedUnit.GivePickUpCrateCommand(hit.GetComponent<CrateHoldingScript>().thisCrate,
+                    OverrideCurrentSetting);
             }
             else {
-                ITargetableHoldingScript targetableHoldingScript = hit.GetComponent<ITargetableHoldingScript>();
-                if (targetableHoldingScript != null) {
-                    SelectedUnit.GiveAttackCommand(targetableHoldingScript.Holding, OverrideCurrentSetting);
-                }
-                else if (hit.GetComponent<CrateHoldingScript>() != null) {
-                    SelectedUnit.GivePickUpCrateCommand(hit.GetComponent<CrateHoldingScript>().thisCrate,
-                        OverrideCurrentSetting);
-                }
-                else if (targetableHoldingScript == null) {
-                    Tile t = MouseController.Instance.GetTileUnderneathMouse();
-                    switch (t.Structure) {
-                        case null:
-                            return;
-                        case ICapturable structure:
-                            SelectedUnit.GiveCaptureCommand(structure, OverrideCurrentSetting);
-                            break;
-                        case TargetStructure tStructure:
-                            SelectedUnit.GiveAttackCommand(tStructure, OverrideCurrentSetting);
-                            break;
-                    }
+                Tile t = MouseController.Instance.GetTileUnderneathMouse();
+                switch (t.Structure) {
+                    case null:
+                        return;
+                    case ICapturable structure:
+                        SelectedUnit.GiveCaptureCommand(structure, OverrideCurrentSetting);
+                        break;
+                    case TargetStructure tStructure:
+                        SelectedUnit.GiveAttackCommand(tStructure, OverrideCurrentSetting);
+                        break;
                 }
             }
         }
+
+        private void DoNoTargetSecondaryMouseButton() {
+            switch (MouseUnitState) {
+                case MouseUnitState.None:
+                    Debug.LogWarning("MouseController is in the wrong state!");
+                    break;
+
+                case MouseUnitState.Normal:
+                    SelectedUnit.GiveMovementCommand(MapClampedMousePosition.x, MapClampedMousePosition.y,
+                        OverrideCurrentSetting);
+                    break;
+
+                case MouseUnitState.Patrol:
+                    MouseController.Instance.SetMouseUnitState(MouseUnitState.Normal);
+                    break;
+
+                case MouseUnitState.Build:
+                    MouseController.Instance.ResetBuild();
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+        }
+
+        private void OnPrimaryMouseButton(Transform hit) {
+            switch (MouseUnitState) {
+                case MouseUnitState.None:
+                    Debug.LogWarning("MouseController is in the wrong state!");
+                    break;
+
+                case MouseUnitState.Normal:
+                    //TODO: Better way?
+                    if (hit) {
+                        ITargetableHoldingScript iths = hit.GetComponent<ITargetableHoldingScript>();
+                        if (iths != null) {
+                            if (iths.Holding == SelectedUnit) {
+                                return;
+                            }
+                        }
+                    }
+                    MouseController.Instance.UnselectUnit();
+                    break;
+
+                case MouseUnitState.Patrol:
+                    SelectedUnit.AddPatrolCommand(MapClampedMousePosition.x, MapClampedMousePosition.y);
+                    break;
+
+                case MouseUnitState.Build:
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+        }
+
         protected void CheckUnitCursor() {
             if (SelectedUnit.IsOwnedByCurrentPlayer() == false)
                 return;

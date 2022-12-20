@@ -249,14 +249,13 @@ namespace Andja.Controller {
         /// Responsible for detecting a drag not in Build/Destroy Mode 
         /// </summary>
         private void CheckDragBoxSelect() {
-            if (IsInBuildDestroyMode || MouseState == MouseState.DragSelect)
+            if (IsInBuildDestroyMode || MouseState == MouseState.DragSelect 
+                || EventSystem.current.IsPointerOverGameObject() || ShortcutUI.Instance.IsDragging)
                 return;
             if (InputHandler.GetMouseButton(InputMouse.Primary)) {
-                if (EventSystem.current.IsPointerOverGameObject() == false && ShortcutUI.Instance.IsDragging == false) {
-                    float sqrdist = (Input.mousePosition - LastFrameGuiPosition).sqrMagnitude;
-                    if (sqrdist > 5) {
-                        SetMouseState(MouseState.DragSelect);
-                    }
+                float sqrdist = (Input.mousePosition - LastFrameGuiPosition).sqrMagnitude;
+                if (sqrdist > 5) {
+                    SetMouseState(MouseState.DragSelect);
                 }
             }
         }

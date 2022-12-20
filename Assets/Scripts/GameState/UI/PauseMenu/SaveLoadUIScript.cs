@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Andja {
+namespace Andja.UI {
 
     public class SaveLoadUIScript : MonoBehaviour {
         public SaveDetails saveInfo;
@@ -15,7 +15,7 @@ namespace Andja {
         private string selected;
         public InputField saveGameInput;
         private GameObject selectedGO;
-        private Dictionary<string, SaveController.SaveMetaData> nameToFile;
+        private Dictionary<string, SaveMetaData> nameToFile;
 
         // Use this for initialization
         private void OnEnable() {
@@ -23,11 +23,11 @@ namespace Andja {
         }
 
         private void LoadSaveFiles() {
-            nameToFile = new Dictionary<string, SaveController.SaveMetaData>();
+            nameToFile = new Dictionary<string, SaveMetaData>();
             foreach (Transform item in canvasGO.transform) {
                 GameObject.Destroy(item.gameObject);
             }
-            SaveController.SaveMetaData[] saveMetaDatas = SaveController.GetMetaFiles(EditorController.IsEditor);
+            SaveMetaData[] saveMetaDatas = SaveMetaData.GetMetaFiles(EditorController.IsEditor);
             // Build file list by instantiating fileListItemPrefab
             for (int i = saveMetaDatas.Length - 1; i >= 0; i--) {
                 SaveGameSelectableScript go = Instantiate(listPrefab).GetComponent<SaveGameSelectableScript>();

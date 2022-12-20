@@ -1,5 +1,6 @@
 using Andja.FogOfWar;
 using Andja.Model;
+using Andja.Utility;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -167,12 +168,12 @@ namespace Andja.Controller {
         public FogOfWarSave GetFogOfWarSave() {
             if(_fogStructures != null) {
                 return new FogOfWarSave() {
-                    image = Convert.ToBase64String(SaveController.Zip(Convert.ToBase64String(GetFogOfWarImageBytes()))),
+                    image = Convert.ToBase64String(FileUtil.Zip(Convert.ToBase64String(GetFogOfWarImageBytes()))),
                     fogOfWarStructures = new List<FogOfWarStructureData>(_fogStructures.Values),
                 };
             }
             return new FogOfWarSave() {
-                image = Convert.ToBase64String(SaveController.Zip(Convert.ToBase64String(GetFogOfWarImageBytes()))),
+                image = Convert.ToBase64String(FileUtil.Zip(Convert.ToBase64String(GetFogOfWarImageBytes()))),
             };
         }
 
@@ -196,7 +197,7 @@ namespace Andja.Controller {
                     }
                 }
             }
-            SetFogOfWarImageBytes(Convert.FromBase64String(SaveController.Unzip(Convert.FromBase64String(_fogOfWarSaveData.image))));
+            SetFogOfWarImageBytes(Convert.FromBase64String(FileUtil.Unzip(Convert.FromBase64String(_fogOfWarSaveData.image))));
         }
 
         private byte[] GetFogOfWarImageBytes() {

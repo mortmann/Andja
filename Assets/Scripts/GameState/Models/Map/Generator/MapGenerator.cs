@@ -39,7 +39,7 @@ namespace Andja.Model.Generator {
         private Dictionary<DirectionalRect, Color> rectToColor;
 
         private List<IslandGenerator> islandGenerators;
-        private ConcurrentBag<EditorController.SaveIsland> loadedIslandsList;
+        private ConcurrentBag<SaveIsland> loadedIslandsList;
         private float placeProgress;
 
         public float GeneratedProgressPercentage {
@@ -229,7 +229,7 @@ namespace Andja.Model.Generator {
 
         private void LoadIslands(List<string> toLoad) {
             toLoadIslands = toLoad.Count;
-            loadedIslandsList = new ConcurrentBag<EditorController.SaveIsland>();
+            loadedIslandsList = new ConcurrentBag<SaveIsland>();
             //create as thread to be safe this isnt going to slow down
             loadTask = Task.Factory.StartNew(() => {
                 foreach (string name in toLoad) {
@@ -328,7 +328,7 @@ namespace Andja.Model.Generator {
                         }
                     }
                     if (loadedIslandsList != null) {
-                        foreach (EditorController.SaveIsland save in loadedIslandsList) {
+                        foreach (SaveIsland save in loadedIslandsList) {
                             toPlaceIslands.Add(new IslandData(save));
                         }
                     }
@@ -798,7 +798,7 @@ namespace Andja.Model.Generator {
             public bool NeedsFertility => FertilityCount > fertilities.Count;
             public bool NeedsResources => ResourcesCount > resources.Count;
 
-            public IslandData(EditorController.SaveIsland save) : this(save.Width, save.Height) {
+            public IslandData(SaveIsland save) : this(save.Width, save.Height) {
                 Width = save.Width;
                 Height = save.Height;
                 Tiles = save.tiles;

@@ -50,7 +50,7 @@ namespace Andja.Controller {
                 }
             }
             sr.sprite = _nameToSprite[sprite_name];
-            go.transform.position = gameEvent.position;
+            go.transform.position = gameEvent.DefinedPosition;
             _eventToGo.Add(gameEvent, go);
             sr.sortingLayerName = "TileModifier";
             sr.sortingOrder = 100000;

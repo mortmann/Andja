@@ -27,10 +27,10 @@ namespace Andja.Model {
         void Destroy();
         void FixedUpdate(float deltaTime);
         Fertility GetFertility(string ID);
-        IEnumerable<IGEventable> GetLandUnits();
+        IEnumerable<GEventable> GetLandUnits();
         int GetPlayerNumber();
         Tile GetRandomOceanTile();
-        IEnumerable<IGEventable> GetShipUnits();
+        IEnumerable<GEventable> GetShipUnits();
         Tile GetTileAt(float fx, float fy);
         Tile GetTileAt(int x, int y);
         Tile GetTileAt(Vector2 vec);

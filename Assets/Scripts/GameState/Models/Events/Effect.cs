@@ -83,7 +83,7 @@ namespace Andja.Model {
             this.ID = e.ID;
         }
 
-        public void Update(float deltaTime, IGEventable target) {
+        public void Update(float deltaTime, GEventable target) {
             if (IsUpdateChange) {
                 CalculateUpdateChange(deltaTime, target);
             }
@@ -92,7 +92,7 @@ namespace Andja.Model {
             }
         }
 
-        private void CalculateSpread(float deltaTime, IGEventable target) {
+        private void CalculateSpread(float deltaTime, GEventable target) {
             //we need some kind increased probability over time that it spread
             //if it happens it will need to check for a valid target
             //if valid is found it needs to add itself as new effect to that target
@@ -104,25 +104,25 @@ namespace Andja.Model {
             if (Random.Range(0f, 1f) > SpreadProbability - SpreadProbability * WorkAmount) {
                 return;
             }
-            IGEventable newTarget = GetValidTarget(target);
+            GEventable newTarget = GetValidTarget(target);
             if (newTarget == null)
                 return;
             newTarget.AddEffect(new Effect(ID));
         }
 
-        private IGEventable GetValidTarget(IGEventable target) {
+        private GEventable GetValidTarget(GEventable target) {
             if (target is Structure structure) {
                 List<Structure> strs = structure.GetNeighbourStructuresInTileDistance(SpreadTileRange);
                 strs.RemoveAll(x => Targets.IsTargeted(x.TargetGroups) == false);
                 //now we have a list we can effect
                 //maybe smth more complex but for now just random
-                return strs[UnityEngine.Random.Range(0, strs.Count)];
+                return strs[Random.Range(0, strs.Count)];
             }
             Debug.LogError("CheckForValidTarget has not been implemented for " + target.GetType());
             return null;
         }
 
-        private void CalculateUpdateChange(float deltaTime, IGEventable target) {
+        private void CalculateUpdateChange(float deltaTime, GEventable target) {
             if (target is Structure structure) {
                 switch (UpdateChange) {
                     case EffectUpdateChanges.Health:

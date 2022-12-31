@@ -39,7 +39,7 @@ namespace Andja.Model {
     public enum UnitMainModes { Idle, Moving, Aggroing, Attack, Patrol, Capture, TradeRoute, OffWorldMarket, Escort, PickUpCrate }
 
     [JsonObject(MemberSerialization.OptIn)]
-    public class Unit : IGEventable, IWarfare, IPathfindAgent {
+    public class Unit : GEventable, IWarfare, IPathfindAgent {
         public readonly float EscortDistance = 2f;
 
         //save these Variables
@@ -145,7 +145,7 @@ namespace Andja.Model {
         public float Damage => CalculateRealValue(nameof(Data.damage), Data.damage);
         public float MaxHealth => CalculateRealValue(nameof(Data.maximumHealth), Data.maximumHealth);
         public float AttackRate => CalculateRealValue(nameof(Data.attackRate), Data.attackRate);
-        public float Speed => CalculateRealValue(nameof(Data.attackRange), Data.speed) * SpeedModifier;
+        public float Speed => CalculateRealValue(nameof(Data.speed), Data.speed) * SpeedModifier;
 
         public virtual float SpeedModifier => 1f;
 

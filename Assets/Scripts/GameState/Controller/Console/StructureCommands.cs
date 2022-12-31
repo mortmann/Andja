@@ -35,7 +35,6 @@ namespace Andja.Controller {
         }
 
         private bool DeleteStructure(string[] arg) {
-            if (Structure == null) return false;
             Structure?.Destroy();
             return Structure.IsDestroyed;
         }

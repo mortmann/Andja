@@ -9,6 +9,7 @@ using Andja.Utility;
 using System.Linq;
 using Moq;
 using static AssertNet.Assertions;
+using static AssertNet.Moq.Assertions;
 
 public class UnitInventoryTest {
     const int INVENTORY_MAX_STACK_SIZE = 50;
@@ -55,6 +56,12 @@ public class UnitInventoryTest {
         inventory.AddItem(item);
         IsInventoryEqual(item.ID,inventoryAmount);
         Assert.AreEqual(itemCount, inventory.BaseItems.Count());
+    }
+
+    [Test]
+    public void AddItem_Empty_ShouldNotHaveItem() {
+        inventory.AddItem(ItemProvider.Wood_N(0));
+        AssertThat(inventory.Items).AllSatisfy((item) => item == null);
     }
 
     [Test]
@@ -116,6 +123,7 @@ public class UnitInventoryTest {
     public void GetItemWithMaxAmount_More() {
         inventory.AddItem(ItemProvider.Wood_50);
         Assert.AreEqual(50, inventory.GetItemWithMaxAmount(ItemProvider.Wood, 100).count);
+        AssertThat(inventory.Items).AllSatisfy((item) => item == null);
     }
 
     [Test]
@@ -146,7 +154,8 @@ public class UnitInventoryTest {
         inventory.AddItem(item);
         Assert.AreEqual(INVENTORY_MAX_ITEM_AMOUNT, inventory.GetAllAndRemoveItem(ItemProvider.Wood).count);
         Assert.IsFalse(inventory.HasAnythingOf(item));
-    } 
+        AssertThat(inventory.Items).AllSatisfy((item) => item == null);
+    }
 
     [Theory]
     [TestCase(0, 0)]
@@ -155,7 +164,6 @@ public class UnitInventoryTest {
     [TestCase(150, 101)]
     [TestCase(150, 160)]
     public void MoveItem_Unit(int firstInventory, int moveAmount) {
-
         UnitInventory otherInventory = new UnitInventory(INVENTORY_NUMBER_SPACES, INVENTORY_MAX_ITEM_AMOUNT);
         Item item = ItemProvider.Wood;
         item.count = firstInventory;

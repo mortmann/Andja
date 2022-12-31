@@ -9,10 +9,6 @@
             <entry lang="Deutsch">Einfacher Weg um Gebäude mit einander zuverbinden.</entry>
             <entry lang="English">Simple road to connect structures.</entry>
          </Description>
-         <HoverOver>
-            <entry lang="Deutsch">Feldweg</entry>
-            <entry lang="English">Dirtroad</entry>
-         </HoverOver>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
          <hasHitbox>false</hasHitbox>
@@ -20,7 +16,6 @@
          <structureRange>0</structureRange>
          <populationLevel>0</populationLevel>
          <populationCount>0</populationCount>
-         <structureLevel>0</structureLevel>
          <tileWidth>1</tileWidth>
          <tileHeight>1</tileHeight>
          <canRotate>true</canRotate>
@@ -50,10 +45,6 @@
             <entry lang="Deutsch">Leute bewegen sich schneller auf ihr.</entry>
             <entry lang="English">People can move faster on it.</entry>
          </Description>
-         <HoverOver>
-            <entry lang="Deutsch">Steinstraße</entry>
-            <entry lang="English">Stoneroad</entry>
-         </HoverOver>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
          <hasHitbox>false</hasHitbox>
@@ -61,7 +52,6 @@
          <structureRange>0</structureRange>
          <populationLevel>1</populationLevel>
          <populationCount>0</populationCount>
-         <structureLevel>1</structureLevel>
          <tileWidth>1</tileWidth>
          <tileHeight>1</tileHeight>
          <canRotate>true</canRotate>
@@ -91,10 +81,6 @@
             <entry lang="Deutsch">Gut zum ansehen und noch besser um darauf zulaufen.</entry>
             <entry lang="English">Nice to look at and even better to walk on.</entry>
          </Description>
-         <HoverOver>
-            <entry lang="Deutsch">Marmorstraße</entry>
-            <entry lang="English">Marbelroad</entry>
-         </HoverOver>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
          <hasHitbox>false</hasHitbox>
@@ -102,7 +88,6 @@
          <structureRange>0</structureRange>
          <populationLevel>1</populationLevel>
          <populationCount>0</populationCount>
-         <structureLevel>3</structureLevel>
          <tileWidth>1</tileWidth>
          <tileHeight>1</tileHeight>
          <canRotate>true</canRotate>
@@ -127,10 +112,6 @@
             <entry lang="Deutsch">Erhöht die Laufgeschwindigkeit der Menschen.</entry>
             <entry lang="English">Improve the movementspeed of people.</entry>
          </Description>
-         <HoverOver>
-            <entry lang="Deutsch">Ziegelstraße</entry>
-            <entry lang="English">Brickroad</entry>
-         </HoverOver>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
          <hasHitbox>false</hasHitbox>
@@ -138,7 +119,6 @@
          <structureRange>0</structureRange>
          <populationLevel>2</populationLevel>
          <populationCount>0</populationCount>
-         <structureLevel>2</structureLevel>
          <tileWidth>1</tileWidth>
          <tileHeight>1</tileHeight>
          <canRotate>true</canRotate>
@@ -173,10 +153,6 @@
             <entry lang="Deutsch">Erzeugt Holz.</entry>
             <entry lang="English">Produces wood over time. Requires $growable.name in its range to be able to produce.</entry>
          </Description>
-         <HoverOver>
-            <entry lang="Deutsch">Holzfäller</entry>
-            <entry lang="English">Lumberjack</entry>
-         </HoverOver>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
          <hasHitbox>true</hasHitbox>
@@ -184,7 +160,6 @@
          <structureRange>3</structureRange>
          <populationLevel>0</populationLevel>
          <populationCount>0</populationCount>
-         <structureLevel>0</structureLevel>
          <tileWidth>2</tileWidth>
          <tileHeight>2</tileHeight>
          <canRotate>true</canRotate>
@@ -227,10 +202,6 @@
             <entry lang="Deutsch">Produziert Zucker.</entry>
             <entry lang="English">Produces sugar.</entry>
          </Description>
-         <HoverOver>
-            <entry lang="Deutsch">Zuckerplantage</entry>
-            <entry lang="English">Sugar Plantation</entry>
-         </HoverOver>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
          <hasHitbox>true</hasHitbox>
@@ -238,7 +209,6 @@
          <structureRange>3</structureRange>
          <populationLevel>0</populationLevel>
          <populationCount>200</populationCount>
-         <structureLevel>0</structureLevel>
          <tileWidth>3</tileWidth>
          <tileHeight>2</tileHeight>
          <canRotate>true</canRotate>
@@ -283,10 +253,6 @@
             <entry lang="Deutsch">Produziert Früchte.</entry>
             <entry lang="English">Produces fruits.</entry>
          </Description>
-         <HoverOver>
-            <entry lang="Deutsch">Obstplantage</entry>
-            <entry lang="English">Orchard </entry>
-         </HoverOver>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
          <hasHitbox>true</hasHitbox>
@@ -294,7 +260,6 @@
          <structureRange>4</structureRange>
          <populationLevel>0</populationLevel>
          <populationCount>200</populationCount>
-         <structureLevel>0</structureLevel>
          <tileWidth>2</tileWidth>
          <tileHeight>2</tileHeight>
          <canRotate>true</canRotate>
@@ -339,10 +304,6 @@
             <entry lang="Deutsch">Produziert Kartoffeln.</entry>
             <entry lang="English">Grows Potatoe. Needs $buildingItems.name to be build.</entry>
          </Description>
-         <HoverOver>
-            <entry lang="Deutsch">Kartoffelfarm</entry>
-            <entry lang="English">Potatoefarm</entry>
-         </HoverOver>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
          <hasHitbox>true</hasHitbox>
@@ -350,7 +311,6 @@
          <structureRange>3</structureRange>
          <populationLevel>0</populationLevel>
          <populationCount>200</populationCount>
-         <structureLevel>0</structureLevel>
          <tileWidth>2</tileWidth>
          <tileHeight>2</tileHeight>
          <canRotate>true</canRotate>
@@ -395,10 +355,6 @@
             <entry lang="Deutsch">Produziert Hanf.</entry>
             <entry lang="English">Plantation that produces hemp.</entry>
          </Description>
-         <HoverOver>
-            <entry lang="Deutsch">Hanfplantage</entry>
-            <entry lang="English">Hemp plantation</entry>
-         </HoverOver>
          <Short>
             <entry>
                <lang>Deutsch</lang>
@@ -416,7 +372,6 @@
          <structureRange>5</structureRange>
          <populationLevel>0</populationLevel>
          <populationCount>320</populationCount>
-         <structureLevel>0</structureLevel>
          <tileWidth>2</tileWidth>
          <tileHeight>2</tileHeight>
          <canRotate>true</canRotate>
@@ -441,7 +396,7 @@
          <contactRange>0.0</contactRange>
          <forMarketplace>true</forMarketplace>
          <maxNumberOfWorker>1</maxNumberOfWorker>
-         <produceTime>10.0</produceTime>
+         <produceTime>20.0</produceTime>
          <maxOutputStorage>5</maxOutputStorage>
          <efficiency>1.0</efficiency>
          <output length="1">
@@ -461,10 +416,6 @@
             <entry lang="Deutsch">Jagt Wild um Fleisch zu produzieren.</entry>
             <entry lang="English">Hunts wild life to produce meat.</entry>
          </Description>
-         <HoverOver>
-            <entry lang="Deutsch">Jäger</entry>
-            <entry lang="English">Hunter</entry>
-         </HoverOver>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
          <hasHitbox>true</hasHitbox>
@@ -472,7 +423,6 @@
          <structureRange>4</structureRange>
          <populationLevel>0</populationLevel>
          <populationCount>400</populationCount>
-         <structureLevel>0</structureLevel>
          <tileWidth>1</tileWidth>
          <tileHeight>1</tileHeight>
          <canRotate>true</canRotate>
@@ -517,10 +467,6 @@
             <entry lang="Deutsch">Produziert Getreide.</entry>
             <entry lang="English">Produces Wheat.</entry>
          </Description>
-         <HoverOver>
-            <entry lang="Deutsch">Getreidefarm</entry>
-            <entry lang="English">Wheatfarm</entry>
-         </HoverOver>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
          <hasHitbox>true</hasHitbox>
@@ -528,7 +474,6 @@
          <structureRange>4</structureRange>
          <populationLevel>1</populationLevel>
          <populationCount>0</populationCount>
-         <structureLevel>0</structureLevel>
          <tileWidth>2</tileWidth>
          <tileHeight>2</tileHeight>
          <canRotate>true</canRotate>
@@ -576,10 +521,6 @@
             <entry lang="Deutsch">Benötigt Bäume um daraus Kohle zu produzieren.</entry>
             <entry lang="English">Needs trees to create coal.</entry>
          </Description>
-         <HoverOver>
-            <entry lang="Deutsch">Köhler</entry>
-            <entry lang="English">Charcoal Burner&apos;s Hut</entry>
-         </HoverOver>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
          <hasHitbox>true</hasHitbox>
@@ -587,7 +528,6 @@
          <structureRange>6</structureRange>
          <populationLevel>1</populationLevel>
          <populationCount>750</populationCount>
-         <structureLevel>0</structureLevel>
          <tileWidth>2</tileWidth>
          <tileHeight>2</tileHeight>
          <canRotate>true</canRotate>
@@ -632,10 +572,6 @@
             <entry lang="Deutsch">Produziert Milch.</entry>
             <entry lang="English">Produces milk.</entry>
          </Description>
-         <HoverOver>
-            <entry lang="Deutsch">Ziegenfarm</entry>
-            <entry lang="English">Goat Farm</entry>
-         </HoverOver>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
          <hasHitbox>true</hasHitbox>
@@ -643,7 +579,6 @@
          <structureRange>4</structureRange>
          <populationLevel>1</populationLevel>
          <populationCount>750</populationCount>
-         <structureLevel>0</structureLevel>
          <tileWidth>2</tileWidth>
          <tileHeight>2</tileHeight>
          <canRotate>true</canRotate>
@@ -698,7 +633,6 @@
          <structureRange>5</structureRange>
          <populationLevel>1</populationLevel>
          <populationCount>1000</populationCount>
-         <structureLevel>0</structureLevel>
          <tileWidth>2</tileWidth>
          <tileHeight>2</tileHeight>
          <canRotate>true</canRotate>
@@ -747,10 +681,6 @@
             <entry lang="Deutsch">Braucht freies Land um Schweine zu züchten.</entry>
             <entry lang="English">Needs free land to breed pigs.</entry>
          </Description>
-         <HoverOver>
-            <entry lang="Deutsch">Schweinefarm</entry>
-            <entry lang="English">Pig Farm</entry>
-         </HoverOver>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
          <hasHitbox>true</hasHitbox>
@@ -758,7 +688,6 @@
          <structureRange>5</structureRange>
          <populationLevel>1</populationLevel>
          <populationCount>1500</populationCount>
-         <structureLevel>0</structureLevel>
          <tileWidth>2</tileWidth>
          <tileHeight>2</tileHeight>
          <canRotate>true</canRotate>
@@ -806,10 +735,6 @@
             <entry lang="Deutsch">Produziert Hopfen.</entry>
             <entry lang="English">Produces hops.</entry>
          </Description>
-         <HoverOver>
-            <entry lang="Deutsch">Hopfenplantage</entry>
-            <entry lang="English">Hops Plantation</entry>
-         </HoverOver>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
          <hasHitbox>true</hasHitbox>
@@ -817,7 +742,6 @@
          <structureRange>4</structureRange>
          <populationLevel>1</populationLevel>
          <populationCount>1500</populationCount>
-         <structureLevel>0</structureLevel>
          <tileWidth>2</tileWidth>
          <tileHeight>2</tileHeight>
          <canRotate>true</canRotate>
@@ -872,7 +796,6 @@
          <structureRange>4</structureRange>
          <populationLevel>1</populationLevel>
          <populationCount>2500</populationCount>
-         <structureLevel>0</structureLevel>
          <tileWidth>2</tileWidth>
          <tileHeight>2</tileHeight>
          <canRotate>true</canRotate>
@@ -927,7 +850,6 @@
          <structureRange>6</structureRange>
          <populationLevel>2</populationLevel>
          <populationCount>0</populationCount>
-         <structureLevel>0</structureLevel>
          <tileWidth>2</tileWidth>
          <tileHeight>2</tileHeight>
          <canRotate>true</canRotate>
@@ -980,7 +902,6 @@
          <structureRange>7</structureRange>
          <populationLevel>2</populationLevel>
          <populationCount>0</populationCount>
-         <structureLevel>0</structureLevel>
          <tileWidth>2</tileWidth>
          <tileHeight>2</tileHeight>
          <canRotate>true</canRotate>
@@ -1036,7 +957,6 @@
          <structureRange>4</structureRange>
          <populationLevel>2</populationLevel>
          <populationCount>750</populationCount>
-         <structureLevel>0</structureLevel>
          <tileWidth>2</tileWidth>
          <tileHeight>3</tileHeight>
          <canRotate>true</canRotate>
@@ -1092,7 +1012,6 @@
          <structureRange>6</structureRange>
          <populationLevel>2</populationLevel>
          <populationCount>850</populationCount>
-         <structureLevel>0</structureLevel>
          <tileWidth>3</tileWidth>
          <tileHeight>3</tileHeight>
          <canRotate>true</canRotate>
@@ -1151,7 +1070,6 @@
          <structureRange>5</structureRange>
          <populationLevel>2</populationLevel>
          <populationCount>1400</populationCount>
-         <structureLevel>0</structureLevel>
          <tileWidth>2</tileWidth>
          <tileHeight>3</tileHeight>
          <canRotate>true</canRotate>
@@ -1207,7 +1125,6 @@
          <structureRange>5</structureRange>
          <populationLevel>2</populationLevel>
          <populationCount>1500</populationCount>
-         <structureLevel>0</structureLevel>
          <tileWidth>2</tileWidth>
          <tileHeight>3</tileHeight>
          <canRotate>true</canRotate>
@@ -1268,7 +1185,6 @@
          <structureRange>5</structureRange>
          <populationLevel>2</populationLevel>
          <populationCount>1900</populationCount>
-         <structureLevel>0</structureLevel>
          <tileWidth>2</tileWidth>
          <tileHeight>2</tileHeight>
          <canRotate>true</canRotate>
@@ -1324,7 +1240,6 @@
          <structureRange>10</structureRange>
          <populationLevel>3</populationLevel>
          <populationCount>1600</populationCount>
-         <structureLevel>0</structureLevel>
          <tileWidth>1</tileWidth>
          <tileHeight>1</tileHeight>
          <canRotate>true</canRotate>
@@ -1377,7 +1292,6 @@
          <structureRange>8</structureRange>
          <populationLevel>3</populationLevel>
          <populationCount>1600</populationCount>
-         <structureLevel>0</structureLevel>
          <tileWidth>3</tileWidth>
          <tileHeight>3</tileHeight>
          <canRotate>true</canRotate>
@@ -1439,7 +1353,6 @@
          <structureRange>10</structureRange>
          <populationLevel>3</populationLevel>
          <populationCount>2000</populationCount>
-         <structureLevel>0</structureLevel>
          <tileWidth>2</tileWidth>
          <tileHeight>2</tileHeight>
          <canRotate>true</canRotate>
@@ -1498,7 +1411,6 @@
          <structureRange>7</structureRange>
          <populationLevel>3</populationLevel>
          <populationCount>2800</populationCount>
-         <structureLevel>0</structureLevel>
          <tileWidth>2</tileWidth>
          <tileHeight>2</tileHeight>
          <canRotate>true</canRotate>
@@ -1552,10 +1464,6 @@
             <entry lang="Deutsch">Freies Land für Tiere.</entry>
             <entry lang="English">Free spaces for animals.</entry>
          </Description>
-         <HoverOver>
-            <entry lang="Deutsch">Ackerland</entry>
-            <entry lang="English">Farmland</entry>
-         </HoverOver>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
          <hasHitbox>false</hasHitbox>
@@ -1563,7 +1471,6 @@
          <structureRange>0</structureRange>
          <populationLevel>0</populationLevel>
          <populationCount>0</populationCount>
-         <structureLevel>0</structureLevel>
          <tileWidth>1</tileWidth>
          <tileHeight>1</tileHeight>
          <canRotate>true</canRotate>
@@ -1595,10 +1502,6 @@
             <entry lang="Deutsch">Es ist ein Baum.</entry>
             <entry lang="English">Its a tree.</entry>
          </Description>
-         <HoverOver>
-            <entry lang="Deutsch">Baum</entry>
-            <entry lang="English">Tree</entry>
-         </HoverOver>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
          <hasHitbox>false</hasHitbox>
@@ -1606,7 +1509,6 @@
          <structureRange>0</structureRange>
          <populationLevel>0</populationLevel>
          <populationCount>0</populationCount>
-         <structureLevel>0</structureLevel>
          <tileWidth>1</tileWidth>
          <tileHeight>1</tileHeight>
          <canRotate>true</canRotate>
@@ -1622,9 +1524,9 @@
          <buildingItems length="0"/>
          <spriteBaseName>tree</spriteBaseName>
          <climateSpriteModifier>
+            <entry climate="Middle">oak;conifer</entry>
             <entry climate="Warm">palm</entry>
             <entry climate="Cold">conifer</entry>
-            <entry climate="Middle">oak;conifer</entry>
          </climateSpriteModifier>
          <contactRange>0.0</contactRange>
          <forMarketplace>false</forMarketplace>
@@ -1650,10 +1552,6 @@
             <entry lang="Deutsch">Produziert Früchte.</entry>
             <entry lang="English">Produces Fruit.</entry>
          </Description>
-         <HoverOver>
-            <entry lang="Deutsch">Obstgarten</entry>
-            <entry lang="English">Orchard</entry>
-         </HoverOver>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
          <hasHitbox>false</hasHitbox>
@@ -1661,7 +1559,6 @@
          <structureRange>0</structureRange>
          <populationLevel>0</populationLevel>
          <populationCount>200</populationCount>
-         <structureLevel>0</structureLevel>
          <tileWidth>1</tileWidth>
          <tileHeight>1</tileHeight>
          <canRotate>true</canRotate>
@@ -1698,10 +1595,6 @@
             <entry lang="Deutsch">Hier wächst Zuckerrohr.</entry>
             <entry lang="English">Grows sugar cane.</entry>
          </Description>
-         <HoverOver>
-            <entry lang="Deutsch">Zuckerrohrfeld</entry>
-            <entry lang="English">Sugarcanefield</entry>
-         </HoverOver>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
          <hasHitbox>false</hasHitbox>
@@ -1709,7 +1602,6 @@
          <structureRange>0</structureRange>
          <populationLevel>0</populationLevel>
          <populationCount>200</populationCount>
-         <structureLevel>0</structureLevel>
          <tileWidth>1</tileWidth>
          <tileHeight>1</tileHeight>
          <canRotate>true</canRotate>
@@ -1747,10 +1639,6 @@
             <entry lang="Deutsch">Kartoffeln wachsen hier.</entry>
             <entry lang="English">Potatoes grow here.</entry>
          </Description>
-         <HoverOver>
-            <entry lang="Deutsch">Kartoffelfeld</entry>
-            <entry lang="English">Potatoefield</entry>
-         </HoverOver>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
          <hasHitbox>false</hasHitbox>
@@ -1758,7 +1646,6 @@
          <structureRange>0</structureRange>
          <populationLevel>0</populationLevel>
          <populationCount>200</populationCount>
-         <structureLevel>0</structureLevel>
          <tileWidth>1</tileWidth>
          <tileHeight>1</tileHeight>
          <canRotate>true</canRotate>
@@ -1795,10 +1682,6 @@
             <entry lang="Deutsch">Wächst Hanf an.</entry>
             <entry lang="English">Grows hemp.</entry>
          </Description>
-         <HoverOver>
-            <entry lang="Deutsch">Hanf</entry>
-            <entry lang="English">Hemp</entry>
-         </HoverOver>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
          <hasHitbox>false</hasHitbox>
@@ -1806,7 +1689,6 @@
          <structureRange>0</structureRange>
          <populationLevel>0</populationLevel>
          <populationCount>320</populationCount>
-         <structureLevel>0</structureLevel>
          <tileWidth>1</tileWidth>
          <tileHeight>1</tileHeight>
          <canRotate>true</canRotate>
@@ -1844,10 +1726,6 @@
             <entry lang="Deutsch">Getreide wächst hier.</entry>
             <entry lang="English">Grows wheat.</entry>
          </Description>
-         <HoverOver>
-            <entry lang="Deutsch">Getreidefeld</entry>
-            <entry lang="English">Wheatfield</entry>
-         </HoverOver>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
          <hasHitbox>false</hasHitbox>
@@ -1855,7 +1733,6 @@
          <structureRange>0</structureRange>
          <populationLevel>1</populationLevel>
          <populationCount>0</populationCount>
-         <structureLevel>0</structureLevel>
          <tileWidth>1</tileWidth>
          <tileHeight>1</tileHeight>
          <canRotate>true</canRotate>
@@ -1901,7 +1778,6 @@
          <structureRange>0</structureRange>
          <populationLevel>1</populationLevel>
          <populationCount>1000</populationCount>
-         <structureLevel>0</structureLevel>
          <tileWidth>1</tileWidth>
          <tileHeight>1</tileHeight>
          <canRotate>true</canRotate>
@@ -1939,10 +1815,6 @@
             <entry lang="Deutsch">Produziert Hopfen.</entry>
             <entry lang="English">Grows hops.</entry>
          </Description>
-         <HoverOver>
-            <entry lang="Deutsch">Hopfenreben</entry>
-            <entry lang="English">Hop Vines</entry>
-         </HoverOver>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
          <hasHitbox>false</hasHitbox>
@@ -1950,7 +1822,6 @@
          <structureRange>0</structureRange>
          <populationLevel>1</populationLevel>
          <populationCount>1500</populationCount>
-         <structureLevel>0</structureLevel>
          <tileWidth>1</tileWidth>
          <tileHeight>1</tileHeight>
          <canRotate>true</canRotate>
@@ -1995,7 +1866,6 @@
          <structureRange>0</structureRange>
          <populationLevel>1</populationLevel>
          <populationCount>2500</populationCount>
-         <structureLevel>0</structureLevel>
          <tileWidth>1</tileWidth>
          <tileHeight>1</tileHeight>
          <canRotate>true</canRotate>
@@ -2040,7 +1910,6 @@
          <structureRange>0</structureRange>
          <populationLevel>2</populationLevel>
          <populationCount>0</populationCount>
-         <structureLevel>0</structureLevel>
          <tileWidth>1</tileWidth>
          <tileHeight>1</tileHeight>
          <canRotate>true</canRotate>
@@ -2087,7 +1956,6 @@
          <structureRange>0</structureRange>
          <populationLevel>2</populationLevel>
          <populationCount>850</populationCount>
-         <structureLevel>0</structureLevel>
          <tileWidth>1</tileWidth>
          <tileHeight>1</tileHeight>
          <canRotate>true</canRotate>
@@ -2132,7 +2000,6 @@
          <structureRange>0</structureRange>
          <populationLevel>2</populationLevel>
          <populationCount>1500</populationCount>
-         <structureLevel>0</structureLevel>
          <tileWidth>1</tileWidth>
          <tileHeight>1</tileHeight>
          <canRotate>true</canRotate>
@@ -2171,7 +2038,6 @@
          <structureRange>0</structureRange>
          <populationLevel>3</populationLevel>
          <populationCount>1600</populationCount>
-         <structureLevel>0</structureLevel>
          <tileWidth>1</tileWidth>
          <tileHeight>1</tileHeight>
          <canRotate>true</canRotate>
@@ -2216,7 +2082,6 @@
          <structureRange>0</structureRange>
          <populationLevel>3</populationLevel>
          <populationCount>2000</populationCount>
-         <structureLevel>0</structureLevel>
          <tileWidth>1</tileWidth>
          <tileHeight>1</tileHeight>
          <canRotate>true</canRotate>
@@ -2261,7 +2126,6 @@
          <structureRange>0</structureRange>
          <populationLevel>3</populationLevel>
          <populationCount>2800</populationCount>
-         <structureLevel>0</structureLevel>
          <tileWidth>1</tileWidth>
          <tileHeight>1</tileHeight>
          <canRotate>true</canRotate>
@@ -2301,10 +2165,6 @@
             <entry lang="Deutsch">Es ist benötigt um deine Stadt zu erweitern und um produzierte Produkte abzuholen, die in seiner reichweite sind und mit dem es Sraßen verbunden ist.</entry>
             <entry lang="English">Is required to expand your city and it will collect produced goods in its area, if they are connect with roads.</entry>
          </Description>
-         <HoverOver>
-            <entry lang="Deutsch">Markthaus </entry>
-            <entry lang="English">Market Building</entry>
-         </HoverOver>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
          <hasHitbox>true</hasHitbox>
@@ -2312,7 +2172,6 @@
          <structureRange>20</structureRange>
          <populationLevel>0</populationLevel>
          <populationCount>0</populationCount>
-         <structureLevel>1</structureLevel>
          <tileWidth>4</tileWidth>
          <tileHeight>4</tileHeight>
          <canRotate>true</canRotate>
@@ -2362,7 +2221,6 @@
          <structureRange>20</structureRange>
          <populationLevel>1</populationLevel>
          <populationCount>0</populationCount>
-         <structureLevel>2</structureLevel>
          <tileWidth>4</tileWidth>
          <tileHeight>4</tileHeight>
          <canRotate>true</canRotate>
@@ -2415,7 +2273,6 @@
          <structureRange>18</structureRange>
          <populationLevel>2</populationLevel>
          <populationCount>0</populationCount>
-         <structureLevel>0</structureLevel>
          <tileWidth>4</tileWidth>
          <tileHeight>4</tileHeight>
          <canRotate>true</canRotate>
@@ -2470,7 +2327,6 @@
          <structureRange>18</structureRange>
          <populationLevel>3</populationLevel>
          <populationCount>0</populationCount>
-         <structureLevel>0</structureLevel>
          <tileWidth>4</tileWidth>
          <tileHeight>4</tileHeight>
          <canRotate>true</canRotate>
@@ -2521,10 +2377,6 @@
             <entry lang="Deutsch">Produziert Stein zum Bauen.</entry>
             <entry lang="English">Produces stone for buildings..</entry>
          </Description>
-         <HoverOver>
-            <entry lang="Deutsch">Steinbruch</entry>
-            <entry lang="English">Stone Quarry</entry>
-         </HoverOver>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
          <hasHitbox>true</hasHitbox>
@@ -2532,7 +2384,6 @@
          <structureRange>0</structureRange>
          <populationLevel>1</populationLevel>
          <populationCount>0</populationCount>
-         <structureLevel>0</structureLevel>
          <tileWidth>2</tileWidth>
          <tileHeight>3</tileHeight>
          <buildTileTypes length="2">
@@ -2579,10 +2430,6 @@
             <entry lang="Deutsch">Produziert Eisenerz.</entry>
             <entry lang="English">Produces iron ore.</entry>
          </Description>
-         <HoverOver>
-            <entry lang="Deutsch">Eisenbergwerk</entry>
-            <entry lang="English">Iron Mine</entry>
-         </HoverOver>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
          <hasHitbox>true</hasHitbox>
@@ -2590,7 +2437,6 @@
          <structureRange>0</structureRange>
          <populationLevel>1</populationLevel>
          <populationCount>750</populationCount>
-         <structureLevel>0</structureLevel>
          <tileWidth>2</tileWidth>
          <tileHeight>3</tileHeight>
          <canRotate>true</canRotate>
@@ -2633,10 +2479,6 @@
             <entry lang="Deutsch">Produziert grobes Salz.</entry>
             <entry lang="English">Mines grain salt.</entry>
          </Description>
-         <HoverOver>
-            <entry lang="Deutsch">Salzbergwerk</entry>
-            <entry lang="English">Saltmine</entry>
-         </HoverOver>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
          <hasHitbox>true</hasHitbox>
@@ -2644,7 +2486,6 @@
          <structureRange>0</structureRange>
          <populationLevel>1</populationLevel>
          <populationCount>750</populationCount>
-         <structureLevel>0</structureLevel>
          <tileWidth>2</tileWidth>
          <tileHeight>3</tileHeight>
          <canRotate>true</canRotate>
@@ -2697,7 +2538,6 @@
          <structureRange>0</structureRange>
          <populationLevel>1</populationLevel>
          <populationCount>850</populationCount>
-         <structureLevel>0</structureLevel>
          <tileWidth>3</tileWidth>
          <tileHeight>3</tileHeight>
          <buildTileTypes length="3">
@@ -2755,7 +2595,6 @@
          <structureRange>0</structureRange>
          <populationLevel>2</populationLevel>
          <populationCount>0</populationCount>
-         <structureLevel>0</structureLevel>
          <tileWidth>4</tileWidth>
          <tileHeight>4</tileHeight>
          <canRotate>true</canRotate>
@@ -2808,7 +2647,6 @@
          <structureRange>0</structureRange>
          <populationLevel>2</populationLevel>
          <populationCount>0</populationCount>
-         <structureLevel>0</structureLevel>
          <tileWidth>4</tileWidth>
          <tileHeight>4</tileHeight>
          <canRotate>true</canRotate>
@@ -2861,7 +2699,6 @@
          <structureRange>0</structureRange>
          <populationLevel>2</populationLevel>
          <populationCount>0</populationCount>
-         <structureLevel>0</structureLevel>
          <tileWidth>2</tileWidth>
          <tileHeight>3</tileHeight>
          <buildTileTypes length="2">
@@ -2918,7 +2755,6 @@
          <structureRange>0</structureRange>
          <populationLevel>3</populationLevel>
          <populationCount>0</populationCount>
-         <structureLevel>0</structureLevel>
          <tileWidth>2</tileWidth>
          <tileHeight>3</tileHeight>
          <buildTileTypes length="2">
@@ -2975,7 +2811,6 @@
          <structureRange>0</structureRange>
          <populationLevel>3</populationLevel>
          <populationCount>1600</populationCount>
-         <structureLevel>0</structureLevel>
          <tileWidth>2</tileWidth>
          <tileHeight>3</tileHeight>
          <buildTileTypes length="2">
@@ -3035,7 +2870,6 @@
          <structureRange>0</structureRange>
          <populationLevel>3</populationLevel>
          <populationCount>2500</populationCount>
-         <structureLevel>0</structureLevel>
          <tileWidth>2</tileWidth>
          <tileHeight>3</tileHeight>
          <canRotate>true</canRotate>
@@ -3090,10 +2924,6 @@
             <entry lang="Deutsch">Ort zum Treffen, Reden und Handeln.</entry>
             <entry lang="English">Place where people can meet, talk and trade goods.</entry>
          </Description>
-         <HoverOver>
-            <entry lang="Deutsch">Gemeinschaftsplatz</entry>
-            <entry lang="English">Marketplace</entry>
-         </HoverOver>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
          <hasHitbox>true</hasHitbox>
@@ -3101,7 +2931,6 @@
          <structureRange>17</structureRange>
          <populationLevel>0</populationLevel>
          <populationCount>0</populationCount>
-         <structureLevel>0</structureLevel>
          <tileWidth>4</tileWidth>
          <tileHeight>5</tileHeight>
          <canRotate>true</canRotate>
@@ -3133,10 +2962,6 @@
             <entry lang="Deutsch">Ein heiliger Platz.</entry>
             <entry lang="English">A holy place.</entry>
          </Description>
-         <HoverOver>
-            <entry lang="Deutsch">Kapelle</entry>
-            <entry lang="English">Chapel</entry>
-         </HoverOver>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
          <hasHitbox>true</hasHitbox>
@@ -3144,7 +2969,6 @@
          <structureRange>15</structureRange>
          <populationLevel>0</populationLevel>
          <populationCount>320</populationCount>
-         <structureLevel>0</structureLevel>
          <tileWidth>2</tileWidth>
          <tileHeight>4</tileHeight>
          <canRotate>true</canRotate>
@@ -3176,10 +3000,6 @@
             <entry lang="Deutsch">Platz wo Leuten treffen um zusammen trinken und Spiele zu spielen.</entry>
             <entry lang="English">Place where people meet to drink together and play some games.</entry>
          </Description>
-         <HoverOver>
-            <entry lang="Deutsch">Gasthaus</entry>
-            <entry lang="English">Inn</entry>
-         </HoverOver>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
          <hasHitbox>true</hasHitbox>
@@ -3187,7 +3007,6 @@
          <structureRange>9</structureRange>
          <populationLevel>0</populationLevel>
          <populationCount>400</populationCount>
-         <structureLevel>0</structureLevel>
          <tileWidth>2</tileWidth>
          <tileHeight>3</tileHeight>
          <canRotate>true</canRotate>
@@ -3219,10 +3038,6 @@
             <entry lang="Deutsch">Bietet der Stadtwache eine Stelle von der sie aus die Umgebung sicherer macht.</entry>
             <entry lang="English">Provides a central for the city guard which makes the surrounding area safer.</entry>
          </Description>
-         <HoverOver>
-            <entry lang="Deutsch">Stadtwache</entry>
-            <entry lang="English">City Guard</entry>
-         </HoverOver>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
          <hasHitbox>true</hasHitbox>
@@ -3230,7 +3045,6 @@
          <structureRange>20</structureRange>
          <populationLevel>1</populationLevel>
          <populationCount>1000</populationCount>
-         <structureLevel>0</structureLevel>
          <tileWidth>4</tileWidth>
          <tileHeight>5</tileHeight>
          <canRotate>true</canRotate>
@@ -3272,7 +3086,6 @@
          <structureRange>20</structureRange>
          <populationLevel>1</populationLevel>
          <populationCount>1500</populationCount>
-         <structureLevel>0</structureLevel>
          <tileWidth>3</tileWidth>
          <tileHeight>4</tileHeight>
          <canRotate>true</canRotate>
@@ -3307,10 +3120,6 @@
             <entry lang="Deutsch">Bietet Bildung für Kinder.</entry>
             <entry lang="English">Provides education for children.</entry>
          </Description>
-         <HoverOver>
-            <entry lang="Deutsch">Schule</entry>
-            <entry lang="English">School</entry>
-         </HoverOver>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
          <hasHitbox>true</hasHitbox>
@@ -3318,7 +3127,6 @@
          <structureRange>32</structureRange>
          <populationLevel>1</populationLevel>
          <populationCount>1750</populationCount>
-         <structureLevel>0</structureLevel>
          <tileWidth>4</tileWidth>
          <tileHeight>4</tileHeight>
          <canRotate>true</canRotate>
@@ -3357,7 +3165,6 @@
          <structureRange>18</structureRange>
          <populationLevel>2</populationLevel>
          <populationCount>1000</populationCount>
-         <structureLevel>0</structureLevel>
          <tileWidth>3</tileWidth>
          <tileHeight>5</tileHeight>
          <canRotate>true</canRotate>
@@ -3405,7 +3212,6 @@
          <structureRange>17</structureRange>
          <populationLevel>2</populationLevel>
          <populationCount>1350</populationCount>
-         <structureLevel>0</structureLevel>
          <tileWidth>3</tileWidth>
          <tileHeight>3</tileHeight>
          <canRotate>true</canRotate>
@@ -3443,10 +3249,6 @@
             <entry lang="Deutsch">Bietet öffentliche Schwimmmöglichkeiten.</entry>
             <entry lang="English">Provides public swimming spaces.</entry>
          </Description>
-         <HoverOver>
-            <entry lang="Deutsch">Badehaus</entry>
-            <entry lang="English">Bath House</entry>
-         </HoverOver>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
          <hasHitbox>true</hasHitbox>
@@ -3454,7 +3256,6 @@
          <structureRange>30</structureRange>
          <populationLevel>2</populationLevel>
          <populationCount>1500</populationCount>
-         <structureLevel>0</structureLevel>
          <tileWidth>6</tileWidth>
          <tileHeight>6</tileHeight>
          <canRotate>true</canRotate>
@@ -3486,10 +3287,6 @@
             <entry lang="Deutsch">Platz wo Kämpfe und andere Bespaßungen stattfinden können.</entry>
             <entry lang="English">Place where fights and other amusements can be found.</entry>
          </Description>
-         <HoverOver>
-            <entry lang="Deutsch">Arena</entry>
-            <entry lang="English">Arena</entry>
-         </HoverOver>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
          <hasHitbox>false</hasHitbox>
@@ -3497,7 +3294,6 @@
          <structureRange>22</structureRange>
          <populationLevel>2</populationLevel>
          <populationCount>1500</populationCount>
-         <structureLevel>0</structureLevel>
          <tileWidth>5</tileWidth>
          <tileHeight>6</tileHeight>
          <canRotate>true</canRotate>
@@ -3542,7 +3338,6 @@
          <structureRange>15</structureRange>
          <populationLevel>2</populationLevel>
          <populationCount>2200</populationCount>
-         <structureLevel>0</structureLevel>
          <tileWidth>3</tileWidth>
          <tileHeight>2</tileHeight>
          <canRotate>true</canRotate>
@@ -3587,7 +3382,6 @@
          <structureRange>14</structureRange>
          <populationLevel>3</populationLevel>
          <populationCount>500</populationCount>
-         <structureLevel>0</structureLevel>
          <tileWidth>4</tileWidth>
          <tileHeight>3</tileHeight>
          <canRotate>true</canRotate>
@@ -3635,7 +3429,6 @@
          <structureRange>24</structureRange>
          <populationLevel>3</populationLevel>
          <populationCount>1200</populationCount>
-         <structureLevel>0</structureLevel>
          <tileWidth>5</tileWidth>
          <tileHeight>4</tileHeight>
          <canRotate>true</canRotate>
@@ -3686,7 +3479,6 @@
          <structureRange>18</structureRange>
          <populationLevel>3</populationLevel>
          <populationCount>1700</populationCount>
-         <structureLevel>0</structureLevel>
          <tileWidth>3</tileWidth>
          <tileHeight>2</tileHeight>
          <canRotate>true</canRotate>
@@ -3734,7 +3526,6 @@
          <structureRange>20</structureRange>
          <populationLevel>3</populationLevel>
          <populationCount>2400</populationCount>
-         <structureLevel>0</structureLevel>
          <tileWidth>2</tileWidth>
          <tileHeight>2</tileHeight>
          <canRotate>true</canRotate>
@@ -3777,10 +3568,6 @@
             <entry lang="Deutsch">Fischt Fisch zum essen.</entry>
             <entry lang="English">Catches Fish to eat.</entry>
          </Description>
-         <HoverOver>
-            <entry lang="Deutsch">Fischer</entry>
-            <entry lang="English">Fisherman</entry>
-         </HoverOver>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
          <hasHitbox>true</hasHitbox>
@@ -3788,7 +3575,6 @@
          <structureRange>0</structureRange>
          <populationLevel>0</populationLevel>
          <populationCount>0</populationCount>
-         <structureLevel>0</structureLevel>
          <tileWidth>3</tileWidth>
          <tileHeight>4</tileHeight>
          <buildTileTypes length="3">
@@ -3837,10 +3623,6 @@
             <entry lang="Deutsch">Produziert Schnaps out of either Kartoffeln, Zucker oder Früchten.</entry>
             <entry lang="English">Produces Liquor out of either Sugar, Potatoes or Fruit.</entry>
          </Description>
-         <HoverOver>
-            <entry lang="Deutsch">Brennerei</entry>
-            <entry lang="English">Distellery</entry>
-         </HoverOver>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
          <hasHitbox>true</hasHitbox>
@@ -3848,7 +3630,6 @@
          <structureRange>10</structureRange>
          <populationLevel>0</populationLevel>
          <populationCount>200</populationCount>
-         <structureLevel>0</structureLevel>
          <tileWidth>3</tileWidth>
          <tileHeight>3</tileHeight>
          <canRotate>true</canRotate>
@@ -3903,10 +3684,6 @@
             <entry lang="Deutsch">Produziert Hanfkleidung aus Hanfgewebe.</entry>
             <entry lang="English">Produces hempclothes out of hemp fabric.</entry>
          </Description>
-         <HoverOver>
-            <entry lang="Deutsch">Hanfschneider</entry>
-            <entry lang="English">Hemp Tailor</entry>
-         </HoverOver>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
          <hasHitbox>true</hasHitbox>
@@ -3914,7 +3691,6 @@
          <structureRange>15</structureRange>
          <populationLevel>0</populationLevel>
          <populationCount>320</populationCount>
-         <structureLevel>0</structureLevel>
          <tileWidth>2</tileWidth>
          <tileHeight>3</tileHeight>
          <canRotate>true</canRotate>
@@ -3963,10 +3739,6 @@
             <entry lang="Deutsch">Benutzt rohen Hanf um gewebten Stoff herzustellen.</entry>
             <entry lang="English">Uses raw hemp to produce weaved hemp fabric.</entry>
          </Description>
-         <HoverOver>
-            <entry lang="Deutsch">Hanfweberei</entry>
-            <entry lang="English">Hemp Weaver</entry>
-         </HoverOver>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
          <hasHitbox>true</hasHitbox>
@@ -3974,7 +3746,6 @@
          <structureRange>15</structureRange>
          <populationLevel>0</populationLevel>
          <populationCount>320</populationCount>
-         <structureLevel>0</structureLevel>
          <tileWidth>2</tileWidth>
          <tileHeight>2</tileHeight>
          <canRotate>true</canRotate>
@@ -3999,7 +3770,7 @@
          <contactRange>0.0</contactRange>
          <forMarketplace>true</forMarketplace>
          <maxNumberOfWorker>1</maxNumberOfWorker>
-         <produceTime>20.0</produceTime>
+         <produceTime>10.0</produceTime>
          <maxOutputStorage>5</maxOutputStorage>
          <efficiency>1.0</efficiency>
          <output length="1">
@@ -4009,7 +3780,7 @@
          </output>
          <intake length="1">
             <Item ID="hemp">
-               <count>1</count>
+               <count>2</count>
             </Item>
          </intake>
          <inputTyp>AND</inputTyp>
@@ -4023,10 +3794,6 @@
             <entry lang="Deutsch">Produziert aus Mehl Brot.</entry>
             <entry lang="English">Consums flour to make bread.</entry>
          </Description>
-         <HoverOver>
-            <entry lang="Deutsch">Bäckerei</entry>
-            <entry lang="English">Bakery</entry>
-         </HoverOver>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
          <hasHitbox>true</hasHitbox>
@@ -4034,7 +3801,6 @@
          <structureRange>0</structureRange>
          <populationLevel>1</populationLevel>
          <populationCount>0</populationCount>
-         <structureLevel>0</structureLevel>
          <tileWidth>3</tileWidth>
          <tileHeight>2</tileHeight>
          <canRotate>true</canRotate>
@@ -4086,10 +3852,6 @@
             <entry lang="Deutsch">Verbraucht Getreide um Mehl zu erstellen.</entry>
             <entry lang="English">Consums wheat to produce flour.</entry>
          </Description>
-         <HoverOver>
-            <entry lang="Deutsch">Getreidemühle</entry>
-            <entry lang="English">Flour Mill</entry>
-         </HoverOver>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
          <hasHitbox>true</hasHitbox>
@@ -4097,7 +3859,6 @@
          <structureRange>8</structureRange>
          <populationLevel>1</populationLevel>
          <populationCount>0</populationCount>
-         <structureLevel>0</structureLevel>
          <tileWidth>3</tileWidth>
          <tileHeight>3</tileHeight>
          <canRotate>true</canRotate>
@@ -4149,10 +3910,6 @@
             <entry lang="Deutsch">Benötigt Kohle und Eisenerz um Eisenrohling zuerstellen.</entry>
             <entry lang="English">Uses coal and iron ore to produce iron ingots.</entry>
          </Description>
-         <HoverOver>
-            <entry lang="Deutsch">Eisenerzschmelze</entry>
-            <entry lang="English">Iron Smelter</entry>
-         </HoverOver>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
          <hasHitbox>true</hasHitbox>
@@ -4160,7 +3917,6 @@
          <structureRange>7</structureRange>
          <populationLevel>1</populationLevel>
          <populationCount>750</populationCount>
-         <structureLevel>0</structureLevel>
          <tileWidth>3</tileWidth>
          <tileHeight>3</tileHeight>
          <canRotate>true</canRotate>
@@ -4215,10 +3971,6 @@
             <entry lang="Deutsch">Mahlt grobes Salz zu Salz.</entry>
             <entry lang="English">Millt grain salt to produce salt.</entry>
          </Description>
-         <HoverOver>
-            <entry lang="Deutsch">Salzmühle</entry>
-            <entry lang="English">Salt Mill</entry>
-         </HoverOver>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
          <hasHitbox>true</hasHitbox>
@@ -4226,7 +3978,6 @@
          <structureRange>9</structureRange>
          <populationLevel>1</populationLevel>
          <populationCount>750</populationCount>
-         <structureLevel>0</structureLevel>
          <tileWidth>3</tileWidth>
          <tileHeight>3</tileHeight>
          <canRotate>true</canRotate>
@@ -4278,10 +4029,6 @@
             <entry lang="Deutsch">Produzirt aus Eisenerzrohlingen Werkzeuge.</entry>
             <entry lang="English">Uses iron ingots to produce tools.</entry>
          </Description>
-         <HoverOver>
-            <entry lang="Deutsch">Werkzeugemacher</entry>
-            <entry lang="English">Toolmaker&apos;s Workshop</entry>
-         </HoverOver>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
          <hasHitbox>true</hasHitbox>
@@ -4289,7 +4036,6 @@
          <structureRange>5</structureRange>
          <populationLevel>1</populationLevel>
          <populationCount>750</populationCount>
-         <structureLevel>0</structureLevel>
          <tileWidth>2</tileWidth>
          <tileHeight>3</tileHeight>
          <canRotate>true</canRotate>
@@ -4341,10 +4087,6 @@
             <entry lang="Deutsch">Braucht Milch um Käse zu erstellen.</entry>
             <entry lang="English">Uses Milk to produce Cheese.</entry>
          </Description>
-         <HoverOver>
-            <entry lang="Deutsch">Käserei</entry>
-            <entry lang="English">Cheese Dairy</entry>
-         </HoverOver>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
          <hasHitbox>true</hasHitbox>
@@ -4352,7 +4094,6 @@
          <structureRange>9</structureRange>
          <populationLevel>1</populationLevel>
          <populationCount>750</populationCount>
-         <structureLevel>0</structureLevel>
          <tileWidth>3</tileWidth>
          <tileHeight>4</tileHeight>
          <canRotate>true</canRotate>
@@ -4411,7 +4152,6 @@
          <structureRange>0</structureRange>
          <populationLevel>1</populationLevel>
          <populationCount>850</populationCount>
-         <structureLevel>0</structureLevel>
          <tileWidth>4</tileWidth>
          <tileHeight>2</tileHeight>
          <canRotate>true</canRotate>
@@ -4474,7 +4214,6 @@
          <structureRange>0</structureRange>
          <populationLevel>1</populationLevel>
          <populationCount>850</populationCount>
-         <structureLevel>0</structureLevel>
          <tileWidth>3</tileWidth>
          <tileHeight>2</tileHeight>
          <canRotate>true</canRotate>
@@ -4534,7 +4273,6 @@
          <structureRange>6</structureRange>
          <populationLevel>1</populationLevel>
          <populationCount>1000</populationCount>
-         <structureLevel>0</structureLevel>
          <tileWidth>2</tileWidth>
          <tileHeight>3</tileHeight>
          <canRotate>true</canRotate>
@@ -4597,7 +4335,6 @@
          <structureRange>6</structureRange>
          <populationLevel>1</populationLevel>
          <populationCount>1000</populationCount>
-         <structureLevel>0</structureLevel>
          <tileWidth>2</tileWidth>
          <tileHeight>3</tileHeight>
          <canRotate>true</canRotate>
@@ -4660,7 +4397,6 @@
          <structureRange>6</structureRange>
          <populationLevel>1</populationLevel>
          <populationCount>1000</populationCount>
-         <structureLevel>0</structureLevel>
          <tileWidth>2</tileWidth>
          <tileHeight>2</tileHeight>
          <canRotate>true</canRotate>
@@ -4720,7 +4456,6 @@
          <structureRange>0</structureRange>
          <populationLevel>1</populationLevel>
          <populationCount>1000</populationCount>
-         <structureLevel>0</structureLevel>
          <tileWidth>3</tileWidth>
          <tileHeight>3</tileHeight>
          <canRotate>true</canRotate>
@@ -4780,7 +4515,6 @@
          <structureRange>15</structureRange>
          <populationLevel>1</populationLevel>
          <populationCount>1500</populationCount>
-         <structureLevel>0</structureLevel>
          <tileWidth>3</tileWidth>
          <tileHeight>3</tileHeight>
          <canRotate>true</canRotate>
@@ -4829,10 +4563,6 @@
             <entry lang="Deutsch">Schlachtet Schweine um Schweinefleish und Leder zu produzieren.</entry>
             <entry lang="English">Butchers pigs to produce pig-meat and leather.</entry>
          </Description>
-         <HoverOver>
-            <entry lang="Deutsch">Schweinemetzger</entry>
-            <entry lang="English">Pig Butcher</entry>
-         </HoverOver>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
          <hasHitbox>true</hasHitbox>
@@ -4840,7 +4570,6 @@
          <structureRange>9</structureRange>
          <populationLevel>1</populationLevel>
          <populationCount>1500</populationCount>
-         <structureLevel>0</structureLevel>
          <tileWidth>3</tileWidth>
          <tileHeight>4</tileHeight>
          <canRotate>true</canRotate>
@@ -4902,7 +4631,6 @@
          <structureRange>0</structureRange>
          <populationLevel>2</populationLevel>
          <populationCount>0</populationCount>
-         <structureLevel>0</structureLevel>
          <tileWidth>2</tileWidth>
          <tileHeight>2</tileHeight>
          <canRotate>true</canRotate>
@@ -4965,7 +4693,6 @@
          <structureRange>0</structureRange>
          <populationLevel>2</populationLevel>
          <populationCount>0</populationCount>
-         <structureLevel>0</structureLevel>
          <tileWidth>4</tileWidth>
          <tileHeight>5</tileHeight>
          <canRotate>true</canRotate>
@@ -5031,7 +4758,6 @@
          <structureRange>8</structureRange>
          <populationLevel>2</populationLevel>
          <populationCount>750</populationCount>
-         <structureLevel>0</structureLevel>
          <tileWidth>3</tileWidth>
          <tileHeight>2</tileHeight>
          <canRotate>true</canRotate>
@@ -5094,7 +4820,6 @@
          <structureRange>6</structureRange>
          <populationLevel>2</populationLevel>
          <populationCount>850</populationCount>
-         <structureLevel>0</structureLevel>
          <tileWidth>2</tileWidth>
          <tileHeight>2</tileHeight>
          <canRotate>true</canRotate>
@@ -5163,7 +4888,6 @@
          <structureRange>5</structureRange>
          <populationLevel>2</populationLevel>
          <populationCount>1100</populationCount>
-         <structureLevel>0</structureLevel>
          <tileWidth>2</tileWidth>
          <tileHeight>2</tileHeight>
          <canRotate>true</canRotate>
@@ -5226,7 +4950,6 @@
          <structureRange>8</structureRange>
          <populationLevel>2</populationLevel>
          <populationCount>1400</populationCount>
-         <structureLevel>0</structureLevel>
          <tileWidth>3</tileWidth>
          <tileHeight>3</tileHeight>
          <canRotate>true</canRotate>
@@ -5289,7 +5012,6 @@
          <structureRange>9</structureRange>
          <populationLevel>2</populationLevel>
          <populationCount>1400</populationCount>
-         <structureLevel>0</structureLevel>
          <tileWidth>2</tileWidth>
          <tileHeight>2</tileHeight>
          <canRotate>true</canRotate>
@@ -5352,7 +5074,6 @@
          <structureRange>0</structureRange>
          <populationLevel>2</populationLevel>
          <populationCount>1500</populationCount>
-         <structureLevel>0</structureLevel>
          <tileWidth>4</tileWidth>
          <tileHeight>4</tileHeight>
          <canRotate>true</canRotate>
@@ -5418,7 +5139,6 @@
          <structureRange>8</structureRange>
          <populationLevel>2</populationLevel>
          <populationCount>1600</populationCount>
-         <structureLevel>0</structureLevel>
          <tileWidth>2</tileWidth>
          <tileHeight>2</tileHeight>
          <canRotate>true</canRotate>
@@ -5484,7 +5204,6 @@
          <structureRange>0</structureRange>
          <populationLevel>2</populationLevel>
          <populationCount>1600</populationCount>
-         <structureLevel>0</structureLevel>
          <tileWidth>2</tileWidth>
          <tileHeight>2</tileHeight>
          <canRotate>true</canRotate>
@@ -5550,7 +5269,6 @@
          <structureRange>10</structureRange>
          <populationLevel>2</populationLevel>
          <populationCount>1900</populationCount>
-         <structureLevel>0</structureLevel>
          <tileWidth>1</tileWidth>
          <tileHeight>3</tileHeight>
          <buildTileTypes length="1">
@@ -5613,7 +5331,6 @@
          <structureRange>0</structureRange>
          <populationLevel>2</populationLevel>
          <populationCount>1900</populationCount>
-         <structureLevel>0</structureLevel>
          <tileWidth>3</tileWidth>
          <tileHeight>2</tileHeight>
          <canRotate>true</canRotate>
@@ -5682,7 +5399,6 @@
          <structureRange>0</structureRange>
          <populationLevel>2</populationLevel>
          <populationCount>1900</populationCount>
-         <structureLevel>0</structureLevel>
          <tileWidth>2</tileWidth>
          <tileHeight>2</tileHeight>
          <canRotate>true</canRotate>
@@ -5745,7 +5461,6 @@
          <structureRange>9</structureRange>
          <populationLevel>3</populationLevel>
          <populationCount>0</populationCount>
-         <structureLevel>0</structureLevel>
          <tileWidth>3</tileWidth>
          <tileHeight>3</tileHeight>
          <canRotate>true</canRotate>
@@ -5814,7 +5529,6 @@
          <structureRange>0</structureRange>
          <populationLevel>3</populationLevel>
          <populationCount>0</populationCount>
-         <structureLevel>0</structureLevel>
          <tileWidth>2</tileWidth>
          <tileHeight>3</tileHeight>
          <buildTileTypes length="2">
@@ -5878,7 +5592,6 @@
          <structureRange>10</structureRange>
          <populationLevel>3</populationLevel>
          <populationCount>0</populationCount>
-         <structureLevel>0</structureLevel>
          <tileWidth>3</tileWidth>
          <tileHeight>3</tileHeight>
          <canRotate>true</canRotate>
@@ -5947,7 +5660,6 @@
          <structureRange>0</structureRange>
          <populationLevel>3</populationLevel>
          <populationCount>500</populationCount>
-         <structureLevel>0</structureLevel>
          <tileWidth>3</tileWidth>
          <tileHeight>4</tileHeight>
          <canRotate>true</canRotate>
@@ -6016,7 +5728,6 @@
          <structureRange>12</structureRange>
          <populationLevel>3</populationLevel>
          <populationCount>1600</populationCount>
-         <structureLevel>0</structureLevel>
          <tileWidth>2</tileWidth>
          <tileHeight>2</tileHeight>
          <canRotate>true</canRotate>
@@ -6091,7 +5802,6 @@
          <structureRange>0</structureRange>
          <populationLevel>3</populationLevel>
          <populationCount>1600</populationCount>
-         <structureLevel>0</structureLevel>
          <tileWidth>3</tileWidth>
          <tileHeight>4</tileHeight>
          <canRotate>true</canRotate>
@@ -6160,7 +5870,6 @@
          <structureRange>0</structureRange>
          <populationLevel>3</populationLevel>
          <populationCount>2000</populationCount>
-         <structureLevel>0</structureLevel>
          <tileWidth>2</tileWidth>
          <tileHeight>3</tileHeight>
          <canRotate>true</canRotate>
@@ -6229,7 +5938,6 @@
          <structureRange>0</structureRange>
          <populationLevel>3</populationLevel>
          <populationCount>2000</populationCount>
-         <structureLevel>0</structureLevel>
          <tileWidth>2</tileWidth>
          <tileHeight>3</tileHeight>
          <canRotate>true</canRotate>
@@ -6295,7 +6003,6 @@
          <structureRange>0</structureRange>
          <populationLevel>3</populationLevel>
          <populationCount>2500</populationCount>
-         <structureLevel>0</structureLevel>
          <tileWidth>2</tileWidth>
          <tileHeight>2</tileHeight>
          <canRotate>true</canRotate>
@@ -6361,7 +6068,6 @@
          <structureRange>0</structureRange>
          <populationLevel>3</populationLevel>
          <populationCount>2500</populationCount>
-         <structureLevel>0</structureLevel>
          <tileWidth>2</tileWidth>
          <tileHeight>2</tileHeight>
          <canRotate>true</canRotate>
@@ -6427,7 +6133,6 @@
          <structureRange>10</structureRange>
          <populationLevel>3</populationLevel>
          <populationCount>2800</populationCount>
-         <structureLevel>0</structureLevel>
          <tileWidth>2</tileWidth>
          <tileHeight>3</tileHeight>
          <canRotate>true</canRotate>
@@ -6499,7 +6204,6 @@
          <structureRange>11</structureRange>
          <populationLevel>3</populationLevel>
          <populationCount>3100</populationCount>
-         <structureLevel>0</structureLevel>
          <tileWidth>2</tileWidth>
          <tileHeight>3</tileHeight>
          <canRotate>true</canRotate>
@@ -6565,7 +6269,6 @@
          <structureRange>10</structureRange>
          <populationLevel>3</populationLevel>
          <populationCount>3500</populationCount>
-         <structureLevel>0</structureLevel>
          <tileWidth>3</tileWidth>
          <tileHeight>2</tileHeight>
          <canRotate>true</canRotate>
@@ -6629,10 +6332,6 @@
             <entry lang="Deutsch">Das erste Gebäude einer Stadt und wird dazu genutzt mit Schiffen zu handeln.</entry>
             <entry lang="English">First structure of any City and it is used to trade with Ships.</entry>
          </Description>
-         <HoverOver>
-            <entry lang="Deutsch">Kontor</entry>
-            <entry lang="English">Warehouse</entry>
-         </HoverOver>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
          <hasHitbox>true</hasHitbox>
@@ -6640,7 +6339,6 @@
          <structureRange>20</structureRange>
          <populationLevel>0</populationLevel>
          <populationCount>0</populationCount>
-         <structureLevel>0</structureLevel>
          <tileWidth>4</tileWidth>
          <tileHeight>4</tileHeight>
          <buildTileTypes length="4">
@@ -6671,7 +6369,7 @@
             </Item>
          </buildingItems>
          <spriteBaseName>warehouse</spriteBaseName>
-         <contactRange>12</contactRange>
+         <contactRange>12.0</contactRange>
          <forMarketplace>true</forMarketplace>
          <maxNumberOfWorker>1</maxNumberOfWorker>
          <produceTime>0.0</produceTime>
@@ -6697,7 +6395,6 @@
          <structureRange>20</structureRange>
          <populationLevel>1</populationLevel>
          <populationCount>0</populationCount>
-         <structureLevel>0</structureLevel>
          <tileWidth>4</tileWidth>
          <tileHeight>4</tileHeight>
          <buildTileTypes length="4">
@@ -6731,7 +6428,7 @@
             </Item>
          </buildingItems>
          <spriteBaseName>warehouse2</spriteBaseName>
-         <contactRange>12</contactRange>
+         <contactRange>12.0</contactRange>
          <forMarketplace>true</forMarketplace>
          <maxNumberOfWorker>2</maxNumberOfWorker>
          <produceTime>0.0</produceTime>
@@ -6757,7 +6454,6 @@
          <structureRange>20</structureRange>
          <populationLevel>2</populationLevel>
          <populationCount>0</populationCount>
-         <structureLevel>0</structureLevel>
          <tileWidth>4</tileWidth>
          <tileHeight>4</tileHeight>
          <buildTileTypes length="4">
@@ -6794,7 +6490,7 @@
             </Item>
          </buildingItems>
          <spriteBaseName>warehouse3</spriteBaseName>
-         <contactRange>12</contactRange>
+         <contactRange>12.0</contactRange>
          <forMarketplace>true</forMarketplace>
          <maxNumberOfWorker>3</maxNumberOfWorker>
          <produceTime>0.0</produceTime>
@@ -6820,7 +6516,6 @@
          <structureRange>20</structureRange>
          <populationLevel>3</populationLevel>
          <populationCount>0</populationCount>
-         <structureLevel>0</structureLevel>
          <tileWidth>4</tileWidth>
          <tileHeight>4</tileHeight>
          <buildTileTypes length="4">
@@ -6857,7 +6552,7 @@
             </Item>
          </buildingItems>
          <spriteBaseName>warehouse4</spriteBaseName>
-         <contactRange>12</contactRange>
+         <contactRange>12.0</contactRange>
          <forMarketplace>true</forMarketplace>
          <maxNumberOfWorker>4</maxNumberOfWorker>
          <produceTime>0.0</produceTime>
@@ -6878,10 +6573,6 @@
             <entry lang="Deutsch">Bauern wohnen hier.</entry>
             <entry lang="English">Peasant lives here.</entry>
          </Description>
-         <HoverOver>
-            <entry lang="Deutsch">Bauern</entry>
-            <entry lang="English">Peasant </entry>
-         </HoverOver>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
          <hasHitbox>true</hasHitbox>
@@ -6889,7 +6580,6 @@
          <structureRange>0</structureRange>
          <populationLevel>0</populationLevel>
          <populationCount>0</populationCount>
-         <structureLevel>0</structureLevel>
          <tileWidth>2</tileWidth>
          <tileHeight>2</tileHeight>
          <canRotate>true</canRotate>
@@ -6924,10 +6614,6 @@
             <entry lang="Deutsch">Bürger leben hier.</entry>
             <entry lang="English">Citizen lives here.</entry>
          </Description>
-         <HoverOver>
-            <entry lang="Deutsch">Bürger </entry>
-            <entry lang="English">Citizen </entry>
-         </HoverOver>
          <canBeBuild>false</canBeBuild>
          <isWalkable>false</isWalkable>
          <hasHitbox>true</hasHitbox>
@@ -6935,7 +6621,6 @@
          <structureRange>0</structureRange>
          <populationLevel>1</populationLevel>
          <populationCount>0</populationCount>
-         <structureLevel>0</structureLevel>
          <tileWidth>2</tileWidth>
          <tileHeight>2</tileHeight>
          <canRotate>true</canRotate>
@@ -6973,10 +6658,6 @@
             <entry lang="Deutsch">Patrizier leben hier.</entry>
             <entry lang="English">Patrician lives here.</entry>
          </Description>
-         <HoverOver>
-            <entry lang="Deutsch">Patrizier </entry>
-            <entry lang="English">Patrician </entry>
-         </HoverOver>
          <canBeBuild>false</canBeBuild>
          <isWalkable>false</isWalkable>
          <hasHitbox>true</hasHitbox>
@@ -6984,7 +6665,6 @@
          <structureRange>0</structureRange>
          <populationLevel>2</populationLevel>
          <populationCount>0</populationCount>
-         <structureLevel>0</structureLevel>
          <tileWidth>2</tileWidth>
          <tileHeight>2</tileHeight>
          <canRotate>true</canRotate>
@@ -7025,10 +6705,6 @@
             <entry lang="Deutsch">Adlige leben hier.</entry>
             <entry lang="English">Nobleman lives here.</entry>
          </Description>
-         <HoverOver>
-            <entry lang="Deutsch">Adlige </entry>
-            <entry lang="English">Nobleman </entry>
-         </HoverOver>
          <canBeBuild>false</canBeBuild>
          <isWalkable>false</isWalkable>
          <hasHitbox>true</hasHitbox>
@@ -7036,7 +6712,6 @@
          <structureRange>0</structureRange>
          <populationLevel>3</populationLevel>
          <populationCount>0</populationCount>
-         <structureLevel>0</structureLevel>
          <tileWidth>2</tileWidth>
          <tileHeight>2</tileHeight>
          <canRotate>true</canRotate>
@@ -7079,10 +6754,6 @@
             <entry lang="Deutsch">Baut Schiffe.</entry>
             <entry lang="English">Builds ships.</entry>
          </Description>
-         <HoverOver>
-            <entry lang="Deutsch">Werft</entry>
-            <entry lang="English">Shipyard</entry>
-         </HoverOver>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
          <hasHitbox>true</hasHitbox>
@@ -7090,7 +6761,6 @@
          <structureRange>0</structureRange>
          <populationLevel>0</populationLevel>
          <populationCount>0</populationCount>
-         <structureLevel>0</structureLevel>
          <tileWidth>3</tileWidth>
          <tileHeight>4</tileHeight>
          <buildTileTypes length="3">
@@ -7139,10 +6809,6 @@
             <entry lang="Deutsch">Kann Einheiten ausbilden.</entry>
             <entry lang="English">Can train Units.</entry>
          </Description>
-         <HoverOver>
-            <entry lang="Deutsch">Kastell</entry>
-            <entry lang="English">Fort</entry>
-         </HoverOver>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
          <hasHitbox>true</hasHitbox>
@@ -7150,7 +6816,6 @@
          <structureRange>0</structureRange>
          <populationLevel>0</populationLevel>
          <populationCount>0</populationCount>
-         <structureLevel>0</structureLevel>
          <tileWidth>3</tileWidth>
          <tileHeight>3</tileHeight>
          <canRotate>true</canRotate>
@@ -7193,10 +6858,6 @@
             <entry lang="Deutsch">Arbeiter können damit langsam Feuer löschen.</entry>
             <entry lang="English">Worker can use it to slowly put out fires.</entry>
          </Description>
-         <HoverOver>
-            <entry lang="Deutsch">Brunnen</entry>
-            <entry lang="English">Well</entry>
-         </HoverOver>
          <canBeBuild>true</canBeBuild>
          <isWalkable>false</isWalkable>
          <hasHitbox>false</hasHitbox>
@@ -7204,7 +6865,6 @@
          <structureRange>8</structureRange>
          <populationLevel>0</populationLevel>
          <populationCount>0</populationCount>
-         <structureLevel>0</structureLevel>
          <tileWidth>1</tileWidth>
          <tileHeight>1</tileHeight>
          <canRotate>true</canRotate>
@@ -7251,7 +6911,6 @@
          <structureRange>24</structureRange>
          <populationLevel>1</populationLevel>
          <populationCount>1500</populationCount>
-         <structureLevel>0</structureLevel>
          <tileWidth>2</tileWidth>
          <tileHeight>4</tileHeight>
          <canRotate>true</canRotate>
@@ -7300,7 +6959,6 @@
          <structureRange>9</structureRange>
          <populationLevel>2</populationLevel>
          <populationCount>500</populationCount>
-         <structureLevel>0</structureLevel>
          <tileWidth>2</tileWidth>
          <tileHeight>3</tileHeight>
          <canRotate>true</canRotate>

@@ -6,7 +6,7 @@ using UnityEngine;
 // ReSharper disable All
 
 namespace Andja.Model {
-    public interface IIGEventable {
+    public interface IGEventable {
         IReadOnlyList<Effect> Effects { get; }
         TargetGroup TargetGroups { get; }
         bool HasNegativeEffect { get; }
@@ -23,12 +23,12 @@ namespace Andja.Model {
         bool HasEffect(Effect effect);
         bool HasAnyEffect(params Effect[] effects);
         bool RemoveEffect(Effect effect, bool all = false);
-        void RegisterOnEffectChangedCallback(Action<IGEventable, Effect, bool> cb);
-        void UnregisterOnEffectChangedCallback(Action<IGEventable, Effect, bool> cb);
+        void RegisterOnEffectChangedCallback(Action<GEventable, Effect, bool> cb);
+        void UnregisterOnEffectChangedCallback(Action<GEventable, Effect, bool> cb);
     }
 
     [JsonObject(MemberSerialization.OptIn)]
-    public abstract class IGEventable : IIGEventable {
+    public abstract class GEventable : IGEventable {
 
         /// <summary>
         /// For integer and float modifier
@@ -56,7 +56,7 @@ namespace Andja.Model {
         /// <summary>
         /// Target, Effect, added=true removed=false
         /// </summary>
-        protected Action<IGEventable, Effect, bool> cbEffectChange;
+        protected Action<GEventable, Effect, bool> cbEffectChange;
 
         protected Action<GameEvent> cbEventCreated;
         protected Action<GameEvent> cbEventEnded;
@@ -94,7 +94,7 @@ namespace Andja.Model {
             if (this is Structure str) {
                 targets.Add(Target.AllStructure);
                 if (str.CanTakeDamage)
-                    targets.Add(Target.DamagableStructure);
+                    targets.Add(Target.DamageableStructure);
                 if (str.CanStartBurning)
                     targets.Add(Target.BurnableStructure);
             }
@@ -290,11 +290,11 @@ namespace Andja.Model {
             Debug.LogError("Not implemented Remove Special Effect " + effect.ID + " for this object: " + this.ToString());
         }
 
-        public void RegisterOnEffectChangedCallback(Action<IGEventable, Effect, bool> cb) {
+        public void RegisterOnEffectChangedCallback(Action<GEventable, Effect, bool> cb) {
             cbEffectChange += cb;
         }
 
-        public void UnregisterOnEffectChangedCallback(Action<IGEventable, Effect, bool> cb) {
+        public void UnregisterOnEffectChangedCallback(Action<GEventable, Effect, bool> cb) {
             cbEffectChange -= cb;
         }
     }

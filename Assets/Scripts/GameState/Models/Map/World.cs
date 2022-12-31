@@ -9,7 +9,7 @@ using UnityEngine;
 namespace Andja.Model {
 
     [JsonObject(MemberSerialization.OptIn)]
-    public class World : IGEventable, IWorld {
+    public class World : GEventable, IWorld {
         private static IWorld _current { get; set; }
 
         public static IWorld Current {
@@ -158,14 +158,14 @@ namespace Andja.Model {
             }
         }
 
-        public IEnumerable<IGEventable> GetShipUnits() {
-            List<IGEventable> list = new List<IGEventable>(Units);
+        public IEnumerable<GEventable> GetShipUnits() {
+            List<GEventable> list = new List<GEventable>(Units);
             list.RemoveAll(x => ((Unit)x).IsShip);
             return list;
         }
 
-        public IEnumerable<IGEventable> GetLandUnits() {
-            List<IGEventable> list = new List<IGEventable>(Units);
+        public IEnumerable<GEventable> GetLandUnits() {
+            List<GEventable> list = new List<GEventable>(Units);
             list.RemoveAll(x => ((Unit)x).IsShip == false);
             return list;
         }

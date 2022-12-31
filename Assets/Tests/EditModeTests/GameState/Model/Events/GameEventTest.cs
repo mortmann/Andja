@@ -50,7 +50,7 @@ public class GameEventTest {
         PrototypeData.minDuration = 5;
         GameEvent.StartEvent(new Vector2(50,50));
         AssertThat(GameEvent.currentDuration).IsEqualTo(5);
-        AssertThat(GameEvent.position).IsEquivalentTo(new Vector2(50, 50));
+        AssertThat(GameEvent.DefinedPosition).IsEquivalentTo(new Vector2(50, 50));
     }
 
     [Test]
@@ -62,7 +62,7 @@ public class GameEventTest {
         PrototypeData.effects = new IEffect[] { effectMock.Object };
         GameEvent.StartEvent(new Vector2(50, 50));
         AssertThat(GameEvent.currentDuration).IsEqualTo(5);
-        AssertThat(GameEvent.position.IsFlooredVector(new Vector2(50, 50))).IsTrue();
+        AssertThat(GameEvent.DefinedPosition.IsFlooredVector(new Vector2(50, 50))).IsTrue();
         AssertThat(GameEvent.HasWorldEffect());
     }
     [Test]

@@ -74,28 +74,29 @@ namespace Andja.UI {
                 toPredicte = parts[0];
                 predicted = GetFilterCommands(entryCommands, toPredicte);
             }
-            for (int i = 1; i < parts.Length; i++) {
-                if (entryCommands.Contains(first) == false) {
-                    //doesnt exist so do nothing more
-                    predictiveText.text = "";
-                    return;
-                }
-                var commands = Array.Find(cc.EntryCommand.NextLevelCommands, (a) => a.Argument == first).GetCommandList();
-                if (i < parts.Length - 1) {
-                    if(commands.Contains(parts[i].ToLower())) {
-                        continue;
-                    } else {
-                        return;
+            ConsoleCommand currentCommand = cc.EntryCommand;
+            if(entryCommands.Contains(first)) {
+                for (int i = 1; i < parts.Length; i++) {
+                    currentCommand = currentCommand.NextLevelCommands.First(c => c.Argument == parts[i - 1]);
+                    var commands = Array.Find(cc.EntryCommand.NextLevelCommands, (a) => a.Argument == first).GetCommandList();
+                    if (i < parts.Length - 1) {
+                        if (commands.Contains(parts[i].ToLower())) {
+                            continue;
+                        }
+                        else {
+                            return;
+                        }
                     }
                 }
-                toPredicte = parts[parts.Length-1];
-                predicted = GetFilterCommands(commands, toPredicte);
             }
+            toPredicte = parts[parts.Length-1];
+            predicted = GetFilterCommands(currentCommand.GetCommandList(), toPredicte);
 
             if (predicted == null || predicted.Count == 0) {
                 predictiveText.text = "";
                 return;
             }
+            predicted.Sort();
             string allPredicatedText = "";
             if (string.IsNullOrEmpty(text)) {
                 allPredicatedText += "\n";
@@ -157,6 +158,8 @@ namespace Andja.UI {
         /// <param name="filter"></param>
         /// <returns></returns>
         private List<string> GetFilterCommands(List<string> commands, string filter) {
+            if (commands == null)
+                return new List<string>();
             if(string.IsNullOrEmpty(filter)) {
                 return commands;
             } else {

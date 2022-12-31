@@ -87,8 +87,8 @@ namespace Andja.Controller {
             float tOne = 0;
             float tTwo = 0;
             foreach (var ge in _eventToWeather) {
-                float distance = Util.FindClosestDistancePointCircle(CameraController.Instance.middle, ge.Key.position, ge.Key.range);
-                float tValue = 1 - EasingFunction.EaseInOutQuad(0, 1, Mathf.Clamp01(distance / (ge.Key.range * 1.1f)));
+                float distance = Util.FindClosestDistancePointCircle(CameraController.Instance.middle, ge.Key.DefinedPosition, ge.Key.Radius);
+                float tValue = 1 - EasingFunction.EaseInOutQuad(0, 1, Mathf.Clamp01(distance / (ge.Key.Radius * 0.97f)));
                 if (tValue == 0)
                     continue;
                 if(tValue>tOne) {

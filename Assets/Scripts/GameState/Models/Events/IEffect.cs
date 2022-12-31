@@ -26,6 +26,6 @@ namespace Andja.Model {
         string UiSpriteName { get; }
         EffectUpdateChanges UpdateChange { get; }
         bool ShouldSerializeEffect();
-        void Update(float deltaTime, IGEventable target);
+        void Update(float deltaTime, GEventable target);
     }
 }

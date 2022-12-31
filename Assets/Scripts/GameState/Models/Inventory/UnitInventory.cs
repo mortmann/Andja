@@ -57,7 +57,7 @@ namespace Andja.Model {
         /// <param name="item"></param>
         /// <returns></returns>
         public override int AddItem(Item toAdd) {
-            if (toAdd == null) {
+            if (toAdd == null || toAdd.count == 0) {
                 return 0;
             }
             if (string.IsNullOrEmpty(toAdd.ID)) {
@@ -144,11 +144,11 @@ namespace Andja.Model {
                 int loweredAmount = amount.ClampZero(inInv.count);
                 inInv.count -= loweredAmount;
                 amount -= loweredAmount;
-                if (amount == 0) {
-                    break;
-                }
                 if (inInv.count == 0) {
                     Items[i] = null;
+                }
+                if (amount == 0) {
+                    break;
                 }
             }
             cbInventoryChanged?.Invoke(this);

@@ -114,7 +114,7 @@ namespace Andja.Controller {
             }
         }
 
-        public IGEventable CurrentlySelectedIGEventable {
+        public GEventable CurrentlySelectedIGEventable {
             get {
                 if (SelectedUnit != null)
                     return SelectedUnit;

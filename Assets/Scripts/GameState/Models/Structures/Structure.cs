@@ -111,7 +111,7 @@ namespace Andja.Model {
     }
 
     [JsonObject(MemberSerialization.OptIn)]
-    public abstract class Structure : IGEventable {
+    public abstract class Structure : GEventable {
         public const string InactiveEffectID = "inactive";
 
         #region variables

@@ -8,12 +8,17 @@ namespace Andja.Controller {
         public virtual string Argument { get; protected set; }
 
         protected Func<string[], bool> Command;
-        private List<string> commandArgumentList;
+        protected List<string> commandArgumentList;
+        private Func<List<string>> getArguments;
 
         public ConsoleCommand[] NextLevelCommands { get; protected set; }
         public ConsoleCommand(string argument, Func<string[], bool> action) {
             Argument = argument;
             Command = action;
+        }
+
+        public ConsoleCommand(string argument, Func<string[], bool> action, Func<List<string>> getArguments) : this(argument, action) {
+            this.getArguments = getArguments;
         }
 
         public bool IsResponsible(string[] parameters) {
@@ -32,11 +37,11 @@ namespace Andja.Controller {
         }
 
         public List<string> GetCommandList() {
-            if(commandArgumentList == null) {
+            if(commandArgumentList == null && NextLevelCommands != null) {
                 commandArgumentList = NextLevelCommands.Select(c => c.Argument).ToList();
                 commandArgumentList.Sort();
             }
-            return commandArgumentList;
+            return commandArgumentList ?? getArguments?.Invoke();
         }
 
         public static ConsoleCommand GetEntryCommand() {
@@ -49,8 +54,8 @@ namespace Andja.Controller {
                     new ToggleCheatCommands(),
                     new EventCommands(),
                     new StructureCommands(),
-                    new ToggleCheatCommands(),
                     new SpawnCommands(),
+                    new PlayerCommands(),
                 }.Union(FirstLevelCommands.GetFirstLevel()).ToArray()
             };
         }

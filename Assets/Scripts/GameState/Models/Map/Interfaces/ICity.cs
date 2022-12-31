@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 
 namespace Andja.Model {
-    public interface ICity : IIGEventable {
+    public interface ICity : IGEventable {
         string Name { get; set; }
         HashSet<Tile> Tiles { get; set; }
         int TradeItemCount { get; }

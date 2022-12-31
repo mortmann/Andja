@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace Andja.Model {
-    public interface IIsland : IIGEventable {
+    public interface IIsland : IGEventable {
         List<ICity> Cities { get; set; }
         Climate Climate { get; set; }
         List<IslandFeature> Features { get; set; }

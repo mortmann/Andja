@@ -68,7 +68,7 @@ namespace Andja.UI {
                     UIController.Instance.ShowChoiceDialog(ChoiceInformation);
                 }
                 if (gameEvent != null) {
-                    CameraController.Instance.MoveCameraToPosition(gameEvent.GetPosition());
+                    CameraController.Instance.MoveCameraToPosition(gameEvent.GetRealPosition());
                 }
                 else {
                     CameraController.Instance.MoveCameraToPosition(Information.GetPosition());

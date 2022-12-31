@@ -264,6 +264,9 @@ namespace Andja.Controller {
         }
 
         private Vector3 UpdateMouseCameraMovement() {
+            if (EventSystem.current.IsPointerOverGameObject()) {
+                return Vector3.zero;
+            }
             // Handle screen panning
             if (InputHandler.GetMouseButton(InputMouse.Secondary) || InputHandler.GetMouseButton(InputMouse.Middle)) { 
                 return _lastFramePosition - _currFramePosition;

@@ -3,6 +3,7 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
+using Andja.Model.Components;
 
 namespace Andja.Controller {
     //TODO:
@@ -44,7 +45,7 @@ namespace Andja.Controller {
     public class EventController : MonoBehaviour {
         public static EventController Instance { get; protected set; }
         public static float RandomTickTime = 1f;
-
+        public EventHoldingScript EventRangePrefab;
         private uint _lastId = 0;
         private Dictionary<EventType, List<GameEvent>> _typeToEvents;
         private Dictionary<uint, GameEvent> _idToActiveEvent;
@@ -134,17 +135,33 @@ namespace Andja.Controller {
             if (ge == null || ge.IsValid() == false) {
                 return false;
             }
-            if (ge.Targeted != null && ge.target == null) {
-                return false;
-            }
             Debug.Log("Created event " + ge.eventID);
             //fill the type
             _idToActiveEvent.Add(_lastId, ge);
             ge.eventID = _lastId;
-            ge.StartEvent();
+            switch (ge.Type) {
+                case EventType.Weather:
+                    ge.StartEvent(GetRandomVector2());
+                    break;
+                case EventType.City:
+                case EventType.Structure:
+                case EventType.Quest:
+                case EventType.Disaster:
+                case EventType.Other:
+                    ge.StartEvent();
+                    break;
+            }
+            if (ge.Targeted.HasUnitTarget()) {
+                CreateEventHoldingGameObject(ge);
+            }
             _cbEventCreated(ge);
             _lastId++;
             return true;
+        }
+
+        private void CreateEventHoldingGameObject(GameEvent ge) {
+            EventHoldingScript eventHoldingScript = Instantiate(EventRangePrefab);
+            eventHoldingScript.gameEvent = ge;
         }
 
         /// <summary>
@@ -153,28 +170,34 @@ namespace Andja.Controller {
         /// <param name="id"></param>
         internal bool TriggerEvent(string id) {
             GameEvent gameEvent = new GameEvent(id);
+            if(gameEvent.Type == EventType.Weather) {
+                return CreateGameEvent(gameEvent); 
+            }
             return TriggerEventForPlayer(gameEvent, PlayerController.Instance.GetRandomPlayer());
         }
 
         internal bool TriggerEventForPlayer(GameEvent gameEvent, Player player) {
-            List<IIGEventable> playerTargets = GetPlayerTargets(gameEvent.Targeted, player);
+            List<IGEventable> playerTargets = GetPlayerTargets(gameEvent.Targeted, player);
             return playerTargets.Count != 0 && TriggerEventForEventable(gameEvent, playerTargets[UnityEngine.Random.Range(0, playerTargets.Count)]);
         }
 
-        internal bool TriggerEventForEventable(GameEvent gameEvent, IIGEventable eventable) {
+        internal bool TriggerEventForEventable(GameEvent gameEvent, IGEventable eventable) {
             gameEvent.target = eventable;
             return CreateGameEvent(gameEvent);
         }
-
+        public List<uint> GetActiveEventsIDs() {
+            return _idToActiveEvent.Keys.ToList();
+        }
         internal bool StopGameEvent(uint id) {
             if (_idToActiveEvent.ContainsKey(id) == false)
                 return false;
             _cbEventEnded(_idToActiveEvent[id]);
+            _idToActiveEvent[id].Stop();
             return _idToActiveEvent.Remove(id);
         }
 
-        public List<IIGEventable> GetPlayerTargets(TargetGroup targetGroup, Player player) {
-            List<IIGEventable> targets = new List<IIGEventable>();
+        public List<IGEventable> GetPlayerTargets(TargetGroup targetGroup, Player player) {
+            List<IGEventable> targets = new List<IGEventable>();
             foreach (Target target in targetGroup.Targets) {
                 switch (target) {
                     case Target.AllUnit:
@@ -200,7 +223,7 @@ namespace Andja.Controller {
                     case Target.AllStructure:
                         targets.AddRange(player.AllStructures);
                         break;
-                    case Target.DamagableStructure:
+                    case Target.DamageableStructure:
                         targets.AddRange(player.AllStructures.Where(x => x.CanTakeDamage));
                         break;
                     case Target.BurnableStructure:
@@ -252,8 +275,8 @@ namespace Andja.Controller {
             return targets;
         }
 
-        private IGEventable GetEventTargetForEventType(EventType type) {
-            IGEventable ige = null;
+        private GEventable GetEventTargetForEventType(EventType type) {
+            GEventable ige = null;
             //some times should be target all cities...
             //idk how todo do it tho...
             switch (type) {
@@ -355,7 +378,7 @@ namespace Andja.Controller {
             foreach (uint id in _idToActiveEvent.Keys) {
                 string target;
                 if(_idToActiveEvent[id].target == null) {
-                    target = (_idToActiveEvent[id].position + " " + _idToActiveEvent[id].range);
+                    target = (_idToActiveEvent[id].DefinedPosition + " " + _idToActiveEvent[id].Range);
                 } else {
                     target = _idToActiveEvent[id].target.ToString();
                 }
@@ -433,7 +456,7 @@ namespace Andja.Controller {
                 Target.LandUnit => typeof(Unit),
                 Target.AllStructure => typeof(Structure),
                 //is selected over bool -- so dunno what todo in this case
-                Target.DamagableStructure => typeof(Structure),
+                Target.DamageableStructure => typeof(Structure),
                 Target.RoadStructure => typeof(RoadStructure),
                 Target.NeedStructure => typeof(NeedStructure),
                 Target.MilitaryStructure => typeof(MilitaryStructure),

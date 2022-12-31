@@ -8,7 +8,7 @@ using UnityEngine;
 namespace Andja.Model {
 
     [JsonObject(MemberSerialization.OptIn)]
-    public class City : IGEventable, ICity {
+    public class City : GEventable, ICity {
 
         #region Serialize
 

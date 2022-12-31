@@ -19,7 +19,7 @@ public class MockUtil {
 
     public ICity City => CityMock.Object;
     public ICity OtherCity => OtherCityMock.Object;
-    public Mock<IIGEventable> EventableMock;
+    public Mock<IGEventable> EventableMock;
     public Mock<IPrototypController> PrototypControllerMock;
     public Mock<IPlayerController> PlayerControllerMock;
     public Mock<IBuildController> BuildControllerMock;
@@ -68,7 +68,7 @@ public class MockUtil {
         OtherCityMock = new Mock<ICity>();
         OtherCityMock.Setup(c => c.PlayerNumber).Returns(1);
 
-        EventableMock = new Mock<IIGEventable>();
+        EventableMock = new Mock<IGEventable>();
 
         WorldMock = new Mock<IWorld>();
         World.Current = WorldMock.Object;

@@ -571,24 +571,41 @@ namespace Andja.Controller {
         }
 
         public static System.Collections.Concurrent.ConcurrentBag<Vector2> positions = new System.Collections.Concurrent.ConcurrentBag<Vector2>();
+        public static System.Collections.Concurrent.ConcurrentBag<Vector2> positions2 = new System.Collections.Concurrent.ConcurrentBag<Vector2>();
+        public static System.Collections.Concurrent.ConcurrentBag<Vector2> positions3 = new System.Collections.Concurrent.ConcurrentBag<Vector2>();
+
         public static System.Collections.Concurrent.ConcurrentDictionary<Vector2, float> positionsCost = new System.Collections.Concurrent.ConcurrentDictionary<Vector2, float>();
 #if UNITY_EDITOR
         public void OnDrawGizmos() {
             if (Application.isPlaying == false) return;
-            //foreach (Pathfinding.World.CurrentNode n in World.Current.Current.World.CurrentGraph.Nodes) {
+
+            //foreach (var n in World.Current.WorldGraph.Nodes) {
             //    if (n == null)
             //        continue;
-            //    foreach (Pathfinding.World.CurrentEdge e in n.Edges) {
+            //    foreach (var e in n.Edges) {
             //        Gizmos.color = Color.white;
             //        Gizmos.DrawLine(new Vector2(n.x + 0.5f, n.y + 0.5f), new Vector2(e.Node.x + 0.5f, e.Node.y + 0.5f));
             //    }
+            //}
             foreach (var t in positions) {
                 Gizmos.color = Color.red;
                 Gizmos.DrawSphere(new Vector3(t.x + 0.5f, t.y + 0.5f), 0.5f);
             }
-            foreach (var t in positionsCost) {
-                UnityEditor.Handles.Label(new Vector3(t.Key.x + 0.5f, t.Key.y + 0.5f), t.Value +"");
+            foreach (var t in positions2) {
+                Gizmos.color = Color.magenta;
+                Gizmos.DrawSphere(new Vector3(t.x + 0.5f, t.y + 0.5f), 0.5f);
             }
+            foreach (var t in positions3) {
+                Gizmos.color = Color.yellow;
+                Gizmos.DrawSphere(new Vector3(t.x + 0.5f, t.y + 0.5f), 0.5f);
+            }
+            //var posses = positions.ToArray();
+            //for (int i = 0; i < posses.Length - 1; i++) {
+            //    Gizmos.DrawLine(new Vector2(posses[i].x + 0.5f, posses[i].y + 0.5f), new Vector2(posses[i+1].x + 0.5f, posses[i + 1].y + 0.5f));
+            //}
+            //foreach (var t in positionsCost) {
+            //    UnityEditor.Handles.Label(new Vector3(t.Key.x + 0.5f, t.Key.y + 0.5f), t.Value +"");
+            //}
         }
 # endif
     }

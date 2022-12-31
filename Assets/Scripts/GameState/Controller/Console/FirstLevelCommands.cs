@@ -14,10 +14,13 @@ namespace Andja.Controller {
                 new ConsoleCommand("speed", ChangeSpeed),
                 new ConsoleCommand("itsrainingbuildings", RainingStructures),
                 new ConsoleCommand("itsdrainingbuildings", DrainingStructures),
+                new ConsoleCommand("debugmode", (_) => { ConsoleController.DEBUG_MODE = !ConsoleController.DEBUG_MODE; return true; })
             };
         }
 
         private static bool ChangeSpeed(string[] parameters) {
+            if (parameters.Length == 0)
+                return false;
             if (float.TryParse(parameters[0], out float speed)) {
                 WorldController.Instance.SetSpeed(speed);
                 return true;
@@ -57,19 +60,23 @@ namespace Andja.Controller {
         }
 
         private static bool DevZoom(string[] parameters) {
-            if (int.TryParse(parameters[1], out int num)) {
+            if (int.TryParse(parameters[0], out int num)) {
                 CameraController.devCameraZoom = Convert.ToBoolean(num);
                 return true;
-            }
-            if (bool.TryParse(parameters[1], out bool change)) {
+            } else
+            if (bool.TryParse(parameters[0], out bool change)) {
                 CameraController.devCameraZoom = change;
                 return true;
+            } else {
+                CameraController.devCameraZoom = !CameraController.devCameraZoom;
             }
-            return false;
+            return true;
         }
 
         private static bool SetMaxFps(string[] parameters) {
-            if (int.TryParse(parameters[1], out int fps)) {
+            if (parameters.Length == 0)
+                return false;
+            if (int.TryParse(parameters[0], out int fps)) {
                 Application.targetFrameRate = Mathf.Clamp(fps, -1, 1337);
                 return true;
             }

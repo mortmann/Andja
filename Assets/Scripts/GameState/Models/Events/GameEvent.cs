@@ -21,7 +21,6 @@ namespace Andja.Model {
         public ShadowType cloudCoverage;
         public Speed cloudSpeed;
         public Speed oceanSpeed;
-
     }
 
     [JsonObject(MemberSerialization.OptIn)]
@@ -29,6 +28,7 @@ namespace Andja.Model {
         [JsonPropertyAttribute] public string ID;
 
         protected GameEventPrototypData _PrototypData;
+        public Action<GameEvent> CbEventEnded;
 
         public GameEventPrototypData PrototypeData =>
             _PrototypData ??= (GameEventPrototypData)PrototypController.Instance.GetGameEventPrototypDataForID(ID);
@@ -64,24 +64,24 @@ namespace Andja.Model {
         [JsonPropertyAttribute] public float Duration;
         [JsonPropertyAttribute] public float currentDuration;
 
-        //MAYBE range can also be a little random...?
-        //around this as middle? Range+(-1^RandomInt(1,2)*Random(0,(Random(2,3)*Range)/(Range*Random(0.75,1)));
-        [JsonPropertyAttribute] public float range;
+        [JsonPropertyAttribute] public float Range;
+        public float Radius => Range / 2;
 
-        [JsonPropertyAttribute] public Vector2 position;
 
-        public Vector2 GetPosition() {
+        [JsonPropertyAttribute] public Vector2 DefinedPosition;
+
+        public Vector2 GetRealPosition() {
             return target switch {
                 Structure s => s.Center,
                 Unit u => u.PositionVector2,
-                _ => position
+                _ => DefinedPosition
             };
         }
 
         // this one says what it is...
         // so if complete island/city/player or only a single structuretype is the goal
         // can be null if its not set to which type
-        [JsonPropertyAttribute] public IIGEventable target;  //TODO make a check for it!
+        [JsonPropertyAttribute] public IGEventable target;  //TODO make a check for it!
 
         [JsonPropertyAttribute] public uint eventID;
         [JsonPropertyAttribute] public float triggerEffectCooldown = UnityEngine.Random.Range(0.1f, 1f);
@@ -109,11 +109,16 @@ namespace Andja.Model {
             currentDuration = Duration;
             //DO smth on start event?!
             if (ID == "volcanic_eruption") {
-                position = ((IIsland)target).Features.Find(x => x.type == FeatureType.Volcano).position;
+                DefinedPosition = ((IIsland)target).Features.Find(x => x.type == FeatureType.Volcano).position;
                 CreateVolcanicEruption();
             }
             if(target != null) {
                 
+            }
+            if (Type == EventType.Weather) { 
+                if (Targeted.HasStructureTarget()) {
+                    //loop through all tiles?
+                }
             }
         }
 
@@ -122,7 +127,8 @@ namespace Andja.Model {
                 Debug.LogError("Events that have a position/range can't only target specific target.");
                 return;
             }
-            position = pos;
+            DefinedPosition = pos;
+            Range = (PrototypeData.minRange + (PrototypeData.maxRange - PrototypeData.minRange) * UnityEngine.Random.Range(0, 1f));
             StartEvent();
         }
 
@@ -181,7 +187,7 @@ namespace Andja.Model {
         /// </summary>
         /// <returns><c>true</c> if this instance is target the specified event otherwise, <c>false</c>.</returns>
         /// <param name="t">T.</param>
-        public bool IsTarget(IIGEventable t) {
+        public bool IsTarget(IGEventable t) {
             //when the event is limited to a specific area or player
             if (target != null) {
                 if (target is Player && t is Player) {
@@ -213,7 +219,11 @@ namespace Andja.Model {
             return true;
         }
 
-        public void EffectTarget(IGEventable t, bool start) {
+        internal void Stop() {
+            CbEventEnded?.Invoke(this);
+        }
+
+        public void EffectTarget(GEventable t, bool start) {
             IEffect[] effectsForTarget = GetEffectsForTarget(t);
             if (effectsForTarget == null) {
                 return;
@@ -229,7 +239,7 @@ namespace Andja.Model {
             }
         }
 
-        public Effect[] GetEffectsForTarget(IGEventable t) {
+        public Effect[] GetEffectsForTarget(GEventable t) {
             if (Effects == null)
                 return null;
             List<Effect> effectsForTarget = new List<Effect>();
@@ -261,10 +271,10 @@ namespace Andja.Model {
                 return;
             if (UnityEngine.Random.Range(0f, 1f) > 1f - currentDuration / Duration) {
                 for (int i = UnityEngine.Random.Range(1, 3); i > 0; i--) {
-                    Vector2 goal = position + new Vector2(UnityEngine.Random.Range(-30, 31), UnityEngine.Random.Range(-30, 31));
-                    Vector3 move = position - goal;
+                    Vector2 goal = DefinedPosition + new Vector2(UnityEngine.Random.Range(-30, 31), UnityEngine.Random.Range(-30, 31));
+                    Vector3 move = DefinedPosition - goal;
                     World.Current.OnCreateProjectile(
-                        new Projectile(new World.WorldDamage(200), position, null, goal, move.normalized, move.magnitude, false, 4, true)
+                        new Projectile(new World.WorldDamage(200), DefinedPosition, null, goal, move.normalized, move.magnitude, false, 4, true)
                         );
                 }
             }

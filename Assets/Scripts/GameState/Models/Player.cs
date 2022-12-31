@@ -21,7 +21,7 @@ namespace Andja.Model {
     /// AI's also have this but the calculations are handled by AIPlayer.cs 
     /// </summary>
     [JsonObject(MemberSerialization.OptIn)]
-    public class Player : IGEventable {
+    public class Player : GEventable {
 
         #region Not Serialized
 

@@ -162,7 +162,7 @@ namespace Andja.Controller {
             text.text = road.Route.ToString();
         }
 
-        private void OnStructureEffectChange(IGEventable target, Effect effect, bool added) {
+        private void OnStructureEffectChange(GEventable target, Effect effect, bool added) {
             if (string.IsNullOrEmpty(effect.OnMapSpriteName))
                 return;
             if (!(target is Structure structure) || _structureGameObjectMap.ContainsKey(structure) == false)

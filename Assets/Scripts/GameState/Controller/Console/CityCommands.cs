@@ -1,14 +1,14 @@
 using Andja.Model;
 using System;
+using System.Linq;
 using UnityEngine;
 
 namespace Andja.Controller {
     public class CityCommands : ConsoleCommand {
-        //            { "item","fillitup","builditems", "name", "player", "effect" };
         City City;
         public CityCommands() : base("city", null) {
             NextLevelCommands = new ConsoleCommand[] {
-                new ConsoleCommand("item", AddItem),
+                new ConsoleCommand("item", AddItem, () => PrototypController.Instance.AllItems.Keys.ToList()),
                 new ConsoleCommand("fillitup", FillItUp),
                 new ConsoleCommand("builditems", BuildItems),
                 new ConsoleCommand("name", ChangeName),
@@ -26,7 +26,10 @@ namespace Andja.Controller {
         }
 
         private bool ChangeName(string[] arg) {
-            throw new NotImplementedException();
+            if (arg.Length == 0)
+                return false;
+            City.SetName(arg[0]);
+            return true;
         }
 
         private bool ChangePlayer(string[] arg) {

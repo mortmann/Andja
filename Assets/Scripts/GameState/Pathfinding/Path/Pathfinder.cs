@@ -3,6 +3,7 @@ using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
 using Andja.Model;
+using System;
 
 namespace Andja.Pathfinding {
     public static class Pathfinder {
@@ -189,46 +190,59 @@ namespace Andja.Pathfinding {
             }
             System.Diagnostics.Stopwatch stopwatch = new System.Diagnostics.Stopwatch();
             stopwatch.Start();
-            Queue<Vector2> tempQueue = new Queue<Vector2>();
             if (Utility.Util.CheckLine(worldTilemap, startPos, endPos)) {
-                tempQueue.Enqueue(endPos);
-                return tempQueue;
+                return new Queue<Vector2>(new []{ endPos });
             }
             Queue<Vector2> worldPoints = FindWorldPath(job, agent, graph, startPos, endPos);
-            //if (agent is Ship s && s.IsOwnedByCurrentPlayer()) {
-            //    worldPoints.AsParallel().ForAll(a => Controller.TileSpriteController.positions.Add(a));
-            //}
+            
             if (worldPoints == null)
-                return tempQueue;
-            tempQueue.Enqueue(startPos);
-            Vector2 current = worldPoints.Dequeue();
-            do { //for the all points in worldPoints AND the final destination
-                Vector2 next = worldPoints.Count > 0 ? worldPoints.Dequeue() : endPos;
-                if (job.IsCanceled || PathfindingThreadHandler.FindPaths == false)
-                    return null;
-                if (Utility.Util.CheckLine(worldTilemap, tempQueue.Last(), next) == false) {
-                    //add the last point the current path node could reach
-                    //now it will repeat check to which point this can go 
-                    tempQueue.Enqueue(current);
-                }
-                else {
-                    //last point in current path can reach the point 
-                    //so we can go directly to this one - when it cant reach one 
-                    current = next;
-                }
-            } while (worldPoints.Count > 0);
+                return new Queue<Vector2>();
+            worldPoints = new Queue<Vector2>(worldPoints.Reverse());
+
+
+            Queue<Vector2> shortestQueue = CalculatePathWithDirectLineOfSight(job, worldPoints.ToArray(), startPos, endPos);
+
+            shortestQueue = new Queue<Vector2>(shortestQueue.Reverse());
             Queue<Vector2> finalQueue = new Queue<Vector2>();
-            tempQueue.Dequeue();
-            while (tempQueue.Count > 0) {
-                finalQueue.Enqueue(tempQueue.Dequeue() + new Vector2(0.5f, 0.5f));
+            while (shortestQueue.Count > 0) {
+                finalQueue.Enqueue(shortestQueue.Dequeue() + new Vector2(0.5f, 0.5f));
             }
             if (worldTilemap[Mathf.FloorToInt(endPos.x)][Mathf.FloorToInt(endPos.y)]) {
                 finalQueue.Enqueue(endPos);
-            } 
+            }
+            if (agent is Ship s && s.IsOwnedByCurrentPlayer()) {
+                finalQueue.AsParallel().ForAll(a => Controller.TileSpriteController.positions.Add(a));
+            }
             stopwatch.Stop();
             //Debug.Log("Total Ocean Pathfinder took " + stopwatch.ElapsedMilliseconds + "(" + stopwatch.Elapsed.TotalSeconds + "s)");
             return finalQueue;
         }
+
+        private static Queue<Vector2> CalculatePathWithDirectLineOfSight(PathJob job, Vector2[] worldPathArray, Vector2 startPos, Vector2 endPos) {
+            //start at the end go to start
+            Vector2 current = endPos;
+            Queue<Vector2> tempQueue = new Queue<Vector2>();
+            tempQueue.Enqueue(current);
+            for (int i = 0; i < worldPathArray.Length; i++) {
+                if (job.IsCanceled || PathfindingThreadHandler.FindPaths == false)
+                    return null;
+                Vector2 next = startPos;
+                if (i < worldPathArray.Length - 1) {
+                    next = worldPathArray[i + 1];
+                }
+                if (Utility.Util.CheckLine(worldTilemap, current, next) == false) {
+                    tempQueue.Enqueue(worldPathArray[i]);
+                    current = worldPathArray[i];
+                }
+                //if (agent is Ship s && s.IsOwnedByCurrentPlayer()) {
+                //    Controller.TileSpriteController.positions.Add(current);
+                //}
+            }
+            //remove the added endposition so it does not get 0.5 added later
+            tempQueue.Dequeue();
+            return tempQueue;
+        }
+
         private static Queue<Vector2> FindWorldPath(PathJob job, IPathfindAgent agent, WorldGraph graph, 
                                                         Vector2 startPos, Vector2 endPos) {
             WorldNode start = graph.GetNodeFromWorldCoord(startPos);

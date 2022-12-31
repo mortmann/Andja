@@ -32,10 +32,8 @@ namespace Andja.Pathfinding {
             } 
             AddPathJob();
         }
-        bool debug;
 
-        public void SetDestination(List<Tile> startTiles, List<Tile> endTiles, bool debug = false) {
-            this.debug = debug;
+        public void SetDestination(List<Tile> startTiles, List<Tile> endTiles) {
             this.startTiles = startTiles;
             this.endTiles = endTiles;
             AddPathJob();

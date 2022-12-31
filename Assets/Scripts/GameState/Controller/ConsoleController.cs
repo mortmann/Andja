@@ -24,6 +24,9 @@ namespace Andja.Controller {
                 _graphyInstance = value;
             }
         }
+
+        public static bool DEBUG_MODE { get; internal set; }
+
         public static List<string> logs = new List<string>();
         private Action<string> _writeToConsole;
         private StreamWriter _logWriter;

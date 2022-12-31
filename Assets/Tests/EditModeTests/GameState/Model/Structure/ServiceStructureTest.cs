@@ -131,7 +131,7 @@ public class ServiceStructureTest {
         Service.OnEffectChange += mockutil.Callbacks.Object.EventableEffectChange;
         Service.RangeTiles.ToList().ForEach(x=>x.Structure = new TestEffectStructure(TestEffectStructureID, _effect));
         mockutil.Callbacks.Setup(cb => cb.Structure(It.IsAny<Structure>()));
-        mockutil.Callbacks.Setup(cb => cb.EventableEffectChange(It.IsAny<IGEventable>(), It.IsAny<Effect>(), It.IsAny<bool>()));
+        mockutil.Callbacks.Setup(cb => cb.EventableEffectChange(It.IsAny<GEventable>(), It.IsAny<Effect>(), It.IsAny<bool>()));
         Service.TestSetUpStructures();
         AssertThat(Service.GetTodoOnNewTargetCallbackCount()).IsEqualTo(2);
         AssertThat(mockutil.Callbacks)
@@ -139,7 +139,7 @@ public class ServiceStructureTest {
             .Exactly(Service.RangeTiles.Count);
         AssertThat(mockutil.Callbacks)
             .HasInvoked(cb => 
-                cb.EventableEffectChange(It.IsAny<IGEventable>(), It.IsAny<Effect>(), It.IsAny<bool>()))
+                cb.EventableEffectChange(It.IsAny<GEventable>(), It.IsAny<Effect>(), It.IsAny<bool>()))
             .Exactly(Service.RangeTiles.Count);
     }
     [Test]
@@ -158,7 +158,7 @@ public class ServiceStructureTest {
             .Exactly(effectStructuresCount);
         AssertThat(mockutil.Callbacks)
             .HasInvoked(cb =>
-                cb.EventableEffectChange(It.IsAny<IGEventable>(), It.IsAny<Effect>(), It.IsAny<bool>()))
+                cb.EventableEffectChange(It.IsAny<GEventable>(), It.IsAny<Effect>(), It.IsAny<bool>()))
             .Exactly(effectStructuresCount);
     }
 
@@ -347,7 +347,7 @@ public class ServiceStructureTest {
 
         public List<Worker> Workers => workers;
         public Action<Structure> TodoOnNewTarget { get; set; }
-        public Action<IGEventable, Effect, bool> OnEffectChange;
+        public Action<GEventable, Effect, bool> OnEffectChange;
         public TestServiceStructure(string iD) : base(iD, null) {
             workers = new List<Worker>();
             //setting directly DOES NOT WORK?!?
@@ -371,7 +371,7 @@ public class ServiceStructureTest {
             return todoOnNewTarget.GetInvocationList().Length;
         }
 
-        public void TestCheckForMissingEffect(IIGEventable eventable, Effect _effect, bool start) {
+        public void TestCheckForMissingEffect(IGEventable eventable, Effect _effect, bool start) {
             CheckForMissingEffect(eventable, _effect, start);
         }
 
@@ -383,11 +383,11 @@ public class ServiceStructureTest {
             RepairStructure(structure, deltaTime);
         }
 
-        public void TestPreventEffect(IIGEventable eventableMockObject, Effect effect, bool added) {
+        public void TestPreventEffect(IGEventable eventableMockObject, Effect effect, bool added) {
             PreventEffect(eventableMockObject, effect, added);
         }
 
-        public void TestCheckStructureEffectEnqueueJob(IIGEventable eventable, Effect eff, bool started) {
+        public void TestCheckStructureEffectEnqueueJob(IGEventable eventable, Effect eff, bool started) {
             jobsToDo ??= new List<Structure>();
             CheckStructureEffectEnqueueJob(eventable, eff, started);
         }
@@ -402,11 +402,11 @@ public class ServiceStructureTest {
             OnAddedStructure(structure);
         }
 
-        public void TestImproveTarget(IIGEventable target) {
+        public void TestImproveTarget(IGEventable target) {
             ImproveTarget(target);
         }
 
-        public void TestRemoveTargetEffect(IIGEventable target) {
+        public void TestRemoveTargetEffect(IGEventable target) {
             RemoveTargetEffect(target);
         }
 

@@ -1434,7 +1434,7 @@ namespace Andja.Controller {
                     fi.SetValue(data, items.ToArray());
                     continue;
                 }
-                if (fi.FieldType == (typeof(Effect[]))) {
+                if (fi.FieldType == (typeof(Effect[])) || fi.FieldType == (typeof(IEffect[]))) {
                     fi.SetValue(data, (from XmlNode item in currentNode.ChildNodes select NodeToEffect(item)).ToArray());
                     continue;
                 }

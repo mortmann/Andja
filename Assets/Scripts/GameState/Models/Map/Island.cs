@@ -11,7 +11,7 @@ namespace Andja.Model {
     public enum Climate { Cold, Middle, Warm };
 
     [JsonObject(MemberSerialization.OptIn)]
-    public class Island : IGEventable, IIsland {
+    public class Island : GEventable, IIsland {
 
         #region Serialize
 

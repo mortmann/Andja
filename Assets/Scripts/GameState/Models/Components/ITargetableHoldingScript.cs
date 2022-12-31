@@ -2,6 +2,7 @@ using Andja.Pathfinding;
 using System.Collections.Generic;
 using UnityEngine;
 using Andja.FogOfWar;
+using Andja.Controller;
 
 namespace Andja.Model.Components {
 
@@ -13,7 +14,7 @@ namespace Andja.Model.Components {
         public float y;
         public float rot;
         public int PlayerNumber => Holding.PlayerNumber;
-        public bool Debug_Mode => false; //TODO make this somewhere GLOBAL
+        public bool Debug_Mode => ConsoleController.DEBUG_MODE; //TODO make this somewhere GLOBAL
         Unit unit => (Unit)Holding;
 
         public UnitDoModes currentUnitDO = UnitDoModes.Idle;
@@ -30,7 +31,7 @@ namespace Andja.Model.Components {
         public void Start() {
             line = gameObject.GetComponentInChildren<LineRenderer>();
             rigid = gameObject.GetComponent<Rigidbody2D>();
-
+            
             transform.position = unit.PositionVector;
         }
 
@@ -48,6 +49,10 @@ namespace Andja.Model.Components {
                 return;
             }
             if (Debug_Mode && unit.Pathfinding.worldPath != null) {
+                if (unit.IsOwnedByCurrentPlayer()) {
+                    line.startColor = Color.yellow;
+                    line.endColor = Color.yellow;
+                }
                 List<Vector3> lineVecs = new List<Vector3>();
 
                 if (unit.CurrentDoingMode != UnitDoModes.Move) {

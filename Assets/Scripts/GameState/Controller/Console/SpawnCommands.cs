@@ -12,6 +12,8 @@ namespace Andja.Controller {
         }
 
         private bool SpawnCrate(string[] parameters) {
+            if (parameters.Length == 0)
+                return false;
             string id = parameters[0];
             if (PrototypController.Instance.AllItems.ContainsKey(id) == false) {
                 return false;
@@ -28,6 +30,8 @@ namespace Andja.Controller {
         }
 
         private bool SpawnUnit(string[] parameters) {
+            if (parameters.Length == 0)
+                return false;
             string id = parameters[0];
             // anything can thats not a number can be the current player
             if (PrototypController.Instance.UnitPrototypes.ContainsKey(id) == false) {

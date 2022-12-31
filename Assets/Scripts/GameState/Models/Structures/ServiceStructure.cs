@@ -51,7 +51,7 @@ namespace Andja.Model {
         protected Action<Structure, IWarfare> onTargetDestroy;
         protected Action<Structure> onSelfDestroy;
 
-        protected Action<IGEventable, Effect, bool> onTargetEffectChange;
+        protected Action<GEventable, Effect, bool> onTargetEffectChange;
 
         protected ServiceStructurePrototypeData serviceData;
         //TODO: make it possible service structure to need certain items every time unit to function(otherwise inactive)
@@ -154,7 +154,7 @@ namespace Andja.Model {
             }
         }
 
-        protected void CheckForMissingEffect(IIGEventable eventable, Effect effect, bool started) {
+        protected void CheckForMissingEffect(IGEventable eventable, Effect effect, bool started) {
             if (started) {
                 return;
             }
@@ -175,7 +175,7 @@ namespace Andja.Model {
             str.RegisterOnDestroyCallback(onTargetDestroy);
         }
 
-        protected void CheckStructureEffectEnqueueJob(IIGEventable eventable, Effect eff, bool started) {
+        protected void CheckStructureEffectEnqueueJob(IGEventable eventable, Effect eff, bool started) {
             if (!(eventable is Structure structure))
                 return;
             if (Array.Exists(EffectsOnTargets, element => element.ID == eff.ID) == false) {
@@ -213,7 +213,7 @@ namespace Andja.Model {
             return str.CurrentHealth >= str.MaxHealth;
         }
 
-        protected void ImproveTarget(IIGEventable target) {
+        protected void ImproveTarget(IGEventable target) {
             foreach (Effect eff in EffectsOnTargets) {
                 target.AddEffect(eff);
             }
@@ -233,13 +233,13 @@ namespace Andja.Model {
             return false;
         }
 
-        protected void RemoveTargetEffect(IIGEventable target) {
+        protected void RemoveTargetEffect(IGEventable target) {
             foreach (Effect eff in EffectsOnTargets) {
                 target.RemoveEffect(eff);
             }
         }
 
-        protected void PreventEffect(IIGEventable str, Effect effect, bool added) {
+        protected void PreventEffect(IGEventable str, Effect effect, bool added) {
             if (added == false)
                 return;
             if (Array.Exists<Effect>(EffectsOnTargets, x => x.ID == effect.ID)) {

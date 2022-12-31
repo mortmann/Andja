@@ -1,13 +1,14 @@
 
 using Andja.Model;
 using System;
+using System.Linq;
 
 namespace Andja.Controller {
     public class EventCommands : ConsoleCommand {
         public EventCommands() : base("event", null) {
             NextLevelCommands = new ConsoleCommand[] {
-                new ConsoleCommand("trigger", TriggerEvent),
-                new ConsoleCommand("stop", StopEvent),
+                new ConsoleCommand("trigger", TriggerEvent, () => PrototypController.Instance.GameEventPrototypeDatas.Keys.ToList()),
+                new ConsoleCommand("stop", StopEvent, () =>  EventController.Instance.GetActiveEventsIDs().ConvertAll(i => i+"")),
                 new ConsoleCommand("list", ListEvent),
             };
         }
@@ -26,18 +27,17 @@ namespace Andja.Controller {
         }
 
         protected bool TriggerEvent(string[] parameters) {
-            if (parameters.Length < 2) {
+            if (parameters.Length == 0)
                 return false;
-            }
-            string id = parameters[1].Trim();
+            string id = parameters[0].Trim();
             if (PrototypController.Instance.GameEventExists(id) == false) {
                 return false;
             }
             int player = -1;
-            if (parameters.Length == 3 && string.IsNullOrEmpty(parameters[2]) == false) {
-                int.TryParse(parameters[2], out player);
+            if (parameters.Length == 2 && string.IsNullOrEmpty(parameters[1]) == false) {
+                int.TryParse(parameters[1], out player);
             }
-            if (parameters.Length > 3 && parameters[3].StartsWith("s"))
+            if (parameters.Length > 2 && parameters[2].StartsWith("s"))
                 return EventController.Instance.TriggerEventForEventable(new GameEvent(id), MouseController.Instance.CurrentlySelectedIGEventable);
             if (player < 0)
                 return EventController.Instance.TriggerEvent(id);

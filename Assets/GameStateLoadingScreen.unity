@@ -216,7 +216,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   noBuildCost: 0
-  noUnitRestriction: 0
+  noUnitBuildRangeRestriction: 0
   allStructuresEnabled: 0
 --- !u!1 &65370476
 GameObject:
@@ -262,9 +262,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   GraphyPrefab: {fileID: 11496292, guid: 0abab5bb77339e4428787a870eb31bd3, type: 3}
-  EventsCommands:
-  - trigger
-  - stop
 --- !u!4 &172245057 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 430686, guid: dfbb72e7b75263b4da3c1b05eaa385c6,
@@ -658,6 +655,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a70cfa9cc21bf604689ea7d2f57174af, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  EventRangePrefab: {fileID: -2174585398210597622, guid: 4365332abc127464aabd62ac13ecaa49,
+    type: 3}
 --- !u!1 &561837772
 GameObject:
   m_ObjectHideFlags: 0
@@ -903,6 +902,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: BugReportCanvas
       objectReference: {fileID: 0}
+    - target: {fileID: 946827021076858718, guid: 41156b9b0777c15429d7336fc263e200,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 41156b9b0777c15429d7336fc263e200, type: 3}
 --- !u!1 &630077611
@@ -1104,8 +1108,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5407655ab65b55340b607643ca29f76d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  QuickSaveName: quicksave
   IsDone: 0
-  loadingPercantage: 0
+  loadingPercentage: 0
 --- !u!1 &820870336
 GameObject:
   m_ObjectHideFlags: 0
@@ -1901,7 +1906,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   percentText: {fileID: 1463140532}
   percentBar: {fileID: 1425513372}
-  percantage: 0
+  Percentage: 0
   Type: 2
 --- !u!4 &1592929708
 Transform:
@@ -2209,10 +2214,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   EventParticles:
-  - gameEventID: volcanic_eruption
+  - GameEventID: 
     Prefab: {fileID: 8113707520888759109, guid: 04bdb71c7c90e664d8cfbe9f4e44c877,
       type: 3}
-  - gameEventID: 
+  - GameEventID: 
     Prefab: {fileID: 0}
 --- !u!1 &1787322660
 GameObject:

@@ -559,9 +559,13 @@ namespace Andja.Model {
                         tile = bigger.First().tile;
                     }
                     if(tile == null) {
+                        if (tooSmall.Count() == 0)
+                            continue;
                         tooSmall.OrderBy(x => x.MinVector.x - s.StructureRange).ThenBy(x => x.MinVector.y - s.StructureRange);
-                        tile = tooSmall.Last().tile;
+                        tile = tooSmall.Last()?.tile;
                     }
+                    if (tile == null)
+                        continue;
                     return new PlaceStructure {
                         ID = s.ID,
                         buildTile = tile,

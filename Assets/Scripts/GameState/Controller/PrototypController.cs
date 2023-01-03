@@ -287,7 +287,7 @@ namespace Andja.Controller {
             //SO THAT IT DOESNT USE FUCKIN COMMA AS THE DECIMAL SEPERATOR?!? WHY NOT POINT -Zoidberg
             //Why cant it be both -Fry
             //Good News everyone! Setting it to GB fixes that stupid thing! -Professor
-            System.Threading.Thread.CurrentThread.CurrentCulture = System.Globalization.CultureInfo.CreateSpecificCulture("en-GB");
+            Thread.CurrentThread.CurrentCulture = System.Globalization.CultureInfo.CreateSpecificCulture("en-GB");
             //other
             _populationLevelDatas = new Dictionary<int, PopulationLevelPrototypData>();
             ReadOtherFromXml(LoadXml(XmlFilesTypes.Other));
@@ -403,8 +403,8 @@ namespace Andja.Controller {
             Debug.Log(readInThings);
             //Set it to default so it doesnt interfer with user interface informations
             Thread.CurrentThread.CurrentCulture = System.Globalization.CultureInfo.InstalledUICulture;
-            CalculateOptimalProportions();
-            CalculateNeedStuff();
+            _itemIdToProduce = SupplyChainCalculator.CalculateOptimalProportions();
+            _needsPerLevel = NeedCalculator.CalculateNeedStuff();
             CalculatePopulationNeedGroups();
             CalculateUnlocks();
             FirstLevelMarket = _structurePrototypes[GetFirstLevelStructureIDForStructureType(typeof(MarketStructure))] as MarketStructure;
@@ -485,167 +485,16 @@ namespace Andja.Controller {
         }
 
         private void CalculateUnlocks() {
-            _levelCountToUnlocks = new ConcurrentDictionary<int, Unlocks>[NumberOfPopulationLevels];
-            _buildItemsNeeded = new ConcurrentDictionary<string, float[]>();
-            AllUnlockPeoplePerLevel = new List<int>[NumberOfPopulationLevels];
-            for (int i = 0; i < NumberOfPopulationLevels; i++) {
-                _levelCountToUnlocks[i] = new ConcurrentDictionary<int, Unlocks>();
-            }
-            var one = Parallel.ForEach(StructurePrototypes.Values, structure => {
-                if (_levelCountToUnlocks[structure.PopulationLevel].ContainsKey(structure.PopulationCount) == false) {
-                    _levelCountToUnlocks[structure.PopulationLevel].TryAdd(structure.PopulationCount, new Unlocks(structure.PopulationCount, structure.PopulationLevel));
-                }
-                _levelCountToUnlocks[structure.PopulationLevel].TryGetValue(structure.PopulationCount, out Unlocks value);
-                value.structures.Add(structure);
-                if (structure is OutputStructure) {
-                    if (((OutputStructure)structure).Output != null) {
-                        foreach (Item item in ((OutputStructure)structure).Output) {
-                            lock (item) {
-                                if (item.Data.UnlockLevel <= structure.PopulationLevel) {
-                                    item.Data.UnlockLevel = structure.PopulationLevel;
-                                    item.Data.UnlockPopulationCount = Mathf.Max(item.Data.UnlockPopulationCount, structure.PopulationCount);
-                                }
-                            }
-                        }
-                    }
-                    if (structure is GrowableStructure) {
-                        if (((GrowableStructure)structure).Fertility != null) {
-                            Fertility f = ((GrowableStructure)structure).Fertility;
-                            lock (f) {
-                                if (f.Data.UnlockLevel <= structure.PopulationLevel) {
-                                    f.Data.UnlockLevel = structure.PopulationLevel;
-                                    f.Data.UnlockPopulationCount = Mathf.Max(f.Data.UnlockPopulationCount, structure.PopulationCount);
-                                }
-                            }
-                        }
-                    }
-                }
-                if (structure.BuildingItems != null) {
-                    foreach (Item item in structure.BuildingItems) {
-                        float[] array = new float[NumberOfPopulationLevels];
-                        array[structure.PopulationLevel] = item.count;
-                        _buildItemsNeeded.AddOrUpdate(item.ID, array, (id, oc) => { oc[structure.PopulationLevel] += item.count; return oc; });
-                    }
-                }
-            });
-            var two = Parallel.ForEach(UnitPrototypes.Values, unit => {
-                if (_levelCountToUnlocks[unit.PopulationLevel].ContainsKey(unit.PopulationCount) == false) {
-                    _levelCountToUnlocks[unit.PopulationLevel].TryAdd(unit.PopulationCount, new Unlocks(unit.PopulationCount, unit.PopulationLevel));
-                }
-                _levelCountToUnlocks[unit.PopulationLevel].TryGetValue(unit.PopulationCount, out Unlocks value);
-                value.units.Add(unit);
-                if (unit.BuildingItems != null) {
-                    foreach (Item item in unit.BuildingItems) {
-                        float[] array = new float[NumberOfPopulationLevels];
-                        array[unit.PopulationLevel] = item.count;
-                        _buildItemsNeeded.AddOrUpdate(item.ID, array, (id, oc) => { oc[unit.PopulationLevel] += item.count; return oc; });
-                    }
-                }
-            });
-            var three = Parallel.ForEach(_allNeeds, need => {
-                if (_levelCountToUnlocks[need.StartLevel].ContainsKey(need.StartPopulationCount) == false) {
-                    _levelCountToUnlocks[need.StartLevel].TryAdd(need.StartPopulationCount, new Unlocks(need.StartPopulationCount, need.StartLevel));
-                }
-                _levelCountToUnlocks[need.StartLevel].TryGetValue(need.StartPopulationCount, out Unlocks value);
-                value.needs.Add(need);
-            });
-            while ((one.IsCompleted && two.IsCompleted && three.IsCompleted) == false) {
-            }
-            for (int i = 0; i < NumberOfPopulationLevels; i++) {
-                AllUnlockPeoplePerLevel[i] = new List<int>();
-                foreach (int key in _levelCountToUnlocks[i].Keys) {
-                    AllUnlockPeoplePerLevel[i].Add(key);
-                }
-                AllUnlockPeoplePerLevel[i].Sort();
-            }
-            foreach (FertilityPrototypeData fertilityPrototype in _fertilityPrototypeDatas.Values) {
-                if (fertilityPrototype.ItemsDependentOnThis.Count == 0) {
-                    Debug.LogWarning("Fertility " + fertilityPrototype.ID + " is not required by anything! -- Wanted?");
-                }
-            }
-            //TODO: make this make more sense :)
-            RecommandedBuildSupplyChains = new Dictionary<string, int[]>();
-            foreach (string item in _buildItemsNeeded.Keys) {
-                if (_itemIdToProduce.ContainsKey(item) == false)
-                    continue;
-                RecommandedBuildSupplyChains[item] = new int[NumberOfPopulationLevels];
-                for (int i = 0; i < NumberOfPopulationLevels; i++) {
-                    RecommandedBuildSupplyChains[item][i] = Mathf.CeilToInt(_buildItemsNeeded[item][i]
-                        / (_itemIdToProduce[item][0].producePerMinute * 60));
-                }
-            }
-            OrderUnlockFertilities = new List<Fertility>(_idToFertilities.Values);
-            OrderUnlockFertilities.RemoveAll(x => x.Data.ItemsDependentOnThis.Count == 0);
-            OrderUnlockFertilities = OrderUnlockFertilities.OrderBy(x => x.Data.UnlockLevel).ThenBy(x => x.Data.UnlockPopulationCount).ToList();
+            UnlockCalculator unlockCalculator = new UnlockCalculator();
+            _levelCountToUnlocks = unlockCalculator.LevelCountToUnlocks;
+            _buildItemsNeeded = unlockCalculator.BuildItemsNeeded;
+            AllUnlockPeoplePerLevel = unlockCalculator.AllUnlockPeoplePerLevel;
+            RecommandedBuildSupplyChains = unlockCalculator.RecommandedBuildSupplyChains;
+            OrderUnlockFertilities = unlockCalculator.OrderUnlockFertilities;
         }
+
         public Unlocks GetNextUnlocks(int populationLevel, int populationCount) {
             return (from item in _levelCountToUnlocks[populationLevel] where item.Key > populationCount select item.Value).FirstOrDefault();
-        }
-
-        private void CalculateNeedStuff() {
-            _needsPerLevel = new List<NeedPrototypeData>[NumberOfPopulationLevels];
-            foreach (var pair in _needPrototypeDatas) {
-                NeedPrototypeData need = pair.Value;
-                if (need.structures != null) {
-                    int startPopulationCount = int.MaxValue;
-                    int populationLevel = int.MaxValue;
-                    foreach (NeedStructure str in need.structures) {
-                        startPopulationCount = Mathf.Min(startPopulationCount, str.PopulationCount);
-                        populationLevel = Mathf.Min(populationLevel, str.PopulationLevel);
-                        str.NeedStructureData.SatisfiesNeeds.Add(new Need(pair.Key));
-                    }
-                    if (need.startLevel < populationLevel
-                        || need.startLevel == populationLevel && need.startPopulationCount < startPopulationCount) {
-                        Debug.LogWarning("Need " + need.Name + " is misconfigured to start earlier than supposed. Fixed to unlock time." +
-                            "\nCount " + need.startPopulationCount + "->" + startPopulationCount
-                            + "\nLevel " + need.startLevel + "->" + populationLevel);
-                        need.startPopulationCount = startPopulationCount;
-                        need.startLevel = populationLevel;
-                    }
-                }
-                if (need.item != null) {
-                    need.item.Data.SatisfiesNeeds ??= new List<Need>();
-                    need.item.Data.SatisfiesNeeds.Add(new Need(pair.Key));
-                    if (need.item.Type != ItemType.Luxury) {
-                        Debug.LogWarning("Item " + need.item.ID + " is not marked as luxury good. Fix it, but change it in file.");
-                        need.item.Data.type = ItemType.Luxury;
-                    }
-                    need.produceForPeople = new Dictionary<Produce, int[]>();
-                    if (_itemIdToProduce.ContainsKey(need.item.ID) == false) {
-                        Debug.LogError("itemIDToProduce does not have any production for this need item " + need.item.ID);
-                        continue;
-                    }
-                    int startPopulationCount = int.MaxValue;
-                    int populationLevel = int.MaxValue;
-                    foreach (Produce produce in _itemIdToProduce[need.item.ID]) {
-                        StructurePrototypeData str = produce.ProducerStructure;
-                        startPopulationCount = Mathf.Min(startPopulationCount, str.populationCount);
-                        populationLevel = Mathf.Min(populationLevel, str.populationLevel);
-                        need.produceForPeople[produce] = new int[NumberOfPopulationLevels];
-                        for (int i = 0; i < NumberOfPopulationLevels; i++) {
-                            need.produceForPeople[produce][i] = Mathf.FloorToInt(produce.producePerMinute / need.UsageAmounts[i]);
-                        }
-                    }
-                    if (need.startLevel < populationLevel
-                        || need.startLevel == populationLevel && need.startPopulationCount < startPopulationCount) {
-                        Debug.LogWarning("Need " + need.Name + " is misconfigured to start earlier than supposed. Fixed to unlock time." +
-                            "\nCount " + need.startPopulationCount + "->" + startPopulationCount
-                            + "\nLevel " + need.startLevel + "->" + populationLevel);
-                        need.startPopulationCount = startPopulationCount;
-                        need.startLevel = populationLevel;
-                    }
-                }
-                _needsPerLevel[need.startLevel] ??= new List<NeedPrototypeData>();
-                _needsPerLevel[need.startLevel].Add(need);
-            }
-            foreach (Item item in AllItems.Values.Where(x => x.Type == ItemType.Luxury)) {
-                item.Data.TotalUsagePerLevel = new float[NumberOfPopulationLevels];
-                for (int i = 0; i < NumberOfPopulationLevels; i++) {
-                    if (item.Data.SatisfiesNeeds != null)
-                        item.Data.TotalUsagePerLevel[i] = item.Data.SatisfiesNeeds.Sum(x => x.Uses[i]);
-                }
-            }
-
         }
 
         private void ReadStartingLoadoutsFromXmLs(string xmlText) {
@@ -656,175 +505,6 @@ namespace Andja.Controller {
                 SetData<StartingLoadout>(node, ref sl);
                 _startingLoadouts.Add(sl);
             }
-        }
-
-        private void CalculateOptimalProportions() {
-            List<StructurePrototypeData> structures = new List<StructurePrototypeData>(_structurePrototypeDatas.Values);
-            List<FarmPrototypeData> farms = new List<FarmPrototypeData>(structures.OfType<FarmPrototypeData>());
-            List<MinePrototypeData> mines = new List<MinePrototypeData>(structures.OfType<MinePrototypeData>());
-            List<ProductionPrototypeData> productions = new List<ProductionPrototypeData>(structures.OfType<ProductionPrototypeData>());
-            List<Produce> productionsProduces = new List<Produce>();
-            _itemIdToProduce = new Dictionary<string, List<Produce>>();
-            string produceDebug = "Produce Per Minute\n";
-            produceDebug += "##############FARMS##############\n";
-            foreach (FarmPrototypeData fpd in farms) {
-                foreach (Item outItem in fpd.output) {
-                    float ppm = 0;
-                    int tileCount = fpd.RangeTileCount;
-                    int numGrowablesPerTon = fpd.neededHarvestToProduce;
-                    float growtime = fpd.growable != null ? fpd.growable.ProduceTime : 1;
-                    float produceTime = fpd.produceTime;
-                    float neededWorkerRatio = (float)fpd.maxNumberOfWorker / (float)fpd.neededHarvestToProduce;
-                    float workPerWorker = (float)fpd.neededHarvestToProduce / (float)fpd.maxNumberOfWorker;
-                    if (fpd.growable == null) {
-                        ppm = 60f / (produceTime * fpd.efficiency);
-                    }
-                    else
-                    if (produceTime * fpd.efficiency <= 0 || growtime <= 0) {
-                        ppm = 0;
-                    }
-                    else if (fpd.maxNumberOfWorker * produceTime * fpd.efficiency >= growtime) {
-                        ppm = neededWorkerRatio * (60f / produceTime);
-                    }
-                    else {
-                        ppm = Mathf.Min(
-                                60f / (workPerWorker * (produceTime * fpd.efficiency)),
-                                //not sure if this is correct
-                                ((float)tileCount / ((float)numGrowablesPerTon * fpd.maxNumberOfWorker)) * (60f / growtime)
-                             );
-                    }
-                    ppm /= (float)outItem.count;
-                    if (ppm == 0)
-                        Debug.LogError("Farm " + fpd.ID + " does not produce anything per minute. FIX IT!");
-                    produceDebug += fpd.ID + ": " + ppm + "\n";
-                    fpd.ProducePerMinute = ppm;
-                    Produce p = new Produce {
-                        item = outItem,
-                        producePerMinute = ppm,
-                        ProducerStructure = fpd
-                    };
-                    p.CalculateSupplyChains();
-                    if (_itemIdToProduce.ContainsKey(outItem.ID)) {
-                        _itemIdToProduce[outItem.ID].Add(p);
-                    }
-                    else {
-                        _itemIdToProduce.Add(outItem.ID, new List<Produce> { p });
-                    }
-                    if (fpd.growable?.Fertility != null) {
-                        _fertilityPrototypeDatas[fpd.growable.Fertility.ID].ItemsDependentOnThis.Add(outItem.ID);
-                    }
-                }
-            }
-            produceDebug += "\n##############MINES##############\n";
-            foreach (MinePrototypeData mpd in mines) {
-                foreach (Item outItem in mpd.output) {
-                    float ppm = mpd.produceTime == 0 ? float.MaxValue : outItem.count * (60f / mpd.produceTime);
-                    mpd.ProducePerMinute = ppm;
-                    Produce p = new Produce {
-                        item = outItem,
-                        producePerMinute = ppm,
-                        ProducerStructure = mpd
-                    };
-                    p.CalculateSupplyChains();
-                    produceDebug += mpd.ID + ": " + ppm + "\n";
-                    if (_itemIdToProduce.ContainsKey(outItem.ID)) {
-                        _itemIdToProduce[outItem.ID].Add(p);
-                    }
-                    else {
-                        _itemIdToProduce.Add(outItem.ID, new List<Produce> { p });
-                    }
-                }
-            }
-            produceDebug += "\n###########PRODUCTION############\n";
-            foreach (ProductionPrototypeData ppd in productions) {
-                if (ppd.output == null)
-                    continue;
-                foreach (Item outItem in ppd.output) {
-                    float ppm = ppd.produceTime == 0 ? float.MaxValue : outItem.count * (60f / ppd.produceTime);
-                    ppd.ProducePerMinute = ppm;
-                    Produce p = new Produce {
-                        item = outItem,
-                        producePerMinute = ppm,
-                        ProducerStructure = ppd,
-                        needed = ppd.intake
-                    };
-                    produceDebug += ppd.ID + ": " + ppm + "\n";
-                    productionsProduces.Add(p);
-                    if (_itemIdToProduce.ContainsKey(outItem.ID)) {
-                        _itemIdToProduce[outItem.ID].Add(p);
-                    }
-                    else {
-                        _itemIdToProduce.Add(outItem.ID, new List<Produce> { p });
-                    }
-                }
-            }
-            Debug.Log(produceDebug);
-            foreach (Produce currentProduce in productionsProduces) {
-                if (currentProduce.needed == null)
-                    continue;
-                foreach (Item need in currentProduce.needed) {
-                    if (_itemIdToProduce.ContainsKey(need.ID) == false) {
-                        Debug.LogWarning("NEEDED ITEM CANNOT BE PRODUCED! -- Wanted beahviour? Item-ID:" + need.ID);
-                        continue;
-                    }
-                    foreach (Produce itemProducer in _itemIdToProduce[need.ID]) {
-                        float f1 = (((float)need.count * (60f / currentProduce.ProducerStructure.produceTime)));
-                        float f2 = (((float)itemProducer.item.count * itemProducer.producePerMinute));
-                        if (f2 == 0)
-                            continue;
-                        float ratio = f1 / f2;
-                        if (currentProduce.itemProduceRatios.ContainsKey(need.ID) == false) {
-                            currentProduce.itemProduceRatios[need.ID] = new List<ProduceRatio>();
-                        }
-                        currentProduce.itemProduceRatios[need.ID].Add(new ProduceRatio {
-                            Producer = itemProducer,
-                            Ratio = ratio,
-                        });
-                    }
-                }
-            }
-            foreach (Produce currentProduce in productionsProduces) {
-                currentProduce.CalculateSupplyChains();
-            }
-            string proportionDebug = "Proportions";
-            foreach (Produce currentProduce in productionsProduces) {
-                proportionDebug += "\n" + currentProduce.ProducerStructure.ID + ":";
-                foreach (string item in currentProduce.itemProduceRatios.Keys) {
-                    proportionDebug += "\n ->" + item;
-                    proportionDebug = currentProduce.itemProduceRatios[item].Aggregate(proportionDebug, (current, pr)
-                                        => current + ("\n  # " + pr.Producer.ProducerStructure.ID + "= " + pr.Ratio));
-                }
-            }
-            Debug.Log(proportionDebug);
-            string supplyChains = "SupplyChains";
-            foreach (Produce currentProduce in productionsProduces) {
-                supplyChains += "\n" + currentProduce.ProducerStructure.ID + "(" + currentProduce.item.ID + "): ";
-                foreach (SupplyChain sc in currentProduce.SupplyChains) {
-                    supplyChains += "[";
-                    for (int i = 0; i < sc.tiers.Count; i++) {
-                        supplyChains += (i + 1) + "| " + string.Join(", ", sc.tiers[i]);
-                        if (i < sc.tiers.Count - 1)
-                            supplyChains += " ";
-                    }
-                    supplyChains += "]";
-                }
-            }
-            Debug.Log(supplyChains);
-            string supplyChainsCosts = "SupplyChainsCosts";
-            foreach (Produce currentProduce in productionsProduces) {
-                supplyChainsCosts += "\n" + currentProduce.ProducerStructure.ID + "(" + currentProduce.item.ID + "): ";
-                foreach (SupplyChain sc in currentProduce.SupplyChains) {
-                    supplyChainsCosts += "[";
-                    supplyChainsCosts += "TBC " + sc.cost.TotalBuildCost;
-                    supplyChainsCosts += " TMC " + sc.cost.TotalMaintenance;
-                    supplyChainsCosts += " PL " + sc.cost.PopulationLevel;
-                    supplyChainsCosts += " I " + string.Join(", ", sc.cost.TotalItemCost.Select(x=>x.ToString()));
-                    if (sc.cost.requiredFertilites != null)
-                        supplyChainsCosts += " F " + string.Join(", ", sc.cost.requiredFertilites.Select(x => x.ToString()));
-                    supplyChainsCosts += "]";
-                }
-            }
-            Debug.Log(supplyChainsCosts);
         }
 
         public int GetMaxStructureLevelForStructureType(Type type) {
@@ -1826,19 +1506,5 @@ namespace Andja.Controller {
         public void OnDestroy() {
             Instance = null;
         }
-    }
-
-    public class Unlocks {
-        public Unlocks(int peopleCount, int level) {
-            this.peopleCount = peopleCount;
-            this.populationLevel = level;
-            this.requiredFullHomes = peopleCount / PrototypController.Instance.PopulationLevelDatas[level].HomeStructure.People;
-        }
-        public int peopleCount;
-        public int populationLevel;
-        public int requiredFullHomes;
-        public ConcurrentBag<Structure> structures = new ConcurrentBag<Structure>();
-        public ConcurrentBag<Unit> units = new ConcurrentBag<Unit>();
-        public ConcurrentBag<Need> needs = new ConcurrentBag<Need>();
     }
 }

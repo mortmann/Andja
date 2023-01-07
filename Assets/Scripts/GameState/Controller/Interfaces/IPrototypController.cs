@@ -14,6 +14,7 @@ namespace Andja.Controller {
         IReadOnlyDictionary<string, ArmorType> ArmorTypeDatas { get; }
         HomeStructure BuildableHomeStructure { get; }
         Item[] BuildItems { get; }
+        string LoadXml(PrototypController.XmlFilesTypes xml);
         List<Item> MineableItems { get; }
         public List<Fertility> OrderUnlockFertilities { get; }
         public MarketStructure FirstLevelMarket { get; }
@@ -32,6 +33,7 @@ namespace Andja.Controller {
         IReadOnlyDictionary<int, Unlocks>[] LevelCountToUnlocks { get; }
         IReadOnlyDictionary<string, NeedGroup> NeedGroups { get; }
         IReadOnlyDictionary<string, NeedPrototypeData> NeedPrototypeDatas { get; }
+        IReadOnlyDictionary<string, NeedGroupPrototypeData> NeedGroupDatas { get; }
         int NumberOfPopulationLevels { get; }
         IReadOnlyDictionary<int, PopulationLevelPrototypData> PopulationLevelDatas { get; }
         IReadOnlyDictionary<int, List<NeedGroup>> PopulationLevelToNeedGroup { get; }
@@ -78,6 +80,5 @@ namespace Andja.Controller {
         DamageType GetWorldDamageType();
         void LoadFromXML();
         void ReloadLanguage();
-        void ReloadLanguageVariables(string xml);
     }
 }

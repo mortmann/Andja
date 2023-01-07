@@ -6,7 +6,7 @@ using Andja.Utility;
 
 namespace Andja.Model {
 
-    public class WarehousePrototypData : MarketPrototypData {
+    public class WarehousePrototypData : MarketPrototypeData {
         public int tradeItemCount;
     }
 

@@ -16,13 +16,13 @@ using static AssertNet.Moq.Assertions;
 public class MarketStructureTest {
     string ID = "MarketStructure";
     MarketStructure Market;
-    MarketPrototypData PrototypeData;
+    MarketPrototypeData PrototypeData;
     private MockUtil mockutil;
     private ICity City;
     [SetUp]
     public void SetUp() {
         Market = new MarketStructure(ID, null);
-        PrototypeData = new MarketPrototypData() {
+        PrototypeData = new MarketPrototypeData() {
             ID = ID,
             structureRange = 20
         };

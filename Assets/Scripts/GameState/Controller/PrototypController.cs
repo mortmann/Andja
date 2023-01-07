@@ -41,6 +41,7 @@ namespace Andja.Controller {
         public IReadOnlyDictionary<Type, int> StructureTypeToMaxStructureLevel => _structureTypeToMaxStructureLevel;
         public IReadOnlyDictionary<string, StructurePrototypeData> StructurePrototypeDatas => _structurePrototypeDatas;
         public IReadOnlyDictionary<string, NeedPrototypeData> NeedPrototypeDatas => _needPrototypeDatas;
+        public IReadOnlyDictionary<string, NeedGroupPrototypeData> NeedGroupDatas => _needGroupDatas;
         public IReadOnlyDictionary<string, NeedGroup> NeedGroups => _idToNeedGroup;
         public IReadOnlyDictionary<string, FertilityPrototypeData> FertilityPrototypeDatas => _fertilityPrototypeDatas;
         public IReadOnlyDictionary<string, UnitPrototypeData> UnitPrototypeDatas => _unitPrototypeDatas;
@@ -93,8 +94,6 @@ namespace Andja.Controller {
         private Dictionary<string, NeedGroup> _idToNeedGroup;
         private Dictionary<string, Item> _allItems;
         private Dictionary<Climate, List<SpawnStructureGenerationInfo>> _spawnStructureGeneration;
-
-        private List<Item> _buildItemsList;
         private Dictionary<int, List<NeedGroup>> _populationLevelToNeedGroup;
         private Dictionary<Climate, List<Fertility>> _allFertilities;
         private Dictionary<Climate, List<FertilityPrototypeData>> _allFertilitiesDatasPerClimate;
@@ -210,7 +209,6 @@ namespace Andja.Controller {
             }
             Instance = this;
             ModLoader.LoadMods();
-            //ModLoader.AvaibleMods();
             LoadFromXML();
             StructureSpriteController.LoadSprites();
         }
@@ -288,93 +286,16 @@ namespace Andja.Controller {
             //Why cant it be both -Fry
             //Good News everyone! Setting it to GB fixes that stupid thing! -Professor
             Thread.CurrentThread.CurrentCulture = System.Globalization.CultureInfo.CreateSpecificCulture("en-GB");
-            //other
-            _populationLevelDatas = new Dictionary<int, PopulationLevelPrototypData>();
             ReadOtherFromXml(LoadXml(XmlFilesTypes.Other));
-            ModLoader.LoadXMLs(XmlFilesTypes.Other, ReadOtherFromXml);
-
-            //GAMEEVENTS
-            _effectPrototypeDatas = new Dictionary<string, EffectPrototypeData>();
-            _gameEventPrototypeDatas = new Dictionary<string, GameEventPrototypData>();
             ReadEventsFromXml(LoadXml(XmlFilesTypes.Events));
-            ModLoader.LoadXMLs(XmlFilesTypes.Events, ReadEventsFromXml);
-
-
-            //fertilities
-            _allFertilities = new Dictionary<Climate, List<Fertility>>();
-            _idToFertilities = new Dictionary<string, Fertility>();
-            _allFertilitiesDatasPerClimate = new Dictionary<Climate, List<FertilityPrototypeData>>();
-            _fertilityPrototypeDatas = new Dictionary<string, FertilityPrototypeData>();
             ReadFertilitiesFromXml(LoadXml(XmlFilesTypes.Fertilities));
-            ModLoader.LoadXMLs(XmlFilesTypes.Fertilities, ReadFertilitiesFromXml);
-
-            // prototypes of items
-            _allItems = new Dictionary<string, Item>();
-            _buildItemsList = new List<Item>();
-            MineableItems = new List<Item>();
-            _itemPrototypeDatas = new Dictionary<string, ItemPrototypeData>();
             ReadItemsFromXml(LoadXml(XmlFilesTypes.Items));
-            ModLoader.LoadXMLs(XmlFilesTypes.Items, ReadItemsFromXml);
-            _buildItems = _buildItemsList.ToArray();
-            _buildItemsList = null;
-
-            _armorTypeDatas = new Dictionary<string, ArmorType>();
-            _damageTypeDatas = new Dictionary<string, DamageType>();
             ReadCombatFromXml(LoadXml(XmlFilesTypes.Combat));
-            ModLoader.LoadXMLs(XmlFilesTypes.Combat, ReadCombatFromXml);
-            Dictionary<ArmorType, float> worldMultiplier = ArmorTypeDatas.Values.ToDictionary<ArmorType, ArmorType, float>(at => at, at => 1);
-            //Hardcoded WorldDamage -- We need it and cant change yo
-            _damageTypeDatas.Add("world", new DamageType() {
-                ID = "world",
-                damageMultiplier = worldMultiplier,
-            });
-
-            _unitPrototypes = new Dictionary<string, Unit>();
-            _unitPrototypeDatas = new Dictionary<string, UnitPrototypeData>();
-            _workerPrototypeDatas = new Dictionary<string, WorkerPrototypeData>();
             ReadUnitsFromXml(LoadXml(XmlFilesTypes.Units));
-            ModLoader.LoadXMLs(XmlFilesTypes.Units, ReadUnitsFromXml);
-
-            // setup all prototypes of structures here
-            // load them from the
-            _structureTypeToMaxStructureLevel = new Dictionary<Type, int>();
-            _structurePrototypes = new Dictionary<string, Structure>();
-            _structurePrototypeDatas = new Dictionary<string, StructurePrototypeData>();
             ReadStructuresFromXml(LoadXml(XmlFilesTypes.Structures));
-            ModLoader.LoadXMLs(XmlFilesTypes.Structures, ReadStructuresFromXml);
-
-            //needs
-            _allNeeds = new List<Need>();
-            _populationLevelToNeedGroup = new Dictionary<int, List<NeedGroup>>();
-            _needPrototypeDatas = new Dictionary<string, NeedPrototypeData>();
-            _needGroupDatas = new Dictionary<string, NeedGroupPrototypeData>();
-            _idToNeedGroup = new Dictionary<string, NeedGroup>();
             ReadNeedsFromXml(LoadXml(XmlFilesTypes.Needs));
-            ModLoader.LoadXMLs(XmlFilesTypes.Needs, ReadNeedsFromXml);
-
-            _startingLoadouts = new List<StartingLoadout>();
             ReadStartingLoadoutsFromXmLs(LoadXml(XmlFilesTypes.Startingloadouts));
-            ModLoader.LoadXMLs(XmlFilesTypes.Startingloadouts, ReadStartingLoadoutsFromXmLs);
-
-            _islandSizeToGenerationInfo = new Dictionary<Size, IslandSizeGenerationInfo>();
-            _climateToResourceGeneration = new Dictionary<Climate, List<ResourceGenerationInfo>>();
-            _islandFeaturePrototypeDatas = new Dictionary<string, IslandFeaturePrototypeData>();
-            _spawnStructureGeneration = new Dictionary<Climate, List<SpawnStructureGenerationInfo>>();
-            _allNaturalSpawningStructureIDs = new List<string>();
-            foreach (Climate climate in Enum.GetValues(typeof(Climate))) {
-                _spawnStructureGeneration[climate] = new List<SpawnStructureGenerationInfo>();
-            }
-            ResourceGenerations = new List<ResourceGenerationInfo>();
             ReadMapGenerationInfos(LoadXml(XmlFilesTypes.Mapgeneration));
-            ModLoader.LoadXMLs(XmlFilesTypes.Mapgeneration, ReadMapGenerationInfos);
-            if (_islandFeaturePrototypeDatas.Count > 0) {
-                MoonSharp.Interpreter.UserData.RegisterAssembly(); //Set up for exchange of Tile Data
-                MoonSharp.Interpreter.UserData.RegisterType<TileType>();
-            }
-
-            foreach (IslandFeaturePrototypeData d in IslandFeaturePrototypeData.TempSetUp()) {
-                _islandFeaturePrototypeDatas.Add(d.ID, d);
-            }
 
             string str = "";
             List<Structure> all = new List<Structure>(_structurePrototypes.Values);
@@ -415,66 +336,6 @@ namespace Andja.Controller {
             return _damageTypeDatas["world"];
         }
 
-        private void ReadMapGenerationInfos(string xmlText) {
-            XmlDocument xmlDoc = new XmlDocument(); // xmlDoc is the new xml document.
-            xmlDoc.LoadXml(xmlText); // load the file.
-
-            foreach (XmlElement node in xmlDoc.SelectNodes("generationInfos/islandSizes/islandSize")) {
-                //SetData<StartingLoadout>(node, ref sl);
-                IslandSizeGenerationInfo islandSize = new IslandSizeGenerationInfo();
-                SetData<IslandSizeGenerationInfo>((XmlElement)node, ref islandSize);
-                Enum.TryParse(node.GetAttribute("size"), true, out Size size);
-                _islandSizeToGenerationInfo[size] = islandSize;
-            }
-            foreach (Climate climate in Enum.GetValues(typeof(Climate))) {
-                _climateToResourceGeneration[climate] = new List<ResourceGenerationInfo>();
-            }
-            foreach (XmlElement node in xmlDoc.SelectNodes("generationInfos/resources/resource")) {
-                ResourceGenerationInfo generationInfo = new ResourceGenerationInfo();
-                generationInfo.ID = node.GetAttribute("ID");
-                SetData<ResourceGenerationInfo>(node, ref generationInfo);
-                ResourceGenerations.Add(generationInfo);
-                generationInfo.resourceRange = new Dictionary<Size, Range>();
-                foreach (XmlElement child in node["distributionMap"].ChildNodes) {
-                    string sizeS = child.GetAttribute("islandSize");
-                    Enum.TryParse(sizeS, true, out Size size);
-                    Range range = new Range(child["range"]["lower"].GetIntValue(), child["range"]["upper"].GetIntValue());
-                    generationInfo.resourceRange[size] = range;
-                    if (range.upper > 0) {
-                        IslandSizeToGenerationInfo[size].resourceGenerationsInfo.Add(generationInfo);
-                    }
-                    generationInfo.climate ??= (Climate[])Enum.GetValues(typeof(Climate));
-                }
-                foreach (Climate c in generationInfo.climate) {
-                    ClimateToResourceGeneration[c].Add(generationInfo);
-                }
-            }
-            foreach (XmlElement node in xmlDoc.SelectNodes("generationInfos/islandFeatures/islandFeature")) {
-                IslandFeaturePrototypeData feature = new IslandFeaturePrototypeData();
-                feature.ID = node.GetAttribute("ID");
-                SetData<IslandFeaturePrototypeData>(node, ref feature);
-                _islandFeaturePrototypeDatas[feature.ID] = feature;
-            }
-            foreach (XmlElement node in xmlDoc.SelectNodes("generationInfos/structures/structure")) {
-                SpawnStructureGenerationInfo sps = new SpawnStructureGenerationInfo();
-                sps.ID = node.GetAttribute("ID");
-                SetData<SpawnStructureGenerationInfo>(node, ref sps);
-                if (sps.climate != null) {
-                    foreach (Climate c in sps.climate) {
-                        _spawnStructureGeneration[c].Add(sps);
-                    }
-                }
-                else {
-                    foreach (Climate c in Enum.GetValues(typeof(Climate))) {
-                        _spawnStructureGeneration[c].Add(sps);
-                    }
-                }
-                if (sps.structureType == StructureType.Natural) {
-                    _allNaturalSpawningStructureIDs.Add(sps.ID);
-                }
-            }
-        }
-
         private void CalculatePopulationNeedGroups() {
             foreach (int level in _populationLevelDatas.Keys) {
                 if (_populationLevelToNeedGroup.ContainsKey(level))
@@ -496,17 +357,6 @@ namespace Andja.Controller {
         public Unlocks GetNextUnlocks(int populationLevel, int populationCount) {
             return (from item in _levelCountToUnlocks[populationLevel] where item.Key > populationCount select item.Value).FirstOrDefault();
         }
-
-        private void ReadStartingLoadoutsFromXmLs(string xmlText) {
-            XmlDocument xmlDoc = new XmlDocument(); // xmlDoc is the new xml document.
-            xmlDoc.LoadXml(xmlText); // load the file.
-            foreach (XmlElement node in xmlDoc.SelectNodes("startingloadouts/startingloadout")) {
-                StartingLoadout sl = new StartingLoadout();
-                SetData<StartingLoadout>(node, ref sl);
-                _startingLoadouts.Add(sl);
-            }
-        }
-
         public int GetMaxStructureLevelForStructureType(Type type) {
             if (_structureTypeToMaxStructureLevel.ContainsKey(type) == false)
                 _structureTypeToMaxStructureLevel[type] =
@@ -529,204 +379,141 @@ namespace Andja.Controller {
             return _unitPrototypes.ContainsKey(id) == false ? null : _unitPrototypes[id];
         }
 
-        ///////////////////////////////////////
-        /// XML LOADING FROM FILE
-        ///
-        ///////////////////////////////////////
+        private void ReadMapGenerationInfos(string xmlText) {
+            _islandSizeToGenerationInfo = new Dictionary<Size, IslandSizeGenerationInfo>();
+            _climateToResourceGeneration = new Dictionary<Climate, List<ResourceGenerationInfo>>();
+            _islandFeaturePrototypeDatas = new Dictionary<string, IslandFeaturePrototypeData>();
+            _spawnStructureGeneration = new Dictionary<Climate, List<SpawnStructureGenerationInfo>>();
+            _allNaturalSpawningStructureIDs = new List<string>();
+            foreach (Climate climate in Enum.GetValues(typeof(Climate))) {
+                _spawnStructureGeneration[climate] = new List<SpawnStructureGenerationInfo>();
+                _climateToResourceGeneration[climate] = new List<ResourceGenerationInfo>();
+            }
+            
+            ResourceGenerations = new List<ResourceGenerationInfo>();
+
+            MapGenerationConverter mapGenerationConverter = new MapGenerationConverter(_spawnStructureGeneration, _islandSizeToGenerationInfo,
+                _islandFeaturePrototypeDatas, _allNaturalSpawningStructureIDs, _climateToResourceGeneration, ResourceGenerations);
+
+            mapGenerationConverter.ReadFromFile(xmlText);
+            ModLoader.LoadXMLs(XmlFilesTypes.Mapgeneration, mapGenerationConverter.ReadFromFile);
+            if (_islandFeaturePrototypeDatas.Count > 0) {
+                MoonSharp.Interpreter.UserData.RegisterAssembly(); //Set up for exchange of Tile Data
+                MoonSharp.Interpreter.UserData.RegisterType<TileType>();
+            }
+            foreach (IslandFeaturePrototypeData d in IslandFeaturePrototypeData.TempSetUp()) {
+                _islandFeaturePrototypeDatas.Add(d.ID, d);
+            }
+        }
+
+        private void ReadStartingLoadoutsFromXmLs(string xmlText) {
+            _startingLoadouts = new List<StartingLoadout>();
+            BaseConverter<StartingLoadout> loadoutConverter = new BaseConverter<StartingLoadout>(
+                (id) => new StartingLoadout(),
+                "startingloadouts/startingloadout",
+                (id, data) => _startingLoadouts.Add(data)
+                );
+
+            loadoutConverter.ReadFile(xmlText);
+            ModLoader.LoadXMLs(XmlFilesTypes.Startingloadouts, loadoutConverter.ReadFile);
+        }
+
         private void ReadEventsFromXml(string file) {
-            XmlDocument xmlDoc = new XmlDocument();
-            xmlDoc.LoadXml(file); // load the file.
-            XmlNodeList listEffect = xmlDoc.SelectNodes("events/Effect");
-            if (listEffect != null) {
-                foreach (XmlElement node in listEffect) {
-                    EffectPrototypeData epd = new EffectPrototypeData();
-                    string id = node.GetAttribute("ID");
-                    SetData<EffectPrototypeData>(node, ref epd);
-                    _effectPrototypeDatas[id] = epd;
-                }
-            }
-            XmlNodeList listGameEvent = xmlDoc.SelectNodes("events/GameEvent");
-            if (listGameEvent == null) return;
-            foreach (XmlElement node in listGameEvent) {
-                GameEventPrototypData gepd = new GameEventPrototypData();
-                string id = node.GetAttribute("ID");
-                gepd.ID = id;
-                SetData<GameEventPrototypData>(node, ref gepd);
-                _gameEventPrototypeDatas[id] = gepd;
-            }
+            _effectPrototypeDatas = new Dictionary<string, EffectPrototypeData>();
+            _gameEventPrototypeDatas = new Dictionary<string, GameEventPrototypData>();
+            EventConverter eventConverter = new EventConverter(_effectPrototypeDatas, _gameEventPrototypeDatas);
+            eventConverter.ReadFromFile(file);
+            ModLoader.LoadXMLs(XmlFilesTypes.Events, eventConverter.ReadFromFile);
         }
 
         private void ReadOtherFromXml(string file) {
-            XmlDocument xmlDoc = new XmlDocument();
-            xmlDoc.LoadXml(file); // load the file.
-            foreach (XmlElement node in xmlDoc.SelectNodes("Other/PopulationLevels/PopulationLevel")) {
-                PopulationLevelPrototypData plpd = new PopulationLevelPrototypData();
-                int level = int.Parse(node.GetAttribute("LEVEL"));
-                plpd.LEVEL = level;
-                SetData<PopulationLevelPrototypData>(node, ref plpd);
-                _populationLevelDatas[level] = plpd;
-            }
+            _populationLevelDatas = new Dictionary<int, PopulationLevelPrototypData>();
+            OtherConverter otherConverter = new OtherConverter(_populationLevelDatas);
+            otherConverter.ReadFromFile(file);
+            ModLoader.LoadXMLs(XmlFilesTypes.Other, otherConverter.ReadFromFile);
         }
 
         private void ReadCombatFromXml(string file) {
-            XmlDocument xmlDoc = new XmlDocument();
-            xmlDoc.LoadXml(file); // load the file.
-            XmlNodeList listArmorType = xmlDoc.SelectNodes("combatTypes/armorType");
-            if (listArmorType != null) {
-                foreach (XmlElement node in listArmorType) {
-                    ArmorType at = new ArmorType();
-                    string id = node.GetAttribute("ID");
-                    at.ID = id;
-                    SetData<ArmorType>(node, ref at);
-                    _armorTypeDatas[id] = at;
-                }
-            }
-            XmlNodeList listDamageType = xmlDoc.SelectNodes("combatTypes/damageType");
-            if (listDamageType != null) {
-                foreach (XmlElement node in listDamageType) {
-                    DamageType at = new DamageType();
-                    string id = node.GetAttribute("ID");
-                    at.ID = id;
-                    SetData<DamageType>(node, ref at);
-                    XmlNode dict = node.SelectSingleNode("damageMultiplier");
-                    at.damageMultiplier = new Dictionary<ArmorType, float>();
-                    foreach (XmlElement child in dict.ChildNodes) {
-                        string armorID = child.GetAttribute("ArmorTyp");
-                        if (string.IsNullOrEmpty(armorID))
-                            continue;
-                        if (float.TryParse(child.InnerText, out float multiplier) == false) {
-                            Debug.LogError("ID is not an float for ArmorType ");
-                        }
-                        at.damageMultiplier[_armorTypeDatas[armorID]] = multiplier;
-                    }
-                    _damageTypeDatas[id] = at;
-                }
-            }
+            _armorTypeDatas = new Dictionary<string, ArmorType>();
+            _damageTypeDatas = new Dictionary<string, DamageType>();
+
+            CombatConverter combatConverter = new CombatConverter(_armorTypeDatas, _damageTypeDatas);
+            combatConverter.ReadFromFile(file);
+            ModLoader.LoadXMLs(XmlFilesTypes.Combat, combatConverter.ReadFromFile);
+            Dictionary<ArmorType, float> worldMultiplier = ArmorTypeDatas.Values.ToDictionary<ArmorType, ArmorType, float>(at => at, at => 1);
+            //Hardcoded WorldDamage -- We need it and cant change yo
+            _damageTypeDatas.Add("world", new DamageType() {
+                ID = "world",
+                damageMultiplier = worldMultiplier,
+            });
         }
 
         private void ReadItemsFromXml(string file) {
-            XmlDocument xmlDoc = new XmlDocument();
-            xmlDoc.LoadXml(file); // load the file.
-            foreach (XmlElement node in xmlDoc.SelectNodes("items/Item")) {
-                ItemPrototypeData ipd = new ItemPrototypeData();
-                string id = node.GetAttribute("ID");
-                SetData<ItemPrototypeData>(node, ref ipd);
+            _allItems = new Dictionary<string, Item>();
+            MineableItems = new List<Item>();
+            _itemPrototypeDatas = new Dictionary<string, ItemPrototypeData>();
 
-                _itemPrototypeDatas[id] = ipd;
-                Item item = new Item(id, ipd);
-
-                if (item.Type == ItemType.Build) {
-                    _buildItemsList.Add(item);
-                }
-                _allItems[id] = item;
-            }
+            BaseConverter<ItemPrototypeData> itemConverter = new BaseConverter<ItemPrototypeData>(
+                (_) => new ItemPrototypeData(),
+                "items/Item",
+                (id, data) => {
+                    _itemPrototypeDatas[id] = data;
+                    _allItems[id] = new Item(id, data);
+                });
+            itemConverter.ReadFile(file);
+            ModLoader.LoadXMLs(XmlFilesTypes.Items, itemConverter.ReadFile);
+            _buildItems = _allItems.Values.Where(i => i.Type == ItemType.Build).ToArray();
         }
 
         private void ReadUnitsFromXml(string file) {
-            XmlDocument xmlDoc = new XmlDocument();
-            xmlDoc.LoadXml(file); // load the file.
-            XmlNodeList listUnit = xmlDoc.SelectNodes("units/unit");
-            if (listUnit != null) {
-                foreach (XmlElement node in listUnit) {
-                    UnitPrototypeData upd = new UnitPrototypeData();
-                    string id = node.GetAttribute("ID");
-                    SetData<UnitPrototypeData>(node, ref upd);
-                    _unitPrototypeDatas[id] = upd;
-                    _unitPrototypes[id] = new Unit(id, upd);
-                }
-            }
-            XmlNodeList listShip = xmlDoc.SelectNodes("units/ship");
-            if (listShip != null) {
-                foreach (XmlElement node in listShip) {
-                    ShipPrototypeData spd = new ShipPrototypeData();
-                    string id = node.GetAttribute("ID");
-                    SetData<ShipPrototypeData>(node, ref spd);
-                    _unitPrototypeDatas[id] = spd;
-                    _unitPrototypes[id] = new Ship(id, spd);
-                }
-            }
-            XmlNodeList listWorker = xmlDoc.SelectNodes("units/worker");
-            if (listShip != null) {
-                foreach (XmlElement node in listWorker) {
-                    WorkerPrototypeData wpd = new WorkerPrototypeData();
-                    string id = node.GetAttribute("ID");
-                    SetData<WorkerPrototypeData>(node, ref wpd);
-                    _workerPrototypeDatas[id] = wpd;
-                }
-            }
+            _unitPrototypes = new Dictionary<string, Unit>();
+            _unitPrototypeDatas = new Dictionary<string, UnitPrototypeData>();
+            _workerPrototypeDatas = new Dictionary<string, WorkerPrototypeData>();
+
+            UnitConverter unitConverter = new UnitConverter(_unitPrototypes, _unitPrototypeDatas, _workerPrototypeDatas);
+            unitConverter.ReadFile(file);
+            ModLoader.LoadXMLs(XmlFilesTypes.Units, unitConverter.ReadFile);
         }
 
         private void ReadFertilitiesFromXml(string file) {
-            XmlDocument xmlDoc = new XmlDocument();
-            xmlDoc.LoadXml(file); // load the file.
-            foreach (XmlElement node in xmlDoc.SelectNodes("fertilities/Fertility")) {
-                string ID = node.GetAttribute("ID");
-                FertilityPrototypeData fpd = new FertilityPrototypeData {
-                    ID = ID
-                };
-                SetData<FertilityPrototypeData>(node, ref fpd);
-                Fertility fer = new Fertility(ID, fpd);
-                _idToFertilities.Add(fer.ID, fer);
-                _fertilityPrototypeDatas[ID] = fpd;
-                foreach (Climate item in fer.Climates) {
-                    if (_allFertilities.ContainsKey(item) == false)
-                        _allFertilities[item] = new List<Fertility>();
-                    _allFertilities[item].Add(fer);
+            _allFertilities = new Dictionary<Climate, List<Fertility>>();
+            _idToFertilities = new Dictionary<string, Fertility>();
+            _allFertilitiesDatasPerClimate = new Dictionary<Climate, List<FertilityPrototypeData>>();
+            _fertilityPrototypeDatas = new Dictionary<string, FertilityPrototypeData>();
+            BaseConverter<FertilityPrototypeData> fertilityConverter = new BaseConverter<FertilityPrototypeData>(
+                (_) => new FertilityPrototypeData(),
+                "fertilities/Fertility",
+                (id, data) => {
+                    _fertilityPrototypeDatas[id] = data;
+                    Fertility fertility = new Fertility(id, data);
+                    _idToFertilities[id] = fertility;
+                    foreach (Climate item in fertility.Climates) {
+                        if (_allFertilities.ContainsKey(item) == false)
+                            _allFertilities[item] = new List<Fertility>();
+                        _allFertilities[item].Add(fertility);
 
-                    if (_allFertilitiesDatasPerClimate.ContainsKey(item) == false)
-                        _allFertilitiesDatasPerClimate[item] = new List<FertilityPrototypeData>();
-                    _allFertilitiesDatasPerClimate[item].Add(fpd);
-                }
-            }
+                        if (_allFertilitiesDatasPerClimate.ContainsKey(item) == false)
+                            _allFertilitiesDatasPerClimate[item] = new List<FertilityPrototypeData>();
+                        _allFertilitiesDatasPerClimate[item].Add(data);
+                    }
+                });
+            fertilityConverter.ReadFile(file);
+            ModLoader.LoadXMLs(XmlFilesTypes.Fertilities, fertilityConverter.ReadFile);
         }
 
         private void ReadNeedsFromXml(string file) {
-            XmlDocument xmlDoc = new XmlDocument();
-            xmlDoc.LoadXml(file); // load the file.
-            XmlNodeList listNeedGroup = xmlDoc.SelectNodes("needs/NeedGroup");
-            if (listNeedGroup != null) {
-                foreach (XmlElement node in listNeedGroup) {
-                    NeedGroupPrototypeData ngpd = new NeedGroupPrototypeData();
-                    string ID = node.GetAttribute("ID");
-                    ngpd.ID = ID;
-                    SetData<NeedGroupPrototypeData>(node, ref ngpd);
-                    _needGroupDatas[ID] = ngpd;
-                    _idToNeedGroup[ID] = new NeedGroup(ID);
-                }
-            }
+            _allNeeds = new List<Need>();
+            _populationLevelToNeedGroup = new Dictionary<int, List<NeedGroup>>();
+            _needPrototypeDatas = new Dictionary<string, NeedPrototypeData>();
+            _needGroupDatas = new Dictionary<string, NeedGroupPrototypeData>();
+            _idToNeedGroup = new Dictionary<string, NeedGroup>();
+
+            NeedsConverter needsConverter = new NeedsConverter(_idToNeedGroup, _needGroupDatas, _allNeeds, _needPrototypeDatas);
+            needsConverter.ReadFromFile(file);
+            ModLoader.LoadXMLs(XmlFilesTypes.Needs, needsConverter.ReadFromFile);
+
+
             Dictionary<int, List<Need>> levelToNeedList = new Dictionary<int, List<Need>>();
-
-            XmlNodeList listNeed = xmlDoc.SelectNodes("needs/Need");
-            if (listNeed != null) {
-                foreach (XmlElement node in xmlDoc.SelectNodes("needs/Need")) {
-                    NeedPrototypeData npd = new NeedPrototypeData();
-                    string ID = node.GetAttribute("ID");
-                    SetData<NeedPrototypeData>(node, ref npd);
-                    _needPrototypeDatas[ID] = npd;
-                    if (npd.item == null && npd.structures == null)
-                        continue;
-                    if (npd.structures != null) {
-                        foreach (NeedStructure str in npd.structures) {
-                            if (npd.startLevel > str.PopulationLevel) {
-                                npd.startLevel = str.PopulationLevel;
-                            }
-                            if (npd.startLevel != str.PopulationLevel) continue;
-                            if (npd.startPopulationCount > str.PopulationCount) {
-                                npd.startPopulationCount = str.PopulationCount;
-                            }
-                        }
-                    }
-                    Need n = new Need(ID, npd);
-                    if (_idToNeedGroup.ContainsKey(n.Group.ID))
-                        _idToNeedGroup[n.Group.ID].AddNeed(n.Clone());
-                    _allNeeds.Add(n);
-                    if (levelToNeedList.ContainsKey(npd.startLevel) == false) {
-                        levelToNeedList[npd.startLevel] = new List<Need>();
-                    }
-
-                    levelToNeedList[npd.startLevel].Add(n.Clone());
-                }
-            }
             HomeRoadsNotNeeded = _allNeeds.All(x => x.HasToReachPerRoad == false);
             foreach (int level in levelToNeedList.Keys) {
                 List<NeedGroup> ngs = new List<NeedGroup>();
@@ -741,764 +528,40 @@ namespace Andja.Controller {
         }
 
         private void ReadStructuresFromXml(string file) {
-            XmlDocument xmlDoc = new XmlDocument();
-            xmlDoc.LoadXml(file); // load the file.
-            ReadRoads(xmlDoc.SelectSingleNode("structures/roads"));
-            ReadGrowables(xmlDoc.SelectSingleNode("structures/growables"));
-            ReadFarms(xmlDoc.SelectSingleNode("structures/farms"));
-            ReadMarketStructures(xmlDoc.SelectSingleNode("structures/markets"));
-            ReadProductionStructures(xmlDoc.SelectSingleNode("structures/productions"));
-            ReadNeedsStructures(xmlDoc.SelectSingleNode("structures/needstructures"));
-            ReadMineStructure(xmlDoc.SelectSingleNode("structures/mines"));
-            ReadHomeStructures(xmlDoc.SelectSingleNode("structures/homes"));
-            ReadWarehouse(xmlDoc.SelectSingleNode("structures/warehouses"));
-            ReadMilitaryStructures(xmlDoc.SelectSingleNode("structures/militarystructures"));
-            ReadServiceStructures(xmlDoc.SelectSingleNode("structures/servicestructures"));
-        }
+            _structureTypeToMaxStructureLevel = new Dictionary<Type, int>();
+            _structurePrototypes = new Dictionary<string, Structure>();
+            _structurePrototypeDatas = new Dictionary<string, StructurePrototypeData>();
 
-        private void ReadServiceStructures(XmlNode xmlDoc) {
-            if (xmlDoc == null)
-                return;
-            foreach (XmlElement node in xmlDoc.SelectNodes("servicestructure")) {
-                string id = node.GetAttribute("ID");
+            StructureConverter structureConverter = new StructureConverter(_structurePrototypes, _structurePrototypeDatas);
+            structureConverter.ReadFile(file);
+            ModLoader.LoadXMLs(XmlFilesTypes.Structures, structureConverter.ReadFile);
 
-                ServiceStructurePrototypeData sspd = new ServiceStructurePrototypeData();
-                sspd.ID = id;
-                //THESE are fix and are not changed for any
-                //!not anymore
-                SetData<ServiceStructurePrototypeData>(node, ref sspd);
-                if (sspd.effectsOnTargets != null)
-                    foreach (Effect effect in sspd.effectsOnTargets) {
-                        effect.Serialize = false;
-                    }
-                //Important is that we set the usageItem count to more than the usage amount
-                //(for the case it is more than one ton
-                if (node.SelectSingleNode("Usages") != null) {
-                    var nodes = node.SelectSingleNode("Usages").SelectNodes("entry");
-                    List<float> usages = new List<float>();
-                    List<Item> items = new List<Item>();
-                    for (int i = 0; i < nodes.Count; i++) {
-                        XmlNode child = nodes.Item(i);
-                        var attribute = child.Attributes["Item"];
-                        if (attribute == null || attribute.Value == null)
-                            continue;
-                        if (_allItems.ContainsKey(attribute.Value) == false)
-                            continue;
-                        if (float.TryParse(child.InnerText, out float usage) == false)
-                            continue;
-                        if (usage <= 0)
-                            continue;
-                        usages.Add(usage);
-                        Item item = new Item(attribute.Value) {
-                            count = Mathf.Clamp(Mathf.CeilToInt(usage), 1, 100)
-                        };
-                        items.Add(item);
-                    }
-                    sspd.usagePerTick = usages.ToArray();
-                    sspd.usageItems = items.ToArray();
-                }
-
-                _structurePrototypeDatas[id] = sspd;
-                _structurePrototypes[id] = new ServiceStructure(id, sspd);
-            }
-        }
-
-        private void ReadMilitaryStructures(XmlNode xmlDoc) {
-            if (xmlDoc == null)
-                return;
-            foreach (XmlElement node in xmlDoc.SelectNodes("militarystructure")) {
-                string ID = node.GetAttribute("ID");
-                MilitaryPrototypeData mpd = new MilitaryPrototypeData {
-                    ID = ID
-                };
-                SetData<MilitaryPrototypeData>(node, ref mpd);
-                foreach (Unit u in mpd.canBeBuildUnits) {
-                    if (u.IsShip) {
-                        mpd.canBuildShips = true;
-                    }
-                }
-                _structurePrototypeDatas[ID] = mpd;
-                _structurePrototypes[ID] = new MilitaryStructure(ID, mpd);
-            }
-        }
-
-        private void ReadRoads(XmlNode xmlDoc) {
-            if (xmlDoc == null)
-                return;
-            foreach (XmlElement node in xmlDoc.SelectNodes("road")) {
-                string ID = node.GetAttribute("ID");
-
-                RoadStructurePrototypeData rpd = new RoadStructurePrototypeData {
-                    //THESE are fix and are not changed for any road
-                    tileWidth = 1,
-                    tileHeight = 1,
-                    buildTyp = BuildType.Path,
-                    structureTyp = StructureTyp.Pathfinding,
-                    //!not anymore
-                    upkeepCost = 0,
-                    buildCost = 25,
-                    Name = "Testroad",
-                    structureRange = 0,
-                };
-
-                rpd.ID = ID;
-                SetData<RoadStructurePrototypeData>(node, ref rpd);
-
-                _structurePrototypeDatas[ID] = rpd;
-                _structurePrototypes[ID] = new RoadStructure(ID, rpd);
-            }
-        }
-
-        private void ReadGrowables(XmlNode xmlDoc) {
-            if (xmlDoc == null)
-                return;
-            foreach (XmlElement node in xmlDoc.SelectNodes("growable")) {
-                string ID = node.GetAttribute("ID");
-
-                GrowablePrototypeData gpd = new GrowablePrototypeData {
-                    //THESE are fix and should not be changed for any growable
-                    forMarketplace = false,
-                    maxNumberOfWorker = 0,
-                    tileWidth = 1,
-                    tileHeight = 1,
-                    structureTyp = StructureTyp.Free,
-                    buildTyp = BuildType.Drag,
-                    buildCost = 50,
-                    maxOutputStorage = 1
-                };
-                gpd.ID = ID;
-                SetData<GrowablePrototypeData>(node, ref gpd);
-                _structurePrototypeDatas[ID] = gpd;
-                _structurePrototypes[ID] = new GrowableStructure(ID, gpd);
-            }
-        }
-
-        private void ReadFarms(XmlNode xmlDoc) {
-            if (xmlDoc == null)
-                return;
-            foreach (XmlElement node in xmlDoc.SelectNodes("farm")) {
-                string ID = node.GetAttribute("ID");
-
-                FarmPrototypeData fpd = new FarmPrototypeData();
-                fpd.ID = ID;
-
-                SetData<FarmPrototypeData>(node, ref fpd);
-                if (fpd.growable.ID == "farmland") {
-                    //for now hardcoded. maybe gonna change this
-                    //but this is just the "empty" setting for growable
-                    fpd.growable = null;
-                }
-                if (fpd.output != null && fpd.output.Length > 0 && fpd.output[0].count == 0) {
-                    fpd.output[0].count = 1;
-                }
-                else {
-                }
-                _structurePrototypeDatas[ID] = fpd;
-                _structurePrototypes[ID] = new FarmStructure(ID, fpd);
-            }
-        }
-
-        private void ReadMarketStructures(XmlNode xmlDoc) {
-            if (xmlDoc == null)
-                return;
-            foreach (XmlElement node in xmlDoc.SelectNodes("market")) {
-                string ID = node.GetAttribute("ID");
-                MarketPrototypData mpd = new MarketPrototypData();
-                mpd.ID = ID;
-                SetData<MarketPrototypData>(node, ref mpd);
-                _structurePrototypeDatas[ID] = mpd;
-                _structurePrototypes[ID] = new MarketStructure(ID, mpd);
-            }
-        }
-
-        private void ReadProductionStructures(XmlNode xmlDoc) {
-            if (xmlDoc == null)
-                return;
-            foreach (XmlElement node in xmlDoc.SelectNodes("production")) {
-                string ID = node.GetAttribute("ID");
-                ProductionPrototypeData ppd = new ProductionPrototypeData {
-                    //THESE are fix and are not changed for any ProduktionStructure
-                    maxOutputStorage = 5, // hardcoded 5 ? need this to change?
-                    hasHitbox = true,
-                    structureTyp = StructureTyp.Blocking,
-                    buildTyp = BuildType.Single,
-                    canTakeDamage = true,
-                    forMarketplace = true,
-                    //!not anymore
-
-                    Name = "TEST Production",
-                    maxNumberOfWorker = 1
-                };
-                ppd.ID = ID;
-                SetData<ProductionPrototypeData>(node, ref ppd);
-                //DO After loading from file
-                _structurePrototypeDatas[ID] = ppd;
-                _structurePrototypes[ID] = new ProductionStructure(ID, ppd);
-            }
-        }
-
-        private void ReadNeedsStructures(XmlNode xmlDoc) {
-            if (xmlDoc == null)
-                return;
-            foreach (XmlElement node in xmlDoc.SelectNodes("needstructure")) {
-                string ID = node.GetAttribute("ID");
-                NeedStructurePrototypeData nspd = new NeedStructurePrototypeData();
-                nspd.ID = ID;
-                SetData<NeedStructurePrototypeData>(node, ref nspd);
-                _structurePrototypeDatas[ID] = nspd;
-                _structurePrototypes[ID] = new NeedStructure(ID, nspd);
-            }
-        }
-
-        private void ReadHomeStructures(XmlNode xmlDoc) {
-            if (xmlDoc == null)
-                return;
-            List<HomePrototypeData> hpds = new List<HomePrototypeData>();
-            foreach (XmlElement node in xmlDoc.SelectNodes("home")) {
-                string ID = node.GetAttribute("ID");
-                HomePrototypeData hpd = new HomePrototypeData {
-                    //THESE are fix and are not changed for any HomeStructure
-                    tileWidth = 2,
-                    tileHeight = 2,
-                    buildTyp = BuildType.Drag,
-                    structureTyp = StructureTyp.Blocking,
-                    structureRange = 0,
-                    hasHitbox = true,
-                    canTakeDamage = true,
-                    upkeepCost = 0
-                };
-                hpds.Add(hpd);
-                hpd.ID = ID;
-                SetData<HomePrototypeData>(node, ref hpd);
-
-                _structurePrototypeDatas[ID] = hpd;
-                HomeStructure hs = new HomeStructure(ID, hpd);
-                _structurePrototypes[ID] = hs;
-                _populationLevelDatas[_structurePrototypes[ID].PopulationLevel].HomeStructure = hs;
-
-
-            }
-            HomePrototypeData[] sorted = hpds.OrderBy(x => x.populationLevel).ToArray();
+            FirstLevelWarehouse = _structurePrototypes[GetFirstLevelStructureIDForStructureType(typeof(WarehouseStructure))] as WarehouseStructure;
+            HomePrototypeData[] sorted = StructurePrototypes.OfType<HomePrototypeData>()
+                .OrderBy(x => x.populationLevel).ToArray();
             for (int i = 0; i < sorted.Length; i++) {
                 if (i > 0) {
-                    sorted[i].prevLevel = GetStructure(sorted[i - 1].ID) as HomeStructure;
+                    sorted[i].prevLevel = new HomeStructure(sorted[i].ID, sorted[i]);
                 }
                 else {
                     sorted[i].prevLevel = null;
                 }
                 if (i < sorted.Length - 1) {
-                    sorted[i].nextLevel = GetStructure(sorted[i + 1].ID) as HomeStructure;
+                    sorted[i].nextLevel = new HomeStructure(sorted[i + 1].ID, sorted[i + 1]);
                 }
                 else {
                     sorted[i].nextLevel = null;
                 }
             }
-
+            MineableItems.AddRange(_structurePrototypes.OfType<MineStructure>().SelectMany(m => m.Output));
+            MineableItems = MineableItems.GroupBy(x => x.ID).Select(g => g.First()).ToList();
         }
 
-        private void ReadWarehouse(XmlNode xmlDoc) {
-            if (xmlDoc == null)
-                return;
-            foreach (XmlElement node in xmlDoc.SelectNodes("warehouse")) {
-                string ID = node.GetAttribute("ID");
-                WarehousePrototypData wpd = new WarehousePrototypData();
-
-                wpd.ID = ID;
-                SetData<WarehousePrototypData>(node, ref wpd);
-                _structurePrototypeDatas[ID] = wpd;
-                _structurePrototypes[ID] = new WarehouseStructure(ID, wpd);
-
-                if (FirstLevelWarehouse == null ||
-                    wpd.populationLevel < FirstLevelWarehouse.PopulationLevel && wpd.populationCount < FirstLevelWarehouse.PopulationCount) {
-                    FirstLevelWarehouse = (WarehouseStructure)_structurePrototypes[ID];
-                }
-            }
-        }
-
-        private void ReadMineStructure(XmlNode xmlDoc) {
-            if (xmlDoc == null)
-                return;
-            foreach (XmlElement node in xmlDoc.SelectNodes("mine")) {
-                string ID = node.GetAttribute("ID");
-                MinePrototypeData mpd = new MinePrototypeData();
-                mpd.ID = ID;
-                SetData<MinePrototypeData>(node, ref mpd);
-                MineableItems.AddRange(mpd.output);
-                _structurePrototypeDatas[ID] = mpd;
-                _structurePrototypes[ID] = new MineStructure(ID, mpd);
-            }
-        }
-
-        private void SetData<T>(XmlElement node, ref T data) {
-            FieldInfo[] fields = typeof(T).GetFields();
-            HashSet<string> langs = new HashSet<string>();
-            if (typeof(LanguageVariables).IsAssignableFrom(typeof(T))) {
-                foreach (FieldInfo f in typeof(LanguageVariables).GetFields()) {
-                    langs.Add(f.Name);
-                }
-            }
-            foreach (FieldInfo fi in fields) {
-                if (Attribute.IsDefined(fi, typeof(IgnoreAttribute)))
-                    continue;
-                XmlNode currentNode = node.SelectSingleNode(fi.Name);
-                if (langs.Contains(fi.Name)) {
-                    if (currentNode == null) {
-                        //TODO activate this warning when all data is correctly created
-                        //				Debug.LogWarning (fi.Name + " selected language not avaible!");
-                        continue;
-                    }
-                    XmlNode textNode = currentNode.SelectSingleNode("entry[@lang='" + UILanguageController.selectedLanguage.ToString() + "']");
-                    if (textNode != null) {
-                        string text = ReplacePlaceHolders(data, textNode.InnerXml);
-                        fi.SetValue(data, Convert.ChangeType(text, fi.FieldType));
-                    }
-                    continue;
-                }
-
-                if (currentNode == null) continue;
-                if (fi.FieldType == typeof(Item)) {
-                    fi.SetValue(data, NodeToItem(currentNode));
-                    continue;
-                }
-                if (fi.FieldType == typeof(Item[])) {
-                    fi.SetValue(data, (from XmlNode item in currentNode.ChildNodes select NodeToItem(item)).ToArray());
-                    continue;
-                }
-                if (fi.FieldType.IsSubclassOf(typeof(Structure))) {
-                    fi.SetValue(data, NodeToStructure(currentNode));
-                    continue;
-                }
-                if (fi.FieldType.IsArray && fi.FieldType.GetElementType().IsSubclassOf(typeof(Structure))
-                    || fi.FieldType == (typeof(Structure[]))) {
-                    Array items = (Array)Activator.CreateInstance(fi.FieldType, currentNode.ChildNodes.Count);
-                    for (int i = 0; i < currentNode.ChildNodes.Count; i++) {
-                        items.SetValue(NodeToStructure(currentNode.ChildNodes[i]), i);
-                    }
-                    fi.SetValue(data, items);
-                    continue;
-                }
-                if (fi.FieldType.IsArray && fi.FieldType.GetElementType().IsSubclassOf(typeof(string))
-                    || fi.FieldType == (typeof(string[]))) {
-                    Array items = (Array)Activator.CreateInstance(fi.FieldType, currentNode.ChildNodes.Count);
-                    for (int i = 0; i < currentNode.ChildNodes.Count; i++) {
-                        items.SetValue(currentNode.ChildNodes[i].InnerText, i);
-                    }
-                    fi.SetValue(data, items);
-                    continue;
-                }
-                if (fi.FieldType == typeof(NeedGroupPrototypeData)) {
-                    fi.SetValue(data, NodeToNeedGroupPrototypData(currentNode));
-                    continue;
-                }
-                if (fi.FieldType == typeof(ArmorType)) {
-                    fi.SetValue(data, NodeToArmorType(currentNode));
-                    continue;
-                }
-                if (fi.FieldType == typeof(DamageType)) {
-                    fi.SetValue(data, NodeToDamageType(currentNode));
-                    continue;
-                }
-                if (fi.FieldType == typeof(Fertility)) {
-                    fi.SetValue(data, NodeToFertility(currentNode));
-                    continue;
-                }
-                if (fi.FieldType.IsSubclassOf(typeof(Unit))) {
-                    fi.SetValue(data, NodeToUnit(currentNode));
-                    continue;
-                }
-                if (fi.FieldType.IsSubclassOf(typeof(Unit[])) || fi.FieldType == (typeof(Unit[]))) {
-                    List<Unit> items = new List<Unit>();
-                    foreach (XmlNode item in currentNode.ChildNodes) {
-                        items.Add(NodeToUnit(item));
-                    }
-                    fi.SetValue(data, items.ToArray());
-                    continue;
-                }
-                if (fi.FieldType == (typeof(Effect[])) || fi.FieldType == (typeof(IEffect[]))) {
-                    fi.SetValue(data, (from XmlNode item in currentNode.ChildNodes select NodeToEffect(item)).ToArray());
-                    continue;
-                }
-                if (fi.FieldType == (typeof(float[]))) {
-                    List<float> items = new List<float>(currentNode.ChildNodes.Count);
-                    foreach (XmlNode item in currentNode.ChildNodes) {
-                        int id = int.Parse(item.Attributes[0].InnerXml);
-                        items.Insert(id, float.Parse(item.InnerXml));
-                    }
-                    fi.SetValue(data, items.ToArray());
-                    continue;
-                }
-                if (fi.FieldType.IsEnum) {
-                    fi.SetValue(data, Enum.Parse(fi.FieldType, currentNode.InnerXml, true));
-                    continue;
-                }
-                if (fi.FieldType.IsArray && fi.FieldType.GetArrayRank() == 1 && fi.FieldType.GetElementType().IsEnum) {
-                    var listType = typeof(List<>);
-                    var constructedListType = listType.MakeGenericType(fi.FieldType.GetElementType());
-                    var list = (IList)Activator.CreateInstance(constructedListType);
-                    foreach (XmlNode item in currentNode.ChildNodes) {
-                        if (item.Name != fi.FieldType.GetElementType().Name) {
-                            continue;
-                        }
-                        if (fi.DeclaringType == typeof(TileType)) {
-                            if (item.Name == "BuildLand") { // shortcut to make it easy to include all buildable land
-                                foreach (TileType tt in Tile.BuildLand)
-                                    list.Add(tt);
-                                continue;
-                            }
-                        }
-                        list.Add(Enum.Parse(fi.FieldType.GetElementType(), item.InnerXml, true));
-                    }
-                    Array enumArray = Array.CreateInstance(fi.FieldType.GetElementType(), list.Count);
-                    list.CopyTo(enumArray, 0);
-                    fi.SetValue(data, Convert.ChangeType(enumArray, fi.FieldType));
-                    continue;
-                }
-                if (fi.FieldType.IsArray && fi.FieldType.GetArrayRank() == 2 && fi.FieldType.GetElementType() == typeof(TileType?)) {
-                    if (int.TryParse(currentNode.Attributes.GetNamedItem("length").Value, out var firstLength) == false) {
-                        continue;
-                    }
-                    int secondLength = 0;
-                    var listType = typeof(List<>);
-                    var constructedfirstListType = listType.MakeGenericType(fi.FieldType.GetElementType().MakeArrayType());
-                    var firstlist = (IList)Activator.CreateInstance(constructedfirstListType);
-                    foreach (XmlNode item in currentNode.ChildNodes) {
-                        XmlNode len2 = item.Attributes.GetNamedItem("length");
-                        if (len2 == null || int.TryParse(len2.Value, out secondLength) == false) {
-                            continue;
-                        }
-                        var constructedSecondListType = listType.MakeGenericType(fi.FieldType.GetElementType());
-                        var secondlist = (IList)Activator.CreateInstance(constructedSecondListType);
-                        string[] singleValues = item.InnerXml.Split(',');
-                        if (singleValues.Length < secondLength) {
-                            continue;
-                        }
-                        foreach (string single in singleValues) {
-                            //own try parse because in needs non nullable
-                            try {
-                                secondlist.Add(Enum.Parse(typeof(TileType), single.Trim(), true));
-                            }
-                            catch {
-                                secondlist.Add(null);
-                            }
-                        }
-                        Array enumArray = Array.CreateInstance(fi.FieldType.GetElementType(), secondLength);
-                        secondlist.CopyTo(enumArray, 0);
-                        firstlist.Add(enumArray);
-                    }
-                    Array twoDimEnumArray = Array.CreateInstance(fi.FieldType.GetElementType(), firstLength, secondLength);
-                    for (int i = 0; i < firstlist.Count; i++) {
-                        for (int j = 0; j < ((TileType?[])firstlist[i]).Length; j++) {
-                            twoDimEnumArray.SetValue(((TileType?[])firstlist[i])[j], i, j);
-                        }
-                    }
-                    fi.SetValue(data, Convert.ChangeType(twoDimEnumArray, fi.FieldType));
-                    continue;
-                }
-                if (fi.FieldType == typeof(Dictionary<ArmorType, float>)) {
-                    // this will get set in load xml directly and not here!
-                    continue;
-                }
-                if (fi.FieldType == typeof(Range)) {
-                    fi.SetValue(data, new Range(currentNode["lower"].GetIntValue(), currentNode["upper"].GetIntValue()));
-                    continue;
-                }
-                if (fi.FieldType == typeof(Dictionary<Target, List<int>>)) {
-                    Dictionary<Target, List<int>> range = new Dictionary<Target, List<int>>();
-                    foreach (XmlNode child in currentNode.ChildNodes) {
-                        Target target = Target.World;
-                        if (child.Attributes[0] == null)
-                            continue;
-                        if (Enum.TryParse<Target>(child.Attributes[0].InnerXml, true, out target) == false)
-                            continue;
-                        string[] ids = child.InnerXml.Split(',');
-                        if (ids.Length == 0) {
-                            continue;
-                        }
-                        range.Add(target, new List<int>());
-                        foreach (string stringid in ids) {
-                            int.TryParse(stringid, out int id);
-                            if (id == -1)
-                                continue;
-                            range[target].Add(id);
-                        }
-                    }
-                    //clean up empty target groups
-                    List<Target> targets = new List<Target>(range.Keys);
-                    targets.RemoveAll(t => range[t].Count == 0);
-                    //only if it has stuff we need to set it
-                    if (range.Count > 0)
-                        fi.SetValue(data, range);
-                    continue;
-                }
-                if (fi.FieldType == typeof(TargetGroup)) {
-                    List<Target> targets = new List<Target>();
-                    foreach (XmlNode child in currentNode.ChildNodes) {
-                        if (Enum.TryParse(child.InnerXml, true, out Target target) == false)
-                            continue;
-                        targets.Add(target);
-                    }
-                    fi.SetValue(data, new TargetGroup(targets));
-                    continue;
-                }
-                if (fi.FieldType == typeof(Dictionary<Climate, string[]>)) {
-                    Dictionary<Climate, string[]> climToString = new Dictionary<Climate, string[]>();
-                    foreach (XmlNode child in currentNode.ChildNodes) {
-                        if (Enum.TryParse(child.Attributes[0].InnerXml, true, out Climate climate) == false)
-                            continue;
-                        climToString[climate] = child.InnerXml.Split(';');
-                    }
-                    fi.SetValue(data, climToString);
-                    continue;
-                }
-                try {
-                    fi.SetValue(data, Convert.ChangeType(currentNode.InnerXml, fi.FieldType, System.Globalization.CultureInfo.InvariantCulture));
-                }
-                catch {
-                    Debug.Log(data + " -> " + fi.Name + " is faulty!");
-                }
-            }
-        }
-
-        private Effect NodeToEffect(XmlNode item) {
-            string id = item.InnerXml;
-            if (string.IsNullOrEmpty(id)) {
-                return null;//not needed
-            }
-
-            if (_effectPrototypeDatas.ContainsKey(id)) return new Effect(id);
-            Debug.LogError("ID was not created before the depending DamageType! " + id);
-            return null;
-        }
-
-        private object NodeToDamageType(XmlNode n) {
-            string id = n.InnerXml;
-
-            if (string.IsNullOrEmpty(id)) {
-                return null;//not needed
-            }
-
-            if (_damageTypeDatas.ContainsKey(id)) return _damageTypeDatas[id];
-            Debug.LogError("ID was not created before the depending DamageType! " + id);
-            return null;
-        }
-
-        private object NodeToNeedGroupPrototypData(XmlNode n) {
-            string id = n.InnerXml;
-
-            if (string.IsNullOrEmpty(id)) {
-                return null;//not needed
-            }
-
-            if (_needGroupDatas.ContainsKey(id)) return _needGroupDatas[id];
-            Debug.LogError("ID was not created before the depending NeedGroup! " + id);
-            return null;
-        }
-
-        private object NodeToArmorType(XmlNode n) {
-            string id = n.InnerXml;
-
-            if (string.IsNullOrEmpty(id)) {
-                return null;//not needed
-            }
-
-            if (_armorTypeDatas.ContainsKey(id)) return _armorTypeDatas[id];
-            Debug.LogError("ID was not created before the depending ArmorType! " + id);
-            return null;
-        }
-
-        private Item NodeToItem(XmlNode n) {
-            string id = n.Attributes["ID"].Value;
-            if (_allItems.ContainsKey(id) == false) {
-                Debug.LogError("ITEM ID was not created! " + id + " (" + n.ParentNode.Name + ")");
-                return null;
-            }
-            Item clone = _allItems[id].Clone();
-            if (n.SelectSingleNode("count") == null) return clone;
-            if (int.TryParse(n.SelectSingleNode("count").InnerXml, out int count) == false) {
-                Debug.LogError("Count is not an int");
-                return null;
-            }
-            clone.count = Mathf.Abs(count);
-            return clone;
-        }
-
-        private Unit NodeToUnit(XmlNode n) {
-            string id = n.InnerXml;
-            if (string.IsNullOrEmpty(id)) {
-                return null;//not needed
-            }
-            if (_unitPrototypes.ContainsKey(id)) return _unitPrototypes[id];
-            Debug.LogError("ID was not created before the depending Unit! " + id);
-            return null;
-        }
-
-        private Structure NodeToStructure(XmlNode n) {
-            string id = n.InnerText;
-            if (string.IsNullOrEmpty(id)) {
-                return null;//not needed
-            }
-
-            if (_structurePrototypes.ContainsKey(id)) return _structurePrototypes[id];
-            Debug.LogError("ID was not created before the depending Structure! " + id);
-            return null;
-        }
-
-        private Fertility NodeToFertility(XmlNode n) {
-            string id = n.InnerXml;
-            if (string.IsNullOrEmpty(id)) {
-                return null;//not needed
-            }
-
-            if (_idToFertilities.ContainsKey(id)) return _idToFertilities[id];
-            Debug.LogError("ID was not created before the depending Fertility! " + id);
-            return null;
-        }
-
-        private XmlFilesTypes _current;
         public void ReloadLanguage() {
-            foreach (XmlFilesTypes xml in Enum.GetValues(typeof(XmlFilesTypes))) {
-                _current = xml;
-                ReloadLanguageVariables(LoadXml(xml));
-                ModLoader.LoadXMLs(xml, ReloadLanguageVariables);
-            }
-        }
-        private string ReplacePlaceHolders<T>(T data, string text) {
-            if (text.Contains("$") == false)
-                return text;
-            string[] splits = text.Split('$');
-            for (int i = 0; i < splits.Length - 1; i += 2) {
-                string[] replaceSplit = splits[i + 1].Split(' ');
-                string replace = replaceSplit[0];
-                string replaceWith;
-                if (replace.Contains('.')) {
-                    string[] subgetsplits = replace.Split('.');
-                    replaceWith = GetFieldString(data, 0, subgetsplits);
-                }
-                else {
-                    replaceWith = GetFieldString(data, 0, replace);
-                }
-                replaceSplit[0] = replaceWith;
-                splits[i + 1] = string.Join(" ", replaceSplit);
-            }
-            return string.Join("", splits);
+            LanguageHandler.ReloadLanguage();
         }
 
-        private readonly BindingFlags _flags = BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance;
-
-        private string GetFieldString(object data, int index, params string[] fields) {
-            Type dataType = data.GetType();
-            if (typeof(IEnumerable).IsAssignableFrom(dataType)) {
-                List<string> strings = (from object o in (IEnumerable)data select GetFieldString(o, index, fields)).ToList();
-                if (strings.Count == 1)
-                    return strings[0];
-                string last = strings[strings.Count - 1];
-                strings.RemoveAt(strings.Count - 1);
-                return string.Join(", ", strings) + " " + GetLocalisedAnd() + " " + last;
-            }
-            if (fields.Length - 1 == index) {
-                var field = dataType.GetField(fields[index], _flags)?.GetValue(data);
-                if (field == null)
-                    field = dataType.GetProperty(fields[index], _flags)?.GetValue(data);
-                return field.ToString();
-            }
-            return GetFieldString(dataType.GetField(fields[index], _flags)?.GetValue(data), ++index, fields);
-        }
-
-        private string GetLocalisedAnd() {
-            return UILanguageController.Instance.GetStaticVariables(StaticLanguageVariables.And);
-        }
-        public void ReloadLanguageVariables(string xml) {
-            FieldInfo[] fields = typeof(LanguageVariables).GetFields();
-            XmlDocument xmlDoc = new XmlDocument();
-            xmlDoc.LoadXml(xml);
-            XmlNodeList nodeList = xmlDoc.ChildNodes;
-            //have todo it for all three deep xml files
-            if (_current == XmlFilesTypes.Structures) {
-                nodeList = xmlDoc.FirstChild.ChildNodes;
-            }
-            foreach (XmlNode parent in nodeList) {
-                foreach (XmlNode node in parent.ChildNodes) {
-                    object data = null;
-                    if (node.Attributes.Count == 0)
-                        continue;
-                    string id = node.Attributes?[0]?.InnerXml;
-                    //if(id == null) {
-                    //    id = node.Attributes.GetNamedItem("LEVEL")?.InnerXml;
-                    //}
-                    if (id == null)
-                        continue;
-                    switch (_current) {
-                        case XmlFilesTypes.Other:
-                            if (node.LocalName == "PopulationLevel")
-                                data = _populationLevelDatas[int.Parse(id)];
-                            else
-                                Debug.LogWarning("Read Language again one missing this type" + _current);
-                            break;
-
-                        case XmlFilesTypes.Events:
-                            if (node.LocalName == "GameEvent")
-                                data = _gameEventPrototypeDatas[id];
-                            if (node.LocalName == "Effect")
-                                data = _effectPrototypeDatas[id];
-                            break;
-
-                        case XmlFilesTypes.Fertilities:
-                            data = _fertilityPrototypeDatas[id];
-                            break;
-
-                        case XmlFilesTypes.Items:
-                            data = _itemPrototypeDatas[id];
-                            break;
-
-                        case XmlFilesTypes.Combat:
-                            if (node.LocalName == "damageType")
-                                data = _damageTypeDatas[id];
-                            if (node.LocalName == "armorType")
-                                data = _armorTypeDatas[id];
-                            break;
-
-                        case XmlFilesTypes.Units:
-                            if (node.LocalName == "worker")
-                                continue;
-                            data = _unitPrototypeDatas[id];
-                            break;
-
-                        case XmlFilesTypes.Structures:
-                            data = _structurePrototypeDatas[id];
-                            break;
-
-                        case XmlFilesTypes.Needs:
-                            if (node.LocalName == "need")
-                                data = NeedPrototypeDatas[id];
-                            if (node.LocalName == "needGroup")
-                                data = _needGroupDatas[id];
-                            break;
-
-                        case XmlFilesTypes.Startingloadouts:
-                            break;
-
-                        case XmlFilesTypes.Mapgeneration:
-                            break;
-
-                        default:
-                            Debug.LogWarning("Read Language again missing this type" + _current);
-                            return;
-                    }
-                    if (data == null)
-                        continue;
-                    foreach (FieldInfo fi in fields) {
-                        XmlNode currentNode = node.SelectSingleNode(fi.Name);
-                        XmlNode textNode = currentNode?.SelectSingleNode("entry[@lang='" + UILanguageController.selectedLanguage + "']");
-                        if (textNode != null) {
-                            string text = ReplacePlaceHolders(data, textNode.InnerXml);
-                            fi.SetValue(data, Convert.ChangeType(text, fi.FieldType));
-                        }
-                    }
-                }
-            }
-        }
-
-        private string LoadXml(XmlFilesTypes name) {
+        public string LoadXml(XmlFilesTypes name) {
             string path = System.IO.Path.Combine(ConstantPathHolder.StreamingAssets, GameData.DataLocation, "GameState", name + ".xml");
             return System.IO.File.ReadAllText(path);
         }

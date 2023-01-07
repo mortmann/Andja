@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace Andja.Model {
 
-    public class MarketPrototypData : OutputPrototypData {
+    public class MarketPrototypeData : OutputPrototypData {
         public float takeOverStartGoal = 100;
 
         //TODO: load this all in
@@ -36,17 +36,17 @@ namespace Andja.Model {
         public float DecreaseCaptureSpeed => CalculateRealValue(nameof(MarketData.decreaseCaptureSpeed), MarketData.decreaseCaptureSpeed);
         public float MaximumCaptureSpeed => CalculateRealValue(nameof(MarketData.maximumCaptureSpeed), MarketData.maximumCaptureSpeed);
 
-        private MarketPrototypData _marketData;
+        private MarketPrototypeData _marketData;
 
-        public MarketPrototypData MarketData {
+        public MarketPrototypeData MarketData {
             get {
-                return _marketData ??= (MarketPrototypData)PrototypController.Instance.GetStructurePrototypDataForID(ID);
+                return _marketData ??= (MarketPrototypeData)PrototypController.Instance.GetStructurePrototypDataForID(ID);
             }
         }
 
         #endregion RuntimeOrOther
 
-        public MarketStructure(string id, MarketPrototypData marketData) {
+        public MarketStructure(string id, MarketPrototypeData marketData) {
             this.ID = id;
             _marketData = marketData;
         }

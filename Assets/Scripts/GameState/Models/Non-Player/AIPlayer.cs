@@ -87,6 +87,8 @@ namespace Andja.Model {
             }
         }
 
+        public AIPlayer() { }
+
         public AIPlayer(Player player, bool dummy) {
             this.Player = player;
             CalculateNeeded();
@@ -139,7 +141,6 @@ namespace Andja.Model {
                 }
             }
         }
-        bool t2 = false;
         internal void Loop() {
             while(AIController.ShutdownAI == false && isActive) {
                 if(AIController.ActiveAI == false || WorldController.Instance.IsPaused) {
@@ -162,12 +163,12 @@ namespace Andja.Model {
                 GameStartFunction();
                 UnlocksFunction();
                 BuildBuildings();
-                if(t2 == false) {
-                    currentOperationPending.Add(AIController.Instance.AddOperation(
-                                new DemandMoneyOperation(this, PlayerController.CurrentPlayer, 1000)
-                                ));
-                    t2 = true;
-                }
+                //if(t2 == false) {
+                //    currentOperationPending.Add(AIController.Instance.AddOperation(
+                //                new DemandMoneyOperation(this, PlayerController.CurrentPlayer, 1000)
+                //                ));
+                //    t2 = true;
+                //}
             }
         }
         /// <summary>
@@ -272,7 +273,7 @@ namespace Andja.Model {
         }
 
         internal bool AskDiplomaticIncrease(Player other, DiplomaticStatus ds) {
-            if(ds.currentStatus == DiplomacyType.War) {
+            if(ds.CurrentStatus == DiplomacyType.War) {
                 if(combatValues.Find(x=>x.Player == other).EndScore < CombatValue.EndScore) {
                     return false;
                 }
@@ -816,7 +817,8 @@ namespace Andja.Model {
             List<Player> players = PlayerController.Instance.GetPlayers();
             combatValues = players.Select(p => new PlayerCombatValue(p, CombatValue)).ToList();
         }
-        internal void Load() {
+        internal void Load(Player player) {
+            this.Player = player;
             PlayerAttitude ??= PlayerController.Instance.GetPlayers()
                 .Where(p => p != Player).ToDictionary(player => player.Number, player => new PlayerDiplomaticAI(player));
             foreach (var item in PlayerAttitude) {

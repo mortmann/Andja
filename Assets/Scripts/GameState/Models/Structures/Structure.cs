@@ -121,7 +121,7 @@ namespace Andja.Model {
         //prototype id
         [JsonPropertyAttribute] public string ID;
         //build id -- when it was build
-        [JsonPropertyAttribute] public uint buildID;
+        [JsonPropertyAttribute] public uint BuildID;
         [JsonPropertyAttribute] protected float _health;
         [JsonPropertyAttribute]
         public LandTile BuildTile {

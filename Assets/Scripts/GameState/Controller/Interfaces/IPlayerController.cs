@@ -42,5 +42,7 @@ namespace Andja.Controller {
         void TryToDemandMoney(Player demands, Player target, int amount);
         void UnregisterPlayersDiplomacyStatusChange(Action<Player, Player, DiplomacyType, DiplomacyType> callbackfunc);
         string GetPlayerName(int playerNumber);
+        void TriggerDiplomaticChangeCb(Player playerOne, Player playerTwo, DiplomacyType currentStatus, DiplomacyType changeTo);
+        List<DiplomaticStatus> GetAlliesFor(int number);
     }
 }

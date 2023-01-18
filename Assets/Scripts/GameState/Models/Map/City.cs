@@ -151,7 +151,7 @@ namespace Andja.Model {
         public IEnumerable<Structure> Load(Island island) {
             this.Island = island;
             Setup();
-            Inventory.Load();
+            Inventory?.Load();
             foreach (Structure item in Structures) {
                 switch (item)
                 {
@@ -244,7 +244,7 @@ namespace Andja.Model {
                 case MarketStructure m:
                     MarketStructures?.Add(m);
                     if (str is WarehouseStructure warehouse) {
-                        if (Warehouse != null && Warehouse.buildID != str.buildID) {
+                        if (Warehouse != null && Warehouse.BuildID != str.BuildID) {
                             Debug.LogError("There should be only one Warehouse per City! ");
                             return;
                         }

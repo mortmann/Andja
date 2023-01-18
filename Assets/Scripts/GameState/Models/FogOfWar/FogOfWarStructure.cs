@@ -34,7 +34,7 @@ namespace Andja.FogOfWar {
         public void Link(Structure structure) {
             SpriteRenderer sr = GetComponent<SpriteRenderer>();
             sr.maskInteraction = SpriteMaskInteraction.VisibleInsideMask;
-            Data.buildID = structure.buildID;
+            Data.buildID = structure.BuildID;
             this.structure = structure;
             structure.RegisterOnDestroyCallback(Destroyed);
         }

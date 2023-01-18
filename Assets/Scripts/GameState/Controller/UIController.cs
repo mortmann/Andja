@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using static Andja.UI.Model.EventUIManager;
 
 namespace Andja.Controller {
     public enum TextColor { Positive, Neutral, Negative }
@@ -323,11 +324,12 @@ namespace Andja.Controller {
         }
 
         public UIControllerSave GetUISaveData() {
-            return new UIControllerSave(FindObjectOfType<ShortcutUI>().GetShortCutSave());
+            return new UIControllerSave(FindObjectOfType<ShortcutUI>().GetShortCutSave(), EventUIManager.Instance.GetSave());
         }
 
         public void LoadUISaveData() {
             FindObjectOfType<ShortcutUI>().LoadShortCuts(uIControllerSave.shortcuts);
+            EventUIManager.Instance.Load(uIControllerSave.eventUIData);
             uIControllerSave = null;
         }
         public void ToggleDebugData() {
@@ -353,12 +355,15 @@ namespace Andja.Controller {
     [Serializable]
     public class UIControllerSave : BaseSaveData {
         public string[] shortcuts;
+        public EventUISave eventUIData;
 
-        public UIControllerSave(string[] shortcuts) {
+        public UIControllerSave(string[] shortcuts, EventUISave eventUIData) {
             this.shortcuts = shortcuts;
+            this.eventUIData = eventUIData;
         }
 
         public UIControllerSave() {
+
         }
     }
 }

@@ -1,14 +1,16 @@
 using Andja.UI;
 using Andja.Controller;
 using System;
-using System.Collections.Generic;
 using UnityEngine;
+using Andja.Model;
+using Newtonsoft.Json;
+using Andja.UI.Model;
 
-namespace Andja.Model {
+namespace Andja.UI {
     public enum InformationType { UnitUnderAttack, StructureUnderAttack, DiplomacyChange, Praise, Denounce, ReceivedGift, 
                                   DemandMoney }
-
-    public class BasicInformation {
+    [JsonObject(MemberSerialization.OptIn)]
+    public abstract class BasicInformation {
         public InformationType Type;
         public Func<Vector2> GetPosition;
         public object[] DescriptionValues;
@@ -25,13 +27,16 @@ namespace Andja.Model {
             TitleValues = titleValues;
             SpriteName = spriteName;
         }
+        public BasicInformation() { }
+
+        public abstract BasicInformation Load();
         public string GetTitle() {
             if (translation == null)
                 return "MISSING Title";
             string text = translation.translation;
             for (int i = 0; i < TitleValues.Length; i++) {
-                if(TitleValues[i] is string)
-                    text = text.Replace("$" + i, TitleValues[i].ToString());
+                if(TitleValues[i] is string value)
+                    text = text.Replace("$" + i, value);
                 else
                     text = text.Replace("$" + i, UILanguageController.Instance.GetTranslation(TitleValues[i]));
             }
@@ -54,121 +59,200 @@ namespace Andja.Model {
         }
 
         public static BasicInformation CreateUnitDamage(Unit unit, IWarfare warfare) {
-            if(warfare == null) {
-                return new BasicInformation(InformationType.UnitUnderAttack,
-                () => unit.CurrentPosition, 
-                new string[] { unit.PlayerSetName }, 
-                new string[] { unit.PlayerSetName },
-                "Attacked"
-                );
-            }
-            return new BasicInformation(InformationType.UnitUnderAttack,
-                () => unit.CurrentPosition,
-                new string[] { unit.PlayerSetName },
-                new string[] { unit.PlayerSetName, PlayerController.Instance.GetPlayerName(warfare.PlayerNumber) },
-                "Attacked"
-                );
+            return new UnitUnderAttack(unit, warfare);
         }
         public static BasicInformation CreateStructureDamage(Structure Structure, IWarfare warfare) {
-            if (warfare == null) {
-                return new BasicInformation(InformationType.UnitUnderAttack,
-                () => Structure.Center, 
-                new string[] { Structure.Name }, 
-                new string[] { Structure.Name },
-                "Attacked"
-                );
-            }
-            return new BasicInformation(InformationType.StructureUnderAttack,
-                () => Structure.Center,
-                new string[] { Structure.Name },
-                new string[] { Structure.Name, PlayerController.Instance.GetPlayer(warfare.PlayerNumber).Name },
-                "Attacked"
-                );
+            return new StructureUnderAttack(Structure, warfare); 
         }
         public static BasicInformation DiplomacyChanged(DiplomaticStatus status) {
-            Player one = PlayerController.Instance.GetPlayer(status.PlayerOne);
-            Player two = PlayerController.Instance.GetPlayer(status.PlayerTwo);
-            if (PlayerController.currentPlayerNumber == status.PlayerTwo) {
-                one = two;
-                two = PlayerController.Instance.GetPlayer(status.PlayerOne);
-            }
-            object[] first = new object[] { status.currentStatus };
-            object[] second = new object[] { one.Name, two.Name, status.currentStatus };
-            return new BasicInformation(InformationType.DiplomacyChange,
-                () => two.GetMainCityPosition(),
-                first,
-                second,
-                status.currentStatus.ToString()
-                );
+            return new DiplomaticStatusChange(status);
         }
-
         internal static BasicInformation CreatePraiseReceived(Player from) {
-            string[] first = new string[] { from.Name };
-            string[] second = new string[] { from.Name };
-            return new BasicInformation(InformationType.Praise,
-                () => from.GetMainCityPosition(),
-                first,
-                second,
-                InformationType.Praise.ToString()
-                );
+            return new PraiseInteraction(from);
         }
-
         internal static BasicInformation CreateDenounceReceived(Player from) {
-            string[] first = new string[] { from.Name };
-            string[] second = new string[] { from.Name };
-            return new BasicInformation(InformationType.Denounce,
-                () => from.GetMainCityPosition(),
-                first,
-                second,
-                InformationType.Praise.ToString()
-                );
+            return new DenounceInteraction(from);
         }
         internal static BasicInformation CreateMoneyReceived(Player from, int amount) {
-            string[] first = new string[] { from.Name, amount.ToString() };
-            string[] second = new string[] { from.Name, amount.ToString() };
-            return new BasicInformation(InformationType.Denounce,
-                () => from.GetMainCityPosition(),
-                first,
-                second,
-                InformationType.Praise.ToString()
-                );
+            return new MoneyReceivedInteraction(from, amount);
+        }
+    }
+    [JsonObject(MemberSerialization.OptIn)]
+    public abstract class AttackInformation : BasicInformation {
+        [JsonProperty] protected uint buildID;
+        [JsonProperty] protected IWarfare Warfare;
+
+        public AttackInformation() { }
+
+        public AttackInformation(InformationType type, Func<Vector2> getPosition, object[] titleValues,
+            object[] descriptionValues, string spriteName, uint buildID, IWarfare warfare) : 
+            base(type, getPosition, titleValues, descriptionValues, spriteName) {
+            this.buildID = buildID;
+            Warfare = warfare;
+        }
+        public bool IsSame(uint hit, IWarfare warfare) {
+            return buildID == hit && Warfare == warfare;
+        }
+    }
+    public class UnitUnderAttack : AttackInformation {
+        public UnitUnderAttack() { }
+        public UnitUnderAttack(Unit Unit, IWarfare warfare) :
+            base(InformationType.UnitUnderAttack,
+                () => Unit.PositionVector,
+                new string[] { Unit.Name },
+                warfare != null ? new string[] { Unit.Name, PlayerController.Instance.GetPlayer(warfare.PlayerNumber).Name } : new string[] { Unit.Name },
+                "Attacked", 
+                Unit.BuildID,
+                warfare
+                ) {
+        }
+
+        public override BasicInformation Load() {
+            return new UnitUnderAttack(World.Current.GetUnitFromBuildID(buildID), Warfare);
+        }
+    }
+    public class StructureUnderAttack : AttackInformation {
+        public StructureUnderAttack() { }
+
+        public StructureUnderAttack(Structure Structure, IWarfare warfare) :
+            base(InformationType.StructureUnderAttack,
+                () => Structure.Center,
+                new string[] { Structure.Name },
+                warfare != null ? new string[] { Structure.Name, PlayerController.Instance.GetPlayer(warfare.PlayerNumber).Name } : new string[] { Structure.Name },
+                "Attacked",
+                Structure.BuildID,
+                warfare
+                ) {
+        }
+
+        public override BasicInformation Load() {
+            return new StructureUnderAttack(BuildController.Instance.BuildIdToStructure[buildID], Warfare);
         }
     }
 
-    public class ChoiceInformation : BasicInformation {
+    [JsonObject(MemberSerialization.OptIn)]
+    public class DiplomaticStatusChange : BasicInformation {
+        [JsonProperty] int PlayerNumberOne;
+        [JsonProperty] int PlayerNumberTwo;
+        public DiplomaticStatusChange(DiplomaticStatus status) : base(
+            InformationType.DiplomacyChange, 
+            () => status.PlayerTwo.GetMainCityPosition(),
+            new object[] { status.CurrentStatus }, 
+            new object[] { status.PlayerOne.Name, status.PlayerTwo.Name, status.CurrentStatus },
+            status.CurrentStatus.ToString()
+            ) {
+            PlayerNumberOne = status.PlayerNumberOne;
+            PlayerNumberTwo = status.PlayerNumberTwo;
+        }
+        public DiplomaticStatusChange() { }
+
+        public override BasicInformation Load() {
+            return new DiplomaticStatusChange(PlayerController.Instance.GetDiplomaticStatus(PlayerNumberOne, PlayerNumberTwo));
+        }
+    }
+    [JsonObject(MemberSerialization.OptIn)]
+    public abstract class PlayerInteraction : BasicInformation {
+        [JsonProperty] protected int fromPlayer;
+        [JsonProperty] protected int moneyAmount;
+        public PlayerInteraction() { }
+
+        public PlayerInteraction(InformationType type, object[] titleValues, object[] descriptionValues, string spriteName, Player from, int amount = 0) 
+            : base(type, () => from.GetMainCityPosition(), titleValues, descriptionValues, spriteName) {
+            this.fromPlayer = from.GetPlayerNumber();
+            moneyAmount = amount;
+        }
+    }
+    class PraiseInteraction : PlayerInteraction {
+        public PraiseInteraction(Player from) :
+            base(InformationType.Praise, new string[] { from.Name }, new string[] { from.Name }, InformationType.Praise.ToString(), from, 0) {
+        }
+        public PraiseInteraction() { }
+
+        public override BasicInformation Load() {
+            return new PraiseInteraction(PlayerController.Instance.GetPlayer(fromPlayer));
+        }
+    }
+    class DenounceInteraction : PlayerInteraction {
+        public DenounceInteraction(Player from) : 
+            base(InformationType.Denounce, new string[] { from.Name }, new string[] { from.Name }, InformationType.Denounce.ToString(), from, 0) {
+        }
+        public DenounceInteraction() { }
+
+        public override BasicInformation Load() {
+            return new DenounceInteraction(PlayerController.Instance.GetPlayer(fromPlayer));
+        }
+    }
+    class MoneyReceivedInteraction : PlayerInteraction {
+        public MoneyReceivedInteraction(Player from, int amount) 
+            : base(InformationType.ReceivedGift, 
+                  new string[] { from.Name, amount.ToString() }, 
+                  new string[] { from.Name, amount.ToString() }, 
+                  InformationType.ReceivedGift.ToString(), 
+                  from,
+                  amount) {
+        }
+        public MoneyReceivedInteraction() { }
+
+        public override BasicInformation Load() {
+            return new MoneyReceivedInteraction(PlayerController.Instance.GetPlayer(fromPlayer), moneyAmount);
+        }
+    }
+    public abstract class ChoiceInformation : PlayerInteraction {
         public Choice[] Choices;
         public Action OnClose;
-        public ChoiceInformation(InformationType type, Func<Vector2> getPosition,
+        public ChoiceInformation(InformationType type,
                                     object[] titleValues, object[] descriptionValues,
-                                    string spriteName, Choice[] choices) 
-                                : base(type, getPosition,titleValues, descriptionValues,spriteName) {
+                                    string spriteName, Choice[] choices, Player from, int amount = 0)
+                                : base(type, titleValues, descriptionValues, spriteName, from, amount) {
             Choices = choices;
         }
-        internal static ChoiceInformation CreateMoneyDemand(Player from, int amount, Action yes, Action no) {
-            return new ChoiceInformation (
-                InformationType.DemandMoney, 
-                () => from.GetMainCityPosition(),
-                new string[] { from.Name, amount.ToString() },
-                new string[] { from.Name, amount.ToString() },
-                InformationType.DemandMoney.ToString(),
-                new Choice[] {
-                    new Choice(StaticLanguageVariables.Yes, yes),
-                    new Choice(StaticLanguageVariables.No, no)
-                }
-            );
+        public ChoiceInformation() { }
+
+        class ChoiceDemandMoney : ChoiceInformation {
+            public ChoiceDemandMoney(Player from, int amount) 
+                : base(InformationType.DemandMoney,
+                      new string[] { from.Name, amount.ToString() },
+                      new string[] { from.Name, amount.ToString() },
+                      InformationType.DemandMoney.ToString(),
+                      new Choice[] {
+                        new Choice(StaticLanguageVariables.Yes, () => PlayerController.Instance.SendMoneyFromTo(PlayerController.CurrentPlayer, from, amount)),
+                        new Choice(StaticLanguageVariables.No, null)
+                      },
+                      from, 
+                      amount
+                      ) {
+            }
+            public ChoiceDemandMoney() { }
+            public override BasicInformation Load() {
+                return new ChoiceDemandMoney(PlayerController.Instance.GetPlayer(fromPlayer), moneyAmount);
+            }
         }
-        internal static ChoiceInformation CreateAskDiplomaticIncrease(Player from, DiplomacyType status, Action yes, Action no) {
-            return new ChoiceInformation(
-                InformationType.DiplomacyChange,
-                () => from.GetMainCityPosition(),
-                new object[] { from.Name, status },
-                new string[] { from.Name },
-                status.ToString(),
-                new Choice[] {
-                    new Choice(StaticLanguageVariables.Yes, yes),
-                    new Choice(StaticLanguageVariables.No, no)
-                }
-            );
+        [JsonObject(MemberSerialization.OptIn)]
+        class ChoiceDiplomacy : ChoiceInformation {
+            public ChoiceDiplomacy(Player from, DiplomacyType askForStatus, DiplomaticStatus status)
+                : base(InformationType.DemandMoney,
+                      new object[] { from.Name, askForStatus },
+                      new string[] { from.Name },
+                      askForStatus.ToString(),
+                      new Choice[] {
+                        new Choice(StaticLanguageVariables.Yes, () => status.Increase()),
+                        new Choice(StaticLanguageVariables.No, null)
+                      },
+                      from
+                      ) {
+            }
+            public ChoiceDiplomacy() { }
+
+            public override BasicInformation Load() {
+                DiplomaticStatus status = PlayerController.Instance.GetDiplomaticStatus(PlayerController.currentPlayerNumber, fromPlayer);
+                return new ChoiceDiplomacy(PlayerController.Instance.GetPlayer(fromPlayer), status.NextHigherStatus, status);
+            }
+        }
+        internal static ChoiceInformation CreateMoneyDemand(Player from, int amount) {
+            return new ChoiceDemandMoney(from, amount);
+        }
+        internal static ChoiceInformation CreateAskDiplomaticIncrease(Player from, DiplomacyType askForStatus, DiplomaticStatus status) {
+            return new ChoiceDiplomacy(from, askForStatus, status);
         }
     }
 }

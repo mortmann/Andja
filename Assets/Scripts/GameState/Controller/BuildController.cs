@@ -63,6 +63,7 @@ namespace Andja.Controller {
             }
         }
 
+
         /// <summary>
         /// Is called when any structure is build. 
         /// </summary>
@@ -161,7 +162,7 @@ namespace Andja.Controller {
         public void PlaceAllLoadedStructure(List<Structure> loadedStructures) {
             this.LoadedStructures = loadedStructures;
             //order by descending because we need to go from back to front -- for removing from the last
-            LoadedStructures = LoadedStructures.OrderByDescending(x => x.buildID).ToList();
+            LoadedStructures = LoadedStructures.OrderByDescending(x => x.BuildID).ToList();
             for (int i = LoadedStructures.Count - 1; i >= 0; i--) {
                 if (LoadBuildOnTile(LoadedStructures[i], World.Current.GetTileAt(LoadedStructures[i].BuildTile.Vector2))) {
                     LoadedStructures[i].City.TriggerAddCallBack(LoadedStructures[i]);
@@ -354,7 +355,7 @@ namespace Andja.Controller {
             //check to see if the structure can be placed there
             if (structure.CheckPlaceStructure(tiles, playerNumber) == false) {
                 if (loading == false || EditorController.IsEditor) return false;
-                Debug.LogWarning("PLACING FAILED WHILE LOADING! " + structure.buildID + " - " + structure.SmallName);
+                Debug.LogWarning("PLACING FAILED WHILE LOADING! " + structure.BuildID + " - " + structure.SmallName);
                 structure.Destroy(null, true);
                 return false;
             } else
@@ -388,17 +389,20 @@ namespace Andja.Controller {
             }
 
             if(loading) {
-                if(BuildIdToStructure.ContainsKey(structure.buildID)) {
-                    Debug.Log("Build ID duplicate found: " + BuildIdToStructure[structure.buildID] + " " + structure);
+                if(BuildIdToStructure.ContainsKey(structure.BuildID)) {
+                    Debug.Log("Build ID duplicate found: " + BuildIdToStructure[structure.BuildID] + " " + structure);
                     structure.Destroy();
                     return false;
                 }
             }
-
-            // this should also work on loading. it should tightly pack everything next to each other.
-            structure.buildID = _buildId;
-            BuildIdToStructure[_buildId] = structure;           
-            _buildId++;
+             
+            if(structure.BuildID == 0) {
+                structure.BuildID = _buildId;
+                _buildId++;
+            } else {
+                _buildId = Math.Max(_buildId, structure.BuildID);
+            }
+            BuildIdToStructure[structure.BuildID] = structure;
 
             _cbStructureCreated?.Invoke(structure, loading);
             structure.RegisterOnDestroyCallback(OnStructureDestroy);
@@ -426,7 +430,7 @@ namespace Andja.Controller {
 
         public void OnStructureDestroy(Structure str, IWarfare destroyer) {
             _cbAnyStructureDestroyed?.Invoke(str, destroyer);
-            BuildIdToStructure.Remove(str.buildID);
+            BuildIdToStructure.Remove(str.BuildID);
         }
 
         public bool PlayerHasEnoughMoney(Structure s, int playerNumber) {

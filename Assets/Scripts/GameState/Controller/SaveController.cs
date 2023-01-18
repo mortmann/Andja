@@ -36,7 +36,7 @@ namespace Andja.Controller {
         public static bool DebugModeSave = true;
         public static string SaveName = "unsaved";
 
-        public const string SaveFileVersion = "0.1.13";
+        public const string SaveFileVersion = "0.1.14";
         public const string IslandSaveFileVersion = "i_0.0.3";
         private float _timeToAutoSave = AutoSaveInterval;
         private const float AutoSaveInterval = 15 * 60; // every 15 min -- TODO: add game option to change this
@@ -349,10 +349,7 @@ namespace Andja.Controller {
             loadingPercentage += 0.05f; // 5
             LinkedSaves linkedSaveData = BaseSaveData.Deserialize<LinkedSaves>(state.linkedsave);
             PlayerControllerSave pcs = linkedSaveData.player;
-            loadingPercentage += 0.15f; // 20
-            yield return null;
-            WorldSaveState wss = linkedSaveData.world;
-            loadingPercentage += 0.30f; // 50
+            loadingPercentage += 0.175f; // 22.5
             yield return null;
             FogOfWarSave fws = null;
             if (string.IsNullOrEmpty(state.fw)) {
@@ -361,23 +358,21 @@ namespace Andja.Controller {
             else {
                 fws = BaseSaveData.Deserialize<FogOfWarSave>(state.fw);
             }
-            loadingPercentage += 0.05f; // 55
+            loadingPercentage += 0.05f; // 27.5
             yield return null;
             GameEventSave ges = linkedSaveData.events;
-            loadingPercentage += 0.1f; // 65
+            loadingPercentage += 0.1f; // 37.5
             yield return null;
             CameraSave cs = BaseSaveData.Deserialize<CameraSave>(state.camera);
-            loadingPercentage += 0.025f; // 67.5
-            UIControllerSave uics = BaseSaveData.Deserialize<UIControllerSave>(state.ui);
-            loadingPercentage += 0.025f; // 70
+            loadingPercentage += 0.025f; // 40
             yield return null;
             while (MapGenerator.Instance.IsDone == false)
                 yield return null;
             PlayerController.Instance.SetPlayerData(pcs);
-            loadingPercentage += 0.05f; // 75
+            loadingPercentage += 0.05f; // 45
             yield return null;
-            WorldController.Instance.SetWorldData(wss);
-            loadingPercentage += 0.15f; // 90
+            WorldController.Instance.SetWorldData(linkedSaveData.world);
+            loadingPercentage += 0.45f; // 90
             yield return null;
             EventController.Instance.SetGameEventData(ges);
             loadingPercentage += 0.05f; // 95
@@ -386,7 +381,7 @@ namespace Andja.Controller {
             FogOfWarController.SetSaveFogData(fws);
             loadingPercentage += 0.025f; // 97.5
             yield return null;
-            UIController.SetSaveUIData(uics);
+            UIController.SetSaveUIData(linkedSaveData.ui);
             loadingPercentage += 0.025f; // 100
             yield return null;
             Debug.Log("LOAD ENDED");

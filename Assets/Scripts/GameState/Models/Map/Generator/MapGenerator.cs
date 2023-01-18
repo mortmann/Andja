@@ -439,20 +439,20 @@ namespace Andja.Model.Generator {
             }
 
             foreach (Climate climate in Enum.GetValues(typeof(Climate))) {
-                if (fertilityRandomListPerClimate[climate].hasNoMustLeft == false) {
+                if (fertilityRandomListPerClimate[climate].HasNoMustLeft == false) {
                     List<IslandData> sorted = toPlaceIslands.Where(x => x.climate == climate).OrderBy(x => x.Tiles.Length).ToList();
                     int i = 0;
-                    while (fertilityRandomListPerClimate[climate].hasNoMustLeft == false && i < sorted.Count * 2) {
+                    while (fertilityRandomListPerClimate[climate].HasNoMustLeft == false && i < sorted.Count * 2) {
                         sorted[i % sorted.Count].AddFertility
                             (fertilityRandomListPerClimate[climate].GetRandom(mapThreadRandom, sorted[i % sorted.Count].fertilities, toPlaceIslands.Count));
                         i++;
                     }
                 }
-                if (resourcesRandomListPerClimate[climate].hasNoMustLeft == false) {
+                if (resourcesRandomListPerClimate[climate].HasNoMustLeft == false) {
                     List<IslandData> sorted = toPlaceIslands.Where(x => x.climate == climate).OrderBy(x => x.Tiles.Length).ToList();
                     int maxRes = sorted.Max(x => x.ResourcesCount);
                     int i = 0;
-                    while (resourcesRandomListPerClimate[climate].hasNoMustLeft == false 
+                    while (resourcesRandomListPerClimate[climate].HasNoMustLeft == false 
                                 && i < sorted.Count * (maxRes * 2)) {
                         List<ResourceGenerationInfo> exclude = new List<ResourceGenerationInfo>(sorted[i % sorted.Count].resources);
                         exclude.AddRange(sorted[i % sorted.Count].excludedResources);

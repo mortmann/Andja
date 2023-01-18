@@ -1,4 +1,5 @@
 using Andja.Model;
+using Andja.UI;
 using Andja.UI.Model;
 using System;
 using System.Collections.Generic;
@@ -53,7 +54,7 @@ namespace Andja.Controller {
         }
 
         public DiplomacyType GetDiplomaticStatusType(Player firstPlayer, Player secondPlayer) {
-            return firstPlayer == secondPlayer ? DiplomacyType.Alliance : GetDiplomaticStatus(firstPlayer.Number, secondPlayer.Number).currentStatus;
+            return firstPlayer == secondPlayer ? DiplomacyType.Alliance : GetDiplomaticStatus(firstPlayer.Number, secondPlayer.Number).CurrentStatus;
         }
 
         public string GetPlayerName(int playerNumber) {
@@ -96,7 +97,7 @@ namespace Andja.Controller {
                 Debug.Log("HUMAN YOU HAVE LOST THE GAME -- WE WILL DOMINATE ");
                 UIController.Instance.ShowEndScoreScreen(); //TODO: show endscore
             }
-            _playerDiplomaticStandings.RemoveAll(x => x.PlayerOne == player.Number || x.PlayerTwo == player.Number);
+            _playerDiplomaticStandings.RemoveAll(x => x.PlayerNumberOne == player.Number || x.PlayerNumberTwo == player.Number);
             List<Unit> units = new List<Unit>(player.Units);
             for (int i = units.Count - 1; i >= 0; i--) {
                 units[i].Destroy(null);
@@ -109,7 +110,7 @@ namespace Andja.Controller {
 
         public bool IsAtWar(Player player) {
             return _playerDiplomaticStandings.Exists(
-                x => (x.PlayerOne == player.Number || x.PlayerTwo == player.Number) && x.currentStatus == DiplomacyType.War
+                x => (x.PlayerNumberOne == player.Number || x.PlayerNumberTwo == player.Number) && x.AreAtWar()
             );
         }
 
@@ -128,7 +129,7 @@ namespace Andja.Controller {
                 return;
             _balanceTickTimer -= WorldController.Instance.DeltaTime;
             if (_balanceTickTimer <= 0) {
-                Players.ForEach(p => p.UpdateBalance((BalanceFullTime / BalanceTicksTime)));
+                Players.ForEach(p => p.UpdateBalance(BalanceFullTime / BalanceTicksTime));
                 _balanceTickTimer = BalanceTicksTime;
             }
             //ALLOW SWITCH OF playernumber in editor
@@ -183,9 +184,7 @@ namespace Andja.Controller {
 
         public void TryToDemandMoney(Player demands, Player target, int amount) {
             if (target.Number == PlayerController.currentPlayerNumber) {
-                EventUIManager.Instance.Show(ChoiceInformation.CreateMoneyDemand(demands, amount, () => {
-                    SendMoneyFromTo(target, demands, amount);
-                }, null));
+                EventUIManager.Instance.Show(ChoiceInformation.CreateMoneyDemand(demands, amount));
             }
             if (target.IsHuman == false) {
                 target.AI.ReceiveDemandMoney(demands, amount);
@@ -199,21 +198,7 @@ namespace Andja.Controller {
         /// <param name="playerOne"></param>
         /// <param name="playerTwo"></param>
         public void IncreaseDiplomaticStanding(Player playerOne, Player playerTwo) {
-            DiplomaticStatus ds = GetDiplomaticStatus(playerOne, playerTwo);
-            if (ds.currentStatus == DiplomacyType.Alliance)
-                return;
-            if (playerTwo.Number == PlayerController.currentPlayerNumber) {
-                EventUIManager.Instance.Show(ChoiceInformation.CreateAskDiplomaticIncrease(playerOne,
-                    (GetDiplomaticStatusType(playerOne, playerTwo) + 1),
-                () => {
-                    ChangeDiplomaticStanding(playerOne.Number, playerTwo.Number, (DiplomacyType)((int)ds.currentStatus + 1));
-                }, null));
-            }
-            else {
-                if (playerTwo.AI.AskDiplomaticIncrease(playerOne, ds)) {
-                    ChangeDiplomaticStanding(playerOne.Number, playerTwo.Number, (DiplomacyType)((int)ds.currentStatus + 1));
-                }
-            }
+            GetDiplomaticStatus(playerOne, playerTwo)?.TryIncrease();
         }
 
         public List<Player> GetPlayers() {
@@ -227,31 +212,7 @@ namespace Andja.Controller {
         /// <param name="playerOne"></param>
         /// <param name="playerTwo"></param>
         public void DecreaseDiplomaticStanding(Player playerOne, Player playerTwo) {
-            DiplomaticStatus ds = GetDiplomaticStatus(playerOne, playerTwo);
-            if (ds.currentStatus == DiplomacyType.War)
-                return;
-            ChangeDiplomaticStanding(playerOne.Number, playerTwo.Number, (DiplomacyType)((int)ds.currentStatus - 1));
-            if (ds.currentStatus == DiplomacyType.War) {
-                List<DiplomaticStatus> allies = GetAlliesFor(playerOne.Number);
-                foreach (DiplomaticStatus ads in allies) {
-                    if (ads.PlayerOne == playerOne.Number) {
-                        ChangeDiplomaticStanding(ads.PlayerTwo, playerTwo.Number, DiplomacyType.War);
-                    }
-                    if (ads.PlayerTwo == playerOne.Number) {
-                        ChangeDiplomaticStanding(ads.PlayerOne, playerTwo.Number, DiplomacyType.War);
-                    }
-                }
-                allies = GetAlliesFor(playerTwo.Number);
-                foreach (DiplomaticStatus ads in allies) {
-                    if (ads.PlayerOne == playerTwo.Number) {
-                        ChangeDiplomaticStanding(playerOne.Number, ads.PlayerTwo, DiplomacyType.War);
-                    }
-                    if (ads.PlayerTwo == playerTwo.Number) {
-                        ChangeDiplomaticStanding(playerOne.Number, ads.PlayerOne, DiplomacyType.War);
-                    }
-                }
-            }
-
+            GetDiplomaticStatus(playerOne, playerTwo)?.DecreaseDiplomaticStanding(playerOne, playerTwo);
         }
         /// <summary>
         /// sendPlayer sends money. receivingPlayer cannot decline.
@@ -398,22 +359,19 @@ namespace Andja.Controller {
             if (playerOne == GameData.WorldNumber || playerTwo == GameData.WorldNumber) {
                 return false;//No war with world stuff
             }
-            DiplomaticStatus ds = GetDiplomaticStatus(playerOne, playerTwo);
-            if (ds == null)
-                Debug.LogError("Missing DiplomaticStatus for " + playerOne + " " + playerTwo);
-            return ds.currentStatus == DiplomacyType.War;
+            return GetDiplomaticStatus(playerOne, playerTwo)?.AreAtWar() == true;
         }
 
-        private List<DiplomaticStatus> GetAlliesFor(int player) {
-            return _playerDiplomaticStandings.FindAll(x => x.currentStatus == DiplomacyType.Alliance && (x.PlayerOne == player || x.PlayerTwo == player)).ToList();
+        public List<DiplomaticStatus> GetAlliesFor(int player) {
+            return _playerDiplomaticStandings.FindAll(x => x.CurrentStatus == DiplomacyType.Alliance && (x.PlayerNumberOne == player || x.PlayerNumberTwo == player)).ToList();
         }
 
         public List<int> GetPlayersWithRelationTypeFor(int player, params DiplomacyType[] type) {
             //First find all where this player is in && has the status
             //then select only the int that isnt the player
             return _playerDiplomaticStandings
-                .FindAll(x => (x.PlayerOne == player || x.PlayerTwo == player) && type.Contains(x.currentStatus))
-                .Select(x => player == x.PlayerOne ? x.PlayerTwo : x.PlayerOne).ToList();
+                .FindAll(x => (x.PlayerNumberOne == player || x.PlayerNumberTwo == player) && type.Contains(x.CurrentStatus))
+                .Select(x => player == x.PlayerNumberOne ? x.PlayerNumberTwo : x.PlayerNumberOne).ToList();
         }
 
         /// <summary>
@@ -423,29 +381,7 @@ namespace Andja.Controller {
         /// <param name="playerNRTwo"></param>
         /// <param name="changeTo"></param>
         public void ChangeDiplomaticStanding(int playerNROne, int playerNRTwo, DiplomacyType changeTo, bool force = false) {
-            if (playerNROne == playerNRTwo) {
-                return;
-            }
-            DiplomaticStatus ds = GetDiplomaticStatus(playerNROne, playerNRTwo);
-            if (ds.currentStatus == changeTo) {
-                return;
-            }
-            Player playerOne = GetPlayer(playerNROne);
-            Player playerTwo = GetPlayer(playerNRTwo);
-            if (ds.currentStatus > changeTo) {
-                //Should this before forced by the game -- ai needs to know
-                if (force) {
-                    playerOne.AI?.ForcedIncreasedDiplomaticStanding(playerTwo, changeTo);
-                    playerTwo.AI?.ForcedIncreasedDiplomaticStanding(playerOne, changeTo);
-                }
-            }
-            else {
-                playerOne.AI?.DecreaseDiplomaticStanding(playerTwo, ds);
-                playerTwo.AI?.DecreaseDiplomaticStanding(playerOne, ds);
-            }
-            _cbDiplomaticChangePlayer?.Invoke(GetPlayer(playerNROne), GetPlayer(playerNRTwo), ds.currentStatus, changeTo);
-            ds.currentStatus = changeTo;
-            EventUIManager.Instance.Show(BasicInformation.DiplomacyChanged(ds));
+            GetDiplomaticStatus(playerNROne, playerNRTwo)?.ChangeDiplomaticStanding(changeTo, force);
         }
 
         public DiplomaticStatus GetDiplomaticStatus(Player playerOne, Player playerTwo) {
@@ -488,6 +424,10 @@ namespace Andja.Controller {
 
         public void UnregisterPlayersDiplomacyStatusChange(Action<Player, Player, DiplomacyType, DiplomacyType> callbackfunc) {
             _cbDiplomaticChangePlayer -= callbackfunc;
+        }
+
+        public void TriggerDiplomaticChangeCb(Player playerOne, Player playerTwo, DiplomacyType currentStatus, DiplomacyType changeTo) {
+            _cbDiplomaticChangePlayer?.Invoke(playerOne, playerTwo, currentStatus, changeTo);
         }
     }
 

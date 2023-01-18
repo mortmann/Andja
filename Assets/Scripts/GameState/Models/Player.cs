@@ -217,7 +217,7 @@ namespace Andja.Model {
                 OnUnitCreated(item);
             }
             CalculateBalance();
-            AI?.Load();
+            AI?.Load(this);
         }
         //TODO: make this not so cpu heavy
         internal IReadOnlyList<int> GetUnitCityEnterable() {

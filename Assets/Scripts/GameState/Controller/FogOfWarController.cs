@@ -122,13 +122,13 @@ namespace Andja.Controller {
         }
         public void AddStructureFogModule(GameObject gameObject, Structure structure) {
             FogOfWarStructure fws = gameObject.AddComponent<FogOfWarStructure>();
-            if (_fogStructures.ContainsKey(structure.buildID)) {
-                fws.Set(_fogStructures[structure.buildID]);
+            if (_fogStructures.ContainsKey(structure.BuildID)) {
+                fws.Set(_fogStructures[structure.BuildID]);
             } else {
                 fws.Link(structure);
             }
             AddBoxCollider(gameObject, structure.HasHitbox == false);
-            _fogStructures[structure.buildID] = fws.Data;
+            _fogStructures[structure.BuildID] = fws.Data;
         }
 
         private void AddBoxCollider(GameObject gameObject, bool isTrigger) {

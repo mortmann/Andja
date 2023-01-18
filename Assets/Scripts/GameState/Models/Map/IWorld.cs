@@ -35,6 +35,7 @@ namespace Andja.Model {
         Tile GetTileAt(int x, int y);
         Tile GetTileAt(Vector2 vec);
         Queue<Tile> GetTilesQueue(Queue<Vector2> q);
+        Unit GetUnitFromBuildID(uint buildID);
         bool IsInTileAt(Tile t, float x, float y);
         void Load();
         void LoadTiles(Tile[] tiles, int width, int height);

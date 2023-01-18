@@ -195,6 +195,11 @@ namespace Andja.Model {
             base.OnUpgrade();
             militaryStructureData = null;
         }
+
+        public uint GetBuildID() {
+            return BuildID;
+        }
+
         public float CurrentDamage => isActive ? MilitaryStructureData.damage : 0;
         public float MaximumDamage => MilitaryStructureData.damage;
         public DamageType DamageType => MilitaryStructureData.damageType;

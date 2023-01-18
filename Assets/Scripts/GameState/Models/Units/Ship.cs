@@ -61,7 +61,7 @@ namespace Andja.Model {
         public Ship() {
         }
 
-        public Ship(Unit unit, int playerNumber, Tile t) {
+        public Ship(Unit unit, int playerNumber, Tile t, uint buildID) {
             ID = unit.ID;
             PatrolCommand = new PatrolCommand();
             prototypeData = unit.Data;
@@ -72,10 +72,11 @@ namespace Andja.Model {
             PlayerSetName = "Ship " + Random.Range(0, 1000000000);
             Pathfinding = new OceanPathfinding(t, this);
             Pathfinding.cbIsAtDestination += OnPathfindingAtDestination;
+            this.BuildID = buildID;
         }
 
-        public override Unit Clone(int playerNumber, Tile startTile) {
-            return new Ship(this, playerNumber, startTile);
+        public override Unit Clone(int playerNumber, Tile startTile, uint buildID) {
+            return new Ship(this, playerNumber, startTile, buildID);
         }
 
         public Ship(string id, ShipPrototypeData spd) {

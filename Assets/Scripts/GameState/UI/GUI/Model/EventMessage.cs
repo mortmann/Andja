@@ -9,12 +9,13 @@ using UnityEngine.UI;
 namespace Andja.UI {
 
     public class EventMessage : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler, IScrollHandler {
+        public DateTime ShownTime = DateTime.Now;
         ScrollRect ParentScroll;
-        GameEvent gameEvent;
-        BasicInformation Information;
+        public GameEvent gameEvent;
+        public BasicInformation Information;
         private Text nameText;
         public Image IconImage;
-        ChoiceInformation ChoiceInformation;
+
         private void Start() {
             ParentScroll = GetComponentInParent<ScrollRect>();
         }
@@ -31,10 +32,9 @@ namespace Andja.UI {
             LanguageChanged();
             UILanguageController.Instance.RegisterLanguageChange(LanguageChanged);
             IconImage.sprite = UISpriteController.GetIcon(Information.SpriteName);
-        }
-        public void Setup(ChoiceInformation information) {
-            Setup((BasicInformation)information);
-            ChoiceInformation = information;
+            if(information is ChoiceInformation choice) {
+                choice.OnClose = () => { EventUIManager.Instance.RemoveEvent(this); };
+            }
         }
         private void LanguageChanged() {
             if(gameEvent != null) {
@@ -64,8 +64,8 @@ namespace Andja.UI {
 
         public void OnPointerClick(PointerEventData eventData) {
             if(eventData.button == PointerEventData.InputButton.Left) {
-                if(ChoiceInformation != null) {
-                    UIController.Instance.ShowChoiceDialog(ChoiceInformation);
+                if(Information is ChoiceInformation choice) {
+                    UIController.Instance.ShowChoiceDialog(choice);
                 }
                 if (gameEvent != null) {
                     CameraController.Instance.MoveCameraToPosition(gameEvent.GetRealPosition());
@@ -81,6 +81,20 @@ namespace Andja.UI {
 
         public void OnScroll(PointerEventData eventData) {
             ParentScroll.verticalScrollbar.value += 4 * ParentScroll.scrollSensitivity * Time.deltaTime * eventData.scrollDelta.y;
+        }
+
+        public EventMessageSave GetSave() {
+            return new EventMessageSave() {
+                ShownTime = ShownTime,
+                gameEventID = gameEvent?.eventID,
+                Information = Information
+            };
+        }
+
+        public class EventMessageSave {
+            public DateTime ShownTime = DateTime.Now;
+            public uint? gameEventID;
+            public BasicInformation Information;
         }
     }
 }

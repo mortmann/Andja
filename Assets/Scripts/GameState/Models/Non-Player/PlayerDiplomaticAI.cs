@@ -43,7 +43,7 @@ namespace Andja.AI {
         }
 
         public void DecreasedDiplomaticStanding(DiplomaticStatus status) {
-            switch (status.currentStatus) {
+            switch (status.CurrentStatus) {
                 case DiplomacyType.War:
                     _standing = -10;
                     break;
@@ -75,7 +75,7 @@ namespace Andja.AI {
         }
 
         internal bool AskDiplomaticIncrease(DiplomaticStatus status) {
-            switch (status.currentStatus) {
+            switch (status.CurrentStatus) {
                 case DiplomacyType.War:
                     //Depends on different factors...
                     //like who started, who is stronger, what the goals may be

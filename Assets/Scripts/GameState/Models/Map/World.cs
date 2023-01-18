@@ -4,6 +4,7 @@ using Andja.Pathfinding;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace Andja.Model {
@@ -30,10 +31,14 @@ namespace Andja.Model {
         [JsonPropertyAttribute] public List<Crate> Crates { get; protected set; }
         [JsonPropertyAttribute] public List<Projectile> Projectiles { get; protected set; }
 
-#endregion Serialize
+        #endregion Serialize
 
-#region RuntimeOrOther
-
+        #region RuntimeOrOther
+        /// <summary>
+        /// Unique ID that gets assigned to a created unit.
+        /// Should start with one -- so 0 is unset
+        /// </summary>
+        private uint _unitBuildId = 1;
         public int Width => GameData.Width;
         public int Height => GameData.Height;
 
@@ -125,6 +130,7 @@ namespace Andja.Model {
                 u.RegisterOnCreateProjectileCallback(OnCreateProjectile);
                 cbUnitCreated?.Invoke(u);
             }
+            _unitBuildId = Units.Max(u => u.BuildID);
             foreach (Crate c in Crates) {
                 cbCrateSpawn?.Invoke(c);
             }
@@ -246,7 +252,7 @@ namespace Andja.Model {
             int playerNumber = nonPlayerNumber;
             if (player != null)
                 playerNumber = player.Number;
-            Unit unit = prefabUnit.Clone(playerNumber, startTile);
+            Unit unit = prefabUnit.Clone(playerNumber, startTile, _unitBuildId++);
             Units.Add(unit);
             unit.RegisterOnDestroyCallback(OnUnitDestroy);
             unit.RegisterOnCreateProjectileCallback(OnCreateProjectile);
@@ -461,6 +467,10 @@ namespace Andja.Model {
             public void TakeDamageFrom(IWarfare warfare) {
                 throw new NotImplementedException();
             }
+
+            public uint GetBuildID() {
+                return 0;
+            }
         }
 
         public Queue<Tile> GetTilesQueue(Queue<Vector2> q) {
@@ -476,6 +486,10 @@ namespace Andja.Model {
                 CreateIsland(item);
             }
             WorldGraph = new WorldGraph();
+        }
+
+        public Unit GetUnitFromBuildID(uint buildID) {
+            return Units.Find(u => u.BuildID == buildID);
         }
     }
 }

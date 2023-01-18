@@ -35,13 +35,15 @@ namespace Andja.Controller {
         public PlayerControllerSave player;
         public WorldSaveState world;
         public GameEventSave events;
+        public UIControllerSave ui;
 
         public LinkedSaves() {
         }
-        public LinkedSaves(PlayerControllerSave player, WorldSaveState world, GameEventSave events) {
+        public LinkedSaves(PlayerControllerSave player, WorldSaveState world, GameEventSave events, UIControllerSave ui) {
             this.player = player;
             this.world = world;
             this.events = events;
+            this.ui = ui;
         }
     }
 }

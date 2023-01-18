@@ -6,7 +6,6 @@ namespace Andja.Controller {
         public string gamedata;
         public string linkedsave;
         public string camera;
-        public string ui;
         public string fw;
 
         public static SaveState GetDebugSaveStateFromSave(string save) {
@@ -56,10 +55,10 @@ namespace Andja.Controller {
                 linkedsave = new LinkedSaves(
                     PlayerController.Instance.GetSavePlayerData(),
                     WorldController.Instance.GetSaveWorldData(),
-                    EventController.Instance.GetSaveGameEventData()
+                    EventController.Instance.GetSaveGameEventData(),
+                    UIController.Instance.GetUISaveData()
                     ).Serialize(true),
                 camera = CameraController.Instance.GetSaveCamera().Serialize(false),
-                ui = UIController.Instance.GetUISaveData().Serialize(false),
                 fw = FogOfWarController.FogOfWarOn ? FogOfWarController.Instance.GetFogOfWarSave().Serialize(false) : null,
             };
         }

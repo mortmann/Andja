@@ -5,6 +5,7 @@ using Andja.Model.Components;
 using Andja.Pathfinding;
 using Newtonsoft.Json;
 using UnityEngine;
+using static UnityEditor.ObjectChangeEventStream;
 using Random = UnityEngine.Random;
 
 namespace Andja.Model {
@@ -47,6 +48,7 @@ namespace Andja.Model {
         #region Serialize
 
         [JsonPropertyAttribute] public string ID;
+        [JsonPropertyAttribute] public uint BuildID { get; protected set; }
         [JsonPropertyAttribute] public int playerNumber;
         [JsonPropertyAttribute] protected string playerSetName;
         [JsonPropertyAttribute] protected float currentHealth;
@@ -139,7 +141,7 @@ namespace Andja.Model {
 
         #region prototype
 
-        public float CaptureSpeed => Data.captureSpeed;
+        public float CaptureSpeed => CalculateRealValue(nameof(Data.captureSpeed), Data.captureSpeed);
 
         public float AttackRange => CalculateRealValue(nameof(Data.attackRange), Data.attackRange);
         public float Damage => CalculateRealValue(nameof(Data.damage), Data.damage);
@@ -161,8 +163,8 @@ namespace Andja.Model {
         public float BuildTime => Data.buildTime;
         public int BuildCost => Data.buildCost;
 
-        public virtual Unit Clone(int playerNumber, Tile startTile) {
-            return new Unit(this, playerNumber, startTile);
+        public virtual Unit Clone(int playerNumber, Tile startTile, uint buildID) {
+            return new Unit(this, playerNumber, startTile, buildID);
         }
 
         public float Width => Data.width;
@@ -221,10 +223,9 @@ namespace Andja.Model {
         public Unit(string id, UnitPrototypeData upd) {
             ID = id;
             prototypeData = upd;
-            PatrolCommand = new PatrolCommand();
         }
 
-        public Unit(Unit unit, int playerNumber, Tile t) {
+        public Unit(Unit unit, int playerNumber, Tile t, uint buildID) {
             ID = unit.ID;
             PatrolCommand = new PatrolCommand();
             prototypeData = unit.Data;
@@ -233,6 +234,7 @@ namespace Andja.Model {
             PlayerSetName = Name + " " + Random.Range(0, 1000000000);
             Pathfinding = new IslandPathfinding(this, t);
             queuedCommands = new Queue<Command>();
+            this.BuildID = buildID;
             Setup();
         }
         public void ReduceHealth(float damage, IWarfare warfare) {
@@ -930,6 +932,10 @@ namespace Andja.Model {
         public void ChangePlayer(int number) {
             Debug.LogWarning("Unit changed Player Number -- Only with cheats possible -- If not used report.");
             playerNumber = number;
+        }
+
+        public uint GetBuildID() {
+            return BuildID;
         }
     }
 }

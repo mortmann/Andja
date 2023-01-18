@@ -4,6 +4,7 @@ using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
 using Andja.Model.Components;
+using Andja.UI;
 
 namespace Andja.Controller {
     //TODO:
@@ -480,6 +481,10 @@ namespace Andja.Controller {
         public GameEventSave GetSaveGameEventData() {
             GameEventSave ges = new GameEventSave(_idToActiveEvent, _nextRandomTick);
             return ges;
+        }
+
+        public GameEvent GetEventByID(uint gameEventID) {
+            return _idToActiveEvent[gameEventID];
         }
     }
 

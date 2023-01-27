@@ -235,61 +235,82 @@ namespace Andja.Controller {
             }
             if (tileValue?.ContainsKey(t) == false)
                 return;
-            if (_cityToCurrentSpaceValueTiles[t.City].ContainsKey(t) == false)
-                return;
-            if (t.Structure != null && t.Structure.ShouldAICountTileAsFree() == false)
-                return;
+            TileValue currentValue = _cityToCurrentSpaceValueTiles[t.City][t];
+            Tile next;
             switch (direction) {
                 case Direction.N:
-                    if (tileValue?.ContainsKey(t.South()) == false)
+                    next = t.South();
+                    if (tileValue?.ContainsKey(next) == false)
                         return;
-                    tileValue[t].swValue.y = tileValue[t.South()].swValue.y + 1;
-                    if(t.City == t.South().City) {
-                        _cityToCurrentSpaceValueTiles[t.City][t].swValue.y = _cityToCurrentSpaceValueTiles[t.City][t.South()].swValue.y + 1;
+                    tileValue[t].swValue.y = tileValue[next].swValue.y + 1;
+                    if (t.City == next.City) {
+                        if (t.Structure != null && t.Structure.ShouldAICountTileAsFree() == false) {
+                            currentValue.swValue.y = 0;
+                        } else {
+                            currentValue.swValue.y = _cityToCurrentSpaceValueTiles[t.City][next].swValue.y + 1;
+                        }
                     }
                     else {
-                        _cityToCurrentSpaceValueTiles[t.City][t].swValue.y = 1;
+                        currentValue.swValue.y = 1;
                     }
-                    ChangeTileValue(t.North(), t, Direction.N, tileValue);
+                    ChangeTileValue(next, t, Direction.N, tileValue);
                     break;
 
                 case Direction.W:
-                    if (tileValue?.ContainsKey(t.East()) == false)
+                    next = t.East();
+                    if (tileValue?.ContainsKey(next) == false)
                         return;
-                    tileValue[t].neValue.x = tileValue[t.East()].neValue.x + 1;
-                    if (t.City == t.East().City) {
-                        _cityToCurrentSpaceValueTiles[t.City][t].neValue.x = _cityToCurrentSpaceValueTiles[t.City][t.East()].neValue.x + 1;
+                    tileValue[t].neValue.x = tileValue[next].neValue.x + 1;
+                    if (t.City == next.City) {
+                        if (t.Structure != null && t.Structure.ShouldAICountTileAsFree() == false) {
+                            currentValue.neValue.x = 0;
+                        }
+                        else {
+                            currentValue.neValue.x = _cityToCurrentSpaceValueTiles[t.City][next].neValue.x + 1;
+                        }
                     }
                     else {
-                        _cityToCurrentSpaceValueTiles[t.City][t].neValue.x = 1;
+                        currentValue.neValue.x = 1;
                     }
-                    ChangeTileValue(t.West(), t, Direction.W, tileValue);
+                    ChangeTileValue(next, t, Direction.W, tileValue);
                     break;
 
                 case Direction.S:
-                    if (tileValue?.ContainsKey(t.North()) == false)
+                    next = t.North();
+                    if (tileValue?.ContainsKey(next) == false)
                         return;
-                    tileValue[t].neValue.y = tileValue[t.North()].neValue.y + 1;
-                    if (t.City == t.North().City) {
-                        _cityToCurrentSpaceValueTiles[t.City][t].neValue.y = _cityToCurrentSpaceValueTiles[t.City][t.North()].neValue.y + 1;
+                    tileValue[t].neValue.y = tileValue[next].neValue.y + 1;
+                    if (t.City == next.City) {
+                        if (t.Structure != null && t.Structure.ShouldAICountTileAsFree() == false) {
+                            currentValue.neValue.y = 0;
+                        }
+                        else {
+                            currentValue.neValue.y = _cityToCurrentSpaceValueTiles[t.City][next].neValue.y + 1;
+                        }
                     } 
                     else {
-                        _cityToCurrentSpaceValueTiles[t.City][t].neValue.y = 1;
+                        currentValue.neValue.y = 1;
                     }
-                    ChangeTileValue(t.South(), t, Direction.S, tileValue);
+                    ChangeTileValue(next, t, Direction.S, tileValue);
                     break;
 
                 case Direction.E:
-                    if (tileValue?.ContainsKey(t.West()) == false)
+                    next = t.West();
+                    if (tileValue?.ContainsKey(next) == false)
                         return;
-                    tileValue[t].swValue.x = tileValue[t.West()].swValue.x + 1;
-                    if (t.City == t.West().City) {
-                        _cityToCurrentSpaceValueTiles[t.City][t].swValue.x = _cityToCurrentSpaceValueTiles[t.City][t.West()].swValue.x + 1;
+                    tileValue[t].swValue.x = tileValue[next].swValue.x + 1;
+                    if (t.City == next.City) {
+                        if (t.Structure != null && t.Structure.ShouldAICountTileAsFree() == false) {
+                            currentValue.swValue.x = 0;
+                        }
+                        else {
+                            currentValue.swValue.x = _cityToCurrentSpaceValueTiles[t.City][next].swValue.x + 1;
+                        }
                     }
                     else {
-                        _cityToCurrentSpaceValueTiles[t.City][t].swValue.x = 1;
+                        currentValue.swValue.x = 1;
                     }
-                    ChangeTileValue(t.East(), t, Direction.E, tileValue);
+                    ChangeTileValue(next, t, Direction.E, tileValue);
                     break;
 
                 case Direction.None:

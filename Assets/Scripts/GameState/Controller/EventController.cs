@@ -50,7 +50,7 @@ namespace Andja.Controller {
         private uint _lastId = 0;
         private Dictionary<EventType, List<GameEvent>> _typeToEvents;
         private Dictionary<uint, GameEvent> _idToActiveEvent;
-
+        public IEnumerable<GameEvent> AllActiveEvents => _idToActiveEvent.Values;
         //Every EventType has a chance to happen
         private Dictionary<EventType, float> _chanceToEvent;
 
@@ -93,8 +93,7 @@ namespace Andja.Controller {
                 return;
             }
             //update and remove inactive events
-            List<uint> ids = new List<uint>(_idToActiveEvent.Keys);
-            foreach (uint i in ids) {
+            foreach (uint i in _idToActiveEvent.Keys.ToArray()) {
                 if (_idToActiveEvent[i].IsDone) {
                     StopGameEvent(i);
                 }

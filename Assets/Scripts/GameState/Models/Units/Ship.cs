@@ -101,12 +101,11 @@ namespace Andja.Model {
                     AttackCooldownTimer -= deltaTime;
                     return;
                 }
-                Vector3 velocity = new Vector3();
                 Vector3 targetPosition = CurrentTarget.CurrentPosition;
                 Vector3 lastMove = CurrentTarget.LastMovement;
                 Vector3 projectileDestination = CurrentTarget.CurrentPosition;
                 if (Projectile.PredictiveAim(CurrentPosition, ProjectileSpeed, targetPosition, 
-                                    lastMove, GameData.Gravity, out velocity, out projectileDestination) == false) {
+                                    lastMove, GameData.Gravity, out Vector3 velocity, out projectileDestination) == false) {
                     return;
                 }
                 ShotAtPosition(projectileDestination);

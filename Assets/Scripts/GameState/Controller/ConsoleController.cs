@@ -141,7 +141,7 @@ namespace Andja.Controller {
 
         public void OnDestroy() {
             Instance = null;
-            Destroy(GraphyInstance);
+            Destroy(_graphyInstance);
             if (Application.isEditor) return;
             _logWriter.WriteLine("Closed safely.");
             _logWriter.Flush();

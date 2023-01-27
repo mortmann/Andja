@@ -33,7 +33,7 @@ namespace Andja.Controller {
                 });
             workerConverter = new BaseConverter<WorkerPrototypeData>(
                 (_) => new WorkerPrototypeData(),
-                "units/ship",
+                "units/worker",
                 (id, data) => {
                     idToWorkerPrototypData[id] = data;
                 });

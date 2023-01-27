@@ -65,6 +65,15 @@
       <translation>[**Missing**]</translation>
       <valueIsMainTranslation>false</valueIsMainTranslation>
     </translationData>
+    <translationData id="HealthUI">
+      <translation>[**Missing**]</translation>
+      <toolTipTranslation>[**Missing**]</toolTipTranslation>
+      <valueIsMainTranslation>false</valueIsMainTranslation>
+      <uiElements>
+        <string>UnitHealth/Health/</string>
+      </uiElements>
+      <onlyToolTip>true</onlyToolTip>
+    </translationData>
     <translationData id="Hint">
       <translation>[**Missing**]</translation>
       <valueIsMainTranslation>false</valueIsMainTranslation>
@@ -228,6 +237,15 @@
       <uiElements>
         <string>Canvas/Hint/HintTitle/</string>
       </uiElements>
+    </translationData>
+    <translationData id="HealthUI">
+      <translation>[**Missing**]</translation>
+      <toolTipTranslation>[**Missing**]</toolTipTranslation>
+      <valueIsMainTranslation>false</valueIsMainTranslation>
+      <uiElements>
+        <string>UnitHealth/Health/</string>
+      </uiElements>
+      <onlyToolTip>true</onlyToolTip>
     </translationData>
     <translationData id="Buy">
       <translation>[**Missing**]</translation>

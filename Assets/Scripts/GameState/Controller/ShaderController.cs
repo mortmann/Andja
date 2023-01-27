@@ -23,10 +23,14 @@ namespace Andja.Controller {
             oceanSpeed = Speed.Slow
         };
 
-        public void Start() {
+        public void OnEnable() {
             _cloudShadows = FindObjectOfType<CloudShadows>();
             EventController.Instance.RegisterOnEvent(OnEventStarted, OnEventEnded);
             _oceanMaterial = TileSpriteController.Instance.oceanInstance.GetComponent<Renderer>().material;
+            foreach(GameEvent ge in EventController.Instance.AllActiveEvents) {
+                OnEventStarted(ge);
+            }
+            LateUpdate();
         }
 
         private void OnEventEnded(GameEvent gameevent) {

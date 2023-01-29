@@ -548,21 +548,21 @@ namespace Andja.Model {
                         }
                     }
                 } else {
-                    tiles = tiles.Where(x => x.tile.CheckTile() && x.MinVector.x >= s.TileWidth && x.MinVector.y >= s.TileHeight).ToList();
+                    tiles = tiles.Where(x => x.tile.CheckTile() && x.MaxRectangle.x >= s.TileWidth && x.MaxRectangle.y >= s.TileHeight).ToList();
                 }
                 if (s.StructureRange > 0) {
-                    var ordered = tiles.OrderBy(x => x.MinVector.x == s.StructureRange && x.MinVector.y == s.StructureRange);
-                    var tooSmall = ordered.Where(x => x.MinVector.x < s.StructureRange || x.MinVector.y < s.StructureRange);
+                    var ordered = tiles.OrderBy(x => x.MaxRectangle.x == s.StructureRange && x.MaxRectangle.y == s.StructureRange);
+                    var tooSmall = ordered.Where(x => x.MaxRectangle.x < s.StructureRange || x.MaxRectangle.y < s.StructureRange);
                     var bigger = ordered.Except(tooSmall);
                     Tile tile = null;
-                    if(bigger.Count() > 0) {
-                        bigger.OrderBy(x => x.MinVector.x - s.StructureRange).ThenBy(x => x.MinVector.y - s.StructureRange);
+                    if (bigger.Count() > 0) {
+                        bigger.OrderBy(x => x.MaxRectangle.x - s.StructureRange).ThenBy(x => x.MaxRectangle.y - s.StructureRange);
                         tile = bigger.First().tile;
                     }
-                    if(tile == null) {
+                    if (tile == null) {
                         if (tooSmall.Count() == 0)
                             continue;
-                        tooSmall.OrderBy(x => x.MinVector.x - s.StructureRange).ThenBy(x => x.MinVector.y - s.StructureRange);
+                        tooSmall.OrderBy(x => x.MaxRectangle.x - s.StructureRange).ThenBy(x => x.MaxRectangle.y - s.StructureRange);
                         tile = tooSmall.Last()?.tile;
                     }
                     if (tile == null)

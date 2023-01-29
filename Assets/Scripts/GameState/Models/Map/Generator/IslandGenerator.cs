@@ -142,7 +142,7 @@ namespace Andja.Model.Generator {
                 for (int x = 0; x < Width; x++) {
                     foreach (IslandFeaturePrototypeData proto in allFeatures) {
                         IslandFeature feature = new IslandFeature(proto.ID);
-                        if (feature.RequiredTile == PreTileValues[x, y].Type) {
+                        if (feature.RequiredTile == PreTileValues[x, y]?.Type) {
                             bool fits = false;
                             switch (feature.fitType) {
                                 case FitType.Exact:

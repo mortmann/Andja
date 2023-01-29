@@ -118,14 +118,15 @@ namespace Andja.Controller {
 
         private void OnCityTileAdded(ICity c, Tile t) {
             if(_cityToCurrentSpaceValueTiles[c].ContainsKey(t) == false)
-                _cityToCurrentSpaceValueTiles[c].TryAdd(t, new TileValue(t, Vector2.one, Vector2.one));
-            if (t.GetNeighbours().All(x => x.City == c)) return;
-            ChangeTileValue(t, t.West(), Direction.W, _cityToCurrentSpaceValueTiles[c]);
-            ChangeTileValue(t, t.South(), Direction.S, _cityToCurrentSpaceValueTiles[c]);
-            ChangeTileValue(t, t.North(), Direction.N, _cityToCurrentSpaceValueTiles[c]);
-            ChangeTileValue(t, t.East(), Direction.E, _cityToCurrentSpaceValueTiles[c]);
+                _cityToCurrentSpaceValueTiles[c].TryAdd(t, new TileValue(t, 1, 1, 1, 1));
+            if (HasToDoCheck(c, t, t.East(), Direction.E)) ChangeTileValue(t.West(), t, Direction.W);
+            if (HasToDoCheck(c, t, t.North(), Direction.N)) ChangeTileValue(t.South(), t, Direction.S);
+            if (HasToDoCheck(c, t, t.South(), Direction.S)) ChangeTileValue(t.North(), t, Direction.N);
+            if (HasToDoCheck(c, t, t.West(), Direction.W)) ChangeTileValue(t.East(), t, Direction.E);
         }
-
+        private bool HasToDoCheck(ICity c, Tile t, Tile o, Direction dir) {
+            return o.City != c || _cityToCurrentSpaceValueTiles[c][t].HasToDoCheck(_cityToCurrentSpaceValueTiles[c][o], dir);
+        }
         public void Update() {
             for (int i = 0; i < AIOperationsPerFrame; i++) {
                 if(_allOperations.TryDequeue(out Operation op) == false) {
@@ -175,16 +176,16 @@ namespace Andja.Controller {
                 for (int y = 0; y < structure.TileHeight; y++) {
                     Tile t = structure.Tiles[y + x * structure.TileHeight];
                     if (y == 0) {
-                        ChangeTileValue(t, t.West(), Direction.E, IslandsTileToValue[t.Island]);
+                        ChangeTileValue(t.East(), t, Direction.E);
                     }
                     if (y < structure.TileWidth) {
-                        ChangeTileValue(t, t.South(), Direction.N, IslandsTileToValue[t.Island]);
+                        ChangeTileValue(t.North(), t, Direction.N);
                     }
                     if (y == structure.TileWidth - 1) {
-                        ChangeTileValue(t, t.East(), Direction.W, IslandsTileToValue[t.Island]);
+                        ChangeTileValue(t.West(), t, Direction.W);
                     }
                     if (x == structure.TileHeight - 1) {
-                        ChangeTileValue(t, t.North(), Direction.S, IslandsTileToValue[t.Island]);
+                        ChangeTileValue(t.South(), t, Direction.S);
                     }
                 }
             }
@@ -200,127 +201,50 @@ namespace Andja.Controller {
                 return;
             Dictionary<Tile, TileValue> tileValue = IslandsTileToValue[island];
             lock(tileValue) {
-                for (int y = 0; y < structure.TileHeight; y++) {
-                    for (int x = 0; x < structure.TileWidth; x++) {
-                        Tile t = structure.Tiles[x * structure.TileHeight + y];
-                        tileValue[t].neValue = Vector2.zero;
-                        tileValue[t].swValue = Vector2.zero;
-                        _cityToCurrentSpaceValueTiles[t.City][t].neValue = Vector2.zero;
-                        _cityToCurrentSpaceValueTiles[t.City][t].swValue = Vector2.zero;
+                for (int x = 0; x < structure.TileWidth; x++) {
+                    for (int y = 0; y < structure.TileHeight; y++) {
+                        Tile t = structure.Tiles[y * structure.TileWidth + x];
+                        tileValue[t].SetValuesToZero();
+                        _cityToCurrentSpaceValueTiles[t.City][t].SetValuesToZero();
                         if (x == 0) {
-                            ChangeTileValue(t.East(), t, Direction.E, IslandsTileToValue[t.Island]);
+                            ChangeTileValue(t.West(), t, Direction.W);
                         }
                         if (y == structure.TileHeight - 1) {
-                            ChangeTileValue(t.North(), t, Direction.N, IslandsTileToValue[t.Island]);
+                            ChangeTileValue(t.North(), t, Direction.N);
                         }
                         if (x == structure.TileWidth - 1) {
-                            ChangeTileValue(t.West(), t, Direction.W, IslandsTileToValue[t.Island]);
+                            ChangeTileValue(t.East(), t, Direction.E);
                         }
                         if (y == 0) {
-                            ChangeTileValue(t.South(), t, Direction.S, IslandsTileToValue[t.Island]);
+                            ChangeTileValue(t.South(), t, Direction.S);
                         }
                     }
                 }
             }
         }
 
-        private static void ChangeTileValue(Tile t, ITile tValue, Direction direction, IDictionary<Tile, TileValue> tileValue) {
-            if (tileValue == null) throw new ArgumentNullException(nameof(tileValue));
-            if (t.Type == TileType.Ocean) {
+        private static void ChangeTileValue(Tile current, Tile previous, Direction direction) {
+            if (current.Type == TileType.Ocean) {
                 return;
             }
-            if (t.IsGenericBuildType() != tValue.IsGenericBuildType()) {
-                if (t.Type != tValue.Type)
-                    return;
-            }
-            if (tileValue?.ContainsKey(t) == false)
-                return;
-            TileValue currentValue = _cityToCurrentSpaceValueTiles[t.City][t];
-            Tile next;
-            switch (direction) {
-                case Direction.N:
-                    next = t.South();
-                    if (tileValue?.ContainsKey(next) == false)
-                        return;
-                    tileValue[t].swValue.y = tileValue[next].swValue.y + 1;
-                    if (t.City == next.City) {
-                        if (t.Structure != null && t.Structure.ShouldAICountTileAsFree() == false) {
-                            currentValue.swValue.y = 0;
-                        } else {
-                            currentValue.swValue.y = _cityToCurrentSpaceValueTiles[t.City][next].swValue.y + 1;
-                        }
-                    }
-                    else {
-                        currentValue.swValue.y = 1;
-                    }
-                    ChangeTileValue(next, t, Direction.N, tileValue);
-                    break;
-
-                case Direction.W:
-                    next = t.East();
-                    if (tileValue?.ContainsKey(next) == false)
-                        return;
-                    tileValue[t].neValue.x = tileValue[next].neValue.x + 1;
-                    if (t.City == next.City) {
-                        if (t.Structure != null && t.Structure.ShouldAICountTileAsFree() == false) {
-                            currentValue.neValue.x = 0;
-                        }
-                        else {
-                            currentValue.neValue.x = _cityToCurrentSpaceValueTiles[t.City][next].neValue.x + 1;
-                        }
-                    }
-                    else {
-                        currentValue.neValue.x = 1;
-                    }
-                    ChangeTileValue(next, t, Direction.W, tileValue);
-                    break;
-
-                case Direction.S:
-                    next = t.North();
-                    if (tileValue?.ContainsKey(next) == false)
-                        return;
-                    tileValue[t].neValue.y = tileValue[next].neValue.y + 1;
-                    if (t.City == next.City) {
-                        if (t.Structure != null && t.Structure.ShouldAICountTileAsFree() == false) {
-                            currentValue.neValue.y = 0;
-                        }
-                        else {
-                            currentValue.neValue.y = _cityToCurrentSpaceValueTiles[t.City][next].neValue.y + 1;
-                        }
+            if (current.Structure != null && current.Structure.ShouldAICountTileAsFree() == false) {
+                _cityToCurrentSpaceValueTiles[current.City][current].SetValuesToZero();
+                IslandsTileToValue[current.Island][current].SetValuesToZero();
+            } else {
+                if (previous.Type != current.Type) {
+                    _cityToCurrentSpaceValueTiles[current.City][current].SetValue(direction, 1);
+                    IslandsTileToValue[current.Island][current].SetValue(direction, 1);
+                }
+                else {
+                    if (_cityToCurrentSpaceValueTiles[current.City].ContainsKey(previous)) {
+                        _cityToCurrentSpaceValueTiles[current.City][current].SetValuePlusOne(direction, _cityToCurrentSpaceValueTiles[current.City][previous]);
                     } 
-                    else {
-                        currentValue.neValue.y = 1;
-                    }
-                    ChangeTileValue(next, t, Direction.S, tileValue);
-                    break;
-
-                case Direction.E:
-                    next = t.West();
-                    if (tileValue?.ContainsKey(next) == false)
-                        return;
-                    tileValue[t].swValue.x = tileValue[next].swValue.x + 1;
-                    if (t.City == next.City) {
-                        if (t.Structure != null && t.Structure.ShouldAICountTileAsFree() == false) {
-                            currentValue.swValue.x = 0;
-                        }
-                        else {
-                            currentValue.swValue.x = _cityToCurrentSpaceValueTiles[t.City][next].swValue.x + 1;
-                        }
-                    }
-                    else {
-                        currentValue.swValue.x = 1;
-                    }
-                    ChangeTileValue(next, t, Direction.E, tileValue);
-                    break;
-
-                case Direction.None:
-                    throw new ArgumentOutOfRangeException(nameof(direction), direction, null);
-
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(direction), direction, null);
+                    IslandsTileToValue[current.Island][current].SetValuePlusOne(direction, IslandsTileToValue[current.Island][previous]);
+                }
             }
+            ChangeTileValue(current.GetDirectionTile(direction), current, direction);
         }
-
+        
         public static bool BuildStructure(AIPlayer player, Structure structure, List<Tile> tiles, Unit buildUnit = null, bool onStart = false) {
             return BuildController.Instance.BuildOnTile(structure, tiles, player.PlayerNumber, false, false, buildUnit, false, onStart);
         }
@@ -398,7 +322,7 @@ namespace Andja.Controller {
 
         public static void UpdateCityCurrentSpaceValue(City city, Tile tile) {
             if (_cityToCurrentSpaceValueTiles != null && _cityToCurrentSpaceValueTiles[city].ContainsKey(tile) == false)
-                _cityToCurrentSpaceValueTiles[city].TryAdd(tile, new TileValue(tile, Vector2.one, Vector2.one));
+                _cityToCurrentSpaceValueTiles[city].TryAdd(tile, new TileValue(tile, 1, 1, 1, 1));
         }
     }
 

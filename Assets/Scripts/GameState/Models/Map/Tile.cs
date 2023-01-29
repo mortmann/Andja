@@ -173,7 +173,24 @@ namespace Andja.Model {
         public Tile West() {
             return World.Current.GetTileAt(X - 1, Y);
         }
-
+        public Tile GetDirectionTile(Direction direction) {
+            return direction switch {
+                Direction.N => North(),
+                Direction.E => East(),
+                Direction.S => South(),
+                Direction.W => West(),
+                _ => throw new ArgumentException(nameof(direction)),
+            };
+        }
+        public Tile GetOppositeDirectionTile(Direction direction) {
+            return direction switch {
+                Direction.S => North(),
+                Direction.W => East(),
+                Direction.N => South(),
+                Direction.E => West(),
+                _ => throw new ArgumentException(nameof(direction)),
+            };
+        }
         /// <summary>
         /// Checks if Structure can be placed on the tile.
         /// </summary>

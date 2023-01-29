@@ -513,7 +513,7 @@ namespace Andja.Controller {
             ModLoader.LoadXMLs(XmlFilesTypes.Needs, needsConverter.ReadFromFile);
 
 
-            Dictionary<int, List<Need>> levelToNeedList = new Dictionary<int, List<Need>>();
+            Dictionary<int, List<Need>> levelToNeedList = _allNeeds.GroupBy(need => need.StartLevel).ToDictionary(g => g.Key, g => g.ToList());
             HomeRoadsNotNeeded = _allNeeds.All(x => x.HasToReachPerRoad == false);
             foreach (int level in levelToNeedList.Keys) {
                 List<NeedGroup> ngs = new List<NeedGroup>();

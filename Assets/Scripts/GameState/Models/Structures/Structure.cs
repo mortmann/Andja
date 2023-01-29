@@ -14,7 +14,7 @@ namespace Andja.Model {
 
     public enum StructureTyp { Pathfinding, Blocking, Free };
 
-    public enum Direction { None, N, E, S, W };
+    public enum Direction { N, E, S, W, None };
 
     public enum ExtraUI { None, Range, Upgrade, Efficiency };
 
@@ -903,7 +903,7 @@ namespace Andja.Model {
         /// <returns></returns>
         public bool ShouldAICountTileAsFree() {
             if (this is GrowableStructure g) {
-                return g.IsBeingWorked;
+                return !g.IsBeingWorked;
             }
             return CanBeBuildOver;
         }
